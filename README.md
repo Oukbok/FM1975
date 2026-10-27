@@ -3,7 +3,7 @@
 Ein Fußballmanager im Browser: Start in der Saison 1975/76, einen Verein über die Jahrzehnte führen – durch Ligareformen und Regeländerungen, mit Finanzen, Jugendarbeit und Europapokal.
 
 ## Spielen
-Die aktuelle Version wird bei jeder Änderung automatisch über Cloudflare Pages veröffentlicht.
+Die aktuelle Version wird bei jeder Änderung automatisch über Cloudflare veröffentlicht.
 
 ## Lokal starten (optional)
 ```bash

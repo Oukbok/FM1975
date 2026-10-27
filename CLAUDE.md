@@ -7,7 +7,7 @@ React 18 + TypeScript, gebaut mit esbuild. Kein Backend – alles läuft im Brow
 - `npm run check` – Typprüfung, muss **0 Fehler** ergeben.
 - `npm run build` – Build nach `dist/`. `npm run dev` – lokaler Server auf http://localhost:5173.
 - `npm run test:ui` – Rauchtest (Playwright): startet ein Spiel, öffnet jede Seite, lässt Zeit laufen, meldet JS-Fehler. Screenshots in `test-output/`.
-- Hosting: Cloudflare Pages baut jeden Push auf `main` automatisch (Build `npm run build`, Ausgabe `dist`).
+- Hosting: Cloudflare Workers (statische Assets, `wrangler.jsonc`) baut jeden Push auf `main` automatisch (Build `npm run build`, Ausgabe `dist`).
 
 ## Wo liegt was (nur die betroffene Datei lesen, nicht breit suchen)
 - `src/App.tsx` – Wurzel: Hauptmenü ↔ Spiel, Laden/Speichern-Einstieg.
