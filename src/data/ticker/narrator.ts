@@ -27,6 +27,10 @@ export interface Line {
   hold?: number;
   /** Diese Zeile verändert den Spielstand (Anzeige erst nach Auflösung). */
   score?: [number, number];
+  /** Zwischenstand im Elfmeterschießen. */
+  pens?: [number, number];
+  /** Torschütze (für die Anzeigetafel). */
+  scorer?: string;
 }
 
 function colorWord(hex: string): string {
@@ -67,7 +71,7 @@ export class Narrator {
   private lastStat = -20;
   private labelMem: Record<Side, number> = { home: 0, away: 0 };
 
-  constructor(private sim: MatchSim, private opts: NarratorOpts) {
+  constructor(private sim: MatchSim, public opts: NarratorOpts) {
     this.sp = new Speaker({ ...LEXICON, ...CHANCES, ...SITUATIONS, ...AMBIENCE }, mulberry(Date.now() & 0xffffffff));
   }
 
@@ -243,7 +247,7 @@ export class Narrator {
       corners: `${st(this.sim.home).corners}:${st(this.sim.away).corners}`,
     });
     if (r < 0.004) return [this.line(ev, this.sp.say('anecdote', c), 'color')];
-    if (r < 0.1 && ev.minute - this.lastStat > 12 && ev.minute > 10) {
+    if (r < 0.1 && ev.minute - this.lastStat > 12 && ev.minute > 10 && st(t).shots > 0) {
       this.lastStat = ev.minute;
       return [this.line(ev, this.sp.say('stat_line', c), 'color')];
     }
@@ -317,7 +321,8 @@ export class Narrator {
     else osym = `o_${ch.outcome}`;
     let otext = this.sp.say(osym, c);
     if (ch.outcome === 'post' && word) otext = otext.replace(word === 'LATTE!' ? /Pfosten!/ : /Latte!/, word === 'LATTE!' ? 'Latte!' : 'Pfosten!');
-    out.push(this.line(ev, otext, scored ? 'goal' : ch.outcome === 'saved' ? 'save' : ch.big ? 'chance' : 'normal', { score: scored ? [h, a] : undefined, hold: scored ? 1.4 : ch.big ? 1.1 : 1 }));
+    const scorer = scored ? `${this.name(ev.player)}${ch.type === 'penalty' ? ' (E)' : ch.ownGoal ? ' (ET)' : ''}` : undefined;
+    out.push(this.line(ev, otext, scored ? 'goal' : ch.outcome === 'saved' ? 'save' : ch.big ? 'chance' : 'normal', { score: scored ? [h, a] : undefined, hold: scored ? 1.4 : ch.big ? 1.1 : 1, scorer }));
 
     if (ch.disallowed) {
       const v = next?.kind === 'var' ? next : null;
@@ -346,6 +351,8 @@ export class Narrator {
     if (this.opts.suspense) out.push(this.line(ev, word, s.scored ? 'goal' : 'chance', { suspense: { word, good: mine == null ? null : s.scored ? mine : !mine } }));
     out.push(this.line(ev, this.sp.say(s.scored ? 'so_goal' : s.saved ? 'so_saved' : 'so_miss', c), s.scored ? 'goal' : 'save'));
     for (const l of out) if (l) l.minute = 'i.E.';
+    const last = out[out.length - 1];
+    if (last) last.pens = [s.home, s.away];
     return out;
   }
 

@@ -3,7 +3,9 @@ import { snapshotAttributes } from '../engine/history';
 import ClubEditorModal from '../components/ClubEditorModal';
 import Icon from '../components/Icon';
 import LineupView from '../components/LineupView';
-import MatchLiveView from '../components/MatchLiveView';
+import { MatchScreen } from '../screens/match/MatchScreen';
+import { OwnMatchInfo, completeOwnMatch, createOwnMatchSim, findOwnMatchDue, quickSimOwnMatch } from '../game/ownMatch';
+import type { MatchSim } from '../engine/match/sim';
 import TacticsView from '../components/TacticsView';
 import { ACTIVITY_DEFS, activityIncomeBase } from '../data/activities';
 import { EURO_COMP_NAMES } from '../data/europe';
@@ -70,7 +72,9 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   const [screen, setScreen] = useState<Screen>('dashboard');
   const [running, setRunning] = useState(false);
   const [liveMatchId, setLiveMatchId] = useState<string | null>(null);
-  const [textMatchId, setTextMatchId] = useState<string | null>(null);
+  // Textmodus: laufende Live-Simulation des eigenen Spiels (eigene Oberfläche ohne Menü)
+  const [textMatch, setTextMatch] = useState<{ sim: MatchSim; info: OwnMatchInfo } | null>(null);
+  const watchedRef = useRef(false);
   const [saveMsg, setSaveMsg] = useState('');
   const [devReveal, setDevReveal] = useState<PlayerDevReveal[] | null>(null);
   const [ratingCeremony, setRatingCeremony] = useState<{ results: RatingResult[]; type: 'medium' | 'large'; anlass: string } | null>(null);
@@ -124,7 +128,9 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   // ---------------------------------------------------------------------------
   const processDay = useCallback((): boolean => {
     const ok = processGameDay(g, {
-      onOwnMatch: (id) => setTextMatchId(id),
+      // Spielbericht nach „Schnell simulieren“; nach dem Textmodus nicht nochmal.
+      onOwnMatch: (id) => { if (watchedRef.current) watchedRef.current = false; else setLiveMatchId(id); },
+      onOwnMatchDue: () => setRunning(false),
       onRatingCeremony: (c) => setRatingCeremony(c),
       onSeasonEnd: () => { if (settings.autosave) doSave(); },
     });
@@ -140,7 +146,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.code === 'Space' && !liveMatchId && !textMatchId) {
+      if (e.code === 'Space' && !liveMatchId && !textMatch) {
         const tag = (e.target as HTMLElement)?.tagName;
         if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
         e.preventDefault();
@@ -149,26 +155,25 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [liveMatchId, textMatchId]);
+  }, [liveMatchId, textMatch]);
 
-  const nextEv = CalendarEngine.nextEvent(g.calendar);
   const seasonOver = CalendarEngine.isSeasonOver(g.calendar);
 
-  // Button-Label: "Simulieren" NUR, wenn ein Klick das eigene Spiel DIREKT öffnet,
-  // d.h. das eigene nächste Spiel liegt am AKTUELLEN Kalendertag (kein Tagesvorlauf nötig).
-  // Muss bis zum Spiel erst vorgespult werden, bleibt es "Weiter".
-  const nextIsMyMatch = !!nextEv && nextEv.date === g.calendar.currentDate && (
-    (nextEv.type === 'matchday' && (() => {
-      const m = g.fixtures.find((x) => x.id === nextEv.matchId);
-      return !!m && m.involvesPlayerClub;
-    })()) ||
-    (nextEv.type === 'cup_matchday' && nextEv.cupRoundIndex != null && (() => {
-      const round = g.cup?.rounds[nextEv.cupRoundIndex!];
-      return !!round && round.ties.some((t) => t.involvesPlayerClub && !t.played);
-    })())
-  );
+  // Eigenes Spiel heute fällig → „Schnell simulieren“ / „Textmodus“ statt „Weiter“.
+  const due = !running && !seasonOver && !textMatch ? findOwnMatchDue(g) : null;
+  const quickSim = () => {
+    if (!due) return;
+    quickSimOwnMatch(g, due);
+    processDay();
+    rerender();
+  };
+  const startText = () => {
+    if (!due) return;
+    const sim = createOwnMatchSim(g, due, true);
+    if (sim) setTextMatch({ sim, info: due });
+  };
   // Header-Button: nur Text (kein Icon/Datum) – Zustand bleibt sprechend.
-  const hdrBtnLabel = seasonOver ? 'Neue Saison' : running ? 'Pause' : nextIsMyMatch ? 'Simulieren' : 'Weiter';
+  const hdrBtnLabel = seasonOver ? 'Neue Saison' : running ? 'Pause' : 'Weiter';
   // Aktive Hauptkategorie für die Header-Navigation.
   const navMatched = MENU_STRUCTURE.find((c) => c.dash === screen || c.subs.some((s) => s.screen === screen));
 
@@ -257,25 +262,38 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
             )}
           </div>
           <span className="hd-sep" aria-hidden="true" />
-          <button
-            className={`hd-continue ${running ? 'running' : ''} ${seasonOver ? 'season' : ''}`}
-            onClick={() => {
-              if (seasonOver) { startNextSeason(g); setRunning(false); rerender(); }
-              else setRunning((r) => !r);
-            }}
-            title={seasonOver ? 'Nächste Saison starten' : 'Leertaste'}
-          >
-            <span className="hd-continue-ico" aria-hidden="true">
-              {running ? (
-                <svg viewBox="0 0 24 24" width="38" height="38"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor" /><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor" /></svg>
-              ) : (
-                <svg viewBox="0 0 24 24" width="45" height="45"><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg>
-              )}
-            </span>
-            <span className="hd-continue-txt">
-              <span className="hd-continue-lbl">{hdrBtnLabel}</span>
-            </span>
-          </button>
+          {due ? (
+            <div className="hd-match-btns">
+              <button className="hd-continue compact" onClick={quickSim} title="Sofortiges Ergebnis">
+                <span className="hd-continue-ico" aria-hidden="true"><Icon name="skip" size={34} /></span>
+                <span className="hd-continue-lbl">Schnell simulieren</span>
+              </button>
+              <button className="hd-continue compact text" onClick={startText} title="Spiel im Textmodus verfolgen und eingreifen">
+                <span className="hd-continue-ico" aria-hidden="true"><Icon name="matchball" size={34} /></span>
+                <span className="hd-continue-lbl">Textmodus</span>
+              </button>
+            </div>
+          ) : (
+            <button
+              className={`hd-continue ${running ? 'running' : ''} ${seasonOver ? 'season' : ''}`}
+              onClick={() => {
+                if (seasonOver) { startNextSeason(g); setRunning(false); rerender(); }
+                else setRunning((r) => !r);
+              }}
+              title={seasonOver ? 'Nächste Saison starten' : 'Leertaste'}
+            >
+              <span className="hd-continue-ico" aria-hidden="true">
+                {running ? (
+                  <svg viewBox="0 0 24 24" width="38" height="38"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor" /><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor" /></svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" width="45" height="45"><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg>
+                )}
+              </span>
+              <span className="hd-continue-txt">
+                <span className="hd-continue-lbl">{hdrBtnLabel}</span>
+              </span>
+            </button>
+          )}
         </div>
       </header>
 
@@ -352,9 +370,10 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         />
       )}
 
-      {textMatchId && (
-        <MatchLiveView g={g as any} matchId={textMatchId}
-          onClose={() => { const id = textMatchId; setTextMatchId(null); setLiveMatchId(id); rerender(); }} />
+      {textMatch && (
+        <MatchScreen g={g} sim={textMatch.sim} info={textMatch.info} settings={settings} onSettings={onUpdateSettings}
+          onComplete={() => completeOwnMatch(g, textMatch.info, textMatch.sim, true)}
+          onFinish={() => { watchedRef.current = true; processDay(); setTextMatch(null); rerender(); }} />
       )}
 
       {liveMatchId && (

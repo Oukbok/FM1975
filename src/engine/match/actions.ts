@@ -5,8 +5,7 @@
 import type { InjurySeverity } from '../../types';
 import type { MatchSim } from './sim';
 import { lineupChanged, onPitch, type TeamState } from './state';
-import { finishing, keeperSkill, rating } from './team';
-import { positionSuitability } from '../positions';
+import { finishing, keeperSkill, matchBase, rating } from './team';
 import type { BuildKind, ChanceKind, MPlayer, ShotOutcome, Side } from './types';
 
 /** Gesamtskala der Torgefahr (Kalibrierung über `npm run sim`). */
@@ -330,7 +329,7 @@ function sendOff(sim: MatchSim, T: TeamState, m: MPlayer, kind: 'red' | 'yellowR
     const out = onPitch(T).filter((x) => x.group === 'ATT').sort((x, y) => rating(x) - rating(y))[0] ?? onPitch(T)[0];
     if (sub && out && sim.subsLeft(T) > 0) {
       sim.substitute(T.side, out.id, sub.id, 'torwart');
-      sub.pos = 'TW'; sub.group = 'GK'; sub.base = positionSuitability(sub.p, 'TW');
+      sub.pos = 'TW'; sub.group = 'GK'; sub.base = matchBase(sub.p, 'TW');
     }
   }
 }

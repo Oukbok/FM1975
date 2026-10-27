@@ -21,25 +21,33 @@ export function conditionFactor(p: Player): number {
   const morale = MORALE[p.morale] ?? 1;
   const fit = 0.9 + (clamp(p.attributes.fitness ?? 80, 0, 100) / 100) * 0.1;
   const fr = typeof p.frische === 'number' ? p.frische : 100;
-  const frische = 0.92 + (clamp(fr, 0, 100) / 100) * 0.08;
+  const frische = 0.95 + (clamp(fr, 0, 100) / 100) * 0.05;
   return form * morale * fit * frische;
 }
 
 /** Startkraft aus der Frische: müde Spieler bauen früher ab. */
 export function startEnergy(p: Player): number {
   const fr = typeof p.frische === 'number' ? p.frische : 100;
-  return 80 + clamp(fr, 0, 100) * 0.2;
+  return 85 + clamp(fr, 0, 100) * 0.15;
 }
 
 export function makeMPlayer(p: Player, side: Side, pos: Position, started: boolean, minuteIn: number): MPlayer {
   return {
     p, id: p.id, side, pos, group: POSITION_GROUPS[pos],
-    base: cachedSuitability(p, pos), cond: conditionFactor(p), energy: startEnergy(p),
+    base: matchBase(p, pos), cond: conditionFactor(p), energy: startEnergy(p),
     onPitch: started, started, minuteIn, minuteOut: null, sentOff: false, injured: false,
     goals: 0, ownGoals: 0, assists: 0, yellow: 0, yellowRed: 0, red: 0, shots: 0, shotsOnTarget: 0, xg: 0,
     bigMissed: 0, keyPasses: 0, passes: 0, passesOk: 0, duels: 0, duelsWon: 0, tackles: 0, saves: 0,
     errors: 0, distance: 0, impact: 0,
   };
+}
+
+/**
+ * Stärke auf der gespielten Position. Ein Großteil kommt aus der Positionseignung,
+ * ein kleiner Teil aus der Gesamtklasse (Spielintelligenz hilft auch fehlbesetzt).
+ */
+export function matchBase(p: Player, pos: Position): number {
+  return cachedSuitability(p, pos) * 0.82 + Math.min(p.overall, cachedSuitability(p, p.naturalPosition)) * 0.18;
 }
 
 /** Tagesstärke eines Spielers auf seiner Position inkl. Kraft. */

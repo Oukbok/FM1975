@@ -87,7 +87,7 @@ function storedType(ev: SimEvent): MatchEventType | null {
 }
 
 function shortText(sim: MatchSim, ev: SimEvent): string {
-  const club = ev.side ? sim.team(ev.side).club.shortName : '';
+  const club = ev.side ? sim.team(ev.side).club.name : '';
   const [h, a] = ev.score;
   switch (ev.kind) {
     case 'kickoff': return `Anpfiff: ${sim.home.club.name} – ${sim.away.club.name}.`;
@@ -107,7 +107,7 @@ function shortText(sim: MatchSim, ev: SimEvent): string {
       if (c.type === 'penalty') return c.outcome === 'goal' ? `${name(sim, ev.player)} verwandelt den Elfmeter, ${h}:${a}.` : `${name(sim, ev.player)} vergibt einen Elfmeter.`;
       if (c.outcome === 'goal' && !c.disallowed) return c.ownGoal ? `Eigentor ${name(sim, ev.player)}, ${h}:${a}.` : `Tor für ${club} durch ${name(sim, ev.player)}${ev.assist ? ` (Vorlage ${name(sim, ev.assist)})` : ''}, ${h}:${a}.`;
       if (c.disallowed) return `Treffer von ${name(sim, ev.player)} zählt nicht.`;
-      return `Großchance für ${club}: ${name(sim, ev.player)} ${c.outcome === 'saved' ? 'scheitert am Torwart' : c.outcome === 'post' ? 'trifft nur Pfosten oder Latte' : 'vergibt'}.`;
+      return `Großchance für ${club}: ${name(sim, ev.player)} ${c.outcome === 'saved' ? 'scheitert am Torwart' : c.outcome === 'post' ? (ev.seq % 2 ? 'trifft nur den Pfosten' : 'trifft nur die Latte') : c.outcome === 'blocked' ? 'wird im letzten Moment geblockt' : 'vergibt'}.`;
     }
     default: return '';
   }

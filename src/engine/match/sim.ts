@@ -8,7 +8,7 @@ import type { Club, InjurySeverity, Player } from '../../types';
 import { positionSuitability } from '../positions';
 import { eraRules, type EraRules } from './era';
 import { bench, emptyStats, initRefs, lineupChanged, onPitch, refresh, type TeamState } from './state';
-import { makeMPlayer, rating, resolveLineup } from './team';
+import { makeMPlayer, matchBase, rating, resolveLineup } from './team';
 import { attack, openPlayFoul, maybeInjury, shootoutKick } from './actions';
 import type { MPlayer, Mentality, ShoutId, Side, SimEvent, SimEventKind, TeamTalk } from './types';
 import { other } from './types';
@@ -331,7 +331,7 @@ export class MatchSim {
     inn.minuteIn = this.minute;
     inn.pos = out.pos;
     inn.group = out.group;
-    inn.base = positionSuitability(inn.p, out.pos);
+    inn.base = matchBase(inn.p, out.pos);
     t.subsUsed++;
     lineupChanged(t);
     if (t.captainId === out.id) t.captainId = null;

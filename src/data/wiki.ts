@@ -699,21 +699,21 @@ Das Ergebnis wird auf 1–99 begrenzt. Deshalb kann ein Weltklasse-Stürmer als 
     title: 'Taktik-Anweisungen & ihre Wirkung',
     keywords: ['taktik', 'tempo', 'pressing', 'abseitsfalle', 'aufbau', 'anweisung'],
     body: `## Taktik-Anweisungen
-Über den Button **🧩 Taktik** öffnest du das Taktik-Popup. Alle Einstellungen wirken sich **direkt auf die Simulation** aus (in \`engine/match.ts\`, Funktion \`makeTeamState\`).
+Über den Button **Taktik** öffnest du das Taktik-Popup. Alle Einstellungen wirken direkt in der Match-Engine (\`engine/match/team.ts\`, Funktion \`tacticMods\`).
 
 ### Ausrichtung
-- **Grundausrichtung:** Defensiv / Ausgewogen / Offensiv / Konter – verschiebt die Balance zwischen Angriffs- und Abwehrstärke.
-- **Tempo (0–100):** Höheres Tempo erhöht die Zahl der Torchancen (\`chanceMod\`), kostet aber Stabilität. Formel: \`chanceMod = 1 + Tempo·0.18 + Pressing·0.1\` (normiert um 50).
-- **Pressinghöhe (0–100):** Hohes Pressing erzeugt mehr Chancen und mehr Fouls, öffnet aber Räume.
-- **Abwehrlinie (0–100):** Tief = sicher, hoch = aggressiv.
+- **Grundausrichtung:** Defensiv / Ausgewogen / Offensiv / Konter. Offensiv: mehr und gefährlichere Angriffe, dafür anfälliger für Konter. Konter: weniger Ballbesitz, aber deutlich gefährlichere Gegenstöße.
+- **Tempo (0–100):** mehr Angriffe pro Minute, aber auch mehr Fehler im Aufbau und höherer Kraftverbrauch.
+- **Pressinghöhe (0–100):** etwas mehr Spielkontrolle und Angriffe, mehr Fouls, mehr Kraftverbrauch; hohe Linie und Pressing öffnen Räume für Konter.
+- **Abwehrlinie (0–100):** Hoch = mehr Konteranfälligkeit für dich, tief = sicherer.
 
 ### Verhalten
-- **Zweikampfhärte (0–100):** Erhöht die Foulwahrscheinlichkeit stark. Formel: \`foulMod = 1 + Härte·0.4 + Pressing·0.15\`.
-- **Abseitsfalle (an/aus):** Aktiviert gibt sie einen Defensiv-Bonus von ~3 % – riskant gegen schnelle Stürmer.
-- **Breite (0–100):** Über die Mitte oder über die Flügel.
-- **Aufbauspiel:** Kurz (Ballbesitz, +2 % Angriff) oder lang (direkt).
+- **Zweikampfhärte (0–100):** gewinnt mehr Zweikämpfe, kostet aber Fouls und Karten.
+- **Abseitsfalle (an/aus):** mehr gegnerische Abseitsstellungen, vor allem gegen Steilpässe und Konter.
+- **Breite (0–100):** Hohe Breite = mehr Flanken und Kopfballchancen; wie gefährlich das ist, hängt von deinen Flankengebern und Kopfballspielern ab.
+- **Aufbauspiel:** Kurz (bessere Passquote, mehr Kontrolle) oder lang (mehr lange Bälle und Flanken).
 
-Tempo, Pressing und Zweikampfhärte werden intern auf einen Bereich von −1 bis +1 normiert und passen \`attackMod\`, \`defenseMod\`, \`chanceMod\` und \`foulMod\` an. Wer voll aufs Tempo drückt, erlebt ein wilderes, chancenreicheres Spiel.`,
+Im Textmodus kannst du zusätzlich während des Spiels die **Ausrichtung** ändern und **Zurufe** geben (siehe *Textmodus*).`,
   },
   {
     id: 'set-pieces',
@@ -733,34 +733,70 @@ Der gewählte Schütze wird in der Simulation bei der jeweiligen Standardsituati
   {
     id: 'match',
     category: 'match',
-    title: 'Match-Textmodus (Spielbericht live)',
-    keywords: ['match', 'text', 'live', 'kommentar', 'simulieren', 'phase', 'chance'],
-    body: `## Match-Textmodus
-Trifft der Vorlauf (Weiter/Simulieren) auf ein Spiel **deines** Vereins, hält er **unmittelbar vor dem Anpfiff** an und öffnet automatisch das Match-Fenster im **Vor-Anpfiff-Zustand**: Der Spielstand steht auf 0:0, es ist noch keine Zeile zu sehen. Erst ein Klick auf **Spiel simulieren** startet die eigentliche Textwiedergabe. So verpasst du nie den Beginn deines Spiels.
+    title: 'Textmodus und Schnellsimulation',
+    keywords: ['match', 'text', 'textmodus', 'live', 'kommentar', 'simulieren', 'schnell', 'wechsel', 'zuruf', 'halbzeit', 'ansprache', 'spannung', 'statistik', 'xg'],
+    body: `## Dein Spiel: Schnell simulieren oder Textmodus
+Erreicht der Vorlauf einen Tag mit einem Spiel deines Vereins (Liga, Pokal, Europapokal), hält er an. Oben rechts erscheinen dann zwei Knöpfe:
+- **Schnell simulieren:** Das Spiel wird sofort berechnet, danach öffnet sich der Spielbericht.
+- **Textmodus:** Eine eigene Oberfläche ohne Menü. Du verfolgst das Spiel live und greifst ein.
 
-### Aufbau des Fensters
-Das Fenster ist im Zentrale-Dark-Stil gehalten:
-- **Anzeigetafel oben:** beide Vereinswappen, Kurznamen, laufender **Spielstand** und **Spielminute** samt schmaler Zeitleiste.
-- **Ereignis-Protokoll links:** die Kommentarzeilen laufen Zug um Zug ein.
-- **Infopanel rechts:** oben **Stadion** (Arena, Zuschauer, Kapazität, Wetter), darunter die **Aufstellung** deines Vereins (Rückennummer, Position, Name, Wert) und die **Ersatzbank**.
+Beide Wege nutzen **dieselbe Match-Engine** und verbuchen alles identisch (Ergebnis, Statistik, Noten, Spielliste, Verletzungen, Karten).
 
-### Ablauf einer Chance
-Chancen entstehen nicht mit einer Zeile, sondern über mehrere **Textphasen**:
-1. **Spielaufbau** – ruhige Phase, der Angriff wird vorbereitet.
-2. **Chance entsteht** – der Ball kommt in die Gefahrenzone.
-3. **Spannung** – der entscheidende Moment.
-4. **Auflösung** – Tor, gehalten, vorbei, geblockt oder Latte/Pfosten.
+## Der Textmodus
+- **Anzeigetafel** mit Spielstand, Torschützen und Spielminute (inklusive Nachspielzeit).
+- **Druckphasen:** Balken je Minute zeigen, wer gerade drückt (oben Heim, unten Gast).
+- **Ticker:** Chancen bauen sich über mehrere Zeilen auf (Aufbau, Abschluss, Ausgang, Echo). Jede Zeile bleibt so lange stehen, dass du sie lesen kannst, dann folgt direkt die nächste.
+- **Spannungsmoment:** Bei Großchancen, Elfmetern und direkten Freistößen flimmert zuerst unleserlicher Text, der sich erst dann zu **TOR!**, **GEHALTEN!**, **DANEBEN!** oder **LATTE!** auflöst.
+- **Deine Elf:** Kraft (Balken) und Live-Note jedes Spielers, Karten, Tore, Vorlagen.
+- **Rechts:** Taktik (Ausrichtung, Zurufe), Statistik, gegnerische Aufstellung.
 
-Bei einem Treffer folgt zusätzlich eine **Jubel**-Zeile. Der große deutsche Kommentar-Katalog (\`data/commentary.ts\`) sorgt dafür, dass sich die Texte abwechslungsreich lesen.
+## Eingreifen
+- **Wechseln:** Spieler auf dem Platz anklicken, dann einen Ersatzspieler wählen. Der Neue übernimmt die Position; seine **Eignung** für die Position wird angezeigt. Wechsel je nach Epoche: **2** (bis 1994), **3** (ab 1995), **5** (ab 2020).
+- **Ausrichtung:** Mauern, Defensiv, Normal, Offensiv, Alles nach vorne. Wirkt sofort auf Angriffshäufigkeit, Stabilität und Konteranfälligkeit.
+- **Zurufe:** sechs kurze Anweisungen (Mehr Druck, Ruhe reinbringen, Kompakt stehen, Über die Flügel, Konzentration, Zweikämpfe annehmen). Ein Zuruf wirkt etwa **zehn Minuten**, danach brauchst du eine kurze Pause. Wie gut er ankommt, hängt auch vom Kapitän ab. Wer immer wieder dasselbe ruft, wird überhört.
+- **Halbzeitansprache:** Loben, ruhig analysieren oder Kabinenpredigt. Lob hilft bei Führung, eine Predigt bei Rückstand. Falscher Ton kann schaden.
+- Verletzt sich ein Spieler, wird er automatisch ersetzt, wenn noch Wechsel übrig sind.
 
-### Geschwindigkeit
-Nach dem Anpfiff stellst du unten das Tempo ein: **Langsam, Normal, Schnell** oder **Überspringen** (sofort zum Ende). Mit **Pause** hältst du an, mit **Fortsetzen** geht es weiter.
+## Tempo und Optionen
+Lesetempo **Langsam / Normal / Schnell**, **Pause** (auch Leertaste) und **Bis zur Pause / Bis zum Ende** (spult ohne Lesepausen vor). Tempo, Spannungsmoment und Halbzeitansprache lassen sich in den **Einstellungen** dauerhaft festlegen.
 
-### Anzeige
-Das Ereignis-Protokoll markiert Tore **grün** (fett), Chancen **gelb** und Karten **orange**. Am Ende führt **Zum Spielbericht** zur Statistik-Übersicht; danach kehrst du sauber in die Zentrale zurück.
+## Statistik passend zur Zeit
+Angezeigt wird nur, was es damals schon gab: Schüsse, Ecken, Fouls, Karten und Abseits immer; **Schüsse aufs Tor** ab 1985, **Ballbesitz** ab 1992, **Zweikampfquote** ab 1998, **Pässe, Passquote und Laufleistung** ab 2003, **Großchancen** ab 2013, **Expected Goals** ab 2016. Auch der Kommentar verändert sich: Libero und Bananenflanke in den Siebzigern, Gegenpressing und Halbräume heute, Videobeweis ab 2017.
 
-### Warum ist das Ergebnis schon fest?
-Die eigentliche Simulation (deterministisch, mit festem Zufalls-Seed) läuft vorab – sie berücksichtigt bereits deine Aufstellung, Eignung und Taktik. Der Textmodus **erzählt** dieses Ergebnis anschließend ab dem Klick auf „Spiel simulieren" Minute für Minute. So bleibt das Spiel reproduzierbar.`,
+## Abwechslung im Text
+Der Kommentar wird aus einer Grammatik mit vielen ineinander verschachtelten Bausteinen gebaut (\`data/ticker/\`). Ein Gedächtnis verhindert, dass dieselbe Formulierung kurz hintereinander auftaucht; Wetter, Derby, Pokal, Spielstand und Epoche verändern die Wortwahl.`,
+  },
+  {
+    id: 'match-engine',
+    category: 'match',
+    title: 'So rechnet die Match-Engine',
+    keywords: ['engine', 'simulation', 'stärke', 'position', 'eignung', 'heimvorteil', 'tore', 'xg', 'chance', 'note', 'kraft', 'frische', 'epoche'],
+    body: `## Spielerstärke im Spiel
+Jeder Spieler bringt seine **Positionsstärke** auf der Position mit, auf der er tatsächlich spielt (Attribute nach Positionsgewichten der jeweiligen Epoche, Abzug für deutliche Schwächen, Vertrautheit mit der Position). Dazu kommt die **Tagesform** aus Form, Moral, Fitness und Frische. Während des Spiels sinkt die **Kraft** je nach Ausdauer, Tempo, Pressing, Hitze und Verlängerung; müde Spieler verlieren an Wirkung. Frische Einwechselspieler bringen volle Kraft.
+
+## Mannschaftsteile
+Aus den Spielern auf dem Platz entstehen vier Werte: **Angriff**, **Spielkontrolle**, **Abwehr** und **Torwart**. Jede Position trägt unterschiedlich bei (ein Flügelstürmer viel zum Angriff, ein Sechser viel zu Kontrolle und Abwehr). Fehlt ein Spieler (Platzverweis, Verletzung ohne Wechsel), sinken die Werte spürbar.
+
+## Minute für Minute
+- **Ballbesitz** folgt der Spielkontrolle (die führende Mannschaft überlässt dem Gegner etwas mehr den Ball).
+- **Angriffe** entstehen je nach Ballbesitz, Tempo und Ausrichtung. Ob daraus eine **Chance** wird, entscheidet das Verhältnis Angriff gegen Abwehr (inklusive Heimvorteil).
+- Verpufft ein Angriff, gibt es Abseits, Ecke, Foul (vor dem Strafraum mit Freistoß oder Elfmeter) oder einen Ballverlust – mit Kontergefahr.
+- Jede Chance hat eine **Torwahrscheinlichkeit** (Großchance, normaler Schuss, Kopfball, Distanzschuss, Freistoß, Elfmeter). Ob der Ball reingeht, hängt zusätzlich vom Abschluss des Schützen und vom Torwart ab. Fehler im Aufbau führen zu Großchancen.
+- Dazu kommen Fouls, Karten, Verletzungen, Nachspielzeit, und im Pokal Verlängerung und Elfmeterschießen.
+- Die **KI-Trainer** wechseln müde oder schwache Spieler aus und ändern bei Rückstand oder knapper Führung die Ausrichtung.
+
+## Epochen
+- **Heimvorteil:** in den Siebzigern deutlich stärker als heute.
+- **Torschnitt:** um 3,1 Tore pro Spiel früher, um 2,9 heute.
+- **Karten:** früher seltener Gelb; ab 1995 mehr Verwarnungen.
+- **Wechsel und Bank:** 2 Wechsel bei 5 Bankplätzen, ab 1995 3 Wechsel (7 Plätze), ab 2020 5 Wechsel (9 Plätze).
+- **Videobeweis** ab 2017: Treffer können nachträglich aberkannt werden.
+
+## Noten
+Jeder Spieler bekommt eine Note von **1,0 bis 6,0** in halben Schritten. Sie ergibt sich aus seinem Beitrag (Tore, Vorlagen, Schlüsselpässe, Paraden, Zweikämpfe, Fehler, Karten, Gegentore) und seiner Leistung auf der Position. Kurzeinsätze liegen näher an 3,5.
+
+## Kalibrierung
+Mit \`node scripts/matchbench.mjs\` werden tausende Spiele je Epoche simuliert und Torschnitt, Heimsiege, Favoritenquote und der Einfluss schlechter Aufstellungen gemessen.`,
   },
   {
     id: 'cpu-ai',

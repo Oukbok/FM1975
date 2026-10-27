@@ -6,6 +6,7 @@ React 18 + TypeScript, gebaut mit esbuild. Kein Backend – alles läuft im Brow
 ## Befehle
 - `npm run check` – Typprüfung, muss **0 Fehler** ergeben.
 - `npm run build` – Build nach `dist/`. `npm run dev` – lokaler Server auf http://localhost:5173.
+- `node scripts/matchbench.mjs [n]` – Balance der Match-Engine je Epoche; `node scripts/tickerdemo.mjs [jahr] [seed]` – Textmodus auf der Konsole; `node tests/match-ui.mjs` – Oberflächentest Textmodus.
 - `npm run test:ui` – Rauchtest (Playwright): startet ein Spiel, öffnet jede Seite, lässt Zeit laufen, meldet JS-Fehler. Screenshots in `test-output/`.
 - Live: https://fm1975.pas-franke.workers.dev
 - Hosting: Cloudflare Workers (statische Assets, `wrangler.jsonc`) baut jeden Push auf `main` automatisch (Build `npm run build`, Ausgabe `dist`).
@@ -14,12 +15,12 @@ React 18 + TypeScript, gebaut mit esbuild. Kein Backend – alles läuft im Brow
 - `src/App.tsx` – Wurzel: Hauptmenü ↔ Spiel, Laden/Speichern-Einstieg.
 - `src/shell/GameShell.tsx` – laufendes Spiel: **Tagesablauf `processDay`**, Header, Routing der Seiten.
 - `src/shell/navigation.tsx` – `Screen`-Typ + `MENU_STRUCTURE` (einzige Quelle für Menü/Unterpunkte). `CalendarStrip.tsx` – Kalenderstreifen oben.
-- `src/game/` – Spielablauf ohne UI: `season.ts` (Spieltag, Saisonwechsel, Timeline), `competitions.ts` (Pokal/Europapokal-Kalender + Nachrichten), `leagueSetup.ts` (Ligensystem, DDR, Punkteregel), `state.ts` (`Game`-Typ, Sponsoring-Migration), `clubProfile.ts`.
-- `src/engine/` – Spielmechaniken: `match.ts` (Match-Engine), `finances.ts`, `economy.ts` (Inflation, DM/EUR), `development.ts`, `youth.ts`, `training.ts`/`weeklyTraining.ts`, `form.ts`, `transfers.ts`, `cup.ts`, `euro.ts`, `leagues.ts`, `calendar.ts`, `save.ts`, `lineupAI.ts`, `infrastructure.ts`.
+- `src/game/` – Spielablauf ohne UI: `season.ts` (Spieltag, Saisonwechsel, Timeline), `competitions.ts` (Pokal/Europapokal-Kalender + Nachrichten), `leagueSetup.ts` (Ligensystem, DDR, Punkteregel), `state.ts` (`Game`-Typ, Sponsoring-Migration), `clubProfile.ts`, `ownMatch.ts` (eigenes Spiel: Schnell simulieren / Textmodus vorbereiten).
+- `src/engine/` – Spielmechaniken: `match.ts` (Schnittstelle der Match-Engine; Simulation in `engine/match/`: `sim.ts` Minutenablauf + Eingriffe, `actions.ts` Chancen/Fouls/Karten, `team.ts` Positionsstärke × Tagesform, `era.ts` Epochenregeln, `finish.ts` Noten + Verbuchung), `finances.ts`, `economy.ts` (Inflation, DM/EUR), `development.ts`, `youth.ts`, `training.ts`/`weeklyTraining.ts`, `form.ts`, `transfers.ts`, `cup.ts`, `euro.ts`, `leagues.ts`, `calendar.ts`, `save.ts`, `lineupAI.ts`, `infrastructure.ts`.
 - `src/data/` – Stammdaten: `generate.ts` (Vereine/Kader), `reforms.ts` (Ligareformen), `timeline.ts`, `staff.ts`, `marketing.ts`, `europe.ts`, `ddr.ts`, `defaultCrests.ts`, `clubOverrides.ts` (Editor-Wappen/Trikots), `wiki.ts` (In-Game-Wiki).
 - `src/views/<bereich>/` – je Menübereich (zentrale, spieltag, kader, transfers, finanzen, verein, statistiken, wiki, modals); `categoryDashboards.tsx` = Übersichtsseiten der Kategorien.
-- `src/screens/` – Hauptmenü, Neues Spiel, Laden, Einstellungen. `src/ui/` – `PageHead`, `DisplayFrame` (Skalierung), `format.ts` (Geld/Datum).
-- `src/components/` – wiederverwendbar: Icon, ClubCrest, PlayerAvatar, PlayerModal, ClubModal, LineupView, TacticsView, MatchLiveView, JerseySVG, ClubEditorModal.
+- `src/screens/` – Hauptmenü, Neues Spiel, Laden, Einstellungen; `screens/match/` = Textmodus (eigene Oberfläche ohne Menü). Kommentar-Grammatik in `src/data/ticker/`. `src/ui/` – `PageHead`, `DisplayFrame` (Skalierung), `format.ts` (Geld/Datum).
+- `src/components/` – wiederverwendbar: Icon, ClubCrest, PlayerAvatar, PlayerModal, ClubModal, LineupView, TacticsView, JerseySVG, ClubEditorModal.
 - `src/components/player/` – Reiter des Spielerprofils (`PlayerModal.tsx` ist nur Rahmen + Kopf): Übersicht, Attribute, Entwicklung, Statistik, Vertrag, Medizin, Bericht; `shared.tsx` = Kategorien/Beschriftungen.
 - `src/types/index.ts` – alle zentralen Typen (`Club`, `Player`, `ClubFinances` …). Groß: gezielt per grep lesen.
 - `src/styles/NN-bereich.css` – CSS nach Bereichen; Reihenfolge = Kaskade (`styles/index.ts`). Design-Tokens in `00-base.css` (`:root`).

@@ -393,6 +393,29 @@ export const RAW: Record<string, string> = {
     '<rect x="5.6" y="12" width="12.8" height="7.5" rx="0.6" fill="none" stroke="%BASE%" stroke-width="1.5"/>' +
     '<line x1="5.6" y1="19.5" x2="18.4" y2="19.5" stroke="%BASE%" stroke-width="1.5"/>' +
     '<path d="M9 15.5c1-1 2.4-1 3.4 0s2.4 1 3.4 0" fill="none" stroke="%ACCENT%" stroke-width="1.4" stroke-linecap="round"/>',
+
+  // Textmodus: Trillerpfeife (Zuruf) — weisser Korpus, tuerkise Schallwellen
+  whistle:
+    '<path d="M4 12.5a4.5 4.5 0 0 0 8.6 1.9H19a1 1 0 0 0 1-1v-2.3a1 1 0 0 0-1-1h-8.3A4.5 4.5 0 0 0 4 12.5Z" fill="%BASE%"/>' +
+    '<circle cx="8.5" cy="12.5" r="1.6" fill="#0a0e14"/>' +
+    '<path d="M14 6.5c.8-.8 2-.8 2.8 0M13 4.6c1.4-1.4 3.6-1.4 5 0" fill="none" stroke="%ACCENT%" stroke-width="1.4" stroke-linecap="round"/>',
+
+  // Textmodus: Auswechslung — weisser Pfeil raus, tuerkiser Pfeil rein
+  swap:
+    '<path d="M7 4.5v12M7 16.5l-3-3M7 16.5l3-3" fill="none" stroke="%BASE%" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<path d="M17 19.5v-12M17 7.5l-3 3M17 7.5l3 3" fill="none" stroke="%ACCENT%" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
+
+  // Textmodus: Pause — zwei weisse Balken
+  pause:
+    '<rect x="6.5" y="5" width="4" height="14" rx="1" fill="%BASE%"/><rect x="13.5" y="5" width="4" height="14" rx="1" fill="%ACCENT%"/>',
+
+  // Textmodus: Abspielen — tuerkises Dreieck
+  play:
+    '<path d="M8 5.5v13l11-6.5Z" fill="%ACCENT%"/>',
+
+  // Textmodus: Vorspulen — weisses + tuerkises Dreieck
+  skip:
+    '<path d="M4 6v12l8-6Z" fill="%BASE%"/><path d="M12 6v12l8-6Z" fill="%ACCENT%"/>',
 };
 
 /** Gültige Icon-Namen (englische Keys). */

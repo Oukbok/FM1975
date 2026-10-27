@@ -87,7 +87,7 @@ export const CHANCES: Grammar = {
     'Ein Geschenk! {d} vertändelt den Ball, {p} sagt danke.',
     'Missverständnis in der Abwehr von {o}! {p} geht dazwischen.',
     '{d} rutscht weg – und {p} hat freie Bahn!',
-    '#fehler_art# {d} sieht dabei gar nicht gut aus. {p} schnappt sich den Ball.',
+    '#fehler_art#! {d} sieht dabei gar nicht gut aus. {p} schnappt sich den Ball.',
     '@1992- Rückpass von {d} zu kurz – {p} spritzt dazwischen!',
     '{d} will den Ball ins Aus schlagen und trifft ihn nicht richtig. {p} lauert!',
   ],
