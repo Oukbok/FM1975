@@ -1,7 +1,7 @@
 // =============================================================================
-// FOOTBALL MANAGER 1980 — DFB-Pokal-Engine (K.-o.-Wettbewerb)
+// FOOTBALL MANAGER 1980 — Landespokal-Engine (K.-o.-Wettbewerb)
 // =============================================================================
-// Der DFB-Pokal läuft parallel zur Bundesliga-Saison 1980/81 als reiner
+// Der Landespokal läuft parallel zur 1. Liga-Saison 1980/81 als reiner
 // K.-o.-Wettbewerb mit 32 Teilnehmern (18 Bundesligisten + 14 Amateurvereine).
 //
 // Format:
@@ -173,7 +173,7 @@ export function drawRound(
 // -----------------------------------------------------------------------------
 
 /**
- * Legt den kompletten DFB-Pokal an: Teilnehmerfeld, Rundentermine und die
+ * Legt den kompletten Landespokal an: Teilnehmerfeld, Rundentermine und die
  * bereits ausgeloste 1. Hauptrunde.
  *
  * @param blClubIds       IDs der 18 Bundesligisten

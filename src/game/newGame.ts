@@ -18,6 +18,7 @@ import { makeMessage, pushMessage } from '../engine/messages';
 import { AppSettings, loadGame, loadSettings, saveSettings } from '../engine/save';
 import { createDefaultWeeklyPlan } from '../engine/weeklyTraining';
 import { academyStartingCohort, generateYouthPlayer } from '../engine/youth';
+import { initWorld } from '../engine/world';
 import { addCupCalendarEvents, buildEuroCupsForSeason, cupDateSet, cupDrawMessage, euroDrawMessage, leagueDateSet } from './competitions';
 import { buildDdrDivisions, buildLeagueSystem, buildSecondLigaSimClubs, historicPointSystem } from './leagueSetup';
 import { applyTimelineEffect, fireTimelineForSeason } from './season';
@@ -41,7 +42,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   calendar.speedMs = opts.speedMs;
   const club = world.clubs[opts.managedClubId];
 
-  // --- DFB-Pokal aufsetzen: 14 Amateurvereine ergänzen (→ 32er-Feld) ---
+  // --- Landespokal aufsetzen: 14 Amateurvereine ergänzen (→ 32er-Feld) ---
   const amateurs = generateCupAmateurs(14);
   Object.assign(world.clubs, amateurs.clubs);
   Object.assign(world.players, amateurs.players);
@@ -99,6 +100,7 @@ export function createNewGame(opts: NewGameOptions): Game {
     cup,
     euroCups,
     euroClubs,
+    world: initWorld(euroClubs),
     firedMilestones: [],
     unlockedFeatures: [],
     hiredStaff: [],

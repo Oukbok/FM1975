@@ -157,7 +157,7 @@ function buildLines(g: G, matchId: string, events: any[], homeId: string, awayId
       case 'injury': lines.push({ minute: e.minute, text: say(VERLETZUNG, tok, rng), kind: 'normal' }); break;
       case 'half_time': lines.push({ minute: 45, text: e.commentary || 'Halbzeit! Die Mannschaften gehen in die Kabine.', kind: 'whistle' }); break;
       case 'full_time': lines.push({ minute: e.minute || 90, text: e.commentary || 'Abpfiff! Das Spiel ist zu Ende.', kind: 'whistle' }); break;
-      // DFB-Pokal: Verlängerung & Elfmeterschießen (Kommentar kommt aus der Engine).
+      // Landespokal: Verlängerung & Elfmeterschießen (Kommentar kommt aus der Engine).
       case 'extra_time_start': case 'extra_time_half': case 'extra_time_end':
         if (e.commentary) lines.push({ minute: e.minute, text: e.commentary, kind: 'whistle' });
         break;

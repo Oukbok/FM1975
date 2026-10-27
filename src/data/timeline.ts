@@ -71,7 +71,7 @@ export const TIMELINE: TimelineEvent[] = [
     description:
       'Zum Start 1975/76 gilt die klassische 2-Punkte-Regel (Sieg 2, Remis 1). '
       + 'Drei Vereine steigen am Saisonende ab. Die Trikotwerbung hat sich in der '
-      + 'Bundesliga durchgesetzt und wird zur festen Einnahmequelle – der Beginn der '
+      + '1. Liga durchgesetzt und wird zur festen Einnahmequelle – der Beginn der '
       + 'Kommerzialisierung des deutschen Profifußballs.',
     effect: { unlock: 'shirt_sponsorship' },
   },
@@ -80,7 +80,7 @@ export const TIMELINE: TimelineEvent[] = [
     season: '1983/84', year: 1983, type: 'reform',
     title: 'Professionalisierung der Vereinsstäbe',
     description:
-      'Anfang der 1980er professionalisieren sich die Bundesliga-Vereine abseits des '
+      'Anfang der 1980er professionalisieren sich die 1. Liga-Vereine abseits des '
       + 'Rasens: Co-Trainer, Physiotherapeuten und erste hauptamtliche Geschäftsstellen '
       + 'werden zum Standard. Im Bereich „Mitarbeiter" lassen sich nun neue '
       + 'Fachkräfte verpflichten, und die Werbeflächen im Stadion werden systematisch '
@@ -110,9 +110,9 @@ export const TIMELINE: TimelineEvent[] = [
   {
     id: 'ucl-1992',
     season: '1992/93', year: 1992, type: 'competition',
-    title: 'UEFA Champions League',
+    title: 'Europa-Verband Meisterliga',
     description:
-      'Der Europapokal der Landesmeister wird 1992/93 zur UEFA Champions League mit '
+      'Der Europapokal der Landesmeister wird 1992/93 zur Europa-Verband Meisterliga mit '
       + 'Gruppenphase umgebaut – der prestigeträchtigste und lukrativste Vereins-'
       + 'wettbewerb Europas entsteht.',
     effect: { unlock: 'champions_league' },
@@ -164,7 +164,7 @@ export const TIMELINE: TimelineEvent[] = [
     season: '2010/11', year: 2010, type: 'law',
     title: 'Financial Fair Play',
     description:
-      'Die UEFA beschließt 2010 das Financial Fair Play: Vereine dürfen langfristig '
+      'Die Europa-Verband beschließt 2010 das Financial Fair Play: Vereine dürfen langfristig '
       + 'nicht mehr ausgeben als sie einnehmen. Solide Vereinsfinanzen werden zur '
       + 'Voraussetzung für die europäischen Wettbewerbe.',
     effect: { unlock: 'ffp' },
@@ -184,7 +184,7 @@ export const TIMELINE: TimelineEvent[] = [
     season: '2015/16', year: 2015, type: 'tech',
     title: 'Torlinientechnik',
     description:
-      'Ab 2015/16 entscheidet in der Bundesliga die Torlinientechnik zweifelsfrei, '
+      'Ab 2015/16 entscheidet in der 1. Liga die Torlinientechnik zweifelsfrei, '
       + 'ob der Ball die Linie vollständig überschritten hat – das Ende der '
       + '„Phantomtore".',
     effect: { unlock: 'goalline_tech' },
@@ -192,18 +192,18 @@ export const TIMELINE: TimelineEvent[] = [
   {
     id: 'var-l1-2017',
     season: '2017/18', year: 2017, type: 'tech',
-    title: 'Video-Assistent (1. Bundesliga)',
+    title: 'Video-Assistent (1. 1. Liga)',
     description:
-      'Der Video-Assistent (VAR) hält 2017/18 in der 1. Bundesliga Einzug und '
+      'Der Video-Assistent (VAR) hält 2017/18 in der 1. 1. Liga Einzug und '
       + 'überprüft Tore, Elfmeter, Rote Karten und Spielerverwechslungen.',
     effect: { unlock: 'var_league1' },
   },
   {
     id: 'var-l2-2019',
     season: '2019/20', year: 2019, type: 'tech',
-    title: 'Video-Assistent (2. Bundesliga)',
+    title: 'Video-Assistent (2. 1. Liga)',
     description:
-      'Ab 2019/20 kommt der Video-Assistent auch in der 2. Bundesliga zum Einsatz.',
+      'Ab 2019/20 kommt der Video-Assistent auch in der 2. 1. Liga zum Einsatz.',
     effect: { unlock: 'var_league2' },
   },
   {

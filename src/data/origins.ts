@@ -132,7 +132,7 @@ export const ORIGINS: Record<string, Origin> = {
 };
 
 // -----------------------------------------------------------------------------
-// Mischung je Epoche (Bundesliga-artige Liga). Werte = Gewichte.
+// Mischung je Epoche (1. Liga-artige Liga). Werte = Gewichte.
 // Anteil Ausländer: 1975 ≈ 8 %, 1990 ≈ 15 %, 2000 ≈ 35 %, 2010 ≈ 45 %, 2025 ≈ 52 %.
 // Deutsche mit Wurzeln in anderen Ländern werden ab den 1990ern häufiger.
 // -----------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 // =============================================================================
 // FOOTBALL MANAGER 1980 — Match-Engine mit Text-Simulation
-// Bundesliga Saison 1980/81
+// 1. Liga Saison 1980/81
 // =============================================================================
 // Dieses Modul stellt die Spiel-Simulation bereit:
 //   1. MatchEngine       — simuliert ein Spiel (komplett oder Minute-für-Minute)
@@ -284,7 +284,7 @@ export class MatchEngine {
   }
 
   /**
-   * Simuliert eine K.-o.-Begegnung (DFB-Pokal, Single-Leg):
+   * Simuliert eine K.-o.-Begegnung (Landespokal, Single-Leg):
    *   1. 90 Minuten reguläre Spielzeit
    *   2. bei Gleichstand: Verlängerung (Minuten 91–120)
    *   3. bei weiterhin Gleichstand: Elfmeterschießen

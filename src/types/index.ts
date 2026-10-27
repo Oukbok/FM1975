@@ -1,6 +1,6 @@
 // =============================================================================
 // FOOTBALL MANAGER 1980 — Zentrale Typ-Definitionen
-// Bundesliga Saison 1980/81
+// 1. Liga Saison 1980/81
 // =============================================================================
 // Dieses Modul enthält ALLE TypeScript-Interfaces und Types des Spiels.
 // Gruppen: Spieler, Verein, Match, Liga, Kalender, Training, Transfer, GameState.
@@ -478,8 +478,8 @@ export interface Player {
    * (Softcap). Grobe Einordnung:
    *  - 1.0–1.75 ★  → 3.-Liga-Niveau (max. ~60–65 OVR)
    *  - 2.0–2.75 ★  → 2.-Liga-Niveau (max. ~66–72 OVR)
-   *  - 3.0–3.75 ★  → Bundesliga (max. ~73–82 OVR)
-   *  - 4.0–4.75 ★  → Top-Bundesliga (max. ~83–89 OVR)
+   *  - 3.0–3.75 ★  → 1. Liga (max. ~73–82 OVR)
+   *  - 4.0–4.75 ★  → Top-1. Liga (max. ~83–89 OVR)
    *  - 5.0 ★       → absolutes Ausnahmetalent (max. ~90–99 OVR)
    */
   potentialStars: number;
@@ -828,7 +828,7 @@ export interface ClubCommerce {
   bandenOffers?: SponsorOffer[];
 }
 
-/** Ein Bundesliga-Verein. */
+/** Ein 1. Liga-Verein. */
 export interface Club {
   id: string;
   name: string;
@@ -1053,7 +1053,7 @@ export type EventType =
   | 'season_end'
   | 'winter_break'      // Winterpause
   | 'press_conference'
-  | 'cup_matchday'      // DFB-Pokal-Runde
+  | 'cup_matchday'      // Landespokal-Runde
   | 'euro_matchday'     // Europapokal-Runde (ec/cwc/uefa)
   | 'custom';
 
@@ -1364,13 +1364,13 @@ export interface InboxMessage {
 }
 
 // -----------------------------------------------------------------------------
-// 16a. DFB-POKAL (K.-o.-Wettbewerb)
+// 16a. Verband-POKAL (K.-o.-Wettbewerb)
 // -----------------------------------------------------------------------------
 
 /** Wie eine Pokalbegegnung entschieden wurde. */
 export type CupTieDecision = 'regular' | 'aet' | 'penalties';
 
-/** Eine einzelne K.-o.-Begegnung (Single-Leg) im DFB-Pokal. */
+/** Eine einzelne K.-o.-Begegnung (Single-Leg) im Landespokal. */
 export interface CupTie {
   id: string;
   /** Index der Runde (0 = 1. Hauptrunde). */
@@ -1399,7 +1399,7 @@ export interface CupTie {
   winnerClubId: string | null;
 }
 
-/** Eine Runde im DFB-Pokal (z.B. Achtelfinale). */
+/** Eine Runde im Landespokal (z.B. Achtelfinale). */
 export interface CupRound {
   /** Index der Runde (0-basiert). */
   index: number;
@@ -1413,7 +1413,7 @@ export interface CupRound {
   ties: CupTie[];
 }
 
-/** Gesamtzustand des DFB-Pokal-Wettbewerbs einer Saison. */
+/** Gesamtzustand des Landespokal-Wettbewerbs einer Saison. */
 export interface CupState {
   /** Saison-Bezeichnung, z.B. "1980/81". */
   season: string;

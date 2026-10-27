@@ -10,6 +10,7 @@ import PlayerAvatar from './PlayerAvatar';
 import ClubCrest from './ClubCrest';
 import Icon from './Icon';
 import { vColor } from '../ui/format';
+import { scoutRangeText } from '../engine/scouting';
 import { POS_DE, PLAYER_TYPE, MORALE_DE, MORALE_VAL, AVAIL_DE, utcDate, footLabel, frischeOf, Bar } from './player/shared';
 import OverviewTab from './player/OverviewTab';
 import AttributesTab from './player/AttributesTab';
@@ -52,7 +53,7 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
             <div className="pp-sub">{POS_DE[p.naturalPosition] ?? p.naturalPosition} · {PLAYER_TYPE[p.naturalPosition] ?? '—'}</div>
             <div className="pp-badges">
               <span className="pill" style={{ color: vColor(p.overall) }}>Stärke <b>{p.overall}</b></span>
-              <span className="pill">Potenzial <span className="stars">{renderStars(p.potentialStars)}</span></span>
+              <span className="pill" title="Einschätzung der Scouts – kann danebenliegen">Potenzial <b>{scoutRangeText(p)}</b></span>
               <span className="pill" style={{ color: p.availability === 'available' ? 'var(--green)' : 'var(--red)' }}>{availText}</span>
               {p.transferListed && <span className="pill" style={{ color: 'var(--orange)' }}>Transferliste</span>}
               {p.isYouth && <span className="pill" style={{ color: 'var(--accent)' }}>Jugend</span>}

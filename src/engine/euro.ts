@@ -4,7 +4,7 @@
 // Drei parallele K.-o.-Wettbewerbe wie 1975:
 //   • ec   — Europapokal der Landesmeister   (16 Teams, 1 dt. Meister)
 //   • cwc  — Europapokal der Pokalsieger      (16 Teams, 1 dt. Pokalsieger)
-//   • uefa — UEFA-Pokal                       (32 Teams, 3 dt. via Liga 2..4)
+//   • uefa — Europa-Pokal                       (32 Teams, 3 dt. via Liga 2..4)
 //
 // "Basic": EIN Spiel pro Runde (kein Hin/Rueck), Neuauslosung nach jeder Runde.
 // Auslaendische Teilnehmer stammen fix aus `src/data/europe.ts` (leichte
@@ -58,7 +58,7 @@ export const EURO_ROUND_NAMES: Record<EuroCompId, string[]> = {
 /**
  * Wunsch-Termine der Runden als Monat-Tag-Vorlage (Mittwoch-nahe englische
  * Wochen der Aera). `off` = Jahres-Offset zum Saisonstartjahr (0 = Herbst,
- * 1 = Fruehjahr). Kollisionen mit Liga-/DFB-Pokal-Terminen werden beim
+ * 1 = Fruehjahr). Kollisionen mit Liga-/Landespokal-Terminen werden beim
  * Terminieren durch Verschiebung um je einen Tag vermieden.
  */
 const EURO_DATE_TEMPLATE: Record<EuroCompId, { md: string; off: number }[]> = {
@@ -83,7 +83,7 @@ const EURO_DATE_TEMPLATE: Record<EuroCompId, { md: string; off: number }[]> = {
   ],
 };
 
-/** Preisgeld je gewonnener Begegnung (DM), Aera-gerecht. EC > CWC > UEFA. */
+/** Preisgeld je gewonnener Begegnung (DM), Aera-gerecht. EC > CWC > Europa-Verband. */
 export const EURO_PRIZE_BY_ROUND: Record<EuroCompId, number[]> = {
   ec: [50000, 100000, 200000, 400000],
   cwc: [40000, 80000, 160000, 320000],
@@ -91,7 +91,7 @@ export const EURO_PRIZE_BY_ROUND: Record<EuroCompId, number[]> = {
 };
 
 // -----------------------------------------------------------------------------
-// TERMIN-PLANUNG (kollisionsfrei zu Liga- und DFB-Pokal-Terminen)
+// TERMIN-PLANUNG (kollisionsfrei zu Liga- und Landespokal-Terminen)
 // -----------------------------------------------------------------------------
 
 function addDays(dateISO: string, days: number): string {
@@ -102,7 +102,7 @@ function addDays(dateISO: string, days: number): string {
 
 /**
  * Bestimmt die Termine der Runden: jeder Termin liegt nach `earliest`, mit
- * Mindestabstand zur Vorrunde, und weicht belegten Terminen (Liga ∪ DFB-Pokal)
+ * Mindestabstand zur Vorrunde, und weicht belegten Terminen (Liga ∪ Landespokal)
  * per Verschiebung um je einen Tag aus.
  */
 function scheduleRoundDates(
@@ -146,7 +146,7 @@ function localStrength(g: EuroGameLike, id: string): number {
 /**
  * Lost eine Europapokal-Runde aus. Nutzt `drawRound` aus cup.ts und praefixt die
  * Begegnungs-IDs anschliessend eindeutig je Wettbewerb (`euro_<comp>_r<i>_t<j>`),
- * damit sich die Match-/Tie-IDs der drei Europapokale UND des DFB-Pokals nicht
+ * damit sich die Match-/Tie-IDs der drei Europapokale UND des Landespokals nicht
  * ueberschneiden (die Match-ID wird erst spaeter aus tie.id abgeleitet).
  */
 export function drawEuroRound(
@@ -167,14 +167,14 @@ export function drawEuroRound(
 // -----------------------------------------------------------------------------
 /**
  * Legt einen Europapokal-Wettbewerb an: Teilnehmerfeld (deutsche volle Clubs +
- * auslaendische eu_-IDs), Rundentermine (kollisionsfrei zu Liga ∪ DFB-Pokal)
+ * auslaendische eu_-IDs), Rundentermine (kollisionsfrei zu Liga ∪ Landespokal)
  * und die bereits ausgeloste erste Runde.
  *
  * @param comp          Wettbewerb ('ec' | 'cwc' | 'uefa')
  * @param germanIds     deutsche Starter (volle Club-IDs in g.clubs)
  * @param foreignIds    auslaendische Starter (eu_-IDs in g.euroClubs)
  * @param leagueDates   Liga-Spieltag-Daten (Kollisionsvermeidung)
- * @param cupDates      DFB-Pokal-Termine (Kollisionsvermeidung)
+ * @param cupDates      Landespokal-Termine (Kollisionsvermeidung)
  * @param seed          fester Seed fuer Reproduzierbarkeit
  * @param earliest      fruehestes zulaessiges Datum (Saisonstart bzw. akt. Datum)
  * @param managedClubId Verein des Nutzers (fuer involvesPlayerClub-Markierung)
@@ -232,9 +232,9 @@ export function createEuroCup(
 /**
  * Ermittelt die deutschen Starter je Wettbewerb.
  * - `firstSeason` (1975/76): feste historische Starter aus `EURO_FIRST_SEASON_GERMAN`.
- * - sonst dynamisch aus der Endtabelle der Vorsaison + DFB-Pokalsieger:
+ * - sonst dynamisch aus der Endtabelle der Vorsaison + Landespokalsieger:
  *   ec   = Meister (Platz 1)
- *   cwc  = DFB-Pokalsieger; ist er = Meister -> Pokalfinalist (Finalverlierer);
+ *   cwc  = Landespokalsieger; ist er = Meister -> Pokalfinalist (Finalverlierer);
  *          sonst -> Vizemeister
  *   uefa = naechste 3 Ligaplaetze ab Platz 2, ohne bereits qualifizierte Vereine
  *          (kaskadiert nach unten bis genau 3 feststehen)
@@ -257,7 +257,7 @@ export function computeGermanEuroQualifiers(
 
   const ec: string[] = champion ? [champion] : [];
 
-  // CWC: DFB-Pokalsieger, sonst Finalist, sonst Vizemeister.
+  // CWC: Landespokalsieger, sonst Finalist, sonst Vizemeister.
   let cwcId: string | null = g.cup?.winnerClubId ?? null;
   if (!cwcId || cwcId === champion) {
     // Pokalfinalist (Verlierer des Finales) ermitteln.
@@ -279,7 +279,7 @@ export function computeGermanEuroQualifiers(
   }
   const cwc: string[] = cwcId ? [cwcId] : [];
 
-  // UEFA: naechste 3 Ligaplaetze ab Platz 2, Doppel-Qualifikation ausschliessen.
+  // Europa-Verband: naechste 3 Ligaplaetze ab Platz 2, Doppel-Qualifikation ausschliessen.
   const taken = new Set<string>([...ec, ...cwc]);
   const uefa: string[] = [];
   for (let i = 1; i < order.length && uefa.length < 3; i++) {

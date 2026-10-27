@@ -2,6 +2,7 @@ import { EuroCompId, allEuroClubs } from '../data/europe';
 import { setEraYear } from '../engine/positions';
 import { refreshOverall } from '../engine/development';
 import { manageSquads } from './squads';
+import { advanceWorldSeason, initWorld, isForeignId } from '../engine/world';
 import { closeSeason } from '../engine/history';
 import { buildProClub } from '../data/generate';
 import { CurrentDivision, TransitionResult, computeSeasonTransition, structureForSeason } from '../data/reforms';
@@ -59,7 +60,7 @@ export function simulateMatchday(game: Game, matchday: number): void {
   }
 }
 
-/** Nur die Bundesliga-Vereine (ohne die Pokal-Amateurvereine mit Präfix "am"). */
+/** Nur die 1. Liga-Vereine (ohne die Pokal-Amateurvereine mit Präfix "am"). */
 export function leagueClubs(game: Game): Club[] {
   return Object.values(game.clubs).filter((c) => !c.id.startsWith('am'));
 }
@@ -107,7 +108,7 @@ export function fireTimelineForSeason(g: Game, season: string, dateISO: string, 
 }
 
 /**
- * Startet die nächste Saison: Spielplan, Kalender, Tabelle und DFB-Pokal werden
+ * Startet die nächste Saison: Spielplan, Kalender, Tabelle und Landespokal werden
  * neu erzeugt, das Saison-Label hochgezählt und die zu Saisonbeginn fälligen
  * Chronik-Meilensteine ausgelöst. Der Kaderbestand, die Finanzen und die
  * Jugendakademien bleiben erhalten (Nachwuchs rückt am 1. Juli automatisch nach).
@@ -161,7 +162,7 @@ export function startNextSeason(g: Game): void {
   const seasonEnd = `${nextEndYear}-06-30`;
 
   // Europapokal-Starter der neuen Saison AUS der abgelaufenen Saison ableiten
-  // (Endtabelle + DFB-Pokalsieger) – VOR dem Überschreiben von g.table/g.cup.
+  // (Endtabelle + Landespokalsieger) – VOR dem Überschreiben von g.table/g.cup.
   const euroQuals = computeGermanEuroQualifiers(g, false);
 
   // --- 1) Sim-Ligen zu Ende simulieren, damit alle Endtabellen feststehen ---
@@ -241,6 +242,13 @@ export function startNextSeason(g: Game): void {
   //     vereine des Pokals bleiben unangetastet).
   for (const c of Object.values(g.clubs)) {
     if (c.id.startsWith('am')) continue;
+    // Für den Europapokal materialisierte Auslandsvereine nicht in deutsche Ligen
+    // übernehmen – der Kader wird beim nächsten Duell neu erzeugt.
+    if (isForeignId(c.id)) {
+      for (const pid of c.playerIds) delete g.players[pid];
+      delete g.clubs[c.id];
+      continue;
+    }
     if (playerSet.has(c.id)) continue;
     const dest = divOf[c.id] ?? { tier: 2, group: 'nord' as LeagueGroup };
     g.simClubs[c.id] = simClubFromClub(c, g.players, dest.tier, dest.group);
@@ -284,7 +292,7 @@ export function startNextSeason(g: Game): void {
   const calendar = generateSeasonCalendar(fixtures, seasonStart, seasonEnd);
   calendar.speedMs = g.calendar.speedMs;
 
-  // --- 8) DFB-Pokal der neuen Saison (Feld bleibt 32: volle Ligavereine + Amateure) ---
+  // --- 8) Landespokal der neuen Saison (Feld bleibt 32: volle Ligavereine + Amateure) ---
   const allAm = Object.keys(g.clubs).filter((id) => id.startsWith('am'));
   const blClubIds = playerClubList.map((c) => c.id);
   const amateurIds = allAm.slice(0, Math.max(0, 32 - blClubIds.length));
@@ -331,12 +339,26 @@ export function startNextSeason(g: Game): void {
     }
   }
 
-  // --- 8a) Europapokale der neuen Saison (drei Wettbewerbe, EC/CWC/UEFA) ---
+  // --- 8a) Europapokale der neuen Saison (drei Wettbewerbe, EC/CWC/Europa-Verband) ---
   const euroClubs = g.euroClubs ?? allEuroClubs();
   g.euroClubs = euroClubs;
+  // Europa im Hintergrund: abgelaufene Saison aller Auslandsligen durchrechnen,
+  // Koeffizienten werten und die ausländischen Starter bestimmen.
+  if (!g.world) g.world = initWorld(euroClubs, nextStartYear);
+  const worldRes = advanceWorldSeason(
+    g.world, euroClubs, oldSeason, nextStartYear, g.pointSystem === '3-point' ? 3 : 2,
+    g.euroCups as any, (id) => !!g.clubs[id] || !!g.simClubs?.[id],
+  );
+  for (const note of worldRes.notes) {
+    pushMessage(g.messages, makeMessage({
+      date: calendar.currentDate, category: 'milestone', from: 'Fußball-Chronik',
+      subject: 'Europas Fußball-Landkarte ändert sich', shortText: note, bodyText: note, actionRequired: false,
+    }));
+  }
   g.euroCups = buildEuroCupsForSeason(
     euroQuals, euroClubs, leagueDateSet(fixtures), cupDateSet(cup),
     g.managedClubId + ':' + nextStartYear, calendar.seasonStartDate, g.managedClubId, calendar,
+    worldRes.participants,
   );
   for (const comp of ['ec', 'cwc', 'uefa'] as EuroCompId[]) {
     const ec = g.euroCups[comp];
@@ -404,9 +426,9 @@ export function startNextSeason(g: Game): void {
   pushMessage(g.messages, makeMessage({
     date: calendar.currentDate, category: 'board', from: 'Vereinsvorstand',
     subject: `Die neue Saison ${newSeason} beginnt`,
-    shortText: `Spielplan und DFB-Pokal für ${newSeason} stehen fest.`,
+    shortText: `Spielplan und Landespokal für ${newSeason} stehen fest.`,
     bodyText: `Willkommen zur Saison ${newSeason}! Der Spielplan der Liga und die 1. Runde des `
-      + `DFB-Pokals wurden ausgelost. Die Vorbereitung läuft – nutze die Transferphase und das Training.`,
+      + `Landespokals wurden ausgelost. Die Vorbereitung läuft – nutze die Transferphase und das Training.`,
   }));
   // Saisonbilanz als Station festhalten, Saisonstatistik für die neue Saison leeren.
   closeSeason(g.players, g.clubs, oldSeason);

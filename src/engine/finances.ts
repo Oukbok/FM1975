@@ -283,7 +283,7 @@ export function bookHomeMatch(
 }
 
 /**
- * Bucht die Stadioneinnahmen eines DFB-Pokal-Heimspiels (Ticket, Fanartikel,
+ * Bucht die Stadioneinnahmen eines Landespokal-Heimspiels (Ticket, Fanartikel,
  * TV). Anders als in der Liga gibt es KEINE Leistungsprämie an dieser Stelle —
  * das Preisgeld pro Runde wird separat über {@link bookCupPrize} gebucht.
  */
@@ -308,7 +308,7 @@ export function bookCupHomeMatch(
   if (matchday > 0) book(fin, date, matchday, 'matchday', `Programmhefte Pokalspiel (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
 }
 
-/** Bucht das rundenabhängige DFB-Pokal-Preisgeld (Einnahme, in DM). */
+/** Bucht das rundenabhängige Landespokal-Preisgeld (Einnahme, in DM). */
 export function bookCupPrize(
   club: Club,
   amount: number,
@@ -317,7 +317,7 @@ export function bookCupPrize(
   trackDetail: boolean,
 ): void {
   if (amount <= 0) return;
-  book(club.finances, date, amount, 'prize_money', `DFB-Pokal-Prämie (${roundName})`, trackDetail);
+  book(club.finances, date, amount, 'prize_money', `Landespokal-Prämie (${roundName})`, trackDetail);
 }
 
 /** Monatliche Fixkosten & Erträge eines Vereins (aufgeschlüsselt). */

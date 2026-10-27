@@ -1,5 +1,6 @@
 import { PlannedActivity } from '../data/activities';
 import { EuroClub } from '../data/europe';
+import type { WorldState } from '../engine/world';
 import { generateBandenOffers, generateShirtOffers } from '../engine/finances';
 import { LeagueSystem, SimClub } from '../engine/leagues';
 import { Club, ClubCommerce, CupState, Difficulty, GameCalendar, InboxMessage, LeagueTable, ManagerProfile, Match, Player, PointSystem, SponsorContract, SponsorOffer, WeeklyTrainingPlan } from '../types';
@@ -54,12 +55,14 @@ export interface Game {
   messages: InboxMessage[];
   /** Wochen-Trainingsplan des Manager-Vereins (7 Tage × 3 Slots). */
   trainingPlan: WeeklyTrainingPlan;
-  /** DFB-Pokal-Wettbewerb (parallel zur Bundesliga). */
+  /** Landespokal-Wettbewerb (parallel zur 1. Liga). */
   cup: CupState;
   /** Europapokal-Wettbewerbe (optional -> abwaertskompatibel mit Alt-Saves). */
   euroCups?: { ec: CupState | null; cwc: CupState | null; uefa: CupState | null };
   /** Leichte auslaendische Europapokal-Vereine (aus allEuroClubs()). */
   euroClubs?: Record<string, EuroClub>;
+  /** Europa im Hintergrund: ausländische Ligen, Koeffizienten (engine/world.ts). */
+  world?: WorldState;
   /** IDs bereits ausgelöster Chronik-Meilensteine (Epochen-/Timeline-System). */
   firedMilestones: string[];
   /** Freigeschaltete Features (durch Meilensteine, z. B. "champions_league"). */
@@ -89,7 +92,7 @@ export function bumpMorale(m: import('../types').PlayerMorale, steps: number): i
 }
 
 // -----------------------------------------------------------------------------
-// DFB-Pokal — Hilfsfunktionen für Kalender & Nachrichten
+// Landespokal — Hilfsfunktionen für Kalender & Nachrichten
 // -----------------------------------------------------------------------------
 
 /** Kleiner FNV-1a-Hash für stabile Seeds aus Strings. */

@@ -80,12 +80,12 @@ export const BASE_STRUCTURE: DivisionTarget[] = [
  */
 export const LEAGUE_REFORMS: LeagueReform[] = [
   // ---------------------------------------------------------------------------
-  // 1981/82 — Eingleisige 2. Bundesliga
+  // 1981/82 — Eingleisige 2. 1. Liga
   // ---------------------------------------------------------------------------
   {
     reformId: 'reform-1981-single-second',
     effectiveSeason: '1981/82',
-    title: 'Eingleisige 2. Bundesliga',
+    title: 'Eingleisige 2. 1. Liga',
     description:
       'Zur Saison 1981/82 werden die beiden Staffeln Nord und Süd der 2. Liga zu '
       + 'einer EINGLEISIGEN 2. Liga mit 20 Vereinen (38 Spieltage) zusammengeführt. '
@@ -170,7 +170,7 @@ export const LEAGUE_REFORMS: LeagueReform[] = [
     title: 'Einführung der 3. Liga',
     description:
       'Zur Saison 2008/09 wird zwischen 2. Liga und Regionalliga eine neue, '
-      + 'eingleisige und vom DFB verwaltete 3. LIGA mit 20 Vereinen eingezogen. Die '
+      + 'eingleisige und vom Verband verwaltete 3. LIGA mit 20 Vereinen eingezogen. Die '
       + 'bisherige Regionalliga rückt auf Ebene 4 (nun drei Staffeln: Nord, Nordost, '
       + 'Süd zu je 18). Auf-/Abstieg gilt fortan 2.↔3. Liga und 3. Liga↔Regionalliga.',
     affectedTiers: [3, 4],

@@ -136,7 +136,7 @@ export default function App() {
         }
       }
     }
-    // Alte Spielstände ohne DFB-Pokal → sauber nachrüsten (darf nicht crashen).
+    // Alte Spielstände ohne Landespokal → sauber nachrüsten (darf nicht crashen).
     if (!s.game.cup) {
       try {
         const amateurs = generateCupAmateurs(14);

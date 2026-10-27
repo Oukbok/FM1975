@@ -30,7 +30,7 @@ export function generateSeasonCalendar(
 
   events.push({
     id: eid(), date: seasonStart, type: 'season_start',
-    title: `Saisonstart ${label}`, description: 'Die neue Bundesliga-Saison beginnt!',
+    title: `Saisonstart ${label}`, description: 'Die neue 1. Liga-Saison beginnt!',
     processed: false, requiresAction: false,
   });
 
@@ -38,7 +38,7 @@ export function generateSeasonCalendar(
   for (const m of matches) {
     events.push({
       id: eid(), date: m.date, type: 'matchday',
-      title: `Spieltag ${m.matchday}`, description: 'Bundesliga-Spieltag',
+      title: `Spieltag ${m.matchday}`, description: '1. Liga-Spieltag',
       matchId: m.id, processed: false, requiresAction: false,
     });
   }
@@ -88,7 +88,7 @@ export function generateSeasonCalendar(
   // Winterpause
   events.push({
     id: eid(), date: `${y0}-12-21`, type: 'winter_break',
-    title: 'Winterpause', description: 'Die Bundesliga geht in die Winterpause.',
+    title: 'Winterpause', description: 'Die 1. Liga geht in die Winterpause.',
     processed: false, requiresAction: false,
   });
 

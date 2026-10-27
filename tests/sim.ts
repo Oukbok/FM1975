@@ -35,21 +35,33 @@ function report(game: Game) {
   const ovr = ps.map((p) => p.overall).sort((a, b) => b - a);
   const bad = ps.filter((p) => !Number.isFinite(p.overall) || Object.values(p.attributes).some((v) => !Number.isFinite(v)));
   if (bad.length) throw new Error(`NaN bei ${bad.length} Spielern, z. B. ${bad[0].fullName}`);
-  const champ = game.table.rows?.[0];
+  const top = game.leagues?.playerDivision?.tier === 1 ? null : game.leagues?.otherDivisions.find((d) => d.tier === 1);
+  const champ = top ? top.table.rows?.[0] : game.table.rows?.[0];
   const my = game.clubs[game.managedClubId];
   console.log([
     game.season.padEnd(8),
+    `Liga ${game.leagues?.playerDivision?.tier ?? '?'} Platz ${(game.table.rows.findIndex((r) => r.clubId === game.managedClubId) + 1)}`,
     `Ø ${avg(ovr).toFixed(1)}`,
     `Top10 ${avg(ovr.slice(0, 10)).toFixed(1)}`,
     `≥85: ${ovr.filter((o) => o >= 85).length}`,
     `≤60: ${ovr.filter((o) => o <= 60).length}`,
     `Alter ${avg(ps.map((p) => p.age)).toFixed(1)}`,
     `Spieler ${ps.length}`,
-    `Meister ${champ ? game.clubs[champ.clubId]?.shortName ?? '?' : '?'}`,
+    `Meister ${champ ? game.clubs[champ.clubId]?.shortName ?? game.simClubs?.[champ.clubId]?.shortName ?? '?' : '?'}${champ && (champ.clubId.startsWith('eu_') || champ.clubId.startsWith('w_')) ? '(AUSLAND!)' : ''}`,
     `Konto ${Math.round(my.finances.balance / 1000)}k`,
     `Kader ${my.playerIds.length}`,
     `verletzt ${ps.filter((p) => p.injury).length}`,
+    `EC ${game.euroCups?.ec?.winnerClubId ? (game.euroClubs?.[game.euroCups.ec.winnerClubId]?.shortName ?? game.clubs[game.euroCups.ec.winnerClubId]?.shortName ?? game.simClubs?.[game.euroCups.ec.winnerClubId]?.shortName) : '-'}`,
   ].join(' | '));
+  const w = game.world;
+  if (w && w.history.length) {
+    const h = w.history[w.history.length - 1];
+    const n = (id: string) => game.euroClubs?.[id]?.name ?? id;
+    const rank = Object.values(w.countries).filter((c) => c.active)
+      .sort((a, b) => b.coef.reduce((x, y) => x + y, 0) - a.coef.reduce((x, y) => x + y, 0)).slice(0, 5)
+      .map((c) => `${c.name.slice(0, 3)} ${c.coef.reduce((x, y) => x + y, 0).toFixed(1)}`).join(', ');
+    console.log(`   Welt ${h.season}: ENG ${n(h.champions.England)}, ITA ${n(h.champions.Italien)}, ESP ${n(h.champions.Spanien)} | Koeff: ${rank} | DE ${w.germanCoef.reduce((x, y) => x + y, 0).toFixed(1)}`);
+  }
 }
 
 const t0 = Date.now();

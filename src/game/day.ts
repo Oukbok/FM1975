@@ -138,7 +138,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
           date: today, category: 'board', from: 'Vereinsvorstand',
           subject: 'Die Saison ist beendet!',
           shortText: 'Endstand und Saisonfazit.',
-          bodyText: `Die Saison ${g.season} ist beendet. Den Endstand findest du in der Tabelle. Der Vorstand wird das Saisonziel auswerten.\n\nÜber den Button „Neue Saison“ oben rechts startest du die nächste Spielzeit – Spielplan, DFB-Pokal und die fälligen Chronik-Meilensteine werden dann neu aufgesetzt.`,
+          bodyText: `Die Saison ${g.season} ist beendet. Den Endstand findest du in der Tabelle. Der Vorstand wird das Saisonziel auswerten.\n\nÜber den Button „Neue Saison“ oben rechts startest du die nächste Spielzeit – Spielplan, Landespokal und die fälligen Chronik-Meilensteine werden dann neu aufgesetzt.`,
         }));
         ui.onSeasonEnd();
         stopForAction = true;
@@ -187,10 +187,10 @@ export function processDay(g: Game, ui: DayUi): boolean {
             cup.winnerClubId = round.ties[0]?.winnerClubId ?? null;
             if (cup.winnerClubId && cup.winnerClubId !== mid) {
               pushMessage(g.messages, makeMessage({
-                date: today, category: 'cup', from: 'DFB-Pokal-Kommission',
-                subject: `DFB-Pokalsieger ${cup.season}: ${g.clubs[cup.winnerClubId]?.name ?? ''}`,
-                shortText: `${g.clubs[cup.winnerClubId]?.name ?? ''} gewinnt den DFB-Pokal.`,
-                bodyText: `Das Finale des DFB-Pokals ${cup.season} ist entschieden. ${g.clubs[cup.winnerClubId]?.name ?? ''} sichert sich den Titel.`,
+                date: today, category: 'cup', from: 'Landespokal-Kommission',
+                subject: `Landespokalsieger ${cup.season}: ${g.clubs[cup.winnerClubId]?.name ?? ''}`,
+                shortText: `${g.clubs[cup.winnerClubId]?.name ?? ''} gewinnt den Landespokal.`,
+                bodyText: `Das Finale des Landespokals ${cup.season} ist entschieden. ${g.clubs[cup.winnerClubId]?.name ?? ''} sichert sich den Titel.`,
               }));
             }
           }
