@@ -2,6 +2,7 @@
 // Spielaktionen: Angriff → Chance → Abschluss, Standards, Fouls, Karten,
 // Verletzungen, Elfmeterschießen.
 // =============================================================================
+import { injuryRiskFactor } from '../injuryRisk';
 import type { InjurySeverity } from '../../types';
 import type { MatchSim } from './sim';
 import { lineupChanged, onPitch, type TeamState } from './state';
@@ -340,7 +341,7 @@ export function maybeInjury(sim: MatchSim, T: TeamState, O: TeamState): void {
   const cand = onPitch(T)[Math.floor(sim.rng() * onPitch(T).length)];
   if (!cand) return;
   const prone = (cand.p.development?.injuryProneness ?? 40) / 100;
-  if (sim.rng() >= 0.12 * (0.5 + prone) * (cand.energy < 50 ? 1.4 : 1)) return;
+  if (sim.rng() >= 0.12 * (0.5 + prone) * (cand.energy < 50 ? 1.4 : 1) * injuryRiskFactor(cand.p)) return;
   const r = sim.rng();
   const severity: InjurySeverity = r < 0.58 ? 'minor' : r < 0.9 ? 'moderate' : 'severe';
   sim.injuries.set(cand.id, severity);

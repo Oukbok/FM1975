@@ -11,7 +11,9 @@ import { marketingIncomeBase, marketingMonthlyBase, marketingReputationNudge } f
 import { staffMonthlyTotal } from '../data/staff';
 import { monthlyEnvironmentUpdate } from './environmentGame';
 import { autoResolveEvents, monthlyEvents } from './eventsGame';
-import { applyFocusLoad, devContextFor, ensureStaff, monthlyTrainingReport, staffEffectsOf } from './staffGame';
+import { setInjuryRiskHook } from '../engine/injuryRisk';
+import { focusEffect } from '../engine/staffPeople';
+import { applyFocusLoad, currentFocus, devContextFor, ensureStaff, monthlyTrainingReport, staffEffectsOf } from './staffGame';
 import { coachingReport, memberMonthlySalary } from '../engine/staffPeople';
 import { CalendarEngine } from '../engine/calendar';
 import { drawRound, roundWinners, simulateCupTie } from '../engine/cup';
@@ -75,6 +77,12 @@ export function processDay(g: Game, ui: DayUi): boolean {
   if (CalendarEngine.isSeasonOver(cal)) { return false; }
 
   const today = cal.currentDate;
+  // Verletzungsrisiko im Spiel: medizinisches Personal und Trainingsphilosophie (nur eigener Verein).
+  {
+    const red = staffEffectsOf(g).injuryReduction;
+    const focus = currentFocus(g, today);
+    setInjuryRiskHook((p) => (p.clubId === g.managedClubId ? (1 - red) * focusEffect(focus, p).injury : 1));
+  }
   setDisplayYear(yearOf(today));
   setEraYear(yearOf(today));
   if (ui.onOwnMatchDue) {
