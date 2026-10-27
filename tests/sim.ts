@@ -66,6 +66,13 @@ function report(game: Game) {
     const others = lc.filter((c) => c.id !== my.id).map((c) => c.finances.balance).sort((a, b) => a - b);
     console.log(`   KI-Konten min ${Math.round(others[0] / 1000)}k median ${Math.round(others[others.length >> 1] / 1000)}k max ${Math.round(others[others.length - 1] / 1000)}k`);
   }
+  if (process.env.MINE) {
+    const sq = my.playerIds.map((id) => game.players[id]).filter(Boolean);
+    const ovr = sq.map((p) => p.overall).sort((a, b) => b - a);
+    const others = leagueClubs(game).filter((c) => c.id !== my.id).map((c) => c.playerIds.map((id) => game.players[id]?.overall ?? 0).sort((a, b) => b - a).slice(0, 11).reduce((a, b) => a + b, 0) / 11).sort((a, b) => b - a);
+    const row = game.table.rows.find((r) => r.clubId === my.id);
+    console.log(`   MINE top11 ${(ovr.slice(0, 11).reduce((a, b) => a + b, 0) / 11).toFixed(1)} | Liga top11 max ${others[0]?.toFixed(1)} med ${others[others.length >> 1]?.toFixed(1)} | Frische ${(sq.reduce((a, p) => a + (p.frische ?? 100), 0) / sq.length).toFixed(0)} Form ${(sq.reduce((a, p) => a + p.form, 0) / sq.length).toFixed(0)} | Tore ${row?.goalsFor}:${row?.goalsAgainst}`);
+  }
   if (process.env.SQUADS) {
     const lc = leagueClubs(game);
     const sz = lc.map((c) => c.playerIds.length).sort((a, b) => a - b);
@@ -89,6 +96,9 @@ report(g);
 for (let s = 0; s < seasons; s++) {
   let guard = 0;
   while (!CalendarEngine.isSeasonOver(g.calendar)) {
+    // Simulation: eigener Verein stellt wie die KI auf (keine eingefrorene Startelf).
+    const t = g.clubs[g.managedClubId]?.tactics;
+    if (t && t.startingXI?.length) { t.startingXI = []; t.lineupMap = undefined; }
     processDay(g, HEADLESS_UI);
     if (++guard > 1000) throw new Error('Saison endet nicht');
   }

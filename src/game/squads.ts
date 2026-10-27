@@ -44,7 +44,28 @@ function neededPosition(game: Game, club: Club): Position {
 }
 
 /** @param autoManageMine Auch den eigenen Verein automatisch auffüllen (nur Simulation/Tests). */
+/** Konsistenz: Kaderlisten ohne Geister-IDs/Dubletten, jeder Spieler genau einem Verein zugeordnet. */
+export function repairSquadLists(game: Game): number {
+  let fixed = 0;
+  for (const club of Object.values(game.clubs)) {
+    const seen = new Set<string>();
+    const ok = club.playerIds.filter((id) => {
+      const p = game.players[id];
+      if (!p || p.clubId !== club.id || seen.has(id)) return false;
+      seen.add(id); return true;
+    });
+    fixed += club.playerIds.length - ok.length;
+    club.playerIds = ok;
+  }
+  for (const p of Object.values(game.players)) {
+    const c = game.clubs[p.clubId];
+    if (c && !c.playerIds.includes(p.id) && !p.isYouth) { c.playerIds.push(p.id); fixed++; }
+  }
+  return fixed;
+}
+
 export function manageSquads(game: Game, date: string, autoManageMine = false): void {
+  repairSquadLists(game);
   const year = Number(date.slice(0, 4));
   const mine = game.managedClubId;
   const retiredMine: Player[] = [];

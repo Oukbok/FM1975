@@ -227,6 +227,14 @@ export function finishMatch(sim: MatchSim, opts: FinishOptions): MatchOutcome {
 function commit(sim: MatchSim, grades: Map<string, number>, opts: FinishOptions): void {
   const H = sim.home, A = sim.away;
   const { date, competition = 'Liga', logClubIds, applyInjuries } = opts;
+  // Sperren absitzen: Wer gesperrt war, hat dieses Spiel verpasst → ein Spiel weniger.
+  // (Vor dem Verbuchen neuer Karten, damit eine frische Sperre nicht sofort verfällt.)
+  for (const t of [H, A]) {
+    for (const id of t.club.playerIds) {
+      const p = sim.players[id];
+      if (p && p.suspensionMatches > 0) p.suspensionMatches--;
+    }
+  }
   for (const t of [H, A]) {
     const o = t === H ? A : H;
     const clean = o.goals === 0;
@@ -250,7 +258,11 @@ function commit(sim: MatchSim, grades: Map<string, number>, opts: FinishOptions)
         stats.averageRating = stats.ratedMatches > 0 ? stats.ratingSum / stats.ratedMatches : 0;
       }
       player.yellowCardCount += m.yellow;
-      if (m.red > 0 || m.yellowRed > 0) player.suspensionMatches = Math.max(player.suspensionMatches, 1);
+      if (m.red > 0 || m.yellowRed > 0) player.suspensionMatches = Math.max(player.suspensionMatches, m.red > 0 ? 2 : 1);
+      // Gelbsperre: jede fünfte Gelbe Karte einer Saison (nur Liga) kostet ein Spiel.
+      else if (m.yellow > 0 && competition === 'Liga' && player.seasonStats.yellowCards > 0 && player.seasonStats.yellowCards % 5 === 0) {
+        player.suspensionMatches = Math.max(player.suspensionMatches, 1);
+      }
       if (date && logClubIds?.includes(player.clubId)) {
         const isHome = t === H;
         logMatch(player, {
