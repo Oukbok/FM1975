@@ -9,7 +9,7 @@ import {
 } from '../engine/positions';
 import { autoFillLineup, assignToFormation } from '../engine/lineupAI';
 import PlayerAvatar from './PlayerAvatar';
-import Icon from './Icon';
+import { DashBox, DashPage, Kpi } from '../ui/DashPage';
 
 // Loses Game-Interface (Vollstruktur liegt in App.tsx).
 interface G {
@@ -95,90 +95,97 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
 
   const xiPlayers = Object.values(lineupMap).map((id) => g.players[id]).filter(Boolean) as Player[];
 
+  const xiAvg = xiPlayers.length ? Math.round(xiPlayers.reduce((sum, p) => sum + p.overall, 0) / xiPlayers.length) : 0;
+  const suitAvg = formation.slots.length
+    ? Math.round(formation.slots.reduce((sum, slot) => {
+      const pid = lineupMap[slot.id];
+      const p = pid ? g.players[pid] : undefined;
+      return sum + (p ? positionSuitability(p, slot.position) : 0);
+    }, 0) / formation.slots.length)
+    : 0;
+  const unavailableInXI = xiPlayers.filter((p) => p.availability !== 'available' || p.suspensionMatches > 0);
+
   return (
-    <div className="lineup-wrap">
-      <div className="page-head">
-        <span className="page-head-ico"><Icon name="lineup" /></span>
-        <div className="page-head-title"><span className="accent">Aufstellung</span> &amp; Taktik</div>
-        <div className="page-head-right">
-          <button className="btn-sm btn-ghost" onClick={doAuto}><Icon name="settings" /> Auto-Aufstellen</button>
-        </div>
-      </div>
-
-      {/* Formations-Auswahl */}
-      <div className="chip-row" style={{ marginBottom: 14 }}>
-        {FORMATIONS.map((f) => (
-          <button key={f.id}
-            className={`chip ${t.formation === f.id ? 'active' : ''}`}
-            title={f.desc}
-            onClick={() => changeFormation(f.id)}>
-            {f.label}{f.libero ? ' ¹' : ''}
-          </button>
-        ))}
-      </div>
-      <div className="dim mini" style={{ marginBottom: 12 }}>{getFormation(t.formation).desc}
-        {getFormation(t.formation).libero && '  ·  ¹ = Libero-System der 80er'}</div>
-
-      <div className="lineup-grid">
-        {/* PITCH */}
-        <div className="pitch"
-          onDragOver={(e) => e.preventDefault()}>
-          {formation.slots.map((slot) => {
-            const pid = lineupMap[slot.id];
-            const p = pid ? g.players[pid] : undefined;
-            const suit = p ? positionSuitability(p, slot.position) : 0;
-            return (
-              <div key={slot.id}
-                className={`slot ${drag ? 'droptarget' : ''}`}
-                style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={() => drag && dropOnSlot(slot.id, drag)}>
-                <div className="slot-pos">{slot.position}</div>
-                {p ? (
-                  <div className="slot-player" draggable
-                    onDragStart={() => setDrag(p.id)} onDragEnd={() => setDrag(null)}>
-                    <PlayerAvatar player={p} size={34} />
-                    <div className="slot-name">{p.lastName}</div>
-                    <div className="suit-badge" style={{ background: suitabilityColor(suit) }}>{suit}</div>
-                  </div>
-                ) : (
-                  <div className="slot-empty">+</div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* BENCH / RESERVE */}
-        <div className="bench" onDragOver={(e) => e.preventDefault()}
-          onDrop={() => drag && dropOnBench(drag)}>
-          <div className="card-title"><span className="ico">◆</span> Ersatzbank &amp; Reserve</div>
-          <div className="bench-list">
-            {benchPlayers.map((p) => {
-              const suit = positionSuitability(p, p.naturalPosition);
+    <DashPage>
+      <DashBox title="Spielfeld" icon="lineup" rows={2}
+        right={<button className="dchip" onClick={doAuto}>Auto-Aufstellen</button>}>
+        <div className="lineup-pitch-wrap">
+          <div className="pitch" onDragOver={(e) => e.preventDefault()}>
+            {formation.slots.map((slot) => {
+              const pid = lineupMap[slot.id];
+              const p = pid ? g.players[pid] : undefined;
+              const suit = p ? positionSuitability(p, slot.position) : 0;
               return (
-                <div key={p.id} className="bench-item" draggable
-                  onDragStart={() => setDrag(p.id)} onDragEnd={() => setDrag(null)}>
-                  <PlayerAvatar player={p} size={28} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div className="bench-name">{p.lastName}</div>
-                    <div className="dim mini">{POSITION_NAMES_DE[p.naturalPosition]}
-                      {p.availability === 'injured' && ' · verletzt'}
-                      {p.suspensionMatches > 0 && ' · gesperrt'}</div>
-                  </div>
-                  <span className="suit-badge sm" style={{ background: suitabilityColor(suit) }}>{suit}</span>
+                <div key={slot.id}
+                  className={`slot ${drag ? 'droptarget' : ''}`}
+                  style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={() => drag && dropOnSlot(slot.id, drag)}>
+                  <div className="slot-pos">{slot.position}</div>
+                  {p ? (
+                    <div className="slot-player" draggable
+                      onDragStart={() => setDrag(p.id)} onDragEnd={() => setDrag(null)}>
+                      <PlayerAvatar player={p} size={34} />
+                      <div className="slot-name">{p.lastName}</div>
+                      <div className="suit-badge" style={{ background: suitabilityColor(suit) }}>{suit}</div>
+                    </div>
+                  ) : (
+                    <div className="slot-empty">+</div>
+                  )}
                 </div>
               );
             })}
-            {benchPlayers.length === 0 && <div className="dim mini">Keine weiteren Spieler.</div>}
           </div>
         </div>
-      </div>
+      </DashBox>
 
-      {/* STANDARDSITUATIONEN */}
-      <div className="card" style={{ marginTop: 14 }}>
-        <div className="card-title"><span className="ico">◆</span> Standardschützen</div>
-        <div className="setpiece-row">
+      <DashBox title="Formation" icon="tactics" right={formation.label}>
+        <div className="dbtnrow" style={{ marginBottom: 10 }}>
+          {FORMATIONS.map((f) => (
+            <button key={f.id} className={`dchip ${t.formation === f.id ? 'on' : ''}`} title={f.desc}
+              onClick={() => changeFormation(f.id)}>
+              {f.label}{f.libero ? ' (Libero)' : ''}
+            </button>
+          ))}
+        </div>
+        <div className="dnote" style={{ marginBottom: 10 }}>{formation.desc}</div>
+        <div className="dkpis">
+          <Kpi value={xiPlayers.length + '/11'} label="Startelf" color={xiPlayers.length === 11 ? 'var(--green)' : 'var(--red)'} />
+          <Kpi value={xiAvg} label="Ø Stärke" />
+          <Kpi value={suitAvg} label="Ø Eignung" color={suitabilityColor(suitAvg)} />
+        </div>
+        {unavailableInXI.length > 0 && (
+          <div className="dnote" style={{ color: 'var(--red)' }}>
+            Nicht einsatzfähig in der Startelf: {unavailableInXI.map((p) => p.lastName).join(', ')}
+          </div>
+        )}
+      </DashBox>
+
+      <DashBox title="Ersatzbank & Reserve" icon="squad" rows={2} right={`${benchPlayers.length} Spieler`}>
+        <div className="bench-drop" onDragOver={(e) => e.preventDefault()} onDrop={() => drag && dropOnBench(drag)}>
+          {benchPlayers.map((p) => {
+            const suit = positionSuitability(p, p.naturalPosition);
+            return (
+              <div key={p.id} className="bench-item" draggable
+                onDragStart={() => setDrag(p.id)} onDragEnd={() => setDrag(null)}>
+                <PlayerAvatar player={p} size={30} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div className="bench-name">{p.fullName}</div>
+                  <div className="dim mini">{POSITION_NAMES_DE[p.naturalPosition]} · Stärke {p.overall}
+                    {p.availability === 'injured' && ' · verletzt'}
+                    {p.suspensionMatches > 0 && ' · gesperrt'}</div>
+                </div>
+                <span className="suit-badge sm" style={{ background: suitabilityColor(suit) }}>{suit}</span>
+              </div>
+            );
+          })}
+          {benchPlayers.length === 0 && <div className="dim mini">Keine weiteren Spieler.</div>}
+          <div className="dnote mt8">Spieler hierher ziehen, um sie aus der Startelf zu nehmen.</div>
+        </div>
+      </DashBox>
+
+      <DashBox title="Standardschützen" icon="matchball">
+        <div className="setpiece-grid">
           <SetPieceSelect label="Elfmeter" value={t.penaltyTakerId} players={xiPlayers}
             onChange={(v) => { t.penaltyTakerId = v; refresh(); }} attr="penalties" />
           <SetPieceSelect label="Freistoß" value={t.freeKickTakerId} players={xiPlayers}
@@ -188,9 +195,9 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
           <SetPieceSelect label="Kapitän" value={t.captainId} players={xiPlayers}
             onChange={(v) => { t.captainId = v; refresh(); }} attr="leadership" />
         </div>
-      </div>
-
-    </div>
+        <div className="dnote mt8">Die Zahl in Klammern ist der passende Wert (Elfmeter, Freistöße, Ecken, Führungsqualitäten).</div>
+      </DashBox>
+    </DashPage>
   );
 }
 
