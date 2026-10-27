@@ -252,7 +252,7 @@ export function cupResultMessage(cup: CupState, clubs: Record<string, Club>, man
   const hName = name(tie.homeClubId); const aName = name(tie.awayClubId);
   let subject: string; let shortText: string; let body: string;
   if (isFinal && advanced) {
-    subject = `🏆 Landespokalsieger ${cup.season}!`;
+    subject = `Landespokalsieger ${cup.season}!`;
     shortText = 'Ihr habt den Landespokal gewonnen!';
     body = `Sensation! Im Finale des Landespokals ${cup.season} setzte sich dein Verein mit ${scoreLine} gegen ${opp} durch.\n\nDer Landespokal steht in der Vitrine — ein historischer Triumph! Prämie: ${Math.round(prize).toLocaleString('de-DE')} DM.`;
   } else if (advanced) {

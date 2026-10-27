@@ -435,7 +435,7 @@ export function StatistikenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Scree
         {rated.length ? rated.map((p) => <PlayerRow key={p.id} p={p} sub={g.clubs[p.clubId]?.shortName} value={p.seasonStats.averageRating.toFixed(2)} color="var(--green)" />) : <Empty icon="stats">Noch zu wenige Spiele.</Empty>}
       </DashBox>
 
-      <DashBox title="DFB-Pokal" icon="trophy" onClick={() => onGoto('cup')}>
+      <DashBox title="Landespokal" icon="trophy" onClick={() => onGoto('cup')}>
         {cup ? (
           <>
             <KV k="Aktuelle Runde" v={cup.rounds[cup.currentRoundIndex]?.name ?? '—'} />

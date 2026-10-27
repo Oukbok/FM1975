@@ -78,7 +78,7 @@ export function Dashboard({ g, onGoto, onWatch, onOpenEditor }: {
   const nextIsCup = !!nextTie && (!nextLeague || nextTie.date < nextLeague.date);
   const nextMatch = nextIsCup ? nextTie : nextLeague;
   // Wettbewerb (rechts oben) + Detailzeile darunter: Liga → "XX. Spieltag", Pokal → Runde.
-  const nextCompName = nextIsCup ? 'DFB-Pokal' : leagueName;
+  const nextCompName = nextIsCup ? 'Landespokal' : leagueName;
   const nextCompDetail = nextIsCup
     ? (nextTie ? (ROUND_NAMES[nextTie.round] ?? 'Pokal') : 'Pokal')
     : (nextLeague ? `${nextLeague.matchday}. Spieltag` : '');

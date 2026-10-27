@@ -176,7 +176,7 @@ export function generateYouthPlayer(
 
   const currentYear = Number(currentDate.slice(0, 4));
   const origin = pickOrigin(currentYear, rand, rand() < 0.9);
-  const { firstName, lastName } = currentYear < 1990 && origin.id === 'ger' ? { firstName: pick(FIRST_NAMES), lastName: pick(LAST_NAMES) } : makeName(origin, rand);
+  const { firstName, lastName } = makeName(origin, rand);
   const pos = pick(YOUTH_POSITIONS);
   const useAge = age != null
     ? Math.max(YOUTH_ENTRY_AGE, Math.min(19, Math.round(age)))

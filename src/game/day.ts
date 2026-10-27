@@ -479,7 +479,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
         if (club.finances.balance < 0) {
           pushMessage(g.messages, makeMessage({
             date: today, category: 'board', from: 'Vereinsvorstand',
-            subject: '⚠️ Konto im Minus!',
+            subject: 'Konto im Minus!',
             shortText: 'Der Verein steckt in den roten Zahlen.',
             bodyText: `Achtung: Das Vereinskonto ist mit ${fmtDM(club.finances.balance)} im Minus. `
               + `Der Vorstand erwartet, dass du die Ausgaben (v. a. Gehälter) senkst oder über Transfers/Erfolg neue Einnahmen generierst.`,

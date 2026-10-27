@@ -1,3 +1,4 @@
+import { BLOCKED_NAMES, EXTRA_NAMES } from './namePools';
 // =============================================================================
 // Herkünfte: Namenslisten, Nationalität und Gesichtsgruppe (für spätere Porträts).
 // Der Ausländeranteil und die Herkunftsmischung ändern sich je Jahrzehnt.
@@ -175,5 +176,18 @@ export function pickOrigin(year: number, rng: () => number, domestic = false): O
 /** Name passend zur Herkunft. */
 export function makeName(o: Origin, rng: () => number): { firstName: string; lastName: string } {
   const pick = (a: string[]) => a[Math.floor(rng() * a.length)];
-  return { firstName: pick(o.first), lastName: pick(o.last) };
+  let firstName = pick(o.first), lastName = pick(o.last);
+  // Bekannte reale Kombinationen und Doppelnamen („Thomas Thomas“) vermeiden.
+  for (let i = 0; i < 6 && (BLOCKED_NAMES.has(`${firstName} ${lastName}`) || firstName === lastName); i++) {
+    firstName = pick(o.first); lastName = pick(o.last);
+  }
+  return { firstName, lastName };
+}
+
+// Erweiterte Namenspools einmalig einmischen (ohne Dubletten).
+for (const [id, extra] of Object.entries(EXTRA_NAMES)) {
+  const o = ORIGINS[id];
+  if (!o) continue;
+  if (extra.first) o.first = [...new Set([...o.first, ...extra.first])];
+  if (extra.last) o.last = [...new Set([...o.last, ...extra.last])];
 }

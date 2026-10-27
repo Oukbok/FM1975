@@ -15,7 +15,7 @@ export function CupView({ g, onWatch }: { g: Game; onWatch: (id: string) => void
   if (!cup) {
     return (
       <DashPage>
-        <DashBox title="DFB-Pokal" icon="trophy" span={3} rows={2}><Empty icon="trophy">Für diesen Spielstand ist kein Pokal-Wettbewerb hinterlegt.</Empty></DashBox>
+        <DashBox title="Landespokal" icon="trophy" span={3} rows={2}><Empty icon="trophy">Für diesen Spielstand ist kein Pokal-Wettbewerb hinterlegt.</Empty></DashBox>
       </DashPage>
     );
   }
@@ -63,7 +63,7 @@ export function CupView({ g, onWatch }: { g: Game; onWatch: (id: string) => void
 
   return (
     <DashPage>
-      <DashBox title={`DFB-Pokal ${cup.season}`} icon="trophy" span={2} rows={2} right={winner ? `Sieger: ${name(winner)}` : undefined}>
+      <DashBox title={`Landespokal ${cup.season}`} icon="trophy" span={2} rows={2} right={winner ? `Sieger: ${name(winner)}` : undefined}>
         <div className="cup-bracket dcup-bracket">
           {cup.rounds.map((round) => (
             <div className="cup-col" key={round.index}>

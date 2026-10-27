@@ -384,7 +384,7 @@ export function startNextSeason(g: Game): void {
     const rf = res.reform;
     pushMessage(g.messages, makeMessage({
       date: calendar.currentDate, category: 'milestone', from: 'Fußball-Chronik',
-      subject: `🏗️ ${seasonStartYear(newSeason)}: ${rf.title}`,
+      subject: `${seasonStartYear(newSeason)}: ${rf.title}`,
       shortText: `Ligareform ${rf.effectiveSeason}: ${rf.title}.`,
       bodyText: `${rf.title}  (Ligareform ${rf.effectiveSeason})\n\n${rf.description}\n\n`
         + `Qualifikation & Zuordnung: ${rf.qualificationRule}\n\n`

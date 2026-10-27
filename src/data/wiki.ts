@@ -75,7 +75,7 @@ Deutsche Retro-Fußballmanager-Simulation. Der Spielstand startet in der **Saiso
 - Die Umstellung erfolgt ausschließlich über den Chronik-Meilenstein „3-Punkte-Regel" beim Erreichen der Saison **1995/96** — das wirkt **real auf die Tabellenberechnung**.
 
 ## Chronik & Epochen
-- Historische Meilensteine (Rückpassregel, Meisterliga, Bosman, FFP, Torlinientechnik, VAR …) werden zur jeweiligen Saison ausgelöst — siehe Bereich **Chronik** (📜).`,
+- Historische Meilensteine (Rückpassregel, Meisterliga, Bosman, FFP, Torlinientechnik, VAR …) werden zur jeweiligen Saison ausgelöst — siehe Bereich **Chronik** ().`,
   },
   {
     id: 'core-datetime',
@@ -112,7 +112,7 @@ Die 2.-Liga-Vereine sind reine **Städtenamen** (rechtssicher, keine geschützte
 Jeder 2.-Liga-Verein hat nur eine aggregierte **Stärke** + **Farben** + generisches Wappen — **keinen vollen Kader**. Erst beim Aufstieg in die Spielerliga wird ein vollständiger Kader generiert.
 
 ## Tabellen-Ansicht
-Im Bereich **Tabelle** schaltest du oben zwischen **1. Liga**, **2. Liga Nord** und **2. Liga Süd** um. Deine aktuelle Liga ist mit **★** markiert und vorausgewählt.
+Im Bereich **Tabelle** schaltest du oben zwischen **1. Liga**, **2. Liga Nord** und **2. Liga Süd** um. Deine aktuelle Liga ist mit **** markiert und vorausgewählt.
 
 ## Single Source of Truth
 Ligadaten leben in \`src/data/generate.ts\` (Seeds: \`CLUB_SEEDS\`, \`SECOND_LIGA_NORD_SEEDS\`, \`SECOND_LIGA_SUED_SEEDS\`) und im Ligamodul \`src/engine/leagues.ts\` (Typen \`SimClub\`, \`LeagueDivision\`, \`LeagueSystem\`).`,
@@ -461,31 +461,31 @@ Unter **Training** stellst du den Trainingsplan deiner Mannschaft für die ganze
 - **Extraeinheit** (zusätzliche Belastung, freiwillig)
 
 ### Spieltage
-An Tagen mit einem **Pflichtspiel deines Vereins** wird **nicht trainiert**. Diese Tage sind im Raster rot markiert (⚽ Spieltag) und gesperrt. Die aktuelle Kalenderwoche wird automatisch anhand des Spielplans erkannt.
+An Tagen mit einem **Pflichtspiel deines Vereins** wird **nicht trainiert**. Diese Tage sind im Raster rot markiert (Spieltag) und gesperrt. Die aktuelle Kalenderwoche wird automatisch anhand des Spielplans erkannt.
 
 ### Vorgefertigte Trainingsblöcke
 Jeder Slot wird mit einem **vorgefertigten Block** belegt (Dropdown). Die Blöcke decken **alle Fähigkeitsbereiche** ab. Jeder Block hat eine **Intensität** (niedrig / mittel / hoch), einen **Belastungswert** und die von ihm geförderten **Attribute** (mit Gewichtung):
 
 | Block | Intensität | Belastung | Schwerpunkt-Attribute |
 |---|---|---|---|
-| 🏃 Ausdauerlauf | hoch | 6 | Ausdauer, Fitness, Arbeitseinsatz |
-| 💪 Konditionszirkel | mittel | 3.5 | Ausdauer, Fitness, Kraft |
-| ⚡ Sprinttraining | hoch | 5.5 | Antritt, Schnelligkeit, Agilität |
-| 🤸 Beweglichkeit & Balance | mittel | 3 | Agilität, Balance, Antritt |
-| 🏋️ Krafttraining | hoch | 5.5 | Kraft, Sprungkraft |
-| ⚽ Technikschulung | mittel | 3 | Technik, Ballannahme, Ballkontrolle |
-| 🕺 Dribbling & Finten | mittel | 3 | Dribbling, Ballkontrolle, Kreativität |
-| 🎯 Passspiel | mittel | 3 | Passspiel, Langer Ball, Übersicht |
+| Ausdauerlauf | hoch | 6 | Ausdauer, Fitness, Arbeitseinsatz |
+| Konditionszirkel | mittel | 3.5 | Ausdauer, Fitness, Kraft |
+| Sprinttraining | hoch | 5.5 | Antritt, Schnelligkeit, Agilität |
+| Beweglichkeit & Balance | mittel | 3 | Agilität, Balance, Antritt |
+| Krafttraining | hoch | 5.5 | Kraft, Sprungkraft |
+| Technikschulung | mittel | 3 | Technik, Ballannahme, Ballkontrolle |
+| Dribbling & Finten | mittel | 3 | Dribbling, Ballkontrolle, Kreativität |
+| Passspiel | mittel | 3 | Passspiel, Langer Ball, Übersicht |
 | ↗️ Flankentraining | niedrig | 2 | Flanken, Langer Ball |
-| 🥅 Abschlusstraining | mittel | 3.5 | Torschuss, Schusskraft, Distanzschuss |
-| 🗣️ Kopfballtraining | mittel | 3.5 | Kopfball, Sprungkraft |
-| 🛡️ Zweikampf & Verteidigung | hoch | 5 | Tackling, Manndeckung, Abfangen |
-| 📋 Taktik & Positionsspiel | niedrig | 2 | Stellungsspiel, Entscheidung, Teamwork |
+| Abschlusstraining | mittel | 3.5 | Torschuss, Schusskraft, Distanzschuss |
+| Kopfballtraining | mittel | 3.5 | Kopfball, Sprungkraft |
+| Zweikampf & Verteidigung | hoch | 5 | Tackling, Manndeckung, Abfangen |
+| Taktik & Positionsspiel | niedrig | 2 | Stellungsspiel, Entscheidung, Teamwork |
 | 🆚 Spielform (Match Practice) | hoch | 5 | Teamwork, Entscheidung, Passspiel u.v.m. |
-| 🧤 Torwarttraining | mittel | 3.5 | Reflexe, Fangsicherheit, 1-gg-1 |
-| 🚩 Standardsituationen | niedrig | 2 | Freistöße, Ecken, Elfmeter |
-| 🧠 Mentaltraining | niedrig | 1.5 | Nervenstärke, Konzentration, Führung |
-| 🧖 Regeneration | niedrig | −4 | (kein Lerneffekt, starke Erholung) |
+| Torwarttraining | mittel | 3.5 | Reflexe, Fangsicherheit, 1-gg-1 |
+| Standardsituationen | niedrig | 2 | Freistöße, Ecken, Elfmeter |
+| Mentaltraining | niedrig | 1.5 | Nervenstärke, Konzentration, Führung |
+| Regeneration | niedrig | −4 | (kein Lerneffekt, starke Erholung) |
 
 ### Standardplan
 Neue Spiele starten mit einem ausgewogenen Vorschlag (Mo–Fr je zwei Einheiten, Sa leicht, So Regeneration). Alles ist frei umstellbar; der Plan wird gespeichert.`,
@@ -615,7 +615,7 @@ Je Spieler siehst du **Name, Verein, Position, Alter** sowie **alter → neuer O
     title: 'Aufstellung & Formationen',
     keywords: ['taktik', 'aufstellung', 'formation', 'libero', '4-4-2', '4-3-3'],
     body: `## Aufstellung & Formationen
-Auf der Seite **Aufstellung** (📋 in der unteren Leiste) stellst du deine Mannschaft.
+Auf der Seite **Aufstellung** (in der unteren Leiste) stellst du deine Mannschaft.
 
 ### Formationen
 Es stehen neun Formationen zur Wahl – vom modernen System bis zum klassischen Libero-System der 80er:
@@ -638,7 +638,7 @@ Formationen mit ¹ sind Libero-Systeme – zeitgemäß für 1980. Die CPU-Verein
 Ziehe einen Spieler von der **Ersatzbank** auf einen **Positions-Slot** im Feld – oder tausche zwei Spieler, indem du einen auf einen belegten Slot ziehst. Ziehst du einen Feldspieler zurück auf die Bank, wird der Slot frei.
 
 ### Auto-Aufstellen
-Der Button **⚙ Auto-Aufstellen** besetzt alle Slots automatisch nach bestmöglicher Eignung – deine Formation und deine Taktik-Feineinstellungen bleiben erhalten.`,
+Der Button **Auto-Aufstellen** besetzt alle Slots automatisch nach bestmöglicher Eignung – deine Formation und deine Taktik-Feineinstellungen bleiben erhalten.`,
   },
   {
     id: 'position-weights',
@@ -672,10 +672,10 @@ Ein Mittelstürmer mit starkem Abschluss erreicht also eine deutlich höhere Eig
     body: `## Positionseignung (0–100)
 Für jeden Spieler auf jedem Slot zeigt das Feld eine **Eignungszahl** mit Farbcode:
 
-- 🟢 **grün** > 75 – Idealbesetzung
-- 🟡 **gelb** 60–75 – solide
-- 🟠 **orange** 45–59 – Notlösung
-- 🔴 **rot** < 60 (unterer Bereich) – ungeeignet
+- **grün** > 75 – Idealbesetzung
+- **gelb** 60–75 – solide
+- **orange** 45–59 – Notlösung
+- **rot** < 60 (unterer Bereich) – ungeeignet
 
 ### Formel
 \`Eignung = gewichteter Attribut-Mittelwert × Vertrautheits-Faktor\`
@@ -859,7 +859,7 @@ Der Trainerstab meldet, wer auffällig zulegt, wer trotz Luft nach oben stagnier
     title: 'Finanzen – Überblick',
     keywords: ['finanzen', 'kontostand', 'budget', 'bilanz', 'dm', 'mark', 'euro', 'währung', 'wirtschaft', 'epoche'],
     body: `## Bereich "Finanzen"
-Der Bereich **Finanzen** (unteres Menü, 🏦) zeigt Kontostand, Budgets, die aufgeschlüsselte Einnahmen-/Ausgaben-Bilanz der Saison, einen Verlaufsgraphen, eine Prognose bis Saisonende sowie die letzten Buchungen.
+Der Bereich **Finanzen** (unteres Menü, ) zeigt Kontostand, Budgets, die aufgeschlüsselte Einnahmen-/Ausgaben-Bilanz der Saison, einen Verlaufsgraphen, eine Prognose bis Saisonende sowie die letzten Buchungen.
 
 ## Währungs-Ära (DM/EUR) — automatisch
 Alle Beträge werden **ära-gerecht** angezeigt:
@@ -893,38 +893,38 @@ Buchungen entstehen automatisch beim Zeitfortschritt: **bei jedem Heimspiel** (Z
     keywords: ['einnahmen', 'stadion', 'zuschauer', 'ticket', 'fanartikel', 'tv', 'sponsor', 'prämie', 'transfer', 'catering', 'würstchen', 'programmheft', 'trikot', 'banden', 'mitglied', 'beitrag'],
     body: `## Einnahmeposten (mit Formeln)
 
-### 🎟️ Stadioneinnahmen (pro Heimspiel)
+### Stadioneinnahmen (pro Heimspiel)
 \`Zuschauer × Ticketpreis\`
 Die Zuschauerzahl liefert die Match-Engine abhängig von Erfolg/Form, Gegner, Attraktivität und **Stadionkapazität** des Vereins. Der Ticketpreis liegt Ära-gerecht bei ca. **8–20 DM**.
 
-### 🧣 Fanartikel / Merchandising (pro Heimspiel)
+### Fanartikel / Merchandising (pro Heimspiel)
 \`Zuschauer × ProKopf\`, mit \`ProKopf = 2 + (Reputation / 100) × 4\` (≈ 2–6 DM je Besucher).
 Steigt also mit Zuschauerzahl und Reputation des Vereins.
 
-### 📺 TV- & Mediengelder (pro Heimspiel)
+### TV- & Mediengelder (pro Heimspiel)
 \`20.000 + Reputation × 400\` DM – Ära-gerecht bewusst **klein** (1980 gab es noch keine großen TV-Verträge).
 
-### 🌭 Catering / Würstchenbuden (pro Heimspiel)
+### Catering / Würstchenbuden (pro Heimspiel)
 \`Zuschauer × Netto-pro-Kopf\`, wobei der Pro-Kopf-Erlös von **Ausbaustufe** und **Betriebsform** abhängt (Eigenbetrieb > Umsatzbeteiligung > Verpachtung). Details siehe *Catering & Betriebsformen*.
 
-### 📕 Programmhefte & Spieltagserlöse (pro Heimspiel)
+### Programmhefte & Spieltagserlöse (pro Heimspiel)
 \`Zuschauer × 0,25\` DM (1975-Basis, era-skaliert). Skaliert direkt mit der Auslastung.
 
-### 🤝 Trikotsponsoring (monatlich, aus echtem Vertrag)
+### Trikotsponsoring (monatlich, aus echtem Vertrag)
 Monatsrate = \`Jahreswert des Trikotvertrags ÷ 12\`. Der Vertrag wird im Bereich **Sponsoring** unterschrieben (2–3 Saison-Angebote, Laufzeit 1–5 Jahre). Ohne Vertrag: keine Einnahme.
 
-### 🪧 Bandenwerbung (monatlich, aus echtem Vertrag)
+### Bandenwerbung (monatlich, aus echtem Vertrag)
 Monatsrate = \`Jahreswert des Bandenvertrags ÷ 12\`. Grundwert je Verein: \`80.000 + Kapazität/1000 × 1.500 + Reputation × 800\` DM/Jahr (gedeckelt 100.000–300.000). Laufzeit 1–3 Jahre.
 
-### 👥 Mitgliedsbeiträge (monatlich)
+### Mitgliedsbeiträge (monatlich)
 Jahreswert = \`30.000 + Reputation × 1.000\` DM, monatlich gebucht (\`÷ 12\`). Wächst mit dem Ansehen des Vereins.
 
-### 🏆 Prämien
+### Prämien
 - **Siegprämie:** \`25.000 + Reputation × 200\` DM pro Sieg.
 - **Remisprämie:** \`8.000\` DM pro Unentschieden.
 - **Sponsor-Platzierungsbonus (monatlich):** Platz 1–3 → 30.000 DM · Platz 4–6 → 15.000 DM · Platz 7–10 → 6.000 DM.
 
-### 📈 Transfererlöse
+### Transfererlöse
 Spielerverkäufe fließen über die Transfer-Engine ein (Ablösesumme als Einnahme gebucht, sobald ein Deal abgeschlossen ist).`,
   },
   {
@@ -934,17 +934,17 @@ Spielerverkäufe fließen über die Transfer-Engine ein (Ablösesumme als Einnah
     keywords: ['ausgaben', 'gehalt', 'stab', 'unterhalt', 'trainingsbetrieb', 'fixkosten', 'transfer', 'gebäude', 'einrichtung', 'catering', 'pacht'],
     body: `## Ausgabeposten (mit Formeln, überwiegend monatlich)
 
-### 👤 Spielergehälter
+### Spielergehälter
 \`Summe der Wochengehälter des Kaders × 4,33\` (Wochen je Monat).
 Die Wochengehälter der Spieler werden aus OVR/Alter abgeleitet (Vertrag \`weeklyWage\`).
 
-### 🧑‍🏫 Betreuerstab
+### Betreuerstab
 \`Spielergehälter × 0,18\` – Trainer-, Betreuer- und Verwaltungspersonal.
 
-### 🏟️ Stadionunterhalt
+### Stadionunterhalt
 \`Kapazität × 0,9 + (100 − Zustand) × 800\` DM/Monat. Ein schlechterer Stadionzustand erhöht die Kosten.
 
-### 🏗️ Gebäude-Fixkosten (Unterhalt)
+### Gebäude-Fixkosten (Unterhalt)
 Jede **gebaute Einrichtung** verursacht monatliche Fixkosten (ersetzt den alten Pauschalposten "Trainingsbetrieb"):
 \`Basis × Stufen-Multiplikator\` (era-skaliert), summiert über alle Einrichtungen.
 - **Stufen-Multiplikator** (Stufe 1..5): \`1 · 1,4 · 1,9 · 2,5 · 3,2\`.
@@ -952,13 +952,13 @@ Jede **gebaute Einrichtung** verursacht monatliche Fixkosten (ersetzt den alten 
 - **Stadion** ist ausgenommen (steckt im Stadionunterhalt), **Catering** ist Sonderfall je Betriebsform (siehe *Catering & Betriebsformen*).
 - Zukunfts-Einrichtungen (Reha, NLZ, Leistungs-/Datenzentrum) zählen erst ab **Stufe ≥ 2** als gebaut.
 
-### 🌭 Catering-Fixkosten & -Pacht (monatlich)
+### Catering-Fixkosten & -Pacht (monatlich)
 Fixkosten je Betriebsform/Stufe; bei **Verpachtung** zusätzlich eine feste Monatspacht als Einnahme (siehe *Catering & Betriebsformen*).
 
-### 🧾 Sonstige Fixkosten
+### Sonstige Fixkosten
 \`6.000 + Reputation × 500\` DM/Monat (Reise, Organisation, Verwaltung).
 
-### 📉 Transferausgaben
+### Transferausgaben
 Spielerkäufe werden als Ausgabe gebucht (Ablöse verringert Kontostand und Transferbudget).
 
 ## Warnungen
@@ -1105,7 +1105,7 @@ Die Bereiche **Stadion**, **Marketing** und **Fans** zeigen eine erwartete Ausla
 Jeder Verein besitzt eine **Jugendakademie**. Ihre Ausbaustufe (Bereich **Gelände** → Infrastruktur) bestimmt,
 **wie viele** und **wie gute** Talente entstehen und **wie schnell** sie sich entwickeln.
 
-Die Jugendakademie ist ein **eigenständiger Bildschirm** (Bereich **Jugend**, Symbol 🧒 in der unteren Navigation).
+Die Jugendakademie ist ein **eigenständiger Bildschirm** (Bereich **Jugend**, Symbol in der unteren Navigation).
 Dort sind alle Talente **nach Altersklassen** (Jahrgängen) gruppiert — von der G-Jugend (Bambini) bis zur A-Jugend:
 - Register/Filter für **Alle** sowie jede Altersklasse **G · F · E · D · C · B · A** mit Anzahl.
 - Je Altersklasse eine eigene Tabelle mit Position, Alter, Gesamtstärke (OVR) und Attributen (farbcodiert).
@@ -1356,17 +1356,17 @@ Ein Routinier nimmt ein Talent unter seine Fittiche, ein junger Spieler zerreiß
     title: 'Vereinsgelände — Überblick',
     keywords: ['vereinsgelände', 'gelände', 'infrastruktur', 'ausbau', 'stufen', 'gebäude', 'überblick'],
     body: `## Das Vereinsgelände
-Im Bereich **Gelände** (Symbol 🏗️ in der unteren Navigation) baust du deine Einrichtungen aus. Jede hat **5 Stufen**
+Im Bereich **Gelände** (Symbol in der unteren Navigation) baust du deine Einrichtungen aus. Jede hat **5 Stufen**
 und einen **konkreten, real wirkenden Effekt** in den Spiel-Engines.
 
 | Einrichtung | Wirkung |
 |---|---|
-| 🏟️ Stadion | +Zuschauerkapazität → mehr Stadioneinnahmen |
-| 🎯 Trainingszentrum | schnellere Attribut-Entwicklung des ganzen Kaders |
-| 🧒 Jugendakademie | mehr & bessere Talente, schnellere Jugendentwicklung |
-| ⚕️ Medizinische Abteilung | schnellere Fitness-Regeneration & kürzere Ausfälle |
-| 🧣 Fanshop / Merchandising | höherer Fanartikel-Erlös je Besucher |
-| 🌭 Catering / Würstchenbuden | Pro-Kopf-Erlös je Heimspiel; Betriebsform wählbar |
+| Stadion | +Zuschauerkapazität → mehr Stadioneinnahmen |
+| Trainingszentrum | schnellere Attribut-Entwicklung des ganzen Kaders |
+| Jugendakademie | mehr & bessere Talente, schnellere Jugendentwicklung |
+| Medizinische Abteilung | schnellere Fitness-Regeneration & kürzere Ausfälle |
+| Fanshop / Merchandising | höherer Fanartikel-Erlös je Besucher |
+| Catering / Würstchenbuden | Pro-Kopf-Erlös je Heimspiel; Betriebsform wählbar |
 
 Das **Catering** wird über ein eigenes \`<Icon>\` (kein Emoji) dargestellt und hat eine wählbare **Betriebsform** (Eigenbetrieb/Umsatzbeteiligung/Verpachtung) — direkt an der Einrichtung oder im Bereich **Marketing**. Details siehe *Catering & Betriebsformen*.
 
@@ -1396,7 +1396,7 @@ Details zu Kosten und Effekten je Einrichtung: siehe *Einrichtungen im Detail*.`
     keywords: ['stadion', 'trainingszentrum', 'medizin', 'fanshop', 'merchandising', 'kosten', 'kapazität', 'effekte', 'dm'],
     body: `Alle Kosten in **DM**, auf 10.000 gerundet. Stufe 1 ist die Grundausstattung (kostenlos).
 
-## 🏟️ Stadion — Basiskosten 900.000 DM
+## Stadion — Basiskosten 900.000 DM
 Jede Stufe über 1 erhöht die **Kapazität um 6.000 Plätze**. Mehr Kapazität → höhere Zuschauerzahl und damit
 **mehr Stadion- und Fanartikel-Einnahmen** pro Heimspiel (wirkt direkt in den Finanzen und in der Saisonprognose).
 
@@ -1405,7 +1405,7 @@ Jede Stufe über 1 erhöht die **Kapazität um 6.000 Plätze**. Mehr Kapazität 
 | Kosten | 900.000 | 1.890.000 | 3.240.000 | 4.860.000 |
 | Kapazität ggü. Stufe 1 | +6.000 | +12.000 | +18.000 | +24.000 |
 
-## 🎯 Trainingszentrum — Basiskosten 320.000 DM
+## Trainingszentrum — Basiskosten 320.000 DM
 Setzt die **Anlagenqualität** (facilitiesQuality), die das Training direkt multipliziert — höhere Qualität = schnelleres
 Attribut-Wachstum des gesamten Profikaders.
 
@@ -1416,7 +1416,7 @@ Attribut-Wachstum des gesamten Profikaders.
 
 (Stufe 1 = Qualität 55.)
 
-## 🧒 Jugendakademie — Basiskosten 260.000 DM
+## Jugendakademie — Basiskosten 260.000 DM
 Steuert **Anzahl** und **Qualität** neuer Talente sowie die **Lernrate** der Jugendentwicklung (Details im Bereich *Jugendsystem*).
 
 | Zielstufe | 2 | 3 | 4 | 5 |
@@ -1428,7 +1428,7 @@ Steuert **Anzahl** und **Qualität** neuer Talente sowie die **Lernrate** der Ju
 
 (Stufe 1 = 1 Talent/Jahr, Bonus 0, Lernrate ×0,85.)
 
-## ⚕️ Medizinische Abteilung — Basiskosten 200.000 DM
+## Medizinische Abteilung — Basiskosten 200.000 DM
 Beschleunigt die **Fitness-Regeneration** deiner Spieler und **verkürzt Ausfallzeiten** nach Verletzungen (wirkt täglich
 auf den Profikader).
 
@@ -1441,7 +1441,7 @@ auf den Profikader).
 (Stufe 1 = kein Bonus.) „Regeneration/Tag" sind zusätzliche Fitnesspunkte pro Tag, „Reha-Verkürzung" reduziert die
 verbleibenden Verletzungstage zusätzlich.
 
-## 🧣 Fanshop / Merchandising — Basiskosten 180.000 DM
+## Fanshop / Merchandising — Basiskosten 180.000 DM
 Multipliziert den **Fanartikel-Erlös pro Besucher** (wirkt bei jedem Heimspiel in den Finanzen).
 
 | Zielstufe | 2 | 3 | 4 | 5 |
@@ -1451,7 +1451,7 @@ Multipliziert den **Fanartikel-Erlös pro Besucher** (wirkt bei jedem Heimspiel 
 
 (Stufe 1 = ×1,0. Grund-Erlös ≈ 2–6 DM je Besucher, abhängig von der Reputation.)
 
-## 🌭 Catering / Würstchenbuden — Basiskosten 120.000 DM
+## Catering / Würstchenbuden — Basiskosten 120.000 DM
 Steigert den **Pro-Kopf-Erlös je Heimspiel**. Die Betriebsform bestimmt Erlös und Fixkosten (vollständige Tabellen: *Catering & Betriebsformen*).
 
 | Zielstufe | 2 | 3 | 4 | 5 |
@@ -1461,7 +1461,7 @@ Steigert den **Pro-Kopf-Erlös je Heimspiel**. Die Betriebsform bestimmt Erlös 
 
 (Stufe 1 = 0,60 DM/Besucher im Eigenbetrieb.)
 
-## 🏗️ Monatliche Fixkosten je Einrichtung
+## Monatliche Fixkosten je Einrichtung
 Basis-Unterhalt/Monat (1975-DM, Stufe-1-Basis), skaliert mit \`1 · 1,4 · 1,9 · 2,5 · 3,2\` je Stufe:
 Trainingszentrum 4.000 · Jugendakademie 3.000 · Medizin 2.500 · Fanshop 2.000 · Reha-Zentrum 3.000 · NLZ 4.000 · Leistungszentrum 4.500 · Datenanalyse 3.500. Stadion ausgenommen; Catering je Betriebsform.`,
   },
@@ -1476,10 +1476,10 @@ Mit der Checkbox **„Zukunft anzeigen"** siehst du sie schon vorab **ausgegraut
 
 | Einrichtung | ab | Basiskosten | Wirkung |
 |---|---|---|---|
-| 🏥 Reha-Zentrum | 1990 | 240.000 | verkürzt Ausfallzeiten & steigert die Regeneration zusätzlich |
-| 🏫 Nachwuchsleistungszentrum (NLZ) | 1998 | 380.000 | beschleunigt die Jugendentwicklung (Wachstums-Bonus) |
-| 💪 Leistungszentrum | 2003 | 340.000 | hebt die Anlagenqualität → schnellere Kaderentwicklung |
-| 📊 Datenanalyse-Zentrum | 2013 | 300.000 | präzisiert das Scouting im Nachwuchs (Genauigkeit) |
+| Reha-Zentrum | 1990 | 240.000 | verkürzt Ausfallzeiten & steigert die Regeneration zusätzlich |
+| Nachwuchsleistungszentrum (NLZ) | 1998 | 380.000 | beschleunigt die Jugendentwicklung (Wachstums-Bonus) |
+| Leistungszentrum | 2003 | 340.000 | hebt die Anlagenqualität → schnellere Kaderentwicklung |
+| Datenanalyse-Zentrum | 2013 | 300.000 | präzisiert das Scouting im Nachwuchs (Genauigkeit) |
 
 ## Wirkung im Spiel (real)
 - **Reha-Zentrum**: addiert zu Medizin & Reha-Personal — kürzere Verletzungsausfälle und mehr tägliche Regeneration.
@@ -1500,7 +1500,7 @@ ausbaubar.`,
     title: 'Mitarbeiter — Überblick',
     keywords: ['mitarbeiter', 'personal', 'staff', 'anstellen', 'entlassen', 'gehalt', 'rollen', 'epoche', 'zukunft'],
     body: `## Mitarbeiterstab
-Im Bereich **Mitarbeiter** (🧑‍💼 in der unteren Navigation) stellst du Personal abseits des Spielerkaders an:
+Im Bereich **Mitarbeiter** (in der unteren Navigation) stellst du Personal abseits des Spielerkaders an:
 Trainerteam, Medizin/Reha, Scouting/Analyse, Medien/Marketing und Verwaltung. Jede Rolle ist einer **Epoche**
 zugeordnet und wird erst ab ihrem **Freischaltjahr** anstellbar — passend zur Professionalisierung des Fußballs.
 
@@ -1562,7 +1562,7 @@ auslöst; im aktuellen Spielverlauf treten aktive Verletzungen selten auf, daher
     title: 'Marketing — Werbekanäle & Sättigung',
     keywords: ['marketing', 'werbung', 'regler', 'slider', 'sättigung', 'kosten', 'nutzen', 'reichweite', 'sponsoring', 'merchandising', 'epoche', 'zukunft'],
     body: `## Marketing
-Im Bereich **Marketing** (📣 in der unteren Navigation) stellst du je Werbekanal ein Budget per **Schieberegler** ein.
+Im Bereich **Marketing** (in der unteren Navigation) stellst du je Werbekanal ein Budget per **Schieberegler** ein.
 Neue Kanäle schalten sich epochengerecht frei: **1975** (Stadionwerbung, Lokalpresse), **1984** (Fernsehwerbung),
 **1993** (überregionale Kampagnen, Merchandising), **2000** (Online), **2010** (Social Media), **2020**
 (Influencer/Content, internationale Digitalkampagnen). Die Checkbox **„Zukunft anzeigen"** blendet spätere Kanäle
@@ -1602,24 +1602,24 @@ Unter den Werbereglern zeigt der Bereich drei zusätzliche Karten des Finanzsyst
     title: 'Kalender & planbare Aktivitäten',
     keywords: ['kalender', 'monat', 'aktivität', 'trainingslager', 'freundschaftsspiel', 'teambuilding', 'planen', 'freie tage', 'kollision'],
     body: `## Monatskalender
-Im Bereich **Kalender** (🗓️ in der unteren Navigation) siehst du den aktuellen Monat als Tagesraster (Mo–So).
+Im Bereich **Kalender** (in der unteren Navigation) siehst du den aktuellen Monat als Tagesraster (Mo–So).
 Du blätterst mit **‹ Vormonat** / **Folgemonat ›**. Die Tage sind farblich markiert:
 
 - **frei** (grün umrandet, klickbar) — planbar
-- **Spiel/Planung** (rot) — Ligaspiel ⚽, Pokalspiel 🏆 oder bereits geplante Aktivität 📌
+- **Spiel/Planung** (rot) — Ligaspiel , Pokalspiel oder bereits geplante Aktivität 
 - **heute** (türkiser Rahmen)
 - **Auswahl** (grün = gültiger Zeitraum, rot = Kollision)
 
 ## Aktivitäten planen
 Oben wählst du den Typ, bei mehrtägigen Aktivitäten die Dauer, klickst einen **freien Starttag** und bestätigst
-mit **„✓ Einplanen"**. Planung ist **nur an freien Tagen** möglich — der komplette Zeitraum darf mit **keinem
+mit **„Einplanen"**. Planung ist **nur an freien Tagen** möglich — der komplette Zeitraum darf mit **keinem
 Spiel und keiner anderen Aktivität** kollidieren.
 
 | Aktivität | Dauer | Kosten (Basis) | Effekt | Erlös |
 |---|---|---|---|---|
-| 🏕️ Trainingslager | 3–10 Tage | 9.000/Tag | Fitness +12, Form +5, Moral ↑ | – |
-| 🤝 Freundschaftsspiel | 1 Tag | keine | Fitness +5, Form +4 | +22.000 (Basis) |
-| 🎉 Teambuilding-Event | 1–2 Tage | 6.000/Tag | Form +3, Moral ↑ | – |
+| Trainingslager | 3–10 Tage | 9.000/Tag | Fitness +12, Form +5, Moral ↑ | – |
+| Freundschaftsspiel | 1 Tag | keine | Fitness +5, Form +4 | +22.000 (Basis) |
+| Teambuilding-Event | 1–2 Tage | 6.000/Tag | Form +3, Moral ↑ | – |
 
 ## Buchung & Wirkung
 - **Kosten** werden **sofort bei der Planung** vom Vereinskonto gebucht (ära-gerecht skaliert). Noch nicht
@@ -1637,7 +1637,7 @@ Spiel und keiner anderen Aktivität** kollidieren.
     title: 'Landespokal — Überblick & Format',
     keywords: ['pokal', 'dfb', 'ko', 'knockout', 'runde', 'finale', 'amateure', 'turnierbaum', 'bracket'],
     body: `## Landespokal
-Parallel zur 1. Liga läuft der **Landespokal** als reiner **K.-o.-Wettbewerb**. Er hat eine eigene Seite (🏆 **Pokal** in der Navigation) mit Turnierbaum, deinem eingefärbten Pokalweg und der Preisgeld-Leiter.
+Parallel zur 1. Liga läuft der **Landespokal** als reiner **K.-o.-Wettbewerb**. Er hat eine eigene Seite (**Pokal** in der Navigation) mit Turnierbaum, deinem eingefärbten Pokalweg und der Preisgeld-Leiter.
 
 ## Teilnehmerfeld — 32 Mannschaften
 - **18 Bundesligisten** (alle Erstligavereine der Saison)
@@ -1678,7 +1678,7 @@ Parallel zur 1. Liga läuft der **Landespokal** als reiner **K.-o.-Wettbewerb**.
 
 ## CPU-Begegnungen
 - Alle anderen Begegnungen einer Runde werden **automatisch simuliert** (mit der Aufstellungs-KI).
-- Ergebnisse, Weiterkommen und Auslosung der nächsten Runde erhältst du als **Nachricht** in der Kategorie **🏆 Pokal**.
+- Ergebnisse, Weiterkommen und Auslosung der nächsten Runde erhältst du als **Nachricht** in der Kategorie **Pokal**.
 
 ## Preisgeld & Einnahmen
 - **Rundenabhängiges Preisgeld** (pro gewonnener Begegnung, in DM):
@@ -1743,7 +1743,7 @@ Die Europapokal-Saison X/Y wird aus der **Vorsaison** gespeist:
 
 - **Landesmeister-Pokal (ec):** der **Meister** der Vorsaison (Endtabelle 1. Liga, Platz 1).
 - **Pokalsieger-Pokal (cwc):** der **Landespokalsieger** der Vorsaison. Ist er zugleich Meister (also schon im Landesmeister-Pokal), rückt der **Pokalfinalist** (Verlierer des Finales) nach; ist auch der nicht ermittelbar, der **Vizemeister**.
-- **Europa-Pokal (uefa):** die nächsten **3 Ligaplätze ab Platz 2** (also 2, 3, 4). Kein Verein darf doppelt qualifiziert sein: bereits für ec/cwc qualifizierte Vereine werden entfernt und die Startplätze **kaskadieren nach unten** (Platz 5, 6, …), bis genau 3 Europapokal-Starter feststehen.
+- **Europa-Pokal:** die nächsten **3 Ligaplätze ab Platz 2** (also 2, 3, 4). Kein Verein darf doppelt qualifiziert sein: bereits für ec/cwc qualifizierte Vereine werden entfernt und die Startplätze **kaskadieren nach unten** (Platz 5, 6, …), bis genau 3 Europapokal-Starter feststehen.
 
 Die deutschen Starter sind immer volle Vereine des Spielstands. Nur dein Verein wird real gemanagt; die übrigen deutschen laufen wie die ausländischen per Stärke.
 
@@ -1833,17 +1833,17 @@ Die Tabellen-Markierung der 1. Liga zeigt die europäische Qualifikation:
     body: `## Was ist die Chronik?
 Das Spiel beginnt zum **1. Juli 1975** (Saison **1975/76**) und lässt den deutschen Fußball über die Jahrzehnte
 historisch mitwachsen. Alle großen Regel-, Wettbewerbs-, Rechts-, Technik- und Wirtschafts-**Meilensteine** sind in
-einer zentralen **Chronik** hinterlegt (Bereich **Chronik**, Symbol 📜 in der unteren Navigation).
+einer zentralen **Chronik** hinterlegt (Bereich **Chronik**, Symbol in der unteren Navigation).
 
 Die vollständige, interaktive Zeitleiste ist **auch direkt hier im Wiki** erreichbar — siehe den Eintrag
 **„Chronik der Epochen – Historische Zeitleiste"** in dieser Kategorie.
 
 ## Wie Meilensteine ausgelöst werden
 Jeder Meilenstein ist einer **Auslöse-Saison** zugeordnet. Sobald diese Saison beginnt (Button **„▶ Neue Saison"**),
-- erscheint eine **Meilenstein-Nachricht** im Postfach (Kategorie 📜 *Meilenstein*),
+- erscheint eine **Meilenstein-Nachricht** im Postfach (Kategorie *Meilenstein*),
 - und – falls hinterlegt – wird ein **Spiel-Effekt** angewendet (z. B. Umstellung des Punktesystems, Freischalten eines Features).
 
-In der Chronik siehst du alle Ereignisse chronologisch: **erreichte** (✓), das **aktuelle** und **bevorstehende**
+In der Chronik siehst du alle Ereignisse chronologisch: **erreichte** (), das **aktuelle** und **bevorstehende**
 Meilensteine – jeweils mit Jahr, Saison, Kategorie und Beschreibung.
 
 ## Die Meilensteine (1975 → 2030er)

@@ -116,9 +116,9 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
     }, g);
     if (ok) {
       setCurrentSlot(useSlot);
-      setSaveMsg('✓ Spiel gespeichert');
+      setSaveMsg('Spiel gespeichert');
     } else {
-      setSaveMsg('⚠ Speichern fehlgeschlagen');
+      setSaveMsg('Speichern fehlgeschlagen');
     }
     setTimeout(() => setSaveMsg(''), 2500);
   }, [currentSlot, g, myClub, setCurrentSlot]);

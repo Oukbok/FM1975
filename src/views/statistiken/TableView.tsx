@@ -83,7 +83,7 @@ export function TableView({ g }: { g: Game }) {
         <div className="dzones">
           {sel.tier === 1 ? <>
             <span><span className="pos-badge zone-cl" /> Landesmeister-Pokal</span>
-            <span><span className="pos-badge zone-eu" /> UEFA-Pokal</span>
+            <span><span className="pos-badge zone-eu" /> Europa-Pokal</span>
             <span><span className="pos-badge zone-rel" /> Abstieg</span>
           </> : <>
             <span><span className="pos-badge zone-cl" /> Direktaufstieg</span>
