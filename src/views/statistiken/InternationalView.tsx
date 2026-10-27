@@ -6,7 +6,8 @@ import { nextPlayerEuroTie } from '../../engine/euro';
 import { clubView } from '../../game/clubProfile';
 import { Game } from '../../game/state';
 import { CupTie } from '../../types';
-import { PageHead } from '../../ui/PageHead';
+import { DashBox, DashPage, Empty, KV } from '../../ui/DashPage';
+import { fmtDMfull } from '../../ui/format';
 import { useState } from 'react';
 
 // --- INTERNATIONAL ----------------------------------------------------------
@@ -20,15 +21,11 @@ export function InternationalView({ g, onWatch }: { g: Game; onWatch: (id: strin
   // Alt-Save ohne Europapokal-Struktur -> sauberer Hinweis statt Absturz.
   if (!euroCups || (!euroCups.ec && !euroCups.cwc && !euroCups.uefa)) {
     return (
-      <div className="page">
-        <PageHead icon="international" title="International" />
-        <div className="card">
-          <p className="dim" style={{ margin: 0 }}>
-            Für diesen Spielstand sind noch keine Europapokal-Wettbewerbe hinterlegt.
-            Sie erscheinen automatisch, sobald eine neue Saison mit europäischer Qualifikation beginnt.
-          </p>
-        </div>
-      </div>
+      <DashPage>
+        <DashBox title="International" icon="international" span={3} rows={2}>
+          <Empty icon="international">Für diesen Spielstand sind noch keine Europapokal-Wettbewerbe hinterlegt. Sie erscheinen, sobald eine Saison mit europäischer Qualifikation beginnt.</Empty>
+        </DashBox>
+      </DashPage>
     );
   }
 
@@ -92,88 +89,68 @@ export function InternationalView({ g, onWatch }: { g: Game; onWatch: (id: strin
   const myNext = cup ? nextPlayerEuroTie(cup, mid) : null;
   const winner = cup?.winnerClubId ?? null;
 
+  const germans = cup ? cup.participantIds.filter((id) => !g.euroClubs?.[id]) : [];
+  const myTies = cup ? cup.rounds.flatMap((rd) => rd.ties.filter((t) => t.homeClubId === mid || t.awayClubId === mid).map((t) => ({ rd, t }))) : [];
+
   return (
-    <div className="page">
-      <PageHead icon="international" title={<>International{cup && <> <span className="accent">{cup.season}</span></>}</>} />
-
-      {/* Wettbewerbs-Umschalter */}
-      <div className="seg-group" style={{ display: 'inline-flex', marginBottom: 12 }}>
-        {(['ec', 'cwc', 'uefa'] as EuroCompId[]).map((c) => (
-          <button key={c} className={`seg-btn ${comp === c ? 'active' : ''}`}
-            disabled={!euroCups[c]} onClick={() => setComp(c)}>
-            {EURO_COMP_SHORT[c]}
-          </button>
-        ))}
-      </div>
-
-      {!cup ? (
-        <div className="card"><p className="dim" style={{ margin: 0 }}>Dieser Wettbewerb ist in dieser Saison nicht hinterlegt.</p></div>
-      ) : (
-        <>
-          {/* Info + eigener Weg */}
-          <div className="card">
-            <div style={{ fontWeight: 800, marginBottom: 4 }}>{EURO_COMP_NAMES[comp]}</div>
-            <p className="mini dim" style={{ margin: 0 }}>
-              K.-o.-Wettbewerb mit {cup.participantIds.length} Teilnehmern. Ein Spiel entscheidet —
-              bei Gleichstand Verlängerung, dann Elfmeterschießen. Nach jeder Runde wird neu ausgelost.
-            </p>
-            {winner && (
-              <p className="mt12" style={{ margin: '10px 0 0' }}>
-                <b style={{ color: 'var(--gold)' }}>Sieger {cup.season}: {winnerName(winner)}</b>
-                {winner === mid && ' — das ist dein Verein!'}
-              </p>
-            )}
-            {!winner && myNext && (
-              <div className="mt12" style={{ margin: '10px 0 0' }}>
-                <span className="dim mini">Dein nächstes Europapokal-Spiel — {cup.rounds[myNext.round]?.name}, {CalendarEngine.formatDate(myNext.date)}:</span><br />
-                <b>{myNext.homeClubId === mid ? 'Heim gegen ' : 'Auswärts bei '}{teamInfo(myNext.homeClubId === mid ? myNext.awayClubId : myNext.homeClubId).name}</b>
-                {myNext.match && (
-                  <div className="mt8">
-                    <button className="btn-sm btn-primary" onClick={() => onWatch(myNext.match!.id)}>Partie ansehen</button>
-                  </div>
-                )}
+    <DashPage>
+      <DashBox title={cup ? `${EURO_COMP_NAMES[comp]} ${cup.season}` : 'International'} icon="international" span={2} rows={2}
+        right={<span className="dbtnrow">
+          {(['ec', 'cwc', 'uefa'] as EuroCompId[]).map((c) => (
+            <button key={c} className={`dchip ${comp === c ? 'on' : ''}`} disabled={!euroCups[c]} onClick={() => setComp(c)}>{EURO_COMP_SHORT[c]}</button>
+          ))}
+        </span>}>
+        {!cup ? <Empty icon="international">Dieser Wettbewerb ist in dieser Saison nicht hinterlegt.</Empty> : cup.rounds.map((round) => {
+          const allPlayed = round.drawn && round.ties.length > 0 && round.ties.every((t) => t.played);
+          const key = `${comp}-${round.index}`;
+          const isCollapsed = key in collapsed ? collapsed[key] : allPlayed;
+          const winners = allPlayed ? roundWinners(round) : [];
+          return (
+            <div key={round.index} className="deuro-round">
+              <div className={`deuro-head ${allPlayed ? 'clickable' : ''}`} onClick={() => { if (allPlayed) setCollapsed((st) => ({ ...st, [key]: !isCollapsed })); }}>
+                <b>{round.name}</b>
+                <span className="dnote">{CalendarEngine.formatDate(round.date)}{allPlayed ? (isCollapsed ? ' · aufklappen' : ' · zuklappen') : ''}</span>
               </div>
-            )}
-            {!winner && !myNext && (
-              <p className="mt12 dim mini" style={{ margin: '10px 0 0' }}>Dein Verein ist in diesem Wettbewerb nicht (mehr) vertreten.</p>
-            )}
-          </div>
+              {!round.drawn ? <div className="dnote">Noch nicht ausgelost.</div>
+                : isCollapsed ? <div className="dnote">Abgeschlossen – weiter: {winners.map((w) => teamInfo(w).short).join(', ')}</div>
+                : <div className="deuro-ties">{round.ties.map((tie) => <TieRow key={tie.id} tie={tie} />)}</div>}
+            </div>
+          );
+        })}
+      </DashBox>
 
-          {/* Runden — aktuelle/kommende offen, gespielte einklappbar */}
-          <div className="mt12" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {cup.rounds.map((round) => {
-              const allPlayed = round.drawn && round.ties.length > 0 && round.ties.every((t) => t.played);
-              const key = `${comp}-${round.index}`;
-              const isCollapsed = key in collapsed ? collapsed[key] : allPlayed;
-              const winners = allPlayed ? roundWinners(round) : [];
-              return (
-                <div className="card" key={round.index} style={{ padding: 12 }}>
-                  <div className="row" style={{ cursor: allPlayed ? 'pointer' : 'default' }}
-                    onClick={() => { if (allPlayed) setCollapsed((s) => ({ ...s, [key]: !isCollapsed })); }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      {allPlayed && <span className="dim" style={{ fontSize: 11 }}>{isCollapsed ? '\u25B8' : '\u25BE'}</span>}
-                      <b>{round.name}</b>
-                      <span className="dim mini">{CalendarEngine.formatDate(round.date)}</span>
-                    </div>
-                    <span className="dim mini">{(cup.prizeByRound[round.index] / 1000).toLocaleString('de-DE')} Tsd. DM</span>
-                  </div>
-                  {!round.drawn ? (
-                    <div className="cup-tie cup-tie-pending mt8"><span className="dim mini">Noch nicht ausgelost</span></div>
-                  ) : isCollapsed ? (
-                    <div className="dim mini mt8">
-                      Abgeschlossen — weiter: {winners.map((w) => teamInfo(w).short).join(', ')}
-                    </div>
-                  ) : (
-                    <div className="mt8" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                      {round.ties.map((tie) => <TieRow key={tie.id} tie={tie} />)}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </>
-      )}
-    </div>
+      <DashBox title="Dein Weg" icon="dashBall" right={cup ? EURO_COMP_SHORT[comp] : undefined}>
+        {!cup ? <div className="dnote">–</div> : <>
+          {winner && <KV k={`Sieger ${cup.season}`} v={winnerName(winner)} strong color={winner === mid ? 'var(--accent)' : undefined} />}
+          {!winner && myNext && <>
+            <div className="dsec">Nächstes Spiel</div>
+            <KV k={cup.rounds[myNext.round]?.name ?? 'Runde'} v={CalendarEngine.formatDate(myNext.date)} />
+            <KV k={myNext.homeClubId === mid ? 'Heim gegen' : 'Auswärts bei'} v={teamInfo(myNext.homeClubId === mid ? myNext.awayClubId : myNext.homeClubId).name} strong />
+            {myNext.match && <button className="dchip on mt8" onClick={() => onWatch(myNext.match!.id)}>Partie ansehen</button>}
+          </>}
+          <div className="dsec">Bisherige Spiele</div>
+          {myTies.filter(({ t }) => t.played).length ? myTies.filter(({ t }) => t.played).map(({ rd, t }) => {
+            const homeSide = t.homeClubId === mid;
+            return (
+              <div key={t.id} className={`dlist-row ${t.match ? 'clickable' : ''}`} onClick={() => t.match && onWatch(t.match.id)}>
+                <span className="meta" style={{ minWidth: 110 }}>{rd.name}</span>
+                <span className="grow">{teamInfo(homeSide ? t.awayClubId : t.homeClubId).name}</span>
+                <span className={`dres dres-${t.winnerClubId === mid ? 'W' : 'L'}`}>{homeSide ? `${t.homeGoals}:${t.awayGoals}` : `${t.awayGoals}:${t.homeGoals}`}</span>
+              </div>
+            );
+          }) : <div className="dnote">{myTies.length ? 'Noch kein Spiel bestritten.' : 'Dein Verein ist in diesem Wettbewerb nicht vertreten.'}</div>}
+        </>}
+      </DashBox>
+
+      <DashBox title="Wettbewerb" icon="trophy" right={cup ? `${cup.participantIds.length} Teams` : undefined}>
+        {cup ? <>
+          <div className="dsec">Deutsche Teilnehmer</div>
+          {germans.length ? germans.map((id) => <KV key={id} k={teamInfo(id).name} v={id === mid ? 'dein Verein' : ''} />) : <div className="dnote">Keine.</div>}
+          <div className="dsec">Preisgeld pro Runde</div>
+          {cup.rounds.map((rd) => <KV key={rd.index} k={rd.name} v={fmtDMfull(cup.prizeByRound[rd.index])} />)}
+          <div className="dnote mt8">K.-o.-Modus: ein Spiel, bei Gleichstand Verlängerung und Elfmeterschießen.</div>
+        </> : <div className="dnote">–</div>}
+      </DashBox>
+    </DashPage>
   );
 }

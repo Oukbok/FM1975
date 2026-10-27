@@ -58,6 +58,11 @@
 .dmeter-fill { display: block; height: 100%; border-radius: 5px; }
 .dmeter-val { text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .dbox-wide-lbl .dmeter { grid-template-columns: 240px 1fr 100px; }
+.dselect { background: var(--bg-2); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 5px 10px; font-size: 15px; }
+.dselect:focus { outline: none; border-color: var(--accent); }
+.dzones { display: flex; flex-wrap: wrap; gap: 14px; font-size: 15px; color: var(--text-2); }
+.dzones > span { display: inline-flex; align-items: center; gap: 6px; }
+.dzones .pos-badge { width: 16px; height: 16px; display: inline-block; }
 
 /* Tabellen in Boxen */
 .dtable { width: 100%; border-collapse: collapse; font-size: 16px; }
@@ -84,6 +89,7 @@
 .dlist-row { display: flex; align-items: center; gap: 10px; padding: 8px 2px; border-bottom: 1px solid var(--border-soft); font-size: 16.5px; }
 .dlist-row:last-child { border-bottom: none; }
 .dlist-row .grow { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dlist-row .grow .dnote { white-space: normal; }
 .dlist-row .meta { color: var(--text-3); font-size: 14px; white-space: nowrap; }
 .dlist-row .val { font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .dlist-row.clickable { cursor: pointer; }
@@ -224,3 +230,17 @@
 .dfac-act { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; text-align: right; }
 .dchip:disabled { opacity: 0.4; cursor: not-allowed; }
 .dstaff-on b { color: var(--accent); }
+
+/* --- Pokal-Baum im Seitenraster ----------------------------------------- */
+.dcup-bracket { margin: 0; height: 100%; }
+.dcup-bracket .cup-col { flex: 1 1 0; min-width: 0; gap: 6px; }
+.dcup-bracket .cup-tie { font-size: 14px; padding: 6px 10px; }
+.dcup-bracket .cup-col-head { font-size: 15px; }
+.dcup-bracket .cup-team-name { font-size: 14px; }
+
+/* --- International ------------------------------------------------------ */
+.deuro-round { padding: 10px 0; border-bottom: 1px solid var(--border-soft); }
+.deuro-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.deuro-head b { font-size: 17px; }
+.deuro-head.clickable { cursor: pointer; }
+.deuro-ties { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 14px; }
