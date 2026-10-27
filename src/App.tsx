@@ -1,4 +1,7 @@
 import { hydrateClubOverrides } from './data/clubOverrides';
+import { setEraYear } from './engine/positions';
+import { ensureDevFields, refreshOverall } from './engine/development';
+import { updateScoutEstimate } from './engine/scouting';
 import { snapshotAttributes } from './engine/history';
 import { EuroCompId, allEuroClubs } from './data/europe';
 import { generateCupAmateurs, generateWorld } from './data/generate';
@@ -59,6 +62,12 @@ export default function App() {
   const doLoad = useCallback((slot: string) => {
     const s = loadGame<Game>(slot);
     if (!s) return;
+    // Positionsbewertung auf das Spieljahr einstellen; ältere Spielstände auf Entwicklung 2.0 heben.
+    setEraYear(Number(s.game.calendar.currentDate.slice(0, 4)));
+    for (const p of Object.values(s.game.players)) {
+      if (p.isYouth) continue;
+      if (p.development.basePotential == null) { ensureDevFields(p); refreshOverall(p); updateScoutEstimate(p, 0.3, p.clubId === s.game.managedClubId); }
+    }
     // Ältere Spielstände ohne Attribut-Verlauf: Ausgangswert für den eigenen Kader setzen.
     for (const pid of s.game.clubs[s.game.managedClubId]?.playerIds ?? []) {
       const p = s.game.players[pid];

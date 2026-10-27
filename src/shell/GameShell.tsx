@@ -11,7 +11,7 @@ import { marketingIncomeBase, marketingMonthlyBase, marketingReputationNudge } f
 import { computeStaffEffects, staffMonthlyTotal } from '../data/staff';
 import { CalendarEngine } from '../engine/calendar';
 import { drawRound, roundWinners, simulateCupTie } from '../engine/cup';
-import { RatingResult, runRatingCeremony, runWeeklyDevelopment, updateAges } from '../engine/development';
+import { RatingResult } from '../engine/development';
 import { economyScale, yearOf } from '../engine/economy';
 import { drawEuroRound, simulateEuroTie } from '../engine/euro';
 import { book, bookCupHomeMatch, bookCupPrize, bookMonthly } from '../engine/finances';

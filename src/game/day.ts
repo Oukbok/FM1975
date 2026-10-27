@@ -3,6 +3,7 @@
 // Jugend, Entwicklung …). Ohne Oberfläche – die Shell reagiert über `ui`.
 // Rückgabe: true = Vorlauf darf weiterlaufen, false = anhalten (Aktion nötig).
 // =============================================================================
+import { setEraYear } from '../engine/positions';
 import { snapshotAttributes } from '../engine/history';
 import { ACTIVITY_DEFS, activityIncomeBase } from '../data/activities';
 import { EURO_COMP_NAMES } from '../data/europe';
@@ -10,7 +11,7 @@ import { marketingIncomeBase, marketingMonthlyBase, marketingReputationNudge } f
 import { computeStaffEffects, staffMonthlyTotal } from '../data/staff';
 import { CalendarEngine } from '../engine/calendar';
 import { drawRound, roundWinners, simulateCupTie } from '../engine/cup';
-import { RatingResult, runRatingCeremony, runWeeklyDevelopment, updateAges } from '../engine/development';
+import { RatingResult, RatingType, runRatingCeremony, weeklyDevelopment, clubTrainingFactor, ratingTendencies, updateAges } from '../engine/development';
 import { economyScale, yearOf } from '../engine/economy';
 import { drawEuroRound, simulateEuroTie } from '../engine/euro';
 import { book, bookCupHomeMatch, bookCupPrize, bookMonthly } from '../engine/finances';
@@ -62,6 +63,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
 
   const today = cal.currentDate;
   setDisplayYear(yearOf(today));
+  setEraYear(yearOf(today));
   setTransferDate(today);
   const todaysEvents = CalendarEngine.eventsOn(cal, today).filter((e) => !e.processed);
   let stopForAction = false;
@@ -86,32 +88,32 @@ export function processDay(g: Game, ui: DayUi): boolean {
         break;
       }
       case 'rating_update': {
-        const isLarge = ev.description.includes('Große');
-        // JEDER Spieler der Liga wird bewertet (jeder bekommt seine Chance),
-        // enthüllt wird in der Zeremonie aber nur der eigene Verein.
-        // Wichtig: runRatingCeremony mutiert die Spielerwerte SOFORT – die
-        // Auf-/Abwertungen wirken also in jedem Fall.
-        const results = runRatingCeremony(
-          g.players, g.clubs, g.managedClubId,
-          isLarge ? 'large' : 'medium', today,
-        );
-        for (const pid of g.clubs[g.managedClubId]?.playerIds ?? []) {
+        const desc = ev.description;
+        const type: RatingType = desc.includes('Große') ? 'large'
+          : (desc.includes('Winter') || desc.includes('Jahreswechsel')) ? 'medium' : 'small';
+        const fx = computeStaffEffects(g.hiredStaff ?? []);
+        const scoutQ = Math.min(1, 0.3 + (fx.scouting ?? 0) * 2 + dataScoutingBonus(myClub.infrastructure?.dataCenter ?? 1) * 2);
+        // ALLE Spieler werden bewertet; gezeigt wird nur der eigene Kader.
+        const results = runRatingCeremony(g.players, g.clubs, g.managedClubId, type, today, scoutQ);
+        for (const pid of myClub.playerIds) {
           const p = g.players[pid];
-          if (p) snapshotAttributes(p, today, isLarge ? `Saisonbewertung ${g.season}` : `Zwischenbewertung ${g.season}`);
+          if (p) snapshotAttributes(p, today, `${type === 'large' ? 'Saisonbewertung' : type === 'medium' ? 'Winterbewertung' : 'Herbstbewertung'} ${g.season}`);
         }
-        // Nur die große Saison-Bewertung wird sichtbar gemacht (Zeremonie +
-        // Meldung + Pause). Kleine/periodische Bewertungen laufen still im
-        // Hintergrund – die Werte ändern sich, ohne den Vorlauf zu unterbrechen.
-        if (isLarge) {
-          ui.onRatingCeremony({ results, type: 'large', anlass: ev.description });
-          pushMessage(g.messages, makeMessage({
-            date: today, category: 'training', from: 'Trainerstab',
-            subject: 'Leistungsbewertung abgeschlossen',
-            shortText: 'Die Spielerwerte wurden neu bewertet.',
-            bodyText: `Der Trainerstab hat die große Saison-Leistungsbewertung durchgeführt (${ev.description}). Die aktuellen Werte und Entwicklungen findest du im Kader.`,
-          }));
-          stopForAction = true;
-        }
+        const label = type === 'large' ? 'Große Saison-Bewertung' : type === 'medium' ? 'Winter-Bewertung' : 'Herbst-Bewertung';
+        ui.onRatingCeremony({ results, type: type === 'small' ? 'medium' : type, anlass: label });
+        const ups = results.filter((r) => r.change > 0).length;
+        const downs = results.filter((r) => r.change < 0).length;
+        const special = results.filter((r) => r.tag).map((r) => `• ${r.playerName}: ${r.tag} (${r.change > 0 ? '+' : ''}${r.change})`);
+        pushMessage(g.messages, makeMessage({
+          date: today, category: 'training', from: 'Trainerstab',
+          subject: `${label}: ${ups} Aufwertungen, ${downs} Abwertungen`,
+          shortText: special.length ? `${special.length} besondere Entwicklung(en) im Kader.` : 'Die Spielerwerte wurden neu bewertet.',
+          bodyText: `Der Trainerstab hat die ${label} abgeschlossen.\n\n`
+            + (special.length ? `Besonders:\n${special.join('\n')}\n\n` : '')
+            + (type !== 'small' ? 'Die Scouts haben ihre Potenzial-Einschätzungen aktualisiert.\n\n' : '')
+            + 'Details siehst du im Kader und im Spielerprofil (Reiter „Entwicklung“).',
+        }));
+        stopForAction = true;
         break;
       }
       case 'transfer_window_open':
@@ -256,6 +258,28 @@ export function processDay(g: Game, ui: DayUi): boolean {
           subject: ev.title, shortText: ev.description || ev.title,
           bodyText: ev.description || ev.title,
         }));
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // VORSCHAU: eine Woche vor jeder Bewertungsrunde nennt der Trainerstab Tendenzen.
+  // -------------------------------------------------------------------------
+  {
+    const inAWeek = CalendarEngine.addDays(today, 7);
+    const upcoming = g.calendar.events.find((e) => e.type === 'rating_update' && e.date === inAWeek && !e.processed);
+    if (upcoming) {
+      const staffQ = Math.min(1, (g.hiredStaff?.length ?? 0) / 6);
+      const tips = ratingTendencies(myClub.playerIds.map((id) => g.players[id]).filter(Boolean), staffQ);
+      if (tips.length) {
+        pushMessage(g.messages, makeMessage({
+          date: today, category: 'training', from: 'Co-Trainer',
+          subject: `Tendenzen vor der ${upcoming.description}`,
+          shortText: `${tips.length} Spieler mit deutlicher Tendenz.`,
+          bodyText: `In einer Woche steht die ${upcoming.description} an. Mein Eindruck aus dem Training:\n\n`
+            + tips.map((t) => `• ${t.player.fullName}: ${t.up ? 'macht große Fortschritte' : 'stagniert oder baut ab'}`).join('\n')
+            + `\n\nOhne Gewähr – ganz sicher sind wir uns erst bei der Bewertung.`,
+        }));
+      }
     }
   }
 
@@ -466,7 +490,10 @@ export function processDay(g: Game, ui: DayUi): boolean {
     // direkt verändert (runWeeklyDevelopment mutiert die Attribute/OVR), aber
     // es erscheint KEIN Popup und der Lauf pausiert nicht mehr. Eine Meldung
     // gibt es nur noch bei den großen Auf-/Abwertungsrunden (rating_update).
-    runWeeklyDevelopment(g.players, userIds);
+    weeklyDevelopment(g.players, g.clubs, yearOf(today), (club) => ({
+      training: clubTrainingFactor(club, club.id === g.managedClubId ? 0.03 : 0),
+      environment: 1,
+    }));
     // Jugendentwicklung aller Vereine (Talente wachsen; Scouting präzisiert sich).
     // Manager-Verein erhält Boni aus Mitarbeitern (Scouting) und Zukunfts-Bauten
     // (NLZ → Wachstum, Datenanalyse-Zentrum → Scouting) — Block p11.

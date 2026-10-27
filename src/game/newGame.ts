@@ -1,4 +1,6 @@
 // Erzeugt ein neues Spiel (Welt, Spielplan, Pokale, Ligen) – ohne Oberfläche, auch für Simulationen.
+import { setEraYear } from '../engine/positions';
+import { updateScoutEstimate } from '../engine/scouting';
 import { snapshotAttributes } from '../engine/history';
 import { EuroCompId, allEuroClubs } from '../data/europe';
 import { generateCupAmateurs, generateWorld } from '../data/generate';
@@ -24,6 +26,7 @@ import { InboxMessage, NewGameOptions, YOUTH_ENTRY_AGE } from '../types';
 import { setDisplayYear } from '../ui/format';
 
 export function createNewGame(opts: NewGameOptions): Game {
+  setEraYear(1975);
   // Punktesystem historisch fest ableiten (Spielstart immer 1975/76 → 2-Punkte-Regel).
   // Die Umstellung auf 3 Punkte erfolgt automatisch beim Meilenstein 1995/96.
   const pointSystem = historicPointSystem('1975/76');
@@ -111,5 +114,7 @@ export function createNewGame(opts: NewGameOptions): Game {
     const p = g0.players[pid];
     if (p) snapshotAttributes(p, calendar.currentDate, 'Spielbeginn');
   }
+  // Erste Scout-Einschätzung: eigener Kader genauer als fremde Spieler.
+  for (const p of Object.values(g0.players)) if (!p.isYouth) updateScoutEstimate(p, p.clubId === g0.managedClubId ? 0.4 : 0.2, p.clubId === g0.managedClubId);
   return g0;
 }

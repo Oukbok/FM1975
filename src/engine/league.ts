@@ -11,10 +11,13 @@ import {
 // Spielplan: Round-Robin (Kreis-Algorithmus / "Berger-Tabellen")
 // 18 Vereine -> 17 Spieltage Hinrunde, 17 Rückrunde = 34 Spieltage.
 // -----------------------------------------------------------------------------
+const BYE = '__spielfrei__';
+
 export function generateFixtures(clubs: Club[], seasonStart = '1975-08-15'): Match[] {
   const ids = clubs.map((c) => c.id);
+  // Ungerade Vereinszahl: ein Verein ist pro Spieltag spielfrei.
+  if (ids.length % 2 !== 0) ids.push(BYE);
   const n = ids.length;
-  if (n % 2 !== 0) throw new Error('Anzahl Vereine muss gerade sein');
 
   const rounds = n - 1;         // 17
   const half = n / 2;           // 9
@@ -51,6 +54,7 @@ export function generateFixtures(clubs: Club[], seasonStart = '1975-08-15'): Mat
     const d = new Date(startDate);
     d.setUTCDate(d.getUTCDate() + idx * 7);
     day.forEach((m, j) => {
+      if (m.home === BYE || m.away === BYE) return;
       matches.push(makeMatch(mdCounter, isoDate(d), m.home, m.away, j));
     });
   });
@@ -61,6 +65,7 @@ export function generateFixtures(clubs: Club[], seasonStart = '1975-08-15'): Mat
     const d = new Date(startDate);
     d.setUTCDate(d.getUTCDate() + (rounds + idx) * 7 + 21); // +3 Wochen Winterpause
     day.forEach((m, j) => {
+      if (m.home === BYE || m.away === BYE) return;
       matches.push(makeMatch(mdCounter, isoDate(d), m.away, m.home, j));
     });
   });
