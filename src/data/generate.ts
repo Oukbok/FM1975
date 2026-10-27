@@ -419,15 +419,24 @@ export function buildProClub(
   players: Record<string, Player>,
   youthPlayers: Record<string, Player>,
 ): Club {
+  // Vereine aus den simulierten Ligen: Ruf, Stadion und Zuschauerzuspruch richten
+  // sich nach ihrer Stärke (ein Zweitligist hat kleinere Ränge und weniger Publikum).
   const reputation = Math.max(55, Math.min(80, Math.round(src.strength)));
   const seed: ClubSeed = {
     id: src.id, name: src.name, shortName: src.shortName, city: src.city,
     founded: 1900 + ri(0, 20), primary: src.colors.primary, secondary: src.colors.secondary,
-    reputation, stadium: `Stadion ${src.city}`, capacity: 18000 + Math.round(src.strength * 400),
+    reputation, stadium: `Stadion ${src.city}`, capacity: 12000 + Math.max(0, Math.round((src.strength - 50) * 1100)),
   };
   setGenDate(currentDate);
   try {
-    return buildClubFromSeed(seed, managedClubId, currentDate, players, youthPlayers);
+    const club = buildClubFromSeed(seed, managedClubId, currentDate, players, youthPlayers);
+    club.stadium.averageAttendanceRate = Math.max(0.3, Math.min(0.85, 0.3 + (src.strength - 58) * 0.025 + rng() * 0.08));
+    club.stadium.ticketPrice = Math.max(6, Math.min(14, Math.round(src.strength / 7)));
+    club.reputation = Math.max(40, Math.min(80, Math.round(src.strength - 6)));
+    // Gehaltsniveau unterhalb der 1. Liga deutlich niedriger.
+    const wf = Math.max(0.3, Math.min(1, (src.strength - 50) / 25));
+    for (const id of club.playerIds) { const p = players[id]; if (p) p.contract.weeklyWage = Math.round(p.contract.weeklyWage * wf); }
+    return club;
   } finally {
     setGenDate(CURRENT_DATE);
   }

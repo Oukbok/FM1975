@@ -22,6 +22,9 @@ import { initWorld } from '../engine/world';
 import { makeCandidates } from '../engine/staffPeople';
 import { allocateTv, commercialAnnualFor, isLeagueClub, refreshMarketValues } from '../engine/clubEconomy';
 import { addCupCalendarEvents, buildEuroCupsForSeason, cupDateSet, cupDrawMessage, euroDrawMessage, leagueDateSet } from './competitions';
+import { buildDivision, DivisionMeta, simClubFromClub } from '../engine/leagues';
+import { buildProClub } from '../data/generate';
+import { seasonExpectation } from '../engine/environment';
 import { buildDdrDivisions, buildLeagueSystem, buildSecondLigaSimClubs, historicPointSystem } from './leagueSetup';
 import { applyTimelineEffect, fireTimelineForSeason } from './season';
 import { Game, hashSeed, migrateCommerce } from './state';
@@ -34,6 +37,28 @@ export function createNewGame(opts: NewGameOptions): Game {
   // Die Umstellung auf 3 Punkte erfolgt automatisch beim Meilenstein 1995/96.
   const pointSystem = historicPointSystem('1975/76');
   const world = generateWorld(opts.managedClubId);
+  // --- Start in der 2. Liga? Dann wird deren Staffel zur Spielerliga (volle Kader),
+  //     die 1. Liga läuft simuliert. Jeder Verein ist wählbar. ---
+  const simClubs = buildSecondLigaSimClubs();
+  const startSim = simClubs[opts.managedClubId];
+  let playerDivMeta: DivisionMeta = { id: 'tier1', name: '1. Liga', tier: 1, group: null };
+  let tier1SimIds: string[] = [];
+  if (startSim) {
+    tier1SimIds = Object.keys(world.clubs);
+    for (const id of tier1SimIds) {
+      const c = world.clubs[id];
+      simClubs[id] = simClubFromClub(c, world.players, 1, null);
+      for (const pid of c.playerIds) delete world.players[pid];
+      for (const yid of c.youthPlayerIds ?? []) delete world.youthPlayers[yid];
+      delete world.clubs[id];
+    }
+    const group = startSim.group;
+    for (const sc of Object.values(simClubs).filter((x) => x.tier === 2 && x.group === group)) {
+      world.clubs[sc.id] = buildProClub(sc, opts.managedClubId, '1975-07-01', world.players, world.youthPlayers);
+      delete simClubs[sc.id];
+    }
+    playerDivMeta = { id: `tier2-${group}`, name: `2. Liga ${group === 'nord' ? 'Nord' : 'Süd'}`, tier: 2, group };
+  }
   const clubList = Object.values(world.clubs);
   const fixtures = generateFixtures(clubList);
   for (const m of fixtures) {
@@ -43,15 +68,24 @@ export function createNewGame(opts: NewGameOptions): Game {
   const calendar = generateSeasonCalendar(fixtures);
   calendar.speedMs = opts.speedMs;
   const club = world.clubs[opts.managedClubId];
+  if (startSim && club) {
+    // Saisonziel in der 2. Liga aus der Kaderstärke ableiten.
+    const str = (c: typeof club) => {
+      const o = c.playerIds.map((id) => world.players[id]?.overall ?? 0).sort((a, b) => b - a).slice(0, 14);
+      return o.reduce((a, b) => a + b, 0) / Math.max(1, o.length);
+    };
+    const ranked = [...clubList].sort((a, b) => str(b) - str(a));
+    club.boardExpectation = seasonExpectation(ranked.findIndex((c) => c.id === club.id) + 1, ranked.length, 2);
+  }
 
   // --- Landespokal aufsetzen: 14 Amateurvereine ergänzen (→ 32er-Feld) ---
-  const amateurs = generateCupAmateurs(14);
+  const amateurs = generateCupAmateurs(Math.max(0, 32 - clubList.length));
   Object.assign(world.clubs, amateurs.clubs);
   Object.assign(world.players, amateurs.players);
   const blClubIds = clubList.map((c) => c.id);
   const cup = createCup(
     blClubIds,
-    Object.keys(amateurs.clubs),
+    Object.keys(amateurs.clubs).slice(0, Math.max(0, 32 - blClubIds.length)),
     leagueDateSet(fixtures),
     hashSeed(opts.managedClubId + ':1980'),
     calendar.seasonStartDate,
@@ -87,9 +121,20 @@ export function createNewGame(opts: NewGameOptions): Game {
     }
   });
   // --- Mehrstufiges Ligasystem: 2. Liga Nord/Süd (aggregiert simuliert) ---
-  const simClubs = buildSecondLigaSimClubs();
   const ligaStart = fixtures[0]?.date ?? calendar.seasonStartDate;
-  const leagues = buildLeagueSystem(simClubs, pointSystem, '1975/76', ligaStart);
+  const leagues = startSim
+    ? {
+      playerDivision: playerDivMeta,
+      otherDivisions: [
+        buildDivision({ id: 'tier1', name: '1. Liga', tier: 1, group: null }, tier1SimIds, pointSystem, '1975/76', ligaStart),
+        ...(['nord', 'sued'] as const).filter((gr) => gr !== startSim.group).map((gr) => buildDivision(
+          { id: `tier2-${gr}`, name: `2. Liga ${gr === 'nord' ? 'Nord' : 'Süd'}`, tier: 2, group: gr },
+          Object.values(simClubs).filter((x) => x.tier === 2 && x.group === gr).map((x) => x.id), pointSystem, '1975/76', ligaStart,
+        )),
+      ],
+      season: '1975/76',
+    }
+    : buildLeagueSystem(simClubs, pointSystem, '1975/76', ligaStart);
   // Parallele DDR-Ligapyramide (bis zur Wiedervereinigung 1991/92) ergänzen.
   leagues.otherDivisions.push(...buildDdrDivisions(simClubs, pointSystem, '1975/76', ligaStart));
   const g0: Game = {
@@ -129,7 +174,8 @@ export function createNewGame(opts: NewGameOptions): Game {
     ...makeCandidates(roleId, 1975, g0.clubs[g0.managedClubId]?.reputation ?? 60, Math.random)[1], hired: calendar.currentDate,
   }));
   g0.hiredStaff = g0.staff.map((m) => m.roleId);
-  for (const c of leagueClubs) c.finances.commercialAnnual = commercialAnnualFor(c, 1, 1975);
-  allocateTv(leagueClubs, 1, 1975, (id) => 1 - byRep.indexOf(id) / Math.max(1, byRep.length - 1));
+  const startTier = g0.leagues.playerDivision.tier;
+  for (const c of leagueClubs) c.finances.commercialAnnual = commercialAnnualFor(c, startTier, 1975);
+  allocateTv(leagueClubs, startTier, 1975, (id) => 1 - byRep.indexOf(id) / Math.max(1, byRep.length - 1));
   return g0;
 }

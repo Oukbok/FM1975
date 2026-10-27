@@ -1,6 +1,6 @@
 import ClubCrest from '../components/ClubCrest';
 import Icon from '../components/Icon';
-import { getClubSeeds } from '../data/generate';
+import { SECOND_LIGA_NORD_SEEDS, SECOND_LIGA_SUED_SEEDS, getClubSeeds } from '../data/generate';
 import { AppSettings } from '../engine/save';
 import { Difficulty, ManagerBackground, ManagerProfile, ManagerStyle, NewGameOptions } from '../types';
 import { useState } from 'react';
@@ -21,6 +21,14 @@ export function NewGameScreen({ defaults, onBack, onStart }: {
   defaults: AppSettings; onBack: () => void; onStart: (o: NewGameOptions) => void;
 }) {
   const seeds = getClubSeeds();
+  const [league, setLeague] = useState<'tier1' | 'nord' | 'sued'>('tier1');
+  const second = (list: typeof SECOND_LIGA_NORD_SEEDS) => list.map((s) => ({
+    id: s.id, name: s.name, shortName: s.shortName, city: s.city, primary: s.primary, secondary: s.secondary,
+    reputation: Math.round(s.strength), label: `Stärke ${Math.round(s.strength)}`,
+  }));
+  const shown = league === 'tier1'
+    ? seeds.map((s) => ({ id: s.id, name: s.name, shortName: s.shortName, city: s.city, primary: s.primary, secondary: s.secondary, reputation: s.reputation, label: `Ansehen ${s.reputation}` }))
+    : second(league === 'nord' ? SECOND_LIGA_NORD_SEEDS : SECOND_LIGA_SUED_SEEDS);
   const [name, setName] = useState('');
   const [nationality, setNationality] = useState('Deutschland');
   const [birthYear, setBirthYear] = useState(1940);
@@ -82,8 +90,14 @@ export function NewGameScreen({ defaults, onBack, onStart }: {
       {/* Verein */}
       <div className="card mt16">
         <div className="card-title"><span className="ico"><Icon name="dashVerein" /></span> Verein wählen</div>
-        <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))' }}>
-          {seeds.map((s) => (
+        <div className="chip-row">
+          {([['tier1', '1. Liga'], ['nord', '2. Liga Nord'], ['sued', '2. Liga Süd']] as const).map(([k, l]) => (
+            <button key={k} className={`chip ${league === k ? 'active' : ''}`} onClick={() => setLeague(k)}>{l}</button>
+          ))}
+        </div>
+        <div className="dim2 mini mt8">{league === 'tier1' ? 'Klassischer Start in der 1. Liga.' : 'Der lange Weg nach oben: Start in der 2. Liga mit kleinem Budget.'}</div>
+        <div className="grid mt8" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))' }}>
+          {shown.map((s) => (
             <div key={s.id} className={`card club-pick ${clubId === s.id ? 'sel' : ''}`} onClick={() => setClubId(s.id)}>
               {/* ClubCrest statt Inline-SVG, damit ein spielweit hochgeladenes Wappen
                   auch in der Vereinsauswahl beim Spielstart erscheint. */}
@@ -91,7 +105,7 @@ export function NewGameScreen({ defaults, onBack, onStart }: {
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontWeight: 700 }}>{s.shortName}</div>
                 <div className="dim2 mini" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.name}</div>
-                <div className="dim2 mini">{s.city} · Ansehen {s.reputation}</div>
+                <div className="dim2 mini">{s.city} · {s.label}</div>
               </div>
             </div>
           ))}
