@@ -1,7 +1,10 @@
 import { MAX_LEVEL } from '../../engine/infrastructure';
+import { scoutRange } from '../../engine/scouting';
 import { Game } from '../../game/state';
 import { Player, YOUTH_AGE_CLASS_LABEL, YOUTH_AGE_CLASS_ORDER, YOUTH_AGE_CLASS_RANGE, YouthAgeClass, renderStars, youthAgeClass } from '../../types';
 import { vColor } from '../../ui/format';
+import { DashBox, DashPage, Empty, Meter } from '../../ui/DashPage';
+import { PlayerRow } from '../shared';
 import { YouthModal } from './YouthModal';
 import { useState } from 'react';
 
@@ -12,8 +15,7 @@ export type YouthSort = 'pot' | 'ovr' | 'age';
 
 /** Rendert die Scouting-Einschätzung als GOLDENE Sterne-Spanne (min–max). */
 export function ScoutRange({ p }: { p: Player }) {
-  const min = p.scoutedPotentialMin ?? p.potentialStars;
-  const max = p.scoutedPotentialMax ?? p.potentialStars;
+  const [min, max] = scoutRange(p);
   if (Math.abs(max - min) < 0.001) {
     return <span className="stars" title={`Potenzial: ${min.toFixed(1)} Sterne`}>{renderStars(min)}</span>;
   }
@@ -38,8 +40,8 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
       case 'ovr': return b.overall - a.overall;
       case 'age': return a.age - b.age;
       default: {
-        const am = a.scoutedPotentialMax ?? a.potentialStars;
-        const bm = b.scoutedPotentialMax ?? b.potentialStars;
+        const am = scoutRange(a)[1];
+        const bm = scoutRange(b)[1];
         return (bm - am) || (b.overall - a.overall);
       }
     }
@@ -57,124 +59,79 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
   }
   for (const cls of YOUTH_AGE_CLASS_ORDER) byClass[cls].sort(sortFn);
 
-  const visibleClasses = YOUTH_AGE_CLASS_ORDER.filter(
-    (cls) => (classFilter === 'ALL' || classFilter === cls) && byClass[cls].length > 0,
-  );
-
   const p = sel ? g.youthPlayers[sel] : null;
 
-  const SortBtn = ({ k, label }: { k: YouthSort; label: string }) => (
-    <button className={`btn-sm ${sortBy === k ? 'active' : ''}`} onClick={() => setSortBy(k)}>{label}</button>
+  const rows = YOUTH_AGE_CLASS_ORDER.filter((cls) => classFilter === 'ALL' || classFilter === cls).flatMap((cls) => byClass[cls]);
+  const Th = ({ k, children, cls }: { k: YouthSort; children: React.ReactNode; cls?: string }) => (
+    <th className={`sortable ${cls ?? ''} ${sortBy === k ? 'sorted' : ''}`} onClick={() => setSortBy(k)}>{children}</th>
   );
-
-  const YouthTable = ({ rows }: { rows: Player[] }) => (
-    <div className="table-scroll">
-      <table className="squad-table">
-        <thead>
-          <tr>
-            <th>Name</th><th>Pos</th><th>Alter</th><th>OVR</th><th>Potenzial (Scouting)</th>
-            <th title="Tempo">TMP</th><th title="Technik">TEC</th><th title="Passspiel">PAS</th>
-            <th title="Zweikampf">ZWK</th><th title="Torschuss">TOR</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((pl) => (
-            <tr key={pl.id} className="clickable" onClick={() => setSel(pl.id)}>
-              <td style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{pl.fullName}</td>
-              <td><span className="pos-tag">{pl.naturalPosition}</span></td>
-              <td>{pl.age}</td>
-              <td><b style={{ color: vColor(pl.overall) }}>{pl.overall}</b></td>
-              <td><ScoutRange p={pl} /></td>
-              <td style={{ color: vColor(pl.attributes.speed) }}>{pl.attributes.speed}</td>
-              <td style={{ color: vColor(pl.attributes.technique) }}>{pl.attributes.technique}</td>
-              <td style={{ color: vColor(pl.attributes.passing) }}>{pl.attributes.passing}</td>
-              <td style={{ color: vColor(pl.attributes.tackling) }}>{pl.attributes.tackling}</td>
-              <td style={{ color: vColor(pl.attributes.shooting) }}>{pl.attributes.shooting}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+  const top = [...youth].sort((a, b) => (scoutRange(b)[1] - scoutRange(a)[1]) || b.overall - a.overall).slice(0, 5);
+  const ready = youth.filter((x) => youthAgeClass(x.age) === 'A').sort((a, b) => b.overall - a.overall).slice(0, 4);
+  const maxClass = Math.max(1, ...YOUTH_AGE_CLASS_ORDER.map((c) => byClass[c].length));
 
   return (
-    <div className="youth-academy">
-      <div className="youth-hero card">
-        <div className="youth-hero-title">🧒 Jugendakademie</div>
-        <div className="youth-hero-sub dim">
-          {club.name} · Jahrgänge von der G-Jugend (Bambini) bis zur A-Jugend
-        </div>
-        <div className="youth-hero-pills">
-          <span className="pill">Akademie-Stufe <b style={{ marginLeft: 4 }}>{acadLevel}/{MAX_LEVEL}</b></span>
-          <span className="pill">Talente gesamt <b style={{ marginLeft: 4 }}>{youth.length}</b></span>
-        </div>
-        <div className="dim mini mt8">
-          Neue G-Jugend-Talente (Bambini, 7 Jahre) treffen jeweils zum <b>1. Juli</b> ein; alle Jahrgänge rücken
-          dann eine Altersklasse auf. Am Ende der A-Jugend (mit ~19&nbsp;Jahren) verlassen die Talente die
-          Akademie – die besten werden in den Profikader hochgezogen. Anzahl, Qualität und Lernrate hängen
-          von der Akademie-Stufe ab (Ausbau im Bereich <b>Gelände</b>).
-        </div>
-      </div>
-
-      <div className="row mt12">
-        <div className="youth-class-tabs">
-          <button
-            className={`btn-sm ${classFilter === 'ALL' ? 'active' : ''}`}
-            onClick={() => setClassFilter('ALL')}
-          >
-            Alle <span className="dim2">({youth.length})</span>
-          </button>
+    <DashPage>
+      <DashBox title={`Talente (${youth.length})`} icon="youth" span={2} rows={2} flush
+        right={<span className="dbtnrow">
+          <button className={`dchip ${classFilter === 'ALL' ? 'on' : ''}`} onClick={() => setClassFilter('ALL')}>Alle</button>
           {YOUTH_AGE_CLASS_ORDER.map((cls) => (
-            <button
-              key={cls}
-              className={`btn-sm ${classFilter === cls ? 'active' : ''}`}
-              onClick={() => setClassFilter(cls)}
-              disabled={byClass[cls].length === 0}
-            >
-              {YOUTH_AGE_CLASS_LABEL[cls]} <span className="dim2">({byClass[cls].length})</span>
+            <button key={cls} className={`dchip ${classFilter === cls ? 'on' : ''}`} onClick={() => setClassFilter(cls)} disabled={byClass[cls].length === 0}>
+              {cls} ({byClass[cls].length})
             </button>
           ))}
-        </div>
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
-          <span className="dim mini">Sortieren:</span>
-          <SortBtn k="pot" label="Potenzial" />
-          <SortBtn k="ovr" label="OVR" />
-          <SortBtn k="age" label="Alter" />
-        </div>
-      </div>
+        </span>}>
+        {rows.length === 0 ? (
+          <Empty icon="youth">{youth.length === 0 ? 'Aktuell keine Talente in der Akademie. Der nächste Bambini-Jahrgang trifft zum 1. Juli ein.' : 'In dieser Altersklasse gibt es derzeit keine Talente.'}</Empty>
+        ) : (
+          <table className="dtable">
+            <thead><tr>
+              <th className="ctr">Kl.</th><th>Name</th><th className="ctr">Pos</th><Th k="age" cls="num">Alter</Th>
+              <Th k="ovr" cls="num">Stärke</Th><Th k="pot">Potenzial (Scouting)</Th>
+              <th className="num" title="Tempo">TMP</th><th className="num" title="Technik">TEC</th><th className="num" title="Passspiel">PAS</th>
+              <th className="num" title="Zweikampf">ZWK</th><th className="num" title="Torschuss">TOR</th>
+            </tr></thead>
+            <tbody>
+              {rows.map((pl) => (
+                <tr key={pl.id} className="clickable" onClick={() => setSel(pl.id)}>
+                  <td className="ctr muted">{youthAgeClass(pl.age)}</td>
+                  <td className="nowrap" style={{ fontWeight: 700 }}>{pl.fullName}</td>
+                  <td className="ctr"><span className="pos-badge">{pl.naturalPosition}</span></td>
+                  <td className="num">{pl.age}</td>
+                  <td className="num"><b style={{ color: vColor(pl.overall) }}>{pl.overall}</b></td>
+                  <td><ScoutRange p={pl} /></td>
+                  <td className="num" style={{ color: vColor(pl.attributes.speed) }}>{pl.attributes.speed}</td>
+                  <td className="num" style={{ color: vColor(pl.attributes.technique) }}>{pl.attributes.technique}</td>
+                  <td className="num" style={{ color: vColor(pl.attributes.passing) }}>{pl.attributes.passing}</td>
+                  <td className="num" style={{ color: vColor(pl.attributes.tackling) }}>{pl.attributes.tackling}</td>
+                  <td className="num" style={{ color: vColor(pl.attributes.shooting) }}>{pl.attributes.shooting}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </DashBox>
 
-      {youth.length === 0 ? (
-        <div className="card mt12 dim" style={{ padding: 16 }}>
-          Aktuell befinden sich keine Talente in der Akademie. Der nächste G-Jugend-Jahrgang (Bambini) trifft zum 1. Juli ein.
-        </div>
-      ) : visibleClasses.length === 0 ? (
-        <div className="card mt12 dim" style={{ padding: 16 }}>
-          In dieser Altersklasse befinden sich derzeit keine Talente.
-        </div>
-      ) : (
-        visibleClasses.map((cls) => (
-          <div key={cls} className="youth-class-section card mt12">
-            <div className="youth-class-head">
-              <div className="youth-class-badge">{cls}</div>
-              <div>
-                <div className="youth-class-name">{YOUTH_AGE_CLASS_LABEL[cls]}</div>
-                <div className="dim2 mini">{YOUTH_AGE_CLASS_RANGE[cls]}</div>
-              </div>
-              <span className="pill" style={{ marginLeft: 'auto' }}>{byClass[cls].length} Talent(e)</span>
-            </div>
-            <YouthTable rows={byClass[cls]} />
+      <DashBox title="Jugendakademie" icon="facilities" right={`Stufe ${acadLevel}/${MAX_LEVEL}`}>
+        <Meter label="Akademie-Stufe" value={acadLevel} max={MAX_LEVEL} text={`${acadLevel} / ${MAX_LEVEL}`} />
+        {YOUTH_AGE_CLASS_ORDER.map((cls) => (
+          <Meter key={cls} label={YOUTH_AGE_CLASS_LABEL[cls]} value={byClass[cls].length} max={maxClass} text={`${byClass[cls].length}`} />
+        ))}
+        <div className="dnote mt8">Neue Bambini kommen zum 1. Juli, alle Jahrgänge rücken auf. Ausbau der Akademie unter „Gelände“.</div>
+      </DashBox>
+
+      <DashBox title="Größte Talente" icon="trophy">
+        {top.length ? top.map((x) => (
+          <div key={x.id} className="dlist-row clickable" onClick={() => setSel(x.id)}>
+            <span className="pos-badge">{x.naturalPosition}</span>
+            <span className="grow">{x.fullName} <span className="muted">· {x.age} J.</span></span>
+            <ScoutRange p={x} />
           </div>
-        ))
-      )}
-
-      {youth.length > 0 && (
-        <div className="dim2 mini mt12">
-          Das echte Potenzial eines Talents ist verborgen – die Scouts geben nur eine <b>Sterne-Spanne</b> an.
-          Je jünger das Talent (G/F/E-Jugend), desto breiter die Spanne; mit steigendem Alter und höherer
-          Akademie-Stufe engt sie sich an den wahren Wert an. Klicke eine Zeile für Details und zum Hochziehen
-          in den Profikader.
-        </div>
-      )}
+        )) : <Empty icon="youth">Noch keine Talente.</Empty>}
+        <div className="dsec">A-Jugend: bereit für die Profis</div>
+        {ready.length ? ready.map((x) => <PlayerRow key={x.id} p={x} value={x.overall} onClick={() => setSel(x.id)} />)
+          : <div className="dnote">Derzeit niemand in der A-Jugend.</div>}
+        <div className="dnote mt8">Das echte Potenzial ist verborgen; die Spanne wird mit dem Alter enger.</div>
+      </DashBox>
 
       {p && (
         <YouthModal
@@ -183,6 +140,6 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
           onChange={onChange}
         />
       )}
-    </div>
+    </DashPage>
   );
 }

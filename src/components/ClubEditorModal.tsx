@@ -313,13 +313,14 @@ export default function ClubEditorModal({
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal ce-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="modal modal-xl ce-modal" onClick={(e) => e.stopPropagation()}>
         <div className="ce-header">
           <h2 className="ce-title">Editor</h2>
           <button className="modal-close" onClick={onClose}>×</button>
         </div>
 
-        <div className="ce-body">
+        <div className="ce-body ce-grid">
+          <div className="ce-col">
           {/* --- Vereinsauswahl --- */}
           <section className="ce-section">
             <label className="ce-field ce-team-pick">
@@ -363,6 +364,9 @@ export default function ClubEditorModal({
             </div>
           </section>
 
+          <p className="ce-note">Anpassungen gelten spielweit — über alle Spielstände hinweg und auch für neue Spiele.</p>
+          </div>
+
           {/* --- Trikots --- */}
           <section className="ce-section">
             <h3 className="ce-sec-title">Trikots</h3>
@@ -371,8 +375,6 @@ export default function ClubEditorModal({
               <KitEditor key={`${activeClub.id}-away`} title="Auswärts" club={activeClub} which="away" state={away} onChange={setAway} />
             </div>
           </section>
-
-          <p className="ce-note">Anpassungen gelten spielweit — über alle Spielstände hinweg und auch für neue Spiele.</p>
         </div>
 
         <div className="ce-foot">

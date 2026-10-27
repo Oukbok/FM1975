@@ -51,7 +51,7 @@ export function NewGameScreen({ defaults, onBack, onStart }: {
 
       {/* Managerprofil */}
       <div className="card mt16">
-        <div className="card-title"><span className="ico">👤</span> Dein Managerprofil</div>
+        <div className="card-title"><span className="ico"><Icon name="squad" /></span> Dein Managerprofil</div>
         <div className="form-grid">
           <label>Name
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="z.B. Max Mustermann" />
@@ -81,7 +81,7 @@ export function NewGameScreen({ defaults, onBack, onStart }: {
 
       {/* Verein */}
       <div className="card mt16">
-        <div className="card-title"><span className="ico">🛡️</span> Verein wählen</div>
+        <div className="card-title"><span className="ico"><Icon name="dashVerein" /></span> Verein wählen</div>
         <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))' }}>
           {seeds.map((s) => (
             <div key={s.id} className={`card club-pick ${clubId === s.id ? 'sel' : ''}`} onClick={() => setClubId(s.id)}>

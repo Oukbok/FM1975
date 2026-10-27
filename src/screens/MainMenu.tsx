@@ -60,7 +60,7 @@ export function MainMenu({ settings, onNewGame, onLoad, onUpdateSettings }: {
             </button>
             {!storageAvailable() && (
               <div className="mini red mt12" style={{ textAlign: 'center' }}>
-                ⚠ Speichern/Laden ist in dieser Umgebung nicht verfügbar (localStorage gesperrt).
+                Speichern/Laden ist in dieser Umgebung nicht verfügbar (localStorage gesperrt).
               </div>
             )}
           </div>

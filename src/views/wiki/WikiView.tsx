@@ -1,6 +1,6 @@
 import { WIKI_ARTICLES, WIKI_CATEGORIES, WikiArticle, searchWiki } from '../../data/wiki';
 import { Game } from '../../game/state';
-import { PageHead } from '../../ui/PageHead';
+import { DashBox, DashPage, Empty } from '../../ui/DashPage';
 import { ChronicleView } from '../statistiken/ChronicleView';
 import { useState } from 'react';
 
@@ -47,58 +47,40 @@ export function WikiView({ g }: { g: Game }) {
   const catsWithHits = new Set(searchWiki(query).map((a) => a.category));
   if (chronMatches) catsWithHits.add('chronicle');
 
-  return (
-    <div className="page">
-      <PageHead icon="wiki" title={<>Entwickler-Wiki <span className="accent">· Spielmechaniken</span></>} />
-      <div className="wiki-layout">
-        {/* Sidebar */}
-        <aside className="wiki-side card">
-          <input
-            className="wiki-search"
-            placeholder="🔎 Suchen…"
-            value={query}
-            onChange={(e) => { setQuery(e.target.value); setOpenId(null); }}
-          />
-          <button className={`wiki-cat ${cat === 'all' ? 'active' : ''}`} onClick={() => setCat('all')}>
-            📚 Alle Kategorien
-          </button>
-          {WIKI_CATEGORIES.map((c) => (
-            <button
-              key={c.id}
-              className={`wiki-cat ${cat === c.id ? 'active' : ''} ${query && !catsWithHits.has(c.id) ? 'faded' : ''}`}
-              onClick={() => setCat(c.id)}
-            >
-              {c.icon} {c.title}
-            </button>
-          ))}
-        </aside>
+  const shown = open ?? results[0] ?? null;
+  const catTitle = (id: string) => WIKI_CATEGORIES.find((x) => x.id === id)?.title ?? '';
 
-        {/* Content */}
-        <div className="wiki-content">
-          {open ? (
-            <div className="card">
-              <button className="btn-sm mb12" onClick={() => setOpenId(null)}>← Zurück zur Liste</button>
-              {open.id === CHRONICLE_WIKI_ID ? <ChronicleView g={g} embedded /> : <WikiBody text={open.body} />}
-            </div>
-          ) : results.length === 0 ? (
-            <div className="card dim" style={{ textAlign: 'center', padding: 30 }}>Keine Treffer für „{query}".</div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {results.map((a) => {
-                const c = WIKI_CATEGORIES.find((x) => x.id === a.category);
-                return (
-                  <div key={a.id} className="card hoverable clickable" onClick={() => setOpenId(a.id)}>
-                    <div className="dim2 mini">{c?.icon} {c?.title}</div>
-                    <div style={{ fontWeight: 800, fontSize: 16, marginTop: 2 }}>{a.title}</div>
-                    <div className="dim mini mt8">{firstLine(a.body)}</div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+  return (
+    <DashPage>
+      <DashBox title="Kapitel" icon="wiki" right={`${WIKI_ARTICLES.length + 1} Artikel`}>
+        <input className="dselect wiki-search-d" placeholder="Suchen …" value={query}
+          onChange={(e) => { setQuery(e.target.value); setOpenId(null); }} />
+        <div className="dbtnrow mt8">
+          <button className={`dchip ${cat === 'all' ? 'on' : ''}`} onClick={() => { setCat('all'); setOpenId(null); }}>Alle</button>
+          {WIKI_CATEGORIES.map((c) => (
+            <button key={c.id} className={`dchip ${cat === c.id ? 'on' : ''}`} style={{ opacity: query && !catsWithHits.has(c.id) ? 0.4 : 1 }}
+              onClick={() => { setCat(c.id); setOpenId(null); }}>{c.title}</button>
+          ))}
         </div>
-      </div>
-    </div>
+      </DashBox>
+
+      <DashBox title={shown ? shown.title : 'Artikel'} icon={shown?.id === CHRONICLE_WIKI_ID ? 'chronicle' : 'news'} span={2} rows={2}
+        right={shown ? catTitle(shown.category) : undefined}>
+        {shown ? (shown.id === CHRONICLE_WIKI_ID ? <ChronicleView g={g} embedded /> : <WikiBody text={shown.body} />)
+          : <Empty icon="wiki">Keine Treffer für „{query}“.</Empty>}
+      </DashBox>
+
+      <DashBox title="Artikel" icon="contracts" right={`${results.length} Treffer`}>
+        {results.length ? results.map((a) => (
+          <div key={a.id} className={`dmsg ${shown?.id === a.id ? 'sel' : ''}`} onClick={() => setOpenId(a.id)}>
+            <span className="dmsg-main">
+              <span className="dmsg-top"><b>{catTitle(a.category)}</b></span>
+              <span className="dmsg-subj">{a.title}</span>
+            </span>
+          </div>
+        )) : <Empty icon="wiki">Keine Treffer.</Empty>}
+      </DashBox>
+    </DashPage>
   );
 }
 

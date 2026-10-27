@@ -175,7 +175,8 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   const isZentrale = screen === 'dashboard';
   // Dashboard-aehnliche Seiten: Zentrale + die 6 Kategorie-Dashboards. Teilen sich
   // das fuellende Flex-Layout (Boxen mit fixer Geometrie, Kalenderstreifen oben).
-  const isDashLike = isZentrale || screen.startsWith('cat-');
+  // Seit dem Seiten-Umbau nutzen ALLE Seiten das Zentrale-Raster (src/ui/DashPage.tsx).
+  const isDashLike = true;
 
   return (
     <div className={`app-shell ${isZentrale ? 'shell-zentrale' : ''} ${isDashLike ? 'shell-dashlike' : ''}`}>
@@ -315,8 +316,8 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {/* Rudimentäre Einzelseiten */}
         {screen === 'presse' && <PresseView g={g} />}
         {screen === 'vertraege' && <VertraegeView g={g} />}
-        {screen === 'beobachtung' && <BeobachtungView />}
-        {screen === 'verhandlungen' && <VerhandlungenView />}
+        {screen === 'beobachtung' && <BeobachtungView g={g} />}
+        {screen === 'verhandlungen' && <VerhandlungenView g={g} />}
         {screen === 'sponsoring' && <SponsoringView g={g} onGoto={setScreen} onChange={rerender} />}
         {screen === 'fans' && <FansView g={g} />}
         {screen === 'international' && <InternationalView g={g} onWatch={(id) => setLiveMatchId(id)} />}

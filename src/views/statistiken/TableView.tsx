@@ -4,109 +4,107 @@ import { seasonStartYear } from '../../data/timeline';
 import { LeagueGroup, divisionLabel } from '../../engine/leagues';
 import { buildClubProfile, clubView, divisionZone } from '../../game/clubProfile';
 import { Game } from '../../game/state';
-import { LeagueTable } from '../../types';
-import { PageHead } from '../../ui/PageHead';
+import { LeagueTable, LeagueTableRow as TableRow } from '../../types';
+import { DashBox, DashPage, KV, Kpi } from '../../ui/DashPage';
+import { FormDots } from '../shared';
 import { useState } from 'react';
 
+// =============================================================================
+// TABELLE — Liga wählbar, Ligarekorde, eigene Lage, Zonen-Legende
+// =============================================================================
 export function TableView({ g }: { g: Game }) {
-  // Alle wählbaren Ligen/Staffeln: Spielerliga (volle Tabelle) + Sim-Ligen.
   const divisions: { id: string; label: string; tier: number; group: LeagueGroup; table: LeagueTable }[] = [
     { id: g.leagues.playerDivision.id, label: divisionLabel(g.leagues.playerDivision.tier, g.leagues.playerDivision.group), tier: g.leagues.playerDivision.tier, group: g.leagues.playerDivision.group, table: g.table },
-    // DDR-Ligen tragen einen eigenen Namen (tier 101/102) und werden klar als
-    // solche beschriftet; alle anderen nutzen das generische Ebenen-/Staffel-Label.
+    // DDR-Ligen tragen einen eigenen Namen, alle anderen das Ebenen-/Staffel-Label.
     ...g.leagues.otherDivisions.map((d) => ({ id: d.id, label: d.id.startsWith('ddr-') ? d.name : divisionLabel(d.tier, d.group), tier: d.tier, group: d.group, table: d.table })),
   ];
-  // Sortierung: Ebene, dann Nord vor Süd.
-  divisions.sort((a, b) => a.tier - b.tier || (a.group === 'nord' ? -1 : a.group === 'sued' ? 1 : 0) - (b.group === 'nord' ? -1 : b.group === 'sued' ? 1 : 0));
+  const gOrd = (x: LeagueGroup) => (x === 'nord' ? -1 : x === 'sued' ? 1 : 0);
+  divisions.sort((a, b) => a.tier - b.tier || gOrd(a.group) - gOrd(b.group));
 
   const [selId, setSelId] = useState(g.leagues.playerDivision.id);
   const [clubModalId, setClubModalId] = useState<string | null>(null);
   const sel = divisions.find((d) => d.id === selId) || divisions[0];
-  const rowCount = sel.table.rows.length;
+  const rows = sel.table.rows;
+  const rowCount = rows.length;
+  const year = seasonStartYear(g.season);
+  const nameOf = (id: string) => clubView(g, id, year).name;
+  const best = (f: (r: TableRow) => number, low = false) => [...rows].sort((a, b) => (low ? f(a) - f(b) : f(b) - f(a)))[0];
+  const played = rows.some((r) => r.played > 0);
+  const totalGoals = rows.reduce((s, r) => s + r.goalsFor, 0);
+  const matches = rows.reduce((s, r) => s + r.played, 0) / 2;
+
+  const my = g.table.rows.find((r) => r.clubId === g.managedClubId);
+  const top = g.table.rows[0];
+  const relIdx = Math.max(0, g.table.rows.length - 3);
+  const relRow = g.table.rows[relIdx];
 
   return (
-    <div className="page">
-      <PageHead icon="dashTabelle" title={<>Tabelle <span className="accent">{g.season}</span></>} />
+    <DashPage>
+      <DashBox title={`Tabelle ${g.season}`} icon="dashTabelle" span={2} rows={2} flush
+        right={<select className="dselect" value={sel.id} onChange={(e) => setSelId(e.target.value)}>
+          {divisions.map((d) => <option key={d.id} value={d.id}>{d.label}{d.id === g.leagues.playerDivision.id ? ' (deine Liga)' : ''}</option>)}
+        </select>}>
+        <table className="dtable">
+          <thead><tr>
+            <th className="ctr">#</th><th>Verein</th><th className="num">Sp</th><th className="num">S</th><th className="num">U</th><th className="num">N</th>
+            <th className="num">Tore</th><th className="num">Diff</th><th className="num">Pkt</th><th>Form</th>
+          </tr></thead>
+          <tbody>
+            {rows.map((r) => {
+              const c = clubView(g, r.clubId, year);
+              const mine = r.clubId === g.managedClubId;
+              return (
+                <tr key={r.clubId} className={`clickable ${mine ? 'me' : ''}`} onClick={() => setClubModalId(r.clubId)}>
+                  <td className="ctr"><span className={`pos-badge ${divisionZone(r.position, sel.tier, rowCount)}`}>{r.position}</span></td>
+                  <td className="nowrap"><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}><ClubCrest club={c as any} size={24} />{c.name}</span></td>
+                  <td className="num">{r.played}</td><td className="num">{r.won}</td><td className="num">{r.drawn}</td><td className="num">{r.lost}</td>
+                  <td className="num muted">{r.goalsFor}:{r.goalsAgainst}</td>
+                  <td className="num">{r.goalDifference > 0 ? '+' : ''}{r.goalDifference}</td>
+                  <td className="num"><b style={{ color: 'var(--accent)' }}>{r.points}</b></td>
+                  <td><FormDots form={r.form} /></td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </DashBox>
 
-      {/* Liga-/Staffel-Umschalter */}
-      <div className="card" style={{ padding: 10, marginBottom: 12 }}>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          {divisions.map((d) => {
-            const active = d.id === sel.id;
-            const isPlayer = d.id === g.leagues.playerDivision.id;
-            return (
-              <button
-                key={d.id}
-                onClick={() => setSelId(d.id)}
-                className="btn"
-                style={{
-                  padding: '6px 14px', fontWeight: active ? 800 : 600,
-                  background: active ? 'var(--accent)' : 'transparent',
-                  color: active ? '#06121a' : 'var(--text)',
-                  border: `1px solid ${active ? 'var(--accent)' : 'var(--border)'}`,
-                  borderRadius: 8, cursor: 'pointer',
-                }}
-              >
-                {d.label}{isPlayer ? ' ★' : ''}
-              </button>
-            );
-          })}
+      <DashBox title="Deine Lage" icon="dashVerein">
+        {my ? <>
+          <div className="dkpis">
+            <Kpi value={`${my.position}.`} label="Platz" />
+            <Kpi value={my.points} label="Punkte" />
+          </div>
+          <KV k="Rückstand auf Platz 1" v={top && top.clubId !== my.clubId ? `${top.points - my.points} Pkt.` : 'Tabellenführer'} />
+          <KV k={`Abstand zu Platz ${relRow?.position ?? "–"}`} v={relRow && my.position < relRow.position ? `${my.points - relRow.points} Pkt.` : 'Abstiegszone'} />
+          <KV k="Tore" v={`${my.goalsFor}:${my.goalsAgainst}`} />
+        </> : <div className="dnote">Keine Tabellendaten.</div>}
+        <div className="dsec">Legende</div>
+        <div className="dzones">
+          {sel.tier === 1 ? <>
+            <span><span className="pos-badge zone-cl" /> Landesmeister-Pokal</span>
+            <span><span className="pos-badge zone-eu" /> UEFA-Pokal</span>
+            <span><span className="pos-badge zone-rel" /> Abstieg</span>
+          </> : <>
+            <span><span className="pos-badge zone-cl" /> Direktaufstieg</span>
+            <span><span className="pos-badge zone-eu" /> Aufstiegs-Playoff</span>
+          </>}
         </div>
-      </div>
+      </DashBox>
 
-      <div className="card">
-        <div className="table-scroll">
-          <table>
-            <thead>
-              <tr><th>#</th><th>Verein</th><th>Sp</th><th>S</th><th>U</th><th>N</th><th>Tore</th><th>Diff</th><th>Pkt</th><th>Form</th></tr>
-            </thead>
-            <tbody>
-              {sel.table.rows.map((r) => {
-                const c = clubView(g, r.clubId, seasonStartYear(g.season));
-                const mine = r.clubId === g.managedClubId;
-                return (
-                  <tr key={r.clubId} className={mine ? 'me' : ''}>
-                    <td><span className={`pos-badge ${divisionZone(r.position, sel.tier, rowCount)}`}>{r.position}</span></td>
-                    <td>
-                      <div
-                        className="club-link"
-                        style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}
-                        onClick={() => setClubModalId(r.clubId)}
-                        title="Vereinsprofil öffnen"
-                      >
-                        <ClubCrest club={c as any} size={22} />
-                        <span style={{ fontWeight: mine ? 800 : 600 }}>{c.name}</span>
-                      </div>
-                    </td>
-                    <td>{r.played}</td><td>{r.won}</td><td>{r.drawn}</td><td>{r.lost}</td>
-                    <td className="dim">{r.goalsFor}:{r.goalsAgainst}</td>
-                    <td>{r.goalDifference > 0 ? '+' : ''}{r.goalDifference}</td>
-                    <td><b className="accent-text">{r.points}</b></td>
-                    <td><div className="form-row">{r.form.map((f, i) => <span key={i} className={`form-pill ${f}`}>{f}</span>)}</div></td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-        <div className="mini dim2 mt12" style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-          {sel.tier === 1 ? (
-            <>
-              <span><span className="pos-badge zone-cl" style={{ width: 16, height: 16 }}></span> Landesmeister-Pokal</span>
-              <span><span className="pos-badge zone-eu" style={{ width: 16, height: 16 }}></span> UEFA-Pokal</span>
-              <span><span className="pos-badge zone-rel" style={{ width: 16, height: 16 }}></span> Abstieg</span>
-              <span className="dim2">Pokalsieger-Pokal: über den DFB-Pokal</span>
-            </>
-          ) : (
-            <>
-              <span><span className="pos-badge zone-cl" style={{ width: 16, height: 16 }}></span> Direktaufstieg</span>
-              <span><span className="pos-badge zone-eu" style={{ width: 16, height: 16 }}></span> Aufstiegs-Playoff</span>
-            </>
-          )}
-        </div>
-      </div>
+      <DashBox title="Ligarekorde" icon="trophy" right={sel.label}>
+        {played ? <>
+          <KV k="Bester Angriff" v={`${nameOf(best((r) => r.goalsFor).clubId)} (${best((r) => r.goalsFor).goalsFor})`} />
+          <KV k="Beste Abwehr" v={`${nameOf(best((r) => r.goalsAgainst, true).clubId)} (${best((r) => r.goalsAgainst, true).goalsAgainst})`} />
+          <KV k="Meiste Siege" v={`${nameOf(best((r) => r.won).clubId)} (${best((r) => r.won).won})`} />
+          <KV k="Meiste Remis" v={`${nameOf(best((r) => r.drawn).clubId)} (${best((r) => r.drawn).drawn})`} />
+          <KV k="Schwächster Angriff" v={`${nameOf(best((r) => r.goalsFor, true).clubId)} (${best((r) => r.goalsFor, true).goalsFor})`} />
+          <KV k="Tore gesamt · Ø pro Spiel" v={`${totalGoals} · ${matches ? (totalGoals / matches).toFixed(2) : '–'}`} strong />
+        </> : <div className="dnote">Rekorde erscheinen nach dem ersten Spieltag.</div>}
+        <div className="dnote mt8">Klicke einen Verein für sein Profil. Punkte: {g.pointSystem === '3-point' ? '3' : '2'} pro Sieg.</div>
+      </DashBox>
 
       {clubModalId && <ClubModal data={buildClubProfile(g, clubModalId)} onClose={() => setClubModalId(null)} />}
-    </div>
+    </DashPage>
   );
 }
