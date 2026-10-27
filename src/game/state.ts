@@ -54,7 +54,7 @@ export interface Game {
   messages: InboxMessage[];
   /** Wochen-Trainingsplan des Manager-Vereins (7 Tage × 3 Slots). */
   trainingPlan: WeeklyTrainingPlan;
-  /** DFB-Pokal-Wettbewerb (parallel zur Bundesliga). */
+  /** Landespokal-Wettbewerb (parallel zur 1. Liga). */
   cup: CupState;
   /** Europapokal-Wettbewerbe (optional -> abwaertskompatibel mit Alt-Saves). */
   euroCups?: { ec: CupState | null; cwc: CupState | null; uefa: CupState | null };
@@ -89,7 +89,7 @@ export function bumpMorale(m: import('../types').PlayerMorale, steps: number): i
 }
 
 // -----------------------------------------------------------------------------
-// DFB-Pokal — Hilfsfunktionen für Kalender & Nachrichten
+// Landespokal — Hilfsfunktionen für Kalender & Nachrichten
 // -----------------------------------------------------------------------------
 
 /** Kleiner FNV-1a-Hash für stabile Seeds aus Strings. */

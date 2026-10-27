@@ -41,7 +41,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   calendar.speedMs = opts.speedMs;
   const club = world.clubs[opts.managedClubId];
 
-  // --- DFB-Pokal aufsetzen: 14 Amateurvereine ergänzen (→ 32er-Feld) ---
+  // --- Landespokal aufsetzen: 14 Amateurvereine ergänzen (→ 32er-Feld) ---
   const amateurs = generateCupAmateurs(14);
   Object.assign(world.clubs, amateurs.clubs);
   Object.assign(world.players, amateurs.players);

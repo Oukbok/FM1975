@@ -47,7 +47,7 @@ export const WIKI_CATEGORIES: WikiCategory[] = [
   { id: 'staff', title: 'Mitarbeiter', icon: '🧑‍💼' },
   { id: 'marketing', title: 'Marketing', icon: '📣' },
   { id: 'calendar', title: 'Kalender & Aktivitäten', icon: '🗓️' },
-  { id: 'cup', title: 'DFB-Pokal', icon: '🏆' },
+  { id: 'cup', title: 'Landespokal', icon: '🏆' },
   { id: 'euro', title: 'Europapokal', icon: '🌍' },
   { id: 'chronicle', title: 'Chronik & Epochen', icon: '📜' },
 ];
@@ -74,7 +74,7 @@ Deutsche Retro-Fußballmanager-Simulation. Der Spielstand startet in der **Saiso
 - Die Umstellung erfolgt ausschließlich über den Chronik-Meilenstein „3-Punkte-Regel" beim Erreichen der Saison **1995/96** — das wirkt **real auf die Tabellenberechnung**.
 
 ## Chronik & Epochen
-- Historische Meilensteine (Rückpassregel, Champions League, Bosman, FFP, Torlinientechnik, VAR …) werden zur jeweiligen Saison ausgelöst — siehe Bereich **Chronik** (📜).`,
+- Historische Meilensteine (Rückpassregel, Meisterliga, Bosman, FFP, Torlinientechnik, VAR …) werden zur jeweiligen Saison ausgelöst — siehe Bereich **Chronik** (📜).`,
   },
   {
     id: 'core-datetime',
@@ -154,7 +154,7 @@ Am Saisonende (Übergang zur Folgesaison) gilt:
 Die 3 Absteiger füllen die 2. Liga wieder auf: Sie werden so verteilt, dass **jede Staffel wieder 20 Vereine** hat (die Staffel, die zwei Aufsteiger abgegeben hat, erhält zwei Absteiger; die andere einen).
 
 ## Dein Verein steigt mit
-- Steigt dein Verein auf oder ab, **folgt die volle Match-Engine deinem Verein** in die neue Liga/Staffel. Spielplan, Tabelle und DFB-Pokal-Feld passen sich automatisch an (18 → 34 Spieltage bzw. 20 → 38 Spieltage).
+- Steigt dein Verein auf oder ab, **folgt die volle Match-Engine deinem Verein** in die neue Liga/Staffel. Spielplan, Tabelle und Landespokal-Feld passen sich automatisch an (18 → 34 Spieltage bzw. 20 → 38 Spieltage).
 - Du erhältst eine Vorstands-Nachricht zum Auf- bzw. Abstieg; eine Sportredaktions-Meldung fasst alle Auf-/Absteiger zusammen.
 
 ## Ausblick
@@ -190,7 +190,7 @@ Steht zur neuen Saison eine noch nicht angewandte Reform an, führt die Engine �
 
 **Dein Verein ist geschützt:** Auch bei einer Reform, die Vereine aus der Simulation entfernt, fällt dein eigener Verein nie heraus – er wird notfalls in die unterste Ebene übernommen.
 
-## Reform 1981/82 – Eingleisige 2. Bundesliga
+## Reform 1981/82 – Eingleisige 2. 1. Liga
 Die beiden Staffeln **Nord und Süd** der 2. Liga werden zu **einer eingleisigen 2. Liga mit 20 Vereinen** (38 Spieltage) zusammengeführt.
 - **Qualifikation:** die **besten 10** jeder Staffel (Nord + Süd) der Saison 1980/81, abzüglich der Aufsteiger in die 1. Liga, ergänzt um die 3 Erstliga-Absteiger.
 - Alle übrigen 2.-Liga-Vereine steigen in die (nicht simulierten) Amateurligen ab und werden aus der Simulation entfernt.
@@ -1439,15 +1439,15 @@ Spiel und keiner anderen Aktivität** kollidieren.
 - Alle Datumsberechnungen laufen konsequent in **UTC**.`,
   },
   // ---------------------------------------------------------------------------
-  // DFB-POKAL
+  // Verband-POKAL
   // ---------------------------------------------------------------------------
   {
     id: 'cup-overview',
     category: 'cup',
-    title: 'DFB-Pokal — Überblick & Format',
+    title: 'Landespokal — Überblick & Format',
     keywords: ['pokal', 'dfb', 'ko', 'knockout', 'runde', 'finale', 'amateure', 'turnierbaum', 'bracket'],
-    body: `## DFB-Pokal
-Parallel zur Bundesliga läuft der **DFB-Pokal** als reiner **K.-o.-Wettbewerb**. Er hat eine eigene Seite (🏆 **Pokal** in der Navigation) mit Turnierbaum, deinem eingefärbten Pokalweg und der Preisgeld-Leiter.
+    body: `## Landespokal
+Parallel zur 1. Liga läuft der **Landespokal** als reiner **K.-o.-Wettbewerb**. Er hat eine eigene Seite (🏆 **Pokal** in der Navigation) mit Turnierbaum, deinem eingefärbten Pokalweg und der Preisgeld-Leiter.
 
 ## Teilnehmerfeld — 32 Mannschaften
 - **18 Bundesligisten** (alle Erstligavereine der Saison)
@@ -1515,30 +1515,30 @@ Parallel zur Bundesliga läuft der **DFB-Pokal** als reiner **K.-o.-Wettbewerb**
     title: 'Europapokal — Die drei Wettbewerbe',
     keywords: ['europapokal', 'europa', 'landesmeister', 'pokalsieger', 'uefa', 'ec', 'cwc', 'international', 'europacup'],
     body: `## Drei Wettbewerbe wie 1975
-Parallel zur Liga und zum DFB-Pokal laufen die **drei europäischen Wettbewerbe der Ära** — genau wie 1975/76. Sie haben eine eigene Seite (**International** in der Navigation) mit den Begegnungen je Wettbewerb.
+Parallel zur Liga und zum Landespokal laufen die **drei europäischen Wettbewerbe der Ära** — genau wie 1975/76. Sie haben eine eigene Seite (**International** in der Navigation) mit den Begegnungen je Wettbewerb.
 
 | Kürzel | Wettbewerb | Feld | deutsche Plätze |
 |---|---|---|---|
 | ec | Europapokal der Landesmeister | 16 | 1 (Meister) |
-| cwc | Europapokal der Pokalsieger | 16 | 1 (DFB-Pokalsieger) |
-| uefa | UEFA-Pokal | 32 | 3 (Ligaplätze 2–4) |
+| cwc | Europapokal der Pokalsieger | 16 | 1 (Landespokalsieger) |
+| uefa | Europa-Pokal | 32 | 3 (Ligaplätze 2–4) |
 
 - **Europapokal der Landesmeister:** 16 Teams — **15 ausländische** Vereine + der **deutsche Meister**.
-- **Europapokal der Pokalsieger:** 16 Teams — **15 ausländische** Vereine + der **deutsche DFB-Pokalsieger**.
-- **UEFA-Pokal:** 32 Teams — **29 ausländische** Vereine + **3 deutsche** (Ligaplätze 2–4).
+- **Europapokal der Pokalsieger:** 16 Teams — **15 ausländische** Vereine + der **deutsche Landespokalsieger**.
+- **Europa-Pokal:** 32 Teams — **29 ausländische** Vereine + **3 deutsche** (Ligaplätze 2–4).
 
 Das Feld geht in jedem Wettbewerb exakt auf (16/16/32).
 
 ## Ausländische Teilnehmer
-- Die ausländischen Klubs stammen fest aus dem Datensatz (\`src/data/europe.ts\`) und existierten alle 1975 real (z. B. Real Madrid, FC Liverpool, Ajax Amsterdam, Juventus Turin im Landesmeister-Pokal).
+- Die ausländischen Klubs stammen fest aus dem Datensatz (\`src/data/europe.ts\`) und sind an die Spitzenvereine des Jahres 1975 angelehnt, tragen aber erfundene Namen (z. B. Madrid Weiß, Liverpool Rot, Amsterdam, Turin Schwarz-Weiß im Landesmeister-Pokal).
 - Ihre **Stärke** liegt auf der Skala ~55–82 (plausible Spielwerte, keine exakten historischen Tabellenplätze).
 - Sie werden als leichte Einträge geführt (Name/Stadt/Land/Stärke/Farben) — **kein voller Kader**, solange dein Verein nicht gegen sie spielt.
 
 ## Erste Saison 1975/76 — feste historische Starter
 Für die allererste Saison gibt es noch keine gespielte Vorsaison. Deshalb sind die deutschen Starter fest auf die realen Europapokal-Teilnehmer 1975/76 gesetzt (Basis Saison 1974/75):
-- **Landesmeister-Pokal:** Borussia Mönchengladbach (Meister 1974/75)
-- **Pokalsieger-Pokal:** Eintracht Frankfurt (DFB-Pokalsieger 1974/75)
-- **UEFA-Pokal:** Hertha BSC, Kickers Offenbach, MSV Duisburg (Ligaplätze 2–4)
+- **Landesmeister-Pokal:** Mönchengladbach (Meister 1974/75)
+- **Pokalsieger-Pokal:** Frankfurt Rot (Landespokalsieger 1974/75)
+- **Europa-Pokal:** Berlin Blau, Offenbach, Duisburg (Ligaplätze 2–4)
 
 Ab 1976/77 werden die deutschen Teilnehmer dynamisch aus dem Spielstand ermittelt (siehe **Qualifikation**).`,
   },
@@ -1551,8 +1551,8 @@ Ab 1976/77 werden die deutschen Teilnehmer dynamisch aus dem Spielstand ermittel
 Die Europapokal-Saison X/Y wird aus der **Vorsaison** gespeist:
 
 - **Landesmeister-Pokal (ec):** der **Meister** der Vorsaison (Endtabelle 1. Liga, Platz 1).
-- **Pokalsieger-Pokal (cwc):** der **DFB-Pokalsieger** der Vorsaison. Ist er zugleich Meister (also schon im Landesmeister-Pokal), rückt der **Pokalfinalist** (Verlierer des Finales) nach; ist auch der nicht ermittelbar, der **Vizemeister**.
-- **UEFA-Pokal (uefa):** die nächsten **3 Ligaplätze ab Platz 2** (also 2, 3, 4). Kein Verein darf doppelt qualifiziert sein: bereits für ec/cwc qualifizierte Vereine werden entfernt und die Startplätze **kaskadieren nach unten** (Platz 5, 6, …), bis genau 3 UEFA-Starter feststehen.
+- **Pokalsieger-Pokal (cwc):** der **Landespokalsieger** der Vorsaison. Ist er zugleich Meister (also schon im Landesmeister-Pokal), rückt der **Pokalfinalist** (Verlierer des Finales) nach; ist auch der nicht ermittelbar, der **Vizemeister**.
+- **Europa-Pokal (uefa):** die nächsten **3 Ligaplätze ab Platz 2** (also 2, 3, 4). Kein Verein darf doppelt qualifiziert sein: bereits für ec/cwc qualifizierte Vereine werden entfernt und die Startplätze **kaskadieren nach unten** (Platz 5, 6, …), bis genau 3 Europapokal-Starter feststehen.
 
 Die deutschen Starter sind immer volle Vereine des Spielstands. Nur dein Verein wird real gemanagt; die übrigen deutschen laufen wie die ausländischen per Stärke.
 
@@ -1562,11 +1562,11 @@ Die deutschen Starter sind immer volle Vereine des Spielstands. Nur dein Verein 
 - In der Anzeige stehen **n.V.** (nach Verlängerung) bzw. **i.E.** (im Elfmeterschießen) hinter dem Ergebnis.
 - **Runden je Wettbewerb:**
   - Landesmeister-Pokal & Pokalsieger-Pokal (16 Teams): Achtelfinale, Viertelfinale, Halbfinale, Finale.
-  - UEFA-Pokal (32 Teams): 1. Runde, Achtelfinale, Viertelfinale, Halbfinale, Finale.
+  - Europa-Pokal (32 Teams): 1. Runde, Achtelfinale, Viertelfinale, Halbfinale, Finale.
 
 ## Auslosung & Termine
 - **Nach jeder Runde wird neu ausgelost** — kein fester Turnierpfad. Alle Auslosungen leiten ihren Zufall aus einem **festen Seed** ab (reproduzierbar).
-- Die europäischen Runden liegen historisch über die Saison verteilt (Herbst-Runden, Frühjahr Viertel-/Halbfinale, Mai Finale) auf **Mitte-der-Woche-Terminen** und werden **kollisionsfrei zu Liga- und DFB-Pokal-Terminen** geplant (bei Kollision tageweise verschoben).`,
+- Die europäischen Runden liegen historisch über die Saison verteilt (Herbst-Runden, Frühjahr Viertel-/Halbfinale, Mai Finale) auf **Mitte-der-Woche-Terminen** und werden **kollisionsfrei zu Liga- und Landespokal-Terminen** geplant (bei Kollision tageweise verschoben).`,
   },
   {
     id: 'euro-simulation',
@@ -1574,20 +1574,20 @@ Die deutschen Starter sind immer volle Vereine des Spielstands. Nur dein Verein 
     title: 'Europapokal — Simulation, Preisgeld & Tabellen-Markierung',
     keywords: ['simulation', 'lazy', 'kader', 'stärke', 'preisgeld', 'prämie', 'tabelle', 'zone', 'matchengine'],
     body: `## Wie Begegnungen simuliert werden
-- **Dein Verein beteiligt:** die Partie läuft über die **volle Match-Engine** (wie beim DFB-Pokal, inkl. Verlängerung/Elfmeterschießen im Textticker). Ist der Gegner ein ausländischer Verein, wird **einmalig** ein voller Kader passend zur Stärke des Klubs erzeugt (**Lazy-Kader**, ohne Jugendstamm) und dem Spielstand hinzugefügt — nur beim ersten Aufeinandertreffen. So bleibt der Spielstand klein.
+- **Dein Verein beteiligt:** die Partie läuft über die **volle Match-Engine** (wie beim Landespokal, inkl. Verlängerung/Elfmeterschießen im Textticker). Ist der Gegner ein ausländischer Verein, wird **einmalig** ein voller Kader passend zur Stärke des Klubs erzeugt (**Lazy-Kader**, ohne Jugendstamm) und dem Spielstand hinzugefügt — nur beim ersten Aufeinandertreffen. So bleibt der Spielstand klein.
 - **Neutrale Begegnungen** (dein Verein nicht dabei): reine, **deterministische Stärke-Simulation** (Zufall aus einem Seed der Begegnung). Es wird kein Match-Objekt erzeugt; Ergebnis, ggf. Verlängerung/Elfmeterschießen und Sieger werden direkt gesetzt.
 - **Stärke-Basis:** ausländische Vereine nutzen ihren festen Stärkewert; deutsche Vereine den **Kader-Schnitt** (bzw. den Ruf als Rückfall).
 
 ## Nachrichten
-- **Auslosungs- und Ergebnis-Nachrichten** bekommst du nur, wenn **dein Verein beteiligt** ist (wie beim DFB-Pokal).
+- **Auslosungs- und Ergebnis-Nachrichten** bekommst du nur, wenn **dein Verein beteiligt** ist (wie beim Landespokal).
 - Europäische Titelträger tauchen sonst als dezente **Chronik-/Info-Notiz** auf.
 
 ## Preisgeld je gewonnener Begegnung (DM)
-Das Preisgeld ist ära-gerecht gestaffelt (Landesmeister-Pokal > Pokalsieger-Pokal > UEFA-Pokal) und wird **pro gewonnener Begegnung** verbucht:
+Das Preisgeld ist ära-gerecht gestaffelt (Landesmeister-Pokal > Pokalsieger-Pokal > Europa-Pokal) und wird **pro gewonnener Begegnung** verbucht:
 
-| Runde | Landesmeister-Pokal | Pokalsieger-Pokal | UEFA-Pokal |
+| Runde | Landesmeister-Pokal | Pokalsieger-Pokal | Europa-Pokal |
 |---|---|---|---|
-| 1. Runde (nur UEFA) | — | — | 20.000 |
+| 1. Runde (nur Europa-Verband) | — | — | 20.000 |
 | Achtelfinale | 50.000 | 40.000 | 40.000 |
 | Viertelfinale | 100.000 | 80.000 | 80.000 |
 | Halbfinale | 200.000 | 160.000 | 160.000 |
@@ -1596,8 +1596,8 @@ Das Preisgeld ist ära-gerecht gestaffelt (Landesmeister-Pokal > Pokalsieger-Pok
 ## Ligatabelle — Europapokal-Zonen (1. Liga)
 Die Tabellen-Markierung der 1. Liga zeigt die europäische Qualifikation:
 - **Platz 1** → **Landesmeister-Pokal** (Meister-Zone).
-- **Platz 2–4** → **UEFA-Pokal**.
-- Der **Pokalsieger-Pokal** hängt am **DFB-Pokal**, nicht an der Ligatabelle — dafür gibt es keine eigene Tabellenzone (nur ein Legenden-Hinweis).
+- **Platz 2–4** → **Europa-Pokal**.
+- Der **Pokalsieger-Pokal** hängt am **Landespokal**, nicht an der Ligatabelle — dafür gibt es keine eigene Tabellenzone (nur ein Legenden-Hinweis).
 - Die Abstiegszone unten bleibt unverändert.
 
 ## Persistenz
@@ -1632,17 +1632,17 @@ Meilensteine – jeweils mit Jahr, Saison, Kategorie und Beschreibung.
 |---|---|---|
 | **1975/76** | 2-Punkte-Regel, drei Absteiger & Trikotwerbung | Startbedingungen; Trikotsponsoring freigeschaltet |
 | **1992/93** | Rückpassregel | Torwart darf Rückpass nicht mehr aufnehmen |
-| **1992/93** | UEFA Champions League | Wettbewerb entsteht |
+| **1992/93** | Europa-Verband Meisterliga | Wettbewerb entsteht |
 | **1995/96** | **3-Punkte-Regel** | **3 Punkte pro Sieg — verändert die Tabellenrechnung real** |
 | **1995/96** | Bosman-Urteil | ablösefreie Wechsel, EU-Transfermarkt |
 | **2010/11** | Financial Fair Play | solide Vereinsfinanzen als Auflage |
 | **2015/16** | Torlinientechnik | zweifelsfreie Tor-Entscheidung |
-| **2017/18** | Video-Assistent (1. Liga) | VAR in der 1. Bundesliga |
-| **2019/20** | Video-Assistent (2. Liga) | VAR in der 2. Bundesliga |
+| **2017/18** | Video-Assistent (1. Liga) | VAR in der 1. 1. Liga |
+| **2019/20** | Video-Assistent (2. Liga) | VAR in der 2. 1. Liga |
 
 ## Neue Saison starten
 Am Saisonende wird aus dem **„Weiter"-Button** oben rechts ein **„▶ Neue Saison"-Button**. Ein Klick erzeugt Spielplan,
-Tabelle, Kalender und DFB-Pokal der Folgesaison neu, zählt das Saison-Label hoch und löst die fälligen Chronik-Meilensteine
+Tabelle, Kalender und Landespokal der Folgesaison neu, zählt das Saison-Label hoch und löst die fälligen Chronik-Meilensteine
 aus. Kader, Finanzen und Jugendakademien bleiben erhalten (der Nachwuchs rückt am 1. Juli automatisch nach).
 
 ## Für Entwickler: erweiterbar
@@ -1676,7 +1676,7 @@ Tabelle sofort neu berechnet** (\`calculateTable\`). Ab diesem Zeitpunkt werden 
 Der Profifußball ist 1975 finanziell winzig gegenüber heute. Damit die Finanzen glaubhaft mitwachsen, führt das Spiel
 einen **Wirtschafts-Index** (economyScale) über eine **Makro-Erlöskurve** (\`src/engine/economy.ts\`).
 
-- **Stützwerte:** historische Größenordnungen der Bundesliga-Gesamterlöse (1975 → 2030) bilden Ankerpunkte.
+- **Stützwerte:** historische Größenordnungen der 1. Liga-Gesamterlöse (1975 → 2030) bilden Ankerpunkte.
 - **Zwischen den Ankern:** **geometrische Interpolation** \`R(y) = R0 · (R1/R0)^((y−y0)/(y1−y0))\` — gleichmäßiges prozentuales Wachstum.
 - **Nach 2030 (Projektion):** jährliche Fortschreibung mit ~**+3,7 %** Basiswachstum, gedämpft durch eine
   **Sättigung** \`d_sat = 0,035 · R/(R + 12 Mrd €)\` und überlagert von deterministischen **±3 %-Schocks** je Jahr.

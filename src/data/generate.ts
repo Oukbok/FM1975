@@ -34,7 +34,7 @@ function pick<T>(arr: T[]): T {
 }
 
 // -----------------------------------------------------------------------------
-// Vereins-Stammdaten (Bundesliga 1980/81)
+// Vereins-Stammdaten (1. Liga 1980/81)
 // -----------------------------------------------------------------------------
 interface ClubSeed {
   id: string; name: string; shortName: string; city: string;
@@ -55,24 +55,24 @@ interface ClubSeed {
 // Farben werden generisch aus Stadttradition abgeleitet (Farben sind nicht
 // schützbar); Stadionnamen sind generisch gehalten.
 const CLUB_SEEDS: ClubSeed[] = [
-  { id: 'mgl', name: 'Mönchengladbach', shortName: 'MGL', city: 'Mönchengladbach', founded: 1900, primary: '#000000', secondary: '#00A650', reputation: 86, stadium: 'Stadion am Bökelberg', capacity: 34500 },
-  { id: 'ham', name: 'Hamburg Blau', shortName: 'HAB', city: 'Hamburg', founded: 1887, primary: '#003DA5', secondary: '#FFFFFF', reputation: 84, stadium: 'Volkspark-Stadion', capacity: 61000 },
-  { id: 'bra', name: 'Braunschweig', shortName: 'BRA', city: 'Braunschweig', founded: 1895, primary: '#F6C500', secondary: '#004A99', reputation: 74, stadium: 'Stadion an der Hamburger Straße', capacity: 38000 },
-  { id: 'muc', name: 'München Rot', shortName: 'MÜR', city: 'München', founded: 1900, primary: '#DC052D', secondary: '#0066B2', reputation: 85, stadium: 'Olympia-Stadion', capacity: 69000 },
-  { id: 'kai', name: 'Kaiserslautern', shortName: 'KAI', city: 'Kaiserslautern', founded: 1900, primary: '#E30613', secondary: '#FFFFFF', reputation: 78, stadium: 'Stadion auf dem Betzenberg', capacity: 38000 },
-  { id: 'gel', name: 'Gelsenkirchen', shortName: 'GEL', city: 'Gelsenkirchen', founded: 1904, primary: '#004D9D', secondary: '#FFFFFF', reputation: 77, stadium: 'Park-Stadion', capacity: 70000 },
-  { id: 'kln', name: 'Köln Rot', shortName: 'KÖR', city: 'Köln', founded: 1948, primary: '#ED1C24', secondary: '#FFFFFF', reputation: 82, stadium: 'Müngersdorfer Stadion', capacity: 61000 },
-  { id: 'ber', name: 'Berlin Blau', shortName: 'BEB', city: 'Berlin', founded: 1892, primary: '#004A99', secondary: '#FFFFFF', reputation: 79, stadium: 'Olympia-Stadion Berlin', capacity: 76000 },
-  { id: 'fra', name: 'Frankfurt Rot', shortName: 'FRR', city: 'Frankfurt', founded: 1899, primary: '#E1000F', secondary: '#000000', reputation: 80, stadium: 'Wald-Stadion', capacity: 62000 },
-  { id: 'ess', name: 'Essen Rot', shortName: 'ESR', city: 'Essen', founded: 1907, primary: '#E30613', secondary: '#FFFFFF', reputation: 71, stadium: 'Stadion an der Hafenstraße', capacity: 40000 },
-  { id: 'dus', name: 'Düsseldorf', shortName: 'DÜS', city: 'Düsseldorf', founded: 1895, primary: '#E2001A', secondary: '#FFFFFF', reputation: 73, stadium: 'Rhein-Stadion', capacity: 68000 },
-  { id: 'dui', name: 'Duisburg', shortName: 'DUI', city: 'Duisburg', founded: 1902, primary: '#0055A5', secondary: '#FFFFFF', reputation: 70, stadium: 'Wedau-Stadion', capacity: 38500 },
-  { id: 'bre', name: 'Bremen', shortName: 'BRE', city: 'Bremen', founded: 1899, primary: '#009A44', secondary: '#FFFFFF', reputation: 72, stadium: 'Weser-Stadion', capacity: 36000 },
-  { id: 'kre', name: 'Krefeld', shortName: 'KRE', city: 'Krefeld', founded: 1905, primary: '#E2001A', secondary: '#0055A5', reputation: 66, stadium: 'Grotenburg-Stadion', capacity: 34500 },
-  { id: 'kar', name: 'Karlsruhe', shortName: 'KAR', city: 'Karlsruhe', founded: 1894, primary: '#0033A0', secondary: '#FFFFFF', reputation: 67, stadium: 'Wildpark-Stadion', capacity: 35000 },
-  { id: 'han', name: 'Hannover', shortName: 'HAN', city: 'Hannover', founded: 1896, primary: '#00963E', secondary: '#000000', reputation: 68, stadium: 'Niedersachsen-Stadion', capacity: 60000 },
-  { id: 'boc', name: 'Bochum', shortName: 'BOC', city: 'Bochum', founded: 1848, primary: '#005CA9', secondary: '#FFFFFF', reputation: 66, stadium: 'Ruhr-Stadion', capacity: 40000 },
-  { id: 'off', name: 'Offenbach', shortName: 'OFF', city: 'Offenbach', founded: 1901, primary: '#E30613', secondary: '#FFFFFF', reputation: 65, stadium: 'Stadion am Bieberer Berg', capacity: 30000 },
+  { id: 'mgl', name: 'Mönchengladbach', shortName: 'MGL', city: 'Mönchengladbach', founded: 1900, primary: '#000000', secondary: '#00A650', reputation: 86, stadium: 'Stadion am Gladbacher Hang', capacity: 34500 },
+  { id: 'ham', name: 'Hamburg Blau', shortName: 'HAB', city: 'Hamburg', founded: 1887, primary: '#003DA5', secondary: '#FFFFFF', reputation: 84, stadium: 'Elbpark-Stadion', capacity: 61000 },
+  { id: 'bra', name: 'Braunschweig', shortName: 'BRA', city: 'Braunschweig', founded: 1895, primary: '#F6C500', secondary: '#004A99', reputation: 74, stadium: 'Oker-Stadion', capacity: 38000 },
+  { id: 'muc', name: 'München Rot', shortName: 'MÜR', city: 'München', founded: 1900, primary: '#DC052D', secondary: '#0066B2', reputation: 85, stadium: 'Isar-Stadion', capacity: 69000 },
+  { id: 'kai', name: 'Kaiserslautern', shortName: 'KAI', city: 'Kaiserslautern', founded: 1900, primary: '#E30613', secondary: '#FFFFFF', reputation: 78, stadium: 'Bergstadion Lautern', capacity: 38000 },
+  { id: 'gel', name: 'Gelsenkirchen', shortName: 'GEL', city: 'Gelsenkirchen', founded: 1904, primary: '#004D9D', secondary: '#FFFFFF', reputation: 77, stadium: 'Emscherpark-Stadion', capacity: 70000 },
+  { id: 'kln', name: 'Köln Rot', shortName: 'KÖR', city: 'Köln', founded: 1948, primary: '#ED1C24', secondary: '#FFFFFF', reputation: 82, stadium: 'Rheinwiesen-Stadion', capacity: 61000 },
+  { id: 'ber', name: 'Berlin Blau', shortName: 'BEB', city: 'Berlin', founded: 1892, primary: '#004A99', secondary: '#FFFFFF', reputation: 79, stadium: 'Havel-Stadion', capacity: 76000 },
+  { id: 'fra', name: 'Frankfurt Rot', shortName: 'FRR', city: 'Frankfurt', founded: 1899, primary: '#E1000F', secondary: '#000000', reputation: 80, stadium: 'Mainwald-Stadion', capacity: 62000 },
+  { id: 'ess', name: 'Essen Rot', shortName: 'ESR', city: 'Essen', founded: 1907, primary: '#E30613', secondary: '#FFFFFF', reputation: 71, stadium: 'Stadion an der Zeche', capacity: 40000 },
+  { id: 'dus', name: 'Düsseldorf', shortName: 'DÜS', city: 'Düsseldorf', founded: 1895, primary: '#E2001A', secondary: '#FFFFFF', reputation: 73, stadium: 'Rheinufer-Stadion', capacity: 68000 },
+  { id: 'dui', name: 'Duisburg', shortName: 'DUI', city: 'Duisburg', founded: 1902, primary: '#0055A5', secondary: '#FFFFFF', reputation: 70, stadium: 'Stadion am Kanal', capacity: 38500 },
+  { id: 'bre', name: 'Bremen', shortName: 'BRE', city: 'Bremen', founded: 1899, primary: '#009A44', secondary: '#FFFFFF', reputation: 72, stadium: 'Hanse-Stadion', capacity: 36000 },
+  { id: 'kre', name: 'Krefeld', shortName: 'KRE', city: 'Krefeld', founded: 1905, primary: '#E2001A', secondary: '#0055A5', reputation: 66, stadium: 'Seidenweber-Stadion', capacity: 34500 },
+  { id: 'kar', name: 'Karlsruhe', shortName: 'KAR', city: 'Karlsruhe', founded: 1894, primary: '#0033A0', secondary: '#FFFFFF', reputation: 67, stadium: 'Schlossgarten-Stadion', capacity: 35000 },
+  { id: 'han', name: 'Hannover', shortName: 'HAN', city: 'Hannover', founded: 1896, primary: '#00963E', secondary: '#000000', reputation: 68, stadium: 'Leine-Stadion', capacity: 60000 },
+  { id: 'boc', name: 'Bochum', shortName: 'BOC', city: 'Bochum', founded: 1848, primary: '#005CA9', secondary: '#FFFFFF', reputation: 66, stadium: 'Hellweg-Stadion', capacity: 40000 },
+  { id: 'off', name: 'Offenbach', shortName: 'OFF', city: 'Offenbach', founded: 1901, primary: '#E30613', secondary: '#FFFFFF', reputation: 65, stadium: 'Stadion am Mainbogen', capacity: 30000 },
 ];
 
 // -----------------------------------------------------------------------------
@@ -308,7 +308,7 @@ function buildClubFromSeed(
     trainingSchedule: defaultTrainingSchedule(),
     isPlayerControlled: seed.id === managedClubId,
     aiManagerSkill: ri(45, 85),
-    boardExpectation: seed.reputation > 82 ? 'Meisterschaft' : seed.reputation > 72 ? 'UEFA-Cup-Platz' : seed.reputation > 65 ? 'Gesicherter Mittelfeldplatz' : 'Klassenerhalt',
+    boardExpectation: seed.reputation > 82 ? 'Meisterschaft' : seed.reputation > 72 ? 'Europa-Pokal-Platz' : seed.reputation > 65 ? 'Gesicherter Mittelfeldplatz' : 'Klassenerhalt',
     boardConfidence: ri(55, 80),
     youthPlayerIds,
     infrastructure,
@@ -357,7 +357,7 @@ export interface SecondLigaSeed {
 }
 
 export const SECOND_LIGA_NORD_SEEDS: SecondLigaSeed[] = [
-  // Reale Teilnehmer der 2. Bundesliga Nord 1975/76 (als rechtssichere Stadt-
+  // Reale Teilnehmer der 2. 1. Liga Nord 1975/76 (als rechtssichere Stadt-
   // namen). Doppelstädte werden per belegter Vereinsfarbe unterschieden; wo
   // Farbe kollidiert/unbelegt ist, per belegtem Stadtteil (Köln Süd = Südstadt,
   // Berlin Reinickendorf = Wacker 04, dessen Lila mit Berlin Lila/TeBe kollidiert).
@@ -384,7 +384,7 @@ export const SECOND_LIGA_NORD_SEEDS: SecondLigaSeed[] = [
 ];
 
 export const SECOND_LIGA_SUED_SEEDS: SecondLigaSeed[] = [
-  // Reale Teilnehmer der 2. Bundesliga Süd 1975/76 (als rechtssichere Stadt-
+  // Reale Teilnehmer der 2. 1. Liga Süd 1975/76 (als rechtssichere Stadt-
   // namen). Doppelstädte per Farbe: München Blau = 1860, Stuttgart Rot/Blau =
   // VfB/Kickers, Frankfurt Blau = FSV (Gegenstueck zu Frankfurt Rot in Liga 1).
   { id: 's_saa', name: 'Saarbrücken', shortName: 'SAA', city: 'Saarbrücken', primary: '#000000', secondary: '#0055A5', strength: 67 },
@@ -438,7 +438,7 @@ export function getClubSeeds(): ClubSeed[] {
 }
 
 // -----------------------------------------------------------------------------
-// DFB-POKAL — Amateur- / Unterklassevereine
+// Verband-POKAL — Amateur- / Unterklassevereine
 // -----------------------------------------------------------------------------
 // Für den Pokal werden zusätzlich kleine Vereine erzeugt, damit ein sauberes
 // 32er-Feld entsteht (18 Bundesligisten + 14 Amateure). Sie sind schwächer,
@@ -466,7 +466,7 @@ export interface CupAmateurs {
 }
 
 /**
- * Erzeugt `count` Amateur-/Unterklassevereine für den DFB-Pokal.
+ * Erzeugt `count` Amateur-/Unterklassevereine für den Landespokal.
  * Deterministisch (fester Seed), damit jeder Spielstart dasselbe Feld erhält.
  * Die Vereine bekommen KEINEN Jugendstamm (kein Akademie-Kohortenaufbau).
  */

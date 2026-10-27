@@ -14,8 +14,8 @@ export function addCupCalendarEvents(calendar: GameCalendar, cup: CupState): voi
       id: `cupev_${round.index}`,
       date: round.date,
       type: 'cup_matchday',
-      title: `DFB-Pokal: ${round.name}`,
-      description: `${round.name} im DFB-Pokal ${cup.season}.`,
+      title: `Landespokal: ${round.name}`,
+      description: `${round.name} im Landespokal ${cup.season}.`,
       cupRoundIndex: round.index,
       processed: false,
       requiresAction: false,
@@ -35,7 +35,7 @@ export function leagueDateSet(fixtures: Match[]): Set<string> {
 // EUROPAPOKAL — Hilfsfunktionen für Kalender, Aufbau & Nachrichten
 // -----------------------------------------------------------------------------
 
-/** Menge aller DFB-Pokal-Termine (zur Kollisionsvermeidung der Euro-Termine). */
+/** Menge aller Landespokal-Termine (zur Kollisionsvermeidung der Euro-Termine). */
 export function cupDateSet(cup: CupState | null | undefined): Set<string> {
   const s = new Set<string>();
   if (cup) for (const r of cup.rounds) s.add(r.date);
@@ -185,7 +185,7 @@ export function cupDrawMessage(cup: CupState, clubs: Record<string, Club>, manag
   const round = cup.rounds[cup.currentRoundIndex];
   const myTie = round.ties.find((t) => t.involvesPlayerClub);
   const name = (id: string) => clubs[id]?.name ?? id;
-  let body = `Die Auslosung der ${round.name} des DFB-Pokals ${cup.season} ist erfolgt. 32 Mannschaften kämpfen um den Pokal — 18 Bundesligisten und 14 Amateurvereine.\n\n`;
+  let body = `Die Auslosung der ${round.name} des Landespokals ${cup.season} ist erfolgt. 32 Mannschaften kämpfen um den Pokal — 18 Bundesligisten und 14 Amateurvereine.\n\n`;
   if (myTie) {
     const heim = myTie.homeClubId === managedClubId;
     const gegner = heim ? name(myTie.awayClubId) : name(myTie.homeClubId);
@@ -196,8 +196,8 @@ export function cupDrawMessage(cup: CupState, clubs: Record<string, Club>, manag
   return makeMessage({
     date,
     category: 'cup',
-    from: 'DFB-Pokal-Kommission',
-    subject: `Auslosung ${round.name} — DFB-Pokal ${cup.season}`,
+    from: 'Landespokal-Kommission',
+    subject: `Auslosung ${round.name} — Landespokal ${cup.season}`,
     shortText: myTie
       ? `Dein Los: ${myTie.homeClubId === managedClubId ? name(myTie.awayClubId) : name(myTie.homeClubId)}`
       : 'Die 1. Hauptrunde ist ausgelost.',
@@ -211,7 +211,7 @@ export function cupNextDrawMessage(cup: CupState, clubs: Record<string, Club>, m
   const round = cup.rounds[roundIndex];
   const myTie = round.ties.find((t) => t.involvesPlayerClub);
   const name = (id: string) => clubs[id]?.name ?? id;
-  let body = `Die Auslosung des ${round.name} im DFB-Pokal ${cup.season} ist erfolgt. Noch ${round.ties.length * 2} Mannschaften sind im Wettbewerb.\n\n`;
+  let body = `Die Auslosung des ${round.name} im Landespokal ${cup.season} ist erfolgt. Noch ${round.ties.length * 2} Mannschaften sind im Wettbewerb.\n\n`;
   if (myTie) {
     const heim = myTie.homeClubId === managedClubId;
     const gegner = heim ? name(myTie.awayClubId) : name(myTie.homeClubId);
@@ -222,8 +222,8 @@ export function cupNextDrawMessage(cup: CupState, clubs: Record<string, Club>, m
   return makeMessage({
     date,
     category: 'cup',
-    from: 'DFB-Pokal-Kommission',
-    subject: `Auslosung ${round.name} — DFB-Pokal ${cup.season}`,
+    from: 'Landespokal-Kommission',
+    subject: `Auslosung ${round.name} — Landespokal ${cup.season}`,
     shortText: myTie
       ? `Dein Los: ${myTie.homeClubId === managedClubId ? name(myTie.awayClubId) : name(myTie.homeClubId)}`
       : `${round.name} ausgelost.`,
@@ -245,17 +245,17 @@ export function cupResultMessage(cup: CupState, clubs: Record<string, Club>, man
   const hName = name(tie.homeClubId); const aName = name(tie.awayClubId);
   let subject: string; let shortText: string; let body: string;
   if (isFinal && advanced) {
-    subject = `🏆 DFB-Pokalsieger ${cup.season}!`;
-    shortText = 'Ihr habt den DFB-Pokal gewonnen!';
-    body = `Sensation! Im Finale des DFB-Pokals ${cup.season} setzte sich dein Verein mit ${scoreLine} gegen ${opp} durch.\n\nDer DFB-Pokal steht in der Vitrine — ein historischer Triumph! Prämie: ${Math.round(prize).toLocaleString('de-DE')} DM.`;
+    subject = `🏆 Landespokalsieger ${cup.season}!`;
+    shortText = 'Ihr habt den Landespokal gewonnen!';
+    body = `Sensation! Im Finale des Landespokals ${cup.season} setzte sich dein Verein mit ${scoreLine} gegen ${opp} durch.\n\nDer Landespokal steht in der Vitrine — ein historischer Triumph! Prämie: ${Math.round(prize).toLocaleString('de-DE')} DM.`;
   } else if (advanced) {
     subject = `Pokal: Weiter! ${hName} ${scoreLine} ${aName}`;
     shortText = `${round.name} gewonnen — weiter im Pokal.`;
-    body = `${round.name}, DFB-Pokal ${cup.season}:\n\n${hName} ${scoreLine} ${aName}\n\nDein Verein steht in der nächsten Runde! Prämie für diese Runde: ${Math.round(prize).toLocaleString('de-DE')} DM.`;
+    body = `${round.name}, Landespokal ${cup.season}:\n\n${hName} ${scoreLine} ${aName}\n\nDein Verein steht in der nächsten Runde! Prämie für diese Runde: ${Math.round(prize).toLocaleString('de-DE')} DM.`;
   } else {
     subject = `Pokal-Aus: ${hName} ${scoreLine} ${aName}`;
     shortText = `${round.name} verloren — im Pokal ausgeschieden.`;
-    body = `${round.name}, DFB-Pokal ${cup.season}:\n\n${hName} ${scoreLine} ${aName}\n\nDein Verein ist gegen ${opp} ausgeschieden. Der Pokaltraum ist für diese Saison beendet.`;
+    body = `${round.name}, Landespokal ${cup.season}:\n\n${hName} ${scoreLine} ${aName}\n\nDein Verein ist gegen ${opp} ausgeschieden. Der Pokaltraum ist für diese Saison beendet.`;
   }
   return makeMessage({
     date: tie.date, category: 'cup', from: 'Spielbericht Pokal',

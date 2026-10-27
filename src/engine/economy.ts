@@ -25,7 +25,7 @@ export const LAST_DM_YEAR = 2001;
 export const ECONOMY_BASE_YEAR = 1975;
 
 /**
- * Historische Stützwerte der Erlös-Basis (Bundesliga-Gesamterlöse, Größenordnung),
+ * Historische Stützwerte der Erlös-Basis (1. Liga-Gesamterlöse, Größenordnung),
  * intern durchgehend in EUR geführt. DM-Ära-Werte sind aus nominalen DM
  * umgerechnet (÷ 1,95583), damit eine lückenlose Reihe entsteht.
  *

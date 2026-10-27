@@ -41,7 +41,7 @@ export function buildStripEventMap(g: Game): Map<string, StripEvent> {
       }
       case 'cup_matchday': {
         const round = ev.cupRoundIndex != null ? g.cup?.rounds[ev.cupRoundIndex] : undefined;
-        let line = 'DFB-Pokal';
+        let line = 'Landespokal';
         if (round?.drawn) {
           const tie = round.ties.find((t) => t.homeClubId === g.managedClubId || t.awayClubId === g.managedClubId);
           if (tie) {
