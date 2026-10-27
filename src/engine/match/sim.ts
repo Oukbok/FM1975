@@ -4,6 +4,7 @@
 // (step() je Minute + Eingriffe des Trainers). Ergebnisse werden in finish()
 // identisch verbucht.
 // =============================================================================
+import { attendanceRestriction } from '../../data/history';
 import type { Club, InjurySeverity, Player } from '../../types';
 import { positionSuitability } from '../positions';
 import { eraRules, type EraRules } from './era';
@@ -79,7 +80,7 @@ export class MatchSim {
     this.live = !!opts.live;
     this.derby = !!homeClub.city && homeClub.city === awayClub.city;
     this.weather = rollWeather(opts.date, this.rng);
-    this.attendance = estimateAttendance(homeClub, this.derby, this.rng);
+    this.attendance = Math.round(estimateAttendance(homeClub, this.derby, this.rng) * attendanceRestriction(opts.date));
     const humanSides = new Set(opts.humanSides ?? []);
     const humanClubs = new Set(opts.humanClubIds ?? []);
     this.home = this.makeTeam('home', homeClub, humanSides.has('home'), humanClubs.has(homeClub.id));

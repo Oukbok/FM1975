@@ -19,6 +19,7 @@ import { economyScale, revenueScale, revenueShare } from './economy';
 
 const revenueShareCommercial = (y: number) => revenueShare('commercial', y);
 import { createPlayer } from './playerFactory';
+import { tvMarketFactor } from '../data/history';
 import { refreshOverall } from './development';
 import { book } from './finances';
 import { recordTransfer } from './history';
@@ -173,7 +174,7 @@ export function updateBrand(c: Club, o: SeasonOutcome, year: number, isManaged: 
 const TV_POOL_1975 = 14_000_000;
 
 export function tvPoolFor(tier: number, year: number): number {
-  const top = TV_POOL_1975 * revenueScale('tv', year);
+  const top = TV_POOL_1975 * revenueScale('tv', year) * tvMarketFactor(year);
   if (tier <= 1) return top;
   if (tier === 2) return top * (year < 2000 ? 0.25 : 0.2);
   if (tier === 3) return top * 0.035;
@@ -231,6 +232,8 @@ export function bookDebtInterest(c: Club, date: string, track: boolean): number 
 // Finanzielles Fairplay & Lizenz
 // -----------------------------------------------------------------------------
 export const FFP_START_YEAR = 2011;
+export const WAGE_CAP_YEAR = 2034;
+export const WAGE_CAP = 0.7;
 
 export interface LicenseVerdict { level: 'ok' | 'warning' | 'ban'; text: string }
 
@@ -251,7 +254,16 @@ export function checkLicense(c: Club, newSeason: string, year: number): LicenseV
     ffp.note = 'Lizenzauflage wegen Überschuldung';
     return { level: 'ban', text: 'Der Verband erteilt die Lizenz nur unter Auflagen: Wegen der hohen Verschuldung darfst du in dieser Saison keine Ablösesummen zahlen.' };
   }
-  if (year >= FFP_START_YEAR && h.length >= 3) {
+  // Fiktive Zukunft: ab 2034/35 Gehaltsquote statt Fairplay (data/timeline.ts „wagecap-2034“).
+  if (year >= WAGE_CAP_YEAR && last && last.wageRatio > WAGE_CAP) {
+    ffp.warnings++;
+    if (ffp.warnings >= 2) {
+      ffp.banSeason = newSeason; ffp.note = 'Gehaltsquote überschritten: Transfersperre'; ffp.warnings = 1;
+      return { level: 'ban', text: `Die Gehaltsquote lag erneut über ${Math.round(WAGE_CAP * 100)} % des Umsatzes. Für diese Saison gilt eine Transfersperre.` };
+    }
+    return { level: 'warning', text: `Die Gehaltsquote liegt bei ${Math.round(last.wageRatio * 100)} % des Umsatzes (erlaubt: ${Math.round(WAGE_CAP * 100)} %). Bei einem weiteren Verstoß droht eine Transfersperre.` };
+  }
+  if (year >= FFP_START_YEAR && year < WAGE_CAP_YEAR && h.length >= 3) {
     const recent = h.slice(-3);
     const res = recent.reduce((a, r) => a + r.result, 0);
     const rev = recent.reduce((a, r) => a + r.revenue, 0);

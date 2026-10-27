@@ -29,6 +29,8 @@ export interface TimelineEffect {
   pointSystem?: PointSystem;
   /** Schaltet ein benanntes Feature frei (Flag in game.unlockedFeatures). */
   unlock?: string;
+  /** Hebt die Grund-Auslastung aller Stadien einmalig an (z. B. Heim-WM). */
+  attendanceBoost?: number;
 }
 
 /** Ein historischer Meilenstein der Fußball-Chronik. */
@@ -46,6 +48,8 @@ export interface TimelineEvent {
   description: string;
   /** Optionaler Spiel-Effekt. */
   effect?: TimelineEffect;
+  /** Fiktive Zukunft (ab 2027/28) statt echter Geschichte. */
+  fictional?: boolean;
 }
 
 /** Deutsche Labels & Icons je Meilenstein-Typ. */
@@ -80,7 +84,7 @@ export const TIMELINE: TimelineEvent[] = [
     season: '1983/84', year: 1983, type: 'reform',
     title: 'Professionalisierung der Vereinsstäbe',
     description:
-      'Anfang der 1980er professionalisieren sich die 1. Liga-Vereine abseits des '
+      'Anfang der 1980er professionalisieren sich die Erstligisten abseits des '
       + 'Rasens: Co-Trainer, Physiotherapeuten und erste hauptamtliche Geschäftsstellen '
       + 'werden zum Standard. Im Bereich „Mitarbeiter" lassen sich nun neue '
       + 'Fachkräfte verpflichten, und die Werbeflächen im Stadion werden systematisch '
@@ -110,9 +114,9 @@ export const TIMELINE: TimelineEvent[] = [
   {
     id: 'ucl-1992',
     season: '1992/93', year: 1992, type: 'competition',
-    title: 'Europa-Verband Meisterliga',
+    title: 'Meisterliga',
     description:
-      'Der Europapokal der Landesmeister wird 1992/93 zur Europa-Verband Meisterliga mit '
+      'Der Pokal der Landesmeister wird 1992/93 zur Meisterliga mit '
       + 'Gruppenphase umgebaut – der prestigeträchtigste und lukrativste Vereins-'
       + 'wettbewerb Europas entsteht.',
     effect: { unlock: 'champions_league' },
@@ -162,9 +166,9 @@ export const TIMELINE: TimelineEvent[] = [
   {
     id: 'ffp-2010',
     season: '2010/11', year: 2010, type: 'law',
-    title: 'Financial Fair Play',
+    title: 'Finanzielles Fairplay',
     description:
-      'Die Europa-Verband beschließt 2010 das Financial Fair Play: Vereine dürfen langfristig '
+      'Der europäische Verband beschließt 2010 das Finanzielle Fairplay (wirksam ab 2011/12): Vereine dürfen langfristig '
       + 'nicht mehr ausgeben als sie einnehmen. Solide Vereinsfinanzen werden zur '
       + 'Voraussetzung für die europäischen Wettbewerbe.',
     effect: { unlock: 'ffp' },
@@ -192,18 +196,18 @@ export const TIMELINE: TimelineEvent[] = [
   {
     id: 'var-l1-2017',
     season: '2017/18', year: 2017, type: 'tech',
-    title: 'Video-Assistent (1. 1. Liga)',
+    title: 'Video-Assistent (1. Liga)',
     description:
-      'Der Video-Assistent (VAR) hält 2017/18 in der 1. 1. Liga Einzug und '
+      'Der Video-Assistent hält 2017/18 in der 1. Liga Einzug und '
       + 'überprüft Tore, Elfmeter, Rote Karten und Spielerverwechslungen.',
     effect: { unlock: 'var_league1' },
   },
   {
     id: 'var-l2-2019',
     season: '2019/20', year: 2019, type: 'tech',
-    title: 'Video-Assistent (2. 1. Liga)',
+    title: 'Video-Assistent (2. Liga)',
     description:
-      'Ab 2019/20 kommt der Video-Assistent auch in der 2. 1. Liga zum Einsatz.',
+      'Ab 2019/20 kommt der Video-Assistent auch in der 2. Liga zum Einsatz.',
     effect: { unlock: 'var_league2' },
   },
   {
@@ -217,7 +221,133 @@ export const TIMELINE: TimelineEvent[] = [
       + 'Netzwerke und internationale Märkte.',
     effect: { unlock: 'staff_wave_2021' },
   },
+  {
+    id: 'privatetv-1988',
+    season: '1988/89', year: 1988, type: 'finance',
+    title: 'Privatfernsehen kauft die Liga',
+    description:
+      'Ein privater Fernsehsender sichert sich die Übertragungsrechte der 1. Liga. Die '
+      + 'TV-Gelder vervielfachen sich in wenigen Jahren – der Beginn des Fernsehzeitalters '
+      + 'im Fußball. Fernsehgeld wird zur zweiten Säule neben den Zuschauereinnahmen.',
+  },
+  {
+    id: 'heysel-1985',
+    season: '1985/86', year: 1985, type: 'competition',
+    title: 'Englische Vereine gesperrt',
+    description:
+      'Nach der Katastrophe beim Pokal-der-Landesmeister-Finale 1985 werden englische Vereine '
+      + 'für fünf Jahre von den europäischen Wettbewerben ausgeschlossen. Stadionsicherheit wird '
+      + 'überall zum Thema.',
+  },
+  {
+    id: 'subs3-1995',
+    season: '1995/96', year: 1995, type: 'rule',
+    title: 'Drei Auswechslungen',
+    description: 'Ab 1995/96 dürfen pro Spiel drei statt zwei Spieler eingewechselt werden.',
+  },
+  {
+    id: 'cwc-end-1999',
+    season: '1999/00', year: 1999, type: 'competition',
+    title: 'Ende des Pokals der Pokalsieger',
+    description:
+      'Der Pokal der Pokalsieger wird nach 1998/99 eingestellt. Die nationalen Pokalsieger '
+      + 'spielen fortan im Europa-Pokal, der dadurch größer und wichtiger wird.',
+  },
+  {
+    id: 'tvcrisis-2002',
+    season: '2002/03', year: 2002, type: 'finance',
+    title: 'Krise des TV-Marktes',
+    description:
+      'Die Insolvenz eines großen Rechtehändlers erschüttert die Liga: Die TV-Gelder sinken '
+      + 'für zwei Spielzeiten spürbar, mehrere Vereine geraten in finanzielle Schwierigkeiten. '
+      + 'Gleichzeitig zahlt man ab 2002 in Euro.',
+  },
+  {
+    id: 'homeworldcup-2006',
+    season: '2006/07', year: 2006, type: 'competition',
+    title: 'Sommermärchen: Weltmeisterschaft im eigenen Land',
+    description:
+      'Die Heim-WM 2006 löst eine Fußballbegeisterung aus, wie es sie lange nicht gab. Neue und '
+      + 'modernisierte Stadien, volle Ränge, mehr Familien im Publikum – die Zuschauerzahlen '
+      + 'steigen in der ganzen Liga.',
+    effect: { attendanceBoost: 0.06 },
+  },
+  {
+    id: 'europa-group-2009',
+    season: '2009/10', year: 2009, type: 'competition',
+    title: 'Europa-Pokal wird reformiert',
+    description:
+      'Der Europa-Pokal erhält ein neues Format mit Gruppenphase und mehr Spielen. Die Prämien '
+      + 'steigen, bleiben aber weit hinter der Meisterliga zurück.',
+  },
+  {
+    id: 'ghostgames-2020',
+    season: '2019/20', year: 2020, type: 'law',
+    title: 'Geisterspiele',
+    description:
+      'Im März 2020 wird der Spielbetrieb wegen einer Pandemie unterbrochen und später ohne '
+      + 'Zuschauer fortgesetzt. Bis ins Frühjahr 2022 bleiben die Stadien leer oder nur halb '
+      + 'gefüllt – Spieltagseinnahmen brechen weg.',
+  },
+  {
+    id: 'subs5-2020',
+    season: '2020/21', year: 2020, type: 'rule',
+    title: 'Fünf Auswechslungen',
+    description: 'Wegen der dichten Terminpläne sind ab 2020/21 fünf Wechsel (in drei Unterbrechungen) erlaubt – die Regel bleibt dauerhaft.',
+  },
+  {
+    id: 'swissmodel-2024',
+    season: '2024/25', year: 2024, type: 'competition',
+    title: 'Meisterliga mit Ligaphase',
+    description:
+      'Die Meisterliga spielt ab 2024/25 mit einer großen Ligaphase statt Gruppen. Mehr Spiele, '
+      + 'mehr Geld – und eine noch größere Kluft zwischen Europas Spitze und dem Rest.',
+  },
+  {
+    id: 'semiauto-2027',
+    season: '2027/28', year: 2027, type: 'tech', fictional: true,
+    title: 'Halbautomatisches Abseits',
+    description:
+      'Kameras und Sensoren im Ball entscheiden Abseitsstellungen in Sekunden. Die Diskussionen '
+      + 'verlagern sich vom Abseits zu Handspielen.',
+  },
+  {
+    id: 'superleague-debate-2030',
+    season: '2030/31', year: 2030, type: 'competition', fictional: true,
+    title: 'Streit um eine geschlossene Europaliga',
+    description:
+      'Mehrere europäische Großvereine drohen mit einer eigenen, geschlossenen Liga. Am Ende '
+      + 'einigt man sich auf eine erweiterte Meisterliga mit festen Startplätzen für die besten '
+      + 'Nationen – die Kluft zu kleineren Ligen wächst weiter.',
+  },
+  {
+    id: 'wagecap-2034',
+    season: '2034/35', year: 2034, type: 'law', fictional: true,
+    title: 'Gehaltsquote als Lizenzauflage',
+    description:
+      'Der europäische Verband ersetzt das Finanzielle Fairplay durch eine feste Gehaltsquote: '
+      + 'Spieler- und Stabsgehälter dürfen höchstens 70 % des Umsatzes betragen. Wer darüber '
+      + 'liegt, wird verwarnt und im Wiederholungsfall mit einer Transfersperre belegt.',
+  },
+  {
+    id: 'climate-2038',
+    season: '2038/39', year: 2038, type: 'reform', fictional: true,
+    title: 'Klimaauflagen für Stadien',
+    description:
+      'Neue Auflagen verlangen klimaneutrale Stadien. Die Betriebskosten steigen, Vereine mit '
+      + 'modernen Anlagen sind im Vorteil.',
+  },
+  {
+    id: 'globalbroadcast-2042',
+    season: '2042/43', year: 2042, type: 'finance', fictional: true,
+    title: 'Weltweite Streaming-Rechte',
+    description:
+      'Die Liga vermarktet ihre Rechte weltweit direkt über eigene Streamingdienste. Die TV-Gelder '
+      + 'steigen erneut, internationale Bekanntheit wird noch wertvoller.',
+  },
 ];
+// Chronologisch sortiert halten (echte Geschichte und fiktive Zukunft gemischt gepflegt).
+TIMELINE.sort((a, b) => seasonStartYear(a.season) - seasonStartYear(b.season) || a.year - b.year);
 
 /** Vergleicht zwei Saison-Labels ("1995/96") anhand des Startjahres. */
 export function seasonStartYear(season: string): number {

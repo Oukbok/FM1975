@@ -83,6 +83,11 @@ export function applyTimelineEffect(g: Game, ev: TimelineEvent): void {
     // Umstellung auf 3 Punkte 1995/96 die Tabellenrechnung wirklich verändert.
     g.table = calculateTable(leagueClubs(g), g.fixtures, g.pointSystem, g.season, g.table);
   }
+  if (ev.effect.attendanceBoost) {
+    for (const c of Object.values(g.clubs)) {
+      c.stadium.averageAttendanceRate = Math.min(0.98, c.stadium.averageAttendanceRate + ev.effect.attendanceBoost);
+    }
+  }
   if (ev.effect.unlock && !g.unlockedFeatures.includes(ev.effect.unlock)) {
     g.unlockedFeatures.push(ev.effect.unlock);
   }

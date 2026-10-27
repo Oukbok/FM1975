@@ -371,15 +371,18 @@ export function shootoutKick(sim: MatchSim): void {
     return (b.p.attributes.penalties ?? 50) + b.p.attributes.composure * 0.3 - ((a.p.attributes.penalties ?? 50) + a.p.attributes.composure * 0.3);
   });
   const idx = side === 'home' ? s.kicksH : s.kicksA;
-  const taker = takers[idx % Math.max(1, takers.length)];
+  // Notfall: niemand mehr auf dem Platz (z. B. Amateurverein mit Mini-Kader) → irgendein Spieler.
+  const taker = takers[idx % Math.max(1, takers.length)] ?? T.players[idx % Math.max(1, T.players.length)];
   const keeper = keeperOf(O);
   const pressure = idx >= 4 ? 0.95 : 1;
-  const p = clamp(0.75 * Math.pow(finishing(taker, 'penalty') / 65, 0.6) * Math.pow(62 / keeperSkill(keeper), 0.4) * pressure, 0.5, 0.92);
+  const p = taker
+    ? clamp(0.75 * Math.pow(finishing(taker, 'penalty') / 65, 0.6) * Math.pow(62 / keeperSkill(keeper), 0.4) * pressure, 0.5, 0.92)
+    : 0;
   const scored = sim.rng() < p;
   const saved = !scored && sim.rng() < 0.6;
   if (side === 'home') { s.kicksH++; if (scored) s.home++; } else { s.kicksA++; if (scored) s.away++; }
   if (keeper && saved) keeper.impact += 0.35;
-  sim.emit('shootout_kick', { side, player: taker.id, keeper: keeper?.id, shootout: { scored, saved, home: s.home, away: s.away, round: Math.max(s.kicksH, s.kicksA) } });
+  sim.emit('shootout_kick', { side, player: taker?.id ?? '', keeper: keeper?.id, shootout: { scored, saved, home: s.home, away: s.away, round: Math.max(s.kicksH, s.kicksA) } });
   s.next = side === 'home' ? 'away' : 'home';
   // Entscheidung?
   const remH = Math.max(0, 5 - s.kicksH), remA = Math.max(0, 5 - s.kicksA);

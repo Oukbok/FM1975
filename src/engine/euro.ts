@@ -42,6 +42,8 @@ export interface EuroGameLike {
   calendar?: { seasonStartDate: string; currentDate: string };
   season?: string;
   injuriesEnabled?: boolean;
+  /** Ligensystem: für die Qualifikation zählt immer die Tabelle der 1. Liga. */
+  leagues?: { playerDivision: { tier: number }; otherDivisions: { tier: number; table: LeagueTable }[] };
 }
 
 // -----------------------------------------------------------------------------
@@ -251,7 +253,11 @@ export function computeGermanEuroQualifiers(
     };
   }
 
-  const rows = g.table?.rows ?? [];
+  // Maßgeblich ist die 1. Liga – auch wenn der eigene Verein gerade tiefer spielt.
+  const top = g.leagues && g.leagues.playerDivision.tier !== 1
+    ? g.leagues.otherDivisions.find((d) => d.tier === 1)?.table
+    : g.table;
+  const rows = top?.rows ?? [];
   const order = rows.map((r) => r.clubId);
   const champion = order[0];
 

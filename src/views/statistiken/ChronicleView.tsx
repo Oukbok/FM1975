@@ -30,7 +30,7 @@ function ChronicleItem({ e, state }: { e: TlEvent; state: 'past' | 'current' | '
           {state === 'future' && <span className="chronicle-badge soon">Bevorstehend</span>}
           {state === 'past' && <span className="chronicle-badge done">Erreicht</span>}
         </div>
-        <div className="chronicle-title">{e.title}</div>
+        <div className="chronicle-title">{e.title}{e.fictional ? <span className="muted" style={{ fontWeight: 500, marginLeft: 8, fontSize: 13 }}>(fiktive Zukunft)</span> : null}</div>
         <div className="chronicle-desc">{e.description}</div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import { EURO_COMP_NAMES, EuroClub, EuroCompId } from '../data/europe';
 import { CalendarEngine } from '../engine/calendar';
 import { decisionBadge } from '../engine/cup';
 import { createEuroCup } from '../engine/euro';
+import { cupWinnersCupActive } from '../data/history';
 import { makeMessage } from '../engine/messages';
 import { Club, CupState, CupTie, GameCalendar, InboxMessage, Match } from '../types';
 import { hashSeed } from './state';
@@ -89,13 +90,20 @@ export function buildEuroCupsForSeason(
   const out: { ec: CupState | null; cwc: CupState | null; uefa: CupState | null } = {
     ec: null, cwc: null, uefa: null,
   };
+  // Ab 1999/2000 gibt es den Pokal der Pokalsieger nicht mehr: Der Pokalsieger
+  // spielt im Europa-Pokal (historisch: Zusammenlegung mit dem UEFA-Pokal).
+  const startYear = Number(earliest.slice(0, 4)) - (Number(earliest.slice(5, 7)) >= 7 ? 0 : 1);
+  if (!cupWinnersCupActive(startYear)) {
+    quals = { ...quals, uefa: [...(quals.cwc ?? []), ...(quals.uefa ?? [])], cwc: [] };
+  }
+  const FIELD: Record<EuroCompId, number> = { ec: 16, cwc: 16, uefa: 32 };
   for (const comp of comps) {
     const germanIds = (quals[comp] ?? []).filter(Boolean);
     if (germanIds.length === 0) continue;
     const cup = createEuroCup(
       comp,
       germanIds,
-      foreignByComp[comp],
+      foreignByComp[comp].slice(0, Math.max(0, FIELD[comp] - germanIds.length)),
       leagueDates,
       cupDates,
       hashSeed(`${seedBase}:euro:${comp}`),

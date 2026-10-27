@@ -1276,6 +1276,24 @@ Altersklasse selbst wird nicht gespeichert, sondern stets aus dem Alter abgeleit
 automatisch korrekt ein.`,
   },
   {
+    id: 'chronicle-history-future',
+    category: 'chronicle',
+    title: 'Echte Geschichte bis 2026/27, danach fiktive Zukunft',
+    keywords: ['geschichte', 'zukunft', 'fiktiv', 'pokalsieger', 'geisterspiele', 'heim-wm', 'tv-krise', 'gehaltsquote', 'meisterliga'],
+    body: `## Bis 2026/27: angelehnt an die echte Geschichte
+Neben Regeln (Rückpass, 3 Punkte, Wechsel) prägen echte Ereignisse das Spiel – mit Wirkung:
+- **1985–1990:** Englische Vereine sind von den Europapokalen ausgeschlossen.
+- **1988:** Privatfernsehen kauft die Liga, die TV-Gelder steigen stark.
+- **1999/2000:** Der **Pokal der Pokalsieger** endet; Pokalsieger spielen im Europa-Pokal.
+- **2002/03–2003/04:** Krise des TV-Marktes – spürbar weniger TV-Geld.
+- **2006:** Heim-WM – die Grundauslastung aller Stadien steigt.
+- **März 2020 bis Frühjahr 2022:** Geisterspiele, danach halbe Kapazität – die Spieltagseinnahmen brechen ein.
+- Europapokal-Teilnahme: Maßgeblich ist immer die Tabelle der **1. Liga**.
+
+## Ab 2027/28: eine glaubwürdige, erfundene Zukunft
+Die Chronik markiert diese Ereignisse als **fiktive Zukunft**, z. B. halbautomatisches Abseits, der Streit um eine geschlossene Europaliga, eine **Gehaltsquote** als Lizenzauflage (ab 2034/35: höchstens 70 % des Umsatzes, sonst Verwarnung und Transfersperre), Klimaauflagen für Stadien und weltweite Streaming-Rechte.`,
+  },
+  {
     id: 'environment-overview',
     category: 'environment',
     title: 'Vereinsumfeld — Fans, Mitglieder, Medien, Vorstand',
