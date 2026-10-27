@@ -373,6 +373,8 @@ export interface PlayerDevelopment {
   scoutBias?: number;
   /** Verborgenes Juwel: entfaltet mit `boostAge` einen Schub von `boost` Potenzialpunkten. */
   gem?: { boostAge: number; boost: number; done?: boolean };
+  /** Fiktive Legende (data/legends.ts). */
+  legendId?: string;
   /** Fördervertrag (Jugend): schützt vor Abwerbung, bis zur Saison (Startjahr) gültig. */
   protectedUntil?: number;
   /**

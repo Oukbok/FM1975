@@ -10,6 +10,7 @@ import { EURO_COMP_NAMES } from '../data/europe';
 import { marketingIncomeBase, marketingMonthlyBase, marketingReputationNudge } from '../data/marketing';
 import { staffMonthlyTotal } from '../data/staff';
 import { monthlyEnvironmentUpdate } from './environmentGame';
+import { spawnLegends } from './legendsGame';
 import { autoResolveEvents, monthlyEvents } from './eventsGame';
 import { setInjuryRiskHook } from '../engine/injuryRisk';
 import { focusEffect } from '../engine/staffPeople';
@@ -377,6 +378,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
     const domNow = new Date(today + 'T00:00:00Z').getUTCDate();
     const yearNow = new Date(today + 'T00:00:00Z').getUTCFullYear();
     if (utcMon === 7 && domNow === 1) {
+      // Fiktive Legenden des Jahrgangs tauchen in einer Akademie auf (data/legends.ts).
+      spawnLegends(g, today);
       for (const club of Object.values(g.clubs)) {
         if ((club.infrastructure.lastYouthIntakeYear ?? 0) >= yearNow) continue;
         club.infrastructure.lastYouthIntakeYear = yearNow;

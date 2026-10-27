@@ -83,6 +83,8 @@ export interface Game {
   youthApproaches?: Record<string, number>;
   /** Vereinsumfeld des eigenen Vereins (Fans, Mitglieder, Medien, Leitbild). */
   environment?: ClubEnvironment;
+  /** Bereits erschienene Legenden (IDs aus data/legends.ts). */
+  spawnedLegends?: string[];
   /** Marketing-Budget je Bereich: Bereichs-ID → Anzahl Einheiten (0 = aus). */
   marketing: Record<string, number>;
   /** Geplante Aktivitäten (Trainingslager, Freundschaftsspiele, Teambuilding). */

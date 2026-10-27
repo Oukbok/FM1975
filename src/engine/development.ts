@@ -168,7 +168,8 @@ export function weeklyDevelopment(
     let pts: number;
     if (base >= 0) {
       pts = base * training * practiceFactor(p) * characterFactor(p) * environment * moraleFactor(p)
-        * distanceFactor(p) * era.growth * (ctx?.playerFactor ? ctx.playerFactor(p) : 1);
+        * distanceFactor(p) * era.growth * (ctx?.playerFactor ? ctx.playerFactor(p) : 1)
+        * (d.legendId ? 1.6 : 1); // Legenden: außergewöhnliche Auffassungsgabe
     } else {
       // Abbau: gutes Training und Professionalität bremsen ihn (bis −35 %), stoppen ihn nicht.
       const brake = clamp(1 - (training - 0.9) * 0.6 - ((d.professionalism ?? 50) - 50) / 400, 0.65, 1.15);

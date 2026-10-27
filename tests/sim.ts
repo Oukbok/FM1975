@@ -106,6 +106,8 @@ for (let s = 0; s < seasons; s++) {
   startNextSeason(g);
 }
 console.log(`fertig in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+const legends = [...Object.values(g.players), ...Object.values(g.youthPlayers)].filter((p) => p.development.legendId);
+for (const p of legends) console.log('Legende', p.fullName.padEnd(24), p.naturalPosition, 'Alter', p.age, 'OVR', p.overall, 'Verein', g.clubs[p.clubId]?.shortName ?? p.clubId, p.isYouth ? '(Jugend)' : '', 'Hist', p.development.abilityHistory.map((h) => h.ability).join(','));
 
 // Diagnose: Wer ist ≥ 85?
 {

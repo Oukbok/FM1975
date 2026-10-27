@@ -329,8 +329,10 @@ export function graduateYouth(
       promote = !cpuPromoted && p.potentialStars >= 3.5 && club.playerIds.length < maxSquad;
     }
 
+    // Legenden werden nie fortgeschickt – notfalls wird der Kader kurz größer.
+    if (p.development.legendId) promote = true;
     if (promote) {
-      const res = promoteYouth(club, p.id, players, youthPlayers, maxSquad);
+      const res = promoteYouth(club, p.id, players, youthPlayers, p.development.legendId ? maxSquad + 4 : maxSquad);
       if (res.ok) {
         result.promoted.push(p);
         cpuPromoted = true;
@@ -393,7 +395,7 @@ export function developYouthWeekly(
 
     const aFactor = ageFactor(p.age);
     const pFactor = potentialFactor(p);
-    const weekGain = YOUTH_BASE_GAIN * aFactor * pFactor * growth;
+    const weekGain = YOUTH_BASE_GAIN * aFactor * pFactor * growth * (p.development.legendId ? 1.3 : 1);
 
     // --- Akkumulator über eine Auswahl entwicklungsrelevanter Attribute füllen
     const devAttrs = developmentAttrsFor(p.naturalPosition);

@@ -1294,6 +1294,19 @@ Neben Regeln (Rückpass, 3 Punkte, Wechsel) prägen echte Ereignisse das Spiel �
 Die Chronik markiert diese Ereignisse als **fiktive Zukunft**, z. B. halbautomatisches Abseits, der Streit um eine geschlossene Europaliga, eine **Gehaltsquote** als Lizenzauflage (ab 2034/35: höchstens 70 % des Umsatzes, sonst Verwarnung und Transfersperre), Klimaauflagen für Stadien und weltweite Streaming-Rechte.`,
   },
   {
+    id: 'development-legends',
+    category: 'development',
+    title: 'Legenden',
+    keywords: ['legende', 'jahrhunderttalent', 'ausnahmetalent', 'gerücht', 'akademie'],
+    body: `## Jahrhunderttalente zu festen Jahrgängen
+Rund 30 erfundene **Legenden** sind über die Jahrzehnte verteilt – vom Bomber aus dem Kohlenpott in den 1970ern bis zum Jahrhundertstürmer der 2020er. Jede taucht mit etwa 15 Jahren in der **Jugendakademie** eines Vereins deiner Liga auf.
+
+- **Wo** sie landet, entscheidet der Zufall: Gute Akademien und Vereine aus der Heimatregion der Legende sind wahrscheinlicher.
+- Landet sie bei dir, meldet sich der Leiter der Jugendakademie. Sonst berichten deine Scouts von einem **Gerücht** – unter Transfers → Beobachtungsliste kannst du versuchen, das Talent zu holen (siehe „Talente anderer Vereine“).
+- Legenden lernen schneller als andere und werden nie aus der Jugend fortgeschickt. Ob sie wirklich zur Legende werden, hängt trotzdem von **Training, Spielpraxis und Umfeld** ab: In einer schwachen Liga ohne gute Trainer bleibt auch ein Jahrhunderttalent unter seinen Möglichkeiten.
+- Steigt ihr Verein aus deiner Liga ab, wechselt die Legende zu einem Verein, der bleibt – sie geht nicht verloren.`,
+  },
+  {
     id: 'environment-overview',
     category: 'environment',
     title: 'Vereinsumfeld — Fans, Mitglieder, Medien, Vorstand',

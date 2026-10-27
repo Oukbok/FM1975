@@ -7,7 +7,7 @@ import { staffSeasonChange } from './staffGame';
 import { youthPoachingAtSeasonChange } from './youthMarket';
 import { environmentSeasonChange, setSeasonGoal } from './environmentGame';
 import { advanceWorldSeason, initWorld, isForeignId } from '../engine/world';
-import { closeSeason } from '../engine/history';
+import { closeSeason, recordTransfer } from '../engine/history';
 import { buildProClub } from '../data/generate';
 import { CurrentDivision, TransitionResult, computeSeasonTransition, structureForSeason } from '../data/reforms';
 import { TIMELINE_TYPE_META, TimelineEvent, dueTimelineEvents, seasonStartYear } from '../data/timeline';
@@ -264,6 +264,8 @@ export function startNextSeason(g: Game): void {
       continue;
     }
     if (playerSet.has(c.id)) continue;
+    // Legenden gehen nicht verloren: Sie wechseln zu einem Verein der Spielerliga.
+    rescueLegends(g, c, playerSet, calendar0Date(g));
     const dest = divOf[c.id] ?? { tier: 2, group: 'nord' as LeagueGroup };
     g.simClubs[c.id] = simClubFromClub(c, g.players, dest.tier, dest.group);
     for (const pid of c.playerIds) delete g.players[pid];
@@ -515,5 +517,31 @@ function balanceDivisions(
         ids.push(inn);
       }
     }
+  }
+}
+
+function calendar0Date(g: Game): string { return g.calendar.currentDate; }
+
+/** Legenden eines Vereins, der die Spielerliga verlässt, wechseln zu einem verbleibenden Verein. */
+function rescueLegends(g: Game, from: Club, stay: Set<string>, date: string): void {
+  const targets = [...stay].map((id) => g.clubs[id]).filter((c): c is Club => !!c && c.id !== g.managedClubId);
+  if (!targets.length) return;
+  const pick = () => targets.sort((a, b) => b.reputation - a.reputation)[Math.floor(Math.random() * Math.min(6, targets.length))];
+  for (const id of [...from.playerIds]) {
+    const p = g.players[id];
+    if (!p?.development.legendId) continue;
+    const to = pick();
+    from.playerIds = from.playerIds.filter((x) => x !== id);
+    to.playerIds.push(id);
+    p.clubId = to.id;
+    recordTransfer(p, from.name, to.name, Math.round(p.contract.transferValue * economyScale(yearOf(date))), date);
+  }
+  for (const id of [...(from.youthPlayerIds ?? [])]) {
+    const p = g.youthPlayers[id];
+    if (!p?.development.legendId) continue;
+    const to = pick();
+    from.youthPlayerIds = from.youthPlayerIds.filter((x) => x !== id);
+    (to.youthPlayerIds ??= []).push(id);
+    p.clubId = to.id;
   }
 }
