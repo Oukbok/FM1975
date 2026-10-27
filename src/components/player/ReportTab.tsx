@@ -1,5 +1,6 @@
 // Reiter „Bericht“: Einschätzung von Trainerteam/Scout – aus den Werten abgeleitet, kein Zufall.
 import { Player, starsToPotential } from '../../types';
+import { scoutRange, scoutRangeText } from '../../engine/scouting';
 import Icon from '../Icon';
 import { ATTR_DE, POS_DE, PLAYER_TYPE, Section, Line } from './shared';
 import { strengthsWeaknesses } from './OverviewTab';
@@ -36,7 +37,8 @@ function role(p: Player, squad?: Player[]): string {
 
 export default function ReportTab({ p, squad }: { p: Player; squad?: Player[] }) {
   const { strengths, weaknesses } = strengthsWeaknesses(p);
-  const maxOvr = starsToPotential(p.potentialStars);
+  const [lo, hi] = scoutRange(p);
+  const maxOvr = Math.round((starsToPotential(lo) + starsToPotential(hi)) / 2);
   const outlook = maxOvr - p.overall >= 8 ? 'Hat noch viel Luft nach oben – Geduld und Einsatzzeit lohnen sich.'
     : maxOvr - p.overall >= 3 ? 'Kann sich noch etwas steigern.'
     : p.age >= 30 ? 'Hat seinen Zenit erreicht; der Abbau ist absehbar.' : 'Ist weitgehend ausentwickelt.';
@@ -56,7 +58,7 @@ export default function ReportTab({ p, squad }: { p: Player; squad?: Player[] })
         <div className="pp-list">
           <Line label="Rolle im Kader" value={role(p, squad)} strong />
           <Line label="Gesamtstärke" value={`${p.overall} (${level(p.overall)})`} />
-          <Line label="Potenzial" value={`${maxOvr} (${level(maxOvr)})`} color="var(--accent)" />
+          <Line label="Potenzial (Scouts)" value={`${scoutRangeText(p)} · ${level(maxOvr)}`} color="var(--accent)" />
           <Line label="Bester Fuß" value={p.preferredFoot === 'both' ? 'Beidfüßig – großer Vorteil' : p.preferredFoot === 'left' ? 'Links' : 'Rechts'} />
           <Line label="Erfahrung" value={level(p.attributes.experience)} />
         </div>

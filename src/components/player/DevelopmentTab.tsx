@@ -1,5 +1,6 @@
 // Reiter „Entwicklung“: Stärke-Verlauf, Potenzial, Karrierephase
-import { Player, renderStars, starsToPotential } from '../../types';
+import { Player, starsToPotential } from '../../types';
+import { scoutRange, scoutRangeText } from '../../engine/scouting';
 import Icon from '../Icon';
 import { utcDate, Section, Line, ATTR_DE, AttrKey } from './shared';
 
@@ -65,8 +66,10 @@ function AttributeChanges({ p }: { p: Player }) {
 }
 
 export default function DevelopmentTab({ p }: { p: Player }) {
-  const maxOvr = starsToPotential(p.potentialStars);
-  const growth = maxOvr - p.overall;
+  // Nur die Scout-Einschätzung ist sichtbar – das wahre Potenzial bleibt verdeckt.
+  const [lo, hi] = scoutRange(p);
+  const minOvr = starsToPotential(lo), maxOvr = starsToPotential(hi);
+  const growth = Math.round((minOvr + maxOvr) / 2) - p.overall;
   const phase = careerPhase(p.age);
   const d = p.development;
   const last = d.lastRatingChange;
@@ -82,12 +85,12 @@ export default function DevelopmentTab({ p }: { p: Player }) {
       </div>
       <div className="pp-stack">
         <Section title="Potenzial" icon={<Icon name="youth" size={15} />}>
-          <div className="pp-stars">{renderStars(p.potentialStars)}</div>
+          <div className="pp-stars">{scoutRangeText(p)}</div>
           <div className="pp-growth-track"><div className="pp-growth-fill" style={{ width: `${maxOvr > 0 ? Math.min(100, (p.overall / maxOvr) * 100) : 100}%` }} /></div>
           <div className="pp-list mt8">
             <Line label="Aktuelle Stärke" value={p.overall} strong />
-            <Line label="Erreichbare Stärke" value={maxOvr} color="var(--accent)" />
-            <Line label="Spielraum" value={growth > 0 ? `+${growth}` : '±0'} color={growth > 0 ? 'var(--green)' : 'var(--text-2)'} />
+            <Line label="Erreichbare Stärke (geschätzt)" value={minOvr === maxOvr ? `${maxOvr}` : `${minOvr}–${maxOvr}`} color="var(--accent)" />
+            <Line label="Spielraum (geschätzt)" value={growth > 0 ? `+${growth}` : '±0'} color={growth > 0 ? 'var(--green)' : 'var(--text-2)'} />
             <Line label="Letzte Bewertung" value={last > 0 ? `+${last}` : last < 0 ? `${last}` : '±0'} color={last > 0 ? 'var(--green)' : last < 0 ? 'var(--red)' : 'var(--text-2)'} />
             <Line label="Entwicklungstempo" value={d.growthRate >= 1.15 ? 'Schnell' : d.growthRate <= 0.85 ? 'Langsam' : 'Normal'} />
           </div>
