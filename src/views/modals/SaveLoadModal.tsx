@@ -36,7 +36,7 @@ export function SaveLoadModal({ mode, currentSlot, onClose, onSave, onLoad }: {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" style={{ maxWidth: 620, width: '100%' }} onClick={(e) => e.stopPropagation()}>
         <div className="row"><h2 style={{ margin: 0 }}>{mode === 'save' ? 'Spiel speichern' : 'Spiel laden'}</h2>
-          <button className="btn-sm" onClick={onClose}>✕ Schließen</button></div>
+          <button className="btn-sm" onClick={onClose}>Schließen</button></div>
 
         {mode === 'save' && (
           <div className="card mt16">

@@ -88,7 +88,7 @@ export function DevelopmentReveal({ g, reveals, onClose }: {
             </div>
 
             <button className="btn-continue paused reveal-next" onClick={next}>
-              {isLast ? '✓ Fertig' : 'Weiter →'}
+              {isLast ? 'Fertig' : 'Weiter →'}
             </button>
           </div>
         )}
@@ -181,7 +181,7 @@ export function RatingCeremony({ results, type, anlass, onClose }: {
               <button className="btn-sm btn-ghost" onClick={skip}>Überspringen</button>
             </>
           ) : (
-            <button className="btn-continue paused" onClick={onClose}>✓ Fertig</button>
+            <button className="btn-continue paused" onClick={onClose}>Fertig</button>
           )}
         </div>
       </div>
