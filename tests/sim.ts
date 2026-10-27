@@ -23,6 +23,8 @@ const g: Game = createNewGame({
   difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300,
 });
 
+(g as any).simAutoManage = true; // eigener Verein wird wie ein KI-Verein gepflegt
+
 const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
 function leaguePlayers(game: Game): Player[] {
   return leagueClubs(game).flatMap((c) => c.playerIds.map((id) => game.players[id]).filter(Boolean));

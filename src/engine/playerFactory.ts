@@ -4,7 +4,7 @@
 // (1975) und vom Nachrücken neuer Spieler in späteren Jahren (Regens).
 // =============================================================================
 import { Player, Position, PlayerAttributes, AttributeKey, createEmptyStats, potentialToStars, clampStars } from '../types';
-import { POSITION_WEIGHTS, positionSuitability } from './positions';
+import { weightsFor, positionSuitability } from './positions';
 import { pickOrigin, makeName, Origin } from '../data/origins';
 
 export interface NewPlayerSpec {
@@ -44,7 +44,7 @@ const clamp = (v: number, lo = 1, hi = 99) => Math.max(lo, Math.min(hi, Math.rou
  * Positionsstärke genau die Zielstärke trifft.
  */
 export function makePositionAttributes(pos: Position, strength: number, age: number, rng: () => number): PlayerAttributes {
-  const w = POSITION_WEIGHTS[pos] as Partial<Record<AttributeKey, number>>;
+  const w = weightsFor(pos) as Partial<Record<AttributeKey, number>>;
   const noise = (s: number) => (rng() + rng() + rng() - 1.5) * s; // ~normalverteilt
   const gk = pos === 'TW';
   const a = {} as PlayerAttributes;

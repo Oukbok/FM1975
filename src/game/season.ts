@@ -1,8 +1,10 @@
 import { EuroCompId, allEuroClubs } from '../data/europe';
+import { setEraYear } from '../engine/positions';
+import { refreshOverall } from '../engine/development';
 import { manageSquads } from './squads';
 import { closeSeason } from '../engine/history';
 import { buildProClub } from '../data/generate';
-import { CurrentDivision, TransitionResult, computeSeasonTransition } from '../data/reforms';
+import { CurrentDivision, TransitionResult, computeSeasonTransition, structureForSeason } from '../data/reforms';
 import { TIMELINE_TYPE_META, TimelineEvent, dueTimelineEvents, seasonStartYear } from '../data/timeline';
 import { generateSeasonCalendar, seasonLabel } from '../engine/calendar';
 import { createCup } from '../engine/cup';
@@ -209,6 +211,10 @@ export function startNextSeason(g: Game): void {
   // --- 4) Mitgliedschaften + Spielerliga bestimmen ---
   const membership: Record<string, { ids: string[]; meta: DivisionMeta }> = {};
   for (const d of res.divisions) membership[d.meta.id] = { ids: d.ids, meta: d.meta };
+  // Sollgrößen absichern (Reform-/Relegationssonderfälle dürfen keine Liga
+  // dauerhaft verzerren). Ausnahme: die bewusst übergroße Wiedervereinigungssaison.
+  if (!isReunify) balanceDivisions(membership, structureForSeason(newSeason), (id) => clubStrengthFor(g, id), g.managedClubId);
+
   const playerDivId = Object.keys(membership).find((k) => membership[k].ids.includes(g.managedClubId))
     || res.divisions[0].meta.id;
   const playerIds = membership[playerDivId].ids;
@@ -404,7 +410,10 @@ export function startNextSeason(g: Game): void {
   }));
   // Saisonbilanz als Station festhalten, Saisonstatistik für die neue Saison leeren.
   closeSeason(g.players, g.clubs, oldSeason);
-  manageSquads(g, calendar.currentDate);
+  manageSquads(g, calendar.currentDate, !!(g as any).simAutoManage);
+  // Neue Saison, evtl. neue Epoche: Positionsstärken aller Spieler neu bewerten.
+  setEraYear(Number(calendar.currentDate.slice(0, 4)));
+  for (const p of Object.values(g.players)) if (!p.isYouth) refreshOverall(p);
 }
 
 /** Erzeugt eine Spielbericht-Nachricht für das Spiel des Nutzers. */
@@ -423,4 +432,48 @@ export function emitMatchMessage(game: Game, m: Match): void {
     bodyText: `Am ${m.matchday}. Spieltag ${myHome ? 'empfing' : 'gastierte'} ${myHome ? h.name + ' ' + a.name : h.name + ' gegen ' + a.name}.\n\nEndstand: ${h.name} ${m.result.homeGoals}:${m.result.awayGoals} ${a.name} — ein ${outcome} aus deiner Sicht.\n\nBallbesitz: ${m.result.homePossession}% : ${100 - m.result.homePossession}%\nSchüsse: ${m.result.homeShots} : ${m.result.awayShots}\nZuschauer: ${m.result.attendance.toLocaleString('de-DE')}\n\nDen ausführlichen Spielbericht öffnest du über den Spielplan.`,
     relatedId: m.id,
   }));
+}
+
+/**
+ * Gleicht Ligagrößen an die Sollstruktur an: Überzählige (schwächste) wandern eine
+ * Ebene tiefer, fehlende Plätze werden mit den stärksten Vereinen der Ebene darunter
+ * aufgefüllt. Auf der untersten Ebene werden Überzählige gestrichen.
+ */
+function balanceDivisions(
+  membership: Record<string, { ids: string[]; meta: DivisionMeta }>,
+  target: { id: string; tier: number; teamCount: number }[],
+  strengthOf: (id: string) => number,
+  protectedId: string,
+): void {
+  const want: Record<string, number> = {};
+  for (const t of target) want[t.id] = t.teamCount;
+  const keys = Object.keys(membership).filter((k) => want[k] != null);
+  const tiers = [...new Set(keys.map((k) => membership[k].meta.tier))].sort((a, b) => a - b);
+  for (const tier of tiers) {
+    const here = keys.filter((k) => membership[k].meta.tier === tier);
+    const below = keys.filter((k) => membership[k].meta.tier === tier + 1);
+    for (const k of here) {
+      const ids = membership[k].ids;
+      // Zu viele: schwächste nach unten (nie den eigenen Verein).
+      while (ids.length > want[k]) {
+        const sorted = ids.filter((id) => id !== protectedId).sort((a, b) => strengthOf(a) - strengthOf(b));
+        const out = sorted[0];
+        if (!out) break;
+        ids.splice(ids.indexOf(out), 1);
+        if (below.length) {
+          const dest = below.sort((a, b) => (membership[a].ids.length - want[a]) - (membership[b].ids.length - want[b]))[0];
+          membership[dest].ids.push(out);
+        }
+      }
+      // Zu wenige: stärkste von unten holen.
+      while (ids.length < want[k] && below.length) {
+        const src = below.sort((a, b) => membership[b].ids.length - membership[a].ids.length)[0];
+        const pool = membership[src].ids.filter((id) => id !== protectedId).sort((a, b) => strengthOf(b) - strengthOf(a));
+        const inn = pool[0];
+        if (!inn) break;
+        membership[src].ids.splice(membership[src].ids.indexOf(inn), 1);
+        ids.push(inn);
+      }
+    }
+  }
 }

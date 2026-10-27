@@ -172,13 +172,18 @@ const COUNTRY_ORIGIN: Record<string, string> = {
   Tschechoslowakei: 'cze', Polen: 'pol', Oesterreich: 'aut', Tuerkei: 'tur', Schweiz: 'sui', Schweden: 'swe', Rumaenien: 'hun',
 };
 
+// Erzeugungsjahr (1975 beim Spielstart; später für aufsteigende/neue Vereine das aktuelle Jahr).
+let genYear = 1975;
+let genDate = CURRENT_DATE;
+function setGenDate(date: string): void { genDate = date; genYear = Number(date.slice(0, 4)); }
+
 function makePlayer(clubId: string, index: number, pos: Position, strength: number, shirt: number, origin?: Origin): Player {
   // Altersverteilung um 25 (18–34), wenige ganz Junge/ganz Alte.
   const age = Math.max(18, Math.min(34, Math.round(25 + (rng() + rng() + rng() - 1.5) * 9)));
   const p = createPlayer({
     id: `${clubId}_p${index}`, clubId, pos, age,
     strength: Math.max(35, Math.min(88, strength + ri(-8, 8))),
-    year: 1975, date: CURRENT_DATE, rng, shirt, origin,
+    year: genYear, date: genDate, rng, shirt, origin,
   });
   p.form = ri(45, 75);
   p.transferListed = rng() < 0.08;
@@ -420,7 +425,12 @@ export function buildProClub(
     founded: 1900 + ri(0, 20), primary: src.colors.primary, secondary: src.colors.secondary,
     reputation, stadium: `Stadion ${src.city}`, capacity: 18000 + Math.round(src.strength * 400),
   };
-  return buildClubFromSeed(seed, managedClubId, currentDate, players, youthPlayers);
+  setGenDate(currentDate);
+  try {
+    return buildClubFromSeed(seed, managedClubId, currentDate, players, youthPlayers);
+  } finally {
+    setGenDate(CURRENT_DATE);
+  }
 }
 
 export function getClubSeeds(): ClubSeed[] {
@@ -554,6 +564,7 @@ export function buildEuroClubFull(
   for (let i = 0; i < euro.id.length; i++) { h ^= euro.id.charCodeAt(i); h = Math.imul(h, 16777619); }
   _seed = h >>> 0;
 
+  setGenDate(seasonStart);
   const reputation = Math.max(55, Math.min(85, Math.round(euro.strength)));
   const strengthBase = Math.max(40, Math.min(90, Math.round(euro.strength)));
 
@@ -599,6 +610,6 @@ export function buildEuroClubFull(
 
   applyFacilityEffects(club);
   club.commerce = makeCommerce(club, false);
-  void seasonStart;
+  setGenDate(CURRENT_DATE);
   return club;
 }

@@ -3,6 +3,7 @@
 // Jugend, Entwicklung …). Ohne Oberfläche – die Shell reagiert über `ui`.
 // Rückgabe: true = Vorlauf darf weiterlaufen, false = anhalten (Aktion nötig).
 // =============================================================================
+import { setEraYear } from '../engine/positions';
 import { snapshotAttributes } from '../engine/history';
 import { ACTIVITY_DEFS, activityIncomeBase } from '../data/activities';
 import { EURO_COMP_NAMES } from '../data/europe';
@@ -62,6 +63,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
 
   const today = cal.currentDate;
   setDisplayYear(yearOf(today));
+  setEraYear(yearOf(today));
   setTransferDate(today);
   const todaysEvents = CalendarEngine.eventsOn(cal, today).filter((e) => !e.processed);
   let stopForAction = false;

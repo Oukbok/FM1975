@@ -13,7 +13,7 @@
 // Alle Vereine nutzen dieselbe Formel – nur Training/Spielzeit unterscheiden sich.
 // =============================================================================
 import { Player, Club, AttributeKey, potentialToStars, clampStars } from '../types';
-import { POSITION_WEIGHTS, positionSuitability } from './positions';
+import { weightsFor, positionSuitability } from './positions';
 import { updateScoutEstimate } from './scouting';
 
 /** Ergebnis der Leistungsbewertung je Spieler (auch bei change === 0). */
@@ -184,7 +184,7 @@ const MAX_STEP: Record<RatingType, number> = { small: 2, medium: 3, large: 6 };
 /** Verteilt eine OVR-Änderung auf die Attribute (positionsgewichtet, Abbau zuerst physisch). */
 export function applyOverallChange(p: Player, change: number): void {
   if (change === 0) return;
-  const w = POSITION_WEIGHTS[p.naturalPosition] as Partial<Record<AttributeKey, number>>;
+  const w = weightsFor(p.naturalPosition) as Partial<Record<AttributeKey, number>>;
   const keys = Object.keys(w) as AttributeKey[];
   const physical: AttributeKey[] = ['speed', 'acceleration', 'stamina', 'agility', 'jumping', 'strength', 'balance'];
   const target = p.overall + change;

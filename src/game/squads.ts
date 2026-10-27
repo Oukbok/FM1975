@@ -42,7 +42,8 @@ function neededPosition(game: Game, club: Club): Position {
   return best;
 }
 
-export function manageSquads(game: Game, date: string): void {
+/** @param autoManageMine Auch den eigenen Verein automatisch auffüllen (nur Simulation/Tests). */
+export function manageSquads(game: Game, date: string, autoManageMine = false): void {
   const year = Number(date.slice(0, 4));
   const mine = game.managedClubId;
   const retiredMine: Player[] = [];
@@ -64,7 +65,7 @@ export function manageSquads(game: Game, date: string): void {
         delete game.players[id];
       }
     }
-    if (club.id === mine) continue;
+    if (club.id === mine && !autoManageMine) continue;
 
     // 2) Zu große Kader verkleinern (schwächste Ältere zuerst)
     while (club.playerIds.length > MAX_SQUAD) {

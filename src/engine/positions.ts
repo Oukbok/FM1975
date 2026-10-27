@@ -134,18 +134,74 @@ function familiarity(player: Player, pos: Position): number {
  * Positionseignung eines Spielers (0–100).
  * = gewichteter Attribut-Mittelwert × Vertrautheits-Faktor.
  */
+// -----------------------------------------------------------------------------
+// Epochen: Der Fußball verändert sich – und damit, was eine Position ausmacht.
+// Die Änderungen wirken kumulativ ab dem jeweiligen Jahr (Faktor auf das Gewicht;
+// fehlt das Attribut in der Grundtabelle, ist der Wert das neue Gewicht).
+// -----------------------------------------------------------------------------
+type EraMod = [number, Partial<Record<Position, Partial<Record<AttributeKey, number>>>>];
+const ERA_MODS: EraMod[] = [
+  // Rückpassregel 1992: Torhüter müssen mitspielen.
+  [1992, { TW: { kicking: 1.8, communication: 1.2, composure: 1.2 }, LIB: { passing: 1.2, speed: 1.0 } }],
+  // Viererkette verdrängt Libero und Manndeckung.
+  [1995, { LIB: { speed: 1.2, acceleration: 1.0, marking: 0.8 }, VS: { speed: 1.0, passing: 0.8, marking: 0.85 }, AV: { crossing: 1.3, stamina: 1.2 } }],
+  // Pressing-Zeit: Laufbereitschaft und Antritt überall wichtiger.
+  [2005, { DM: { stamina: 1.2, workRate: 1.3 }, FL: { workRate: 1.0, acceleration: 1.2 }, MS: { workRate: 0.8, speed: 1.0 }, AV: { stamina: 1.2 } }],
+  // Spielaufbau von hinten, Datenzeitalter.
+  [2015, { TW: { kicking: 1.4, passing: 1.0 }, VS: { passing: 1.5, composure: 1.4 }, DM: { passing: 1.3, decisions: 1.3 }, AV: { dribbling: 1.0 }, MS: { decisions: 1.0 } }],
+];
+
+let eraYear = 1975;
+const weightCache = new Map<string, PositionWeights>();
+
+/** Setzt das Spieljahr für die Positionsbewertung (täglich aus dem Spielablauf). */
+export function setEraYear(year: number): void {
+  if (year !== eraYear) { eraYear = year; weightCache.clear(); }
+}
+export function getEraYear(): number { return eraYear; }
+
+/** Gewichte einer Position im aktuellen Spieljahr. */
+export function weightsFor(pos: Position): PositionWeights {
+  const key = `${pos}:${eraYear}`;
+  const hit = weightCache.get(key);
+  if (hit) return hit;
+  const w: PositionWeights = { ...POSITION_WEIGHTS[pos] };
+  for (const [from, mods] of ERA_MODS) {
+    if (eraYear < from) continue;
+    const m = mods[pos];
+    if (!m) continue;
+    for (const k of Object.keys(m) as AttributeKey[]) {
+      const f = m[k]!;
+      w[k] = w[k] != null ? w[k]! * f : f;
+    }
+  }
+  weightCache.set(key, w);
+  return w;
+}
+
+/**
+ * Positionsstärke eines Spielers (1–99):
+ *  1. gewichteter Mittelwert der für die Position wichtigen Attribute (epochenabhängig),
+ *  2. Abzug für eine deutliche Schwachstelle in einem Kernwert (Gewicht ≥ 2),
+ *  3. × Vertrautheit mit der Position.
+ */
 export function positionSuitability(player: Player, pos: Position): number {
-  const weights = POSITION_WEIGHTS[pos];
+  const weights = weightsFor(pos);
   let sum = 0;
   let wsum = 0;
+  let weakest = 99;
   for (const key in weights) {
     const w = weights[key as AttributeKey]!;
     const v = player.attributes[key as AttributeKey] ?? 50;
     sum += w * v;
     wsum += w;
+    if (w >= 2 && v < weakest) weakest = v;
   }
   const base = wsum > 0 ? sum / wsum : player.overall;
-  const rating = base * familiarity(player, pos);
+  // Eine klare Schwäche in einem Kernwert kostet (z. B. ein Vorstopper ohne Kopfball).
+  const gap = base - weakest;
+  const penalty = gap > 15 ? (gap - 15) * 0.12 : 0;
+  const rating = (base - penalty) * familiarity(player, pos);
   return Math.max(1, Math.min(99, Math.round(rating)));
 }
 
