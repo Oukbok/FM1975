@@ -188,3 +188,14 @@
 }
 .tac-dot b { font-size: 12px; color: var(--accent); }
 .tac-dot span { font-size: 12px; color: var(--text-2); white-space: nowrap; }
+
+/* --- Training im Seitenraster ------------------------------------------- */
+.dbox .planner-grid { gap: 12px; height: 100%; }
+.dbox .planner-day { min-height: 0; padding: 10px 12px; gap: 8px; }
+.dbox .pd-name { font-size: 16px; }
+.dbox .pd-slot-lbl { font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
+.dbox .pd-select { font-size: 15px; padding: 6px 8px; }
+.dbox .pd-fitness { font-size: 14px; }
+.dbox .pd-md-ico { color: #ff8fa0; }
+.dbox .pd-md-sub { font-size: 15px; }
+.dbox .int-tag { font-size: 11px; }
