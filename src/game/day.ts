@@ -24,6 +24,7 @@ import { applyDailyTraining } from '../engine/weeklyTraining';
 import { academyIntake, ageYouthPlayers, developYouthWeekly, graduateYouth } from '../engine/youth';
 import { cupNextDrawMessage, cupResultMessage, euroDrawMessage, euroResultMessage, euroWinnerChronicle } from './competitions';
 import { emitMatchMessage, simulateMatchday, startNextSeason } from './season';
+import { OwnMatchInfo, findOwnMatchDue, isPrepared } from './ownMatch';
 import { Game, bumpMorale } from './state';
 import { PlayerDevReveal } from '../types';
 import { fmtDM, fmtDMfull, fmtDateFull, setDisplayYear } from '../ui/format';
@@ -36,6 +37,12 @@ export interface DayUi {
   onRatingCeremony(c: { results: _RatingResult[]; type: 'medium' | 'large'; anlass: string }): void;
   /** Saisonende erreicht (z. B. Autospeichern). */
   onSeasonEnd(): void;
+  /**
+   * Eigenes Spiel steht heute an und ist noch nicht gespielt → anhalten und
+   * „Schnell simulieren“ / „Textmodus“ anbieten. Fehlt der Rückruf (Simulation),
+   * wird das Spiel wie jedes andere im Spieltag simuliert.
+   */
+  onOwnMatchDue?(info: OwnMatchInfo): void;
 }
 
 /** Oberfläche ohne Reaktion – für Simulationen und Tests. */
@@ -64,6 +71,10 @@ export function processDay(g: Game, ui: DayUi): boolean {
   const today = cal.currentDate;
   setDisplayYear(yearOf(today));
   setEraYear(yearOf(today));
+  if (ui.onOwnMatchDue) {
+    const due = findOwnMatchDue(g);
+    if (due && !isPrepared(due)) { ui.onOwnMatchDue(due); return false; }
+  }
   setTransferDate(today);
   const todaysEvents = CalendarEngine.eventsOn(cal, today).filter((e) => !e.processed);
   let stopForAction = false;

@@ -52,6 +52,7 @@ export class MatchSim {
   readonly derby: boolean;
   readonly weather: Weather;
   readonly live: boolean;
+  readonly attendance: number;
   minute = 0;
   stoppage = 0;
   period: 1 | 2 | 3 | 4 | 5 = 1;
@@ -78,6 +79,7 @@ export class MatchSim {
     this.live = !!opts.live;
     this.derby = !!homeClub.city && homeClub.city === awayClub.city;
     this.weather = rollWeather(opts.date, this.rng);
+    this.attendance = estimateAttendance(homeClub, this.derby, this.rng);
     const humanSides = new Set(opts.humanSides ?? []);
     const humanClubs = new Set(opts.humanClubIds ?? []);
     this.home = this.makeTeam('home', homeClub, humanSides.has('home'), humanClubs.has(homeClub.id));
@@ -445,4 +447,16 @@ function rollWeather(date: string | undefined, rng: () => number): Weather {
   if (month === 12 || month <= 2) return r < 0.14 ? 'schnee' : r < 0.42 ? 'regen' : r < 0.52 ? 'nebel' : r < 0.85 ? 'bewoelkt' : 'sonnig';
   if (month >= 6 && month <= 8) return r < 0.22 ? 'hitze' : r < 0.32 ? 'regen' : r < 0.75 ? 'sonnig' : 'bewoelkt';
   return r < 0.3 ? 'regen' : r < 0.4 ? 'wind' : r < 0.7 ? 'bewoelkt' : 'sonnig';
+}
+
+function estimateAttendance(c: Club, derby: boolean, rng: () => number): number {
+  const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
+  const cap = c.stadium?.capacity ?? 30000;
+  const baseRate = c.stadium?.averageAttendanceRate ?? 0.7;
+  const reputation = c.reputation ?? 50;
+  const ticketPrice = c.stadium?.ticketPrice ?? 14;
+  const refPrice = Math.round(8 + reputation * 0.12);
+  const priceFactor = clamp(1 - ((ticketPrice - refPrice) / refPrice) * 0.5, 0.6, 1.15);
+  const rate = clamp(baseRate * priceFactor * (derby ? 1.12 : 1) + (rng() - 0.5) * 0.1, 0.3, 1.0);
+  return Math.round(cap * rate);
 }

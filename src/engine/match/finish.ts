@@ -172,19 +172,6 @@ function distribute(sim: MatchSim, t: TeamState): void {
   t.stats.distance = km;
 }
 
-function attendanceFor(sim: MatchSim): number {
-  const c = sim.home.club;
-  const cap = c.stadium?.capacity ?? 30000;
-  const baseRate = c.stadium?.averageAttendanceRate ?? 0.7;
-  const reputation = c.reputation ?? 50;
-  const ticketPrice = c.stadium?.ticketPrice ?? 14;
-  const refPrice = Math.round(8 + reputation * 0.12);
-  const priceFactor = clamp(1 - ((ticketPrice - refPrice) / refPrice) * 0.5, 0.6, 1.15);
-  const derby = sim.derby ? 1.12 : 1;
-  const rate = clamp(baseRate * priceFactor * derby + (sim.rng() - 0.5) * 0.1, 0.3, 1.0);
-  return Math.round(cap * rate);
-}
-
 export function finishMatch(sim: MatchSim, opts: FinishOptions): MatchOutcome {
   const H = sim.home, A = sim.away;
   distribute(sim, H); distribute(sim, A);
@@ -210,7 +197,7 @@ export function finishMatch(sim: MatchSim, opts: FinishOptions): MatchOutcome {
     homeFouls: hs.fouls, awayFouls: as.fouls,
     homeYellowCards: hs.yellow, awayYellowCards: as.yellow,
     homeRedCards: hs.red, awayRedCards: as.red,
-    attendance: opts.attendance ?? attendanceFor(sim),
+    attendance: opts.attendance ?? sim.attendance,
     manOfTheMatchId: motm,
   };
 

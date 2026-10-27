@@ -61,7 +61,7 @@ export function yearFor(date?: string): number {
 export function createMatchSim(home: Club, away: Club, players: Record<string, Player>, opts: Partial<SimOptions> & { logClubIds?: string[] } = {}): MatchSim {
   return new MatchSim(home, away, players, {
     year: opts.year ?? yearFor(opts.date), date: opts.date, seed: opts.seed, knockout: opts.knockout,
-    humanSides: opts.humanSides, humanClubIds: opts.humanClubIds ?? opts.logClubIds,
+    humanSides: opts.humanSides, humanClubIds: opts.humanClubIds ?? opts.logClubIds, live: opts.live,
   });
 }
 
