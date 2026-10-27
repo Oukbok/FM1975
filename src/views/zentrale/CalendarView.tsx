@@ -1,4 +1,3 @@
-import ClubCrest from '../../components/ClubCrest';
 import Icon from '../../components/Icon';
 import { ACTIVITY_DEFS, ActivityType, activityCostBase, activityId, activityIncomeBase, addDaysUTC, daysInRange } from '../../data/activities';
 import { economyScale, yearOf } from '../../engine/economy';
@@ -7,7 +6,7 @@ import { makeMessage, pushMessage } from '../../engine/messages';
 import { Game } from '../../game/state';
 import { buildStripEventMap } from '../../shell/CalendarStrip';
 import { Screen } from '../../shell/navigation';
-import { PageHead } from '../../ui/PageHead';
+import { DashBox, DashPage, Empty, KV } from '../../ui/DashPage';
 import { fmtDM, fmtDay } from '../../ui/format';
 import { useState } from 'react';
 
@@ -107,15 +106,15 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
   const cancelPlanning = () => { setPlanMode(false); setSelStart(null); setMsg(null); };
 
   const confirmPlan = () => {
-    if (!selStart) { setMsg('⚠ Bitte zuerst einen freien Starttag im Kalender wählen.'); return; }
+    if (!selStart) { setMsg('Bitte zuerst einen freien Starttag im Kalender wählen.'); return; }
     const end = addDaysUTC(selStart, days - 1);
     const range = daysInRange(selStart, end);
     if (selStart < today || !range.every((d) => !blocked.has(d))) {
-      setMsg('⚠ Der gewählte Zeitraum kollidiert mit einem Spiel oder einer anderen Planung.');
+      setMsg('Der gewählte Zeitraum kollidiert mit einem Spiel oder einer anderen Planung.');
       return;
     }
     if (club.finances.balance < plannedCost) {
-      setMsg('⚠ Kontostand zu niedrig für diese Aktivität.');
+      setMsg('Kontostand zu niedrig für diese Aktivität.');
       return;
     }
     const label = `${def.name} ${selStart.slice(8, 10)}.${selStart.slice(5, 7)}.`;
@@ -128,7 +127,7 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
     });
     pushMessage(g.messages, makeMessage({
       date: today, category: 'board', from: 'Trainerstab',
-      subject: `${def.icon} ${def.name} eingeplant`,
+      subject: `${def.name} eingeplant`,
       shortText: `${def.name} vom ${fmtDay(selStart)} bis ${fmtDay(end)} geplant.`,
       bodyText: `Die Aktivität „${def.name}" ist eingeplant.\n\n`
         + `Zeitraum: ${fmtDay(selStart)} – ${fmtDay(end)} (${days} Tag(e))\n`
@@ -137,7 +136,7 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
     }));
     setSelStart(null);
     setPlanMode(false);
-    setMsg(`✔ ${def.name} geplant (${plannedCost > 0 ? fmtDM(plannedCost) : 'kostenlos'}).`);
+    setMsg(`${def.name} geplant (${plannedCost > 0 ? fmtDM(plannedCost) : 'kostenlos'}).`);
     onChange();
     setTimeout(() => setMsg(null), 4000);
   };
@@ -148,14 +147,14 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
     if (idx < 0) return;
     const act = list[idx];
     if (act.applied || act.startDate <= today) {
-      setMsg('⚠ Bereits laufende oder abgeschlossene Aktivitäten können nicht storniert werden.');
+      setMsg('Bereits laufende oder abgeschlossene Aktivitäten können nicht storniert werden.');
       setTimeout(() => setMsg(null), 3500);
       return;
     }
     // Kosten erstatten (Planung rückgängig).
     if (act.cost > 0) book(club.finances, today, act.cost, 'other', `Storno ${ACTIVITY_DEFS[act.type].name}`, true);
     list.splice(idx, 1);
-    setMsg('✔ Aktivität storniert, Kosten erstattet.');
+    setMsg('Aktivität storniert, Kosten erstattet.');
     onChange();
     setTimeout(() => setMsg(null), 3500);
   };
@@ -175,167 +174,130 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
 
   const upcoming = (g.activities ?? []).filter((a) => a.endDate >= today).sort((a, b) => a.startDate.localeCompare(b.startDate));
 
+  const nextEvents = g.calendar.events
+    .filter((e) => e.date >= today && !e.processed)
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .slice(0, 10);
+
   return (
-    <div className="page">
-      <PageHead
-        left={<ClubCrest club={club} size={27} />}
-        title="Kalender"
-        right={<span className="dim">Kontostand: <b style={{ color: 'var(--accent)' }}>{fmtDM(club.finances.balance)}</b></span>}
-      />
+    <DashPage>
+      <DashBox title={`${MONTH_LABELS[viewM]} ${viewY}`} icon="kalender" span={2} rows={2}
+        right={<span className="dbtnrow">
+          <button className="dchip" onClick={prevMonth}>‹ Vormonat</button>
+          <button className="dchip" onClick={() => { setViewY(todayY); setViewM(todayM); }}>Heute</button>
+          <button className="dchip" onClick={nextMonth}>Folgemonat ›</button>
+        </span>}>
+        <div className="dnote" style={{ marginBottom: 8 }}>
+          {planMode
+            ? 'Planungsmodus: Klicke einen freien Tag als Starttag der Aktivität an.'
+            : 'Klicke auf einen Tag mit Termin, um direkt dorthin zu springen.'}
+        </div>
+        <div className="cal-grid cal-head-row">
+          {WD_LABELS.map((w) => <div key={w} className="cal-wd">{w}</div>)}
+        </div>
+        <div className="cal-grid cal-grid-fill">
+          {cells.map((iso, i) => {
+            if (!iso) return <div key={`b${i}`} className="cal-cell cal-empty" />;
+            const dom = Number(iso.slice(8, 10));
+            const isToday = iso === today;
+            const reason = blocked.get(iso);
+            const past = iso < today;
+            const free = dayIsFree(iso);
+            const inPreview = previewDays.has(iso);
+            const ev = eventMap.get(iso);
+            const accentCls = ev?.accent === 'orange' ? 'cal-acc-orange' : ev?.accent === 'gold' ? 'cal-acc-gold' : '';
+            const jumpable = !planMode && !!screenForDate(iso);
+            const cls = ['cal-cell'];
+            if (isToday) cls.push('cal-today');
+            if (past) cls.push('cal-past');
+            if (reason) cls.push('cal-blocked');
+            else if (free) cls.push('cal-free');
+            if (accentCls) cls.push(accentCls);
+            if (inPreview) cls.push(previewValid ? 'cal-preview' : 'cal-preview-bad');
+            if (jumpable) cls.push('cal-jumpable');
+            if (planMode && free) cls.push('cal-selectable');
+            const title = planMode
+              ? (free ? 'Als Starttag wählen' : (ev ? `${fmtDay(iso)} — ${ev.line}` : reason ? `${fmtDay(iso)} — ${reason}` : fmtDay(iso)))
+              : (ev ? `${fmtDay(iso)} — ${ev.line} (klicken zum Springen)` : reason ? `${fmtDay(iso)} — ${reason}` : fmtDay(iso));
+            return (
+              <div key={iso} className={cls.join(' ')} onClick={() => clickDay(iso)} title={title}>
+                <span className="cal-dom">{dom}</span>
+                {ev ? (
+                  <span className="cal-cell-ev">
+                    <Icon name={ev.icon} className="cal-cell-ico" />
+                    <span className="cal-cell-ev-txt">{ev.line}</span>
+                  </span>
+                ) : reason ? (
+                  <span className="cal-cell-ev cal-cell-ev-generic">
+                    <Icon name="kalender" className="cal-cell-ico" />
+                    <span className="cal-cell-ev-txt">{reason}</span>
+                  </span>
+                ) : null}
+              </div>
+            );
+          })}
+        </div>
+        <div className="cal-legend dim2 mini mt8">
+          <span><i className="lg lg-free" /> frei</span>
+          <span><i className="lg lg-block" /> Spiel/Planung</span>
+          <span><i className="lg lg-today" /> heute</span>
+          <span><i className="lg lg-prev" /> Auswahl</span>
+        </div>
+      </DashBox>
 
-      {/* === KALENDER (zuerst) ================================================ */}
-      {/* Monatsnavigation */}
-      <div className="cal-nav mt12">
-        <button className="btn btn-sm btn-ghost" onClick={prevMonth}>‹ Vormonat</button>
-        <div className="cal-month-title">{MONTH_LABELS[viewM]} {viewY}</div>
-        <button className="btn btn-sm btn-ghost" onClick={nextMonth}>Folgemonat ›</button>
-      </div>
+      <DashBox title="Aktivität planen" icon="training" right={`Konto ${fmtDM(club.finances.balance)}`}>
+        <div className="dbtnrow" style={{ marginBottom: 8 }}>
+          {(['camp', 'friendly', 'teambuilding'] as ActivityType[]).map((t) => (
+            <button key={t} className={`dchip ${planType === t ? 'on' : ''}`} onClick={() => { setPlanType(t); setSelStart(null); }}>
+              {ACTIVITY_DEFS[t].name}
+            </button>
+          ))}
+        </div>
+        <div className="dnote" style={{ marginBottom: 8 }}>{def.desc}</div>
+        {planType !== 'friendly' && (
+          <label className="cal-days">
+            Dauer: <b>{days}</b> Tag(e)
+            <input type="range" min={def.minDays} max={def.maxDays} step={1} value={days}
+              onChange={(e) => setPlanDays(Number(e.target.value))} />
+          </label>
+        )}
+        <KV k="Kosten" v={plannedCost > 0 ? fmtDM(plannedCost) : 'keine'} color="var(--red)" />
+        {plannedIncome > 0 && <KV k="Erlös" v={`+${fmtDM(plannedIncome)}`} color="var(--green)" />}
+        <KV k="Wirkung" v={[def.fitness ? `Fitness +${def.fitness}` : '', def.form ? `Form +${def.form}` : '', def.morale ? 'Moral besser' : ''].filter(Boolean).join(' · ') || '—'} />
+        {planMode && <KV k="Zeitraum" v={selStart ? `${fmtDay(selStart)} – ${fmtDay(previewEnd)}${previewValid ? '' : ' (belegt)'}` : 'Starttag im Kalender wählen'} color={selStart && !previewValid ? 'var(--red)' : undefined} />}
+        <div className="dbtnrow mt8">
+          {!planMode ? (
+            <button className="btn btn-sm" onClick={startPlanning}>Starttag wählen</button>
+          ) : (
+            <>
+              <button className="btn btn-sm btn-ghost" onClick={cancelPlanning}>Abbrechen</button>
+              <button className="btn btn-sm" disabled={!selStart || !previewValid} onClick={confirmPlan}>Einplanen</button>
+            </>
+          )}
+        </div>
+        {msg && <div className="dnote mt8" style={{ color: 'var(--accent)' }}>{msg}</div>}
+      </DashBox>
 
-      {/* Hinweis: aktueller Klick-Modus */}
-      <div className="dim2 mini mt4" style={{ textAlign: 'center' }}>
-        {planMode
-          ? 'Planungsmodus: Klicke einen freien Tag als Starttag der Aktivität an.'
-          : 'Klicke auf einen Tag mit Event, um direkt dorthin zu springen.'}
-      </div>
-
-      {/* Wochentagsköpfe */}
-      <div className="cal-grid cal-head-row">
-        {WD_LABELS.map((w) => <div key={w} className="cal-wd">{w}</div>)}
-      </div>
-
-      {/* Tagesraster */}
-      <div className="cal-grid">
-        {cells.map((iso, i) => {
-          if (!iso) return <div key={`b${i}`} className="cal-cell cal-empty" />;
-          const dom = Number(iso.slice(8, 10));
-          const isToday = iso === today;
-          const reason = blocked.get(iso);
-          const past = iso < today;
-          const free = dayIsFree(iso);
-          const inPreview = previewDays.has(iso);
-          const ev = eventMap.get(iso);
-          const accentCls = ev?.accent === 'orange' ? 'cal-acc-orange' : ev?.accent === 'gold' ? 'cal-acc-gold' : '';
-          const jumpable = !planMode && !!screenForDate(iso);
-          const cls = ['cal-cell'];
-          if (isToday) cls.push('cal-today');
-          if (past) cls.push('cal-past');
-          if (reason) cls.push('cal-blocked');
-          else if (free) cls.push('cal-free');
-          if (accentCls) cls.push(accentCls);
-          if (inPreview) cls.push(previewValid ? 'cal-preview' : 'cal-preview-bad');
-          if (jumpable) cls.push('cal-jumpable');
-          if (planMode && free) cls.push('cal-selectable');
-          const title = planMode
-            ? (free ? 'Als Starttag wählen' : (ev ? `${fmtDay(iso)} — ${ev.line}` : reason ? `${fmtDay(iso)} — ${reason}` : fmtDay(iso)))
-            : (ev ? `${fmtDay(iso)} — ${ev.line} (klicken zum Springen)` : reason ? `${fmtDay(iso)} — ${reason}` : fmtDay(iso));
+      <DashBox title="Termine" icon="schedule">
+        {upcoming.length > 0 && <div className="dsec">Geplante Aktivitäten</div>}
+        {upcoming.map((a) => {
+          const ad = ACTIVITY_DEFS[a.type];
+          const running = a.startDate <= today && !a.applied;
           return (
-            <div key={iso} className={cls.join(' ')} onClick={() => clickDay(iso)} title={title}>
-              <span className="cal-dom">{dom}</span>
-              {ev ? (
-                <span className="cal-cell-ev">
-                  <Icon name={ev.icon} className="cal-cell-ico" />
-                  <span className="cal-cell-ev-txt">{ev.line}</span>
-                </span>
-              ) : reason ? (
-                <span className="cal-cell-ev cal-cell-ev-generic">
-                  <Icon name="kalender" className="cal-cell-ico" />
-                  <span className="cal-cell-ev-txt">{reason}</span>
-                </span>
-              ) : null}
+            <div key={a.id} className="dlist-row">
+              <span className="grow">{ad.name} <span className="muted">· {fmtDay(a.startDate)} – {fmtDay(a.endDate)}{running ? ' · läuft' : ''}</span></span>
+              {!running && a.startDate > today && <button className="dchip" onClick={() => cancelActivity(a.id)}>Stornieren</button>}
             </div>
           );
         })}
-      </div>
-
-      <div className="cal-legend dim2 mini mt12">
-        <span><i className="lg lg-free" /> frei</span>
-        <span><i className="lg lg-block" /> Spiel/Planung</span>
-        <span><i className="lg lg-today" /> heute</span>
-        <span><i className="lg lg-prev" /> Auswahl</span>
-      </div>
-
-      {msg && <div className="card mt12" style={{ borderColor: 'var(--accent)' }}>{msg}</div>}
-
-      {/* === TRAININGSLAGER & AKTIVITÄTEN PLANEN (darunter) ==================== */}
-      <div className="card mt12">
-        <div className="section-title">Trainingslager & Aktivitäten planen</div>
-        <div className="cal-plan">
-          <div className="cal-plan-types">
-            {(['camp', 'friendly', 'teambuilding'] as ActivityType[]).map((t) => (
-              <button
-                key={t}
-                className={`btn btn-sm ${planType === t ? '' : 'btn-ghost'}`}
-                onClick={() => { setPlanType(t); setSelStart(null); }}
-              >
-                {ACTIVITY_DEFS[t].icon} {ACTIVITY_DEFS[t].name}
-              </button>
-            ))}
+        <div className="dsec">Nächste Termine</div>
+        {nextEvents.length ? nextEvents.map((e) => (
+          <div key={e.id} className="dlist-row clickable" onClick={() => { const t = screenForDate(e.date); if (t) onGoto(t); }}>
+            <span className="meta" style={{ minWidth: 92 }}>{fmtDay(e.date)}</span>
+            <span className="grow">{e.title}</span>
           </div>
-          <div className="dim mini">{def.desc}</div>
-          {planType !== 'friendly' && (
-            <label className="cal-days">
-              Dauer: <b>{days}</b> Tag(e)
-              <input type="range" min={def.minDays} max={def.maxDays} step={1} value={days}
-                onChange={(e) => setPlanDays(Number(e.target.value))} />
-            </label>
-          )}
-          <div className="cal-plan-info">
-            <span className="mini">Kosten: <b className="red">{plannedCost > 0 ? fmtDM(plannedCost) : 'keine'}</b></span>
-            {plannedIncome > 0 && <span className="mini">Erlös: <b className="accent-text">+{fmtDM(plannedIncome)}</b></span>}
-            {!planMode ? (
-              <>
-                <span className="mini dim2">Starttag oben im Kalender festlegen ↑</span>
-                <button className="btn btn-sm" style={{ marginLeft: 'auto' }} onClick={startPlanning}>
-                  Starttag wählen
-                </button>
-              </>
-            ) : (
-              <>
-                <span className="mini">
-                  {selStart
-                    ? <>Zeitraum: <b>{fmtDay(selStart)} – {fmtDay(previewEnd)}</b> {previewValid ? '✅' : '⛔'}</>
-                    : <span className="dim2">Klicke oben einen freien Starttag an ↑</span>}
-                </span>
-                <button className="btn btn-sm btn-ghost" style={{ marginLeft: 'auto' }} onClick={cancelPlanning}>
-                  Abbrechen
-                </button>
-                <button className="btn btn-sm" disabled={!selStart || !previewValid} onClick={confirmPlan}>
-                  ✓ Einplanen
-                </button>
-              </>
-            )}
-          </div>
-          <div className="dim2 mini">
-            Effekte: {def.fitness ? `Fitness +${def.fitness} ` : ''}{def.form ? `· Form +${def.form} ` : ''}{def.morale ? '· Moral ↑' : ''}
-            — die Wirkung tritt am Ende des Zeitraums ein. Planung nur an freien Tagen (kein Spiel, keine andere Aktivität).
-          </div>
-        </div>
-      </div>
-
-      {/* Geplante Aktivitäten */}
-      {upcoming.length > 0 && (
-        <div className="mt12">
-          <div className="section-title">Geplante Aktivitäten</div>
-          <div className="cal-list">
-            {upcoming.map((a) => {
-              const ad = ACTIVITY_DEFS[a.type];
-              const running = a.startDate <= today && !a.applied;
-              return (
-                <div key={a.id} className="card cal-list-item">
-                  <span className="fac-ico">{ad.icon}</span>
-                  <div style={{ flex: 1 }}>
-                    <div className="fac-name">{ad.name}</div>
-                    <div className="dim2 mini">{fmtDay(a.startDate)} – {fmtDay(a.endDate)} · {a.cost > 0 ? fmtDM(a.cost) : 'kostenlos'}{running ? ' · läuft' : ''}</div>
-                  </div>
-                  {!running && a.startDate > today && (
-                    <button className="btn btn-sm btn-danger" onClick={() => cancelActivity(a.id)}>Stornieren</button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-    </div>
+        )) : <Empty icon="schedule">Keine Termine mehr in dieser Saison.</Empty>}
+      </DashBox>
+    </DashPage>
   );
 }
