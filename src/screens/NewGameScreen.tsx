@@ -1,6 +1,9 @@
 import ClubCrest from '../components/ClubCrest';
 import Icon from '../components/Icon';
 import { SECOND_LIGA_NORD_SEEDS, SECOND_LIGA_SUED_SEEDS, getClubSeeds } from '../data/generate';
+import { applyDataset } from '../data/dataset/apply';
+import { BUILTIN_ID } from '../data/dataset/builtin';
+import { cachedDataset, cachedSummaries } from '../data/dataset/storage';
 import { AppSettings } from '../engine/save';
 import { Difficulty, ManagerBackground, ManagerProfile, ManagerStyle, NewGameOptions } from '../types';
 import { useState } from 'react';
@@ -20,6 +23,13 @@ export const BG_DE: Record<ManagerBackground, { label: string; desc: string }> =
 export function NewGameScreen({ defaults, onBack, onStart }: {
   defaults: AppSettings; onBack: () => void; onStart: (o: NewGameOptions) => void;
 }) {
+  const datasets = cachedSummaries();
+  const [datasetId, setDatasetId] = useState(BUILTIN_ID);
+  const chooseDataset = (id: string) => {
+    applyDataset(cachedDataset(id));
+    setDatasetId(id);
+    setClubId(getClubSeeds()[0]?.id ?? '');
+  };
   const seeds = getClubSeeds();
   const [league, setLeague] = useState<'tier1' | 'nord' | 'sued'>('tier1');
   const second = (list: typeof SECOND_LIGA_NORD_SEEDS) => list.map((s) => ({
@@ -49,7 +59,7 @@ export function NewGameScreen({ defaults, onBack, onStart }: {
     };
     onStart({
       managedClubId: clubId, manager, difficulty,
-      realisticSquads: realistic, injuriesEnabled: injuries, speedMs,
+      realisticSquads: realistic, injuriesEnabled: injuries, speedMs, datasetId,
     });
   };
 
@@ -86,6 +96,19 @@ export function NewGameScreen({ defaults, onBack, onStart }: {
         </div>
         <div className="dim2 mini mt8">{BG_DE[background].desc}</div>
       </div>
+
+      {/* Datensatz */}
+      {datasets.length > 1 && (
+        <div className="card mt16">
+          <div className="card-title"><span className="ico"><Icon name="contracts" /></span> Datensatz</div>
+          <div className="chip-row">
+            {datasets.map((d) => (
+              <button key={d.id} className={`chip ${datasetId === d.id ? 'active' : ''}`} onClick={() => chooseDataset(d.id)} title={d.description}>{d.name}</button>
+            ))}
+          </div>
+          <div className="dim2 mini mt8">Vereine, Ligen, Namen und Geschichte stammen aus dem gewählten Datensatz.</div>
+        </div>
+      )}
 
       {/* Verein */}
       <div className="card mt16">

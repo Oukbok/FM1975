@@ -58,6 +58,8 @@ export interface StaffRole {
   group: StaffGroup;
   /** Jahr, ab dem die Rolle anstellbar ist (Epoche). */
   unlockYear: number;
+  /** Optional: ab diesem Jahr nicht mehr anstellbar (Datensatz). */
+  obsoleteYear?: number;
   costClass: StaffCostClass;
   /** Menschlich lesbare Effektbeschreibung. */
   effect: string;
@@ -253,5 +255,5 @@ export function computeStaffEffects(hiredIds: string[]): StaffEffects {
 
 /** Ob eine Rolle im gegebenen Jahr bereits anstellbar ist. */
 export function staffAvailable(role: StaffRole, year: number): boolean {
-  return year >= role.unlockYear;
+  return year >= role.unlockYear && (!role.obsoleteYear || year < role.obsoleteYear);
 }

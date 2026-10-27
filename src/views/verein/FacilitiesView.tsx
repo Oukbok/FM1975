@@ -1,6 +1,6 @@
 import { currencyForYear, economyScale, yearOf } from '../../engine/economy';
 import { CATERING_UPKEEP } from '../../engine/finances';
-import { FACILITIES, FACILITY_BY_KEY, FAC_UPKEEP_BASE, LEVEL_MULT, MAX_LEVEL, canUpgrade, upgradeCost, upgradeFacility } from '../../engine/infrastructure';
+import { FACILITIES, facilityAvailable, FACILITY_BY_KEY, FAC_UPKEEP_BASE, LEVEL_MULT, MAX_LEVEL, canUpgrade, upgradeCost, upgradeFacility } from '../../engine/infrastructure';
 import { makeMessage, pushMessage } from '../../engine/messages';
 import { Game } from '../../game/state';
 import { CateringMode, FacilityKey } from '../../types';
@@ -51,7 +51,7 @@ export function FacilitiesView({ g, onChange }: { g: Game; onChange: () => void 
     }
   };
 
-  const unlockedDefs = FACILITIES.filter((d) => !d.unlockYear || curYear >= d.unlockYear);
+  const unlockedDefs = FACILITIES.filter((d) => facilityAvailable(d, curYear));
   const futureDefs = FACILITIES.filter((d) => d.unlockYear && curYear < d.unlockYear).sort((a, b) => (a.unlockYear ?? 0) - (b.unlockYear ?? 0));
   const totalUpkeep = unlockedDefs.reduce((sum, d) => sum + facMonthlyUpkeep(d.key, infra[d.key] as number), 0);
   const upgradable = unlockedDefs.filter((d) => (infra[d.key] as number) < MAX_LEVEL)

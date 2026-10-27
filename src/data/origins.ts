@@ -137,8 +137,8 @@ export const ORIGINS: Record<string, Origin> = {
 // Anteil Ausländer: 1975 ≈ 8 %, 1990 ≈ 15 %, 2000 ≈ 35 %, 2010 ≈ 45 %, 2025 ≈ 52 %.
 // Deutsche mit Wurzeln in anderen Ländern werden ab den 1990ern häufiger.
 // -----------------------------------------------------------------------------
-type Mix = [number, Record<string, number>];
-const MIX: Mix[] = [
+export type Mix = [number, Record<string, number>];
+export const MIX: Mix[] = [
   [1975, { ger: 92, aut: 2, den: 1.5, ned: 1, yug: 1.5, swe: 1, sui: 0.5, bel: 0.5 }],
   [1985, { ger: 88, aut: 2, den: 2, ned: 1.5, yug: 2, swe: 1, nor: 0.5, pol: 0.5, sco: 0.5, kor: 0.3, hun: 0.5, bel: 0.7, ger_tr: 0.5 }],
   [1995, { ger: 62, ger_tr: 2, ger_pl: 1.5, ger_af: 1, aut: 2, sui: 1.5, den: 2, swe: 1.5, nor: 1, ned: 2, bel: 1, cro: 2, srb: 2, pol: 2, cze: 2, hun: 1, rus: 2, bra: 3, gha: 1.5, nga: 1, cmr: 0.5, tur: 1.5, ita: 0.5, fra: 0.5 }],
@@ -166,7 +166,9 @@ export function originMixForYear(year: number): Record<string, number> {
 /** Zieht eine Herkunft für ein Jahr. `domestic` erzwingt einheimische Spieler (z. B. Jugend). */
 export function pickOrigin(year: number, rng: () => number, domestic = false): Origin {
   const mix = originMixForYear(year);
-  const entries = Object.entries(mix).filter(([k, w]) => w > 0 && (!domestic || ORIGINS[k].nationality === 'GER'));
+  // Robust gegenüber Datensätzen: unbekannte Herkünfte überspringen.
+  let entries = Object.entries(mix).filter(([k, w]) => w > 0 && ORIGINS[k] && (!domestic || ORIGINS[k].nationality === 'GER'));
+  if (!entries.length) entries = Object.keys(ORIGINS).slice(0, 1).map((k) => [k, 1] as [string, number]);
   const total = entries.reduce((s, [, w]) => s + w, 0);
   let r = rng() * total;
   for (const [k, w] of entries) { r -= w; if (r <= 0) return ORIGINS[k]; }
@@ -175,7 +177,7 @@ export function pickOrigin(year: number, rng: () => number, domestic = false): O
 
 /** Name passend zur Herkunft. */
 export function makeName(o: Origin, rng: () => number): { firstName: string; lastName: string } {
-  const pick = (a: string[]) => a[Math.floor(rng() * a.length)];
+  const pick = (a: string[]) => (a.length ? a[Math.floor(rng() * a.length)] : 'Spieler');
   let firstName = pick(o.first), lastName = pick(o.last);
   // Bekannte reale Kombinationen und Doppelnamen („Thomas Thomas“) vermeiden.
   for (let i = 0; i < 6 && (BLOCKED_NAMES.has(`${firstName} ${lastName}`) || firstName === lastName); i++) {

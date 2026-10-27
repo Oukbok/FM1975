@@ -8,7 +8,8 @@
     "build": "node scripts/build.mjs",
     "check": "tsc --noEmit -p .",
     "test:ui": "node scripts/build.mjs && node tests/ui-smoke.mjs test-output 25",
-    "sim": "node scripts/sim.mjs"
+    "sim": "node scripts/sim.mjs",
+    "test:dataset": "node scripts/run-ts.mjs tests/dataset-test.ts"
   },
   "dependencies": {
     "lz-string": "1.5.0",

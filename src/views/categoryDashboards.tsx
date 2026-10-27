@@ -6,7 +6,7 @@ import { ROUND_NAMES, nextPlayerTie } from '../engine/cup';
 import { economyScale, yearOf } from '../engine/economy';
 import { nextPlayerEuroTie } from '../engine/euro';
 import { computeMonthly, totalExpense, totalIncome } from '../engine/finances';
-import { FACILITIES, MAX_LEVEL } from '../engine/infrastructure';
+import { FACILITIES, facilityAvailable, MAX_LEVEL } from '../engine/infrastructure';
 import { getAvailablePlayers } from '../engine/transfers';
 import { getFormation } from '../data/formations';
 import { Game } from '../game/state';
@@ -333,7 +333,7 @@ export function VereinDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) =>
   const year = yearOf(g.calendar.currentDate);
   const staff = (g.hiredStaff ?? []).map((id) => STAFF_BY_ID[id]).filter(Boolean);
   const staffCost = staffMonthlyTotal(g.hiredStaff ?? [], economyScale(year));
-  const facs = FACILITIES.filter((f) => !f.unlockYear || f.unlockYear <= year);
+  const facs = FACILITIES.filter((f) => facilityAvailable(f, year));
   const homeGames = g.fixtures.filter((m) => m.homeClubId === myClub.id && m.result).slice(-6);
   const avgAtt = homeGames.length ? Math.round(avg(homeGames.map((m) => m.result!.attendance))) : 0;
   const row = tableRow(g);

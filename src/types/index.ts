@@ -1534,6 +1534,8 @@ export interface NewGameOptions {
   injuriesEnabled: boolean;
   /** Auto-Advance-Geschwindigkeit in ms/Tag. */
   speedMs: number;
+  /** Datensatz (data/dataset), Standard „builtin“. */
+  datasetId?: string;
 }
 
 // -----------------------------------------------------------------------------

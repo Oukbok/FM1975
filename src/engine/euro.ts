@@ -246,10 +246,22 @@ export function computeGermanEuroQualifiers(
   firstSeason: boolean,
 ): Record<EuroCompId, string[]> {
   if (firstSeason) {
+    // Datensätze können Vereine entfernen: nur existierende IDs, Lücken mit den
+    // angesehensten Vereinen füllen.
+    const exists = (id: string) => !!g.clubs[id] || !!g.simClubs?.[id];
+    const used = new Set<string>();
+    const take = (ids: string[], n: number): string[] => {
+      const out = ids.filter((id) => exists(id) && !used.has(id)).slice(0, n);
+      const pool = Object.values(g.clubs).filter((c) => !c.id.startsWith('am') && !used.has(c.id) && !out.includes(c.id))
+        .sort((a, b) => b.reputation - a.reputation);
+      while (out.length < n && pool.length) out.push(pool.shift()!.id);
+      out.forEach((id) => used.add(id));
+      return out;
+    };
     return {
-      ec: [...EURO_FIRST_SEASON_GERMAN.ec],
-      cwc: [...EURO_FIRST_SEASON_GERMAN.cwc],
-      uefa: [...EURO_FIRST_SEASON_GERMAN.uefa],
+      ec: take(EURO_FIRST_SEASON_GERMAN.ec, 1),
+      cwc: take(EURO_FIRST_SEASON_GERMAN.cwc, 1),
+      uefa: take(EURO_FIRST_SEASON_GERMAN.uefa, 3),
     };
   }
 

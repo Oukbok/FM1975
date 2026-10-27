@@ -1,3 +1,4 @@
+import { datasetCrest, datasetKits } from './dataset/apply';
 // =============================================================================
 // FOOTBALL MANAGER 1980 — Daten-Generator
 // Erzeugt die 18 Erstliga-Vereine der Saison 1975/76 samt Kader.
@@ -36,7 +37,7 @@ function pick<T>(arr: T[]): T {
 // -----------------------------------------------------------------------------
 // Vereins-Stammdaten (1. Liga 1980/81)
 // -----------------------------------------------------------------------------
-interface ClubSeed {
+export interface ClubSeed {
   id: string; name: string; shortName: string; city: string;
   founded: number; primary: string; secondary: string;
   reputation: number; stadium: string; capacity: number;
@@ -54,7 +55,7 @@ interface ClubSeed {
 // Rot/Schwarz …); nur wo Farbe kollidiert/unbelegt ist, per Stadtteil.
 // Farben werden generisch aus Stadttradition abgeleitet (Farben sind nicht
 // schützbar); Stadionnamen sind generisch gehalten.
-const CLUB_SEEDS: ClubSeed[] = [
+export const CLUB_SEEDS: ClubSeed[] = [
   { id: 'mgl', name: 'Mönchengladbach', shortName: 'MGL', city: 'Mönchengladbach', founded: 1900, primary: '#000000', secondary: '#00A650', reputation: 86, stadium: 'Stadion am Gladbacher Hang', capacity: 34500 },
   { id: 'ham', name: 'Hamburg Blau', shortName: 'HAB', city: 'Hamburg', founded: 1887, primary: '#003DA5', secondary: '#FFFFFF', reputation: 84, stadium: 'Elbpark-Stadion', capacity: 61000 },
   { id: 'bra', name: 'Braunschweig', shortName: 'BRA', city: 'Braunschweig', founded: 1895, primary: '#F6C500', secondary: '#004A99', reputation: 74, stadium: 'Oker-Stadion', capacity: 38000 },
@@ -313,6 +314,12 @@ function buildClubFromSeed(
     youthPlayerIds,
     infrastructure,
   };
+
+  // Wappen/Trikots aus dem aktiven Datensatz (data/dataset).
+  const dsCrest = datasetCrest(seed.id);
+  if (dsCrest) club.customCrest = dsCrest;
+  const dsKits = datasetKits(seed.id);
+  if (dsKits?.home && dsKits?.away) club.kits = { home: dsKits.home, away: dsKits.away };
 
   // Trainingsqualität an die Trainingszentrum-Stufe koppeln.
   applyFacilityEffects(club);

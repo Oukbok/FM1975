@@ -4,12 +4,13 @@ import { NewGameOptions } from '../types';
 import { LoadGameScreen } from './LoadGameScreen';
 import { NewGameScreen } from './NewGameScreen';
 import { SettingsScreen } from './SettingsScreen';
+import { DatasetScreen } from './DatasetScreen';
 import { useState } from 'react';
 
 // =============================================================================
 // STARTBILDSCHIRM (Menü)
 // =============================================================================
-export type MenuView = 'main' | 'new' | 'load' | 'settings';
+export type MenuView = 'main' | 'new' | 'load' | 'settings' | 'datasets';
 
 export function MainMenu({ settings, onNewGame, onLoad, onUpdateSettings }: {
   settings: AppSettings;
@@ -47,6 +48,9 @@ export function MainMenu({ settings, onNewGame, onLoad, onUpdateSettings }: {
               <span className="mi"><Icon name="loadGame" /></span><span>Spiel laden</span>
               {saves.length > 0 && <span className="menu-tag">{saves.length}</span>}
             </button>
+            <button className="menu-btn" onClick={() => setView('datasets')}>
+              <span className="mi"><Icon name="contracts" /></span><span>Datensätze & Editor</span>
+            </button>
             <button className="menu-btn" onClick={() => setView('settings')}>
               <span className="mi"><Icon name="settings" /></span><span>Einstellungen</span>
             </button>
@@ -65,6 +69,8 @@ export function MainMenu({ settings, onNewGame, onLoad, onUpdateSettings }: {
             )}
           </div>
         )}
+
+        {view === 'datasets' && <DatasetScreen onBack={() => setView('main')} />}
 
         {view === 'new' && (
           <NewGameScreen defaults={settings} onBack={() => setView('main')} onStart={onNewGame} />

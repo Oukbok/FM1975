@@ -1,3 +1,6 @@
+import { applyDataset } from './data/dataset/apply';
+import { BUILTIN_ID } from './data/dataset/builtin';
+import { cachedDataset, hydrateDatasets } from './data/dataset/storage';
 import { hydrateClubOverrides } from './data/clubOverrides';
 import { setEraYear } from './engine/positions';
 import { ensureDevFields, refreshOverall } from './engine/development';
@@ -46,10 +49,17 @@ export default function App() {
   // danach neu rendern, damit hochgeladene Wappen/Trikots nach dem asynchronen
   // Laden erscheinen.
   useEffect(() => { hydrateClubOverrides().then(rerender).catch(() => {}); }, [rerender]);
+  // Eigene Datensätze (IndexedDB) in den Zwischenspeicher laden.
+  useEffect(() => { hydrateDatasets().then(rerender).catch(() => {}); }, [rerender]);
 
   // --- Neues Spiel starten ---
   const startGame = useCallback((opts: NewGameOptions) => {
+    // Gewählten Datensatz anwenden (Vereine, Ligen, Geschichte …), dann das Spiel erzeugen.
+    const ds = cachedDataset(opts.datasetId);
+    applyDataset(ds);
     const g0 = createNewGame(opts);
+    g0.datasetId = ds?.meta.id ?? BUILTIN_ID;
+    g0.datasetName = ds?.meta.name ?? 'Standard (1975)';
     const calendar = g0.calendar;
     setDisplayYear(yearOf(calendar.currentDate));
     gameRef.current = g0;
@@ -62,6 +72,18 @@ export default function App() {
   const doLoad = useCallback((slot: string) => {
     const s = loadGame<Game>(slot);
     if (!s) return;
+    // Datensatz des Spielstands anwenden (fehlt er, gilt der eingebaute).
+    const dsId = s.game.datasetId ?? BUILTIN_ID;
+    const ds = cachedDataset(dsId);
+    applyDataset(ds);
+    if (dsId !== BUILTIN_ID && !ds) {
+      s.game.messages.unshift(makeMessage({
+        date: s.game.calendar.currentDate, category: 'general', from: 'System',
+        subject: 'Datensatz nicht gefunden',
+        shortText: `„${s.game.datasetName ?? dsId}“ ist auf diesem Rechner nicht installiert.`,
+        bodyText: `Dieser Spielstand wurde mit dem Datensatz „${s.game.datasetName ?? dsId}“ begonnen. Er ist hier nicht installiert, deshalb gelten die Standardwerte für Geschichte, Namen und neue Vereine. Importiere den Datensatz im Hauptmenü unter „Datensätze & Editor“ und lade den Spielstand erneut.`,
+      }));
+    }
     // Positionsbewertung auf das Spieljahr einstellen; ältere Spielstände auf Entwicklung 2.0 heben.
     setEraYear(Number(s.game.calendar.currentDate.slice(0, 4)));
     for (const p of Object.values(s.game.players)) {

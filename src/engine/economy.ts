@@ -38,8 +38,9 @@ export const ECONOMY_BASE_YEAR = 1975;
 const DM = (mrdDM: number) => (mrdDM * 1e9) / DM_PER_EUR; // Mrd DM → EUR
 const EUR = (mrdEUR: number) => mrdEUR * 1e9;             // Mrd EUR → EUR
 
-interface Anchor { year: number; value: number; }
-const ANCHORS: Anchor[] = [
+export interface Anchor { year: number; value: number; }
+/** Stützwerte (EUR). Vom Datensatz (data/dataset) änderbar → danach resetEconomyCache(). */
+export const ANCHORS: Anchor[] = [
   { year: 1975, value: DM(0.120) },
   { year: 1980, value: DM(0.180) },
   { year: 1985, value: DM(0.300) },
@@ -58,7 +59,6 @@ const ANCHORS: Anchor[] = [
   { year: 2030, value: EUR(8.100) },
 ];
 
-const LAST_ANCHOR = ANCHORS[ANCHORS.length - 1];
 
 /** Deterministischer Pseudo-Zufall in [-1, 1] aus einem Jahr (reproduzierbar). */
 function yearShock(year: number): number {
@@ -72,6 +72,9 @@ function yearShock(year: number): number {
 
 // Cache für die iterative Projektion ab 2030 (monoton, deterministisch).
 const _projCache: Record<number, number> = {};
+
+/** Nach Änderung der Stützwerte (Datensatz) die Projektion neu berechnen. */
+export function resetEconomyCache(): void { for (const k of Object.keys(_projCache)) delete _projCache[Number(k)]; }
 
 /**
  * Erlös-Basis (Makro-Index) für ein Jahr, in EUR.
@@ -92,10 +95,10 @@ export function revenueBaseline(year: number): number {
     }
   }
   // Projektion ab dem letzten Stützwert.
-  if (year <= LAST_ANCHOR.year) return LAST_ANCHOR.value;
+  if (year <= ANCHORS[ANCHORS.length - 1].year) return ANCHORS[ANCHORS.length - 1].value;
   if (_projCache[year] != null) return _projCache[year];
-  let r = LAST_ANCHOR.value;
-  for (let y = LAST_ANCHOR.year + 1; y <= year; y++) {
+  let r = ANCHORS[ANCHORS.length - 1].value;
+  for (let y = ANCHORS[ANCHORS.length - 1].year + 1; y <= year; y++) {
     const dSat = 0.035 * (r / (r + EUR(12)));
     const shock = 1 + yearShock(y) * 0.03; // ±3 %
     r = r * (1 + 0.037 - dSat) * shock;
@@ -166,7 +169,7 @@ export function formatMoneyShort(amountDM: number, year: number): string {
 
 export type RevenueKind = 'matchday' | 'tv' | 'commercial';
 
-const MIX: { year: number; matchday: number; tv: number; commercial: number }[] = [
+export const REVENUE_MIX: { year: number; matchday: number; tv: number; commercial: number }[] = [
   { year: 1975, matchday: 0.60, tv: 0.07, commercial: 0.24 },
   { year: 1980, matchday: 0.58, tv: 0.08, commercial: 0.25 },
   { year: 1985, matchday: 0.55, tv: 0.10, commercial: 0.27 },
@@ -183,6 +186,7 @@ const MIX: { year: number; matchday: number; tv: number; commercial: number }[] 
 
 /** Anteil einer Erlösart am Umsatz im Jahr X (linear interpoliert). */
 export function revenueShare(kind: RevenueKind, year: number): number {
+  const MIX = REVENUE_MIX;
   if (year <= MIX[0].year) return MIX[0][kind];
   for (let i = 0; i < MIX.length - 1; i++) {
     const a = MIX[i], b = MIX[i + 1];

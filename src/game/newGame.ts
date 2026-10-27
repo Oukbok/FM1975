@@ -105,7 +105,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   // --- Europapokal 1975/76: feste historische deutsche Starter aufsetzen ---
   const euroClubs = allEuroClubs();
   const euroQuals = computeGermanEuroQualifiers(
-    { clubs: world.clubs, players: world.players, managedClubId: opts.managedClubId, pointSystem } as any,
+    { clubs: world.clubs, simClubs, players: world.players, managedClubId: opts.managedClubId, pointSystem } as any,
     true,
   );
   const euroCups = buildEuroCupsForSeason(

@@ -23,6 +23,8 @@ export interface MarketingArea {
   name: string;
   /** Jahr, ab dem der Kanal verfügbar ist (Epoche). */
   unlockYear: number;
+  /** Optional: ab diesem Jahr nicht mehr verfügbar (Datensatz). */
+  obsoleteYear?: number;
   icon: string;
   desc: string;
   /** Reglerstufen 0..maxUnits (ganzzahlig). */
@@ -83,7 +85,7 @@ export const MARKETING_BY_ID: Record<string, MarketingArea> =
 
 /** Ob ein Kanal im gegebenen Jahr verfügbar ist. */
 export function marketingAvailable(area: MarketingArea, year: number): boolean {
-  return year >= area.unlockYear;
+  return year >= area.unlockYear && (!area.obsoleteYear || year < area.obsoleteYear);
 }
 
 /** Monatskosten eines Kanals bei gegebener Reglerstufe (LINEAR, Basisjahr). */

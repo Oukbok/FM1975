@@ -85,6 +85,9 @@ export interface Game {
   environment?: ClubEnvironment;
   /** Bereits erschienene Legenden (IDs aus data/legends.ts). */
   spawnedLegends?: string[];
+  /** Datensatz, mit dem dieses Spiel begonnen wurde. */
+  datasetId?: string;
+  datasetName?: string;
   /** Marketing-Budget je Bereich: Bereichs-ID → Anzahl Einheiten (0 = aus). */
   marketing: Record<string, number>;
   /** Geplante Aktivitäten (Trainingslager, Freundschaftsspiele, Teambuilding). */

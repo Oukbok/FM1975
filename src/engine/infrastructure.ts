@@ -43,6 +43,13 @@ export interface FacilityDef {
    * erst dann als ausbaubar (davor über die „Zukunft"-Ansicht sichtbar).
    */
   unlockYear?: number;
+  /** Optional: ab diesem Jahr veraltet – nicht mehr bau- oder ausbaubar (Datensatz). */
+  obsoleteYear?: number;
+}
+
+/** Kann die Einrichtung im Jahr gebaut/ausgebaut werden? */
+export function facilityAvailable(def: FacilityDef, year: number): boolean {
+  return (!def.unlockYear || year >= def.unlockYear) && (!def.obsoleteYear || year < def.obsoleteYear);
 }
 
 // -----------------------------------------------------------------------------

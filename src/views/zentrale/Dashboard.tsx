@@ -7,7 +7,7 @@ import { CalendarEngine } from '../../engine/calendar';
 import { ROUND_NAMES, nextPlayerTie } from '../../engine/cup';
 import { yearOf } from '../../engine/economy';
 import { computeMonthly } from '../../engine/finances';
-import { FACILITIES, MAX_LEVEL } from '../../engine/infrastructure';
+import { FACILITIES, facilityAvailable, MAX_LEVEL } from '../../engine/infrastructure';
 import { divisionLabel } from '../../engine/leagues';
 import { buildClubProfile } from '../../game/clubProfile';
 import { Game } from '../../game/state';
@@ -145,7 +145,7 @@ export function Dashboard({ g, onGoto, onWatch, onOpenEditor }: {
     nlz: 'NLZ', performanceCenter: 'Leistung', dataCenter: 'Datenanalyse',
   };
   const facRows = FACILITIES
-    .filter((def) => !def.unlockYear || curYear >= def.unlockYear)
+    .filter((def) => facilityAvailable(def, curYear))
     .slice(0, 6)
     .map((def) => ({ key: def.key, name: FAC_SHORT[def.key] ?? def.name, level: (myClub.infrastructure?.[def.key] as number) ?? 0 }));
   return (
