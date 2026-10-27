@@ -1095,7 +1095,7 @@ function MainMenu({ settings, onNewGame, onLoad, onUpdateSettings }: {
               bei keiner Auflösung überdecken kann. */}
           <img
             className="menu-logo"
-            src="/assets/logo-1975.svg"
+            src="assets/logo-1975.svg"
             alt="1975 – A Football Manager"
             draggable={false}
           />

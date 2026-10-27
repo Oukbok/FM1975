@@ -1,10 +1,4 @@
 // =============================================================================
-// ZENTRALE WAHRHEIT = SERVER (api/overrides). IndexedDB ist ab jetzt nur noch
-// Offline-Cache/Spiegel. Beim App-Start ist der Server maßgeblich; lokale Daten
-// (IndexedDB/Legacy-localStorage) werden einmalig nach oben migriert, wenn der
-// Server erreichbar aber leer ist. Ein späterer Spiel-Export kann direkt aus dem
-// Server schöpfen. Ist der Server nicht erreichbar, greift der lokale Fallback.
-// =============================================================================
 // Vereins-Overrides — SPIELWEITE, save-unabhängige kosmetische Anpassungen
 // =============================================================================
 // Anders als Club.customCrest / Club.kits (die im jeweiligen Speicherstand
@@ -136,77 +130,7 @@ async function idbPutAll(map: Record<string, ClubOverride>): Promise<void> {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Server-Kapselung (relative URLs mit Prefix "api"; der Server ist die zentrale
-// Wahrheit). Alle Helfer sind so gebaut, dass Aufrufer ihre Fehler abfangen.
-// ---------------------------------------------------------------------------
-
-/** Basis-Pfad der Override-API (relativ, hinter demselben Origin). */
-const API_BASE = 'api/overrides';
-
-/** GET api/overrides → komplette Map. Timeout via AbortController (~8s). */
-async function serverGetAll(): Promise<Record<string, ClubOverride>> {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 8000);
-  try {
-    const res = await fetch(API_BASE, { signal: ctrl.signal, headers: { Accept: 'application/json' } });
-    if (!res.ok) throw new Error('Server-GET fehlgeschlagen: ' + res.status);
-    const data = await res.json();
-    return data && typeof data === 'object' ? (data as Record<string, ClubOverride>) : {};
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-/** PUT api/overrides mit der kompletten Map (einmalige Hochwärts-Migration). */
-async function serverPutAll(map: Record<string, ClubOverride>): Promise<void> {
-  const res = await fetch(API_BASE, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(map),
-  });
-  if (!res.ok) throw new Error('Server-PUT (all) fehlgeschlagen: ' + res.status);
-}
-
-/** PUT api/overrides/:key — schreibt EIN Override auf den Server. */
-async function serverPutKey(key: string, ov: ClubOverride): Promise<void> {
-  const res = await fetch(API_BASE + '/' + encodeURIComponent(key), {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(ov),
-  });
-  if (!res.ok) throw new Error('Server-PUT (key) fehlgeschlagen: ' + res.status);
-}
-
-/** DELETE api/overrides/:key — entfernt EIN Override auf dem Server. */
-async function serverDeleteKey(key: string): Promise<void> {
-  const res = await fetch(API_BASE + '/' + encodeURIComponent(key), { method: 'DELETE' });
-  if (!res.ok && res.status !== 404) throw new Error('Server-DELETE fehlgeschlagen: ' + res.status);
-}
-
 /**
- * Liest die lokalen Daten (IndexedDB, danach Legacy-localStorage). Führt die
- * Legacy-Migration NICHT selbst durch, sondern liefert nur die gefundene Map —
- * so kann der Aufrufer entscheiden, ob nach IndexedDB und/oder Server gespiegelt
- * wird. Wirft NIE (leere Map als Fallback).
- */
-async function readLocal(): Promise<Record<string, ClubOverride>> {
-  try {
-    const fromIdb = await idbGetAll();
-    if (fromIdb && Object.keys(fromIdb).length > 0) return fromIdb;
-  } catch { /* IndexedDB nicht verfügbar — weiter mit localStorage */ }
-  try {
-    const raw = localStorage.getItem(LEGACY_LS_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (parsed && typeof parsed === 'object') return parsed as Record<string, ClubOverride>;
-    }
-  } catch { /* localStorage nicht lesbar — ignorieren */ }
-  return {};
-}
-
-/**
- * Lokaler Fallback-Pfad (Server nicht erreichbar): bisheriges Verhalten —
  * IndexedDB zuerst, danach einmalige Migration aus dem alten localStorage-
  * Schlüssel. Setzt den Cache. Wirft NIE.
  */
@@ -241,51 +165,13 @@ async function hydrateFromLocal(): Promise<void> {
 }
 
 /**
- * Befüllt den synchronen Cache beim App-Start. Der SERVER ist die zentrale
- * Wahrheit:
- *   (a) Server erreichbar & liefert Daten → Cache = Server-Map, Spiegelung nach
- *       IndexedDB als Offline-Cache.
- *   (b) Server erreichbar aber LEER, während lokal Daten existieren → einmalige
- *       Migration nach oben (PUT api/overrides mit den lokalen Daten),
- *       Cache = lokale Daten.
- *   (c) Server NICHT erreichbar (Fehler/Timeout) → Fallback auf das bisherige
- *       lokale Verhalten (IndexedDB, dann Legacy-localStorage-Migration).
+ * Befüllt den synchronen Cache beim App-Start aus IndexedDB (inkl. einmaliger
+ * Migration aus dem alten localStorage-Schlüssel). Wirft NIE.
  * MUSS beim App-Start aufgerufen werden (App.tsx), danach ein rerender().
- * Signatur unverändert; wirft NIE und setzt am Ende hydrated = true.
  */
 export async function hydrateClubOverrides(): Promise<void> {
   try {
-    let serverMap: Record<string, ClubOverride> | null = null;
-    try {
-      serverMap = await serverGetAll();
-    } catch {
-      serverMap = null; // Server nicht erreichbar → (c)
-    }
-
-    if (serverMap !== null) {
-      if (Object.keys(serverMap).length > 0) {
-        // (a) Server hat Daten → zentrale Wahrheit übernehmen und spiegeln.
-        cache = serverMap;
-        try { await idbPutAll(cache); } catch { /* Offline-Spiegel best effort */ }
-      } else {
-        // (b) Server erreichbar aber leer → lokale Daten ggf. nach oben migrieren.
-        const local = await readLocal();
-        if (Object.keys(local).length > 0) {
-          cache = local;
-          try { await serverPutAll(local); } catch { /* Hochwärts-Migration best effort */ }
-          try { await idbPutAll(cache); } catch { /* Offline-Spiegel best effort */ }
-          try { localStorage.removeItem(LEGACY_LS_KEY); } catch { /* ignorieren */ }
-        } else {
-          cache = {};
-        }
-      }
-    } else {
-      // (c) Server nicht erreichbar → lokaler Fallback (bisheriges Verhalten).
-      await hydrateFromLocal();
-    }
-  } catch {
-    // Sicherheitsnetz: nichts darf nach oben durchschlagen.
-    cache = cache && Object.keys(cache).length > 0 ? cache : {};
+    await hydrateFromLocal();
   } finally {
     hydrated = true;
   }
@@ -301,26 +187,6 @@ function persist(): void {
   idbPutAll(cache).catch(() => {
     // eslint-disable-next-line no-console
     console.warn('Vereins-Override konnte nicht dauerhaft gespeichert werden – bleibt für diese Sitzung aktiv.');
-  });
-}
-
-/**
- * Schreibt EIN Override fire-and-forget auf den Server. Blockiert den Editor
- * NICHT und wirft NIE — Fehler werden nur geloggt (IndexedDB bleibt Offline-
- * Cache; die nächste Hydration gleicht ab).
- */
-function serverSyncPut(key: string, ov: ClubOverride): void {
-  serverPutKey(key, ov).catch(() => {
-    // eslint-disable-next-line no-console
-    console.warn('Vereins-Override konnte nicht zum Server synchronisiert werden – lokal gespeichert.');
-  });
-}
-
-/** Löscht EIN Override fire-and-forget auf dem Server. Wirft NIE. */
-function serverSyncDelete(key: string): void {
-  serverDeleteKey(key).catch(() => {
-    // eslint-disable-next-line no-console
-    console.warn('Vereins-Override-Löschung konnte nicht zum Server synchronisiert werden.');
   });
 }
 
@@ -363,17 +229,11 @@ export function setClubOverride(club: Club, ov: ClubOverride): void {
   if (!clean.crest && !clean.home && !clean.away) {
     delete cache[club.id];
     if (cKey) delete cache[cKey];
-    // Server (zentrale Wahrheit) informieren: betroffene Keys löschen.
-    serverSyncDelete(club.id);
-    if (cKey) serverSyncDelete(cKey);
   } else {
     cache[club.id] = clean;
     // Zusätzlich unter der stabilen Stadt-Kennung ablegen, damit der Override
     // auch in neu generierten Spielen (andere club.id, gleiche Stadt) greift.
     if (cKey) cache[cKey] = clean;
-    // Server (zentrale Wahrheit) informieren: betroffene Keys schreiben.
-    serverSyncPut(club.id, clean);
-    if (cKey) serverSyncPut(cKey, clean);
   }
   persist();
 }
@@ -385,9 +245,6 @@ export function clearClubOverride(club: Club): void {
   const cKey = club.city ? cityKey(club.city) : null;
   if (cKey && cache[cKey]) { delete cache[cKey]; changed = true; }
   if (changed) persist();
-  // Server (zentrale Wahrheit) immer informieren — auch wenn lokal nichts stand.
-  serverSyncDelete(club.id);
-  if (cKey) serverSyncDelete(cKey);
 }
 
 /**

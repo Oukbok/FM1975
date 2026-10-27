@@ -133,7 +133,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.2px; }
   z-index: -1;
   background:
     linear-gradient(180deg, rgba(10, 14, 20, 0.10) 0%, rgba(10, 14, 20, 0.14) 60%, rgba(10, 14, 20, 0.28) 100%),
-    url('/assets/stadion-hintergrund.jpg') center top / cover no-repeat;
+    url('assets/stadion-hintergrund.jpg') center top / cover no-repeat;
 }
 /* Zentrale: eigenes Manager-Buero-Motiv grossflaechig hinter/ausserhalb der
    Boxen. Ein leichter Abdunkel-Verlauf darueber (oben 5%, Mitte 15%, unten 30%)
@@ -141,7 +141,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.2px; }
 .shell-zentrale::before {
   background:
     linear-gradient(180deg, rgba(8, 11, 17, 0.05) 0%, rgba(8, 11, 17, 0.15) 55%, rgba(8, 11, 17, 0.30) 100%),
-    url('/assets/zentrale-hintergrund.png?v=2') center center / cover no-repeat;
+    url('assets/zentrale-hintergrund.png?v=2') center center / cover no-repeat;
 }
 /* Dashboard-aehnliche Seiten (Zentrale + Kategorie-Dashboards): Inhaltsbereich als
    volle Hoehen-Flexspalte, damit der Footer immer am unteren Rand klebt und die
@@ -847,7 +847,7 @@ input[type="range"] { padding: 0; accent-color: var(--accent); }
   background:
     radial-gradient(1100px 520px at 50% -8%, rgba(0, 217, 255, 0.12), transparent 62%),
     linear-gradient(180deg, rgba(6, 8, 11, 0.45), rgba(6, 8, 11, 0.72)),
-    url('/assets/menu-bg-3.jpg') center / cover no-repeat,
+    url('assets/menu-bg-3.jpg') center / cover no-repeat,
     var(--bg);
 }
 .menu-wrap {
@@ -3111,7 +3111,7 @@ input[type="range"] { padding: 0; accent-color: var(--accent); }
   height: 156px;
   background:
     linear-gradient(180deg, rgba(8, 11, 17, 0.34) 0%, rgba(8, 11, 17, 0.72) 100%),
-    url('/assets/stadion-zuschauer.jpg?v=1') center / cover no-repeat;
+    url('assets/stadion-zuschauer.jpg?v=1') center / cover no-repeat;
 }
 /* Wappen-Reihe füllt die gesamte Foto-Höhe; jede Seite ist eine Spalte
    (großes Wappen + Name als Bildunterschrift darunter). */
@@ -3180,14 +3180,14 @@ input[type="range"] { padding: 0; accent-color: var(--accent); }
   width: 152px;
   aspect-ratio: 1024 / 1280;
   background: var(--jc, #cccccc);
-  -webkit-mask: url(/assets/trikot-basis.png?v=1) center / contain no-repeat;
-  mask: url(/assets/trikot-basis.png?v=1) center / contain no-repeat;
+  -webkit-mask: url(assets/trikot-basis.png?v=1) center / contain no-repeat;
+  mask: url(assets/trikot-basis.png?v=1) center / contain no-repeat;
 }
 .ckd-jersey-photo::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: url(/assets/trikot-basis.png?v=1) center / contain no-repeat;
+  background: url(assets/trikot-basis.png?v=1) center / contain no-repeat;
   mix-blend-mode: multiply;
   pointer-events: none;
 }
