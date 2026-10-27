@@ -18,6 +18,7 @@ import { makeMessage, pushMessage } from '../engine/messages';
 import { AppSettings, loadGame, loadSettings, saveSettings } from '../engine/save';
 import { createDefaultWeeklyPlan } from '../engine/weeklyTraining';
 import { academyStartingCohort, generateYouthPlayer } from '../engine/youth';
+import { initWorld } from '../engine/world';
 import { addCupCalendarEvents, buildEuroCupsForSeason, cupDateSet, cupDrawMessage, euroDrawMessage, leagueDateSet } from './competitions';
 import { buildDdrDivisions, buildLeagueSystem, buildSecondLigaSimClubs, historicPointSystem } from './leagueSetup';
 import { applyTimelineEffect, fireTimelineForSeason } from './season';
@@ -99,6 +100,7 @@ export function createNewGame(opts: NewGameOptions): Game {
     cup,
     euroCups,
     euroClubs,
+    world: initWorld(euroClubs),
     firedMilestones: [],
     unlockedFeatures: [],
     hiredStaff: [],

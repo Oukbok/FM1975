@@ -2,6 +2,7 @@ import { EuroCompId, allEuroClubs } from '../data/europe';
 import { setEraYear } from '../engine/positions';
 import { refreshOverall } from '../engine/development';
 import { manageSquads } from './squads';
+import { advanceWorldSeason, initWorld, isForeignId } from '../engine/world';
 import { closeSeason } from '../engine/history';
 import { buildProClub } from '../data/generate';
 import { CurrentDivision, TransitionResult, computeSeasonTransition, structureForSeason } from '../data/reforms';
@@ -241,6 +242,13 @@ export function startNextSeason(g: Game): void {
   //     vereine des Pokals bleiben unangetastet).
   for (const c of Object.values(g.clubs)) {
     if (c.id.startsWith('am')) continue;
+    // Für den Europapokal materialisierte Auslandsvereine nicht in deutsche Ligen
+    // übernehmen – der Kader wird beim nächsten Duell neu erzeugt.
+    if (isForeignId(c.id)) {
+      for (const pid of c.playerIds) delete g.players[pid];
+      delete g.clubs[c.id];
+      continue;
+    }
     if (playerSet.has(c.id)) continue;
     const dest = divOf[c.id] ?? { tier: 2, group: 'nord' as LeagueGroup };
     g.simClubs[c.id] = simClubFromClub(c, g.players, dest.tier, dest.group);
@@ -334,9 +342,23 @@ export function startNextSeason(g: Game): void {
   // --- 8a) Europapokale der neuen Saison (drei Wettbewerbe, EC/CWC/Europa-Verband) ---
   const euroClubs = g.euroClubs ?? allEuroClubs();
   g.euroClubs = euroClubs;
+  // Europa im Hintergrund: abgelaufene Saison aller Auslandsligen durchrechnen,
+  // Koeffizienten werten und die ausländischen Starter bestimmen.
+  if (!g.world) g.world = initWorld(euroClubs, nextStartYear);
+  const worldRes = advanceWorldSeason(
+    g.world, euroClubs, oldSeason, nextStartYear, g.pointSystem === '3-point' ? 3 : 2,
+    g.euroCups as any, (id) => !!g.clubs[id] || !!g.simClubs?.[id],
+  );
+  for (const note of worldRes.notes) {
+    pushMessage(g.messages, makeMessage({
+      date: calendar.currentDate, category: 'milestone', from: 'Fußball-Chronik',
+      subject: 'Europas Fußball-Landkarte ändert sich', shortText: note, bodyText: note, actionRequired: false,
+    }));
+  }
   g.euroCups = buildEuroCupsForSeason(
     euroQuals, euroClubs, leagueDateSet(fixtures), cupDateSet(cup),
     g.managedClubId + ':' + nextStartYear, calendar.seasonStartDate, g.managedClubId, calendar,
+    worldRes.participants,
   );
   for (const comp of ['ec', 'cwc', 'uefa'] as EuroCompId[]) {
     const ec = g.euroCups[comp];

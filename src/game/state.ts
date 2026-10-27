@@ -1,5 +1,6 @@
 import { PlannedActivity } from '../data/activities';
 import { EuroClub } from '../data/europe';
+import type { WorldState } from '../engine/world';
 import { generateBandenOffers, generateShirtOffers } from '../engine/finances';
 import { LeagueSystem, SimClub } from '../engine/leagues';
 import { Club, ClubCommerce, CupState, Difficulty, GameCalendar, InboxMessage, LeagueTable, ManagerProfile, Match, Player, PointSystem, SponsorContract, SponsorOffer, WeeklyTrainingPlan } from '../types';
@@ -60,6 +61,8 @@ export interface Game {
   euroCups?: { ec: CupState | null; cwc: CupState | null; uefa: CupState | null };
   /** Leichte auslaendische Europapokal-Vereine (aus allEuroClubs()). */
   euroClubs?: Record<string, EuroClub>;
+  /** Europa im Hintergrund: ausländische Ligen, Koeffizienten (engine/world.ts). */
+  world?: WorldState;
   /** IDs bereits ausgelöster Chronik-Meilensteine (Epochen-/Timeline-System). */
   firedMilestones: string[];
   /** Freigeschaltete Features (durch Meilensteine, z. B. "champions_league"). */

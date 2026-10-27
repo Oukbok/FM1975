@@ -1530,7 +1530,8 @@ Parallel zur Liga und zum Landespokal laufen die **drei europäischen Wettbewerb
 Das Feld geht in jedem Wettbewerb exakt auf (16/16/32).
 
 ## Ausländische Teilnehmer
-- Die ausländischen Klubs stammen fest aus dem Datensatz (\`src/data/europe.ts\`) und sind an die Spitzenvereine des Jahres 1975 angelehnt, tragen aber erfundene Namen (z. B. Madrid Weiß, Liverpool Rot, Amsterdam, Turin Schwarz-Weiß im Landesmeister-Pokal).
+- In der **ersten Saison** stammen die ausländischen Klubs aus dem Datensatz (\`src/data/europe.ts\`), angelehnt an die Spitzenvereine des Jahres 1975, mit erfundenen Namen (z. B. Madrid Weiß, Liverpool Rot, Amsterdam, Turin Schwarz-Weiß).
+- **Ab der zweiten Saison** qualifizieren sich die Auslandsvereine sportlich über ihre eigenen Ligen (siehe **Europa im Hintergrund**).
 - Ihre **Stärke** liegt auf der Skala ~55–82 (plausible Spielwerte, keine exakten historischen Tabellenplätze).
 - Sie werden als leichte Einträge geführt (Name/Stadt/Land/Stärke/Farben) — **kein voller Kader**, solange dein Verein nicht gegen sie spielt.
 
@@ -1567,6 +1568,34 @@ Die deutschen Starter sind immer volle Vereine des Spielstands. Nur dein Verein 
 ## Auslosung & Termine
 - **Nach jeder Runde wird neu ausgelost** — kein fester Turnierpfad. Alle Auslosungen leiten ihren Zufall aus einem **festen Seed** ab (reproduzierbar).
 - Die europäischen Runden liegen historisch über die Saison verteilt (Herbst-Runden, Frühjahr Viertel-/Halbfinale, Mai Finale) auf **Mitte-der-Woche-Terminen** und werden **kollisionsfrei zu Liga- und Landespokal-Terminen** geplant (bei Kollision tageweise verschoben).`,
+  },
+  {
+    id: 'euro-world',
+    category: 'euro',
+    title: 'Europa im Hintergrund — Auslandsligen & Koeffizienten',
+    keywords: ['europa', 'ausland', 'ligen', 'koeffizient', 'fünfjahreswertung', 'meister', 'pokalsieger', 'teilung', 'sperre', 'welt'],
+    body: `## Alle großen Ligen Europas laufen mit
+Rund **20 Länder** mit je **1. und 2. Liga** (über 700 Vereine) werden im Hintergrund simuliert. Jeder Auslandsverein ist nur ein schlanker Eintrag (Name, Stadt, Land, Stärke, Farben) – erst wenn dein Verein gegen ihn spielt, entsteht ein voller Kader. Eine komplette Europa-Saison kostet nur Millisekunden, damit das Spiel auch nach Jahrzehnten flüssig bleibt.
+
+## Saison im Zeitraffer
+- Am **Saisonende** werden alle Auslandsligen auf einmal ausgespielt (Hin- und Rückrunde, Ergebnisse nach Stärke mit Heimvorteil und Zufall).
+- **Auf- und Abstieg:** 3 Vereine je Richtung (2 in kleinen Ligen).
+- **Landespokal** jedes Landes: K.-o.-Turnier, Außenseiter gewinnen manchmal.
+
+## Wie sich Vereine entwickeln
+- Jeder Verein hat eine **Größe** (Stadt, Tradition, Wirtschaftskraft). Sie zieht seine Stärke langfristig an und wächst mit Titeln und Europapokal-Erfolgen – kehrt aber langsam zur natürlichen Größe zurück.
+- Ein **Generationen-Zyklus** sorgt für goldene und magere Jahre: Auch große Vereine erleben Durststrecken, kleine Vereine haben ihre Glanzzeit.
+- Das **Niveau der Länder** verschiebt sich über die Jahrzehnte (z. B. wird England ab den 1990ern stärker, Osteuropa schwächer).
+
+## Koeffizienten (Fünfjahreswertung)
+- Jede Europapokal-Saison bringt Punkte: 1 für die Teilnahme, 2 je gewonnener Runde, 2 Bonus für den Titel. Der Landeswert ist der Schnitt der Starter eines Landes, summiert über die **letzten fünf Saisons**.
+- Danach richten sich die Startplätze: Die **Meister der 15 bestplatzierten Länder** spielen im Landesmeister-Pokal, deren **Pokalsieger** im Pokalsieger-Pokal (ist der Pokalsieger schon Meister, rückt der Nächste der Tabelle nach). Im **Europa-Pokal** erhalten die Länder auf Rang 1–2 drei Plätze, Rang 3–9 zwei, Rang 10–18 einen.
+- Auch für **Deutschland** wird der Koeffizient mitgeführt.
+
+## Geschichte
+- **Sperre englischer Vereine** 1985/86 bis 1989/90.
+- **Staatenteilungen:** 1992 zerfallen die Sowjetunion (Russland, Ukraine) und Jugoslawien (Serbien, Kroatien), 1993 die Tschechoslowakei (Tschechien, Slowakei). Vereine wechseln anhand ihrer Stadt in die neuen Ligen, fehlende Plätze füllen neue Vereine auf.
+- Alle Vereinsnamen sind erfunden (Stadt, ggf. mit Farbe).`,
   },
   {
     id: 'euro-simulation',

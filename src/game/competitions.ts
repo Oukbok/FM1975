@@ -74,9 +74,16 @@ export function buildEuroCupsForSeason(
   earliest: string,
   managedClubId: string,
   calendar: GameCalendar,
+  foreign?: Record<EuroCompId, string[]> | null,
 ): { ec: CupState | null; cwc: CupState | null; uefa: CupState | null } {
-  const foreignByComp: Record<EuroCompId, string[]> = { ec: [], cwc: [], uefa: [] };
-  for (const c of Object.values(euroClubs)) foreignByComp[c.comp].push(c.id);
+  // Ausländische Starter: aus der Europa-Simulation (engine/world.ts) oder – in der
+  // ersten Saison/alten Spielständen – der historische Satz aus data/europe.ts.
+  const foreignByComp: Record<EuroCompId, string[]> = foreign
+    ? { ec: [...foreign.ec], cwc: [...foreign.cwc], uefa: [...foreign.uefa] }
+    : { ec: [], cwc: [], uefa: [] };
+  if (!foreign) {
+    for (const c of Object.values(euroClubs)) if (c.id.startsWith('eu_')) foreignByComp[c.comp].push(c.id);
+  }
 
   const comps: EuroCompId[] = ['ec', 'cwc', 'uefa'];
   const out: { ec: CupState | null; cwc: CupState | null; uefa: CupState | null } = {

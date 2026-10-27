@@ -169,7 +169,7 @@ function assignPotentialStars(age: number, overall: number): number {
 const COUNTRY_ORIGIN: Record<string, string> = {
   England: 'eng', Italien: 'ita', Spanien: 'esp', Frankreich: 'fra', Schottland: 'sco', Niederlande: 'ned',
   Sowjetunion: 'rus', Portugal: 'por', Jugoslawien: 'yug', Griechenland: 'gre', Belgien: 'bel', Ungarn: 'hun',
-  Tschechoslowakei: 'cze', Polen: 'pol', Oesterreich: 'aut', Tuerkei: 'tur', Schweiz: 'sui', Schweden: 'swe', Rumaenien: 'hun',
+  Tschechoslowakei: 'cze', Polen: 'pol', Oesterreich: 'aut', Tuerkei: 'tur', Schweiz: 'sui', Schweden: 'swe', Rumaenien: 'hun', Daenemark: 'den', Ukraine: 'rus', Russland: 'rus', Kroatien: 'cro', Serbien: 'srb', Slowakei: 'cze', Tschechien: 'cze',
 };
 
 // Erzeugungsjahr (1975 beim Spielstart; später für aufsteigende/neue Vereine das aktuelle Jahr).
