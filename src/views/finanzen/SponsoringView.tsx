@@ -1,6 +1,7 @@
 import { type IconName } from '../../components/Icon';
-import { economyScale, yearOf } from '../../engine/economy';
+import { economyScale, revenueScale, yearOf } from '../../engine/economy';
 import { computeMonthly } from '../../engine/finances';
+import { commercialMultiplier, ensureBrand, internationalWeight } from '../../engine/clubEconomy';
 import { Game, offerToContract } from '../../game/state';
 import { Screen } from '../../shell/navigation';
 import { SponsorContract, SponsorOffer } from '../../types';
@@ -13,8 +14,15 @@ import { tableRow } from '../shared';
 // =============================================================================
 export function SponsoringView({ g, onGoto, onChange }: { g: Game; onGoto: (s: Screen) => void; onChange: () => void }) {
   const myClub = g.clubs[g.managedClubId];
-  const m = computeMonthly(myClub, g.players, g.table);
-  const scale = economyScale(yearOf(g.calendar.currentDate));
+  const year = yearOf(g.calendar.currentDate);
+  const scale = economyScale(year);
+  const m = computeMonthly(myClub, g.players, g.table, scale, year);
+  const brand = ensureBrand(myClub);
+  const commMult = commercialMultiplier(myClub, year);
+  const intW = internationalWeight(year);
+  // Vertragswerte (1975-Basis) wachsen mit dem Vermarktungsmarkt und der Marke.
+  const commScale = revenueScale('commercial', year) * commMult;
+  void scale;
   const com = myClub.commerce ?? (myClub.commerce = { cateringMode: 'verpachtung' });
   const row = tableRow(g);
 
@@ -25,7 +33,7 @@ export function SponsoringView({ g, onGoto, onChange }: { g: Game; onGoto: (s: S
     <DashBox title={title} icon={icon} right={contract ? `${contract.yearsLeft} ${contract.yearsLeft === 1 ? 'Saison' : 'Saisons'}` : 'kein Vertrag'}>
       {contract ? <>
         <div className="dkpis">
-          <Kpi value={fmtDM(contract.annualValue * scale)} label="pro Jahr" />
+          <Kpi value={fmtDM(contract.annualValue * commScale)} label="pro Jahr" />
           <Kpi value={fmtDM(monthly)} label="pro Monat" color="var(--green)" />
         </div>
         <KV k="Partner" v={contract.name} strong />
@@ -38,7 +46,7 @@ export function SponsoringView({ g, onGoto, onChange }: { g: Game; onGoto: (s: S
     <DashBox title={title} icon={icon} right={offers?.length ? `${offers.length} Angebote` : undefined}>
       {offers && offers.length ? offers.map((o, i) => (
         <div key={`${o.name}-${i}`} className="dlist-row">
-          <span className="grow"><b>{o.name}</b><span className="dnote" style={{ display: 'block' }}>{fmtDM(o.annualValue * scale)} pro Jahr · {o.years} {o.years === 1 ? 'Saison' : 'Saisons'}</span></span>
+          <span className="grow"><b>{o.name}</b><span className="dnote" style={{ display: 'block' }}>{fmtDM(o.annualValue * commScale)} pro Jahr · {o.years} {o.years === 1 ? 'Saison' : 'Saisons'}</span></span>
           <button className="dchip on" onClick={() => onSign(o)}>Unterschreiben</button>
         </div>
       )) : <Empty icon={icon}>Neue Angebote kommen zum Saisonwechsel oder wenn ein Vertrag ausläuft.</Empty>}
@@ -63,11 +71,14 @@ export function SponsoringView({ g, onGoto, onChange }: { g: Game; onGoto: (s: S
       <Offers title="Angebote Trikot" icon="sponsoring" offers={com.shirtOffers} onSign={signShirt} />
       <Offers title="Angebote Banden" icon="marketing" offers={com.bandenOffers} onSign={signBanden} />
 
-      <DashBox title="Werbewert des Vereins" icon="stats">
-        <Meter label="Ansehen" value={myClub.reputation} text={`${myClub.reputation}`} />
-        <Meter label="Stadionkapazität" value={myClub.stadium.capacity} max={80000} text={myClub.stadium.capacity.toLocaleString('de-DE')} />
-        <Meter label="Tabellenplatz" value={row ? g.table.rows.length + 1 - row.position : 0} max={g.table.rows.length || 1} text={row ? `${row.position}.` : '–'} />
-        <div className="dnote mt8">Trikot- und Bandenwerte richten sich nach Ansehen, Stadionkapazität und Tabellenlage. Höheres Ansehen bringt bessere Angebote.</div>
+      <DashBox title="Marke & Vermarktung" icon="stats" right={`Faktor ${commMult.toFixed(2)}`}>
+        <Meter label="Regional" value={brand.regional} text={Math.round(brand.regional)} />
+        <Meter label="National" value={brand.national} text={Math.round(brand.national)} />
+        <Meter label="International" value={brand.international} text={Math.round(brand.international)} />
+        <KV k="Vermarktung & Hospitality / Jahr" v={fmtDM(myClub.finances.commercialAnnual ?? 0)} />
+        <KV k="TV-Gelder / Jahr" v={fmtDM(myClub.finances.tvAnnual ?? 0)} />
+        <KV k="Ansehen · Tabellenplatz" v={`${myClub.reputation} · ${row ? `${row.position}.` : '–'}`} />
+        <div className="dnote mt8">Die Marke wächst mit Titeln und Europapokal-Erfolgen und vervielfacht Sponsoring, Fanartikel und Vermarktung. Internationale Bekanntheit zählt heute {Math.round(intW * 100)} % – Tendenz steigend.</div>
       </DashBox>
     </DashPage>
   );

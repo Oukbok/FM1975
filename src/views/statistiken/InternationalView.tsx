@@ -7,6 +7,7 @@ import { clubView } from '../../game/clubProfile';
 import { Game } from '../../game/state';
 import { CupTie } from '../../types';
 import { DashBox, DashPage, Empty, KV } from '../../ui/DashPage';
+import { EuropeBox } from './EuropeBox';
 import { fmtDMfull } from '../../ui/format';
 import { useState } from 'react';
 
@@ -142,15 +143,7 @@ export function InternationalView({ g, onWatch }: { g: Game; onWatch: (id: strin
         </>}
       </DashBox>
 
-      <DashBox title="Wettbewerb" icon="trophy" right={cup ? `${cup.participantIds.length} Teams` : undefined}>
-        {cup ? <>
-          <div className="dsec">Deutsche Teilnehmer</div>
-          {germans.length ? germans.map((id) => <KV key={id} k={teamInfo(id).name} v={id === mid ? 'dein Verein' : ''} />) : <div className="dnote">Keine.</div>}
-          <div className="dsec">Preisgeld pro Runde</div>
-          {cup.rounds.map((rd) => <KV key={rd.index} k={rd.name} v={fmtDMfull(cup.prizeByRound[rd.index])} />)}
-          <div className="dnote mt8">K.-o.-Modus: ein Spiel, bei Gleichstand Verlängerung und Elfmeterschießen.</div>
-        </> : <div className="dnote">–</div>}
-      </DashBox>
+      <EuropeBox g={g} germans={germans} teamName={(id) => teamInfo(id).name} />
     </DashPage>
   );
 }

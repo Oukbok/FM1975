@@ -1,3 +1,4 @@
+import { economyScale, yearOf } from '../../engine/economy';
 import Icon from '../../components/Icon';
 import { computeMonthly, forecastSeasonEnd, totalExpense, totalIncome, weeklyWageBill } from '../../engine/finances';
 import { Game } from '../../game/state';
@@ -106,7 +107,7 @@ export function FinancesView({ g }: { g: Game }) {
   const income = totalIncome(fin);
   const expense = totalExpense(fin);
   const net = income - expense;
-  const monthly = computeMonthly(club, g.players, g.table);
+  const monthly = computeMonthly(club, g.players, g.table, economyScale(yearOf(g.calendar.currentDate)), yearOf(g.calendar.currentDate));
   const homeRemaining = g.fixtures.filter((m) => m.homeClubId === g.managedClubId && m.status === 'scheduled').length;
   const forecast = forecastSeasonEnd(club, g.players, g.table, g.calendar.currentDate, g.calendar.seasonEndDate, homeRemaining);
   const weekly = weeklyWageBill(club, g.players);

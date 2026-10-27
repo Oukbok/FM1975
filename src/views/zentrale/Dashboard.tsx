@@ -5,7 +5,7 @@ import JerseySVG, { type JerseyPattern } from '../../components/JerseySVG';
 import { getClubKitDisplay } from '../../data/kits';
 import { CalendarEngine } from '../../engine/calendar';
 import { ROUND_NAMES, nextPlayerTie } from '../../engine/cup';
-import { yearOf } from '../../engine/economy';
+import { yearOf, economyScale } from '../../engine/economy';
 import { computeMonthly } from '../../engine/finances';
 import { FACILITIES, facilityAvailable, MAX_LEVEL } from '../../engine/infrastructure';
 import { divisionLabel } from '../../engine/leagues';
@@ -83,7 +83,7 @@ export function Dashboard({ g, onGoto, onWatch, onOpenEditor }: {
     ? (nextTie ? (ROUND_NAMES[nextTie.round] ?? 'Pokal') : 'Pokal')
     : (nextLeague ? `${nextLeague.matchday}. Spieltag` : '');
   const squad = myClub.playerIds.map((id) => g.players[id]).filter(Boolean);
-  const monthly = computeMonthly(myClub, g.players, g.table);
+  const monthly = computeMonthly(myClub, g.players, g.table, economyScale(yearOf(g.calendar.currentDate)), yearOf(g.calendar.currentDate));
   const monIncome = monthly.sponsorship + monthly.advertising + monthly.membership + monthly.cateringLease + monthly.tv + monthly.commercial + monthly.placementBonus;
   const monExpense = monthly.wages + monthly.staffWages + monthly.stadiumMaintenance + monthly.facilities + monthly.otherFixed;
   const bal = myClub.finances.balance;

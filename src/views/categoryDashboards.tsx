@@ -253,7 +253,7 @@ const EXPENSE_DE: Record<string, string> = {
 export function FinanzenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) => void }) {
   const myClub = g.clubs[g.managedClubId];
   const fin = myClub.finances;
-  const m = computeMonthly(myClub, g.players, g.table, economyScale(yearOf(g.calendar.currentDate)));
+  const m = computeMonthly(myClub, g.players, g.table, economyScale(yearOf(g.calendar.currentDate)), yearOf(g.calendar.currentDate));
   const inc = totalIncome(fin), exp = totalExpense(fin);
   const incRows = Object.entries(fin.income).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
   const expRows = Object.entries(fin.expenses).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
