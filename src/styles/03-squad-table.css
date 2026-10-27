@@ -1,0 +1,41 @@
+/* =============================================================================
+   KADER-TABELLE
+   ============================================================================= */
+.table-scroll { width: 100%; overflow-x: auto; }
+.squad-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.squad-table th {
+  text-align: left;
+  padding: 10px 10px;
+  color: var(--text-3);
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+.squad-table th.num, .squad-table td.num { text-align: center; }
+.squad-table th:hover { color: var(--text); }
+.squad-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border-soft);
+  white-space: nowrap;
+}
+.squad-table tr.clickable-row { cursor: pointer; transition: background 0.12s ease; }
+.squad-table tr.clickable-row:hover { background: var(--panel-hover); }
+.pos-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+}
+.orange-text { color: var(--orange); }

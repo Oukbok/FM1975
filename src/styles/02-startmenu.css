@@ -1,0 +1,233 @@
+/* =============================================================================
+   STARTMENÜ
+   ============================================================================= */
+.menu-bg {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Vertikales Padding skaliert mit der Höhe; bei sehr niedrigen Viewports darf
+     der Inhalt scrollen statt beschnitten zu werden. */
+  padding: clamp(16px, 4vh, 48px) 24px;
+  overflow-y: auto;
+  /* Design 3 (Dark UI) als Startbildschirm-Hintergrund. Das Logo ist NICHT
+     eingebrannt, sondern liegt separat im DOM (siehe .menu-logo) — dadurch kann
+     das Menü das Logo bei keiner Auflösung überdecken. Ein dezenter dunkler
+     Verlauf legt sich über das Bild und hält Logo/Menü stets gut lesbar. */
+  background:
+    radial-gradient(1100px 520px at 50% -8%, rgba(0, 217, 255, 0.12), transparent 62%),
+    linear-gradient(180deg, rgba(6, 8, 11, 0.45), rgba(6, 8, 11, 0.72)),
+    url('assets/menu-bg-3.jpg') center / cover no-repeat,
+    var(--bg);
+}
+.menu-wrap {
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Fester Abstand zwischen Logo-Block und Menü — beide sind eigene
+     Flex-Kinder und können sich dadurch niemals überlappen. */
+  gap: clamp(20px, 5vh, 40px);
+}
+.menu-hero {
+  text-align: center;
+  width: 100%;
+}
+/* Wiederverwendbares SVG-Logo. Breite ist responsiv gedeckelt, die Höhe
+   zusätzlich per max-height an die Viewport-Höhe gebunden: auf niedrigen/breiten
+   Bildschirmen schrumpft das Logo, sodass immer Platz fürs Menü bleibt. */
+.menu-logo {
+  display: block;
+  width: min(440px, 82vw);
+  max-height: 32vh;
+  height: auto;
+  margin: 0 auto;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 26px rgba(0, 0, 0, 0.55));
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.menu-hero h1 {
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  line-height: 1.05;
+}
+.menu-hero h1 .accent { color: var(--accent); }
+.menu-hero p {
+  color: var(--text-2);
+  font-size: 13px;
+  margin-top: 6px;
+}
+.menu-hero h1.menu-year {
+  font-size: 88px;
+  font-weight: 900;
+  letter-spacing: -3px;
+  line-height: 0.95;
+  color: var(--accent);
+}
+.menu-hero p.menu-slogan {
+  color: var(--text-1);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+.menu-badge {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-soft);
+  letter-spacing: 0.5px;
+}
+.menu-panel {
+  width: 100%;
+  background: linear-gradient(180deg, var(--panel), var(--bg-2));
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.menu-panel.wide { max-width: 720px; }
+.menu-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+.menu-btn:hover:not(:disabled) {
+  background: var(--panel-hover);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.menu-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.menu-btn.primary {
+  background: linear-gradient(180deg, var(--accent), var(--accent-dim));
+  border-color: var(--accent);
+  color: #04222b;
+  font-weight: 800;
+}
+.menu-btn.primary:hover:not(:disabled) { filter: brightness(1.08); }
+.menu-btn.danger { color: var(--red); }
+.menu-btn.danger:hover:not(:disabled) { border-color: var(--red); }
+.mi { font-size: 18px; width: 22px; text-align: center; }
+
+/* ---------------------------------------------------------------------------
+   Set-C UI-Icons (<Icon/>). Skalieren über die font-size des Elternelements
+   (Standardgröße 1em) und richten sich sauber an begleitendem Text aus.
+   Stilregeln & Erweiterung: siehe docs/ICON_STYLE.md
+--------------------------------------------------------------------------- */
+.game-icon { display: inline-block; width: 1em; height: 1em; vertical-align: -0.125em; flex: none; }
+.mi .game-icon { vertical-align: middle; }
+.card-title .ico .game-icon,
+.nav-item .nav-ico .game-icon { vertical-align: -0.15em; }
+.menu-tag {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-3);
+  font-weight: 600;
+}
+
+/* --- Neues Spiel Formular --- */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.form-grid .full { grid-column: 1 / -1; }
+.field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-2);
+  margin-bottom: 6px;
+}
+.field-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+}
+.field-input:focus { outline: none; border-color: var(--accent); }
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  padding: 8px 14px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.chip:hover { border-color: var(--accent); color: var(--text); }
+.chip.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 700;
+}
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 10px 0;
+}
+.toggle-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+.toggle-item input { display: none; }
+.toggle {
+  width: 46px;
+  height: 26px;
+  border-radius: 20px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  position: relative;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--text-3);
+  transition: all 0.15s ease;
+}
+.toggle.on { background: var(--accent-soft); border-color: var(--accent); }
+.toggle.on::after { left: 22px; background: var(--accent); }

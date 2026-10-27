@@ -1,0 +1,94 @@
+/* =============================================================================
+   Vereins-Editor (ClubEditorModal)
+   ============================================================================= */
+.ce-modal { max-width: 620px; }
+.ce-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 22px 14px; border-bottom: 1px solid var(--border);
+}
+.ce-title { font-size: 20px; font-weight: 800; letter-spacing: 0.3px; }
+.ce-body { padding: 18px 22px; overflow-y: auto; display: flex; flex-direction: column; gap: 22px; }
+.ce-section { display: flex; flex-direction: column; gap: 12px; }
+.ce-sec-title {
+  font-size: 13px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase;
+  color: var(--text-3);
+}
+.ce-crest-row { display: flex; align-items: center; gap: 20px; }
+.ce-crest-preview {
+  flex: 0 0 auto; width: 108px; height: 108px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 12px;
+}
+.ce-crest-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.ce-hint { font-size: 12px; color: var(--text-3); margin: 2px 0 0; }
+.ce-err { font-size: 12px; color: var(--red); margin: 2px 0 0; }
+.ce-kits { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.ce-kit {
+  display: flex; flex-direction: column; gap: 12px;
+  background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px;
+}
+.ce-kit-preview { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.ce-kit-cap { font-size: 14px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-2); }
+.ce-kit-fields { display: flex; flex-direction: column; gap: 9px; }
+.ce-field { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.ce-field-lbl { font-size: 13px; font-weight: 600; color: var(--text-2); }
+.ce-color {
+  width: 46px; height: 30px; padding: 2px; border-radius: 7px;
+  border: 1px solid var(--border); background: var(--panel-2); cursor: pointer;
+}
+.ce-select {
+  min-width: 130px; padding: 6px 10px; border-radius: 7px;
+  border: 1px solid var(--border); background: var(--panel-2); color: var(--text);
+  font-size: 13px; font-weight: 600;
+}
+/* Vereinsauswahl im Editor */
+.ce-team-pick { display: flex; align-items: center; gap: 12px; }
+.ce-team-pick .ce-select { min-width: 240px; flex: 0 1 auto; }
+/* Umschalter Design / Bild pro Trikot */
+.ce-kit-modes { display: flex; gap: 6px; }
+.ce-mode {
+  flex: 1; padding: 6px 8px; border-radius: 7px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--panel-2); color: var(--text-2);
+  font-size: 12.5px; font-weight: 700; letter-spacing: 0.3px;
+}
+.ce-mode.is-active { border-color: var(--accent); color: var(--accent); }
+.ce-kit-upload { display: flex; flex-direction: column; gap: 7px; align-items: flex-start; }
+.ce-kit-reset { align-self: flex-start; margin-top: 2px; }
+.ce-note { font-size: 12.5px; color: var(--text-3); margin: 4px 2px 0; }
+.ce-foot {
+  display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+  padding: 14px 22px 18px; border-top: 1px solid var(--border);
+}
+.ce-saved { margin-right: auto; color: var(--accent); font-weight: 700; font-size: 16px; }
+
+/* --- Link-Button in Karten --- */
+.dxlink { margin-top: auto; align-self: flex-start; padding: 12px 2px 0; background: none; border: none; color: var(--accent); font-size: 18.5px; font-weight: 700; cursor: pointer; }
+.dxlink:hover { text-decoration: underline; }
+
+/* --- Footer (drei Bereiche: links / mitte / rechts) --- */
+.dashx-foot {
+  /* Kein margin-top:auto mehr – das Raster (.dashx flex:1) fuellt jetzt den
+     Zwischenraum und haelt den Footer unten, ohne die untere Box-Reihe->Footer-
+     Luecke einseitig aufzublaehen. */
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 38px;
+  padding: 0 24px;
+  background: linear-gradient(180deg, rgba(9, 12, 18, 0.94), rgba(10, 14, 20, 0.90));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid var(--border);
+  border-radius: 12px;
+}
+.dashx-foot-l, .dashx-foot-c, .dashx-foot-r { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; }
+.dashx-foot-l { flex: 1 1 0; text-align: left; color: var(--text-3); }
+.dashx-foot-c { flex: 0 0 auto; text-align: center; color: var(--text-2); }
+.dashx-foot-r { flex: 1 1 0; text-align: right; color: var(--text-3); }
+@media (max-width: 760px) {
+  .dashx-foot-l, .dashx-foot-r { display: none; }
+  .dashx-foot-c { flex: 1 1 auto; }
+}

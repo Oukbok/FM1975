@@ -1,0 +1,103 @@
+/* =============================================================================
+   HEADER-MENÜ (Dropdown oben rechts)
+   ============================================================================= */
+.hdr-menu { position: relative; display: inline-flex; }
+.menu-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+}
+/* Unsichtbare Brücke über die 6px-Lücke zwischen Button und Dropdown, damit der
+   Cursor beim Übergang das Menü (Kind von .hdr-menu) nicht verlässt und es nicht
+   ungewollt schließt. */
+.menu-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 0;
+  right: 0;
+  height: 8px;
+}
+.menu-dropdown {
+  z-index: 60;
+  min-width: 210px;
+  padding: 6px;
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: menu-dd-in 0.12s ease-out;
+}
+@keyframes menu-dd-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.menu-dd-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 11px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.menu-dd-item svg { width: 18px; height: 18px; flex: 0 0 auto; }
+.menu-dd-item:hover { background: var(--panel-2); }
+.menu-dd-item.danger { color: var(--red); }
+.menu-dd-item.danger:hover { background: rgba(255, 92, 108, 0.12); }
+.menu-dd-sep { height: 1px; margin: 4px 6px; background: var(--border); }
+
+
+
+/* --- Leistungsbewertungs-Zeremonie ---------------------------------------- */
+.rc-panel {
+  width: min(560px, 94vw); max-height: 86vh;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 18px;
+  padding: 22px 22px 18px; display: flex; flex-direction: column;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .55);
+}
+.rc-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.rc-head .reveal-close { position: static; width: 34px; height: 34px; font-size: 16px; }
+.rc-progress {
+  display: flex; align-items: center; justify-content: space-between;
+  margin: 10px 0 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+.rc-summary { display: flex; gap: 12px; font-weight: 700; font-size: 13px; }
+.rc-list {
+  flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;
+  padding-right: 4px; min-height: 120px;
+}
+.rc-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 12px; border-radius: 10px;
+  background: var(--panel-2); border: 1px solid var(--border);
+  border-left: 3px solid var(--text-3);
+  animation: rc-in .28s ease;
+}
+.rc-row.up { border-left-color: #38d39f; }
+.rc-row.down { border-left-color: var(--red); }
+.rc-row.flat { border-left-color: var(--text-3); }
+.rc-row.newest { box-shadow: 0 0 0 1px var(--accent) inset; }
+@keyframes rc-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+.rc-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.rc-name { font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rc-ovr { display: flex; align-items: center; gap: 8px; font-size: 15px; flex-shrink: 0; }
+.rc-old { color: var(--text-2); }
+.rc-arrow { color: var(--text-3); }
+.rc-delta { font-size: 12px; font-weight: 700; min-width: 40px; text-align: right; }
+.rc-delta.up { color: #38d39f; }
+.rc-delta.down { color: var(--red); }
+.rc-delta.flat { color: var(--text-3); }
+.rc-controls { display: flex; gap: 8px; align-items: center; margin-top: 14px; }
+.rc-controls .btn-continue { flex: 1; }
+.rc-btn { min-width: 48px; font-weight: 700; }

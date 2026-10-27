@@ -1,0 +1,73 @@
+/* =============================================================================
+   ClubModal — Vereins-Detailansicht (FM-Stil)
+   ============================================================================= */
+/* Klickbare Vereinsnamen in Tabelle/Spielplan */
+.club-link { transition: color 0.12s ease; }
+.club-link:hover { color: var(--accent); }
+.club-link:hover span { color: var(--accent); }
+
+.cm-modal { max-width: 1120px; }
+.cm-modal .cm-body { overflow-y: auto; }
+
+.cm-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  border-radius: 12px 12px 0 0;
+}
+.cm-head-crest { flex-shrink: 0; }
+.cm-head-id { min-width: 0; flex: 1; }
+.cm-head-name { margin: 0 0 4px; font-size: 24px; font-weight: 800; line-height: 1.1; }
+.cm-head-sub { color: var(--text-2); font-size: 13px; margin-bottom: 10px; }
+.cm-head-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.cm-form { display: inline-flex; gap: 3px; margin-left: 2px; }
+
+.cm-body { padding: 16px 20px 20px; }
+.cm-cols { display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 14px; align-items: start; }
+.cm-col { display: flex; flex-direction: column; gap: 14px; }
+
+.cm-stat-line {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 10px; padding: 5px 0; font-size: 13px;
+  border-bottom: 1px solid var(--border-soft, rgba(255,255,255,0.05));
+}
+.cm-stat-line:last-child { border-bottom: none; }
+.cm-stat-line > span { color: var(--text-2); }
+
+.cm-best {
+  display: flex; align-items: center; gap: 8px; padding: 6px 4px;
+  border-bottom: 1px solid var(--border-soft, rgba(255,255,255,0.05)); font-size: 13px;
+}
+.cm-best:last-child { border-bottom: none; }
+.cm-best-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cm-best.clickable { cursor: pointer; border-radius: 6px; transition: background 0.12s ease; }
+.cm-best.clickable:hover { background: var(--panel-2, rgba(255,255,255,0.04)); }
+
+.cm-squad { display: flex; flex-direction: column; }
+.cm-squad-row {
+  display: grid; grid-template-columns: 28px 1fr 46px 40px 46px;
+  align-items: center; gap: 6px; padding: 5px 4px; font-size: 13px;
+  border-bottom: 1px solid var(--border-soft, rgba(255,255,255,0.05));
+}
+.cm-squad-row:last-child { border-bottom: none; }
+.cm-squad-head { color: var(--text-3); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.cm-squad-row.clickable { cursor: pointer; border-radius: 6px; transition: background 0.12s ease; }
+.cm-squad-row.clickable:hover { background: var(--panel-2, rgba(255,255,255,0.04)); }
+
+.cm-matches { display: flex; flex-direction: column; }
+.cm-match {
+  display: grid; grid-template-columns: 58px 20px 1fr 46px;
+  align-items: center; gap: 6px; padding: 5px 4px; font-size: 13px;
+  border-bottom: 1px solid var(--border-soft, rgba(255,255,255,0.05));
+}
+.cm-match:last-child { border-bottom: none; }
+.cm-match-ha { color: var(--text-3); font-weight: 700; text-align: center; }
+.cm-match-opp { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+.cm-match-res { text-align: right; }
+
+@media (max-width: 860px) {
+  .cm-cols { grid-template-columns: 1fr; }
+}

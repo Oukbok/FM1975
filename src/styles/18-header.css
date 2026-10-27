@@ -1,0 +1,150 @@
+/* =============================================================================
+   AAA-DASHBOARD – NEUER HEADER (eine Leiste)
+   ============================================================================= */
+.hd-bar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 29px;
+  /* Einheitliche Menue-/Header-Hoehe auf ALLEN Seiten (wie Zentrale). */
+  height: var(--shell-head-height);
+  /* Inhaltskanten buendig zu den Zentrale-Boxen darunter: die aeussere Box-Kante
+     liegt bei content-pad + 2.5% der Grid-Breite (space-evenly-Luecke). Dieselbe
+     Einrueckung als horizontales Padding, damit Logo == linke Box, WEITER == rechte Box. */
+  padding: 0 calc(var(--content-pad) + (100% - 2 * var(--content-pad)) * 0.025);
+  /* Einheitlicher Header-Look (wie Zentrale): dezentes diagonales Linienraster
+     ueber minimalem Dark-Gradient mit Hauch Tuerkis. Kein Glow. */
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.022) 0px, rgba(255, 255, 255, 0.022) 1px, transparent 1px, transparent 7px),
+    radial-gradient(120% 180% at 0% -40%, rgba(0, 217, 255, 0.06) 0%, transparent 42%),
+    linear-gradient(90deg, #0b1018 0%, #131b28 50%, #0b1018 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.hd-logo { display: flex; align-items: center; gap: 17px; flex: 0 0 auto; }
+/* Logo behaelt bewusst Inter (unveraenderte Schriftart lt. Vorgabe). */
+.hd-logo-year { font-family: var(--font-logo); font-size: 46px; font-weight: 900; letter-spacing: 0.5px; color: var(--text); line-height: 1; }
+.hd-logo-div { width: 2px; height: 50px; border-radius: 2px; background: linear-gradient(180deg, transparent, var(--accent), transparent); opacity: 0.75; }
+.hd-logo-title { display: flex; flex-direction: column; line-height: 1.1; }
+.hd-logo-title span { font-family: var(--font-logo); font-size: 17.5px; font-weight: 800; letter-spacing: 1.8px; text-transform: uppercase; }
+.hd-logo-title span:first-child { color: var(--accent); }
+.hd-logo-title span:last-child { color: var(--text-2); }
+
+.hd-nav { display: flex; align-items: center; justify-content: flex-start; gap: 5px; flex: 1 1 auto; overflow-x: auto; scrollbar-width: none; height: 100%; }
+.hd-nav::-webkit-scrollbar { display: none; }
+.hd-nav-item {
+  position: relative;
+  height: 100%;
+  padding: 0 17px;
+  border: none;
+  background: transparent;
+  color: var(--text-3);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.14s, transform 0.06s ease;
+}
+.hd-nav-item:hover { color: var(--text); }
+/* Taktile Rueckmeldung: NUR der angeklickte Menuepunkt reagiert. Fruehere
+   Versionen nutzten translateY (nach unten druecken) – das verschob zwar keine
+   Geschwister im Layout, erzeugte aber eine optische Relativbewegung: springt
+   der gedrueckte Punkt nach unten, wirken die stehenden Nachbarn relativ dazu
+   verschoben. Daher jetzt scale() statt translateY: der Punkt schrumpft kurz
+   um seinen Mittelpunkt, die Grundlinie bleibt erhalten, die Nachbarn wirken
+   absolut ruhig. `:active` gilt nur fuer das gedrueckte Element und ueber-
+   schreibt die globale 1px-Regel `button:active`. */
+.hd-nav-item:active { transform: scale(0.90); }
+/* Aktiver Menuepunkt: NUR Textfarbe + Unterstrich (::after).
+   background/border explizit zuruecksetzen, um die globale Regel
+   `button.active` (accent-soft-Glow, Zeile ~335) zu neutralisieren –
+   das war die wiederkehrende Glow-Ursache im Header. */
+.hd-nav-item.active { color: var(--accent); background: transparent; border-color: transparent; }
+.hd-nav-item.active::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--accent);
+}
+
+.hd-right { display: flex; align-items: center; gap: 19px; flex: 0 0 auto; margin-left: auto; }
+.hd-sep { width: 1px; height: 34px; background: var(--border); flex: 0 0 auto; }
+.hd-balance {
+  display: inline-flex; align-items: center; gap: 11px; white-space: nowrap;
+  padding: 8px 18px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+}
+.hd-balance-ico { display: inline-flex; align-items: center; color: var(--text-2); flex: 0 0 auto; }
+.hd-balance-ico svg { width: 24px; height: 24px; }
+.hd-balance-lbl { font-size: 16px; color: var(--text-2); }
+.hd-balance-val { font-size: 18px; font-weight: 800; color: var(--accent); }
+.hd-club { display: inline-flex; align-items: center; gap: 10px; }
+.hd-club-name { font-size: 16px; font-weight: 700; color: var(--text); max-width: 192px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* WEITER-Button: 1/4 hoeher + 1/2 breiter als zuvor (per Padding + fixe
+   Icon-Box, damit die Masse in allen Zustaenden identisch bleiben).
+   Aktiv-Zustand (.running) = passendes Beige bei GLEICHEN Massen.
+   Hover = leicht helleres Tuerkis als der Ruhezustand. */
+.hd-continue {
+  display: inline-flex; align-items: center; gap: 14px;
+  padding: 12px 58px 12px 52px; border: none; border-radius: 10px;
+  background: var(--accent); color: #04222b;
+  cursor: pointer; transition: background 0.14s, filter 0.14s, transform 0.05s;
+}
+.hd-continue-ico { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 45px; height: 45px; }
+.hd-continue-ico svg { display: block; }
+/* Nur noch der Schriftzug (kein Untertitel mehr): vertikal UND horizontal
+   zentriert. Feste Breite = laengstes Label ("Neue Saison"), damit der Button
+   in ALLEN Zustaenden (Weiter/Pause/Simulieren/Neue Saison) exakt gleich
+   breit bleibt und beim Umschalten nicht springt. */
+.hd-continue-txt { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 96px; line-height: 1; }
+.hd-continue-lbl { font-size: 21px; font-weight: 900; letter-spacing: 0.6px; text-transform: uppercase; text-align: center; }
+.hd-continue:hover { background: #4de6ff; }
+.hd-continue:active { transform: translateY(1px); }
+.hd-continue.running { background: #e7d8b4; color: #3a3020; }
+.hd-continue.running:hover { background: #f0e4c8; }
+.hd-continue.season { background: var(--gold); color: #3a2c00; }
+.hd-continue.season:hover { filter: brightness(1.08); }
+
+/* Zentrale-Header: dunkles Nacht-Stadion-Band wie im Mockup „Variante 12“;
+   der Abdunkel-Verlauf darüber hält Logo, Navigation und rechte Elemente lesbar. */
+.hd-bar--zentrale {
+  height: 100px;
+  border-bottom: 1px solid var(--border);
+  /* Kein Foto mehr: dezentes CSS-Muster (feines diagonales Linienraster) ueber einem
+     minimalen Dark-Gradient in der Panel-Palette mit einem Hauch Tuerkis. Kein Glow. */
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.022) 0px, rgba(255, 255, 255, 0.022) 1px, transparent 1px, transparent 7px),
+    radial-gradient(120% 180% at 0% -40%, rgba(0, 217, 255, 0.06) 0%, transparent 42%),
+    linear-gradient(90deg, #0b1018 0%, #131b28 50%, #0b1018 100%);
+}
+.hd-gear {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 46px; height: 46px; border: 1px solid var(--border); border-radius: 9px;
+  background: var(--panel); color: var(--text-2); cursor: pointer;
+  transition: background 0.14s, color 0.14s;
+}
+/* Kein Hover-Effekt am Zahnrad (bewusst entfernt). */
+.hd-gear svg { width: 24px; height: 24px; }
+
+@media (max-width: 1080px) {
+  .hd-balance-lbl { display: none; }
+}
+@media (max-width: 860px) {
+  .hd-logo-title { display: none; }
+  .hd-club-name { display: none; }
+}
+@media (max-width: 780px) {
+  .hd-bar { gap: 12px; }
+  .hd-nav { display: none; }
+}

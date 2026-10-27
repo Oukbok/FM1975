@@ -1,0 +1,63 @@
+/* =============================================================================
+   BLOCK 1 — Weiter-Button (feste Größe), Nachrichten, Wiki, Startmenü, Kader-Tabelle
+   ============================================================================= */
+
+/* --- Fester Weiter-Button --- */
+.btn-continue.fixed {
+  min-width: 210px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  padding: 0 18px;
+  white-space: nowrap;
+}
+.next-ev-hint {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 4px;
+  text-align: center;
+  min-height: 14px;
+}
+
+/* --- Speichern-Toast --- */
+.save-toast {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  border: 1px solid var(--accent);
+  color: var(--text);
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 13px;
+  box-shadow: var(--shadow-lg);
+  z-index: 200;
+  animation: fadeIn 0.2s ease;
+}
+
+/* --- Nav-Badge (ungelesene Nachrichten) --- */
+.nav-badge {
+  position: absolute;
+  top: 2px;
+  right: 50%;
+  transform: translateX(18px);
+  background: var(--red);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}

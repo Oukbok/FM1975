@@ -1,0 +1,22 @@
+// Reihenfolge = Kaskade (wie frueher in einer Datei). Neue Bereiche hinten anhaengen.
+import './00-base.css';
+import './01-misc-widgets.css';
+import './02-startmenu.css';
+import './03-squad-table.css';
+import './04-news.css';
+import './05-wiki.css';
+import './06-training.css';
+import './07-rating-ceremony.css';
+import './08-lineup-match.css';
+import './09-finances.css';
+import './10-youth.css';
+import './11-facilities.css';
+import './12-cup.css';
+import './13-staff-marketing-calendar.css';
+import './14-navigation.css';
+import './15-header-menu.css';
+import './16-player-modal.css';
+import './17-club-modal.css';
+import './18-header.css';
+import './19-dashboard.css';
+import './20-club-editor.css';

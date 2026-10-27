@@ -1,0 +1,256 @@
+/* ===========================================================================
+   BLOCK p11 — Mitarbeiter, Marketing, Kalender, Zukunft-Toggle
+   =========================================================================== */
+
+/* Zukunft-anzeigen Checkbox-Zeile (Facilities/Staff/Marketing) */
+.future-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.future-toggle input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+.future-toggle .mini { color: var(--text-3); }
+
+/* Ausgegraute, noch nicht verfügbare Karten */
+.fac-locked {
+  opacity: 0.55;
+  filter: grayscale(0.6);
+}
+.fac-locked:hover { border-color: var(--border); }
+
+/* Gefahren-/Entlassen-Button */
+.btn-danger {
+  background: rgba(255, 92, 108, 0.12);
+  border-color: rgba(255, 92, 108, 0.5);
+  color: var(--red);
+}
+.btn-danger:hover { background: rgba(255, 92, 108, 0.2); border-color: var(--red); }
+
+/* ---- Mitarbeiter ---------------------------------------------------------- */
+.staff-fx-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 6px;
+}
+.staff-fx {
+  background: var(--panel-2);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  text-align: center;
+}
+.staff-fx-val { font-size: 19px; font-weight: 800; line-height: 1.1; }
+
+.staff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+.staff-card { display: flex; flex-direction: column; gap: 8px; }
+.staff-card.staff-hired { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent-soft); }
+.staff-card-head { display: flex; align-items: center; gap: 8px; }
+.staff-name { font-weight: 700; font-size: 14px; flex: 1; }
+.staff-cc { color: var(--text-2); font-weight: 700; letter-spacing: 0.5px; }
+.staff-effect { min-height: 32px; }
+.staff-card-foot { display: flex; align-items: center; gap: 8px; margin-top: auto; }
+
+/* ---- Marketing ------------------------------------------------------------ */
+.mkt-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+}
+.mkt-summary > div > div:last-child { font-size: 18px; font-weight: 800; }
+.mkt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+.mkt-card { display: flex; flex-direction: column; gap: 8px; }
+.mkt-head { display: flex; align-items: flex-start; gap: 10px; }
+.mkt-slider { width: 100%; accent-color: var(--accent); cursor: pointer; margin: 2px 0; }
+.mkt-bar {
+  height: 8px;
+  background: var(--panel-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.mkt-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-dim), var(--accent));
+  border-radius: 999px;
+  transition: width 0.2s;
+}
+
+/* ---- Kalender ------------------------------------------------------------- */
+.cal-plan { display: flex; flex-direction: column; gap: 10px; }
+.cal-plan-types { display: flex; flex-wrap: wrap; gap: 8px; }
+.cal-days { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-2); }
+.cal-days input[type="range"] { flex: 1; accent-color: var(--accent); cursor: pointer; max-width: 260px; }
+.cal-plan-info { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; }
+
+.cal-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.cal-month-title { font-size: 17px; font-weight: 800; letter-spacing: 0.5px; }
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-top: 6px;
+}
+.cal-head-row { margin-bottom: 2px; }
+.cal-wd {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  padding: 4px 0;
+}
+/* Große Abreißkalender-Kästchen (Header-Optik, aber breiter, mehr Platz für
+   Tageszahl + Icon + Event-Text). */
+.cal-cell {
+  position: relative;
+  min-height: 82px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  background: var(--panel-2);
+  padding: 7px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color 0.12s, background 0.12s, transform 0.1s;
+}
+.cal-empty { background: transparent; border-color: transparent; min-height: 0; }
+.cal-dom { font-size: 20px; font-weight: 800; line-height: 1; color: var(--text-2); letter-spacing: -0.5px; }
+.cal-past { opacity: 0.42; }
+.cal-free .cal-dom { color: var(--green); }
+/* Anspringbares Event (Normalmodus) bzw. wählbarer Starttag (Planungsmodus). */
+.cal-jumpable, .cal-selectable { cursor: pointer; }
+.cal-jumpable:hover, .cal-selectable:hover { border-color: var(--accent); background: var(--accent-soft); transform: translateY(-1px); }
+.cal-blocked { background: rgba(255, 92, 108, 0.08); border-color: rgba(255, 92, 108, 0.25); }
+.cal-today { box-shadow: inset 0 0 0 2px var(--accent); }
+.cal-today .cal-dom { color: var(--accent); }
+.cal-preview { border-color: var(--green); background: rgba(61, 220, 132, 0.16); cursor: pointer; }
+.cal-preview-bad { border-color: var(--red); background: rgba(255, 92, 108, 0.16); }
+
+/* Event-Anzeige in der Tages-Zelle (aus buildStripEventMap) */
+.cal-cell-ev {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  margin-top: auto;
+  min-width: 0;
+}
+.cal-cell-ico { width: 15px; height: 15px; flex: 0 0 auto; opacity: 0.92; margin-top: 1px; }
+.cal-cell-ev-txt {
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--text-2);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-width: 0;
+}
+.cal-cell-ev-generic .cal-cell-ev-txt { color: var(--text-3); font-weight: 600; }
+/* Farbakzente analog Header: Liga = orange, Pokal = gold */
+.cal-cell.cal-acc-orange { border-color: rgba(255, 159, 67, 0.5); }
+.cal-cell.cal-acc-orange .cal-cell-ico { color: var(--orange); }
+.cal-cell.cal-acc-orange .cal-cell-ev-txt { color: var(--orange); }
+.cal-cell.cal-acc-gold { border-color: rgba(255, 201, 60, 0.5); }
+.cal-cell.cal-acc-gold .cal-cell-ico { color: var(--gold); }
+.cal-cell.cal-acc-gold .cal-cell-ev-txt { color: var(--gold); }
+
+/* Responsive: auf schmaleren Breiten kompakter, aber lesbar */
+@media (max-width: 720px) {
+  .cal-grid { gap: 5px; }
+  .cal-cell { min-height: 64px; padding: 5px 6px; }
+  .cal-dom { font-size: 16px; }
+  .cal-cell-ev-txt { font-size: 10px; }
+  .cal-cell-ico { width: 13px; height: 13px; }
+}
+
+.cal-legend { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+.cal-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.lg { width: 12px; height: 12px; border-radius: 3px; display: inline-block; border: 1px solid var(--border); }
+.lg-free { background: var(--panel-2); border-color: var(--green); }
+.lg-block { background: rgba(255, 92, 108, 0.25); border-color: rgba(255, 92, 108, 0.5); }
+.lg-today { background: transparent; box-shadow: inset 0 0 0 2px var(--accent); border-color: var(--accent); }
+.lg-prev { background: rgba(61, 220, 132, 0.4); border-color: var(--green); }
+
+.cal-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.cal-list-item { display: flex; align-items: center; gap: 12px; }
+
+
+
+/* ---------------------------------------------------------------------------
+   Anzeige-Einstellungen (Auflösung / Modus / UI-Skalierung)
+   --------------------------------------------------------------------------- */
+
+/* Kleine Utility-Klassen, die für den Anzeige-Block benötigt werden */
+.mt4 { margin-top: 4px; }
+.micro { font-size: 10.5px; }
+.row-between { display: flex; justify-content: space-between; align-items: center; }
+
+/* Segment-Umschalter (Anzeige-Modus: Fenster / Randlos / Vollbild) */
+.seg-group {
+  display: inline-flex;
+  border: 1px solid var(--border-soft);
+  border-radius: 9px;
+  overflow: hidden;
+  background: var(--panel);
+}
+.seg-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-2);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  border-right: 1px solid var(--border-soft);
+}
+.seg-btn:last-child { border-right: none; }
+.seg-btn:hover { background: var(--panel-hover); color: var(--text); }
+.seg-btn.active {
+  background: var(--accent);
+  color: #04202a;
+}
+
+/* Rahmen: Automatisch (nur UI-Skalierung via zoom) */
+.display-content { width: 100%; }
+
+/* Rahmen: feste Auflösung — zentriertes Letterboxing/Pillarboxing */
+.display-outer {
+  position: fixed;
+  inset: 0;
+  background: #05070a;
+  overflow: hidden;
+  z-index: 0;
+}
+.display-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: center center;
+  overflow: auto;
+  background: var(--bg);
+  box-shadow: 0 0 0 1px var(--border-soft), 0 24px 80px rgba(0, 0, 0, 0.6);
+}
+/* Innerhalb eines festen Rahmens füllen die Grund-Container den Rahmen
+   (statt sich am Viewport per 100vh zu orientieren). */
+.display-inner .app-shell,
+.display-inner .menu-bg { min-height: 100%; }

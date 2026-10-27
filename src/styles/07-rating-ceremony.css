@@ -1,0 +1,92 @@
+/* =============================================================================
+   AUF-/ABWERTUNGS-SCREEN (Trommelwirbel)
+   ========================================================================== */
+.reveal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: radial-gradient(circle at 50% 30%, #10202b, #05080d 75%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  animation: reveal-fade .3s ease;
+}
+@keyframes reveal-fade { from { opacity: 0; } to { opacity: 1; } }
+.reveal-close {
+  position: absolute; top: 18px; right: 22px; z-index: 3;
+  background: var(--panel); color: var(--text-2); border: 1px solid var(--panel-2);
+  width: 40px; height: 40px; border-radius: 10px; font-size: 18px; cursor: pointer;
+}
+.reveal-close:hover { color: var(--text); border-color: var(--accent); }
+.reveal-progress {
+  position: absolute; top: 26px; left: 50%; transform: translateX(-50%);
+  color: var(--text-3); font-size: 13px; letter-spacing: .5px; text-transform: uppercase;
+}
+.reveal-card {
+  width: min(440px, 92vw);
+  background: var(--panel); border: 1px solid var(--panel-2); border-radius: 20px;
+  padding: 26px 26px 22px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.55);
+}
+.reveal-card.phase-done.dir-up { border-color: var(--green); box-shadow: 0 24px 60px rgba(61,220,132,.22); }
+.reveal-card.phase-done.dir-down { border-color: var(--red); box-shadow: 0 24px 60px rgba(255,92,108,.22); }
+.reveal-card.phase-done { animation: reveal-pop .45s cubic-bezier(.2,1.4,.5,1); }
+@keyframes reveal-pop { 0% { transform: scale(.9); opacity: .4; } 100% { transform: scale(1); opacity: 1; } }
+.reveal-avatar { width: 84px; height: 84px; }
+.reveal-name { font-size: 20px; font-weight: 800; }
+.reveal-pos { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: .5px; }
+
+/* Trommelwirbel-Animation */
+.reveal-roll { padding: 22px 0 8px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.drumroll { display: flex; gap: 12px; }
+.drumroll span {
+  width: 16px; height: 16px; border-radius: 50%; background: var(--accent);
+  animation: drum-bounce 1s infinite ease-in-out;
+}
+.drumroll span:nth-child(2) { animation-delay: .18s; }
+.drumroll span:nth-child(3) { animation-delay: .36s; }
+@keyframes drum-bounce {
+  0%, 100% { transform: translateY(0) scale(.7); opacity: .4; }
+  40% { transform: translateY(-16px) scale(1.15); opacity: 1; }
+}
+.drumroll-txt {
+  font-size: 15px; font-weight: 700; color: var(--text-2); letter-spacing: 1px;
+  animation: drum-shake .5s infinite;
+}
+@keyframes drum-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+.reveal-result { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+.reveal-badge {
+  font-size: 14px; font-weight: 900; letter-spacing: 1px; padding: 5px 16px; border-radius: 20px;
+}
+.reveal-badge.dir-up { background: rgba(61,220,132,.16); color: var(--green); }
+.reveal-badge.dir-down { background: rgba(255,92,108,.16); color: var(--red); }
+.reveal-badge.dir-mixed { background: rgba(255,203,69,.16); color: var(--yellow); }
+.reveal-ovr {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  background: var(--bg-2); border-radius: 12px; padding: 12px 24px; width: 100%;
+}
+.ro-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: .6px; color: var(--text-3); }
+.ro-vals { font-size: 34px; font-weight: 900; display: flex; align-items: center; gap: 12px; }
+.ro-arrow { color: var(--text-3); font-size: 24px; }
+.reveal-attrs { width: 100%; display: flex; flex-direction: column; gap: 5px; }
+.ra-row {
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--bg-2); border-radius: 8px; padding: 7px 12px; font-size: 13px;
+}
+.ra-row .ra-name { color: var(--text-2); }
+.ra-row.up .ra-vals { color: var(--green); font-weight: 700; }
+.ra-row.down .ra-vals { color: var(--red); font-weight: 700; }
+.ra-arrow { font-size: 11px; }
+.reveal-reason {
+  font-size: 14px; font-style: italic; color: var(--text); line-height: 1.5;
+  padding: 4px 6px;
+}
+.reveal-reason.life-event { color: var(--yellow); }
+.le-tag {
+  display: inline-block; font-style: normal; font-size: 9px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .5px; background: var(--yellow); color: #2a1f00;
+  padding: 2px 6px; border-radius: 5px; margin-right: 6px; vertical-align: middle;
+}
+.reveal-next { margin-top: 6px; min-width: 160px; }

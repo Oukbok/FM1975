@@ -1,0 +1,88 @@
+/* =============================================================================
+   JUGENDAKADEMIE — eigenständiger Bildschirm (Jahrgänge F–A)
+   ============================================================================= */
+.youth-hero {
+  padding: 18px 20px;
+  background: linear-gradient(120deg, rgba(0, 217, 255, 0.10), transparent 70%);
+  border-color: rgba(0, 217, 255, 0.28);
+}
+.youth-hero-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+.youth-hero-sub { font-size: 13px; margin-top: 2px; }
+.youth-hero-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.youth-class-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.youth-class-tabs .btn-sm:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.youth-class-section { padding: 14px 16px 6px; }
+.youth-class-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.youth-class-badge {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--bg, #10131a);
+  background: var(--accent, #00D9FF);
+  border-radius: var(--radius-sm, 8px);
+}
+.youth-class-name {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* =============================================================================
+   JUGEND (Jugendakademie) — Attribut-Raster im Talent-Detail
+   ============================================================================= */
+.youth-attr-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 18px;
+}
+@media (max-width: 640px) {
+  .youth-attr-grid { grid-template-columns: 1fr; }
+}
+.youth-attr-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0;
+}
+.youth-attr-label {
+  flex: 0 0 108px;
+  font-size: 12px;
+  color: var(--text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.youth-attr-row .attr-bar {
+  height: 8px;
+  border-radius: 5px;
+  background: var(--panel-2);
+  overflow: hidden;
+}

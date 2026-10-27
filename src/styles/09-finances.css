@@ -1,0 +1,63 @@
+/* ============================================================================
+   FINANZEN
+   ========================================================================== */
+.fin-wrap { display: flex; flex-direction: column; gap: 14px; padding-bottom: 20px; }
+/* Legacy-Fallback: fruehere Seitenkoepfe nutzten .section-head. Falls noch irgendwo
+   verwendet, wird es an den zentralen Seitenkopf (.page-head) angeglichen. */
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: var(--page-head-gap);
+  padding-bottom: var(--page-head-pad-b);
+  margin-bottom: var(--page-head-mb);
+  border-bottom: var(--page-head-border);
+}
+.section-head > h2 {
+  font-size: var(--page-head-title-size);
+  font-weight: var(--page-head-title-weight);
+  letter-spacing: var(--page-head-title-spacing);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.fin-hero {
+  display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px;
+  background: var(--panel, #16181d); border: 1px solid var(--border, #262a33);
+  border-radius: 14px; padding: 18px;
+}
+.fin-hero-main { display: flex; flex-direction: column; justify-content: center; }
+.fin-balance { font-size: 34px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.1; margin: 2px 0 8px; font-variant-numeric: tabular-nums; }
+.fin-hero-sub { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--dim, #9aa0ac); }
+.fin-budgets { display: flex; flex-direction: column; gap: 10px; }
+.fin-budget-card { background: var(--panel-2, #1d2027); border: 1px solid var(--border, #262a33); border-radius: 10px; padding: 10px 12px; }
+.fin-budget-val { font-size: 18px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+.fin-warn {
+  background: rgba(224, 60, 60, 0.10); border: 1px solid rgba(224, 60, 60, 0.5);
+  border-radius: 12px; padding: 12px 16px;
+}
+.fin-warn-title { font-weight: 700; color: var(--red, #e03c3c); margin-bottom: 4px; }
+.fin-warn ul { margin: 0; padding-left: 20px; }
+.fin-warn li { margin: 2px 0; font-size: 13.5px; }
+
+.fin-chart-card { padding: 14px 16px 8px; }
+.fin-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 780px) {
+  .fin-hero { grid-template-columns: 1fr; }
+  .fin-cols { grid-template-columns: 1fr; }
+}
+
+.fin-bar-row { display: grid; grid-template-columns: 150px 1fr auto; align-items: center; gap: 10px; padding: 5px 0; }
+.fin-bar-label { font-size: 13px; display: flex; align-items: center; gap: 6px; }
+.fin-bar-track { height: 8px; border-radius: 5px; background: var(--panel-2, #1d2027); overflow: hidden; }
+.fin-bar-fill { height: 100%; border-radius: 5px; transition: width 0.3s ease; }
+.fin-bar-val { font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--dim, #9aa0ac); min-width: 92px; text-align: right; }
+
+.fin-forecast { display: flex; flex-wrap: wrap; gap: 10px; }
+.fin-fc-item { flex: 1 1 130px; background: var(--panel-2, #1d2027); border: 1px solid var(--border, #262a33); border-radius: 10px; padding: 10px 12px; }
+.fin-fc-highlight { border-color: var(--accent, #00D9FF); box-shadow: 0 0 0 1px rgba(0, 217, 255, 0.25) inset; }
+.fin-fc-val { font-size: 18px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+.fin-tx-table { width: 100%; border-collapse: collapse; }
+.fin-tx-table td { padding: 6px 8px; border-bottom: 1px solid var(--border, #262a33); font-size: 13px; vertical-align: top; }
+.fin-tx-table tr:last-child td { border-bottom: none; }

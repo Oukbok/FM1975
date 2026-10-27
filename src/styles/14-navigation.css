@@ -1,0 +1,120 @@
+/* =============================================================================
+   ZWEISTUFIGE TOP-NAVIGATION (Hauptkategorien + Unterpunkte)
+   ============================================================================= */
+.top-nav {
+  position: sticky;
+  top: 60px;
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0 0 18px;
+  /* Untermenue: voll deckendes Dunkelblau – hier scheint bewusst KEIN
+     Hintergrundbild durch (klare Abgrenzung zum leicht transparenten Header). */
+  background: linear-gradient(180deg, #0b0f16 0%, #0c111a 100%);
+  border-bottom: 1px solid var(--border);
+}
+
+/* --- Reihe 1: Hauptkategorien (fett, Großbuchstaben) --- */
+.tn-main {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 8px var(--bar-pad) 6px;
+  scrollbar-width: none;
+}
+.tn-main::-webkit-scrollbar { display: none; }
+.tn-main-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 0;
+  min-width: 0;
+  justify-content: center;
+  padding: 9px 16px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-3);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s, border-color 0.14s;
+}
+.tn-main-item:hover { background: var(--panel-2); color: var(--text); }
+.tn-main-item.active {
+  color: var(--accent);
+  background: transparent;
+  border-color: transparent;
+}
+.tn-ico { width: 20px; height: 20px; flex: 0 0 auto; }
+
+/* --- Reihe 2: Unterpunkte der aktiven Kategorie --- */
+.tn-sub {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-start;
+  overflow-x: auto;
+  /* Gleiche Kanten-Einrueckung wie Header/Boxen: NACHRICHTEN == linke Box,
+     Datum (margin-left:auto) == rechte Box. */
+  padding: 7px calc(var(--content-pad) + (100% - 2 * var(--content-pad)) * 0.025) 9px;
+  border-top: 1px solid var(--border-soft);
+  scrollbar-width: none;
+}
+.tn-sub::-webkit-scrollbar { display: none; }
+.tn-sub-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 16px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-2);
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s, transform 0.06s ease;
+}
+.tn-sub-item:hover { background: var(--panel-2); color: var(--text); }
+/* Press-Rueckmeldung nur auf dem geklickten Sub-Menuepunkt: scale() statt
+   translateY, damit kein vertikaler Versatz die Nachbarn optisch verschiebt. */
+.tn-sub-item:active { transform: scale(0.90); }
+.tn-sub-item.active {
+  color: var(--accent);
+  background: transparent;
+}
+.tn-sub-item.active::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: -8px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+.tn-sub-ico { width: 17px; height: 17px; flex: 0 0 auto; }
+.tn-label { line-height: 1; }
+/* Ausfuehrliches Datum, zentriert unter dem WEITER-Button (rechts). */
+.tn-date {
+  margin-left: auto; text-align: center; width: 265px;
+  font-size: 16px; font-weight: 800; color: var(--accent);
+  letter-spacing: 0.4px; white-space: nowrap; align-self: center;
+}
+
+@media (max-width: 720px) {
+  .top-nav { top: 0; }
+  .tn-main-item { padding: 8px 12px; font-size: 11px; letter-spacing: 0.4px; }
+  .tn-main-item .tn-label { display: none; }
+  .tn-main-item.active .tn-label { display: inline; }
+  .tn-ico { width: 22px; height: 22px; }
+}

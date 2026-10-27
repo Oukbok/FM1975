@@ -1,0 +1,432 @@
+/* =============================================================================
+   AAA-DASHBOARD – 4-SPALTEN-RASTER
+   ============================================================================= */
+.dashx {
+  display: grid;
+  /* Spalten 10% schmaler als volle Drittel; per space-evenly ueber die volle
+     Breite verteilt, sodass ALLE vier horizontalen Luecken gleich gross sind:
+     Rand<->Box = Box<->Box (beidseitig). column-gap MUSS 0 sein, sonst wuerden
+     nur die inneren Luecken um den gap groesser als die Randluecken. row-gap
+     (vertikaler Abstand der beiden Reihen) bleibt 16px. */
+  grid-template-columns: 30% 30% 30%;
+  grid-template-areas:
+    "verein tabelle  naechstes"
+    "kader  termine  finanzen";
+  /* Das Raster fuellt den GESAMTEN Bereich zwischen Kalender und Footer
+     (flex:1) und haelt so den Footer unten. align-content: space-evenly
+     verteilt den FREIEN Platz zu gleichen Teilen VOR der oberen Reihe,
+     ZWISCHEN den Reihen und NACH der unteren Reihe – dadurch werden die drei
+     vertikalen Abstaende identisch, OHNE die Boxen zu vergroessern:
+       Kalender->obere Reihe == Reihe<->Reihe == untere Reihe->Footer.
+     Die Reihen-Tracks bleiben inhaltsgross (space-evenly streckt sie NICHT);
+     align-items: stretch gleicht nur die Hoehe der Boxen INNERHALB einer Reihe
+     an (wie bisher). row-gap muss 0 sein, sonst kaeme zur space-evenly-Luecke
+     noch ein fixer Abstand hinzu. */
+  flex: 1 1 auto;
+  min-height: 0;
+  align-content: space-evenly;
+  row-gap: 0;
+  column-gap: 0;
+  justify-content: space-evenly;
+  align-items: stretch;
+  margin-bottom: 0;
+}
+.dashx > .card { display: flex; flex-direction: column; min-width: 0; padding: 7px 15px; }
+/* Schrift der Dashboard-Boxen = globaler Standard (--font-ui). */
+.shell-zentrale .dashx { font-family: var(--font-ui); }
+.dashx-verein { grid-area: verein; }
+.dashx-tabelle { grid-area: tabelle; }
+.dashx-naechstes { grid-area: naechstes; }
+.dashx-finanzen { grid-area: finanzen; }
+.dashx-kader { grid-area: kader; }
+.dashx-termine { grid-area: termine; }
+
+@media (max-width: 1200px) {
+  .dashx {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "verein    tabelle"
+      "naechstes finanzen"
+      "kader     termine";
+  }
+}
+@media (max-width: 760px) {
+  .dashx {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "verein"
+      "tabelle"
+      "naechstes"
+      "finanzen"
+      "kader"
+      "termine";
+  }
+}
+
+/* --- Kategorie-Dashboards: Boxen an GLEICHEN Positionen/Groessen wie die 6
+   Zentrale-Boxen, mit FIXER Groesse (kein inhaltsgetriebenes Schrumpfen). ---
+   Gleiche Spalten-Geometrie wie .dashx (3x30%, space-evenly, column-gap 0) =>
+   identische horizontale Positionen. ZWEI Reihen sind IMMER reserviert
+   (grid-template-rows: 1fr 1fr): Kategorien mit nur 3 Boxen lassen die zweite
+   Reihe teils leer, statt die Boxen zu vergroessern. Die Reihen fuellen den
+   Bereich zwischen Kalender und Footer (flex:1); padding (oben/unten) + row-gap
+   bilden die drei gleichen vertikalen Abstaende nach wie bei der Zentrale nach,
+   sodass Reihenhoehe und Box-Positionen deckungsgleich sind. Alle Werte in
+   Referenz-Pixeln => skalieren automatisch mit der Aufloesung, bleiben aber
+   unabhaengig vom Inhalt. */
+.dashx-cat {
+  display: grid;
+  grid-template-columns: 30% 30% 30%;
+  grid-template-rows: 1fr 1fr;
+  flex: 1 1 auto;
+  min-height: 0;
+  justify-content: space-evenly;
+  column-gap: 0;
+  row-gap: 64px;
+  padding: 64px 0;
+  align-items: stretch;
+  margin-bottom: 0;
+}
+.dashx-cat > .card { display: flex; flex-direction: column; min-width: 0; padding: 7px 15px; }
+/* Gleiche Schrift wie die Zentrale-Boxen (--font-ui). */
+.shell-dashlike .dashx-cat { font-family: var(--font-ui); }
+@media (max-width: 1200px) {
+  .dashx-cat { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 760px) {
+  .dashx-cat { grid-template-columns: 1fr; grid-template-rows: auto; row-gap: 14px; padding: 8px 0; }
+}
+
+/* --- Freistehender Kalenderstreifen: dunkle Tageskarten im Referenz-Stil --- */
+/* Rechte Kante um eine space-evenly-Luecke (2.5% der Grid-Breite) einruecken,
+   damit der Kalenderstreifen buendig mit der rechten Box-Spalte abschliesst. */
+.dashx-caltop { display: flex; justify-content: flex-end; margin-bottom: 0; padding-right: 2.5%; }
+.kbstrip { display: flex; align-items: stretch; justify-content: flex-end; gap: 10px; padding: 0; cursor: pointer; }
+.kbsheet {
+  position: relative;
+  flex: 0 0 120px;
+  width: 120px;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 10px 11px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, #161d29 0%, #121924 100%);
+  text-align: center;
+  overflow: hidden;
+}
+/* Kopf: grosse Tageszahl oben links, Wochentag klein darunter. */
+.kbsheet-head { display: flex; flex-direction: column; align-items: center; line-height: 1; }
+.kbday { font-size: 26px; font-weight: 800; line-height: 1; color: var(--text); }
+.kbwd { font-size: 11px; font-weight: 700; color: var(--text-3); letter-spacing: 0.6px; margin-top: 3px; }
+/* Icon zentral, nimmt den freien Raum ein. */
+.kbsheet-ico { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; min-height: 34px; }
+.kbsheet-ico .game-icon { display: block; }
+/* Label unten mittig. */
+.kbsheet-lbl {
+  font-size: 11px; font-weight: 700; color: var(--text-2);
+  letter-spacing: 0.2px; line-height: 1.1;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; min-height: 26px;
+}
+/* Spieltag: orange Tageszahl (Fussball-Icon kommt aus den Daten). */
+.kbsheet.is-match .kbday { color: var(--orange); }
+/* Spieltag-Ball optisch verdoppelt, ohne das Zellen-Layout zu vergroessern. */
+.kbsheet.is-match .kbsheet-ico .game-icon { transform: scale(2); transform-origin: center; }
+/* Aktiver Tag (Heute): orange umrandet, orange Glow, orange Text & Icon. */
+.kbsheet.is-today {
+  border-color: var(--orange);
+  background: linear-gradient(180deg, rgba(255, 159, 67, 0.16) 0%, rgba(255, 159, 67, 0.06) 100%);
+  box-shadow: 0 0 0 1px rgba(255, 159, 67, 0.5), 0 0 16px rgba(255, 159, 67, 0.35);
+}
+.kbsheet.is-today .kbday,
+.kbsheet.is-today .kbwd,
+.kbsheet.is-today .kbsheet-lbl { color: var(--orange); }
+.kbsheet.is-today .kbsheet-ico .game-icon {
+  filter: brightness(0) saturate(100%) invert(72%) sepia(46%) saturate(1180%) hue-rotate(332deg) brightness(103%) contrast(101%);
+}
+
+/* --- Karten-Kopfzeile --- */
+.dxh { display: flex; align-items: center; gap: 9px; padding-bottom: 9px; margin-bottom: 12px; border-bottom: 1px solid var(--border-soft); }
+.dxh-ico { display: inline-flex; color: var(--accent); flex: 0 0 auto; }
+.dxh-ico svg { width: 27px; height: 27px; }
+.dxh-title { font-size: 24px; font-weight: 800; letter-spacing: 0.6px; color: var(--text); text-transform: uppercase; }
+.dxh-right { margin-left: auto; font-size: 16.5px; font-weight: 700; color: var(--text-3); white-space: nowrap; text-transform: uppercase; letter-spacing: 0.4px; }
+.dxh-right-stack { display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1.15; text-align: right; }
+.dxh-comp { font-size: 16.5px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.4px; }
+.dxh-round { font-size: 13px; font-weight: 700; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.4px; margin-top: 2px; }
+.dxh-orange { color: var(--orange); }
+
+/* --- Tabelle --- */
+.dxt { width: 100%; border-collapse: collapse; font-size: 20px; font-family: var(--font-ui); font-variant-numeric: tabular-nums; }
+.dxt thead th { text-align: center; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-3); padding: 0 4px 5px; border-bottom: 1px solid var(--border); }
+.dxt thead th.dxt-club { text-align: left; }
+.dxt-row td { padding: 1px 3px; text-align: center; color: var(--text-2); border-bottom: 1px solid var(--border-soft); }
+.dxt-row td.dxt-club { text-align: left; color: var(--text); font-weight: 600; }
+.dxt-club { display: table-cell; }
+.dxt-row td.dxt-club > * { vertical-align: middle; }
+/* Wappen in der Tabellenzeile: immer feste Inline-Box (SVG wie Bild), damit der
+   Vereinsname nicht umbricht und die Zeilenhöhe konstant bleibt. */
+.dxt-row td.dxt-club > svg,
+.dxt-row td.dxt-club > img { width: 18px; height: 18px; flex: none; object-fit: contain; display: inline-block; vertical-align: middle; }
+.dxt-club-name { display: inline-block; margin-left: 7px; font-size: 19px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; vertical-align: middle; }
+.dxt-row td.dxt-pos { color: var(--text-3); font-weight: 700; font-size: 20px; width: 26px; }
+.dxt-goals { color: var(--text-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dxt-row td.dxt-pkt { color: var(--text); font-weight: 800; font-size: 21.5px; }
+/* Farbige Zonen-Kante liegt auf der ERSTEN Zelle (nicht auf der <tr>), damit der
+   Hover-Hintergrund (der pro <td> gemalt wird) sie nicht mehr ueberdeckt. */
+.dxt-row.zone-cl { background: transparent; }
+.dxt-row.zone-eu { background: transparent; }
+.dxt-row.zone-rel { background: transparent; }
+.dxt-row.zone-cl td.dxt-pos { color: var(--green); box-shadow: inset 3px 0 0 var(--green); }
+.dxt-row.zone-eu td.dxt-pos { color: var(--gold); box-shadow: inset 3px 0 0 var(--gold); }
+.dxt-row.zone-rel td.dxt-pos { color: var(--red); box-shadow: inset 3px 0 0 var(--red); }
+.dxt-row.me { background: var(--accent-soft); }
+.dxt-row.me td.dxt-club { color: var(--accent); }
+/* Klickbare Tabellenzeilen -> Vereinsprofil. Hover wird auf der td-Ebene
+   gemalt, damit er AUCH auf Sonderplaetzen (zone-cl/eu/rel) und der eigenen
+   Zeile funktioniert (deren Zeilen-Hintergrund sonst den generischen
+   tbody-tr:hover ueberdeckt). Die farbige Zonen-Kante (box-shadow) bleibt. */
+.dxt-row { cursor: pointer; }
+.dxt-row:hover td { background: var(--panel-hover); color: var(--text); }
+.dxt-row.me:hover td { background: rgba(0, 217, 255, 0.16); }
+.dxt-row:hover td.dxt-club { color: var(--accent); }
+.dxt-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-soft); font-size: 16.5px; color: var(--text-3); }
+.dxt-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.lg-dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+.lg-champ { background: var(--green); }
+.lg-uefa { background: var(--gold); }
+.lg-rel { background: var(--red); }
+
+/* --- Finanzen --- */
+.dxf-top { display: flex; align-items: stretch; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.dxf-balance { display: flex; flex-direction: column; gap: 4px; justify-content: center; min-width: 0; flex: 1 1 auto; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 12px 14px; }
+.dxf-balance-lbl { font-size: 16.5px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.4px; }
+.dxf-balance-val { font-size: 31px; font-weight: 900; color: var(--accent); line-height: 1.05; white-space: nowrap; }
+.dxf-balance-val.neg { color: var(--red); }
+.dxf-stats { display: flex; flex-direction: column; gap: 5px; flex: 0 0 auto; min-width: 148px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 8px 12px; }
+.dxf-stat { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.dxf-lbl { font-size: 18px; color: var(--text-3); }
+.dxf-val { font-size: 18.5px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.dxf-val.green { color: var(--green); }
+.dxf-val.red { color: var(--red); }
+.dxf-chart { margin-top: auto; }
+.dxf-chart svg { width: 100%; height: auto; display: block; }
+
+/* --- Vereinsüberblick (Mockup-Stil: Kopf mit Wappen, dann Feldliste) --- */
+.cvb2-head { display: flex; gap: 12px; align-items: center; }
+.cvb2-crest { flex: 1 1 0; min-width: 0; display: flex; justify-content: center; align-items: center; }
+.cvb2-headfields { flex: 1 1 0; min-width: 0; display: grid; grid-template-columns: max-content 1fr; column-gap: 10px; row-gap: 4px; align-content: center; }
+.cvb2-name { grid-column: 1 / -1; font-size: 25px; font-weight: 800; color: var(--text); line-height: 1.15; margin-bottom: 8px; text-align: left; }
+.cvb2-row { display: contents; }
+.cvb2-k { color: var(--text-3); font-size: 16px; white-space: nowrap; }
+.cvb2-v { color: var(--text); font-weight: 600; font-size: 16px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cvb2-sep { height: 0; background: transparent; margin: 6px 0 0; }
+.cvb2-cols { display: flex; gap: 24px; align-items: stretch; }
+.cvb2-list { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 3px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 6px 10px; }
+.cvb2-lrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 15px; }
+/* Vereinsgelaende-Stufen (rechte Haelfte, gleiche Breite wie Feldliste) */
+.cvb2-facs { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 3px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 6px 10px; }
+.cvb2-frow { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 15px; }
+.cvb2-fname { color: var(--text-2); font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cvb2-fpips { display: inline-flex; gap: 4px; flex: 0 0 auto; }
+.cvb2-fpip { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.14); }
+.cvb2-fpip.on { background: var(--accent); }
+.cvb2-lk { flex: 0 0 auto; color: var(--text-3); }
+.cvb2-lv { flex: 1 1 auto; color: var(--text); font-weight: 600; text-align: right; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cvb2-colors { display: inline-flex; gap: 6px; justify-content: flex-end; }
+.cvb2-swatch { display: inline-block; width: 15px; height: 15px; border-radius: 3px; border: 1px solid rgba(255, 255, 255, 0.22); }
+.cvb-stars { letter-spacing: 2px; }
+.cvb-stars span { color: var(--text-3); }
+.cvb-stars span.on { color: var(--gold); }
+.cvb-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.cvb-good { color: var(--green); } .cvb-good .cvb-dot { background: var(--green); }
+.cvb-mid { color: var(--orange); } .cvb-mid .cvb-dot { background: var(--orange); }
+.cvb-bad { color: var(--red); } .cvb-bad .cvb-dot { background: var(--red); }
+
+/* --- Nächstes Spiel (Foto-Hintergrund + VS, dann Infozeilen) --- */
+.cns-photo {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  padding: 14px 16px 12px;
+  /* Feste Höhe: identisch zum vorherigen Zustand (Wappen-Reihe + Namen-Reihe),
+     damit die äußere Box unverändert bleibt und die Wappen den frei gewordenen
+     Platz der Namen mit ausfüllen können. */
+  height: 156px;
+  background:
+    linear-gradient(180deg, rgba(8, 11, 17, 0.34) 0%, rgba(8, 11, 17, 0.72) 100%),
+    url('assets/stadion-zuschauer.jpg?v=1') center / cover no-repeat;
+}
+/* Wappen-Reihe füllt die gesamte Foto-Höhe; jede Seite ist eine Spalte
+   (großes Wappen + Name als Bildunterschrift darunter). */
+.cns-photo-crests { display: flex; align-items: center; justify-content: center; height: 100%; }
+.cns-vs-side { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+.cns-vs { flex: 0 0 auto; font-size: 39px; font-weight: 900; color: #fff; letter-spacing: 1px; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.65); }
+.cns-nm { max-width: 100%; text-align: center; font-size: 18px; font-weight: 800; color: #fff; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75); }
+/* Doppelter Trennstrich: zwei dünne Linien dicht untereinander. */
+.cns-dsep { display: flex; flex-direction: column; gap: 2px; margin: 5px 0; }
+.cns-dsep > span { display: block; height: 1px; background: var(--border); }
+/* Info-Gruppe im Stil des Vergleichsblocks, aber zentriert (keine Gegenüberstellung). */
+.cns-meta { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.cns-meta-type { font-size: 14px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: var(--accent); text-align: center; }
+.cns-meta-row { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 18px; font-weight: 600; color: var(--text); text-align: center; }
+.cns-meta-ico { display: inline-flex; align-items: center; color: var(--accent); flex: 0 0 auto; }
+/* Direktvergleich der beiden Vereine im "Naechstes Spiel"-Block */
+.cns-cmp { display: flex; flex-direction: column; gap: 4px; margin-top: 5px; margin-bottom: 8px; }
+.cns-cmp-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; padding: 2px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.cns-cmp-row:last-child { border-bottom: none; }
+.cns-cmp-l { font-size: 12px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--text-3); text-align: center; white-space: nowrap; }
+.cns-cmp-v { font-size: 18px; font-weight: 800; color: var(--text-2); }
+.cns-cmp-row > .cns-cmp-v:first-child { text-align: right; }
+.cns-cmp-row > .cns-cmp-v:last-child { text-align: left; }
+.cns-cmp-v.better { color: var(--accent); }
+.cns-form { display: flex; gap: 4px; }
+.cns-cmp-row > .cns-form:first-child { justify-content: flex-end; }
+.cns-cmp-row > .cns-form:last-child { justify-content: flex-start; }
+.cns-fp { width: 20px; height: 20px; border-radius: 5px; font-size: 12px; font-weight: 800; font-style: normal; display: inline-flex; align-items: center; justify-content: center; color: #06111a; }
+.cns-fp-W { background: var(--green); }
+.cns-fp-D { background: #8a97a8; }
+.cns-fp-L { background: #ff5d5d; }
+
+/* Hintergrund der Zentrale-Boxen (leicht transparent, ohne Muster) */
+.shell-zentrale .dashx > .card {
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(0, 217, 255, 0.06), transparent 60%),
+    linear-gradient(180deg, rgba(26, 34, 46, 0.74), rgba(15, 21, 31, 0.78));
+}
+
+/* --- Termine --- */
+.ctm { display: flex; flex-direction: column; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 2px 12px; }
+.ctm-row { display: flex; align-items: center; gap: 10px; padding: 9px 2px; border-bottom: 1px solid var(--border-soft); font-size: 18.5px; }
+.ctm-row:last-child { border-bottom: none; }
+.ctm-wd { flex: 0 0 24px; color: var(--text-3); font-weight: 700; }
+.ctm-date { flex: 0 0 76px; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.ctm-ico { flex: 0 0 auto; display: inline-flex; }
+.ctm-txt { flex: 1 1 auto; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* --- Nachrichten (Dashboard-Box) --- */
+.cnw { display: flex; flex-direction: column; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 2px 12px; }
+.cnw-row { display: flex; align-items: center; gap: 11px; padding: 9px 2px; border-bottom: 1px solid var(--border-soft); }
+.cnw-row:last-child { border-bottom: none; }
+.cnw-ico { flex: 0 0 auto; display: inline-flex; align-items: center; }
+.cnw-body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; line-height: 1.15; }
+.cnw-subj { font-size: 17px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cnw-text { font-size: 14.5px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.cnw-date { flex: 0 0 auto; color: var(--text-3); font-size: 14.5px; font-variant-numeric: tabular-nums; align-self: flex-start; padding-top: 2px; }
+/* Ungelesen: Betreff türkis + kleiner Punkt-Hinweis via Icon-Akzent. */
+.cnw-row.is-unread .cnw-subj { color: var(--accent); }
+
+/* --- Kader (Trikot + Positionszaehler + Donut-Ringe) --- */
+.ckd2-top { display: flex; align-items: center; gap: 20px; padding: 6px 0 18px; }
+.ckd2-jersey { flex: 0 0 auto; margin-left: 24px; }
+.ckd-jersey-photo {
+  position: relative;
+  width: 152px;
+  aspect-ratio: 1024 / 1280;
+  background: var(--jc, #cccccc);
+  -webkit-mask: url(assets/trikot-basis.png?v=1) center / contain no-repeat;
+  mask: url(assets/trikot-basis.png?v=1) center / contain no-repeat;
+}
+.ckd-jersey-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url(assets/trikot-basis.png?v=1) center / contain no-repeat;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+.ckd2-pos { flex: 1 1 auto; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.ckd2-pos-row { display: flex; align-items: center; gap: 12px; }
+.ckd2-pos-bar { flex: 0 0 4px; width: 4px; height: 22px; border-radius: 2px; }
+.ckd2-pos-lbl { flex: 0 0 50px; font-size: 20px; font-weight: 700; color: var(--text-2); letter-spacing: 0.4px; }
+.ckd2-pos-num { flex: 0 0 auto; font-size: 27px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.ckd2-donuts { display: flex; justify-content: space-around; gap: 10px; margin-top: auto; padding: 9px 10px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; }
+.ckd-donut { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.ckd-donut-ring { position: relative; width: 62px; height: 62px; }
+.ckd-donut-svg { width: 62px; height: 62px; transform: rotate(-90deg); }
+.ckd-donut-bg { fill: none; stroke: var(--panel-2); stroke-width: 6; }
+.ckd-donut-fg { fill: none; stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 0.5s ease; }
+.ckd-donut-val { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 28.5px; font-weight: 800; color: var(--text); }
+.ckd-donut-lbl { font-size: 16.5px; color: var(--text-3); font-weight: 600; }
+/* Ringlose Variante: nur die blanke Zahl, gleiche Hoehe wie der Ring fuer eine
+   saubere Grundlinie mit den uebrigen Kennzahlen. */
+.ckd-donut-plain { display: flex; align-items: center; justify-content: center; }
+.ckd-donut-num { font-weight: 800; color: var(--text); line-height: 1; }
+
+/* --- Kader-Kachel: drei gleich breite, zentrierte Spalten (Heim | Auswärts | Infos) --- */
+.ckd3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  /* stretch: alle drei Spalten sind so hoch wie die hoechste (die Info-Spalte).
+     Die Trikot-Spalten skalieren ihr Trikot auf diese Hoehe, ohne die Box zu
+     vergroessern. */
+  align-items: stretch;
+  flex: 1 1 auto;
+  padding: 2px 0 6px;
+}
+.ckd3-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 0;
+}
+/* Trikot-Wrapper: nimmt die gesamte verbleibende Spaltenhoehe (Spaltenhoehe
+   minus Bildunterschrift) ein; das Trikot fuellt ihn maximal, proportional. */
+.ckd3-jwrap {
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ckd3-jwrap > svg,
+.ckd3-jwrap > img {
+  max-height: 100%;
+  max-width: 100%;
+  height: auto;
+  width: auto;
+  object-fit: contain;
+}
+.ckd3-cap {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.ckd3-info { gap: 12px; }
+.ckd3-pos { display: flex; flex-direction: column; gap: 5px; width: 100%; max-width: 155px; }
+.ckd3-pos-row { display: flex; align-items: center; gap: 8px; }
+.ckd3-pos-bar { flex: 0 0 4px; width: 4px; height: 17px; border-radius: 2px; }
+.ckd3-pos-lbl { flex: 1 1 auto; font-size: 16px; font-weight: 700; color: var(--text-2); letter-spacing: 0.3px; }
+.ckd3-pos-num { flex: 0 0 auto; font-size: 20px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.ckd3-donuts { display: flex; justify-content: space-between; align-items: flex-start; gap: 7px; width: 100%; }
+.ckd3-donuts .ckd-donut { gap: 3px; flex: 1 1 0; }
+.ckd3-donuts .ckd-donut-ring { width: 44px; height: 44px; }
+.ckd3-donuts .ckd-donut-svg { width: 44px; height: 44px; }
+.ckd3-donuts .ckd-donut-val { font-size: 18px; }
+.ckd3-donuts .ckd-donut-lbl { font-size: 11px; }
+.ckd3-donuts .ckd-donut-plain { height: 44px; }
+.ckd3-donuts .ckd-donut-num { font-size: 26px; }
+
+/* --- „Bearbeiten"-Button im Vereinsüberblick --- */
+.cvb2-edit {
+  margin-left: auto;
+  padding: 4px 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-2);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  letter-spacing: 0.3px;
+}
+.cvb2-edit:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }

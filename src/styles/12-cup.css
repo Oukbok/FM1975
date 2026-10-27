@@ -1,0 +1,118 @@
+/* =============================================================================
+   DFB-POKAL — Turnierbaum & Begegnungen
+   ========================================================================== */
+.cup-bracket {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  align-items: flex-start;
+}
+.cup-col {
+  flex: 0 0 210px;
+  min-width: 210px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cup-col-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 13px;
+}
+.cup-tie {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 9px;
+  background: var(--panel);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+.cup-tie-clickable { cursor: pointer; transition: border-color .15s, background .15s; }
+.cup-tie-clickable:hover { border-color: var(--accent); background: var(--panel-hover); }
+.cup-tie-mine { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-glow) inset; }
+.cup-tie-pending { justify-content: center; text-align: center; grid-template-columns: 1fr; }
+.cup-team {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+.cup-team:last-child { justify-content: flex-end; text-align: right; }
+.cup-team-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cup-win .cup-team-name { font-weight: 800; color: var(--text); }
+.cup-win { color: var(--green); }
+.cup-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.15;
+  min-width: 40px;
+}
+.cup-score b { color: var(--accent); }
+.cup-badge { font-size: 9px; color: var(--yellow); font-weight: 700; }
+.cup-pens { font-size: 9px; color: var(--orange); }
+.cup-prizes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.cup-prize {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  flex: 1 1 120px;
+}
+
+
+/* ---------------- CHRONIK / TIMELINE ---------------- */
+.chronicle-list { display: flex; flex-direction: column; gap: 0; }
+.chronicle-item { display: grid; grid-template-columns: 34px 1fr; gap: 10px; }
+.chronicle-rail { display: flex; flex-direction: column; align-items: center; }
+.chronicle-dot {
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 900; color: #05070c; margin-top: 4px; flex: none;
+}
+.chronicle-rail::after {
+  content: ""; width: 2px; flex: 1 1 auto; background: var(--border); margin: 4px 0;
+}
+.chronicle-item:last-child .chronicle-rail::after { display: none; }
+.chronicle-body {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px 14px; margin-bottom: 12px; min-width: 0;
+}
+.chronicle-item.current .chronicle-body {
+  border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-glow) inset;
+}
+.chronicle-item.future .chronicle-body { opacity: 0.62; }
+.chronicle-head { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
+.chronicle-icon { font-size: 18px; }
+.chronicle-year { font-size: 17px; font-weight: 800; letter-spacing: -0.4px; }
+.chronicle-season { font-size: 12px; color: var(--text-2); }
+.chronicle-tag {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+  border: 1px solid var(--border); border-radius: 999px; padding: 2px 8px;
+}
+.chronicle-badge {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+  border-radius: 999px; padding: 2px 8px; margin-left: auto;
+}
+.chronicle-badge.now { background: var(--accent); color: #05070c; }
+.chronicle-badge.done { background: rgba(61,220,132,0.14); color: var(--green); }
+.chronicle-badge.soon { background: var(--panel-2); color: var(--text-2); border: 1px solid var(--border); }
+.chronicle-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.chronicle-desc { font-size: 13px; color: var(--text-2); line-height: 1.5; }
