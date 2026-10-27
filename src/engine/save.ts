@@ -216,6 +216,12 @@ export interface AppSettings {
   displayMode: DisplayMode;
   /** UI-Skalierung in Prozent (80–150), Default 100. */
   uiScale: number;
+  /** Textmodus: Lesetempo des Tickers. */
+  matchTextSpeed?: 'langsam' | 'normal' | 'schnell';
+  /** Textmodus: Spannungsmoment bei Großchancen (Text löst sich erst spät auf). */
+  matchSuspense?: boolean;
+  /** Textmodus: Halbzeitansprache anbieten. */
+  matchHalftimeTalk?: boolean;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -225,6 +231,9 @@ export const DEFAULT_SETTINGS: AppSettings = {
   resolution: 'auto',
   displayMode: 'window',
   uiScale: 100,
+  matchTextSpeed: 'normal',
+  matchSuspense: true,
+  matchHalftimeTalk: true,
 };
 
 export function loadSettings(): AppSettings {

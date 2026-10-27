@@ -88,6 +88,35 @@ export function SettingsScreen({ settings, onBack, onSave }: {
         </div>
       </div>
 
+      {/* --- Textmodus --- */}
+      <div className="card mt16">
+        <h3 style={{ margin: '0 0 4px' }}>Textmodus</h3>
+        <p className="dim mini" style={{ margin: '0 0 14px' }}>
+          So läuft dein Spiel im Textmodus ab. Tempo und Spannungsmoment kannst du auch während des Spiels ändern.
+        </p>
+        <label className="dim mini" style={{ display: 'block' }}>Lesetempo</label>
+        <div className="seg-group mt4">
+          {(['langsam', 'normal', 'schnell'] as const).map((v) => (
+            <button key={v} type="button" className={`seg-btn ${(s.matchTextSpeed ?? 'normal') === v ? 'active' : ''}`}
+              onClick={() => setS({ ...s, matchTextSpeed: v })}>
+              {v === 'langsam' ? 'Langsam' : v === 'normal' ? 'Normal' : 'Schnell'}
+            </button>
+          ))}
+        </div>
+        <div className="toggle-row mt16">
+          <label className="toggle-item">
+            <input type="checkbox" checked={s.matchSuspense !== false} onChange={(e) => setS({ ...s, matchSuspense: e.target.checked })} />
+            <span className={`toggle ${s.matchSuspense !== false ? 'on' : ''}`}></span>
+            Spannungsmoment bei Großchancen
+          </label>
+          <label className="toggle-item">
+            <input type="checkbox" checked={s.matchHalftimeTalk !== false} onChange={(e) => setS({ ...s, matchHalftimeTalk: e.target.checked })} />
+            <span className={`toggle ${s.matchHalftimeTalk !== false ? 'on' : ''}`}></span>
+            Halbzeitansprache anbieten
+          </label>
+        </div>
+      </div>
+
       <button className="btn-primary mt16" style={{ alignSelf: 'center', padding: '11px 34px' }} onClick={save}>Speichern</button>
     </div>
   );
