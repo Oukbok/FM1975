@@ -316,8 +316,8 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {/* Rudimentäre Einzelseiten */}
         {screen === 'presse' && <PresseView g={g} />}
         {screen === 'vertraege' && <VertraegeView g={g} />}
-        {screen === 'beobachtung' && <BeobachtungView />}
-        {screen === 'verhandlungen' && <VerhandlungenView />}
+        {screen === 'beobachtung' && <BeobachtungView g={g} />}
+        {screen === 'verhandlungen' && <VerhandlungenView g={g} />}
         {screen === 'sponsoring' && <SponsoringView g={g} onGoto={setScreen} onChange={rerender} />}
         {screen === 'fans' && <FansView g={g} />}
         {screen === 'international' && <InternationalView g={g} onWatch={(id) => setLiveMatchId(id)} />}
