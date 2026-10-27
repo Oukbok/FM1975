@@ -20,3 +20,4 @@ import './17-club-modal.css';
 import './18-header.css';
 import './19-dashboard.css';
 import './20-club-editor.css';
+import './21-player-profile.css';

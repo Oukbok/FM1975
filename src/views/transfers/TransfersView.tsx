@@ -80,7 +80,7 @@ export function TransfersView({ g, onDone }: { g: Game; onDone: () => void }) {
           </table>
         </div>
       </div>
-      {selP && <PlayerModal player={selP} club={g.clubs[selP.clubId]} onClose={() => setSel(null)} />}
+      {selP && <PlayerModal player={selP} club={g.clubs[selP.clubId]} squad={g.clubs[selP.clubId]?.playerIds.map((id) => g.players[id])} today={g.calendar.currentDate} onClose={() => setSel(null)} />}
     </div>
   );
 }

@@ -20,6 +20,7 @@ React 18 + TypeScript, gebaut mit esbuild. Kein Backend – alles läuft im Brow
 - `src/views/<bereich>/` – je Menübereich (zentrale, spieltag, kader, transfers, finanzen, verein, statistiken, wiki, modals); `categoryDashboards.tsx` = Übersichtsseiten der Kategorien.
 - `src/screens/` – Hauptmenü, Neues Spiel, Laden, Einstellungen. `src/ui/` – `PageHead`, `DisplayFrame` (Skalierung), `format.ts` (Geld/Datum).
 - `src/components/` – wiederverwendbar: Icon, ClubCrest, PlayerAvatar, PlayerModal, ClubModal, LineupView, TacticsView, MatchLiveView, JerseySVG, ClubEditorModal.
+- `src/components/player/` – Reiter des Spielerprofils (`PlayerModal.tsx` ist nur Rahmen + Kopf): Übersicht, Attribute, Entwicklung, Statistik, Vertrag, Medizin, Bericht; `shared.tsx` = Kategorien/Beschriftungen.
 - `src/types/index.ts` – alle zentralen Typen (`Club`, `Player`, `ClubFinances` …). Groß: gezielt per grep lesen.
 - `src/styles/NN-bereich.css` – CSS nach Bereichen; Reihenfolge = Kaskade (`styles/index.ts`). Design-Tokens in `00-base.css` (`:root`).
 - `docs/specs/` – verbindliche Formeln (Finanzen, Europapokal, Icons). `docs/recherche/` – historische Recherche, nur bei Bedarf.
@@ -40,7 +41,7 @@ React 18 + TypeScript, gebaut mit esbuild. Kein Backend – alles läuft im Brow
 
 ## Offene Wünsche (Backlog)
 - Klickbare Gegner-/Vereins-Infoseite (Basis: `game/clubProfile.ts`, `components/ClubModal.tsx`).
-- Spielerprofil-Redesign + Attribut „Frische“ (`form.ts`, `PlayerModal.tsx`).
+- Fotorealistische Spielergesichter je Jahrzehnt/Herkunft (Porträtrahmen in `PlayerModal.tsx`); vorher Namensgenerator nach Herkunft (`generate.ts`, `youth.ts`).
 - Chronik ins In-Game-Wiki einbinden (`views/statistiken/ChronicleView.tsx`).
 - Kalender-Feinschliff (`views/zentrale/CalendarView.tsx`, `engine/calendar.ts`).
 - Langfristig: Manager-KI für Gegnervereine.
