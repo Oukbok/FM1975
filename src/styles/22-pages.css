@@ -200,3 +200,7 @@
 .dbox .pd-md-ico { color: #ff8fa0; }
 .dbox .pd-md-sub { font-size: 15px; }
 .dbox .int-tag { font-size: 11px; }
+
+/* --- Finanzen ----------------------------------------------------------- */
+.dfin-lbl { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.dfin-lbl svg { width: 15px; height: 15px; color: var(--text-3); }
