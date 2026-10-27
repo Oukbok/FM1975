@@ -172,7 +172,7 @@ export function monthlyTrainingReport(g: Game, today: string): void {
 export function staffSeasonChange(g: Game, date: string): void {
   const staff = ensureStaff(g);
   const club = g.clubs[g.managedClubId];
-  const rivals = Object.values(g.clubs).filter((c) => c.id !== g.managedClubId && !c.id.startsWith('am') && (c.reputation ?? 0) >= (club?.reputation ?? 60));
+  const rivals = Object.values(g.clubs).filter((c) => c.id !== g.managedClubId && !c.id.startsWith('am') && !c.id.startsWith('eu_') && !c.id.startsWith('w_') && (c.reputation ?? 0) >= (club?.reputation ?? 60));
   const pick = () => (rivals.length ? rivals[Math.floor(Math.random() * rivals.length)].name : 'einem Verein aus dem Ausland');
   const res = staffSeasonTurnover(staff, club?.reputation ?? 60, yearOf(date), Math.random, pick);
   g.hiredStaff = staff.map((m) => m.roleId);

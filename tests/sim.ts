@@ -66,6 +66,13 @@ function report(game: Game) {
     const others = lc.filter((c) => c.id !== my.id).map((c) => c.finances.balance).sort((a, b) => a - b);
     console.log(`   KI-Konten min ${Math.round(others[0] / 1000)}k median ${Math.round(others[others.length >> 1] / 1000)}k max ${Math.round(others[others.length - 1] / 1000)}k`);
   }
+  if (process.env.SQUADS) {
+    const lc = leagueClubs(game);
+    const sz = lc.map((c) => c.playerIds.length).sort((a, b) => a - b);
+    const divs = [game.leagues.playerDivision, ...game.leagues.otherDivisions].map((d: any) => `${d.id}:${d.tier}:${d.table?.rows?.length ?? d.clubIds?.length ?? '?'}`).join(' ');
+    console.log(`   Divs ${divs}`);
+    console.log(`   Vereine ${lc.length} Kader min ${sz[0]} med ${sz[sz.length >> 1]} max ${sz[sz.length - 1]} | Tabelle ${game.table.rows.length}`);
+  }
   const w = game.world;
   if (w && w.history.length) {
     const h = w.history[w.history.length - 1];

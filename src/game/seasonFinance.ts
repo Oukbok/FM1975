@@ -13,6 +13,7 @@ import { book } from '../engine/finances';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { EuroCompId, EURO_COMP_NAMES } from '../data/europe';
 import { formatMoney } from '../engine/economy';
+import { boardBudgetShare } from '../engine/environment';
 
 /** Leistungswert 0..1 der Vorsaison je Verein (für die TV-Verteilung). */
 export type PerfMap = Record<string, number>;
@@ -100,7 +101,7 @@ export function openFinancialSeason(g: Game, newSeason: string, date: string, pr
   // Polsters über der Liquiditätsreserve frei; bei Lizenzauflagen nichts.
   if (mine) {
     const rev = lastRevenue(mine, year);
-    const free = Math.max(0, mine.finances.balance - 0.25 * rev) * 0.7;
+    const free = Math.max(0, mine.finances.balance - 0.25 * rev) * boardBudgetShare(mine.boardConfidence ?? 60);
     const banned = hasTransferBan(mine, newSeason);
     mine.finances.transferBudget = banned ? 0 : Math.round(free / economyScale(year) / 10000) * 10000;
     pushMessage(g.messages, makeMessage({
@@ -110,7 +111,7 @@ export function openFinancialSeason(g: Game, newSeason: string, date: string, pr
       bodyText: banned
         ? 'Wegen der Lizenzauflagen dürfen in dieser Saison keine Ablösesummen gezahlt werden.'
         : `Der Vorstand gibt für die Saison ${newSeason} ${fmt(mine.finances.transferBudget * economyScale(year))} für Ablösesummen frei. `
-          + `Grundlage: Kontostand ${fmt(mine.finances.balance)} abzüglich einer Liquiditätsreserve von einem Viertel des Jahresumsatzes (${fmt(rev)}).`,
+          + `Grundlage: Kontostand ${fmt(mine.finances.balance)} abzüglich einer Liquiditätsreserve von einem Viertel des Jahresumsatzes (${fmt(rev)}); davon gibt der Vorstand bei einem Vertrauen von ${mine.boardConfidence ?? 60} einen Anteil von ${Math.round(boardBudgetShare(mine.boardConfidence ?? 60) * 100)} % frei.`,
       actionRequired: false,
     }));
   }

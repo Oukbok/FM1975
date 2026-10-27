@@ -1,5 +1,5 @@
 import { MARKETING_AREAS, MARKETING_BY_ID, areaBenefit, areaMonthlyCostBase, marketingAvailable, marketingIncomeBase, marketingMonthlyBase } from '../../data/marketing';
-import { economyScale, yearOf } from '../../engine/economy';
+import { economyScale, revenueScale, yearOf } from '../../engine/economy';
 import { CATERING_LEASE, CATERING_NETPERHEAD, CATERING_UPKEEP, cateringMatchIncome, expectedAttendance, matchdayIncome } from '../../engine/finances';
 import { MAX_LEVEL } from '../../engine/infrastructure';
 import { Game } from '../../game/state';
@@ -15,6 +15,7 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
   const club = g.clubs[g.managedClubId];
   const curYear = yearOf(g.calendar.currentDate);
   const scale = economyScale(curYear);
+  const mdScale = revenueScale('matchday', curYear); // Stadion-Erlöse wachsen langsamer (Finanzen 2.0)
   const budgets = g.marketing ?? (g.marketing = {});
 
   const setUnits = (id: string, units: number) => {
@@ -47,8 +48,8 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
   const membershipMonth = Math.round((Math.round((30000 + club.reputation * 1000) * scale)) / 12);
   // Erwartete Zuschauer & abgeleitete Spieltagserloese.
   const expAtt = expectedAttendance(club);
-  const expCatering = cateringMatchIncome(club, expAtt, scale);
-  const expProgramme = matchdayIncome(expAtt, scale);
+  const expCatering = cateringMatchIncome(club, expAtt, mdScale);
+  const expProgramme = matchdayIncome(expAtt, mdScale);
 
   const areas = MARKETING_AREAS.filter((a) => marketingAvailable(a, curYear));
   const future = MARKETING_AREAS.filter((a) => !marketingAvailable(a, curYear)).sort((a, b) => a.unlockYear - b.unlockYear);

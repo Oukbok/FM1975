@@ -9,6 +9,7 @@ import { ACTIVITY_DEFS, activityIncomeBase } from '../data/activities';
 import { EURO_COMP_NAMES } from '../data/europe';
 import { marketingIncomeBase, marketingMonthlyBase, marketingReputationNudge } from '../data/marketing';
 import { staffMonthlyTotal } from '../data/staff';
+import { monthlyEnvironmentUpdate } from './environmentGame';
 import { applyFocusLoad, devContextFor, ensureStaff, monthlyTrainingReport, staffEffectsOf } from './staffGame';
 import { coachingReport, memberMonthlySalary } from '../engine/staffPeople';
 import { CalendarEngine } from '../engine/calendar';
@@ -433,6 +434,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   const curMonth = today.slice(0, 7);
   if (utcDom === 1) {
     monthlyTrainingReport(g, today);
+    monthlyEnvironmentUpdate(g, today);
     for (const club of Object.values(g.clubs)) {
       if (club.finances.lastMonthlyBooking === curMonth) continue;
       const isMine = club.id === g.managedClubId;

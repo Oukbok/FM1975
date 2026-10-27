@@ -5,6 +5,7 @@ import { manageSquads } from './squads';
 import { closeFinancialSeason, openFinancialSeason } from './seasonFinance';
 import { staffSeasonChange } from './staffGame';
 import { youthPoachingAtSeasonChange } from './youthMarket';
+import { environmentSeasonChange, setSeasonGoal } from './environmentGame';
 import { advanceWorldSeason, initWorld, isForeignId } from '../engine/world';
 import { closeSeason } from '../engine/history';
 import { buildProClub } from '../data/generate';
@@ -65,7 +66,8 @@ export function simulateMatchday(game: Game, matchday: number): void {
 
 /** Nur die 1. Liga-Vereine (ohne die Pokal-Amateurvereine mit Präfix "am"). */
 export function leagueClubs(game: Game): Club[] {
-  return Object.values(game.clubs).filter((c) => !c.id.startsWith('am'));
+  // Ohne Pokal-Amateure und ohne für den Europapokal materialisierte Auslandsvereine.
+  return Object.values(game.clubs).filter((c) => !c.id.startsWith('am') && !isForeignId(c.id));
 }
 
 // -----------------------------------------------------------------------------
@@ -150,9 +152,10 @@ export function decidePlayoff(g: Game, aId: string, bId: string, season: string)
 // Endstand (geordnete Verein-IDs) einer Division – Spielerliga aus game.table,
 // alle anderen aus ihrer Sim-Tabelle.
 export function finalOrder(g: Game, divId: string): string[] {
-  if (g.leagues.playerDivision.id === divId) return g.table.rows.map((r) => r.clubId);
+  // Auslandsvereine (Europapokal) gehören nie in eine deutsche Liga (Altstände reparieren).
+  if (g.leagues.playerDivision.id === divId) return g.table.rows.map((r) => r.clubId).filter((id) => !isForeignId(id));
   const d = g.leagues.otherDivisions.find((x) => x.id === divId);
-  return d ? d.table.rows.map((r) => r.clubId) : [];
+  return d ? d.table.rows.map((r) => r.clubId).filter((id) => !isForeignId(id)) : [];
 }
 
 export function startNextSeason(g: Game): void {
@@ -169,6 +172,7 @@ export function startNextSeason(g: Game): void {
   const euroQuals = computeGermanEuroQualifiers(g, false);
   // Finanzsaison abschließen (Bilanz, Marke, Ruf) solange Tabelle/Pokale noch vorliegen.
   const prevPerf = closeFinancialSeason(g, oldSeason, g.calendar.currentDate);
+  environmentSeasonChange(g, oldSeason, g.calendar.currentDate);
 
   // --- 1) Sim-Ligen zu Ende simulieren, damit alle Endtabellen feststehen ---
   for (const div of g.leagues.otherDivisions) {
@@ -441,6 +445,7 @@ export function startNextSeason(g: Game): void {
   openFinancialSeason(g, newSeason, calendar.currentDate, prevPerf);
   staffSeasonChange(g, calendar.currentDate);
   youthPoachingAtSeasonChange(g, calendar.currentDate);
+  setSeasonGoal(g, calendar.currentDate);
   // Neue Saison, evtl. neue Epoche: Positionsstärken aller Spieler neu bewerten.
   setEraYear(Number(calendar.currentDate.slice(0, 4)));
   for (const p of Object.values(g.players)) if (!p.isYouth) refreshOverall(p);

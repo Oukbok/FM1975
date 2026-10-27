@@ -46,6 +46,7 @@ export const WIKI_CATEGORIES: WikiCategory[] = [
   { id: 'facilities', title: 'Vereinsgelände', icon: '🏟️' },
   { id: 'staff', title: 'Mitarbeiter', icon: '🧑‍💼' },
   { id: 'marketing', title: 'Marketing', icon: '📣' },
+  { id: 'environment', title: 'Vereinsumfeld', icon: '' },
   { id: 'calendar', title: 'Kalender & Aktivitäten', icon: '🗓️' },
   { id: 'cup', title: 'Landespokal', icon: '🏆' },
   { id: 'euro', title: 'Europapokal', icon: '🌍' },
@@ -1010,7 +1011,7 @@ Große Vereine mit hoher Auslastung profitieren stärker vom **Eigenbetrieb** (v
 ## Preisschilder und Kontostand
 - **Gehälter, Marktwerte und das Transferbudget** sind Preisschilder in 1975-Werten und werden mit dem Spieljahr hochgerechnet angezeigt und gebucht. Der **Kontostand** ist nominal.
 - **Marktwerte** werden zu jeder Saison neu bewertet: Alle fünf Stärkepunkte verdoppelt sich der Wert, junge Spieler mit Luft nach oben sind teurer, ältere günstiger.
-- Das **Transferbudget** legt der Vorstand zu Saisonbeginn fest: 70 % des Polsters über einer Reserve von einem Viertel des Jahresumsatzes.
+- Das **Transferbudget** legt der Vorstand zu Saisonbeginn fest: je nach Vertrauen 40–90 % des Polsters über einer Reserve von einem Viertel des Jahresumsatzes.
 
 ## Schulden, Lizenz, Finanzielles Fairplay
 - Ein **negativer Kontostand** kostet monatlich Zinsen (etwa 8 % im Jahr).
@@ -1237,6 +1238,41 @@ Talente** (Stufe 4–5) erzeugt. So besitzt jeder Verein von Beginn an eine glau
 erzeugt; sind nur ältere Jahrgänge vorhanden, werden die **fehlenden jüngeren Jahrgänge (7–16 Jahre) nachgefüllt**. Die
 Altersklasse selbst wird nicht gespeichert, sondern stets aus dem Alter abgeleitet — bestehende Talente ordnen sich damit
 automatisch korrekt ein.`,
+  },
+  {
+    id: 'environment-overview',
+    category: 'environment',
+    title: 'Vereinsumfeld — Fans, Mitglieder, Medien, Vorstand',
+    keywords: ['fans', 'stimmung', 'mitglieder', 'medien', 'vorstand', 'vertrauen', 'leitbild', 'identität', 'derby', 'rivalen', 'fankultur', 'saisonziel', 'ticketpreis'],
+    body: `## Stimmung als Zustand
+Die **Fan-Stimmung** (0–100) wird jeden Monat fortgeschrieben: Ergebnisse der letzten Spiele, **Derbys** gegen Rivalen aus der Region, das **Leitbild** des Vereins und zu hohe **Eintrittspreise** bewegen sie. Gute Stimmung füllt das Stadion langsam, schlechte leert es.
+
+## Leitbild (Identität)
+Jeder Verein hat ein Leitbild, das die Fans erwarten:
+- **Ausbildungsverein:** junge und eigene Spieler sollen spielen.
+- **Offensivfußball:** viele Tore.
+- **Bodenständig & solide:** gesunde Finanzen, keine Abenteuer.
+- **Titel und Stars:** Spitzenplätze und Stars im Kader.
+- **Arbeiter und Kämpfer:** Einsatz, keine Klatschen.
+Wie gut du es erfüllst, steht unter Verein → Fans.
+
+## Mitglieder
+Die Mitgliederzahl ist echt: Sie wächst mit Erfolg, guter Stimmung und der Fankultur der Epoche und bestimmt die **Mitgliedsbeiträge** (40 DM je Mitglied und Jahr, 1975-Wert).
+
+## Fankultur im Wandel
+| Epoche | Prägung |
+|---|---|
+| bis 1984 | Kuttenzeit: Stimmung ändert sich langsam |
+| 1985–1992 | Krawall-Jahre: Sicherheitskosten, schwache Spielzeiten leeren die Kurve |
+| 1993–2004 | Eventisierung: höhere Preise werden akzeptiert, Mitglieder wachsen |
+| 2005–2014 | Ultra-Kultur: Choreos, aber Proteste gegen teure Tickets |
+| ab 2015 | Soziale Medien: Stimmung schwankt so stark wie nie |
+
+## Medien & Vorstand
+- Der **Medien-Druck** steigt mit dem Ansehen des Vereins, der Epoche und Negativserien. Er verstärkt die Ausschläge beim **Vorstandsvertrauen**.
+- Das Vertrauen bewegt sich monatlich mit Tabellenplatz gegenüber dem **Saisonziel**, Fan-Stimmung, Finanzen und Leitbild.
+- Der Vorstand setzt jede Saison ein Ziel nach der Kaderstärke (Meisterschaft, Europa-Pokal-Platz, Mittelfeld, Klassenerhalt; in unteren Ligen Aufstieg).
+- **Entlassen wirst du nicht** – aber das Vertrauen bestimmt, wie viel vom finanziellen Polster der Vorstand als **Transferbudget** freigibt (40–90 %). Unter 30 und 15 gibt es Warnungen.`,
   },
   {
     id: 'youth-gems-scouting',

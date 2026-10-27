@@ -404,7 +404,8 @@ export function computeMonthly(
   const tv = Math.round((club.finances.tvAnnual ?? 0) / 12);
   const commercial = Math.round((club.finances.commercialAnnual ?? 0) / 12);
   // Mitgliedsbeitraege.
-  const membershipYear = Math.round((30000 + club.reputation * 1000) * scale);
+  // Mitglieder (eigener Verein, Vereinsumfeld) × Jahresbeitrag 40 DM (1975-Basis); sonst Schätzung über den Ruf.
+  const membershipYear = Math.round((club.members ? club.members * 40 : 30000 + club.reputation * 1000) * scale);
   const membership = Math.round(membershipYear / 12);
   // Catering-Pacht nur bei Verpachtung.
   const cLevel = Math.max(1, Math.min(5, Math.round(club.infrastructure?.catering ?? 1)));

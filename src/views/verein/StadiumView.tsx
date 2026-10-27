@@ -1,4 +1,4 @@
-import { economyScale, yearOf } from '../../engine/economy';
+import { economyScale, revenueScale, yearOf } from '../../engine/economy';
 import { CATERING_NETPERHEAD, cateringMatchIncome, expectedAttendance, expectedAttendanceRate, matchdayIncome } from '../../engine/finances';
 import { CAPACITY_PER_LEVEL, MAX_LEVEL, canUpgrade, upgradeFacility } from '../../engine/infrastructure';
 import { Game } from '../../game/state';
@@ -20,6 +20,7 @@ export function StadiumView({ g, onChange }: { g: Game; onChange: () => void }) 
   const [confirmExpand, setConfirmExpand] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const scale = economyScale(yearOf(g.calendar.currentDate));
+  const mdScale = revenueScale('matchday', yearOf(g.calendar.currentDate)); // Stadion-Erlöse wachsen langsamer (Finanzen 2.0)
   const doExpand = () => {
     // upgradeFacility bucht die Kosten selbst vom Konto ab.
     const res = upgradeFacility(myClub, 'stadium', g.calendar.currentDate, true);
@@ -33,9 +34,9 @@ export function StadiumView({ g, onChange }: { g: Game; onChange: () => void }) 
   const cateringLevel = Math.max(1, Math.min(5, Math.round(myClub.infrastructure?.catering ?? 1)));
   const expRate = expectedAttendanceRate(myClub);
   const expVisitors = expectedAttendance(myClub);
-  const ticketRev = Math.round(expVisitors * st.ticketPrice * scale);
-  const cateringRev = cateringMatchIncome(myClub, expVisitors, scale);
-  const programmeRev = matchdayIncome(expVisitors, scale);
+  const ticketRev = Math.round(expVisitors * st.ticketPrice * mdScale);
+  const cateringRev = cateringMatchIncome(myClub, expVisitors, mdScale);
+  const programmeRev = matchdayIncome(expVisitors, mdScale);
   const home = ownLeagueMatches(g, 'finished').filter((m) => m.homeClubId === myClub.id && m.result);
   const avgAtt = home.length ? Math.round(avg(home.map((m) => m.result!.attendance))) : 0;
   const affordable = check.ok && myClub.finances.balance >= check.cost;
@@ -48,14 +49,14 @@ export function StadiumView({ g, onChange }: { g: Game; onChange: () => void }) 
           <Kpi value={`${Math.round(st.averageAttendanceRate * 100)} %`} label="Ø Auslastung" />
         </div>
         <Meter label="Zustand" value={st.condition} text={`${st.condition} %`} color={vColor(st.condition)} />
-        <KV k="Ticketpreis" v={fmtDMfull(st.ticketPrice * scale)} />
+        <KV k="Ticketpreis" v={fmtDMfull(st.ticketPrice * mdScale)} />
         <KV k="Heimspiele bisher" v={`${home.length}${home.length ? ` · Ø ${avgAtt.toLocaleString('de-DE')} Zuschauer` : ''}`} />
       </DashBox>
 
       <DashBox title="Ticketpreis & Auslastung" icon="fans">
         <div className="dbtnrow" style={{ justifyContent: 'center', alignItems: 'center', gap: 16, margin: '6px 0 12px' }}>
           <button className="dchip" onClick={() => setTicket(-1)}>− 1</button>
-          <span style={{ fontSize: 34, fontWeight: 900, color: 'var(--accent)', minWidth: 160, textAlign: 'center' }}>{fmtDMfull(st.ticketPrice * scale)}</span>
+          <span style={{ fontSize: 34, fontWeight: 900, color: 'var(--accent)', minWidth: 160, textAlign: 'center' }}>{fmtDMfull(st.ticketPrice * mdScale)}</span>
           <button className="dchip" onClick={() => setTicket(1)}>+ 1</button>
         </div>
         <Meter label="Erw. Auslastung" value={expRate * 100} text={`${Math.round(expRate * 100)} %`} />

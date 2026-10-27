@@ -923,6 +923,8 @@ export interface Club {
   commerce?: ClubCommerce;
   /** Marke (Finanzen 2.0): treibt Sponsoring und Fanartikel. Optional → wird nachgerüstet. */
   brand?: ClubBrand;
+  /** Mitglieder (nur eigener Verein, aus dem Vereinsumfeld); bestimmt die Beiträge. */
+  members?: number;
 }
 
 // -----------------------------------------------------------------------------

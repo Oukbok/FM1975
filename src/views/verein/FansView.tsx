@@ -1,4 +1,6 @@
-import { economyScale, yearOf } from '../../engine/economy';
+import { economyScale, revenueScale, yearOf } from '../../engine/economy';
+import { PHILOSOPHY_INFO, PHILOSOPHY_LABEL, fanEra } from '../../engine/environment';
+import { ensureEnvironment } from '../../game/environmentGame';
 import { cateringMatchIncome, expectedAttendance, expectedAttendanceRate, matchdayIncome } from '../../engine/finances';
 import { Game } from '../../game/state';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
@@ -11,19 +13,23 @@ import { FormDots, MatchRow, avg, ownLeagueMatches, resultFor, tableRow } from '
 export function FansView({ g }: { g: Game }) {
   const myClub = g.clubs[g.managedClubId];
   const st = myClub.stadium;
-  const scale = economyScale(yearOf(g.calendar.currentDate));
+  const year = yearOf(g.calendar.currentDate);
+  const scale = economyScale(year);
+  const md = revenueScale('matchday', year);
+  const env = ensureEnvironment(g);
+  const era = fanEra(year);
   const expRate = expectedAttendanceRate(myClub);
   const expVisitors = expectedAttendance(myClub);
-  const ticket = Math.round(expVisitors * st.ticketPrice * scale);
-  const catering = cateringMatchIncome(myClub, expVisitors, scale);
-  const programme = matchdayIncome(expVisitors, scale);
-  // Mitglieder-Schätzung: Beiträge / typischer Jahresbeitrag (~40 DM, 1975-Basis).
-  const estMembers = Math.round((30000 + myClub.reputation * 1000) / 40);
+  const ticket = Math.round(expVisitors * st.ticketPrice * md);
+  const catering = cateringMatchIncome(myClub, expVisitors, md);
+  const programme = matchdayIncome(expVisitors, md);
+  const members = env.members;
   const played = ownLeagueMatches(g, 'finished');
   const last5 = played.slice(-5);
   const pts = last5.reduce((s, m) => s + ({ W: 3, D: 1, L: 0 }[resultFor(m, myClub.id) ?? 'L']), 0);
-  const mood = last5.length ? Math.round((pts / (last5.length * 3)) * 100) : 50;
-  const moodText = !last5.length ? 'Gespannt auf die neue Saison.' : mood >= 70 ? 'Begeistert – die Kurve steht hinter der Mannschaft.'
+  void pts;
+  const mood = Math.round(env.fanMood);
+  const moodText = !last5.length && mood === 55 ? 'Gespannt auf die neue Saison.' : mood >= 70 ? 'Begeistert – die Kurve steht hinter der Mannschaft.'
     : mood >= 45 ? 'Zufrieden, aber anspruchsvoll.' : mood >= 25 ? 'Unruhig – erste Pfiffe sind zu hören.' : 'Verärgert – die Fans fordern Konsequenzen.';
   const home = played.filter((m) => m.homeClubId === myClub.id && m.result);
   const away = played.filter((m) => m.awayClubId === myClub.id);
@@ -39,7 +45,9 @@ export function FansView({ g }: { g: Game }) {
         </div>
         <div className="dnote" style={{ fontSize: 16, color: 'var(--text-2)' }}>{moodText}</div>
         {row && row.form.length > 0 && <KV k="Form" v={<FormDots form={row.form} />} />}
-        <div className="dnote mt8">Die Stimmung leitet sich aus den letzten fünf Ligaspielen ab.</div>
+        <KV k="Leitbild erfüllt" v={`${env.identity} %`} color={vColor(env.identity)} />
+        <KV k="Medien-Druck" v={Math.round(env.mediaPressure)} />
+        <div className="dnote mt8">Die Stimmung bewegt sich monatlich: Ergebnisse, Derbys, Eintrittspreise und das Leitbild des Vereins zählen.</div>
       </DashBox>
 
       <DashBox title="Zuschauer" icon="stadium">
@@ -49,13 +57,17 @@ export function FansView({ g }: { g: Game }) {
         </div>
         <KV k="Kapazität" v={st.capacity.toLocaleString('de-DE')} />
         <KV k="Ø Auslastung (Basis)" v={`${Math.round(st.averageAttendanceRate * 100)} %`} />
-        <KV k="Ticketpreis" v={fmtDMfull(st.ticketPrice * scale)} />
+        <KV k="Ticketpreis" v={fmtDMfull(st.ticketPrice * md)} />
       </DashBox>
 
       <DashBox title="Mitglieder" icon="dashVerein">
-        <div className="dkpis"><Kpi value={estMembers.toLocaleString('de-DE')} label="geschätzte Mitglieder" /></div>
-        <KV k="Beiträge / Jahr" v={fmtDM((30000 + myClub.reputation * 1000) * scale)} />
-        <div className="dnote mt8">Die Mitgliederzahl wächst mit dem Ansehen des Vereins. Eine echte Mitgliederentwicklung folgt in einem späteren Ausbau.</div>
+        <div className="dkpis">
+          <Kpi value={members.toLocaleString('de-DE')} label="Mitglieder" />
+          <Kpi value={`${env.memberTrend >= 0 ? '+' : ''}${(env.memberTrend * 1200).toFixed(1)} %`} label="Trend / Jahr" color={env.memberTrend >= 0 ? 'var(--green)' : 'var(--red)'} />
+        </div>
+        <KV k="Beiträge / Jahr" v={fmtDM(members * 40 * scale)} />
+        {(env.history ?? []).slice(-4).map((h) => <KV key={h.season} k={h.season} v={`${h.members.toLocaleString('de-DE')} · Stimmung ${h.fanMood}`} />)}
+        <div className="dnote mt8">Erfolg, gute Stimmung und die Fankultur der Epoche lassen die Mitgliederzahl wachsen.</div>
       </DashBox>
 
       <DashBox title="Heimspiele" icon="dashBall" right={`${home.length}`}>
@@ -64,8 +76,15 @@ export function FansView({ g }: { g: Game }) {
         )) : <Empty icon="dashBall">Noch kein Heimspiel.</Empty>}
       </DashBox>
 
-      <DashBox title="Auswärtsfahrten" icon="schedule" right={`${away.length}`}>
-        {away.length ? [...away].reverse().slice(0, 8).map((m) => <MatchRow key={m.id} g={g} m={m} />) : <Empty icon="schedule">Noch kein Auswärtsspiel.</Empty>}
+      <DashBox title="Identität & Rivalen" icon="dashVerein" right={era.name}>
+        <KV k="Leitbild" v={PHILOSOPHY_LABEL[env.philosophy]} strong />
+        <div className="dnote">{PHILOSOPHY_INFO[env.philosophy]}</div>
+        <KV k="Tradition" v={env.tradition} />
+        <div className="dsec">Rivalen</div>
+        {env.rivals.length ? env.rivals.map((id) => <KV key={id} k={g.clubs[id]?.name ?? g.simClubs?.[id]?.name ?? id} v="Derby" />) : <div className="dnote">Kein Derbygegner in der Liga.</div>}
+        <div className="dsec">Fankultur</div>
+        <div className="dnote">{era.text}</div>
+        {away.length > 0 && <div className="dnote mt8">{away.length} Auswärtsfahrten in dieser Saison.</div>}
       </DashBox>
 
       <DashBox title="Spieltagserlöse" icon="finances" right="pro Heimspiel">
