@@ -56,7 +56,8 @@
 .dmeter-lbl { color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .dmeter-track { height: 9px; border-radius: 5px; background: rgba(255,255,255,0.07); overflow: hidden; }
 .dmeter-fill { display: block; height: 100%; border-radius: 5px; }
-.dmeter-val { text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
+.dmeter-val { text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dbox-wide-lbl .dmeter { grid-template-columns: 240px 1fr 100px; }
 
 /* Tabellen in Boxen */
 .dtable { width: 100%; border-collapse: collapse; font-size: 16px; }
@@ -204,3 +205,13 @@
 /* --- Finanzen ----------------------------------------------------------- */
 .dfin-lbl { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .dfin-lbl svg { width: 15px; height: 15px; color: var(--text-3); }
+
+.dscout { color: var(--yellow); font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+/* --- Marketing ---------------------------------------------------------- */
+.dmkt { display: grid; grid-template-columns: 1fr 340px; gap: 16px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-soft); }
+.dmkt.locked { opacity: 0.45; }
+.dmkt-main { display: flex; flex-direction: column; gap: 2px; }
+.dmkt-main b { font-size: 17px; }
+.dmkt-ctrl { display: flex; flex-direction: column; gap: 4px; }
+.dmkt-ctrl input[type=range] { width: 100%; accent-color: var(--accent); }

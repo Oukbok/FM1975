@@ -3,10 +3,10 @@ import PlayerModal from '../../components/PlayerModal';
 import { CalendarEngine } from '../../engine/calendar';
 import { getAvailablePlayers, makeOffer } from '../../engine/transfers';
 import { Game } from '../../game/state';
-import { Player, renderStars } from '../../types';
+import { Player } from '../../types';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtDM, vColor } from '../../ui/format';
-import { GROUP_DE, PlayerRow, avg, groupOf, monthsUntil, squadOf } from '../shared';
+import { GROUP_DE, PlayerRow, ScoutStars, avg, groupOf, monthsUntil, scoutMid, squadOf } from '../shared';
 import { useState } from 'react';
 
 // =============================================================================
@@ -52,7 +52,7 @@ function MarketTable({ g, list, onOpen, action }: { g: Game; list: Player[]; onO
               <td className="ctr"><span className="pos-badge">{p.naturalPosition}</span></td>
               <td className="num">{p.age}</td>
               <td className="num"><b style={{ color: vColor(p.overall) }}>{p.overall}</b></td>
-              <td className="nowrap"><span className="stars">{renderStars(p.potentialStars)}</span></td>
+              <td className="nowrap"><ScoutStars p={p} /></td>
               <td className="num muted">{monthsUntil(today, p.contract.expiryDate)} M.</td>
               <td className="num">{fmtDM(p.contract.weeklyWage)}</td>
               <td className="num" style={{ color: 'var(--accent)' }}>{fmtDM(p.contract.transferValue)}</td>
@@ -137,7 +137,7 @@ export function BeobachtungView({ g }: { g: Game }) {
   const lists: Record<ScoutMode, Player[]> = {
     need: others.filter((p) => groupOf(p) === weakest.k && p.overall > weakest.avg).sort((a, b) => b.overall - a.overall),
     contract: others.filter((p) => monthsUntil(today, p.contract.expiryDate) <= 12).sort((a, b) => b.overall - a.overall),
-    young: others.filter((p) => p.age <= 21).sort((a, b) => b.potentialStars - a.potentialStars || b.overall - a.overall),
+    young: others.filter((p) => p.age <= 21).sort((a, b) => scoutMid(b) - scoutMid(a) || b.overall - a.overall),
   };
   const list = lists[mode].slice(0, 50);
   const label: Record<ScoutMode, string> = { need: `Verstärkung ${GROUP_DE[weakest.k]}`, contract: 'Vertrag läuft aus', young: 'Junge Talente (bis 21)' };

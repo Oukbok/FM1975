@@ -3,6 +3,7 @@ import ClubCrest from '../components/ClubCrest';
 import { Game } from '../game/state';
 import { Match, Player, POSITION_GROUPS } from '../types';
 import { fmtDateShort, vColor } from '../ui/format';
+import { scoutRange, scoutRangeText } from '../engine/scouting';
 
 export const squadOf = (g: Game, clubId = g.managedClubId): Player[] =>
   (g.clubs[clubId]?.playerIds ?? []).map((id) => g.players[id]).filter(Boolean);
@@ -69,4 +70,12 @@ export const groupOf = (p: Player) => POSITION_GROUPS[p.naturalPosition] as stri
 export function monthsUntil(from: string, to: string): number {
   const a = new Date(from + 'T00:00:00Z'), b = new Date(to);
   return Math.max(0, (b.getUTCFullYear() - a.getUTCFullYear()) * 12 + (b.getUTCMonth() - a.getUTCMonth()));
+}
+
+/** Mitte der Scouting-Spanne (das wahre Potenzial ist verdeckt) – zum Sortieren. */
+export const scoutMid = (p: Player) => { const [a, b] = scoutRange(p); return (a + b) / 2; };
+
+/** Scout-Einschätzung des Potenzials als Text-Spanne, z. B. „3,5–4,5 ★“. */
+export function ScoutStars({ p }: { p: Player }) {
+  return <span className="dscout" title="Scouting-Einschätzung des Potenzials">{scoutRangeText(p)}</span>;
 }

@@ -1,10 +1,10 @@
 import PlayerModal from '../../components/PlayerModal';
 import { formIndicator } from '../../engine/form';
 import { Game } from '../../game/state';
-import { Player, renderStars } from '../../types';
+import { Player } from '../../types';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtDM, vColor } from '../../ui/format';
-import { GROUP_DE, PlayerRow, avg, groupOf } from '../shared';
+import { GROUP_DE, PlayerRow, ScoutStars, avg, groupOf, scoutMid } from '../shared';
 import { useState } from 'react';
 
 // =============================================================================
@@ -24,7 +24,7 @@ export function SquadView({ g }: { g: Game }) {
   const cmp = (a: Player, b: Player): number => {
     switch (sortBy) {
       case 'pos': return (GROUP_ORDER.indexOf(groupOf(a)) - GROUP_ORDER.indexOf(groupOf(b))) || (b.overall - a.overall);
-      case 'pot': return (b.potentialStars - a.potentialStars) || (b.overall - a.overall);
+      case 'pot': return (scoutMid(b) - scoutMid(a)) || (b.overall - a.overall);
       case 'form': return b.form - a.form;
       case 'fri': return (a.frische ?? 100) - (b.frische ?? 100);
       case 'fit': return b.attributes.fitness - a.attributes.fitness;
@@ -70,7 +70,7 @@ export function SquadView({ g }: { g: Game }) {
                   <td className="ctr"><span className="pos-badge">{pl.naturalPosition}</span></td>
                   <td className="num">{pl.age}</td>
                   <td className="num"><b style={{ color: vColor(pl.overall) }}>{pl.overall}</b></td>
-                  <td className="nowrap"><span className="stars">{renderStars(pl.potentialStars)}</span></td>
+                  <td className="nowrap"><ScoutStars p={pl} /></td>
                   <td className="num nowrap" style={{ color: fi.color, fontWeight: 700 }} title={fi.label}>{fi.arrow} {Math.round(pl.form)}</td>
                   <td className="num" style={{ color: vColor(fr), fontWeight: 700 }}>{fr}</td>
                   <td className="num" style={{ color: vColor(pl.attributes.fitness) }}>{Math.round(pl.attributes.fitness)}</td>

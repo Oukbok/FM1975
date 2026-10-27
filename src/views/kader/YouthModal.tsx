@@ -1,3 +1,4 @@
+import { scoutRange, scoutRangeText } from '../../engine/scouting';
 import PlayerAvatar from '../../components/PlayerAvatar';
 import { makeMessage, pushMessage } from '../../engine/messages';
 import { promoteYouth } from '../../engine/youth';
@@ -33,7 +34,7 @@ export function YouthModal({ g, player, club, onClose, onChange }: {
         subject: `${p.fullName} in den Profikader hochgezogen`,
         shortText: `${p.fullName} ist jetzt Teil der A-Mannschaft.`,
         bodyText: `${p.fullName} (${p.naturalPosition}, ${p.age} Jahre) wurde aus der Jugendakademie in den Profikader hochgezogen. `
-          + `Das endgültige Potenzial steht nun fest: ${renderStars(p.potentialStars)} (max. Gesamtstärke ${starsToPotential(p.potentialStars)}).`,
+          + `Die Scouts schätzen sein Potenzial auf ${scoutRangeText(p)}.`,
       }));
       onChange();
       onClose();
@@ -73,8 +74,8 @@ export function YouthModal({ g, player, club, onClose, onChange }: {
           <div className="card" style={{ marginBottom: 14 }}>
             <div className="dim mini">
               🔎 <b>Verstecktes Potenzial:</b> Die Scouts schätzen das Potenzial dieses Talents auf eine Spanne
-              von <b>{(p.scoutedPotentialMin ?? p.potentialStars).toFixed(2)}</b> bis
-              <b> {(p.scoutedPotentialMax ?? p.potentialStars).toFixed(2)}</b> Sternen. Je länger das Talent gefördert wird
+              von <b>{scoutRange(p)[0].toFixed(2)}</b> bis
+              <b> {scoutRange(p)[1].toFixed(2)}</b> Sternen. Je länger das Talent gefördert wird
               (und je besser die Akademie), desto genauer wird diese Einschätzung – bis der wahre Wert feststeht.
             </div>
           </div>

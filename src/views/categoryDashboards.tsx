@@ -11,12 +11,12 @@ import { getAvailablePlayers } from '../engine/transfers';
 import { getFormation } from '../data/formations';
 import { Game } from '../game/state';
 import { Screen } from '../shell/navigation';
-import { renderStars } from '../types';
 import { BoxLink, DashBox, DashPage, Empty, KV, Kpi, Meter } from '../ui/DashPage';
 import { fmtDM, fmtDMfull, fmtDateShort, vColor } from '../ui/format';
 import {
   FormDots, GROUP_DE, MatchRow, PlayerRow, avg, groupOf, monthsUntil, ownLeagueMatches, squadOf, tableRow,
 } from './shared';
+import { ScoutStars, scoutMid } from './shared';
 
 // =============================================================================
 // KATEGORIE-ÜBERSICHTEN (Reihe-1-Klick im Hauptmenü)
@@ -116,7 +116,7 @@ export function KaderDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) => 
   const groups = ['GK', 'DEF', 'MID', 'ATT'];
   const tired = [...squad].sort((a, b) => (a.frische ?? 100) - (b.frische ?? 100)).slice(0, 6);
   const expiring = [...squad].sort((a, b) => a.contract.expiryDate.localeCompare(b.contract.expiryDate)).slice(0, 6);
-  const talents = squad.filter((p) => p.age <= 21).sort((a, b) => b.potentialStars - a.potentialStars).slice(0, 6);
+  const talents = squad.filter((p) => p.age <= 21).sort((a, b) => scoutMid(b) - scoutMid(a)).slice(0, 6);
   const youth = myClub.youthPlayerIds.map((id) => g.youthPlayers[id]).filter(Boolean);
   const topYouth = [...youth].sort((a, b) => (b.scoutedPotentialMax ?? 0) - (a.scoutedPotentialMax ?? 0)).slice(0, 5);
   const wages = squad.reduce((s, p) => s + p.contract.weeklyWage, 0);
@@ -159,7 +159,7 @@ export function KaderDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) => 
 
       <DashBox title="Talente" icon="youth" onClick={() => onGoto('squad')} right="bis 21 Jahre">
         {talents.length ? talents.map((p) => (
-          <PlayerRow key={p.id} p={p} sub={`${p.age} J. · ${p.overall}`} value={<span className="stars">{renderStars(p.potentialStars)}</span>} color="var(--yellow)" />
+          <PlayerRow key={p.id} p={p} sub={`${p.age} J. · ${p.overall}`} value={<ScoutStars p={p} />} color="var(--yellow)" />
         )) : <Empty icon="youth">Keine jungen Spieler im Profikader.</Empty>}
       </DashBox>
 
@@ -180,7 +180,7 @@ export function TransfersDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen)
   const squad = squadOf(g);
   const market = getAvailablePlayers(g.players, g.managedClubId);
   const best = [...market].sort((a, b) => b.overall - a.overall).slice(0, 6);
-  const young = [...market].filter((p) => p.age <= 21).sort((a, b) => b.potentialStars - a.potentialStars).slice(0, 6);
+  const young = [...market].filter((p) => p.age <= 21).sort((a, b) => scoutMid(b) - scoutMid(a)).slice(0, 6);
   const listed = squad.filter((p) => p.transferListed);
   const moves = Object.values(g.players)
     .flatMap((p) => (p.history?.transfers ?? []).map((t) => ({ p, t })))
@@ -219,7 +219,7 @@ export function TransfersDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen)
       </DashBox>
 
       <DashBox title="Junge Talente auf dem Markt" icon="youth" onClick={() => onGoto('transfers')}>
-        {young.length ? young.map((p) => <PlayerRow key={p.id} p={p} sub={`${p.age} J. · ${p.overall}`} value={<span className="stars">{renderStars(p.potentialStars)}</span>} color="var(--yellow)" />) : <Empty icon="youth">Keine Talente verfügbar.</Empty>}
+        {young.length ? young.map((p) => <PlayerRow key={p.id} p={p} sub={`${p.age} J. · ${p.overall}`} value={<ScoutStars p={p} />} color="var(--yellow)" />) : <Empty icon="youth">Keine Talente verfügbar.</Empty>}
       </DashBox>
 
       <DashBox title="Eigene Transferliste" icon="negotiations" right={`${listed.length}`}>

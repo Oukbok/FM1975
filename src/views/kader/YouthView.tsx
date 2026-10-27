@@ -1,4 +1,5 @@
 import { MAX_LEVEL } from '../../engine/infrastructure';
+import { scoutRange } from '../../engine/scouting';
 import { Game } from '../../game/state';
 import { Player, YOUTH_AGE_CLASS_LABEL, YOUTH_AGE_CLASS_ORDER, YOUTH_AGE_CLASS_RANGE, YouthAgeClass, renderStars, youthAgeClass } from '../../types';
 import { vColor } from '../../ui/format';
@@ -14,8 +15,7 @@ export type YouthSort = 'pot' | 'ovr' | 'age';
 
 /** Rendert die Scouting-Einschätzung als GOLDENE Sterne-Spanne (min–max). */
 export function ScoutRange({ p }: { p: Player }) {
-  const min = p.scoutedPotentialMin ?? p.potentialStars;
-  const max = p.scoutedPotentialMax ?? p.potentialStars;
+  const [min, max] = scoutRange(p);
   if (Math.abs(max - min) < 0.001) {
     return <span className="stars" title={`Potenzial: ${min.toFixed(1)} Sterne`}>{renderStars(min)}</span>;
   }
@@ -40,8 +40,8 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
       case 'ovr': return b.overall - a.overall;
       case 'age': return a.age - b.age;
       default: {
-        const am = a.scoutedPotentialMax ?? a.potentialStars;
-        const bm = b.scoutedPotentialMax ?? b.potentialStars;
+        const am = scoutRange(a)[1];
+        const bm = scoutRange(b)[1];
         return (bm - am) || (b.overall - a.overall);
       }
     }
@@ -65,7 +65,7 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
   const Th = ({ k, children, cls }: { k: YouthSort; children: React.ReactNode; cls?: string }) => (
     <th className={`sortable ${cls ?? ''} ${sortBy === k ? 'sorted' : ''}`} onClick={() => setSortBy(k)}>{children}</th>
   );
-  const top = [...youth].sort((a, b) => ((b.scoutedPotentialMax ?? b.potentialStars) - (a.scoutedPotentialMax ?? a.potentialStars)) || b.overall - a.overall).slice(0, 5);
+  const top = [...youth].sort((a, b) => (scoutRange(b)[1] - scoutRange(a)[1]) || b.overall - a.overall).slice(0, 5);
   const ready = youth.filter((x) => youthAgeClass(x.age) === 'A').sort((a, b) => b.overall - a.overall).slice(0, 4);
   const maxClass = Math.max(1, ...YOUTH_AGE_CLASS_ORDER.map((c) => byClass[c].length));
 

@@ -129,8 +129,7 @@ export function FinancesView({ g }: { g: Game }) {
             <KV k="Saldo Saison" v={sign(net)} color={net >= 0 ? 'var(--green)' : 'var(--red)'} />
             <KV k="Monatssaldo (fix)" v={sign(monthly.net)} color={monthly.net >= 0 ? 'var(--green)' : 'var(--red)'} />
             <KV k="Transferbudget" v={fmtCompactDM(fin.transferBudget)} />
-            <Meter label="Gehälter" value={weekly} max={Math.max(1, wageBudget)} text={`${fmtCompactDM(weekly)} / ${fmtCompactDM(wageBudget)}`}
-              color={weekly > wageBudget ? 'var(--red)' : undefined} />
+            <KV k="Gehälter / Budget pro Woche" v={`${fmtCompactDM(weekly)} / ${fmtCompactDM(wageBudget)}`} color={weekly > wageBudget ? 'var(--red)' : undefined} />
           </div>
           <BalanceChart points={fin.balanceHistory ?? []} current={fin.balance} currentDate={g.calendar.currentDate} />
         </div>
@@ -146,14 +145,14 @@ export function FinancesView({ g }: { g: Game }) {
         {warnings.map((w, i) => <div key={i} className="dnote mt8" style={{ color: 'var(--orange)', fontSize: 15 }}>{w}</div>)}
       </DashBox>
 
-      <DashBox title="Einnahmen (Saison)" icon="dashFinanzen" right={fmtCompactDM(income)}>
+      <DashBox className="dbox-wide-lbl" title="Einnahmen (Saison)" icon="dashFinanzen" right={fmtCompactDM(income)}>
         {INCOME_ROWS.map((r) => (
           <Meter key={String(r.key)} label={<span className="dfin-lbl">{r.icon} {r.label}</span>} value={fin.income[r.key]} max={maxIncome}
             text={fin.income[r.key] > 0 ? fmtCompactDM(fin.income[r.key]) : '–'} color="var(--green)" />
         ))}
       </DashBox>
 
-      <DashBox title="Ausgaben (Saison)" icon="dashFinanzen" right={fmtCompactDM(expense)}>
+      <DashBox className="dbox-wide-lbl" title="Ausgaben (Saison)" icon="dashFinanzen" right={fmtCompactDM(expense)}>
         {EXPENSE_ROWS.map((r) => (
           <Meter key={String(r.key)} label={<span className="dfin-lbl">{r.icon} {r.label}</span>} value={fin.expenses[r.key]} max={maxExpense}
             text={fin.expenses[r.key] > 0 ? fmtCompactDM(fin.expenses[r.key]) : '–'} color="var(--orange)" />
