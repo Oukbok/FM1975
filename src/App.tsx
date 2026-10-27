@@ -11,6 +11,7 @@ import {
   youthAgeClass, YOUTH_ENTRY_AGE,
   CupState, CupTie,
   ClubCommerce, SponsorContract, SponsorOffer, CateringMode, FacilityKey,
+  ClubFinances,
 } from './types';
 import { generateWorld, getClubSeeds, generateCupAmateurs, SECOND_LIGA_NORD_SEEDS, SECOND_LIGA_SUED_SEEDS, buildProClub } from './data/generate';
 import {
@@ -4777,7 +4778,7 @@ function DevelopmentReveal({ g, reveals, onClose }: {
           <PlayerAvatar player={player} club={club} size="large" />
         </div>
         <div className="reveal-name">{player.fullName}</div>
-        <div className="reveal-pos">{player.position} · {player.age} Jahre</div>
+        <div className="reveal-pos">{player.naturalPosition} · {player.age} Jahre</div>
 
         {phase === 'roll' ? (
           <div className="reveal-roll">
@@ -5479,13 +5480,13 @@ function FinancesView({ g }: { g: Game }) {
         <div className="card">
           <div className="card-title">Einnahmen (Saison) · <span className="accent-text">{fmtCompactDM(income)}</span></div>
           {INCOME_ROWS.map((r) => (
-            <FinBar key={r.key} label={r.label} icon={r.icon} value={fin.income[r.key]} max={maxIncome} color="var(--green)" />
+            <FinBar key={String(r.key)} label={r.label} icon={r.icon} value={fin.income[r.key]} max={maxIncome} color="var(--green)" />
           ))}
         </div>
         <div className="card">
           <div className="card-title">Ausgaben (Saison) · <span style={{ color: 'var(--red)' }}>{fmtCompactDM(expense)}</span></div>
           {EXPENSE_ROWS.map((r) => (
-            <FinBar key={r.key} label={r.label} icon={r.icon} value={fin.expenses[r.key]} max={maxExpense} color="var(--orange)" />
+            <FinBar key={String(r.key)} label={r.label} icon={r.icon} value={fin.expenses[r.key]} max={maxExpense} color="var(--orange)" />
           ))}
         </div>
       </div>

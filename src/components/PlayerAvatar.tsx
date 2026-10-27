@@ -335,14 +335,15 @@ const SIZES = { small: 40, medium: 88, large: 200 };
 interface Props {
   player: Player;
   club?: Club;
-  size?: 'small' | 'medium' | 'large';
+  /** Preset oder Breite in px. */
+  size?: 'small' | 'medium' | 'large' | number;
   className?: string;
 }
 
 export default function PlayerAvatar({ player, club, size = 'medium', className }: Props) {
   const cfg = generatePlayerAvatar(player, club);
   const skin = SKIN_TONES[cfg.skinTone];
-  const px = SIZES[size];
+  const px = typeof size === 'number' ? size : SIZES[size];
   const uid = (player.id || player.fullName || 'a').replace(/[^a-zA-Z0-9]/g, '');
 
   const primary = club?.colors.primary ?? '#2a394f';
