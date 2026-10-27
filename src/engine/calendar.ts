@@ -67,28 +67,20 @@ export function generateSeasonCalendar(
 
   // Leistungsbewertungen — an festen Anlässen, nicht mehr in starren 2-Monats-Abständen.
   // Jede Bewertung hält interaktiv an (requiresAction) und wird als Zeremonie enthüllt.
-  // 1) Tag nach Schluss des Sommer-Transferfensters (AI-Transfers sind dann verbucht).
+  // Drei Bewertungsrunden je Saison (Entwicklung 2.0): Herbst (klein), Winter
+  // (mittel, neue Scout-Einschätzung), Saisonende (groß: Durchbrüche, Abbau).
   events.push({
-    id: eid(), date: `${y0}-09-01`, type: 'rating_update',
-    title: 'Leistungsbewertung', description: 'Bewertung nach dem Transferfenster',
+    id: eid(), date: `${y0}-11-03`, type: 'rating_update',
+    title: 'Leistungsbewertung', description: 'Herbst-Bewertung',
     processed: false, requiresAction: true,
   });
-  // 2) Jahreswechsel (Übergang 31.12. → 01.01.).
   events.push({
-    id: eid(), date: `${y1}-01-01`, type: 'rating_update',
-    title: 'Leistungsbewertung', description: 'Jahreswechsel-Bewertung',
+    id: eid(), date: `${y1}-01-02`, type: 'rating_update',
+    title: 'Leistungsbewertung', description: 'Winter-Bewertung',
     processed: false, requiresAction: true,
   });
-  // 3) Tag nach Schluss des Winter-Transferfensters.
   events.push({
-    id: eid(), date: `${y1}-02-01`, type: 'rating_update',
-    title: 'Leistungsbewertung', description: 'Bewertung nach dem Transferfenster',
-    processed: false, requiresAction: true,
-  });
-  // 4) Zwei Wochen nach Saisonende — die große Saison-Bewertung.
-  const seasonReview = CalendarEngine.addDays(seasonEnd, 14);
-  events.push({
-    id: eid(), date: seasonReview, type: 'rating_update',
+    id: eid(), date: CalendarEngine.addDays(seasonEnd, -14), type: 'rating_update',
     title: 'Leistungsbewertung', description: 'Große Saison-Bewertung',
     processed: false, requiresAction: true,
   });

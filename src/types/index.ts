@@ -354,6 +354,23 @@ export interface PlayerDevelopment {
    * begrenzen. Wird bei der großen Saison-Bewertung zurückgesetzt.
    */
   seasonStarChange?: number;
+  // --- Entwicklung 2.0 (verdeckt; optional für alte Spielstände) ---
+  /** Angeborenes Grundpotenzial (OVR-Skala, verdeckt). */
+  basePotential?: number;
+  /** Entfaltung −6 … +6: verschiebt das wahre Potenzial je nach Bedingungen (verdeckt). */
+  unfold?: number;
+  /** Charakter (1–100, verdeckt): Professionalität, Ehrgeiz, Anpassungsfähigkeit. */
+  professionalism?: number;
+  ambition?: number;
+  adaptability?: number;
+  /** Angesammelte Entwicklungspunkte (OVR-Einheiten) bis zur nächsten Bewertungsrunde. */
+  devPoints?: number;
+  /** Gleitende Einsatzminuten (Pflichtspiele, gewichtet) für den Spielpraxis-Faktor. */
+  recentMinutes?: number;
+  /** Minutenstand beim letzten Wochenabschluss (zur Differenzbildung). */
+  lastMinutesSeen?: number;
+  /** Fester Schätzfehler der Scouts (Sterne, −0,5 … +0,5). */
+  scoutBias?: number;
   /**
    * VERSTECKTER Entwicklungs-Akkumulator je Attribut (in 0.1-Schritten).
    * Training füllt diese Werte kontinuierlich auf. Ein sichtbarer +1 auf das
@@ -479,6 +496,9 @@ export interface Player {
 
   /** Verlauf für das Spielerprofil (Spiele, Stationen, Transfers, Verletzungen, Attribute). Optional = alte Spielstände. */
   history?: PlayerHistory;
+  /** Herkunft (Namens-/Gesichtsgruppe), siehe data/origins.ts. */
+  origin?: string;
+  face?: string;
 
   // --- Jugendsystem (nur bei Jugendspielern gesetzt) ---
   /** Markierung: Spieler gehört der Jugendakademie an (noch kein A-Kader). */

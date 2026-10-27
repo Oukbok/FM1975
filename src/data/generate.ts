@@ -4,6 +4,8 @@
 // Alle Vereine tragen rechtssichere Städtenamen statt geschützter Klubnamen.
 // =============================================================================
 
+import { createPlayer } from '../engine/playerFactory';
+import { ORIGINS, Origin } from './origins';
 import {
   Player, Club, PlayerAttributes, Position, AttributeKey,
   createEmptyStats, TrainingSchedule, Tactics, ClubFinances, Stadium,
@@ -77,7 +79,7 @@ const CLUB_SEEDS: ClubSeed[] = [
 // Namens-Pools
 // -----------------------------------------------------------------------------
 const FIRST_NAMES = ['Klaus', 'Hans', 'Jürgen', 'Uwe', 'Manfred', 'Wolfgang', 'Rainer', 'Dieter', 'Rudi', 'Bernd', 'Karl', 'Günter', 'Horst', 'Werner', 'Norbert', 'Herbert', 'Reinhard', 'Michael', 'Thomas', 'Andreas', 'Stefan', 'Franz', 'Paul', 'Lothar', 'Toni', 'Sepp', 'Pierre', 'Erwin', 'Bernard', 'Felix'];
-const LAST_NAMES = ['Müller', 'Schmidt', 'Schneider', 'Fischer', 'Weber', 'Meyer', 'Wagner', 'Becker', 'Hoffmann', 'Schulz', 'Koch', 'Bauer', 'Richter', 'Klein', 'Wolf', 'Neumann', 'Braun', 'Zimmermann', 'Krüger', 'Hartmann', 'Lange', 'Krause', 'Lehmann', 'Köhler', 'Herrmann', 'Walter', 'Beckenbauer', 'Rummenigge', 'Breitner', 'Netzer', 'Overath', 'Vogts', 'Maier', 'Kaltz', 'Magath', 'Hrubesch', 'Allofs', 'Dremmler', 'Förster', 'Briegel'];
+const LAST_NAMES = ['Müller', 'Schmidt', 'Schneider', 'Fischer', 'Weber', 'Meyer', 'Wagner', 'Becker', 'Hoffmann', 'Schulz', 'Koch', 'Bauer', 'Richter', 'Klein', 'Wolf', 'Neumann', 'Braun', 'Zimmermann', 'Krüger', 'Hartmann', 'Lange', 'Krause', 'Lehmann', 'Köhler', 'Herrmann', 'Walter'];
 
 // Positions-Struktur eines Kaders (18 Spieler)
 const SQUAD_TEMPLATE: Position[] = [
@@ -164,47 +166,24 @@ function assignPotentialStars(age: number, overall: number): number {
   return stars;
 }
 
-function makePlayer(clubId: string, index: number, pos: Position, strength: number, shirt: number): Player {
-  const firstName = pick(FIRST_NAMES);
-  const lastName = pick(LAST_NAMES);
-  const age = ri(18, 34);
-  const base = Math.max(35, Math.min(88, strength + ri(-8, 8)));
-  const attributes = makeAttributes(base, pos);
-  const overall = computeOverall(attributes, pos);
-  const potentialStars = assignPotentialStars(age, overall);
-  const potential = Math.max(overall, starsToPotential(potentialStars));
-  const value = Math.round(overall * overall * 1000 * (age < 28 ? 1.3 : 0.7));
-  return {
-    id: `${clubId}_p${index}`,
-    firstName, lastName, fullName: `${firstName} ${lastName}`,
-    shirtNumber: shirt,
-    nationality: rng() < 0.85 ? 'GER' : pick(['AUT', 'DEN', 'NED', 'YUG', 'SWE']),
-    dateOfBirth: birthDate(age), age,
-    height: ri(170, 194), weight: ri(66, 88),
-    preferredFoot: rng() < 0.7 ? 'right' : (rng() < 0.7 ? 'left' : 'both'),
-    naturalPosition: pos, secondaryPositions: [],
-    positionRatings: { [pos]: overall },
-    attributes, overall,
-    form: ri(45, 75), frische: 100, morale: 'good', availability: 'available',
-    injury: null, suspensionMatches: 0, yellowCardCount: 0,
-    clubId,
-    contract: {
-      weeklyWage: Math.round(overall * 120 + ri(0, 500)),
-      expiryDate: `${1981 + ri(0, 3)}-06-30`,
-      transferValue: value, satisfaction: ri(55, 90),
-    },
-    development: {
-      currentAbility: overall, potentialAbility: potential,
-      growthRate: age < 23 ? 1.2 + rng() : 0.7 + rng() * 0.5,
-      injuryProneness: ri(5, 40), consistency: ri(45, 85),
-      bigMatchTemperament: ri(40, 85), lastRatingChange: 0,
-      abilityHistory: [{ date: CURRENT_DATE, ability: overall }],
-      seasonStarChange: 0,
-    },
-    potentialStars,
-    seasonStats: createEmptyStats(), careerStats: createEmptyStats(),
-    trainingLoad: 0, transferListed: rng() < 0.08,
-  };
+const COUNTRY_ORIGIN: Record<string, string> = {
+  England: 'eng', Italien: 'ita', Spanien: 'esp', Frankreich: 'fra', Schottland: 'sco', Niederlande: 'ned',
+  Sowjetunion: 'rus', Portugal: 'por', Jugoslawien: 'yug', Griechenland: 'gre', Belgien: 'bel', Ungarn: 'hun',
+  Tschechoslowakei: 'cze', Polen: 'pol', Oesterreich: 'aut', Tuerkei: 'tur', Schweiz: 'sui', Schweden: 'swe', Rumaenien: 'hun',
+};
+
+function makePlayer(clubId: string, index: number, pos: Position, strength: number, shirt: number, origin?: Origin): Player {
+  // Altersverteilung um 25 (18–34), wenige ganz Junge/ganz Alte.
+  const age = Math.max(18, Math.min(34, Math.round(25 + (rng() + rng() + rng() - 1.5) * 9)));
+  const p = createPlayer({
+    id: `${clubId}_p${index}`, clubId, pos, age,
+    strength: Math.max(35, Math.min(88, strength + ri(-8, 8))),
+    year: 1975, date: CURRENT_DATE, rng, shirt, origin,
+  });
+  p.form = ri(45, 75);
+  p.transferListed = rng() < 0.08;
+  p.contract.expiryDate = `${1976 + ri(0, 5)}-06-30`;
+  return p;
 }
 
 function defaultTrainingSchedule(): TrainingSchedule {
@@ -581,9 +560,7 @@ export function buildEuroClubFull(
   const playerIds: string[] = [];
   let shirt = 1;
   SQUAD_TEMPLATE.forEach((pos, idx) => {
-    const p = makePlayer(euro.id, idx, pos, strengthBase, shirt++);
-    // Auslaendische Nationalitaet als dezentes Detail (kein Gameplay-Effekt).
-    p.nationality = 'FOR';
+    const p = makePlayer(euro.id, idx, pos, strengthBase, shirt++, ORIGINS[COUNTRY_ORIGIN[euro.country] ?? 'eng']);
     players[p.id] = p;
     playerIds.push(p.id);
   });

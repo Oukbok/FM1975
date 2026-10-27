@@ -62,3 +62,9 @@ for (let s = 0; s < seasons; s++) {
   startNextSeason(g);
 }
 console.log(`fertig in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+
+// Diagnose: Wer ist ≥ 85?
+{
+  const top = leaguePlayers(g).filter((p) => p.overall >= 85).slice(0, 12);
+  for (const p of top) console.log(p.fullName.padEnd(22), p.naturalPosition, 'Alter', p.age, 'OVR', p.overall, 'Basis', p.development.basePotential, 'Entf', p.development.unfold, 'Jugend', p.id.includes('_y_') ? 'ja' : 'nein', 'Hist', p.development.abilityHistory.map((h) => h.ability).join(','));
+}

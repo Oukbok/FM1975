@@ -14,6 +14,10 @@
 // Über "Hochziehen in den Profikader" wandert ein Talent in die A-Mannschaft.
 // =============================================================================
 
+import { ensureDevFields, refreshOverall } from './development';
+import { updateScoutEstimate } from './scouting';
+import { pickOrigin, makeName } from '../data/origins';
+import { makePersonality } from './playerFactory';
 import {
   Player, Club, PlayerAttributes, Position, AttributeKey,
   createEmptyStats, clampStars, starsToPotential, potentialToStars,
@@ -49,7 +53,7 @@ function mulberry32(seed: number): () => number {
 // Namens-Pools (Ära-gerecht, jüngerer Jahrgang)
 // -----------------------------------------------------------------------------
 const FIRST_NAMES = ['Michael', 'Thomas', 'Andreas', 'Stefan', 'Frank', 'Markus', 'Oliver', 'Dirk', 'Jörg', 'Sven', 'Ralf', 'Holger', 'Carsten', 'Matthias', 'Christian', 'Marco', 'Torsten', 'Kai', 'Guido', 'Jens', 'Uwe', 'Bernd', 'Achim', 'Detlef'];
-const LAST_NAMES = ['Müller', 'Schmidt', 'Schneider', 'Fischer', 'Weber', 'Meyer', 'Wagner', 'Becker', 'Hoffmann', 'Schulz', 'Koch', 'Bauer', 'Richter', 'Klein', 'Wolf', 'Neumann', 'Braun', 'Zimmermann', 'Krüger', 'Hartmann', 'Lange', 'Krause', 'Lehmann', 'Köhler', 'Herrmann', 'Walter', 'Voller', 'Littbarski', 'Rahn', 'Schuster'];
+const LAST_NAMES = ['Müller', 'Schmidt', 'Schneider', 'Fischer', 'Weber', 'Meyer', 'Wagner', 'Becker', 'Hoffmann', 'Schulz', 'Koch', 'Bauer', 'Richter', 'Klein', 'Wolf', 'Neumann', 'Braun', 'Zimmermann', 'Krüger', 'Hartmann', 'Lange', 'Krause', 'Lehmann', 'Köhler', 'Herrmann', 'Walter', 'Vogel', 'Seidel', 'Brandt', 'Scholz'];
 
 // Mögliche Positionen für Talente (gewichtete Grundverteilung).
 const YOUTH_POSITIONS: Position[] = [
@@ -105,14 +109,14 @@ function birthDate(rand: () => number, age: number, currentYear: number): string
  * heben die Talent-Obergrenze leicht an; echte Ausnahmetalente sind selten.
  */
 function assignYouthPotential(rand: () => number, academyLevel: number): number {
-  const lift = academyLevel * 0.06; // stärkere Akademie → tendenziell mehr Talent
+  const lift = (academyLevel - 1) * 0.05; // bessere Akademie → etwas mehr Talent
   const roll = rand();
   let stars: number;
-  if (roll < 0.06 + lift * 0.5) stars = 4.5 + rand() * 0.5;        // Ausnahmetalent
-  else if (roll < 0.30 + lift) stars = 3.75 + rand() * 0.75;       // hohes Talent
-  else if (roll < 0.70) stars = 3.0 + rand() * 0.75;               // solides Talent
-  else stars = 2.0 + rand() * 1.0;                                 // Durchschnitt
-  return clampStars(stars + lift * 0.5);
+  if (roll < 0.015 + lift * 0.1) stars = 4.5 + rand() * 0.5;        // Ausnahmetalent (sehr selten)
+  else if (roll < 0.11 + lift * 0.5) stars = 3.75 + rand() * 0.75;  // hohes Talent
+  else if (roll < 0.50 + lift) stars = 3.0 + rand() * 0.75;         // solides Talent
+  else stars = 2.0 + rand() * 1.0;                                  // Durchschnitt
+  return clampStars(stars);
 }
 
 /**
@@ -171,8 +175,8 @@ export function generateYouthPlayer(
   const pick = <T,>(arr: T[]): T => arr[Math.floor(rand() * arr.length)];
 
   const currentYear = Number(currentDate.slice(0, 4));
-  const firstName = pick(FIRST_NAMES);
-  const lastName = pick(LAST_NAMES);
+  const origin = pickOrigin(currentYear, rand, rand() < 0.9);
+  const { firstName, lastName } = currentYear < 1990 && origin.id === 'ger' ? { firstName: pick(FIRST_NAMES), lastName: pick(LAST_NAMES) } : makeName(origin, rand);
   const pos = pick(YOUTH_POSITIONS);
   const useAge = age != null
     ? Math.max(YOUTH_ENTRY_AGE, Math.min(19, Math.round(age)))
@@ -201,7 +205,7 @@ export function generateYouthPlayer(
     id: `${clubId}_y_${uniqueSeed}`,
     firstName, lastName, fullName: `${firstName} ${lastName}`,
     shirtNumber: 30 + ri(0, 69),
-    nationality: rand() < 0.92 ? 'GER' : pick(['AUT', 'DEN', 'NED', 'YUG', 'SWE']),
+    nationality: origin.nationality, origin: origin.id, face: origin.face,
     dateOfBirth: birthDate(rand, useAge, currentYear), age: useAge,
     height: ri(168, 192), weight: ri(60, 82),
     preferredFoot: rand() < 0.7 ? 'right' : (rand() < 0.7 ? 'left' : 'both'),
@@ -224,6 +228,8 @@ export function generateYouthPlayer(
       abilityHistory: [{ date: currentDate, ability: overall }],
       seasonStarChange: 0,
       attributeProgress: {}, ovrProgress: 0,
+      basePotential: potentialAbility, unfold: 0, ...makePersonality(rand),
+      devPoints: 0, recentMinutes: 0, lastMinutesSeen: 0, scoutBias: Math.round((rand() - 0.5) * 4) / 4,
     },
     potentialStars: truePot,          // WAHRES Potenzial (verborgen in der UI)
     seasonStats: createEmptyStats(), careerStats: createEmptyStats(),
@@ -382,7 +388,8 @@ export function developYouthWeekly(
     if (!p.development.attributeProgress) p.development.attributeProgress = {};
     if (p.development.ovrProgress == null) p.development.ovrProgress = 0;
     const acc = p.development.attributeProgress;
-    const maxRating = starsToPotential(p.potentialStars);
+    // Altersgerechte Obergrenze: ein 16-Jähriger ist noch weit vom Endstand entfernt.
+    const maxRating = Math.min(starsToPotential(p.potentialStars), Math.round(starsToPotential(p.potentialStars) * (0.35 + 0.035 * Math.max(0, p.age - 7))));
 
     const aFactor = ageFactor(p.age);
     const pFactor = potentialFactor(p);
@@ -406,7 +413,7 @@ export function developYouthWeekly(
       const progress = acc[key] ?? 0;
       if (progress < 1.0) continue;
       const cur = p.attributes[key] as number;
-      const atCap = p.development.currentAbility >= maxRating + 2 || cur >= 99;
+      const atCap = p.development.currentAbility >= maxRating || cur >= 99;
       if (atCap) { acc[key] = Math.min(progress, 0.95); continue; }
       (p.attributes[key] as number) = cur + 1;
       acc[key] = Math.round((progress - 1.0) * 10) / 10;
@@ -416,7 +423,7 @@ export function developYouthWeekly(
 
     // --- OVR-Aufwertung ---
     let ovrUp = false;
-    if (p.development.ovrProgress >= 1.0 && p.overall < 99 && p.development.currentAbility < maxRating + 2) {
+    if (p.development.ovrProgress >= 1.0 && p.overall < 99 && p.development.currentAbility < maxRating) {
       p.overall = Math.min(99, p.overall + 1);
       p.development.ovrProgress -= 1.0;
       p.development.currentAbility = Math.min(99, p.development.currentAbility + 1);
@@ -516,10 +523,12 @@ export function promoteYouth(
   club.youthPlayerIds.splice(idx, 1);
   delete youthPlayers[playerId];
 
-  // Als Profi übernehmen — Potenzial wird jetzt offengelegt.
+  // Als Profi übernehmen: Stärke nach Profi-Maßstab, Potenzial bleibt eine Einschätzung.
   p.isYouth = false;
-  p.scoutedPotentialMin = p.potentialStars;
-  p.scoutedPotentialMax = p.potentialStars;
+  p.development.basePotential = Math.max(p.overall, starsToPotential(p.potentialStars));
+  ensureDevFields(p);
+  refreshOverall(p);
+  updateScoutEstimate(p, 0.6, true);
   // Freie Rückennummer im Profikader suchen.
   p.shirtNumber = freeShirtNumber(club, players);
 

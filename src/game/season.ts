@@ -1,4 +1,5 @@
 import { EuroCompId, allEuroClubs } from '../data/europe';
+import { manageSquads } from './squads';
 import { closeSeason } from '../engine/history';
 import { buildProClub } from '../data/generate';
 import { CurrentDivision, TransitionResult, computeSeasonTransition } from '../data/reforms';
@@ -403,6 +404,7 @@ export function startNextSeason(g: Game): void {
   }));
   // Saisonbilanz als Station festhalten, Saisonstatistik für die neue Saison leeren.
   closeSeason(g.players, g.clubs, oldSeason);
+  manageSquads(g, calendar.currentDate);
 }
 
 /** Erzeugt eine Spielbericht-Nachricht für das Spiel des Nutzers. */
