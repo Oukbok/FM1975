@@ -155,3 +155,55 @@ export function formatMoneyShort(amountDM: number, year: number): string {
   if (abs >= 1e6) return `${fmtNum(value / 1e6, 2)} Mio. ${unit}`;
   return `${fmtNum(Math.round(value / 1e3))} Tsd. ${unit}`;
 }
+
+// -----------------------------------------------------------------------------
+// Erlös-Mix je Epoche (Finanzen 2.0)
+// -----------------------------------------------------------------------------
+// Anteile am Umsatz eines durchschnittlichen Erstligisten. 1975 lebt der Fußball
+// vom Stadion; ab Ende der 1980er wachsen TV-Gelder (Privatfernsehen, Pay-TV),
+// ab den 2000ern Sponsoring/Vermarktung. Die Anteile steuern, wie stark jede
+// Erlösart gegenüber der allgemeinen Wirtschafts-Basis (economyScale) wächst.
+
+export type RevenueKind = 'matchday' | 'tv' | 'commercial';
+
+const MIX: { year: number; matchday: number; tv: number; commercial: number }[] = [
+  { year: 1975, matchday: 0.60, tv: 0.07, commercial: 0.24 },
+  { year: 1980, matchday: 0.58, tv: 0.08, commercial: 0.25 },
+  { year: 1985, matchday: 0.55, tv: 0.10, commercial: 0.27 },
+  { year: 1988, matchday: 0.50, tv: 0.14, commercial: 0.28 },
+  { year: 1992, matchday: 0.42, tv: 0.22, commercial: 0.29 },
+  { year: 1996, matchday: 0.33, tv: 0.30, commercial: 0.30 },
+  { year: 2000, matchday: 0.26, tv: 0.36, commercial: 0.31 },
+  { year: 2005, matchday: 0.24, tv: 0.33, commercial: 0.36 },
+  { year: 2010, matchday: 0.22, tv: 0.33, commercial: 0.38 },
+  { year: 2015, matchday: 0.19, tv: 0.36, commercial: 0.38 },
+  { year: 2020, matchday: 0.16, tv: 0.40, commercial: 0.38 },
+  { year: 2030, matchday: 0.14, tv: 0.40, commercial: 0.40 },
+];
+
+/** Anteil einer Erlösart am Umsatz im Jahr X (linear interpoliert). */
+export function revenueShare(kind: RevenueKind, year: number): number {
+  if (year <= MIX[0].year) return MIX[0][kind];
+  for (let i = 0; i < MIX.length - 1; i++) {
+    const a = MIX[i], b = MIX[i + 1];
+    if (year <= b.year) return a[kind] + (b[kind] - a[kind]) * ((year - a.year) / (b.year - a.year));
+  }
+  return MIX[MIX.length - 1][kind];
+}
+
+/**
+ * Skalierung einer Erlösart gegenüber 1975: Wirtschafts-Basis × Verschiebung im Mix.
+ * Beispiel 2000: Stadion wächst nur ~40 % so stark wie der Gesamtmarkt, TV ~5×.
+ */
+export function revenueScale(kind: RevenueKind, year: number): number {
+  return economyScale(year) * (revenueShare(kind, year) / revenueShare(kind, ECONOMY_BASE_YEAR));
+}
+
+/**
+ * Europapokal-Faktor: Ab 1992 (Meisterliga mit Gruppenphase) explodieren die
+ * Prämien im Landesmeister-Wettbewerb; die übrigen Wettbewerbe ziehen langsamer nach.
+ */
+export function euroMoneyFactor(comp: 'ec' | 'cwc' | 'uefa', year: number): number {
+  const ramp = Math.max(0, Math.min(1, (year - 1991) / 9));
+  return comp === 'ec' ? 1 + 4 * ramp : 1 + 1 * ramp;
+}

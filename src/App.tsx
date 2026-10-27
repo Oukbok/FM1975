@@ -97,7 +97,7 @@ export default function App() {
       if (c.infrastructure.catering == null) c.infrastructure.catering = (c.reputation ?? 65) >= 80 ? 2 : 1;
       if (c.finances) {
         const inc = c.finances.income ?? (c.finances.income = {} as any);
-        for (const k of ['ticketSales', 'tvMoney', 'sponsorship', 'merchandise', 'transferIncome', 'prizeMoney', 'catering', 'advertising', 'membership', 'matchday', 'other']) {
+        for (const k of ['ticketSales', 'tvMoney', 'sponsorship', 'merchandise', 'transferIncome', 'prizeMoney', 'catering', 'advertising', 'commercial', 'membership', 'matchday', 'other']) {
           if (inc[k] == null) inc[k] = 0;
         }
         const exp = c.finances.expenses ?? (c.finances.expenses = {} as any);

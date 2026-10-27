@@ -1,5 +1,7 @@
 # FINANZEN_SPEC — Tiefes Finanzsystem für „1975 – A Football Manager"
 
+> **Hinweis (Finanzen 2.0):** Die 1975-Werte dieser Spezifikation gelten weiter. Wie die Erlösarten über die Jahrzehnte wachsen (Erlös-Mix, zentrale TV-Verteilung statt Heimspiel-TV, Vermarktung & Hospitality, Marke, KI-Haushalt, Fairplay) regeln `engine/economy.ts` (`revenueScale`) und `engine/clubEconomy.ts`; Beschreibung im In-Game-Wiki (Artikel `finance-epochs`).
+
 Ziel (Pascals Vorgaben): **1.** Spieltag-Einnahmen + monatliche Fixkosten; **existierende Gebaeude bekommen ebenfalls Fixkosten.** **2.** Mikromanagement **sehr tief.** **3.** Wuerstchenbuden/Catering **jetzt** als ausbaubares Gebaeude (3 Betriebsformen). **4.** **Alles andocken** (Finanzen, Sponsoring, Marketing, Stadion, Gelaende, Fans, Stab, Vertraege) und **komplex** gestalten.
 
 Grundregeln des Projekts bleiben: alle Betraege NOMINAL in DM, Anzeige aera-gerecht via `formatMoney/formatMoneyShort` (DM bis 2001, EUR ab 2002). Jede neue Erloes-/Kostengroesse wird mit `economyScale(year)` multipliziert (1975 = 1.0). Keine neuen Emojis in der UI — neue Icons via `<Icon>` aus `iconPaths.ts`. Alte Speicherstaende muessen defensiv weiterladen (neue Felder optional + Migration in `doLoad`). TS-Fehleranzahl bleibt **exakt 7** (App.tsx 5 + LineupView.tsx 2 — nicht anfassen). Footer/Box-Hoehen unveraendert.

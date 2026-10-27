@@ -27,6 +27,24 @@ import {
   CateringMode, SponsorOffer,
 } from '../types';
 import { facilityUpkeep } from './infrastructure';
+import { economyScale, revenueScale, yearOf } from './economy';
+import { commercialMultiplier } from './clubEconomy';
+
+/**
+ * Finanzen 2.0: Skalierung je Erlösart aus dem Buchungsdatum. Stadion-Erlöse wachsen
+ * langsamer als der Gesamtmarkt, Vermarktung (× Marke) schneller; TV läuft zentral
+ * über engine/clubEconomy.ts (monatliche Rate aus `finances.tvAnnual`).
+ */
+function scalesFor(club: Club, date: string) {
+  const y = yearOf(date);
+  return {
+    base: economyScale(y),
+    matchday: revenueScale('matchday', y),
+    commercial: revenueScale('commercial', y) * commercialMultiplier(club, y),
+    // Fanartikel: an Stadionbesucher gekoppelt, mit der Marke wachsend.
+    merch: revenueScale('matchday', y) * commercialMultiplier(club, y),
+  };
+}
 
 let txCounter = 0;
 function txId(): string {
@@ -44,6 +62,7 @@ const INCOME_BUCKET: Partial<Record<FinanceCategory, keyof ClubFinances['income'
   prize_money: 'prizeMoney',
   catering: 'catering',
   advertising: 'advertising',
+  commercial: 'commercial',
   membership: 'membership',
   matchday: 'matchday',
   other: 'other',
@@ -263,15 +282,19 @@ export function bookHomeMatch(
 ): void {
   const fin = club.finances;
   if (isHome) {
+    const sc = scalesFor(club, date);
     const attendance = result.attendance;
-    const ticket = Math.round(attendance * club.stadium.ticketPrice * scale);
-    const merch = Math.round(attendance * merchPerHead(club) * scale);
-    const tv = Math.round((20000 + club.reputation * 400) * scale); // Ära-gerecht: klein
-    const catering = cateringMatchIncome(club, attendance, scale);
-    const matchday = matchdayIncome(attendance, scale);
+    const ticket = Math.round(attendance * club.stadium.ticketPrice * sc.matchday);
+    const merch = Math.round(attendance * merchPerHead(club) * sc.merch);
+    const catering = cateringMatchIncome(club, attendance, sc.matchday);
+    const matchday = matchdayIncome(attendance, sc.matchday);
     book(fin, date, ticket, 'ticket_sales', `Stadioneinnahmen (${attendance.toLocaleString('de-DE')} Zuschauer)`, trackDetail);
     book(fin, date, merch, 'merchandise', `Fanartikel-Verkauf (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
-    book(fin, date, tv, 'tv_money', 'TV- und Mediengelder (Heimspiel)', trackDetail);
+    // TV-Gelder: zentral vermarktet, monatliche Rate (bookMonthly).
+    if (!fin.tvAnnual) {
+      // Alte Spielstände ohne TV-Verteilung: bisherige Heimspiel-Pauschale.
+      book(fin, date, Math.round((20000 + club.reputation * 400) * scale), 'tv_money', 'TV- und Mediengelder (Heimspiel)', trackDetail);
+    }
     if (catering > 0) book(fin, date, catering, 'catering', `Catering / Wuerstchenbuden (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
     if (matchday > 0) book(fin, date, matchday, 'matchday', `Programmhefte & Spieltagserloese (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
   }
@@ -295,12 +318,14 @@ export function bookCupHomeMatch(
   scale = 1,
 ): void {
   const fin = club.finances;
+  const sc = scalesFor(club, date);
   const attendance = result.attendance;
-  const ticket = Math.round(attendance * club.stadium.ticketPrice * scale);
-  const merch = Math.round(attendance * merchPerHead(club) * scale);
-  const tv = Math.round((25000 + club.reputation * 500) * scale); // Pokal: etwas höher
-  const catering = cateringMatchIncome(club, attendance, scale);
-  const matchday = matchdayIncome(attendance, scale);
+  const ticket = Math.round(attendance * club.stadium.ticketPrice * sc.matchday);
+  const merch = Math.round(attendance * merchPerHead(club) * sc.merch);
+  // Pokal-TV: Übertragungsrechte je Spiel (wächst mit dem TV-Markt).
+  const tv = Math.round((25000 + club.reputation * 500) * revenueScale('tv', yearOf(date)) * (scale > 0 ? 1 : 0));
+  const catering = cateringMatchIncome(club, attendance, sc.matchday);
+  const matchday = matchdayIncome(attendance, sc.matchday);
   book(fin, date, ticket, 'ticket_sales', `Pokal-Stadioneinnahmen (${attendance.toLocaleString('de-DE')} Zuschauer)`, trackDetail);
   book(fin, date, merch, 'merchandise', `Fanartikel-Verkauf Pokalspiel (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
   book(fin, date, tv, 'tv_money', 'TV- und Mediengelder (Pokalspiel)', trackDetail);
@@ -317,7 +342,9 @@ export function bookCupPrize(
   trackDetail: boolean,
 ): void {
   if (amount <= 0) return;
-  book(club.finances, date, amount, 'prize_money', `Landespokal-Prämie (${roundName})`, trackDetail);
+  // Prämien liegen in 1975-Basis vor (Preisschild) → nominal buchen.
+  const nominal = Math.round(amount * economyScale(yearOf(date)));
+  book(club.finances, date, nominal, 'prize_money', `Landespokal-Prämie (${roundName})`, trackDetail);
 }
 
 /** Monatliche Fixkosten & Erträge eines Vereins (aufgeschlüsselt). */
@@ -336,6 +363,10 @@ export interface MonthlyBooking {
   membership: number;
   /** Catering-Pacht (nur bei Verpachtung). */
   cateringLease: number;
+  /** Zentrale TV-Vermarktung (Monatsrate). */
+  tv: number;
+  /** Vermarktung & Hospitality (Monatsrate). */
+  commercial: number;
   placementBonus: number;
   net: number;
 }
@@ -352,7 +383,10 @@ export function computeMonthly(
   players: Record<string, Player>,
   table?: LeagueTable,
   scale = 1,
+  year?: number,
 ): MonthlyBooking {
+  // Vermarktungs-Skala (Finanzen 2.0): mit Jahr nach Erlös-Mix × Marke, sonst wie bisher.
+  const commScale = year != null ? revenueScale('commercial', year) * commercialMultiplier(club, year) : scale;
   const weekly = weeklyWageBill(club, players);
   const wages = Math.round(weekly * 4.33 * scale);
   const staffWages = Math.round(wages * 0.18);
@@ -363,10 +397,12 @@ export function computeMonthly(
 
   // Trikotsponsoring (nur aus aktivem Vertrag).
   const sponsorship = club.commerce?.shirtSponsor
-    ? Math.round((club.commerce.shirtSponsor.annualValue / 12) * scale) : 0;
+    ? Math.round((club.commerce.shirtSponsor.annualValue / 12) * commScale) : 0;
   // Bandenwerbung (nur aus aktivem Vertrag).
   const advertising = club.commerce?.banden
-    ? Math.round((club.commerce.banden.annualValue / 12) * scale) : 0;
+    ? Math.round((club.commerce.banden.annualValue / 12) * commScale) : 0;
+  const tv = Math.round((club.finances.tvAnnual ?? 0) / 12);
+  const commercial = Math.round((club.finances.commercialAnnual ?? 0) / 12);
   // Mitgliedsbeitraege.
   const membershipYear = Math.round((30000 + club.reputation * 1000) * scale);
   const membership = Math.round(membershipYear / 12);
@@ -386,9 +422,9 @@ export function computeMonthly(
     }
   }
   placementBonus = Math.round(placementBonus * scale);
-  const net = sponsorship + advertising + membership + cateringLease + placementBonus
+  const net = sponsorship + advertising + membership + cateringLease + tv + commercial + placementBonus
     - wages - staffWages - stadiumMaintenance - facilities - otherFixed;
-  return { wages, staffWages, stadiumMaintenance, facilities, otherFixed, sponsorship, advertising, membership, cateringLease, placementBonus, net };
+  return { wages, staffWages, stadiumMaintenance, facilities, otherFixed, sponsorship, advertising, membership, cateringLease, tv, commercial, placementBonus, net };
 }
 
 /** Bucht den Monatsabschluss (Gehälter, Fixkosten, Sponsoring, Platzierungsbonus). */
@@ -400,7 +436,7 @@ export function bookMonthly(
   trackDetail: boolean,
   scale = 1,
 ): MonthlyBooking {
-  const m = computeMonthly(club, players, table, scale);
+  const m = computeMonthly(club, players, table, scale, yearOf(date));
   const fin = club.finances;
   fin.currentWageBill = weeklyWageBill(club, players);
   // Einnahmen
@@ -408,6 +444,8 @@ export function bookMonthly(
   if (m.advertising > 0) book(fin, date, m.advertising, 'advertising', 'Bandenwerbung (Monatsrate)', trackDetail);
   if (m.membership > 0) book(fin, date, m.membership, 'membership', 'Mitgliedsbeitraege (Monat)', trackDetail);
   if (m.cateringLease > 0) book(fin, date, m.cateringLease, 'catering', 'Catering-Pacht (Monat)', trackDetail);
+  if (m.tv > 0) book(fin, date, m.tv, 'tv_money', 'TV-Gelder (zentrale Vermarktung)', trackDetail);
+  if (m.commercial > 0) book(fin, date, m.commercial, 'commercial', 'Vermarktung & Hospitality (Monat)', trackDetail);
   if (m.placementBonus > 0) book(fin, date, m.placementBonus, 'prize_money', 'Sponsor-Platzierungsbonus', trackDetail);
   // Ausgaben
   book(fin, date, -m.wages, 'wages', 'Spielergehälter (Monat)', trackDetail);
@@ -434,10 +472,12 @@ export function bookTransfer(
   date: string,
   trackDetail: boolean,
 ): void {
+  // Ablösen sind Preisschilder in 1975-Basis → nominal zum Transferdatum buchen.
+  const nominal = Math.round(Math.abs(amount) * economyScale(yearOf(date)));
   if (isPurchase) {
-    book(club.finances, date, -Math.abs(amount), 'transfer_expense', `Transfer: Verpflichtung ${playerName}`, trackDetail);
+    book(club.finances, date, -nominal, 'transfer_expense', `Transfer: Verpflichtung ${playerName}`, trackDetail);
   } else {
-    book(club.finances, date, Math.abs(amount), 'transfer_income', `Transfer: Abgang ${playerName}`, trackDetail);
+    book(club.finances, date, nominal, 'transfer_income', `Transfer: Abgang ${playerName}`, trackDetail);
   }
 }
 
@@ -445,7 +485,7 @@ export function bookTransfer(
 export function totalIncome(fin: ClubFinances): number {
   const i = fin.income;
   return i.ticketSales + i.tvMoney + i.sponsorship + i.merchandise + i.transferIncome + i.prizeMoney
-    + (i.catering ?? 0) + (i.advertising ?? 0) + (i.membership ?? 0) + (i.matchday ?? 0) + i.other;
+    + (i.catering ?? 0) + (i.advertising ?? 0) + (i.commercial ?? 0) + (i.membership ?? 0) + (i.matchday ?? 0) + i.other;
 }
 
 /** Gesamt-Ausgaben der Saison bislang (DM). */
@@ -500,7 +540,7 @@ export function forecastSeasonEnd(
   const projectedEndBalance = Math.round(club.finances.balance + projectedFixedNet + projectedHome);
 
   const projectedIncome = Math.round(
-    (m.sponsorship + m.advertising + m.membership + m.cateringLease + m.placementBonus) * monthsRemaining + projectedHome,
+    (m.sponsorship + m.advertising + m.membership + m.cateringLease + m.tv + m.commercial + m.placementBonus) * monthsRemaining + projectedHome,
   );
   const projectedExpense = Math.round(
     (m.wages + m.staffWages + m.stadiumMaintenance + m.facilities + m.otherFixed) * monthsRemaining,

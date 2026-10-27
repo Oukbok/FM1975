@@ -3,7 +3,7 @@ import { computeMonthly, forecastSeasonEnd, totalExpense, totalIncome, weeklyWag
 import { Game } from '../../game/state';
 import { ClubFinances } from '../../types';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
-import { fmtCompactDM, fmtDateShort, fmtFullDM } from '../../ui/format';
+import { fmtCompactDM, fmtDateShort, fmtFullDM, fmtPrice } from '../../ui/format';
 import { type ReactNode } from 'react';
 
 export const INCOME_ROWS: { key: keyof ClubFinances['income']; label: string; icon: ReactNode }[] = [
@@ -14,6 +14,7 @@ export const INCOME_ROWS: { key: keyof ClubFinances['income']; label: string; ic
   { key: 'tvMoney', label: 'TV- & Mediengelder', icon: <Icon name="presse" /> },
   { key: 'sponsorship', label: 'Trikotsponsoring', icon: <Icon name="sponsoring" /> },
   { key: 'advertising', label: 'Bandenwerbung', icon: <Icon name="sponsoring" /> },
+  { key: 'commercial', label: 'Vermarktung & Hospitality', icon: <Icon name="sponsoring" /> },
   { key: 'membership', label: 'Mitgliedsbeiträge', icon: <Icon name="fans" /> },
   { key: 'prizeMoney', label: 'Prämien', icon: <Icon name="trophy" /> },
   { key: 'transferIncome', label: 'Transfererlöse', icon: <Icon name="transfers" /> },
@@ -128,7 +129,7 @@ export function FinancesView({ g }: { g: Game }) {
             <Kpi value={fmtFullDM(fin.balance)} label="Kontostand" color={fin.balance < 0 ? 'var(--red)' : 'var(--accent)'} />
             <KV k="Saldo Saison" v={sign(net)} color={net >= 0 ? 'var(--green)' : 'var(--red)'} />
             <KV k="Monatssaldo (fix)" v={sign(monthly.net)} color={monthly.net >= 0 ? 'var(--green)' : 'var(--red)'} />
-            <KV k="Transferbudget" v={fmtCompactDM(fin.transferBudget)} />
+            <KV k="Transferbudget" v={fmtPrice(fin.transferBudget)} />
             <KV k="Gehälter / Budget pro Woche" v={`${fmtCompactDM(weekly)} / ${fmtCompactDM(wageBudget)}`} color={weekly > wageBudget ? 'var(--red)' : undefined} />
           </div>
           <BalanceChart points={fin.balanceHistory ?? []} current={fin.balance} currentDate={g.calendar.currentDate} />

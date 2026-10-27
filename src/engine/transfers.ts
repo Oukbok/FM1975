@@ -5,6 +5,10 @@
 import { recordTransfer } from './history';
 import { Player, Club, TransferOffer } from '../types';
 import { bookTransfer } from './finances';
+import { economyScale, yearOf } from './economy';
+
+/** Ablöse (1975-Basis) als nominaler Betrag zum Transferdatum – für die Transferhistorie. */
+const nominalFee = (base: number) => Math.round(base * economyScale(yearOf(transferDate)));
 
 /** Aktuelles Spieldatum für Transfer-Buchungen (von App.tsx gesetzt). */
 let transferDate = new Date().toISOString().slice(0, 10);
@@ -37,13 +41,23 @@ export function makeOffer(
   const clubAccepts = amount >= value * (0.9 + Math.random() * 0.3);
   const playerAccepts = wage >= player.contract.weeklyWage * (0.95 + Math.random() * 0.2);
   const affordable = buyingClub.finances.transferBudget >= amount;
+  // Lizenzauflage / Finanzielles Fairplay: Transfersperre für die laufende Saison.
+  const y = Number(transferDate.slice(0, 4));
+  const season = Number(transferDate.slice(5, 7)) >= 7 ? `${y}/${String((y + 1) % 100).padStart(2, '0')}` : `${y - 1}/${String(y % 100).padStart(2, '0')}`;
+  if (buyingClub.finances.ffp?.banSeason === season) {
+    const offer: TransferOffer = {
+      id: `off_${Date.now()}`, playerId: player.id, sellingClubId: player.clubId, buyingClubId: buyingClub.id,
+      fee: amount, proposedWage: wage, contractLength: 3, status: 'rejected', date: transferDate, initiatedByPlayer: true, expiryDate: transferDate,
+    };
+    return { accepted: false, message: `Transfersperre: ${buyingClub.finances.ffp.note ?? 'Lizenzauflage'}.`, offer };
+  }
 
   const accepted = clubAccepts && playerAccepts && affordable;
   let message: string;
   if (!affordable) message = 'Dein Transferbudget reicht nicht aus.';
   else if (!clubAccepts) message = `${sellingClub?.name ?? 'Der Verein'} lehnt das Angebot ab (zu niedrig).`;
   else if (!playerAccepts) message = `${player.fullName} ist mit dem Gehalt nicht einverstanden.`;
-  else message = `Transfer abgeschlossen: ${player.fullName} wechselt für ${formatDM(amount)}!`;
+  else message = `Transfer abgeschlossen: ${player.fullName} wechselt für ${formatDM(nominalFee(amount))}!`;
 
   const offer: TransferOffer = {
     id: `off_${Date.now()}`, playerId: player.id,
@@ -58,7 +72,7 @@ export function makeOffer(
     // Spieler transferieren
     if (sellingClub) sellingClub.playerIds = sellingClub.playerIds.filter((id) => id !== player.id);
     buyingClub.playerIds.push(player.id);
-    recordTransfer(player, sellingClub?.name ?? 'vereinslos', buyingClub.name, amount, transferDate);
+    recordTransfer(player, sellingClub?.name ?? 'vereinslos', buyingClub.name, nominalFee(amount), transferDate);
     player.clubId = buyingClub.id;
     player.transferListed = false;
     player.contract.weeklyWage = wage;
@@ -100,10 +114,10 @@ export function runAITransfers(
       seller.finances.transferBudget += fee;
       bookTransfer(seller, fee, false, player.fullName, transferDate, seller.isPlayerControlled);
     }
-    recordTransfer(player, seller?.name ?? 'vereinslos', buyer.name, fee, transferDate);
+    recordTransfer(player, seller?.name ?? 'vereinslos', buyer.name, nominalFee(fee), transferDate);
     player.clubId = buyer.id;
     player.transferListed = false;
-    news.push(`${player.fullName} wechselt zu ${buyer.name} (${formatDM(fee)}).`);
+    news.push(`${player.fullName} wechselt zu ${buyer.name} (${formatDM(nominalFee(fee))}).`);
   }
   return news;
 }

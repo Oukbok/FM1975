@@ -218,7 +218,7 @@ function makeFinances(rep: number): ClubFinances {
   return {
     balance: scale + ri(0, 500000), transferBudget: Math.round(scale * 0.6),
     wageBudget: Math.round(rep * 3000), currentWageBill: Math.round(rep * 2500),
-    income: { ticketSales: 0, tvMoney: 0, sponsorship: 0, merchandise: 0, transferIncome: 0, prizeMoney: 0, catering: 0, advertising: 0, membership: 0, matchday: 0, other: 0 },
+    income: { ticketSales: 0, tvMoney: 0, sponsorship: 0, merchandise: 0, transferIncome: 0, prizeMoney: 0, catering: 0, advertising: 0, commercial: 0, membership: 0, matchday: 0, other: 0 },
     expenses: { wages: 0, transferExpense: 0, stadiumMaintenance: 0, trainingFacilities: 0, facilities: 0, staffWages: 0, other: 0 },
     transactions: [],
   };

@@ -84,7 +84,7 @@ export function Dashboard({ g, onGoto, onWatch, onOpenEditor }: {
     : (nextLeague ? `${nextLeague.matchday}. Spieltag` : '');
   const squad = myClub.playerIds.map((id) => g.players[id]).filter(Boolean);
   const monthly = computeMonthly(myClub, g.players, g.table);
-  const monIncome = monthly.sponsorship + monthly.advertising + monthly.membership + monthly.cateringLease + monthly.placementBonus;
+  const monIncome = monthly.sponsorship + monthly.advertising + monthly.membership + monthly.cateringLease + monthly.tv + monthly.commercial + monthly.placementBonus;
   const monExpense = monthly.wages + monthly.staffWages + monthly.stadiumMaintenance + monthly.facilities + monthly.otherFixed;
   const bal = myClub.finances.balance;
   const finStatus = bal >= Math.max(1, myClub.finances.transferBudget) ? 'Solide' : bal > 0 ? 'Stabil' : 'Angespannt';

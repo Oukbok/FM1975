@@ -620,6 +620,7 @@ export type FinanceCategory =
   | 'staff_wages'
   | 'catering'
   | 'advertising'
+  | 'commercial'
   | 'membership'
   | 'matchday'
   | 'facilities'
@@ -649,6 +650,8 @@ export interface ClubFinances {
     catering: number;
     /** Bandenwerbung (monatliche Vertragsrate). */
     advertising: number;
+    /** Vermarktung & Hospitality (Logen, Lizenzen, Partner) – Finanzen 2.0, monatlich. */
+    commercial?: number;
     /** Mitgliedsbeitraege (monatlich). */
     membership: number;
     /** Programmhefte & sonstige Spieltagserloese (pro Heimspiel). */
@@ -678,6 +681,33 @@ export interface ClubFinances {
   balanceHistory?: { date: string; balance: number }[];
   /** ISO-Monat (YYYY-MM) des letzten gebuchten Monatsabschlusses. */
   lastMonthlyBooking?: string;
+  /** Zentrale TV-Vermarktung: Jahresbetrag der laufenden Saison (nominal, engine/clubEconomy.ts). */
+  tvAnnual?: number;
+  /** Vermarktung & Hospitality: Jahresbetrag der laufenden Saison (nominal). */
+  commercialAnnual?: number;
+  /** Saisonbilanzen vergangener Spielzeiten (neueste zuletzt, max. 30). */
+  seasonHistory?: SeasonFinanceRecord[];
+  /** Finanzielles Fairplay (ab 2011) und Lizenzauflagen. */
+  ffp?: { warnings: number; banSeason?: string; note?: string };
+}
+
+/** Abgeschlossene Saisonbilanz eines Vereins. */
+export interface SeasonFinanceRecord {
+  season: string;
+  income: ClubFinances['income'];
+  expenses: ClubFinances['expenses'];
+  revenue: number;
+  result: number;
+  balanceEnd: number;
+  /** Gehaltsquote (Spieler + Stab) am Umsatz ohne Transfers. */
+  wageRatio: number;
+}
+
+/** Marke eines Vereins: Bekanntheit regional, national, international (je 0–100). */
+export interface ClubBrand {
+  regional: number;
+  national: number;
+  international: number;
 }
 
 // -----------------------------------------------------------------------------
@@ -887,6 +917,8 @@ export interface Club {
 
   /** Kommerz/Vertraege (Trikot, Banden, Catering). Optional → Migration. */
   commerce?: ClubCommerce;
+  /** Marke (Finanzen 2.0): treibt Sponsoring und Fanartikel. Optional → wird nachgerüstet. */
+  brand?: ClubBrand;
 }
 
 // -----------------------------------------------------------------------------

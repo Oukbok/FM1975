@@ -1,7 +1,7 @@
 // Reiter „Übersicht“: Fähigkeiten | Positionen + Stärken/Schwächen | Saison + Vertrag kompakt
 import { Player } from '../../types';
 import { POSITION_NAMES_DE } from '../../engine/positions';
-import { fmtDM, fmtDMfull, vColor } from '../../ui/format';
+import { fmtDM, fmtDMfull, vColor, fmtPrice, fmtPriceFull } from '../../ui/format';
 import Icon from '../Icon';
 import {
   ATTR_DE, groupsFor, sortedKeys, keyAttributes, PITCH_POS, ratingFor, positionsOf, utcDate,
@@ -88,8 +88,8 @@ export default function OverviewTab({ p }: { p: Player }) {
         </Section>
         <Section title="Vertrag" icon={<Icon name="contracts" size={15} />}>
           <div className="pp-list">
-            <Line label="Marktwert" value={fmtDM(p.contract.transferValue)} strong />
-            <Line label="Gehalt / Woche" value={fmtDMfull(p.contract.weeklyWage)} />
+            <Line label="Marktwert" value={fmtPrice(p.contract.transferValue)} strong />
+            <Line label="Gehalt / Woche" value={fmtPriceFull(p.contract.weeklyWage)} />
             <Line label="Vertrag bis" value={utcDate(p.contract.expiryDate)} />
             <Line label="Zufriedenheit" value={`${p.contract.satisfaction} %`} color={vColor(p.contract.satisfaction)} />
           </div>

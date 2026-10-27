@@ -12,7 +12,8 @@ import { computeStaffEffects, staffMonthlyTotal } from '../data/staff';
 import { CalendarEngine } from '../engine/calendar';
 import { drawRound, roundWinners, simulateCupTie } from '../engine/cup';
 import { RatingResult, RatingType, runRatingCeremony, weeklyDevelopment, clubTrainingFactor, ratingTendencies, updateAges } from '../engine/development';
-import { economyScale, yearOf } from '../engine/economy';
+import { economyScale, euroMoneyFactor, yearOf } from '../engine/economy';
+import { bookDebtInterest } from '../engine/clubEconomy';
 import { drawEuroRound, simulateEuroTie } from '../engine/euro';
 import { book, bookCupHomeMatch, bookCupPrize, bookMonthly } from '../engine/finances';
 import { applyMatchEffects } from '../engine/form';
@@ -173,7 +174,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
           // Eigene Begegnung: Ergebnis-Nachricht + Textmodus zum Nachverfolgen.
           const myTie = round.ties.find((t) => t.involvesPlayerClub);
           if (myTie && myTie.match) {
-            pushMessage(g.messages, cupResultMessage(cup, g.clubs, mid, myTie, ri, prize));
+            pushMessage(g.messages, cupResultMessage(cup, g.clubs, mid, myTie, ri, Math.round(prize * economyScale(yearOf(today)))));
             ui.onOwnMatch(myTie.match.id);
             stopForAction = true;
           }
@@ -223,7 +224,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
             // Preisgeld an den Sieger (nur falls voller Club vorhanden).
             if (tie.winnerClubId && g.clubs[tie.winnerClubId]) {
               book(
-                g.clubs[tie.winnerClubId].finances, tie.date, prize, 'prize_money',
+                g.clubs[tie.winnerClubId].finances, tie.date,
+                Math.round(prize * economyScale(yearOf(tie.date)) * euroMoneyFactor(comp, yearOf(tie.date))), 'prize_money',
                 `${EURO_COMP_NAMES[comp]} - Praemie (${round.name})`,
                 tie.winnerClubId === mid,
               );
@@ -232,7 +234,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
           // Eigene Begegnung: Ergebnis-Nachricht + Textmodus zum Nachverfolgen.
           const myTie = round.ties.find((t) => t.involvesPlayerClub);
           if (myTie && myTie.played) {
-            pushMessage(g.messages, euroResultMessage(comp, cup, g.clubs, g.euroClubs ?? {}, mid, myTie, ri, prize));
+            pushMessage(g.messages, euroResultMessage(comp, cup, g.clubs, g.euroClubs ?? {}, mid, myTie, ri, Math.round(prize * economyScale(yearOf(today)) * euroMoneyFactor(comp, yearOf(today)))));
             if (myTie.match) { ui.onOwnMatch(myTie.match.id); stopForAction = true; }
           }
           // Nächste Runde auslosen (bzw. Sieger küren) und Nachricht erzeugen.
@@ -417,6 +419,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
       if (club.finances.lastMonthlyBooking === curMonth) continue;
       const isMine = club.id === g.managedClubId;
       const m = bookMonthly(club, g.players, today, g.table, isMine, economyScale(yearOf(today)));
+      bookDebtInterest(club, today, isMine);
       if (isMine) {
         const net = m.net;
         pushMessage(g.messages, makeMessage({
@@ -426,6 +429,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
           bodyText: `Der Monatsabschluss wurde gebucht.\n\n`
             + `Trikotsponsoring: +${fmtDM(m.sponsorship)}\n`
             + `Bandenwerbung: +${fmtDM(m.advertising)}\n`
+            + (m.tv > 0 ? `TV-Gelder: +${fmtDM(m.tv)}\n` : '')
             + `Mitgliedsbeitraege: +${fmtDM(m.membership)}\n`
             + (m.cateringLease > 0 ? `Catering-Pacht: +${fmtDM(m.cateringLease)}\n` : '')
             + (m.placementBonus > 0 ? `Platzierungsbonus: +${fmtDM(m.placementBonus)}\n` : '')

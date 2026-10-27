@@ -6,6 +6,7 @@ React 18 + TypeScript, gebaut mit esbuild. Kein Backend – alles läuft im Brow
 ## Befehle
 - `npm run check` – Typprüfung, muss **0 Fehler** ergeben.
 - `npm run build` – Build nach `dist/`. `npm run dev` – lokaler Server auf http://localhost:5173.
+- `node scripts/sim.mjs <n>` – n Saisons ohne UI (Balance-Bericht, `FIN=1` mit Finanzen); `node scripts/sim.mjs --world 50` – nur Europa.
 - `npm run test:ui` – Rauchtest (Playwright): startet ein Spiel, öffnet jede Seite, lässt Zeit laufen, meldet JS-Fehler. Screenshots in `test-output/`.
 - Live: https://fm1975.pas-franke.workers.dev
 - Hosting: Cloudflare Workers (statische Assets, `wrangler.jsonc`) baut jeden Push auf `main` automatisch (Build `npm run build`, Ausgabe `dist`).
@@ -14,8 +15,8 @@ React 18 + TypeScript, gebaut mit esbuild. Kein Backend – alles läuft im Brow
 - `src/App.tsx` – Wurzel: Hauptmenü ↔ Spiel, Laden/Speichern-Einstieg.
 - `src/shell/GameShell.tsx` – laufendes Spiel: **Tagesablauf `processDay`**, Header, Routing der Seiten.
 - `src/shell/navigation.tsx` – `Screen`-Typ + `MENU_STRUCTURE` (einzige Quelle für Menü/Unterpunkte). `CalendarStrip.tsx` – Kalenderstreifen oben.
-- `src/game/` – Spielablauf ohne UI: `season.ts` (Spieltag, Saisonwechsel, Timeline), `competitions.ts` (Pokal/Europapokal-Kalender + Nachrichten), `leagueSetup.ts` (Ligensystem, DDR, Punkteregel), `state.ts` (`Game`-Typ, Sponsoring-Migration), `clubProfile.ts`.
-- `src/engine/` – Spielmechaniken: `match.ts` (Match-Engine), `finances.ts`, `economy.ts` (Inflation, DM/EUR), `development.ts`, `youth.ts`, `training.ts`/`weeklyTraining.ts`, `form.ts`, `transfers.ts`, `cup.ts`, `euro.ts`, `leagues.ts`, `calendar.ts`, `save.ts`, `lineupAI.ts`, `infrastructure.ts`.
+- `src/game/` – Spielablauf ohne UI: `season.ts` (Spieltag, Saisonwechsel, Timeline), `competitions.ts` (Pokal/Europapokal-Kalender + Nachrichten), `leagueSetup.ts` (Ligensystem, DDR, Punkteregel), `state.ts` (`Game`-Typ, Sponsoring-Migration), `clubProfile.ts`, `seasonFinance.ts`, `squads.ts` (Kaderpflege), `day.ts` (`processDay`).
+- `src/engine/` – Spielmechaniken: `match.ts` (Match-Engine), `finances.ts`, `economy.ts` (Inflation, DM/EUR), `development.ts`, `youth.ts`, `training.ts`/`weeklyTraining.ts`, `form.ts`, `transfers.ts`, `cup.ts`, `euro.ts`, `leagues.ts`, `calendar.ts`, `save.ts`, `lineupAI.ts`, `infrastructure.ts`, `world.ts` (Europa im Hintergrund), `clubEconomy.ts` (Finanzen 2.0).
 - `src/data/` – Stammdaten: `generate.ts` (Vereine/Kader), `reforms.ts` (Ligareformen), `timeline.ts`, `staff.ts`, `marketing.ts`, `europe.ts`, `ddr.ts`, `defaultCrests.ts`, `clubOverrides.ts` (Editor-Wappen/Trikots), `wiki.ts` (In-Game-Wiki).
 - `src/views/<bereich>/` – je Menübereich (zentrale, spieltag, kader, transfers, finanzen, verein, statistiken, wiki, modals); `categoryDashboards.tsx` = Übersichtsseiten der Kategorien.
 - `src/screens/` – Hauptmenü, Neues Spiel, Laden, Einstellungen. `src/ui/` – `DashPage.tsx` (Seitenraster wie die Zentrale: `DashPage`/`DashBox`, `Kpi`, `KV`, `Meter`, `Empty`), `PageHead`, `DisplayFrame` (Skalierung), `format.ts` (Geld/Datum).
@@ -30,6 +31,7 @@ React 18 + TypeScript, gebaut mit esbuild. Kein Backend – alles läuft im Brow
 - **Keine Emojis** in der UI – nur `<Icon>` (`src/components/iconPaths.ts`; neues Icon dort ergänzen).
 - Genau **eine** Akzentfarbe `#00D9FF`. Sprache Deutsch, informelles „du“.
 - Währung DM bis 2001, EUR ab 2002 (`engine/economy.ts`). Datum **immer UTC**.
+- Geld: Kontostand/Buchungen **nominal**; Preisschilder (Gehalt, Marktwert, Transferbudget, Prämien-/Vertragswerte) in **1975-Basis**, Anzeige mit `fmtPrice`, Buchung × `economyScale`. Finanzen 2.0 (Marke, TV, Vermarktung, KI-Haushalt, FFP) in `engine/clubEconomy.ts` + `game/seasonFinance.ts`.
 - Zentrale (Dashboard): Footer unten lassen, Boxenhöhen nicht ändern, Boxen nur verschieben, ohne Scrollen.
 - Neue Seiten: in `MENU_STRUCTURE` eintragen (erster Unterpunkt = Kategorie selbst), Kopf über `PageHead`, gerendert in `<main className="app-main">` unter `CalendarStrip`.
 - Alle Vereine werden simuliert. Änderungen minimal und nicht-destruktiv; Spielstand-Kompatibilität beachten (`SAVE_VERSION` in `engine/save.ts`).

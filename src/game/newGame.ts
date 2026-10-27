@@ -19,6 +19,7 @@ import { AppSettings, loadGame, loadSettings, saveSettings } from '../engine/sav
 import { createDefaultWeeklyPlan } from '../engine/weeklyTraining';
 import { academyStartingCohort, generateYouthPlayer } from '../engine/youth';
 import { initWorld } from '../engine/world';
+import { allocateTv, commercialAnnualFor, isLeagueClub, refreshMarketValues } from '../engine/clubEconomy';
 import { addCupCalendarEvents, buildEuroCupsForSeason, cupDateSet, cupDrawMessage, euroDrawMessage, leagueDateSet } from './competitions';
 import { buildDdrDivisions, buildLeagueSystem, buildSecondLigaSimClubs, historicPointSystem } from './leagueSetup';
 import { applyTimelineEffect, fireTimelineForSeason } from './season';
@@ -118,5 +119,11 @@ export function createNewGame(opts: NewGameOptions): Game {
   }
   // Erste Scout-Einschätzung: eigener Kader genauer als fremde Spieler.
   for (const p of Object.values(g0.players)) if (!p.isYouth) updateScoutEstimate(p, p.clubId === g0.managedClubId ? 0.4 : 0.2, p.clubId === g0.managedClubId);
+  // Finanzen 2.0: zentrale TV-Verteilung der ersten Saison (Ruf als Leistungsmaß).
+  const leagueClubs = Object.values(g0.clubs).filter(isLeagueClub);
+  const byRep = [...leagueClubs].sort((a, b) => b.reputation - a.reputation).map((c) => c.id);
+  refreshMarketValues(g0.players);
+  for (const c of leagueClubs) c.finances.commercialAnnual = commercialAnnualFor(c, 1, 1975);
+  allocateTv(leagueClubs, 1, 1975, (id) => 1 - byRep.indexOf(id) / Math.max(1, byRep.length - 1));
   return g0;
 }

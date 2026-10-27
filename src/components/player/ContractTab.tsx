@@ -1,6 +1,6 @@
 // Reiter „Vertrag & Wert“: Konditionen, Restlaufzeit, Einordnung im Kader
 import { Player } from '../../types';
-import { fmtDM, fmtDMfull, vColor } from '../../ui/format';
+import { fmtDM, fmtDMfull, vColor, fmtPrice, fmtPriceFull } from '../../ui/format';
 import Icon from '../Icon';
 import { utcDate, Section, Line, Stat } from './shared';
 
@@ -26,8 +26,8 @@ export default function ContractTab({ p, squad, today }: { p: Player; squad?: Pl
     <div className="pp-grid pp-grid-contract">
       <Section title="Konditionen" icon={<Icon name="contracts" size={15} />}>
         <div className="pp-list">
-          <Line label="Gehalt / Woche" value={fmtDMfull(k.weeklyWage)} strong />
-          <Line label="Gehalt / Jahr" value={fmtDMfull(k.weeklyWage * 52)} />
+          <Line label="Gehalt / Woche" value={fmtPriceFull(k.weeklyWage)} strong />
+          <Line label="Gehalt / Jahr" value={fmtPriceFull(k.weeklyWage * 52)} />
           <Line label="Vertrag bis" value={utcDate(k.expiryDate)} />
           <Line label="Restlaufzeit" value={left === null ? '—' : left >= 12 ? `${Math.floor(left / 12)} J. ${left % 12} M.` : `${left} Monate`} color={left !== null && left <= 6 ? 'var(--orange)' : undefined} />
           <Line label="Ausstiegsklausel" value={typeof k.releaseClause === 'number' ? fmtDM(k.releaseClause) : 'keine'} />
@@ -38,7 +38,7 @@ export default function ContractTab({ p, squad, today }: { p: Player; squad?: Pl
       <div className="pp-stack">
         <Section title="Wert & Zufriedenheit" icon={<Icon name="finances" size={15} />}>
           <div className="pp-stat-grid">
-            <Stat label="Marktwert" value={fmtDM(k.transferValue)} />
+            <Stat label="Marktwert" value={fmtPrice(k.transferValue)} />
             <Stat label="Zufriedenheit" value={<span style={{ color: vColor(k.satisfaction) }}>{k.satisfaction} %</span>} />
             <Stat label="Wert / Jahresgehalt" value={k.weeklyWage > 0 ? `${(k.transferValue / (k.weeklyWage * 52)).toFixed(1)}×` : '—'} />
           </div>

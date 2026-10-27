@@ -2,6 +2,7 @@ import { EuroCompId, allEuroClubs } from '../data/europe';
 import { setEraYear } from '../engine/positions';
 import { refreshOverall } from '../engine/development';
 import { manageSquads } from './squads';
+import { closeFinancialSeason, openFinancialSeason } from './seasonFinance';
 import { advanceWorldSeason, initWorld, isForeignId } from '../engine/world';
 import { closeSeason } from '../engine/history';
 import { buildProClub } from '../data/generate';
@@ -164,6 +165,8 @@ export function startNextSeason(g: Game): void {
   // Europapokal-Starter der neuen Saison AUS der abgelaufenen Saison ableiten
   // (Endtabelle + Landespokalsieger) – VOR dem Überschreiben von g.table/g.cup.
   const euroQuals = computeGermanEuroQualifiers(g, false);
+  // Finanzsaison abschließen (Bilanz, Marke, Ruf) solange Tabelle/Pokale noch vorliegen.
+  const prevPerf = closeFinancialSeason(g, oldSeason, g.calendar.currentDate);
 
   // --- 1) Sim-Ligen zu Ende simulieren, damit alle Endtabellen feststehen ---
   for (const div of g.leagues.otherDivisions) {
@@ -433,6 +436,7 @@ export function startNextSeason(g: Game): void {
   // Saisonbilanz als Station festhalten, Saisonstatistik für die neue Saison leeren.
   closeSeason(g.players, g.clubs, oldSeason);
   manageSquads(g, calendar.currentDate, !!(g as any).simAutoManage);
+  openFinancialSeason(g, newSeason, calendar.currentDate, prevPerf);
   // Neue Saison, evtl. neue Epoche: Positionsstärken aller Spieler neu bewerten.
   setEraYear(Number(calendar.currentDate.slice(0, 4)));
   for (const p of Object.values(g.players)) if (!p.isYouth) refreshOverall(p);

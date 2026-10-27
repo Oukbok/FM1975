@@ -943,6 +943,46 @@ Catering ist eine **ausbaubare Einrichtung** (Bereich **Gelände**, 5 Stufen) mi
 Große Vereine mit hoher Auslastung profitieren stärker vom **Eigenbetrieb** (viele Besucher × hoher Pro-Kopf-Erlös), kleine Vereine fahren mit **Verpachtung** risikoärmer (feste Pacht, kaum Fixkosten).`,
   },
   {
+    id: 'finance-epochs',
+    category: 'finance',
+    title: 'Finanzen im Wandel der Epochen — TV, Vermarktung, Marke',
+    keywords: ['tv', 'fernsehgelder', 'vermarktung', 'hospitality', 'marke', 'sponsoring', 'epoche', 'fairplay', 'ffp', 'lizenz', 'schulden', 'zinsen', 'marktwert', 'gehaltsquote'],
+    body: `## Der Erlös-Mix verschiebt sich
+1975 lebt ein Verein vom Stadion: rund 60 % des Umsatzes sind Eintritt, Catering und Programmhefte. Ab Ende der 1980er wachsen die **TV-Gelder** (Privatfernsehen, Pay-TV), ab den 2000ern **Vermarktung & Hospitality** (Logen, Lizenzen, Partner). Jede Erlösart wächst deshalb unterschiedlich schnell:
+
+| Jahr | Spieltag | TV | Vermarktung |
+|---|---|---|---|
+| 1975 | 60 % | 7 % | 24 % |
+| 1992 | 42 % | 22 % | 29 % |
+| 2000 | 26 % | 36 % | 31 % |
+| 2020 | 16 % | 40 % | 38 % |
+
+## TV-Gelder (zentrale Vermarktung)
+- Zu Saisonbeginn wird der TV-Topf der Liga verteilt und **monatlich** ausgezahlt.
+- Die Verteilung richtet sich nach **Liga** (2. Liga ein Fünftel bis ein Viertel, darunter wenig) und dem **Tabellenplatz der Vorsaison**. Bis 1990 fast gleichmäßig (15 % leistungsabhängig), ab 2000 zu 35 % leistungsabhängig.
+
+## Marke: regional, national, international
+- Jeder Verein hat eine **Marke** aus drei Werten (0–100). Sie wächst mit Tabellenplätzen, Titeln, Pokalsiegen und Europapokal-Erfolgen und kehrt langsam zu dem Niveau zurück, das der Ruf erwarten lässt.
+- Die **internationale Bekanntheit** zählt anfangs kaum, wird aber über die Jahrzehnte immer wichtiger (Globalisierung).
+- Die Marke multipliziert **Trikot- und Bandenwerbung** sowie **Fanartikel** (gedeckelt, abnehmender Grenznutzen) und bestimmt die **Vermarktung & Hospitality** – hier verdienen große Marken überproportional.
+
+## Europapokal
+- Prämien und **Startgelder** wachsen mit der Wirtschaft. Ab 1992 (Meisterliga mit Gruppenphase) steigen die Prämien im Landesmeister-Wettbewerb bis 2000 auf das Fünffache, in den anderen Wettbewerben auf das Doppelte. Europäischer Erfolg ist damit der stärkste Hebel für eine Dynastie – garantiert aber nichts.
+
+## Preisschilder und Kontostand
+- **Gehälter, Marktwerte und das Transferbudget** sind Preisschilder in 1975-Werten und werden mit dem Spieljahr hochgerechnet angezeigt und gebucht. Der **Kontostand** ist nominal.
+- **Marktwerte** werden zu jeder Saison neu bewertet: Alle fünf Stärkepunkte verdoppelt sich der Wert, junge Spieler mit Luft nach oben sind teurer, ältere günstiger.
+- Das **Transferbudget** legt der Vorstand zu Saisonbeginn fest: 70 % des Polsters über einer Reserve von einem Viertel des Jahresumsatzes.
+
+## Schulden, Lizenz, Finanzielles Fairplay
+- Ein **negativer Kontostand** kostet monatlich Zinsen (etwa 8 % im Jahr).
+- Liegt der Kontostand am Saisonende unter **−40 % des Jahresumsatzes**, gibt es die Lizenz nur mit **Transfersperre**.
+- Ab **2011/12** gilt das **Finanzielle Fairplay**: Liegt das Ergebnis der letzten drei Saisons mehr als 5 % des Umsatzes im Minus, folgt eine Verwarnung, beim zweiten Verstoß eine Transfersperre.
+
+## Die anderen Vereine wirtschaften mit
+- KI-Vereine passen ihre Gehälter dem Umsatz an (Gehaltsquote um 60 %), verkaufen bei Schulden Spieler und investieren Überschüsse in Neuzugänge (aus der Liga oder dem Ausland) sowie in Gelände und Stadion. Geld bleibt nicht einfach auf dem Konto liegen – auch die Konkurrenz wird stärker, wenn sie erfolgreich ist.`,
+  },
+  {
     id: 'finance-contracts',
     category: 'finance',
     title: 'Trikotsponsoring & Bandenwerbung (Verträge)',

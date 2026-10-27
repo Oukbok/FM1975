@@ -5,7 +5,7 @@ import { getAvailablePlayers, makeOffer } from '../../engine/transfers';
 import { Game } from '../../game/state';
 import { Player } from '../../types';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
-import { fmtDM, vColor } from '../../ui/format';
+import { fmtDM, vColor, fmtPrice } from '../../ui/format';
 import { GROUP_DE, PlayerRow, ScoutStars, avg, groupOf, monthsUntil, scoutMid, squadOf } from '../shared';
 import { useState } from 'react';
 
@@ -54,8 +54,8 @@ function MarketTable({ g, list, onOpen, action }: { g: Game; list: Player[]; onO
               <td className="num"><b style={{ color: vColor(p.overall) }}>{p.overall}</b></td>
               <td className="nowrap"><ScoutStars p={p} /></td>
               <td className="num muted">{monthsUntil(today, p.contract.expiryDate)} M.</td>
-              <td className="num">{fmtDM(p.contract.weeklyWage)}</td>
-              <td className="num" style={{ color: 'var(--accent)' }}>{fmtDM(p.contract.transferValue)}</td>
+              <td className="num">{fmtPrice(p.contract.weeklyWage)}</td>
+              <td className="num" style={{ color: 'var(--accent)' }}>{fmtPrice(p.contract.transferValue)}</td>
               {action && <td className="num" onClick={(e) => e.stopPropagation()}>{action(p)}</td>}
             </tr>
           );
@@ -110,7 +110,7 @@ export function TransfersView({ g, onDone }: { g: Game; onDone: () => void }) {
 
       <DashBox title="Budget" icon="finances">
         <div className="dkpis">
-          <Kpi value={fmtDM(fin.transferBudget)} label="Transferbudget" />
+          <Kpi value={fmtPrice(fin.transferBudget)} label="Transferbudget" />
           <Kpi value={fmtDM(Math.max(0, fin.wageBudget - wages))} label="Gehaltsspielraum/Wo." />
         </div>
         <KV k="Kontostand" v={fmtDM(fin.balance)} />
@@ -209,7 +209,7 @@ export function VerhandlungenView({ g }: { g: Game }) {
         </div>
         <KV k="Saldo" v={fmtDM(earned - spent)} strong color={earned - spent >= 0 ? 'var(--green)' : 'var(--red)'} />
         <KV k="Eigene Spieler auf der Transferliste" v={ownListed.length} />
-        {ownListed.slice(0, 3).map((p) => <PlayerRow key={p.id} p={p} value={fmtDM(p.contract.transferValue)} color="var(--text-1)" onClick={() => open(p.id)} />)}
+        {ownListed.slice(0, 3).map((p) => <PlayerRow key={p.id} p={p} value={fmtPrice(p.contract.transferValue)} color="var(--text-1)" onClick={() => open(p.id)} />)}
       </DashBox>
 
       <DashBox title="Wechsel des Vereins" icon="transfers" right={`${moves.length}`}>

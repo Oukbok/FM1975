@@ -1,4 +1,4 @@
-import { formatMoney, formatMoneyShort } from '../engine/economy';
+import { economyScale, formatMoney, formatMoneyShort } from '../engine/economy';
 
 // -----------------------------------------------------------------------------
 // Währung ära-gerecht: bis 2001 DM, ab 2002 EUR (1 EUR = 1,95583 DM). Damit die
@@ -13,6 +13,13 @@ export function setDisplayYear(year: number): void { _displayYear = year; }
 export const fmtDM = (n: number) => formatMoneyShort(n, _displayYear);
 
 export const fmtDMfull = (n: number) => formatMoney(n, _displayYear);
+
+/**
+ * Preisschilder (Gehalt, Marktwert, Transferbudget) liegen in 1975-Basis vor und
+ * werden für die Anzeige auf das aktuelle Spieljahr hochgerechnet.
+ */
+export const fmtPrice = (base: number) => formatMoneyShort(base * economyScale(_displayYear), _displayYear);
+export const fmtPriceFull = (base: number) => formatMoney(Math.round(base * economyScale(_displayYear)), _displayYear);
 
 export const vColor = (v: number) => v >= 75 ? 'var(--green)' : v >= 60 ? 'var(--yellow)' : v >= 45 ? 'var(--orange)' : 'var(--red)';
 

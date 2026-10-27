@@ -12,7 +12,7 @@ import { getFormation } from '../data/formations';
 import { Game } from '../game/state';
 import { Screen } from '../shell/navigation';
 import { BoxLink, DashBox, DashPage, Empty, KV, Kpi, Meter } from '../ui/DashPage';
-import { fmtDM, fmtDMfull, fmtDateShort, vColor } from '../ui/format';
+import { fmtDM, fmtDMfull, fmtDateShort, vColor, fmtPrice } from '../ui/format';
 import {
   FormDots, GROUP_DE, MatchRow, PlayerRow, avg, groupOf, monthsUntil, ownLeagueMatches, squadOf, tableRow,
 } from './shared';
@@ -196,7 +196,7 @@ export function TransfersDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen)
     <DashPage>
       <DashBox title="Budget" icon="finances" onClick={() => onGoto('transfers')}>
         <div className="dkpis">
-          <Kpi value={fmtDM(fin.transferBudget)} label="Transferbudget" color="var(--green)" />
+          <Kpi value={fmtPrice(fin.transferBudget)} label="Transferbudget" color="var(--green)" />
           <Kpi value={fmtDM(fin.balance)} label="Kontostand" color={fin.balance >= 0 ? 'var(--text)' : 'var(--red)'} />
         </div>
         <KV k="Gehälter pro Woche" v={fmtDM(wageBill)} />
@@ -223,7 +223,7 @@ export function TransfersDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen)
       </DashBox>
 
       <DashBox title="Eigene Transferliste" icon="negotiations" right={`${listed.length}`}>
-        {listed.length ? listed.map((p) => <PlayerRow key={p.id} p={p} sub={fmtDM(p.contract.transferValue)} value={p.overall} />) : <Empty icon="negotiations">Kein Spieler steht auf der Transferliste.</Empty>}
+        {listed.length ? listed.map((p) => <PlayerRow key={p.id} p={p} sub={fmtPrice(p.contract.transferValue)} value={p.overall} />) : <Empty icon="negotiations">Kein Spieler steht auf der Transferliste.</Empty>}
       </DashBox>
 
       <DashBox title="Letzte Wechsel" icon="news">
@@ -242,7 +242,7 @@ export function TransfersDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen)
 // --- FINANZEN ---------------------------------------------------------------
 const INCOME_DE: Record<string, string> = {
   ticketSales: 'Zuschauer', tvMoney: 'Fernsehen', sponsorship: 'Sponsoring', merchandise: 'Fanartikel',
-  transferIncome: 'Transfers', prizeMoney: 'Prämien', catering: 'Catering', advertising: 'Werbung',
+  transferIncome: 'Transfers', prizeMoney: 'Prämien', catering: 'Catering', advertising: 'Werbung', commercial: 'Vermarktung',
   membership: 'Mitglieder', matchday: 'Spieltag', other: 'Sonstiges',
 };
 const EXPENSE_DE: Record<string, string> = {

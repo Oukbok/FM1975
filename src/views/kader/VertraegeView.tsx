@@ -2,7 +2,7 @@ import PlayerModal from '../../components/PlayerModal';
 import { CalendarEngine } from '../../engine/calendar';
 import { Game } from '../../game/state';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
-import { fmtDM, vColor } from '../../ui/format';
+import { fmtDM, vColor, fmtPrice } from '../../ui/format';
 import { PlayerRow, monthsUntil } from '../shared';
 import { useState } from 'react';
 
@@ -41,10 +41,10 @@ export function VertraegeView({ g }: { g: Game }) {
                   <td className="ctr"><span className="pos-badge">{pl.naturalPosition}</span></td>
                   <td className="num">{pl.age}</td>
                   <td className="num" style={{ color: vColor(pl.overall), fontWeight: 800 }}>{pl.overall}</td>
-                  <td className="num">{fmtDM(pl.contract.weeklyWage)}</td>
+                  <td className="num">{fmtPrice(pl.contract.weeklyWage)}</td>
                   <td className="num nowrap">{CalendarEngine.formatDate(pl.contract.expiryDate)}</td>
                   <td className="num" style={{ color: m <= 6 ? 'var(--red)' : m <= 12 ? 'var(--yellow)' : undefined, fontWeight: 700 }}>{m} M.</td>
-                  <td className="num" style={{ color: 'var(--accent)' }}>{fmtDM(pl.contract.transferValue)}</td>
+                  <td className="num" style={{ color: 'var(--accent)' }}>{fmtPrice(pl.contract.transferValue)}</td>
                   <td className="num muted">{pl.contract.releaseClause ? fmtDM(pl.contract.releaseClause) : '–'}</td>
                   <td className="num" style={{ color: vColor(pl.contract.satisfaction) }}>{Math.round(pl.contract.satisfaction)}</td>
                 </tr>
@@ -63,7 +63,7 @@ export function VertraegeView({ g }: { g: Game }) {
         <Meter label="Budget ausgeschöpft" value={wages} max={Math.max(1, club.finances.wageBudget)}
           text={`${Math.round((wages / Math.max(1, club.finances.wageBudget)) * 100)} %`} color={wages > club.finances.wageBudget ? 'var(--red)' : undefined} />
         <div className="dsec">Topverdiener</div>
-        {byWage.slice(0, 3).map((x) => <PlayerRow key={x.id} p={x} value={fmtDM(x.contract.weeklyWage)} color="var(--text-1)" onClick={() => setSel(x.id)} />)}
+        {byWage.slice(0, 3).map((x) => <PlayerRow key={x.id} p={x} value={fmtPrice(x.contract.weeklyWage)} color="var(--text-1)" onClick={() => setSel(x.id)} />)}
       </DashBox>
 
       <DashBox title="Handlungsbedarf" icon="negotiations" right={`Ø Zufriedenheit ${avgSat}`}>
