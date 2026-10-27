@@ -1,4 +1,5 @@
 import { hydrateClubOverrides } from './data/clubOverrides';
+import { snapshotAttributes } from './engine/history';
 import { EuroCompId, allEuroClubs } from './data/europe';
 import { generateCupAmateurs, generateWorld } from './data/generate';
 import { LEAGUE_REFORMS } from './data/reforms';
@@ -127,6 +128,10 @@ export default function App() {
     };
     // Startsaison-Meilensteine (1975/76) sofort auslösen → Chronik-Nachricht + Effekte.
     fireTimelineForSeason(g0, '1975/76', calendar.currentDate);
+    for (const pid of g0.clubs[g0.managedClubId]?.playerIds ?? []) {
+      const p = g0.players[pid];
+      if (p) snapshotAttributes(p, calendar.currentDate, 'Spielbeginn');
+    }
     setDisplayYear(yearOf(calendar.currentDate));
     gameRef.current = g0;
     setCurrentSlot(null);
@@ -138,6 +143,11 @@ export default function App() {
   const doLoad = useCallback((slot: string) => {
     const s = loadGame<Game>(slot);
     if (!s) return;
+    // Ältere Spielstände ohne Attribut-Verlauf: Ausgangswert für den eigenen Kader setzen.
+    for (const pid of s.game.clubs[s.game.managedClubId]?.playerIds ?? []) {
+      const p = s.game.players[pid];
+      if (p && !p.history?.attributeSnapshots?.length) snapshotAttributes(p, s.game.calendar.currentDate, 'Stand beim Laden');
+    }
     // Alte Spielstände kennen den Wochen-Trainingsplan noch nicht → nachrüsten.
     if (!s.game.trainingPlan || !Array.isArray(s.game.trainingPlan.days) || s.game.trainingPlan.days.length !== 7) {
       s.game.trainingPlan = createDefaultWeeklyPlan();

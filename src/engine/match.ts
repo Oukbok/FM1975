@@ -16,6 +16,7 @@
 //   • Deterministisch bei gesetztem Seed (stabile Save/Load- & Test-Läufe)
 // =============================================================================
 
+import { logMatch, recordInjury } from './history';
 import type {
   Club,
   Player,
@@ -191,6 +192,14 @@ export interface MatchEngineOptions {
   seed?: number;
   /** Zuschauerzahl überschreiben (sonst aus Stadion/Reputation abgeleitet). */
   attendance?: number;
+  /** Spieldatum (ISO). Nötig für Spielliste und echte Verletzungen. */
+  date?: string;
+  /** Wettbewerb für die Spielliste im Profil. */
+  competition?: 'Liga' | 'Pokal' | 'Europapokal';
+  /** Vereine, deren Spieler eine Spielliste bekommen (Speicher sparen: meist nur der eigene). */
+  logClubIds?: string[];
+  /** Im Spiel entstandene Verletzungen als echte Ausfälle übernehmen. */
+  applyInjuries?: boolean;
 }
 
 /**
@@ -206,6 +215,9 @@ export class MatchEngine {
   private readonly pointSystem: PointSystem;
   private readonly rng: () => number;
   private readonly attendanceOverride?: number;
+  private readonly options: MatchEngineOptions;
+  /** Im Spiel verletzte Spieler → Schwere (wird nach dem Spiel übernommen). */
+  private readonly matchInjuries = new Map<string, InjurySeverity>();
 
   private eventCounter = 0;
 
@@ -221,6 +233,7 @@ export class MatchEngine {
     this.players = players;
     this.pointSystem = pointSystem;
     this.attendanceOverride = options.attendance;
+    this.options = options;
     // Seed: entweder explizit gesetzt oder aus IDs + Zufall abgeleitet.
     const seed =
       options.seed ??
@@ -875,6 +888,7 @@ export class MatchEngine {
     // Verletzungstyp/-schwere bestimmen (nur für Kommentar; echte Injury-Objekte
     // erzeugt später das Verletzungs-/Kalender-System in der Nachbearbeitung).
     const severity = this.rollInjurySeverity();
+    this.matchInjuries.set(candidate.id, severity);
     const commentary = generateInjuryCommentary(candidate, severity, minute, this.rng);
 
     // Minuten kappen für den verletzt raus gegangenen Spieler
@@ -1081,15 +1095,37 @@ export class MatchEngine {
     const awayCleanSheet = home.goals === 0;
     const homeIds = new Set(home.lineup.map((p) => p.id));
 
+    const { date, competition = 'Liga', logClubIds, applyInjuries } = this.options;
     for (const tally of tallies.values()) {
       const player = this.players[tally.playerId];
       if (!player) continue;
-      const cleanSheet = homeIds.has(player.id) ? homeCleanSheet : awayCleanSheet;
-      this.applyTally(player, tally, cleanSheet);
+      const isHome = homeIds.has(player.id);
+      const cleanSheet = isHome ? homeCleanSheet : awayCleanSheet;
+      const rating = this.applyTally(player, tally, cleanSheet);
+      if (date && logClubIds?.includes(player.clubId)) {
+        logMatch(player, {
+          date, competition, home: isHome,
+          opponent: (isHome ? away.club : home.club).name,
+          score: isHome ? `${home.goals}:${away.goals}` : `${away.goals}:${home.goals}`,
+          minutes: tally.minutesPlayed, goals: tally.goals, assists: tally.assists, rating,
+          card: tally.red > 0 ? 'Rot' : tally.yellowRed > 0 ? 'Gelb-Rot' : tally.yellow > 0 ? 'Gelb' : undefined,
+        });
+      }
+    }
+    // Im Spiel entstandene Verletzungen als echte Ausfälle übernehmen.
+    if (date && applyInjuries) {
+      for (const [id, severity] of this.matchInjuries) {
+        const p = this.players[id];
+        if (!p || p.injury) continue;
+        const inj = createMatchInjury(severity, date);
+        p.injury = inj;
+        p.availability = 'injured';
+        recordInjury(p, inj);
+      }
     }
   }
 
-  private applyTally(player: Player, tally: PlayerMatchTally, cleanSheet: boolean): void {
+  private applyTally(player: Player, tally: PlayerMatchTally, cleanSheet: boolean): number {
     const rating = computeMatchRating(tally, cleanSheet);
     for (const stats of [player.seasonStats, player.careerStats]) {
       stats.appearances++;
@@ -1116,6 +1152,7 @@ export class MatchEngine {
     if (tally.red > 0 || tally.yellowRed > 0) {
       player.suspensionMatches = Math.max(player.suspensionMatches, 1);
     }
+    return rating;
   }
 
   /** Rekonstruiert Tallies aus einer Event-Liste (für updatePlayerStats extern). */

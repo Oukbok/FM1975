@@ -1,4 +1,5 @@
 import { EuroCompId, allEuroClubs } from '../data/europe';
+import { closeSeason } from '../engine/history';
 import { buildProClub } from '../data/generate';
 import { CurrentDivision, TransitionResult, computeSeasonTransition } from '../data/reforms';
 import { TIMELINE_TYPE_META, TimelineEvent, dueTimelineEvents, seasonStartYear } from '../data/timeline';
@@ -24,7 +25,9 @@ export function simulateMatchday(game: Game, matchday: number): void {
   for (const match of dayMatches) {
     const home = game.clubs[match.homeClubId];
     const away = game.clubs[match.awayClubId];
-    const engine = new MatchEngine(home, away, game.players, game.pointSystem);
+    const engine = new MatchEngine(home, away, game.players, game.pointSystem, {
+      date: match.date, competition: 'Liga', logClubIds: [game.managedClubId], applyInjuries: game.injuriesEnabled,
+    });
     const { result, events } = engine.simulate();
     match.result = result;
     match.events = events;
@@ -398,6 +401,8 @@ export function startNextSeason(g: Game): void {
     bodyText: `Willkommen zur Saison ${newSeason}! Der Spielplan der Liga und die 1. Runde des `
       + `DFB-Pokals wurden ausgelost. Die Vorbereitung läuft – nutze die Transferphase und das Training.`,
   }));
+  // Saisonbilanz als Station festhalten, Saisonstatistik für die neue Saison leeren.
+  closeSeason(g.players, g.clubs, oldSeason);
 }
 
 /** Erzeugt eine Spielbericht-Nachricht für das Spiel des Nutzers. */

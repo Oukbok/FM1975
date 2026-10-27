@@ -41,6 +41,7 @@ export interface EuroGameLike {
   cup?: CupState | null;
   calendar?: { seasonStartDate: string; currentDate: string };
   season?: string;
+  injuriesEnabled?: boolean;
 }
 
 // -----------------------------------------------------------------------------
@@ -326,7 +327,9 @@ export function simulateEuroTie(
       }
     }
     if (g.clubs[tie.homeClubId] && g.clubs[tie.awayClubId]) {
-      simulateCupTie(tie, g.clubs, g.players, g.pointSystem, cup.seed);
+      simulateCupTie(tie, g.clubs, g.players, g.pointSystem, cup.seed, {
+        competition: 'Europapokal', logClubIds: g.managedClubId ? [g.managedClubId] : undefined, applyInjuries: g.injuriesEnabled,
+      });
       return;
     }
     // Fallback (sollte nicht eintreten): auf Staerke-Simulation ausweichen.

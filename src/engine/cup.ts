@@ -247,6 +247,7 @@ export function simulateCupTie(
   players: Record<string, Player>,
   pointSystem: PointSystem,
   cupSeed: number,
+  ctx: { logClubIds?: string[]; applyInjuries?: boolean; competition?: 'Pokal' | 'Europapokal' } = {},
 ): void {
   const home = clubs[tie.homeClubId];
   const away = clubs[tie.awayClubId];
@@ -254,6 +255,7 @@ export function simulateCupTie(
 
   const engine = new MatchEngine(home, away, players, pointSystem, {
     seed: hashString(`${cupSeed}:${tie.id}`),
+    date: tie.date, competition: ctx.competition ?? 'Pokal', logClubIds: ctx.logClubIds, applyInjuries: ctx.applyInjuries,
   });
   const { result, events, decision, penalties, homeWins } = engine.simulateCup();
 

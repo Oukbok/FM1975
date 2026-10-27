@@ -95,7 +95,7 @@ export function SquadView({ g }: { g: Game }) {
         </div>
       </div>
 
-      {p && <PlayerModal player={p} club={club} squad={club.playerIds.map((id) => g.players[id])} today={g.calendar.currentDate} onClose={() => setSel(null)} />}
+      {p && <PlayerModal player={p} club={club} squad={club.playerIds.map((id) => g.players[id])} today={g.calendar.currentDate} season={g.season} onClose={() => setSel(null)} />}
     </div>
   );
 }

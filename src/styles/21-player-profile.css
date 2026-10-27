@@ -167,3 +167,15 @@
 .pp-text { font-size: 15px; line-height: 1.6; color: var(--text-2); margin: 0 0 10px; }
 .pp-text b { color: var(--text); }
 .pp-bullets { margin: 0; padding-left: 18px; color: var(--text-2); font-size: 14px; line-height: 1.7; }
+
+/* Spiele / Karriere / Veränderungen */
+.pp-grid-matches { grid-template-columns: 1.5fr 1fr; }
+.pp-grid-career { grid-template-columns: 1.4fr 1fr; }
+.pp-table-matches td, .pp-table-matches th { text-align: left; }
+.pp-table-matches td:nth-child(n+4), .pp-table-matches th:nth-child(n+4) { text-align: right; }
+.pp-table th:first-child { text-align: left; }
+.pp-row-current td { color: var(--accent); }
+.pp-row-total td { font-weight: 900; border-top: 1px solid var(--border); }
+.pp-changes { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 24px; }
+.pp-change { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 1px solid var(--border-soft); }
+.pp-grid-career .pp-table td:nth-child(2), .pp-grid-career .pp-table th:nth-child(2) { text-align: left; }

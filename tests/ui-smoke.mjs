@@ -65,7 +65,7 @@ const weiter = page.getByRole('button', { name: /weiter/i }).first();
 const deadline = Date.now() + runSeconds * 1000;
 while (Date.now() < deadline) {
   // Modals (Spielbericht, Nachrichten ...) schliessen und weiterlaufen lassen
-  for (const sel of ['button:has-text("Spiel simulieren")', 'button:has-text("Schließen")', 'button:has-text("Weiter zum")', 'button:has-text("OK")', '.modal-close']) {
+  for (const sel of ['button:has-text("Spiel simulieren")', 'button:has-text("Überspringen")', 'button:has-text("Fortsetzen")', 'button:has-text("Zum Spielbericht")', 'button:has-text("Schließen")', 'button:has-text("Weiter zum")', 'button:has-text("OK")', '.modal-close']) {
     const b = page.locator(sel).first();
     if (await b.isVisible().catch(() => false)) await b.click().catch(() => {});
   }

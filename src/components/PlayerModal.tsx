@@ -1,7 +1,7 @@
 // =============================================================================
 // PlayerModal — großes Spielerprofil mit Reitern (angelehnt an EA Fussball Manager / Football Manager)
 //   Kopf (immer sichtbar): Porträt | Identität + Steckbrief | Zustand
-//   Reiter: Übersicht · Attribute · Entwicklung · Statistik · Vertrag & Wert · Medizin · Bericht
+//   Reiter: Übersicht · Attribute · Entwicklung · Spiele · Statistik · Karriere · Vertrag & Wert · Medizin · Bericht
 //   Die Reiter liegen in src/components/player/.
 // =============================================================================
 import { useState } from 'react';
@@ -18,15 +18,17 @@ import StatsTab from './player/StatsTab';
 import ContractTab from './player/ContractTab';
 import MedicalTab from './player/MedicalTab';
 import ReportTab from './player/ReportTab';
+import MatchesTab from './player/MatchesTab';
+import CareerTab from './player/CareerTab';
 
-type Tab = 'overview' | 'attributes' | 'development' | 'stats' | 'contract' | 'medical' | 'report';
+type Tab = 'overview' | 'attributes' | 'development' | 'matches' | 'stats' | 'career' | 'contract' | 'medical' | 'report';
 const TABS: [Tab, string][] = [
-  ['overview', 'Übersicht'], ['attributes', 'Attribute'], ['development', 'Entwicklung'], ['stats', 'Statistik'],
-  ['contract', 'Vertrag & Wert'], ['medical', 'Medizin'], ['report', 'Bericht'],
+  ['overview', 'Übersicht'], ['attributes', 'Attribute'], ['development', 'Entwicklung'], ['matches', 'Spiele'],
+  ['stats', 'Statistik'], ['career', 'Karriere'], ['contract', 'Vertrag & Wert'], ['medical', 'Medizin'], ['report', 'Bericht'],
 ];
 
-export default function PlayerModal({ player, club, squad, today, onClose }: {
-  player: Player; club?: Club; squad?: Player[]; today?: string; onClose: () => void;
+export default function PlayerModal({ player, club, squad, today, season, onClose }: {
+  player: Player; club?: Club; squad?: Player[]; today?: string; season?: string; onClose: () => void;
 }) {
   const [tab, setTab] = useState<Tab>('overview');
   const p = player;
@@ -85,7 +87,9 @@ export default function PlayerModal({ player, club, squad, today, onClose }: {
           {tab === 'overview' && <OverviewTab p={p} />}
           {tab === 'attributes' && <AttributesTab p={p} />}
           {tab === 'development' && <DevelopmentTab p={p} />}
+          {tab === 'matches' && <MatchesTab p={p} />}
           {tab === 'stats' && <StatsTab p={p} />}
+          {tab === 'career' && <CareerTab p={p} club={club} season={season} />}
           {tab === 'contract' && <ContractTab p={p} squad={squad} today={today} />}
           {tab === 'medical' && <MedicalTab p={p} />}
           {tab === 'report' && <ReportTab p={p} squad={squad} />}

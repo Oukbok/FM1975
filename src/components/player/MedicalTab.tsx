@@ -7,6 +7,7 @@ import { AVAIL_DE, INJURY_TYPE_DE, INJURY_SEV_DE, utcDate, frischeOf, Section, L
 export default function MedicalTab({ p }: { p: Player }) {
   const inj = p.injury;
   const prone = Math.round(p.development.injuryProneness);
+  const hist = p.history?.injuries ?? [];
   return (
     <div className="pp-grid pp-grid-medical">
       <Section title="Verfügbarkeit" icon={<Icon name="staff" size={15} />}>
@@ -29,6 +30,7 @@ export default function MedicalTab({ p }: { p: Player }) {
           <Line label="Gelbe Karten (Konto)" value={p.yellowCardCount} />
         </div>
       </Section>
+      <div className="pp-stack">
       <Section title="Belastung & Körper" icon={<Icon name="training" size={15} />}>
         <Bar label="Frische" value={frischeOf(p)} />
         <Bar label="Fitness" value={Math.round(p.attributes.fitness)} />
@@ -39,6 +41,16 @@ export default function MedicalTab({ p }: { p: Player }) {
           <Line label="Größe / Gewicht" value={`${p.height} cm · ${p.weight} kg`} />
         </div>
       </Section>
+      <Section title="Verletzungshistorie" icon={<Icon name="chronicle" size={15} />} right={hist.length ? `${hist.length} · ${hist.reduce((a, h) => a + h.days, 0)} Ausfalltage` : undefined}>
+        {hist.length === 0 ? <div className="pp-note">Bisher keine Verletzung im Spiel.</div> : (
+          <div className="pp-list">
+            {[...hist].reverse().slice(0, 6).map((h, i) => (
+              <Line key={i} label={`${utcDate(h.date)} · ${h.fromTraining ? 'Training' : 'Spiel'}`} value={`${h.description} (${h.days} T.)`} />
+            ))}
+          </div>
+        )}
+      </Section>
+      </div>
     </div>
   );
 }

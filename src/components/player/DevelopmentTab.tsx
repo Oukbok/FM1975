@@ -1,7 +1,7 @@
 // Reiter „Entwicklung“: Stärke-Verlauf, Potenzial, Karrierephase
 import { Player, renderStars, starsToPotential } from '../../types';
 import Icon from '../Icon';
-import { utcDate, Section, Line } from './shared';
+import { utcDate, Section, Line, ATTR_DE, AttrKey } from './shared';
 
 function careerPhase(age: number): { label: string; text: string } {
   if (age <= 20) return { label: 'Talent', text: 'Entwickelt sich noch stark. Spielpraxis und gutes Training zahlen sich jetzt am meisten aus.' };
@@ -37,6 +37,33 @@ function HistoryChart({ p }: { p: Player }) {
   );
 }
 
+function AttributeChanges({ p }: { p: Player }) {
+  const snaps = p.history?.attributeSnapshots ?? [];
+  if (snaps.length === 0) return <div className="pp-note">Der Verlauf startet mit der nächsten Bewertung.</div>;
+  const first = snaps[0];
+  const changes = (Object.keys(ATTR_DE) as AttrKey[])
+    .filter((k) => k !== 'fitness' && typeof first.attributes[k] === 'number')
+    .map((k) => ({ k, from: first.attributes[k] as number, to: Math.round(p.attributes[k]) }))
+    .filter((c) => c.to !== c.from)
+    .sort((a, b) => Math.abs(b.to - b.from) - Math.abs(a.to - a.from))
+    .slice(0, 12);
+  return (
+    <>
+      <div className="pp-note" style={{ marginTop: 0 }}>Seit „{first.label}“ ({utcDate(first.date)})</div>
+      {changes.length === 0 ? <div className="pp-note">Noch keine Veränderung.</div> : (
+        <div className="pp-changes">
+          {changes.map((c) => (
+            <div key={c.k} className="pp-change">
+              <span className="pp-line-lbl">{ATTR_DE[c.k]}</span>
+              <span>{c.from} → <b>{c.to}</b> <b style={{ color: c.to > c.from ? 'var(--green)' : 'var(--red)' }}>{c.to > c.from ? '+' : ''}{c.to - c.from}</b></span>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function DevelopmentTab({ p }: { p: Player }) {
   const maxOvr = starsToPotential(p.potentialStars);
   const growth = maxOvr - p.overall;
@@ -45,9 +72,14 @@ export default function DevelopmentTab({ p }: { p: Player }) {
   const last = d.lastRatingChange;
   return (
     <div className="pp-grid pp-grid-dev">
-      <Section title="Stärke-Verlauf" icon={<Icon name="stats" size={15} />}>
-        <HistoryChart p={p} />
-      </Section>
+      <div className="pp-stack">
+        <Section title="Stärke-Verlauf" icon={<Icon name="stats" size={15} />}>
+          <HistoryChart p={p} />
+        </Section>
+        <Section title="Attribut-Veränderungen" icon={<Icon name="training" size={15} />}>
+          <AttributeChanges p={p} />
+        </Section>
+      </div>
       <div className="pp-stack">
         <Section title="Potenzial" icon={<Icon name="youth" size={15} />}>
           <div className="pp-stars">{renderStars(p.potentialStars)}</div>

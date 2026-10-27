@@ -1,4 +1,5 @@
 import ClubCrest from '../components/ClubCrest';
+import { snapshotAttributes } from '../engine/history';
 import ClubEditorModal from '../components/ClubEditorModal';
 import Icon from '../components/Icon';
 import LineupView from '../components/LineupView';
@@ -173,6 +174,10 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
             g.players, g.clubs, g.managedClubId,
             isLarge ? 'large' : 'medium', today,
           );
+          for (const pid of g.clubs[g.managedClubId]?.playerIds ?? []) {
+            const p = g.players[pid];
+            if (p) snapshotAttributes(p, today, isLarge ? `Saisonbewertung ${g.season}` : `Zwischenbewertung ${g.season}`);
+          }
           // Nur die große Saison-Bewertung wird sichtbar gemacht (Zeremonie +
           // Meldung + Pause). Kleine/periodische Bewertungen laufen still im
           // Hintergrund – die Werte ändern sich, ohne den Vorlauf zu unterbrechen.
@@ -225,7 +230,9 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
             // Alle noch nicht gespielten Begegnungen der Runde simulieren.
             for (const tie of round.ties) {
               if (tie.played) continue;
-              simulateCupTie(tie, g.clubs, g.players, g.pointSystem, cup.seed);
+              simulateCupTie(tie, g.clubs, g.players, g.pointSystem, cup.seed, {
+                logClubIds: [g.managedClubId], applyInjuries: g.injuriesEnabled,
+              });
               const home = g.clubs[tie.homeClubId];
               const away = g.clubs[tie.awayClubId];
               if (tie.match?.result) {

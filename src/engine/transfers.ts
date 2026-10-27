@@ -2,6 +2,7 @@
 // FOOTBALL MANAGER 1980 — Transfer-Engine (vereinfacht)
 // =============================================================================
 
+import { recordTransfer } from './history';
 import { Player, Club, TransferOffer } from '../types';
 import { bookTransfer } from './finances';
 
@@ -57,6 +58,7 @@ export function makeOffer(
     // Spieler transferieren
     if (sellingClub) sellingClub.playerIds = sellingClub.playerIds.filter((id) => id !== player.id);
     buyingClub.playerIds.push(player.id);
+    recordTransfer(player, sellingClub?.name ?? 'vereinslos', buyingClub.name, amount, transferDate);
     player.clubId = buyingClub.id;
     player.transferListed = false;
     player.contract.weeklyWage = wage;
@@ -98,6 +100,7 @@ export function runAITransfers(
       seller.finances.transferBudget += fee;
       bookTransfer(seller, fee, false, player.fullName, transferDate, seller.isPlayerControlled);
     }
+    recordTransfer(player, seller?.name ?? 'vereinslos', buyer.name, fee, transferDate);
     player.clubId = buyer.id;
     player.transferListed = false;
     news.push(`${player.fullName} wechselt zu ${buyer.name} (${formatDM(fee)}).`);

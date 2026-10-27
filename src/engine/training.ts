@@ -3,6 +3,7 @@
 // Erhöht Attribute je nach Fokus; hohe Intensität -> Müdigkeit/Verletzungsrisiko.
 // =============================================================================
 
+import { recordInjury } from './history';
 import {
   Club, Player, TrainingFocus, AttributeKey, Injury, TrainingReport,
 } from '../types';
@@ -91,6 +92,7 @@ export function trainPlayers(
       const inj = makeTrainingInjury(date);
       p.injury = inj;
       p.availability = 'injured';
+      recordInjury(p, inj);
       report.injuryOccurred = true;
       report.note = `Verletzung im Training: ${inj.description}`;
     } else {

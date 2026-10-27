@@ -246,6 +246,43 @@ export interface PlayerStats {
 }
 
 /** Erzeugt eine leere Statistik. */
+// -----------------------------------------------------------------------------
+// SPIELER-VERLAUF (Profil: Spiele, Stationen, Transfers, Verletzungen, Attribute)
+// -----------------------------------------------------------------------------
+export interface MatchLogEntry {
+  date: string;
+  competition: 'Liga' | 'Pokal' | 'Europapokal';
+  opponent: string;
+  home: boolean;
+  /** Ergebnis aus Sicht des Spielers, z. B. "2:1". */
+  score: string;
+  minutes: number;
+  goals: number;
+  assists: number;
+  /** Note 1.0–6.0 */
+  rating: number;
+  card?: 'Gelb' | 'Gelb-Rot' | 'Rot';
+}
+export interface CareerStation {
+  season: string;
+  clubId: string;
+  clubName: string;
+  appearances: number;
+  goals: number;
+  assists: number;
+  averageRating: number;
+}
+export interface TransferRecord { date: string; fromClub: string; toClub: string; fee: number; }
+export interface InjuryRecord { date: string; type: InjuryType; severity: InjurySeverity; description: string; days: number; fromTraining: boolean; }
+export interface AttributeSnapshot { date: string; label: string; attributes: Partial<Record<AttributeKey, number>>; }
+export interface PlayerHistory {
+  matches?: MatchLogEntry[];
+  stations?: CareerStation[];
+  transfers?: TransferRecord[];
+  injuries?: InjuryRecord[];
+  attributeSnapshots?: AttributeSnapshot[];
+}
+
 export function createEmptyStats(): PlayerStats {
   return {
     appearances: 0,
@@ -439,6 +476,9 @@ export interface Player {
   trainingLoad: number;
   /** Markierung: im aktuellen Transferfenster gelistet / gewünscht. */
   transferListed: boolean;
+
+  /** Verlauf für das Spielerprofil (Spiele, Stationen, Transfers, Verletzungen, Attribute). Optional = alte Spielstände. */
+  history?: PlayerHistory;
 
   // --- Jugendsystem (nur bei Jugendspielern gesetzt) ---
   /** Markierung: Spieler gehört der Jugendakademie an (noch kein A-Kader). */
