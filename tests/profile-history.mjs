@@ -1,3 +1,5 @@
+// Spielt einige Spieltage und fotografiert alle Reiter des Spielerprofils (Ueberhang-Pruefung).
+//   SECS=150 node tests/profile-history.mjs
 import { chromium } from 'playwright';
 import { createServer } from 'node:http'; import { readFile } from 'node:fs/promises'; import { join, extname } from 'node:path';
 const T={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.jpg':'image/jpeg','.svg':'image/svg+xml'};
