@@ -215,3 +215,12 @@
 .dmkt-main b { font-size: 17px; }
 .dmkt-ctrl { display: flex; flex-direction: column; gap: 4px; }
 .dmkt-ctrl input[type=range] { width: 100%; accent-color: var(--accent); }
+
+/* --- Vereinsgelände ----------------------------------------------------- */
+.dfac { display: grid; grid-template-columns: 230px 1fr 260px; gap: 16px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-soft); }
+.dfac-name { display: flex; flex-direction: column; gap: 6px; }
+.dfac-name b { font-size: 17px; }
+.dfac-fx { display: flex; flex-direction: column; gap: 2px; font-size: 15px; }
+.dfac-act { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; text-align: right; }
+.dchip:disabled { opacity: 0.4; cursor: not-allowed; }
+.dstaff-on b { color: var(--accent); }

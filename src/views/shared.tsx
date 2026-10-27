@@ -4,6 +4,7 @@ import { Game } from '../game/state';
 import { Match, Player, POSITION_GROUPS } from '../types';
 import { fmtDateShort, vColor } from '../ui/format';
 import { scoutRange, scoutRangeText } from '../engine/scouting';
+import { DM_PER_EUR, currencyForYear } from '../engine/economy';
 
 export const squadOf = (g: Game, clubId = g.managedClubId): Player[] =>
   (g.clubs[clubId]?.playerIds ?? []).map((id) => g.players[id]).filter(Boolean);
@@ -78,4 +79,10 @@ export const scoutMid = (p: Player) => { const [a, b] = scoutRange(p); return (a
 /** Scout-Einschätzung des Potenzials als Text-Spanne, z. B. „3,5–4,5 ★“. */
 export function ScoutStars({ p }: { p: Player }) {
   return <span className="dscout" title="Scouting-Einschätzung des Potenzials">{scoutRangeText(p)}</span>;
+}
+
+/** Kleinbeträge mit zwei Nachkommastellen (z. B. Netto pro Besucher), DM bzw. EUR ab 2002. */
+export function fmtSmallMoney(dm: number, year: number): string {
+  const eur = currencyForYear(year) === 'EUR';
+  return `${(eur ? dm / DM_PER_EUR : dm).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${eur ? '€' : 'DM'}`;
 }

@@ -1,18 +1,21 @@
-import ClubCrest from '../../components/ClubCrest';
+import { type IconName } from '../../components/Icon';
 import { STAFF_BY_ID, STAFF_CAPS, STAFF_GROUP_META, STAFF_ROLES, computeStaffEffects, staffAvailable, staffMonthlySalary, staffMonthlyTotal } from '../../data/staff';
 import { economyScale, yearOf } from '../../engine/economy';
 import { Game } from '../../game/state';
-import { PageHead } from '../../ui/PageHead';
+import { DashBox, DashPage, Kpi, Meter } from '../../ui/DashPage';
 import { fmtDM } from '../../ui/format';
 import { useState } from 'react';
 
 // =============================================================================
-// MITARBEITER (Personal) — anstellbare Rollen, epochenabhängig (Block p11)
+// MITARBEITER — Wirkung des Stabs + je Bereich eine Box mit anstellbaren Rollen
 // =============================================================================
+export type StaffGroupKey = 'trainer' | 'medical' | 'scouting' | 'media' | 'admin';
+const GROUP_ICON: Record<StaffGroupKey, IconName> = {
+  trainer: 'training', medical: 'facilities', scouting: 'watchlist', media: 'presse', admin: 'contracts',
+};
+
 export function StaffView({ g, onChange }: { g: Game; onChange: () => void }) {
-  const [showFuture, setShowFuture] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
-  const club = g.clubs[g.managedClubId];
   const curYear = yearOf(g.calendar.currentDate);
   const scale = economyScale(curYear);
   const hired = new Set(g.hiredStaff ?? []);
@@ -24,100 +27,60 @@ export function StaffView({ g, onChange }: { g: Game; onChange: () => void }) {
     if (!role) return;
     const list = g.hiredStaff ?? (g.hiredStaff = []);
     const idx = list.indexOf(id);
-    if (idx >= 0) {
-      list.splice(idx, 1);
-      setMsg(`✔ ${role.name} entlassen.`);
-    } else {
-      list.push(id);
-      setMsg(`✔ ${role.name} angestellt (${fmtDM(staffMonthlySalary(role, scale))}/Monat).`);
-    }
+    if (idx >= 0) { list.splice(idx, 1); setMsg(`${role.name} entlassen.`); }
+    else { list.push(id); setMsg(`${role.name} angestellt (${fmtDM(staffMonthlySalary(role, scale))}/Monat).`); }
     onChange();
-    setTimeout(() => setMsg(null), 3500);
   };
 
   const groups: StaffGroupKey[] = ['trainer', 'medical', 'scouting', 'media', 'admin'];
 
   return (
-    <div className="page">
-      <PageHead
-        left={<ClubCrest club={club} size={27} />}
-        title="Mitarbeiter"
-        right={<span className="dim">Personalkosten: <b style={{ color: 'var(--accent)' }}>{fmtDM(monthly)}</b>/Monat</span>}
-      />
-
-      {/* Aggregierte, gedeckelte Effekte */}
-      <div className="card mt12">
-        <div className="section-title">Wirkung des Mitarbeiterstabs</div>
-        <div className="staff-fx-grid">
-          <StaffFxPill label="Verletzungsrisiko" value={`−${Math.round(fx.injuryReduction * 100)} %`} cap={`max −${Math.round(STAFF_CAPS.injuryReduction * 100)} %`} />
-          <StaffFxPill label="Ausfallzeit (Reha)" value={`−${Math.round(fx.rehabReduction * 100)} %`} cap={`max −${Math.round(STAFF_CAPS.rehabReduction * 100)} %`} />
-          <StaffFxPill label="Regeneration" value={`+${fx.recovery.toFixed(1)}/Tag`} cap={`max +${STAFF_CAPS.recovery}`} />
-          <StaffFxPill label="Scouting-Genauigkeit" value={`+${Math.round(fx.scouting * 100)} %`} cap={`max +${Math.round(STAFF_CAPS.scouting * 100)} %`} />
-          <StaffFxPill label="Reichweite / Fanbindung" value={`+${Math.round(fx.reach * 100)} %`} cap={`max +${Math.round(STAFF_CAPS.reach * 100)} %`} />
-        </div>
-        <div className="dim2 mini" style={{ marginTop: 8 }}>
-          Alle Effekte sind gedeckelt und wirken nur für deinen Verein. Reha-Verkürzung und Regeneration
-          sind im Spiel direkt spürbar (kürzere Ausfälle, schnellere Fitness), die Scouting-Genauigkeit
-          präzisiert die Talentbewertung im Nachwuchs. Es gibt bewusst KEINEN direkten Sieg-Bonus.
-        </div>
-      </div>
-
-      <label className="future-toggle mt12">
-        <input type="checkbox" checked={showFuture} onChange={(e) => setShowFuture(e.target.checked)} />
-        <span>Zukunft anzeigen</span>
-        <span className="dim2 mini">— zeigt Rollen späterer Epochen (ausgegraut, noch nicht anstellbar).</span>
-      </label>
-
-      {msg && <div className="card mt12" style={{ borderColor: 'var(--accent)' }}>{msg}</div>}
+    <DashPage>
+      <DashBox title="Wirkung des Stabs" icon="staff" right={`${hired.size} angestellt`}>
+        <div className="dkpis"><Kpi value={fmtDM(monthly)} label="Personalkosten / Monat" /></div>
+        <Meter label="Verletzungsrisiko" value={fx.injuryReduction} max={STAFF_CAPS.injuryReduction} text={`−${Math.round(fx.injuryReduction * 100)} %`} />
+        <Meter label="Ausfallzeit" value={fx.rehabReduction} max={STAFF_CAPS.rehabReduction} text={`−${Math.round(fx.rehabReduction * 100)} %`} />
+        <Meter label="Regeneration" value={fx.recovery} max={STAFF_CAPS.recovery} text={`+${fx.recovery.toFixed(1)}/Tag`} />
+        <Meter label="Scouting" value={fx.scouting} max={STAFF_CAPS.scouting} text={`+${Math.round(fx.scouting * 100)} %`} />
+        <Meter label="Reichweite" value={fx.reach} max={STAFF_CAPS.reach} text={`+${Math.round(fx.reach * 100)} %`} />
+        {msg && <div className="dnote mt8" style={{ color: 'var(--accent)', fontSize: 15 }}>{msg}</div>}
+        <div className="dnote mt8">Balken = Anteil am Höchstwert. Alle Effekte sind gedeckelt, einen direkten Sieg-Bonus gibt es nicht.</div>
+      </DashBox>
 
       {groups.map((grp) => {
-        const roles = STAFF_ROLES.filter((r) => r.group === grp)
-          .filter((r) => staffAvailable(r, curYear) || showFuture);
-        if (roles.length === 0) return null;
-        const meta = STAFF_GROUP_META[grp];
+        const roles = STAFF_ROLES.filter((r) => r.group === grp);
+        const now = roles.filter((r) => staffAvailable(r, curYear));
+        const later = roles.filter((r) => !staffAvailable(r, curYear)).sort((a, b) => a.unlockYear - b.unlockYear);
         return (
-          <div key={grp} className="mt12">
-            <div className="section-title">{meta.icon} {meta.label}</div>
-            <div className="staff-grid">
-              {roles.map((r) => {
-                const avail = staffAvailable(r, curYear);
-                const isHired = hired.has(r.id);
-                const salary = staffMonthlySalary(r, scale);
-                return (
-                  <div key={r.id} className={`card staff-card ${!avail ? 'fac-locked' : ''} ${isHired ? 'staff-hired' : ''}`}>
-                    <div className="staff-card-head">
-                      <span className="staff-name">{r.name}</span>
-                      <span className="pill staff-cc">{r.costClass}</span>
-                    </div>
-                    <div className="dim mini staff-effect">{r.effect}</div>
-                    <div className="staff-card-foot">
-                      {avail ? (
-                        <>
-                          <span className="mini">{fmtDM(salary)}<span className="dim2">/Monat</span></span>
-                          <button
-                            className={`btn btn-sm ${isHired ? 'btn-danger' : ''}`}
-                            style={{ marginLeft: 'auto' }}
-                            onClick={() => toggle(r.id)}
-                          >
-                            {isHired ? '✕ Entlassen' : '＋ Anstellen'}
-                          </button>
-                        </>
-                      ) : (
-                        <span className="pill" style={{ color: 'var(--yellow)' }}>ab {r.unlockYear}</span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          <DashBox key={grp} title={STAFF_GROUP_META[grp].label} icon={GROUP_ICON[grp]}
+            right={`${now.filter((r) => hired.has(r.id)).length}/${now.length}`}>
+            {now.map((r) => {
+              const isHired = hired.has(r.id);
+              return (
+                <div key={r.id} className={`dlist-row ${isHired ? 'dstaff-on' : ''}`} style={{ alignItems: 'flex-start' }}>
+                  <span className="grow">
+                    <b>{r.name}</b> <span className="muted">· {r.costClass} · {fmtDM(staffMonthlySalary(r, scale))}/Monat</span>
+                    <span className="dnote" style={{ display: 'block' }}>{r.effect}</span>
+                  </span>
+                  <button className={`dchip ${isHired ? 'on' : ''}`} onClick={() => toggle(r.id)}>{isHired ? 'Entlassen' : 'Anstellen'}</button>
+                </div>
+              );
+            })}
+            {later.length > 0 && <>
+              <div className="dsec">Spätere Epochen</div>
+              {later.map((r) => (
+                <div key={r.id} className="dlist-row" style={{ opacity: 0.5 }}>
+                  <span className="grow">{r.name}</span><span className="meta">ab {r.unlockYear}</span>
+                </div>
+              ))}
+            </>}
+            {now.length === 0 && later.length === 0 && <div className="dnote">Keine Rollen.</div>}
+          </DashBox>
         );
       })}
-    </div>
+    </DashPage>
   );
 }
-
-export type StaffGroupKey = 'trainer' | 'medical' | 'scouting' | 'media' | 'admin';
 
 export function StaffFxPill({ label, value, cap }: { label: string; value: string; cap: string }) {
   return (

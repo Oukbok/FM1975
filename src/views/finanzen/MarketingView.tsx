@@ -1,11 +1,12 @@
 import { MARKETING_AREAS, MARKETING_BY_ID, areaBenefit, areaMonthlyCostBase, marketingAvailable, marketingIncomeBase, marketingMonthlyBase } from '../../data/marketing';
-import { DM_PER_EUR, currencyForYear, economyScale, yearOf } from '../../engine/economy';
+import { economyScale, yearOf } from '../../engine/economy';
 import { CATERING_LEASE, CATERING_NETPERHEAD, CATERING_UPKEEP, cateringMatchIncome, expectedAttendance, matchdayIncome } from '../../engine/finances';
 import { MAX_LEVEL } from '../../engine/infrastructure';
 import { Game } from '../../game/state';
 import { CateringMode } from '../../types';
 import { DashBox, DashPage, KV, Kpi } from '../../ui/DashPage';
 import { fmtDM, fmtDMfull } from '../../ui/format';
+import { fmtSmallMoney } from '../shared';
 
 // =============================================================================
 // MARKETING — Werbe-Regler je Kanal, epochenabhängig (Block p11)
@@ -14,8 +15,6 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
   const club = g.clubs[g.managedClubId];
   const curYear = yearOf(g.calendar.currentDate);
   const scale = economyScale(curYear);
-  const eur = currencyForYear(curYear) === 'EUR';
-  const perHead = (dm: number) => `${(eur ? dm / DM_PER_EUR : dm).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${eur ? '€' : 'DM'}`;
   const budgets = g.marketing ?? (g.marketing = {});
 
   const setUnits = (id: string, units: number) => {
@@ -106,7 +105,7 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
             <button key={m} className={`dchip ${cateringMode === m ? 'on' : ''}`} onClick={() => setCateringMode(m)}>{CATERING_MODE_LABEL[m]}</button>
           ))}
         </div>
-        <KV k="Netto pro Besucher" v={perHead(CATERING_NETPERHEAD[cateringMode][cateringLevel] * scale)} />
+        <KV k="Netto pro Besucher" v={fmtSmallMoney(CATERING_NETPERHEAD[cateringMode][cateringLevel] * scale, curYear)} />
         <KV k="Fixkosten / Monat" v={`−${fmtDMfull(Math.round(CATERING_UPKEEP[cateringMode][cateringLevel] * scale))}`} color="var(--red)" />
         {cateringMode === 'verpachtung' && <KV k="Pacht / Monat" v={`+${fmtDMfull(Math.round(CATERING_LEASE[cateringLevel] * scale))}`} color="var(--green)" />}
         <div className="dsec">Pro Heimspiel (erwartet)</div>

@@ -1,12 +1,10 @@
-import ClubCrest from '../../components/ClubCrest';
-import Icon from '../../components/Icon';
 import { currencyForYear, economyScale, yearOf } from '../../engine/economy';
-import { CATERING_LEASE, CATERING_NETPERHEAD, CATERING_UPKEEP } from '../../engine/finances';
+import { CATERING_UPKEEP } from '../../engine/finances';
 import { FACILITIES, FACILITY_BY_KEY, FAC_UPKEEP_BASE, LEVEL_MULT, MAX_LEVEL, canUpgrade, upgradeCost, upgradeFacility } from '../../engine/infrastructure';
 import { makeMessage, pushMessage } from '../../engine/messages';
 import { Game } from '../../game/state';
 import { CateringMode, FacilityKey } from '../../types';
-import { PageHead } from '../../ui/PageHead';
+import { DashBox, DashPage, KV, Kpi } from '../../ui/DashPage';
 import { fmtDM } from '../../ui/format';
 import { useState } from 'react';
 
@@ -15,15 +13,11 @@ import { useState } from 'react';
 // =============================================================================
 export function FacilitiesView({ g, onChange }: { g: Game; onChange: () => void }) {
   const [msg, setMsg] = useState<string | null>(null);
-  const [showFuture, setShowFuture] = useState(false);
   const club = g.clubs[g.managedClubId];
   const infra = club.infrastructure;
   const curYear = yearOf(g.calendar.currentDate);
   const scale = economyScale(curYear);
   const cateringMode: CateringMode = club.commerce?.cateringMode ?? 'verpachtung';
-  const CATERING_MODE_LABEL: Record<CateringMode, string> = {
-    eigenbetrieb: 'Eigenbetrieb', umsatz: 'Umsatzbeteiligung', verpachtung: 'Verpachtung',
-  };
   const FUTURE_UPKEEP_KEYS: FacilityKey[] = ['rehaCenter', 'nlz', 'performanceCenter', 'dataCenter'];
 
   // Monatliche Fixkosten (Unterhalt) einer einzelnen Einrichtung (era-skaliert).
@@ -35,12 +29,6 @@ export function FacilitiesView({ g, onChange }: { g: Game; onChange: () => void 
     if (!base) return 0;
     if (FUTURE_UPKEEP_KEYS.includes(key) && lvl < 2) return 0;
     return Math.round(base * LEVEL_MULT[lvl] * scale);
-  };
-
-  const setCateringMode = (mode: CateringMode) => {
-    const com = club.commerce ?? (club.commerce = { cateringMode: 'verpachtung' });
-    com.cateringMode = mode;
-    onChange();
   };
 
   const doUpgrade = (key: typeof FACILITIES[number]['key']) => {
@@ -56,146 +44,70 @@ export function FacilitiesView({ g, onChange }: { g: Game; onChange: () => void 
           + `Neuer Effekt: ${def.effectAt(res.newLevel)}\n`
           + `Neuer Kontostand: ${fmtDM(club.finances.balance)}`,
       }));
-      setMsg(`✔ ${def.name} auf Stufe ${res.newLevel} ausgebaut (${fmtDM(res.cost)}).`);
+      setMsg(`${def.name} auf Stufe ${res.newLevel} ausgebaut (${fmtDM(res.cost)}).`);
       onChange();
     } else {
-      setMsg(`⚠ ${res.reason}`);
+      setMsg(res.reason ?? 'Ausbau nicht möglich.');
     }
-    setTimeout(() => setMsg(null), 4000);
   };
 
+  const unlockedDefs = FACILITIES.filter((d) => !d.unlockYear || curYear >= d.unlockYear);
+  const futureDefs = FACILITIES.filter((d) => d.unlockYear && curYear < d.unlockYear).sort((a, b) => (a.unlockYear ?? 0) - (b.unlockYear ?? 0));
+  const totalUpkeep = unlockedDefs.reduce((sum, d) => sum + facMonthlyUpkeep(d.key, infra[d.key] as number), 0);
+  const upgradable = unlockedDefs.filter((d) => (infra[d.key] as number) < MAX_LEVEL)
+    .map((d) => ({ d, cost: upgradeCost(d.key, (infra[d.key] as number) + 1) })).sort((a, b) => a.cost - b.cost);
+  const avgLevel = unlockedDefs.length ? unlockedDefs.reduce((s2, d) => s2 + (infra[d.key] as number), 0) / unlockedDefs.length : 0;
+
   return (
-    <div className="page">
-      <PageHead
-        left={<ClubCrest club={club} size={27} />}
-        title="Vereinsgelände"
-        right={<span className="dim">Kontostand: <b style={{ color: 'var(--accent)' }}>{fmtDM(club.finances.balance)}</b></span>}
-      />
-
-      <label className="future-toggle mt12">
-        <input type="checkbox" checked={showFuture} onChange={(e) => setShowFuture(e.target.checked)} />
-        <span>Zukunft anzeigen</span>
-        <span className="dim2 mini">— zeigt noch nicht verfügbare Einrichtungen späterer Epochen (ausgegraut).</span>
-      </label>
-
-      {msg && <div className="card mt12" style={{ borderColor: 'var(--accent)' }}>{msg}</div>}
-
-      <div className="fac-grid mt12">
-        {FACILITIES.filter((def) => {
-          const unlocked = !def.unlockYear || curYear >= def.unlockYear;
-          return unlocked || showFuture;
-        }).map((def) => {
-          const unlocked = !def.unlockYear || curYear >= def.unlockYear;
+    <DashPage>
+      <DashBox title="Einrichtungen" icon="facilities" span={2} rows={2} right={`Ø Stufe ${avgLevel.toFixed(1)} / ${MAX_LEVEL}`}>
+        {unlockedDefs.map((def) => {
           const level = infra[def.key] as number;
           const check = canUpgrade(club, def.key);
           const atMax = level >= MAX_LEVEL;
           const nextCost = atMax ? 0 : upgradeCost(def.key, level + 1);
-          const affordable = check.ok && unlocked;
-          if (!unlocked) {
-            return (
-              <div key={def.key} className="card fac-card fac-locked">
-                <div className="fac-head">
-                  <span className="fac-ico">{def.iconName ? <Icon name={def.iconName} /> : def.icon}</span>
-                  <div style={{ flex: 1 }}>
-                    <div className="fac-name">{def.name}</div>
-                    <div className="fac-level">
-                      <span className="pill" style={{ color: 'var(--yellow)' }}>ab {def.unlockYear}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="dim mini fac-desc">{def.desc}</div>
-                <div className="fac-foot">
-                  <span className="dim2 mini">Noch nicht verfügbar — schaltet sich {def.unlockYear} frei.</span>
-                </div>
-              </div>
-            );
-          }
+          const upkeep = facMonthlyUpkeep(def.key, level);
           return (
-            <div key={def.key} className="card fac-card">
-              <div className="fac-head">
-                <span className="fac-ico">{def.iconName ? <Icon name={def.iconName} /> : def.icon}</span>
-                <div style={{ flex: 1 }}>
-                  <div className="fac-name">{def.name}</div>
-                  <div className="fac-level">
-                    {Array.from({ length: MAX_LEVEL }).map((_, i) => (
-                      <span key={i} className={`fac-pip ${i < level ? 'on' : ''}`} />
-                    ))}
-                    <span className="dim mini" style={{ marginLeft: 8 }}>Stufe {level}/{MAX_LEVEL}</span>
-                  </div>
-                </div>
+            <div key={def.key} className="dfac">
+              <div className="dfac-name">
+                <b>{def.name}</b>
+                <span className="dpips">{Array.from({ length: MAX_LEVEL }).map((_, i) => <i key={i} className={i < level ? 'on' : ''} />)}</span>
               </div>
-              <div className="dim mini fac-desc">{def.desc}</div>
-
-              <div className="fac-effect">
-                <div className="fac-effect-row">
-                  <span className="dim2 mini">Aktuell:</span>
-                  <span className="mini">{def.effectAt(level)}</span>
-                </div>
-                {!atMax && (
-                  <div className="fac-effect-row">
-                    <span className="dim2 mini">Nach Ausbau:</span>
-                    <span className="mini accent-text">{def.effectAt(level + 1)}</span>
-                  </div>
-                )}
-                <div className="fac-effect-row">
-                  <span className="dim2 mini">Fixkosten / Monat:</span>
-                  <span className="mini red">
-                    {facMonthlyUpkeep(def.key, level) > 0 ? `−${fmtDM(facMonthlyUpkeep(def.key, level))}` : (def.key === 'stadium' ? 'im Stadionunterhalt' : '—')}
-                  </span>
-                </div>
+              <div className="dfac-fx">
+                <span>{def.effectAt(level)}</span>
+                {!atMax && <span className="dnote" style={{ color: 'var(--accent)' }}>Stufe {level + 1}: {def.effectAt(level + 1)}</span>}
+                <span className="dnote">Fixkosten: {upkeep > 0 ? `${fmtDM(upkeep)}/Monat` : def.key === 'stadium' ? 'im Stadionunterhalt' : 'keine'}</span>
               </div>
-
-              {def.key === 'catering' && (
-                <div className="fac-effect" style={{ marginTop: 6 }}>
-                  <div className="dim2 mini" style={{ marginBottom: 4 }}>Betriebsform (Netto/Besucher · Fixkosten/Monat):</div>
-                  <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                    {(['eigenbetrieb', 'umsatz', 'verpachtung'] as CateringMode[]).map((m) => (
-                      <button
-                        key={m}
-                        className={`btn btn-sm ${cateringMode === m ? 'btn-primary' : 'btn-ghost'}`}
-                        onClick={() => setCateringMode(m)}
-                        title={`${fmtDM(Math.round(CATERING_NETPERHEAD[m][level] * scale))}/Besucher · −${fmtDM(Math.round(CATERING_UPKEEP[m][level] * scale))}/Monat${m === 'verpachtung' ? ` · +${fmtDM(Math.round(CATERING_LEASE[level] * scale))} Pacht/Monat` : ''}`}
-                      >
-                        {CATERING_MODE_LABEL[m]}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="mini dim" style={{ marginTop: 4 }}>
-                    Aktuell <b>{CATERING_MODE_LABEL[cateringMode]}</b>: {fmtDM(Math.round(CATERING_NETPERHEAD[cateringMode][level] * scale))}/Besucher
-                    {cateringMode === 'verpachtung' && <> · +{fmtDM(Math.round(CATERING_LEASE[level] * scale))} Pacht/Monat</>}
-                  </div>
-                </div>
-              )}
-
-              <div className="fac-foot">
-                {atMax ? (
-                  <span className="pill" style={{ color: 'var(--green)' }}>Maximalstufe erreicht</span>
-                ) : (
-                  <>
-                    <span className="mini">
-                      Ausbau auf Stufe {level + 1}: <b className={affordable ? 'accent-text' : 'red'}>{fmtDM(nextCost)}</b>
-                    </span>
-                    <button className="btn btn-sm" disabled={!affordable} onClick={() => doUpgrade(def.key)} style={{ marginLeft: 'auto' }}>
-                      🔨 Ausbauen
-                    </button>
-                  </>
-                )}
+              <div className="dfac-act">
+                {atMax ? <span className="dchip on">Maximum</span> : <>
+                  <button className="dchip on" disabled={!check.ok} onClick={() => doUpgrade(def.key)} title={check.ok ? '' : check.reason}>Ausbauen {fmtDM(nextCost)}</button>
+                  {!check.ok && <span className="dnote" style={{ color: 'var(--red)' }}>{check.reason}</span>}
+                </>}
               </div>
-              {!atMax && !affordable && (
-                <div className="red mini" style={{ marginTop: 6 }}>{check.reason}</div>
-              )}
             </div>
           );
         })}
-      </div>
+      </DashBox>
 
-      <div className="dim2 mini mt12">
-        Alle Ausbaukosten werden sofort vom Vereinskonto abgebucht (Währung ära-gerecht: {currencyForYear(yearOf(g.calendar.currentDate))}). Effekte:
-        <b> Stadion</b> → mehr Zuschauerkapazität & Stadioneinnahmen · <b>Trainingszentrum</b> → schnellere Kaderentwicklung ·
-        <b> Jugendakademie</b> → mehr & bessere Talente · <b>Medizin</b> → schnellere Regeneration & kürzere Ausfälle ·
-        <b> Fanshop</b> → höherer Fanartikel-Erlös · <b>Catering</b> → Pro-Kopf-Erlös je Heimspiel (Betriebsform waehlbar).
-        Jede gebaute Einrichtung verursacht monatliche <b>Fixkosten</b> (oben je Einrichtung ausgewiesen), die im Monatsabschluss gebucht werden.
-      </div>
-    </div>
+      <DashBox title="Ausbau-Übersicht" icon="finances">
+        <div className="dkpis">
+          <Kpi value={fmtDM(club.finances.balance)} label="Kontostand" />
+          <Kpi value={fmtDM(totalUpkeep)} label="Fixkosten / Monat" color="var(--red)" />
+        </div>
+        <div className="dsec">Günstigste nächste Ausbauten</div>
+        {upgradable.slice(0, 4).map(({ d, cost }) => <KV key={d.key} k={`${d.name} → Stufe ${(infra[d.key] as number) + 1}`} v={fmtDM(cost)} />)}
+        {msg && <div className="dnote mt8" style={{ color: 'var(--accent)', fontSize: 15 }}>{msg}</div>}
+        <div className="dnote mt8">Ausbaukosten werden sofort abgebucht ({currencyForYear(curYear)}). Die Catering-Betriebsform stellst du unter „Marketing“ ein.</div>
+      </DashBox>
+
+      <DashBox title="Künftige Einrichtungen" icon="kalender" right={`${futureDefs.length}`}>
+        {futureDefs.length ? futureDefs.map((d) => (
+          <div key={d.key} className="dlist-row" style={{ alignItems: 'flex-start' }}>
+            <span className="dchip" style={{ minWidth: 70, textAlign: 'center' }}>ab {d.unlockYear}</span>
+            <span className="grow"><b>{d.name}</b><span className="dnote" style={{ display: 'block' }}>{d.desc}</span></span>
+          </div>
+        )) : <div className="dnote">Alle Einrichtungen sind verfügbar.</div>}
+      </DashBox>
+    </DashPage>
   );
 }
