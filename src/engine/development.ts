@@ -12,6 +12,7 @@
 //    sind eine Scout-Einschätzung mit Spanne (siehe engine/scouting.ts).
 // Alle Vereine nutzen dieselbe Formel – nur Training/Spielzeit unterscheiden sich.
 // =============================================================================
+import { applyProGem } from './gems';
 import { Player, Club, AttributeKey, potentialToStars, clampStars } from '../types';
 import { weightsFor, positionSuitability } from './positions';
 import { updateScoutEstimate } from './scouting';
@@ -29,7 +30,7 @@ export interface RatingResult {
   change: number;
   isUserClub: boolean;
   /** Besonderes Ergebnis für die Einblendung. */
-  tag?: 'Durchbruch' | 'Spätzünder' | 'Knick';
+  tag?: 'Durchbruch' | 'Spätzünder' | 'Knick' | 'Juwel';
 }
 
 export type RatingType = 'small' | 'medium' | 'large';
@@ -300,7 +301,11 @@ export function runRatingCeremony(
   for (const p of Object.values(players)) {
     if (p.isYouth) continue;
     const old = p.overall;
-    const { change, tag } = applyRatingToPlayer(p, type, dateISO);
+    // Verborgenes Juwel: der Knoten platzt zur Großen Bewertung (engine/gems.ts).
+    const gemBurst = type === 'large' && applyProGem(p);
+    const r = applyRatingToPlayer(p, type, dateISO);
+    const change = r.change;
+    const tag: RatingResult['tag'] = gemBurst ? 'Juwel' : r.tag;
     if (type !== 'small') updateScoutEstimate(p, managedIds.has(p.id) ? scoutQuality : 0.2, managedIds.has(p.id));
     if (managedIds.has(p.id)) {
       results.push({

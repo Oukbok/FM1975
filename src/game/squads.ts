@@ -7,6 +7,7 @@ import { Game } from './state';
 import { createPlayer } from '../engine/playerFactory';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { refreshOverall } from '../engine/development';
+import { GEM_CHANCE_YOUNG_PRO, maybeMakeGem } from '../engine/gems';
 
 const TEMPLATE: Position[] = ['TW', 'TW', 'LIB', 'VS', 'VS', 'AV', 'AV', 'DM', 'ZM', 'ZM', 'OM', 'FL', 'FL', 'MS', 'MS', 'HS', 'ZM', 'AV', 'VS', 'FL'];
 const MIN_SQUAD = 20;
@@ -88,6 +89,7 @@ export function manageSquads(game: Game, date: string, autoManageMine = false): 
         year, date, rng: Math.random, shirt: 0,
       });
       refreshOverall(p);
+      if (age <= 20) maybeMakeGem(p, GEM_CHANCE_YOUNG_PRO);
       game.players[p.id] = p;
       club.playerIds.push(p.id);
     }

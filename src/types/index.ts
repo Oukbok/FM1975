@@ -371,6 +371,10 @@ export interface PlayerDevelopment {
   lastMinutesSeen?: number;
   /** Fester Schätzfehler der Scouts (Sterne, −0,5 … +0,5). */
   scoutBias?: number;
+  /** Verborgenes Juwel: entfaltet mit `boostAge` einen Schub von `boost` Potenzialpunkten. */
+  gem?: { boostAge: number; boost: number; done?: boolean };
+  /** Fördervertrag (Jugend): schützt vor Abwerbung, bis zur Saison (Startjahr) gültig. */
+  protectedUntil?: number;
   /**
    * VERSTECKTER Entwicklungs-Akkumulator je Attribut (in 0.1-Schritten).
    * Training füllt diese Werte kontinuierlich auf. Ein sichtbarer +1 auf das

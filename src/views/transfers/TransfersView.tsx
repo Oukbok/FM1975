@@ -4,6 +4,7 @@ import { CalendarEngine } from '../../engine/calendar';
 import { getAvailablePlayers, makeOffer } from '../../engine/transfers';
 import { Game } from '../../game/state';
 import { Player } from '../../types';
+import { YouthScoutBox } from './YouthScoutBox';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtDM, vColor, fmtPrice } from '../../ui/format';
 import { GROUP_DE, PlayerRow, ScoutStars, avg, groupOf, monthsUntil, scoutMid, squadOf } from '../shared';
@@ -127,7 +128,7 @@ export function TransfersView({ g, onDone }: { g: Game; onDone: () => void }) {
 
 // --- BEOBACHTUNGSLISTE (Scouting-Vorschläge aus der Liga) --------------------
 type ScoutMode = 'contract' | 'young' | 'need';
-export function BeobachtungView({ g }: { g: Game }) {
+export function BeobachtungView({ g, onChange = () => {} }: { g: Game; onChange?: () => void }) {
   const [mode, setMode] = useState<ScoutMode>('need');
   const { open, modal } = usePlayerModal(g);
   const today = g.calendar.currentDate;
@@ -161,7 +162,7 @@ export function BeobachtungView({ g }: { g: Game }) {
         <div className="dnote mt8">Eine eigene Merkliste mit Scouting-Berichten folgt in einem späteren Ausbau.</div>
       </DashBox>
 
-      <NeedsBox g={g} />
+      <YouthScoutBox g={g} onChange={onChange} />
       {modal}
     </DashPage>
   );

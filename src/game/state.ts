@@ -78,6 +78,8 @@ export interface Game {
   foerderSpieler?: string[];
   /** Stand der Entwicklungspunkte beim letzten Monatsbericht (Spieler-ID → Punkte). */
   devReportSnapshot?: Record<string, number>;
+  /** Angesprochene fremde Talente: Spieler-ID → Saison (Startjahr). */
+  youthApproaches?: Record<string, number>;
   /** Marketing-Budget je Bereich: Bereichs-ID → Anzahl Einheiten (0 = aus). */
   marketing: Record<string, number>;
   /** Geplante Aktivitäten (Trainingslager, Freundschaftsspiele, Teambuilding). */

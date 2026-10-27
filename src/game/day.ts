@@ -24,6 +24,7 @@ import { makeMessage, pushMessage } from '../engine/messages';
 import { dailyRecovery } from '../engine/training';
 import { runAITransfers, setTransferDate } from '../engine/transfers';
 import { applyDailyTraining } from '../engine/weeklyTraining';
+import { applyYouthGem, GEM_CHANCE_YOUTH, maybeMakeGem } from '../engine/gems';
 import { academyIntake, ageYouthPlayers, developYouthWeekly, graduateYouth } from '../engine/youth';
 import { cupNextDrawMessage, cupResultMessage, euroDrawMessage, euroResultMessage, euroWinnerChronicle } from './competitions';
 import { emitMatchMessage, simulateMatchday, startNextSeason } from './season';
@@ -362,11 +363,24 @@ export function processDay(g: Game, ui: DayUi): boolean {
 
         // 1) Alle Talente rücken einen Jahrgang auf (Alter +1, Altersklasse steigt).
         ageYouthPlayers(club, g.youthPlayers);
+        // Verborgene Juwelen der Jugend: mit 18/19 platzt der Knoten.
+        for (const yid of club.youthPlayerIds) {
+          const yp = g.youthPlayers[yid];
+          if (yp && applyYouthGem(yp) && isMine) {
+            pushMessage(g.messages, makeMessage({
+              date: today, category: 'training', from: 'Leiter Jugendakademie',
+              subject: `${yp.fullName} macht einen gewaltigen Sprung`,
+              shortText: 'Ein Talent, das wir unterschätzt haben?',
+              bodyText: `Bei ${yp.fullName} (${yp.naturalPosition}, ${yp.age}) ist im Sommer der Knoten geplatzt. Im Training zeigt er Dinge, die wir ihm nicht zugetraut hätten. Unsere Scouts werden ihre Einschätzung nach oben korrigieren.`,
+            }));
+          }
+        }
         // 2) Jahrgangsabschluss: A-Jugend (nun ≥20) verlässt die Akademie –
         //    die Besten werden hochgezogen, der Rest verlässt den Verein.
         const grad = graduateYouth(club, g.players, g.youthPlayers, isMine);
         // 3) Neuer jüngster Jahrgang (G-Jugend/Bambini, 7 Jahre) rückt nach.
         const cohort = academyIntake(club, today, `${yearNow}`);
+        for (const yp of cohort) maybeMakeGem(yp, GEM_CHANCE_YOUTH);
         for (const yp of cohort) {
           g.youthPlayers[yp.id] = yp;
           club.youthPlayerIds.push(yp.id);

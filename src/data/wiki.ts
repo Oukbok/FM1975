@@ -1239,6 +1239,28 @@ Altersklasse selbst wird nicht gespeichert, sondern stets aus dem Alter abgeleit
 automatisch korrekt ein.`,
   },
   {
+    id: 'youth-gems-scouting',
+    category: 'youth',
+    title: 'Verborgene Juwelen & Talente anderer Vereine',
+    keywords: ['juwel', 'verborgen', 'spätzünder', 'talent', 'abwerben', 'fördervertrag', 'ausbildungsentschädigung', 'scouting', 'jugend', 'heimat'],
+    body: `## Verborgene Juwelen
+- Etwa jedes 40. Talent eines Jahrgangs (und selten ein junger Profi) ist ein **verborgenes Juwel**: Lange wirkt es unauffällig, die Scouts sehen nur ein normales Potenzial.
+- Mit **18 oder 19 Jahren platzt der Knoten**: Das Potenzial steigt um 7–13 Punkte, Profis bekommen zur Großen Saison-Bewertung zusätzlich einen Entwicklungsschub (Kennzeichen **Juwel**).
+- Erst danach korrigieren die Scouts ihre Einschätzung. Wer einem unscheinbaren Talent Spielzeit und Geduld schenkt, wird manchmal belohnt – sicher erkennen kann ein Juwel niemand.
+
+## Talente anderer Vereine
+- Unter **Transfers → Beobachtungsliste** zeigen deine Scouts Talente aus fremden Akademien. Wie viele Akademien sie im Blick haben, hängt vom **Scouting-Personal** (und später vom Datenzentrum) ab; die Sichtungen wechseln monatlich.
+- **Mindestalter** für einen Wechsel: bis 1990 16 Jahre, bis 2010 15, danach 14.
+- Pro Talent und Saison hast du **einen Versuch**. Hürden:
+  - **Blockade:** Vereine geben ihre zwei größten Talente nicht frei, wenn sie nicht deutlich kleiner sind als du. Ab 1990 binden sie Talente mit **Förderverträgen**.
+  - **Wechselwille:** Ansehen beider Vereine, Qualität der Akademien, Anpassungsfähigkeit und Alter zählen; wer in eine andere Stadt müsste, bleibt lieber in der Heimat.
+  - **Ausbildungsentschädigung:** abhängig vom geschätzten Potenzial, ab 2000 deutlich teurer; sie geht vom Transferbudget ab.
+
+## Deine Talente schützen
+- Größere Vereine versuchen zum Saisonwechsel, deine besten Talente (ab ca. 3,75 Sterne, bis 18 Jahre) abzuwerben – ab 2010 häufiger. Du erhältst dann eine Ausbildungsentschädigung.
+- Ab 1990 schützt ein **Fördervertrag** (Jugend → Talent öffnen) für ein Jahr. Er kostet jährlich, je nach Potenzial.`,
+  },
+  {
     id: 'facilities-overview',
     category: 'facilities',
     title: 'Vereinsgelände — Überblick',

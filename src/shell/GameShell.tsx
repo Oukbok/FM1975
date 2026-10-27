@@ -316,7 +316,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {/* Rudimentäre Einzelseiten */}
         {screen === 'presse' && <PresseView g={g} />}
         {screen === 'vertraege' && <VertraegeView g={g} />}
-        {screen === 'beobachtung' && <BeobachtungView g={g} />}
+        {screen === 'beobachtung' && <BeobachtungView g={g} onChange={rerender} />}
         {screen === 'verhandlungen' && <VerhandlungenView g={g} />}
         {screen === 'sponsoring' && <SponsoringView g={g} onGoto={setScreen} onChange={rerender} />}
         {screen === 'fans' && <FansView g={g} />}
