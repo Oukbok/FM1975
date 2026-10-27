@@ -150,3 +150,96 @@
   .pm-skill-list { grid-template-columns: 1fr 1fr; }
   .pm-head-postable { min-width: 100%; }
 }
+
+/* =============================================================================
+   Spielerprofil v2 — eine Seite, kein Scrollen (überschreibt Teile von oben;
+   ältere pm-* Klassen bleiben für YouthModal erhalten)
+   ========================================================================== */
+.pm-modal { max-width: 1280px; max-height: 94vh; }
+.pm-modal .pm-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 330px;
+  align-items: stretch;
+  gap: 22px;
+  padding: 20px 24px;
+  flex-wrap: nowrap;
+}
+.pm-portrait {
+  position: relative;
+  width: 176px; height: 210px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: radial-gradient(120% 90% at 50% 15%, rgba(255,255,255,0.08), rgba(10,14,20,0.6));
+  border: 1px solid var(--border-soft);
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.pm-portrait > svg { display: block; }
+.pm-portrait-crest {
+  position: absolute; left: 8px; bottom: 8px;
+  background: rgba(10,14,20,0.75); border-radius: 50%; padding: 3px;
+  border: 1px solid var(--border-soft);
+}
+.pm-id { min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.pm-modal .pm-head-name { font-size: 30px; }
+.pm-modal .pm-head-no { font-size: 22px; }
+.pm-modal .pm-head-sub { font-size: 14px; }
+.pm-modal .pm-head-badges .pill b { margin-left: 4px; }
+.pm-facts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.pm-fact {
+  min-width: 92px; padding: 7px 11px;
+  background: rgba(10,14,20,0.4); border: 1px solid var(--border-soft); border-radius: 10px;
+}
+.pm-fact-lbl { font-size: 10px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px; }
+.pm-fact-val { font-size: 15px; font-weight: 800; color: var(--text); margin-top: 2px; white-space: nowrap; }
+.pm-fact-sub { font-size: 11px; color: var(--text-3); }
+
+.pm-cond {
+  background: rgba(10,14,20,0.4); border: 1px solid var(--border-soft); border-radius: 12px;
+  padding: 12px 14px; margin-right: 34px;
+  display: flex; flex-direction: column; justify-content: center; gap: 7px;
+}
+.pm-cond .pm-col-title { margin-bottom: 2px; }
+.pm-cond-row { display: grid; grid-template-columns: 112px 1fr 30px; align-items: center; gap: 10px; }
+.pm-cond-lbl { font-size: 12px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pm-cond-track { height: 7px; border-radius: 4px; background: rgba(255,255,255,0.06); overflow: hidden; }
+.pm-cond-fill { height: 100%; border-radius: 4px; }
+.pm-cond-val { font-size: 13px; font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+
+.pm-modal .pm-cols {
+  grid-template-columns: 1.45fr 0.85fr 1fr;
+  gap: 22px;
+  padding: 16px 24px 20px;
+  margin: 0;
+  min-height: 0;
+}
+.pm-skill-groups { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 22px; }
+.pm-modal .pm-skill-group { margin-bottom: 6px; }
+.pm-modal .pm-skill-gt { border-bottom: 1px solid var(--border-soft); padding-bottom: 3px; margin-bottom: 3px; color: var(--text-2); }
+.pm-modal .pm-skill-row { padding: 1px 0; }
+.pm-modal .pm-skill-lbl { font-size: 12.5px; }
+
+.pm-col-pitch .pm-pitch { aspect-ratio: auto; height: 250px; }
+.pm-list { display: flex; flex-direction: column; }
+.pm-line {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+  padding: 5px 0; border-bottom: 1px solid var(--border-soft); font-size: 13px;
+}
+.pm-line:last-child { border-bottom: none; }
+.pm-line-lbl { font-size: 12px; color: var(--text-3); }
+.pm-col-pitch .pm-list { margin-top: 8px; }
+
+.pm-growth-track { height: 10px; border-radius: 5px; background: rgba(255,255,255,0.06); overflow: hidden; }
+.pm-growth-fill { height: 100%; background: linear-gradient(90deg, var(--accent-dim), var(--accent)); border-radius: 5px; }
+.pm-growth-meta { display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; color: var(--text-3); }
+.pm-growth-meta b { color: var(--text); margin-left: 3px; }
+
+.pm-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.pm-stat {
+  background: rgba(10,14,20,0.4); border: 1px solid var(--border-soft); border-radius: 10px;
+  padding: 8px 6px; text-align: center;
+}
+.pm-stat-num { font-size: 20px; font-weight: 900; color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.pm-stat-lbl { font-size: 11px; color: var(--text-2); font-weight: 700; margin-top: 3px; }
+.pm-stat-sub { font-size: 10px; color: var(--text-3); }
+.pm-modal .pm-header > .modal-close { position: absolute; top: 14px; right: 14px; }
+.pm-modal .pm-header { position: relative; }
