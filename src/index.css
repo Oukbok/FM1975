@@ -1,0 +1,3380 @@
+/* =============================================================================
+   FOOTBALL MANAGER 1980 — Modernes Dark Theme
+   Inspiriert von F1 Manager 2022 & Football Manager
+   ============================================================================= */
+
+/* Inter bleibt fuer das Logo (1975 / A Football Manager). Barlow ist die neue
+   durchgaengige UI-/Text-/Tabellenschrift (nuechterne, sport-affine Grotesk). */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&display=swap');
+/* Manrope: schlanke, moderne Grotesk ausschliesslich fuer die Inhalte der
+   Zentrale-/Dashboard-Boxen (Barlow bleibt global, Inter bleibt das Logo). */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* --- Hintergründe --- */
+  --bg: #0a0e14;
+  --bg-2: #0f141c;
+  --panel: #141b26;
+  --panel-2: #1a2331;
+  --panel-hover: #1f2a3a;
+  --elevated: #202b3c;
+
+  /* --- Akzent (Türkis/Cyan) --- */
+  --accent: #00d9ff;
+  --accent-dim: #0891b2;
+  --accent-glow: rgba(0, 217, 255, 0.25);
+  --accent-soft: rgba(0, 217, 255, 0.10);
+
+  /* --- Text --- */
+  --text: #e8edf4;
+  --text-2: #9fb0c3;
+  --text-3: #647285;
+
+  /* --- Statusfarben --- */
+  --green: #3ddc84;
+  --yellow: #ffcb45;
+  --orange: #ff9f43;
+  --red: #ff5c6c;
+  --gold: #ffc93c;
+
+  /* --- Struktur --- */
+  --border: #243044;
+  --border-soft: #1b2534;
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 18px 55px rgba(0, 0, 0, 0.6);
+
+  /* --- Layout-Breiten (Full-Bleed-Balken, zentrierte Inhalte) --- */
+  --bar-max: 1360px;      /* zentrierte Spaltenbreite für Kopf-/Menüleiste */
+  --content-max: 3000px;  /* Deckelung für den Inhaltsbereich auf sehr breiten Screens */
+  --bar-pad: max(20px, calc((100% - var(--bar-max)) / 2));
+  --content-pad: max(30px, calc((100% - var(--content-max)) / 2));
+
+  /* ===========================================================================
+     SEITEN-STANDARDFORMATE (am Dashboard orientiert — hier zentral aendern)
+     Werte gespiegelt aus den Dashboard-Regeln (.dxh*, .card). Alle Nicht-
+     Dashboard-Seiten (PageHead/.page) beziehen sich NUR auf diese Tokens, damit
+     spaetere Optik-Aenderungen Ein-Stellen-Edits bleiben. Das Dashboard selbst
+     nutzt weiter seine eigenen .dxh-Regeln (bleibt pixelgleich die Referenz).
+     ------------------------------------------------------------------------- */
+  /* --- ZENTRALE SCHRIFT-TOKENS (Dashboard-Look als App-Standard) ---
+     --font-ui = die schlanke Grotesk der Dashboard-/Zentrale-Boxen (Manrope),
+     ab jetzt ueberall: body + alle Seiten + Boxen. Schrift global aendern =
+     nur diese eine Zeile. --font-logo nur fuer das "1975"-Logo (Inter). */
+  --font-ui: 'Manrope', 'Barlow', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-logo: 'Inter', system-ui, sans-serif;
+  --font-size-base: 18px;                   /* globale Basis-Textgroesse (body) */
+  --page-head-icon-size: 27px;              /* wie .dxh-ico svg */
+  --page-head-title-size: 24px;             /* wie .dxh-title */
+  --page-head-title-weight: 800;            /* wie .dxh-title */
+  --page-head-title-spacing: 0.6px;         /* wie .dxh-title letter-spacing */
+  --page-head-meta-size: 16.5px;            /* wie .dxh-right / .dxh-comp */
+  --page-head-gap: 9px;                     /* wie .dxh gap */
+  --page-head-border: 1px solid var(--border-soft); /* wie .dxh border-bottom */
+  --page-head-pad-b: 9px;                   /* wie .dxh padding-bottom */
+  --page-head-mb: 0px;                      /* Kopf-Abstand regelt der .page-Gap */
+  --page-card-pad: 16px;                    /* wie .card padding */
+  --page-card-radius: var(--radius);        /* wie .card border-radius */
+  --page-gap: 14px;                         /* Standard-Kartenabstand (.grid/.dash-grid) */
+  --page-content-pad: var(--content-pad);   /* seitlicher Inhaltsabstand (vorhanden) */
+  --page-section-gap: 14px;                 /* vertikaler Abstand zwischen Bloecken */
+  --page-body-size: 16.5px;                 /* Standard-Textgroesse Labels/Zellen */
+  --page-label-size: 15px;                  /* kleine Labels/Tabellenkoepfe */
+  --shell-head-height: 100px;               /* Menue-/Header-Hoehe: einheitlich auf ALLEN Seiten (wie Zentrale) */
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root { height: 100%; }
+
+body {
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(0, 217, 255, 0.06), transparent 60%),
+    radial-gradient(900px 500px at 0% 0%, rgba(0, 217, 255, 0.04), transparent 55%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.1px;
+}
+
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2a394f; border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: #35495f; }
+
+h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.2px; }
+
+/* ---------------------------------------------------------------------------
+   App-Grundlayout
+   --------------------------------------------------------------------------- */
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  isolation: isolate;
+}
+/* Stadion-Hintergrundbild fixiert hinter dem gesamten Spielbereich; ein
+   Abdunkel-Verlauf (oben etwas heller, unten dunkler) hält alle UI-Elemente
+   und Boxen gut lesbar. */
+.app-shell::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(10, 14, 20, 0.10) 0%, rgba(10, 14, 20, 0.14) 60%, rgba(10, 14, 20, 0.28) 100%),
+    url('/assets/stadion-hintergrund.jpg') center top / cover no-repeat;
+}
+/* Zentrale: eigenes Manager-Buero-Motiv grossflaechig hinter/ausserhalb der
+   Boxen. Ein leichter Abdunkel-Verlauf darueber (oben 5%, Mitte 15%, unten 30%)
+   sorgt fuer etwas Kontrast, laesst das Motiv aber deutlich durchscheinen. */
+.shell-zentrale::before {
+  background:
+    linear-gradient(180deg, rgba(8, 11, 17, 0.05) 0%, rgba(8, 11, 17, 0.15) 55%, rgba(8, 11, 17, 0.30) 100%),
+    url('/assets/zentrale-hintergrund.png?v=2') center center / cover no-repeat;
+}
+/* Dashboard-aehnliche Seiten (Zentrale + Kategorie-Dashboards): Inhaltsbereich als
+   volle Hoehen-Flexspalte, damit der Footer immer am unteren Rand klebt und die
+   Boxen den Raum fuellen – entkoppelt von der Hoehe der Boxen. */
+.shell-dashlike .app-main {
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+  padding-bottom: 12px;
+}
+.zentrale-wrap {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Inhaltsbereich: volle Bildschirmbreite mit großzügigem Seitenabstand,
+   sehr hohe Deckelung, damit Zeilen auf extrem breiten Monitoren lesbar bleiben. */
+.app-main {
+  flex: 1;
+  /* Unten kein 96px-Spacer mehr noetig: der persistente Footer schliesst die Seite ab. */
+  padding: 14px var(--content-pad) 14px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------------------------------------------------------------------
+   Header
+   --------------------------------------------------------------------------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 14px var(--bar-pad);
+  margin-bottom: 6px;
+  background: linear-gradient(180deg, var(--bg) 55%, rgba(10, 14, 20, 0.85) 100%);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.brand-name { font-size: 17px; font-weight: 800; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.brand-sub { font-size: 11px; color: var(--text-3); font-weight: 600; letter-spacing: 0.6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.brand > div { min-width: 0; }
+
+.date-center { text-align: center; }
+.date-center .lbl { font-size: 10px; letter-spacing: 2px; color: var(--text-3); font-weight: 700; text-transform: uppercase; }
+.date-center .val { font-size: 21px; font-weight: 800; letter-spacing: -0.3px; }
+
+.topbar-right { display: flex; justify-content: flex-end; }
+
+/* ---------------------------------------------------------------------------
+   Kalender-Zeitstrahl (Kalenderblätter im Header)
+   --------------------------------------------------------------------------- */
+.cal-strip {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  min-width: 0;
+  justify-content: center;
+}
+/* „Nächstes Event"-Hinweis rechts neben den Kalenderblättern */
+.cal-next {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 10px;
+  margin-left: 6px;
+  border-left: 1px solid var(--border-soft);
+  min-width: 120px;
+  max-width: 180px;
+}
+.cal-next.clickable { cursor: pointer; }
+.cal-next-lbl {
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.cal-next-body { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.cal-next-ico { width: 16px; height: 16px; flex: 0 0 auto; opacity: 0.9; }
+.cal-next-info { display: flex; flex-direction: column; min-width: 0; }
+.cal-next-date { font-size: 13px; font-weight: 800; color: var(--text); line-height: 1.1; }
+.cal-next-txt {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-2);
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cal-next-empty { font-size: 10px; font-weight: 600; color: var(--text-3); opacity: 0.7; }
+@media (max-width: 1180px) { .cal-next { min-width: 100px; max-width: 140px; padding: 4px 8px; } }
+@media (max-width: 1040px) { .cal-next { display: none; } }
+.cal-sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100px;
+  min-width: 0;
+  flex: 0 1 100px;
+  padding: 0 0 7px;
+  border-radius: 9px;
+  overflow: hidden;
+  background: var(--panel);
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+}
+.cal-sheet.clickable { cursor: pointer; }
+.cal-sheet.clickable:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45); }
+
+/* Kopfstreifen (Monat / HEUTE) */
+.cal-sheet-head {
+  width: 100%;
+  text-align: center;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: #0a0e14;
+  background: #6b7686;
+  padding: 3px 0;
+}
+.cal-sheet-day {
+  font-size: 23px;
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.5px;
+  margin-top: 3px;
+  color: var(--text);
+}
+.cal-sheet-wd {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 5px;
+}
+.cal-sheet-ev {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 6px;
+  min-width: 0;
+}
+.cal-sheet-ico { width: 13px; height: 13px; flex: 0 0 auto; opacity: 0.9; margin-top: 1px; }
+.cal-sheet-ev-txt {
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-2);
+  text-align: left;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-width: 0;
+}
+.cal-sheet-ev-txt.dim { color: var(--text-3); opacity: 0.5; }
+
+/* Heute — Akzent */
+.cal-sheet.today {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 3px 12px rgba(0, 217, 255, 0.28);
+  transform: translateY(-1px);
+}
+.cal-sheet.today .cal-sheet-head { background: var(--accent); color: #04222a; }
+.cal-sheet.today .cal-sheet-day { color: #fff; }
+
+/* Vergangenes — gedimmt */
+.cal-sheet.past { opacity: 0.62; }
+
+/* Leerplatzhalter */
+.cal-sheet.empty {
+  background: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0 6px, transparent 6px 12px);
+  border-style: dashed;
+  border-color: var(--border-soft);
+  box-shadow: none;
+  opacity: 0.35;
+}
+
+/* Akzentfarben Kopfstreifen */
+.cal-sheet.acc-orange .cal-sheet-head { background: var(--orange); color: #2a1500; }
+.cal-sheet.acc-gold .cal-sheet-head { background: var(--gold); color: #2a2200; }
+
+/* Responsive Leiter: Kacheln schrumpfen, damit Wappen links + Buttons rechts
+   auf schmaleren Viewports weiterhin in eine Zeile passen. Auf breiten/4K-Screens
+   ist der Balken ohnehin auf --bar-max (1360px) zentriert → 100px-Kacheln passen. */
+@media (max-width: 1340px) {
+  .cal-sheet { width: 88px; flex-basis: 88px; }
+  .cal-sheet-day { font-size: 24px; }
+  .top-nav { top: 60px; }
+}
+@media (max-width: 1180px) {
+  .cal-strip { gap: 6px; }
+  .cal-sheet { width: 72px; flex-basis: 72px; }
+  .cal-sheet-day { font-size: 22px; }
+  .cal-sheet-ev-txt { font-size: 10px; }
+  .top-nav { top: 60px; }
+}
+@media (max-width: 1040px) {
+  .cal-sheet { width: 58px; flex-basis: 58px; }
+  .cal-sheet-day { font-size: 20px; }
+  .cal-sheet-head { font-size: 9px; letter-spacing: 0.8px; }
+  .cal-sheet-ev-txt { font-size: 9px; }
+  .cal-sheet-ico { width: 12px; height: 12px; }
+  .cal-sheet-ev { min-height: 26px; padding: 0 3px; }
+  .top-nav { top: 60px; }
+}
+@media (max-width: 900px) {
+  .cal-sheet { width: 52px; flex-basis: 52px; }
+  .cal-sheet-day { font-size: 19px; }
+  .top-nav { top: 60px; }
+}
+
+/* ---------------------------------------------------------------------------
+   Buttons
+   --------------------------------------------------------------------------- */
+button {
+  font-family: inherit;
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 8px 15px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s, border-color 0.15s, transform 0.08s, box-shadow 0.15s;
+}
+button:hover { background: var(--panel-hover); border-color: #35495f; }
+button:active { transform: translateY(1px); }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+button.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+  border: none;
+  color: #04212b;
+  font-weight: 800;
+  box-shadow: 0 4px 18px var(--accent-glow);
+}
+.btn-primary:hover { background: linear-gradient(135deg, #33e2ff, #0aa5c4); box-shadow: 0 6px 24px var(--accent-glow); }
+
+.btn-continue {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  padding: 11px 26px;
+  border-radius: 12px;
+}
+.btn-continue.paused {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+  color: #04212b;
+}
+.btn-continue.paused:hover { box-shadow: 0 6px 24px var(--accent-glow); }
+
+.btn-ghost { background: transparent; border-color: var(--border); }
+.btn-sm { padding: 5px 11px; font-size: 12px; }
+
+/* ---------------------------------------------------------------------------
+   Cards & Panels
+   --------------------------------------------------------------------------- */
+.card {
+  /* Kuehles Schiefer-Blau wie im Referenz-Mockup. Grundfarbe bewusst dunkler/
+     kraeftiger als die gewuenschte Endfarbe: der helle Stadion-Hintergrund hellt
+     durch die Transparenz wieder auf. Dezenter Verlauf (oben heller, unten
+     dunkler) wie auf den Vorlage-Boxen. */
+  background: linear-gradient(180deg, rgba(26, 34, 46, 0.90), rgba(15, 21, 31, 0.90));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: border-color 0.18s, transform 0.18s, box-shadow 0.18s;
+}
+.card.hoverable:hover {
+  border-color: rgba(0, 217, 255, 0.4);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-2);
+  margin-bottom: 12px;
+}
+.card-title .ico { color: var(--accent); font-size: 14px; }
+
+.grid { display: grid; gap: 14px; }
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+@media (max-width: 980px) { .dash-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) { .dash-grid { grid-template-columns: 1fr; } }
+
+.section-title { font-size: 20px; font-weight: 800; margin-bottom: 14px; letter-spacing: -0.4px; }
+.section-title .accent { color: var(--accent); }
+
+/* ---------------------------------------------------------------------------
+   GEMEINSAMES SEITEN-SYSTEM (PageHead + .page)
+   Alle Nicht-Dashboard-Seiten nutzen diesen Kopf-/Rahmen-Stil. Er spiegelt den
+   Dashboard-Kopf (.dxh) ueber die Tokens in :root (Block SEITEN-STANDARDFORMATE).
+   Zentrale Aenderung => dort die Tokens anpassen, nicht hier.
+   --------------------------------------------------------------------------- */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--page-section-gap);
+  padding-bottom: 20px;
+}
+/* Der Kopf-Abstand wird vom .page-Gap getragen (kein doppelter Margin). */
+.page > .page-head { margin-bottom: var(--page-head-mb); }
+
+.page-head {
+  display: flex;
+  align-items: center;
+  gap: var(--page-head-gap);
+  padding-bottom: var(--page-head-pad-b);
+  margin-bottom: var(--page-head-mb);
+  border-bottom: var(--page-head-border);
+}
+.page-head-ico { display: inline-flex; color: var(--accent); flex: 0 0 auto; }
+.page-head-ico svg { width: var(--page-head-icon-size); height: var(--page-head-icon-size); }
+.page-head-ico img,
+.page-head-ico > svg.club-crest { width: var(--page-head-icon-size); height: var(--page-head-icon-size); }
+.page-head-title {
+  font-size: var(--page-head-title-size);
+  font-weight: var(--page-head-title-weight);
+  letter-spacing: var(--page-head-title-spacing);
+  color: var(--text);
+  text-transform: uppercase;
+}
+.page-head-title .accent { color: var(--accent); }
+.page-head-right {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--page-head-meta-size);
+  font-weight: 700;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
+   Bottom Navigation (F1-Manager-Stil)
+   --------------------------------------------------------------------------- */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: linear-gradient(180deg, rgba(15, 20, 28, 0.85), var(--bg-2));
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--border);
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 74px;
+  padding: 7px 12px 5px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 600;
+  position: relative;
+}
+.nav-item .nav-ico { font-size: 19px; line-height: 1; }
+.nav-item:hover { background: var(--panel-2); color: var(--text-2); }
+.nav-item.active { color: var(--accent); background: var(--accent-soft); }
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 26px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--accent);
+  /* KEIN Glow (box-shadow) – bewusst entfernt, siehe Header-Design-Regel */
+}
+
+/* ---------------------------------------------------------------------------
+   Tabellen
+   --------------------------------------------------------------------------- */
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { text-align: left; padding: 9px 10px; }
+th {
+  color: var(--text-3);
+  text-transform: uppercase;
+  font-size: 10.5px;
+  letter-spacing: 0.7px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+}
+tbody tr { border-bottom: 1px solid var(--border-soft); transition: background 0.12s; }
+tbody tr:hover { background: var(--panel-hover); }
+tr.me { background: var(--accent-soft); }
+tr.me:hover { background: rgba(0, 217, 255, 0.16); }
+.clickable { cursor: pointer; }
+
+/* Tabellenzonen */
+.pos-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  font-weight: 800;
+  font-size: 12px;
+  background: var(--panel-2);
+}
+.zone-cl { background: rgba(61, 220, 132, 0.18); color: var(--green); box-shadow: inset 3px 0 0 var(--green); }
+.zone-eu { background: rgba(0, 217, 255, 0.16); color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+.zone-rel { background: rgba(255, 92, 108, 0.16); color: var(--red); box-shadow: inset 3px 0 0 var(--red); }
+
+/* ---------------------------------------------------------------------------
+   Formkreise (W/D/L)
+   --------------------------------------------------------------------------- */
+.form-row { display: inline-flex; gap: 4px; }
+.form-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 800;
+  color: #04212b;
+}
+.form-pill.W { background: var(--green); }
+.form-pill.D { background: var(--text-3); color: var(--text); }
+.form-pill.L { background: var(--red); }
+
+/* ---------------------------------------------------------------------------
+   Attribut-Werte (farbcodiert)
+   --------------------------------------------------------------------------- */
+.attr-num { font-weight: 800; font-variant-numeric: tabular-nums; }
+.v-hi { color: var(--green); }
+.v-mid { color: var(--yellow); }
+.v-lo { color: var(--orange); }
+.v-vlo { color: var(--red); }
+
+.attr-bar-row { display: flex; align-items: center; gap: 10px; padding: 4px 0; }
+.attr-bar-row .lbl { flex: 0 0 118px; font-size: 12px; color: var(--text-2); }
+.attr-bar-track { flex: 1; height: 8px; border-radius: 5px; background: var(--panel-2); overflow: hidden; }
+.attr-bar-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
+.attr-bar-row .attr-num { flex: 0 0 28px; text-align: right; font-size: 12px; }
+
+/* Sterne */
+.stars { color: var(--gold); letter-spacing: 1px; white-space: nowrap; font-size: 14px; }
+
+/* ---------------------------------------------------------------------------
+   Helfer
+   --------------------------------------------------------------------------- */
+.row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.col { display: flex; flex-direction: column; }
+.dim { color: var(--text-2); }
+.dim2 { color: var(--text-3); }
+.green { color: var(--green); }
+.red { color: var(--red); }
+.accent-text { color: var(--accent); }
+.big-num { font-size: 40px; font-weight: 900; line-height: 1; letter-spacing: -1px; }
+.mini { font-size: 11px; }
+.mt8 { margin-top: 8px; } .mt12 { margin-top: 12px; } .mt16 { margin-top: 16px; }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+}
+.pill.home { color: var(--green); border-color: rgba(61,220,132,0.4); }
+.pill.away { color: var(--accent); border-color: rgba(0,217,255,0.4); }
+
+.crest {
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  overflow: hidden;
+}
+
+/* Inputs */
+input, select {
+  font-family: inherit;
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+}
+input:focus, select:focus { outline: none; border-color: var(--accent); }
+input[type="range"] { padding: 0; accent-color: var(--accent); }
+
+/* Nachrichten-Ticker */
+.ticker { max-height: 320px; overflow-y: auto; }
+.ticker-item {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.4;
+}
+.ticker-item:last-child { border-bottom: none; }
+.ticker-item .dot { color: var(--accent); margin-right: 6px; }
+
+/* ---------------------------------------------------------------------------
+   Modal
+   --------------------------------------------------------------------------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 8, 14, 0.78);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+.modal {
+  background: linear-gradient(180deg, var(--panel), var(--bg-2));
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 900px;
+  max-height: 88vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: modalIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.96) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-close {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 18px; padding: 0; line-height: 1;
+}
+
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.tab {
+  background: transparent; border: none; border-radius: 0;
+  padding: 10px 16px; color: var(--text-3); font-weight: 700; font-size: 13px;
+  border-bottom: 2px solid transparent;
+}
+.tab:hover { color: var(--text-2); background: transparent; }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); background: transparent; }
+
+/* Setup */
+.setup-hero { text-align: center; padding: 30px 0 10px; }
+.setup-hero h1 { font-size: 34px; font-weight: 900; letter-spacing: -1px; }
+.setup-hero h1 .accent { color: var(--accent); }
+.club-pick {
+  cursor: pointer;
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px;
+}
+.club-pick.sel { border-color: var(--accent); background: var(--accent-soft); }
+
+
+
+/* =============================================================================
+   BLOCK 1 — Weiter-Button (feste Größe), Nachrichten, Wiki, Startmenü, Kader-Tabelle
+   ============================================================================= */
+
+/* --- Fester Weiter-Button --- */
+.btn-continue.fixed {
+  min-width: 210px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  padding: 0 18px;
+  white-space: nowrap;
+}
+.next-ev-hint {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 4px;
+  text-align: center;
+  min-height: 14px;
+}
+
+/* --- Speichern-Toast --- */
+.save-toast {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  border: 1px solid var(--accent);
+  color: var(--text);
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 13px;
+  box-shadow: var(--shadow-lg);
+  z-index: 200;
+  animation: fadeIn 0.2s ease;
+}
+
+/* --- Nav-Badge (ungelesene Nachrichten) --- */
+.nav-badge {
+  position: absolute;
+  top: 2px;
+  right: 50%;
+  transform: translateX(18px);
+  background: var(--red);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* =============================================================================
+   STARTMENÜ
+   ============================================================================= */
+.menu-bg {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Vertikales Padding skaliert mit der Höhe; bei sehr niedrigen Viewports darf
+     der Inhalt scrollen statt beschnitten zu werden. */
+  padding: clamp(16px, 4vh, 48px) 24px;
+  overflow-y: auto;
+  /* Design 3 (Dark UI) als Startbildschirm-Hintergrund. Das Logo ist NICHT
+     eingebrannt, sondern liegt separat im DOM (siehe .menu-logo) — dadurch kann
+     das Menü das Logo bei keiner Auflösung überdecken. Ein dezenter dunkler
+     Verlauf legt sich über das Bild und hält Logo/Menü stets gut lesbar. */
+  background:
+    radial-gradient(1100px 520px at 50% -8%, rgba(0, 217, 255, 0.12), transparent 62%),
+    linear-gradient(180deg, rgba(6, 8, 11, 0.45), rgba(6, 8, 11, 0.72)),
+    url('/assets/menu-bg-3.jpg') center / cover no-repeat,
+    var(--bg);
+}
+.menu-wrap {
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Fester Abstand zwischen Logo-Block und Menü — beide sind eigene
+     Flex-Kinder und können sich dadurch niemals überlappen. */
+  gap: clamp(20px, 5vh, 40px);
+}
+.menu-hero {
+  text-align: center;
+  width: 100%;
+}
+/* Wiederverwendbares SVG-Logo. Breite ist responsiv gedeckelt, die Höhe
+   zusätzlich per max-height an die Viewport-Höhe gebunden: auf niedrigen/breiten
+   Bildschirmen schrumpft das Logo, sodass immer Platz fürs Menü bleibt. */
+.menu-logo {
+  display: block;
+  width: min(440px, 82vw);
+  max-height: 32vh;
+  height: auto;
+  margin: 0 auto;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 26px rgba(0, 0, 0, 0.55));
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.menu-hero h1 {
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  line-height: 1.05;
+}
+.menu-hero h1 .accent { color: var(--accent); }
+.menu-hero p {
+  color: var(--text-2);
+  font-size: 13px;
+  margin-top: 6px;
+}
+.menu-hero h1.menu-year {
+  font-size: 88px;
+  font-weight: 900;
+  letter-spacing: -3px;
+  line-height: 0.95;
+  color: var(--accent);
+}
+.menu-hero p.menu-slogan {
+  color: var(--text-1);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+.menu-badge {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-soft);
+  letter-spacing: 0.5px;
+}
+.menu-panel {
+  width: 100%;
+  background: linear-gradient(180deg, var(--panel), var(--bg-2));
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.menu-panel.wide { max-width: 720px; }
+.menu-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+.menu-btn:hover:not(:disabled) {
+  background: var(--panel-hover);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.menu-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.menu-btn.primary {
+  background: linear-gradient(180deg, var(--accent), var(--accent-dim));
+  border-color: var(--accent);
+  color: #04222b;
+  font-weight: 800;
+}
+.menu-btn.primary:hover:not(:disabled) { filter: brightness(1.08); }
+.menu-btn.danger { color: var(--red); }
+.menu-btn.danger:hover:not(:disabled) { border-color: var(--red); }
+.mi { font-size: 18px; width: 22px; text-align: center; }
+
+/* ---------------------------------------------------------------------------
+   Set-C UI-Icons (<Icon/>). Skalieren über die font-size des Elternelements
+   (Standardgröße 1em) und richten sich sauber an begleitendem Text aus.
+   Stilregeln & Erweiterung: siehe docs/ICON_STYLE.md
+--------------------------------------------------------------------------- */
+.game-icon { display: inline-block; width: 1em; height: 1em; vertical-align: -0.125em; flex: none; }
+.mi .game-icon { vertical-align: middle; }
+.card-title .ico .game-icon,
+.nav-item .nav-ico .game-icon { vertical-align: -0.15em; }
+.menu-tag {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-3);
+  font-weight: 600;
+}
+
+/* --- Neues Spiel Formular --- */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.form-grid .full { grid-column: 1 / -1; }
+.field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-2);
+  margin-bottom: 6px;
+}
+.field-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+}
+.field-input:focus { outline: none; border-color: var(--accent); }
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  padding: 8px 14px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.chip:hover { border-color: var(--accent); color: var(--text); }
+.chip.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 700;
+}
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 10px 0;
+}
+.toggle-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+.toggle-item input { display: none; }
+.toggle {
+  width: 46px;
+  height: 26px;
+  border-radius: 20px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  position: relative;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--text-3);
+  transition: all 0.15s ease;
+}
+.toggle.on { background: var(--accent-soft); border-color: var(--accent); }
+.toggle.on::after { left: 22px; background: var(--accent); }
+
+/* =============================================================================
+   KADER-TABELLE
+   ============================================================================= */
+.table-scroll { width: 100%; overflow-x: auto; }
+.squad-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.squad-table th {
+  text-align: left;
+  padding: 10px 10px;
+  color: var(--text-3);
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+.squad-table th.num, .squad-table td.num { text-align: center; }
+.squad-table th:hover { color: var(--text); }
+.squad-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border-soft);
+  white-space: nowrap;
+}
+.squad-table tr.clickable-row { cursor: pointer; transition: background 0.12s ease; }
+.squad-table tr.clickable-row:hover { background: var(--panel-hover); }
+.pos-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+}
+.orange-text { color: var(--orange); }
+
+/* =============================================================================
+   NACHRICHTEN
+   ============================================================================= */
+.msg-list { display: flex; flex-direction: column; gap: 8px; }
+.msg-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.13s ease;
+  align-items: flex-start;
+}
+.msg-item:hover { background: var(--panel-hover); border-color: var(--accent); }
+.msg-item.unread { border-left: 3px solid var(--accent); }
+.msg-ico {
+  font-size: 20px;
+  width: 26px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.msg-body { flex: 1; min-width: 0; }
+.msg-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+.msg-from { font-weight: 800; font-size: 13px; }
+.msg-cat {
+  font-size: 10px;
+  padding: 1px 7px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+.msg-date { margin-left: auto; font-size: 11px; color: var(--text-3); }
+.msg-subject { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+.msg-item.unread .msg-subject { color: var(--accent); }
+.unread-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 5px;
+}
+.msg-preview {
+  font-size: 12px;
+  color: var(--text-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =============================================================================
+   ENTWICKLER-WIKI
+   ============================================================================= */
+.wiki-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+.wiki-side {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: sticky;
+  top: 16px;
+}
+.wiki-search {
+  width: 100%;
+  padding: 9px 12px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  margin-bottom: 6px;
+}
+.wiki-search:focus { outline: none; border-color: var(--accent); }
+.wiki-cat {
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-2);
+  transition: all 0.12s ease;
+  border: 1px solid transparent;
+}
+.wiki-cat:hover { background: var(--panel-hover); color: var(--text); }
+.wiki-cat.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.wiki-cat.faded { opacity: 0.4; }
+.wiki-content {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 26px;
+  min-height: 300px;
+}
+.wiki-body { max-width: 760px; }
+.wiki-h {
+  font-size: 22px;
+  font-weight: 900;
+  margin: 0 0 14px;
+  letter-spacing: -0.5px;
+}
+.wiki-h5 {
+  font-size: 15px;
+  font-weight: 800;
+  margin: 20px 0 8px;
+  color: var(--accent);
+}
+.wiki-p { font-size: 13.5px; color: var(--text); line-height: 1.7; margin: 0 0 10px; }
+.wiki-ul { margin: 0 0 12px 20px; }
+.wiki-ul li { font-size: 13.5px; color: var(--text); line-height: 1.7; margin-bottom: 4px; }
+.wiki-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0 14px;
+  font-size: 13px;
+}
+.wiki-table th, .wiki-table td {
+  text-align: left;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+}
+.wiki-table th { background: var(--panel-2); font-weight: 700; }
+.wiki-code {
+  display: block;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-family: 'Courier New', monospace;
+  font-size: 12.5px;
+  color: var(--accent);
+  overflow-x: auto;
+  margin: 0 0 12px;
+  white-space: pre;
+}
+.wiki-inline-code {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 1px 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--accent);
+}
+.wiki-search-results { display: flex; flex-direction: column; gap: 8px; }
+
+/* --- Utility --- */
+.mb12 { margin-bottom: 12px; }
+
+@media (max-width: 760px) {
+  .wiki-layout { grid-template-columns: 1fr; }
+  .wiki-side { position: static; }
+  .form-grid { grid-template-columns: 1fr; }
+}
+
+
+
+/* =============================================================================
+   WOCHEN-TRAININGSPLANER
+   ========================================================================== */
+.week-summary {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.week-summary .ws-item {
+  background: var(--panel);
+  border: 1px solid var(--panel-2);
+  border-radius: 10px;
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 100px;
+}
+.week-summary .ws-item b { font-size: 19px; }
+
+.planner-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+@media (max-width: 900px) {
+  .planner-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.planner-day {
+  background: var(--panel);
+  border: 1px solid var(--panel-2);
+  border-radius: 12px;
+  padding: 10px 9px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-height: 210px;
+}
+.planner-day.is-today { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-glow); }
+.planner-day.is-matchday { background: linear-gradient(160deg, #241016, var(--panel)); border-color: #7a2b39; }
+.pd-head {
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--panel-2); padding-bottom: 6px;
+}
+.pd-name { font-weight: 700; font-size: 13px; }
+.pd-full { color: var(--text-3); font-weight: 500; font-size: 11px; }
+@media (max-width: 1100px) { .pd-full { display: none; } }
+.pd-today-badge {
+  font-size: 9px; text-transform: uppercase; letter-spacing: .5px;
+  background: var(--accent); color: #04222b; padding: 2px 6px; border-radius: 6px; font-weight: 800;
+}
+.pd-slot { display: flex; flex-direction: column; gap: 3px; }
+.pd-slot.is-extra { border-top: 1px dashed var(--panel-2); padding-top: 6px; }
+.pd-slot-lbl { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: .4px; }
+.pd-select {
+  width: 100%; background: var(--bg-2); color: var(--text);
+  border: 1px solid var(--panel-2); border-radius: 7px; padding: 5px 6px; font-size: 12px;
+}
+.pd-select:focus { outline: none; border-color: var(--accent); }
+.pd-block-meta { display: flex; gap: 4px; }
+.pd-fitness {
+  margin-top: auto; font-size: 12px; font-weight: 700; text-align: right;
+  border-top: 1px solid var(--panel-2); padding-top: 6px;
+}
+.pd-matchday {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; text-align: center; color: var(--text-2);
+}
+.pd-md-ico { font-size: 30px; }
+.pd-md-txt { font-weight: 800; color: #ff8fa0; }
+.pd-md-sub { font-size: 12px; }
+.pd-md-note { font-size: 10px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-3); margin-top: 4px; }
+
+/* Intensitäts-Tags */
+.int-tag {
+  font-size: 9px; text-transform: uppercase; letter-spacing: .4px;
+  padding: 2px 6px; border-radius: 5px; font-weight: 700;
+}
+.int-low { background: rgba(61,220,132,.15); color: var(--green); }
+.int-medium { background: rgba(255,203,69,.15); color: var(--yellow); }
+.int-high { background: rgba(255,92,108,.15); color: var(--red); }
+
+/* Trainingsblock-Legende */
+.block-legend {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px;
+}
+.block-card {
+  background: var(--panel); border: 1px solid var(--panel-2); border-radius: 12px; padding: 12px;
+  display: flex; flex-direction: column; gap: 7px;
+}
+.bc-head { display: flex; align-items: center; gap: 7px; }
+.bc-ico { font-size: 18px; }
+.bc-name { font-weight: 700; font-size: 14px; flex: 1; }
+.bc-desc { font-size: 12px; color: var(--text-2); line-height: 1.4; }
+.bc-attrs { display: flex; flex-wrap: wrap; gap: 4px; }
+.bc-attr {
+  font-size: 10px; padding: 2px 7px; border-radius: 6px;
+  background: var(--bg-2); color: var(--text-3); border: 1px solid var(--panel-2);
+}
+.bc-attr.primary { color: var(--accent); border-color: var(--accent-dim); }
+.bc-attr.rec { color: var(--green); }
+
+/* =============================================================================
+   AUF-/ABWERTUNGS-SCREEN (Trommelwirbel)
+   ========================================================================== */
+.reveal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: radial-gradient(circle at 50% 30%, #10202b, #05080d 75%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  animation: reveal-fade .3s ease;
+}
+@keyframes reveal-fade { from { opacity: 0; } to { opacity: 1; } }
+.reveal-close {
+  position: absolute; top: 18px; right: 22px; z-index: 3;
+  background: var(--panel); color: var(--text-2); border: 1px solid var(--panel-2);
+  width: 40px; height: 40px; border-radius: 10px; font-size: 18px; cursor: pointer;
+}
+.reveal-close:hover { color: var(--text); border-color: var(--accent); }
+.reveal-progress {
+  position: absolute; top: 26px; left: 50%; transform: translateX(-50%);
+  color: var(--text-3); font-size: 13px; letter-spacing: .5px; text-transform: uppercase;
+}
+.reveal-card {
+  width: min(440px, 92vw);
+  background: var(--panel); border: 1px solid var(--panel-2); border-radius: 20px;
+  padding: 26px 26px 22px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.55);
+}
+.reveal-card.phase-done.dir-up { border-color: var(--green); box-shadow: 0 24px 60px rgba(61,220,132,.22); }
+.reveal-card.phase-done.dir-down { border-color: var(--red); box-shadow: 0 24px 60px rgba(255,92,108,.22); }
+.reveal-card.phase-done { animation: reveal-pop .45s cubic-bezier(.2,1.4,.5,1); }
+@keyframes reveal-pop { 0% { transform: scale(.9); opacity: .4; } 100% { transform: scale(1); opacity: 1; } }
+.reveal-avatar { width: 84px; height: 84px; }
+.reveal-name { font-size: 20px; font-weight: 800; }
+.reveal-pos { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: .5px; }
+
+/* Trommelwirbel-Animation */
+.reveal-roll { padding: 22px 0 8px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.drumroll { display: flex; gap: 12px; }
+.drumroll span {
+  width: 16px; height: 16px; border-radius: 50%; background: var(--accent);
+  animation: drum-bounce 1s infinite ease-in-out;
+}
+.drumroll span:nth-child(2) { animation-delay: .18s; }
+.drumroll span:nth-child(3) { animation-delay: .36s; }
+@keyframes drum-bounce {
+  0%, 100% { transform: translateY(0) scale(.7); opacity: .4; }
+  40% { transform: translateY(-16px) scale(1.15); opacity: 1; }
+}
+.drumroll-txt {
+  font-size: 15px; font-weight: 700; color: var(--text-2); letter-spacing: 1px;
+  animation: drum-shake .5s infinite;
+}
+@keyframes drum-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+.reveal-result { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+.reveal-badge {
+  font-size: 14px; font-weight: 900; letter-spacing: 1px; padding: 5px 16px; border-radius: 20px;
+}
+.reveal-badge.dir-up { background: rgba(61,220,132,.16); color: var(--green); }
+.reveal-badge.dir-down { background: rgba(255,92,108,.16); color: var(--red); }
+.reveal-badge.dir-mixed { background: rgba(255,203,69,.16); color: var(--yellow); }
+.reveal-ovr {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  background: var(--bg-2); border-radius: 12px; padding: 12px 24px; width: 100%;
+}
+.ro-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: .6px; color: var(--text-3); }
+.ro-vals { font-size: 34px; font-weight: 900; display: flex; align-items: center; gap: 12px; }
+.ro-arrow { color: var(--text-3); font-size: 24px; }
+.reveal-attrs { width: 100%; display: flex; flex-direction: column; gap: 5px; }
+.ra-row {
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--bg-2); border-radius: 8px; padding: 7px 12px; font-size: 13px;
+}
+.ra-row .ra-name { color: var(--text-2); }
+.ra-row.up .ra-vals { color: var(--green); font-weight: 700; }
+.ra-row.down .ra-vals { color: var(--red); font-weight: 700; }
+.ra-arrow { font-size: 11px; }
+.reveal-reason {
+  font-size: 14px; font-style: italic; color: var(--text); line-height: 1.5;
+  padding: 4px 6px;
+}
+.reveal-reason.life-event { color: var(--yellow); }
+.le-tag {
+  display: inline-block; font-style: normal; font-size: 9px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .5px; background: var(--yellow); color: #2a1f00;
+  padding: 2px 6px; border-radius: 5px; margin-right: 6px; vertical-align: middle;
+}
+.reveal-next { margin-top: 6px; min-width: 160px; }
+
+
+
+/* =========================================================================
+   AUFSTELLUNG (Lineup) + Textmodus
+   ========================================================================= */
+.lineup-wrap { padding-bottom: 20px; }
+.lineup-grid { display: grid; grid-template-columns: 1fr 300px; gap: 16px; align-items: start; }
+@media (max-width: 860px) { .lineup-grid { grid-template-columns: 1fr; } }
+
+.pitch {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 68 / 105;
+  max-height: 620px;
+  background:
+    linear-gradient(0deg, rgba(0,0,0,.28), rgba(0,0,0,.28)),
+    repeating-linear-gradient(0deg, #1c6b3a 0 8%, #187033 8% 16%);
+  border: 2px solid rgba(255,255,255,.25);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.pitch::before, .pitch::after {
+  content: ''; position: absolute; left: 8%; right: 8%; height: 14%;
+  border: 2px solid rgba(255,255,255,.35);
+}
+.pitch::before { top: -2px; border-top: none; }
+.pitch::after { bottom: -2px; border-bottom: none; }
+
+.slot {
+  position: absolute; transform: translate(-50%, -50%);
+  width: 62px; text-align: center; z-index: 2;
+}
+.slot.droptarget .slot-empty,
+.slot.droptarget .slot-player { outline: 2px dashed var(--accent); outline-offset: 2px; }
+.slot-pos {
+  font-size: 10px; font-weight: 700; color: rgba(255,255,255,.85);
+  letter-spacing: .5px; margin-bottom: 2px; text-shadow: 0 1px 2px #000;
+}
+.slot-player {
+  position: relative; cursor: grab; background: rgba(10,20,16,.55);
+  border-radius: 10px; padding: 3px 2px 4px;
+}
+.slot-player:active { cursor: grabbing; }
+.slot-name {
+  font-size: 10px; font-weight: 600; color: #fff; margin-top: 1px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 2px #000;
+}
+.slot-empty {
+  width: 34px; height: 34px; margin: 0 auto; border-radius: 50%;
+  border: 2px dashed rgba(255,255,255,.45); color: rgba(255,255,255,.6);
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.suit-badge {
+  position: absolute; top: 12px; right: 2px; min-width: 20px; height: 18px;
+  border-radius: 9px; color: #05131a; font-size: 11px; font-weight: 800;
+  display: inline-flex; align-items: center; justify-content: center; padding: 0 5px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.5);
+}
+.suit-badge.sm { position: static; }
+
+.bench { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+.bench-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; max-height: 560px; overflow-y: auto; }
+.bench-item {
+  display: flex; align-items: center; gap: 8px; padding: 6px 8px;
+  background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  cursor: grab;
+}
+.bench-item:active { cursor: grabbing; }
+.bench-name { font-weight: 600; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.setpiece-row { display: flex; flex-wrap: wrap; gap: 12px; }
+.setpiece { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 140px; }
+.setpiece select {
+  background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 7px 9px; font-size: 13px;
+}
+
+.tac-slider { margin-bottom: 16px; }
+.tac-slider input[type=range] { width: 100%; accent-color: var(--accent); }
+
+/* Textmodus-Popup */
+.live-modal { max-width: 940px; width: 100%; display: flex; flex-direction: column; max-height: 90vh; }
+.live-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 22px; border-bottom: 1px solid var(--border); gap: 12px;
+}
+.live-team { display: flex; align-items: center; gap: 8px; font-weight: 700; flex: 1; }
+.live-team:last-child { justify-content: flex-end; }
+.live-score { text-align: center; }
+.live-min { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+.live-log { padding: 14px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 7px; }
+.live-line { display: flex; gap: 10px; font-size: 14px; line-height: 1.4; animation: fadeIn .25s ease; }
+.live-line-min { color: var(--accent); font-weight: 700; min-width: 30px; }
+.live-line.goal { color: var(--green); font-weight: 700; }
+.live-line.chance { color: var(--yellow); }
+.live-line.card { color: var(--orange); }
+.live-line.whistle { color: var(--text-3); font-style: italic; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.live-controls {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 14px 20px; border-top: 1px solid var(--border); flex-wrap: wrap;
+}
+
+/* Doppel-Fortschrittsbalken mit Stoppuhr in der Mitte */
+.live-bars { display: flex; align-items: center; gap: 12px; padding: 8px 16px 4px; }
+.live-bar { flex: 1 1 0; height: 8px; border-radius: 5px; background: var(--panel-2); overflow: hidden; }
+.live-bar-fill { display: block; height: 100%; background: var(--accent); border-radius: 5px; transition: width .5s ease; }
+.live-watch { flex: 0 0 auto; width: 74px; display: flex; flex-direction: column; align-items: center; }
+.live-watch-svg { width: 66px; height: auto; color: #fff; display: block; }
+.live-watch-min { fill: #fff; font-size: 21px; font-weight: 800; letter-spacing: -0.5px; }
+.live-etlabel { font-size: 10px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; color: var(--accent); margin-bottom: 3px; line-height: 1; }
+.live-etlabel.hidden { visibility: hidden; }
+
+/* Unterboxen pro Chance/Tor */
+.live-group { border: 1px solid var(--border); background: rgba(255, 255, 255, 0.03); border-radius: 9px; padding: 8px 11px 10px; animation: fadeIn .25s ease; }
+.live-group.goal { border-color: var(--accent); background: rgba(0, 217, 255, 0.08); }
+.live-group-min { display: inline-block; font-size: 11px; font-weight: 800; color: var(--text-2); background: rgba(255, 255, 255, 0.08); border-radius: 5px; padding: 2px 7px; margin-bottom: 6px; font-variant-numeric: tabular-nums; }
+.live-group.goal .live-group-min { color: #06111a; background: var(--accent); }
+.live-group-body { display: flex; flex-direction: column; gap: 3px; }
+.live-gline { font-size: 14px; line-height: 1.45; color: var(--text); }
+.live-gline.chance { color: var(--yellow); }
+.live-gline.goal { font-weight: 800; color: #fff; }
+
+/* Zweispaltiger Körper: Ticker links, Infopanel rechts */
+.live-body { display: flex; flex: 1; min-height: 0; }
+.live-main { flex: 1.7; display: flex; flex-direction: column; min-width: 0; border-right: 1px solid var(--border); }
+.live-side {
+  flex: 1; min-width: 0; max-width: 320px; overflow-y: auto;
+  padding: 14px; display: flex; flex-direction: column; gap: 12px;
+  background: var(--panel-2);
+}
+.live-box { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+.live-box-head {
+  display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .6px; color: var(--accent); margin-bottom: 9px;
+}
+.live-box-head .game-icon { color: var(--accent); }
+.live-info-row { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; padding: 3px 0; }
+.live-info-row .dim { color: var(--text-3); }
+
+.live-squad { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.live-squad td { padding: 3px 4px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.live-squad tr:last-child td { border-bottom: none; }
+.ls-num { color: var(--text-3); font-variant-numeric: tabular-nums; width: 22px; text-align: right; }
+.ls-pos { color: var(--accent); font-weight: 700; width: 34px; }
+.ls-name { width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.ls-ovr { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Vor-Anpfiff-Zustand */
+.live-prekick {
+  margin: auto; text-align: center; display: flex; flex-direction: column;
+  align-items: center; gap: 10px; padding: 20px; max-width: 380px;
+}
+.live-prekick-icon { color: var(--accent); }
+.live-prekick-title { font-size: 17px; font-weight: 800; }
+.live-startbtn { display: inline-flex; align-items: center; gap: 9px; }
+.live-startbtn .game-icon { color: inherit; }
+
+@media (max-width: 760px) {
+  .live-body { flex-direction: column; }
+  .live-main { border-right: none; border-bottom: 1px solid var(--border); }
+  .live-side { max-width: none; flex-direction: row; flex-wrap: wrap; }
+  .live-side .live-box { flex: 1 1 220px; }
+}
+
+
+/* ============================================================================
+   FINANZEN
+   ========================================================================== */
+.fin-wrap { display: flex; flex-direction: column; gap: 14px; padding-bottom: 20px; }
+/* Legacy-Fallback: fruehere Seitenkoepfe nutzten .section-head. Falls noch irgendwo
+   verwendet, wird es an den zentralen Seitenkopf (.page-head) angeglichen. */
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: var(--page-head-gap);
+  padding-bottom: var(--page-head-pad-b);
+  margin-bottom: var(--page-head-mb);
+  border-bottom: var(--page-head-border);
+}
+.section-head > h2 {
+  font-size: var(--page-head-title-size);
+  font-weight: var(--page-head-title-weight);
+  letter-spacing: var(--page-head-title-spacing);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.fin-hero {
+  display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px;
+  background: var(--panel, #16181d); border: 1px solid var(--border, #262a33);
+  border-radius: 14px; padding: 18px;
+}
+.fin-hero-main { display: flex; flex-direction: column; justify-content: center; }
+.fin-balance { font-size: 34px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.1; margin: 2px 0 8px; font-variant-numeric: tabular-nums; }
+.fin-hero-sub { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--dim, #9aa0ac); }
+.fin-budgets { display: flex; flex-direction: column; gap: 10px; }
+.fin-budget-card { background: var(--panel-2, #1d2027); border: 1px solid var(--border, #262a33); border-radius: 10px; padding: 10px 12px; }
+.fin-budget-val { font-size: 18px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+.fin-warn {
+  background: rgba(224, 60, 60, 0.10); border: 1px solid rgba(224, 60, 60, 0.5);
+  border-radius: 12px; padding: 12px 16px;
+}
+.fin-warn-title { font-weight: 700; color: var(--red, #e03c3c); margin-bottom: 4px; }
+.fin-warn ul { margin: 0; padding-left: 20px; }
+.fin-warn li { margin: 2px 0; font-size: 13.5px; }
+
+.fin-chart-card { padding: 14px 16px 8px; }
+.fin-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 780px) {
+  .fin-hero { grid-template-columns: 1fr; }
+  .fin-cols { grid-template-columns: 1fr; }
+}
+
+.fin-bar-row { display: grid; grid-template-columns: 150px 1fr auto; align-items: center; gap: 10px; padding: 5px 0; }
+.fin-bar-label { font-size: 13px; display: flex; align-items: center; gap: 6px; }
+.fin-bar-track { height: 8px; border-radius: 5px; background: var(--panel-2, #1d2027); overflow: hidden; }
+.fin-bar-fill { height: 100%; border-radius: 5px; transition: width 0.3s ease; }
+.fin-bar-val { font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--dim, #9aa0ac); min-width: 92px; text-align: right; }
+
+.fin-forecast { display: flex; flex-wrap: wrap; gap: 10px; }
+.fin-fc-item { flex: 1 1 130px; background: var(--panel-2, #1d2027); border: 1px solid var(--border, #262a33); border-radius: 10px; padding: 10px 12px; }
+.fin-fc-highlight { border-color: var(--accent, #00D9FF); box-shadow: 0 0 0 1px rgba(0, 217, 255, 0.25) inset; }
+.fin-fc-val { font-size: 18px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+.fin-tx-table { width: 100%; border-collapse: collapse; }
+.fin-tx-table td { padding: 6px 8px; border-bottom: 1px solid var(--border, #262a33); font-size: 13px; vertical-align: top; }
+.fin-tx-table tr:last-child td { border-bottom: none; }
+
+
+
+/* =============================================================================
+   JUGENDAKADEMIE — eigenständiger Bildschirm (Jahrgänge F–A)
+   ============================================================================= */
+.youth-hero {
+  padding: 18px 20px;
+  background: linear-gradient(120deg, rgba(0, 217, 255, 0.10), transparent 70%);
+  border-color: rgba(0, 217, 255, 0.28);
+}
+.youth-hero-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+.youth-hero-sub { font-size: 13px; margin-top: 2px; }
+.youth-hero-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.youth-class-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.youth-class-tabs .btn-sm:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.youth-class-section { padding: 14px 16px 6px; }
+.youth-class-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.youth-class-badge {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--bg, #10131a);
+  background: var(--accent, #00D9FF);
+  border-radius: var(--radius-sm, 8px);
+}
+.youth-class-name {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* =============================================================================
+   JUGEND (Jugendakademie) — Attribut-Raster im Talent-Detail
+   ============================================================================= */
+.youth-attr-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 18px;
+}
+@media (max-width: 640px) {
+  .youth-attr-grid { grid-template-columns: 1fr; }
+}
+.youth-attr-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0;
+}
+.youth-attr-label {
+  flex: 0 0 108px;
+  font-size: 12px;
+  color: var(--text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.youth-attr-row .attr-bar {
+  height: 8px;
+  border-radius: 5px;
+  background: var(--panel-2);
+  overflow: hidden;
+}
+
+/* =============================================================================
+   VEREINSGELÄNDE (Infrastruktur) — Einrichtungs-Karten
+   ============================================================================= */
+.fac-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+.fac-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.fac-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.fac-ico {
+  font-size: 30px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.fac-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text);
+}
+.fac-level {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+  gap: 4px;
+}
+.fac-pip {
+  width: 22px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+}
+.fac-pip.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 6px rgba(0, 217, 255, 0.4);
+}
+.fac-desc { line-height: 1.4; }
+.fac-effect {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.fac-effect-row {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+.fac-effect-row .dim2 { flex: 0 0 84px; }
+.fac-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  flex-wrap: wrap;
+}
+
+/* =============================================================================
+   DFB-POKAL — Turnierbaum & Begegnungen
+   ========================================================================== */
+.cup-bracket {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  align-items: flex-start;
+}
+.cup-col {
+  flex: 0 0 210px;
+  min-width: 210px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cup-col-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 13px;
+}
+.cup-tie {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 9px;
+  background: var(--panel);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+.cup-tie-clickable { cursor: pointer; transition: border-color .15s, background .15s; }
+.cup-tie-clickable:hover { border-color: var(--accent); background: var(--panel-hover); }
+.cup-tie-mine { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-glow) inset; }
+.cup-tie-pending { justify-content: center; text-align: center; grid-template-columns: 1fr; }
+.cup-team {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+.cup-team:last-child { justify-content: flex-end; text-align: right; }
+.cup-team-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cup-win .cup-team-name { font-weight: 800; color: var(--text); }
+.cup-win { color: var(--green); }
+.cup-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.15;
+  min-width: 40px;
+}
+.cup-score b { color: var(--accent); }
+.cup-badge { font-size: 9px; color: var(--yellow); font-weight: 700; }
+.cup-pens { font-size: 9px; color: var(--orange); }
+.cup-prizes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.cup-prize {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  flex: 1 1 120px;
+}
+
+
+/* ---------------- CHRONIK / TIMELINE ---------------- */
+.chronicle-list { display: flex; flex-direction: column; gap: 0; }
+.chronicle-item { display: grid; grid-template-columns: 34px 1fr; gap: 10px; }
+.chronicle-rail { display: flex; flex-direction: column; align-items: center; }
+.chronicle-dot {
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 900; color: #05070c; margin-top: 4px; flex: none;
+}
+.chronicle-rail::after {
+  content: ""; width: 2px; flex: 1 1 auto; background: var(--border); margin: 4px 0;
+}
+.chronicle-item:last-child .chronicle-rail::after { display: none; }
+.chronicle-body {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px 14px; margin-bottom: 12px; min-width: 0;
+}
+.chronicle-item.current .chronicle-body {
+  border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-glow) inset;
+}
+.chronicle-item.future .chronicle-body { opacity: 0.62; }
+.chronicle-head { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
+.chronicle-icon { font-size: 18px; }
+.chronicle-year { font-size: 17px; font-weight: 800; letter-spacing: -0.4px; }
+.chronicle-season { font-size: 12px; color: var(--text-2); }
+.chronicle-tag {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+  border: 1px solid var(--border); border-radius: 999px; padding: 2px 8px;
+}
+.chronicle-badge {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+  border-radius: 999px; padding: 2px 8px; margin-left: auto;
+}
+.chronicle-badge.now { background: var(--accent); color: #05070c; }
+.chronicle-badge.done { background: rgba(61,220,132,0.14); color: var(--green); }
+.chronicle-badge.soon { background: var(--panel-2); color: var(--text-2); border: 1px solid var(--border); }
+.chronicle-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.chronicle-desc { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+
+
+
+/* ===========================================================================
+   BLOCK p11 — Mitarbeiter, Marketing, Kalender, Zukunft-Toggle
+   =========================================================================== */
+
+/* Zukunft-anzeigen Checkbox-Zeile (Facilities/Staff/Marketing) */
+.future-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.future-toggle input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+.future-toggle .mini { color: var(--text-3); }
+
+/* Ausgegraute, noch nicht verfügbare Karten */
+.fac-locked {
+  opacity: 0.55;
+  filter: grayscale(0.6);
+}
+.fac-locked:hover { border-color: var(--border); }
+
+/* Gefahren-/Entlassen-Button */
+.btn-danger {
+  background: rgba(255, 92, 108, 0.12);
+  border-color: rgba(255, 92, 108, 0.5);
+  color: var(--red);
+}
+.btn-danger:hover { background: rgba(255, 92, 108, 0.2); border-color: var(--red); }
+
+/* ---- Mitarbeiter ---------------------------------------------------------- */
+.staff-fx-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 6px;
+}
+.staff-fx {
+  background: var(--panel-2);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  text-align: center;
+}
+.staff-fx-val { font-size: 19px; font-weight: 800; line-height: 1.1; }
+
+.staff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+.staff-card { display: flex; flex-direction: column; gap: 8px; }
+.staff-card.staff-hired { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent-soft); }
+.staff-card-head { display: flex; align-items: center; gap: 8px; }
+.staff-name { font-weight: 700; font-size: 14px; flex: 1; }
+.staff-cc { color: var(--text-2); font-weight: 700; letter-spacing: 0.5px; }
+.staff-effect { min-height: 32px; }
+.staff-card-foot { display: flex; align-items: center; gap: 8px; margin-top: auto; }
+
+/* ---- Marketing ------------------------------------------------------------ */
+.mkt-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+}
+.mkt-summary > div > div:last-child { font-size: 18px; font-weight: 800; }
+.mkt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+.mkt-card { display: flex; flex-direction: column; gap: 8px; }
+.mkt-head { display: flex; align-items: flex-start; gap: 10px; }
+.mkt-slider { width: 100%; accent-color: var(--accent); cursor: pointer; margin: 2px 0; }
+.mkt-bar {
+  height: 8px;
+  background: var(--panel-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.mkt-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-dim), var(--accent));
+  border-radius: 999px;
+  transition: width 0.2s;
+}
+
+/* ---- Kalender ------------------------------------------------------------- */
+.cal-plan { display: flex; flex-direction: column; gap: 10px; }
+.cal-plan-types { display: flex; flex-wrap: wrap; gap: 8px; }
+.cal-days { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-2); }
+.cal-days input[type="range"] { flex: 1; accent-color: var(--accent); cursor: pointer; max-width: 260px; }
+.cal-plan-info { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; }
+
+.cal-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.cal-month-title { font-size: 17px; font-weight: 800; letter-spacing: 0.5px; }
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-top: 6px;
+}
+.cal-head-row { margin-bottom: 2px; }
+.cal-wd {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  padding: 4px 0;
+}
+/* Große Abreißkalender-Kästchen (Header-Optik, aber breiter, mehr Platz für
+   Tageszahl + Icon + Event-Text). */
+.cal-cell {
+  position: relative;
+  min-height: 82px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  background: var(--panel-2);
+  padding: 7px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color 0.12s, background 0.12s, transform 0.1s;
+}
+.cal-empty { background: transparent; border-color: transparent; min-height: 0; }
+.cal-dom { font-size: 20px; font-weight: 800; line-height: 1; color: var(--text-2); letter-spacing: -0.5px; }
+.cal-past { opacity: 0.42; }
+.cal-free .cal-dom { color: var(--green); }
+/* Anspringbares Event (Normalmodus) bzw. wählbarer Starttag (Planungsmodus). */
+.cal-jumpable, .cal-selectable { cursor: pointer; }
+.cal-jumpable:hover, .cal-selectable:hover { border-color: var(--accent); background: var(--accent-soft); transform: translateY(-1px); }
+.cal-blocked { background: rgba(255, 92, 108, 0.08); border-color: rgba(255, 92, 108, 0.25); }
+.cal-today { box-shadow: inset 0 0 0 2px var(--accent); }
+.cal-today .cal-dom { color: var(--accent); }
+.cal-preview { border-color: var(--green); background: rgba(61, 220, 132, 0.16); cursor: pointer; }
+.cal-preview-bad { border-color: var(--red); background: rgba(255, 92, 108, 0.16); }
+
+/* Event-Anzeige in der Tages-Zelle (aus buildStripEventMap) */
+.cal-cell-ev {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  margin-top: auto;
+  min-width: 0;
+}
+.cal-cell-ico { width: 15px; height: 15px; flex: 0 0 auto; opacity: 0.92; margin-top: 1px; }
+.cal-cell-ev-txt {
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--text-2);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-width: 0;
+}
+.cal-cell-ev-generic .cal-cell-ev-txt { color: var(--text-3); font-weight: 600; }
+/* Farbakzente analog Header: Liga = orange, Pokal = gold */
+.cal-cell.cal-acc-orange { border-color: rgba(255, 159, 67, 0.5); }
+.cal-cell.cal-acc-orange .cal-cell-ico { color: var(--orange); }
+.cal-cell.cal-acc-orange .cal-cell-ev-txt { color: var(--orange); }
+.cal-cell.cal-acc-gold { border-color: rgba(255, 201, 60, 0.5); }
+.cal-cell.cal-acc-gold .cal-cell-ico { color: var(--gold); }
+.cal-cell.cal-acc-gold .cal-cell-ev-txt { color: var(--gold); }
+
+/* Responsive: auf schmaleren Breiten kompakter, aber lesbar */
+@media (max-width: 720px) {
+  .cal-grid { gap: 5px; }
+  .cal-cell { min-height: 64px; padding: 5px 6px; }
+  .cal-dom { font-size: 16px; }
+  .cal-cell-ev-txt { font-size: 10px; }
+  .cal-cell-ico { width: 13px; height: 13px; }
+}
+
+.cal-legend { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+.cal-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.lg { width: 12px; height: 12px; border-radius: 3px; display: inline-block; border: 1px solid var(--border); }
+.lg-free { background: var(--panel-2); border-color: var(--green); }
+.lg-block { background: rgba(255, 92, 108, 0.25); border-color: rgba(255, 92, 108, 0.5); }
+.lg-today { background: transparent; box-shadow: inset 0 0 0 2px var(--accent); border-color: var(--accent); }
+.lg-prev { background: rgba(61, 220, 132, 0.4); border-color: var(--green); }
+
+.cal-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.cal-list-item { display: flex; align-items: center; gap: 12px; }
+
+
+
+/* ---------------------------------------------------------------------------
+   Anzeige-Einstellungen (Auflösung / Modus / UI-Skalierung)
+   --------------------------------------------------------------------------- */
+
+/* Kleine Utility-Klassen, die für den Anzeige-Block benötigt werden */
+.mt4 { margin-top: 4px; }
+.micro { font-size: 10.5px; }
+.row-between { display: flex; justify-content: space-between; align-items: center; }
+
+/* Segment-Umschalter (Anzeige-Modus: Fenster / Randlos / Vollbild) */
+.seg-group {
+  display: inline-flex;
+  border: 1px solid var(--border-soft);
+  border-radius: 9px;
+  overflow: hidden;
+  background: var(--panel);
+}
+.seg-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-2);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  border-right: 1px solid var(--border-soft);
+}
+.seg-btn:last-child { border-right: none; }
+.seg-btn:hover { background: var(--panel-hover); color: var(--text); }
+.seg-btn.active {
+  background: var(--accent);
+  color: #04202a;
+}
+
+/* Rahmen: Automatisch (nur UI-Skalierung via zoom) */
+.display-content { width: 100%; }
+
+/* Rahmen: feste Auflösung — zentriertes Letterboxing/Pillarboxing */
+.display-outer {
+  position: fixed;
+  inset: 0;
+  background: #05070a;
+  overflow: hidden;
+  z-index: 0;
+}
+.display-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: center center;
+  overflow: auto;
+  background: var(--bg);
+  box-shadow: 0 0 0 1px var(--border-soft), 0 24px 80px rgba(0, 0, 0, 0.6);
+}
+/* Innerhalb eines festen Rahmens füllen die Grund-Container den Rahmen
+   (statt sich am Viewport per 100vh zu orientieren). */
+.display-inner .app-shell,
+.display-inner .menu-bg { min-height: 100%; }
+
+
+/* =============================================================================
+   ZWEISTUFIGE TOP-NAVIGATION (Hauptkategorien + Unterpunkte)
+   ============================================================================= */
+.top-nav {
+  position: sticky;
+  top: 60px;
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0 0 18px;
+  /* Untermenue: voll deckendes Dunkelblau – hier scheint bewusst KEIN
+     Hintergrundbild durch (klare Abgrenzung zum leicht transparenten Header). */
+  background: linear-gradient(180deg, #0b0f16 0%, #0c111a 100%);
+  border-bottom: 1px solid var(--border);
+}
+
+/* --- Reihe 1: Hauptkategorien (fett, Großbuchstaben) --- */
+.tn-main {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 8px var(--bar-pad) 6px;
+  scrollbar-width: none;
+}
+.tn-main::-webkit-scrollbar { display: none; }
+.tn-main-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 0;
+  min-width: 0;
+  justify-content: center;
+  padding: 9px 16px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-3);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s, border-color 0.14s;
+}
+.tn-main-item:hover { background: var(--panel-2); color: var(--text); }
+.tn-main-item.active {
+  color: var(--accent);
+  background: transparent;
+  border-color: transparent;
+}
+.tn-ico { width: 20px; height: 20px; flex: 0 0 auto; }
+
+/* --- Reihe 2: Unterpunkte der aktiven Kategorie --- */
+.tn-sub {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-start;
+  overflow-x: auto;
+  /* Gleiche Kanten-Einrueckung wie Header/Boxen: NACHRICHTEN == linke Box,
+     Datum (margin-left:auto) == rechte Box. */
+  padding: 7px calc(var(--content-pad) + (100% - 2 * var(--content-pad)) * 0.025) 9px;
+  border-top: 1px solid var(--border-soft);
+  scrollbar-width: none;
+}
+.tn-sub::-webkit-scrollbar { display: none; }
+.tn-sub-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 16px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-2);
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s, transform 0.06s ease;
+}
+.tn-sub-item:hover { background: var(--panel-2); color: var(--text); }
+/* Press-Rueckmeldung nur auf dem geklickten Sub-Menuepunkt: scale() statt
+   translateY, damit kein vertikaler Versatz die Nachbarn optisch verschiebt. */
+.tn-sub-item:active { transform: scale(0.90); }
+.tn-sub-item.active {
+  color: var(--accent);
+  background: transparent;
+}
+.tn-sub-item.active::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: -8px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+.tn-sub-ico { width: 17px; height: 17px; flex: 0 0 auto; }
+.tn-label { line-height: 1; }
+/* Ausfuehrliches Datum, zentriert unter dem WEITER-Button (rechts). */
+.tn-date {
+  margin-left: auto; text-align: center; width: 265px;
+  font-size: 16px; font-weight: 800; color: var(--accent);
+  letter-spacing: 0.4px; white-space: nowrap; align-self: center;
+}
+
+@media (max-width: 720px) {
+  .top-nav { top: 0; }
+  .tn-main-item { padding: 8px 12px; font-size: 11px; letter-spacing: 0.4px; }
+  .tn-main-item .tn-label { display: none; }
+  .tn-main-item.active .tn-label { display: inline; }
+  .tn-ico { width: 22px; height: 22px; }
+}
+
+/* =============================================================================
+   HEADER-MENÜ (Dropdown oben rechts)
+   ============================================================================= */
+.hdr-menu { position: relative; display: inline-flex; }
+.menu-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+}
+/* Unsichtbare Brücke über die 6px-Lücke zwischen Button und Dropdown, damit der
+   Cursor beim Übergang das Menü (Kind von .hdr-menu) nicht verlässt und es nicht
+   ungewollt schließt. */
+.menu-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 0;
+  right: 0;
+  height: 8px;
+}
+.menu-dropdown {
+  z-index: 60;
+  min-width: 210px;
+  padding: 6px;
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: menu-dd-in 0.12s ease-out;
+}
+@keyframes menu-dd-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.menu-dd-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 11px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.menu-dd-item svg { width: 18px; height: 18px; flex: 0 0 auto; }
+.menu-dd-item:hover { background: var(--panel-2); }
+.menu-dd-item.danger { color: var(--red); }
+.menu-dd-item.danger:hover { background: rgba(255, 92, 108, 0.12); }
+.menu-dd-sep { height: 1px; margin: 4px 6px; background: var(--border); }
+
+
+
+/* --- Leistungsbewertungs-Zeremonie ---------------------------------------- */
+.rc-panel {
+  width: min(560px, 94vw); max-height: 86vh;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 18px;
+  padding: 22px 22px 18px; display: flex; flex-direction: column;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .55);
+}
+.rc-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.rc-head .reveal-close { position: static; width: 34px; height: 34px; font-size: 16px; }
+.rc-progress {
+  display: flex; align-items: center; justify-content: space-between;
+  margin: 10px 0 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+.rc-summary { display: flex; gap: 12px; font-weight: 700; font-size: 13px; }
+.rc-list {
+  flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;
+  padding-right: 4px; min-height: 120px;
+}
+.rc-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 12px; border-radius: 10px;
+  background: var(--panel-2); border: 1px solid var(--border);
+  border-left: 3px solid var(--text-3);
+  animation: rc-in .28s ease;
+}
+.rc-row.up { border-left-color: #38d39f; }
+.rc-row.down { border-left-color: var(--red); }
+.rc-row.flat { border-left-color: var(--text-3); }
+.rc-row.newest { box-shadow: 0 0 0 1px var(--accent) inset; }
+@keyframes rc-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+.rc-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.rc-name { font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rc-ovr { display: flex; align-items: center; gap: 8px; font-size: 15px; flex-shrink: 0; }
+.rc-old { color: var(--text-2); }
+.rc-arrow { color: var(--text-3); }
+.rc-delta { font-size: 12px; font-weight: 700; min-width: 40px; text-align: right; }
+.rc-delta.up { color: #38d39f; }
+.rc-delta.down { color: var(--red); }
+.rc-delta.flat { color: var(--text-3); }
+.rc-controls { display: flex; gap: 8px; align-items: center; margin-top: 14px; }
+.rc-controls .btn-continue { flex: 1; }
+.rc-btn { min-width: 48px; font-weight: 700; }
+
+
+
+/* =============================================================================
+   PlayerModal — FM-Stil Spielerprofil (dreispaltig)
+   ========================================================================== */
+.pm-modal { max-width: 1120px; }
+.pm-modal .pm-body { padding: 16px 20px 22px; overflow-y: auto; }
+
+/* ---- Kopfbereich ---- */
+.pm-header {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.pm-head-left { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.pm-head-avatar { position: relative; flex: 0 0 auto; }
+.pm-head-crest {
+  position: absolute; right: -6px; bottom: -6px;
+  background: var(--panel); border-radius: 50%; padding: 2px;
+  border: 1px solid var(--border-soft);
+}
+.pm-head-id { min-width: 0; }
+.pm-head-club { font-size: 12px; color: var(--text-3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.pm-head-name-row { display: flex; align-items: baseline; gap: 10px; margin: 2px 0; }
+.pm-head-no { font-size: 19px; font-weight: 900; color: var(--accent); font-variant-numeric: tabular-nums; }
+.pm-head-name { font-size: 24px; font-weight: 900; letter-spacing: -0.5px; margin: 0; }
+.pm-head-sub { font-size: 13px; color: var(--text-2); }
+.pm-head-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+
+.pm-head-postable {
+  flex: 0 0 auto;
+  min-width: 210px;
+  background: rgba(10, 14, 20, 0.4);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+.pm-pt-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  font-size: 12px; padding: 3px 0; color: var(--text-2);
+}
+.pm-pt-row em { color: var(--text-3); font-style: normal; }
+.pm-pt-head { color: var(--text-3); font-weight: 700; text-transform: uppercase; font-size: 10px; letter-spacing: 0.8px; border-bottom: 1px solid var(--border-soft); padding-bottom: 4px; margin-bottom: 2px; }
+.pm-pt-val { font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text); }
+
+/* ---- 3-Spalten-Layout ---- */
+.pm-cols {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.pm-col { min-width: 0; }
+.pm-col-title {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--accent); margin-bottom: 8px;
+}
+.pm-col-title .game-icon { color: var(--accent); }
+.pm-col-sub { color: var(--text-3); font-weight: 600; letter-spacing: 0; text-transform: none; }
+
+/* Fähigkeiten (links) */
+.pm-skill-group { margin-bottom: 10px; }
+.pm-skill-gt { font-size: 10px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 3px; }
+.pm-skill-list {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2px 14px;
+}
+.pm-skill-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 2px 0; }
+.pm-skill-lbl { font-size: 12px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pm-skill-val { font-size: 13px; font-weight: 800; font-variant-numeric: tabular-nums; flex: 0 0 auto; }
+
+/* Positions-Feld (Mitte) */
+.pm-pitch {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  background: linear-gradient(180deg, rgba(61,220,132,0.06), rgba(0,217,255,0.04));
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.pm-pitch-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.pm-pitch-badge {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2px 7px;
+  line-height: 1.15;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+.pm-pitch-badge.natural { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 2px 8px rgba(0,217,255,0.3); }
+.pm-pitch-pos { font-size: 10px; font-weight: 800; color: var(--text-2); letter-spacing: 0.4px; }
+.pm-pitch-val { font-size: 13px; font-weight: 900; font-variant-numeric: tabular-nums; }
+.pm-pitch-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 8px; }
+.pm-pitch-leg { font-size: 11px; color: var(--text-3); }
+.pm-pitch-leg b { color: var(--text-2); }
+
+/* Ligabilanz / Vertrag (rechts) */
+.pm-side-stats {
+  background: rgba(10, 14, 20, 0.35);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  padding: 6px 12px;
+}
+.pm-stat-line {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.pm-stat-line:last-child { border-bottom: none; }
+
+/* ---- Tabs-Inhalt ---- */
+.pm-tabs { margin-top: 10px; }
+
+.pm-general { display: flex; flex-direction: column; gap: 16px; }
+.pm-gen-block {}
+.pm-gen-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--accent); margin-bottom: 8px; }
+.pm-tiles { display: flex; flex-wrap: wrap; gap: 10px; }
+.pm-tile {
+  flex: 1 1 120px;
+  min-width: 110px;
+  background: var(--panel-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  padding: 12px 10px;
+  text-align: center;
+}
+.pm-tile-num { font-size: 26px; font-weight: 900; font-variant-numeric: tabular-nums; line-height: 1; }
+.pm-tile-lbl { font-size: 11px; color: var(--text-2); font-weight: 700; margin-top: 5px; }
+.pm-tile-sub { font-size: 10px; color: var(--text-3); margin-top: 2px; }
+
+.pm-detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+
+.pm-stat-boxes { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 8px; }
+.pm-statbox { text-align: center; padding: 14px 8px; }
+.pm-statbox-num { font-size: 24px; font-weight: 900; font-variant-numeric: tabular-nums; color: var(--accent); }
+
+.pm-empty { text-align: center; padding: 40px 20px; color: var(--text-2); }
+.pm-empty .game-icon { color: var(--text-3); }
+
+/* Schmale Ansicht: Spalten stapeln */
+@media (max-width: 860px) {
+  .pm-cols { grid-template-columns: 1fr; }
+  .pm-skill-list { grid-template-columns: 1fr 1fr; }
+  .pm-head-postable { min-width: 100%; }
+}
+
+
+
+/* =============================================================================
+   ClubModal — Vereins-Detailansicht (FM-Stil)
+   ============================================================================= */
+/* Klickbare Vereinsnamen in Tabelle/Spielplan */
+.club-link { transition: color 0.12s ease; }
+.club-link:hover { color: var(--accent); }
+.club-link:hover span { color: var(--accent); }
+
+.cm-modal { max-width: 1120px; }
+.cm-modal .cm-body { overflow-y: auto; }
+
+.cm-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  border-radius: 12px 12px 0 0;
+}
+.cm-head-crest { flex-shrink: 0; }
+.cm-head-id { min-width: 0; flex: 1; }
+.cm-head-name { margin: 0 0 4px; font-size: 24px; font-weight: 800; line-height: 1.1; }
+.cm-head-sub { color: var(--text-2); font-size: 13px; margin-bottom: 10px; }
+.cm-head-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.cm-form { display: inline-flex; gap: 3px; margin-left: 2px; }
+
+.cm-body { padding: 16px 20px 20px; }
+.cm-cols { display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 14px; align-items: start; }
+.cm-col { display: flex; flex-direction: column; gap: 14px; }
+
+.cm-stat-line {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 10px; padding: 5px 0; font-size: 13px;
+  border-bottom: 1px solid var(--border-soft, rgba(255,255,255,0.05));
+}
+.cm-stat-line:last-child { border-bottom: none; }
+.cm-stat-line > span { color: var(--text-2); }
+
+.cm-best {
+  display: flex; align-items: center; gap: 8px; padding: 6px 4px;
+  border-bottom: 1px solid var(--border-soft, rgba(255,255,255,0.05)); font-size: 13px;
+}
+.cm-best:last-child { border-bottom: none; }
+.cm-best-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cm-best.clickable { cursor: pointer; border-radius: 6px; transition: background 0.12s ease; }
+.cm-best.clickable:hover { background: var(--panel-2, rgba(255,255,255,0.04)); }
+
+.cm-squad { display: flex; flex-direction: column; }
+.cm-squad-row {
+  display: grid; grid-template-columns: 28px 1fr 46px 40px 46px;
+  align-items: center; gap: 6px; padding: 5px 4px; font-size: 13px;
+  border-bottom: 1px solid var(--border-soft, rgba(255,255,255,0.05));
+}
+.cm-squad-row:last-child { border-bottom: none; }
+.cm-squad-head { color: var(--text-3); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.cm-squad-row.clickable { cursor: pointer; border-radius: 6px; transition: background 0.12s ease; }
+.cm-squad-row.clickable:hover { background: var(--panel-2, rgba(255,255,255,0.04)); }
+
+.cm-matches { display: flex; flex-direction: column; }
+.cm-match {
+  display: grid; grid-template-columns: 58px 20px 1fr 46px;
+  align-items: center; gap: 6px; padding: 5px 4px; font-size: 13px;
+  border-bottom: 1px solid var(--border-soft, rgba(255,255,255,0.05));
+}
+.cm-match:last-child { border-bottom: none; }
+.cm-match-ha { color: var(--text-3); font-weight: 700; text-align: center; }
+.cm-match-opp { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+.cm-match-res { text-align: right; }
+
+@media (max-width: 860px) {
+  .cm-cols { grid-template-columns: 1fr; }
+}
+
+
+
+/* =============================================================================
+   AAA-DASHBOARD – NEUER HEADER (eine Leiste)
+   ============================================================================= */
+.hd-bar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 29px;
+  /* Einheitliche Menue-/Header-Hoehe auf ALLEN Seiten (wie Zentrale). */
+  height: var(--shell-head-height);
+  /* Inhaltskanten buendig zu den Zentrale-Boxen darunter: die aeussere Box-Kante
+     liegt bei content-pad + 2.5% der Grid-Breite (space-evenly-Luecke). Dieselbe
+     Einrueckung als horizontales Padding, damit Logo == linke Box, WEITER == rechte Box. */
+  padding: 0 calc(var(--content-pad) + (100% - 2 * var(--content-pad)) * 0.025);
+  /* Einheitlicher Header-Look (wie Zentrale): dezentes diagonales Linienraster
+     ueber minimalem Dark-Gradient mit Hauch Tuerkis. Kein Glow. */
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.022) 0px, rgba(255, 255, 255, 0.022) 1px, transparent 1px, transparent 7px),
+    radial-gradient(120% 180% at 0% -40%, rgba(0, 217, 255, 0.06) 0%, transparent 42%),
+    linear-gradient(90deg, #0b1018 0%, #131b28 50%, #0b1018 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.hd-logo { display: flex; align-items: center; gap: 17px; flex: 0 0 auto; }
+/* Logo behaelt bewusst Inter (unveraenderte Schriftart lt. Vorgabe). */
+.hd-logo-year { font-family: var(--font-logo); font-size: 46px; font-weight: 900; letter-spacing: 0.5px; color: var(--text); line-height: 1; }
+.hd-logo-div { width: 2px; height: 50px; border-radius: 2px; background: linear-gradient(180deg, transparent, var(--accent), transparent); opacity: 0.75; }
+.hd-logo-title { display: flex; flex-direction: column; line-height: 1.1; }
+.hd-logo-title span { font-family: var(--font-logo); font-size: 17.5px; font-weight: 800; letter-spacing: 1.8px; text-transform: uppercase; }
+.hd-logo-title span:first-child { color: var(--accent); }
+.hd-logo-title span:last-child { color: var(--text-2); }
+
+.hd-nav { display: flex; align-items: center; justify-content: flex-start; gap: 5px; flex: 1 1 auto; overflow-x: auto; scrollbar-width: none; height: 100%; }
+.hd-nav::-webkit-scrollbar { display: none; }
+.hd-nav-item {
+  position: relative;
+  height: 100%;
+  padding: 0 17px;
+  border: none;
+  background: transparent;
+  color: var(--text-3);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.14s, transform 0.06s ease;
+}
+.hd-nav-item:hover { color: var(--text); }
+/* Taktile Rueckmeldung: NUR der angeklickte Menuepunkt reagiert. Fruehere
+   Versionen nutzten translateY (nach unten druecken) – das verschob zwar keine
+   Geschwister im Layout, erzeugte aber eine optische Relativbewegung: springt
+   der gedrueckte Punkt nach unten, wirken die stehenden Nachbarn relativ dazu
+   verschoben. Daher jetzt scale() statt translateY: der Punkt schrumpft kurz
+   um seinen Mittelpunkt, die Grundlinie bleibt erhalten, die Nachbarn wirken
+   absolut ruhig. `:active` gilt nur fuer das gedrueckte Element und ueber-
+   schreibt die globale 1px-Regel `button:active`. */
+.hd-nav-item:active { transform: scale(0.90); }
+/* Aktiver Menuepunkt: NUR Textfarbe + Unterstrich (::after).
+   background/border explizit zuruecksetzen, um die globale Regel
+   `button.active` (accent-soft-Glow, Zeile ~335) zu neutralisieren –
+   das war die wiederkehrende Glow-Ursache im Header. */
+.hd-nav-item.active { color: var(--accent); background: transparent; border-color: transparent; }
+.hd-nav-item.active::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--accent);
+}
+
+.hd-right { display: flex; align-items: center; gap: 19px; flex: 0 0 auto; margin-left: auto; }
+.hd-sep { width: 1px; height: 34px; background: var(--border); flex: 0 0 auto; }
+.hd-balance {
+  display: inline-flex; align-items: center; gap: 11px; white-space: nowrap;
+  padding: 8px 18px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+}
+.hd-balance-ico { display: inline-flex; align-items: center; color: var(--text-2); flex: 0 0 auto; }
+.hd-balance-ico svg { width: 24px; height: 24px; }
+.hd-balance-lbl { font-size: 16px; color: var(--text-2); }
+.hd-balance-val { font-size: 18px; font-weight: 800; color: var(--accent); }
+.hd-club { display: inline-flex; align-items: center; gap: 10px; }
+.hd-club-name { font-size: 16px; font-weight: 700; color: var(--text); max-width: 192px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* WEITER-Button: 1/4 hoeher + 1/2 breiter als zuvor (per Padding + fixe
+   Icon-Box, damit die Masse in allen Zustaenden identisch bleiben).
+   Aktiv-Zustand (.running) = passendes Beige bei GLEICHEN Massen.
+   Hover = leicht helleres Tuerkis als der Ruhezustand. */
+.hd-continue {
+  display: inline-flex; align-items: center; gap: 14px;
+  padding: 12px 58px 12px 52px; border: none; border-radius: 10px;
+  background: var(--accent); color: #04222b;
+  cursor: pointer; transition: background 0.14s, filter 0.14s, transform 0.05s;
+}
+.hd-continue-ico { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 45px; height: 45px; }
+.hd-continue-ico svg { display: block; }
+/* Nur noch der Schriftzug (kein Untertitel mehr): vertikal UND horizontal
+   zentriert. Feste Breite = laengstes Label ("Neue Saison"), damit der Button
+   in ALLEN Zustaenden (Weiter/Pause/Simulieren/Neue Saison) exakt gleich
+   breit bleibt und beim Umschalten nicht springt. */
+.hd-continue-txt { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 96px; line-height: 1; }
+.hd-continue-lbl { font-size: 21px; font-weight: 900; letter-spacing: 0.6px; text-transform: uppercase; text-align: center; }
+.hd-continue:hover { background: #4de6ff; }
+.hd-continue:active { transform: translateY(1px); }
+.hd-continue.running { background: #e7d8b4; color: #3a3020; }
+.hd-continue.running:hover { background: #f0e4c8; }
+.hd-continue.season { background: var(--gold); color: #3a2c00; }
+.hd-continue.season:hover { filter: brightness(1.08); }
+
+/* Zentrale-Header: dunkles Nacht-Stadion-Band wie im Mockup „Variante 12“;
+   der Abdunkel-Verlauf darüber hält Logo, Navigation und rechte Elemente lesbar. */
+.hd-bar--zentrale {
+  height: 100px;
+  border-bottom: 1px solid var(--border);
+  /* Kein Foto mehr: dezentes CSS-Muster (feines diagonales Linienraster) ueber einem
+     minimalen Dark-Gradient in der Panel-Palette mit einem Hauch Tuerkis. Kein Glow. */
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.022) 0px, rgba(255, 255, 255, 0.022) 1px, transparent 1px, transparent 7px),
+    radial-gradient(120% 180% at 0% -40%, rgba(0, 217, 255, 0.06) 0%, transparent 42%),
+    linear-gradient(90deg, #0b1018 0%, #131b28 50%, #0b1018 100%);
+}
+.hd-gear {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 46px; height: 46px; border: 1px solid var(--border); border-radius: 9px;
+  background: var(--panel); color: var(--text-2); cursor: pointer;
+  transition: background 0.14s, color 0.14s;
+}
+/* Kein Hover-Effekt am Zahnrad (bewusst entfernt). */
+.hd-gear svg { width: 24px; height: 24px; }
+
+@media (max-width: 1080px) {
+  .hd-balance-lbl { display: none; }
+}
+@media (max-width: 860px) {
+  .hd-logo-title { display: none; }
+  .hd-club-name { display: none; }
+}
+@media (max-width: 780px) {
+  .hd-bar { gap: 12px; }
+  .hd-nav { display: none; }
+}
+
+/* =============================================================================
+   AAA-DASHBOARD – 4-SPALTEN-RASTER
+   ============================================================================= */
+.dashx {
+  display: grid;
+  /* Spalten 10% schmaler als volle Drittel; per space-evenly ueber die volle
+     Breite verteilt, sodass ALLE vier horizontalen Luecken gleich gross sind:
+     Rand<->Box = Box<->Box (beidseitig). column-gap MUSS 0 sein, sonst wuerden
+     nur die inneren Luecken um den gap groesser als die Randluecken. row-gap
+     (vertikaler Abstand der beiden Reihen) bleibt 16px. */
+  grid-template-columns: 30% 30% 30%;
+  grid-template-areas:
+    "verein tabelle  naechstes"
+    "kader  termine  finanzen";
+  /* Das Raster fuellt den GESAMTEN Bereich zwischen Kalender und Footer
+     (flex:1) und haelt so den Footer unten. align-content: space-evenly
+     verteilt den FREIEN Platz zu gleichen Teilen VOR der oberen Reihe,
+     ZWISCHEN den Reihen und NACH der unteren Reihe – dadurch werden die drei
+     vertikalen Abstaende identisch, OHNE die Boxen zu vergroessern:
+       Kalender->obere Reihe == Reihe<->Reihe == untere Reihe->Footer.
+     Die Reihen-Tracks bleiben inhaltsgross (space-evenly streckt sie NICHT);
+     align-items: stretch gleicht nur die Hoehe der Boxen INNERHALB einer Reihe
+     an (wie bisher). row-gap muss 0 sein, sonst kaeme zur space-evenly-Luecke
+     noch ein fixer Abstand hinzu. */
+  flex: 1 1 auto;
+  min-height: 0;
+  align-content: space-evenly;
+  row-gap: 0;
+  column-gap: 0;
+  justify-content: space-evenly;
+  align-items: stretch;
+  margin-bottom: 0;
+}
+.dashx > .card { display: flex; flex-direction: column; min-width: 0; padding: 7px 15px; }
+/* Schrift der Dashboard-Boxen = globaler Standard (--font-ui). */
+.shell-zentrale .dashx { font-family: var(--font-ui); }
+.dashx-verein { grid-area: verein; }
+.dashx-tabelle { grid-area: tabelle; }
+.dashx-naechstes { grid-area: naechstes; }
+.dashx-finanzen { grid-area: finanzen; }
+.dashx-kader { grid-area: kader; }
+.dashx-termine { grid-area: termine; }
+
+@media (max-width: 1200px) {
+  .dashx {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "verein    tabelle"
+      "naechstes finanzen"
+      "kader     termine";
+  }
+}
+@media (max-width: 760px) {
+  .dashx {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "verein"
+      "tabelle"
+      "naechstes"
+      "finanzen"
+      "kader"
+      "termine";
+  }
+}
+
+/* --- Kategorie-Dashboards: Boxen an GLEICHEN Positionen/Groessen wie die 6
+   Zentrale-Boxen, mit FIXER Groesse (kein inhaltsgetriebenes Schrumpfen). ---
+   Gleiche Spalten-Geometrie wie .dashx (3x30%, space-evenly, column-gap 0) =>
+   identische horizontale Positionen. ZWEI Reihen sind IMMER reserviert
+   (grid-template-rows: 1fr 1fr): Kategorien mit nur 3 Boxen lassen die zweite
+   Reihe teils leer, statt die Boxen zu vergroessern. Die Reihen fuellen den
+   Bereich zwischen Kalender und Footer (flex:1); padding (oben/unten) + row-gap
+   bilden die drei gleichen vertikalen Abstaende nach wie bei der Zentrale nach,
+   sodass Reihenhoehe und Box-Positionen deckungsgleich sind. Alle Werte in
+   Referenz-Pixeln => skalieren automatisch mit der Aufloesung, bleiben aber
+   unabhaengig vom Inhalt. */
+.dashx-cat {
+  display: grid;
+  grid-template-columns: 30% 30% 30%;
+  grid-template-rows: 1fr 1fr;
+  flex: 1 1 auto;
+  min-height: 0;
+  justify-content: space-evenly;
+  column-gap: 0;
+  row-gap: 64px;
+  padding: 64px 0;
+  align-items: stretch;
+  margin-bottom: 0;
+}
+.dashx-cat > .card { display: flex; flex-direction: column; min-width: 0; padding: 7px 15px; }
+/* Gleiche Schrift wie die Zentrale-Boxen (--font-ui). */
+.shell-dashlike .dashx-cat { font-family: var(--font-ui); }
+@media (max-width: 1200px) {
+  .dashx-cat { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 760px) {
+  .dashx-cat { grid-template-columns: 1fr; grid-template-rows: auto; row-gap: 14px; padding: 8px 0; }
+}
+
+/* --- Freistehender Kalenderstreifen: dunkle Tageskarten im Referenz-Stil --- */
+/* Rechte Kante um eine space-evenly-Luecke (2.5% der Grid-Breite) einruecken,
+   damit der Kalenderstreifen buendig mit der rechten Box-Spalte abschliesst. */
+.dashx-caltop { display: flex; justify-content: flex-end; margin-bottom: 0; padding-right: 2.5%; }
+.kbstrip { display: flex; align-items: stretch; justify-content: flex-end; gap: 10px; padding: 0; cursor: pointer; }
+.kbsheet {
+  position: relative;
+  flex: 0 0 120px;
+  width: 120px;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 10px 11px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, #161d29 0%, #121924 100%);
+  text-align: center;
+  overflow: hidden;
+}
+/* Kopf: grosse Tageszahl oben links, Wochentag klein darunter. */
+.kbsheet-head { display: flex; flex-direction: column; align-items: center; line-height: 1; }
+.kbday { font-size: 26px; font-weight: 800; line-height: 1; color: var(--text); }
+.kbwd { font-size: 11px; font-weight: 700; color: var(--text-3); letter-spacing: 0.6px; margin-top: 3px; }
+/* Icon zentral, nimmt den freien Raum ein. */
+.kbsheet-ico { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; min-height: 34px; }
+.kbsheet-ico .game-icon { display: block; }
+/* Label unten mittig. */
+.kbsheet-lbl {
+  font-size: 11px; font-weight: 700; color: var(--text-2);
+  letter-spacing: 0.2px; line-height: 1.1;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; min-height: 26px;
+}
+/* Spieltag: orange Tageszahl (Fussball-Icon kommt aus den Daten). */
+.kbsheet.is-match .kbday { color: var(--orange); }
+/* Spieltag-Ball optisch verdoppelt, ohne das Zellen-Layout zu vergroessern. */
+.kbsheet.is-match .kbsheet-ico .game-icon { transform: scale(2); transform-origin: center; }
+/* Aktiver Tag (Heute): orange umrandet, orange Glow, orange Text & Icon. */
+.kbsheet.is-today {
+  border-color: var(--orange);
+  background: linear-gradient(180deg, rgba(255, 159, 67, 0.16) 0%, rgba(255, 159, 67, 0.06) 100%);
+  box-shadow: 0 0 0 1px rgba(255, 159, 67, 0.5), 0 0 16px rgba(255, 159, 67, 0.35);
+}
+.kbsheet.is-today .kbday,
+.kbsheet.is-today .kbwd,
+.kbsheet.is-today .kbsheet-lbl { color: var(--orange); }
+.kbsheet.is-today .kbsheet-ico .game-icon {
+  filter: brightness(0) saturate(100%) invert(72%) sepia(46%) saturate(1180%) hue-rotate(332deg) brightness(103%) contrast(101%);
+}
+
+/* --- Karten-Kopfzeile --- */
+.dxh { display: flex; align-items: center; gap: 9px; padding-bottom: 9px; margin-bottom: 12px; border-bottom: 1px solid var(--border-soft); }
+.dxh-ico { display: inline-flex; color: var(--accent); flex: 0 0 auto; }
+.dxh-ico svg { width: 27px; height: 27px; }
+.dxh-title { font-size: 24px; font-weight: 800; letter-spacing: 0.6px; color: var(--text); text-transform: uppercase; }
+.dxh-right { margin-left: auto; font-size: 16.5px; font-weight: 700; color: var(--text-3); white-space: nowrap; text-transform: uppercase; letter-spacing: 0.4px; }
+.dxh-right-stack { display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1.15; text-align: right; }
+.dxh-comp { font-size: 16.5px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.4px; }
+.dxh-round { font-size: 13px; font-weight: 700; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.4px; margin-top: 2px; }
+.dxh-orange { color: var(--orange); }
+
+/* --- Tabelle --- */
+.dxt { width: 100%; border-collapse: collapse; font-size: 20px; font-family: var(--font-ui); font-variant-numeric: tabular-nums; }
+.dxt thead th { text-align: center; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-3); padding: 0 4px 5px; border-bottom: 1px solid var(--border); }
+.dxt thead th.dxt-club { text-align: left; }
+.dxt-row td { padding: 1px 3px; text-align: center; color: var(--text-2); border-bottom: 1px solid var(--border-soft); }
+.dxt-row td.dxt-club { text-align: left; color: var(--text); font-weight: 600; }
+.dxt-club { display: table-cell; }
+.dxt-row td.dxt-club > * { vertical-align: middle; }
+/* Wappen in der Tabellenzeile: immer feste Inline-Box (SVG wie Bild), damit der
+   Vereinsname nicht umbricht und die Zeilenhöhe konstant bleibt. */
+.dxt-row td.dxt-club > svg,
+.dxt-row td.dxt-club > img { width: 18px; height: 18px; flex: none; object-fit: contain; display: inline-block; vertical-align: middle; }
+.dxt-club-name { display: inline-block; margin-left: 7px; font-size: 19px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; vertical-align: middle; }
+.dxt-row td.dxt-pos { color: var(--text-3); font-weight: 700; font-size: 20px; width: 26px; }
+.dxt-goals { color: var(--text-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dxt-row td.dxt-pkt { color: var(--text); font-weight: 800; font-size: 21.5px; }
+/* Farbige Zonen-Kante liegt auf der ERSTEN Zelle (nicht auf der <tr>), damit der
+   Hover-Hintergrund (der pro <td> gemalt wird) sie nicht mehr ueberdeckt. */
+.dxt-row.zone-cl { background: transparent; }
+.dxt-row.zone-eu { background: transparent; }
+.dxt-row.zone-rel { background: transparent; }
+.dxt-row.zone-cl td.dxt-pos { color: var(--green); box-shadow: inset 3px 0 0 var(--green); }
+.dxt-row.zone-eu td.dxt-pos { color: var(--gold); box-shadow: inset 3px 0 0 var(--gold); }
+.dxt-row.zone-rel td.dxt-pos { color: var(--red); box-shadow: inset 3px 0 0 var(--red); }
+.dxt-row.me { background: var(--accent-soft); }
+.dxt-row.me td.dxt-club { color: var(--accent); }
+/* Klickbare Tabellenzeilen -> Vereinsprofil. Hover wird auf der td-Ebene
+   gemalt, damit er AUCH auf Sonderplaetzen (zone-cl/eu/rel) und der eigenen
+   Zeile funktioniert (deren Zeilen-Hintergrund sonst den generischen
+   tbody-tr:hover ueberdeckt). Die farbige Zonen-Kante (box-shadow) bleibt. */
+.dxt-row { cursor: pointer; }
+.dxt-row:hover td { background: var(--panel-hover); color: var(--text); }
+.dxt-row.me:hover td { background: rgba(0, 217, 255, 0.16); }
+.dxt-row:hover td.dxt-club { color: var(--accent); }
+.dxt-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-soft); font-size: 16.5px; color: var(--text-3); }
+.dxt-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.lg-dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+.lg-champ { background: var(--green); }
+.lg-uefa { background: var(--gold); }
+.lg-rel { background: var(--red); }
+
+/* --- Finanzen --- */
+.dxf-top { display: flex; align-items: stretch; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.dxf-balance { display: flex; flex-direction: column; gap: 4px; justify-content: center; min-width: 0; flex: 1 1 auto; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 12px 14px; }
+.dxf-balance-lbl { font-size: 16.5px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.4px; }
+.dxf-balance-val { font-size: 31px; font-weight: 900; color: var(--accent); line-height: 1.05; white-space: nowrap; }
+.dxf-balance-val.neg { color: var(--red); }
+.dxf-stats { display: flex; flex-direction: column; gap: 5px; flex: 0 0 auto; min-width: 148px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 8px 12px; }
+.dxf-stat { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.dxf-lbl { font-size: 18px; color: var(--text-3); }
+.dxf-val { font-size: 18.5px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.dxf-val.green { color: var(--green); }
+.dxf-val.red { color: var(--red); }
+.dxf-chart { margin-top: auto; }
+.dxf-chart svg { width: 100%; height: auto; display: block; }
+
+/* --- Vereinsüberblick (Mockup-Stil: Kopf mit Wappen, dann Feldliste) --- */
+.cvb2-head { display: flex; gap: 12px; align-items: center; }
+.cvb2-crest { flex: 1 1 0; min-width: 0; display: flex; justify-content: center; align-items: center; }
+.cvb2-headfields { flex: 1 1 0; min-width: 0; display: grid; grid-template-columns: max-content 1fr; column-gap: 10px; row-gap: 4px; align-content: center; }
+.cvb2-name { grid-column: 1 / -1; font-size: 25px; font-weight: 800; color: var(--text); line-height: 1.15; margin-bottom: 8px; text-align: left; }
+.cvb2-row { display: contents; }
+.cvb2-k { color: var(--text-3); font-size: 16px; white-space: nowrap; }
+.cvb2-v { color: var(--text); font-weight: 600; font-size: 16px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cvb2-sep { height: 0; background: transparent; margin: 6px 0 0; }
+.cvb2-cols { display: flex; gap: 24px; align-items: stretch; }
+.cvb2-list { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 3px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 6px 10px; }
+.cvb2-lrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 15px; }
+/* Vereinsgelaende-Stufen (rechte Haelfte, gleiche Breite wie Feldliste) */
+.cvb2-facs { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 3px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 6px 10px; }
+.cvb2-frow { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 15px; }
+.cvb2-fname { color: var(--text-2); font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cvb2-fpips { display: inline-flex; gap: 4px; flex: 0 0 auto; }
+.cvb2-fpip { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.14); }
+.cvb2-fpip.on { background: var(--accent); }
+.cvb2-lk { flex: 0 0 auto; color: var(--text-3); }
+.cvb2-lv { flex: 1 1 auto; color: var(--text); font-weight: 600; text-align: right; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cvb2-colors { display: inline-flex; gap: 6px; justify-content: flex-end; }
+.cvb2-swatch { display: inline-block; width: 15px; height: 15px; border-radius: 3px; border: 1px solid rgba(255, 255, 255, 0.22); }
+.cvb-stars { letter-spacing: 2px; }
+.cvb-stars span { color: var(--text-3); }
+.cvb-stars span.on { color: var(--gold); }
+.cvb-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.cvb-good { color: var(--green); } .cvb-good .cvb-dot { background: var(--green); }
+.cvb-mid { color: var(--orange); } .cvb-mid .cvb-dot { background: var(--orange); }
+.cvb-bad { color: var(--red); } .cvb-bad .cvb-dot { background: var(--red); }
+
+/* --- Nächstes Spiel (Foto-Hintergrund + VS, dann Infozeilen) --- */
+.cns-photo {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  padding: 14px 16px 12px;
+  /* Feste Höhe: identisch zum vorherigen Zustand (Wappen-Reihe + Namen-Reihe),
+     damit die äußere Box unverändert bleibt und die Wappen den frei gewordenen
+     Platz der Namen mit ausfüllen können. */
+  height: 156px;
+  background:
+    linear-gradient(180deg, rgba(8, 11, 17, 0.34) 0%, rgba(8, 11, 17, 0.72) 100%),
+    url('/assets/stadion-zuschauer.jpg?v=1') center / cover no-repeat;
+}
+/* Wappen-Reihe füllt die gesamte Foto-Höhe; jede Seite ist eine Spalte
+   (großes Wappen + Name als Bildunterschrift darunter). */
+.cns-photo-crests { display: flex; align-items: center; justify-content: center; height: 100%; }
+.cns-vs-side { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+.cns-vs { flex: 0 0 auto; font-size: 39px; font-weight: 900; color: #fff; letter-spacing: 1px; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.65); }
+.cns-nm { max-width: 100%; text-align: center; font-size: 18px; font-weight: 800; color: #fff; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75); }
+/* Doppelter Trennstrich: zwei dünne Linien dicht untereinander. */
+.cns-dsep { display: flex; flex-direction: column; gap: 2px; margin: 5px 0; }
+.cns-dsep > span { display: block; height: 1px; background: var(--border); }
+/* Info-Gruppe im Stil des Vergleichsblocks, aber zentriert (keine Gegenüberstellung). */
+.cns-meta { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.cns-meta-type { font-size: 14px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: var(--accent); text-align: center; }
+.cns-meta-row { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 18px; font-weight: 600; color: var(--text); text-align: center; }
+.cns-meta-ico { display: inline-flex; align-items: center; color: var(--accent); flex: 0 0 auto; }
+/* Direktvergleich der beiden Vereine im "Naechstes Spiel"-Block */
+.cns-cmp { display: flex; flex-direction: column; gap: 4px; margin-top: 5px; margin-bottom: 8px; }
+.cns-cmp-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; padding: 2px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.cns-cmp-row:last-child { border-bottom: none; }
+.cns-cmp-l { font-size: 12px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--text-3); text-align: center; white-space: nowrap; }
+.cns-cmp-v { font-size: 18px; font-weight: 800; color: var(--text-2); }
+.cns-cmp-row > .cns-cmp-v:first-child { text-align: right; }
+.cns-cmp-row > .cns-cmp-v:last-child { text-align: left; }
+.cns-cmp-v.better { color: var(--accent); }
+.cns-form { display: flex; gap: 4px; }
+.cns-cmp-row > .cns-form:first-child { justify-content: flex-end; }
+.cns-cmp-row > .cns-form:last-child { justify-content: flex-start; }
+.cns-fp { width: 20px; height: 20px; border-radius: 5px; font-size: 12px; font-weight: 800; font-style: normal; display: inline-flex; align-items: center; justify-content: center; color: #06111a; }
+.cns-fp-W { background: var(--green); }
+.cns-fp-D { background: #8a97a8; }
+.cns-fp-L { background: #ff5d5d; }
+
+/* Hintergrund der Zentrale-Boxen (leicht transparent, ohne Muster) */
+.shell-zentrale .dashx > .card {
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(0, 217, 255, 0.06), transparent 60%),
+    linear-gradient(180deg, rgba(26, 34, 46, 0.74), rgba(15, 21, 31, 0.78));
+}
+
+/* --- Termine --- */
+.ctm { display: flex; flex-direction: column; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 2px 12px; }
+.ctm-row { display: flex; align-items: center; gap: 10px; padding: 9px 2px; border-bottom: 1px solid var(--border-soft); font-size: 18.5px; }
+.ctm-row:last-child { border-bottom: none; }
+.ctm-wd { flex: 0 0 24px; color: var(--text-3); font-weight: 700; }
+.ctm-date { flex: 0 0 76px; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.ctm-ico { flex: 0 0 auto; display: inline-flex; }
+.ctm-txt { flex: 1 1 auto; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* --- Nachrichten (Dashboard-Box) --- */
+.cnw { display: flex; flex-direction: column; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 2px 12px; }
+.cnw-row { display: flex; align-items: center; gap: 11px; padding: 9px 2px; border-bottom: 1px solid var(--border-soft); }
+.cnw-row:last-child { border-bottom: none; }
+.cnw-ico { flex: 0 0 auto; display: inline-flex; align-items: center; }
+.cnw-body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; line-height: 1.15; }
+.cnw-subj { font-size: 17px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cnw-text { font-size: 14.5px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.cnw-date { flex: 0 0 auto; color: var(--text-3); font-size: 14.5px; font-variant-numeric: tabular-nums; align-self: flex-start; padding-top: 2px; }
+/* Ungelesen: Betreff türkis + kleiner Punkt-Hinweis via Icon-Akzent. */
+.cnw-row.is-unread .cnw-subj { color: var(--accent); }
+
+/* --- Kader (Trikot + Positionszaehler + Donut-Ringe) --- */
+.ckd2-top { display: flex; align-items: center; gap: 20px; padding: 6px 0 18px; }
+.ckd2-jersey { flex: 0 0 auto; margin-left: 24px; }
+.ckd-jersey-photo {
+  position: relative;
+  width: 152px;
+  aspect-ratio: 1024 / 1280;
+  background: var(--jc, #cccccc);
+  -webkit-mask: url(/assets/trikot-basis.png?v=1) center / contain no-repeat;
+  mask: url(/assets/trikot-basis.png?v=1) center / contain no-repeat;
+}
+.ckd-jersey-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url(/assets/trikot-basis.png?v=1) center / contain no-repeat;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+.ckd2-pos { flex: 1 1 auto; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.ckd2-pos-row { display: flex; align-items: center; gap: 12px; }
+.ckd2-pos-bar { flex: 0 0 4px; width: 4px; height: 22px; border-radius: 2px; }
+.ckd2-pos-lbl { flex: 0 0 50px; font-size: 20px; font-weight: 700; color: var(--text-2); letter-spacing: 0.4px; }
+.ckd2-pos-num { flex: 0 0 auto; font-size: 27px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.ckd2-donuts { display: flex; justify-content: space-around; gap: 10px; margin-top: auto; padding: 9px 10px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; }
+.ckd-donut { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.ckd-donut-ring { position: relative; width: 62px; height: 62px; }
+.ckd-donut-svg { width: 62px; height: 62px; transform: rotate(-90deg); }
+.ckd-donut-bg { fill: none; stroke: var(--panel-2); stroke-width: 6; }
+.ckd-donut-fg { fill: none; stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 0.5s ease; }
+.ckd-donut-val { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 28.5px; font-weight: 800; color: var(--text); }
+.ckd-donut-lbl { font-size: 16.5px; color: var(--text-3); font-weight: 600; }
+/* Ringlose Variante: nur die blanke Zahl, gleiche Hoehe wie der Ring fuer eine
+   saubere Grundlinie mit den uebrigen Kennzahlen. */
+.ckd-donut-plain { display: flex; align-items: center; justify-content: center; }
+.ckd-donut-num { font-weight: 800; color: var(--text); line-height: 1; }
+
+/* --- Kader-Kachel: drei gleich breite, zentrierte Spalten (Heim | Auswärts | Infos) --- */
+.ckd3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  /* stretch: alle drei Spalten sind so hoch wie die hoechste (die Info-Spalte).
+     Die Trikot-Spalten skalieren ihr Trikot auf diese Hoehe, ohne die Box zu
+     vergroessern. */
+  align-items: stretch;
+  flex: 1 1 auto;
+  padding: 2px 0 6px;
+}
+.ckd3-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 0;
+}
+/* Trikot-Wrapper: nimmt die gesamte verbleibende Spaltenhoehe (Spaltenhoehe
+   minus Bildunterschrift) ein; das Trikot fuellt ihn maximal, proportional. */
+.ckd3-jwrap {
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ckd3-jwrap > svg,
+.ckd3-jwrap > img {
+  max-height: 100%;
+  max-width: 100%;
+  height: auto;
+  width: auto;
+  object-fit: contain;
+}
+.ckd3-cap {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.ckd3-info { gap: 12px; }
+.ckd3-pos { display: flex; flex-direction: column; gap: 5px; width: 100%; max-width: 155px; }
+.ckd3-pos-row { display: flex; align-items: center; gap: 8px; }
+.ckd3-pos-bar { flex: 0 0 4px; width: 4px; height: 17px; border-radius: 2px; }
+.ckd3-pos-lbl { flex: 1 1 auto; font-size: 16px; font-weight: 700; color: var(--text-2); letter-spacing: 0.3px; }
+.ckd3-pos-num { flex: 0 0 auto; font-size: 20px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.ckd3-donuts { display: flex; justify-content: space-between; align-items: flex-start; gap: 7px; width: 100%; }
+.ckd3-donuts .ckd-donut { gap: 3px; flex: 1 1 0; }
+.ckd3-donuts .ckd-donut-ring { width: 44px; height: 44px; }
+.ckd3-donuts .ckd-donut-svg { width: 44px; height: 44px; }
+.ckd3-donuts .ckd-donut-val { font-size: 18px; }
+.ckd3-donuts .ckd-donut-lbl { font-size: 11px; }
+.ckd3-donuts .ckd-donut-plain { height: 44px; }
+.ckd3-donuts .ckd-donut-num { font-size: 26px; }
+
+/* --- „Bearbeiten"-Button im Vereinsüberblick --- */
+.cvb2-edit {
+  margin-left: auto;
+  padding: 4px 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-2);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  letter-spacing: 0.3px;
+}
+.cvb2-edit:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+
+/* =============================================================================
+   Vereins-Editor (ClubEditorModal)
+   ============================================================================= */
+.ce-modal { max-width: 620px; }
+.ce-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 22px 14px; border-bottom: 1px solid var(--border);
+}
+.ce-title { font-size: 20px; font-weight: 800; letter-spacing: 0.3px; }
+.ce-body { padding: 18px 22px; overflow-y: auto; display: flex; flex-direction: column; gap: 22px; }
+.ce-section { display: flex; flex-direction: column; gap: 12px; }
+.ce-sec-title {
+  font-size: 13px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase;
+  color: var(--text-3);
+}
+.ce-crest-row { display: flex; align-items: center; gap: 20px; }
+.ce-crest-preview {
+  flex: 0 0 auto; width: 108px; height: 108px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 12px;
+}
+.ce-crest-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.ce-hint { font-size: 12px; color: var(--text-3); margin: 2px 0 0; }
+.ce-err { font-size: 12px; color: var(--red); margin: 2px 0 0; }
+.ce-kits { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.ce-kit {
+  display: flex; flex-direction: column; gap: 12px;
+  background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px;
+}
+.ce-kit-preview { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.ce-kit-cap { font-size: 14px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-2); }
+.ce-kit-fields { display: flex; flex-direction: column; gap: 9px; }
+.ce-field { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.ce-field-lbl { font-size: 13px; font-weight: 600; color: var(--text-2); }
+.ce-color {
+  width: 46px; height: 30px; padding: 2px; border-radius: 7px;
+  border: 1px solid var(--border); background: var(--panel-2); cursor: pointer;
+}
+.ce-select {
+  min-width: 130px; padding: 6px 10px; border-radius: 7px;
+  border: 1px solid var(--border); background: var(--panel-2); color: var(--text);
+  font-size: 13px; font-weight: 600;
+}
+/* Vereinsauswahl im Editor */
+.ce-team-pick { display: flex; align-items: center; gap: 12px; }
+.ce-team-pick .ce-select { min-width: 240px; flex: 0 1 auto; }
+/* Umschalter Design / Bild pro Trikot */
+.ce-kit-modes { display: flex; gap: 6px; }
+.ce-mode {
+  flex: 1; padding: 6px 8px; border-radius: 7px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--panel-2); color: var(--text-2);
+  font-size: 12.5px; font-weight: 700; letter-spacing: 0.3px;
+}
+.ce-mode.is-active { border-color: var(--accent); color: var(--accent); }
+.ce-kit-upload { display: flex; flex-direction: column; gap: 7px; align-items: flex-start; }
+.ce-kit-reset { align-self: flex-start; margin-top: 2px; }
+.ce-note { font-size: 12.5px; color: var(--text-3); margin: 4px 2px 0; }
+.ce-foot {
+  display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+  padding: 14px 22px 18px; border-top: 1px solid var(--border);
+}
+.ce-saved { margin-right: auto; color: var(--accent); font-weight: 700; font-size: 16px; }
+
+/* --- Link-Button in Karten --- */
+.dxlink { margin-top: auto; align-self: flex-start; padding: 12px 2px 0; background: none; border: none; color: var(--accent); font-size: 18.5px; font-weight: 700; cursor: pointer; }
+.dxlink:hover { text-decoration: underline; }
+
+/* --- Footer (drei Bereiche: links / mitte / rechts) --- */
+.dashx-foot {
+  /* Kein margin-top:auto mehr – das Raster (.dashx flex:1) fuellt jetzt den
+     Zwischenraum und haelt den Footer unten, ohne die untere Box-Reihe->Footer-
+     Luecke einseitig aufzublaehen. */
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 38px;
+  padding: 0 24px;
+  background: linear-gradient(180deg, rgba(9, 12, 18, 0.94), rgba(10, 14, 20, 0.90));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid var(--border);
+  border-radius: 12px;
+}
+.dashx-foot-l, .dashx-foot-c, .dashx-foot-r { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; }
+.dashx-foot-l { flex: 1 1 0; text-align: left; color: var(--text-3); }
+.dashx-foot-c { flex: 0 0 auto; text-align: center; color: var(--text-2); }
+.dashx-foot-r { flex: 1 1 0; text-align: right; color: var(--text-3); }
+@media (max-width: 760px) {
+  .dashx-foot-l, .dashx-foot-r { display: none; }
+  .dashx-foot-c { flex: 1 1 auto; }
+}
