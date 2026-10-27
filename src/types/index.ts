@@ -1399,6 +1399,24 @@ export interface InboxMessage {
   actionRequired?: boolean;
   /** Optionale verknüpfte Entität (Spieler/Verein/Angebot). */
   relatedId?: string;
+  /** Entscheidungsmöglichkeiten (Zufallsereignisse, engine/randomEvents.ts). */
+  choices?: MessageChoice[];
+  /** Verknüpftes Ereignis inkl. Frist und Ergebnis. */
+  eventRef?: MessageEventRef;
+  /** Ergebnis nach der Entscheidung (wird unter dem Text angezeigt). */
+  resultText?: string;
+}
+
+export interface MessageChoice { id: string; label: string; hint?: string }
+
+export interface MessageEventRef {
+  type: string;
+  playerId?: string;
+  /** Datum, bis zu dem entschieden werden kann (danach Standardwahl). */
+  deadline: string;
+  defaultChoice?: string;
+  resolved?: string;
+  data?: Record<string, number | string>;
 }
 
 // -----------------------------------------------------------------------------

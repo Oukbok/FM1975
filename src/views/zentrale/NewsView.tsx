@@ -1,3 +1,4 @@
+import { EventChoices } from './EventChoices';
 import Icon from '../../components/Icon';
 import { CalendarEngine } from '../../engine/calendar';
 import { CATEGORY_META, unreadCount } from '../../engine/messages';
@@ -63,6 +64,7 @@ export function NewsView({ g, onRead }: { g: Game; onRead: () => void }) {
             </div>
             <div className="dread-lead">{open.shortText}</div>
             <div className="dread-body">{open.bodyText}</div>
+            <EventChoices g={g} msg={open} onDone={onRead} />
           </div>
         ) : <Empty icon="news">Wähle links eine Nachricht aus.</Empty>}
       </DashBox>
@@ -71,7 +73,7 @@ export function NewsView({ g, onRead }: { g: Game; onRead: () => void }) {
 }
 
 /** Einzelne Nachricht als großes Popup (z. B. aus der Zentrale geöffnet). */
-export function MessageModal({ msg, onClose }: { msg: InboxMessage; onClose: () => void }) {
+export function MessageModal({ msg, onClose, g }: { msg: InboxMessage; onClose: () => void; g?: Game }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal modal-xl" onClick={(e) => e.stopPropagation()}>
@@ -87,6 +89,7 @@ export function MessageModal({ msg, onClose }: { msg: InboxMessage; onClose: () 
           <div className="dread">
             <div className="dread-lead">{msg.shortText}</div>
             <div className="dread-body">{msg.bodyText}</div>
+            {g && <EventChoices g={g} msg={msg} />}
           </div>
         </div>
       </div>

@@ -1275,6 +1275,24 @@ Die Mitgliederzahl ist echt: Sie wächst mit Erfolg, guter Stimmung und der Fank
 - **Entlassen wirst du nicht** – aber das Vertrauen bestimmt, wie viel vom finanziellen Polster der Vorstand als **Transferbudget** freigibt (40–90 %). Unter 30 und 15 gibt es Warnungen.`,
   },
   {
+    id: 'environment-events',
+    category: 'environment',
+    title: 'Zufallsereignisse',
+    keywords: ['zufall', 'ereignis', 'entscheidung', 'heimweh', 'berater', 'disco', 'werbung', 'mentor', 'sturm', 'gönner', 'sponsor', 'shitstorm'],
+    body: `## Selten und persönlich
+Etwa **drei Ereignisse pro Saison** betreffen einzelne Spieler; den ganzen Verein trifft es nur ungefähr einmal in vier Spielzeiten (Sturmschaden, Gönner, Pleite des Trikotsponsors). Es gibt **keinen künstlichen Ausgleich**: Gute und schlechte Ereignisse werden unabhängig gewürfelt.
+
+## Passend zur Epoche
+Der Spieler, der eine Kneipe eröffnen will, gehört in die 1970er und 80er, der fordernde **Berater** in die Zeit nach 1995, der **Shitstorm** in die Ära der sozialen Medien. Wunderheiler verschwinden mit der modernen Sportmedizin.
+
+## Entscheidungen
+Viele Ereignisse fragen nach deiner Entscheidung (Nachrichten → Knöpfe unter dem Text), z. B. Heimweh, Disco-Eskapade, Werbeangebot, Berater-Forderung, öffentliche Kritik oder Wunderheiler. Sie wirken auf Moral, Zufriedenheit, Professionalität, Form, Sperren, Vorstandsvertrauen oder kosten Geld.
+Wer eine Woche nicht reagiert, bekommt die vorsichtige **Standardwahl** – das Spiel bleibt nie stehen.
+
+## Kleine Glücksmomente
+Ein Routinier nimmt ein Talent unter seine Fittiche, ein junger Spieler zerreißt sich im Training, ein Spieler wird Vater: Solche Ereignisse geben Entwicklungs- oder Moralschübe ohne Entscheidung.`,
+  },
+  {
     id: 'youth-gems-scouting',
     category: 'youth',
     title: 'Verborgene Juwelen & Talente anderer Vereine',

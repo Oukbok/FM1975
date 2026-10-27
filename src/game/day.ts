@@ -10,6 +10,7 @@ import { EURO_COMP_NAMES } from '../data/europe';
 import { marketingIncomeBase, marketingMonthlyBase, marketingReputationNudge } from '../data/marketing';
 import { staffMonthlyTotal } from '../data/staff';
 import { monthlyEnvironmentUpdate } from './environmentGame';
+import { autoResolveEvents, monthlyEvents } from './eventsGame';
 import { applyFocusLoad, devContextFor, ensureStaff, monthlyTrainingReport, staffEffectsOf } from './staffGame';
 import { coachingReport, memberMonthlySalary } from '../engine/staffPeople';
 import { CalendarEngine } from '../engine/calendar';
@@ -432,9 +433,11 @@ export function processDay(g: Game, ui: DayUi): boolean {
   // -------------------------------------------------------------------------
   const utcDom = new Date(today + 'T00:00:00Z').getUTCDate();
   const curMonth = today.slice(0, 7);
+  autoResolveEvents(g, today);
   if (utcDom === 1) {
     monthlyTrainingReport(g, today);
     monthlyEnvironmentUpdate(g, today);
+    monthlyEvents(g, today);
     for (const club of Object.values(g.clubs)) {
       if (club.finances.lastMonthlyBooking === curMonth) continue;
       const isMine = club.id === g.managedClubId;
