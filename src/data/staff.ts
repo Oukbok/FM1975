@@ -108,6 +108,8 @@ export const STAFF_ROLES: StaffRole[] = [
     effect: 'Betreut den Nachwuchs (unterstützt die Jugendarbeit).', flavor: true },
   { id: 'platzwart', name: 'Platzwart', group: 'admin', unlockYear: 1975, costClass: 'K1',
     effect: 'Pflegt Rasen und Anlage (atmosphärisch).', flavor: true },
+  { id: 'torwarttrainer', name: 'Torwarttrainer', group: 'trainer', unlockYear: 1980, costClass: 'K2',
+    effect: 'Spezialtraining für die Torhüter – sie entwickeln sich schneller.', recovery: 0.1 },
   { id: 'scout_1975', name: 'Scout', group: 'scouting', unlockYear: 1975, costClass: 'K2',
     effect: 'Beobachtet Talente – präzisiert die Potenzial-Einschätzung.', scouting: 0.05 },
 

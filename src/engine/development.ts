@@ -97,6 +97,8 @@ export interface ClubDevContext {
   training: number;
   /** 0.9 … 1.1: Umfeld (Unruhe im Verein, Erfolg). */
   environment: number;
+  /** Optional: individueller Faktor je Spieler (Spezialtrainer, Förderspieler, Philosophie). */
+  playerFactor?: (p: Player) => number;
 }
 
 /** Trainingsfaktor eines Vereins. Eigener Verein erhält zusätzlich den Stab-/Plan-Bonus. */
@@ -165,7 +167,7 @@ export function weeklyDevelopment(
     let pts: number;
     if (base >= 0) {
       pts = base * training * practiceFactor(p) * characterFactor(p) * environment * moraleFactor(p)
-        * distanceFactor(p) * era.growth;
+        * distanceFactor(p) * era.growth * (ctx?.playerFactor ? ctx.playerFactor(p) : 1);
     } else {
       // Abbau: gutes Training und Professionalität bremsen ihn (bis −35 %), stoppen ihn nicht.
       const brake = clamp(1 - (training - 0.9) * 0.6 - ((d.professionalism ?? 50) - 50) / 400, 0.65, 1.15);

@@ -1,6 +1,7 @@
 import { PlannedActivity } from '../data/activities';
 import { EuroClub } from '../data/europe';
 import type { WorldState } from '../engine/world';
+import type { SeasonPhase, StaffMember, TrainingFocus } from '../engine/staffPeople';
 import { generateBandenOffers, generateShirtOffers } from '../engine/finances';
 import { LeagueSystem, SimClub } from '../engine/leagues';
 import { Club, ClubCommerce, CupState, Difficulty, GameCalendar, InboxMessage, LeagueTable, ManagerProfile, Match, Player, PointSystem, SponsorContract, SponsorOffer, WeeklyTrainingPlan } from '../types';
@@ -69,6 +70,14 @@ export interface Game {
   unlockedFeatures: string[];
   /** IDs der aktuell angestellten Mitarbeiter (Block p11, Bereich „Mitarbeiter"). */
   hiredStaff: string[];
+  /** Mitarbeiter 2.0: angestellte Personen (Rollen-IDs bleiben in hiredStaff gespiegelt). */
+  staff?: StaffMember[];
+  /** Trainingsphilosophie je Saisonphase. */
+  trainingFocus?: Partial<Record<SeasonPhase, TrainingFocus>>;
+  /** Förderspieler (max. 3) mit besonderer Aufmerksamkeit im Training. */
+  foerderSpieler?: string[];
+  /** Stand der Entwicklungspunkte beim letzten Monatsbericht (Spieler-ID → Punkte). */
+  devReportSnapshot?: Record<string, number>;
   /** Marketing-Budget je Bereich: Bereichs-ID → Anzahl Einheiten (0 = aus). */
   marketing: Record<string, number>;
   /** Geplante Aktivitäten (Trainingslager, Freundschaftsspiele, Teambuilding). */

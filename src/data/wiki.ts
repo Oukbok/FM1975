@@ -779,6 +779,44 @@ Nicht nur du stellst auf – **alle 17 anderen Vereine** bekommen eine sinnvolle
 Weil jede CPU-Aufstellung dieselbe Eignungs- und Taktik-Logik nutzt wie deine, wirken sich Kaderqualität und Positionsbesetzung des Gegners real auf die Simulation aus. Ein Verein mit schlecht besetzten Positionen spielt spürbar schwächer.`,
   },
   {
+    id: 'staff-people',
+    category: 'staff',
+    title: 'Mitarbeiter als Personen — Qualität, Methoden, Abwerbung',
+    keywords: ['mitarbeiter', 'trainer', 'cotrainer', 'qualität', 'methoden', 'fortbildung', 'abwerbung', 'kapazität', 'spezialist', 'torwarttrainer', 'bewerber'],
+    body: `## Jede Stelle ist ein Mensch
+Für jede Rolle gibt es **drei Bewerber**: eine günstige Nachwuchskraft, eine erfahrene Kraft und eine teure Spitzenkraft. Jede Person hat:
+- **Qualität** (1–20): bestimmt, wie stark ihre Rolle wirkt (Verletzungen, Reha, Regeneration, Scouting, Reichweite, Training).
+- **Spezialgebiet** (z. B. Technik, Taktik, Athletik, Torwart, Mentales): wirkt zusätzlich auf passende Spieler.
+- **Methodenstand**: das Jahr, in dem das Wissen aktuell war. Nach acht Jahren ohne **Fortbildung** (drei Monatsgehälter) verliert die Arbeit spürbar an Wirkung.
+- **Alter und Vereinstreue**: Ältere gehen in den Ruhestand, gute Leute werden von größeren Vereinen **abgeworben**. Treue, ein gutes Gehalt und ein großer Verein halten sie.
+
+## Wirkung des Trainerteams – spürbar, aber gebremst
+- Das Trainerteam (Chef-, Co-, Konditions-, Athletik-, Torwarttrainer …) verändert das **Entwicklungstempo** um etwa −2 % bis +20 %. Die Wirkung sättigt: Der dritte Spitzentrainer bringt weniger als der erste.
+- **Das Potenzial steigt nicht.** Gute Trainer holen nur zuverlässiger heraus, was in den Spielern steckt – deshalb hast du mit einem Top-Co-Trainer nicht automatisch für immer die besten Spieler.
+- **Kapazität:** Ein Trainer betreut etwa neun Spieler sinnvoll. Ein aufgeblähter Kader verwässert die Arbeit.
+- **Spezialisten:** Ein Torwarttrainer hilft nur den Torhütern, ein Techniktrainer vor allem Offensivspielern, ein Taktiktrainer der Abwehr.
+- Die Qualität deines Co-Trainers bestimmt auch, wie treffsicher seine Einschätzungen im **Trainingsbericht** und vor Bewertungsrunden sind.`,
+  },
+  {
+    id: 'training-philosophy',
+    category: 'training',
+    title: 'Trainingsphilosophie, Förderspieler & Monatsbericht',
+    keywords: ['philosophie', 'schwerpunkt', 'belastung', 'schonung', 'förderspieler', 'trainingsbericht', 'phase', 'vorbereitung', 'rückrunde'],
+    body: `## Vier Phasen, eine Entscheidung je Phase
+Statt jede Woche alles neu zu planen, legst du für **Vorbereitung, Hinrunde, Winter und Rückrunde** je einen Schwerpunkt fest (Kader → Training):
+- **Ausgewogen:** keine Nebenwirkungen.
+- **Hohe Belastung:** +6 % Entwicklung, aber weniger Frische und gelegentlich **Überlastungsverletzungen** (medizinisches Personal senkt das Risiko).
+- **Technik & Taktik:** +5 % für Offensivspieler und junge Spieler, etwas weniger für Ältere.
+- **Schonung:** mehr Frische und weniger Verletzungen, dafür −5 % Entwicklung.
+- **Talente fördern:** Spieler bis 23 +10 %, Ältere −4 %.
+
+## Förderspieler
+Bis zu **drei Spieler** bekommen besondere Aufmerksamkeit: +25 % Entwicklungstempo (+15 %, wenn das Trainerteam überlastet ist). Der Rest des Kaders bekommt dafür etwas weniger (−3 %).
+
+## Trainingsbericht zum Monatsanfang
+Der Trainerstab meldet, wer auffällig zulegt, wer trotz Luft nach oben stagniert, wer Spielpraxis braucht und wie es den Förderspielern geht. Er weist auf einen zu großen Kader und veraltete Methoden hin. Die Einschätzung ist umso genauer, je besser dein Co- oder Cheftrainer ist.`,
+  },
+  {
     id: 'finance-overview',
     category: 'finance',
     title: 'Finanzen – Überblick',

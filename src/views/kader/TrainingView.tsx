@@ -1,5 +1,6 @@
 import Icon from '../../components/Icon';
 import { BLOCKS_BY_ID, INTENSITY_LABELS, TRAINING_BLOCKS, dayLoad, expectedFitnessDelta } from '../../engine/weeklyTraining';
+import { PhilosophyBox } from './PhilosophyBox';
 import { Game } from '../../game/state';
 import { ATTRIBUTE_LABELS_DE, DaySlots, Match } from '../../types';
 import { DashBox, DashPage, Empty, Kpi, Meter } from '../../ui/DashPage';
@@ -152,20 +153,7 @@ export function TrainingView({ g, onTrained }: { g: Game; onTrained: () => void 
         <div className="dnote mt8">Zwei mittlere Einheiten pro Tag halten die Fitness etwa stabil. Hohe Intensität und Extraeinheiten kosten Kraft.</div>
       </DashBox>
 
-      <DashBox title="Trainingsblöcke" icon="contracts" right={`${TRAINING_BLOCKS.length} Blöcke`}>
-        {TRAINING_BLOCKS.map((b) => (
-          <div key={b.id} className="dlist-row" style={{ alignItems: 'flex-start' }}>
-            <span className="grow">
-              <b>{b.name}</b> <span className={`int-tag int-${b.intensity}`}>{INTENSITY_LABELS[b.intensity]}</span>
-              <span className="dnote" style={{ display: 'block' }}>
-                {Object.keys(b.attributes).length === 0 ? 'Nur Erholung' : Object.entries(b.attributes)
-                  .sort((x, y) => (y[1] as number) - (x[1] as number))
-                  .map(([attr]) => ATTRIBUTE_LABELS_DE[attr as keyof typeof ATTRIBUTE_LABELS_DE]).join(' · ')}
-              </span>
-            </span>
-          </div>
-        ))}
-      </DashBox>
+      <PhilosophyBox g={g} onChange={refresh} />
     </DashPage>
   );
 }

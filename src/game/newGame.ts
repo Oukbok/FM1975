@@ -19,6 +19,7 @@ import { AppSettings, loadGame, loadSettings, saveSettings } from '../engine/sav
 import { createDefaultWeeklyPlan } from '../engine/weeklyTraining';
 import { academyStartingCohort, generateYouthPlayer } from '../engine/youth';
 import { initWorld } from '../engine/world';
+import { makeCandidates } from '../engine/staffPeople';
 import { allocateTv, commercialAnnualFor, isLeagueClub, refreshMarketValues } from '../engine/clubEconomy';
 import { addCupCalendarEvents, buildEuroCupsForSeason, cupDateSet, cupDrawMessage, euroDrawMessage, leagueDateSet } from './competitions';
 import { buildDdrDivisions, buildLeagueSystem, buildSecondLigaSimClubs, historicPointSystem } from './leagueSetup';
@@ -123,6 +124,11 @@ export function createNewGame(opts: NewGameOptions): Game {
   const leagueClubs = Object.values(g0.clubs).filter(isLeagueClub);
   const byRep = [...leagueClubs].sort((a, b) => b.reputation - a.reputation).map((c) => c.id);
   refreshMarketValues(g0.players);
+  // Grundausstattung des Stabs: Co-Trainer, Masseur, Mannschaftsarzt (je eine erfahrene Kraft).
+  g0.staff = ['cotrainer', 'masseur', 'mannschaftsarzt'].map((roleId) => ({
+    ...makeCandidates(roleId, 1975, g0.clubs[g0.managedClubId]?.reputation ?? 60, Math.random)[1], hired: calendar.currentDate,
+  }));
+  g0.hiredStaff = g0.staff.map((m) => m.roleId);
   for (const c of leagueClubs) c.finances.commercialAnnual = commercialAnnualFor(c, 1, 1975);
   allocateTv(leagueClubs, 1, 1975, (id) => 1 - byRep.indexOf(id) / Math.max(1, byRep.length - 1));
   return g0;

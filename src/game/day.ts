@@ -8,10 +8,12 @@ import { snapshotAttributes } from '../engine/history';
 import { ACTIVITY_DEFS, activityIncomeBase } from '../data/activities';
 import { EURO_COMP_NAMES } from '../data/europe';
 import { marketingIncomeBase, marketingMonthlyBase, marketingReputationNudge } from '../data/marketing';
-import { computeStaffEffects, staffMonthlyTotal } from '../data/staff';
+import { staffMonthlyTotal } from '../data/staff';
+import { applyFocusLoad, devContextFor, ensureStaff, monthlyTrainingReport, staffEffectsOf } from './staffGame';
+import { coachingReport, memberMonthlySalary } from '../engine/staffPeople';
 import { CalendarEngine } from '../engine/calendar';
 import { drawRound, roundWinners, simulateCupTie } from '../engine/cup';
-import { RatingResult, RatingType, runRatingCeremony, weeklyDevelopment, clubTrainingFactor, ratingTendencies, updateAges } from '../engine/development';
+import { RatingResult, RatingType, runRatingCeremony, weeklyDevelopment, ratingTendencies, updateAges } from '../engine/development';
 import { economyScale, euroMoneyFactor, yearOf } from '../engine/economy';
 import { bookDebtInterest } from '../engine/clubEconomy';
 import { drawEuroRound, simulateEuroTie } from '../engine/euro';
@@ -92,7 +94,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
         const desc = ev.description;
         const type: RatingType = desc.includes('Große') ? 'large'
           : (desc.includes('Winter') || desc.includes('Jahreswechsel')) ? 'medium' : 'small';
-        const fx = computeStaffEffects(g.hiredStaff ?? []);
+        const fx = staffEffectsOf(g);
         const scoutQ = Math.min(1, 0.3 + (fx.scouting ?? 0) * 2 + dataScoutingBonus(myClub.infrastructure?.dataCenter ?? 1) * 2);
         // ALLE Spieler werden bewertet; gezeigt wird nur der eigene Kader.
         const results = runRatingCeremony(g.players, g.clubs, g.managedClubId, type, today, scoutQ);
@@ -270,7 +272,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
     const inAWeek = CalendarEngine.addDays(today, 7);
     const upcoming = g.calendar.events.find((e) => e.type === 'rating_update' && e.date === inAWeek && !e.processed);
     if (upcoming) {
-      const staffQ = Math.min(1, (g.hiredStaff?.length ?? 0) / 6);
+      const staffQ = Math.min(1, coachingReport(ensureStaff(g), myClub.playerIds.length, yearOf(today)).strength / 25);
       const tips = ratingTendencies(myClub.playerIds.map((id) => g.players[id]).filter(Boolean), staffQ);
       if (tips.length) {
         pushMessage(g.messages, makeMessage({
@@ -303,6 +305,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   if (!isMyMatchDay) {
     // Manager-Verein trainiert gemäß Wochenplan (füllt den Entwicklungs-Akku).
     applyDailyTraining(myClub, g.players, g.trainingPlan.days[planIdx], false);
+    applyFocusLoad(g, myClub, today, staffEffectsOf(g).injuryReduction);
     // Übrige Liga regeneriert normal; Manager-Verein ist über das Training abgedeckt.
     dailyRecovery(g.players, userIds);
   } else {
@@ -319,7 +322,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
     const medLvl = myClub.infrastructure?.medical ?? 1;
     const rehaLvl = myClub.infrastructure?.rehaCenter ?? 1;
     // Mitarbeiter-Effekte (Block p11): Reha-Verkürzung (Anteil) + Regeneration (Punkte).
-    const staffFx = computeStaffEffects(g.hiredStaff ?? []);
+    const staffFx = staffEffectsOf(g);
     // Tägliche Regeneration: Medizin + Reha-Zentrum + medizinisches Personal.
     const recoverBonus = medicalRecoveryBonus(medLvl) + rehaRecoveryBonus(rehaLvl) + (staffFx.recovery ?? 0);
     // Reha-Tage pro Tag: Gebäude (ganze Tage) + Personal-Anteil (auf Reha-Downtime).
@@ -415,6 +418,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   const utcDom = new Date(today + 'T00:00:00Z').getUTCDate();
   const curMonth = today.slice(0, 7);
   if (utcDom === 1) {
+    monthlyTrainingReport(g, today);
     for (const club of Object.values(g.clubs)) {
       if (club.finances.lastMonthlyBooking === curMonth) continue;
       const isMine = club.id === g.managedClubId;
@@ -462,7 +466,9 @@ export function processDay(g: Game, ui: DayUi): boolean {
       const scale = economyScale(yearOf(today));
       const mine = g.clubs[g.managedClubId];
       // 1) Mitarbeitergehälter → Ausgabe-Kategorie 'staff_wages'.
-      const staffCost = staffMonthlyTotal(g.hiredStaff ?? [], scale);
+      const staffCost = g.staff
+        ? g.staff.reduce((a, m) => a + memberMonthlySalary(m, scale), 0)
+        : staffMonthlyTotal(g.hiredStaff ?? [], scale);
       if (staffCost > 0 && mine) {
         book(mine.finances, today, -staffCost, 'staff_wages', 'Gehälter Mitarbeiterstab (Monat)', true);
       }
@@ -494,14 +500,11 @@ export function processDay(g: Game, ui: DayUi): boolean {
     // direkt verändert (runWeeklyDevelopment mutiert die Attribute/OVR), aber
     // es erscheint KEIN Popup und der Lauf pausiert nicht mehr. Eine Meldung
     // gibt es nur noch bei den großen Auf-/Abwertungsrunden (rating_update).
-    weeklyDevelopment(g.players, g.clubs, yearOf(today), (club) => ({
-      training: clubTrainingFactor(club, club.id === g.managedClubId ? 0.03 : 0),
-      environment: 1,
-    }));
+    weeklyDevelopment(g.players, g.clubs, yearOf(today), devContextFor(g, today));
     // Jugendentwicklung aller Vereine (Talente wachsen; Scouting präzisiert sich).
     // Manager-Verein erhält Boni aus Mitarbeitern (Scouting) und Zukunfts-Bauten
     // (NLZ → Wachstum, Datenanalyse-Zentrum → Scouting) — Block p11.
-    const myStaffFx = computeStaffEffects(g.hiredStaff ?? []);
+    const myStaffFx = staffEffectsOf(g);
     const myInfra = g.clubs[g.managedClubId]?.infrastructure;
     const myGrowthBonus = nlzGrowthBonus(myInfra?.nlz ?? 1);
     const myScoutBonus = (myStaffFx.scouting ?? 0) + dataScoutingBonus(myInfra?.dataCenter ?? 1);

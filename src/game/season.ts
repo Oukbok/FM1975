@@ -3,6 +3,7 @@ import { setEraYear } from '../engine/positions';
 import { refreshOverall } from '../engine/development';
 import { manageSquads } from './squads';
 import { closeFinancialSeason, openFinancialSeason } from './seasonFinance';
+import { staffSeasonChange } from './staffGame';
 import { advanceWorldSeason, initWorld, isForeignId } from '../engine/world';
 import { closeSeason } from '../engine/history';
 import { buildProClub } from '../data/generate';
@@ -437,6 +438,7 @@ export function startNextSeason(g: Game): void {
   closeSeason(g.players, g.clubs, oldSeason);
   manageSquads(g, calendar.currentDate, !!(g as any).simAutoManage);
   openFinancialSeason(g, newSeason, calendar.currentDate, prevPerf);
+  staffSeasonChange(g, calendar.currentDate);
   // Neue Saison, evtl. neue Epoche: Positionsstärken aller Spieler neu bewerten.
   setEraYear(Number(calendar.currentDate.slice(0, 4)));
   for (const p of Object.values(g.players)) if (!p.isYouth) refreshOverall(p);
