@@ -14,6 +14,7 @@
 //   • Finanzielles Fairplay ab 2011/12, Lizenzauflagen bei hoher Verschuldung.
 // =============================================================================
 
+import { capBase, cappedMarketValue, frenzy, softCap } from './transferMarket';
 import { Club, ClubBrand, ClubFinances, Player, SeasonFinanceRecord } from '../types';
 import { economyScale, revenueScale, revenueShare } from './economy';
 
@@ -89,9 +90,14 @@ export function marketWage(p: Player): number {
   return Math.round(p.overall * 110 + top * top * 18);
 }
 
+/** Marktwert am deutschen Markt (Rekordkurve, engine/transferMarket.ts). */
+export function marketValueFor(p: Player, year: number): number {
+  return cappedMarketValue(baseMarketValue(p), year, 'germany');
+}
+
 /** Marktwerte aller Spieler zum Saisonstart neu bewerten. */
-export function refreshMarketValues(players: Record<string, Player>): void {
-  for (const p of Object.values(players)) p.contract.transferValue = baseMarketValue(p);
+export function refreshMarketValues(players: Record<string, Player>, year = 1975): void {
+  for (const p of Object.values(players)) p.contract.transferValue = marketValueFor(p, year);
 }
 
 // -----------------------------------------------------------------------------
@@ -378,12 +384,14 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
       const sell = c.playerIds.map((id) => ctx.players[id]).filter(Boolean)
         .sort((a, b) => b.contract.transferValue - a.contract.transferValue)[0];
       if (!sell) break;
-      const fee = Math.round(sell.contract.transferValue * scale);
-      // Käufer: reichster KI-Verein mit Platz und Geld, sonst Ausland.
+      const domestic = Math.round(sell.contract.transferValue * scale);
+      // Käufer: reichster KI-Verein mit Platz und Geld, sonst Ausland (zahlt nach der Weltkurve).
       const buyer = league
         .filter((b) => b.id !== c.id && isAi(b) && !hasTransferBan(b, ctx.season) && b.playerIds.length < MAX_SQUAD
-          && b.finances.balance - fee > 0.3 * lastRevenue(b, ctx.year))
+          && b.finances.balance - domestic > 0.3 * lastRevenue(b, ctx.year))
         .sort((a, b) => b.finances.balance - a.finances.balance)[0] ?? null;
+      const abroad = Math.round(Math.max(sell.contract.transferValue, cappedMarketValue(baseMarketValue(sell), ctx.year, 'world') * 0.8) * scale);
+      const fee = buyer ? domestic : abroad;
       movePlayer(sell, c, buyer, fee, ctx, 'Ausland');
       news.push(`${c.name} muss sparen: ${sell.fullName} wechselt ${buyer ? 'zu ' + buyer.name : 'ins Ausland'}.`);
     }
@@ -411,12 +419,16 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
         const cands = league
           .filter((s) => s.id !== c.id && s.id !== ctx.managedClubId && s.playerIds.length > MIN_KEEP)
           .flatMap((s) => s.playerIds.map((id) => ctx.players[id]).filter(Boolean))
-          .filter((p) => p.overall >= aim && p.age <= 30 && p.contract.transferValue * scale * 1.15 <= budget)
+          .filter((p) => p.overall >= aim && p.age <= 30 && p.contract.transferValue * scale * 1.25 <= budget)
           .sort((a, b) => b.overall - a.overall || a.contract.transferValue - b.contract.transferValue);
         const p = cands[Math.floor(ctx.rng() * Math.min(3, cands.length))];
         if (p) {
           const seller = ctx.clubs[p.clubId];
-          const fee = Math.round(p.contract.transferValue * scale * 1.15);
+          // Aufpreis je nach Verhandlung; Spitzendeals können die Rekordkurve übertreffen.
+          let base = p.contract.transferValue * (1.05 + ctx.rng() * 0.2);
+          const capDe = capBase(ctx.year, 'germany');
+          base = softCap(base, capDe * 0.92) * frenzy(base, capDe, ctx.rng);
+          const fee = Math.round(Math.min(base * scale, budget));
           movePlayer(p, seller, c, fee, ctx, 'Ausland');
           if (fee > 0.15 * rev) news.push(`${c.name} verpflichtet ${p.fullName} von ${seller.name}.`);
           bought = true;
@@ -434,7 +446,7 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
           age, strength, year: ctx.year, date: ctx.date, rng: ctx.rng, shirt: 0,
         });
         refreshOverall(p);
-        p.contract.transferValue = baseMarketValue(p);
+        p.contract.transferValue = marketValueFor(p, ctx.year);
         const fee = Math.round(p.contract.transferValue * scale);
         if (fee > budget) break;
         ctx.players[p.id] = p;

@@ -261,3 +261,10 @@
 .ce-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 28px; align-items: start; }
 .ce-col { display: flex; flex-direction: column; gap: 22px; }
 .modal-xl.ce-modal .ce-title { font-size: 28px; }
+
+/* Transferverhandlung (views/transfers/TransferTalkModal.tsx) */
+.talk-log { align-items: flex-start; gap: 10px; }
+.talk-who { flex: 0 0 64px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-3); padding-top: 2px; }
+.talk-who.talk-du { color: var(--accent); }
+.talk-who.talk-verein { color: var(--yellow); }
+.talk-who.talk-spieler { color: var(--green); }

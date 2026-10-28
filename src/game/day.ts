@@ -37,6 +37,8 @@ import { OwnMatchInfo, findOwnMatchDue, isPrepared } from './ownMatch';
 import { Game, bumpMorale } from './state';
 import { contractReminders, handleContractExpiry } from './contracts';
 import { monthlySquadHarmony, rollAiOffers } from './aiOffers';
+import { checkPromises } from './promises';
+import { transferTalkDaily } from './transferTalks';
 import { applyEuphoria, monthlyClubEvents } from './clubEventsGame';
 import { announceUpcomingRules } from './ruleNotice';
 import { applyLeagueBalance, ratingTicker, seasonLeagueBalance, snapshotLeague } from './leagueBalance';
@@ -473,6 +475,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
   contractReminders(g, today);
   announceUpcomingRules(g, today);
   rollAiOffers(g, today);
+  checkPromises(g, today);
+  transferTalkDaily(g, today);
   if (utcDom === 1) {
     monthlyTrainingReport(g, today);
     monthlySquadHarmony(g, today);

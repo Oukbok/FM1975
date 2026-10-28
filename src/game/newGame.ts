@@ -172,7 +172,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   // Finanzen 2.0: zentrale TV-Verteilung der ersten Saison (Ruf als Leistungsmaß).
   const leagueClubs = Object.values(g0.clubs).filter(isLeagueClub);
   const byRep = [...leagueClubs].sort((a, b) => b.reputation - a.reputation).map((c) => c.id);
-  refreshMarketValues(g0.players);
+  refreshMarketValues(g0.players, 1975);
   // Grundausstattung des Stabs: Co-Trainer, Masseur, Mannschaftsarzt (je eine erfahrene Kraft).
   g0.staff = ['cotrainer', 'masseur', 'mannschaftsarzt'].map((roleId) => ({
     ...makeCandidates(roleId, 1975, g0.clubs[g0.managedClubId]?.reputation ?? 60, Math.random)[1], hired: calendar.currentDate,

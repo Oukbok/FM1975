@@ -128,6 +128,7 @@ export function LegendsSection({ ds, onChange }: P) {
 
 export function EconomySection({ ds, onChange }: P) {
   const e = ds.economy;
+  if (!e.transferRecords) e.transferRecords = [];
   return (
     <div className="ed-section">
       <Explain>Die Geldmenge im Fußball über die Zeit: <b>Stützwerte</b> geben den typischen Jahresumsatz eines Erstligisten in EUR an (dazwischen wird interpoliert). Der <b>Erlös-Mix</b> verteilt die Einnahmen auf Spieltag, TV und Vermarktung – die drei Anteile ergeben zusammen etwa 0,9 (der Rest sind Prämien und Beiträge).</Explain>
@@ -142,6 +143,10 @@ export function EconomySection({ ds, onChange }: P) {
           ]}
           makeRow={() => ({ year: (e.revenueMix[e.revenueMix.length - 1]?.year ?? 2025) + 5, matchday: 0.15, tv: 0.45, commercial: 0.3 })} />
       </div>
+      <Explain>Die <b>Rekordablösen</b> sind eine weiche Obergrenze für Transfers: Spitzenablöse eines Jahres in EUR, international und für deutsche Vereine. Marktwerte und Forderungen richten sich danach; einzelne Spitzengeschäfte dürfen die Kurve übertreffen. Nach dem letzten Jahr wächst sie um 3,5 % pro Jahr.</Explain>
+      <TableEditor rows={e.transferRecords} onChange={onChange} searchKeys={['year']} title="Rekordablösen"
+        cols={[{ key: 'year', label: 'Jahr', type: 'number', width: 80 }, { key: 'world', label: 'International EUR', type: 'number', width: 150 }, { key: 'germany', label: 'Deutschland EUR', type: 'number', width: 150 }]}
+        makeRow={() => { const l = e.transferRecords![e.transferRecords!.length - 1]; return { year: (l?.year ?? 2025) + 5, world: l?.world ?? 100_000_000, germany: l?.germany ?? 50_000_000 }; }} />
     </div>
   );
 }

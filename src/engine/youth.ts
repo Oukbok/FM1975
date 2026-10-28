@@ -435,7 +435,7 @@ export function developYouthWeekly(
       p.development.ovrProgress -= 1.0;
       p.development.currentAbility = Math.min(99, p.development.currentAbility + 1);
       p.positionRatings[p.naturalPosition] = p.overall;
-      p.contract.transferValue = Math.round(p.overall * p.overall * 400);
+      p.contract.transferValue = Math.min(p.contract.transferValue * 1.15, Math.round(p.overall * p.overall * 400));
       ovrUp = true;
     }
 

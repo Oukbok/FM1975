@@ -11,6 +11,7 @@ import { startNextSeason, leagueClubs } from '../src/game/season';
 import { CalendarEngine } from '../src/engine/calendar';
 import { Game } from '../src/game/state';
 import { Player } from '../src/types';
+import { recordFeeEUR } from '../src/data/transferRecords';
 
 const seasons = Number(process.argv[2] ?? 3);
 
@@ -56,6 +57,22 @@ function report(game: Game) {
     `verletzt ${ps.filter((p) => p.injury).length}`,
     `EC ${game.euroCups?.ec?.winnerClubId ? (game.euroClubs?.[game.euroCups.ec.winnerClubId]?.shortName ?? game.clubs[game.euroCups.ec.winnerClubId]?.shortName ?? game.simClubs?.[game.euroCups.ec.winnerClubId]?.shortName) : '-'}`,
   ].join(' | '));
+  if (process.env.TRANSFERS) {
+    // Spitzenablösen der Saison (alle Wechsel deutscher Vereine) gegen die Rekordkurve.
+    const y0 = Number(game.season.slice(0, 4));
+    const from = `${y0}-07-01`, to = `${y0 + 1}-06-30`;
+    const fees: number[] = [];
+    const seen = new Set<string>();
+    for (const p of Object.values(game.players)) for (const t of p.history?.transfers ?? []) {
+      if (t.date >= from && t.date <= to && t.fee > 0 && !seen.has(p.id + t.date)) { seen.add(p.id + t.date); fees.push(t.fee); }
+    }
+    fees.sort((a, b) => b - a);
+    const curve = recordFeeEUR(y0, 'germany') * 1.95583;
+    const top = fees[0] ?? 0;
+    (globalThis as any).__tr = (globalThis as any).__tr ?? [];
+    (globalThis as any).__tr.push(top / curve);
+    console.log(`   TRANSFERS ${fees.length} Wechsel mit Ablöse, Spitze ${(top / 1e6).toFixed(2)} Mio. (Kurve ${(curve / 1e6).toFixed(2)}) = ${(top / curve * 100).toFixed(0)} %, Top3 ${fees.slice(0, 3).map((f) => (f / curve * 100).toFixed(0) + '%').join('/')}`);
+  }
   if (process.env.FIN) {
     // Werte = laufende Saison bis zum Saisonende (vor dem Abschluss).
     const f = my.finances;

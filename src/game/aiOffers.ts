@@ -11,6 +11,14 @@
 // Alles nur für den eigenen Verein; KI-Vereine pflegen ihre Kader selbst.
 // =============================================================================
 import { CalendarEngine } from '../engine/calendar';
+import { baseMarketValue } from '../engine/clubEconomy';
+import { economyScale, yearOf } from '../engine/economy';
+import { bookTransfer } from '../engine/finances';
+import { recordTransfer } from '../engine/history';
+import { aiMaxPay, capBase, cappedMarketValue, frenzy, softCap } from '../engine/transferMarket';
+import { coefSum } from '../engine/world';
+import { archiveRetired } from './archive';
+import { breakPromise } from './promises';
 import { squadLevel } from '../engine/contractTalks';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { shiftMorale } from '../engine/randomEvents';
@@ -43,6 +51,19 @@ function pickBidder(g: Game, p: Player, own: Club, fee: number): Club | null {
   return cands[Math.floor(Math.random() * Math.min(4, cands.length))];
 }
 
+/** Großer Auslandsverein (Spitze der stärksten Ligen Europas) als Bieter. */
+function foreignBidder(g: Game): { id: string; name: string } | null {
+  const w = g.world;
+  if (!w) return null;
+  const countries = Object.values(w.countries).filter((c) => c.active !== false && c.lastTable?.length)
+    .sort((a, b) => coefSum(b.coef) - coefSum(a.coef)).slice(0, 4);
+  if (!countries.length) return null;
+  const c = countries[Math.floor(Math.random() * countries.length)];
+  const id = c.lastTable[Math.floor(Math.random() * Math.min(3, c.lastTable.length))];
+  const name = g.euroClubs?.[id]?.name;
+  return name ? { id, name: `${name} (${c.name})` } : null;
+}
+
 /** An Stichtagen der Transferfenster: KI-Angebote für eigene Spieler. */
 export function rollAiOffers(g: Game, today: string): void {
   if (!OFFER_DAYS.has(today.slice(5)) || (g as any).simAutoManage) return;
@@ -50,6 +71,7 @@ export function rollAiOffers(g: Game, today: string): void {
   if (!own) return;
   const open = g.messages.filter((m) => m.eventRef?.type === OFFER_TYPE && !m.eventRef.resolved).length;
   if (open >= 2) return;
+  const year = Number(today.slice(0, 4));
   const squad = squadOf(g, own);
   const level = squadLevel(squad);
   const cands = squad.filter((p) => p.age <= 31 && !p.isYouth && !p.contract.preContractClubId)
@@ -59,17 +81,45 @@ export function rollAiOffers(g: Game, today: string): void {
     const chance = clamp(0.04 + Math.max(0, p.overall - own.reputation) / 70 + Math.max(0, p.overall - level) / 90
       + (60 - sat) / 300 + (p.transferListed ? 0.3 : 0), 0.02, 0.4);
     if (Math.random() >= chance) continue;
-    const fee = Math.round(p.contract.transferValue * (0.95 + Math.random() * 0.45));
-    const buyer = pickBidder(g, p, own, fee);
-    if (!buyer) continue;
-    const wish = wantsMove(p, own, buyer);
+    // Stars ziehen gelegentlich große Auslandsvereine an – die zahlen nach der Weltkurve.
+    const abroad = p.overall >= 82 && Math.random() < 0.3 ? foreignBidder(g) : null;
+    let buyerId: string, buyerName: string, maxPay: number, bigger: boolean;
+    if (abroad) {
+      const raw = cappedMarketValue(baseMarketValue(p), year, 'world');
+      const cap = capBase(year, 'world');
+      maxPay = Math.round(softCap(raw * (1 + Math.random() * 0.3), cap) * frenzy(raw, cap, Math.random) / 5000) * 5000;
+      buyerId = 'foreign:' + abroad.id; buyerName = abroad.name; bigger = true;
+    } else {
+      const est = Math.round(p.contract.transferValue * 1.1);
+      const buyer = pickBidder(g, p, own, est);
+      if (!buyer) continue;
+      maxPay = aiMaxPay(p, buyer, year, 'germany', Math.random);
+      buyerId = buyer.id; buyerName = buyer.name; bigger = buyer.reputation > own.reputation;
+    }
+    if (maxPay <= 0) continue;
+    // Ausstiegsklausel: Wer sie zahlt, bekommt den Spieler – ohne Verhandlung.
+    const clause = p.contract.releaseClause;
+    if (clause && maxPay >= clause) {
+      const name = p.fullName;
+      if (abroad) sellAbroad(g, p, own, buyerName, clause, today);
+      else transferPlayer(g, p, own, g.clubs[buyerId], clause, today);
+      repairSquadLists(g);
+      pushMessage(g.messages, makeMessage({
+        date: today, category: 'transfer', from: 'Sportdirektor', subject: `${buyerName} zieht die Ausstiegsklausel für ${name}`,
+        shortText: `${fmtPrice(clause)} – der Wechsel ist nicht aufzuhalten.`,
+        bodyText: `${buyerName} hat die vertraglich festgelegte Ausstiegsklausel von ${fmtPrice(clause)} gezahlt. ${name} verlässt uns.`,
+      }));
+      return;
+    }
+    const fee = Math.round(maxPay * (0.72 + Math.random() * 0.18) / 5000) * 5000;
+    const wish = abroad ? (p.development.ambition ?? 50) >= 45 || sat < 55 : wantsMove(p, own, g.clubs[buyerId]);
     const msg = makeMessage({
-      date: today, category: 'transfer', from: buyer.name,
-      subject: `${buyer.name} bietet ${fmtPrice(fee)} für ${p.fullName}`,
+      date: today, category: 'transfer', from: buyerName,
+      subject: `${buyerName} bietet ${fmtPrice(fee)} für ${p.fullName}`,
       shortText: wish ? 'Der Spieler würde gern wechseln.' : 'Der Spieler fühlt sich bei uns wohl.',
-      bodyText: `${buyer.name} möchte ${p.fullName} (${p.naturalPosition}, ${p.age} J., Stärke ${p.overall}) verpflichten und bietet eine Ablöse von ${fmtPrice(fee)}. Sein Marktwert liegt bei ${fmtPrice(p.contract.transferValue)}.\n\n${wish
+      bodyText: `${buyerName} möchte ${p.fullName} (${p.naturalPosition}, ${p.age} J., Stärke ${p.overall}) verpflichten und bietet eine Ablöse von ${fmtPrice(fee)}. Sein Marktwert liegt bei ${fmtPrice(p.contract.transferValue)}.${abroad ? ' Auslandsvereine zahlen oft deutlich mehr als deutsche.' : ''}\n\n${wish
         ? 'Er hat signalisiert, dass ihn der Wechsel reizt. Lehnst du ab, wird er enttäuscht sein.'
-        : 'Er selbst drängt nicht auf einen Wechsel.'}\n\nDas Angebot gilt fünf Tage.`,
+        : 'Er selbst drängt nicht auf einen Wechsel.'}${p.promises?.some((x) => x.type === 'freigabe' && !x.result) && bigger ? '\n\nAchtung: Du hast ihm die Freigabe bei einem Angebot eines größeren Vereins versprochen.' : ''}\n\nDas Angebot gilt fünf Tage.`,
       actionRequired: true, relatedId: p.id,
     });
     msg.choices = [
@@ -77,7 +127,8 @@ export function rollAiOffers(g: Game, today: string): void {
       { id: 'nachverhandeln', label: 'Mehr fordern (+25 %)', hint: 'Sie könnten abspringen' },
       { id: 'ablehnen', label: 'Ablehnen' },
     ];
-    const ref: MessageEventRef = { type: OFFER_TYPE, playerId: p.id, deadline: CalendarEngine.addDays(today, 5), defaultChoice: 'ablehnen', data: { buyer: buyer.id, fee, wish: wish ? 1 : 0 } };
+    const ref: MessageEventRef = { type: OFFER_TYPE, playerId: p.id, deadline: CalendarEngine.addDays(today, 5), defaultChoice: 'ablehnen',
+      data: { buyer: buyerId, buyerName, fee, max: maxPay, wish: wish ? 1 : 0, bigger: bigger ? 1 : 0 } };
     msg.eventRef = ref;
     pushMessage(g.messages, msg);
     return; // höchstens ein Angebot pro Stichtag
@@ -87,23 +138,36 @@ export function rollAiOffers(g: Game, today: string): void {
 CHOICE_HANDLERS[OFFER_TYPE] = (g, ref, choice) => {
   const p = ref.playerId ? g.players[ref.playerId] : undefined;
   const own = g.clubs[g.managedClubId];
-  const buyer = g.clubs[String(ref.data?.buyer ?? '')];
-  if (!p || !buyer || p.clubId !== own.id) return { text: 'Das Angebot ist hinfällig.' };
+  const buyerId = String(ref.data?.buyer ?? '');
+  const foreign = buyerId.startsWith('foreign:');
+  const buyer = foreign ? null : g.clubs[buyerId];
+  const buyerName = String(ref.data?.buyerName ?? buyer?.name ?? 'Ausland');
+  if (!p || (!foreign && !buyer) || p.clubId !== own.id) return { text: 'Das Angebot ist hinfällig.' };
   const fee = Number(ref.data?.fee ?? 0);
+  const max = Number(ref.data?.max ?? fee * 1.2);
   const wish = Number(ref.data?.wish ?? 0) === 1;
+  const bigger = Number(ref.data?.bigger ?? 0) === 1;
   const today = g.calendar.currentDate;
   const sell = (amount: number) => {
-    transferPlayer(g, p, own, buyer, amount, today);
+    if (buyer) transferPlayer(g, p, own, buyer, amount, today);
+    else sellAbroad(g, p, own, buyerName, amount, today);
     repairSquadLists(g);
-    return { text: `${p.fullName} wechselt für ${fmtPrice(amount)} zu ${buyer.name}.` };
+    return { text: `${p.fullName} wechselt für ${fmtPrice(amount)} zu ${buyerName}.` };
   };
   if (choice === 'annehmen') return sell(fee);
   if (choice === 'nachverhandeln') {
-    const higher = Math.round(fee * 1.25);
-    if (buyer.finances.transferBudget >= higher && Math.random() < 0.5) return sell(higher);
+    const higher = Math.round(fee * 1.25 / 5000) * 5000;
+    if (higher <= max) return sell(higher);
+    if (max >= fee * 1.05 && Math.random() < 0.7) {
+      const last = Math.round(max / 5000) * 5000;
+      const r = sell(last);
+      return { text: `${buyerName} geht nicht ganz so weit, bessert aber auf ${fmtPrice(last)} nach – du schlägst ein. ${r.text}` };
+    }
     if (wish) { p.contract.satisfaction = clamp((p.contract.satisfaction ?? 60) - 8, 0, 100); shiftMorale(p, -1); }
-    return { text: `${buyer.name} ist das zu teuer und zieht das Angebot zurück.${wish ? ` ${p.lastName} ist enttäuscht.` : ''}` };
+    if (bigger) breakPromise(g, p, 'freigabe', today);
+    return { text: `${buyerName} ist das zu teuer und zieht das Angebot zurück.${wish ? ` ${p.lastName} ist enttäuscht.` : ''}` };
   }
+  if (bigger) breakPromise(g, p, 'freigabe', today);
   if (wish) {
     p.contract.satisfaction = clamp((p.contract.satisfaction ?? 60) - 14, 0, 100);
     shiftMorale(p, -1);
@@ -111,6 +175,21 @@ CHOICE_HANDLERS[OFFER_TYPE] = (g, ref, choice) => {
   }
   return { text: `${p.lastName} bleibt – er hatte ohnehin nicht auf einen Wechsel gedrängt.` };
 };
+
+/** Verkauf ins Ausland: Spieler verlässt das Spiel (Eckdaten bleiben im Archiv). */
+export function sellAbroad(g: Game, p: Player, from: Club, toName: string, fee: number, date: string): void {
+  from.playerIds = from.playerIds.filter((id) => id !== p.id);
+  from.finances.transferBudget += fee;
+  if (p.sellOn && g.clubs[p.sellOn.clubId]) {
+    const share = Math.round(fee * p.sellOn.pct), old = g.clubs[p.sellOn.clubId];
+    bookTransfer(from, share, true, `${p.fullName} (Weiterverkaufsbeteiligung)`, date, true);
+    bookTransfer(old, share, false, `${p.fullName} (Weiterverkaufsbeteiligung)`, date, false);
+  }
+  bookTransfer(from, fee, false, p.fullName, date, from.isPlayerControlled);
+  recordTransfer(p, from.name, toName, Math.round(fee * economyScale(yearOf(date))), date);
+  archiveRetired(g, p, date);
+  delete g.players[p.id];
+}
 
 // -----------------------------------------------------------------------------
 // Kabinenfrieden (monatlich)

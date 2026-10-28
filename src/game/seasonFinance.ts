@@ -52,7 +52,7 @@ export function openFinancialSeason(g: Game, newSeason: string, date: string, pr
   const year = yearOf(date);
   const league = Object.values(g.clubs).filter(isLeagueClub);
   const fmt = (v: number) => formatMoney(v, year);
-  refreshMarketValues(g.players);
+  refreshMarketValues(g.players, year);
 
   // TV-Gelder der neuen Saison.
   const tier = g.leagues?.playerDivision?.tier ?? 1;

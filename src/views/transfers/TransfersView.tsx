@@ -1,7 +1,9 @@
 import ClubCrest from '../../components/ClubCrest';
 import PlayerModal from '../../components/PlayerModal';
 import { CalendarEngine } from '../../engine/calendar';
-import { getAvailablePlayers, makeOffer } from '../../engine/transfers';
+import { getAvailablePlayers } from '../../engine/transfers';
+import { activeTalks, startTalk, talkBlocker, TransferTalk } from '../../game/transferTalks';
+import { TransferTalkModal } from './TransferTalkModal';
 import { Game } from '../../game/state';
 import { Player } from '../../types';
 import { YouthScoutBox } from './YouthScoutBox';
@@ -33,6 +35,26 @@ function usePlayerModal(g: Game) {
       today={g.calendar.currentDate} season={g.season} onClose={() => setSel(null)} />
   ) : null;
   return { open: setSel, modal };
+}
+
+/** Verhandlung öffnen (neu starten oder fortsetzen). */
+function useTalk(g: Game, onChange: () => void) {
+  const [talkId, setTalkId] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const talk = talkId ? (g.transferTalks ?? []).find((t) => t.id === talkId) : undefined;
+  const open = (playerId: string) => {
+    const r = startTalk(g, playerId);
+    if (typeof r === 'string') { setErr(r); return; }
+    setErr(null); setTalkId(r.id); onChange();
+  };
+  const modal = talk ? <TransferTalkModal g={g} talk={talk} onClose={() => setTalkId(null)} onChange={onChange} /> : null;
+  return { open, openTalk: (t: TransferTalk) => setTalkId(t.id), modal, err };
+}
+
+function TalkButton({ g, p, onTalk }: { g: Game; p: Player; onTalk: (id: string) => void }) {
+  const running = activeTalks(g).some((t) => t.playerId === p.id);
+  const block = running ? null : talkBlocker(g, p);
+  return <button className={`dchip ${block ? '' : 'on'}`} title={block ?? undefined} disabled={!!block} onClick={() => onTalk(p.id)}>{running ? 'Fortsetzen' : 'Verhandeln'}</button>;
 }
 
 function MarketTable({ g, list, onOpen, action }: { g: Game; list: Player[]; onOpen: (id: string) => void; action?: (p: Player) => React.ReactNode }) {
@@ -82,20 +104,13 @@ function NeedsBox({ g }: { g: Game }) {
 export function TransfersView({ g, onDone }: { g: Game; onDone: () => void }) {
   const club = g.clubs[g.managedClubId];
   const [grp, setGrp] = useState('all');
-  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const { open, modal } = usePlayerModal(g);
+  const talk = useTalk(g, onDone);
   const all = getAvailablePlayers(g.players, g.managedClubId);
   const list = all.filter((p) => grp === 'all' || groupOf(p) === grp).slice(0, 60);
   const fin = club.finances;
   const wages = squadOf(g).reduce((s, p) => s + p.contract.weeklyWage, 0);
 
-  const buy = (p: Player) => {
-    const amount = Math.round(p.contract.transferValue * 1.05);
-    const wage = Math.round(p.contract.weeklyWage * 1.1);
-    const res = makeOffer(club, p, g.clubs, g.players, amount, wage);
-    setMsg({ ok: res.accepted, text: res.message });
-    onDone();
-  };
 
   return (
     <DashPage>
@@ -105,7 +120,7 @@ export function TransfersView({ g, onDone }: { g: Game; onDone: () => void }) {
           {GROUPS.map((k) => <button key={k} className={`dchip ${grp === k ? 'on' : ''}`} onClick={() => setGrp(k)}>{GROUP_DE[k]}</button>)}
         </span>}>
         {list.length ? <MarketTable g={g} list={list} onOpen={open}
-          action={(p) => <button className="dchip on" onClick={() => buy(p)}>Angebot {fmtDM(Math.round(p.contract.transferValue * 1.05))}</button>} />
+          action={(p) => <TalkButton g={g} p={p} onTalk={talk.open} />} />
           : <Empty icon="transfers">Derzeit keine Spieler auf dem Markt.</Empty>}
       </DashBox>
 
@@ -116,12 +131,13 @@ export function TransfersView({ g, onDone }: { g: Game; onDone: () => void }) {
         </div>
         <KV k="Kontostand" v={fmtDM(fin.balance)} />
         <KV k="Gehälter / Gehaltsbudget" v={`${fmtDM(wages)} / ${fmtDM(fin.wageBudget)}`} />
-        {msg && <div className="dnote mt8" style={{ color: msg.ok ? 'var(--green)' : 'var(--red)', fontSize: 16, fontWeight: 700 }}>{msg.text}</div>}
-        <div className="dnote mt8">Ein Angebot liegt 5 % über dem Marktwert, das Gehalt 10 % über dem bisherigen. Der Verkäufer kann ablehnen.</div>
+        {talk.err && <div className="dnote mt8" style={{ color: 'var(--red)', fontWeight: 700 }}>{talk.err}</div>}
+        <div className="dnote mt8">Verhandle erst mit dem Verein über die Ablöse, dann mit dem Spieler über Gehalt und Versprechen. Die Forderung des Vereins kennst du nur ungefähr. Alle Spieler der Liga findest du in der Beobachtungsliste.</div>
       </DashBox>
 
       <NeedsBox g={g} />
       {modal}
+      {talk.modal}
     </DashPage>
   );
 }
@@ -131,6 +147,7 @@ type ScoutMode = 'contract' | 'young' | 'need';
 export function BeobachtungView({ g, onChange = () => {} }: { g: Game; onChange?: () => void }) {
   const [mode, setMode] = useState<ScoutMode>('need');
   const { open, modal } = usePlayerModal(g);
+  const talk = useTalk(g, onChange);
   const today = g.calendar.currentDate;
   const others = Object.values(g.players).filter((p) => p.clubId && p.clubId !== g.managedClubId && g.clubs[p.clubId] && !p.isYouth);
   const ns = needs(g);
@@ -149,7 +166,7 @@ export function BeobachtungView({ g, onChange = () => {} }: { g: Game; onChange?
         right={<span className="dbtnrow">
           {(['need', 'contract', 'young'] as ScoutMode[]).map((m) => <button key={m} className={`dchip ${mode === m ? 'on' : ''}`} onClick={() => setMode(m)}>{label[m]} ({lists[m].length})</button>)}
         </span>}>
-        {list.length ? <MarketTable g={g} list={list} onOpen={open} /> : <Empty icon="watchlist">Keine passenden Spieler gefunden.</Empty>}
+        {list.length ? <MarketTable g={g} list={list} onOpen={open} action={(p) => <TalkButton g={g} p={p} onTalk={talk.open} />} /> : <Empty icon="watchlist">Keine passenden Spieler gefunden.</Empty>}
       </DashBox>
 
       <DashBox title="Auffällig" icon="trophy">
@@ -159,19 +176,23 @@ export function BeobachtungView({ g, onChange = () => {} }: { g: Game; onChange?
         {lists.young[0] ? <PlayerRow p={lists.young[0]} sub={`${lists.young[0].age} J. · ${g.clubs[lists.young[0].clubId]?.shortName}`} value={lists.young[0].overall} onClick={() => open(lists.young[0].id)} /> : <div className="dnote">–</div>}
         <div className="dsec">Bester für {GROUP_DE[weakest.k]}</div>
         {lists.need[0] ? <PlayerRow p={lists.need[0]} sub={g.clubs[lists.need[0].clubId]?.shortName} value={lists.need[0].overall} onClick={() => open(lists.need[0].id)} /> : <div className="dnote">–</div>}
-        <div className="dnote mt8">Eine eigene Merkliste mit Scouting-Berichten folgt in einem späteren Ausbau.</div>
+        {talk.err && <div className="dnote mt8" style={{ color: 'var(--red)', fontWeight: 700 }}>{talk.err}</div>}
       </DashBox>
 
       <YouthScoutBox g={g} onChange={onChange} />
       {modal}
+      {talk.modal}
     </DashPage>
   );
 }
 
 // --- AKTIVE VERHANDLUNGEN ---------------------------------------------------
-export function VerhandlungenView({ g }: { g: Game }) {
+export function VerhandlungenView({ g, onChange = () => {} }: { g: Game; onChange?: () => void }) {
   const club = g.clubs[g.managedClubId];
   const { open, modal } = usePlayerModal(g);
+  const talk = useTalk(g, onChange);
+  const talks = [...(g.transferTalks ?? [])].sort((a, b) => b.lastAction.localeCompare(a.lastAction));
+  const PHASE: Record<string, string> = { club: 'Gespräch mit dem Verein', player: 'Gespräch mit dem Spieler', agreed: 'Einigung – Wechsel im nächsten Fenster', done: 'abgeschlossen', failed: 'gescheitert' };
   const news = g.messages.filter((m) => m.category === 'transfer' || m.category === 'contract');
   const moves = Object.values(g.players).flatMap((p) => (p.history?.transfers ?? [])
     .filter((t) => t.toClub === club.name || t.fromClub === club.name).map((t) => ({ p, t })))
@@ -185,13 +206,24 @@ export function VerhandlungenView({ g }: { g: Game }) {
 
   return (
     <DashPage>
-      <DashBox title="Transfer- und Vertragsmeldungen" icon="negotiations" span={2} right={`${news.length} Meldungen`}>
+      <DashBox title="Verhandlungen & Meldungen" icon="negotiations" span={2} right={`${activeTalks(g).length} laufend`}>
+        {talks.map((t) => {
+          const pl = g.players[t.playerId];
+          return (
+            <div key={t.id} className="dlist-row clickable" onClick={() => talk.openTalk(t)}>
+              <span className="pos-badge">{pl?.naturalPosition ?? '–'}</span>
+              <span className="grow"><b>{pl?.fullName ?? 'Spieler'}</b><span className="muted"> · {g.clubs[t.sellerId]?.shortName} · {PHASE[t.phase]}</span></span>
+              <span className="val" style={{ color: t.phase === 'failed' ? 'var(--red)' : t.phase === 'done' || t.phase === 'agreed' ? 'var(--green)' : 'var(--accent)' }}>{t.phase === 'club' && t.round ? fmtPrice(t.currentAsk) : t.pkg ? fmtPrice(t.pkg.fee) : ''}</span>
+            </div>
+          );
+        })}
+        {talks.length > 0 && <div className="dsec">Meldungen</div>}
         {news.length ? news.map((m) => (
           <div key={m.id} className="dlist-row">
             <span className="meta" style={{ minWidth: 150 }}>{CalendarEngine.formatDate(m.date)}</span>
             <span className="grow"><b style={{ fontWeight: m.read ? 600 : 900 }}>{m.subject}</b><span className="dnote" style={{ display: 'block' }}>{m.shortText}</span></span>
           </div>
-        )) : <Empty icon="negotiations">Keine laufenden Gespräche. Angebote gibst du im Transfermarkt ab.</Empty>}
+        )) : talks.length ? null : <Empty icon="negotiations">Keine laufenden Gespräche. Verhandeln kannst du im Transfermarkt und in der Beobachtungsliste.</Empty>}
       </DashBox>
 
       <DashBox title="Wechselkandidaten im eigenen Kader" icon="contracts" span={2} right={`${unsettled.length} Spieler`}>
@@ -221,6 +253,7 @@ export function VerhandlungenView({ g }: { g: Game }) {
         )) : <Empty icon="transfers">Noch keine Wechsel.</Empty>}
       </DashBox>
       {modal}
+      {talk.modal}
     </DashPage>
   );
 }

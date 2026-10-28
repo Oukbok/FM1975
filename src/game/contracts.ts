@@ -115,6 +115,15 @@ export function transferPlayer(g: Game, p: Player, from: Club, to: Club, fee: nu
   p.contract.weeklyWage = Math.round(Math.max(p.contract.weeklyWage, marketWage(p)) * (fee === 0 ? 1.15 : 1));
   p.contract.expiryDate = `${Number(date.slice(0, 4)) + yearsFor(p.age, hashRand(p.id + date))}-06-30`;
   p.contract.satisfaction = 78;
+  // Weiterverkaufsbeteiligung an den früheren Verein.
+  const so = p.sellOn;
+  if (fee > 0 && so && so.clubId !== to.id && g.clubs[so.clubId]) {
+    const share = Math.round(fee * so.pct);
+    const old = g.clubs[so.clubId];
+    bookTransfer(from, share, true, `${p.fullName} (Weiterverkaufsbeteiligung)`, date, from.isPlayerControlled);
+    bookTransfer(old, share, false, `${p.fullName} (Weiterverkaufsbeteiligung)`, date, old.isPlayerControlled);
+  }
+  if (fee > 0) p.sellOn = undefined;
   if (fee > 0) {
     to.finances.transferBudget -= fee;
     from.finances.transferBudget += fee;

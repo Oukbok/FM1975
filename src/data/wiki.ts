@@ -1324,6 +1324,56 @@ Neben Regeln (Rückpass, 3 Punkte, Wechsel) prägen echte Ereignisse das Spiel �
 Die Chronik markiert diese Ereignisse als **fiktive Zukunft**, z. B. halbautomatisches Abseits, der Streit um eine geschlossene Europaliga, eine **Gehaltsquote** als Lizenzauflage (ab 2034/35: höchstens 70 % des Umsatzes, sonst Verwarnung und Transfersperre), Klimaauflagen für Stadien und weltweite Streaming-Rechte.`,
   },
   {
+    id: 'transfers-market',
+    category: 'squad',
+    title: 'Transfers: Ablösen, Verhandlungen & Versprechen',
+    keywords: ['transfer', 'ablöse', 'rekord', 'verhandlung', 'forderung', 'berater', 'handgeld', 'versprechen', 'stammplatz', 'ausstiegsklausel', 'raten', 'weiterverkauf', 'ausland'],
+    body: `## Die Rekordkurve
+Ablösen folgen einer **Kurve der Spitzenablösen** je Jahr, recherchiert aus echten Rekordtransfers von 1975 bis heute (geglättet; ab 2027 fiktiv fortgeschrieben). Es gibt zwei Linien: **deutsche Vereine** (1976 etwa 1 Mio. DM, 2023 rund 95 Mio. €) und **international** (1975 etwa 3,6 Mio. €, 2017 Ausreißer 222 Mio. €).
+
+- **Marktwert:** Ein Spieler mit Stärke 90 ist etwa die deutsche Spitzenablöse wert; schwächere entsprechend weniger, Stärkere höchstens das 1,3-Fache.
+- **Weiche Obergrenze:** Bis 70 % der Kurve wirkt sie nicht, darüber werden Forderungen gestaucht. Bei Spitzengeschäften kann ein **Bieterwettstreit** die Kurve übertreffen – in Simulationen liegt die Saisonspitze im Schnitt bei etwa 95 % der Kurve, in rund jeder vierten Saison darüber.
+- **Ausland:** Große Auslandsvereine bieten nach der internationalen Kurve – ein Star bringt dort deutlich mehr.
+
+## Verhandeln mit dem Verein
+Im Transfermarkt und in der Beobachtungsliste startest du mit **Verhandeln** ein Gespräch. Dein Sportdirektor schätzt die Forderung – je besser dein Scouting, desto enger und genauer die Spanne. Die **Schmerzgrenze** des Vereins bleibt verdeckt.
+
+| Einfluss auf die Forderung | Wirkung |
+| --- | --- |
+| Vertrag ≥ 3 Jahre / 2 Jahre | +25 % / +10 % |
+| Vertrag endet in ≤ 1 Jahr (ab Bosman) | −35 bis −55 % |
+| Leistungsträger (Top 3) / Ergänzungsspieler | +30 % / −12 % |
+| Verein in Geldnot, Spieler auf der Transferliste, Spieler will weg | jeweils günstiger |
+| Du bist ein Rivale | +15 % |
+| Verhandlungshärte des Vereins | −8 bis +17 % |
+| Bester Spieler eines gleich großen Vereins | „unverkäuflich“: +50 % |
+
+Dein Angebot besteht aus **Ablöse**, **Zahlung** (sofort oder zwei Raten – der Verein bewertet Raten mit 93 %), **Weiterverkaufsbeteiligung** (0/10/20 %) und **Erfolgsprämie** (fällig bei 20 Einsätzen). Der Verein antwortet mit einer Gegenforderung. Lächerliche Angebote kosten viel **Geduld**; ist sie aufgebraucht, endet das Gespräch.
+
+## Verhandeln mit dem Spieler
+Danach überzeugst du den Spieler. Sein **Berater** nennt eine überhöhte Forderung, das echte Mindestgehalt bleibt verdeckt. Du bietest **Gehalt**, **Laufzeit**, **Handgeld** (zählt anteilig wie Gehalt), eine **Ausstiegsklausel** (reizt ehrgeizige Spieler; zahlt ein Verein sie, wechselt der Spieler ohne Verhandlung) und bis zu drei **Versprechen**:
+
+| Versprechen | Wird geprüft (Saisonende) |
+| --- | --- |
+| Stammplatz | mind. 60 % der Ligaspiele in der Startelf (Mahnung am 2. Januar) |
+| Kapitänsbinde | Kapitän zum Saisonende |
+| Europapokal / Um Titel spielen | Platz 1–5 / Platz 1–3 |
+| Weitere Verstärkungen | mind. ein Zugang auf seinem Niveau |
+| Einsätze zur Entwicklung (bis 21 J.) | mind. 15 Pflichtspiele |
+| Freigabe bei Topangebot | du lehnst kein Angebot eines größeren Vereins ab |
+| Umzug & Familie | sofort erfüllt, kostet einmalig etwas |
+
+Was ihm wichtig ist, erfährst du im ersten Gespräch. Für ihn sprechen ein größerer Verein, Europapokal und Aussicht auf Spielzeit; gegen dich eine tiefere Liga und starke Konkurrenz auf seiner Position. Mehr als drei Versprechen wirken unglaubwürdig.
+
+**Glaubwürdigkeit** (Start 70): Gehaltene Versprechen +5, gebrochene −15 – und der Spieler verliert stark an Zufriedenheit und Moral. Je niedriger sie ist, desto weniger glauben dir künftige Spieler.
+
+## Abschluss
+Im Transferfenster (Juli/August, Januar) wird sofort gewechselt, sonst zum nächsten Fenster. Ab Bosman kannst du Spieler, deren Vertrag in höchstens sechs Monaten endet, ohne Ablöse per **Vorvertrag** holen. Höchstens vier Verhandlungen laufen gleichzeitig; ohne neue Angebote schläft ein Gespräch nach 30 Tagen ein.
+
+## Wenn andere bieten
+Für deine Spieler bieten KI-Vereine nach ihrer verdeckten Höchstgrenze. Forderst du 25 % mehr, zahlen sie, wenn es in ihren Rahmen passt – sonst bessern sie oft bis zur Grenze nach oder springen ab.`,
+  },
+  {
     id: 'squad-contracts',
     category: 'squad',
     title: 'Verträge, Bosman & Kabine',

@@ -97,6 +97,8 @@ export interface Dataset {
     /** Erlös-Basis der 1. Liga in EUR je Stützjahr. */
     anchors: { year: number; value: number }[];
     revenueMix: { year: number; matchday: number; tv: number; commercial: number }[];
+    /** Rekordkurve der Ablösen (Spitzenablöse je Jahr in EUR, Welt und Deutschland). Optional. */
+    transferRecords?: { year: number; world: number; germany: number }[];
   };
   history: HistoryConfig;
 }

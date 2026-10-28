@@ -101,6 +101,12 @@ export interface Game {
   /** Liga-Gleichgewicht: Verschiebung des Jugend-Potenzials (Sterne) + Verlauf (game/leagueBalance.ts). */
   /** Spieler-Archiv (Karriereende, game/archive.ts). */
   archive?: import('./archive').ArchivedPlayer[];
+  /** Glaubwürdigkeit deiner Versprechen (0–100, Start 70; game/promises.ts). */
+  promiseTrust?: number;
+  /** Fällige Raten und Erfolgsprämien aus Transfers (1975-Basis). */
+  transferInstallments?: { due: string; amount: number; from: string; to: string; name: string; kind: 'rate' | 'bonus'; playerId?: string }[];
+  /** Laufende Transferverhandlungen (game/transferTalks.ts). */
+  transferTalks?: import('./transferTalks').TransferTalk[];
   /** Sperrzeiten der Vereinsereignisse (Typ → Datum). */
   eventCooldowns?: Record<string, string>;
   /** WM-Euphorie: Zuschauer-Faktor für einen Zeitraum. */

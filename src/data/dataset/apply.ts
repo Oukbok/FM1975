@@ -18,6 +18,7 @@ import { BLOCKED_NAMES } from '../namePools';
 import { LEGENDS } from '../legends';
 import { ANCHORS, REVENUE_MIX, resetEconomyCache } from '../../engine/economy';
 import { HISTORY } from '../history';
+import { TRANSFER_RECORD_ANCHORS } from '../transferRecords';
 import { Dataset } from './schema';
 import { BUILTIN_ID, builtinDataset } from './builtin';
 
@@ -105,6 +106,8 @@ export function applyDataset(ds: Dataset | null): void {
   ANCHORS.sort((a, b) => a.year - b.year);
   replaceArray(REVENUE_MIX, d.economy?.revenueMix, base.economy.revenueMix);
   REVENUE_MIX.sort((a, b) => a.year - b.year);
+  replaceArray(TRANSFER_RECORD_ANCHORS, d.economy?.transferRecords, base.economy.transferRecords ?? []);
+  TRANSFER_RECORD_ANCHORS.sort((a, b) => a.year - b.year);
   resetEconomyCache();
 
   const h = d.history ?? base.history;

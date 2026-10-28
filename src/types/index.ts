@@ -404,6 +404,15 @@ export interface PlayerDevelopment {
 // 7. SPIELER
 // -----------------------------------------------------------------------------
 
+/** Ein Versprechen an einen Spieler (Transferverhandlung). */
+export interface PlayerPromise {
+  type: 'stammplatz' | 'kapitaen' | 'europa' | 'titel' | 'stars' | 'entwicklung' | 'freigabe' | 'umzug';
+  madeOn: string;
+  /** Saison, in der es eingelöst werden muss. */
+  season: string;
+  result?: 'kept' | 'broken';
+}
+
 /** Moral-/Formzustand eines Spielers. */
 export type PlayerMorale =
   | 'very_low'
@@ -510,6 +519,10 @@ export interface Player {
 
   /** Verlauf für das Spielerprofil (Spiele, Stationen, Transfers, Verletzungen, Attribute). Optional = alte Spielstände. */
   history?: PlayerHistory;
+  /** Versprechen beim Wechsel (game/promises.ts). */
+  promises?: PlayerPromise[];
+  /** Weiterverkaufsbeteiligung des abgebenden Vereins (Anteil 0–0,3). */
+  sellOn?: { clubId: string; pct: number };
   /** Herkunft (Namens-/Gesichtsgruppe), siehe data/origins.ts. */
   origin?: string;
   face?: string;
