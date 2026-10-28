@@ -10,6 +10,8 @@ export interface HistoryConfig {
   attendanceRestrictions: { from: string; to: string; factor: number }[];
   /** TV-Markt-Faktoren je Jahr (Krisen/Booms). */
   tvMarket: { year: number; factor: number }[];
+  /** Erster Sommer, in dem Spieler nach Vertragsende ablösefrei wechseln (Bosman-Urteil Dez. 1995). */
+  bosmanFromYear?: number;
 }
 
 export const HISTORY: HistoryConfig = {
@@ -19,6 +21,7 @@ export const HISTORY: HistoryConfig = {
     { from: '2021-07-01', to: '2022-03-19', factor: 0.5 },
   ],
   tvMarket: [{ year: 2002, factor: 0.85 }, { year: 2003, factor: 0.92 }],
+  bosmanFromYear: 1996,
 };
 
 /** Pokal der Pokalsieger aktiv? */

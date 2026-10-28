@@ -5,11 +5,13 @@ import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtDM, vColor, fmtPrice } from '../../ui/format';
 import { PlayerRow, monthsUntil } from '../shared';
 import { useState } from 'react';
+import { demandFor, offerContract } from '../../game/contracts';
+import { bosmanActive } from '../../engine/contractTalks';
 
 // =============================================================================
 // VERTRÄGE — Vertragsliste, auslaufende Verträge, Gehaltsstruktur, Zufriedenheit
 // =============================================================================
-export function VertraegeView({ g }: { g: Game }) {
+export function VertraegeView({ g, onChange }: { g: Game; onChange?: () => void }) {
   const [sel, setSel] = useState<string | null>(null);
   const club = g.clubs[g.managedClubId];
   const today = g.calendar.currentDate;
@@ -73,10 +75,11 @@ export function VertraegeView({ g }: { g: Game }) {
         )) : <Empty icon="contracts">Keine Verträge laufen bald aus.</Empty>}
         <div className="dsec">Unzufriedenste Spieler</div>
         {unhappy.map((x) => <PlayerRow key={x.id} p={x} value={Math.round(x.contract.satisfaction)} onClick={() => setSel(x.id)} />)}
-        <div className="dnote mt8">Ausgelaufene Verträge werden zum 1. Juli automatisch verlängert (Gehalt an den Markt angepasst). Eigene Verhandlungen folgen in einem späteren Ausbau.</div>
+        <div className="dnote mt8">{bosmanActive(today) ? 'Seit dem Bosman-Urteil gehen Spieler nach Vertragsende ablösefrei – und können im Winter Vorverträge woanders unterschreiben.' : 'Spieler ohne neuen Vertrag wechseln im Sommer – noch gegen Ablöse (bis zum Bosman-Urteil 1995).'} Verhandeln: Spieler anklicken, Reiter „Vertrag & Wert“.</div>
       </DashBox>
 
-      {p && <PlayerModal player={p} club={club} squad={squad} today={today} season={g.season} onClose={() => setSel(null)} />}
+      {p && <PlayerModal player={p} club={club} squad={squad} today={today} season={g.season} onClose={() => setSel(null)} initialTab="contract"
+        negotiation={{ demand: (x) => demandFor(g, x), offer: (x, w, y) => { const r = offerContract(g, x.id, w, y); onChange?.(); return r; } }} />}
     </DashPage>
   );
 }

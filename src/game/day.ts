@@ -35,7 +35,8 @@ import { cupNextDrawMessage, cupResultMessage, euroDrawMessage, euroResultMessag
 import { emitMatchMessage, simulateMatchday, startNextSeason } from './season';
 import { OwnMatchInfo, findOwnMatchDue, isPrepared } from './ownMatch';
 import { Game, bumpMorale } from './state';
-import { renewExpiredContracts } from './contracts';
+import { contractReminders, handleContractExpiry } from './contracts';
+import { monthlySquadHarmony, rollAiOffers } from './aiOffers';
 import { PlayerDevReveal } from '../types';
 import { fmtDM, fmtDMfull, fmtDateFull, setDisplayYear } from '../ui/format';
 import { RatingResult as _RatingResult } from '../engine/development';
@@ -381,8 +382,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
     if (utcMon === 7 && domNow === 1) {
       // Fiktive Legenden des Jahrgangs tauchen in einer Akademie auf (data/legends.ts).
       spawnLegends(g, today);
-      // Abgelaufene Verträge werden automatisch verlängert (game/contracts.ts).
-      renewExpiredContracts(g, today);
+      // Vertragsende: Wechsel (vor Bosman gegen Ablöse) oder Verlängerung (game/contracts.ts).
+      handleContractExpiry(g, today);
       for (const club of Object.values(g.clubs)) {
         if ((club.infrastructure.lastYouthIntakeYear ?? 0) >= yearNow) continue;
         club.infrastructure.lastYouthIntakeYear = yearNow;
@@ -459,8 +460,11 @@ export function processDay(g: Game, ui: DayUi): boolean {
   const utcDom = new Date(today + 'T00:00:00Z').getUTCDate();
   const curMonth = today.slice(0, 7);
   autoResolveEvents(g, today);
+  contractReminders(g, today);
+  rollAiOffers(g, today);
   if (utcDom === 1) {
     monthlyTrainingReport(g, today);
+    monthlySquadHarmony(g, today);
     monthlyEnvironmentUpdate(g, today);
     monthlyEvents(g, today);
     for (const club of Object.values(g.clubs)) {

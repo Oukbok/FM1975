@@ -6,6 +6,7 @@ import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtDM, vColor } from '../../ui/format';
 import { GROUP_DE, PlayerRow, ScoutStars, avg, groupOf, scoutMid } from '../shared';
 import { useState } from 'react';
+import { demandFor, offerContract } from '../../game/contracts';
 
 // =============================================================================
 // KADER — sortierbare Kadertabelle, Kaderstruktur, Verfügbarkeit
@@ -15,7 +16,7 @@ export type SquadSort = 'pos' | 'ovr' | 'pot' | 'form' | 'fri' | 'fit' | 'age' |
 const MORALE_DE: Record<string, string> = { very_low: 'sehr schlecht', low: 'schlecht', okay: 'okay', good: 'gut', excellent: 'super' };
 const GROUP_ORDER = ['GK', 'DEF', 'MID', 'ATT'];
 
-export function SquadView({ g }: { g: Game }) {
+export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
   const [sel, setSel] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SquadSort>('pos');
   const [grp, setGrp] = useState<string>('all');
@@ -114,7 +115,8 @@ export function SquadView({ g }: { g: Game }) {
           : <Empty icon="training">Alle Spieler sind ausgeruht.</Empty>}
       </DashBox>
 
-      {p && <PlayerModal player={p} club={club} squad={all} today={g.calendar.currentDate} season={g.season} onClose={() => setSel(null)} />}
+      {p && <PlayerModal player={p} club={club} squad={all} today={g.calendar.currentDate} season={g.season} onClose={() => setSel(null)}
+        negotiation={{ demand: (x) => demandFor(g, x), offer: (x, w, y) => { const r = offerContract(g, x.id, w, y); onChange?.(); return r; } }} />}
     </DashPage>
   );
 }

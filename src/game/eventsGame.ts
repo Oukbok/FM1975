@@ -2,7 +2,7 @@
 // Zufallsereignisse im Spielablauf: monatlich würfeln, Entscheidungen auflösen.
 // =============================================================================
 import { Game } from './state';
-import { InboxMessage } from '../types';
+import { InboxMessage, MessageEventRef } from '../types';
 import { CalendarEngine } from '../engine/calendar';
 import { economyScale, yearOf } from '../engine/economy';
 import { book } from '../engine/finances';
@@ -35,11 +35,18 @@ export function monthlyEvents(g: Game, today: string): void {
   }
 }
 
+/**
+ * Weitere Entscheidungs-Nachrichten (KI-Angebote, Vereinsereignisse …) melden
+ * hier ihren Typ an; sonst gilt der Katalog aus engine/randomEvents.ts.
+ */
+export const CHOICE_HANDLERS: Record<string, (g: Game, ref: MessageEventRef, choice: string) => { text: string; money?: { amount: number; text: string } }> = {};
+
 export function chooseEventOption(g: Game, msg: InboxMessage, choiceId: string, auto = false): string {
   if (!msg.eventRef || msg.eventRef.resolved) return msg.resultText ?? '';
   const ctx = ctxFor(g, g.calendar.currentDate);
   if (!ctx) return '';
-  const eff = resolveEvent(ctx, msg.eventRef, choiceId);
+  const handler = CHOICE_HANDLERS[msg.eventRef.type];
+  const eff = handler ? handler(g, msg.eventRef, choiceId) : resolveEvent(ctx, msg.eventRef, choiceId);
   if (eff.money) book(ctx.club.finances, g.calendar.currentDate, eff.money.amount, 'other', eff.money.text, true);
   const label = msg.choices?.find((c) => c.id === choiceId)?.label ?? choiceId;
   msg.eventRef.resolved = choiceId;

@@ -10,6 +10,7 @@
     "test:ui": "node scripts/build.mjs && node tests/ui-smoke.mjs test-output 25",
     "sim": "node scripts/sim.mjs",
     "test:dataset": "node scripts/run-ts.mjs tests/dataset-test.ts",
+    "test:contracts": "node scripts/run-ts.mjs tests/contracts-test.ts",
     "test:editor": "node scripts/build.mjs && node tests/editor-ui.mjs"
   },
   "dependencies": {

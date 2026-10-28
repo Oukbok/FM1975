@@ -179,3 +179,10 @@
 .pp-changes { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 24px; }
 .pp-change { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 1px solid var(--border-soft); }
 .pp-grid-career .pp-table td:nth-child(2), .pp-grid-career .pp-table th:nth-child(2) { text-align: left; }
+
+/* Vertragsgespräch (Reiter „Vertrag & Wert“) */
+.talk-form { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.talk-row { display: grid; grid-template-columns: 130px 1fr auto; align-items: center; gap: 10px; font-size: 14px; color: var(--text-2); }
+.talk-row input[type="range"] { width: 100%; accent-color: var(--accent); }
+.talk-row .dchips { display: flex; gap: 6px; flex-wrap: wrap; grid-column: 2 / 4; }
+.talk-send { align-self: flex-start; }

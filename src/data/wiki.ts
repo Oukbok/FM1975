@@ -960,7 +960,7 @@ Spielerverkäufe fließen über die Transfer-Engine ein (Ablösesumme als Einnah
 ### Spielergehälter
 \`Summe der Wochengehälter des Kaders × 4,33\` (Wochen je Monat).
 Die Wochengehälter der Spieler werden aus OVR/Alter abgeleitet (Vertrag \`weeklyWage\`).
-Ausgelaufene Verträge werden zum 1. Juli automatisch verlängert: Laufzeit nach Alter (bis 24 J. 3–5 Jahre, bis 29 J. 2–4, bis 32 J. 1–2, älter 1 Jahr), neues Gehalt = Mittel aus altem Gehalt und Marktgehalt. Über deine Verlängerungen informiert dich der Sportdirektor.
+Verlängerungen verhandelst du selbst (siehe Artikel **Verträge, Bosman & Kabine**). KI-Vereine verlängern meist automatisch: Laufzeit nach Alter, neues Gehalt = Mittel aus altem Gehalt und Marktgehalt.
 
 ### Betreuerstab
 \`Spielergehälter × 0,18\` – Trainer-, Betreuer- und Verwaltungspersonal.
@@ -1316,6 +1316,43 @@ Neben Regeln (Rückpass, 3 Punkte, Wechsel) prägen echte Ereignisse das Spiel �
 
 ## Ab 2027/28: eine glaubwürdige, erfundene Zukunft
 Die Chronik markiert diese Ereignisse als **fiktive Zukunft**, z. B. halbautomatisches Abseits, der Streit um eine geschlossene Europaliga, eine **Gehaltsquote** als Lizenzauflage (ab 2034/35: höchstens 70 % des Umsatzes, sonst Verwarnung und Transfersperre), Klimaauflagen für Stadien und weltweite Streaming-Rechte.`,
+  },
+  {
+    id: 'squad-contracts',
+    category: 'squad',
+    title: 'Verträge, Bosman & Kabine',
+    keywords: ['vertrag', 'verlängerung', 'bosman', 'ablösefrei', 'vorvertrag', 'angebot', 'zufriedenheit', 'gehaltsgefüge', 'spielzeit'],
+    body: `## Verlängern
+Verhandelt wird im Spielerprofil (Reiter **Vertrag & Wert**), frühestens 30 Monate vor Vertragsende. Der Spieler nennt **Haltung**, **Forderung** und **Wunschlaufzeit**:
+
+| Einfluss | Wirkung auf die Forderung |
+| --- | --- |
+| Marktgehalt | Grundlage (Stärke) |
+| Stellenwert im Kader | Leistungsträger bis +30 %, Ergänzungsspieler bis −12 % |
+| Alter | ab 31 J. und bis 21 J. etwa −10 % |
+| Zufriedenheit | unter 40: +18 %, über 75: −4 % |
+| Ehrgeiz | ± bis 12 % |
+| Bosman (ab 1996) | im letzten Vertragsjahr +10 % |
+
+Ob er überhaupt will, hängt von Zufriedenheit, Moral, Ehrgeiz und dem **Ansehen deines Vereins im Verhältnis zu seiner Stärke** ab („gern“, „offen“, „zögerlich“, „ablehnend“). Knapp unter der Forderung entscheidet ein kleiner Zufall. Nach drei gescheiterten Angeboten bricht er die Gespräche für zwei Monate ab. Der Vorstand gibt keine Erhöhung frei, wenn die Gehälter danach über 115 % des Gehaltsrahmens lägen.
+
+## Vertragsende und Bosman
+Wer am 30. Juni ohne neuen Vertrag ist, wechselt zum 1. Juli:
+- **bis Sommer 1995:** gegen eine Ablöse (60 % des Marktwerts) – so war es vor dem Bosman-Urteil.
+- **ab Sommer 1996:** **ablösefrei**. Zusätzlich können andere Vereine ab dem 15. Januar **Vorverträge** mit deinen auslaufenden Leistungsträgern schließen – dann ist er weg, außer du verkaufst ihn im Winter.
+
+Der Sportdirektor erinnert dich am 2. Januar und am 1. April an alle Verträge, die im Sommer enden.
+
+## Angebote der Konkurrenz
+In den Transferfenstern (Juli, August, Januar) bieten größere Vereine für deine besten Spieler – umso eher, je stärker der Spieler im Vergleich zu deinem Verein ist und je unzufriedener er ist. Du kannst **annehmen**, **ablehnen** oder **25 % mehr fordern** (die Hälfte der Vereine springt dann ab). Lehnst du ab, obwohl der Spieler wechseln wollte, sinken Zufriedenheit und Moral. Ohne Antwort gilt das Angebot nach fünf Tagen als abgelehnt.
+
+## Kabinenfrieden
+Monatlich verschiebt sich die **Zufriedenheit**:
+- **Gehaltsgefüge:** Verdient ein schwächerer Mitspieler über 35 % mehr, kostet das bis zu 4 Punkte im Monat.
+- **Spielzeit:** Stammkräfte (Top 11, ab 21 J.) ohne Einsätze verlieren 4–5 Punkte im Monat; regelmäßige Einsätze bringen Punkte zurück.
+- Ohne Anlass kehrt die Zufriedenheit langsam zur Mitte (60) zurück.
+
+Unzufriedene Spieler fordern mehr, verlängern ungern, sinken in der Moral und ziehen Angebote anderer Vereine an.`,
   },
   {
     id: 'development-legends',

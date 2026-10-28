@@ -321,6 +321,10 @@ export interface Contract {
   goalBonus?: number;
   /** Zufriedenheit des Spielers mit dem Vertrag (0–100). */
   satisfaction: number;
+  /** Vertragsgespräche der laufenden Saison (Verhandlung, game/contracts.ts). */
+  talks?: { season: string; attempts: number; blockedUntil?: string };
+  /** Vorvertrag bei einem anderen Verein (ab Bosman): Wechsel zum Vertragsende. */
+  preContractClubId?: string;
 }
 
 // -----------------------------------------------------------------------------

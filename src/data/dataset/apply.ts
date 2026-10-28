@@ -111,4 +111,5 @@ export function applyDataset(ds: Dataset | null): void {
   HISTORY.cupWinnersCupLastSeason = h.cupWinnersCupLastSeason ?? base.history.cupWinnersCupLastSeason;
   HISTORY.attendanceRestrictions = JSON.parse(JSON.stringify(h.attendanceRestrictions ?? base.history.attendanceRestrictions));
   HISTORY.tvMarket = JSON.parse(JSON.stringify(h.tvMarket ?? base.history.tvMarket));
+  HISTORY.bosmanFromYear = h.bosmanFromYear ?? base.history.bosmanFromYear;
 }

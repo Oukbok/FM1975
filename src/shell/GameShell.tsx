@@ -308,7 +308,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'dashboard' && <Dashboard g={g} onGoto={setScreen} onWatch={(id) => setLiveMatchId(id)} onOpenEditor={() => setClubEditorOpen(true)} />}
         {screen === 'table' && <TableView g={g} />}
         {screen === 'fixtures' && <FixturesView g={g} onWatch={(id) => setLiveMatchId(id)} />}
-        {screen === 'squad' && <SquadView g={g} />}
+        {screen === 'squad' && <SquadView g={g} onChange={rerender} />}
         {screen === 'lineup' && <LineupView g={g as any} onChange={rerender} />}
         {screen === 'training' && <TrainingView g={g} onTrained={rerender} />}
         {screen === 'transfers' && <TransfersView g={g} onDone={rerender} />}
@@ -333,7 +333,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'cat-statistiken' && <StatistikenDashboard g={g} onGoto={setScreen} />}
         {/* Rudimentäre Einzelseiten */}
         {screen === 'presse' && <PresseView g={g} />}
-        {screen === 'vertraege' && <VertraegeView g={g} />}
+        {screen === 'vertraege' && <VertraegeView g={g} onChange={rerender} />}
         {screen === 'beobachtung' && <BeobachtungView g={g} onChange={rerender} />}
         {screen === 'verhandlungen' && <VerhandlungenView g={g} />}
         {screen === 'sponsoring' && <SponsoringView g={g} onGoto={setScreen} onChange={rerender} />}
