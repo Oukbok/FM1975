@@ -16,6 +16,7 @@ import { applyProGem } from './gems';
 import { Player, Club, AttributeKey, potentialToStars, clampStars } from '../types';
 import { weightsFor, positionSuitability } from './positions';
 import { updateScoutEstimate } from './scouting';
+import { curveFactor } from '../data/legendArchetypes';
 
 /** Ergebnis der Leistungsbewertung je Spieler (auch bei change === 0). */
 export interface RatingResult {
@@ -116,7 +117,16 @@ export function clubTrainingFactor(club: Club, extra = 0): number {
 function practiceFactor(p: Player): number {
   // recentMinutes ≈ gleitende Minuten der letzten ~8 Wochen; 540 ≈ 6 volle Spiele.
   const r = clamp((p.development.recentMinutes ?? 0) / 540, 0, 1);
-  return 0.6 + r * 0.8;
+  const f = 0.6 + r * 0.8;
+  // Junge Legenden bekommen ihre Spielpraxis irgendwo (zweite Mannschaft, Leihe).
+  return p.development.legendId && p.age <= 22 ? Math.max(f, 1.0) : f;
+}
+
+/** Entwicklungsschub einer Legende: Seltenheit × Entwicklungskurve (sonst 1). */
+export function legendGrowth(p: Player): number {
+  const d = p.development;
+  if (!d.legendId) return 1;
+  return (d.legendBoost ?? 1.6) * curveFactor(d.legendCurve, p.age);
 }
 
 function characterFactor(p: Player): number {
@@ -133,8 +143,10 @@ function distanceFactor(p: Player): number {
   const gap = truePotential(p) - (p.development.currentAbility ?? p.overall);
   if (gap <= 0) return 0;
   // Weiche Bremse: die letzten Punkte sind am schwersten (nur mit sehr guten Bedingungen erreichbar).
-  const f = Math.min(1, gap / 10);
-  return gap < 2 ? f * 0.35 : f;
+  // Weltklasse-Legenden: Die Bremse greift später – ihr Talent setzt sich eher durch.
+  const legend = !!p.development.legendId && (p.development.legendBoost ?? 1.6) >= 1.5;
+  const f = Math.min(1, gap / (legend ? 5 : 10));
+  return gap < 2 ? f * (legend ? 0.6 : 0.35) : f;
 }
 
 // -----------------------------------------------------------------------------
@@ -169,7 +181,7 @@ export function weeklyDevelopment(
     if (base >= 0) {
       pts = base * training * practiceFactor(p) * characterFactor(p) * environment * moraleFactor(p)
         * distanceFactor(p) * era.growth * (ctx?.playerFactor ? ctx.playerFactor(p) : 1)
-        * (d.legendId ? 1.6 : 1); // Legenden: außergewöhnliche Auffassungsgabe
+        * legendGrowth(p); // Legenden: außergewöhnliche Auffassungsgabe (Seltenheit × Kurve)
     } else {
       // Abbau: gutes Training und Professionalität bremsen ihn (bis −35 %), stoppen ihn nicht.
       const brake = clamp(1 - (training - 0.9) * 0.6 - ((d.professionalism ?? 50) - 50) / 400, 0.65, 1.15);
@@ -201,7 +213,17 @@ export function applyOverallChange(p: Player, change: number): void {
     if (change > 0) {
       // Training-Akkumulator (eigener Verein) gibt Schwerpunkt vor, sonst nach Gewicht.
       const acc = p.development.attributeProgress ?? {};
-      const weighted = keys.map((key) => ({ key, s: (w[key] ?? 1) * (1 + (acc[key] ?? 0)) * (0.6 + Math.random()) }));
+      // Signatur-Werte einer Legende wachsen bevorzugt – bis zu ihrer Höchstmarke.
+      const sig = p.development.legendSignature;
+      const sigW = (key: AttributeKey) => {
+        const s = sig?.find((x) => x.attr === key);
+        if (!s) return 1;
+        return (p.attributes[key] ?? 0) >= s.max ? 0.2 : 2.5;
+      };
+      // Ausgereizte Werte (99) wachsen nicht weiter – sonst bliebe der Spieler stecken.
+      const weighted = keys.filter((key) => (p.attributes[key] ?? 0) < 99)
+        .map((key) => ({ key, s: (w[key] ?? 1) * (1 + (acc[key] ?? 0)) * sigW(key) * (0.6 + Math.random()) }));
+      if (!weighted.length) break;
       weighted.sort((a, b) => b.s - a.s);
       k = weighted[0].key;
     } else {

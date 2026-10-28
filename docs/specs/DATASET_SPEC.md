@@ -38,7 +38,7 @@ Verbindliche Typen: `src/data/dataset/schema.ts`. Anwenden: `src/data/dataset/ap
 | `names.origins` | `OriginData[]` | `id, nationality, face, first[], last[]`. `face` ∈ `mitteleuropa, nordeuropa, suedeuropa, osteuropa, balkan, tuerkei, westafrika, lateinamerika, ostasien, nordafrika`. |
 | `names.mix` | `[jahr, {herkunft: gewicht}][]` | Herkunfts-Mischung je Stützjahr (interpoliert). |
 | `names.blocked` | `string[]` | Gesperrte Kombinationen „Vorname Nachname“. |
-| `legends` | `LegendSeed[]` | `id, firstName, lastName, origin, position, birthYear, peak, cities?, bio, professionalism, ambition`. |
+| `legends` | `LegendSeed[]` | `id, firstName, lastName, origin, position, birthYear, peak, cities?, bio, professionalism, ambition`; optional (Legenden 2.0): `rarity` (`weltklasse`/`national`/`liebling` → verdeckter Talent-Korridor, fehlt: aus `peak`), `archetype` (ID aus `data/legendArchetypes.ts`, fehlt: Standard je Position), `curve` (`frueh`/`normal`/`spaet`), `signature` (Liste `attribut:von-bis`, z. B. `heading:90-95`), `homeClub` (Vereins-ID des Jugendvereins), `ddr` (erst nach der Wende im Spiel). `peak` ist die Obergrenze des ausgewürfelten Potenzials. Legenden ohne `cities` mit ausländischer Herkunft erscheinen als Auslandstalente; wer 1975 mindestens 15 ist, steht beim Spielstart im Kader. Der Standard-Datensatz enthält ~450 Legenden (handverlesen + je Jahrgang 1940–2010 erzeugt, `data/legendsGenerated.ts`). |
 | `economy.anchors` | `{year, value}[]` | Erlös-Basis eines Erstligisten in EUR. |
 | `economy.revenueMix` | `{year, matchday, tv, commercial}[]` | Anteile, Summe ≈ 0,9. |
 | `history` | `HistoryConfig` | `cupWinnersCupLastSeason`, `attendanceRestrictions[{from,to,factor}]`, `tvMarket[{year,factor}]`. |

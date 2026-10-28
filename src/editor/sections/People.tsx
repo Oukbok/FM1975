@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Dataset, OriginData } from '../../data/dataset/schema';
 import { LegendSeed } from '../../data/legends';
+import { LEGEND_ARCHETYPES } from '../../data/legendArchetypes';
 import { Col, Explain, FieldForm, TableEditor } from '../TableEditor';
 
 // =============================================================================
@@ -103,12 +104,22 @@ export function LegendsSection({ ds, onChange }: P) {
     { key: 'position', label: 'Pos.', type: 'select', options: POS, width: 70 },
     { key: 'birthYear', label: 'Geboren', type: 'number', width: 80 }, { key: 'peak', label: 'Höchststärke', type: 'number', width: 90 },
     { key: 'professionalism', label: 'Profi', type: 'number', width: 70, hint: '0–100' }, { key: 'ambition', label: 'Ehrgeiz', type: 'number', width: 70, hint: '0–100' },
+    { key: 'rarity', label: 'Seltenheit', type: 'select', optional: true, width: 130, hint: 'Talent-Korridor', options: [
+      { value: 'weltklasse', label: 'Weltklasse 4,0–5,0 ★' },
+      { value: 'national', label: 'Nationalspieler 3,5–4,5 ★' }, { value: 'liebling', label: 'Publikumsliebling 3,0–4,0 ★' }] },
+    { key: 'archetype', label: 'Archetyp', type: 'select', optional: true, width: 150, options: [
+      ...LEGEND_ARCHETYPES.map((a) => ({ value: a.id, label: a.label }))] },
+    { key: 'curve', label: 'Kurve', type: 'select', optional: true, width: 100, options: [
+      { value: 'frueh', label: 'Frühstarter' }, { value: 'normal', label: 'normal' }, { value: 'spaet', label: 'Spätzünder' }] },
+    { key: 'signature', label: 'Signatur-Werte', type: 'list', optional: true, width: 170, hint: 'z. B. heading:90-95' },
     { key: 'cities', label: 'Bevorzugte Städte', type: 'list', optional: true, width: 180 },
+    { key: 'homeClub', label: 'Jugendverein (ID)', optional: true, width: 110 },
+    { key: 'ddr', label: 'DDR', type: 'bool', optional: true, width: 60, hint: 'erst nach der Wende' },
     { key: 'bio', label: 'Steckbrief', type: 'longtext', width: 280 },
   ];
   return (
     <div className="ed-section">
-      <Explain>Legenden sind fest geplante Ausnahmetalente. Sie tauchen mit 15 Jahren zum Jahrgangswechsel (1. Juli) in einer Jugend auf – bevorzugt in ihren Städten – und können die <b>Höchststärke</b> erreichen, wenn sie gut gefördert werden. Nur erfundene Namen verwenden.</Explain>
+      <Explain>Legenden sind fest geplante Ausnahmetalente. Sie tauchen mit 15 Jahren zum Jahrgangswechsel (1. Juli) auf: meist beim <b>Jugendverein</b> oder in ihren <b>Städten</b>, manchmal als Geheimtipp bei einem Amateurverein; Legenden ohne Städte aus dem Ausland erscheinen als Auslandstalente. Wer 1975 schon 15 oder älter ist, steht beim Spielstart im Kader. Die <b>Seltenheit</b> legt den verdeckten Talent-Korridor fest (das Spiel würfelt das Ziel aus), die <b>Höchststärke</b> ist die Obergrenze. <b>Archetyp</b> und <b>Signatur-Werte</b> („heading:90-95“) bestimmen, welche Attribute herausragen; die <b>Kurve</b>, wann der Sprung kommt. Nur erfundene Namen verwenden.</Explain>
       <TableEditor rows={ds.legends} cols={cols} onChange={onChange} searchKeys={['id', 'firstName', 'lastName']}
         makeRow={(): LegendSeed => ({ id: `legende${ds.legends.length + 1}`, firstName: 'Vorname', lastName: 'Nachname', origin: 'ger', position: 'ZM', birthYear: 1990, peak: 90, bio: '', professionalism: 70, ambition: 70 })} />
     </div>

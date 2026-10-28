@@ -2,6 +2,7 @@
 // Prüfungen des Editors (zusätzlich zu validateDataset aus dem Spiel).
 // =============================================================================
 import { Dataset, validateDataset } from '../data/dataset/schema';
+import { ARCHETYPE_BY_ID, parseSignature } from '../data/legendArchetypes';
 
 export interface Issue { level: 'error' | 'warn'; area: string; text: string }
 
@@ -79,7 +80,15 @@ export function checkDataset(d: Dataset): Issue[] {
     yr('Marketing', m.name, m.unlockYear); yr('Marketing', m.name, m.obsoleteYear);
     if (m.obsoleteYear && m.obsoleteYear <= m.unlockYear) err('Marketing', `${m.name}: veraltet vor der Freischaltung.`);
   }
-  for (const l of d.legends) if (l.birthYear < 1955 || l.birthYear > 2085) warn('Legenden', `${l.firstName} ${l.lastName}: Geburtsjahr ${l.birthYear} ungewöhnlich.`);
+  const legIds = new Set<string>();
+  for (const l of d.legends) {
+    const who = `${l.firstName} ${l.lastName}`;
+    if (l.birthYear < 1935 || l.birthYear > 2085) warn('Legenden', `${who}: Geburtsjahr ${l.birthYear} ungewöhnlich.`);
+    if (legIds.has(l.id)) err('Legenden', `Doppelte Legenden-ID: ${l.id}`);
+    legIds.add(l.id);
+    if (l.archetype && !ARCHETYPE_BY_ID[l.archetype]) warn('Legenden', `${who}: unbekannter Archetyp „${l.archetype}“ (Standard je Position wird genutzt).`);
+    for (const sg of l.signature ?? []) if (!parseSignature(sg)) warn('Legenden', `${who}: Signatur-Wert „${sg}“ hat nicht das Format attribut:von-bis.`);
+  }
 
   // Erlös-Mix: Summe der drei Anteile etwa 0,9 (Rest = Prämien/Beiträge).
   for (const m of d.economy.revenueMix) {

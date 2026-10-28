@@ -5,6 +5,7 @@
 // Kontostand des eigenen Vereins, Verletzte. Bricht bei Fehlern/NaN ab.
 // =============================================================================
 import { createNewGame } from '../src/game/newGame';
+import { LEGENDS } from '../src/data/legends';
 import { processDay, HEADLESS_UI } from '../src/game/day';
 import { startNextSeason, leagueClubs } from '../src/game/season';
 import { CalendarEngine } from '../src/engine/calendar';
@@ -21,6 +22,7 @@ const g: Game = createNewGame({
   managedClubId: process.env.CLUB ?? 'mgl',
   manager: { name: 'Sim', nationality: 'GER', birthYear: 1940, style: 'balanced', background: 'newcomer' } as any,
   difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300,
+  legendMode: (process.env.LEGENDS as any) ?? 'fictional',
 });
 
 (g as any).simAutoManage = true; // eigener Verein wird wie ein KI-Verein gepflegt
@@ -117,8 +119,33 @@ if (process.env.DUMP) {
 }
 console.log(`fertig in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 const legends = [...Object.values(g.players), ...Object.values(g.youthPlayers)].filter((p) => p.development.legendId);
-for (const p of legends) console.log('Legende', p.fullName.padEnd(24), p.naturalPosition, 'Alter', p.age, 'OVR', p.overall, 'Verein', g.clubs[p.clubId]?.shortName ?? p.clubId, p.isYouth ? '(Jugend)' : '', 'Hist', p.development.abilityHistory.map((h) => h.ability).join(','));
+if (process.env.LEGENDLIST) for (const p of legends) console.log('Legende', p.fullName.padEnd(24), p.naturalPosition, 'Alter', p.age, 'OVR', p.overall, 'Verein', g.clubs[p.clubId]?.shortName ?? p.clubId, p.isYouth ? '(Jugend)' : '', 'Hist', p.development.abilityHistory.map((h) => h.ability).join(','));
 
+// Legenden-Bilanz: Höchstwert der Karriere je Seltenheit (nur ab 24 Jahren).
+{
+  const seeds = new Map(LEGENDS.map((l) => [l.id, l]));
+  const rows: Record<string, number[]> = {};
+  for (const p of legends) {
+    if (p.age < 24) continue;
+    const s = seeds.get(p.development.legendId!);
+    const r = s?.rarity ?? 'alt';
+    const best = Math.max(p.overall, ...p.development.abilityHistory.map((h) => h.ability));
+    (rows[r] ??= []).push(best);
+  }
+  for (const [r, xs] of Object.entries(rows)) {
+    const star = xs.filter((x) => x >= 85).length, good = xs.filter((x) => x >= 78 && x < 85).length;
+    console.log(`Legenden ${r.padEnd(10)} n=${xs.length}  Star(≥85) ${star}  gut(78–84) ${good}  darunter ${xs.length - star - good}  Ø Höchstwert ${(xs.reduce((a, b) => a + b, 0) / Math.max(1, xs.length)).toFixed(1)}`);
+  }
+  if (process.env.LEGENDLIST) {
+    const byId = new Map(legends.map((p) => [p.development.legendId!, p]));
+    for (const id of g.spawnedLegends ?? []) {
+      const s = seeds.get(id); if (!s || s.rarity !== 'weltklasse') continue;
+      const p = byId.get(id);
+      console.log('  W', id, s.firstName, s.lastName, s.position, p ? `${p.age} J. OVR ${p.overall} Pot ${p.development.potentialAbility}/${p.development.basePotential}+${p.development.unfold} ★${p.potentialStars} ${g.clubs[p.clubId]?.shortName ?? p.clubId} Hist ${p.development.abilityHistory.map((h) => h.ability).join(',')} | hoch: ${Object.entries(p.attributes).filter(([, v]) => (v as number) >= 93).map(([k, v]) => k + '=' + v).join(' ')} | sig ${JSON.stringify(p.development.legendSignature)}` : 'nicht mehr im Spiel');
+    }
+  }
+  console.log(`Legenden aktiv: ${legends.length}, Interessenten (Geheimtipp/Ausland): ${(g.legendProspects ?? []).length}`);
+}
 // Diagnose: Wer ist ≥ 85?
 {
   const top = leaguePlayers(g).filter((p) => p.overall >= 85).slice(0, 12);

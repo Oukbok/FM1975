@@ -5,6 +5,7 @@ import { applyDataset } from '../data/dataset/apply';
 import { BUILTIN_ID } from '../data/dataset/builtin';
 import { cachedDataset, cachedSummaries } from '../data/dataset/storage';
 import { AppSettings } from '../engine/save';
+import { loadLegendNames } from '../data/legendNames';
 import { Difficulty, ManagerBackground, ManagerProfile, ManagerStyle, NewGameOptions } from '../types';
 import { useState } from 'react';
 
@@ -49,6 +50,8 @@ export function NewGameScreen({ defaults, onBack, onStart }: {
   const [injuries, setInjuries] = useState(true);
   const [realistic, setRealistic] = useState(true);
   const [speedMs, setSpeedMs] = useState(defaults.speedMs);
+  const customNames = Object.keys(loadLegendNames()).length;
+  const [legendMode, setLegendMode] = useState<'off' | 'fictional' | 'custom'>(customNames ? 'custom' : 'fictional');
 
   const canStart = name.trim().length >= 2;
 
@@ -59,7 +62,7 @@ export function NewGameScreen({ defaults, onBack, onStart }: {
     };
     onStart({
       managedClubId: clubId, manager, difficulty,
-      realisticSquads: realistic, injuriesEnabled: injuries, speedMs, datasetId,
+      realisticSquads: realistic, injuriesEnabled: injuries, speedMs, datasetId, legendMode,
     });
   };
 
@@ -159,6 +162,19 @@ export function NewGameScreen({ defaults, onBack, onStart }: {
             Realistische Kader
           </label>
         </div>
+        <label className="dim mini mt12" style={{ display: 'block' }}>Historische Spieler</label>
+        <div className="chip-row">
+          {([['off', 'Aus'], ['fictional', 'Fiktive Legenden'], ['custom', 'Eigene Namensdatei']] as const).map(([k, l]) => (
+            <button key={k} className={`chip ${legendMode === k ? 'active' : ''}`} disabled={k === 'custom' && !customNames}
+              onClick={() => setLegendMode(k)}>{l}</button>
+          ))}
+        </div>
+        <div className="dim2 mini mt8">{legendMode === 'off'
+          ? 'Keine Legenden: Alle Talente entstehen zufällig.'
+          : legendMode === 'custom'
+            ? `Legenden tragen die Namen aus deiner Namensdatei (${customNames} Einträge, nur in diesem Browser).`
+            : 'Fiktive Ausnahmespieler tauchen zu festen Jahrgängen auf – ob sie Stars werden, entscheidet das Spiel.'}
+          {!customNames && ' Eine eigene Namensdatei kannst du in den Einstellungen laden.'}</div>
         <label className="dim mini mt12" style={{ display: 'block' }}>Spieltempo: <b className="accent-text">{speedMs} ms/Tag</b> ({speedMs <= 600 ? 'schnell' : speedMs >= 1200 ? 'langsam' : 'mittel'})</label>
         <input type="range" min={300} max={1600} step={100} value={speedMs} onChange={(e) => setSpeedMs(+e.target.value)} style={{ width: '100%' }} />
       </div>
