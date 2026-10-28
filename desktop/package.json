@@ -1,0 +1,25 @@
+{
+  "name": "fm1975-desktop",
+  "productName": "1975 A Football Manager",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Desktop-Version von 1975 – A Football Manager",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "npm --prefix .. run build && electron .",
+    "dist:win": "npm --prefix .. run build && electron-builder --win nsis portable"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "de.fm1975.game",
+    "productName": "1975 A Football Manager",
+    "directories": { "output": "release" },
+    "files": ["main.cjs"],
+    "extraResources": [{ "from": "../dist", "to": "dist" }],
+    "win": { "target": ["nsis", "portable"] },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "shortcutName": "1975 A Football Manager" }
+  }
+}

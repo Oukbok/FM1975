@@ -28,6 +28,7 @@ React 18 + TypeScript, gebaut mit esbuild. Kein Backend – alles läuft im Brow
 - `src/types/index.ts` – alle zentralen Typen (`Club`, `Player`, `ClubFinances` …). Groß: gezielt per grep lesen.
 - `src/styles/NN-bereich.css` – CSS nach Bereichen; Reihenfolge = Kaskade (`styles/index.ts`). Design-Tokens in `00-base.css` (`:root`).
 - `src/data/dataset/` – Datensätze (Modding): `schema.ts` Format, `builtin.ts` Standard, `apply.ts` Anwenden, `storage.ts` IndexedDB. `src/editor/` – externer Datensatz-Editor (eigene Seite `/editor/`, zweiter esbuild-Einstieg `src/editor/main.tsx` → `dist/editor/`; Bereiche in `editor/sections/`, Prüfungen in `editor/validate.ts`). Neue Datensatz-Felder: Schema + builtin + apply + Editor-Bereich + `DATASET_SPEC.md`.
+- `desktop/` – Electron-Hülle für Windows/Steam (`main.cjs` lädt `dist/` über `app://fm1975/`; Anleitung in `desktop/README.md`).
 - `docs/specs/` – verbindliche Formeln (Finanzen, Europapokal, Icons, Datensatz-Format `DATASET_SPEC.md`). `docs/recherche/` – historische Recherche, nur bei Bedarf.
 
 ## Feste Vorgaben von Pascal

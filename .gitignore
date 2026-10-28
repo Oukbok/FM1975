@@ -4,3 +4,5 @@ test-output/
 *.log
 .env
 .claude/worktrees/
+desktop/node_modules/
+desktop/release/
