@@ -110,11 +110,10 @@ function PlayerTalkBox({ g, t, onChange }: { g: Game; t: TransferTalk; onChange:
 
 export function TransferTalkModal({ g, talk, onClose, onChange }: { g: Game; talk: TransferTalk; onClose: () => void; onChange: () => void }) {
   const [, setTick] = useState(0);
-  const [last, setLast] = useState<string | null>(null);
   const p = g.players[talk.playerId];
   const seller = g.clubs[talk.sellerId];
   const own = g.clubs[g.managedClubId];
-  const act = (msg: string) => { setLast(msg); setTick((x) => x + 1); onChange(); };
+  const act = (_msg: string) => { setTick((x) => x + 1); onChange(); };
   const st = p && talk.phase !== 'done' ? stanceFor(g, talk) : null;
   const known = talk.pRound >= 1;
   const wages = own.playerIds.reduce((s, id) => s + (g.players[id]?.contract.weeklyWage ?? 0), 0);
@@ -142,7 +141,6 @@ export function TransferTalkModal({ g, talk, onClose, onChange }: { g: Game; tal
                 <span className="grow">{l.text}</span>
               </div>
             ))}
-            {last && <div className="dnote mt8" style={{ fontWeight: 700 }}>{last}</div>}
           </DashBox>
           <ClubTalkBox key={`c${talk.round}`} g={g} t={talk} onChange={act} />
           <DashBox title="Einschätzung" icon="watchlist">

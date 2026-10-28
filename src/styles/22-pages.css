@@ -268,3 +268,4 @@
 .talk-who.talk-du { color: var(--accent); }
 .talk-who.talk-verein { color: var(--yellow); }
 .talk-who.talk-spieler { color: var(--green); }
+.talk-log .grow { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.35; }

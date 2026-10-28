@@ -134,18 +134,16 @@
 .kbsheet.is-match .kbday { color: var(--orange); }
 /* Spieltag-Ball optisch verdoppelt, ohne das Zellen-Layout zu vergroessern. */
 .kbsheet.is-match .kbsheet-ico .game-icon { transform: scale(2); transform-origin: center; }
-/* Aktiver Tag (Heute): orange umrandet, orange Glow, orange Text & Icon. */
+/* Aktiver Tag (Heute): cremefarbener Hintergrund mit dunkler Schrift, orange Rand – sofort erkennbar. */
 .kbsheet.is-today {
   border-color: var(--orange);
-  background: linear-gradient(180deg, rgba(255, 159, 67, 0.16) 0%, rgba(255, 159, 67, 0.06) 100%);
-  box-shadow: 0 0 0 1px rgba(255, 159, 67, 0.5), 0 0 16px rgba(255, 159, 67, 0.35);
+  background: linear-gradient(180deg, #f6eedb 0%, #ece0c4 100%);
+  box-shadow: 0 0 0 1px rgba(255, 159, 67, 0.6), 0 0 16px rgba(255, 159, 67, 0.3);
 }
-.kbsheet.is-today .kbday,
-.kbsheet.is-today .kbwd,
-.kbsheet.is-today .kbsheet-lbl { color: var(--orange); }
-.kbsheet.is-today .kbsheet-ico .game-icon {
-  filter: brightness(0) saturate(100%) invert(72%) sepia(46%) saturate(1180%) hue-rotate(332deg) brightness(103%) contrast(101%);
-}
+.kbsheet.is-today .kbday { color: #1b2330; }
+.kbsheet.is-today .kbwd { color: #6b5532; }
+.kbsheet.is-today .kbsheet-lbl { color: #8a4b0c; }
+.kbsheet.is-today .kbsheet-ico .game-icon { filter: brightness(0) opacity(0.75); }
 
 /* --- Karten-Kopfzeile --- */
 .dxh { display: flex; align-items: center; gap: 9px; padding-bottom: 9px; margin-bottom: 12px; border-bottom: 1px solid var(--border-soft); }
