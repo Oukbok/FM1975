@@ -35,12 +35,25 @@ await page.addInitScript(() => {
 await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
 
 await page.goto(url);
-await page.click('text=Neues Spiel');
-await page.fill('input[placeholder*="Mustermann"]', 'Test');
-await page.click('.club-pick >> nth=0');
-await page.locator('input[type=range]').fill('300');
-await page.click('text=SAISON STARTEN');
-await page.waitForTimeout(800);
+if (process.env.SAVE) {
+  // Fortgeschrittenen Spielstand (z. B. aus scripts/sim.mjs mit DUMP=…) laden.
+  const raw = await readFile(process.env.SAVE, 'utf8');
+  await page.evaluate((r) => {
+    localStorage.setItem('fm1980_save_sim', r);
+    localStorage.setItem('fm1980_saves_index', JSON.stringify(['sim']));
+  }, raw);
+  await page.reload();
+  await page.click('text=Spiel laden');
+  await page.click('button:has-text("Laden") >> nth=0');
+  await page.waitForTimeout(1500);
+} else {
+  await page.click('text=Neues Spiel');
+  await page.fill('input[placeholder*="Mustermann"]', 'Test');
+  await page.click('.club-pick >> nth=0');
+  await page.locator('input[type=range]').fill('300');
+  await page.click('text=SAISON STARTEN');
+  await page.waitForTimeout(800);
+}
 
 let shots = 0;
 const mains = await page.locator('.hd-nav-item').count();
@@ -74,7 +87,7 @@ while (Date.now() < deadline) {
 }
 await page.screenshot({ path: `${outDir}/zz_nach_zeitlauf.png` });
 const dateAfter = await page.locator('body').innerText();
-const dateRe = /\d{1,2}\. \w+ 19\d\d/;
+const dateRe = /\d{1,2}\. \w+ (19|20)\d\d/;
 console.log(`Screenshots: ${shots}`);
 console.log(`Datum vorher: ${dateBefore.match(dateRe)?.[0]}  nachher: ${dateAfter.match(dateRe)?.[0]}`);
 console.log(errors.length ? errors.join('\n') : 'Keine JS-Fehler.');

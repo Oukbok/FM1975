@@ -104,6 +104,8 @@ export function openFinancialSeason(g: Game, newSeason: string, date: string, pr
     const free = Math.max(0, mine.finances.balance - 0.25 * rev) * boardBudgetShare(mine.boardConfidence ?? 60);
     const banned = hasTransferBan(mine, newSeason);
     mine.finances.transferBudget = banned ? 0 : Math.round(free / economyScale(year) / 10000) * 10000;
+    // Gehaltsrahmen (Wochenbasis, 1975-Werte): etwa 60 % des Umsatzes für Spieler (Stab separat).
+    mine.finances.wageBudget = Math.round((0.6 * rev) / economyScale(year) / 52 / 1.18 / 100) * 100;
     pushMessage(g.messages, makeMessage({
       date, category: 'board', from: 'Vorstand',
       subject: `Transferbudget ${newSeason}: ${fmt(mine.finances.transferBudget * economyScale(year))}`,

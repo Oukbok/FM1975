@@ -105,6 +105,16 @@ for (let s = 0; s < seasons; s++) {
   report(g);
   startNextSeason(g);
 }
+if (process.env.SAVESIZE) { const j = JSON.stringify(g); console.log(`Spielstand ${(j.length / 1024 / 1024).toFixed(2)} MB (unkomprimiert)`); for (const [k, v] of Object.entries(g)) { const n = JSON.stringify(v ?? null).length; if (n > 50000) console.log('  ', k, (n / 1024).toFixed(0), 'KB'); } const pl = Object.values(g.players); const hist = pl.reduce((a, p) => a + JSON.stringify(p.history ?? {}).length, 0); console.log('   davon Spieler-Historie', (hist / 1024).toFixed(0), 'KB bei', pl.length, 'Spielern'); }
+if (process.env.DUMP) {
+  // Spielstand im Speicherformat ablegen (für tests/ui-smoke.mjs mit SAVE=…).
+  const { compressToUTF16 } = await import('lz-string');
+  const { writeFileSync } = await import('node:fs');
+  const my = g.clubs[g.managedClubId];
+  const meta = { slot: 'sim', name: 'Simulation', managerName: 'Sim', clubName: my.name, clubId: my.id, season: g.season, gameDate: g.calendar.currentDate, savedAt: new Date().toISOString(), version: 9 };
+  writeFileSync(process.env.DUMP, 'LZ1:' + compressToUTF16(JSON.stringify({ meta, game: g })));
+  console.log('Spielstand geschrieben:', process.env.DUMP);
+}
 console.log(`fertig in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 const legends = [...Object.values(g.players), ...Object.values(g.youthPlayers)].filter((p) => p.development.legendId);
 for (const p of legends) console.log('Legende', p.fullName.padEnd(24), p.naturalPosition, 'Alter', p.age, 'OVR', p.overall, 'Verein', g.clubs[p.clubId]?.shortName ?? p.clubId, p.isYouth ? '(Jugend)' : '', 'Hist', p.development.abilityHistory.map((h) => h.ability).join(','));

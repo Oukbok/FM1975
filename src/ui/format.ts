@@ -68,14 +68,17 @@ export function zoneClass(pos: number, rowCount: number): string {
 // =============================================================================
 // FINANZEN
 // =============================================================================
-/** Voller DM-Betrag mit Tausenderpunkten (z.B. "1.240.000 DM"). */
-export const fmtFullDM = (n: number) => `${Math.round(n).toLocaleString('de-DE')} DM`;
+/** Voller Betrag ära-gerecht (DM bis 2001, danach EUR), z. B. "1.240.000 DM". */
+export const fmtFullDM = (n: number) => formatMoney(n, _displayYear);
 
-/** Kompakte DM-Darstellung: Tsd. für kleine, Mio. für große Beträge. */
+/** Kompakte Darstellung ära-gerecht: Tsd. für kleine, Mio. für große Beträge. */
 export const fmtCompactDM = (n: number) => {
-  const a = Math.abs(n);
-  if (a >= 1_000_000) return `${(n / 1_000_000).toLocaleString('de-DE', { maximumFractionDigits: 2 })} Mio. DM`;
-  return `${Math.round(n / 1000).toLocaleString('de-DE')} Tsd. DM`;
+  const eur = _displayYear > 2001;
+  const v = eur ? n / 1.95583 : n;
+  const unit = eur ? '€' : 'DM';
+  const a = Math.abs(v);
+  if (a >= 1_000_000) return `${(v / 1_000_000).toLocaleString('de-DE', { maximumFractionDigits: 2 })} Mio. ${unit}`;
+  return `${Math.round(v / 1000).toLocaleString('de-DE')} Tsd. ${unit}`;
 };
 
 /** Kurzes Datum "15.08.1980" (UTC). */
