@@ -30,6 +30,7 @@ import { applyTimelineEffect, fireTimelineForSeason } from './season';
 import { Game, hashSeed, migrateCommerce } from './state';
 import { InboxMessage, NewGameOptions, YOUTH_ENTRY_AGE } from '../types';
 import { setDisplayYear } from '../ui/format';
+import { seedStartLegends } from './legendsGame';
 
 export function createNewGame(opts: NewGameOptions): Game {
   setEraYear(1975);
@@ -156,7 +157,10 @@ export function createNewGame(opts: NewGameOptions): Game {
     leagues,
     simClubs,
     appliedReforms: [],
+    legendMode: opts.legendMode ?? 'fictional',
   };
+  // Legenden, die 1975 schon spielen (bis Jahrgang 1960), in die Kader setzen.
+  seedStartLegends(g0, calendar.currentDate);
   // Startsaison-Meilensteine (1975/76) sofort auslösen → Chronik-Nachricht + Effekte.
   fireTimelineForSeason(g0, '1975/76', calendar.currentDate);
   for (const pid of g0.clubs[g0.managedClubId]?.playerIds ?? []) {

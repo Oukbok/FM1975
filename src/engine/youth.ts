@@ -18,6 +18,7 @@ import { ensureDevFields, refreshOverall } from './development';
 import { updateScoutEstimate } from './scouting';
 import { pickOrigin, makeName } from '../data/origins';
 import { makePersonality } from './playerFactory';
+import { curveFactor } from '../data/legendArchetypes';
 import {
   Player, Club, PlayerAttributes, Position, AttributeKey,
   createEmptyStats, clampStars, starsToPotential, potentialToStars,
@@ -336,7 +337,7 @@ export function graduateYouth(
     // Legenden werden nie fortgeschickt – notfalls wird der Kader kurz größer.
     if (p.development.legendId) promote = true;
     if (promote) {
-      const res = promoteYouth(club, p.id, players, youthPlayers, p.development.legendId ? maxSquad + 4 : maxSquad);
+      const res = promoteYouth(club, p.id, players, youthPlayers, p.development.legendId ? 99 : maxSquad);
       if (res.ok) {
         result.promoted.push(p);
         cpuPromoted = true;
@@ -399,7 +400,7 @@ export function developYouthWeekly(
 
     const aFactor = ageFactor(p.age);
     const pFactor = potentialFactor(p);
-    const weekGain = YOUTH_BASE_GAIN * aFactor * pFactor * growth * (p.development.legendId ? 1.3 : 1);
+    const weekGain = YOUTH_BASE_GAIN * aFactor * pFactor * growth * (p.development.legendId ? (1 + ((p.development.legendBoost ?? 1.6) - 1) / 2) * curveFactor(p.development.legendCurve, p.age) : 1);
 
     // --- Akkumulator über eine Auswahl entwicklungsrelevanter Attribute füllen
     const devAttrs = developmentAttrsFor(p.naturalPosition);
@@ -531,7 +532,9 @@ export function promoteYouth(
 
   // Als Profi übernehmen: Stärke nach Profi-Maßstab, Potenzial bleibt eine Einschätzung.
   p.isYouth = false;
-  p.development.basePotential = Math.max(p.overall, starsToPotential(p.potentialStars));
+  // Legenden behalten ihr verdeckt ausgewürfeltes Höchstpotenzial (keine Sterne-Rundung).
+  p.development.basePotential = Math.max(p.overall, p.development.legendId && p.development.potentialAbility
+    ? p.development.potentialAbility : starsToPotential(p.potentialStars));
   ensureDevFields(p);
   refreshOverall(p);
   updateScoutEstimate(p, 0.6, true);

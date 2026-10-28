@@ -1382,14 +1382,31 @@ Unter **Statistiken → Ruhmeshalle** siehst du die größten Karrieren, deine V
     id: 'development-legends',
     category: 'development',
     title: 'Legenden',
-    keywords: ['legende', 'jahrhunderttalent', 'ausnahmetalent', 'gerücht', 'akademie'],
-    body: `## Jahrhunderttalente zu festen Jahrgängen
-Rund 30 erfundene **Legenden** sind über die Jahrzehnte verteilt – vom Bomber aus dem Kohlenpott in den 1970ern bis zum Jahrhundertstürmer der 2020er. Jede taucht mit etwa 15 Jahren in der **Jugendakademie** eines Vereins deiner Liga auf.
+    keywords: ['legende', 'jahrhunderttalent', 'ausnahmetalent', 'gerücht', 'akademie', 'geheimtipp', 'archetyp', 'namensdatei', 'historische spieler'],
+    body: `## Ausnahmespieler zu festen Jahrgängen
+Über 450 erfundene **Legenden** sind über die Jahrgänge 1940–2010 verteilt (dazu einige handverlesene bis in die 2020er): je Jahrgang vier deutsche und zwei aus dem Ausland. Wer sie wird, steht fest – **was** aus ihnen wird, nicht.
 
-- **Wo** sie landet, entscheidet der Zufall: Gute Akademien und Vereine aus der Heimatregion der Legende sind wahrscheinlicher.
-- Landet sie bei dir, meldet sich der Leiter der Jugendakademie. Sonst berichten deine Scouts von einem **Gerücht** – unter Transfers → Beobachtungsliste kannst du versuchen, das Talent zu holen (siehe „Talente anderer Vereine“).
-- Legenden lernen schneller als andere und werden nie aus der Jugend fortgeschickt. Ob sie wirklich zur Legende werden, hängt trotzdem von **Training, Spielpraxis und Umfeld** ab: In einer schwachen Liga ohne gute Trainer bleibt auch ein Jahrhunderttalent unter seinen Möglichkeiten.
-- Steigt ihr Verein aus deiner Liga ab, wechselt die Legende zu einem Verein, der bleibt – sie geht nicht verloren.`,
+### Profil einer Legende
+- **Seltenheit** – Weltklasse, Nationalspieler oder Publikumsliebling. Sie legt einen verdeckten **Talent-Korridor** fest (Weltklasse 4,0–5,0 ★, Nationalspieler 3,5–4,5 ★, Publikumsliebling 3,0–4,0 ★). Beim Auftauchen würfelt das Spiel daraus das wahre Ziel aus: Von zehn Weltklasse-Legenden werden etwa sieben Stars, zwei gute Profis, eine bleibt hinter den Erwartungen. Deine Scouts sehen nur den Korridor.
+- **Archetyp** – Torwart-Katze, Libero, Ausputzer, Manndecker, Abräumer, Regisseur, Motor, Spielmacher, Flügelflitzer, Strafraumstürmer, Kopfballungeheuer, Dribbelkünstler, Freistoß-Spezialist … Er bestimmt, welche Attribute von Anfang an herausragen.
+- **Signatur-Werte** – ein oder zwei Attribute, die im Höhepunkt einen festen Bereich erreichen (z. B. Kopfball 90–95). Sie wachsen bevorzugt.
+- **Entwicklungskurve** – Frühstarter springen mit 17–20, Spätzünder erst mit 22–26.
+- **Charakter** – Professionalität und Ehrgeiz wie bei allen Spielern.
+
+### Wann und wo sie auftauchen
+- **Spielstart 1975:** Legenden, die 1975 schon 15 oder älter sind, stehen bereits im Kader – passend zur Karrierephase, bevorzugt bei Vereinen ihrer Region (Weltklasse eher bei großen Vereinen). Die Jüngsten spielen in einer Jugendakademie.
+- **Jedes Jahr am 1. Juli** erscheint der Jahrgang mit 15 Jahren: zu 60 % beim historischen Jugendverein bzw. in seiner Region, zu 30 % beim Verein der Region mit der **besten Jugendabteilung** – liegt dein Verein in der Region und hat die bessere Akademie, landet er bei dir –, zu 10 % als **Geheimtipp** bei einem Amateurverein.
+- **Geheimtipps** hört jeder: Unter Transfers → Talente anderer Vereine kannst du sie für eine kleine Ablöse holen. Nach einer Saison schnappt sie sich sonst der Verein der Region mit der besten Jugend.
+- **Ausländische Legenden** reifen in ihrer Heimat und erscheinen als **Auslandstalente** – je mehr Scouts, desto eher siehst du sie. Ab 16 kannst du sie holen (Ausbildungsentschädigung, nicht jeder will umziehen). Mit 18 wechseln sie sonst vielleicht zu einem anderen deutschen Verein (vor 1990 selten, nach dem Bosman-Urteil häufiger) – oder machen im Ausland Karriere.
+- **DDR-Legenden** kommen erst nach der Wende (ab Sommer 1991) in die gesamtdeutschen Ligen.
+
+### Entwicklung
+- Legenden lernen schneller als andere (Weltklasse am meisten) und bekommen in jungen Jahren ihre Spielpraxis (zweite Mannschaft, Leihe). Sie werden nie aus der Jugend fortgeschickt und als junge Spieler nicht aussortiert.
+- Ob sie ihr Ziel erreichen, hängt trotzdem von **Training, Spielpraxis und Umfeld** ab. Ihre spätere Karriere – Wechsel, Ausland, Karriereende – entsteht im Spiel.
+- Steigt ihr Verein aus deiner Liga ab, wechselt die Legende zu einem Verein, der bleibt.
+
+### Einstellung „Historische Spieler“
+Beim neuen Spiel wählst du **Aus** (keine Legenden), **Fiktive Legenden** (Standard) oder **Eigene Namensdatei**. Die Namensdatei lädst du unter Einstellungen → Historische Spieler: eine JSON-Datei \`{ "lg_1954_1": "Vorname Nachname", … }\`. Sie bleibt in deinem Browser und wird nie mit dem Spiel ausgeliefert; die Vorlage dort enthält alle Legenden-IDs. Eigene Legenden legst du im Datensatz-Editor an.`,
   },
   {
     id: 'club-business',

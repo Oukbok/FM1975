@@ -40,6 +40,21 @@ export function migrateCommerce(club: Club, isManaged: boolean): ClubCommerce {
 // Zentraler Spielzustand (mutabel, in Ref gehalten). Reines Datenobjekt →
 // direkt JSON-serialisierbar (Speichern/Laden).
 // -----------------------------------------------------------------------------
+/** Einstellung „Historische Spieler“: aus, fiktive Legenden, eigene Namensdatei. */
+export type LegendMode = 'off' | 'fictional' | 'custom';
+
+/** Legende außerhalb der Ligen (Geheimtipp beim Amateurverein oder Auslandstalent). */
+export interface LegendProspect {
+  player: Player;
+  kind: 'amateur' | 'foreign';
+  /** Herkunft für die Anzeige („SV Musterdorf“, „Brasilien“). */
+  from: string;
+  /** Datum des Auftauchens. */
+  since: string;
+  /** Region (Städte), in der ein Geheimtipp später landet. */
+  cities?: string[];
+}
+
 export interface Game {
   clubs: Record<string, Club>;
   players: Record<string, Player>;
@@ -93,6 +108,10 @@ export interface Game {
   leagueBalance?: { shift: number; history: { season: string; avg: number; shift: number }[] };
   /** Bereits erschienene Legenden (IDs aus data/legends.ts). */
   spawnedLegends?: string[];
+  /** Einstellung „Historische Spieler“ (Standard: fiktive Legenden). */
+  legendMode?: LegendMode;
+  /** Legenden außerhalb der Ligen: Geheimtipps bei Amateurvereinen, Auslandstalente. */
+  legendProspects?: LegendProspect[];
   /** Datensatz, mit dem dieses Spiel begonnen wurde. */
   datasetId?: string;
   datasetName?: string;

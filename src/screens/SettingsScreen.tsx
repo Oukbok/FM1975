@@ -1,6 +1,7 @@
 import { AppSettings, DisplayMode } from '../engine/save';
 import { RESOLUTION_GROUPS } from '../ui/DisplayFrame';
 import { useState } from 'react';
+import { LegendNamesCard } from './LegendNamesCard';
 
 // -----------------------------------------------------------------------------
 // EINSTELLUNGEN
@@ -130,6 +131,8 @@ export function SettingsScreen({ settings, onBack, onSave }: {
           </label>
         </div>
       </div>
+
+      <LegendNamesCard />
 
       <button className="btn-primary mt16" style={{ alignSelf: 'center', padding: '11px 34px' }} onClick={save}>Speichern</button>
     </div>

@@ -6,10 +6,14 @@
 // Regionen werden bevorzugt). Wo sie landet, entscheidet der Zufall – sicher
 // ist nur, dass es sie gibt. Ob sie wirklich zur Legende wird, hängt von
 // Training, Spielpraxis und Charakter ab.
-// Der Datensatz ist bewusst einfach gehalten, damit der spätere Editor ihn
-// bearbeiten oder durch eigene Legenden ersetzen kann.
+// Legenden 2.0: Archetyp, Seltenheit (verdeckter Talent-Korridor),
+// Entwicklungskurve und Signatur-Werte (data/legendArchetypes.ts). Neben den
+// handverlesenen Legenden unten erzeugt data/legendsGenerated.ts für jeden
+// Jahrgang 1940–2010 weitere (deterministisch, immer dieselben Namen).
 // =============================================================================
 import { Position } from '../types';
+import type { LegendCurve, LegendRarity } from './legendArchetypes';
+import { generateLegends } from './legendsGenerated';
 
 export interface LegendSeed {
   id: string;
@@ -29,9 +33,24 @@ export interface LegendSeed {
   /** Charakter: Professionalität/Ehrgeiz (0–100). */
   professionalism: number;
   ambition: number;
+  // --- Legenden 2.0 (alle optional) ---
+  /** Archetyp (data/legendArchetypes.ts), sonst Standard je Position. */
+  archetype?: string;
+  /** Seltenheit → verdeckter Talent-Korridor; sonst aus `peak` abgeleitet. */
+  rarity?: LegendRarity;
+  /** Entwicklungskurve: wann der Sprung kommt. */
+  curve?: LegendCurve;
+  /** Signatur-Werte im Höhepunkt, z. B. "heading:90-95". */
+  signature?: string[];
+  /** Historischer Jugendverein (Vereins-ID), bevorzugt beim Auftauchen. */
+  homeClub?: string;
+  /** DDR-Legende: vor der Wende nicht im Spiel, danach in der Region. */
+  ddr?: boolean;
 }
 
-export const LEGENDS: LegendSeed[] = [
+/** Handverlesene Legenden (Weltklasse). */
+const CURATED: LegendSeed[] = [
+
   { id: 'lg_1961_tw', firstName: 'Bernd', lastName: 'Hollmann', origin: 'ger', position: 'TW', birthYear: 1961, peak: 93, cities: ['Köln', 'Mönchengladbach', 'Düsseldorf'], bio: 'Ein Torwart mit Nerven aus Stahl und Reflexen wie eine Katze.', professionalism: 85, ambition: 80 },
   { id: 'lg_1962_ms', firstName: 'Klaus', lastName: 'Brettschneider', origin: 'ger', position: 'MS', birthYear: 1962, peak: 94, cities: ['Gelsenkirchen', 'Dortmund', 'Bochum'], bio: 'Der Bomber aus dem Kohlenpott – trifft mit links, rechts und mit dem Kopf.', professionalism: 70, ambition: 90 },
   { id: 'lg_1964_lib', firstName: 'Wolfgang', lastName: 'Aschenbrenner', origin: 'ger', position: 'LIB', birthYear: 1964, peak: 94, cities: ['München', 'Nürnberg', 'Augsburg'], bio: 'Ein Libero, der das Spiel liest wie ein Buch und aus der Tiefe dirigiert.', professionalism: 90, ambition: 85 },
@@ -63,3 +82,6 @@ export const LEGENDS: LegendSeed[] = [
   { id: 'lg_2020_zm', firstName: 'Leon', lastName: 'Achenbach', origin: 'ger_modern', position: 'ZM', birthYear: 2020, peak: 94, cities: ['Köln', 'Bonn', 'Aachen'], bio: 'Ein Dirigent mit Weltklasse-Passspiel.', professionalism: 92, ambition: 86 },
   { id: 'lg_2024_ms', firstName: 'Milan', lastName: 'Hartwig', origin: 'ger_modern', position: 'MS', birthYear: 2024, peak: 96, bio: 'Ein Stürmer, über den man in 50 Jahren noch spricht.', professionalism: 86, ambition: 94 },
 ];
+
+/** Alle Legenden: handverlesen + je Jahrgang erzeugt. Wird vom Datensatz ersetzt. */
+export const LEGENDS: LegendSeed[] = [...CURATED, ...generateLegends(CURATED)];

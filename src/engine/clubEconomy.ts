@@ -333,7 +333,7 @@ function movePlayer(p: Player, from: Club | null, to: Club | null, feeNominal: n
 /** Schwächsten/ältesten überzähligen Spieler abgeben (ablösefrei ins Ausland). */
 function trimSquad(c: Club, ctx: AiEconomyContext): void {
   while (c.playerIds.length > MAX_SQUAD) {
-    const worst = c.playerIds.map((id) => ctx.players[id]).filter(Boolean)
+    const worst = c.playerIds.map((id) => ctx.players[id]).filter((p) => p && !(p.development.legendId && p.age <= 23))
       .sort((a, b) => (a.overall - a.age * 0.4) - (b.overall - b.age * 0.4))[0];
     if (!worst) break;
     movePlayer(worst, c, null, 0, ctx, 'Ausland');
