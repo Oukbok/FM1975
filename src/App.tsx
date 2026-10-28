@@ -32,6 +32,7 @@ import { createNewGame } from './game/newGame';
 import { InboxMessage, NewGameOptions, YOUTH_ENTRY_AGE } from './types';
 import { DisplayFrame, applyDisplayMode } from './ui/DisplayFrame';
 import { setDisplayYear } from './ui/format';
+import { setEventFrequency } from './engine/randomEvents';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 // =============================================================================
@@ -325,12 +326,14 @@ export default function App() {
     // Anzeige-Modus direkt im Klick-Kontext anwenden (Fullscreen-API benötigt
     // eine Nutzer-Geste — der "Speichern"-Klick zählt als solche).
     applyDisplayMode(s.displayMode);
+    setEventFrequency(s.eventFrequency);
   }, []);
 
   // Anzeige-Modus beim Start bestmöglich wiederherstellen (ohne Nutzer-Geste
   // kann der Browser Vollbild ablehnen — das wird sauber abgefangen).
   useEffect(() => {
     applyDisplayMode(settings.displayMode);
+    setEventFrequency(settings.eventFrequency);
     // nur einmal beim Mounten
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -47,6 +47,7 @@ function report(game: Game) {
     `≤60: ${ovr.filter((o) => o <= 60).length}`,
     `Alter ${avg(ps.map((p) => p.age)).toFixed(1)}`,
     `Spieler ${ps.length}`,
+    `Jgd ${(game.leagueBalance?.shift ?? 0).toFixed(1)}`,
     `Meister ${champ ? game.clubs[champ.clubId]?.shortName ?? game.simClubs?.[champ.clubId]?.shortName ?? '?' : '?'}${champ && (champ.clubId.startsWith('eu_') || champ.clubId.startsWith('w_')) ? '(AUSLAND!)' : ''}`,
     `Konto ${Math.round(my.finances.balance / 1000)}k`,
     `Kader ${my.playerIds.length}`,

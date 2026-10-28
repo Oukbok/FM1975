@@ -222,6 +222,8 @@ export interface AppSettings {
   matchSuspense?: boolean;
   /** Textmodus: Halbzeitansprache anbieten. */
   matchHalftimeTalk?: boolean;
+  /** Häufigkeit der Zufalls- und Vereinsereignisse. */
+  eventFrequency?: 'wenige' | 'normal' | 'viele';
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -234,6 +236,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   matchTextSpeed: 'normal',
   matchSuspense: true,
   matchHalftimeTalk: true,
+  eventFrequency: 'normal',
 };
 
 export function loadSettings(): AppSettings {

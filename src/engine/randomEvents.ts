@@ -326,10 +326,17 @@ const CLUB_DEFS: { type: string; from: number; to: number; spawn: (ctx: EventCon
 export const PLAYER_EVENT_CHANCE = 0.27;
 export const CLUB_EVENT_CHANCE = 0.02;
 
+/** Einstellung „Ereignisse“ (App-Einstellungen): wenige · normal · viele. */
+export type EventFrequency = 'wenige' | 'normal' | 'viele';
+let frequency: EventFrequency = 'normal';
+export function setEventFrequency(f: EventFrequency | undefined): void { frequency = f ?? 'normal'; }
+export function eventFrequency(): EventFrequency { return frequency; }
+const FREQ_FACTOR: Record<EventFrequency, number> = { wenige: 0.5, normal: 1, viele: 1.8 };
+
 export function rollMonthlyEvents(ctx: EventContext): (EventSpawn & { money?: { amount: number; text: string } })[] {
   const out: (EventSpawn & { money?: { amount: number; text: string } })[] = [];
   const squad = ctx.club.playerIds.map((id) => ctx.players[id]).filter(Boolean);
-  if (ctx.rng() < PLAYER_EVENT_CHANCE) {
+  if (ctx.rng() < PLAYER_EVENT_CHANCE * FREQ_FACTOR[frequency]) {
     const options = DEFS.filter((d) => ctx.year >= d.from && ctx.year <= d.to)
       .map((d) => ({ d, cands: d.candidates(ctx, squad) })).filter((x) => x.cands.length);
     const total = options.reduce((a, x) => a + x.d.weight, 0);
@@ -339,7 +346,7 @@ export function rollMonthlyEvents(ctx: EventContext): (EventSpawn & { money?: { 
       if (r <= 0) { const p = pick(x.cands, ctx.rng); if (p) out.push(x.d.spawn(ctx, p)); break; }
     }
   }
-  if (ctx.rng() < CLUB_EVENT_CHANCE) {
+  if (ctx.rng() < CLUB_EVENT_CHANCE * FREQ_FACTOR[frequency]) {
     const opts = CLUB_DEFS.filter((d) => ctx.year >= d.from && ctx.year <= d.to);
     const d = pick(opts, ctx.rng);
     if (d) out.push(d.spawn(ctx));

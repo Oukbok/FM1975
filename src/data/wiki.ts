@@ -630,7 +630,13 @@ Ausschließlich die **große Saison-Bewertung** öffnet ein **Bewertungs-Fenster
 - **x2** — enthüllt zwei Spieler pro Schritt (schneller).
 - **Überspringen** — zeigt sofort die vollständige Ergebnisliste.
 
-Je Spieler siehst du **Name, Verein, Position, Alter** sowie **alter → neuer Overall** mit farbiger Änderung (grün bei Auf-, rot bei Abwertung, grau bei keiner Änderung). Am Ende fasst das Fenster zusammen, wie viele Auf-/Abwertungen es gab; mit **Fertig** schließt du die Zeremonie und das Spiel läuft weiter.`,
+Je Spieler siehst du **Name, Verein, Position, Alter** sowie **alter → neuer Overall** mit farbiger Änderung (grün bei Auf-, rot bei Abwertung, grau bei keiner Änderung). Am Ende fasst das Fenster zusammen, wie viele Auf-/Abwertungen es gab; mit **Fertig** schließt du die Zeremonie und das Spiel läuft weiter.
+
+## Liga-Ticker nach den Bewertungen
+Nach der Winter- und der Saison-Bewertung meldet der **Liga-Ticker** die größten Gewinner und Verlierer der anderen Vereine deiner Liga. Junge Spieler mit großen Sprüngen sind die Transferziele von morgen.
+
+## Liga-Gleichgewicht
+Zum 1. Juli vergleicht das Spiel die Durchschnittsstärke der 1. Liga mit dem Zielwert **72,5**. Liegt sie mehr als einen Punkt darüber, werden die **neuen** Jugendjahrgänge aller Akademien um 0,1 Sterne Potenzial schwächer erzeugt (bis −0,6), liegt sie darunter, etwas stärker (bis +0,3); im Zielkorridor läuft die Korrektur wieder aus. Bestehende Spieler werden nie nachträglich verändert. So bleibt die Liga über Jahrzehnte vergleichbar, ohne dass dein Kader bestraft wird.`,
   },
   {
     id: 'tactics',
@@ -1418,7 +1424,28 @@ Viele Ereignisse fragen nach deiner Entscheidung (Nachrichten → Knöpfe unter 
 Wer eine Woche nicht reagiert, bekommt die vorsichtige **Standardwahl** – das Spiel bleibt nie stehen.
 
 ## Kleine Glücksmomente
-Ein Routinier nimmt ein Talent unter seine Fittiche, ein junger Spieler zerreißt sich im Training, ein Spieler wird Vater: Solche Ereignisse geben Entwicklungs- oder Moralschübe ohne Entscheidung.`,
+Ein Routinier nimmt ein Talent unter seine Fittiche, ein junger Spieler zerreißt sich im Training, ein Spieler wird Vater: Solche Ereignisse geben Entwicklungs- oder Moralschübe ohne Entscheidung.
+
+## Vereinsereignisse
+Daneben gibt es seltene Ereignisse für den ganzen Verein, jeweils mit drei Jahren Sperrzeit:
+
+| Ereignis | Wann | Entscheidung | Wirkung |
+| --- | --- | --- | --- |
+| Mäzen bietet Geld | bis 1998, häufiger bei Schulden | annehmen / ablehnen | 6–12 % eines Jahresumsatzes, aber Vorstandsvertrauen −6 |
+| Derby-Warnung | häufiger 1980–1999 | Sicherheit verstärken / nichts tun | ohne Ordner zu 50 % Strafe, Fanstimmung −4 |
+| Fanprotest | ab 2000, bei schlechter Stimmung | Gespräch / Preise −10 % / aussitzen | Stimmung +4 / +8 / −6 |
+| Pressekampagne | ab 1984, nach 3 Niederlagen in Folge | Interview / schweigen | Vertrauen und Mediendruck ± |
+| Flutlichtschaden | eher in alten Stadien | sofort / verschieben | Kosten oder Ärger |
+| Grippewelle | November–Februar | – | 2–4 Spieler 4–9 Tage krank |
+| Probetraining | jederzeit | Ausbildungsvertrag / absagen | 16-jähriges Talent mit unbekanntem Potenzial |
+| Konjunktur | September | – | ±3 % eines Jahresumsatzes |
+| WM-Euphorie | WM-Sommer (1978, 1982 …) zu 50 % | – | eine Saison 5–10 % mehr Zuschauer bei allen Vereinen |
+
+## Häufigkeit und fester Zufall
+In den **Einstellungen** wählst du „Ereignisse: wenige · normal · viele“ (Faktor 0,5 / 1 / 1,8). Gewürfelt wird mit einem festen Zufall aus Verein und Datum – Neuladen ändert nichts an den Ereignissen eines Tages.
+
+## Regeln mit Vorlauf
+Am 2. Januar kündigt der Verband an, welche Regeln, Wettbewerbe und Ligareformen ab der nächsten Saison gelten.`,
   },
   {
     id: 'youth-gems-scouting',

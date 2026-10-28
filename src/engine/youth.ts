@@ -163,6 +163,10 @@ function initialScoutRange(rand: () => number, truePot: number, academyLevel: nu
  * @param uniqueSeed eindeutiger String-Seed (z.B. clubId + Jahr + Laufindex)
  * @param age        gewünschtes Alter; ohne Angabe zufällig 16–19 (Altkompat.)
  */
+/** Liga-Gleichgewicht: Verschiebung des Jugendpotenzials in Sternen (game/leagueBalance.ts). */
+let youthPotentialShift = 0;
+export function setYouthPotentialShift(stars: number): void { youthPotentialShift = stars; }
+
 export function generateYouthPlayer(
   clubId: string,
   uniqueSeed: string,
@@ -192,7 +196,7 @@ export function generateYouthPlayer(
   const overall = computeOverall(attributes, pos);
 
   // Wahres Potenzial (verborgen) — nie unter dem aktuellen OVR.
-  let truePot = assignYouthPotential(rand, academyLevel);
+  let truePot = Math.max(0.5, Math.min(5, assignYouthPotential(rand, academyLevel) + youthPotentialShift));
   const minStarsForOverall = potentialToStars(overall + 4);
   if (truePot < minStarsForOverall) truePot = minStarsForOverall;
   const potentialAbility = Math.max(overall + 3, starsToPotential(truePot));

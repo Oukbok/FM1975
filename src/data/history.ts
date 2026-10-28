@@ -30,9 +30,14 @@ export function cupWinnersCupActive(seasonStartYear: number): boolean {
 }
 
 /** Zuschauer-Beschränkung am Datum (1 = keine). */
+let euphoria: { from: string; to: string; factor: number } | null = null;
+/** WM-Euphorie (game/clubEventsGame.ts): Zuschauer-Faktor > 1 für einen Zeitraum. */
+export function setAttendanceEuphoria(e: { from: string; to: string; factor: number } | null): void { euphoria = e; }
+
 export function attendanceRestriction(dateISO?: string): number {
   if (!dateISO) return 1;
   for (const r of HISTORY.attendanceRestrictions) if (dateISO >= r.from && dateISO <= r.to) return r.factor;
+  if (euphoria && dateISO >= euphoria.from && dateISO <= euphoria.to) return euphoria.factor;
   return 1;
 }
 

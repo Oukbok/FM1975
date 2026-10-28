@@ -30,6 +30,20 @@ export function SettingsScreen({ settings, onBack, onSave }: {
         </div>
       </div>
 
+      {/* --- Spiel --- */}
+      <div className="card mt16">
+        <h3 style={{ margin: '0 0 4px' }}>Ereignisse</h3>
+        <p className="dim mini" style={{ margin: '0 0 14px' }}>
+          Wie oft Zufallsereignisse für Spieler und Verein auftreten (Heimweh, Disziplinfälle, Mäzen, Fanprotest, Grippewelle …).
+        </p>
+        <div className="seg-group">
+          {(['wenige', 'normal', 'viele'] as const).map((f) => (
+            <button key={f} type="button" className={`seg-btn ${(s.eventFrequency ?? 'normal') === f ? 'active' : ''}`}
+              onClick={() => setS({ ...s, eventFrequency: f })}>{f.charAt(0).toUpperCase() + f.slice(1)}</button>
+          ))}
+        </div>
+      </div>
+
       {/* --- Anzeige & Auflösung --- */}
       <div className="card mt16">
         <h3 style={{ margin: '0 0 4px' }}>Anzeige</h3>

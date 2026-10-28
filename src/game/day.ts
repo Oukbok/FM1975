@@ -37,6 +37,9 @@ import { OwnMatchInfo, findOwnMatchDue, isPrepared } from './ownMatch';
 import { Game, bumpMorale } from './state';
 import { contractReminders, handleContractExpiry } from './contracts';
 import { monthlySquadHarmony, rollAiOffers } from './aiOffers';
+import { applyEuphoria, monthlyClubEvents } from './clubEventsGame';
+import { announceUpcomingRules } from './ruleNotice';
+import { applyLeagueBalance, ratingTicker, seasonLeagueBalance, snapshotLeague } from './leagueBalance';
 import { PlayerDevReveal } from '../types';
 import { fmtDM, fmtDMfull, fmtDateFull, setDisplayYear } from '../ui/format';
 import { RatingResult as _RatingResult } from '../engine/development';
@@ -85,6 +88,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
     const red = staffEffectsOf(g).injuryReduction;
     const focus = currentFocus(g, today);
     setInjuryRiskHook((p) => (p.clubId === g.managedClubId ? (1 - red) * focusEffect(focus, p).injury : 1));
+    applyLeagueBalance(g);
+    applyEuphoria(g);
   }
   setDisplayYear(yearOf(today));
   setEraYear(yearOf(today));
@@ -122,6 +127,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
         const fx = staffEffectsOf(g);
         const scoutQ = Math.min(1, 0.3 + (fx.scouting ?? 0) * 2 + dataScoutingBonus(myClub.infrastructure?.dataCenter ?? 1) * 2);
         // ALLE Spieler werden bewertet; gezeigt wird nur der eigene Kader.
+        const leagueBefore = type !== 'small' ? snapshotLeague(g) : null;
         const results = runRatingCeremony(g.players, g.clubs, g.managedClubId, type, today, scoutQ);
         for (const pid of myClub.playerIds) {
           const p = g.players[pid];
@@ -129,6 +135,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
         }
         const label = type === 'large' ? 'Große Saison-Bewertung' : type === 'medium' ? 'Winter-Bewertung' : 'Herbst-Bewertung';
         ui.onRatingCeremony({ results, type: type === 'small' ? 'medium' : type, anlass: label });
+        if (leagueBefore) ratingTicker(g, leagueBefore, label, today);
         const ups = results.filter((r) => r.change > 0).length;
         const downs = results.filter((r) => r.change < 0).length;
         const special = results.filter((r) => r.tag).map((r) => `• ${r.playerName}: ${r.tag} (${r.change > 0 ? '+' : ''}${r.change})`);
@@ -381,6 +388,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
     const yearNow = new Date(today + 'T00:00:00Z').getUTCFullYear();
     if (utcMon === 7 && domNow === 1) {
       // Fiktive Legenden des Jahrgangs tauchen in einer Akademie auf (data/legends.ts).
+      // Liga-Gleichgewicht vor dem neuen Nachwuchs-Jahrgang nachführen.
+      seasonLeagueBalance(g);
       spawnLegends(g, today);
       // Vertragsende: Wechsel (vor Bosman gegen Ablöse) oder Verlängerung (game/contracts.ts).
       handleContractExpiry(g, today);
@@ -461,12 +470,14 @@ export function processDay(g: Game, ui: DayUi): boolean {
   const curMonth = today.slice(0, 7);
   autoResolveEvents(g, today);
   contractReminders(g, today);
+  announceUpcomingRules(g, today);
   rollAiOffers(g, today);
   if (utcDom === 1) {
     monthlyTrainingReport(g, today);
     monthlySquadHarmony(g, today);
     monthlyEnvironmentUpdate(g, today);
     monthlyEvents(g, today);
+    monthlyClubEvents(g, today);
     for (const club of Object.values(g.clubs)) {
       if (club.finances.lastMonthlyBooking === curMonth) continue;
       const isMine = club.id === g.managedClubId;

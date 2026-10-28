@@ -107,7 +107,7 @@ export function fireTimelineForSeason(g: Game, season: string, dateISO: string, 
       const meta = TIMELINE_TYPE_META[ev.type];
       pushMessage(g.messages, makeMessage({
         date: dateISO, category: 'milestone', from: 'Fußball-Chronik',
-        subject: `${meta.icon} ${ev.year}: ${ev.title}`,
+        subject: `${ev.year}: ${ev.title}`,
         shortText: `${meta.label}-Meilenstein ${ev.season}: ${ev.title}.`,
         bodyText: `${ev.title}  (${ev.season} · ${meta.label})\n\n${ev.description}\n\n`
           + `Diesen und alle weiteren Meilensteine findest du im Bereich „Chronik“.`,

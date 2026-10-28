@@ -80,7 +80,7 @@ export class MatchSim {
     this.live = !!opts.live;
     this.derby = !!homeClub.city && homeClub.city === awayClub.city;
     this.weather = rollWeather(opts.date, this.rng);
-    this.attendance = Math.round(estimateAttendance(homeClub, this.derby, this.rng) * attendanceRestriction(opts.date));
+    this.attendance = Math.min(homeClub.stadium.capacity, Math.round(estimateAttendance(homeClub, this.derby, this.rng) * attendanceRestriction(opts.date)));
     const humanSides = new Set(opts.humanSides ?? []);
     const humanClubs = new Set(opts.humanClubIds ?? []);
     this.home = this.makeTeam('home', homeClub, humanSides.has('home'), humanClubs.has(homeClub.id));

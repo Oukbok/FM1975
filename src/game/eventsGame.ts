@@ -13,7 +13,13 @@ function ctxFor(g: Game, date: string): EventContext | null {
   const club = g.clubs[g.managedClubId];
   if (!club) return null;
   const year = yearOf(date);
-  return { date, year, club, players: g.players, rng: Math.random, scale: economyScale(year) };
+  // Fester Zufall aus Verein und Datum: Neuladen würfelt kein Ereignis weg.
+  let h = 2166136261;
+  const seed = `${g.managedClubId}|ev|${date}`;
+  for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
+  let s = h >>> 0;
+  const rng = () => { s = (s + 0x6d2b79f5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  return { date, year, club, players: g.players, rng, scale: economyScale(year) };
 }
 
 export function monthlyEvents(g: Game, today: string): void {

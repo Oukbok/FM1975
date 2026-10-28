@@ -83,6 +83,12 @@ export interface Game {
   youthApproaches?: Record<string, number>;
   /** Vereinsumfeld des eigenen Vereins (Fans, Mitglieder, Medien, Leitbild). */
   environment?: ClubEnvironment;
+  /** Liga-Gleichgewicht: Verschiebung des Jugend-Potenzials (Sterne) + Verlauf (game/leagueBalance.ts). */
+  /** Sperrzeiten der Vereinsereignisse (Typ → Datum). */
+  eventCooldowns?: Record<string, string>;
+  /** WM-Euphorie: Zuschauer-Faktor für einen Zeitraum. */
+  euphoria?: { from: string; to: string; factor: number };
+  leagueBalance?: { shift: number; history: { season: string; avg: number; shift: number }[] };
   /** Bereits erschienene Legenden (IDs aus data/legends.ts). */
   spawnedLegends?: string[];
   /** Datensatz, mit dem dieses Spiel begonnen wurde. */
