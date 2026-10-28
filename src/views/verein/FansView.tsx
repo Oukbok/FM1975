@@ -6,6 +6,7 @@ import { Game } from '../../game/state';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtDM, fmtDMfull, vColor } from '../../ui/format';
 import { FormDots, MatchRow, avg, ownLeagueMatches, resultFor, tableRow } from '../shared';
+import { FanCrowd } from './FanCrowd';
 
 // =============================================================================
 // FANS — Zuschauer, Stimmung (aus Ergebnissen), Mitglieder, Spieltagserlöse
@@ -27,7 +28,6 @@ export function FansView({ g }: { g: Game }) {
   const played = ownLeagueMatches(g, 'finished');
   const last5 = played.slice(-5);
   const pts = last5.reduce((s, m) => s + ({ W: 3, D: 1, L: 0 }[resultFor(m, myClub.id) ?? 'L']), 0);
-  void pts;
   const mood = Math.round(env.fanMood);
   const moodText = !last5.length && mood === 55 ? 'Gespannt auf die neue Saison.' : mood >= 70 ? 'Begeistert – die Kurve steht hinter der Mannschaft.'
     : mood >= 45 ? 'Zufrieden, aber anspruchsvoll.' : mood >= 25 ? 'Unruhig – erste Pfiffe sind zu hören.' : 'Verärgert – die Fans fordern Konsequenzen.';
@@ -38,26 +38,25 @@ export function FansView({ g }: { g: Game }) {
 
   return (
     <DashPage>
-      <DashBox title="Stimmung" icon="fans">
-        <div className="dkpis">
-          <Kpi value={mood} label="Fan-Stimmung" color={vColor(mood)} />
-          <Kpi value={myClub.reputation} label="Ansehen" />
+      <DashBox title="Fankurve" icon="fans" span={2} right={<span style={{ color: vColor(mood) }}>{moodText}</span>}>
+        <div className="fan-layout">
+          <FanCrowd mood={mood} formPoints={last5.length ? pts : -1} attendance={expRate} year={year} seed={`${myClub.id}|${g.calendar.currentDate.slice(0, 7)}`}
+            primary={myClub.colors?.primary ?? '#c0392b'} secondary={myClub.colors?.secondary ?? '#ffffff'} />
+          <div className="fan-side">
+            <div className="dkpis">
+              <Kpi value={mood} label="Fan-Stimmung" color={vColor(mood)} />
+              <Kpi value={home.length ? avgAtt.toLocaleString('de-DE') : expVisitors.toLocaleString('de-DE')} label={home.length ? 'Ø Heimspiel' : 'erwartet'} />
+            </div>
+            {row && row.form.length > 0 && <KV k="Form" v={<FormDots form={row.form} />} />}
+            <KV k="Erw. Auslastung" v={`${Math.round(expRate * 100)} %`} />
+            <KV k="Kapazität" v={st.capacity.toLocaleString('de-DE')} />
+            <KV k="Ticketpreis" v={fmtDMfull(st.ticketPrice * md)} />
+            <KV k="Ansehen" v={myClub.reputation} />
+            <KV k="Leitbild erfüllt" v={`${env.identity} %`} color={vColor(env.identity)} />
+            <KV k="Medien-Druck" v={Math.round(env.mediaPressure)} />
+            <div className="dnote mt8">Je besser Stimmung und Ergebnisse, desto voller und lauter die Kurve.</div>
+          </div>
         </div>
-        <div className="dnote" style={{ fontSize: 16, color: 'var(--text-2)' }}>{moodText}</div>
-        {row && row.form.length > 0 && <KV k="Form" v={<FormDots form={row.form} />} />}
-        <KV k="Leitbild erfüllt" v={`${env.identity} %`} color={vColor(env.identity)} />
-        <KV k="Medien-Druck" v={Math.round(env.mediaPressure)} />
-        <div className="dnote mt8">Die Stimmung bewegt sich monatlich: Ergebnisse, Derbys, Eintrittspreise und das Leitbild des Vereins zählen.</div>
-      </DashBox>
-
-      <DashBox title="Zuschauer" icon="stadium">
-        <div className="dkpis">
-          <Kpi value={home.length ? avgAtt.toLocaleString('de-DE') : expVisitors.toLocaleString('de-DE')} label={home.length ? 'Ø Heimspiel' : 'erwartet'} />
-          <Kpi value={`${Math.round(expRate * 100)} %`} label="Erw. Auslastung" />
-        </div>
-        <KV k="Kapazität" v={st.capacity.toLocaleString('de-DE')} />
-        <KV k="Ø Auslastung (Basis)" v={`${Math.round(st.averageAttendanceRate * 100)} %`} />
-        <KV k="Ticketpreis" v={fmtDMfull(st.ticketPrice * md)} />
       </DashBox>
 
       <DashBox title="Mitglieder" icon="dashVerein">

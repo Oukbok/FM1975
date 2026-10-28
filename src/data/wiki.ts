@@ -1550,7 +1550,10 @@ Die Mitgliederzahl ist echt: Sie wächst mit Erfolg, guter Stimmung und der Fank
 - Der **Medien-Druck** steigt mit dem Ansehen des Vereins, der Epoche und Negativserien. Er verstärkt die Ausschläge beim **Vorstandsvertrauen**.
 - Das Vertrauen bewegt sich monatlich mit Tabellenplatz gegenüber dem **Saisonziel**, Fan-Stimmung, Finanzen und Leitbild.
 - Der Vorstand setzt jede Saison ein Ziel nach der Kaderstärke (Meisterschaft, Europa-Pokal-Platz, Mittelfeld, Klassenerhalt; in unteren Ligen Aufstieg).
-- **Entlassen wirst du nicht** – aber das Vertrauen bestimmt, wie viel vom finanziellen Polster der Vorstand als **Transferbudget** freigibt (40–90 %). Unter 30 und 15 gibt es Warnungen.`,
+- **Entlassen wirst du nicht** – aber das Vertrauen bestimmt, wie viel vom finanziellen Polster der Vorstand als **Transferbudget** freigibt (40–90 %). Unter 30 und 15 gibt es Warnungen.
+
+## Die Fankurve
+Unter **Verein → Fans** zeigt eine gezeichnete Stehtribüne, wie es um deine Anhänger steht: Je besser Stimmung und Auslastung, desto mehr Fans (6 bis 32 Figuren). Stimmung und die letzten fünf Spiele bestimmen das Gemüt – jubelnd mit erhobenen Armen, Schal oder Fahne, gelassen oder enttäuscht mit verschränkten Armen. Bei Euphorie hängen Fahnen und ein Spruchband, bei großem Ärger ein Protestbanner. Die Ausstattung folgt der Epoche: Kutte und Wollmütze in den 70ern und 80ern, Schals ab den 90ern, Handys ab 2010.`,
   },
   {
     id: 'environment-events',
