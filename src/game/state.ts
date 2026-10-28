@@ -84,6 +84,8 @@ export interface Game {
   /** Vereinsumfeld des eigenen Vereins (Fans, Mitglieder, Medien, Leitbild). */
   environment?: ClubEnvironment;
   /** Liga-Gleichgewicht: Verschiebung des Jugend-Potenzials (Sterne) + Verlauf (game/leagueBalance.ts). */
+  /** Spieler-Archiv (Karriereende, game/archive.ts). */
+  archive?: import('./archive').ArchivedPlayer[];
   /** Sperrzeiten der Vereinsereignisse (Typ → Datum). */
   eventCooldowns?: Record<string, string>;
   /** WM-Euphorie: Zuschauer-Faktor für einen Zeitraum. */

@@ -1361,6 +1361,24 @@ Monatlich verschiebt sich die **Zufriedenheit**:
 Unzufriedene Spieler fordern mehr, verlängern ungern, sinken in der Moral und ziehen Angebote anderer Vereine an.`,
   },
   {
+    id: 'chronicle-hall-of-fame',
+    category: 'chronicle',
+    title: 'Ruhmeshalle & Spieler-Archiv',
+    keywords: ['ruhmeshalle', 'archiv', 'karriereende', 'rekorde', 'vereinslegende'],
+    body: `## Was nach dem Karriereende bleibt
+Beendet ein Spieler seine Karriere, wird er aus dem Spielstand entfernt. Bemerkenswerte Karrieren bleiben als **Eckdaten** im Archiv: Name, Position, Geburts- und Abschiedsjahr, Spitzenstärke, Einsätze, Tore und die letzten Stationen. So bleiben Spielstände auch nach 50 Jahren klein.
+
+Archiviert werden:
+- alle Spieler, die zuletzt bei **deinem Verein** waren,
+- Karrieren mit **Spitzenstärke ab 78** oder **250 Einsätzen**,
+- alle **fiktiven Legenden**.
+
+Höchstens 4000 Einträge; darüber fallen zuerst die unauffälligsten fremden Karrieren heraus.
+
+## Ruhmeshalle
+Unter **Statistiken → Ruhmeshalle** siehst du die größten Karrieren, deine Vereinslegenden (nach Einsätzen), die Rekordhalter und die Legenden im Ruhestand.`,
+  },
+  {
     id: 'development-legends',
     category: 'development',
     title: 'Legenden',

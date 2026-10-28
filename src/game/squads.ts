@@ -4,6 +4,7 @@
 // =============================================================================
 import { Player, Position, Club } from '../types';
 import { Game } from './state';
+import { archiveRetired } from './archive';
 import { createPlayer } from '../engine/playerFactory';
 import { marketWage } from '../engine/clubEconomy';
 import { makeMessage, pushMessage } from '../engine/messages';
@@ -85,6 +86,7 @@ export function manageSquads(game: Game, date: string, autoManageMine = false): 
       if (Math.random() < retireChance(p)) {
         club.playerIds = club.playerIds.filter((x) => x !== id);
         if (club.id === mine) retiredMine.push(p);
+        archiveRetired(game, p, date);
         delete game.players[id];
       }
     }

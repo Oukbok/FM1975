@@ -4,7 +4,7 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   // Kategorie-Dashboards (Übersichtsseiten je Hauptkategorie)
   | 'cat-spieltag' | 'cat-kader' | 'cat-transfers' | 'cat-finanzen' | 'cat-verein' | 'cat-statistiken'
   // Neue Einzelseiten
-  | 'tactics' | 'stadium' | 'presse' | 'vertraege' | 'beobachtung' | 'verhandlungen' | 'sponsoring' | 'fans' | 'international' | 'vorstand';
+  | 'tactics' | 'stadium' | 'presse' | 'vertraege' | 'beobachtung' | 'verhandlungen' | 'sponsoring' | 'fans' | 'international' | 'vorstand' | 'ruhmeshalle';
 
 // =============================================================================
 // MENÜ-STRUKTUR (zweistufige Top-Navigation)
@@ -65,6 +65,7 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'cup', label: 'Pokal', icon: 'trophy' },
     { screen: 'international', label: 'International', icon: 'international' },
     { screen: 'chronicle', label: 'Chronik', icon: 'chronicle' },
+    { screen: 'ruhmeshalle', label: 'Ruhmeshalle', icon: 'trophy' },
   ] },
 ];
 
