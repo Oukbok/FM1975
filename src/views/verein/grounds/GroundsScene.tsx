@@ -8,7 +8,8 @@
 // Winter, Herbstfarben im Herbst. Laufendes Stadion-Bauprojekt: Kran.
 // =============================================================================
 import type { ReactNode } from 'react';
-import { Club, FacilityKey } from '../../../types';
+import { BlockId, Club, FacilityKey } from '../../../types';
+import { tierGeometry } from '../stadium/StadiumScene';
 import { Box, Car, Crane, Flat, Floodlight, GableRoof, P, Pitch, Track, Tree, WindowsFront, WindowsSide, pts, shade } from './isoKit';
 
 export type GroundKey = FacilityKey | 'clubhouse';
@@ -73,9 +74,15 @@ export function GroundsScene(props: SceneProps) {
 
   // ---------------------------------------------------------------- Stadion
   const L = lvl('stadium');
-  const arena = (year >= 2000 && L >= 4) || (year >= 2006 && L >= 3);
-  const classicTrack = !arena && year < 1995 && L <= 3;
+  // Eigener Verein mit Blöcken (engine/stadiumBlocks.ts): Höhe/Dach je Seite aus den Rängen.
+  const bl = club.stadium.blocks;
+  const blk = (id: BlockId) => bl?.find((b) => b.id === id);
+  const arena = bl ? bl.every((b) => b.roof === 'full') : (year >= 2000 && L >= 4) || (year >= 2006 && L >= 3);
+  const classicTrack = !arena && year < 1995 && (bl ? bl.every((b) => b.tiers.length === 1) : L <= 3);
   const sh = 0.9 + L * 0.45;
+  const hOf = (id: BlockId, def: number) => { const b = blk(id); if (!b) return def; const geo = tierGeometry(b); return 0.8 + geo[geo.length - 1].zt * 0.22; };
+  const roofOf = (id: BlockId) => blk(id)?.roof ?? 'none';
+  const has = (id: BlockId, def: boolean) => (bl ? !!blk(id) : def);
   const seat = pal.era >= 1 || L >= 3 ? shade(primary, 0.9) : pal.concrete;
   const stand = (x: number, y: number, w: number, d: number, h: number) => (
     <g>
@@ -92,10 +99,11 @@ export function GroundsScene(props: SceneProps) {
         {!classicTrack && <Flat x={px - off + 0.2} y={py - off + 0.2} w={pw + 2 * off - 0.4} d={pd + 2 * off - 0.4} fill={shade(pitchGrass, 0.85)} />}
         <Pitch x={px} y={py} w={pw} d={pd} grass={year >= 1995 || !winter ? '#4f9a45' : pitchGrass} />
         {/* Gegengerade (hinten) */}
-        {stand(px - off, py - off - 2.4, pw + 2 * off, 2.4, sh)}
+        {stand(px - off, py - off - 2.4, pw + 2 * off, 2.4, hOf('opposite', sh))}
+        {!arena && roofOf('opposite') !== 'none' && <Box x={px - off} y={py - off - 2.6} w={pw + 2 * off} d={roofOf('opposite') === 'full' ? 2.8 : 1.4} z={hOf('opposite', sh) + 0.4} h={0.15} color="#c9d0d6" />}
         {/* Kurven links/rechts */}
-        {L >= 2 && stand(px - off - 2.4, py - off, 2.4, pd + 2 * off, sh * (arena ? 1 : 0.85))}
-        {L >= 3 && stand(px + pw + off, py - off, 2.4, pd + 2 * off, sh * (arena ? 1 : 0.85))}
+        {has('north', L >= 2) && stand(px - off - 2.4, py - off, 2.4, pd + 2 * off, hOf('north', sh * (arena ? 1 : 0.85)))}
+        {has('south', L >= 3) && stand(px + pw + off, py - off, 2.4, pd + 2 * off, hOf('south', sh * (arena ? 1 : 0.85)))}
         {arena && <polygon points={pts(P(px - off - 2.6, py - off - 2.6, sh + 0.9), P(px + pw + off + 2.6, py - off - 2.6, sh + 0.9), P(px + pw + off + 2.6, py + pd + off + 2.2, sh + 0.9), P(px - off - 2.6, py + pd + off + 2.2, sh + 0.9), P(px - off - 2.6, py - off - 2.6, sh + 0.9), P(px - off + 0.8, py - off + 0.8, sh + 0.9), P(px - off + 0.8, py + pd + off - 0.8, sh + 0.9), P(px + pw + off - 0.8, py + pd + off - 0.8, sh + 0.9), P(px + pw + off - 0.8, py - off + 0.8, sh + 0.9), P(px - off + 0.8, py - off + 0.8, sh + 0.9))}
           fill="rgba(210,225,235,0.42)" stroke="#dfe7ee" strokeWidth={1} fillRule="evenodd" />}
         {!arena && <>
@@ -106,13 +114,13 @@ export function GroundsScene(props: SceneProps) {
     );
     G('stadium', 30, node, [px + pw / 2, py - 2, sh + 2.5]);
     // Haupttribüne vorne (niedriger, verdeckt den Platz nicht ganz) – eigener Tiefenwert.
-    if (L >= 4 || arena) {
-      G('stadium', 40, <g>{stand(px - off, py + pd + off, pw + 2 * off, 2.2, sh * 0.7)}</g>, [px + pw / 2, py - 2, sh + 2.5]);
+    if (bl ? blk('main')!.tiers.length >= 2 || arena : L >= 4 || arena) {
+      G('stadium', 40, <g>{stand(px - off, py + pd + off, pw + 2 * off, 2.2, bl ? hOf('main', sh) * 0.7 : sh * 0.7)}</g>, [px + pw / 2, py - 2, sh + 2.5]);
     }
     if (!arena) {
       plain('fl2', 41, <g><Floodlight x={px - off - 2.8} y={py + pd + off + 2.8} h={sh + 6} /><Floodlight x={px + pw + off + 2.8} y={py + pd + off + 2.8} h={sh + 6} /></g>);
     }
-    if (club.stadiumProject) plain('crane', 42, <Crane x={px + pw + off + 4} y={py + pd + 2} h={sh + 8} />);
+    if (club.stadiumProject || club.stadium.blockProject) plain('crane', 42, <Crane x={px + pw + off + 4} y={py + pd + 2} h={sh + 8} />);
   }
 
   // ---------------------------------------------------------------- Buden & Fanshop

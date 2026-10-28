@@ -62,6 +62,7 @@ export function createMatchSim(home: Club, away: Club, players: Record<string, P
   return new MatchSim(home, away, players, {
     year: opts.year ?? yearFor(opts.date), date: opts.date, seed: opts.seed, knockout: opts.knockout,
     humanSides: opts.humanSides, humanClubIds: opts.humanClubIds ?? opts.logClubIds, live: opts.live,
+    competition: opts.competition,
   });
 }
 
@@ -86,6 +87,7 @@ export class MatchEngine {
     if (pre) return pre;
     const sim = createMatchSim(this.homeClub, this.awayClub, this.players, {
       date: this.options.date, seed: this.options.seed, knockout, logClubIds: this.options.logClubIds,
+      competition: this.options.competition,
     });
     sim.runToEnd();
     const fo: FinishOptions = { ...this.options };

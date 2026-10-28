@@ -10,6 +10,7 @@ import { economyScale, revenueScale } from './economy';
 import { CAPACITY_PER_LEVEL, MAX_LEVEL, upgradeCost } from './infrastructure';
 import { book } from './finances';
 import { commercialMultiplier } from './clubEconomy';
+import { vipAreaBoxes } from './stadiumBlocks';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -154,7 +155,7 @@ export function advanceStadiumProject(club: Club, date: string): string | null {
 
 /** Logen-Einnahmen je Heimspiel (nominal). 1975-Basis 1.400 DM je Loge. */
 export function vipIncome(club: Club, mdScale: number, year: number): number {
-  const boxes = club.stadium.vipBoxes ?? 0;
+  const boxes = (club.stadium.vipBoxes ?? 0) + vipAreaBoxes(club);
   if (!boxes) return 0;
   return Math.round(boxes * 1400 * mdScale * clamp(commercialMultiplier(club, year), 0.6, 1.8));
 }

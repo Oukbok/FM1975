@@ -4,6 +4,7 @@
 // (step() je Minute + Eingriffe des Trainers). Ergebnisse werden in finish()
 // identisch verbucht.
 // =============================================================================
+import { allSeaterEuro, euroCapacity, roofAttendanceFactor } from '../stadiumBlocks';
 import { attendanceRestriction } from '../../data/history';
 import type { Club, InjurySeverity, Player } from '../../types';
 import { positionSuitability } from '../positions';
@@ -38,6 +39,8 @@ export interface SimOptions {
   humanClubIds?: string[];
   /** Live-Modus (Textmodus): auch ruhige Minuten als Ereignis melden. */
   live?: boolean;
+  /** Wettbewerb (Europapokal: ab 1998 nur Sitzplätze). */
+  competition?: 'Liga' | 'Pokal' | 'Europapokal';
 }
 
 const PERIOD_END = [0, 45, 90, 105, 120];
@@ -80,7 +83,11 @@ export class MatchSim {
     this.live = !!opts.live;
     this.derby = !!homeClub.city && homeClub.city === awayClub.city;
     this.weather = rollWeather(opts.date, this.rng);
-    this.attendance = Math.min(homeClub.stadium.capacity, Math.round(estimateAttendance(homeClub, this.derby, this.rng) * attendanceRestriction(opts.date)));
+    const month = opts.date ? Number(opts.date.slice(5, 7)) : 9;
+    const euroSeated = opts.competition === 'Europapokal' && allSeaterEuro(opts.year) && (opts.date ?? '9999') >= '1998-07-01' && homeClub.stadium.blocks?.length;
+    const cap = euroSeated ? euroCapacity(homeClub.stadium.blocks!, homeClub.stadium.capacity) : homeClub.stadium.capacity;
+    const raw = estimateAttendance(homeClub, this.derby, this.rng) * roofAttendanceFactor(homeClub, this.weather, month);
+    this.attendance = Math.min(cap, Math.round(raw * attendanceRestriction(opts.date)));
     const humanSides = new Set(opts.humanSides ?? []);
     const humanClubs = new Set(opts.humanClubIds ?? []);
     this.home = this.makeTeam('home', homeClub, humanSides.has('home'), humanClubs.has(homeClub.id));

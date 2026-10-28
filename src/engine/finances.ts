@@ -23,6 +23,7 @@
 // =============================================================================
 
 import { vipIncome } from './clubBusiness';
+import { ticketFactor } from './stadiumBlocks';
 import {
   Club, Player, MatchResult, ClubFinances, FinanceCategory, FinanceTransaction, LeagueTable,
   CateringMode, SponsorOffer,
@@ -285,7 +286,7 @@ export function bookHomeMatch(
   if (isHome) {
     const sc = scalesFor(club, date);
     const attendance = result.attendance;
-    const ticket = Math.round(attendance * club.stadium.ticketPrice * sc.matchday);
+    const ticket = Math.round(attendance * club.stadium.ticketPrice * ticketFactor(club) * sc.matchday);
     const merch = Math.round(attendance * merchPerHead(club) * sc.merch);
     const catering = cateringMatchIncome(club, attendance, sc.matchday);
     const matchday = matchdayIncome(attendance, sc.matchday);
@@ -323,7 +324,7 @@ export function bookCupHomeMatch(
   const fin = club.finances;
   const sc = scalesFor(club, date);
   const attendance = result.attendance;
-  const ticket = Math.round(attendance * club.stadium.ticketPrice * sc.matchday);
+  const ticket = Math.round(attendance * club.stadium.ticketPrice * ticketFactor(club) * sc.matchday);
   const merch = Math.round(attendance * merchPerHead(club) * sc.merch);
   // Pokal-TV: Übertragungsrechte je Spiel (wächst mit dem TV-Markt).
   const tv = Math.round((25000 + club.reputation * 500) * revenueScale('tv', yearOf(date)) * (scale > 0 ? 1 : 0));
@@ -532,7 +533,7 @@ export function forecastSeasonEnd(
   // Erwartete Einnahme je Heimspiel (Ticket + Catering + Fanartikel + Matchday + TV)
   const expAtt = Math.round(club.stadium.capacity * club.stadium.averageAttendanceRate);
   const perHome = Math.round(
-    expAtt * club.stadium.ticketPrice
+    expAtt * club.stadium.ticketPrice * ticketFactor(club)
     + cateringMatchIncome(club, expAtt, 1)
     + expAtt * merchPerHead(club)
     + matchdayIncome(expAtt, 1)

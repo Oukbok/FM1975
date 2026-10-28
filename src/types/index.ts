@@ -619,6 +619,51 @@ export interface Stadium {
   vipBoxes?: number;
   /** Ursprünglicher Stadionname (solange Namensrechte verkauft sind). */
   baseName?: string;
+  /** Tribünenblöcke (eigener Verein, engine/stadiumBlocks.ts). Fehlt bei KI-Vereinen. */
+  blocks?: StadiumBlock[];
+  /** Laufender Blockumbau. */
+  blockProject?: BlockProject;
+  /** Preismix bei Einführung der Blöcke (Bezug für den Ticket-Faktor). */
+  priceBase?: number;
+}
+
+/** Platzart eines Rangs. */
+export type SeatType = 'steh' | 'bank' | 'schale' | 'komfort' | 'business';
+/** Überdachung eines Blocks. */
+export type RoofType = 'none' | 'partial' | 'full';
+export type BlockId = 'main' | 'opposite' | 'north' | 'south';
+
+/** Ein Rang (Unter-, Mittel-, Oberrang) eines Blocks. */
+export interface StadiumTier {
+  seat: SeatType;
+  /** Reihen (Tiefe des Rangs, 3–36). */
+  rows: number;
+}
+
+/** Ein Tribünenblock (Haupttribüne, Gegengerade, Kurven). */
+export interface StadiumBlock {
+  id: BlockId;
+  tiers: StadiumTier[];
+  roof: RoofType;
+  /** VIP-Bereich mit Business-Club. */
+  vip: boolean;
+  /** Logen (Lounges) über dem Block. */
+  lounges: number;
+  /** Anzeigetafel (nur Kurven). */
+  scoreboard?: boolean;
+}
+
+/** Laufender Umbau eines Blocks. */
+export interface BlockProject {
+  blockId: BlockId;
+  target: StadiumBlock;
+  startDate: string;
+  finishDate: string;
+  /** Kosten nominal. */
+  cost: number;
+  financing: 'cash' | 'loan';
+  /** Während des Baus gesperrte Plätze. */
+  capacityLoss: number;
 }
 
 /** Kredit eines Vereins (Beträge nominal). */

@@ -1142,7 +1142,7 @@ Unter **Verein → Vereinsgelände** siehst du deine Anlage als Zeichnung. Jede 
 
 | Einrichtung | Was sich zeigt |
 |---|---|
-| Stadion | Laufbahn und offene Ränge, ab der 2. Stufe Kurven, ab der 4. Stufe Haupttribüne; später reines Fußballstadion, ab 2000 (Stufe 4+) Arena mit Dach. Laufender Bau: Kran |
+| Stadion | Folgt deinen Blöcken: Höhe je Seite aus den Rängen, Dächer, bei vier vollen Dächern eine Arena; Laufbahn, solange alle Blöcke nur einen Rang haben. Laufender Bau: Kran |
 | Trainingszentrum | 1 bis 3 Plätze, ab Stufe 3 (ab 1995) Kunstrasen, ab Stufe 4 Flutlicht, Stufe 5 Trainingshalle |
 | Jugendakademie | Jugendplätze und ein Gebäude von der Holzbaracke bis zum Campus mit Internat |
 | Medizin, Fanshop, Buden | wachsen sichtbar mit jeder Stufe |
@@ -1484,12 +1484,39 @@ Unter **Statistiken → Ruhmeshalle** siehst du die größten Karrieren, deine V
 Beim neuen Spiel wählst du **Aus** (keine Legenden), **Fiktive Legenden** (Standard) oder **Eigene Namensdatei**. Die Namensdatei lädst du unter Einstellungen → Historische Spieler: eine JSON-Datei \`{ "lg_1954_1": "Vorname Nachname", … }\`. Sie bleibt in deinem Browser und wird nie mit dem Spiel ausgeliefert; die Vorlage dort enthält alle Legenden-IDs. Eigene Legenden legst du im Datensatz-Editor an.`,
   },
   {
+    id: 'stadium-blocks',
+    category: 'environment',
+    title: 'Stadion: Blöcke, Ränge und Dächer',
+    keywords: ['stadion', 'block', 'tribüne', 'haupttribüne', 'gegengerade', 'kurve', 'rang', 'oberrang', 'sitzplätze', 'stehplätze', 'dach', 'vip', 'logen', 'lounge', 'anzeigetafel', 'videowand', 'umbau', 'all-seater'],
+    body: `## Vier Blöcke
+Unter **Verein → Stadion** siehst du dein Stadion als Zeichnung: **Haupttribüne**, **Gegengerade**, **Nordkurve** und **Südkurve**. Klick auf einen Block öffnet rechts den Planer, die Zeichnung zeigt die Planung sofort. Ohne Auswahl zeigt das Panel Ticketpreis, erwartete Erlöse, Catering, Namensrechte, den laufenden Umbau und die letzten Heimspiele.
+
+## Was du planst
+- **Ränge:** bis zu drei (Unter-, Mittel-, Oberrang), je 3–36 Reihen. Ein neuer Rang kostet 30 % Aufschlag, Abriss 15 DM je Platz.
+- **Sitzart je Rang:** Stehplätze (fassen doppelt so viele Menschen wie Sitze, bringen aber nur 75 % des Grundpreises), Holzbänke (bis 1999), Schalensitze, Komfortsitze (ab 1988), Business-Seats (ab 1992, gut dreifacher Preis, wenig Platz). Der Eintritt richtet sich nach dem **Preismix** gegenüber dem Stand bei Einführung der Blöcke (Faktor 0,7–2,2).
+- **Dach:** keins, Teildach oder volles Dach. Überdachte Plätze locken bei Regen bis zu 7 % mehr Zuschauer an, im Winter 3,5 %. Ein neues Dach hebt die Fan-Stimmung um 2 Punkte.
+- **VIP-Tribüne** (ab 1980): zählt wie 6 Logen auf einer Langseite bzw. 4 in der Kurve. **Logen** (ab 1985, Haupttribüne bis 12, Gegengerade bis 10, Kurven bis 4) brauchen einen zweiten Rang oder ein volles Dach. Jede Loge bringt je Heimspiel 1.400 DM (1975-Basis) × Spieltags-Skala × Marke.
+- **Anzeigetafel**, ab 1994 als Videowand.
+
+## Bauen
+Jeder Umbau ist ein Bauprojekt: 2–18 Monate Bauzeit, in der die Hälfte des Blocks gesperrt ist. Die Kosten sind ein Preisschild in 1975-Basis × Wirtschaftsskala. Du zahlst bar oder per Kredit über 10, 15 oder 20 Jahre; die Bank lehnt ab, wenn alle Raten zusammen mehr als 12 % des Jahresumsatzes kosten. Es läuft immer nur ein Umbau. Mehr als 90.000 Plätze genehmigt die Stadt nicht.
+
+## Fans
+Werden Stehplätze zu Sitzplätzen, murren die Fans: bis zu 12 Punkte Stimmung, bei Traditionsvereinen (Tradition ab 70) und in der Ultra-Zeit (2005–2014) anderthalbmal so viel. Neue Stehplätze ab 2005 freuen die Kurve ein wenig.
+
+## Europapokal
+Ab 1998 sind im Europapokal nur Sitzplätze erlaubt: Bei Europapokal-Heimspielen werden deine Stehränge mit Klappsitzen bestuhlt und fassen dann nur die Hälfte. Wer oft international spielt, baut deshalb früher auf Sitzplätze um.
+
+## Gegner
+KI-Vereine bauen weiter vereinfacht aus (Kapazität wächst mit Überschüssen); Blöcke hat nur dein eigener Verein.`,
+  },
+  {
     id: 'club-business',
     category: 'environment',
     title: 'Stadionbau, Kredite, Namensrechte, Investoren und Überschuldung',
     keywords: ['stadion', 'ausbau', 'kredit', 'zins', 'logen', 'vip', 'namensrechte', 'arena', 'ausgliederung', 'kapitalgesellschaft', 'investor', '50+1', 'dividende', 'punktabzug', 'zwangsabstieg', 'überschuldung', 'vorstand'],
     body: `## Stadionausbau als Bauprojekt
-Das Stadion wächst nicht über Nacht. Unter **Verein → Stadion** startest du den nächsten Ausbauschritt (+6.000 Plätze):
+Dein eigenes Stadion baust du Block für Block um (siehe *Stadion: Blöcke, Ränge und Dächer*). Die folgenden Regeln gelten für den alten Ausbau in Stufen (+6.000 Plätze), der in älteren Spielständen noch zu Ende läuft:
 - **Bauzeit:** Stufe 2–3 eine Saison, Stufe 4 zwei, Stufe 5 drei Spielzeiten. Fertig wird immer zum 1. Juli.
 - **Während des Baus** sind rund 8 % der Plätze gesperrt.
 - **Kosten:** Preisschild in 1975-Basis × Wirtschaftsskala; ab 2004 (Arenen) ×1,1.
