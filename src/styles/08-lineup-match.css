@@ -11,15 +11,15 @@
   aspect-ratio: 68 / 105;
   max-height: 620px;
   background:
-    linear-gradient(0deg, rgba(0,0,0,.28), rgba(0,0,0,.28)),
+    linear-gradient(0deg, rgba(0, 0, 0,.28), rgba(0, 0, 0,.28)),
     repeating-linear-gradient(0deg, #1c6b3a 0 8%, #187033 8% 16%);
-  border: 2px solid rgba(255,255,255,.25);
+  border: 2px solid rgba(255, 255, 255,.25);
   border-radius: var(--radius);
   overflow: hidden;
 }
 .pitch::before, .pitch::after {
   content: ''; position: absolute; left: 8%; right: 8%; height: 14%;
-  border: 2px solid rgba(255,255,255,.35);
+  border: 2px solid rgba(255, 255, 255,.35);
 }
 .pitch::before { top: -2px; border-top: none; }
 .pitch::after { bottom: -2px; border-bottom: none; }
@@ -31,11 +31,11 @@
 .slot.droptarget .slot-empty,
 .slot.droptarget .slot-player { outline: 2px dashed var(--accent); outline-offset: 2px; }
 .slot-pos {
-  font-size: 10px; font-weight: 700; color: rgba(255,255,255,.85);
+  font-size: 10px; font-weight: 700; color: rgba(255, 255, 255,.85);
   letter-spacing: .5px; margin-bottom: 2px; text-shadow: 0 1px 2px #000;
 }
 .slot-player {
-  position: relative; cursor: grab; background: rgba(10,20,16,.55);
+  position: relative; cursor: grab; background: rgba(10, 20, 16,.55);
   border-radius: 10px; padding: 3px 2px 4px;
 }
 .slot-player:active { cursor: grabbing; }
@@ -45,14 +45,14 @@
 }
 .slot-empty {
   width: 34px; height: 34px; margin: 0 auto; border-radius: 50%;
-  border: 2px dashed rgba(255,255,255,.45); color: rgba(255,255,255,.6);
+  border: 2px dashed rgba(255, 255, 255,.45); color: rgba(255, 255, 255,.6);
   display: flex; align-items: center; justify-content: center; font-size: 18px;
 }
 .suit-badge {
   position: absolute; top: 12px; right: 2px; min-width: 20px; height: 18px;
-  border-radius: 9px; color: #05131a; font-size: 11px; font-weight: 800;
+  border-radius: 9px; color: #1a0f05; font-size: 11px; font-weight: 800;
   display: inline-flex; align-items: center; justify-content: center; padding: 0 5px;
-  box-shadow: 0 1px 3px rgba(0,0,0,.5);
+  box-shadow: 0 1px 3px rgba(0, 0, 0,.5);
 }
 .suit-badge.sm { position: static; }
 
@@ -111,9 +111,9 @@
 
 /* Unterboxen pro Chance/Tor */
 .live-group { border: 1px solid var(--border); background: rgba(255, 255, 255, 0.03); border-radius: 9px; padding: 8px 11px 10px; animation: fadeIn .25s ease; }
-.live-group.goal { border-color: var(--accent); background: rgba(0, 217, 255, 0.08); }
+.live-group.goal { border-color: var(--accent); background: rgba(241, 160, 55, 0.08); }
 .live-group-min { display: inline-block; font-size: 11px; font-weight: 800; color: var(--text-2); background: rgba(255, 255, 255, 0.08); border-radius: 5px; padding: 2px 7px; margin-bottom: 6px; font-variant-numeric: tabular-nums; }
-.live-group.goal .live-group-min { color: #06111a; background: var(--accent); }
+.live-group.goal .live-group-min { color: #130d10; background: var(--accent); }
 .live-group-body { display: flex; flex-direction: column; gap: 3px; }
 .live-gline { font-size: 14px; line-height: 1.45; color: var(--text); }
 .live-gline.chance { color: var(--yellow); }

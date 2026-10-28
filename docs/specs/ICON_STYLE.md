@@ -16,7 +16,7 @@ haben).
 |--------------------|------------------------------------------------------------------------|
 | **Look**           | Duotone / Flat modern – flache, gefüllte Formen                        |
 | **Basisfarbe**     | Off-White `#e8edf4` (entspricht `--text`)                              |
-| **Akzentfarbe**    | Genau **EIN** türkiser Akzent `#00d9ff` (entspricht `--accent`) pro Icon |
+| **Akzentfarbe**    | Genau **EIN** türkiser Akzent `#f2a541` (entspricht `--accent`) pro Icon |
 | **Outline/Glow**   | Keine Konturlinien, kein Schlagschatten, kein Glow                     |
 | **Ecken**          | Sanft gerundet (weiche, freundliche Formen)                           |
 | **Zeichenfläche**  | `viewBox="0 0 24 24"`, optisch einheitlich groß (ca. 2 px Rand)       |

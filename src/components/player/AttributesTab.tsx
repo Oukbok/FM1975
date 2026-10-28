@@ -16,7 +16,7 @@ function Radar({ p }: { p: Player }) {
     <svg viewBox="0 0 260 260" className="pp-radar">
       {[0.25, 0.5, 0.75, 1].map((f) => <polygon key={f} points={poly(() => R * f)} fill="none" stroke="var(--border)" strokeWidth="1" />)}
       {groups.map((_, i) => { const [x, y] = pt(i, R); return <line key={i} x1={C} y1={C} x2={x} y2={y} stroke="var(--border)" strokeWidth="1" />; })}
-      <polygon points={poly((i) => (R * groupAvg(p, groups[i].keys)) / 100)} fill="rgba(0,217,255,0.22)" stroke="var(--accent)" strokeWidth="2" />
+      <polygon points={poly((i) => (R * groupAvg(p, groups[i].keys)) / 100)} fill="rgba(241, 160, 55,0.22)" stroke="var(--accent)" strokeWidth="2" />
       {groups.map((g, i) => {
         const [x, y] = pt(i, R + 18);
         return (

@@ -15,9 +15,9 @@
      das Menü das Logo bei keiner Auflösung überdecken. Ein dezenter dunkler
      Verlauf legt sich über das Bild und hält Logo/Menü stets gut lesbar. */
   background:
-    radial-gradient(1100px 520px at 50% -8%, rgba(0, 217, 255, 0.12), transparent 62%),
-    linear-gradient(180deg, rgba(6, 8, 11, 0.45), rgba(6, 8, 11, 0.72)),
-    url('assets/menu-bg-3.jpg') center / cover no-repeat,
+    radial-gradient(1100px 520px at 50% -8%, rgba(241, 160, 55, 0.12), transparent 62%),
+    linear-gradient(180deg, rgba(10, 7, 8, 0.45), rgba(10, 7, 8, 0.72)),
+    url('assets/start-tribuene.jpg') center / cover no-repeat,
     var(--bg);
 }
 .menu-wrap {
@@ -123,7 +123,7 @@
 .menu-btn.primary {
   background: linear-gradient(180deg, var(--accent), var(--accent-dim));
   border-color: var(--accent);
-  color: #04222b;
+  color: #291706;
   font-weight: 800;
 }
 .menu-btn.primary:hover:not(:disabled) { filter: brightness(1.08); }
@@ -396,4 +396,4 @@
   backdrop-filter: blur(3px);
 }
 .st-sub > * { width: 100%; max-width: 720px; }
-.st-note { position: absolute; left: 56px; bottom: 96px; font-size: 13px; color: #ffb4a6; text-shadow: 0 2px 8px rgba(0,0,0,0.7); }
+.st-note { position: absolute; left: 56px; bottom: 96px; font-size: 13px; color: #ffb4a6; text-shadow: 0 2px 8px rgba(0, 0, 0,0.7); }

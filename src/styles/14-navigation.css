@@ -11,7 +11,7 @@
   margin: 0 0 18px;
   /* Untermenue: voll deckendes Dunkelblau – hier scheint bewusst KEIN
      Hintergrundbild durch (klare Abgrenzung zum leicht transparenten Header). */
-  background: linear-gradient(180deg, #0b0f16 0%, #0c111a 100%);
+  background: linear-gradient(180deg, #130e10 0%, #161013 100%);
   border-bottom: 1px solid var(--border);
 }
 

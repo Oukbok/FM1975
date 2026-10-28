@@ -112,7 +112,7 @@
   padding: 10px 10px 11px;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: linear-gradient(180deg, #161d29 0%, #121924 100%);
+  background: linear-gradient(180deg, #241b20 0%, #1f171b 100%);
   text-align: center;
   overflow: hidden;
 }
@@ -140,7 +140,7 @@
   background: linear-gradient(180deg, #f6eedb 0%, #ece0c4 100%);
   box-shadow: 0 0 0 1px rgba(255, 159, 67, 0.6), 0 0 16px rgba(255, 159, 67, 0.3);
 }
-.kbsheet.is-today .kbday { color: #1b2330; }
+.kbsheet.is-today .kbday { color: #2a2126; }
 .kbsheet.is-today .kbwd { color: #6b5532; }
 .kbsheet.is-today .kbsheet-lbl { color: #8a4b0c; }
 .kbsheet.is-today .kbsheet-ico .game-icon { filter: brightness(0) opacity(0.75); }
@@ -188,7 +188,7 @@
    tbody-tr:hover ueberdeckt). Die farbige Zonen-Kante (box-shadow) bleibt. */
 .dxt-row { cursor: pointer; }
 .dxt-row:hover td { background: var(--panel-hover); color: var(--text); }
-.dxt-row.me:hover td { background: rgba(0, 217, 255, 0.16); }
+.dxt-row.me:hover td { background: rgba(241, 160, 55, 0.16); }
 .dxt-row:hover td.dxt-club { color: var(--accent); }
 .dxt-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-soft); font-size: 16.5px; color: var(--text-3); }
 .dxt-legend span { display: inline-flex; align-items: center; gap: 6px; }
@@ -255,7 +255,7 @@
      Platz der Namen mit ausfüllen können. */
   height: 156px;
   background:
-    linear-gradient(180deg, rgba(8, 11, 17, 0.34) 0%, rgba(8, 11, 17, 0.72) 100%),
+    linear-gradient(180deg, rgba(15, 11, 13, 0.34) 0%, rgba(15, 11, 13, 0.72) 100%),
     url('assets/stadion-zuschauer.jpg?v=1') center / cover no-repeat;
 }
 /* Wappen-Reihe füllt die gesamte Foto-Höhe; jede Seite ist eine Spalte
@@ -284,16 +284,16 @@
 .cns-form { display: flex; gap: 4px; }
 .cns-cmp-row > .cns-form:first-child { justify-content: flex-end; }
 .cns-cmp-row > .cns-form:last-child { justify-content: flex-start; }
-.cns-fp { width: 20px; height: 20px; border-radius: 5px; font-size: 12px; font-weight: 800; font-style: normal; display: inline-flex; align-items: center; justify-content: center; color: #06111a; }
+.cns-fp { width: 20px; height: 20px; border-radius: 5px; font-size: 12px; font-weight: 800; font-style: normal; display: inline-flex; align-items: center; justify-content: center; color: #130d10; }
 .cns-fp-W { background: var(--green); }
-.cns-fp-D { background: #8a97a8; }
+.cns-fp-D { background: #a39a8e; }
 .cns-fp-L { background: #ff5d5d; }
 
 /* Hintergrund der Zentrale-Boxen (leicht transparent, ohne Muster) */
 .shell-zentrale .dashx > .card {
   background:
-    radial-gradient(120% 80% at 50% -10%, rgba(0, 217, 255, 0.06), transparent 60%),
-    linear-gradient(180deg, rgba(26, 34, 46, 0.74), rgba(15, 21, 31, 0.78));
+    radial-gradient(120% 80% at 50% -10%, rgba(241, 160, 55, 0.06), transparent 60%),
+    linear-gradient(180deg, rgba(40, 32, 36, 0.74), rgba(27, 19, 23, 0.78));
 }
 
 /* --- Termine --- */

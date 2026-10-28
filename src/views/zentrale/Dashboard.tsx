@@ -130,9 +130,9 @@ export function Dashboard({ g, onGoto, onWatch, onOpenEditor }: {
     : 0;
   // Positionszaehler im Mockup-Stil (TW/ABW/MF/ST) mit je eigener Akzentfarbe.
   const posMeta: { key: 'GK' | 'DEF' | 'MID' | 'ATT'; label: string; color: string }[] = [
-    { key: 'GK', label: 'TW', color: '#00d9ff' },
+    { key: 'GK', label: 'TW', color: '#f2a541' },
     { key: 'DEF', label: 'ABW', color: '#3ddc84' },
-    { key: 'MID', label: 'MF', color: '#4aa8ff' },
+    { key: 'MID', label: 'MF', color: '#c0a689' },
     { key: 'ATT', label: 'ST', color: '#9b7cff' },
   ];
 
@@ -360,8 +360,8 @@ export function Dashboard({ g, onGoto, onWatch, onOpenEditor }: {
                 ))}
               </div>
               <div className="ckd3-donuts">
-                <Donut value={String(avgOvr)} frac={avgOvr / 100} color="#00d9ff" label="Ø Stärke" ring={false} />
-                <Donut value={String(Math.round(avgAge))} frac={avgAge / 40} color="#4aa8ff" label="Ø Alter" ring={false} />
+                <Donut value={String(avgOvr)} frac={avgOvr / 100} color="#f2a541" label="Ø Stärke" ring={false} />
+                <Donut value={String(Math.round(avgAge))} frac={avgAge / 40} color="#c0a689" label="Ø Alter" ring={false} />
                 <Donut value={String(teamChemie)} frac={teamChemie / 100} color="#3ddc84" label="Teamchemie" />
               </div>
             </div>

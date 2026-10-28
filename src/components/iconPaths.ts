@@ -5,16 +5,16 @@
 // Größe/Gewicht). Zweifarbig: Off-White-Basis + GENAU EIN türkises Akzent-
 // element pro Icon. Farben werden über die Platzhalter %BASE% / %ACCENT%
 // eingesetzt und beim Laden durch feste Hex-Werte ersetzt:
-//   Off-White  #e8edf4  (= Theme var(--text))
-//   Türkis     #00d9ff  (= Theme var(--accent))
+//   Off-White  #f2eeea  (= Theme var(--text))
+//   Türkis     #f1a037  (= Theme var(--accent))
 // Dieselben Rohdaten erzeugen via scripts/gen-icons.mjs die einzelnen
 // public/assets/icons/*.svg — Stil bleibt garantiert identisch.
 // Neue Icons: hier einen weiteren Eintrag ergänzen (siehe docs/ICON_STYLE.md).
 // =============================================================================
 
 /** Feste Icon-Farben (bewusst hart kodiert für Pixel-Konsistenz mit den .svg). */
-export const BASE = '#e8edf4';
-export const ACCENT = '#00d9ff';
+export const BASE = '#f2eeea';
+export const ACCENT = '#f1a037';
 
 /** Material-Zahnrad (ein Zahn-Ring mit Loch, evenodd) — als Basisform. */
 const GEAR =
@@ -149,18 +149,18 @@ export const RAW: Record<string, string> = {
 
   // 14b) Spiel (Kalender) — rein weisser Fussball: weisse Kugel, Muster als feine dunkle Nahtlinien
   matchballwhite:
-    '<circle cx="12" cy="12" r="9" fill="%BASE%" stroke="#0e1420" stroke-width="0.7"/>' +
-    '<polygon points="12,8.4 15.42,10.89 14.12,14.91 9.88,14.91 8.58,10.89" fill="none" stroke="#0e1420" stroke-width="0.85" stroke-linejoin="round"/>' +
-    '<line x1="12" y1="8.4" x2="12" y2="3.8" stroke="#0e1420" stroke-width="0.85" stroke-linecap="round"/>' +
-    '<line x1="15.42" y1="10.89" x2="19.8" y2="9.47" stroke="#0e1420" stroke-width="0.85" stroke-linecap="round"/>' +
-    '<line x1="14.12" y1="14.91" x2="16.82" y2="18.63" stroke="#0e1420" stroke-width="0.85" stroke-linecap="round"/>' +
-    '<line x1="9.88" y1="14.91" x2="7.18" y2="18.63" stroke="#0e1420" stroke-width="0.85" stroke-linecap="round"/>' +
-    '<line x1="8.58" y1="10.89" x2="4.2" y2="9.47" stroke="#0e1420" stroke-width="0.85" stroke-linecap="round"/>' +
-    '<polygon points="12,3.9 13.43,4.94 12.88,6.61 11.12,6.61 10.57,4.94" fill="none" stroke="#0e1420" stroke-width="0.7" stroke-linejoin="round"/>' +
-    '<polygon points="18.28,8.46 19.71,9.5 19.16,11.17 17.4,11.17 16.85,9.5" fill="none" stroke="#0e1420" stroke-width="0.7" stroke-linejoin="round"/>' +
-    '<polygon points="15.88,15.84 17.31,16.88 16.76,18.55 15.0,18.55 14.45,16.88" fill="none" stroke="#0e1420" stroke-width="0.7" stroke-linejoin="round"/>' +
-    '<polygon points="8.12,15.84 9.55,16.88 9.0,18.55 7.24,18.55 6.69,16.88" fill="none" stroke="#0e1420" stroke-width="0.7" stroke-linejoin="round"/>' +
-    '<polygon points="5.72,8.46 7.15,9.5 6.6,11.17 4.84,11.17 4.29,9.5" fill="none" stroke="#0e1420" stroke-width="0.7" stroke-linejoin="round"/>',
+    '<circle cx="12" cy="12" r="9" fill="%BASE%" stroke="#1b1317" stroke-width="0.7"/>' +
+    '<polygon points="12,8.4 15.42,10.89 14.12,14.91 9.88,14.91 8.58,10.89" fill="none" stroke="#1b1317" stroke-width="0.85" stroke-linejoin="round"/>' +
+    '<line x1="12" y1="8.4" x2="12" y2="3.8" stroke="#1b1317" stroke-width="0.85" stroke-linecap="round"/>' +
+    '<line x1="15.42" y1="10.89" x2="19.8" y2="9.47" stroke="#1b1317" stroke-width="0.85" stroke-linecap="round"/>' +
+    '<line x1="14.12" y1="14.91" x2="16.82" y2="18.63" stroke="#1b1317" stroke-width="0.85" stroke-linecap="round"/>' +
+    '<line x1="9.88" y1="14.91" x2="7.18" y2="18.63" stroke="#1b1317" stroke-width="0.85" stroke-linecap="round"/>' +
+    '<line x1="8.58" y1="10.89" x2="4.2" y2="9.47" stroke="#1b1317" stroke-width="0.85" stroke-linecap="round"/>' +
+    '<polygon points="12,3.9 13.43,4.94 12.88,6.61 11.12,6.61 10.57,4.94" fill="none" stroke="#1b1317" stroke-width="0.7" stroke-linejoin="round"/>' +
+    '<polygon points="18.28,8.46 19.71,9.5 19.16,11.17 17.4,11.17 16.85,9.5" fill="none" stroke="#1b1317" stroke-width="0.7" stroke-linejoin="round"/>' +
+    '<polygon points="15.88,15.84 17.31,16.88 16.76,18.55 15.0,18.55 14.45,16.88" fill="none" stroke="#1b1317" stroke-width="0.7" stroke-linejoin="round"/>' +
+    '<polygon points="8.12,15.84 9.55,16.88 9.0,18.55 7.24,18.55 6.69,16.88" fill="none" stroke="#1b1317" stroke-width="0.7" stroke-linejoin="round"/>' +
+    '<polygon points="5.72,8.46 7.15,9.5 6.6,11.17 4.84,11.17 4.29,9.5" fill="none" stroke="#1b1317" stroke-width="0.7" stroke-linejoin="round"/>',
 
   // 15) Zentrale — 2x2-Kachelraster, obere linke Kachel türkis
   zentrale:
@@ -302,7 +302,7 @@ export const RAW: Record<string, string> = {
   // =========================================================================
   // DASHBOARD-KOPFSYMBOLE (Zentrale) — solide, monochrom weiße Glyphen,
   // exakt nach Mockup "Variante 12". Bewusst EINFARBIG (nur %BASE% + dunkle
-  // Aussparung #0e1420), damit sie 1:1 wie in der Vorlage aussehen.
+  // Aussparung #1b1317), damit sie 1:1 wie in der Vorlage aussehen.
   // =========================================================================
 
   // Vereinsüberblick — antikes Gebäude (Säulen + Giebel), wie Mockup
@@ -327,14 +327,14 @@ export const RAW: Record<string, string> = {
   // Nächstes Spiel — Fußball (weiß mit dunklen Segmenten), wie Mockup
   dashBall:
     '<circle cx="12" cy="12" r="8.6" fill="%BASE%"/>' +
-    '<g stroke="#0e1420" stroke-width="0.9" stroke-linecap="round">' +
+    '<g stroke="#1b1317" stroke-width="0.9" stroke-linecap="round">' +
     '<line x1="12.00" y1="9.50" x2="12.00" y2="7.00"/>' +
     '<line x1="14.38" y1="11.23" x2="16.76" y2="10.45"/>' +
     '<line x1="13.47" y1="14.02" x2="14.94" y2="16.05"/>' +
     '<line x1="10.53" y1="14.02" x2="9.06" y2="16.05"/>' +
     '<line x1="9.62" y1="11.23" x2="7.24" y2="10.45"/>' +
     '</g>' +
-    '<g fill="#0e1420">' +
+    '<g fill="#1b1317">' +
     '<polygon points="12.00 9.50 14.38 11.23 13.47 14.02 10.53 14.02 9.62 11.23"/>' +
     '<polygon points="12.00 3.90 13.62 5.07 13.00 6.98 11.00 6.98 10.38 5.07"/>' +
     '<polygon points="19.70 9.50 19.09 11.40 17.09 11.40 16.47 9.50 18.09 8.32"/>' +
@@ -345,7 +345,7 @@ export const RAW: Record<string, string> = {
 
   // Finanzen — zwei Münzstapel (weiße Scheiben), wie Mockup
   dashFinanzen:
-    '<g fill="%BASE%" stroke="#0e1420" stroke-width="0.6">' +
+    '<g fill="%BASE%" stroke="#1b1317" stroke-width="0.6">' +
     '<ellipse cx="15.3" cy="15.4" rx="3.2" ry="1.25"/>' +
     '<ellipse cx="15.3" cy="13.5" rx="3.2" ry="1.25"/>' +
     '<ellipse cx="15.3" cy="11.6" rx="3.2" ry="1.25"/>' +
@@ -359,16 +359,16 @@ export const RAW: Record<string, string> = {
   dashKader:
     '<circle cx="15.4" cy="8.6" r="2.6" fill="%BASE%"/>' +
     '<path d="M10.4 18.6v-.4c0-3 2.3-5 5-5s5 2 5 5v.4Z" fill="%BASE%"/>' +
-    '<circle cx="9" cy="9.2" r="3.1" fill="%BASE%" stroke="#0e1420" stroke-width="0.7"/>' +
-    '<path d="M2.6 19.6v-.5c0-3.2 2.6-5.6 6.4-5.6s6.4 2.4 6.4 5.6v.5Z" fill="%BASE%" stroke="#0e1420" stroke-width="0.7"/>',
+    '<circle cx="9" cy="9.2" r="3.1" fill="%BASE%" stroke="#1b1317" stroke-width="0.7"/>' +
+    '<path d="M2.6 19.6v-.5c0-3.2 2.6-5.6 6.4-5.6s6.4 2.4 6.4 5.6v.5Z" fill="%BASE%" stroke="#1b1317" stroke-width="0.7"/>',
 
   // Termine — Kalender mit Punkteraster, wie Mockup
   dashTermine:
     '<rect x="3.5" y="4.8" width="17" height="15.7" rx="2.3" fill="%BASE%"/>' +
     '<rect x="7" y="3" width="2" height="4" rx="1" fill="%BASE%"/>' +
     '<rect x="15" y="3" width="2" height="4" rx="1" fill="%BASE%"/>' +
-    '<rect x="5" y="9" width="14" height="0.9" fill="#0e1420"/>' +
-    '<g fill="#0e1420">' +
+    '<rect x="5" y="9" width="14" height="0.9" fill="#1b1317"/>' +
+    '<g fill="#1b1317">' +
     '<circle cx="7" cy="12.6" r="0.85"/><circle cx="10.3" cy="12.6" r="0.85"/><circle cx="13.7" cy="12.6" r="0.85"/><circle cx="17" cy="12.6" r="0.85"/>' +
     '<circle cx="7" cy="15.4" r="0.85"/><circle cx="10.3" cy="15.4" r="0.85"/><circle cx="13.7" cy="15.4" r="0.85"/><circle cx="17" cy="15.4" r="0.85"/>' +
     '<circle cx="7" cy="18.2" r="0.85"/><circle cx="10.3" cy="18.2" r="0.85"/><circle cx="13.7" cy="18.2" r="0.85"/><circle cx="17" cy="18.2" r="0.85"/>' +
@@ -377,8 +377,8 @@ export const RAW: Record<string, string> = {
   // Nachrichten — Zeitung (weiß) mit Bild- und Textbloecken, im dash-Stil
   dashNews:
     '<rect x="3.6" y="5.4" width="16.8" height="14.2" rx="2.1" fill="%BASE%"/>' +
-    '<rect x="5.9" y="8" width="5.4" height="4.3" rx="0.6" fill="#0e1420"/>' +
-    '<g fill="#0e1420">' +
+    '<rect x="5.9" y="8" width="5.4" height="4.3" rx="0.6" fill="#1b1317"/>' +
+    '<g fill="#1b1317">' +
     '<rect x="12.6" y="8.1" width="5.5" height="1.05" rx="0.5"/>' +
     '<rect x="12.6" y="10.3" width="5.5" height="1.05" rx="0.5"/>' +
     '<rect x="12.6" y="12.5" width="3.7" height="1.05" rx="0.5"/>' +
@@ -397,7 +397,7 @@ export const RAW: Record<string, string> = {
   // Textmodus: Trillerpfeife (Zuruf) — weisser Korpus, tuerkise Schallwellen
   whistle:
     '<path d="M4 12.5a4.5 4.5 0 0 0 8.6 1.9H19a1 1 0 0 0 1-1v-2.3a1 1 0 0 0-1-1h-8.3A4.5 4.5 0 0 0 4 12.5Z" fill="%BASE%"/>' +
-    '<circle cx="8.5" cy="12.5" r="1.6" fill="#0a0e14"/>' +
+    '<circle cx="8.5" cy="12.5" r="1.6" fill="#110d0f"/>' +
     '<path d="M14 6.5c.8-.8 2-.8 2.8 0M13 4.6c1.4-1.4 3.6-1.4 5 0" fill="none" stroke="%ACCENT%" stroke-width="1.4" stroke-linecap="round"/>',
 
   // Textmodus: Auswechslung — weisser Pfeil raus, tuerkiser Pfeil rein

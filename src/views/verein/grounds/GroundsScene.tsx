@@ -63,7 +63,7 @@ export function GroundsScene(props: SceneProps) {
           {node}
           {on && (
             <g className="gr-label" pointerEvents="none">
-              <rect x={lx - labels[k].length * 3.6 - 8} y={ly - 26} width={labels[k].length * 7.2 + 16} height={22} rx={6} fill="rgba(10,16,24,0.88)" stroke="#00D9FF" />
+              <rect x={lx - labels[k].length * 3.6 - 8} y={ly - 26} width={labels[k].length * 7.2 + 16} height={22} rx={6} fill="rgba(10,16,24,0.88)" stroke="#F2A541" />
               <text x={lx} y={ly - 11} textAnchor="middle" fill="#fff" fontSize={12} fontWeight={800}>{labels[k]}</text>
             </g>
           )}
@@ -277,7 +277,7 @@ export function GroundsScene(props: SceneProps) {
   plot('dataCenter', 46.5, 35, 3, 3, (
     <g>
       <Box x={46.5} y={35} w={3} d={3} h={2.2} color="#2b3540">
-        <WindowsFront x={46.5} w={3} yf={38} z0={0.5} rows={2} color="#00D9FF" step={0.8} ww={0.5} wh={0.3} rowH={0.7} />
+        <WindowsFront x={46.5} w={3} yf={38} z0={0.5} rows={2} color="#F2A541" step={0.8} ww={0.5} wh={0.3} rowH={0.7} />
       </Box>
       <ellipse cx={P(48, 36.5, 2.9)[0]} cy={P(48, 36.5, 2.9)[1]} rx={9} ry={5} fill="#dfe6ec" stroke="#9aa6b2" />
     </g>

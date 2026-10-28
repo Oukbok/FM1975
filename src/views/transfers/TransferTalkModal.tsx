@@ -120,7 +120,7 @@ export function TransferTalkModal({ g, talk, onClose, onChange }: { g: Game; tal
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal modal-xl" onClick={(e) => e.stopPropagation()}>
-        <div className="mx-head" style={{ background: `linear-gradient(120deg, ${seller?.colors.primary ?? '#1a2331'}22, transparent 70%)` }}>
+        <div className="mx-head" style={{ background: `linear-gradient(120deg, ${seller?.colors.primary ?? '#2b2026'}22, transparent 70%)` }}>
           {p && <PlayerAvatar player={p} club={seller} size="large" />}
           <div>
             <div className="mx-sub">Transferverhandlung · {seller && <ClubCrest club={seller} size={18} />} {seller?.name}</div>

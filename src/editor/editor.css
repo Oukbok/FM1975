@@ -80,7 +80,7 @@
   border: 1px solid var(--border); background: var(--panel-2); color: var(--text); font: inherit; font-weight: 600; cursor: pointer;
 }
 .ed-btn:hover { border-color: var(--accent-dim); background: var(--panel-hover); }
-.ed-btn.on { background: var(--accent); border-color: var(--accent); color: #04121a; }
+.ed-btn.on { background: var(--accent); border-color: var(--accent); color: #110d0f; }
 .ed-btn.on:hover { filter: brightness(1.08); background: var(--accent); }
 .ed-btn.on svg { filter: brightness(0); }
 .ed-in {

@@ -227,7 +227,7 @@
 .seg-btn:hover { background: var(--panel-hover); color: var(--text); }
 .seg-btn.active {
   background: var(--accent);
-  color: #04202a;
+  color: #281606;
 }
 
 /* Rahmen: Automatisch (nur UI-Skalierung via zoom) */
@@ -237,7 +237,7 @@
 .display-outer {
   position: fixed;
   inset: 0;
-  background: #05070a;
+  background: #090608;
   overflow: hidden;
   z-index: 0;
 }

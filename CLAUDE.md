@@ -33,7 +33,7 @@ React 18 + TypeScript, gebaut mit esbuild. Kein Backend – alles läuft im Brow
 
 ## Feste Vorgaben von Pascal
 - **Keine Emojis** in der UI – nur `<Icon>` (`src/components/iconPaths.ts`; neues Icon dort ergänzen).
-- Genau **eine** Akzentfarbe `#00D9FF`. Sprache Deutsch, informelles „du“.
+- Genau **eine** Akzentfarbe: Bernstein `#F2A541` (Thema „Abendhimmel“ wie der Startbildschirm; kein Türkis mehr). Farben nur über die Tokens in `00-base.css`; Schriften: Oswald (`--font-display`, Titel/Menüs/Knöpfe, Großbuchstaben) + Barlow (`--font-ui`), Regeln in `25-theme.css`. Sprache Deutsch, informelles „du“.
 - Währung DM bis 2001, EUR ab 2002 (`engine/economy.ts`). Datum **immer UTC**.
 - Geld: Kontostand/Buchungen **nominal**; Preisschilder (Gehalt, Marktwert, Transferbudget, Prämien-/Vertragswerte) in **1975-Basis**, Anzeige mit `fmtPrice`, Buchung × `economyScale`. Finanzen 2.0 (Marke, TV, Vermarktung, KI-Haushalt, FFP) in `engine/clubEconomy.ts` + `game/seasonFinance.ts`.
 - Zentrale (Dashboard): Footer unten lassen, Boxenhöhen nicht ändern, Boxen nur verschieben, ohne Scrollen.

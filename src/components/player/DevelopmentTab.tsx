@@ -29,7 +29,7 @@ function HistoryChart({ p }: { p: Player }) {
           <text x={4} y={y(v) + 4} className="pp-chart-axis">{Math.round(v)}</text>
         </g>
       ))}
-      <path d={`${path} L${x(pts.length - 1)},${H - pad} L${x(0)},${H - pad} Z`} fill="rgba(0,217,255,0.12)" />
+      <path d={`${path} L${x(pts.length - 1)},${H - pad} L${x(0)},${H - pad} Z`} fill="rgba(241, 160, 55,0.12)" />
       <path d={path} fill="none" stroke="var(--accent)" strokeWidth="2.5" />
       {pts.map((h, i) => <circle key={i} cx={x(i)} cy={y(h.ability)} r="3" fill="var(--accent)" />)}
       <text x={pad} y={H - 6} className="pp-chart-axis">{utcDate(pts[0].date)}</text>

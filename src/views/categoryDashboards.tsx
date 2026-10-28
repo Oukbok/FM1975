@@ -320,7 +320,7 @@ export function Sparkline({ values, height = 120 }: { values: number[]; height?:
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="dspark" preserveAspectRatio="none">
       {min < 0 && <line x1={0} x2={W} y1={y(0)} y2={y(0)} stroke="var(--red)" strokeDasharray="4 4" strokeWidth="1" />}
-      <path d={`${path} L${x(values.length - 1)},${H} L${x(0)},${H} Z`} fill="rgba(0,217,255,0.12)" />
+      <path d={`${path} L${x(values.length - 1)},${H} L${x(0)},${H} Z`} fill="rgba(241, 160, 55,0.12)" />
       <path d={path} fill="none" stroke="var(--accent)" strokeWidth="2.5" vectorEffect="non-scaling-stroke" />
     </svg>
   );

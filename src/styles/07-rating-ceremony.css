@@ -3,7 +3,7 @@
    ========================================================================== */
 .reveal-overlay {
   position: fixed; inset: 0; z-index: 200;
-  background: radial-gradient(circle at 50% 30%, #10202b, #05080d 75%);
+  background: radial-gradient(circle at 50% 30%, #22191e, #0a0809 75%);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   animation: reveal-fade .3s ease;
 }
@@ -23,10 +23,10 @@
   background: var(--panel); border: 1px solid var(--panel-2); border-radius: 20px;
   padding: 26px 26px 22px; text-align: center;
   display: flex; flex-direction: column; align-items: center; gap: 8px;
-  box-shadow: 0 24px 60px rgba(0,0,0,.55);
+  box-shadow: 0 24px 60px rgba(0, 0, 0,.55);
 }
-.reveal-card.phase-done.dir-up { border-color: var(--green); box-shadow: 0 24px 60px rgba(61,220,132,.22); }
-.reveal-card.phase-done.dir-down { border-color: var(--red); box-shadow: 0 24px 60px rgba(255,92,108,.22); }
+.reveal-card.phase-done.dir-up { border-color: var(--green); box-shadow: 0 24px 60px rgba(61, 220, 132,.22); }
+.reveal-card.phase-done.dir-down { border-color: var(--red); box-shadow: 0 24px 60px rgba(255, 92, 108,.22); }
 .reveal-card.phase-done { animation: reveal-pop .45s cubic-bezier(.2,1.4,.5,1); }
 @keyframes reveal-pop { 0% { transform: scale(.9); opacity: .4; } 100% { transform: scale(1); opacity: 1; } }
 .reveal-avatar { width: 84px; height: 84px; }
@@ -60,9 +60,9 @@
 .reveal-badge {
   font-size: 14px; font-weight: 900; letter-spacing: 1px; padding: 5px 16px; border-radius: 20px;
 }
-.reveal-badge.dir-up { background: rgba(61,220,132,.16); color: var(--green); }
-.reveal-badge.dir-down { background: rgba(255,92,108,.16); color: var(--red); }
-.reveal-badge.dir-mixed { background: rgba(255,203,69,.16); color: var(--yellow); }
+.reveal-badge.dir-up { background: rgba(61, 220, 132,.16); color: var(--green); }
+.reveal-badge.dir-down { background: rgba(255, 92, 108,.16); color: var(--red); }
+.reveal-badge.dir-mixed { background: rgba(255, 203, 69,.16); color: var(--yellow); }
 .reveal-ovr {
   display: flex; flex-direction: column; align-items: center; gap: 3px;
   background: var(--bg-2); border-radius: 12px; padding: 12px 24px; width: 100%;

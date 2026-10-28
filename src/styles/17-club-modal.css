@@ -32,36 +32,36 @@
 .cm-stat-line {
   display: flex; justify-content: space-between; align-items: center;
   gap: 10px; padding: 5px 0; font-size: 13px;
-  border-bottom: 1px solid var(--border-soft, rgba(255,255,255,0.05));
+  border-bottom: 1px solid var(--border-soft, rgba(255, 255, 255,0.05));
 }
 .cm-stat-line:last-child { border-bottom: none; }
 .cm-stat-line > span { color: var(--text-2); }
 
 .cm-best {
   display: flex; align-items: center; gap: 8px; padding: 6px 4px;
-  border-bottom: 1px solid var(--border-soft, rgba(255,255,255,0.05)); font-size: 13px;
+  border-bottom: 1px solid var(--border-soft, rgba(255, 255, 255,0.05)); font-size: 13px;
 }
 .cm-best:last-child { border-bottom: none; }
 .cm-best-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cm-best.clickable { cursor: pointer; border-radius: 6px; transition: background 0.12s ease; }
-.cm-best.clickable:hover { background: var(--panel-2, rgba(255,255,255,0.04)); }
+.cm-best.clickable:hover { background: var(--panel-2, rgba(255, 255, 255,0.04)); }
 
 .cm-squad { display: flex; flex-direction: column; }
 .cm-squad-row {
   display: grid; grid-template-columns: 28px 1fr 46px 40px 46px;
   align-items: center; gap: 6px; padding: 5px 4px; font-size: 13px;
-  border-bottom: 1px solid var(--border-soft, rgba(255,255,255,0.05));
+  border-bottom: 1px solid var(--border-soft, rgba(255, 255, 255,0.05));
 }
 .cm-squad-row:last-child { border-bottom: none; }
 .cm-squad-head { color: var(--text-3); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 .cm-squad-row.clickable { cursor: pointer; border-radius: 6px; transition: background 0.12s ease; }
-.cm-squad-row.clickable:hover { background: var(--panel-2, rgba(255,255,255,0.04)); }
+.cm-squad-row.clickable:hover { background: var(--panel-2, rgba(255, 255, 255,0.04)); }
 
 .cm-matches { display: flex; flex-direction: column; }
 .cm-match {
   display: grid; grid-template-columns: 58px 20px 1fr 46px;
   align-items: center; gap: 6px; padding: 5px 4px; font-size: 13px;
-  border-bottom: 1px solid var(--border-soft, rgba(255,255,255,0.05));
+  border-bottom: 1px solid var(--border-soft, rgba(255, 255, 255,0.05));
 }
 .cm-match:last-child { border-bottom: none; }
 .cm-match-ha { color: var(--text-3); font-weight: 700; text-align: center; }

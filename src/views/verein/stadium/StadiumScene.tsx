@@ -220,7 +220,7 @@ export function StadiumScene({ blocks, colors, year, month, selected, hover, bui
     const text = `${BLOCK_NAME[id]} · ${blockCapacity(b).toLocaleString('de-DE')}`;
     return (
       <g key={`lb${id}`} pointerEvents="none">
-        <rect x={x - text.length * 3.9 - 10} y={y - 28} width={text.length * 7.8 + 20} height={24} rx={6} fill="rgba(10,16,24,0.92)" stroke="#00D9FF" />
+        <rect x={x - text.length * 3.9 - 10} y={y - 28} width={text.length * 7.8 + 20} height={24} rx={6} fill="rgba(20,15,18,0.92)" stroke="#F2A541" />
         <text x={x} y={y - 11} textAnchor="middle" fill="#fff" fontSize={13} fontWeight={800}>{text}</text>
       </g>
     );

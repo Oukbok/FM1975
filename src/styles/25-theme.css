@@ -1,0 +1,29 @@
+/* =============================================================================
+   THEMA „ABENDHIMMEL“ – übernimmt den Look des Startbildschirms ins ganze Spiel:
+   Oswald (Großbuchstaben) für Logo, Titel, Menüs und Hauptknöpfe, Barlow für
+   Text; Bernstein als einzige Akzentfarbe; warme, dunkle Abendtöne.
+   Farben stehen als Tokens in 00-base.css (:root).
+   ============================================================================= */
+.hd-logo-year { font-family: var(--font-logo); font-weight: 700; letter-spacing: 1px; }
+.hd-logo-title span { font-family: var(--font-display); font-weight: 600; letter-spacing: 4px; }
+.hd-nav-item,
+.tn-sub-item,
+.menu-dd-item,
+.hd-continue-lbl,
+.dxh-title,
+.page-head-title,
+.card-title,
+.mx-head h2,
+.modal h2,
+.modal-title,
+.btn-primary,
+.menu-btn,
+.ng-step-title,
+h1, h2 {
+  font-family: var(--font-display);
+  letter-spacing: 1px;
+}
+.hd-nav-item, .tn-sub-item, .dxh-title, .page-head-title, .hd-continue-lbl, .btn-primary { text-transform: uppercase; font-weight: 600; }
+.dxh-title, .page-head-title { letter-spacing: 1.5px; }
+/* Akzentflächen: dunkle, warme Schrift wie „Neues Spiel“ auf dem Startbildschirm */
+.btn-primary, .menu-btn.primary { color: var(--accent-ink); }

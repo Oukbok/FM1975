@@ -42,7 +42,7 @@
 .fac-pip.on {
   background: var(--accent);
   border-color: var(--accent);
-  box-shadow: 0 0 6px rgba(0, 217, 255, 0.4);
+  box-shadow: 0 0 6px rgba(241, 160, 55, 0.4);
 }
 .fac-desc { line-height: 1.4; }
 .fac-effect {

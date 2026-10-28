@@ -51,7 +51,7 @@ export function InternationalView({ g, onWatch }: { g: Game; onWatch: (id: strin
         {t.foreign ? (
           <span title={t.country} style={{
             width: 14, height: 14, borderRadius: '50%', flex: '0 0 auto',
-            background: t.colors.primary, border: '1px solid rgba(255,255,255,0.35)', display: 'inline-block',
+            background: t.colors.primary, border: '1px solid rgba(255, 255, 255,0.35)', display: 'inline-block',
           }} />
         ) : (
           t.club && <ClubCrest club={t.club} size={18} />

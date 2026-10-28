@@ -9,7 +9,7 @@ simuliert. K.-o.-System, EIN Spiel pro Runde (kein Hin/Rueck – "basic").
 WICHTIG / HARTE VORGABEN:
 - Es duerfen am Ende GENAU 7 vorbestehende TS-Fehler bestehen (App.tsx 5 + LineupView.tsx 2).
   Check: `npx tsc --noEmit 2>&1 | grep -c "error TS"` MUSS 7 ergeben. Keine NEUEN Fehler.
-- Deutsch, informell ("du"), genau EINE Akzentfarbe #00D9FF. Keine Emojis in UI-Komponenten
+- Deutsch, informell ("du"), genau EINE Akzentfarbe #f2a541. Keine Emojis in UI-Komponenten
   (Icons via <Icon name=...>). Datum immer UTC. Waehrung DM (bis 2001).
 - Minimal-invasiv: keine unnoetigen Refactors, bestehende Boxenhoehen/Footer nicht anfassen.
 - Commit-Messages: ASCII, praegnant.
@@ -121,7 +121,7 @@ Ersetze den Platzhalter durch eine echte Ansicht:
   Button (gleicher Weg wie DFB-Pokal-Partien).
 - Vereinsnamen: deutsche via clubView(g,id), auslaendische via g.euroClubs[id].name (+ Land).
   Fuer auslaendische KEIN ClubCrest noetig; ein simpler Farbpunkt (colors.primary) genuegt.
-- Design konsistent (Panels wie sonst, Akzent #00D9FF, Gold `--gold` fuer Pokal-Titel ok).
+- Design konsistent (Panels wie sonst, Akzent #f2a541, Gold `--gold` fuer Pokal-Titel ok).
 
 ## 8. Ligatabelle — Markierungen anpassen (App.tsx)
 
