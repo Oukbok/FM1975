@@ -1489,7 +1489,7 @@ Beim neuen Spiel wählst du **Aus** (keine Legenden), **Fiktive Legenden** (Stan
     title: 'Stadion: Blöcke, Ränge und Dächer',
     keywords: ['stadion', 'block', 'tribüne', 'haupttribüne', 'gegengerade', 'kurve', 'rang', 'oberrang', 'sitzplätze', 'stehplätze', 'dach', 'vip', 'logen', 'lounge', 'anzeigetafel', 'videowand', 'umbau', 'all-seater'],
     body: `## Vier Blöcke
-Unter **Verein → Stadion** siehst du dein Stadion als Zeichnung: **Haupttribüne**, **Gegengerade**, **Nordkurve** und **Südkurve**. Klick auf einen Block öffnet rechts den Planer, die Zeichnung zeigt die Planung sofort. Ohne Auswahl zeigt das Panel Ticketpreis, erwartete Erlöse, Catering, Namensrechte, den laufenden Umbau und die letzten Heimspiele.
+Unter **Verein → Stadion** siehst du dein leeres Stadion von schräg oben, über der Haupttribüne: **Haupttribüne**, **Gegengerade**, **Nordkurve** und **Südkurve** mit Stufen, Sitzreihen in Vereinsfarben, Wellenbrechern, Mundlöchern, Dächern, Logen und Flutlicht der jeweiligen Epoche. Das Dach der Haupttribüne ist durchscheinend gezeichnet, damit das Spielfeld sichtbar bleibt. Klick auf einen Block öffnet rechts den Planer, die Zeichnung zeigt die Planung sofort. Ohne Auswahl zeigt das Panel Ticketpreis, erwartete Erlöse, Catering, Namensrechte, den laufenden Umbau und die letzten Heimspiele.
 
 ## Was du planst
 - **Ränge:** bis zu drei (Unter-, Mittel-, Oberrang), je 3–36 Reihen. Ein neuer Rang kostet 30 % Aufschlag, Abriss 15 DM je Platz.

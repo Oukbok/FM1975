@@ -66,7 +66,7 @@ export function StadiumView({ g, onChange }: { g: Game; onChange: () => void }) 
       <DashBox title={st.name} icon="stadium" span={3} rows={2} flush
         right={`${cap.toLocaleString('de-DE')} Plätze · Kontostand ${fmtDM(club.finances.balance)}`}>
         <div className="gr-wrap st-wrap">
-          <StadiumScene blocks={shown} colors={{ primary, secondary }} year={year} month={month} crowd={Math.min(1, expRate)}
+          <StadiumScene blocks={shown} colors={{ primary, secondary }} year={year} month={month}
             selected={sel} hover={hover} building={bp?.blockId ?? null} onSelect={select} onHover={setHover} />
           {!sel && <div className="gr-hint">Klicke auf einen Block, um Ränge, Sitze, Dach, VIP-Bereich und Logen zu planen.</div>}
           {sel && draft && editable && (
