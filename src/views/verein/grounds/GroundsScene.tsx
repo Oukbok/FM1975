@@ -8,7 +8,8 @@
 // Winter, Herbstfarben im Herbst. Laufendes Stadion-Bauprojekt: Kran.
 // =============================================================================
 import type { ReactNode } from 'react';
-import { BlockId, Club, FacilityKey } from '../../../types';
+import { BlockSide, Club, FacilityKey } from '../../../types';
+import { BLOCK_SIDE } from '../../../engine/stadiumBlocks';
 import { tierGeometry } from '../stadium/StadiumScene';
 import { Box, Car, Crane, Flat, Floodlight, GableRoof, P, Pitch, Track, Tree, WindowsFront, WindowsSide, pts, shade } from './isoKit';
 
@@ -76,13 +77,14 @@ export function GroundsScene(props: SceneProps) {
   const L = lvl('stadium');
   // Eigener Verein mit Blöcken (engine/stadiumBlocks.ts): Höhe/Dach je Seite aus den Rängen.
   const bl = club.stadium.blocks;
-  const blk = (id: BlockId) => bl?.find((b) => b.id === id);
+  const sideOf = (side: BlockSide) => bl?.filter((b) => BLOCK_SIDE[b.id] === side) ?? [];
+  const blk = (side: BlockSide) => sideOf(side).sort((a, b) => tierGeometry(b)[b.tiers.length - 1].zt - tierGeometry(a)[a.tiers.length - 1].zt)[0];
   const arena = bl ? bl.every((b) => b.roof === 'full') : (year >= 2000 && L >= 4) || (year >= 2006 && L >= 3);
   const classicTrack = !arena && year < 1995 && (bl ? bl.every((b) => b.tiers.length === 1) : L <= 3);
   const sh = 0.9 + L * 0.45;
-  const hOf = (id: BlockId, def: number) => { const b = blk(id); if (!b) return def; const geo = tierGeometry(b); return 0.8 + geo[geo.length - 1].zt * 0.22; };
-  const roofOf = (id: BlockId) => blk(id)?.roof ?? 'none';
-  const has = (id: BlockId, def: boolean) => (bl ? !!blk(id) : def);
+  const hOf = (id: BlockSide, def: number) => { const b = blk(id); if (!b) return def; const geo = tierGeometry(b); return 0.8 + geo[geo.length - 1].zt * 0.22; };
+  const roofOf = (id: BlockSide) => blk(id)?.roof ?? 'none';
+  const has = (id: BlockSide, def: boolean) => (bl ? !!blk(id) : def);
   const seat = pal.era >= 1 || L >= 3 ? shade(primary, 0.9) : pal.concrete;
   const stand = (x: number, y: number, w: number, d: number, h: number) => (
     <g>

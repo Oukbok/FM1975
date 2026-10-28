@@ -1487,19 +1487,26 @@ Beim neuen Spiel wählst du **Aus** (keine Legenden), **Fiktive Legenden** (Stan
     id: 'stadium-blocks',
     category: 'environment',
     title: 'Stadion: Blöcke, Ränge und Dächer',
-    keywords: ['stadion', 'block', 'tribüne', 'haupttribüne', 'gegengerade', 'kurve', 'rang', 'oberrang', 'sitzplätze', 'stehplätze', 'dach', 'vip', 'logen', 'lounge', 'anzeigetafel', 'videowand', 'umbau', 'all-seater'],
-    body: `## Vier Blöcke
-Unter **Verein → Stadion** siehst du dein leeres Stadion von schräg oben, über der Haupttribüne: **Haupttribüne**, **Gegengerade**, **Nordkurve** und **Südkurve** mit Stufen, Sitzreihen in Vereinsfarben, Wellenbrechern, Mundlöchern, Dächern, Logen und Flutlicht der jeweiligen Epoche. Das Dach der Haupttribüne ist durchscheinend gezeichnet, damit das Spielfeld sichtbar bleibt. Klick auf einen Block öffnet rechts den Planer, die Zeichnung zeigt die Planung sofort. Ohne Auswahl zeigt das Panel Ticketpreis, erwartete Erlöse, Catering, Namensrechte, den laufenden Umbau und die letzten Heimspiele.
+    keywords: ['stadion', 'block', 'tribüne', 'haupttribüne', 'gegengerade', 'kurve', 'ecke', 'nordtribüne', 'südtribüne', 'schüssel', 'rang', 'oberrang', 'sitzplätze', 'stehplätze', 'dach', 'vip', 'logen', 'lounge', 'anzeigetafel', 'videowand', 'umbau', 'all-seater'],
+    body: `## 14 Blöcke
+Unter **Verein → Stadion** siehst du dein leeres Stadion von schräg oben, über der Haupttribüne. Es besteht aus **14 Blöcken**:
+- **Haupttribüne** (West) und **Gegengerade** (Ost) mit je drei Blöcken: Nord, Mitte, Süd.
+- **Nord- und Südtribüne** hinter den Toren mit je zwei Blöcken: West und Ost.
+- **Vier Kurven** in den Ecken (Nordwest, Nordost, Südwest, Südost), gebogen um die Eckfahne. Sie schließen das Stadion zur Schüssel.
+
+Gezeichnet werden Stufen, Sitzreihen in Vereinsfarben, Wellenbrecher, Mundlöcher, Dächer, Logen und das Flutlicht der jeweiligen Epoche. Das Dach der Haupttribüne ist durchscheinend, damit das Spielfeld sichtbar bleibt. Klick auf einen Block öffnet rechts den Planer, die Zeichnung zeigt die Planung sofort. Ohne Auswahl zeigt das Panel Ticketpreis, erwartete Erlöse, Catering, Namensrechte, den laufenden Umbau und die letzten Heimspiele.
+
+Ältere Spielstände mit vier Blöcken werden beim Laden umgewandelt: Die Kurven übernehmen den Aufbau der Hintertor-Tribünen, Kapazität, Logen, VIP-Bereich und Ticketfaktor bleiben erhalten.
 
 ## Was du planst
 - **Ränge:** bis zu drei (Unter-, Mittel-, Oberrang), je 3–36 Reihen. Ein neuer Rang kostet 30 % Aufschlag, Abriss 15 DM je Platz.
 - **Sitzart je Rang:** Stehplätze (fassen doppelt so viele Menschen wie Sitze, bringen aber nur 75 % des Grundpreises), Holzbänke (bis 1999), Schalensitze, Komfortsitze (ab 1988), Business-Seats (ab 1992, gut dreifacher Preis, wenig Platz). Der Eintritt richtet sich nach dem **Preismix** gegenüber dem Stand bei Einführung der Blöcke (Faktor 0,7–2,2).
 - **Dach:** keins, Teildach oder volles Dach. Überdachte Plätze locken bei Regen bis zu 7 % mehr Zuschauer an, im Winter 3,5 %. Ein neues Dach hebt die Fan-Stimmung um 2 Punkte.
-- **VIP-Tribüne** (ab 1980): zählt wie 6 Logen auf einer Langseite bzw. 4 in der Kurve. **Logen** (ab 1985, Haupttribüne bis 12, Gegengerade bis 10, Kurven bis 4) brauchen einen zweiten Rang oder ein volles Dach. Jede Loge bringt je Heimspiel 1.400 DM (1975-Basis) × Spieltags-Skala × Marke.
-- **Anzeigetafel**, ab 1994 als Videowand.
+- **VIP-Tribüne** (ab 1980, nicht in den Kurven): zählt wie 6 Logen. **Logen** (ab 1985; je Block: Haupttribüne Mitte bis 6, sonst auf den Geraden bis 3 bzw. 4 in der Gegengerade Mitte, hinter dem Tor bis 2, Kurven bis 1) brauchen einen zweiten Rang oder ein volles Dach. Jede Loge bringt je Heimspiel 1.400 DM (1975-Basis) × Spieltags-Skala × Marke.
+- **Anzeigetafel** hinter dem Tor oder in einer Kurve, ab 1994 als Videowand.
 
 ## Bauen
-Jeder Umbau ist ein Bauprojekt: 2–18 Monate Bauzeit, in der die Hälfte des Blocks gesperrt ist. Die Kosten sind ein Preisschild in 1975-Basis × Wirtschaftsskala. Du zahlst bar oder per Kredit über 10, 15 oder 20 Jahre; die Bank lehnt ab, wenn alle Raten zusammen mehr als 12 % des Jahresumsatzes kosten. Es läuft immer nur ein Umbau. Mehr als 90.000 Plätze genehmigt die Stadt nicht.
+Jeder Umbau ist ein Bauprojekt: 2–18 Monate Bauzeit, in der die Hälfte des Blocks gesperrt ist. Die Kosten sind ein Preisschild in 1975-Basis × Wirtschaftsskala. Du zahlst bar oder per Kredit über 10, 15 oder 20 Jahre; die Bank lehnt ab, wenn alle Raten zusammen mehr als 12 % des Jahresumsatzes kosten. Es läuft immer nur ein Umbau, der aber eine ganze Seite umfassen kann: Mit **„Ganze Haupttribüne“** (bzw. Gegengerade, Nord-, Südtribüne oder **„Alle 4 Kurven“**) gelten Ränge und Dach für alle Blöcke der Seite. Gemeinsam gebaut ist es 5 % günstiger; die Bauzeit ist die des längsten Blocks plus ein Monat je weiterem Block (höchstens 24 Monate). Mehr als 90.000 Plätze genehmigt die Stadt nicht.
 
 ## Fans
 Werden Stehplätze zu Sitzplätzen, murren die Fans: bis zu 12 Punkte Stimmung, bei Traditionsvereinen (Tradition ab 70) und in der Ultra-Zeit (2005–2014) anderthalbmal so viel. Neue Stehplätze ab 2005 freuen die Kurve ein wenig.

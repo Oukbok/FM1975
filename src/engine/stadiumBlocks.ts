@@ -1,6 +1,7 @@
 // =============================================================================
-// STADION-BLÖCKE (eigener Verein): Haupttribüne, Gegengerade, Nord- und
-// Südkurve mit je 1–3 Rängen, Platzart je Rang, Dach, VIP-Bereich, Logen,
+// STADION-BLÖCKE (eigener Verein): 14 Blöcke – je drei auf Haupttribüne (West)
+// und Gegengerade (Ost), je zwei hinter den Toren (Nord/Süd), vier Kurven in
+// den Ecken – mit je 1–3 Rängen, Platzart je Rang, Dach, VIP-Bereich, Logen,
 // Anzeigetafel. Reine Rechenlogik – Spielablauf in game/stadiumGame.ts.
 // -----------------------------------------------------------------------------
 // Kapazität = Σ Reihen × Plätze pro Reihe × Dichte der Platzart.
@@ -12,18 +13,32 @@
 // Ab 1998 gilt im Europapokal: nur Sitzplätze.
 // Alle Preise in 1975-Basis (DM), gebucht × economyScale.
 // =============================================================================
-import { BlockId, Club, RoofType, SeatType, StadiumBlock, StadiumTier } from '../types';
+import { BlockId, BlockSide, Club, RoofType, SeatType, StadiumBlock, StadiumTier } from '../types';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
-export const BLOCK_IDS: BlockId[] = ['main', 'opposite', 'north', 'south'];
-export const BLOCK_NAME: Record<BlockId, string> = { main: 'Haupttribüne', opposite: 'Gegengerade', north: 'Nordkurve', south: 'Südkurve' };
+export const BLOCK_IDS: BlockId[] = ['main_n', 'main_m', 'main_s', 'opp_n', 'opp_m', 'opp_s', 'north_w', 'north_e', 'south_w', 'south_e',
+  'curve_nw', 'curve_ne', 'curve_sw', 'curve_se'];
+export const BLOCK_NAME: Record<BlockId, string> = {
+  main_n: 'Haupttribüne Nord', main_m: 'Haupttribüne Mitte', main_s: 'Haupttribüne Süd',
+  opp_n: 'Gegengerade Nord', opp_m: 'Gegengerade Mitte', opp_s: 'Gegengerade Süd',
+  north_w: 'Nordtribüne West', north_e: 'Nordtribüne Ost', south_w: 'Südtribüne West', south_e: 'Südtribüne Ost',
+  curve_nw: 'Kurve Nordwest', curve_ne: 'Kurve Nordost', curve_sw: 'Kurve Südwest', curve_se: 'Kurve Südost',
+};
+export const BLOCK_SIDE: Record<BlockId, BlockSide> = {
+  main_n: 'main', main_m: 'main', main_s: 'main', opp_n: 'opposite', opp_m: 'opposite', opp_s: 'opposite',
+  north_w: 'north', north_e: 'north', south_w: 'south', south_e: 'south',
+  curve_nw: 'curve', curve_ne: 'curve', curve_sw: 'curve', curve_se: 'curve',
+};
+export const SIDE_NAME: Record<BlockSide, string> = { main: 'Haupttribüne', opposite: 'Gegengerade', north: 'Nordtribüne', south: 'Südtribüne', curve: 'alle Kurven' };
+export const sideBlocks = (side: BlockSide): BlockId[] => BLOCK_IDS.filter((id) => BLOCK_SIDE[id] === side);
 export const SEAT_NAME: Record<SeatType, string> = { steh: 'Stehplätze', bank: 'Holzbänke', schale: 'Schalensitze', komfort: 'Komfortsitze', business: 'Business-Seats' };
 export const ROOF_NAME: Record<RoofType, string> = { none: 'kein Dach', partial: 'Teildach', full: 'volles Dach' };
 export const TIER_NAME = ['Unterrang', 'Mittelrang', 'Oberrang'];
 
 const SEATS_PER_ROW = 170;
-const LENGTH: Record<BlockId, number> = { main: 1, opposite: 1, north: 0.62, south: 0.62 };
+const SIDE_LENGTH: Record<BlockSide, number> = { main: 1 / 3, opposite: 1 / 3, north: 0.31, south: 0.31, curve: 0.22 };
+const LENGTH = (id: BlockId) => SIDE_LENGTH[BLOCK_SIDE[id]];
 const DENSITY: Record<SeatType, number> = { steh: 2.0, bank: 1.25, schale: 1, komfort: 0.85, business: 0.55 };
 /** Preisfaktor der Platzart (relativ zum Grundpreis). */
 export const SEAT_PRICE: Record<SeatType, number> = { steh: 0.75, bank: 0.9, schale: 1.1, komfort: 1.45, business: 3.2 };
@@ -33,7 +48,13 @@ const ROOF_COST: Record<RoofType, number> = { none: 0, partial: 45, full: 110 };
 const ROOF_SHARE: Record<RoofType, number> = { none: 0, partial: 0.5, full: 1 };
 export const VIP_COST = 250000;
 export const LOUNGE_COST = 110000;
-export const MAX_LOUNGES: Record<BlockId, number> = { main: 12, opposite: 10, north: 4, south: 4 };
+export const MAX_LOUNGES: Record<BlockId, number> = {
+  main_n: 3, main_m: 6, main_s: 3, opp_n: 3, opp_m: 4, opp_s: 3, north_w: 2, north_e: 2, south_w: 2, south_e: 2,
+  curve_nw: 1, curve_ne: 1, curve_sw: 1, curve_se: 1,
+};
+/** VIP-Bereich nur auf den Geraden und hinter dem Tor, Anzeigetafel nur hinter dem Tor und in den Kurven. */
+export const vipAllowed = (id: BlockId) => BLOCK_SIDE[id] !== 'curve';
+export const scoreboardAllowed = (id: BlockId) => BLOCK_SIDE[id] !== 'main' && BLOCK_SIDE[id] !== 'opposite';
 export const MAX_CAPACITY = 90000;
 
 /** Verfügbarkeit der Platzarten je Epoche. */
@@ -50,7 +71,7 @@ export const videoWall = (year: number) => year >= 1994;
 export const allSeaterEuro = (year: number) => year >= 1998;
 
 export function tierCapacity(id: BlockId, t: StadiumTier): number {
-  return Math.round((SEATS_PER_ROW * LENGTH[id] * t.rows * DENSITY[t.seat]) / 50) * 50;
+  return Math.round((SEATS_PER_ROW * LENGTH(id) * t.rows * DENSITY[t.seat]) / 50) * 50;
 }
 export function blockCapacity(b: StadiumBlock): number {
   return b.tiers.reduce((s, t) => s + tierCapacity(b.id, t), 0);
@@ -92,9 +113,9 @@ export function roofAttendanceFactor(club: Club, weather: string, month: number)
   const bonus = weather === 'regen' ? 0.07 : (month >= 11 || month <= 2) ? 0.035 : 0.01;
   return 1 + share * bonus;
 }
-/** VIP-Bereiche zählen wie je 6 Logen (Langseite) bzw. 4 (Kurve). */
+/** Ein VIP-Bereich zählt wie 6 Logen (Gerade bzw. hinter dem Tor). */
 export function vipAreaBoxes(club: Club): number {
-  return (club.stadium.blocks ?? []).reduce((s, b) => s + (b.vip ? Math.round(6 * LENGTH[b.id] + 0.3) : 0), 0);
+  return (club.stadium.blocks ?? []).reduce((s, b) => s + (b.vip ? Math.round(18 * LENGTH(b.id)) : 0), 0);
 }
 /** Ausbaustufe 1–5 aus dem Blockzustand (für Gelände, Wiki, Vergleiche). */
 export function derivedLevel(blocks: StadiumBlock[]): number {
@@ -102,6 +123,79 @@ export function derivedLevel(blocks: StadiumBlock[]): number {
   const seated = cap ? seatedCapacity(blocks) / cap : 0;
   const score = cap / 16000 + seated * 1.2 + roofShare(blocks) * 1.2 + (blocks.some((b) => b.vip) ? 0.4 : 0);
   return clamp(Math.round(score), 1, 5);
+}
+
+type Legacy = Omit<StadiumBlock, 'id'> & { id: string };
+const LEGACY_IDS = ['main', 'opposite', 'north', 'south'];
+export const isLegacyBlocks = (blocks: { id: string }[] | undefined) => !!blocks?.some((b) => LEGACY_IDS.includes(b.id));
+
+/** Reihen aller Blöcke so skalieren, dass die Kapazität ungefähr `target` ergibt. */
+function fitRows(blocks: StadiumBlock[], target: number): void {
+  for (let i = 0; i < 8; i++) {
+    const cap = blocksCapacity(blocks);
+    if (!cap || Math.abs(cap - target) / target < 0.015) break;
+    const f = target / cap;
+    for (const b of blocks) for (const tr of b.tiers) tr.rows = clamp(Math.round(tr.rows * f), 3, 36);
+  }
+}
+
+/** Vier alte Seiten-Blöcke → 14 Blöcke (Kurven übernehmen die Hintertor-Tribüne). */
+export function splitLegacyBlocks(old: Legacy[]): StadiumBlock[] {
+  const get = (id: string) => old.find((b) => b.id === id) ?? old[0];
+  const copy = (b: Legacy, id: BlockId, patch: Partial<StadiumBlock> = {}): StadiumBlock =>
+    ({ ...JSON.parse(JSON.stringify(b)), vip: false, lounges: 0, scoreboard: false, ...patch, id });
+  const share = (n: number, parts: number[], max: number[]) => {
+    const tot = parts.reduce((a, b) => a + b, 0);
+    let left = n;
+    return parts.map((p, i) => { const v = i === parts.length - 1 ? left : Math.round((n * p) / tot); const r = Math.min(max[i], Math.max(0, v)); left -= r; return r; });
+  };
+  const out: StadiumBlock[] = [];
+  for (const [side, ids] of [['main', ['main_n', 'main_m', 'main_s']], ['opposite', ['opp_n', 'opp_m', 'opp_s']]] as [string, BlockId[]][]) {
+    const b = get(side);
+    const l = share(b.lounges, [1, 2, 1], ids.map((id) => MAX_LOUNGES[id]));
+    ids.forEach((id, i) => out.push(copy(b, id, { vip: b.vip && i === 1, lounges: l[i] })));
+  }
+  for (const [side, ids] of [['north', ['north_w', 'north_e']], ['south', ['south_w', 'south_e']]] as [string, BlockId[]][]) {
+    const b = get(side);
+    const l = share(b.lounges, [1, 1], [2, 2]);
+    ids.forEach((id, i) => out.push(copy(b, id, { vip: b.vip && i === 0, lounges: l[i], scoreboard: !!b.scoreboard && i === 1 })));
+  }
+  for (const [id, from] of [['curve_nw', 'north'], ['curve_ne', 'north'], ['curve_sw', 'south'], ['curve_se', 'south']] as [BlockId, string][]) {
+    const b = get(from);
+    out.push(copy(b, id, { roof: b.roof === 'full' ? 'full' : 'none' }));
+  }
+  return out;
+}
+
+/** Alte Spielstände: vier Blöcke in 14 umwandeln, Kapazität und Ticketfaktor bleiben. */
+export function convertLegacyBlocks(club: Club): boolean {
+  const st = club.stadium;
+  if (!isLegacyBlocks(st.blocks)) return false;
+  let old = st.blocks as unknown as Legacy[];
+  // laufender Umbau eines alten Blocks: sofort fertigstellen
+  const p = st.blockProject as unknown as { blockId: string; target: Legacy; capacityLoss: number } | undefined;
+  if (p && LEGACY_IDS.includes(p.blockId)) {
+    old = old.map((b) => (b.id === p.blockId ? p.target : b));
+    st.blockProject = undefined;
+  }
+  const oldCap = legacyCapacity(old);
+  const factor = st.priceBase ? priceMixLegacy(old) / st.priceBase : 1;
+  const blocks = splitLegacyBlocks(old);
+  fitRows(blocks, oldCap);
+  st.blocks = blocks;
+  st.capacity = blocksCapacity(blocks);
+  st.vipBoxes = blocks.reduce((s, b) => s + b.lounges, 0);
+  st.priceBase = priceMix(blocks) / (factor || 1);
+  return true;
+}
+const legacyLen = (id: string) => (id === 'main' || id === 'opposite' ? 1 : 0.62);
+function legacyCapacity(old: Legacy[]): number {
+  return old.reduce((s, b) => s + b.tiers.reduce((a, t) => a + Math.round((SEATS_PER_ROW * legacyLen(b.id) * t.rows * DENSITY[t.seat]) / 50) * 50, 0), 0);
+}
+function priceMixLegacy(old: Legacy[]): number {
+  let cap = 0, val = 0;
+  for (const b of old) for (const t of b.tiers) { const c = t.rows * DENSITY[t.seat] * legacyLen(b.id); cap += c; val += c * SEAT_PRICE[t.seat]; }
+  return cap ? val / cap : 1;
 }
 
 // -----------------------------------------------------------------------------
@@ -118,34 +212,25 @@ export function migrateBlocks(club: Club, year: number): StadiumBlock[] {
   // Einnahmen-neutral: ein VIP-Bereich ersetzt sechs der bisherigen Logen.
   const vipMain = vipAvailable(year) && V >= 6;
   const Vl = loungesAvailable(year) ? (vipMain ? V - 6 : V) : 0;
-  const lMain = Math.min(MAX_LOUNGES.main, Math.round(Vl * 0.6));
-  const blocks: StadiumBlock[] = [
-    { id: 'main', tiers: L >= 3 ? [t(seatMain), t(modern ? 'schale' : seatMain, 14)] : [t(seatMain)], roof: roofMain,
-      vip: vipMain, lounges: lMain },
+  const lMain = Math.min(12, Math.round(Vl * 0.6));
+  const legacy: Legacy[] = [
+    { id: 'main', tiers: L >= 3 ? [t(seatMain), t(modern ? 'schale' : seatMain, 14)] : [t(seatMain)], roof: roofMain, vip: vipMain, lounges: lMain },
     { id: 'opposite', tiers: L >= 4 ? [t(modern ? 'schale' : 'steh'), t(modern ? 'schale' : 'bank', 14)] : [t(modern ? 'schale' : 'steh')], roof: roofOther,
-      vip: false, lounges: Math.min(MAX_LOUNGES.opposite, Vl - lMain) },
+      vip: false, lounges: Math.max(0, Math.min(10, Vl - lMain)) },
     { id: 'north', tiers: L >= 5 ? [t('steh'), t(modern ? 'schale' : 'steh', 14)] : [t('steh')], roof: roofOther, vip: false, lounges: 0, scoreboard: true },
     { id: 'south', tiers: L >= 5 ? [t(modern ? 'schale' : 'steh'), t(modern ? 'schale' : 'steh', 14)] : [t(modern ? 'schale' : 'steh')], roof: roofOther, vip: false, lounges: 0 },
   ];
-  // Reihen so skalieren, dass die bisherige Kapazität ungefähr erhalten bleibt.
+  const blocks = splitLegacyBlocks(legacy);
   const target = club.stadium.capacity;
-  const fit = () => {
-    for (let i = 0; i < 6; i++) {
-      const cap = blocksCapacity(blocks);
-      if (!cap || Math.abs(cap - target) / target < 0.02) break;
-      const f = target / cap;
-      for (const b of blocks) for (const tr of b.tiers) tr.rows = clamp(Math.round(tr.rows * f), 3, 36);
-    }
-  };
-  fit();
-  // Große Stadien: reichen 36 Reihen nicht, kommt ein weiterer Rang dazu.
-  for (let k = 0; k < 8 && blocksCapacity(blocks) < target * 0.97; k++) {
-    const b = [...blocks].sort((a, c) => a.tiers.length - c.tiers.length)[0];
-    if (b.tiers.length >= 3) break;
-    b.tiers.push(t(b.tiers[b.tiers.length - 1].seat, 14));
-    fit();
+  fitRows(blocks, target);
+  // Große Stadien: reichen 36 Reihen nicht, kommt seitenweise ein weiterer Rang dazu.
+  const sides: BlockSide[] = ['main', 'opposite', 'north', 'south', 'curve'];
+  for (let k = 0; k < 10 && blocksCapacity(blocks) < target * 0.97; k++) {
+    const side = sides.map((sd) => ({ sd, n: blocks.find((b) => BLOCK_SIDE[b.id] === sd)!.tiers.length })).sort((a, b) => a.n - b.n)[0];
+    if (side.n >= 3) break;
+    for (const b of blocks) if (BLOCK_SIDE[b.id] === side.sd) b.tiers.push(t(b.tiers[b.tiers.length - 1].seat, 14));
+    fitRows(blocks, target);
   }
-  for (const b of blocks) b.lounges = Math.max(0, b.lounges);
   return blocks;
 }
 
@@ -197,6 +282,8 @@ export function planBlock(cur: StadiumBlock, target: StadiumBlock, year: number,
     cost += (target.lounges - cur.lounges) * LOUNGE_COST;
   }
   if (target.lounges > MAX_LOUNGES[target.id]) errors.push(`Höchstens ${MAX_LOUNGES[target.id]} Logen in diesem Block.`);
+  if (target.vip && !cur.vip && !vipAllowed(target.id)) errors.push('In den Kurven gibt es keinen VIP-Bereich.');
+  if (target.scoreboard && !cur.scoreboard && !scoreboardAllowed(target.id)) errors.push('Anzeigetafeln stehen hinter dem Tor oder in den Kurven.');
   if (target.lounges > 0 && target.tiers.length < 2 && target.roof !== 'full') errors.push('Logen brauchen einen zweiten Rang oder ein volles Dach.');
   if (target.scoreboard && !cur.scoreboard) cost += videoWall(year) ? 500000 : 40000;
   if (totalCapacity - oldCap + newCap > MAX_CAPACITY) errors.push(`Mehr als ${MAX_CAPACITY.toLocaleString('de-DE')} Plätze genehmigt die Stadt nicht.`);

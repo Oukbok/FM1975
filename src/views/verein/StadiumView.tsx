@@ -3,7 +3,7 @@ import { economyScale, revenueScale, yearOf } from '../../engine/economy';
 import { CATERING_NETPERHEAD, cateringMatchIncome, expectedAttendance, expectedAttendanceRate, matchdayIncome } from '../../engine/finances';
 import { vipIncome } from '../../engine/clubBusiness';
 import { BLOCK_NAME, migrateBlocks, roofShare, seatedCapacity, ticketFactor } from '../../engine/stadiumBlocks';
-import { ensureStadiumBlocks } from '../../game/stadiumGame';
+import { ensureStadiumBlocks, projectName, sideTargets } from '../../game/stadiumGame';
 import { Game } from '../../game/state';
 import { BlockId, CateringMode, StadiumBlock } from '../../types';
 import { DashBox, DashPage, KV, Kpi, Meter } from '../../ui/DashPage';
@@ -31,11 +31,14 @@ export function StadiumView({ g, onChange }: { g: Game; onChange: () => void }) 
   const [sel, setSel] = useState<BlockId | null>(null);
   const [hover, setHover] = useState<BlockId | null>(null);
   const [draft, setDraft] = useState<StadiumBlock | null>(null);
+  const [whole, setWhole] = useState(false);
   const blocks = st.blocks?.length ? st.blocks : migrateBlocks(club, year); // altes Projekt läuft: nur Vorschau
   const editable = !!st.blocks?.length;
-  const shown = draft ? blocks.map((b) => (b.id === draft.id ? draft : b)) : blocks;
+  const planned = draft ? sideTargets(blocks, draft, whole) : [];
+  const shown = blocks.map((b) => planned.find((t) => t.id === b.id) ?? b);
   const select = (id: BlockId | null) => {
     setSel(id);
+    setWhole(false);
     const b = id ? blocks.find((x) => x.id === id) : null;
     setDraft(b && editable ? JSON.parse(JSON.stringify(b)) : null);
   };
@@ -67,10 +70,10 @@ export function StadiumView({ g, onChange }: { g: Game; onChange: () => void }) 
         right={`${cap.toLocaleString('de-DE')} Plätze · Kontostand ${fmtDM(club.finances.balance)}`}>
         <div className="gr-wrap st-wrap">
           <StadiumScene blocks={shown} colors={{ primary, secondary }} year={year} month={month}
-            selected={sel} hover={hover} building={bp?.blockId ?? null} onSelect={select} onHover={setHover} />
+            selected={sel} hover={hover} building={bp?.blockId ?? null} group={planned.map((t) => t.id)} onSelect={select} onHover={setHover} />
           {!sel && <div className="gr-hint">Klicke auf einen Block, um Ränge, Sitze, Dach, VIP-Bereich und Logen zu planen.</div>}
           {sel && draft && editable && (
-            <BlockConfigurator key={sel} g={g} draft={draft} setDraft={setDraft} onClose={() => select(null)}
+            <BlockConfigurator key={sel} g={g} draft={draft} setDraft={setDraft} whole={whole} setWhole={setWhole} onClose={() => select(null)}
               onDone={() => { onChange(); }} />
           )}
           {sel && !editable && (
@@ -107,7 +110,7 @@ export function StadiumView({ g, onChange }: { g: Game; onChange: () => void }) 
 
               <div className="st-sec">Bau</div>
               {bp ? <>
-                <KV k="Umbau" v={BLOCK_NAME[bp.blockId]} strong />
+                <KV k="Umbau" v={projectName(bp)} strong />
                 <KV k="Fertig zum" v={fmtD(bp.finishDate)} />
                 <KV k="Gesperrt" v={`${bp.capacityLoss.toLocaleString('de-DE')} Plätze`} color="var(--red)" />
                 <KV k="Kosten" v={`${fmtDM(bp.cost)} · ${bp.financing === 'loan' ? 'Kredit' : 'bar'}`} />

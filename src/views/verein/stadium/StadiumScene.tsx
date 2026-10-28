@@ -18,7 +18,7 @@ export type { SceneColors } from './StadiumBlockShape';
 
 const UP: V3 = [0, 0, 1];
 const MAST_H = 17;
-const mastOffOf = (ext: number) => Math.min(ext - 1, 8);
+const mastOffOf = (ext: number) => ext / 1.25;
 const pl = (ps: [number, number][]) => ps.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
 const P0 = (x: number, y: number, z = 0.02) => proj([x, y, z]);
 
@@ -147,16 +147,18 @@ export interface StadiumSceneProps {
   selected: BlockId | null;
   hover: BlockId | null;
   building?: BlockId | null;
+  /** Weitere Blöcke, die zur Planung gehören (ganze Seite). */
+  group?: BlockId[];
   onSelect: (id: BlockId | null) => void;
   onHover: (id: BlockId | null) => void;
 }
 
-export function StadiumScene({ blocks, colors, year, month, selected, hover, building, onSelect, onHover }: StadiumSceneProps) {
+export function StadiumScene({ blocks, colors, year, month, selected, hover, building, group, onSelect, onHover }: StadiumSceneProps) {
   const era = year < 1990 ? 0 : year < 2010 ? 1 : 2;
   const winter = month === 12 || month <= 2;
   const grass = winter && year < 1995 ? '#8fa88a' : era === 0 ? '#4f9545' : '#4a9a43';
   const by = Object.fromEntries(blocks.map((b) => [b.id, b])) as Record<BlockId, StadiumBlock>;
-  const anyFullRoof = blocks.filter((b) => b.roof === 'full').length >= 3;
+  const anyFullRoof = blocks.filter((b) => b.roof === 'full').length >= blocks.length * 0.6;
   const showMasts = !(anyFullRoof && era >= 1);
   let ext = 9;
   for (const b of blocks) {
@@ -168,7 +170,7 @@ export function StadiumScene({ blocks, colors, year, month, selected, hover, bui
   // Ausschnitt aus allen Eckpunkten
   const bx: [number, number][] = [];
   for (const b of blocks) {
-    const { len, at } = mapper(b.id);
+    const { len, at } = mapper(b);
     const geo = tierGeometry(b), l = geo[geo.length - 1], rg = roofGeo(b);
     const zt = Math.max(l.zt + 0.5, rg ? rg.zF + (era >= 1 ? 2.8 : 0.2) : 0, b.scoreboard ? (rg ? rg.zB : l.zt) + 3.2 : 0);
     for (const u of [0, len]) for (const v of [0, l.v1 + 0.3]) for (const z of [0, zt]) bx.push(proj(at(u, v, z)));
@@ -188,14 +190,14 @@ export function StadiumScene({ blocks, colors, year, month, selected, hover, bui
 
   // Blöcke und Masten nach Kameratiefe
   const items: { d: number; n: ReactNode }[] = [];
-  for (const id of ['opposite', 'north', 'south', 'main'] as BlockId[]) {
-    const b = by[id];
-    if (!b) continue;
-    const { len, at } = mapper(id);
+  for (const b of blocks) {
+    const id = b.id;
+    const { len, at } = mapper(b);
     const geo = tierGeometry(b);
-    const on = selected === id || hover === id;
+    const inSel = selected === id || !!group?.includes(id);
+    const on = inSel || hover === id;
     items.push({ d: depth(at(len / 2, geo[geo.length - 1].v1 / 2, 0)), n: (
-      <g key={id} className={`gr-obj ${selected === id ? 'sel' : ''}`} opacity={selected && !on ? 0.82 : 1}
+      <g key={id} className={`gr-obj ${inSel ? 'sel' : ''}`} opacity={selected && !on ? 0.82 : 1}
         onClick={(e) => { e.stopPropagation(); onSelect(id); }} onMouseEnter={() => onHover(id)} onMouseLeave={() => onHover(null)}>
         <StadiumBlockShape b={b} colors={colors} era={era} year={year} />
         {building === id && (() => {
@@ -211,7 +213,7 @@ export function StadiumScene({ blocks, colors, year, month, selected, hover, bui
 
   const label = (id: BlockId) => {
     const b = by[id];
-    const { len, at } = mapper(id);
+    const { len, at } = mapper(b);
     const geo = tierGeometry(b), l = geo[geo.length - 1];
     const rg = roofGeo(b);
     const [x, y] = proj(at(len / 2, l.v1 * 0.5, (rg ? rg.zF : l.zt) + 1.6));

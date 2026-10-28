@@ -35,9 +35,18 @@ export const SHADOW: [number, number] = [0.3, -0.35];
 
 export function hash(n: number): number { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
 
+/** Flächennormale nach Newell (robust für Vielecke mit vielen Punkten). */
+function normalOf(vs: V3[]): V3 {
+  const n: V3 = [0, 0, 0];
+  for (let i = 0; i < vs.length; i++) {
+    const a = vs[i], b = vs[(i + 1) % vs.length];
+    n[0] += (a[1] - b[1]) * (a[2] + b[2]); n[1] += (a[2] - b[2]) * (a[0] + b[0]); n[2] += (a[0] - b[0]) * (a[1] + b[1]);
+  }
+  return n;
+}
 /** Fläche mit Normalen-Test; `back` = Farbe der Rückseite (sonst unsichtbar). */
 export function face(key: string, vs: V3[], nOut: V3, color: string, o?: { back?: string; opacity?: number; stroke?: string; sw?: number }): ReactNode {
-  let n = cross(sub(vs[1], vs[0]), sub(vs[2], vs[0]));
+  let n = normalOf(vs);
   if (dot(n, nOut) < 0) n = neg(n);
   const len = Math.hypot(...n) || 1;
   let col = color;
@@ -54,18 +63,36 @@ export function seg(key: string, a: V3, b: V3, stroke: string, w: number, extra?
     strokeDasharray={extra?.dash} opacity={extra?.opacity} strokeLinecap={extra?.cap ?? 'butt'} />;
 }
 
-/** Lokale Blockkoordinaten (u entlang der Seite, v vom Platz weg) → Welt. */
-export interface BlockFrame { len: number; at: (u: number, v: number, z: number) => V3; ud: V3; vd: V3 }
-export function mapper(id: BlockId): BlockFrame {
+/** Lokale Blockkoordinaten (u entlang des Blocks, v vom Platz weg) → Welt. Kurven sind Viertelkreise um die Eckfahne. */
+export interface BlockFrame { len: number; curve: boolean; at: (u: number, v: number, z: number) => V3; ud: (u: number) => V3; vd: (u: number) => V3 }
+const nrm = (a: V3): V3 => { const l = Math.hypot(...a) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
+function frame(len: number, at: BlockFrame['at'], curve: boolean): BlockFrame {
+  return { len, at, curve, ud: (u) => nrm(sub(at(u + 0.01, 0, 0), at(u, 0, 0))), vd: (u) => nrm(sub(at(u, 1, 0), at(u, 0, 0))) };
+}
+const T3 = W / 3, H2 = D / 2;
+const CURVE: Record<string, [number, number, number]> = {
+  curve_nw: [0, D, Math.PI / 2], curve_ne: [0, 0, Math.PI], curve_se: [W, 0, Math.PI * 1.5], curve_sw: [W, D, 0],
+};
+export function mapper(b: StadiumBlock | BlockId): BlockFrame {
+  const id = typeof b === 'string' ? b : b.id;
+  const st = (len: number, f: BlockFrame['at']) => frame(len, f, false);
   switch (id) {
-    case 'opposite': return { len: W, at: (u, v, z) => [u, -GAP - v, z], ud: [1, 0, 0], vd: [0, -1, 0] };
-    case 'main': return { len: W, at: (u, v, z) => [u, D + GAP + v, z], ud: [1, 0, 0], vd: [0, 1, 0] };
-    case 'north': return { len: D, at: (u, v, z) => [-GAP - v, u, z], ud: [0, 1, 0], vd: [-1, 0, 0] };
-    case 'south': return { len: D, at: (u, v, z) => [W + GAP + v, u, z], ud: [0, 1, 0], vd: [1, 0, 0] };
+    case 'main_n': case 'main_m': case 'main_s': { const o = { main_n: 0, main_m: 1, main_s: 2 }[id] * T3; return st(T3, (u, v, z) => [o + u, D + GAP + v, z]); }
+    case 'opp_n': case 'opp_m': case 'opp_s': { const o = { opp_n: 0, opp_m: 1, opp_s: 2 }[id] * T3; return st(T3, (u, v, z) => [o + u, -GAP - v, z]); }
+    case 'north_e': return st(H2, (u, v, z) => [-GAP - v, u, z]);
+    case 'north_w': return st(H2, (u, v, z) => [-GAP - v, H2 + u, z]);
+    case 'south_e': return st(H2, (u, v, z) => [W + GAP + v, u, z]);
+    case 'south_w': return st(H2, (u, v, z) => [W + GAP + v, H2 + u, z]);
+    default: {
+      const [cx, cy, a0] = CURVE[id];
+      const vMax = typeof b === 'string' ? 4 : (() => { const g = tierGeometry(b); return g[g.length - 1].v1; })();
+      const len = (Math.PI / 2) * (GAP + vMax / 2);
+      return frame(len, (u, v, z) => { const a = a0 + (u / len) * (Math.PI / 2), r = GAP + v; return [cx + Math.cos(a) * r, cy + Math.sin(a) * r, z]; }, true);
+    }
   }
 }
-/** Tribüne zeigt der Kamera den Rücken (Außenfassade sichtbar). */
-export const isNear = (id: BlockId) => dot(mapper(id).vd, VIEW) > 0;
+/** Block zeigt der Kamera den Rücken (Außenfassade sichtbar). */
+export const isNear = (b: StadiumBlock) => { const f = mapper(b); return dot(f.vd(f.len / 2), VIEW) > 0; };
 
 const RAKE = 0.55, DEPTH_PER_ROW = 0.19;
 export interface TierGeo { v0: number; v1: number; zb: number; zt: number }

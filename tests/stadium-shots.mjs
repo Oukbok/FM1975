@@ -46,7 +46,7 @@ if (await roof.isVisible()) await roof.click();
 await page.waitForTimeout(300);
 await page.screenshot({ path: `${outDir}/${tag}_3_planung.png` });
 // Haupttribüne (vorne)
-await page.locator('.gr-svg .gr-obj').nth(3).click({ force: true });
+await page.locator('.gr-svg .gr-obj').last().click({ force: true });
 await page.waitForTimeout(300);
 await page.screenshot({ path: `${outDir}/${tag}_4_haupttribuene.png` });
 console.log(errors.length ? 'FEHLER:\n' + errors.join('\n') : 'ok, keine JS-Fehler');

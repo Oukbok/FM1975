@@ -631,7 +631,11 @@ export interface Stadium {
 export type SeatType = 'steh' | 'bank' | 'schale' | 'komfort' | 'business';
 /** Überdachung eines Blocks. */
 export type RoofType = 'none' | 'partial' | 'full';
-export type BlockId = 'main' | 'opposite' | 'north' | 'south';
+/** 14 Blöcke: je drei auf Haupt- (West) und Gegengerade (Ost), je zwei hinter den Toren, vier Kurven in den Ecken. */
+export type BlockId = 'main_n' | 'main_m' | 'main_s' | 'opp_n' | 'opp_m' | 'opp_s' | 'north_w' | 'north_e' | 'south_w' | 'south_e'
+  | 'curve_nw' | 'curve_ne' | 'curve_sw' | 'curve_se';
+/** Seite eines Blocks (Kurven = Ecken). */
+export type BlockSide = 'main' | 'opposite' | 'north' | 'south' | 'curve';
 
 /** Ein Rang (Unter-, Mittel-, Oberrang) eines Blocks. */
 export interface StadiumTier {
@@ -649,7 +653,7 @@ export interface StadiumBlock {
   vip: boolean;
   /** Logen (Lounges) über dem Block. */
   lounges: number;
-  /** Anzeigetafel (nur Kurven). */
+  /** Anzeigetafel (hinter dem Tor und in den Kurven). */
   scoreboard?: boolean;
 }
 
@@ -657,6 +661,8 @@ export interface StadiumBlock {
 export interface BlockProject {
   blockId: BlockId;
   target: StadiumBlock;
+  /** Weitere Blöcke im selben Umbau (ganze Seite). */
+  more?: StadiumBlock[];
   startDate: string;
   finishDate: string;
   /** Kosten nominal. */
