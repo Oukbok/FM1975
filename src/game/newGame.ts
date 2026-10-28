@@ -1,3 +1,4 @@
+import { ensureStadiumBlocks } from './stadiumGame';
 import { ensureYouthTeams } from './youthTeams';
 // Erzeugt ein neues Spiel (Welt, Spielplan, Pokale, Ligen) – ohne Oberfläche, auch für Simulationen.
 import { setEraYear } from '../engine/positions';
@@ -184,5 +185,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   allocateTv(leagueClubs, startTier, 1975, (id) => 1 - byRep.indexOf(id) / Math.max(1, byRep.length - 1));
   // Volle Jugendmannschaften des eigenen Vereins (game/youthTeams.ts).
   ensureYouthTeams(g0, g0.calendar.currentDate);
+  // Stadion in vier Blöcken (game/stadiumGame.ts).
+  ensureStadiumBlocks(g0);
   return g0;
 }

@@ -42,6 +42,7 @@ import { transferTalkDaily } from './transferTalks';
 import { applyEuphoria, monthlyClubEvents } from './clubEventsGame';
 import { announceUpcomingRules } from './ruleNotice';
 import { monthlyYouthRecruit } from './youthRecruit';
+import { stadiumDaily } from './stadiumGame';
 import { ensureYouthTeams, fillYouthTeams, youthChangeMessage, youthTeamsSeasonChange } from './youthTeams';
 import { applyLeagueBalance, ratingTicker, seasonLeagueBalance, snapshotLeague } from './leagueBalance';
 import { monthlyClubBusiness } from './clubBusiness';
@@ -95,6 +96,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
     setInjuryRiskHook((p) => (p.clubId === g.managedClubId ? (1 - red) * focusEffect(focus, p).injury : 1));
     applyLeagueBalance(g);
     ensureYouthTeams(g, today);
+    stadiumDaily(g, today);
     applyEuphoria(g);
   }
   setDisplayYear(yearOf(today));

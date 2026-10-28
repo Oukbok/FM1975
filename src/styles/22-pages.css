@@ -295,3 +295,14 @@
 .fan-jump { animation: fanJump 0.9s ease-in-out infinite; transform-box: fill-box; }
 .fan-jump.fan-d1 { animation-delay: 0.2s; } .fan-jump.fan-d2 { animation-delay: 0.45s; } .fan-jump.fan-d3 { animation-delay: 0.7s; }
 @media (prefers-reduced-motion: reduce) { .fan-jump { animation: none; } }
+/* Stadion (views/verein/StadiumView.tsx + stadium/) */
+.st-wrap { background: radial-gradient(ellipse at 38% 50%, rgba(110, 160, 100, 0.14), transparent 70%); }
+.st-panel { width: 430px; }
+.st-sec { margin-top: 6px; padding-top: 8px; border-top: 1px solid var(--border); font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-2); }
+.st-tier { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px; border-radius: 8px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); }
+.st-tier-head { display: flex; justify-content: space-between; font-size: 14px; }
+.st-tier-head span { color: var(--text-2); font-weight: 700; }
+.st-rows { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: var(--text-2); }
+.st-rows input[type=range] { flex: 1; accent-color: var(--accent); }
+.st-rows b { color: var(--text); }
+.st-wrap .gr-svg { width: calc(100% - 450px); }

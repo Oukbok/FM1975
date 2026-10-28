@@ -17,6 +17,7 @@ export function announceUpcomingRules(g: Game, today: string): void {
     .map((e) => `${TIMELINE_TYPE_META[e.type].label}: ${e.title}`);
   const applied = new Set(g.appliedReforms ?? []);
   for (const r of LEAGUE_REFORMS) if (r.effectiveSeason === next && !applied.has(r.reformId)) items.push(`Ligareform: ${r.title} – ${r.qualificationRule}`);
+  if (next === '1998/99') items.push('Europapokal: Nur noch Sitzplätze – Stehränge werden bei Europapokal-Heimspielen bestuhlt und fassen nur die Hälfte.');
   if (!items.length) return;
   pushMessage(g.messages, makeMessage({
     date: today, category: 'milestone', from: 'Verband',

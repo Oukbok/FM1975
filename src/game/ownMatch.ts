@@ -89,7 +89,7 @@ export function createOwnMatchSim(g: Game, info: OwnMatchInfo, live = true): Mat
   if (!ensureClubs(g, info)) return null;
   return createMatchSim(g.clubs[info.homeId], g.clubs[info.awayId], g.players, {
     date: info.date, knockout: info.knockout, humanSides: live ? [info.side] : [],
-    humanClubIds: [g.managedClubId], live,
+    humanClubIds: [g.managedClubId], live, competition: info.competition,
   });
 }
 
