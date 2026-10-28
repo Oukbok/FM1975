@@ -103,6 +103,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   setTransferDate(today);
   const todaysEvents = CalendarEngine.eventsOn(cal, today).filter((e) => !e.processed);
   let stopForAction = false;
+  const decisionsBefore = new Set(g.messages.filter((m) => m.choices?.length).map((m) => m.id));
 
   for (const ev of todaysEvents) {
     ev.processed = true;
@@ -458,9 +459,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
                 + lines.join('\n'),
             }));
           }
-          if (cohort.length > 0 || grad.promoted.length > 0 || grad.released.length > 0) {
-            stopForAction = true;
-          }
+          // Jahrgangswechsel läuft still (Nachricht im Posteingang, keine Pause).
         }
       }
     }
@@ -555,7 +554,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
         }
       }
     }
-    stopForAction = true;
+    // Monatsabschluss läuft still – keine Pause.
   }
 
   // -------------------------------------------------------------------------
@@ -623,6 +622,10 @@ export function processDay(g: Game, ui: DayUi): boolean {
     }
   }
 
+  // Pause nur, wenn heute eine neue Entscheidung ansteht (Ereignis mit Auswahl).
+  if (g.messages.some((m) => m.choices?.length && m.eventRef && !m.eventRef.resolved && m.date === today && !decisionsBefore.has(m.id))) {
+    stopForAction = true;
+  }
   if (stopForAction) {
     // Auf dem heutigen Datum stehen bleiben (z.B. AM Spieltag), damit die
     // Zentrale den korrekten Tag zeigt. Der Tageswechsel wird beim Fortsetzen
