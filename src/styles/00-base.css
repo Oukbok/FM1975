@@ -10,6 +10,8 @@
 /* Manrope: schlanke, moderne Grotesk ausschliesslich fuer die Inhalte der
    Zentrale-/Dashboard-Boxen (Barlow bleibt global, Inter bleibt das Logo). */
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+/* Oswald: Logo und Knöpfe des Startbildschirms (Fallback: Barlow). */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap');
 
 :root {
   /* --- Hintergründe --- */

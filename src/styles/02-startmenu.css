@@ -231,3 +231,169 @@
 }
 .toggle.on { background: var(--accent-soft); border-color: var(--accent); }
 .toggle.on::after { left: 22px; background: var(--accent); }
+
+/* =============================================================================
+   STARTBILDSCHIRM „ABENDHIMMEL“: Tribünenfoto (1970er · 1990er · 2020er) als
+   Vollbild, Logo im Himmel oben links, Menü als Leiste auf dem Rasen, Zeitreise
+   rechts unten (dunkelt die anderen Epochen ab und färbt das Bild um).
+   Eigene Akzentfarbe Bernstein nur für diesen Bildschirm.
+   ============================================================================= */
+.st-start {
+  --st-accent: #f2a541;
+  --st-on: #241405;
+  --st-ink: #fbf3e6;
+  --st-muted: #ecd9c4;
+  --st-panel: 20, 15, 18;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #120d12;
+  color: var(--st-ink);
+  font-family: 'Barlow', system-ui, sans-serif;
+}
+.display-inner .st-start { min-height: 100%; }
+/* Bild deckt den Rahmen ab, behält aber 16:9 – so sitzen die Epochen-Abdunklungen
+   bei jeder Auflösung genau über ihrem Tribünenteil. */
+.st-img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 100%;
+  min-height: 100%;
+  aspect-ratio: 16 / 9;
+}
+.st-img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: filter 0.5s;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.st-img.era-0 img { filter: sepia(0.6) saturate(0.75) contrast(0.95) brightness(0.97); }
+.st-img.era-1 img { filter: saturate(1.2) contrast(1.03); }
+.st-img.era-2 img { filter: contrast(1.1) saturate(1.05) brightness(1.03); }
+.st-shade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: rgba(6, 4, 10, 0);
+  transition: background 0.5s;
+}
+.st-shade.s0 { left: 0; width: 26.2%; }
+.st-shade.s1 { left: 26.2%; width: 46.3%; }
+.st-shade.s2 { left: 72.5%; right: 0; }
+.st-shade.dim { background: rgba(6, 4, 10, 0.62); }
+.st-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(10, 6, 12, 0.55) 0%, rgba(10, 6, 12, 0) 28%, rgba(10, 6, 12, 0) 72%, rgba(8, 10, 8, 0.78) 100%);
+}
+.st-logo {
+  position: absolute;
+  left: 56px;
+  top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
+}
+.st-logo .y {
+  font-family: 'Oswald', 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 132px;
+  line-height: 0.88;
+  letter-spacing: 2px;
+  color: var(--st-ink);
+}
+.st-logo .n {
+  font-family: 'Oswald', 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 21px;
+  letter-spacing: 7px;
+  color: var(--st-accent);
+}
+.st-logo .t { font-size: 19px; color: var(--st-muted); margin-top: 8px; }
+.st-menu {
+  position: absolute;
+  left: 56px;
+  bottom: 36px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.st-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 50px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Oswald', 'Barlow', sans-serif;
+  font-weight: 600;
+  font-size: 19px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--st-ink);
+  background: rgba(var(--st-panel), 0.55);
+  box-shadow: inset 0 0 0 1px rgba(251, 243, 230, 0.35);
+  backdrop-filter: blur(6px);
+  transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+.st-btn:hover:not(:disabled) { background: rgba(var(--st-panel), 0.8); box-shadow: inset 0 0 0 1px var(--st-accent); transform: translateY(-1px); }
+.st-btn:focus-visible { outline: 2px solid var(--st-accent); outline-offset: 2px; }
+.st-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.st-btn.primary { background: var(--st-accent); color: var(--st-on); box-shadow: none; }
+.st-btn.primary:hover:not(:disabled) { filter: brightness(1.08); background: var(--st-accent); }
+.st-btn .cnt { font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 700; opacity: 0.75; }
+.st-era {
+  position: absolute;
+  right: 40px;
+  bottom: 36px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 8px;
+  background: rgba(var(--st-panel), 0.7);
+  backdrop-filter: blur(6px);
+  box-shadow: inset 0 0 0 1px rgba(251, 243, 230, 0.2);
+}
+.st-era .lbl { font-size: 11px; font-weight: 700; letter-spacing: 3px; color: var(--st-muted); padding: 0 8px 0 10px; }
+.st-era button {
+  min-width: 62px;
+  height: 40px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+  color: var(--st-ink);
+  font-family: 'Oswald', 'Barlow', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+}
+.st-era button.on { background: var(--st-accent); color: var(--st-on); }
+/* Unterseiten (Laden, Einstellungen, Datensätze) liegen mittig über dem Bild. */
+.st-sub {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  overflow-y: auto;
+  background: rgba(8, 6, 10, 0.55);
+  backdrop-filter: blur(3px);
+}
+.st-sub > * { width: 100%; max-width: 720px; }
+.st-note { position: absolute; left: 56px; bottom: 96px; font-size: 13px; color: #ffb4a6; text-shadow: 0 2px 8px rgba(0,0,0,0.7); }
