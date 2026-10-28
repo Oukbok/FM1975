@@ -598,6 +598,64 @@ export interface Stadium {
   ticketPrice: number;
   /** Zustand / Ausbaustufe (0–100). */
   condition: number;
+  /** Logen/VIP-Bereiche (moderne Ausbaustufen); bringen Einnahmen je Heimspiel. */
+  vipBoxes?: number;
+  /** Ursprünglicher Stadionname (solange Namensrechte verkauft sind). */
+  baseName?: string;
+}
+
+/** Kredit eines Vereins (Beträge nominal). */
+export interface ClubLoan {
+  id: string;
+  purpose: string;
+  principal: number;
+  remaining: number;
+  /** Monatliche Rate (Zins + Tilgung, nominal). */
+  monthlyRate: number;
+  /** Jahreszins (z. B. 0.075). */
+  annualRate: number;
+  startDate: string;
+  months: number;
+  paidMonths: number;
+}
+
+/** Laufendes Stadion-Bauprojekt. */
+export interface StadiumProject {
+  targetLevel: number;
+  addCapacity: number;
+  addBoxes: number;
+  startDate: string;
+  /** Fertigstellung (ISO, jeweils 1. Juli). */
+  finishDate: string;
+  /** Baukosten (nominal). */
+  cost: number;
+  financing: 'cash' | 'loan';
+  /** Während der Bauzeit gesperrte Plätze. */
+  capacityLoss: number;
+}
+
+/** Verkaufte Stadion-Namensrechte. */
+export interface NamingRights {
+  sponsor: string;
+  arenaName: string;
+  /** Jahreswert in 1975-Basis (Buchung mit der Vermarktungs-Skala). */
+  annualValue: number;
+  fromYear: number;
+  /** Läuft zum 30. Juni dieses Jahres aus. */
+  untilYear: number;
+}
+
+/** Rechtsform & Anteilseigner (ab 1998 Ausgliederung möglich). */
+export interface ClubCorporate {
+  /** Jahr der Ausgliederung in eine Kapitalgesellschaft. */
+  since: number;
+  /** Anteil eines Investors in Prozent (max. 49 wegen 50+1). */
+  investorShare: number;
+  investorName?: string;
+  /** Eingenommenes Kapital (nominal, Summe). */
+  capitalRaised: number;
+  /** Bisher ausgeschüttete Dividenden (nominal, Summe). */
+  dividendsPaid?: number;
 }
 
 // -----------------------------------------------------------------------------
@@ -698,7 +756,7 @@ export interface ClubFinances {
   /** Saisonbilanzen vergangener Spielzeiten (neueste zuletzt, max. 30). */
   seasonHistory?: SeasonFinanceRecord[];
   /** Finanzielles Fairplay (ab 2011) und Lizenzauflagen. */
-  ffp?: { warnings: number; banSeason?: string; note?: string };
+  ffp?: { warnings: number; banSeason?: string; note?: string; forcedRelegation?: string };
 }
 
 /** Abgeschlossene Saisonbilanz eines Vereins. */
@@ -931,6 +989,16 @@ export interface Club {
   brand?: ClubBrand;
   /** Mitglieder (nur eigener Verein, aus dem Vereinsumfeld); bestimmt die Beiträge. */
   members?: number;
+  /** Kredite (Stadionbau u. a.). */
+  loans?: ClubLoan[];
+  /** Laufender Stadionausbau. */
+  stadiumProject?: StadiumProject;
+  /** Verkaufte Stadion-Namensrechte. */
+  namingRights?: NamingRights;
+  /** Kapitalgesellschaft / Investor (ab 1998). */
+  corporate?: ClubCorporate;
+  /** Punktabzug (Lizenzauflage wegen Überschuldung) für eine Saison. */
+  pointDeduction?: { season: string; points: number; reason: string };
 }
 
 // -----------------------------------------------------------------------------
@@ -1055,6 +1123,8 @@ export interface LeagueTableRow {
   /** Tordifferenz (goalsFor - goalsAgainst). */
   goalDifference: number;
   points: number;
+  /** Punktabzug (bereits in `points` eingerechnet). */
+  deduction?: number;
   /** Letzte 5 Ergebnisse (neueste zuletzt). */
   form: ('W' | 'D' | 'L')[];
 }

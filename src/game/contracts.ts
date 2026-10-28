@@ -19,7 +19,7 @@ import { makeMessage, pushMessage } from '../engine/messages';
 import { isForeignId } from '../engine/world';
 import { Club, Player } from '../types';
 import { fmtPrice } from '../ui/format';
-import { repairSquadLists } from './squads';
+import { repairSquadLists, wageRatioOf } from './squads';
 import { Game } from './state';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -159,9 +159,10 @@ export function handleContractExpiry(g: Game, today: string): void {
         if (mine) { left.push(`${p.fullName} → ${buyer.name}${fee ? ` (Ablöse ${fmtPrice(fee)})` : ' (ablösefrei)'}`); income += fee; }
         continue;
       }
-      // Verlängerung (KI, alte Spielstände oder kein Abnehmer)
+      // Verlängerung (KI, alte Spielstände oder kein Abnehmer): Gehalt rückt zur Hälfte
+      // an das Gefüge des Vereins (verschuldete Vereine zahlen weniger als den Markt).
       p.contract.expiryDate = `${year + yearsFor(p.age, r)}-06-30`;
-      p.contract.weeklyWage = Math.round((p.contract.weeklyWage + marketWage(p)) / 2);
+      p.contract.weeklyWage = Math.round((p.contract.weeklyWage + marketWage(p) * Math.min(1, wageRatioOf(g, club))) / 2);
       p.contract.preContractClubId = undefined;
       if (mine && !stale) renewed.push(`${p.fullName} (bis ${p.contract.expiryDate.slice(0, 4)})`);
     }

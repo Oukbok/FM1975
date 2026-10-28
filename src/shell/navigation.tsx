@@ -4,7 +4,7 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   // Kategorie-Dashboards (Übersichtsseiten je Hauptkategorie)
   | 'cat-spieltag' | 'cat-kader' | 'cat-transfers' | 'cat-finanzen' | 'cat-verein' | 'cat-statistiken'
   // Neue Einzelseiten
-  | 'tactics' | 'stadium' | 'presse' | 'vertraege' | 'beobachtung' | 'verhandlungen' | 'sponsoring' | 'fans' | 'international';
+  | 'tactics' | 'stadium' | 'presse' | 'vertraege' | 'beobachtung' | 'verhandlungen' | 'sponsoring' | 'fans' | 'international' | 'vorstand';
 
 // =============================================================================
 // MENÜ-STRUKTUR (zweistufige Top-Navigation)
@@ -53,6 +53,7 @@ export const MENU_STRUCTURE: MainCat[] = [
   ] },
   { key: 'verein', label: 'Verein', icon: 'stadium', dash: 'cat-verein', subs: [
     { screen: 'cat-verein', label: 'Verein', icon: 'stadium' },
+    { screen: 'vorstand', label: 'Vorstand', icon: 'dashVerein' },
     { screen: 'staff', label: 'Mitarbeiter', icon: 'staff' },
     { screen: 'facilities', label: 'Vereinsgelände', icon: 'facilities' },
     { screen: 'stadium', label: 'Stadion', icon: 'stadium' },

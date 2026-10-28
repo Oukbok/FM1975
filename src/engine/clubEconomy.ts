@@ -364,7 +364,9 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
     const factor = budgetWeekly / sum;
     for (const p of squad) {
       const target = marketWage(p) * factor;
-      p.contract.weeklyWage = Math.max(200, Math.round(p.contract.weeklyWage + (target - p.contract.weeklyWage) * 0.5));
+      // Verschuldete Vereine kürzen schneller (Gehaltsverzicht, Abgänge, günstige Verlängerungen).
+      const speed = c.finances.balance < 0 && target < p.contract.weeklyWage ? 0.8 : 0.5;
+      p.contract.weeklyWage = Math.max(200, Math.round(p.contract.weeklyWage + (target - p.contract.weeklyWage) * speed));
     }
   }
 

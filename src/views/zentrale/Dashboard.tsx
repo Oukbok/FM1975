@@ -232,7 +232,7 @@ export function Dashboard({ g, onGoto, onWatch, onOpenEditor }: {
                     <td>{r.drawn}</td>
                     <td>{r.lost}</td>
                     <td>{(r.goalDifference > 0 ? '+' : '') + r.goalDifference}</td>
-                    <td className="dxt-pkt">{r.points}</td>
+                    <td className="dxt-pkt">{r.points}{r.deduction ? <sup title={`${r.deduction} Punkte Abzug (Überschuldung)`} style={{ color: 'var(--red)', marginLeft: 3 }}>−{r.deduction}</sup> : null}</td>
                   </tr>
                 );
               })}

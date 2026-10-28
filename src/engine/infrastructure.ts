@@ -16,6 +16,7 @@
 // Kosten und passt die betroffenen Vereinswerte sofort an.
 // =============================================================================
 
+import { economyScale } from './economy';
 import { Club, ClubInfrastructure, FacilityKey, CateringMode } from '../types';
 import { book, CATERING_UPKEEP } from './finances';
 import type { IconName } from '../components/iconPaths';
@@ -244,11 +245,13 @@ export function upgradeCost(key: FacilityKey, targetLevel: number): number {
 }
 
 /** Ob der Verein die nächste Stufe finanzieren und ausbauen kann. */
-export function canUpgrade(club: Club, key: FacilityKey): { ok: boolean; reason?: string; cost: number; nextLevel: number } {
+export function canUpgrade(club: Club, key: FacilityKey, scale = 1): { ok: boolean; reason?: string; cost: number; nextLevel: number } {
   const level = (club.infrastructure[key] as number) ?? 1;
   const nextLevel = level + 1;
   if (nextLevel > MAX_LEVEL) return { ok: false, reason: 'Maximalstufe erreicht', cost: 0, nextLevel: level };
-  const cost = upgradeCost(key, nextLevel);
+  // Preisschild in 1975-Basis, Buchung × Wirtschaftsskala.
+  const cost = Math.round((upgradeCost(key, nextLevel) * scale) / 10000) * 10000;
+  if (key === 'stadium') return { ok: false, reason: 'Stadionausbau als Bauprojekt unter „Stadion“', cost, nextLevel };
   if (club.finances.balance < cost) return { ok: false, reason: 'Kontostand zu niedrig', cost, nextLevel };
   return { ok: true, cost, nextLevel };
 }
@@ -278,7 +281,7 @@ export function upgradeFacility(
   date: string,
   trackDetail: boolean,
 ): { ok: boolean; reason?: string; newLevel: number; cost: number } {
-  const check = canUpgrade(club, key);
+  const check = canUpgrade(club, key, economyScale(Number(date.slice(0, 4))));
   if (!check.ok) return { ok: false, reason: check.reason, newLevel: (club.infrastructure[key] as number) ?? 1, cost: check.cost };
 
   const def = FACILITY_BY_KEY[key];

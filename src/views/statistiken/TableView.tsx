@@ -60,7 +60,7 @@ export function TableView({ g }: { g: Game }) {
                   <td className="num">{r.played}</td><td className="num">{r.won}</td><td className="num">{r.drawn}</td><td className="num">{r.lost}</td>
                   <td className="num muted">{r.goalsFor}:{r.goalsAgainst}</td>
                   <td className="num">{r.goalDifference > 0 ? '+' : ''}{r.goalDifference}</td>
-                  <td className="num"><b style={{ color: 'var(--accent)' }}>{r.points}</b></td>
+                  <td className="num"><b style={{ color: 'var(--accent)' }}>{r.points}</b>{r.deduction ? <sup title={`${r.deduction} Punkte Abzug (Überschuldung)`} style={{ color: 'var(--red)', marginLeft: 3 }}>−{r.deduction}</sup> : null}</td>
                   <td><FormDots form={r.form} /></td>
                 </tr>
               );

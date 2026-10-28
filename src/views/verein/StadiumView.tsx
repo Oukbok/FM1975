@@ -1,6 +1,8 @@
 import { economyScale, revenueScale, yearOf } from '../../engine/economy';
 import { CATERING_NETPERHEAD, cateringMatchIncome, expectedAttendance, expectedAttendanceRate, matchdayIncome } from '../../engine/finances';
-import { CAPACITY_PER_LEVEL, MAX_LEVEL, canUpgrade, upgradeFacility } from '../../engine/infrastructure';
+import { MAX_LEVEL } from '../../engine/infrastructure';
+import { annuity, loanInterest, stadiumPlan, vipIncome } from '../../engine/clubBusiness';
+import { startStadiumBuild } from '../../game/clubBusiness';
 import { Game } from '../../game/state';
 import { CateringMode } from '../../types';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
@@ -16,16 +18,18 @@ const CATERING_MODE_LABEL: Record<CateringMode, string> = { eigenbetrieb: 'Eigen
 export function StadiumView({ g, onChange }: { g: Game; onChange: () => void }) {
   const myClub = g.clubs[g.managedClubId];
   const st = myClub.stadium;
-  const check = canUpgrade(myClub, 'stadium');
-  const [confirmExpand, setConfirmExpand] = useState(false);
+  const year = yearOf(g.calendar.currentDate);
+  const plan = stadiumPlan(myClub, year);
+  const proj = myClub.stadiumProject;
+  const [confirm, setConfirm] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
-  const scale = economyScale(yearOf(g.calendar.currentDate));
-  const mdScale = revenueScale('matchday', yearOf(g.calendar.currentDate)); // Stadion-Erlöse wachsen langsamer (Finanzen 2.0)
-  const doExpand = () => {
-    // upgradeFacility bucht die Kosten selbst vom Konto ab.
-    const res = upgradeFacility(myClub, 'stadium', g.calendar.currentDate, true);
-    setMsg(res.ok ? `Stadion auf Stufe ${res.newLevel} ausgebaut.` : res.reason ?? 'Ausbau nicht möglich.');
-    setConfirmExpand(false);
+  const scale = economyScale(year);
+  const mdScale = revenueScale('matchday', year); // Stadion-Erlöse wachsen langsamer (Finanzen 2.0)
+  const rate = loanInterest(year, myClub.finances.balance < 0);
+  const build = (key: string, financing: 'cash' | 'loan', years: number) => {
+    if (confirm !== key) { setConfirm(key); return; }
+    setMsg(startStadiumBuild(g, financing, years));
+    setConfirm(null);
     onChange();
   };
   const setTicket = (delta: number) => { st.ticketPrice = Math.max(4, Math.min(60, st.ticketPrice + delta)); onChange(); };
@@ -39,7 +43,7 @@ export function StadiumView({ g, onChange }: { g: Game; onChange: () => void }) 
   const programmeRev = matchdayIncome(expVisitors, mdScale);
   const home = ownLeagueMatches(g, 'finished').filter((m) => m.homeClubId === myClub.id && m.result);
   const avgAtt = home.length ? Math.round(avg(home.map((m) => m.result!.attendance))) : 0;
-  const affordable = check.ok && myClub.finances.balance >= check.cost;
+  const vipRev = vipIncome(myClub, mdScale, year);
 
   return (
     <DashPage>
@@ -50,6 +54,7 @@ export function StadiumView({ g, onChange }: { g: Game; onChange: () => void }) 
         </div>
         <Meter label="Zustand" value={st.condition} text={`${st.condition} %`} color={vColor(st.condition)} />
         <KV k="Ticketpreis" v={fmtDMfull(st.ticketPrice * mdScale)} />
+        <KV k="Logen" v={st.vipBoxes ? `${st.vipBoxes}` : 'keine'} />
         <KV k="Heimspiele bisher" v={`${home.length}${home.length ? ` · Ø ${avgAtt.toLocaleString('de-DE')} Zuschauer` : ''}`} />
       </DashBox>
 
@@ -64,26 +69,38 @@ export function StadiumView({ g, onChange }: { g: Game; onChange: () => void }) 
         <div className="dnote mt8">Höherer Preis bringt weniger Zuschauer, ein niedriger Preis füllt die Ränge.</div>
       </DashBox>
 
-      <DashBox title="Ausbau" icon="facilities">
-        {check.ok ? <>
-          <KV k="Nächste Stufe" v={`Stufe ${check.nextLevel}`} />
-          <KV k="Zusätzliche Plätze" v={`+${CAPACITY_PER_LEVEL.toLocaleString('de-DE')}`} color="var(--green)" />
-          <KV k="Kosten" v={fmtDM(check.cost)} color="var(--red)" />
-          <KV k="Kontostand" v={fmtDM(myClub.finances.balance)} color={affordable ? 'var(--green)' : 'var(--red)'} />
+      <DashBox title="Ausbau" icon="facilities" right={proj ? 'im Bau' : plan ? plan.label : undefined}>
+        {proj ? <>
+          <KV k="Ziel" v={`Stufe ${proj.targetLevel} · +${proj.addCapacity.toLocaleString('de-DE')} Plätze${proj.addBoxes ? ` · ${proj.addBoxes} Logen` : ''}`} />
+          <KV k="Fertigstellung" v={`${proj.finishDate.slice(8, 10)}.${proj.finishDate.slice(5, 7)}.${proj.finishDate.slice(0, 4)}`} strong />
+          <KV k="Gesperrt während Bau" v={`${proj.capacityLoss.toLocaleString('de-DE')} Plätze`} color="var(--red)" />
+          <KV k="Finanzierung" v={proj.financing === 'loan' ? 'Kredit (siehe Vorstand)' : 'bar bezahlt'} />
+          <KV k="Baukosten" v={fmtDM(proj.cost)} />
+        </> : plan ? <>
+          <KV k="Nächste Stufe" v={`Stufe ${plan.targetLevel} · ${plan.buildSeasons} ${plan.buildSeasons === 1 ? 'Saison' : 'Saisons'} Bauzeit`} />
+          <KV k="Zusätzlich" v={`+${plan.addCapacity.toLocaleString('de-DE')} Plätze${plan.addBoxes ? ` · ${plan.addBoxes} Logen` : ''}`} color="var(--green)" />
+          <KV k="Kosten" v={fmtDM(plan.cost)} color="var(--red)" />
           <div className="dbtnrow mt8">
-            {!confirmExpand
-              ? <button className="dchip on" disabled={!affordable} onClick={() => setConfirmExpand(true)}>Stadion ausbauen</button>
-              : <><button className="dchip on" onClick={doExpand}>Ja, für {fmtDM(check.cost)} ausbauen</button><button className="dchip" onClick={() => setConfirmExpand(false)}>Abbrechen</button></>}
+            <button className={`dchip ${confirm === 'cash' ? 'on' : ''}`} disabled={myClub.finances.balance < plan.cost} onClick={() => build('cash', 'cash', 0)}>
+              {confirm === 'cash' ? 'Ja, bar bezahlen' : 'Bar bezahlen'}
+            </button>
+            {[10, 15, 20].map((y) => (
+              <button key={y} className={`dchip ${confirm === `l${y}` ? 'on' : ''}`} onClick={() => build(`l${y}`, 'loan', y)}>
+                {confirm === `l${y}` ? `Ja, Kredit ${y} J.` : `Kredit ${y} J. · ${fmtDM(annuity(plan.cost, rate, y * 12))}/Mon.`}
+              </button>
+            ))}
           </div>
-        </> : <Empty icon="stadium">{check.reason ?? 'Kein weiterer Ausbau möglich.'}</Empty>}
+          <div className="dnote mt8">Zins derzeit {(rate * 100).toFixed(1)} % p. a. Während der Bauzeit sind rund 8 % der Plätze gesperrt.</div>
+        </> : <Empty icon="stadium">Maximalstufe erreicht.</Empty>}
         {msg && <div className="dnote mt8" style={{ color: 'var(--accent)', fontSize: 15 }}>{msg}</div>}
       </DashBox>
 
       <DashBox title="Erlöse pro Heimspiel" icon="finances" right="erwartet">
-        <div className="dkpis"><Kpi value={fmtDM(ticketRev + cateringRev + programmeRev)} label="Summe" color="var(--green)" /></div>
+        <div className="dkpis"><Kpi value={fmtDM(ticketRev + cateringRev + programmeRev + vipRev)} label="Summe" color="var(--green)" /></div>
         <KV k="Eintritt" v={fmtDM(ticketRev)} />
         <KV k="Catering" v={fmtDM(cateringRev)} />
         <KV k="Programmhefte" v={fmtDM(programmeRev)} />
+        {vipRev > 0 && <KV k="Logen & VIP" v={fmtDM(vipRev)} />}
       </DashBox>
 
       <DashBox title="Heimspiele" icon="dashBall" right={home.length ? `Ø ${avgAtt.toLocaleString('de-DE')}` : undefined}>

@@ -40,6 +40,7 @@ import { monthlySquadHarmony, rollAiOffers } from './aiOffers';
 import { applyEuphoria, monthlyClubEvents } from './clubEventsGame';
 import { announceUpcomingRules } from './ruleNotice';
 import { applyLeagueBalance, ratingTicker, seasonLeagueBalance, snapshotLeague } from './leagueBalance';
+import { monthlyClubBusiness } from './clubBusiness';
 import { PlayerDevReveal } from '../types';
 import { fmtDM, fmtDMfull, fmtDateFull, setDisplayYear } from '../ui/format';
 import { RatingResult as _RatingResult } from '../engine/development';
@@ -478,6 +479,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
     monthlyEnvironmentUpdate(g, today);
     monthlyEvents(g, today);
     monthlyClubEvents(g, today);
+    // Kreditraten, Stadion-Bauprojekte, Namensrechte (game/clubBusiness.ts).
+    monthlyClubBusiness(g, today);
     for (const club of Object.values(g.clubs)) {
       if (club.finances.lastMonthlyBooking === curMonth) continue;
       const isMine = club.id === g.managedClubId;
