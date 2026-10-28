@@ -9,6 +9,7 @@ React 18 + TypeScript, gebaut mit esbuild. Kein Backend – alles läuft im Brow
 - `node scripts/sim.mjs <n>` – n Saisons ohne UI (Balance-Bericht, `FIN=1` mit Finanzen); `node scripts/sim.mjs --world 50` – nur Europa.
 - `node scripts/matchbench.mjs [n]` – Balance der Match-Engine je Epoche; `node scripts/tickerdemo.mjs [jahr] [seed]` – Textmodus auf der Konsole; `node tests/match-ui.mjs` – Oberflächentest Textmodus.
 - `npm run test:ui` – Rauchtest (Playwright): startet ein Spiel, öffnet jede Seite, lässt Zeit laufen, meldet JS-Fehler. Screenshots in `test-output/`.
+- `npm run test:dataset` – Datensatz-Test ohne UI; `npm run test:editor` – Oberflächentest des Datensatz-Editors (Screenshots in `test-output/editor/`).
 - Live: https://fm1975.pas-franke.workers.dev
 - Hosting: Cloudflare Workers (statische Assets, `wrangler.jsonc`) baut jeden Push auf `main` automatisch (Build `npm run build`, Ausgabe `dist`).
 
@@ -26,7 +27,8 @@ React 18 + TypeScript, gebaut mit esbuild. Kein Backend – alles läuft im Brow
 - `src/components/player/` – Reiter des Spielerprofils (`PlayerModal.tsx` ist nur Rahmen + Kopf): Übersicht, Attribute, Entwicklung, Statistik, Vertrag, Medizin, Bericht; `shared.tsx` = Kategorien/Beschriftungen.
 - `src/types/index.ts` – alle zentralen Typen (`Club`, `Player`, `ClubFinances` …). Groß: gezielt per grep lesen.
 - `src/styles/NN-bereich.css` – CSS nach Bereichen; Reihenfolge = Kaskade (`styles/index.ts`). Design-Tokens in `00-base.css` (`:root`).
-- `docs/specs/` – verbindliche Formeln (Finanzen, Europapokal, Icons). `docs/recherche/` – historische Recherche, nur bei Bedarf.
+- `src/data/dataset/` – Datensätze (Modding): `schema.ts` Format, `builtin.ts` Standard, `apply.ts` Anwenden, `storage.ts` IndexedDB. `src/editor/` – externer Datensatz-Editor (eigene Seite `/editor/`, zweiter esbuild-Einstieg `src/editor/main.tsx` → `dist/editor/`; Bereiche in `editor/sections/`, Prüfungen in `editor/validate.ts`). Neue Datensatz-Felder: Schema + builtin + apply + Editor-Bereich + `DATASET_SPEC.md`.
+- `docs/specs/` – verbindliche Formeln (Finanzen, Europapokal, Icons, Datensatz-Format `DATASET_SPEC.md`). `docs/recherche/` – historische Recherche, nur bei Bedarf.
 
 ## Feste Vorgaben von Pascal
 - **Keine Emojis** in der UI – nur `<Icon>` (`src/components/iconPaths.ts`; neues Icon dort ergänzen).

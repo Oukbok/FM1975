@@ -90,5 +90,13 @@ export function checkDataset(d: Dataset): Issue[] {
   const origins = new Set(d.names.origins.map((o) => o.id));
   for (const [y, mix] of d.names.mix) for (const k of Object.keys(mix)) if (!origins.has(k)) err('Namen', `Mischung ${y}: Herkunft „${k}“ existiert nicht.`);
   for (const o of d.names.origins) if (!o.first.length || !o.last.length) err('Namen', `Herkunft „${o.id}“ braucht Vor- und Nachnamen.`);
+
+  // Leere Listen ersetzt das Spiel beim Anwenden durch den Standard.
+  const empties: [string, unknown[]][] = [
+    ['DDR-Oberliga', d.clubs.ddrOberliga], ['DDR-Liga', d.clubs.ddrLiga], ['Europa: Teilungen', d.europe.splits],
+    ['Europa: Sperren', d.europe.exclusions], ['Chronik', d.timeline], ['Ligareformen', d.leagues.reforms],
+    ['Mitarbeiter', d.staff], ['Marketing', d.marketing], ['Legenden', d.legends],
+  ];
+  for (const [area, list] of empties) if (!list.length) warn(area, 'Leere Liste – das Spiel verwendet dafür die Einträge des Standards.');
   return out;
 }

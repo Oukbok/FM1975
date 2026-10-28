@@ -58,7 +58,7 @@ export function LeaguesSection({ ds, onChange }: P) {
   const ch = () => { fixGroup(ds.leagues.base); ds.leagues.reforms.forEach((r) => fixGroup(r.targetStructure)); onChange(); };
   return (
     <div className="ed-section">
-      <Explain>Die Ligapyramide zum Start und ihre Reformen. Jede Reform beschreibt die <b>vollständige</b> Struktur ab ihrer Saison. Auf- und Abstiege beim Übergang regelt das Spiel. Die vier eingebauten Reformen (<code>reform-1981-…</code>, <code>-1991-</code>, <code>-1994-</code>, <code>-2008-</code>) haben eigene Übergangsregeln, die über die Reform-ID verknüpft sind – behalte diese IDs, wenn du sie nur anpasst.</Explain>
+      <Explain>Die Ligapyramide zum Start und ihre Reformen. Jede Reform beschreibt die <b>vollständige</b> Struktur ab ihrer Saison. Auf- und Abstiege beim Übergang regelt das Spiel. Die vier eingebauten Reformen (<code>reform-1981-…</code>, <code>-1991-</code>, <code>-1994-</code>, <code>-2008-</code>) haben eigene Übergangsregeln, die über die Reform-ID verknüpft sind – behalte diese IDs, wenn du sie anpasst. Reformen mit eigener ID bauen die Pyramide derzeit noch nicht um (nur normaler Auf- und Abstieg).</Explain>
       <div className="ed-sec">Startstruktur 1975/76</div>
       <TableEditor rows={ds.leagues.base} cols={DIV_COLS} onChange={ch}
         makeRow={(): DivisionTarget => ({ id: 'tier3', tier: 3, group: null, name: '3. Liga', teamCount: 18 })} />

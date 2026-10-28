@@ -119,7 +119,7 @@ export function EconomySection({ ds, onChange }: P) {
   const e = ds.economy;
   return (
     <div className="ed-section">
-      <Explain>Die Geldmenge im Fußball über die Zeit: <b>Stützwerte</b> geben den typischen Jahresumsatz eines Erstligisten in EUR an (dazwischen wird interpoliert). Der <b>Erlös-Mix</b> verteilt die Einnahmen auf Spieltag, TV und Vermarktung – die drei Anteile ergeben zusammen etwa 0,9 (der Rest sind Transfers und Sonstiges).</Explain>
+      <Explain>Die Geldmenge im Fußball über die Zeit: <b>Stützwerte</b> geben den typischen Jahresumsatz eines Erstligisten in EUR an (dazwischen wird interpoliert). Der <b>Erlös-Mix</b> verteilt die Einnahmen auf Spieltag, TV und Vermarktung – die drei Anteile ergeben zusammen etwa 0,9 (der Rest sind Prämien und Beiträge).</Explain>
       <div className="ed-split even">
         <TableEditor rows={e.anchors} onChange={onChange} searchKeys={['year']} title="Stützwerte"
           cols={[{ key: 'year', label: 'Jahr', type: 'number', width: 80 }, { key: 'value', label: 'Umsatz EUR', type: 'number', width: 140 }]}

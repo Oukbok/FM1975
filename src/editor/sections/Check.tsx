@@ -13,7 +13,7 @@ export function CheckSection({ ds, issues, onCheck, onExport, onStore }: {
   const warns = issues?.filter((i) => i.level === 'warn') ?? [];
   return (
     <div className="ed-section">
-      <Explain><b>Prüfen</b> sucht nach Fehlern, die das Spiel ablehnen oder aus dem Tritt bringen würden (z. B. doppelte IDs, ungerade Ligagrößen), und nach Hinweisen, die du dir ansehen solltest. <b>Exportieren</b> lädt die Datei <code>{ds.meta.id}.fm1975.json</code> herunter – zum Weitergeben oder Sichern. <b>Ins Spiel übernehmen</b> speichert den Datensatz direkt im Browser; im Spiel wählst du ihn bei „Neues Spiel“ aus. Laufende Spielstände bleiben unverändert.</Explain>
+      <Explain><b>Prüfen</b> sucht nach Fehlern, die das Spiel ablehnen oder aus dem Tritt bringen würden (z. B. doppelte IDs, ungerade Ligagrößen), und nach Hinweisen, die du dir ansehen solltest. <b>Exportieren</b> lädt die Datei <code>{ds.meta.id}.fm1975.json</code> herunter – zum Weitergeben oder Sichern. <b>Ins Spiel übernehmen</b> speichert den Datensatz direkt im Browser; im Spiel wählst du ihn bei „Neues Spiel“ aus. Spielstände mit derselben Datensatz-ID übernehmen Regel- und Tabellenänderungen beim nächsten Laden – für Experimente eine neue ID wählen.</Explain>
       <div className="ed-row">
         <button className="ed-btn" onClick={onCheck}><Icon name="whistle" /> Jetzt prüfen</button>
         <button className="ed-btn" onClick={onExport}><Icon name="save" /> Exportieren</button>
