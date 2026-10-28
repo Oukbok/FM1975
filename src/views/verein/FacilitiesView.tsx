@@ -1,6 +1,6 @@
 import { currencyForYear, economyScale, yearOf } from '../../engine/economy';
 import { CATERING_UPKEEP } from '../../engine/finances';
-import { FACILITIES, facilityAvailable, FACILITY_BY_KEY, FAC_UPKEEP_BASE, LEVEL_MULT, MAX_LEVEL, canUpgrade, upgradeCost, upgradeFacility } from '../../engine/infrastructure';
+import { FACILITIES, facilityAvailable, FACILITY_BY_KEY, FAC_UPKEEP_BASE, LEVEL_MULT, MAX_LEVEL, canUpgrade, upgradeFacility } from '../../engine/infrastructure';
 import { makeMessage, pushMessage } from '../../engine/messages';
 import { Game } from '../../game/state';
 import { CateringMode, FacilityKey } from '../../types';
@@ -55,7 +55,7 @@ export function FacilitiesView({ g, onChange }: { g: Game; onChange: () => void 
   const futureDefs = FACILITIES.filter((d) => d.unlockYear && curYear < d.unlockYear).sort((a, b) => (a.unlockYear ?? 0) - (b.unlockYear ?? 0));
   const totalUpkeep = unlockedDefs.reduce((sum, d) => sum + facMonthlyUpkeep(d.key, infra[d.key] as number), 0);
   const upgradable = unlockedDefs.filter((d) => (infra[d.key] as number) < MAX_LEVEL)
-    .map((d) => ({ d, cost: upgradeCost(d.key, (infra[d.key] as number) + 1) })).sort((a, b) => a.cost - b.cost);
+    .filter((d) => d.key !== 'stadium').map((d) => ({ d, cost: canUpgrade(club, d.key, scale).cost })).sort((a, b) => a.cost - b.cost);
   const avgLevel = unlockedDefs.length ? unlockedDefs.reduce((s2, d) => s2 + (infra[d.key] as number), 0) / unlockedDefs.length : 0;
 
   return (
@@ -63,9 +63,9 @@ export function FacilitiesView({ g, onChange }: { g: Game; onChange: () => void 
       <DashBox title="Einrichtungen" icon="facilities" span={2} rows={2} right={`Ø Stufe ${avgLevel.toFixed(1)} / ${MAX_LEVEL}`}>
         {unlockedDefs.map((def) => {
           const level = infra[def.key] as number;
-          const check = canUpgrade(club, def.key);
+          const check = canUpgrade(club, def.key, scale);
           const atMax = level >= MAX_LEVEL;
-          const nextCost = atMax ? 0 : upgradeCost(def.key, level + 1);
+          const nextCost = atMax ? 0 : check.cost;
           const upkeep = facMonthlyUpkeep(def.key, level);
           return (
             <div key={def.key} className="dfac">
@@ -80,8 +80,10 @@ export function FacilitiesView({ g, onChange }: { g: Game; onChange: () => void 
               </div>
               <div className="dfac-act">
                 {atMax ? <span className="dchip on">Maximum</span> : <>
-                  <button className="dchip on" disabled={!check.ok} onClick={() => doUpgrade(def.key)} title={check.ok ? '' : check.reason}>Ausbauen {fmtDM(nextCost)}</button>
-                  {!check.ok && <span className="dnote" style={{ color: 'var(--red)' }}>{check.reason}</span>}
+                  {def.key === 'stadium'
+                    ? <span className="dnote">Ausbau als Bauprojekt unter „Stadion“</span>
+                    : <button className="dchip on" disabled={!check.ok} onClick={() => doUpgrade(def.key)} title={check.ok ? '' : check.reason}>Ausbauen {fmtDM(nextCost)}</button>}
+                  {!check.ok && def.key !== 'stadium' && <span className="dnote" style={{ color: 'var(--red)' }}>{check.reason}</span>}
                 </>}
               </div>
             </div>

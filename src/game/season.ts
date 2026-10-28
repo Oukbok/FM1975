@@ -3,6 +3,7 @@ import { setEraYear } from '../engine/positions';
 import { refreshOverall } from '../engine/development';
 import { manageSquads } from './squads';
 import { closeFinancialSeason, openFinancialSeason } from './seasonFinance';
+import { applyForcedRelegation } from './clubBusiness';
 import { staffSeasonChange } from './staffGame';
 import { youthPoachingAtSeasonChange } from './youthMarket';
 import { environmentSeasonChange, setSeasonGoal } from './environmentGame';
@@ -158,7 +159,10 @@ export function decidePlayoff(g: Game, aId: string, bId: string, season: string)
 // alle anderen aus ihrer Sim-Tabelle.
 export function finalOrder(g: Game, divId: string): string[] {
   // Auslandsvereine (Europapokal) gehören nie in eine deutsche Liga (Altstände reparieren).
-  if (g.leagues.playerDivision.id === divId) return g.table.rows.map((r) => r.clubId).filter((id) => !isForeignId(id));
+  if (g.leagues.playerDivision.id === divId) {
+    // Zwangsabstieg wegen Überschuldung: betroffene Vereine ans Ende (game/clubBusiness.ts).
+    return applyForcedRelegation(g, g.table.rows.map((r) => r.clubId).filter((id) => !isForeignId(id)), g.season);
+  }
   const d = g.leagues.otherDivisions.find((x) => x.id === divId);
   return d ? d.table.rows.map((r) => r.clubId).filter((id) => !isForeignId(id)) : [];
 }

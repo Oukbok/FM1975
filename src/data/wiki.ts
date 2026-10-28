@@ -1331,6 +1331,40 @@ Rund 30 erfundene **Legenden** sind über die Jahrzehnte verteilt – vom Bomber
 - Steigt ihr Verein aus deiner Liga ab, wechselt die Legende zu einem Verein, der bleibt – sie geht nicht verloren.`,
   },
   {
+    id: 'club-business',
+    category: 'environment',
+    title: 'Stadionbau, Kredite, Namensrechte, Investoren und Überschuldung',
+    keywords: ['stadion', 'ausbau', 'kredit', 'zins', 'logen', 'vip', 'namensrechte', 'arena', 'ausgliederung', 'kapitalgesellschaft', 'investor', '50+1', 'dividende', 'punktabzug', 'zwangsabstieg', 'überschuldung', 'vorstand'],
+    body: `## Stadionausbau als Bauprojekt
+Das Stadion wächst nicht über Nacht. Unter **Verein → Stadion** startest du den nächsten Ausbauschritt (+6.000 Plätze):
+- **Bauzeit:** Stufe 2–3 eine Saison, Stufe 4 zwei, Stufe 5 drei Spielzeiten. Fertig wird immer zum 1. Juli.
+- **Während des Baus** sind rund 8 % der Plätze gesperrt.
+- **Kosten:** Preisschild in 1975-Basis × Wirtschaftsskala; ab 2004 (Arenen) ×1,1.
+- **Finanzierung:** bar oder per Kredit über 10, 15 oder 20 Jahre. Die Monatsrate (Annuität: Zins + Tilgung) wird jeden Monat gebucht. Die Bank lehnt ab, wenn alle Kreditraten zusammen mehr als 12 % des Jahresumsatzes kosten würden.
+- **Zinsen je Epoche:** etwa 8,5 % (1975), 10,5 % (1981), 6 % (1998), 2–3 % (2016–2021), danach wieder rund 4,5 %. Wer im Minus steht, zahlt 1,5 Prozentpunkte Aufschlag.
+
+## Logen
+Ab 1985 bringt jeder Ausbauschritt Logen mit (8 bis 1992, 16 bis 2003, danach 28). Jede Loge bringt je Heimspiel 1.400 DM (1975-Basis) × Spieltags-Skala × Marke.
+
+## Namensrechte (ab 2000)
+Unter **Verein → Vorstand** liegen drei Angebote fiktiver Firmen (3, 5 oder 8 Jahre). Der Jahreswert richtet sich nach Kapazität und Ansehen und wächst mit Vermarktungs-Skala und Marke; er wird monatlich gebucht. Traditionsvereine zahlen mit Fan-Stimmung (je nach Tradition und Leitbild 2–15 Punkte). Läuft der Vertrag aus, heißt das Stadion wieder wie früher; im letzten Vertragsjahr bietet der Partner eine Verlängerung (+10 %).
+
+## Ausgliederung und Investor (ab 1998)
+- **Ausgliederung** des Profibereichs bringt einmalig Kapital (12 % des Jahresumsatzes) und +8 Vorstandsvertrauen. Die Saisonziele fallen danach eine Stufe ehrgeiziger aus. Je nach Leitbild murren die Fans (bis −8, Traditionsvereine −3 zusätzlich).
+- **Investor:** Danach kannst du Anteile verkaufen (10, 15 oder 24 %), höchstens 49 % wegen der **50+1-Regel**. Preis ≈ 6 % des Umsatzes je Prozentpunkt × Marke. Ab 25 % steigen die Ziele noch eine Stufe.
+- **Renditedruck:** Nach jeder Saison erhält der Investor seinen Anteil am Gewinn. Ohne Gewinn sinkt das Vorstandsvertrauen um 5.
+- **Fanprotest:** Jeder Verkauf kostet Stimmung (stärker ab 2005 und bei bodenständigen Vereinen). Liegt die Stimmung danach unter 45, gibt es Proteste und etwas weniger Zuschauer.
+
+## Vorstandsvertrauen
+Unter 40 gibt der Vorstand weniger Transfermittel frei, unter 20 halbiert er das Transferbudget zusätzlich. Entlassen wirst du nicht.
+
+## Überschuldung: Punktabzug und Zwangsabstieg
+Zum Saisonstart prüft der Verband **alle Vereine**: Schulden (negativer Kontostand + ein Viertel der Kreditrestschuld) im Verhältnis zum Jahresumsatz.
+- über 60 %: **3 Punkte Abzug**, über 90 %: **6**, über 120 %: **9** – sichtbar in der Tabelle.
+- Wer schon in der Vorsaison einen Abzug hatte und über 150 % liegt, steigt **zum Saisonende zwangsweise ab** (landet auf dem letzten Platz).
+- Dazu kommen die Lizenzauflagen (Transfersperre) wie bisher.`,
+  },
+  {
     id: 'environment-overview',
     category: 'environment',
     title: 'Vereinsumfeld — Fans, Mitglieder, Medien, Vorstand',
@@ -1435,8 +1469,9 @@ Jede **gebaute Einrichtung** verursacht laufende Fixkosten (Unterhalt), die je E
 - Nach Abschluss erhältst du eine Vorstands-Nachricht mit neuem Effekt und Kontostand.
 
 Die Ausbaukosten steigen überproportional mit der Zielstufe:
-\`Kosten(Zielstufe) = Basiskosten × Faktor  (auf 10.000 DM gerundet)\`
-mit den Faktoren **Stufe 2 = ×1,0**, **Stufe 3 = ×2,1**, **Stufe 4 = ×3,6**, **Stufe 5 = ×5,4**.
+\`Kosten(Zielstufe) = Basiskosten × Faktor × Wirtschaftsskala des Jahres  (auf 10.000 gerundet)\`
+mit den Faktoren **Stufe 2 = ×1,0**, **Stufe 3 = ×2,1**, **Stufe 4 = ×3,6**, **Stufe 5 = ×5,4**. Die Basiskosten sind Preise von 1975; später steigen sie mit der Inflation des Fußballs.
+Das **Stadion** ist die Ausnahme: Es wird als Bauprojekt mit Bauzeit und wahlweise per Kredit ausgebaut (siehe *Stadionbau, Kredite, Namensrechte, Investoren und Überschuldung*).
 
 ## Startausstattung
 Größere Vereine (höhere Reputation) starten mit besserer Infrastruktur (Stufen 1–3). Auch die KI-Vereine besitzen
@@ -1449,7 +1484,7 @@ Details zu Kosten und Effekten je Einrichtung: siehe *Einrichtungen im Detail*.`
     category: 'facilities',
     title: 'Einrichtungen im Detail (Kosten & Effekte)',
     keywords: ['stadion', 'trainingszentrum', 'medizin', 'fanshop', 'merchandising', 'kosten', 'kapazität', 'effekte', 'dm'],
-    body: `Alle Kosten in **DM**, auf 10.000 gerundet. Stufe 1 ist die Grundausstattung (kostenlos).
+    body: `Alle Kosten in **DM von 1975** (später × Wirtschaftsskala), auf 10.000 gerundet. Stufe 1 ist die Grundausstattung (kostenlos).
 
 ## Stadion — Basiskosten 900.000 DM
 Jede Stufe über 1 erhöht die **Kapazität um 6.000 Plätze**. Mehr Kapazität → höhere Zuschauerzahl und damit

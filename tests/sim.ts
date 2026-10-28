@@ -64,6 +64,15 @@ function report(game: Game) {
     const wr = lc.map((c) => c.finances.seasonHistory?.[c.finances.seasonHistory.length - 1]?.wageRatio ?? 0);
     console.log(`   Liga-Umsatz Vorsaison: min ${Math.round(revs[0] / 1e6)}M median ${Math.round(revs[revs.length >> 1] / 1e6)}M max ${Math.round(revs[revs.length - 1] / 1e6)}M | Ø Gehaltsquote ${(wr.reduce((a, b) => a + b, 0) / wr.length).toFixed(2)} | Top-Marktwert ${Math.round(Math.max(...Object.values(game.players).map((p) => p.contract.transferValue)) / 1000)}k (Basis)`);
     const others = lc.filter((c) => c.id !== my.id).map((c) => c.finances.balance).sort((a, b) => a - b);
+    const ded = lc.filter((c) => c.pointDeduction && c.pointDeduction.season === game.season).map((c) => `${c.shortName} −${c.pointDeduction!.points}${c.finances.ffp?.forcedRelegation === game.season ? ' Zwangsabstieg' : ''}`);
+    if (ded.length) console.log(`   Punktabzug: ${ded.join(', ')}`);
+    if (process.env.DEBT) {
+      const worst = [...lc].sort((a, b) => a.finances.balance - b.finances.balance).slice(0, 3);
+      for (const c of worst) {
+        const h = c.finances.seasonHistory?.[c.finances.seasonHistory.length - 1];
+        console.log(`   DEBT ${c.shortName} rep ${c.reputation} Konto ${Math.round(c.finances.balance / 1000)}k Umsatz ${Math.round((h?.revenue ?? 0) / 1000)}k Ergebnis ${Math.round((h?.result ?? 0) / 1000)}k Quote ${h?.wageRatio?.toFixed(2)} | AUS ${h ? Object.entries(h.expenses).map(([k, v]) => `${k} ${Math.round((v as number) / 1000)}k`).join(' ') : ''} | EIN ${h ? Object.entries(h.income).filter(([, v]) => v).map(([k, v]) => `${k} ${Math.round((v as number) / 1000)}k`).join(' ') : ''}`);
+      }
+    }
     console.log(`   KI-Konten min ${Math.round(others[0] / 1000)}k median ${Math.round(others[others.length >> 1] / 1000)}k max ${Math.round(others[others.length - 1] / 1000)}k`);
   }
   if (process.env.MINE) {

@@ -14,6 +14,7 @@ import { makeMessage, pushMessage } from '../engine/messages';
 import { EuroCompId, EURO_COMP_NAMES } from '../data/europe';
 import { formatMoney } from '../engine/economy';
 import { boardBudgetShare } from '../engine/environment';
+import { seasonClubBusiness } from './clubBusiness';
 
 /** Leistungswert 0..1 der Vorsaison je Verein (für die TV-Verteilung). */
 export type PerfMap = Record<string, number>;
@@ -126,4 +127,7 @@ export function openFinancialSeason(g: Game, newSeason: string, date: string, pr
       actionRequired: false,
     }));
   }
+
+  // Ausschüttung, Überschuldung (Punktabzug/Zwangsabstieg), Vorstandsgeduld (game/clubBusiness.ts).
+  seasonClubBusiness(g, newSeason, date);
 }

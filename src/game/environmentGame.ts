@@ -11,6 +11,7 @@ import { lastRevenue, isLeagueClub } from '../engine/clubEconomy';
 import { book } from '../engine/finances';
 import { yearOf } from '../engine/economy';
 import { makeMessage, pushMessage } from '../engine/messages';
+import { expectationShift } from './clubBusiness';
 
 export function ensureEnvironment(g: Game): ClubEnvironment {
   const club = g.clubs[g.managedClubId];
@@ -123,9 +124,10 @@ export function setSeasonGoal(g: Game, date: string): void {
     return o.reduce((a, b) => a + b, 0) / Math.max(1, o.length);
   };
   const ranked = [...league].sort((a, b) => strength(b) - strength(a));
+  // Geldgeber (Ausgliederung/Investor) erwarten mehr: Ziel wie ein stärkerer Kader.
   const rank = ranked.findIndex((c) => c.id === club.id) + 1;
   const tier = g.leagues?.playerDivision?.tier ?? 1;
-  club.boardExpectation = seasonExpectation(rank, ranked.length, tier);
+  club.boardExpectation = seasonExpectation(Math.max(1, rank - expectationShift(club)), ranked.length, tier);
   pushMessage(g.messages, makeMessage({
     date, category: 'board', from: 'Vorstand',
     subject: `Saisonziel: ${club.boardExpectation}`,

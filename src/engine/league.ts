@@ -130,6 +130,14 @@ export function calculateTable(
   }
 
   const rows = Object.values(rowMap);
+  // Punktabzug (Lizenzauflage bei Überschuldung, game/clubBusiness.ts).
+  for (const club of clubs) {
+    const pd = club.pointDeduction;
+    if (pd && pd.season === season && pd.points > 0 && rowMap[club.id]) {
+      rowMap[club.id].points -= pd.points;
+      rowMap[club.id].deduction = pd.points;
+    }
+  }
   for (const row of rows) {
     row.goalDifference = row.goalsFor - row.goalsAgainst;
     row.form = row.form.slice(-5);

@@ -35,6 +35,7 @@ import { cupNextDrawMessage, cupResultMessage, euroDrawMessage, euroResultMessag
 import { emitMatchMessage, simulateMatchday, startNextSeason } from './season';
 import { OwnMatchInfo, findOwnMatchDue, isPrepared } from './ownMatch';
 import { Game, bumpMorale } from './state';
+import { monthlyClubBusiness } from './clubBusiness';
 import { renewExpiredContracts } from './contracts';
 import { PlayerDevReveal } from '../types';
 import { fmtDM, fmtDMfull, fmtDateFull, setDisplayYear } from '../ui/format';
@@ -463,6 +464,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
     monthlyTrainingReport(g, today);
     monthlyEnvironmentUpdate(g, today);
     monthlyEvents(g, today);
+    // Kreditraten, Stadion-Bauprojekte, Namensrechte (game/clubBusiness.ts).
+    monthlyClubBusiness(g, today);
     for (const club of Object.values(g.clubs)) {
       if (club.finances.lastMonthlyBooking === curMonth) continue;
       const isMine = club.id === g.managedClubId;

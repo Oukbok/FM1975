@@ -340,7 +340,7 @@ export function VereinDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) =>
   const conf = myClub.boardConfidence ?? 50;
   return (
     <DashPage>
-      <DashBox title="Vorstand" icon="dashVerein">
+      <DashBox title="Vorstand" icon="dashVerein" onClick={() => onGoto('vorstand')}>
         <div className="dkpis">
           <Kpi value={row ? `${row.position}.` : '–'} label="Tabellenplatz" />
           <Kpi value={`${Math.round(conf)}`} label="Vertrauen" color={vColor(conf)} />
@@ -420,7 +420,7 @@ export function StatistikenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Scree
             {around.map((r) => (
               <tr key={r.clubId} className={r.clubId === myId ? 'me' : ''}>
                 <td>{r.position}</td><td>{g.clubs[r.clubId]?.name}</td><td className="num">{r.played}</td>
-                <td className="num">{r.goalDifference > 0 ? '+' : ''}{r.goalDifference}</td><td className="num">{r.points}</td>
+                <td className="num">{r.goalDifference > 0 ? '+' : ''}{r.goalDifference}</td><td className="num">{r.points}{r.deduction ? <sup title={`${r.deduction} Punkte Abzug (Überschuldung)`} style={{ color: 'var(--red)', marginLeft: 3 }}>−{r.deduction}</sup> : null}</td>
               </tr>
             ))}
           </tbody>

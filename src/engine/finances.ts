@@ -22,6 +22,7 @@
 //   • Transferausgaben  = Spielerkäufe (siehe transfers.ts → bookTransfer)
 // =============================================================================
 
+import { vipIncome } from './clubBusiness';
 import {
   Club, Player, MatchResult, ClubFinances, FinanceCategory, FinanceTransaction, LeagueTable,
   CateringMode, SponsorOffer,
@@ -297,6 +298,8 @@ export function bookHomeMatch(
     }
     if (catering > 0) book(fin, date, catering, 'catering', `Catering / Wuerstchenbuden (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
     if (matchday > 0) book(fin, date, matchday, 'matchday', `Programmhefte & Spieltagserloese (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
+    const vip = vipIncome(club, sc.matchday, Number(date.slice(0, 4)));
+    if (vip > 0) book(fin, date, vip, 'commercial', `Logen & VIP-Bereich (${club.stadium.vipBoxes} Logen)`, trackDetail);
   }
   // Leistungsprämie (2-Punkte-Ära: bescheiden)
   const bonus = Math.round((won ? 25000 + club.reputation * 200 : drawn ? 8000 : 0) * scale);
