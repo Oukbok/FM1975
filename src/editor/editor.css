@@ -13,7 +13,7 @@
 .ed-logo { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 22px; color: var(--accent); letter-spacing: -0.5px; }
 .ed-ds-name { font-weight: 600; color: var(--text); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ed-tools { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.ed-open { width: auto; min-width: 190px; }
+.ed-tools .ed-open { width: auto; min-width: 190px; }
 
 .ed-confirm {
   display: flex; align-items: center; gap: 10px; padding: 8px 18px;
@@ -68,7 +68,7 @@
   padding: 8px 14px; border: 0; border-bottom: 2px solid transparent; background: transparent;
   color: var(--text-2); font: inherit; font-weight: 600; cursor: pointer;
 }
-.ed-tab:hover { color: var(--text); }
+.ed-tab:hover { color: var(--text); background: transparent; }
 .ed-tab.on { color: var(--accent); border-bottom-color: var(--accent); }
 .ed-badge { display: inline-block; min-width: 22px; padding: 1px 6px; border-radius: 10px; background: var(--panel-2); color: var(--text-2); font-size: 11px; text-align: center; }
 .ed-badge.bad { background: var(--red); color: #fff; }
@@ -81,7 +81,8 @@
 }
 .ed-btn:hover { border-color: var(--accent-dim); background: var(--panel-hover); }
 .ed-btn.on { background: var(--accent); border-color: var(--accent); color: #04121a; }
-.ed-btn.on:hover { filter: brightness(1.08); }
+.ed-btn.on:hover { filter: brightness(1.08); background: var(--accent); }
+.ed-btn.on svg { filter: brightness(0); }
 .ed-in {
   width: 100%; padding: 5px 8px; border-radius: 6px; border: 1px solid var(--border-soft); background: var(--bg-2);
   color: var(--text); font: inherit; font-size: 13px;
@@ -105,7 +106,8 @@ textarea.ed-in { resize: vertical; line-height: 1.4; }
 .ed-mini.danger:hover { color: var(--red); border-color: var(--red); }
 
 /* --- Tabelle --- */
-.ed-table-wrap { display: flex; flex-direction: column; gap: 8px; min-width: 0; flex: 1; min-height: 0; }
+.ed-table-wrap { display: flex; flex-direction: column; gap: 8px; min-width: 0; flex: 0 0 auto; }
+.ed-split > .ed-table-wrap { flex: 1; }
 .ed-table-bar { display: flex; gap: 10px; align-items: center; }
 .ed-count { color: var(--text-3); font-size: 12px; }
 .ed-search { max-width: 240px; margin-left: auto; }
