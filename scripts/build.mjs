@@ -25,8 +25,28 @@ writeFileSync(`${out}/index.html`, `<!DOCTYPE html>
 </html>
 `);
 
+// Datensatz-Editor: eigene Seite unter /editor/. <base href="../"> sorgt dafür,
+// dass relative Pfade (assets/…, editor/editor.js) wie im Spiel aufgelöst werden –
+// online unter /editor/ ebenso wie später in einer lokalen Windows-Fassung.
+mkdirSync(`${out}/editor`, { recursive: true });
+writeFileSync(`${out}/editor/index.html`, `<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="../" />
+    <title>1975 – Datensatz-Editor</title>
+    <link rel="stylesheet" href="editor/editor.css" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="editor/editor.js"></script>
+  </body>
+</html>
+`);
+
 const options = {
-  entryPoints: { app: 'src/main.tsx' },
+  entryPoints: { app: 'src/main.tsx', 'editor/editor': 'src/editor/main.tsx' },
   bundle: true,
   outdir: out,
   format: 'iife',

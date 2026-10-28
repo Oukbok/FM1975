@@ -89,6 +89,29 @@ Alle Datumsberechnungen nutzen **UTC** (\`'T00:00:00Z'\`, \`setUTCDate\`, \`getU
 
 Betroffen: \`engine/calendar.ts\`, \`engine/league.ts\` und jede neue datumsbezogene Logik.`,
   },
+  {
+    id: 'core-datasets',
+    category: 'core',
+    title: 'Datensätze & Datensatz-Editor (Modding)',
+    keywords: ['datensatz', 'editor', 'modding', 'mod', 'wappen', 'trikot', 'vereine', 'import', 'export', 'json'],
+    body: `## Was ist ein Datensatz?
+Ein Datensatz ist eine einzelne JSON-Datei (\`<id>.fm1975.json\`), die festlegt, womit ein **neues Spiel** startet: Vereine aller Ligen, Wappen und Trikots, Europa (Länder, Starter der ersten Saison), Chronik-Ereignisse, Ligareformen, Einrichtungen, Mitarbeiter-Rollen, Marketing-Kanäle, Namen und Herkünfte, Legenden, Wirtschaftskurven und besondere Zeitabschnitte. Der eingebaute Datensatz **Standard (1975)** entspricht den Werten im Code.
+
+## Der Editor
+Der Datensatz-Editor ist eine eigene Seite unter **/editor/** (Hauptmenü → Datensätze → Editor öffnen).
+- **Neu** legt eine Kopie des Standards an, **Datei öffnen** lädt eine JSON-Datei, **Aus dem Spiel öffnen** einen bereits übernommenen Datensatz.
+- Die **Arbeitskopie** sichert sich automatisch im Browser – auch nach dem Schließen geht nichts verloren.
+- Jeder Bereich hat einen kurzen Erklärtext. Jahre steuern, **wann** etwas kommt oder verschwindet (z. B. „Ab Jahr“/„Bis Jahr“ bei Einrichtungen, Mitarbeitern und Marketing, Saison bei Chronik und Reformen).
+- **Vereine:** je Verein eigenes Wappen (PNG/JPG/SVG, auf 256 px verkleinert) und Heim-/Auswärtstrikot (Farben + Muster).
+- **Prüfen** zeigt Fehler (z. B. doppelte IDs, ungerade Ligagrößen, fehlende Starter) und Hinweise.
+- **Exportieren** lädt die Datei herunter (zum Teilen), **Ins Spiel übernehmen** speichert sie direkt im Browser.
+
+## Im Spiel
+Übernommene oder importierte Datensätze erscheinen unter **Datensätze** und werden bei **Neues Spiel** gewählt. Ein Spielstand merkt sich die ID seines Datensatzes und wendet ihn beim Laden erneut an. Vereine und Kader stecken im Spielstand selbst; Tabellen wie Chronik, Mitarbeiter oder Marketing kommen aber aus dem Datensatz – überschreibst du einen Datensatz mit gleicher ID, gelten solche Änderungen auch für dessen Spielstände. Für Experimente lieber eine neue ID wählen. Fehlende Felder fallen auf den Standard zurück.
+
+## Grenzen
+Wirkungen von Einrichtungen sowie die Übergangsregeln der vier eingebauten Ligareformen bleiben im Spiel fest (verknüpft über Schlüssel bzw. Reform-ID). Reformen mit eigener ID bauen die Ligapyramide noch nicht um. Bitte nur erfundene Namen für Vereine, Spieler und Stadien verwenden. Das genaue Format steht in \`docs/specs/DATASET_SPEC.md\`.`,
+  },
 
   // ---------------------------------------------------------------------------
   // LIGASTRUKTUR & AUF-/ABSTIEG
