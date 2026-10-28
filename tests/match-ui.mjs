@@ -6,6 +6,7 @@ import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { chromium } from 'playwright';
+import { startNewGame } from './newgame-flow.mjs';
 
 const outDir = process.argv[2] || 'test-output/match';
 await mkdir(outDir, { recursive: true });
@@ -24,11 +25,7 @@ const errors = [];
 page.on('pageerror', (e) => errors.push('JS-Fehler: ' + e.message));
 await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
 await page.goto(url);
-await page.click('text=Neues Spiel');
-await page.fill('input[placeholder*="Mustermann"]', 'Test');
-await page.click('.club-pick >> nth=0');
-await page.locator('input[type=range]').fill('300');
-await page.click('text=SAISON STARTEN');
+await startNewGame(page);
 await page.waitForTimeout(800);
 
 const closeModals = async () => {

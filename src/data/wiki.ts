@@ -450,16 +450,20 @@ Kategorien: transfer, injury, match, board, contract, training, media, general.
     id: 'save-system',
     category: 'save',
     title: 'Speichern, Laden & Startbildschirm',
-    keywords: ['speichern', 'laden', 'save', 'load', 'slot', 'startbildschirm', 'menü', 'einstellungen', 'manager'],
+    keywords: ['speichern', 'laden', 'save', 'load', 'slot', 'startbildschirm', 'menü', 'einstellungen', 'manager', 'neues spiel', 'vereinswahl', 'liga wählen'],
     body: `## Startbildschirm
 Beim Start erscheint ein Menü mit:
-- **Neues Spiel** – Managerprofil + Verein + Optionen festlegen.
+- **Neues Spiel** – Assistent in drei Schritten: Spielwelt, Verein, Manager.
 - **Spiel laden** – vorhandene Speicherstände mit Vorschau (Verein, Manager, Datum).
 - **Einstellungen** – Geschwindigkeit, Autosave, Anzeige u.a.
 - **Spiel verlassen** – schließt/entkoppelt die laufende Partie.
 
-## Neues Spiel: Managerprofil
-Du stellst **dich selbst als Manager** ein: Name, Nationalität, Geburtsjahr, bevorzugter Spielstil und Trainer-Hintergrund. Dazu Optionen wie Schwierigkeitsgrad, Verletzungen an/aus und Spieltempo. Das **Punktesystem ist historisch automatisch** (2 Punkte bis 1994/95, ab 1995/96 automatisch 3 Punkte) und nicht mehr wählbar.
+## Neues Spiel in drei Schritten
+1. **Spielwelt:** Datensatz, Schwierigkeit, Verletzungen, realistische Kader, Spieltempo und **Historische Spieler** (Aus, fiktive Legenden oder eigene Namensdatei). Start ist immer der 1. Juli 1975.
+2. **Verein:** Links wählst du die Liga (1. Liga, 2. Liga Nord, 2. Liga Süd; die DDR-Oberliga kommt erst 1991 ins Spiel). In der Mitte siehst du alle Vereine der Liga als Wappen – sortierbar nach Stärke, Name oder Region. Rechts zeigt die Detailkarte Trikots, Stadion, Kapazität, Ansehen, Finanzkraft, die geschätzte Kaderstärke im Ligavergleich, das Ziel des Vorstands und die Rivalen. Kaderstärke und Ziel sind **Einschätzungen**: Die echten Kader entstehen beim Start, das endgültige Saisonziel richtet sich danach.
+3. **Manager:** Name, Nationalität, Geburtsjahr, Spielstil und Trainer-Hintergrund, daneben eine Zusammenfassung. „Karriere starten“ erzeugt die Spielwelt.
+
+Über den Stepper oben springst du jederzeit zu einem früheren Schritt zurück. Das **Punktesystem ist historisch automatisch** (2 Punkte bis 1994/95, ab 1995/96 automatisch 3 Punkte) und nicht wählbar.
 
 ## Speicherstände
 - Gespeichert wird im **Browser (localStorage)**. Der Spielzustand ist ein reines Datenobjekt und damit direkt als JSON serialisierbar.
