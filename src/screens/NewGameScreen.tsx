@@ -1,188 +1,121 @@
-import ClubCrest from '../components/ClubCrest';
 import Icon from '../components/Icon';
-import { SECOND_LIGA_NORD_SEEDS, SECOND_LIGA_SUED_SEEDS, getClubSeeds } from '../data/generate';
+import { getClubSeeds } from '../data/generate';
 import { applyDataset } from '../data/dataset/apply';
 import { BUILTIN_ID } from '../data/dataset/builtin';
-import { cachedDataset, cachedSummaries } from '../data/dataset/storage';
+import { cachedDataset } from '../data/dataset/storage';
 import { AppSettings } from '../engine/save';
 import { loadLegendNames } from '../data/legendNames';
 import { Difficulty, ManagerBackground, ManagerProfile, ManagerStyle, NewGameOptions } from '../types';
+import { LeagueKey } from './newgame/clubPreview';
+import { StepSetup } from './newgame/StepSetup';
+import { StepClub } from './newgame/StepClub';
+import { StepManager } from './newgame/StepManager';
 import { useState } from 'react';
 
 // -----------------------------------------------------------------------------
-// NEUES SPIEL: Managerprofil + Verein + Optionen
+// NEUES SPIEL — Assistent in drei Schritten (wie bei den großen Managerspielen):
+//   1. Datensatz & Optionen   2. Liga & Verein   3. Manager & Start
 // -----------------------------------------------------------------------------
 export const STYLE_DE: Record<ManagerStyle, string> = { defensive: 'Defensiv', balanced: 'Ausgeglichen', attacking: 'Offensiv' };
 
 export const BG_DE: Record<ManagerBackground, { label: string; desc: string }> = {
   legend: { label: 'Trainer-Legende', desc: 'Großer Name, hohes Ansehen beim Vorstand.' },
-  ex_pro: { label: 'Ex-Profi', desc: 'Selbst gespielt – gute Draht zur Mannschaft.' },
+  ex_pro: { label: 'Ex-Profi', desc: 'Selbst gespielt – guter Draht zur Mannschaft.' },
   tactician: { label: 'Taktik-Fuchs', desc: 'Analytiker mit Sinn für Details.' },
   rookie: { label: 'Newcomer', desc: 'Unbeschriebenes Blatt mit Ambitionen.' },
 };
 
+export type LegendMode = 'off' | 'fictional' | 'custom';
+
+/** Gemeinsamer Zustand aller Schritte. */
+export interface NewGameDraft {
+  datasetId: string;
+  difficulty: Difficulty;
+  injuries: boolean;
+  realistic: boolean;
+  speedMs: number;
+  legendMode: LegendMode;
+  league: LeagueKey;
+  clubId: string;
+  name: string;
+  nationality: string;
+  birthYear: number;
+  style: ManagerStyle;
+  background: ManagerBackground;
+}
+
+const STEPS: { label: string; sub: string; icon: 'settings' | 'dashVerein' | 'squad' }[] = [
+  { label: 'Spielwelt', sub: 'Datensatz & Optionen', icon: 'settings' },
+  { label: 'Verein', sub: 'Liga & Verein wählen', icon: 'dashVerein' },
+  { label: 'Manager', sub: 'Profil & Start', icon: 'squad' },
+];
+
 export function NewGameScreen({ defaults, onBack, onStart }: {
   defaults: AppSettings; onBack: () => void; onStart: (o: NewGameOptions) => void;
 }) {
-  const datasets = cachedSummaries();
-  const [datasetId, setDatasetId] = useState(BUILTIN_ID);
+  const customNames = Object.keys(loadLegendNames()).length;
+  const [step, setStep] = useState(0);
+  const [d, setD] = useState<NewGameDraft>(() => ({
+    datasetId: BUILTIN_ID, difficulty: 'normal', injuries: true, realistic: true, speedMs: defaults.speedMs,
+    legendMode: customNames ? 'custom' : 'fictional',
+    league: 'tier1', clubId: [...getClubSeeds()].sort((a, b) => b.reputation - a.reputation)[0]?.id ?? '',
+    name: '', nationality: 'Deutschland', birthYear: 1940, style: 'balanced', background: 'ex_pro',
+  }));
+  const set = (p: Partial<NewGameDraft>) => setD((x) => ({ ...x, ...p }));
+
   const chooseDataset = (id: string) => {
     applyDataset(cachedDataset(id));
-    setDatasetId(id);
-    setClubId(getClubSeeds()[0]?.id ?? '');
+    const first = [...getClubSeeds()].sort((a, b) => b.reputation - a.reputation)[0]?.id ?? '';
+    set({ datasetId: id, league: 'tier1', clubId: first });
   };
-  const seeds = getClubSeeds();
-  const [league, setLeague] = useState<'tier1' | 'nord' | 'sued'>('tier1');
-  const second = (list: typeof SECOND_LIGA_NORD_SEEDS) => list.map((s) => ({
-    id: s.id, name: s.name, shortName: s.shortName, city: s.city, primary: s.primary, secondary: s.secondary,
-    reputation: Math.round(s.strength), label: `Stärke ${Math.round(s.strength)}`,
-  }));
-  const shown = league === 'tier1'
-    ? seeds.map((s) => ({ id: s.id, name: s.name, shortName: s.shortName, city: s.city, primary: s.primary, secondary: s.secondary, reputation: s.reputation, label: `Ansehen ${s.reputation}` }))
-    : second(league === 'nord' ? SECOND_LIGA_NORD_SEEDS : SECOND_LIGA_SUED_SEEDS);
-  const [name, setName] = useState('');
-  const [nationality, setNationality] = useState('Deutschland');
-  const [birthYear, setBirthYear] = useState(1940);
-  const [style, setStyle] = useState<ManagerStyle>('balanced');
-  const [background, setBackground] = useState<ManagerBackground>('ex_pro');
-  const [clubId, setClubId] = useState(seeds[0].id);
-  const [difficulty, setDifficulty] = useState<Difficulty>('normal');
-  const [injuries, setInjuries] = useState(true);
-  const [realistic, setRealistic] = useState(true);
-  const [speedMs, setSpeedMs] = useState(defaults.speedMs);
-  const customNames = Object.keys(loadLegendNames()).length;
-  const [legendMode, setLegendMode] = useState<'off' | 'fictional' | 'custom'>(customNames ? 'custom' : 'fictional');
 
-  const canStart = name.trim().length >= 2;
-
+  const canStart = d.name.trim().length >= 2 && !!d.clubId;
   const start = () => {
     const manager: ManagerProfile = {
-      name: name.trim(), nationality, birthYear, style, background,
-      avatarSeed: name.trim().toLowerCase(),
+      name: d.name.trim(), nationality: d.nationality, birthYear: d.birthYear, style: d.style, background: d.background,
+      avatarSeed: d.name.trim().toLowerCase(),
     };
     onStart({
-      managedClubId: clubId, manager, difficulty,
-      realisticSquads: realistic, injuriesEnabled: injuries, speedMs, datasetId, legendMode,
+      managedClubId: d.clubId, manager, difficulty: d.difficulty, realisticSquads: d.realistic,
+      injuriesEnabled: d.injuries, speedMs: d.speedMs, datasetId: d.datasetId, legendMode: d.legendMode,
     });
   };
+  const last = step === STEPS.length - 1;
 
   return (
-    <div className="menu-panel wide">
-      <div className="row"><h2 style={{ margin: 0 }}>Neues Spiel</h2><button className="btn-sm" onClick={onBack}>← Zurück</button></div>
-
-      {/* Managerprofil */}
-      <div className="card mt16">
-        <div className="card-title"><span className="ico"><Icon name="squad" /></span> Dein Managerprofil</div>
-        <div className="form-grid">
-          <label>Name
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="z.B. Max Mustermann" />
-          </label>
-          <label>Nationalität
-            <input value={nationality} onChange={(e) => setNationality(e.target.value)} />
-          </label>
-          <label>Geburtsjahr
-            <input type="number" min={1910} max={1962} value={birthYear} onChange={(e) => setBirthYear(+e.target.value)} />
-          </label>
-          <label>Bevorzugter Spielstil
-            <select value={style} onChange={(e) => setStyle(e.target.value as ManagerStyle)}>
-              {(Object.keys(STYLE_DE) as ManagerStyle[]).map((s) => <option key={s} value={s}>{STYLE_DE[s]}</option>)}
-            </select>
-          </label>
+    <div className="ng-root">
+      <header className="ng-head">
+        <div className="ng-title">
+          <span className="ng-title-main">Neues Spiel</span>
+          <span className="ng-title-sub">Saison 1975/76</span>
         </div>
-        <label className="dim mini mt12" style={{ display: 'block' }}>Trainer-Hintergrund</label>
-        <div className="chip-row">
-          {(Object.keys(BG_DE) as ManagerBackground[]).map((b) => (
-            <button key={b} className={`chip ${background === b ? 'active' : ''}`} onClick={() => setBackground(b)} title={BG_DE[b].desc}>
-              {BG_DE[b].label}
+        <nav className="ng-steps">
+          {STEPS.map((s, i) => (
+            <button key={s.label} className={`ng-step ${i === step ? 'on' : ''} ${i < step ? 'done' : ''}`}
+              disabled={i > step} onClick={() => i < step && setStep(i)}>
+              <span className="ng-step-no">{i + 1}</span>
+              <span className="ng-step-txt"><b>{s.label}</b><small>{s.sub}</small></span>
             </button>
           ))}
-        </div>
-        <div className="dim2 mini mt8">{BG_DE[background].desc}</div>
-      </div>
+        </nav>
+        <button className="ng-btn ghost" onClick={onBack}><Icon name="mainmenu" size={18} /> Hauptmenü</button>
+      </header>
 
-      {/* Datensatz */}
-      {datasets.length > 1 && (
-        <div className="card mt16">
-          <div className="card-title"><span className="ico"><Icon name="contracts" /></span> Datensatz</div>
-          <div className="chip-row">
-            {datasets.map((d) => (
-              <button key={d.id} className={`chip ${datasetId === d.id ? 'active' : ''}`} onClick={() => chooseDataset(d.id)} title={d.description}>{d.name}</button>
-            ))}
-          </div>
-          <div className="dim2 mini mt8">Vereine, Ligen, Namen und Geschichte stammen aus dem gewählten Datensatz.</div>
-        </div>
-      )}
+      <main className={`ng-body ${step === 1 ? '' : 'center'}`}>
+        {step === 0 && <StepSetup d={d} set={set} customNames={customNames} chooseDataset={chooseDataset} />}
+        {step === 1 && <StepClub d={d} set={set} />}
+        {step === 2 && <StepManager d={d} set={set} />}
+      </main>
 
-      {/* Verein */}
-      <div className="card mt16">
-        <div className="card-title"><span className="ico"><Icon name="dashVerein" /></span> Verein wählen</div>
-        <div className="chip-row">
-          {([['tier1', '1. Liga'], ['nord', '2. Liga Nord'], ['sued', '2. Liga Süd']] as const).map(([k, l]) => (
-            <button key={k} className={`chip ${league === k ? 'active' : ''}`} onClick={() => setLeague(k)}>{l}</button>
-          ))}
+      <footer className="ng-foot">
+        <button className="ng-btn ghost" onClick={() => (step === 0 ? onBack() : setStep(step - 1))}>Zurück</button>
+        <div className="ng-foot-info">
+          {last && !canStart ? 'Gib deinen Namen ein (mindestens 2 Zeichen).' : `Schritt ${step + 1} von ${STEPS.length}`}
         </div>
-        <div className="dim2 mini mt8">{league === 'tier1' ? 'Klassischer Start in der 1. Liga.' : 'Der lange Weg nach oben: Start in der 2. Liga mit kleinem Budget.'}</div>
-        <div className="grid mt8" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))' }}>
-          {shown.map((s) => (
-            <div key={s.id} className={`card club-pick ${clubId === s.id ? 'sel' : ''}`} onClick={() => setClubId(s.id)}>
-              {/* ClubCrest statt Inline-SVG, damit ein spielweit hochgeladenes Wappen
-                  auch in der Vereinsauswahl beim Spielstart erscheint. */}
-              <ClubCrest club={{ id: s.id, name: s.name, shortName: s.shortName, city: s.city, colors: { primary: s.primary, secondary: s.secondary } } as any} size={32} />
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontWeight: 700 }}>{s.shortName}</div>
-                <div className="dim2 mini" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.name}</div>
-                <div className="dim2 mini">{s.city} · {s.label}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Optionen */}
-      <div className="card mt16">
-        <div className="card-title"><span className="ico"><Icon name="settings" /></span> Spieloptionen</div>
-        <div className="form-grid">
-          <label>Schwierigkeit
-            <select value={difficulty} onChange={(e) => setDifficulty(e.target.value as Difficulty)}>
-              <option value="easy">Leicht</option>
-              <option value="normal">Normal</option>
-              <option value="hard">Schwer</option>
-            </select>
-          </label>
-        </div>
-        <div className="toggle-row mt12">
-          <label className="toggle-item">
-            <input type="checkbox" checked={injuries} onChange={(e) => setInjuries(e.target.checked)} />
-            <span className={`toggle ${injuries ? 'on' : ''}`}></span>
-            Verletzungen aktiviert
-          </label>
-          <label className="toggle-item">
-            <input type="checkbox" checked={realistic} onChange={(e) => setRealistic(e.target.checked)} />
-            <span className={`toggle ${realistic ? 'on' : ''}`}></span>
-            Realistische Kader
-          </label>
-        </div>
-        <label className="dim mini mt12" style={{ display: 'block' }}>Historische Spieler</label>
-        <div className="chip-row">
-          {([['off', 'Aus'], ['fictional', 'Fiktive Legenden'], ['custom', 'Eigene Namensdatei']] as const).map(([k, l]) => (
-            <button key={k} className={`chip ${legendMode === k ? 'active' : ''}`} disabled={k === 'custom' && !customNames}
-              onClick={() => setLegendMode(k)}>{l}</button>
-          ))}
-        </div>
-        <div className="dim2 mini mt8">{legendMode === 'off'
-          ? 'Keine Legenden: Alle Talente entstehen zufällig.'
-          : legendMode === 'custom'
-            ? `Legenden tragen die Namen aus deiner Namensdatei (${customNames} Einträge, nur in diesem Browser).`
-            : 'Fiktive Ausnahmespieler tauchen zu festen Jahrgängen auf – ob sie Stars werden, entscheidet das Spiel.'}
-          {!customNames && ' Eine eigene Namensdatei kannst du in den Einstellungen laden.'}</div>
-        <label className="dim mini mt12" style={{ display: 'block' }}>Spieltempo: <b className="accent-text">{speedMs} ms/Tag</b> ({speedMs <= 600 ? 'schnell' : speedMs >= 1200 ? 'langsam' : 'mittel'})</label>
-        <input type="range" min={300} max={1600} step={100} value={speedMs} onChange={(e) => setSpeedMs(+e.target.value)} style={{ width: '100%' }} />
-      </div>
-
-      <button className="btn-primary btn-continue mt16" style={{ alignSelf: 'center', padding: '13px 40px', fontSize: 16 }} disabled={!canStart} onClick={start}>
-        <Icon name="newGame" /> SAISON STARTEN
-      </button>
-      {!canStart && <div className="dim2 mini" style={{ textAlign: 'center', marginTop: 6 }}>Bitte gib deinen Managernamen ein (min. 2 Zeichen).</div>}
+        {last
+          ? <button className="ng-btn primary" disabled={!canStart} onClick={start}><Icon name="newGame" size={18} /> Karriere starten</button>
+          : <button className="ng-btn primary" disabled={step === 1 && !d.clubId} onClick={() => setStep(step + 1)}>Weiter</button>}
+      </footer>
     </div>
   );
 }

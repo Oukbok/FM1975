@@ -22,6 +22,15 @@ export function MainMenu({ settings, onNewGame, onLoad, onUpdateSettings }: {
   const [saves, setSaves] = useState<SaveMeta[]>(() => listSaves());
   const refreshSaves = () => setSaves(listSaves());
 
+  // Neues Spiel: eigener Vollbild-Assistent statt schmaler Menüspalte.
+  if (view === 'new') {
+    return (
+      <div className="menu-bg ng-host">
+        <NewGameScreen defaults={settings} onBack={() => setView('main')} onStart={onNewGame} />
+      </div>
+    );
+  }
+
   return (
     <div className="menu-bg">
       <div className="menu-wrap">
@@ -71,10 +80,6 @@ export function MainMenu({ settings, onNewGame, onLoad, onUpdateSettings }: {
         )}
 
         {view === 'datasets' && <DatasetScreen onBack={() => setView('main')} />}
-
-        {view === 'new' && (
-          <NewGameScreen defaults={settings} onBack={() => setView('main')} onStart={onNewGame} />
-        )}
 
         {view === 'load' && (
           <LoadGameScreen

@@ -2,14 +2,14 @@
 //   SECS=150 node tests/profile-history.mjs
 import { chromium } from 'playwright';
 import { createServer } from 'node:http'; import { readFile } from 'node:fs/promises'; import { join, extname } from 'node:path';
+import { startNewGame } from './newgame-flow.mjs';
 const T={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.jpg':'image/jpeg','.svg':'image/svg+xml'};
 const s=createServer(async(q,r)=>{let p=decodeURIComponent(new URL(q.url,'http://x').pathname);if(p.endsWith('/'))p+='index.html';try{r.writeHead(200,{'Content-Type':T[extname(p)]||'x'}).end(await readFile(join('dist',p)))}catch{r.writeHead(404).end()}}).listen(0);
 const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1920,height:1080}});
 const errs=[];pg.on('pageerror',e=>errs.push(e.message));
 await pg.route(/fonts\./,r=>r.abort());
 await pg.goto(`http://127.0.0.1:${s.address().port}/`);
-await pg.click('text=Neues Spiel');await pg.fill('input[placeholder*="Mustermann"]','Test');await pg.click('.club-pick >> nth=0');
-await pg.locator('input[type=range]').fill('300');await pg.click('text=SAISON STARTEN');await pg.waitForTimeout(800);
+await startNewGame(pg);await pg.waitForTimeout(800);
 const weiter = pg.getByRole('button', { name: /weiter/i }).first();
 const end=Date.now()+Number(process.env.SECS||90)*1000;
 while(Date.now()<end){

@@ -6,6 +6,7 @@ import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { chromium } from 'playwright';
+import { startNewGame } from './newgame-flow.mjs';
 
 const outDir = process.argv[2] || 'test-output';
 const runSeconds = Number(process.argv[3] ?? 25);
@@ -47,11 +48,7 @@ if (process.env.SAVE) {
   await page.click('button:has-text("Laden") >> nth=0');
   await page.waitForTimeout(1500);
 } else {
-  await page.click('text=Neues Spiel');
-  await page.fill('input[placeholder*="Mustermann"]', 'Test');
-  await page.click('.club-pick >> nth=0');
-  await page.locator('input[type=range]').fill('300');
-  await page.click('text=SAISON STARTEN');
+  await startNewGame(page);
   await page.waitForTimeout(800);
 }
 

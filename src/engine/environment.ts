@@ -67,7 +67,16 @@ const REGIONS: string[][] = [
   ['Bielefeld', 'Paderborn', 'Münster', 'Gütersloh'],
 ];
 
-function sameRegion(a: string, b: string): boolean {
+/** Anzeigenamen der Regionen (Reihenfolge wie REGIONS). */
+export const REGION_NAMES = ['Ruhrgebiet', 'Rheinland', 'Norden', 'Bayern', 'Baden-Württemberg', 'Südwest & Hessen', 'Berlin & Brandenburg', 'Sachsen & Thüringen', 'Westfalen'];
+
+/** Region einer Stadt (Name) oder „Sonstige“. */
+export function regionOf(city: string): string {
+  const i = REGIONS.findIndex((r) => r.some((x) => (city ?? '').startsWith(x)));
+  return i >= 0 ? REGION_NAMES[i] ?? 'Sonstige' : 'Sonstige';
+}
+
+export function sameRegion(a: string, b: string): boolean {
   if (!a || !b) return false;
   if (a === b) return true;
   return REGIONS.some((r) => r.some((x) => a.startsWith(x)) && r.some((x) => b.startsWith(x)));

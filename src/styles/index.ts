@@ -23,3 +23,4 @@ import './20-club-editor.css';
 import './21-player-profile.css';
 import './22-pages.css';
 import './23-match-screen.css';
+import './24-newgame.css';
