@@ -316,7 +316,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'transfers' && <TransfersView g={g} onDone={rerender} />}
         {screen === 'finances' && <FinancesView g={g} />}
         {screen === 'youth' && <YouthView g={g} onChange={rerender} />}
-        {screen === 'facilities' && <FacilitiesView g={g} onChange={rerender} />}
+        {screen === 'facilities' && <FacilitiesView g={g} onChange={rerender} onGoto={(sc) => setScreen(sc)} />}
         {screen === 'staff' && <StaffView g={g} onChange={rerender} />}
         {screen === 'marketing' && <MarketingView g={g} onChange={rerender} />}
         {screen === 'calendar' && <CalendarView g={g} onChange={rerender} onGoto={setScreen} />}

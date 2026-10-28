@@ -1133,6 +1133,24 @@ Die gleiche Zahl gilt für **alle** Match-Buchungen (Eintritt, Catering, Program
 Die Bereiche **Stadion**, **Marketing** und **Fans** zeigen eine erwartete Auslastung/Zuschauerzahl **ohne** den ±0,10-Zufallsterm (\`expectedAttendanceRate\`), damit die Wirkung einer Preisänderung planbar ist. Faustregel: Preis unter dem Referenzpreis → mehr Zuschauer → mehr Catering-/Programm-Erlös; deutlich über Referenz → leere Ränge.`,
   },
   {
+    id: 'facilities-grounds',
+    category: 'facilities',
+    title: 'Das Vereinsgelände',
+    keywords: ['vereinsgelände', 'gelände', 'ausbau', 'gebäude', 'bauplatz', 'kunstrasen', 'halle'],
+    body: `## Eine Anlage, die mitwächst
+Unter **Verein → Vereinsgelände** siehst du deine Anlage als Zeichnung. Jede Einrichtung ist ein Gebäude oder Platz, der mit der Ausbaustufe wächst:
+
+| Einrichtung | Was sich zeigt |
+|---|---|
+| Stadion | Laufbahn und offene Ränge, ab der 2. Stufe Kurven, ab der 4. Stufe Haupttribüne; später reines Fußballstadion, ab 2000 (Stufe 4+) Arena mit Dach. Laufender Bau: Kran |
+| Trainingszentrum | 1 bis 3 Plätze, ab Stufe 3 (ab 1995) Kunstrasen, ab Stufe 4 Flutlicht, Stufe 5 Trainingshalle |
+| Jugendakademie | Jugendplätze und ein Gebäude von der Holzbaracke bis zum Campus mit Internat |
+| Medizin, Fanshop, Buden | wachsen sichtbar mit jeder Stufe |
+| Reha-Zentrum, NLZ, Leistungszentrum, Datenanalyse | erscheinen erst, wenn ihre Zeit gekommen ist – zuerst als **Bauplatz** |
+
+Der Baustil folgt der Epoche (Backstein und Satteldach in den 70ern und 80ern, Putz und Flachdach ab 1990, Glas ab 2010), die Jahreszeit ist sichtbar (Herbstlaub, Schnee im Winter), und der Parkplatz füllt sich mit dem Ansehen des Vereins. Ein Klick auf ein Gebäude zeigt Stufe, Wirkung, Fixkosten und den nächsten Ausbau.`,
+  },
+  {
     id: 'youth-overview',
     category: 'youth',
     title: 'Jugendsystem — Überblick',

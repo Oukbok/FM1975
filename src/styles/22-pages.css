@@ -269,3 +269,20 @@
 .talk-who.talk-verein { color: var(--yellow); }
 .talk-who.talk-spieler { color: var(--green); }
 .talk-log .grow { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.35; }
+
+/* Vereinsgelände (views/verein/FacilitiesView.tsx + grounds/) */
+.gr-wrap { position: relative; width: 100%; height: 100%; min-height: 0; overflow: hidden; border-radius: 10px;
+  background: radial-gradient(ellipse at 50% 45%, rgba(110, 160, 100, 0.16), transparent 72%); }
+.gr-svg { width: 100%; height: 100%; display: block; }
+.gr-obj { cursor: pointer; transition: filter 0.15s; }
+.gr-obj:hover { filter: brightness(1.12) drop-shadow(0 0 6px rgba(0, 217, 255, 0.55)); }
+.gr-obj.sel { filter: brightness(1.15) drop-shadow(0 0 8px rgba(0, 217, 255, 0.9)); }
+.gr-hint { position: absolute; left: 18px; bottom: 14px; padding: 8px 14px; border-radius: 8px; background: rgba(10, 16, 24, 0.82); color: var(--text-2); font-size: 14px; font-weight: 700; }
+.gr-panel { position: absolute; top: 14px; right: 14px; width: 380px; max-height: calc(100% - 28px); overflow: auto; padding: 16px 18px; border-radius: 12px;
+  background: rgba(12, 18, 27, 0.94); border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); display: flex; flex-direction: column; gap: 8px; }
+.gr-panel-head { display: flex; align-items: center; justify-content: space-between; font-size: 20px; }
+.gr-panel-head .modal-close { position: static; }
+.gr-pips { display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 700; color: var(--text-2); }
+.gr-pips i { width: 22px; height: 7px; border-radius: 4px; background: var(--border); }
+.gr-pips i.on { background: var(--accent); }
+.gr-pips span { margin-left: 8px; }
