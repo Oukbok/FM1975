@@ -35,6 +35,7 @@ import { cupNextDrawMessage, cupResultMessage, euroDrawMessage, euroResultMessag
 import { emitMatchMessage, simulateMatchday, startNextSeason } from './season';
 import { OwnMatchInfo, findOwnMatchDue, isPrepared } from './ownMatch';
 import { Game, bumpMorale } from './state';
+import { renewExpiredContracts } from './contracts';
 import { PlayerDevReveal } from '../types';
 import { fmtDM, fmtDMfull, fmtDateFull, setDisplayYear } from '../ui/format';
 import { RatingResult as _RatingResult } from '../engine/development';
@@ -380,6 +381,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
     if (utcMon === 7 && domNow === 1) {
       // Fiktive Legenden des Jahrgangs tauchen in einer Akademie auf (data/legends.ts).
       spawnLegends(g, today);
+      // Abgelaufene Verträge werden automatisch verlängert (game/contracts.ts).
+      renewExpiredContracts(g, today);
       for (const club of Object.values(g.clubs)) {
         if ((club.infrastructure.lastYouthIntakeYear ?? 0) >= yearNow) continue;
         club.infrastructure.lastYouthIntakeYear = yearNow;

@@ -5,7 +5,7 @@
 import { recordTransfer } from './history';
 import { Player, Club, TransferOffer } from '../types';
 import { bookTransfer } from './finances';
-import { economyScale, yearOf } from './economy';
+import { economyScale, formatMoney, yearOf } from './economy';
 
 /** Ablöse (1975-Basis) als nominaler Betrag zum Transferdatum – für die Transferhistorie. */
 const nominalFee = (base: number) => Math.round(base * economyScale(yearOf(transferDate)));
@@ -57,7 +57,7 @@ export function makeOffer(
   if (!affordable) message = 'Dein Transferbudget reicht nicht aus.';
   else if (!clubAccepts) message = `${sellingClub?.name ?? 'Der Verein'} lehnt das Angebot ab (zu niedrig).`;
   else if (!playerAccepts) message = `${player.fullName} ist mit dem Gehalt nicht einverstanden.`;
-  else message = `Transfer abgeschlossen: ${player.fullName} wechselt für ${formatDM(nominalFee(amount))}!`;
+  else message = `Transfer abgeschlossen: ${player.fullName} wechselt für ${formatMoney(nominalFee(amount), yearOf(transferDate), true)}!`;
 
   const offer: TransferOffer = {
     id: `off_${Date.now()}`, playerId: player.id,
@@ -117,11 +117,8 @@ export function runAITransfers(
     recordTransfer(player, seller?.name ?? 'vereinslos', buyer.name, nominalFee(fee), transferDate);
     player.clubId = buyer.id;
     player.transferListed = false;
-    news.push(`${player.fullName} wechselt zu ${buyer.name} (${formatDM(nominalFee(fee))}).`);
+    news.push(`${player.fullName} wechselt zu ${buyer.name} (${formatMoney(nominalFee(fee), yearOf(transferDate), true)}).`);
   }
   return news;
 }
 
-function formatDM(n: number): string {
-  return `${(n / 1000).toLocaleString('de-DE', { maximumFractionDigits: 0 })} Tsd. DM`;
-}

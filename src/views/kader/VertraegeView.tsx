@@ -73,7 +73,7 @@ export function VertraegeView({ g }: { g: Game }) {
         )) : <Empty icon="contracts">Keine Verträge laufen bald aus.</Empty>}
         <div className="dsec">Unzufriedenste Spieler</div>
         {unhappy.map((x) => <PlayerRow key={x.id} p={x} value={Math.round(x.contract.satisfaction)} onClick={() => setSel(x.id)} />)}
-        <div className="dnote mt8">Vertragsverlängerungen folgen in einem späteren Ausbau.</div>
+        <div className="dnote mt8">Ausgelaufene Verträge werden zum 1. Juli automatisch verlängert (Gehalt an den Markt angepasst). Eigene Verhandlungen folgen in einem späteren Ausbau.</div>
       </DashBox>
 
       {p && <PlayerModal player={p} club={club} squad={squad} today={today} season={g.season} onClose={() => setSel(null)} />}

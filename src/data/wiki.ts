@@ -937,6 +937,7 @@ Spielerverkäufe fließen über die Transfer-Engine ein (Ablösesumme als Einnah
 ### Spielergehälter
 \`Summe der Wochengehälter des Kaders × 4,33\` (Wochen je Monat).
 Die Wochengehälter der Spieler werden aus OVR/Alter abgeleitet (Vertrag \`weeklyWage\`).
+Ausgelaufene Verträge werden zum 1. Juli automatisch verlängert: Laufzeit nach Alter (bis 24 J. 3–5 Jahre, bis 29 J. 2–4, bis 32 J. 1–2, älter 1 Jahr), neues Gehalt = Mittel aus altem Gehalt und Marktgehalt. Über deine Verlängerungen informiert dich der Sportdirektor.
 
 ### Betreuerstab
 \`Spielergehälter × 0,18\` – Trainer-, Betreuer- und Verwaltungspersonal.
