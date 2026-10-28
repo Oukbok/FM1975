@@ -12,6 +12,8 @@
 // =============================================================================
 
 /** Kategorie eines Wiki-Artikels. */
+import { YOUTH_RECRUIT_EVENTS } from './youthRecruitEvents';
+
 export interface WikiCategory {
   id: string;
   title: string;
@@ -1297,6 +1299,7 @@ Der **Qualitäts-Bonus** (academyQualityBonus) hebt die Grundstärke neuer Talen
 sowohl mehr als auch stärkere und potenzialträchtigere Talente.
 
 4. Für deinen Verein erscheint die Nachricht **„Neuer G-Jugend-Jahrgang (Bambini) in der Jugendakademie"** mit der Liste der Neuzugänge.
+5. **Nur dein Verein:** Die Jugendmannschaften werden auf volle Stärke gebracht – siehe Artikel **Volle Jugendmannschaften & Rekrutierung**.
 
 ## Startjahrgang (kompletter Altersaufbau)
 Zu Spielbeginn (Saison 1975/76) besitzt jeder Verein einen **vollständigen Altersaufbau** von der G-Jugend (Bambini) bis
@@ -1569,6 +1572,37 @@ In den **Einstellungen** wählst du „Ereignisse: wenige · normal · viele“ 
 
 ## Regeln mit Vorlauf
 Am 2. Januar kündigt der Verband an, welche Regeln, Wettbewerbe und Ligareformen ab der nächsten Saison gelten.`,
+  },
+  {
+    id: 'youth-teams-recruit',
+    category: 'youth',
+    title: 'Volle Jugendmannschaften & Rekrutierung',
+    keywords: ['jugendmannschaft', 'kader', 'breite', 'aussortiert', 'aufhören', 'rekrutierung', 'leichtathlet', 'handball', 'probetraining', 'sichtung', 'ereignis'],
+    body: `## Volle Mannschaften
+Dein Verein hat in jeder Altersklasse eine volle Mannschaft:
+
+| Klasse | G | F | E | D | C | B | A |
+|---|---|---|---|---|---|---|---|
+| Spieler | 10 | 12 | 14 | 16 | 20 | 20 | 22 |
+
+Den Kern bilden die **Akademie-Talente** (je nach Ausbaustufe 1–4 pro Jahr). Aufgefüllt wird mit **Breitensportlern**: rund 70 % haben unter 2 Sterne Potenzial, 22 % 2–2,75, 7 % 3–3,5 und nur 1 % mehr. Die meisten spielen aus Freude am Fußball – im Test schafften es über 15 Jahre nur etwa **13 %** der A-Jugend-Abgänger zu den Profis.
+
+Zum **1. Juli** rücken alle auf. Danach:
+- **Abgänge:** bis 11 Jahre 4 %, bis 15 Jahre 8 %, darüber 12 % pro Jahr – im schwächsten Drittel fast doppelt so oft, erkennbare Talente (≥ 3,5 Sterne laut Scouts) nur selten. Gründe: aufhören, Schule, Ausbildung, Umzug, andere Sportart, Nachbarverein.
+- **Aussortieren:** Ist eine Mannschaft zu groß, gehen die Schwächsten (Stärke plus erkennbares Potenzial). Legenden und Spieler mit Fördervertrag bleiben.
+- **Auffüllen:** Lücken werden mit neuen Spielern auf den fehlenden Positionen geschlossen (je Mannschaft 1–2 Torhüter, sonst etwa 36 % Abwehr, 36 % Mittelfeld, 28 % Angriff).
+
+KI-Vereine behalten schlanke Akademien – so bleiben Spielstände klein.
+
+## Rekrutierungs-Ereignisse
+Etwa **einmal pro Jahr** (Einstellung „Ereignisse“ wirkt mit) bietet sich eine besondere Chance – ein Leichtathlet aus der Leichtathletikabteilung, ein Handballtorwart, der lieber Fußball spielen will, ein Straßenfußballer vom Bolzplatz. Jedes Ereignis bringt eigene Stärken und Schwächen mit, passt zur Epoche und kommt höchstens alle acht Jahre wieder. Du entscheidest: **aufnehmen** oder **absagen** (manche kosten eine Ausbildungsentschädigung).
+
+**Zufall:** Ein verdeckter Wurf entscheidet über die wahre Klasse – 8 % **Glücksgriff** (+0,75 Sterne), 17 % besser als gedacht (+0,25), 60 % wie erwartet, 15 % **Blender** (−0,75). Die Scouts sehen nur die übliche Sterne-Spanne.
+
+## Alle Ereignisse
+| Ereignis | Zeitraum | Alter | Positionen |
+|---|---|---|---|
+` + YOUTH_RECRUIT_EVENTS.map((e) => `| ${e.title} | ${e.from ?? 1975}–${e.to ?? 'heute'} | ${e.ages[0]}–${e.ages[1]} | ${[...new Set(e.positions)].join(', ')} |`).join('\n'),
   },
   {
     id: 'youth-gems-scouting',

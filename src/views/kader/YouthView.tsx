@@ -6,6 +6,7 @@ import { vColor } from '../../ui/format';
 import { DashBox, DashPage, Empty, Meter } from '../../ui/DashPage';
 import { PlayerRow } from '../shared';
 import { YouthModal } from './YouthModal';
+import { YOUTH_TEAM_SIZE } from '../../game/youthTeams';
 import { useState } from 'react';
 
 // =============================================================================
@@ -31,7 +32,7 @@ export function ScoutRange({ p }: { p: Player }) {
 export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
   const [sel, setSel] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<YouthSort>('pot');
-  const [classFilter, setClassFilter] = useState<YouthAgeClass | 'ALL'>('ALL');
+  const [classFilter, setClassFilter] = useState<YouthAgeClass | 'ALL'>('A');
   const club = g.clubs[g.managedClubId];
   const acadLevel = club.infrastructure.youthAcademy;
 
@@ -114,9 +115,10 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
       <DashBox title="Jugendakademie" icon="facilities" right={`Stufe ${acadLevel}/${MAX_LEVEL}`}>
         <Meter label="Akademie-Stufe" value={acadLevel} max={MAX_LEVEL} text={`${acadLevel} / ${MAX_LEVEL}`} />
         {YOUTH_AGE_CLASS_ORDER.map((cls) => (
-          <Meter key={cls} label={YOUTH_AGE_CLASS_LABEL[cls]} value={byClass[cls].length} max={maxClass} text={`${byClass[cls].length}`} />
+          <Meter key={cls} label={`${YOUTH_AGE_CLASS_LABEL[cls]} · ${YOUTH_AGE_CLASS_RANGE[cls].split(' · ')[0]}`} value={byClass[cls].length} max={Math.max(YOUTH_TEAM_SIZE[cls], maxClass)}
+            text={`${byClass[cls].length} / ${YOUTH_TEAM_SIZE[cls]}`} />
         ))}
-        <div className="dnote mt8">Neue Bambini kommen zum 1. Juli, alle Jahrgänge rücken auf. Ausbau der Akademie unter „Gelände“.</div>
+        <div className="dnote mt8">Jede Altersklasse hat eine volle Mannschaft. Die meisten spielen aus Freude am Fußball – Profi wird nur, wer genug Potenzial hat. Zum 1. Juli rücken alle auf, einige hören auf, Lücken werden aufgefüllt.</div>
       </DashBox>
 
       <DashBox title="Größte Talente" icon="trophy">

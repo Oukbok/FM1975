@@ -168,21 +168,56 @@ function initialScoutRange(rand: () => number, truePot: number, academyLevel: nu
 let youthPotentialShift = 0;
 export function setYouthPotentialShift(stars: number): void { youthPotentialShift = stars; }
 
+/** Zusatzoptionen: Breitensport-Auffüller oder Rekrutierungsereignis (game/youthRecruit.ts). */
+export interface YouthGenOpts {
+  /** 'breite' = Mannschaftsauffüller mit meist geringem Potenzial. */
+  pool?: 'talent' | 'breite';
+  /** Verschiebung des Potenzials in Sternen. */
+  potBias?: number;
+  positions?: Position[];
+  boosts?: Partial<Record<AttributeKey, [number, number]>>;
+  weak?: Partial<Record<AttributeKey, [number, number]>>;
+  /** Ausländische Herkunft (je Epoche). */
+  foreign?: boolean;
+  ambition?: number;
+  professionalism?: number;
+}
+
+/**
+ * Potenzial der Breite: die meisten Jugendspieler werden keine Profis.
+ * ~70 % unter 2 Sternen, ~22 % 2–2,75, ~7 % 3–3,5, ~1 % darüber.
+ */
+function breitePotential(rand: () => number): number {
+  const r = rand();
+  if (r < 0.70) return clampStars(0.75 + rand() * 1.25);
+  if (r < 0.92) return clampStars(2.0 + rand() * 0.75);
+  if (r < 0.99) return clampStars(3.0 + rand() * 0.5);
+  return clampStars(3.75 + rand() * 0.75);
+}
+
+function tunePersonality<T extends { ambition?: number; professionalism?: number }>(pers: T, opts: YouthGenOpts): T {
+  if (opts.ambition && pers.ambition != null) pers.ambition = Math.max(1, Math.min(99, pers.ambition + opts.ambition));
+  if (opts.professionalism && pers.professionalism != null) pers.professionalism = Math.max(1, Math.min(99, pers.professionalism + opts.professionalism));
+  return pers;
+}
+
 export function generateYouthPlayer(
   clubId: string,
   uniqueSeed: string,
   currentDate: string,
   academyLevel: number,
   age?: number,
+  opts: YouthGenOpts = {},
 ): Player {
   const rand = mulberry32(hashSeed(`${clubId}|${uniqueSeed}`));
   const ri = (min: number, max: number) => Math.floor(rand() * (max - min + 1)) + min;
   const pick = <T,>(arr: T[]): T => arr[Math.floor(rand() * arr.length)];
 
   const currentYear = Number(currentDate.slice(0, 4));
-  const origin = pickOrigin(currentYear, rand, rand() < 0.9);
+  let origin = pickOrigin(currentYear, rand, !opts.foreign && rand() < 0.9);
+  for (let t = 0; opts.foreign && origin.nationality === 'GER' && t < 8; t++) origin = pickOrigin(currentYear, rand, false);
   const { firstName, lastName } = makeName(origin, rand);
-  const pos = pick(YOUTH_POSITIONS);
+  const pos = opts.positions?.length ? pick(opts.positions) : pick(YOUTH_POSITIONS);
   const useAge = age != null
     ? Math.max(YOUTH_ENTRY_AGE, Math.min(19, Math.round(age)))
     : ri(16, 19);
@@ -192,12 +227,19 @@ export function generateYouthPlayer(
   // Akademie-Qualitätsbonus und etwas Streuung.
   const qBonus = academyQualityBonus(academyLevel);
   const ageBase = 8 + (useAge - YOUTH_ENTRY_AGE) * 3.7; // Alter 7→8 … 19→52.4
-  const base = Math.max(6, Math.min(70, Math.round(ageBase + qBonus * 0.55 + ri(-5, 5))));
+  const base = Math.max(6, Math.min(70, Math.round(ageBase + qBonus * 0.55 + ri(-5, 5) - (opts.pool === 'breite' ? 4 : 0))));
   const attributes = makeYouthAttributes(rand, base, pos);
+  for (const [k, r] of Object.entries(opts.boosts ?? {}) as [AttributeKey, [number, number]][]) {
+    (attributes as any)[k] = Math.min(99, (attributes[k] as number) + ri(r[0], r[1]));
+  }
+  for (const [k, r] of Object.entries(opts.weak ?? {}) as [AttributeKey, [number, number]][]) {
+    (attributes as any)[k] = Math.max(1, (attributes[k] as number) - ri(r[0], r[1]));
+  }
   const overall = computeOverall(attributes, pos);
 
   // Wahres Potenzial (verborgen) — nie unter dem aktuellen OVR.
-  let truePot = Math.max(0.5, Math.min(5, assignYouthPotential(rand, academyLevel) + youthPotentialShift));
+  const rawPot = opts.pool === 'breite' ? breitePotential(rand) : assignYouthPotential(rand, academyLevel);
+  let truePot = Math.max(0.5, Math.min(5, clampStars(rawPot + (opts.potBias ?? 0)) + youthPotentialShift));
   const minStarsForOverall = potentialToStars(overall + 4);
   if (truePot < minStarsForOverall) truePot = minStarsForOverall;
   const potentialAbility = Math.max(overall + 3, starsToPotential(truePot));
@@ -233,7 +275,7 @@ export function generateYouthPlayer(
       abilityHistory: [{ date: currentDate, ability: overall }],
       seasonStarChange: 0,
       attributeProgress: {}, ovrProgress: 0,
-      basePotential: potentialAbility, unfold: 0, ...makePersonality(rand),
+      basePotential: potentialAbility, unfold: 0, ...tunePersonality(makePersonality(rand), opts),
       devPoints: 0, recentMinutes: 0, lastMinutesSeen: 0, scoutBias: Math.round((rand() - 0.5) * 4) / 4,
     },
     potentialStars: truePot,          // WAHRES Potenzial (verborgen in der UI)

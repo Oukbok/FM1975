@@ -41,6 +41,8 @@ import { checkPromises } from './promises';
 import { transferTalkDaily } from './transferTalks';
 import { applyEuphoria, monthlyClubEvents } from './clubEventsGame';
 import { announceUpcomingRules } from './ruleNotice';
+import { monthlyYouthRecruit } from './youthRecruit';
+import { ensureYouthTeams, fillYouthTeams, youthChangeMessage, youthTeamsSeasonChange } from './youthTeams';
 import { applyLeagueBalance, ratingTicker, seasonLeagueBalance, snapshotLeague } from './leagueBalance';
 import { monthlyClubBusiness } from './clubBusiness';
 import { PlayerDevReveal } from '../types';
@@ -92,6 +94,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
     const focus = currentFocus(g, today);
     setInjuryRiskHook((p) => (p.clubId === g.managedClubId ? (1 - red) * focusEffect(focus, p).injury : 1));
     applyLeagueBalance(g);
+    ensureYouthTeams(g, today);
     applyEuphoria(g);
   }
   setDisplayYear(yearOf(today));
@@ -427,6 +430,12 @@ export function processDay(g: Game, ui: DayUi): boolean {
           club.youthPlayerIds.push(yp.id);
         }
 
+        if (isMine && !(g as any).simAutoManage) {
+          // Volle Jugendmannschaften: Abgänge, Aussortieren, Auffüllen (game/youthTeams.ts).
+          const leaving = youthTeamsSeasonChange(g, today);
+          const added = fillYouthTeams(g, today);
+          youthChangeMessage(g, today, leaving, added);
+        }
         if (isMine) {
           if (cohort.length > 0) {
             pushMessage(g.messages, makeMessage({
@@ -482,6 +491,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
     monthlyEnvironmentUpdate(g, today);
     monthlyEvents(g, today);
     monthlyClubEvents(g, today);
+    monthlyYouthRecruit(g, today);
     // Kreditraten, Stadion-Bauprojekte, Namensrechte (game/clubBusiness.ts).
     monthlyClubBusiness(g, today);
     for (const club of Object.values(g.clubs)) {

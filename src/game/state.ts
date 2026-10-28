@@ -101,6 +101,8 @@ export interface Game {
   /** Liga-Gleichgewicht: Verschiebung des Jugend-Potenzials (Sterne) + Verlauf (game/leagueBalance.ts). */
   /** Spieler-Archiv (Karriereende, game/archive.ts). */
   archive?: import('./archive').ArchivedPlayer[];
+  /** Volle Jugendmannschaften wurden einmalig hergestellt (game/youthTeams.ts). */
+  youthTeamsReady?: boolean;
   /** Glaubwürdigkeit deiner Versprechen (0–100, Start 70; game/promises.ts). */
   promiseTrust?: number;
   /** Fällige Raten und Erfolgsprämien aus Transfers (1975-Basis). */

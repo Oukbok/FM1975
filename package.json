@@ -13,7 +13,8 @@
     "test:contracts": "node scripts/run-ts.mjs tests/contracts-test.ts",
     "test:editor": "node scripts/build.mjs && node tests/editor-ui.mjs",
     "test:business": "node scripts/run-ts.mjs tests/club-business-test.ts",
-    "test:transfers": "node scripts/run-ts.mjs tests/transfer-test.ts"
+    "test:transfers": "node scripts/run-ts.mjs tests/transfer-test.ts",
+    "test:youth": "node scripts/run-ts.mjs tests/youth-test.ts"
   },
   "dependencies": {
     "lz-string": "1.5.0",
