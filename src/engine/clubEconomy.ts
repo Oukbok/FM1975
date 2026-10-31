@@ -308,6 +308,13 @@ export interface AiEconomyContext {
 }
 
 const MIN_KEEP = 20;
+/**
+ * Liquiditätsreserve der KI (Anteil am Jahresumsatz), die zum Saisonstart auf dem
+ * Konto bleibt. Darüber wird investiert (Zugänge, Gehälter, Gelände). Vorher 0,6:
+ * KI-Vereine saßen dauerhaft auf rund einem Jahresumsatz Guthaben (Geld-Horten),
+ * kein Verein geriet je ins Minus.
+ */
+const AI_RESERVE = 0.25;
 const MAX_SQUAD = 25;
 
 function squadRankValue(c: Club, players: Record<string, Player>, rank: number): number {
@@ -417,7 +424,7 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
   for (const c of league) {
     if (!isAi(c)) continue;
     const rev = lastRevenue(c, ctx.year);
-    const rich = Math.max(0, (c.finances.balance - 0.6 * rev) / Math.max(1, rev));
+    const rich = Math.max(0, (c.finances.balance - AI_RESERVE * rev) / Math.max(1, rev));
     const quota = 0.62 + Math.min(0.12, rich * 0.1) - (c.finances.balance < 0 ? 0.06 : 0);
     const budgetWeekly = (quota * rev) / scale / 52 / 1.18;
     const squad = c.playerIds.map((id) => ctx.players[id]).filter(Boolean);
@@ -471,7 +478,7 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
     if (!isAi(c) || hasTransferBan(c, ctx.season)) continue;
     const rev = lastRevenue(c, ctx.year);
     for (let k = 0; k < 2; k++) {
-      const surplus = c.finances.balance - 0.3 * rev;
+      const surplus = c.finances.balance - AI_RESERVE * rev;
       if (surplus < 0.05 * rev) break;
       const budget = surplus * 0.6;
       const need = squadRankValue(c, ctx.players, 13); // 14. Spieler = Breite
@@ -527,10 +534,10 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
   for (const c of league) {
     if (!isAi(c)) continue;
     const rev = lastRevenue(c, ctx.year);
-    const excess = c.finances.balance - 0.6 * rev;
+    const excess = c.finances.balance - AI_RESERVE * rev;
     if (excess <= 0) continue;
     const ratio = excess / Math.max(1, rev);
-    const spend = Math.round(excess * 0.6);
+    const spend = Math.round(excess * 0.75);
     const keys = (['trainingCenter', 'youthAcademy', 'medical', 'merchandising'] as const)
       .filter((k) => (c.infrastructure?.[k] ?? 1) < 5);
     if (keys.length) {
