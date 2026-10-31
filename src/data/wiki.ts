@@ -668,8 +668,8 @@ Zum 1. Juli vergleicht das Spiel die Durchschnittsstärke der 1. Liga mit dem Zi
 ## Weltklasse ist selten
 Spieler mit Stärke **85 oder mehr** sind die Ausnahme: In der 1. Liga gibt es davon meist nur **rund 8 bis 13** – oft sind Legenden darunter, gelegentlich ein Star aus einer Akademie.
 - **Erzeugte Spieler** (Startkader, Aufsteiger, Nachrücker, Zugänge aus dem Ausland oder von unterklassigen Vereinen) kommen nie als fertige Weltklasse ins Spiel: höchstens 84 (Nachrücker 82, Ausland 83, unterklassig 79). Auch ihr verdecktes Potenzial wird oberhalb von 82 deutlich gestaucht – nur seltene Ausnahmetalente haben wirklich Luft bis ganz nach oben.
-- **Weltklasse-Bremse:** Ab Stärke 82 wird jeder weitere Punkt schwerer (je Punkt rund 15 % langsamer, höchstens auf ein Fünftel des Tempos). Spitzentraining (gute Anlagen, großer Verein) schiebt den Beginn um bis zu 3 Punkte nach hinten – Weltklasse reift eher bei den Großen. Legenden spüren die Bremse etwas schwächer (80 %).
-- **Breite der Spitze:** Zum 1. Juli zählt das Liga-Gleichgewicht auch die Spieler ab 85 in der 1. Liga. Sind es mehr als 13, setzt die Bremse im Folgejahr einen halben Punkt früher ein (bis 3 Punkte), bei weniger als 8 entsprechend später; im Korridor läuft die Verschiebung wieder aus.
+- **Weltklasse-Bremse:** Ab Stärke 82 wird jeder weitere Punkt schwerer (je Punkt rund 15 % langsamer, höchstens auf ein Fünftel des Tempos). Spitzentraining (gute Anlagen, großer Verein) schiebt den Beginn um bis zu 3 Punkte nach hinten – Weltklasse reift eher bei den Großen. Legenden spüren die Bremse etwas schwächer (90 %).
+- **Breite der Spitze:** Zum 1. Juli zählt das Liga-Gleichgewicht auch die Spieler ab 85 in der 1. Liga. Sind es mehr als 13, setzt die Bremse im Folgejahr einen halben Punkt früher ein (bei deutlich mehr als 17 einen ganzen; bis 5 Punkte), bei weniger als 8 entsprechend später; im Korridor läuft die Verschiebung wieder aus.
 Für dich heißt das: Ein 85er ist ein echter Unterschiedsspieler – teuer, begehrt und schwer zu ersetzen.`,
   },
   {

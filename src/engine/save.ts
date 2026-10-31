@@ -51,7 +51,7 @@ import { compressToUTF16, decompressFromUTF16 } from 'lz-string';
 //     ≈ 15 Mio.). Optionales Feld `Game.financeLevel` (fehlt = altes Niveau); doLoad
 //     (App.tsx → migrateFinanceLevel, game/financeMigration.ts) rechnet Kontostände,
 //     Bilanzen, Kredite, Gehälter, Budgets, Eintritt und Auslastung einmalig um.
-export const SAVE_VERSION = 10;
+export const SAVE_VERSION = 11;
 
 /** Metadaten eines Speicherstands (für die Slot-Übersicht). */
 export interface SaveMeta {

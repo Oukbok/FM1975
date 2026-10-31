@@ -78,10 +78,12 @@ export function seasonLeagueBalance(g: Game): void {
   // Breite der Spitze: zu viele Weltklasse-Spieler → Bremse greift früher (negativ).
   const n85 = ps.filter((p) => p.overall >= 85).length;
   let elite = lb.elite ?? 0;
-  if (n85 > ELITE_MAX) elite -= ELITE_STEP;
+  // Deutlich zu viele Weltklassespieler (> ELITE_MAX + 4): doppelt so schnell nachziehen.
+  if (n85 > ELITE_MAX + 4) elite -= ELITE_STEP * 2;
+  else if (n85 > ELITE_MAX) elite -= ELITE_STEP;
   else if (n85 < ELITE_MIN) elite += ELITE_STEP;
   else elite *= 0.5;
-  lb.elite = Math.round(Math.max(-3, Math.min(3, elite)) * 100) / 100;
+  lb.elite = Math.round(Math.max(-5, Math.min(3, elite)) * 100) / 100;
   lb.history.push({ season: g.season, avg: Math.round(avg * 10) / 10, shift: lb.shift, n85, elite: lb.elite });
   if (lb.history.length > 60) lb.history.splice(0, lb.history.length - 60);
   g.leagueBalance = lb;

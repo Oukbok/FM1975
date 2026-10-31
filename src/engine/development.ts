@@ -158,20 +158,20 @@ function distanceFactor(p: Player): number {
 
 /**
  * Weltklasse-Bremse: Ab ELITE_FROM wird jeder weitere Punkt deutlich schwerer
- * (je Punkt −15 %, mindestens 20 % Tempo). Legenden spüren 80 % davon.
+ * (je Punkt −15 %, mindestens 20 % Tempo). Legenden spüren 90 % davon.
  * Das Liga-Gleichgewicht (game/leagueBalance.ts) verschiebt den Beginn um
- * ±3 Punkte, wenn die 1. Liga zu viele oder zu wenige Spieler ≥ 85 hat.
+ * −5 … +3 Punkte, wenn die 1. Liga zu viele oder zu wenige Spieler ≥ 85 hat.
  */
 const ELITE_FROM = 82;
 let eliteShift = 0;
-export function setEliteShift(points: number): void { eliteShift = clamp(points, -3, 3); }
+export function setEliteShift(points: number): void { eliteShift = clamp(points, -5, 3); }
 export function eliteBrake(p: Player, training = 1): number {
   // Spitzentraining (große Vereine, gute Anlagen) schiebt die Bremse bis zu 3 Punkte nach hinten:
   // Weltklasse reift eher bei den Spitzenvereinen – der Abstand zu den Kellerkindern bleibt spürbar.
   const over = p.overall - (ELITE_FROM + eliteShift + clamp((training - 0.9) * 8, 0, 3));
   if (over <= 0) return 1;
   const f = Math.max(0.2, 1 - over * 0.15);
-  return p.development.legendId ? 1 - (1 - f) * 0.8 : f;
+  return p.development.legendId ? 1 - (1 - f) * 0.9 : f;
 }
 
 // -----------------------------------------------------------------------------
