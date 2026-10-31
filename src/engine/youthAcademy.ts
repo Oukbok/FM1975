@@ -117,7 +117,7 @@ export const YOUTH_BLOCKS: YouthBlockDef[] = [
     { name: 'national', desc: 'Sichter-Netz in ganz Deutschland.', from: 1985, build: 0, months: 4, upkeep: 20000 },
     { name: 'international', desc: 'Partnervereine und Sichter im Ausland – nach Bosman.', from: 1996, build: 0, months: 6, upkeep: 50000, needs: { boarding: 1 } },
   ] },
-  { key: 'reserve', name: 'Zweite Mannschaft', icon: 'squad', what: 'Spielpraxis für Talente bis 23, die bei den Profis (noch) nicht spielen.', levels: [
+  { key: 'reserve', name: 'Zweite Mannschaft', icon: 'squad', what: 'Spielpraxis für Eigengewächse bis 23, die bei den Profis (noch) nicht spielen.', levels: [
     { name: 'keine', desc: 'Junge Profis ohne Einsatz verkümmern auf der Bank.', from: 0, build: 0, months: 0, upkeep: 0 },
     { name: 'Amateure (Oberliga)', desc: 'Klassische Amateurmannschaft unterhalb der Profis.', from: 1975, build: 0, months: 1, upkeep: 40000 },
     { name: 'U23 (Regionalliga)', desc: 'Leistungsorientierte U23 mit Profitrainer – ab 1994.', from: 1994, build: 0, months: 2, upkeep: 90000 },
@@ -264,10 +264,15 @@ export const RESERVE_WEIGHT = [0, 0.4, 0.55];
 /** Spielminuten je Woche in der zweiten Mannschaft (ein Spiel). */
 export const RESERVE_MINUTES = 85;
 
-/** Effektive Reserve-Minuten dieser Woche für einen jungen Profi (≤ 23). */
-export function reserveMinutesFor(club: Club, age: number, proMinutes: number): number {
+/**
+ * Effektive Reserve-Minuten dieser Woche für einen jungen Profi (≤ 23), der
+ * aus einer Akademie kommt (ID mit „_y_“). Die zweite Mannschaft ist die Brücke
+ * für Eigengewächse; eingekaufte junge Profis profitieren nicht – sonst stiege
+ * die Zahl der Spitzenspieler ligaweit (Sim: Ø ≥85 in Liga 1 von 26 auf 38).
+ */
+export function reserveMinutesFor(club: Club, age: number, proMinutes: number, playerId = '_y_'): number {
   const lvl = club.youthInvest?.levels.reserve ?? 0;
-  if (lvl <= 0 || age > 23) return 0;
+  if (lvl <= 0 || age > 23 || !playerId.includes('_y_')) return 0;
   return Math.max(0, RESERVE_MINUTES - proMinutes) * RESERVE_WEIGHT[lvl];
 }
 

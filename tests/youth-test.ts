@@ -113,7 +113,7 @@ console.log(`Rekruten-Potenzial: 10% ${q(0.1)} · Median ${q(0.5)} · 90% ${q(0.
   if (moved < 0.1 || moved > 0.4) fail('Wirkung nicht verzögert (Ziel ≈ 20 %/Jahr)');
   // Zweite Mannschaft: Reserve-Minuten nur für U23 ohne Profi-Einsatz.
   inv.levels.reserve = 1;
-  if (reserveMinutesFor(my, 20, 0) <= 0 || reserveMinutesFor(my, 25, 0) !== 0 || reserveMinutesFor(my, 20, 90) !== 0) fail('Reserve-Minuten falsch');
+  if (reserveMinutesFor(my, 20, 0, 'mgl_y_1') <= 0 || reserveMinutesFor(my, 25, 0, 'mgl_y_1') !== 0 || reserveMinutesFor(my, 20, 90, 'mgl_y_1') !== 0 || reserveMinutesFor(my, 20, 0, 'mgl_p3') !== 0) fail('Reserve-Minuten falsch');
   // KI: Jugend-Trainer investiert mehr als Einkaufs-Trainer.
   const [a, b] = [lc[1], lc[2]];
   a.youthInvest = initialInvest(a, 1980); b.youthInvest = initialInvest(b, 1980);

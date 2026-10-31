@@ -377,6 +377,6 @@ export function withReserve(ctxFor: (c: Club) => ClubDevContext, today: string):
   return (club) => {
     const ctx = ctxFor(club);
     if (off || !club.youthInvest || !(club.youthInvest.levels.reserve > 0)) return ctx;
-    return { ...ctx, reserve: (p: Player, proMinutes: number) => reserveMinutesFor(club, p.age, proMinutes) };
+    return { ...ctx, reserve: (p: Player, proMinutes: number) => reserveMinutesFor(club, p.age, proMinutes, p.id) };
   };
 }

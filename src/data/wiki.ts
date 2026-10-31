@@ -1828,7 +1828,7 @@ Dazu kommt der **Jugendetat** je Saison (Fahrten, Turniere, Material, Sichtungst
 Jedes Jahr gibt es eine Handvoll herausragender **12- bis 16-Jähriger** (ab 1990 und 2002 mehr; ab 1996 auch aus dem Ausland). Sie wählen den Verein mit der größten **Anziehungskraft**: Ruf der Akademie, Ansehen des Vereins, Durchlässigkeit und Ausbildung – Heimatvereine haben einen Bonus, auswärtige Talente brauchen ein **Internat**. Du konkurrierst nur um Talente, die dein **Scouting-Netz** kennt. Die Nachricht „Talentwettbewerb“ zeigt Zu- und Absagen.
 
 ## Zweite Mannschaft & Potenzial
-Junge Profis, die bei den Profis kaum spielen, verloren früher Jahr für Jahr Entfaltung (Potenzial). Mit **Amateuren** sammeln Spieler bis 23 gewichtete Minuten (40 %), mit einer **U23** mehr (55 %). Das hält sie im Rhythmus; echte Sprünge gibt es weiter nur mit Einsätzen bei den Profis.
+Junge Profis, die bei den Profis kaum spielen, verloren früher Jahr für Jahr Entfaltung (Potenzial). Mit **Amateuren** sammeln **Eigengewächse** (Spieler aus einer Jugendakademie) bis 23 gewichtete Minuten (40 %), mit einer **U23** mehr (55 %). Eingekaufte junge Profis profitieren davon nicht. Das hält sie im Rhythmus; echte Sprünge gibt es weiter nur mit Einsätzen bei den Profis.
 
 ## Leistungszentrum-Pflicht
 Nach dem EM-Aus 2000 wurde ein Leistungszentrum Lizenzbedingung: **ab 2001 für die Bundesliga, ab 2002 für die 2. Liga**. Mindestens: Fußballlehrer im Nachwuchs, zwei Plätze mit Flutlicht, Gastfamilien, Partnerschule und 8 Jugendtrainer. Fehlt etwas, gibt es jedes Jahr eine **Geldstrafe** und der Ruf leidet. Ein Jahr vorher kommt eine Ankündigung. 2002 startet das **DFB-Talentförderprogramm** (Stützpunkte): Alle Scouting-Netze finden mehr Talente.
