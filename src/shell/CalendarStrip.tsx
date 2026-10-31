@@ -1,4 +1,5 @@
 import Icon, { type IconName } from '../components/Icon';
+import { ownCampDays, ownIndoorDays } from '../game/winterShared';
 import { ACTIVITY_DEFS, addDaysUTC } from '../data/activities';
 import { Game } from '../game/state';
 import { MessageCategory } from '../types';
@@ -90,6 +91,14 @@ export function buildStripEventMap(g: Game): Map<string, StripEvent> {
       isMatch: true,
       prio: 50,
     });
+  }
+
+  // Quelle C — Winter: eigene Hallenturniere und Trainingslager (game/winterShared.ts).
+  for (const [date, t] of ownIndoorDays(g)) {
+    consider({ date, icon: 'trophy', line: t.kind === 'masters' ? 'Hallen-Masters' : `Halle ${t.city}`, accent: 'gold', isMatch: false, prio: 60 });
+  }
+  for (const [date, b] of ownCampDays(g)) {
+    consider({ date, icon: 'weather', line: date === b.start ? 'Trainingslager' : 'Lager', accent: undefined, isMatch: false, prio: 22 });
   }
 
   return byDate;

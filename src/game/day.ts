@@ -47,6 +47,8 @@ import { stadiumDaily } from './stadiumGame';
 import { ensureYouthTeams, fillYouthTeams, youthChangeMessage, youthTeamsSeasonChange } from './youthTeams';
 import { applyLeagueBalance, ratingTicker, seasonLeagueBalance, snapshotLeague } from './leagueBalance';
 import { monthlyClubBusiness } from './clubBusiness';
+import { indoorDaily } from './indoorGame';
+import { campDaily } from './trainingCampGame';
 import { PlayerDevReveal } from '../types';
 import { fmtDM, fmtDMfull, fmtDateFull, setDisplayYear } from '../ui/format';
 import { RatingResult as _RatingResult } from '../engine/development';
@@ -489,6 +491,9 @@ export function processDay(g: Game, ui: DayUi): boolean {
   rollAiOffers(g, today);
   checkPromises(g, today);
   transferTalkDaily(g, today);
+  // Winter-Systeme: Hallenturniere/Masters (game/indoorGame.ts) und Trainingslager (game/trainingCampGame.ts).
+  indoorDaily(g, today);
+  campDaily(g, today);
   if (utcDom === 1) {
     monthlyTrainingReport(g, today);
     monthlySquadHarmony(g, today);

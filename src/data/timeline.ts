@@ -303,6 +303,61 @@ export const TIMELINE: TimelineEvent[] = [
       'Die Meisterliga spielt ab 2024/25 mit einer großen Ligaphase statt Gruppen. Mehr Spiele, '
       + 'mehr Geld – und eine noch größere Kluft zwischen Europas Spitze und dem Rest.',
   },
+  // --- Winter: Hallenfußball (data/indoorHistory.ts) und Trainingslager (data/campDestinations.ts) ---
+  {
+    id: 'indoor-masters-1987',
+    season: '1987/88', year: 1987, type: 'competition',
+    title: 'DFB-Hallenpokal: Hallentour und Hallen-Masters',
+    description:
+      'Die Lizenzvereine beschließen mit 32:2 Stimmen eine offizielle Hallenrunde, um die seit 1986/87 '
+      + 'elf Wochen lange Winterpause zu überbrücken. Über 18 Qualifikationsturniere (Wertung nach '
+      + 'Durchschnittspunkten) geht es zur Endrunde im Januar 1988 in der Frankfurter Festhalle. '
+      + 'Hallenturniere mit Bundesligisten gab es schon seit den 70ern – nun mit Masters. '
+      + 'Einladungen und Ergebnisse unter „Statistiken › Halle“.',
+  },
+  {
+    id: 'indoor-shrink-1997',
+    season: '1997/98', year: 1997, type: 'reform',
+    title: 'Winterpause verkürzt – Hallentour schrumpft',
+    description:
+      'Die Winterpause wird auf sechs Wochen verkürzt, die Hallentour von 16 auf vier Turniere '
+      + 'reduziert. Spitzenvereine schicken immer öfter die zweite oder dritte Garnitur.',
+  },
+  {
+    id: 'indoor-end-2001',
+    season: '2001/02', year: 2001, type: 'competition',
+    title: 'Hallen-Masters abgeschafft',
+    description:
+      'Nach der Endrunde im Januar 2001 in Dortmund (Sieger: SpVgg Unterhaching) stellt der DFB den '
+      + 'Hallenpokal ein: kürzere Winterpause, Verletzungsangst, Absagen der Topklubs und sinkendes '
+      + 'TV-Interesse. Regionale Hallenturniere laufen noch wenige Jahre aus, danach ist der '
+      + '„Budenzauber“ mit Profis Geschichte.',
+  },
+  {
+    id: 'camp-turkey-1992',
+    season: '1991/92', year: 1992, type: 'reform',
+    title: 'Winterlager in der Ferne: Türkei und Florida',
+    description:
+      'Im Januar 1992 fährt Schalke 04 als erster Bundesligist an die türkische Riviera, Leverkusen '
+      + 'fliegt nach Orlando. Bis dahin ging es im Winter auf die Kanaren oder nach Spanien – oder '
+      + 'auf gefrorene Plätze in der Heimat. Neue Ziele unter „Kader › Trainingslager“.',
+  },
+  {
+    id: 'camp-qatar-2010',
+    season: '2010/11', year: 2011, type: 'reform',
+    title: 'Trainingslager am Golf: Katar',
+    description:
+      'Der FC Bayern bezieht im Januar 2011 sein Winterquartier in Doha (Katar) – perfekte Plätze, '
+      + 'Sponsorenkontakte, aber zunehmend Kritik von Fans und Menschenrechtsorganisationen.',
+  },
+  {
+    id: 'camp-asia-2015',
+    season: '2015/16', year: 2015, type: 'reform',
+    title: 'Sommerreisen nach Asien und in die USA',
+    description:
+      'Spitzenvereine verlegen Teile der Vorbereitung auf Marketingreisen nach China, Japan und in die '
+      + 'USA. Millionen-Erlöse und neue Fans – aber Jetlag, wenig Training und Kritik an „grenzwertigen“ Reiseplänen.',
+  },
   {
     id: 'semiauto-2027',
     season: '2027/28', year: 2027, type: 'tech', fictional: true,

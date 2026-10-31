@@ -4,7 +4,9 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   // Kategorie-Dashboards (Übersichtsseiten je Hauptkategorie)
   | 'cat-spieltag' | 'cat-kader' | 'cat-transfers' | 'cat-finanzen' | 'cat-verein' | 'cat-statistiken'
   // Neue Einzelseiten
-  | 'tactics' | 'stadium' | 'presse' | 'vertraege' | 'beobachtung' | 'verhandlungen' | 'sponsoring' | 'fans' | 'international' | 'vorstand' | 'ruhmeshalle';
+  | 'tactics' | 'stadium' | 'presse' | 'vertraege' | 'beobachtung' | 'verhandlungen' | 'sponsoring' | 'fans' | 'international' | 'vorstand' | 'ruhmeshalle'
+  // Winter: Hallenfußball + Trainingslager
+  | 'halle' | 'trainingslager';
 
 // =============================================================================
 // MENÜ-STRUKTUR (zweistufige Top-Navigation)
@@ -37,6 +39,7 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'squad', label: 'Übersicht', icon: 'squad' },
     { screen: 'vertraege', label: 'Verträge', icon: 'contracts' },
     { screen: 'training', label: 'Training', icon: 'training' },
+    { screen: 'trainingslager', label: 'Trainingslager', icon: 'weather' },
     { screen: 'youth', label: 'Jugend', icon: 'youth' },
   ] },
   { key: 'transfers', label: 'Transfers', icon: 'transfers', dash: 'cat-transfers', subs: [
@@ -64,6 +67,7 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'table', label: 'Liga', icon: 'stats' },
     { screen: 'cup', label: 'Pokal', icon: 'trophy' },
     { screen: 'international', label: 'International', icon: 'international' },
+    { screen: 'halle', label: 'Halle', icon: 'trophy' },
     { screen: 'chronicle', label: 'Chronik', icon: 'chronicle' },
     { screen: 'ruhmeshalle', label: 'Ruhmeshalle', icon: 'trophy' },
   ] },

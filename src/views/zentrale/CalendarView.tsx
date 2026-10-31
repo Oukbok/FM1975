@@ -9,6 +9,7 @@ import { Screen } from '../../shell/navigation';
 import { DashBox, DashPage, Empty, KV } from '../../ui/DashPage';
 import { fmtDM, fmtDay } from '../../ui/format';
 import { useState } from 'react';
+import { ownCampDays, ownIndoorDays } from '../../game/winterShared';
 
 // =============================================================================
 // KALENDER — Monatsansicht, planbare Aktivitäten (Block p11)
@@ -24,7 +25,7 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
   const todayM = Number(today.slice(5, 7)) - 1;
   const [viewY, setViewY] = useState(todayY);
   const [viewM, setViewM] = useState(todayM);
-  const [planType, setPlanType] = useState<ActivityType>('camp');
+  const [planType, setPlanType] = useState<ActivityType>('friendly');
   const [planDays, setPlanDays] = useState(5);
   const [selStart, setSelStart] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
@@ -48,6 +49,11 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
       if (!blocked.has(d)) blocked.set(d, ACTIVITY_DEFS[act.type].name);
     }
   }
+  // Winter: Hallenturniere (zugesagt/offen) und gebuchte Trainingslager (game/winterShared.ts).
+  const indoorDays = ownIndoorDays(g);
+  const campDays = ownCampDays(g);
+  for (const d of indoorDays.keys()) if (!blocked.has(d)) blocked.set(d, 'Hallenturnier');
+  for (const d of campDays.keys()) if (!blocked.has(d)) blocked.set(d, 'Trainingslager');
 
   const def = ACTIVITY_DEFS[planType];
   const days = planType === 'friendly' ? 1 : Math.max(def.minDays, Math.min(def.maxDays, planDays));
@@ -75,6 +81,8 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
     const consider = (screen: Screen, prio: number) => {
       if (!best || prio > best.prio) best = { screen, prio };
     };
+    if (indoorDays.has(iso)) consider('halle', 60);
+    if (campDays.has(iso)) consider('trainingslager', 55);
     for (const ev of g.calendar.events) {
       if (ev.date !== iso) continue;
       switch (ev.type) {
@@ -247,13 +255,14 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
 
       <DashBox title="Aktivität planen" icon="training" right={`Konto ${fmtDM(club.finances.balance)}`}>
         <div className="dbtnrow" style={{ marginBottom: 8 }}>
-          {(['camp', 'friendly', 'teambuilding'] as ActivityType[]).map((t) => (
+          {(['friendly', 'teambuilding'] as ActivityType[]).map((t) => (
             <button key={t} className={`dchip ${planType === t ? 'on' : ''}`} onClick={() => { setPlanType(t); setSelStart(null); }}>
               {ACTIVITY_DEFS[t].name}
             </button>
           ))}
         </div>
         <div className="dnote" style={{ marginBottom: 8 }}>{def.desc}</div>
+        <div className="dnote clickable" style={{ marginBottom: 8, color: 'var(--accent)' }} onClick={() => onGoto('trainingslager')}>Trainingslager buchst du unter Kader › Trainingslager.</div>
         {planType !== 'friendly' && (
           <label className="cal-days">
             Dauer: <b>{days}</b> Tag(e)
@@ -290,6 +299,27 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
             </div>
           );
         })}
+        {(() => {
+          // Winter: gebuchte Trainingslager und Hallenturniere (je Termin eine Zeile).
+          const camps = [...new Map([...campDays.values()].map((b) => [b.id, b])).values()];
+          const halls = [...new Map([...indoorDays.values()].map((t) => [t.id, t])).values()].filter((t) => t.date >= today);
+          if (!camps.length && !halls.length) return null;
+          return (
+            <>
+              <div className="dsec">Trainingslager & Halle</div>
+              {camps.map((b) => (
+                <div key={b.id} className="dlist-row clickable" onClick={() => onGoto('trainingslager')}>
+                  <span className="meta" style={{ minWidth: 92 }}>{fmtDay(b.start)}</span><span className="grow">Trainingslager bis {fmtDay(b.end)}</span>
+                </div>
+              ))}
+              {halls.map((t) => (
+                <div key={t.id} className="dlist-row clickable" onClick={() => onGoto('halle')}>
+                  <span className="meta" style={{ minWidth: 92 }}>{fmtDay(t.date)}</span><span className="grow">{t.name}{t.own === null ? ' (Einladung offen)' : ''}</span>
+                </div>
+              ))}
+            </>
+          );
+        })()}
         <div className="dsec">Nächste Termine</div>
         {nextEvents.length ? nextEvents.map((e) => (
           <div key={e.id} className="dlist-row clickable" onClick={() => { const t = screenForDate(e.date); if (t) onGoto(t); }}>
