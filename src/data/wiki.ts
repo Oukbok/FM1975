@@ -1100,7 +1100,7 @@ Verlängerungen verhandelst du selbst (siehe Artikel **Verträge, Bosman & Kabin
 Jede **gebaute Einrichtung** verursacht monatliche Fixkosten (ersetzt den alten Pauschalposten "Trainingsbetrieb"):
 \`Basis × Stufen-Multiplikator\` (era-skaliert), summiert über alle Einrichtungen.
 - **Stufen-Multiplikator** (Stufe 1..5): \`1 · 1,4 · 1,9 · 2,5 · 3,2\`.
-- **Basis-Unterhalt/Monat (1975-DM):** Trainingszentrum 4.000 · Jugendakademie 3.000 · Medizin 2.500 · Fanshop 2.000 · Reha-Zentrum 3.000 · NLZ 4.000 · Leistungszentrum 4.500 · Datenanalyse 3.500.
+- **Basis-Unterhalt/Monat (1975-DM):** Trainingszentrum 4.000 · Medizin 2.500 · Fanshop 2.000 · Reha-Zentrum 3.000 (Jugendakademie und NLZ: Kosten über **Kader → Akademie**) · Leistungszentrum 4.500 · Datenanalyse 3.500.
 - **Stadion** ist ausgenommen (steckt im Stadionunterhalt), **Catering** ist Sonderfall je Betriebsform (siehe *Catering & Betriebsformen*).
 - Zukunfts-Einrichtungen (Reha, NLZ, Leistungs-/Datenzentrum) zählen erst ab **Stufe ≥ 2** als gebaut.
 
@@ -1954,7 +1954,7 @@ Steigert den **Pro-Kopf-Erlös je Heimspiel**. Die Betriebsform bestimmt Erlös 
 
 ## Monatliche Fixkosten je Einrichtung
 Basis-Unterhalt/Monat (1975-DM, Stufe-1-Basis), skaliert mit \`1 · 1,4 · 1,9 · 2,5 · 3,2\` je Stufe:
-Trainingszentrum 4.000 · Jugendakademie 3.000 · Medizin 2.500 · Fanshop 2.000 · Reha-Zentrum 3.000 · NLZ 4.000 · Leistungszentrum 4.500 · Datenanalyse 3.500. Stadion ausgenommen; Catering je Betriebsform.`,
+Trainingszentrum 4.000 · Medizin 2.500 · Fanshop 2.000 · Reha-Zentrum 3.000 (Jugendakademie und NLZ: Kosten über **Kader → Akademie**) · Leistungszentrum 4.500 · Datenanalyse 3.500. Stadion ausgenommen; Catering je Betriebsform.`,
   },
   {
     id: 'facilities-future',

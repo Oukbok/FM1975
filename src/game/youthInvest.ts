@@ -138,6 +138,18 @@ function perspectiveTarget(g: Game, club: Club, inv: YouthInvest): number {
   return clamp(s * 24 + (inv.levels.reserve ?? 0) * 8, 0, 100);
 }
 
+/**
+ * Die alten Vereinsgelände-Stufen „Jugendakademie“ und „NLZ“ (engine/infrastructure.ts)
+ * werden nicht mehr eigens ausgebaut, sondern spiegeln die Akademie (Kader › Akademie).
+ * Alte Leser (Vereinsumfeld, Jugend-Scouting, Legenden, Anzeigen) bleiben so stimmig.
+ */
+export function syncLegacyAcademy(club: Club, year: number): void {
+  if (!club.youthInvest || !club.infrastructure) return;
+  const lvl = Math.max(1, Math.min(5, Math.round(academyLevelOf(club))));
+  club.infrastructure.youthAcademy = lvl;
+  club.infrastructure.nlz = year >= 1998 ? lvl : 1;
+}
+
 export function monthlyYouthInvest(g: Game, today: string): void {
   const month = today.slice(0, 7);
   if (g.youthInvestTick === month) return;
@@ -148,6 +160,7 @@ export function monthlyYouthInvest(g: Game, today: string): void {
   for (const club of leagueClubs(g)) {
     const inv = youthInvestOf(club, year);
     const mine = club.id === g.managedClubId;
+    syncLegacyAcademy(club, year);
     // Fertige Ausbauten.
     for (const b of [...inv.builds]) {
       if (b.done > today) continue;

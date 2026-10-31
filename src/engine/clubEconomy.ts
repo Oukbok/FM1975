@@ -556,7 +556,7 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
     // Plant die Manager-KI den Kader (skipInvest), bleibt der größere Teil des Überschusses
     // fürs Transferbudget (game/aiClubs.ts) – sonst ginge fast alles in den Ausbau.
     const spend = Math.round(excess * (ctx.skipInvest ? AI_BUILD_SHARE : 0.85));
-    const keys = (['trainingCenter', 'youthAcademy', 'medical', 'merchandising'] as const)
+    const keys = (['trainingCenter', 'medical', 'merchandising'] as const) // Jugend: game/youthInvest.ts
       .filter((k) => (c.infrastructure?.[k] ?? 1) < 5);
     if (keys.length) {
       const k = keys[Math.floor(ctx.rng() * keys.length)];

@@ -197,11 +197,10 @@ export const LEVEL_MULT = [0, 1, 1.4, 1.9, 2.5, 3.2];
  */
 export const FAC_UPKEEP_BASE: Partial<Record<FacilityKey, number>> = {
   trainingCenter: 4000,
-  youthAcademy: 3000,
+  // youthAcademy/nlz: Kosten laufen über die Akademie (game/youthInvest.ts), sonst doppelt.
   medical: 2500,
   merchandising: 2000,
   rehaCenter: 3000,
-  nlz: 4000,
   performanceCenter: 4500,
   dataCenter: 3500,
 };

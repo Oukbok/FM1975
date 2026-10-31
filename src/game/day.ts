@@ -24,7 +24,7 @@ import { bookDebtInterest } from '../engine/clubEconomy';
 import { drawEuroRound, simulateEuroTie } from '../engine/euro';
 import { book, bookCupHomeMatch, bookCupPrize, bookMonthly } from '../engine/finances';
 import { applyMatchEffects } from '../engine/form';
-import { dataScoutingBonus, medicalRecoveryBonus, medicalRehabBonus, nlzGrowthBonus, rehaRecoveryBonus, rehaRehabBonus } from '../engine/infrastructure';
+import { dataScoutingBonus, medicalRecoveryBonus, medicalRehabBonus, rehaRecoveryBonus, rehaRehabBonus } from '../engine/infrastructure';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { dailyRecovery } from '../engine/training';
 import { setTransferDate } from '../engine/transfers';
@@ -596,7 +596,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
     // (NLZ → Wachstum, Datenanalyse-Zentrum → Scouting) — Block p11.
     const myStaffFx = staffEffectsOf(g);
     const myInfra = g.clubs[g.managedClubId]?.infrastructure;
-    const myGrowthBonus = nlzGrowthBonus(myInfra?.nlz ?? 1);
+    // NLZ-Wachstum steckt seit den Nachwuchs-Investitionen in academyGrowthOf (engine/youthAcademy.ts).
+    const myGrowthBonus = 0;
     const myScoutBonus = (myStaffFx.scouting ?? 0) + dataScoutingBonus(myInfra?.dataCenter ?? 1);
     for (const club of Object.values(g.clubs)) {
       if (club.id === g.managedClubId) {

@@ -123,7 +123,7 @@ export function ModuleDetail({ g, club, gr, year, onChange, onClose, k }: Props 
 
 const FUTURE: FacilityKey[] = ['rehaCenter', 'nlz', 'performanceCenter', 'dataCenter'];
 
-export function FacilityDetail({ g, club, gr, year, onChange, onClose, k, onGoto }: Props & { k: FacilityKey; onGoto?: (s: 'stadium' | 'marketing') => void }) {
+export function FacilityDetail({ g, club, gr, year, onChange, onClose, k, onGoto }: Props & { k: FacilityKey; onGoto?: (s: 'stadium' | 'marketing' | 'akademie') => void }) {
   const [note, setNote] = useState<string | null>(null);
   const def = FACILITY_BY_KEY[k];
   const level = (club.infrastructure[k] as number) ?? 1;
@@ -136,6 +136,9 @@ export function FacilityDetail({ g, club, gr, year, onChange, onClose, k, onGoto
   const upkeep = k === 'catering' ? CATERING_UPKEEP[mode][Math.max(1, level)] * economyScaleOf(year)
     : FAC_UPKEEP_BASE[k] && !(plot) ? FAC_UPKEEP_BASE[k]! * LEVEL_MULT[Math.max(1, level)] * economyScaleOf(year) : 0;
   const obsolete = def.obsoleteYear != null && year >= def.obsoleteYear;
+  // Jugendakademie und NLZ werden über Kader › Akademie gesteuert (game/youthInvest.ts);
+  // hier spiegeln sie nur deren Stand (syncLegacyAcademy).
+  const viaAcademy = k === 'youthAcademy' || k === 'nlz';
   const doUpgrade = () => {
     const res = upgradeFacility(club, k, g.calendar.currentDate, true);
     if (res.ok) {
@@ -160,8 +163,12 @@ export function FacilityDetail({ g, club, gr, year, onChange, onClose, k, onGoto
         <Pips n={level} of={MAX_LEVEL} />
         <div className="gd-eff">{def.effectAt(level)}</div>
       </>}
-      <KV k="Fixkosten" v={upkeep > 0 ? `${money(upkeep, year)} / Monat` : k === 'stadium' ? 'im Stadionunterhalt' : 'keine'} />
-      {level < MAX_LEVEL && k !== 'stadium' && !obsolete && (
+      <KV k="Fixkosten" v={upkeep > 0 ? `${money(upkeep, year)} / Monat` : k === 'stadium' ? 'im Stadionunterhalt' : viaAcademy ? 'über die Akademie' : 'keine'} />
+      {viaAcademy && <>
+        <div className="dnote mt8">Ausbau, Jugendtrainer, Internat und Etat steuerst du auf der Akademie-Seite. Die Stufe hier zeigt den Stand der Nachwuchsarbeit.</div>
+        <button className="btn btn-primary mt8" onClick={() => onGoto?.('akademie')}>Zur Akademie</button>
+      </>}
+      {level < MAX_LEVEL && k !== 'stadium' && !obsolete && !viaAcademy && (
         <div className="gd-next">
           <div className="gd-next-h">{plot ? 'Nach dem Bau' : `Stufe ${level + 1}`}</div>
           <div className="gd-eff acc">{def.effectAt(level + 1)}</div>

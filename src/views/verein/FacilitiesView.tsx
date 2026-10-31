@@ -21,7 +21,7 @@ import { FacilityDetail, ModuleDetail } from './grounds/GroundsDetail';
 const FUTURE_KEYS: FacilityKey[] = ['rehaCenter', 'nlz', 'performanceCenter', 'dataCenter'];
 const isModule = (k: GroundKey): k is GroundsModuleKey => k in GROUNDS_BY_KEY;
 
-export function FacilitiesView({ g, onChange, onGoto }: { g: Game; onChange: () => void; onGoto?: (s: 'stadium' | 'marketing') => void }) {
+export function FacilitiesView({ g, onChange, onGoto }: { g: Game; onChange: () => void; onGoto?: (s: 'stadium' | 'marketing' | 'akademie') => void }) {
   const [sel, setSel] = useState<GroundKey | null>(null);
   const [hover, setHover] = useState<GroundKey | null>(null);
   const club = g.clubs[g.managedClubId];
