@@ -1275,8 +1275,8 @@ Der Baustil folgt der Epoche (Backstein und Satteldach in den 70ern und 80ern, P
     title: 'Jugendsystem — Überblick',
     keywords: ['jugend', 'nachwuchs', 'talente', 'akademie', 'jugendakademie', 'überblick'],
     body: `## Die Jugendakademie
-Jeder Verein besitzt eine **Jugendakademie**. Ihre Ausbaustufe (Bereich **Gelände** → Infrastruktur) bestimmt,
-**wie viele** und **wie gute** Talente entstehen und **wie schnell** sie sich entwickeln.
+Jeder Verein besitzt eine **Jugendakademie**. Ihre **Nachwuchs-Investitionen** (Bereich **Kader → Akademie**, siehe Artikel
+**Nachwuchs-Investitionen**) bestimmen, **wie viele** und **wie gute** Talente entstehen und **wie schnell** sie sich entwickeln.
 
 Die Jugendakademie ist ein **eigenständiger Bildschirm** (Bereich **Jugend**, Symbol in der unteren Navigation).
 Dort sind alle Talente **nach Altersklassen** (Jahrgängen) gruppiert — von der G-Jugend (Bambini) bis zur A-Jugend:
@@ -1417,23 +1417,18 @@ bevor ein weiteres Talent hochgezogen werden kann (die Schaltfläche ist dann ge
 Talente, die nach dem Aufrücken **20 Jahre** alt sind (die A-Jugend also beendet haben), verlassen die Jugendakademie:
 - **Dein Verein:** Talente mit **≥ 3,0 Potenzial-Sternen** werden automatisch in den Profikader **hochgezogen**, solange
   ein Kaderplatz frei ist (max. 26). Alle übrigen **verlassen den Verein**.
-- **CPU-Vereine:** ziehen höchstens ein besonders vielversprechendes Talent (≥ 3,5 Sterne) hoch, der Rest verlässt den Verein
-  (bewusst simpel gehalten).
+- **CPU-Vereine:** ziehen 1–3 Talente hoch – Grundregel ab **3,5 Sternen**, gute Akademien (Ausbildung ≥ 55) und Trainer mit
+  Jugend-Philosophie schon ab 3,25 bzw. 3,0 Sternen, Einkaufs-Trainer erst ab 3,75. Der Rest verlässt den Verein.
 - Für deinen Verein fasst die Nachricht **„Jahrgangsabschluss der A-Jugend"** zusammen, wer hochgezogen wurde und wer gegangen ist.
 
 ## Nachwuchs-Rhythmus (neue Jahrgänge)
 Jeweils zum **1. Juli** vollzieht jede Akademie den Jahreswechsel — in dieser Reihenfolge:
 1. Alle bestehenden Talente **altern um ein Jahr** und rücken damit eine **Altersklasse auf** (G→F→E→D→C→B→A).
 2. **Jahrgangsabschluss** (siehe oben): die A-Jugend-Absolventen (nun 20) werden hochgezogen oder verlassen den Verein.
-3. Ein neuer **G-Jugend-Jahrgang (Bambini, 7 Jahre)** rückt nach — **Anzahl nach Akademie-Stufe** (academyIntakeCount):
-
-| Akademie-Stufe | 1 | 2 | 3 | 4 | 5 |
-|---|---|---|---|---|---|
-| Neue G-Jugend/Jahr | 1 | 2 | 2 | 3 | 4 |
-| Qualitäts-Bonus (OVR) | 0 | +3 | +6 | +9 | +13 |
-
-Der **Qualitäts-Bonus** (academyQualityBonus) hebt die Grundstärke neuer Talente an — bessere Akademien liefern also
-sowohl mehr als auch stärkere und potenzialträchtigere Talente.
+3. Ein neuer **G-Jugend-Jahrgang (Bambini, 7 Jahre)** rückt nach — **1 bis 4 Kinder**, je nach Ausbildungsqualität,
+   Plätzen und Jugendetat (siehe **Nachwuchs-Investitionen**). Ausbildung und Ruf heben außerdem Grundstärke und
+   Potenzial der neuen Talente – bessere Akademien liefern mehr, stärkere und potenzialträchtigere Talente.
+   Vorher (ebenfalls am 1. Juli) läuft der **Wettbewerb um Talente**: herausragende 12- bis 16-Jährige wählen ihren Verein.
 
 4. Für deinen Verein erscheint die Nachricht **„Neuer G-Jugend-Jahrgang (Bambini) in der Jugendakademie"** mit der Liste der Neuzugänge.
 5. **Nur dein Verein:** Die Jugendmannschaften werden auf volle Stärke gebracht – siehe Artikel **Volle Jugendmannschaften & Rekrutierung**.
@@ -1799,6 +1794,50 @@ Etwa **einmal pro Jahr** (Einstellung „Ereignisse“ wirkt mit) bietet sich ei
 ## Deine Talente schützen
 - Größere Vereine versuchen zum Saisonwechsel, deine besten Talente (ab ca. 3,75 Sterne, bis 18 Jahre) abzuwerben – ab 2010 häufiger. Du erhältst dann eine Ausbildungsentschädigung.
 - Ab 1990 schützt ein **Fördervertrag** (Jugend → Talent öffnen) für ein Jahr. Er kostet jährlich, je nach Potenzial.`,
+  },
+  {
+    id: 'youth-invest',
+    category: 'youth',
+    title: 'Nachwuchs-Investitionen (Akademie)',
+    keywords: ['akademie', 'nachwuchs', 'investition', 'jugendtrainer', 'internat', 'schule', 'scouting', 'zweite mannschaft', 'amateure', 'u23', 'nlz', 'leistungszentrum', 'ruf', 'durchlässigkeit', 'talentwettbewerb', 'jugendetat'],
+    body: `## Worum es geht
+Unter **Kader → Akademie** entscheidest du, wie viel du in den Nachwuchs steckst – und worin. Die Wirkung kommt **verzögert**:
+Eine Investition zahlt sich typischerweise erst nach **3–6 Jahren** aus. Wer kürzt, verliert schneller, als er aufgebaut hat.
+
+## Die Bausteine
+Jeder Baustein hat Stufen mit **Baukosten**, **Bauzeit** und **jährlichem Unterhalt** (Preise wachsen mit der Epoche). Neue Stufen werden erst in ihrer Zeit verfügbar.
+
+| Baustein | Stufen | Wirkung |
+|---|---|---|
+| **Jugendtrainer** (Qualität × Anzahl) | Ehrenamt → Lizenztrainer → hauptamtlich → Fußballlehrer (ab 1985) → Ausbilder-Team (ab 2001) | stärkster Hebel der Ausbildung; volle Wirkung nur mit genug Trainern (7, ab 2001: 10) |
+| **Plätze & Halle** | Rasenplatz → Flutlicht → Kunstrasen & Halle (ab 1985) → Campus (ab 1998) | Ausbildung, mehr Kinder je Jahrgang |
+| **Internat** | Gastfamilien → Jugendhaus (ab 1988) → Internat im Campus (ab 2003) | auswärtige Talente kommen; etwas Ausbildung |
+| **Schulkooperation** | Partnerschule (ab 1985) → Eliteschule des Fußballs (ab 2006) | Trainingszeit am Vormittag |
+| **Sportwissenschaft** | Ernährung & Diagnostik (ab 1995) → Psychologie (ab 2004) → Analyse-Team (ab 2012) | kleine Ausbildungs-Vorteile |
+| **Scouting-Netz** | lokal → regional → national (ab 1985) → international (ab 1996) | wie viele Talente du im Wettbewerb überhaupt kennst |
+| **Zweite Mannschaft** | Amateure (Oberliga) → U23 (ab 1994) | Spielpraxis für junge Profis bis 23 |
+
+Dazu kommt der **Jugendetat** je Saison (Fahrten, Turniere, Material, Sichtungstage): mehr Breite und etwas Qualität; über der Empfehlung flacht die Wirkung ab.
+
+## Was die Akademie ausmacht
+- **Ausbildung (0–100):** aus Trainern, Plätzen, Etat, Internat, Schule, Wissenschaft. Die *wirksame* Ausbildung folgt dem Ziel nur um **etwa 20 % pro Jahr** (Abbau ≈ 35 %). Sie steuert Lernrate der Talente (×0,8 bis ×1,65), wie reif sie mit 18/19 sind (bis +8 % Spielstärke), Zahl und Potenzial der Bambini und wie genau deine Scouts einschätzen.
+- **Ruf (0–100):** Langzeitwert. Jedes Jahr ≈ 15 % Richtung Ausbildung, Vereinsgröße und **Erfolg eigener Absolventen** (wer spielt, wie gut).
+- **Durchlässigkeit (0–100):** bekommen eigene Talente bis 23 Einsatzzeit bei den Profis? Eine zweite Mannschaft hilft ein wenig.
+
+## Wettbewerb um Talente (1. Juli)
+Jedes Jahr gibt es eine Handvoll herausragender **12- bis 16-Jähriger** (ab 1990 und 2002 mehr; ab 1996 auch aus dem Ausland). Sie wählen den Verein mit der größten **Anziehungskraft**: Ruf der Akademie, Ansehen des Vereins, Durchlässigkeit und Ausbildung – Heimatvereine haben einen Bonus, auswärtige Talente brauchen ein **Internat**. Du konkurrierst nur um Talente, die dein **Scouting-Netz** kennt. Die Nachricht „Talentwettbewerb“ zeigt Zu- und Absagen.
+
+## Zweite Mannschaft & Potenzial
+Junge Profis, die bei den Profis kaum spielen, verloren früher Jahr für Jahr Entfaltung (Potenzial). Mit **Amateuren** sammeln Spieler bis 23 gewichtete Minuten (40 %), mit einer **U23** mehr (55 %). Das hält sie im Rhythmus; echte Sprünge gibt es weiter nur mit Einsätzen bei den Profis.
+
+## Leistungszentrum-Pflicht
+Nach dem EM-Aus 2000 wurde ein Leistungszentrum Lizenzbedingung: **ab 2001 für die Bundesliga, ab 2002 für die 2. Liga**. Mindestens: Fußballlehrer im Nachwuchs, zwei Plätze mit Flutlicht, Gastfamilien, Partnerschule und 8 Jugendtrainer. Fehlt etwas, gibt es jedes Jahr eine **Geldstrafe** und der Ruf leidet. Ein Jahr vorher kommt eine Ankündigung. 2002 startet das **DFB-Talentförderprogramm** (Stützpunkte): Alle Scouting-Netze finden mehr Talente.
+
+## Was kostet das?
+Alle Preise sind Preisschilder in 1975-Basis und wachsen mit der Epoche. Ein üblicher Erstligist gibt 1975 rund **100 Tsd. DM** im Jahr für den Nachwuchs aus, ein stark investierender 200–300 Tsd. – grob 3–6 % des Umsatzes. Ein volles Leistungszentrum der 2010er/2020er liegt bei mehreren Millionen bis über 20 Mio. €. Die Kosten erscheinen in der Bilanz unter **Nachwuchs**.
+
+## KI-Vereine
+KI-Vereine investieren vereinfacht einen Anteil ihres Umsatzes – Trainer mit **Jugend-Philosophie** deutlich mehr, Einkaufs-Trainer weniger – höchstens einen neuen Ausbau pro Jahr, und erfüllen die Leistungszentrum-Pflicht.`,
   },
   {
     id: 'facilities-overview',

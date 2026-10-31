@@ -113,6 +113,7 @@ function report(game: Game) {
     console.log(`   Vereine ${lc.length} Kader min ${sz[0]} med ${sz[sz.length >> 1]} max ${sz[sz.length - 1]} | Tabelle ${game.table.rows.length}`);
   }
   if (process.env.BAL) balanceReport(game, ps);
+  if (process.env.YOUTH) youthReport(game, ps);
   const w = game.world;
   if (w && w.history.length) {
     const h = w.history[w.history.length - 1];
@@ -226,6 +227,69 @@ function balanceReport(game: Game, ps: Player[]) {
   console.log(`   BAL Gehalt/Jahr top ${(wages[0] / 1e6).toFixed(2)}M p90 ${((wages[Math.floor(wages.length * 0.1)] ?? 0) / 1e6).toFixed(2)}M med ${((wages[wages.length >> 1] ?? 0) / 1e3).toFixed(0)}k | MW top ${(fees[0] / 1e6).toFixed(2)}M | Konto/Umsatz KI min ${ratio[0]?.toFixed(2)} med ${ratio[ratio.length >> 1]?.toFixed(2)} max ${ratio[ratio.length - 1]?.toFixed(2)} | eigen ${myH ? (my.finances.balance / myH.revenue).toFixed(2) : '-'} | im Minus ${neg}`);
 }
 
+// -----------------------------------------------------------------------------
+// YOUTH=1: Akademie-Bilanz. Akademiespieler = ID mit „_y_“ (ohne Legenden),
+// Herkunftsverein = ID-Präfix. Investition je Verein = Ausbildungsqualität aus
+// game/youthInvest (falls vorhanden), sonst alte Akademie-Stufe × 20.
+// -----------------------------------------------------------------------------
+const yt = { peak: new Map<string, number>(), first80: new Map<string, number>(), first85: new Map<string, number>(), inv: new Map<string, number[]>(), shares: [] as number[] };
+const isAcad = (p: Player) => p.id.includes('_y_') && !p.development.legendId;
+const originOf = (id: string) => id.split('_y_')[0];
+function investScore(c: any): number {
+  const yi = c.youthInvest;
+  if (yi && typeof yi.quality === 'number') return yi.quality;
+  return (c.infrastructure?.youthAcademy ?? 1) * 20;
+}
+function youthReport(game: Game, ps: Player[]) {
+  const y0 = Number(game.season.slice(0, 4));
+  const acad = ps.filter(isAcad);
+  const share = acad.length / Math.max(1, ps.length);
+  yt.shares.push(share);
+  for (const p of Object.values(game.players)) {
+    if (!isAcad(p)) continue;
+    const prev = yt.peak.get(p.id) ?? 0;
+    yt.peak.set(p.id, Math.max(prev, p.overall));
+    if (p.overall >= 80 && !yt.first80.has(p.id)) yt.first80.set(p.id, y0);
+    if (p.overall >= 85 && !yt.first85.has(p.id)) yt.first85.set(p.id, y0);
+  }
+  for (const c of leagueClubs(game)) {
+    const a = yt.inv.get(c.id) ?? []; a.push(investScore(c)); yt.inv.set(c.id, a);
+  }
+  const best = acad.reduce((b, p) => (p.overall > (b?.overall ?? 0) ? p : b), null as Player | null);
+  const u23 = acad.filter((p) => p.age <= 23);
+  const invs = leagueClubs(game).map((c) => (c as any).youthInvest).filter(Boolean);
+  if (invs.length) {
+    const q = (xs: number[]) => { const s = [...xs].sort((a, b) => a - b); return `${Math.round(s[0])}/${Math.round(s[s.length >> 1])}/${Math.round(s[s.length - 1])}`; };
+    const cost = invs.map((v: any) => v.history?.[v.history.length - 1]?.spend ?? 0);
+    const race = game.youthRace;
+    console.log(`   YOUTH Invest Qualität ${q(invs.map((v: any) => v.quality))} Ruf ${q(invs.map((v: any) => v.reputation))} Perspektive ${q(invs.map((v: any) => v.perspective))} Kosten(Basis,k) ${q(cost.map((x: number) => x / 1000))}${race ? ` | Talentwettbewerb ${race.entries.filter((e) => e.to).length}/${race.entries.length} an Ligavereine` : ''}`);
+  }
+  console.log(`   YOUTH Akademie in Liga 1:${acad.length}/${ps.length} (${(share * 100).toFixed(1)} %) | bester ${best ? `${best.overall} (${best.age} J., ${game.clubs[best.clubId]?.shortName ?? '?'})` : '-'} | ≥80 ${acad.filter((p) => p.overall >= 80).length} ≥85 ${acad.filter((p) => p.overall >= 85).length} | U23 ${u23.length} Ø ${avg(u23.map((p) => p.overall)).toFixed(1)}`);
+}
+function youthSummary(game: Game) {
+  console.log(`YOUTH Anteil Akademiespieler Liga 1: Ø ${(avg(yt.shares) * 100).toFixed(1)} % (erste 10 J. ${(avg(yt.shares.slice(0, 10)) * 100).toFixed(1)} %, letzte 10 J. ${(avg(yt.shares.slice(-10)) * 100).toFixed(1)} %) | bester Akademiespieler je erreicht ${Math.max(0, ...yt.peak.values())}`);
+  for (const [a, b] of [[1975, 1985], [1985, 1995], [1995, 2005], [2005, 2015], [2015, 2030]]) {
+    const n80 = [...yt.first80.values()].filter((y) => y >= a && y < b).length;
+    const n85 = [...yt.first85.values()].filter((y) => y >= a && y < b).length;
+    console.log(`YOUTH ${a}–${b - 1}: neue Akademie-Spieler ≥80 ${n80}, ≥85 ${n85}`);
+  }
+  // Investitionsvergleich: Vereine mit ≥ 10 Saisons in Liga 1 nach Ø Investition gedrittelt.
+  const rows = [...yt.inv.entries()].filter(([, v]) => v.length >= 10).map(([id, v]) => ({ id, inv: avg(v) })).sort((a, b) => b.inv - a.inv);
+  const third = Math.max(1, Math.floor(rows.length / 3));
+  const stat = (grp: typeof rows) => {
+    const ids = new Set(grp.map((r) => r.id));
+    const prods = [...yt.peak.entries()].filter(([id]) => ids.has(originOf(id)));
+    const n = Math.max(1, grp.length);
+    return `${grp.length} Vereine, Ø Inv. ${avg(grp.map((r) => r.inv)).toFixed(0)} | je Verein: Profis aus eigener Akademie ${(prods.length / n).toFixed(1)}, ≥75 ${(prods.filter(([, v]) => v >= 75).length / n).toFixed(1)}, ≥80 ${(prods.filter(([, v]) => v >= 80).length / n).toFixed(2)}, ≥85 ${(prods.filter(([, v]) => v >= 85).length / n).toFixed(2)}`;
+  };
+  const top = [...yt.peak.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5)
+    .map(([id, v]) => `${v} ${game.players[id]?.fullName ?? id} (${originOf(id)}${id.includes('_y_race_') ? ', Talentwettbewerb' : ''}, Inv. ${avg(yt.inv.get(originOf(id)) ?? [0]).toFixed(0)})`);
+  console.log(`YOUTH beste Akademiespieler: ${top.join(' | ')}`);
+  console.log(`YOUTH viel Investition:  ${stat(rows.slice(0, third))}`);
+  console.log(`YOUTH wenig Investition: ${stat(rows.slice(-third))}`);
+  void game;
+}
+
 const t0 = Date.now();
 report(g);
 if (process.env.AI) aiReport(g);
@@ -267,6 +331,7 @@ if (process.env.BAL) {
     if (r.length) console.log(`BAL ${a}–${b - 1}: Tore/Sp ${avg(r.map((x) => x.tore)).toFixed(2)} Heimsieg ${(avg(r.map((x) => x.heim)) * 100).toFixed(1)}% Remis ${(avg(r.map((x) => x.remis)) * 100).toFixed(1)}% Verletzungen/Saison ${avg(r.map((x) => x.inj)).toFixed(0)} Vereine ohne TW ${avg(r.map((x) => x.tw0)).toFixed(1)}`);
   }
 }
+if (process.env.YOUTH) youthSummary(g);
 console.log(`fertig in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 const legends = [...Object.values(g.players), ...Object.values(g.youthPlayers)].filter((p) => p.development.legendId);
 if (process.env.LEGENDLIST) for (const p of legends) console.log('Legende', p.fullName.padEnd(24), p.naturalPosition, 'Alter', p.age, 'OVR', p.overall, 'Verein', g.clubs[p.clubId]?.shortName ?? p.clubId, p.isYouth ? '(Jugend)' : '', 'Hist', p.development.abilityHistory.map((h) => h.ability).join(','));

@@ -40,6 +40,7 @@ import { SquadView } from '../views/kader/SquadView';
 import { TrainingView } from '../views/kader/TrainingView';
 import { VertraegeView } from '../views/kader/VertraegeView';
 import { YouthView } from '../views/kader/YouthView';
+import { AcademyView } from '../views/kader/AcademyView';
 import { SaveLoadModal, SettingsModal } from '../views/modals/SaveLoadModal';
 import { FixturesView } from '../views/spieltag/FixturesView';
 import { MatchModal } from '../views/spieltag/MatchModal';
@@ -319,6 +320,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'transfers' && <TransfersView g={g} onDone={rerender} />}
         {screen === 'finances' && <FinancesView g={g} />}
         {screen === 'youth' && <YouthView g={g} onChange={rerender} />}
+        {screen === 'akademie' && <AcademyView g={g} onChange={rerender} />}
         {screen === 'facilities' && <FacilitiesView g={g} onChange={rerender} onGoto={(sc) => setScreen(sc)} />}
         {screen === 'staff' && <StaffView g={g} onChange={rerender} />}
         {screen === 'marketing' && <MarketingView g={g} onChange={rerender} />}

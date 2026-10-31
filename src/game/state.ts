@@ -103,6 +103,10 @@ export interface Game {
   archive?: import('./archive').ArchivedPlayer[];
   /** Volle Jugendmannschaften wurden einmalig hergestellt (game/youthTeams.ts). */
   youthTeamsReady?: boolean;
+  /** Wettbewerb um Talente des letzten Sommers (game/youthInvest.ts). */
+  youthRace?: import('./youthInvest').YouthRaceLog;
+  /** Monat der letzten Nachwuchs-Buchung (game/youthInvest.ts). */
+  youthInvestTick?: string;
   /** Glaubwürdigkeit deiner Versprechen (0–100, Start 70; game/promises.ts). */
   promiseTrust?: number;
   /** Fällige Raten und Erfolgsprämien aus Transfers (1975-Basis). */

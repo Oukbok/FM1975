@@ -373,6 +373,8 @@ export interface PlayerDevelopment {
   recentMinutes?: number;
   /** Minutenstand beim letzten Wochenabschluss (zur Differenzbildung). */
   lastMinutesSeen?: number;
+  /** Gleitende, gewichtete Einsatzminuten in der zweiten Mannschaft (U23, game/youthInvest.ts). */
+  reserveMinutes?: number;
   /** Fester Schätzfehler der Scouts (Sterne, −0,5 … +0,5). */
   scoutBias?: number;
   /** Verborgenes Juwel: entfaltet mit `boostAge` einen Schub von `boost` Potenzialpunkten. */
@@ -1030,6 +1032,8 @@ export interface Club {
   playerIds: string[];
   /** Spieler-IDs in der Jugendakademie (nicht im A-Kader). */
   youthPlayerIds: string[];
+  /** Nachwuchs-Investitionen (Bausteine, Etat, Ruf; engine/youthAcademy.ts). Optional für alte Spielstände. */
+  youthInvest?: import('../engine/youthAcademy').YouthInvest;
   /** Ausbaustufen des Vereinsgeländes. */
   infrastructure: ClubInfrastructure;
   /** Stadion. */

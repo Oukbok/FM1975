@@ -27,7 +27,7 @@ export const EXPENSE_ROWS: { key: keyof ClubFinances['expenses']; label: string;
   { key: 'staffWages', label: 'Betreuerstab', icon: <Icon name="staff" /> },
   { key: 'stadiumMaintenance', label: 'Stadionunterhalt', icon: <Icon name="stadium" /> },
   { key: 'facilities', label: 'Gebäude-Fixkosten', icon: <Icon name="facilities" /> },
-  { key: 'trainingFacilities', label: 'Trainingsbetrieb (alt)', icon: <Icon name="training" /> },
+  { key: 'trainingFacilities', label: 'Nachwuchs (Akademie)', icon: <Icon name="youth" /> },
   { key: 'other', label: 'Sonstige Fixkosten', icon: <Icon name="contracts" /> },
   { key: 'transferExpense', label: 'Transferausgaben', icon: <Icon name="transfers" /> },
 ];

@@ -101,6 +101,11 @@ export interface ClubDevContext {
   environment: number;
   /** Optional: individueller Faktor je Spieler (Spezialtrainer, Förderspieler, Philosophie). */
   playerFactor?: (p: Player) => number;
+  /**
+   * Optional: gewichtete Wochenminuten in der zweiten Mannschaft für junge Profis
+   * (game/youthInvest.ts). `proMinutes` = Profi-Minuten dieser Woche.
+   */
+  reserve?: (p: Player, proMinutes: number) => number;
 }
 
 /** Trainingsfaktor eines Vereins. Eigener Verein erhält zusätzlich den Stab-/Plan-Bonus. */
@@ -116,7 +121,9 @@ export function clubTrainingFactor(club: Club, extra = 0): number {
 
 function practiceFactor(p: Player): number {
   // recentMinutes ≈ gleitende Minuten der letzten ~8 Wochen; 540 ≈ 6 volle Spiele.
-  const r = clamp((p.development.recentMinutes ?? 0) / 540, 0, 1);
+  // Junge Profis (≤ 23) sammeln zusätzlich Praxis in der zweiten Mannschaft (gewichtet).
+  const reserve = p.age <= 23 ? p.development.reserveMinutes ?? 0 : 0;
+  const r = clamp(((p.development.recentMinutes ?? 0) + reserve) / 540, 0, 1);
   const f = 0.6 + r * 0.8;
   // Junge Legenden bekommen ihre Spielpraxis irgendwo (zweite Mannschaft, Leihe).
   return p.development.legendId && p.age <= 22 ? Math.max(f, 1.0) : f;
@@ -173,6 +180,10 @@ export function weeklyDevelopment(
     const club = clubs[p.clubId];
     let ctx = club ? ctxCache.get(club.id) : undefined;
     if (club && !ctx) { ctx = ctxFor(club); ctxCache.set(club.id, ctx); }
+    // Zweite Mannschaft: wer bei den Profis nicht spielt, sammelt dort (gewichtete) Minuten.
+    if (p.age <= 23 && (ctx?.reserve || d.reserveMinutes)) {
+      d.reserveMinutes = Math.round(((d.reserveMinutes ?? 0) * 0.88 + (ctx?.reserve ? ctx.reserve(p, delta) : 0)) * 10) / 10;
+    } else if (d.reserveMinutes) d.reserveMinutes = 0;
     const training = ctx?.training ?? 0.9;
     const environment = ctx?.environment ?? 1;
 
