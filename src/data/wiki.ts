@@ -1093,7 +1093,7 @@ Große Vereine mit hoher Auslastung profitieren stärker vom **Eigenbetrieb** (v
 - Ab **2011/12** gilt das **Finanzielle Fairplay**: Liegt das Ergebnis der letzten drei Saisons mehr als 5 % des Umsatzes im Minus, folgt eine Verwarnung, beim zweiten Verstoß eine Transfersperre.
 
 ## Die anderen Vereine wirtschaften mit
-- KI-Vereine passen ihre Gehälter dem Umsatz an (Gehaltsquote um 60 %), verkaufen bei Schulden Spieler und investieren Überschüsse in Neuzugänge (aus der Liga oder dem Ausland) sowie in Gelände und Stadion. Zum Saisonstart behalten sie rund **ein Viertel des Jahresumsatzes** als Reserve; was darüber liegt, fließt in Kader, Gehälter und Ausbau. Geld bleibt nicht einfach auf dem Konto liegen – auch die Konkurrenz wird stärker, wenn sie erfolgreich ist.
+- KI-Vereine passen ihre Gehälter dem Umsatz an (Gehaltsquote um 60 %), verkaufen bei Schulden Spieler und investieren Überschüsse in Neuzugänge (aus der Liga oder dem Ausland) sowie in Gelände und Stadion. Zum Saisonstart behalten sie rund **ein Zehntel des Jahresumsatzes** als Reserve; was darüber liegt, fließt in Kader, Gehälter und Ausbau. Geld bleibt nicht einfach auf dem Konto liegen – auch die Konkurrenz wird stärker, wenn sie erfolgreich ist.
 - Jeder KI-Kader hält **zwei Torhüter**: Beendet einer seine Karriere oder wird verkauft, holt der Verein vor allen anderen Wechseln Ersatz (Ersatztorwart eines Liga-Rivalen oder aus dem Ausland, bei leerer Kasse ablösefrei).`,
   },
   {

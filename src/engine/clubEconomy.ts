@@ -312,9 +312,10 @@ const MIN_KEEP = 20;
  * Liquiditätsreserve der KI (Anteil am Jahresumsatz), die zum Saisonstart auf dem
  * Konto bleibt. Darüber wird investiert (Zugänge, Gehälter, Gelände). Vorher 0,6:
  * KI-Vereine saßen dauerhaft auf rund einem Jahresumsatz Guthaben (Geld-Horten),
- * kein Verein geriet je ins Minus.
+ * kein Verein geriet je ins Minus. Weil die Vereine während der Saison Überschüsse
+ * erwirtschaften, liegt das Guthaben am Saisonende trotzdem bei rund 40–50 % des Umsatzes.
  */
-const AI_RESERVE = 0.25;
+const AI_RESERVE = 0.1;
 const MAX_SQUAD = 25;
 
 function squadRankValue(c: Club, players: Record<string, Player>, rank: number): number {
@@ -537,7 +538,7 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
     const excess = c.finances.balance - AI_RESERVE * rev;
     if (excess <= 0) continue;
     const ratio = excess / Math.max(1, rev);
-    const spend = Math.round(excess * 0.75);
+    const spend = Math.round(excess * 0.85);
     const keys = (['trainingCenter', 'youthAcademy', 'medical', 'merchandising'] as const)
       .filter((k) => (c.infrastructure?.[k] ?? 1) < 5);
     if (keys.length) {
