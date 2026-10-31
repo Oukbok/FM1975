@@ -822,8 +822,8 @@ Aus den Spielern auf dem Platz entstehen vier Werte: **Angriff**, **Spielkontrol
 - Die **KI-Trainer** wechseln müde oder schwache Spieler aus und ändern bei Rückstand oder knapper Führung die Ausrichtung.
 
 ## Epochen
-- **Heimvorteil:** in den Siebzigern deutlich stärker als heute.
-- **Torschnitt:** um 3,1 Tore pro Spiel früher, um 2,9 heute.
+- **Heimvorteil:** in den Siebzigern deutlich stärker als heute (damals rund 57 % Heimsiege, um 1995 knapp 47 %, heute gut 40 %). Er wirkt in beide Richtungen: Die Heimelf wird gefährlicher, die Gäste etwas harmloser.
+- **Torschnitt:** rund 3,3 Tore pro Spiel in den Siebzigern und frühen Achtzigern, um 2,9 um die Jahrtausendwende, heute wieder etwa 3,1.
 - **Karten:** früher seltener Gelb; ab 1995 mehr Verwarnungen.
 - **Wechsel und Bank:** 2 Wechsel bei 5 Bankplätzen, ab 1995 3 Wechsel (7 Plätze), ab 2020 5 Wechsel (9 Plätze).
 - **Videobeweis** ab 2017: Treffer können nachträglich aberkannt werden.

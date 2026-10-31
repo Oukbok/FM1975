@@ -38,9 +38,9 @@ export interface StatAvailability {
 
 export function eraRules(year: number): EraRules {
   const goalFactor =
-    year < 1980 ? 1.02 : year < 1990 ? 1.04 : year < 2000 ? 0.97 : year < 2010 ? 0.94 : year < 2020 ? 0.94 : 0.96;
+    year < 1980 ? 1.12 : year < 1990 ? 1.12 : year < 2000 ? 1.01 : year < 2010 ? 0.94 : year < 2020 ? 0.97 : 1.03;
   const homeAdvantage =
-    year < 1985 ? 1.3 : year < 1995 ? 1.26 : year < 2005 ? 1.21 : year < 2015 ? 1.2 : 1.19;
+    year < 1985 ? 1.8 : year < 1995 ? 1.5 : year < 2005 ? 1.36 : year < 2015 ? 1.28 : 1.22;
   return {
     year,
     goalFactor,

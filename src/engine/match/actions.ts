@@ -36,7 +36,10 @@ const keeperOf = (t: TeamState) => onPitch(t).find((m) => m.group === 'GK') ?? o
 const pulse = (sim: MatchSim, side: Side, v: number) => { sim.pulse += side === 'home' ? v : -v; };
 
 function threat(sim: MatchSim, T: TeamState, O: TeamState): number {
-  const home = T.side === 'home' ? sim.era.homeAdvantage : 1;
+  // Heimvorteil wirkt beidseitig (Heim stärker, Gast schwächer): verschiebt die
+  // Ergebnisse, ohne den Torschnitt aufzublähen. Verhältnis Heim:Gast = homeAdvantage.
+  const ha = Math.sqrt(sim.era.homeAdvantage);
+  const home = T.side === 'home' ? ha : 1 / ha;
   const momBoost = 1 + 0.03 * (T.side === 'home' ? sim.mom : -sim.mom);
   const derbyNoise = sim.derby ? 0.97 : 1; // Derbys sind enger
   const a = T.units.attack * T.mods.att * home * momBoost;
