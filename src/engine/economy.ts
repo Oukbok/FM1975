@@ -278,7 +278,7 @@ const TIER_WAGE_BASE = [1, 1, 0.45, 0.2, 0.1, 0.05];
 /**
  * Gehaltsniveau einer Liga-Ebene gegenüber der 1. Liga (1. Liga = 1): Grundniveau 1975 ×
  * Anteil am Wachstum (Stadion 60 %, Vermarktung 40 %). Heute verdient ein Zweitligist
- * im Schnitt rund ein Fünftel, ein Viertligist rund ein Hundertstel eines Erstligisten.
+ * im Schnitt rund ein Viertel, ein Drittligist rund 7 %, ein Viertligist rund 2 % eines Erstligisten.
  * Marktgehälter (wageForOverall) gelten für die 1. Liga; Zugänge unterklassiger Vereine
  * werden mit diesem Niveau bezahlt.
  */
