@@ -4,6 +4,7 @@
 // (1975) und vom Nachrücken neuer Spieler in späteren Jahren (Regens).
 // =============================================================================
 import { Player, Position, PlayerAttributes, AttributeKey, createEmptyStats, potentialToStars, clampStars } from '../types';
+import { wageForOverall } from './economy';
 import { weightsFor, positionSuitability } from './positions';
 import { pickOrigin, makeName, Origin } from '../data/origins';
 
@@ -118,7 +119,7 @@ export function createPlayer(spec: NewPlayerSpec): Player {
     injury: null, suspensionMatches: 0, yellowCardCount: 0,
     clubId: spec.clubId,
     contract: {
-      weeklyWage: Math.round(overall * 120 + rng() * 500),
+      weeklyWage: Math.round(wageForOverall(overall) * (0.85 + rng() * 0.3)),
       expiryDate: `${year + 1 + Math.floor(rng() * 4)}-06-30`,
       transferValue: value, satisfaction: 55 + Math.floor(rng() * 35),
     },

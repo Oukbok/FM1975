@@ -1,9 +1,10 @@
 // =============================================================================
-// FOOTBALL MANAGER 1980 — Finanz-Engine
+// 1975 – A Football Manager — Finanz-Engine
 // =============================================================================
 // Bucht Einnahmen und Ausgaben fortlaufend über die Saison und schreibt den
-// Kontostand real fort. Alle Beträge in Deutscher Mark (DM), Größenordnungen
-// der Ära 1980/81 (keine modernen Millionenbeträge).
+// Kontostand real fort. Alle Grundwerte in 1975-DM (Recherche
+// docs/recherche/FINANZEN_Recherche_1975.md: Erstligist ≈ 4,5 Mio. DM Umsatz,
+// Spanne ≈ 1,7–8,3 Mio.), gebucht nominal mit der Skala des Buchungsjahres.
 //
 // EINNAHMEN
 //   • Stadioneinnahmen  = Zuschauer × Ticketpreis   (pro Heimspiel)
@@ -29,7 +30,7 @@ import {
   CateringMode, SponsorOffer,
 } from '../types';
 import { facilityUpkeep } from './infrastructure';
-import { economyScale, revenueScale, yearOf } from './economy';
+import { attendanceDemand, clubTier, economyScale, fairTicketPrice, matchdayPriceScale, revenueScale, tierScale, yearOf } from './economy';
 import { commercialMultiplier } from './clubEconomy';
 
 /**
@@ -39,14 +40,31 @@ import { commercialMultiplier } from './clubEconomy';
  */
 function scalesFor(club: Club, date: string) {
   const y = yearOf(date);
+  const tier = clubTier(club);
+  const comm = tierScale(revenueScale('commercial', y), tier, 'commercial');
   return {
     base: economyScale(y),
-    matchday: revenueScale('matchday', y),
-    commercial: revenueScale('commercial', y) * commercialMultiplier(club, y),
-    // Fanartikel: an Stadionbesucher gekoppelt, mit der Marke wachsend.
-    merch: revenueScale('matchday', y) * commercialMultiplier(club, y),
+    // Preis je Besucher: Stadionumsatz-Skala ÷ Zuschauer-Nachfrage der Epoche
+    // (Unterklassige nehmen nur teilweise an der Preisentwicklung teil).
+    matchday: tierScale(matchdayPriceScale(y), tier, 'matchday'),
+    commercial: comm * commercialMultiplier(club, y),
+    // Fanartikel: an Stadionbesucher gekoppelt, wachsen aber mit gut der Hälfte der
+    // Vermarktung (1975 kaum vorhanden, ab den 1990ern eine eigene Säule) und der Marke.
+    merch: (1 + (comm - 1) * 0.55) * commercialMultiplier(club, y),
   };
 }
+
+/** Preis-Skala je Besucher (Eintritt, Catering, Programm, Logen) eines Vereins im Jahr X. */
+export function clubPriceScale(club: Club, year: number): number {
+  return tierScale(matchdayPriceScale(year), clubTier(club), 'matchday');
+}
+
+/** Vermarktungs-Skala (Trikot, Banden) eines Vereins im Jahr X, ohne Marke. */
+export function clubCommercialScale(club: Club, year: number): number {
+  return tierScale(revenueScale('commercial', year), clubTier(club), 'commercial');
+}
+
+export { clubTier };
 
 let txCounter = 0;
 function txId(): string {
@@ -120,17 +138,21 @@ export function cateringMatchIncome(club: Club, attendance: number, scale = 1): 
  * Erwartete Auslastungsrate bei gegebenem Ticketpreis (Elastizitaets-Vorschau, ohne Zufall).
  * Spiegelt match.ts `estimateAttendance` ohne den +/-0.10-Zufallsterm.
  */
-export function expectedAttendanceRate(club: Club, ticketPrice?: number): number {
-  const baseRate = club.stadium.averageAttendanceRate ?? 0.7;
-  const price = ticketPrice ?? club.stadium.ticketPrice ?? 14;
-  const refPrice = Math.round(8 + club.reputation * 0.12);
+export function expectedAttendanceRate(club: Club, ticketPrice?: number, year?: number): number {
+  const baseRate = club.stadium.averageAttendanceRate ?? 0.5;
+  const price = ticketPrice ?? club.stadium.ticketPrice ?? 8;
+  const refPrice = fairTicketPrice(club.reputation);
   const priceFactor = Math.max(0.6, Math.min(1.15, 1 - ((price - refPrice) / refPrice) * 0.5));
-  return Math.max(0.3, Math.min(1.0, baseRate * priceFactor));
+  const demand = year != null ? attendanceDemand(year) : 1;
+  return Math.max(0.15, Math.min(1.0, baseRate * priceFactor * demand));
 }
 
+
+export { fairTicketPrice };
+
 /** Erwartete Zuschauerzahl bei gegebenem Ticketpreis (Vorschau). */
-export function expectedAttendance(club: Club, ticketPrice?: number): number {
-  return Math.round(club.stadium.capacity * expectedAttendanceRate(club, ticketPrice));
+export function expectedAttendance(club: Club, ticketPrice?: number, year?: number): number {
+  return Math.round(club.stadium.capacity * expectedAttendanceRate(club, ticketPrice, year));
 }
 
 /** Programmhefte & sonstige Spieltagserloese eines Heimspiels (era-skaliert). */
@@ -260,9 +282,13 @@ export function weeklyWageBill(club: Club, players: Record<string, Player>): num
 // infrastructure.ts zu vermeiden).
 const MERCH_FACTOR = [1, 1, 1.15, 1.3, 1.5, 1.75];
 
-/** Fanartikel-Erlös pro Kopf (DM) — steigt mit Reputation und Fanshop-Ausbau. */
+/**
+ * Fanartikel-Erlös pro Kopf (1975-DM) — steigt mit Reputation und Fanshop-Ausbau.
+ * 1975 kaum mehr als Schals und Wimpel (≈ 0,30 DM je Besucher, ≈ 120.000 DM im Jahr);
+ * gebucht × Vermarktungs-Skala, damit Fanartikel ab den 1990ern zur Säule werden.
+ */
 function merchPerHead(club: Club): number {
-  const base = 2 + (club.reputation / 100) * 4; // ~2–6 DM je Zuschauer
+  const base = 0.1 + (club.reputation / 100) * 0.27; // ~0,25–0,35 DM je Zuschauer
   const lvl = Math.max(0, Math.min(5, Math.round(club.infrastructure?.merchandising ?? 1)));
   return base * MERCH_FACTOR[lvl];
 }
@@ -295,19 +321,32 @@ export function bookHomeMatch(
     // TV-Gelder: zentral vermarktet, monatliche Rate (bookMonthly).
     if (!fin.tvAnnual) {
       // Alte Spielstände ohne TV-Verteilung: bisherige Heimspiel-Pauschale.
-      book(fin, date, Math.round((20000 + club.reputation * 400) * scale), 'tv_money', 'TV- und Mediengelder (Heimspiel)', trackDetail);
+      book(fin, date, Math.round((6000 + club.reputation * 120) * scale), 'tv_money', 'TV- und Mediengelder (Heimspiel)', trackDetail);
     }
     if (catering > 0) book(fin, date, catering, 'catering', `Catering / Wuerstchenbuden (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
     if (matchday > 0) book(fin, date, matchday, 'matchday', `Programmhefte & Spieltagserloese (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
     const vip = vipIncome(club, sc.matchday, Number(date.slice(0, 4)));
     if (vip > 0) book(fin, date, vip, 'commercial', `Logen & VIP-Bereich (${club.stadium.vipBoxes} Logen)`, trackDetail);
   }
-  // Leistungsprämie (2-Punkte-Ära: bescheiden)
-  const bonus = Math.round((won ? 25000 + club.reputation * 200 : drawn ? 8000 : 0) * scale);
+  // Leistungsprämie von Sponsoren/Gönnern (1975 ≈ 10.000 DM je Sieg; wächst wie das Stadiongeschäft)
+  const bonus = Math.round((won ? 6000 + club.reputation * 50 : drawn ? 2000 : 0) * (scale > 0 ? scalesFor(club, date).matchday : 0));
   if (bonus > 0) {
     book(fin, date, bonus, 'prize_money', won ? 'Siegprämie' : 'Prämie für Unentschieden', trackDetail);
   }
+  // Auflaufprämien an die Mannschaft (Recherche: Prämien ≈ 15–20 % der Grundgehälter):
+  // je Sieg gut ein halbes, je Remis ein Fünftel Wochengehalt des Kaders.
+  const squadBonus = Math.round((fin.currentWageBill ?? 0) * (won ? PLAYER_WIN_BONUS : drawn ? PLAYER_DRAW_BONUS : 0) * scale);
+  if (squadBonus > 0) book(fin, date, -squadBonus, 'wages', won ? 'Siegprämien an die Mannschaft' : 'Punktprämien an die Mannschaft', trackDetail);
 }
+
+/** Spielerprämie je Sieg bzw. Remis (Anteil am Wochen-Grundgehalt des Kaders). */
+export const PLAYER_WIN_BONUS = 0.55;
+export const PLAYER_DRAW_BONUS = 0.2;
+/**
+ * Aufschlag auf die Grundgehälter für Betreuerstab (18 %) und Prämien (≈ 18 %): aus einem
+ * Gehaltsrahmen in Umsatzanteilen wird so das Wochen-Grundgehalt der Spieler.
+ */
+export const WAGE_OVERHEAD = 1.36;
 
 /**
  * Bucht die Stadioneinnahmen eines Landespokal-Heimspiels (Ticket, Fanartikel,
@@ -327,7 +366,7 @@ export function bookCupHomeMatch(
   const ticket = Math.round(attendance * club.stadium.ticketPrice * ticketFactor(club) * sc.matchday);
   const merch = Math.round(attendance * merchPerHead(club) * sc.merch);
   // Pokal-TV: Übertragungsrechte je Spiel (wächst mit dem TV-Markt).
-  const tv = Math.round((25000 + club.reputation * 500) * revenueScale('tv', yearOf(date)) * (scale > 0 ? 1 : 0));
+  const tv = Math.round((2500 + club.reputation * 50) * revenueScale('tv', yearOf(date)) * (scale > 0 ? 1 : 0));
   const catering = cateringMatchIncome(club, attendance, sc.matchday);
   const matchday = matchdayIncome(attendance, sc.matchday);
   book(fin, date, ticket, 'ticket_sales', `Pokal-Stadioneinnahmen (${attendance.toLocaleString('de-DE')} Zuschauer)`, trackDetail);
@@ -391,7 +430,8 @@ export function computeMonthly(
   year?: number,
 ): MonthlyBooking {
   // Vermarktungs-Skala (Finanzen 2.0): mit Jahr nach Erlös-Mix × Marke, sonst wie bisher.
-  const commScale = year != null ? revenueScale('commercial', year) * commercialMultiplier(club, year) : scale;
+  const tier = clubTier(club);
+  const commScale = year != null ? tierScale(revenueScale('commercial', year), tier, 'commercial') * commercialMultiplier(club, year) : scale;
   const weekly = weeklyWageBill(club, players);
   const wages = Math.round(weekly * 4.33 * scale);
   const staffWages = Math.round(wages * 0.18);
@@ -399,11 +439,16 @@ export function computeMonthly(
   // (revenueScale 'matchday'), nicht mit dem ganzen Markt: Sonst stiegen sie bis 2024
   // um das ~100-Fache, die Zuschauererlöse kleiner Vereine aber nur um das ~25-Fache –
   // Dritt- und Viertligisten wurden zwangsläufig zahlungsunfähig.
-  const opScale = year != null ? revenueScale('matchday', year) : scale;
-  const stadiumMaintenance = Math.round((club.stadium.capacity * 0.9 + (100 - club.stadium.condition) * 800) * opScale);
+  // Unterklassige: Betrieb, Gebäude und Mitglieder wachsen wie ihr Stadiongeschäft.
+  const opScale = year != null ? tierScale(revenueScale('matchday', year), tier, 'matchday') : scale;
+  const localScale = tierScale(scale, tier, 'matchday');
+  // 1975: 50.000 Plätze, Zustand 75 ≈ 21.000 DM/Monat (Recherche: Stadion/Betrieb 150–500 Tsd. im Jahr).
+  const stadiumMaintenance = Math.round((club.stadium.capacity * 0.3 + (100 - club.stadium.condition) * 250) * opScale);
   // Gebaeude-Fixkosten ersetzen den alten trainingFacilities-Pauschalposten.
-  const facilities = facilityUpkeep(club, scale);
-  const otherFixed = Math.round((6000 + club.reputation * 500) * opScale);
+  const facilities = facilityUpkeep(club, localScale);
+  // Verwaltung, Reisen, Versicherungen: Ruf 75 ≈ 210.000 DM, Ruf 45 ≈ 140.000 DM im Jahr
+  // (Recherche: Reisen 80–200 Tsd., Sonstiges 100–400 Tsd.; Unterklassige deutlich weniger).
+  const otherFixed = Math.round((2500 + club.reputation * 200) * opScale);
 
   // Trikotsponsoring (nur aus aktivem Vertrag).
   const sponsorship = club.commerce?.shirtSponsor
@@ -415,24 +460,24 @@ export function computeMonthly(
   const commercial = Math.round((club.finances.commercialAnnual ?? 0) / 12);
   // Mitgliedsbeitraege.
   // Mitglieder (eigener Verein, Vereinsumfeld) × Jahresbeitrag 40 DM (1975-Basis); sonst Schätzung über den Ruf.
-  const membershipYear = Math.round((club.members ? club.members * 40 : 30000 + club.reputation * 1000) * scale);
+  const membershipYear = Math.round((club.members ? club.members * 40 : 30000 + club.reputation * 1000) * localScale);
   const membership = Math.round(membershipYear / 12);
   // Catering-Pacht nur bei Verpachtung.
   const cLevel = Math.max(1, Math.min(5, Math.round(club.infrastructure?.catering ?? 1)));
   const cateringLease = (club.commerce?.cateringMode ?? 'verpachtung') === 'verpachtung'
-    ? Math.round(CATERING_LEASE[cLevel] * scale) : 0;
+    ? Math.round(CATERING_LEASE[cLevel] * localScale) : 0;
 
   // Platzierungsbonus vom Sponsor (monatlich, je besser die Tabellenposition)
   let placementBonus = 0;
   if (table) {
     const row = table.rows.find((r) => r.clubId === club.id);
     if (row) {
-      if (row.position <= 3) placementBonus = 30000;
-      else if (row.position <= 6) placementBonus = 15000;
-      else if (row.position <= 10) placementBonus = 6000;
+      if (row.position <= 3) placementBonus = 9000;
+      else if (row.position <= 6) placementBonus = 4500;
+      else if (row.position <= 10) placementBonus = 2000;
     }
   }
-  placementBonus = Math.round(placementBonus * scale);
+  placementBonus = Math.round(placementBonus * tierScale(scale, tier, 'commercial'));
   const net = sponsorship + advertising + membership + cateringLease + tv + commercial + placementBonus
     - wages - staffWages - stadiumMaintenance - facilities - otherFixed;
   return { wages, staffWages, stadiumMaintenance, facilities, otherFixed, sponsorship, advertising, membership, cateringLease, tv, commercial, placementBonus, net };
@@ -533,17 +578,20 @@ export function forecastSeasonEnd(
   const days = Math.max(0, (end.getTime() - now.getTime()) / 86400000);
   const monthsRemaining = Math.max(0, Math.round((days / 30.4) * 10) / 10);
 
-  const m = computeMonthly(club, players, table);
+  // Nominal im laufenden Jahr (wie die Buchungen), nicht in 1975-Basis.
+  const year = yearOf(currentDate);
+  const m = computeMonthly(club, players, table, economyScale(year), year);
   const monthlyNet = m.net;
+  const sc = scalesFor(club, currentDate);
 
-  // Erwartete Einnahme je Heimspiel (Ticket + Catering + Fanartikel + Matchday + TV)
-  const expAtt = Math.round(club.stadium.capacity * club.stadium.averageAttendanceRate);
+  // Erwartete Einnahme je Heimspiel (Ticket + Catering + Fanartikel + Matchday)
+  const expAtt = Math.min(club.stadium.capacity, Math.round(club.stadium.capacity * club.stadium.averageAttendanceRate * attendanceDemand(year)));
   const perHome = Math.round(
-    expAtt * club.stadium.ticketPrice * ticketFactor(club)
-    + cateringMatchIncome(club, expAtt, 1)
-    + expAtt * merchPerHead(club)
-    + matchdayIncome(expAtt, 1)
-    + 20000 + club.reputation * 400,
+    expAtt * club.stadium.ticketPrice * ticketFactor(club) * sc.matchday
+    + cateringMatchIncome(club, expAtt, sc.matchday)
+    + expAtt * merchPerHead(club) * sc.merch
+    + matchdayIncome(expAtt, sc.matchday)
+    + (club.finances.tvAnnual ? 0 : (6000 + club.reputation * 120) * sc.base),
   );
 
   const projectedFixedNet = Math.round(monthlyNet * monthsRemaining);

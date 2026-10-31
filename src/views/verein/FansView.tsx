@@ -1,7 +1,7 @@
-import { economyScale, revenueScale, yearOf } from '../../engine/economy';
+import { economyScale, yearOf } from '../../engine/economy';
 import { PHILOSOPHY_INFO, PHILOSOPHY_LABEL, fanEra } from '../../engine/environment';
 import { ensureEnvironment } from '../../game/environmentGame';
-import { cateringMatchIncome, expectedAttendance, expectedAttendanceRate, matchdayIncome } from '../../engine/finances';
+import { cateringMatchIncome, expectedAttendance, expectedAttendanceRate, matchdayIncome, clubPriceScale } from '../../engine/finances';
 import { Game } from '../../game/state';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtDM, fmtDMfull, vColor } from '../../ui/format';
@@ -16,11 +16,11 @@ export function FansView({ g }: { g: Game }) {
   const st = myClub.stadium;
   const year = yearOf(g.calendar.currentDate);
   const scale = economyScale(year);
-  const md = revenueScale('matchday', year);
+  const md = clubPriceScale(myClub, year);
   const env = ensureEnvironment(g);
   const era = fanEra(year);
-  const expRate = expectedAttendanceRate(myClub);
-  const expVisitors = expectedAttendance(myClub);
+  const expRate = expectedAttendanceRate(myClub, undefined, year);
+  const expVisitors = expectedAttendance(myClub, undefined, year);
   const ticket = Math.round(expVisitors * st.ticketPrice * md);
   const catering = cateringMatchIncome(myClub, expVisitors, md);
   const programme = matchdayIncome(expVisitors, md);

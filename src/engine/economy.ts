@@ -180,8 +180,9 @@ export const REVENUE_MIX: { year: number; matchday: number; tv: number; commerci
   { year: 2005, matchday: 0.24, tv: 0.33, commercial: 0.36 },
   { year: 2010, matchday: 0.22, tv: 0.33, commercial: 0.38 },
   { year: 2015, matchday: 0.19, tv: 0.36, commercial: 0.38 },
-  { year: 2020, matchday: 0.16, tv: 0.40, commercial: 0.38 },
-  { year: 2030, matchday: 0.14, tv: 0.40, commercial: 0.40 },
+  // 2020er: Spielbetrieb ≈ 11 % des Bundesliga-Umsatzes (DFL 2023/24: 10,9 %).
+  { year: 2020, matchday: 0.12, tv: 0.40, commercial: 0.38 },
+  { year: 2030, matchday: 0.11, tv: 0.40, commercial: 0.40 },
 ];
 
 /** Anteil einer Erlösart am Umsatz im Jahr X (linear interpoliert). */
@@ -201,6 +202,116 @@ export function revenueShare(kind: RevenueKind, year: number): number {
  */
 export function revenueScale(kind: RevenueKind, year: number): number {
   return economyScale(year) * (revenueShare(kind, year) / revenueShare(kind, ECONOMY_BASE_YEAR));
+}
+
+// -----------------------------------------------------------------------------
+// Zuschauer-Nachfrage je Epoche (Bundesliga-Schnitt relativ zu 1975/76 = 23.180)
+// -----------------------------------------------------------------------------
+// Die Auslastung eines Stadions = Grund-Auslastung des Vereins × Nachfrage der Epoche.
+// Tal Mitte der 1980er (rund 19.000), Boom nach der WM 1990 und in den 2000ern
+// (rund 40.000 ab 2010). Weil mehr Zuschauer kommen, wachsen die Preise je Besucher
+// entsprechend langsamer als der Stadionumsatz (matchdayPriceScale).
+export const ATTENDANCE_DEMAND: Anchor[] = [
+  { year: 1975, value: 1.0 },
+  { year: 1980, value: 1.05 },
+  { year: 1985, value: 0.85 },
+  { year: 1990, value: 0.9 },
+  { year: 1995, value: 1.3 },
+  { year: 2000, value: 1.4 },
+  { year: 2005, value: 1.6 },
+  { year: 2010, value: 1.8 },
+  { year: 2015, value: 1.85 },
+  { year: 2024, value: 1.75 },
+];
+
+/** Zuschauer-Nachfrage im Jahr X gegenüber 1975 (linear interpoliert). */
+export function attendanceDemand(year: number): number {
+  const A = ATTENDANCE_DEMAND;
+  if (year <= A[0].year) return A[0].value;
+  for (let i = 0; i < A.length - 1; i++) {
+    const a = A[i], b = A[i + 1];
+    if (year <= b.year) return a.value + (b.value - a.value) * ((year - a.year) / (b.year - a.year));
+  }
+  return A[A.length - 1].value;
+}
+
+/**
+ * Preis-Skala je Besucher (Eintritt, Catering, Programmheft, Logen): Stadionumsatz-
+ * Skala geteilt durch die Zuschauer-Nachfrage. Zuschauer × Preis wächst damit
+ * genau wie revenueScale('matchday').
+ */
+export function matchdayPriceScale(year: number): number {
+  return revenueScale('matchday', year) / attendanceDemand(year);
+}
+
+/**
+ * Angemessener Eintrittspreis (1975-Basis, DM) nach Ruf: Ruf 65 ≈ 7,5 DM,
+ * 75 ≈ 8,3 DM, 86 ≈ 9 DM (Recherche: Modellpreis 5–10 DM, Schnitt 8 DM).
+ * Bezugspunkt der Preis-Reaktion der Zuschauer.
+ */
+export function fairTicketPrice(reputation: number): number {
+  return Math.round((3 + reputation * 0.07) * 10) / 10;
+}
+
+// -----------------------------------------------------------------------------
+// Liga-Ebene: Unterklassige wachsen nur teilweise mit
+// -----------------------------------------------------------------------------
+// 1975 lagen Erst- und Zweitligisten bei Sponsoren und Eintritt nicht weit auseinander;
+// der Boom von Vermarktung und Stadiongeschäft kam vor allem oben an (heute: Trikot
+// 2. Liga ≈ 1–3 Mio. € gegen 5–60 Mio. €, Eintritt 3. Liga ≈ 15 € gegen ≈ 45 €).
+// Die Skala einer Ebene wächst deshalb nur mit einem Anteil über 1975 hinaus.
+const TIER_SHARE: Record<'commercial' | 'matchday', number[]> = {
+  //            –  1.    2.    3.    4.    5. (Amateure)
+  commercial: [1, 1, 0.35, 0.15, 0.08, 0.04],
+  matchday: [1, 1, 0.7, 0.45, 0.3, 0.2],
+};
+
+/** Skala `scale` (1975 = 1) für eine Liga-Ebene: 1 + (scale − 1) × Anteil der Ebene. */
+export function tierScale(scale: number, tier: number, kind: 'commercial' | 'matchday'): number {
+  const share = TIER_SHARE[kind][Math.max(1, Math.min(5, Math.round(tier || 1)))];
+  return scale <= 1 ? scale : 1 + (scale - 1) * share;
+}
+
+/** Gehaltsniveau einer Ebene 1975 gegenüber der 1. Liga (2. Liga halbprofessionell). */
+const TIER_WAGE_BASE = [1, 1, 0.45, 0.2, 0.1, 0.05];
+
+/**
+ * Gehaltsniveau einer Liga-Ebene gegenüber der 1. Liga (1. Liga = 1): Grundniveau 1975 ×
+ * Anteil am Wachstum (Stadion 60 %, Vermarktung 40 %). Heute verdient ein Zweitligist
+ * im Schnitt rund ein Fünftel, ein Viertligist rund ein Hundertstel eines Erstligisten.
+ * Marktgehälter (wageForOverall) gelten für die 1. Liga; Zugänge unterklassiger Vereine
+ * werden mit diesem Niveau bezahlt.
+ */
+export function tierWageLevel(tier: number, year: number): number {
+  const t = Math.max(1, Math.min(5, Math.round(tier || 1)));
+  if (t === 1) return 1;
+  const s = economyScale(year);
+  const growth = s <= 1 ? 1 : (0.6 * tierScale(s, t, 'matchday') + 0.4 * tierScale(s, t, 'commercial')) / s;
+  return TIER_WAGE_BASE[t] * growth;
+}
+
+/** Liga-Ebene eines Vereins (Amateure des Pokals = 5, sonst aus der Saisoneröffnung, fehlt = 1). */
+export function clubTier(club: { id: string; finances?: { leagueTier?: number } }): number {
+  if (club.id.startsWith('am')) return 5;
+  return club.finances?.leagueTier ?? 1;
+}
+
+/** Gehaltsniveau eines Vereins (1. Liga = 1), siehe tierWageLevel. */
+export function clubWageLevel(club: { id: string; finances?: { leagueTier?: number } }, year: number): number {
+  return tierWageLevel(clubTier(club), year);
+}
+
+// -----------------------------------------------------------------------------
+// Marktgehalt (1975-Basis, DM/Woche)
+// -----------------------------------------------------------------------------
+/**
+ * Marktübliches Wochengehalt eines Spielers nach Stärke (1975-Basis). Exponentiell:
+ * alle 11 Stärkepunkte doppelt so viel. Stärke 72 (Stammspieler) ≈ 1.400 DM/Woche
+ * (73.000 DM/Jahr), 80 ≈ 120.000, 90 ≈ 226.000 DM/Jahr (Recherche 1975: Schnitt
+ * 50–100 Tsd., Spitzenspieler 150–250 Tsd. DM). Untergrenze 80 DM/Woche (Amateure).
+ */
+export function wageForOverall(overall: number): number {
+  return Math.max(80, Math.round(1400 * Math.pow(2, (overall - 72) / 11)));
 }
 
 /**

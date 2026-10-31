@@ -43,41 +43,41 @@ export const MARKETING_AREAS: MarketingArea[] = [
   // ===== 1975 — einfache Anfänge =====
   { id: 'stadionwerbung', name: 'Stadionwerbung', unlockYear: 1975, icon: '🏟️',
     desc: 'Bandenwerbung und Anzeigen im Stadion – die klassische Einnahmequelle.',
-    maxUnits: 5, costPerUnit: 4000, maxBenefit: 20, k: 0.9 },
+    maxUnits: 5, costPerUnit: 1200, maxBenefit: 20, k: 0.9 },
   { id: 'lokalpresse', name: 'Lokale Presse & Plakate', unlockYear: 1975, icon: '📰',
     desc: 'Anzeigen in der Lokalzeitung und Plakate in der Stadt.',
-    maxUnits: 5, costPerUnit: 2500, maxBenefit: 14, k: 1.0 },
+    maxUnits: 5, costPerUnit: 750, maxBenefit: 14, k: 1.0 },
 
   // ===== 1984 — Privatfernsehen =====
   { id: 'fernsehwerbung', name: 'Fernsehwerbung', unlockYear: 1984, icon: '📺',
     desc: 'Werbespots im aufkommenden Privatfernsehen erreichen ein breites Publikum.',
-    maxUnits: 6, costPerUnit: 9000, maxBenefit: 34, k: 0.7 },
+    maxUnits: 6, costPerUnit: 2700, maxBenefit: 34, k: 0.7 },
 
   // ===== 1993 — überregional & Merchandising =====
   { id: 'ueberregional', name: 'Überregionale Kampagnen', unlockYear: 1993, icon: '🗞️',
     desc: 'Bundesweite Anzeigen- und Plakatkampagnen steigern die Bekanntheit.',
-    maxUnits: 6, costPerUnit: 12000, maxBenefit: 30, k: 0.8 },
+    maxUnits: 6, costPerUnit: 3600, maxBenefit: 30, k: 0.8 },
   { id: 'merchandising_kampagne', name: 'Merchandising-Kampagne', unlockYear: 1993, icon: '🧣',
     desc: 'Gezielte Vermarktung von Fanartikeln – kurbelt den Fanshop an.',
-    maxUnits: 6, costPerUnit: 8000, maxBenefit: 26, k: 0.85 },
+    maxUnits: 6, costPerUnit: 2400, maxBenefit: 26, k: 0.85 },
 
   // ===== 2000 — Internet =====
   { id: 'online', name: 'Internet-/Online-Werbung', unlockYear: 2000, icon: '💻',
     desc: 'Vereinswebsite, Banner und Newsletter erreichen Fans online.',
-    maxUnits: 7, costPerUnit: 10000, maxBenefit: 34, k: 0.7 },
+    maxUnits: 7, costPerUnit: 3000, maxBenefit: 34, k: 0.7 },
 
   // ===== 2010 — Social Media =====
   { id: 'socialmedia', name: 'Social-Media-Werbung', unlockYear: 2010, icon: '📱',
     desc: 'Kampagnen auf sozialen Netzwerken binden eine junge, große Fangemeinde.',
-    maxUnits: 8, costPerUnit: 12000, maxBenefit: 44, k: 0.6 },
+    maxUnits: 8, costPerUnit: 3600, maxBenefit: 44, k: 0.6 },
 
   // ===== 2020 — digital & international =====
   { id: 'influencer', name: 'Influencer & Content', unlockYear: 2020, icon: '🎬',
     desc: 'Kooperationen mit Creators und eigener Content-Kanal.',
-    maxUnits: 8, costPerUnit: 15000, maxBenefit: 40, k: 0.6 },
+    maxUnits: 8, costPerUnit: 4500, maxBenefit: 40, k: 0.6 },
   { id: 'international', name: 'Internationale Digitalkampagnen', unlockYear: 2020, icon: '🌍',
     desc: 'Globale, datengetriebene Kampagnen erschließen Auslandsmärkte.',
-    maxUnits: 8, costPerUnit: 20000, maxBenefit: 50, k: 0.55 },
+    maxUnits: 8, costPerUnit: 6000, maxBenefit: 50, k: 0.55 },
 ];
 
 export const MARKETING_BY_ID: Record<string, MarketingArea> =
@@ -132,8 +132,8 @@ export function marketingTotalBenefit(budgets: Record<string, number>): number {
 export function marketingIncomeBase(budgets: Record<string, number>): { merch: number; sponsor: number } {
   const b = marketingTotalBenefit(budgets); // grob 0..250
   return {
-    merch: Math.round(b * 260),   // Reichweite → Fanartikel
-    sponsor: Math.round(b * 190), // Reichweite → Sponsoring
+    merch: Math.round(b * 80),   // Reichweite → Fanartikel
+    sponsor: Math.round(b * 60), // Reichweite → Sponsoring
   };
 }
 

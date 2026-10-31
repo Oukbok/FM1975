@@ -4,12 +4,13 @@
 // Aufgerufen aus game/season.ts (startNextSeason) und game/newGame.ts.
 // =============================================================================
 import { Game } from './state';
+import { Club } from '../types';
 import { economyScale, euroMoneyFactor, yearOf } from '../engine/economy';
 import {
   allocateTv, checkLicense, commercialAnnualFor, hasTransferBan, lastRevenue, closeSeasonFinances, isLeagueClub, refreshMarketValues, runAiEconomy, updateBrand,
 } from '../engine/clubEconomy';
 import { seasonEuroPoints } from '../engine/world';
-import { book } from '../engine/finances';
+import { book, WAGE_OVERHEAD } from '../engine/finances';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { EuroCompId, EURO_COMP_NAMES } from '../data/europe';
 import { formatMoney } from '../engine/economy';
@@ -42,9 +43,21 @@ export function closeFinancialSeason(g: Game, oldSeason: string, date: string): 
       euroPoints: euroPts[c.id] ?? 0,
       euroTitle: euroWinners.has(c.id),
     }, year, c.id === g.managedClubId);
+    if (c.id !== g.managedClubId) driftAttendance(c, p, tier);
     closeSeasonFinances(c, oldSeason);
   }
   return perf;
+}
+
+/**
+ * Zuschauerzuspruch der KI-Vereine folgt Ruf, Tabellenplatz und Liga (der eigene Verein:
+ * Fanstimmung, game/environmentGame.ts). Die Nachfrage der Epoche kommt beim Spiel dazu.
+ */
+function driftAttendance(c: Club, perf: number, tier: number): void {
+  const tierAdj = tier <= 1 ? 0 : tier === 2 ? -0.08 : -0.15;
+  const target = Math.max(0.15, Math.min(0.95, 0.17 + (c.reputation ?? 60) * 0.0036 + (perf - 0.5) * 0.12 + tierAdj));
+  const r = c.stadium.averageAttendanceRate ?? target;
+  c.stadium.averageAttendanceRate = Math.round((r + (target - r) * 0.35) * 1000) / 1000;
 }
 
 /** Eröffnet die Finanzsaison: Marktwerte, TV-Verteilung, Lizenz, KI-Haushalte, Startgelder. */
@@ -56,6 +69,7 @@ export function openFinancialSeason(g: Game, newSeason: string, date: string, pr
 
   // TV-Gelder der neuen Saison.
   const tier = g.leagues?.playerDivision?.tier ?? 1;
+  for (const c of league) c.finances.leagueTier = tier;
   allocateTv(league, tier, year, (id) => prevPerf[id] ?? 0.15);
   for (const c of league) c.finances.commercialAnnual = commercialAnnualFor(c, tier, year);
 
@@ -72,7 +86,7 @@ export function openFinancialSeason(g: Game, newSeason: string, date: string, pr
   }
 
   // Startgelder im Europapokal (ab 1992 deutlich höher).
-  const START_FEE: Record<EuroCompId, number> = { ec: 60000, cwc: 40000, uefa: 25000 };
+  const START_FEE: Record<EuroCompId, number> = { ec: 18000, cwc: 12000, uefa: 7500 };
   for (const comp of ['ec', 'cwc', 'uefa'] as EuroCompId[]) {
     const cup = (g.euroCups as any)?.[comp];
     if (!cup) continue;
@@ -105,8 +119,9 @@ export function openFinancialSeason(g: Game, newSeason: string, date: string, pr
     const free = Math.max(0, mine.finances.balance - 0.25 * rev) * boardBudgetShare(mine.boardConfidence ?? 60);
     const banned = hasTransferBan(mine, newSeason);
     mine.finances.transferBudget = banned ? 0 : Math.round(free / economyScale(year) / 10000) * 10000;
-    // Gehaltsrahmen (Wochenbasis, 1975-Werte): etwa 60 % des Umsatzes für Spieler (Stab separat).
-    mine.finances.wageBudget = Math.round((0.6 * rev) / economyScale(year) / 52 / 1.18 / 100) * 100;
+    // Gehaltsrahmen (Wochen-Grundgehalt, 1975-Werte): etwa 60 % des Umsatzes für Spieler
+    // samt Betreuerstab und Prämien (WAGE_OVERHEAD).
+    mine.finances.wageBudget = Math.round((0.6 * rev) / economyScale(year) / 52 / WAGE_OVERHEAD / 100) * 100;
     pushMessage(g.messages, makeMessage({
       date, category: 'board', from: 'Vorstand',
       subject: `Transferbudget ${newSeason}: ${fmt(mine.finances.transferBudget * economyScale(year))}`,

@@ -85,11 +85,15 @@ const EURO_DATE_TEMPLATE: Record<EuroCompId, { md: string; off: number }[]> = {
   ],
 };
 
-/** Preisgeld je gewonnener Begegnung (DM), Aera-gerecht. EC > CWC > Europa-Verband. */
+/**
+ * Preisgeld je gewonnener Begegnung (1975-DM). EC > CWC > Europa-Verband. Ab 1992 wächst
+ * der Landesmeister-Wettbewerb mit euroMoneyFactor (×5 bis 2000). Die großen Summen
+ * kamen 1975 aus den Heimspiel-Einnahmen, nicht aus Prämien.
+ */
 export const EURO_PRIZE_BY_ROUND: Record<EuroCompId, number[]> = {
-  ec: [50000, 100000, 200000, 400000],
-  cwc: [40000, 80000, 160000, 320000],
-  uefa: [20000, 40000, 80000, 160000, 320000],
+  ec: [15000, 30000, 60000, 120000],
+  cwc: [12000, 24000, 48000, 96000],
+  uefa: [6000, 12000, 24000, 48000, 96000],
 };
 
 // -----------------------------------------------------------------------------

@@ -81,10 +81,20 @@ function report(game: Game) {
     console.log('   EIN', k(f.income as any));
     console.log('   AUS', k(f.expenses as any));
     const lc = leagueClubs(game).filter((c) => !c.id.startsWith('am'));
-    const revs = lc.map((c) => c.finances.seasonHistory?.[c.finances.seasonHistory.length - 1]?.revenue ?? 0).sort((a, b) => a - b);
+    // Nur Vereine mit Bilanz der Vorsaison (Aufsteiger haben noch keine).
+    const revs = lc.map((c) => c.finances.seasonHistory?.[c.finances.seasonHistory.length - 1]?.revenue ?? 0).filter((v) => v > 0).sort((a, b) => a - b);
     const wr = lc.map((c) => c.finances.seasonHistory?.[c.finances.seasonHistory.length - 1]?.wageRatio ?? 0);
-    console.log(`   Liga-Umsatz Vorsaison: min ${Math.round(revs[0] / 1e6)}M median ${Math.round(revs[revs.length >> 1] / 1e6)}M max ${Math.round(revs[revs.length - 1] / 1e6)}M | Ø Gehaltsquote ${(wr.reduce((a, b) => a + b, 0) / wr.length).toFixed(2)} | Top-Marktwert ${Math.round(Math.max(...Object.values(game.players).map((p) => p.contract.transferValue)) / 1000)}k (Basis)`);
+    console.log(`   Liga-Umsatz Vorsaison: min ${(revs[0] / 1e6).toFixed(1)}M median ${(revs[revs.length >> 1] / 1e6).toFixed(1)}M max ${(revs[revs.length - 1] / 1e6).toFixed(1)}M | Ø Gehaltsquote ${(wr.reduce((a, b) => a + b, 0) / wr.length).toFixed(2)} | Top-Marktwert ${Math.round(Math.max(...Object.values(game.players).map((p) => p.contract.transferValue)) / 1000)}k (Basis)`);
     const others = lc.filter((c) => c.id !== my.id).map((c) => c.finances.balance).sort((a, b) => a - b);
+    {
+      // Geldflüsse der Vorsaison je Verein (Anteil am Umsatz, Median): Ergebnis, Gehälter+Stab, Gelände/Ausbau, Transfersaldo.
+      const hs = lc.map((c) => c.finances.seasonHistory?.[c.finances.seasonHistory.length - 1]).filter((h): h is NonNullable<typeof h> => !!h && h.revenue > 0);
+      const med = (xs: number[]) => { const t = [...xs].sort((a, b) => a - b); return t[t.length >> 1] ?? 0; };
+      const sh = (f: (h: typeof hs[number]) => number) => med(hs.map((h) => f(h) / h.revenue)).toFixed(2);
+      console.log(`   FLUSS Ergebnis ${sh((h) => h.result)} | Gehalt+Stab ${sh((h) => h.expenses.wages + h.expenses.staffWages)} | Gelände ${sh((h) => (h.expenses.facilities ?? 0) + h.expenses.trainingFacilities)} | Stadion ${sh((h) => h.expenses.stadiumMaintenance)} | Sonst ${sh((h) => h.expenses.other)} | Transfer netto ${sh((h) => h.income.transferIncome - h.expenses.transferExpense)}`);
+      const mk = (f: (h: typeof hs[number]) => number) => (med(hs.map(f)) / 1e3).toFixed(0) + 'k';
+      console.log(`   MIX (Median, nominal) Eintritt ${mk((h) => h.income.ticketSales)} TV ${mk((h) => h.income.tvMoney)} Trikot ${mk((h) => h.income.sponsorship)} Bande ${mk((h) => h.income.advertising)} Fanart. ${mk((h) => h.income.merchandise)} Catering ${mk((h) => h.income.catering)} Programm ${mk((h) => h.income.matchday)} Prämien ${mk((h) => h.income.prizeMoney)} Vermarkt. ${mk((h) => h.income.commercial ?? 0)} Mitgl. ${mk((h) => h.income.membership)}`);
+    }
     const ded = lc.filter((c) => c.pointDeduction && c.pointDeduction.season === game.season).map((c) => `${c.shortName} −${c.pointDeduction!.points}${c.finances.ffp?.forcedRelegation === game.season ? ' Zwangsabstieg' : ''}`);
     if (ded.length) console.log(`   Punktabzug: ${ded.join(', ')}`);
     if (process.env.DEBT) {

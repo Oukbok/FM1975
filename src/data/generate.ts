@@ -215,11 +215,15 @@ function makeTactics(clubId: string, playerIds: string[], players: Record<string
   return buildAutoTactics(stubClub, players);
 }
 
+/**
+ * Start-Finanzen (1975-DM). Guthaben ≈ ein Viertel des Jahresumsatzes (Ruf 86 ≈ 1,6 Mio.,
+ * Ruf 65 ≈ 0,9 Mio. DM); Gehaltsrahmen ≈ 55 % eines zum Ruf passenden Umsatzes.
+ */
 function makeFinances(rep: number): ClubFinances {
-  const scale = rep * rep * 1000;
+  const scale = rep * rep * 200;
   return {
-    balance: scale + ri(0, 500000), transferBudget: Math.round(scale * 0.6),
-    wageBudget: Math.round(rep * 3000), currentWageBill: Math.round(rep * 2500),
+    balance: scale + ri(0, 150000), transferBudget: Math.round(scale * 0.6),
+    wageBudget: Math.round(rep * rep * 8), currentWageBill: Math.round(rep * rep * 7),
     income: { ticketSales: 0, tvMoney: 0, sponsorship: 0, merchandise: 0, transferIncome: 0, prizeMoney: 0, catering: 0, advertising: 0, commercial: 0, membership: 0, matchday: 0, other: 0 },
     expenses: { wages: 0, transferExpense: 0, stadiumMaintenance: 0, trainingFacilities: 0, facilities: 0, staffWages: 0, other: 0 },
     transactions: [],
@@ -229,7 +233,10 @@ function makeFinances(rep: number): ClubFinances {
 function makeStadium(seed: ClubSeed): Stadium {
   return {
     name: seed.stadium, capacity: seed.capacity,
-    averageAttendanceRate: 0.6 + rng() * 0.3, ticketPrice: ri(8, 20), condition: ri(55, 90),
+    // 1975/76: Ø 23.180 Zuschauer bei großen Stadien (Ø ≈ 50.000 Plätze) → Auslastung ≈ 0,35–0,65.
+    averageAttendanceRate: Math.round((0.17 + seed.reputation * 0.0036 + (rng() - 0.5) * 0.1) * 100) / 100,
+    ticketPrice: Math.max(5, Math.min(11, Math.round(3 + seed.reputation * 0.07 + (rng() - 0.5) * 2))),
+    condition: ri(55, 90),
   };
 }
 
@@ -439,7 +446,7 @@ export function buildProClub(
   try {
     const club = buildClubFromSeed(seed, managedClubId, currentDate, players, youthPlayers);
     club.stadium.averageAttendanceRate = Math.max(0.3, Math.min(0.85, 0.3 + (src.strength - 58) * 0.025 + rng() * 0.08));
-    club.stadium.ticketPrice = Math.max(6, Math.min(14, Math.round(src.strength / 7)));
+    club.stadium.ticketPrice = Math.max(4, Math.min(9, Math.round(src.strength / 9)));
     club.reputation = Math.max(40, Math.min(80, Math.round(src.strength - 6)));
     // Startguthaben ist nominal: auf das Wirtschaftsniveau des Jahres hochrechnen. Sonst
     // begann ein später aufsteigender oder neu vollsimulierter Verein mit 1975-Beträgen
@@ -529,7 +536,7 @@ export function generateCupAmateurs(count: number): CupAmateurs {
       name: `Stadion am ${town}er Weg`,
       capacity,
       averageAttendanceRate: 0.35 + rng() * 0.35,
-      ticketPrice: ri(5, 12),
+      ticketPrice: ri(3, 6),
       condition: ri(35, 70),
     };
 
@@ -602,7 +609,7 @@ export function buildEuroClubFull(
     name: `Stadion ${euro.city}`,
     capacity,
     averageAttendanceRate: 0.6 + rng() * 0.3,
-    ticketPrice: ri(8, 20),
+    ticketPrice: ri(6, 11),
     condition: ri(55, 90),
   };
 

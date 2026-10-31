@@ -43,11 +43,11 @@ const DENSITY: Record<SeatType, number> = { steh: 2.0, bank: 1.25, schale: 1, ko
 /** Preisfaktor der Platzart (relativ zum Grundpreis). */
 export const SEAT_PRICE: Record<SeatType, number> = { steh: 0.75, bank: 0.9, schale: 1.1, komfort: 1.45, business: 3.2 };
 /** Baukosten je Platz (1975-Basis). */
-const SEAT_COST: Record<SeatType, number> = { steh: 70, bank: 130, schale: 240, komfort: 420, business: 1100 };
-const ROOF_COST: Record<RoofType, number> = { none: 0, partial: 45, full: 110 };
+const SEAT_COST: Record<SeatType, number> = { steh: 35, bank: 65, schale: 120, komfort: 210, business: 550 };
+const ROOF_COST: Record<RoofType, number> = { none: 0, partial: 22, full: 55 };
 const ROOF_SHARE: Record<RoofType, number> = { none: 0, partial: 0.5, full: 1 };
-export const VIP_COST = 250000;
-export const LOUNGE_COST = 110000;
+export const VIP_COST = 125000;
+export const LOUNGE_COST = 55000;
 export const MAX_LOUNGES: Record<BlockId, number> = {
   main_n: 3, main_m: 6, main_s: 3, opp_n: 3, opp_m: 4, opp_s: 3, north_w: 2, north_e: 2, south_w: 2, south_e: 2,
   curve_nw: 1, curve_ne: 1, curve_sw: 1, curve_se: 1,
@@ -285,7 +285,7 @@ export function planBlock(cur: StadiumBlock, target: StadiumBlock, year: number,
   if (target.vip && !cur.vip && !vipAllowed(target.id)) errors.push('In den Kurven gibt es keinen VIP-Bereich.');
   if (target.scoreboard && !cur.scoreboard && !scoreboardAllowed(target.id)) errors.push('Anzeigetafeln stehen hinter dem Tor oder in den Kurven.');
   if (target.lounges > 0 && target.tiers.length < 2 && target.roof !== 'full') errors.push('Logen brauchen einen zweiten Rang oder ein volles Dach.');
-  if (target.scoreboard && !cur.scoreboard) cost += videoWall(year) ? 500000 : 40000;
+  if (target.scoreboard && !cur.scoreboard) cost += videoWall(year) ? 250000 : 20000;
   if (totalCapacity - oldCap + newCap > MAX_CAPACITY) errors.push(`Mehr als ${MAX_CAPACITY.toLocaleString('de-DE')} Plätze genehmigt die Stadt nicht.`);
 
   // Stimmung: Sitze statt Stehplätze tun Traditionsvereinen und Ultras weh.

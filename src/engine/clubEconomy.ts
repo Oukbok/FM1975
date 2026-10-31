@@ -16,13 +16,14 @@
 
 import { capBase, cappedMarketValue, frenzy, softCap } from './transferMarket';
 import { Club, ClubBrand, ClubFinances, Player, SeasonFinanceRecord } from '../types';
-import { economyScale, revenueScale, revenueShare } from './economy';
+import { attendanceDemand, clubTier, clubWageLevel, economyScale, revenueScale, revenueShare, tierScale, wageForOverall } from './economy';
+import { facilityUpkeep } from './infrastructure';
 
 const revenueShareCommercial = (y: number) => revenueShare('commercial', y);
 import { createPlayer } from './playerFactory';
 import { tvMarketFactor } from '../data/history';
 import { refreshOverall } from './development';
-import { book } from './finances';
+import { book, WAGE_OVERHEAD } from './finances';
 import { recordTransfer } from './history';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -86,8 +87,7 @@ export function baseMarketValue(p: Player): number {
 
 /** Marktübliches Wochengehalt (1975-Basis) für einen Spieler. */
 export function marketWage(p: Player): number {
-  const top = Math.max(0, p.overall - 70);
-  return Math.round(p.overall * 110 + top * top * 18);
+  return wageForOverall(p.overall);
 }
 
 /** Marktwert am deutschen Markt (Rekordkurve, engine/transferMarket.ts). */
@@ -144,7 +144,9 @@ export function lastRevenue(c: Club, year: number, tier = 1): number {
   const h = c.finances.seasonHistory;
   if (h && h.length) return h[h.length - 1].revenue;
   const tf = TIER_REVENUE[Math.max(1, Math.min(4, Math.round(tier)))];
-  return (2_000_000 + (c.reputation ?? 50) * 120_000) * economyScale(year) * tf;
+  // 1975: Ruf 65 ≈ 3,4 Mio., 75 ≈ 4,3 Mio., 86 ≈ 5,6 Mio. DM (Recherche: Median ≈ 4,5 Mio.).
+  const rep = c.reputation ?? 50;
+  return (400_000 + rep * rep * 700) * economyScale(year) * tf;
 }
 
 // -----------------------------------------------------------------------------
@@ -185,8 +187,12 @@ export function updateBrand(c: Club, o: SeasonOutcome, year: number, isManaged: 
 // -----------------------------------------------------------------------------
 // Zentrale TV-Vermarktung
 // -----------------------------------------------------------------------------
-/** TV-Topf der 1. Liga in 1975-Werten (≈ 18 Vereine × 0,78 Mio). */
-const TV_POOL_1975 = 14_000_000;
+/**
+ * TV-Topf der 1. Liga in 1975-Werten: ARD/ZDF zahlten 1975/76 4,8 Mio. DM für die
+ * Bundesliga (Recherche); davon 4,2 Mio. für die 1. Liga (≈ 233.000 DM je Verein),
+ * der Rest über den Anteil der 2. Liga.
+ */
+export const TV_POOL_1975 = 4_200_000;
 
 export function tvPoolFor(tier: number, year: number): number {
   const top = TV_POOL_1975 * revenueScale('tv', year) * tvMarketFactor(year);
@@ -217,8 +223,8 @@ export function allocateTv(clubs: Club[], tier: number, year: number, perfOf: (i
 // -----------------------------------------------------------------------------
 // Vermarktung & Hospitality (Logen, Lizenzen, Partner)
 // -----------------------------------------------------------------------------
-/** Durchschnittsumsatz eines Erstligisten 1975 im Spiel (Bezug für die Vermarktung). */
-const AVG_REVENUE_1975 = 11_000_000;
+/** Durchschnittsumsatz eines Erstligisten 1975 (Recherche: Median ≈ 4,5 Mio. DM; Bezug für die Vermarktung). */
+export const AVG_REVENUE_1975 = 4_500_000;
 
 /**
  * Jahreswert der Vermarktung (nominal): 1975 praktisch null, ab den 1990ern ein
@@ -230,7 +236,7 @@ export function commercialAnnualFor(c: Club, tier: number, year: number): number
   const growth = Math.max(0, revenueShareCommercial(year) - revenueShareCommercial(1975));
   const size = Math.pow(Math.max(5, brandIndex(b, year)) / 45, 1.5);
   const tierF = tier <= 1 ? 1 : tier === 2 ? 0.35 : 0.1;
-  return Math.round(AVG_REVENUE_1975 * economyScale(year) * growth * 1.3 * size * tierF);
+  return Math.round(AVG_REVENUE_1975 * economyScale(year) * growth * 0.6 * size * tierF);
 }
 
 // -----------------------------------------------------------------------------
@@ -321,6 +327,8 @@ export interface AiEconomyContext {
 }
 
 const MIN_KEEP = 20;
+/** Grund-Gehaltsquote der KI (Spieler + Betreuerstab, Anteil am Vorjahresumsatz). */
+export const AI_WAGE_QUOTA = 0.71;
 /**
  * Liquiditätsreserve der KI (Anteil am Jahresumsatz), die zum Saisonstart auf dem
  * Konto bleibt. Darüber wird investiert (Zugänge, Gehälter, Gelände). Vorher 0,6:
@@ -330,7 +338,7 @@ const MIN_KEEP = 20;
  */
 export const AI_RESERVE = 0.1;
 /** Anteil des Überschusses, den KI-Vereine mit Kaderplanung in Gelände/Stadion stecken. */
-const AI_BUILD_SHARE = 0.35;
+const AI_BUILD_SHARE = 0.25;
 const MAX_SQUAD = 25;
 
 function squadRankValue(c: Club, players: Record<string, Player>, rank: number): number {
@@ -350,7 +358,7 @@ function movePlayer(p: Player, from: Club | null, to: Club | null, feeNominal: n
     // Gehalt im Gefüge des neuen Vereins: am Mittel des Kaders ausgerichtet.
     const mates = to.playerIds.map((id) => ctx.players[id]).filter((m) => m && m.id !== p.id);
     const avgRatio = mates.length ? mates.reduce((a, m) => a + m.contract.weeklyWage / Math.max(1, marketWage(m)), 0) / mates.length : 1;
-    p.contract.weeklyWage = Math.round(marketWage(p) * Math.max(0.3, avgRatio) * 1.1);
+    p.contract.weeklyWage = Math.round(marketWage(p) * Math.max(0.3 * clubWageLevel(to, ctx.year), avgRatio) * 1.1);
     p.contract.satisfaction = 75;
     p.transferListed = false;
   } else {
@@ -441,16 +449,22 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
     if (!isAi(c)) continue;
     const rev = lastRevenue(c, ctx.year, ctx.tier);
     const rich = Math.max(0, (c.finances.balance - AI_RESERVE * rev) / Math.max(1, rev));
-    const quota = 0.62 + Math.min(0.12, rich * 0.1) - (c.finances.balance < 0 ? 0.06 : 0);
-    const budgetWeekly = (quota * rev) / scale / 52 / 1.18;
+    // Wohlhabende Vereine zahlen deutlich mehr (Stabilisator gegen Geld-Horten); ab Bosman
+    // (1996) fließt Geld, das früher in Ablösen ging, in höhere Gehälter.
+    const quota = AI_WAGE_QUOTA + Math.min(0.25, rich * 0.5) + (ctx.year >= 1996 ? 0.04 : 0) - (c.finances.balance < 0 ? 0.06 : 0);
+    const budgetWeekly = (quota * rev) / scale / 52 / WAGE_OVERHEAD;
     const squad = c.playerIds.map((id) => ctx.players[id]).filter(Boolean);
     const sum = squad.reduce((a, p) => a + marketWage(p), 0) || 1;
     const factor = budgetWeekly / sum;
+    // Untergrenze (Amateurvertrag) auf dem Gehaltsniveau der Liga.
+    const minWage = Math.max(5, Math.round(80 * clubWageLevel(c, ctx.year)));
     for (const p of squad) {
       const target = marketWage(p) * factor;
       // Verschuldete Vereine kürzen schneller (Gehaltsverzicht, Abgänge, günstige Verlängerungen).
-      const speed = c.finances.balance < 0 && target < p.contract.weeklyWage ? 0.8 : 0.5;
-      p.contract.weeklyWage = Math.max(200, Math.round(p.contract.weeklyWage + (target - p.contract.weeklyWage) * speed));
+      // Liegt die Gehaltsquote schon über dem Umsatz-Rahmen (z. B. nach einem Abstieg), wird schneller gekürzt.
+      const over = (c.finances.seasonHistory?.slice(-1)[0]?.wageRatio ?? 0) > 0.85;
+      const speed = (c.finances.balance < 0 || over) && target < p.contract.weeklyWage ? 0.8 : target > p.contract.weeklyWage ? 0.7 : 0.5;
+      p.contract.weeklyWage = Math.max(minWage, Math.round(p.contract.weeklyWage + (target - p.contract.weeklyWage) * speed));
     }
   }
 
@@ -460,6 +474,19 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
     const note = secureKeepers(c, league, ctx, scale);
     if (note) news.push(note);
     trimSquad(c, ctx);
+  }
+
+  // 0b) Verschuldete Vereine bauen teure Einrichtungen zurück (nach einem Abstieg
+  //     fraß der Unterhalt eines Erstliga-Geländes sonst den halben Umsatz).
+  for (const c of league) {
+    if (!isAi(c) || c.finances.balance >= 0 || !c.infrastructure) continue;
+    const rev = Math.max(1, lastRevenue(c, ctx.year, ctx.tier));
+    const upkeepYear = facilityUpkeep(c, tierScale(scale, clubTier(c), 'matchday')) * 12;
+    if (upkeepYear < 0.08 * rev) continue;
+    const keys = (['trainingCenter', 'youthAcademy', 'medical', 'merchandising', 'rehaCenter', 'nlz', 'performanceCenter', 'dataCenter'] as const)
+      .filter((k) => (c.infrastructure[k] ?? 1) > 1)
+      .sort((a, b) => (c.infrastructure[b] ?? 1) - (c.infrastructure[a] ?? 1));
+    if (keys.length) (c.infrastructure as any)[keys[0]] = (c.infrastructure[keys[0]] ?? 1) - 1;
   }
 
   // 1) Verschuldete Vereine verkaufen.
@@ -562,7 +589,10 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
       const k = keys[Math.floor(ctx.rng() * keys.length)];
       (c.infrastructure as any)[k] = (c.infrastructure?.[k] ?? 1) + 1;
     }
-    if (c.stadium.capacity < 75000) c.stadium.capacity = Math.round(c.stadium.capacity * 1.06 / 100) * 100;
+    // Ränge nur erweitern, wenn das Stadion (fast) voll ist – sonst wüchsen Zuschauerzahl
+    // und Stadionumsatz allein durch den Ausbau.
+    const util = (c.stadium.averageAttendanceRate ?? 0.5) * attendanceDemand(ctx.year);
+    if (c.stadium.capacity < 75000 && util >= 0.85) c.stadium.capacity = Math.round(c.stadium.capacity * 1.06 / 100) * 100;
     book(c.finances, ctx.date, -spend, 'facilities', 'Ausbau Vereinsgelände und Stadion', false);
     void ratio;
   }

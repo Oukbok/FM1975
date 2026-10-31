@@ -39,19 +39,19 @@ export const ACTIVITY_DEFS: Record<ActivityType, ActivityDef> = {
   camp: {
     type: 'camp', name: 'Trainingslager', icon: '🏕️',
     desc: 'Mehrtägiges Trainingslager: intensive Arbeit an Fitness und Zusammenhalt.',
-    minDays: 3, maxDays: 10, costPerDayBase: 9000,
+    minDays: 3, maxDays: 10, costPerDayBase: 2700,
     fitness: 12, form: 5, morale: 1,
   },
   friendly: {
     type: 'friendly', name: 'Freundschaftsspiel', icon: '🤝',
     desc: 'Testspiel an einem freien Termin: Spielpraxis, etwas Fitness & Erlös.',
     minDays: 1, maxDays: 1, costPerDayBase: 0,
-    fitness: 5, form: 4, morale: 0, incomeBase: 22000,
+    fitness: 5, form: 4, morale: 0, incomeBase: 7000,
   },
   teambuilding: {
     type: 'teambuilding', name: 'Teambuilding-Event', icon: '🎉',
     desc: 'Kurzes Event für den Teamgeist: hebt Moral und Form.',
-    minDays: 1, maxDays: 2, costPerDayBase: 6000,
+    minDays: 1, maxDays: 2, costPerDayBase: 1800,
     fitness: 0, form: 3, morale: 1,
   },
 };

@@ -11,6 +11,7 @@
 import { Club, Player } from '../types';
 import { HISTORY } from '../data/history';
 import { marketWage } from './clubEconomy';
+import { clubWageLevel } from './economy';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -80,7 +81,8 @@ export function contractDemand(p: Player, club: Club, squad: Player[], today: st
   if (bosmanActive(today) && left <= 12) f *= 1.1; // Verhandlungsmacht vor dem Vertragsende
 
   const floor = p.age >= 31 ? p.contract.weeklyWage * 0.85 : p.contract.weeklyWage * 1.03;
-  const wage = Math.round(Math.max(floor, marketWage(p) * f) / 10) * 10;
+  // Marktgehalt auf dem Gehaltsniveau der eigenen Liga (unterklassig deutlich weniger).
+  const wage = Math.round(Math.max(floor, marketWage(p) * clubWageLevel(club, Number(today.slice(0, 4))) * f) / 10) * 10;
   const [minYears, maxYears] = yearRange(p.age);
 
   // Bereitschaft: Zufriedenheit, Ansehen des Vereins gegenüber eigener Stärke, Ehrgeiz, Moral.

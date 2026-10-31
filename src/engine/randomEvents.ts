@@ -84,7 +84,7 @@ const DEFS: EventDef[] = [
     }),
     resolve: (ctx, p, choice) => {
       if (!p) return { text: '' };
-      if (choice === 'familie') { shiftMorale(p, 2); return { money: { amount: -Math.round(8000 * ctx.scale), text: `Familienbesuch ${p.fullName}` }, text: `Der Besuch tut ${p.fullName} sichtlich gut.` }; }
+      if (choice === 'familie') { shiftMorale(p, 2); return { money: { amount: -Math.round(2500 * ctx.scale), text: `Familienbesuch ${p.fullName}` }, text: `Der Besuch tut ${p.fullName} sichtlich gut.` }; }
       if (choice === 'gespraech') {
         if (ctx.rng() < 0.6) { shiftMorale(p, 1); return { text: `Das Gespräch hilft – ${p.fullName} fängt sich.` }; }
         return { text: `${p.fullName} bedankt sich, wirkt aber weiter bedrückt.` };
@@ -129,7 +129,7 @@ const DEFS: EventDef[] = [
     resolve: (ctx, p, choice) => {
       if (!p) return { text: '' };
       const d = p.development;
-      if (choice === 'strafe') { shiftMorale(p, -1); d.professionalism = clamp((d.professionalism ?? 50) + 4, 0, 100); return { money: { amount: Math.round(3000 * ctx.scale), text: `Geldstrafe ${p.fullName}` }, text: `${p.fullName} zahlt die Strafe und gelobt Besserung.` }; }
+      if (choice === 'strafe') { shiftMorale(p, -1); d.professionalism = clamp((d.professionalism ?? 50) + 4, 0, 100); return { money: { amount: Math.round(1000 * ctx.scale), text: `Geldstrafe ${p.fullName}` }, text: `${p.fullName} zahlt die Strafe und gelobt Besserung.` }; }
       if (choice === 'tribuene') { p.suspensionMatches = Math.max(p.suspensionMatches, 1); d.professionalism = clamp((d.professionalism ?? 50) + 6, 0, 100); shiftMorale(p, -1); return { text: `${p.fullName} sitzt beim nächsten Spiel auf der Tribüne.` }; }
       d.professionalism = clamp((d.professionalism ?? 50) - 3, 0, 100);
       ctx.club.boardConfidence = clamp((ctx.club.boardConfidence ?? 60) - 3, 0, 100);
@@ -284,7 +284,7 @@ const CLUB_DEFS: { type: string; from: number; to: number; spawn: (ctx: EventCon
   {
     type: 'sturm', from: 1975, to: 2100,
     spawn: (c) => {
-      const cost = Math.round((40000 + c.club.stadium.capacity * 2) * c.scale);
+      const cost = Math.round((12000 + c.club.stadium.capacity * 0.6) * c.scale);
       return {
         type: 'sturm', from: 'Platzwart', category: 'general',
         subject: 'Sturmschaden am Stadiondach',
@@ -297,7 +297,7 @@ const CLUB_DEFS: { type: string; from: number; to: number; spawn: (ctx: EventCon
   {
     type: 'goenner', from: 1975, to: 2100,
     spawn: (c) => {
-      const gift = Math.round((60000 + c.club.reputation * 1500) * c.scale);
+      const gift = Math.round((18000 + c.club.reputation * 450) * c.scale);
       return {
         type: 'goenner', from: 'Vorstand', category: 'board',
         subject: 'Ein Gönner unterstützt den Verein',

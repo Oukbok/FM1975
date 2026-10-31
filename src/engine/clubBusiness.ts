@@ -153,11 +153,11 @@ export function advanceStadiumProject(club: Club, date: string): string | null {
     + (p.addBoxes ? `, ${club.stadium.vipBoxes} Logen` : '') + '.';
 }
 
-/** Logen-Einnahmen je Heimspiel (nominal). 1975-Basis 1.400 DM je Loge. */
+/** Logen-Einnahmen je Heimspiel (nominal). 1975-Basis 850 DM je Loge. */
 export function vipIncome(club: Club, mdScale: number, year: number): number {
   const boxes = (club.stadium.vipBoxes ?? 0) + vipAreaBoxes(club);
   if (!boxes) return 0;
-  return Math.round(boxes * 1400 * mdScale * clamp(commercialMultiplier(club, year), 0.6, 1.8));
+  return Math.round(boxes * 850 * mdScale * clamp(commercialMultiplier(club, year), 0.6, 1.8));
 }
 
 // -----------------------------------------------------------------------------
@@ -180,7 +180,7 @@ function hash(s: string): number {
 /** Angebote für die Namensrechte (deterministisch je Saison). */
 export function namingOffers(club: Club, year: number, season: string): NamingRights[] {
   if (year < NAMING_RIGHTS_YEAR) return [];
-  const base = club.stadium.capacity * 2.6 * clamp(0.6 + club.reputation / 100, 0.8, 1.6);
+  const base = club.stadium.capacity * 1.3 * clamp(0.6 + club.reputation / 100, 0.8, 1.6);
   const out: NamingRights[] = [];
   const used = new Set<number>();
   for (let i = 0; i < 3; i++) {

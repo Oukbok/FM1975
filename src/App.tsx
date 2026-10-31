@@ -35,6 +35,7 @@ import { setDisplayYear } from './ui/format';
 import { setEventFrequency } from './engine/randomEvents';
 import { ensureYouthTeams } from './game/youthTeams';
 import { migrateAiClubs } from './game/aiClubs';
+import { migrateFinanceLevel } from './game/financeMigration';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 // =============================================================================
@@ -312,6 +313,8 @@ export default function App() {
     ensureYouthTeams(s.game, s.game.calendar.currentDate);
     // Manager-KI (SAVE_VERSION 10): Trainer der KI-Vereine nachrüsten.
     try { migrateAiClubs(s.game); } catch (err) { console.error('Trainer-Nachrüstung fehlgeschlagen:', err); }
+    // Finanzniveau (v11, Sammel-Update): alte Spielstände auf das realistische Niveau umrechnen.
+    try { migrateFinanceLevel(s.game); } catch (err) { console.error('Finanz-Umstellung fehlgeschlagen:', err); }
     gameRef.current = s.game;
     setCurrentSlot(slot);
     setInGame(true);

@@ -18,7 +18,7 @@ import { Club, Player } from '../types';
 import { assessSquad, GROUP_LABEL, GROUP_OF, GROUP_POS, GroupNeed, PosGroup, squadLevel11, SquadAssessment, targetStrength } from '../engine/aiManager';
 import { AI_RESERVE, hasTransferBan, isLeagueClub, lastRevenue, marketValueFor, marketWage } from '../engine/clubEconomy';
 import { bosmanActive } from '../engine/contractTalks';
-import { economyScale } from '../engine/economy';
+import { clubWageLevel, economyScale } from '../engine/economy';
 import { bookTransfer } from '../engine/finances';
 import { recordTransfer } from '../engine/history';
 import { makeMessage, pushMessage } from '../engine/messages';
@@ -215,7 +215,7 @@ function bestProspect(g: Game, club: Club, group: PosGroup): Player | null {
 function promote(ctx: RoundCtx, club: Club, p: Player, need: GroupNeed): boolean {
   const res = promoteYouth(club, p.id, ctx.g.players, ctx.g.youthPlayers, 27);
   if (!res.ok) return false;
-  p.contract.weeklyWage = Math.max(p.contract.weeklyWage, Math.round(marketWage(p) * 0.6));
+  p.contract.weeklyWage = Math.max(p.contract.weeklyWage, Math.round(marketWage(p) * 0.6 * clubWageLevel(club, ctx.year)));
   void need;
   return true;
 }
@@ -326,7 +326,7 @@ function buyExternal(ctx: RoundCtx, club: Club, need: GroupNeed, want: { min: nu
   p.contract.transferValue = marketValueFor(p, year);
   const fee = r5k(p.contract.transferValue * (lower ? 0.7 : 1));
   if (fee > club.finances.transferBudget) return false;
-  p.contract.weeklyWage = Math.max(200, Math.round(marketWage(p) * Math.max(0.6, wageRatioOf(g, club))));
+  p.contract.weeklyWage = Math.max(Math.max(5, Math.round(80 * clubWageLevel(club, year))), Math.round(marketWage(p) * Math.max(0.6 * clubWageLevel(club, year), wageRatioOf(g, club))));
   g.players[p.id] = p;
   club.playerIds.push(p.id);
   club.finances.transferBudget -= fee;

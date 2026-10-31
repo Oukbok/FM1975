@@ -4,8 +4,8 @@
 // Kapazitätsänderung, Bauzeit, Stimmungs- und Erlösprognose und Finanzierung.
 // =============================================================================
 import { useState } from 'react';
-import { revenueScale, yearOf } from '../../../engine/economy';
-import { expectedAttendance } from '../../../engine/finances';
+import { yearOf } from '../../../engine/economy';
+import { expectedAttendance, clubPriceScale } from '../../../engine/finances';
 import { vipIncome } from '../../../engine/clubBusiness';
 import {
   BLOCK_NAME, BLOCK_SIDE, MAX_LOUNGES, ROOF_NAME, SEAT_NAME, SIDE_NAME, TIER_NAME, blockCapacity, blocksCapacity, loungesAvailable,
@@ -23,10 +23,10 @@ const sign = (n: number) => (n > 0 ? '+' : n < 0 ? '−' : '±') + Math.abs(n).t
 
 /** Erlös je Heimspiel (Eintritt + Logen/VIP) für einen hypothetischen Blockzustand. */
 function perMatch(club: Club, blocks: StadiumBlock[], year: number): { ticket: number; vip: number; visitors: number } {
-  const md = revenueScale('matchday', year);
+  const md = clubPriceScale(club, year);
   const st = { ...club.stadium, blocks, capacity: blocksCapacity(blocks), vipBoxes: blocks.reduce((s, b) => s + b.lounges, 0) };
   const c = { ...club, stadium: st } as Club;
-  const visitors = expectedAttendance(c);
+  const visitors = expectedAttendance(c, undefined, year);
   return { ticket: Math.round(visitors * st.ticketPrice * ticketFactor(c) * md), vip: vipIncome(c, md, year), visitors };
 }
 

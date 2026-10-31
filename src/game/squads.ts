@@ -7,6 +7,7 @@ import { Game } from './state';
 import { archiveRetired } from './archive';
 import { createPlayer } from '../engine/playerFactory';
 import { isLeagueClub, marketWage } from '../engine/clubEconomy';
+import { clubWageLevel } from '../engine/economy';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { refreshOverall } from '../engine/development';
 import { GEM_CHANCE_YOUNG_PRO, maybeMakeGem } from '../engine/gems';
@@ -94,7 +95,7 @@ export function fillSquad(game: Game, club: Club, date: string, min = MIN_SQUAD,
     });
     refreshOverall(p);
     // Gehalt im Gefüge des Vereins (Nachrücker kosten, was der Kader im Schnitt verdient).
-    p.contract.weeklyWage = Math.max(200, Math.round(marketWage(p) * wageRatioOf(game, club)));
+    p.contract.weeklyWage = Math.max(Math.max(5, Math.round(80 * clubWageLevel(club, year))), Math.round(marketWage(p) * wageRatioOf(game, club)));
     if (age <= 20) maybeMakeGem(p, GEM_CHANCE_YOUNG_PRO);
     game.players[p.id] = p;
     club.playerIds.push(p.id);
@@ -165,5 +166,5 @@ export function wageRatioOf(game: Game, club: Club): number {
   const mates = club.playerIds.map((id) => game.players[id]).filter(Boolean);
   if (!mates.length) return 1;
   const r = mates.reduce((a, m) => a + m.contract.weeklyWage / Math.max(1, marketWage(m)), 0) / mates.length;
-  return Math.max(0.2, Math.min(1.5, r));
+  return Math.max(0.01, Math.min(1.5, r));
 }

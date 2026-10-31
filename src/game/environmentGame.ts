@@ -9,7 +9,7 @@ import {
 } from '../engine/environment';
 import { lastRevenue, isLeagueClub } from '../engine/clubEconomy';
 import { book } from '../engine/finances';
-import { yearOf } from '../engine/economy';
+import { fairTicketPrice, yearOf } from '../engine/economy';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { expectationShift } from './clubBusiness';
 
@@ -52,7 +52,7 @@ export function monthlyEnvironmentUpdate(g: Game, today: string): void {
   const rows = g.table.rows;
   const pos = Math.max(1, rows.findIndex((r) => r.clubId === club.id) + 1);
   const size = rows.length || 18;
-  const fair = 8 + club.reputation * 0.12;
+  const fair = fairTicketPrice(club.reputation);
   const hist = club.finances.balanceHistory ?? [];
   const rev = Math.max(1, lastRevenue(club, year));
   const balanceTrend = hist.length >= 3 ? Math.max(-1, Math.min(1, (hist[hist.length - 1].balance - hist[hist.length - 3].balance) / (rev * 0.15))) : 0;
