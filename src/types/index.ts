@@ -934,6 +934,10 @@ export interface Tactics {
   widthFocus?: number;
   /** Aufbauspiel: kurz (Ballbesitz) oder lang (direkt). */
   buildup?: 'short' | 'long';
+  /** Eigene Lage einzelner Formations-Slots (Slot-ID → Koordinaten in % + abgeleitete Position). */
+  slotLayout?: Record<string, { x: number; y: number; position: Position }>;
+  /** Aufstellung: gezogene Spieler rasten auf feste Positionsfelder ein (Standard an). */
+  snapToGrid?: boolean;
 }
 
 /** Muster-Typ für ein parametrisches Trikot (deckungsgleich mit JerseySVG). */

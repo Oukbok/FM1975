@@ -5,6 +5,7 @@
 import type { Club, Player, Position, Tactics } from '../../types';
 import { POSITION_GROUPS } from '../../types';
 import { getFormation } from '../../data/formations';
+import { withLayout } from '../../data/pitchGrid';
 import { getEraYear, positionSuitability } from '../positions';
 import type { MPlayer, Mentality, ShoutId, Side } from './types';
 
@@ -82,7 +83,8 @@ export interface ResolvedLineup {
  */
 export function resolveLineup(club: Club, players: Record<string, Player>, human: boolean, benchSize: number): ResolvedLineup {
   const t: Tactics | undefined = club.tactics;
-  const formation = getFormation(t?.formation);
+  // Eigene Slot-Lagen (frei verschobene Positionen) gelten für den gespeicherten Plan.
+  const formation = withLayout(getFormation(t?.formation), human ? t?.slotLayout : undefined);
   const pool = club.playerIds.map((id) => players[id]).filter(isAvailable);
   const used = new Set<string>();
   const slotPlayer: Record<string, Player> = {};
