@@ -120,8 +120,58 @@ function report(game: Game) {
   }
 }
 
+// -----------------------------------------------------------------------------
+// AI=1: Kaderbewegungen der Ligavereine je Saison (Zugänge nach Herkunft,
+// Trainerwechsel). Vergleicht den Stand am Saisonende mit dem der Vorsaison.
+// -----------------------------------------------------------------------------
+type AiSnap = { club: Map<string, string>; youth: Set<string>; clubs: Set<string>; date: string };
+let aiPrev: AiSnap | null = null;
+const aiTotals = { seasons: 0, arrivals: 0, transfers: 0, generated: 0, imports: 0, lower: 0, youth: 0, coach: 0, sacked: 0 };
+function aiSnap(game: Game): AiSnap {
+  const club = new Map<string, string>();
+  const clubs = new Set(leagueClubs(game).map((c) => c.id));
+  for (const c of leagueClubs(game)) for (const id of c.playerIds) club.set(id, c.id);
+  return { club, youth: new Set(Object.keys(game.youthPlayers)), clubs, date: game.calendar.currentDate };
+}
+function aiReport(game: Game) {
+  const now = aiSnap(game);
+  if (aiPrev) {
+    const prev = aiPrev;
+    let transfers = 0, generated = 0, imports = 0, youth = 0, lower = 0, other = 0;
+    const perClub = new Map<string, number>();
+    for (const [id, cid] of now.club) {
+      if (!prev.clubs.has(cid)) continue; // Aufsteiger mit neu aufgebautem Kader
+      const before = prev.club.get(id);
+      if (before === cid) continue;
+      perClub.set(cid, (perClub.get(cid) ?? 0) + 1);
+      if (before) transfers++;
+      else if (prev.youth.has(id)) youth++;
+      else if (/_r\d{4}_/.test(id)) generated++;
+      else if (/_t\d{4}_|_imp\d{4}_/.test(id)) imports++;
+      else if (/_uk\d{4}_/.test(id)) lower++;
+      else other++;
+    }
+    const arrivals = transfers + generated + imports + youth + lower + other;
+    const n = [...now.clubs].filter((c) => prev.clubs.has(c)).length || 1;
+    // Trainerwechsel seit dem letzten Bericht (inkl. Karussell zum Saisonwechsel).
+    let coach = 0, sacked = 0;
+    for (const c of leagueClubs(game)) for (const h of (c as any).coachHistory ?? []) {
+      if (h.to >= prev.date && h.to < now.date) { coach++; if (h.reason === 'entlassen') sacked++; }
+    }
+    const counts = [...perClub.values()].sort((a, b) => a - b);
+    console.log(`   KI Zugänge ${arrivals} (Ø ${(arrivals / n).toFixed(1)}/Verein, min ${counts[0] ?? 0} max ${counts[counts.length - 1] ?? 0}) | Wechsel Liga ${transfers} | unterklassig ${lower} | Ausland ${imports} | Jugend ${youth} | generiert ${generated} (${(generated / Math.max(1, arrivals) * 100).toFixed(0)} %) | sonst ${other} | Trainerwechsel ${coach} (entlassen ${sacked})`);
+    Object.assign(aiTotals, {
+      seasons: aiTotals.seasons + 1, arrivals: aiTotals.arrivals + arrivals, transfers: aiTotals.transfers + transfers,
+      generated: aiTotals.generated + generated, imports: aiTotals.imports + imports, lower: aiTotals.lower + lower, youth: aiTotals.youth + youth,
+      coach: aiTotals.coach + coach, sacked: aiTotals.sacked + sacked,
+    });
+  }
+  aiPrev = now;
+}
+
 const t0 = Date.now();
 report(g);
+if (process.env.AI) aiReport(g);
 for (let s = 0; s < seasons; s++) {
   let guard = 0;
   while (!CalendarEngine.isSeasonOver(g.calendar)) {
@@ -132,7 +182,12 @@ for (let s = 0; s < seasons; s++) {
     if (++guard > 1000) throw new Error('Saison endet nicht');
   }
   report(g);
+  if (process.env.AI) aiReport(g);
   startNextSeason(g);
+}
+if (process.env.AI && aiTotals.seasons) {
+  const s = aiTotals.seasons, a = Math.max(1, aiTotals.arrivals);
+  console.log(`KI-Bilanz über ${s} Saisons: Zugänge/Saison ${(aiTotals.arrivals / s).toFixed(1)}, Wechsel in der Liga ${(aiTotals.transfers / s).toFixed(1)}, unterklassig ${(aiTotals.lower / s).toFixed(1)}, Ausland ${(aiTotals.imports / s).toFixed(1)}, Jugend ${(aiTotals.youth / s).toFixed(1)}, generiert ${(aiTotals.generated / s).toFixed(1)} (${(aiTotals.generated / a * 100).toFixed(0)} % der Zugänge), Trainerwechsel ${(aiTotals.coach / s).toFixed(1)} (Entlassungen ${(aiTotals.sacked / s).toFixed(1)})`);
 }
 if (process.env.SAVESIZE) { const j = JSON.stringify(g); console.log(`Spielstand ${(j.length / 1024 / 1024).toFixed(2)} MB (unkomprimiert)`); for (const [k, v] of Object.entries(g)) { const n = JSON.stringify(v ?? null).length; if (n > 50000) console.log('  ', k, (n / 1024).toFixed(0), 'KB'); } const pl = Object.values(g.players); const hist = pl.reduce((a, p) => a + JSON.stringify(p.history ?? {}).length, 0); console.log('   davon Spieler-Historie', (hist / 1024).toFixed(0), 'KB bei', pl.length, 'Spielern'); }
 if (process.env.DUMP) {
