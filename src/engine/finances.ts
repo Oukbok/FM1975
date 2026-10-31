@@ -378,8 +378,9 @@ export interface MonthlyBooking {
 /**
  * Berechnet die monatlichen Posten (ohne zu buchen) — auch für die Prognose.
  * `scale` ist die jährlich steigende Wirtschafts-Basis (1975 ≈ 1, 2030 ≈ 130):
- * Sponsoring, Boni UND die kostenseitigen Fixposten wachsen gemeinsam, sodass
- * das gesamte Finanz-Niveau des Fußballs über die Jahrzehnte real ansteigt.
+ * Gehälter, Boni und Gebäude-Fixkosten wachsen mit ihr. Stadionunterhalt und
+ * Verwaltung (`otherFixed`) wachsen mit dem Stadiongeschäft (revenueScale
+ * 'matchday', bis 2024 ≈ ×25 statt ×100), Sponsoring mit der Vermarktung.
  * Die Beträge bleiben nominal in DM; die Anzeige rechnet ära-gerecht in DM/EUR um.
  */
 export function computeMonthly(
@@ -394,10 +395,15 @@ export function computeMonthly(
   const weekly = weeklyWageBill(club, players);
   const wages = Math.round(weekly * 4.33 * scale);
   const staffWages = Math.round(wages * 0.18);
-  const stadiumMaintenance = Math.round((club.stadium.capacity * 0.9 + (100 - club.stadium.condition) * 800) * scale);
+  // Betriebskosten von Stadion und Verwaltung wachsen mit dem Stadiongeschäft
+  // (revenueScale 'matchday'), nicht mit dem ganzen Markt: Sonst stiegen sie bis 2024
+  // um das ~100-Fache, die Zuschauererlöse kleiner Vereine aber nur um das ~25-Fache –
+  // Dritt- und Viertligisten wurden zwangsläufig zahlungsunfähig.
+  const opScale = year != null ? revenueScale('matchday', year) : scale;
+  const stadiumMaintenance = Math.round((club.stadium.capacity * 0.9 + (100 - club.stadium.condition) * 800) * opScale);
   // Gebaeude-Fixkosten ersetzen den alten trainingFacilities-Pauschalposten.
   const facilities = facilityUpkeep(club, scale);
-  const otherFixed = Math.round((6000 + club.reputation * 500) * scale);
+  const otherFixed = Math.round((6000 + club.reputation * 500) * opScale);
 
   // Trikotsponsoring (nur aus aktivem Vertrag).
   const sponsorship = club.commerce?.shirtSponsor

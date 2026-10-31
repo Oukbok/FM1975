@@ -994,6 +994,8 @@ Fixkosten je Betriebsform/Stufe; bei **Verpachtung** zusätzlich eine feste Mona
 ### Sonstige Fixkosten
 \`6.000 + Reputation × 500\` DM/Monat (Reise, Organisation, Verwaltung).
 
+Alle Werte gelten in 1975-DM. Stadionunterhalt und sonstige Fixkosten wachsen über die Jahrzehnte mit dem **Stadiongeschäft** (bis heute etwa um das 25-Fache), Gehälter und Gebäudekosten mit dem gesamten Fußballmarkt (etwa um das 100-Fache). So kann auch ein Drittligist mit vollem Haus seine Kosten decken.
+
 ### Transferausgaben
 Spielerkäufe werden als Ausgabe gebucht (Ablöse verringert Kontostand und Transferbudget).
 
