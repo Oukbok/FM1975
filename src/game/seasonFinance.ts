@@ -16,6 +16,7 @@ import { EuroCompId, EURO_COMP_NAMES } from '../data/europe';
 import { formatMoney } from '../engine/economy';
 import { boardBudgetShare } from '../engine/environment';
 import { seasonClubBusiness } from './clubBusiness';
+import { seatingNewSeason } from './seatingGame';
 
 /** Leistungswert 0..1 der Vorsaison je Verein (für die TV-Verteilung). */
 export type PerfMap = Record<string, number>;
@@ -66,6 +67,7 @@ export function openFinancialSeason(g: Game, newSeason: string, date: string, pr
   const league = Object.values(g.clubs).filter(isLeagueClub);
   const fmt = (v: number) => formatMoney(v, year);
   refreshMarketValues(g.players, year);
+  seatingNewSeason(g, date); // Platzkategorien: Preise, Potenzial, KI-Platzmix
 
   // TV-Gelder der neuen Saison.
   const tier = g.leagues?.playerDivision?.tier ?? 1;

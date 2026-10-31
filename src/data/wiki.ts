@@ -1205,7 +1205,7 @@ Große Vereine mit hoher Auslastung profitieren stärker vom **Eigenbetrieb** (v
     title: 'Finanzen im Wandel der Epochen — TV, Vermarktung, Marke',
     keywords: ['tv', 'fernsehgelder', 'vermarktung', 'hospitality', 'marke', 'sponsoring', 'epoche', 'fairplay', 'ffp', 'lizenz', 'schulden', 'zinsen', 'marktwert', 'gehaltsquote'],
     body: `## Der Erlös-Mix verschiebt sich
-1975 lebt ein Verein vom Stadion: rund 60 % des Umsatzes sind Eintritt, Catering und Programmhefte. Ab Ende der 1980er wachsen die **TV-Gelder** (Privatfernsehen, Pay-TV), ab den 2000ern **Vermarktung & Hospitality** (Logen, Lizenzen, Partner). Jede Erlösart wächst deshalb unterschiedlich schnell:
+1975 lebt ein Verein vom Stadion: rund 60 % des Umsatzes sind Eintritt, Catering und Programmhefte. Ab Ende der 1980er wachsen die **TV-Gelder** (Privatfernsehen, Pay-TV), ab den 2000ern **Vermarktung** (Lizenzen, Partner) – Logen und Business-Seats zählen als Eintritt ihrer Platzkategorie. Jede Erlösart wächst deshalb unterschiedlich schnell:
 
 | Jahr | Spieltag | TV | Vermarktung |
 |---|---|---|---|
@@ -1264,22 +1264,44 @@ Zu jedem Saisonstart wird die Restlaufzeit aller Verträge um 1 Jahr reduziert; 
   {
     id: 'finance-elasticity',
     category: 'finance',
-    title: 'Ticketpreis & Preiselastizität',
-    keywords: ['ticket', 'ticketpreis', 'preis', 'elastizität', 'auslastung', 'zuschauer', 'nachfrage', 'referenzpreis'],
-    body: `## Ticketpreis steuert die Auslastung
-Im Bereich **Stadion** setzt du den Ticketpreis (±1 DM in 1975-Werten, Bereich 2–40 DM). Ein höherer Preis senkt die Auslastung, ein niedrigerer hebt sie (bis zur Kapazitätsgrenze).
+    title: 'Platzkategorien, Ticketpreise und Nachfrage',
+    keywords: ['ticket', 'ticketpreis', 'preis', 'elastizität', 'auslastung', 'zuschauer', 'nachfrage', 'referenzpreis', 'richtpreis', 'stehplatz', 'sitzplatz', 'business', 'business-seat', 'loge', 'logen', 'premium', 'gästeblock', 'gäste', 'vip', 'hospitality', 'rollstuhl', 'schätzung', 'marktforschung'],
+    body: `## Sieben Platzkategorien
+Jeder Platz im Stadion gehört zu einer Kategorie mit **eigenem Preis** und **eigener Nachfrage**:
 
-## Formel (Match-Engine)
-- **Referenzpreis:** \`refPrice = 3 + Reputation × 0,07\` DM (1975-Basis) — der "faire" Preis für die Vereinsgröße (Ruf 75 ≈ 8,3 DM).
-- **Preisfaktor:** \`priceFactor = clamp(1 − ((Preis − refPrice) / refPrice) × 0,5 , 0,6 , 1,15)\`.
-- **Gegner:** \`clamp(1 + (Ruf Gegner − 70) / 120 , 0,88 , 1,2)\`; **Derby** × 1,15.
-- **Nachfrage der Epoche** (Ligaschnitt gegenüber 1975): 1985 × 0,85 (Zuschauertal), 1995 × 1,3, 2005 × 1,6, ab 2010 rund × 1,8.
-- **Auslastungsrate:** \`clamp(baseRate × priceFactor × Gegner × Derby × Nachfrage + Zufall(±0,05) , 0,12 , 1,0)\`, mit \`baseRate = Grund-Auslastung des Vereins\`.
+| Kategorie | ab | Herkunft im Stadion | Richtpreis Erstligist (Ruf 70) |
+|---|---|---|---|
+| Stehplätze | 1975 | Stehränge | 1975 ≈ 5,60 DM · 2024 ≈ 15 € |
+| Sitzplätze (offen) | 1975 | Bänke/Schalensitze ohne Dach | 1975 ≈ 10,50 DM · 2024 ≈ 30 € |
+| Sitzplätze (überdacht) | 1975 | Bänke/Schalensitze unter Dach (Teildach: halb) | 1975 ≈ 15 DM · 2024 ≈ 50 € |
+| Premium-Sitze | 1988 | Komfortsitze | 1990 ≈ 45 DM · 2024 ≈ 90 € |
+| Business-Seats | 1980 | VIP-Bereich eines Blocks (≈ 200 Plätze), ab 1992 ganze Business-Ränge | 1985 ≈ 90 DM · 2024 ≈ 360 € je Spiel |
+| Logen | 1985 | Logen der Blöcke (≈ 11 Gäste) | 1990 ≈ 3.500 DM · 2024 ≈ 9.000 € je Spiel |
+| Gästeblock | 1984 | 10 % der Plätze (im Europapokal 5 %), zuerst aus Stehplätzen | wie Stehplatz, etwas teurer |
 
-Die gleiche Zahl gilt für **alle** Match-Buchungen (Eintritt, Catering, Programmhefte) — Vorschau und Buchung sind konsistent.
+Größere Vereine dürfen mehr verlangen (Fans wie der faire Preis nach Ruf, Business und Logen deutlich steiler). Das **Hospitality-Modul** des Stadionumfelds (VIP-Zelt, Business-Club, Premium-Hospitality) hebt Nachfrage (+6/15/25 %) und Preisbereitschaft (halb so viel) für Business-Seats und Logen. Ab 2002 sind 1 % der Sitzplätze Rollstuhlplätze (Pflicht, nur Anzeige).
 
-## Vorschau ohne Zufall
-Die Bereiche **Stadion**, **Marketing** und **Fans** zeigen eine erwartete Auslastung/Zuschauerzahl **ohne** den ±0,10-Zufallsterm (\`expectedAttendanceRate\`), damit die Wirkung einer Preisänderung planbar ist. Faustregel: Preis unter dem Referenzpreis → mehr Zuschauer → mehr Catering-/Programm-Erlös; deutlich über Referenz → leere Ränge.`,
+## Unabhängige Nachfrage
+- **Fans:** Zuschauerpotenzial des Vereins × Zuspruch (Erfolg, Stimmung) × Nachfrage der Epoche × Gegner × Derby. Aufgeteilt nach Vorlieben der Zeit: 1975 wollen 70 % stehen, 1998 noch 42 %, heute rund ein Drittel; Sitzplatz-Fans wollen zunehmend ein Dach; ab 1988 kommt ein kleiner Premium-Markt dazu. Gästefans hängen am Gegner (Ruf, Derby).
+- **Business & Logen:** eigene, absolute Märkte aus Vereinsgröße, Marke, Wirtschaftskraft der Region (München, Frankfurt, Stuttgart … stärker; Ostdeutschland nach 1990 schwächer; in der DDR-Oberliga gar keine) und Reife des Hospitality-Markts (1980 kaum, ab den WM-Stadien 2006 voll). Wer mehr Business-Seats baut, als der Markt hergibt, bekommt leere Plätze – VIP lässt sich nicht beliebig stapeln.
+- **Wetter:** Bei Regen bleiben offene Plätze leer (−18 %), überdachte sind gefragter.
+- **Ausweichen:** Wer in seiner Kategorie keinen Platz bekommt, nimmt teils die Nachbarkategorie (Steh → Sitz, Sitz ↔ Tribüne, Business → Premium, Logen → Business).
+- Das Potenzial hängt **nicht** an der Kapazität: Ein größeres Stadion zieht über Jahre neue Fans an (15 % je Saison), aber nur bis zur Obergrenze, die der Ruf hergibt.
+
+## Preise und Elastizität
+Nachfrage × (1 − Elastizität × (Preis/Richtpreis − 1)); günstiger als der Richtpreis lockt etwas mehr. Elastizität: Steh 0,6, Gäste 0,5, Sitz 0,75, Tribüne 0,8, Premium 0,95, Business 1,05, Logen 1,15 – teure Plätze reagieren stärker. Je teurer die Kategorie, desto mehr bringt der einzelne Platz: Ein Business-Seat erlöst ein Vielfaches eines Stehplatzes.
+Die Preise wachsen jede Saison mit dem Richtpreis der Epoche mit (dein Preisniveau bleibt). Das Preisniveau der Fanplätze (Steh, Sitz, Tribüne, Gäste; Stehplätze zählen 1,5-fach) bestimmt die Fanstimmung.
+
+## Nachfrage nur geschätzt
+Unter **Stadion → Tickets & Nachfrage** siehst du die Nachfrage als **Spanne**, nicht als genaue Zahl. Grundunschärfe: Kurve ±16 %, Sitzplätze ±20 %, Premium ±28 %, Business ±34 %, Logen ±40 %. Genauer wird es durch **Kaufmännischen Leiter, Marketing-/Sponsoringmanager, Stadion-/Eventmanager, Fan-Data/CRM-Manager und Datenanalyst** (je nach Qualität, zusammen höchstens −55 %) und durch Erfahrung: jedes Heimspiel, in dem die Kategorie **nicht** ausverkauft war, verrät mehr. Ausverkauft heißt nur: Die Nachfrage ist mindestens so groß wie das Kontingent.
+
+## KI-Vereine
+KI-Vereine haben keine Blöcke, aber Kontingente je Kategorie: Sie bauen ihren Platzmix jede Saison ein Stück in Richtung Epoche um (Sitzplatz-Boom ab den 1990ern, Business-Seats und Logen nach Nachfrage) und erhöhen Preise, wenn sie ausverkauft sind, oder senken sie bei leeren Rängen.
+
+## Größenordnung
+Ein Erstligist nimmt 1975 je Heimspiel rund 150.000 DM Eintritt (≈ 70 % des Umsatzes inkl. Catering und Programm), ein Spitzenverein 2024 mit voller Arena rund 6–8 Mio. € (FC Bayern 2023: ≈ 121 Mio. € Spieltagserlöse, ≈ 5,2 Mio. € je Heimspiel).
+
+Quellen: Allianz Arena (fcbayern.com: 106 Logen, 2.200 Business-Plätze, 227 Plätze für Menschen mit Behinderung), Westfalenstadion 1974 mit 17.000 von 54.000 Sitzplätzen (bvb.de), Eintracht Frankfurt Hospitality (Loge ab 640 € je Platz und Spiel, Business ab ≈ 360 €), Stehplatz-Dauerkarten 2024/25 (Schnitt 213 €), UEFA-Gästekontingent 5 %. Annahmen: VIP-Bereiche 1980, Logen 1985, Gästeblock 1984, Premium 1988.`,
   },
   {
     id: 'facilities-grounds',
@@ -1659,15 +1681,15 @@ Unter **Verein → Stadion** siehst du dein leeres Stadion von schräg oben, üb
 - **Nord- und Südtribüne** hinter den Toren mit je zwei Blöcken: West und Ost.
 - **Vier Kurven** in den Ecken (Nordwest, Nordost, Südwest, Südost), gebogen um die Eckfahne. Sie schließen das Stadion zur Schüssel.
 
-Gezeichnet werden Stufen, Sitzreihen in Vereinsfarben, Wellenbrecher, Mundlöcher, Dächer, Logen und das Flutlicht der jeweiligen Epoche. Das Dach der Haupttribüne ist durchscheinend, damit das Spielfeld sichtbar bleibt. Klick auf einen Block öffnet rechts den Planer, die Zeichnung zeigt die Planung sofort. Ohne Auswahl zeigt das Panel Ticketpreis, erwartete Erlöse, Catering, Namensrechte, den laufenden Umbau und die letzten Heimspiele.
+Gezeichnet werden Stufen, Sitzreihen in Vereinsfarben, Wellenbrecher, Mundlöcher, Dächer, Logen und das Flutlicht der jeweiligen Epoche. Das Dach der Haupttribüne ist durchscheinend, damit das Spielfeld sichtbar bleibt. Der Bildausschnitt ist fest auf das größtmögliche Stadion ausgelegt: Beim Ausbau wachsen nur die Tribünen. Klick auf einen Block öffnet das **Bau-Popover** am Rand, die Szene zeigt den geplanten Block als Vorschau (gestrichelter Umriss), dazu Kapazität, erwartete Zuschauer und Eintritt vorher → nachher. Rund ums Stadion stehen **Würstchenbuden, Fanshop, Megastore, Kassen, Parkplatz, ÖPNV-Haltestelle, Hospitality, Vereinsheim, Fan-Zone und Museum** – anklicken und direkt ausbauen (dieselben Regeln wie auf dem Vereinsgelände). Die Leiste unten filtert, was anklickbar ist (Tribünen, Gastronomie, Handel, Anreise, Hospitality); die **Kassen** bzw. „Tickets & Nachfrage“ öffnen Preise und geschätzte Nachfrage je Platzkategorie.
 
-Ältere Spielstände mit vier Blöcken werden beim Laden umgewandelt: Die Kurven übernehmen den Aufbau der Hintertor-Tribünen, Kapazität, Logen, VIP-Bereich und Ticketfaktor bleiben erhalten.
+Ältere Spielstände mit vier Blöcken werden beim Laden umgewandelt: Die Kurven übernehmen den Aufbau der Hintertor-Tribünen, Kapazität, Logen und VIP-Bereich bleiben erhalten.
 
 ## Was du planst
 - **Ränge:** bis zu drei (Unter-, Mittel-, Oberrang), je 3–36 Reihen. Ein neuer Rang kostet 30 % Aufschlag, Abriss 15 DM je Platz. Baukosten je Platz (1975): Stehplatz 35 DM, Holzbank 65, Schalensitz 120, Komfortsitz 210, Business-Seat 550; Teildach 22, volles Dach 55 DM; VIP-Tribüne 125.000, Loge 55.000 DM.
-- **Sitzart je Rang:** Stehplätze (fassen doppelt so viele Menschen wie Sitze, bringen aber nur 75 % des Grundpreises), Holzbänke (bis 1999), Schalensitze, Komfortsitze (ab 1988), Business-Seats (ab 1992, gut dreifacher Preis, wenig Platz). Der Eintritt richtet sich nach dem **Preismix** gegenüber dem Stand bei Einführung der Blöcke (Faktor 0,7–2,2).
+- **Platzart je Rang:** Stehplätze (fassen doppelt so viele Menschen wie Sitze), Holzbänke (bis 1999) und Schalensitze (offen oder überdacht je nach Dach), Komfortsitze als **Premium** (ab 1988), Business-Seats (ab 1992, nur auf Haupttribüne und Gegengerade, höchstens ein Business-Rang je Block, wenig Platz). Jede Platzart wird als eigene **Platzkategorie** mit eigenem Preis und eigener Nachfrage verkauft (siehe *Platzkategorien, Ticketpreise und Nachfrage*).
 - **Dach:** keins, Teildach oder volles Dach. Überdachte Plätze locken bei Regen bis zu 7 % mehr Zuschauer an, im Winter 3,5 %. Ein neues Dach hebt die Fan-Stimmung um 2 Punkte.
-- **VIP-Tribüne** (ab 1980, nicht in den Kurven): zählt wie 6 Logen. **Logen** (ab 1985; je Block: Haupttribüne Mitte bis 6, sonst auf den Geraden bis 3 bzw. 4 in der Gegengerade Mitte, hinter dem Tor bis 2, Kurven bis 1) brauchen einen zweiten Rang oder ein volles Dach. Jede Loge bringt je Heimspiel 850 DM (1975-Basis) × Preis-Skala × Marke.
+- **VIP-Bereich** (ab 1980, nicht in den Kurven): Business-Club mit rund 200 Business-Seats (Gerade). **Logen** (ab 1985; je Block: Haupttribüne Mitte bis 6, sonst auf den Geraden bis 3 bzw. 4 in der Gegengerade Mitte, hinter dem Tor bis 2, Kurven bis 1) brauchen einen zweiten Rang oder ein volles Dach. Logen werden je Heimspiel vermietet – so viele, wie der Hospitality-Markt des Vereins hergibt.
 - **Anzeigetafel** hinter dem Tor oder in einer Kurve, ab 1994 als Videowand.
 
 ## Bauen
@@ -1680,7 +1702,7 @@ Werden Stehplätze zu Sitzplätzen, murren die Fans: bis zu 12 Punkte Stimmung, 
 Ab 1998 sind im Europapokal nur Sitzplätze erlaubt: Bei Europapokal-Heimspielen werden deine Stehränge mit Klappsitzen bestuhlt und fassen dann nur die Hälfte. Wer oft international spielt, baut deshalb früher auf Sitzplätze um.
 
 ## Gegner
-KI-Vereine bauen weiter vereinfacht aus (Kapazität wächst mit Überschüssen); Blöcke hat nur dein eigener Verein.`,
+KI-Vereine bauen weiter vereinfacht aus (Kapazität wächst mit Überschüssen) und stellen ihren Platzmix je Saison um; Blöcke hat nur dein eigener Verein.`,
   },
   {
     id: 'club-business',
@@ -1696,7 +1718,7 @@ Dein eigenes Stadion baust du Block für Block um (siehe *Stadion: Blöcke, Rän
 - **Zinsen je Epoche:** etwa 8,5 % (1975), 10,5 % (1981), 6 % (1998), 2–3 % (2016–2021), danach wieder rund 4,5 %. Wer im Minus steht, zahlt 1,5 Prozentpunkte Aufschlag.
 
 ## Logen
-Ab 1985 bringt jeder Ausbauschritt Logen mit (8 bis 1992, 16 bis 2003, danach 28). Jede Loge bringt je Heimspiel 850 DM (1975-Basis) × Preis-Skala × Marke.
+Ab 1985 bringt jeder Ausbauschritt Logen mit (8 bis 1992, 16 bis 2003, danach 28). Logen sind eine eigene Platzkategorie mit Preis und begrenzter Nachfrage (siehe *Platzkategorien, Ticketpreise und Nachfrage*).
 
 ## Namensrechte (ab 2000)
 Unter **Verein → Vorstand** liegen drei Angebote fiktiver Firmen (3, 5 oder 8 Jahre). Der Jahreswert richtet sich nach Kapazität und Ansehen und wächst mit Vermarktungs-Skala und Marke; er wird monatlich gebucht. Traditionsvereine zahlen mit Fan-Stimmung (je nach Tradition und Leitbild 2–15 Punkte). Läuft der Vertrag aus, heißt das Stadion wieder wie früher; im letzten Vertragsjahr bietet der Partner eine Verlängerung (+10 %).
@@ -2062,7 +2084,7 @@ Jedes Heimspiel kann **Ausschreitungen** bringen: Grundrisiko 4 % (bis 1979), **
 Ab **2015** stellen manche Länder **Polizeikosten** für Hochrisikospiele (Derbys) in Rechnung (Bremen, erster Bescheid ~425.000 € für Werder–HSV), ab **2025** häufiger (Urteil des Bundesverfassungsgerichts). Ein guter Ordnungsdienst senkt die Rechnung.
 
 ## Hospitality & Medien
-**Hospitality** (VIP-Zelt ab 1985, Business-Club ab 1995, Premium ab 2005) bringt Business-Plätze mit Erlös je Heimspiel (Ruf und Marke bestimmen die Belegung) – zusätzlich zu den Logen im Stadion. **Presse & TV** (Pressezentrum ab 1988, TV-Compound ab 1992, Medienzentrum ab 2008) und **Flutlicht** (300 lx bis LED 1.600 lx) stärken die nationale Marke bzw. erlauben Abendspiele.
+**Hospitality** (VIP-Zelt ab 1985, Business-Club ab 1995, Premium ab 2005) liefert Räume, Küche und Service für die Business-Seats und Logen im Stadion: +6/15/25 % Nachfrage und halb so viel mehr Preisbereitschaft. Eigene Plätze hat das Modul nicht mehr – ohne Business-Seats oder Logen im Stadion bringt es nichts. **Presse & TV** (Pressezentrum ab 1988, TV-Compound ab 1992, Medienzentrum ab 2008) und **Flutlicht** (300 lx bis LED 1.600 lx) stärken die nationale Marke bzw. erlauben Abendspiele.
 **Lizenzauflagen** (1. und 2. Liga) prüft der Verband zu jedem Saisonstart: Flutlicht in der 1. Liga ab 1988 TV-tauglich, ab 2000 1.200 lx, ab 2008 1.400 lx, **ab 2019 1.600 lx** (DFL; 2. Liga je eine Stufe weniger), Presse ab 1992 ein TV-Compound. Fehlt etwas, gibt es eine Geldstrafe, die bei Wiederholung steigt, und der Vorstand verliert Vertrauen.
 
 ## Zustand und Modernisierung

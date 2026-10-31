@@ -1,5 +1,6 @@
 import { recordSeasonBriefing } from './seasonBriefing';
 import { ensureStadiumBlocks } from './stadiumGame';
+import { migrateSeating } from './seatingGame';
 import { ensureYouthTeams } from './youthTeams';
 // Erzeugt ein neues Spiel (Welt, Spielplan, Pokale, Ligen) – ohne Oberfläche, auch für Simulationen.
 import { setEraYear } from '../engine/positions';
@@ -192,6 +193,8 @@ export function createNewGame(opts: NewGameOptions): Game {
   ensureYouthTeams(g0, g0.calendar.currentDate);
   // Stadion in vier Blöcken (game/stadiumGame.ts).
   ensureStadiumBlocks(g0);
+  // Platzkategorien aller Vereine (game/seatingGame.ts).
+  migrateSeating(g0);
   // Trainer der KI-Vereine (game/coachCarousel.ts).
   ensureCoaches(g0, calendar.currentDate);
   migrateYouthInvest(g0);

@@ -23,8 +23,8 @@
 //   • Transferausgaben  = Spielerkäufe (siehe transfers.ts → bookTransfer)
 // =============================================================================
 
-import { vipIncome } from './clubBusiness';
-import { ticketFactor } from './stadiumBlocks';
+import { expectedSale, logSeatSale, saleForResult, saleRevenue, type SeatSale } from './seating';
+import type { SeatNums } from '../types';
 import {
   Club, Player, MatchResult, ClubFinances, FinanceCategory, FinanceTransaction, LeagueTable,
   CateringMode, SponsorOffer,
@@ -137,24 +137,20 @@ export function cateringMatchIncome(club: Club, attendance: number, scale = 1): 
 }
 
 /**
- * Erwartete Auslastungsrate bei gegebenem Ticketpreis (Elastizitaets-Vorschau, ohne Zufall).
- * Spiegelt match.ts `estimateAttendance` ohne den +/-0.10-Zufallsterm.
+ * Erwartete Auslastung (Zuschauer ÷ Kapazität) des nächsten Heimspiels ohne Zufall
+ * (engine/seating.ts: Nachfrage je Platzkategorie bei den aktuellen Preisen).
  */
-export function expectedAttendanceRate(club: Club, ticketPrice?: number, year?: number): number {
-  const baseRate = club.stadium.averageAttendanceRate ?? 0.5;
-  const price = ticketPrice ?? club.stadium.ticketPrice ?? 8;
-  const refPrice = fairTicketPrice(club.reputation);
-  const priceFactor = Math.max(0.6, Math.min(1.15, 1 - ((price - refPrice) / refPrice) * 0.5));
-  const demand = year != null ? attendanceDemand(year) : 1;
-  return Math.max(0.15, Math.min(1.0, baseRate * priceFactor * demand));
+export function expectedAttendanceRate(club: Club, _ticketPrice?: number, year?: number): number {
+  const y = year ?? 1975;
+  return Math.max(0, Math.min(1, expectedSale(club, y).attendance / Math.max(1, club.stadium.capacity)));
 }
 
 
 export { fairTicketPrice };
 
-/** Erwartete Zuschauerzahl bei gegebenem Ticketpreis (Vorschau). */
-export function expectedAttendance(club: Club, ticketPrice?: number, year?: number): number {
-  return Math.round(club.stadium.capacity * expectedAttendanceRate(club, ticketPrice, year));
+/** Erwartete Zuschauerzahl des nächsten Heimspiels (Vorschau). */
+export function expectedAttendance(club: Club, _ticketPrice?: number, year?: number): number {
+  return expectedSale(club, year ?? 1975).attendance;
 }
 
 /** Programmhefte & sonstige Spieltagserloese eines Heimspiels (era-skaliert). */
@@ -314,11 +310,10 @@ export function bookHomeMatch(
   if (isHome) {
     const sc = scalesFor(club, date);
     const attendance = result.attendance;
-    const ticket = Math.round(attendance * club.stadium.ticketPrice * ticketFactor(club) * sc.matchday);
+    bookSeatSales(club, result, date, trackDetail, '');
     const merch = Math.round(attendance * merchPerHead(club) * sc.merch);
     const catering = cateringMatchIncome(club, attendance, sc.matchday);
     const matchday = matchdayIncome(attendance, sc.matchday);
-    book(fin, date, ticket, 'ticket_sales', `Stadioneinnahmen (${attendance.toLocaleString('de-DE')} Zuschauer)`, trackDetail);
     book(fin, date, merch, 'merchandise', `Fanartikel-Verkauf (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
     // TV-Gelder: zentral vermarktet, monatliche Rate (bookMonthly).
     if (!fin.tvAnnual) {
@@ -327,8 +322,6 @@ export function bookHomeMatch(
     }
     if (catering > 0) book(fin, date, catering, 'catering', `Catering / Wuerstchenbuden (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
     if (matchday > 0) book(fin, date, matchday, 'matchday', `Programmhefte & Spieltagserloese (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
-    const vip = vipIncome(club, sc.matchday, Number(date.slice(0, 4)));
-    if (vip > 0) book(fin, date, vip, 'commercial', `Logen & VIP-Bereich (${club.stadium.vipBoxes} Logen)`, trackDetail);
     bookGroundsMatchday(club, attendance, date, trackDetail); // Stadionumfeld
   }
   // Leistungsprämie von Sponsoren/Gönnern (1975 ≈ 10.000 DM je Sieg; wächst wie das Stadiongeschäft)
@@ -340,6 +333,33 @@ export function bookHomeMatch(
   // je Sieg gut ein halbes, je Remis ein Fünftel Wochengehalt des Kaders.
   const squadBonus = Math.round((fin.currentWageBill ?? 0) * (won ? PLAYER_WIN_BONUS : drawn ? PLAYER_DRAW_BONUS : 0) * scale);
   if (squadBonus > 0) book(fin, date, -squadBonus, 'wages', won ? 'Siegprämien an die Mannschaft' : 'Punktprämien an die Mannschaft', trackDetail);
+}
+
+/**
+ * Eintritt je Platzkategorie (engine/seating.ts): Steh, Sitz (offen, überdacht, Premium),
+ * Gästeblock, Business-Seats, Logen – alles Spieltagserlös (`ticket_sales`). Der eigene
+ * Verein bekommt je Kategorie eine Zeile und den Verlauf für die Stadionseite.
+ */
+function bookSeatSales(club: Club, result: MatchResult, date: string, track: boolean, prefix: string): void {
+  const y = yearOf(date);
+  const sale: SeatSale = saleForResult(club, result, y);
+  const rev: SeatNums = saleRevenue(club, sale.sold, y);
+  const n = (v?: number) => (v ?? 0).toLocaleString('de-DE');
+  if (!track) {
+    const sum = Object.values(rev).reduce((a, v) => a + (v ?? 0), 0);
+    if (sum > 0) book(club.finances, date, sum, 'ticket_sales', `${prefix}Stadioneinnahmen`, false);
+    return;
+  }
+  const s = sale.sold;
+  const lines: [number, string][] = [
+    [rev.steh ?? 0, `Eintritt Stehplätze (${n(s.steh)})`],
+    [(rev.sitz ?? 0) + (rev.dach ?? 0) + (rev.premium ?? 0), `Eintritt Sitzplätze (${n((s.sitz ?? 0) + (s.dach ?? 0) + (s.premium ?? 0))})`],
+    [rev.gast ?? 0, `Eintritt Gästeblock (${n(s.gast)})`],
+    [rev.business ?? 0, `Business-Seats (${n(s.business)})`],
+    [rev.loge ?? 0, `Logen (${n(s.loge)})`],
+  ];
+  for (const [v, t] of lines) if (v > 0) book(club.finances, date, v, 'ticket_sales', prefix + t, true);
+  logSeatSale(club, date, sale, rev);
 }
 
 /** Spielerprämie je Sieg bzw. Remis (Anteil am Wochen-Grundgehalt des Kaders). */
@@ -366,13 +386,12 @@ export function bookCupHomeMatch(
   const fin = club.finances;
   const sc = scalesFor(club, date);
   const attendance = result.attendance;
-  const ticket = Math.round(attendance * club.stadium.ticketPrice * ticketFactor(club) * sc.matchday);
+  bookSeatSales(club, result, date, trackDetail, 'Pokal: ');
   const merch = Math.round(attendance * merchPerHead(club) * sc.merch);
   // Pokal-TV: Übertragungsrechte je Spiel (wächst mit dem TV-Markt).
   const tv = Math.round((2500 + club.reputation * 50) * revenueScale('tv', yearOf(date)) * (scale > 0 ? 1 : 0));
   const catering = cateringMatchIncome(club, attendance, sc.matchday);
   const matchday = matchdayIncome(attendance, sc.matchday);
-  book(fin, date, ticket, 'ticket_sales', `Pokal-Stadioneinnahmen (${attendance.toLocaleString('de-DE')} Zuschauer)`, trackDetail);
   book(fin, date, merch, 'merchandise', `Fanartikel-Verkauf Pokalspiel (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
   book(fin, date, tv, 'tv_money', 'TV- und Mediengelder (Pokalspiel)', trackDetail);
   if (catering > 0) book(fin, date, catering, 'catering', `Catering Pokalspiel (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
@@ -589,9 +608,10 @@ export function forecastSeasonEnd(
   const sc = scalesFor(club, currentDate);
 
   // Erwartete Einnahme je Heimspiel (Ticket + Catering + Fanartikel + Matchday)
-  const expAtt = Math.min(club.stadium.capacity, Math.round(club.stadium.capacity * club.stadium.averageAttendanceRate * attendanceDemand(year)));
+  const exp = expectedSale(club, year);
+  const expAtt = exp.attendance;
   const perHome = Math.round(
-    expAtt * club.stadium.ticketPrice * ticketFactor(club) * sc.matchday
+    Object.values(saleRevenue(club, exp.sold, year)).reduce((a, v) => a + (v ?? 0), 0)
     + cateringMatchIncome(club, expAtt, sc.matchday)
     + expAtt * merchPerHead(club) * sc.merch
     + matchdayIncome(expAtt, sc.matchday)

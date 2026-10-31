@@ -129,7 +129,7 @@ export const STAFF_ROLES: StaffRole[] = [
   { id: 'pressesprecher', name: 'Pressesprecher', group: 'media', unlockYear: 1983, costClass: 'K2',
     effect: 'Steuert die Außendarstellung – etwas mehr Reichweite.', reach: 0.05 },
   { id: 'kaufm_leiter', name: 'Kaufmännischer Leiter', group: 'admin', unlockYear: 1983, costClass: 'K4',
-    effect: 'Professionalisiert die kaufmännische Führung.', flavor: true },
+    effect: 'Professionalisiert die kaufmännische Führung; schätzt die Ticket-Nachfrage genauer.', flavor: true },
   { id: 'gegnerbeobachter', name: 'Gegnerbeobachter', group: 'scouting', unlockYear: 1983, costClass: 'K2',
     effect: 'Analysiert Gegner & Talente – bessere Scouting-Genauigkeit.', scouting: 0.04 },
 
@@ -141,7 +141,7 @@ export const STAFF_ROLES: StaffRole[] = [
   { id: 'intl_scout', name: 'Internationaler Scout', group: 'scouting', unlockYear: 1993, costClass: 'K3',
     effect: 'Beobachtet Talente im Ausland – bessere Scouting-Genauigkeit.', scouting: 0.05 },
   { id: 'marketingmanager', name: 'Marketing-/Sponsoringmanager', group: 'media', unlockYear: 1993, costClass: 'K4',
-    effect: 'Erschließt Sponsoren & Fanmärkte – mehr Reichweite.', reach: 0.06 },
+    effect: 'Erschließt Sponsoren & Fanmärkte – mehr Reichweite; genauere Nachfrage-Schätzung.', reach: 0.06 },
   { id: 'reha_trainer', name: 'Reha-Trainer', group: 'medical', unlockYear: 1993, costClass: 'K3',
     effect: 'Spezialisiert auf Wiederaufbau – verkürzt Ausfallzeiten spürbar.', rehabReduction: 0.10, recovery: 0.3 },
   { id: 'videoanalyst', name: 'Videoanalyst', group: 'scouting', unlockYear: 1993, costClass: 'K2',
@@ -149,7 +149,7 @@ export const STAFF_ROLES: StaffRole[] = [
   { id: 'vertragsmanager', name: 'Vertrags-/Rechtsmanager', group: 'admin', unlockYear: 1993, costClass: 'K3',
     effect: 'Betreut Verträge & rechtliche Fragen.', flavor: true },
   { id: 'eventmanager', name: 'Stadion-/Eventmanager', group: 'media', unlockYear: 1993, costClass: 'K3',
-    effect: 'Organisiert Spieltag-Events – etwas mehr Reichweite.', reach: 0.04 },
+    effect: 'Organisiert Spieltag-Events – etwas mehr Reichweite; kennt die Ticket-Nachfrage.', reach: 0.04 },
 
   // ===== 2003 — moderne Strukturen =====
   { id: 'leistungsdiag', name: 'Leistungsdiagnostiker', group: 'medical', unlockYear: 2003, costClass: 'K3',
@@ -171,7 +171,7 @@ export const STAFF_ROLES: StaffRole[] = [
 
   // ===== 2013 — Datenzeitalter =====
   { id: 'datenanalyst', name: 'Datenanalyst', group: 'scouting', unlockYear: 2013, costClass: 'K3',
-    effect: 'Datengestütztes Scouting – deutlich höhere Genauigkeit.', scouting: 0.06 },
+    effect: 'Datengestütztes Scouting – deutlich höhere Genauigkeit; hilft bei der Ticket-Nachfrage.', scouting: 0.06 },
   { id: 'dateningenieur', name: 'Dateningenieur', group: 'scouting', unlockYear: 2013, costClass: 'K3',
     effect: 'Baut Datenpipelines für Scouting & Analyse.', scouting: 0.03 },
   { id: 'socialmedia', name: 'Social-Media-Manager', group: 'media', unlockYear: 2013, costClass: 'K3',
@@ -199,7 +199,7 @@ export const STAFF_ROLES: StaffRole[] = [
   { id: 'nachhaltigkeit', name: 'Nachhaltigkeitsmanager', group: 'admin', unlockYear: 2021, costClass: 'K3',
     effect: 'Verantwortet Nachhaltigkeit & CSR des Vereins.', flavor: true },
   { id: 'crm_manager', name: 'Fan-Data/CRM-Manager', group: 'media', unlockYear: 2021, costClass: 'K3',
-    effect: 'Datenbasierte Fanbindung – mehr Reichweite.', reach: 0.06 },
+    effect: 'Datenbasierte Fanbindung – mehr Reichweite; sehr genaue Nachfrage-Schätzung.', reach: 0.06 },
   { id: 'ki_scouting', name: 'KI-Scouting-Leiter', group: 'scouting', unlockYear: 2021, costClass: 'K4',
     effect: 'KI-gestützte Talentsuche – höchste Scouting-Genauigkeit.', scouting: 0.05 },
 ];

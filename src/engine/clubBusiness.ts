@@ -10,7 +10,6 @@ import { economyScale, revenueScale } from './economy';
 import { CAPACITY_PER_LEVEL, MAX_LEVEL, upgradeCost } from './infrastructure';
 import { book } from './finances';
 import { commercialMultiplier } from './clubEconomy';
-import { vipAreaBoxes } from './stadiumBlocks';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -153,12 +152,7 @@ export function advanceStadiumProject(club: Club, date: string): string | null {
     + (p.addBoxes ? `, ${club.stadium.vipBoxes} Logen` : '') + '.';
 }
 
-/** Logen-Einnahmen je Heimspiel (nominal). 1975-Basis 850 DM je Loge. */
-export function vipIncome(club: Club, mdScale: number, year: number): number {
-  const boxes = (club.stadium.vipBoxes ?? 0) + vipAreaBoxes(club);
-  if (!boxes) return 0;
-  return Math.round(boxes * 850 * mdScale * clamp(commercialMultiplier(club, year), 0.6, 1.8));
-}
+// Logen und VIP-Bereiche erlösen seit den Platzkategorien je Heimspiel über engine/seating.ts.
 
 // -----------------------------------------------------------------------------
 // Namensrechte (ab 2000)

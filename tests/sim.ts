@@ -106,6 +106,20 @@ function report(game: Game) {
     }
     console.log(`   KI-Konten min ${Math.round(others[0] / 1000)}k median ${Math.round(others[others.length >> 1] / 1000)}k max ${Math.round(others[others.length - 1] / 1000)}k`);
   }
+  if (process.env.SEATS || process.env.FIN) {
+    // Spieltagserlöse (Eintritt aller Platzkategorien + Catering + Programm) der Vorsaison, Liga 1.
+    const lc = leagueClubs(game).filter((c) => !c.id.startsWith('am'));
+    const hs = lc.map((c) => ({ c, h: c.finances.seasonHistory?.[c.finances.seasonHistory.length - 1] })).filter((x) => x.h && x.h.revenue > 0);
+    const md = (h: any) => h.income.ticketSales + h.income.catering + h.income.matchday;
+    const shares = hs.map((x) => md(x.h) / x.h!.revenue).sort((a, b) => a - b);
+    const tops = [...hs].sort((a, b) => md(b.h) - md(a.h));
+    const y0 = Number(game.season.slice(0, 4));
+    const cur = y0 >= 2002 ? 1.95583 : 1;
+    const medMd = hs.map((x) => md(x.h)).sort((a, b) => a - b)[hs.length >> 1] ?? 0;
+    const caps = (c: any) => c.stadium.seating?.caps ?? {};
+    const t = tops[0];
+    console.log(`   SEATS Spieltag Median ${(medMd / cur / 1e6).toFixed(1)} Mio. (${Math.round((shares[shares.length >> 1] ?? 0) * 100)} % Umsatz) | Spitze ${t ? t.c.shortName + ' ' + (md(t.h) / cur / 1e6).toFixed(1) + ' Mio. (' + Math.round(md(t.h) / t.h!.revenue * 100) + ' %)' : '-'}${t ? ' | Mix ' + t.c.shortName + ' ' + JSON.stringify(caps(t.c)) : ''}`);
+  }
   if (process.env.MINE) {
     const sq = my.playerIds.map((id) => game.players[id]).filter(Boolean);
     const ovr = sq.map((p) => p.overall).sort((a, b) => b - a);

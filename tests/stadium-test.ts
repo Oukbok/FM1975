@@ -7,7 +7,9 @@ import { ensureEnvironment } from '../src/game/environmentGame';
 import {
   blockCapacity, blocksCapacity, convertLegacyBlocks, euroCapacity, migrateBlocks, planBlock, priceMix, roofAttendanceFactor, seatedCapacity, ticketFactor, vipAreaBoxes,
 } from '../src/engine/stadiumBlocks';
-import { vipIncome } from '../src/engine/clubBusiness';
+import { blockCaps, vipAreaSeats } from '../src/engine/seating';
+/** Hospitality-Kapazität (Business-Plätze + Logengäste) – ersetzt die alte Logen-Pauschale. */
+const vipIncome = (c: { stadium: { blocks?: StadiumBlock[] } }, _s: number, _y: number) => { const k = blockCaps(c.stadium.blocks!).caps; return (k.business ?? 0) + (k.loge ?? 0) * 11; };
 import { MatchSim } from '../src/engine/match/sim';
 import { StadiumBlock } from '../src/types';
 
@@ -117,7 +119,7 @@ const loans0 = (me.loans ?? []).length;
 const r2 = startBlockBuild(g, vipT, 'loan', 15);
 ok(r2.ok && (me.loans ?? []).length === loans0 + 1, `Kredit für Haupttribüne: ${r2.text}`);
 stadiumDaily(g, me.stadium.blockProject!.finishDate);
-ok(vipIncome(me, 1, 1996) > vip0 && vipAreaBoxes(me) > 0, `VIP-Erlös steigt (${vip0} → ${vipIncome(me, 1, 1996)})`);
+ok(vipIncome(me, 1, 1996) > vip0 && vipAreaBoxes(me) > 0, `VIP-Plätze steigen (${vip0} → ${vipIncome(me, 1, 1996)})`);
 ok(blockCapacity(me.stadium.blocks!.find((b) => b.id === 'main_m')!) > 0, 'Haupttribüne in Ordnung');
 
 // --- Kapazität von außen verändert (Autopilot): Blöcke folgen, Ticketfaktor bleibt ---
@@ -126,7 +128,7 @@ me.stadium.capacity = Math.round(me.stadium.capacity * 1.25);
 stadiumDaily(g, '1997-01-01');
 ok(Math.abs(blocksCapacity(me.stadium.blocks!) - me.stadium.capacity) / me.stadium.capacity < 0.03 && Math.abs(ticketFactor(me) - tf0) < 0.01,
   `Blöcke neu abgeleitet (${me.stadium.capacity}), Ticketfaktor ${tf0.toFixed(3)} → ${ticketFactor(me).toFixed(3)}`);
-ok(vipIncome(me, 1, 1996) === vipBefore, `VIP-Erlös bleibt (${vipBefore} → ${vipIncome(me, 1, 1996)})`);
+ok(vipIncome(me, 1, 1996) === vipBefore, `VIP-Plätze bleiben (${vipBefore} → ${vipIncome(me, 1, 1996)})`);
 
 // --- Europapokal ab 1998: nur Sitzplätze ---
 const seated = euroCapacity(me.stadium.blocks!, me.stadium.capacity);
@@ -137,7 +139,8 @@ for (let s = 1; s <= 20; s++) {
   maxEuro = Math.max(maxEuro, new MatchSim(me, other, g.players, { year: 1999, date: '1999-09-15', seed: s, competition: 'Europapokal' }).attendance);
   maxLiga = Math.max(maxLiga, new MatchSim(me, other, g.players, { year: 1999, date: '1999-09-15', seed: s, competition: 'Liga' }).attendance);
 }
-ok(maxEuro <= seated && maxLiga > seated, `Europapokal max. ${maxEuro} ≤ ${seated} Plätze, Liga bis ${maxLiga}`);
+const hosp = me.stadium.blocks!.reduce((a, b) => a + (b.vip ? vipAreaSeats(b) : 0) + b.lounges * 11, 0); // VIP-Bereiche/Logen kommen dazu
+ok(maxEuro <= seated + hosp && maxLiga > seated, `Europapokal max. ${maxEuro} ≤ ${seated} Plätze + ${hosp} VIP, Liga bis ${maxLiga}`);
 
 console.log(fails ? `\n${fails} Fehler` : '\nAlle Stadion-Tests bestanden.');
 process.exit(fails ? 1 : 0);

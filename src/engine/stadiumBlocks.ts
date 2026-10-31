@@ -8,8 +8,9 @@
 //   Stehplätze zählen doppelt so viele Menschen wie Schalensitze, bringen aber
 //   weniger Eintritt. Der Ticket-Faktor vergleicht den Preismix mit dem Stand
 //   bei Einführung der Blöcke (Umbau zu Sitzen = mehr Erlös je Zuschauer).
-// Dach: mehr Zuschauer bei Regen und im Winter. VIP-Bereich und Logen:
-//   Hospitality-Erlöse je Heimspiel (über vipIncome in clubBusiness.ts).
+// Dach: mehr Zuschauer bei Regen und im Winter. Platzarten, VIP-Bereich und
+//   Logen ergeben die Platzkategorien (engine/seating.ts: blockCaps) mit eigener
+//   Nachfrage und eigenem Preis; Ticket-Faktor und Logen-Pauschale sind abgelöst.
 // Ab 1998 gilt im Europapokal: nur Sitzplätze.
 // Alle Preise in 1975-Basis (DM), gebucht × economyScale.
 // =============================================================================
@@ -39,6 +40,9 @@ export const TIER_NAME = ['Unterrang', 'Mittelrang', 'Oberrang'];
 const SEATS_PER_ROW = 170;
 const SIDE_LENGTH: Record<BlockSide, number> = { main: 1 / 3, opposite: 1 / 3, north: 0.31, south: 0.31, curve: 0.22 };
 const LENGTH = (id: BlockId) => SIDE_LENGTH[BLOCK_SIDE[id]];
+/** Relative Länge eines Blocks (Gerade = 1/3). */
+export const blockLength = LENGTH;
+export const ROOF_COVER = (r: RoofType) => ({ none: 0, partial: 0.5, full: 1 } as const)[r];
 const DENSITY: Record<SeatType, number> = { steh: 2.0, bank: 1.25, schale: 1, komfort: 0.85, business: 0.55 };
 /** Preisfaktor der Platzart (relativ zum Grundpreis). */
 export const SEAT_PRICE: Record<SeatType, number> = { steh: 0.75, bank: 0.9, schale: 1.1, komfort: 1.45, business: 3.2 };
@@ -277,6 +281,12 @@ export function planBlock(cur: StadiumBlock, target: StadiumBlock, year: number,
   if (ROOF_SHARE[target.roof] > ROOF_SHARE[cur.roof]) cost += newCap * (ROOF_COST[target.roof] - ROOF_COST[cur.roof]);
   else if (target.roof === cur.roof && newCap > oldCap) cost += (newCap - oldCap) * ROOF_COST[target.roof];
   if (target.vip && !cur.vip) { if (!vipAvailable(year)) errors.push('VIP-Bereiche gibt es erst ab 1980.'); cost += VIP_COST; }
+  // Bauliche Grenzen für Hospitality: Business-Ränge nur auf den Geraden, höchstens einer je Block.
+  const bizTiers = target.tiers.filter((t) => t.seat === 'business').length;
+  if (bizTiers > cur.tiers.filter((t) => t.seat === 'business').length) {
+    if (BLOCK_SIDE[target.id] !== 'main' && BLOCK_SIDE[target.id] !== 'opposite') errors.push('Business-Seats gibt es nur auf Haupttribüne und Gegengerade.');
+    if (bizTiers > 1) errors.push('Höchstens ein Business-Rang je Block.');
+  }
   if (target.lounges > cur.lounges) {
     if (!loungesAvailable(year)) errors.push('Logen gibt es erst ab 1985.');
     cost += (target.lounges - cur.lounges) * LOUNGE_COST;

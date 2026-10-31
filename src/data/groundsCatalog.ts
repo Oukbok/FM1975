@@ -73,8 +73,10 @@ export interface GroundsLevelDef {
   perMatch?: number;
   /** Erlös je Monat (1975-DM). */
   monthly?: number;
-  /** Business-Plätze. */
+  /** Business-Plätze (alt, nicht mehr verwendet – Business-Seats und Logen liegen im Stadion). */
   seats?: number;
+  /** Hospitality: Aufschlag auf Nachfrage und Preisbereitschaft für Business-Seats und Logen im Stadion (Anteil). */
+  vipMult?: number;
   /** Beleuchtungsstärke (Lux). */
   lux?: number;
   /** Marken-Zuwachs je Saison. */
@@ -226,11 +228,11 @@ export const GROUNDS_MODULES: GroundsModuleDef[] = [
   // ---------------------------------------------------------------- Hospitality & Medien
   {
     key: 'hospitality', name: 'Hospitality', category: 'medien', noise: 0.4, wear: 0.5, lifespan: 20,
-    desc: 'Business-Plätze mit Essen und Netzwerk. Erlöse je Heimspiel, abhängig von Ruf, Liga und Marke. Die Logen im Stadion kommen hinzu.',
+    desc: 'Räume, Küche und Service für die Gäste der Business-Seats und Logen im Stadion. Mehr Gäste buchen, und sie zahlen mehr. Ohne Business-Seats oder Logen im Stadion bringt das nichts.',
     levels: [
-      L({ name: 'VIP-Zelt', unlock: 1985, cost: 150000, upkeep: 1500, area: 2, days: 60, seats: 150, aiRep: 72 }),
-      L({ name: 'Business-Club', unlock: 1995, cost: 500000, upkeep: 4000, area: 2, days: 240, permit: true, seats: 600, brand: { national: 0.2 }, aiRep: 74 }),
-      L({ name: 'Premium-Hospitality', unlock: 2005, cost: 1200000, upkeep: 7500, area: 3, days: 300, permit: true, seats: 1500, brand: { national: 0.4 }, aiRep: 80 }),
+      L({ name: 'VIP-Zelt', unlock: 1985, cost: 150000, upkeep: 1500, area: 2, days: 60, vipMult: 0.06, aiRep: 72 }),
+      L({ name: 'Business-Club', unlock: 1995, cost: 500000, upkeep: 4000, area: 2, days: 240, permit: true, vipMult: 0.15, brand: { national: 0.2 }, aiRep: 74 }),
+      L({ name: 'Premium-Hospitality', unlock: 2005, cost: 1200000, upkeep: 7500, area: 3, days: 300, permit: true, vipMult: 0.25, brand: { national: 0.4 }, aiRep: 80 }),
     ],
   },
   {
