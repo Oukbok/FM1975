@@ -65,7 +65,7 @@ export default function SquadTab({ g, d, openPlayer, onTalk, talkErr }: ClubTabP
                   <td className="num">{p.age}</td>
                   <td className="num"><b style={{ color: vColor(p.overall) }}>{p.overall}</b></td>
                   <td className="nowrap"><ScoutStars p={p} /></td>
-                  <td className="num" style={{ color: 'var(--accent)' }}>{fmtPrice(p.contract.transferValue)}</td>
+                  <td className="num">{fmtPrice(p.contract.transferValue)}</td>
                   <td className="num muted">{monthsUntil(today, p.contract.expiryDate)} M.</td>
                   {!d.isPlayerClub && (
                     <td className="num" onClick={(e) => e.stopPropagation()}>

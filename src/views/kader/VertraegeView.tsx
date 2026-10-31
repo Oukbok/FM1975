@@ -46,7 +46,7 @@ export function VertraegeView({ g, onChange }: { g: Game; onChange?: () => void 
                   <td className="num">{fmtPrice(pl.contract.weeklyWage)}</td>
                   <td className="num nowrap">{CalendarEngine.formatDate(pl.contract.expiryDate)}</td>
                   <td className="num" style={{ color: m <= 6 ? 'var(--red)' : m <= 12 ? 'var(--yellow)' : undefined, fontWeight: 700 }}>{m} M.</td>
-                  <td className="num" style={{ color: 'var(--accent)' }}>{fmtPrice(pl.contract.transferValue)}</td>
+                  <td className="num">{fmtPrice(pl.contract.transferValue)}</td>
                   <td className="num muted">{pl.contract.releaseClause ? fmtDM(pl.contract.releaseClause) : '–'}</td>
                   <td className="num" style={{ color: vColor(pl.contract.satisfaction) }}>{Math.round(pl.contract.satisfaction)}</td>
                 </tr>

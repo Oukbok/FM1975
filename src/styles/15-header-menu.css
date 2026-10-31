@@ -54,7 +54,7 @@
 .menu-dd-item svg { width: 18px; height: 18px; flex: 0 0 auto; }
 .menu-dd-item:hover { background: var(--panel-2); }
 .menu-dd-item.danger { color: var(--red); }
-.menu-dd-item.danger:hover { background: rgba(255, 92, 108, 0.12); }
+.menu-dd-item.danger:hover { background: rgba(224, 100, 111, 0.12); }
 .menu-dd-sep { height: 1px; margin: 4px 6px; background: var(--border); }
 
 

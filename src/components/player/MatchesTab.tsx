@@ -4,7 +4,7 @@ import Icon from '../Icon';
 import { utcDate, Section, Line } from './shared';
 
 // Deutsche Noten: 1 = sehr gut … 6 = ungenügend
-const noteColor = (r: number) => (r <= 2 ? 'var(--green)' : r <= 3 ? 'var(--accent)' : r <= 4 ? 'var(--yellow)' : 'var(--red)');
+const noteColor = (r: number) => (r <= 2 ? 'var(--green)' : r <= 4 ? 'var(--text)' : 'var(--red)');
 
 function NoteChart({ list }: { list: MatchLogEntry[] }) {
   const pts = list.slice(-20);

@@ -126,12 +126,12 @@ export function Dashboard({ g, onGoto, onWatch, onOpenEditor }: {
   const teamChemie = totalPlayers
     ? Math.round(squad.reduce((s, p) => s + 0.7 * (MORALE_CHEM[p.morale] ?? 55) + 0.3 * Math.max(0, Math.min(100, p.form ?? 60)), 0) / totalPlayers)
     : 0;
-  // Positionszaehler im Mockup-Stil (TW/ABW/MF/ST) mit je eigener Akzentfarbe.
+  // Positionszaehler (TW/ABW/MF/ST) – ruhig, ohne Farbcodierung je Mannschaftsteil.
   const posMeta: { key: 'GK' | 'DEF' | 'MID' | 'ATT'; label: string; color: string }[] = [
-    { key: 'GK', label: 'TW', color: '#f2a541' },
-    { key: 'DEF', label: 'ABW', color: '#3ddc84' },
-    { key: 'MID', label: 'MF', color: '#c0a689' },
-    { key: 'ATT', label: 'ST', color: '#9b7cff' },
+    { key: 'GK', label: 'TW', color: 'var(--text-4)' },
+    { key: 'DEF', label: 'ABW', color: 'var(--text-4)' },
+    { key: 'MID', label: 'MF', color: 'var(--text-4)' },
+    { key: 'ATT', label: 'ST', color: 'var(--text-4)' },
   ];
 
   const colorFarben = [myClub.colors.primary, myClub.colors.secondary].filter((c, i, a) => c && a.indexOf(c) === i);
@@ -358,9 +358,9 @@ export function Dashboard({ g, onGoto, onWatch, onOpenEditor }: {
                 ))}
               </div>
               <div className="ckd3-donuts">
-                <Donut value={String(avgOvr)} frac={avgOvr / 100} color="#f2a541" label="Ø Stärke" ring={false} />
-                <Donut value={String(Math.round(avgAge))} frac={avgAge / 40} color="#c0a689" label="Ø Alter" ring={false} />
-                <Donut value={String(teamChemie)} frac={teamChemie / 100} color="#3ddc84" label="Teamchemie" />
+                <Donut value={String(avgOvr)} frac={avgOvr / 100} color="var(--text)" label="Ø Stärke" ring={false} />
+                <Donut value={String(Math.round(avgAge))} frac={avgAge / 40} color="var(--text)" label="Ø Alter" ring={false} />
+                <Donut value={String(teamChemie)} frac={teamChemie / 100} color={teamChemie < 50 ? 'var(--red)' : 'var(--text-2)'} label="Teamchemie" />
               </div>
             </div>
           </div>

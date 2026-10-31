@@ -56,7 +56,7 @@ export default function ClubModal({ g, clubId, nonce, onChange, onClose, onBack 
   return (
     <div className="modal-overlay cmx-overlay" onClick={onClose}>
       <div className="modal modal-xl cmx-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="mx-head cmx-head" style={{ background: `linear-gradient(120deg, ${d.colors.primary}40, transparent 65%)` }}>
+        <div className="mx-head cmx-head" style={{ ['--club' as string]: d.colors.primary }}>
           {onBack && <button className="cmx-back" onClick={onBack} title="Zurück zum vorherigen Verein"><Icon name="swap" size={16} /> Zurück</button>}
           <ClubCrest club={d.crestClub} size={84} />
           <div className="cmx-id">

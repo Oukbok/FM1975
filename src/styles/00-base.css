@@ -31,17 +31,31 @@
   /* Überschriften-/Knopfschrift wie der Startbildschirm */
   --font-display: 'Oswald', 'Barlow', system-ui, sans-serif;
 
-  /* --- Text --- */
-  --text: #f1f4f8;
-  --text-2: #b3bcc8;
-  --text-3: #808a97;
+  /* --- Text (Hierarchie: 1 Werte/Namen · 2 Beschriftungen · 3 Nebeninfo · 4 gedimmt) --- */
+  --text: #eef1f5;
+  --text-2: #aeb7c3;
+  --text-3: #7c8693;
+  --text-4: #59626e;
 
-  /* --- Statusfarben --- */
-  --green: #3ddc84;
-  --yellow: #ffcb45;
-  --orange: #ff7a45;
-  --red: #ff5c6c;
-  --gold: #ffc93c;
+  /* --- Qualitätsskala (monochrom) für Attribute/Stärke: hell = gut, dunkel = schwach.
+     Keine Ampelfarben für Werte – Farbe ist Hervorhebungen und echten Signalen vorbehalten. --- */
+  --q-1: #f3f5f8;   /* >= 80 */
+  --q-2: #c3cad4;   /* 70–79 */
+  --q-3: #8d97a4;   /* 55–69 */
+  --q-4: #626b77;   /* < 55 */
+  --bar-track: rgba(255, 255, 255, 0.06);
+  --bar-fill: #8a94a1;      /* neutraler Balken */
+  --bar-fill-hi: #c9d0d9;   /* heller Balken (gute Werte) */
+
+  /* --- Statusfarben (gedämpft; nur echte Signale: Verletzung, Vertragsende, Trend, Saldo) --- */
+  --green: #5bbf8b;
+  --yellow: #d7b45e;
+  --orange: #d98a5b;
+  --red: #e0646f;
+  --gold: #d9b26a;
+  --pos: var(--green);
+  --neg: var(--red);
+  --warn: var(--yellow);
 
   /* --- Struktur --- */
   --border: #303339;
@@ -607,9 +621,9 @@ tr.me:hover { background: rgba(241, 160, 55, 0.16); }
   font-size: 12px;
   background: var(--panel-2);
 }
-.zone-cl { background: rgba(61, 220, 132, 0.18); color: var(--green); box-shadow: inset 3px 0 0 var(--green); }
+.zone-cl { background: rgba(91, 191, 139, 0.18); color: var(--green); box-shadow: inset 3px 0 0 var(--green); }
 .zone-eu { background: rgba(241, 160, 55, 0.16); color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
-.zone-rel { background: rgba(255, 92, 108, 0.16); color: var(--red); box-shadow: inset 3px 0 0 var(--red); }
+.zone-rel { background: rgba(224, 100, 111, 0.16); color: var(--red); box-shadow: inset 3px 0 0 var(--red); }
 
 /* ---------------------------------------------------------------------------
    Formkreise (W/D/L)
@@ -673,7 +687,7 @@ tr.me:hover { background: rgba(241, 160, 55, 0.16); }
   background: var(--panel-2);
   border: 1px solid var(--border);
 }
-.pill.home { color: var(--green); border-color: rgba(61, 220, 132,0.4); }
+.pill.home { color: var(--green); border-color: rgba(91, 191, 139,0.4); }
 .pill.away { color: var(--accent); border-color: rgba(241, 160, 55,0.4); }
 
 .crest {

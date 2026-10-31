@@ -26,7 +26,7 @@ React 18 + TypeScript, gebaut mit esbuild. Kein Backend – alles läuft im Brow
 - Seiten-Layout: jede Unterseite = `<DashPage>` mit 3×2 `DashBox`en (Spalten/Zeilen per `span`/`rows`), Seite scrollt nie, Boxen intern. Große Popups: `modal modal-xl` + `mx-head`/`mx-body` (optional `mx-grid` mit DashBoxen). Gemeinsame Anzeige-Helfer in `src/views/shared.tsx` (`ScoutStars`, `MatchRow`, `PlayerRow` …), CSS dazu in `styles/22-pages.css`.
 - `src/components/` – wiederverwendbar: Icon, ClubCrest, PlayerAvatar, PlayerModal, ClubModal, LineupView, TacticsView, JerseySVG, ClubEditorModal.
 - `src/components/club/` – Reiter des Vereinsprofils (`components/ClubModal.tsx` ist Rahmen + Kopf): `OverviewTab`/`SquadTab`/`ClubTab`/`HistoryTab`, `shared.tsx` (Trainer-Kachel, Mannschaftsteil-Vergleich, Platzierungsdiagramm). **Jeder Vereinsname/jedes Wappen** über `<ClubLink id>` (`club/ClubLink.tsx`) klickbar; Provider `club/ClubProfileContext.tsx` liegt in `GameShell`. Screenshots: `npm run test:club` (mit `SAVE=…` aus `DUMP=… node scripts/sim.mjs 6` für Historie) → `test-output/club/`.
-- `src/components/player/` – Reiter des Spielerprofils (`PlayerModal.tsx` ist nur Rahmen + Kopf): Übersicht, Attribute, Entwicklung, Statistik, Vertrag, Medizin, Bericht; `shared.tsx` = Kategorien/Beschriftungen.
+- `src/components/player/` – Reiter des Spielerprofils (`PlayerModal.tsx` ist nur Rahmen + Kopf): Übersicht, Attribute (Positionswahl → Schlüsselattribute aus `engine/positions.ts` `weightsFor`, `attrTiers`/`positionChoices` in `shared.tsx`), Entwicklung, Statistik, Vertrag, Medizin, Bericht; `shared.tsx` = Kategorien/Beschriftungen.
 - `src/types/index.ts` – alle zentralen Typen (`Club`, `Player`, `ClubFinances` …). Groß: gezielt per grep lesen.
 - `src/styles/NN-bereich.css` – CSS nach Bereichen; Reihenfolge = Kaskade (`styles/index.ts`). Design-Tokens in `00-base.css` (`:root`).
 - `src/data/dataset/` – Datensätze (Modding): `schema.ts` Format, `builtin.ts` Standard, `apply.ts` Anwenden, `storage.ts` IndexedDB. `src/editor/` – externer Datensatz-Editor (eigene Seite `/editor/`, zweiter esbuild-Einstieg `src/editor/main.tsx` → `dist/editor/`; Bereiche in `editor/sections/`, Prüfungen in `editor/validate.ts`). Neue Datensatz-Felder: Schema + builtin + apply + Editor-Bereich + `DATASET_SPEC.md`.
@@ -42,6 +42,14 @@ React 18 + TypeScript, gebaut mit esbuild. Kein Backend – alles läuft im Brow
 - Neue Seiten: in `MENU_STRUCTURE` eintragen (erster Unterpunkt = Kategorie selbst), Kopf über `PageHead`, gerendert in `<main className="app-main">` unter `CalendarStrip`.
 - Alle Vereine werden simuliert. Änderungen minimal und nicht-destruktiv; Spielstand-Kompatibilität beachten (`SAVE_VERSION` in `engine/save.ts`).
 - **Wiki-Pflicht:** neue/geänderte Mechanik → passenden Artikel in `src/data/wiki.ts` mitpflegen (einzige Wiki-Quelle).
+
+## Optik (erwachsen, ruhig – gilt für jede neue Seite)
+- Flächen neutral, Rahmen dezent (`--border`/`--border-soft`), Radien klein (4–8 px); keine Verläufe aus Vereinsfarben – Vereinsfarbe höchstens als 3-px-Linie (`--club`, siehe `.pp-header`/`.cmx-head`).
+- Text-Hierarchie über Tokens: `--text` Werte/Namen, `--text-2` Beschriftungen, `--text-3` Nebeninfo/Spaltenköpfe, `--text-4` gedimmt. Abschnittstitel klein, Großbuchstaben, `--text-3` (nicht Bernstein).
+- Werte (Attribute, Stärke, Eignung) **monochrom**: `vColor`/`vBar` aus `ui/format.ts` (Skala `--q-1…4`). Keine Ampel-Balken. Zustände (Frische, Fitness, Moral, Vertrauen): `condColor`/`condBar` – neutral, erst bei niedrigen Werten Gelb/Rot.
+- Bernstein (`--accent`) nur für Auswahl, aktiven Reiter, eigenen Verein, Hervorhebung (z. B. Schlüsselattribute) und Hauptknopf – nicht für Kennzahlen, Überschriften, Icons oder Listenwerte. Grün/Rot (`--pos`/`--neg`, gedämpft) nur für echte Signale (Saldo, Verletzung, Vertragsende, Trend, Tabellenzonen).
+- Zahlen tabellarisch (global `tabular-nums`); große Kennzahlen in Oswald (`--font-display`), Gewicht 500–600, weiß. Wenige Icons: Box-Kopf-Icon grau, keine Icons vor Listenzeilen/Balken.
+- Pillen/Badges sparsam, eckig (4 px), neutral; Positionskürzel als umrandetes Etikett (`.pos-badge`). Übergreifende Optik-Regeln stehen in `styles/29-look.css` (zuletzt geladen); Screenshots Vorher/Nachher: `node tests/look-shots.mjs [ordner]`.
 
 ## Arbeitsweise
 - Vor dem Commit: `npm run check` (0 Fehler) und `npm run build`; bei UI-Änderungen zusätzlich `npm run test:ui`.

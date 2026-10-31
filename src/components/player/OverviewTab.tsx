@@ -2,9 +2,8 @@
 import { Player } from '../../types';
 import { POSITION_NAMES_DE } from '../../engine/positions';
 import { fmtDM, fmtDMfull, vColor, fmtPrice, fmtPriceFull } from '../../ui/format';
-import Icon from '../Icon';
 import {
-  ATTR_DE, groupsFor, sortedKeys, keyAttributes, PITCH_POS, ratingFor, positionsOf, utcDate,
+  ATTR_DE, groupsFor, sortedKeys, keyAttributes, attrTiers, PITCH_POS, ratingFor, positionsOf, utcDate,
   Section, Line, Stat, AttrRow,
 } from './shared';
 
@@ -43,21 +42,22 @@ export function strengthsWeaknesses(p: Player) {
 export default function OverviewTab({ p }: { p: Player }) {
   const s = p.seasonStats;
   const { strengths, weaknesses } = strengthsWeaknesses(p);
+  const tiers = attrTiers(p.naturalPosition);
   return (
     <div className="pp-grid pp-grid-overview">
-      <Section title="Fähigkeiten" icon={<Icon name="training" size={15} />}>
+      <Section title="Fähigkeiten" right={<span className="pp-key-hint">Schlüsselattribute für {p.naturalPosition}</span>}>
         <div className="pp-skill-groups">
           {groupsFor(p).map((grp) => (
             <div key={grp.title} className="pp-skill-group">
               <div className="pp-skill-gt">{grp.title}</div>
-              {sortedKeys(grp.keys).map((k) => <AttrRow key={k} label={ATTR_DE[k]} value={Math.round(p.attributes[k])} />)}
+              {sortedKeys(grp.keys).map((k) => <AttrRow key={k} label={ATTR_DE[k]} value={Math.round(p.attributes[k])} tier={tiers.get(k) === 'core' ? 'core' : undefined} />)}
             </div>
           ))}
         </div>
       </Section>
 
       <div className="pp-stack">
-        <Section title="Positionen" icon={<Icon name="tactics" size={15} />}>
+        <Section title="Positionen">
           <Pitch player={p} />
           <div className="pp-list mt8">
             {positionsOf(p).map((pos) => (
@@ -65,7 +65,7 @@ export default function OverviewTab({ p }: { p: Player }) {
             ))}
           </div>
         </Section>
-        <Section title="Stärken & Schwächen" icon={<Icon name="stats" size={15} />}>
+        <Section title="Stärken & Schwächen">
           <div className="pp-sw">
             <div>{strengths.map((k) => <div key={k} className="pp-sw-item plus">+ {ATTR_DE[k]} <b>{Math.round(p.attributes[k])}</b></div>)}</div>
             <div>{weaknesses.map((k) => <div key={k} className="pp-sw-item minus">− {ATTR_DE[k]} <b>{Math.round(p.attributes[k])}</b></div>)}</div>
@@ -74,7 +74,7 @@ export default function OverviewTab({ p }: { p: Player }) {
       </div>
 
       <div className="pp-stack">
-        <Section title="Saison" icon={<Icon name="schedule" size={15} />}>
+        <Section title="Saison">
           <div className="pp-stat-grid">
             <Stat label="Einsätze" value={s.appearances} sub={`${s.starts} Startelf`} />
             <Stat label="Tore" value={s.goals} />
@@ -86,7 +86,7 @@ export default function OverviewTab({ p }: { p: Player }) {
               : <Stat label="Ø Note" value={s.averageRating > 0 ? s.averageRating.toFixed(2) : '—'} />}
           </div>
         </Section>
-        <Section title="Vertrag" icon={<Icon name="contracts" size={15} />}>
+        <Section title="Vertrag">
           <div className="pp-list">
             <Line label="Marktwert" value={fmtPrice(p.contract.transferValue)} strong />
             <Line label="Gehalt / Woche" value={fmtPriceFull(p.contract.weeklyWage)} />
