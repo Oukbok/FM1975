@@ -416,6 +416,18 @@ export const RAW: Record<string, string> = {
   // Textmodus: Vorspulen — weisses + tuerkises Dreieck
   skip:
     '<path d="M4 6v12l8-6Z" fill="%BASE%"/><path d="M12 6v12l8-6Z" fill="%ACCENT%"/>',
+
+  // Stadionumfeld: Anreise — weisse Straßenbahn mit Akzent-Fensterband
+  transit:
+    '<rect x="5" y="4.5" width="14" height="13" rx="3" fill="%BASE%"/>' +
+    '<rect x="7" y="7" width="10" height="4" rx="1" fill="%ACCENT%"/>' +
+    '<circle cx="8.5" cy="14.5" r="1.1" fill="#1b1317"/><circle cx="15.5" cy="14.5" r="1.1" fill="#1b1317"/>' +
+    '<path d="M8 17.5 6 20.5M16 17.5l2 3" stroke="%BASE%" stroke-width="1.5" stroke-linecap="round"/>',
+
+  // Stadionumfeld: Sicherheit — weisses Schild mit Akzent-Haken
+  shield:
+    '<path d="M12 3.5 19 6v5.5c0 4.3-2.9 7.6-7 9-4.1-1.4-7-4.7-7-9V6Z" fill="%BASE%"/>' +
+    '<path d="m8.8 12 2.3 2.3 4.3-4.6" fill="none" stroke="%ACCENT%" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
 };
 
 /** Gültige Icon-Namen (englische Keys). */

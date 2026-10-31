@@ -38,6 +38,10 @@ import { compressToUTF16, decompressFromUTF16 } from 'lz-string';
 //     und Trainingslager (`game.camps`: Buchungen, KI-Lager, Verlauf). Beide optional,
 //     Nachrüstung idempotent über migrateWinter (game/winterShared.ts) in doLoad.
 //     Masters-Titel als TitleKind 'halle' in `clubRecords`.
+// v11 (Sammel-Update): Stadionumfeld — optionales `Club.grounds` (Lage, Fläche,
+//     Parkplätze, ÖPNV, Handel, Sicherheit, Hospitality, Medien, Bauvorhaben).
+//     Altstände bekommen in doLoad (App.tsx → migrateGrounds, game/groundsGame.ts)
+//     eine epochentypische Ausstattung; vorhandene Einrichtungen bleiben unverändert.
 export const SAVE_VERSION = 10;
 
 /** Metadaten eines Speicherstands (für die Slot-Übersicht). */

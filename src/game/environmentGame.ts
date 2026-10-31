@@ -12,6 +12,7 @@ import { book } from '../engine/finances';
 import { yearOf } from '../engine/economy';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { expectationShift } from './clubBusiness';
+import { groundsMoodBonus } from '../engine/grounds';
 
 export function ensureEnvironment(g: Game): ClubEnvironment {
   const club = g.clubs[g.managedClubId];
@@ -62,7 +63,7 @@ export function monthlyEnvironmentUpdate(g: Game, today: string): void {
   const res = monthlyEnvironment(env, club, {
     year, ppg, games: last5.length, derbies, priceRatio: club.stadium.ticketPrice / fair,
     tablePos: pos, tableSize: size, expectedPos: expectedPosition(club.boardExpectation, size),
-    identity: env.identity, balanceTrend,
+    identity: env.identity, balanceTrend, groundsMood: groundsMoodBonus(club.grounds, year, today),
   });
   club.members = env.members;
   club.stadium.averageAttendanceRate = Math.max(0.3, Math.min(0.98, club.stadium.averageAttendanceRate + attendanceNudge(env.fanMood, year)));

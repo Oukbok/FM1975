@@ -139,15 +139,76 @@ export function Car({ x, y, color, era }: { x: number; y: number; color: string;
   );
 }
 
-/** Flutlichtmast. */
-export function Floodlight({ x, y, h }: { x: number; y: number; h: number }) {
+/** Flutlichtmast. `lux` (300–1600) steuert Lampenfeld und Lichtkegel. */
+export function Floodlight({ x, y, h, lux = 300 }: { x: number; y: number; h: number; lux?: number }) {
   const [bx, by] = P(x, y, 0);
   const [, ty] = P(x, y, h);
+  const w = lux >= 1400 ? 22 : lux >= 800 ? 19 : 16;
+  const led = lux >= 1600;
   return (
     <g>
-      <line x1={bx} y1={by} x2={bx} y2={ty} stroke="#6f7782" strokeWidth={2.4} />
-      <rect x={bx - 8} y={ty - 7} width={16} height={8} fill="#2d333b" stroke="#6f7782" />
-      <rect x={bx - 6} y={ty - 5} width={12} height={4} fill="#fff6c8" />
+      <line x1={bx} y1={by} x2={bx} y2={ty} stroke="#6f7782" strokeWidth={lux >= 800 ? 3 : 2.4} />
+      {lux >= 1200 && <path d={`M${bx - w / 2},${ty + 3} L${bx - w * 1.1},${ty + 26} L${bx + w * 1.1},${ty + 26} L${bx + w / 2},${ty + 3} Z`} fill={led ? 'rgba(240,248,255,0.13)' : 'rgba(255,236,170,0.12)'} />}
+      <rect x={bx - w / 2} y={ty - 7} width={w} height={lux >= 800 ? 10 : 8} fill="#2d333b" stroke="#6f7782" />
+      <rect x={bx - w / 2 + 2} y={ty - 5} width={w - 4} height={lux >= 800 ? 6 : 4} fill={led ? '#f4f8ff' : '#fff6c8'} />
+    </g>
+  );
+}
+
+/** Bus (Shuttle). Länge entlang x. */
+export function Bus({ x, y, color = '#e8c547' }: { x: number; y: number; color?: string }) {
+  return (
+    <g>
+      <Box x={x} y={y} w={3.2} d={1.1} h={1.1} color={color} />
+      <Box x={x + 0.2} y={y + 1.1} w={2.8} d={0.01} h={0.4} z={0.55} color="#9fc3d6" />
+    </g>
+  );
+}
+
+/** Zug/Straßenbahn aus `n` Wagen entlang y. */
+export function Train({ x, y, n = 3, color = '#c8463c', era = 1975 }: { x: number; y: number; n?: number; color?: string; era?: number }) {
+  const out: ReactNode[] = [];
+  for (let i = 0; i < n; i++) {
+    out.push(<g key={i}>
+      <Box x={x} y={y + i * 4.2} w={1.2} d={3.9} h={1.3} color={color} top={shade(color, 1.15)} />
+      <Box x={x + 1.2} y={y + i * 4.2 + 0.3} w={0.01} d={3.3} h={0.45} z={0.6} color={era >= 2000 ? '#2c3540' : '#e9dfc4'} />
+    </g>);
+  }
+  return <g>{out}</g>;
+}
+
+/** Spitzzelt (VIP-Zelt, Fan-Zone). */
+export function Tent({ x, y, w, d, h, color = '#f4f2ee', peak = 1.4 }: { x: number; y: number; w: number; d: number; h: number; color?: string; peak?: number }) {
+  const c = [x + w / 2, y + d / 2] as const;
+  return (
+    <g>
+      <Box x={x} y={y} w={w} d={d} h={h} color={shade(color, 0.92)} />
+      <polygon points={pts(P(x, y + d, h), P(x + w, y + d, h), P(c[0], c[1], h + peak))} fill={shade(color, 0.9)} />
+      <polygon points={pts(P(x + w, y, h), P(x + w, y + d, h), P(c[0], c[1], h + peak))} fill={shade(color, 1.0)} />
+      <polygon points={pts(P(x, y, h), P(x + w, y, h), P(c[0], c[1], h + peak))} fill={shade(color, 1.08)} />
+    </g>
+  );
+}
+
+/** Satellitenschüssel. */
+export function Dish({ x, y, z = 0, r = 7 }: { x: number; y: number; z?: number; r?: number }) {
+  const [cx, cy] = P(x, y, z);
+  return (
+    <g>
+      <line x1={cx} y1={cy} x2={cx} y2={cy - r * 1.2} stroke="#8c96a0" strokeWidth={1.5} />
+      <ellipse cx={cx} cy={cy - r * 1.4} rx={r} ry={r * 0.55} fill="#e8edf1" stroke="#9aa6b2" transform={`rotate(-25 ${cx} ${cy - r * 1.4})`} />
+    </g>
+  );
+}
+
+/** Zaun entlang eines Rechtecks (zugekauftes Grundstück). */
+export function Fence({ x, y, w, d, color = '#c9b48a' }: { x: number; y: number; w: number; d: number; color?: string }) {
+  const posts: ReactNode[] = [];
+  for (let u = 0; u <= w; u += 1.5) posts.push(<line key={`a${u}`} x1={P(x + u, y + d)[0]} y1={P(x + u, y + d)[1]} x2={P(x + u, y + d, 0.6)[0]} y2={P(x + u, y + d, 0.6)[1]} stroke={color} strokeWidth={1.2} />);
+  return (
+    <g>
+      <polyline points={pts(P(x, y, 0.5), P(x + w, y, 0.5), P(x + w, y + d, 0.5), P(x, y + d, 0.5), P(x, y, 0.5))} fill="none" stroke={color} strokeWidth={1.2} />
+      {posts}
     </g>
   );
 }

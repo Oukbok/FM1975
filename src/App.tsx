@@ -36,6 +36,7 @@ import { setEventFrequency } from './engine/randomEvents';
 import { ensureYouthTeams } from './game/youthTeams';
 import { migrateAiClubs } from './game/aiClubs';
 import { migrateWinter } from './game/winterShared';
+import { migrateGrounds } from './game/groundsGame';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 // =============================================================================
@@ -315,6 +316,8 @@ export default function App() {
     try { migrateAiClubs(s.game); } catch (err) { console.error('Trainer-Nachrüstung fehlgeschlagen:', err); }
     // Hallenfußball + Trainingslager (v11 Sammel-Update): optionale Felder nachrüsten.
     try { migrateWinter(s.game); } catch (err) { console.error('Winter-Nachrüstung fehlgeschlagen:', err); }
+    // Stadionumfeld (v11-Sammel-Update): Lage, Fläche, epochentypische Ausstattung nachrüsten.
+    try { migrateGrounds(s.game); } catch (err) { console.error('Umfeld-Nachrüstung fehlgeschlagen:', err); }
     gameRef.current = s.game;
     setCurrentSlot(slot);
     setInGame(true);

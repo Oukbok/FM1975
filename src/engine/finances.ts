@@ -31,6 +31,8 @@ import {
 import { facilityUpkeep } from './infrastructure';
 import { economyScale, revenueScale, yearOf } from './economy';
 import { commercialMultiplier } from './clubEconomy';
+// ANSCHLUSS Stadionumfeld (engine/grounds.ts): Parken, Ordnungsdienst, Hospitality, Anreise-Chaos je Heimspiel.
+import { bookGroundsMatchday } from './grounds';
 
 /**
  * Finanzen 2.0: Skalierung je Erlösart aus dem Buchungsdatum. Stadion-Erlöse wachsen
@@ -301,6 +303,7 @@ export function bookHomeMatch(
     if (matchday > 0) book(fin, date, matchday, 'matchday', `Programmhefte & Spieltagserloese (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
     const vip = vipIncome(club, sc.matchday, Number(date.slice(0, 4)));
     if (vip > 0) book(fin, date, vip, 'commercial', `Logen & VIP-Bereich (${club.stadium.vipBoxes} Logen)`, trackDetail);
+    bookGroundsMatchday(club, attendance, date, trackDetail); // Stadionumfeld
   }
   // Leistungsprämie (2-Punkte-Ära: bescheiden)
   const bonus = Math.round((won ? 25000 + club.reputation * 200 : drawn ? 8000 : 0) * scale);
@@ -335,6 +338,7 @@ export function bookCupHomeMatch(
   book(fin, date, tv, 'tv_money', 'TV- und Mediengelder (Pokalspiel)', trackDetail);
   if (catering > 0) book(fin, date, catering, 'catering', `Catering Pokalspiel (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
   if (matchday > 0) book(fin, date, matchday, 'matchday', `Programmhefte Pokalspiel (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
+  bookGroundsMatchday(club, attendance, date, trackDetail); // Stadionumfeld
 }
 
 /** Bucht das rundenabhängige Landespokal-Preisgeld (Einnahme, in DM). */

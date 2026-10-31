@@ -1265,6 +1265,7 @@ Unter **Verein → Vereinsgelände** siehst du deine Anlage als Zeichnung. Jede 
 | Trainingszentrum | 1 bis 3 Plätze, ab Stufe 3 (ab 1995) Kunstrasen, ab Stufe 4 Flutlicht, Stufe 5 Trainingshalle |
 | Jugendakademie | Jugendplätze und ein Gebäude von der Holzbaracke bis zum Campus mit Internat |
 | Medizin, Fanshop, Buden | wachsen sichtbar mit jeder Stufe |
+| Umfeld | Bahnstrecke mit Sonderzügen und Stadion-Bahnhof, Shuttlebusse, Parkplatz bis Parkhaus, VIP-Zelt bis Premium-Hospitality, Familienbereich, Museum, Fan-Zone, Pressezentrum mit Ü-Wagen, Flutlicht je Lux-Stufe, Vereinsheim, Megastore, Versandlager, Fanprojekt, Fanräume, zugekaufte Grundstücke – noch nicht Gebautes als **Bauplatz** (siehe *Stadionumfeld*) |
 | Reha-Zentrum, NLZ, Leistungszentrum, Datenanalyse | erscheinen erst, wenn ihre Zeit gekommen ist – zuerst als **Bauplatz** |
 
 Der Baustil folgt der Epoche (Backstein und Satteldach in den 70ern und 80ern, Putz und Flachdach ab 1990, Glas ab 2010), die Jahreszeit ist sichtbar (Herbstlaub, Schnee im Winter), und der Parkplatz füllt sich mit dem Ansehen des Vereins. Ein Klick auf ein Gebäude zeigt Stufe, Wirkung, Fixkosten und den nächsten Ausbau.`,
@@ -1941,6 +1942,48 @@ Mit der Checkbox **„Zukunft anzeigen"** siehst du sie schon vorab **ausgegraut
 
 Alle vier Einrichtungen haben — wie die Grund-Einrichtungen — **5 Stufen** und werden erst ab ihrem Freischaltjahr
 ausbaubar.`,
+  },
+  {
+    id: 'facilities-surroundings',
+    category: 'facilities',
+    title: 'Stadionumfeld: Anreise, Handel, Fans, Medien',
+    keywords: ['umfeld', 'stadionumfeld', 'parkplatz', 'parkhaus', 'öpnv', 'kombiticket', 'bahnhof', 'anreise', 'chaos', 'vereinsheim', 'megastore', 'onlineshop', 'museum', 'führung', 'ordnungsdienst', 'fanprojekt', 'familienblock', 'fan-zone', 'choreo', 'hospitality', 'vip', 'business', 'presse', 'tv', 'flutlicht', 'lux', 'lizenz', 'grundstück', 'fläche', 'genehmigung', 'anwohner', 'protest', 'polizei', 'strafe', 'ausschreitungen', 'sanierung', 'abriss'],
+    body: `## Das Umfeld rund ums Stadion
+Unter **Verein → Vereinsgelände** steuerst du neben Training, Jugend und Medizin auch das **Umfeld**: wie die Fans anreisen, was sie rund ums Spiel kaufen, wie sicher es ist und wie Presse, Fernsehen und Sponsoren arbeiten. Rechts wählst du **Lage & Wirkung** (Kennzahlen) oder die **Bauliste**; ein Klick auf ein Gebäude in der Zeichnung öffnet die Details.
+
+## Lage und Fläche
+Jeder Verein hat eine feste **Lage**: **Innenstadt** (viele kommen zu Fuß, gute Bahn, aber nur ~12 Parzellen und empfindliche Nachbarn), **Stadtteil** (~18 Parzellen) oder **Stadtrand** (~26 Parzellen, billiges Land, fast alle kommen mit dem Auto). Trainingsplätze, Gebäude und Umfeld teilen sich die Fläche. Ist sie voll, kaufst du ein **Grundstück** dazu (+2 Parzellen; in der Innenstadt höchstens einmal, teuer) oder **reißt** etwas ab.
+
+## Bauen: Genehmigung, Protest, Bauzeit
+Größere Bauten brauchen eine **Baugenehmigung** (1975 etwa 6 Wochen, ab 2005 vier, ab 2020 sechs Monate). Die Kosten werden beim Antrag gebucht. **Anwohner** können protestieren – je lauter das Bauwerk (Fan-Zone, Flutlicht, Parkplatz) und je enger die Lage, desto eher: Das Verfahren verzögert sich, die Stadt erteilt **Auflagen** (+12 % Kosten) oder **lehnt ab** (90 % zurück). Danach folgt die Bauzeit. Höchstens zwei Vorhaben laufen gleichzeitig.
+
+## Anbindung & Anreise
+| Teil | Stufen | Wirkung |
+|---|---|---|
+| Parkplätze | Schotter → Asphalt → Parkhaus (ab 1985) → Leitsystem (ab 2000) | Parkgebühr je Pkw, mehr Anreisekapazität; das Parkhaus braucht weniger Fläche |
+| ÖPNV | Shuttlebusse → Sonderzüge (Verhandlung) → **Kombiticket** (ab 1993, Vorbild SC Freiburg 1993/94) → eigener Stadion-Bahnhof (ab 2000) | mehr Kapazität, Auslastung +1 bis +5 %; Kosten je Spiel bzw. je Zuschauer |
+
+Ab Stufe 2 verhandelst du mit der **Stadt**: Sie zahlt mit, entscheidet aber nach sechs bis zehn Wochen selbst (besser mit hohem Ansehen, schlechter nach Ausschreitungen). Liegt die Nachfrage über der Kapazität (Autos, Bus & Bahn, Wildparken), gibt es **Anreise-Chaos**: Fans verpassen Buden und Shop (entgangener Umsatz), die Stimmung sinkt, dauerhaft zu kleine Kapazität kostet Auslastung.
+
+## Gastronomie & Handel
+Buden und Fanshop baust du wie bisher aus (Betriebsform des Caterings unter Marketing). Dazu: **Vereinsheim** (Pacht jeden Monat, etwas Stimmung), **Megastore** (ab 1990 als City-Filiale, ab 1995 am Stadion; braucht Fanshop Stufe 3), **Versand & Onlineshop** (Katalog ab 1985, Onlineshop ab 1998, international ab 2010 – je bekannter der Verein, desto mehr), **Vereinsmuseum** (ab 2004, Vorbild HSV-Museum) und **Stadionführungen** (ab 1998). Handelserlöse laufen mit der **Marke** und litten 1997–1999 unter der Fanartikel-Flaute (-30 %).
+
+## Fanbereich & Sicherheit
+Jedes Heimspiel kann **Ausschreitungen** bringen: Grundrisiko 4 % (bis 1979), **12 % in der Hooligan-Zeit 1980–1992**, 6 % ab 1993, 9 % in der Pyro-Zeit 2005–2014, danach 8 %; **Derbys ×2,2**, schlechte Stimmung ×1,3. Folge: **DFB-Geldstrafe**, in den 80ern bleiben Familien weg, die Stimmung leidet. Dagegen helfen **Ordnungsdienst** (bis −65 %, kostet je Zuschauer), **Fanprojekt** (ab 1981 – erstes deutsches Fanprojekt in Bremen; wirkt nach etwa einem Jahr voll; ab 1993 tragen Stadt, Land und DFB nach dem NKSS den Großteil), **Familienblock** (ab 1990: mehr Zuschauer, weniger Krawall, aber Rabatte; zur Ultra-Zeit murrt die Kurve), **Fanräume & Choreo-Lager** (ab 1998, Stimmung) und die **Fan-Zone** (ab 2006, Erlös vor dem Spiel, laut).
+Ab **2015** stellen manche Länder **Polizeikosten** für Hochrisikospiele (Derbys) in Rechnung (Bremen, erster Bescheid ~425.000 € für Werder–HSV), ab **2025** häufiger (Urteil des Bundesverfassungsgerichts). Ein guter Ordnungsdienst senkt die Rechnung.
+
+## Hospitality & Medien
+**Hospitality** (VIP-Zelt ab 1985, Business-Club ab 1995, Premium ab 2005) bringt Business-Plätze mit Erlös je Heimspiel (Ruf und Marke bestimmen die Belegung) – zusätzlich zu den Logen im Stadion. **Presse & TV** (Pressezentrum ab 1988, TV-Compound ab 1992, Medienzentrum ab 2008) und **Flutlicht** (300 lx bis LED 1.600 lx) stärken die nationale Marke bzw. erlauben Abendspiele.
+**Lizenzauflagen** (1. und 2. Liga) prüft der Verband zu jedem Saisonstart: Flutlicht in der 1. Liga ab 1988 TV-tauglich, ab 2000 1.200 lx, ab 2008 1.400 lx, **ab 2019 1.600 lx** (DFL; 2. Liga je eine Stufe weniger), Presse ab 1992 ein TV-Compound. Fehlt etwas, gibt es eine Geldstrafe, die bei Wiederholung steigt, und der Vorstand verliert Vertrauen.
+
+## Zustand und Modernisierung
+Alles nutzt sich ab. Der **Zustand** bestimmt die Wirkung (100 % → voll, 0 % → 60 %). Nach der **Lebensdauer** (z. B. Onlineshop 10, Flutlicht 25 Jahre) gilt eine Anlage als **veraltet**: Sie wirkt schwächer und verfällt doppelt so schnell. **Sanieren** stellt den Zustand her und modernisiert.
+
+## Was es kostet (Größenordnung)
+Preise sind 1975-Basis und wachsen mit dem Stadiongeschäft (bis 2025 etwa ×27). Ein Schotterparkplatz kostet 1975 rund 40.000 DM, ein Parkhaus 1985 etwa 2,5 Mio. DM, Premium-Hospitality 2025 rund 16 Mio. €. 1975 ist das Umfeld ein Nebengeschäft (einige zehntausend DM im Jahr); ein voll ausgebautes Umfeld eines Spitzenclubs bringt 2025 netto über 10 Mio. € im Jahr.
+
+## KI-Vereine
+Die anderen Vereine ziehen vereinfacht mit: Zum Saisonstart bauen sie je nach Ruf und freiem Geld höchstens zwei Stufen aus, sanieren Verfallenes und erfüllen Lizenzauflagen sofort.`,
   },
   // ---------------------------------------------------------------------------
   // MITARBEITER (Personal)

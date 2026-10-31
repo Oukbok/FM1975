@@ -11,9 +11,11 @@ import type { ReactNode } from 'react';
 import { BlockSide, Club, FacilityKey } from '../../../types';
 import { BLOCK_SIDE } from '../../../engine/stadiumBlocks';
 import { tierGeometry } from '../stadium/StadiumScene';
-import { Box, Car, Crane, Flat, Floodlight, GableRoof, P, Pitch, Track, Tree, WindowsFront, WindowsSide, pts, shade } from './isoKit';
+import { Box, Crane, Flat, Floodlight, GableRoof, P, Pitch, Track, Tree, WindowsFront, WindowsSide, pts, shade } from './isoKit';
+import type { ClubGrounds, GroundsModuleKey } from '../../../types/grounds';
+import { SURROUND_ZONES, drawSurroundings } from './SurroundLayer';
 
-export type GroundKey = FacilityKey | 'clubhouse';
+export type GroundKey = FacilityKey | 'clubhouse' | GroundsModuleKey;
 
 export interface SceneProps {
   club: Club;
@@ -63,7 +65,7 @@ export function GroundsScene(props: SceneProps) {
           {node}
           {on && (
             <g className="gr-label" pointerEvents="none">
-              <rect x={lx - labels[k].length * 3.6 - 8} y={ly - 26} width={labels[k].length * 7.2 + 16} height={22} rx={6} fill="rgba(10,16,24,0.88)" stroke="#F2A541" />
+              <rect x={lx - (labels[k] ?? '').length * 3.6 - 8} y={ly - 26} width={(labels[k] ?? '').length * 7.2 + 16} height={22} rx={6} fill="rgba(10,16,24,0.88)" stroke="#F2A541" />
               <text x={lx} y={ly - 11} textAnchor="middle" fill="#fff" fontSize={12} fontWeight={800}>{labels[k]}</text>
             </g>
           )}
@@ -74,6 +76,8 @@ export function GroundsScene(props: SceneProps) {
   const plain = (key: string, depth: number, node: ReactNode) => objs.push({ key, depth, node });
 
   // ---------------------------------------------------------------- Stadion
+  let mastPos: [number, number][] = [];
+  let mastH = 8;
   const L = lvl('stadium');
   // Eigener Verein mit Blöcken (engine/stadiumBlocks.ts): Höhe/Dach je Seite aus den Rängen.
   const bl = club.stadium.blocks;
@@ -108,10 +112,6 @@ export function GroundsScene(props: SceneProps) {
         {has('south', L >= 3) && stand(px + pw + off, py - off, 2.4, pd + 2 * off, hOf('south', sh * (arena ? 1 : 0.85)))}
         {arena && <polygon points={pts(P(px - off - 2.6, py - off - 2.6, sh + 0.9), P(px + pw + off + 2.6, py - off - 2.6, sh + 0.9), P(px + pw + off + 2.6, py + pd + off + 2.2, sh + 0.9), P(px - off - 2.6, py + pd + off + 2.2, sh + 0.9), P(px - off - 2.6, py - off - 2.6, sh + 0.9), P(px - off + 0.8, py - off + 0.8, sh + 0.9), P(px - off + 0.8, py + pd + off - 0.8, sh + 0.9), P(px + pw + off - 0.8, py + pd + off - 0.8, sh + 0.9), P(px + pw + off - 0.8, py - off + 0.8, sh + 0.9), P(px - off + 0.8, py - off + 0.8, sh + 0.9))}
           fill="rgba(210,225,235,0.42)" stroke="#dfe7ee" strokeWidth={1} fillRule="evenodd" />}
-        {!arena && <>
-          <Floodlight x={px - off - 2.8} y={py - off - 2.8} h={sh + 6} />
-          <Floodlight x={px + pw + off + 2.8} y={py - off - 2.8} h={sh + 6} />
-        </>}
       </g>
     );
     G('stadium', 30, node, [px + pw / 2, py - 2, sh + 2.5]);
@@ -119,9 +119,10 @@ export function GroundsScene(props: SceneProps) {
     if (bl ? blk('main')!.tiers.length >= 2 || arena : L >= 4 || arena) {
       G('stadium', 40, <g>{stand(px - off, py + pd + off, pw + 2 * off, 2.2, bl ? hOf('main', sh) * 0.7 : sh * 0.7)}</g>, [px + pw / 2, py - 2, sh + 2.5]);
     }
-    if (!arena) {
-      plain('fl2', 41, <g><Floodlight x={px - off - 2.8} y={py + pd + off + 2.8} h={sh + 6} /><Floodlight x={px + pw + off + 2.8} y={py + pd + off + 2.8} h={sh + 6} /></g>);
-    }
+    // Flutlicht und Umfeld (SurroundLayer.tsx): Masten an den Ecken, bei der Arena auf dem Dach.
+    const mo = arena ? 2.2 : 2.8;
+    mastPos = [[px - off - mo, py - off - mo], [px + pw + off + mo, py - off - mo], [px - off - mo, py + pd + off + mo], [px + pw + off + mo, py + pd + off + mo]];
+    mastH = arena ? sh + 1.4 : sh + 6;
     if (club.stadiumProject || club.stadium.blockProject) plain('crane', 42, <Crane x={px + pw + off + 4} y={py + pd + 2} h={sh + 8} />);
   }
 
@@ -179,18 +180,6 @@ export function GroundsScene(props: SceneProps) {
         </g>
       </g>
     ), [35.5 + w / 2, 13, h + 1.5]);
-  }
-
-  // ---------------------------------------------------------------- Parkplatz
-  {
-    const cars: ReactNode[] = [];
-    const nCars = Math.round(4 + (club.reputation ?? 60) / 10);
-    const colors = pal.era === 0 ? ['#c0392b', '#e1b12c', '#2e86de', '#6d4c41', '#7f8c8d', '#27ae60'] : pal.era === 1 ? ['#2c3e50', '#bdc3c7', '#8e44ad', '#c0392b', '#16a085', '#ecf0f1'] : ['#ecf0f1', '#2d3436', '#636e72', '#b2bec3', '#0984e3', '#d63031'];
-    for (let i = 0; i < nCars; i++) {
-      const row = Math.floor(i / 6), col = i % 6;
-      cars.push(<Car key={i} x={28 + col * 2} y={3 + row * 2.4} color={colors[Math.floor(hash(i + year) * colors.length)]} era={year} />);
-    }
-    plain('parking', 28 + 12 + 2 + 8, <g><Flat x={27.5} y={2.2} w={12.5} d={8} fill={winter ? '#c7ccd1' : '#4b5159'} />{cars}</g>);
   }
 
   // ---------------------------------------------------------------- Trainingsplätze
@@ -283,17 +272,24 @@ export function GroundsScene(props: SceneProps) {
     </g>
   ), [48, 36, 4.5]);
 
+  // ---------------------------------------------------------------- Stadionumfeld
+  const gr: ClubGrounds = club.grounds ?? { location: 'stadtteil', area: 0, landBought: 0, modules: {}, projects: [], attApplied: 0, log: [] };
+  drawSurroundings({ gr, year, winter, pal, primary, reputation: club.reputation ?? 60, mastPos, mastH, G: (k, d, n, l) => G(k, d, n, l), plain });
+
   // ---------------------------------------------------------------- Bäume
   const trees: [number, number, number][] = [];
   for (let i = 0; i < 26; i++) {
     const t = hash(i * 3.1);
     const edge = i % 4;
     const p = 2 + t * 44;
-    const [x, y] = edge === 0 ? [p, -2.5] : edge === 1 ? [-2.5, p] : edge === 2 ? [p, 45 + hash(i) * 2] : [50.5, p];
+    const q = -6 + t * 56;
+    const [x, y] = edge === 0 ? [q, -8.6] : edge === 1 ? [-9, q] : edge === 2 ? [p, 45.5 + hash(i) * 1.5] : [52, q];
     trees.push([x, y, 0.8 + hash(i + 9) * 0.5]);
   }
   for (const [x, y, s] of [[2, 18.5, 0.9], [16.8, 32, 0.8], [30.8, 32.5, 1], [26, 21.5, 0.8], [46, 21, 0.9], [14, 44, 1]] as [number, number, number][]) trees.push([x, y, s]);
-  trees.forEach(([x, y, s], i) => plain(`tree${i}`, x + y + 0.5, <Tree x={x} y={y} s={s} snow={winter} color={autumn && i % 3 === 0 ? '#c9822c' : '#3f7a3a'} />));
+  const free = ([x, y]: [number, number, number]) => !SURROUND_ZONES.some(([zx, zy, zw, zd]) => x > zx - 0.8 && x < zx + zw + 0.8 && y > zy - 0.8 && y < zy + zd + 0.8)
+    && !(gr.landBought > 0 && y > 46 && x > 3 && x < 4 + gr.landBought * 9.5);
+  trees.filter(free).forEach(([x, y, s], i) => plain(`tree${i}`, x + y + 0.5, <Tree x={x} y={y} s={s} snow={winter} color={autumn && i % 3 === 0 ? '#c9822c' : '#3f7a3a'} />));
 
   objs.sort((a, b) => a.depth - b.depth);
 
@@ -306,17 +302,17 @@ export function GroundsScene(props: SceneProps) {
   );
 
   return (
-    <svg className="gr-svg" viewBox="10 20 1320 770" preserveAspectRatio="xMidYMid meet">
+    <svg className="gr-svg" viewBox="-60 -70 1420 880" preserveAspectRatio="xMidYMid meet">
       <defs>
         <linearGradient id="grSky" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor={winter ? '#c9d6e2' : '#8fc3e8'} />
           <stop offset="1" stopColor={winter ? '#e9eef2' : '#d9eef8'} />
         </linearGradient>
       </defs>
-      <Flat x={-4} y={-4} w={56} d={51} fill={grass} />
-      {path([-4, 20.8], [52, 20.8], 1.6)}
+      <Flat x={-9} y={-9} w={62} d={61} fill={grass} />
+      {path([-5, 20.8], [53, 20.8], 1.6)}
       {path([4, 32.3], [50, 32.3], 1.2)}
-      {pathV([26.5, -4], [26.5, 47], 1.6)}
+      {pathV([26.5, -5.4], [26.5, 52], 1.6)}
       {objs.map((o) => <g key={o.key + o.depth}>{o.node}</g>)}
       {winter && <g pointerEvents="none" opacity={0.7}>{Array.from({ length: 70 }).map((_, i) => <circle key={i} cx={hash(i) * 1300} cy={hash(i + 99) * 760} r={1.5 + hash(i + 7) * 1.5} fill="#fff" />)}</g>}
     </svg>

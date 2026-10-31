@@ -1071,6 +1071,8 @@ export interface Club {
   coach?: ClubCoach;
   /** Frühere Trainer des Vereins (älteste zuerst). */
   coachHistory?: CoachHistoryEntry[];
+  /** Stadionumfeld (Vereinsgelände 2.0, engine/grounds.ts). Optional → migrateGrounds. */
+  grounds?: import('./grounds').ClubGrounds;
 }
 
 /** Spielstil eines KI-Trainers (bestimmt Ausrichtung/Formation der KI). */
