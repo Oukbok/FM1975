@@ -47,6 +47,7 @@ import { stadiumDaily } from './stadiumGame';
 import { ensureYouthTeams, fillYouthTeams, youthChangeMessage, youthTeamsSeasonChange } from './youthTeams';
 import { applyLeagueBalance, ratingTicker, seasonLeagueBalance, snapshotLeague } from './leagueBalance';
 import { monthlyClubBusiness } from './clubBusiness';
+import { groundsDaily } from './groundsGame';
 import { PlayerDevReveal } from '../types';
 import { fmtDM, fmtDMfull, fmtDateFull, setDisplayYear } from '../ui/format';
 import { RatingResult as _RatingResult } from '../engine/development';
@@ -489,6 +490,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   rollAiOffers(g, today);
   checkPromises(g, today);
   transferTalkDaily(g, today);
+  groundsDaily(g, today); // Stadionumfeld: Bauvorhaben, Spiele, Monat, Saison (game/groundsGame.ts)
   if (utcDom === 1) {
     monthlyTrainingReport(g, today);
     monthlySquadHarmony(g, today);

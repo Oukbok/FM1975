@@ -34,6 +34,10 @@ import { compressToUTF16, decompressFromUTF16 } from 'lz-string';
 //     arbeitslose Trainer in `game.coachPool`, Kaderplanung in `game.aiMarket`.
 //     Alle Felder optional; Altstände bekommen in doLoad (App.tsx →
 //     migrateAiClubs, game/aiClubs.ts) Trainer zugewiesen.
+// v11 (Sammel-Update): Stadionumfeld — optionales `Club.grounds` (Lage, Fläche,
+//     Parkplätze, ÖPNV, Handel, Sicherheit, Hospitality, Medien, Bauvorhaben).
+//     Altstände bekommen in doLoad (App.tsx → migrateGrounds, game/groundsGame.ts)
+//     eine epochentypische Ausstattung; vorhandene Einrichtungen bleiben unverändert.
 export const SAVE_VERSION = 10;
 
 /** Metadaten eines Speicherstands (für die Slot-Übersicht). */

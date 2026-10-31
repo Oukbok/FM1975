@@ -160,6 +160,8 @@ export interface MonthInput {
   identity: number;
   /** Kontostand-Tendenz −1..+1. */
   balanceTrend: number;
+  /** Beitrag des Stadionumfelds zur Zielstimmung (engine/grounds.ts groundsMoodBonus, −8..+8). */
+  groundsMood?: number;
 }
 
 export interface MonthResult { moodDelta: number; boardDelta: number; notes: string[] }
@@ -172,6 +174,7 @@ export function monthlyEnvironment(env: ClubEnvironment, club: Club, inp: MonthI
   let target = 0.55 * resultMood + 0.25 * env.identity + 0.2 * 55;
   const derbySum = inp.derbies.reduce((a, b) => a + b, 0);
   target += derbySum * 8;
+  target += inp.groundsMood ?? 0; // Stadionumfeld (Fanprojekt, Fanräume, Chaos, Ausschreitungen …)
   if (derbySum > 0) notes.push('Der Derbysieg hat die Fans begeistert.');
   if (derbySum < 0) notes.push('Die Derbyniederlage schmerzt die Fans.');
   const fair = era.ticketTolerance;
