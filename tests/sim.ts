@@ -128,7 +128,7 @@ function report(game: Game) {
 // -----------------------------------------------------------------------------
 // BAL=1: Kennzahlen für die Langzeit-Balance (eigene Liga = voll simulierte Liga).
 // -----------------------------------------------------------------------------
-const bal = { injSnap: [] as number[], prevIds: new Map<string, number>(), titles: new Map<string, number>(), rows: [] as Record<string, number>[] };
+const bal = { prevClubs: new Set<string>(), newRanks: [] as number[], injSnap: [] as number[], prevIds: new Map<string, number>(), titles: new Map<string, number>(), rows: [] as Record<string, number>[] };
 function balanceReport(game: Game, ps: Player[]) {
   const y0 = Number(game.season.slice(0, 4));
   const from = `${y0}-07-01`, to = `${y0 + 1}-06-30`;
@@ -160,6 +160,14 @@ function balanceReport(game: Game, ps: Player[]) {
   const row = { y: y0, tore: played.length ? goals / played.length : 0, heim: played.length ? hw / played.length : 0, remis: played.length ? dr / played.length : 0, inj, tw0: tw.filter((n) => n === 0).length };
   bal.rows.push(row);
   const snap = bal.injSnap.splice(0);
+  // Aufsteiger (neu in der Spielerliga) und ihr Abschneiden.
+  const rows = game.table.rows ?? [];
+  const newcomers = rows.map((r, i) => ({ id: r.clubId, rank: i + 1 })).filter((r) => bal.prevClubs.size && !bal.prevClubs.has(r.id));
+  bal.prevClubs = new Set(rows.map((r) => r.clubId));
+  if ((game.leagues?.playerDivision?.tier ?? 1) === 1) bal.newRanks.push(...newcomers.map((n) => n.rank));
+  const top11 = (c: { playerIds: string[] }) => { const o = c.playerIds.map((id) => game.players[id]?.overall ?? 0).sort((a, b) => b - a).slice(0, 11); return o.reduce((a, b) => a + b, 0) / Math.max(1, o.length); };
+  const nm = (id: string) => game.clubs[id]?.shortName ?? id;
+  console.log(`   BAL Neu in der Liga: ${newcomers.map((n) => `${nm(n.id)} Platz ${n.rank} (Top11 ${top11(game.clubs[n.id]).toFixed(1)})`).join(', ') || '-'} | Liga-Top11 Median ${(() => { const t = lc.map(top11).sort((a, b) => a - b); return t[t.length >> 1]?.toFixed(1); })()}`);
   console.log(`   BAL Tore/Sp ${row.tore.toFixed(2)} Heim ${(row.heim * 100).toFixed(0)}% Remis ${(row.remis * 100).toFixed(0)}% | Verl. ${inj} verletzt Nov/Mär ${snap.join('/')} (${Math.round(injDays / Math.max(1, ps.length))} T/Sp.) | TW je Verein 0:${tw.filter((n) => n === 0).length} 1:${tw.filter((n) => n === 1).length} 2+:${tw.filter((n) => n >= 2).length}`
     + ` | Alter ≤21 ${pct((a) => a <= 21)}% 22–25 ${pct((a) => a >= 22 && a <= 25)}% 26–29 ${pct((a) => a >= 26 && a <= 29)}% 30–33 ${pct((a) => a >= 30 && a <= 33)}% ≥34 ${pct((a) => a >= 34)}%`
     + ` | weg ${gone} (≥31: ${goneOld}) | Jugend-Eigengew. ${youthOrigin} U21≥75 ${youngStars}`);
@@ -198,6 +206,7 @@ if (process.env.DUMP) {
 if (process.env.BAL) {
   const t = [...bal.titles.entries()].sort((a, b) => b[1] - a[1]);
   const name = (id: string) => g.clubs[id]?.shortName ?? g.simClubs?.[id]?.shortName ?? id;
+  console.log(`BAL Aufsteiger: ${bal.newRanks.length}, Ø Platz ${avg(bal.newRanks).toFixed(1)}, in den Top 3: ${bal.newRanks.filter((r) => r <= 3).length}, Meister: ${bal.newRanks.filter((r) => r === 1).length}`);
   console.log(`BAL Meister (1. Liga, eigene Liga): ${t.length} verschiedene in ${t.reduce((a, x) => a + x[1], 0)} Saisons: ${t.map(([id, n]) => name(id) + ' ' + n).join(', ')}`);
   for (const [a, b] of [[1975, 1985], [1985, 1995], [1995, 2005], [2005, 2015], [2015, 2030]]) {
     const r = bal.rows.filter((x) => x.y >= a && x.y < b && x.tore > 0);
