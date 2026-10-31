@@ -43,6 +43,7 @@ import { transferTalkDaily } from './transferTalks';
 import { applyEuphoria, monthlyClubEvents } from './clubEventsGame';
 import { announceUpcomingRules } from './ruleNotice';
 import { monthlyYouthRecruit } from './youthRecruit';
+import { monthlyYouthInvest, withReserve, youthInvestSeasonStart } from './youthInvest';
 import { stadiumDaily } from './stadiumGame';
 import { ensureYouthTeams, fillYouthTeams, youthChangeMessage, youthTeamsSeasonChange } from './youthTeams';
 import { applyLeagueBalance, ratingTicker, seasonLeagueBalance, snapshotLeague } from './leagueBalance';
@@ -406,6 +407,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
       spawnLegends(g, today);
       // Vertragsende: Wechsel (vor Bosman gegen Ablöse) oder Verlängerung (game/contracts.ts).
       handleContractExpiry(g, today);
+      // Nachwuchs-Investitionen: Ruf, NLZ-Pflicht, Wettbewerb um Talente (game/youthInvest.ts).
+      youthInvestSeasonStart(g, today);
       for (const club of Object.values(g.clubs)) {
         if ((club.infrastructure.lastYouthIntakeYear ?? 0) >= yearNow) continue;
         club.infrastructure.lastYouthIntakeYear = yearNow;
@@ -503,6 +506,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
     monthlyEvents(g, today);
     monthlyClubEvents(g, today);
     monthlyYouthRecruit(g, today);
+    monthlyYouthInvest(g, today);
     // Kreditraten, Stadion-Bauprojekte, Namensrechte (game/clubBusiness.ts).
     monthlyClubBusiness(g, today);
     for (const club of Object.values(g.clubs)) {
@@ -586,7 +590,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
     // direkt verändert (runWeeklyDevelopment mutiert die Attribute/OVR), aber
     // es erscheint KEIN Popup und der Lauf pausiert nicht mehr. Eine Meldung
     // gibt es nur noch bei den großen Auf-/Abwertungsrunden (rating_update).
-    weeklyDevelopment(g.players, g.clubs, yearOf(today), devContextFor(g, today));
+    weeklyDevelopment(g.players, g.clubs, yearOf(today), withReserve(devContextFor(g, today), today));
     // Jugendentwicklung aller Vereine (Talente wachsen; Scouting präzisiert sich).
     // Manager-Verein erhält Boni aus Mitarbeitern (Scouting) und Zukunfts-Bauten
     // (NLZ → Wachstum, Datenanalyse-Zentrum → Scouting) — Block p11.

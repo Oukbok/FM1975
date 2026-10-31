@@ -34,6 +34,7 @@ import { InboxMessage, NewGameOptions, YOUTH_ENTRY_AGE } from '../types';
 import { setDisplayYear } from '../ui/format';
 import { seedStartLegends } from './legendsGame';
 import { ensureCoaches } from './coachCarousel';
+import { migrateYouthInvest } from './youthInvest';
 
 export function createNewGame(opts: NewGameOptions): Game {
   setEraYear(1975);
@@ -190,5 +191,6 @@ export function createNewGame(opts: NewGameOptions): Game {
   ensureStadiumBlocks(g0);
   // Trainer der KI-Vereine (game/coachCarousel.ts).
   ensureCoaches(g0, calendar.currentDate);
+  migrateYouthInvest(g0);
   return g0;
 }

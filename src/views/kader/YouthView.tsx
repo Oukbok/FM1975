@@ -1,4 +1,3 @@
-import { MAX_LEVEL } from '../../engine/infrastructure';
 import { scoutRange } from '../../engine/scouting';
 import { Game } from '../../game/state';
 import { Player, YOUTH_AGE_CLASS_LABEL, YOUTH_AGE_CLASS_ORDER, YOUTH_AGE_CLASS_RANGE, YouthAgeClass, renderStars, youthAgeClass } from '../../types';
@@ -8,6 +7,8 @@ import { PlayerRow } from '../shared';
 import { YouthModal } from './YouthModal';
 import { YOUTH_TEAM_SIZE } from '../../game/youthTeams';
 import { useState } from 'react';
+import { youthInvestOf } from '../../game/youthInvest';
+import { yearOf } from '../../engine/economy';
 
 // =============================================================================
 // JUGEND (Jugendakademie) — Talentliste + Detail mit verstecktem Potenzial
@@ -34,7 +35,7 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
   const [sortBy, setSortBy] = useState<YouthSort>('pot');
   const [classFilter, setClassFilter] = useState<YouthAgeClass | 'ALL'>('A');
   const club = g.clubs[g.managedClubId];
-  const acadLevel = club.infrastructure.youthAcademy;
+  const inv = youthInvestOf(club, yearOf(g.calendar.currentDate));
 
   const sortFn = (a: Player, b: Player) => {
     switch (sortBy) {
@@ -112,13 +113,13 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
         )}
       </DashBox>
 
-      <DashBox title="Jugendakademie" icon="facilities" right={`Stufe ${acadLevel}/${MAX_LEVEL}`}>
-        <Meter label="Akademie-Stufe" value={acadLevel} max={MAX_LEVEL} text={`${acadLevel} / ${MAX_LEVEL}`} />
+      <DashBox title="Jugendakademie" icon="facilities" right={`Ruf ${Math.round(inv.reputation)}`}>
+        <Meter label="Ausbildungsqualität" value={inv.quality} text={`${Math.round(inv.quality)}`} />
         {YOUTH_AGE_CLASS_ORDER.map((cls) => (
           <Meter key={cls} label={`${YOUTH_AGE_CLASS_LABEL[cls]} · ${YOUTH_AGE_CLASS_RANGE[cls].split(' · ')[0]}`} value={byClass[cls].length} max={Math.max(YOUTH_TEAM_SIZE[cls], maxClass)}
             text={`${byClass[cls].length} / ${YOUTH_TEAM_SIZE[cls]}`} />
         ))}
-        <div className="dnote mt8">Jede Altersklasse hat eine volle Mannschaft. Die meisten spielen aus Freude am Fußball – Profi wird nur, wer genug Potenzial hat. Zum 1. Juli rücken alle auf, einige hören auf, Lücken werden aufgefüllt.</div>
+        <div className="dnote mt8">Jede Altersklasse hat eine volle Mannschaft. Die meisten spielen aus Freude am Fußball – Profi wird nur, wer genug Potenzial hat. Zum 1. Juli rücken alle auf, einige hören auf, Lücken werden aufgefüllt. Investitionen steuerst du unter Kader → Akademie.</div>
       </DashBox>
 
       <DashBox title="Größte Talente" icon="trophy">

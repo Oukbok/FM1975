@@ -34,6 +34,7 @@ import { transferPlayer } from './contracts';
 import { sellAbroad } from './aiOffers';
 import { fillSquad, leagueAnchor, MAX_SQUAD, MIN_SQUAD, wageRatioOf } from './squads';
 import { Game } from './state';
+import { aiYouthInvest } from './youthInvest';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const r5k = (v: number) => Math.round(v / 5000) * 5000;
@@ -152,7 +153,11 @@ function marketRound(g: Game, today: string, winter: boolean, rng: () => number)
     const squad = squadOf(g, club);
     const a = assessSquad(squad, club.tactics?.formation, winter ? 60 : 9999);
     listSurplus(club, a);
-    if (firstSummer) philosophyYouth(g, club, a, today, m);
+    if (firstSummer) {
+      philosophyYouth(g, club, a, today, m);
+      // Nachwuchs-Investitionen nach Umsatz und Philosophie (game/youthInvest.ts).
+      aiYouthInvest(g, club, today, lastRevenue(club, year));
+    }
     // Zu große Kader: Überzählige abgeben (unterklassig/Ausland).
     if (club.playerIds.length > BUY_SQUAD_MAX) sellSurplus(g, club, a, today, 1);
     else if (!winter && club.playerIds.length >= 24) releaseVeteran(g, club, squad, a, today);
@@ -223,7 +228,8 @@ function promote(ctx: RoundCtx, club: Club, p: Player, need: GroupNeed): boolean
 /** Saisonbeginn: Trainer mit Jugend-Philosophie ziehen ihre besten Talente hoch. */
 function philosophyYouth(g: Game, club: Club, a: SquadAssessment, today: string, m: AiMarketState): void {
   const phil = club.coach?.philosophy ?? 'ausgewogen';
-  const n = phil === 'jugend' ? 1 : 0;
+  // Gute Akademien (Ausbildungsqualität ≥ 60) geben einem weiteren Talent die Chance.
+  const n = (phil === 'jugend' ? 1 : 0) + ((club.youthInvest?.quality ?? 0) >= 60 ? 1 : 0);
   const cands = (club.youthPlayerIds ?? []).map((id) => g.youthPlayers[id])
     .filter((p): p is Player => !!p && p.age >= 18 && p.potentialStars >= 3.5 && p.overall >= a.level - 12)
     .sort((x, y) => y.potentialStars - x.potentialStars || y.overall - x.overall);

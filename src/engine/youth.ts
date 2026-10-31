@@ -1,9 +1,10 @@
 // =============================================================================
 // FOOTBALL MANAGER 1980 — Jugendsystem (Jugendakademie)
 // =============================================================================
-// Jeder Verein besitzt eine Jugendakademie, deren Ausbaustufe (Infrastruktur,
-// siehe engine/infrastructure.ts) steuert, WIE VIELE und WIE GUTE Talente
-// entstehen und WIE SCHNELL sie sich entwickeln.
+// Jeder Verein besitzt eine Jugendakademie, deren Nachwuchs-Investitionen
+// (Bausteine, Etat, Ruf – engine/youthAcademy.ts, game/youthInvest.ts) steuern,
+// WIE VIELE und WIE GUTE Talente entstehen und WIE SCHNELL sie sich entwickeln.
+// Ohne `club.youthInvest` gilt die alte Ausbaustufe (engine/infrastructure.ts).
 //
 // Besonderheit: das ECHTE Potenzial eines Talents ist verborgen. Die Scouting-
 // Einschätzung wird als STERNE-SPANNE (min–max) angezeigt und engt sich mit der
@@ -24,9 +25,8 @@ import {
   createEmptyStats, clampStars, starsToPotential, potentialToStars,
   YOUTH_ENTRY_AGE, YOUTH_GRADUATE_AGE,
 } from '../types';
-import {
-  academyIntakeCount, academyQualityBonus, academyGrowthFactor,
-} from './infrastructure';
+import { academyQualityBonus } from './infrastructure';
+import { academyGrowthOf, academyLevelOf, ageCapBonus, cpuPromotionPolicy, intakeCountOf } from './youthAcademy';
 import { ageFactor, potentialFactor } from './weeklyTraining';
 
 // -----------------------------------------------------------------------------
@@ -296,8 +296,9 @@ export function generateYouthPlayer(
  * @returns Liste neuer Talente (noch NICHT in den Verein eingehängt).
  */
 export function academyIntake(club: Club, currentDate: string, cohortTag: string): Player[] {
-  const level = club.infrastructure.youthAcademy;
-  const count = academyIntakeCount(level);
+  // Nachwuchs-Investitionen (engine/youthAcademy.ts): Breite und Qualität des Jahrgangs.
+  const level = academyLevelOf(club);
+  const count = intakeCountOf(club);
   const players: Player[] = [];
   for (let i = 0; i < count; i++) {
     // Neuzugänge treten stets als jüngster Jahrgang mit 7 Jahren (G-Jugend/Bambini) ein.
@@ -318,7 +319,7 @@ export function academyIntake(club: Club, currentDate: string, cohortTag: string
  * @returns Liste neuer Talente (noch NICHT in den Verein eingehängt).
  */
 export function academyStartingCohort(club: Club, currentDate: string): Player[] {
-  const level = club.infrastructure.youthAcademy;
+  const level = academyLevelOf(club);
   const perYear = level >= 4 ? 2 : 1;
   const players: Player[] = [];
   for (let age = YOUTH_ENTRY_AGE; age < YOUTH_GRADUATE_AGE; age++) {
@@ -343,8 +344,9 @@ export interface GraduateResult {
  *  - Der eigene (gemanagte) Verein zieht die besten Talente in den Profikader
  *    hoch (Potenzial-Sterne ≥ 3.0, solange Kaderplatz frei ist), der Rest
  *    verlässt den Verein.
- *  - CPU-Vereine ziehen höchstens das beste Talent hoch (Potenzial ≥ 3.5) und
- *    lassen den Rest ziehen (bewusst simpel gehalten).
+ *  - CPU-Vereine ziehen je nach Akademie und Trainerphilosophie 1–3 Talente
+ *    ab 3,0–3,75 Sternen hoch (engine/youthAcademy.ts cpuPromotionPolicy);
+ *    früher war es höchstens eines ab 3,5 – dadurch kamen kaum Eigengewächse an.
  *
  * Wird NACH ageYouthPlayers und VOR academyIntake aufgerufen.
  * @returns Listen der hochgezogenen und der abgegebenen Talente.
@@ -364,7 +366,8 @@ export function graduateYouth(
     .filter((p): p is Player => !!p && p.age >= YOUTH_GRADUATE_AGE)
     .sort((a, b) => b.potentialStars - a.potentialStars);
 
-  let cpuPromoted = false;
+  let cpuPromoted = 0;
+  const policy = cpuPromotionPolicy(club);
 
   for (const p of graduates) {
     let promote = false;
@@ -372,8 +375,8 @@ export function graduateYouth(
       // Bester Nachwuchs wird hochgezogen, solange Kaderplatz frei ist.
       promote = p.potentialStars >= 3.0 && club.playerIds.length < maxSquad;
     } else {
-      // CPU: höchstens ein Talent pro Jahr, nur echte Perspektivspieler.
-      promote = !cpuPromoted && p.potentialStars >= 3.5 && club.playerIds.length < maxSquad;
+      // CPU: wenige Talente pro Jahr, nur echte Perspektivspieler (Hürde je Akademie/Philosophie).
+      promote = cpuPromoted < policy.max && p.potentialStars >= policy.minStars && club.playerIds.length < maxSquad;
     }
 
     // Legenden werden nie fortgeschickt – notfalls wird der Kader kurz größer.
@@ -382,7 +385,7 @@ export function graduateYouth(
       const res = promoteYouth(club, p.id, players, youthPlayers, p.development.legendId ? 99 : maxSquad);
       if (res.ok) {
         result.promoted.push(p);
-        cpuPromoted = true;
+        cpuPromoted++;
         continue;
       }
     }
@@ -427,7 +430,8 @@ export function developYouthWeekly(
   // NLZ (Block p11) erhöht das Wachstum zusätzlich zur klassischen Akademie.
   const growthBonus = Math.max(0, opts?.growthBonus ?? 0);
   const scoutBonus = Math.max(0, opts?.scoutBonus ?? 0);
-  const growth = academyGrowthFactor(club.infrastructure.youthAcademy) * (1 + growthBonus);
+  const growth = academyGrowthOf(club) * (1 + growthBonus);
+  const level = academyLevelOf(club);
   if (growth <= 0) return reveals;
 
   for (const pid of club.youthPlayerIds) {
@@ -438,7 +442,8 @@ export function developYouthWeekly(
     if (p.development.ovrProgress == null) p.development.ovrProgress = 0;
     const acc = p.development.attributeProgress;
     // Altersgerechte Obergrenze: ein 16-Jähriger ist noch weit vom Endstand entfernt.
-    const maxRating = Math.min(starsToPotential(p.potentialStars), Math.round(starsToPotential(p.potentialStars) * (0.35 + 0.035 * Math.max(0, p.age - 7))));
+    // Gute Ausbildung (Nachwuchs-Investitionen) lässt Talente mit 18/19 reifer sein.
+    const maxRating = Math.min(starsToPotential(p.potentialStars), Math.round(starsToPotential(p.potentialStars) * (0.35 + 0.035 * Math.max(0, p.age - 7) + ageCapBonus(club, p.age))));
 
     const aFactor = ageFactor(p.age);
     const pFactor = potentialFactor(p);
@@ -482,7 +487,7 @@ export function developYouthWeekly(
     }
 
     // --- Scouting-Spanne an das wahre Potenzial annähern ---
-    narrowScoutRange(p, club.infrastructure.youthAcademy, scoutBonus);
+    narrowScoutRange(p, level, scoutBonus);
 
     if (upAttrs.length > 0 || ovrUp) {
       reveals.push({ playerId: p.id, name: p.fullName, upAttrs, ovrUp, newOverall: p.overall });

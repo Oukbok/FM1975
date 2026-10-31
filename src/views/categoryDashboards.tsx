@@ -247,7 +247,7 @@ const INCOME_DE: Record<string, string> = {
   membership: 'Mitglieder', matchday: 'Spieltag', other: 'Sonstiges',
 };
 const EXPENSE_DE: Record<string, string> = {
-  wages: 'Spielergehälter', transferExpense: 'Transfers', stadiumMaintenance: 'Stadion', trainingFacilities: 'Trainingsanlagen',
+  wages: 'Spielergehälter', transferExpense: 'Transfers', stadiumMaintenance: 'Stadion', trainingFacilities: 'Nachwuchs',
   staffWages: 'Mitarbeiter', facilities: 'Gebäude', other: 'Sonstiges',
 };
 

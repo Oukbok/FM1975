@@ -37,6 +37,7 @@ import { ensureYouthTeams } from './game/youthTeams';
 import { migrateAiClubs } from './game/aiClubs';
 import { migrateWinter } from './game/winterShared';
 import { migrateGrounds } from './game/groundsGame';
+import { migrateYouthInvest } from './game/youthInvest';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 // =============================================================================
@@ -318,6 +319,8 @@ export default function App() {
     try { migrateWinter(s.game); } catch (err) { console.error('Winter-Nachrüstung fehlgeschlagen:', err); }
     // Stadionumfeld (v11-Sammel-Update): Lage, Fläche, epochentypische Ausstattung nachrüsten.
     try { migrateGrounds(s.game); } catch (err) { console.error('Umfeld-Nachrüstung fehlgeschlagen:', err); }
+    // Nachwuchs-Investitionen (v11): Bausteine aus der alten Akademie-Stufe ableiten.
+    try { migrateYouthInvest(s.game); } catch (err) { console.error('Nachwuchs-Nachrüstung fehlgeschlagen:', err); }
     gameRef.current = s.game;
     setCurrentSlot(slot);
     setInGame(true);

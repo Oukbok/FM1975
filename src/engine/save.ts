@@ -42,6 +42,11 @@ import { compressToUTF16, decompressFromUTF16 } from 'lz-string';
 //     Parkplätze, ÖPNV, Handel, Sicherheit, Hospitality, Medien, Bauvorhaben).
 //     Altstände bekommen in doLoad (App.tsx → migrateGrounds, game/groundsGame.ts)
 //     eine epochentypische Ausstattung; vorhandene Einrichtungen bleiben unverändert.
+// v11 (Sammel-Update): Nachwuchs-Investitionen — `Club.youthInvest` (Bausteine,
+//     Etat, Ausbildungsqualität, Ruf, Durchlässigkeit), `game.youthRace`,
+//     `game.youthInvestTick`, `development.reserveMinutes`. Alle Felder optional;
+//     Altstände werden in doLoad (App.tsx → migrateYouthInvest,
+//     game/youthInvest.ts) idempotent aus der alten Akademie-Stufe abgeleitet.
 export const SAVE_VERSION = 10;
 
 /** Metadaten eines Speicherstands (für die Slot-Übersicht). */
