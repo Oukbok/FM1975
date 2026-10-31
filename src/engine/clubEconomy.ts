@@ -336,10 +336,65 @@ function movePlayer(p: Player, from: Club | null, to: Club | null, feeNominal: n
   recordTransfer(p, from?.name ?? abroad, to?.name ?? abroad, feeNominal, ctx.date);
 }
 
+/** Torhüter je Kader, die ein Verein mindestens hält (Stammtorwart + Ersatz). */
+const MIN_KEEPERS = 2;
+
+function keeperCount(c: Club, players: Record<string, Player>): number {
+  return c.playerIds.filter((id) => players[id]?.naturalPosition === 'TW').length;
+}
+
+/**
+ * Torhüter sichern: Kaderpflege (game/squads.ts) füllt nur bis 20 Spieler auf, und
+ * Zukäufe/Jugend kommen auf beliebigen Positionen. Ohne diese Regel verlor ein Verein
+ * nach dem Karriereende seines einzigen Torwarts dauerhaft den Torhüter (Feldspieler
+ * im Tor, 150+ Gegentore). Fehlt ein Torwart, holt die KI einen passenden:
+ * zuerst einen Ersatzmann eines Liga-Vereins mit drei oder mehr Torhütern, sonst
+ * aus dem Ausland (Stammkraft auf Höhe der Startelf, Ersatz etwas schwächer).
+ */
+function secureKeepers(c: Club, league: Club[], ctx: AiEconomyContext, scale: number): string | null {
+  let note: string | null = null;
+  for (let k = 0; k < MIN_KEEPERS && keeperCount(c, ctx.players) < MIN_KEEPERS; k++) {
+    const have = keeperCount(c, ctx.players);
+    const starter = squadRankValue(c, ctx.players, 10);
+    const strength = have === 0 ? starter : Math.max(50, starter - 6);
+    const affordable = (fee: number) => fee <= Math.max(0, c.finances.balance) * 0.5;
+    const spare = league
+      .filter((s) => s.id !== c.id && s.id !== ctx.managedClubId && keeperCount(s, ctx.players) > MIN_KEEPERS)
+      .flatMap((s) => s.playerIds.map((id) => ctx.players[id]).filter((p) => p?.naturalPosition === 'TW'))
+      .filter((p) => p.overall >= strength - 4 && p.age <= 33 && affordable(p.contract.transferValue * scale))
+      .sort((a, b) => b.overall - a.overall)[0];
+    if (spare) {
+      const seller = ctx.clubs[spare.clubId];
+      // Nicht den Stammtorwart des Verkäufers: nur dessen Ersatzleute.
+      const best = seller.playerIds.map((id) => ctx.players[id]).filter((p) => p?.naturalPosition === 'TW').sort((a, b) => b.overall - a.overall)[0];
+      if (best && best.id !== spare.id) {
+        movePlayer(spare, seller, c, Math.round(spare.contract.transferValue * scale), ctx, 'Ausland');
+        note = `${c.name} verpflichtet Torwart ${spare.fullName} von ${seller.name}.`;
+        continue;
+      }
+    }
+    const p = createPlayer({
+      id: `${c.id}_t${ctx.year}_tw${k}_${Math.floor(ctx.rng() * 1e6)}`, clubId: c.id, pos: 'TW',
+      age: 23 + Math.floor(ctx.rng() * 9), strength, year: ctx.year, date: ctx.date, rng: ctx.rng, shirt: 0,
+    });
+    refreshOverall(p);
+    p.contract.transferValue = marketValueFor(p, ctx.year);
+    // Kann sich der Verein die Ablöse nicht leisten, kommt ein ablösefreier Torwart.
+    const fee = affordable(p.contract.transferValue * scale) ? Math.round(p.contract.transferValue * scale) : 0;
+    ctx.players[p.id] = p;
+    p.clubId = '';
+    movePlayer(p, null, c, fee, ctx, 'Ausland');
+    if (have === 0) note = `${c.name} holt Torwart ${p.fullName} aus dem Ausland.`;
+  }
+  return note;
+}
+
 /** Schwächsten/ältesten überzähligen Spieler abgeben (ablösefrei ins Ausland). */
 function trimSquad(c: Club, ctx: AiEconomyContext): void {
   while (c.playerIds.length > MAX_SQUAD) {
-    const worst = c.playerIds.map((id) => ctx.players[id]).filter((p) => p && !(p.development.legendId && p.age <= 23))
+    const keepers = keeperCount(c, ctx.players);
+    const worst = c.playerIds.map((id) => ctx.players[id])
+      .filter((p) => p && !(p.development.legendId && p.age <= 23) && !(p.naturalPosition === 'TW' && keepers <= MIN_KEEPERS))
       .sort((a, b) => (a.overall - a.age * 0.4) - (b.overall - b.age * 0.4))[0];
     if (!worst) break;
     movePlayer(worst, c, null, 0, ctx, 'Ausland');
@@ -376,12 +431,21 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
     }
   }
 
+  // 0) Jeder Kader braucht zwei Torhüter (siehe secureKeepers).
+  for (const c of league) {
+    if (!isAi(c)) continue;
+    const note = secureKeepers(c, league, ctx, scale);
+    if (note) news.push(note);
+    trimSquad(c, ctx);
+  }
+
   // 1) Verschuldete Vereine verkaufen.
   for (const c of league) {
     if (!isAi(c)) continue;
     let guard = 0;
     while (c.finances.balance < 0 && guard++ < 3 && c.playerIds.length > MIN_KEEP - 2) {
-      const sell = c.playerIds.map((id) => ctx.players[id]).filter(Boolean)
+      const keepers = keeperCount(c, ctx.players);
+      const sell = c.playerIds.map((id) => ctx.players[id]).filter((p) => p && !(p.naturalPosition === 'TW' && keepers <= MIN_KEEPERS))
         .sort((a, b) => b.contract.transferValue - a.contract.transferValue)[0];
       if (!sell) break;
       const domestic = Math.round(sell.contract.transferValue * scale);
@@ -418,7 +482,7 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
       if (ctx.rng() < 0.55) {
         const cands = league
           .filter((s) => s.id !== c.id && s.id !== ctx.managedClubId && s.playerIds.length > MIN_KEEP)
-          .flatMap((s) => s.playerIds.map((id) => ctx.players[id]).filter(Boolean))
+          .flatMap((s) => s.playerIds.map((id) => ctx.players[id]).filter((p) => p && !(p.naturalPosition === 'TW' && keeperCount(s, ctx.players) <= MIN_KEEPERS)))
           .filter((p) => p.overall >= aim && p.age <= 30 && p.contract.transferValue * scale * 1.25 <= budget)
           .sort((a, b) => b.overall - a.overall || a.contract.transferValue - b.contract.transferValue);
         const p = cands[Math.floor(ctx.rng() * Math.min(3, cands.length))];
