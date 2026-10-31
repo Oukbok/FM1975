@@ -27,7 +27,7 @@ export function DatasetScreen({ onBack }: { onBack: () => void }) {
       <div className="card mt16">
         <div className="card-title"><span className="ico"><Icon name="contracts" /></span> Was ist ein Datensatz?</div>
         <div className="dim mini" style={{ lineHeight: 1.6 }}>
-          Ein Datensatz legt fest, mit welchen Vereinen, Ligen, Wappen, Trikots, Namen, Legenden und welcher Geschichte ein neues Spiel beginnt –
+          Ein Datensatz legt fest, mit welchen Vereinen, Ligen, Wappen, Trikots, Namen und welcher Geschichte ein neues Spiel beginnt –
           bis hin zu den Jahren, in denen Regeln, Gebäude oder Mitarbeiter-Rollen auftauchen oder veralten. Mit dem <b>Datensatz-Editor</b> erstellst du eigene
           Datensätze und teilst sie als Datei. Eigene Datensätze bleiben auf deinem Rechner.
         </div>

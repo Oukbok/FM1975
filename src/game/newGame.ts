@@ -33,7 +33,6 @@ import { applyTimelineEffect, fireTimelineForSeason } from './season';
 import { Game, hashSeed, migrateCommerce } from './state';
 import { InboxMessage, NewGameOptions, YOUTH_ENTRY_AGE } from '../types';
 import { setDisplayYear } from '../ui/format';
-import { seedStartLegends } from './legendsGame';
 import { ensureCoaches } from './coachCarousel';
 import { migrateYouthInvest } from './youthInvest';
 import { FINANCE_LEVEL } from './financeMigration';
@@ -164,10 +163,7 @@ export function createNewGame(opts: NewGameOptions): Game {
     simClubs,
     appliedReforms: [],
     financeLevel: FINANCE_LEVEL,
-    legendMode: opts.legendMode ?? 'fictional',
   };
-  // Legenden, die 1975 schon spielen (bis Jahrgang 1960), in die Kader setzen.
-  seedStartLegends(g0, calendar.currentDate);
   // Startsaison-Meilensteine (1975/76) sofort auslösen (Effekte); erklärt werden sie im Saison-Briefing.
   fireTimelineForSeason(g0, '1975/76', calendar.currentDate, true);
   for (const pid of g0.clubs[g0.managedClubId]?.playerIds ?? []) {

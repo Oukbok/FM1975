@@ -134,8 +134,7 @@ export function manageSquads(game: Game, date: string, autoManageMine = false): 
 
     // 2) Zu große Kader verkleinern (schwächste Ältere zuerst)
     while (club.playerIds.length > MAX_SQUAD) {
-      // Junge Legenden werden nie aussortiert.
-      const worst = club.playerIds.map((id) => game.players[id]).filter((p) => p && !(p.development.legendId && p.age <= 23)
+      const worst = club.playerIds.map((id) => game.players[id]).filter((p) => p
           && !(p.naturalPosition === 'TW' && club.playerIds.filter((x) => game.players[x]?.naturalPosition === 'TW').length <= 2))
         .sort((a, b) => (a.overall - a.age * 0.5) - (b.overall - b.age * 0.5))[0];
       if (!worst) break;

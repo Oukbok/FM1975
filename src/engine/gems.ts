@@ -24,7 +24,7 @@ export function applyYouthGem(p: Player): boolean {
   const g = p.development.gem;
   if (!g || g.done || p.age < g.boostAge) return false;
   g.done = true;
-  const pot = starsToPotential(p.potentialStars) + g.boost;
+  const pot = Math.min(99, (p.development.potentialAbility ?? starsToPotential(p.potentialStars)) + g.boost);
   p.potentialStars = clampStars(potentialToStars(pot));
   p.development.potentialAbility = Math.max(p.development.potentialAbility ?? 0, pot);
   return true;

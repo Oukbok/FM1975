@@ -365,7 +365,7 @@ function reportDeal(ctx: RoundCtx, line: string, fee: number, name: string, buye
 // -----------------------------------------------------------------------------
 function sellSurplus(g: Game, club: Club, a: SquadAssessment, today: string, max: number): number {
   const cands = Object.values(a.groups).flatMap((x) => x.surplus)
-    .filter((p) => club.playerIds.includes(p.id) && !p.development.legendId)
+    .filter((p) => club.playerIds.includes(p.id))
     .sort((x, y) => (x.overall - x.age * 0.6) - (y.overall - y.age * 0.6));
   let n = 0;
   for (const p of cands) {
@@ -381,7 +381,7 @@ function sellSurplus(g: Game, club: Club, a: SquadAssessment, today: string, max
 
 /** Sommer: einen alternden Ergänzungsspieler abgeben (Platz für Jüngere). */
 function releaseVeteran(g: Game, club: Club, squad: Player[], a: SquadAssessment, today: string): void {
-  const v = squad.filter((p) => p.age >= 32 && p.overall < a.level - 4 && !p.development.legendId && club.playerIds.includes(p.id))
+  const v = squad.filter((p) => p.age >= 32 && p.overall < a.level - 4 && club.playerIds.includes(p.id))
     .sort((x, y) => (x.overall - x.age) - (y.overall - y.age))[0];
   if (!v) return;
   market(g).news.push(`${club.name} verabschiedet ${v.fullName} (${v.age}) zu einem unterklassigen Verein`);

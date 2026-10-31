@@ -217,7 +217,6 @@ export function assessSquad(squad: Player[], formationId: string | undefined, lo
     const keepN = target + 1;
     const surplus = members.length > keepN
       ? [...members].sort((a, b) => (a.overall - a.age * 0.6) - (b.overall - b.age * 0.6)).slice(0, members.length - keepN)
-        .filter((p) => !(p.development.legendId && p.age <= 25))
       : [];
     groups[g] = { group: g, count: members.length, target, starters: st, startAvg, startMin, score, quality: qualityGap * 2.5 > depthGap * 9, surplus };
   }

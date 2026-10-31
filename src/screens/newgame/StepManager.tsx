@@ -7,7 +7,6 @@ import { LEAGUES, leaguePreview } from './clubPreview';
 
 // Schritt 3: Manager — Profil und Zusammenfassung vor dem Start
 const DIFF_DE = { easy: 'Leicht', normal: 'Normal', hard: 'Schwer' } as const;
-const LEGEND_DE = { off: 'Aus', fictional: 'Fiktive Legenden', custom: 'Eigene Namensdatei' } as const;
 
 export function StepManager({ d, set }: { d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void }) {
   const club = leaguePreview(d.league).find((c) => c.id === d.clubId);
@@ -64,7 +63,6 @@ export function StepManager({ d, set }: { d: NewGameDraft; set: (p: Partial<NewG
         <div className="ng-kv"><span>Datensatz</span><b>{ds?.name ?? 'Standard'}</b></div>
         <div className="ng-kv"><span>Schwierigkeit</span><b>{DIFF_DE[d.difficulty]}</b></div>
         <div className="ng-kv"><span>Verletzungen</span><b>{d.injuries ? 'an' : 'aus'}</b></div>
-        <div className="ng-kv"><span>Historische Spieler</span><b>{LEGEND_DE[d.legendMode]}</b></div>
         <div className="ng-kv"><span>Spieltempo</span><b>{d.speedMs} ms/Tag</b></div>
         <p className="ng-note ng-push">Einen Vereinswechsel gibt es nicht: Du führst diesen Verein durch die Jahrzehnte.</p>
       </section>

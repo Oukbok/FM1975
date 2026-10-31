@@ -7,9 +7,10 @@
 //   verglichen. Liegt sie zu hoch, werden neue Jugendjahrgänge etwas schwächer
 //   erzeugt (zu niedrig: etwas stärker). Bestehende Spieler werden nie
 //   nachträglich verändert.
-// • Breite der Spitze: Gibt es in der 1. Liga mehr als ELITE_MAX Spieler mit
-//   Stärke ≥ 85, setzt die Weltklasse-Bremse der Entwicklung früher ein (bei
-//   zu wenigen später) – Weltklasse bleibt selten und begehrt.
+// • Breite der Spitze: Weicht die Zahl der Spieler mit Stärke ≥ 85 in der
+//   1. Liga vom Ziel (ELITE_TARGET, Korridor 10–15) ab, verschiebt sich die
+//   Weltklasse-Bremse der Entwicklung anteilig (zu viele → früher, zu wenige →
+//   später). Ohne Rücksprung auf 0 im Korridor, damit nichts aufschaukelt.
 // =============================================================================
 import { makeMessage, pushMessage } from '../engine/messages';
 import { setYouthPotentialShift } from '../engine/youth';
@@ -19,9 +20,10 @@ import { Game } from './state';
 
 const TARGET: Record<number, number> = { 1: 72.5 };
 const SHIFT_MIN = -0.6, SHIFT_MAX = 0.3;
-/** Zielkorridor der Spieler ≥ 85 in der 1. Liga. */
-const ELITE_MIN = 8, ELITE_MAX = 13;
-const ELITE_STEP = 0.5;
+/** Ziel der Spieler ≥ 85 in der 1. Liga (Recherche: 10–15, docs/recherche/spielerkurven.md). */
+const ELITE_TARGET = 12.5;
+/** Nachführung je Saison: Punkte Bremse je Spieler Abweichung, höchstens ±1 Punkt. */
+const ELITE_GAIN = 0.15;
 
 /** Stärke aller Spieler der eigenen Liga (außer eigener Verein) vor der Bewertung merken. */
 export function snapshotLeague(g: Game): Map<string, number> {
@@ -77,12 +79,7 @@ export function seasonLeagueBalance(g: Game): void {
   lb.shift = Math.round(Math.max(SHIFT_MIN, Math.min(SHIFT_MAX, lb.shift)) * 100) / 100;
   // Breite der Spitze: zu viele Weltklasse-Spieler → Bremse greift früher (negativ).
   const n85 = ps.filter((p) => p.overall >= 85).length;
-  let elite = lb.elite ?? 0;
-  // Deutlich zu viele Weltklassespieler (> ELITE_MAX + 4): doppelt so schnell nachziehen.
-  if (n85 > ELITE_MAX + 4) elite -= ELITE_STEP * 2;
-  else if (n85 > ELITE_MAX) elite -= ELITE_STEP;
-  else if (n85 < ELITE_MIN) elite += ELITE_STEP;
-  else elite *= 0.5;
+  let elite = (lb.elite ?? 0) + Math.max(-1, Math.min(1, (ELITE_TARGET - n85) * ELITE_GAIN));
   lb.elite = Math.round(Math.max(-5, Math.min(3, elite)) * 100) / 100;
   lb.history.push({ season: g.season, avg: Math.round(avg * 10) / 10, shift: lb.shift, n85, elite: lb.elite });
   if (lb.history.length > 60) lb.history.splice(0, lb.history.length - 60);

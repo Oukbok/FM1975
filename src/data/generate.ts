@@ -6,6 +6,7 @@ import { datasetCrest, datasetKits } from './dataset/apply';
 // =============================================================================
 
 import { createPlayer } from '../engine/playerFactory';
+import { seedClubStars } from '../engine/clubStars';
 import { ORIGINS, Origin } from './origins';
 import {
   Player, Club, PlayerAttributes, Position, AttributeKey,
@@ -186,12 +187,22 @@ let genDate = CURRENT_DATE;
 function setGenDate(date: string): void { genDate = date; genYear = Number(date.slice(0, 4)); }
 
 /** @param cap Obergrenze der Erzeugungsstärke (deutsche Vereine 84, Europapokal-Gegner 88). */
+/**
+ * Stärke nach Alter: Junge Spieler sind meist noch nicht fertig (18 J. ≈ −9),
+ * Veteranen bauen ab. Nur selten ist ein Junger schon auf dem Niveau der Etablierten.
+ */
+function ageStrengthAdj(age: number): number {
+  if (age <= 23 && rng() < 0.04) return 0; // frühreif
+  return age <= 18 ? -9 : age <= 19 ? -7 : age <= 20 ? -5 : age <= 21 ? -3.5 : age <= 22 ? -2 : age <= 23 ? -1
+    : age <= 30 ? 1.5 : age <= 31 ? 0.5 : age <= 32 ? -1 : age <= 33 ? -2 : -3;
+}
+
 function makePlayer(clubId: string, index: number, pos: Position, strength: number, shirt: number, origin?: Origin, cap = GEN_CAP): Player {
   // Altersverteilung um 25 (18–34), wenige ganz Junge/ganz Alte.
   const age = Math.max(18, Math.min(34, Math.round(25 + (rng() + rng() + rng() - 1.5) * 9)));
   const p = createPlayer({
     id: `${clubId}_p${index}`, clubId, pos, age,
-    strength: Math.max(35, Math.min(cap, strength + ri(-8, 8))),
+    strength: Math.max(35, Math.min(age <= 21 ? cap - 4 : cap, Math.round(strength + ageStrengthAdj(age)) + ri(-8, 8))),
     year: genYear, date: genDate, rng, shirt, origin,
   });
   p.form = ri(45, 75);
@@ -311,6 +322,9 @@ function buildClubFromSeed(
     p.potentialStars = 4.75;
     p.development.potentialAbility = Math.max(p.overall, starsToPotential(4.75));
   });
+
+  // Starke Kader bringen ihre Leistungsträger mit (engine/clubStars.ts).
+  seedClubStars(playerIds, players, rng);
 
   const infrastructure = makeInfrastructure(seed.reputation);
   const youthPlayerIds: string[] = [];

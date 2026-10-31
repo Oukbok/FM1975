@@ -20,7 +20,7 @@ export function HallOfFameView({ g }: { g: Game }) {
   const all = g.archive ?? [];
   const byPeak = [...all].sort((a, b) => b.peak - a.peak || b.apps - a.apps).slice(0, 60);
   const mine = all.filter((a) => a.lastClubId === g.managedClubId).sort((a, b) => b.apps - a.apps || b.peak - a.peak);
-  const legends = all.filter((a) => a.legendId).sort((a, b) => b.peak - a.peak);
+  const worldClass = all.filter((a) => a.peak >= 85).sort((a, b) => b.peak - a.peak || b.apps - a.apps);
   const topScorer = [...all].sort((a, b) => b.goals - a.goals)[0];
   const mostApps = [...all].sort((a, b) => b.apps - a.apps)[0];
 
@@ -36,7 +36,7 @@ export function HallOfFameView({ g }: { g: Game }) {
             <tbody>
               {byPeak.map((a) => (
                 <tr key={a.id}>
-                  <td className="nowrap" style={{ fontWeight: 700 }}>{a.name}{a.legendId && <span className="muted"> · Legende</span>}</td>
+                  <td className="nowrap" style={{ fontWeight: 700 }}>{a.name}</td>
                   <td className="ctr"><span className="pos-badge">{a.pos}</span></td>
                   <td className="num nowrap">{a.born}–{a.retired}</td>
                   <td className="num" style={{ color: vColor(a.peak), fontWeight: 800 }}>{a.peak}</td>
@@ -55,12 +55,12 @@ export function HallOfFameView({ g }: { g: Game }) {
           : <Empty icon="dashVerein">Bei dir hat noch niemand seine Karriere beendet.</Empty>}
       </DashBox>
 
-      <DashBox title="Rekorde & Legenden" icon="chronicle">
+      <DashBox title="Rekorde & Weltklasse" icon="chronicle">
         {topScorer ? <KV k="Meiste Tore" v={`${topScorer.name} (${topScorer.goals})`} /> : null}
         {mostApps ? <KV k="Meiste Einsätze" v={`${mostApps.name} (${mostApps.apps})`} /> : null}
-        <div className="dsec">Fiktive Legenden im Ruhestand ({legends.length})</div>
-        {legends.length ? legends.slice(0, 5).map((a) => <Row key={a.id} a={a} value={<span style={{ color: vColor(a.peak) }}>{a.peak}</span>} sub={a.clubs[a.clubs.length - 1]} />)
-          : <Empty icon="youth">Noch keine Legende im Ruhestand.</Empty>}
+        <div className="dsec">Weltklasse im Ruhestand – Spitze 85+ ({worldClass.length})</div>
+        {worldClass.length ? worldClass.slice(0, 5).map((a) => <Row key={a.id} a={a} value={<span style={{ color: vColor(a.peak) }}>{a.peak}</span>} sub={a.clubs[a.clubs.length - 1]} />)
+          : <Empty icon="youth">Noch kein Weltklassespieler im Ruhestand.</Empty>}
       </DashBox>
     </DashPage>
   );

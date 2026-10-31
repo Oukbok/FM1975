@@ -12,7 +12,6 @@ import { STAFF_ROLES } from '../staff';
 import { MARKETING_AREAS } from '../marketing';
 import { MIX, ORIGINS } from '../origins';
 import { BLOCKED_NAMES } from '../namePools';
-import { LEGENDS } from '../legends';
 import { ANCHORS, REVENUE_MIX } from '../../engine/economy';
 import { HISTORY } from '../history';
 import { TRANSFER_RECORD_ANCHORS } from '../transferRecords';
@@ -59,7 +58,6 @@ export function snapshotCurrent(id: string, name: string): Dataset {
       mix: MIX,
       blocked: [...BLOCKED_NAMES],
     },
-    legends: LEGENDS,
     economy: { anchors: ANCHORS, revenueMix: REVENUE_MIX, transferRecords: TRANSFER_RECORD_ANCHORS },
     history: HISTORY,
   } as Dataset);

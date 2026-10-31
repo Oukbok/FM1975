@@ -19,7 +19,6 @@ import { ensureDevFields, refreshOverall } from './development';
 import { updateScoutEstimate } from './scouting';
 import { pickOrigin, makeName } from '../data/origins';
 import { makePersonality } from './playerFactory';
-import { curveFactor } from '../data/legendArchetypes';
 import {
   Player, Club, PlayerAttributes, Position, AttributeKey,
   createEmptyStats, clampStars, starsToPotential, potentialToStars,
@@ -28,6 +27,7 @@ import {
 import { academyQualityBonus } from './infrastructure';
 import { academyGrowthOf, academyLevelOf, ageCapBonus, cpuPromotionPolicy, intakeCountOf } from './youthAcademy';
 import { ageFactor, potentialFactor } from './weeklyTraining';
+import { youthMaturityCap, youthTalentPotential, maturityGrowth } from './talent';
 
 // -----------------------------------------------------------------------------
 // Deterministischer RNG (mulberry32) — aus einem String-Seed abgeleitet.
@@ -106,18 +106,13 @@ function birthDate(rand: () => number, age: number, currentYear: number): string
 // Verstecktes Potenzial + Scouting-Spanne
 // -----------------------------------------------------------------------------
 /**
- * Vergibt das WAHRE (verborgene) Potenzial eines Talents. Bessere Akademien
- * heben die Talent-Obergrenze leicht an; echte Ausnahmetalente sind selten.
+ * Vergibt das WAHRE (verborgene) Potenzial eines Talents auf der OVR-Skala
+ * (engine/talent.ts). Bessere Akademien heben die Chance auf hohe Talente
+ * leicht an; Ausnahmetalente stammen aus einem seltenen Ausreißer-Schwanz.
  */
 function assignYouthPotential(rand: () => number, academyLevel: number): number {
   const lift = (academyLevel - 1) * 0.05; // bessere Akademie → etwas mehr Talent
-  const roll = rand();
-  let stars: number;
-  if (roll < 0.015 + lift * 0.1) stars = 4.5 + rand() * 0.5;        // Ausnahmetalent (sehr selten)
-  else if (roll < 0.11 + lift * 0.5) stars = 3.75 + rand() * 0.75;  // hohes Talent
-  else if (roll < 0.50 + lift) stars = 3.0 + rand() * 0.75;         // solides Talent
-  else stars = 2.0 + rand() * 1.0;                                  // Durchschnitt
-  return clampStars(stars);
+  return youthTalentPotential(rand, lift);
 }
 
 /**
@@ -238,11 +233,10 @@ export function generateYouthPlayer(
   const overall = computeOverall(attributes, pos);
 
   // Wahres Potenzial (verborgen) — nie unter dem aktuellen OVR.
-  const rawPot = opts.pool === 'breite' ? breitePotential(rand) : assignYouthPotential(rand, academyLevel);
-  let truePot = Math.max(0.5, Math.min(5, clampStars(rawPot + (opts.potBias ?? 0)) + youthPotentialShift));
-  const minStarsForOverall = potentialToStars(overall + 4);
-  if (truePot < minStarsForOverall) truePot = minStarsForOverall;
-  const potentialAbility = Math.max(overall + 3, starsToPotential(truePot));
+  // Fein ausgewürfelt auf der OVR-Skala; Verschiebungen in Sternen ≈ 8 OVR-Punkte je Stern.
+  const rawPot = opts.pool === 'breite' ? starsToPotential(breitePotential(rand)) : assignYouthPotential(rand, academyLevel);
+  const potentialAbility = Math.round(Math.max(overall + 4, Math.min(99, rawPot + ((opts.potBias ?? 0) + youthPotentialShift) * 8)));
+  const truePot = clampStars(potentialToStars(potentialAbility));
 
   const [scoutMin, scoutMax] = initialScoutRange(rand, truePot, academyLevel, useAge);
 
@@ -379,10 +373,12 @@ export function graduateYouth(
       promote = cpuPromoted < policy.max && p.potentialStars >= policy.minStars && club.playerIds.length < maxSquad;
     }
 
-    // Legenden werden nie fortgeschickt – notfalls wird der Kader kurz größer.
-    if (p.development.legendId) promote = true;
+    // Ausnahmetalente (schon profireif oder höchstes Potenzial) schickt niemand fort –
+    // notfalls wird der Kader kurz um zwei Plätze größer.
+    const exceptional = p.overall >= 68 || p.potentialStars >= 4.5;
+    if (exceptional) promote = true;
     if (promote) {
-      const res = promoteYouth(club, p.id, players, youthPlayers, p.development.legendId ? 99 : maxSquad);
+      const res = promoteYouth(club, p.id, players, youthPlayers, exceptional ? maxSquad + 2 : maxSquad);
       if (res.ok) {
         result.promoted.push(p);
         cpuPromoted++;
@@ -443,11 +439,13 @@ export function developYouthWeekly(
     const acc = p.development.attributeProgress;
     // Altersgerechte Obergrenze: ein 16-Jähriger ist noch weit vom Endstand entfernt.
     // Gute Ausbildung (Nachwuchs-Investitionen) lässt Talente mit 18/19 reifer sein.
-    const maxRating = Math.min(starsToPotential(p.potentialStars), Math.round(starsToPotential(p.potentialStars) * (0.35 + 0.035 * Math.max(0, p.age - 7) + ageCapBonus(club, p.age))));
+    // Frühreife Talente sind mit 16–19 schon deutlich weiter (engine/talent.ts).
+    const pot = p.development.potentialAbility ?? starsToPotential(p.potentialStars);
+    const maxRating = Math.min(pot, Math.round(pot * (0.35 + 0.035 * Math.max(0, p.age - 7) + ageCapBonus(club, p.age) + youthMaturityCap(p))));
 
     const aFactor = ageFactor(p.age);
     const pFactor = potentialFactor(p);
-    const weekGain = YOUTH_BASE_GAIN * aFactor * pFactor * growth * (p.development.legendId ? (1 + ((p.development.legendBoost ?? 1.6) - 1) / 2) * curveFactor(p.development.legendCurve, p.age) : 1);
+    const weekGain = YOUTH_BASE_GAIN * aFactor * pFactor * growth * (p.age >= 14 ? maturityGrowth(p) : 1);
 
     // --- Akkumulator über eine Auswahl entwicklungsrelevanter Attribute füllen
     const devAttrs = developmentAttrsFor(p.naturalPosition);
@@ -579,9 +577,8 @@ export function promoteYouth(
 
   // Als Profi übernehmen: Stärke nach Profi-Maßstab, Potenzial bleibt eine Einschätzung.
   p.isYouth = false;
-  // Legenden behalten ihr verdeckt ausgewürfeltes Höchstpotenzial (keine Sterne-Rundung).
-  p.development.basePotential = Math.max(p.overall, p.development.legendId && p.development.potentialAbility
-    ? p.development.potentialAbility : starsToPotential(p.potentialStars));
+  // Das fein ausgewürfelte Höchstpotenzial bleibt erhalten (keine Sterne-Rundung).
+  p.development.basePotential = Math.max(p.overall, p.development.potentialAbility ?? starsToPotential(p.potentialStars));
   ensureDevFields(p);
   refreshOverall(p);
   updateScoutEstimate(p, 0.6, true);
