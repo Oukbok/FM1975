@@ -25,3 +25,4 @@ import './22-pages.css';
 import './23-match-screen.css';
 import './24-newgame.css';
 import './25-theme.css';
+import './26-winter.css';

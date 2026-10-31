@@ -34,6 +34,10 @@ import { compressToUTF16, decompressFromUTF16 } from 'lz-string';
 //     arbeitslose Trainer in `game.coachPool`, Kaderplanung in `game.aiMarket`.
 //     Alle Felder optional; Altstände bekommen in doLoad (App.tsx →
 //     migrateAiClubs, game/aiClubs.ts) Trainer zugewiesen.
+// v11 (Sammel-Update): Hallenfußball (`game.indoor`: Turniere, Tour, Masters-Historie)
+//     und Trainingslager (`game.camps`: Buchungen, KI-Lager, Verlauf). Beide optional,
+//     Nachrüstung idempotent über migrateWinter (game/winterShared.ts) in doLoad.
+//     Masters-Titel als TitleKind 'halle' in `clubRecords`.
 export const SAVE_VERSION = 10;
 
 /** Metadaten eines Speicherstands (für die Slot-Übersicht). */

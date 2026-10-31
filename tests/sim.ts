@@ -113,6 +113,14 @@ function report(game: Game) {
     console.log(`   Vereine ${lc.length} Kader min ${sz[0]} med ${sz[sz.length >> 1]} max ${sz[sz.length - 1]} | Tabelle ${game.table.rows.length}`);
   }
   if (process.env.BAL) balanceReport(game, ps);
+  if (process.env.WINTER) {
+    // Hallenfußball + Trainingslager der laufenden Saison (game/indoorGame.ts, game/trainingCampGame.ts).
+    const ind = (game as any).indoor; const cur = ind?.current; const camps = (game as any).camps;
+    const nm = (id: string) => game.clubs[id]?.shortName ?? game.simClubs?.[id]?.shortName ?? game.euroClubs?.[id]?.shortName ?? id;
+    const dest: Record<string, number> = {};
+    for (const a of camps?.ai ?? []) if (a.destId) dest[a.destId] = (dest[a.destId] ?? 0) + 1;
+    console.log(`   WINTER ${cur?.phase ?? '-'} Turniere ${cur?.tournaments?.length ?? 0}${cur?.masters?.done ? ` Masters ${nm(cur.masters.result.ranking[0])} (${cur.masters.city})` : ''} | KI-Lager ${Object.entries(dest).map(([k, v]) => k + ':' + v).join(' ')}`);
+  }
   const w = game.world;
   if (w && w.history.length) {
     const h = w.history[w.history.length - 1];
@@ -248,6 +256,11 @@ if (process.env.AI && aiTotals.seasons) {
   console.log(`KI-Bilanz über ${s} Saisons: Zugänge/Saison ${(aiTotals.arrivals / s).toFixed(1)}, Wechsel in der Liga ${(aiTotals.transfers / s).toFixed(1)}, unterklassig ${(aiTotals.lower / s).toFixed(1)}, Ausland ${(aiTotals.imports / s).toFixed(1)}, Jugend ${(aiTotals.youth / s).toFixed(1)}, generiert ${(aiTotals.generated / s).toFixed(1)} (${(aiTotals.generated / a * 100).toFixed(0)} % der Zugänge), Trainerwechsel ${(aiTotals.coach / s).toFixed(1)} (Entlassungen ${(aiTotals.sacked / s).toFixed(1)})`);
 }
 if (process.env.SAVESIZE) { const j = JSON.stringify(g); console.log(`Spielstand ${(j.length / 1024 / 1024).toFixed(2)} MB (unkomprimiert)`); for (const [k, v] of Object.entries(g)) { const n = JSON.stringify(v ?? null).length; if (n > 50000) console.log('  ', k, (n / 1024).toFixed(0), 'KB'); } const pl = Object.values(g.players); const hist = pl.reduce((a, p) => a + JSON.stringify(p.history ?? {}).length, 0); console.log('   davon Spieler-Historie', (hist / 1024).toFixed(0), 'KB bei', pl.length, 'Spielern'); }
+if (process.env.UNTIL) {
+  // Für Screenshots: nach den Saisons bis zu einem Datum weiterspielen (z. B. mitten in die Hallenrunde).
+  let guard = 0;
+  while (g.calendar.currentDate < process.env.UNTIL && !CalendarEngine.isSeasonOver(g.calendar) && guard++ < 400) processDay(g, HEADLESS_UI);
+}
 if (process.env.DUMP) {
   // Spielstand im Speicherformat ablegen (für tests/ui-smoke.mjs mit SAVE=…).
   const { compressToUTF16 } = await import('lz-string');

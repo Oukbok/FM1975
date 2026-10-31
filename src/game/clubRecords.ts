@@ -15,7 +15,7 @@ import { Game } from './state';
 
 /** [Saison, Ebene, Platz, Ligagröße, Liga-Index in `divs`] */
 export type SeasonTuple = [string, number, number, number, number];
-export type TitleKind = 'meister' | 'ddr' | 'pokal' | 'ec' | 'cwc' | 'uefa';
+export type TitleKind = 'meister' | 'ddr' | 'pokal' | 'ec' | 'cwc' | 'uefa' | 'halle';
 /** Ein Spiel deines Vereins gegen diesen Gegner: [Saison, Datum, Wettbewerb, Heim (1/0), Tore dein Verein, Tore Gegner] */
 export type H2HTuple = [string, string, 'L' | 'P' | 'E', number, number, number];
 
@@ -48,7 +48,15 @@ function ensureBook(g: Game): ClubRecordBook {
 export const TITLE_DE: Record<TitleKind, string> = {
   meister: 'Deutscher Meister', ddr: 'DDR-Meister', pokal: 'Landespokal',
   ec: 'Europapokal der Landesmeister', cwc: 'Europapokal der Pokalsieger', uefa: 'UEFA-Pokal',
+  halle: 'DFB-Hallenpokal (Masters)',
 };
+
+/** Titel außerhalb des Saisonabschlusses eintragen (z. B. Hallen-Masters, game/indoorGame.ts). */
+export function addTitleRecord(g: Game, clubId: string, kind: TitleKind, season: string): void {
+  if (!g.clubs[clubId] && !g.simClubs[clubId]) return;
+  const list = (ensureBook(g).titles[clubId] ??= []);
+  if (!list.some(([k, s]) => k === kind && s === season)) list.push([kind, season]);
+}
 
 /** Spiele deines Vereins der laufenden Saison gegen einen Gegner (Liga + Landespokal). */
 export function currentH2H(g: Game, oppId: string): H2HTuple[] {

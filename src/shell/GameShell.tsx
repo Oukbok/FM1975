@@ -47,6 +47,8 @@ import { ChronicleView } from '../views/statistiken/ChronicleView';
 import { HallOfFameView } from '../views/statistiken/HallOfFameView';
 import { CupView } from '../views/statistiken/CupView';
 import { InternationalView } from '../views/statistiken/InternationalView';
+import { IndoorView } from '../views/statistiken/IndoorView';
+import { TrainingCampView } from '../views/kader/TrainingCampView';
 import { TableView } from '../views/statistiken/TableView';
 import { BeobachtungView, TransfersView, VerhandlungenView } from '../views/transfers/TransfersView';
 import { FacilitiesView } from '../views/verein/FacilitiesView';
@@ -346,6 +348,8 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'fans' && <FansView g={g} />}
         {screen === 'vorstand' && <BoardView g={g} onChange={rerender} />}
         {screen === 'international' && <InternationalView g={g} onWatch={(id) => setLiveMatchId(id)} />}
+        {screen === 'halle' && <IndoorView g={g} onChange={rerender} />}
+        {screen === 'trainingslager' && <TrainingCampView g={g} onChange={rerender} />}
       </main>
 
       {/* Persistenter Footer auf ALLEN Seiten (Dashboard inklusive) - voll buendig

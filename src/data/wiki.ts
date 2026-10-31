@@ -2070,7 +2070,6 @@ Spiel und keiner anderen Aktivität** kollidieren.
 
 | Aktivität | Dauer | Kosten (Basis) | Effekt | Erlös |
 |---|---|---|---|---|
-| Trainingslager | 3–10 Tage | 9.000/Tag | Fitness +12, Form +5, Moral ↑ | – |
 | Freundschaftsspiel | 1 Tag | keine | Fitness +5, Form +4 | +22.000 (Basis) |
 | Teambuilding-Event | 1–2 Tage | 6.000/Tag | Form +3, Moral ↑ | – |
 
@@ -2079,7 +2078,76 @@ Spiel und keiner anderen Aktivität** kollidieren.
   begonnene Aktivitäten lassen sich **stornieren** (Kosten werden erstattet).
 - Die **Effekte** (Fitness/Form/Moral auf den Kader) treten ein, sobald das **Enddatum** im Kalenderlauf erreicht
   ist (\`App.processDay\`). Der Erlös eines Freundschaftsspiels wird dann als Einnahme gebucht.
-- Alle Datumsberechnungen laufen konsequent in **UTC**.`,
+- Alle Datumsberechnungen laufen konsequent in **UTC**.
+
+**Trainingslager** werden nicht mehr hier, sondern unter **Kader › Trainingslager** gebucht (siehe Artikel „Trainingslager“).
+Zugesagte Hallenturniere und gebuchte Lager erscheinen im Kalender als belegte Tage.`,
+  },
+  {
+    id: 'training-camps',
+    category: 'calendar',
+    title: 'Trainingslager',
+    keywords: ['trainingslager', 'camp', 'türkei', 'belek', 'katar', 'dubai', 'florida', 'spanien', 'asien', 'jetlag', 'sportschule', 'alpen'],
+    body: `## Wo und wann
+Unter **Kader › Trainingslager** buchst du je Saison ein **Sommerlager** (Vorbereitung bis kurz vor dem 1. Spieltag) und ein
+**Winterlager** (in der Winterpause). Die Ziele werden so freigeschaltet, wie sie historisch aufkamen – und zunächst nur für Vereine,
+die es sich damals leisten konnten (Ansehen):
+
+| Ziel | ab | Rahmen |
+|---|---|---|
+| Sportschule (Inland), Voralpen | 1975 | im Winter oft gefrorene Plätze |
+| Österreich / Schweiz (Sommer) | 1977 / 1980 | Annahme |
+| Kanaren / Spanien (Winter) | 1980 / 1982 | Leverkusen in den 80ern meist auf den Kanaren |
+| VAE (Dubai) | 1984 | nur Ansehen ≥ 85 (Bayern „gelegentlich“), ab 2003/2008 breiter |
+| Algarve / Malta | 1990 / 1995 | Annahme |
+| Türkei (Belek) | 1992 | Schalke 1992 als Erster; ab 1996 für alle |
+| Florida | 1992 | Leverkusen Januar 1992; ab 2010 breiter |
+| Katar (Doha) | 2011 | nur Spitzenvereine (Ansehen ≥ 82); Corona-Pause 2021/22 |
+| USA-Sommertour / Asien-Reise | 2014 / 2015 | Marketingreisen der Großen |
+
+## Buchung
+- Mindestens **7 Tage im Voraus**; unter 21 Tagen kostet es **20 % Aufschlag**. Storno bringt **50 %** zurück.
+- Kosten = (Reise + Tagessatz × Tage) × Tross-Faktor (Ansehen) × Wirtschaftsindex – kalkuliert auf dem Zielniveau
+  (Erstligist 1975 ≈ 4,5 Mio. DM Umsatz): Sportschule eine Woche ≈ 15.000 DM (1975), Spanien zehn Tage ≈ 45.000 DM (1980).
+- Das Lager darf nicht mit Pflichtspielen oder **zugesagten Hallenturnieren** kollidieren; offene Hallen-Einladungen im Zeitraum werden abgesagt.
+
+## Wirkung (bei Rückkehr)
+- **Kondition:** Fitness je Spieler ≈ Tage × 1,6 (Sommer) bzw. 1,3 (Winter) × Platzqualität, minus Wetterausfälle.
+- **Taktik/Technik:** zusätzliche Entwicklungspunkte; Chance auf bessere **Moral** (Mannschaftsgefüge) und Zufriedenheit +2.
+- **Risiken:** Verletzungen (schlechte/gefrorene Plätze erhöhen das Risiko), **Reisestrapazen** (Frische −Flugstunden × 1,6 − Zeitzonen × 3, Form −Zeitzonen × 0,7).
+- **Testspiele:** Erlös und Spielpraxis; Asien-/USA-Reisen bringen viel Geld und internationale Bekanntheit, aber wenig Training.
+- **Kritik:** Katar (ab 2014, verstärkt ab 2020), Golf- und Marketingreisen kosten Fan-Stimmung.
+
+## KI-Vereine
+Alle Vereine fahren: sie wählen ein für Größe und Epoche übliches Ziel (Belek-Boom 1998–2016, Rückkehr nach Spanien ab 2017),
+zahlen über ihre Finanzen und bekommen einen kleinen Fitness-/Form-Effekt.`,
+  },
+  {
+    id: 'indoor-football',
+    category: 'calendar',
+    title: 'Hallenfußball & Hallen-Masters',
+    keywords: ['halle', 'hallenturnier', 'masters', 'hallenpokal', 'budenzauber', 'bande', 'westfalenhalle', 'olympiahalle', 'winterpause'],
+    body: `## Geschichte im Spiel
+- **1976–1987:** Einladungsturniere mit Bundesligisten (Dortmund, Berlin, Stuttgart, München, Frankfurt) – ohne Endrunde.
+- **1988–2001: DFB-Hallenpokal.** Qualifikationsturniere (1988: 18, bis 1997: 16, ab 1998: 4), Wertung nach **Durchschnittspunkten je Spiel**
+  (ein einziges Turnier kann reichen), die **8 Besten** spielen das **Hallen-Masters** (Frankfurter Festhalle, Westfalenhalle Dortmund, Olympiahalle München – Ort wie in der Wirklichkeit).
+- **2002–2004:** nur noch wenige Regionalturniere. **Danach findet nichts mehr statt** (Chronik: „Hallen-Masters abgeschafft“).
+
+## Modus
+Sechs Teams je Turnier (zwei Dreiergruppen, Halbfinale, Spiel um Platz 3, Finale); Masters mit zwei Vierergruppen über zwei Tage.
+Fünf Feldspieler plus Torwart, Rundumbande, Gruppenspiele 12 Minuten, K.-o.-Spiele 2 × 10 Minuten, Neunmeterschießen bei Remis,
+Zwei-Minuten-Strafen. Die Hallenstärke zählt Technik, Ballkontrolle, Antritt und Wendigkeit stärker als Kopfball und Härte; Außenseiter gewinnen öfter als draußen.
+
+## Deine Entscheidung
+Einladungen kommen Anfang November als Nachricht und stehen unter **Statistiken › Halle**: **Stammkräfte**, **gemischt**, **Nachwuchs** oder **Absage**.
+- **Vorteile:** Antrittsgeld und Prämien (Masters nominal: 1988 Sieger 40.000 DM, ab 1989 120.000 DM; Startgeld 1994 50.000, 1996 200.000, ab 1997 350.000 DM),
+  Fan-Stimmung (Heimturnier), Spielpraxis und Entwicklungspunkte für Reservisten/Junge, Moral bei Turniersieg, Masters-Titel in der Vereinshistorie (+Marke, +Ansehen).
+- **Nachteile:** Verletzungen durch Hallenboden und Bande (≈ 1,6 % je Spieler und Turniertag), Frische −9 und Fitness −2 je Tag, kürzere Pause,
+  Konflikt mit dem Trainingslager. **Absage:** Fan-Stimmung −1 (Heimturnier −2,5, Masters −1,5) und Verärgerung – wer oft absagt, wird seltener eingeladen.
+
+## KI-Vereine
+Alle Vereine spielen mit: Teilnahme nach Größe, Epoche und Trainer (offensive und Jugend-Trainer lieber). Spitzenvereine schonen ab Mitte der 90er ihre Stars
+und verzichten öfter auf das Masters – wie 1988, als zehn qualifizierte Bundesligisten absagten.`,
   },
   // ---------------------------------------------------------------------------
   // Verband-POKAL
