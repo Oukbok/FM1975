@@ -2110,7 +2110,7 @@ Rund **20 Länder** mit je **1. und 2. Liga** (über 700 Vereine) werden im Hint
 - **Landespokal** jedes Landes: K.-o.-Turnier, Außenseiter gewinnen manchmal.
 
 ## Wie sich Vereine entwickeln
-- Jeder Verein hat eine **Größe** (Stadt, Tradition, Wirtschaftskraft). Sie zieht seine Stärke langfristig an und wächst mit Titeln und Europapokal-Erfolgen – kehrt aber langsam zur natürlichen Größe zurück.
+- Jeder Verein hat eine **Größe** (Stadt, Tradition, Wirtschaftskraft). Sie zieht seine Stärke langfristig an und wächst mit Titeln und Europapokal-Erfolgen – kehrt aber langsam zur natürlichen Größe zurück. Auch die natürliche Größe verschiebt sich über Jahrzehnte ein wenig (Aufschwung einer Stadt, Investoren, Niedergang), damit Dynastien kommen und gehen.
 - Ein **Generationen-Zyklus** sorgt für goldene und magere Jahre: Auch große Vereine erleben Durststrecken, kleine Vereine haben ihre Glanzzeit.
 - Das **Niveau der Länder** verschiebt sich über die Jahrzehnte (z. B. wird England ab den 1990ern stärker, Osteuropa schwächer).
 

@@ -421,8 +421,11 @@ export function advanceWorldSeason(
       for (const id of ids) {
         const club = euroClubs[id];
         const m = w.meta[id];
+        // Natürliche Größe driftet über Jahrzehnte (Stadtentwicklung, Investoren, Niedergang):
+        // ohne Drift gewann derselbe Verein oft 30+ von 50 Titeln (z. B. England).
+        m.home = clamp(m.home + gauss(r) * 0.02, 0.1, 0.95);
         m.size = clamp(m.size + (m.home - m.size) * 0.06 + gauss(r) * 0.01, 0, 1);
-        m.cycle = m.cycle * 0.8 + gauss(r) * 2.2;
+        m.cycle = m.cycle * 0.85 + gauss(r) * 2.6;
         const target = targetStrength(level, m.size, t) + m.cycle;
         club.strength = Math.round(clamp(club.strength + (target - club.strength) * 0.4 + gauss(r) * 1.5, 40, 92));
       }
