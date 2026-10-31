@@ -1,4 +1,5 @@
 // =============================================================================
+import { ClubLink } from './club/ClubLink';
 // PlayerModal — großes Spielerprofil mit Reitern (angelehnt an EA Fussball Manager / Football Manager)
 //   Kopf (immer sichtbar): Porträt | Identität + Steckbrief | Zustand
 //   Reiter: Übersicht · Attribute · Entwicklung · Spiele · Statistik · Karriere · Vertrag & Wert · Medizin · Bericht
@@ -44,11 +45,11 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
         <header className="pp-header" style={{ background: `linear-gradient(120deg, ${club?.colors.primary ?? '#2b2026'}40, transparent 60%)` }}>
           <div className="pp-portrait">
             <PlayerAvatar player={p} club={club} size={210} />
-            {club && <div className="pp-portrait-crest"><ClubCrest club={club} size={44} /></div>}
+            {club && <div className="pp-portrait-crest"><ClubLink id={club.id}><ClubCrest club={club} size={44} /></ClubLink></div>}
           </div>
 
           <div className="pp-id">
-            <div className="pp-club">{club?.name ?? 'Vereinslos'}</div>
+            <div className="pp-club">{club ? <ClubLink id={club.id}>{club.name}</ClubLink> : 'Vereinslos'}</div>
             <div className="pp-name-row">
               <span className="pp-no">#{p.shirtNumber}</span>
               <h2 className="pp-name">{p.fullName}</h2>

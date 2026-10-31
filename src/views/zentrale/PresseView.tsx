@@ -1,4 +1,5 @@
 import ClubCrest from '../../components/ClubCrest';
+import { ClubLink } from '../../components/club/ClubLink';
 import { CalendarEngine } from '../../engine/calendar';
 import { Game } from '../../game/state';
 import { DashBox, DashPage, Empty, KV, Kpi } from '../../ui/DashPage';
@@ -63,9 +64,9 @@ export function PresseView({ g }: { g: Game }) {
         {next && opp ? (
           <>
             <div className="dvs">
-              <div className="dvs-side"><ClubCrest club={g.clubs[next.homeClubId]} size={56} /><b>{g.clubs[next.homeClubId].shortName}</b></div>
+              <ClubLink id={next.homeClubId} block className="dvs-side"><ClubCrest club={g.clubs[next.homeClubId]} size={56} /><b>{g.clubs[next.homeClubId].shortName}</b></ClubLink>
               <div className="dvs-mid">VS</div>
-              <div className="dvs-side"><ClubCrest club={g.clubs[next.awayClubId]} size={56} /><b>{g.clubs[next.awayClubId].shortName}</b></div>
+              <ClubLink id={next.awayClubId} block className="dvs-side"><ClubCrest club={g.clubs[next.awayClubId]} size={56} /><b>{g.clubs[next.awayClubId].shortName}</b></ClubLink>
             </div>
             <KV k="Tabelle" v={`${row?.position ?? '–'}. gegen ${oppRow?.position ?? '–'}.`} />
             <KV k="Ø Stärke" v={`${Math.round(avg(squad.map((p) => p.overall)))} : ${Math.round(avg(squadOf(g, opp.id).map((p) => p.overall)))}`} />

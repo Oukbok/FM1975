@@ -10,6 +10,7 @@ import { environmentSeasonChange, setSeasonGoal } from './environmentGame';
 import { advanceWorldSeason, initWorld, isForeignId } from '../engine/world';
 import { closeSeason, recordTransfer } from '../engine/history';
 import { buildProClub } from '../data/generate';
+import { recordSeasonEnd } from './clubRecords';
 import { CurrentDivision, TransitionResult, computeSeasonTransition, structureForSeason } from '../data/reforms';
 import { TIMELINE_TYPE_META, TimelineEvent, dueTimelineEvents, seasonStartYear } from '../data/timeline';
 import { generateSeasonCalendar, seasonLabel } from '../engine/calendar';
@@ -206,6 +207,8 @@ export function startNextSeason(g: Game): void {
     if (div.id.startsWith('ddr-') && !isReunify) continue;
     current.push({ id: div.id, tier: div.tier, group: div.group, name: div.name, orderedIds: finalOrder(g, div.id) });
   }
+  // Vereinsprofil-Historie (Endplätze, Titel, direkter Vergleich) vor dem Überschreiben sichern.
+  recordSeasonEnd(g, oldSeason, [...current, ...(isReunify ? [] : ddrDivs.map((d) => ({ id: d.id, tier: d.tier, group: d.group, name: d.name, orderedIds: finalOrder(g, d.id) })))]);
 
   // --- 3) Auf-/Abstieg + evtl. Ligareform datengetrieben berechnen ---
   // Liegt für die neue Saison eine noch nicht angewandte Reform vor (z. B. 1981/82

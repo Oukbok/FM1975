@@ -1,8 +1,8 @@
 import ClubCrest from '../../components/ClubCrest';
-import ClubModal from '../../components/ClubModal';
+import { useClubProfile } from '../../components/club/ClubLink';
 import { seasonStartYear } from '../../data/timeline';
 import { LeagueGroup, divisionLabel } from '../../engine/leagues';
-import { buildClubProfile, clubView, divisionZone } from '../../game/clubProfile';
+import { clubView, divisionZone } from '../../game/clubProfile';
 import { Game } from '../../game/state';
 import { LeagueTable, LeagueTableRow as TableRow } from '../../types';
 import { DashBox, DashPage, KV, Kpi } from '../../ui/DashPage';
@@ -22,7 +22,7 @@ export function TableView({ g }: { g: Game }) {
   divisions.sort((a, b) => a.tier - b.tier || gOrd(a.group) - gOrd(b.group));
 
   const [selId, setSelId] = useState(g.leagues.playerDivision.id);
-  const [clubModalId, setClubModalId] = useState<string | null>(null);
+  const profile = useClubProfile();
   const sel = divisions.find((d) => d.id === selId) || divisions[0];
   const rows = sel.table.rows;
   const rowCount = rows.length;
@@ -54,7 +54,7 @@ export function TableView({ g }: { g: Game }) {
               const c = clubView(g, r.clubId, year);
               const mine = r.clubId === g.managedClubId;
               return (
-                <tr key={r.clubId} className={`clickable ${mine ? 'me' : ''}`} onClick={() => setClubModalId(r.clubId)}>
+                <tr key={r.clubId} className={`clickable ${mine ? 'me' : ''}`} onClick={() => profile?.open(r.clubId)} title="Vereinsprofil öffnen">
                   <td className="ctr"><span className={`pos-badge ${divisionZone(r.position, sel.tier, rowCount)}`}>{r.position}</span></td>
                   <td className="nowrap"><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}><ClubCrest club={c as any} size={24} />{c.name}</span></td>
                   <td className="num">{r.played}</td><td className="num">{r.won}</td><td className="num">{r.drawn}</td><td className="num">{r.lost}</td>
@@ -104,7 +104,6 @@ export function TableView({ g }: { g: Game }) {
         <div className="dnote mt8">Klicke einen Verein für sein Profil. Punkte: {g.pointSystem === '3-point' ? '3' : '2'} pro Sieg.</div>
       </DashBox>
 
-      {clubModalId && <ClubModal data={buildClubProfile(g, clubModalId)} onClose={() => setClubModalId(null)} />}
     </DashPage>
   );
 }

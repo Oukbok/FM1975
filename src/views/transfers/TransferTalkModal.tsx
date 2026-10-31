@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ClubLink } from '../../components/club/ClubLink';
 import PlayerAvatar from '../../components/PlayerAvatar';
 import ClubCrest from '../../components/ClubCrest';
 import { PROMISES, PromiseType } from '../../engine/transferMarket';
@@ -123,7 +124,7 @@ export function TransferTalkModal({ g, talk, onClose, onChange }: { g: Game; tal
         <div className="mx-head" style={{ background: `linear-gradient(120deg, ${seller?.colors.primary ?? '#2b2026'}22, transparent 70%)` }}>
           {p && <PlayerAvatar player={p} club={seller} size="large" />}
           <div>
-            <div className="mx-sub">Transferverhandlung · {seller && <ClubCrest club={seller} size={18} />} {seller?.name}</div>
+            <div className="mx-sub">Transferverhandlung · <ClubLink id={talk.sellerId}>{seller && <ClubCrest club={seller} size={18} />} {seller?.name}</ClubLink></div>
             <h2>{p?.fullName ?? 'Spieler'}</h2>
           </div>
           {p && <div className="mx-kpis">
