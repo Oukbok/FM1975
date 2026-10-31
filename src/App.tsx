@@ -34,6 +34,7 @@ import { DisplayFrame, applyDisplayMode } from './ui/DisplayFrame';
 import { setDisplayYear } from './ui/format';
 import { setEventFrequency } from './engine/randomEvents';
 import { ensureYouthTeams } from './game/youthTeams';
+import { migrateAiClubs } from './game/aiClubs';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 // =============================================================================
@@ -309,6 +310,8 @@ export default function App() {
     // Anzeige-Währung auf das aktuelle Spieljahr setzen (DM ≤2001, EUR ≥2002).
     setDisplayYear(yearOf(s.game.calendar.currentDate));
     ensureYouthTeams(s.game, s.game.calendar.currentDate);
+    // Manager-KI (SAVE_VERSION 10): Trainer der KI-Vereine nachrüsten.
+    try { migrateAiClubs(s.game); } catch (err) { console.error('Trainer-Nachrüstung fehlgeschlagen:', err); }
     gameRef.current = s.game;
     setCurrentSlot(slot);
     setInGame(true);

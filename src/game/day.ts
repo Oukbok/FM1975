@@ -27,7 +27,8 @@ import { applyMatchEffects } from '../engine/form';
 import { dataScoutingBonus, medicalRecoveryBonus, medicalRehabBonus, nlzGrowthBonus, rehaRecoveryBonus, rehaRehabBonus } from '../engine/infrastructure';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { dailyRecovery } from '../engine/training';
-import { runAITransfers, setTransferDate } from '../engine/transfers';
+import { setTransferDate } from '../engine/transfers';
+import { aiClubsDaily, aiWindowClose } from './aiClubs';
 import { applyDailyTraining } from '../engine/weeklyTraining';
 import { applyYouthGem, GEM_CHANCE_YOUTH, maybeMakeGem } from '../engine/gems';
 import { academyIntake, ageYouthPlayers, developYouthWeekly, graduateYouth } from '../engine/youth';
@@ -168,7 +169,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
         }));
         break;
       case 'transfer_window_close': {
-        const tnews = runAITransfers(g.clubs, g.players, g.managedClubId);
+        const tnews = aiWindowClose(g, today);
         pushMessage(g.messages, makeMessage({
           date: today, category: 'transfer', from: 'Sportdirektor',
           subject: ev.title,
@@ -484,6 +485,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   autoResolveEvents(g, today);
   contractReminders(g, today);
   announceUpcomingRules(g, today);
+  aiClubsDaily(g, today);
   rollAiOffers(g, today);
   checkPromises(g, today);
   transferTalkDaily(g, today);

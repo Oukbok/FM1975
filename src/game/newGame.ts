@@ -33,6 +33,7 @@ import { Game, hashSeed, migrateCommerce } from './state';
 import { InboxMessage, NewGameOptions, YOUTH_ENTRY_AGE } from '../types';
 import { setDisplayYear } from '../ui/format';
 import { seedStartLegends } from './legendsGame';
+import { ensureCoaches } from './coachCarousel';
 
 export function createNewGame(opts: NewGameOptions): Game {
   setEraYear(1975);
@@ -187,5 +188,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   ensureYouthTeams(g0, g0.calendar.currentDate);
   // Stadion in vier Blöcken (game/stadiumGame.ts).
   ensureStadiumBlocks(g0);
+  // Trainer der KI-Vereine (game/coachCarousel.ts).
+  ensureCoaches(g0, calendar.currentDate);
   return g0;
 }

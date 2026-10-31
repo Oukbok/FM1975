@@ -87,7 +87,7 @@ export function openFinancialSeason(g: Game, newSeason: string, date: string, pr
   // KI-Haushalte (Überschüsse investieren, Schulden abbauen).
   const news = runAiEconomy({
     clubs: g.clubs, players: g.players, managedClubId: g.managedClubId, season: newSeason, date, year,
-    rng: Math.random, autoManageMine: !!(g as any).simAutoManage,
+    rng: Math.random, autoManageMine: !!(g as any).simAutoManage, skipInvest: true,
   });
   if (news.length) {
     pushMessage(g.messages, makeMessage({

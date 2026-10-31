@@ -30,7 +30,11 @@ import { compressToUTF16, decompressFromUTF16 } from 'lz-string';
 //     data/clubOverrides.ts). Dieser Store liegt AUSSERHALB des Save-Schemas,
 //     gilt über alle Spielstände hinweg und erfordert KEINE SAVE_VERSION-
 //     Erhöhung. Das Save-Objekt wird lediglich abwärtskompatibel mitgepflegt.
-export const SAVE_VERSION = 9;
+// v10: Manager-KI — KI-Vereine haben Trainer (`Club.coach`, `Club.coachHistory`),
+//     arbeitslose Trainer in `game.coachPool`, Kaderplanung in `game.aiMarket`.
+//     Alle Felder optional; Altstände bekommen in doLoad (App.tsx →
+//     migrateAiClubs, game/aiClubs.ts) Trainer zugewiesen.
+export const SAVE_VERSION = 10;
 
 /** Metadaten eines Speicherstands (für die Slot-Übersicht). */
 export interface SaveMeta {

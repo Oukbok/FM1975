@@ -133,6 +133,10 @@ export interface Game {
   simClubs: Record<string, SimClub>;
   /** IDs bereits angewandter Ligareformen (verhindert Doppel-Migration beim Laden). */
   appliedReforms: string[];
+  /** Arbeitslose Trainer (Trainerkarussell, game/coachCarousel.ts). */
+  coachPool?: import('../types').ClubCoach[];
+  /** Kaderplanung der KI-Vereine in der laufenden Saison (game/aiClubs.ts). */
+  aiMarket?: import('./aiClubs').AiMarketState;
 }
 
 // Moral-Stufen in aufsteigender Reihenfolge (für Aktivitäts-Effekte, Block p11).

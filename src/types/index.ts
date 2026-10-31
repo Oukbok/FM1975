@@ -1067,6 +1067,41 @@ export interface Club {
   corporate?: ClubCorporate;
   /** Punktabzug (Lizenzauflage wegen Überschuldung) für eine Saison. */
   pointDeduction?: { season: string; points: number; reason: string };
+  /** KI-Trainer (nur KI-Vereine; der eigene Verein hat keinen – das bist du). */
+  coach?: ClubCoach;
+  /** Frühere Trainer des Vereins (älteste zuerst). */
+  coachHistory?: CoachHistoryEntry[];
+}
+
+/** Spielstil eines KI-Trainers (bestimmt Ausrichtung/Formation der KI). */
+export type CoachStyle = 'offensiv' | 'ausgewogen' | 'defensiv' | 'konter';
+/** Kaderphilosophie eines KI-Trainers: Jugend hochziehen, einkaufen oder beides. */
+export type CoachPhilosophy = 'jugend' | 'einkauf' | 'ausgewogen';
+
+/** Trainer eines KI-Vereins (game/coachCarousel.ts, engine/aiManager.ts). */
+export interface ClubCoach {
+  id: string;
+  name: string;
+  age: number;
+  nationality: string;
+  style: CoachStyle;
+  philosophy: CoachPhilosophy;
+  /** Ansehen 0–100. */
+  reputation: number;
+  /** Im Amt seit (ISO-Datum). */
+  since: string;
+  /** Lieblingsformation (ID aus data/formations.ts). */
+  preferredFormation?: string;
+  /** Druck vom Vorstand 0–100. */
+  pressure: number;
+}
+
+/** Eintrag der Trainerhistorie eines Vereins. */
+export interface CoachHistoryEntry {
+  name: string;
+  from: string;
+  to: string;
+  reason: 'entlassen' | 'ruhestand' | 'abgeworben' | 'vertragsende';
 }
 
 // -----------------------------------------------------------------------------

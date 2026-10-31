@@ -2,6 +2,7 @@ import { EuroCompId, allEuroClubs } from '../data/europe';
 import { setEraYear } from '../engine/positions';
 import { refreshOverall } from '../engine/development';
 import { manageSquads } from './squads';
+import { aiSeasonEnd } from './aiClubs';
 import { closeFinancialSeason, openFinancialSeason } from './seasonFinance';
 import { applyForcedRelegation } from './clubBusiness';
 import { staffSeasonChange } from './staffGame';
@@ -168,6 +169,8 @@ export function finalOrder(g: Game, divId: string): string[] {
 }
 
 export function startNextSeason(g: Game): void {
+  // Trainerbilanz und -karussell der KI-Vereine, solange die Endtabelle vorliegt.
+  aiSeasonEnd(g);
   const oldSeason = g.season;
   const nextStartYear = seasonStartYear(g.season) + 1;
   const nextEndYear = nextStartYear + 1;

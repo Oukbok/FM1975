@@ -6,14 +6,16 @@ import { Player, Position, Club } from '../types';
 import { Game } from './state';
 import { archiveRetired } from './archive';
 import { createPlayer } from '../engine/playerFactory';
-import { marketWage } from '../engine/clubEconomy';
+import { isLeagueClub, marketWage } from '../engine/clubEconomy';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { refreshOverall } from '../engine/development';
 import { GEM_CHANCE_YOUNG_PRO, maybeMakeGem } from '../engine/gems';
 
 const TEMPLATE: Position[] = ['TW', 'TW', 'LIB', 'VS', 'VS', 'AV', 'AV', 'DM', 'ZM', 'ZM', 'OM', 'FL', 'FL', 'MS', 'MS', 'HS', 'ZM', 'AV', 'VS', 'FL'];
-const MIN_SQUAD = 20;
-const MAX_SQUAD = 25;
+export const MIN_SQUAD = 20;
+export const MAX_SQUAD = 25;
+/** Notgrenze zum Saisonwechsel für Ligavereine mit Manager-KI (Rest über Transfers/Jugend). */
+const AI_SEASON_MIN = 17;
 
 /** Ziel-Durchschnittsstärke der 1. Liga (Anker gegen Inflation/Deflation). */
 const LEAGUE_TARGET = 72;
@@ -66,17 +68,47 @@ export function repairSquadLists(game: Game): number {
   return fixed;
 }
 
+/** Liga-Anker: liegt die Liga über/unter dem Ziel, werden Nachrücker etwas schwächer/stärker. */
+export function leagueAnchor(game: Game): number {
+  const leagueClubs = Object.values(game.clubs).filter((c) => !c.id.startsWith('am') && !c.id.startsWith('eu_'));
+  const all = leagueClubs.flatMap((c) => c.playerIds.map((id) => game.players[id]).filter(Boolean)) as Player[];
+  const avg = all.length ? all.reduce((s, p) => s + p.overall, 0) / all.length : LEAGUE_TARGET;
+  return Math.max(-6, Math.min(6, (LEAGUE_TARGET - avg) * 1.5));
+}
+
+/**
+ * Notnagel: Kader mit generierten Nachrückern bis `min` auffüllen.
+ * @returns Anzahl erzeugter Spieler.
+ */
+export function fillSquad(game: Game, club: Club, date: string, min = MIN_SQUAD, anchor = leagueAnchor(game)): number {
+  const year = Number(date.slice(0, 4));
+  const level = clubLevel(game, club);
+  let n = 0;
+  while (club.playerIds.length < min) {
+    const pos = neededPosition(game, club);
+    const age = 18 + Math.floor(Math.random() * 6);
+    const strength = Math.round(Math.max(40, Math.min(86, level - 8 + (age - 18) * 1.5 + anchor + (Math.random() - 0.5) * 10)));
+    const p = createPlayer({
+      id: `${club.id}_r${year}_${n++}_${Math.floor(Math.random() * 1e6)}`, clubId: club.id, pos, age, strength,
+      year, date, rng: Math.random, shirt: 0,
+    });
+    refreshOverall(p);
+    // Gehalt im Gefüge des Vereins (Nachrücker kosten, was der Kader im Schnitt verdient).
+    p.contract.weeklyWage = Math.max(200, Math.round(marketWage(p) * wageRatioOf(game, club)));
+    if (age <= 20) maybeMakeGem(p, GEM_CHANCE_YOUNG_PRO);
+    game.players[p.id] = p;
+    club.playerIds.push(p.id);
+  }
+  return n;
+}
+
 export function manageSquads(game: Game, date: string, autoManageMine = false): void {
   repairSquadLists(game);
   const year = Number(date.slice(0, 4));
   const mine = game.managedClubId;
   const retiredMine: Player[] = [];
 
-  // Liga-Anker: liegt die Liga über/unter dem Ziel, werden Nachrücker etwas schwächer/stärker.
-  const leagueClubs = Object.values(game.clubs).filter((c) => !c.id.startsWith('am') && !c.id.startsWith('eu_'));
-  const all = leagueClubs.flatMap((c) => c.playerIds.map((id) => game.players[id]).filter(Boolean)) as Player[];
-  const avg = all.length ? all.reduce((s, p) => s + p.overall, 0) / all.length : LEAGUE_TARGET;
-  const anchor = Math.max(-6, Math.min(6, (LEAGUE_TARGET - avg) * 1.5));
+  const anchor = leagueAnchor(game);
 
   for (const club of Object.values(game.clubs)) {
     // 1) Karriereenden
@@ -102,24 +134,10 @@ export function manageSquads(game: Game, date: string, autoManageMine = false): 
       delete game.players[worst.id];
     }
 
-    // 3) Nachrücker für KI-Vereine
-    const level = clubLevel(game, club);
-    let n = 0;
-    while (club.playerIds.length < MIN_SQUAD) {
-      const pos = neededPosition(game, club);
-      const age = 18 + Math.floor(Math.random() * 6);
-      const strength = Math.round(Math.max(40, Math.min(86, level - 8 + (age - 18) * 1.5 + anchor + (Math.random() - 0.5) * 10)));
-      const p = createPlayer({
-        id: `${club.id}_r${year}_${n++}_${Math.floor(Math.random() * 1e6)}`, clubId: club.id, pos, age, strength,
-        year, date, rng: Math.random, shirt: 0,
-      });
-      refreshOverall(p);
-      // Gehalt im Gefüge des Vereins (Nachrücker kosten, was der Kader im Schnitt verdient).
-      p.contract.weeklyWage = Math.max(200, Math.round(marketWage(p) * wageRatioOf(game, club)));
-      if (age <= 20) maybeMakeGem(p, GEM_CHANCE_YOUNG_PRO);
-      game.players[p.id] = p;
-      club.playerIds.push(p.id);
-    }
+    // 3) Nachrücker für KI-Vereine. Mit Manager-KI nur bis zur Notgrenze – den Rest
+    //    regeln Transfers und Jugend im Sommer (game/aiClubs.ts), aufgefüllt wird
+    //    erst wieder zum Ende des Transferfensters.
+    fillSquad(game, club, date, isLeagueClub(club) ? AI_SEASON_MIN : MIN_SQUAD, anchor);
   }
 
   if (retiredMine.length) {

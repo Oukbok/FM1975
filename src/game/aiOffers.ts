@@ -28,6 +28,7 @@ import { fmtPrice } from '../ui/format';
 import { transferPlayer } from './contracts';
 import { CHOICE_HANDLERS } from './eventsGame';
 import { repairSquadLists } from './squads';
+import { needBidders } from './aiClubs';
 import { Game } from './state';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -44,6 +45,9 @@ function wantsMove(p: Player, own: Club, buyer: Club): boolean {
 }
 
 function pickBidder(g: Game, p: Player, own: Club, fee: number): Club | null {
+  // Zuerst Vereine mit echtem Bedarf auf seiner Position (Kaderplanung, game/aiClubs.ts).
+  const planned = needBidders(g, p, fee).filter((c) => c.id !== own.id && !isForeignId(c.id) && c.reputation >= own.reputation - 8);
+  if (planned.length) return planned[Math.floor(Math.random() * Math.min(2, planned.length))];
   const cands = Object.values(g.clubs).filter((c) => c.id !== own.id && !isForeignId(c.id)
     && c.reputation >= Math.max(own.reputation - 4, p.overall - 6) && c.finances.transferBudget >= fee && c.playerIds.length < 30);
   if (!cands.length) return null;

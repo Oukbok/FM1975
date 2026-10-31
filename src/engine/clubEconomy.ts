@@ -305,6 +305,8 @@ export interface AiEconomyContext {
   rng: () => number;
   /** Eigenen Verein ebenfalls automatisch führen (nur Simulation/Tests). */
   autoManageMine?: boolean;
+  /** Überschüsse nicht pauschal investieren – das übernimmt die Kaderplanung (game/aiClubs.ts). */
+  skipInvest?: boolean;
 }
 
 const MIN_KEEP = 20;
@@ -403,7 +405,7 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
   const elevenths = league.map((c) => squadRankValue(c, ctx.players, 10)).sort((a, b) => a - b);
   const leagueRef = elevenths[Math.floor(elevenths.length * 0.75)] ?? 72;
   const order = [...league].sort((a, b) => b.finances.balance - a.finances.balance);
-  for (const c of order) {
+  for (const c of ctx.skipInvest ? [] : order) {
     if (!isAi(c) || hasTransferBan(c, ctx.season)) continue;
     const rev = lastRevenue(c, ctx.year);
     for (let k = 0; k < 2; k++) {
