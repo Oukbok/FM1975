@@ -75,7 +75,7 @@ export function SponsoringView({ g, onGoto, onChange }: { g: Game; onGoto: (s: S
         <Meter label="Regional" value={brand.regional} text={Math.round(brand.regional)} />
         <Meter label="National" value={brand.national} text={Math.round(brand.national)} />
         <Meter label="International" value={brand.international} text={Math.round(brand.international)} />
-        <KV k="Vermarktung & Hospitality / Jahr" v={fmtDM(myClub.finances.commercialAnnual ?? 0)} />
+        <KV k="Vermarktung (Partner, Lizenzen) / Jahr" v={fmtDM(myClub.finances.commercialAnnual ?? 0)} />
         <KV k="TV-Gelder / Jahr" v={fmtDM(myClub.finances.tvAnnual ?? 0)} />
         <KV k="Ansehen · Tabellenplatz" v={`${myClub.reputation} · ${row ? `${row.position}.` : '–'}`} />
         <div className="dnote mt8">Die Marke wächst mit Titeln und Europapokal-Erfolgen und vervielfacht Sponsoring, Fanartikel und Vermarktung. Internationale Bekanntheit zählt heute {Math.round(intW * 100)} % – Tendenz steigend.</div>

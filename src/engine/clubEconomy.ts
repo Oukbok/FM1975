@@ -221,7 +221,7 @@ export function allocateTv(clubs: Club[], tier: number, year: number, perfOf: (i
 }
 
 // -----------------------------------------------------------------------------
-// Vermarktung & Hospitality (Logen, Lizenzen, Partner)
+// Vermarktung (Partner, Lizenzen, Werbung) – Business-Plätze laufen über das Stadionumfeld
 // -----------------------------------------------------------------------------
 /** Durchschnittsumsatz eines Erstligisten 1975 (Recherche: Median ≈ 4,5 Mio. DM; Bezug für die Vermarktung). */
 export const AVG_REVENUE_1975 = 4_500_000;
@@ -236,7 +236,9 @@ export function commercialAnnualFor(c: Club, tier: number, year: number): number
   const growth = Math.max(0, revenueShareCommercial(year) - revenueShareCommercial(1975));
   const size = Math.pow(Math.max(5, brandIndex(b, year)) / 45, 1.5);
   const tierF = tier <= 1 ? 1 : tier === 2 ? 0.35 : 0.1;
-  return Math.round(AVG_REVENUE_1975 * economyScale(year) * growth * 0.6 * size * tierF);
+  // × 0,85: Der Hospitality-Anteil (Business-Plätze) wird seit dem Stadionumfeld eigens
+  // über engine/grounds.ts verdient – hier nur Partner, Lizenzen, Werbung (keine Doppelzählung).
+  return Math.round(AVG_REVENUE_1975 * economyScale(year) * growth * 0.6 * size * tierF * 0.85);
 }
 
 // -----------------------------------------------------------------------------

@@ -505,7 +505,7 @@ export function bookMonthly(
   if (m.membership > 0) book(fin, date, m.membership, 'membership', 'Mitgliedsbeitraege (Monat)', trackDetail);
   if (m.cateringLease > 0) book(fin, date, m.cateringLease, 'catering', 'Catering-Pacht (Monat)', trackDetail);
   if (m.tv > 0) book(fin, date, m.tv, 'tv_money', 'TV-Gelder (zentrale Vermarktung)', trackDetail);
-  if (m.commercial > 0) book(fin, date, m.commercial, 'commercial', 'Vermarktung & Hospitality (Monat)', trackDetail);
+  if (m.commercial > 0) book(fin, date, m.commercial, 'commercial', 'Vermarktung (Monat)', trackDetail);
   if (m.placementBonus > 0) book(fin, date, m.placementBonus, 'prize_money', 'Sponsor-Platzierungsbonus', trackDetail);
   // Ausgaben
   book(fin, date, -m.wages, 'wages', 'Spielergehälter (Monat)', trackDetail);
