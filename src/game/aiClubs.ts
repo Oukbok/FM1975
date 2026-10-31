@@ -310,7 +310,8 @@ function buyExternal(ctx: RoundCtx, club: Club, need: GroupNeed, want: { min: nu
   const from = lower ? lowerClubName(g, rng) : 'Ausland';
   if (!from) return false;
   // Unterklassige Spieler sind jünger und etwas schwächer; niemand übertrifft das Liganiveau.
-  const top = lower ? Math.min(want.ideal - 3, ctx.leagueRef - 4) : Math.min(want.ideal, ctx.leagueRef);
+  // Fertige Weltklasse kauft man nicht aus dem Nichts: unterklassig höchstens 79, Ausland höchstens 83.
+  const top = lower ? Math.min(want.ideal - 3, ctx.leagueRef - 4, 79) : Math.min(want.ideal, ctx.leagueRef, 83);
   // Liga-Anker wie bei den Nachrückern: ist die Liga zu stark, kommen etwas schwächere Spieler.
   const strength = Math.round(Math.min(want.min + rng() * Math.max(0, want.ideal - want.min), top) + Math.min(0, ctx.anchor));
   if (strength < want.min - 1 + Math.min(0, ctx.anchor)) return false;
