@@ -1,5 +1,5 @@
 // Gemeinsamer Ablauf „Neues Spiel“ für die Oberflächentests (Assistent in drei Schritten).
-//   startNewGame(page, { name, clubIndex, league, speed, shots })
+//   startNewGame(page, { name, clubIndex, league, speed, shots, keepBriefing })
 export async function startNewGame(page, opts = {}) {
   const { name = 'Test', clubIndex = 0, league, speed = '300', shots } = opts;
   await page.click('text=Neues Spiel');
@@ -17,4 +17,15 @@ export async function startNewGame(page, opts = {}) {
   await page.fill('.ng-form input[placeholder*="Mustermann"]', name);
   if (shots) await shots('3_manager');
   await page.click('.ng-foot button:has-text("Karriere starten")');
+  // Saison-Briefing (öffnet automatisch zu Spielbeginn) schließen – ausser es soll offen bleiben.
+  if (!opts.keepBriefing) await closeBriefing(page);
+}
+
+/** Schließt das Saison-Briefing-Popup, falls es offen ist. */
+export async function closeBriefing(page) {
+  const btn = page.locator('.bf-modal .bf-continue');
+  try { await btn.waitFor({ state: 'visible', timeout: 4000 }); } catch { return false; }
+  await btn.click();
+  await page.locator('.bf-modal').waitFor({ state: 'detached', timeout: 4000 }).catch(() => {});
+  return true;
 }

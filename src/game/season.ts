@@ -1,3 +1,4 @@
+import { recordSeasonBriefing } from './seasonBriefing';
 import { EuroCompId, allEuroClubs } from '../data/europe';
 import { setEraYear } from '../engine/positions';
 import { refreshOverall } from '../engine/development';
@@ -397,21 +398,15 @@ export function startNextSeason(g: Game): void {
   // Wurde diese Saison eine Struktur-Reform ausgeführt, meldet die Fußball-Chronik
   // den Umbau. Die Reform wird gespeichert, damit sie beim erneuten Laden eines
   // Spielstands nicht ein zweites Mal migriert (Doppel-Migration verhindert).
+  // Die Reform selbst erklärt das Saison-Briefing („Neu im Spiel“, game/seasonBriefing.ts).
   if (res.reform) {
     const rf = res.reform;
-    pushMessage(g.messages, makeMessage({
-      date: calendar.currentDate, category: 'milestone', from: 'Fußball-Chronik',
-      subject: `${seasonStartYear(newSeason)}: ${rf.title}`,
-      shortText: `Ligareform ${rf.effectiveSeason}: ${rf.title}.`,
-      bodyText: `${rf.title}  (Ligareform ${rf.effectiveSeason})\n\n${rf.description}\n\n`
-        + `Qualifikation & Zuordnung: ${rf.qualificationRule}\n\n`
-        + `Details zum Reformsystem findest du im Bereich „Wiki“ (Ligastruktur & Auf-/Abstieg).`,
-    }));
     if (!g.appliedReforms.includes(rf.reformId)) g.appliedReforms.push(rf.reformId);
   }
 
-  // Meilensteine dieser Saison auslösen (z. B. 1995/96 → 3-Punkte-Regel).
-  fireTimelineForSeason(g, newSeason, calendar.currentDate);
+  // Meilensteine dieser Saison auslösen (z. B. 1995/96 → 3-Punkte-Regel). Ohne Einzel-
+  // Nachrichten: Sie stehen gesammelt im Saison-Briefing (recordSeasonBriefing unten).
+  fireTimelineForSeason(g, newSeason, calendar.currentDate, true);
 
   // --- 9) Nachrichten: Auf-/Abstieg des eigenen Vereins + Ligaüberblick ---
   const newPlayerTier = membership[playerDivId].meta.tier;
@@ -466,6 +461,8 @@ export function startNextSeason(g: Game): void {
   // Neue Saison, evtl. neue Epoche: Positionsstärken aller Spieler neu bewerten.
   setEraYear(Number(calendar.currentDate.slice(0, 4)));
   for (const p of Object.values(g.players)) if (!p.isYouth) refreshOverall(p);
+  // Saison-Briefing („Was ist neu?“) festhalten und zum Anzeigen vormerken.
+  recordSeasonBriefing(g);
 }
 
 /** Erzeugt eine Spielbericht-Nachricht für das Spiel des Nutzers. */

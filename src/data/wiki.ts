@@ -1580,6 +1580,26 @@ Monatlich verschiebt sich die **Zufriedenheit**:
 Unzufriedene Spieler fordern mehr, verlängern ungern, sinken in der Moral und ziehen Angebote anderer Vereine an.`,
   },
   {
+    id: 'chronicle-briefing',
+    category: 'chronicle',
+    title: 'Saison-Briefing',
+    keywords: ['briefing', 'saisonbriefing', 'damals', 'heute', 'neu im spiel', 'gesellschaft', 'saisonwechsel', 'ausgangslage', 'archiv'],
+    body: `## Wann es erscheint
+Zu **Spielbeginn** und nach jedem **Saisonwechsel** öffnet sich automatisch das Saison-Briefing. „Weiter“ schließt es. Abschalten kannst du das unter **Einstellungen → Saison-Briefing automatisch anzeigen**; das Briefing liegt trotzdem als Nachricht im Posteingang. Beim Laden eines Spielstands öffnet es sich nicht.
+
+## Aufbau
+- **Überblick:** die 3–5 wichtigsten Punkte und **deine Ausgangslage** (Saisonziel des Vorstands, Liga, Kaderstärke im Ligavergleich, Vertrauen, Kontostand, Transferbudget, Kader-Eckdaten).
+- **Fußball** und **Gesellschaft:** was sich in dieser Saison im Fußball ändert und was das Land bewegt – Politik, Alltag, Kultur.
+- **Damals & heute:** In der ersten Saison alle Unterschiede zum heutigen Fußball (2025/26), nach Thema geordnet. Danach nur die Wechsel: was **ab jetzt wie heute** ist, was **neu anders** wird, was **zum letzten Mal** gilt – der Rest aufklappbar unter „Noch anders als heute“.
+- **Neu im Spiel:** automatisch aus den Spielregeln abgeleitet – Chronik-Meilensteine (z. B. 1995/96 drei Punkte pro Sieg), Ligareformen, neue Trainingslager-Ziele, Beginn und Ende von Hallenturnieren und Hallen-Masters, neue Nachwuchs-Bausteine und die NLZ-Pflicht, neue Bauten und Lizenzauflagen im Stadionumfeld, neue Einrichtungen und die Umstellung von D-Mark auf Euro (1. Januar 2002).
+
+## Archiv
+Unter **Zentrale → Briefing** findest du die Briefings aller Saisons dieses Spiels; „Briefing öffnen“ zeigt das große Fenster. Alte Spielstände führen das Archiv ab der Saison, in der sie zuerst geladen werden.
+
+## Vorschau und Chronik
+Am **2. Januar** kündigt der Verband an, was ab der nächsten Saison gilt. Die Einzelmeldungen der Chronik zum Saisonstart sind im Briefing zusammengefasst; alle Meilensteine stehen weiter unter **Statistiken → Chronik**.`,
+  },
+  {
     id: 'chronicle-hall-of-fame',
     category: 'chronicle',
     title: 'Ruhmeshalle & Spieler-Archiv',

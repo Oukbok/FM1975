@@ -39,6 +39,7 @@ import { migrateFinanceLevel } from './game/financeMigration';
 import { migrateWinter } from './game/winterShared';
 import { migrateGrounds } from './game/groundsGame';
 import { migrateYouthInvest } from './game/youthInvest';
+import { migrateBriefing } from './game/seasonBriefing';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 // =============================================================================
@@ -324,6 +325,8 @@ export default function App() {
     try { migrateGrounds(s.game); } catch (err) { console.error('Umfeld-Nachrüstung fehlgeschlagen:', err); }
     // Nachwuchs-Investitionen (v11): Bausteine aus der alten Akademie-Stufe ableiten.
     try { migrateYouthInvest(s.game); } catch (err) { console.error('Nachwuchs-Nachrüstung fehlgeschlagen:', err); }
+    // Saison-Briefing: Archiv ab der aktuellen Saison, beim Laden kein automatisches Popup.
+    try { migrateBriefing(s.game); } catch (err) { console.error('Briefing-Nachrüstung fehlgeschlagen:', err); }
     gameRef.current = s.game;
     setCurrentSlot(slot);
     setInGame(true);

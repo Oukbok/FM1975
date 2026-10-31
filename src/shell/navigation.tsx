@@ -6,7 +6,9 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   // Neue Einzelseiten
   | 'tactics' | 'stadium' | 'presse' | 'vertraege' | 'beobachtung' | 'verhandlungen' | 'sponsoring' | 'fans' | 'international' | 'vorstand' | 'ruhmeshalle' | 'akademie'
   // Winter: Hallenfußball + Trainingslager
-  | 'halle' | 'trainingslager';
+  | 'halle' | 'trainingslager'
+  // Saison-Briefing (Archiv)
+  | 'briefing';
 
 // =============================================================================
 // MENÜ-STRUKTUR (zweistufige Top-Navigation)
@@ -27,6 +29,7 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'news', label: 'Nachrichten', icon: 'news' },
     { screen: 'presse', label: 'Presse', icon: 'presse' },
     { screen: 'calendar', label: 'Kalender', icon: 'kalender' },
+    { screen: 'briefing', label: 'Briefing', icon: 'briefing' },
   ] },
   { key: 'spieltag', label: 'Spieltag', icon: 'lineup', dash: 'cat-spieltag', subs: [
     { screen: 'cat-spieltag', label: 'Spieltag', icon: 'lineup' },

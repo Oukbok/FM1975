@@ -27,3 +27,4 @@ import './24-newgame.css';
 import './25-theme.css';
 import './26-winter.css';
 import './26-grounds.css';
+import './27-briefing.css';

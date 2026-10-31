@@ -1,0 +1,225 @@
+// =============================================================================
+// SAISON-BRIEFING — „Neu im Spiel“: automatisch aus den Spieldaten abgeleitet
+// -----------------------------------------------------------------------------
+// Was ändert sich zur Saison IM SPIEL? Nicht redaktionell, sondern aus denselben
+// Tabellen, die die Mechaniken steuern:
+//   Chronik-Meilensteine (data/timeline.ts) · Ligareformen (data/reforms.ts) ·
+//   Trainingslager-Ziele (data/campDestinations.ts) · Hallenfußball
+//   (data/indoorHistory.ts) · Nachwuchs-Bausteine + NLZ-Pflicht
+//   (engine/youthAcademy.ts) · Stadionumfeld + Lizenzauflagen
+//   (data/groundsCatalog.ts) · Einrichtungen (engine/infrastructure.ts) ·
+//   Währung DM → EUR (engine/economy.ts).
+// Diese Liste ersetzt die früheren Einzel-Nachrichten der Chronik zum
+// Saisonstart; die Vorschau am 2. Januar (game/ruleNotice.ts) bleibt.
+// =============================================================================
+import { CAMP_DESTINATIONS, CampDestination } from '../data/campDestinations';
+import { GROUNDS_BY_KEY, GROUNDS_MODULES, licenseMin } from '../data/groundsCatalog';
+import { indoorPhase } from '../data/indoorHistory';
+import { LEAGUE_REFORMS } from '../data/reforms';
+import { TIMELINE, TimelineType, seasonStartYear } from '../data/timeline';
+import { currencyForYear, DM_PER_EUR } from '../engine/economy';
+import { FACILITIES } from '../engine/infrastructure';
+import { YOUTH_BLOCKS, nlzDutyYear } from '../engine/youthAcademy';
+
+export type GameChangeKind = 'regel' | 'liga' | 'wettbewerb' | 'geld' | 'technik' | 'training' | 'halle' | 'jugend' | 'umfeld' | 'einrichtung';
+
+export interface GameChange {
+  kind: GameChangeKind;
+  /** Name eines <Icon>. */
+  icon: string;
+  title: string;
+  text: string;
+  /** Herkunft (Chronik, Ligareform …) – kleine Beschriftung. */
+  source: string;
+  /** Wo du es im Spiel findest (z. B. „Kader › Trainingslager“). */
+  where?: string;
+  /** Wichtig für den Überblick (Regeln, Reformen, Währung). */
+  major?: boolean;
+}
+
+export const CHANGE_KIND_META: Record<GameChangeKind, { label: string; icon: string }> = {
+  regel: { label: 'Spielregeln', icon: 'whistle' },
+  liga: { label: 'Ligasystem', icon: 'dashTabelle' },
+  wettbewerb: { label: 'Wettbewerbe', icon: 'trophy' },
+  geld: { label: 'Geld & Recht', icon: 'finances' },
+  technik: { label: 'Technik', icon: 'stats' },
+  training: { label: 'Trainingslager', icon: 'weather' },
+  halle: { label: 'Hallenfußball', icon: 'trophy' },
+  jugend: { label: 'Nachwuchs', icon: 'youth' },
+  umfeld: { label: 'Stadionumfeld', icon: 'facilities' },
+  einrichtung: { label: 'Einrichtungen', icon: 'stadium' },
+};
+
+/** Sonderregeln ohne eigenen Chronik-Eintrag (auch in der Vorschau am 2. Januar). */
+export const SPECIAL_RULE_CHANGES: { startYear: number; title: string; text: string }[] = [
+  { startYear: 1998, title: 'Europapokal nur mit Sitzplätzen', text: 'Stehränge werden bei Europapokal-Heimspielen bestuhlt und fassen nur noch die Hälfte.' },
+];
+
+const TIMELINE_KIND: Record<TimelineType, GameChangeKind> = {
+  rule: 'regel', competition: 'wettbewerb', law: 'geld', tech: 'technik', finance: 'geld', reform: 'liga',
+};
+
+const seasonOf = (y: number) => `${y}/${String((y + 1) % 100).padStart(2, '0')}`;
+
+/** Kleinste Ansehens-Schwelle, ab der ein Ziel im Jahr buchbar ist (null = gar nicht). */
+function campMinRep(d: CampDestination, year: number): number | null {
+  if (year < d.access[0].from || d.closed?.includes(year)) return null;
+  return [...d.access].reverse().find((a) => a.from <= year)!.minRep;
+}
+/** Sommerlager liegen im Juli des Startjahres, Winterlager im Januar danach. */
+function campSeasonRep(d: CampDestination, startYear: number): number | null {
+  const reps = d.seasons.map((s) => campMinRep(d, s === 'summer' ? startYear : startYear + 1)).filter((r): r is number => r != null);
+  return reps.length ? Math.min(...reps) : null;
+}
+const campWhen = (d: CampDestination) => d.seasons.length === 2 ? 'Sommer & Winter' : d.seasons[0] === 'summer' ? 'Sommer' : 'Winter';
+
+function campChanges(y: number, first: boolean): GameChange[] {
+  const out: GameChange[] = [];
+  if (first) {
+    const open = CAMP_DESTINATIONS.filter((d) => campSeasonRep(d, y) != null);
+    out.push({
+      kind: 'training', icon: 'weather', source: 'Trainingslager', where: 'Kader › Trainingslager',
+      title: `${open.length} Trainingslager-Ziele buchbar`,
+      text: `${open.map((d) => d.name).join(', ')}. Weitere Ziele kommen mit den Jahren dazu – Fernreisen erst viel später.`,
+    });
+    return out;
+  }
+  for (const d of CAMP_DESTINATIONS) {
+    const now = campSeasonRep(d, y);
+    const prev = campSeasonRep(d, y - 1);
+    if (now != null && prev == null) {
+      const wasOpen = d.access[0].from < y - 1 && d.closed?.length;
+      out.push({
+        kind: 'training', icon: 'weather', source: 'Trainingslager', where: 'Kader › Trainingslager',
+        title: wasOpen ? `Wieder buchbar: ${d.name}` : `Neues Ziel: ${d.name}`,
+        text: `${d.place} (${d.country}), ${campWhen(d)}.${now > 0 ? ` Zunächst nur für Vereine ab Ansehen ${now}.` : ''}`,
+      });
+    } else if (now != null && prev != null && now < prev) {
+      out.push({
+        kind: 'training', icon: 'weather', source: 'Trainingslager', where: 'Kader › Trainingslager',
+        title: `${d.name} für mehr Vereine`,
+        text: now > 0 ? `${d.place} ist jetzt ab Ansehen ${now} buchbar (bisher ${prev}).` : `${d.place} steht jetzt allen Vereinen offen.`,
+      });
+    } else if (now == null && prev != null) {
+      out.push({
+        kind: 'training', icon: 'weather', source: 'Trainingslager', where: 'Kader › Trainingslager',
+        title: `Nicht buchbar: ${d.name}`, text: `${d.place} ist in dieser Saison nicht verfügbar (Reisebeschränkungen).`,
+      });
+    }
+  }
+  return out;
+}
+
+const INDOOR_TEXT: Record<string, { title: string; text: string }> = {
+  invitational: { title: 'Hallenturniere im Winter', text: 'In der Winterpause laden Veranstalter zu Hallenturnieren ein – Antrittsgeld, Prämien und Spielpraxis, aber auch Verletzungsrisiko.' },
+  masters: { title: 'Hallen-Masters', text: 'Der Verband richtet ein offizielles Hallen-Masters aus: Über die Turniere der Tour qualifizieren sich acht Teams für die Endrunde im Januar.' },
+  regional: { title: 'Hallen-Masters eingestellt', text: 'Das Hallen-Masters gibt es nicht mehr. Im Winter laufen nur noch einzelne regionale Hallenturniere.' },
+  none: { title: 'Keine Profi-Hallenturniere mehr', text: 'Die Profis bleiben im Winter draußen: Statt Hallenturnieren gibt es nur noch Trainingslager im Süden.' },
+};
+
+function indoorChanges(y: number, first: boolean): GameChange[] {
+  const now = indoorPhase(y + 1);
+  const prev = first ? 'none' : indoorPhase(y);
+  if (now === prev) return [];
+  const t = INDOOR_TEXT[now];
+  return [{ kind: 'halle', icon: 'trophy', source: 'Hallenfußball', where: 'Statistiken › Halle', ...t }];
+}
+
+function youthChanges(y: number, tier: number): GameChange[] {
+  const out: GameChange[] = [];
+  for (const b of YOUTH_BLOCKS) {
+    for (const lv of b.levels) {
+      if (lv.from !== y || y <= 1975) continue;
+      out.push({ kind: 'jugend', icon: 'youth', source: 'Nachwuchs', where: 'Kader › Akademie', title: `${b.name}: ${lv.name}`, text: lv.desc });
+    }
+  }
+  const duty = nlzDutyYear(tier);
+  if (duty === y) {
+    out.push({
+      kind: 'jugend', icon: 'youth', source: 'Lizenz', where: 'Kader › Akademie', major: true,
+      title: 'Leistungszentrum ist Pflicht',
+      text: `Ab dieser Saison bekommt in deiner Liga nur noch eine Lizenz, wer ein Nachwuchsleistungszentrum betreibt.`,
+    });
+  }
+  return out;
+}
+
+function groundsChanges(y: number, tier: number): GameChange[] {
+  const out: GameChange[] = [];
+  if (y > 1975) {
+    for (const m of GROUNDS_MODULES) {
+      for (const lv of m.levels) {
+        if (lv.unlock !== y) continue;
+        const short = lv.name.toLowerCase().includes(m.name.split(/[ &]/)[0].toLowerCase());
+        out.push({ kind: 'umfeld', icon: 'facilities', source: 'Stadionumfeld', where: 'Verein › Vereinsgelände', title: short ? lv.name : `${m.name}: ${lv.name}`, text: `Neu im Stadionumfeld (${m.name}) – ab jetzt baubar.` });
+      }
+    }
+  }
+  for (const key of ['floodlight', 'press'] as const) {
+    const now = licenseMin(key, tier, y);
+    const prev = licenseMin(key, tier, y - 1);
+    if (now <= prev || y <= 1975) continue;
+    const mod = GROUNDS_BY_KEY[key];
+    out.push({
+      kind: 'umfeld', icon: 'facilities', source: 'Lizenzauflage', where: 'Verein › Vereinsgelände',
+      title: `Lizenz: ${mod.name} „${mod.levels[now - 1]?.name ?? `Stufe ${now}`}“`,
+      text: 'Die Lizenz verlangt diese Mindeststufe. Fehlt sie, droht eine Geldstrafe je Saison.',
+    });
+  }
+  return out;
+}
+
+function facilityChanges(y: number): GameChange[] {
+  const out: GameChange[] = [];
+  for (const f of FACILITIES) {
+    if (f.unlockYear === y) out.push({ kind: 'einrichtung', icon: f.iconName ?? 'facilities', source: 'Einrichtungen', where: 'Verein › Vereinsgelände', title: `Neu baubar: ${f.name}`, text: f.desc });
+    if (f.obsoleteYear === y) out.push({ kind: 'einrichtung', icon: 'facilities', source: 'Einrichtungen', where: 'Verein › Vereinsgelände', title: `Veraltet: ${f.name}`, text: 'Nicht mehr bau- oder ausbaubar.' });
+  }
+  return out;
+}
+
+function currencyChanges(y: number, first: boolean): GameChange[] {
+  if (first) {
+    return [{ kind: 'geld', icon: 'finances', source: 'Währung', title: `Gerechnet wird in ${currencyForYear(y) === 'DM' ? 'D-Mark' : 'Euro'}`, text: 'Alle Preise, Gehälter und Ablösen erscheinen in der Währung ihrer Zeit.' }];
+  }
+  if (currencyForYear(y + 1) !== currencyForYear(y)) {
+    return [{
+      kind: 'geld', icon: 'finances', source: 'Währung', major: true, title: 'Der Euro kommt',
+      text: `Zum 1. Januar ${y + 1} stellt das Spiel auf Euro um (1 EUR = ${String(DM_PER_EUR).replace('.', ',')} DM). Kontostand und Preise werden umgerechnet.`,
+    }];
+  }
+  if (currencyForYear(y) !== currencyForYear(y - 1)) {
+    return [{ kind: 'geld', icon: 'finances', source: 'Währung', major: true, title: 'Erste ganze Saison in Euro', text: 'Alle Beträge – Gehälter, Ablösen, Eintritt – laufen jetzt in Euro.' }];
+  }
+  return [];
+}
+
+/**
+ * Alle Änderungen im Spiel zur Saison mit Startjahr `y`.
+ * `first` = Spielbeginn (statt „neu“ wird der Startzustand beschrieben),
+ * `tier` = Liga-Ebene des eigenen Vereins (Lizenzauflagen, NLZ-Pflicht).
+ */
+export function gameChangesFor(y: number, opts: { first?: boolean; tier?: number } = {}): GameChange[] {
+  const first = !!opts.first;
+  const tier = opts.tier ?? 1;
+  const out: GameChange[] = [];
+  for (const e of TIMELINE) {
+    if (seasonStartYear(e.season) !== y) continue;
+    const kind = TIMELINE_KIND[e.type];
+    out.push({ kind, icon: CHANGE_KIND_META[kind].icon, source: 'Chronik', title: e.title, text: e.description, major: e.type === 'rule' || e.type === 'reform' || !!e.effect?.pointSystem });
+  }
+  for (const r of LEAGUE_REFORMS) {
+    if (seasonStartYear(r.effectiveSeason) !== y) continue;
+    out.push({ kind: 'liga', icon: 'dashTabelle', source: 'Ligareform', where: 'Statistiken › Liga', title: r.title, text: `${r.description} ${r.qualificationRule}`.trim(), major: true });
+  }
+  for (const s of SPECIAL_RULE_CHANGES) if (s.startYear === y) out.push({ kind: 'regel', icon: 'whistle', source: 'Reglement', title: s.title, text: s.text, major: true });
+  out.push(...currencyChanges(y, first));
+  out.push(...indoorChanges(y, first));
+  out.push(...campChanges(y, first));
+  out.push(...youthChanges(y, tier));
+  out.push(...groundsChanges(y, tier));
+  out.push(...facilityChanges(y));
+  return out;
+}
+
+export { seasonOf as briefingSeasonLabel };

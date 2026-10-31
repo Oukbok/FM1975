@@ -1,0 +1,115 @@
+/* =============================================================================
+   SAISON-BRIEFING – Popup (views/zentrale/BriefingModal.tsx) und Archiv
+   (views/zentrale/BriefingView.tsx). Farben nur über Tokens aus 00-base.css.
+   ============================================================================= */
+
+/* Symbole in der Größe des size-Attributs (sonst 1em aus 02-startmenu.css) */
+.bf-modal svg.game-icon, .bf-arch svg.game-icon { width: auto; height: auto; }
+
+/* ---------- Popup: Rahmen ---------- */
+.bf-overlay { z-index: 1100; }
+.bf-modal { max-width: 1500px; }
+.bf-head { gap: 18px; padding: 20px 30px 16px; }
+.bf-head-ico { display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 14px; background: var(--panel-2); border: 1px solid var(--border); flex: 0 0 auto; }
+.bf-head-id { min-width: 0; padding-right: 40px; }
+.bf-head-id h2 { font-size: 30px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bf-head .mx-sub { color: var(--accent); }
+
+.bf-tabs { padding: 0 28px; margin: 0; flex: 0 0 auto; gap: 2px; }
+.bf-tabs .tab { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-display); font-size: 15px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; padding: 12px 18px; }
+.bf-tabs .tab.active { color: var(--text); border-bottom-color: var(--accent); }
+.bf-count { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--border); color: var(--text-2); font-family: var(--font-ui); font-size: 12px; font-weight: 800; letter-spacing: 0; }
+.tab.active .bf-count { color: var(--accent); border-color: var(--accent); }
+
+.bf-body { padding: 22px 30px 24px; font-size: 16px; line-height: 1.5; color: var(--text); }
+.bf-foot { align-items: center; }
+.bf-foot-hint { margin-right: auto; color: var(--text-3); font-size: 13px; }
+.bf-continue { padding: 10px 34px; font-size: 16px; }
+
+.bf-kicker { font-family: var(--font-display); font-size: 12px; font-weight: 500; letter-spacing: 1.2px; text-transform: uppercase; color: var(--accent); }
+.bf-title { font-family: var(--font-display); font-size: 22px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 14px; color: var(--text); }
+.bf-lead { color: var(--text-2); margin: 0 0 16px; font-size: 16px; }
+.bf-empty { color: var(--text-3); font-size: 15px; padding: 18px 0; margin: 0; }
+.bf-sec { margin-bottom: 22px; }
+.bf-sec-title { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font-family: var(--font-display); font-size: 15px; font-weight: 500; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-2); }
+.bf-sec-title.mt { margin-top: 22px; }
+
+/* ---------- Überblick ---------- */
+.bf-overview { display: grid; grid-template-columns: minmax(0, 1.9fr) minmax(280px, 1fr); gap: 30px; align-items: start; }
+.bf-ov-side { background: var(--panel-2); border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 16px 18px; }
+
+.bf-hl { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.bf-hl-item { display: flex; gap: 16px; align-items: flex-start; padding: 14px 16px; background: var(--panel-2); border: 1px solid var(--border-soft); border-left: 3px solid var(--accent); border-radius: var(--radius-sm); }
+.bf-hl-ico { flex: 0 0 auto; display: inline-flex; padding-top: 2px; }
+.bf-hl-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.bf-hl-title { font-size: 19px; font-weight: 800; color: var(--text); }
+.bf-hl-text { font-size: 16px; color: var(--text-2); }
+.bf-hl.compact { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 8px 12px; }
+.bf-hl.compact .bf-hl-item { padding: 9px 12px; gap: 12px; }
+.bf-hl.compact .bf-hl-title { font-size: 16px; }
+.bf-hl.compact .bf-hl-text { font-size: 14px; }
+
+.bf-sit { display: flex; flex-direction: column; }
+.bf-sit-row { display: flex; justify-content: space-between; gap: 14px; padding: 6px 0; border-bottom: 1px solid var(--border-soft); font-size: 15px; }
+.bf-sit-row:last-child { border-bottom: none; }
+.bf-sit-row span { color: var(--text-3); white-space: nowrap; }
+.bf-sit-row b { text-align: right; color: var(--text); font-weight: 700; }
+.bf-sit-row.strong b { color: var(--accent); }
+
+.bf-jump { display: flex; flex-direction: column; gap: 6px; }
+.bf-jump-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px; background: transparent; border: 1px solid var(--border-soft); border-radius: var(--radius-sm); color: var(--text-2); font-size: 14px; font-weight: 700; text-align: left; cursor: pointer; }
+.bf-jump-btn span { flex: 1 1 auto; }
+.bf-jump-btn b { color: var(--text); }
+.bf-jump-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--text); }
+.bf-jump-btn:disabled { opacity: 0.45; cursor: default; }
+
+/* ---------- Fußball / Gesellschaft ---------- */
+.bf-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
+.bf-item { background: var(--panel-2); border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; }
+.bf-item header { display: flex; align-items: center; gap: 10px; }
+.bf-item h3 { margin: 4px 0 0; font-size: 20px; font-weight: 800; color: var(--text); font-family: var(--font-ui); letter-spacing: 0; }
+.bf-item p { margin: 0; color: var(--text-2); font-size: 16px; }
+.bf-ingame { display: flex; gap: 8px; align-items: flex-start; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border-soft); color: var(--text-2); font-size: 14px; }
+.bf-ingame .game-icon { flex: 0 0 auto; margin-top: 2px; }
+.bf-ingame b { color: var(--accent); }
+
+/* ---------- Damals & heute ---------- */
+.bf-diff { display: flex; flex-direction: column; }
+.bf-diff-head, .bf-diff-row { display: grid; grid-template-columns: minmax(180px, 0.8fr) 1fr 1fr; gap: 18px; }
+.bf-diff-head { position: sticky; top: -22px; z-index: 1; background: var(--panel); padding: 8px 0; border-bottom: 1px solid var(--border); font-family: var(--font-display); font-size: 13px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-3); }
+.bf-diff-head span:nth-child(2) { color: var(--accent); }
+.bf-diff-group h4 { display: flex; align-items: center; gap: 8px; margin: 18px 0 4px; font-family: var(--font-display); font-size: 15px; font-weight: 500; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-2); }
+.bf-diff-row { padding: 9px 0; border-bottom: 1px solid var(--border-soft); font-size: 15px; }
+.bf-diff-title { font-weight: 800; color: var(--text); display: flex; flex-direction: column; }
+.bf-diff-title small { font-weight: 600; color: var(--text-3); font-size: 12px; }
+.bf-then { color: var(--text); }
+.bf-today { color: var(--text-3); }
+
+.bf-toggle { display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 14px; color: var(--text-2); font-family: var(--font-display); font-size: 14px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; margin-bottom: 8px; }
+.bf-toggle:hover { border-color: var(--accent); color: var(--text); }
+.bf-caret { display: inline-block; transition: transform 0.15s; font-size: 18px; line-height: 1; }
+.bf-caret.open { transform: rotate(90deg); }
+
+/* ---------- Neu im Spiel ---------- */
+.bf-changes { columns: 2 420px; column-gap: 30px; }
+.bf-changes .bf-sec { break-inside: avoid; }
+.bf-change { display: flex; gap: 12px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--border-soft); }
+.bf-change .game-icon { flex: 0 0 auto; margin-top: 2px; }
+.bf-change b { font-size: 16px; color: var(--text); }
+.bf-change p { margin: 2px 0 0; color: var(--text-2); font-size: 15px; }
+.bf-where { display: inline-block; margin-top: 5px; padding: 1px 9px; border-radius: 999px; border: 1px solid var(--border); color: var(--text-3); font-size: 12px; font-weight: 700; }
+
+/* ---------- Archiv (Zentrale › Briefing) ---------- */
+.bf-arch-list { display: flex; flex-direction: column; gap: 4px; }
+.bf-arch-item { display: grid; grid-template-columns: 82px 1fr auto; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; background: transparent; border: 1px solid transparent; border-left: 3px solid transparent; border-radius: var(--radius-sm); color: var(--text-2); text-align: left; cursor: pointer; font-size: 15px; }
+.bf-arch-item:hover { background: var(--panel-hover); }
+.bf-arch-item.sel { background: var(--panel-2); border-color: var(--border-soft); border-left-color: var(--accent); color: var(--text); }
+.bf-arch-season { font-family: var(--font-display); font-size: 17px; letter-spacing: 1px; color: var(--text); }
+.bf-arch-head { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bf-arch-tag { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 1px 8px; }
+.bf-arch-title { font-family: var(--font-display); font-size: 17px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-2); margin-bottom: 10px; }
+.bf-arch-changes { display: flex; flex-direction: column; }
+.bf-arch-change { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; border-bottom: 1px solid var(--border-soft); font-size: 14px; }
+.bf-arch-change .game-icon { flex: 0 0 auto; margin-top: 2px; }
+.bf-arch-change span { display: flex; flex-direction: column; min-width: 0; }
+.bf-arch-change small { color: var(--text-3); font-size: 12px; }

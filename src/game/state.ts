@@ -146,6 +146,8 @@ export interface Game {
    * 2 = realistisch, Erstligist 1975 ≈ 4,5 Mio. DM). Umstellung: game/financeMigration.ts.
    */
   financeLevel?: number;
+  /** Saison-Briefings: Archiv (Saison + Ausgangslage) und offenes Popup (game/seasonBriefing.ts). */
+  briefing?: import('./seasonBriefing').BriefingLog;
 }
 
 // Moral-Stufen in aufsteigender Reihenfolge (für Aktivitäts-Effekte, Block p11).

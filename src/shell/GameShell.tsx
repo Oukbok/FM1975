@@ -59,13 +59,16 @@ import { BoardView } from '../views/verein/BoardView';
 import { StaffView } from '../views/verein/StaffView';
 import { WikiView } from '../views/wiki/WikiView';
 import { CalendarView } from '../views/zentrale/CalendarView';
+import { BriefingView } from '../views/zentrale/BriefingView';
+import { BriefingModal } from '../views/zentrale/BriefingModal';
+import { briefingLog, briefingOfRecord, clearPendingBriefing } from '../game/seasonBriefing';
 import { Dashboard } from '../views/zentrale/Dashboard';
 import { NewsView } from '../views/zentrale/NewsView';
 import { PresseView } from '../views/zentrale/PresseView';
 import { CalendarStrip } from './CalendarStrip';
 import { MENU_STRUCTURE, Screen, TopNav } from './navigation';
 import { processDay as processGameDay } from '../game/day';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 // =============================================================================
 // SPIEL-SHELL (In-Game UI)
@@ -108,6 +111,18 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
 
   const g = game;
   const myClub = g.clubs[g.managedClubId];
+
+  // Saison-Briefing: zu Spielbeginn und nach dem Saisonwechsel automatisch zeigen
+  // (game/seasonBriefing.ts merkt es in g.briefing.pending vor; Laden setzt es zurück).
+  const pendingSeason = g.briefing?.pending;
+  const autoBriefing = settings.briefingAuto !== false;
+  const pendingRec = pendingSeason && autoBriefing ? briefingLog(g).records.find((r) => r.season === pendingSeason) : undefined;
+  useEffect(() => {
+    if (pendingSeason && (!autoBriefing || !pendingRec)) { clearPendingBriefing(g); rerender(); }
+  }, [pendingSeason, autoBriefing, pendingRec, g, rerender]);
+  useEffect(() => { if (pendingRec) setRunning(false); }, [pendingRec]);
+  const pendingBriefing = useMemo(() => (pendingRec ? briefingOfRecord(pendingRec) : null), [pendingRec]);
+  const closeBriefing = useCallback(() => { clearPendingBriefing(g); rerender(); }, [g, rerender]);
 
   // --- Speichern ---
   const doSave = useCallback((slot?: string, name?: string) => {
@@ -152,7 +167,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.code === 'Space' && !liveMatchId && !textMatch) {
+      if (e.code === 'Space' && !liveMatchId && !textMatch && !g.briefing?.pending) {
         const tag = (e.target as HTMLElement)?.tagName;
         if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
         e.preventDefault();
@@ -327,6 +342,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'staff' && <StaffView g={g} onChange={rerender} />}
         {screen === 'marketing' && <MarketingView g={g} onChange={rerender} />}
         {screen === 'calendar' && <CalendarView g={g} onChange={rerender} onGoto={setScreen} />}
+        {screen === 'briefing' && <BriefingView g={g} />}
         {screen === 'cup' && <CupView g={g} onWatch={(id) => setLiveMatchId(id)} />}
         {screen === 'chronicle' && <ChronicleView g={g} />}
         {screen === 'ruhmeshalle' && <HallOfFameView g={g} />}
@@ -401,6 +417,8 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
           onClose={() => { setDevReveal(null); rerender(); }}
         />
       )}
+
+      {pendingBriefing && <BriefingModal b={pendingBriefing} onClose={closeBriefing} />}
 
       {ratingCeremony && (
         <RatingCeremony

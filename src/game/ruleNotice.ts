@@ -7,6 +7,7 @@ import { makeMessage, pushMessage } from '../engine/messages';
 import { LEAGUE_REFORMS } from '../data/reforms';
 import { TIMELINE, TIMELINE_TYPE_META } from '../data/timeline';
 import { Game } from './state';
+import { SPECIAL_RULE_CHANGES } from './briefingChanges';
 
 export function announceUpcomingRules(g: Game, today: string): void {
   if (today.slice(5) !== '01-02') return;
@@ -17,12 +18,12 @@ export function announceUpcomingRules(g: Game, today: string): void {
     .map((e) => `${TIMELINE_TYPE_META[e.type].label}: ${e.title}`);
   const applied = new Set(g.appliedReforms ?? []);
   for (const r of LEAGUE_REFORMS) if (r.effectiveSeason === next && !applied.has(r.reformId)) items.push(`Ligareform: ${r.title} – ${r.qualificationRule}`);
-  if (next === '1998/99') items.push('Europapokal: Nur noch Sitzplätze – Stehränge werden bei Europapokal-Heimspielen bestuhlt und fassen nur die Hälfte.');
+  for (const s of SPECIAL_RULE_CHANGES) if (s.startYear === y + 1) items.push(`${s.title}: ${s.text}`);
   if (!items.length) return;
   pushMessage(g.messages, makeMessage({
     date: today, category: 'milestone', from: 'Verband',
     subject: `Vorschau: Das ändert sich zur Saison ${next}`,
     shortText: items[0] + (items.length > 1 ? ` (+${items.length - 1} weitere)` : ''),
-    bodyText: `Zur kommenden Saison ${next} treten folgende Änderungen in Kraft:\n\n${items.join('\n')}\n\nDie Details stehen ab dem 1. Juli in der Chronik.`,
+    bodyText: `Zur kommenden Saison ${next} treten folgende Änderungen in Kraft:\n\n${items.join('\n')}\n\nZum Saisonstart am 1. Juli erklärt dir das Saison-Briefing alles Neue (Zentrale › Briefing).`,
   }));
 }

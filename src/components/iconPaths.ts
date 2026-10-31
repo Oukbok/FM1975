@@ -428,6 +428,41 @@ export const RAW: Record<string, string> = {
   shield:
     '<path d="M12 3.5 19 6v5.5c0 4.3-2.9 7.6-7 9-4.1-1.4-7-4.7-7-9V6Z" fill="%BASE%"/>' +
     '<path d="m8.8 12 2.3 2.3 4.3-4.6" fill="none" stroke="%ACCENT%" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+
+  // Saison-Briefing — weisses Klemmbrett mit Akzent-Klammer und Zeilen
+  briefing:
+    '<rect x="5" y="4.5" width="14" height="16" rx="2" fill="%BASE%"/>' +
+    '<rect x="8.5" y="3" width="7" height="3.4" rx="1.2" fill="%ACCENT%"/>' +
+    '<path d="M8.3 10.5h7.4M8.3 13.5h7.4M8.3 16.5h4.6" stroke="#0c0f15" stroke-width="1.4" stroke-linecap="round"/>',
+
+  // Briefing-Thema Politik — weisses Säulengebäude mit Akzent-Giebel
+  politics:
+    '<path d="M3.5 9 12 4l8.5 5Z" fill="%ACCENT%"/>' +
+    '<rect x="5.5" y="10.2" width="2.2" height="7.3" rx="0.4" fill="%BASE%"/><rect x="10.9" y="10.2" width="2.2" height="7.3" rx="0.4" fill="%BASE%"/><rect x="16.3" y="10.2" width="2.2" height="7.3" rx="0.4" fill="%BASE%"/>' +
+    '<rect x="3.5" y="18.3" width="17" height="2.2" rx="0.5" fill="%BASE%"/>',
+
+  // Briefing-Thema Alltag — weisses Haus mit Akzent-Tür
+  home:
+    '<path d="M3.8 11.2 12 4.3l8.2 6.9V20a.8.8 0 0 1-.8.8H4.6a.8.8 0 0 1-.8-.8Z" fill="%BASE%"/>' +
+    '<rect x="10" y="14" width="4" height="6.8" rx="0.6" fill="%ACCENT%"/>',
+
+  // Briefing-Thema Kultur — weisse Doppelnote mit Akzent-Balken
+  music:
+    '<path d="M8 6.5 19 4v3.2L8 9.7Z" fill="%ACCENT%"/>' +
+    '<path d="M8 8v9.2" stroke="%BASE%" stroke-width="1.7"/><path d="M19 5.5v9.5" stroke="%BASE%" stroke-width="1.7"/>' +
+    '<ellipse cx="6.1" cy="17.6" rx="2.6" ry="2.1" fill="%BASE%"/><ellipse cx="17.1" cy="15.4" rx="2.6" ry="2.1" fill="%BASE%"/>',
+
+  // Damals & heute — weisse Sanduhr mit Akzent-Sand
+  hourglass:
+    '<path d="M6.5 3.5h11M6.5 20.5h11" stroke="%BASE%" stroke-width="1.8" stroke-linecap="round"/>' +
+    '<path d="M7.5 4.5h9c0 4-4.5 5.5-4.5 7.5s4.5 3.5 4.5 7.5h-9c0-4 4.5-5.5 4.5-7.5S7.5 8.5 7.5 4.5Z" fill="%BASE%"/>' +
+    '<path d="M9.3 18.8c.6-1.8 2.7-2.6 2.7-3.6 0 1 2.1 1.8 2.7 3.6Z" fill="%ACCENT%"/>',
+
+  // Neu im Spiel — weisses offenes Schloss mit Akzent-Bügel
+  unlock:
+    '<path d="M8 10.5V7.8a4 4 0 0 1 7.6-1.7" fill="none" stroke="%ACCENT%" stroke-width="2" stroke-linecap="round"/>' +
+    '<rect x="5" y="10.5" width="14" height="10" rx="2" fill="%BASE%"/>' +
+    '<circle cx="12" cy="15.5" r="1.5" fill="#0c0f15"/>',
 };
 
 /** Gültige Icon-Namen (englische Keys). */

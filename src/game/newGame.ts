@@ -1,3 +1,4 @@
+import { recordSeasonBriefing } from './seasonBriefing';
 import { ensureStadiumBlocks } from './stadiumGame';
 import { ensureYouthTeams } from './youthTeams';
 // Erzeugt ein neues Spiel (Welt, Spielplan, Pokale, Ligen) – ohne Oberfläche, auch für Simulationen.
@@ -167,8 +168,8 @@ export function createNewGame(opts: NewGameOptions): Game {
   };
   // Legenden, die 1975 schon spielen (bis Jahrgang 1960), in die Kader setzen.
   seedStartLegends(g0, calendar.currentDate);
-  // Startsaison-Meilensteine (1975/76) sofort auslösen → Chronik-Nachricht + Effekte.
-  fireTimelineForSeason(g0, '1975/76', calendar.currentDate);
+  // Startsaison-Meilensteine (1975/76) sofort auslösen (Effekte); erklärt werden sie im Saison-Briefing.
+  fireTimelineForSeason(g0, '1975/76', calendar.currentDate, true);
   for (const pid of g0.clubs[g0.managedClubId]?.playerIds ?? []) {
     const p = g0.players[pid];
     if (p) snapshotAttributes(p, calendar.currentDate, 'Spielbeginn');
@@ -194,5 +195,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   // Trainer der KI-Vereine (game/coachCarousel.ts).
   ensureCoaches(g0, calendar.currentDate);
   migrateYouthInvest(g0);
+  // Saison-Briefing „So anders ist der Fußball 1975/76“ (game/seasonBriefing.ts).
+  recordSeasonBriefing(g0, true);
   return g0;
 }

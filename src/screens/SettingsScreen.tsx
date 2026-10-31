@@ -28,6 +28,11 @@ export function SettingsScreen({ settings, onBack, onSave }: {
             <span className={`toggle ${s.soundEnabled ? 'on' : ''}`}></span>
             Ton/Effekte (Platzhalter)
           </label>
+          <label className="toggle-item">
+            <input type="checkbox" checked={s.briefingAuto !== false} onChange={(e) => setS({ ...s, briefingAuto: e.target.checked })} />
+            <span className={`toggle ${s.briefingAuto !== false ? 'on' : ''}`}></span>
+            Saison-Briefing automatisch anzeigen (Spielstart &amp; Saisonwechsel)
+          </label>
         </div>
       </div>
 

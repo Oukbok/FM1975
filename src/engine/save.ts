@@ -245,6 +245,8 @@ export interface AppSettings {
   matchHalftimeTalk?: boolean;
   /** Häufigkeit der Zufalls- und Vereinsereignisse. */
   eventFrequency?: 'wenige' | 'normal' | 'viele';
+  /** Saison-Briefing zu Spielbeginn und Saisonwechsel automatisch öffnen (Standard an). */
+  briefingAuto?: boolean;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -258,6 +260,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   matchSuspense: true,
   matchHalftimeTalk: true,
   eventFrequency: 'normal',
+  briefingAuto: true,
 };
 
 export function loadSettings(): AppSettings {
