@@ -42,8 +42,8 @@ export const MENU_STRUCTURE: MainCat[] = [
   { key: 'transfers', label: 'Transfers', icon: 'transfers', dash: 'cat-transfers', subs: [
     { screen: 'cat-transfers', label: 'Transfers', icon: 'transfers' },
     { screen: 'transfers', label: 'Transfermarkt', icon: 'transfers' },
-    { screen: 'beobachtung', label: 'Beobachtungsliste', icon: 'watchlist' },
-    { screen: 'verhandlungen', label: 'Aktive Verhandlungen', icon: 'negotiations' },
+    { screen: 'beobachtung', label: 'Beobachtung', icon: 'watchlist' },
+    { screen: 'verhandlungen', label: 'Verhandlungen', icon: 'negotiations' },
   ] },
   { key: 'finanzen', label: 'Finanzen', icon: 'finances', dash: 'cat-finanzen', subs: [
     { screen: 'cat-finanzen', label: 'Finanzen', icon: 'finances' },

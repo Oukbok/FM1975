@@ -55,8 +55,11 @@
 
 /* --- Reihe 2: Unterpunkte der aktiven Kategorie --- */
 .tn-sub {
+  /* Feste, gleich breite Plätze: Jeder Unterpunkt steht an derselben Stelle,
+     egal welche Hauptkategorie aktiv ist – beim Wechsel springt nichts. */
+  --sub-slot: 184px;
   display: flex;
-  gap: 6px;
+  gap: 0;
   justify-content: flex-start;
   overflow-x: auto;
   /* Gleiche Kanten-Einrueckung wie Header/Boxen: NACHRICHTEN == linke Box,
@@ -69,9 +72,13 @@
 .tn-sub-item {
   position: relative;
   display: flex;
+  flex: 0 0 var(--sub-slot);
+  min-width: 0;
+  justify-content: center;
   align-items: center;
   gap: 7px;
   padding: 7px 16px;
+  overflow: visible;
   border: none;
   border-radius: 9px;
   background: transparent;
@@ -84,20 +91,24 @@
   cursor: pointer;
   transition: background 0.14s, color 0.14s, transform 0.06s ease;
 }
-.tn-sub-item:hover { background: var(--panel-2); color: var(--text); }
+.tn-sub-item > span { position: relative; white-space: nowrap; }
+/* Hover nur über die Schriftfarbe – eine Hintergrundfläche über den ganzen
+   Platz wäre bei kurzen Beschriftungen unruhig. */
+.tn-sub-item:hover { color: var(--text); }
 /* Press-Rueckmeldung nur auf dem geklickten Sub-Menuepunkt: scale() statt
    translateY, damit kein vertikaler Versatz die Nachbarn optisch verschiebt. */
-.tn-sub-item:active { transform: scale(0.90); }
+.tn-sub-item:active { transform: none; color: var(--accent); }
 .tn-sub-item.active {
   color: var(--accent);
   background: transparent;
 }
-.tn-sub-item.active::after {
+/* Linie genau unter der Beschriftung (Textbreite), nicht über den ganzen Platz. */
+.tn-sub-item.active > span::after {
   content: '';
   position: absolute;
-  left: 14px;
-  right: 14px;
-  bottom: -8px;
+  left: -2px;
+  right: -2px;
+  bottom: -15px;
   height: 2px;
   border-radius: 2px;
   background: var(--accent);
