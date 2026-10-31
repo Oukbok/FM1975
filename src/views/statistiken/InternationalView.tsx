@@ -1,4 +1,5 @@
 import ClubCrest from '../../components/ClubCrest';
+import { ClubLink } from '../../components/club/ClubLink';
 import { EURO_COMP_NAMES, EURO_COMP_SHORT, EuroCompId } from '../../data/europe';
 import { CalendarEngine } from '../../engine/calendar';
 import { decisionBadge, roundWinners } from '../../engine/cup';
@@ -54,9 +55,9 @@ export function InternationalView({ g, onWatch }: { g: Game; onWatch: (id: strin
             background: t.colors.primary, border: '1px solid rgba(255, 255, 255,0.35)', display: 'inline-block',
           }} />
         ) : (
-          t.club && <ClubCrest club={t.club} size={18} />
+          t.club && <ClubLink id={id}><ClubCrest club={t.club} size={18} /></ClubLink>
         )}
-        <span className="cup-team-name" title={t.foreign ? `${t.name} (${t.country})` : t.name}>{t.short}</span>
+        <ClubLink id={t.foreign ? null : id}><span className="cup-team-name" title={t.foreign ? `${t.name} (${t.country})` : t.name}>{t.short}</span></ClubLink>
       </div>
     );
   };
@@ -135,7 +136,7 @@ export function InternationalView({ g, onWatch }: { g: Game; onWatch: (id: strin
             return (
               <div key={t.id} className={`dlist-row ${t.match ? 'clickable' : ''}`} onClick={() => t.match && onWatch(t.match.id)}>
                 <span className="meta" style={{ minWidth: 110 }}>{rd.name}</span>
-                <span className="grow">{teamInfo(homeSide ? t.awayClubId : t.homeClubId).name}</span>
+                <span className="grow"><ClubLink id={homeSide ? t.awayClubId : t.homeClubId}>{teamInfo(homeSide ? t.awayClubId : t.homeClubId).name}</ClubLink></span>
                 <span className={`dres dres-${t.winnerClubId === mid ? 'W' : 'L'}`}>{homeSide ? `${t.homeGoals}:${t.awayGoals}` : `${t.awayGoals}:${t.homeGoals}`}</span>
               </div>
             );

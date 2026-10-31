@@ -1,73 +1,85 @@
 /* =============================================================================
-   ClubModal — Vereins-Detailansicht (FM-Stil)
+   Vereinsprofil (components/ClubModal.tsx + components/club/)
    ============================================================================= */
-/* Klickbare Vereinsnamen in Tabelle/Spielplan */
-.club-link { transition: color 0.12s ease; }
-.club-link:hover { color: var(--accent); }
-.club-link:hover span { color: var(--accent); }
+/* Klickbare Vereinsnamen/-wappen überall im Spiel (<ClubLink>) */
+.club-link { cursor: pointer; transition: color 0.12s ease; border-radius: 4px; }
+.club-link:hover, .club-link:hover span, .club-link:hover b { color: var(--accent); }
+.club-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cup-team-link { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.cup-team:last-child .cup-team-link { flex-direction: row-reverse; }
+.mr-team-link { display: flex; align-items: center; gap: 16px; }
+.mr-team:last-child .mr-team-link { flex-direction: row-reverse; }
+.cns-link { display: inline-flex; }
 
-.cm-modal { max-width: 1120px; }
-.cm-modal .cm-body { overflow-y: auto; }
-
-.cm-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 18px 20px;
-  border-bottom: 1px solid var(--border);
-  position: relative;
-  border-radius: 12px 12px 0 0;
+/* Popup: liegt über allen anderen Fenstern */
+.cmx-overlay { z-index: 1200; }
+.cmx-head { gap: 18px; }
+.cmx-id { min-width: 0; }
+.cmx-id h2 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cmx-mine {
+  margin-left: 12px; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--accent);
+  color: var(--accent); font-size: 13px; font-weight: 800; vertical-align: middle; letter-spacing: 0.4px;
 }
-.cm-head-crest { flex-shrink: 0; }
-.cm-head-id { min-width: 0; flex: 1; }
-.cm-head-name { margin: 0 0 4px; font-size: 24px; font-weight: 800; line-height: 1.1; }
-.cm-head-sub { color: var(--text-2); font-size: 13px; margin-bottom: 10px; }
-.cm-head-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.cm-form { display: inline-flex; gap: 3px; margin-left: 2px; }
-
-.cm-body { padding: 16px 20px 20px; }
-.cm-cols { display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 14px; align-items: start; }
-.cm-col { display: flex; flex-direction: column; gap: 14px; }
-
-.cm-stat-line {
-  display: flex; justify-content: space-between; align-items: center;
-  gap: 10px; padding: 5px 0; font-size: 13px;
-  border-bottom: 1px solid var(--border-soft, rgba(255, 255, 255,0.05));
+.cmx-back {
+  position: absolute; top: 14px; right: 64px; display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 999px; border: 1px solid var(--border); background: transparent;
+  color: var(--text-2); font-size: 13px; font-weight: 700; cursor: pointer;
 }
-.cm-stat-line:last-child { border-bottom: none; }
-.cm-stat-line > span { color: var(--text-2); }
+.cmx-back:hover { color: var(--accent); border-color: var(--accent); }
+.cmx-tabs { padding: 0 28px; margin: 0; flex: 0 0 auto; }
+.cmx-body { padding-top: 16px; }
 
-.cm-best {
-  display: flex; align-items: center; gap: 8px; padding: 6px 4px;
-  border-bottom: 1px solid var(--border-soft, rgba(255, 255, 255,0.05)); font-size: 13px;
+/* Spielzeilen */
+.cmx-match { gap: 8px; }
+.cmx-date { min-width: 92px; font-size: 14px; }
+.cmx-comp {
+  flex: 0 0 auto; min-width: 54px; font-size: 11px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.5px; color: var(--text-3); text-align: center;
 }
-.cm-best:last-child { border-bottom: none; }
-.cm-best-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cm-best.clickable { cursor: pointer; border-radius: 6px; transition: background 0.12s ease; }
-.cm-best.clickable:hover { background: var(--panel-2, rgba(255, 255, 255,0.04)); }
+.cmx-opp { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.cm-squad { display: flex; flex-direction: column; }
-.cm-squad-row {
-  display: grid; grid-template-columns: 28px 1fr 46px 40px 46px;
-  align-items: center; gap: 6px; padding: 5px 4px; font-size: 13px;
-  border-bottom: 1px solid var(--border-soft, rgba(255, 255, 255,0.05));
-}
-.cm-squad-row:last-child { border-bottom: none; }
-.cm-squad-head { color: var(--text-3); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-.cm-squad-row.clickable { cursor: pointer; border-radius: 6px; transition: background 0.12s ease; }
-.cm-squad-row.clickable:hover { background: var(--panel-2, rgba(255, 255, 255,0.04)); }
+/* Trainer */
+.cmx-coach-name { font-family: var(--font-display); font-size: 22px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px; }
 
-.cm-matches { display: flex; flex-direction: column; }
-.cm-match {
-  display: grid; grid-template-columns: 58px 20px 1fr 46px;
-  align-items: center; gap: 6px; padding: 5px 4px; font-size: 13px;
-  border-bottom: 1px solid var(--border-soft, rgba(255, 255, 255,0.05));
-}
-.cm-match:last-child { border-bottom: none; }
-.cm-match-ha { color: var(--text-3); font-weight: 700; text-align: center; }
-.cm-match-opp { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
-.cm-match-res { text-align: right; }
+/* Mannschaftsteil-Vergleich (Spiegelbalken) */
+.cmx-cmp { display: flex; flex-direction: column; gap: 4px; }
+.cmx-cmp-row { display: grid; grid-template-columns: 40px 1fr 104px 1fr 40px; align-items: center; gap: 8px; padding: 5px 0; font-size: 15px; }
+.cmx-cmp-head { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 2px; }
+.cmx-cmp-name { font-size: 12px; font-weight: 800; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cmx-cmp-name.r { text-align: right; }
+.cmx-cmp-lbl { text-align: center; color: var(--text-2); font-size: 14px; white-space: nowrap; }
+.cmx-cmp-v { font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text-2); }
+.cmx-cmp-v.r { text-align: right; }
+.cmx-cmp-v.hi { color: var(--accent); }
+.cmx-cmp-track { height: 9px; border-radius: 5px; background: rgba(255, 255, 255, 0.07); overflow: hidden; display: flex; }
+.cmx-cmp-track.l { justify-content: flex-end; }
+.cmx-cmp-fill { display: block; height: 100%; border-radius: 5px; background: var(--text-3); }
+.cmx-cmp-fill.hi { background: var(--accent); }
+.cmx-verdict { color: var(--text-2); }
 
-@media (max-width: 860px) {
-  .cm-cols { grid-template-columns: 1fr; }
+/* Kader */
+.cmx-tag {
+  margin-left: 8px; padding: 1px 7px; border-radius: 999px; border: 1px solid var(--border);
+  font-size: 11px; font-weight: 800; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.4px;
 }
+
+/* Verein */
+.cmx-stadium-name { font-family: var(--font-display); font-size: 20px; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 10px; }
+.cmx-kits { height: 100%; display: flex; align-items: center; justify-content: space-evenly; gap: 12px; }
+.cmx-kit { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.cmx-kit-lbl { font-size: 12px; font-weight: 800; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Historie */
+.cmx-chart-wrap { height: calc(100% - 6px); min-height: 160px; display: flex; flex-direction: column; }
+.cmx-chart { width: 100%; flex: 1 1 auto; min-height: 0; }
+.cmx-band { fill: rgba(255, 255, 255, 0.025); }
+.cmx-band.alt { fill: rgba(255, 255, 255, 0.055); }
+.cmx-axis { fill: var(--text-3); font-size: 12px; font-weight: 700; font-family: var(--font-ui); }
+.cmx-val { fill: var(--text-2); font-size: 11px; font-weight: 700; font-family: var(--font-ui); }
+.cmx-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.cmx-dot { fill: var(--accent); stroke: var(--panel); stroke-width: 2; }
+.cmx-dot.top { fill: var(--gold); }
+.cmx-dot.live { fill: var(--panel); stroke: var(--accent); stroke-width: 2; }
+.cmx-title { display: flex; align-items: flex-start; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--border-soft); }
+.cmx-title-n { font-family: var(--font-display); font-size: 22px; color: var(--accent); min-width: 40px; }
+.cmx-title-seasons { display: block; }

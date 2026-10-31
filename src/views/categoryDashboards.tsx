@@ -1,4 +1,5 @@
 import ClubCrest from '../components/ClubCrest';
+import { ClubLink } from '../components/club/ClubLink';
 import { EURO_COMP_NAMES } from '../data/europe';
 import { STAFF_BY_ID, staffMonthlyTotal } from '../data/staff';
 import { TIMELINE } from '../data/timeline';
@@ -51,9 +52,9 @@ export function SpieltagDashboard({ g, onGoto, onWatch }: {
         {next && opp ? (
           <>
             <div className="dvs">
-              <div className="dvs-side"><ClubCrest club={g.clubs[next.homeClubId]} size={72} /><b>{g.clubs[next.homeClubId].name}</b></div>
+              <ClubLink id={next.homeClubId} block className="dvs-side"><ClubCrest club={g.clubs[next.homeClubId]} size={72} /><b>{g.clubs[next.homeClubId].name}</b></ClubLink>
               <div className="dvs-mid">VS<span>{fmtDateShort(next.date).dmy}</span></div>
-              <div className="dvs-side"><ClubCrest club={g.clubs[next.awayClubId]} size={72} /><b>{g.clubs[next.awayClubId].name}</b></div>
+              <ClubLink id={next.awayClubId} block className="dvs-side"><ClubCrest club={g.clubs[next.awayClubId]} size={72} /><b>{g.clubs[next.awayClubId].name}</b></ClubLink>
             </div>
             <KV k="Spielort" v={next.homeClubId === myId ? `Heimspiel · ${myClub.stadium.name}` : `Auswärts · ${opp.stadium.name}`} />
           </>
@@ -419,7 +420,7 @@ export function StatistikenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Scree
           <tbody>
             {around.map((r) => (
               <tr key={r.clubId} className={r.clubId === myId ? 'me' : ''}>
-                <td>{r.position}</td><td>{g.clubs[r.clubId]?.name}</td><td className="num">{r.played}</td>
+                <td>{r.position}</td><td><ClubLink id={r.clubId}>{g.clubs[r.clubId]?.name}</ClubLink></td><td className="num">{r.played}</td>
                 <td className="num">{r.goalDifference > 0 ? '+' : ''}{r.goalDifference}</td><td className="num">{r.points}{r.deduction ? <sup title={`${r.deduction} Punkte Abzug (Überschuldung)`} style={{ color: 'var(--red)', marginLeft: 3 }}>−{r.deduction}</sup> : null}</td>
               </tr>
             ))}
@@ -428,11 +429,11 @@ export function StatistikenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Scree
       </DashBox>
 
       <DashBox title="Torjäger" icon="matchball" onClick={() => onGoto('table')}>
-        {scorers.length ? scorers.map((p) => <PlayerRow key={p.id} p={p} sub={g.clubs[p.clubId]?.shortName} value={p.seasonStats.goals} color="var(--accent)" />) : <Empty icon="matchball">Noch keine Tore gefallen.</Empty>}
+        {scorers.length ? scorers.map((p) => <PlayerRow key={p.id} p={p} sub={<ClubLink id={p.clubId}>{g.clubs[p.clubId]?.shortName}</ClubLink>} value={p.seasonStats.goals} color="var(--accent)" />) : <Empty icon="matchball">Noch keine Tore gefallen.</Empty>}
       </DashBox>
 
       <DashBox title="Beste Noten" icon="stats" right="ab 3 Spielen">
-        {rated.length ? rated.map((p) => <PlayerRow key={p.id} p={p} sub={g.clubs[p.clubId]?.shortName} value={p.seasonStats.averageRating.toFixed(2)} color="var(--green)" />) : <Empty icon="stats">Noch zu wenige Spiele.</Empty>}
+        {rated.length ? rated.map((p) => <PlayerRow key={p.id} p={p} sub={<ClubLink id={p.clubId}>{g.clubs[p.clubId]?.shortName}</ClubLink>} value={p.seasonStats.averageRating.toFixed(2)} color="var(--green)" />) : <Empty icon="stats">Noch zu wenige Spiele.</Empty>}
       </DashBox>
 
       <DashBox title="Landespokal" icon="trophy" onClick={() => onGoto('cup')}>

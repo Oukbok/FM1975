@@ -303,6 +303,26 @@ Der Kader-Bildschirm zeigt die Mannschaft als **übersichtliche Tabelle** (kein 
 - Sortierung nach OVR, Potenzial, Form oder Fitness möglich.`,
   },
   {
+    id: 'club-profile',
+    category: 'core',
+    title: 'Vereinsprofil (Gegner-Info)',
+    keywords: ['verein', 'profil', 'gegner', 'wappen', 'scouting', 'historie', 'direkter vergleich', 'trainer', 'rekord', 'platzierung'],
+    body: `## Aufruf
+Fast jeder **Vereinsname und jedes Wappen** ist anklickbar und öffnet das Vereinsprofil: Tabelle (Liga und Zentrale), Spielplan und Spieltag, Landespokal, Europapokal, Transfermarkt, Verhandlungen, Torjäger, Spielbericht, Taktik („Nächster Gegner“), Presse und das Spielerprofil (Vereinsname bzw. Wappen am Porträt). Das Profil liegt über allen anderen Fenstern; öffnest du daraus einen weiteren Verein, bringt dich **Zurück** zum vorherigen. Escape schließt erst das Spielerprofil, dann das Vereinsprofil.
+
+## Reiter
+- **Übersicht**: Stadt, Gründung, Liga und Tabellenplatz, Form, Ansehen. Kräftevergleich und Duelle mit deinem Verein (nächstes, letztes, Bilanz über alle Jahre). Trainer. **Kurzbewertung**: Ø der Stammkräfte je Mannschaftsteil (1 Torwart, je 4 Abwehr/Mittelfeld, 2 Angriff) als Spiegelbalken gegen dein Team; der stärkere Wert ist hervorgehoben. Stärkste Spieler und die letzten/nächsten Spiele.
+- **Kader**: alle Spieler, sortierbar. Die Stärke siehst du wie auf dem Transfermarkt genau, das **Potenzial nur als Scouting-Spanne** (Sterne von–bis, je nach Scout-Qualität). Klick öffnet das Spielerprofil, **Verhandeln** startet direkt eine Transferverhandlung. Rechts Kaderstruktur und Vertragslage (auslaufende Verträge, wechselwillige Spieler).
+- **Verein**: Stadion, Finanzen aus **Außensicht** (Umsatzklasse in der Liga, Umsatz der Vorsaison gerundet, Transferbudget als geschätzte Spanne, Kaderwert, Gehälter – Kontostand und Schulden bleiben geheim), Trikots, Ausbaustufen des Geländes, Marke/Bekanntheit, Nachwuchs.
+- **Historie**: Platzierungsverlauf über alle Ligaebenen (goldener Punkt = Meister, offener Punkt = laufende Saison), Titel, beste Platzierung, Auf-/Abstiege, direkter Vergleich Spiel für Spiel, Rekordspieler (Einsätze/Tore für den Verein) und Rekordtransfers.
+
+## Simulierte Vereine
+Vereine aus rein simulierten Ligen haben keinen Einzelkader. Ihr Profil zeigt Liga, Tabellenplatz, geschätzte Gesamtstärke, Spiele und die Historie; Kader und Vereinsdaten werden sichtbar, sobald sie in deine Liga kommen.
+
+## Historie
+Die Historie wird beim Saisonwechsel geschrieben (Endplätze aller Ligen inkl. DDR, Meister, Landespokal, Europapokal, alle Pflichtspiele gegen deinen Verein). Sie beginnt mit deinem Spielstart; ältere Spielstände füllen sie ab der nächsten Saison.`,
+  },
+  {
     id: 'squad-attributes',
     category: 'squad',
     title: 'Attribute & Overall (OVR)',

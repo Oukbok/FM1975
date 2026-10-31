@@ -1,4 +1,5 @@
 // =============================================================================
+import { ClubLink } from '../../components/club/ClubLink';
 // SPIELBERICHT – großes Fenster: Verlauf, zeitgemäße Statistik, Aufstellungen
 // mit Noten, Druckphasen. Ausführliche Werte gibt es für Spiele des eigenen
 // Vereins; bei anderen Partien die Eckdaten.
@@ -64,7 +65,7 @@ export function MatchModal({ g, matchId, onClose }: { g: Game; matchId: string; 
             {rep?.weather && <span><Icon name="weather" size={18} /> {WEATHER[rep.weather] ?? rep.weather}</span>}
           </div>
           <div className="mr-score">
-            <div className={`mr-team ${m.homeClubId === myId ? 'mine' : ''}`}><ClubCrest club={h} size={92} /><b>{h?.name}</b></div>
+            <div className={`mr-team ${m.homeClubId === myId ? 'mine' : ''}`}><ClubLink id={m.homeClubId} block className="mr-team-link"><ClubCrest club={h} size={92} /><b>{h?.name}</b></ClubLink></div>
             <div className="mr-res">
               <div className="mr-big">{r.homeGoals}<span>:</span>{r.awayGoals}</div>
               <div className="mr-sub">
@@ -73,7 +74,7 @@ export function MatchModal({ g, matchId, onClose }: { g: Game; matchId: string; 
                 {tie?.scoreAfter && <> · {tie.scoreAfter.home}:{tie.scoreAfter.away} i.E.</>}
               </div>
             </div>
-            <div className={`mr-team ${m.awayClubId === myId ? 'mine' : ''}`}><ClubCrest club={a} size={92} /><b>{a?.name}</b></div>
+            <div className={`mr-team ${m.awayClubId === myId ? 'mine' : ''}`}><ClubLink id={m.awayClubId} block className="mr-team-link"><ClubCrest club={a} size={92} /><b>{a?.name}</b></ClubLink></div>
           </div>
           {motm && <div className="mr-motm">Spieler des Spiels: <b>{motm.firstName} {motm.lastName}</b></div>}
         </div>

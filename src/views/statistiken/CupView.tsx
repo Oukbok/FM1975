@@ -1,4 +1,5 @@
 import ClubCrest from '../../components/ClubCrest';
+import { ClubLink } from '../../components/club/ClubLink';
 import { CalendarEngine } from '../../engine/calendar';
 import { decisionBadge, nextPlayerTie } from '../../engine/cup';
 import { Game } from '../../game/state';
@@ -34,8 +35,8 @@ export function CupView({ g, onWatch }: { g: Game; onWatch: (id: string) => void
       <div className={`cup-tie ${mine ? 'cup-tie-mine' : ''} ${tie.match ? 'cup-tie-clickable' : ''}`}
         onClick={() => { if (tie.match) onWatch(tie.match.id); }}>
         <div className={`cup-team ${homeWon ? 'cup-win' : ''}`}>
-          {home && <ClubCrest club={home} size={18} />}
-          <span className="cup-team-name">{short(tie.homeClubId)}</span>
+          <ClubLink id={tie.homeClubId} className="cup-team-link">{home && <ClubCrest club={home} size={18} />}
+          <span className="cup-team-name">{short(tie.homeClubId)}</span></ClubLink>
         </div>
         <div className="cup-score">
           {tie.played ? (
@@ -49,8 +50,8 @@ export function CupView({ g, onWatch }: { g: Game; onWatch: (id: string) => void
           )}
         </div>
         <div className={`cup-team ${awayWon ? 'cup-win' : ''}`}>
-          {away && <ClubCrest club={away} size={18} />}
-          <span className="cup-team-name">{short(tie.awayClubId)}</span>
+          <ClubLink id={tie.awayClubId} className="cup-team-link">{away && <ClubCrest club={away} size={18} />}
+          <span className="cup-team-name">{short(tie.awayClubId)}</span></ClubLink>
         </div>
       </div>
     );
@@ -63,7 +64,7 @@ export function CupView({ g, onWatch }: { g: Game; onWatch: (id: string) => void
 
   return (
     <DashPage>
-      <DashBox title={`Landespokal ${cup.season}`} icon="trophy" span={2} rows={2} right={winner ? `Sieger: ${name(winner)}` : undefined}>
+      <DashBox title={`Landespokal ${cup.season}`} icon="trophy" span={2} rows={2} right={winner ? <>Sieger: <ClubLink id={winner}>{name(winner)}</ClubLink></> : undefined}>
         <div className="cup-bracket dcup-bracket">
           {cup.rounds.map((round) => (
             <div className="cup-col" key={round.index}>
@@ -83,7 +84,7 @@ export function CupView({ g, onWatch }: { g: Game; onWatch: (id: string) => void
         {!winner && myNext && <>
           <div className="dsec">Nächstes Pokalspiel</div>
           <KV k={cup.rounds[myNext.round].name} v={CalendarEngine.formatDate(myNext.date)} />
-          <KV k={myNext.homeClubId === mid ? 'Heim gegen' : 'Auswärts bei'} v={myNext.homeClubId === mid ? name(myNext.awayClubId) : name(myNext.homeClubId)} strong />
+          <KV k={myNext.homeClubId === mid ? 'Heim gegen' : 'Auswärts bei'} v={<ClubLink id={myNext.homeClubId === mid ? myNext.awayClubId : myNext.homeClubId}>{myNext.homeClubId === mid ? name(myNext.awayClubId) : name(myNext.homeClubId)}</ClubLink>} strong />
         </>}
         <div className="dsec">Bisherige Runden</div>
         {myTies.filter(({ t }) => t.played).length ? myTies.filter(({ t }) => t.played).map(({ rd, t }) => {
@@ -93,7 +94,7 @@ export function CupView({ g, onWatch }: { g: Game; onWatch: (id: string) => void
           return (
             <div key={t.id} className={`dlist-row ${t.match ? 'clickable' : ''}`} onClick={() => t.match && onWatch(t.match.id)}>
               <span className="meta" style={{ minWidth: 110 }}>{rd.name}</span>
-              <span className="grow">{name(opp)} <span className="muted">({homeSide ? 'H' : 'A'})</span></span>
+              <span className="grow"><ClubLink id={opp}>{name(opp)}</ClubLink> <span className="muted">({homeSide ? 'H' : 'A'})</span></span>
               <span className={`dres dres-${won ? 'W' : 'L'}`}>{homeSide ? `${t.homeGoals}:${t.awayGoals}` : `${t.awayGoals}:${t.homeGoals}`}{decisionBadge(t) ? ` ${decisionBadge(t)}` : ''}</span>
             </div>
           );

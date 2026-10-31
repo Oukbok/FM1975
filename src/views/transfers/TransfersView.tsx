@@ -1,4 +1,5 @@
 import ClubCrest from '../../components/ClubCrest';
+import { ClubLink } from '../../components/club/ClubLink';
 import PlayerModal from '../../components/PlayerModal';
 import { CalendarEngine } from '../../engine/calendar';
 import { getAvailablePlayers } from '../../engine/transfers';
@@ -71,7 +72,7 @@ function MarketTable({ g, list, onOpen, action }: { g: Game; list: Player[]; onO
           return (
             <tr key={p.id} className="clickable" onClick={() => onOpen(p.id)}>
               <td className="nowrap" style={{ fontWeight: 700 }}>{p.fullName}</td>
-              <td className="nowrap"><span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>{c && <ClubCrest club={c} size={20} />}{c?.shortName}</span></td>
+              <td className="nowrap"><ClubLink id={p.clubId}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>{c && <ClubCrest club={c} size={20} />}{c?.shortName}</span></ClubLink></td>
               <td className="ctr"><span className="pos-badge">{p.naturalPosition}</span></td>
               <td className="num">{p.age}</td>
               <td className="num"><b style={{ color: vColor(p.overall) }}>{p.overall}</b></td>
@@ -212,7 +213,7 @@ export function VerhandlungenView({ g, onChange = () => {} }: { g: Game; onChang
           return (
             <div key={t.id} className="dlist-row clickable" onClick={() => talk.openTalk(t)}>
               <span className="pos-badge">{pl?.naturalPosition ?? '–'}</span>
-              <span className="grow"><b>{pl?.fullName ?? 'Spieler'}</b><span className="muted"> · {g.clubs[t.sellerId]?.shortName} · {PHASE[t.phase]}</span></span>
+              <span className="grow"><b>{pl?.fullName ?? 'Spieler'}</b><span className="muted"> · <ClubLink id={t.sellerId}>{g.clubs[t.sellerId]?.shortName}</ClubLink> · {PHASE[t.phase]}</span></span>
               <span className="val" style={{ color: t.phase === 'failed' ? 'var(--red)' : t.phase === 'done' || t.phase === 'agreed' ? 'var(--green)' : 'var(--accent)' }}>{t.phase === 'club' && t.round ? fmtPrice(t.currentAsk) : t.pkg ? fmtPrice(t.pkg.fee) : ''}</span>
             </div>
           );

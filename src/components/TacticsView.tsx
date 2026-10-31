@@ -1,4 +1,5 @@
 // =============================================================================
+import { ClubLink } from './club/ClubLink';
 // TAKTIK — Ausrichtung, Spielverhalten, Formation, Gegner (Seitenraster)
 // Liest/schreibt direkt g.clubs[managedClubId].tactics (wie LineupView).
 // =============================================================================
@@ -102,8 +103,8 @@ export default function TacticsView({ g, onChange }: { g: G; onChange: () => voi
         {opp && oppT ? (
           <>
             <div style={{ display: 'flex', gap: 14, alignItems: 'center', marginBottom: 10 }}>
-              <ClubCrest club={opp} size={60} />
-              <div style={{ fontSize: 20, fontWeight: 900 }}>{opp.name}</div>
+              <ClubLink id={opp.id}><ClubCrest club={opp} size={60} /></ClubLink>
+              <div style={{ fontSize: 20, fontWeight: 900 }}><ClubLink id={opp.id}>{opp.name}</ClubLink></div>
             </div>
             <KV k="Formation" v={getFormation(oppT.formation).label} />
             <KV k="Ausrichtung" v={STYLE_DE[oppT.style] ?? oppT.style} />

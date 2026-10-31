@@ -1,12 +1,10 @@
 import ClubCrest from '../../components/ClubCrest';
-import ClubModal from '../../components/ClubModal';
+import { ClubLink } from '../../components/club/ClubLink';
 import { CalendarEngine } from '../../engine/calendar';
-import { buildClubProfile } from '../../game/clubProfile';
 import { Game } from '../../game/state';
 import { Match } from '../../types';
 import { DashBox, DashPage, Empty, KV, Kpi } from '../../ui/DashPage';
 import { resultFor } from '../shared';
-import { useState } from 'react';
 
 // =============================================================================
 // SPIELPLAN — eigene Saison, Bilanz Heim/Auswärts, Spieltag der Liga
@@ -27,7 +25,6 @@ function bilanz(ms: Match[], clubId: string) {
 export function FixturesView({ g, onWatch }: { g: Game; onWatch: (id: string) => void }) {
   const mid = g.managedClubId;
   const myMatches = g.fixtures.filter((m) => m.involvesPlayerClub).sort((a, b) => a.matchday - b.matchday);
-  const [clubModalId, setClubModalId] = useState<string | null>(null);
   const played = myMatches.filter((m) => m.status === 'finished');
   const home = bilanz(played.filter((m) => m.homeClubId === mid), mid);
   const away = bilanz(played.filter((m) => m.awayClubId === mid), mid);
@@ -54,8 +51,8 @@ export function FixturesView({ g, onWatch }: { g: Game; onWatch: (id: string) =>
                   <td className="ctr"><b>{m.matchday}</b></td>
                   <td className="nowrap muted">{CalendarEngine.formatDate(m.date)}</td>
                   <td className="ctr">{isHome ? 'Heim' : 'Ausw.'}</td>
-                  <td className="clickable" style={{ cursor: 'pointer' }} onClick={() => setClubModalId(oppId)}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>{opp && <ClubCrest club={opp} size={24} />}{opp?.name}</span>
+                  <td>
+                    <ClubLink id={oppId}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>{opp && <ClubCrest club={opp} size={24} />}{opp?.name}</span></ClubLink>
                   </td>
                   <td className="ctr"><span className={`dres ${r ? 'dres-' + r : ''}`}>{score}</span></td>
                   <td className="num">{m.status === 'finished' && <button className="dchip" onClick={() => onWatch(m.id)}>Bericht</button>}</td>
@@ -80,14 +77,13 @@ export function FixturesView({ g, onWatch }: { g: Game; onWatch: (id: string) =>
       <DashBox title={showMd != null ? `${showMd}. Spieltag` : 'Spieltag'} icon="dashTabelle" right={lastMd ? 'Ergebnisse' : 'Paarungen'}>
         {mdMatches.length ? mdMatches.map((m) => (
           <div key={m.id} className={`dlist-row ${m.involvesPlayerClub ? 'clickable' : ''}`} onClick={() => m.status === 'finished' && onWatch(m.id)}>
-            <span className="grow" style={{ textAlign: 'right', fontWeight: m.homeClubId === mid ? 900 : 500 }}>{g.clubs[m.homeClubId]?.shortName}</span>
+            <span className="grow" style={{ textAlign: 'right', fontWeight: m.homeClubId === mid ? 900 : 500 }}><ClubLink id={m.homeClubId}>{g.clubs[m.homeClubId]?.shortName}</ClubLink></span>
             <span className="dres">{m.result ? `${m.result.homeGoals}:${m.result.awayGoals}` : '–:–'}</span>
-            <span className="grow" style={{ fontWeight: m.awayClubId === mid ? 900 : 500 }}>{g.clubs[m.awayClubId]?.shortName}</span>
+            <span className="grow" style={{ fontWeight: m.awayClubId === mid ? 900 : 500 }}><ClubLink id={m.awayClubId}>{g.clubs[m.awayClubId]?.shortName}</ClubLink></span>
           </div>
         )) : <Empty icon="schedule">Kein Spieltag.</Empty>}
       </DashBox>
 
-      {clubModalId && <ClubModal data={buildClubProfile(g, clubModalId)} onClose={() => setClubModalId(null)} />}
     </DashPage>
   );
 }

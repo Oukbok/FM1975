@@ -1,5 +1,5 @@
 import ClubCrest from '../../components/ClubCrest';
-import ClubModal from '../../components/ClubModal';
+import { ClubLink, useClubProfile } from '../../components/club/ClubLink';
 import Icon from '../../components/Icon';
 import JerseySVG, { type JerseyPattern } from '../../components/JerseySVG';
 import { getClubKitDisplay } from '../../data/kits';
@@ -9,14 +9,12 @@ import { yearOf, economyScale } from '../../engine/economy';
 import { computeMonthly } from '../../engine/finances';
 import { FACILITIES, facilityAvailable, MAX_LEVEL } from '../../engine/infrastructure';
 import { divisionLabel } from '../../engine/leagues';
-import { buildClubProfile } from '../../game/clubProfile';
 import { Game } from '../../game/state';
 import { MSG_CAT_ICON } from '../../shell/CalendarStrip';
 import { Screen } from '../../shell/navigation';
 import { Match, POSITION_GROUPS } from '../../types';
 import { fmtDMfull, fmtDateFull, fmtDateShort, zoneClass } from '../../ui/format';
 import { BalanceChart } from '../finanzen/FinancesView';
-import { useState } from 'react';
 
 // =============================================================================
 // DASHBOARD
@@ -53,7 +51,7 @@ export function Dashboard({ g, onGoto, onWatch, onOpenEditor }: {
   g: Game; onGoto: (s: Screen) => void; onWatch: (id: string) => void;
   onOpenEditor: () => void;
 }) {
-  const [clubModalId, setClubModalId] = useState<string | null>(null);
+  const profile = useClubProfile();
   const myClub = g.clubs[g.managedClubId];
   const myRow = g.table.rows.find((r) => r.clubId === g.managedClubId);
   const rows = g.table.rows;
@@ -219,7 +217,7 @@ export function Dashboard({ g, onGoto, onWatch, onOpenEditor }: {
                   <tr
                     key={r.clubId}
                     className={`dxt-row ${zoneClass(r.position, rows.length)} ${me ? 'me' : ''}`}
-                    onClick={(e) => { e.stopPropagation(); setClubModalId(r.clubId); }}
+                    onClick={(e) => { e.stopPropagation(); profile?.open(r.clubId); }}
                     title="Vereinsprofil öffnen"
                   >
                     <td className="dxt-pos">{r.position}</td>
@@ -255,13 +253,13 @@ export function Dashboard({ g, onGoto, onWatch, onOpenEditor }: {
               <div className="cns-photo">
                 <div className="cns-photo-crests">
                   <div className="cns-vs-side">
-                    <ClubCrest club={homeClub} size={96} />
-                    <span className="cns-nm">{homeClub.name}</span>
+                    <ClubLink id={homeClub.id} className="cns-link"><ClubCrest club={homeClub} size={96} /></ClubLink>
+                    <ClubLink id={homeClub.id}><span className="cns-nm">{homeClub.name}</span></ClubLink>
                   </div>
                   <span className="cns-vs">VS</span>
                   <div className="cns-vs-side">
-                    <ClubCrest club={awayClub} size={96} />
-                    <span className="cns-nm">{awayClub.name}</span>
+                    <ClubLink id={awayClub.id} className="cns-link"><ClubCrest club={awayClub} size={96} /></ClubLink>
+                    <ClubLink id={awayClub.id}><span className="cns-nm">{awayClub.name}</span></ClubLink>
                   </div>
                 </div>
               </div>
@@ -393,7 +391,6 @@ export function Dashboard({ g, onGoto, onWatch, onOpenEditor }: {
         </div>
 
       </div>
-      {clubModalId && <ClubModal data={buildClubProfile(g, clubModalId)} onClose={() => setClubModalId(null)} />}
     </div>
   );
 }
@@ -405,9 +402,9 @@ export function NextMatchCard({ g, m }: { g: Game; m: Match }) {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 4 }}>
-        <ClubCrest club={opp} size={44} />
+        <ClubLink id={opp.id}><ClubCrest club={opp} size={44} /></ClubLink>
         <div>
-          <div style={{ fontWeight: 800, fontSize: 16 }}>{opp.name}</div>
+          <div style={{ fontWeight: 800, fontSize: 16 }}><ClubLink id={opp.id}>{opp.name}</ClubLink></div>
           <div className="mini">
             <span className={`pill ${isHome ? 'home' : 'away'}`}>{isHome ? 'HEIM' : 'AUSWÄRTS'}</span>
             <span className="dim" style={{ marginLeft: 8 }}>{m.matchday}. Spieltag</span>
@@ -425,11 +422,11 @@ export function MatchLine({ g, m, onWatch }: { g: Game; m: Match; onWatch?: (id:
     <div className="row" onClick={(e) => { e.stopPropagation(); if (onWatch && m.status === 'finished') onWatch(m.id); }}
       style={{ cursor: onWatch && m.status === 'finished' ? 'pointer' : 'default', padding: '4px 0' }}>
       <span className="dim mini" style={{ minWidth: 40 }}>{m.matchday}. ST</span>
-      <span style={{ flex: 1, textAlign: 'right', fontWeight: 600 }}>{h.shortName}</span>
+      <span style={{ flex: 1, textAlign: 'right', fontWeight: 600 }}><ClubLink id={h.id}>{h.shortName}</ClubLink></span>
       <b style={{ minWidth: 54, textAlign: 'center', color: 'var(--accent)' }}>
         {m.result ? `${m.result.homeGoals}:${m.result.awayGoals}` : 'vs'}
       </b>
-      <span style={{ flex: 1, fontWeight: 600 }}>{a.shortName}</span>
+      <span style={{ flex: 1, fontWeight: 600 }}><ClubLink id={a.id}>{a.shortName}</ClubLink></span>
     </div>
   );
 }
