@@ -388,12 +388,14 @@
   position: absolute;
   inset: 0;
   display: flex;
-  align-items: center;
+  /* flex-start + margin:auto am Kind: mittig, solange es passt – sonst von oben scrollbar
+     (align-items:center würde den oberen Teil unerreichbar abschneiden). */
+  align-items: flex-start;
   justify-content: center;
   padding: 40px 24px;
   overflow-y: auto;
   background: rgba(8, 6, 10, 0.55);
   backdrop-filter: blur(3px);
 }
-.st-sub > * { width: 100%; max-width: 720px; }
+.st-sub > * { width: 100%; max-width: 720px; margin: auto 0; }
 .st-note { position: absolute; left: 56px; bottom: 96px; font-size: 13px; color: #ffb4a6; text-shadow: 0 2px 8px rgba(0, 0, 0,0.7); }

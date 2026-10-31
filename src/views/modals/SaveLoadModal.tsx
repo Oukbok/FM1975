@@ -10,7 +10,8 @@ export function SettingsModal({ settings, onClose, onSave }: {
 }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" style={{ maxWidth: 640, width: '100%' }} onClick={(e) => e.stopPropagation()}>
+      {/* Einstellungen sind länger als der Bildschirm: der Inhalt scrollt im Fenster. */}
+      <div className="modal modal-scroll" style={{ maxWidth: 640, width: '100%' }} onClick={(e) => e.stopPropagation()}>
         <SettingsScreen settings={settings} onBack={onClose} onSave={onSave} />
       </div>
     </div>
