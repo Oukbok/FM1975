@@ -663,7 +663,14 @@ Je Spieler siehst du **Name, Verein, Position, Alter** sowie **alter → neuer O
 Nach der Winter- und der Saison-Bewertung meldet der **Liga-Ticker** die größten Gewinner und Verlierer der anderen Vereine deiner Liga. Junge Spieler mit großen Sprüngen sind die Transferziele von morgen.
 
 ## Liga-Gleichgewicht
-Zum 1. Juli vergleicht das Spiel die Durchschnittsstärke der 1. Liga mit dem Zielwert **72,5**. Liegt sie mehr als einen Punkt darüber, werden die **neuen** Jugendjahrgänge aller Akademien um 0,1 Sterne Potenzial schwächer erzeugt (bis −0,6), liegt sie darunter, etwas stärker (bis +0,3); im Zielkorridor läuft die Korrektur wieder aus. Bestehende Spieler werden nie nachträglich verändert. So bleibt die Liga über Jahrzehnte vergleichbar, ohne dass dein Kader bestraft wird.`,
+Zum 1. Juli vergleicht das Spiel die Durchschnittsstärke der 1. Liga mit dem Zielwert **72,5**. Liegt sie mehr als einen Punkt darüber, werden die **neuen** Jugendjahrgänge aller Akademien um 0,1 Sterne Potenzial schwächer erzeugt (bis −0,6), liegt sie darunter, etwas stärker (bis +0,3); im Zielkorridor läuft die Korrektur wieder aus. Bestehende Spieler werden nie nachträglich verändert. So bleibt die Liga über Jahrzehnte vergleichbar, ohne dass dein Kader bestraft wird.
+
+## Weltklasse ist selten
+Spieler mit Stärke **85 oder mehr** sind die Ausnahme: In der 1. Liga gibt es davon meist nur **rund 8 bis 13** – oft sind Legenden darunter, gelegentlich ein Star aus einer Akademie.
+- **Erzeugte Spieler** (Startkader, Aufsteiger, Nachrücker, Zugänge aus dem Ausland oder von unterklassigen Vereinen) kommen nie als fertige Weltklasse ins Spiel: höchstens 84 (Nachrücker 82, Ausland 83, unterklassig 79). Auch ihr verdecktes Potenzial wird oberhalb von 82 deutlich gestaucht – nur seltene Ausnahmetalente haben wirklich Luft bis ganz nach oben.
+- **Weltklasse-Bremse:** Ab Stärke 82 wird jeder weitere Punkt schwerer (je Punkt rund 15 % langsamer, höchstens auf ein Fünftel des Tempos). Spitzentraining (gute Anlagen, großer Verein) schiebt den Beginn um bis zu 3 Punkte nach hinten – Weltklasse reift eher bei den Großen. Legenden spüren die Bremse etwas schwächer (80 %).
+- **Breite der Spitze:** Zum 1. Juli zählt das Liga-Gleichgewicht auch die Spieler ab 85 in der 1. Liga. Sind es mehr als 13, setzt die Bremse im Folgejahr einen halben Punkt früher ein (bis 3 Punkte), bei weniger als 8 entsprechend später; im Korridor läuft die Verschiebung wieder aus.
+Für dich heißt das: Ein 85er ist ein echter Unterschiedsspieler – teuer, begehrt und schwer zu ersetzen.`,
   },
   {
     id: 'tactics',
