@@ -8,6 +8,7 @@
 import type { IndoorPhase } from '../data/indoorHistory';
 import type { IndoorResult, IndoorSquad, TourStat } from '../engine/indoor';
 import { CalendarEngine } from '../engine/calendar';
+import { findWinterBreak } from '../engine/winterBreak';
 import { Game } from './state';
 
 // -----------------------------------------------------------------------------
@@ -162,19 +163,15 @@ export function ownCampDays(g: Game): Map<string, CampBooking> {
 }
 
 /**
- * Freies Winterfenster der laufenden Saison: zwei Tage nach dem letzten Hinrunden-
- * Spieltag bis drei Tage vor dem Rückrundenstart (Liga deines Vereins).
+ * Freies Winterfenster der laufenden Saison: zwei Tage nach dem letzten Spieltag vor
+ * der Winterpause bis drei Tage vor dem ersten danach (Liga deines Vereins). Die Lage
+ * der Pause kommt aus dem Spielplan (historisch je Saison, data/winterBreaks.ts).
  */
 export function winterWindow(g: Game, season = g.season): { from: string; to: string } {
   const y0 = parseInt(season.slice(0, 4), 10);
-  const mid = `${y0}-12-24`;
-  let last = '', first = '';
-  for (const m of g.fixtures) {
-    if (m.date <= mid && m.date.startsWith(`${y0}-`) && m.date > last) last = m.date;
-    if (m.date > mid && (!first || m.date < first)) first = m.date;
-  }
-  if (!last || !first || !first.startsWith(`${y0 + 1}-`)) return { from: `${y0}-12-07`, to: `${y0}-12-30` };
-  return { from: CalendarEngine.addDays(last, 2), to: CalendarEngine.addDays(first, -3) };
+  const wb = findWinterBreak(g.fixtures.map((m) => m.date), y0);
+  if (!wb) return { from: `${y0}-12-07`, to: `${y0}-12-30` };
+  return { from: CalendarEngine.addDays(wb.last, 2), to: CalendarEngine.addDays(wb.first, -3) };
 }
 
 /** Sommerfenster der Vorbereitung: Saisonstart bis eine Woche vor dem ersten Spieltag. */
@@ -192,4 +189,31 @@ export function competitiveDays(g: Game): Set<string> {
   for (const e of g.calendar.events) if (e.type === 'cup_matchday' || e.type === 'euro_matchday') s.add(e.date);
   for (const m of g.fixtures) if (m.involvesPlayerClub) s.add(m.date);
   return s;
+}
+
+/** Liegt `today` in der Winterpause der eigenen Liga (ab dem 4. Tag nach dem letzten Spieltag)? */
+export function inWinterBreak(g: Game, today: string): boolean {
+  const y0 = parseInt(g.season.slice(0, 4), 10);
+  const wb = findWinterBreak(g.fixtures.map((m) => m.date), y0);
+  return !!wb && today >= CalendarEngine.addDays(wb.last, 4) && today < wb.first;
+}
+
+/**
+ * Fehlender Spielrhythmus in der Winterpause: Die Form aller Ligaspieler driftet
+ * täglich um 0,5 % Richtung Mitte (50) – Formstarke verlieren etwas, Formschwache
+ * fangen sich. 3 Wochen Pause ≈ −1,5 Formpunkte bei Form 70, 11 Wochen ≈ −6. Gilt
+ * für alle Vereine (die KI hatte ohne Spiele bisher gar keine Formänderung); das
+ * Training deines Vereins bringt in der Pause kein Form-Plus (game/day.ts).
+ * Frische/Fitness erholen sich ohnehin täglich (engine/form.ts, engine/training.ts).
+ */
+export function winterBreakDaily(g: Game, today: string): void {
+  if (!inWinterBreak(g, today)) return;
+  for (const c of Object.values(g.clubs)) {
+    if (c.id.startsWith('am')) continue;
+    for (const pid of c.playerIds) {
+      const p = g.players[pid];
+      if (!p || p.injury) continue;
+      p.form = Math.max(0, Math.min(100, p.form + (50 - p.form) * 0.005));
+    }
+  }
 }

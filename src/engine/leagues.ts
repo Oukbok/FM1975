@@ -160,9 +160,10 @@ export function simMatchGoals(
 // Fixtures & Tabellen für simulierte Ligen (nutzt die vorhandene League-Engine
 // mit minimalen Club-Stubs — nur die ID wird gebraucht).
 // -----------------------------------------------------------------------------
-export function simFixtures(clubIds: string[], seasonStart: string): Match[] {
+export function simFixtures(clubIds: string[], seasonStart: string, tier = 2): Match[] {
   const stubs = clubIds.map((id) => ({ id }) as Club);
-  return generateFixtures(stubs, seasonStart);
+  // DDR-Ligen (tier ≥ 100) im DDR-Rhythmus (lange Winterpause bis Ende Februar).
+  return generateFixtures(stubs, seasonStart, { tier, kind: tier >= 100 ? 'ddr' : 'west' });
 }
 
 export function simTable(
@@ -239,7 +240,7 @@ export function buildDivision(
   season: string,
   seasonStart: string,
 ): LeagueDivision {
-  const fixtures = simFixtures(clubIds, seasonStart);
+  const fixtures = simFixtures(clubIds, seasonStart, meta.tier);
   const table = simTable(clubIds, fixtures, pointSystem, season);
   return { ...meta, clubIds, fixtures, table, nextMatchday: 1 };
 }

@@ -4,6 +4,7 @@
 // =============================================================================
 
 import { CalendarEvent, GameCalendar, Match } from '../types';
+import { findWinterBreak } from './winterBreak';
 
 let _eid = 0;
 function eid(): string { return `ev_${_eid++}`; }
@@ -85,10 +86,16 @@ export function generateSeasonCalendar(
     processed: false, requiresAction: true,
   });
 
-  // Winterpause
+  // Winterpause: Tag nach dem letzten Spieltag vor der Pause (aus dem Spielplan,
+  // engine/winterBreak.ts). Fallback für Spielpläne ohne erkennbare Pause.
+  const wb = findWinterBreak(matches.map((m) => m.date), y0);
+  const fmt = (d: string) => `${parseInt(d.slice(8), 10)}.${parseInt(d.slice(5, 7), 10)}.`;
   events.push({
-    id: eid(), date: `${y0}-12-21`, type: 'winter_break',
-    title: 'Winterpause', description: 'Die 1. Liga geht in die Winterpause.',
+    id: eid(), date: wb ? CalendarEngine.addDays(wb.last, 1) : `${y0}-12-21`, type: 'winter_break',
+    title: 'Winterpause',
+    description: wb
+      ? `Die Liga geht in die Winterpause – weiter geht es am ${fmt(wb.first)}${wb.first.slice(0, 4)}.`
+      : 'Die Liga geht in die Winterpause.',
     processed: false, requiresAction: false,
   });
 

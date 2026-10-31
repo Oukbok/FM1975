@@ -6,6 +6,8 @@
 import {
   Club, Match, MatchResult, PointSystem, LeagueTable, LeagueTableRow,
 } from '../types';
+import type { LeagueKind } from '../data/winterBreaks';
+import { seasonSchedule } from './winterBreak';
 
 // -----------------------------------------------------------------------------
 // Spielplan: Round-Robin (Kreis-Algorithmus / "Berger-Tabellen")
@@ -13,7 +15,16 @@ import {
 // -----------------------------------------------------------------------------
 const BYE = '__spielfrei__';
 
-export function generateFixtures(clubs: Club[], seasonStart = '1975-08-15'): Match[] {
+/**
+ * Spielplan einer Liga. Aus `seasonStart` zählt nur das Jahr (Saison-Startjahr);
+ * die Termine kommen aus der historischen Winterpause (engine/winterBreak.ts,
+ * data/winterBreaks.ts): Samstage, bei Bedarf englische Wochen.
+ */
+export function generateFixtures(
+  clubs: Club[],
+  seasonStart = '1975-08-15',
+  opts: { tier?: number; kind?: LeagueKind } = {},
+): Match[] {
   const ids = clubs.map((c) => c.id);
   // Ungerade Vereinszahl: ein Verein ist pro Spieltag spielfrei.
   if (ids.length % 2 !== 0) ids.push(BYE);
@@ -41,32 +52,23 @@ export function generateFixtures(clubs: Club[], seasonStart = '1975-08-15'): Mat
     arr.splice(0, arr.length, fixed, ...rest);
   }
 
+  // Termine (UTC, passend zu den Kalenderschritten in calendar.ts).
+  const y0 = parseInt(seasonStart.slice(0, 4), 10);
+  const dates = seasonSchedule(y0, rounds * 2, opts.tier ?? 1, opts.kind ?? 'west').dates;
   const matches: Match[] = [];
-  // Alle Datumsberechnungen laufen in UTC, damit die Spieltermine exakt zu den
-  // (ebenfalls UTC-basierten) Kalenderschritten in calendar.ts passen. Sonst
-  // entsteht in Zeitzonen mit Offset (z. B. Europe/Berlin) ein Off-by-one-Tag.
-  const startDate = new Date(seasonStart + 'T00:00:00Z');
-  let mdCounter = 0;
 
-  // Hinrunde
+  // Hinrunde, dann Rückrunde mit getauschtem Heimrecht.
   firstLeg.forEach((day, idx) => {
-    mdCounter = idx + 1;
-    const d = new Date(startDate);
-    d.setUTCDate(d.getUTCDate() + idx * 7);
     day.forEach((m, j) => {
       if (m.home === BYE || m.away === BYE) return;
-      matches.push(makeMatch(mdCounter, isoDate(d), m.home, m.away, j));
+      matches.push(makeMatch(idx + 1, dates[idx], m.home, m.away, j));
     });
   });
-
-  // Rückrunde (Heimrecht getauscht), 1 Woche Winterpause nach Hinrunde
   firstLeg.forEach((day, idx) => {
-    mdCounter = rounds + idx + 1;
-    const d = new Date(startDate);
-    d.setUTCDate(d.getUTCDate() + (rounds + idx) * 7 + 21); // +3 Wochen Winterpause
+    const md = rounds + idx + 1;
     day.forEach((m, j) => {
       if (m.home === BYE || m.away === BYE) return;
-      matches.push(makeMatch(mdCounter, isoDate(d), m.away, m.home, j));
+      matches.push(makeMatch(md, dates[md - 1], m.away, m.home, j));
     });
   });
 
@@ -79,10 +81,6 @@ function makeMatch(matchday: number, date: string, home: string, away: string, i
     matchday, date, homeClubId: home, awayClubId: away,
     status: 'scheduled', result: null, events: [], involvesPlayerClub: false,
   };
-}
-
-function isoDate(d: Date): string {
-  return d.toISOString().slice(0, 10);
 }
 
 // -----------------------------------------------------------------------------
