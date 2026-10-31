@@ -16,7 +16,7 @@
 // =============================================================================
 import { Club, Player } from '../types';
 import { assessSquad, GROUP_LABEL, GROUP_OF, GROUP_POS, GroupNeed, PosGroup, squadLevel11, SquadAssessment, targetStrength } from '../engine/aiManager';
-import { hasTransferBan, isLeagueClub, lastRevenue, marketValueFor, marketWage } from '../engine/clubEconomy';
+import { AI_RESERVE, hasTransferBan, isLeagueClub, lastRevenue, marketValueFor, marketWage } from '../engine/clubEconomy';
 import { bosmanActive } from '../engine/contractTalks';
 import { economyScale } from '../engine/economy';
 import { bookTransfer } from '../engine/finances';
@@ -83,7 +83,7 @@ function market(g: Game): AiMarketState {
 export function aiTransferBudget(c: Club, year: number, season: string): number {
   if (hasTransferBan(c, season) || c.finances.balance <= 0) return 0;
   const rev = lastRevenue(c, year);
-  const free = Math.max(0, c.finances.balance - 0.3 * rev) * 0.6;
+  const free = Math.max(0, c.finances.balance - AI_RESERVE * rev) * 0.85;
   const phil = c.coach?.philosophy === 'einkauf' ? 1.25 : c.coach?.philosophy === 'jugend' ? 0.75 : 1;
   return r5k(free * phil / economyScale(year));
 }

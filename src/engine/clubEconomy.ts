@@ -131,11 +131,20 @@ export function closeSeasonFinances(c: Club, season: string): SeasonFinanceRecor
   return rec;
 }
 
-/** Umsatz der Vorsaison (nominal) oder eine Schätzung, wenn es noch keine Bilanz gibt. */
-export function lastRevenue(c: Club, year: number): number {
+/** Umsatz-Schätzung je Liga-Ebene gegenüber der 1. Liga (ohne Bilanz). */
+const TIER_REVENUE = [1, 1, 0.4, 0.15, 0.08];
+
+/**
+ * Umsatz der Vorsaison (nominal) oder eine Schätzung, wenn es noch keine Bilanz gibt.
+ * Die Schätzung berücksichtigt die Liga-Ebene: Ein neu voll simulierter Zweit- oder
+ * Drittligist wurde sonst wie ein Erstligist eingeschätzt, die KI zahlte Gehälter für
+ * den doppelten bis fünffachen Umsatz und fast die ganze Liga rutschte im ersten Jahr ins Minus.
+ */
+export function lastRevenue(c: Club, year: number, tier = 1): number {
   const h = c.finances.seasonHistory;
   if (h && h.length) return h[h.length - 1].revenue;
-  return (2_000_000 + (c.reputation ?? 50) * 120_000) * economyScale(year);
+  const tf = TIER_REVENUE[Math.max(1, Math.min(4, Math.round(tier)))];
+  return (2_000_000 + (c.reputation ?? 50) * 120_000) * economyScale(year) * tf;
 }
 
 // -----------------------------------------------------------------------------
@@ -307,9 +316,21 @@ export interface AiEconomyContext {
   autoManageMine?: boolean;
   /** Überschüsse nicht pauschal investieren – das übernimmt die Kaderplanung (game/aiClubs.ts). */
   skipInvest?: boolean;
+  /** Liga-Ebene der voll simulierten Liga (1 = 1. Liga), für Umsatz-Schätzungen. */
+  tier?: number;
 }
 
 const MIN_KEEP = 20;
+/**
+ * Liquiditätsreserve der KI (Anteil am Jahresumsatz), die zum Saisonstart auf dem
+ * Konto bleibt. Darüber wird investiert (Zugänge, Gehälter, Gelände). Vorher 0,6:
+ * KI-Vereine saßen dauerhaft auf rund einem Jahresumsatz Guthaben (Geld-Horten),
+ * kein Verein geriet je ins Minus. Weil die Vereine während der Saison Überschüsse
+ * erwirtschaften, liegt das Guthaben am Saisonende trotzdem bei rund 40–50 % des Umsatzes.
+ */
+export const AI_RESERVE = 0.1;
+/** Anteil des Überschusses, den KI-Vereine mit Kaderplanung in Gelände/Stadion stecken. */
+const AI_BUILD_SHARE = 0.35;
 const MAX_SQUAD = 25;
 
 function squadRankValue(c: Club, players: Record<string, Player>, rank: number): number {
@@ -338,10 +359,65 @@ function movePlayer(p: Player, from: Club | null, to: Club | null, feeNominal: n
   recordTransfer(p, from?.name ?? abroad, to?.name ?? abroad, feeNominal, ctx.date);
 }
 
+/** Torhüter je Kader, die ein Verein mindestens hält (Stammtorwart + Ersatz). */
+const MIN_KEEPERS = 2;
+
+function keeperCount(c: Club, players: Record<string, Player>): number {
+  return c.playerIds.filter((id) => players[id]?.naturalPosition === 'TW').length;
+}
+
+/**
+ * Torhüter sichern: Kaderpflege (game/squads.ts) füllt nur bis 20 Spieler auf, und
+ * Zukäufe/Jugend kommen auf beliebigen Positionen. Ohne diese Regel verlor ein Verein
+ * nach dem Karriereende seines einzigen Torwarts dauerhaft den Torhüter (Feldspieler
+ * im Tor, 150+ Gegentore). Fehlt ein Torwart, holt die KI einen passenden:
+ * zuerst einen Ersatzmann eines Liga-Vereins mit drei oder mehr Torhütern, sonst
+ * aus dem Ausland (Stammkraft auf Höhe der Startelf, Ersatz etwas schwächer).
+ */
+function secureKeepers(c: Club, league: Club[], ctx: AiEconomyContext, scale: number): string | null {
+  let note: string | null = null;
+  for (let k = 0; k < MIN_KEEPERS && keeperCount(c, ctx.players) < MIN_KEEPERS; k++) {
+    const have = keeperCount(c, ctx.players);
+    const starter = squadRankValue(c, ctx.players, 10);
+    const strength = have === 0 ? starter : Math.max(50, starter - 6);
+    const affordable = (fee: number) => fee <= Math.max(0, c.finances.balance) * 0.5;
+    const spare = league
+      .filter((s) => s.id !== c.id && s.id !== ctx.managedClubId && keeperCount(s, ctx.players) > MIN_KEEPERS)
+      .flatMap((s) => s.playerIds.map((id) => ctx.players[id]).filter((p) => p?.naturalPosition === 'TW'))
+      .filter((p) => p.overall >= strength - 4 && p.age <= 33 && affordable(p.contract.transferValue * scale))
+      .sort((a, b) => b.overall - a.overall)[0];
+    if (spare) {
+      const seller = ctx.clubs[spare.clubId];
+      // Nicht den Stammtorwart des Verkäufers: nur dessen Ersatzleute.
+      const best = seller.playerIds.map((id) => ctx.players[id]).filter((p) => p?.naturalPosition === 'TW').sort((a, b) => b.overall - a.overall)[0];
+      if (best && best.id !== spare.id) {
+        movePlayer(spare, seller, c, Math.round(spare.contract.transferValue * scale), ctx, 'Ausland');
+        note = `${c.name} verpflichtet Torwart ${spare.fullName} von ${seller.name}.`;
+        continue;
+      }
+    }
+    const p = createPlayer({
+      id: `${c.id}_t${ctx.year}_tw${k}_${Math.floor(ctx.rng() * 1e6)}`, clubId: c.id, pos: 'TW',
+      age: 23 + Math.floor(ctx.rng() * 9), strength, year: ctx.year, date: ctx.date, rng: ctx.rng, shirt: 0,
+    });
+    refreshOverall(p);
+    p.contract.transferValue = marketValueFor(p, ctx.year);
+    // Kann sich der Verein die Ablöse nicht leisten, kommt ein ablösefreier Torwart.
+    const fee = affordable(p.contract.transferValue * scale) ? Math.round(p.contract.transferValue * scale) : 0;
+    ctx.players[p.id] = p;
+    p.clubId = '';
+    movePlayer(p, null, c, fee, ctx, 'Ausland');
+    if (have === 0) note = `${c.name} holt Torwart ${p.fullName} aus dem Ausland.`;
+  }
+  return note;
+}
+
 /** Schwächsten/ältesten überzähligen Spieler abgeben (ablösefrei ins Ausland). */
 function trimSquad(c: Club, ctx: AiEconomyContext): void {
   while (c.playerIds.length > MAX_SQUAD) {
-    const worst = c.playerIds.map((id) => ctx.players[id]).filter((p) => p && !(p.development.legendId && p.age <= 23))
+    const keepers = keeperCount(c, ctx.players);
+    const worst = c.playerIds.map((id) => ctx.players[id])
+      .filter((p) => p && !(p.development.legendId && p.age <= 23) && !(p.naturalPosition === 'TW' && keepers <= MIN_KEEPERS))
       .sort((a, b) => (a.overall - a.age * 0.4) - (b.overall - b.age * 0.4))[0];
     if (!worst) break;
     movePlayer(worst, c, null, 0, ctx, 'Ausland');
@@ -363,8 +439,8 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
   // etwas mehr). So können sich auch Drittligisten ihren Kader leisten.
   for (const c of league) {
     if (!isAi(c)) continue;
-    const rev = lastRevenue(c, ctx.year);
-    const rich = Math.max(0, (c.finances.balance - 0.6 * rev) / Math.max(1, rev));
+    const rev = lastRevenue(c, ctx.year, ctx.tier);
+    const rich = Math.max(0, (c.finances.balance - AI_RESERVE * rev) / Math.max(1, rev));
     const quota = 0.62 + Math.min(0.12, rich * 0.1) - (c.finances.balance < 0 ? 0.06 : 0);
     const budgetWeekly = (quota * rev) / scale / 52 / 1.18;
     const squad = c.playerIds.map((id) => ctx.players[id]).filter(Boolean);
@@ -378,19 +454,28 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
     }
   }
 
+  // 0) Jeder Kader braucht zwei Torhüter (siehe secureKeepers).
+  for (const c of league) {
+    if (!isAi(c)) continue;
+    const note = secureKeepers(c, league, ctx, scale);
+    if (note) news.push(note);
+    trimSquad(c, ctx);
+  }
+
   // 1) Verschuldete Vereine verkaufen.
   for (const c of league) {
     if (!isAi(c)) continue;
     let guard = 0;
     while (c.finances.balance < 0 && guard++ < 3 && c.playerIds.length > MIN_KEEP - 2) {
-      const sell = c.playerIds.map((id) => ctx.players[id]).filter(Boolean)
+      const keepers = keeperCount(c, ctx.players);
+      const sell = c.playerIds.map((id) => ctx.players[id]).filter((p) => p && !(p.naturalPosition === 'TW' && keepers <= MIN_KEEPERS))
         .sort((a, b) => b.contract.transferValue - a.contract.transferValue)[0];
       if (!sell) break;
       const domestic = Math.round(sell.contract.transferValue * scale);
       // Käufer: reichster KI-Verein mit Platz und Geld, sonst Ausland (zahlt nach der Weltkurve).
       const buyer = league
         .filter((b) => b.id !== c.id && isAi(b) && !hasTransferBan(b, ctx.season) && b.playerIds.length < MAX_SQUAD
-          && b.finances.balance - domestic > 0.3 * lastRevenue(b, ctx.year))
+          && b.finances.balance - domestic > 0.3 * lastRevenue(b, ctx.year, ctx.tier))
         .sort((a, b) => b.finances.balance - a.finances.balance)[0] ?? null;
       const abroad = Math.round(Math.max(sell.contract.transferValue, cappedMarketValue(baseMarketValue(sell), ctx.year, 'world') * 0.8) * scale);
       const fee = buyer ? domestic : abroad;
@@ -407,9 +492,9 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
   const order = [...league].sort((a, b) => b.finances.balance - a.finances.balance);
   for (const c of ctx.skipInvest ? [] : order) {
     if (!isAi(c) || hasTransferBan(c, ctx.season)) continue;
-    const rev = lastRevenue(c, ctx.year);
+    const rev = lastRevenue(c, ctx.year, ctx.tier);
     for (let k = 0; k < 2; k++) {
-      const surplus = c.finances.balance - 0.3 * rev;
+      const surplus = c.finances.balance - AI_RESERVE * rev;
       if (surplus < 0.05 * rev) break;
       const budget = surplus * 0.6;
       const need = squadRankValue(c, ctx.players, 13); // 14. Spieler = Breite
@@ -420,7 +505,7 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
       if (ctx.rng() < 0.55) {
         const cands = league
           .filter((s) => s.id !== c.id && s.id !== ctx.managedClubId && s.playerIds.length > MIN_KEEP)
-          .flatMap((s) => s.playerIds.map((id) => ctx.players[id]).filter(Boolean))
+          .flatMap((s) => s.playerIds.map((id) => ctx.players[id]).filter((p) => p && !(p.naturalPosition === 'TW' && keeperCount(s, ctx.players) <= MIN_KEEPERS)))
           .filter((p) => p.overall >= aim && p.age <= 30 && p.contract.transferValue * scale * 1.25 <= budget)
           .sort((a, b) => b.overall - a.overall || a.contract.transferValue - b.contract.transferValue);
         const p = cands[Math.floor(ctx.rng() * Math.min(3, cands.length))];
@@ -464,11 +549,13 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
   //    Gelände/Stadion ausbauen, Gehälter über Markt (Prämien, Spitzengehälter).
   for (const c of league) {
     if (!isAi(c)) continue;
-    const rev = lastRevenue(c, ctx.year);
-    const excess = c.finances.balance - 0.6 * rev;
+    const rev = lastRevenue(c, ctx.year, ctx.tier);
+    const excess = c.finances.balance - AI_RESERVE * rev;
     if (excess <= 0) continue;
     const ratio = excess / Math.max(1, rev);
-    const spend = Math.round(excess * 0.6);
+    // Plant die Manager-KI den Kader (skipInvest), bleibt der größere Teil des Überschusses
+    // fürs Transferbudget (game/aiClubs.ts) – sonst ginge fast alles in den Ausbau.
+    const spend = Math.round(excess * (ctx.skipInvest ? AI_BUILD_SHARE : 0.85));
     const keys = (['trainingCenter', 'youthAcademy', 'medical', 'merchandising'] as const)
       .filter((k) => (c.infrastructure?.[k] ?? 1) < 5);
     if (keys.length) {

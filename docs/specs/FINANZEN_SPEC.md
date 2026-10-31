@@ -100,7 +100,8 @@ Jede gebaute Einrichtung verursacht monatliche Unterhaltskosten, die mit der Stu
 **Wichtig zur Nicht-Zerstoerung der Balance:** Der bisherige Posten `trainingFacilities` (= `(8.000 + facilitiesQuality*220)*scale`) wird durch die neue Summe `facilities` ERSETZT (nicht zusaetzlich). D.h. `computeMonthly` gibt weiterhin `trainingFacilities` zurueck, aber jetzt als **0** ODER wir entfernen ihn aus der Netto-Rechnung und fuehren `facilities` als eigenen Posten. Konkret: `MonthlyBooking` bekommt Feld `facilities: number`; `trainingFacilities` entfaellt aus der Netto-Summe (auf 0 setzen und im UI durch `facilities` ersetzen). Zukunfts-Einrichtungen zaehlen nur ab Stufe ≥ 2 (Stufe 1 = Grundausbau, noch nicht gebaut).
 
 ### 3.2 Uebrige Monatsposten (unveraendert bzw. leicht)
-`wages` (Spieler), `staffWages` (Betreuerstab/Stab), `stadiumMaintenance` (Stadionunterhalt), `otherFixed`→bucket `other` (Verwaltung/Reisen/Sonstiges: `(6.000 + rep*500)*scale`) bleiben. `placementBonus` (Sponsor-Erfolgsbonus) bleibt.
+`wages` (Spieler), `staffWages` (Betreuerstab/Stab), `stadiumMaintenance` (Stadionunterhalt), `otherFixed`→bucket `other` (Verwaltung/Reisen/Sonstiges: `(6.000 + rep*500)*opScale`) bleiben. `placementBonus` (Sponsor-Erfolgsbonus) bleibt.
+**Skalierung (Finanzen 2.0, Balance 2026):** `stadiumMaintenance` und `otherFixed` werden nicht mit `economyScale`, sondern mit `opScale = revenueScale('matchday', year)` multipliziert (Stadiongeschäft wächst bis 2024 ≈ ×25, der Gesamtmarkt ≈ ×100). Mit `economyScale` überstiegen diese Fixkosten ab den 1990ern die Zuschauererlöse von Dritt-/Viertligisten, die Hälfte der Liga war dauerhaft im Minus. 1975 gilt `opScale = scale = 1`; die Beispielbilanzen bleiben unverändert.
 
 ---
 

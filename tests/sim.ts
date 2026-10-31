@@ -12,6 +12,7 @@ import { CalendarEngine } from '../src/engine/calendar';
 import { Game } from '../src/game/state';
 import { Player } from '../src/types';
 import { recordFeeEUR } from '../src/data/transferRecords';
+import { economyScale as econScale } from '../src/engine/economy';
 
 const seasons = Number(process.argv[2] ?? 3);
 
@@ -100,6 +101,8 @@ function report(game: Game) {
     const ovr = sq.map((p) => p.overall).sort((a, b) => b - a);
     const others = leagueClubs(game).filter((c) => c.id !== my.id).map((c) => c.playerIds.map((id) => game.players[id]?.overall ?? 0).sort((a, b) => b - a).slice(0, 11).reduce((a, b) => a + b, 0) / 11).sort((a, b) => b - a);
     const row = game.table.rows.find((r) => r.clubId === my.id);
+    const pc: Record<string, number> = {}; for (const p of sq) pc[p.naturalPosition] = (pc[p.naturalPosition] ?? 0) + 1;
+    console.log(`   MINE Positionen ${Object.entries(pc).map(([k, v]) => k + ':' + v).join(' ')} | TW-OVR ${sq.filter((p) => p.naturalPosition === 'TW').map((p) => p.overall).join('/')}`);
     console.log(`   MINE top11 ${(ovr.slice(0, 11).reduce((a, b) => a + b, 0) / 11).toFixed(1)} | Liga top11 max ${others[0]?.toFixed(1)} med ${others[others.length >> 1]?.toFixed(1)} | Frische ${(sq.reduce((a, p) => a + (p.frische ?? 100), 0) / sq.length).toFixed(0)} Form ${(sq.reduce((a, p) => a + p.form, 0) / sq.length).toFixed(0)} | Tore ${row?.goalsFor}:${row?.goalsAgainst}`);
   }
   if (process.env.SQUADS) {
@@ -109,6 +112,7 @@ function report(game: Game) {
     console.log(`   Divs ${divs}`);
     console.log(`   Vereine ${lc.length} Kader min ${sz[0]} med ${sz[sz.length >> 1]} max ${sz[sz.length - 1]} | Tabelle ${game.table.rows.length}`);
   }
+  if (process.env.BAL) balanceReport(game, ps);
   const w = game.world;
   if (w && w.history.length) {
     const h = w.history[w.history.length - 1];
@@ -169,6 +173,59 @@ function aiReport(game: Game) {
   aiPrev = now;
 }
 
+// -----------------------------------------------------------------------------
+// BAL=1: Kennzahlen für die Langzeit-Balance (eigene Liga = voll simulierte Liga).
+// -----------------------------------------------------------------------------
+const bal = { prevClubs: new Set<string>(), newRanks: [] as number[], injSnap: [] as number[], prevIds: new Map<string, number>(), titles: new Map<string, number>(), rows: [] as Record<string, number>[] };
+function balanceReport(game: Game, ps: Player[]) {
+  const y0 = Number(game.season.slice(0, 4));
+  const from = `${y0}-07-01`, to = `${y0 + 1}-06-30`;
+  const played = game.fixtures.filter((m) => m.result);
+  const goals = played.reduce((a, m) => a + m.result!.homeGoals + m.result!.awayGoals, 0);
+  const hw = played.filter((m) => m.result!.homeGoals > m.result!.awayGoals).length;
+  const dr = played.filter((m) => m.result!.homeGoals === m.result!.awayGoals).length;
+  const inj = ps.reduce((a, p) => a + (p.history?.injuries ?? []).filter((i) => i.date >= from && i.date <= to).length, 0);
+  const injDays = ps.reduce((a, p) => a + (p.history?.injuries ?? []).filter((i) => i.date >= from && i.date <= to).reduce((x, i) => x + (i.days ?? 0), 0), 0);
+  const lc = leagueClubs(game);
+  const tw = lc.map((c) => c.playerIds.filter((id) => game.players[id]?.naturalPosition === 'TW').length);
+  const ages = ps.map((p) => p.age);
+  const pct = (f: (a: number) => boolean) => Math.round(ages.filter(f).length / Math.max(1, ages.length) * 100);
+  const now = new Map(ps.map((p) => [p.id, p.age] as [string, number]));
+  let gone = 0, goneOld = 0;
+  for (const [id, age] of bal.prevIds) if (!now.has(id) && !game.players[id]) { gone++; if (age >= 31) goneOld++; }
+  bal.prevIds = now;
+  const youthOrigin = ps.filter((p) => p.id.includes('_y_') || p.id.includes('youth')).length;
+  const youngStars = ps.filter((p) => p.age <= 21 && p.overall >= 75).length;
+  const sc = econScale(y0);
+  const wages = ps.map((p) => p.contract.weeklyWage * 52 * sc).sort((a, b) => b - a);
+  const fees = ps.map((p) => p.contract.transferValue * sc).sort((a, b) => b - a);
+  const champ = game.table.rows?.[0]?.clubId;
+  if (played.length > 100 && champ && (game.leagues?.playerDivision?.tier ?? 1) === 1) bal.titles.set(champ, (bal.titles.get(champ) ?? 0) + 1);
+  const ratio = lc.map((c) => { const h = c.finances.seasonHistory?.[c.finances.seasonHistory.length - 1]; return h && h.revenue > 0 ? c.finances.balance / h.revenue : NaN; }).filter(Number.isFinite).sort((a, b) => a - b);
+  const my = game.clubs[game.managedClubId];
+  const myH = my.finances.seasonHistory?.[my.finances.seasonHistory.length - 1];
+  const neg = lc.filter((c) => c.finances.balance < 0).length;
+  const row = { y: y0, tore: played.length ? goals / played.length : 0, heim: played.length ? hw / played.length : 0, remis: played.length ? dr / played.length : 0, inj, tw0: tw.filter((n) => n === 0).length };
+  bal.rows.push(row);
+  const snap = bal.injSnap.splice(0);
+  // Aufsteiger (neu in der Spielerliga) und ihr Abschneiden.
+  const rows = game.table.rows ?? [];
+  const newcomers = rows.map((r, i) => ({ id: r.clubId, rank: i + 1 })).filter((r) => bal.prevClubs.size && !bal.prevClubs.has(r.id));
+  bal.prevClubs = new Set(rows.map((r) => r.clubId));
+  if ((game.leagues?.playerDivision?.tier ?? 1) === 1) bal.newRanks.push(...newcomers.map((n) => n.rank));
+  const top11 = (c: { playerIds: string[] }) => { const o = c.playerIds.map((id) => game.players[id]?.overall ?? 0).sort((a, b) => b - a).slice(0, 11); return o.reduce((a, b) => a + b, 0) / Math.max(1, o.length); };
+  const nm = (id: string) => game.clubs[id]?.shortName ?? id;
+  console.log(`   BAL Neu in der Liga: ${newcomers.map((n) => `${nm(n.id)} Platz ${n.rank} (Top11 ${top11(game.clubs[n.id]).toFixed(1)})`).join(', ') || '-'} | Liga-Top11 Median ${(() => { const t = lc.map(top11).sort((a, b) => a - b); return t[t.length >> 1]?.toFixed(1); })()}`);
+  console.log(`   BAL Tore/Sp ${row.tore.toFixed(2)} Heim ${(row.heim * 100).toFixed(0)}% Remis ${(row.remis * 100).toFixed(0)}% | Verl. ${inj} verletzt Nov/Mär ${snap.join('/')} (${Math.round(injDays / Math.max(1, ps.length))} T/Sp.) | TW je Verein 0:${tw.filter((n) => n === 0).length} 1:${tw.filter((n) => n === 1).length} 2+:${tw.filter((n) => n >= 2).length}`
+    + ` | Alter ≤21 ${pct((a) => a <= 21)}% 22–25 ${pct((a) => a >= 22 && a <= 25)}% 26–29 ${pct((a) => a >= 26 && a <= 29)}% 30–33 ${pct((a) => a >= 30 && a <= 33)}% ≥34 ${pct((a) => a >= 34)}%`
+    + ` | weg ${gone} (≥31: ${goneOld}) | Jugend-Eigengew. ${youthOrigin} (bester ${Math.max(0, ...ps.filter((p) => p.id.includes('_y_') && !p.development.legendId).map((p) => p.overall))}) U21≥75 ${youngStars}`);
+  const origin = (p: Player) => p.development.legendId ? 'Legende' : p.id.includes('_y_') ? 'Jugend' : /_r\d{4}_/.test(p.id) ? 'Nachrücker' : /_t\d{4}_/.test(p.id) ? 'Ausland' : /_p\d+$/.test(p.id) ? 'Start' : 'sonst';
+  const stars = ps.filter((p) => p.overall >= 85);
+  const byO: Record<string, number> = {}; for (const p of stars) byO[origin(p)] = (byO[origin(p)] ?? 0) + 1;
+  console.log(`   BAL ≥85 nach Herkunft ${Object.entries(byO).map(([k, v]) => k + ' ' + v).join(', ')} | Ø Alter ${avg(stars.map((p) => p.age)).toFixed(1)}`);
+  console.log(`   BAL Gehalt/Jahr top ${(wages[0] / 1e6).toFixed(2)}M p90 ${((wages[Math.floor(wages.length * 0.1)] ?? 0) / 1e6).toFixed(2)}M med ${((wages[wages.length >> 1] ?? 0) / 1e3).toFixed(0)}k | MW top ${(fees[0] / 1e6).toFixed(2)}M | Konto/Umsatz KI min ${ratio[0]?.toFixed(2)} med ${ratio[ratio.length >> 1]?.toFixed(2)} max ${ratio[ratio.length - 1]?.toFixed(2)} | eigen ${myH ? (my.finances.balance / myH.revenue).toFixed(2) : '-'} | im Minus ${neg}`);
+}
+
 const t0 = Date.now();
 report(g);
 if (process.env.AI) aiReport(g);
@@ -179,6 +236,7 @@ for (let s = 0; s < seasons; s++) {
     const t = g.clubs[g.managedClubId]?.tactics;
     if (t && t.startingXI?.length) { t.startingXI = []; t.lineupMap = undefined; }
     processDay(g, HEADLESS_UI);
+    if (process.env.BAL && /-(11|03)-15$/.test(g.calendar.currentDate)) bal.injSnap.push(leaguePlayers(g).filter((p) => p.injury).length);
     if (++guard > 1000) throw new Error('Saison endet nicht');
   }
   report(g);
@@ -198,6 +256,16 @@ if (process.env.DUMP) {
   const meta = { slot: 'sim', name: 'Simulation', managerName: 'Sim', clubName: my.name, clubId: my.id, season: g.season, gameDate: g.calendar.currentDate, savedAt: new Date().toISOString(), version: 9 };
   writeFileSync(process.env.DUMP, 'LZ1:' + compressToUTF16(JSON.stringify({ meta, game: g })));
   console.log('Spielstand geschrieben:', process.env.DUMP);
+}
+if (process.env.BAL) {
+  const t = [...bal.titles.entries()].sort((a, b) => b[1] - a[1]);
+  const name = (id: string) => g.clubs[id]?.shortName ?? g.simClubs?.[id]?.shortName ?? id;
+  console.log(`BAL Aufsteiger: ${bal.newRanks.length}, Ø Platz ${avg(bal.newRanks).toFixed(1)}, in den Top 3: ${bal.newRanks.filter((r) => r <= 3).length}, Meister: ${bal.newRanks.filter((r) => r === 1).length}`);
+  console.log(`BAL Meister (1. Liga, eigene Liga): ${t.length} verschiedene in ${t.reduce((a, x) => a + x[1], 0)} Saisons: ${t.map(([id, n]) => name(id) + ' ' + n).join(', ')}`);
+  for (const [a, b] of [[1975, 1985], [1985, 1995], [1995, 2005], [2005, 2015], [2015, 2030]]) {
+    const r = bal.rows.filter((x) => x.y >= a && x.y < b && x.tore > 0);
+    if (r.length) console.log(`BAL ${a}–${b - 1}: Tore/Sp ${avg(r.map((x) => x.tore)).toFixed(2)} Heimsieg ${(avg(r.map((x) => x.heim)) * 100).toFixed(1)}% Remis ${(avg(r.map((x) => x.remis)) * 100).toFixed(1)}% Verletzungen/Saison ${avg(r.map((x) => x.inj)).toFixed(0)} Vereine ohne TW ${avg(r.map((x) => x.tw0)).toFixed(1)}`);
+  }
 }
 console.log(`fertig in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 const legends = [...Object.values(g.players), ...Object.values(g.youthPlayers)].filter((p) => p.development.legendId);

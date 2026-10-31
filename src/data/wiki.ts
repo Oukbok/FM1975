@@ -843,8 +843,8 @@ Aus den Spielern auf dem Platz entstehen vier Werte: **Angriff**, **Spielkontrol
 - Die **KI-Trainer** wechseln müde oder schwache Spieler aus und ändern bei Rückstand oder knapper Führung die Ausrichtung.
 
 ## Epochen
-- **Heimvorteil:** in den Siebzigern deutlich stärker als heute.
-- **Torschnitt:** um 3,1 Tore pro Spiel früher, um 2,9 heute.
+- **Heimvorteil:** in den Siebzigern deutlich stärker als heute (damals rund 57 % Heimsiege, um 1995 knapp 47 %, heute gut 40 %). Er wirkt in beide Richtungen: Die Heimelf wird gefährlicher, die Gäste etwas harmloser.
+- **Torschnitt:** rund 3,3 Tore pro Spiel in den Siebzigern und frühen Achtzigern, um 2,9 um die Jahrtausendwende, heute wieder etwa 3,1.
 - **Karten:** früher seltener Gelb; ab 1995 mehr Verwarnungen.
 - **Wechsel und Bank:** 2 Wechsel bei 5 Bankplätzen, ab 1995 3 Wechsel (7 Plätze), ab 2020 5 Wechsel (9 Plätze).
 - **Videobeweis** ab 2017: Treffer können nachträglich aberkannt werden.
@@ -1110,6 +1110,8 @@ Fixkosten je Betriebsform/Stufe; bei **Verpachtung** zusätzlich eine feste Mona
 ### Sonstige Fixkosten
 \`6.000 + Reputation × 500\` DM/Monat (Reise, Organisation, Verwaltung).
 
+Alle Werte gelten in 1975-DM. Stadionunterhalt und sonstige Fixkosten wachsen über die Jahrzehnte mit dem **Stadiongeschäft** (bis heute etwa um das 25-Fache), Gehälter und Gebäudekosten mit dem gesamten Fußballmarkt (etwa um das 100-Fache). So kann auch ein Drittligist mit vollem Haus seine Kosten decken.
+
 ### Transferausgaben
 Spielerkäufe werden als Ausgabe gebucht (Ablöse verringert Kontostand und Transferbudget).
 
@@ -1207,7 +1209,8 @@ Große Vereine mit hoher Auslastung profitieren stärker vom **Eigenbetrieb** (v
 - Ab **2011/12** gilt das **Finanzielle Fairplay**: Liegt das Ergebnis der letzten drei Saisons mehr als 5 % des Umsatzes im Minus, folgt eine Verwarnung, beim zweiten Verstoß eine Transfersperre.
 
 ## Die anderen Vereine wirtschaften mit
-- KI-Vereine passen ihre Gehälter dem Umsatz an (Gehaltsquote um 60 %), verkaufen bei Schulden Spieler, investieren Überschüsse in Gelände und Stadion und geben ein **Transferbudget** frei (60 % des Polsters über einer Reserve von 30 % des Umsatzes; Trainer mit Einkaufs-Philosophie bekommen mehr, solche mit Jugend-Philosophie weniger). Wofür es ausgegeben wird, entscheidet die Kaderplanung (siehe **Kaderplanung der KI-Vereine**). Geld bleibt nicht einfach auf dem Konto liegen – auch die Konkurrenz wird stärker, wenn sie erfolgreich ist.`,
+- KI-Vereine passen ihre Gehälter dem Umsatz an (Gehaltsquote um 60 %), verkaufen bei Schulden Spieler, investieren Überschüsse in Gelände und Stadion und geben ein **Transferbudget** frei. Als Reserve bleibt rund **ein Zehntel des Jahresumsatzes**; vom Überschuss darüber fließt gut ein Drittel in Gelände und Stadion, vom Rest werden 85 % zum Transferbudget ( Trainer mit Einkaufs-Philosophie bekommen mehr, solche mit Jugend-Philosophie weniger). Wofür es ausgegeben wird, entscheidet die Kaderplanung (siehe **Kaderplanung der KI-Vereine**). Geld bleibt nicht einfach auf dem Konto liegen – auch die Konkurrenz wird stärker, wenn sie erfolgreich ist.
+- Jeder KI-Kader hält **zwei Torhüter**: Beendet einer seine Karriere oder wird verkauft, holt der Verein vor allen anderen Wechseln Ersatz (Ersatztorwart eines Liga-Rivalen oder aus dem Ausland, bei leerer Kasse ablösefrei).`,
   },
   {
     id: 'finance-contracts',
@@ -1998,8 +2001,10 @@ Die Effekt-Kachel oben im Bereich zeigt jederzeit den aktuellen aggregierten Wer
   zusammen mit dem Datenanalyse-Zentrum.
 - **Reichweite**: erzeugt keine direkten Punkte, sondern speist kleine Marketing-Nebenerträge.
 
-(*) Die Verletzungs-Reduktion wird als Faktor bereitgestellt und dort angewandt, wo das Spiel Verletzungen
-auslöst; im aktuellen Spielverlauf treten aktive Verletzungen selten auf, daher ist dieser Wert v. a. vorbereitet.`,
+(*) Die Verletzungs-Reduktion senkt das Risiko von Spiel- und Trainingsverletzungen deiner Spieler. Im Spiel
+verletzen sich im Schnitt etwa **0,3 Spieler je Mannschaft und Spiel** (rund neun Verletzungen pro Verein und
+Saison, meist Prellungen und Zerrungen von wenigen Tagen, jede zehnte schwer mit 40–90 Tagen Pause). Anfällige,
+müde und überlastete Spieler trifft es häufiger.`,
   },
   // ---------------------------------------------------------------------------
   // MARKETING
@@ -2221,7 +2226,7 @@ Rund **20 Länder** mit je **1. und 2. Liga** (über 700 Vereine) werden im Hint
 - **Landespokal** jedes Landes: K.-o.-Turnier, Außenseiter gewinnen manchmal.
 
 ## Wie sich Vereine entwickeln
-- Jeder Verein hat eine **Größe** (Stadt, Tradition, Wirtschaftskraft). Sie zieht seine Stärke langfristig an und wächst mit Titeln und Europapokal-Erfolgen – kehrt aber langsam zur natürlichen Größe zurück.
+- Jeder Verein hat eine **Größe** (Stadt, Tradition, Wirtschaftskraft). Sie zieht seine Stärke langfristig an und wächst mit Titeln und Europapokal-Erfolgen – kehrt aber langsam zur natürlichen Größe zurück. Auch die natürliche Größe verschiebt sich über Jahrzehnte ein wenig (Aufschwung einer Stadt, Investoren, Niedergang), damit Dynastien kommen und gehen.
 - Ein **Generationen-Zyklus** sorgt für goldene und magere Jahre: Auch große Vereine erleben Durststrecken, kleine Vereine haben ihre Glanzzeit.
 - Das **Niveau der Länder** verschiebt sich über die Jahrzehnte (z. B. wird England ab den 1990ern stärker, Osteuropa schwächer).
 

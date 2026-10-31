@@ -102,6 +102,12 @@ export function fillSquad(game: Game, club: Club, date: string, min = MIN_SQUAD,
   return n;
 }
 
+/** Torhüter im Kader des verwalteten Vereins. */
+function keepersLeft(game: Game): number {
+  const c = game.clubs[game.managedClubId];
+  return c ? c.playerIds.filter((id) => game.players[id]?.naturalPosition === 'TW').length : 0;
+}
+
 export function manageSquads(game: Game, date: string, autoManageMine = false): void {
   repairSquadLists(game);
   const year = Number(date.slice(0, 4));
@@ -127,7 +133,8 @@ export function manageSquads(game: Game, date: string, autoManageMine = false): 
     // 2) Zu große Kader verkleinern (schwächste Ältere zuerst)
     while (club.playerIds.length > MAX_SQUAD) {
       // Junge Legenden werden nie aussortiert.
-      const worst = club.playerIds.map((id) => game.players[id]).filter((p) => p && !(p.development.legendId && p.age <= 23))
+      const worst = club.playerIds.map((id) => game.players[id]).filter((p) => p && !(p.development.legendId && p.age <= 23)
+          && !(p.naturalPosition === 'TW' && club.playerIds.filter((x) => game.players[x]?.naturalPosition === 'TW').length <= 2))
         .sort((a, b) => (a.overall - a.age * 0.5) - (b.overall - b.age * 0.5))[0];
       if (!worst) break;
       club.playerIds = club.playerIds.filter((x) => x !== worst.id);
@@ -147,7 +154,8 @@ export function manageSquads(game: Game, date: string, autoManageMine = false): 
       shortText: retiredMine.map((p) => p.fullName).join(', '),
       bodyText: 'Zum Saisonwechsel verabschieden sich:\n\n'
         + retiredMine.map((p) => `• ${p.fullName} (${p.naturalPosition}, ${p.age} Jahre, Stärke ${p.overall})`).join('\n')
-        + '\n\nDenk an Ersatz: Jugend, Transfermarkt oder Umschulung.',
+        + '\n\nDenk an Ersatz: Jugend, Transfermarkt oder Umschulung.'
+        + (keepersLeft(game) < 2 ? `\n\nAchtung: Im Kader ${keepersLeft(game) === 0 ? 'steht kein Torwart mehr' : 'steht nur noch ein Torwart'}. Hol rechtzeitig Ersatz.` : ''),
     }));
   }
 }
