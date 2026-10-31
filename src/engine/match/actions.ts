@@ -340,7 +340,8 @@ function sendOff(sim: MatchSim, T: TeamState, m: MPlayer, kind: 'red' | 'yellowR
 
 export function maybeInjury(sim: MatchSim, T: TeamState, O: TeamState): void {
   const hard = 1 + (O.mods.foul - 1) * 0.6;
-  if (sim.rng() >= 0.0105 * hard) return; // Vorprüfung (Team)
+  // Vorprüfung (Team): ≈ 0,3 Verletzungen je Mannschaft und Spiel (Profi-Studien: 0,3–0,4).
+  if (sim.rng() >= 0.03 * hard) return;
   const cand = onPitch(T)[Math.floor(sim.rng() * onPitch(T).length)];
   if (!cand) return;
   const prone = (cand.p.development?.injuryProneness ?? 40) / 100;

@@ -1883,8 +1883,10 @@ Die Effekt-Kachel oben im Bereich zeigt jederzeit den aktuellen aggregierten Wer
   zusammen mit dem Datenanalyse-Zentrum.
 - **Reichweite**: erzeugt keine direkten Punkte, sondern speist kleine Marketing-Nebenerträge.
 
-(*) Die Verletzungs-Reduktion wird als Faktor bereitgestellt und dort angewandt, wo das Spiel Verletzungen
-auslöst; im aktuellen Spielverlauf treten aktive Verletzungen selten auf, daher ist dieser Wert v. a. vorbereitet.`,
+(*) Die Verletzungs-Reduktion senkt das Risiko von Spiel- und Trainingsverletzungen deiner Spieler. Im Spiel
+verletzen sich im Schnitt etwa **0,3 Spieler je Mannschaft und Spiel** (rund neun Verletzungen pro Verein und
+Saison, meist Prellungen und Zerrungen von wenigen Tagen, jede zehnte schwer mit 40–90 Tagen Pause). Anfällige,
+müde und überlastete Spieler trifft es häufiger.`,
   },
   // ---------------------------------------------------------------------------
   // MARKETING
