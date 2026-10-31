@@ -113,7 +113,7 @@
 .live-group { border: 1px solid var(--border); background: rgba(255, 255, 255, 0.03); border-radius: 9px; padding: 8px 11px 10px; animation: fadeIn .25s ease; }
 .live-group.goal { border-color: var(--accent); background: rgba(241, 160, 55, 0.08); }
 .live-group-min { display: inline-block; font-size: 11px; font-weight: 800; color: var(--text-2); background: rgba(255, 255, 255, 0.08); border-radius: 5px; padding: 2px 7px; margin-bottom: 6px; font-variant-numeric: tabular-nums; }
-.live-group.goal .live-group-min { color: #130d10; background: var(--accent); }
+.live-group.goal .live-group-min { color: #0d1016; background: var(--accent); }
 .live-group-body { display: flex; flex-direction: column; gap: 3px; }
 .live-gline { font-size: 14px; line-height: 1.45; color: var(--text); }
 .live-gline.chance { color: var(--yellow); }

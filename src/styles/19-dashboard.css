@@ -112,7 +112,7 @@
   padding: 10px 10px 11px;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: linear-gradient(180deg, #241b20 0%, #1f171b 100%);
+  background: linear-gradient(180deg, #1c1f25 0%, #181b21 100%);
   text-align: center;
   overflow: hidden;
 }
@@ -140,7 +140,7 @@
   background: linear-gradient(180deg, #f6eedb 0%, #ece0c4 100%);
   box-shadow: 0 0 0 1px rgba(255, 159, 67, 0.6), 0 0 16px rgba(255, 159, 67, 0.3);
 }
-.kbsheet.is-today .kbday { color: #2a2126; }
+.kbsheet.is-today .kbday { color: #22252b; }
 .kbsheet.is-today .kbwd { color: #6b5532; }
 .kbsheet.is-today .kbsheet-lbl { color: #8a4b0c; }
 .kbsheet.is-today .kbsheet-ico .game-icon { filter: brightness(0) opacity(0.75); }
@@ -255,7 +255,7 @@
      Platz der Namen mit ausfüllen können. */
   height: 156px;
   background:
-    linear-gradient(180deg, rgba(15, 11, 13, 0.34) 0%, rgba(15, 11, 13, 0.72) 100%),
+    linear-gradient(180deg, rgba(10, 13, 19, 0.34) 0%, rgba(10, 13, 19, 0.72) 100%),
     url('assets/stadion-zuschauer.jpg?v=1') center / cover no-repeat;
 }
 /* Wappen-Reihe füllt die gesamte Foto-Höhe; jede Seite ist eine Spalte
@@ -284,7 +284,7 @@
 .cns-form { display: flex; gap: 4px; }
 .cns-cmp-row > .cns-form:first-child { justify-content: flex-end; }
 .cns-cmp-row > .cns-form:last-child { justify-content: flex-start; }
-.cns-fp { width: 20px; height: 20px; border-radius: 5px; font-size: 12px; font-weight: 800; font-style: normal; display: inline-flex; align-items: center; justify-content: center; color: #130d10; }
+.cns-fp { width: 20px; height: 20px; border-radius: 5px; font-size: 12px; font-weight: 800; font-style: normal; display: inline-flex; align-items: center; justify-content: center; color: #0d1016; }
 .cns-fp-W { background: var(--green); }
 .cns-fp-D { background: #a39a8e; }
 .cns-fp-L { background: #ff5d5d; }
@@ -292,8 +292,8 @@
 /* Hintergrund der Zentrale-Boxen (leicht transparent, ohne Muster) */
 .shell-zentrale .dashx > .card {
   background:
-    radial-gradient(120% 80% at 50% -10%, rgba(241, 160, 55, 0.06), transparent 60%),
-    linear-gradient(180deg, rgba(40, 32, 36, 0.74), rgba(27, 19, 23, 0.78));
+    radial-gradient(120% 80% at 50% -10%, rgba(255, 255, 255, 0.035), transparent 60%),
+    linear-gradient(180deg, rgba(33, 36, 42, 0.74), rgba(20, 23, 29, 0.78));
 }
 
 /* --- Termine --- */

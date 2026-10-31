@@ -19,8 +19,8 @@
   display: grid; grid-template-rows: auto auto auto minmax(0, 1fr); gap: 16px;
   padding: 24px 40px 28px;
   background:
-    radial-gradient(ellipse at 50% -20%, rgba(241, 160, 55, 0.08), transparent 55%),
-    linear-gradient(180deg, #140f12 0%, var(--bg) 40%);
+    radial-gradient(ellipse at 50% -20%, rgba(255, 255, 255, 0.04), transparent 55%),
+    linear-gradient(180deg, #0f1218 0%, var(--bg) 40%);
   color: var(--text); font-family: var(--font-ui);
 }
 .ms-dim { color: var(--text-2); display: inline-flex; align-items: center; gap: 6px; }
@@ -192,7 +192,7 @@
 .ms-shout:disabled { opacity: 0.4; cursor: default; }
 
 /* --- Dialoge --- */
-.ms-dialog-bg { position: absolute; inset: 0; z-index: 5; display: flex; align-items: center; justify-content: center; background: rgba(10, 7, 8, 0.8); }
+.ms-dialog-bg { position: absolute; inset: 0; z-index: 5; display: flex; align-items: center; justify-content: center; background: rgba(6, 9, 15, 0.8); }
 .ms-dialog {
   width: 980px; max-width: 92%; max-height: 90%; overflow-y: auto; padding: 32px 40px; border-radius: 18px;
   background: var(--panel); border: 1px solid var(--border); box-shadow: var(--shadow-lg);

@@ -1,7 +1,8 @@
 /* =============================================================================
    THEMA „ABENDHIMMEL“ – übernimmt den Look des Startbildschirms ins ganze Spiel:
    Oswald (Großbuchstaben) für Logo, Titel, Menüs und Hauptknöpfe, Barlow für
-   Text; Bernstein als einzige Akzentfarbe; warme, dunkle Abendtöne.
+   Text; Bernstein als einzige Akzentfarbe; Flächen in neutralen, kühlen Dunkeltönen
+   (kein Sepia-Schleier).
    Farben stehen als Tokens in 00-base.css (:root).
    ============================================================================= */
 .hd-logo-year { font-family: var(--font-logo); font-weight: 700; letter-spacing: 1px; }

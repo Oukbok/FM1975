@@ -19,7 +19,7 @@
   background:
     repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.022) 0px, rgba(255, 255, 255, 0.022) 1px, transparent 1px, transparent 7px),
     radial-gradient(120% 180% at 0% -40%, rgba(241, 160, 55, 0.06) 0%, transparent 42%),
-    linear-gradient(90deg, #140f12 0%, #22191e 50%, #140f12 100%);
+    linear-gradient(90deg, #0f1218 0%, #1a1d23 50%, #0f1218 100%);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border);
@@ -126,7 +126,7 @@
   background:
     repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.022) 0px, rgba(255, 255, 255, 0.022) 1px, transparent 1px, transparent 7px),
     radial-gradient(120% 180% at 0% -40%, rgba(241, 160, 55, 0.06) 0%, transparent 42%),
-    linear-gradient(90deg, #140f12 0%, #22191e 50%, #140f12 100%);
+    linear-gradient(90deg, #0f1218 0%, #1a1d23 50%, #0f1218 100%);
 }
 .hd-gear {
   display: inline-flex; align-items: center; justify-content: center;

@@ -42,7 +42,7 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal pp-modal" onClick={(e) => e.stopPropagation()}>
-        <header className="pp-header" style={{ background: `linear-gradient(120deg, ${club?.colors.primary ?? '#2b2026'}40, transparent 60%)` }}>
+        <header className="pp-header" style={{ background: `linear-gradient(120deg, ${club?.colors.primary ?? '#22252b'}40, transparent 60%)` }}>
           <div className="pp-portrait">
             <PlayerAvatar player={p} club={club} size={210} />
             {club && <div className="pp-portrait-crest"><ClubLink id={club.id}><ClubCrest club={club} size={44} /></ClubLink></div>}

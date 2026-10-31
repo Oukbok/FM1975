@@ -38,7 +38,7 @@
   min-height: 210px;
 }
 .planner-day.is-today { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-glow); }
-.planner-day.is-matchday { background: linear-gradient(160deg, #241016, var(--panel)); border-color: #7a2b39; }
+.planner-day.is-matchday { background: linear-gradient(160deg, #15181e, var(--panel)); border-color: #7a2b39; }
 .pd-head {
   display: flex; align-items: center; justify-content: space-between;
   border-bottom: 1px solid var(--panel-2); padding-bottom: 6px;
