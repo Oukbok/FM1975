@@ -43,6 +43,7 @@ export const WIKI_CATEGORIES: WikiCategory[] = [
   { id: 'development', title: 'Entwicklung & Potenzial', icon: '⭐' },
   { id: 'tactics', title: 'Aufstellung & Taktik', icon: '🧩' },
   { id: 'match', title: 'Match-Engine', icon: '⚽' },
+  { id: 'ai', title: 'KI-Vereine & Trainer', icon: '' },
   { id: 'finance', title: 'Finanzen', icon: '💰' },
   { id: 'youth', title: 'Jugendsystem', icon: '🧒' },
   { id: 'facilities', title: 'Vereinsgelände', icon: '🏟️' },
@@ -843,12 +844,107 @@ Mit \`node scripts/matchbench.mjs\` werden tausende Spiele je Epoche simuliert u
 Nicht nur du stellst auf – **alle 17 anderen Vereine** bekommen eine sinnvolle Aufstellung und Taktik (\`engine/lineupAI.ts\`).
 
 ### So denkt die CPU
-1. **Formationswahl** (\`pickBestFormation\`): Für jede der neun Formationen wird durchgerechnet, wie gut der Kader sie besetzen kann (Summe der Eignungen). Libero-Systeme erhalten einen kleinen Ära-Bonus (+12), damit die KI zeitgemäß für 1980 aufstellt.
+1. **Formationswahl:** Für jede der neun Formationen wird durchgerechnet, wie gut der Kader sie besetzen kann (Summe der Eignungen). Dazu kommen die Vorlieben des **Vereinstrainers** (Lieblingsformation, Stil) und der Zeitgeist: Libero-Systeme bekommen bis Mitte der 80er einen Bonus, ab den späten 90ern einen deutlichen Abschlag (siehe **Trainer der KI-Vereine**). Neu gewählt wird beim Trainerwechsel, zum Saisonstart und nach jedem Transferfenster.
 2. **Besetzung** (\`assignToFormation\`): Alle (Slot, Spieler)-Paare werden nach Eignung sortiert und greedy vergeben – der beste passende Spieler bekommt zuerst seinen Platz.
 3. **Standardschützen & Kapitän:** automatisch nach den passenden Attributen (Elfmeter, Freistöße, Ecken, Führung).
-4. **Taktik-Werte:** pro Verein leicht variiert, aber deterministisch aus der Vereins-ID abgeleitet – jeder Klub hat also einen eigenen „Charakter".
+4. **Taktik-Werte:** folgen dem Stil des Trainers (offensiv, ausgewogen, defensiv, Konter) mit kleiner persönlicher Note – jeder Klub hat so den „Charakter" seines Trainers, und ein Trainerwechsel ändert ihn.
 
 Weil jede CPU-Aufstellung dieselbe Eignungs- und Taktik-Logik nutzt wie deine, wirken sich Kaderqualität und Positionsbesetzung des Gegners real auf die Simulation aus. Ein Verein mit schlecht besetzten Positionen spielt spürbar schwächer.`,
+  },
+  {
+    id: 'ai-coaches',
+    category: 'ai',
+    title: 'Trainer der KI-Vereine',
+    keywords: ['trainer', 'ki', 'coach', 'stil', 'philosophie', 'formation', 'libero', 'gegner'],
+    body: `## Trainer der KI-Vereine
+Jeder andere Verein deiner Liga hat einen **Trainer** mit Namen, Alter, Herkunft, Ansehen (0–100) und zwei Eigenschaften (\`engine/aiManager.ts\`, \`game/coachCarousel.ts\`). Dein eigener Verein hat keinen – das bist du.
+
+### Stil → Taktik
+- **Offensiv:** Angriffsausrichtung, mehr Pressing und Tempo, höhere Linie.
+- **Ausgewogen:** alles in der Mitte.
+- **Defensiv:** tiefe Linie, weniger Tempo, Absicherung.
+- **Konterfußball:** tief stehen, schnell umschalten (Konter-Bonus der Engine).
+
+Jeder Trainer hat eine **Lieblingsformation**, die zu Stil und Epoche passt (Libero in den 70ern/80ern, Dreierkette und 4-4-2 in den 90ern, 4-2-3-1 ab 2000). Gewählt wird trotzdem nur, was der Kader besetzen kann. Die Stilverteilung ändert sich mit der Zeit: früher mehr Vorsicht, später mehr Pressing und Umschaltspiel.
+
+### Philosophie → Kaderplanung
+- **Jugend:** zieht Talente früh hoch, kauft eher junge Spieler, bekommt weniger Transferbudget.
+- **Einkauf:** kauft lieber fertige Spieler, bekommt mehr Budget.
+- **Ausgewogen:** je nach Lage.
+
+### Herkunft
+Überwiegend einheimische Trainer; ausländische kamen anfangs vor allem aus Österreich, Jugoslawien, Ungarn und den Niederlanden, später aus ganz Europa. Große Vereine holen bekanntere Trainer.
+
+### Neuer Trainer
+Ein neuer Trainer bringt seine Taktik mit und sorgt kurz für bessere Stimmung (Moral +1 Stufe) – der bekannte „Trainereffekt".`,
+  },
+  {
+    id: 'ai-carousel',
+    category: 'ai',
+    title: 'Vorstandsdruck & Trainerkarussell',
+    keywords: ['entlassung', 'trainer', 'druck', 'vorstand', 'karussell', 'ruhestand', 'abgeworben'],
+    body: `## Vorstandsdruck & Trainerkarussell
+### Erwartung
+Vor jedem Urteil schätzt der Vorstand, wo der Verein stehen müsste: zu 60 % nach der Stärke der besten Elf, zu 40 % nach dem Ruf.
+
+### Druck (0–100)
+Jeden Montag ab dem 4. Spieltag bewegt sich der Druck auf einen Zielwert zu:
+- Platz schlechter als erwartet erhöht ihn deutlich, besser senkt ihn.
+- Die Form der letzten fünf Spiele zählt mit.
+- Abstiegsplätze (+20) und die Plätze davor (+10) machen nervös.
+- Bekannte Trainer genießen etwas mehr Geduld.
+
+### Entlassung während der Saison
+Ab Druck 72 (September bis April, frühestens 70 Tage nach Amtsantritt) wird es gefährlich – je höher, desto wahrscheinlicher. Nach etwa sechs Entlassungen in einer Saison wird die Liga zurückhaltender. Üblich sind **drei bis sechs Entlassungen pro Saison**. Jede Entlassung meldet die Sportredaktion in deinen Nachrichten, samt Nachfolger.
+
+### Zum Saisonende
+- **Ansehen** steigt oder fällt mit dem Abschneiden gegenüber der Erwartung (Meister +6).
+- **Ruhestand** ab 65 möglich, mit 70 sicher.
+- **Entlassung**, wenn das Ziel klar verfehlt wurde.
+- **Vertragsende** nach einigen Jahren.
+- **Abgeworben:** Ein großer Verein ohne Trainer holt sich gern den Trainer eines kleineren Vereins, der klar über den Erwartungen lag.
+
+Die Sportredaktion fasst das Karussell in einer Nachricht zusammen.
+
+### Arbeitslose Trainer
+Entlassene Trainer und solche ohne neuen Vertrag bleiben im **Trainerpool** und können später woanders wieder anfangen – nur nicht sofort bei dem Verein, der sie gerade entlassen hat. Mit 70 hören sie auf.`,
+  },
+  {
+    id: 'ai-squad-planning',
+    category: 'ai',
+    title: 'Kaderplanung der KI-Vereine',
+    keywords: ['ki', 'transfer', 'kader', 'bedarf', 'jugend', 'ausland', 'nachrücker', 'transferliste', 'angebot'],
+    body: `## Kaderplanung der KI-Vereine
+Die anderen Vereine kaufen nicht zufällig, sondern nach **Bedarf** (\`game/aiClubs.ts\`).
+
+### Markttage
+Im Sommer jede Woche von Anfang Juli bis Ende August, im Winter jede Woche im Januar. An jedem Markttag prüft jeder KI-Verein seinen Kader; nicht jeder schlägt jedes Mal zu.
+
+### Bedarf je Positionsgruppe
+Tor, Innenverteidigung, Außenverteidigung, Mittelfeld, Flügel, Sturm. Die Formation bestimmt die Stammplätze, die gewünschte Tiefe ist etwa das Doppelte (im Tor drei). Bewertet werden:
+- **Breite:** zu wenige Spieler (Spieler ab 33 zählen halb, im Winter fehlen Langzeitverletzte),
+- **Qualität:** ein Stammspieler deutlich unter dem Niveau der Mannschaft,
+- **Alter:** alle Stammkräfte der Gruppe über 30.
+
+### Wie der Bedarf gedeckt wird
+1. **Jugend**, wenn ein Talent ab 17 gut genug ist (Trainer mit Jugend-Philosophie sind großzügiger). Sie ziehen zum Saisonstart zusätzlich ihr bestes Talent hoch.
+2. **Kauf bei einem anderen KI-Verein:** Ablöse über die Verhandlungslogik des Transfermarkts (Marktwert, Rekordkurve, Vertragslaufzeit, Bedeutung im Kader). Wer sonst selbst eine Lücke hätte, gibt nur zur vollen Forderung ab. Der Spieler muss wollen (Vereinsgröße, Aussicht auf Spielzeit).
+3. **Kauf bei einem unterklassigen Verein** (jünger, etwas schwächer, günstiger).
+4. **Kauf im Ausland** – in den 70ern selten, ab den 2000ern häufig.
+
+Spitzentransfers meldet die Sportpresse sofort; die übrigen Wechsel stehen in der Nachricht zum Fensterschluss.
+
+### Mengen
+Höchstens fünf Zugänge im Sommer, zwei im Winter, sieben pro Saison. Im Schnitt sind es drei bis fünf Zugänge je Verein und Saison (Jugend eingerechnet) – wie in der Bundesliga.
+
+### Abgänge
+Überzählige einer Gruppe kommen auf die **Transferliste** (für dich und die Konkurrenz sichtbar). Ist der Kader zu groß, werden die schwächsten oder ältesten abgegeben; im Sommer verabschieden sich Routiniers über 32, die nicht mehr mithalten, zu unterklassigen Vereinen.
+
+### Notnagel
+Fehlen nach dem Sommerfenster immer noch Spieler (unter 20), rücken neue Spieler nach. Das ist nur noch selten nötig.
+
+### Dein Verein
+Dein Kader wird nie automatisch verändert. Angebote für deine Spieler kommen bevorzugt von Vereinen, die auf der Position Bedarf haben.`,
   },
   {
     id: 'staff-people',
@@ -1091,7 +1187,7 @@ Große Vereine mit hoher Auslastung profitieren stärker vom **Eigenbetrieb** (v
 - Ab **2011/12** gilt das **Finanzielle Fairplay**: Liegt das Ergebnis der letzten drei Saisons mehr als 5 % des Umsatzes im Minus, folgt eine Verwarnung, beim zweiten Verstoß eine Transfersperre.
 
 ## Die anderen Vereine wirtschaften mit
-- KI-Vereine passen ihre Gehälter dem Umsatz an (Gehaltsquote um 60 %), verkaufen bei Schulden Spieler und investieren Überschüsse in Neuzugänge (aus der Liga oder dem Ausland) sowie in Gelände und Stadion. Geld bleibt nicht einfach auf dem Konto liegen – auch die Konkurrenz wird stärker, wenn sie erfolgreich ist.`,
+- KI-Vereine passen ihre Gehälter dem Umsatz an (Gehaltsquote um 60 %), verkaufen bei Schulden Spieler, investieren Überschüsse in Gelände und Stadion und geben ein **Transferbudget** frei (60 % des Polsters über einer Reserve von 30 % des Umsatzes; Trainer mit Einkaufs-Philosophie bekommen mehr, solche mit Jugend-Philosophie weniger). Wofür es ausgegeben wird, entscheidet die Kaderplanung (siehe **Kaderplanung der KI-Vereine**). Geld bleibt nicht einfach auf dem Konto liegen – auch die Konkurrenz wird stärker, wenn sie erfolgreich ist.`,
   },
   {
     id: 'finance-contracts',
@@ -1396,7 +1492,7 @@ Was ihm wichtig ist, erfährst du im ersten Gespräch. Für ihn sprechen ein gr�
 Im Transferfenster (Juli/August, Januar) wird sofort gewechselt, sonst zum nächsten Fenster. Ab Bosman kannst du Spieler, deren Vertrag in höchstens sechs Monaten endet, ohne Ablöse per **Vorvertrag** holen. Höchstens vier Verhandlungen laufen gleichzeitig; ohne neue Angebote schläft ein Gespräch nach 30 Tagen ein.
 
 ## Wenn andere bieten
-Für deine Spieler bieten KI-Vereine nach ihrer verdeckten Höchstgrenze. Forderst du 25 % mehr, zahlen sie, wenn es in ihren Rahmen passt – sonst bessern sie oft bis zur Grenze nach oder springen ab.`,
+Für deine Spieler bieten vor allem KI-Vereine, die auf seiner Position **Bedarf** haben und sich die Ablöse leisten können (Kaderplanung); für Stars melden sich auch einfach die Großen. Sie bieten nach ihrer verdeckten Höchstgrenze. Forderst du 25 % mehr, zahlen sie, wenn es in ihren Rahmen passt – sonst bessern sie oft bis zur Grenze nach oder springen ab.`,
   },
   {
     id: 'squad-contracts',
