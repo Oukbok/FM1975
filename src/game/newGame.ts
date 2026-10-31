@@ -67,7 +67,7 @@ export function createNewGame(opts: NewGameOptions): Game {
     playerDivMeta = { id: `tier2-${group}`, name: `2. Liga ${group === 'nord' ? 'Nord' : 'Süd'}`, tier: 2, group };
   }
   const clubList = Object.values(world.clubs);
-  const fixtures = generateFixtures(clubList);
+  const fixtures = generateFixtures(clubList, '1975-08-15', { tier: playerDivMeta.tier });
   for (const m of fixtures) {
     m.involvesPlayerClub = m.homeClubId === opts.managedClubId || m.awayClubId === opts.managedClubId;
   }
@@ -116,7 +116,7 @@ export function createNewGame(opts: NewGameOptions): Game {
     true,
   );
   const euroCups = buildEuroCupsForSeason(
-    euroQuals, euroClubs, leagueDateSet(fixtures), cupDateSet(cup),
+    euroQuals, euroClubs, leagueDateSet([...fixtures, ...generateFixtures(clubList, '1975-08-15', { tier: 1 })]), cupDateSet(cup),
     opts.managedClubId + ':1975', calendar.seasonStartDate, opts.managedClubId, calendar,
   );
   const euroDrawMsgs: InboxMessage[] = [];

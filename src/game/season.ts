@@ -59,10 +59,21 @@ export function simulateMatchday(game: Game, matchday: number): void {
   }
   game.table = calculateTable(leagueClubs(game), game.fixtures, game.pointSystem, game.table.season, game.table);
 
-  // Nicht-Spieler-Ligen (2. Liga Nord/Süd) performant per Stärke um einen
-  // Spieltag weiterführen. Kein voller Match-Engine-Lauf → kein Tick-Lag.
-  if (game.leagues) {
-    for (const div of game.leagues.otherDivisions) {
+  // Nicht-Spieler-Ligen performant per Stärke bis zu diesem Datum nachziehen.
+  if (dayMatches[0]) advanceDivisionsTo(game, dayMatches[0].date);
+}
+
+/**
+ * Simulierte Ligen nach ihrem eigenen Spielplan fortführen: alle Spieltage, deren
+ * Termin erreicht ist (eigene Winterpause, englische Wochen; DDR im DDR-Rhythmus).
+ * Täglich aus processDay (game/day.ts) und nach jedem eigenen Spieltag.
+ */
+export function advanceDivisionsTo(game: Game, date: string): void {
+  if (!game.leagues) return;
+  for (const div of game.leagues.otherDivisions) {
+    for (let guard = 0; guard < 80; guard++) {
+      const next = div.fixtures.find((m) => m.matchday === div.nextMatchday);
+      if (!next || next.date > date) break;
       advanceDivision(div, game.simClubs, game.pointSystem, game.season);
     }
   }
@@ -290,7 +301,7 @@ export function startNextSeason(g: Game): void {
 
   // --- 6) Spielerliga: neuer Spielplan + Tabelle (volle Engine) ---
   const playerClubList = playerIds.map((id) => g.clubs[id]).filter(Boolean) as Club[];
-  const fixtures = generateFixtures(playerClubList, fixturesStart);
+  const fixtures = generateFixtures(playerClubList, fixturesStart, { tier: membership[playerDivId].meta.tier });
   for (const m of fixtures) {
     m.involvesPlayerClub = m.homeClubId === g.managedClubId || m.awayClubId === g.managedClubId;
   }
@@ -383,7 +394,7 @@ export function startNextSeason(g: Game): void {
     }));
   }
   g.euroCups = buildEuroCupsForSeason(
-    euroQuals, euroClubs, leagueDateSet(fixtures), cupDateSet(cup),
+    euroQuals, euroClubs, leagueDateSet(fixtures, otherDivisions), cupDateSet(cup),
     g.managedClubId + ':' + nextStartYear, calendar.seasonStartDate, g.managedClubId, calendar,
     worldRes.participants,
   );

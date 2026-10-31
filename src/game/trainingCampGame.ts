@@ -142,12 +142,16 @@ function planAiCamps(g: Game, s: CampSeason, w: { from: string; to: string }, to
   const scale = economyScale(yearOf(today));
   const rng = mulberry32(hashStr(`camps|${g.season}|${s}`));
   const len = s === 'summer' ? 8 : 7;
-  const span = Math.max(0, daysBetween(today, w.to).length - len);
+  // Winterlager in den letzten vier Wochen vor dem Rückrundenstart (lange Pausen der
+  // 80er/90er: Dezember ist Urlaub/Halle, das Lager liegt im Januar/Februar).
+  const lateFrom = s === 'winter' ? CalendarEngine.addDays(w.to, -28) : today;
+  const from = lateFrom > today ? lateFrom : today;
+  const span = Math.max(0, daysBetween(from, w.to).length - len);
   for (const c of leagueClubs(g)) {
     if (c.id === g.managedClubId) continue;
     const d = aiCampChoice(s, year, c.reputation, c.finances.balance, scale, rng);
     if (!d) continue;
-    const start = CalendarEngine.addDays(today, Math.floor(rng() * (span + 1)));
+    const start = CalendarEngine.addDays(from, Math.floor(rng() * (span + 1)));
     const end = CalendarEngine.addDays(start, len - 1);
     const cost = Math.round(campCostBase(d, len, c.reputation) * scale);
     book(c.finances, today, -cost, 'training_facilities', `Trainingslager ${d.name}`, false);

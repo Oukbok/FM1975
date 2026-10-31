@@ -43,7 +43,7 @@ export const PRIZE_BY_ROUND = [7500, 15000, 30000, 60000, 120000];
 const PREFERRED_DATE_TEMPLATE: { md: string; yearOffset: number }[] = [
   { md: '09-24', yearOffset: 0 }, // 1. Hauptrunde
   { md: '11-05', yearOffset: 0 }, // Achtelfinale
-  { md: '12-17', yearOffset: 0 }, // Viertelfinale (vor der Winterpause 21.12.)
+  { md: '12-17', yearOffset: 0 }, // Viertelfinale (vor bzw. – in langen Pausen der 80er/90er – in der Winterpause)
   { md: '04-01', yearOffset: 1 }, // Halbfinale
   { md: '06-20', yearOffset: 1 }, // Finale (vor Saisonende 30.06.)
 ];

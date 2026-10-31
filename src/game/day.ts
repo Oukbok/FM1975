@@ -33,7 +33,8 @@ import { applyDailyTraining } from '../engine/weeklyTraining';
 import { applyYouthGem, GEM_CHANCE_YOUTH, maybeMakeGem } from '../engine/gems';
 import { academyIntake, ageYouthPlayers, developYouthWeekly, graduateYouth } from '../engine/youth';
 import { cupNextDrawMessage, cupResultMessage, euroDrawMessage, euroResultMessage, euroWinnerChronicle } from './competitions';
-import { emitMatchMessage, simulateMatchday, startNextSeason } from './season';
+import { advanceDivisionsTo, emitMatchMessage, simulateMatchday, startNextSeason } from './season';
+import { inWinterBreak, winterBreakDaily } from './winterShared';
 import { OwnMatchInfo, findOwnMatchDue, isPrepared } from './ownMatch';
 import { Game, bumpMorale } from './state';
 import { contractReminders, handleContractExpiry } from './contracts';
@@ -350,7 +351,10 @@ export function processDay(g: Game, ui: DayUi): boolean {
 
   if (!isMyMatchDay) {
     // Manager-Verein trainiert gemäß Wochenplan (füllt den Entwicklungs-Akku).
+    // Winterpause: Training baut Fitness auf, aber keine Spielform (kein Form-Plus).
+    const breakForm = inWinterBreak(g, today) ? new Map(myClub.playerIds.map((id) => [id, g.players[id]?.form ?? 0])) : null;
     applyDailyTraining(myClub, g.players, g.trainingPlan.days[planIdx], false);
+    if (breakForm) for (const [id, f] of breakForm) { const p = g.players[id]; if (p && p.form > f) p.form = f; }
     applyFocusLoad(g, myClub, today, staffEffectsOf(g).injuryReduction);
     // Übrige Liga regeneriert normal; Manager-Verein ist über das Training abgedeckt.
     dailyRecovery(g.players, userIds);
@@ -498,6 +502,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
   // Winter-Systeme: Hallenturniere/Masters (game/indoorGame.ts) und Trainingslager (game/trainingCampGame.ts).
   indoorDaily(g, today);
   campDaily(g, today);
+  winterBreakDaily(g, today);   // Formdrift in der Winterpause (game/winterShared.ts)
+  advanceDivisionsTo(g, today); // Sim-Ligen nach eigenem Spielplan (game/season.ts)
   groundsDaily(g, today); // Stadionumfeld: Bauvorhaben, Spiele, Monat, Saison (game/groundsGame.ts)
   if (utcDom === 1) {
     monthlyTrainingReport(g, today);

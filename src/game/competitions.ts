@@ -28,8 +28,12 @@ export function addCupCalendarEvents(calendar: GameCalendar, cup: CupState): voi
 }
 
 /** Baut die Menge aller Liga-Spieltag-Daten (für kollisionsfreie Pokaltermine). */
-export function leagueDateSet(fixtures: Match[]): Set<string> {
-  return new Set(fixtures.map((m) => m.date));
+export function leagueDateSet(fixtures: Match[], others: { tier: number; fixtures: Match[] }[] = []): Set<string> {
+  const s = new Set(fixtures.map((m) => m.date));
+  // Weitere West-Ligen (Europapokal-Starter können in einer anderen Liga spielen
+  // als dein Verein); DDR-Ligen (tier ≥ 100) spielen keinen West-Europapokal.
+  for (const d of others) if (d.tier < 100) for (const m of d.fixtures) s.add(m.date);
+  return s;
 }
 
 // -----------------------------------------------------------------------------

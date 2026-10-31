@@ -121,6 +121,24 @@ function maxPerClub(phaseKind: IndoorKind, winterYear: number): number {
   return winterYear >= 1998 ? 2 : 4;
 }
 
+/**
+ * Endrunde (zwei Tage, Sa/So): historisch Mitte Januar (1988 Frankfurt, 2001 Dortmund
+ * am 13./14.1., taz 15.01.2001) – Wochenende um den 13. Januar, ins Winterfenster
+ * geklemmt und an Pflichtspielen vorbei.
+ */
+function mastersWeekend(win: { from: string; to: string }, winterYear: number, busy: Set<string>): string[] {
+  const lastStart = CalendarEngine.addDays(win.to, -1);
+  const clamp = (d: string) => (d < win.from ? win.from : d > lastStart ? lastStart : d);
+  const fwd = (6 - new Date(`${winterYear}-01-13T00:00:00Z`).getUTCDay() + 7) % 7;
+  const sat = CalendarEngine.addDays(`${winterYear}-01-13`, fwd > 3 ? fwd - 7 : fwd);
+  for (const shift of [0, -7, 7, -14, 14]) {
+    const d = clamp(CalendarEngine.addDays(sat, shift));
+    const pair = [d, CalendarEngine.addDays(d, 1)];
+    if (!pair.some((x) => busy.has(x))) return pair;
+  }
+  return [lastStart, win.to];
+}
+
 // -----------------------------------------------------------------------------
 // Winter aufsetzen (Anfang November)
 // -----------------------------------------------------------------------------
@@ -132,8 +150,12 @@ export function setupIndoorWinter(g: Game, today: string): IndoorWinter {
   const rng = mulberry32(hashStr(`indoor|${g.season}|${g.managedClubId}`));
   const win = winterWindow(g);
   const busy = competitiveDays(g);
-  const mastersDays = phase === 'masters' ? [CalendarEngine.addDays(win.to, -1), win.to] : [];
-  const days = daysBetween(win.from, win.to).filter((d) => d > today && !busy.has(d) && !mastersDays.includes(d));
+  const mastersDays = phase === 'masters' ? mastersWeekend(win, winterYear, busy) : [];
+  // Tour/Einladungsturniere vor der Endrunde, sonst bis Ende Januar (Februar gehört
+  // in langen Pausen dem Trainingslager).
+  const tourEnd = mastersDays.length ? CalendarEngine.addDays(mastersDays[0], -2) : `${winterYear}-01-31`;
+  let days = daysBetween(win.from, win.to < tourEnd ? win.to : tourEnd).filter((d) => d > today && !busy.has(d) && !mastersDays.includes(d));
+  if (!days.length) days = daysBetween(win.from, win.to).filter((d) => d > today && !busy.has(d) && !mastersDays.includes(d));
   const kind: IndoorKind = phase === 'invitational' ? 'invite' : phase === 'masters' ? 'qualifier' : 'regional';
   const n = tournamentCount(winterYear);
   const venues = venuesFor(winterYear);

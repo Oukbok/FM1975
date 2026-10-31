@@ -153,7 +153,7 @@ Ligadaten leben in \`src/data/generate.ts\` (Seeds: \`CLUB_SEEDS\`, \`SECOND_LIG
 - **Alle anderen Ligen/Staffeln (Stärke-Simulation):** Werden **performant** pro Spieltag rein aus den aggregierten Stärken plus Zufall berechnet (schnelle Torermittlung, Heimvorteil). Kein Tick-Lag, keine Kaderpflege.
 
 ## Ablauf
-- Mit jedem gespielten Ligaspieltag rückt jede Sim-Staffel um genau **einen** Spieltag vor (\`advanceDivision\`) und ihre Tabelle wird aktualisiert.
+- Jede Sim-Staffel spielt nach ihrem **eigenen Spielplan**: Sobald der Termin eines Spieltags erreicht ist, wird er berechnet (\`advanceDivisionsTo\` → \`advanceDivision\`) und die Tabelle aktualisiert. So hat die 2. Liga ihre eigenen englischen Wochen und die DDR-Oberliga ihre lange Winterpause bis Ende Februar (Artikel „Winterpause“).
 - Am Saisonende werden restliche Sim-Spieltage automatisch fertig simuliert (\`flushDivision\`), bevor Auf-/Abstieg berechnet wird.
 - Die Ergebnisse sind **deterministisch** (seed-basierter RNG pro Staffel & Spieltag).
 
@@ -2216,13 +2216,44 @@ Spiel und keiner anderen Aktivität** kollidieren.
 Zugesagte Hallenturniere und gebuchte Lager erscheinen im Kalender als belegte Tage.`,
   },
   {
+    id: 'winter-break',
+    category: 'calendar',
+    title: 'Winterpause & Spielplan',
+    keywords: ['winterpause', 'rückrunde', 'hinrunde', 'spielplan', 'englische woche', 'pause', 'wm', 'katar', 'ddr', 'spieltag'],
+    body: `## Historische Winterpause
+Die Pause liegt in jeder Saison dort, wo sie in der Bundesliga wirklich lag (DFB-Datencenter, RSSSF; Jahre ohne Beleg werden innerhalb ihrer Epoche interpoliert):
+
+| Epoche | typische Pause | Wochen | Beispiel |
+|---|---|---|---|
+| 1975–1985 | Mitte Dezember bis Mitte/Ende Januar | 3–8 (meist 5–6) | 1975/76: 6.12. bis 17.1. |
+| 1986–1996 | Anfang Dezember bis Mitte/Ende Februar | 8–11 | 1986/87: 6.12. bis 21.2. (elf Wochen) |
+| 1997–2008 | Mitte Dezember bis Ende Januar | 5–9 (meist 6) | 1997/98: 20.12. bis 31.1. |
+| 2009–2019 | kurz vor Weihnachten bis Mitte/Ende Januar | 4–6 | 2017/18: 16.12. bis 13.1. |
+| ab 2020 | so nah an Weihnachten wie möglich bis ~10. Januar | 3 | 2025/26: 20.12. bis 10.1. |
+
+Sonderfälle: **WM in Katar 2022** – Pause vom 13. November bis 20. Januar. Die Corona-Unterbrechung 2019/20 und die gestauchte Pause 2020/21 werden **nicht** nachgebaut.
+Ab 2027/28 wird die heutige Regel fortgeschrieben (Annahme: WM 2034 wieder im Winter).
+
+## Spielplan
+- Spieltage liegen **samstags**. Die Pause beginnt nicht immer nach der Hinrunde – wie 1987/88 (19 Spieltage vor der Pause) oder 2024/25 (15).
+- Passen nicht alle Spieltage auf die Samstage, gibt es **englische Wochen** (Mittwoch) – vor allem in der 2. Liga mit 38 Spieltagen und in den langen Pausen der 80er/90er.
+- **Saisonende** je Epoche: bis 1991 Mitte Juni, danach Ende Mai, in WM-Jahren Mitte Mai oder früher (1986: 26. April). Die 2. Liga beginnt eine bzw. (ab 2009) zwei Wochen früher.
+- **DDR-Oberliga/DDR-Liga** (bis 1990/91): 26 Spieltage ab Mitte August, Pause von Mitte Dezember bis Ende Februar (9–11 Wochen), Saisonende Ende Mai.
+- Laufende Saisons behalten ihren Spielplan; die neuen Termine gelten ab dem nächsten Saisonwechsel.
+- Pokal- und Europapokalrunden weichen allen Ligaspieltagen aus (Europapokal auch denen der anderen West-Ligen).
+
+## In der Pause
+- **Hallenturniere** und das **Hallen-Masters** (Mitte Januar) liegen in der Pause, ebenso das **Winter-Trainingslager** (KI-Vereine in den letzten vier Wochen vor dem Rückrundenstart).
+- **Frische und Fitness** erholen sich täglich. Ohne Spielrhythmus driftet die **Form** aller Spieler leicht zur Mitte (0,5 % je Tag): Formstarke verlieren in drei Wochen ≈ 1–2 Punkte, in elf Wochen ≈ 6; Formschwache fangen sich. Training bringt in der Pause Fitness, aber kein Form-Plus.`,
+  },
+  {
     id: 'training-camps',
     category: 'calendar',
     title: 'Trainingslager',
     keywords: ['trainingslager', 'camp', 'türkei', 'belek', 'katar', 'dubai', 'florida', 'spanien', 'asien', 'jetlag', 'sportschule', 'alpen'],
     body: `## Wo und wann
 Unter **Kader › Trainingslager** buchst du je Saison ein **Sommerlager** (Vorbereitung bis kurz vor dem 1. Spieltag) und ein
-**Winterlager** (in der Winterpause). Die Ziele werden so freigeschaltet, wie sie historisch aufkamen – und zunächst nur für Vereine,
+**Winterlager** (in der Winterpause – deren Länge hängt von der Saison ab, siehe „Winterpause & Spielplan“: in den 80ern/90ern bis zu elf Wochen, heute drei). Die Ziele werden so freigeschaltet, wie sie historisch aufkamen – und zunächst nur für Vereine,
 die es sich damals leisten konnten (Ansehen):
 
 | Ziel | ab | Rahmen |
@@ -2263,6 +2294,8 @@ zahlen über ihre Finanzen und bekommen einen kleinen Fitness-/Form-Effekt.`,
 - **1976–1987:** Einladungsturniere mit Bundesligisten (Dortmund, Berlin, Stuttgart, München, Frankfurt) – ohne Endrunde.
 - **1988–2001: DFB-Hallenpokal.** Qualifikationsturniere (1988: 18, bis 1997: 16, ab 1998: 4), Wertung nach **Durchschnittspunkten je Spiel**
   (ein einziges Turnier kann reichen), die **8 Besten** spielen das **Hallen-Masters** (Frankfurter Festhalle, Westfalenhalle Dortmund, Olympiahalle München – Ort wie in der Wirklichkeit).
+- **Termine:** Alle Turniere liegen in der echten Winterpause der Saison (Artikel „Winterpause & Spielplan“), nie auf Pflichtspieltagen. Die Tour-Turniere laufen bis kurz vor dem
+  **Masters**, das wie historisch **Mitte Januar** stattfindet (Wochenende um den 13.1.); ohne Masters enden die Turniere Ende Januar – der Februar der langen Pausen gehört dem Trainingslager.
 - **2002–2004:** nur noch wenige Regionalturniere. **Danach findet nichts mehr statt** (Chronik: „Hallen-Masters abgeschafft“).
 
 ## Modus
