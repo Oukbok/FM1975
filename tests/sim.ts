@@ -170,7 +170,7 @@ function balanceReport(game: Game, ps: Player[]) {
   console.log(`   BAL Neu in der Liga: ${newcomers.map((n) => `${nm(n.id)} Platz ${n.rank} (Top11 ${top11(game.clubs[n.id]).toFixed(1)})`).join(', ') || '-'} | Liga-Top11 Median ${(() => { const t = lc.map(top11).sort((a, b) => a - b); return t[t.length >> 1]?.toFixed(1); })()}`);
   console.log(`   BAL Tore/Sp ${row.tore.toFixed(2)} Heim ${(row.heim * 100).toFixed(0)}% Remis ${(row.remis * 100).toFixed(0)}% | Verl. ${inj} verletzt Nov/Mär ${snap.join('/')} (${Math.round(injDays / Math.max(1, ps.length))} T/Sp.) | TW je Verein 0:${tw.filter((n) => n === 0).length} 1:${tw.filter((n) => n === 1).length} 2+:${tw.filter((n) => n >= 2).length}`
     + ` | Alter ≤21 ${pct((a) => a <= 21)}% 22–25 ${pct((a) => a >= 22 && a <= 25)}% 26–29 ${pct((a) => a >= 26 && a <= 29)}% 30–33 ${pct((a) => a >= 30 && a <= 33)}% ≥34 ${pct((a) => a >= 34)}%`
-    + ` | weg ${gone} (≥31: ${goneOld}) | Jugend-Eigengew. ${youthOrigin} U21≥75 ${youngStars}`);
+    + ` | weg ${gone} (≥31: ${goneOld}) | Jugend-Eigengew. ${youthOrigin} (bester ${Math.max(0, ...ps.filter((p) => p.id.includes('_y_') && !p.development.legendId).map((p) => p.overall))}) U21≥75 ${youngStars}`);
   const origin = (p: Player) => p.development.legendId ? 'Legende' : p.id.includes('_y_') ? 'Jugend' : /_r\d{4}_/.test(p.id) ? 'Nachrücker' : /_t\d{4}_/.test(p.id) ? 'Ausland' : /_p\d+$/.test(p.id) ? 'Start' : 'sonst';
   const stars = ps.filter((p) => p.overall >= 85);
   const byO: Record<string, number> = {}; for (const p of stars) byO[origin(p)] = (byO[origin(p)] ?? 0) + 1;
