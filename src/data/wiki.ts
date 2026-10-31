@@ -852,9 +852,10 @@ Aus den Spielern auf dem Platz entstehen vier Werte: **Angriff**, **Spielkontrol
 ## Epochen
 - **Heimvorteil:** in den Siebzigern deutlich stärker als heute (damals rund 57 % Heimsiege, um 1995 knapp 47 %, heute gut 40 %). Er wirkt in beide Richtungen: Die Heimelf wird gefährlicher, die Gäste etwas harmloser.
 - **Torschnitt:** rund 3,3 Tore pro Spiel in den Siebzigern und frühen Achtzigern, um 2,9 um die Jahrtausendwende, heute wieder etwa 3,1.
-- **Karten:** früher seltener Gelb; ab 1995 mehr Verwarnungen.
-- **Wechsel und Bank:** 2 Wechsel bei 5 Bankplätzen, ab 1995 3 Wechsel (7 Plätze), ab 2020 5 Wechsel (9 Plätze).
-- **Videobeweis** ab 2017: Treffer können nachträglich aberkannt werden.
+- **Karten:** früher seltener Gelb; ab 1995 mehr Verwarnungen. Die **Gelb-Rote Karte** gibt es erst ab 1991/92 – vorher bleibt die zweite Gelbe ohne Platzverweis. Die **Gelbsperre** (jede fünfte Gelbe in der Liga) gilt ab 1979/80.
+- **Wechsel und Bank:** 2 Wechsel bei 5 Bankplätzen, ab 1995/96 3 Wechsel (7 Plätze), ab 2020/21 5 Wechsel (9 Plätze).
+- **Videobeweis** ab 2017/18: Treffer können nachträglich aberkannt werden.
+- Regeländerungen gelten immer ab dem **Saisonstart (1. Juli)**, nicht ab Jahresbeginn.
 
 ## Noten
 Jeder Spieler bekommt eine Note von **1,0 bis 6,0** in halben Schritten. Sie ergibt sich aus seinem Beitrag (Tore, Vorlagen, Schlüsselpässe, Paraden, Zweikämpfe, Fehler, Karten, Gegentore) und seiner Leistung auf der Position. Kurzeinsätze liegen näher an 3,5.

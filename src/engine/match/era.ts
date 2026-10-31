@@ -22,6 +22,10 @@ export interface EraRules {
   var: boolean;
   /** Rückpassregel (Torwart darf Rückpässe nicht aufnehmen). */
   backPassRule: boolean;
+  /** Gelb-Rote Karte (ab 1991/92); vorher bleibt es bei der zweiten Gelben ohne Platzverweis. */
+  yellowRed: boolean;
+  /** Gelbsperre nach jeder fünften Gelben in der Liga (Bundesliga ab 1979/80). */
+  yellowBan: boolean;
   /** Welche Statistiken es in dieser Zeit gab. */
   stats: StatAvailability;
 }
@@ -36,6 +40,13 @@ export interface StatAvailability {
   xg: boolean;
 }
 
+/** Saison-Startjahr aus einem ISO-Datum: Regeln wechseln zum 1. Juli, nicht zum Jahreswechsel. */
+export function seasonYearOf(date: string): number {
+  const y = Number(date.slice(0, 4));
+  return Number(date.slice(5, 7)) >= 7 ? y : y - 1;
+}
+
+/** Regeln der Saison, die im Jahr `year` beginnt (z. B. 2017 = 2017/18: Videobeweis). */
 export function eraRules(year: number): EraRules {
   const goalFactor =
     year < 1980 ? 1.12 : year < 1990 ? 1.12 : year < 2000 ? 1.01 : year < 2010 ? 0.94 : year < 2020 ? 0.97 : 1.03;
@@ -51,6 +62,8 @@ export function eraRules(year: number): EraRules {
     benchSize: year < 1995 ? 5 : year < 2008 ? 7 : year < 2020 ? 7 : 9,
     var: year >= 2017,
     backPassRule: year >= 1992,
+    yellowRed: year >= 1991,
+    yellowBan: year >= 1979,
     stats: {
       shotsOnTarget: year >= 1985,
       possession: year >= 1992,

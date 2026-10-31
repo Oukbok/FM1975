@@ -9,7 +9,7 @@ import { attendanceRestriction } from '../../data/history';
 import { attendanceDemand, fairTicketPrice } from '../economy';
 import type { Club, InjurySeverity, Player } from '../../types';
 import { positionSuitability } from '../positions';
-import { eraRules, type EraRules } from './era';
+import { eraRules, seasonYearOf, type EraRules } from './era';
 import { bench, emptyStats, initRefs, lineupChanged, onPitch, refresh, type TeamState } from './state';
 import { makeMPlayer, matchBase, rating, resolveLineup } from './team';
 import { attack, openPlayFoul, maybeInjury, shootoutKick } from './actions';
@@ -79,7 +79,8 @@ export class MatchSim {
     this.rng = mulberry32(seed);
     this.year = opts.year;
     this.date = opts.date;
-    this.era = eraRules(opts.year);
+    // Regeln gelten je Saison (Videobeweis ab 2017/18, fünf Wechsel ab 2020/21 …), nicht ab Januar.
+    this.era = eraRules(opts.date ? seasonYearOf(opts.date) : opts.year);
     this.knockout = !!opts.knockout;
     this.live = !!opts.live;
     this.derby = !!homeClub.city && homeClub.city === awayClub.city;

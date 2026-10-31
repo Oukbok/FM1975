@@ -259,8 +259,8 @@ function commit(sim: MatchSim, grades: Map<string, number>, opts: FinishOptions)
       }
       player.yellowCardCount += m.yellow;
       if (m.red > 0 || m.yellowRed > 0) player.suspensionMatches = Math.max(player.suspensionMatches, m.red > 0 ? 2 : 1);
-      // Gelbsperre: jede fünfte Gelbe Karte einer Saison (nur Liga) kostet ein Spiel.
-      else if (m.yellow > 0 && competition === 'Liga' && player.seasonStats.yellowCards > 0 && player.seasonStats.yellowCards % 5 === 0) {
+      // Gelbsperre (ab 1979/80): jede fünfte Gelbe Karte einer Saison (nur Liga) kostet ein Spiel.
+      else if (m.yellow > 0 && competition === 'Liga' && sim.era.yellowBan && player.seasonStats.yellowCards > 0 && player.seasonStats.yellowCards % 5 === 0) {
         player.suspensionMatches = Math.max(player.suspensionMatches, 1);
       }
       if (date && logClubIds?.includes(player.clubId)) {

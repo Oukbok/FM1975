@@ -311,6 +311,12 @@ function card(sim: MatchSim, T: TeamState, m: MPlayer, sev: number, notbremse: b
   }
   const pY = sim.era.yellowPerFoul * sev * temper * late * derby * ref * T.mods.cards * (m.yellow ? 0.65 : 1);
   if (rng() >= pY) return;
+  if (m.yellow && !sim.era.yellowRed) {
+    // Vor 1991/92 gibt es keine Gelb-Rote Karte: die zweite Verwarnung bleibt ohne Platzverweis.
+    m.yellow++; m.impact -= 0.15; T.stats.yellow++;
+    sim.emit('card', { side: T.side, player: m.id, card: 'yellow' });
+    return;
+  }
   if (m.yellow) {
     m.yellowRed++; m.impact -= 1.0;
     sendOff(sim, T, m, 'yellowRed');
