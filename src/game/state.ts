@@ -141,6 +141,11 @@ export interface Game {
   coachPool?: import('../types').ClubCoach[];
   /** Kaderplanung der KI-Vereine in der laufenden Saison (game/aiClubs.ts). */
   aiMarket?: import('./aiClubs').AiMarketState;
+  /**
+   * Finanzniveau des Spielstands (fehlt = 1: bis v10, rund das Dreifache der Recherche;
+   * 2 = realistisch, Erstligist 1975 ≈ 4,5 Mio. DM). Umstellung: game/financeMigration.ts.
+   */
+  financeLevel?: number;
 }
 
 // Moral-Stufen in aufsteigender Reihenfolge (für Aktivitäts-Effekte, Block p11).

@@ -6,6 +6,7 @@
 // =============================================================================
 import { allSeaterEuro, euroCapacity, roofAttendanceFactor } from '../stadiumBlocks';
 import { attendanceRestriction } from '../../data/history';
+import { attendanceDemand, fairTicketPrice } from '../economy';
 import type { Club, InjurySeverity, Player } from '../../types';
 import { positionSuitability } from '../positions';
 import { eraRules, type EraRules } from './era';
@@ -86,7 +87,7 @@ export class MatchSim {
     const month = opts.date ? Number(opts.date.slice(5, 7)) : 9;
     const euroSeated = opts.competition === 'Europapokal' && allSeaterEuro(opts.year) && (opts.date ?? '9999') >= '1998-07-01' && homeClub.stadium.blocks?.length;
     const cap = euroSeated ? euroCapacity(homeClub.stadium.blocks!, homeClub.stadium.capacity) : homeClub.stadium.capacity;
-    const raw = estimateAttendance(homeClub, this.derby, this.rng) * roofAttendanceFactor(homeClub, this.weather, month);
+    const raw = estimateAttendance(homeClub, awayClub, this.derby, opts.year, this.rng) * roofAttendanceFactor(homeClub, this.weather, month);
     this.attendance = Math.min(cap, Math.round(raw * attendanceRestriction(opts.date)));
     const humanSides = new Set(opts.humanSides ?? []);
     const humanClubs = new Set(opts.humanClubIds ?? []);
@@ -457,14 +458,20 @@ function rollWeather(date: string | undefined, rng: () => number): Weather {
   return r < 0.3 ? 'regen' : r < 0.4 ? 'wind' : r < 0.7 ? 'bewoelkt' : 'sonnig';
 }
 
-function estimateAttendance(c: Club, derby: boolean, rng: () => number): number {
+/**
+ * Zuschauer eines Heimspiels: Kapazität × Grund-Auslastung des Vereins (Erfolg, Stimmung)
+ * × Preis-Reaktion × Gegner (große Namen ziehen) × Derby × Nachfrage der Epoche.
+ */
+function estimateAttendance(c: Club, away: Club, derby: boolean, year: number | undefined, rng: () => number): number {
   const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
   const cap = c.stadium?.capacity ?? 30000;
-  const baseRate = c.stadium?.averageAttendanceRate ?? 0.7;
+  const baseRate = c.stadium?.averageAttendanceRate ?? 0.5;
   const reputation = c.reputation ?? 50;
-  const ticketPrice = c.stadium?.ticketPrice ?? 14;
-  const refPrice = Math.round(8 + reputation * 0.12);
+  const ticketPrice = c.stadium?.ticketPrice ?? 8;
+  const refPrice = fairTicketPrice(reputation);
   const priceFactor = clamp(1 - ((ticketPrice - refPrice) / refPrice) * 0.5, 0.6, 1.15);
-  const rate = clamp(baseRate * priceFactor * (derby ? 1.12 : 1) + (rng() - 0.5) * 0.1, 0.3, 1.0);
+  const opponent = clamp(1 + ((away?.reputation ?? 65) - 70) / 120, 0.88, 1.2);
+  const demand = year != null ? attendanceDemand(year) : 1;
+  const rate = clamp(baseRate * priceFactor * opponent * (derby ? 1.15 : 1) * demand + (rng() - 0.5) * 0.1, 0.12, 1.0);
   return Math.round(cap * rate);
 }

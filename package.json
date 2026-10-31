@@ -19,7 +19,8 @@
     "test:ai": "node scripts/run-ts.mjs tests/ai-test.ts",
     "test:club": "node scripts/build.mjs && node tests/club-profile-shots.mjs",
     "test:winter": "node scripts/run-ts.mjs tests/winter-test.ts",
-    "test:grounds": "node scripts/run-ts.mjs tests/grounds-test.ts"
+    "test:grounds": "node scripts/run-ts.mjs tests/grounds-test.ts",
+    "test:finance": "node scripts/run-ts.mjs tests/finance-test.ts"
   },
   "dependencies": {
     "lz-string": "1.5.0",

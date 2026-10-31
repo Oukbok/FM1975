@@ -823,6 +823,8 @@ export interface ClubFinances {
   tvAnnual?: number;
   /** Vermarktung & Hospitality: Jahresbetrag der laufenden Saison (nominal). */
   commercialAnnual?: number;
+  /** Liga-Ebene der laufenden Saison (1 = 1. Liga), gesetzt zum Saisonstart; fehlt = 1. */
+  leagueTier?: number;
   /** Saisonbilanzen vergangener Spielzeiten (neueste zuletzt, max. 30). */
   seasonHistory?: SeasonFinanceRecord[];
   /** Finanzielles Fairplay (ab 2011) und Lizenzauflagen. */

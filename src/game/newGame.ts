@@ -35,6 +35,7 @@ import { setDisplayYear } from '../ui/format';
 import { seedStartLegends } from './legendsGame';
 import { ensureCoaches } from './coachCarousel';
 import { migrateYouthInvest } from './youthInvest';
+import { FINANCE_LEVEL } from './financeMigration';
 
 export function createNewGame(opts: NewGameOptions): Game {
   setEraYear(1975);
@@ -161,6 +162,7 @@ export function createNewGame(opts: NewGameOptions): Game {
     leagues,
     simClubs,
     appliedReforms: [],
+    financeLevel: FINANCE_LEVEL,
     legendMode: opts.legendMode ?? 'fictional',
   };
   // Legenden, die 1975 schon spielen (bis Jahrgang 1960), in die Kader setzen.
@@ -183,7 +185,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   }));
   g0.hiredStaff = g0.staff.map((m) => m.roleId);
   const startTier = g0.leagues.playerDivision.tier;
-  for (const c of leagueClubs) c.finances.commercialAnnual = commercialAnnualFor(c, startTier, 1975);
+  for (const c of leagueClubs) { c.finances.commercialAnnual = commercialAnnualFor(c, startTier, 1975); c.finances.leagueTier = startTier; }
   allocateTv(leagueClubs, startTier, 1975, (id) => 1 - byRep.indexOf(id) / Math.max(1, byRep.length - 1));
   // Volle Jugendmannschaften des eigenen Vereins (game/youthTeams.ts).
   ensureYouthTeams(g0, g0.calendar.currentDate);

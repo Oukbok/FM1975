@@ -124,7 +124,7 @@ export function moveYouth(p: Player, from: Club, to: Club): void {
 
 /** Jährliche Kosten eines Fördervertrags (1975-Basis). */
 export function protectionCost(p: Player): number {
-  return Math.round((4000 + Math.max(0, scoutMidOf(p) - 3) * 6000) / 500) * 500;
+  return Math.round((1200 + Math.max(0, scoutMidOf(p) - 3) * 1800) / 100) * 100;
 }
 
 /**

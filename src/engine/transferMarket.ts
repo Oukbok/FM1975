@@ -16,7 +16,7 @@
 // =============================================================================
 import { Club, Player } from '../types';
 import { recordFeeEUR } from '../data/transferRecords';
-import { DM_PER_EUR, economyScale } from './economy';
+import { DM_PER_EUR, clubWageLevel, economyScale } from './economy';
 import { marketWage } from './clubEconomy';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -265,7 +265,8 @@ export function playerStance(p: Player, buyer: Club, ctx: StanceCtx): PlayerStan
   pr.sort((a, b) => b[1] - a[1]);
 
   // Gehalt: Mindestforderung (verdeckt) und Berater-Forderung (sichtbar)
-  const base = Math.max(marketWage(p), p.contract.weeklyWage * 1.12);
+  // Marktgehalt auf dem Gehaltsniveau der Liga des Käufers (unterklassig deutlich weniger).
+  const base = Math.max(marketWage(p) * clubWageLevel(buyer, ctx.year), p.contract.weeklyWage * 1.12);
   const minWage = Math.round(base * (1 + clamp(-repGap / 60, -0.1, 0.25) + (ambition - 50) / 500) / 10) * 10;
   const agentWage = Math.round(minWage * (1.12 + h('agent') * 0.15) / 10) * 10;
   const years: [number, number] = p.age <= 23 ? [3, 5] : p.age <= 29 ? [2, 5] : p.age <= 32 ? [1, 3] : [1, 2];

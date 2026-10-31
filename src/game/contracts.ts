@@ -13,7 +13,7 @@
 import { marketWage } from '../engine/clubEconomy';
 import { bosmanActive, contractDemand, evaluateOffer, seasonEndYear } from '../engine/contractTalks';
 import { bookTransfer } from '../engine/finances';
-import { economyScale, yearOf } from '../engine/economy';
+import { clubWageLevel, economyScale, yearOf } from '../engine/economy';
 import { recordTransfer } from '../engine/history';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { isForeignId } from '../engine/world';
@@ -112,7 +112,7 @@ export function transferPlayer(g: Game, p: Player, from: Club, to: Club, fee: nu
   p.transferListed = false;
   p.contract.preContractClubId = undefined;
   p.contract.talks = undefined;
-  p.contract.weeklyWage = Math.round(Math.max(p.contract.weeklyWage, marketWage(p)) * (fee === 0 ? 1.15 : 1));
+  p.contract.weeklyWage = Math.round(Math.max(p.contract.weeklyWage, marketWage(p) * clubWageLevel(to, Number(date.slice(0, 4)))) * (fee === 0 ? 1.15 : 1));
   p.contract.expiryDate = `${Number(date.slice(0, 4)) + yearsFor(p.age, hashRand(p.id + date))}-06-30`;
   p.contract.satisfaction = 78;
   // Weiterverkaufsbeteiligung an den früheren Verein.

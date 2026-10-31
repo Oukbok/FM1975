@@ -30,8 +30,8 @@ export const ROUND_NAMES = [
   'Finale',
 ] as const;
 
-/** Preisgeld pro Runde in DM (pro gewonnener Begegnung), Ära-gerecht 1980/81. */
-export const PRIZE_BY_ROUND = [25000, 50000, 100000, 200000, 400000];
+/** Preisgeld pro Runde (1975-DM, pro gewonnener Begegnung); Pokalsieger ≈ 230.000 DM. */
+export const PRIZE_BY_ROUND = [7500, 15000, 30000, 60000, 120000];
 
 /**
  * Wunsch-Termine der Runden als Monat-Tag-Vorlage (Mittwoch-nah, Englische

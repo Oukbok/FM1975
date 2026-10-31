@@ -35,6 +35,7 @@ import { setDisplayYear } from './ui/format';
 import { setEventFrequency } from './engine/randomEvents';
 import { ensureYouthTeams } from './game/youthTeams';
 import { migrateAiClubs } from './game/aiClubs';
+import { migrateFinanceLevel } from './game/financeMigration';
 import { migrateWinter } from './game/winterShared';
 import { migrateGrounds } from './game/groundsGame';
 import { migrateYouthInvest } from './game/youthInvest';
@@ -315,6 +316,8 @@ export default function App() {
     ensureYouthTeams(s.game, s.game.calendar.currentDate);
     // Manager-KI (SAVE_VERSION 10): Trainer der KI-Vereine nachrüsten.
     try { migrateAiClubs(s.game); } catch (err) { console.error('Trainer-Nachrüstung fehlgeschlagen:', err); }
+    // Finanzniveau (v11, Sammel-Update): alte Spielstände auf das realistische Niveau umrechnen.
+    try { migrateFinanceLevel(s.game); } catch (err) { console.error('Finanz-Umstellung fehlgeschlagen:', err); }
     // Hallenfußball + Trainingslager (v11 Sammel-Update): optionale Felder nachrüsten.
     try { migrateWinter(s.game); } catch (err) { console.error('Winter-Nachrüstung fehlgeschlagen:', err); }
     // Stadionumfeld (v11-Sammel-Update): Lage, Fläche, epochentypische Ausstattung nachrüsten.

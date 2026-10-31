@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { economyScale, revenueScale, yearOf } from '../../engine/economy';
-import { CATERING_NETPERHEAD, cateringMatchIncome, expectedAttendance, expectedAttendanceRate, matchdayIncome } from '../../engine/finances';
+import { economyScale, yearOf } from '../../engine/economy';
+import { CATERING_NETPERHEAD, cateringMatchIncome, expectedAttendance, expectedAttendanceRate, matchdayIncome, clubPriceScale } from '../../engine/finances';
 import { vipIncome } from '../../engine/clubBusiness';
 import { BLOCK_NAME, migrateBlocks, roofShare, seatedCapacity, ticketFactor } from '../../engine/stadiumBlocks';
 import { ensureStadiumBlocks, projectName, sideTargets } from '../../game/stadiumGame';
@@ -44,12 +44,12 @@ export function StadiumView({ g, onChange }: { g: Game; onChange: () => void }) 
   };
 
   const scale = economyScale(year);
-  const mdScale = revenueScale('matchday', year);
-  const setTicket = (delta: number) => { st.ticketPrice = Math.max(4, Math.min(60, st.ticketPrice + delta)); onChange(); };
+  const mdScale = clubPriceScale(club, year);
+  const setTicket = (delta: number) => { st.ticketPrice = Math.max(2, Math.min(40, st.ticketPrice + delta)); onChange(); };
   const cateringMode: CateringMode = club.commerce?.cateringMode ?? 'verpachtung';
   const cateringLevel = Math.max(1, Math.min(5, Math.round(club.infrastructure?.catering ?? 1)));
-  const expRate = expectedAttendanceRate(club);
-  const expVisitors = expectedAttendance(club);
+  const expRate = expectedAttendanceRate(club, undefined, year);
+  const expVisitors = expectedAttendance(club, undefined, year);
   const ticketRev = Math.round(expVisitors * st.ticketPrice * ticketFactor(club) * mdScale);
   const cateringRev = cateringMatchIncome(club, expVisitors, mdScale);
   const programmeRev = matchdayIncome(expVisitors, mdScale);

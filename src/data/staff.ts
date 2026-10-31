@@ -26,13 +26,17 @@
 
 export type StaffCostClass = 'K1' | 'K2' | 'K3' | 'K4' | 'K5';
 
-/** Grundgehalt je Kostenklasse (DM/Monat, Basisjahr 1975). Skaliert via economyScale. */
+/**
+ * Grundgehalt je Kostenklasse (DM/Monat, Basisjahr 1975). Skaliert via economyScale.
+ * Cheftrainer (K5) ≈ 96.000 DM im Jahr; der Grundstab 1975 kostet ≈ 220.000 DM
+ * (Recherche: Trainer, Betreuer, Verwaltung 250–700 Tsd. DM zusammen mit dem Betreuerstab).
+ */
 export const STAFF_COST_BASE: Record<StaffCostClass, number> = {
-  K1: 1200,
-  K2: 2500,
-  K3: 5000,
-  K4: 10000,
-  K5: 20000,
+  K1: 400,
+  K2: 800,
+  K3: 1700,
+  K4: 3500,
+  K5: 8000,
 };
 
 /** Thematische Gruppierung (nur für die Anzeige/Sortierung). */

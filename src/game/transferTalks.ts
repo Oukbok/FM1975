@@ -255,7 +255,7 @@ function completeTalk(g: Game, t: TransferTalk): string {
     book(own.finances, today, -Math.round(t.terms.signingFee * scale), 'transfer_expense', `Handgeld ${p.fullName}`, true);
     own.finances.transferBudget -= t.terms.signingFee;
   }
-  if (t.terms.promises.includes('umzug')) book(own.finances, today, -Math.round(Math.max(2000, marketWage(p) * 4) * scale), 'other', `Umzug & Familie ${p.fullName}`, true);
+  if (t.terms.promises.includes('umzug')) book(own.finances, today, -Math.round(Math.max(1000, marketWage(p) * 4) * scale), 'other', `Umzug & Familie ${p.fullName}`, true);
   givePromises(g, p, t.terms.promises, today);
   repairSquadLists(g);
   t.phase = 'done';

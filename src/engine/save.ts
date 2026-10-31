@@ -47,6 +47,10 @@ import { compressToUTF16, decompressFromUTF16 } from 'lz-string';
 //     `game.youthInvestTick`, `development.reserveMinutes`. Alle Felder optional;
 //     Altstände werden in doLoad (App.tsx → migrateYouthInvest,
 //     game/youthInvest.ts) idempotent aus der alten Akademie-Stufe abgeleitet.
+// v11 (Sammel-Update): Finanzniveau realistisch (Erstligist 1975 ≈ 4,5 Mio. DM statt
+//     ≈ 15 Mio.). Optionales Feld `Game.financeLevel` (fehlt = altes Niveau); doLoad
+//     (App.tsx → migrateFinanceLevel, game/financeMigration.ts) rechnet Kontostände,
+//     Bilanzen, Kredite, Gehälter, Budgets, Eintritt und Auslastung einmalig um.
 export const SAVE_VERSION = 10;
 
 /** Metadaten eines Speicherstands (für die Slot-Übersicht). */

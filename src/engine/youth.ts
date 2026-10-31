@@ -263,7 +263,7 @@ export function generateYouthPlayer(
     injury: null, suspensionMatches: 0, yellowCardCount: 0,
     clubId,
     contract: {
-      weeklyWage: Math.round(overall * 25 + ri(0, 150)),
+      weeklyWage: Math.round(overall * 8 + ri(0, 50)),
       expiryDate: `${currentYear + ri(2, 4)}-06-30`,
       transferValue: value, satisfaction: ri(60, 90),
     },

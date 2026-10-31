@@ -1024,13 +1024,20 @@ Alle Beträge werden **ära-gerecht** angezeigt:
 - **bis einschließlich 2001:** Deutsche Mark (**DM**)
 - **ab 2002:** Euro (**€**), fest umgerechnet mit **1 € = 1,95583 DM**
 
-Intern rechnet das Spiel durchgehend in nominalen DM; die Anzeige stellt ab 2002 automatisch auf Euro um. Zum Start
-1975/76 sind die Beträge bewusst klein gehalten (keine modernen Millionensummen).
+Intern rechnet das Spiel durchgehend in nominalen DM; die Anzeige stellt ab 2002 automatisch auf Euro um.
+
+## Das Finanzniveau ist recherchiert
+1975/76 setzt ein Erstligist im Mittel rund **4,5 Mio. DM** um: etwa 70 % Eintritt (Ø 23.000 Zuschauer × 8 DM), dazu Catering,
+Trikot- und Bandenwerbung, ein kleiner TV-Anteil (ARD/ZDF zahlten 4,8 Mio. DM für die ganze Liga), Programmhefte und Mitgliedsbeiträge.
+Kleine Vereine kommen auf knapp 2–3 Mio., große Zuschauermagneten auf 7–9 Mio. DM. Ein Stammspieler verdient rund 75.000 DM im Jahr,
+ein Star 200.000–250.000 DM. Ablösen folgen der echten Rekordkurve: 1975 ist ein Spitzenspieler für 0,5–1,5 Mio. DM eine Investition
+von einem Viertel des Jahresumsatzes. Bis heute wächst ein mittlerer Erstligist auf rund 200 Mio. € (TV-Explosion ab 1988/1992/2000,
+Vermarktung ab den 2000ern), die Spitze auf ein Vielfaches davon.
 
 ## Steigende Finanzbasis über die Jahrzehnte
 Die gesamte Finanzbasis des Fußballs **wächst über die Jahre real mit** — Sponsoring, TV-, Ticket- und Fanartikel-Erlöse
 sowie die Fixkosten skalieren gemeinsam mit einem **Wirtschafts-Index** (economyScale). Bezugsjahr ist **1975 ≈ 1×**,
-bis **2030 ≈ 130×**. Details siehe *Chronik: Steigende Finanzbasis & Währung*.
+bis **2030 ≈ 130×**. Die Erlösarten wachsen unterschiedlich schnell (siehe *Finanzen im Wandel der Epochen*). Details siehe *Chronik: Steigende Finanzbasis & Währung*.
 
 ## Kontostand & Budgets
 - **Kontostand:** wird real fortgeschrieben (rot bei Minus, türkis bei Plus).
@@ -1052,21 +1059,25 @@ Buchungen entstehen automatisch beim Zeitfortschritt: **bei jedem Heimspiel** (Z
     body: `## Einnahmeposten (mit Formeln)
 
 ### Stadioneinnahmen (pro Heimspiel)
-\`Zuschauer × Ticketpreis\`
-Die Zuschauerzahl liefert die Match-Engine abhängig von Erfolg/Form, Gegner, Attraktivität und **Stadionkapazität** des Vereins. Der Ticketpreis liegt Ära-gerecht bei ca. **8–20 DM**.
+\`Zuschauer × Ticketpreis × Preismix der Tribünen\`
+Zuschauer = \`Kapazität × Grund-Auslastung × Preis-Reaktion × Gegner × Derby × Nachfrage der Epoche\` (siehe *Ticketpreis & Preiselastizität*).
+Die **Grund-Auslastung** folgt bei KI-Vereinen Ruf, Tabellenplatz und Liga (1975 etwa 40–50 %, die Stadien waren groß), beim eigenen Verein der Fanstimmung.
+Große Gegner ziehen bis zu 20 % mehr, kleine bis zu 12 % weniger, ein Derby 15 % mehr. Der Ticketpreis liegt 1975 bei **5–11 DM** (Schnitt 8 DM).
 
 ### Fanartikel / Merchandising (pro Heimspiel)
-\`Zuschauer × ProKopf\`, mit \`ProKopf = 2 + (Reputation / 100) × 4\` (≈ 2–6 DM je Besucher).
-Steigt also mit Zuschauerzahl und Reputation des Vereins.
+\`Zuschauer × ProKopf × Fanshop-Faktor\`, mit \`ProKopf = 0,10 + (Reputation / 100) × 0,27\` DM (1975 ≈ 0,30 DM, Schals und Wimpel).
+Wächst mit der **Vermarktung** und der Marke: ab den 1990ern wird der Fanshop zu einer eigenen Säule.
 
-### TV- & Mediengelder (pro Heimspiel)
-\`20.000 + Reputation × 400\` DM – Ära-gerecht bewusst **klein** (1980 gab es noch keine großen TV-Verträge).
+### TV- & Mediengelder (monatlich)
+Zentral vermarktet (siehe *Finanzen im Wandel der Epochen*): 1975 rund 230.000 DM je Erstligist im Jahr. Pokalspiele bringen je Heimspiel \`2.500 + Reputation × 50\` DM × TV-Skala.
 
 ### Catering / Würstchenbuden (pro Heimspiel)
 \`Zuschauer × Netto-pro-Kopf\`, wobei der Pro-Kopf-Erlös von **Ausbaustufe** und **Betriebsform** abhängt (Eigenbetrieb > Umsatzbeteiligung > Verpachtung). Details siehe *Catering & Betriebsformen*.
 
 ### Programmhefte & Spieltagserlöse (pro Heimspiel)
-\`Zuschauer × 0,25\` DM (1975-Basis, era-skaliert). Skaliert direkt mit der Auslastung.
+\`Zuschauer × 0,25\` DM (1975-Basis). Skaliert direkt mit der Auslastung.
+
+Alle Preise je Besucher (Eintritt, Catering, Programm, Logen) wachsen mit der **Preis-Skala** = Stadionumsatz-Skala ÷ Zuschauer-Nachfrage der Epoche.
 
 ### Trikotsponsoring (monatlich, aus echtem Vertrag)
 Monatsrate = \`Jahreswert des Trikotvertrags ÷ 12\`. Der Vertrag wird im Bereich **Sponsoring** unterschrieben (2–3 Saison-Angebote, Laufzeit 1–5 Jahre). Ohne Vertrag: keine Einnahme.
@@ -1078,9 +1089,10 @@ Monatsrate = \`Jahreswert des Bandenvertrags ÷ 12\`. Grundwert je Verein: \`80.
 Jahreswert = \`30.000 + Reputation × 1.000\` DM, monatlich gebucht (\`÷ 12\`). Wächst mit dem Ansehen des Vereins.
 
 ### Prämien
-- **Siegprämie:** \`25.000 + Reputation × 200\` DM pro Sieg.
-- **Remisprämie:** \`8.000\` DM pro Unentschieden.
-- **Sponsor-Platzierungsbonus (monatlich):** Platz 1–3 → 30.000 DM · Platz 4–6 → 15.000 DM · Platz 7–10 → 6.000 DM.
+- **Siegprämie (Sponsoren/Gönner):** \`6.000 + Reputation × 50\` DM pro Sieg (1975; wächst wie die Preise im Stadion).
+- **Remisprämie:** \`2.000\` DM pro Unentschieden.
+- **Sponsor-Platzierungsbonus (monatlich):** Platz 1–3 → 9.000 DM · Platz 4–6 → 4.500 DM · Platz 7–10 → 2.000 DM.
+- **Pokal und Europapokal:** Preisgeld je gewonnener Runde (siehe *Landespokal* und *Europapokal*).
 
 ### Transfererlöse
 Spielerverkäufe fließen über die Transfer-Engine ein (Ablösesumme als Einnahme gebucht, sobald ein Deal abgeschlossen ist).`,
@@ -1094,20 +1106,23 @@ Spielerverkäufe fließen über die Transfer-Engine ein (Ablösesumme als Einnah
 
 ### Spielergehälter
 \`Summe der Wochengehälter des Kaders × 4,33\` (Wochen je Monat).
-Die Wochengehälter der Spieler werden aus OVR/Alter abgeleitet (Vertrag \`weeklyWage\`).
+Die Wochengehälter der Spieler richten sich nach dem **Marktgehalt**: \`1.400 × 2^((Stärke − 72) / 11)\` DM/Woche (1975-Basis). Stärke 72 ≈ 73.000 DM im Jahr, 80 ≈ 120.000, 90 ≈ 226.000 DM.
 Verlängerungen verhandelst du selbst (siehe Artikel **Verträge, Bosman & Kabine**). KI-Vereine verlängern meist automatisch: Laufzeit nach Alter, neues Gehalt = Mittel aus altem Gehalt und Marktgehalt.
+
+### Auflauf- und Siegprämien
+Je Sieg zahlt der Verein der Mannschaft gut ein halbes Wochengehalt des Kaders (\`× 0,55\`), je Remis ein Fünftel. Über eine Saison sind das rund 15–20 % der Grundgehälter (Recherche).
 
 ### Betreuerstab
 \`Spielergehälter × 0,18\` – Trainer-, Betreuer- und Verwaltungspersonal.
 
 ### Stadionunterhalt
-\`Kapazität × 0,9 + (100 − Zustand) × 800\` DM/Monat. Ein schlechterer Stadionzustand erhöht die Kosten.
+\`Kapazität × 0,3 + (100 − Zustand) × 250\` DM/Monat (1975: 50.000 Plätze ≈ 250.000 DM im Jahr). Ein schlechterer Stadionzustand erhöht die Kosten.
 
 ### Gebäude-Fixkosten (Unterhalt)
 Jede **gebaute Einrichtung** verursacht monatliche Fixkosten (ersetzt den alten Pauschalposten "Trainingsbetrieb"):
 \`Basis × Stufen-Multiplikator\` (era-skaliert), summiert über alle Einrichtungen.
 - **Stufen-Multiplikator** (Stufe 1..5): \`1 · 1,4 · 1,9 · 2,5 · 3,2\`.
-- **Basis-Unterhalt/Monat (1975-DM):** Trainingszentrum 4.000 · Medizin 2.500 · Fanshop 2.000 · Reha-Zentrum 3.000 (Jugendakademie und NLZ: Kosten über **Kader → Akademie**) · Leistungszentrum 4.500 · Datenanalyse 3.500.
+- **Basis-Unterhalt/Monat (1975-DM):** Trainingszentrum 1.400 · Medizin 875 · Fanshop 700 · Reha-Zentrum 1.050 (Jugendakademie und NLZ: Kosten über **Kader → Akademie**) · Leistungszentrum 1.575 · Datenanalyse 1.225.
 - **Stadion** ist ausgenommen (steckt im Stadionunterhalt), **Catering** ist Sonderfall je Betriebsform (siehe *Catering & Betriebsformen*).
 - Zukunfts-Einrichtungen (Reha, NLZ, Leistungs-/Datenzentrum) zählen erst ab **Stufe ≥ 2** als gebaut.
 
@@ -1115,9 +1130,14 @@ Jede **gebaute Einrichtung** verursacht monatliche Fixkosten (ersetzt den alten 
 Fixkosten je Betriebsform/Stufe; bei **Verpachtung** zusätzlich eine feste Monatspacht als Einnahme (siehe *Catering & Betriebsformen*).
 
 ### Sonstige Fixkosten
-\`6.000 + Reputation × 500\` DM/Monat (Reise, Organisation, Verwaltung).
+\`2.500 + Reputation × 200\` DM/Monat (Reisen, Organisation, Verwaltung, Versicherungen; Ruf 75 ≈ 210.000 DM im Jahr).
 
-Alle Werte gelten in 1975-DM. Stadionunterhalt und sonstige Fixkosten wachsen über die Jahrzehnte mit dem **Stadiongeschäft** (bis heute etwa um das 25-Fache), Gehälter und Gebäudekosten mit dem gesamten Fußballmarkt (etwa um das 100-Fache). So kann auch ein Drittligist mit vollem Haus seine Kosten decken.
+Alle Werte gelten in 1975-DM. Stadionunterhalt und sonstige Fixkosten wachsen über die Jahrzehnte mit dem **Stadiongeschäft** (bis heute etwa um das 25-Fache), Gehälter mit dem gesamten Fußballmarkt (etwa um das 100-Fache).
+
+## Liga-Ebene
+Der Boom von Vermarktung und Stadiongeschäft kam vor allem in der 1. Liga an. Unterklassige Vereine wachsen deshalb nur mit einem Anteil über das Niveau von 1975 hinaus: Trikot, Banden und Fanartikel in der 2. Liga mit gut einem Drittel, in der 3. Liga mit 15 %, darunter mit 8 %; Eintrittspreise, Catering, Sponsorenprämien, Stadionbetrieb, Gebäudeunterhalt und Mitgliedsbeiträge in der 2. Liga mit 70 %, in der 3. Liga mit 45 %, darunter mit 30 %. 1975 macht das keinen Unterschied, heute trennt es die Ligen deutlich. TV-Gelder werden je Liga verteilt (2. Liga ein Fünftel bis ein Viertel des Erstliga-Topfs).
+
+Entsprechend zahlen unterklassige Vereine weniger: Das Marktgehalt gilt für die 1. Liga, in der 2. Liga liegt das Gehaltsniveau 1975 bei 45 % (heute rund ein Viertel), in der 3. Liga bei 20 % (heute rund 7 %), darunter noch tiefer. Forderungen bei Verlängerungen und Wechseln richten sich nach dem Niveau der Liga, in der dein Verein spielt.
 
 ### Transferausgaben
 Spielerkäufe werden als Ausgabe gebucht (Ablöse verringert Kontostand und Transferbudget).
@@ -1138,7 +1158,7 @@ Hochrechnung des erwarteten Endkontostands:
 \`Endkontostand ≈ aktueller Kontostand + (fester Monatssaldo × Restmonate) + (erwartete Heimspiel-Einnahmen × Restheimspiele)\`
 
 - **Restmonate:** aus aktuellem Datum bis Saisonende (UTC-basiert).
-- **Erwartete Heimspiel-Einnahme:** \`Ø-Auslastung × Kapazität × (Ticketpreis + ProKopf-Fanartikel) + TV\`.
+- **Erwartete Heimspiel-Einnahme:** \`erwartete Zuschauer × (Ticketpreis + Catering + Fanartikel + Programm)\` zum laufenden Preisniveau; TV kommt über den Monatssaldo.
 - Zusätzlich werden erwartete Gesamt-Einnahmen und -Ausgaben separat ausgewiesen.
 
 ## Budget-Aufteilung
@@ -1191,10 +1211,10 @@ Große Vereine mit hoher Auslastung profitieren stärker vom **Eigenbetrieb** (v
 | 1975 | 60 % | 7 % | 24 % |
 | 1992 | 42 % | 22 % | 29 % |
 | 2000 | 26 % | 36 % | 31 % |
-| 2020 | 16 % | 40 % | 38 % |
+| 2020 | 12 % | 40 % | 38 % |
 
 ## TV-Gelder (zentrale Vermarktung)
-- Zu Saisonbeginn wird der TV-Topf der Liga verteilt und **monatlich** ausgezahlt.
+- Zu Saisonbeginn wird der TV-Topf der Liga verteilt und **monatlich** ausgezahlt. 1975 umfasst er 4,2 Mio. DM für die 1. Liga (ARD/ZDF zahlten 4,8 Mio. für die Bundesliga), heute über eine Milliarde Euro.
 - Die Verteilung richtet sich nach **Liga** (2. Liga ein Fünftel bis ein Viertel, darunter wenig) und dem **Tabellenplatz der Vorsaison**. Bis 1990 fast gleichmäßig (15 % leistungsabhängig), ab 2000 zu 35 % leistungsabhängig.
 
 ## Marke: regional, national, international
@@ -1203,7 +1223,7 @@ Große Vereine mit hoher Auslastung profitieren stärker vom **Eigenbetrieb** (v
 - Die Marke multipliziert **Trikot- und Bandenwerbung** sowie **Fanartikel** (gedeckelt, abnehmender Grenznutzen) und bestimmt die **Vermarktung & Hospitality** – hier verdienen große Marken überproportional.
 
 ## Europapokal
-- Prämien und **Startgelder** wachsen mit der Wirtschaft. Ab 1992 (Meisterliga mit Gruppenphase) steigen die Prämien im Landesmeister-Wettbewerb bis 2000 auf das Fünffache, in den anderen Wettbewerben auf das Doppelte. Europäischer Erfolg ist damit der stärkste Hebel für eine Dynastie – garantiert aber nichts.
+- 1975 verdient ein Verein im Europapokal vor allem an den **Heimspielen** (volle Ränge); die Prämien sind klein. Prämien und **Startgelder** wachsen mit der Wirtschaft. Ab 1992 (Meisterliga mit Gruppenphase) steigen die Prämien im Landesmeister-Wettbewerb bis 2000 auf das Fünffache, in den anderen Wettbewerben auf das Doppelte. Europäischer Erfolg ist damit der stärkste Hebel für eine Dynastie – garantiert aber nichts.
 
 ## Preisschilder und Kontostand
 - **Gehälter, Marktwerte und das Transferbudget** sind Preisschilder in 1975-Werten und werden mit dem Spieljahr hochgerechnet angezeigt und gebucht. Der **Kontostand** ist nominal.
@@ -1216,7 +1236,7 @@ Große Vereine mit hoher Auslastung profitieren stärker vom **Eigenbetrieb** (v
 - Ab **2011/12** gilt das **Finanzielle Fairplay**: Liegt das Ergebnis der letzten drei Saisons mehr als 5 % des Umsatzes im Minus, folgt eine Verwarnung, beim zweiten Verstoß eine Transfersperre.
 
 ## Die anderen Vereine wirtschaften mit
-- KI-Vereine passen ihre Gehälter dem Umsatz an (Gehaltsquote um 60 %), verkaufen bei Schulden Spieler, investieren Überschüsse in Gelände und Stadion und geben ein **Transferbudget** frei. Als Reserve bleibt rund **ein Zehntel des Jahresumsatzes**; vom Überschuss darüber fließt gut ein Drittel in Gelände und Stadion, vom Rest werden 85 % zum Transferbudget ( Trainer mit Einkaufs-Philosophie bekommen mehr, solche mit Jugend-Philosophie weniger). Wofür es ausgegeben wird, entscheidet die Kaderplanung (siehe **Kaderplanung der KI-Vereine**). Geld bleibt nicht einfach auf dem Konto liegen – auch die Konkurrenz wird stärker, wenn sie erfolgreich ist.
+- KI-Vereine passen ihre Gehälter dem Umsatz an (Gehälter, Stab und Prämien zusammen gut zwei Drittel des Vorjahresumsatzes; wer viel Geld auf dem Konto hat, zahlt deutlich mehr, ab Bosman 1996 etwas mehr als vorher), verkaufen bei Schulden Spieler, investieren Überschüsse in Gelände und Stadion und geben ein **Transferbudget** frei. Als Reserve bleibt rund **ein Zehntel des Jahresumsatzes**; vom Überschuss darüber fließt ein Viertel in Gelände und Stadion (Ränge nur, wenn das Stadion fast voll ist; verschuldete Vereine bauen teure Einrichtungen zurück), vom Rest werden 85 % zum Transferbudget ( Trainer mit Einkaufs-Philosophie bekommen mehr, solche mit Jugend-Philosophie weniger). Wofür es ausgegeben wird, entscheidet die Kaderplanung (siehe **Kaderplanung der KI-Vereine**). Geld bleibt nicht einfach auf dem Konto liegen – auch die Konkurrenz wird stärker, wenn sie erfolgreich ist.
 - Jeder KI-Kader hält **zwei Torhüter**: Beendet einer seine Karriere oder wird verkauft, holt der Verein vor allen anderen Wechseln Ersatz (Ersatztorwart eines Liga-Rivalen oder aus dem Ausland, bei leerer Kasse ablösefrei).`,
   },
   {
@@ -1246,12 +1266,14 @@ Zu jedem Saisonstart wird die Restlaufzeit aller Verträge um 1 Jahr reduziert; 
     title: 'Ticketpreis & Preiselastizität',
     keywords: ['ticket', 'ticketpreis', 'preis', 'elastizität', 'auslastung', 'zuschauer', 'nachfrage', 'referenzpreis'],
     body: `## Ticketpreis steuert die Auslastung
-Im Bereich **Stadion** setzt du den Ticketpreis (±1 DM, Bereich ca. 4–60 DM). Ein höherer Preis senkt die Auslastung, ein niedrigerer hebt sie (bis zur Kapazitätsgrenze).
+Im Bereich **Stadion** setzt du den Ticketpreis (±1 DM in 1975-Werten, Bereich 2–40 DM). Ein höherer Preis senkt die Auslastung, ein niedrigerer hebt sie (bis zur Kapazitätsgrenze).
 
 ## Formel (Match-Engine)
-- **Referenzpreis:** \`refPrice = round(8 + Reputation × 0,12)\` DM — der "faire" Preis für die Vereinsgröße.
+- **Referenzpreis:** \`refPrice = 3 + Reputation × 0,07\` DM (1975-Basis) — der "faire" Preis für die Vereinsgröße (Ruf 75 ≈ 8,3 DM).
 - **Preisfaktor:** \`priceFactor = clamp(1 − ((Preis − refPrice) / refPrice) × 0,5 , 0,6 , 1,15)\`.
-- **Auslastungsrate:** \`clamp(baseRate × priceFactor + Zufall(±0,10) , 0,3 , 1,0)\`, mit \`baseRate = Ø-Auslastung des Vereins\`.
+- **Gegner:** \`clamp(1 + (Ruf Gegner − 70) / 120 , 0,88 , 1,2)\`; **Derby** × 1,15.
+- **Nachfrage der Epoche** (Ligaschnitt gegenüber 1975): 1985 × 0,85 (Zuschauertal), 1995 × 1,3, 2005 × 1,6, ab 2010 rund × 1,8.
+- **Auslastungsrate:** \`clamp(baseRate × priceFactor × Gegner × Derby × Nachfrage + Zufall(±0,05) , 0,12 , 1,0)\`, mit \`baseRate = Grund-Auslastung des Vereins\`.
 
 Die gleiche Zahl gilt für **alle** Match-Buchungen (Eintritt, Catering, Programmhefte) — Vorschau und Buchung sind konsistent.
 
@@ -1621,10 +1643,10 @@ Gezeichnet werden Stufen, Sitzreihen in Vereinsfarben, Wellenbrecher, Mundlöche
 Ältere Spielstände mit vier Blöcken werden beim Laden umgewandelt: Die Kurven übernehmen den Aufbau der Hintertor-Tribünen, Kapazität, Logen, VIP-Bereich und Ticketfaktor bleiben erhalten.
 
 ## Was du planst
-- **Ränge:** bis zu drei (Unter-, Mittel-, Oberrang), je 3–36 Reihen. Ein neuer Rang kostet 30 % Aufschlag, Abriss 15 DM je Platz.
+- **Ränge:** bis zu drei (Unter-, Mittel-, Oberrang), je 3–36 Reihen. Ein neuer Rang kostet 30 % Aufschlag, Abriss 15 DM je Platz. Baukosten je Platz (1975): Stehplatz 35 DM, Holzbank 65, Schalensitz 120, Komfortsitz 210, Business-Seat 550; Teildach 22, volles Dach 55 DM; VIP-Tribüne 125.000, Loge 55.000 DM.
 - **Sitzart je Rang:** Stehplätze (fassen doppelt so viele Menschen wie Sitze, bringen aber nur 75 % des Grundpreises), Holzbänke (bis 1999), Schalensitze, Komfortsitze (ab 1988), Business-Seats (ab 1992, gut dreifacher Preis, wenig Platz). Der Eintritt richtet sich nach dem **Preismix** gegenüber dem Stand bei Einführung der Blöcke (Faktor 0,7–2,2).
 - **Dach:** keins, Teildach oder volles Dach. Überdachte Plätze locken bei Regen bis zu 7 % mehr Zuschauer an, im Winter 3,5 %. Ein neues Dach hebt die Fan-Stimmung um 2 Punkte.
-- **VIP-Tribüne** (ab 1980, nicht in den Kurven): zählt wie 6 Logen. **Logen** (ab 1985; je Block: Haupttribüne Mitte bis 6, sonst auf den Geraden bis 3 bzw. 4 in der Gegengerade Mitte, hinter dem Tor bis 2, Kurven bis 1) brauchen einen zweiten Rang oder ein volles Dach. Jede Loge bringt je Heimspiel 1.400 DM (1975-Basis) × Spieltags-Skala × Marke.
+- **VIP-Tribüne** (ab 1980, nicht in den Kurven): zählt wie 6 Logen. **Logen** (ab 1985; je Block: Haupttribüne Mitte bis 6, sonst auf den Geraden bis 3 bzw. 4 in der Gegengerade Mitte, hinter dem Tor bis 2, Kurven bis 1) brauchen einen zweiten Rang oder ein volles Dach. Jede Loge bringt je Heimspiel 850 DM (1975-Basis) × Preis-Skala × Marke.
 - **Anzeigetafel** hinter dem Tor oder in einer Kurve, ab 1994 als Videowand.
 
 ## Bauen
@@ -1653,7 +1675,7 @@ Dein eigenes Stadion baust du Block für Block um (siehe *Stadion: Blöcke, Rän
 - **Zinsen je Epoche:** etwa 8,5 % (1975), 10,5 % (1981), 6 % (1998), 2–3 % (2016–2021), danach wieder rund 4,5 %. Wer im Minus steht, zahlt 1,5 Prozentpunkte Aufschlag.
 
 ## Logen
-Ab 1985 bringt jeder Ausbauschritt Logen mit (8 bis 1992, 16 bis 2003, danach 28). Jede Loge bringt je Heimspiel 1.400 DM (1975-Basis) × Spieltags-Skala × Marke.
+Ab 1985 bringt jeder Ausbauschritt Logen mit (8 bis 1992, 16 bis 2003, danach 28). Jede Loge bringt je Heimspiel 850 DM (1975-Basis) × Preis-Skala × Marke.
 
 ## Namensrechte (ab 2000)
 Unter **Verein → Vorstand** liegen drei Angebote fiktiver Firmen (3, 5 oder 8 Jahre). Der Jahreswert richtet sich nach Kapazität und Ansehen und wächst mit Vermarktungs-Skala und Marke; er wird monatlich gebucht. Traditionsvereine zahlen mit Fan-Stimmung (je nach Tradition und Leitbild 2–15 Punkte). Läuft der Vertrag aus, heißt das Stadion wieder wie früher; im letzten Vertragsjahr bietet der Partner eine Verlängerung (+10 %).
@@ -1877,7 +1899,7 @@ Jede **gebaute Einrichtung** verursacht laufende Fixkosten (Unterhalt), die je E
 - Nach Abschluss erhältst du eine Vorstands-Nachricht mit neuem Effekt und Kontostand.
 
 Die Ausbaukosten steigen überproportional mit der Zielstufe:
-\`Kosten(Zielstufe) = Basiskosten × Faktor × Wirtschaftsskala des Jahres  (auf 10.000 gerundet)\`
+\`Kosten(Zielstufe) = Basiskosten × Faktor × Wirtschaftsskala des Jahres  (auf 5.000 gerundet)\`
 mit den Faktoren **Stufe 2 = ×1,0**, **Stufe 3 = ×2,1**, **Stufe 4 = ×3,6**, **Stufe 5 = ×5,4**. Die Basiskosten sind Preise von 1975; später steigen sie mit der Inflation des Fußballs.
 Das **Stadion** ist die Ausnahme: Es wird als Bauprojekt mit Bauzeit und wahlweise per Kredit ausgebaut (siehe *Stadionbau, Kredite, Namensrechte, Investoren und Überschuldung*).
 
@@ -1892,76 +1914,76 @@ Details zu Kosten und Effekten je Einrichtung: siehe *Einrichtungen im Detail*.`
     category: 'facilities',
     title: 'Einrichtungen im Detail (Kosten & Effekte)',
     keywords: ['stadion', 'trainingszentrum', 'medizin', 'fanshop', 'merchandising', 'kosten', 'kapazität', 'effekte', 'dm'],
-    body: `Alle Kosten in **DM von 1975** (später × Wirtschaftsskala), auf 10.000 gerundet. Stufe 1 ist die Grundausstattung (kostenlos).
+    body: `Alle Kosten in **DM von 1975** (später × Wirtschaftsskala), auf 5.000 gerundet. Stufe 1 ist die Grundausstattung (kostenlos).
 
-## Stadion — Basiskosten 900.000 DM
+## Stadion — Basiskosten 450.000 DM
 Jede Stufe über 1 erhöht die **Kapazität um 6.000 Plätze**. Mehr Kapazität → höhere Zuschauerzahl und damit
 **mehr Stadion- und Fanartikel-Einnahmen** pro Heimspiel (wirkt direkt in den Finanzen und in der Saisonprognose).
 
 | Zielstufe | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|
-| Kosten | 900.000 | 1.890.000 | 3.240.000 | 4.860.000 |
+| Kosten | 450.000 | 945.000 | 1.620.000 | 2.430.000 |
 | Kapazität ggü. Stufe 1 | +6.000 | +12.000 | +18.000 | +24.000 |
 
-## Trainingszentrum — Basiskosten 320.000 DM
+## Trainingszentrum — Basiskosten 100.000 DM
 Setzt die **Anlagenqualität** (facilitiesQuality), die das Training direkt multipliziert — höhere Qualität = schnelleres
 Attribut-Wachstum des gesamten Profikaders.
 
 | Zielstufe | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|
-| Kosten | 320.000 | 670.000 | 1.150.000 | 1.730.000 |
+| Kosten | 100.000 | 210.000 | 360.000 | 540.000 |
 | Anlagenqualität (Stufe 1→5) | 68 | 78 | 88 | 96 |
 
 (Stufe 1 = Qualität 55.)
 
-## Jugendakademie — Basiskosten 260.000 DM
+## Jugendakademie — Basiskosten 80.000 DM
 Steuert **Anzahl** und **Qualität** neuer Talente sowie die **Lernrate** der Jugendentwicklung (Details im Bereich *Jugendsystem*).
 
 | Zielstufe | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|
-| Kosten | 260.000 | 550.000 | 940.000 | 1.400.000 |
+| Kosten | 80.000 | 170.000 | 290.000 | 430.000 |
 | Talente/Jahr | 2 | 2 | 3 | 4 |
 | Qualitäts-Bonus | +3 | +6 | +9 | +13 |
 | Lernrate × | 1,0 | 1,15 | 1,3 | 1,5 |
 
 (Stufe 1 = 1 Talent/Jahr, Bonus 0, Lernrate ×0,85.)
 
-## Medizinische Abteilung — Basiskosten 200.000 DM
+## Medizinische Abteilung — Basiskosten 60.000 DM
 Beschleunigt die **Fitness-Regeneration** deiner Spieler und **verkürzt Ausfallzeiten** nach Verletzungen (wirkt täglich
 auf den Profikader).
 
 | Zielstufe | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|
-| Kosten | 200.000 | 420.000 | 720.000 | 1.080.000 |
+| Kosten | 60.000 | 125.000 | 215.000 | 325.000 |
 | Regeneration/Tag | +1 | +2 | +3 | +5 |
 | Reha-Verkürzung/Tag | – | −1 Tag | −1 Tag | −2 Tage |
 
 (Stufe 1 = kein Bonus.) „Regeneration/Tag" sind zusätzliche Fitnesspunkte pro Tag, „Reha-Verkürzung" reduziert die
 verbleibenden Verletzungstage zusätzlich.
 
-## Fanshop / Merchandising — Basiskosten 180.000 DM
+## Fanshop / Merchandising — Basiskosten 55.000 DM
 Multipliziert den **Fanartikel-Erlös pro Besucher** (wirkt bei jedem Heimspiel in den Finanzen).
 
 | Zielstufe | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|
-| Kosten | 180.000 | 380.000 | 650.000 | 970.000 |
+| Kosten | 55.000 | 115.000 | 200.000 | 295.000 |
 | Erlös-Multiplikator | ×1,15 | ×1,3 | ×1,5 | ×1,75 |
 
-(Stufe 1 = ×1,0. Grund-Erlös ≈ 2–6 DM je Besucher, abhängig von der Reputation.)
+(Stufe 1 = ×1,0. Grund-Erlös 1975 ≈ 0,25–0,35 DM je Besucher, abhängig von der Reputation; wächst mit der Vermarktung.)
 
-## Catering / Würstchenbuden — Basiskosten 120.000 DM
+## Catering / Würstchenbuden — Basiskosten 60.000 DM
 Steigert den **Pro-Kopf-Erlös je Heimspiel**. Die Betriebsform bestimmt Erlös und Fixkosten (vollständige Tabellen: *Catering & Betriebsformen*).
 
 | Zielstufe | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|
-| Kosten | 120.000 | 250.000 | 430.000 | 650.000 |
+| Kosten | 60.000 | 125.000 | 215.000 | 325.000 |
 | Netto/Besucher (Eigenbetrieb) | 0,85 | 1,10 | 1,35 | 1,60 |
 
 (Stufe 1 = 0,60 DM/Besucher im Eigenbetrieb.)
 
 ## Monatliche Fixkosten je Einrichtung
 Basis-Unterhalt/Monat (1975-DM, Stufe-1-Basis), skaliert mit \`1 · 1,4 · 1,9 · 2,5 · 3,2\` je Stufe:
-Trainingszentrum 4.000 · Medizin 2.500 · Fanshop 2.000 · Reha-Zentrum 3.000 (Jugendakademie und NLZ: Kosten über **Kader → Akademie**) · Leistungszentrum 4.500 · Datenanalyse 3.500. Stadion ausgenommen; Catering je Betriebsform.`,
+Trainingszentrum 1.400 · Medizin 875 · Fanshop 700 · Reha-Zentrum 1.050 (Jugendakademie und NLZ: Kosten über **Kader → Akademie**) · Leistungszentrum 1.575 · Datenanalyse 1.225. Stadion ausgenommen; Catering je Betriebsform.`,
   },
   {
     id: 'facilities-future',
@@ -1974,10 +1996,10 @@ Mit der Checkbox **„Zukunft anzeigen"** siehst du sie schon vorab **ausgegraut
 
 | Einrichtung | ab | Basiskosten | Wirkung |
 |---|---|---|---|
-| Reha-Zentrum | 1990 | 240.000 | verkürzt Ausfallzeiten & steigert die Regeneration zusätzlich |
-| Nachwuchsleistungszentrum (NLZ) | 1998 | 380.000 | beschleunigt die Jugendentwicklung (Wachstums-Bonus) |
-| Leistungszentrum | 2003 | 340.000 | hebt die Anlagenqualität → schnellere Kaderentwicklung |
-| Datenanalyse-Zentrum | 2013 | 300.000 | präzisiert das Scouting im Nachwuchs (Genauigkeit) |
+| Reha-Zentrum | 1990 | 75.000 | verkürzt Ausfallzeiten & steigert die Regeneration zusätzlich |
+| Nachwuchsleistungszentrum (NLZ) | 1998 | 115.000 | beschleunigt die Jugendentwicklung (Wachstums-Bonus) |
+| Leistungszentrum | 2003 | 100.000 | hebt die Anlagenqualität → schnellere Kaderentwicklung |
+| Datenanalyse-Zentrum | 2013 | 90.000 | präzisiert das Scouting im Nachwuchs (Genauigkeit) |
 
 ## Wirkung im Spiel (real)
 - **Reha-Zentrum**: addiert zu Medizin & Reha-Personal — kürzere Verletzungsausfälle und mehr tägliche Regeneration.
@@ -2058,7 +2080,7 @@ Jede Rolle hat eine **Kostenklasse K1–K5** mit einem Grundgehalt (Basisjahr 19
 
 | Klasse | K1 | K2 | K3 | K4 | K5 |
 |---|---|---|---|---|---|
-| Gehalt/Monat (Basis) | 1.200 | 2.500 | 5.000 | 10.000 | 20.000 |
+| Gehalt/Monat (Basis) | 400 | 800 | 1.700 | 3.500 | 8.000 |
 
 Die Gehälter **skalieren mit der Wirtschafts-Basis** (economyScale) über die Jahrzehnte mit. Die Summe aller
 Monatsgehälter wird **monatlich** (am 1. des Monats) als Ausgabe in den Finanzen unter **„Betreuerstab"
@@ -2159,8 +2181,8 @@ Spiel und keiner anderen Aktivität** kollidieren.
 
 | Aktivität | Dauer | Kosten (Basis) | Effekt | Erlös |
 |---|---|---|---|---|
-| Freundschaftsspiel | 1 Tag | keine | Fitness +5, Form +4 | +22.000 (Basis) |
-| Teambuilding-Event | 1–2 Tage | 6.000/Tag | Form +3, Moral ↑ | – |
+| Freundschaftsspiel | 1 Tag | keine | Fitness +5, Form +4 | +7.000 (Basis) |
+| Teambuilding-Event | 1–2 Tage | 1.800/Tag | Form +3, Moral ↑ | – |
 
 ## Buchung & Wirkung
 - **Kosten** werden **sofort bei der Planung** vom Vereinskonto gebucht (ära-gerecht skaliert). Noch nicht
@@ -2291,15 +2313,15 @@ Parallel zur 1. Liga läuft der **Landespokal** als reiner **K.-o.-Wettbewerb**.
 - Ergebnisse, Weiterkommen und Auslosung der nächsten Runde erhältst du als **Nachricht** in der Kategorie **Pokal**.
 
 ## Preisgeld & Einnahmen
-- **Rundenabhängiges Preisgeld** (pro gewonnener Begegnung, in DM):
+- **Rundenabhängiges Preisgeld** (pro gewonnener Begegnung, in DM von 1975, später × Wirtschaftsskala):
 
 | Runde | Prämie |
 |---|---|
-| 1. Hauptrunde | 25.000 DM |
-| Achtelfinale | 50.000 DM |
-| Viertelfinale | 100.000 DM |
-| Halbfinale | 200.000 DM |
-| Finale | 400.000 DM |
+| 1. Hauptrunde | 7.500 DM |
+| Achtelfinale | 15.000 DM |
+| Viertelfinale | 30.000 DM |
+| Halbfinale | 60.000 DM |
+| Finale | 120.000 DM |
 
 - Zusätzlich verbucht der **Ausrichter** (Heimrecht) die **Heimspiel-Einnahmen** aus Eintritt, Fanartikeln und TV-Geldern (etwas höher als in der Liga).
 
@@ -2416,11 +2438,13 @@ Das Preisgeld ist ära-gerecht gestaffelt (Landesmeister-Pokal > Pokalsieger-Pok
 
 | Runde | Landesmeister-Pokal | Pokalsieger-Pokal | Europa-Pokal |
 |---|---|---|---|
-| 1. Runde (nur Europa-Verband) | — | — | 20.000 |
-| Achtelfinale | 50.000 | 40.000 | 40.000 |
-| Viertelfinale | 100.000 | 80.000 | 80.000 |
-| Halbfinale | 200.000 | 160.000 | 160.000 |
-| Finale | 400.000 | 320.000 | 320.000 |
+| 1. Runde (nur Europa-Verband) | — | — | 6.000 |
+| Achtelfinale | 15.000 | 12.000 | 12.000 |
+| Viertelfinale | 30.000 | 24.000 | 24.000 |
+| Halbfinale | 60.000 | 48.000 | 48.000 |
+| Finale | 120.000 | 96.000 | 96.000 |
+
+Werte in DM von 1975 (später × Wirtschaftsskala, ab 1992 im Landesmeister-Wettbewerb bis zum Fünffachen). Das große Geld brachten 1975 die ausverkauften Heimspiele.
 
 ## Ligatabelle — Europapokal-Zonen (1. Liga)
 Die Tabellen-Markierung der 1. Liga zeigt die europäische Qualifikation:
@@ -2517,6 +2541,9 @@ Vereinseinnahmen **und** Fixkosten skalieren gemeinsam mit \`economyScale(Jahr)\
 mitwächst, ohne die Vereine unrealistisch reich werden zu lassen:
 - Heimspiel: Ticket-, Fanartikel-, TV-Erlöse und Leistungsprämie
 - Monatsabschluss: Sponsoring, Platzierungsbonus, Gehälter, Stab, Stadionunterhalt, Trainingsbetrieb, sonstige Kosten
+
+Das Niveau 1975 ist recherchiert (Erstligist ≈ 4,5 Mio. DM Umsatz). Mit dem Index ergibt sich für einen mittleren Erstligisten etwa
+1985 ≈ 11 Mio. DM, 1995 ≈ 30–35 Mio. DM, 2005 ≈ 45 Mio. €, 2015 ≈ 90 Mio. € und 2024 ≈ 220 Mio. €.
 
 ## Währungs-Ära DM → EUR
 Interne Beträge bleiben **nominal in DM**; die Anzeige rechnet ära-gerecht um:

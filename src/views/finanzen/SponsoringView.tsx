@@ -1,6 +1,6 @@
 import { type IconName } from '../../components/Icon';
-import { economyScale, revenueScale, yearOf } from '../../engine/economy';
-import { computeMonthly } from '../../engine/finances';
+import { economyScale, yearOf } from '../../engine/economy';
+import { computeMonthly, clubCommercialScale } from '../../engine/finances';
 import { commercialMultiplier, ensureBrand, internationalWeight } from '../../engine/clubEconomy';
 import { Game, offerToContract } from '../../game/state';
 import { Screen } from '../../shell/navigation';
@@ -21,7 +21,7 @@ export function SponsoringView({ g, onGoto, onChange }: { g: Game; onGoto: (s: S
   const commMult = commercialMultiplier(myClub, year);
   const intW = internationalWeight(year);
   // Vertragswerte (1975-Basis) wachsen mit dem Vermarktungsmarkt und der Marke.
-  const commScale = revenueScale('commercial', year) * commMult;
+  const commScale = clubCommercialScale(myClub, year) * commMult;
   void scale;
   const com = myClub.commerce ?? (myClub.commerce = { cateringMode: 'verpachtung' });
   const row = tableRow(g);
