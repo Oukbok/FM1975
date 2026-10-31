@@ -131,11 +131,20 @@ export function closeSeasonFinances(c: Club, season: string): SeasonFinanceRecor
   return rec;
 }
 
-/** Umsatz der Vorsaison (nominal) oder eine Schätzung, wenn es noch keine Bilanz gibt. */
-export function lastRevenue(c: Club, year: number): number {
+/** Umsatz-Schätzung je Liga-Ebene gegenüber der 1. Liga (ohne Bilanz). */
+const TIER_REVENUE = [1, 1, 0.4, 0.15, 0.08];
+
+/**
+ * Umsatz der Vorsaison (nominal) oder eine Schätzung, wenn es noch keine Bilanz gibt.
+ * Die Schätzung berücksichtigt die Liga-Ebene: Ein neu voll simulierter Zweit- oder
+ * Drittligist wurde sonst wie ein Erstligist eingeschätzt, die KI zahlte Gehälter für
+ * den doppelten bis fünffachen Umsatz und fast die ganze Liga rutschte im ersten Jahr ins Minus.
+ */
+export function lastRevenue(c: Club, year: number, tier = 1): number {
   const h = c.finances.seasonHistory;
   if (h && h.length) return h[h.length - 1].revenue;
-  return (2_000_000 + (c.reputation ?? 50) * 120_000) * economyScale(year);
+  const tf = TIER_REVENUE[Math.max(1, Math.min(4, Math.round(tier)))];
+  return (2_000_000 + (c.reputation ?? 50) * 120_000) * economyScale(year) * tf;
 }
 
 // -----------------------------------------------------------------------------
@@ -305,6 +314,8 @@ export interface AiEconomyContext {
   rng: () => number;
   /** Eigenen Verein ebenfalls automatisch führen (nur Simulation/Tests). */
   autoManageMine?: boolean;
+  /** Liga-Ebene der voll simulierten Liga (1 = 1. Liga), für Umsatz-Schätzungen. */
+  tier?: number;
 }
 
 const MIN_KEEP = 20;
@@ -424,7 +435,7 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
   // etwas mehr). So können sich auch Drittligisten ihren Kader leisten.
   for (const c of league) {
     if (!isAi(c)) continue;
-    const rev = lastRevenue(c, ctx.year);
+    const rev = lastRevenue(c, ctx.year, ctx.tier);
     const rich = Math.max(0, (c.finances.balance - AI_RESERVE * rev) / Math.max(1, rev));
     const quota = 0.62 + Math.min(0.12, rich * 0.1) - (c.finances.balance < 0 ? 0.06 : 0);
     const budgetWeekly = (quota * rev) / scale / 52 / 1.18;
@@ -460,7 +471,7 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
       // Käufer: reichster KI-Verein mit Platz und Geld, sonst Ausland (zahlt nach der Weltkurve).
       const buyer = league
         .filter((b) => b.id !== c.id && isAi(b) && !hasTransferBan(b, ctx.season) && b.playerIds.length < MAX_SQUAD
-          && b.finances.balance - domestic > 0.3 * lastRevenue(b, ctx.year))
+          && b.finances.balance - domestic > 0.3 * lastRevenue(b, ctx.year, ctx.tier))
         .sort((a, b) => b.finances.balance - a.finances.balance)[0] ?? null;
       const abroad = Math.round(Math.max(sell.contract.transferValue, cappedMarketValue(baseMarketValue(sell), ctx.year, 'world') * 0.8) * scale);
       const fee = buyer ? domestic : abroad;
@@ -477,7 +488,7 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
   const order = [...league].sort((a, b) => b.finances.balance - a.finances.balance);
   for (const c of order) {
     if (!isAi(c) || hasTransferBan(c, ctx.season)) continue;
-    const rev = lastRevenue(c, ctx.year);
+    const rev = lastRevenue(c, ctx.year, ctx.tier);
     for (let k = 0; k < 2; k++) {
       const surplus = c.finances.balance - AI_RESERVE * rev;
       if (surplus < 0.05 * rev) break;
@@ -534,7 +545,7 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
   //    Gelände/Stadion ausbauen, Gehälter über Markt (Prämien, Spitzengehälter).
   for (const c of league) {
     if (!isAi(c)) continue;
-    const rev = lastRevenue(c, ctx.year);
+    const rev = lastRevenue(c, ctx.year, ctx.tier);
     const excess = c.finances.balance - AI_RESERVE * rev;
     if (excess <= 0) continue;
     const ratio = excess / Math.max(1, rev);

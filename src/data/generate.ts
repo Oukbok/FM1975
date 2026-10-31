@@ -16,6 +16,7 @@ import { buildAutoTactics } from '../engine/lineupAI';
 import { makeInfrastructure, applyFacilityEffects } from '../engine/infrastructure';
 import { generateShirtOffers, generateBandenOffers } from '../engine/finances';
 import { academyStartingCohort } from '../engine/youth';
+import { economyScale } from '../engine/economy';
 import type { ClubCommerce, SponsorOffer } from '../types';
 import type { EuroClub } from './europe';
 
@@ -440,6 +441,10 @@ export function buildProClub(
     club.stadium.averageAttendanceRate = Math.max(0.3, Math.min(0.85, 0.3 + (src.strength - 58) * 0.025 + rng() * 0.08));
     club.stadium.ticketPrice = Math.max(6, Math.min(14, Math.round(src.strength / 7)));
     club.reputation = Math.max(40, Math.min(80, Math.round(src.strength - 6)));
+    // Startguthaben ist nominal: auf das Wirtschaftsniveau des Jahres hochrechnen. Sonst
+    // begann ein später aufsteigender oder neu vollsimulierter Verein mit 1975-Beträgen
+    // (z. B. 3,6 Mio. DM bei 200 Mio. Jahresumsatz) und rutschte sofort ins Minus.
+    club.finances.balance = Math.round(club.finances.balance * economyScale(Number(currentDate.slice(0, 4))));
     // Gehaltsniveau unterhalb der 1. Liga deutlich niedriger.
     const wf = Math.max(0.3, Math.min(1, (src.strength - 50) / 25));
     for (const id of club.playerIds) { const p = players[id]; if (p) p.contract.weeklyWage = Math.round(p.contract.weeklyWage * wf); }
