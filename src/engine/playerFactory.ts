@@ -74,6 +74,10 @@ export function makePersonality(rng: () => number) {
   return { professionalism: tri(), ambition: tri(), adaptability: tri() };
 }
 
+/** Weiche Potenzialgrenze erzeugter Spieler: darüber bleibt nur ELITE_KEEP der Luft (Weltklasse ≥85 ist selten). */
+const ELITE_SOFT = 82;
+const ELITE_KEEP = 0.5;
+
 /** Grundpotenzial abhängig von Alter und heutiger Stärke (OVR-Skala). */
 export function rollBasePotential(age: number, strength: number, rng: () => number): number {
   const headroomByAge = age <= 17 ? 18 : age <= 19 ? 14 : age <= 21 ? 10 : age <= 23 ? 6 : age <= 26 ? 3 : 1;
@@ -81,6 +85,8 @@ export function rollBasePotential(age: number, strength: number, rng: () => numb
   // Je näher an der Weltspitze, desto weniger Luft nach oben.
   const room = Math.pow(Math.max(0, 99 - strength) / 25, 0.9);
   let pot = strength + headroomByAge * (0.2 + u * 1.2) * room;
+  // Weltklasse ist selten: oberhalb von ELITE_SOFT zählt nur ein Teil der Luft nach oben.
+  if (pot > ELITE_SOFT) pot = ELITE_SOFT + (pot - ELITE_SOFT) * ELITE_KEEP;
   if (age <= 20 && rng() < 0.02) pot += 5 + rng() * 6; // seltenes Ausnahmetalent
   return clamp(pot, strength, 96);
 }
