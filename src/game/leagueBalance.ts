@@ -7,14 +7,21 @@
 //   verglichen. Liegt sie zu hoch, werden neue Jugendjahrgänge etwas schwächer
 //   erzeugt (zu niedrig: etwas stärker). Bestehende Spieler werden nie
 //   nachträglich verändert.
+// • Breite der Spitze: Gibt es in der 1. Liga mehr als ELITE_MAX Spieler mit
+//   Stärke ≥ 85, setzt die Weltklasse-Bremse der Entwicklung früher ein (bei
+//   zu wenigen später) – Weltklasse bleibt selten und begehrt.
 // =============================================================================
 import { makeMessage, pushMessage } from '../engine/messages';
 import { setYouthPotentialShift } from '../engine/youth';
+import { setEliteShift } from '../engine/development';
 import { leagueClubs } from './season';
 import { Game } from './state';
 
 const TARGET: Record<number, number> = { 1: 72.5 };
 const SHIFT_MIN = -0.6, SHIFT_MAX = 0.3;
+/** Zielkorridor der Spieler ≥ 85 in der 1. Liga. */
+const ELITE_MIN = 8, ELITE_MAX = 13;
+const ELITE_STEP = 0.5;
 
 /** Stärke aller Spieler der eigenen Liga (außer eigener Verein) vor der Bewertung merken. */
 export function snapshotLeague(g: Game): Map<string, number> {
@@ -53,8 +60,10 @@ export function seasonLeagueBalance(g: Game): void {
   const lb0 = g.leagueBalance ?? { shift: 0, history: [] };
   if ((g.leagues?.playerDivision?.tier ?? 1) !== 1) {
     lb0.shift = Math.round(lb0.shift * 0.8 * 100) / 100;
+    lb0.elite = Math.round((lb0.elite ?? 0) * 0.8 * 100) / 100;
     g.leagueBalance = lb0;
     setYouthPotentialShift(lb0.shift);
+    setEliteShift(lb0.elite);
     return;
   }
   const ps = leagueClubs(g).flatMap((c) => c.playerIds.map((id) => g.players[id]).filter(Boolean));
@@ -66,13 +75,22 @@ export function seasonLeagueBalance(g: Game): void {
   else if (avg < target - 1) lb.shift += 0.1;
   else lb.shift *= 0.5;
   lb.shift = Math.round(Math.max(SHIFT_MIN, Math.min(SHIFT_MAX, lb.shift)) * 100) / 100;
-  lb.history.push({ season: g.season, avg: Math.round(avg * 10) / 10, shift: lb.shift });
+  // Breite der Spitze: zu viele Weltklasse-Spieler → Bremse greift früher (negativ).
+  const n85 = ps.filter((p) => p.overall >= 85).length;
+  let elite = lb.elite ?? 0;
+  if (n85 > ELITE_MAX) elite -= ELITE_STEP;
+  else if (n85 < ELITE_MIN) elite += ELITE_STEP;
+  else elite *= 0.5;
+  lb.elite = Math.round(Math.max(-3, Math.min(3, elite)) * 100) / 100;
+  lb.history.push({ season: g.season, avg: Math.round(avg * 10) / 10, shift: lb.shift, n85, elite: lb.elite });
   if (lb.history.length > 60) lb.history.splice(0, lb.history.length - 60);
   g.leagueBalance = lb;
   setYouthPotentialShift(lb.shift);
+  setEliteShift(lb.elite);
 }
 
 /** Beim Laden/Tageswechsel den gespeicherten Wert setzen. */
 export function applyLeagueBalance(g: Game): void {
   setYouthPotentialShift(g.leagueBalance?.shift ?? 0);
+  setEliteShift(g.leagueBalance?.elite ?? 0);
 }

@@ -122,6 +122,7 @@ function report(game: Game) {
     console.log(`   WINTER ${cur?.phase ?? '-'} Turniere ${cur?.tournaments?.length ?? 0}${cur?.masters?.done ? ` Masters ${nm(cur.masters.result.ranking[0])} (${cur.masters.city})` : ''} | KI-Lager ${Object.entries(dest).map(([k, v]) => k + ':' + v).join(' ')}`);
   }
   if (process.env.YOUTH) youthReport(game, ps);
+  if (process.env.TOP) topReport(game, ps);
   const w = game.world;
   if (w && w.history.length) {
     const h = w.history[w.history.length - 1];
@@ -228,7 +229,8 @@ function balanceReport(game: Game, ps: Player[]) {
   console.log(`   BAL Tore/Sp ${row.tore.toFixed(2)} Heim ${(row.heim * 100).toFixed(0)}% Remis ${(row.remis * 100).toFixed(0)}% | Verl. ${inj} verletzt Nov/Mär ${snap.join('/')} (${Math.round(injDays / Math.max(1, ps.length))} T/Sp.) | TW je Verein 0:${tw.filter((n) => n === 0).length} 1:${tw.filter((n) => n === 1).length} 2+:${tw.filter((n) => n >= 2).length}`
     + ` | Alter ≤21 ${pct((a) => a <= 21)}% 22–25 ${pct((a) => a >= 22 && a <= 25)}% 26–29 ${pct((a) => a >= 26 && a <= 29)}% 30–33 ${pct((a) => a >= 30 && a <= 33)}% ≥34 ${pct((a) => a >= 34)}%`
     + ` | weg ${gone} (≥31: ${goneOld}) | Jugend-Eigengew. ${youthOrigin} (bester ${Math.max(0, ...ps.filter((p) => p.id.includes('_y_') && !p.development.legendId).map((p) => p.overall))}) U21≥75 ${youngStars}`);
-  const origin = (p: Player) => p.development.legendId ? 'Legende' : p.id.includes('_y_') ? 'Jugend' : /_r\d{4}_/.test(p.id) ? 'Nachrücker' : /_t\d{4}_/.test(p.id) ? 'Ausland' : /_p\d+$/.test(p.id) ? 'Start' : 'sonst';
+  const legRar = (p: Player) => { const sd = LEGENDS.find((l) => l.id === p.development.legendId); return sd?.rarity ?? (sd && (sd.peak ?? 0) >= 91 ? 'weltklasse' : 'national'); };
+  const origin = (p: Player) => p.development.legendId ? (p.overall >= 85 ? 'Legende-' + legRar(p).slice(0, 4) : 'Legende') : p.id.includes('_y_') ? 'Jugend' : /_r\d{4}_/.test(p.id) ? 'Nachrücker' : /_t\d{4}_/.test(p.id) ? 'Ausland' : /_p\d+$/.test(p.id) ? 'Start' : 'sonst';
   const stars = ps.filter((p) => p.overall >= 85);
   const byO: Record<string, number> = {}; for (const p of stars) byO[origin(p)] = (byO[origin(p)] ?? 0) + 1;
   console.log(`   BAL ≥85 nach Herkunft ${Object.entries(byO).map(([k, v]) => k + ' ' + v).join(', ')} | Ø Alter ${avg(stars.map((p) => p.age)).toFixed(1)}`);
@@ -297,6 +299,47 @@ function youthSummary(game: Game) {
   console.log(`YOUTH wenig Investition: ${stat(rows.slice(-third))}`);
   void game;
 }
+// TOP=1: Breite der Spitze (Liga 1): Spieler ≥85/≥80 nach Herkunft, Top-10,
+// Abstand Spitze/Keller, Meister. Zusammenfassung je Jahrzehnt am Ende.
+// -----------------------------------------------------------------------------
+const topStat = { startIds: null as Set<string> | null, rows: [] as { y: number; n85: number; n80: number; avg: number; top10: number; gap: number; leg85: number; champ: string }[], champs: new Map<string, number>(), peak: new Map<string, number>() };
+function topReport(game: Game, ps: Player[]) {
+  if (!topStat.startIds) topStat.startIds = new Set(Object.keys(game.players));
+  const y0 = Number(game.season.slice(0, 4));
+  if ((game.leagues?.playerDivision?.tier ?? 1) !== 1) { console.log('   TOP (nicht Liga 1)'); return; }
+  const legRar = (p: Player) => { const sd = LEGENDS.find((l) => l.id === p.development.legendId); return sd?.rarity ?? (sd && (sd.peak ?? 0) >= 91 ? 'weltklasse' : 'national'); };
+  const origin = (p: Player) => p.development.legendId ? (p.overall >= 85 ? 'Legende-' + legRar(p).slice(0, 4) : 'Legende') : p.id.includes('_y_') ? 'Jugend' : /_r\d{4}_/.test(p.id) ? 'Nachrücker'
+    : /_imp\d{4}_/.test(p.id) ? 'KI-Ausland' : /_uk\d{4}_/.test(p.id) ? 'KI-unten' : /_t\d{4}_/.test(p.id) ? 'Welt'
+    : /_p\d+$/.test(p.id) ? (topStat.startIds!.has(p.id) ? 'Start' : 'Aufsteiger') : 'sonst';
+  const ovr = ps.map((p) => p.overall).sort((a, b) => b - a);
+  const by = (min: number) => { const o: Record<string, number> = {}; for (const p of ps) if (p.overall >= min) o[origin(p)] = (o[origin(p)] ?? 0) + 1; return Object.entries(o).sort((a, b) => b[1] - a[1]).map(([k, v]) => k + ' ' + v).join(', '); };
+  const lc = leagueClubs(game);
+  const t11 = lc.map((c) => { const o = c.playerIds.map((id) => game.players[id]?.overall ?? 0).sort((a, b) => b - a).slice(0, 11); return o.reduce((a, b) => a + b, 0) / Math.max(1, o.length); }).sort((a, b) => b - a);
+  const gap = avg(t11.slice(0, 3)) - avg(t11.slice(-3));
+  const clubT11 = lc.map((c) => ({ c, v: (() => { const o = c.playerIds.map((id) => game.players[id]?.overall ?? 0).sort((a, b) => b - a).slice(0, 11); return o.reduce((a, b) => a + b, 0) / Math.max(1, o.length); })() })).sort((a, b) => b.v - a.v);
+  const top3 = new Set(clubT11.slice(0, 3).map((x) => x.c.id));
+  const starsTop3 = ps.filter((p) => p.overall >= 85 && top3.has(p.clubId)).length;
+  const played = game.fixtures.filter((m) => m.result).length;
+  const champ = played > 100 ? game.table.rows?.[0]?.clubId ?? '' : '';
+  if (champ) topStat.champs.set(champ, (topStat.champs.get(champ) ?? 0) + 1);
+  for (const p of ps) if (p.overall >= 85) topStat.peak.set(origin(p), Math.max(topStat.peak.get(origin(p)) ?? 0, p.overall));
+  const row = { y: y0, n85: ovr.filter((o) => o >= 85).length, n80: ovr.filter((o) => o >= 80).length, avg: avg(ovr), top10: avg(ovr.slice(0, 10)), gap, leg85: ps.filter((p) => p.overall >= 85 && p.development.legendId).length, champ };
+  const lbh = game.leagueBalance?.history?.[game.leagueBalance.history.length - 1] as { elite?: number } | undefined;
+  topStat.rows.push(row);
+  const pot = ps.filter((p) => p.age <= 23).map((p) => p.development.basePotential ?? p.overall);
+  console.log(`   TOP ≥90 ${ovr.filter((o) => o >= 90).length} ≥85 ${row.n85} [${by(85)}] | ≥80 ${row.n80} [${by(80)}] | max ${ovr[0]} | Top11 Spitze-Keller ${gap.toFixed(1)} (oben ${avg(t11.slice(0, 3)).toFixed(1)} unten ${avg(t11.slice(-3)).toFixed(1)}, ≥85 bei Top-3 ${starsTop3}) | U23 Basis-Pot ≥85: ${pot.filter((x) => x >= 85).length} | Bremse ${lbh?.elite ?? '-'}`);
+}
+function topSummary() {
+  const name = (id: string) => g.clubs[id]?.shortName ?? g.simClubs?.[id]?.shortName ?? id;
+  for (const [a, b] of [[1975, 1985], [1985, 1995], [1995, 2005], [2005, 2015], [2015, 2030]]) {
+    const r = topStat.rows.filter((x) => x.y >= a && x.y < b);
+    if (!r.length) continue;
+    const ch = new Set(r.map((x) => x.champ).filter(Boolean));
+    console.log(`TOP ${a}–${b - 1}: ≥85 ${avg(r.map((x) => x.n85)).toFixed(1)} (Leg. ${avg(r.map((x) => x.leg85)).toFixed(1)}) ≥80 ${avg(r.map((x) => x.n80)).toFixed(1)} Ø ${avg(r.map((x) => x.avg)).toFixed(1)} Top10 ${avg(r.map((x) => x.top10)).toFixed(1)} Spitze-Keller ${avg(r.map((x) => x.gap)).toFixed(1)} | Meister ${ch.size} verschiedene`);
+  }
+  const t = [...topStat.champs.entries()].sort((a, b) => b[1] - a[1]);
+  console.log(`TOP Meister: ${t.length} verschiedene: ${t.map(([id, n]) => name(id) + ' ' + n).join(', ')} | Höchstwert je Herkunft: ${[...topStat.peak.entries()].map(([k, v]) => k + ' ' + v).join(', ')}`);
+}
 
 const t0 = Date.now();
 report(g);
@@ -345,6 +388,7 @@ if (process.env.BAL) {
   }
 }
 if (process.env.YOUTH) youthSummary(g);
+if (process.env.TOP) topSummary();
 console.log(`fertig in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 const legends = [...Object.values(g.players), ...Object.values(g.youthPlayers)].filter((p) => p.development.legendId);
 if (process.env.LEGENDLIST) for (const p of legends) console.log('Legende', p.fullName.padEnd(24), p.naturalPosition, 'Alter', p.age, 'OVR', p.overall, 'Verein', g.clubs[p.clubId]?.shortName ?? p.clubId, p.isYouth ? '(Jugend)' : '', 'Hist', p.development.abilityHistory.map((h) => h.ability).join(','));

@@ -174,17 +174,24 @@ const COUNTRY_ORIGIN: Record<string, string> = {
   Tschechoslowakei: 'cze', Polen: 'pol', Oesterreich: 'aut', Tuerkei: 'tur', Schweiz: 'sui', Schweden: 'swe', Rumaenien: 'hun', Daenemark: 'den', Ukraine: 'rus', Russland: 'rus', Kroatien: 'cro', Serbien: 'srb', Slowakei: 'cze', Tschechien: 'cze',
 };
 
+/**
+ * Höchste Erzeugungsstärke deutscher Kader (Start, Aufsteiger, Pokal-Amateure):
+ * Weltklasse (≥85) entsteht durch Entwicklung, nicht am Reißbrett.
+ */
+const GEN_CAP = 84;
+
 // Erzeugungsjahr (1975 beim Spielstart; später für aufsteigende/neue Vereine das aktuelle Jahr).
 let genYear = 1975;
 let genDate = CURRENT_DATE;
 function setGenDate(date: string): void { genDate = date; genYear = Number(date.slice(0, 4)); }
 
-function makePlayer(clubId: string, index: number, pos: Position, strength: number, shirt: number, origin?: Origin): Player {
+/** @param cap Obergrenze der Erzeugungsstärke (deutsche Vereine 84, Europapokal-Gegner 88). */
+function makePlayer(clubId: string, index: number, pos: Position, strength: number, shirt: number, origin?: Origin, cap = GEN_CAP): Player {
   // Altersverteilung um 25 (18–34), wenige ganz Junge/ganz Alte.
   const age = Math.max(18, Math.min(34, Math.round(25 + (rng() + rng() + rng() - 1.5) * 9)));
   const p = createPlayer({
     id: `${clubId}_p${index}`, clubId, pos, age,
-    strength: Math.max(35, Math.min(88, strength + ri(-8, 8))),
+    strength: Math.max(35, Math.min(cap, strength + ri(-8, 8))),
     year: genYear, date: genDate, rng, shirt, origin,
   });
   p.form = ri(45, 75);
@@ -592,7 +599,7 @@ export function buildEuroClubFull(
   const playerIds: string[] = [];
   let shirt = 1;
   SQUAD_TEMPLATE.forEach((pos, idx) => {
-    const p = makePlayer(euro.id, idx, pos, strengthBase, shirt++, ORIGINS[COUNTRY_ORIGIN[euro.country] ?? 'eng']);
+    const p = makePlayer(euro.id, idx, pos, strengthBase, shirt++, ORIGINS[COUNTRY_ORIGIN[euro.country] ?? 'eng'], 88);
     players[p.id] = p;
     playerIds.push(p.id);
   });

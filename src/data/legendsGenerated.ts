@@ -149,6 +149,10 @@ export function generateLegends(existing: LegendSeed[]): LegendSeed[] {
       { rarity: rng() < 0.5 ? 'weltklasse' : 'national', foreign: true, ddr: false },
       { rarity: rng() < 0.4 ? 'national' : 'liebling', foreign: true, ddr: false },
     ];
+    // Weltklasse bleibt selten: drei von vier Weltklasse-Plätzen werden zum
+    // Nationalspieler (eigener Zufall, damit Namen und Profile gleich bleiben).
+    const thin = mulberry32(year * 104729 + 3);
+    for (const slot of slots) if (slot.rarity === 'weltklasse' && thin() < 0.75) slot.rarity = 'national';
     slots.forEach((slot, i) => {
       let pos = pickW(rng, POS_WEIGHTS);
       if (pos === 'LIB' && year > 1975) pos = 'VS';

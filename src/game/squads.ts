@@ -87,7 +87,8 @@ export function fillSquad(game: Game, club: Club, date: string, min = MIN_SQUAD,
   while (club.playerIds.length < min) {
     const pos = neededPosition(game, club);
     const age = 18 + Math.floor(Math.random() * 6);
-    const strength = Math.round(Math.max(40, Math.min(86, level - 8 + (age - 18) * 1.5 + anchor + (Math.random() - 0.5) * 10)));
+    // Nachrücker sind nie fertige Weltklasse (höchstens 82).
+    const strength = Math.round(Math.max(40, Math.min(82, level - 8 + (age - 18) * 1.5 + anchor + (Math.random() - 0.5) * 10)));
     const p = createPlayer({
       id: `${club.id}_r${year}_${n++}_${Math.floor(Math.random() * 1e6)}`, clubId: club.id, pos, age, strength,
       year, date, rng: Math.random, shirt: 0,

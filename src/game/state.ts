@@ -117,7 +117,7 @@ export interface Game {
   eventCooldowns?: Record<string, string>;
   /** WM-Euphorie: Zuschauer-Faktor für einen Zeitraum. */
   euphoria?: { from: string; to: string; factor: number };
-  leagueBalance?: { shift: number; history: { season: string; avg: number; shift: number }[] };
+  leagueBalance?: { shift: number; history: { season: string; avg: number; shift: number; n85?: number; elite?: number }[]; /** Verschiebung der Weltklasse-Bremse in OVR-Punkten (−3 … +3, engine/development.ts). */ elite?: number };
   /** Bereits erschienene Legenden (IDs aus data/legends.ts). */
   spawnedLegends?: string[];
   /** Einstellung „Historische Spieler“ (Standard: fiktive Legenden). */

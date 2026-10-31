@@ -67,7 +67,7 @@ export const RARITY_CORRIDOR: Record<LegendRarity, [number, number]> = {
 const ROLL_BANDS: Record<LegendRarity, [number, number, number][]> = {
   // [Anteil, von, bis]
   weltklasse: [[0.7, 88, 95], [0.2, 83, 87], [0.1, 76, 82]],
-  national: [[0.4, 82, 87], [0.45, 77, 81], [0.15, 72, 76]],
+  national: [[0.25, 82, 86], [0.5, 77, 81], [0.25, 72, 76]],
   liebling: [[0.5, 75, 81], [0.35, 70, 74], [0.15, 65, 69]],
 };
 

@@ -663,7 +663,14 @@ Je Spieler siehst du **Name, Verein, Position, Alter** sowie **alter → neuer O
 Nach der Winter- und der Saison-Bewertung meldet der **Liga-Ticker** die größten Gewinner und Verlierer der anderen Vereine deiner Liga. Junge Spieler mit großen Sprüngen sind die Transferziele von morgen.
 
 ## Liga-Gleichgewicht
-Zum 1. Juli vergleicht das Spiel die Durchschnittsstärke der 1. Liga mit dem Zielwert **72,5**. Liegt sie mehr als einen Punkt darüber, werden die **neuen** Jugendjahrgänge aller Akademien um 0,1 Sterne Potenzial schwächer erzeugt (bis −0,6), liegt sie darunter, etwas stärker (bis +0,3); im Zielkorridor läuft die Korrektur wieder aus. Bestehende Spieler werden nie nachträglich verändert. So bleibt die Liga über Jahrzehnte vergleichbar, ohne dass dein Kader bestraft wird.`,
+Zum 1. Juli vergleicht das Spiel die Durchschnittsstärke der 1. Liga mit dem Zielwert **72,5**. Liegt sie mehr als einen Punkt darüber, werden die **neuen** Jugendjahrgänge aller Akademien um 0,1 Sterne Potenzial schwächer erzeugt (bis −0,6), liegt sie darunter, etwas stärker (bis +0,3); im Zielkorridor läuft die Korrektur wieder aus. Bestehende Spieler werden nie nachträglich verändert. So bleibt die Liga über Jahrzehnte vergleichbar, ohne dass dein Kader bestraft wird.
+
+## Weltklasse ist selten
+Spieler mit Stärke **85 oder mehr** sind die Ausnahme: In der 1. Liga gibt es davon meist nur **rund 8 bis 13** – oft sind Legenden darunter, gelegentlich ein Star aus einer Akademie.
+- **Erzeugte Spieler** (Startkader, Aufsteiger, Nachrücker, Zugänge aus dem Ausland oder von unterklassigen Vereinen) kommen nie als fertige Weltklasse ins Spiel: höchstens 84 (Nachrücker 82, Ausland 83, unterklassig 79). Auch ihr verdecktes Potenzial wird oberhalb von 82 deutlich gestaucht – nur seltene Ausnahmetalente haben wirklich Luft bis ganz nach oben.
+- **Weltklasse-Bremse:** Ab Stärke 82 wird jeder weitere Punkt schwerer (je Punkt rund 15 % langsamer, höchstens auf ein Fünftel des Tempos). Spitzentraining (gute Anlagen, großer Verein) schiebt den Beginn um bis zu 3 Punkte nach hinten – Weltklasse reift eher bei den Großen. Legenden spüren die Bremse etwas schwächer (80 %).
+- **Breite der Spitze:** Zum 1. Juli zählt das Liga-Gleichgewicht auch die Spieler ab 85 in der 1. Liga. Sind es mehr als 13, setzt die Bremse im Folgejahr einen halben Punkt früher ein (bis 3 Punkte), bei weniger als 8 entsprechend später; im Korridor läuft die Verschiebung wieder aus.
+Für dich heißt das: Ein 85er ist ein echter Unterschiedsspieler – teuer, begehrt und schwer zu ersetzen.`,
   },
   {
     id: 'tactics',
@@ -1577,7 +1584,7 @@ Unter **Statistiken → Ruhmeshalle** siehst du die größten Karrieren, deine V
 Über 450 erfundene **Legenden** sind über die Jahrgänge 1940–2010 verteilt (dazu einige handverlesene bis in die 2020er): je Jahrgang vier deutsche und zwei aus dem Ausland. Wer sie wird, steht fest – **was** aus ihnen wird, nicht.
 
 ### Profil einer Legende
-- **Seltenheit** – Weltklasse, Nationalspieler oder Publikumsliebling. Sie legt einen verdeckten **Talent-Korridor** fest (Weltklasse 4,0–5,0 ★, Nationalspieler 3,5–4,5 ★, Publikumsliebling 3,0–4,0 ★). Beim Auftauchen würfelt das Spiel daraus das wahre Ziel aus: Von zehn Weltklasse-Legenden werden etwa sieben Stars, zwei gute Profis, eine bleibt hinter den Erwartungen. Deine Scouts sehen nur den Korridor.
+- **Seltenheit** – Weltklasse, Nationalspieler oder Publikumsliebling. Sie legt einen verdeckten **Talent-Korridor** fest (Weltklasse 4,0–5,0 ★, Nationalspieler 3,5–4,5 ★, Publikumsliebling 3,0–4,0 ★). Beim Auftauchen würfelt das Spiel daraus das wahre Ziel aus: Von zehn Weltklasse-Legenden werden etwa sieben Stars, zwei gute Profis, eine bleibt hinter den Erwartungen; Nationalspieler werden meist gute Profis um 80, nur wenige Stars (85+). Weltklasse ist selten: Mit den handverlesenen Legenden bringt im Schnitt nicht einmal jeder Jahrgang eine hervor. Deine Scouts sehen nur den Korridor.
 - **Archetyp** – Torwart-Katze, Libero, Ausputzer, Manndecker, Abräumer, Regisseur, Motor, Spielmacher, Flügelflitzer, Strafraumstürmer, Kopfballungeheuer, Dribbelkünstler, Freistoß-Spezialist … Er bestimmt, welche Attribute von Anfang an herausragen.
 - **Signatur-Werte** – ein oder zwei Attribute, die im Höhepunkt einen festen Bereich erreichen (z. B. Kopfball 90–95). Sie wachsen bevorzugt.
 - **Entwicklungskurve** – Frühstarter springen mit 17–20, Spätzünder erst mit 22–26.
