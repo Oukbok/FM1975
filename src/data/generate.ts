@@ -6,7 +6,7 @@ import { datasetCrest, datasetKits } from './dataset/apply';
 // =============================================================================
 
 import { createPlayer } from '../engine/playerFactory';
-import { maybeRisingStar, seedClubStars } from '../engine/clubStars';
+import { maybeRisingStar, seedClubStars, seedStarRng, starRng } from '../engine/clubStars';
 import { ORIGINS, Origin } from './origins';
 import {
   Player, Club, PlayerAttributes, Position, AttributeKey,
@@ -16,7 +16,7 @@ import {
 import { buildAutoTactics } from '../engine/lineupAI';
 import { makeInfrastructure, applyFacilityEffects } from '../engine/infrastructure';
 import { generateShirtOffers, generateBandenOffers } from '../engine/finances';
-import { academyStartingCohort } from '../engine/youth';
+import { academyStartingCohort, getYouthSalt } from '../engine/youth';
 import { economyScale } from '../engine/economy';
 import type { ClubCommerce, SponsorOffer } from '../types';
 import type { EuroClub } from './europe';
@@ -208,7 +208,7 @@ function makePlayer(clubId: string, index: number, pos: Position, strength: numb
   p.form = ri(45, 75);
   p.transferListed = rng() < 0.08;
   p.contract.expiryDate = `${1976 + ri(0, 5)}-06-30`;
-  maybeRisingStar(p, strength, rng); // kommende Stars (engine/clubStars.ts)
+  maybeRisingStar(p, strength, starRng); // kommende Stars (engine/clubStars.ts)
   return p;
 }
 
@@ -325,7 +325,7 @@ function buildClubFromSeed(
   });
 
   // Starke Kader bringen ihre Leistungsträger mit (engine/clubStars.ts).
-  seedClubStars(playerIds, players, rng);
+  seedClubStars(playerIds, players, starRng);
 
   const infrastructure = makeInfrastructure(seed.reputation);
   const youthPlayerIds: string[] = [];
@@ -367,6 +367,7 @@ function buildClubFromSeed(
 
 export function generateWorld(managedClubId: string): GeneratedWorld {
   _seed = 1980; // reset für Determinismus
+  seedStarRng(getYouthSalt());
   const clubs: Record<string, Club> = {};
   const players: Record<string, Player> = {};
   const youthPlayers: Record<string, Player> = {};

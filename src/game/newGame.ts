@@ -20,7 +20,7 @@ import { autoFillLineup } from '../engine/lineupAI';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { AppSettings, loadGame, loadSettings, saveSettings } from '../engine/save';
 import { createDefaultWeeklyPlan } from '../engine/weeklyTraining';
-import { academyStartingCohort, generateYouthPlayer } from '../engine/youth';
+import { academyStartingCohort, generateYouthPlayer, setYouthSalt } from '../engine/youth';
 import { initWorld } from '../engine/world';
 import { makeCandidates } from '../engine/staffPeople';
 import { allocateTv, commercialAnnualFor, isLeagueClub, refreshMarketValues } from '../engine/clubEconomy';
@@ -42,6 +42,9 @@ export function createNewGame(opts: NewGameOptions): Game {
   // Punktesystem historisch fest ableiten (Spielstart immer 1975/76 → 2-Punkte-Regel).
   // Die Umstellung auf 3 Punkte erfolgt automatisch beim Meilenstein 1995/96.
   const pointSystem = historicPointSystem('1975/76');
+  // Eigenes Salz je Spiel: Talente entstehen in jedem Spiel anders (engine/youth.ts).
+  const youthSalt = `|${Math.floor(Math.random() * 2 ** 31).toString(36)}`;
+  setYouthSalt(youthSalt);
   const world = generateWorld(opts.managedClubId);
   // --- Start in der 2. Liga? Dann wird deren Staffel zur Spielerliga (volle Kader),
   //     die 1. Liga läuft simuliert. Jeder Verein ist wählbar. ---
@@ -163,6 +166,7 @@ export function createNewGame(opts: NewGameOptions): Game {
     simClubs,
     appliedReforms: [],
     financeLevel: FINANCE_LEVEL,
+    youthSalt,
   };
   // Startsaison-Meilensteine (1975/76) sofort auslösen (Effekte); erklärt werden sie im Saison-Briefing.
   fireTimelineForSeason(g0, '1975/76', calendar.currentDate, true);

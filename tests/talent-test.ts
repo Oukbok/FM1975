@@ -55,6 +55,18 @@ const young80 = young.filter((p) => p.overall >= 80).length;
 console.log(`Startkader: ${young.length} Spieler ≤ 20 J., davon ≥ 80: ${young80}`);
 if (young80 > Math.max(3, young.length * 0.03)) fail('Zu viele fertige Junge im Startkader');
 
+// 3b) Jedes Spiel würfelt seine Talente neu (kein fest geplanter Star beim selben Verein).
+const g2 = createNewGame({
+  managedClubId: 'mgl',
+  manager: { name: 'T', nationality: 'GER', birthYear: 1940, style: 'balanced', background: 'newcomer' } as any,
+  difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300,
+});
+if (!g.youthSalt || g.youthSalt === g2.youthSalt) fail('Kein eigenes Talent-Salz je Spiel');
+const sameYouth = Object.keys(g.youthPlayers).filter((id) => g2.youthPlayers[id]);
+const samePot = sameYouth.filter((id) => g.youthPlayers[id].development.potentialAbility === g2.youthPlayers[id].development.potentialAbility).length;
+console.log(`Zwei neue Spiele: ${sameYouth.length} gleiche Jugend-IDs, davon gleiches Potenzial ${samePot}`);
+if (sameYouth.length && samePot > sameYouth.length * 0.4) fail('Jugendtalente in zwei Spielen fast identisch');
+
 // 4) Migration: alte Felder entfernen, idempotent.
 const p0 = Object.values(g.players)[0];
 Object.assign(p0.development as object, { legendId: 'lg_1954_1', legendBoost: 1.8, legendCurve: 'frueh', legendSignature: [{ attr: 'heading', min: 90, max: 95 }] });

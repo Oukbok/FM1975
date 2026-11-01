@@ -103,6 +103,8 @@ export interface Game {
   /** WM-Euphorie: Zuschauer-Faktor für einen Zeitraum. */
   euphoria?: { from: string; to: string; factor: number };
   leagueBalance?: { shift: number; history: { season: string; avg: number; shift: number; n85?: number; elite?: number }[]; /** Verschiebung der Weltklasse-Bremse in OVR-Punkten (−5 … +4, engine/development.ts). */ elite?: number; /** Gedächtnisanteil des Reglers (±2). */ eliteI?: number };
+  /** Salz der Talent-Würfel (engine/youth.ts `setYouthSalt`); fehlt bei alten Spielständen. */
+  youthSalt?: string;
   /** Datensatz, mit dem dieses Spiel begonnen wurde. */
   datasetId?: string;
   datasetName?: string;

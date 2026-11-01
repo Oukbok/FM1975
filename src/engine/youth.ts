@@ -163,6 +163,14 @@ function initialScoutRange(rand: () => number, truePot: number, academyLevel: nu
 /** Liga-Gleichgewicht: Verschiebung des Jugendpotenzials in Sternen (game/leagueBalance.ts). */
 let youthPotentialShift = 0;
 export function setYouthPotentialShift(stars: number): void { youthPotentialShift = stars; }
+/**
+ * Spielstand-Salz für die Talent-Würfel: Ohne es entstünde in jedem neuen Spiel
+ * beim selben Verein im selben Jahrgang dasselbe Talent (verkappte Legende).
+ * Alte Spielstände ohne Salz würfeln wie bisher.
+ */
+let youthSalt = '';
+export function setYouthSalt(salt: string): void { youthSalt = salt; }
+export function getYouthSalt(): string { return youthSalt; }
 
 /** Zusatzoptionen: Breitensport-Auffüller oder Rekrutierungsereignis (game/youthRecruit.ts). */
 export interface YouthGenOpts {
@@ -205,7 +213,7 @@ export function generateYouthPlayer(
   age?: number,
   opts: YouthGenOpts = {},
 ): Player {
-  const rand = mulberry32(hashSeed(`${clubId}|${uniqueSeed}`));
+  const rand = mulberry32(hashSeed(`${clubId}|${uniqueSeed}${youthSalt}`));
   const ri = (min: number, max: number) => Math.floor(rand() * (max - min + 1)) + min;
   const pick = <T,>(arr: T[]): T => arr[Math.floor(rand() * arr.length)];
 
@@ -317,7 +325,7 @@ export function academyStartingCohort(club: Club, currentDate: string): Player[]
   const level = academyLevelOf(club);
   const perYear = level >= 4 ? 2 : 1;
   const players: Player[] = [];
-  const rs = mulberry32(hashSeed(`${club.id}|kommende-stars`));
+  const rs = mulberry32(hashSeed(`${club.id}|kommende-stars${youthSalt}`));
   for (let age = YOUTH_ENTRY_AGE; age < YOUTH_GRADUATE_AGE; age++) {
     for (let i = 0; i < perYear; i++) {
       const yp = generateYouthPlayer(club.id, `init_${age}_${i}`, currentDate, level, age);

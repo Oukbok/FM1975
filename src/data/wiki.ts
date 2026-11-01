@@ -1624,7 +1624,7 @@ Unter **Statistiken → Ruhmeshalle** siehst du die größten Karrieren, deine V
     title: 'Talente & Spielerkurven',
     keywords: ['talent', 'jahrhunderttalent', 'ausnahmetalent', 'frühreif', 'spätentwickler', 'frühstarter', 'höhepunkt', 'karriere', 'weltklasse', 'potenzial'],
     body: `## Jeder Spieler folgt denselben Regeln
-Es gibt keine fest geplanten Stars. Jeder Spieler – ob aus deiner Akademie, einem anderen Verein oder dem Ausland – entwickelt sich nach denselben Regeln: **Talent** (verdecktes Potenzial), **Training**, **Spielpraxis**, **Charakter**, **Umfeld** und etwas Glück.
+Es gibt keine fest geplanten Stars: Die Startkader sind in jedem Spiel gleich, wer daraus und aus den Akademien zum Star wird, würfelt jedes Spiel neu aus. Jeder Spieler – ob aus deiner Akademie, einem anderen Verein oder dem Ausland – entwickelt sich nach denselben Regeln: **Talent** (verdecktes Potenzial), **Training**, **Spielpraxis**, **Charakter**, **Umfeld** und etwas Glück.
 
 ## Typische Kurven
 - **Normalprofi:** Stammspieler mit 22–23, Höhepunkt mit 26–29 um 73, ab 31 spürbarer Abbau.

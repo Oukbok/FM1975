@@ -12,6 +12,22 @@
 import { clampStars, potentialToStars, type Player } from '../types';
 import { applyOverallChange } from './development';
 
+/**
+ * Eigener Würfel für Stars und kommende Stars: Die Startkader sind bewusst in
+ * jedem Spiel gleich (fester Seed in data/generate.ts), wer davon Weltklasse
+ * wird, soll es nicht sein – gesalzen mit dem Spiel-Salz (engine/youth.ts).
+ */
+let starSeed = 1;
+export function starRng(): number {
+  starSeed = (starSeed * 1664525 + 1013904223) >>> 0;
+  return starSeed / 0xffffffff;
+}
+export function seedStarRng(salt: string): void {
+  let h = 2166136261;
+  for (const ch of `sterne${salt}`) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); }
+  starSeed = h >>> 0;
+}
+
 export function seedClubStars(ids: string[], players: Record<string, Player>, rng: () => number): number {
   const squad = ids.map((id) => players[id]).filter((p): p is Player => !!p);
   if (!squad.length) return 0;

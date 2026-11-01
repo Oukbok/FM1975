@@ -13,7 +13,7 @@
 //   später). Ohne Rücksprung auf 0 im Korridor, damit nichts aufschaukelt.
 // =============================================================================
 import { makeMessage, pushMessage } from '../engine/messages';
-import { setYouthPotentialShift } from '../engine/youth';
+import { setYouthPotentialShift, setYouthSalt } from '../engine/youth';
 import { setEliteShift } from '../engine/development';
 import { setTalentSupply } from '../engine/talent';
 import { leagueClubs } from './season';
@@ -107,6 +107,7 @@ function supplyOf(eliteI: number | undefined): number { return 1 + (eliteI ?? 0)
 
 /** Beim Laden/Tageswechsel den gespeicherten Wert setzen. */
 export function applyLeagueBalance(g: Game): void {
+  setYouthSalt(g.youthSalt ?? '');
   setYouthPotentialShift(g.leagueBalance?.shift ?? 0);
   setEliteShift(g.leagueBalance?.elite ?? 0);
   setTalentSupply(supplyOf(g.leagueBalance?.eliteI));
