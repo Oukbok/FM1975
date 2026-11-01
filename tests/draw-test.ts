@@ -14,6 +14,7 @@ import { startNextSeason } from '../src/game/season';
 import type { DrawComp } from '../src/types/draw';
 import { ENGINE_TIEBREAK, ruleSheet } from '../src/data/drawRuleSheet';
 import { bracketFromCup } from '../src/game/cupBracket';
+import { cupReplay, euroCompName, euroFormat } from '../src/data/euroFormats';
 
 let seed = 1976;
 Math.random = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
@@ -90,45 +91,50 @@ for (const y of [1976, 1985]) {
   check(!r1.countryProtection && !r1.seeded, 'Viertelfinale ohne Schutz/Setzliste');
 }
 
-// 2b) Regeltexte je Epoche (Startbildschirm) – müssen dem entsprechen, was die Engine spielt.
+// 2b) Regeltexte je Epoche (Startbildschirm) – müssen dem entsprechen, was die Engine spielt
+//     (Europapokal 2.0: Format je Saison, Landespokal mit Wiederholungsspiel bis 1990/91).
 {
-  const names: Record<DrawComp, string[]> = {
-    cup: ['1. Hauptrunde', 'Achtelfinale', 'Viertelfinale', 'Halbfinale', 'Finale'],
-    ec: ['Achtelfinale', 'Viertelfinale', 'Halbfinale', 'Finale'],
-    cwc: ['Achtelfinale', 'Viertelfinale', 'Halbfinale', 'Finale'],
-    uefa: ['1. Runde', 'Achtelfinale', 'Viertelfinale', 'Halbfinale', 'Finale'],
-  };
-  const sheet = (comp: DrawComp, ri: number, y: number) => {
-    const rules = drawRulesFor(comp, ri, y);
-    const pots = rules.twoPots || rules.seeded ? 2 : 1;
-    return ruleSheet({ comp, roundIndex: ri, roundNames: names[comp], startYear: y, rules, potCount: pots });
-  };
-  const has = (items: ReturnType<typeof sheet>, re: RegExp) => items.some((i) => re.test(`${i.title} ${i.text} ${i.history ?? ''}`));
-  for (const y of [1975, 1982, 1990, 1991, 1999, 2004, 2020, 2021, 2030]) {
+  const cupNames = ['1. Hauptrunde', 'Achtelfinale', 'Viertelfinale', 'Halbfinale', 'Finale'];
+  const has = (items: ReturnType<typeof ruleSheet>, re: RegExp) => items.some((i) => re.test(`${i.title} ${i.text}`));
+  for (const y of [1975, 1976, 1977, 1982, 1990, 1991, 1993, 1999, 2004, 2020, 2021, 2024, 2030]) {
     for (const comp of DRAW_COMPS) {
-      names[comp].forEach((_, ri) => {
-        const it = sheet(comp, ri, y);
+      const fmt = comp === 'cup' ? null : euroFormat(comp, y);
+      if (comp !== 'cup' && !fmt) continue;
+      const names = fmt ? fmt.stages.map((st) => st.name) : cupNames;
+      names.forEach((_, ri) => {
+        const rules = drawRulesFor(comp, ri, y);
+        const it = ruleSheet({ comp, roundIndex: ri, roundNames: names, startYear: y, rules, potCount: rules.twoPots || rules.seeded ? 2 : 1 });
         const tag = `${comp} ${y} R${ri}`;
-        // Engine: immer ein Spiel, Verlängerung + Elfmeterschießen.
-        check(it[0].title === 'Ein Spiel' && it.some((i) => i.text === ENGINE_TIEBREAK), `${tag}: Engine-Regeln fehlen`);
-        check(!it.some((i) => /Wiederholungsspiel|Hin- und Rückspiel|doppelt/.test(i.text) && !/Kein Hin-|nicht doppelt/.test(i.text)), `${tag}: Regeltext widerspricht der Engine`);
-        const repl = has(it, /Wiederholungsspiel/);
-        check(comp === 'cup' && ri < 4 ? repl === (y <= 1990) : !repl, `${tag}: Hinweis Wiederholungsspiel falsch`);
-        if (comp !== 'cup') {
-          check(has(it, /Auswärtstore/), `${tag}: Auswärtstore fehlen`);
-          check(y <= 2020 ? has(it, /doppelt \(bis 2020\/21\)/) : has(it, /seit 2021\/22 abgeschafft/), `${tag}: Auswärtstorregel falsch datiert`);
-          const twoLegs = has(it, /Im Original Hin- und Rückspiel/);
-          const finalOne = ri === names[comp].length - 1 && (comp !== 'uefa' || y >= 1997);
-          check(twoLegs === !finalOne, `${tag}: Hinweis Hin-/Rückspiel falsch`);
-        } else check(!has(it, /Auswärtstor/), `${tag}: Auswärtstore im Landespokal`);
-        if (comp === 'cup' && ri === 0) check(has(it, /Zwei Lostöpfe/) === (y >= 1982), `${tag}: Lostöpfe`);
-        check(has(it, /Amateurvereine empfangen Profis/) === (comp === 'cup' && y >= 1982), `${tag}: Heimrecht Amateure`);
-        check(has(it, /Gruppenphase/) === ((comp === 'ec' && y >= 1991) || (comp === 'uefa' && y >= 2004)), `${tag}: Hinweis Gruppenphase`);
+        check(!it.some((i) => i.history), `${tag}: Abweichungs-Hinweis übrig`);
+        if (comp === 'cup') {
+          const repl = has(it, /Wiederholungsspiel/);
+          check(repl === cupReplay(y, ri === 4), `${tag}: Wiederholungsspiel falsch`);
+          check(!has(it, /Auswärtstor/), `${tag}: Auswärtstore im Landespokal`);
+          if (ri === 0) check(has(it, /Zwei Lostöpfe/) === (y >= 1982), `${tag}: Lostöpfe`);
+          check(has(it, /Amateurvereine empfangen Profis/) === (y >= 1982), `${tag}: Heimrecht Amateure`);
+          return;
+        }
+        const st = fmt!.stages[ri];
+        if (st.kind === 'groups') check(has(it, /Gruppenphase/) && has(it, new RegExp(`Sieg ${fmt!.winPts} Punkte`)), `${tag}: Gruppen-Regeln`);
+        else if (st.kind === 'league') check(has(it, /Ligaphase/), `${tag}: Ligaphase`);
+        else if (st.legs === 2) {
+          check(has(it, /Hin- und Rückspiel/), `${tag}: Hin- und Rückspiel fehlt`);
+          check(fmt!.awayGoals ? has(it, /mehr Tore auswärts/) : has(it, /seit 2021\/22 abgeschafft/), `${tag}: Auswärtstorregel falsch`);
+          check(has(it, /Verlängerung im Rückspiel/), `${tag}: Verlängerung im Rückspiel`);
+        } else check(it[0].title === 'Ein Spiel' && it.some((i) => i.text === ENGINE_TIEBREAK), `${tag}: Einzelspiel-Regeln`);
+        for (const a of st.advance ?? []) if (a.comp && a.comp !== comp) check(has(it, new RegExp(euroCompName(a.comp, y))), `${tag}: Wechsel in ${a.comp} fehlt`);
       });
     }
-    const c0 = sheet('cup', 0, y), e0 = sheet('ec', 0, y);
-    console.log(`Regeln ${y}: Pokal ${c0.map((i) => i.title + (i.history ? '*' : '')).join(', ')} | Landesmeister ${e0.map((i) => i.title + (i.history ? '*' : '')).join(', ')}`);
+    // Alter Spielstand: laufender Wettbewerb im alten Modus.
+    const legacy = ruleSheet({ comp: 'ec', roundIndex: 0, roundNames: ['Achtelfinale', 'Viertelfinale', 'Halbfinale', 'Finale'], startYear: y, rules: drawRulesFor('ec', 0, y), potCount: 2, legacy: true });
+    check(legacy[0].title === 'Ein Spiel' && legacy.some((i) => i.text === ENGINE_TIEBREAK), `${y}: alter Modus falsch beschrieben`);
+    const e0 = fmtOf('ec', y);
+    console.log(`Regeln ${y}: Landesmeister ${e0}`);
   }
+}
+function fmtOf(comp: 'ec' | 'cwc' | 'uefa', y: number): string {
+  const f = euroFormat(comp, y);
+  return f ? f.stages.map((s) => `${s.name}${s.kind === 'ko' ? `(${s.legs})` : ''}`).join(' › ') : '–';
 }
 
 // 3) Alter Spielstand: ohne Aufschub sofort gelost, kein Termin.

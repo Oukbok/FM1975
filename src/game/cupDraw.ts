@@ -19,6 +19,7 @@ import type { DrawComp, DrawRecord } from '../types/draw';
 import { hashSeed, type Game } from './state';
 import { drawMessageV2, performDrawV2 } from './euroDraw';
 import { isV2 } from './euroSetup';
+import { euroCompName } from '../data/euroFormats';
 
 export const DRAW_COMPS: DrawComp[] = ['cup', 'ec', 'cwc', 'uefa'];
 
@@ -27,6 +28,10 @@ export function compCup(g: Game, comp: DrawComp): CupState | null {
 }
 export function drawCompName(comp: DrawComp): string {
   return comp === 'cup' ? 'Landespokal' : EURO_COMP_NAMES[comp as EuroCompId];
+}
+/** Name je Saison (Meisterliga, Europa-Liga, Konferenz-Liga …). */
+export function drawCompLabel(comp: DrawComp, cup: CupState): string {
+  return comp === 'cup' ? 'Landespokal' : euroCompName(comp, Number(cup.season.slice(0, 4)));
 }
 
 /** Setzt die Auslosungstermine aller Runden und trägt sie in den Kalender ein. */

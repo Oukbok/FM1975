@@ -128,7 +128,7 @@ export function StageReveal({ rec, clubs, ball, phase, step, reduced }: {
       <div key={`c${step}`} className={`dr-card ${c.mine ? 'mine' : ''} ${ball.rejected ? 'rejected' : ''}`}>
         <div className="dr-card-crest"><ClubCrest club={c.crest} size={210} /></div>
         <div className="dr-card-txt">
-          <div className="dr-card-no">Los {ball.no} · {rec.pots[ball.pot]?.label}</div>
+          <div className="dr-card-no">Los {ball.no} · {rec.pots[ball.pot]?.label}{ball.group != null && rec.groups && !rec.opponents ? ` → Gruppe ${rec.groups[ball.group]?.name ?? ''}` : ''}</div>
           <div className="dr-card-name" style={{ fontSize: fitSize(c.name, 88, 16) }}>{c.name}</div>
           <div className="dr-card-meta">{c.foreign ? c.country : c.amateur ? 'Amateurverein' : 'Profiverein'} · Stärke {c.strength}</div>
           {c.mine && <span className="dr-pill">Dein Verein</span>}

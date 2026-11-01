@@ -34,6 +34,9 @@ export function enableCupReplays(cup: CupState, calendar: GameCalendar): void {
     const isFinal = i === cup.rounds.length - 1;
     if (!cupReplay(y, isFinal)) { r.dates = [r.date]; return; }
     let d = CalendarEngine.addDays(r.date, isFinal ? 2 : 7);
+    // Nicht über die Feiertage: dann schon nach drei Tagen.
+    const md = d.slice(5);
+    if (md >= '12-21' || md <= '01-06') d = CalendarEngine.addDays(r.date, 3);
     while (busy.has(d)) d = CalendarEngine.addDays(d, 1);
     busy.add(d);
     r.dates = [r.date, d];

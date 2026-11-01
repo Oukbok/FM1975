@@ -79,8 +79,9 @@ function phantomRoster(cup: CupState, clubId: string, country: string, strength:
   const people = (cup.xpeople ??= {});
   return SLOTS.map((pos, slot) => {
     const gen = Math.floor((year + slot * 3) / 6);
-    const id = `x:${clubId}:${slot}:${gen}`;
-    const r = rng(hashKey(id));
+    const key = `${clubId}:${slot}:${gen}`;
+    const id = `x${hashKey(key).toString(36)}`;
+    const r = rng(hashKey(key));
     if (!people[id]) {
       const first = origin.first[Math.floor(r() * origin.first.length)];
       const last = origin.last[Math.floor(r() * origin.last.length)];

@@ -27,8 +27,10 @@ export function useDrawPlayer(rec: DrawRecord, myId: string, speed: DrawSpeed) {
   const n = rec.balls.length;
 
   // Sprung zur eigenen Ziehung endet an der ersten Kugel der eigenen Paarung.
+  const grouped = !!rec.groups?.length;
   const pairStart = useMemo(() => {
     if (myFirst < 0) return -1;
+    if (rec.groups?.length) return myFirst;
     const pair = rec.balls[myFirst].pair;
     return rec.balls.findIndex((b) => b.pair === pair && !b.rejected);
   }, [rec, myFirst]);
@@ -39,12 +41,12 @@ export function useDrawPlayer(rec: DrawRecord, myId: string, speed: DrawSpeed) {
     if (paused || phase === 'done' || (phase === 'intro' && !started)) return;
     const f = fast ? 0.04 : FACTOR[speed];
     const ball = rec.balls[step];
-    const pairDone = !!ball && !ball.rejected && rec.balls.findIndex((b) => b.pair === ball.pair && !b.rejected) !== step;
-    const mine = !!ball && rec.pairs[ball.pair] && (rec.pairs[ball.pair].home === myId || rec.pairs[ball.pair].away === myId);
+    const pairDone = !grouped && !!ball && !ball.rejected && rec.balls.findIndex((b) => b.pair === ball.pair && !b.rejected) !== step;
+    const mine = !!ball && (grouped ? ball.id === myId : !!rec.pairs[ball.pair] && (rec.pairs[ball.pair].home === myId || rec.pairs[ball.pair].away === myId));
     let ms: number; let next: () => void;
     if (phase === 'intro') { ms = 500; next = () => { setStep(0); setPhase('roll'); }; }
-    else if (phase === 'roll') { ms = reduced ? 0 : 950 * f; next = () => setPhase('open'); }
-    else if (phase === 'open') { ms = (reduced ? 200 : 700) * f; next = () => setPhase('hold'); }
+    else if (phase === 'roll') { ms = reduced ? 0 : (grouped ? 600 : 950) * f; next = () => setPhase('open'); }
+    else if (phase === 'open') { ms = (reduced ? 200 : grouped ? 450 : 700) * f; next = () => setPhase('hold'); }
     else {
       ms = (ball?.rejected ? 1300 : pairDone ? (mine ? 3600 : 2200) : mine ? 2200 : 1300) * f;
       next = () => {
@@ -54,7 +56,7 @@ export function useDrawPlayer(rec: DrawRecord, myId: string, speed: DrawSpeed) {
     }
     const id = setTimeout(next, Math.max(16, ms));
     return () => clearTimeout(id);
-  }, [phase, step, paused, speed, fast, reduced, rec, myId, n, started]);
+  }, [phase, step, paused, speed, fast, reduced, rec, myId, n, started, grouped]);
 
   /** Alle Kugeln, die schon „offen“ sind (inkl. der aktuellen ab Phase open). */
   const shown = phase === 'done' ? n : phase === 'intro' ? 0 : step + (phase === 'roll' ? 0 : 1);

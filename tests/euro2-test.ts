@@ -175,7 +175,13 @@ for (const Y of YEARS) {
     check((g.euroCups?.cwc?.rounds.find((r) => r.key === 'po')?.entrants ?? []).filter((id) => uIds.has(id)).length === 8, `${Y}: 8 EL-Dritte in der Konferenz-Liga`);
   }
   if (Y >= 2024) check(inUefa('af').every((id) => !ecIds.has(id)), `${Y}: Ligaphase ohne Wechsel`);
-  console.log(`${Y}/${String((Y + 1) % 100).padStart(2, '0')} (${Date.now() - t0} ms)\n  ` + line.join('\n  '));
+  // Archiv: Gruppen/Hin-Rückspiel kompakt, Bestenliste aus allen Spielen.
+  archiveSeasonEnd(g, `${Y}/x`);
+  const arch = archivedSeason(g, `${Y}/x`)!;
+  const euroBytes = JSON.stringify(arch.cups).length - JSON.stringify(arch.cups.cup ?? {}).length;
+  check(euroBytes < 9000, `${Y}: Europapokal-Archiv ${euroBytes} Byte`);
+  check(EURO_COMPS.every((c) => !g.euroCups?.[c] || (arch.stats[c]?.goals?.length ?? 0) >= 3), `${Y}: Bestenliste im Archiv`);
+  console.log(`${Y}/${String((Y + 1) % 100).padStart(2, '0')} (${Date.now() - t0} ms, Archiv Europa ${euroBytes} B, gesamt ${JSON.stringify(arch).length} B)\n  ` + line.join('\n  '));
 }
 
 // Endspiel-Modus

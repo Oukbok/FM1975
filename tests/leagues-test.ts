@@ -111,7 +111,8 @@ for (let i = 0; i < seasons; i++) {
   check(Object.keys(compStatsOf(Object.values(g.players)[0]) ?? {}).length === 0, `${season}: Wettbewerbsstatistik geleert`);
   for (const list of Object.values(a.stats)) for (const l of Object.values(list)) check(l!.length <= 10, `${season}: Top-N begrenzt`);
   const size = JSON.stringify(a).length;
-  check(size < 16000, `${season}: Archiv-Eintrag ${size} Byte`);
+  // Europapokal 2.0: Hin-/Rückspiele und Bestenlisten aus allen Europapokalspielen (≈ +1,5 KB).
+  check(size < 18000, `${season}: Archiv-Eintrag ${size} Byte`);
   // Tausch: neue Vereine in der untersten Liga kommen aus dem Pool
   const newLow = g.leagues.otherDivisions.filter((d) => d.tier === lowest).flatMap((d) => d.clubIds);
   const fromPool = newLow.filter((id) => !lowIds.has(id) && arch.seasons.every((s) => !s.divisions.some((d) => d.tier < lowest && d.rows.some((r) => r[0] === id))));

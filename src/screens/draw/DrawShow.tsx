@@ -10,7 +10,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Icon from '../../components/Icon';
 import type { AppSettings } from '../../engine/save';
 import type { Game } from '../../game/state';
-import { compCup, drawCompName } from '../../game/cupDraw';
+import { compCup, drawCompLabel, drawCompName } from '../../game/cupDraw';
 import { drawVenue, seasonStartYearOf } from '../../data/drawHistory';
 import { fmtDateFull } from '../../ui/format';
 import type { DrawRecord } from '../../types/draw';
@@ -19,6 +19,7 @@ import { DrawSummary, PairsPanel, PotsPanel, StageReveal } from './DrawParts';
 import { DrawIntro } from './DrawIntro';
 import { BracketOverview, PairsOverview, useClubLookup, type OverviewTab } from './DrawOverview';
 import { useDrawPlayer, type DrawSpeed } from './useDrawPlayer';
+import { GroupSummary, GroupsOverview, GroupsPanel, isGroupDraw, isLeagueDraw } from './DrawGroups';
 
 export function DrawShow({ g, rec, replay, settings, onSettings, onClose }: {
   g: Game; rec: DrawRecord; replay?: boolean; settings: AppSettings;
@@ -27,7 +28,8 @@ export function DrawShow({ g, rec, replay, settings, onSettings, onClose }: {
   const myId = g.managedClubId;
   const [speed, setSpeed] = useState<DrawSpeed>(settings.drawSpeed ?? 'normal');
   // Ohne eigenen Verein in der Runde startet die Übersicht mit allen Paarungen.
-  const inDraw = rec.pairs.some((x) => x.home === myId || x.away === myId);
+  const grouped = isGroupDraw(rec);
+  const inDraw = rec.pairs.some((x) => x.home === myId || x.away === myId) || !!rec.groups?.some((x) => x.ids.includes(myId));
   const [tab, setTab] = useState<OverviewTab>(inDraw ? 'los' : 'pairs');
   const p = useDrawPlayer(rec, myId, speed);
   const cup = compCup(g, rec.comp);
@@ -75,7 +77,7 @@ export function DrawShow({ g, rec, replay, settings, onSettings, onClose }: {
       <div className="dr-top">
         <div className="dr-top-l">
           <Icon name="trophy" size={34} />
-          <span className="dr-comp">{drawCompName(rec.comp)} · {rec.roundName}</span>
+          <span className="dr-comp">{cup ? drawCompLabel(rec.comp, cup) : drawCompName(rec.comp)} · {rec.roundName}</span>
           <span className="dr-dim">{rec.venue} · {show}</span>
           <span className="dr-dim">{fmtDateFull(rec.date)}</span>
           {replay && <span className="dr-pill dim">Wiederholung</span>}
@@ -83,7 +85,9 @@ export function DrawShow({ g, rec, replay, settings, onSettings, onClose }: {
         {p.phase === 'done' ? (
           <div className="dr-top-r">
             <div className="seg-group dr-speed dr-tabs">
-              {([['los', inDraw ? 'Dein Los' : 'Topspiel'], ['pairs', 'Alle Paarungen'], ...(cup ? [['bracket', 'Turnierbaum']] : [])] as [OverviewTab, string][]).map(([v, l]) => (
+              {((grouped
+                ? [['los', isLeagueDraw(rec) ? 'Deine Gegner' : inDraw ? 'Deine Gruppe' : 'Gruppe A'], ['pairs', isLeagueDraw(rec) ? 'Alle Töpfe' : 'Alle Gruppen']]
+                : [['los', inDraw ? 'Dein Los' : 'Topspiel'], ['pairs', 'Alle Paarungen'], ...(cup ? [['bracket', 'Turnierbaum']] : [])]) as [OverviewTab, string][]).map(([v, l]) => (
                 <button key={v} className={`seg-btn ${tab === v ? 'active' : ''}`} onClick={() => setTab(v)}>{l}</button>
               ))}
             </div>
@@ -117,7 +121,7 @@ export function DrawShow({ g, rec, replay, settings, onSettings, onClose }: {
 
       {p.phase === 'done' && tab !== 'los' ? (
         <div className="dr-wide">
-          {tab === 'pairs' && <PairsOverview rec={rec} clubs={lookup} myId={myId} />}
+          {tab === 'pairs' && (grouped ? <GroupsOverview rec={rec} clubs={lookup} /> : <PairsOverview rec={rec} clubs={lookup} myId={myId} />)}
           {tab === 'bracket' && cup && <BracketOverview cup={cup} rec={rec} clubs={lookup} myId={myId} />}
         </div>
       ) : (
@@ -130,10 +134,12 @@ export function DrawShow({ g, rec, replay, settings, onSettings, onClose }: {
             {p.phase === 'intro' && (
               <DrawIntro rec={rec} cup={cup} startYear={startYear} show={show} replay={replay} onStart={p.start} onOverview={toOverview} />
             )}
-            {p.phase === 'done' && <DrawSummary rec={rec} clubs={clubs} myId={myId} endLine="" onClose={() => setTab('pairs')} closeLabel="Alle Paarungen" />}
+            {p.phase === 'done' && (grouped
+              ? <GroupSummary rec={rec} clubs={lookup} myId={myId} onClose={() => setTab('pairs')} />
+              : <DrawSummary rec={rec} clubs={clubs} myId={myId} endLine="" onClose={() => setTab('pairs')} closeLabel="Alle Paarungen" />)}
             {ball && <StageReveal rec={rec} clubs={clubs} ball={ball} phase={p.phase} step={p.step} reduced={p.reduced} />}
             {p.phase !== 'intro' && p.phase !== 'done' && (
-              <div className="dr-progress">Paarung {pairNo} von {rec.pairs.length}</div>
+              <div className="dr-progress">{grouped ? `Kugel ${Math.min(rec.balls.length, p.step + 1)} von ${rec.balls.length}` : `Paarung ${pairNo} von ${rec.pairs.length}`}</div>
             )}
           </div>
           <div className={`dr-now tone-${line?.tone ?? 'neutral'}`}>
@@ -142,7 +148,7 @@ export function DrawShow({ g, rec, replay, settings, onSettings, onClose }: {
           </div>
         </div>
 
-        {p.phase !== 'intro' && <PairsPanel rec={rec} clubs={clubs} shown={p.shown} />}
+        {p.phase !== 'intro' && (grouped ? <GroupsPanel rec={rec} clubs={lookup} shown={p.shown} /> : <PairsPanel rec={rec} clubs={clubs} shown={p.shown} />)}
       </div>
       )}
     </div>

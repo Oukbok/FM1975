@@ -106,6 +106,8 @@ export function MatchScreen({ g, sim, info, settings, onSettings, onComplete, on
         <div className="ms-center">
           <div className={`ms-score ${state.revealing ? 'tense' : ''}`}>{hs}<span>:</span>{as}</div>
           {state.pens && <div className="ms-pens">{state.pens[0]}:{state.pens[1]} i.E.</div>}
+          {info.firstLeg && <AggLine fl={info.firstLeg} hs={hs} as={as} homeName={H.shortName ?? H.name} awayName={A.shortName ?? A.name} />}
+          {!info.firstLeg && info.stageNote && <div className="ms-agg"><span className="ms-agg-note">{info.stageNote}</span></div>}
           <div className="ms-clock">{state.clock}</div>
         </div>
         <div className={`ms-team away ${side === 'away' ? 'mine' : ''}`}>
@@ -186,6 +188,22 @@ function TickerNow({ line, revealing, mySide }: { line: Line | null; revealing: 
       ) : (
         <span key={line.id} className="ms-now-txt">{line.text}</span>
       )}
+    </div>
+  );
+}
+
+/** Rückspiel: Hinspiel, Gesamtstand und (bis 2020/21) die Auswärtstore live. */
+function AggLine({ fl, hs, as, homeName, awayName }: { fl: NonNullable<OwnMatchInfo['firstLeg']>; hs: number; as: number; homeName: string; awayName: string }) {
+  // Heim des Rückspiels war im Hinspiel Gast.
+  const aggH = hs + fl.ag, aggA = as + fl.hg;
+  let note = '';
+  if (aggH === aggA) {
+    if (fl.awayGoals && fl.ag !== as) note = `${fl.ag > as ? homeName : awayName} vorn durch Auswärtstore`;
+    else note = 'Gleichstand – Verlängerung droht';
+  } else note = `${aggH > aggA ? homeName : awayName} liegt vorn`;
+  return (
+    <div className="ms-agg">
+      Hinspiel {fl.hg}:{fl.ag} · Gesamt <b>{aggH}:{aggA}</b><span className="ms-agg-note">{note}</span>
     </div>
   );
 }

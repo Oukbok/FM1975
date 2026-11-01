@@ -21,8 +21,12 @@ export type ArchRow = [id: string, w: number, d: number, l: number, gf: number, 
 export interface ArchDivision { id: string; name: string; tier: number; group: LeagueGroup; rows: ArchRow[] }
 /** [Heim, Gast, Tore H, Tore G, Entscheidung 0 regulär/1 n. V./2 i. E., Sieger, Elfer H, Elfer G] */
 export type ArchTie = [string, string, number, number, number, string, number?, number?];
-/** Hin-/Rückspiel bzw. Wiederholung: [Tore H, Tore G (1. Spiel), Tore H, Tore G (2. Spiel, Sicht der Begegnung), 1 = Auswärtstore / 2 = Wiederholung] */
-export type ArchLegs = [number, number, number, number, number];
+/**
+ * Hin-/Rückspiel bzw. Wiederholung, Sicht der Begegnung: [Tore H, Tore G im 1. Spiel,
+ * 0 / 1 = Auswärtstore / 2 = Wiederholung]. Das 2. Spiel ergibt sich aus dem Gesamtstand
+ * (bei der Wiederholung steht das Ergebnis der Wiederholung in der Begegnung selbst).
+ */
+export type ArchLegs = [number, number, number];
 /** Gruppenzeile: [Verein, Sp, S, U, N, Tore, Gegentore, Punkte] */
 export type ArchGroupRow = [string, number, number, number, number, number, number, number];
 export interface ArchRound {
@@ -129,8 +133,7 @@ export function euroClubSet(cup: CupState | null | undefined): Set<string> {
 export function packLegs(t: CupTie): ArchLegs | null {
   const l = t.legs;
   if (!l || l.length < 2 || !l[1].played) return null;
-  const second = l[1].home === t.homeClubId ? [l[1].homeGoals ?? 0, l[1].awayGoals ?? 0] : [l[1].awayGoals ?? 0, l[1].homeGoals ?? 0];
-  return [l[0].homeGoals ?? 0, l[0].awayGoals ?? 0, second[0], second[1], t.id.startsWith('cup_') ? 2 : t.awayGoalsWin ? 1 : 0];
+  return [l[0].homeGoals ?? 0, l[0].awayGoals ?? 0, t.id.startsWith('cup_') ? 2 : t.awayGoalsWin ? 1 : 0];
 }
 
 /** Gruppentabelle (Abschluss-Reihenfolge, sonst Punkte/Tordifferenz) als Zeilen. */
@@ -237,7 +240,9 @@ export function archiveSeasonEnd(g: Game, season: string): void {
     if (!cup) continue;
     if (cup.xstats) {
       // Europapokal 2.0: alle Spiele des Wettbewerbs (auch Kurzkader ausländischer Vereine).
+      // Kurz halten (Spielstand-Größe): Karten und Weiße Weste nur die ersten drei.
       const lists = topLists(xEntries(cup), TOP_CUP);
+      for (const cat of ['yellow', 'red', 'clean'] as StatCat[]) lists[cat] = lists[cat].slice(0, 3);
       for (const cat of STAT_CATS) for (const [pid] of lists[cat]) {
         const x = cup.xpeople?.[pid];
         if (x && !people[pid]) { people[pid] = [x[0], x[1], x[2]]; remember(x[1]); }

@@ -4,6 +4,7 @@ import { ACTIVITY_DEFS, addDaysUTC } from '../data/activities';
 import { Game } from '../game/state';
 import type { Match, MessageCategory } from '../types';
 import { EURO_COMP_NAMES } from '../data/europe';
+import { ownFixtureOn } from '../game/euroFixture';
 
 // Ereignisse je Kalendertag (früher: Kalenderstreifen oben auf jeder Seite; heute
 // Datenquelle für das Kalender-Overlay `CalendarOverlay.tsx` und die Kalenderseite).
@@ -55,6 +56,13 @@ export function buildDayEventsMap(g: Game): Map<string, StripEvent[]> {
         break;
       }
       case 'cup_matchday': {
+        // Wiederholungstermin (Landespokal bis 1990/91): nur mit eigenem Wiederholungsspiel.
+        const fx = ownFixtureOn(g, ev);
+        if (fx === null) break;
+        if (fx) {
+          consider({ date: ev.date, icon: 'trophy', line: `${full(fx.opp)} (${fx.home ? 'H' : 'A'})`, accent: 'gold', isMatch: true, prio: 95, clubId: fx.opp, home: fx.home, comp: fx.comp, result: resultOf(fx.match) });
+          break;
+        }
         const round = ev.cupRoundIndex != null ? g.cup?.rounds[ev.cupRoundIndex] : undefined;
         let line = 'Landespokal';
         let extra: Partial<StripEvent> = {};
@@ -76,6 +84,12 @@ export function buildDayEventsMap(g: Game): Map<string, StripEvent[]> {
       }
       case 'euro_matchday': {
         // Nur Runden mit eigener Beteiligung – die übrigen Europapokal-Termine wären Rauschen.
+        const fx = ownFixtureOn(g, ev);
+        if (fx === null) break;
+        if (fx) {
+          consider({ date: ev.date, icon: 'trophy', line: `${full(fx.opp)} (${fx.home ? 'H' : 'A'})`, accent: 'gold', isMatch: true, prio: 97, clubId: fx.opp, home: fx.home, comp: fx.comp, result: resultOf(fx.match) });
+          break;
+        }
         const cup = ev.euroComp ? g.euroCups?.[ev.euroComp] : null;
         const round = ev.cupRoundIndex != null ? cup?.rounds[ev.cupRoundIndex] : undefined;
         const tie = round?.drawn ? round.ties.find((t) => t.homeClubId === me || t.awayClubId === me) : undefined;

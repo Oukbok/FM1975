@@ -36,4 +36,5 @@ import './28-sponsor.css';
 import './28-positions.css';
 import './28-leagues.css';
 import './28-calendar.css';
+import './28-euro2.css';
 import './29-look.css'; // zuletzt: ruhige Gesamtoptik
