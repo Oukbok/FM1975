@@ -158,7 +158,7 @@ export function staffFromRetired(g: Game, p: Player, date: string, rng: () => nu
   const m = staffFromPlayer(p, info, year, { loyal: pe.loyalitaet, family: pe.familie, ambition: pe.ehrgeiz }, rng);
   m.freeSince = year;
   // Selbstauswahl: Wer kaum Begabung fürs Trainerfach hat, lässt es meist bleiben.
-  if (m.quality < 5 && rng() < 0.7) return null;
+  if (m.quality < 3 || (m.quality < 5 && rng() < 0.8)) return null;
   const w = g.staffWorld;
   w.cur.exPros++;
   // Große Namen mit Führungsqualität: direkt als Cheftrainer-Kandidat.

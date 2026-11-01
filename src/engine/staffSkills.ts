@@ -127,7 +127,7 @@ export function careerSuccess(peak: number, apps: number, titles: number, captai
 /** Wahrscheinlichkeit, nach dem Karriereende ins Trainergeschäft zu gehen. */
 export function coachingChance(s: number, leadership: number, age: number): number {
   if (age > 39) return 0;
-  return clamp(0.12 + 0.45 * s + (leadership >= 70 ? 0.05 : 0), 0, 0.65);
+  return clamp(0.15 + 0.45 * s + (leadership >= 70 ? 0.05 : 0), 0, 0.65);
 }
 
 /** Affinität eines Ex-Profis je Fachgebiet (0,35–1,15) aus Spielerattributen und Persönlichkeit. */
@@ -195,7 +195,7 @@ export function staffFromPlayer(p: Player, info: ExProInfo, year: number, person
   const pot = {} as Record<CoachSkill, number>;
   for (const k of COACH_SKILLS) pot[k] = clamp(r1(ceil * aff[k]), 1, 20);
   const role = bestRole(pot, year);
-  const m = personBase(newId(year, r), role, p.fullName, p.age, year, pot, 0.7 + info.s * 0.1, r);
+  const m = personBase(newId(year, r), role, p.fullName, p.age, year, pot, 0.78 + info.s * 0.1, r);
   m.exPro = info;
   m.nat = p.nationality;
   return m;

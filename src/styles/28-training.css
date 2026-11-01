@@ -4,7 +4,8 @@
 
 /* ---- Trainingsplan ---- */
 .tp-box .dbox-body { display: flex; flex-direction: column; gap: 8px; }
-.tp-weeknav { display: inline-flex; gap: 6px; }
+.tp-weeknav { display: inline-flex; gap: 6px; align-items: center; }
+.tp-weeknav select { max-width: 220px; }
 .tp-palette {
   display: flex; flex-wrap: wrap; gap: 6px; padding: 6px; border: 1px solid var(--border-soft);
   border-radius: 6px; background: var(--bg-2);

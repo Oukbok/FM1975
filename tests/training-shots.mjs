@@ -70,7 +70,7 @@ if (await tile.count() && await target.count()) {
   const txt = await target.innerText();
   if (!txt.includes('Torschuss')) errors.push(`Ziehen hat das Feld nicht belegt (${txt})`);
 }
-await page.locator('.tp-tpls .dchip:has-text("Vorbereitung")').click();
+await page.locator('.tp-weeknav select').selectOption('vorbereitung');
 await page.waitForTimeout(200);
 await page.screenshot({ path: `${outDir}/${tag}_4_vorlage.png` });
 await page.locator('.tn-sub-item:has-text("Trainerteam")').click();

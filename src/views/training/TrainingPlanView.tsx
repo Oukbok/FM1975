@@ -106,6 +106,10 @@ export function TrainingPlanView({ g, onChange }: { g: Game; onChange: () => voi
     <DashPage className="tp-page">
       <DashBox title="Trainingsplan" icon="training" span={3} className="tp-box"
         right={<span className="tp-weeknav">
+          <select className="tt-select" value="" title="Vorlage für die ganze Woche laden" onChange={(e) => { if (e.target.value) { applyTemplate(plan, e.target.value, year); refresh(); } }}>
+            <option value="">Vorlage laden …</option>
+            {PLAN_TEMPLATES.map((t) => <option key={t.id} value={t.id}>{t.name} – {t.desc}</option>)}
+          </select>
           <button className={`dchip ${weekOff === 0 ? 'on' : ''}`} onClick={() => setWeekOff(0)}>Diese Woche</button>
           <button className={`dchip ${weekOff === 1 ? 'on' : ''}`} onClick={() => setWeekOff(1)}>Nächste Woche</button>
         </span>}>
@@ -166,12 +170,6 @@ export function TrainingPlanView({ g, onChange }: { g: Game; onChange: () => voi
         {lead.map((l) => (
           <Meter key={l.k} label={SKILL_LABEL[l.k]} value={l.v} max={20} text={l.v ? `${l.v}/20` : 'niemand'} />
         ))}
-        <div className="dsec">Vorlagen</div>
-        <div className="dchips tp-tpls">
-          {PLAN_TEMPLATES.map((t) => (
-            <button key={t.id} className="dchip" title={t.desc} onClick={() => { applyTemplate(plan, t.id, year); refresh(); }}>{t.name}</button>
-          ))}
-        </div>
       </DashBox>
 
       <PhilosophyBox g={g} onChange={refresh} />
