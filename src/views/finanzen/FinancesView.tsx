@@ -63,19 +63,19 @@ export function BalanceChart({ points, current, currentDate }: {
     <svg viewBox={`0 0 ${W} ${H}`} width="100%" preserveAspectRatio="xMidYMid meet" style={{ display: 'block' }}>
       <defs>
         <linearGradient id="balArea" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.35" />
-          <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
+          <stop offset="0%" stopColor="var(--text-2)" stopOpacity="0.14" />
+          <stop offset="100%" stopColor="var(--text-2)" stopOpacity="0" />
         </linearGradient>
       </defs>
       {min < 0 && max > 0 && (
         <line x1={PL} y1={zeroY} x2={W - PR} y2={zeroY} stroke="var(--red)" strokeDasharray="3 3" strokeOpacity="0.6" />
       )}
       <path d={area} fill="url(#balArea)" />
-      <path d={line} fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+      <path d={line} fill="none" stroke="var(--text-2)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
       {data.map((d, i) => (
         <g key={i}>
-          <circle cx={x(i)} cy={y(d.balance)} r={i === data.length - 1 ? 4 : 2.5}
-            fill={d.balance < 0 ? 'var(--red)' : 'var(--accent)'} />
+          <circle cx={x(i)} cy={y(d.balance)} r={i === data.length - 1 ? 4 : 2}
+            fill={d.balance < 0 ? 'var(--red)' : i === data.length - 1 ? 'var(--accent)' : 'var(--text-2)'} />
           {(i === 0 || i === data.length - 1 || i % 2 === 0) && (
             <text x={x(i)} y={H - 6} fill="var(--text-3)" fontSize="10" textAnchor="middle">{mmLabel(d.date)}</text>
           )}
@@ -127,7 +127,7 @@ export function FinancesView({ g }: { g: Game }) {
       <DashBox title="Kontostand" icon="finances" span={2} right={`Saison ${g.season}`}>
         <div className="dgrid2" style={{ gridTemplateColumns: '1fr 2fr', alignItems: 'center' }}>
           <div>
-            <Kpi value={fmtFullDM(fin.balance)} label="Kontostand" color={fin.balance < 0 ? 'var(--red)' : 'var(--accent)'} />
+            <Kpi value={fmtFullDM(fin.balance)} label="Kontostand" color={fin.balance < 0 ? 'var(--red)' : undefined} />
             <KV k="Saldo Saison" v={sign(net)} color={net >= 0 ? 'var(--green)' : 'var(--red)'} />
             <KV k="Monatssaldo (fix)" v={sign(monthly.net)} color={monthly.net >= 0 ? 'var(--green)' : 'var(--red)'} />
             <KV k="Transferbudget" v={fmtPrice(fin.transferBudget)} />
@@ -139,7 +139,7 @@ export function FinancesView({ g }: { g: Game }) {
 
       <DashBox title="Prognose Saisonende" icon="stats" right={warnings.length ? `${warnings.length} Warnung(en)` : undefined}>
         <div className="dkpis">
-          <Kpi value={fmtCompactDM(forecast.projectedEndBalance)} label="Endkontostand" color={forecast.projectedEndBalance < 0 ? 'var(--red)' : 'var(--accent)'} />
+          <Kpi value={fmtCompactDM(forecast.projectedEndBalance)} label="Endkontostand" color={forecast.projectedEndBalance < 0 ? 'var(--red)' : undefined} />
         </div>
         <KV k="Restmonate · Heimspiele" v={`${forecast.monthsRemaining.toLocaleString('de-DE')} · ${forecast.homeMatchesRemaining}`} />
         <KV k="Erwartete Einnahmen" v={`+${fmtCompactDM(forecast.projectedIncome)}`} color="var(--green)" />

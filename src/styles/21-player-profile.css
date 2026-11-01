@@ -16,48 +16,53 @@
   position: relative;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) 380px;
-  gap: 26px;
-  padding: 22px 28px 18px;
+  gap: 30px;
+  padding: 24px 28px 20px;
   border-bottom: 1px solid var(--border);
   flex: 0 0 auto;
+}
+/* Vereinsfarbe nur als feine Linie oben (kein Farbverlauf). */
+.pp-header::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px;
+  background: var(--club); opacity: 0.85;
 }
 .pp-header > .modal-close { position: absolute; top: 14px; right: 14px; }
 .pp-portrait {
   position: relative;
   width: 210px; height: 242px;
-  border-radius: 16px;
+  border-radius: 8px;
   overflow: hidden;
-  background: radial-gradient(120% 90% at 50% 15%, rgba(255, 255, 255,0.09), rgba(12, 15, 21,0.65));
-  border: 1px solid var(--border-soft);
+  background: linear-gradient(180deg, var(--panel-2), var(--bg-2));
+  border: 1px solid var(--border);
   display: flex; align-items: flex-end; justify-content: center;
 }
 .pp-portrait > svg, .pp-portrait > img { display: block; }
 .pp-portrait-crest {
-  position: absolute; left: 10px; bottom: 10px;
-  background: rgba(12, 15, 21,0.75); border-radius: 50%; padding: 3px;
-  border: 1px solid var(--border-soft);
+  position: absolute; left: 8px; top: 8px;
+  background: rgba(12, 15, 21,0.6); border-radius: 6px; padding: 3px;
 }
 .pp-id { min-width: 0; display: flex; flex-direction: column; justify-content: center; }
-.pp-club { font-size: 13px; color: var(--text-3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; }
-.pp-name-row { display: flex; align-items: baseline; gap: 12px; margin: 4px 0 2px; }
-.pp-no { font-size: 26px; font-weight: 900; color: var(--accent); font-variant-numeric: tabular-nums; }
-.pp-name { font-size: 36px; font-weight: 900; letter-spacing: -0.5px; margin: 0; }
+.pp-club { font-size: 12px; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: flex; gap: 14px; }
+.pp-club-no { color: var(--text-4); font-variant-numeric: tabular-nums; }
+.modal .pp-name { font-size: 34px; font-weight: 600; letter-spacing: 0.5px; margin: 4px 0 2px; line-height: 1.1; }
 .pp-sub { font-size: 15px; color: var(--text-2); }
-.pp-badges { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
-.pp-badges .pill b { margin-left: 4px; }
-.pp-facts { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 16px; }
-.pp-fact {
-  min-width: 104px; padding: 8px 12px;
-  background: rgba(12, 15, 21,0.4); border: 1px solid var(--border-soft); border-radius: 10px;
-}
-.pp-fact-lbl { font-size: 10px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px; }
-.pp-fact-val { font-size: 16px; font-weight: 800; color: var(--text); margin-top: 2px; white-space: nowrap; }
+.pp-sub-sec { color: var(--text-3); }
+.pp-status { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 13px; color: var(--text-2); }
+.pp-avail-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+.pp-avail-dot.bad { background: var(--red); }
+.pp-status-bad { color: var(--red); font-weight: 700; }
+.pp-tag { margin-left: 6px; padding: 1px 7px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.5px; }
+.pp-facts { display: flex; flex-wrap: wrap; align-items: flex-end; margin-top: 18px; }
+.pp-fact { padding: 0 20px; border-left: 1px solid var(--border); }
+.pp-fact:first-child { padding-left: 0; border-left: none; }
+.pp-fact-lbl { font-size: 10.5px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.8px; }
+.pp-fact-val { font-size: 17px; font-weight: 600; color: var(--text); margin-top: 3px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pp-fact.big .pp-fact-val { font-family: var(--font-display); font-size: 30px; line-height: 1; font-weight: 600; }
 .pp-fact-sub { font-size: 11px; color: var(--text-3); }
 
 .pp-cond {
-  background: rgba(12, 15, 21,0.4); border: 1px solid var(--border-soft); border-radius: 12px;
-  padding: 14px 16px; margin-right: 36px;
-  display: flex; flex-direction: column; justify-content: center; gap: 6px;
+  border-left: 1px solid var(--border); padding: 4px 0 4px 24px; margin-right: 36px;
+  display: flex; flex-direction: column; justify-content: center; gap: 5px;
 }
 
 /* ---- Reiter + Körper ---- */
@@ -65,7 +70,7 @@
 .pp-body { flex: 1 1 auto; min-height: 0; padding: 18px 28px 22px; overflow: hidden; }
 .pp-grid { display: grid; gap: 26px; height: 100%; }
 .pp-grid-overview { grid-template-columns: 1.5fr 0.9fr 1fr; }
-.pp-grid-attr { grid-template-columns: 340px 1fr; }
+.pp-grid-attr { grid-template-columns: 360px 1fr; }
 .pp-grid-dev { grid-template-columns: 1.4fr 1fr; }
 .pp-grid-stats { grid-template-columns: 1fr 1fr; }
 .pp-grid-contract, .pp-grid-medical, .pp-grid-report { grid-template-columns: 1fr 1fr; }
@@ -74,11 +79,11 @@
 .pp-section { min-width: 0; }
 .pp-section-title {
   display: flex; align-items: center; gap: 7px;
-  font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;
-  color: var(--accent); margin-bottom: 9px;
+  font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.1px;
+  color: var(--text-3); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border-soft);
 }
-.pp-section-title .game-icon { color: var(--accent); }
-.pp-section-right { margin-left: auto; color: var(--text-2); letter-spacing: 0; }
+.pp-section-title .game-icon { display: none; }
+.pp-section-right { margin-left: auto; color: var(--text-3); letter-spacing: 0.2px; font-weight: 600; text-transform: none; font-variant-numeric: tabular-nums; }
 
 /* Listen, Balken, Kacheln */
 .pp-list { display: flex; flex-direction: column; }
@@ -88,19 +93,28 @@
 }
 .pp-line:last-child { border-bottom: none; }
 .pp-line-lbl { font-size: 13px; color: var(--text-3); }
-.pp-bar-row { display: grid; grid-template-columns: 150px 1fr 32px; align-items: center; gap: 10px; padding: 2px 0; }
-.pp-bar-lbl { font-size: 13px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pp-bar-track { height: 7px; border-radius: 4px; background: rgba(255, 255, 255,0.06); overflow: hidden; }
-.pp-bar-fill { height: 100%; border-radius: 4px; }
-.pp-bar-val { font-size: 14px; font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+.pp-bar-row { display: grid; grid-template-columns: 150px 1fr 32px; align-items: center; gap: 12px; padding: 3px 0; transition: opacity 0.15s; }
+.pp-bar-lbl { font-size: 13.5px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pp-bar-track { height: 4px; border-radius: 2px; background: var(--bar-track); overflow: hidden; }
+.pp-bar-fill { height: 100%; border-radius: 2px; transition: width 0.2s, background 0.15s; }
+.pp-bar-val { font-size: 14px; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+/* Wichtigkeit für die gewählte Position */
+.pp-tier-core .pp-bar-lbl, .pp-tier-core .pp-attr-lbl { color: var(--text); font-weight: 700; }
+.pp-tier-core .pp-bar-lbl::before, .pp-tier-core .pp-attr-lbl::before {
+  content: ''; display: inline-block; width: 3px; height: 11px; margin-right: 7px; border-radius: 1px;
+  background: var(--accent); vertical-align: -1px;
+}
+.pp-tier-dim { opacity: 0.45; }
+.pp-key-hint { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-3); }
+.pp-key-hint::before { content: ''; width: 3px; height: 10px; border-radius: 1px; background: var(--accent); }
 .pp-cond .pp-bar-row { grid-template-columns: 130px 1fr 30px; }
 .pp-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
 .pp-stat {
-  background: rgba(12, 15, 21,0.4); border: 1px solid var(--border-soft); border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025); border: 1px solid var(--border-soft); border-radius: 6px;
   padding: 10px 6px; text-align: center;
 }
-.pp-stat-num { font-size: 22px; font-weight: 900; color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1.1; }
-.pp-stat-lbl { font-size: 12px; color: var(--text-2); font-weight: 700; margin-top: 4px; }
+.pp-stat-num { font-family: var(--font-display); font-size: 24px; font-weight: 500; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.pp-stat-lbl { font-size: 11px; color: var(--text-3); font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.6px; }
 .pp-stat-sub { font-size: 11px; color: var(--text-3); }
 .pp-note { font-size: 13px; color: var(--text-3); margin-top: 6px; line-height: 1.45; }
 .pp-empty { padding: 30px 10px; text-align: center; color: var(--text-3); font-size: 14px; }
@@ -110,18 +124,18 @@
 .pp-skill-group { break-inside: avoid; }
 .pp-skill-group { margin-bottom: 10px; }
 .pp-skill-gt {
-  font-size: 11px; font-weight: 800; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.6px;
+  font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px;
   border-bottom: 1px solid var(--border-soft); padding-bottom: 3px; margin-bottom: 3px;
 }
 .pp-attr-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 2px 0; }
 .pp-attr-lbl { font-size: 14px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pp-attr-val { font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.pp-attr-val { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
 
 /* Positionsfeld */
 .pp-pitch {
   position: relative; width: 100%; height: 300px;
-  background: linear-gradient(180deg, rgba(61, 220, 132,0.06), rgba(241, 160, 55,0.04));
-  border: 1px solid var(--border-soft); border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-soft); border-radius: 6px;
 }
 .pp-pitch-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .pp-pitch-badge {
@@ -129,7 +143,7 @@
   display: flex; flex-direction: column; align-items: center;
   background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 3px 8px;
 }
-.pp-pitch-badge.natural { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 2px 8px rgba(241, 160, 55,0.3); }
+.pp-pitch-badge.natural { border-color: var(--accent); }
 .pp-pitch-pos { font-size: 11px; font-weight: 800; color: var(--text-2); }
 .pp-pitch-val { font-size: 15px; font-weight: 900; font-variant-numeric: tabular-nums; }
 
@@ -140,12 +154,37 @@
 .pp-sw-item.minus b { color: var(--orange); }
 
 /* Attribute */
-.pp-radar { width: 100%; max-width: 330px; display: block; margin: 0 auto; }
-.pp-radar-lbl { fill: var(--text-2); font-size: 11px; font-weight: 700; }
-.pp-radar-val { fill: var(--accent); font-weight: 900; }
+.pp-radar { width: 100%; max-width: 380px; display: block; margin: 4px auto 0; }
+.pp-radar-lbl { fill: var(--text-3); font-size: 12px; font-weight: 600; }
+.pp-radar-lbl.core { fill: var(--text-2); }
+.pp-radar-val { fill: var(--text); font-weight: 700; }
+/* Positionswahl (Reiter Attribute) */
+.pp-posbar { display: flex; flex-wrap: wrap; gap: 6px; }
+.pp-posbtn {
+  display: grid; grid-template-columns: auto auto; grid-template-rows: auto auto; column-gap: 8px; align-items: baseline;
+  min-width: 74px; padding: 6px 10px 5px; border-radius: 5px; cursor: pointer; text-align: left;
+  background: transparent; border: 1px solid var(--border); color: var(--text-2); font-family: inherit;
+  transition: border-color 0.12s, background 0.12s;
+}
+.pp-posbtn:hover { border-color: var(--text-3); }
+.pp-posbtn-code { font-family: var(--font-display); font-size: 16px; font-weight: 600; letter-spacing: 0.8px; color: var(--text); }
+.pp-posbtn-val { font-size: 14px; font-weight: 700; color: var(--text-2); font-variant-numeric: tabular-nums; justify-self: end; }
+.pp-posbtn-kind { grid-column: 1 / 3; font-size: 10px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px; }
+.pp-posbtn.on { border-color: var(--accent); background: var(--accent-soft); }
+.pp-posbtn.on .pp-posbtn-code { color: var(--accent); }
+.pp-pos-head { display: flex; justify-content: space-between; align-items: baseline; margin-top: 14px; }
+.pp-pos-name { font-size: 15px; font-weight: 600; color: var(--text); }
+.pp-pos-suit { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px; }
+.pp-pos-suit b { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--text); margin-left: 6px; letter-spacing: 0; }
+.pp-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 11.5px; color: var(--text-3); margin-top: 6px; }
+.pp-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.pp-legend i { width: 14px; height: 4px; border-radius: 2px; }
+.pp-lg-core { background: var(--accent); }
+.pp-lg-use { background: var(--bar-fill-hi); }
+.pp-lg-dim { background: var(--bar-fill-hi); opacity: 0.45; }
 .pp-attr-cols { columns: 3; column-gap: 26px; }
 .pp-attr-cols > .pp-section { break-inside: avoid; margin-bottom: 14px; }
-.pp-attr-cols .pp-bar-row { grid-template-columns: 140px 1fr 30px; }
+.pp-attr-cols .pp-bar-row { grid-template-columns: 158px 1fr 30px; }
 .pp-key .pp-bar-lbl { color: var(--text); font-weight: 800; }
 
 /* Entwicklung */
@@ -153,8 +192,8 @@
 .pp-chart-axis { fill: var(--text-3); font-size: 11px; }
 .pp-stars { font-size: 24px; margin-bottom: 8px; }
 .pp-growth-track { height: 10px; border-radius: 5px; background: rgba(255, 255, 255,0.06); overflow: hidden; }
-.pp-growth-fill { height: 100%; background: linear-gradient(90deg, var(--accent-dim), var(--accent)); border-radius: 5px; }
-.pp-phase { font-size: 22px; font-weight: 900; }
+.pp-growth-fill { height: 100%; background: var(--bar-fill-hi); border-radius: 5px; }
+.pp-phase { font-size: 22px; font-weight: 600; font-family: var(--font-display); }
 
 /* Statistik */
 .pp-table { width: 100%; border-collapse: collapse; font-size: 14px; }
@@ -163,7 +202,7 @@
 .pp-table td:first-child { text-align: left; color: var(--text-2); font-weight: 600; }
 
 /* Medizin / Bericht */
-.pp-avail { font-size: 22px; font-weight: 900; margin-bottom: 8px; }
+.pp-avail { font-size: 22px; font-weight: 600; font-family: var(--font-display); margin-bottom: 8px; }
 .pp-text { font-size: 15px; line-height: 1.6; color: var(--text-2); margin: 0 0 10px; }
 .pp-text b { color: var(--text); }
 .pp-bullets { margin: 0; padding-left: 18px; color: var(--text-2); font-size: 14px; line-height: 1.7; }

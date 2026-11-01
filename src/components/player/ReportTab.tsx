@@ -58,7 +58,7 @@ export default function ReportTab({ p, squad }: { p: Player; squad?: Player[] })
         <div className="pp-list">
           <Line label="Rolle im Kader" value={role(p, squad)} strong />
           <Line label="Gesamtstärke" value={`${p.overall} (${level(p.overall)})`} />
-          <Line label="Potenzial (Scouts)" value={`${scoutRangeText(p)} · ${level(maxOvr)}`} color="var(--accent)" />
+          <Line label="Potenzial (Scouts)" value={`${scoutRangeText(p)} · ${level(maxOvr)}`} />
           <Line label="Bester Fuß" value={p.preferredFoot === 'both' ? 'Beidfüßig – großer Vorteil' : p.preferredFoot === 'left' ? 'Links' : 'Rechts'} />
           <Line label="Erfahrung" value={level(p.attributes.experience)} />
         </div>

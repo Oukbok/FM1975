@@ -725,7 +725,10 @@ Jede Position bewertet bestimmte Attribute stärker als andere. Diese Gewichte (
 | Mittelstürmer (MS) | Abschluss 2.8, Kopfball 2.0, Schusskraft 1.8, Nervenstärke 1.8 |
 | Hängende Spitze (HS) | Abschluss 2.0, Dribbling 2.0, Technik 2.0, erster Kontakt 1.8 |
 
-Ein Mittelstürmer mit starkem Abschluss erreicht also eine deutlich höhere Eignung als einer mit gleichem Gesamtwert, dessen Stärken aber in der Defensive liegen.`,
+Ein Mittelstürmer mit starkem Abschluss erreicht also eine deutlich höhere Eignung als einer mit gleichem Gesamtwert, dessen Stärken aber in der Defensive liegen.
+
+### Im Spielerprofil
+Im Reiter **Attribute** wählst du oben eine Position: Stammposition, Nebenpositionen und bis zu drei weitere Positionen mit der besten Eignung. Die fünf für diese Position am stärksten gewichteten Attribute sind als **Schlüsselattribute** markiert (Bernstein), die übrigen gewichteten Werte sind normal zu sehen, Attribute ohne Einfluss auf die Position werden gedimmt. Das Netz links zeigt die bis zu acht wichtigsten Attribute der gewählten Position. Die Gewichte gelten für das aktuelle Spieljahr – sie ändern sich mit den Epochen (Rückpassregel, Viererkette, Pressing, Spielaufbau).`,
   },
   {
     id: 'suitability',

@@ -130,8 +130,8 @@ export function applyTrainingForm(player: Player, intensity: number): void {
 /** Kategorisiert einen Formwert für die UI (Label, Farbe, Trend-Pfeil). */
 export function formIndicator(form: number): { label: string; color: string; arrow: string } {
   if (form >= 75) return { label: 'Bestform', color: 'var(--green)', arrow: '▲▲' };
-  if (form >= 60) return { label: 'gut', color: 'var(--green)', arrow: '▲' };
-  if (form >= 45) return { label: 'normal', color: 'var(--yellow)', arrow: '▬' };
+  if (form >= 60) return { label: 'gut', color: 'var(--text)', arrow: '▲' };
+  if (form >= 45) return { label: 'normal', color: 'var(--text-3)', arrow: '▬' };
   if (form >= 30) return { label: 'schwach', color: 'var(--orange)', arrow: '▼' };
   return { label: 'Formkrise', color: 'var(--red)', arrow: '▼▼' };
 }

@@ -9,8 +9,6 @@ import { useState } from 'react';
 import { Player, Club, renderStars } from '../types';
 import PlayerAvatar from './PlayerAvatar';
 import ClubCrest from './ClubCrest';
-import Icon from './Icon';
-import { vColor } from '../ui/format';
 import { scoutRangeText } from '../engine/scouting';
 import { POS_DE, PLAYER_TYPE, MORALE_DE, MORALE_VAL, AVAIL_DE, utcDate, footLabel, frischeOf, Bar } from './player/shared';
 import OverviewTab from './player/OverviewTab';
@@ -42,29 +40,31 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal pp-modal" onClick={(e) => e.stopPropagation()}>
-        <header className="pp-header" style={{ background: `linear-gradient(120deg, ${club?.colors.primary ?? '#22252b'}40, transparent 60%)` }}>
+        <header className="pp-header" style={{ ['--club' as string]: club?.colors.primary ?? 'var(--border)' }}>
           <div className="pp-portrait">
             <PlayerAvatar player={p} club={club} size={210} />
-            {club && <div className="pp-portrait-crest"><ClubLink id={club.id}><ClubCrest club={club} size={44} /></ClubLink></div>}
+            {club && <div className="pp-portrait-crest"><ClubLink id={club.id}><ClubCrest club={club} size={40} /></ClubLink></div>}
           </div>
 
           <div className="pp-id">
-            <div className="pp-club">{club ? <ClubLink id={club.id}>{club.name}</ClubLink> : 'Vereinslos'}</div>
-            <div className="pp-name-row">
-              <span className="pp-no">#{p.shirtNumber}</span>
-              <h2 className="pp-name">{p.fullName}</h2>
+            <div className="pp-club">{club ? <ClubLink id={club.id}>{club.name}</ClubLink> : 'Vereinslos'}<span className="pp-club-no">Nr. {p.shirtNumber}</span></div>
+            <h2 className="pp-name">{p.fullName}</h2>
+            <div className="pp-sub">
+              {POS_DE[p.naturalPosition] ?? p.naturalPosition} · {PLAYER_TYPE[p.naturalPosition] ?? '—'}
+              {p.secondaryPositions.length > 0 && <span className="pp-sub-sec"> · auch {p.secondaryPositions.join(', ')}</span>}
+              <span className="pp-sub-sec"> · geb. {utcDate(p.dateOfBirth)}</span>
             </div>
-            <div className="pp-sub">{POS_DE[p.naturalPosition] ?? p.naturalPosition} · {PLAYER_TYPE[p.naturalPosition] ?? '—'}</div>
-            <div className="pp-badges">
-              <span className="pill" style={{ color: vColor(p.overall) }}>Stärke <b>{p.overall}</b></span>
-              <span className="pill" title="Einschätzung der Scouts – kann danebenliegen">Potenzial <b>{scoutRangeText(p)}</b></span>
-              <span className="pill" style={{ color: p.availability === 'available' ? 'var(--green)' : 'var(--red)' }}>{availText}</span>
-              {p.transferListed && <span className="pill" style={{ color: 'var(--orange)' }}>Transferliste</span>}
-              {p.isYouth && <span className="pill" style={{ color: 'var(--accent)' }}>Jugend</span>}
+            <div className="pp-status">
+              <span className={`pp-avail-dot${p.availability === 'available' ? '' : ' bad'}`} />
+              <span className={p.availability === 'available' ? '' : 'pp-status-bad'}>{availText}</span>
+              {p.transferListed && <span className="pp-tag">Transferliste</span>}
+              {p.isYouth && <span className="pp-tag">Jugend</span>}
             </div>
             <div className="pp-facts">
-              <Fact label="Alter" value={`${p.age} Jahre`} sub={utcDate(p.dateOfBirth)} />
-              <Fact label="Nationalität" value={p.nationality} />
+              <Fact label="Stärke" value={String(p.overall)} big />
+              <Fact label="Potenzial" value={scoutRangeText(p)} title="Einschätzung der Scouts – kann danebenliegen" />
+              <Fact label="Alter" value={`${p.age}`} title={`geboren am ${utcDate(p.dateOfBirth)}`} />
+              <Fact label="Nation" value={p.nationality} />
               <Fact label="Größe" value={`${p.height} cm`} />
               <Fact label="Gewicht" value={`${p.weight} kg`} />
               <Fact label="Fuß" value={footLabel(p)} />
@@ -72,11 +72,11 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
           </div>
 
           <div className="pp-cond">
-            <div className="pp-section-title"><Icon name="fans" size={15} />Zustand</div>
-            <Bar label="Frische" value={frischeOf(p)} />
-            <Bar label="Fitness" value={Math.round(p.attributes.fitness)} />
-            <Bar label="Form" value={Math.round(p.form)} />
-            <Bar label={`Moral · ${MORALE_DE[p.morale]}`} value={MORALE_VAL[p.morale]} />
+            <div className="pp-section-title">Zustand</div>
+            <Bar label="Frische" value={frischeOf(p)} tone="cond" />
+            <Bar label="Fitness" value={Math.round(p.attributes.fitness)} tone="cond" />
+            <Bar label="Form" value={Math.round(p.form)} tone="cond" />
+            <Bar label={`Moral · ${MORALE_DE[p.morale]}`} value={MORALE_VAL[p.morale]} tone="cond" />
             <Bar label="Konstanz" value={Math.round(p.development.consistency)} />
             <Bar label="Nervenstärke" value={Math.round(p.development.bigMatchTemperament)} />
           </div>
@@ -104,9 +104,9 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
   );
 }
 
-function Fact({ label, value, sub }: { label: string; value: string; sub?: string }) {
+function Fact({ label, value, sub, big, title }: { label: string; value: string; sub?: string; big?: boolean; title?: string }) {
   return (
-    <div className="pp-fact">
+    <div className={`pp-fact${big ? ' big' : ''}`} title={title}>
       <div className="pp-fact-lbl">{label}</div>
       <div className="pp-fact-val">{value}</div>
       {sub && <div className="pp-fact-sub">{sub}</div>}

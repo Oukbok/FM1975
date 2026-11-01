@@ -3,7 +3,7 @@ import { formIndicator } from '../../engine/form';
 import { Game } from '../../game/state';
 import { Player } from '../../types';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
-import { fmtDM, vColor } from '../../ui/format';
+import { fmtDM, vColor, condColor } from '../../ui/format';
 import { GROUP_DE, PlayerRow, ScoutStars, avg, groupOf, scoutMid } from '../shared';
 import { useState } from 'react';
 import { demandFor, offerContract } from '../../game/contracts';
@@ -73,12 +73,12 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
                   <td className="num"><b style={{ color: vColor(pl.overall) }}>{pl.overall}</b></td>
                   <td className="nowrap"><ScoutStars p={pl} /></td>
                   <td className="num nowrap" style={{ color: fi.color, fontWeight: 700 }} title={fi.label}>{fi.arrow} {Math.round(pl.form)}</td>
-                  <td className="num" style={{ color: vColor(fr), fontWeight: 700 }}>{fr}</td>
-                  <td className="num" style={{ color: vColor(pl.attributes.fitness) }}>{Math.round(pl.attributes.fitness)}</td>
+                  <td className="num" style={{ color: condColor(fr) }}>{fr}</td>
+                  <td className="num" style={{ color: condColor(pl.attributes.fitness) }}>{Math.round(pl.attributes.fitness)}</td>
                   <td className="muted">{MORALE_DE[pl.morale] ?? pl.morale}</td>
                   <td className="num">{pl.seasonStats.appearances}</td>
                   <td className="num">{pl.seasonStats.goals}</td>
-                  <td className={`nowrap ${pl.availability === 'injured' ? 'red' : pl.suspensionMatches > 0 ? 'orange-text' : 'green'}`}>
+                  <td className={`nowrap ${pl.availability === 'injured' ? 'red' : pl.suspensionMatches > 0 ? 'orange-text' : 'muted'}`}>
                     {pl.availability === 'injured' ? `verletzt (${pl.injury?.daysRemaining} T.)` : pl.suspensionMatches > 0 ? `gesperrt (${pl.suspensionMatches})` : 'fit'}
                   </td>
                 </tr>

@@ -134,7 +134,7 @@ function TransferRow({ p, fee, date, other, dir, onClick }: { p: Player; fee: nu
     <div className="dlist-row clickable" onClick={onClick}>
       <span className="pos-badge">{p.naturalPosition}</span>
       <span className="grow">{p.fullName}<span className="muted"> · {dir} {other} · {date.slice(0, 4)}</span></span>
-      <span className="val" style={{ color: 'var(--accent)' }}>{fmtDM(fee)}</span>
+      <span className="val">{fmtDM(fee)}</span>
     </div>
   );
 }

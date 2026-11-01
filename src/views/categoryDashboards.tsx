@@ -13,7 +13,7 @@ import { getFormation } from '../data/formations';
 import { Game } from '../game/state';
 import { Screen } from '../shell/navigation';
 import { BoxLink, DashBox, DashPage, Empty, KV, Kpi, Meter } from '../ui/DashPage';
-import { fmtDM, fmtDMfull, fmtDateShort, vColor, fmtPrice } from '../ui/format';
+import { fmtDM, fmtDMfull, fmtDateShort, vColor, condColor, condBar, fmtPrice } from '../ui/format';
 import {
   FormDots, GROUP_DE, MatchRow, PlayerRow, avg, groupOf, monthsUntil, ownLeagueMatches, squadOf, tableRow,
 } from './shared';
@@ -148,7 +148,7 @@ export function KaderDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) => 
       </DashBox>
 
       <DashBox title="Belastung" icon="training" onClick={() => onGoto('training')} right="niedrigste Frische">
-        {tired.map((p) => <Meter key={p.id} label={p.fullName} value={p.frische ?? 100} color={vColor(p.frische ?? 100)} />)}
+        {tired.map((p) => <Meter key={p.id} label={p.fullName} value={p.frische ?? 100} color={condBar(p.frische ?? 100)} />)}
       </DashBox>
 
       <DashBox title="Verträge" icon="contracts" onClick={() => onGoto('vertraege')} right={`${fmtDM(wages)} / Woche`}>
@@ -160,13 +160,13 @@ export function KaderDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) => 
 
       <DashBox title="Talente" icon="youth" onClick={() => onGoto('squad')} right="bis 21 Jahre">
         {talents.length ? talents.map((p) => (
-          <PlayerRow key={p.id} p={p} sub={`${p.age} J. · ${p.overall}`} value={<ScoutStars p={p} />} color="var(--yellow)" />
+          <PlayerRow key={p.id} p={p} sub={`${p.age} J. · ${p.overall}`} value={<ScoutStars p={p} />} />
         )) : <Empty icon="youth">Keine jungen Spieler im Profikader.</Empty>}
       </DashBox>
 
       <DashBox title="Jugendakademie" icon="youth" onClick={() => onGoto('youth')} right={`${youth.length} Talente`}>
         {topYouth.length ? topYouth.map((p) => (
-          <PlayerRow key={p.id} p={p} sub={`${p.age} J.`} value={p.scoutedPotentialMin != null ? `${p.scoutedPotentialMin}–${p.scoutedPotentialMax}` : '–'} color="var(--accent)" />
+          <PlayerRow key={p.id} p={p} sub={`${p.age} J.`} value={p.scoutedPotentialMin != null ? `${p.scoutedPotentialMin}–${p.scoutedPotentialMax}` : '–'} color="var(--text-2)" />
         )) : <Empty icon="youth">Noch keine Talente in der Akademie.</Empty>}
         <div className="dnote mt8">Wert = geschätzte Potenzial-Spanne der Scouts.</div>
       </DashBox>
@@ -220,7 +220,7 @@ export function TransfersDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen)
       </DashBox>
 
       <DashBox title="Junge Talente auf dem Markt" icon="youth" onClick={() => onGoto('transfers')}>
-        {young.length ? young.map((p) => <PlayerRow key={p.id} p={p} sub={`${p.age} J. · ${p.overall}`} value={<ScoutStars p={p} />} color="var(--yellow)" />) : <Empty icon="youth">Keine Talente verfügbar.</Empty>}
+        {young.length ? young.map((p) => <PlayerRow key={p.id} p={p} sub={`${p.age} J. · ${p.overall}`} value={<ScoutStars p={p} />} />) : <Empty icon="youth">Keine Talente verfügbar.</Empty>}
       </DashBox>
 
       <DashBox title="Eigene Transferliste" icon="negotiations" right={`${listed.length}`}>
@@ -265,7 +265,7 @@ export function FinanzenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) 
     <DashPage>
       <DashBox title="Kassenstand" icon="finances" onClick={() => onGoto('finances')}>
         <div className="dkpis">
-          <Kpi value={fmtDM(fin.balance)} label="Kontostand" color={fin.balance >= 0 ? 'var(--accent)' : 'var(--red)'} />
+          <Kpi value={fmtDM(fin.balance)} label="Kontostand" color={fin.balance >= 0 ? undefined : 'var(--red)'} />
           <Kpi value={fmtDM(m.net)} label="Saldo pro Monat" color={m.net >= 0 ? 'var(--green)' : 'var(--red)'} />
         </div>
         <Sparkline values={hist.map((h) => h.balance)} />
@@ -322,7 +322,7 @@ export function Sparkline({ values, height = 120 }: { values: number[]; height?:
     <svg viewBox={`0 0 ${W} ${H}`} className="dspark" preserveAspectRatio="none">
       {min < 0 && <line x1={0} x2={W} y1={y(0)} y2={y(0)} stroke="var(--red)" strokeDasharray="4 4" strokeWidth="1" />}
       <path d={`${path} L${x(values.length - 1)},${H} L${x(0)},${H} Z`} fill="rgba(241, 160, 55,0.12)" />
-      <path d={path} fill="none" stroke="var(--accent)" strokeWidth="2.5" vectorEffect="non-scaling-stroke" />
+      <path d={path} fill="none" stroke="var(--text-2)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
     </svg>
   );
 }
@@ -344,10 +344,10 @@ export function VereinDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) =>
       <DashBox title="Vorstand" icon="dashVerein" onClick={() => onGoto('vorstand')}>
         <div className="dkpis">
           <Kpi value={row ? `${row.position}.` : '–'} label="Tabellenplatz" />
-          <Kpi value={`${Math.round(conf)}`} label="Vertrauen" color={vColor(conf)} />
+          <Kpi value={`${Math.round(conf)}`} label="Vertrauen" color={condColor(conf)} />
         </div>
         <KV k="Saisonziel" v={myClub.boardExpectation} />
-        <Meter label="Vertrauen des Vorstands" value={conf} color={vColor(conf)} />
+        <Meter label="Vertrauen des Vorstands" value={conf} color={condBar(conf)} />
         <div className="dnote mt8">Unter 20 droht die Entlassung.</div>
       </DashBox>
 
@@ -381,7 +381,7 @@ export function VereinDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) =>
           <Kpi value={`${Math.round(myClub.stadium.averageAttendanceRate * 100)} %`} label="Auslastung" />
         </div>
         <KV k="Ticketpreis" v={fmtDMfull(myClub.stadium.ticketPrice)} />
-        <Meter label="Zustand" value={myClub.stadium.condition} color={vColor(myClub.stadium.condition)} />
+        <Meter label="Zustand" value={myClub.stadium.condition} color={condBar(myClub.stadium.condition)} />
       </DashBox>
 
       <DashBox title="Fans" icon="fans" onClick={() => onGoto('fans')}>
@@ -429,7 +429,7 @@ export function StatistikenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Scree
       </DashBox>
 
       <DashBox title="Torjäger" icon="matchball" onClick={() => onGoto('table')}>
-        {scorers.length ? scorers.map((p) => <PlayerRow key={p.id} p={p} sub={<ClubLink id={p.clubId}>{g.clubs[p.clubId]?.shortName}</ClubLink>} value={p.seasonStats.goals} color="var(--accent)" />) : <Empty icon="matchball">Noch keine Tore gefallen.</Empty>}
+        {scorers.length ? scorers.map((p) => <PlayerRow key={p.id} p={p} sub={<ClubLink id={p.clubId}>{g.clubs[p.clubId]?.shortName}</ClubLink>} value={p.seasonStats.goals} />) : <Empty icon="matchball">Noch keine Tore gefallen.</Empty>}
       </DashBox>
 
       <DashBox title="Beste Noten" icon="stats" right="ab 3 Spielen">

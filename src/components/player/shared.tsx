@@ -1,7 +1,7 @@
 // Gemeinsame Bausteine des Spielerprofils (Beschriftungen, Kategorien, Mini-Komponenten).
 import { Player, PlayerAttributes, Position, PlayerMorale, PlayerAvailability, InjuryType, InjurySeverity } from '../../types';
-import { vColor } from '../../ui/format';
-import { POSITION_WEIGHTS } from '../../engine/positions';
+import { vColor, vBar, condColor, condBar } from '../../ui/format';
+import { POSITION_WEIGHTS, weightsFor, positionSuitability } from '../../engine/positions';
 
 export type AttrKey = keyof PlayerAttributes;
 
@@ -30,7 +30,8 @@ export const GROUPS: { title: string; short: string; keys: AttrKey[] }[] = [
 ];
 export const GK_GROUP = { title: 'Torwart', short: 'Torwart', keys: ['aerialReach', 'communication', 'handling', 'kicking', 'oneOnOnes', 'reflexes'] as AttrKey[] };
 
-export const groupsFor = (p: Player) => (p.naturalPosition === 'TW' ? [GK_GROUP, ...GROUPS] : GROUPS);
+export const groupsFor = (p: Player, pos: Position = p.naturalPosition) =>
+  (p.naturalPosition === 'TW' || pos === 'TW' ? [GK_GROUP, ...GROUPS] : GROUPS);
 export const sortedKeys = (keys: AttrKey[]) => [...keys].sort((a, b) => ATTR_DE[a].localeCompare(ATTR_DE[b], 'de'));
 export const groupAvg = (p: Player, keys: AttrKey[]) => Math.round(keys.reduce((s, k) => s + p.attributes[k], 0) / keys.length);
 
@@ -39,6 +40,48 @@ export function keyAttributes(pos: Position): AttrKey[] {
   const w = POSITION_WEIGHTS[pos] as Partial<Record<AttrKey, number>>;
   return (Object.keys(w) as AttrKey[]).filter((k) => k in ATTR_DE && k !== 'fitness').sort((a, b) => (w[b] ?? 0) - (w[a] ?? 0));
 }
+
+/** Kurzbeschriftungen fürs Profil-Netz (lange Namen gekürzt). */
+export const ATTR_SHORT: Partial<Record<AttrKey, string>> = {
+  aerialReach: 'Strafraum', oneOnOnes: '1 gegen 1', communication: 'Kommunikation', leadership: 'Führung',
+  concentration: 'Konzentration', interceptions: 'Abfangen', positioning: 'Stellungsspiel',
+};
+
+export type AttrTier = 'core' | 'use';
+/**
+ * Wichtigkeit der Attribute für eine Position – direkt aus den Engine-Gewichten
+ * (`weightsFor`, epochenabhängig): die fünf höchst gewichteten = Schlüsselattribute,
+ * die übrigen gewichteten = wichtig, alles andere spielt für die Position keine Rolle.
+ */
+export function attrTiers(pos: Position): Map<AttrKey, AttrTier> {
+  const w = weightsFor(pos) as Partial<Record<AttrKey, number>>;
+  const keys = (Object.keys(w) as AttrKey[]).filter((k) => k in ATTR_DE && k !== 'fitness')
+    .sort((a, b) => (w[b] ?? 0) - (w[a] ?? 0));
+  return new Map(keys.map((k, i) => [k, i < 5 ? 'core' : 'use'] as [AttrKey, AttrTier]));
+}
+
+export type PosKind = 'natural' | 'secondary' | 'option';
+/**
+ * Positionen, die der Spieler beherrscht: Stammposition, Nebenpositionen und bis zu drei
+ * weitere Positionen mit der besten Eignung (`positionSuitability`, mindestens 55).
+ * Reihenfolge: Stamm, Neben, weitere nach Eignung.
+ */
+export function positionChoices(p: Player): { pos: Position; kind: PosKind; value: number }[] {
+  const out: { pos: Position; kind: PosKind; value: number }[] = [
+    { pos: p.naturalPosition, kind: 'natural', value: positionSuitability(p, p.naturalPosition) },
+  ];
+  for (const pos of p.secondaryPositions ?? []) {
+    if (!out.some((o) => o.pos === pos)) out.push({ pos, kind: 'secondary', value: positionSuitability(p, pos) });
+  }
+  const extra = (Object.keys(POSITION_WEIGHTS) as Position[])
+    .filter((pos) => !out.some((o) => o.pos === pos))
+    .map((pos) => ({ pos, kind: 'option' as PosKind, value: positionSuitability(p, pos) }))
+    .filter((o) => o.value >= 55)
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 3);
+  return [...out, ...extra];
+}
+export const POS_KIND_DE: Record<PosKind, string> = { natural: 'Stamm', secondary: 'Neben', option: 'möglich' };
 
 export const POS_DE: Record<string, string> = {
   TW: 'Torwart', LIB: 'Libero', VS: 'Vorstopper', AV: 'Außenverteidiger',
@@ -98,13 +141,22 @@ export function Line({ label, value, strong, color }: { label: string; value: Re
   );
 }
 
-export function Bar({ label, value, max = 100 }: { label: string; value: number; max?: number }) {
+/**
+ * Balken mit Wert. `tone`: 'q' = Qualitätsskala (monochrom), 'cond' = Zustand (neutral,
+ * nur bei niedrigen Werten Warnfarbe). `tier` hebt Schlüsselattribute hervor bzw. dimmt
+ * für die gewählte Position unwichtige Werte.
+ */
+export function Bar({ label, value, max = 100, tone = 'q', tier }: {
+  label: string; value: number; max?: number; tone?: 'q' | 'cond'; tier?: AttrTier | 'dim';
+}) {
   const pct = Math.max(0, Math.min(100, (value / max) * 100));
+  const fill = tier === 'core' ? 'var(--accent)' : tone === 'cond' ? condBar(value) : vBar(value);
+  const col = tone === 'cond' ? condColor(value) : vColor(value);
   return (
-    <div className="pp-bar-row">
+    <div className={`pp-bar-row${tier ? ' pp-tier-' + tier : ''}`}>
       <span className="pp-bar-lbl">{label}</span>
-      <div className="pp-bar-track"><div className="pp-bar-fill" style={{ width: `${pct}%`, background: vColor(value) }} /></div>
-      <span className="pp-bar-val" style={{ color: vColor(value) }}>{value}</span>
+      <div className="pp-bar-track"><div className="pp-bar-fill" style={{ width: `${pct}%`, background: fill }} /></div>
+      <span className="pp-bar-val" style={{ color: col }}>{value}</span>
     </div>
   );
 }
@@ -119,9 +171,9 @@ export function Stat({ label, value, sub }: { label: string; value: React.ReactN
   );
 }
 
-export function AttrRow({ label, value }: { label: string; value: number }) {
+export function AttrRow({ label, value, tier }: { label: string; value: number; tier?: AttrTier }) {
   return (
-    <div className="pp-attr-row">
+    <div className={`pp-attr-row${tier ? ' pp-tier-' + tier : ''}`}>
       <span className="pp-attr-lbl">{label}</span>
       <span className="pp-attr-val" style={{ color: vColor(value) }}>{value}</span>
     </div>

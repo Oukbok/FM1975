@@ -78,7 +78,7 @@ export function YouthModal({ g, player, club, onClose, onChange, foreign = false
           </div>
           <div className="mx-kpis">
             <Kpi value={p.overall} label="Stärke" color={vColor(p.overall)} />
-            <Kpi value={scoutRangeText(p)} label="Potenzial (Scouting)" color="var(--yellow)" />
+            <Kpi value={scoutRangeText(p)} label="Potenzial (Scouting)" />
           </div>
           <button className="modal-close" onClick={onClose}>×</button>
         </div>
@@ -90,7 +90,7 @@ export function YouthModal({ g, player, club, onClose, onChange, foreign = false
             <KV k="Herkunft" v={p.nationality} />
             <KV k="Größe · Gewicht" v={`${p.height} cm · ${p.weight} kg`} />
             <div className="dsec">Scouting</div>
-            <Meter label="Spanne" value={smax - smin} max={2} text={`${smin.toLocaleString('de-DE')}–${smax.toLocaleString('de-DE')}`} color="var(--yellow)" />
+            <Meter label="Spanne" value={smax - smin} max={2} text={`${smin.toLocaleString("de-DE")}–${smax.toLocaleString("de-DE")}`} />
             <div className="dnote">Das wahre Potenzial ist verborgen. Mit zunehmendem Alter und besserer Akademie wird die Spanne enger.</div>
           </DashBox>
 

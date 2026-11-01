@@ -1,0 +1,115 @@
+/* =============================================================================
+   OPTIK „ERWACHSEN“ – gemeinsame Ebene über allen Bereichen (zuletzt geladen).
+   Leitlinie: ruhige neutrale Flächen, klare Typo-Hierarchie, tabellarische Ziffern,
+   Farbe nur als Bedeutungsträger (Bernstein = Auswahl/Hervorhebung, Grün/Rot nur
+   für echte Gut/Schlecht-Signale). Werte (Attribute/Stärke) monochrom über --q-*.
+   Regeln dazu: CLAUDE.md, Abschnitt „Optik“.
+   ============================================================================= */
+
+/* Ziffern überall gleich breit (Tabellen, Kennzahlen, Listen) */
+body { font-variant-numeric: tabular-nums; }
+
+/* ---- Boxen ---------------------------------------------------------------- */
+.card.hoverable:hover { border-color: var(--text-4); transform: none; }
+.dxh-ico { color: var(--text-3); }
+.dxh-ico svg { width: 22px; height: 22px; }
+.dbox-link { color: var(--text-2); font-weight: 600; }
+.dbox-link:hover { color: var(--accent); }
+
+/* Kennzahl-Kacheln: weiß statt Bernstein, flacher Rahmen */
+.dkpi { border-radius: 6px; background: rgba(255, 255, 255, 0.025); border: 1px solid var(--border-soft); }
+.dkpi-val { color: var(--text); font-family: var(--font-display); font-weight: 500; letter-spacing: 0.3px; }
+.dkpi-lbl { color: var(--text-3); font-weight: 600; font-size: 11.5px; letter-spacing: 0.8px; }
+
+/* Zeilen / Listen */
+.dkv-k { color: var(--text-3); }
+.dkv-v { font-weight: 600; }
+.dlist-row .val { font-weight: 700; }
+.dsec { color: var(--text-3); font-weight: 700; letter-spacing: 1px; }
+.dnote { color: var(--text-3); }
+
+/* Balken: dünn, neutral */
+.dmeter-track { height: 5px; border-radius: 3px; background: var(--bar-track); }
+.dmeter-fill { border-radius: 3px; }
+.dmeter-lbl { color: var(--text-2); }
+.dmeter-val { font-weight: 700; }
+
+/* ---- Tabellen --------------------------------------------------------------- */
+.dtable thead th { color: var(--text-3); font-weight: 600; letter-spacing: 0.8px; }
+.dtable th.sorted { color: var(--text); box-shadow: inset 0 -2px 0 var(--accent); }
+.dtable tbody tr:hover, .dlist-row.clickable:hover { background: rgba(255, 255, 255, 0.035); }
+.dtable tbody tr.me td { color: var(--text); font-weight: 700; }
+tr.me { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+tr.me:hover { background: rgba(242, 165, 65, 0.14); }
+
+/* Positionskürzel: schlichtes Etikett statt Kachel */
+.pos-badge {
+  width: auto; min-width: 30px; height: 20px; padding: 0 5px; border-radius: 3px;
+  background: transparent; border: 1px solid rgba(255, 255, 255, 0.14); color: var(--text-2);
+  font-size: 11.5px; font-weight: 600; letter-spacing: 0.6px;
+}
+
+/* Potenzial-Spanne / Sterne: neutral (kein Gelb) */
+.dscout, .stars { color: var(--text-2); }
+
+/* ---- Pillen, Chips, Badges ---------------------------------------------- */
+.pill {
+  border-radius: 4px; background: transparent; border-color: var(--border);
+  color: var(--text-2); font-weight: 600; letter-spacing: 0.3px;
+}
+.pill.home { color: var(--text); border-color: var(--border); }
+.pill.away { color: var(--text-2); border-color: var(--border); }
+.dchip { border-radius: 4px; font-weight: 600; }
+.dchip.on { background: var(--accent-soft); }
+
+/* Formleiste S/U/N: kleiner, gedämpft */
+.dform i { width: 18px; height: 18px; border-radius: 3px; font-size: 10.5px; font-weight: 700; color: var(--bg); }
+.dform i.dform-D { background: var(--text-4); color: var(--text); }
+.form-pill { border-radius: 3px; color: var(--bg); }
+
+/* Duell-Anzeige: „VS“ ruhig */
+.dvs-mid { color: var(--text-3); font-weight: 600; }
+
+/* ---- Kalenderstreifen: „Heute“ dunkel mit Bernsteinkante statt Creme ---- */
+.kbsheet { border-radius: 8px; border-color: var(--border-soft); background: linear-gradient(180deg, rgba(30, 33, 39, 0.92), rgba(22, 25, 31, 0.92)); }
+.kbday { font-family: var(--font-display); font-weight: 500; }
+.kbsheet.is-match .kbday { color: var(--text); }
+.kbsheet.is-today {
+  border-color: var(--accent);
+  background: linear-gradient(180deg, rgba(36, 38, 44, 0.96), rgba(26, 28, 34, 0.96));
+  box-shadow: inset 0 3px 0 var(--accent);
+}
+.kbsheet.is-today .kbday { color: var(--accent); }
+.kbsheet.is-today .kbwd { color: var(--accent); }
+.kbsheet.is-today .kbsheet-lbl { color: var(--text); }
+.kbsheet.is-today .kbsheet-ico .game-icon { filter: none; }
+
+/* ---- Popups ---------------------------------------------------------------- */
+.mx-head h2 { font-weight: 600; }
+.modal-close { border-radius: 6px; }
+/* Vereinsprofil-Kopf: Vereinsfarbe nur als feine Linie */
+.cmx-head::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--club, var(--border)); opacity: 0.85; }
+
+/* ---- Zentrale (nur Farben/Schrift – Layout, Boxenhöhen und Footer unverändert) ---- */
+.dxf-balance-val { color: var(--text); font-family: var(--font-display); font-weight: 500; letter-spacing: 0.3px; }
+.cvb2-fpip.on { background: var(--text-2); }
+.cns-meta-ico { color: var(--text-3); }
+.cnw-subj { color: var(--text-2); font-weight: 600; }
+.cnw-row.is-unread .cnw-subj { color: var(--text); font-weight: 700; }
+.cnw-row.is-unread { box-shadow: inset 2px 0 0 var(--accent); }
+.dxt-row.me td.dxt-club { color: var(--text); font-weight: 700; }
+.dxt-row.me { box-shadow: inset 3px 0 0 var(--accent); }
+.dxt-row:hover td.dxt-club { color: var(--text); }
+.cns-cmp-v { color: var(--text-3); font-weight: 700; }
+.cns-cmp-v.better { color: var(--text); }
+
+/* Tabellenzonen am Platz-Kürzel: Farbkante statt Kachel */
+.pos-badge.zone-cl, .pos-badge.zone-eu, .pos-badge.zone-rel { border-color: transparent; border-radius: 2px; }
+.pos-badge.zone-cl { background: rgba(91, 191, 139, 0.10); color: var(--text); box-shadow: inset 3px 0 0 var(--green); }
+.pos-badge.zone-eu { background: rgba(255, 255, 255, 0.05); color: var(--text); box-shadow: inset 3px 0 0 var(--text-2); }
+.pos-badge.zone-rel { background: rgba(224, 100, 111, 0.10); color: var(--text); box-shadow: inset 3px 0 0 var(--red); }
+.zone-eu { background: rgba(255, 255, 255, 0.05); color: var(--text); box-shadow: inset 3px 0 0 var(--text-2); }
+.dxt-row.zone-eu td.dxt-pos { color: var(--text-2); box-shadow: inset 3px 0 0 var(--text-2); }
+
+/* Weniger Icon-Gewimmel: keine Symbole vor Balken-Beschriftungen */
+.dmeter-lbl .game-icon { display: none; }

@@ -112,7 +112,7 @@
   border-radius: 999px; padding: 2px 8px; margin-left: auto;
 }
 .chronicle-badge.now { background: var(--accent); color: #06090f; }
-.chronicle-badge.done { background: rgba(61, 220, 132,0.14); color: var(--green); }
+.chronicle-badge.done { background: rgba(91, 191, 139,0.14); color: var(--green); }
 .chronicle-badge.soon { background: var(--panel-2); color: var(--text-2); border: 1px solid var(--border); }
 .chronicle-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
 .chronicle-desc { font-size: 13px; color: var(--text-2); line-height: 1.5; }

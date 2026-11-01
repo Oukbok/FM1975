@@ -11,7 +11,7 @@ export default function MedicalTab({ p }: { p: Player }) {
   return (
     <div className="pp-grid pp-grid-medical">
       <Section title="Verfügbarkeit" icon={<Icon name="staff" size={15} />}>
-        <div className="pp-avail" style={{ color: p.availability === 'available' ? 'var(--green)' : 'var(--red)' }}>{AVAIL_DE[p.availability]}</div>
+        <div className="pp-avail" style={{ color: p.availability === 'available' ? 'var(--text)' : 'var(--red)' }}>{AVAIL_DE[p.availability]}</div>
         {inj ? (
           <div className="pp-list">
             <Line label="Diagnose" value={inj.description || INJURY_TYPE_DE[inj.type]} strong />
@@ -32,8 +32,8 @@ export default function MedicalTab({ p }: { p: Player }) {
       </Section>
       <div className="pp-stack">
       <Section title="Belastung & Körper" icon={<Icon name="training" size={15} />}>
-        <Bar label="Frische" value={frischeOf(p)} />
-        <Bar label="Fitness" value={Math.round(p.attributes.fitness)} />
+        <Bar label="Frische" value={frischeOf(p)} tone="cond" />
+        <Bar label="Fitness" value={Math.round(p.attributes.fitness)} tone="cond" />
         <Bar label="Robustheit" value={Math.round(p.attributes.strength)} />
         <div className="pp-list mt8">
           <Line label="Trainingsbelastung" value={Math.round(p.trainingLoad)} />

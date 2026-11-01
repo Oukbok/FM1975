@@ -71,7 +71,7 @@ export function Meter({ label, value, max = 100, color, text }: { label: ReactNo
   return (
     <div className="dmeter">
       <span className="dmeter-lbl">{label}</span>
-      <span className="dmeter-track"><span className="dmeter-fill" style={{ width: `${pct}%`, background: color ?? 'var(--accent)' }} /></span>
+      <span className="dmeter-track"><span className="dmeter-fill" style={{ width: `${pct}%`, background: color ?? 'var(--bar-fill-hi)' }} /></span>
       <span className="dmeter-val">{text ?? Math.round(value)}</span>
     </div>
   );

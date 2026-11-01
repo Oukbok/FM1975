@@ -21,7 +21,13 @@ export const fmtDMfull = (n: number) => formatMoney(n, _displayYear);
 export const fmtPrice = (base: number) => formatMoneyShort(base * economyScale(_displayYear), _displayYear);
 export const fmtPriceFull = (base: number) => formatMoney(Math.round(base * economyScale(_displayYear)), _displayYear);
 
-export const vColor = (v: number) => v >= 75 ? 'var(--green)' : v >= 60 ? 'var(--yellow)' : v >= 45 ? 'var(--orange)' : 'var(--red)';
+/** Qualitätsskala für Werte (Attribute, Stärke, Eignung): monochrom – hell = gut, dunkel = schwach. */
+export const vColor = (v: number) => v >= 80 ? 'var(--q-1)' : v >= 70 ? 'var(--q-2)' : v >= 55 ? 'var(--q-3)' : 'var(--q-4)';
+/** Balkenfarbe passend zur Qualitätsskala (gedämpfter als die Ziffern). */
+export const vBar = (v: number) => v >= 70 ? 'var(--bar-fill-hi)' : v >= 55 ? 'var(--bar-fill)' : 'var(--q-4)';
+/** Zustandswerte (Frische, Fitness, Moral …): neutral, nur auffällig wenn wirklich niedrig. */
+export const condColor = (v: number) => v < 45 ? 'var(--red)' : v < 60 ? 'var(--yellow)' : 'var(--text)';
+export const condBar = (v: number) => v < 45 ? 'var(--red)' : v < 60 ? 'var(--yellow)' : 'var(--bar-fill-hi)';
 
 // =============================================================================
 // KALENDER-ZEITSTRAHL (Header) — 7 „Kalenderblatt"-Kacheln
