@@ -52,6 +52,12 @@
 // [C20] lamangaclub.com: La Manga Club mit acht Fußballplätzen; Winter 2020 über 60
 //       Mannschaften aus 20 Ländern. [C21] hsv.de / bayer04.de: HSV und Leverkusen im
 //       Winterlager La Manga.
+// [C22] bundesliga.com, Winter-Liveticker 12.–14.01.2015: VfL Wolfsburg in Kapstadt (4:1 gegen
+//       Ajax Cape Town), TSG Hoffenheim in Südafrika (Test gegen University of Pretoria).
+// [C23] t-online.de (02.01.2019) „Werder Bremen: Abflug nach Südafrika“: zehn Tage Johannesburg
+//       (3.–12.1.), Training auf der Anlage des FC Randburg; pressreader/Daily News (11.01.2019):
+//       Bremen wählt Südafrika auch, um Fans zu gewinnen.
+// Lage der Orte (geo): Breiten-/Längengrad des erstgenannten Ortes (gerundet, Ortsmitte).
 // Annahmen sind als „Annahme“ markiert. Preise in 1975-Basis (Buchung × economyScale),
 // kalkuliert für einen Tross von ~30 Personen (Erstligist 1975 ≈ 4,5 Mio. DM Umsatz).
 // Reise = An- und Abreise des Trosses; Tagessätze stehen bei den Unterkünften.
@@ -63,11 +69,13 @@ export type CampOpp = 'amateur' | 'regional' | 'international' | 'top';
 export type CampTransport = 'bus' | 'bahn' | 'flug';
 export type CampClimate =
   | 'flachland' | 'kueste' | 'mittelgebirge' | 'alpen' | 'hochalpen'
-  | 'mittelmeer' | 'atlantik' | 'golf' | 'florida' | 'asien' | 'usa';
+  | 'mittelmeer' | 'atlantik' | 'golf' | 'florida' | 'asien' | 'usa' | 'kap';
 
 export interface CampDestination {
   id: string;
   name: string;
+  /** Lage für die Karte im Planer: [Breitengrad, Längengrad] des erstgenannten Ortes. */
+  geo: [number, number];
   place: string;
   country: string;
   region: CampRegion;
@@ -106,135 +114,135 @@ const from = (y: number, rep = 0) => [{ from: y, minRep: rep }];
 export const CAMP_DESTINATIONS: CampDestination[] = [
   // --- Sportschulen der Landesverbände: günstig, viele Plätze, im Winter Hallen -------
   {
-    id: 'sportschule', name: 'Sportschule Kaiserau', place: 'Kamen (Westfalen)', country: 'Deutschland', region: 'inland',
+    id: 'sportschule', name: 'Sportschule Kaiserau', geo: [51.59, 7.66], place: 'Kamen (Westfalen)', country: 'Deutschland', region: 'inland',
     seasons: both, access: from(1975), climate: 'flachland', altitude: 70, transport: 'bus', travelH: 2, tz: 0, travel: 1200,
     opp: 'amateur', testIncome: 2500, marketing: 0, buzz: 0.25,
     note: 'Sportschule des Westfälischen Verbands, SportHotel und Schule eng verzahnt; Gäste „von Beckenbauer bis Ronaldo“ [C10]. Nah an den Revierklubs.',
   },
   {
-    id: 'hennef', name: 'Sportschule Hennef', place: 'Hennef (Sieg)', country: 'Deutschland', region: 'inland',
+    id: 'hennef', name: 'Sportschule Hennef', geo: [50.78, 7.28], place: 'Hennef (Sieg)', country: 'Deutschland', region: 'inland',
     seasons: both, access: from(1975), climate: 'flachland', altitude: 70, transport: 'bus', travelH: 3, tz: 0, travel: 1300,
     opp: 'amateur', testIncome: 2500, marketing: 0, buzz: 0.15,
     note: 'Seit 1950 Schule des Mittelrhein-Verbands; schon 1965 eine Halle mit Kunstrasen, 1968 ein Hallenbad – im Winter ein echter Vorteil [C8].',
   },
   {
-    id: 'wedau', name: 'Sportschule Wedau', place: 'Duisburg', country: 'Deutschland', region: 'inland',
+    id: 'wedau', name: 'Sportschule Wedau', geo: [51.4, 6.78], place: 'Duisburg', country: 'Deutschland', region: 'inland',
     seasons: both, access: from(1975), climate: 'flachland', altitude: 30, transport: 'bus', travelH: 2, tz: 0, travel: 1200,
     opp: 'amateur', testIncome: 2500, marketing: 0, buzz: 0.3,
     note: 'Die größte Sportschule Deutschlands: rund 400 Betten, viele Plätze, Wald und Regattabahn für Läufe [C9]. Mitten in der Großstadt.',
   },
   {
-    id: 'gruenberg', name: 'Sportschule Grünberg', place: 'Grünberg (Mittelhessen)', country: 'Deutschland', region: 'inland',
+    id: 'gruenberg', name: 'Sportschule Grünberg', geo: [50.59, 8.96], place: 'Grünberg (Mittelhessen)', country: 'Deutschland', region: 'inland',
     seasons: both, access: from(1975), climate: 'flachland', altitude: 270, transport: 'bus', travelH: 3, tz: 0, travel: 1300,
     opp: 'amateur', testIncome: 2200, marketing: 0, buzz: 0.1,
     note: 'Sportschule des Hessischen Verbands am Rand des Vogelsbergs: ruhig, waldreich, wenig Ablenkung (Annahme: Betrieb seit den 50ern).',
   },
   {
-    id: 'barsinghausen', name: 'Sportschule Barsinghausen', place: 'Barsinghausen (Deister)', country: 'Deutschland', region: 'inland',
+    id: 'barsinghausen', name: 'Sportschule Barsinghausen', geo: [52.3, 9.46], place: 'Barsinghausen (Deister)', country: 'Deutschland', region: 'inland',
     seasons: both, access: from(1975), climate: 'flachland', altitude: 120, transport: 'bus', travelH: 3, tz: 0, travel: 1300,
     opp: 'amateur', testIncome: 2200, marketing: 0, buzz: 0.1,
     note: 'Niedersachsens Verbandssportschule am Deister – Waldläufe am Berg direkt vor der Tür (Annahme: Betrieb seit den 50ern; Sporthotel später).',
   },
   {
-    id: 'malente', name: 'Sportschule Malente', place: 'Malente (Holsteinische Schweiz)', country: 'Deutschland', region: 'inland',
+    id: 'malente', name: 'Sportschule Malente', geo: [54.17, 10.56], place: 'Malente (Holsteinische Schweiz)', country: 'Deutschland', region: 'inland',
     seasons: both, access: from(1975), climate: 'kueste', altitude: 30, transport: 'bus', travelH: 5, tz: 0, travel: 1600,
     opp: 'amateur', testIncome: 2200, marketing: 0, buzz: 0.1,
     note: 'Das WM-Quartier von 1974: spartanisch, abgeschieden zwischen Seen, viel Zeit miteinander – der „Geist von Malente“ [C11].',
   },
   // --- Küste: Dünenläufe der 70er, Seeluft, im Sommer Urlauber ----------------------------
   {
-    id: 'norderney', name: 'Norderney', place: 'Norderney (Nordsee)', country: 'Deutschland', region: 'kueste',
+    id: 'norderney', name: 'Norderney', geo: [53.71, 7.15], place: 'Norderney (Nordsee)', country: 'Deutschland', region: 'kueste',
     seasons: S, access: from(1975), climate: 'kueste', altitude: 5, transport: 'bahn', travelH: 6, tz: 0, travel: 2200,
     opp: 'amateur', testIncome: 3000, marketing: 0.01, buzz: 0.35,
     note: 'Dünenläufe und Seeluft – der Klassiker der harten Sommervorbereitung (Annahme). Mit Fähre, Plätze eher mäßig, Testspiele vor Urlaubern.',
   },
   {
-    id: 'sylt', name: 'Sylt', place: 'Westerland / Rantum', country: 'Deutschland', region: 'kueste',
+    id: 'sylt', name: 'Sylt', geo: [54.91, 8.31], place: 'Westerland / Rantum', country: 'Deutschland', region: 'kueste',
     seasons: S, access: from(1975), climate: 'kueste', altitude: 5, transport: 'bahn', travelH: 7, tz: 0, travel: 2600,
     opp: 'amateur', testIncome: 3500, marketing: 0.02, buzz: 0.5,
     note: 'Dünen, Strand – und das Nachtleben von Westerland. Wer in Rantum wohnt, hat Ruhe; wer im Zentrum wohnt, hat Gesellschaft (Annahme).',
   },
   {
-    id: 'timmendorf', name: 'Timmendorfer Strand', place: 'Timmendorfer Strand (Ostsee)', country: 'Deutschland', region: 'kueste',
+    id: 'timmendorf', name: 'Timmendorfer Strand', geo: [53.99, 10.78], place: 'Timmendorfer Strand (Ostsee)', country: 'Deutschland', region: 'kueste',
     seasons: both, access: from(1975), climate: 'kueste', altitude: 5, transport: 'bus', travelH: 5, tz: 0, travel: 1600,
     opp: 'amateur', testIncome: 2800, marketing: 0.01, buzz: 0.3,
     note: 'Im Sommer Strandläufe, im Winter Training auf gefrorenem Boden – so bei Leverkusen noch Anfang der 90er bei −10 °C [C2]. Testgegner aus dem Amateurlager wie 1976 in Quickborn [C12].',
   },
   // --- Mittelgebirge: Bergläufe, Wald, günstige Gasthöfe -----------------------------------
   {
-    id: 'harz', name: 'Harz', place: 'Braunlage / Bad Lauterberg', country: 'Deutschland', region: 'mittelgebirge',
+    id: 'harz', name: 'Harz', geo: [51.73, 10.61], place: 'Braunlage / Bad Lauterberg', country: 'Deutschland', region: 'mittelgebirge',
     seasons: both, access: from(1975), climate: 'mittelgebirge', altitude: 600, transport: 'bus', travelH: 4, tz: 0, travel: 1400,
     opp: 'amateur', testIncome: 2200, marketing: 0, buzz: 0.1,
     note: 'Steigerungsläufe am Berg wie bei Magdeburg im Harz [C13]. Im Winter Schnee – dann bleiben Halle und Waldwege.',
   },
   {
-    id: 'schwarzwald', name: 'Schwarzwald', place: 'Hinterzarten / Schluchsee / Feldberg', country: 'Deutschland', region: 'mittelgebirge',
+    id: 'schwarzwald', name: 'Schwarzwald', geo: [47.9, 8.1], place: 'Hinterzarten / Schluchsee / Feldberg', country: 'Deutschland', region: 'mittelgebirge',
     seasons: both, access: from(1975), climate: 'mittelgebirge', altitude: 900, transport: 'bus', travelH: 5, tz: 0, travel: 1600,
     opp: 'regional', testIncome: 3000, marketing: 0.01, buzz: 0.15,
     note: 'Brasilien bereitete sich 1974 im Leistungszentrum Herzogenhorn auf rund 1.350 m vor, der DFB 1982 am Schluchsee – mit bekannten „Vorkommnissen“ [C14].',
   },
   {
-    id: 'sauerland', name: 'Sauerland', place: 'Winterberg / Schmallenberg', country: 'Deutschland', region: 'mittelgebirge',
+    id: 'sauerland', name: 'Sauerland', geo: [51.19, 8.53], place: 'Winterberg / Schmallenberg', country: 'Deutschland', region: 'mittelgebirge',
     seasons: both, access: from(1975), climate: 'mittelgebirge', altitude: 700, transport: 'bus', travelH: 3, tz: 0, travel: 1300,
     opp: 'amateur', testIncome: 2200, marketing: 0, buzz: 0.15,
     note: 'Kurz vor der Haustür der Westklubs: Waldläufe, Höhenwege, im Winter Schnee (Annahme). Günstig – und Fans fahren mal eben hin.',
   },
   // --- Alpen (Sommer): Höhenluft, Testspiele vor Urlaubern --------------------------------
   {
-    id: 'tegernsee', name: 'Tegernsee', place: 'Rottach-Egern / Kreuth', country: 'Deutschland', region: 'alpen',
+    id: 'tegernsee', name: 'Tegernsee', geo: [47.69, 11.77], place: 'Rottach-Egern / Kreuth', country: 'Deutschland', region: 'alpen',
     seasons: S, access: from(1975), climate: 'alpen', altitude: 750, transport: 'bus', travelH: 6, tz: 0, travel: 1800,
     opp: 'regional', testIncome: 4000, marketing: 0.02, buzz: 0.45,
     note: 'Klassiker seit den 70ern – Rottach-Egern beim FC Bayern bis ins neue Jahrtausend [C1], 2023 wieder Bayern und Gladbach [C15]. Viele Zaungäste.',
   },
   {
-    id: 'tirol', name: 'Tirol', place: 'Seefeld / Kitzbühel', country: 'Österreich', region: 'alpen',
+    id: 'tirol', name: 'Tirol', geo: [47.33, 11.19], place: 'Seefeld / Kitzbühel', country: 'Österreich', region: 'alpen',
     seasons: S, access: from(1977), // Annahme: ab Ende der 70er üblich
     climate: 'alpen', altitude: 1180, transport: 'bus', travelH: 8, tz: 0, travel: 2600,
     opp: 'regional', testIncome: 5000, marketing: 0.04, buzz: 0.35,
     note: 'Höhenluft auf knapp 1.200 m, gute Plätze, Testspiele gegen österreichische Klubs; 2023 Wolfsburg in Seefeld, Hoffenheim in Kitzbühel [C15].',
   },
   {
-    id: 'zillertal', name: 'Zillertal', place: 'Zell am Ziller / Gerlos', country: 'Österreich', region: 'alpen',
+    id: 'zillertal', name: 'Zillertal', geo: [47.23, 11.88], place: 'Zell am Ziller / Gerlos', country: 'Österreich', region: 'alpen',
     seasons: S, access: from(1977), climate: 'alpen', altitude: 600, transport: 'bus', travelH: 8, tz: 0, travel: 2600,
     opp: 'regional', testIncome: 4500, marketing: 0.03, buzz: 0.3,
     note: 'Tal mit Tradition: Werder Bremen kommt seit rund 15 Jahren nach Zell-Gerlos [C16]. Gasthöfe im Talschluss oder Sporthotels im Ort.',
   },
   {
-    id: 'salzburgerland', name: 'Salzburger Land', place: 'Saalfelden / Maria Alm / Leogang', country: 'Österreich', region: 'alpen',
+    id: 'salzburgerland', name: 'Salzburger Land', geo: [47.43, 12.85], place: 'Saalfelden / Maria Alm / Leogang', country: 'Österreich', region: 'alpen',
     seasons: S, access: from(1977), climate: 'alpen', altitude: 750, transport: 'bus', travelH: 7, tz: 0, travel: 2500,
     opp: 'regional', testIncome: 4500, marketing: 0.03, buzz: 0.25,
     note: 'Pinzgau unter dem Steinernen Meer – 2023 Leverkusen in Saalfelden, Köln in Maria Alm [C15]. Später Gutshöfe mit eigenen Plätzen.',
   },
   {
-    id: 'steiermark', name: 'Steiermark', place: 'Schladming / Bad Waltersdorf', country: 'Österreich', region: 'alpen',
+    id: 'steiermark', name: 'Steiermark', geo: [47.39, 13.69], place: 'Schladming / Bad Waltersdorf', country: 'Österreich', region: 'alpen',
     seasons: S, access: from(1980), // Annahme
     climate: 'alpen', altitude: 750, transport: 'bus', travelH: 9, tz: 0, travel: 2700,
     opp: 'regional', testIncome: 4000, marketing: 0.03, buzz: 0.2,
     note: 'Schladming am Dachstein (2023 Augsburg und Mainz [C15]) oder Thermenhotels in der Oststeiermark (Annahme) – gute Regeneration.',
   },
   {
-    id: 'kaernten', name: 'Kärnten', place: 'Velden / Wörthersee', country: 'Österreich', region: 'alpen',
+    id: 'kaernten', name: 'Kärnten', geo: [46.61, 14.04], place: 'Velden / Wörthersee', country: 'Österreich', region: 'alpen',
     seasons: S, access: from(1977), // Annahme
     climate: 'alpen', altitude: 450, transport: 'bus', travelH: 10, tz: 0, travel: 2800,
     opp: 'regional', testIncome: 4500, marketing: 0.04, buzz: 0.5,
     note: 'Wörthersee: warmes Wasser, Seepromenade, Kasino – angenehm für die Stimmung, schwierig für die Disziplin (Annahme).',
   },
   {
-    id: 'schweiz', name: 'Schweizer Alpen', place: 'Crans-Montana / Bad Ragaz', country: 'Schweiz', region: 'alpen',
+    id: 'schweiz', name: 'Schweizer Alpen', geo: [46.31, 7.48], place: 'Crans-Montana / Bad Ragaz', country: 'Schweiz', region: 'alpen',
     seasons: S, access: from(1980), // Annahme
     climate: 'alpen', altitude: 1500, transport: 'bus', travelH: 8, tz: 0, travel: 3000,
     opp: 'international', testIncome: 5000, marketing: 0.05, buzz: 0.2,
     note: 'Teurer als Österreich, dafür ruhiger; WM-Teams 2010 in Crans-Montana und Bad Ragaz [C17]. Testspiele gegen Schweizer Erstligisten.',
   },
   {
-    id: 'engadin', name: 'Höhentraining Engadin/Wallis', place: 'St. Moritz / Saas-Fee', country: 'Schweiz', region: 'alpen',
+    id: 'engadin', name: 'Höhentraining Engadin/Wallis', geo: [46.5, 9.84], place: 'St. Moritz / Saas-Fee', country: 'Schweiz', region: 'alpen',
     seasons: S, access: [{ from: 1980, minRep: 65 }, { from: 1992, minRep: 0 }], // Annahme: Höhentraining im Fußball zunächst bei Ambitionierten
     climate: 'hochalpen', altitude: 1850, transport: 'bus', travelH: 9, tz: 0, travel: 3200,
     opp: 'regional', testIncome: 3500, marketing: 0.04, buzz: 0.15,
     note: 'Höhentraining auf rund 1.800 m: St. Moritz ist Höhentrainingszentrum von Swiss Olympic [C18], Japan bereitete sich 2010 in Saas-Fee vor [C17]. Die Wirkung kommt verzögert.',
   },
   {
-    id: 'suedtirol', name: 'Südtirol', place: 'Eppan / Passeiertal / Bruneck', country: 'Italien', region: 'alpen',
+    id: 'suedtirol', name: 'Südtirol', geo: [46.47, 11.26], place: 'Eppan / Passeiertal / Bruneck', country: 'Italien', region: 'alpen',
     seasons: S, access: from(1980), // Annahme
     climate: 'alpen', altitude: 600, transport: 'bus', travelH: 9, tz: 0, travel: 2800,
     opp: 'regional', testIncome: 4000, marketing: 0.03, buzz: 0.25,
@@ -242,55 +250,55 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
   },
   // --- Süden (Winter) ---------------------------------------------------------------------
   {
-    id: 'kanaren', name: 'Kanarische Inseln', place: 'Gran Canaria / Teneriffa', country: 'Spanien', region: 'sueden',
+    id: 'kanaren', name: 'Kanarische Inseln', geo: [27.76, -15.59], place: 'Gran Canaria / Teneriffa', country: 'Spanien', region: 'sueden',
     seasons: W, access: from(1980), climate: 'atlantik', altitude: 50, transport: 'flug', travelH: 4.5, tz: -1, travel: 9000,
     opp: 'regional', testIncome: 3000, marketing: 0.03, buzz: 0.3,
     note: 'In den 80ern das typische Winterziel – Leverkusen fuhr fast jedes Jahr hin [C2]. Mildes Klima, Plätze lange nicht überall gut.',
   },
   {
-    id: 'spanien', name: 'Andalusien', place: 'Marbella / Jerez', country: 'Spanien', region: 'sueden',
+    id: 'spanien', name: 'Andalusien', geo: [36.51, -4.88], place: 'Marbella / Jerez', country: 'Spanien', region: 'sueden',
     seasons: W, access: from(1982), // Annahme analog zu den Kanaren [C2]; 2020 Marbella/Jerez [C7]
     climate: 'mittelmeer', altitude: 50, transport: 'flug', travelH: 3, tz: 0, travel: 7500,
     opp: 'international', testIncome: 4000, marketing: 0.04, buzz: 0.35,
     note: 'Seit den 80ern im Kommen, heute das häufigste Winterziel der Bundesliga (2020: elf Vereine in Spanien [C7]). Marbella glänzt, Jerez ist ruhiger.',
   },
   {
-    id: 'mallorca', name: 'Mallorca', place: 'Palma / Inselinneres', country: 'Spanien', region: 'sueden',
+    id: 'mallorca', name: 'Mallorca', geo: [39.57, 2.65], place: 'Palma / Inselinneres', country: 'Spanien', region: 'sueden',
     seasons: W, access: from(1985), // Annahme; Mallorca 2020 [C7]
     climate: 'mittelmeer', altitude: 50, transport: 'flug', travelH: 2.5, tz: 0, travel: 6500,
     opp: 'regional', testIncome: 3000, marketing: 0.03, buzz: 0.4,
     note: 'Kurzer Flug, im Winter mild. An der Playa wartet die Ablenkung, im Inselinneren die Ruhe.',
   },
   {
-    id: 'lamanga', name: 'La Manga', place: 'La Manga Club (Murcia)', country: 'Spanien', region: 'sueden',
+    id: 'lamanga', name: 'La Manga', geo: [37.6, -0.8], place: 'La Manga Club (Murcia)', country: 'Spanien', region: 'sueden',
     seasons: W, access: from(1990), // Annahme; acht Plätze [C20], HSV/Leverkusen [C21]
     climate: 'mittelmeer', altitude: 30, transport: 'flug', travelH: 3, tz: 0, travel: 7500,
     opp: 'international', testIncome: 4500, marketing: 0.04, buzz: 0.3,
     note: 'Eine Anlage mit acht Fußballplätzen, im Winter 2020 über 60 Mannschaften aus 20 Ländern [C20]; HSV und Leverkusen waren da [C21]. Testgegner gibt es reichlich.',
   },
   {
-    id: 'algarve', name: 'Algarve', place: 'Almancil / Albufeira', country: 'Portugal', region: 'sueden',
+    id: 'algarve', name: 'Algarve', geo: [37.08, -8.03], place: 'Almancil / Albufeira', country: 'Portugal', region: 'sueden',
     seasons: W, access: from(1990), // Annahme; Wolfsburg 2020 [C7]
     climate: 'mittelmeer', altitude: 30, transport: 'flug', travelH: 3, tz: -1, travel: 7500,
     opp: 'international', testIncome: 3500, marketing: 0.03, buzz: 0.25,
     note: 'Golfhotels mit gepflegten Rasenplätzen, ruhiger als Spanien.',
   },
   {
-    id: 'malta', name: 'Malta', place: 'St. Julian’s', country: 'Malta', region: 'sueden',
+    id: 'malta', name: 'Malta', geo: [35.92, 14.49], place: 'St. Julian’s', country: 'Malta', region: 'sueden',
     seasons: W, access: from(1995), // Annahme; Augsburg 2020 [C7]
     climate: 'mittelmeer', altitude: 30, transport: 'flug', travelH: 3, tz: 0, travel: 7000,
     opp: 'regional', testIncome: 2500, marketing: 0.02, buzz: 0.2,
     note: 'Günstige Alternative im Mittelmeer, wenige gute Plätze und schwache Testgegner.',
   },
   {
-    id: 'tuerkei', name: 'Türkische Riviera', place: 'Belek / Antalya', country: 'Türkei', region: 'sueden',
+    id: 'tuerkei', name: 'Türkische Riviera', geo: [36.86, 31.05], place: 'Belek / Antalya', country: 'Türkei', region: 'sueden',
     seasons: W, access: [{ from: 1992, minRep: 70 }, { from: 1996, minRep: 0 }],
     climate: 'mittelmeer', altitude: 30, transport: 'flug', travelH: 3.5, tz: 1, travel: 6500,
     opp: 'international', testIncome: 5000, marketing: 0.03, buzz: 0.45,
     note: 'Schalke 04 eröffnete 1992 die Türkei-Touren [C3]; ab Ende der 90er Massenziel, 2015 ein Drittel der Liga in Belek. Viele Testgegner aus ganz Europa – aber auch viele Berater.',
   },
   {
-    id: 'zypern', name: 'Zypern', place: 'Limassol / Paphos', country: 'Zypern', region: 'sueden',
+    id: 'zypern', name: 'Zypern', geo: [34.68, 33.04], place: 'Limassol / Paphos', country: 'Zypern', region: 'sueden',
     seasons: W, access: from(1995), // Annahme
     climate: 'mittelmeer', altitude: 30, transport: 'flug', travelH: 4, tz: 1, travel: 8000,
     opp: 'regional', testIncome: 3000, marketing: 0.02, buzz: 0.2,
@@ -298,14 +306,14 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
   },
   // --- Fernreisen -------------------------------------------------------------------------
   {
-    id: 'florida', name: 'Florida', place: 'Orlando / Bradenton', country: 'USA', region: 'fern',
+    id: 'florida', name: 'Florida', geo: [28.54, -81.38], place: 'Orlando / Bradenton', country: 'USA', region: 'fern',
     seasons: W, access: [{ from: 1992, minRep: 72 }, { from: 2010, minRep: 60 }], closed: [2021, 2022],
     climate: 'florida', altitude: 30, transport: 'flug', travelH: 10, tz: -6, travel: 24000,
     opp: 'international', testIncome: 7000, marketing: 0.25, buzz: 0.35,
     note: 'Leverkusen fuhr im Januar 1992 als erster Bundesligist nach Orlando [C2]; 2020 u. a. Frankfurt und Hertha [C7]. Lange Anreise, sechs Stunden Zeitverschiebung.',
   },
   {
-    id: 'dubai', name: 'Vereinigte Arabische Emirate', place: 'Dubai / Abu Dhabi', country: 'VAE', region: 'fern',
+    id: 'dubai', name: 'Vereinigte Arabische Emirate', geo: [25.2, 55.27], place: 'Dubai / Abu Dhabi', country: 'VAE', region: 'fern',
     seasons: W, access: [{ from: 1984, minRep: 85 }, { from: 2003, minRep: 70 }, { from: 2008, minRep: 60 }], closed: [2021, 2022],
     climate: 'golf', altitude: 10, transport: 'flug', travelH: 6, tz: 3, travel: 18000,
     opp: 'international', testIncome: 6000, marketing: 0.3, buzz: 0.4,
@@ -313,7 +321,7 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
     note: 'In den 80ern nur gelegentlich für die ganz Großen [C1]; im Januar 2009 trainierten die Bayern unter Klinsmann in Dubai [C5]. Perfekte Plätze, viel Luxus.',
   },
   {
-    id: 'katar', name: 'Katar', place: 'Doha (Aspire Academy)', country: 'Katar', region: 'fern',
+    id: 'katar', name: 'Katar', geo: [25.29, 51.53], place: 'Doha (Aspire Academy)', country: 'Katar', region: 'fern',
     seasons: W, access: [{ from: 2011, minRep: 82 }], closed: [2021, 2022],
     climate: 'golf', altitude: 10, transport: 'flug', travelH: 6, tz: 2, travel: 20000,
     opp: 'international', testIncome: 9000, marketing: 0.45, buzz: 0.4,
@@ -324,7 +332,14 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
     note: 'Seit 2011 Winterquartier des FC Bayern – als einziger Bundesligist [C3][C4]. Beste Bedingungen, gute Kontakte zu Sponsoren – und wachsende Kritik.',
   },
   {
-    id: 'asien', name: 'Asien-Reise', place: 'China / Japan / Singapur', country: 'Asien', region: 'fern',
+    id: 'suedafrika', name: 'Südafrika', geo: [-33.92, 18.42], place: 'Kapstadt / Johannesburg', country: 'Südafrika', region: 'fern',
+    seasons: W, access: [{ from: 2015, minRep: 62 }], closed: [2021, 2022], // erstmals belegt Januar 2015 [C22], Werder 2019 [C23]
+    climate: 'kap', altitude: 30, transport: 'flug', travelH: 11.5, tz: 1, travel: 26000,
+    opp: 'regional', testIncome: 4000, marketing: 0.12, buzz: 0.25,
+    note: 'Hochsommer statt Winter: Wolfsburg trainierte im Januar 2015 in Kapstadt, Hoffenheim bei Pretoria [C22], Werder 2019 zehn Tage in Johannesburg [C23]. Langer Flug, aber kaum Zeitverschiebung – und auf dem Highveld (1.600 m) ein Höhenreiz.',
+  },
+  {
+    id: 'asien', name: 'Asien-Reise', geo: [31.23, 121.47], place: 'China / Japan / Singapur', country: 'Asien', region: 'fern',
     seasons: S, access: [{ from: 2015, minRep: 82 }, { from: 2017, minRep: 76 }], closed: [2020, 2021, 2022],
     climate: 'asien', altitude: 50, transport: 'flug', travelH: 12, tz: 7, travel: 40000,
     opp: 'top', testIncome: 60000, marketing: 1, buzz: 1,
@@ -332,7 +347,7 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
     note: 'Marketingreise statt Trainingslager: Bayern 2017 in China, zwölf Tage, rund 10 Mio. € Erlös [C6]. Viel Geld und Bekanntheit, kaum Training, schwerer Jetlag.',
   },
   {
-    id: 'usatour', name: 'USA-Sommertour', place: 'New York / Miami / Los Angeles', country: 'USA', region: 'fern',
+    id: 'usatour', name: 'USA-Sommertour', geo: [40.71, -74.01], place: 'New York / Miami / Los Angeles', country: 'USA', region: 'fern',
     seasons: S, access: [{ from: 2014, minRep: 80 }, { from: 2018, minRep: 75 }], closed: [2020, 2021],
     climate: 'usa', altitude: 50, transport: 'flug', travelH: 10, tz: -6, travel: 35000,
     opp: 'top', testIncome: 45000, marketing: 0.85, buzz: 0.9,
@@ -369,6 +384,7 @@ export const CAMP_CLIMATE: Record<CampClimate, { risk: number[]; ground: number[
   golf:          { label: 'Golfklima',        risk: [.03, .05, .1, .3, .6, .8, .85, .85, .7, .35, .1, .04],  ground: [.95, .95, .9, .8, .6, .5, .5, .5, .55, .8, .9, .95] },
   florida:       { label: 'Subtropen',        risk: [.12, .12, .12, .15, .25, .45, .5, .5, .45, .25, .15, .12], ground: [.85, .85, .85, .85, .8, .7, .65, .65, .7, .8, .85, .85] },
   asien:         { label: 'Sommer in Ostasien', risk: [.3, .3, .3, .3, .35, .45, .45, .45, .4, .3, .3, .3], ground: [.7, .7, .7, .7, .7, .7, .7, .7, .7, .7, .7, .7] },
+  kap:           { label: 'Südsommer',        risk: [.08, .08, .1, .15, .25, .3, .3, .3, .25, .15, .1, .08], ground: [.8, .8, .8, .75, .7, .65, .65, .65, .7, .75, .8, .8] },
   usa:           { label: 'Sommer in den USA', risk: [.2, .2, .2, .2, .25, .3, .3, .3, .25, .2, .2, .2],     ground: [.8, .8, .8, .8, .8, .8, .8, .8, .8, .8, .8, .8] },
 };
 

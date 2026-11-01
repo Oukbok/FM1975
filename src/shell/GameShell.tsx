@@ -74,6 +74,7 @@ import { CalendarOverlay } from './CalendarOverlay';
 import { MENU_STRUCTURE, Screen, TopNav } from './navigation';
 import { processDay as processGameDay } from '../game/day';
 import { DrawShow } from '../screens/draw/DrawShow';
+import { CampRecap } from '../views/kader/camp/CampRecap';
 import { compCup } from '../game/cupDraw';
 import type { DrawComp } from '../types/draw';
 import { setWikiOpener } from '../ui/InfoTip';
@@ -102,6 +103,8 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   const [drawQueue, setDrawQueue] = useState<{ comp: DrawComp; roundIndex: number; replay?: boolean; n: number }[]>([]);
   const drawSeq = useRef(0);
   const replayDraw = useCallback((comp: DrawComp, roundIndex: number) => setDrawQueue((q) => [...q, { comp, roundIndex, replay: true, n: ++drawSeq.current }]), []);
+  // Rückkehr aus dem Trainingslager: Buchungs-IDs für die animierte Zusammenfassung.
+  const [campQueue, setCampQueue] = useState<string[]>([]);
   const [ratingCeremony, setRatingCeremony] = useState<{ results: RatingResult[]; type: 'medium' | 'large'; anlass: string } | null>(null);
   // In-Game-Overlays: Menü-Dropdown, Einstellungen, Speichern/Laden-Popup.
   const [menuOpen, setMenuOpen] = useState(false);
@@ -176,6 +179,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         setDrawQueue((q) => [...q, { comp: d.comp, roundIndex: d.roundIndex, n: ++drawSeq.current }]);
         return true;
       },
+      onCampEnd: (id) => { setCampQueue((q) => [...q, id]); return true; },
     });
     if (!ok) setRunning(false);
     return ok;
@@ -200,7 +204,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
     return () => window.removeEventListener('keydown', onKey);
   }, [liveMatchId, textMatch]);
   const drawOpenRef = useRef(false);
-  useEffect(() => { drawOpenRef.current = drawQueue.length > 0; }, [drawQueue]);
+  useEffect(() => { drawOpenRef.current = drawQueue.length > 0 || campQueue.length > 0; }, [drawQueue, campQueue]);
 
   const seasonOver = CalendarEngine.isSeasonOver(g.calendar);
 
@@ -453,6 +457,11 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
             onClose={() => { setDrawQueue((q) => q.slice(1)); rerender(); }} />
         );
       })()}
+
+      {/* Bilanz des Trainingslagers: nach Spielbericht/Zeremonie/Briefing/Auslosung. */}
+      {campQueue[0] && !textMatch && !liveMatchId && !ratingCeremony && !pendingBriefing && !drawQueue.length && (
+        <CampRecap key={campQueue[0]} g={g} bookingId={campQueue[0]} onClose={() => { setCampQueue((q) => q.slice(1)); rerender(); }} />
+      )}
 
       {liveMatchId && (
         <MatchModal g={g} matchId={liveMatchId} onClose={() => { setLiveMatchId(null); rerender(); }} />

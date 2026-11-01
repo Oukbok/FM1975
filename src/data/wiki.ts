@@ -2530,7 +2530,7 @@ Ab 2027/28 wird die heutige Regel fortgeschrieben (Annahme: WM 2034 wieder im Wi
     id: 'training-camps',
     category: 'calendar',
     title: 'Trainingslager',
-    keywords: ['trainingslager', 'camp', 'türkei', 'belek', 'katar', 'dubai', 'florida', 'spanien', 'asien', 'jetlag', 'sportschule', 'alpen', 'hotel', 'unterkunft', 'höhentraining', 'schwerpunkt', 'disziplin', 'sponsor', 'dünen', 'malente', 'hennef'],
+    keywords: ['trainingslager', 'camp', 'türkei', 'belek', 'katar', 'dubai', 'florida', 'spanien', 'asien', 'jetlag', 'sportschule', 'alpen', 'hotel', 'unterkunft', 'höhentraining', 'schwerpunkt', 'disziplin', 'sponsor', 'dünen', 'malente', 'hennef', 'planer', 'karte', 'reisegruppe', 'südafrika', 'bilanz'],
     body: `## Wo und wann
 Unter **Training › Trainingslager** buchst du je Saison ein **Sommerlager** (Vorbereitung bis kurz vor dem 1. Spieltag) und ein
 **Winterlager** (in der Winterpause – deren Länge hängt von der Saison ab, siehe „Winterpause & Spielplan“). Die Ziele werden so
@@ -2544,7 +2544,22 @@ freigeschaltet, wie sie historisch aufkamen – und zunächst nur für Vereine, 
 | Alpen (Sommer) | Tegernsee 1975; Tirol, Zillertal, Salzburger Land, Kärnten 1977; Steiermark, Schweiz, Südtirol 1980 | 1975–1980 |
 | Höhentraining | Engadin/Wallis (St. Moritz, Saas-Fee, ~1.800 m): 1980 ab Ansehen 65, ab 1992 für alle | 1980 |
 | Süden (Winter) | Kanaren 1980, Andalusien 1982, Mallorca 1985, La Manga und Algarve 1990, Türkei 1992 (ab 1996 für alle), Malta und Zypern 1995 | 1980–1995 |
-| Fernreisen | VAE 1984 (nur Ansehen ≥ 85), Florida 1992, Katar 2011, USA-Tour 2014, Asien-Reise 2015; Corona-Pausen 2020–2022 | 1984– |
+| Fernreisen | VAE 1984 (nur Ansehen ≥ 85), Florida 1992, Katar 2011, USA-Tour 2014, Asien-Reise und Südafrika (Kapstadt/Johannesburg, Winter) 2015; Corona-Pausen 2020–2022 | 1984– |
+
+## Planen
+Der Knopf **Trainingslager planen** öffnet den Planer in drei Schritten; rechts zeigen **Wirkungsbalken** (wie in der Taktik)
+bei jeder Wahl, was das Lager bringt: Fitness, Taktik & Form, Teamgeist, Erholung, Verletzungsrisiko und Kosten im Verhältnis
+zur Kasse.
+1. **Zeitraum:** Kalender der Sommervorbereitung bzw. Winterpause. Pflichtspiele und zugesagte Hallenturniere sind gesperrt,
+   die erste Woche (Vorlauf) ebenso; kurzfristige Tage (unter 21 Tagen) sind markiert. Dauer 5–14 Tage.
+2. **Ziel & Unterkunft:** Karte mit Umschalter **Deutschland & Alpen, Europa & Mittelmeer, Afrika, Asien & Naher Osten,
+   Amerika, Welt**. Es erscheinen nur Ziele, die es im jeweiligen Jahr schon gab; zu teure oder gesperrte Ziele sind gedimmt.
+   Ein Klick zeigt **Vor- und Nachteile** (Klima im gewählten Monat, Reise und Jetlag, Anlage, Höhe, Ablenkung, Sponsor- und
+   Image-Folgen, andere Vereine vor Ort) und die Unterkünfte mit Gesamtpreis.
+3. **Reisegruppe:** wer mitfährt. Verletzte bleiben zunächst zur Reha daheim (mit Schwerpunkt Regeneration lohnt es, sie
+   mitzunehmen). Bis zu **6 Spieler aus B- und A-Jugend** können mit – sie lernen im Training mit den Profis besonders viel
+   (Entwicklung ×1,3, hohe Moral-Chance). **Gesunde Profis, die daheim bleiben, sind zu 40 % enttäuscht** (Moral −1).
+   Die Kosten richten sich nach der Größe der Reisegruppe (Spieler plus rund neun Betreuer); mindestens 11 Spieler.
 
 ## Unterkunft und Anlage
 Jedes Ziel bietet mehrere **Unterkünfte** – von der Sportschule mit Mehrbettzimmern und der Pension über Mittelklasse- und
@@ -2585,6 +2600,13 @@ etwas Trainingszeit; heimatnahe Lager bringen dafür Fan-Stimmung.
 - **Risiken:** Verletzungen (schlechte Plätze, harte Umfänge, Testspiele), **Reisestrapazen** (Bus/Bahn: Stunden × 0,8/0,5; Flug: Flugstunden × 1,6 + Zeitzonen × 3; Form −Zeitzonen × 0,7), Disziplin.
 - **Testspiele:** Erlös und Spielpraxis, stärkere Gegner bringen mehr Form, aber mehr Verletzungsrisiko; Asien-/USA-Reisen bringen viel Geld und Bekanntheit, aber wenig Training.
 - **Kritik:** Katar (ab 2014, verstärkt ab 2020), Golf- und Marketingreisen kosten Fan-Stimmung.
+
+## Bilanz und Archiv
+Am letzten Lagertag erscheint eine kurze **animierte Bilanz** (überspringbar): Gesamterfolg 0–100 (Wetterglück, Fitness-Zuwachs,
+Entwicklung, Stimmung, minus Verletzte und Disziplinverstöße), Vorher/Nachher von Fitness, Form, Frische und **Teamgeist**
+(mittlere Moral des Kaders), Kosten und Erlöse sowie die Spieler, die **am meisten profitiert** haben, und die **Sorgenkinder**
+(Verletzte, Verstöße, enttäuschte Daheimgebliebene). Unter **Vergangene Lager** bleibt die gemessene Wirkung jedes Lagers
+abrufbar; ein Höhentraining wird nachgetragen, sobald es greift.
 
 ## KI-Vereine
 Alle Vereine fahren: Ziel nach Größe und Epoche (Kanaren in den 80ern, Belek-Boom 1998–2016, Rückkehr nach Spanien ab 2017),

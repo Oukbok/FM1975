@@ -199,6 +199,10 @@ export const CAMP_LODGINGS: Record<string, CampLodging[]> = {
   katar: [
     L('aspire', 'Gästehaus der Sportakademie', 'zentrum', 4, 4500, { pitches: 6, pitchQ: 1, gym: 2, regen: 3, kitchen: 2, quiet: 0.7, lure: 0.3 }, 'Beste Bedingungen [C4].'),
   ],
+  suedafrika: [
+    L('kapstadt', 'Hotel an der Waterfront, Kapstadt', 'hotel', 3, 3400, { pitches: 2, pitchQ: 0.85, gym: 2, regen: 2, kitchen: 2, quiet: 0.3, lure: 0.55 }, 'Meer, Tafelberg, Testspiele gegen Klubs der Premier Soccer League [C22].'),
+    L('highveld', 'Sporthotel auf dem Highveld bei Johannesburg', 'sporthotel', 3, 3200, { pitches: 3, pitchQ: 0.85, gym: 2, regen: 2, kitchen: 2, quiet: 0.6, lure: 0.25, altitude: 1600 }, 'Rund 1.600 m hoch: Höhenreiz wie in den Alpen, aber im Hochsommer [C23].'),
+  ],
   asien: [
     L('tour', 'Tourhotels in den Metropolen', 'hotel', 4, 3800, { pitches: 1, pitchQ: 0.75, regen: 2, quiet: 0.1, lure: 0.5 }, 'Jede Nacht eine andere Stadt [C6].'),
   ],
