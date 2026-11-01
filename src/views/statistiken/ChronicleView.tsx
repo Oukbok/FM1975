@@ -3,6 +3,8 @@ import { TIMELINE, TIMELINE_TYPE_META, seasonStartYear } from '../../data/timeli
 import { Game } from '../../game/state';
 import { DashBox, DashPage, Empty, KV, Meter } from '../../ui/DashPage';
 import { useState } from 'react';
+import { recordBook } from '../../game/clubRecords';
+import { compClubName } from '../../game/competitionView';
 
 // =============================================================================
 // CHRONIK — Epochen & Meilensteine des deutschen Fußballs (1975 → 2030er)
@@ -91,6 +93,10 @@ export function ChronicleView({ g, embedded = false }: { g: Game; embedded?: boo
           return <Meter key={t} label={TIMELINE_TYPE_META[t].label} value={done} max={Math.max(1, all.length)} text={`${done}/${all.length}`} color={TIMELINE_TYPE_META[t].color} />;
         })}
         <div className="dnote mt8">Jeder Meilenstein wird zu Beginn seiner Saison wirksam und verändert das Spiel, etwa die 3-Punkte-Regel 1995/96.</div>
+        <div className="dsec">Deutsche Meister (seit 1963/64)</div>
+        {Object.entries(recordBook(g)?.titles ?? {}).flatMap(([id, l]) => l.filter(([k]) => k === 'meister').map(([, season]) => ({ id, season })))
+          .sort((a, b) => b.season.localeCompare(a.season)).slice(0, 6)
+          .map((x) => <KV key={x.season} k={x.season} v={compClubName(g, x.id, x.season)} />)}
       </DashBox>
     </DashPage>
   );

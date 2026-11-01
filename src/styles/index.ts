@@ -33,4 +33,5 @@ import './28-stadium.css';
 import './28-draw.css';
 import './28-transfer2.css';
 import './28-sponsor.css';
+import './28-leagues.css';
 import './29-look.css'; // zuletzt: ruhige Gesamtoptik
