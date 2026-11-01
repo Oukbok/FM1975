@@ -3,6 +3,7 @@
 // Weiße Weste – oder Vereinswerte, wenn eine Liga vereinsweise simuliert wird.
 // =============================================================================
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import PlayerModal from '../../../components/PlayerModal';
 import type { ClubStatCat, CompSnapshot } from '../../../game/competitionView';
 import type { StatCat } from '../../../game/leagueArchive';
@@ -26,9 +27,11 @@ export function StatsBox({ g, snap }: { g: Game; snap: CompSnapshot | null }) {
   const p = sel ? g.players[sel] ?? g.youthPlayers[sel] : null; // Jugendwettbewerbe: auch Jugendspieler
   const stats = snap?.stats;
   const clubStats = snap?.clubStats;
-  const modal = p ? (
+  // Über ein Portal: die Box (Glas-Effekt) würde ein festes Popup sonst auf ihre Größe beschneiden.
+  const modal = p ? createPortal(
     <PlayerModal player={p} club={g.clubs[p.clubId]} squad={g.clubs[p.clubId]?.playerIds.map((id) => g.players[id]).filter(Boolean)}
-      today={g.calendar.currentDate} season={g.season} onClose={() => setSel(null)} />
+      today={g.calendar.currentDate} season={g.season} onClose={() => setSel(null)} />,
+    document.body,
   ) : null;
 
   if (stats) {
