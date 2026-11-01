@@ -18,15 +18,16 @@
 .itip {
   display: inline-flex; align-items: center; justify-content: center;
   width: 14px; height: 14px; margin: 0 0 0 6px; padding: 0;
-  border: 1px solid var(--text-4); border-radius: 50%;
-  background: transparent; color: var(--text-3);
+  border: 1px solid var(--text-3); border-radius: 50%;
+  background: transparent; color: var(--text-2);
   font: italic 600 9.5px/1 Georgia, 'Times New Roman', serif;
   text-transform: none; letter-spacing: 0;
   vertical-align: middle; cursor: help; flex: none;
   position: relative; top: -1px;
   transition: color .12s, border-color .12s;
 }
-.itip:hover, .itip.open, .itip:focus-visible { color: var(--text); border-color: var(--text-2); outline: none; }
+.itip { opacity: .7; }
+.itip:hover, .itip.open, .itip:focus-visible { opacity: 1; color: var(--text); border-color: var(--text-2); outline: none; }
 .itip:focus-visible { box-shadow: 0 0 0 2px var(--border); }
 /* Treffer etwas größer als das Symbol (Touch) */
 .itip::after { content: ''; position: absolute; inset: -6px; }
@@ -74,3 +75,7 @@
 
 /* --- Textmodus: Kraft als Batterie ----------------------------------------- */
 .ms-energy-ico { display: flex; justify-content: center; }
+
+/* Zentrale: Beschriftung unter dem Teamchemie-Ring bleibt einzeilig */
+.ckd-donut-lbl:has(.itip) { white-space: nowrap; }
+.ckd-donut-lbl .itip { width: 11px; height: 11px; font-size: 8px; margin-left: 3px; }

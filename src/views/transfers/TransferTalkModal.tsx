@@ -12,6 +12,7 @@ import { TransferTalk, cancelTalk, clubOffer, inTransferWindow, playerOffer, sco
 import { ImportanceDots, InterestLight, ReasonList, WishList, importanceText } from '../../components/player/WishesParts';
 import { DashBox, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtPrice, vColor } from '../../ui/format';
+import { InfoTip } from '../../ui/InfoTip';
 
 // =============================================================================
 // TRANSFERVERHANDLUNG — Vereinsgespräch, Spielergespräch, Wünsche, Verlauf
@@ -71,7 +72,7 @@ function ClubTalkBox({ g, t, onChange }: { g: Game; t: TransferTalk; onChange: (
     swapPlayerId: swap || undefined, buyBack: buyBack ? r5k(fee * buyBack) : undefined, loan: loan || undefined, optionFee: loan ? option : undefined,
   }));
   return (
-    <DashBox title="Vereinsgespräch" icon="negotiations" rows={2} right={<span style={{ color: m.color }}>{m.text}</span>}>
+    <DashBox title="Vereinsgespräch" info="verkaeuferposition" icon="negotiations" rows={2} right={<span style={{ color: m.color }}>{m.text}</span>}>
       <KV k="Forderung zuletzt" v={t.round ? fmtPrice(t.currentAsk) : 'noch keine genannt'} strong />
       <KV k="Schätzung Sportdirektor" v={`${fmtPrice(t.estimate[0])} – ${fmtPrice(t.estimate[1])}`} />
       <div className="talk-form">
@@ -79,7 +80,7 @@ function ClubTalkBox({ g, t, onChange }: { g: Game; t: TransferTalk; onChange: (
         <label className="talk-row"><span>{loan ? 'Leihgebühr' : 'Ablöse'}</span>
           <input type="range" min={loan ? 5000 : lo} max={hi} step={5000} value={fee} onChange={(e) => setFee(Number(e.target.value))} />
           <b className="accent-text">{fmtPrice(fee)}</b></label>
-        {loan && <label className="talk-row"><span>Kaufoption</span>
+        {loan && <label className="talk-row"><span>Kaufoption<InfoTip k="leihe" /></span>
           <input type="range" min={lo} max={hi * 1.3} step={5000} value={option} onChange={(e) => setOption(Number(e.target.value))} />
           <b>{fmtPrice(option)}</b></label>}
         {!loan && <Chips label="Zahlung" value={rates} set={(v) => setRates(v as 1 | 2 | 3)} opts={[[1, 'Sofort'], [2, '2 Raten', 'Hälfte jetzt, Rest in einem Jahr'], ...(year >= CLAUSE_FROM.threeRates ? [[3, '3 Raten', 'Ein Drittel jährlich']] as [number, string, string][] : [])]} />}
@@ -178,7 +179,7 @@ function WishBox({ g, t }: { g: Game; t: TransferTalk }) {
   const known = t.pRound >= 1 || k >= 0.55;
   const pe = personaOf(p);
   return (
-    <DashBox title="Was ihm wichtig ist" icon="watchlist">
+    <DashBox title="Was ihm wichtig ist" info="interesse" icon="watchlist">
       {st.dealBreaker && k >= 0.3 ? <div className="wish-block">{st.dealBreaker}</div> : <InterestLight score={st.interest} knowledge={k} />}
       <div className="dnote">{k >= 0.35 ? `${personaTitle(pe)} · ` : ''}{PHASE_LABEL[careerPhase(p)]}</div>
       <div className="dsec">Für und gegen dich</div>
@@ -188,7 +189,7 @@ function WishBox({ g, t }: { g: Game; t: TransferTalk }) {
         <KV k={st.agent ? 'Berater fordert' : 'Er fordert'} v={`${fmtPrice(st.agentWage)} / Woche`} />
         <KV k="Wunschlaufzeit" v={`${st.years[0]}–${st.years[1]} Jahre`} />
         {st.signingFee > 0 && <KV k="Handgeld" v={`etwa ${fmtPrice(st.signingFee)}`} />}
-        {st.agent && <KV k="Provision" v={fmtPrice(st.agentFee)} />}
+        {st.agent && <KV k="Provision" info="berater" v={fmtPrice(st.agentFee)} />}
         {known && st.cut > 0.04 && <KV k="Verzicht" v={`würde für euch etwa ${Math.round(st.cut * 100)} % weniger nehmen`} color="var(--green)" />}
         {known && st.cut < -0.04 && <KV k="Aufschlag" v={`verlangt etwa ${Math.round(-st.cut * 100)} % mehr`} color="var(--orange)" />}
       </div>
@@ -236,7 +237,7 @@ export function TransferTalkModal({ g, talk, onClose, onChange }: { g: Game; tal
             ? <ClubTalkBox key={`c${talk.round}`} g={g} t={talk} onChange={act} />
             : <PlayerTalkBox key={`p${talk.pRound}`} g={g} t={talk} onChange={act} />}
           <WishBox g={g} t={talk} />
-          <DashBox title="Rahmen" icon="finances">
+          <DashBox title="Rahmen" info="gehaltsbudget" icon="finances">
             {talk.phase === 'club' ? <div className="dnote">Erst wenn du dich mit dem Verein einig bist, darfst du mit {p?.lastName} sprechen.</div> : <ClubDeal g={g} t={talk} />}
             <KV k="Transferbudget" v={fmtPrice(own.finances.transferBudget)} />
             <Meter label="Gehaltsrahmen" value={wages} max={Math.max(1, own.finances.wageBudget)} text={`${Math.round((wages / Math.max(1, own.finances.wageBudget)) * 100)} %`} />

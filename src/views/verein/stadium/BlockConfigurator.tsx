@@ -16,6 +16,7 @@ import { groupPlanFor, sideTargets, startBlockBuild } from '../../../game/stadiu
 import type { Game } from '../../../game/state';
 import type { Club, RoofType, SeatType, StadiumBlock } from '../../../types';
 import { fmtDM } from '../../../ui/format';
+import { InfoTip } from '../../../ui/InfoTip';
 
 const SEATS: SeatType[] = ['steh', 'bank', 'schale', 'komfort', 'business'];
 /** Platzart → Kategorie, wie sie verkauft wird. */
@@ -74,7 +75,7 @@ export function BlockConfigurator({ g, draft, setDraft, whole, setWhole, onClose
         </label>
       )}
 
-      <div className="sv-sec">Ränge</div>
+      <div className="sv-sec">Ränge<InfoTip k="platzarten" /></div>
       {draft.tiers.map((t, i) => (
         <div key={i} className="sv-tier">
           <div className="sv-tier-h"><span>{TIER_NAME[i]}</span><span className="num">{tierCapacity(draft.id, t).toLocaleString('de-DE')} Plätze</span></div>
@@ -95,7 +96,7 @@ export function BlockConfigurator({ g, draft, setDraft, whole, setWhole, onClose
         <button className="dchip" disabled={draft.tiers.length <= 1} onClick={() => upd({ tiers: draft.tiers.slice(0, -1) })}>Obersten Rang abreißen</button>
       </div>
 
-      <div className="sv-sec">Dach &amp; Ausstattung</div>
+      <div className="sv-sec">Dach &amp; Ausstattung<InfoTip k="ueberdacht" /></div>
       <div className="sv-seg">
         {ROOFS.map((r) => <button key={r} className={draft.roof === r ? 'on' : ''} onClick={() => upd({ roof: r })}>{ROOF_NAME[r]}</button>)}
       </div>

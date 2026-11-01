@@ -17,6 +17,7 @@ import { vColor } from '../../../ui/format';
 import { money } from './GroundsDetail';
 import Icon from '../../../components/Icon';
 import type { GroundKey } from './GroundsScene';
+import { InfoTip } from '../../../ui/InfoTip';
 
 const pctS = (v: number) => `${v > 0 ? '+' : ''}${(v * 100).toFixed(1).replace('.', ',')} %`;
 const date = (d: string) => d.split('-').reverse().join('.');
@@ -56,18 +57,18 @@ function Overview({ g, club, gr, year, onChange, onSelect }: Props) {
     <>
       <div className="gp-sec">Lage: {loc.name}</div>
       <div className="dnote">{loc.desc}</div>
-      <Meter label="Fläche belegt" value={used} max={gr.area} color={used >= gr.area ? 'var(--orange)' : undefined} text={`${used} / ${gr.area}`} />
+      <Meter label="Fläche belegt" info="flaeche" value={used} max={gr.area} color={used >= gr.area ? 'var(--orange)' : undefined} text={`${used} / ${gr.area}`} />
       {lp != null
         ? <button className="btn btn-sm" disabled={club.finances.balance < lp} onClick={() => { const r = buyGroundsLand(g); setNote(r.text); if (r.ok) onChange(); }}>Grundstück kaufen (+{LAND_PARCEL} Parzellen) · {money(lp, year)}</button>
         : <div className="dnote">Rund um das Stadion ist kein Grundstück mehr zu haben – Platz schaffst du nur durch Abriss.</div>}
       {note && <div className="dnote" style={{ color: 'var(--accent)', fontWeight: 700 }}>{note}</div>}
 
-      <div className="gp-sec">Anreise</div>
+      <div className="gp-sec">Anreise<InfoTip k="anreise" /></div>
       <Meter label="Normales Spiel" value={Math.min(1.5, accTyp.ratio)} max={1.5} color={accTyp.ratio >= 1 ? 'var(--green)' : 'var(--orange)'} text={`${Math.round(Math.min(accTyp.ratio, 9) * 100)} %`} />
       <Meter label="Ausverkauft" value={Math.min(1.5, accFull.ratio)} max={1.5} color={accFull.ratio >= 1 ? 'var(--green)' : 'var(--red)'} text={`${Math.round(Math.min(accFull.ratio, 9) * 100)} %`} />
       <div className="dnote">Kapazität {accFull.capacity.toLocaleString('de-DE')} Personen ({accFull.spaces.toLocaleString('de-DE')} Stellplätze, Bus &amp; Bahn {accFull.transit.toLocaleString('de-DE')}, Wildparken {accFull.street.toLocaleString('de-DE')}); {Math.round(loc.walk * 100)} % kommen zu Fuß. Unter 100 % droht Anreise-Chaos.</div>
 
-      <div className="gp-sec">Sicherheit</div>
+      <div className="gp-sec">Sicherheit<InfoTip k="sicherheit" /></div>
       <KV k="Risiko je Heimspiel" v={`${(risk * 100).toFixed(1).replace('.', ',')} % · Derby ${(riskD * 100).toFixed(1).replace('.', ',')} %`} color={riskD > 0.15 ? 'var(--orange)' : undefined} />
       <KV k="Senkung durch Maßnahmen" v={`−${Math.round(riskReduction(gr, year) * 100)} %`} />
 
@@ -75,12 +76,12 @@ function Overview({ g, club, gr, year, onChange, onSelect }: Props) {
       {att.length ? att.map((p) => <KV key={p.label} k={`Auslastung: ${p.label}`} v={pctS(p.value)} color={p.value < 0 ? 'var(--red)' : 'var(--green)'} />) : <div className="dnote">Keine Wirkung auf die Auslastung.</div>}
       {moodParts.map((p) => <KV key={p.label} k={`Stimmung: ${p.label}`} v={`${p.value > 0 ? '+' : ''}${p.value.toFixed(1).replace('.', ',')}`} color={p.value < 0 ? 'var(--red)' : 'var(--green)'} />)}
 
-      <div className="gp-sec">Lizenzauflagen</div>
+      <div className="gp-sec">Lizenzauflagen<InfoTip k="lizenzauflagen" /></div>
       {lic.map((l) => (
         <KV key={l.k} k={l.k === 'floodlight' ? 'Flutlicht' : 'Presse & TV'} v={l.have >= l.need ? 'erfüllt' : `fehlt: ${levelDef(l.k, l.need)?.name}`} color={l.have >= l.need ? 'var(--green)' : 'var(--red)'} />
       ))}
 
-      {(gr.projects.length > 0 || gr.talk) && <div className="gp-sec">Laufende Vorhaben</div>}
+      {(gr.projects.length > 0 || gr.talk) && <div className="gp-sec">Laufende Vorhaben<InfoTip k="anwohner" /></div>}
       {gr.projects.map((p) => (
         <button key={p.id} className="gp-row" onClick={() => onSelect(p.module)}>
           <Icon name="facilities" size={16} /><span className="grow">{levelDef(p.module, p.targetLevel)?.name}</span>
@@ -92,7 +93,7 @@ function Overview({ g, club, gr, year, onChange, onSelect }: Props) {
       <div className="gp-sec">Saison {s?.season ?? ''}</div>
       <KV k="Erlöse Umfeld" v={money(s?.income ?? 0, year)} color="var(--green)" />
       <KV k="Kosten Umfeld" v={money(s?.cost ?? 0, year)} />
-      <KV k="davon Strafen & Polizei" v={money(s?.fines ?? 0, year)} color={(s?.fines ?? 0) > 0 ? 'var(--red)' : undefined} />
+      <KV k="davon Strafen & Polizei" info="sicherheit" v={money(s?.fines ?? 0, year)} color={(s?.fines ?? 0) > 0 ? 'var(--red)' : undefined} />
       <KV k="Ausschreitungen / Anreise-Chaos" v={`${s?.incidents ?? 0} / ${s?.chaos ?? 0}`} />
       {gr.prevStats && <div className="dnote">Vorsaison {gr.prevStats.season}: Saldo {money(gr.prevStats.income - gr.prevStats.cost, year)}</div>}
       {gr.log.slice(0, 4).map((e, i) => <div key={i} className="gp-log"><b>{date(e.date)}</b> {e.text.split('\n')[0]}</div>)}

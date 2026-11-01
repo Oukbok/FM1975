@@ -96,7 +96,7 @@ export function AcademyView({ g, onChange }: { g: Game; onChange: () => void }) 
 
   return (
     <DashPage>
-      <DashBox title="Bausteine der Nachwuchsarbeit" icon="youth" span={2}
+      <DashBox title="Bausteine der Nachwuchsarbeit" info="jugendEtat" icon="youth" span={2}
         right={<span className="dnote">Kosten/Jahr {fmtPrice(annual)}</span>}>
         <div className="ac-grid">
           <div className="ac-card" title="Fahrten, Turniere, Material, Sichtungstage – mehr Breite und etwas mehr Qualität">
@@ -112,11 +112,11 @@ export function AcademyView({ g, onChange }: { g: Game; onChange: () => void }) 
         </div>
       </DashBox>
 
-      <DashBox title="Wirkung" icon="training" right={<span className="dnote">verzögert</span>}>
+      <DashBox title="Wirkung" info="ausbildung" icon="training" right={<span className="dnote">verzögert</span>}>
         <div className="dkpis">
           <Kpi value={Math.round(inv.quality)} label="Ausbildung" sub={`Ziel ${Math.round(target)}`} />
-          <Kpi value={Math.round(inv.reputation)} label="Ruf" sub={`Platz ${ranked.findIndex((c) => c.id === club.id) + 1} der Liga`} />
-          <Kpi value={Math.round(inv.perspective)} label="Durchlässigkeit" />
+          <Kpi value={Math.round(inv.reputation)} label="Ruf" info="jugendRuf" sub={`Platz ${ranked.findIndex((c) => c.id === club.id) + 1} der Liga`} />
+          <Kpi value={Math.round(inv.perspective)} label="Durchlässigkeit" info="durchlaessigkeit" />
         </div>
         <Meter label="Weg zum Ziel" value={target > 0 ? Math.min(inv.quality, target) : 0} max={Math.max(1, target)} text={`${Math.round(inv.quality)} / ${Math.round(target)}`} />
         <KV k="Bambini je Jahrgang" v={intakeCountOf(club)} />
@@ -126,7 +126,7 @@ export function AcademyView({ g, onChange }: { g: Game; onChange: () => void }) 
         <div className="dnote mt8">Die Ausbildung folgt dem Ziel um etwa ein Fünftel pro Jahr, der Ruf noch langsamer – er wächst mit erfolgreichen eigenen Talenten. Kürzungen wirken schneller.</div>
       </DashBox>
 
-      <DashBox title="Kosten & Bauprojekte" icon="finances" right={revenueBase > 0 ? <span className="dnote">{(annual / revenueBase * 100).toLocaleString('de-DE', { maximumFractionDigits: 1 })} % vom Umsatz</span> : undefined}>
+      <DashBox title="Kosten & Bauprojekte" info="nlz" icon="finances" right={revenueBase > 0 ? <span className="dnote">{(annual / revenueBase * 100).toLocaleString('de-DE', { maximumFractionDigits: 1 })} % vom Umsatz</span> : undefined}>
         <div className="ac-kv2">{costBreakdown(inv).map((r) => <KV key={r.label} k={r.label} v={fmtPrice(r.base)} />)}</div>
         <KV k="Summe je Saison" v={fmtPrice(annual)} strong />
         <div className="dsec">Laufende Bauprojekte</div>
@@ -139,7 +139,7 @@ export function AcademyView({ g, onChange }: { g: Game; onChange: () => void }) 
             : <div className="dnote" title={missing.join(' · ')} style={{ color: year >= duty ? 'var(--red)' : undefined }}>{year >= duty ? 'Pflicht verletzt' : `Pflicht ab ${duty}`} – noch {missing.length} Punkt(e) offen (Maus drüber).</div>}
       </DashBox>
 
-      <DashBox title="Wettbewerb um Talente" icon="watchlist" right={<span className="dnote">Anziehung Platz {attrRank}/{clubs.length}</span>}>
+      <DashBox title="Wettbewerb um Talente" info="talentWettbewerb" icon="watchlist" right={<span className="dnote">Anziehung Platz {attrRank}/{clubs.length}</span>}>
         {!race ? <Empty icon="youth">Der erste Wettbewerb um die besten 12- bis 16-Jährigen findet zum 1. Juli statt.</Empty> : raceRows.length ? raceRows.slice(0, 9).map((e, i) => (
           <div key={i} className="dlist-row">
             <span className="pos-badge">{e.pos}</span>

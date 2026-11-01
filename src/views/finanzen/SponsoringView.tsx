@@ -50,7 +50,7 @@ export function SponsoringView({ g, onGoto, onChange }: { g: Game; onGoto: (s: S
 
   return (
     <DashPage>
-      <DashBox title="Partner-Pyramide" icon="sponsoring" span={2} right={`${deals.length} Verträge · ${fmtDM(sponsorYear)} pro Jahr`}>
+      <DashBox title="Partner-Pyramide" info="partnerPyramide" icon="sponsoring" span={2} right={`${deals.length} Verträge · ${fmtDM(sponsorYear)} pro Jahr`}>
         <div className="sp-table">
           {rows.map((r) => r.deal ? (
             <button key={r.key} className={`sp-row ${sel === r.deal.id ? 'on' : ''}`} onClick={() => setSel(sel === r.deal!.id ? null : r.deal!.id)}>
@@ -72,14 +72,14 @@ export function SponsoringView({ g, onGoto, onChange }: { g: Game; onGoto: (s: S
         </div>
       </DashBox>
 
-      <DashBox title="Einnahmen & Reichweite" icon="finances">
+      <DashBox title="Einnahmen & Reichweite" info="reichweite" icon="finances">
         <div className="dkpis">
-          <Kpi value={fmtDM(m.sponsorship * 12)} label="Sponsoring / Jahr" />
+          <Kpi value={fmtDM(m.sponsorship * 12)} label="Sponsoring / Jahr" info="markenfaktor" />
           <Kpi value={fmtDM(m.advertising * 12)} label="Werbung / Jahr" />
         </div>
         {bonusPotential > 0 && <KV k="Mögliche Erfolgsprämien" v={fmtDM(bonusPotential)} />}
         {m.merchGlobal > 0 && <KV k="Fanartikel weltweit / Jahr" v={fmtDM(m.merchGlobal * 12)} />}
-        <KV k="Lizenzen & Vermarktung / Jahr" v={fmtDM(club.finances.commercialAnnual ?? 0)} />
+        <KV k="Lizenzen & Vermarktung / Jahr" info="vermarktung" v={fmtDM(club.finances.commercialAnnual ?? 0)} />
         {naming > 0 && <KV k={`Namensrechte (${club.namingRights!.arenaName})`} v={fmtDM(naming)} />}
         <div className="dsec">Reichweite</div>
         <Meter label="TV-Präsenz" value={tvPresence(club, year) * 100} text={`${Math.round(tvPresence(club, year) * 100)}`} />
@@ -89,7 +89,7 @@ export function SponsoringView({ g, onGoto, onChange }: { g: Game; onGoto: (s: S
         <div className="dnote mt8">Markenfaktor {commercialMultiplier(club, year).toFixed(2)}. Titel, Europapokal und Fernsehen machen die Marke größer – und große Marken verdienen überproportional.</div>
       </DashBox>
 
-      <DashBox title="Angebote" icon="negotiations" span={2} right={offers.length ? `${offers.length} offen` : undefined}>
+      <DashBox title="Angebote" info="sponsorKlauseln" icon="negotiations" span={2} right={offers.length ? `${offers.length} offen` : undefined}>
         {note && <div className="sp-warn">{note}</div>}
         {offers.length ? offers.map((o) => (
           <div key={o.id} className="sp-offer">
@@ -127,7 +127,7 @@ export function SponsoringView({ g, onGoto, onChange }: { g: Game; onGoto: (s: S
           </div>
         </DashBox>
       ) : (
-        <DashBox title="Pflichten & Markt" icon="kalender">
+        <DashBox title="Pflichten & Markt" info="sponsorpflicht" icon="kalender">
           {obligations.length ? obligations.map((o, i) => (
             <KV key={i} k={`${o.window === 'winter' ? 'Winterlager' : 'Sommerreise'}: ${campDestination(o.destId)?.name ?? o.destId}`}
               v={o.status === 'done' ? 'erfüllt' : o.status === 'missed' ? 'verpasst' : `für ${o.partner}`}

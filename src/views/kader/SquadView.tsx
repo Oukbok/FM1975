@@ -87,7 +87,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
         </table>
       </DashBox>
 
-      <DashBox title="Kaderstruktur" icon="dashKader">
+      <DashBox title="Kaderstruktur" info="kaderbedarf" icon="dashKader">
         <div className="dkpis">
           <Kpi value={Math.round(avg(all.map((x) => x.overall)))} label="Ø Stärke" />
           <Kpi value={avg(all.map((x) => x.age)).toFixed(1)} label="Ø Alter" />

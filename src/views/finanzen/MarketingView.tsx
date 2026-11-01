@@ -62,7 +62,7 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
 
   return (
     <DashPage>
-      <DashBox title="Werbekanäle" icon="marketing" span={2} rows={future.length ? 1 : 2} right={`${areas.length} verfügbar`}>
+      <DashBox title="Werbekanäle" info="werbekanaele" icon="marketing" span={2} rows={future.length ? 1 : 2} right={`${areas.length} verfügbar`}>
         {areas.map((a) => {
           const avail = marketingAvailable(a, curYear);
           const units = budgets[a.id] ?? 0;
@@ -102,17 +102,17 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
         </div>
         <KV k="Merchandising" v={`+${fmtDM(incMerch)}`} color="var(--green)" />
         <KV k="Sponsoring-Zuschlag" v={`+${fmtDM(incSponsor)}`} color="var(--green)" />
-        <KV k="Mitgliedsbeiträge" v={`+${fmtDM(membershipMonth)}`} color="var(--green)" />
+        <KV k="Mitgliedsbeiträge" info="mitglieder" v={`+${fmtDM(membershipMonth)}`} color="var(--green)" />
         <div className="dnote mt8">Mitgliedsbeiträge wachsen mit dem Ansehen ({Math.round(club.reputation)}).</div>
         <div className="dsec">Werbeflächen im Stadion</div>
         <KV k="Bandenpartner" v={bandenDeal ? `${bandenDeal.partner} · ${fmtDM(monthly.advertising * 12)}/Jahr` : 'frei – siehe Sponsoring'} />
         <KV k="Banden" v={curYear >= LED_YEAR ? 'LED, wechselnde Motive' : 'statisch'} />
-        <KV k="Wert (Zuschauer × TV)" v={`${Math.round(bandenFactor(club, curYear) * 100)} %`} />
+        <KV k="Wert (Zuschauer × TV)" info="reichweite" v={`${Math.round(bandenFactor(club, curYear) * 100)} %`} />
         <KV k="TV-Präsenz" v={`${Math.round(presence * 100)} %`} />
         <div className="dnote">{tvEraText(curYear)}.</div>
       </DashBox>
 
-      <DashBox title="Catering & Spieltag" icon="catering" right={`Stufe ${cateringLevel}`}>
+      <DashBox title="Catering & Spieltag" info="catering" icon="catering" right={`Stufe ${cateringLevel}`}>
         <div className="dbtnrow" style={{ marginBottom: 8 }}>
           {(['eigenbetrieb', 'umsatz', 'verpachtung'] as CateringMode[]).map((m) => (
             <button key={m} className={`dchip ${cateringMode === m ? 'on' : ''}`} onClick={() => setCateringMode(m)}>{CATERING_MODE_LABEL[m]}</button>

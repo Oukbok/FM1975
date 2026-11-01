@@ -29,7 +29,7 @@ export function PhilosophyBox({ g, onChange }: { g: Game; onChange: () => void }
   const cur = focus[now] ?? 'balance';
 
   return (
-    <DashBox title="Philosophie & Förderspieler" icon="contracts" right={PHASE_LABEL[now].split(' ')[0]}>
+    <DashBox title="Philosophie & Förderspieler" info="philosophie" icon="contracts" right={PHASE_LABEL[now].split(' ')[0]}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 12px' }}>
         {PHASES.map((ph) => (
           <label key={ph} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>

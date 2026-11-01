@@ -146,12 +146,12 @@ export const INFO_TEXTS = {
   },
   halle: {
     title: 'Hallenfußball',
-    text: 'Von 1976 bis 2004 gab es im Winter Hallenturniere. Eine Zusage bringt Antrittsgeld, Prämien und Ansehen, kostet aber Frische und birgt Verletzungsrisiko.',
+    text: 'Von 1976 bis 2004 gab es im Winter Hallenturniere. Eine Zusage bringt Antrittsgeld, Prämien und – in der eigenen Stadt – etwas Fan-Stimmung, kostet aber deutlich Frische und birgt Verletzungsrisiko.',
     wiki: 'indoor-football',
   },
   hallenMasters: {
     title: 'Hallen-Masters',
-    text: 'Das Finalturnier der Hallensaison (1988–2001) für die besten Mannschaften der Tour. Ein Sieg bringt Geld und Ansehen, sportlich zählt er nicht.',
+    text: 'Das Finalturnier der Hallensaison (1988–2001) für die besten Mannschaften der Tour. Ein Sieg bringt eine Prämie, für die Liga zählt er nicht.',
     wiki: 'indoor-football',
   },
 
@@ -242,6 +242,16 @@ export const INFO_TEXTS = {
     title: 'TV- & Mediengelder',
     text: 'Anteil am Fernsehvertrag der Liga, verteilt nach festen Sockeln und Tabellenplatz. In den 70ern ein Taschengeld, ab den 90ern mit dem Privatfernsehen die wichtigste Einnahme.',
     wiki: 'finance-income',
+  },
+  vermarktung: {
+    title: 'Vermarktung & Hospitality',
+    text: 'Lizenzen, Events und Kooperationen neben dem Sponsoring. 1975 praktisch null, ab den 90ern ein Hauptpfeiler – große Marken verdienen hier überproportional.',
+    wiki: 'finance-income',
+  },
+  betrieb: {
+    title: 'Betrieb & Vermarktung',
+    text: 'Wareneinsatz der Fanartikel, Betreuung der Sponsoren sowie Geschäftsstelle, Beratung und Reisen. Wächst mit dem Umsatz – wer mehr vermarktet, braucht auch mehr Apparat.',
+    wiki: 'finance-expenses',
   },
   fixposten: {
     title: 'Monatliche Fixposten',

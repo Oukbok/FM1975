@@ -31,19 +31,19 @@ export function BoardView({ g, onChange }: { g: Game; onChange: () => void }) {
 
   return (
     <DashPage>
-      <DashBox title="Vorstand" icon="dashVerein" right={conf < 20 ? 'Letzte Warnung' : conf < 40 ? 'Besorgt' : conf < 60 ? 'Abwartend' : 'Zufrieden'}>
+      <DashBox title="Vorstand" info="vorstandVertrauen" icon="dashVerein" right={conf < 20 ? 'Letzte Warnung' : conf < 40 ? 'Besorgt' : conf < 60 ? 'Abwartend' : 'Zufrieden'}>
         <div className="dkpis">
           <Kpi value={conf} label="Vertrauen" color={vColor(conf)} />
-          <Kpi value={club.boardExpectation} label="Saisonziel" />
+          <Kpi value={club.boardExpectation} label="Saisonziel" info="saisonziel" />
         </div>
         <Meter label="Vertrauen" value={conf} color={vColor(conf)} />
-        <KV k="Transferbudget" v={fmtPrice(club.finances.transferBudget)} />
+        <KV k="Transferbudget" info="transferbudget" v={fmtPrice(club.finances.transferBudget)} />
         <div className="dnote mt8">
           Unter 40 kürzt der Vorstand die Transfermittel, unter 20 halbiert er sie. Entlassen wirst du nicht – aber ohne Vertrauen fehlt das Geld.
         </div>
       </DashBox>
 
-      <DashBox title="Rechtsform & Investor" icon="contracts" right={corp ? 'Kapitalgesellschaft' : 'e. V.'}>
+      <DashBox title="Rechtsform & Investor" info="rechtsform" icon="contracts" right={corp ? 'Kapitalgesellschaft' : 'e. V.'}>
         {corp ? <>
           <KV k="Ausgegliedert seit" v={corp.since} />
           <KV k="Investor" v={corp.investorShare ? `${corp.investorName} · ${corp.investorShare} %` : 'keiner'} />
@@ -77,7 +77,7 @@ export function BoardView({ g, onChange }: { g: Game; onChange: () => void }) {
         </>}
       </DashBox>
 
-      <DashBox title="Lizenz & Schulden" icon="stats" right={debt.deduction ? `−${debt.deduction} Punkte` : undefined}>
+      <DashBox title="Lizenz & Schulden" info="lizenz" icon="stats" right={debt.deduction ? `−${debt.deduction} Punkte` : undefined}>
         <div className="dkpis">
           <Kpi value={`${Math.round(debt.ratio * 100)} %`} label="Schulden / Umsatz" color={debt.ratio >= 0.6 ? 'var(--red)' : debt.ratio > 0.3 ? 'var(--yellow)' : 'var(--green)'} />
           <Kpi value={fmtDM(club.finances.balance)} label="Kontostand" color={club.finances.balance < 0 ? 'var(--red)' : undefined} />
@@ -91,7 +91,7 @@ export function BoardView({ g, onChange }: { g: Game; onChange: () => void }) {
         </div>
       </DashBox>
 
-      <DashBox title="Kredite" icon="finances" right={loans.length ? `${loans.length}` : undefined}>
+      <DashBox title="Kredite" info="kredite" icon="finances" right={loans.length ? `${loans.length}` : undefined}>
         {loans.length ? loans.map((l) => (
           <div key={l.id}>
             <KV k={l.purpose} v={fmtDM(l.remaining)} strong />
@@ -100,7 +100,7 @@ export function BoardView({ g, onChange }: { g: Game; onChange: () => void }) {
         )) : <Empty icon="finances">Keine Kredite. Stadionausbauten lassen sich unter „Stadion“ per Kredit finanzieren.</Empty>}
       </DashBox>
 
-      <DashBox title="Namensrechte" icon="sponsoring" span={2} right={nr ? `bis ${nr.untilYear}` : year < NAMING_RIGHTS_YEAR ? `ab ${NAMING_RIGHTS_YEAR}` : `${offers.length} Angebote`}>
+      <DashBox title="Namensrechte" info="namensrechte" icon="sponsoring" span={2} right={nr ? `bis ${nr.untilYear}` : year < NAMING_RIGHTS_YEAR ? `ab ${NAMING_RIGHTS_YEAR}` : `${offers.length} Angebote`}>
         {nr && <>
           <KV k="Stadionname" v={nr.arenaName} strong />
           <KV k="Partner" v={nr.sponsor} />

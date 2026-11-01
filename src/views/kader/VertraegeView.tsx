@@ -7,6 +7,7 @@ import { PlayerRow, monthsUntil } from '../shared';
 import { useState } from 'react';
 import { demandFor, offerContract } from '../../game/contracts';
 import { bosmanActive } from '../../engine/contractTalks';
+import { InfoTip } from '../../ui/InfoTip';
 
 // =============================================================================
 // VERTRÄGE — Vertragsliste, auslaufende Verträge, Gehaltsstruktur, Zufriedenheit
@@ -27,12 +28,12 @@ export function VertraegeView({ g, onChange }: { g: Game; onChange?: () => void 
 
   return (
     <DashPage>
-      <DashBox title="Laufende Verträge" icon="contracts" span={2} rows={2} flush right={`${squad.length} Spieler`}>
+      <DashBox title="Laufende Verträge" info="restlaufzeit" icon="contracts" span={2} rows={2} flush right={`${squad.length} Spieler`}>
         <table className="dtable">
           <thead><tr>
             <th>Spieler</th><th className="ctr">Pos</th><th className="num">Alter</th><th className="num">Stärke</th>
-            <th className="num">Gehalt/Wo.</th><th className="num">Vertrag bis</th><th className="num">Rest</th>
-            <th className="num">Marktwert</th><th className="num">Klausel</th><th className="num">Zufr.</th>
+            <th className="num">Gehalt/Wo.</th><th className="num">Vertrag bis</th><th className="num">Rest<InfoTip k="bosman" /></th>
+            <th className="num">Marktwert<InfoTip k="marktwert" /></th><th className="num">Klausel<InfoTip k="ausstiegsklausel" /></th><th className="num">Zufr.<InfoTip k="zufriedenheit" /></th>
           </tr></thead>
           <tbody>
             {squad.map((pl) => {
@@ -56,7 +57,7 @@ export function VertraegeView({ g, onChange }: { g: Game; onChange?: () => void 
         </table>
       </DashBox>
 
-      <DashBox title="Gehaltsstruktur" icon="finances">
+      <DashBox title="Gehaltsstruktur" info="gehaltsbudget" icon="finances">
         <div className="dkpis">
           <Kpi value={fmtDM(wages)} label="pro Woche" />
           <Kpi value={fmtDM(value)} label="Kaderwert" />
@@ -68,7 +69,7 @@ export function VertraegeView({ g, onChange }: { g: Game; onChange?: () => void 
         {byWage.slice(0, 3).map((x) => <PlayerRow key={x.id} p={x} value={fmtPrice(x.contract.weeklyWage)} color="var(--text-1)" onClick={() => setSel(x.id)} />)}
       </DashBox>
 
-      <DashBox title="Handlungsbedarf" icon="negotiations" right={`Ø Zufriedenheit ${avgSat}`}>
+      <DashBox title="Handlungsbedarf" info="zufriedenheit" icon="negotiations" right={`Ø Zufriedenheit ${avgSat}`}>
         <div className="dsec">Laufen in 12 Monaten aus ({expiring.length})</div>
         {expiring.length ? expiring.slice(0, 5).map((x) => (
           <PlayerRow key={x.id} p={x} sub={CalendarEngine.formatDate(x.contract.expiryDate)} value={`${monthsUntil(today, x.contract.expiryDate)} M.`} color="var(--yellow)" onClick={() => setSel(x.id)} />

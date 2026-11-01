@@ -12,6 +12,7 @@ import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtDM, vColor, fmtPrice } from '../../ui/format';
 import { GROUP_DE, PlayerRow, ScoutStars, avg, groupOf, monthsUntil, scoutMid, squadOf } from '../shared';
 import { useState } from 'react';
+import { InfoTip } from '../../ui/InfoTip';
 
 // =============================================================================
 // TRANSFERS — Transfermarkt, Beobachtung (Scouting-Vorschläge), Verhandlungen
@@ -64,7 +65,7 @@ function MarketTable({ g, list, onOpen, action }: { g: Game; list: Player[]; onO
     <table className="dtable">
       <thead><tr>
         <th>Name</th><th>Verein</th><th className="ctr">Pos</th><th className="num">Alter</th><th className="num">Stärke</th>
-        <th>Potenzial</th><th className="num">Vertrag</th><th className="num">Gehalt/Wo.</th><th className="num">Wert</th>{action && <th />}
+        <th>Potenzial<InfoTip k="potenzial" /></th><th className="num">Vertrag</th><th className="num">Gehalt/Wo.</th><th className="num">Wert<InfoTip k="marktwert" /></th>{action && <th />}
       </tr></thead>
       <tbody>
         {list.map((p) => {
@@ -91,7 +92,7 @@ function MarketTable({ g, list, onOpen, action }: { g: Game; list: Player[]; onO
 
 function NeedsBox({ g }: { g: Game }) {
   return (
-    <DashBox title="Kaderbedarf" icon="dashKader">
+    <DashBox title="Kaderbedarf" info="kaderbedarf" icon="dashKader">
       {needs(g).map((n) => (
         <Meter key={n.k} label={`${GROUP_DE[n.k]} · Ø ${n.avg || '–'}`} value={n.n} max={IDEAL[n.k] + 2}
           text={`${n.n} / ${IDEAL[n.k]}`} color={n.short ? 'var(--red)' : undefined} />
@@ -125,10 +126,10 @@ export function TransfersView({ g, onDone }: { g: Game; onDone: () => void }) {
           : <Empty icon="transfers">Derzeit keine Spieler auf dem Markt.</Empty>}
       </DashBox>
 
-      <DashBox title="Budget" icon="finances">
+      <DashBox title="Budget" info="transferbudget" icon="finances">
         <div className="dkpis">
           <Kpi value={fmtPrice(fin.transferBudget)} label="Transferbudget" />
-          <Kpi value={fmtDM(Math.max(0, fin.wageBudget - wages))} label="Gehaltsspielraum/Wo." />
+          <Kpi value={fmtDM(Math.max(0, fin.wageBudget - wages))} label="Gehaltsspielraum/Wo." info="gehaltsbudget" />
         </div>
         <KV k="Kontostand" v={fmtDM(fin.balance)} />
         <KV k="Gehälter / Gehaltsbudget" v={`${fmtDM(wages)} / ${fmtDM(fin.wageBudget)}`} />
@@ -163,7 +164,7 @@ export function BeobachtungView({ g, onChange = () => {} }: { g: Game; onChange?
 
   return (
     <DashPage>
-      <DashBox title="Scouting-Vorschläge" icon="watchlist" span={2} rows={2} flush
+      <DashBox title="Scouting-Vorschläge" info="beobachtung" icon="watchlist" span={2} rows={2} flush
         right={<span className="dbtnrow">
           {(['need', 'contract', 'young'] as ScoutMode[]).map((m) => <button key={m} className={`dchip ${mode === m ? 'on' : ''}`} onClick={() => setMode(m)}>{label[m]} ({lists[m].length})</button>)}
         </span>}>
@@ -227,7 +228,7 @@ export function VerhandlungenView({ g, onChange = () => {} }: { g: Game; onChang
         )) : talks.length ? null : <Empty icon="negotiations">Keine laufenden Gespräche. Verhandeln kannst du im Transfermarkt und in der Beobachtungsliste.</Empty>}
       </DashBox>
 
-      <DashBox title="Wechselkandidaten im eigenen Kader" icon="contracts" span={2} right={`${unsettled.length} Spieler`}>
+      <DashBox title="Wechselkandidaten im eigenen Kader" info="wechselgefahr" icon="contracts" span={2} right={`${unsettled.length} Spieler`}>
         {unsettled.length ? unsettled.map((p) => (
           <PlayerRow key={p.id} p={p} onClick={() => open(p.id)} value={Math.round(p.contract.satisfaction)}
             sub={[p.transferListed && 'auf der Transferliste', p.contract.satisfaction < 60 && 'unzufrieden – für andere Vereine verfügbar',

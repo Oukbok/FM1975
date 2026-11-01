@@ -24,6 +24,7 @@ import { BlockConfigurator, perMatch } from './stadium/BlockConfigurator';
 import { StadiumScene } from './stadium/StadiumScene';
 import { VENUE_GROUPS, Venue, VenueGroup, venuesOf } from './stadium/StadiumSurround';
 import { TicketSheet } from './stadium/TicketSheet';
+import { InfoTip } from '../../ui/InfoTip';
 
 type Mode = 'alles' | 'tribuenen' | VenueGroup;
 interface Anchor { x: number; y: number }
@@ -109,10 +110,10 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
             onSelect={selectBlock} onHover={setHover} onVenue={selectVenue} />
 
           <div className="sv-kpis" onClick={(e) => e.stopPropagation()}>
-            <div className="sv-kpi-name"><b>{st.name}</b><span>Kontostand {fmtDM(club.finances.balance)}</span></div>
+            <div className="sv-kpi-name"><b>{st.name}<InfoTip k="stadionBloecke" /></b><span>Kontostand {fmtDM(club.finances.balance)}</span></div>
             <div><b className="num">{cap.toLocaleString('de-DE')}</b><span>Plätze</span></div>
             <div><b className="num">{cap ? Math.round((seated / cap) * 100) : 0} %</b><span>Sitzplätze</span></div>
-            <div><b className="num">{Math.round(roofShare(blocks) * 100)} %</b><span>überdacht</span></div>
+            <div><b className="num">{Math.round(roofShare(blocks) * 100)} %</b><span>überdacht<InfoTip k="ueberdacht" /></span></div>
             <div><b className="num">{(avgAtt || exp.attendance).toLocaleString('de-DE')}</b><span>{avgAtt ? 'Ø Zuschauer zuletzt' : 'Zuschauer erwartet'}</span></div>
             <div><b className="num">{fmtDM(expRev)}</b><span>Eintritt je Spiel</span></div>
             {preview && <div className="sv-kpi-plan"><b className="num">{fmtDM(preview.rev)}</b><span>nach Umbau</span></div>}
