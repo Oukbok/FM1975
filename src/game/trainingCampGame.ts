@@ -20,6 +20,8 @@ import {
 } from '../engine/trainingCamp';
 import type { Club } from '../types';
 import { fmtDM, fmtDay } from '../ui/format';
+import { campGrade } from '../engine/campPlan';
+import { buildCampResult, campGroup, playerDelta, snap, spiritOf } from './campResult';
 import { setOwnIndoorDecision } from './indoorGame';
 import { leagueClubs } from './season';
 import { Game, bumpMorale } from './state';
@@ -67,12 +69,39 @@ export function campObligationMet(g: Game, clubId: string, s: CampSeason): boole
 // -----------------------------------------------------------------------------
 // Buchung
 // -----------------------------------------------------------------------------
-export interface CampChoice { lodgingId?: string; focus?: CampFocus }
+export interface CampChoice {
+  lodgingId?: string; focus?: CampFocus;
+  /** Reisegruppe aus dem Planer (Profis / eingeladene Jugendspieler); fehlt = alle Profis. */
+  squad?: string[]; youth?: string[];
+}
 export interface CampQuote { costBase: number; cost: number; surcharge: boolean; end: string; error?: string; indoorConflict?: string[] }
+/** Mindestgröße der Reisegruppe (Profis + Jugend) im Planer. */
+export const CAMP_MIN_GROUP = 11;
+
+/** Prüfung nur des Zeitraums (Planer Schritt 1): Fenster, Vorlauf, Pflichtspiele, Halle. */
+export function checkCampDates(g: Game, s: CampSeason, start: string, days: number): { end: string; surcharge: boolean; error?: string; indoorConflict?: string[] } {
+  const today = g.calendar.currentDate;
+  const end = CalendarEngine.addDays(start, Math.max(1, days) - 1);
+  const lead = (Date.parse(start + 'T00:00:00Z') - Date.parse(today + 'T00:00:00Z')) / 86_400_000;
+  const out: { end: string; surcharge: boolean; error?: string; indoorConflict?: string[] } = { end, surcharge: lead < CAMP_SHORT_NOTICE_DAYS };
+  if (days < CAMP_MIN_DAYS || days > CAMP_MAX_DAYS) return { ...out, error: `Dauer ${CAMP_MIN_DAYS}–${CAMP_MAX_DAYS} Tage.` };
+  if (lead < CAMP_LEAD_DAYS) return { ...out, error: `Buchung mindestens ${CAMP_LEAD_DAYS} Tage im Voraus.` };
+  const w = campWindow(g, s);
+  if (start < w.from || end > w.to) return { ...out, error: `Das Lager muss in die ${s === 'summer' ? 'Sommervorbereitung' : 'Winterpause'} passen (${fmtDay(w.from)} – ${fmtDay(w.to)}).` };
+  const busy = competitiveDays(g);
+  const range = daysBetween(start, end);
+  const clash = range.find((x) => busy.has(x));
+  if (clash) return { ...out, error: `Pflichtspiel am ${fmtDay(clash)}.` };
+  const indoor = ownIndoorDays(g, true);
+  const conflicts = [...new Set(range.filter((x) => indoor.has(x)).map((x) => indoor.get(x)!))];
+  const accepted = conflicts.filter((t) => t.own && t.own !== 'decline');
+  if (accepted.length) return { ...out, error: `Kollision mit zugesagtem Hallenturnier: ${accepted.map((t) => t.name).join(', ')}.` };
+  if (conflicts.length) out.indoorConflict = conflicts.map((t) => t.name);
+  return out;
+}
 
 /** Preis und Prüfung einer geplanten Buchung (ohne zu buchen). */
 export function quoteCamp(g: Game, destId: string, s: CampSeason, start: string, days: number, opt: CampChoice = {}): CampQuote {
-  const today = g.calendar.currentDate;
   const club = g.clubs[g.managedClubId];
   const d = campDestination(destId);
   const end = CalendarEngine.addDays(start, Math.max(1, days) - 1);
@@ -84,23 +113,14 @@ export function quoteCamp(g: Game, destId: string, s: CampSeason, start: string,
   if (!st.ok) return { ...q, error: ob && ob !== d.id ? `Sponsor-Vertrag: Pflicht-Trainingslager in ${campDestination(ob)?.name}.` : `${d.name}: ${st.reason}.` };
   const l = opt.lodgingId ? lodgingsFor(d.id, year).find((x) => x.id === opt.lodgingId) : defaultLodging(d.id, year);
   if (!l) return { ...q, error: 'Diese Unterkunft ist in diesem Jahr nicht buchbar.' };
-  if (days < CAMP_MIN_DAYS || days > CAMP_MAX_DAYS) return { ...q, error: `Dauer ${CAMP_MIN_DAYS}–${CAMP_MAX_DAYS} Tage.` };
-  const w = campWindow(g, s);
-  q.costBase = campCostBase(d, l, days, club.reputation, opt.focus ?? 'ausgewogen');
-  const lead = (Date.parse(start + 'T00:00:00Z') - Date.parse(today + 'T00:00:00Z')) / 86_400_000;
-  q.surcharge = lead < CAMP_SHORT_NOTICE_DAYS;
+  const heads = opt.squad ? opt.squad.length + (opt.youth?.length ?? 0) : undefined;
+  if (heads != null && heads < CAMP_MIN_GROUP) return { ...q, error: `Mindestens ${CAMP_MIN_GROUP} Spieler müssen mitfahren.` };
+  q.costBase = campCostBase(d, l, days, club.reputation, opt.focus ?? 'ausgewogen', heads);
+  const dc = checkCampDates(g, s, start, days);
+  q.surcharge = dc.surcharge;
   q.cost = Math.round(q.costBase * economyScale(yearOf(start)) * (q.surcharge ? 1 + CAMP_SHORT_NOTICE_SURCHARGE : 1));
-  if (lead < CAMP_LEAD_DAYS) return { ...q, error: `Buchung mindestens ${CAMP_LEAD_DAYS} Tage im Voraus.` };
-  if (start < w.from || end > w.to) return { ...q, error: `Das Lager muss in die ${s === 'summer' ? 'Sommervorbereitung' : 'Winterpause'} passen (${fmtDay(w.from)} – ${fmtDay(w.to)}).` };
-  const busy = competitiveDays(g);
-  const range = daysBetween(start, end);
-  const clash = range.find((x) => busy.has(x));
-  if (clash) return { ...q, error: `Pflichtspiel am ${fmtDay(clash)}.` };
-  const indoor = ownIndoorDays(g, true);
-  const conflicts = [...new Set(range.filter((x) => indoor.has(x)).map((x) => indoor.get(x)!))];
-  const accepted = conflicts.filter((t) => t.own && t.own !== 'decline');
-  if (accepted.length) return { ...q, error: `Kollision mit zugesagtem Hallenturnier: ${accepted.map((t) => t.name).join(', ')}.` };
-  if (conflicts.length) q.indoorConflict = conflicts.map((t) => t.name);
+  if (dc.error) return { ...q, error: dc.error };
+  if (dc.indoorConflict) q.indoorConflict = dc.indoorConflict;
   return q;
 }
 
@@ -122,6 +142,7 @@ export function bookCamp(g: Game, destId: string, s: CampSeason, start: string, 
   campState(g).bookings.push({
     id: `camp-${g.season}-${s}`, destId, lodgingId: l.id, focus, season: s, start, end: q.end,
     tests: clamp(Math.round(tests), 0, 4), cost: q.cost, bookedOn: today, done: false,
+    ...(opt.squad ? { squad: [...opt.squad], youth: [...(opt.youth ?? [])] } : {}),
   });
   pushMessage(g.messages, makeMessage({
     date: today, category: 'training', from: 'Teammanager',
@@ -129,6 +150,7 @@ export function bookCamp(g: Game, destId: string, s: CampSeason, start: string, 
     shortText: `${l.name}, ${fmtDay(start)} – ${fmtDay(q.end)}, ${fmtDM(q.cost)}.`,
     bodyText: `Unterkunft, Plätze und Reise sind gebucht: ${l.name} in ${d.place} (${d.country}), ${fmtDay(start)} bis ${fmtDay(q.end)}.\n`
       + `Schwerpunkt: ${CAMP_FOCUS[focus].label}. Testspiele vor Ort: ${tests}.\n`
+      + (opt.squad ? `Reisegruppe: ${opt.squad.length} Profis${opt.youth?.length ? ` und ${opt.youth.length} Jugendspieler` : ''}.\n` : '')
       + `Kosten: ${fmtDM(q.cost)}${q.surcharge ? ' (inkl. Aufschlag für kurzfristige Buchung)' : ''}.\n`
       + (q.indoorConflict?.length ? `\nOffene Hallen-Einladungen im Zeitraum wurden abgesagt: ${q.indoorConflict.join(', ')}.\n` : '')
       + `\nEine Stornierung bringt nur noch ${Math.round(CAMP_REFUND * 100)} % zurück.`,
@@ -152,7 +174,9 @@ export function cancelCamp(g: Game, id: string): string {
 // -----------------------------------------------------------------------------
 // Tagesablauf
 // -----------------------------------------------------------------------------
-export function campDaily(g: Game, today: string): void {
+/** Tagesablauf; liefert die IDs der heute beendeten eigenen Lager (Zusammenfassung, DayUi.onCampEnd). */
+export function campDaily(g: Game, today: string): string[] {
+  const ended: string[] = [];
   const st = campState(g);
   if (st.aiSeason !== g.season) { st.ai = []; st.aiSeason = g.season; }
   for (const s of ['summer', 'winter'] as CampSeason[]) {
@@ -166,9 +190,10 @@ export function campDaily(g: Game, today: string): void {
   }
   for (const b of st.bookings) {
     if (!b.done && b.start === today) arrival(g, b, today);
-    if (!b.done && b.end <= today) finishCamp(g, b, today);
+    if (!b.done && b.end <= today) { finishCamp(g, b, today); if (b.result) ended.push(b.id); }
     if (b.delayed && !b.delayed.done && b.delayed.due <= today) altitudeEffect(g, b, today);
   }
+  return ended;
 }
 
 /** Vereinfachte Wirkung bei KI-Vereinen (etwa ein Drittel des eigenen Lagers). */
@@ -248,13 +273,18 @@ function finishCamp(g: Game, b: CampBooking, today: string): void {
   const rng = mulberry32(hashStr(`camp|${b.id}|${today}`));
   // Wetter dieses Mal: Glück oder Pech gegenüber dem Mittel (Spanne wie in der Vorschau).
   const luck = 1 - o.weatherRisk * 0.6 + rng() * o.weatherRisk * 0.9;
+  const group = campGroup(g, b);
+  const squadNow = club.playerIds.map((id) => g.players[id]).filter(Boolean);
+  const before = new Map([...group.pros, ...group.youth, ...group.stayed].map((p) => [p.id, snap(p)] as const));
+  const spiritBefore = spiritOf(squadNow);
   const injured: string[] = [];
+  const injuredBy = new Map<string, string>();
   const incidents: string[] = [];
   const grumble: string[] = [];
+  const leftOut: string[] = [];
   let moraleUp = 0, healed = 0, steadier = 0;
-  for (const pid of club.playerIds) {
-    const p = g.players[pid];
-    if (!p) continue;
+  const travelers = [...group.pros.map((p) => [p, false] as const), ...group.youth.map((p) => [p, true] as const)];
+  for (const [p, invited] of travelers) {
     if (p.injury) {
       // Verletzte reisen mit: Regeneration beschleunigt die Heilung.
       if (o.heal > 0 && p.injury.daysRemaining > 1) {
@@ -270,12 +300,13 @@ function finishCamp(g: Game, b: CampBooking, today: string): void {
     p.attributes.fitness = Math.min(100, p.attributes.fitness + o.fitness * luck);
     p.frische = clamp((p.frische ?? 100) - o.travelFrische + o.campFrische, 30, 100);
     p.form = clamp(p.form + (o.form + o.travelForm) * luck - o.travelForm, 0, 100);
-    dv.devPoints = (dv.devPoints ?? 0) + (young ? o.devYouth : o.dev) * luck;
-    if (b.tests) dv.recentMinutes = (dv.recentMinutes ?? 0) + b.tests * (young && focus === 'jugend' ? 60 : 40);
-    const mChance = young && focus === 'jugend' ? Math.min(0.9, o.morale * 1.5) : o.morale;
+    // Eingeladene Jugendspieler lernen im Training mit den Profis besonders viel.
+    dv.devPoints = (dv.devPoints ?? 0) + (young ? o.devYouth : o.dev) * luck * (invited ? 1.3 : 1);
+    if (b.tests) dv.recentMinutes = (dv.recentMinutes ?? 0) + b.tests * (young && (focus === 'jugend' || invited) ? 60 : 40);
+    const mChance = invited ? Math.min(0.9, o.morale * 1.6) : young && focus === 'jugend' ? Math.min(0.9, o.morale * 1.5) : o.morale;
     if (rng() < mChance) { p.morale = bumpMorale(p.morale, 1); moraleUp++; }
     if (o.starGrumble && p.age >= 28 && rng() < o.starGrumble) { p.morale = bumpMorale(p.morale, -1); grumble.push(p.fullName); }
-    p.contract.satisfaction = clamp((p.contract.satisfaction ?? 60) + o.satisfaction, 0, 100);
+    if (!invited) p.contract.satisfaction = clamp((p.contract.satisfaction ?? 60) + o.satisfaction, 0, 100);
     // Disziplin: Ablenkung verführt die weniger Professionellen, Abgeschiedenheit erzieht.
     const prof = dv.professionalism ?? 50;
     if (rng() < o.discipline * (1.5 - prof / 100)) {
@@ -293,7 +324,13 @@ function finishCamp(g: Game, b: CampBooking, today: string): void {
       inj.description = `${inj.description} (Trainingslager)`;
       p.injury = inj; p.availability = 'injured'; recordInjury(p, inj);
       injured.push(`${p.fullName} – ${inj.description}, ${inj.totalDays} Tage`);
+      injuredBy.set(p.id, `${inj.description.replace(' (Trainingslager)', '')}, ${inj.totalDays} Tage`);
     }
+  }
+  // Gesunde Profis, die zu Hause bleiben müssen, sind teils enttäuscht.
+  for (const p of group.stayed) {
+    if (p.injury || p.age <= CAMP_YOUTH_AGE) continue;
+    if (rng() < 0.4) { p.morale = bumpMorale(p.morale, -1); leftOut.push(p.fullName); }
   }
   if (o.altitudeFitness > 0) b.delayed = { due: CalendarEngine.addDays(today, CAMP_ALTITUDE_DELAY), fitness: o.altitudeFitness * luck };
   const scale = economyScale(yearOf(today));
@@ -304,21 +341,31 @@ function finishCamp(g: Game, b: CampBooking, today: string): void {
   if (o.brandIntl > 0) { const br = ensureBrand(club); br.international = clamp(br.international + o.brandIntl, 0, 100); }
   const fan = o.fanMood - o.criticism;
   if (fan !== 0 && g.environment) g.environment.fanMood = clamp(g.environment.fanMood + fan, 0, 100);
+  // Messung: Vorher/Nachher je Spieler, Gesamterfolg, Gewinner/Verlierer.
+  const deltas = [...group.pros, ...group.youth, ...group.stayed].map((p) =>
+    playerDelta(p, before.get(p.id)!, group.youth.includes(p), injuredBy.get(p.id), incidents.includes(p.fullName)));
+  b.result = buildCampResult(g, { b, luck, group, before, spiritBefore, deltas, healed, income, sponsor, fans: fan });
+  if (b.delayed) b.result.altitudeDue = b.delayed.due;
   const fitTxt = (o.fitness * luck).toFixed(1);
   const formV = (o.form + o.travelForm) * luck - o.travelForm;
   const note = `${d.name} (${l.name}, ${CAMP_FOCUS[focus].label}): Fitness +${fitTxt}, Form ${formV >= 0 ? '+' : ''}${formV.toFixed(1)}, ${injured.length} verletzt${incidents.length ? `, ${incidents.length} Disziplinverstöße` : ''}`;
   b.report = note;
-  campState(g).history.push({ season: g.season, destId: d.id, campSeason: b.season, note });
+  campState(g).history.push({
+    season: g.season, destId: d.id, campSeason: b.season, note,
+    bookingId: b.id, start: b.start, end: b.end, lodgingId: l.id, focus, result: b.result,
+  });
   if (campState(g).history.length > 60) campState(g).history.shift();
   pushMessage(g.messages, makeMessage({
     date: today, category: 'training', from: 'Trainerstab',
     subject: `Zurück aus dem Trainingslager (${d.place})`,
     shortText: note,
     bodyText: `Bilanz des Trainingslagers in ${d.place} (${l.name}, Schwerpunkt ${CAMP_FOCUS[focus].label}):\n\n`
+      + `• Gesamteindruck: ${campGrade(b.result.score)} (${b.result.score} von 100)\n`
       + `• Kondition: +${fitTxt} Fitness je Spieler${luck < 0.95 ? ' (Wetter hat Einheiten gekostet)' : luck > 1.05 ? ' (bestes Wetter)' : ''}\n`
       + (o.altitudeFitness > 0 ? `• Höhentraining (${o.altitude} m): weitere +${(o.altitudeFitness * luck).toFixed(1)} Fitness in etwa ${CAMP_ALTITUDE_DELAY} Tagen\n` : '')
-      + `• Taktik & Technik: zusätzliche Entwicklungsschritte${focus === 'jugend' ? ' – besonders für die Jungen' : ''}; ${moraleUp} Spieler mit besserer Stimmung\n`
+      + `• Taktik & Technik: zusätzliche Entwicklungsschritte${focus === 'jugend' || group.youth.length ? ' – besonders für die Jungen' : ''}; ${moraleUp} Spieler mit besserer Stimmung\n`
       + (grumble.length ? `• Unmut über die einfache Unterkunft: ${grumble.join(', ')}\n` : '')
+      + (leftOut.length ? `• Enttäuscht, weil sie zu Hause bleiben mussten: ${leftOut.join(', ')}\n` : '')
       + (incidents.length ? `• Disziplin: Zapfenstreich verpasst – ${incidents.join(', ')}\n` : steadier ? `• Disziplin: Die Abgeschiedenheit hat ${steadier} Spielern gutgetan.\n` : '')
       + (healed ? `• Regeneration: ${healed} Verletzte kommen früher zurück\n` : '')
       + (o.travelFrische > 0 ? `• Reisestrapazen: Frische −${o.travelFrische}${o.travelForm > 0 ? `, Form −${o.travelForm} (Zeitverschiebung ${d.tz > 0 ? '+' : ''}${d.tz} h)` : ''}\n` : '')
@@ -336,11 +383,16 @@ function altitudeEffect(g: Game, b: CampBooking, today: string): void {
   del.done = true;
   const club = g.clubs[g.managedClubId];
   if (!club) return;
-  for (const pid of club.playerIds) {
-    const p = g.players[pid];
-    if (!p || p.injury) continue;
+  const grp = campGroup(g, b);
+  for (const p of [...grp.pros, ...grp.youth]) {
+    if (p.injury) continue;
     p.attributes.fitness = Math.min(100, p.attributes.fitness + del.fitness);
   }
+  // Im Archiv nachtragen (Buchung und Verlaufseintrag sind nach dem Laden getrennte Objekte).
+  const fit = Math.round(del.fitness * 10) / 10;
+  if (b.result) b.result.altitude = fit;
+  const h = campState(g).history.find((x) => x.bookingId === b.id);
+  if (h?.result) h.result.altitude = fit;
   pushMessage(g.messages, makeMessage({
     date: today, category: 'training', from: 'Trainerstab',
     subject: 'Höhentraining zahlt sich aus',

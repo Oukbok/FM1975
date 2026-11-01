@@ -102,6 +102,41 @@ export interface CampBooking {
   report?: string;
   /** Höhentraining: verzögerte Fitness-Wirkung (fällig am Datum). */
   delayed?: { due: string; fitness: number; done?: boolean };
+  /** Reisegruppe (Planer): Profis bzw. eingeladene Jugendspieler. Fehlt = alle Profis (alte Stände). */
+  squad?: string[];
+  youth?: string[];
+  /** Gemessene Wirkung nach der Rückkehr (game/campResult.ts). */
+  result?: CampResult;
+}
+
+/** Wirkung eines Lagers auf einen Spieler (Vorher/Nachher, kompakt). */
+export interface CampPlayerDelta {
+  id: string; name: string; pos: string; age: number; youth?: boolean;
+  /** Fitness-Attribut, Form, Entwicklungspunkte, Moral-Stufen (Δ). */
+  fit: number; form: number; dev: number; morale: number;
+  injured?: string; incident?: boolean;
+  /** Nutzen-Wert für die Rangliste. */
+  score: number;
+}
+
+/** Gemessene Wirkung eines Lagers (Archiv, Zusammenfassung). */
+export interface CampResult {
+  /** Gesamterfolg 0–100. */
+  score: number;
+  /** Wetterglück (1 = Mittel). */
+  luck: number;
+  travelers: number; youth: number; stayed: number;
+  /** Mittelwerte der Reisenden vorher/nachher. */
+  fit: [number, number]; form: [number, number]; frische: [number, number];
+  /** Teamgeist: mittlere Moral des Kaders 0–100 vorher/nachher. */
+  spirit: [number, number];
+  dev: number;
+  moraleUp: number; moraleDown: number; injuries: number; incidents: number; healed: number;
+  /** Nominal: Kosten, Testspiel- und Marketingerlöse; Fan-Stimmung Δ. */
+  cost: number; income: number; sponsor: number; fans: number;
+  /** Höhentraining: Fitness nach der Rückkehr (eingetragen, sobald es greift). */
+  altitude?: number; altitudeDue?: string;
+  best: CampPlayerDelta[]; worst: CampPlayerDelta[];
 }
 
 export interface AiCampEntry { clubId: string; destId: string; season: CampSeason; start: string; end: string; applied: boolean; lodgingId?: string; focus?: CampFocus }
@@ -113,7 +148,13 @@ export interface CampState {
   ai: AiCampEntry[];
   aiSeason?: string;
   /** Verlauf deiner Lager (Saison, Ziel, Ergebnis). */
-  history: { season: string; destId: string; campSeason: CampSeason; note: string }[];
+  history: CampHistoryEntry[];
+}
+
+export interface CampHistoryEntry {
+  season: string; destId: string; campSeason: CampSeason; note: string;
+  /** Ab dem Planer: Buchung, Zeitraum, Unterkunft, Schwerpunkt und gemessene Wirkung. */
+  bookingId?: string; start?: string; end?: string; lodgingId?: string; focus?: CampFocus; result?: CampResult;
 }
 
 type WinterGame = Game & { indoor?: IndoorState; camps?: CampState };

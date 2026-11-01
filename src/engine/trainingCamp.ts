@@ -83,9 +83,16 @@ export function entourageFactor(rep: number): number {
   return clamp(0.85 + (rep - 50) / 115, 0.85, 1.2);
 }
 
-/** Kosten in 1975-Basis (ohne Kurzfrist-Aufschlag). */
-export function campCostBase(d: CampDestination, l: CampLodging, days: number, rep: number, focus: CampFocus = 'ausgewogen'): number {
-  return Math.round((d.travel + l.rate * days * CAMP_FOCUS[focus].cost) * entourageFactor(rep) / 100) * 100;
+/** Übliche Reisegruppe (Spieler), auf die Reise- und Tagessätze kalkuliert sind. */
+export const CAMP_STD_HEADS = 24;
+/** Kostenfaktor nach Größe der Reisegruppe (Spieler + rund neun Betreuer). */
+export function headsFactor(heads: number | undefined): number {
+  return heads == null ? 1 : clamp((heads + 9) / (CAMP_STD_HEADS + 9), 0.55, 1.35);
+}
+
+/** Kosten in 1975-Basis (ohne Kurzfrist-Aufschlag); `heads` = mitreisende Spieler (Planer). */
+export function campCostBase(d: CampDestination, l: CampLodging, days: number, rep: number, focus: CampFocus = 'ausgewogen', heads?: number): number {
+  return Math.round((d.travel + l.rate * days * CAMP_FOCUS[focus].cost) * entourageFactor(rep) * headsFactor(heads) / 100) * 100;
 }
 
 // -----------------------------------------------------------------------------

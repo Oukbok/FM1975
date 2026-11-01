@@ -78,6 +78,11 @@ export interface DayUi {
    * zeigt die Ziehung, der Vorlauf hält an. Fehlt der Rückruf: nur Nachricht.
    */
   onCupDraw?(d: DrawNotice): boolean;
+  /**
+   * Ein eigenes Trainingslager ist heute zu Ende (game/trainingCampGame.ts) → kurze
+   * Zusammenfassung zeigen. Rückgabe true = der Vorlauf hält an.
+   */
+  onCampEnd?(bookingId: string): boolean;
 }
 
 /** Oberfläche ohne Reaktion – für Simulationen und Tests. */
@@ -518,7 +523,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   transferTalkDaily(g, today);
   // Winter-Systeme: Hallenturniere/Masters (game/indoorGame.ts) und Trainingslager (game/trainingCampGame.ts).
   indoorDaily(g, today);
-  campDaily(g, today);
+  const campsEnded = campDaily(g, today);
   winterBreakDaily(g, today);   // Formdrift in der Winterpause (game/winterShared.ts)
   advanceDivisionsTo(g, today); // Sim-Ligen nach eigenem Spielplan (game/season.ts)
   groundsDaily(g, today); // Stadionumfeld: Bauvorhaben, Spiele, Monat, Saison (game/groundsGame.ts)
@@ -680,6 +685,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
   for (const d of cupDrawsDaily(g, today)) {
     if (ui.onCupDraw?.(d)) stopForAction = true;
   }
+  // Rückkehr aus dem Trainingslager: animierte Zusammenfassung.
+  for (const id of campsEnded) if (ui.onCampEnd?.(id)) stopForAction = true;
 
   // Pause nur, wenn heute eine neue Entscheidung ansteht (Ereignis mit Auswahl).
   if (g.messages.some((m) => m.choices?.length && m.eventRef && !m.eventRef.resolved && m.date === today && !decisionsBefore.has(m.id))) {
