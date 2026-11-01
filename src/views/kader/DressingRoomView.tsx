@@ -10,7 +10,8 @@ import { ensureLeadership, roomAnalysis, roomOf, squadOf } from '../../game/dres
 import { chooseEventOption } from '../../game/eventsGame';
 import { Game } from '../../game/state';
 import { DashBox, DashPage, Empty, Kpi } from '../../ui/DashPage';
-import { condBar, condColor, fmtDay } from '../../ui/format';
+import { condColor, fmtDay } from '../../ui/format';
+import { MoraleIcon } from '../../components/status';
 import { RoomCircle } from './kabine/RoomCircle';
 import { FactorList, MoodSpark, PlayerFocus, TeamActions } from './kabine/RoomParts';
 
@@ -90,7 +91,7 @@ export function DressingRoomView({ g, onChange }: { g: Game; onChange: () => voi
                   <td className="kb-td-name">{p.lastName}{o.id === dr.captainId ? ' (K)' : dr.council?.includes(o.id) ? ' (R)' : ''}{o.outsiderWhy[0] && <span className="muted"> · {o.outsiderWhy[0]}</span>}</td>
                   <td className="muted nowrap">{TIER_LABEL[o.tier]}</td>
                   <td className="num"><span className="kb-mini"><i style={{ width: `${o.influence}%` }} /></span>{o.influence}</td>
-                  <td className="num"><span className="kb-mini"><i style={{ width: `${s}%`, background: condBar(s) }} /></span><span style={{ color: condColor(s) }}>{s}</span></td>
+                  <td className="num"><MoraleIcon value={s} size={16} /> <span>{s}</span></td>
                 </tr>
               );
             })}

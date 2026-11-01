@@ -12,6 +12,7 @@ import {
 } from '../../../game/dressingRoomGame';
 import { Game } from '../../../game/state';
 import { condBar, condColor, fmtDay, fmtPrice } from '../../../ui/format';
+import { MoraleIcon } from '../../../components/status';
 
 const sign = (v: number) => (v > 0 ? `+${v}` : `${v}`);
 
@@ -73,7 +74,7 @@ export function PlayerFocus({ g, a, pid, onChange }: { g: Game; a: DRAnalysis; p
       <div className="kb-cols">
         <div>
           <div className="kb-big">
-            <span className="kb-big-val" style={{ color: condColor(score) }}>{score}</span>
+            <MoraleIcon value={score} size={26} /> <span className="kb-big-val">{score}</span>
             <span className="kb-big-lbl">Moral · {MORALE_LABEL[moraleStepOf(score)]} · Ziel {o.target} {Math.abs(trend) < 2 ? '(stabil)' : trend > 0 ? '(steigt)' : '(sinkt)'}</span>
           </div>
           <div className="kb-bar"><i style={{ width: `${score}%`, background: condBar(score) }} /><b style={{ left: `${o.target}%` }} title={`Zielwert ${o.target}`} /></div>
