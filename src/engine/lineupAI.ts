@@ -14,6 +14,7 @@
 import type { Club, Player, Position, Tactics } from '../types';
 import { FORMATIONS, getFormation, Formation, DEFAULT_FORMATION_ID } from '../data/formations';
 import { positionSuitability } from './positions';
+import { withLayout } from '../data/pitchGrid';
 
 /** Kleiner deterministischer Hash → 32-Bit-Seed. */
 function hashString(str: string): number {
@@ -59,6 +60,7 @@ export interface LineupAssignment {
 export function assignToFormation(
   formation: Formation,
   pool: Player[],
+  benchSize = 5,
 ): LineupAssignment {
   const pairs: { slotId: string; playerId: string; value: number }[] = [];
   for (const slot of formation.slots) {
@@ -87,11 +89,14 @@ export function assignToFormation(
   // Startelf in Slot-Reihenfolge
   const startingXI = formation.slots.map((s) => lineupMap[s.id]).filter(Boolean) as string[];
   // Ersatzbank: beste verbleibende Spieler
-  const substitutes = pool
-    .filter((p) => !usedPlayers.has(p.id))
-    .sort((a, b) => b.overall - a.overall)
-    .slice(0, 5)
-    .map((p) => p.id);
+  const rest = pool.filter((p) => !usedPlayers.has(p.id)).sort((a, b) => b.overall - a.overall);
+  const bench = rest.slice(0, benchSize);
+  // Ein Ersatztorwart gehört auf die Bank, wenn einer da ist.
+  if (benchSize > 0 && !bench.some((p) => p.naturalPosition === 'TW')) {
+    const gk = rest.find((p) => p.naturalPosition === 'TW');
+    if (gk) { if (bench.length >= benchSize) bench.pop(); bench.push(gk); }
+  }
+  const substitutes = bench.map((p) => p.id);
 
   return { lineupMap, assignedPositions, startingXI, substitutes };
 }
@@ -191,10 +196,12 @@ export function autoFillLineup(
   club: Club,
   players: Record<string, Player>,
   tactics: Tactics,
+  benchSize = 5,
 ): Tactics {
   const pool = availablePlayers(club, players);
-  const formation = getFormation(tactics.formation);
-  const asg = assignToFormation(formation, pool);
+  // Eigene Slot-Lagen bleiben erhalten und werden nach ihrer Position besetzt.
+  const formation = withLayout(getFormation(tactics.formation), tactics.slotLayout);
+  const asg = assignToFormation(formation, pool, benchSize);
   const xiPlayers = asg.startingXI.map((id) => players[id]).filter(Boolean) as Player[];
 
   return {

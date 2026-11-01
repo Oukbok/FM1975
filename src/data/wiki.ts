@@ -678,10 +678,14 @@ Für dich heißt das: Ein 85er ist ein echter Unterschiedsspieler – teuer, beg
     title: 'Aufstellung & Formationen',
     keywords: ['taktik', 'aufstellung', 'formation', 'libero', '4-4-2', '4-3-3'],
     body: `## Aufstellung & Formationen
-Auf der Seite **Aufstellung** (in der unteren Leiste) stellst du deine Mannschaft.
+Unter **Spieltag › Aufstellung** stellst du deine Mannschaft – aufgebaut wie in modernen Fußballmanagern:
+
+- **Links – Kaderliste:** drei Abschnitte *Startelf*, *Ersatzbank* und *Reserve* mit Position, Rückennummer, Eignung, Frische, Form, Moral, Durchschnittsnote und Stärke. Ein Klick auf eine Spaltenüberschrift sortiert innerhalb der Abschnitte.
+- **Mitte – Spielfeld:** maßstabsgetreu nach FIFA-Regeln (105 × 68 m) mit Spielerkarten auf den Positionen: Position, Eignung, Name und Frischebalken; der farbige Rand zeigt, wie gut der Spieler auf diese Position passt. Darunter die **Ersatzbank** mit so vielen Plätzen, wie die Epoche erlaubt (bis 1994 fünf, ab 1995 sieben, ab 2020 neun).
+- **Rechts:** Mentalität und Teamanweisungen im Überblick, Ø Stärke, Ø Eignung und **vertraute Positionen** (wie viele Spieler auf Stamm- oder Nebenposition stehen), darunter Kapitän, Standardschützen und **Hinweise** (Spieler außerhalb seiner Position, Verletzte/Gesperrte, müde Spieler, unausgewogene Formation, fehlender Ersatztorwart).
 
 ### Formationen
-Es stehen neun Formationen zur Wahl – vom modernen System bis zum klassischen Libero-System der 80er:
+Die Formation wählst du oben im Spielfeld:
 
 | Formation | Typ | Charakter |
 |-----------|-----|-----------|
@@ -691,17 +695,30 @@ Es stehen neun Formationen zur Wahl – vom modernen System bis zum klassischen 
 | 4-2-3-1 | modern | Doppelsechs, ein Zielspieler |
 | 5-3-2 | defensiv | Fünferkette, sicher gegen starke Gegner |
 | 3-4-3 | offensiv | mutig, viel Risiko |
-| Libero 1-4-3-2 | 80er | freier Libero hinter der Viererkette |
-| Libero 1-3-4-2 | 80er | Libero + Dreierkette, starkes Mittelfeld |
-| Libero 1-4-4-1 | 80er | Libero, defensiv, ein Stürmer |
+| Libero 1-4-3-2 | 70er/80er | freier Libero hinter der Viererkette |
+| Libero 1-3-4-2 | 70er/80er | Libero + Dreierkette, starkes Mittelfeld |
+| Libero 1-4-4-1 | 70er/80er | Libero, defensiv, ein Stürmer |
 
-Formationen mit ¹ sind Libero-Systeme – zeitgemäß für 1980. Die CPU-Vereine bevorzugen diese Systeme leicht.
+Beim Wechsel der Formation bleibt deine Startelf zusammen und wird bestmöglich auf die neuen Positionen verteilt; eigene Positionsänderungen werden dabei verworfen.
 
-### Spieler zuordnen (Drag & Drop)
-Ziehe einen Spieler von der **Ersatzbank** auf einen **Positions-Slot** im Feld – oder tausche zwei Spieler, indem du einen auf einen belegten Slot ziehst. Ziehst du einen Feldspieler zurück auf die Bank, wird der Slot frei.
+### Ziehen und Tauschen
+- Spieler aus der **Liste** oder von der **Bank** auf eine Karte im Feld ziehen setzt ihn dort ein (der bisherige Spieler tauscht den Platz). Lässt du ihn irgendwo auf dem Rasen los, kommt er auf die nächstgelegene Position.
+- Eine **Karte auf eine andere Karte** ziehen tauscht die beiden Spieler.
+- Auf die Bank oder in die Reserve ziehen nimmt einen Spieler aus der Startelf.
+- Ein einfacher Klick auf Karte oder Zeile öffnet das Spielerprofil.
 
-### Auto-Aufstellen
-Der Button **Auto-Aufstellen** besetzt alle Slots automatisch nach bestmöglicher Eignung – deine Formation und deine Taktik-Feineinstellungen bleiben erhalten.`,
+### Positionen verschieben
+Ziehst du eine Karte auf eine freie Stelle des Rasens, verschiebst du die **Position selbst**:
+- **Fest einrasten (an):** Die Karte springt auf das nächste freie Feld eines festen Rasters (Libero, Innenverteidiger links/zentral/rechts, Außenverteidiger, offensive Außenverteidiger, Sechser, zentrales und offensives Mittelfeld, Flügel, hängende Spitzen, Mittelstürmer). Das Ziel wird beim Ziehen hervorgehoben.
+- **Fest einrasten (aus):** Die Karte bleibt genau dort, wo du sie loslässt. Die Position heißt wie das nächstgelegene Rasterfeld – beim Ziehen siehst du den Namen live.
+
+Die so entstandene Position zählt im Spiel genauso wie eine Formationsposition (Eignung, Mannschaftsteile, Torschützenwahl). Der Torwart bleibt fest im Tor, kein Feldspieler kann ins Tor gezogen werden. **Zurücksetzen** stellt die Positionen der Formation wieder her. Die Einstellung *Fest einrasten* wird mit deiner Taktik gespeichert.
+
+### Auto
+**Auto** besetzt alle Positionen nach bestmöglicher Eignung (nur einsatzfähige Spieler) und füllt die Bank samt Ersatztorwart – Formation, eigene Positionen und Anweisungen bleiben erhalten.
+
+### Was vor dem Anpfiff passiert
+Das Spiel nimmt genau diese Aufstellung. Fällt ein Spieler bis dahin aus (verletzt, gesperrt), rückt auf seine Position der passendste Freie. Freie Bankplätze füllt das Spiel mit den besten Übrigen auf, bevorzugt mit einem Ersatztorwart.`,
   },
   {
     id: 'position-weights',
@@ -766,7 +783,7 @@ Das Ergebnis wird auf 1–99 begrenzt. Deshalb kann ein Weltklasse-Stürmer als 
     title: 'Taktik-Anweisungen & ihre Wirkung',
     keywords: ['taktik', 'tempo', 'pressing', 'abseitsfalle', 'aufbau', 'anweisung'],
     body: `## Taktik-Anweisungen
-Über den Button **Taktik** öffnest du das Taktik-Popup. Alle Einstellungen wirken direkt in der Match-Engine (\`engine/match/team.ts\`, Funktion \`tacticMods\`).
+Unter **Spieltag › Taktik** stellst du Mentalität und Teamanweisungen ein – gegliedert in *Mit Ball* und *Gegen den Ball*. Alle Einstellungen wirken direkt in der Match-Engine (\`engine/match/team.ts\`, Funktion \`tacticMods\`); der Kasten **Wirkung im Spiel** zeigt genau diese Rechnung als Abweichung vom neutralen Wert (orange = Nachteil, z. B. mehr Fouls oder höhere Konteranfälligkeit).
 
 ### Ausrichtung
 - **Grundausrichtung:** Defensiv / Ausgewogen / Offensiv / Konter. Offensiv: mehr und gefährlichere Angriffe, dafür anfälliger für Konter. Konter: weniger Ballbesitz, aber deutlich gefährlichere Gegenstöße.
@@ -788,14 +805,14 @@ Im Textmodus kannst du zusätzlich während des Spiels die **Ausrichtung** ände
     title: 'Standardschützen & Kapitän',
     keywords: ['standard', 'elfmeter', 'freistoß', 'ecke', 'kapitän', 'schütze'],
     body: `## Standardschützen
-Im Abschnitt **Standardschützen** auf der Aufstellungsseite legst du fest, wer ruhende Bälle ausführt. Zur Auswahl stehen nur Spieler der aktuellen Startelf, sortiert nach dem passenden Attribut:
+Im Kasten **Kapitän & Standards** auf der Aufstellungsseite legst du fest, wer ruhende Bälle ausführt. Zur Auswahl stehen nur Spieler der aktuellen Startelf, sortiert nach dem passenden Attribut:
 
 - **Elfmeter** – nach Attribut *Elfmeter*
 - **Freistoß** – nach Attribut *Freistöße*
 - **Ecke** – nach Attribut *Ecken*
 - **Kapitän** – nach Attribut *Führung*
 
-Der gewählte Schütze wird in der Simulation bei der jeweiligen Standardsituation bevorzugt – ein guter Elfmeterschütze erhöht die Verwandlungschance. Wählst du niemanden, schlägt das Spiel automatisch den besten verfügbaren Spieler vor.`,
+Der gewählte Schütze wird in der Simulation bei der jeweiligen Standardsituation bevorzugt – ein guter Elfmeterschütze erhöht die Verwandlungschance. Bei *automatisch (Bester)* nimmt das Spiel den Feldspieler mit dem besten Wert. Der **Kapitän** trägt die Binde (Kennzeichen K) und gibt im Textmodus den Zurufen Gewicht: Je besser seine Führungsqualität, desto stärker wirkt ein Zuruf.`,
   },
   {
     id: 'match',
