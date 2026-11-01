@@ -70,6 +70,7 @@ Deutsche Retro-Fußballmanager-Simulation. Der Spielstand startet in der **Saiso
 
 ## Zeitfortschritt
 - Der Kalender läuft tageweise. Mit dem **Weiter**-Button oben rechts (oder der **Leertaste**) startest/stoppst du den Auto-Advance.
+- Solange die Zeit läuft, erscheint in der Bildschirmmitte der **Kalenderstreifen** (siehe Artikel „Kalender & planbare Aktivitäten“); der Rest des Bildschirms ist dann unscharf und abgedunkelt, nur der **Pause**-Knopf bleibt bedienbar.
 - Der Button hat eine **feste Größe** und wechselt je nach Kontext die Beschriftung (Weiter / Pause / Simulieren / ▶ Neue Saison), ohne zu springen.
 - An wichtigen Ereignissen (**dein Spiel** – hier hält der Vorlauf unmittelbar vor dem Anpfiff an und öffnet das Match-Fenster im Vor-Anpfiff-Zustand –, **große Saison-Bewertung**, Saisonende) hält das Spiel automatisch an. Die Pause landet dabei **genau auf dem betreffenden Tag** (also z.B. **am Spieltag selbst**, nicht am Folgetag): Das angezeigte Datum in der Zentrale bleibt auf diesem Tag stehen, der Tageswechsel wird erst nachgeholt, sobald du den Vorlauf fortsetzt. Die drei kleinen periodischen Leistungsbewertungen laufen dagegen still im Hintergrund und stoppen den Vorlauf nicht. Am Saisonende wird der **Weiter**-Button zu **„▶ Neue Saison"** und startet die Folgesaison samt fälliger Chronik-Meilensteine.
 
@@ -2304,14 +2305,30 @@ Unter den Werbereglern zeigt der Bereich drei zusätzliche Karten des Finanzsyst
     id: 'calendar-overview',
     category: 'calendar',
     title: 'Kalender & planbare Aktivitäten',
-    keywords: ['kalender', 'monat', 'aktivität', 'trainingslager', 'freundschaftsspiel', 'teambuilding', 'planen', 'freie tage', 'kollision'],
-    body: `## Monatskalender
-Im Bereich **Kalender** (in der unteren Navigation) siehst du den aktuellen Monat als Tagesraster (Mo–So).
+    keywords: ['kalender', 'monat', 'aktivität', 'trainingslager', 'freundschaftsspiel', 'teambuilding', 'planen', 'freie tage', 'kollision', 'kalenderstreifen', 'zeitlauf', 'pause'],
+    body: `## Kalenderstreifen während des Zeitlaufs
+Einen festen Kalenderstreifen oben auf den Seiten gibt es nicht mehr – die Seiten nutzen die volle Höhe. Sobald du
+**Weiter** drückst (oder die **Leertaste**), blendet sich in der Bildschirmmitte ein Streifen mit **11 Tagen** ein:
+**3 vergangene Tage**, **heute** im festen Bernstein-Rahmen und die **7 kommenden Tage**. Mit jedem Tageswechsel
+gleitet der Streifen einen Tag weiter (so schnell wie dein Spieltempo); die äußeren Tage blenden zum Rand hin aus.
+
+Je Tag siehst du das wichtigste Ereignis und bis zu zwei weitere: **eigene Spiele** mit Wappen des Gegners,
+Heim/Auswärts und Wettbewerb (Liga, Pokal, Europapokal, Testspiel) – gespielte Partien links mit **Ergebnis** –,
+dazu **Auslosungen**, **Transferfenster**, **Vertragsenden** im eigenen Kader, **Hallenturniere**, **Trainingslager**,
+Bewertungen, Winterpause, Saisonstart und -ende.
+
+Der Hintergrund ist währenddessen unscharf und abgedunkelt; nur der **Pause**-Knopf oben rechts bleibt klar.
+Anhalten kannst du mit dem Knopf, der Leertaste oder einem Klick irgendwo auf den Hintergrund. Hält das Spiel von
+selbst an (dein Spieltag, Auslosung, Briefing, Ereignis mit Entscheidung, Saisonende), blendet der Streifen weich aus;
+Popups (Auslosung, Briefing, Textmodus, Spielbericht) erscheinen nie zusammen mit ihm.
+
+## Monatskalender
+Unter **Zentrale › Kalender** siehst du den aktuellen Monat als Tagesraster (Mo–So).
 Du blätterst mit **‹ Vormonat** / **Folgemonat ›**. Die Tage sind farblich markiert:
 
 - **frei** (grün umrandet, klickbar) — planbar
 - **Spiel/Planung** (rot) — Ligaspiel , Pokalspiel oder bereits geplante Aktivität 
-- **heute** (türkiser Rahmen)
+- **heute** (Bernstein-Rahmen)
 - **Auswahl** (grün = gültiger Zeitraum, rot = Kollision)
 
 ## Aktivitäten planen
