@@ -26,7 +26,8 @@
     "test:seats": "node scripts/run-ts.mjs tests/seats-test.ts",
     "test:draw": "node scripts/run-ts.mjs tests/draw-test.ts",
     "test:sponsor": "node scripts/run-ts.mjs tests/sponsor-test.ts",
-    "test:talent": "node scripts/run-ts.mjs tests/talent-test.ts"
+    "test:talent": "node scripts/run-ts.mjs tests/talent-test.ts",
+    "test:staff": "node scripts/run-ts.mjs tests/staff-test.ts"
   },
   "dependencies": {
     "lz-string": "1.5.0",

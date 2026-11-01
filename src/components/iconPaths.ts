@@ -463,6 +463,125 @@ export const RAW: Record<string, string> = {
     '<path d="M8 10.5V7.8a4 4 0 0 1 7.6-1.7" fill="none" stroke="%ACCENT%" stroke-width="2" stroke-linecap="round"/>' +
     '<rect x="5" y="10.5" width="14" height="10" rx="2" fill="%BASE%"/>' +
     '<circle cx="12" cy="15.5" r="1.5" fill="#0c0f15"/>',
+
+  // ---- Trainingsbausteine (Training › Trainingsplan) ----
+  // Ausdauer — weisses Herz mit Akzent-Puls
+  trEndurance:
+    '<path d="M12 20.5s-7.8-4.7-7.8-10.4A4.3 4.3 0 0 1 12 7.7a4.3 4.3 0 0 1 7.8 2.4c0 5.7-7.8 10.4-7.8 10.4Z" fill="%BASE%"/>' +
+    '<path d="M2.5 13h5l1.6-3 2.6 6 2-4.2 1.3 1.2h6.5" fill="none" stroke="%ACCENT%" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+
+  // Kondition — weisse Stoppuhr mit Akzent-Zeiger
+  trCircuit:
+    '<circle cx="12" cy="13.5" r="7.3" fill="none" stroke="%BASE%" stroke-width="1.8"/>' +
+    '<path d="M9.8 3h4.4M12 3v3.2M17.6 7.6l1.5-1.5" stroke="%BASE%" stroke-width="1.8" stroke-linecap="round"/>' +
+    '<path d="M12 13.5V8.8M12 13.5l3 2" stroke="%ACCENT%" stroke-width="2" stroke-linecap="round"/>',
+
+  // Schnelligkeit — weisser Blitz mit Akzent-Tempolinien
+  trSpeed:
+    '<polygon points="14.5 2.5 7.5 13.2 12 13.2 10.5 21.5 18.5 9.8 13.8 9.8" fill="%BASE%" stroke="%BASE%" stroke-width="0.8" stroke-linejoin="round"/>' +
+    '<path d="M2.5 8.5h4M1.8 12.5h3.6M2.8 16.5h3.6" stroke="%ACCENT%" stroke-width="1.8" stroke-linecap="round"/>',
+
+  // Koordination — weisse Koordinationsleiter mit Akzent-Schritten
+  trAgility:
+    '<path d="M7 2.8v18.4M17 2.8v18.4M7 6.5h10M7 10.5h10M7 14.5h10M7 18.5h10" stroke="%BASE%" stroke-width="1.6" stroke-linecap="round"/>' +
+    '<path d="M10 8.5h.1M14 12.5h.1M10 16.5h.1" stroke="%ACCENT%" stroke-width="3.2" stroke-linecap="round"/>',
+
+  // Kraft — weisse Hantelscheiben, Akzent-Stange
+  trStrength:
+    '<rect x="2.2" y="9" width="2.8" height="6" rx="1" fill="%BASE%"/><rect x="5.4" y="6.5" width="3" height="11" rx="1" fill="%BASE%"/>' +
+    '<rect x="15.6" y="6.5" width="3" height="11" rx="1" fill="%BASE%"/><rect x="19" y="9" width="2.8" height="6" rx="1" fill="%BASE%"/>' +
+    '<path d="M8.4 12h7.2" stroke="%ACCENT%" stroke-width="2.6"/>',
+
+  // Technik — weisser Ball mit Akzent-Bogen (Jonglieren)
+  trTechnique:
+    '<circle cx="12" cy="15.5" r="5.2" fill="%BASE%"/>' +
+    '<polygon points="12 13.3 14.1 14.8 13.3 17.2 10.7 17.2 9.9 14.8" fill="#0c0f15"/>' +
+    '<path d="M5.5 8.5a7.5 7.5 0 0 1 13 0" fill="none" stroke="%ACCENT%" stroke-width="1.8" stroke-linecap="round"/><path d="M16.2 8.8l2.4-.3.3-2.4" fill="none" stroke="%ACCENT%" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+
+  // Dribbling — weisse Hütchen + Ball, Akzent-Laufweg
+  trDribbling:
+    '<path d="M7.2 20.5h4.4l-2.2-6Z M13.6 9.5H18l-2.2-6Z" fill="%BASE%"/>' +
+    '<circle cx="19" cy="18.6" r="2.5" fill="%BASE%"/>' +
+    '<path d="M3.5 4.5c4 0 7 1.6 7.6 4.8.6 3 3.6 3.6 4.2 6.2.3 1.4 1 2.6 1.6 3" fill="none" stroke="%ACCENT%" stroke-width="1.9" stroke-linecap="round"/>',
+
+  // Passspiel — zwei weisse Spieler, Akzent-Pass
+  trPassing:
+    '<circle cx="5" cy="17" r="2.6" fill="%BASE%"/><circle cx="19" cy="7" r="2.6" fill="%BASE%"/>' +
+    '<path d="M7.6 15.1 15.6 9.4M12.4 9.1l3.4.2-1 3.2" fill="none" stroke="%ACCENT%" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>',
+
+  // Flanken — weisses Tor, Akzent-Flugkurve
+  trCrossing:
+    '<path d="M12.5 17V8h9v9" fill="none" stroke="%BASE%" stroke-width="1.8" stroke-linejoin="round"/><circle cx="3.6" cy="19.4" r="2" fill="%BASE%"/>' +
+    '<path d="M4.8 17.3C6 9 11 3.6 16.8 9.8M17 6.4v3.6h-3.4" fill="none" stroke="%ACCENT%" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+
+  // Torschuss — weisses Tor mit Netz, Akzent-Ball im Winkel
+  trShooting:
+    '<path d="M2.5 19V6.5h19V19" fill="none" stroke="%BASE%" stroke-width="1.9" stroke-linejoin="round"/>' +
+    '<path d="M2.5 10.5h19M2.5 14.7h19M7.2 6.5V19M12 6.5V19M16.8 6.5V19" stroke="%BASE%" stroke-width="0.7" opacity="0.55"/>' +
+    '<circle cx="16.8" cy="10.6" r="2.5" fill="%ACCENT%"/>',
+
+  // Kopfball — weisser Kopf, Akzent-Ball
+  trHeading:
+    '<circle cx="10" cy="11.5" r="3.8" fill="%BASE%"/><path d="M3.5 21.5c0-3.8 2.9-6 6.5-6s6.5 2.2 6.5 6Z" fill="%BASE%"/>' +
+    '<circle cx="17" cy="5.3" r="2.6" fill="%ACCENT%"/>',
+
+  // Verteidigung — weisses Schild mit Akzent-Riegel
+  trDefending:
+    '<path d="M12 2.8 19.5 5.6v6.2c0 4.4-3.2 7.8-7.5 9.6-4.3-1.8-7.5-5.2-7.5-9.6V5.6Z" fill="%BASE%"/>' +
+    '<path d="M8 12h8" stroke="%ACCENT%" stroke-width="2.6" stroke-linecap="round"/>',
+
+  // Taktik — weisse Taktiktafel (X/O) mit Akzent-Laufweg
+  trTactics:
+    '<rect x="2.5" y="3.5" width="19" height="17" rx="1.6" fill="none" stroke="%BASE%" stroke-width="1.7"/>' +
+    '<circle cx="7" cy="15.5" r="1.8" fill="none" stroke="%BASE%" stroke-width="1.5"/><path d="M15.6 6.8l2.8 2.8M18.4 6.8l-2.8 2.8" stroke="%BASE%" stroke-width="1.6" stroke-linecap="round"/>' +
+    '<path d="M8.5 13.8c1-3.6 3.4-5.2 5.8-5.6M12.6 6.9l1.9 1.3-1.2 2" fill="none" stroke="%ACCENT%" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
+
+  // Spielform — weisses Spielfeld mit Akzent-Anstoßpunkt
+  trMatch:
+    '<rect x="2.5" y="4.5" width="19" height="15" rx="1.2" fill="none" stroke="%BASE%" stroke-width="1.7"/>' +
+    '<path d="M12 4.5v15M2.5 9h3v6h-3M21.5 9h-3v6h3" fill="none" stroke="%BASE%" stroke-width="1.4"/><circle cx="12" cy="12" r="2.6" fill="none" stroke="%BASE%" stroke-width="1.4"/>' +
+    '<circle cx="12" cy="12" r="1.2" fill="%ACCENT%"/>',
+
+  // Torwart — weisser Handschuh mit Akzent-Bündchen
+  trGoalkeeper:
+    '<path d="M7.2 18.6 4.6 13.4a1.4 1.4 0 0 1 2.3-1.5l1.6 1.8V5.6a1.3 1.3 0 0 1 2.6 0v5.6V4.3a1.3 1.3 0 0 1 2.6 0v6.9V5.2a1.3 1.3 0 0 1 2.6 0v6.6-4.4a1.3 1.3 0 0 1 2.6 0v7.4c0 2-.8 3.2-2.2 3.8Z" fill="%BASE%"/>' +
+    '<rect x="7" y="19" width="10.2" height="2.6" rx="0.8" fill="%ACCENT%"/>',
+
+  // Standards — weisse Eckfahne mit Akzent-Fahne
+  trSetpiece:
+    '<path d="M7 21V3" stroke="%BASE%" stroke-width="1.8" stroke-linecap="round"/><path d="M2.5 21a6 6 0 0 1 6-1.8" fill="none" stroke="%BASE%" stroke-width="1.4"/>' +
+    '<path d="M7.8 3.5 18.5 7.2 7.8 11Z" fill="%ACCENT%"/>' +
+    '<circle cx="16.5" cy="18.5" r="2.4" fill="%BASE%"/>',
+
+  // Mentaltraining — weisser Kopf mit Akzent-Gedanke
+  trMental:
+    '<path d="M13.8 21.5v-3.2h2.6a1.6 1.6 0 0 0 1.6-1.6v-2.4l1.7-.6c.5-.2.6-.7.3-1.1L18 9.8A7 7 0 1 0 6.5 15v6.5Z" fill="%BASE%"/>' +
+    '<circle cx="11.6" cy="9.6" r="2.6" fill="%ACCENT%"/>',
+
+  // Regeneration — weisse Batterie, Akzent-Ladung
+  trRecovery:
+    '<rect x="2.5" y="7" width="17" height="10" rx="2" fill="none" stroke="%BASE%" stroke-width="1.8"/><path d="M21.5 10.3v3.4" stroke="%BASE%" stroke-width="2" stroke-linecap="round"/>' +
+    '<rect x="5" y="9.5" width="9" height="5" rx="0.8" fill="%ACCENT%"/>',
+
+  // Pressing — weisse Pfeile auf den Akzent-Ball
+  trPressing:
+    '<path d="M3 3.5l4.6 4.6M7.6 4.4v3.7H3.9M21 3.5l-4.6 4.6M16.4 4.4v3.7h3.7M12 21.5v-5.2M9.4 18.9l2.6-2.6 2.6 2.6" fill="none" stroke="%BASE%" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<circle cx="12" cy="11.2" r="2.8" fill="%ACCENT%"/>',
+
+  // Videoanalyse — weisser Bildschirm mit Akzent-Play
+  trVideo:
+    '<rect x="2.5" y="4" width="19" height="12.5" rx="1.6" fill="none" stroke="%BASE%" stroke-width="1.8"/><path d="M8 20.5h8M12 16.5v4" stroke="%BASE%" stroke-width="1.8" stroke-linecap="round"/>' +
+    '<polygon points="10 7.4 15.4 10.2 10 13" fill="%ACCENT%" stroke="%ACCENT%" stroke-width="1" stroke-linejoin="round"/>',
+
+  // Athletik — weisse Kettlebell mit Akzent-Griff
+  trAthletics:
+    '<path d="M7.6 11V7.6a4.4 4.4 0 0 1 8.8 0V11" fill="none" stroke="%ACCENT%" stroke-width="2.2" stroke-linecap="round"/>' +
+    '<circle cx="12" cy="15.2" r="6.4" fill="%BASE%"/>',
+
+  // Frei — gestricheltes Feld mit Akzent-Strich
+  trFree:
+    '<rect x="3.5" y="3.5" width="17" height="17" rx="3" fill="none" stroke="%BASE%" stroke-width="1.6" stroke-dasharray="3 2.6"/>' +
+    '<path d="M9 12h6" stroke="%ACCENT%" stroke-width="2" stroke-linecap="round"/>',
 };
 
 /** Gültige Icon-Namen (englische Keys). */

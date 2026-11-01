@@ -21,6 +21,7 @@ import { autoFillLineup } from '../engine/lineupAI';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { AppSettings, loadGame, loadSettings, saveSettings } from '../engine/save';
 import { createDefaultWeeklyPlan } from '../engine/weeklyTraining';
+import { ensureStaffWorld } from './staffWorld';
 import { academyStartingCohort, generateYouthPlayer, setYouthSalt } from '../engine/youth';
 import { initWorld } from '../engine/world';
 import { makeCandidates } from '../engine/staffPeople';
@@ -202,6 +203,8 @@ export function createNewGame(opts: NewGameOptions): Game {
   // Trainer der KI-Vereine (game/coachCarousel.ts).
   ensureCoaches(g0, calendar.currentDate);
   migrateYouthInvest(g0);
+  // Arbeitsmarkt für Trainer und Betreuer (game/staffWorld.ts).
+  ensureStaffWorld(g0);
   // Sponsoring 2.0: Werbeflächen 1975 (Brust, Ausrüster, Banden, Regionalpartner) – KI unterschreibt, du bekommst Angebote.
   initSponsorship(g0);
   // Saison-Briefing „So anders ist der Fußball 1975/76“ (game/seasonBriefing.ts).
