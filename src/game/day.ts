@@ -445,7 +445,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
         const isMine = club.id === g.managedClubId;
 
         // 1) Alle Talente rücken einen Jahrgang auf (Alter +1, Altersklasse steigt).
-        ageYouthPlayers(club, g.youthPlayers);
+        ageYouthPlayers(club, g.youthPlayers, yearNow);
         // Verborgene Juwelen der Jugend: mit 18/19 platzt der Knoten.
         for (const yid of club.youthPlayerIds) {
           const yp = g.youthPlayers[yid];

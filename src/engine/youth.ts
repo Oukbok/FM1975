@@ -16,6 +16,9 @@
 // =============================================================================
 
 import { ensurePositionSkill } from './positionSkill';
+import { baseMarketValue as proMarketValue } from './clubEconomy';
+/** Jugendspieler ohne Profivertrag: halber Profi-Marktwert (Ausbildungsentschädigung statt Ablöse). */
+const baseMarketValue = (p: Player) => Math.round(proMarketValue(p) * 0.5 / 5000) * 5000;
 import { ensureDevFields, refreshOverall } from './development';
 import { updateScoutEstimate } from './scouting';
 import { pickOrigin, makeName } from '../data/origins';
@@ -496,7 +499,9 @@ export function developYouthWeekly(
       p.development.ovrProgress -= 1.0;
       p.development.currentAbility = Math.min(99, p.development.currentAbility + 1);
       p.positionRatings[p.naturalPosition] = p.overall;
-      p.contract.transferValue = Math.min(p.contract.transferValue * 1.15, Math.round(p.overall * p.overall * 400));
+      // Marktwert folgt der Kurve der Profis (1975-Basis, clubEconomy.baseMarketValue) – vorher
+      // overall² × 400 als Deckel: Stärke 62 ≈ 1,5 Mio. Basis (2016 ≈ 39 Mio. €).
+      p.contract.transferValue = Math.min(Math.round(p.contract.transferValue * 1.15), baseMarketValue(p));
       ovrUp = true;
     }
 
@@ -552,10 +557,15 @@ function narrowScoutRange(p: Player, academyLevel: number, scoutBonus = 0): void
 // Altern der Talente (jährlich)
 // -----------------------------------------------------------------------------
 /** Erhöht das Alter aller Talente eines Vereins um 1 Jahr. */
-export function ageYouthPlayers(club: Club, youthPlayers: Record<string, Player>): void {
+export function ageYouthPlayers(club: Club, youthPlayers: Record<string, Player>, year?: number): void {
   for (const pid of club.youthPlayerIds) {
     const p = youthPlayers[pid];
-    if (p) p.age += 1;
+    if (!p) continue;
+    p.age += 1;
+    // Jugendverträge (Förderverträge) laufen mit: abgelaufene um 2 Jahre verlängern und den
+    // Marktwert neu einordnen (sonst stand bei KI-Talenten z. B. „bis 30.6.2007“ im Jahr 2016).
+    if (year && p.contract.expiryDate < `${year}-06-30`) p.contract.expiryDate = `${year + 2}-06-30`;
+    if (year) p.contract.transferValue = Math.min(p.contract.transferValue, baseMarketValue(p));
   }
 }
 
@@ -611,4 +621,17 @@ function freeShirtNumber(club: Club, players: Record<string, Player>): number {
   const used = new Set(club.playerIds.map((id) => players[id]?.shirtNumber).filter(Boolean));
   for (let n = 1; n <= 40; n++) if (!used.has(n)) return n;
   return 40;
+}
+
+/**
+ * Nachrüstung beim Laden: Jugend-Marktwerte auf die Profikurve begrenzen und abgelaufene
+ * Jugendverträge verlängern (alte Spielstände hatten Werte bis overall² × 400 und Verträge,
+ * die nie verlängert wurden). Idempotent.
+ */
+export function migrateYouthContracts(g: { youthPlayers?: Record<string, Player>; calendar: { currentDate: string } }): void {
+  const year = Number(g.calendar.currentDate.slice(0, 4)) - (Number(g.calendar.currentDate.slice(5, 7)) < 7 ? 1 : 0);
+  for (const p of Object.values(g.youthPlayers ?? {})) {
+    p.contract.transferValue = Math.min(p.contract.transferValue, baseMarketValue(p));
+    if (p.contract.expiryDate < g.calendar.currentDate) p.contract.expiryDate = `${year + 2}-06-30`;
+  }
 }
