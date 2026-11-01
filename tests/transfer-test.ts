@@ -40,8 +40,11 @@ g.calendar.currentDate = '1975-07-10';
 const own = g.clubs[g.managedClubId];
 own.finances.transferBudget = 50_000_000;
 own.finances.wageBudget = 10_000_000;
-const target = Object.values(g.players).filter((p) => p.clubId !== own.id && g.clubs[p.clubId] && !p.isYouth && p.age <= 28)
-  .sort((a, b) => b.overall - a.overall)[5];
+// Ziel: guter Spieler eines KLEINEREN Vereins – für ihn ist der eigene Verein attraktiv
+// (Stars großer Vereine lehnen einen Wechsel nach unten inzwischen zu Recht ab).
+const target = Object.values(g.players).filter((p) => p.clubId !== own.id && g.clubs[p.clubId] && !p.isYouth && p.age <= 28
+    && g.clubs[p.clubId].reputation < own.reputation - 5)
+  .sort((a, b) => b.overall - a.overall)[2];
 target.contract.expiryDate = '1978-06-30';
 const t = startTalk(g, target.id) as TransferTalk;
 if (typeof t === 'string') fail(t);
