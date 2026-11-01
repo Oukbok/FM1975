@@ -13,6 +13,7 @@ import { Game } from '../src/game/state';
 import { Player } from '../src/types';
 import { recordFeeEUR } from '../src/data/transferRecords';
 import { economyScale as econScale } from '../src/engine/economy';
+import { roomAnalysis } from '../src/game/dressingRoomGame';
 
 const seasons = Number(process.argv[2] ?? 3);
 
@@ -377,6 +378,23 @@ function topSummary() {
 
 const t0 = Date.now();
 report(g);
+// Kabine (KABINE=1): Stimmung je Saison, Außenseiter, Gruppen, Vorfälle, Moral-Verteilung.
+const kab = { moods: [] as number[], incidents: 0, last: '' };
+function kabineTrack(game: Game) {
+  const dr = game.clubs[game.managedClubId]?.dressingRoom;
+  if (!dr) return;
+  kab.moods.push(dr.mood);
+  if (dr.lastIncident && dr.lastIncident !== kab.last) { kab.last = dr.lastIncident; kab.incidents++; }
+}
+function kabineReport(game: Game) {
+  const club = game.clubs[game.managedClubId];
+  const a = roomAnalysis(game);
+  const sq = club.playerIds.map((id) => game.players[id]).filter((p) => p && !p.isYouth);
+  const steps = ['very_low', 'low', 'okay', 'good', 'excellent'].map((m) => sq.filter((p) => p.morale === m).length).join('/');
+  const ai = Object.values(game.clubs).filter((c) => c.id !== club.id && c.dressingRoom).map((c) => c.dressingRoom!.mood);
+  console.log(`   KABINE Stimmung Ø ${avg(kab.moods).toFixed(0)} min ${Math.min(...kab.moods).toFixed(0)} | Krisentage ${kab.moods.filter((m) => m < 35).length} | Zusammenhalt ${a.cohesion} | Außenseiter ${a.outsiders.map((id) => game.players[id]?.lastName).join(', ') || '-'} | Gruppen ${a.groups.map((x) => `${x.label} ${x.members.length}`).join(', ')} | Führung ${a.leaders.map((id) => game.players[id]?.lastName).join('/')} | Vorfälle ${kab.incidents} | Moral-Stufen ${steps} | KI-Stimmung ${ai.length ? `${Math.min(...ai).toFixed(0)}–${Math.max(...ai).toFixed(0)}` : '-'}`);
+  kab.moods = []; kab.incidents = 0;
+}
 if (process.env.AI) aiReport(g);
 for (let s = 0; s < seasons; s++) {
   let guard = 0;
@@ -385,11 +403,13 @@ for (let s = 0; s < seasons; s++) {
     const t = g.clubs[g.managedClubId]?.tactics;
     if (t && t.startingXI?.length) { t.startingXI = []; t.lineupMap = undefined; }
     processDay(g, HEADLESS_UI);
+    if (process.env.KABINE) kabineTrack(g);
     if (process.env.BAL && /-(11|03)-15$/.test(g.calendar.currentDate)) bal.injSnap.push(leaguePlayers(g).filter((p) => p.injury).length);
     if (++guard > 1000) throw new Error('Saison endet nicht');
   }
   report(g);
   if (process.env.AI) aiReport(g);
+  if (process.env.KABINE) kabineReport(g);
   startNextSeason(g);
 }
 if (process.env.AI && aiTotals.seasons) {

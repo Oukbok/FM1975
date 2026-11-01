@@ -50,6 +50,7 @@ import { CupView } from '../views/statistiken/CupView';
 import { InternationalView } from '../views/statistiken/InternationalView';
 import { IndoorView } from '../views/statistiken/IndoorView';
 import { TrainingCampView } from '../views/kader/TrainingCampView';
+import { DressingRoomView } from '../views/kader/DressingRoomView';
 import { TableView } from '../views/statistiken/TableView';
 import { BeobachtungView, TransfersView, VerhandlungenView } from '../views/transfers/TransfersView';
 import { FacilitiesView } from '../views/verein/FacilitiesView';
@@ -387,6 +388,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'international' && <InternationalView g={g} onWatch={(id) => setLiveMatchId(id)} onReplayDraw={replayDraw} />}
         {screen === 'halle' && <IndoorView g={g} onChange={rerender} />}
         {screen === 'trainingslager' && <TrainingCampView g={g} onChange={rerender} />}
+        {screen === 'kabine' && <DressingRoomView g={g} onChange={rerender} />}
       </main>
 
       {/* Persistenter Footer auf ALLEN Seiten (Dashboard inklusive) - voll buendig

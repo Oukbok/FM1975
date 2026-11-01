@@ -46,6 +46,7 @@ import { migrateBriefing } from './game/seasonBriefing';
 import { migrateLegacyLegends } from './game/playerMigration';
 import { migratePersonas } from './game/playerWishesGame';
 import { migratePositionSkills } from './game/positionsGame';
+import { migrateDressingRoom } from './game/dressingRoomGame';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 // =============================================================================
@@ -344,6 +345,8 @@ export default function App() {
     try { migratePersonas(s.game); } catch (err) { console.error('Persönlichkeits-Nachrüstung fehlgeschlagen:', err); }
     // Positionsvertrautheit je Position (game/positionsGame.ts).
     try { migratePositionSkills(s.game); } catch (err) { console.error('Positions-Nachrüstung fehlgeschlagen:', err); }
+    // Kabine: Moral 0–100 und Kabinenzustand des eigenen Vereins nachrüsten.
+    try { migrateDressingRoom(s.game); } catch (err) { console.error('Kabinen-Nachrüstung fehlgeschlagen:', err); }
     gameRef.current = s.game;
     setCurrentSlot(slot);
     setInGame(true);
