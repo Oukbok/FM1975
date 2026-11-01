@@ -501,44 +501,38 @@ Beim Start erscheint ein Menü mit:
   {
     id: 'training-planner',
     category: 'training',
-    title: 'Wochen-Trainingsplaner',
-    keywords: ['training', 'wochenplan', 'block', 'einheit', 'slot', 'spieltag', 'planer', 'intensität'],
-    body: `## Wochen-Trainingsplaner
-Unter **Training** stellst du den Trainingsplan deiner Mannschaft für die ganze Woche ein — **7 Tage (Mo–So)** mit je **drei Slots**:
+    title: 'Trainingsplan: Bausteine ziehen',
+    keywords: ['training', 'trainingsplan', 'wochenplan', 'baustein', 'block', 'einheit', 'ziehen', 'vorlage', 'spieltag', 'regeneration', 'anreise', 'videoanalyse', 'pressing', 'athletik'],
+    body: `## Trainingsplan
+Unter **Training › Trainingsplan** legst du die Trainingswoche fest: **7 Tage** mit je **drei Feldern** – **Vormittag**, **Nachmittag** und **Abend / Zusatz** (die Zusatzeinheit belastet ×1,3, bringt aber auch etwas mehr Lernreiz).
 
-- **Einheit 1** (Vormittag)
-- **Einheit 2** (Nachmittag)
-- **Extraeinheit** (zusätzliche Belastung, freiwillig)
+### Bedienung
+- **Ziehen:** Baustein aus der Leiste in ein Feld ziehen. Ein belegtes Feld auf ein anderes ziehen **tauscht** beide.
+- **Leeren:** Feld zurück in die Leiste ziehen, auf „Frei“ setzen oder **doppelklicken**.
+- **Ohne Ziehen:** Baustein anklicken (er wird markiert), dann Felder anklicken.
+- **Vorlagen:** Ausgewogen, Vorbereitung, Englische Woche, Taktikwoche, Abschluss & Technik, Schonung.
+- **Diese Woche / Nächste Woche:** Der Plan ist eine Wochenvorlage; die Ansicht zeigt, wie die echten Spiele ihn verändern.
 
-### Spieltage
-An Tagen mit einem **Pflichtspiel deines Vereins** wird **nicht trainiert**. Diese Tage sind im Raster rot markiert (Spieltag) und gesperrt. Die aktuelle Kalenderwoche wird automatisch anhand des Spielplans erkannt.
+### Spiele sperren Felder
+- **Spieltag** (Liga, Pokal, Europapokal): kein Training.
+- **Tag nach dem Spiel:** Vormittag fest **Auslaufen** (Regeneration).
+- **Abend vor einem Auswärtsspiel:** **Anreise**, kein Training.
 
-### Vorgefertigte Trainingsblöcke
-Jeder Slot wird mit einem **vorgefertigten Block** belegt (Dropdown). Die Blöcke decken **alle Fähigkeitsbereiche** ab. Jeder Block hat eine **Intensität** (niedrig / mittel / hoch), einen **Belastungswert** und die von ihm geförderten **Attribute** (mit Gewichtung):
+### Bausteine
+Jeder Baustein hat ein Symbol, eine Intensität (Striche oben rechts), eine Belastung und gewichtete Attribute: Ausdauer, Kondition, Sprint, Koordination, Kraft, Technik, Dribbling, Passspiel, Flanken, Torschuss, Kopfball, Zweikampf, Taktik, Spielform, Torwart, Standards und Regeneration. Mit der Zeit kommen neue hinzu:
+| Baustein | ab | Hintergrund |
+|---|---|---|
+| Pressing & Umschalten | 1988 | Sacchis AC Mailand macht das Pressing populär |
+| Videoanalyse | 1993 | systematische Spielanalyse (Prozone/Amisco Mitte der 90er) – wirkt nur mit Analyst richtig |
+| Mentaltraining | 2003 | Sportpsychologie wird Teil des Profialltags |
+| Athletik & Stabilisation | 2004 | funktionelles Athletiktraining, senkt das Verletzungsrisiko |
 
-| Block | Intensität | Belastung | Schwerpunkt-Attribute |
-|---|---|---|---|
-| Ausdauerlauf | hoch | 6 | Ausdauer, Fitness, Arbeitseinsatz |
-| Konditionszirkel | mittel | 3.5 | Ausdauer, Fitness, Kraft |
-| Sprinttraining | hoch | 5.5 | Antritt, Schnelligkeit, Agilität |
-| Beweglichkeit & Balance | mittel | 3 | Agilität, Balance, Antritt |
-| Krafttraining | hoch | 5.5 | Kraft, Sprungkraft |
-| Technikschulung | mittel | 3 | Technik, Ballannahme, Ballkontrolle |
-| Dribbling & Finten | mittel | 3 | Dribbling, Ballkontrolle, Kreativität |
-| Passspiel | mittel | 3 | Passspiel, Langer Ball, Übersicht |
-| ↗️ Flankentraining | niedrig | 2 | Flanken, Langer Ball |
-| Abschlusstraining | mittel | 3.5 | Torschuss, Schusskraft, Distanzschuss |
-| Kopfballtraining | mittel | 3.5 | Kopfball, Sprungkraft |
-| Zweikampf & Verteidigung | hoch | 5 | Tackling, Manndeckung, Abfangen |
-| Taktik & Positionsspiel | niedrig | 2 | Stellungsspiel, Entscheidung, Teamwork |
-| 🆚 Spielform (Match Practice) | hoch | 5 | Teamwork, Entscheidung, Passspiel u.v.m. |
-| Torwarttraining | mittel | 3.5 | Reflexe, Fangsicherheit, 1-gg-1 |
-| Standardsituationen | niedrig | 2 | Freistöße, Ecken, Elfmeter |
-| Mentaltraining | niedrig | 1.5 | Nervenstärke, Konzentration, Führung |
-| Regeneration | niedrig | −4 | (kein Lerneffekt, starke Erholung) |
-
-### Standardplan
-Neue Spiele starten mit einem ausgewogenen Vorschlag (Mo–Fr je zwei Einheiten, Sa leicht, So Regeneration). Alles ist frei umstellbar; der Plan wird gespeichert.`,
+### Wochenwirkung
+- **Schwerpunkte:** Balken je Bereich (Ausdauer, Schnelligkeit, Kraft, Technik, Passspiel, Abschluss, Defensive, Spielverständnis, Standards, Torwart). Sie lenken, **welche** Attribute bei den nächsten Bewertungen wachsen.
+- **Fitness je Tag:** Grund-Regeneration 10 minus Belastung.
+- **Verletzungsrisiko:** Tage mit mehr als 6 Belastungspunkten bergen ein kleines Risiko für Zerrungen; müde Spieler (Fitness < 50) doppelt so stark. Fitness- und Medizinwissen im Trainerteam senkt es um bis zu 30 %.
+- **Entwicklung:** Der Trainingsumfang verändert das Entwicklungstempo leicht (etwa −6 % bei fast keinem Training bis +5 % bei vollem Programm; Überlastung kostet wieder).
+- **Trainerteam:** Jeder Baustein wird von einem Fachgebiet angeleitet (Fitness, Technik, Taktik, Torwart, Mentales, Analyse). Der Beste deines Teams in diesem Fach bestimmt den Lernfaktor (0,85 ohne Fachmann bis 1,2 mit Spitzenkraft).`,
   },
   {
     id: 'training-fitness',
@@ -1015,12 +1009,41 @@ Für jede Rolle gibt es **drei Bewerber**: eine günstige Nachwuchskraft, eine e
 - Die Qualität deines Co-Trainers bestimmt auch, wie treffsicher seine Einschätzungen im **Trainingsbericht** und vor Bewertungsrunden sind.`,
   },
   {
+    id: 'staff-trainerteam',
+    category: 'staff',
+    title: 'Trainerteam und Arbeitsmarkt',
+    keywords: ['trainerteam', 'co-trainer', 'torwarttrainer', 'fitnesstrainer', 'athletiktrainer', 'analyst', 'videoanalyst', 'jugendtrainer', 'arbeitsmarkt', 'ex-profi', 'quereinsteiger', 'abfindung', 'ablöse', 'verhandlung', 'fachgebiet'],
+    body: `## Trainerteam
+Unter **Training › Trainerteam** stellst du Cheftrainer-Assistenz, Co-Trainer, Torwarttrainer (ab 1980), Fitnesstrainer (ab 1983), Reha-Trainer und Videoanalyst (ab 1993), Athletiktrainer, Spielanalyst und Sportpsychologe (ab 2003) sowie Jugendtrainer ein. Übrige Mitarbeiter (Medizin, Scouting, Medien, Verwaltung) bleiben unter **Verein › Mitarbeiter**.
+
+### Fachgebiete
+Jede Person hat acht Fachgebiete (1–20): **Taktik, Technik, Fitness, Torwart, Mentales, Nachwuchs, Analyse, Medizin & Reha**. Ihre **Qualität in der Rolle** ergibt sich daraus (ein Torwarttrainer zählt nur mit seinem Torwartwissen, ein Co-Trainer vor allem mit Taktik und Technik). Im Beruf lernen Trainer dazu – bei erfolgreichen Vereinen schneller –, im Alter bauen sie ab; wer lange ohne Stelle ist, rostet ein.
+
+### Anstellen, Verlängern, Entlassen
+- **Verhandlung:** Jede Person nennt eine Gehaltsforderung. Ein großer Verein und eine lange Laufzeit geben bis zu etwa 14 % Spielraum; nach drei Absagen ist Schluss.
+- **Abwerben:** Angestellte anderer Vereine kosten **sechs Monatsgehälter Ablöse** und wechseln nur zu einem mindestens etwa gleich großen Verein.
+- **Entlassen:** Abfindung = halbe Restlaufzeit (mindestens zwei, höchstens 18 Monatsgehälter). Die Person kehrt auf den Arbeitsmarkt zurück.
+- **Vertragsende** (30.6.): Treue Leute verlängern zu ihrer aktuellen Forderung, andere gehen. Mit „+2 Jahre“ verlängerst du vorher selbst.
+
+### Wirkung
+- Lernfaktor je Trainingsbaustein (siehe „Trainingsplan“), weniger Trainingsverletzungen durch Fitness/Medizin.
+- Entwicklungstempo, Betreuung, Spezialisten, Reha und Regeneration wie unter „Mitarbeiter als Personen“ beschrieben.
+
+## Der Arbeitsmarkt über die Jahrzehnte
+Alle Vereine der Liga haben ein Trainerteam; der Markt wird jede Saison neu gemischt:
+- **Ehemalige Profis:** Beendet ein Spieler seine Karriere, geht er mit einer gewissen Wahrscheinlichkeit ins Trainergeschäft. **Erfolgreiche Spieler** (Titel, viele Einsätze, hohe Spitzenstärke, Kapitän) tun das öfter und haben im Schnitt mehr Trainer-Potenzial – eine Garantie ist es nicht. Ihre Stärken stammen aus der Spielerzeit: Spielintelligenz → Taktik, Technik → Technik, Athletik → Fitness, Torhüter → Torwarttraining, Persönlichkeit → Nachwuchsarbeit.
+- **Quereinsteiger:** Sportlehrer, Amateurtrainer, Sportwissenschaftler, Physiotherapeuten, ab den 90ern Analysten, ab 2000 Psychologen.
+- **KI-Vereine** besetzen ihre Stellen nach ihrem Ruf, werben Bessere ab und verlängern Verträge. Ihr Trainerteam beeinflusst die Entwicklung ihrer Spieler.
+- **Aufstieg:** Gute Co-Trainer und sehr erfolgreiche Ex-Kapitäne werden Kandidaten für Cheftrainerposten der KI-Vereine (Trainerkarussell).
+- **Ruhestand** spätestens mit 69, Berufswechsel nach langer Zeit ohne Stelle.`,
+  },
+  {
     id: 'training-philosophy',
     category: 'training',
     title: 'Trainingsphilosophie, Förderspieler & Monatsbericht',
     keywords: ['philosophie', 'schwerpunkt', 'belastung', 'schonung', 'förderspieler', 'trainingsbericht', 'phase', 'vorbereitung', 'rückrunde'],
     body: `## Vier Phasen, eine Entscheidung je Phase
-Statt jede Woche alles neu zu planen, legst du für **Vorbereitung, Hinrunde, Winter und Rückrunde** je einen Schwerpunkt fest (Kader → Training):
+Statt jede Woche alles neu zu planen, legst du für **Vorbereitung, Hinrunde, Winter und Rückrunde** je einen Schwerpunkt fest (Training → Trainingsplan):
 - **Ausgewogen:** keine Nebenwirkungen.
 - **Hohe Belastung:** +6 % Entwicklung, aber weniger Frische und gelegentlich **Überlastungsverletzungen** (medizinisches Personal senkt das Risiko).
 - **Technik & Taktik:** +5 % für Offensivspieler und junge Spieler, etwas weniger für Ältere.
@@ -1142,7 +1165,7 @@ Je Sieg zahlt der Verein der Mannschaft gut ein halbes Wochengehalt des Kaders (
 Jede **gebaute Einrichtung** verursacht monatliche Fixkosten (ersetzt den alten Pauschalposten "Trainingsbetrieb"):
 \`Basis × Stufen-Multiplikator\` (era-skaliert), summiert über alle Einrichtungen.
 - **Stufen-Multiplikator** (Stufe 1..5): \`1 · 1,4 · 1,9 · 2,5 · 3,2\`.
-- **Basis-Unterhalt/Monat (1975-DM):** Trainingszentrum 1.400 · Medizin 875 · Fanshop 700 · Reha-Zentrum 1.050 (Jugendakademie und NLZ: Kosten über **Kader → Akademie**) · Leistungszentrum 1.575 · Datenanalyse 1.225.
+- **Basis-Unterhalt/Monat (1975-DM):** Trainingszentrum 1.400 · Medizin 875 · Fanshop 700 · Reha-Zentrum 1.050 (Jugendakademie und NLZ: Kosten über **Jugend → Akademie**) · Leistungszentrum 1.575 · Datenanalyse 1.225.
 - **Stadion** ist ausgenommen (steckt im Stadionunterhalt), **Catering** ist Sonderfall je Betriebsform (siehe *Catering & Betriebsformen*).
 - Zukunfts-Einrichtungen (Reha, NLZ, Leistungs-/Datenzentrum) zählen erst ab **Stufe ≥ 2** als gebaut.
 
@@ -1384,7 +1407,7 @@ Der Baustil folgt der Epoche (Backstein und Satteldach in den 70ern und 80ern, P
     title: 'Jugendsystem — Überblick',
     keywords: ['jugend', 'nachwuchs', 'talente', 'akademie', 'jugendakademie', 'überblick'],
     body: `## Die Jugendakademie
-Jeder Verein besitzt eine **Jugendakademie**. Ihre **Nachwuchs-Investitionen** (Bereich **Kader → Akademie**, siehe Artikel
+Jeder Verein besitzt eine **Jugendakademie**. Ihre **Nachwuchs-Investitionen** (Bereich **Jugend → Akademie**, siehe Artikel
 **Nachwuchs-Investitionen**) bestimmen, **wie viele** und **wie gute** Talente entstehen und **wie schnell** sie sich entwickeln.
 
 Die Jugendakademie ist ein **eigenständiger Bildschirm** (Bereich **Jugend**, Symbol in der unteren Navigation).
@@ -1971,7 +1994,7 @@ Etwa **einmal pro Jahr** (Einstellung „Ereignisse“ wirkt mit) bietet sich ei
     title: 'Nachwuchs-Investitionen (Akademie)',
     keywords: ['akademie', 'nachwuchs', 'investition', 'jugendtrainer', 'internat', 'schule', 'scouting', 'zweite mannschaft', 'amateure', 'u23', 'nlz', 'leistungszentrum', 'ruf', 'durchlässigkeit', 'talentwettbewerb', 'jugendetat'],
     body: `## Worum es geht
-Unter **Kader → Akademie** entscheidest du, wie viel du in den Nachwuchs steckst – und worin. Die Wirkung kommt **verzögert**:
+Unter **Jugend → Akademie** entscheidest du, wie viel du in den Nachwuchs steckst – und worin. Die Wirkung kommt **verzögert**:
 Eine Investition zahlt sich typischerweise erst nach **3–6 Jahren** aus. Wer kürzt, verliert schneller, als er aufgebaut hat.
 
 ## Die Bausteine
@@ -2123,7 +2146,7 @@ Steigert den **Pro-Kopf-Erlös je Heimspiel**. Die Betriebsform bestimmt Erlös 
 
 ## Monatliche Fixkosten je Einrichtung
 Basis-Unterhalt/Monat (1975-DM, Stufe-1-Basis), skaliert mit \`1 · 1,4 · 1,9 · 2,5 · 3,2\` je Stufe:
-Trainingszentrum 1.400 · Medizin 875 · Fanshop 700 · Reha-Zentrum 1.050 (Jugendakademie und NLZ: Kosten über **Kader → Akademie**) · Leistungszentrum 1.575 · Datenanalyse 1.225. Stadion ausgenommen; Catering je Betriebsform.`,
+Trainingszentrum 1.400 · Medizin 875 · Fanshop 700 · Reha-Zentrum 1.050 (Jugendakademie und NLZ: Kosten über **Jugend → Akademie**) · Leistungszentrum 1.575 · Datenanalyse 1.225. Stadion ausgenommen; Catering je Betriebsform.`,
   },
   {
     id: 'facilities-future',
@@ -2331,7 +2354,7 @@ Spiel und keiner anderen Aktivität** kollidieren.
   ist (\`App.processDay\`). Der Erlös eines Freundschaftsspiels wird dann als Einnahme gebucht.
 - Alle Datumsberechnungen laufen konsequent in **UTC**.
 
-**Trainingslager** werden nicht mehr hier, sondern unter **Kader › Trainingslager** gebucht (siehe Artikel „Trainingslager“).
+**Trainingslager** werden nicht mehr hier, sondern unter **Training › Trainingslager** gebucht (siehe Artikel „Trainingslager“).
 Zugesagte Hallenturniere und gebuchte Lager erscheinen im Kalender als belegte Tage.`,
   },
   {
@@ -2371,7 +2394,7 @@ Ab 2027/28 wird die heutige Regel fortgeschrieben (Annahme: WM 2034 wieder im Wi
     title: 'Trainingslager',
     keywords: ['trainingslager', 'camp', 'türkei', 'belek', 'katar', 'dubai', 'florida', 'spanien', 'asien', 'jetlag', 'sportschule', 'alpen', 'hotel', 'unterkunft', 'höhentraining', 'schwerpunkt', 'disziplin', 'sponsor', 'dünen', 'malente', 'hennef'],
     body: `## Wo und wann
-Unter **Kader › Trainingslager** buchst du je Saison ein **Sommerlager** (Vorbereitung bis kurz vor dem 1. Spieltag) und ein
+Unter **Training › Trainingslager** buchst du je Saison ein **Sommerlager** (Vorbereitung bis kurz vor dem 1. Spieltag) und ein
 **Winterlager** (in der Winterpause – deren Länge hängt von der Saison ab, siehe „Winterpause & Spielplan“). Die Ziele werden so
 freigeschaltet, wie sie historisch aufkamen – und zunächst nur für Vereine, die es sich damals leisten konnten (Ansehen):
 

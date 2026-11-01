@@ -32,7 +32,7 @@ export interface GameChange {
   text: string;
   /** Herkunft (Chronik, Ligareform …) – kleine Beschriftung. */
   source: string;
-  /** Wo du es im Spiel findest (z. B. „Kader › Trainingslager“). */
+  /** Wo du es im Spiel findest (z. B. „Training › Trainingslager“). */
   where?: string;
   /** Wichtig für den Überblick (Regeln, Reformen, Währung). */
   major?: boolean;
@@ -76,7 +76,7 @@ const campWhen = (d: CampDestination) => d.seasons.length === 2 ? 'Sommer & Wint
 
 function campChanges(y: number, first: boolean): GameChange[] {
   const out: GameChange[] = [];
-  const base = { kind: 'training' as const, icon: 'weather', source: 'Trainingslager', where: 'Kader › Trainingslager' };
+  const base = { kind: 'training' as const, icon: 'weather', source: 'Trainingslager', where: 'Training › Trainingslager' };
   if (first) {
     const open = CAMP_DESTINATIONS.filter((d) => campSeasonRep(d, y) != null);
     const regions = CAMP_REGION_ORDER.filter((r) => open.some((d) => d.region === r)).map((r) => CAMP_REGION_LABEL[r]);
@@ -143,13 +143,13 @@ function youthChanges(y: number, tier: number): GameChange[] {
   for (const b of YOUTH_BLOCKS) {
     for (const lv of b.levels) {
       if (lv.from !== y || y <= 1975) continue;
-      out.push({ kind: 'jugend', icon: 'youth', source: 'Nachwuchs', where: 'Kader › Akademie', title: `${b.name}: ${lv.name}`, text: lv.desc });
+      out.push({ kind: 'jugend', icon: 'youth', source: 'Nachwuchs', where: 'Jugend › Akademie', title: `${b.name}: ${lv.name}`, text: lv.desc });
     }
   }
   const duty = nlzDutyYear(tier);
   if (duty === y) {
     out.push({
-      kind: 'jugend', icon: 'youth', source: 'Lizenz', where: 'Kader › Akademie', major: true,
+      kind: 'jugend', icon: 'youth', source: 'Lizenz', where: 'Jugend › Akademie', major: true,
       title: 'Leistungszentrum ist Pflicht',
       text: `Ab dieser Saison bekommt in deiner Liga nur noch eine Lizenz, wer ein Nachwuchsleistungszentrum betreibt.`,
     });

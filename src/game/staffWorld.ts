@@ -43,7 +43,7 @@ const yearOf = (d: string) => Number(d.slice(0, 4));
 /** Mindestens so viele Bewerber je Rolle sollen frei sein. */
 const MIN_FREE = 6;
 /** Obergrenze des freien Pools (Spielstandgröße). */
-const MAX_FREE = 170;
+const MAX_FREE = 140;
 
 function emptyLog(season: string): StaffWorldLog { return { season, exPros: 0, outsiders: 0, promoted: 0, retired: 0, hires: 0 }; }
 
@@ -78,6 +78,8 @@ export function ensureStaffWorld(g: Game, rng: () => number = Math.random): Staf
     }
   }
   refillFree(g, w, year, rng);
+  // Auch unter den Bewerbern 1975 sind ehemalige Spieler (Karriere vor Spielbeginn).
+  for (const m of w.people) if (!m.clubId && m.roleId !== 'cheftrainer' && rng() < 0.4) m.exPro = syntheticExPro(m, rng);
   return w;
 }
 
@@ -95,7 +97,8 @@ function tuneTo(m: StaffMember, q: number): void {
 
 /** Startbesetzung 1975: Ex-Profi ohne Spielstand-Spieler (Karriere vor 1975). */
 function syntheticExPro(m: StaffMember, rng: () => number): ExProInfo {
-  const s = Math.round(rng() * rng() * 70) / 100;
+  // Erfolg passend zur heutigen Güte (gute Trainer waren eher gute Spieler), mit Streuung.
+  const s = Math.round(clamp((m.quality - 6) / 14 + (rng() - 0.5) * 0.3, 0, 0.9) * 100) / 100;
   return { pos: m.roleId === 'torwarttrainer' ? 'TW' : ['VS', 'ZM', 'MS', 'AV', 'OM'][Math.floor(rng() * 5)], peak: Math.round(62 + s * 25), apps: Math.round(80 + s * 300), titles: s > 0.5 ? 1 : 0, s, clubs: [] };
 }
 
@@ -154,6 +157,8 @@ export function staffFromRetired(g: Game, p: Player, date: string, rng: () => nu
   const pe = personaOf(p);
   const m = staffFromPlayer(p, info, year, { loyal: pe.loyalitaet, family: pe.familie, ambition: pe.ehrgeiz }, rng);
   m.freeSince = year;
+  // Selbstauswahl: Wer kaum Begabung fürs Trainerfach hat, lässt es meist bleiben.
+  if (m.quality < 5 && rng() < 0.7) return null;
   const w = g.staffWorld;
   w.cur.exPros++;
   // Große Namen mit Führungsqualität: direkt als Cheftrainer-Kandidat.
@@ -200,7 +205,9 @@ export function staffWorldSeason(g: Game, date: string, rng: () => number = Math
     if (!m.skills) skillsFromQuality(m, rng);
     m.age++;
     // Ruhestand
-    if (m.age >= 69 || (m.age >= 63 && rng() < 0.3) || (!m.clubId && m.age >= 58 && (m.freeSince ?? year) <= year - 3 && rng() < 0.5)) {
+    const idle = m.clubId ? 0 : year - (m.freeSince ?? year);
+    // Ruhestand – oder Berufswechsel nach langer Zeit ohne Stelle.
+    if (m.age >= 69 || (m.age >= 63 && rng() < 0.3) || (idle >= 3 && m.age >= 58 && rng() < 0.5) || (idle >= 6 && rng() < 0.35)) {
       log.retired++;
       continue;
     }

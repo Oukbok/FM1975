@@ -25,7 +25,10 @@ export const MAX_FOERDER = 3;
 /** Alte Spielstände: Rollen-Liste in Personen umwandeln; Rollen-Spiegel aktuell halten. */
 export function ensureStaff(g: Game): StaffMember[] {
   if (!g.staff) g.staff = migrateStaff(g.hiredStaff ?? [], yearOf(g.calendar.currentDate), Math.random);
-  for (const m of g.staff) if (!m.skills) skillsFromQuality(m, Math.random);
+  for (const m of g.staff) {
+    if (!m.skills) skillsFromQuality(m, Math.random);
+    if (!m.contractEnd) m.contractEnd = `${yearOf(g.calendar.currentDate) + (Number(g.calendar.currentDate.slice(5, 7)) >= 7 ? 2 : 1)}-06-30`;
+  }
   g.hiredStaff = g.staff.map((m) => m.roleId);
   return g.staff;
 }

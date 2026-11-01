@@ -39,7 +39,7 @@ export function promoteEarlyTalents(g: Game, today: string): void {
         date: today, category: 'training', from: 'Leiter Jugendakademie',
         subject: `${p.fullName} ist reif für die Profis`,
         shortText: `Mit ${p.age} spielt er schon auf dem Niveau der ersten Mannschaft.`,
-        bodyText: `${p.fullName} (${p.naturalPosition}, ${p.age} Jahre, Stärke ${p.overall}) ist in der Jugend unterfordert. Mit Spielpraxis bei den Profis entwickelt er sich am schnellsten – zieh ihn unter Kader › Jugend hoch, bevor andere Vereine anklopfen.`,
+        bodyText: `${p.fullName} (${p.naturalPosition}, ${p.age} Jahre, Stärke ${p.overall}) ist in der Jugend unterfordert. Mit Spielpraxis bei den Profis entwickelt er sich am schnellsten – zieh ihn unter Jugend › Mannschaften hoch, bevor andere Vereine anklopfen.`,
       }));
       continue;
     }

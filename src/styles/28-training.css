@@ -1,0 +1,106 @@
+/* =============================================================================
+   TRAINING (Trainingsplan, Trainerteam, Übersicht) – views/training/
+   ============================================================================= */
+
+/* ---- Trainingsplan ---- */
+.tp-box .dbox-body { display: flex; flex-direction: column; gap: 8px; }
+.tp-weeknav { display: inline-flex; gap: 6px; }
+.tp-palette {
+  display: flex; flex-wrap: wrap; gap: 6px; padding: 6px; border: 1px solid var(--border-soft);
+  border-radius: 6px; background: var(--bg-2);
+}
+.tp-tile {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  width: 74px; height: 58px; padding: 4px 2px; border: 1px solid var(--border); border-radius: 6px;
+  background: var(--panel-2); color: var(--text-2); cursor: grab; touch-action: none; user-select: none;
+}
+.tp-tile:hover { background: var(--panel-hover); color: var(--text); }
+.tp-tile.sel { border-color: var(--accent); color: var(--text); }
+.tp-tile.free { border-style: dashed; }
+.tp-tile-lbl { font-size: 11px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70px; }
+
+.tp-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; flex: 1; min-height: 0; }
+.tp-day {
+  display: grid; grid-template-rows: auto 1fr 1fr 1fr; gap: 4px; min-height: 0;
+  padding: 4px; border: 1px solid var(--border-soft); border-radius: 6px; background: var(--panel);
+}
+.tp-day.today { border-color: var(--accent); }
+.tp-day-head { display: grid; grid-template-columns: 1fr auto; column-gap: 6px; padding: 2px 4px 4px; border-bottom: 1px solid var(--border-soft); }
+.tp-day-name { font-family: var(--font-display); text-transform: uppercase; letter-spacing: .04em; font-size: 13px; color: var(--text); }
+.tp-day-date { font-size: 12px; color: var(--text-3); }
+.tp-day-sub { grid-column: 1 / -1; font-size: 11px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.tp-cell {
+  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  min-height: 0; border: 1px solid var(--border); border-radius: 5px; background: var(--panel-2);
+  color: var(--text); user-select: none; touch-action: none;
+}
+.tp-cell.filled { cursor: grab; }
+.tp-cell.empty { border-style: dashed; background: transparent; cursor: pointer; }
+.tp-cell.hover { border-color: var(--accent); border-style: solid; background: var(--accent-soft); }
+.tp-cell.dragging { opacity: .35; }
+.tp-cell.locked { background: var(--bg-2); color: var(--text-3); border-style: solid; border-color: var(--border-soft); }
+.tp-cell.lock-match { color: var(--text-2); }
+.tp-cell-slot { position: absolute; top: 2px; left: 5px; font-size: 10px; color: var(--text-4); text-transform: uppercase; letter-spacing: .04em; }
+.tp-cell-name { font-size: 12px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; padding: 0 4px; }
+.tp-cell-free { font-size: 11px; color: var(--text-4); }
+.tp-cell.locked .game-icon { opacity: .7; }
+.tp-ticks { position: absolute; top: 4px; right: 5px; display: inline-flex; gap: 2px; }
+.tp-ticks i { width: 3px; height: 8px; border-radius: 1px; background: var(--border); }
+.tp-ticks i.on { background: var(--text-3); }
+.tp-hint { font-size: 12px; color: var(--text-3); }
+.tp-tpls { flex-wrap: wrap; }
+.tp-ghost {
+  position: fixed; z-index: 9999; pointer-events: none; transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 10px;
+  border: 1px solid var(--accent); border-radius: 6px; background: var(--elevated); color: var(--text);
+  font-size: 12px; box-shadow: var(--shadow);
+}
+
+/* ---- Übersicht ---- */
+.td-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 8px; }
+.td-day { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 4px 0; border: 1px solid var(--border-soft); border-radius: 5px; }
+.td-day.today { border-color: var(--accent); }
+.td-day.match { background: var(--bg-2); }
+.td-day-name { font-size: 11px; color: var(--text-3); text-transform: uppercase; }
+.td-empty { width: 22px; height: 22px; border: 1px dashed var(--border); border-radius: 4px; }
+
+/* ---- Trainerteam ---- */
+.tt-msg { margin: 6px 0; font-size: 13px; color: var(--text); padding: 6px 8px; border-left: 3px solid var(--accent); background: var(--bg-2); }
+.tt-row { display: flex; gap: 8px; align-items: flex-start; padding: 7px 4px; border-bottom: 1px solid var(--border-soft); cursor: pointer; }
+.tt-row:hover { background: var(--panel-hover); }
+.tt-row.sel { box-shadow: inset 3px 0 0 var(--accent); }
+.tt-row.vacant { cursor: default; opacity: .85; }
+.tt-row-main { flex: 1; min-width: 0; }
+.tt-row-sub { display: flex; align-items: center; gap: 6px; font-size: 12px; margin-top: 2px; }
+.tt-row-btns { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
+.tt-role { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-3); }
+.tt-warn { color: var(--neg); }
+.tt-qbar { display: inline-block; width: 60px; height: 6px; border-radius: 3px; background: var(--bar-track); vertical-align: middle; overflow: hidden; }
+.tt-qbar > span { display: block; height: 100%; }
+.tt-filter { display: inline-flex; gap: 6px; align-items: center; }
+.tt-select { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 3px 6px; font: inherit; font-size: 13px; }
+.tt-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tt-table th { text-align: left; font-weight: 500; color: var(--text-3); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; padding: 4px 6px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--panel); }
+.tt-table td { padding: 5px 6px; border-bottom: 1px solid var(--border-soft); white-space: nowrap; }
+.tt-table tr { cursor: pointer; }
+.tt-table tbody tr:hover { background: var(--panel-hover); }
+.tt-table tr.sel { box-shadow: inset 3px 0 0 var(--accent); }
+.tt-table .r { text-align: right; }
+.tt-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.tt-key { color: var(--accent); }
+.tt-neg { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+
+/* ---- Kopfleiste: neun Hauptkategorien (Training, Jugend) passen bei 1920 px ---- */
+.hd-nav { gap: 0; }
+.hd-nav-item { padding: 0 11px; letter-spacing: 0.6px; }
+.hd-nav-item.active::after { left: 8px; right: 8px; }
+
+/* Symbole: .game-icon misst 1em – Größe hier fest setzen. */
+.tp-tile .game-icon { width: 30px; height: 30px; }
+.tp-cell .game-icon { width: 28px; height: 28px; }
+.tp-ghost .game-icon { width: 30px; height: 30px; }
+.td-day .game-icon { width: 22px; height: 22px; }
+.tp-tile { flex: 1 1 74px; width: auto; max-width: 100px; }
+.modal.tt-modal { max-width: 1180px; }
+.tt-modal .mx-body { padding: 20px 28px 26px; overflow: auto; }

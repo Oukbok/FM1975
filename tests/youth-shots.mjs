@@ -1,4 +1,4 @@
-// Screenshots der Nachwuchs-Seiten (Kader → Akademie, Kader → Jugend).
+// Screenshots der Nachwuchs-Seiten (Jugend → Akademie, Jugend → Mannschaften).
 //   node tests/youth-shots.mjs [ausgabeordner]   (SAVE=… lädt einen Spielstand, z. B. aus DUMP=… node scripts/sim.mjs 30)
 import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
@@ -30,7 +30,7 @@ if (process.env.SAVE) {
   await page.click('button:has-text("Laden") >> nth=0');
   await page.waitForTimeout(1500);
 } else { await startNewGame(page); await page.waitForTimeout(800); }
-await page.locator('.hd-nav-item:has-text("Kader")').click();
+await page.locator('.hd-nav-item:has-text("Jugend")').click();
 await page.waitForTimeout(200);
 await page.locator('.tn-sub-item:has-text("Akademie")').click();
 await page.waitForTimeout(400);
@@ -45,7 +45,7 @@ await page.screenshot({ path: `${outDir}/${tag}_2_ausbau.png` });
 // Seitenscroll prüfen (die Seite selbst darf nie scrollen).
 const scroll = await page.evaluate(() => { const m = document.querySelector('.app-main'); return m ? m.scrollHeight - m.clientHeight : 0; });
 if (scroll > 2) errors.push(`Akademie-Seite scrollt (${scroll}px)`);
-await page.locator('.tn-sub-item:has-text("Jugend")').click();
+await page.locator('.tn-sub-item:has-text("Mannschaften")').click();
 await page.waitForTimeout(400);
 await page.screenshot({ path: `${outDir}/${tag}_3_jugend.png` });
 console.log(errors.length ? 'FEHLER:\n' + errors.join('\n') : 'ok, keine JS-Fehler');

@@ -321,7 +321,7 @@ function checkObligations(g: Game, c: Club, today: string): void {
     const dest = campDestination(o.destId);
     const booked = ownBooking(g, o.window);
     if (today < w.from && addDays(today, 45) >= w.from && !booked) {
-      msg(g, today, `Erinnerung: ${o.partner} erwartet dich in ${dest?.place ?? o.destId}`, `Laut Vertrag mit ${o.partner} muss das ${o.window === 'winter' ? 'Wintertrainingslager' : 'Sommerprogramm'} in ${dest?.name ?? o.destId} stattfinden (Kader › Trainingslager). Sonst wird eine Vertragsstrafe fällig.`, true);
+      msg(g, today, `Erinnerung: ${o.partner} erwartet dich in ${dest?.place ?? o.destId}`, `Laut Vertrag mit ${o.partner} muss das ${o.window === 'winter' ? 'Wintertrainingslager' : 'Sommerprogramm'} in ${dest?.name ?? o.destId} stattfinden (Training › Trainingslager). Sonst wird eine Vertragsstrafe fällig.`, true);
       continue;
     }
     if (today <= w.to) continue;
