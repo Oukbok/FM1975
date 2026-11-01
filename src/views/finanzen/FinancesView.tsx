@@ -13,8 +13,8 @@ export const INCOME_ROWS: { key: keyof ClubFinances['income']; label: string; ic
   { key: 'matchday', label: 'Programmhefte & Spieltag', icon: <Icon name="marketing" /> },
   { key: 'merchandise', label: 'Fanartikel', icon: <Icon name="fans" /> },
   { key: 'tvMoney', label: 'TV- & Mediengelder', icon: <Icon name="presse" /> },
-  { key: 'sponsorship', label: 'Trikotsponsoring', icon: <Icon name="sponsoring" /> },
-  { key: 'advertising', label: 'Bandenwerbung', icon: <Icon name="sponsoring" /> },
+  { key: 'sponsorship', label: 'Sponsoring & Partner', icon: <Icon name="sponsoring" /> },
+  { key: 'advertising', label: 'Werbung (Banden)', icon: <Icon name="sponsoring" /> },
   { key: 'commercial', label: 'Vermarktung & Hospitality', icon: <Icon name="sponsoring" /> },
   { key: 'membership', label: 'Mitgliedsbeiträge', icon: <Icon name="fans" /> },
   { key: 'prizeMoney', label: 'Prämien', icon: <Icon name="trophy" /> },
@@ -28,6 +28,7 @@ export const EXPENSE_ROWS: { key: keyof ClubFinances['expenses']; label: string;
   { key: 'stadiumMaintenance', label: 'Stadionunterhalt', icon: <Icon name="stadium" /> },
   { key: 'facilities', label: 'Gebäude-Fixkosten', icon: <Icon name="facilities" /> },
   { key: 'trainingFacilities', label: 'Nachwuchs (Akademie)', icon: <Icon name="youth" /> },
+  { key: 'operations', label: 'Betrieb & Vermarktung', icon: <Icon name="marketing" /> },
   { key: 'other', label: 'Sonstige Fixkosten', icon: <Icon name="contracts" /> },
   { key: 'transferExpense', label: 'Transferausgaben', icon: <Icon name="transfers" /> },
 ];
@@ -113,7 +114,7 @@ export function FinancesView({ g }: { g: Game }) {
   const weekly = weeklyWageBill(club, g.players);
   const wageBudget = fin.wageBudget;
   const maxIncome = Math.max(1, ...INCOME_ROWS.map((r) => fin.income[r.key]));
-  const maxExpense = Math.max(1, ...EXPENSE_ROWS.map((r) => fin.expenses[r.key]));
+  const maxExpense = Math.max(1, ...EXPENSE_ROWS.map((r) => fin.expenses[r.key] ?? 0));
 
   const warnings: string[] = [];
   if (fin.balance < 0) warnings.push(`Das Konto ist mit ${fmtFullDM(fin.balance)} im Minus.`);
@@ -156,8 +157,8 @@ export function FinancesView({ g }: { g: Game }) {
 
       <DashBox className="dbox-wide-lbl" title="Ausgaben (Saison)" icon="dashFinanzen" right={fmtCompactDM(expense)}>
         {EXPENSE_ROWS.map((r) => (
-          <Meter key={String(r.key)} label={<span className="dfin-lbl">{r.icon} {r.label}</span>} value={fin.expenses[r.key]} max={maxExpense}
-            text={fin.expenses[r.key] > 0 ? fmtCompactDM(fin.expenses[r.key]) : '–'} color="var(--orange)" />
+          <Meter key={String(r.key)} label={<span className="dfin-lbl">{r.icon} {r.label}</span>} value={fin.expenses[r.key] ?? 0} max={maxExpense}
+            text={(fin.expenses[r.key] ?? 0) > 0 ? fmtCompactDM(fin.expenses[r.key] ?? 0) : '–'} color="var(--orange)" />
         ))}
       </DashBox>
 

@@ -16,7 +16,7 @@ import type { ClubGrounds, GroundsLocation, GroundsModuleKey, GroundsModuleState
 import {
   GROUNDS_BY_KEY, GROUNDS_MODULES, GroundsLevelDef, GroundsModuleDef, INFRA_AREA, LAND_PARCEL, LOCATIONS, incidentBaseRate,
 } from '../data/groundsCatalog';
-import { economyScale, revenueScale, yearOf } from './economy';
+import { clubTier, economyScale, revenueScale, tierScale, yearOf } from './economy';
 import { commercialMultiplier } from './clubEconomy';
 import { book } from './finances';
 
@@ -307,7 +307,11 @@ export function merchSlump(year: number): number {
 
 /** Monatliche Posten (nominal): Unterhalt (−) und laufende Erlöse (+). */
 export function monthlyItems(club: Club, gr: ClubGrounds, year: number): MoneyItem[] {
-  const md = mdScale(year);
+  // Liga-Ebene: Unterhalt und Erlöse wachsen bei Unterklassigen nur anteilig mit (tierScale) –
+  // sonst zahlte ein Viertligist Bundesliga-Preise und das Umfeld fraß seinen ganzen Umsatz.
+  const tier = clubTier(club);
+  const md = tierScale(mdScale(year), tier, 'matchday');
+  const cms = tierScale(revenueScale('commercial', year), tier, 'commercial');
   const items: MoneyItem[] = [];
   let upkeep = 0;
   for (const m of GROUNDS_MODULES) {
@@ -321,7 +325,7 @@ export function monthlyItems(club: Club, gr: ClubGrounds, year: number): MoneyIt
       const cm = condMult(st, m, year);
       let v = d.monthly * cm;
       if (m.commercial) {
-        v *= revenueScale('commercial', year) * commercialMultiplier(club, year) * merchSlump(year);
+        v *= cms * commercialMultiplier(club, year) * merchSlump(year);
         if (m.key === 'onlineShop' && st!.level >= 3) v *= 0.6 + (club.brand?.international ?? 0) / 100;
       } else {
         v *= md;

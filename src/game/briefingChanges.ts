@@ -18,6 +18,7 @@ import { indoorPhase } from '../data/indoorHistory';
 import { LEAGUE_REFORMS } from '../data/reforms';
 import { TIMELINE, TimelineType, seasonStartYear } from '../data/timeline';
 import { currencyForYear, DM_PER_EUR } from '../engine/economy';
+import { LED_YEAR, SPONSOR_SLOTS } from '../data/sponsorCatalog';
 import { FACILITIES } from '../engine/infrastructure';
 import { YOUTH_BLOCKS, nlzDutyYear } from '../engine/youthAcademy';
 
@@ -178,6 +179,25 @@ function facilityChanges(y: number): GameChange[] {
   return out;
 }
 
+/** Sponsoring 2.0: neue Werbeflächen, Verbote, LED-Banden (data/sponsorCatalog.ts). */
+function sponsorChanges(y: number, tier: number, first: boolean): GameChange[] {
+  const out: GameChange[] = [];
+  const where = 'Finanzen › Sponsoring';
+  const add = (title: string, text: string, major = false) => out.push({ kind: 'geld', icon: 'sponsoring', source: 'Sponsoring', where, title, text, major });
+  if (first) { add('Werbeflächen 1975: Brust, Ausrüster, Banden, Regionalpartner', 'Trikotwerbung ist seit 1973 erlaubt. Angebote liegen unter Finanzen › Sponsoring – annehmen oder nachverhandeln.'); return out; }
+  for (const sl of SPONSOR_SLOTS) {
+    if (sl.unlock === y && sl.count(y, tier) > 0) add(`Neue Werbefläche: ${sl.name}`, sl.desc);
+    if (sl.until != null && sl.until + 1 === y) add(`Vorbei: ${sl.name}`, 'Die Fläche wird nicht mehr vermarktet.');
+  }
+  if (y === LED_YEAR) add('LED-Banden', 'Wechselnde Motive auf LED-Banden: Die Bandenwerbung ist rund 20 % mehr wert.');
+  if (y === 2000) add('Keine Spirituosen mehr auf dem Trikot', 'Werbung für Hochprozentiges verschwindet von der Spielkleidung (Banden bleiben).');
+  if (y === 2006) add('Werbeverbot für private Wettanbieter', 'Wettpartner müssen von Trikot und Bande – laufende Verträge enden (wie bwin 2006).', true);
+  if (y === 2007) add('Tabakwerbung verboten', 'Die EU-Tabakwerberichtlinie beendet Tabak-Sponsoring auch auf den Banden.');
+  if (y === 2011) add('Sponsoren vom Golf', 'Staatsfonds und Fluggesellschaften aus Katar und den Emiraten suchen Partner – oft mit Pflicht-Trainingslager im Winter.');
+  if (y === 2012) add('Wettanbieter wieder erlaubt', 'Mit dem Glücksspieländerungsstaatsvertrag dürfen lizenzierte Wettanbieter wieder werben.');
+  return out;
+}
+
 function currencyChanges(y: number, first: boolean): GameChange[] {
   if (first) {
     return [{ kind: 'geld', icon: 'finances', source: 'Währung', title: `Gerechnet wird in ${currencyForYear(y) === 'DM' ? 'D-Mark' : 'Euro'}`, text: 'Alle Preise, Gehälter und Ablösen erscheinen in der Währung ihrer Zeit.' }];
@@ -219,6 +239,7 @@ export function gameChangesFor(y: number, opts: { first?: boolean; tier?: number
   out.push(...youthChanges(y, tier));
   out.push(...groundsChanges(y, tier));
   out.push(...facilityChanges(y));
+  out.push(...sponsorChanges(y, tier, first));
   return out;
 }
 

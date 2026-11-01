@@ -248,7 +248,7 @@ const INCOME_DE: Record<string, string> = {
 };
 const EXPENSE_DE: Record<string, string> = {
   wages: 'Spielergehälter', transferExpense: 'Transfers', stadiumMaintenance: 'Stadion', trainingFacilities: 'Nachwuchs',
-  staffWages: 'Mitarbeiter', facilities: 'Gebäude', other: 'Sonstiges',
+  staffWages: 'Mitarbeiter', facilities: 'Gebäude', operations: 'Betrieb & Vermarktung', other: 'Sonstiges',
 };
 
 export function FinanzenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) => void }) {
@@ -280,8 +280,8 @@ export function FinanzenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) 
       </DashBox>
 
       <DashBox title="Monatliche Fixposten" icon="schedule">
-        <KV k="Trikotsponsor" v={`+${fmtDM(m.sponsorship)}`} color="var(--green)" />
-        <KV k="Bandenwerbung" v={`+${fmtDM(m.advertising)}`} color="var(--green)" />
+        <KV k="Sponsoring" v={`+${fmtDM(m.sponsorship)}`} color="var(--green)" />
+        <KV k="Werbung" v={`+${fmtDM(m.advertising)}`} color="var(--green)" />
         <KV k="Mitgliedsbeiträge" v={`+${fmtDM(m.membership)}`} color="var(--green)" />
         <KV k="Spielergehälter" v={`−${fmtDM(m.wages)}`} color="var(--red)" />
         <KV k="Mitarbeiter" v={`−${fmtDM(m.staffWages)}`} color="var(--red)" />
@@ -290,10 +290,10 @@ export function FinanzenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) 
 
       <DashBox title="Sponsoren" icon="sponsoring" onClick={() => onGoto('sponsoring')}>
         <KV k="Trikot" v={c?.shirtSponsor ? `${c.shirtSponsor.name}` : 'kein Vertrag'} color={c?.shirtSponsor ? undefined : 'var(--orange)'} />
-        {c?.shirtSponsor && <KV k="· pro Jahr / Restlaufzeit" v={`${fmtDM(c.shirtSponsor.annualValue)} · ${c.shirtSponsor.yearsLeft} J.`} />}
-        <KV k="Banden" v={c?.banden ? `${c.banden.name}` : 'kein Vertrag'} color={c?.banden ? undefined : 'var(--orange)'} />
-        {c?.banden && <KV k="· pro Jahr / Restlaufzeit" v={`${fmtDM(c.banden.annualValue)} · ${c.banden.yearsLeft} J.`} />}
-        <KV k="Offene Angebote" v={(c?.shirtOffers?.length ?? 0) + (c?.bandenOffers?.length ?? 0)} />
+        {c?.shirtSponsor && <KV k="· pro Jahr / Restlaufzeit" v={`${fmtDM(c.shirtSponsor.annualValue * economyScale(yearOf(g.calendar.currentDate)))} · ${c.shirtSponsor.yearsLeft} J.`} />}
+        <KV k="Verträge gesamt" v={c?.deals?.length ?? (c?.banden ? 2 : 1)} />
+        <KV k="Sponsoring + Werbung / Jahr" v={fmtDM((m.sponsorship + m.advertising) * 12)} color="var(--green)" />
+        <KV k="Offene Angebote" v={c?.dealOffers?.length ?? (c?.shirtOffers?.length ?? 0) + (c?.bandenOffers?.length ?? 0)} color={(c?.dealOffers?.length ?? 0) > 0 ? 'var(--accent)' : undefined} />
         <BoxLink>Sponsoring öffnen</BoxLink>
       </DashBox>
 

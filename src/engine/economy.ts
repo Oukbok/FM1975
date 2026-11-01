@@ -322,3 +322,22 @@ export function euroMoneyFactor(comp: 'ec' | 'cwc' | 'uefa', year: number): numb
   const ramp = Math.max(0, Math.min(1, (year - 1991) / 9));
   return comp === 'ec' ? 1 + 4 * ramp : 1 + 1 * ramp;
 }
+
+/**
+ * Startgeld-Faktor (zusätzlich zu euroMoneyFactor): Mit der Gruppenphase der Champions
+ * League (ab 1992/94) und später dem Marktpool und der Koeffizienten-Säule bekommen
+ * Teilnehmer schon fürs Dabeisein zweistellige Millionen. Kalibrierung: CL-Teilnehmer
+ * 1999/2000 ≈ 8 Mio. €, 2024/25 ≈ 45 Mio. € fürs Dabeisein (FC Bayern 2024/25 insgesamt
+ * 105,9 Mio. € von der UEFA, Viertelfinale; docs/recherche/fcbayern_2026.md). UEFA-Pokal/
+ * Europa League ab der Gruppenphase 2004/05 und dem Europa-League-Format 2009/10.
+ */
+export function euroStartFactor(comp: 'ec' | 'cwc' | 'uefa', year: number): number {
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * Math.max(0, Math.min(1, t));
+  if (comp === 'ec') {
+    if (year < 1992) return 1;
+    if (year <= 2000) return lerp(1, 11, (year - 1992) / 8);
+    return lerp(11, 9.5, (year - 2000) / 24);
+  }
+  if (comp === 'uefa') return year < 2004 ? 1 : lerp(1, 12, (year - 2004) / 6);
+  return 1;
+}

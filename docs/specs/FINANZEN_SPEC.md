@@ -203,3 +203,55 @@ Kosten (1975-Basis, alle ≈ × 0,3 gegenüber vorher, wo keine Recherche-Anker 
 
 **Gehaltsniveau je Ebene (`tierWageLevel`, `clubWageLevel`):** Marktgehälter gelten für die 1. Liga. Niveau = Grundniveau 1975 (1 · 0,45 · 0,2 · 0,1 · 0,05) × `(0,6 × Stadion-Skala der Ebene + 0,4 × Vermarktungs-Skala der Ebene) ÷ economyScale`. Wirkt auf Forderungen (contractTalks, playerStance), Wechsel (`transferPlayer`), Untergrenzen der KI (aiClubs, clubEconomy) – nicht auf die Gehaltsanpassung der KI, die sich am Umsatz orientiert.
 
+
+---
+
+## 10. Sponsoring 2.0, TV-Verträge, Spitzenklub (Update 11/2026)
+
+Recherche: `docs/recherche/sponsoring.md` (Flächen, Branchen, Verbote, Klauseln) und `docs/recherche/fcbayern_2026.md` (FC Bayern 2024/25: 978,3 Mio. € Konzernumsatz, ≈ 861 Mio. € ohne Transfers; Sponsoring 240,4, Merchandising 150,5, Medien ≈ 103–105, UEFA 105,9; Personal 408,3 = 47 % des Umsatzes ohne Transfers, Material 59,9, sonstige betriebliche 310,0, Abschreibungen 132,3).
+
+### 10.1 Werbeflächen (`data/sponsorCatalog.ts`, `engine/sponsorship.ts`)
+Ersetzt Trikot-/Bandenvertrag (§2.1/2.2) und den Partner-Anteil der Vermarktungspauschale. Je Fläche Verträge `SponsorDeal` (1975-Basis, Buchung × `economyScale` des Buchungsjahres) an `Club.commerce.deals`; `shirtSponsor`/`banden` bleiben als Spiegel.
+- Flächen mit Freischaltjahr und Anzahl (1. Liga): Brust 1975 (1), Ausrüster 1975 (1), Banden 1975 (1; LED ab 2010 × 1,2), Regionalpartner 1975 (2 → 4), Premium 1990 (1 → 3), Trainingsanzug 1994, Co-Partner 1995 (2 → 6), Nachwuchs 2001, Wetten 2005 (2006–2011 gesperrt), Digital 2012, Ärmel 2017, Krypto 2021–2022. Unterklassige: weniger Flächen (Ärmel/Premium/Digital nur bis 2. Liga).
+- Marktwert = `Stützwert(Fläche, Jahr)` (Median-Erstligist, nominal; nach dem letzten Stützjahr × `revenueScale('commercial')`) × `Zugkraft` × `Ebenen-Anteil` × (Banden: `(0,55 + 0,6 × TV-Präsenz) × (Kapazität/40.000)^0,35`).
+- Zugkraft = `(Reichweite ÷ Reichweite eines Vereins mit Ruf 74)^e`, `e = 1,25 + 1,25 × clamp((Jahr − 1975)/45)` (1975 1,25, ab 2020 2,5), Deckel 0,12–9. Reichweite: regional = Marke regional (e = 1); national = `brandIndex`; global = `0,25 × regional + 0,4 × national + (internationalWeight + 0,25) × international`.
+- Ebenen-Anteil = `tierScale(s, Ebene)/s` mit `s = revenueScale('commercial')` (regional: `'matchday'`).
+- Angebot: `Marktwert × (0,85 … 1,15)` × Klausel-Aufschläge (Pflichtreise +12 %, Freundschaftsspiel +4 %, Mindestplatz +8 %, Exklusivität +10 %, umstritten +8 % je Stufe). Prämien (1975-Basis): Meister 15–30 %, Pokal 5–10 %, Europapokal 8–16 % (×0,5 Teilnahme, ×2 Titel), Klassenerhalt 6–12 % des Jahreswerts.
+- Laufzeit: Restlaufzeit −1 je Saisonstart, Verlängerungsangebot im Januar des letzten Jahres (neue Konditionen ab der nächsten Saison), Option +2 J./+10 %. Verbote (Tabak 2007, Spirituosen auf Textil 2000, Wetten 2006–2011) beenden Verträge zur neuen Saison; März 2022 enden russische Energieverträge, Dezember 2022 60 % der Krypto-Verträge.
+- Pflichtreise: Klausel `camp` (Katar ab 2011 nur bei buchbarem Ziel, VAE, Türkei im Winter; China/Japan/Korea/USA im Sommer) → `commerce.campObligations`; nicht gebucht → Vertragsstrafe 25 % des Jahreswerts. Schnittstelle Trainingslager: `campObligationFor(club, saison, fenster)`.
+- Image: Stufe 0–3 je Branche/Land/Jahr; Unterschrift −2 × Stufe × Volatilität der Epoche, monatlich −0,25 × Summe × Volatilität (max. −2).
+- Verhandlung: `fair = Wert × (1 − Σ Klauselwert gestrichen) × (1 + 0,02 × ΔJahre)`, Annahme-Chance `Interesse × 1,15 − 3,2 × max(0, Forderung/fair − 1) − 0,12 × Runde`, max. zwei Runden.
+
+### 10.2 Fanartikel weltweit, Vermarktungspauschale
+- `merchGlobal = 130 Mio. € (2024) × revenueScale('commercial')/Wert 2024 × clamp((Jahr − 1985)/15) × ((national + international)/200)^4` (1. Liga; 2. Liga × 0,4), monatlich gebucht (Fanartikel).
+- `commercialAnnualFor` behält nur noch `COMMERCIAL_REST = 0,3` (Lizenzen, Events; vorher 0,85).
+
+### 10.3 Betrieb & Vermarktung (Ausgaben, Topf `operations`)
+`monatlich = 0,35 × Fanartikel der Vorsaison/12 + Betreuung × (Sponsoring + Werbung + Vermarktung) + Verwaltung × Umsatz der Vorsaison/12`, Betreuung 5 % (1975) → 12 % (2010), Verwaltung 0 → 5 % (2020). KI-Gehälter rechnen mit `Umsatz − Betrieb` (mind. 50 % des Umsatzes). Quote je Größe: `0,71 − 0,05 × clamp(Umsatz/Liga-Median − 1, 0, 3)`, Polster-Zuschlag `min(0,25; 0,5 × Polster) × clamp(1,75 − 0,35 × Umsatz/Median, 0,3, 1)` – Spitzenklubs landen bei ≈ 50 % Personalquote.
+
+### 10.4 TV-Topf nach echten Verträgen (`engine/clubEconomy.ts tvPoolBase`)
+1. Liga ≈ 80 % der Bundesliga-Summe, Mio. (DM bis 2001, € ab 2002 als DM-Einheiten): 1975 4,2 · 1984 8 · 1988 32 · 1992 116 · 1996 156 · 1997 204 · 1999 264 · 2000 555 · 2004 469 · 2006 637 · 2013 980 · 2015 1.280 · 2017 2.190 · 2025 2.330 (≈ 1,19 Mrd. €); danach × `revenueScale('tv')`. Kirch-Delle über `tvMarketFactor` (Datensatz). Leistungsanteil: 15 % / 25 % (1990er) / 35 % (2000–2016) / 50 % (ab 2017).
+
+### 10.5 Europapokal-Startgelder
+`Startgeld × economyScale × euroMoneyFactor × euroStartFactor`; `euroStartFactor('ec')` 1 bis 1991 → 11 (2000) → 9,5 (2024); `'uefa'` 1 bis 2003 → 12 (2010). CL-Teilnehmer 2024 ≈ 45 Mio. € fürs Dabeisein; ab 2000 × `(1 + 0,8 × international/100)` (Marktpool/Koeffizient, Weltmarke ≈ 80 Mio. €).
+
+### 10.6 KI-Gehälter je Epoche
+Verteilung im Kader `marketWage^γ`, `γ = 0,72` bis 1985 → 1,0 ab 2000 (flacher in den 1980ern); Höchstgehalt `marketWage × wageCapFactor` (1,4 bis 1989, dann bis 2005 auf 3,0). Gehaltsrahmen höchstens `Umsatz − feste Kosten der Vorsaison (Stadion, Gelände, Nachwuchs, Sonstiges, Betrieb) − 3 %` (mind. 35 % des Umsatzes), außer bei Polster ≥ 30 % des Umsatzes.
+
+### 10.7 Unterklassige Ligen (Liga 3/4)
+- Umfeld-Unterhalt und -Erlöse (`engine/grounds.ts monthlyItems`) und laufende Nachwuchskosten (`game/youthInvest.ts`) × `tierScale(…, Ebene)` statt voller Skala.
+- KI-Ausbau der Einrichtungen nur, solange deren Unterhalt < 8 % des Umsatzes bleibt; Rückbau (bis zwei Stufen je Saison), sobald er 12 % übersteigt (bei Schulden 8 %).
+- Ab Liga 3: Polster-Zuschlag auf die Gehälter höchstens 0,08, Gehaltsrahmen immer durch `Umsatz − feste Kosten` begrenzt.
+
+### 10.8 Kalibrierung (Sim `FIN=1 BAL=1 AI=1`, Seeds 1975/7, Vereine kln/ham/n_hern)
+
+| Saison | Median 1. Liga | Keller | Spitze (Vorsaison, ohne Transfers) |
+|---|---:|---:|---|
+| 1975/76 | 5,5 Mio. DM | 3,0 | 8,1–9,5 |
+| 1984/85 | 11,6 Mio. DM | 5,5–7,1 | 20–40 (Dynastie) |
+| 1994/95 | 35–37 Mio. DM | 22–24 | 78–110 |
+| 2004/05 | 46 Mio. € (91 Mio. DM) | 37–39 € | 120–141 € |
+| 2014/15 | 102–115 € | 77–79 € | 250–380 € |
+| 2023/24 | 191–209 € | 122–148 € | 570–895 € (Weltmarke mit CL-Läufen: 833–895 €, Personalquote 38–53 %) |
+
+Liga 4 (2010–2024): Gehalt + Stab 0,56–0,75 des Umsatzes (vorher 1,0–1,4), 3–8 Vereine im Minus, generierte Nachrücker 3–20 %. Rest-Defizite: Trainingslager der KI (nicht nach Liga skaliert, ≈ 7–10 % des Umsatzes) und Bauten aus Transfer-Erlösen.

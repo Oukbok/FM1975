@@ -5,7 +5,7 @@
 // =============================================================================
 import { Game } from './state';
 import { Club } from '../types';
-import { economyScale, euroMoneyFactor, yearOf } from '../engine/economy';
+import { economyScale, euroMoneyFactor, euroStartFactor, yearOf } from '../engine/economy';
 import {
   allocateTv, checkLicense, commercialAnnualFor, hasTransferBan, lastRevenue, closeSeasonFinances, isLeagueClub, refreshMarketValues, runAiEconomy, updateBrand,
 } from '../engine/clubEconomy';
@@ -16,6 +16,7 @@ import { EuroCompId, EURO_COMP_NAMES } from '../data/europe';
 import { formatMoney } from '../engine/economy';
 import { boardBudgetShare } from '../engine/environment';
 import { seasonClubBusiness } from './clubBusiness';
+import { sponsorSeasonClose } from './sponsorGame';
 
 /** Leistungswert 0..1 der Vorsaison je Verein (für die TV-Verteilung). */
 export type PerfMap = Record<string, number>;
@@ -44,6 +45,11 @@ export function closeFinancialSeason(g: Game, oldSeason: string, date: string): 
       euroTitle: euroWinners.has(c.id),
     }, year, c.id === g.managedClubId);
     if (c.id !== g.managedClubId) driftAttendance(c, p, tier);
+    // Erfolgsprämien, Mindestplatzierung, Jugend-Klausel der Sponsoren (game/sponsorGame.ts).
+    sponsorSeasonClose(g, c, {
+      position: pos || n, size: n, tier, cupWinner: g.cup?.winnerClubId === c.id,
+      euroPoints: euroPts[c.id] ?? 0, euroTitle: euroWinners.has(c.id),
+    }, date);
     closeSeasonFinances(c, oldSeason);
   }
   return perf;
@@ -93,7 +99,10 @@ export function openFinancialSeason(g: Game, newSeason: string, date: string, pr
     for (const id of cup.participantIds as string[]) {
       const c = g.clubs[id];
       if (!c || !isLeagueClub(c)) continue;
-      const fee = Math.round(START_FEE[comp] * economyScale(year) * euroMoneyFactor(comp, year));
+      // Ab 2000 (Marktpool, später Koeffizienten-Säule): große Namen bekommen mehr – international bekannte
+      // Vereine bis knapp das Doppelte (FC Bayern 2024/25: 106 Mio. € bis zum Viertelfinale).
+      const pillar = comp === 'ec' && year >= 2000 ? 1 + 0.8 * (c.brand?.international ?? 0) / 100 : 1;
+      const fee = Math.round(START_FEE[comp] * economyScale(year) * euroMoneyFactor(comp, year) * euroStartFactor(comp, year) * pillar);
       book(c.finances, date, fee, 'prize_money', `${EURO_COMP_NAMES[comp]} - Startgeld`, c.id === g.managedClubId);
     }
   }

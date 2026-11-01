@@ -19,7 +19,7 @@ import { generateSeasonCalendar, seasonLabel } from '../engine/calendar';
 import { createCup } from '../engine/cup';
 import { economyScale, yearOf } from '../engine/economy';
 import { computeGermanEuroQualifiers } from '../engine/euro';
-import { bookHomeMatch, generateBandenOffers, generateShirtOffers } from '../engine/finances';
+import { bookHomeMatch } from '../engine/finances';
 import { SideResult, applyMatchEffects } from '../engine/form';
 import { calculateTable, generateFixtures } from '../engine/league';
 import { DivisionMeta, LeagueDivision, LeagueGroup, advanceDivision, buildDivision, flushDivision, hashStr, mulberry32, simClubFromClub, simMatchGoals } from '../engine/leagues';
@@ -27,7 +27,8 @@ import { MatchEngine } from '../engine/match';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { Club, Match } from '../types';
 import { addCupCalendarEvents, buildEuroCupsForSeason, cupDateSet, cupDrawMessage, euroDrawMessage, leagueDateSet } from './competitions';
-import { Game, bestOffer, hashSeed, migrateCommerce, offerToContract } from './state';
+import { Game, hashSeed } from './state';
+import { sponsorSeasonStart } from './sponsorGame';
 
 // -----------------------------------------------------------------------------
 // Spieltag simulieren + Form/Fitness-Effekte + Nachrichten
@@ -343,39 +344,8 @@ export function startNextSeason(g: Game): void {
   g.calendar = calendar;
   g.season = newSeason;
 
-  // --- 7c) Kommerz-Vertraege (Trikot/Banden) fortschreiben ---------------------
-  // Restlaufzeiten verringern, abgelaufene Vertraege entfernen, je Saison neue
-  // Angebote erzeugen. KI-Vereine verlaengern automatisch mit dem besten Angebot,
-  // damit ihre Bilanz stimmt; der Manager erhaelt Angebote zum Unterschreiben.
-  for (const club of Object.values(g.clubs)) {
-    if (!club.commerce) club.commerce = migrateCommerce(club, club.id === g.managedClubId);
-    const com = club.commerce;
-    const seed = `${club.id}:${newSeason}`;
-    if (com.shirtSponsor) {
-      com.shirtSponsor.yearsLeft -= 1;
-      if (com.shirtSponsor.yearsLeft <= 0) com.shirtSponsor = undefined;
-    }
-    if (com.banden) {
-      com.banden.yearsLeft -= 1;
-      if (com.banden.yearsLeft <= 0) com.banden = undefined;
-    }
-    const shirtOffers = generateShirtOffers(club, `shirt-${seed}`);
-    const bandenOffers = generateBandenOffers(club, `banden-${seed}`);
-    if (club.id === g.managedClubId) {
-      // Angebote nur speichern, wenn (noch) kein laufender Vertrag besteht.
-      com.shirtOffers = shirtOffers;
-      com.bandenOffers = bandenOffers;
-    } else {
-      if (!com.shirtSponsor) {
-        const s = bestOffer(shirtOffers);
-        if (s) com.shirtSponsor = offerToContract(s);
-      }
-      if (!com.banden) {
-        const b = bestOffer(bandenOffers);
-        if (b) com.banden = offerToContract(b);
-      }
-    }
-  }
+  // --- 7c) Sponsoring 2.0: Laufzeiten, Abstiegsklauseln, Angebote, KI-Abschlüsse (game/sponsorGame.ts) ---
+  sponsorSeasonStart(g, newSeason, calendar.seasonStartDate);
 
   // --- 8a) Europapokale der neuen Saison (drei Wettbewerbe, EC/CWC/Europa-Verband) ---
   const euroClubs = g.euroClubs ?? allEuroClubs();

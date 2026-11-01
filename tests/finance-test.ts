@@ -44,7 +44,10 @@ startNextSeason(g);
 const revs = leagueClubs(g).map((c) => c.finances.seasonHistory?.at(-1)?.revenue ?? 0).filter((v) => v > 0).sort((a, b) => a - b);
 const r50 = med(revs);
 ok(r50 > 3_500_000 && r50 < 6_500_000, `Umsatz 1975/76 Median ${M(r50)} (Soll ≈ 4,5 Mio. + Pokal)`);
-ok(revs[revs.length - 1] > 1.5 * r50, `Spitze ${M(revs[revs.length - 1])} deutlich über dem Median`);
+// Robuster Mittelwert (fünf mittlere Vereine): Bei 15 Bilanzen springt der reine Median zwischen Lücken der Verteilung.
+const mid5 = revs.slice(Math.max(0, (revs.length >> 1) - 2), (revs.length >> 1) + 3);
+const rMid = mid5.reduce((a, b) => a + b, 0) / mid5.length;
+ok(revs[revs.length - 1] > 1.5 * rMid, `Spitze ${M(revs[revs.length - 1])} deutlich über der Mitte (${M(rMid)})`);
 ok(revs[0] < 0.8 * r50, `Schlusslicht ${M(revs[0])} deutlich darunter`);
 const tickShare = med(leagueClubs(g).map((c) => { const h = c.finances.seasonHistory?.at(-1); return h ? h.income.ticketSales / h.revenue : 0; }).filter((x) => x > 0));
 ok(tickShare > 0.55 && tickShare < 0.85, `Eintritt ${Math.round(tickShare * 100)} % des Umsatzes (Recherche ≈ 70 %)`);
