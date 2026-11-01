@@ -1560,10 +1560,10 @@ Im Transfermarkt und in der Beobachtungsliste startest du mit **Verhandeln** ein
 | Verhandlungshärte des Vereins | −8 bis +17 % |
 | Bester Spieler eines gleich großen Vereins | „unverkäuflich“: +50 % |
 
-Dein Angebot besteht aus **Ablöse**, **Zahlung** (sofort oder zwei Raten – der Verein bewertet Raten mit 93 %), **Weiterverkaufsbeteiligung** (0/10/20 %) und **Erfolgsprämie** (fällig bei 20 Einsätzen). Der Verein antwortet mit einer Gegenforderung. Lächerliche Angebote kosten viel **Geduld**; ist sie aufgebraucht, endet das Gespräch.
+Dein Angebot besteht aus **Ablöse**, **Zahlung** (sofort, zwei Raten – der Verein bewertet sie mit 93 % – oder ab 1990 drei Raten, 89 %), **Weiterverkaufsbeteiligung** (0/10/20 %), **Erfolgsprämie** (fällig bei 20 Einsätzen) und optional einem **Spieler-Tausch**: Der Verkäufer rechnet deinen Spieler mit 50–85 % seines Marktwerts an – je nachdem, ob er auf dessen Position Bedarf hat –, und der Tauschspieler muss selbst wechseln wollen. Ab **2000** gibt es die **Leihe mit Kaufoption** (nur für Ergänzungsspieler oder Talente bis 21; der Verein bewertet die Option mit 60 %; am Saisonende entscheidest du, ob du sie ziehst), ab **2005** die **Rückkaufoption** für den Verkäufer (zwei Jahre, senkt den Preis etwas). Ist dein Verein **direkter Tabellennachbar**, verlangt der Verkäufer 8 % mehr. Der Verein antwortet mit einer Gegenforderung. Lächerliche Angebote kosten viel **Geduld**; ist sie aufgebraucht, endet das Gespräch.
 
 ## Verhandeln mit dem Spieler
-Danach überzeugst du den Spieler. Sein **Berater** nennt eine überhöhte Forderung, das echte Mindestgehalt bleibt verdeckt. Du bietest **Gehalt**, **Laufzeit**, **Handgeld** (zählt anteilig wie Gehalt), eine **Ausstiegsklausel** (reizt ehrgeizige Spieler; zahlt ein Verein sie, wechselt der Spieler ohne Verhandlung) und bis zu drei **Versprechen**:
+Danach überzeugst du den Spieler – was er will, hängt von seiner **Persönlichkeit** ab (Artikel „Spielerwünsche“). Sein **Berater** (bzw. er selbst) nennt eine überhöhte Forderung, das echte Mindestgehalt bleibt verdeckt. Du bietest **Gehalt**, **Laufzeit**, **Handgeld** (zählt anteilig wie Gehalt, Geldgierige schätzen es mehr), **Beraterprovision** (fehlt sie, rät der Berater ab), **Treueprämie** (fällig bei Vertragsende, wenn er bleibt), **Erfolgsklausel** (+10/+20 % Gehalt bei einem Europapokal-Platz), ab **1996** eine **Ausstiegsklausel** (reizt Ehrgeizige und Abenteurer; zahlt ein Verein sie, wechselt der Spieler ohne Verhandlung) und **Versprechen**:
 
 | Versprechen | Wird geprüft (Saisonende) |
 | --- | --- |
@@ -1574,16 +1574,56 @@ Danach überzeugst du den Spieler. Sein **Berater** nennt eine überhöhte Forde
 | Einsätze zur Entwicklung (bis 21 J.) | mind. 15 Pflichtspiele |
 | Freigabe bei Topangebot | du lehnst kein Angebot eines größeren Vereins ab |
 | Umzug & Familie | sofort erfüllt, kostet einmalig etwas |
+| Wunschposition | am Saisonende Startelf-Anteil ≥ 40 % und Einsatz in seinem Mannschaftsteil |
+| Kein Verkauf an Rivalen | gilt die ganze Vertragslaufzeit; gebrochen, wenn du ihn an einen Rivalen verkaufst |
 
-Was ihm wichtig ist, erfährst du im ersten Gespräch. Für ihn sprechen ein größerer Verein, Europapokal und Aussicht auf Spielzeit; gegen dich eine tiefere Liga und starke Konkurrenz auf seiner Position. Mehr als drei Versprechen wirken unglaubwürdig.
+Was ihm wichtig ist, erfährst du im ersten Gespräch – mit gutem Scouting schon vorher (Wichtigkeit als Punkte neben jedem Versprechen). Mehr als drei Versprechen wirken unglaubwürdig.
 
-**Glaubwürdigkeit** (Start 70): Gehaltene Versprechen +5, gebrochene −15 – und der Spieler verliert stark an Zufriedenheit und Moral. Je niedriger sie ist, desto weniger glauben dir künftige Spieler.
+**Glaubwürdigkeit** (Start 70): Gehaltene Versprechen +5, gebrochene −15 – der Spieler verliert stark an Zufriedenheit und Moral. Wenig loyale oder sehr ehrgeizige Spieler wollen danach weg und lehnen ein halbes Jahr lang Vertragsgespräche ab. Die **Kabine** bekommt es mit: alle Mitspieler −2 Zufriedenheit, wer selbst offene Versprechen hat −4.
 
 ## Abschluss
 Im Transferfenster (Juli/August, Januar) wird sofort gewechselt, sonst zum nächsten Fenster. Ab Bosman kannst du Spieler, deren Vertrag in höchstens sechs Monaten endet, ohne Ablöse per **Vorvertrag** holen. Höchstens vier Verhandlungen laufen gleichzeitig; ohne neue Angebote schläft ein Gespräch nach 30 Tagen ein.
 
 ## Wenn andere bieten
 Für deine Spieler bieten vor allem KI-Vereine, die auf seiner Position **Bedarf** haben und sich die Ablöse leisten können (Kaderplanung); für Stars melden sich auch einfach die Großen. Sie bieten nach ihrer verdeckten Höchstgrenze. Forderst du 25 % mehr, zahlen sie, wenn es in ihren Rahmen passt – sonst bessern sie oft bis zur Grenze nach oder springen ab.`,
+  },
+  {
+    id: 'transfers-wishes',
+    category: 'squad',
+    title: 'Spielerwünsche: Persönlichkeit, Wunschverein, Gehalt',
+    keywords: ['persönlichkeit', 'charakter', 'wünsche', 'ehrgeiz', 'loyalität', 'geld', 'heimat', 'abenteuer', 'rampenlicht', 'familie', 'karrierephase', 'berater', 'provision', 'handgeld', 'verzicht', 'rivale', 'wunschverein', 'interesse'],
+    body: `## Persönlichkeit
+Jeder Spieler hat sieben verdeckte Charakterzüge (0–100): **Ehrgeiz**, **Loyalität**, **Geld** (Geldgier), **Heimatverbundenheit**, **Abenteuerlust**, **Rampenlicht** und **Familie** (wiegt mit dem Alter schwerer). Dazu kommen **Heimat** (Region seines Herkunftsvereins), **Jugendverein** und die **Karrierephase**:
+
+| Phase | Alter | Was zählt |
+| --- | --- | --- |
+| Talent / Durchbruch | bis 24 | Spielzeit, Entwicklung; nimmt weniger Gehalt |
+| Leistungshöhepunkt | 25–29 | Titel, Europapokal, großer Verein |
+| Spätphase | 30–32 | der letzte große Vertrag: mehr Gehalt, längere Laufzeit |
+| Ausklang | ab 33 | Ruhe, Familie, Nähe zur Heimat; Größe zählt kaum noch |
+
+Im Spielerprofil zeigt der Reiter **Wünsche** Charakter, Wünsche und das Interesse an deinem Verein – bei fremden Spielern nur als Spanne, deren Genauigkeit von deinem Scouting und dem Verlauf der Gespräche abhängt.
+
+## Wohin will er?
+Der Reiz eines Vereins setzt sich aus Punkten zusammen (50 = neutral):
+- **Größe** gegenüber seinem jetzigen Verein und gegenüber seiner Klasse – ein Star geht ungern zu einem Verein unter seinem Niveau (je ehrgeiziger, desto weniger).
+- **Stammplatz-Chance**: wie viele Spieler seiner Positionsgruppe besser sind. Talente gewichten das am stärksten.
+- **Europapokal**, **Trainer-Ansehen**, **tiefere Liga** (stark negativ).
+- **Heimat**: Heimkehr zum Jugendverein, Rückkehr in die Region, Abschied aus der Heimat; **Ausland** reizt Abenteurer und schreckt Familienmenschen.
+- **Große Bühne** (Großstadt, Spitzenverein) für Spieler mit viel Rampenlicht.
+- **Bindung** an den jetzigen Verein (Loyalität × Jahre) und **Unzufriedenheit**.
+- **Rivale**: Ein Wechsel zum Erzrivalen seines Vereins kostet viel; sehr loyale Spieler mit langer Bindung (oder Jugendverein) wechseln **nie** dorthin.
+
+Die Interesse-Ampel: „Will unbedingt zu euch“, „offen“, „zögerlich“, „kein Interesse“. Ohne Interesse hilft höchstens sehr viel Geld – und nur bei Geldgierigen.
+
+## Gehalt und Verzicht
+Grundlage ist das **Marktgehalt** (Stärke, Liga-Niveau), dazu Karrierephase, Geldgier und die Größe des Vereins (große Vereine zahlen mehr). Wer wechselt, will mindestens 6 % mehr als bisher. Reizt ihn der Verein, **verzichtet** er auf bis zu 30 %; reizt er ihn nicht, verlangt er bis zu 35 % **Aufschlag** – Geldgierige verzichten kaum.
+
+- **Bosman (ab 1996):** Ablösefreie Spieler verlangen 10 % mehr Gehalt und ein hohes **Handgeld** (8–25 Wochengehälter) – die gesparte Ablöse landet beim Spieler.
+- **Berater:** In den 70ern verhandeln die meisten selbst. In Deutschland war Arbeitsvermittlung bis 1994 Sache der Bundesanstalt für Arbeit; die FIFA regelt Spielervermittler ab 1994; nach Bosman hat fast jeder Profi einen Berater. Die übliche Provision (5–10 % des Gehalts über die Laufzeit) zahlt der Verein einmalig.
+
+## Die KI hält sich an dieselben Regeln
+KI-Vereine kaufen nur Spieler, die auch wollen. Deshalb sammeln sich die Stars bei den großen Vereinen: Die angesehensten Vereine holen im Sommer gezielt die Leistungsträger kleinerer Vereine, die Kleinen kassieren Ablöse und kaufen günstiger nach. Spieler ohne Vertrag suchen sich ihren Wunschverein unter den Vereinen, die sie brauchen; ehrgeizige Leistungsträger kleiner Vereine verlängern seltener. Von außen (Ausland, untere Ligen) bekommt ein Verein nur Spieler, die zu seinem Ansehen passen.`,
   },
   {
     id: 'squad-contracts',
@@ -1602,7 +1642,7 @@ Verhandelt wird im Spielerprofil (Reiter **Vertrag & Wert**), frühestens 30 Mon
 | Ehrgeiz | ± bis 12 % |
 | Bosman (ab 1996) | im letzten Vertragsjahr +10 % |
 
-Ob er überhaupt will, hängt von Zufriedenheit, Moral, Ehrgeiz und dem **Ansehen deines Vereins im Verhältnis zu seiner Stärke** ab („gern“, „offen“, „zögerlich“, „ablehnend“). Knapp unter der Forderung entscheidet ein kleiner Zufall. Nach drei gescheiterten Angeboten bricht er die Gespräche für zwei Monate ab. Der Vorstand gibt keine Erhöhung frei, wenn die Gehälter danach über 115 % des Gehaltsrahmens lägen.
+Ob er überhaupt will, hängt von Zufriedenheit, Moral, Ehrgeiz, **Loyalität** und dem **Ansehen deines Vereins im Verhältnis zu seiner Stärke** ab („gern“, „offen“, „zögerlich“, „ablehnend“). Geldgierige fordern bis zu 17 % mehr, Loyale etwas weniger. Knapp unter der Forderung entscheidet ein kleiner Zufall. Nach drei gescheiterten Angeboten bricht er die Gespräche für zwei Monate ab. Der Vorstand gibt keine Erhöhung frei, wenn die Gehälter danach über 115 % des Gehaltsrahmens lägen.
 
 ## Vertragsende und Bosman
 Wer am 30. Juni ohne neuen Vertrag ist, wechselt zum 1. Juli:

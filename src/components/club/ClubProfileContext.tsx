@@ -20,7 +20,7 @@ export function ClubProfileProvider({ g, onChange, children }: { g: Game; onChan
     setStack((s) => (s[s.length - 1] === id ? s : [...s, id].slice(-12)));
     setNonce((n) => n + 1);
   }, []);
-  const api = useMemo<ClubProfileApi>(() => ({ open, canOpen: (id) => hasClubProfile(g, id) }), [open, g]);
+  const api = useMemo<ClubProfileApi>(() => ({ open, canOpen: (id) => hasClubProfile(g, id), game: g }), [open, g]);
   const current = stack[stack.length - 1];
 
   return (

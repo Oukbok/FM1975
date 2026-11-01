@@ -1,0 +1,54 @@
+/* =============================================================================
+   Transfer 2.0 – Spielerwünsche (Reiter „Wünsche“, Transferverhandlung)
+   Ruhig und sachlich: dünne Linien, Statusfarben nur als kleine Marker.
+   ============================================================================= */
+.pp-grid-wishes { grid-template-columns: 1fr 1fr 1.1fr; }
+
+.wish-title { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.6px; font-size: 17px; color: var(--text); margin: 2px 0 4px; }
+
+/* Ampel */
+.wish-light { display: flex; align-items: center; gap: 12px; padding: 8px 0 10px; }
+.wish-lamps { display: inline-flex; gap: 5px; padding: 5px 7px; border: 1px solid var(--border); border-radius: 999px; background: var(--bg-2); }
+.wish-lamps i { width: 10px; height: 10px; border-radius: 50%; background: var(--panel-hover); display: block; }
+.wish-lamps i.on.red { background: var(--red); }
+.wish-lamps i.on.yellow { background: var(--yellow); }
+.wish-lamps i.on.green { background: var(--green); }
+.wish-light-text { font-weight: 700; color: var(--text); font-size: 14px; }
+.wish-block { border-left: 3px solid var(--red); padding: 6px 10px; margin: 6px 0 10px; color: var(--text-2); font-size: 13px; background: var(--bg-2); }
+
+/* Gründe */
+.wish-reasons, .wish-list { list-style: none; margin: 0; padding: 0; }
+.wish-reasons li, .wish-list li { display: flex; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--border-soft); font-size: 13px; color: var(--text-2); }
+.wish-reasons li:last-child, .wish-list li:last-child { border-bottom: 0; }
+.wish-reasons .grow, .wish-list .grow { flex: 1; min-width: 0; }
+.wish-sign { width: 14px; text-align: center; font-weight: 900; }
+.wish-reasons li.pro .wish-sign { color: var(--green); }
+.wish-reasons li.con .wish-sign { color: var(--red); }
+.wish-weight, .wish-imp { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.4px; }
+.wish-imp { min-width: 92px; text-align: right; }
+.wish-more { font-style: italic; color: var(--text-3); }
+
+/* Wichtigkeit */
+.wish-dots { display: inline-flex; gap: 3px; }
+.wish-dots i { width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--text-3); display: block; }
+.wish-dots i.on { background: var(--accent); border-color: var(--accent); }
+
+/* Charakterzüge */
+.wish-traits { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.wish-trait { display: grid; grid-template-columns: 150px 1fr 86px; align-items: center; gap: 10px; font-size: 13px; color: var(--text-2); }
+.wish-trait-track { position: relative; height: 6px; border-radius: 3px; background: var(--panel-hover); }
+.wish-trait-span { position: absolute; top: 0; bottom: 0; border-radius: 3px; background: var(--text-3); }
+.wish-trait-val { text-align: right; font-size: 12px; color: var(--text); }
+
+/* Verhandlung: Forderungen/Versprechen als Liste */
+.talk-checklist { list-style: none; margin: 4px 0 0; padding: 0; grid-column: 2 / 4; }
+.talk-checklist li { display: flex; align-items: center; gap: 10px; padding: 4px 6px; border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; color: var(--text-2); }
+.talk-checklist li:hover { background: var(--panel-hover); }
+.talk-checklist li.on { color: var(--text); }
+.talk-checklist .box { width: 14px; height: 14px; border: 1px solid var(--text-3); border-radius: 3px; flex: 0 0 auto; }
+.talk-checklist li.on .box { background: var(--accent); border-color: var(--accent); }
+.talk-checklist .grow { flex: 1; }
+.talk-select { background: var(--bg-2); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 4px 8px; font: inherit; font-size: 13px; max-width: 100%; }
+.talk-demands { margin: 2px 0 6px; }
+.talk-row.talk-row-top { align-items: start; }
+.talk-row.talk-row-top > span:first-child { padding-top: 4px; }

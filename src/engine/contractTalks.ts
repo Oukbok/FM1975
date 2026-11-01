@@ -6,12 +6,15 @@
 // Die Forderung hängt ab von: Marktgehalt, Stellenwert im Kader, Alter,
 // Zufriedenheit, Ehrgeiz und – ab Bosman – der Verhandlungsmacht kurz vor
 // Vertragsende. Ob ein Spieler überhaupt verlängern will, hängt vom Verhältnis
-// zwischen seiner Stärke und dem Ansehen des Vereins ab.
+// zwischen seiner Stärke und dem Ansehen des Vereins ab – und von seiner
+// Persönlichkeit (engine/persona.ts): Loyale bleiben gern und billiger,
+// Geldgierige fordern mehr, Ehrgeizige wollen nach oben.
 // =============================================================================
 import { Club, Player } from '../types';
 import { HISTORY } from '../data/history';
 import { marketWage } from './clubEconomy';
 import { clubWageLevel } from './economy';
+import { personaOf } from './persona';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -69,7 +72,8 @@ export function contractDemand(p: Player, club: Club, squad: Player[], today: st
   const level = squadLevel(squad);
   const rel = p.overall - level; // > 0: Leistungsträger
   const sat = p.contract.satisfaction ?? 60;
-  const ambition = d.ambition ?? 50;
+  const pe = personaOf(p);
+  const ambition = pe.ehrgeiz ?? d.ambition ?? 50;
 
   let f = 1;
   f *= 1 + clamp(rel / 25, -0.12, 0.3);          // Stellenwert im Kader
@@ -77,6 +81,7 @@ export function contractDemand(p: Player, club: Club, squad: Player[], today: st
   if (p.age <= 21) f *= 0.92;                     // Talente wollen vor allem spielen
   f *= sat < 40 ? 1.18 : sat > 75 ? 0.96 : 1;     // Zufriedenheit
   f *= 1 + (ambition - 50) / 400;                 // Ehrgeiz
+  f *= 1 + (pe.geld - 50) / 300 - (pe.loyalitaet - 50) / 600; // Geldgier, Vereinstreue
   const left = monthsLeft(today, p.contract.expiryDate);
   if (bosmanActive(today) && left <= 12) f *= 1.1; // Verhandlungsmacht vor dem Vertragsende
 
@@ -87,7 +92,7 @@ export function contractDemand(p: Player, club: Club, squad: Player[], today: st
 
   // Bereitschaft: Zufriedenheit, Ansehen des Vereins gegenüber eigener Stärke, Ehrgeiz, Moral.
   const moraleBonus = { very_low: -15, low: -7, okay: 0, good: 5, excellent: 10 }[p.morale] ?? 0;
-  const score = 50 + (sat - 55) * 0.7 + ((club.reputation ?? 60) - p.overall) * 0.9 - (ambition - 50) * 0.25 + moraleBonus;
+  const score = 50 + (sat - 55) * 0.7 + ((club.reputation ?? 60) - p.overall) * 0.9 - (ambition - 50) * 0.25 + (pe.loyalitaet - 50) * 0.3 + moraleBonus;
   const mood: TalkMood = score >= 65 ? 'gern' : score >= 42 ? 'offen' : score >= 22 ? 'zögerlich' : 'ablehnend';
   const reason = mood === 'gern' ? 'Fühlt sich wohl und möchte bleiben.'
     : mood === 'offen' ? 'Ist offen für eine Verlängerung, wenn das Gehalt stimmt.'

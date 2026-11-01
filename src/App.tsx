@@ -41,6 +41,7 @@ import { migrateGrounds } from './game/groundsGame';
 import { migrateSeating } from './game/seatingGame';
 import { migrateYouthInvest } from './game/youthInvest';
 import { migrateBriefing } from './game/seasonBriefing';
+import { migratePersonas } from './game/playerWishesGame';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 // =============================================================================
@@ -329,6 +330,8 @@ export default function App() {
     try { migrateYouthInvest(s.game); } catch (err) { console.error('Nachwuchs-Nachrüstung fehlgeschlagen:', err); }
     // Saison-Briefing: Archiv ab der aktuellen Saison, beim Laden kein automatisches Popup.
     try { migrateBriefing(s.game); } catch (err) { console.error('Briefing-Nachrüstung fehlgeschlagen:', err); }
+    // Transfer 2.0: Spielerpersönlichkeit (Wünsche, Gehaltsforderung) nachrüsten.
+    try { migratePersonas(s.game); } catch (err) { console.error('Persönlichkeits-Nachrüstung fehlgeschlagen:', err); }
     gameRef.current = s.game;
     setCurrentSlot(slot);
     setInGame(true);

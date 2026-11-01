@@ -7,6 +7,8 @@ import { createContext, useContext, type ReactNode } from 'react';
 export interface ClubProfileApi {
   open: (clubId: string) => void;
   canOpen: (clubId: string | null | undefined) => boolean;
+  /** Laufendes Spiel (für Anzeigen ohne eigenen Spielstand-Prop, z. B. Spielerwünsche). */
+  game?: import('../../game/state').Game;
 }
 
 export const ClubProfileCtx = createContext<ClubProfileApi | null>(null);

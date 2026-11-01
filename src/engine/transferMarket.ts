@@ -11,13 +11,15 @@
 //    Vertragslaufzeit, Bedeutung im Kader, Kassenlage, Rivalität, Härte.
 //    Du siehst nur eine Schätzspanne, deren Genauigkeit vom Scouting abhängt.
 // 3) Spieler: Mindestgehalt (verdeckt), Forderung des Beraters (sichtbar),
-//    Interesse aus Vereinsgröße, Spielzeit, Perspektive und Gehalt;
-//    Versprechen wirken nach seinen Prioritäten und deiner Glaubwürdigkeit.
+//    Interesse aus Persönlichkeit und Lage (engine/playerWishes.ts), Handgeld,
+//    Beraterprovision, Treueprämie, Erfolgsklausel; Versprechen wirken nach
+//    seinen Prioritäten und deiner Glaubwürdigkeit.
 // =============================================================================
 import { Club, Player } from '../types';
 import { recordFeeEUR } from '../data/transferRecords';
-import { DM_PER_EUR, clubWageLevel, economyScale } from './economy';
-import { marketWage } from './clubEconomy';
+import { DM_PER_EUR, economyScale } from './economy';
+import { personaOf } from './persona';
+import { ClubAppeal, WageDemand, WishPromise } from './playerWishes';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -100,6 +102,8 @@ export interface SellerCtx {
   /** Käufer ist Rivale (Derby, direkter Konkurrent). */
   rival: boolean;
   scope: FeeScope;
+  /** Käufer ist direkter Tabellennachbar (Konkurrent um dieselben Ziele). */
+  competitor?: boolean;
 }
 
 export function sellerPosition(p: Player, seller: Club, buyer: Club, ctx: SellerCtx): SellerPosition {
@@ -122,6 +126,7 @@ export function sellerPosition(p: Player, seller: Club, buyer: Club, ctx: Seller
   if ((p.contract.satisfaction ?? 60) < 45) { f *= 0.92; notes.push('Spieler will weg'); }
   // Rivale, größerer Käufer
   if (ctx.rival) { f *= 1.15; notes.push('Rivale'); }
+  if (ctx.competitor) { f *= 1.08; notes.push('direkter Konkurrent'); }
   if (buyer.reputation > seller.reputation + 5) f *= 1.06;
 
   const hardness = hash01(seller.id + '|härte');
@@ -139,10 +144,27 @@ export function sellerPosition(p: Player, seller: Club, buyer: Club, ctx: Seller
   return { asking, walkaway, hardness, untouchable, patience, notes };
 }
 
-/** Wert eines Angebotspakets aus Sicht des Verkäufers. */
-export interface ClubPackage { fee: number; installments: boolean; sellOn: number; bonus: number }
+/**
+ * Angebotspaket an den Verkäufer: Ablöse, Raten (2 oder ab 1990 auch 3),
+ * Weiterverkaufsbeteiligung, Erfolgsprämie, Spieler-Tausch (Wert aus Sicht des
+ * Verkäufers), Rückkaufoption für den Verkäufer, Leihe mit Kaufoption.
+ */
+export interface ClubPackage {
+  fee: number; installments: boolean; sellOn: number; bonus: number;
+  /** Anzahl Raten bei `installments` (Standard 2). */
+  rates?: 2 | 3;
+  /** Eigener Spieler im Tausch und sein Wert für den Verkäufer (1975-Basis). */
+  swapPlayerId?: string; swapValue?: number;
+  /** Rückkaufoption für den Verkäufer (Preis, 0/undefined = keine). */
+  buyBack?: number;
+  /** Leihe für eine Saison: `fee` = Leihgebühr, `optionFee` = Kaufoption. */
+  loan?: boolean; optionFee?: number;
+}
 export function packageValue(o: ClubPackage): number {
-  return o.fee * (o.installments ? 0.93 : 1) + o.fee * clamp(o.sellOn, 0, 0.3) * 0.5 + o.bonus * 0.45;
+  if (o.loan) return o.fee + (o.optionFee ?? 0) * 0.6 + (o.swapValue ?? 0);
+  const rate = o.installments ? (o.rates === 3 ? 0.89 : 0.93) : 1;
+  return o.fee * rate + o.fee * clamp(o.sellOn, 0, 0.3) * 0.5 + o.bonus * 0.45 + (o.swapValue ?? 0)
+    + (o.buyBack ? Math.min(o.fee * 0.08, o.buyBack * 0.05) : 0);
 }
 
 export type ClubAnswer =
@@ -191,9 +213,9 @@ export function aiMaxPay(p: Player, buyer: Club, year: number, scope: FeeScope, 
 }
 
 // -----------------------------------------------------------------------------
-// 3) Spieler
+// 3) Spieler (Persönlichkeit und Wünsche: engine/persona.ts, engine/playerWishes.ts)
 // -----------------------------------------------------------------------------
-export type PromiseType = 'stammplatz' | 'kapitaen' | 'europa' | 'titel' | 'stars' | 'entwicklung' | 'freigabe' | 'umzug';
+export type PromiseType = WishPromise;
 
 export const PROMISES: Record<PromiseType, { label: string; desc: string; check: string }> = {
   stammplatz: { label: 'Stammplatz', desc: 'Er spielt von Anfang an.', check: 'Mindestens 60 % der Ligaspiele in der Startelf.' },
@@ -204,76 +226,61 @@ export const PROMISES: Record<PromiseType, { label: string; desc: string; check:
   entwicklung: { label: 'Einsätze zur Entwicklung', desc: 'Er bekommt Spielpraxis.', check: 'Mindestens 15 Pflichtspiele in der Saison (nur bis 21 J.).' },
   freigabe: { label: 'Freigabe bei Topangebot', desc: 'Kommt ein größerer Verein, darf er gehen.', check: 'Du lehnst kein Angebot eines größeren Vereins für ihn ab.' },
   umzug: { label: 'Umzug & Familie', desc: 'Wohnung, Schule, Sprachkurs – wir kümmern uns.', check: 'Sofort erfüllt (kostet einmalig etwas).' },
+  wunschposition: { label: 'Wunschposition', desc: 'Er spielt auf seiner Stammposition.', check: 'Am Saisonende in der Startelf in seinem Mannschaftsteil.' },
+  keinRivale: { label: 'Kein Verkauf an Rivalen', desc: 'Wir geben ihn nie an einen Rivalen ab.', check: 'Gebrochen, sobald du ihn an einen Rivalen verkaufst.' },
 };
 
-export interface StanceCtx {
-  year: number;
-  sellerRep: number;
-  /** Ligaebene des Käufers (1 = 1. Liga). */
-  buyerTier: number;
-  /** Käufer spielt (voraussichtlich) international. */
-  buyerEuro: boolean;
-  /** Rang, den er in der neuen Positionsgruppe hätte (0 = bester). */
-  depthRank: number;
-  /** Glaubwürdigkeit deiner Versprechen (0..100, Start 70). */
-  trust: number;
-}
+/** Ab wann gibt es welche Vertrags- und Ablöse-Bausteine (deutscher Markt, vereinfacht)? */
+export const CLAUSE_FROM = {
+  /** Ausstiegsklauseln: in Spanien seit 1985 Pflicht, in Deutschland erst nach Bosman verbreitet. */
+  releaseClause: 1996,
+  /** Leihe mit Kaufoption: ab den 2000ern üblich. */
+  loanOption: 2000,
+  /** Rückkaufoption: ab Mitte der 2000er. */
+  buyBack: 2005,
+  /** Ratenzahlung in drei Raten. */
+  threeRates: 1990,
+} as const;
 
 export interface PlayerStance {
   /** Verdecktes Mindestgehalt (Woche, 1975-Basis). */
   minWage: number;
-  /** Forderung des Beraters (sichtbar). */
+  /** Forderung des Beraters bzw. des Spielers (sichtbar). */
   agentWage: number;
   years: [number, number];
-  /** Grundinteresse ohne Gehalt und Versprechen (verdeckt). */
+  /** Interesse am Verein 0..100 (verdeckt; Anzeige als Stufe). */
   interest: number;
   /** Prioritäten (wichtigste zuerst) mit Gewicht 0..12. */
   priorities: [PromiseType, number][];
   /** Sichtbare Gründe mit Richtung. */
-  reasons: { label: string; sign: -1 | 1 }[];
+  reasons: { label: string; sign: -1 | 1; value: number }[];
+  /** Erwartetes Handgeld und Beraterprovision (Einmalzahlungen). */
+  signingFee: number;
+  agentFee: number;
+  agent: boolean;
+  /** Verzicht (+) / Aufschlag (−) gegenüber dem Normalgehalt. */
+  cut: number;
+  market: number;
+  dealBreaker?: string;
 }
 
-export function playerStance(p: Player, buyer: Club, ctx: StanceCtx): PlayerStance {
-  const d = p.development;
-  const ambition = d.ambition ?? 50;
-  const reasons: PlayerStance['reasons'] = [];
-  let interest = 50;
-  const repGap = buyer.reputation - ctx.sellerRep;
-  interest += repGap * (0.6 + ambition / 200);
-  if (repGap >= 5) reasons.push({ label: 'größerer Verein', sign: 1 });
-  if (repGap <= -5) reasons.push({ label: 'kleinerer Verein', sign: -1 });
-  const levelGap = buyer.reputation - p.overall;
-  interest += clamp(levelGap * 0.4, -12, 8);
-  if (ctx.buyerTier >= 2) { interest -= ctx.buyerTier === 2 ? 15 : 30; reasons.push({ label: 'tiefere Liga', sign: -1 }); }
-  if (ctx.buyerEuro) { interest += 5; reasons.push({ label: 'Europapokal', sign: 1 }); }
-  if (ctx.depthRank <= 1) { interest += 8; reasons.push({ label: 'Aussicht auf Stammplatz', sign: 1 }); }
-  else if (ctx.depthRank >= 3) { interest -= 10; reasons.push({ label: 'starke Konkurrenz auf seiner Position', sign: -1 }); }
-  if ((p.contract.satisfaction ?? 60) < 50) { interest += 10; reasons.push({ label: 'unzufrieden beim jetzigen Verein', sign: 1 }); }
-  if (p.age >= 31) interest += 4; // Routiniers sind offener für einen letzten Vertrag
-
-  const h = (k: string) => hash01(p.id + '|' + k);
-  const pr: [PromiseType, number][] = [
-    ['stammplatz', (p.age >= 21 && p.age <= 31 ? 8 : 4) + h('s') * 4],
-    ['titel', 2 + (ambition / 100) * 8 + h('t') * 2],
-    ['europa', 2 + (ambition / 100) * 6 + h('e') * 3],
-    ['stars', 1 + (ambition / 100) * 5 + h('x') * 3],
-    ['kapitaen', p.age >= 26 ? 2 + ((d.professionalism ?? 50) / 100) * 6 + h('k') * 2 : 0],
-    ['entwicklung', p.age <= 21 ? 7 + h('j') * 4 : 0],
-    ['freigabe', 1 + (ambition / 100) * 5 + h('f') * 3],
-    ['umzug', (p.nationality && p.nationality !== 'Deutschland' ? 5 : 1) + h('u') * 3],
-  ];
-  pr.sort((a, b) => b[1] - a[1]);
-
-  // Gehalt: Mindestforderung (verdeckt) und Berater-Forderung (sichtbar)
-  // Marktgehalt auf dem Gehaltsniveau der Liga des Käufers (unterklassig deutlich weniger).
-  const base = Math.max(marketWage(p) * clubWageLevel(buyer, ctx.year), p.contract.weeklyWage * 1.12);
-  const minWage = Math.round(base * (1 + clamp(-repGap / 60, -0.1, 0.25) + (ambition - 50) / 500) / 10) * 10;
-  const agentWage = Math.round(minWage * (1.12 + h('agent') * 0.15) / 10) * 10;
-  const years: [number, number] = p.age <= 23 ? [3, 5] : p.age <= 29 ? [2, 5] : p.age <= 32 ? [1, 3] : [1, 2];
-  return { minWage, agentWage, years, interest: Math.round(interest), priorities: pr.filter((x) => x[1] > 0), reasons };
+export function stanceFrom(appeal: ClubAppeal, d: WageDemand, priorities: [PromiseType, number][]): PlayerStance {
+  return {
+    minWage: d.min, agentWage: d.ask, years: d.years, interest: appeal.score, priorities,
+    reasons: appeal.factors.map((f) => ({ label: f.label, sign: f.value >= 0 ? 1 : -1, value: f.value })),
+    signingFee: d.signingFee, agentFee: d.agentFee, agent: d.agent, cut: d.cut, market: d.market, dealBreaker: appeal.dealBreaker,
+  };
 }
 
-export interface PlayerOffer { wage: number; years: number; signingFee: number; releaseClause: boolean; promises: PromiseType[] }
+export interface PlayerOffer {
+  wage: number; years: number; signingFee: number; releaseClause: boolean; promises: PromiseType[];
+  /** Treueprämie bei Vertragsende (Einmalzahlung, 1975-Basis). */
+  loyaltyBonus?: number;
+  /** Gehaltssteigerung bei Europapokal-Platz (Anteil, z. B. 0,15). */
+  successRaise?: number;
+  /** Provision für den Berater (Einmalzahlung). */
+  agentFee?: number;
+}
 
 export interface PlayerAnswer { accepted: boolean; score: number; text: string; hint?: string }
 
@@ -282,24 +289,39 @@ export function promiseValue(st: PlayerStance, promises: PromiseType[], trust: n
   const w = new Map(st.priorities);
   const vals = promises.map((t) => w.get(t) ?? 0).sort((a, b) => b - a);
   const credibility = clamp(trust / 70, 0.2, 1.3) * (promises.length > 3 ? 0.6 : 1);
-  return (vals[0] ?? 0) + (vals[1] ?? 0) * 0.7 + (vals[2] ?? 0) * 0.5 + vals.slice(3).reduce((s, v) => s + v * 0.2, 0) * credibility
-    + ((vals[0] ?? 0) + (vals[1] ?? 0) * 0.7 + (vals[2] ?? 0) * 0.5) * (credibility - 1);
+  return ((vals[0] ?? 0) + (vals[1] ?? 0) * 0.7 + (vals[2] ?? 0) * 0.5 + vals.slice(3).reduce((s, v) => s + v * 0.2, 0)) * credibility;
 }
 
-export function playerAnswer(p: Player, st: PlayerStance, o: PlayerOffer, trust: number, round: number, rnd: () => number): PlayerAnswer {
-  const eff = o.wage + (o.signingFee / Math.max(1, o.years * 52)) * 0.8;
-  const ratio = eff / st.minWage;
+/** Gehalt inklusive Handgeld, Treueprämie und Erfolgsklausel – wie der Spieler es bewertet. */
+export function effectiveWage(p: Player, o: PlayerOffer, euroLikely: boolean): number {
+  const pe = personaOf(p);
+  const weeks = Math.max(1, o.years * 52);
+  return o.wage + (o.signingFee / weeks) * (0.6 + pe.geld / 125) + ((o.loyaltyBonus ?? 0) / weeks) * 0.55
+    + (o.successRaise ?? 0) * o.wage * (euroLikely ? 0.6 : 0.3) * (0.5 + pe.ehrgeiz / 100);
+}
+
+export function playerAnswer(p: Player, st: PlayerStance, o: PlayerOffer, trust: number, round: number, rnd: () => number, euroLikely = false): PlayerAnswer {
+  const pe = personaOf(p);
+  if (st.dealBreaker) return { accepted: false, score: 0, text: `${p.lastName} lehnt ab.`, hint: st.dealBreaker };
+  const ratio = effectiveWage(p, o, euroLikely) / Math.max(1, st.minWage);
+  if (st.interest < 25 && !(ratio >= 1.35 && pe.geld >= 60)) {
+    return { accepted: false, score: st.interest, text: `${p.lastName} hat kein Interesse an einem Wechsel zu euch.`, hint: 'Ein Verein wie eurer reizt ihn nicht – höchstens sehr viel Geld könnte ihn umstimmen.' };
+  }
   const wageScore = clamp((ratio - 1) * 70, -45, 22);
-  let score = st.interest + wageScore + promiseValue(st, o.promises, trust) + (o.releaseClause ? 3 + ((p.development.ambition ?? 50) - 50) / 15 : 0);
+  const agentShort = st.agent && st.agentFee > 0 ? clamp(1 - (o.agentFee ?? 0) / st.agentFee, 0, 1) : 0;
+  const feeShort = st.signingFee > 0 && o.signingFee < st.signingFee * 0.5 ? 4 * (pe.geld / 60) : 0;
+  let score = 55 + wageScore + promiseValue(st, o.promises, trust) + (st.interest - 50) * 0.35 - agentShort * 12 - feeShort
+    + (o.releaseClause ? (pe.ehrgeiz - 40) / 8 + (pe.abenteuer - 50) / 20 : 0);
   if (o.years < st.years[0] || o.years > st.years[1]) score -= 12;
   score += (rnd() - 0.5) * 6;
   if (score >= 60) return { accepted: true, score, text: `${p.lastName} sagt zu.` };
-  // Hinweise: was fehlt am meisten?
   const missingTop = st.priorities.find(([t]) => !o.promises.includes(t));
-  const hint = ratio < 0.95 ? 'Sein Berater: „Beim Gehalt müsst ihr nachlegen.“'
-    : o.years < st.years[0] || o.years > st.years[1] ? `Er möchte ${st.years[0]}–${st.years[1]} Jahre unterschreiben.`
-      : missingTop && round >= 1 ? `Ihm geht es vor allem um: ${PROMISES[missingTop[0]].label}.`
-        : 'Er ist noch nicht überzeugt.';
+  const hint = ratio < 0.95 ? (st.agent ? 'Sein Berater: „Beim Gehalt müsst ihr nachlegen.“' : `${p.lastName}: „Beim Gehalt müsst ihr nachlegen.“`)
+    : agentShort > 0.3 ? 'Sein Berater besteht auf seiner Provision.'
+      : o.years < st.years[0] || o.years > st.years[1] ? `Er möchte ${st.years[0]}–${st.years[1]} Jahre unterschreiben.`
+        : feeShort > 0 ? 'Ohne ordentliches Handgeld unterschreibt er nicht.'
+          : missingTop && round >= 1 ? `Ihm geht es vor allem um: ${PROMISES[missingTop[0]].label}.`
+            : 'Er ist noch nicht überzeugt.';
   const text = score >= 50 ? `${p.lastName} zögert – es fehlt nicht mehr viel.` : score >= 35 ? `${p.lastName} ist skeptisch.` : `${p.lastName} winkt ab.`;
   return { accepted: false, score, text, hint };
 }

@@ -325,6 +325,14 @@ export interface Contract {
   talks?: { season: string; attempts: number; blockedUntil?: string };
   /** Vorvertrag bei einem anderen Verein (ab Bosman): Wechsel zum Vertragsende. */
   preContractClubId?: string;
+  /** Treueprämie (1975-Basis), fällig bei Vertragsende, wenn er bis dahin bleibt (game/playerWishesGame.ts). */
+  loyaltyBonus?: number;
+  /** Gehaltssteigerung (Anteil) bei Europapokal-Platz am Saisonende. */
+  successRaise?: number;
+  /** Zusage: kein Verkauf an einen Rivalen. */
+  noRivalSale?: boolean;
+  /** Rückkaufoption des abgebenden Vereins (1975-Basis, gilt bis `until`). */
+  buyBack?: { clubId: string; fee: number; until: string };
 }
 
 // -----------------------------------------------------------------------------
@@ -408,7 +416,7 @@ export interface PlayerDevelopment {
 
 /** Ein Versprechen an einen Spieler (Transferverhandlung). */
 export interface PlayerPromise {
-  type: 'stammplatz' | 'kapitaen' | 'europa' | 'titel' | 'stars' | 'entwicklung' | 'freigabe' | 'umzug';
+  type: 'stammplatz' | 'kapitaen' | 'europa' | 'titel' | 'stars' | 'entwicklung' | 'freigabe' | 'umzug' | 'wunschposition' | 'keinRivale';
   madeOn: string;
   /** Saison, in der es eingelöst werden muss. */
   season: string;
@@ -525,6 +533,10 @@ export interface Player {
   promises?: PlayerPromise[];
   /** Weiterverkaufsbeteiligung des abgebenden Vereins (Anteil 0–0,3). */
   sellOn?: { clubId: string; pct: number };
+  /** Persönlichkeit (verdeckt, engine/persona.ts). Optional → wird beim Lesen erzeugt. */
+  persona?: import('../engine/persona').PlayerPersona;
+  /** Leihe mit Kaufoption: Stammverein, Ende, Kaufoption (1975-Basis). */
+  loan?: { fromClubId: string; until: string; optionFee: number; wage: number };
   /** Herkunft (Namens-/Gesichtsgruppe), siehe data/origins.ts. */
   origin?: string;
   face?: string;
