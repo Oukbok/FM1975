@@ -20,6 +20,10 @@ export interface BracketTie {
   pens: { home: number; away: number } | null;
   /** Heimrecht nach Regel getauscht (aus der Ziehung). */
   swapped?: boolean;
+  /** Hin- und Rückspiel (Sicht der Begegnung) bzw. erstes Spiel + Wiederholung. */
+  legs?: [number, number][];
+  /** Durch Auswärtstore entschieden. */
+  byAwayGoals?: boolean;
 }
 
 export interface BracketRound {
@@ -31,15 +35,34 @@ export interface BracketRound {
 }
 
 function toBracketTie(t: CupTie, swapped?: boolean): BracketTie {
+  const legs = (t.legs ?? []).filter((l) => l.played)
+    .map((l) => (l.home === t.homeClubId ? [l.homeGoals ?? 0, l.awayGoals ?? 0] : [l.awayGoals ?? 0, l.homeGoals ?? 0]) as [number, number]);
   return {
-    home: t.homeClubId, away: t.awayClubId, homeGoals: t.homeGoals, awayGoals: t.awayGoals,
-    winner: t.played ? t.winnerClubId : null, badge: t.played ? decisionBadge(t) : '', pens: t.penalties, swapped,
+    home: t.homeClubId, away: t.awayClubId, homeGoals: t.played ? t.homeGoals : null, awayGoals: t.played ? t.awayGoals : null,
+    winner: t.played ? t.winnerClubId : null, badge: t.played ? (t.awayGoalsWin ? 'Ausw.' : decisionBadge(t)) : '', pens: t.penalties, swapped,
+    legs: (t.legs?.length ?? 0) === 2 && legs.length ? legs : undefined, byAwayGoals: t.awayGoalsWin,
   };
 }
 
-export function bracketFromCup(cup: CupState): BracketRound[] {
+/**
+ * Europapokal 2.0: Der Baum beginnt mit der ersten K.-o.-Runde, ab der jede Runde genau die
+ * Sieger der vorigen enthält (nach Gruppen/Ligaphase, Zwischenrunde, Wechsel aus anderen
+ * Wettbewerben). Rückgabe: Index der ersten Baum-Runde.
+ */
+export function bracketStart(cup: CupState): number {
+  let start = 0;
+  cup.rounds.forEach((r, i) => { if (r.kind && r.kind !== 'ko') start = i + 1; });
+  for (let i = cup.rounds.length - 2; i >= start; i--) {
+    const a = cup.rounds[i].need, b = cup.rounds[i + 1].need;
+    if (a != null && b != null && b * 2 !== a) { start = i + 1; break; }
+  }
+  return Math.min(start, cup.rounds.length - 1);
+}
+
+export function bracketFromCup(full: CupState): BracketRound[] {
+  const cup: CupState = full.v2 ? { ...full, rounds: full.rounds.slice(bracketStart(full)) } : full;
   const R = cup.rounds.length;
-  const firstSize = Math.max(cup.rounds[0]?.ties.length ?? 0, Math.ceil(cup.participantIds.length / 2), 1 << Math.max(0, R - 1));
+  const firstSize = full.v2 ? Math.max(1, Math.round((cup.rounds[0]?.need ?? 2) / 2)) : Math.max(cup.rounds[0]?.ties.length ?? 0, Math.ceil(cup.participantIds.length / 2), 1 << Math.max(0, R - 1));
   const sizes = cup.rounds.map((_, i) => Math.max(1, Math.round(firstSize / (1 << i))));
   const ordered: (CupTie | null)[][] = cup.rounds.map((r) => (r.drawn ? [...r.ties] : []));
   let last = -1;

@@ -50,9 +50,31 @@ export function buildScript(g: Game, rec: DrawRecord, clubs: Record<string, Show
   const perBall: ScriptLine[] = [];
   const firstOf = new Map<number, string>();
   let saidHome = false;
+  const groupsOf = rec.groups ?? [];
+  const placed = new Map<number, string[]>();
   for (const b of rec.balls) {
     const c = clubs[b.id];
     if (b.rejected) { perBall.push({ text: sp.say('rejected', ctx({ n: c.name })), tone: 'rule' }); continue; }
+    if (groupsOf.length) {
+      // Gruppen-/Ligaphasen-Auslosung: Kugel → Gruppe (bzw. Ligaphase mit Gegnern).
+      if (rec.opponents) {
+        const o = rec.opponents[b.id];
+        const big = [...o.home, ...o.away].map((id) => clubs[id]).sort((x, y) => y.strength - x.strength)[0];
+        perBall.push({ text: c.mine ? `${c.name} – dein Verein. Acht Gegner, der stärkste: ${big?.name ?? ''}.` : `${c.name}: ${o.home.length + o.away.length} Gegner, darunter ${big?.name ?? ''}.`, tone: c.mine ? 'mine' : 'neutral' });
+        continue;
+      }
+      const gi = b.group ?? 0;
+      const already = placed.get(gi) ?? [];
+      placed.set(gi, [...already, b.id]);
+      const gname = groupsOf[gi]?.name ?? '';
+      const mates = already.map((id) => clubs[id]);
+      const strong = mates.length && mates.every((m) => m.strength >= 72) && c.strength >= 72;
+      const text = c.mine ? `${c.name} – dein Verein kommt in Gruppe ${gname}${mates.length ? `, zu ${mates.map((m) => m.name).join(', ')}` : ''}.`
+        : mates.some((m) => m.mine) ? `${c.name} kommt in Gruppe ${gname} – ein Gegner für ${me}.`
+        : strong ? `${c.name} in Gruppe ${gname} – das wird eine schwere Gruppe.` : `${c.name} kommt in Gruppe ${gname}.`;
+      perBall.push({ text, tone: c.mine || mates.some((m) => m.mine) ? 'mine' : strong ? 'hot' : 'neutral' });
+      continue;
+    }
     const pair = rec.pairs[b.pair];
     if (!firstOf.has(b.pair)) {
       firstOf.set(b.pair, b.id);

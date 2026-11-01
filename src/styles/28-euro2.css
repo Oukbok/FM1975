@@ -1,0 +1,68 @@
+/* =============================================================================
+   Europapokal 2.0: Hin-/Rückspiel im Turnierbaum, Gruppen-/Ligaphase-Tabellen,
+   Spieltagslisten, Gruppenauslosung in der Show, Gesamtstand im Textmodus.
+   Nur Tokens aus 00-base.css; Bernstein nur für den eigenen Verein.
+   ============================================================================= */
+
+/* Turnierbaum (Statistiken) */
+.rb-head-sub { margin-left: 6px; font-size: 10px; color: var(--text-4); letter-spacing: .5px; }
+.rb-gs { display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto; }
+.rb-lg { min-width: 10px; text-align: right; font-size: 11px; color: var(--text-4); font-weight: 400; }
+.rb-tie.legs .rb-g { min-width: 16px; padding-left: 4px; border-left: 1px solid var(--border-soft); }
+.rb-legs-txt { font-size: 11px; color: var(--text-3); white-space: nowrap; }
+
+/* Gruppen */
+.cmp-groups { display: flex; flex-direction: column; }
+.cmp-groups .gt-root:not(.wide) .gt-grid { grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); }
+.cmp-groups .gt-root:not(.wide) .gt-row { padding-top: 7px; padding-bottom: 7px; }
+.gt-leg { display: inline-flex; align-items: center; gap: 6px; margin-right: 12px; }
+.gt-leg .gt-key { margin-left: 0; }
+.gt-key.po { background: color-mix(in srgb, var(--pos) 45%, transparent); }
+.gt-row.po { box-shadow: inset 3px 0 0 color-mix(in srgb, var(--pos) 45%, transparent); }
+.gt-rows { display: flex; flex-direction: column; }
+.gt-root.wide .gt-grid { grid-template-columns: 1fr; overflow: visible; }
+.gt-root.wide .gt-head, .gt-root.wide .gt-row { grid-template-columns: 30px minmax(0, 1fr) 34px 30px 30px 30px 60px 44px 40px; padding: 3px 12px; }
+.gt-root.wide .gt-head span:first-child { grid-column: span 2; }
+.gt-root.wide .gt-rows { display: grid; grid-template-columns: 1fr 1fr; grid-auto-flow: column; grid-template-rows: repeat(18, auto); column-gap: 16px; }
+.gt-root.wide .gt-row:nth-child(18) { border-bottom: none; }
+
+/* Spieltage einer Gruppen-/Ligarunde */
+.cmp-mds { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 12px 18px; }
+.cmp-md { display: flex; flex-direction: column; gap: 4px; }
+.cmp-md-head { font-family: var(--font-display); font-size: 14px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-3); padding-bottom: 2px; border-bottom: 1px solid var(--border-soft); }
+.cmp-md .cmp-tie { font-size: 14px; padding: 2px 8px; }
+.cmp-grp { display: inline-block; min-width: 18px; color: var(--text-4); font-size: 12px; }
+
+/* Turnierbaum der Show: Hin-/Rückspiel */
+.cb-legs { display: inline-flex; gap: 6px; margin-right: 8px; color: var(--text-4); font-size: 13px; font-weight: 400; }
+
+/* Gruppenauslosung in der Show */
+.dr-groups { display: flex; flex-direction: column; min-height: 0; border-radius: var(--radius); background: var(--panel); border: 1px solid var(--border); overflow: hidden; }
+.dr-ggrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px; overflow-y: auto; min-height: 0; }
+.dr-ggrid.many { grid-template-columns: 1fr 1fr 1fr; }
+.dr-gcard { border: 1px solid var(--border-soft); border-radius: 6px; background: var(--bg-2); padding: 4px 8px 6px; }
+.dr-gcard.mine { border-color: var(--accent); }
+.dr-gcard.fresh { background: var(--panel-2); }
+.dr-gname { font-family: var(--font-display); font-size: 16px; letter-spacing: 1px; color: var(--text-3); text-transform: uppercase; }
+.dr-gslot { display: flex; align-items: center; gap: 8px; height: 30px; font-size: 17px; min-width: 0; }
+.dr-gslot > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dr-gslot.empty { color: var(--text-4); }
+.dr-gslot.me span { color: var(--accent); font-weight: 700; }
+.dr-gslot.fresh { animation: ms-in 0.4s ease-out; }
+.dr-ov-groups { flex: 1 1 auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; padding: 16px 0; min-height: 0; overflow-y: auto; align-content: center; }
+.dr-ov-groups.g6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.dr-ov-groups .dr-gcard { padding: 14px 20px; }
+.dr-ov-groups .dr-gslot { height: 50px; font-size: 24px; gap: 14px; }
+.dr-ov-groups.dense .dr-gslot { height: 38px; font-size: 20px; }
+.dr-ov-groups .dr-gname { font-size: 20px; margin-bottom: 4px; }
+.dr-gsum { display: flex; flex-direction: column; align-items: center; gap: 18px; animation: ms-in 0.5s ease-out; width: min(760px, 100%); }
+.dr-gsum .dr-gcard { width: 100%; padding: 12px 18px; }
+.dr-gsum .dr-gslot { height: 52px; font-size: 26px; gap: 14px; }
+.dr-gsum .dr-opp { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; width: 100%; }
+.dr-opp-row { display: flex; align-items: center; gap: 10px; font-size: 19px; min-width: 0; }
+.dr-opp-row > span:last-child { margin-left: auto; color: var(--text-3); font-size: 15px; }
+
+/* Textmodus: Gesamtstand im Rückspiel */
+.ms-agg { margin-top: 4px; font-size: 18px; color: var(--text-2); letter-spacing: .5px; text-align: center; white-space: nowrap; }
+.ms-agg b { color: var(--text); font-family: var(--font-display); font-weight: 600; }
+.ms-agg .ms-agg-note { color: var(--text-3); margin-left: 8px; }

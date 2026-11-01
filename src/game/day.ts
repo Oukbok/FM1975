@@ -56,6 +56,9 @@ import { indoorDaily } from './indoorGame';
 import { campDaily } from './trainingCampGame';
 import { groundsDaily } from './groundsGame';
 import { DrawNotice, cupDrawsDaily, ensureDrawn, hasScheduledDraw } from './cupDraw';
+import { cupMatchdayV2 } from './cupReplay';
+import { euroMatchdayV2 } from './euroFlow';
+import { isV2 } from './euroSetup';
 import { monthlySponsoring } from './sponsorGame';
 import { monthlyPositions, ownPositionTraining } from './positionsGame';
 import { promoteEarlyTalents } from './talentGame';
@@ -217,6 +220,12 @@ export function processDay(g: Game, ui: DayUi): boolean {
         const cup = g.cup;
         const ri = ev.cupRoundIndex;
         if (ri != null) ensureDrawn(g, 'cup', ri, today);
+        // Neuer Modus: Wiederholungsspiele nach historischer Regel (game/cupReplay.ts).
+        if (isV2(cup) && ri != null) {
+          const own = cupMatchdayV2(g, ri, ev.leg ?? 0, today);
+          if (own) { ui.onOwnMatch(own); stopForAction = true; }
+          break;
+        }
         if (cup && ri != null && cup.rounds[ri] && cup.rounds[ri].drawn) {
           const round = cup.rounds[ri];
           const prize = cup.prizeByRound[ri];
@@ -274,6 +283,12 @@ export function processDay(g: Game, ui: DayUi): boolean {
         const comp = ev.euroComp;
         const cup = comp ? g.euroCups?.[comp] : null;
         const ri = ev.cupRoundIndex;
+        // Europapokal 2.0: Hin-/Rückspiel, Gruppen, Ligaphase (game/euroFlow.ts).
+        if (comp && ri != null && isV2(cup)) {
+          const own = euroMatchdayV2(g, comp, cup, ri, ev.leg ?? 0, today);
+          if (own) { ui.onOwnMatch(own); stopForAction = true; }
+          break;
+        }
         if (comp && ri != null) ensureDrawn(g, comp, ri, today);
         if (comp && cup && ri != null && cup.rounds[ri] && cup.rounds[ri].drawn) {
           const round = cup.rounds[ri];

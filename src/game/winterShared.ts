@@ -5,6 +5,7 @@
 // diese schmalen Zugriffe gelesen; Altstände ohne Felder bekommen sie per
 // `migrateWinter` (Aufruf in App.tsx beim Laden) bzw. beim ersten Tag.
 // =============================================================================
+import { mayPlayOn } from './euroFixture';
 import type { IndoorPhase } from '../data/indoorHistory';
 import type { IndoorResult, IndoorSquad, TourStat } from '../engine/indoor';
 import { CalendarEngine } from '../engine/calendar';
@@ -241,7 +242,8 @@ export function summerWindow(g: Game, season = g.season): { from: string; to: st
 /** Tage mit Pflichtspielen (Liga deines Vereins, Pokal, Europapokal). */
 export function competitiveDays(g: Game): Set<string> {
   const s = new Set<string>();
-  for (const e of g.calendar.events) if (e.type === 'cup_matchday' || e.type === 'euro_matchday') s.add(e.date);
+  // Europapokal 2.0: nur Termine, an denen der eigene Verein (noch) spielen kann (game/euroFixture.ts).
+  for (const e of g.calendar.events) if ((e.type === 'cup_matchday' || e.type === 'euro_matchday') && mayPlayOn(g, e)) s.add(e.date);
   for (const m of g.fixtures) if (m.involvesPlayerClub) s.add(m.date);
   return s;
 }

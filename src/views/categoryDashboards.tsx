@@ -7,6 +7,8 @@ import { TIMELINE } from '../data/timeline';
 import { ROUND_NAMES, nextPlayerTie } from '../engine/cup';
 import { economyScale, yearOf } from '../engine/economy';
 import { nextPlayerEuroTie } from '../engine/euro';
+import { euroStatus, inEuroCup } from '../game/euroFixture';
+import { euroCompName } from '../data/euroFormats';
 import { computeMonthly, expectedAttendanceRate, totalExpense, totalIncome } from '../engine/finances';
 import { priceOf, seatPriceScale } from '../engine/seating';
 import { FACILITIES, facilityAvailable, MAX_LEVEL } from '../engine/infrastructure';
@@ -411,7 +413,7 @@ export function StatistikenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Scree
   const cup = g.cup;
   const myTie = cup ? nextPlayerTie(cup, myId) : null;
   const cupOut = cup && !myTie && cup.rounds.some((r) => r.ties.some((t) => t.played && (t.homeClubId === myId || t.awayClubId === myId) && t.winnerClubId !== myId));
-  const euro = (['ec', 'cwc', 'uefa'] as const).map((k) => ({ k, c: g.euroCups?.[k] ?? null })).filter((e) => e.c && e.c.participantIds.includes(myId));
+  const euro = (['ec', 'cwc', 'uefa'] as const).map((k) => ({ k, c: g.euroCups?.[k] ?? null })).filter((e) => e.c && inEuroCup(e.c, myId));
   const year = yearOf(g.calendar.currentDate);
   const milestones = TIMELINE.filter((e) => e.year <= year).slice(-6).reverse();
   return (
@@ -451,6 +453,7 @@ export function StatistikenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Scree
 
       <DashBox title="International" icon="international" onClick={() => onGoto('international')}>
         {euro.length ? euro.map(({ k, c }) => {
+          if (c!.v2) return <KV key={k} k={euroCompName(k, Number(c!.season.slice(0, 4)))} v={euroStatus(c!, myId)} />;
           const t = nextPlayerEuroTie(c!, myId);
           return <KV key={k} k={EURO_COMP_NAMES[k]} v={t ? `${c!.rounds[t.round]?.name ?? ''}` : c!.winnerClubId === myId ? 'Sieger!' : 'ausgeschieden'} />;
         }) : <Empty icon="international">Diese Saison nicht im Europapokal.</Empty>}

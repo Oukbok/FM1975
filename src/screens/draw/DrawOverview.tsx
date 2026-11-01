@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import ClubCrest from '../../components/ClubCrest';
 import { ClubLink } from '../../components/club/ClubLink';
 import { CupBracket, type BracketClub } from '../../components/competition/CupBracket';
-import { bracketFromCup } from '../../game/cupBracket';
+import { bracketFromCup, bracketStart } from '../../game/cupBracket';
 import type { Game } from '../../game/state';
 import type { CupState } from '../../types';
 import type { DrawRecord } from '../../types/draw';
@@ -73,7 +73,7 @@ export function BracketOverview({ cup, rec, clubs, myId }: { cup: CupState; rec:
   const club = (id: string): BracketClub => clubs(id);
   return (
     <div className="dr-wide-body dr-bracket">
-      <CupBracket rounds={rounds} club={club} highlightId={myId} focusRound={rec.roundIndex} />
+      <CupBracket rounds={rounds} club={club} highlightId={myId} focusRound={rec.roundIndex - (cup.v2 ? bracketStart(cup) : 0)} />
     </div>
   );
 }

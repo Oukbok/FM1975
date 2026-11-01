@@ -12,7 +12,7 @@
 // =============================================================================
 import type { Club, MatchEvent, MatchResult, Player, PointSystem } from '../types';
 import { getEraYear } from './positions';
-import { MatchSim, type SimOptions } from './match/sim';
+import { MatchSim, type KoRule, type SimOptions } from './match/sim';
 import { finishMatch, type FinishOptions } from './match/finish';
 import { computeUnits, referenceWeights, makeMPlayer, resolveLineup } from './match/team';
 import { eraRules } from './match/era';
@@ -20,6 +20,7 @@ import type { MatchOutcome } from './match/types';
 
 export { createMatchInjury } from './match/finish';
 export { MatchSim } from './match/sim';
+export type { KoRule } from './match/sim';
 export type { MatchOutcome } from './match/types';
 
 export interface MatchEngineOptions {
@@ -35,6 +36,8 @@ export interface MatchEngineOptions {
   logClubIds?: string[];
   /** Im Spiel entstandene Verletzungen als echte Ausfälle übernehmen. */
   applyInjuries?: boolean;
+  /** K.-o.-Regel im Detail (Rückspiel, Wiederholungsspiel). */
+  ko?: KoRule;
 }
 
 // -----------------------------------------------------------------------------
@@ -62,7 +65,7 @@ export function createMatchSim(home: Club, away: Club, players: Record<string, P
   return new MatchSim(home, away, players, {
     year: opts.year ?? yearFor(opts.date), date: opts.date, seed: opts.seed, knockout: opts.knockout,
     humanSides: opts.humanSides, humanClubIds: opts.humanClubIds ?? opts.logClubIds, live: opts.live,
-    competition: opts.competition,
+    competition: opts.competition, ko: opts.ko,
   });
 }
 
@@ -87,7 +90,7 @@ export class MatchEngine {
     if (pre) return pre;
     const sim = createMatchSim(this.homeClub, this.awayClub, this.players, {
       date: this.options.date, seed: this.options.seed, knockout, logClubIds: this.options.logClubIds,
-      competition: this.options.competition,
+      competition: this.options.competition, ko: knockout ? this.options.ko : undefined,
     });
     sim.runToEnd();
     const fo: FinishOptions = { ...this.options };

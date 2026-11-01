@@ -12,10 +12,13 @@ import { seasonLabel } from '../engine/calendar';
 import type { LeagueGroup } from '../engine/leagues';
 import { seasonStartYear } from '../data/timeline';
 import type { CompTuple } from '../engine/compStats';
-import type { CupState, Match } from '../types';
+import type { CupState, CupTie, Match } from '../types';
+import { euroCompName, euroFormat } from '../data/euroFormats';
+import { groupStandings } from '../engine/euroGroups';
+import type { GroupTable, GroupZone } from '../components/competition/GroupTables';
 import { clubView } from './clubProfile';
 import {
-  STAT_CATS, archivedSeason, euroClubSet, leagueArchive, liveEntries, topLists,
+  STAT_CATS, archivedSeason, euroClubSet, leagueArchive, liveEntries, topLists, xEntries,
   type ArchCup, type ArchRow, type CupKey, type StatCat,
 } from './leagueArchive';
 import type { Game } from './state';
@@ -31,8 +34,27 @@ export interface TableRowLite {
 export interface TieLite {
   id: string; home: string; away: string; hg: number | null; ag: number | null; dec: 0 | 1 | 2;
   pen?: [number, number]; winner: string | null; date?: string; matchId?: string; mine?: boolean; scoreText?: string;
+  /** Hin-/Rückspiel bzw. erstes Spiel + Wiederholung, Tore in Sicht der Begegnung (Heim = home). */
+  legs?: [number, number][];
+  /** Gesamtergebnis aus Hin- und Rückspiel (sonst: Wiederholungsspiel). */
+  agg?: boolean;
+  /** Durch Auswärtstore entschieden. */
+  awayGoals?: boolean;
+  /** Termine der Spiele (Hin-/Rückspiel, Wiederholung). */
+  legDates?: string[];
 }
-export interface RoundLite { index: number; name: string; date?: string; drawn: boolean; drawDate?: string; hasDraw?: boolean; ties: TieLite[] }
+export interface RoundLite {
+  index: number; name: string; date?: string; drawn: boolean; drawDate?: string; hasDraw?: boolean; ties: TieLite[];
+  /** Europapokal 2.0: K.-o.-Runde, Gruppen oder Ligaphase. */
+  kind?: 'ko' | 'groups' | 'league';
+  legs?: number;
+  groups?: GroupTable[];
+  zones?: GroupZone[];
+  /** 1997/98: als beste Gruppenzweite weiter. */
+  extraAdvance?: string[];
+  /** Laufende Saison: Spiele der Gruppen/Ligaphase. */
+  matches?: { id: string; md: number; date: string; group: string; home: string; away: string; hg: number | null; ag: number | null; matchId?: string; mine: boolean }[];
+}
 export interface StatRow { pid: string; name: string; clubId: string; pos: string; value: number; apps: number }
 export type ClubStatCat = 'gf' | 'ga' | 'w' | 'cs' | 'ti';
 export interface ClubStatRow { clubId: string; value: number }
@@ -56,7 +78,34 @@ export interface CompSnapshot {
   zones?: string[];
 }
 
-const CUP_LABEL = (k: CupKey, season: string) => (k === 'cup' ? 'Landespokal' : k === 'uefa' && seasonStartYear(season) < 1971 ? 'Messepokal' : EURO_COMP_NAMES[k]);
+const CUP_LABEL = (k: CupKey, season: string) => (k === 'cup' ? 'Landespokal' : euroCompName(k, seasonStartYear(season)) ?? EURO_COMP_NAMES[k]);
+
+/** Zonen einer Gruppen-/Ligarunde (Weiterkommen, Zwischenrunde, Wechsel) nach Format der Saison. */
+function zonesFor(k: CupKey, season: string, roundName: string): { zones: GroupZone[]; legs?: number } {
+  if (k === 'cup') return { zones: [] };
+  const y = seasonStartYear(season);
+  const fmt = euroFormat(k, y);
+  const st = fmt?.stages.find((x) => x.name === roundName);
+  if (!fmt || !st) return { zones: [] };
+  const zones: GroupZone[] = (st.advance ?? []).map((a) => {
+    const tgt = (a.comp ? euroFormat(a.comp, y) : fmt)?.stages.find((x) => x.key === a.target)?.name ?? a.target;
+    const kind: GroupZone['kind'] = a.comp && a.comp !== k ? 'move' : a.target === 'po' && st.advance!.some((b) => b.target === 'af' && !b.comp) ? 'po' : 'adv';
+    return { from: a.from, to: a.to, label: a.comp && a.comp !== k ? `${euroCompName(a.comp, y)} (${tgt})` : tgt, kind };
+  });
+  return { zones, legs: st.legs };
+}
+
+function tieLegs(t: CupTie): Pick<TieLite, 'legs' | 'agg' | 'awayGoals' | 'legDates'> {
+  const ls = t.legs;
+  if (!ls || (ls.length < 2 && !ls[0]?.played)) return {};
+  const played = ls.filter((l) => l.played);
+  const replay = t.id.startsWith('cup_');
+  if (replay && ls.length < 2) return {};
+  return {
+    legs: played.map((l) => (l.home === t.homeClubId ? [l.homeGoals ?? 0, l.awayGoals ?? 0] : [l.awayGoals ?? 0, l.homeGoals ?? 0]) as [number, number]),
+    agg: ls.length === 2 && !replay, awayGoals: !!t.awayGoalsWin, legDates: ls.map((l) => l.date),
+  };
+}
 
 // -----------------------------------------------------------------------------
 // Auswahl
@@ -155,26 +204,72 @@ function liveStats(g: Game, code: 'L' | 'P' | 'E', filter?: (c: string) => boole
   return out;
 }
 
-function tiesOfCup(cup: CupState, mid: string): RoundLite[] {
-  return cup.rounds.map((r) => ({
-    index: r.index, name: r.name, date: r.date, drawn: r.drawn, drawDate: r.drawDate, hasDraw: !!r.draw,
-    ties: r.ties.map((t) => ({
-      id: t.id, home: t.homeClubId, away: t.awayClubId, hg: t.played ? t.homeGoals : null, ag: t.played ? t.awayGoals : null,
-      dec: (t.decision === 'penalties' ? 2 : t.decision === 'aet' ? 1 : 0) as 0 | 1 | 2,
-      pen: t.penalties ? [t.penalties.home, t.penalties.away] as [number, number] : undefined,
-      winner: t.winnerClubId, date: t.date, matchId: t.match?.id, mine: t.homeClubId === mid || t.awayClubId === mid,
-    })),
-  }));
+/** Bestenliste aus der Statistik am Wettbewerb (Europapokal 2.0: alle Spiele). */
+function cupStats(g: Game, cup: CupState, n: number): Record<StatCat, StatRow[]> {
+  const entries = xEntries(cup);
+  const byPid = new Map<string, CompTuple>(entries.map((e) => [e.pid, e.t]));
+  const lists = topLists(entries, n);
+  const out = {} as Record<StatCat, StatRow[]>;
+  for (const cat of STAT_CATS) {
+    out[cat] = lists[cat].map(([pid, value]) => {
+      const p = g.players[pid];
+      const x = cup.xpeople?.[pid];
+      return { pid, name: p?.fullName ?? x?.[0] ?? pid, clubId: p?.clubId ?? x?.[1] ?? '', pos: p?.naturalPosition ?? x?.[2] ?? '', value, apps: byPid.get(pid)?.[0] ?? 0 };
+    });
+  }
+  return out;
 }
 
-function tiesOfArch(cup: ArchCup, mid: string): RoundLite[] {
-  return cup.rounds.map((r, i) => ({
-    index: i, name: r.n, drawn: true,
-    ties: r.t.map((t, j) => ({
-      id: `${i}-${j}`, home: t[0], away: t[1], hg: t[2], ag: t[3], dec: t[4] as 0 | 1 | 2, winner: t[5] || null,
-      pen: t[6] != null ? [t[6], t[7] ?? 0] as [number, number] : undefined, mine: t[0] === mid || t[1] === mid,
-    })),
-  }));
+function tiesOfCup(cup: CupState, mid: string, key: CupKey, strengthOf: (id: string) => number): RoundLite[] {
+  const y = Number(cup.season.slice(0, 4));
+  const fmt = key !== 'cup' && cup.v2 ? euroFormat(key, y) : null;
+  return cup.rounds.map((r) => {
+    const z = r.groups ? zonesFor(key, cup.season, r.name) : { zones: [] as GroupZone[] };
+    const groups: GroupTable[] | undefined = r.groups?.map((gr) => ({
+      name: gr.name,
+      rows: groupStandings(gr, fmt?.winPts ?? 3, fmt?.tiebreak ?? 'h2h', strengthOf)
+        .map((x) => ({ id: x.id, played: x.p, won: x.w, drawn: x.d, lost: x.l, gf: x.gf, ga: x.ga, pts: x.pts })),
+    }));
+    const best = fmt?.stages[r.index]?.bestRunnersUp;
+    const extra = best ? (cup.rounds.find((x) => x.key === best.target)?.entrants ?? []).filter((id) => cup.rounds[r.index].groups?.some((gr) => gr.final?.[1] === id)) : undefined;
+    return {
+      index: r.index, name: r.name, date: r.date, drawn: r.drawn, drawDate: r.drawDate, hasDraw: !!r.draw,
+      kind: r.kind, legs: r.legs, groups, zones: z.zones, extraAdvance: extra,
+      matches: r.groups?.flatMap((gr) => gr.matches.map((m) => ({
+        id: m.id, md: m.md, date: m.date, group: gr.name, home: m.home, away: m.away, hg: m.hg, ag: m.ag,
+        matchId: m.match?.id, mine: m.home === mid || m.away === mid,
+      }))),
+      ties: r.ties.map((t) => ({
+        id: t.id, home: t.homeClubId, away: t.awayClubId, hg: t.played ? t.homeGoals : null, ag: t.played ? t.awayGoals : null,
+        dec: (t.decision === 'penalties' ? 2 : t.decision === 'aet' ? 1 : 0) as 0 | 1 | 2,
+        pen: t.penalties ? [t.penalties.home, t.penalties.away] as [number, number] : undefined,
+        winner: t.winnerClubId, date: t.date, matchId: t.match?.id ?? [...(t.legs ?? [])].reverse().find((l) => l.match)?.match?.id,
+        mine: t.homeClubId === mid || t.awayClubId === mid, ...tieLegs(t),
+      })),
+    };
+  });
+}
+
+function tiesOfArch(cup: ArchCup, mid: string, key: CupKey, season: string): RoundLite[] {
+  return cup.rounds.map((r, i) => {
+    const z = r.g ? zonesFor(key, season, r.n) : { zones: [] as GroupZone[] };
+    return {
+      index: i, name: r.n, drawn: true, kind: r.k === 'l' ? 'league' : r.k === 'g' ? 'groups' : 'ko', zones: z.zones,
+      legs: r.l ? 2 : undefined,
+      groups: r.g?.map((gr) => ({ name: gr.n, rows: gr.r.map((x) => ({ id: x[0], played: x[1], won: x[2], drawn: x[3], lost: x[4], gf: x[5], ga: x[6], pts: x[7] })) })),
+      ties: r.t.map((t, j) => {
+        const l = r.l?.[j];
+        return {
+          id: `${i}-${j}`, home: t[0], away: t[1], hg: t[2], ag: t[3], dec: t[4] as 0 | 1 | 2, winner: t[5] || null,
+          pen: t[6] != null ? [t[6], t[7] ?? 0] as [number, number] : undefined, mine: t[0] === mid || t[1] === mid,
+          ...(l ? {
+            legs: (l[2] === 2 ? [[l[0], l[1]], [t[2], t[3]]] : [[l[0], l[1]], [t[2] - l[0], t[3] - l[1]]]) as [number, number][],
+            agg: l[2] !== 2, awayGoals: l[2] === 1,
+          } : {}),
+        };
+      }),
+    } as RoundLite;
+  });
 }
 
 // -----------------------------------------------------------------------------
@@ -231,7 +326,7 @@ export function buildSnapshot(g: Game, season: string, key: string): CompSnapsho
       return { ...base, tier: d.tier, group: d.group, table, stats: key === a.playerDiv ? statsFor(key) : null, clubStats: clubStatsFromRows(table) };
     }
     const cup = a.cups[key as CupKey]!;
-    return { ...base, rounds: tiesOfArch(cup, mid), winner: cup.winner, stats: statsFor(key) };
+    return { ...base, rounds: tiesOfArch(cup, mid, key as CupKey, season), winner: cup.winner, stats: statsFor(key) };
   }
 
   // Laufende Saison
@@ -257,12 +352,19 @@ export function buildSnapshot(g: Game, season: string, key: string): CompSnapsho
       note: 'Diese Liga wird vereinsweise simuliert – statt Einzelstatistiken siehst du Vereinswerte.',
     };
   }
-  if (key === 'cup') return { ...base, rounds: tiesOfCup(g.cup, mid), winner: g.cup.winnerClubId, stats: liveStats(g, 'P', undefined, 10) };
+  const str = (id: string) => g.euroClubs?.[id]?.strength ?? g.simClubs?.[id]?.strength ?? g.clubs[id]?.reputation ?? 50;
+  if (key === 'cup') return { ...base, rounds: tiesOfCup(g.cup, mid, 'cup', str), winner: g.cup.winnerClubId, stats: liveStats(g, 'P', undefined, 10) };
   const cup = g.euroCups?.[key as 'ec' | 'cwc' | 'uefa'];
   if (!cup) return null;
+  if (cup.xstats) {
+    return {
+      ...base, rounds: tiesOfCup(cup, mid, key as CupKey, str), winner: cup.winnerClubId, stats: cupStats(g, cup, 10),
+      note: 'Spiele ohne eigenen Verein laufen im Hintergrund – Torschützen, Vorlagen und Karten zählen trotzdem für die Bestenliste.',
+    };
+  }
   const set = euroClubSet(cup);
   return {
-    ...base, rounds: tiesOfCup(cup, mid), winner: cup.winnerClubId, stats: liveStats(g, 'E', (c) => set.has(c), 10),
+    ...base, rounds: tiesOfCup(cup, mid, key as CupKey, str), winner: cup.winnerClubId, stats: liveStats(g, 'E', (c) => set.has(c), 10),
     note: 'Spiele ohne deutsche Beteiligung werden vereinsweise simuliert; die Bestenliste zählt die voll simulierten Spiele.',
   };
 }

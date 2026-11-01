@@ -49,20 +49,20 @@ export function CupBracket({ rounds, club, highlightId, focusRound, useShort }: 
 
 function TieBox({ t, club, hl, useShort }: { t: BracketTie; club: CupBracketProps['club']; hl?: string; useShort?: boolean }) {
   const mine = !!hl && (t.home === hl || t.away === hl);
-  const row = (id: string, goals: number | null, pen: number | undefined) => {
+  const row = (id: string, goals: number | null, pen: number | undefined, side: 0 | 1) => {
     const c = club(id);
     const cls = t.winner ? (t.winner === id ? 'win' : 'lose') : '';
     return (
       <div className={`cb-row ${cls} ${id === hl ? 'me' : ''}`}>
         <ClubLink id={id}><span className="cb-club"><ClubCrest club={c.crest} size={18} /><span className="cb-name">{useShort ? c.short : c.name}</span></span></ClubLink>
-        <span className="cb-goals">{goals ?? ''}{pen != null && <sup>{pen}</sup>}</span>
+        <span className="cb-goals">{t.legs && <span className="cb-legs">{t.legs.map((l, i) => <span key={i}>{l[side]}</span>)}</span>}{goals ?? ''}{pen != null && <sup>{pen}</sup>}</span>
       </div>
     );
   };
   return (
-    <div className={`cb-tie ${mine ? 'mine' : ''}`} title={t.badge ? (t.badge === 'i.E.' ? 'im Elfmeterschießen' : 'nach Verlängerung') : undefined}>
-      {row(t.home, t.homeGoals, t.pens?.home)}
-      {row(t.away, t.awayGoals, t.pens?.away)}
+    <div className={`cb-tie ${mine ? 'mine' : ''}`} title={t.badge ? (t.badge === 'i.E.' ? 'im Elfmeterschießen' : t.badge === 'Ausw.' ? 'durch Auswärtstore' : 'nach Verlängerung') : t.legs ? 'Hinspiel, Rückspiel, Gesamt' : undefined}>
+      {row(t.home, t.homeGoals, t.pens?.home, 0)}
+      {row(t.away, t.awayGoals, t.pens?.away, 1)}
       {t.badge && <span className="cb-badge">{t.badge}</span>}
     </div>
   );

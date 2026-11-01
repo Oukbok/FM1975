@@ -41,7 +41,18 @@ export interface SimOptions {
   live?: boolean;
   /** Wettbewerb (Europapokal: ab 1998 nur Sitzplätze). */
   competition?: 'Liga' | 'Pokal' | 'Europapokal';
+  /** K.-o.-Regel im Detail (Rückspiel mit Gesamtstand, Wiederholungsspiel statt Elfmeter). */
+  ko?: KoRule;
 }
+
+/**
+ * K.-o.-Regel eines Spiels. Ohne Angabe gilt bei `knockout`: Verlängerung, dann Elfmeter.
+ *   prev        Rückspiel: Tore [dieses Heimteams, dieses Gastteams] im Hinspiel
+ *   awayGoals   Auswärtstorregel bei Gleichstand (auch in der Verlängerung)
+ *   extraTime   Verlängerung bei Gleichstand (Standard true)
+ *   shootout    Elfmeterschießen nach der Verlängerung (false = Wiederholungsspiel)
+ */
+export interface KoRule { prev?: [number, number]; awayGoals?: boolean; extraTime?: boolean; shootout?: boolean }
 
 const PERIOD_END = [0, 45, 90, 105, 120];
 
@@ -53,6 +64,7 @@ export class MatchSim {
   readonly year: number;
   readonly date?: string;
   readonly knockout: boolean;
+  readonly ko?: KoRule;
   readonly derby: boolean;
   readonly weather: Weather;
   readonly live: boolean;
@@ -82,7 +94,8 @@ export class MatchSim {
     this.date = opts.date;
     // Regeln gelten je Saison (Videobeweis ab 2017/18, fünf Wechsel ab 2020/21 …), nicht ab Januar.
     this.era = eraRules(opts.date ? seasonYearOf(opts.date) : opts.year);
-    this.knockout = !!opts.knockout;
+    this.knockout = !!opts.knockout || !!opts.ko;
+    this.ko = opts.ko;
     this.live = !!opts.live;
     this.derby = !!homeClub.city && homeClub.city === awayClub.city;
     this.weather = rollWeather(opts.date, this.rng);
@@ -224,7 +237,8 @@ export class MatchSim {
       return;
     }
     if (this.period === 2 || this.period === 4) {
-      if (this.knockout && h === a) {
+      const more = this.period === 2 ? this.ko?.extraTime !== false : this.ko?.shootout !== false;
+      if (this.knockout && more && this.koLevel()) {
         if (this.period === 2) {
           this.phase = 'et_break'; this.minute = 90;
           this.emit('fulltime', { detail: 'et' });
@@ -247,6 +261,29 @@ export class MatchSim {
     }
   }
 
+  /** Vorsprung aus Sicht einer Seite – im Rückspiel nach Gesamtstand (Auswärtstore ±0,4). */
+  effDiff(side: Side): number {
+    const [h, a] = this.score();
+    let d = h - a;
+    const r = this.ko;
+    if (r?.prev) {
+      d += r.prev[0] - r.prev[1];
+      if (d === 0 && r.awayGoals && r.prev[0] !== a) d = r.prev[0] > a ? 0.4 : -0.4;
+    }
+    return side === 'home' ? d : -d;
+  }
+
+  /** Steht die Begegnung (inkl. Hinspiel und Auswärtstoren) noch unentschieden? */
+  koLevel(): boolean {
+    const [h, a] = this.score();
+    const r = this.ko;
+    if (!r?.prev) return h === a;
+    const aggH = h + r.prev[0], aggA = a + r.prev[1];
+    if (aggH !== aggA) return false;
+    // Auswärtstore: dieses Heimteam traf im Hinspiel auswärts prev[0], das Gastteam heute a.
+    return !r.awayGoals || r.prev[0] === a;
+  }
+
   private playMinute(): void {
     const H = this.home, A = this.away;
     const nEvents = this.events.length;
@@ -257,8 +294,7 @@ export class MatchSim {
     for (const t of [H, A]) if (t.shout && this.minute === t.shoutUntil) { t.shout = null; t.dirty = true; }
 
     // --- Ballbesitz aus der Spielkontrolle ---
-    const [hg, ag] = this.score();
-    const lead = (t: TeamState) => (t.side === 'home' ? hg - ag : ag - hg);
+    const lead = (t: TeamState) => this.effDiff(t.side);
     const homeCtrl = 1 + (this.era.homeAdvantage - 1) * 0.35;
     const ctrl = (t: TeamState) => t.units.control * t.mods.ctrl * (t.side === 'home' ? homeCtrl : 1) * (1 - 0.025 * Math.max(-2, Math.min(2, lead(t))))
       * (this.weather === 'schnee' ? 0.97 : 1);
@@ -421,8 +457,7 @@ export class MatchSim {
   private aiManager(t: TeamState): void {
     const min = this.minute;
     if (this.stoppage || min % 3 !== 0 || min < 55) return;
-    const [h, a] = this.score();
-    const diff = t.side === 'home' ? h - a : a - h;
+    const diff = Math.round(this.effDiff(t.side));
     // Ausrichtung
     let want: Mentality = 0;
     if (this.period <= 2) {

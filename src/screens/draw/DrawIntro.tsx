@@ -6,7 +6,7 @@
 import Icon from '../../components/Icon';
 import type { CupState } from '../../types';
 import type { DrawRecord } from '../../types/draw';
-import { drawCompName } from '../../game/cupDraw';
+import { drawCompLabel, drawCompName } from '../../game/cupDraw';
 import { drawRulesFor } from '../../data/drawHistory';
 import { ruleSheet } from '../../data/drawRuleSheet';
 import { fmtDateFull } from '../../ui/format';
@@ -18,18 +18,18 @@ export function DrawIntro({ rec, cup, startYear, show, replay, onStart, onOvervi
   const roundNames = cup?.rounds.map((r) => r.name) ?? [rec.roundName];
   const items = ruleSheet({
     comp: rec.comp, roundIndex: rec.roundIndex, roundNames, startYear,
-    rules: drawRulesFor(rec.comp, rec.roundIndex, startYear), potCount: rec.pots.length,
+    rules: drawRulesFor(rec.comp, rec.roundIndex, startYear), potCount: rec.pots.length, legacy: !!cup && !cup.v2,
   });
   const teams = rec.pots.reduce((s, p) => s + p.ids.length, 0);
   return (
     <div className="dr-intro">
-      <div className="dr-intro-kicker">{drawCompName(rec.comp)} {cup?.season ?? ''}</div>
+      <div className="dr-intro-kicker">{cup ? drawCompLabel(rec.comp, cup) : drawCompName(rec.comp)} {cup?.season ?? ''}</div>
       <div className="dr-intro-title">Auslosung</div>
       <div className="dr-intro-round">{rec.roundName}</div>
       <div className="dr-intro-facts">
         <span>Ziehung {fmtDateFull(rec.date)}</span>
         <span>{rec.venue} · {show}</span>
-        <span>{teams} Vereine · {rec.pairs.length} Paarungen · gespielt am {fmtDateFull(rec.matchDate)}</span>
+        <span>{teams} Vereine · {rec.opponents ? 'Ligaphase' : rec.groups?.length ? `${rec.groups.length} Gruppen` : `${rec.pairs.length} Paarungen`} · {rec.groups?.length ? 'erster Spieltag' : 'gespielt am'} {fmtDateFull(rec.matchDate)}</span>
       </div>
       <div className="dr-rulebox">
         <div className="dr-rulebox-head">Regeln dieser Runde</div>

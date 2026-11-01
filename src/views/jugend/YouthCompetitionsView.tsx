@@ -7,7 +7,7 @@
 // Daten: game/youthComps/view.ts; Bausteine aus views/statistiken/competition/.
 // =============================================================================
 import { useEffect, useMemo, useState } from 'react';
-import { GroupTables } from '../../components/competition/GroupTables';
+import { GroupTables, type GroupZone } from '../../components/competition/GroupTables';
 import { seasonStartYear } from '../../data/timeline';
 import { clubView } from '../../game/clubProfile';
 import { compClubName } from '../../game/competitionView';
@@ -40,9 +40,11 @@ function GroupsView({ g, snap }: { g: Game; snap: YcSnapshot }) {
     return { name: compClubName(g, id, snap.season), short: v.shortName, crest: v as never };
   };
   const adv = snap.advance ?? { n: 1, label: 'nächste Runde' };
+  const zones: GroupZone[] = [{ from: 1, to: adv.n, label: adv.label, kind: 'adv' }];
+  if (adv.transfer) zones.push({ from: adv.n + 1, to: adv.n + adv.transfer.count, label: adv.transfer.label, kind: 'po' });
   return (
     <div className="cmp-scroll yc-groups">
-      <GroupTables groups={snap.groups ?? []} club={club} advance={adv.n} advanceLabel={adv.label} transfer={adv.transfer} highlightId={g.managedClubId} />
+      <GroupTables groups={snap.groups ?? []} club={club} zones={zones} highlightId={g.managedClubId} />
     </div>
   );
 }

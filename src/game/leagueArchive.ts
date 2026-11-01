@@ -13,14 +13,31 @@
 import { compStatsOf, clearCompStats, type CompTuple } from '../engine/compStats';
 import type { LeagueGroup } from '../engine/leagues';
 import { isForeignId } from '../engine/world';
-import type { CupState } from '../types';
+import type { CupState, CupTie } from '../types';
+import type { CupGroup } from '../types/euro2';
 import type { Game } from './state';
 
 export type ArchRow = [id: string, w: number, d: number, l: number, gf: number, ga: number, pts: number, deduction?: number];
 export interface ArchDivision { id: string; name: string; tier: number; group: LeagueGroup; rows: ArchRow[] }
 /** [Heim, Gast, Tore H, Tore G, Entscheidung 0 regulär/1 n. V./2 i. E., Sieger, Elfer H, Elfer G] */
 export type ArchTie = [string, string, number, number, number, string, number?, number?];
-export interface ArchCup { rounds: { n: string; t: ArchTie[] }[]; winner: string | null }
+/**
+ * Hin-/Rückspiel bzw. Wiederholung, Sicht der Begegnung: [Tore H, Tore G im 1. Spiel,
+ * 0 / 1 = Auswärtstore / 2 = Wiederholung]. Das 2. Spiel ergibt sich aus dem Gesamtstand
+ * (bei der Wiederholung steht das Ergebnis der Wiederholung in der Begegnung selbst).
+ */
+export type ArchLegs = [number, number, number];
+/** Gruppenzeile: [Verein, Sp, S, U, N, Tore, Gegentore, Punkte] */
+export type ArchGroupRow = [string, number, number, number, number, number, number, number];
+export interface ArchRound {
+  n: string; t: ArchTie[];
+  /** Europapokal 2.0: Spiele je Begegnung (Index wie `t`). */
+  l?: (ArchLegs | null)[];
+  /** Gruppen/Ligaphase: 'g' bzw. 'l', Tabellen in Abschluss-Reihenfolge. */
+  k?: 'g' | 'l';
+  g?: { n: string; r: ArchGroupRow[] }[];
+}
+export interface ArchCup { rounds: ArchRound[]; winner: string | null }
 export type CupKey = 'cup' | 'ec' | 'cwc' | 'uefa';
 export type StatCat = 'goals' | 'assists' | 'scorer' | 'yellow' | 'red' | 'clean';
 export const STAT_CATS: StatCat[] = ['goals', 'assists', 'scorer', 'yellow', 'red', 'clean'];
@@ -100,6 +117,11 @@ export function liveEntries(g: Game, code: 'L' | 'P' | 'E', clubFilter?: (clubId
   return out;
 }
 
+/** Europapokal 2.0: Statistik am Wettbewerb (alle Spiele). */
+export function xEntries(cup: CupState): StatEntry[] {
+  return Object.entries(cup.xstats ?? {}).map(([pid, t]) => ({ pid, t }));
+}
+
 export function euroClubSet(cup: CupState | null | undefined): Set<string> {
   return new Set(cup?.participantIds ?? []);
 }
@@ -107,19 +129,52 @@ export function euroClubSet(cup: CupState | null | undefined): Set<string> {
 // -----------------------------------------------------------------------------
 // Saisonende archivieren
 // -----------------------------------------------------------------------------
+/** Spiele einer Begegnung kompakt (Sicht der Begegnung: Heim = zuerst gezogener Verein). */
+export function packLegs(t: CupTie): ArchLegs | null {
+  const l = t.legs;
+  if (!l || l.length < 2 || !l[1].played) return null;
+  return [l[0].homeGoals ?? 0, l[0].awayGoals ?? 0, t.id.startsWith('cup_') ? 2 : t.awayGoalsWin ? 1 : 0];
+}
+
+/** Gruppentabelle (Abschluss-Reihenfolge, sonst Punkte/Tordifferenz) als Zeilen. */
+export function groupRows(gr: CupGroup, winPts: number): ArchGroupRow[] {
+  const rows = new Map<string, ArchGroupRow>(gr.ids.map((id) => [id, [id, 0, 0, 0, 0, 0, 0, 0]]));
+  for (const m of gr.matches) {
+    if (m.hg == null || m.ag == null) continue;
+    const h = rows.get(m.home)!, a = rows.get(m.away)!;
+    h[1]++; a[1]++; h[5] += m.hg; h[6] += m.ag; a[5] += m.ag; a[6] += m.hg;
+    if (m.hg > m.ag) { h[2]++; a[4]++; h[7] += winPts; } else if (m.hg < m.ag) { a[2]++; h[4]++; a[7] += winPts; } else { h[3]++; a[3]++; h[7]++; a[7]++; }
+  }
+  const order = gr.final ?? [...rows.keys()].sort((x, y) => {
+    const a = rows.get(x)!, b = rows.get(y)!;
+    return b[7] - a[7] || (b[5] - b[6]) - (a[5] - a[6]) || b[5] - a[5];
+  });
+  return order.map((id) => rows.get(id)!);
+}
+
 function packCup(cup: CupState | null | undefined): ArchCup | undefined {
   if (!cup) return undefined;
+  const winPts = Number(cup.season.slice(0, 4)) >= 1995 ? 3 : 2;
   return {
     winner: cup.winnerClubId ?? null,
-    rounds: cup.rounds.filter((r) => r.drawn).map((r) => ({
-      n: r.name,
-      t: r.ties.filter((t) => t.played).map((t) => {
-        const dec = t.decision === 'penalties' ? 2 : t.decision === 'aet' ? 1 : 0;
-        const tie: ArchTie = [t.homeClubId, t.awayClubId, t.homeGoals ?? 0, t.awayGoals ?? 0, dec, t.winnerClubId ?? ''];
-        if (t.penalties) tie.push(t.penalties.home, t.penalties.away);
-        return tie;
-      }),
-    })),
+    rounds: cup.rounds.filter((r) => r.drawn).map((r) => {
+      const ties = r.ties.filter((t) => t.played);
+      const out: ArchRound = {
+        n: r.name,
+        t: ties.map((t) => {
+          const dec = t.decision === 'penalties' ? 2 : t.decision === 'aet' ? 1 : 0;
+          const tie: ArchTie = [t.homeClubId, t.awayClubId, t.homeGoals ?? 0, t.awayGoals ?? 0, dec, t.winnerClubId ?? ''];
+          if (t.penalties) tie.push(t.penalties.home, t.penalties.away);
+          return tie;
+        }),
+      };
+      if (ties.some((t) => t.legs && t.legs.length > 1)) out.l = ties.map(packLegs);
+      if (r.groups?.length) {
+        out.k = r.kind === 'league' ? 'l' : 'g';
+        out.g = r.groups.map((gr) => ({ n: gr.name, r: groupRows(gr, winPts) }));
+      }
+      return out;
+    }),
   };
 }
 
@@ -156,7 +211,10 @@ export function archiveSeasonEnd(g: Game, season: string): void {
     const packed = packCup(src[k]);
     if (!packed) continue;
     cups[k] = packed;
-    for (const r of packed.rounds) for (const t of r.t) { remember(t[0]); remember(t[1]); }
+    for (const r of packed.rounds) {
+      for (const t of r.t) { remember(t[0]); remember(t[1]); }
+      for (const gr of r.g ?? []) for (const row of gr.r) remember(row[0]);
+    }
   }
 
   // Bestenlisten
@@ -180,6 +238,18 @@ export function archiveSeasonEnd(g: Game, season: string): void {
   for (const k of ['ec', 'cwc', 'uefa'] as const) {
     const cup = src[k];
     if (!cup) continue;
+    if (cup.xstats) {
+      // Europapokal 2.0: alle Spiele des Wettbewerbs (auch Kurzkader ausländischer Vereine).
+      // Kurz halten (Spielstand-Größe): Karten und Weiße Weste nur die ersten drei.
+      const lists = topLists(xEntries(cup), TOP_CUP);
+      for (const cat of ['yellow', 'red', 'clean'] as StatCat[]) lists[cat] = lists[cat].slice(0, 3);
+      for (const cat of STAT_CATS) for (const [pid] of lists[cat]) {
+        const x = cup.xpeople?.[pid];
+        if (x && !people[pid]) { people[pid] = [x[0], x[1], x[2]]; remember(x[1]); }
+      }
+      keep(lists, k);
+      continue;
+    }
     const set = euroClubSet(cup);
     keep(topLists(liveEntries(g, 'E', (c) => set.has(c)), TOP_CUP), k);
   }

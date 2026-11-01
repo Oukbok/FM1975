@@ -17,6 +17,7 @@ import { LeagueTable } from './LeagueTable';
 import { StatsBox } from './StatsBox';
 import { EuropeBox } from '../EuropeBox';
 import { compClubName } from '../../../game/competitionView';
+import { inEuroCup } from '../../../game/euroFixture';
 
 export type CompStart = 'league' | 'cup' | 'euro';
 
@@ -24,7 +25,7 @@ function defaultKey(g: Game, opts: CompOption[], start: CompStart): string {
   if (start === 'league') return opts.find((o) => o.key === g.leagues.playerDivision.id)?.key ?? opts.find((o) => o.kind === 'league')?.key ?? opts[0]?.key ?? '';
   if (start === 'cup') return opts.find((o) => o.key === 'cup')?.key ?? opts[0]?.key ?? '';
   const mid = g.managedClubId;
-  const mineIn = (['ec', 'cwc', 'uefa'] as const).find((k) => g.euroCups?.[k]?.participantIds.includes(mid));
+  const mineIn = (['ec', 'cwc', 'uefa'] as const).find((k) => inEuroCup(g.euroCups?.[k], mid));
   return opts.find((o) => o.key === mineIn)?.key ?? opts.find((o) => o.section === 'Europa')?.key ?? opts[0]?.key ?? '';
 }
 
@@ -72,7 +73,7 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
             onReplayDraw={onReplayDraw && src === 'live' ? (ri) => onReplayDraw(effKey as 'cup' | EuroCompId, ri) : undefined} />}
       </DashBox>
       <StatsBox key={`st-${season}-${effKey}`} g={g} snap={snap} />
-      {snap && src === 'live' && ['ec', 'cwc', 'uefa'].includes(snap.key) && !snap.rounds?.some((r) => r.ties.some((t) => t.mine))
+      {snap && src === 'live' && ['ec', 'cwc', 'uefa'].includes(snap.key) && !snap.rounds?.some((r) => r.ties.some((t) => t.mine) || r.groups?.some((gr) => gr.rows.some((x) => x.id === g.managedClubId)))
         ? <EuropeBox g={g} germans={(g.euroCups?.[snap.key as EuroCompId]?.participantIds ?? []).filter((id) => !g.euroClubs?.[id])} teamName={(id) => compClubName(g, id, season)} />
         : <InfoBox g={g} snap={snap} />}
     </DashPage>

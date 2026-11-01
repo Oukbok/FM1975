@@ -23,6 +23,8 @@ import { EURO_FIRST_SEASON_GERMAN } from '../data/europe';
 import { drawRound, simulateCupTie } from './cup';
 import { buildEuroClubFull } from '../data/generate';
 import { mulberry32, hashStr, simMatchGoals } from './leagues';
+import { germanRank, type WorldState } from './world';
+import { germanQualifiersV2 } from '../game/euroSetup';
 
 // -----------------------------------------------------------------------------
 // STRUKTURELLES SPIEL-INTERFACE
@@ -42,6 +44,8 @@ export interface EuroGameLike {
   calendar?: { seasonStartDate: string; currentDate: string };
   season?: string;
   injuriesEnabled?: boolean;
+  /** Europa im Hintergrund (Rang Deutschlands → Startplätze). */
+  world?: WorldState | null;
   /** Ligensystem: für die Qualifikation zählt immer die Tabelle der 1. Liga. */
   leagues?: { playerDivision: { tier: number }; otherDivisions: { tier: number; table: LeagueTable }[] };
 }
@@ -270,6 +274,11 @@ export function computeGermanEuroQualifiers(
     };
   }
 
+  // Europapokal 2.0: Startplätze je Saison nach Rang Deutschlands (data/euroFormats.ts).
+  if (g.season) {
+    const y = Number(g.season.slice(0, 4)) + 1;
+    return germanQualifiersV2(g, y, germanRank(g.world, y), false);
+  }
   // Maßgeblich ist die 1. Liga – auch wenn der eigene Verein gerade tiefer spielt.
   const top = g.leagues && g.leagues.playerDivision.tier !== 1
     ? g.leagues.otherDivisions.find((d) => d.tier === 1)?.table

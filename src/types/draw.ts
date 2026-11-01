@@ -21,6 +21,8 @@ export interface DrawBall {
   pair: number;
   /** Länderschutz: Kugel passte nicht und wurde für die nächste Paarung zurückgelegt. */
   rejected?: boolean;
+  /** Gruppenauslosung: Index der Gruppe, in die die Kugel kommt. */
+  group?: number;
 }
 
 /** Eine Paarung nach Anwendung aller Regeln (Index = Begegnungs-Index der Runde). */
@@ -47,4 +49,8 @@ export interface DrawRecord {
   pairs: DrawPair[];
   /** Geltende Regeln als kurze Sätze (Anzeige zu Beginn der Show). */
   rules: string[];
+  /** Gruppenauslosung: Ergebnis je Gruppe (Ligaphase: eine „Gruppe“ mit allen Teams). */
+  groups?: { name: string; ids: string[] }[];
+  /** Ligaphase: Gegner je Verein (Heimspiele zuerst). */
+  opponents?: Record<string, { home: string[]; away: string[] }>;
 }
