@@ -40,6 +40,7 @@ import { migrateWinter } from './game/winterShared';
 import { migrateGrounds } from './game/groundsGame';
 import { migrateSeating } from './game/seatingGame';
 import { migrateYouthInvest } from './game/youthInvest';
+import { migrateSponsorship } from './game/sponsorGame';
 import { migrateBriefing } from './game/seasonBriefing';
 import { migratePersonas } from './game/playerWishesGame';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -328,6 +329,8 @@ export default function App() {
     try { migrateSeating(s.game); } catch (err) { console.error('Platzkategorien-Nachrüstung fehlgeschlagen:', err); }
     // Nachwuchs-Investitionen (v11): Bausteine aus der alten Akademie-Stufe ableiten.
     try { migrateYouthInvest(s.game); } catch (err) { console.error('Nachwuchs-Nachrüstung fehlgeschlagen:', err); }
+    // Sponsoring 2.0: Trikot-/Bandenvertrag übernehmen, Werbeflächen der Epoche (game/sponsorGame.ts).
+    try { migrateSponsorship(s.game); } catch (err) { console.error('Sponsoring-Nachrüstung fehlgeschlagen:', err); }
     // Saison-Briefing: Archiv ab der aktuellen Saison, beim Laden kein automatisches Popup.
     try { migrateBriefing(s.game); } catch (err) { console.error('Briefing-Nachrüstung fehlgeschlagen:', err); }
     // Transfer 2.0: Spielerpersönlichkeit (Wünsche, Gehaltsforderung) nachrüsten.

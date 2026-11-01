@@ -314,7 +314,12 @@ const CLUB_DEFS: { type: string; from: number; to: number; spawn: (ctx: EventCon
       subject: 'Trikotsponsor meldet Insolvenz an',
       shortText: 'Der Vertrag endet sofort.',
       bodyText: 'Unser Trikotsponsor ist insolvent. Der Vertrag endet mit sofortiger Wirkung – zur neuen Saison gibt es wieder Angebote.',
-      apply: () => { if (c.club.commerce) c.club.commerce.shirtSponsor = undefined; },
+      apply: () => {
+        const k = c.club.commerce;
+        if (!k) return;
+        k.shirtSponsor = undefined;
+        if (k.deals) k.deals = k.deals.filter((d) => d.slot !== 'brust'); // Sponsoring 2.0: Brustvertrag endet
+      },
     }),
   },
 ];

@@ -1,5 +1,8 @@
 import { MARKETING_AREAS, MARKETING_BY_ID, areaBenefit, areaMonthlyCostBase, marketingAvailable, marketingIncomeBase, marketingMonthlyBase } from '../../data/marketing';
 import { economyScale, yearOf } from '../../engine/economy';
+import { LED_YEAR } from '../../data/sponsorCatalog';
+import { computeMonthly } from '../../engine/finances';
+import { bandenFactor, tvEraText, tvPresence } from '../../engine/sponsorship';
 import { CATERING_LEASE, CATERING_NETPERHEAD, CATERING_UPKEEP, cateringMatchIncome, expectedAttendance, matchdayIncome, clubPriceScale } from '../../engine/finances';
 import { MAX_LEVEL } from '../../engine/infrastructure';
 import { Game } from '../../game/state';
@@ -44,8 +47,11 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
     com.cateringMode = m;
     onChange();
   };
-  // Mitgliedsbeitraege (mirror finances.computeMonthly).
-  const membershipMonth = Math.round((Math.round((30000 + club.reputation * 1000) * scale)) / 12);
+  // Mitgliedsbeiträge und Werbeflächen wie im Monatsabschluss (engine/finances.ts computeMonthly).
+  const monthly = computeMonthly(club, g.players, g.table, scale, curYear);
+  const membershipMonth = monthly.membership;
+  const bandenDeal = club.commerce?.deals?.find((d) => d.slot === 'banden');
+  const presence = tvPresence(club, curYear);
   // Erwartete Zuschauer & abgeleitete Spieltagserloese.
   const expAtt = expectedAttendance(club, undefined, curYear);
   const expCatering = cateringMatchIncome(club, expAtt, mdScale);
@@ -56,7 +62,7 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
 
   return (
     <DashPage>
-      <DashBox title="Werbekanäle" icon="marketing" span={2} right={`${areas.length} verfügbar`}>
+      <DashBox title="Werbekanäle" icon="marketing" span={2} rows={future.length ? 1 : 2} right={`${areas.length} verfügbar`}>
         {areas.map((a) => {
           const avail = marketingAvailable(a, curYear);
           const units = budgets[a.id] ?? 0;
@@ -80,14 +86,14 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
         <div className="dnote mt8">Kosten steigen linear mit der Stufe, der Nutzen flacht ab. Marketing bringt kleine Zusatzerträge und etwas Ansehen – sportlicher Erfolg bleibt der Haupttreiber.</div>
       </DashBox>
 
-      <DashBox title="Kommende Werbekanäle" icon="kalender" span={2} right={`${future.length} weitere`}>
+      {future.length > 0 && <DashBox title="Kommende Werbekanäle" icon="kalender" span={2} right={`${future.length} weitere`}>
         {future.length ? future.map((a) => (
           <div key={a.id} className="dlist-row">
             <span className="dchip" style={{ minWidth: 70, textAlign: 'center' }}>ab {a.unlockYear}</span>
             <span className="grow"><b>{a.name}</b><span className="dnote" style={{ display: 'block' }}>{a.desc}</span></span>
           </div>
-        )) : <div className="dnote">Alle Werbekanäle sind freigeschaltet.</div>}
-      </DashBox>
+        )) : null}
+      </DashBox>}
 
       <DashBox title="Werbebilanz (Monat)" icon="finances">
         <div className="dkpis">
@@ -97,7 +103,13 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
         <KV k="Merchandising" v={`+${fmtDM(incMerch)}`} color="var(--green)" />
         <KV k="Sponsoring-Zuschlag" v={`+${fmtDM(incSponsor)}`} color="var(--green)" />
         <KV k="Mitgliedsbeiträge" v={`+${fmtDM(membershipMonth)}`} color="var(--green)" />
-        <div className="dnote mt8">Mitgliedsbeiträge wachsen mit dem Ansehen ({club.reputation}).</div>
+        <div className="dnote mt8">Mitgliedsbeiträge wachsen mit dem Ansehen ({Math.round(club.reputation)}).</div>
+        <div className="dsec">Werbeflächen im Stadion</div>
+        <KV k="Bandenpartner" v={bandenDeal ? `${bandenDeal.partner} · ${fmtDM(monthly.advertising * 12)}/Jahr` : 'frei – siehe Sponsoring'} />
+        <KV k="Banden" v={curYear >= LED_YEAR ? 'LED, wechselnde Motive' : 'statisch'} />
+        <KV k="Wert (Zuschauer × TV)" v={`${Math.round(bandenFactor(club, curYear) * 100)} %`} />
+        <KV k="TV-Präsenz" v={`${Math.round(presence * 100)} %`} />
+        <div className="dnote">{tvEraText(curYear)}.</div>
       </DashBox>
 
       <DashBox title="Catering & Spieltag" icon="catering" right={`Stufe ${cateringLevel}`}>

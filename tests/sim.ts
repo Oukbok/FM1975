@@ -93,7 +93,19 @@ function report(game: Game) {
       const sh = (f: (h: typeof hs[number]) => number) => med(hs.map((h) => f(h) / h.revenue)).toFixed(2);
       console.log(`   FLUSS Ergebnis ${sh((h) => h.result)} | Gehalt+Stab ${sh((h) => h.expenses.wages + h.expenses.staffWages)} | Gelände ${sh((h) => (h.expenses.facilities ?? 0) + h.expenses.trainingFacilities)} | Stadion ${sh((h) => h.expenses.stadiumMaintenance)} | Sonst ${sh((h) => h.expenses.other)} | Transfer netto ${sh((h) => h.income.transferIncome - h.expenses.transferExpense)}`);
       const mk = (f: (h: typeof hs[number]) => number) => (med(hs.map(f)) / 1e3).toFixed(0) + 'k';
-      console.log(`   MIX (Median, nominal) Eintritt ${mk((h) => h.income.ticketSales)} TV ${mk((h) => h.income.tvMoney)} Trikot ${mk((h) => h.income.sponsorship)} Bande ${mk((h) => h.income.advertising)} Fanart. ${mk((h) => h.income.merchandise)} Catering ${mk((h) => h.income.catering)} Programm ${mk((h) => h.income.matchday)} Prämien ${mk((h) => h.income.prizeMoney)} Vermarkt. ${mk((h) => h.income.commercial ?? 0)} Mitgl. ${mk((h) => h.income.membership)}`);
+      console.log(`   MIX (Median, nominal) Eintritt ${mk((h) => h.income.ticketSales)} TV ${mk((h) => h.income.tvMoney)} Spons ${mk((h) => h.income.sponsorship)} Werb ${mk((h) => h.income.advertising)} Fanart. ${mk((h) => h.income.merchandise)} Catering ${mk((h) => h.income.catering)} Programm ${mk((h) => h.income.matchday)} Prämien ${mk((h) => h.income.prizeMoney)} Vermarkt. ${mk((h) => h.income.commercial ?? 0)} Mitgl. ${mk((h) => h.income.membership)}`);
+    }
+    {
+      // Spitze der Liga (Vorsaison, nominal; ab 2002 in €): Umsatz und Mix der drei umsatzstärksten Vereine.
+      const y0 = Number(game.season.slice(0, 4));
+      const cur = y0 - 1 > 2001 ? 1.95583 : 1;
+      const M = (v: number) => (v / cur / 1e6).toFixed(1);
+      const tops = lc.map((c) => ({ c, h: c.finances.seasonHistory?.[c.finances.seasonHistory.length - 1] })).filter((x) => x.h && x.h.revenue > 0)
+        .sort((a, b) => b.h!.revenue - a.h!.revenue).slice(0, 3);
+      for (const { c, h } of tops) {
+        const i = h!.income, e = h!.expenses as any, b = c.brand;
+        console.log(`   TOP ${c.shortName.padEnd(4)} Umsatz ${M(h!.revenue)} (${cur > 1 ? '€' : 'DM'}) | TV ${M(i.tvMoney)} Spons ${M(i.sponsorship + i.advertising)} Verm ${M(i.commercial ?? 0)} Fanart ${M(i.merchandise)} Präm ${M(i.prizeMoney)} Tick ${M(i.ticketSales)} | Pers ${(h!.wageRatio * 100).toFixed(0)} % Betr ${M(e.operations ?? 0)} Gel ${M((e.facilities ?? 0) + e.trainingFacilities)} Trf ${M(i.transferIncome - e.transferExpense)} | Marke ${Math.round(b?.regional ?? 0)}/${Math.round(b?.national ?? 0)}/${Math.round(b?.international ?? 0)} Ruf ${c.reputation} Deals ${(c.commerce as any)?.deals?.length ?? '-'}`);
+      }
     }
     const ded = lc.filter((c) => c.pointDeduction && c.pointDeduction.season === game.season).map((c) => `${c.shortName} −${c.pointDeduction!.points}${c.finances.ffp?.forcedRelegation === game.season ? ' Zwangsabstieg' : ''}`);
     if (ded.length) console.log(`   Punktabzug: ${ded.join(', ')}`);
@@ -397,6 +409,14 @@ if (process.env.DUMP) {
   const { compressToUTF16 } = await import('lz-string');
   const { writeFileSync } = await import('node:fs');
   const my = g.clubs[g.managedClubId];
+  if (process.env.HUMAN) {
+    // Für Screenshots: eigenen Verein wieder als Spieler führen, einige Werbeflächen frei mit Angeboten.
+    delete (g as any).simAutoManage;
+    const { offerFreeSlots } = await import('../src/game/sponsorGame');
+    const ds = my.commerce?.deals ?? [];
+    my.commerce!.deals = ds.filter((d, i) => d.slot === 'brust' || d.slot === 'banden' || i % 3 !== 1);
+    offerFreeSlots(g);
+  }
   const meta = { slot: 'sim', name: 'Simulation', managerName: 'Sim', clubName: my.name, clubId: my.id, season: g.season, gameDate: g.calendar.currentDate, savedAt: new Date().toISOString(), version: 9 };
   writeFileSync(process.env.DUMP, 'LZ1:' + compressToUTF16(JSON.stringify({ meta, game: g })));
   console.log('Spielstand geschrieben:', process.env.DUMP);

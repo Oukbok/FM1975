@@ -41,8 +41,8 @@ export const MARKETING_EPOCHS = [1975, 1984, 1993, 2000, 2010, 2020];
 
 export const MARKETING_AREAS: MarketingArea[] = [
   // ===== 1975 — einfache Anfänge =====
-  { id: 'stadionwerbung', name: 'Stadionwerbung', unlockYear: 1975, icon: '🏟️',
-    desc: 'Bandenwerbung und Anzeigen im Stadion – die klassische Einnahmequelle.',
+  { id: 'stadionwerbung', name: 'Stadionaktionen', unlockYear: 1975, icon: '🏟️',
+    desc: 'Eigene Werbung im Stadion: Stadionzeitung, Anzeigetafel, Aktionstage – bindet die Zuschauer (die Banden vermarktet das Sponsoring).',
     maxUnits: 5, costPerUnit: 1200, maxBenefit: 20, k: 0.9 },
   { id: 'lokalpresse', name: 'Lokale Presse & Plakate', unlockYear: 1975, icon: '📰',
     desc: 'Anzeigen in der Lokalzeitung und Plakate in der Stadt.',

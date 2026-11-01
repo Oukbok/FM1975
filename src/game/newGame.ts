@@ -33,6 +33,7 @@ import { seasonExpectation } from '../engine/environment';
 import { buildDdrDivisions, buildLeagueSystem, buildSecondLigaSimClubs, historicPointSystem } from './leagueSetup';
 import { applyTimelineEffect, fireTimelineForSeason } from './season';
 import { Game, hashSeed, migrateCommerce } from './state';
+import { initSponsorship } from './sponsorGame';
 import { InboxMessage, NewGameOptions, YOUTH_ENTRY_AGE } from '../types';
 import { setDisplayYear } from '../ui/format';
 import { seedStartLegends } from './legendsGame';
@@ -201,6 +202,8 @@ export function createNewGame(opts: NewGameOptions): Game {
   // Trainer der KI-Vereine (game/coachCarousel.ts).
   ensureCoaches(g0, calendar.currentDate);
   migrateYouthInvest(g0);
+  // Sponsoring 2.0: Werbeflächen 1975 (Brust, Ausrüster, Banden, Regionalpartner) – KI unterschreibt, du bekommst Angebote.
+  initSponsorship(g0);
   // Saison-Briefing „So anders ist der Fußball 1975/76“ (game/seasonBriefing.ts).
   recordSeasonBriefing(g0, true);
   return g0;

@@ -209,7 +209,11 @@ function planAiCamps(g: Game, s: CampSeason, w: { from: string; to: string }, to
     if (!pick) continue;
     const start = CalendarEngine.addDays(from, Math.floor(rng() * (span + 1)));
     const end = CalendarEngine.addDays(start, len - 1);
-    const cost = Math.round(campCostBase(pick.d, pick.l, len, c.reputation, pick.focus) * scale);
+    // Unterklassige Vereine reisen deutlich günstiger (Bus, Sportschule, kürzer) – sonst
+    // fräße das Lager in Liga 3/4 bis zu 10 % des Umsatzes.
+    const tier = c.finances.leagueTier ?? 1;
+    const tierF = tier <= 1 ? 1 : tier === 2 ? 0.6 : tier === 3 ? 0.3 : 0.18;
+    const cost = Math.round(campCostBase(pick.d, pick.l, len, c.reputation, pick.focus) * scale * tierF);
     book(c.finances, today, -cost, 'training_facilities', `Trainingslager ${pick.d.name}`, false);
     st.ai.push({ clubId: c.id, destId: pick.d.id, lodgingId: pick.l.id, focus: pick.focus, season: s, start, end, applied: false });
   }

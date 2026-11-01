@@ -55,6 +55,7 @@ import { indoorDaily } from './indoorGame';
 import { campDaily } from './trainingCampGame';
 import { groundsDaily } from './groundsGame';
 import { DrawNotice, cupDrawsDaily, ensureDrawn, hasScheduledDraw } from './cupDraw';
+import { monthlySponsoring } from './sponsorGame';
 import { PlayerDevReveal } from '../types';
 import { fmtDM, fmtDMfull, fmtDateFull, setDisplayYear } from '../ui/format';
 import { RatingResult as _RatingResult } from '../engine/development';
@@ -531,6 +532,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
     monthlyYouthInvest(g, today);
     // Kreditraten, Stadion-Bauprojekte, Namensrechte (game/clubBusiness.ts).
     monthlyClubBusiness(g, today);
+    // Sponsoring 2.0: Verlängerungen, neue Interessenten, Pflichtreisen, Image (game/sponsorGame.ts).
+    monthlySponsoring(g, today);
     for (const club of Object.values(g.clubs)) {
       if (club.finances.lastMonthlyBooking === curMonth) continue;
       const isMine = club.id === g.managedClubId;
@@ -543,8 +546,9 @@ export function processDay(g: Game, ui: DayUi): boolean {
           subject: `Monatsabschluss – Kontostand ${fmtDM(club.finances.balance)}`,
           shortText: `${net >= 0 ? 'Überschuss' : 'Fehlbetrag'}: ${fmtDM(Math.abs(net))} im Monat.`,
           bodyText: `Der Monatsabschluss wurde gebucht.\n\n`
-            + `Trikotsponsoring: +${fmtDM(m.sponsorship)}\n`
-            + `Bandenwerbung: +${fmtDM(m.advertising)}\n`
+            + `Sponsoring: +${fmtDM(m.sponsorship)}\n`
+            + `Werbung (Banden, Wettpartner): +${fmtDM(m.advertising)}\n`
+            + (m.merchGlobal > 0 ? `Fanartikel weltweit: +${fmtDM(m.merchGlobal)}\n` : '')
             + (m.tv > 0 ? `TV-Gelder: +${fmtDM(m.tv)}\n` : '')
             + `Mitgliedsbeitraege: +${fmtDM(m.membership)}\n`
             + (m.cateringLease > 0 ? `Catering-Pacht: +${fmtDM(m.cateringLease)}\n` : '')
@@ -553,7 +557,9 @@ export function processDay(g: Game, ui: DayUi): boolean {
             + `Betreuerstab: -${fmtDM(m.staffWages)}\n`
             + `Stadionunterhalt: -${fmtDM(m.stadiumMaintenance)}\n`
             + `Gebäude-Fixkosten: -${fmtDM(m.facilities)}\n`
-            + `Sonstige Kosten: -${fmtDM(m.otherFixed)}\n\n`
+            + `Sonstige Kosten: -${fmtDM(m.otherFixed)}\n`
+            + (m.operations > 0 ? `Betrieb & Vermarktung: -${fmtDM(m.operations)}\n` : '')
+            + `\n`
             + `Monatssaldo: ${net >= 0 ? '+' : '-'}${fmtDM(Math.abs(net))}\n`
             + `Neuer Kontostand: ${fmtDM(club.finances.balance)}\n\n`
             + `Details findest du im Bereich Finanzen.`,

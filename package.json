@@ -24,7 +24,8 @@
     "test:finance": "node scripts/run-ts.mjs tests/finance-test.ts",
     "test:briefing": "node scripts/run-ts.mjs tests/briefing-test.ts",
     "test:seats": "node scripts/run-ts.mjs tests/seats-test.ts",
-    "test:draw": "node scripts/run-ts.mjs tests/draw-test.ts"
+    "test:draw": "node scripts/run-ts.mjs tests/draw-test.ts",
+    "test:sponsor": "node scripts/run-ts.mjs tests/sponsor-test.ts"
   },
   "dependencies": {
     "lz-string": "1.5.0",

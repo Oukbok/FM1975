@@ -32,6 +32,7 @@ import {
 import { facilityUpkeep } from './infrastructure';
 import { attendanceDemand, clubTier, economyScale, fairTicketPrice, matchdayPriceScale, revenueScale, tierScale, yearOf } from './economy';
 import { commercialMultiplier } from './clubEconomy';
+import { merchGlobalAnnual, operationsMonthly, sponsorMonthly } from './sponsorship';
 // ANSCHLUSS Stadionumfeld (engine/grounds.ts): Parken, Ordnungsdienst, Hospitality, Anreise-Chaos je Heimspiel.
 import { bookGroundsMatchday } from './grounds';
 
@@ -98,6 +99,7 @@ const EXPENSE_BUCKET: Partial<Record<FinanceCategory, keyof ClubFinances['expens
   training_facilities: 'trainingFacilities',
   staff_wages: 'staffWages',
   facilities: 'facilities',
+  operations: 'operations',
   other: 'other',
 };
 
@@ -258,10 +260,10 @@ export function book(
   fin.balance += amount;
   if (amount >= 0) {
     const k = INCOME_BUCKET[category];
-    if (k) fin.income[k] += amount;
+    if (k) fin.income[k] = (fin.income[k] ?? 0) + amount;
   } else {
     const k = EXPENSE_BUCKET[category];
-    if (k) fin.expenses[k] += -amount;
+    if (k) fin.expenses[k] = (fin.expenses[k] ?? 0) + -amount;
   }
   if (trackDetail) {
     const tx: FinanceTransaction = { id: txId(), date, amount, category, description };
@@ -433,6 +435,10 @@ export interface MonthlyBooking {
   tv: number;
   /** Vermarktung & Hospitality (Monatsrate). */
   commercial: number;
+  /** Fanartikel weltweit: Lizenzen, Versand, Kollektionen (Monatsrate, engine/sponsorship.ts). */
+  merchGlobal: number;
+  /** Betrieb & Vermarktung: Wareneinsatz, Sponsoren-Betreuung, Verwaltung (Monat). */
+  operations: number;
   placementBonus: number;
   net: number;
 }
@@ -473,14 +479,17 @@ export function computeMonthly(
   // (Recherche: Reisen 80–200 Tsd., Sonstiges 100–400 Tsd.; Unterklassige deutlich weniger).
   const otherFixed = Math.round((2500 + club.reputation * 200) * opScale);
 
-  // Trikotsponsoring (nur aus aktivem Vertrag).
-  const sponsorship = club.commerce?.shirtSponsor
+  // Sponsoring 2.0 (engine/sponsorship.ts): alle Verträge der Werbeflächen, 1975-Basis × Skala.
+  // Alte Spielstände vor der Migration: Trikot- und Bandenvertrag wie bisher.
+  const sp = club.commerce?.sponsorV && year != null ? sponsorMonthly(club, year) : null;
+  const sponsorship = sp ? sp.sponsorship : club.commerce?.shirtSponsor
     ? Math.round((club.commerce.shirtSponsor.annualValue / 12) * commScale) : 0;
-  // Bandenwerbung (nur aus aktivem Vertrag).
-  const advertising = club.commerce?.banden
+  const advertising = sp ? sp.advertising : club.commerce?.banden
     ? Math.round((club.commerce.banden.annualValue / 12) * commScale) : 0;
   const tv = Math.round((club.finances.tvAnnual ?? 0) / 12);
   const commercial = Math.round((club.finances.commercialAnnual ?? 0) / 12);
+  const merchGlobal = year != null ? Math.round(merchGlobalAnnual(club, year, tier) / 12) : 0;
+  const operations = year != null ? operationsMonthly(club, year, sponsorship + advertising, commercial, merchGlobal) : 0;
   // Mitgliedsbeitraege.
   // Mitglieder (eigener Verein, Vereinsumfeld) × Jahresbeitrag 40 DM (1975-Basis); sonst Schätzung über den Ruf.
   const membershipYear = Math.round((club.members ? club.members * 40 : 30000 + club.reputation * 1000) * localScale);
@@ -501,9 +510,9 @@ export function computeMonthly(
     }
   }
   placementBonus = Math.round(placementBonus * tierScale(scale, tier, 'commercial'));
-  const net = sponsorship + advertising + membership + cateringLease + tv + commercial + placementBonus
-    - wages - staffWages - stadiumMaintenance - facilities - otherFixed;
-  return { wages, staffWages, stadiumMaintenance, facilities, otherFixed, sponsorship, advertising, membership, cateringLease, tv, commercial, placementBonus, net };
+  const net = sponsorship + advertising + membership + cateringLease + tv + commercial + merchGlobal + placementBonus
+    - wages - staffWages - stadiumMaintenance - facilities - otherFixed - operations;
+  return { wages, staffWages, stadiumMaintenance, facilities, otherFixed, sponsorship, advertising, membership, cateringLease, tv, commercial, merchGlobal, operations, placementBonus, net };
 }
 
 /** Bucht den Monatsabschluss (Gehälter, Fixkosten, Sponsoring, Platzierungsbonus). */
@@ -519,8 +528,9 @@ export function bookMonthly(
   const fin = club.finances;
   fin.currentWageBill = weeklyWageBill(club, players);
   // Einnahmen
-  if (m.sponsorship > 0) book(fin, date, m.sponsorship, 'sponsorship', 'Trikotsponsoring (Monatsrate)', trackDetail);
-  if (m.advertising > 0) book(fin, date, m.advertising, 'advertising', 'Bandenwerbung (Monatsrate)', trackDetail);
+  if (m.sponsorship > 0) book(fin, date, m.sponsorship, 'sponsorship', 'Sponsoring: Trikot, Ausrüster, Partner (Monatsrate)', trackDetail);
+  if (m.advertising > 0) book(fin, date, m.advertising, 'advertising', 'Werbung: Banden, Wettpartner (Monatsrate)', trackDetail);
+  if (m.merchGlobal > 0) book(fin, date, m.merchGlobal, 'merchandise', 'Fanartikel weltweit: Lizenzen, Versand (Monat)', trackDetail);
   if (m.membership > 0) book(fin, date, m.membership, 'membership', 'Mitgliedsbeitraege (Monat)', trackDetail);
   if (m.cateringLease > 0) book(fin, date, m.cateringLease, 'catering', 'Catering-Pacht (Monat)', trackDetail);
   if (m.tv > 0) book(fin, date, m.tv, 'tv_money', 'TV-Gelder (zentrale Vermarktung)', trackDetail);
@@ -532,6 +542,7 @@ export function bookMonthly(
   book(fin, date, -m.stadiumMaintenance, 'stadium_maintenance', 'Stadionunterhalt (Monat)', trackDetail);
   book(fin, date, -m.facilities, 'facilities', 'Gebaeude-Fixkosten (Monat)', trackDetail);
   book(fin, date, -m.otherFixed, 'other', 'Sonstige Betriebskosten (Monat)', trackDetail);
+  if (m.operations > 0) book(fin, date, -m.operations, 'operations', 'Betrieb & Vermarktung: Wareneinsatz, Sponsorenbetreuung, Verwaltung (Monat)', trackDetail);
 
   if (trackDetail) {
     if (!fin.balanceHistory) fin.balanceHistory = [];
@@ -571,7 +582,7 @@ export function totalIncome(fin: ClubFinances): number {
 export function totalExpense(fin: ClubFinances): number {
   const e = fin.expenses;
   return e.wages + e.transferExpense + e.stadiumMaintenance + e.trainingFacilities
-    + (e.facilities ?? 0) + e.staffWages + e.other;
+    + (e.facilities ?? 0) + (e.operations ?? 0) + e.staffWages + e.other;
 }
 
 /** Prognose bis Saisonende. */
@@ -623,10 +634,10 @@ export function forecastSeasonEnd(
   const projectedEndBalance = Math.round(club.finances.balance + projectedFixedNet + projectedHome);
 
   const projectedIncome = Math.round(
-    (m.sponsorship + m.advertising + m.membership + m.cateringLease + m.tv + m.commercial + m.placementBonus) * monthsRemaining + projectedHome,
+    (m.sponsorship + m.advertising + m.membership + m.cateringLease + m.tv + m.commercial + m.merchGlobal + m.placementBonus) * monthsRemaining + projectedHome,
   );
   const projectedExpense = Math.round(
-    (m.wages + m.staffWages + m.stadiumMaintenance + m.facilities + m.otherFixed) * monthsRemaining,
+    (m.wages + m.staffWages + m.stadiumMaintenance + m.facilities + m.otherFixed + m.operations) * monthsRemaining,
   );
 
   return { monthsRemaining, homeMatchesRemaining, projectedIncome, projectedExpense, projectedEndBalance };

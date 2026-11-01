@@ -1100,11 +1100,9 @@ Zentral vermarktet (siehe *Finanzen im Wandel der Epochen*): 1975 rund 230.000 D
 
 Alle Preise je Besucher (Eintritt, Catering, Programm, Logen) wachsen mit der **Preis-Skala** = Stadionumsatz-Skala ÷ Zuschauer-Nachfrage der Epoche.
 
-### Trikotsponsoring (monatlich, aus echtem Vertrag)
-Monatsrate = \`Jahreswert des Trikotvertrags ÷ 12\`. Der Vertrag wird im Bereich **Sponsoring** unterschrieben (2–3 Saison-Angebote, Laufzeit 1–5 Jahre). Ohne Vertrag: keine Einnahme.
+### Sponsoring & Werbung (monatlich, aus echten Verträgen)
+Monatsrate = Summe aller Verträge der Partner-Pyramide ÷ 12 (Brust, Ausrüster, Ärmel, Premium-/Co-/Regionalpartner …; Banden und Wettpartner als „Werbung“). Details: Artikel **Sponsoring & Werbung**.
 
-### Bandenwerbung (monatlich, aus echtem Vertrag)
-Monatsrate = \`Jahreswert des Bandenvertrags ÷ 12\`. Grundwert je Verein: \`80.000 + Kapazität/1000 × 1.500 + Reputation × 800\` DM/Jahr (gedeckelt 100.000–300.000). Laufzeit 1–3 Jahre.
 
 ### Mitgliedsbeiträge (monatlich)
 Jahreswert = \`30.000 + Reputation × 1.000\` DM, monatlich gebucht (\`÷ 12\`). Wächst mit dem Ansehen des Vereins.
@@ -1149,6 +1147,9 @@ Jede **gebaute Einrichtung** verursacht monatliche Fixkosten (ersetzt den alten 
 
 ### Catering-Fixkosten & -Pacht (monatlich)
 Fixkosten je Betriebsform/Stufe; bei **Verpachtung** zusätzlich eine feste Monatspacht als Einnahme (siehe *Catering & Betriebsformen*).
+
+### Betrieb & Vermarktung (monatlich)
+Wareneinsatz der Fanartikel (35 % des Fanartikel-Umsatzes der Vorsaison), Betreuung der Sponsoren (5 % der Sponsoring- und Vermarktungserlöse 1975, 12 % ab 2010) und Geschäftsstelle, Berater, Reisen (1975 nichts, 2020 5 % des Vorjahresumsatzes). Ein Weltverein mit großem Fanartikel- und Sponsorengeschäft hat davon deutlich mehr; KI-Vereine planen ihre Gehälter nach dem Umsatz abzüglich dieser Kosten.
 
 ### Sonstige Fixkosten
 \`2.500 + Reputation × 200\` DM/Monat (Reisen, Organisation, Verwaltung, Versicherungen; Ruf 75 ≈ 210.000 DM im Jahr).
@@ -1236,15 +1237,16 @@ Große Vereine mit hoher Auslastung profitieren stärker vom **Eigenbetrieb** (v
 
 ## TV-Gelder (zentrale Vermarktung)
 - Zu Saisonbeginn wird der TV-Topf der Liga verteilt und **monatlich** ausgezahlt. 1975 umfasst er 4,2 Mio. DM für die 1. Liga (ARD/ZDF zahlten 4,8 Mio. für die Bundesliga), heute über eine Milliarde Euro.
-- Die Verteilung richtet sich nach **Liga** (2. Liga ein Fünftel bis ein Viertel, darunter wenig) und dem **Tabellenplatz der Vorsaison**. Bis 1990 fast gleichmäßig (15 % leistungsabhängig), ab 2000 zu 35 % leistungsabhängig.
+- Die Größe des Topfs folgt den echten Rechteverträgen (1. Liga ≈ 80 %): 1984/85 rund 8 Mio. DM, 1988/89 (UFA, Privatfernsehen) 32, 1992/93 (SAT.1 „ran“) 116, 1997/98 204, 2000/01 (Kirch) rund 555 Mio. DM; 2006/07 ≈ 330 Mio. €, 2017/18 mit Auslandsrechten über 1,1 Mrd. €, 2024/25 ≈ 1,17 Mrd. €. Die Kirch-Pleite 2002/03 drückt den Topf vorübergehend.
+- Die Verteilung richtet sich nach **Liga** (2. Liga ein Fünftel bis ein Viertel, darunter wenig) und dem **Tabellenplatz der Vorsaison**. Bis 1990 fast gleichmäßig (15 % leistungsabhängig), ab 2000 zu 35 %, ab 2017/18 (vier Säulen) zu 50 % – der Meister bekommt dann gut das Doppelte des Letzten.
 
 ## Marke: regional, national, international
 - Jeder Verein hat eine **Marke** aus drei Werten (0–100). Sie wächst mit Tabellenplätzen, Titeln, Pokalsiegen und Europapokal-Erfolgen und kehrt langsam zu dem Niveau zurück, das der Ruf erwarten lässt.
 - Die **internationale Bekanntheit** zählt anfangs kaum, wird aber über die Jahrzehnte immer wichtiger (Globalisierung).
-- Die Marke multipliziert **Trikot- und Bandenwerbung** sowie **Fanartikel** (gedeckelt, abnehmender Grenznutzen) und bestimmt die **Vermarktung & Hospitality** – hier verdienen große Marken überproportional.
+- Die Marke bestimmt die **Reichweite** im Sponsoring (siehe **Sponsoring & Werbung**), multipliziert **Fanartikel** und die **Vermarktung** (Lizenzen). International bekannte Vereine verkaufen außerdem **Fanartikel weltweit** (Lizenzen, Versand): eine echte Weltmarke 2024 bis rund 130 Mio. € im Jahr.
 
 ## Europapokal
-- 1975 verdient ein Verein im Europapokal vor allem an den **Heimspielen** (volle Ränge); die Prämien sind klein. Prämien und **Startgelder** wachsen mit der Wirtschaft. Ab 1992 (Meisterliga mit Gruppenphase) steigen die Prämien im Landesmeister-Wettbewerb bis 2000 auf das Fünffache, in den anderen Wettbewerben auf das Doppelte. Europäischer Erfolg ist damit der stärkste Hebel für eine Dynastie – garantiert aber nichts.
+- 1975 verdient ein Verein im Europapokal vor allem an den **Heimspielen** (volle Ränge); die Prämien sind klein. Prämien und **Startgelder** wachsen mit der Wirtschaft. Ab 1992 (Meisterliga mit Gruppenphase) steigen die Prämien im Landesmeister-Wettbewerb bis 2000 auf das Fünffache, in den anderen Wettbewerben auf das Doppelte. Mit der Gruppenphase der Champions League kommen hohe **Startgelder** dazu: Ein Teilnehmer bekommt 1999/2000 rund 8 Mio. €, heute rund 45 Mio. € schon fürs Dabeisein, international bekannte Vereine über Marktpool und Koeffizient bis knapp das Doppelte (FC Bayern 2024/25 insgesamt 106 Mio. € bis zum Viertelfinale); im UEFA-Pokal ab der Gruppenphase 2004 und der Europa League 2009 deutlich weniger. Europäischer Erfolg ist damit der stärkste Hebel für eine Dynastie – garantiert aber nichts.
 
 ## Preisschilder und Kontostand
 - **Gehälter, Marktwerte und das Transferbudget** sind Preisschilder in 1975-Werten und werden mit dem Spieljahr hochgerechnet angezeigt und gebucht. Der **Kontostand** ist nominal.
@@ -1263,23 +1265,56 @@ Große Vereine mit hoher Auslastung profitieren stärker vom **Eigenbetrieb** (v
   {
     id: 'finance-contracts',
     category: 'finance',
-    title: 'Trikotsponsoring & Bandenwerbung (Verträge)',
-    keywords: ['sponsoring', 'trikot', 'banden', 'werbung', 'vertrag', 'laufzeit', 'jahreswert', 'angebot', 'unterschreiben'],
-    body: `## Echte Verträge statt Pauschale
-Trikotsponsoring und Bandenwerbung laufen über **echte Verträge** mit Name, Jahreswert und Restlaufzeit. Die monatliche Buchung ist \`Jahreswert ÷ 12\` (era-skaliert). Ohne aktiven Vertrag gibt es keine Einnahme aus diesem Kanal.
+    title: 'Sponsoring & Werbung: Partner-Pyramide, Klauseln, Verhandlung',
+    keywords: ['sponsoring', 'trikot', 'brust', 'ärmel', 'ausrüster', 'banden', 'led', 'werbung', 'vertrag', 'laufzeit', 'klausel', 'katar', 'trainingslager', 'wetten', 'krypto', 'tabak', 'premium', 'partner', 'verhandlung', 'prämie', 'abstieg', 'exklusiv'],
+    body: `## Werbeflächen nach Epochen
+Jede Fläche ist ein eigener Vertrag mit Partner, Branche, Herkunftsland, Jahreswert, Laufzeit, Prämien und Klauseln (Finanzen › Sponsoring).
 
-## Trikotsponsoring
-- Angebote entstehen zu **Saisonbeginn** (2–3 Stück, im Bereich **Sponsoring** sichtbar).
-- Historische Anker (1975-DM/Jahr): **Regional 100.000 · National 275.000 · Premium 500.000**.
-- Jahreswert = \`Tier × (0,85 + Reputation/100 × 0,4) × Varianz\`, gerundet auf 5.000.
-- Laufzeit **1–5 Jahre**. Bessere Reputation schaltet höhere Tiers frei.
+| Fläche | ab | Hinweis |
+|---|---|---|
+| Trikot-Brust | 1975 | seit Jägermeister bei Braunschweig (1973) |
+| Ausrüster | 1975 | erst ab den 1990ern viel Geld |
+| Banden | 1975 | Wert = Zuschauer × TV-Präsenz, ab 2010 LED (+20 %) |
+| Regionalpartner | 1975 | 2–4 kleine Partner, in den unteren Ligen das Rückgrat |
+| Premium-Partner | 1990 | 1 → 3 Plätze (1. Liga) |
+| Trainingsanzug & Kollektion | 1994 | 1. und 2. Liga |
+| Co-/Exklusivpartner | 1995 | 2 → 6 Plätze |
+| Nachwuchs-Partner | 2001 | Teil zweckgebunden für den Jugendetat |
+| Wettpartner | 2005 | 2006–2011 verboten, ab 2012 mit Lizenz |
+| Digitalpartner | 2012 | Technologie, Streaming |
+| Ärmel | 2017/18 | vorher vermarktete die Liga den Ärmel |
+| Krypto/NFT | 2021–22 | Einbruch nach der FTX-Pleite im November 2022 |
 
-## Bandenwerbung
-- Grundwert = \`80.000 + Kapazität/1000 × 1.500 + Reputation × 800\` DM/Jahr, gedeckelt **100.000–300.000**.
-- Angebote (2–3) zu Saisonbeginn, Laufzeit **1–3 Jahre**.
+Namensrechte am Stadion (ab 2000) laufen weiter über **Stadion › Namensrechte**.
 
-## Ablauf & Restlaufzeit
-Zu jedem Saisonstart wird die Restlaufzeit aller Verträge um 1 Jahr reduziert; abgelaufene Verträge enden automatisch und es werden neue Angebote erzeugt. KI-Vereine schließen automatisch passende Verträge, damit ihre Bilanz stimmt.`,
+## Was ein Vertrag wert ist
+- Grundlage ist der Marktwert der Fläche für einen durchschnittlichen Erstligisten in diesem Jahr (1975 Brust ≈ 0,25 Mio. DM, 2024 ≈ 9 Mio. €).
+- Darauf wirkt die **Reichweite**: regionale Marke (Regionalpartner), nationale Marke (Brust, Banden, Premium) oder weltweite Strahlkraft (Ausrüster, Ärmel, Digital). Je weiter die Globalisierung, desto stärker zählt Größe (1975 Reichweite^1,25, ab 2020 ^2,5): Ein Weltverein bekommt heute ein Vielfaches des Durchschnitts – der FC Bayern nahm 2024/25 240 Mio. € mit Sponsoring ein.
+- Unterklassige Vereine wachsen nur anteilig mit (wie bei Trikot und Banden früher).
+- Werte stehen in 1975-Basis und steigen mit der Inflation – nicht mit dem schnelleren Werbemarkt. Lange Verträge werden deshalb mit der Zeit günstig für den Sponsor; die Verlängerung bringt dann den Sprung.
+
+## Branchen im Wandel
+1970er Spirituosen und Brauereien, 1980er Unterhaltungselektronik, ab 1992 Telekommunikation, ab 1998 Energie und IT, ab 2000 Fluggesellschaften, ab 2011 Staatsfonds und Tourismus vom Golf, ab 2012 Wettanbieter, 2021/22 Krypto. **Regulierung:** Tabak nur auf Banden (Fernsehwerbung seit 1975 verboten), ab 2007 gar nicht mehr; Spirituosen ab 2000 nicht mehr auf dem Trikot; Wettanbieter 2006–2011 untersagt. Ein Verbot beendet laufende Verträge zur neuen Saison. Im März 2022 enden alle Verträge mit russischen Energiekonzernen.
+
+## Klauseln
+- **Pflicht-Trainingslager / Pflicht-Sommerreise im Herkunftsland:** Katar (ab 2011, nur für Vereine, die Doha buchen dürfen), VAE, Türkei; China, Japan, Korea, USA mit Sommertour. Erinnerung sechs Wochen vorher; findet das Lager woanders statt, kostet es **25 % des Jahreswerts** Vertragsstrafe. Der Sponsor zahlt für die Klausel rund 12 % mehr.
+- **Freundschaftsspiel beim Sponsor:** einmal im Winter, Einnahme, Spieler etwas müde.
+- **Abstieg:** Ausstieg oder Kürzung um 30–50 %, solange der Verein unten spielt.
+- **Mindestplatzierung** (Topklubs): unter Platz 4 bzw. 6 sinkt der Wert in der nächsten Saison.
+- **Exklusivität:** kein zweiter Partner derselben Branche.
+- **Verlängerungsoption:** du kannst im letzten Jahr um zwei Saisons verlängern (+10 %).
+- **Jugend:** Fällt der Jugendetat unter die Zweckbindung, zieht sich der Nachwuchs-Partner zurück.
+- **Umstrittene Partner** (Tabak, Wetten, Krypto, Golfstaaten, ab 2014 russische Energie): Sie zahlen mehr, aber die Fan-Stimmung leidet bei der Unterschrift und jeden Monat – heute stärker als 1980.
+- **Erfolgsprämien:** Meister, Pokal, Europapokal, Klassenerhalt – am Saisonende gebucht.
+
+## Verhandlung
+Jedes Angebot kannst du annehmen, ablehnen oder verhandeln: höherer Jahreswert, andere Laufzeit, Klauseln streichen (kostet den Wert, den die Klausel für den Sponsor hat). Ein interessierter Sponsor kommt entgegen; wer zu viel fordert, riskiert den Abbruch. Höchstens zwei Runden. Im **Januar** melden sich Partner im letzten Vertragsjahr mit einem Verlängerungsangebot; neue Konditionen gelten ab der nächsten Saison. Für freie Flächen kommen im Lauf der Saison neue Interessenten.
+
+## KI-Vereine
+Sie füllen freie Flächen zu Saisonbeginn mit dem besten von zwei Angeboten, ziehen Verlängerungsoptionen und unterliegen denselben Abstiegs-, Prämien- und Verbotsregeln.
+
+## Betrieb & Vermarktung (Ausgaben)
+Vermarktung kostet: Wareneinsatz der Fanartikel (35 %), Betreuung der Sponsoren (5 % 1975 → 12 % ab 2010) und eine wachsende Geschäftsstelle mit Beratern und Reisen (0 → 5 % des Umsatzes). Große Marken haben davon mehr – ihre Personalquote liegt deshalb niedriger (FC Bayern 2024/25: Personal 47 % des Umsatzes ohne Transfers).`,
   },
   {
     id: 'finance-elasticity',

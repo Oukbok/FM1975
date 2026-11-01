@@ -805,6 +805,7 @@ export type FinanceCategory =
   | 'membership'
   | 'matchday'
   | 'facilities'
+  | 'operations'
   | 'other';
 
 /** Finanzielle Situation eines Vereins. */
@@ -849,6 +850,8 @@ export interface ClubFinances {
     staffWages: number;
     /** Monatliche Gebaeude-Fixkosten aller Einrichtungen (inkl. Catering). */
     facilities: number;
+    /** Betrieb & Vermarktung: Wareneinsatz Fanartikel, Sponsoren-Betreuung, Verwaltung (engine/sponsorship.ts). */
+    operations?: number;
     other: number;
   };
 
@@ -1043,8 +1046,19 @@ export interface ClubCommerce {
   shirtOffers?: SponsorOffer[];
   /** Aktuelle Banden-Angebote (je Saison neu). */
   bandenOffers?: SponsorOffer[];
-  /** Sponsor-Klauseln: Pflicht-Trainingslager (Ziel-ID aus data/campDestinations.ts) je Saison/Fenster; gelesen in game/trainingCampGame.ts. */
-  campObligations?: { destId: string; season: string; window: 'winter' | 'summer' }[];
+  // --- Sponsoring 2.0 (engine/sponsorship.ts, game/sponsorGame.ts) ---------------------
+  /** Version der Sponsoring-Daten (fehlt = alter Stand → migrateSponsorship). */
+  sponsorV?: number;
+  /** Laufende Verträge aller Werbeflächen. `shirtSponsor`/`banden` bleiben als Spiegel. */
+  deals?: import('./sponsor').SponsorDeal[];
+  /** Offene Angebote (nur eigener Verein). */
+  dealOffers?: import('./sponsor').SponsorDealOffer[];
+  /** Pflichtreisen aus Sponsor-Klauseln (Schnittstelle Trainingslager). */
+  campObligations?: import('./sponsor').CampObligation[];
+  /** Liga-Ebene der Vorsaison (Abstiegsklauseln). */
+  lastTier?: number;
+  /** Chronik der Sponsor-Ereignisse (eigener Verein, max. 30). */
+  sponsorLog?: import('./sponsor').SponsorLogEntry[];
 }
 
 /** Ein 1. Liga-Verein. */

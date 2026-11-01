@@ -14,7 +14,7 @@
 // • Zweite Mannschaft: Reserve-Minuten für junge Profis (engine/development.ts).
 // =============================================================================
 import { ClubDevContext } from '../engine/development';
-import { economyScale, yearOf } from '../engine/economy';
+import { clubTier, economyScale, tierScale, yearOf } from '../engine/economy';
 import { book } from '../engine/finances';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { generateYouthPlayer } from '../engine/youth';
@@ -175,8 +175,9 @@ export function monthlyYouthInvest(g: Game, today: string): void {
         }));
       }
     }
-    // Kosten.
-    const cost = Math.round(annualCostBase(inv) / 12 * scale);
+    // Kosten. Unterklassige zahlen anteilig (Trainer, Platzmiete, Etat wie das Stadiongeschäft der Liga,
+    // tierScale) – sonst fraß das Pflicht-NLZ eines Viertligisten ein Viertel seines Umsatzes.
+    const cost = Math.round(annualCostBase(inv) / 12 * tierScale(scale, clubTier(club), 'matchday'));
     if (cost > 0) book(club.finances, today, -cost, 'training_facilities', 'Nachwuchs: Jugendetat, Trainer, Unterhalt', mine && !sim(g));
     // Verzögerte Wirkung: aufwärts ≈ 20 %/Jahr, abwärts schneller (Trainer gehen, Abläufe zerfallen).
     const target = targetQuality(club, inv, year);
