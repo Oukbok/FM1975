@@ -108,7 +108,7 @@ export interface CampBarCtx {
 export function campEffectBars(c: CampBarCtx): CampBar[] {
   const { o } = c;
   const fit = o.fitness + o.altitudeFitness;
-  const tact = o.dev * 2 + Math.max(0, o.form) / 6;
+  const tact = o.dev * 2 + o.form / 6;
   const spirit = (o.morale - 0.3) * 2.2 + o.satisfaction / 12 - o.starGrumble * 2 - o.discipline * 1.5
     - (c.stayed > 0 ? Math.min(0.5, c.stayed * 0.06) : 0) + (c.youth > 0 ? 0.05 : 0);
   const rest = (o.campFrische - o.travelFrische) / 18 + (c.injuredAlong > 0 ? o.heal / 25 : 0);

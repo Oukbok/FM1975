@@ -109,7 +109,7 @@
 .cp-month-name { font-family: var(--font-display); font-size: 15px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-2); margin-bottom: 6px; }
 .cp-wd, .cp-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
 .cp-wd span { font-size: 11px; font-weight: 700; color: var(--text-4); text-align: center; padding-bottom: 2px; }
-.cp-day { position: relative; height: 46px; border: 1px solid transparent; border-radius: 4px; background: transparent; color: var(--text-4); font: inherit; font-size: 14px; font-variant-numeric: tabular-nums; padding: 0; cursor: default; }
+.cp-day { position: relative; height: 54px; border: 1px solid transparent; border-radius: 4px; background: transparent; color: var(--text-4); font: inherit; font-size: 14px; font-variant-numeric: tabular-nums; padding: 0; cursor: default; }
 .cp-day.blank { visibility: hidden; }
 .cp-day.win { background: var(--panel); color: var(--text-2); }
 .cp-day.win.can { cursor: pointer; color: var(--text); }

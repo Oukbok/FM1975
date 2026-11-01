@@ -85,6 +85,7 @@ const planBtn = page.locator('.cp-plan-btn');
 if (await planBtn.isDisabled()) { console.log('Planen gesperrt – keine freien Fenster.'); }
 else {
   await planBtn.click();
+  if (process.env.WINTER) { await page.locator('.cp-season button:has-text("Winter")').click().catch(() => console.log('kein Winterfenster')); }
   await shot('2_zeitraum', 'modal');
   await page.locator('.cp-foot button:has-text("Weiter")').click();
   await shot('3_karte', 'modal');

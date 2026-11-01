@@ -55,11 +55,14 @@ export function CampPlanner({ g, season: season0, seasons, onClose, onBooked }: 
   const year = campYear(g.season, season);
   const obligation = campObligation(g, club, season);
   const opts = useMemo(() => destinationsFor(season, year, club.reputation, obligation), [season, year, club.reputation, obligation]);
-  // Startvorschlag: erster Tag ohne Aufschlag, sonst der erste mögliche.
+  // Startvorschlag: erster Tag ohne Aufschlag (Winter: spät in der Pause), sonst der erste mögliche.
   useEffect(() => {
     if (start && !checkCampDates(g, season, start, days).error) return;
     const all = daysBetween(w.from, w.to).filter((d) => !checkCampDates(g, season, d, days).error);
-    setStart(all.find((d) => !checkCampDates(g, season, d, days).surcharge) ?? all[0] ?? '');
+    // Winter: wie üblich in den letzten vier Wochen vor dem Rückrundenstart (Dezember = Urlaub/Halle).
+    const late = season === 'winter' ? CalendarEngine.addDays(w.to, -28) : '';
+    const pool = all.filter((d) => d >= late);
+    setStart(pool.find((d) => !checkCampDates(g, season, d, days).surcharge) ?? pool[0] ?? all[0] ?? '');
   }, [season, days]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
