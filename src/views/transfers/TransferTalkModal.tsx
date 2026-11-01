@@ -13,6 +13,7 @@ import { ImportanceDots, InterestLight, ReasonList, WishList, importanceText } f
 import { DashBox, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtPrice, vColor } from '../../ui/format';
 import { InfoTip } from '../../ui/InfoTip';
+import type { InfoKey } from '../../data/infoTexts';
 
 // =============================================================================
 // TRANSFERVERHANDLUNG — Vereinsgespräch, Spielergespräch, Wünsche, Verlauf
@@ -27,9 +28,9 @@ function mood(patience: number): { text: string; color: string } {
   return { text: 'gereizt', color: 'var(--red)' };
 }
 
-function Chips({ opts, value, set, label, disabled }: { opts: [number, string, string?][]; value: number; set: (v: number) => void; label: string; disabled?: string }) {
+function Chips({ opts, value, set, label, disabled, info }: { opts: [number, string, string?][]; value: number; set: (v: number) => void; label: string; disabled?: string; info?: InfoKey }) {
   return (
-    <div className="talk-row"><span>{label}</span><div className="dchips">
+    <div className="talk-row"><span>{label}{info && <InfoTip k={info} />}</span><div className="dchips">
       {opts.map(([v, l, tip]) => <button key={String(v)} className={`dchip ${value === v ? 'on' : ''}`} title={disabled ?? tip} disabled={!!disabled && v !== opts[0][0]} onClick={() => set(v)}>{l}</button>)}
     </div></div>
   );
@@ -150,8 +151,8 @@ function PlayerTalkBox({ g, t, onChange }: { g: Game; t: TransferTalk; onChange:
         <Chips label="Laufzeit" value={years} set={setYears} opts={[1, 2, 3, 4, 5].map((y) => [y, `${y} J.`] as [number, string])} />
         <Chips label="Handgeld" value={hand} set={setHand} opts={[[0, 'keins'], [0.5, st.signingFee ? fmtPrice(r100(st.signingFee * 0.5)) : fmtPrice(r100(wage * 3))], [1, st.signingFee ? fmtPrice(st.signingFee) : fmtPrice(r100(wage * 6))], [1.6, st.signingFee ? fmtPrice(r100(st.signingFee * 1.6)) : fmtPrice(r100(wage * 10))]]} />
         {st.agent && <Chips label="Beraterprovision" value={agentPct} set={setAgentPct} opts={[[0, 'keine'], [0.5, fmtPrice(r100(st.agentFee * 0.5))], [1, fmtPrice(st.agentFee), 'Die übliche Provision des Beraters']]} />}
-        <Chips label="Treueprämie" value={loyal} set={setLoyal} opts={[[0, 'keine'], [10, fmtPrice(r100(wage * 10)), 'fällig bei Vertragsende, wenn er bleibt'], [26, fmtPrice(r100(wage * 26)), 'fällig bei Vertragsende, wenn er bleibt']]} />
-        <Chips label="Erfolgsklausel" value={raise} set={setRaise} opts={[[0, 'keine'], [0.1, '+10 %', 'mehr Gehalt bei einem Europapokal-Platz'], [0.2, '+20 %', 'mehr Gehalt bei einem Europapokal-Platz']]} />
+        <Chips label="Treueprämie" info="treuepraemie" value={loyal} set={setLoyal} opts={[[0, 'keine'], [10, fmtPrice(r100(wage * 10)), 'fällig bei Vertragsende, wenn er bleibt'], [26, fmtPrice(r100(wage * 26)), 'fällig bei Vertragsende, wenn er bleibt']]} />
+        <Chips label="Erfolgsklausel" info="erfolgsklausel" value={raise} set={setRaise} opts={[[0, 'keine'], [0.1, '+10 %', 'mehr Gehalt bei einem Europapokal-Platz'], [0.2, '+20 %', 'mehr Gehalt bei einem Europapokal-Platz']]} />
         <Chips label="Ausstiegsklausel" value={clause ? 1 : 0} set={(v) => setClause(v === 1)} disabled={year < CLAUSE_FROM.releaseClause ? `erst ab ${CLAUSE_FROM.releaseClause} üblich` : undefined}
           opts={[[0, 'keine'], [1, 'vereinbaren', 'Ein Verein, der die Klausel zahlt, bekommt ihn ohne Verhandlung.']]} />
         <div className="talk-row talk-row-top"><span>Versprechen</span>

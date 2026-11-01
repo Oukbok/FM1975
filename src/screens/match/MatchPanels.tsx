@@ -90,7 +90,7 @@ function PlayerRow({ sim, m, name, mine, selected, dim, onClick }: {
         {!m.started && m.minuteIn > 0 && <span className="ms-tag">{m.minuteIn}'</span>}
       </span>
       {mine && !dim && (
-        <span className="ms-energy-ico"><FreshnessIcon kind="kraft" value={energy} size={17} /></span>
+        <span className="ms-energy-ico"><FreshnessIcon kind="kraft" value={energy} size={24} /></span>
       )}
       <span className={`ms-grade ${early ? '' : gradeCls(g)}`}>{early ? '–' : fmtGrade(g)}</span>
     </button>

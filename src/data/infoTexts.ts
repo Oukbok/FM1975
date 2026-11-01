@@ -50,11 +50,6 @@ export const INFO_TEXTS = {
     text: 'Wie gut ein Spieler mit großen Spielen umgeht – Derbys, Pokal, Europapokal, Entscheidungsspiele. Nervenstarke Spieler steigern sich dort eher, nervöse fallen ab.',
     wiki: 'development-hidden',
   },
-  zustand: {
-    title: 'Zustand',
-    text: 'Frische, Form und Moral ändern sich laufend; Fitness, Konstanz und Nervenstärke gehören zum Spieler. Fahre mit der Maus über ein Symbol, um den genauen Wert zu sehen.',
-    wiki: 'condition-frische',
-  },
 
   // ---------------------------------------------------------------- Spieler-Bewertung
   staerke: {
@@ -480,7 +475,7 @@ export const INFO_TEXTS = {
   },
   erfolgsklausel: {
     title: 'Erfolgsklausel',
-    text: 'Bonus, der nur bei einem vereinbarten Erfolg fällig wird, etwa Meisterschaft oder Europapokal. Ehrgeizige Spieler mögen sie, die Kasse trifft sie erst im Erfolgsfall.',
+    text: 'Mehr Gehalt (z. B. +10 oder +20 %), sobald ihr einen Europapokal-Platz erreicht. Ehrgeizige Spieler mögen sie, die Kasse trifft sie erst im Erfolgsfall.',
     wiki: 'transfers-wishes',
   },
   spielerKlauseln: {

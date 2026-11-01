@@ -79,3 +79,4 @@
 /* Zentrale: Beschriftung unter dem Teamchemie-Ring bleibt einzeilig */
 .ckd-donut-lbl:has(.itip) { white-space: nowrap; }
 .ckd-donut-lbl .itip { width: 11px; height: 11px; font-size: 8px; margin-left: 3px; }
+.lu-card-top .lu-cap { flex: none; }

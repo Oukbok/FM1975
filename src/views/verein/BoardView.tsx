@@ -7,6 +7,7 @@ import {
 import { Game } from '../../game/state';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtDM, fmtPrice, vColor } from '../../ui/format';
+import { InfoTip } from '../../ui/InfoTip';
 
 // =============================================================================
 // VORSTAND — Vertrauen, Rechtsform & Investor, Kredite, Namensrechte, Lizenz
@@ -87,7 +88,7 @@ export function BoardView({ g, onChange }: { g: Game; onChange: () => void }) {
         {ffp?.forcedRelegation && <KV k="Zwangsabstieg" v={`zum Ende ${ffp.forcedRelegation}`} color="var(--red)" strong />}
         <div className="dnote mt8">
           Schulden über 60 % des Jahresumsatzes: 3 Punkte Abzug, über 90 %: 6, über 120 %: 9. Wer nach einem Abzug über 150 % bleibt, steigt zwangsweise ab.
-          Kredite zählen zu einem Viertel.
+          Kredite zählen zu einem Viertel. Ab 2011 gilt zusätzlich das Finanzielle Fairplay.<InfoTip k="ffp" />
         </div>
       </DashBox>
 

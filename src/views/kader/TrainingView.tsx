@@ -146,8 +146,8 @@ export function TrainingView({ g, onTrained }: { g: Game; onTrained: () => void 
 
       <DashBox title="Belastung" icon="dashKader" info="belastung">
         <div className="dkpis">
-          <Kpi value={<FreshnessIcon value={avgFri} size={30} showValue />} label="Ø Frische" info="frische" />
-          <Kpi value={avgFit} label="Ø Fitness" color={vColor(avgFit)} info="fitness" />
+          <Kpi value={<FreshnessIcon value={avgFri} size={30} showValue />} label="Ø Frische" />
+          <Kpi value={avgFit} label="Ø Fitness" color={vColor(avgFit)} />
         </div>
         <div className="dsec">Am stärksten belastet</div>
         {tired.map((p) => <PlayerRow key={p.id} p={p} value={<PlayerFreshness p={p} showValue />} sub={`Fitness ${Math.round(p.attributes.fitness)}`} />)}
