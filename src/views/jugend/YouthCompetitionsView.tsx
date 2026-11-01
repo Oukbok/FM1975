@@ -53,10 +53,12 @@ function GroupsView({ g, snap }: { g: Game; snap: YcSnapshot }) {
 
 export function YouthCompetitionsView({ g }: { g: Game }) {
   const seasons = useMemo(() => youthSeasonOptions(g), [g, g.season]); // eslint-disable-line react-hooks/exhaustive-deps
-  const [season, setSeason] = useState(g.season);
+  // Beim Saisonwechsel (vor dem ersten Spieltag) gibt es die neue Saison noch nicht: letzte zeigen.
+  const liveSeason = seasons.some((s) => s.season === g.season) ? g.season : seasons[seasons.length - 1]?.season ?? g.season;
+  const [season, setSeason] = useState(liveSeason);
   const opts = useMemo(() => youthCompOptions(g, season), [g, season]);
-  const [key, setKey] = useState(() => defaultKey(g, g.season));
-  useEffect(() => { setSeason(g.season); setKey(defaultKey(g, g.season)); }, [g.season]); // eslint-disable-line react-hooks/exhaustive-deps
+  const [key, setKey] = useState(() => defaultKey(g, liveSeason));
+  useEffect(() => { setSeason(liveSeason); setKey(defaultKey(g, liveSeason)); }, [liveSeason]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Wettbewerb beim Saisonwechsel halten, sonst gleichartigen wählen.
   const effKey = opts.some((o) => o.key === key) ? key
