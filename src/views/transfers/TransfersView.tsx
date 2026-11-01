@@ -9,7 +9,7 @@ import { Game } from '../../game/state';
 import { Player } from '../../types';
 import { YouthScoutBox } from './YouthScoutBox';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
-import { fmtDM, vColor, fmtPrice } from '../../ui/format';
+import { fmtDM, vColor, fmtPrice, fmtWage, wageHead, wageUnit } from '../../ui/format';
 import { GROUP_DE, PlayerRow, ScoutStars, avg, groupOf, monthsUntil, scoutMid, squadOf } from '../shared';
 import { useState } from 'react';
 
@@ -64,7 +64,7 @@ function MarketTable({ g, list, onOpen, action }: { g: Game; list: Player[]; onO
     <table className="dtable">
       <thead><tr>
         <th>Name</th><th>Verein</th><th className="ctr">Pos</th><th className="num">Alter</th><th className="num">Stärke</th>
-        <th>Potenzial</th><th className="num">Vertrag</th><th className="num">Gehalt/Wo.</th><th className="num">Wert</th>{action && <th />}
+        <th>Potenzial</th><th className="num">Vertrag</th><th className="num">{wageHead()}</th><th className="num">Wert</th>{action && <th />}
       </tr></thead>
       <tbody>
         {list.map((p) => {
@@ -78,7 +78,7 @@ function MarketTable({ g, list, onOpen, action }: { g: Game; list: Player[]; onO
               <td className="num"><b style={{ color: vColor(p.overall) }}>{p.overall}</b></td>
               <td className="nowrap"><ScoutStars p={p} /></td>
               <td className="num muted">{monthsUntil(today, p.contract.expiryDate)} M.</td>
-              <td className="num">{fmtPrice(p.contract.weeklyWage)}</td>
+              <td className="num">{fmtWage(p.contract.weeklyWage, { unit: false })}</td>
               <td className="num" style={{ color: 'var(--accent)' }}>{fmtPrice(p.contract.transferValue)}</td>
               {action && <td className="num" onClick={(e) => e.stopPropagation()}>{action(p)}</td>}
             </tr>
@@ -128,10 +128,10 @@ export function TransfersView({ g, onDone }: { g: Game; onDone: () => void }) {
       <DashBox title="Budget" icon="finances">
         <div className="dkpis">
           <Kpi value={fmtPrice(fin.transferBudget)} label="Transferbudget" />
-          <Kpi value={fmtDM(Math.max(0, fin.wageBudget - wages))} label="Gehaltsspielraum/Wo." />
+          <Kpi value={fmtWage(Math.max(0, fin.wageBudget - wages), { unit: false })} label={`Gehaltsspielraum / ${wageUnit()}`} />
         </div>
         <KV k="Kontostand" v={fmtDM(fin.balance)} />
-        <KV k="Gehälter / Gehaltsbudget" v={`${fmtDM(wages)} / ${fmtDM(fin.wageBudget)}`} />
+        <KV k={`Gehälter / Gehaltsbudget (${wageUnit()})`} v={`${fmtWage(wages, { unit: false })} / ${fmtWage(fin.wageBudget, { unit: false })}`} />
         {talk.err && <div className="dnote mt8" style={{ color: 'var(--red)', fontWeight: 700 }}>{talk.err}</div>}
         <div className="dnote mt8">Verhandle erst mit dem Verein über die Ablöse, dann mit dem Spieler über Gehalt und Versprechen. Die Forderung des Vereins kennst du nur ungefähr. Alle Spieler der Liga findest du in der Beobachtungsliste.</div>
       </DashBox>

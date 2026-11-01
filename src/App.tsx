@@ -31,7 +31,7 @@ import { GameShell } from './shell/GameShell';
 import { createNewGame } from './game/newGame';
 import { InboxMessage, NewGameOptions, YOUTH_ENTRY_AGE } from './types';
 import { DisplayFrame, applyDisplayMode } from './ui/DisplayFrame';
-import { setDisplayYear } from './ui/format';
+import { setDisplayYear, setWagePeriod } from './ui/format';
 import { setEventFrequency } from './engine/randomEvents';
 import { ensureYouthTeams } from './game/youthTeams';
 import { migrateAiClubs } from './game/aiClubs';
@@ -369,6 +369,7 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  setWagePeriod(settings.wagePeriod); // Gehaltsanzeige pro Jahr/Woche (vor dem Rendern der Seiten)
   const content = (!inGame || !gameRef.current) ? (
     <MainMenu
       settings={settings}

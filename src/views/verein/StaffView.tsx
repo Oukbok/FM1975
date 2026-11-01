@@ -7,7 +7,7 @@ import {
 import { Game } from '../../game/state';
 import { candidatesFor, ensureStaff, fireStaff, hireStaff, sendToCourse, staffEffectsOf } from '../../game/staffGame';
 import { DashBox, DashPage, KV, Kpi, Meter } from '../../ui/DashPage';
-import { fmtDM } from '../../ui/format';
+import { fmtDM, fmtStaffWage, wageUnit } from '../../ui/format';
 import { useState } from 'react';
 
 // =============================================================================
@@ -52,7 +52,7 @@ export function StaffView({ g, onChange }: { g: Game; onChange: () => void }) {
             Qualität {m.quality}/20<QualityBar q={m.quality} />
             {m.specialty !== 'allround' && <> · {SPECIALTY_LABEL[m.specialty]}</>}
             {' · '}Methoden {m.methodYear}{mf < 0.9 ? <span style={{ color: 'var(--orange)' }}> (veraltet, {Math.round(mf * 100)} %)</span> : ''}
-            {' · '}{fmtDM(memberMonthlySalary(m, scale))}/Monat
+            {' · '}{fmtStaffWage(memberMonthlySalary(m, scale))}
           </span>
         </span>
         <span style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
@@ -81,7 +81,7 @@ export function StaffView({ g, onChange }: { g: Game; onChange: () => void }) {
               <span className="dnote" style={{ display: 'block' }}>
                 Qualität {c.quality}/20<QualityBar q={c.quality} />
                 {c.specialty !== 'allround' && <> · {SPECIALTY_LABEL[c.specialty]}</>} · Methoden {c.methodYear}
-                {' · '}{fmtDM(memberMonthlySalary(c, scale))}/Monat
+                {' · '}{fmtStaffWage(memberMonthlySalary(c, scale))}
               </span>
             </span>
             <button className="dchip on" onClick={() => act(hireStaff(g, c))}>Einstellen</button>
@@ -95,7 +95,7 @@ export function StaffView({ g, onChange }: { g: Game; onChange: () => void }) {
     <DashPage>
       <DashBox title="Wirkung des Stabs" icon="staff" right={`${staff.length} Personen`}>
         <div className="dkpis">
-          <Kpi value={fmtDM(monthly)} label="Personalkosten / Monat" />
+          <Kpi value={fmtStaffWage(monthly, { unit: false })} label={`Personalkosten / ${wageUnit()}`} />
           <Kpi value={`${coach.extra >= 0 ? '+' : ''}${Math.round(coach.extra * 100)} %`} label="Trainingswirkung" color={coach.extra >= 0 ? 'var(--green)' : 'var(--orange)'} />
         </div>
         <Meter label="Betreuung" value={coach.capacity} max={1} text={`${Math.round(coach.capacity * 100)} %`} />

@@ -253,6 +253,8 @@ export interface AppSettings {
   drawShow?: 'immer' | 'eigener' | 'aus';
   /** Tempo der Ziehungs-Show. */
   drawSpeed?: 'langsam' | 'normal' | 'schnell';
+  /** Gehälter pro Jahr (Standard) oder pro Woche anzeigen und eingeben (ui/format.ts `fmtWage`). */
+  wagePeriod?: 'jahr' | 'woche';
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -270,6 +272,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   briefingIntro: true,
   drawShow: 'eigener',
   drawSpeed: 'normal',
+  wagePeriod: 'jahr',
 };
 
 export function loadSettings(): AppSettings {

@@ -54,6 +54,20 @@ export function SettingsScreen({ settings, onBack, onSave }: {
         </div>
       </div>
 
+      {/* --- Gehälter --- */}
+      <div className="card mt16">
+        <h3 style={{ margin: '0 0 4px' }}>Gehälter</h3>
+        <p className="dim mini" style={{ margin: '0 0 14px' }}>
+          Wie Gehälter im ganzen Spiel angezeigt und in Verhandlungen eingegeben werden. Gerechnet wird intern unverändert.
+        </p>
+        <div className="seg-group">
+          {([['jahr', 'Pro Jahr'], ['woche', 'Pro Woche']] as const).map(([v, l]) => (
+            <button key={v} type="button" className={`seg-btn ${(s.wagePeriod ?? 'jahr') === v ? 'active' : ''}`}
+              onClick={() => setS({ ...s, wagePeriod: v })}>{l}</button>
+          ))}
+        </div>
+      </div>
+
       {/* --- Pokalauslosung --- */}
       <div className="card mt16">
         <h3 style={{ margin: '0 0 4px' }}>Pokalauslosung</h3>

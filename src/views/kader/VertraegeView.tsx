@@ -2,7 +2,7 @@ import PlayerModal from '../../components/PlayerModal';
 import { CalendarEngine } from '../../engine/calendar';
 import { Game } from '../../game/state';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
-import { fmtDM, vColor, fmtPrice } from '../../ui/format';
+import { vColor, fmtPrice, fmtWage, wageHead, wageUnit } from '../../ui/format';
 import { PlayerRow, monthsUntil } from '../shared';
 import { useState } from 'react';
 import { demandFor, offerContract } from '../../game/contracts';
@@ -31,7 +31,7 @@ export function VertraegeView({ g, onChange }: { g: Game; onChange?: () => void 
         <table className="dtable">
           <thead><tr>
             <th>Spieler</th><th className="ctr">Pos</th><th className="num">Alter</th><th className="num">Stärke</th>
-            <th className="num">Gehalt/Wo.</th><th className="num">Vertrag bis</th><th className="num">Rest</th>
+            <th className="num">{wageHead()}</th><th className="num">Vertrag bis</th><th className="num">Rest</th>
             <th className="num">Marktwert</th><th className="num">Klausel</th><th className="num">Zufr.</th>
           </tr></thead>
           <tbody>
@@ -43,11 +43,11 @@ export function VertraegeView({ g, onChange }: { g: Game; onChange?: () => void 
                   <td className="ctr"><span className="pos-badge">{pl.naturalPosition}</span></td>
                   <td className="num">{pl.age}</td>
                   <td className="num" style={{ color: vColor(pl.overall), fontWeight: 800 }}>{pl.overall}</td>
-                  <td className="num">{fmtPrice(pl.contract.weeklyWage)}</td>
+                  <td className="num">{fmtWage(pl.contract.weeklyWage, { unit: false })}</td>
                   <td className="num nowrap">{CalendarEngine.formatDate(pl.contract.expiryDate)}</td>
                   <td className="num" style={{ color: m <= 6 ? 'var(--red)' : m <= 12 ? 'var(--yellow)' : undefined, fontWeight: 700 }}>{m} M.</td>
                   <td className="num">{fmtPrice(pl.contract.transferValue)}</td>
-                  <td className="num muted">{pl.contract.releaseClause ? fmtDM(pl.contract.releaseClause) : '–'}</td>
+                  <td className="num muted">{pl.contract.releaseClause ? fmtPrice(pl.contract.releaseClause) : '–'}</td>
                   <td className="num" style={{ color: vColor(pl.contract.satisfaction) }}>{Math.round(pl.contract.satisfaction)}</td>
                 </tr>
               );
@@ -58,14 +58,14 @@ export function VertraegeView({ g, onChange }: { g: Game; onChange?: () => void 
 
       <DashBox title="Gehaltsstruktur" icon="finances">
         <div className="dkpis">
-          <Kpi value={fmtDM(wages)} label="pro Woche" />
-          <Kpi value={fmtDM(value)} label="Kaderwert" />
+          <Kpi value={fmtWage(wages, { unit: false })} label={`pro ${wageUnit()}`} />
+          <Kpi value={fmtPrice(value)} label="Kaderwert" />
         </div>
-        <KV k="Gehaltsbudget / Woche" v={fmtDM(club.finances.wageBudget)} />
+        <KV k={`Gehaltsbudget / ${wageUnit()}`} v={fmtWage(club.finances.wageBudget, { unit: false })} />
         <Meter label="Budget ausgeschöpft" value={wages} max={Math.max(1, club.finances.wageBudget)}
           text={`${Math.round((wages / Math.max(1, club.finances.wageBudget)) * 100)} %`} color={wages > club.finances.wageBudget ? 'var(--red)' : undefined} />
         <div className="dsec">Topverdiener</div>
-        {byWage.slice(0, 3).map((x) => <PlayerRow key={x.id} p={x} value={fmtPrice(x.contract.weeklyWage)} color="var(--text-1)" onClick={() => setSel(x.id)} />)}
+        {byWage.slice(0, 3).map((x) => <PlayerRow key={x.id} p={x} value={fmtWage(x.contract.weeklyWage)} color="var(--text-1)" onClick={() => setSel(x.id)} />)}
       </DashBox>
 
       <DashBox title="Handlungsbedarf" icon="negotiations" right={`Ø Zufriedenheit ${avgSat}`}>

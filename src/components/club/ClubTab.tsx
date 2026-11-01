@@ -3,7 +3,7 @@ import { getClubKitDisplay } from '../../data/kits';
 import { Club } from '../../types';
 import { FACILITIES, MAX_LEVEL, facilityAvailable } from '../../engine/infrastructure';
 import { DashBox, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
-import { fmtDM, fmtPrice, vColor } from '../../ui/format';
+import { fmtDM, fmtPrice, fmtWage, vColor, wageUnit } from '../../ui/format';
 import { ScoutStars, scoutMid } from '../../views/shared';
 import JerseySVG, { type JerseyPattern } from '../JerseySVG';
 import { ClubTabProps } from './shared';
@@ -51,7 +51,7 @@ export default function ClubTab({ g, d, openPlayer }: ClubTabProps) {
           <KV k="Umsatz Vorsaison (ca.)" v={fmtDM(f.revenue)} />
           <KV k="Transferbudget (geschätzt)" v={`${fmtPrice(f.budget[0])} – ${fmtPrice(f.budget[1])}`} />
           <KV k="Kaderwert" v={fmtPrice(f.squadValue)} />
-          <KV k="Gehälter pro Woche (ca.)" v={fmtPrice(f.wages)} />
+          <KV k={`Gehälter / ${wageUnit()} (ca.)`} v={fmtWage(f.wages, { unit: false })} />
           <div className="dnote mt8">Zahlen aus Presse und Scoutberichten – Kontostand und Schulden sind nicht öffentlich.</div>
         </> : <Empty icon="finances">Keine Angaben.</Empty>}
       </DashBox>

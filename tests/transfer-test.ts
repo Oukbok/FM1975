@@ -15,6 +15,8 @@ import { migratePersonas, wishesFor, contractClausesDaily } from '../src/game/pl
 import { chooseEventOption } from '../src/game/eventsGame';
 import { swapValueFor } from '../src/game/transferTalks';
 import { Game } from '../src/game/state';
+import { fmtPrice, fmtWage, setDisplayYear, setWagePeriod, wageFromDisplay, wageToDisplay } from '../src/ui/format';
+import { demandFor, offerContract } from '../src/game/contracts';
 
 let seed = 11;
 Math.random = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
@@ -182,4 +184,71 @@ if (!optMsg) fail('Keine Nachricht zur Kaufoption');
 const res7 = chooseEventOption(g7, optMsg!, 'kaufen');
 console.log('Kaufoption:', JSON.stringify(res7));
 if (lp.loan || lp.clubId !== o7.id) fail('Kaufoption nicht gezogen');
+// 8) Angezeigt = eingestellt (Fehler: „Ich stelle 410.000 ein, links steht 300.000“).
+//    Ursache war ein stilles Ablehnen (Transferbudget) – der Verlauf zeigte weiter das alte Angebot.
+//    Geprüft in 1985 (Wirtschafts-Index ≠ 1) und für Gehälter pro Jahr und pro Woche.
+{
+  const g8 = fresh();
+  g8.calendar.currentDate = '1985-07-10';
+  setDisplayYear(1985);
+  const o8 = g8.clubs[g8.managedClubId];
+  o8.finances.wageBudget = 10_000_000;
+  const tp = Object.values(g8.players).filter((p) => p.clubId !== o8.id && g8.clubs[p.clubId] && !p.isYouth && p.age <= 28
+    && g8.clubs[p.clubId].reputation < o8.reputation - 5).sort((a, b) => b.overall - a.overall)[3];
+  tp.contract.expiryDate = '1988-06-30';
+  const t8 = startTalk(g8, tp.id) as TransferTalk;
+  if (typeof t8 === 'string') fail(t8);
+  const newestDu = () => [...t8.log].reverse().find((l) => l.who === 'du')?.text ?? '';
+  // a) gültiges Angebot: Verlauf zeigt genau den eingestellten Betrag
+  o8.finances.transferBudget = 50_000_000;
+  const f1 = Math.round(t8.asking * 0.55 / 5000) * 5000;
+  clubOffer(g8, t8.id, { fee: f1, installments: false, sellOn: 0, bonus: 0 });
+  if (!newestDu().includes(fmtPrice(f1))) fail(`Verlauf zeigt nicht das abgegebene Angebot ${fmtPrice(f1)}: ${newestDu()}`);
+  // b) Angebot über dem Transferbudget: nicht abgeschickt, aber sichtbar – nicht das alte Angebot als neuestes
+  if (t8.phase === 'club') {
+    o8.finances.transferBudget = f1 + 5000;
+    const f2 = f1 + 100_000;
+    const round = t8.round;
+    const r2 = clubOffer(g8, t8.id, { fee: f2, installments: false, sellOn: 0, bonus: 0 });
+    const last = t8.log[t8.log.length - 1];
+    if (t8.round !== round) fail('Angebot über dem Budget wurde abgeschickt');
+    if (last.who !== 'info' || !last.text.includes('Nicht abgeschickt') || !last.text.includes(fmtPrice(f2))) fail(`Abgelehntes Angebot ${fmtPrice(f2)} nicht im Verlauf: ${last.text}`);
+    console.log(`Angezeigt = eingestellt: ${fmtPrice(f1)} abgegeben; ${fmtPrice(f2)} → ${r2}`);
+    o8.finances.transferBudget = 50_000_000;
+  }
+  for (let i = 0; i < 10 && t8.phase === 'club'; i++) {
+    const f = Math.round(Math.max(t8.currentAsk, t8.asking) / 5000) * 5000 + 5000;
+    clubOffer(g8, t8.id, { fee: f, installments: false, sellOn: 0, bonus: 0 });
+    if (!newestDu().includes(fmtPrice(f))) fail('Verlauf ≠ Angebot');
+  }
+  if (t8.phase !== 'player') fail('Keine Einigung im Angezeigt-Test (Phase ' + t8.phase + ')');
+  // c) Gehalt: eingestellt wird der Jahresbetrag auf die Mark genau
+  setWagePeriod('jahr');
+  const st8 = stanceFor(g8, t8);
+  const yearly = Math.round(wageToDisplay(st8.agentWage * 1.3) / 10) * 10 + 7; // krummer Betrag, Einserstelle
+  const shown = fmtWage(wageFromDisplay(yearly));
+  if (shown !== `${yearly.toLocaleString('de-DE')} DM / Jahr`) fail(`Gehalt falsch angezeigt: ${shown} statt ${yearly}`);
+  // Wechsel erst im Fenster: Datum im Juli → sofortiger Abschluss
+  playerOffer(g8, t8.id, { wage: wageFromDisplay(yearly), years: st8.years[0], signingFee: st8.signingFee, releaseClause: false, promises: st8.priorities.slice(0, 2).map((x) => x[0]), agentFee: st8.agentFee });
+  if (!newestDu().includes(shown)) fail(`Verlauf zeigt nicht das eingestellte Gehalt ${shown}: ${newestDu()}`);
+  if (t8.phase !== 'done') fail('Gehaltsangebot im Angezeigt-Test nicht angenommen (Phase ' + t8.phase + ')');
+  if (fmtWage(tp.contract.weeklyWage) !== shown) fail(`Vertrag ${fmtWage(tp.contract.weeklyWage)} ≠ vereinbart ${shown}`);
+  console.log(`Gehalt eingestellt ${shown} → Vertrag ${fmtWage(tp.contract.weeklyWage)} (Phase ${t8.phase})`);
+  // d) Vertragsverlängerung pro Woche
+  setWagePeriod('woche');
+  const mine = o8.playerIds.map((id) => g8.players[id]).find((p) => p && p.id !== tp.id && !p.isYouth)!;
+  const weekly = Math.round(wageToDisplay(demandFor(g8, mine).wage * 1.2) / 10) * 10 + 3;
+  const wantW = fmtWage(wageFromDisplay(weekly));
+  if (wantW !== `${weekly.toLocaleString('de-DE')} DM / Woche`) fail(`Wochengehalt falsch: ${wantW}`);
+  const rc = offerContract(g8, mine.id, wageFromDisplay(weekly), 2);
+  if (!rc.ok) fail('Verlängerung abgelehnt: ' + rc.text);
+  if (fmtWage(mine.contract.weeklyWage) !== wantW) fail(`Verlängerung ${fmtWage(mine.contract.weeklyWage)} ≠ ${wantW}`);
+  console.log(`Verlängerung pro Woche: ${wantW} → ${rc.ok ? fmtWage(mine.contract.weeklyWage) : rc.text}`);
+  // e) Hin- und Rückweg in EUR (2005) auf den Euro genau
+  setDisplayYear(2005); setWagePeriod('jahr');
+  for (const v of [48_313, 312_457, 1_234_567, 9_876_543]) {
+    if (fmtWage(wageFromDisplay(v)) !== `${v.toLocaleString('de-DE')} € / Jahr`) fail(`EUR-Rundweg ${v}: ${fmtWage(wageFromDisplay(v))}`);
+  }
+  setDisplayYear(1975);
+}
 console.log('Transfer-Test bestanden.');

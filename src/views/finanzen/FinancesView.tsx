@@ -4,7 +4,7 @@ import { computeMonthly, forecastSeasonEnd, totalExpense, totalIncome, weeklyWag
 import { Game } from '../../game/state';
 import { ClubFinances } from '../../types';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
-import { fmtCompactDM, fmtDateShort, fmtFullDM, fmtPrice } from '../../ui/format';
+import { fmtCompactDM, fmtDateShort, fmtFullDM, fmtPrice, fmtWage, wageUnit } from '../../ui/format';
 import { type ReactNode } from 'react';
 
 export const INCOME_ROWS: { key: keyof ClubFinances['income']; label: string; icon: ReactNode }[] = [
@@ -119,7 +119,7 @@ export function FinancesView({ g }: { g: Game }) {
   const warnings: string[] = [];
   if (fin.balance < 0) warnings.push(`Das Konto ist mit ${fmtFullDM(fin.balance)} im Minus.`);
   if (forecast.projectedEndBalance < 0) warnings.push(`Hochrechnung zum Saisonende: ${fmtFullDM(forecast.projectedEndBalance)}.`);
-  if (weekly > wageBudget) warnings.push(`Gehälter (${fmtPrice(weekly)}/Woche) über dem Gehaltsbudget (${fmtPrice(wageBudget)}).`);
+  if (weekly > wageBudget) warnings.push(`Gehälter (${fmtWage(weekly)}) über dem Gehaltsbudget (${fmtWage(wageBudget)}).`);
   if (monthly.net < 0) warnings.push(`Feste Monatskosten übersteigen feste Erträge um ${fmtCompactDM(-monthly.net)} – Heimspiele müssen das ausgleichen.`);
   const sign = (v: number) => (v >= 0 ? '+' : '−') + fmtCompactDM(Math.abs(v));
 
@@ -132,7 +132,7 @@ export function FinancesView({ g }: { g: Game }) {
             <KV k="Saldo Saison" v={sign(net)} color={net >= 0 ? 'var(--green)' : 'var(--red)'} />
             <KV k="Monatssaldo (fix)" v={sign(monthly.net)} color={monthly.net >= 0 ? 'var(--green)' : 'var(--red)'} />
             <KV k="Transferbudget" v={fmtPrice(fin.transferBudget)} />
-            <KV k="Gehälter / Budget pro Woche" v={`${fmtPrice(weekly)} / ${fmtPrice(wageBudget)}`} color={weekly > wageBudget ? 'var(--red)' : undefined} />
+            <KV k={`Gehälter / Budget pro ${wageUnit()}`} v={`${fmtWage(weekly, { unit: false })} / ${fmtWage(wageBudget, { unit: false })}`} color={weekly > wageBudget ? 'var(--red)' : undefined} />
           </div>
           <BalanceChart points={fin.balanceHistory ?? []} current={fin.balance} currentDate={g.calendar.currentDate} />
         </div>

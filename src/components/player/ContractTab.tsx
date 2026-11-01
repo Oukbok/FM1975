@@ -1,6 +1,7 @@
 // Reiter „Vertrag & Wert“: Konditionen, Restlaufzeit, Einordnung im Kader
 import { Player } from '../../types';
-import { fmtDM, fmtDMfull, vColor, fmtPrice, fmtPriceFull } from '../../ui/format';
+import { fmtDMfull, vColor, fmtPrice, fmtWage, wageUnit } from '../../ui/format';
+import { WageSlider } from '../../ui/WageSlider';
 import Icon from '../Icon';
 import { useState } from 'react';
 import type { ContractDemand } from '../../engine/contractTalks';
@@ -19,23 +20,20 @@ function TalkBox({ p, neg }: { p: Player; neg: Negotiation }) {
   const [wage, setWage] = useState(dem.wage);
   const [years, setYears] = useState(Math.min(dem.maxYears, Math.max(dem.minYears, 3)));
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
-  const lo = Math.round(dem.wage * 0.7 / 10) * 10, hi = Math.round(dem.wage * 1.3 / 10) * 10;
+  const lo = dem.wage * 0.7, hi = dem.wage * 1.3;
   const yearOpts = [1, 2, 3, 4, 5];
   return (
     <Section title="Vertragsgespräch" icon={<Icon name="negotiations" size={15} />}>
       <div className="pp-list">
         <Line label="Haltung" value={dem.mood.charAt(0).toUpperCase() + dem.mood.slice(1)} color={MOOD_COLOR[dem.mood]} strong />
         <Line label="Einschätzung" value={dem.reason} />
-        <Line label="Forderung / Woche" value={fmtPriceFull(dem.wage)} />
+        <Line label={`Forderung / ${wageUnit()}`} value={fmtWage(dem.wage, { unit: false })} />
         <Line label="Wunschlaufzeit" value={dem.minYears === dem.maxYears ? `${dem.minYears} Jahr${dem.minYears > 1 ? 'e' : ''}` : `${dem.minYears}–${dem.maxYears} Jahre`} />
       </div>
       {dem.open ? (
         <div className="talk-form">
-          <label className="talk-row">
-            <span>Angebot / Woche</span>
-            <input type="range" min={lo} max={hi} step={10} value={wage} onChange={(e) => setWage(Number(e.target.value))} />
-            <b style={{ color: wage >= dem.wage ? 'var(--green)' : wage >= dem.wage * 0.93 ? 'var(--accent)' : 'var(--orange)' }}>{fmtPriceFull(wage)}</b>
-          </label>
+          <WageSlider label={`Angebot / ${wageUnit()}`} value={wage} min={lo} max={hi} onChange={setWage}
+            valueStyle={{ color: wage >= dem.wage ? 'var(--green)' : wage >= dem.wage * 0.93 ? 'var(--accent)' : 'var(--orange)' }} />
           <div className="talk-row">
             <span>Laufzeit</span>
             <div className="dchips">
@@ -73,11 +71,10 @@ export default function ContractTab({ p, squad, today, negotiation }: { p: Playe
     <div className="pp-grid pp-grid-contract">
       <Section title="Konditionen" icon={<Icon name="contracts" size={15} />}>
         <div className="pp-list">
-          <Line label="Gehalt / Woche" value={fmtPriceFull(k.weeklyWage)} strong />
-          <Line label="Gehalt / Jahr" value={fmtPriceFull(k.weeklyWage * 52)} />
+          <Line label={`Gehalt / ${wageUnit()}`} value={fmtWage(k.weeklyWage, { unit: false })} strong />
           <Line label="Vertrag bis" value={utcDate(k.expiryDate)} />
           <Line label="Restlaufzeit" value={left === null ? '—' : left >= 12 ? `${Math.floor(left / 12)} J. ${left % 12} M.` : `${left} Monate`} color={left !== null && left <= 6 ? 'var(--orange)' : undefined} />
-          <Line label="Ausstiegsklausel" value={typeof k.releaseClause === 'number' ? fmtDM(k.releaseClause) : 'keine'} />
+          <Line label="Ausstiegsklausel" value={typeof k.releaseClause === 'number' ? fmtPrice(k.releaseClause) : 'keine'} />
           <Line label="Tor-Prämie" value={k.goalBonus ? fmtDMfull(k.goalBonus) : 'keine'} />
           <Line label="Transferliste" value={p.transferListed ? 'Ja' : 'Nein'} color={p.transferListed ? 'var(--orange)' : undefined} />
         </div>

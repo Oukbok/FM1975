@@ -18,7 +18,7 @@ import { isLeagueClub } from '../engine/clubEconomy';
 import { CalendarEngine } from '../engine/calendar';
 import { recordTransfer } from '../engine/history';
 import { Club, Player } from '../types';
-import { fmtPrice } from '../ui/format';
+import { fmtPrice, fmtWage } from '../ui/format';
 import { CHOICE_HANDLERS } from './eventsGame';
 import { repairSquadLists } from './squads';
 import { Game } from './state';
@@ -199,8 +199,8 @@ export function contractClausesDaily(g: Game, today: string): void {
       p.contract.weeklyWage = Math.round(old * (1 + p.contract.successRaise));
       pushMessage(g.messages, makeMessage({
         date: today, category: 'contract', from: 'Sportdirektor', subject: `Erfolgsklausel: ${p.fullName} verdient mehr`,
-        shortText: `Platz ${pos} – sein Gehalt steigt auf ${fmtPrice(p.contract.weeklyWage)} pro Woche.`,
-        bodyText: `Vertraglich vereinbart: Bei einem Europapokal-Platz steigt das Gehalt von ${p.fullName} um ${Math.round(p.contract.successRaise * 100)} %. Neu: ${fmtPrice(p.contract.weeklyWage)} statt ${fmtPrice(old)} pro Woche.`,
+        shortText: `Platz ${pos} – sein Gehalt steigt auf ${fmtWage(p.contract.weeklyWage)}.`,
+        bodyText: `Vertraglich vereinbart: Bei einem Europapokal-Platz steigt das Gehalt von ${p.fullName} um ${Math.round(p.contract.successRaise * 100)} %. Neu: ${fmtWage(p.contract.weeklyWage)} statt ${fmtWage(old, { unit: false })}.`,
       }));
       p.contract.successRaise = undefined;
     }

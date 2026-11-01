@@ -10,7 +10,7 @@ import { isLeagueClub } from '../../engine/clubEconomy';
 import { homeRegionOf, rivalsOf, wishesFor, yearsAtClub } from '../../game/playerWishesGame';
 import { scoutKnowledge, talkFor } from '../../game/transferTalks';
 import { Player } from '../../types';
-import { fmtPrice } from '../../ui/format';
+import { fmtPrice, fmtWage } from '../../ui/format';
 import Icon from '../Icon';
 import { Line, Section } from './shared';
 import { InterestLight, ReasonList, TraitBands, WishList } from './WishesParts';
@@ -96,8 +96,8 @@ export default function WishesTab({ p }: { p: Player }) {
           <ReasonList reasons={w.appeal.factors} knowledge={k} />
           <div className="pp-section-title mt14">Gehaltsvorstellung</div>
           <div className="pp-list">
-            <Line label="Marktgehalt bei dir" value={`${fmtPrice(st.market)} / Woche`} />
-            <Line label={st.agent ? 'Forderung des Beraters' : 'Seine Forderung'} value={k >= 0.35 ? `${fmtPrice(st.agentWage)} / Woche` : '—'} />
+            <Line label="Marktgehalt bei dir" value={fmtWage(st.market)} />
+            <Line label={st.agent ? 'Forderung des Beraters' : 'Seine Forderung'} value={k >= 0.35 ? fmtWage(st.agentWage) : '—'} />
             <Line label="Bereitschaft" value={k < 0.5 ? 'unbekannt' : st.cut > 0.04 ? `würde etwa ${pct(st.cut)} verzichten` : st.cut < -0.04 ? `verlangt etwa ${pct(st.cut)} Aufschlag` : 'keine Abstriche'}
               color={k < 0.5 ? undefined : st.cut > 0.04 ? 'var(--green)' : st.cut < -0.04 ? 'var(--orange)' : undefined} />
             <Line label="Berater" value={st.agent ? `ja – Provision etwa ${fmtPrice(st.agentFee)}` : 'nein, verhandelt selbst'} />

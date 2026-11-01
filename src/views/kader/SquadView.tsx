@@ -3,7 +3,7 @@ import { formIndicator } from '../../engine/form';
 import { Game } from '../../game/state';
 import { Player } from '../../types';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
-import { fmtDM, vColor, condColor } from '../../ui/format';
+import { fmtDM, vColor, condColor, fmtWage, wageUnit } from '../../ui/format';
 import { GROUP_DE, PlayerRow, ScoutStars, avg, groupOf, scoutMid } from '../shared';
 import { useState } from 'react';
 import { demandFor, offerContract } from '../../game/contracts';
@@ -97,7 +97,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
           const xs = all.filter((x) => groupOf(x) === k);
           return <KV key={k} k={`${GROUP_DE[k]} (${xs.length})`} v={xs.length ? `Ø ${Math.round(avg(xs.map((x) => x.overall)))}` : '–'} />;
         })}
-        <KV k="Gehälter pro Woche" v={fmtDM(wages)} strong />
+        <KV k={`Gehälter / ${wageUnit()}`} v={fmtWage(wages, { unit: false })} strong />
         <Meter label="Unter 23 Jahren" value={all.filter((x) => x.age < 23).length} max={Math.max(1, all.length)} text={`${all.filter((x) => x.age < 23).length}`} />
       </DashBox>
 

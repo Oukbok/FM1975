@@ -21,6 +21,43 @@ export const fmtDMfull = (n: number) => formatMoney(n, _displayYear);
 export const fmtPrice = (base: number) => formatMoneyShort(base * economyScale(_displayYear), _displayYear);
 export const fmtPriceFull = (base: number) => formatMoney(Math.round(base * economyScale(_displayYear)), _displayYear);
 
+// -----------------------------------------------------------------------------
+// GEHÄLTER — intern immer Wochengehalt in 1975-Basis (`contract.weeklyWage`,
+// Gehaltsbudget). Angezeigt wird auf die Einserstelle, je nach Einstellung
+// „pro Jahr“ (Standard, × 52) oder „pro Woche“. Die Einstellung setzt App.tsx
+// bei jedem Render (`setWagePeriod`), wie `setDisplayYear`.
+// -----------------------------------------------------------------------------
+export type WagePeriod = 'jahr' | 'woche';
+let _wagePeriod: WagePeriod = 'jahr';
+export function setWagePeriod(p: WagePeriod | undefined): void { _wagePeriod = p === 'woche' ? 'woche' : 'jahr'; }
+export const wagePeriod = (): WagePeriod => _wagePeriod;
+/** „Jahr“ bzw. „Woche“ – für Beschriftungen wie „Gehalt / Jahr“. */
+export const wageUnit = () => (_wagePeriod === 'woche' ? 'Woche' : 'Jahr');
+/** Kurzform für Spaltenköpfe („Gehalt/Jahr“). */
+export const wageHead = (label = 'Gehalt') => `${label}/${_wagePeriod === 'woche' ? 'Wo.' : 'Jahr'}`;
+const periodFactor = () => (_wagePeriod === 'woche' ? 1 : 52);
+const currencyDiv = () => (_displayYear > 2001 ? 1.95583 : 1);
+/** Wochengehalt (1975-Basis) → angezeigter Betrag in der Währung der Epoche je Zeitraum (ungerundet). */
+export const wageToDisplay = (weeklyBase: number) => (weeklyBase * economyScale(_displayYear) * periodFactor()) / currencyDiv();
+/** Angezeigter/eingegebener Betrag je Zeitraum → Wochengehalt in 1975-Basis. */
+export const wageFromDisplay = (amount: number) => (amount * currencyDiv()) / (economyScale(_displayYear) * periodFactor());
+/** Gehalt auf die Einserstelle, z. B. „312.457 DM / Jahr“ (`unit: false` ohne Zeitraum). */
+export function fmtWage(weeklyBase: number, opts: { unit?: boolean } = {}): string {
+  const v = Math.round(wageToDisplay(weeklyBase));
+  const s = `${v.toLocaleString('de-DE')} ${_displayYear > 2001 ? '€' : 'DM'}`;
+  return opts.unit === false ? s : `${s} / ${wageUnit()}`;
+}
+/** Mitarbeitergehalt (nominal pro Monat, engine/staffPeople.ts) im gewählten Zeitraum, auf die Einserstelle. */
+export function fmtStaffWage(monthlyNominal: number, opts: { unit?: boolean } = {}): string {
+  const v = Math.round((monthlyNominal * (_wagePeriod === 'woche' ? 12 / 52 : 12)) / currencyDiv());
+  const s = `${v.toLocaleString('de-DE')} ${_displayYear > 2001 ? '€' : 'DM'}`;
+  return opts.unit === false ? s : `${s} / ${wageUnit()}`;
+}
+/** Schrittweite für Gehalts-Schieberegler in Anzeige-Einheiten (≈ 1 % des Höchstwerts, glatte Zahl). */
+export function wageStep(maxDisplay: number): number {
+  return Math.max(1, 10 ** Math.max(0, Math.floor(Math.log10(Math.max(1, maxDisplay))) - 2));
+}
+
 /** Qualitätsskala für Werte (Attribute, Stärke, Eignung): monochrom – hell = gut, dunkel = schwach. */
 export const vColor = (v: number) => v >= 80 ? 'var(--q-1)' : v >= 70 ? 'var(--q-2)' : v >= 55 ? 'var(--q-3)' : 'var(--q-4)';
 /** Balkenfarbe passend zur Qualitätsskala (gedämpfter als die Ziffern). */

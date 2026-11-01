@@ -11,7 +11,8 @@ import { Game } from '../../game/state';
 import { TransferTalk, cancelTalk, clubOffer, inTransferWindow, playerOffer, scoutKnowledge, stanceFor, swapValueFor } from '../../game/transferTalks';
 import { ImportanceDots, InterestLight, ReasonList, WishList, importanceText } from '../../components/player/WishesParts';
 import { DashBox, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
-import { fmtPrice, vColor } from '../../ui/format';
+import { fmtPrice, fmtWage, vColor, wageUnit } from '../../ui/format';
+import { WageSlider } from '../../ui/WageSlider';
 
 // =============================================================================
 // TRANSFERVERHANDLUNG — Vereinsgespräch, Spielergespräch, Wünsche, Verlauf
@@ -48,7 +49,12 @@ function ClubDeal({ g, t }: { g: Game; t: TransferTalk }) {
   </>;
 }
 
-function ClubTalkBox({ g, t, onChange }: { g: Game; t: TransferTalk; onChange: (msg: string) => void }) {
+/** Hinweis, wenn ein Vorschlag nicht abgeschickt wurde (Budget, Gehaltsrahmen, Klausel …). */
+function Refused({ text }: { text: string | null }) {
+  return text ? <div className="dnote mt8" style={{ color: 'var(--red)' }}>Nicht abgeschickt: {text}</div> : null;
+}
+
+function ClubTalkBox({ g, t, onChange, notice }: { g: Game; t: TransferTalk; onChange: (msg: string) => void; notice: string | null }) {
   const year = Number(g.calendar.currentDate.slice(0, 4));
   const lo = r5k(Math.min(t.estimate[0], t.currentAsk) * 0.5);
   const hi = r5k(Math.max(t.estimate[1], t.currentAsk) * 1.35);
@@ -79,6 +85,7 @@ function ClubTalkBox({ g, t, onChange }: { g: Game; t: TransferTalk; onChange: (
         <label className="talk-row"><span>{loan ? 'Leihgebühr' : 'Ablöse'}</span>
           <input type="range" min={loan ? 5000 : lo} max={hi} step={5000} value={fee} onChange={(e) => setFee(Number(e.target.value))} />
           <b className="accent-text">{fmtPrice(fee)}</b></label>
+        {fee * (loan || rates === 1 ? 1 : 1 / rates) > own.finances.transferBudget && <div className="dnote" style={{ color: 'var(--orange)' }}>Über deinem Transferbudget ({fmtPrice(own.finances.transferBudget)}) – der Vorstand gibt das nicht frei.</div>}
         {loan && <label className="talk-row"><span>Kaufoption</span>
           <input type="range" min={lo} max={hi * 1.3} step={5000} value={option} onChange={(e) => setOption(Number(e.target.value))} />
           <b>{fmtPrice(option)}</b></label>}
@@ -94,6 +101,7 @@ function ClubTalkBox({ g, t, onChange }: { g: Game; t: TransferTalk; onChange: (
           <span className="muted">{swInfo ? (swInfo.value ? `zählt etwa ${fmtPrice(swInfo.value)}` : swInfo.reason) : ''}</span>
         </div>
         <button className="btn btn-primary talk-send" onClick={send}>Angebot abgeben</button>
+        <Refused text={notice} />
       </div>
       <div className="dsec">So rechnet der Verein</div>
       <div className="dnote">Raten zählen mit 93 % (drei Raten 89 %), eine Weiterverkaufsbeteiligung zur Hälfte ihres Anteils, eine Erfolgsprämie zu 45 %. Einen Tauschspieler rechnet er nach eigenem Bedarf an – und nur, wenn der Spieler selbst wechseln will. Zu niedrige Angebote kosten Geduld.</div>
@@ -101,7 +109,7 @@ function ClubTalkBox({ g, t, onChange }: { g: Game; t: TransferTalk; onChange: (
   );
 }
 
-function PlayerTalkBox({ g, t, onChange }: { g: Game; t: TransferTalk; onChange: (msg: string) => void }) {
+function PlayerTalkBox({ g, t, onChange, notice }: { g: Game; t: TransferTalk; onChange: (msg: string) => void; notice: string | null }) {
   const p = g.players[t.playerId];
   const st = stanceFor(g, t);
   const year = Number(g.calendar.currentDate.slice(0, 4));
@@ -118,7 +126,7 @@ function PlayerTalkBox({ g, t, onChange }: { g: Game; t: TransferTalk; onChange:
     return (
       <DashBox title="Spielergespräch" icon="squad" rows={2} right={t.phase === 'failed' ? 'beendet' : 'Einigung'}>
         {tr ? <>
-          <KV k="Gehalt / Woche" v={fmtPrice(tr.wage)} strong />
+          <KV k={`Gehalt / ${wageUnit()}`} v={fmtWage(tr.wage, { unit: false })} strong />
           <KV k="Laufzeit" v={`${tr.years} Jahre`} />
           <KV k="Handgeld" v={tr.signingFee ? fmtPrice(tr.signingFee) : 'keins'} />
           {tr.agentFee ? <KV k="Beraterprovision" v={fmtPrice(tr.agentFee)} /> : null}
@@ -129,7 +137,7 @@ function PlayerTalkBox({ g, t, onChange }: { g: Game; t: TransferTalk; onChange:
       </DashBox>
     );
   }
-  const lo = Math.round(st.agentWage * 0.6 / 10) * 10, hi = Math.round(st.agentWage * 1.5 / 10) * 10;
+  const lo = st.agentWage * 0.6, hi = st.agentWage * 1.5;
   const known = t.pRound >= 1 || scoutKnowledge(g, p) >= 0.55;
   const weights = new Map(st.priorities);
   const toggle = (x: PromiseType) => setProm((cur) => cur.includes(x) ? cur.filter((y) => y !== x) : [...cur, x]);
@@ -143,9 +151,7 @@ function PlayerTalkBox({ g, t, onChange }: { g: Game; t: TransferTalk; onChange:
   return (
     <DashBox title="Spielergespräch" icon="squad" rows={2} right={<span style={{ color: mood(t.pPatience).color }}>{mood(t.pPatience).text}</span>}>
       <div className="talk-form">
-        <label className="talk-row"><span>Gehalt / Woche</span>
-          <input type="range" min={lo} max={hi} step={10} value={wage} onChange={(e) => setWage(Number(e.target.value))} />
-          <b className="accent-text">{fmtPrice(wage)}</b></label>
+        <WageSlider value={wage} min={lo} max={hi} onChange={setWage} valueClass="accent-text" />
         <Chips label="Laufzeit" value={years} set={setYears} opts={[1, 2, 3, 4, 5].map((y) => [y, `${y} J.`] as [number, string])} />
         <Chips label="Handgeld" value={hand} set={setHand} opts={[[0, 'keins'], [0.5, st.signingFee ? fmtPrice(r100(st.signingFee * 0.5)) : fmtPrice(r100(wage * 3))], [1, st.signingFee ? fmtPrice(st.signingFee) : fmtPrice(r100(wage * 6))], [1.6, st.signingFee ? fmtPrice(r100(st.signingFee * 1.6)) : fmtPrice(r100(wage * 10))]]} />
         {st.agent && <Chips label="Beraterprovision" value={agentPct} set={setAgentPct} opts={[[0, 'keine'], [0.5, fmtPrice(r100(st.agentFee * 0.5))], [1, fmtPrice(st.agentFee), 'Die übliche Provision des Beraters']]} />}
@@ -163,6 +169,7 @@ function PlayerTalkBox({ g, t, onChange }: { g: Game; t: TransferTalk; onChange:
             ))}
           </ul></div>
         <button className="btn btn-primary talk-send" onClick={send}>Vorschlag machen</button>
+        <Refused text={notice} />
       </div>
     </DashBox>
   );
@@ -185,7 +192,7 @@ function WishBox({ g, t }: { g: Game; t: TransferTalk }) {
       <ReasonList reasons={w.appeal.factors} knowledge={k} max={5} />
       <div className="dsec">Seine Forderungen</div>
       <div className="talk-demands">
-        <KV k={st.agent ? 'Berater fordert' : 'Er fordert'} v={`${fmtPrice(st.agentWage)} / Woche`} />
+        <KV k={st.agent ? 'Berater fordert' : 'Er fordert'} v={fmtWage(st.agentWage)} />
         <KV k="Wunschlaufzeit" v={`${st.years[0]}–${st.years[1]} Jahre`} />
         {st.signingFee > 0 && <KV k="Handgeld" v={`etwa ${fmtPrice(st.signingFee)}`} />}
         {st.agent && <KV k="Provision" v={fmtPrice(st.agentFee)} />}
@@ -204,7 +211,11 @@ export function TransferTalkModal({ g, talk, onClose, onChange }: { g: Game; tal
   const p = g.players[talk.playerId];
   const seller = g.clubs[talk.sellerId];
   const own = g.clubs[g.managedClubId];
-  const act = (_msg: string) => { setTick((x) => x + 1); onChange(); };
+  // Abgelehnte Vorschläge (keine neue Runde) sichtbar machen – vorher verschwand die Meldung,
+  // und der Verlauf zeigte weiter das letzte gültige Angebot.
+  const [notice, setNotice] = useState<string | null>(null);
+  const rounds = talk.round + talk.pRound;
+  const act = (msg: string) => { setNotice(talk.round + talk.pRound === rounds && talk.phase !== 'failed' ? msg : null); setTick((x) => x + 1); onChange(); };
   const wages = own.playerIds.reduce((s, id) => s + (g.players[id]?.contract.weeklyWage ?? 0), 0);
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -233,8 +244,8 @@ export function TransferTalkModal({ g, talk, onClose, onChange }: { g: Game; tal
             ))}
           </DashBox>
           {talk.phase === 'club'
-            ? <ClubTalkBox key={`c${talk.round}`} g={g} t={talk} onChange={act} />
-            : <PlayerTalkBox key={`p${talk.pRound}`} g={g} t={talk} onChange={act} />}
+            ? <ClubTalkBox key={`c${talk.round}`} g={g} t={talk} onChange={act} notice={notice} />
+            : <PlayerTalkBox key={`p${talk.pRound}`} g={g} t={talk} onChange={act} notice={notice} />}
           <WishBox g={g} t={talk} />
           <DashBox title="Rahmen" icon="finances">
             {talk.phase === 'club' ? <div className="dnote">Erst wenn du dich mit dem Verein einig bist, darfst du mit {p?.lastName} sprechen.</div> : <ClubDeal g={g} t={talk} />}

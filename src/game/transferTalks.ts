@@ -31,7 +31,7 @@ import { interestText } from '../engine/playerWishes';
 import { playsEurope, rivalsOf, willJoin, wishesFor } from './playerWishesGame';
 import { isForeignId } from '../engine/world';
 import { Club, Player } from '../types';
-import { fmtPrice } from '../ui/format';
+import { fmtPrice, fmtWage } from '../ui/format';
 import { transferPlayer } from './contracts';
 import { ensureEnvironment } from './environmentGame';
 import { givePromises, trustOf } from './promises';
@@ -160,6 +160,17 @@ function say(t: TransferTalk, date: string, who: TransferTalk['log'][number]['wh
   t.lastAction = date;
 }
 
+/**
+ * Abgelehnter Vorschlag (Budget, Gehaltsrahmen, Klausel noch nicht erlaubt …): Er wird NICHT
+ * abgeschickt. Damit der Verlauf nicht weiter das letzte gültige Angebot als neuestes zeigt,
+ * steht der Grund als Info-Zeile darin (ohne `lastAction` – das Gespräch schläft trotzdem ein).
+ */
+function refuse(t: TransferTalk, date: string, text: string): string {
+  t.log.push({ date, who: 'info', text: `Nicht abgeschickt: ${text}` });
+  if (t.log.length > 30) t.log.splice(0, t.log.length - 30);
+  return text;
+}
+
 /** Wert eines eigenen Spielers als Tauschobjekt für den Verkäufer (0 = will ihn nicht bzw. er will nicht hin). */
 export function swapValueFor(g: Game, swap: Player, seller: Club): { value: number; reason: string } {
   if (swap.clubId !== g.managedClubId) return { value: 0, reason: 'Nur eigene Spieler.' };
@@ -182,23 +193,23 @@ export function clubOffer(g: Game, talkId: string, pkg: ClubPackage): string {
   const p = g.players[t.playerId];
   const seller = g.clubs[t.sellerId];
   if (!p || !seller || p.clubId !== seller.id) { t.phase = 'failed'; return 'Der Spieler ist nicht mehr verfügbar.'; }
-  if (pkg.loan && year < CLAUSE_FROM.loanOption) return `Leihen mit Kaufoption gibt es erst ab ${CLAUSE_FROM.loanOption}.`;
-  if (pkg.buyBack && year < CLAUSE_FROM.buyBack) return `Rückkaufoptionen sind erst ab ${CLAUSE_FROM.buyBack} üblich.`;
-  if (pkg.rates === 3 && year < CLAUSE_FROM.threeRates) return `Drei Raten akzeptiert vor ${CLAUSE_FROM.threeRates} niemand.`;
+  if (pkg.loan && year < CLAUSE_FROM.loanOption) return refuse(t, today, `Leihen mit Kaufoption gibt es erst ab ${CLAUSE_FROM.loanOption}.`);
+  if (pkg.buyBack && year < CLAUSE_FROM.buyBack) return refuse(t, today, `Rückkaufoptionen sind erst ab ${CLAUSE_FROM.buyBack} üblich.`);
+  if (pkg.rates === 3 && year < CLAUSE_FROM.threeRates) return refuse(t, today, `Drei Raten akzeptiert vor ${CLAUSE_FROM.threeRates} niemand.`);
   if (pkg.loan) {
     const rank = seller.playerIds.map((id) => g.players[id]).filter(Boolean).sort((a, b) => b.overall - a.overall).findIndex((x) => x.id === p.id);
-    if (rank >= 0 && rank < 11 && p.age > 21) return `${seller.shortName} verleiht keine Stammspieler.`;
+    if (rank >= 0 && rank < 11 && p.age > 21) return refuse(t, today, `${seller.shortName} verleiht keine Stammspieler.`);
   }
   // Tauschspieler: Wert neu bestimmen (nicht vom Aufrufer übernehmen).
   if (pkg.swapPlayerId) {
     const sw = g.players[pkg.swapPlayerId];
     const sv = sw ? swapValueFor(g, sw, seller) : { value: 0, reason: 'Spieler nicht gefunden.' };
-    if (!sv.value) return sv.reason;
+    if (!sv.value) return refuse(t, today, sv.reason);
     pkg = { ...pkg, swapValue: sv.value };
   } else pkg = { ...pkg, swapValue: 0 };
   const share = pkg.installments ? 1 / (pkg.rates ?? 2) : 1;
   const upfront = pkg.fee * share;
-  if (upfront > own.finances.transferBudget) return `Der Vorstand gibt das nicht frei: Dein Transferbudget beträgt ${fmtPrice(own.finances.transferBudget)}${pkg.installments ? ' (bei Ratenzahlung zählt die erste Rate)' : ''}.`;
+  if (upfront > own.finances.transferBudget) return refuse(t, today, `Der Vorstand gibt ${fmtPrice(pkg.fee)} nicht frei: Dein Transferbudget beträgt ${fmtPrice(own.finances.transferBudget)}${pkg.installments ? ' (bei Ratenzahlung zählt die erste Rate)' : ''}.`);
   t.round += 1;
   const swapP = pkg.swapPlayerId ? g.players[pkg.swapPlayerId] : undefined;
   const extras = [pkg.loan && `als Leihe, Kaufoption ${fmtPrice(pkg.optionFee ?? 0)}`, pkg.installments && `in ${pkg.rates ?? 2} Raten`, pkg.sellOn > 0 && `${Math.round(pkg.sellOn * 100)} % Weiterverkaufsbeteiligung`,
@@ -212,7 +223,7 @@ export function clubOffer(g: Game, talkId: string, pkg: ClubPackage): string {
     t.phase = 'player';
     say(t, today, 'verein', ans.text);
     const st = stanceFor(g, t);
-    say(t, today, 'info', `Jetzt musst du ${p.fullName} überzeugen. ${st.agent ? `Sein Berater fordert ${fmtPrice(st.agentWage)} pro Woche${st.agentFee ? ` und ${fmtPrice(st.agentFee)} Provision` : ''}.` : `Er verhandelt selbst und fordert ${fmtPrice(st.agentWage)} pro Woche.`}`);
+    say(t, today, 'info', `Jetzt musst du ${p.fullName} überzeugen. ${st.agent ? `Sein Berater fordert ${fmtWage(st.agentWage)}${st.agentFee ? ` und ${fmtPrice(st.agentFee)} Provision` : ''}.` : `Er verhandelt selbst und fordert ${fmtWage(st.agentWage)}.`}`);
     return ans.text;
   }
   if (ans.kind === 'breakoff') {
@@ -242,15 +253,15 @@ export function playerOffer(g: Game, talkId: string, offer: PlayerOffer): string
   const own = g.clubs[g.managedClubId];
   const p = g.players[t.playerId];
   if (!p || p.clubId !== t.sellerId) { t.phase = 'failed'; return 'Der Spieler ist nicht mehr verfügbar.'; }
-  if (offer.releaseClause && yearOf(today) < CLAUSE_FROM.releaseClause) return `Ausstiegsklauseln sind in Deutschland erst ab ${CLAUSE_FROM.releaseClause} üblich.`;
+  if (offer.releaseClause && yearOf(today) < CLAUSE_FROM.releaseClause) return refuse(t, today, `Ausstiegsklauseln sind in Deutschland erst ab ${CLAUSE_FROM.releaseClause} üblich.`);
   // Gehaltsrahmen
   const wages = own.playerIds.reduce((s, id) => s + (g.players[id]?.contract.weeklyWage ?? 0), 0) + offer.wage;
   if (own.finances.wageBudget > 0 && wages > own.finances.wageBudget * 1.15) {
-    return `Der Vorstand gibt das Gehalt nicht frei: Die Gehälter lägen bei ${Math.round((wages / own.finances.wageBudget) * 100)} % des Gehaltsrahmens (Grenze 115 %).`;
+    return refuse(t, today, `Der Vorstand gibt ${fmtWage(offer.wage)} nicht frei: Die Gehälter lägen bei ${Math.round((wages / own.finances.wageBudget) * 100)} % des Gehaltsrahmens (Grenze 115 %).`);
   }
   const fee = t.pkg ? t.pkg.fee / (t.pkg.installments ? (t.pkg.rates ?? 2) : 1) : 0;
   if (offer.signingFee + (offer.agentFee ?? 0) > own.finances.transferBudget - fee) {
-    return 'Für Handgeld und Provision reicht das Transferbudget nicht.';
+    return refuse(t, today, 'Für Handgeld und Provision reicht das Transferbudget nicht.');
   }
   t.pRound += 1;
   const st = stanceFor(g, t);
@@ -258,7 +269,7 @@ export function playerOffer(g: Game, talkId: string, offer: PlayerOffer): string
   const extras = [offer.signingFee && `Handgeld ${fmtPrice(offer.signingFee)}`, offer.agentFee && `Provision ${fmtPrice(offer.agentFee)}`,
     offer.loyaltyBonus && `Treueprämie ${fmtPrice(offer.loyaltyBonus)}`, offer.successRaise && `+${Math.round(offer.successRaise * 100)} % bei Europapokal`,
     offer.releaseClause && 'Ausstiegsklausel'].filter(Boolean).join(', ');
-  say(t, today, 'du', `${fmtPrice(offer.wage)} pro Woche, ${offer.years} Jahre${extras ? `, ${extras}` : ''}${promises ? ` · Versprechen: ${promises}` : ''}.`);
+  say(t, today, 'du', `Gehalt ${fmtWage(offer.wage)}, ${offer.years} Jahre${extras ? `, ${extras}` : ''}${promises ? ` · Versprechen: ${promises}` : ''}.`);
   const ans = playerAnswer(p, st, offer, trustOf(g), t.pRound - 1, () => hash01(`${t.id}|p${t.pRound}|${offer.wage}`), playsEurope(g, own.id));
   if (ans.accepted) {
     t.terms = offer;
@@ -313,7 +324,7 @@ function completeTalk(g: Game, t: TransferTalk): string {
   }
   // Vertrag nach Einigung (transferPlayer setzt Standardwerte)
   const terms = t.terms;
-  p.contract.weeklyWage = Math.round(terms.wage);
+  p.contract.weeklyWage = Math.round(terms.wage * 1e4) / 1e4; // ungerundet: angezeigt = vereinbart
   p.contract.expiryDate = `${seasonEndYear(today) + terms.years - (Number(today.slice(5, 7)) >= 7 ? 1 : 0)}-06-30`;
   if (pkg?.loan && p.contract.expiryDate <= p.loan!.until) p.contract.expiryDate = `${seasonEndYear(today) + 1}-06-30`;
   p.contract.releaseClause = terms.releaseClause ? r5k(Math.max(fee, p.contract.transferValue) * 1.8) : undefined;
@@ -342,7 +353,7 @@ function completeTalk(g: Game, t: TransferTalk): string {
   pushMessage(g.messages, makeMessage({
     date: today, category: 'transfer', from: 'Sportdirektor', subject: `Transfer perfekt: ${p.fullName}`,
     shortText: text,
-    bodyText: `${text}\n\nVertrag bis 30.06.${p.contract.expiryDate.slice(0, 4)}, ${fmtPrice(p.contract.weeklyWage)} pro Woche.${clauses.length ? `\nKlauseln: ${clauses.join(', ')}.` : ''}${terms.promises.length ? `\nVersprechen: ${terms.promises.map((x) => PROMISES[x].label).join(', ')} – sie werden am Saisonende geprüft.` : ''}`,
+    bodyText: `${text}\n\nVertrag bis 30.06.${p.contract.expiryDate.slice(0, 4)}, Gehalt ${fmtWage(p.contract.weeklyWage)}.${clauses.length ? `\nKlauseln: ${clauses.join(', ')}.` : ''}${terms.promises.length ? `\nVersprechen: ${terms.promises.map((x) => PROMISES[x].label).join(', ')} – sie werden am Saisonende geprüft.` : ''}`,
   }));
   return text;
 }

@@ -14,7 +14,7 @@ import { getFormation } from '../data/formations';
 import { Game } from '../game/state';
 import { Screen } from '../shell/navigation';
 import { BoxLink, DashBox, DashPage, Empty, KV, Kpi, Meter } from '../ui/DashPage';
-import { fmtDM, fmtDMfull, fmtDateShort, vColor, condColor, condBar, fmtPrice } from '../ui/format';
+import { fmtDM, fmtDMfull, fmtDateShort, vColor, condColor, condBar, fmtPrice, fmtWage, wageUnit } from '../ui/format';
 import {
   FormDots, GROUP_DE, MatchRow, PlayerRow, avg, groupOf, monthsUntil, ownLeagueMatches, squadOf, tableRow,
 } from './shared';
@@ -152,7 +152,7 @@ export function KaderDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) => 
         {tired.map((p) => <Meter key={p.id} label={p.fullName} value={p.frische ?? 100} color={condBar(p.frische ?? 100)} />)}
       </DashBox>
 
-      <DashBox title="Verträge" icon="contracts" onClick={() => onGoto('vertraege')} right={`${fmtDM(wages)} / Woche`}>
+      <DashBox title="Verträge" icon="contracts" onClick={() => onGoto('vertraege')} right={fmtWage(wages)}>
         {expiring.map((p) => {
           const left = monthsUntil(today, p.contract.expiryDate);
           return <PlayerRow key={p.id} p={p} sub={`${p.age} J.`} value={left <= 12 ? `${left} Mon.` : new Date(p.contract.expiryDate).getUTCFullYear()} color={left <= 6 ? 'var(--orange)' : 'var(--text)'} />;
@@ -201,7 +201,7 @@ export function TransfersDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen)
           <Kpi value={fmtPrice(fin.transferBudget)} label="Transferbudget" color="var(--green)" />
           <Kpi value={fmtDM(fin.balance)} label="Kontostand" color={fin.balance >= 0 ? 'var(--text)' : 'var(--red)'} />
         </div>
-        <KV k="Gehälter pro Woche" v={fmtDM(wageBill)} />
+        <KV k={`Gehälter / ${wageUnit()}`} v={fmtWage(wageBill, { unit: false })} />
         {fin.wageBudget > 0 && <Meter label="Gehaltsbudget genutzt" value={wageBill} max={fin.wageBudget} text={`${Math.round((wageBill / fin.wageBudget) * 100)} %`} color={wageBill > fin.wageBudget ? 'var(--red)' : 'var(--accent)'} />}
       </DashBox>
 

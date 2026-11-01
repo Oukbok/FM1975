@@ -18,7 +18,7 @@ import { recordTransfer } from '../engine/history';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { isForeignId } from '../engine/world';
 import { Club, Player } from '../types';
-import { fmtPrice } from '../ui/format';
+import { fmtPrice, fmtWage } from '../ui/format';
 import { repairSquadLists, wageRatioOf } from './squads';
 import { freeAgentDestination, preferredClub } from './playerWishesGame';
 import { personaOf } from '../engine/persona';
@@ -69,7 +69,7 @@ export function offerContract(g: Game, playerId: string, wage: number, years: nu
   talks.attempts += 1;
   const res = evaluateOffer(p, dem, wage, years, talks.attempts);
   if (res.accepted) {
-    p.contract.weeklyWage = Math.round(wage);
+    p.contract.weeklyWage = Math.round(wage * 1e4) / 1e4; // ungerundet: angezeigt = vereinbart
     // Laufzeit zählt ab der nächsten Saison, mindestens ein Jahr über das bisherige Ende hinaus.
     const endYear = Math.max(seasonEndYear(today) + years, Number(p.contract.expiryDate.slice(0, 4)) + 1);
     p.contract.expiryDate = `${endYear}-06-30`;
@@ -78,8 +78,8 @@ export function offerContract(g: Game, playerId: string, wage: number, years: nu
     pushMessage(g.messages, makeMessage({
       date: today, category: 'contract', from: 'Sportdirektor',
       subject: `${p.fullName} verlängert bis ${p.contract.expiryDate.slice(0, 4)}`,
-      shortText: `Neues Gehalt: ${fmtPrice(p.contract.weeklyWage)} pro Woche.`,
-      bodyText: `${p.fullName} hat seinen Vertrag verlängert. Laufzeit bis 30.06.${p.contract.expiryDate.slice(0, 4)}, Wochengehalt ${fmtPrice(p.contract.weeklyWage)}.`,
+      shortText: `Neues Gehalt: ${fmtWage(p.contract.weeklyWage)}.`,
+      bodyText: `${p.fullName} hat seinen Vertrag verlängert. Laufzeit bis 30.06.${p.contract.expiryDate.slice(0, 4)}, Gehalt ${fmtWage(p.contract.weeklyWage)}.`,
     }));
     return { ok: true, text: res.text };
   }
