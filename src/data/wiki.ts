@@ -1584,18 +1584,23 @@ Unzufriedene Spieler fordern mehr, verlängern ungern, sinken in der Moral und z
     id: 'chronicle-briefing',
     category: 'chronicle',
     title: 'Saison-Briefing',
-    keywords: ['briefing', 'saisonbriefing', 'damals', 'heute', 'neu im spiel', 'gesellschaft', 'saisonwechsel', 'ausgangslage', 'archiv'],
+    keywords: ['briefing', 'saisonbriefing', 'damals', 'heute', 'neu im spiel', 'gesellschaft', 'saisonwechsel', 'ausgangslage', 'archiv', 'auftakt', 'animation', 'aufgaben', 'tipps', 'epoche'],
     body: `## Wann es erscheint
-Zu **Spielbeginn** und nach jedem **Saisonwechsel** öffnet sich automatisch das Saison-Briefing. „Weiter“ schließt es. Abschalten kannst du das unter **Einstellungen → Saison-Briefing automatisch anzeigen**; das Briefing liegt trotzdem als Nachricht im Posteingang. Beim Laden eines Spielstands öffnet es sich nicht.
+Zu **Spielbeginn** und nach jedem **Saisonwechsel** öffnet sich automatisch das Saison-Briefing als großes Fenster über der ganzen Spielfläche (wie der Textmodus). Solange es offen ist, steht die Zeit. „Los geht’s“ bzw. „Saison starten“ schließt es. Abschalten kannst du das unter **Einstellungen → Saison-Briefing automatisch anzeigen**; das Briefing liegt trotzdem als Nachricht im Posteingang. Beim Laden eines Spielstands öffnet es sich nicht.
+
+## Auftakt
+Vor dem Briefing läuft ein kurzer Auftakt (etwa 6 Sekunden): Mittelkreis und Mittellinie zeichnen sich, die Saisonzahl rollt ein, dann folgen Schlagzeile der Saison, Epoche, dein Wappen, Liga und Saisonziel. Der Bernstein-Bogen um den Mittelkreis zeigt, wie lange der Auftakt noch läuft. Die Anmutung wechselt mit der Zeit – bis Mitte der Achtziger als Fallblatt-Anzeigetafel mit Fernsehzeilen, später Video-, Neunziger- und digitale Optik. **Klick, Leertaste, Enter oder Esc** überspringen. Abschalten: **Einstellungen → Auftakt-Animation vor dem Saison-Briefing zeigen**; bei „Bewegung reduzieren“ im Betriebssystem entfällt er automatisch.
 
 ## Aufbau
 - **Überblick:** die 3–5 wichtigsten Punkte und **deine Ausgangslage** (Saisonziel des Vorstands, Liga, Kaderstärke im Ligavergleich, Vertrauen, Kontostand, Transferbudget, Kader-Eckdaten).
+- **Deine Aufgaben** (Überblick und Reiter **Aufgaben & Tipps**): aus deinem Spielstand abgeleitete Empfehlungen, sortiert nach **Dringend**, **Wichtig** und **Tipp** – mit Knopf, der direkt zur passenden Seite springt. Erkannt werden: weniger als zwei Torhüter, zu kleiner oder aufgeblähter Kader, dünn besetzte Mannschaftsteile, abgelaufene und auslaufende Verträge deiner wichtigsten 14 Spieler (ab Bosman dringend, weil sie ablösefrei gehen), ungenutztes Transferbudget (mit dem schwächsten Mannschaftsteil), ein Saisonziel deutlich über der Kaderstärke (oder darunter), geringes Vertrauen des Vorstands, noch nicht gebuchte Trainingslager im Sommer und Winter, fehlende NLZ-Bausteine (ab drei Jahre vor der Pflicht), Talente ab 17 mit hohem Potenzial oder schwache Nachwuchsarbeit, Konto im Minus, Punktabzug, knappe Reserve für Kreditraten, fehlender oder auslaufender Trikotsponsor, unbesetzte Bandenwerbung und neu freigeschaltete Bauten in Umfeld, Einrichtungen und Akademie. Die Aufgaben werden bei jedem Öffnen neu berechnet – Erledigtes verschwindet. Im Archiv früherer Saisons gibt es keine Aufgaben.
+- **Typisch für diese Spielzeit:** Trainer-Tipps je Epoche (z. B. 1975 Libero und Manndeckung, Zuschauer als Haupteinnahme, Trikotsponsor; ab 1995 Bosman, Drei-Punkte-Regel, drei Wechsel; ab 2000 Viererkette, NLZ-Pflicht, Euro und Fernsehkrise; ab 2011 Finanzielles Fairplay und Gegenpressing) – jeweils mit dem, was es im Spiel für dich heißt.
 - **Fußball** und **Gesellschaft:** was sich in dieser Saison im Fußball ändert und was das Land bewegt – Politik, Alltag, Kultur.
 - **Damals & heute:** In der ersten Saison alle Unterschiede zum heutigen Fußball (2025/26), nach Thema geordnet. Danach nur die Wechsel: was **ab jetzt wie heute** ist, was **neu anders** wird, was **zum letzten Mal** gilt – der Rest aufklappbar unter „Noch anders als heute“.
 - **Neu im Spiel:** automatisch aus den Spielregeln abgeleitet – Chronik-Meilensteine (z. B. 1995/96 drei Punkte pro Sieg), Ligareformen, neue Trainingslager-Ziele, Beginn und Ende von Hallenturnieren und Hallen-Masters, neue Nachwuchs-Bausteine und die NLZ-Pflicht, neue Bauten und Lizenzauflagen im Stadionumfeld, neue Einrichtungen und die Umstellung von D-Mark auf Euro (1. Januar 2002).
 
 ## Archiv
-Unter **Zentrale → Briefing** findest du die Briefings aller Saisons dieses Spiels; „Briefing öffnen“ zeigt das große Fenster. Alte Spielstände führen das Archiv ab der Saison, in der sie zuerst geladen werden.
+Unter **Zentrale → Briefing** findest du die Briefings aller Saisons dieses Spiels; „Briefing öffnen“ zeigt dasselbe Fenster ohne Auftakt. Alte Spielstände führen das Archiv ab der Saison, in der sie zuerst geladen werden.
 
 ## Vorschau und Chronik
 Am **2. Januar** kündigt der Verband an, was ab der nächsten Saison gilt. Die Einzelmeldungen der Chronik zum Saisonstart sind im Briefing zusammengefasst; alle Meilensteine stehen weiter unter **Statistiken → Chronik**.`,

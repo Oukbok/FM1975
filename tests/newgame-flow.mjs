@@ -21,8 +21,18 @@ export async function startNewGame(page, opts = {}) {
   if (!opts.keepBriefing) await closeBriefing(page);
 }
 
-/** Schließt das Saison-Briefing-Popup, falls es offen ist. */
+/** Überspringt die Auftakt-Animation des Saison-Briefings (Esc), falls sie läuft. */
+export async function skipIntro(page) {
+  const stage = page.locator('.si-stage');
+  try { await stage.waitFor({ state: 'visible', timeout: 2500 }); } catch { return false; }
+  await page.keyboard.press('Escape');
+  await stage.waitFor({ state: 'detached', timeout: 3000 }).catch(() => {});
+  return true;
+}
+
+/** Schließt das Saison-Briefing-Fenster (inkl. Auftakt-Animation), falls es offen ist. */
 export async function closeBriefing(page) {
+  await skipIntro(page);
   const btn = page.locator('.bf-modal .bf-continue');
   try { await btn.waitFor({ state: 'visible', timeout: 4000 }); } catch { return false; }
   await btn.click();

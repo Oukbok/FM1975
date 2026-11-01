@@ -342,7 +342,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'staff' && <StaffView g={g} onChange={rerender} />}
         {screen === 'marketing' && <MarketingView g={g} onChange={rerender} />}
         {screen === 'calendar' && <CalendarView g={g} onChange={rerender} onGoto={setScreen} />}
-        {screen === 'briefing' && <BriefingView g={g} />}
+        {screen === 'briefing' && <BriefingView g={g} onGoto={setScreen} onOpen={() => setRunning(false)} />}
         {screen === 'cup' && <CupView g={g} onWatch={(id) => setLiveMatchId(id)} />}
         {screen === 'chronicle' && <ChronicleView g={g} />}
         {screen === 'ruhmeshalle' && <HallOfFameView g={g} />}
@@ -418,7 +418,10 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         />
       )}
 
-      {pendingBriefing && <BriefingModal b={pendingBriefing} onClose={closeBriefing} />}
+      {pendingBriefing && (
+        <BriefingModal b={pendingBriefing} g={g} auto intro={settings.briefingIntro !== false}
+          onClose={closeBriefing} onGoto={setScreen} />
+      )}
 
       {ratingCeremony && (
         <RatingCeremony

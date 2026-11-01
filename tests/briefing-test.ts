@@ -10,6 +10,10 @@ import { gameChangesFor } from '../src/game/briefingChanges';
 import { DIFFERENCES } from '../src/data/briefings/differences';
 import { briefingFor, differencesFor } from '../src/data/briefings';
 import { TIMELINE, seasonStartYear } from '../src/data/timeline';
+import { ERA_TIPS, eraFor, eraTipsFor } from '../src/data/briefings/eraTips';
+import { seasonTasks } from '../src/game/seasonTasks';
+import { situationOf } from '../src/game/seasonBriefing';
+import { MENU_STRUCTURE } from '../src/shell/navigation';
 
 let seed = 1975;
 Math.random = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
@@ -100,4 +104,58 @@ expect(log.pending === undefined && log.records.length === 2, 'Laden: Popup nich
 const old: any = { ...g, briefing: undefined };
 migrateBriefing(old);
 expect(old.briefing.records.length === 1 && old.briefing.records[0].season === '1976/77' && !old.briefing.pending, 'Alter Spielstand: Archiv nicht ab aktueller Saison');
+
+// 7) Epochen-Tipps: lückenlos 1975–2099, 2–5 Tipps je Saison, gültige Seiten
+const whereOk = (w?: string) => { if (!w) return true; const [c, sub] = w.split('›').map((x) => x.trim()); const cat = MENU_STRUCTURE.find((m) => m.label === c); return !!cat && (!sub || cat.subs.some((x) => x.label === sub)); };
+for (let y = 1975; y <= 2060; y++) {
+  const e = eraFor(y);
+  expect(e.from <= y && y <= e.to, `${label(y)}: keine Epoche`);
+  const t = eraTipsFor(y);
+  expect(t.length >= 2 && t.length <= 6, `${label(y)}: ${t.length} Epochen-Tipps`);
+}
+for (const e of ERA_TIPS) for (const t of e.tips) expect(whereOk(t.where), `Epochen-Tipp „${t.title}“: Seite ${t.where} unbekannt`);
+expect(eraTipsFor(1975).some((t) => t.title.includes('Libero')), '1975: Libero-Tipp fehlt');
+expect(eraTipsFor(1996).some((t) => t.title.includes('ablösefrei')), '1996: Bosman-Tipp fehlt');
+expect(eraTipsFor(2002).some((t) => /Euro|Zahlen/.test(t.title)), '2002: Euro-Tipp fehlt');
+expect(!eraTipsFor(2022).some((t) => t.title.includes('ohne Publikum')), '2022: Geisterspiel-Tipp gilt noch');
+// Keine Doppelung mit den Unterschieden „Damals & heute“ (gleicher Titel).
+for (const e of ERA_TIPS) for (const t of e.tips) expect(!DIFFERENCES.some((d) => d.title === t.title), `Epochen-Tipp „${t.title}“ doppelt zu differences.ts`);
+
+// 8) Aufgaben aus dem Spielstand: Seiten gültig, gezielt erzeugte Lagen erkannt
+const club = g.clubs[g.managedClubId];
+const sit = situationOf(g)!;
+const base = seasonTasks(g, sit, composeBriefing(g.season).inGame);
+for (const t of base) expect(whereOk(t.where), `Aufgabe „${t.title}“: Seite ${t.where} unbekannt`);
+const ids = (list: { id: string }[]) => list.map((t) => t.id);
+// Nur ein Torwart → dringend
+const keepers = club.playerIds.filter((id) => g.players[id]?.naturalPosition === 'TW');
+const savedIds = [...club.playerIds];
+club.playerIds = club.playerIds.filter((id) => !keepers.slice(1).includes(id));
+expect(ids(seasonTasks(g, sit)).includes('gk'), 'Nur ein Torwart nicht erkannt');
+expect(seasonTasks(g, sit)[0].level === 'dringend', 'Dringende Aufgabe nicht zuerst');
+club.playerIds = savedIds;
+// Auslaufender Vertrag eines Stammspielers
+const star = club.playerIds.map((id) => g.players[id]).sort((a, b) => b.overall - a.overall)[0];
+const exp = star.contract.expiryDate;
+star.contract.expiryDate = `${parseInt(g.season.slice(0, 4), 10) + 1}-06-30`;
+expect(ids(seasonTasks(g, sit)).includes('contracts'), 'Auslaufender Vertrag nicht erkannt');
+star.contract.expiryDate = exp;
+// Konto im Minus, kein Trikotsponsor
+const bal = club.finances.balance;
+club.finances.balance = -100000;
+expect(ids(seasonTasks(g, sit)).includes('debt'), 'Konto im Minus nicht erkannt');
+club.finances.balance = bal;
+if (club.commerce) {
+  const sp = club.commerce.shirtSponsor;
+  club.commerce.shirtSponsor = undefined;
+  club.commerce.shirtOffers = [{ name: 'Test', annualValue: 100000, years: 2 }];
+  expect(ids(seasonTasks(g, sit)).includes('shirt'), 'Fehlender Trikotsponsor nicht erkannt');
+  club.commerce.shirtSponsor = sp;
+}
+// Ziel deutlich über der Kaderstärke
+expect(ids(seasonTasks(g, { ...sit, goal: 'Meisterschaft', rank: 9, of: 18 })).includes('goal-hard'), 'Ehrgeiziges Saisonziel nicht erkannt');
+// Neu Freigeschaltetes als Tipp mit Seite
+const unlocks = seasonTasks(g, sit, gameChangesFor(1993));
+expect(unlocks.some((t) => t.id.startsWith('new-') && whereOk(t.where)), '1993/94: Neu im Umfeld nicht als Aufgabe');
+console.log(`Aufgaben ${g.season}: ${base.map((t) => `${t.level}:${t.title}`).join(' | ')}`);
 console.log('Briefing-Test OK');

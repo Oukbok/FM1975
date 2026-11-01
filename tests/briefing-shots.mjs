@@ -7,7 +7,7 @@ import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { chromium } from 'playwright';
-import { startNewGame } from './newgame-flow.mjs';
+import { skipIntro, startNewGame } from './newgame-flow.mjs';
 
 const outDir = process.argv[2] || 'test-output/briefing';
 await mkdir(outDir, { recursive: true });
@@ -74,6 +74,7 @@ if (process.env.SAVE) {
   }
 } else {
   await startNewGame(page, { keepBriefing: true });
+  await skipIntro(page);
   await modalTabs('start_popup');
   await page.locator('.bf-continue').click();
   await page.waitForTimeout(300);

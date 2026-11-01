@@ -1,0 +1,189 @@
+/* =============================================================================
+   SAISON-AUFTAKT + BRIEFING-FENSTER (Textmodus-Größe)
+   views/zentrale/BriefingModal.tsx, briefing/SeasonIntro.tsx, briefing/TasksPanel.tsx
+   Farben nur über Tokens aus 00-base.css; Epochen-Anmutung über .si-motif-*.
+   ============================================================================= */
+
+.si-root svg.game-icon { width: auto; height: auto; }
+
+.si-root {
+  position: fixed; inset: 0; z-index: 1100;
+  --si-line: color-mix(in srgb, var(--text) 9%, transparent);
+  --si-faint: color-mix(in srgb, var(--text) 4%, transparent);
+  background:
+    radial-gradient(ellipse at 50% -20%, var(--si-faint), transparent 55%),
+    linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 45%);
+  color: var(--text); font-family: var(--font-ui);
+}
+
+/* ---------------------------------------------------------------------------
+   Bühne der Auftakt-Animation
+   --------------------------------------------------------------------------- */
+.si-stage {
+  position: absolute; inset: 0; overflow: hidden; cursor: pointer; user-select: none;
+  --si-cy: 38.9%;
+  transition: opacity 0.45s ease, transform 0.45s ease, filter 0.45s ease;
+}
+.si-stage.leaving { opacity: 0; transform: scale(1.035); filter: blur(3px); }
+.si-stage::after { /* Vignette */
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 42%, transparent 45%, color-mix(in srgb, var(--bg) 85%, transparent) 100%);
+}
+.si-pattern { position: absolute; inset: 0; pointer-events: none; opacity: 0; animation: si-fade 1.4s 0.1s ease-out forwards; }
+
+/* Epochen: Fernsehbild (Zeilen), Video (feine Zeilen + Abtastbalken), Neunziger
+   (Diagonalen), Digital (Punktraster), Taktiktafel (Raster), Zukunft (Raster + Licht). */
+.si-motif-tv .si-pattern { background: repeating-linear-gradient(180deg, var(--si-faint) 0 1px, transparent 1px 4px); }
+.si-motif-tv .si-stage::after { background: radial-gradient(ellipse at 50% 45%, transparent 35%, color-mix(in srgb, var(--bg) 92%, transparent) 95%); }
+.si-motif-video .si-pattern { background: repeating-linear-gradient(180deg, var(--si-faint) 0 1px, transparent 1px 3px); }
+.si-motif-video .si-pattern::after {
+  content: ''; position: absolute; left: 0; right: 0; height: 140px; top: -160px;
+  background: linear-gradient(180deg, transparent, var(--si-faint), transparent);
+  animation: si-scan 3.2s 0.6s ease-in-out 1 both;
+}
+.si-motif-stripes .si-pattern { background: repeating-linear-gradient(-55deg, var(--si-faint) 0 2px, transparent 2px 22px); }
+.si-motif-digital .si-pattern { background: radial-gradient(circle, var(--si-line) 1px, transparent 1.6px) 0 0 / 22px 22px; opacity: 0.6; }
+.si-motif-grid .si-pattern, .si-motif-future .si-pattern {
+  background:
+    linear-gradient(90deg, var(--si-faint) 1px, transparent 1px) 0 0 / 80px 80px,
+    linear-gradient(180deg, var(--si-faint) 1px, transparent 1px) 0 0 / 80px 80px;
+}
+.si-motif-future .si-stage { background: radial-gradient(ellipse at 50% 40%, var(--si-faint), transparent 60%); }
+
+/* Spielfeld: Mittellinie, Mittelkreis, Bernstein-Bogen als Restzeit */
+.si-pitch { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.si-halfway { stroke: var(--si-line); stroke-width: 2; transform-box: fill-box; animation: si-draw-line 1.1s 0.1s cubic-bezier(.2,.7,.2,1) both; }
+.si-halfway.l { transform-origin: right center; }
+.si-halfway.r { transform-origin: left center; }
+.si-circle { fill: none; stroke: var(--si-line); stroke-width: 2; stroke-dasharray: 1800; stroke-dashoffset: 1800; animation: si-draw 1.3s 0.25s ease-out forwards; }
+.si-arc { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 1000; stroke-dashoffset: 1000;
+  transform: rotate(-90deg); transform-origin: 960px 420px; animation-name: si-arc; animation-timing-function: linear; animation-fill-mode: forwards; opacity: 0.85; }
+.si-spot { fill: var(--accent); opacity: 0; animation: si-spot 1.1s 0.2s forwards; }
+
+.si-top, .si-center, .si-headline-wrap, .si-club, .si-skip { position: absolute; left: 0; right: 0; z-index: 1; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.si-top { top: 4.5%; }
+.si-kicker { font-family: var(--font-display); font-size: 26px; font-weight: 500; letter-spacing: 9px; text-transform: uppercase; color: var(--accent);
+  animation: si-rise 0.7s 0.3s cubic-bezier(.2,.7,.2,1) both; }
+.si-era { margin-top: 12px; font-size: 24px; color: var(--text-3); letter-spacing: 0.6px; animation: si-rise 0.7s 2.5s cubic-bezier(.2,.7,.2,1) both; }
+
+.si-center { top: var(--si-cy); transform: translateY(-50%); }
+.si-season { display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--font-display); font-weight: 600; line-height: 1; }
+.si-year { display: inline-flex; font-size: 270px; letter-spacing: 2px; color: var(--text); font-variant-numeric: tabular-nums; }
+.si-digit { display: inline-block; height: 1em; overflow: hidden; line-height: 1; }
+.si-digit-col { display: flex; flex-direction: column; animation-name: si-roll; animation-timing-function: cubic-bezier(.15,.75,.2,1); animation-fill-mode: both; }
+.si-digit-col > span { height: 1em; display: block; }
+.si-slash { font-size: 120px; color: var(--text-3); font-weight: 500; animation: si-rise 0.6s 1.65s cubic-bezier(.2,.7,.2,1) both; }
+
+/* Bis 1986: Fallblatt-Anzeigetafel (Kacheln mit Trennfuge) */
+.si-year.flap { gap: 14px; font-size: 230px; }
+.si-year.flap .si-digit {
+  position: relative; width: 0.66em; text-align: center; border-radius: 10px;
+  background: linear-gradient(180deg, var(--panel-2) 0 50%, var(--panel) 50% 100%);
+  box-shadow: inset 0 0 0 1px var(--border), 0 10px 30px color-mix(in srgb, var(--bg) 70%, transparent);
+  padding: 0.06em 0; height: 1.12em;
+}
+.si-year.flap .si-digit::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 2px; background: var(--bg); }
+.si-year.flap .si-digit-col > span { height: 1em; }
+/* Neunziger: Sportgrafik mit Schräglage */
+.si-motif-stripes .si-year, .si-motif-stripes .si-slash { transform: skewX(-8deg); }
+
+.si-headline-wrap { top: 68.5%; padding: 0 120px; }
+.si-headline { margin: 0; max-width: 2000px; font-family: var(--font-display); font-weight: 500; font-size: 66px; letter-spacing: 3px; text-transform: uppercase; color: var(--text);
+  animation: si-wipe 0.9s 2.05s cubic-bezier(.3,.7,.2,1) both; }
+
+.si-club { top: 78.5%; flex-direction: row; justify-content: center; gap: 36px; text-align: left; }
+.si-crest { display: inline-flex; animation: si-crest 0.8s 3.0s cubic-bezier(.2,.9,.25,1.15) both; filter: drop-shadow(0 10px 24px color-mix(in srgb, var(--bg) 80%, transparent)); }
+.si-club-id { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.si-club-name { font-family: var(--font-display); font-size: 68px; font-weight: 600; letter-spacing: 2px; line-height: 1; text-transform: uppercase; animation: si-rise 0.7s 3.2s cubic-bezier(.2,.7,.2,1) both; }
+.si-chips { display: flex; gap: 12px; flex-wrap: wrap; }
+.si-chip { padding: 7px 20px; border-radius: 999px; border: 1px solid var(--border); background: var(--panel); color: var(--text-2); font-size: 22px; font-weight: 700;
+  animation: si-rise 0.6s calc(3.45s + var(--k) * 0.16s) cubic-bezier(.2,.7,.2,1) both; }
+.si-chip.goal { border-color: var(--accent); color: var(--accent); }
+
+.si-skip { bottom: 4%; font-size: 17px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-3);
+  animation: si-fade 0.6s 0.9s both; }
+
+/* ---------------------------------------------------------------------------
+   Fenster (nach der Animation bzw. direkt)
+   --------------------------------------------------------------------------- */
+.si-window.bf-modal { max-width: none; zoom: 1.25; }
+.si-window { position: absolute; inset: 0; display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; animation: si-fade 0.3s ease-out both; }
+.si-window.from-intro { animation: si-window-in 0.55s cubic-bezier(.2,.7,.2,1) both; }
+.si-window.from-intro .si-head-season { animation: si-rise 0.6s 0.1s both; }
+
+.si-head { display: flex; align-items: center; gap: 22px; padding: 22px 40px 16px; border-bottom: 1px solid var(--border-soft); }
+.si-head-crest { display: inline-flex; flex: 0 0 auto; }
+.si-head-id { min-width: 0; flex: 1 1 auto; }
+.si-head-kicker { font-family: var(--font-display); font-size: 15px; font-weight: 500; letter-spacing: 2.5px; text-transform: uppercase; color: var(--accent); }
+.si-head-id h2 { margin: 4px 0 0; font-family: var(--font-display); font-weight: 500; font-size: 34px; letter-spacing: 1.5px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.si-head-season { font-family: var(--font-display); font-size: 58px; font-weight: 600; line-height: 1; color: var(--text-2); letter-spacing: 1px; padding-right: 56px; font-variant-numeric: tabular-nums; }
+.si-close { top: 24px; right: 30px; }
+
+.si-window .bf-tabs { padding: 0 36px; border-bottom: 1px solid var(--border-soft); }
+.si-body { overflow-y: auto; padding: 22px 40px 22px; }
+.si-foot { display: flex; align-items: center; gap: 14px; padding: 16px 40px 22px; border-top: 1px solid var(--border-soft); }
+.si-foot .bf-continue { padding: 12px 40px; font-size: 18px; }
+
+/* Überblick: Ausgangslage | Das Wichtigste | Aufgaben, darunter Epochen-Band */
+.si-overview { display: grid; grid-template-columns: minmax(300px, 0.75fr) minmax(0, 1.5fr) minmax(0, 1.15fr); grid-template-rows: auto auto; gap: 22px 28px; align-items: start; }
+.si-ov-sit, .si-ov-tasks { background: var(--panel); border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 16px 18px; }
+.si-ov-main .bf-hl.compact { grid-template-columns: 1fr; }
+.si-ov-main .bf-hl.compact .bf-hl-item { padding: 10px 14px; }
+.si-sum { margin-left: auto; font-family: var(--font-ui); font-size: 13px; letter-spacing: 0; text-transform: none; color: var(--text-3); font-weight: 600; }
+.si-more { margin: 10px 0 0; display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 14px; color: var(--text-2); font-family: var(--font-display); font-size: 14px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; }
+.si-more:hover { border-color: var(--accent); color: var(--text); }
+
+.si-tasks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.si-task { display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; border: 1px solid var(--border-soft); border-left: 3px solid var(--border); border-radius: var(--radius-sm); background: var(--panel-2); }
+.si-task.lv-dringend { border-left-color: var(--accent); }
+.si-task.lv-wichtig { border-left-color: var(--text-3); }
+.si-task-ico { flex: 0 0 auto; display: inline-flex; padding-top: 2px; }
+.si-task-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1 1 auto; }
+.si-task-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.si-task-head b { font-size: 16px; color: var(--text); }
+.si-task-text { font-size: 14px; color: var(--text-2); line-height: 1.4; }
+.si-level { font-family: var(--font-display); font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; padding: 1px 7px; border-radius: 999px; border: 1px solid var(--border); color: var(--text-3); }
+.si-level.lv-dringend { border-color: var(--accent); color: var(--accent); }
+.si-level.lv-wichtig { color: var(--text-2); }
+
+.si-jump { align-self: flex-start; margin-top: 4px; padding: 3px 10px; background: transparent; border: 1px solid var(--border); border-radius: 999px; color: var(--text-2); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.si-jump:hover { border-color: var(--accent); color: var(--text); }
+.si-where { align-self: flex-start; margin-top: 4px; font-size: 12px; font-weight: 700; color: var(--text-3); }
+
+.si-era-band { grid-column: 1 / -1; }
+.si-era-band .bf-sec-title { margin-bottom: 10px; }
+.si-era-name { margin-left: 6px; font-family: var(--font-ui); font-size: 14px; letter-spacing: 0; text-transform: none; color: var(--text-3); font-weight: 600; }
+.si-era-cards { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 14px; }
+.si-era-card { display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; background: var(--panel); border: 1px solid var(--border-soft); border-top: 2px solid var(--border); border-radius: var(--radius-sm); }
+.si-era-card header { display: flex; align-items: center; gap: 8px; }
+.si-era-card b { font-size: 15px; }
+.si-era-card p { margin: 0; font-size: 14px; color: var(--text-2); line-height: 1.4; flex: 1 1 auto; }
+
+/* Reiter „Aufgaben & Tipps“ */
+.si-tasks-tab { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 32px; align-items: start; }
+.si-era-lead { margin-top: -4px; }
+.si-tips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.si-tip { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; background: var(--panel-2); border: 1px solid var(--border-soft); border-radius: var(--radius); }
+.si-tip header { display: flex; align-items: center; gap: 10px; }
+.si-tip h3 { margin: 2px 0 0; font-family: var(--font-ui); font-size: 18px; font-weight: 800; letter-spacing: 0; }
+.si-tip p { margin: 0; color: var(--text-2); font-size: 15px; }
+.si-tip .bf-ingame { margin-top: 4px; }
+
+/* ---------------------------------------------------------------------------
+   Keyframes
+   --------------------------------------------------------------------------- */
+@keyframes si-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes si-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes si-spot { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes si-draw { to { stroke-dashoffset: 0; } }
+@keyframes si-arc { to { stroke-dashoffset: 0; } }
+@keyframes si-draw-line { from { transform: scaleX(0); opacity: 0; } to { transform: scaleX(1); opacity: 1; } }
+@keyframes si-roll { from { transform: translateY(0); opacity: 0.2; } 12% { opacity: 1; } to { transform: translateY(calc(var(--n) * -1em)); opacity: 1; } }
+@keyframes si-wipe { from { opacity: 0; clip-path: inset(0 50% 0 50%); letter-spacing: 10px; } to { opacity: 1; clip-path: inset(0 0 0 0); letter-spacing: 3px; } }
+@keyframes si-crest { from { opacity: 0; transform: scale(0.7) rotate(-6deg); } to { opacity: 1; transform: none; } }
+@keyframes si-scan { from { transform: translateY(0); } to { transform: translateY(1400px); } }
+@keyframes si-window-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .si-root, .si-root *, .si-root *::before, .si-root *::after { animation-duration: 1ms !important; animation-delay: 0s !important; transition: none !important; }
+}
