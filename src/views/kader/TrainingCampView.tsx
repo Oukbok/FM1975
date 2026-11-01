@@ -176,7 +176,7 @@ export function TrainingCampView({ g, onChange }: { g: Game; onChange: () => voi
             </div>
             {quote && <KV k="Kosten gesamt" v={`${fmtDM(quote.cost)}${quote.surcharge ? ' (kurzfristig +20 %)' : ''}`} color="var(--red)" strong />}
             {quote?.indoorConflict?.length ? <div className="dnote mt8" style={{ color: 'var(--orange)' }}>Offene Hallen-Einladung wird abgesagt: {quote.indoorConflict.join(', ')}</div> : null}
-            <div className="dbtnrow mt8"><button className="btn btn-sm" disabled={!chosen} onClick={doBook}>Buchen</button></div>
+            <div className="dbtnrow mt8"><button className="btn btn-primary" disabled={!chosen} onClick={doBook}>Trainingslager buchen</button></div>
           </>
         )}
         {msg && <div className="dnote mt8" style={{ color: 'var(--accent)' }}>{msg}</div>}

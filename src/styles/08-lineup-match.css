@@ -17,12 +17,12 @@
 .lu-warn-n { color: var(--orange); }
 
 /* --- Kopfzeile der Aufstellung (Formation, Einrasten, Auto) --- */
-.lu-tools { display: inline-flex; align-items: center; gap: 8px; text-transform: none; letter-spacing: 0; font-weight: 600; }
+.lu-tools { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; text-transform: none; letter-spacing: 0; font-weight: 600; }
 .lu-formation, .lu-role select {
   background: var(--panel-2); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-sm);
   padding: 6px 10px; font: 600 15px var(--font-ui);
 }
-.lu-formation { max-width: 210px; }
+.lu-formation { max-width: 150px; }
 .lu-tools .dchip { padding: 4px 10px; font-size: 14px; }
 .lu-check { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; color: var(--text-2); cursor: pointer; }
 .lu-check input { accent-color: var(--accent); width: 16px; height: 16px; }

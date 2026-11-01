@@ -213,7 +213,7 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
           <label className="lu-check" title="Gezogene Spieler rasten auf feste Positionsfelder ein">
             <input type="checkbox" checked={snap} onChange={(e) => set({ snapToGrid: e.target.checked })} /> Fest einrasten
           </label>
-          {t.slotLayout && Object.keys(t.slotLayout).length > 0 && <button className="dchip" onClick={resetLayout} title="Eigene Positionen verwerfen">Zurücksetzen</button>}
+          {t.slotLayout && Object.keys(t.slotLayout).length > 0 && <button className="dchip" onClick={resetLayout} title="Eigene Positionen verwerfen, zurück zur Formation">Standard</button>}
           <button className="dchip" onClick={doAuto}>Auto</button>
         </span>
       }>
