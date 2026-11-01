@@ -1,7 +1,7 @@
 // =============================================================================
 // ZENTRALE › BRIEFING — Archiv aller Saison-Briefings dieses Spiels
 //   links: Liste der Saisons · rechts: Überblick, Ausgangslage, Neu im Spiel
-//   „Briefing öffnen“ zeigt das große Popup (BriefingModal).
+//   „Briefing öffnen“ zeigt das Briefing-Fenster (BriefingModal, ohne Auftakt-Animation).
 // =============================================================================
 import { useMemo, useState } from 'react';
 import Icon from '../../components/Icon';
@@ -10,13 +10,15 @@ import { CHANGE_KIND_META } from '../../game/briefingChanges';
 import { BriefingRecord, briefingLog, briefingOfRecord } from '../../game/seasonBriefing';
 import { Game } from '../../game/state';
 import { DashBox, DashPage, Empty } from '../../ui/DashPage';
+import type { Screen } from '../../shell/navigation';
 import { BriefingModal, BriefingTab } from './BriefingModal';
 import { Highlights, Situation } from './briefing/BriefingParts';
 
-export function BriefingView({ g }: { g: Game }) {
+export function BriefingView({ g, onGoto, onOpen }: { g: Game; onGoto?: (s: Screen) => void; onOpen?: () => void }) {
   const records: BriefingRecord[] = [...briefingLog(g).records].reverse();
   const [sel, setSel] = useState<string | null>(records[0]?.season ?? null);
-  const [modal, setModal] = useState<BriefingTab | null>(null);
+  const [modal, setModalRaw] = useState<BriefingTab | null>(null);
+  const setModal = (t: BriefingTab | null) => { if (t) onOpen?.(); setModalRaw(t); };
   const rec = records.find((r) => r.season === sel) ?? records[0];
   const b = useMemo(() => (rec ? briefingOfRecord(rec) : null), [rec]);
 
@@ -64,7 +66,7 @@ export function BriefingView({ g }: { g: Game }) {
         ) : <Empty icon="unlock">Keine Änderungen im Spiel.</Empty>}
       </DashBox>
 
-      {b && modal && <BriefingModal b={b} initialTab={modal} onClose={() => setModal(null)} />}
+      {b && modal && <BriefingModal b={b} g={g} initialTab={modal} onClose={() => setModal(null)} onGoto={onGoto} />}
     </DashPage>
   );
 }

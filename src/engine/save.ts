@@ -247,6 +247,8 @@ export interface AppSettings {
   eventFrequency?: 'wenige' | 'normal' | 'viele';
   /** Saison-Briefing zu Spielbeginn und Saisonwechsel automatisch öffnen (Standard an). */
   briefingAuto?: boolean;
+  /** Auftakt-Animation vor dem Saison-Briefing (views/zentrale/briefing/SeasonIntro.tsx). */
+  briefingIntro?: boolean;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -261,6 +263,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   matchHalftimeTalk: true,
   eventFrequency: 'normal',
   briefingAuto: true,
+  briefingIntro: true,
 };
 
 export function loadSettings(): AppSettings {

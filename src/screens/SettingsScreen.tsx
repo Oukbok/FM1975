@@ -33,6 +33,11 @@ export function SettingsScreen({ settings, onBack, onSave }: {
             <span className={`toggle ${s.briefingAuto !== false ? 'on' : ''}`}></span>
             Saison-Briefing automatisch anzeigen (Spielstart &amp; Saisonwechsel)
           </label>
+          <label className="toggle-item">
+            <input type="checkbox" checked={s.briefingIntro !== false} onChange={(e) => setS({ ...s, briefingIntro: e.target.checked })} />
+            <span className={`toggle ${s.briefingIntro !== false ? 'on' : ''}`}></span>
+            Auftakt-Animation vor dem Saison-Briefing zeigen
+          </label>
         </div>
       </div>
 
