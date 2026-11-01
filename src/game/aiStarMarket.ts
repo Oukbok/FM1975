@@ -4,7 +4,7 @@
 // Wie in der Bundesliga: Die Großen kaufen die Leistungsträger der Kleinen,
 // die Kleinen kassieren und kaufen günstiger nach. Pro Sommer versucht jeder
 // KI-Verein (außer den vier kleinsten) einen solchen Coup, die fünf angesehensten
-// bis zu zwei (auch bei nur etwas kleineren Vereinen, notfalls in zwei Raten):
+// bis zu zwei (die drei größten bis zu drei) (auch bei nur etwas kleineren Vereinen, notfalls in zwei Raten):
 //   • Ziel: ein Spieler (20–29 J.), der klar besser ist als der schwächste
 //     Stammspieler seiner Positionsgruppe und mindestens Mannschaftsniveau hat,
 //   • bei einem kleineren Verein (Ruf ≥ 3 bzw. ≥ 6 Punkte darunter),
@@ -37,13 +37,13 @@ export function poachStar(ctx: RoundCtx, buyer: Club, a: SquadAssessment): boole
   const m = g.aiMarket!;
   const key = `${buyer.id}#star`;
   const done = m.arrivals[key] ?? 0;
-  if (done >= 2) return false;
+  if (done >= 3) return false;
   const budget = buyer.finances.transferBudget;
   if (budget <= 0 || buyer.playerIds.length >= 26) return false;
   // Die angesehensten Vereine schlagen häufiger zu, aber jeder größere Verein bedient sich bei kleineren.
   const ranked = Object.values(g.clubs).filter((c) => isAiClub(g, c)).sort((x, y) => y.reputation - x.reputation);
   const rank = ranked.findIndex((c) => c.id === buyer.id);
-  if (rank >= ranked.length - 4 || (rank >= TOP_N && done >= 1) || rng() > (rank < TOP_N ? 0.6 : 0.35)) return false;
+  if (rank >= ranked.length - 4 || (rank >= TOP_N && done >= 1) || (rank >= 3 && done >= 2) || rng() > (rank < TOP_N ? 0.8 : 0.35)) return false;
 
   // Spitzenvereine dürfen in zwei Raten zahlen (Hälfte jetzt, Rest in einem Jahr).
   const credit = rank < TOP_N ? 1.8 : 1;
