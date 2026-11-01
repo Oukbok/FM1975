@@ -55,6 +55,24 @@ export const POSITION_GROUPS: Record<Position, PositionGroup> = {
   HS: 'ATT',
 };
 
+/**
+ * Positionsvertrautheit (0–100) eines Spielers: wächst durch Einsätze und
+ * Positionstraining, sinkt nach langer Pause langsam (nie unter 50 % des Höchstwerts).
+ * Rechnung in `engine/positionSkill.ts`.
+ */
+export interface PositionSkill {
+  /** Aktuelle Vertrautheit je Position (eine Nachkommastelle). */
+  v: Partial<Record<Position, number>>;
+  /** Höchstwert – nur gespeichert, wo er über dem aktuellen Wert liegt. */
+  pk?: Partial<Record<Position, number>>;
+  /** Letzter Einsatz/Training je Position (Tage seit 1970, UTC). */
+  used?: Partial<Record<Position, number>>;
+  /** Tag der Erzeugung (Tage seit 1970) – gilt als letzter Einsatz, solange `used` fehlt. */
+  t0: number;
+  /** Positionstraining: Zielposition (eine je Spieler). */
+  train?: Position;
+}
+
 /** Alle Positionen als Array (für Iteration / Auswahl). */
 export const ALL_POSITIONS: Position[] = [
   'TW', 'LIB', 'VS', 'AV', 'DM', 'ZM', 'OM', 'FL', 'MS', 'HS',
@@ -466,6 +484,8 @@ export interface Player {
    * Auf der Naturposition am höchsten, auf fremden Positionen reduziert.
    */
   positionRatings: Partial<Record<Position, number>>;
+  /** Positionsvertrautheit je Position (optional, Nachrüstung in `engine/positionSkill.ts`). */
+  positionSkill?: PositionSkill;
 
   /** Vollständiger Attribut-Satz. */
   attributes: PlayerAttributes;
@@ -968,6 +988,8 @@ export interface Tactics {
   assignedPositions?: Record<string, Position>;
   /** Zweikampfhärte (0=zurückhaltend … 100=kompromisslos). */
   tackleHardness?: number;
+  /** Einsatz der Mannschaft (0=schonend … 50=normal … 100=volle Kraft). */
+  effort?: number;
   /** Abseitsfalle aktiv? */
   offsideTrap?: boolean;
   /** Fokus der Breite: 0=über die Mitte … 100=über die Flügel. */

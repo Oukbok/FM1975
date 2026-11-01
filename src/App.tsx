@@ -44,6 +44,7 @@ import { migrateSponsorship } from './game/sponsorGame';
 import { migrateBriefing } from './game/seasonBriefing';
 import { migrateLegacyLegends } from './game/playerMigration';
 import { migratePersonas } from './game/playerWishesGame';
+import { migratePositionSkills } from './game/positionsGame';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 // =============================================================================
@@ -338,6 +339,8 @@ export default function App() {
     try { migrateLegacyLegends(s.game); } catch (err) { console.error('Legenden-Bereinigung fehlgeschlagen:', err); }
     // Transfer 2.0: Spielerpersönlichkeit (Wünsche, Gehaltsforderung) nachrüsten.
     try { migratePersonas(s.game); } catch (err) { console.error('Persönlichkeits-Nachrüstung fehlgeschlagen:', err); }
+    // Positionsvertrautheit je Position (game/positionsGame.ts).
+    try { migratePositionSkills(s.game); } catch (err) { console.error('Positions-Nachrüstung fehlgeschlagen:', err); }
     gameRef.current = s.game;
     setCurrentSlot(slot);
     setInGame(true);

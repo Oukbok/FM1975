@@ -15,6 +15,7 @@
 // Über "Hochziehen in den Profikader" wandert ein Talent in die A-Mannschaft.
 // =============================================================================
 
+import { ensurePositionSkill } from './positionSkill';
 import { ensureDevFields, refreshOverall } from './development';
 import { updateScoutEstimate } from './scouting';
 import { pickOrigin, makeName } from '../data/origins';
@@ -251,7 +252,7 @@ export function generateYouthPlayer(
 
   const value = Math.round(overall * overall * 400);
 
-  return {
+  const youth: Player = {
     id: `${clubId}_y_${uniqueSeed}`,
     firstName, lastName, fullName: `${firstName} ${lastName}`,
     shirtNumber: 30 + ri(0, 69),
@@ -288,6 +289,8 @@ export function generateYouthPlayer(
     scoutedPotentialMin: scoutMin,
     scoutedPotentialMax: scoutMax,
   };
+  ensurePositionSkill(youth, currentDate); // Positionsvertrautheit (engine/positionSkill.ts)
+  return youth;
 }
 
 // -----------------------------------------------------------------------------
