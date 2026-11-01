@@ -10,3 +10,24 @@
 .yc-card .mx-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
 .yc-card-name { display: flex; align-items: center; gap: 8px; margin: 4px 0 0; font-family: var(--font-display); font-weight: 500; font-size: 24px; }
 .yc-card .mx-body { padding-top: 8px; }
+/* C- bis G-Jugend: Spielfeste ohne Tabelle (views/jugend/youthcomp/YouthFestView.tsx) */
+.cmp-page > .yc-fest-wide { grid-column: 2 / 4 !important; grid-row: 1 !important; }
+.cmp-page > .yc-fest-l { grid-column: 2 / 3 !important; grid-row: 2 / 4 !important; }
+.cmp-page > .yc-fest-r { grid-column: 3 / 4 !important; grid-row: 2 / 4 !important; }
+.yc-fest-box .dbox-body { overflow-y: auto; }
+.yc-fest-banner { padding: 14px 16px; border: 1px solid var(--border-soft); border-radius: 6px; margin-bottom: 14px; }
+.yc-fest-title { font-family: var(--font-display); text-transform: uppercase; letter-spacing: .04em; font-size: 15px; color: var(--text-2); margin-bottom: 6px; }
+.yc-fest-banner .dnote { line-height: 1.45; font-size: 14px; }
+.yc-fest-row { display: grid; grid-template-columns: 130px minmax(0, 1fr) 70px; gap: 10px; align-items: center; padding: 6px 4px; border-bottom: 1px solid var(--border-soft); }
+.yc-fest-row.past { color: var(--text-3); }
+.yc-fest-date { color: var(--text-2); }
+.yc-fest-host { display: flex; align-items: center; gap: 6px; min-width: 0; color: var(--text-3); }
+.yc-fest-state { text-align: right; color: var(--text-3); font-size: 13px; }
+/* Jugendmannschaften mit Liga + Platz (Jugend-Übersicht) */
+.yc-team-row { display: grid; grid-template-columns: 92px minmax(0, 1fr) auto; gap: 8px; align-items: baseline; padding: 6px 0; border-bottom: 1px solid var(--border-soft); font-size: 14.5px; }
+.yc-team-row:last-child { border-bottom: 0; }
+.yc-team-cls { color: var(--text-2); }
+.yc-team-league { color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.yc-team-pos { color: var(--text); font-variant-numeric: tabular-nums; }
+.yc-team-strip { padding: 8px 12px; border-bottom: 1px solid var(--border-soft); color: var(--text-2); font-size: 13.5px; }
+.yc-main .dxh-title { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

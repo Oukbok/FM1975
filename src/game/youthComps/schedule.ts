@@ -28,7 +28,7 @@ export function doubleRoundRobin(clubs: string[], r: () => number): [string, str
 const md = (y0: number, [y, s]: [number, string]) => `${y0 + y}-${s}`;
 
 /** Winterpause der Profis (Bundesliga- bzw. DDR-Rhythmus) als Sperrfenster für Jugendspiele. */
-function breakWindow(y0: number, ddr: boolean): [string, string] {
+export function breakWindow(y0: number, ddr: boolean): [string, string] {
   try {
     const s = seasonSchedule(y0, ddr ? 26 : 34, 1, ddr ? 'ddr' : 'west');
     return [isoAdd(s.breakLast, 2), isoAdd(s.breakFirst, -1)];

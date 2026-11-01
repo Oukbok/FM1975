@@ -5,6 +5,7 @@
 // Historie vor Spielbeginn (data/history/). Die Seiten in views/statistiken/
 // (Liga, Pokal, International) lesen nur diesen Schnappschuss.
 // =============================================================================
+import { isLocalClub, localClubName } from './youthComps/localClubs';
 import { EURO_COMP_NAMES } from '../data/europe';
 import { HIST_FOREIGN, HIST_TOP_SCORERS } from '../data/history/finals';
 import { HISTORIC_SEASONS, historicDivisions, historicFinal, type HistFinal } from '../data/history/seasons';
@@ -379,6 +380,7 @@ export function compClubName(g: Game, id: string, season: string, short = false)
   if (eu) return short ? eu.shortName : eu.name;
   const hf = HIST_FOREIGN[id];
   if (hf) return hf.name;
+  if (isLocalClub(id)) return localClubName(id); // erzeugte Ortsvereine der Jugendstaffeln
   const archName = archivedSeason(g, season)?.names[id];
   if (!g.clubs[id] && !g.simClubs[id] && archName) return archName;
   const v = clubView(g, id, year);

@@ -58,6 +58,16 @@ export interface YcComp {
   /** Alle Teilnehmer der Endrunde (für Nachrichten/Effekte). */
   winner?: string | null;
   done?: boolean;
+  // --- C- bis G-Jugend (nur Staffel des eigenen Vereins) ---
+  /** Spielklasse des eigenen Vereins: 0 = obere, 1 = untere. */
+  lvl?: 0 | 1;
+  /** Titel bei Staffelsieg (z. B. „C-Jugend-Verbandsmeister“). */
+  title?: string;
+  /** Spielform (Anzeige), Spieler auf dem Feld. */
+  play?: string;
+  n?: number;
+  /** Spielfeste ohne Tabelle: Termine + Gastgeber, Erklärung. */
+  fest?: { d: string[]; h: string[]; note: string };
 }
 
 export interface YcArchComp {
@@ -66,6 +76,8 @@ export interface YcArchComp {
   ko: { n: string; t: [string, string, number, number, number, string, number?, number?, string?][] }[];
   winner: string | null;
   stats: ArchStatList;
+  /** C–G: Spielklasse, Spielform, Anzahl Spielfeste (ohne Tabelle). */
+  lvl?: 0 | 1; play?: string; fest?: number;
 }
 
 export interface YcArchSeason {
@@ -89,6 +101,10 @@ export interface YouthCompsState {
   people: Record<string, [string, string, string]>;
   /** Vorjahressieger (Pokal/Meister für UEFA Youth League, Pokal-Titelverteidiger). */
   lastWinners?: Partial<Record<YcKey, string>>;
+  /** C- bis G-Jugend eingeführt (Markierung der Migration). */
+  low?: 1;
+  /** Spielklasse der eigenen C–F-Jugend (0 = obere, 1 = untere). */
+  lvl?: Partial<Record<YcKey, 0 | 1>>;
   /** Zuletzt verarbeiteter Tag. */
   day?: string;
   archive: YcArchSeason[];

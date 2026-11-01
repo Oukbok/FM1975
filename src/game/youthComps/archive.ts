@@ -13,6 +13,7 @@ import type { YcArchComp, YcArchSeason, YcComp, YouthCompsState } from './types'
 
 export const MAX_SEASONS = 50;
 export const TOP_N = 6;
+export const TOP_N_LOW = 3;
 
 /** Spiele eines Vereins in einem Wettbewerb (Einsätze erzeugter Spieler). */
 export function teamGames(comp: YcComp): Map<string, number> {
@@ -41,11 +42,14 @@ export function personOf(g: Game, st: YouthCompsState, pid: string): [string, st
 }
 
 export function archiveComp(g: Game, st: YouthCompsState, comp: YcComp, people: YcArchSeason['people']): YcArchComp {
-  const lists = topLists(statEntries(g, st, comp), TOP_N);
+  // C–G: nur die Spitze der Bestenlisten (Archiv klein), Spielfeste ohne Bestenliste.
+  const lists = topLists(comp.fest ? [] : statEntries(g, st, comp), comp.fmt === 'stf' ? TOP_N_LOW : TOP_N);
+  if (comp.fmt === 'stf') for (const cat of ['scorer', 'yellow', 'red', 'clean'] as const) lists[cat] = [];
   // Erzeugte Spieler lassen sich aus der ID wiederherstellen – nur echte Spieler speichern.
   for (const l of Object.values(lists)) for (const [pid] of l) if (!isVirtual(pid)) people[pid] ??= personOf(g, st, pid);
   return {
     key: comp.key, label: comp.label, section: comp.section, winner: comp.winner ?? null, stats: lists,
+    ...(comp.lvl != null ? { lvl: comp.lvl } : {}), ...(comp.play ? { play: comp.play } : {}), ...(comp.fest ? { fest: comp.fest.d.length } : {}),
     leagues: comp.leagues.map((l) => ({
       id: l.id, name: l.name, stage: l.stage, group: l.group, slots: l.slots, down: l.down,
       rows: leagueTable(l, comp.pts).map((r) => [r.clubId, r.w, r.d, r.l, r.gf, r.ga, r.pts] as ArchRow),
