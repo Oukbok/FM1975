@@ -198,6 +198,110 @@
 }
 .dr-close:hover { filter: brightness(1.08); }
 
+/* --- Startbildschirm: Regeln der Runde, Startknopf --- */
+.dr-main.intro { grid-template-columns: 500px minmax(0, 1fr); }
+.dr-main.intro .dr-intro { max-width: 1240px; width: calc(100% - 80px); padding: 10px 0; }
+.dr-main.intro .dr-intro-title { font-size: 76px; letter-spacing: 8px; margin: 6px 0 2px; }
+.dr-main.intro .dr-intro-round { font-size: 34px; }
+.dr-main.intro .dr-intro-kicker { font-size: 20px; }
+.dr-intro-facts { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 28px; margin-top: 14px; color: var(--text-2); font-size: 19px; }
+.dr-rulebox { margin: 24px auto 0; text-align: left; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-2); }
+.dr-rulebox-head {
+  padding: 12px 22px; border-bottom: 1px solid var(--border-soft); color: var(--text-3);
+  font-family: var(--font-display); font-size: 17px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+}
+.dr-rulegrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 34px; padding: 6px 22px 12px; }
+.dr-rule { padding: 10px 0; border-bottom: 1px solid var(--border-soft); }
+.dr-rule:nth-last-child(-n+2) { border-bottom: none; }
+.dr-rule-t { font-family: var(--font-display); font-size: 18px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text); }
+.dr-rule-x { font-size: 19px; color: var(--text-2); line-height: 1.35; margin-top: 2px; }
+.dr-rule-h { font-size: 16px; color: var(--text-3); line-height: 1.35; margin-top: 4px; padding-left: 10px; border-left: 2px solid var(--border); }
+.dr-intro-actions { display: flex; justify-content: center; align-items: center; gap: 18px; margin-top: 24px; }
+.dr-start { padding: 16px 40px; }
+
+/* --- Nach der Ziehung: Übersicht / Turnierbaum (volle Breite) --- */
+.dr-tabs .seg-btn { min-width: 150px; }
+.dr-wide { min-height: 0; display: flex; border-radius: var(--radius); background: var(--panel); border: 1px solid var(--border); overflow: hidden; }
+.dr-wide-body { flex: 1 1 auto; min-width: 0; min-height: 0; display: flex; flex-direction: column; padding: 18px 26px; animation: ms-in 0.35s ease-out; }
+.dr-ov-head { display: flex; justify-content: space-between; align-items: baseline; padding: 0 4px 12px; font-size: 19px; border-bottom: 1px solid var(--border-soft); }
+.dr-ov-grid { flex: 1 1 auto; display: grid; grid-auto-flow: column; gap: 10px 28px; min-height: 0; padding-top: 14px; }
+.dr-ov-card {
+  display: grid; grid-template-columns: 34px minmax(0, 1fr) 110px minmax(0, 1fr); align-items: center; gap: 14px;
+  padding: 0 20px 0 12px; min-height: 0; border: 1px solid var(--border-soft); border-radius: var(--radius); background: var(--bg-2);
+}
+.dr-ov-card.mine { border-color: var(--accent); box-shadow: inset 4px 0 0 var(--accent); }
+.dr-ov-mid { text-align: center; }
+.dr-ov-mid .dr-pdash { font-size: 26px; }
+.dr-ov-club { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.dr-ov-club.home { flex-direction: row-reverse; text-align: right; }
+.dr-ov-club .club-link { display: inline-flex; flex: 0 0 auto; }
+.dr-ov-txt { min-width: 0; }
+.dr-ov-name { font-family: var(--font-display); font-size: 24px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dr-ov-sub { color: var(--text-3); font-size: 15px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dr-ov-club.me .dr-ov-name { color: var(--accent); }
+.dr-ov-grid.lg .dr-ov-name { font-size: 32px; }
+.dr-ov-grid.lg .dr-ov-sub { font-size: 18px; }
+
+/* Turnierbaum (components/competition/CupBracket.tsx) */
+.dr-bracket { padding: 14px 18px; }
+.cb-root { display: grid; gap: 0 26px; flex: 1 1 auto; min-height: 0; height: 100%; }
+.cb-col { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.cb-head { display: flex; justify-content: space-between; align-items: baseline; padding: 0 2px 8px; margin-bottom: 4px; border-bottom: 1px solid var(--border-soft); }
+.cb-head-name { font-family: var(--font-display); font-size: 20px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-2); }
+.cb-head-date { font-size: 16px; color: var(--text-3); }
+.cb-col.focus .cb-head { border-bottom-color: var(--accent); }
+.cb-col.focus .cb-head-name { color: var(--text); }
+.cb-body { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
+.cb-slot { flex: 1 1 0; min-height: 0; position: relative; display: flex; align-items: center; }
+/* Verbindungslinien: rechts aus jeder Begegnung, senkrecht zum Partner, links in die nächste */
+.cb-col:not(.last) .cb-slot::after { content: ''; position: absolute; right: -13px; width: 13px; top: 50%; border-top: 1px solid var(--text-4); }
+.cb-col:not(.last) .cb-slot.even::before { content: ''; position: absolute; right: -13px; top: 50%; bottom: 0; border-right: 1px solid var(--text-4); }
+.cb-col:not(.last) .cb-slot.odd::before { content: ''; position: absolute; right: -13px; top: 0; bottom: 50%; border-right: 1px solid var(--text-4); }
+.cb-col:not(.first) .cb-tie::before { content: ''; position: absolute; left: -14px; width: 13px; top: 50%; border-top: 1px solid var(--text-4); }
+.cb-tie {
+  position: relative; width: 100%; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-2);
+  display: flex; flex-direction: column;
+}
+.cb-tie.mine { border-color: var(--accent); }
+.cb-tie.empty { height: 71px; justify-content: center; align-items: center; border-style: dashed; background: transparent; color: var(--text-4); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+.cb-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 2px 10px; height: 34px; font-size: 18px; }
+.cb-row + .cb-row { border-top: 1px solid var(--border-soft); }
+.cb-row.lose { color: var(--text-3); }
+.cb-row.win { color: var(--text); font-weight: 600; }
+.cb-row.me .cb-name { color: var(--accent); }
+.cb-club { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.cb-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cb-goals { font-weight: 700; min-width: 16px; text-align: right; }
+.cb-goals sup { font-size: 12px; color: var(--text-3); margin-left: 2px; font-weight: 600; }
+.cb-badge { position: absolute; right: 34px; top: 50%; transform: translateY(-50%); font-size: 13px; color: var(--text-3); background: var(--bg-2); padding: 0 4px; }
+.cb-root.dense .cb-row { height: 24px; font-size: 15px; }
+.cb-root.dense .cb-tie.empty { height: 51px; }
+
+/* Gruppenübersicht (components/competition/GroupTables.tsx) */
+.gt-root { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+.gt-legend { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; color: var(--text-2); font-size: 15px; }
+.gt-key { display: inline-block; width: 4px; height: 16px; margin-left: 12px; border-radius: 1px; }
+.gt-key.adv { background: var(--pos); }
+.gt-key.move { background: var(--text-2); }
+.gt-key.out { background: var(--border); }
+.gt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; overflow-y: auto; min-height: 0; }
+.gt-group { border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-2); }
+.gt-head, .gt-row { display: grid; grid-template-columns: 26px minmax(0, 1fr) 34px 60px 40px; align-items: center; gap: 8px; padding: 6px 12px; }
+.gt-head { color: var(--text-3); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border-soft); }
+.gt-head span:first-child { grid-column: span 2; font-family: var(--font-display); font-size: 16px; color: var(--text-2); }
+.gt-head span:not(:first-child) { text-align: right; }
+.gt-row { font-size: 15px; border-bottom: 1px solid var(--border-soft); box-shadow: inset 3px 0 0 var(--border); }
+.gt-row:last-child { border-bottom: none; }
+.gt-row.adv { box-shadow: inset 3px 0 0 var(--pos); }
+.gt-row.move { box-shadow: inset 3px 0 0 var(--text-2); }
+.gt-row.out { color: var(--text-3); }
+.gt-row.me .gt-club span { color: var(--accent); font-weight: 700; }
+.gt-pos { color: var(--text-3); text-align: right; }
+.gt-club { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.gt-club > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gt-num { text-align: right; }
+.gt-pts { font-weight: 700; }
+
 /* Wiederholungs-Knopf in Statistiken › Pokal / International */
 .cup-draw-replay { display: inline-flex; align-items: center; gap: 4px; margin-left: 8px; }
 .cup-draw-replay svg.game-icon { width: auto; height: auto; }

@@ -1,8 +1,10 @@
 // =============================================================================
-// ZIEHUNGS-SHOW – Vollbild wie der Textmodus (ohne Menü). Kugeln werden
-// nacheinander gezogen und geöffnet, die Paarungen bauen sich auf, am Ende
-// steht dein Los. Live am Auslosungstag (Zeit steht) oder als Wiederholung.
-// Daten: round.draw (game/cupDraw.ts), Ablauf: useDrawPlayer.ts.
+// ZIEHUNGS-SHOW – Vollbild wie der Textmodus (ohne Menü). Startbildschirm mit
+// den Regeln der Runde (DrawIntro.tsx), dann werden die Kugeln nacheinander
+// gezogen und geöffnet, die Paarungen bauen sich auf. Am Ende: dein Los, alle
+// Paarungen und der Turnierbaum (DrawOverview.tsx). Live am Auslosungstag (Zeit
+// steht) oder als Wiederholung. Daten: round.draw (game/cupDraw.ts), Ablauf:
+// useDrawPlayer.ts.
 // =============================================================================
 import { useEffect, useMemo, useState } from 'react';
 import Icon from '../../components/Icon';
@@ -14,6 +16,8 @@ import { fmtDateFull } from '../../ui/format';
 import type { DrawRecord } from '../../types/draw';
 import { buildScript, showClub, type ShowClub } from './drawScript';
 import { DrawSummary, PairsPanel, PotsPanel, StageReveal } from './DrawParts';
+import { DrawIntro } from './DrawIntro';
+import { BracketOverview, PairsOverview, useClubLookup, type OverviewTab } from './DrawOverview';
 import { useDrawPlayer, type DrawSpeed } from './useDrawPlayer';
 
 export function DrawShow({ g, rec, replay, settings, onSettings, onClose }: {
@@ -22,6 +26,9 @@ export function DrawShow({ g, rec, replay, settings, onSettings, onClose }: {
 }) {
   const myId = g.managedClubId;
   const [speed, setSpeed] = useState<DrawSpeed>(settings.drawSpeed ?? 'normal');
+  // Ohne eigenen Verein in der Runde startet die Übersicht mit allen Paarungen.
+  const inDraw = rec.pairs.some((x) => x.home === myId || x.away === myId);
+  const [tab, setTab] = useState<OverviewTab>(inDraw ? 'los' : 'pairs');
   const p = useDrawPlayer(rec, myId, speed);
   const cup = compCup(g, rec.comp);
   const clubs = useMemo(() => {
@@ -31,8 +38,10 @@ export function DrawShow({ g, rec, replay, settings, onSettings, onClose }: {
     return out;
   }, [g, rec, cup]);
   const script = useMemo(() => buildScript(g, rec, clubs), [g, rec, clubs]);
+  const lookup = useClubLookup(g, cup, clubs);
   const startYear = seasonStartYearOf(rec.matchDate);
   const show = drawVenue(rec.comp, rec.roundIndex, startYear).show;
+  const toOverview = () => { setTab('pairs'); p.skipAll(); };
 
   useEffect(() => {
     if (speed !== settings.drawSpeed) onSettings({ ...settings, drawSpeed: speed });
@@ -42,6 +51,11 @@ export function DrawShow({ g, rec, replay, settings, onSettings, onClose }: {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (document.querySelector('.cmx-overlay')) return;
+      if (p.phase === 'intro' && !p.started) {
+        if (e.code === 'Space' || e.key === 'Enter') { e.preventDefault(); p.start(); }
+        else if (e.key === 'Escape') { e.preventDefault(); toOverview(); }
+        return;
+      }
       if (e.code === 'Space') { e.preventDefault(); if (p.phase !== 'done') p.togglePause(); }
       else if (e.key === 'Escape') { e.preventDefault(); if (p.phase === 'done') onClose(); else p.skipAll(); }
     };
@@ -66,41 +80,55 @@ export function DrawShow({ g, rec, replay, settings, onSettings, onClose }: {
           <span className="dr-dim">{fmtDateFull(rec.date)}</span>
           {replay && <span className="dr-pill dim">Wiederholung</span>}
         </div>
-        <div className="dr-top-r">
-          <div className="seg-group dr-speed">
-            {(['langsam', 'normal', 'schnell'] as DrawSpeed[]).map((v) => (
-              <button key={v} className={`seg-btn ${speed === v ? 'active' : ''}`} onClick={() => setSpeed(v)}>
-                {v === 'langsam' ? 'Langsam' : v === 'normal' ? 'Normal' : 'Schnell'}
-              </button>
-            ))}
+        {p.phase === 'done' ? (
+          <div className="dr-top-r">
+            <div className="seg-group dr-speed dr-tabs">
+              {([['los', inDraw ? 'Dein Los' : 'Topspiel'], ['pairs', 'Alle Paarungen'], ...(cup ? [['bracket', 'Turnierbaum']] : [])] as [OverviewTab, string][]).map(([v, l]) => (
+                <button key={v} className={`seg-btn ${tab === v ? 'active' : ''}`} onClick={() => setTab(v)}>{l}</button>
+              ))}
+            </div>
+            <button className="ms-btn" onClick={onClose} title="Esc">Schließen</button>
           </div>
-          <button className="ms-btn" onClick={p.togglePause} disabled={p.phase === 'done'} title="Leertaste">
-            <Icon name={p.paused ? 'play' : 'pause'} size={24} /> {p.paused ? 'Fortsetzen' : 'Pause'}
-          </button>
-          {p.hasMine && (
-            <button className="ms-btn" onClick={p.skipToMine} disabled={p.phase === 'done' || p.fast}>
-              <Icon name="skip" size={24} /> Bis zu meiner Ziehung
+        ) : (
+          <div className="dr-top-r">
+            <div className="seg-group dr-speed">
+              {(['langsam', 'normal', 'schnell'] as DrawSpeed[]).map((v) => (
+                <button key={v} className={`seg-btn ${speed === v ? 'active' : ''}`} onClick={() => setSpeed(v)}>
+                  {v === 'langsam' ? 'Langsam' : v === 'normal' ? 'Normal' : 'Schnell'}
+                </button>
+              ))}
+            </div>
+            {p.started && (
+              <button className="ms-btn" onClick={p.togglePause} title="Leertaste">
+                <Icon name={p.paused ? 'play' : 'pause'} size={24} /> {p.paused ? 'Fortsetzen' : 'Pause'}
+              </button>
+            )}
+            {p.hasMine && (
+              <button className="ms-btn" onClick={p.skipToMine} disabled={p.fast}>
+                <Icon name="skip" size={24} /> Bis zu meiner Ziehung
+              </button>
+            )}
+            <button className="ms-btn" onClick={p.skipAll} title="Esc">
+              <Icon name="skip" size={24} /> Überspringen
             </button>
-          )}
-          <button className="ms-btn" onClick={p.skipAll} disabled={p.phase === 'done'} title="Esc">
-            <Icon name="skip" size={24} /> Überspringen
-          </button>
-        </div>
+          </div>
+        )}
       </div>
 
-      <div className="dr-main">
+      {p.phase === 'done' && tab !== 'los' ? (
+        <div className="dr-wide">
+          {tab === 'pairs' && <PairsOverview rec={rec} clubs={lookup} myId={myId} />}
+          {tab === 'bracket' && cup && <BracketOverview cup={cup} rec={rec} clubs={lookup} myId={myId} />}
+        </div>
+      ) : (
+      <div className={`dr-main ${p.phase === 'intro' ? 'intro' : ''}`}>
         <PotsPanel rec={rec} clubs={clubs} shown={p.shown} activePot={ball ? ball.pot : null} />
 
         <div className="dr-center">
           <div className="dr-stagebox">
             <div className="dr-lights" aria-hidden="true" />
             {p.phase === 'intro' && (
-              <div className="dr-intro">
-                <div className="dr-intro-kicker">{drawCompName(rec.comp)} {cup?.season ?? ''}</div>
-                <div className="dr-intro-title">Auslosung</div>
-                <div className="dr-intro-round">{rec.roundName}</div>
-                <ul className="dr-rules">{rec.rules.map((r) => <li key={r}>{r}</li>)}</ul>
-              </div>
+              <DrawIntro rec={rec} cup={cup} startYear={startYear} show={show} replay={replay} onStart={p.start} onOverview={toOverview} />
             )}
             {p.phase === 'done' && <DrawSummary rec={rec} clubs={clubs} myId={myId} endLine="" onClose={onClose} />}
             {ball && <StageReveal rec={rec} clubs={clubs} ball={ball} phase={p.phase} step={p.step} reduced={p.reduced} />}
@@ -114,8 +142,9 @@ export function DrawShow({ g, rec, replay, settings, onSettings, onClose }: {
           </div>
         </div>
 
-        <PairsPanel rec={rec} clubs={clubs} shown={p.shown} />
+        {p.phase !== 'intro' && <PairsPanel rec={rec} clubs={clubs} shown={p.shown} />}
       </div>
+      )}
     </div>
   );
 }

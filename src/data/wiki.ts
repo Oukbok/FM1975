@@ -2496,7 +2496,7 @@ Parallel zur 1. Liga läuft der **Landespokal** als reiner **K.-o.-Wettbewerb**.
     id: 'cup-draw',
     category: 'cup',
     title: 'Pokalauslosung — Termine, Regeln & Ziehungs-Show',
-    keywords: ['auslosung', 'ziehung', 'losfee', 'lostopf', 'heimrecht', 'amateure', 'setzliste', 'länderschutz', 'zürich', 'genf', 'nyon', 'monaco', 'sportstudio', 'wiederholung'],
+    keywords: ['auslosung', 'ziehung', 'losfee', 'lostopf', 'heimrecht', 'amateure', 'setzliste', 'länderschutz', 'zürich', 'genf', 'nyon', 'monaco', 'sportstudio', 'wiederholung', 'turnierbaum', 'auswärtstore', 'wiederholungsspiel', 'regeln'],
     body: `## Wann wird gelost?
 Die Paarungen entstehen erst **am Tag der Auslosung** – vorher steht im Pokalbaum „Auslosung am …“, im Kalender ist der Termin eingetragen. Die Spieltermine selbst ändern sich dadurch nicht.
 
@@ -2516,12 +2516,20 @@ Liegt zwischen zwei Europapokal-Runden die Winterpause, wird Mitte Dezember gelo
 - **Europapokal:** In der ersten Runde sind die stärkeren Vereine **gesetzt** und treffen auf Ungesetzte; je Paarung entscheidet das Los, aus welchem Topf die erste Kugel kommt – der zuerst gezogene Verein hat Heimrecht (im Spiel gibt es nur ein Spiel je Runde). **Länderschutz** in der ersten Runde (im Europa-Pokal auch in der zweiten): Passt die gezogene Kugel nicht, geht sie zurück in den Topf und wartet auf die nächste Paarung.
 - Vereinfachung: Im Spiel gibt es im Europapokal keine Gruppenphase und je Runde **ein** Spiel.
 
+## Wie wird gespielt? (Regeln dieser Runde)
+Vor jeder Ziehung zeigt der Startbildschirm die Regeln der Runde – so, wie das Spiel sie tatsächlich austrägt, mit dem historischen Vorbild als Hinweis darunter:
+- **Ein Spiel** je Runde, kein Hin- und Rückspiel – im Landespokal wie im Europapokal. *Im Original* spielt der Europapokal Hin- und Rückspiel (Endspiele der Landesmeister und Pokalsieger als ein Spiel, das Europa-Pokal-Finale bis 1996/97 mit Rückspiel).
+- **Bei Unentschieden** Verlängerung über zweimal 15 Minuten, danach Elfmeterschießen – in allen Epochen. *Im Original* gab es im Landespokal bis 1990/91 ein **Wiederholungsspiel** mit getauschtem Heimrecht (Endspiele zuletzt 1977); erst ab 1991/92 folgt das Elfmeterschießen direkt.
+- **Auswärtstore** zählen im Spiel nie doppelt (es gibt ja nur ein Spiel). *Im Original* galt die Auswärtstorregel im Europapokal bis 2020/21; seit 2021/22 ist sie abgeschafft.
+- Dazu Lostöpfe, Heimrecht, Setzliste und Länderschutz der Runde und wohin die Sieger kommen. Ab 1991/92 (Landesmeister) bzw. 2004/05 (Europa-Pokal) weist der Bildschirm darauf hin, dass das Vorbild eine Gruppenphase spielt.
+
 ## Die Ziehungs-Show
-Am Auslosungstag hält die Zeit an und die Ziehung läuft im Vollbild – Kugeln rollen aus dem Topf, öffnen sich, Losnummer, Wappen und Name erscheinen groß, die Paarungsliste baut sich auf, der Kommentar ordnet ein („Ein Kracher!“, „Der Amateurverein hat Heimrecht“). Die Bühne passt zur Epoche (Fernsehstudio der 70er, TV-Studio, Fußballmuseum, Verbandssaal, Gala in Monaco). Am Ende steht **dein Los**: Gegner, Termin, Heim/Auswärts und der Stärkevergleich; ein Klick aufs Wappen öffnet das Vereinsprofil.
-- **Tempo** langsam/normal/schnell, **Pause** (Leertaste), **Bis zu meiner Ziehung**, **Überspringen** (Esc; Esc in der Zusammenfassung schließt).
+Am Auslosungstag hält die Zeit an und die Show öffnet im Vollbild mit dem **Startbildschirm** (Wettbewerb, Runde, Termin, Ort, Regeln). Die Ziehung beginnt erst mit **Mit der Auslosung beginnen** (oder Leertaste/Enter); **Ergebnis sofort zeigen** (Esc) springt gleich zur Übersicht. Danach rollen die Kugeln aus dem Topf, öffnen sich, Losnummer, Wappen und Name erscheinen groß, die Paarungsliste baut sich auf, der Kommentar ordnet ein („Ein Kracher!“, „Der Amateurverein hat Heimrecht“). Die Bühne passt zur Epoche (Fernsehstudio der 70er, TV-Studio, Fußballmuseum, Verbandssaal, Gala in Monaco). Am Ende steht **dein Los**: Gegner, Termin, Heim/Auswärts und der Stärkevergleich; ein Klick aufs Wappen öffnet das Vereinsprofil.
+- **Tempo** langsam/normal/schnell (etwas ruhiger als früher: eine Ziehung dauert rund 30 % länger), **Pause** (Leertaste), **Bis zu meiner Ziehung**, **Überspringen** (Esc; Esc in der Zusammenfassung schließt).
+- **Nach der Ziehung** oben drei Reiter: **Dein Los** (bzw. das Topspiel, wenn dein Verein nicht dabei ist), **Alle Paarungen** (Gastgeber links, Land bzw. Amateur/Profi, Stärke, dein Verein hervorgehoben) und **Turnierbaum** (bisherige Runden mit Ergebnissen, n. V./i. E., die neue Runde, spätere Runden noch offen). Weil jede Runde neu gelost wird, ordnet der Baum die gespielten Begegnungen nachträglich so, dass die Sieger zu ihrer nächsten Paarung führen.
 - Wer reduzierte Bewegung im System eingestellt hat, sieht die Ziehung ohne rollende Kugeln.
 - **Einstellungen › Pokalauslosung:** *Immer*, *Mit eigenem Verein* (Standard) oder *Nur Nachricht*. Eine Nachricht mit allen Paarungen kommt in jedem Fall.
-- **Wiederholung:** In *Statistiken › Pokal* und *International* steht an jeder gelosten Runde der Knopf **Auslosung**.
+- **Wiederholung:** In *Statistiken › Pokal* und *International* steht an jeder gelosten Runde der Knopf **Auslosung**. Auf dem Startbildschirm führt **Direkt zur Übersicht** zu Paarungen und Turnierbaum, ohne die Ziehung erneut abzuspielen.
 - Spielstände aus früheren Versionen: Die laufende Saison wird wie bisher direkt nach der Vorrunde gelost; die Show gibt es ab der nächsten Saison.`,
   },
   {
