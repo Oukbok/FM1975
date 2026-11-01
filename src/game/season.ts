@@ -13,6 +13,8 @@ import { advanceWorldSeason, initWorld, isForeignId } from '../engine/world';
 import { closeSeason, recordTransfer } from '../engine/history';
 import { buildProClub } from '../data/generate';
 import { recordSeasonEnd } from './clubRecords';
+import { archiveSeasonEnd } from './leagueArchive';
+import { absorbPlaceholders, ddrExchange, mergeDdrPool, poolDrift, poolExchange, settlePool } from './clubPool';
 import { CurrentDivision, TransitionResult, computeSeasonTransition, structureForSeason } from '../data/reforms';
 import { TIMELINE_TYPE_META, TimelineEvent, dueTimelineEvents, seasonStartYear } from '../data/timeline';
 import { generateSeasonCalendar, seasonLabel } from '../engine/calendar';
@@ -227,6 +229,8 @@ export function startNextSeason(g: Game): void {
   }
   // Vereinsprofil-Historie (Endplätze, Titel, direkter Vergleich) vor dem Überschreiben sichern.
   recordSeasonEnd(g, oldSeason, [...current, ...(isReunify ? [] : ddrDivs.map((d) => ({ id: d.id, tier: d.tier, group: d.group, name: d.name, orderedIds: finalOrder(g, d.id) })))]);
+  // Liga-Archiv: Tabellen, Pokalrunden, Bestenlisten (game/leagueArchive.ts).
+  archiveSeasonEnd(g, oldSeason);
 
   // --- 3) Auf-/Abstieg + evtl. Ligareform datengetrieben berechnen ---
   // Liegt für die neue Saison eine noch nicht angewandte Reform vor (z. B. 1981/82
@@ -241,9 +245,15 @@ export function startNextSeason(g: Game): void {
     protectedId: g.managedClubId,
   });
 
-  // Neu erzeugte fiktive Platzhalter aufnehmen, entfallene Vereine austragen.
+  // Neue Plätze zuerst aus dem Vereins-Pool besetzen (game/clubPool.ts), dann fiktive
+  // Platzhalter aufnehmen; entfallene Vereine wechseln in den Pool (Platzhalter verschwinden).
+  absorbPlaceholders(g, res, newSeason);
   for (const ph of res.placeholders) g.simClubs[ph.id] = ph;
-  for (const id of res.dropped) delete g.simClubs[id];
+  const pooled: string[] = [];
+  for (const id of res.dropped) {
+    if (id.startsWith('ph-')) delete g.simClubs[id];
+    else pooled.push(id);
+  }
 
   const promoted = res.promotedTop;
   const relegated = res.relegatedTop;
@@ -254,6 +264,8 @@ export function startNextSeason(g: Game): void {
   // Sollgrößen absichern (Reform-/Relegationssonderfälle dürfen keine Liga
   // dauerhaft verzerren). Ausnahme: die bewusst übergroße Wiedervereinigungssaison.
   if (!isReunify) balanceDivisions(membership, structureForSeason(newSeason), (id) => clubStrengthFor(g, id), g.managedClubId);
+  // Auf-/Abstieg zwischen unterster simulierter Liga und Amateurligen (Vereins-Pool).
+  if (!res.reform) pooled.push(...poolExchange(g, membership, current, newSeason, g.managedClubId));
 
   const playerDivId = Object.keys(membership).find((k) => membership[k].ids.includes(g.managedClubId))
     || res.divisions[0].meta.id;
@@ -300,6 +312,9 @@ export function startNextSeason(g: Game): void {
     if (divOf[id]) { g.simClubs[id].tier = divOf[id].tier; g.simClubs[id].group = divOf[id].group; }
   }
 
+  settlePool(g, pooled);
+  if (isReunify) mergeDdrPool(g);
+
   // --- 6) Spielerliga: neuer Spielplan + Tabelle (volle Engine) ---
   const playerClubList = playerIds.map((id) => g.clubs[id]).filter(Boolean) as Club[];
   const fixtures = generateFixtures(playerClubList, fixturesStart, { tier: membership[playerDivId].meta.tier });
@@ -319,14 +334,17 @@ export function startNextSeason(g: Game): void {
   // Mannschaftsbesetzung für die neue Saison neu aufbauen. Ab 1991/92 (isReunify)
   // sind die DDR-Vereine integriert und die separate Struktur ist aufgelöst.
   if (nextStartYear < 1991 && !isReunify) {
+    // Auf-/Abstieg Oberliga ↔ DDR-Liga ↔ DDR-Pool (game/clubPool.ts).
+    const ddrNew = ddrExchange(g, ddrDivs.map((d) => ({ id: d.id, tier: d.tier, orderedIds: finalOrder(g, d.id) })), newSeason);
     for (const d of ddrDivs) {
       otherDivisions.push(buildDivision(
         { id: d.id, name: d.name, tier: d.tier, group: d.group },
-        d.clubIds, g.pointSystem, newSeason, fixturesStart,
+        ddrNew[d.id] ?? d.clubIds, g.pointSystem, newSeason, fixturesStart,
       ));
     }
   }
   g.leagues = { playerDivision: membership[playerDivId].meta, otherDivisions, season: newSeason };
+  poolDrift(g, newSeason);
 
   const calendar = generateSeasonCalendar(fixtures, seasonStart, seasonEnd);
   calendar.speedMs = g.calendar.speedMs;

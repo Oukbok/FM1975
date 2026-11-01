@@ -58,6 +58,29 @@ export function addTitleRecord(g: Game, clubId: string, kind: TitleKind, season:
   if (!list.some(([k, s]) => k === kind && s === season)) list.push([kind, season]);
 }
 
+/**
+ * Historie vor Spielbeginn eintragen (game/clubPool.ts → seedHistoricRecords): Endplätze
+ * einer Liga-Saison und Titel. Idempotent, chronologisch einsortiert (vor den gespielten Saisons).
+ */
+export function addHistoricSeason(g: Game, season: string, label: string, tier: number, orderedIds: string[]): void {
+  const book = ensureBook(g);
+  let di = book.divs.indexOf(label);
+  if (di < 0) { book.divs.push(label); di = book.divs.length - 1; }
+  orderedIds.forEach((id, i) => {
+    const list = (book.seasons[id] ??= []);
+    if (list.some((s) => s[0] === season)) return;
+    list.push([season, tier, i + 1, orderedIds.length, di]);
+    list.sort((a, b) => a[0].localeCompare(b[0]));
+    if (list.length > MAX_SEASONS) list.shift();
+  });
+}
+export function addHistoricTitle(g: Game, clubId: string, kind: TitleKind, season: string): void {
+  const list = (ensureBook(g).titles[clubId] ??= []);
+  if (list.some(([k, s]) => k === kind && s === season)) return;
+  list.push([kind, season]);
+  list.sort((a, b) => a[1].localeCompare(b[1]));
+}
+
 /** Spiele deines Vereins der laufenden Saison gegen einen Gegner (Liga + Landespokal). */
 export function currentH2H(g: Game, oppId: string): H2HTuple[] {
   const mid = g.managedClubId;

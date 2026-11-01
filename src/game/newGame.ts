@@ -39,6 +39,7 @@ import { setDisplayYear } from '../ui/format';
 import { ensureCoaches } from './coachCarousel';
 import { migrateYouthInvest } from './youthInvest';
 import { FINANCE_LEVEL } from './financeMigration';
+import { migrateLeaguePool } from './clubPool';
 
 export function createNewGame(opts: NewGameOptions): Game {
   setEraYear(1975);
@@ -173,6 +174,8 @@ export function createNewGame(opts: NewGameOptions): Game {
     financeLevel: FINANCE_LEVEL,
     youthSalt,
   };
+  // Vereins-Pool (Amateurligen) + Historie 1963–1975 (game/clubPool.ts).
+  migrateLeaguePool(g0);
   // Startsaison-Meilensteine (1975/76) sofort auslösen (Effekte); erklärt werden sie im Saison-Briefing.
   fireTimelineForSeason(g0, '1975/76', calendar.currentDate, true);
   for (const pid of g0.clubs[g0.managedClubId]?.playerIds ?? []) {

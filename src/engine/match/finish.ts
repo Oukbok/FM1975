@@ -6,6 +6,7 @@ import { SEAT_SALES } from '../seating';
 import type { Injury, InjurySeverity, InjuryType, MatchEventType, Player } from '../../types';
 import { POSITION_GROUPS } from '../../types';
 import { logMatch, recordInjury } from '../history';
+import { addCompStats, compCodeOf } from '../compStats';
 import type { MatchSim } from './sim';
 import type { TeamState } from './state';
 import { rating } from './team';
@@ -259,6 +260,8 @@ function commit(sim: MatchSim, grades: Map<string, number>, opts: FinishOptions)
         stats.ratedMatches++;
         stats.averageRating = stats.ratedMatches > 0 ? stats.ratingSum / stats.ratedMatches : 0;
       }
+      // Bestenlisten je Wettbewerb (Weiße Weste: nur Torhüter).
+      addCompStats(player, compCodeOf(competition), m, clean && m.group === 'GK');
       player.yellowCardCount += m.yellow;
       if (m.red > 0 || m.yellowRed > 0) player.suspensionMatches = Math.max(player.suspensionMatches, m.red > 0 ? 2 : 1);
       // Gelbsperre (ab 1979/80): jede fünfte Gelbe Karte einer Saison (nur Liga) kostet ein Spiel.
