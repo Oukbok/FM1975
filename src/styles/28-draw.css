@@ -318,3 +318,10 @@
 @media (prefers-reduced-motion: reduce) {
   .dr-root *, .dr-root *::before, .dr-root *::after { animation: none !important; transition: none !important; }
 }
+
+/* Vier und mehr Töpfe (Gruppenauslosung): Schale flacher, Zeilen enger – sonst wird der
+   vierte Verein je Topf abgeschnitten. */
+.dr-pots:has(> .dr-pot:nth-child(4)) { gap: 10px; }
+.dr-pots:has(> .dr-pot:nth-child(4)) .dr-bowl { height: 72px; margin: 0 18px 2px; }
+.dr-pots:has(> .dr-pot:nth-child(4)) .dr-pot-head { padding: 8px 20px 2px; }
+.dr-pots:has(> .dr-pot:nth-child(4)) .dr-pot-row { padding: 3px 20px; font-size: 16px; }
