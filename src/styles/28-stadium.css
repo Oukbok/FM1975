@@ -98,3 +98,13 @@
 .sv-spark { display: inline-flex; align-items: flex-end; gap: 2px; height: 22px; }
 .sv-spark i { width: 6px; border-radius: 1px; background: rgba(179, 188, 200, 0.5); }
 .sv-spark i.full { background: var(--text); }
+
+/* Szenen-Seite (GameShell .shell-scene): nur Menüleiste oben, darunter Stadion + Umfeld
+   randlos, ohne Hintergrundfoto, Kalenderstreifen und Footer. */
+.shell-scene::before { background: var(--bg); filter: none; }
+.shell-scene .app-main { padding: 0; }
+.scene-page { flex: 1 1 auto; min-height: 0; position: relative; display: flex; }
+.scene-page > .sv-wrap { flex: 1; height: auto; border-radius: 0; }
+.sv-kpis .sv-kpi-name { min-width: 0; padding-right: 18px; }
+.sv-kpis .sv-kpi-name b { font-size: 17px; text-transform: uppercase; letter-spacing: 0.03em; white-space: nowrap; }
+.sv-kpis .sv-kpi-name span { text-transform: none; letter-spacing: 0; }

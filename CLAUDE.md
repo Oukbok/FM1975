@@ -40,6 +40,7 @@ React 18 + TypeScript, gebaut mit esbuild. Kein Backend – alles läuft im Brow
 - Währung DM bis 2001, EUR ab 2002 (`engine/economy.ts`). Datum **immer UTC**.
 - Geld: Kontostand/Buchungen **nominal**; Preisschilder (Gehalt, Marktwert, Transferbudget, Prämien-/Vertragswerte) in **1975-Basis**, Anzeige mit `fmtPrice`, Buchung × `economyScale`. Finanzen 2.0 (Marke, TV, Vermarktung, KI-Haushalt, FFP) in `engine/clubEconomy.ts` + `game/seasonFinance.ts`. Finanzniveau nach Recherche: Erstligist 1975 ≈ 4,5 Mio. DM Umsatz (Spanne ≈ 2,5–9 Mio.), Stammspieler ≈ 75 Tsd., Star ≈ 250 Tsd. DM/Jahr; neue Preise/Kosten auf dieses Niveau setzen (Formeln: `docs/specs/FINANZEN_SPEC.md`).
 - Zentrale (Dashboard): Footer unten lassen, Boxenhöhen nicht ändern, Boxen nur verschieben, ohne Scrollen.
+- Szenen-Seiten (gezeichnetes Bild füllt alles unter der Menüleiste, ohne Kalenderstreifen/Footer/Hintergrundfoto): `isScene` in `GameShell.tsx` (derzeit `stadium`), Seite rendert `<div className="scene-page">` statt `DashPage`, CSS `.shell-scene` in `28-stadium.css`.
 - Neue Seiten: in `MENU_STRUCTURE` eintragen (erster Unterpunkt = Kategorie selbst), Kopf über `PageHead`, gerendert in `<main className="app-main">` unter `CalendarStrip`.
 - Alle Vereine werden simuliert. Änderungen minimal und nicht-destruktiv; Spielstand-Kompatibilität beachten (`SAVE_VERSION` in `engine/save.ts`).
 - **Wiki-Pflicht:** neue/geänderte Mechanik → passenden Artikel in `src/data/wiki.ts` mitpflegen (einzige Wiki-Quelle).

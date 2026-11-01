@@ -18,7 +18,6 @@ import { ensureStadiumBlocks, projectName, sideTargets } from '../../game/stadiu
 import { Game } from '../../game/state';
 import { BlockId, FacilityKey, StadiumBlock } from '../../types';
 import type { GroundsModuleKey } from '../../types/grounds';
-import { DashBox, DashPage } from '../../ui/DashPage';
 import { fmtDM } from '../../ui/format';
 import { FacilityDetail, ModuleDetail } from './grounds/GroundsDetail';
 import { BlockConfigurator, perMatch } from './stadium/BlockConfigurator';
@@ -101,9 +100,8 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
   const common = { g, club, gr, year, onChange, onClose: close };
 
   return (
-    <DashPage>
-      <DashBox title={st.name} icon="stadium" span={3} rows={2} flush
-        right={`${cap.toLocaleString('de-DE')} Plätze · Kontostand ${fmtDM(club.finances.balance)}`}>
+    // Szenen-Seite: kein Rahmen, kein Kalender – Stadion und Umfeld füllen die Fläche (shell-scene in GameShell).
+    <div className="scene-page">
         <div className="gr-wrap st-wrap sv-wrap" ref={wrap} onClick={() => close()}>
           <StadiumScene blocks={shown} colors={{ primary, secondary }} year={year} month={month}
             selected={sel} hover={hover} building={bp?.blockId ?? null} group={planned.map((t) => t.id)} ghost={changed.map((t) => t.id)}
@@ -111,6 +109,7 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
             onSelect={selectBlock} onHover={setHover} onVenue={selectVenue} />
 
           <div className="sv-kpis" onClick={(e) => e.stopPropagation()}>
+            <div className="sv-kpi-name"><b>{st.name}</b><span>Kontostand {fmtDM(club.finances.balance)}</span></div>
             <div><b className="num">{cap.toLocaleString('de-DE')}</b><span>Plätze</span></div>
             <div><b className="num">{cap ? Math.round((seated / cap) * 100) : 0} %</b><span>Sitzplätze</span></div>
             <div><b className="num">{Math.round(roofShare(blocks) * 100)} %</b><span>überdacht</span></div>
@@ -150,7 +149,6 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
             <span className="sv-hint">{sel || vdef ? 'Außerhalb klicken schließt die Planung.' : mode === 'tribuenen' ? 'Block anklicken: Ränge, Platzarten, Dach, Logen planen.' : 'Block oder Gebäude anklicken zum Ausbauen – das Kassenhäuschen öffnet die Ticketpreise.'}</span>
           </div>
         </div>
-      </DashBox>
-    </DashPage>
+    </div>
   );
 }

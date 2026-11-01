@@ -218,11 +218,14 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   // das fuellende Flex-Layout (Boxen mit fixer Geometrie, Kalenderstreifen oben).
   // Seit dem Seiten-Umbau nutzen ALLE Seiten das Zentrale-Raster (src/ui/DashPage.tsx).
   const isDashLike = true;
+  // Szenen-Seiten (gezeichnetes Bild füllt alles unter der Menüleiste): ohne Kalenderstreifen,
+  // Footer und Hintergrundfoto.
+  const isScene = screen === 'stadium';
 
   return (
     // Vereinsprofil: jeder <ClubLink> im Spiel öffnet es (components/club/ClubProfileContext.tsx).
     <ClubProfileProvider g={g} onChange={rerender}>
-    <div className={`app-shell ${isZentrale ? 'shell-zentrale' : ''} ${isDashLike ? 'shell-dashlike' : ''}`}>
+    <div className={`app-shell ${isZentrale ? 'shell-zentrale' : ''} ${isDashLike ? 'shell-dashlike' : ''} ${isScene ? 'shell-scene' : ''}`}>
       {/* ---------------- HEADER (eine Leiste) ---------------- */}
       <header className={`hd-bar ${isZentrale ? 'hd-bar--zentrale' : ''}`}>
         {/* Logo */}
@@ -342,7 +345,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
       {/* ---------------- HAUPTINHALT ---------------- */}
       <main className="app-main">
         {/* Universeller Kalender-Streifen: identisch auf JEDER Seite (wie Header/Footer). */}
-        <CalendarStrip g={g} onGoto={setScreen} />
+        {!isScene && <CalendarStrip g={g} onGoto={setScreen} />}
         {screen === 'dashboard' && <Dashboard g={g} onGoto={setScreen} onWatch={(id) => setLiveMatchId(id)} onOpenEditor={() => setClubEditorOpen(true)} />}
         {screen === 'table' && <TableView g={g} />}
         {screen === 'fixtures' && <FixturesView g={g} onWatch={(id) => setLiveMatchId(id)} />}
@@ -387,11 +390,13 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
 
       {/* Persistenter Footer auf ALLEN Seiten (Dashboard inklusive) - voll buendig
           am unteren Rand, Shell-Ebene, einheitlich. */}
-      <footer className="dashx-foot">
-        <span className="dashx-foot-l">1975 A FOOTBALL MANAGER</span>
-        <span className="dashx-foot-c">SAISON {g.season}</span>
-        <span className="dashx-foot-r">DEUTSCHE FUSSBALLKULTUR. FÜR IMMER.</span>
-      </footer>
+      {!isScene && (
+        <footer className="dashx-foot">
+          <span className="dashx-foot-l">1975 A FOOTBALL MANAGER</span>
+          <span className="dashx-foot-c">SAISON {g.season}</span>
+          <span className="dashx-foot-r">DEUTSCHE FUSSBALLKULTUR. FÜR IMMER.</span>
+        </footer>
+      )}
 
       {/* ---------------- IN-GAME-OVERLAYS ---------------- */}
       {showSettings && (
