@@ -55,7 +55,8 @@ console.log(`2002/03: ${b02.inGame.map((c) => c.title).join(' | ')}`);
 // 4) Einzelne Quellen: Ligareform, Trainingslager, Halle, Nachwuchs, Umfeld, Einrichtung
 const has = (y: number, kind: string, part: string) => gameChangesFor(y).some((c) => c.kind === kind && c.title.includes(part));
 expect(has(1981, 'liga', '2. 1. Liga') || has(1981, 'liga', 'Liga'), '1981/82: Ligareform fehlt');
-expect(has(1977, 'training', 'Österreichische Alpen'), '1977/78: Tirol fehlt');
+expect(has(1977, 'training', 'Tirol'), '1977/78: Tirol fehlt');
+expect(gameChangesFor(1980).filter((c) => c.kind === 'training').length <= 3, '1980/81: Trainingslager überfluten das Briefing');
 expect(has(1979, 'training', 'Kanarische'), '1979/80: Kanaren (Winter 1980) fehlen');
 expect(has(1987, 'halle', 'Masters'), '1987/88: Hallen-Masters fehlt');
 expect(has(2001, 'halle', 'eingestellt'), '2001/02: Masters-Ende fehlt');

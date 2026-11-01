@@ -12,7 +12,7 @@
 // Diese Liste ersetzt die früheren Einzel-Nachrichten der Chronik zum
 // Saisonstart; die Vorschau am 2. Januar (game/ruleNotice.ts) bleibt.
 // =============================================================================
-import { CAMP_DESTINATIONS, CampDestination } from '../data/campDestinations';
+import { CAMP_DESTINATIONS, CAMP_REGION_LABEL, CAMP_REGION_ORDER, CampDestination, CampRegion } from '../data/campDestinations';
 import { GROUNDS_BY_KEY, GROUNDS_MODULES, licenseMin } from '../data/groundsCatalog';
 import { indoorPhase } from '../data/indoorHistory';
 import { LEAGUE_REFORMS } from '../data/reforms';
@@ -75,37 +75,49 @@ const campWhen = (d: CampDestination) => d.seasons.length === 2 ? 'Sommer & Wint
 
 function campChanges(y: number, first: boolean): GameChange[] {
   const out: GameChange[] = [];
+  const base = { kind: 'training' as const, icon: 'weather', source: 'Trainingslager', where: 'Kader › Trainingslager' };
   if (first) {
     const open = CAMP_DESTINATIONS.filter((d) => campSeasonRep(d, y) != null);
+    const regions = CAMP_REGION_ORDER.filter((r) => open.some((d) => d.region === r)).map((r) => CAMP_REGION_LABEL[r]);
     out.push({
-      kind: 'training', icon: 'weather', source: 'Trainingslager', where: 'Kader › Trainingslager',
-      title: `${open.length} Trainingslager-Ziele buchbar`,
-      text: `${open.map((d) => d.name).join(', ')}. Weitere Ziele kommen mit den Jahren dazu – Fernreisen erst viel später.`,
+      ...base, title: `${open.length} Trainingslager-Ziele buchbar`,
+      text: `${regions.join(', ')} – je Ziel mehrere Unterkünfte und ein frei wählbarer Schwerpunkt. Der Süden kommt mit den Jahren dazu, Fernreisen erst viel später.`,
     });
     return out;
   }
+  // Je Region höchstens eine Meldung (sonst überflutet die Vielzahl der Ziele das Briefing).
+  const added = new Map<CampRegion, { d: CampDestination; rep: number; again: boolean }[]>();
+  const wider: { d: CampDestination; now: number; prev: number }[] = [];
+  const shut: CampDestination[] = [];
   for (const d of CAMP_DESTINATIONS) {
     const now = campSeasonRep(d, y);
     const prev = campSeasonRep(d, y - 1);
     if (now != null && prev == null) {
-      const wasOpen = d.access[0].from < y - 1 && d.closed?.length;
-      out.push({
-        kind: 'training', icon: 'weather', source: 'Trainingslager', where: 'Kader › Trainingslager',
-        title: wasOpen ? `Wieder buchbar: ${d.name}` : `Neues Ziel: ${d.name}`,
-        text: `${d.place} (${d.country}), ${campWhen(d)}.${now > 0 ? ` Zunächst nur für Vereine ab Ansehen ${now}.` : ''}`,
-      });
-    } else if (now != null && prev != null && now < prev) {
-      out.push({
-        kind: 'training', icon: 'weather', source: 'Trainingslager', where: 'Kader › Trainingslager',
-        title: `${d.name} für mehr Vereine`,
-        text: now > 0 ? `${d.place} ist jetzt ab Ansehen ${now} buchbar (bisher ${prev}).` : `${d.place} steht jetzt allen Vereinen offen.`,
-      });
-    } else if (now == null && prev != null) {
-      out.push({
-        kind: 'training', icon: 'weather', source: 'Trainingslager', where: 'Kader › Trainingslager',
-        title: `Nicht buchbar: ${d.name}`, text: `${d.place} ist in dieser Saison nicht verfügbar (Reisebeschränkungen).`,
-      });
+      const again = d.access[0].from < y - 1 && !!d.closed?.length;
+      added.set(d.region, [...(added.get(d.region) ?? []), { d, rep: now, again }]);
+    } else if (now != null && prev != null && now < prev) wider.push({ d, now, prev });
+    else if (now == null && prev != null) shut.push(d);
+  }
+  for (const r of CAMP_REGION_ORDER) {
+    const list = added.get(r);
+    if (!list) continue;
+    if (list.length === 1) {
+      const { d, rep, again } = list[0];
+      out.push({ ...base, title: again ? `Wieder buchbar: ${d.name}` : `Neues Ziel: ${d.name}`,
+        text: `${d.place} (${d.country}), ${campWhen(d)}.${rep > 0 ? ` Zunächst nur für Vereine ab Ansehen ${rep}.` : ''}` });
+    } else {
+      const again = list.every((x) => x.again);
+      out.push({ ...base, title: `${again ? 'Wieder buchbar' : 'Neue Ziele'} (${CAMP_REGION_LABEL[r]}): ${list.map((x) => x.d.name).join(', ')}`,
+        text: list.map((x) => `${x.d.place} (${x.d.country})${x.rep > 0 ? `, ab Ansehen ${x.rep}` : ''}`).join(' · ') + '.' });
     }
+  }
+  if (wider.length) {
+    out.push({ ...base, title: wider.length === 1 ? `${wider[0].d.name} für mehr Vereine` : `Mehr Vereine können reisen: ${wider.map((x) => x.d.name).join(', ')}`,
+      text: wider.map((x) => x.now > 0 ? `${x.d.place} jetzt ab Ansehen ${x.now} (bisher ${x.prev})` : `${x.d.place} steht jetzt allen Vereinen offen`).join(' · ') + '.' });
+  }
+  if (shut.length) {
+    out.push({ ...base, title: `Nicht buchbar: ${shut.map((d) => d.name).join(', ')}`,
+      text: `${shut.map((d) => d.place).join(', ')} – in dieser Saison nicht verfügbar (Reisebeschränkungen).` });
   }
   return out;
 }

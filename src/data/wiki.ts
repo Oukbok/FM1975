@@ -2270,40 +2270,66 @@ Ab 2027/28 wird die heutige Regel fortgeschrieben (Annahme: WM 2034 wieder im Wi
     id: 'training-camps',
     category: 'calendar',
     title: 'Trainingslager',
-    keywords: ['trainingslager', 'camp', 'türkei', 'belek', 'katar', 'dubai', 'florida', 'spanien', 'asien', 'jetlag', 'sportschule', 'alpen'],
+    keywords: ['trainingslager', 'camp', 'türkei', 'belek', 'katar', 'dubai', 'florida', 'spanien', 'asien', 'jetlag', 'sportschule', 'alpen', 'hotel', 'unterkunft', 'höhentraining', 'schwerpunkt', 'disziplin', 'sponsor', 'dünen', 'malente', 'hennef'],
     body: `## Wo und wann
 Unter **Kader › Trainingslager** buchst du je Saison ein **Sommerlager** (Vorbereitung bis kurz vor dem 1. Spieltag) und ein
-**Winterlager** (in der Winterpause – deren Länge hängt von der Saison ab, siehe „Winterpause & Spielplan“: in den 80ern/90ern bis zu elf Wochen, heute drei). Die Ziele werden so freigeschaltet, wie sie historisch aufkamen – und zunächst nur für Vereine,
-die es sich damals leisten konnten (Ansehen):
+**Winterlager** (in der Winterpause – deren Länge hängt von der Saison ab, siehe „Winterpause & Spielplan“). Die Ziele werden so
+freigeschaltet, wie sie historisch aufkamen – und zunächst nur für Vereine, die es sich damals leisten konnten (Ansehen):
 
-| Ziel | ab | Rahmen |
+| Region | Ziele | ab |
 |---|---|---|
-| Sportschule (Inland), Voralpen | 1975 | im Winter oft gefrorene Plätze |
-| Österreich / Schweiz (Sommer) | 1977 / 1980 | Annahme |
-| Kanaren / Spanien (Winter) | 1980 / 1982 | Leverkusen in den 80ern meist auf den Kanaren |
-| VAE (Dubai) | 1984 | nur Ansehen ≥ 85 (Bayern „gelegentlich“), ab 2003/2008 breiter |
-| Algarve / Malta | 1990 / 1995 | Annahme |
-| Türkei (Belek) | 1992 | Schalke 1992 als Erster; ab 1996 für alle |
-| Florida | 1992 | Leverkusen Januar 1992; ab 2010 breiter |
-| Katar (Doha) | 2011 | nur Spitzenvereine (Ansehen ≥ 82); Corona-Pause 2021/22 |
-| USA-Sommertour / Asien-Reise | 2014 / 2015 | Marketingreisen der Großen |
+| Sportschulen | Kaiserau, Hennef (Halle mit Kunstrasen seit 1965), Wedau, Grünberg, Barsinghausen, Malente (WM-Quartier 1974) | 1975 |
+| Nord- und Ostsee | Norderney, Sylt (Sommer, Dünenläufe), Timmendorfer Strand (auch Winter) | 1975 |
+| Mittelgebirge | Harz, Schwarzwald (u. a. Leistungszentrum am Feldberg, 1.350 m), Sauerland | 1975 |
+| Alpen (Sommer) | Tegernsee 1975; Tirol, Zillertal, Salzburger Land, Kärnten 1977; Steiermark, Schweiz, Südtirol 1980 | 1975–1980 |
+| Höhentraining | Engadin/Wallis (St. Moritz, Saas-Fee, ~1.800 m): 1980 ab Ansehen 65, ab 1992 für alle | 1980 |
+| Süden (Winter) | Kanaren 1980, Andalusien 1982, Mallorca 1985, La Manga und Algarve 1990, Türkei 1992 (ab 1996 für alle), Malta und Zypern 1995 | 1980–1995 |
+| Fernreisen | VAE 1984 (nur Ansehen ≥ 85), Florida 1992, Katar 2011, USA-Tour 2014, Asien-Reise 2015; Corona-Pausen 2020–2022 | 1984– |
+
+## Unterkunft und Anlage
+Jedes Ziel bietet mehrere **Unterkünfte** – von der Sportschule mit Mehrbettzimmern und der Pension über Mittelklasse- und
+Sporthotels bis zum Luxus-Resort. Manche kommen erst später dazu (z. B. Belek-Resorts ab 1996, Haus Schleiden in Hennef ab 2006).
+Die Vergleichstabelle zeigt:
+- **Komfort** (1–4): Zufriedenheit +2 ± 1,5 je Stufe, etwas mehr Moral. In der **einfachsten Stufe murren ältere Stars** (ab 28 Jahren) bei großen Vereinen.
+- **Anlage:** Zahl der Plätze (ein Platz bremst Taktik-Arbeit), Rasenzustand, **Halle** und **Kunstrasen** – im Winter fangen sie Frost und Schnee ab.
+- **Kraftraum** (vor 1985 nur Hantelraum), **Regeneration** (Sauna → Physio/Bäder → ab 1998 Eisbad, ab 2012 Kältekammer), **Küche** (Ernährungsplan wirkt erst ab den 2000ern voll).
+- **Ruhe und Ablenkung:** Strand, Nachtleben, Kasino und Luxus verführen die weniger Professionellen zu **Disziplinverstößen** (Professionalität −3, Form −2). Abgeschiedenheit (Gasthof im Talschluss, Malente) **stärkt** dagegen die Disziplin.
+- **Laufstrecken:** Dünen, Strand, Wald, Berg geben bei Kondition zusätzliche Fitness (Dünen etwas verletzungsanfälliger).
+- **Höhe:** ab 1.000 m ein Teil, ab 1.500 m fast die Hälfte der Konditionswirkung **verzögert** – sie kommt rund **12 Tage nach der Rückkehr**; die Höhe zehrt an der Frische.
+
+Das **Wetter** kommt aus einer Klimatabelle je Monat: Januar in Mitteleuropa und im Gebirge mit großem Ausfallrisiko und
+gefrorenen Plätzen, Mittelmeer und Kanaren mild, die Golfstaaten im Winter ideal. **Rummel** (Zaungäste, Presse, Berater) kostet
+etwas Trainingszeit; heimatnahe Lager bringen dafür Fan-Stimmung.
+
+## Trainingsschwerpunkt
+| Schwerpunkt | Wirkung |
+|---|---|
+| Ausgewogen | üblicher Mix |
+| Kondition | Fitness ×1,35, Entwicklung ×0,75, Verletzungen ×1,3, müde Beine (Frische −8) |
+| Taktik | Entwicklung ×1,5, Form ×1,25, Fitness ×0,8 |
+| Mannschaftsgeist | Moral-Chance ×2, Zufriedenheit +3, Fitness ×0,75 |
+| Regeneration | Verletzungen ×0,45, Frische +12, mitreisende Verletzte werden schneller fit, Fitness ×0,55 |
+| Jugendintegration | Spieler bis 21: Entwicklung ×2,4, mehr Testspiel-Minuten und Moral |
 
 ## Buchung
 - Mindestens **7 Tage im Voraus**; unter 21 Tagen kostet es **20 % Aufschlag**. Storno bringt **50 %** zurück.
-- Kosten = (Reise + Tagessatz × Tage) × Tross-Faktor (Ansehen) × Wirtschaftsindex – kalkuliert auf dem Zielniveau
-  (Erstligist 1975 ≈ 4,5 Mio. DM Umsatz): Sportschule eine Woche ≈ 15.000 DM (1975), Spanien zehn Tage ≈ 45.000 DM (1980).
+- Kosten = (Reise + Tagessatz der Unterkunft × Tage × Schwerpunkt-Faktor) × Tross-Faktor (Ansehen) × Wirtschaftsindex – auf dem
+  Zielniveau (Erstligist 1975 ≈ 4,5 Mio. DM Umsatz): Sportschule eine Woche ≈ 9.000–12.000 DM (1975), Luxushotel am See ≈ das Dreifache.
 - Das Lager darf nicht mit Pflichtspielen oder **zugesagten Hallenturnieren** kollidieren; offene Hallen-Einladungen im Zeitraum werden abgesagt.
+- **Sponsor-Klausel:** Schreibt ein Sponsorvertrag ein Pflicht-Trainingslager vor (z. B. im Herkunftsland des Sponsors), ist für
+  dieses Fenster nur dieses Ziel buchbar – auch ohne das sonst nötige Ansehen. KI-Vereine halten sich ebenfalls daran.
 
 ## Wirkung (bei Rückkehr)
-- **Kondition:** Fitness je Spieler ≈ Tage × 1,6 (Sommer) bzw. 1,3 (Winter) × Platzqualität, minus Wetterausfälle.
-- **Taktik/Technik:** zusätzliche Entwicklungspunkte; Chance auf bessere **Moral** (Mannschaftsgefüge) und Zufriedenheit +2.
-- **Risiken:** Verletzungen (schlechte/gefrorene Plätze erhöhen das Risiko), **Reisestrapazen** (Frische −Flugstunden × 1,6 − Zeitzonen × 3, Form −Zeitzonen × 0,7).
-- **Testspiele:** Erlös und Spielpraxis; Asien-/USA-Reisen bringen viel Geld und internationale Bekanntheit, aber wenig Training.
+- **Kondition:** Fitness ≈ Tage × 1,6 (Sommer) bzw. 1,3 (Winter) × Platzqualität × Schwerpunkt × Ausstattung, minus Wetterausfälle. Die Vorschau zeigt die Spanne je nach Wetter.
+- **Taktik/Technik:** Entwicklungspunkte; Chance auf bessere **Moral** (Mannschaftsgefüge), Zufriedenheit.
+- **Risiken:** Verletzungen (schlechte Plätze, harte Umfänge, Testspiele), **Reisestrapazen** (Bus/Bahn: Stunden × 0,8/0,5; Flug: Flugstunden × 1,6 + Zeitzonen × 3; Form −Zeitzonen × 0,7), Disziplin.
+- **Testspiele:** Erlös und Spielpraxis, stärkere Gegner bringen mehr Form, aber mehr Verletzungsrisiko; Asien-/USA-Reisen bringen viel Geld und Bekanntheit, aber wenig Training.
 - **Kritik:** Katar (ab 2014, verstärkt ab 2020), Golf- und Marketingreisen kosten Fan-Stimmung.
 
 ## KI-Vereine
-Alle Vereine fahren: sie wählen ein für Größe und Epoche übliches Ziel (Belek-Boom 1998–2016, Rückkehr nach Spanien ab 2017),
-zahlen über ihre Finanzen und bekommen einen kleinen Fitness-/Form-Effekt.`,
+Alle Vereine fahren: Ziel nach Größe und Epoche (Kanaren in den 80ern, Belek-Boom 1998–2016, Rückkehr nach Spanien ab 2017),
+Unterkunft nach Kasse und Ansehen, Schwerpunkt nach Trainerstil (Konter → Kondition, Offensiv → Taktik, Jugend-Philosophie →
+Jugendintegration). Sie zahlen über ihre Finanzen und bekommen rund ein Drittel der Wirkung.`,
   },
   {
     id: 'indoor-football',
