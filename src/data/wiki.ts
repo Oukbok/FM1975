@@ -752,7 +752,7 @@ Im Reiter **Attribute** wählst du oben eine Position: Stammposition, Nebenposit
     id: 'suitability',
     category: 'tactics',
     title: 'Positionseignung – so wird sie berechnet',
-    keywords: ['eignung', 'suitability', 'berechnung', 'vertrautheit', 'farbe'],
+    keywords: ['eignung', 'suitability', 'berechnung', 'farbe'],
     body: `## Positionseignung (0–100)
 Für jeden Spieler auf jedem Slot zeigt das Feld eine **Eignungszahl** mit Farbcode:
 
@@ -767,16 +767,49 @@ Für jeden Spieler auf jedem Slot zeigt das Feld eine **Eignungszahl** mit Farbc
 1. **Gewichteter Mittelwert:** Alle für die Position relevanten Attribute (siehe Positions-Gewichtungen) werden mit ihrem Gewicht multipliziert und gemittelt.
 2. **Vertrautheits-Faktor:** Wie gut kennt der Spieler die Position?
 
-| Situation | Faktor |
+Der Faktor kommt aus der **Positionsvertrautheit** des Spielers (0–100, siehe Artikel *Positionsvertrautheit*):
+
+| Vertrautheit | Faktor |
 |-----------|--------|
-| Stammposition | 1.00 |
-| eingetragene Nebenposition | 0.92 |
-| selbe Positionsgruppe (z.B. VS→LIB) | 0.82 |
-| benachbarte Gruppe (z.B. DEF→MID) | 0.70 |
-| weit entfernte Gruppe (z.B. DEF→ATT) | 0.55 |
-| Feldspieler im Tor / Torwart im Feld | 0.30 |
+| ≥ 95 (natürlich) | 1.00 |
+| 90 | 0.97 |
+| 75 (gut) | 0.89 |
+| 60 | 0.80 |
+| 50 (ausreichend) | 0.73 |
+| 30 | 0.60 |
+| 0 (z. B. Feldspieler im Tor) | 0.30 |
 
 Das Ergebnis wird auf 1–99 begrenzt. Deshalb kann ein Weltklasse-Stürmer als Innenverteidiger trotzdem nur eine mittelmäßige Eignung haben – ihm fehlt die Vertrautheit **und** die passenden Attribute.`,
+  },
+  {
+    id: 'position-skill',
+    category: 'tactics',
+    title: 'Positionsvertrautheit – mehrere Positionen lernen',
+    keywords: ['vertrautheit', 'position', 'nebenposition', 'positionstraining', 'umschulen', 'natürlich', 'grün'],
+    body: `## Positionsvertrautheit (0–100)
+Jeder Spieler hat für **jede** Position einen eigenen Vertrautheitswert. Im Spielerprofil (Reiter **Attribute**) siehst du alle Positionen auf einem Spielfeld – je grüner, desto vertrauter:
+
+- **Natürlich** (≥ 90, kräftiges Grün) – hier spielt er wie zu Hause.
+- **Gut** (75–89, mittleres Grün) – solide einsetzbar, zählt als Nebenposition.
+- **Ausreichend** (50–74, schwaches Grün) – geht, kostet aber spürbar Leistung.
+- **Ungeeignet** (< 50, neutral) – Notlösung.
+
+Vorausgewählt ist die Position, auf der er am stärksten ist. Klickst du eine andere an, siehst du ihre Eignung und die dafür wichtigen Attribute: **kräftiger blauer Strich** = Schlüsselattribut, **schlanker, hellerer Strich** = ebenfalls wichtig. Unter jeder Position zeigt ein Balken den Fortschritt; eine dezente Marke steht beim bisherigen Höchstwert.
+
+### Ausgangslage
+Die meisten Spieler haben eine natürliche Position, ein bis zwei gute und einige ausreichende (verwandte Rollen wie VS–LIB, ZM–DM/OM, MS–HS, AV–FL liegen nahe beieinander; passende Attribute helfen). Torhüter sind auf dem Feld kaum zu gebrauchen und umgekehrt.
+
+### Wachstum
+- **Spielen:** Jeder Einsatz auf einer Position steigert die Vertrautheit – schnell, solange sie niedrig ist, dann immer langsamer. Von null auf „gut“ dauert es etwa anderthalb Spielzeiten Stammplatz; junge Spieler lernen schneller, ältere langsamer.
+- **Positionstraining:** Im Spielerprofil wählst du für einen eigenen Spieler **eine** Zielposition („Position trainieren“). Er lernt dann an jedem Trainingstag dazu – bessere Trainingsanlagen helfen. Training allein bringt ihn höchstens auf **85**; den letzten Schliff zur natürlichen Position holt er sich nur in Spielen. Erreicht er eine neue Stufe, meldet sich der Trainerstab.
+
+### Abbau
+Wer eine Position über ein Jahr nicht mehr spielt, verlernt sie langsam – nicht jeden Monat, sondern zufällig verzögert und umso langsamer, je näher der Wert an der Untergrenze liegt. Er fällt **nie unter 50 % seines Höchstwerts**. Die Stammposition und die gerade trainierte Position bauen nicht ab.
+
+### Wirkung
+Die Vertrautheit ist der Vertrautheits-Faktor der **Positionseignung** (siehe dort) und wirkt damit überall: Match-Engine, Aufstellungs-KI, Eignungsfarben in der Aufstellung und Einwechslungen. Alle Vereine nutzen das System: Die KI stellt Spieler auch auf guten Nebenpositionen auf und lässt zu Saisonbeginn je Verein höchstens einen jungen Spieler eine Position lernen, auf der die Formation dünn besetzt ist.
+
+*Technik:* \`engine/positionSkill.ts\` (Erzeugung, Wachstum, Abbau), \`game/positionsGame.ts\` (Monat, KI, Nachrüstung), optionales Feld \`Player.positionSkill\`.`,
   },
   {
     id: 'tactic-options',
@@ -793,7 +826,8 @@ Unter **Spieltag › Taktik** stellst du Mentalität und Teamanweisungen ein –
 - **Abwehrlinie (0–100):** Hoch = mehr Konteranfälligkeit für dich, tief = sicherer.
 
 ### Verhalten
-- **Zweikampfhärte (0–100):** gewinnt mehr Zweikämpfe, kostet aber Fouls und Karten.
+- **Zweikampfhärte (0–100):** Härte gewinnt mehr Zweikämpfe (bis +8 % Zweikampfstärke, etwas mehr Abwehr und Ballkontrolle), kostet aber deutlich mehr Fouls (bis +35 %) und Karten (bis +30 %).
+- **Einsatz (0–100):** Wie viel gibt deine Mannschaft? Volle Kraft bringt mehr gewonnene Zweikämpfe (+7 %), etwas mehr Druck, Abwehr und Spielkontrolle – aber 30 % mehr Kraftverbrauch im Spiel, mehr Frischeverlust danach (+15 %), mehr Verletzungen (+30 %), Fouls und Karten. Kräfteschonend spielt umgekehrt: weniger Wucht, dafür frische, gesunde Spieler (z. B. in englischen Wochen). Die KI-Trainer wählen den Einsatz nach ihrem Stil.
 - **Abseitsfalle (an/aus):** mehr gegnerische Abseitsstellungen, vor allem gegen Steilpässe und Konter.
 - **Breite (0–100):** Hohe Breite = mehr Flanken und Kopfballchancen; wie gefährlich das ist, hängt von deinen Flankengebern und Kopfballspielern ab.
 - **Aufbauspiel:** Kurz (bessere Passquote, mehr Kontrolle) oder lang (mehr lange Bälle und Flanken).
