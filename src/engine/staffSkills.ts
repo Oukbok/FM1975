@@ -127,7 +127,7 @@ export function careerSuccess(peak: number, apps: number, titles: number, captai
 /** Wahrscheinlichkeit, nach dem Karriereende ins Trainergeschäft zu gehen. */
 export function coachingChance(s: number, leadership: number, age: number): number {
   if (age > 39) return 0;
-  return clamp(0.15 + 0.45 * s + (leadership >= 70 ? 0.05 : 0), 0, 0.65);
+  return clamp(0.2 + 0.45 * s + (leadership >= 70 ? 0.05 : 0), 0, 0.7);
 }
 
 /** Affinität eines Ex-Profis je Fachgebiet (0,35–1,15) aus Spielerattributen und Persönlichkeit. */

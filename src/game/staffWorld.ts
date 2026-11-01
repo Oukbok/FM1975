@@ -15,7 +15,7 @@
 //     gute Co-Trainer steigen zum Cheftrainer auf (game.coachPool).
 // Der eigene Verein hat seine Leute in `game.staff` (game/staffGame.ts).
 // =============================================================================
-import { Game } from './state';
+import { Game, hashSeed } from './state';
 import { Club, ClubCoach, Player } from '../types';
 import { isLeagueClub } from '../engine/clubEconomy';
 import { makeCoach } from '../engine/aiManager';
@@ -60,8 +60,15 @@ function contractEndIn(date: string, years: number): string {
   return `${yearOf(date) + years}-06-30`;
 }
 
-export function ensureStaffWorld(g: Game, rng: () => number = Math.random): StaffWorld {
+/** Eigener, deterministischer Zufall für die Erstbesetzung (verbraucht kein Math.random). */
+function seededRng(key: string): () => number {
+  let a = hashSeed(key) >>> 0;
+  return () => { a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+
+export function ensureStaffWorld(g: Game, rngIn?: () => number): StaffWorld {
   if (g.staffWorld && g.staffWorld.v === 1) return g.staffWorld;
+  const rng = rngIn ?? seededRng(`staff:${g.managedClubId}:${g.calendar.currentDate}`);
   const date = g.calendar.currentDate;
   const year = yearOf(date);
   const w: StaffWorld = { v: 1, people: [], log: [], cur: emptyLog(g.season) };
@@ -329,10 +336,11 @@ export function marketForRole(g: Game, roleId: string | 'all'): StaffMember[] {
 }
 
 /** Alte Spielstände: Fachgebiete/Verträge des eigenen Stabs + Arbeitsmarkt anlegen. */
-export function migrateStaffPeople(g: Game, rng: () => number = Math.random): void {
+export function migrateStaffPeople(g: Game, rngIn?: () => number): void {
+  const rng = rngIn ?? seededRng(`staffmig:${g.managedClubId}:${g.calendar.currentDate}`);
   for (const m of g.staff ?? []) {
     if (!m.skills) skillsFromQuality(m, rng);
     if (!m.contractEnd) m.contractEnd = contractEndIn(g.calendar.currentDate, 1 + (Number(g.calendar.currentDate.slice(5, 7)) >= 7 ? 1 : 0));
   }
-  ensureStaffWorld(g, rng);
+  ensureStaffWorld(g, rngIn);
 }
