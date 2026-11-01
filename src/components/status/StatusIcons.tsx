@@ -12,7 +12,7 @@ import { type StatusKind, statusColor, statusLevel, statusText } from './statusS
 interface Props {
   /** Wert 0–100. */
   value: number;
-  /** Kantenlänge in px (Standard 16). */
+  /** Kantenlänge in px (Standard 18). */
   size?: number;
   /** Zahl neben dem Symbol anzeigen. */
   showValue?: boolean;
@@ -21,14 +21,14 @@ interface Props {
   kind?: StatusKind;
 }
 
-function Frame({ kind, value, size = 16, showValue, className, children }: Props & { kind: StatusKind; children: React.ReactNode }) {
+function Frame({ kind, value, size = 18, showValue, className, children }: Props & { kind: StatusKind; children: React.ReactNode }) {
   const v = Math.max(0, Math.min(100, Math.round(value)));
   const lvl = statusLevel(kind, v);
   const text = statusText(kind, v);
   return (
     <span className={`st-icon st-${kind} st-l${lvl}${className ? ` ${className}` : ''}`} style={{ color: statusColor(lvl) }}
       title={text} aria-label={text} role="img" tabIndex={0}>
-      <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" focusable="false">{children}</svg>
+      <svg width={size} height={size} viewBox="0 0 24 24" overflow="visible" aria-hidden="true" focusable="false">{children}</svg>
       {showValue && <span className="st-val">{v}</span>}
     </span>
   );
@@ -37,12 +37,12 @@ function Frame({ kind, value, size = 16, showValue, className, children }: Props
 /** Frische: Batterie mit Füllstand (stufenlos) in der Farbe der Stufe. */
 export function FreshnessIcon(props: Props) {
   const v = Math.max(0, Math.min(100, props.value));
-  const w = Math.max(1.2, (14 * v) / 100);
+  const w = Math.max(1.4, (16 * v) / 100);
   return (
     <Frame {...props} kind={props.kind ?? 'frische'}>
-      <path d={S.batteryBody} fill="none" stroke="currentColor" strokeWidth="1.7" />
+      <path d={S.batteryBody} fill="none" stroke="currentColor" strokeWidth="1.8" />
       <path d={S.batteryTip} fill="currentColor" />
-      <rect x="4" y="9" width={w} height="6" rx="0.8" fill="currentColor" />
+      <rect x="3" y="7.6" width={w} height="8.8" rx="1" fill="currentColor" />
     </Frame>
   );
 }
@@ -53,7 +53,10 @@ export function FormIcon(props: Props) {
   const angle = [180, 135, 90, 45, 0][lvl - 1];
   return (
     <Frame {...props} kind="form">
-      <g transform={`rotate(${angle} 12 12)`}><path d={S.thumb} fill="currentColor" /></g>
+      <g transform={`rotate(${angle} 12 12)`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d={S.thumb} fill="currentColor" fillOpacity="0.22" />
+        <path d={S.thumbCuff} />
+      </g>
     </Frame>
   );
 }

@@ -3,6 +3,7 @@
 // Taktik/Zurufe, Druckphasen.
 // =============================================================================
 import { useState } from 'react';
+import { FreshnessIcon } from '../../components/status';
 import Icon from '../../components/Icon';
 import type { MatchSim } from '../../engine/match/sim';
 import { bench, type TeamState } from '../../engine/match/state';
@@ -89,9 +90,7 @@ function PlayerRow({ sim, m, name, mine, selected, dim, onClick }: {
         {!m.started && m.minuteIn > 0 && <span className="ms-tag">{m.minuteIn}'</span>}
       </span>
       {mine && !dim && (
-        <span className="ms-energy" title={`Kraft ${energy}`}>
-          <span style={{ width: `${energy}%` }} className={energy < 55 ? 'low' : energy < 70 ? 'mid' : ''} />
-        </span>
+        <span className="ms-energy-ico"><FreshnessIcon kind="kraft" value={energy} size={17} /></span>
       )}
       <span className={`ms-grade ${early ? '' : gradeCls(g)}`}>{early ? '–' : fmtGrade(g)}</span>
     </button>

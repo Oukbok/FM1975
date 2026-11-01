@@ -483,10 +483,11 @@ export const ICON_MARKUP: Record<string, string> = Object.fromEntries(
 // Skala (`--st-1 … --st-5`, siehe components/status/statusScale.ts). viewBox 0 0 24 24.
 export const STATUS_SHAPES = {
   /** Batterie-Gehäuse (Frische); der Füllstand wird in FreshnessIcon gezeichnet. */
-  batteryBody: 'M4 7h14a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z',
-  batteryTip: 'M21 10.2h.8a.7.7 0 0 1 .7.7v2.2a.7.7 0 0 1-.7.7H21Z',
-  /** Daumen hoch (Form); gedreht je Stufe. Nach Material „thumb_up“ (Apache 2.0). */
-  thumb: 'M2 21h3.6V10H2v11Zm20-9.6c0-1.1-.9-2-2-2h-6l.9-4.3.03-.3c0-.4-.17-.8-.44-1.06L13.4 2.7 7.6 8.5c-.36.36-.6.86-.6 1.4v9.1c0 1.1.9 2 2 2h8.4c.83 0 1.54-.5 1.84-1.22l2.6-6.1c.1-.23.16-.47.16-.73v-1.55Z',
+  batteryBody: 'M3.2 5.6h15.6a2.2 2.2 0 0 1 2.2 2.2v8.4a2.2 2.2 0 0 1-2.2 2.2H3.2A2.2 2.2 0 0 1 1 16.2V7.8a2.2 2.2 0 0 1 2.2-2.2Z',
+  batteryTip: 'M21.6 9.4h.6a.8.8 0 0 1 .8.8v3.6a.8.8 0 0 1-.8.8h-.6Z',
+  /** Daumen hoch als Umriss (Form): Ärmel + Hand, gedreht je Stufe um (12, 12). Nach Lucide „thumbs-up“ (ISC). */
+  thumbCuff: 'M7 10v12',
+  thumb: 'M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z',
   /** Smiley (Moral): Kopf, Augen und Mund je Stufe 1–5. */
   face: 'M12 2.6a9.4 9.4 0 1 1 0 18.8 9.4 9.4 0 0 1 0-18.8Z',
   eyes: 'M8.9 8.7a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Zm6.2 0a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Z',

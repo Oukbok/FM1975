@@ -473,6 +473,16 @@ export const INFO_TEXTS = {
     text: 'Bonus, der nur bei einem vereinbarten Erfolg fällig wird, etwa Meisterschaft oder Europapokal. Ehrgeizige Spieler mögen sie, die Kasse trifft sie erst im Erfolgsfall.',
     wiki: 'transfers-wishes',
   },
+  spielerKlauseln: {
+    title: 'Vertragsklauseln',
+    text: 'Sonderregeln im Vertrag: Ausstiegsklausel (feste Ablöse), Treueprämie (Bonus bei Vertragsende), Erfolgsklausel (mehr Gehalt bei Europapokal), Rückkaufoption für den abgebenden Verein. Sie erleichtern Abschlüsse, binden dich aber.',
+    wiki: 'transfers-wishes',
+  },
+  wechselgefahr: {
+    title: 'Wechselgefahr',
+    text: 'Wie wahrscheinlich andere Vereine den Spieler weglocken. Sie steigt bei niedriger Zufriedenheit und wenn ein reizvollerer Verein in Frage kommt – ehrgeizige, wenig loyale Spieler sind besonders gefährdet.',
+    wiki: 'transfers-wishes',
+  },
   restlaufzeit: {
     title: 'Restlaufzeit',
     text: 'Monate bis Vertragsende. Unter 12 Monaten sinkt der Preis bei einem Verkauf, und der Spieler wird für andere Vereine interessant.',

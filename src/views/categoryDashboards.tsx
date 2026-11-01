@@ -1,4 +1,5 @@
 import ClubCrest from '../components/ClubCrest';
+import { PlayerForm, PlayerFreshness } from '../components/status';
 import { ClubLink } from '../components/club/ClubLink';
 import { EURO_COMP_NAMES } from '../data/europe';
 import { STAFF_BY_ID, staffMonthlyTotal } from '../data/staff';
@@ -148,8 +149,8 @@ export function KaderDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) => 
         <div className="dnote mt8">Wert = Ø der drei Besten je Mannschaftsteil.</div>
       </DashBox>
 
-      <DashBox title="Belastung" icon="training" onClick={() => onGoto('training')} right="niedrigste Frische">
-        {tired.map((p) => <Meter key={p.id} label={p.fullName} value={p.frische ?? 100} color={condBar(p.frische ?? 100)} />)}
+      <DashBox title="Belastung" icon="training" info="frische" onClick={() => onGoto('training')} right="niedrigste Frische">
+        {tired.map((p) => <PlayerRow key={p.id} p={p} value={<PlayerFreshness p={p} showValue />} sub={<PlayerForm p={p} size={14} />} />)}
       </DashBox>
 
       <DashBox title="Verträge" icon="contracts" onClick={() => onGoto('vertraege')} right={`${fmtDM(wages)} / Woche`}>

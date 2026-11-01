@@ -50,6 +50,7 @@ function TalkBox({ p, neg }: { p: Player; neg: Negotiation }) {
   );
 }
 import { utcDate, Section, Line, Stat } from './shared';
+import { InfoTip } from '../../ui/InfoTip';
 
 function monthsLeft(expiry: string, today?: string): number | null {
   if (!expiry) return null;
@@ -76,8 +77,8 @@ export default function ContractTab({ p, squad, today, negotiation }: { p: Playe
           <Line label="Gehalt / Woche" value={fmtPriceFull(k.weeklyWage)} strong />
           <Line label="Gehalt / Jahr" value={fmtPriceFull(k.weeklyWage * 52)} />
           <Line label="Vertrag bis" value={utcDate(k.expiryDate)} />
-          <Line label="Restlaufzeit" value={left === null ? '—' : left >= 12 ? `${Math.floor(left / 12)} J. ${left % 12} M.` : `${left} Monate`} color={left !== null && left <= 6 ? 'var(--orange)' : undefined} />
-          <Line label="Ausstiegsklausel" value={typeof k.releaseClause === 'number' ? fmtDM(k.releaseClause) : 'keine'} />
+          <Line label={<>Restlaufzeit<InfoTip k="restlaufzeit" /></>} value={left === null ? '—' : left >= 12 ? `${Math.floor(left / 12)} J. ${left % 12} M.` : `${left} Monate`} color={left !== null && left <= 6 ? 'var(--orange)' : undefined} />
+          <Line label={<>Ausstiegsklausel<InfoTip k="ausstiegsklausel" /></>} value={typeof k.releaseClause === 'number' ? fmtDM(k.releaseClause) : 'keine'} />
           <Line label="Tor-Prämie" value={k.goalBonus ? fmtDMfull(k.goalBonus) : 'keine'} />
           <Line label="Transferliste" value={p.transferListed ? 'Ja' : 'Nein'} color={p.transferListed ? 'var(--orange)' : undefined} />
         </div>
@@ -85,8 +86,8 @@ export default function ContractTab({ p, squad, today, negotiation }: { p: Playe
       <div className="pp-stack">
         <Section title="Wert & Zufriedenheit" icon={<Icon name="finances" size={15} />}>
           <div className="pp-stat-grid">
-            <Stat label="Marktwert" value={fmtPrice(k.transferValue)} />
-            <Stat label="Zufriedenheit" value={<span style={{ color: vColor(k.satisfaction) }}>{k.satisfaction} %</span>} />
+            <Stat label={<>Marktwert<InfoTip k="marktwert" /></>} value={fmtPrice(k.transferValue)} />
+            <Stat label={<>Zufriedenheit<InfoTip k="zufriedenheit" /></>} value={<span style={{ color: vColor(k.satisfaction) }}>{k.satisfaction} %</span>} />
             <Stat label="Wert / Jahresgehalt" value={k.weeklyWage > 0 ? `${(k.transferValue / (k.weeklyWage * 52)).toFixed(1)}×` : '—'} />
           </div>
         </Section>

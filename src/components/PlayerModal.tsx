@@ -10,7 +10,9 @@ import { Player, Club, renderStars } from '../types';
 import PlayerAvatar from './PlayerAvatar';
 import ClubCrest from './ClubCrest';
 import { scoutRangeText } from '../engine/scouting';
-import { POS_DE, PLAYER_TYPE, MORALE_DE, MORALE_VAL, AVAIL_DE, utcDate, footLabel, frischeOf, Bar } from './player/shared';
+import { POS_DE, PLAYER_TYPE, AVAIL_DE, utcDate, footLabel, Bar } from './player/shared';
+import { StatusLine, freshness100, form100, morale100 } from './status';
+import { InfoTip } from '../ui/InfoTip';
 import OverviewTab from './player/OverviewTab';
 import AttributesTab from './player/AttributesTab';
 import DevelopmentTab from './player/DevelopmentTab';
@@ -21,6 +23,7 @@ import ReportTab from './player/ReportTab';
 import MatchesTab from './player/MatchesTab';
 import CareerTab from './player/CareerTab';
 import WishesTab from './player/WishesTab';
+import type { InfoKey } from '../data/infoTexts';
 
 export type Tab = 'overview' | 'attributes' | 'development' | 'matches' | 'stats' | 'career' | 'contract' | 'wishes' | 'medical' | 'report';
 const TABS: [Tab, string][] = [
@@ -62,8 +65,8 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
               {p.isYouth && <span className="pp-tag">Jugend</span>}
             </div>
             <div className="pp-facts">
-              <Fact label="Stärke" value={String(p.overall)} big />
-              <Fact label="Potenzial" value={scoutRangeText(p)} title="Einschätzung der Scouts – kann danebenliegen" />
+              <Fact label="Stärke" value={String(p.overall)} big info="staerke" />
+              <Fact label="Potenzial" value={scoutRangeText(p)} info="potenzial" />
               <Fact label="Alter" value={`${p.age}`} title={`geboren am ${utcDate(p.dateOfBirth)}`} />
               <Fact label="Nation" value={p.nationality} />
               <Fact label="Größe" value={`${p.height} cm`} />
@@ -74,12 +77,12 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
 
           <div className="pp-cond">
             <div className="pp-section-title">Zustand</div>
-            <Bar label="Frische" value={frischeOf(p)} tone="cond" />
-            <Bar label="Fitness" value={Math.round(p.attributes.fitness)} tone="cond" />
-            <Bar label="Form" value={Math.round(p.form)} tone="cond" />
-            <Bar label={`Moral · ${MORALE_DE[p.morale]}`} value={MORALE_VAL[p.morale]} tone="cond" />
-            <Bar label="Konstanz" value={Math.round(p.development.consistency)} />
-            <Bar label="Nervenstärke" value={Math.round(p.development.bigMatchTemperament)} />
+            <StatusLine kind="frische" value={freshness100(p)} />
+            <StatusLine kind="form" value={form100(p)} />
+            <StatusLine kind="moral" value={morale100(p.morale)} />
+            <Bar label={<>Fitness<InfoTip k="fitness" /></>} value={Math.round(p.attributes.fitness)} tone="cond" />
+            <Bar label={<>Konstanz<InfoTip k="konstanz" /></>} value={Math.round(p.development.consistency)} />
+            <Bar label={<>Nervenstärke<InfoTip k="nervenstaerke" /></>} value={Math.round(p.development.bigMatchTemperament)} />
           </div>
 
           <button className="modal-close" onClick={onClose}>×</button>
@@ -106,10 +109,10 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
   );
 }
 
-function Fact({ label, value, sub, big, title }: { label: string; value: string; sub?: string; big?: boolean; title?: string }) {
+function Fact({ label, value, sub, big, title, info }: { label: string; value: string; sub?: string; big?: boolean; title?: string; info?: InfoKey }) {
   return (
     <div className={`pp-fact${big ? ' big' : ''}`} title={title}>
-      <div className="pp-fact-lbl">{label}</div>
+      <div className="pp-fact-lbl">{label}{info && <InfoTip k={info} />}</div>
       <div className="pp-fact-val">{value}</div>
       {sub && <div className="pp-fact-sub">{sub}</div>}
     </div>

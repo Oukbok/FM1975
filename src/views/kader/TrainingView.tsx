@@ -1,4 +1,5 @@
 import Icon from '../../components/Icon';
+import { FreshnessIcon, PlayerFreshness } from '../../components/status';
 import { BLOCKS_BY_ID, INTENSITY_LABELS, TRAINING_BLOCKS, dayLoad, expectedFitnessDelta } from '../../engine/weeklyTraining';
 import { PhilosophyBox } from './PhilosophyBox';
 import { Game } from '../../game/state';
@@ -89,7 +90,7 @@ export function TrainingView({ g, onTrained }: { g: Game; onTrained: () => void 
 
   return (
     <DashPage>
-      <DashBox title="Wochen-Trainingsplan" icon="training" span={3}
+      <DashBox title="Wochen-Trainingsplan" icon="training" span={3} info="trainingsplan"
         right={`${trainDays} Trainingstage · ${Object.keys(matchByIdx).length} Spieltag(e) · Ø Fitness/Tag ${avgDelta > 0 ? '+' : ''}${avgDelta}`}>
         <div className="planner-grid">
           {plan.days.map((day, idx) => {
@@ -136,20 +137,20 @@ export function TrainingView({ g, onTrained }: { g: Game; onTrained: () => void 
         </div>
       </DashBox>
 
-      <DashBox title="Schwerpunkte der Woche" icon="stats" right={`${units} Einheiten`}>
+      <DashBox title="Schwerpunkte der Woche" icon="stats" info="schwerpunkte" right={`${units} Einheiten`}>
         {focusTop.length ? focusTop.map(([a, w]) => (
           <Meter key={a} label={ATTRIBUTE_LABELS_DE[a as keyof typeof ATTRIBUTE_LABELS_DE] ?? a} value={w} max={focusMax} text={w.toFixed(1)} />
         )) : <Empty icon="training">Keine Einheiten geplant – die Mannschaft regeneriert nur.</Empty>}
         <div className="dnote mt8">Gezieltes Training füllt verdeckte Fortschrittswerte; sichtbar wird ein Punkt erst nach einiger Zeit.</div>
       </DashBox>
 
-      <DashBox title="Belastung" icon="dashKader">
+      <DashBox title="Belastung" icon="dashKader" info="belastung">
         <div className="dkpis">
-          <Kpi value={avgFri} label="Ø Frische" color={vColor(avgFri)} />
-          <Kpi value={avgFit} label="Ø Fitness" color={vColor(avgFit)} />
+          <Kpi value={<FreshnessIcon value={avgFri} size={30} showValue />} label="Ø Frische" info="frische" />
+          <Kpi value={avgFit} label="Ø Fitness" color={vColor(avgFit)} info="fitness" />
         </div>
         <div className="dsec">Am stärksten belastet</div>
-        {tired.map((p) => <PlayerRow key={p.id} p={p} value={Math.round(p.frische ?? 100)} sub={`Fitness ${Math.round(p.attributes.fitness)}`} />)}
+        {tired.map((p) => <PlayerRow key={p.id} p={p} value={<PlayerFreshness p={p} showValue />} sub={`Fitness ${Math.round(p.attributes.fitness)}`} />)}
         <div className="dnote mt8">Zwei mittlere Einheiten pro Tag halten die Fitness etwa stabil. Hohe Intensität und Extraeinheiten kosten Kraft.</div>
       </DashBox>
 

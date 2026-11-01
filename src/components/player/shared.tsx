@@ -123,7 +123,7 @@ export const frischeOf = (p: Player) => (typeof p.frische === 'number' ? Math.ro
 // ---------------------------------------------------------------------------
 // Mini-Komponenten
 // ---------------------------------------------------------------------------
-export function Section({ title, icon, children, right }: { title: string; icon?: React.ReactNode; children: React.ReactNode; right?: React.ReactNode }) {
+export function Section({ title, icon, children, right }: { title: React.ReactNode; icon?: React.ReactNode; children: React.ReactNode; right?: React.ReactNode }) {
   return (
     <section className="pp-section">
       <div className="pp-section-title">{icon}{title}{right && <span className="pp-section-right">{right}</span>}</div>
@@ -132,7 +132,7 @@ export function Section({ title, icon, children, right }: { title: string; icon?
   );
 }
 
-export function Line({ label, value, strong, color }: { label: string; value: React.ReactNode; strong?: boolean; color?: string }) {
+export function Line({ label, value, strong, color }: { label: React.ReactNode; value: React.ReactNode; strong?: boolean; color?: string }) {
   return (
     <div className="pp-line">
       <span className="pp-line-lbl">{label}</span>
@@ -147,7 +147,7 @@ export function Line({ label, value, strong, color }: { label: string; value: Re
  * für die gewählte Position unwichtige Werte.
  */
 export function Bar({ label, value, max = 100, tone = 'q', tier }: {
-  label: string; value: number; max?: number; tone?: 'q' | 'cond'; tier?: AttrTier | 'dim';
+  label: React.ReactNode; value: number; max?: number; tone?: 'q' | 'cond'; tier?: AttrTier | 'dim';
 }) {
   const pct = Math.max(0, Math.min(100, (value / max) * 100));
   const fill = tier === 'core' ? 'var(--accent)' : tone === 'cond' ? condBar(value) : vBar(value);
@@ -161,7 +161,7 @@ export function Bar({ label, value, max = 100, tone = 'q', tier }: {
   );
 }
 
-export function Stat({ label, value, sub }: { label: string; value: React.ReactNode; sub?: string }) {
+export function Stat({ label, value, sub }: { label: React.ReactNode; value: React.ReactNode; sub?: string }) {
   return (
     <div className="pp-stat">
       <div className="pp-stat-num">{value}</div>
