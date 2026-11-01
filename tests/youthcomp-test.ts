@@ -14,6 +14,10 @@ import { ycOpts } from '../src/game/youthComps/sim';
 import { youthCompOptions, youthSeasonOptions, youthSnapshot, myYouthStandings } from '../src/game/youthComps/view';
 import { titlesOf } from '../src/game/clubRecords';
 import { isoAdd } from '../src/data/youthCompetitions';
+import { isLowKey, LOW_KEYS } from '../src/data/youthLowerLeagues';
+import { setupSeason } from '../src/game/youthComps/setup';
+import { isLocalClub } from '../src/game/youthComps/localClubs';
+import { compClubName } from '../src/game/competitionView';
 
 let seed = 1975;
 Math.random = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
@@ -49,6 +53,7 @@ function verify(g: Game, y0: number, expect: Record<string, string | null>): voi
     check(fmt ? c?.fmt === fmt : !c, `${tag}: ${k} Format ${fmt} (ist ${c?.fmt ?? '–'})`);
   }
   for (const c of st.comps) {
+    if (c.fest) { check(c.done && !c.leagues.length && !c.ko.length, `${tag} ${c.key}: Spielfeste abgeschlossen, ohne Tabelle`); continue; }
     check(c.done && !!c.winner, `${tag} ${c.key}: abgeschlossen mit Sieger`);
     let goals = 0;
     for (const l of c.leagues) {
@@ -72,7 +77,7 @@ function verify(g: Game, y0: number, expect: Record<string, string | null>): voi
     if (c.fmt === 'cup21') check(c.ko[0].ties.length === 5 && c.ko[1].ties.length === 8, `${tag}: Pokal 21 Teilnehmer (5 Vorrundenspiele)`);
     const statGoals = Object.values(st.stats[c.key] ?? {}).reduce((a, t) => a + t[1], 0);
     check(statGoals === goals, `${tag} ${c.key}: Torschützen (${statGoals}) = Tore (${goals})`);
-    check(titlesOf(g, c.winner!).length > 0 || !!g.euroClubs?.[c.winner!], `${tag} ${c.key}: Titel in der Vereins-Historie`);
+    if (!isLowKey(c.key) || c.winner === 'mgl') check(titlesOf(g, c.winner!).length > 0 || !!g.euroClubs?.[c.winner!], `${tag} ${c.key}: Titel in der Vereins-Historie`);
   }
   // Seite: jede Option liefert einen Schnappschuss
   for (const o of youthCompOptions(g, g.season)) check(!!youthSnapshot(g, g.season, o.key), `${tag}: Schnappschuss ${o.key}`);
@@ -103,7 +108,7 @@ ycOpts.prune = true;
 {
   const st = youthCompsOf(g)!;
   const one = JSON.stringify(st.comps.length ? (archiveSeason(g, st), st.archive[st.archive.length - 1]) : {}).length;
-  check(one < 16000, `Archiv je Saison klein (${one} Zeichen)`);
+  check(one < 18000, `Archiv je Saison klein (${one} Zeichen)`);
   for (let i = 0; i < MAX_SEASONS + 8; i++) { st.season = `x${i}`; archiveSeason(g, st); }
   check(st.archive.length === MAX_SEASONS, `Archiv begrenzt auf ${MAX_SEASONS} (ist ${st.archive.length})`);
   console.log(`Archiv: ${one} Zeichen je Saison, max. ${MAX_SEASONS} Saisons`);
@@ -117,7 +122,7 @@ ycOpts.prune = true;
   const t0 = performance.now();
   while (!CalendarEngine.isSeasonOver(h.calendar) && guard++ < 900) processDay(h, HEADLESS_UI);
   total = performance.now() - t0;
-  check(youthCompsOf(h)!.comps.every((c) => c.done && c.winner), '1975/76 über processDay: alle Wettbewerbe beendet');
+  check(youthCompsOf(h)!.comps.every((c) => c.done && (c.winner || c.fest)), `1975/76 über processDay: alle Wettbewerbe beendet (offen: ${youthCompsOf(h)!.comps.filter((c) => !c.done || !(c.winner || c.fest)).map((c) => c.key).join(',')})`);
   // Jugend allein (gleiche Saison neu aufgesetzt) im Vergleich zum ganzen Tagesablauf
   const save = h.calendar.currentDate;
   const youthMs = runSeason(h, 1975);
@@ -158,6 +163,104 @@ ycOpts.prune = true;
   const leak = JSON.stringify(st).includes('"attributes"') || JSON.stringify(st).includes('"contract"');
   check(!leak, 'youthComps enthält keine Spielerobjekte');
   check(myYouthStandings(m).some((s) => s.compKey === 'u19' && s.pos), 'Eigene Lage (Kategorie-Übersicht)');
+}
+
+// 5) C- bis G-Jugend je Epoche: Staffel des eigenen Vereins bzw. Spielfeste ohne Tabelle
+{
+  ycOpts.prune = true;
+  const L = make();
+  (L as any).simAutoManage = true;
+  // Erwartung: Art (stf/fest) und Spieler auf dem Feld je Klasse u15/u13/u11/u9/u7
+  const expect: [number, string[], number[]][] = [
+    [1976, ['stf', 'stf', 'stf', 'fest', 'fest'], [11, 11, 7, 0, 0]],
+    [1995, ['stf', 'stf', 'stf', 'stf', 'fest'], [11, 11, 7, 7, 0]],
+    [2010, ['stf', 'stf', 'stf', 'stf', 'fest'], [11, 11, 7, 7, 0]],
+    [2025, ['stf', 'stf', 'fest', 'fest', 'fest'], [11, 9, 0, 0, 0]],
+  ];
+  for (const [y0, kinds, ns] of expect) {
+    const ms = runSeason(L, y0);
+    const st = youthCompsOf(L)!;
+    const tag = label(y0);
+    const kb = JSON.stringify(st).length;
+    ycOpts.lower = false; const msA = runSeason(L, y0); const kbA = JSON.stringify(youthCompsOf(L)!).length; ycOpts.lower = true;
+    runSeason(L, y0);
+    const st2 = youthCompsOf(L)!;
+    const lines: string[] = [];
+    LOW_KEYS.forEach((k, i) => {
+      const c = st2.comps.find((x) => x.key === k);
+      check(c?.fmt === kinds[i], `${tag} ${k}: ${kinds[i]} (ist ${c?.fmt})`);
+      if (!c) return;
+      if (c.fmt === 'fest') {
+        check(!c.leagues.length && (c.fest?.d.length ?? 0) >= 6, `${tag} ${k}: Spielfeste mit Terminen, keine Tabelle`);
+        const snap = youthSnapshot(L, L.season, `${k}:fest`);
+        check(!!snap?.fest && !snap.table && !!snap.fest.note, `${tag} ${k}: Seite zeigt Spielfest-Erklärung statt Tabelle`);
+        check(Object.values(st2.stats[k] ?? {}).every((t) => t[1] === 0 && t[3] === 0), `${tag} ${k}: keine Tore/Karten bei Spielfesten`);
+        const own = Object.keys(st2.stats[k] ?? {}).length;
+        lines.push(`${k}: ${c.label} (${c.fest!.d.length} Feste, ${own} Kinder)`);
+        return;
+      }
+      const l = c.leagues[0];
+      check(c.n === ns[i], `${tag} ${k}: ${ns[i]} gegen ${ns[i]} (ist ${c.n})`);
+      check(l.clubs[0] === 'mgl' && l.clubs.length >= 8, `${tag} ${k}: eigener Verein in der Staffel (${l.clubs.length} Teams)`);
+      check(l.clubs.every((id) => compClubName(L, id, L.season) !== id), `${tag} ${k}: alle Teams mit Namen`);
+      const names = l.clubs.map((id) => compClubName(L, id, L.season));
+      check(new Set(names).size === names.length, `${tag} ${k}: keine doppelten Vereinsnamen`);
+      const snap = youthSnapshot(L, L.season, `${k}:${l.id}`);
+      check((snap?.table?.length ?? 0) === l.clubs.length && (snap?.stats?.goals.length ?? 0) > 0, `${tag} ${k}: Tabelle + Bestenliste auf der Seite`);
+      const ownPlayers = Object.keys(st2.stats[k] ?? {}).filter((pid) => L.youthPlayers[pid]?.clubId === 'mgl');
+      check(ownPlayers.length >= (c.n ?? 11) || !(L as any).youthTeamsReady, `${tag} ${k}: eigene Spieler mit Einsätzen (${ownPlayers.length})`);
+      if (c.cls === 'E' || c.cls === 'F') check(Object.values(st2.stats[k] ?? {}).every((t) => t[3] === 0 && t[5] === 0), `${tag} ${k}: keine Karten im Kinderfußball`);
+      const pos = leagueTable(l, c.pts).find((r) => r.clubId === 'mgl')?.pos;
+      lines.push(`${k}: ${c.label}, ${c.play}, ${l.clubs.length} Teams (${l.clubs.filter(isLocalClub).length} Ortsvereine), Platz ${pos}`);
+    });
+    const opts = youthCompOptions(L, L.season);
+    check(['C-', 'D-', 'E-', 'F-', 'G-'].every((p) => opts.some((o) => o.section.startsWith(p))), `${tag}: Auswahl enthält alle Klassen`);
+    check(opts.findIndex((o) => o.section.startsWith('C-')) > opts.findIndex((o) => o.section.startsWith('B-')), `${tag}: Auswahl nach Jugend sortiert`);
+    const tsd = myYouthStandings(L).filter((s) => isLowKey(s.compKey)).length;
+    console.log(`${tag} C–G: ${lines.join(' | ')}`);
+    console.log(`   Zeit Saison ${msA.toFixed(0)} → ${ms.toFixed(0)} ms, youthComps ${(kbA / 1024).toFixed(0)} → ${(kb / 1024).toFixed(0)} KB (Saisonende), eigene Lage ${tsd} Klassen`);
+    check(kb - kbA < 60 * 1024, `${tag}: C–G kosten < 60 KB`);
+  }
+  // Auf-/Abstieg des eigenen Vereins
+  {
+    const st = youthCompsOf(L)!;
+    runSeason(L, 1995);
+    const st1 = youthCompsOf(L)!;
+    const c = st1.comps.find((x) => x.key === 'u13')!;
+    c.lvl = 1; st1.lvl!.u13 = 1;
+    for (const f of c.leagues[0].fx) { if (f[1] === 'mgl') { f[3] = 5; f[4] = 0; } else if (f[2] === 'mgl') { f[3] = 0; f[4] = 5; } }
+    const d = st1.comps.find((x) => x.key === 'u15')!;
+    for (const f of d.leagues[0].fx) { if (f[1] === 'mgl') { f[3] = 0; f[4] = 9; } else if (f[2] === 'mgl') { f[3] = 9; f[4] = 0; } }
+    const prev = st1.comps;
+    L.season = label(1996);
+    setupSeason(L, st1, prev);
+    check(st1.lvl!.u13 === 0, 'D-Jugend: Staffelsieg in der unteren Klasse → Aufstieg');
+    check(st1.lvl!.u15 === 1 && st1.comps.find((x) => x.key === 'u15')!.label.startsWith('Landesliga'), 'C-Jugend: Abstieg in die Landesliga');
+    void st;
+  }
+  // Migration: Spielstand mit Jugendwettbewerben, aber ohne C–G → sofort in der laufenden Saison
+  {
+    const m = make();
+    ycOpts.lower = false;
+    delete (m as any).youthComps;
+    m.calendar.currentDate = '1975-07-01';
+    ensureYouthComps(m, '1975-07-01');
+    ycOpts.lower = true;
+    const st = youthCompsOf(m)!;
+    delete st.low;
+    check(!st.comps.some((c) => isLowKey(c.key)), 'Migration: Ausgangslage ohne C–G');
+    for (let d = '1975-07-01'; d <= '1975-11-15'; d = isoAdd(d, 1)) { m.calendar.currentDate = d; youthCompsDaily(m, d); }
+    m.calendar.currentDate = '1975-11-16';
+    const before = JSON.stringify(st.comps.filter((c) => !isLowKey(c.key)));
+    migrateYouthComps(m);
+    const low = st.comps.filter((c) => isLowKey(c.key));
+    check(low.length === 5 && st.low === 1, 'Migration: C–G in der laufenden Saison angelegt');
+    const fx = low.flatMap((c) => c.leagues.flatMap((l) => l.fx));
+    check(fx.filter((f) => f[0] < '1975-11-16').every((f) => f[3] >= 0) && fx.filter((f) => f[0] >= '1975-11-16').every((f) => f[3] < 0), 'Migration: vergangene C–F-Spieltage nachgeholt, künftige offen');
+    check(JSON.stringify(st.comps.filter((c) => !isLowKey(c.key))) === before, 'Migration: A/B/Pokal unverändert');
+    migrateYouthComps(m);
+    check(st.comps.filter((c) => isLowKey(c.key)).length === 5, 'Migration C–G idempotent');
+  }
 }
 
 if (failures) { console.error(`\n${failures} Fehler`); process.exit(1); }

@@ -4,12 +4,19 @@
 import { CalendarEngine } from '../../../engine/calendar';
 import type { Game } from '../../../game/state';
 import { myYouthStandings, type YcSnapshot } from '../../../game/youthComps/view';
+import { isLowKey } from '../../../data/youthLowerLeagues';
 import { DashBox, KV } from '../../../ui/DashPage';
 import { TeamName } from '../../statistiken/competition/parts';
 
 /** Kurzbeschreibung des Modus (Quellen: data/youthCompetitions.ts). */
 function modeText(snap: YcSnapshot): string {
   const y0 = Number(snap.season.slice(0, 4));
+  if (snap.fest) return `Spielfeste statt Meisterschaft (${snap.play ?? ''}). Keine Tabelle, keine Ergebnisse.`;
+  if (isLowKey(snap.compKey)) {
+    const own = 'Gezeigt wird die Staffel deiner Mannschaft; die übrigen Staffeln werden nicht simuliert.';
+    const move = snap.lowLevel === 1 ? 'Der Erste steigt auf.' : snap.zones?.includes('zone-rel') ? 'Der Erste ist Meister, die Letzten steigen ab.' : 'Der Erste ist Meister.';
+    return `Doppelrunde, ${snap.play ?? '11 gegen 11'}. ${move} ${own}`;
+  }
   switch (snap.compKey) {
     case 'u19': case 'u17': {
       const rl = snap.compKey === 'u19' ? 1996 : 2000, bl = snap.compKey === 'u19' ? 2003 : 2007;
@@ -40,22 +47,23 @@ export function YouthInfoBox({ g, snap }: { g: Game; snap: YcSnapshot | null }) 
   const myRow = started ? snap.table?.find((r) => r.clubId === mid) : undefined;
   return (
     <DashBox title={live && mine ? 'Deine Jugend' : live ? 'Stand' : 'Saisonbilanz'} icon={live && mine ? 'youth' : 'chronicle'} right={snap.compLabel} className="yc-info">
-      {snap.winner ? <KV k="Sieger" v={T(snap.winner)} strong />
+      {snap.fest ? <KV k="Sieger" v="keiner (Spielfeste)" />
+        : snap.winner ? <KV k="Sieger" v={T(snap.winner)} strong />
         : leader && snap.kind === 'league' ? <KV k="Tabellenführer" v={T(leader)} /> : <KV k="Sieger" v="steht noch aus" />}
       {fin?.winner && <KV k="Endspiel" v={<span className="cmp-inline">{T(fin.home)} {fin.hg}:{fin.ag}{fin.dec === 1 ? ' n. V.' : fin.dec === 2 ? ' i. E.' : ''} {T(fin.away)}</span>} />}
       {myRow && <KV k="Dein Verein" v={`${myRow.pos}. · ${myRow.pts} Pkt.`} />}
       {mine && <>
-        {mine.league && !myRow && <KV k={mine.league} v={mine.pos ? `${mine.pos}. von ${mine.size}` : '–'} />}
+        {mine.league && !myRow && !mine.fest && <KV k={mine.league} v={mine.pos ? `${mine.pos}. von ${mine.size}` : '–'} />}
         {mine.ko && <KV k={snap.compKey === 'pokal' ? 'Stand' : 'Endrunde'} v={mine.ko} />}
         {mine.next && <>
-          <div className="dsec">Nächstes Spiel</div>
+          <div className="dsec">{mine.fest ? 'Nächstes Spielfest' : 'Nächstes Spiel'}</div>
           <KV k={mine.next.what} v={CalendarEngine.formatDate(mine.next.date)} />
-          <KV k={mine.next.home ? 'Heim gegen' : 'Auswärts bei'} v={T(mine.next.opp)} />
+          <KV k={mine.fest ? 'Gastgeber' : mine.next.home ? 'Heim gegen' : 'Auswärts bei'} v={T(mine.next.opp)} />
         </>}
       </>}
       {snap.zones && snap.kind === 'league' && (
         <div className="dzones mt8">
-          <span><span className="pos-badge zone-cl" /> {snap.compKey === 'ddr' ? 'Meister' : 'Endrunde'}</span>
+          <span><span className="pos-badge zone-cl" /> {snap.compKey === 'ddr' || snap.lowLevel === 0 ? 'Meister' : snap.lowLevel === 1 ? 'Aufstieg' : 'Endrunde'}</span>
           {snap.zones.includes('zone-rel') && <span><span className="pos-badge zone-rel" /> Abstieg</span>}
         </div>
       )}

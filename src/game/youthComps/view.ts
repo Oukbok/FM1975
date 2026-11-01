@@ -12,7 +12,9 @@ import type { Game } from '../state';
 import { personOf, statEntries } from './archive';
 import { youthCompsOf } from './daily';
 import { leagueTable } from './table';
-import { isVirtual, virtualPerson } from './sim';
+import { isDdr, isVirtual, lvOf, regionOf, virtualPerson } from './sim';
+import { LOW_CLS, isLowKey, lowFormat } from '../../data/youthLowerLeagues';
+import type { YcCls, YcKey } from '../../data/youthCompetitions';
 import type { YcArchComp, YcComp, YcLeague, YouthCompsState } from './types';
 
 export interface YcSnapshot extends CompSnapshot {
@@ -24,6 +26,11 @@ export interface YcSnapshot extends CompSnapshot {
   advance?: { n: number; label: string; transfer?: { count: number; label: string } };
   /** Eigener Verein in diesem Wettbewerb (Staffel, Platz). */
   winner?: string | null;
+  /** C–G: Spielklasse des eigenen Vereins (0 = obere, 1 = untere), Spielform. */
+  lowLevel?: 0 | 1;
+  play?: string;
+  /** Spielfeste ohne Tabelle (G-Jugend, F vor 1984, G/F/E ab 2024). */
+  fest?: { note: string; dates: { date: string; host: string }[]; count: number; apps: { pid: string; name: string; pos: string; n: number }[] };
 }
 
 export function youthSeasonOptions(g: Game): SeasonOption[] {
@@ -34,7 +41,13 @@ export function youthSeasonOptions(g: Game): SeasonOption[] {
   return out;
 }
 
-type AnyComp = { key: string; label: string; section: string; leagues: { id: string; name: string; stage: number; group?: boolean }[]; ko: unknown[] };
+type AnyComp = { key: string; label: string; section: string; leagues: { id: string; name: string; stage: number; group?: boolean }[]; ko: unknown[]; fest?: unknown };
+
+/** Reihenfolge der Bereiche: A, B, C … G, DDR, Europa. */
+function sectionRank(sec: string): number {
+  const i = 'ABCDEFG'.indexOf(sec[0]);
+  return sec.startsWith('DDR') ? 7 : sec === 'Europa' ? 8 : i < 0 ? 9 : i;
+}
 
 function compsOf(st: YouthCompsState, season: string): { live: boolean; comps: AnyComp[]; arch?: YcArchComp[] } | null {
   if (st.season === season) return { live: true, comps: st.comps };
@@ -51,6 +64,7 @@ export function youthCompOptions(g: Game, season: string): CompOption[] {
   if (!s) return [];
   const out: CompOption[] = [];
   for (const c of s.comps) {
+    if (c.fest) { out.push({ key: `${c.key}:fest`, label: `${c.label} (ohne Tabelle)`, kind: 'league', section: c.section }); continue; }
     const stages = [...new Set(c.leagues.filter((l) => l.group).map((l) => l.stage))];
     for (const l of c.leagues.filter((x) => !x.group)) out.push({ key: `${c.key}:${l.id}`, label: c.key === 'ddr' ? l.name : l.name, kind: 'league', section: c.section });
     for (const stg of stages) out.push({ key: `${c.key}:groups${stg}`, label: `${c.key === 'uyl' ? 'UEFA Youth League' : c.label} – ${stageLabel(c, stg)}`, kind: 'league', section: c.section });
@@ -60,7 +74,8 @@ export function youthCompOptions(g: Game, season: string): CompOption[] {
     }
   }
   // Endrunde zuerst je Bereich, dann Ligen.
-  return out.sort((a, b) => a.section === b.section ? (a.kind === b.kind ? 0 : a.kind === 'cup' ? -1 : 1) : 0);
+  return out.map((o, i) => ({ o, i })).sort((a, b) => sectionRank(a.o.section) - sectionRank(b.o.section)
+    || (a.o.kind === b.o.kind ? 0 : a.o.kind === 'cup' ? -1 : 1) || a.i - b.i).map((x) => x.o);
 }
 
 // -----------------------------------------------------------------------------
@@ -147,6 +162,10 @@ export function youthSnapshot(g: Game, season: string, key: string): YcSnapshot 
     compKey: ck, compLabel: meta.label, section: meta.section, winner: lc ? lc.winner ?? null : ac!.winner,
     stats: lc ? statsLive(g, st, lc) : statsArch(g, arch!, ac!),
   };
+  base.lowLevel = lc?.lvl ?? ac?.lvl;
+  base.play = lc?.play ?? ac?.play;
+  if (isLowKey(ck)) base.label = `${(lc?.cls ?? LOW_CLS[ck])}-Jugend · ${part === 'fest' ? 'Spielfeste' : opt.label}`;
+  if (part === 'fest') return { ...base, fest: festOf(g, st, lc, ac, season) };
   if (part === 'ko') {
     return { ...base, rounds: lc ? liveRounds(lc, mid, today) : archRounds(ac!, mid) };
   }
@@ -173,7 +192,7 @@ export function youthSnapshot(g: Game, season: string, key: string): YcSnapshot 
 }
 
 /** Eigene Lage je Wettbewerb (Kategorie-Übersicht, Info-Box). */
-export interface YouthStanding { compKey: string; compLabel: string; cls: 'A' | 'B'; league?: string; pos?: number; size?: number; ko?: string; next?: { date: string; opp: string; home: boolean; what: string } }
+export interface YouthStanding { compKey: string; compLabel: string; cls: YcCls; fest?: boolean; league?: string; pos?: number; size?: number; ko?: string; next?: { date: string; opp: string; home: boolean; what: string } }
 
 export function myYouthStandings(g: Game): YouthStanding[] {
   const st = youthCompsOf(g);
@@ -189,6 +208,11 @@ export function myYouthStandings(g: Game): YouthStanding[] {
       s.league = mine.name; s.pos = t.find((r) => r.clubId === mid)?.pos; s.size = t.length;
     }
     const nexts: NonNullable<YouthStanding['next']>[] = [];
+    if (c.fest) {
+      s.fest = true; s.league = c.label;
+      const nd = c.fest.d.find((x) => x >= today);
+      if (nd) s.next = { date: nd, opp: c.fest.h[c.fest.d.indexOf(nd)], home: c.fest.h[c.fest.d.indexOf(nd)] === mid, what: 'Spielfest' };
+    }
     for (const l of c.leagues) for (const f of l.fx) if (f[3] < 0 && f[0] >= today && (f[1] === mid || f[2] === mid)) nexts.push({ date: f[0], opp: f[1] === mid ? f[2] : f[1], home: f[1] === mid, what: l.name });
     for (const rd of c.ko) for (const t of rd.ties) {
       if (t.h !== mid && t.a !== mid) continue;
@@ -202,4 +226,34 @@ export function myYouthStandings(g: Game): YouthStanding[] {
     if (s.league || s.ko || s.next) out.push(s);
   }
   return out;
+}
+
+/** Je Jugendmannschaft des eigenen Vereins: Liga + Platz (A = U19-Meisterschaft, B = U17, C–G = Staffel). */
+export function teamStandings(g: Game): Partial<Record<YcCls, YouthStanding>> {
+  const out: Partial<Record<YcCls, YouthStanding>> = {};
+  for (const s of myYouthStandings(g)) {
+    if (s.compKey === 'pokal' || s.compKey === 'uyl' || s.compKey === 'ddr' && out.A) continue;
+    if (!out[s.cls]) out[s.cls] = s;
+  }
+  return out;
+}
+
+/** Spielfeste: Termine, Gastgeber, Teilnahmen der eigenen Kinder. */
+function festOf(g: Game, st: YouthCompsState, lc: YcComp | undefined, ac: YcArchComp | undefined, season: string): NonNullable<YcSnapshot['fest']> {
+  const key = (lc ?? ac)!.key;
+  const apps = Object.entries(lc ? st.stats[key] ?? {} : {}).map(([pid, t]) => {
+    const [name, , pos] = personOf(g, st, pid);
+    return { pid, name, pos, n: t[0] };
+  }).sort((a, b) => b.n - a.n || a.name.localeCompare(b.name));
+  if (!lc) {
+    const y0 = Number(season.slice(0, 4));
+    return { note: festNoteFor(g, key, y0), dates: [], count: ac!.fest ?? 0, apps: [] };
+  }
+  return { note: lc.fest!.note, dates: lc.fest!.d.map((date, i) => ({ date, host: lc.fest!.h[i] })), count: lc.fest!.d.length, apps };
+}
+
+function festNoteFor(g: Game, key: YcKey, y0: number): string {
+  if (!isLowKey(key)) return '';
+  const mid = g.managedClubId;
+  return lowFormat(key, y0, regionOf(g, mid), lvOf(g, mid), 0, isDdr(g, mid) && y0 < 1991).fest ?? '';
 }

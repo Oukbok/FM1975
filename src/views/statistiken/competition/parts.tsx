@@ -8,15 +8,16 @@ import { clubView } from '../../../game/clubProfile';
 import { compClubName, foreignCountry } from '../../../game/competitionView';
 import type { Game } from '../../../game/state';
 import { seasonStartYear } from '../../../data/timeline';
+import { isLocalClub, localClubColor } from '../../../game/youthComps/localClubs';
 
 /** Verein mit Wappen (deutsch) bzw. Farbpunkt (Ausland), klickbar wenn Profil vorhanden. */
 export function TeamName({ g, id, season, short = false, size = 20 }: { g: Game; id: string; season: string; short?: boolean; size?: number }) {
   const country = foreignCountry(g, id);
   const name = compClubName(g, id, season, short);
   if (country || id.startsWith('x_')) {
-    const col = g.euroClubs?.[id]?.colors.primary ?? 'var(--text-4)';
+    const col = g.euroClubs?.[id]?.colors.primary ?? (isLocalClub(id) ? localClubColor(id) : 'var(--text-4)');
     return (
-      <span className="cmp-team" title={country ? `${name} (${country})` : name}>
+      <span className="cmp-team" title={country ? `${name} (${country})` : isLocalClub(id) ? `${name} (Ortsverein)` : name}>
         <span className="cmp-dot" style={{ background: col }} />
         <span className="cmp-team-name">{name}</span>
       </span>

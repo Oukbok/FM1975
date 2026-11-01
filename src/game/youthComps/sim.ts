@@ -10,6 +10,7 @@
 // Tore Poisson-verteilt nach Stärkeunterschied; Torschützen/Vorlagen/Karten werden
 // nach Position und Stärke verteilt.
 // =============================================================================
+import { isLowKey } from '../../data/youthLowerLeagues';
 import { CITY_LV, LV_REGION, type Lv, type YcCls, type YcKey, type YcRegion } from '../../data/youthCompetitions';
 import { ORIGINS, makeName, pickOrigin } from '../../data/origins';
 import type { CompTuple } from '../../engine/compStats';
@@ -137,14 +138,18 @@ export function virtualPerson(g: Game, pid: string): [string, string, string] {
 }
 
 /** Elf eines Jugendteams; echte Spieler zuerst (Torhüter garantiert). */
-export function lineupOf(g: Game, st: YouthCompsState, clubId: string, cls: YcCls, y0: number): { slots: YcSlot[]; strength: number } {
+/** Kleinfeld: welche Plätze der Elfer-Vorlage besetzt sind (Index in TEMPLATE). */
+const SLOT_IDX: Record<number, number[]> = { 11: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 9: [0, 1, 2, 3, 5, 6, 7, 8, 10], 7: [0, 1, 3, 6, 7, 8, 10] };
+
+export function lineupOf(g: Game, st: YouthCompsState, clubId: string, cls: YcCls, y0: number, n = 11): { slots: YcSlot[]; strength: number } {
   const real = youthOf(g, clubId, cls);
   const base = st.str[`${clubId}|${cls}`] ?? 45;
+  const idx = SLOT_IDX[n] ?? SLOT_IDX[11];
   const virt = (i: number): YcSlot => ({ id: virtualId(clubId, cls, y0, i), pos: TEMPLATE[i], ovr: Math.round(base + ((i * 7) % 5) - 2), real: false });
   const tw = real.find((p) => p.naturalPosition === 'TW');
   const slots: YcSlot[] = [tw ? { id: tw.id, pos: 'TW', ovr: tw.overall, real: true } : virt(0)];
-  for (const p of real) { if (slots.length >= 11) break; if (p.naturalPosition !== 'TW') slots.push({ id: p.id, pos: p.naturalPosition, ovr: p.overall, real: true }); }
-  for (let i = 1; slots.length < 11; i++) slots.push(virt(i));
+  for (const p of real) { if (slots.length >= idx.length) break; if (p.naturalPosition !== 'TW') slots.push({ id: p.id, pos: p.naturalPosition, ovr: p.overall, real: true }); }
+  for (let k = 1; slots.length < idx.length; k++) slots.push(virt(idx[k]));
   const full = slots.every((s) => s.real);
   const strength = full ? slots.reduce((a, s) => a + s.ovr, 0) / slots.length : base;
   return { slots, strength };
@@ -161,10 +166,10 @@ function poisson(l: number, r: () => number): number {
 }
 
 /** Tore eines Jugendspiels (mehr Tore als bei den Profis). */
-export function simGoals(hs: number, as: number, neutral: boolean, r: () => number = Math.random): [number, number] {
+export function simGoals(hs: number, as: number, neutral: boolean, r: () => number = Math.random, base = 1.65): [number, number] {
   const d = clamp(hs - as, -20, 20) * 0.07;
   const home = neutral ? 0 : 0.12;
-  return [poisson(1.65 * Math.exp(d / 2 + home), r), poisson(1.65 * Math.exp(-d / 2 - (neutral ? 0 : 0.05)), r)];
+  return [poisson(base * Math.exp(d / 2 + home), r), poisson(base * Math.exp(-d / 2 - (neutral ? 0 : 0.05)), r)];
 }
 
 const GOAL_W: Partial<Record<Position, number>> = { MS: 5, HS: 4.5, FL: 3.5, OM: 3, ZM: 1.6, DM: 1, AV: 0.8, VS: 0.6, LIB: 0.6, TW: 0.02 };
@@ -194,7 +199,7 @@ function remember(g: Game, st: YouthCompsState, s: YcSlot, clubId: string): void
 /** Verbucht Einsätze, Tore, Vorlagen, Karten und Zu-null-Spiele einer Mannschaft. */
 export function recordSide(
   g: Game, st: YouthCompsState, key: YcKey, clubId: string, slots: YcSlot[], goals: number, conceded: number, year: number, r: () => number = Math.random,
-  extraTime = false,
+  extraTime = false, cards = 1,
 ): void {
   if (!extraTime) for (const s of slots) if (s.real) { tup(st, key, s.id)[0]++; remember(g, st, s, clubId); }
   for (let i = 0; i < goals; i++) {
@@ -204,25 +209,29 @@ export function recordSide(
     if (r() < 0.72) { const as = pick(slots, ASSIST_W, r, sc.id); if (as) { tup(st, key, as.id)[2]++; remember(g, st, as, clubId); } }
   }
   if (extraTime) return;
-  const yellows = poisson(1.25, r);
+  const yellows = cards > 0 ? poisson(1.25 * cards, r) : 0;
   for (let i = 0; i < yellows; i++) { const p = pick(slots, CARD_W, r); if (p) { tup(st, key, p.id)[3]++; remember(g, st, p, clubId); } }
-  if (year >= 1991 && r() < 0.035) { const p = pick(slots, CARD_W, r); if (p) { tup(st, key, p.id)[4]++; remember(g, st, p, clubId); } }
-  if (r() < 0.025) { const p = pick(slots, CARD_W, r); if (p) { tup(st, key, p.id)[5]++; remember(g, st, p, clubId); } }
+  if (year >= 1991 && r() < 0.035 * cards) { const p = pick(slots, CARD_W, r); if (p) { tup(st, key, p.id)[4]++; remember(g, st, p, clubId); } }
+  if (r() < 0.025 * cards) { const p = pick(slots, CARD_W, r); if (p) { tup(st, key, p.id)[5]++; remember(g, st, p, clubId); } }
   if (conceded === 0) { const k = slots.find((s) => s.pos === 'TW'); if (k) { tup(st, key, k.id)[6]++; remember(g, st, k, clubId); } }
 }
 
 /** Hält die Statistik klein: erzeugte Spieler außerhalb der Top 40 jeder Kategorie fallen weg. */
-export const ycOpts = { prune: true };
+/** Schalter für Tests: Statistik ausdünnen; C- bis G-Jugend aufsetzen (Messung vorher/nachher). */
+export const ycOpts = { prune: true, lower: true };
 export function pruneStats(st: YouthCompsState): void {
   if (!ycOpts.prune) return;
-  for (const m of Object.values(st.stats)) {
+  for (const [key, m] of Object.entries(st.stats)) {
     if (!m) continue;
     const keep = new Set<string>();
     const virt = Object.entries(m).filter(([pid]) => isVirtual(pid));
-    if (virt.length < 300) continue;
-    for (const idx of [1, 2, 3, 6]) virt.sort((a, b) => b[1][idx] - a[1][idx]).slice(0, 40).forEach(([pid]) => keep.add(pid));
-    virt.sort((a, b) => b[1][1] + b[1][2] - a[1][1] - a[1][2]).slice(0, 40).forEach(([pid]) => keep.add(pid));
-    virt.sort((a, b) => b[1][4] + b[1][5] - a[1][4] - a[1][5]).slice(0, 40).forEach(([pid]) => keep.add(pid));
+    // C–F-Staffeln (eine Staffel): früher und knapper ausdünnen.
+    const low = isLowKey(key);
+    const lim = low ? 60 : 300, top = low ? 18 : 40;
+    if (virt.length < lim) continue;
+    for (const idx of [1, 2, 3, 6]) virt.sort((a, b) => b[1][idx] - a[1][idx]).slice(0, top).forEach(([pid]) => keep.add(pid));
+    virt.sort((a, b) => b[1][1] + b[1][2] - a[1][1] - a[1][2]).slice(0, top).forEach(([pid]) => keep.add(pid));
+    virt.sort((a, b) => b[1][4] + b[1][5] - a[1][4] - a[1][5]).slice(0, top).forEach(([pid]) => keep.add(pid));
     for (const [pid] of virt) if (!keep.has(pid)) delete m[pid];
   }
 }

@@ -3,7 +3,8 @@
 // -----------------------------------------------------------------------------
 // Links groß: Tabelle (Verbandsliga/Regionalliga/Staffel), Gruppenübersicht oder
 // Endrunde (Turnierbaum ↔ Runden); rechts oben die Bestenlisten, rechts unten
-// Saisonbilanz bzw. „Deine Jugend“. Kopf: Saison (laufend + Archiv) und Wettbewerb.
+// Saisonbilanz bzw. „Deine Jugend“. Kopf: Saison (laufend + Archiv) und Wettbewerb,
+// gruppiert nach Jugend (A … G). C–G: Staffel des eigenen Vereins oder Spielfeste.
 // Daten: game/youthComps/view.ts; Bausteine aus views/statistiken/competition/.
 // =============================================================================
 import { useEffect, useMemo, useState } from 'react';
@@ -17,6 +18,7 @@ import { DashBox, DashPage, Empty } from '../../ui/DashPage';
 import { CupRounds } from '../statistiken/competition/CupRounds';
 import { LeagueTable } from '../statistiken/competition/LeagueTable';
 import { StatsBox } from '../statistiken/competition/StatsBox';
+import { FestDates, FestSide } from './youthcomp/YouthFestView';
 import { YouthInfoBox } from './youthcomp/YouthInfoBox';
 import { youthPlayerCard } from './youthcomp/YouthPlayerCard';
 
@@ -51,10 +53,12 @@ function GroupsView({ g, snap }: { g: Game; snap: YcSnapshot }) {
 
 export function YouthCompetitionsView({ g }: { g: Game }) {
   const seasons = useMemo(() => youthSeasonOptions(g), [g, g.season]); // eslint-disable-line react-hooks/exhaustive-deps
-  const [season, setSeason] = useState(g.season);
+  // Beim Saisonwechsel (vor dem ersten Spieltag) gibt es die neue Saison noch nicht: letzte zeigen.
+  const liveSeason = seasons.some((s) => s.season === g.season) ? g.season : seasons[seasons.length - 1]?.season ?? g.season;
+  const [season, setSeason] = useState(liveSeason);
   const opts = useMemo(() => youthCompOptions(g, season), [g, season]);
-  const [key, setKey] = useState(() => defaultKey(g, g.season));
-  useEffect(() => { setSeason(g.season); setKey(defaultKey(g, g.season)); }, [g.season]); // eslint-disable-line react-hooks/exhaustive-deps
+  const [key, setKey] = useState(() => defaultKey(g, liveSeason));
+  useEffect(() => { setSeason(liveSeason); setKey(defaultKey(g, liveSeason)); }, [liveSeason]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Wettbewerb beim Saisonwechsel halten, sonst gleichartigen wählen.
   const effKey = opts.some((o) => o.key === key) ? key
@@ -93,13 +97,15 @@ export function YouthCompetitionsView({ g }: { g: Game }) {
 
   return (
     <DashPage className="cmp-page">
-      <DashBox title={snap ? snap.label : 'Wettbewerb'} icon={snap?.kind === 'cup' ? 'trophy' : 'dashTabelle'} span={2} rows={2} right={header} className="cmp-main">
+      <DashBox title={snap ? snap.label : 'Wettbewerb'} icon={snap?.kind === 'cup' ? 'trophy' : 'dashTabelle'} span={2} rows={2} right={header} className="cmp-main yc-main">
         {!snap ? <Empty icon="stats">Für diese Auswahl liegen keine Daten vor.</Empty>
+          : snap.fest ? <FestDates g={g} snap={snap} />
           : snap.groups ? <GroupsView g={g} snap={snap} />
           : snap.kind === 'league' ? <LeagueTable key={`${season}-${effKey}`} g={g} snap={snap} />
           : <CupRounds g={g} snap={snap} />}
       </DashBox>
-      <StatsBox key={`st-${season}-${effKey}`} g={g} snap={snap} playerCard={(pid, close) => youthPlayerCard(g, snap, pid, close)} />
+      {snap?.fest ? <FestSide g={g} snap={snap} />
+        : <StatsBox key={`st-${season}-${effKey}`} g={g} snap={snap} playerCard={(pid, close) => youthPlayerCard(g, snap, pid, close)} />}
       <YouthInfoBox g={g} snap={snap} />
     </DashPage>
   );

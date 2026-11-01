@@ -15,7 +15,9 @@ import { Game } from './state';
 
 /** [Saison, Ebene, Platz, Ligagröße, Liga-Index in `divs`] */
 export type SeasonTuple = [string, number, number, number, number];
-export type TitleKind = 'meister' | 'ddr' | 'pokal' | 'ec' | 'cwc' | 'uefa' | 'halle' | 'jugendA' | 'jugendB' | 'jugendPokal' | 'jugendDdr' | 'uyl';
+export type TitleKind = 'meister' | 'ddr' | 'pokal' | 'ec' | 'cwc' | 'uefa' | 'halle' | 'jugendA' | 'jugendB' | 'jugendPokal' | 'jugendDdr' | 'uyl'
+  /** C- bis F-Jugend: Staffelsieg (nur eigener Verein, game/youthComps/lower.ts). */
+  | 'jugendC' | 'jugendD' | 'jugendE' | 'jugendF';
 /** Ein Spiel deines Vereins gegen diesen Gegner: [Saison, Datum, Wettbewerb, Heim (1/0), Tore dein Verein, Tore Gegner] */
 export type H2HTuple = [string, string, 'L' | 'P' | 'E', number, number, number];
 
@@ -51,6 +53,7 @@ export const TITLE_DE: Record<TitleKind, string> = {
   halle: 'DFB-Hallenpokal (Masters)',
   jugendA: 'Deutscher A-Jugend-Meister', jugendB: 'Deutscher B-Jugend-Meister', jugendPokal: 'DFB-Junioren-Pokal',
   jugendDdr: 'DDR-Juniorenmeister', uyl: 'UEFA Youth League',
+  jugendC: 'Staffelsieg C-Jugend', jugendD: 'Staffelsieg D-Jugend', jugendE: 'Staffelsieg E-Jugend', jugendF: 'Staffelsieg F-Jugend',
 };
 
 /** Titel außerhalb des Saisonabschlusses eintragen (z. B. Hallen-Masters, game/indoorGame.ts). */

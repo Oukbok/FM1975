@@ -56,10 +56,11 @@ const seasonSel = () => page.locator('.cmp-select select').nth(0);
 const opts = await compSel().locator('option').allTextContents();
 console.log('Optionen:', opts.join(' | '));
 for (const [want, n] of [['A-Jugendmeisterschaft – Endrunde', 'yc_endrunde'], ['A-Junioren-Bundesliga – Endrunde', 'yc_endrunde'], ['Nachwuchsliga U19 – Endrunde', 'yc_endrunde'],
+  ['Verbandsliga', 'yc_c'], ['Bayernliga', 'yc_c'], ['C-Junioren-Regionalliga', 'yc_c'], ['Bezirksliga', 'yc_d'], ['Kreisliga', 'yc_e'], ['ohne Tabelle', 'yc_fest'],
   ['UEFA Youth League – Gruppenphase', 'yc_uyl_gruppen'], ['UEFA Youth League – K.-o.-Runde', 'yc_uyl_ko'], ['DFB-J', 'yc_pokal'], ['DDR-', 'yc_ddr'], ['Staffel West', 'yc_staffel_west']]) {
-  const o = opts.find((t) => t.includes(want));
-  if (!o) continue;
-  await compSel().selectOption({ label: o });
+  const i = opts.findLastIndex((t) => t.includes(want));
+  if (i < 0) continue;
+  await compSel().selectOption({ index: i });
   await shot(n);
   const runden = page.locator('.cmp-main .dchip:has-text("Runden")');
   if (n.endsWith('endrunde') && await runden.count()) { await runden.first().click(); await shot(`${n}_runden`); }
@@ -73,6 +74,15 @@ if (so.length > 1) { await seasonSel().selectOption({ index: so.length - 2 }); a
 // Spielerprofil aus der Bestenliste
 const clickable = page.locator('.cmp-stat.clickable').first();
 if (await clickable.count()) { await clickable.click(); await page.waitForTimeout(400); await shot('yc_spieler'); }
+// Mannschaften (Liga + Platz je Jugend)
+for (let i = 0; i < 3 && await page.locator('.modal-overlay').count(); i++) { await page.locator('.modal-overlay').first().click({ position: { x: 5, y: 5 } }); await page.waitForTimeout(200); }
+const mann = page.locator('.tn-sub-item:has-text("Mannschaften")');
+if (await mann.count()) {
+  await mann.first().click(); await page.waitForTimeout(400);
+  const c = page.locator('.dchip:has-text("C (")');
+  if (await c.count()) { await c.first().click(); }
+  await shot('jugend_mannschaften');
+}
 console.log(errors.length ? errors.join('\n') : 'keine Fehler');
 await browser.close();
 server.close();

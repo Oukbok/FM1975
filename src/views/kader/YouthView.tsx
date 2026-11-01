@@ -1,7 +1,11 @@
 import { scoutRange } from '../../engine/scouting';
 import { Game } from '../../game/state';
 import { Player, YOUTH_AGE_CLASS_LABEL, YOUTH_AGE_CLASS_ORDER, YOUTH_AGE_CLASS_RANGE, YouthAgeClass, renderStars, youthAgeClass } from '../../types';
-import { vColor } from '../../ui/format';
+import { fmtDateShort, vColor } from '../../ui/format';
+import { teamStandings, type YouthStanding } from '../../game/youthComps/view';
+
+/** Kurz: „ · 3. Platz“ bzw. „ · Spielfeste“ für die Meter-Beschriftung. */
+const placeOf = (t?: YouthStanding) => (!t ? '' : t.fest ? ' · Spielfeste' : t.pos ? ` · ${t.pos}. Platz` : '');
 import { DashBox, DashPage, Empty, Meter } from '../../ui/DashPage';
 import { PlayerRow } from '../shared';
 import { YouthModal } from './YouthModal';
@@ -69,6 +73,7 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
   );
   const top = [...youth].sort((a, b) => (scoutRange(b)[1] - scoutRange(a)[1]) || b.overall - a.overall).slice(0, 5);
   const ready = youth.filter((x) => youthAgeClass(x.age) === 'A').sort((a, b) => b.overall - a.overall).slice(0, 4);
+  const teams = teamStandings(g);
   const maxClass = Math.max(1, ...YOUTH_AGE_CLASS_ORDER.map((c) => byClass[c].length));
 
   return (
@@ -82,6 +87,13 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
             </button>
           ))}
         </span>}>
+        {classFilter !== 'ALL' && teams[classFilter] && (
+          <div className="yc-team-strip">
+            {YOUTH_AGE_CLASS_LABEL[classFilter]}: {teams[classFilter]!.league ?? teams[classFilter]!.compLabel}
+            {teams[classFilter]!.pos ? ` · ${teams[classFilter]!.pos}. von ${teams[classFilter]!.size}` : teams[classFilter]!.fest ? ' · ohne Tabelle' : ''}
+            {teams[classFilter]!.next ? ` · nächster Termin ${fmtDateShort(teams[classFilter]!.next!.date).dmy}` : ''}
+          </div>
+        )}
         {rows.length === 0 ? (
           <Empty icon="youth">{youth.length === 0 ? 'Aktuell keine Talente in der Akademie. Der nächste Bambini-Jahrgang trifft zum 1. Juli ein.' : 'In dieser Altersklasse gibt es derzeit keine Talente.'}</Empty>
         ) : (
@@ -116,7 +128,7 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
       <DashBox title="Jugendakademie" info="ausbildung" icon="facilities" right={`Ruf ${Math.round(inv.reputation)}`}>
         <Meter label="Ausbildungsqualität" value={inv.quality} text={`${Math.round(inv.quality)}`} />
         {YOUTH_AGE_CLASS_ORDER.map((cls) => (
-          <Meter key={cls} label={`${YOUTH_AGE_CLASS_LABEL[cls]} · ${YOUTH_AGE_CLASS_RANGE[cls].split(' · ')[0]}`} value={byClass[cls].length} max={Math.max(YOUTH_TEAM_SIZE[cls], maxClass)}
+          <Meter key={cls} label={teams[cls] ? `${cls === 'G' ? 'Bambini' : `${cls}-Jugend`}${placeOf(teams[cls])}` : `${YOUTH_AGE_CLASS_LABEL[cls]} · ${YOUTH_AGE_CLASS_RANGE[cls].split(' · ')[0]}`} value={byClass[cls].length} max={Math.max(YOUTH_TEAM_SIZE[cls], maxClass)}
             text={`${byClass[cls].length} / ${YOUTH_TEAM_SIZE[cls]}`} />
         ))}
         <div className="dnote mt8">Jede Altersklasse hat eine volle Mannschaft. Die meisten spielen aus Freude am Fußball – Profi wird nur, wer genug Potenzial hat. Zum 1. Juli rücken alle auf, einige hören auf, Lücken werden aufgefüllt. Investitionen steuerst du unter Kader → Akademie.</div>

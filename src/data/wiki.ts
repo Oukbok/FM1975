@@ -1527,7 +1527,7 @@ Der Baustil folgt der Epoche (Backstein und Satteldach in den 70ern und 80ern, P
     id: 'youth-competitions',
     category: 'youth',
     title: 'Jugendwettbewerbe',
-    keywords: ['jugendwettbewerbe', 'a-jugend', 'b-jugend', 'u19', 'u17', 'jugendmeister', 'junioren-bundesliga', 'nachwuchsliga', 'junioren-pokal', 'youth league', 'ddr', 'endrunde', 'verbandsliga', 'regionalliga'],
+    keywords: ['jugendwettbewerbe', 'a-jugend', 'b-jugend', 'u19', 'u17', 'jugendmeister', 'junioren-bundesliga', 'nachwuchsliga', 'junioren-pokal', 'youth league', 'ddr', 'endrunde', 'verbandsliga', 'regionalliga', 'c-jugend', 'd-jugend', 'e-jugend', 'f-jugend', 'bambini', 'kreisliga', 'bezirksliga', 'spielfest', 'funino', 'kinderfußball'],
     body: `## Was gespielt wird
 Unter **Jugend › Jugendwettbewerbe** laufen die Meisterschaften und Pokale des Nachwuchses – für alle Vereine, nicht nur für dich. Die Seite ist aufgebaut wie Statistiken › Liga: oben Saison und Wettbewerb, links Tabelle, Gruppen oder Endrunde (Turnierbaum oder Runden), rechts die Bestenlisten (Tore, Vorlagen, Scorer, Karten, Weiße Weste) und deine Lage.
 
@@ -1539,14 +1539,26 @@ Unter **Jugend › Jugendwettbewerbe** laufen die Meisterschaften und Pokale des
 - **UEFA Youth League:** ab 2013/14 die Jugend der Champions-League-Vereine (Gruppen, dann K.-o., Final Four in Nyon); ab 2015/16 zusätzlich der Meisterweg mit dem deutschen A-Jugend-Meister des Vorjahres; ab 2024/25 Ligaphase mit 36 Teams.
 In Regionalliga und Bundesliga steigen je Staffel drei Vereine ab; nachrücken die Vereine der Region mit der stärksten Jugend.
 
+## C- bis G-Jugend: deine Staffel
+Jede deiner Jugendmannschaften hat ihren eigenen Wettbewerb; in der Auswahl sind sie nach Jugend gruppiert (A-Jugend, B-Jugend, C-Jugend …). Simuliert wird nur die **Staffel, in der deine Mannschaft spielt** – Gegner sind Jugendteams von Vereinen aus deiner Region bzw. deinem Landesverband und Ortsvereine aus deinem Kreis.
+- **C-Jugend (U15):** Verbandsliga deines Landesverbands (Bayern: Bezirksoberliga, ab 2005 Bayernliga), darunter die Landesliga. **C-Junioren-Regionalligen:** Nord ab 2004/05, Süd ab 2010/11 (als letzte der fünf), West, Nordost und Südwest im Spiel ab 2008/09. 11 gegen 11.
+- **D-Jugend (U13):** Bezirksliga, darunter Kreisliga. 11 gegen 11, ab 2011/12 9 gegen 9 auf Kleinfeldtore.
+- **E-Jugend (U11):** Kreisliga bzw. Kreisklasse, 7 gegen 7 – bis 2023/24.
+- **F-Jugend (U9):** bis 1983/84 kein geregelter Spielbetrieb (Freundschaftsspiele, Turniere), ab 1984/85 Kreisstaffeln mit Tabelle, ab 2010/11 als Fair-Play-Liga ohne Schiedsrichter – bis 2023/24.
+- **G-Jugend (Bambini, U7):** nie eine Meisterschaft, nur Spielfeste und Turniere.
+- **Kinderfußball-Reform 2024/25:** Für G-, F- und E-Jugend gibt es verbindlich nur noch **Spielfeste** (2 gegen 2 bis 7 gegen 7 auf Minitore, viele Ballkontakte, alle spielen). Die Seite zeigt dann **keine Tabelle**, sondern die Termine der Spielfeste und wie oft deine Kinder dabei waren – Ergebnisse werden nicht festgehalten.
+Je Altersklasse gibt es zwei Spielklassen: Wird deine Mannschaft in der unteren Erster, steigt sie auf; landet sie in der oberen auf einem Abstiegsplatz, steigt sie ab. Die Stärke deiner Mannschaft ist die deiner echten Spieler; die Gegner liegen je nach Ausbildungsqualität und Ruf darüber oder darunter – je jünger, desto größer der Abstand zwischen Nachwuchsleistungszentrum und Dorfverein. In E- und F-Jugend gibt es keine Karten.
+
 ## Wie gespielt wird
 Jugendspiele sind sonntags (Europapokal mittwochs), mit Winterpause wie bei den Profis; alles ist vor dem Saisonende entschieden. Die Ergebnisse folgen der **Stärke der A- bzw. B-Jugend**: Bei dir zählt die beste Elf deiner echten Mannschaft (Jugend › Mannschaften). Bei anderen Vereinen ergibt sie sich aus Ausbildungsqualität und Ruf der Akademie (Jugend › Akademie) bzw. der Vereinsgröße; ihre bekannten Talente spielen mit, die übrigen Spieler werden erzeugt.
 
 ## Was es bringt
 - Titel (und ein Endspiel) heben den **Ruf der Akademie** – und damit die Anziehungskraft im Wettbewerb um Talente.
 - Siege geben deinen eingesetzten Jugendspielern einen kleinen **Entwicklungsschub**, ein Titel zusätzlich Moral.
-- Meistertitel stehen in der **Vereins-Historie** (Vereinsprofil › Historie); vergangene Saisons bleiben im Archiv (Tabellen, Runden, die besten Spieler je Kategorie).
-Alte Spielstände starten sofort mit der laufenden Saison; bereits vergangene Spieltage werden beim Laden nachgespielt.`,
+- Meistertitel stehen in der **Vereins-Historie** (Vereinsprofil › Historie), auch Staffelsiege deiner C- bis F-Jugend; vergangene Saisons bleiben im Archiv (Tabellen, Runden, die besten Spieler je Kategorie).
+- C- bis F-Jugend: Siege geben einen etwas kleineren Entwicklungsschub, Spielfeste einen ganz kleinen – plus etwas Moral für alle Kinder, die dabei sind.
+- Jugend › Übersicht und Jugend › Mannschaften zeigen je Mannschaft Liga und Tabellenplatz.
+Alte Spielstände starten sofort mit der laufenden Saison; bereits vergangene Spieltage werden beim Laden nachgespielt (auch für die C- bis G-Jugend, wenn ein Spielstand sie noch nicht kennt).`,
   },
   {
     id: 'youth-overview',

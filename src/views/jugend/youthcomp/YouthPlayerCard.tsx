@@ -19,7 +19,7 @@ export function youthPlayerCard(g: Game, snap: YcSnapshot | null, pid: string, c
   const any = rows.find((x) => x.r)?.r;
   if (!any) return null;
   const real = g.youthPlayers[pid];
-  const cls = snap.compKey === 'u17' ? 'B-Jugend (U17)' : 'A-Jugend (U19)';
+  const cls = snap.section;
   return (
     <div className="modal-overlay" onClick={close}>
       <div className="modal yc-card" onClick={(e) => e.stopPropagation()}>

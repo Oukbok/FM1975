@@ -16,14 +16,19 @@ import { addTitleRecord, type TitleKind } from '../clubRecords';
 import { bumpMorale, type Game } from '../state';
 import { archiveSeason } from './archive';
 import { buildNwlMainRound, setupSeason } from './setup';
-import { hash32, lineupOf, pruneStats, recordSide, rng32, shootout, simGoals, tierOfClub } from './sim';
+import { CARD_RATE, GOAL_BASE, buildLowerComps } from './lower';
+import { setLocalCity } from './localClubs';
+import { youthAgeClass } from '../../types';
+import { cityOf, hash32, lineupOf, pruneStats, recordSide, rng32, shootout, simGoals, tierOfClub } from './sim';
 import { leagueDone, leagueTable } from './table';
 import type { YcComp, YcRound, YcTie, YouthCompsState } from './types';
 
 type GameYc = Game & { youthComps?: YouthCompsState };
 export const youthCompsOf = (g: Game): YouthCompsState | undefined => (g as GameYc).youthComps;
 
-export const TITLE_KIND: Record<YcKey, TitleKind> = { u19: 'jugendA', u17: 'jugendB', pokal: 'jugendPokal', ddr: 'jugendDdr', uyl: 'uyl' };
+export const TITLE_KIND: Partial<Record<YcKey, TitleKind>> = {
+  u19: 'jugendA', u17: 'jugendB', pokal: 'jugendPokal', ddr: 'jugendDdr', uyl: 'uyl', u15: 'jugendC', u13: 'jugendD', u11: 'jugendE', u9: 'jugendF',
+};
 
 // -----------------------------------------------------------------------------
 // Einstieg
@@ -42,8 +47,19 @@ export function ensureYouthComps(g: Game, today: string): YouthCompsState {
 /** Idempotente Nachrüstung beim Laden (App.tsx). */
 export function migrateYouthComps(g: Game): void {
   const st = youthCompsOf(g);
+  setLocalCity(cityOf(g, g.managedClubId));
   if (!st) { ensureYouthComps(g, g.calendar.currentDate); return; }
   slimPeople(st);
+  // C- bis G-Jugend (ab Version mit allen Klassen): sofort in der laufenden Saison starten,
+  // vergangene Spieltage nur dieser Wettbewerbe nachholen.
+  if (!st.low && st.season === g.season) {
+    const low = buildLowerComps(g, st, seasonStartYear(g.season));
+    st.comps.push(...low);
+    const keys = new Set(low.map((c) => c.key));
+    const y0 = seasonStartYear(g.season);
+    for (let d = `${y0}-07-01`; d < g.calendar.currentDate; d = isoAdd(d, 1)) playDay(g, st, d, true, keys);
+    st.low = 1;
+  }
 }
 
 /** Nur schlanke Einträge [Name, Verein, Position]: falls ein Spielstand ganze Spielerobjekte enthält, kürzen. */
@@ -90,11 +106,12 @@ export function youthCompsDaily(g: Game, today: string): void {
 // -----------------------------------------------------------------------------
 // Ein Tag
 // -----------------------------------------------------------------------------
-function playDay(g: Game, st: YouthCompsState, d: string, quiet: boolean): void {
+function playDay(g: Game, st: YouthCompsState, d: string, quiet: boolean, only?: Set<YcKey>): void {
   const y0 = seasonStartYear(st.season);
   const r = Math.random;
   for (const comp of st.comps) {
-    if (comp.done) continue;
+    if (comp.done || (only && !only.has(comp.key))) continue;
+    if (comp.fest) { festDay(g, st, comp, d); continue; }
     for (const l of comp.leagues) {
       for (const f of l.fx) {
         if (f[0] !== d || f[3] >= 0) continue;
@@ -121,15 +138,17 @@ function playDay(g: Game, st: YouthCompsState, d: string, quiet: boolean): void 
     }
   }
   if (d.endsWith('-01')) pruneStats(st);
-  st.day = d;
+  if (!only) st.day = d;
 }
 
 function playMatch(g: Game, st: YouthCompsState, comp: YcComp, h: string, a: string, neutral: boolean, y0: number, r: () => number): [number, number] {
-  const lh = lineupOf(g, st, h, comp.cls, y0), la = lineupOf(g, st, a, comp.cls, y0);
-  const [hg, ag] = simGoals(lh.strength, la.strength, neutral, r);
+  const n = comp.n ?? 11;
+  const lh = lineupOf(g, st, h, comp.cls, y0, n), la = lineupOf(g, st, a, comp.cls, y0, n);
+  const [hg, ag] = simGoals(lh.strength, la.strength, neutral, r, GOAL_BASE[comp.cls] ?? 1.65);
   const year = y0 + 1;
-  recordSide(g, st, comp.key, h, lh.slots, hg, ag, year, r);
-  recordSide(g, st, comp.key, a, la.slots, ag, hg, year, r);
+  const cards = CARD_RATE[comp.cls] ?? 1;
+  recordSide(g, st, comp.key, h, lh.slots, hg, ag, year, r, false, cards);
+  recordSide(g, st, comp.key, a, la.slots, ag, hg, year, r, false, cards);
   // Eigene Jugendspieler: Siege geben etwas Entwicklungsschub (dezent).
   const mid = g.managedClubId;
   if (h === mid || a === mid) {
@@ -138,7 +157,7 @@ function playMatch(g: Game, st: YouthCompsState, comp: YcComp, h: string, a: str
     const drawn = hg === ag;
     for (const s of mine) {
       const p = s.real ? g.youthPlayers[s.id] : undefined;
-      if (p) p.development.ovrProgress = (p.development.ovrProgress ?? 0) + (won ? 0.02 : drawn ? 0.008 : 0);
+      if (p) p.development.ovrProgress = (p.development.ovrProgress ?? 0) + (won ? 0.02 : drawn ? 0.008 : 0) * (comp.fmt === 'stf' ? 0.6 : 1);
     }
   }
   return [hg, ag];
@@ -268,24 +287,15 @@ function finish(g: Game, st: YouthCompsState, comp: YcComp, winner: string | nul
   comp.done = true;
   comp.winner = winner;
   if (!winner) return;
-  addTitleRecord(g, winner, TITLE_KIND[comp.key], st.season);
-  const bump: Record<YcKey, number> = { u19: 2, u17: 1.5, pokal: 1, ddr: 1.5, uyl: 3 };
-  const rep = (id: string | null, v: number) => { const inv = id ? g.clubs[id]?.youthInvest : undefined; if (inv) inv.reputation = Math.min(100, Math.round((inv.reputation + v) * 10) / 10); };
-  rep(winner, bump[comp.key]);
-  rep(runnerUp, bump[comp.key] * 0.35);
+  if (comp.fmt === 'stf') { finishLower(g, st, comp, winner, d, quiet); return; }
+  const kind = TITLE_KIND[comp.key];
+  if (kind) addTitleRecord(g, winner, kind, st.season);
+  const bump: Partial<Record<YcKey, number>> = { u19: 2, u17: 1.5, pokal: 1, ddr: 1.5, uyl: 3 };
+  rep(g, winner, bump[comp.key] ?? 0);
+  rep(g, runnerUp, (bump[comp.key] ?? 0) * 0.35);
   const mid = g.managedClubId;
   const name = (id: string) => g.clubs[id]?.name ?? g.simClubs[id]?.name ?? g.euroClubs?.[id]?.name ?? id;
-  if (winner === mid) {
-    // Titel: Moral und ein kleiner Entwicklungsschub für die Spieler mit Einsätzen.
-    const stats = st.stats[comp.key] ?? {};
-    for (const [pid, tu] of Object.entries(stats)) {
-      const p = g.youthPlayers[pid];
-      if (!p || p.clubId !== mid || tu[0] < 1) continue;
-      p.morale = bumpMorale(p.morale, 1);
-      if (p.moraleScore != null) p.moraleScore = Math.min(100, p.moraleScore + 6);
-      p.development.ovrProgress = (p.development.ovrProgress ?? 0) + 0.25;
-    }
-  }
+  if (winner === mid) titleBoost(g, st, comp, 6, 0.25);
   if (quiet) return;
   const mine = winner === mid || runnerUp === mid;
   if (!mine && !['u19', 'u17', 'ddr', 'uyl'].includes(comp.key)) return;
@@ -300,4 +310,66 @@ function finish(g: Game, st: YouthCompsState, comp: YcComp, winner: string | nul
         ? `Deine ${comp.cls}-Jugend unterliegt im Endspiel ${name(winner)}. Trotzdem: Das Erreichen des Finales spricht sich herum. (Jugend › Jugendwettbewerbe)`
         : `${name(winner)} gewinnt ${comp.label} ${st.season}${runnerUp ? ` gegen ${name(runnerUp)}` : ''}. (Jugend › Jugendwettbewerbe)`,
   }));
+}
+
+const rep = (g: Game, id: string | null, v: number) => {
+  const inv = id && v ? g.clubs[id]?.youthInvest : undefined;
+  if (inv) inv.reputation = Math.min(100, Math.round((inv.reputation + v) * 10) / 10);
+};
+
+/** Titel: Moral und ein kleiner Entwicklungsschub für die eigenen Spieler mit Einsätzen. */
+function titleBoost(g: Game, st: YouthCompsState, comp: YcComp, morale: number, dev: number): void {
+  const mid = g.managedClubId;
+  for (const [pid, tu] of Object.entries(st.stats[comp.key] ?? {})) {
+    const p = g.youthPlayers[pid];
+    if (!p || p.clubId !== mid || tu[0] < 1) continue;
+    p.morale = bumpMorale(p.morale, 1);
+    if (p.moraleScore != null) p.moraleScore = Math.min(100, p.moraleScore + morale);
+    p.development.ovrProgress = (p.development.ovrProgress ?? 0) + dev;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// C- bis G-Jugend: Staffelsieg, Auf-/Abstieg, Spielfeste
+// -----------------------------------------------------------------------------
+function finishLower(g: Game, st: YouthCompsState, comp: YcComp, winner: string, d: string, quiet: boolean): void {
+  const mid = g.managedClubId;
+  const l = comp.leagues[0];
+  const t = leagueTable(l, comp.pts);
+  const pos = t.find((r) => r.clubId === mid)?.pos ?? 0;
+  const cls = `${comp.cls}-Jugend`;
+  const kind = TITLE_KIND[comp.key];
+  let subject = '', text = '';
+  if (winner === mid) {
+    if (kind) addTitleRecord(g, mid, kind, st.season);
+    rep(g, mid, comp.key === 'u15' ? 0.4 : comp.key === 'u13' ? 0.2 : 0.1);
+    titleBoost(g, st, comp, 4, comp.key === 'u15' ? 0.15 : 0.1);
+    subject = `${comp.title ?? cls} ${st.season}`;
+    text = `Deine ${cls} gewinnt die ${l.name}${comp.lvl === 1 ? ' und steigt auf' : ''}.`;
+  } else if (comp.lvl === 0 && l.down && pos > t.length - l.down) {
+    subject = `${cls} steigt ab`; text = `Deine ${cls} wird ${pos}. in der ${l.name} und muss absteigen.`;
+  }
+  if (quiet || !subject) return;
+  pushMessage(g.messages, makeMessage({
+    date: d, category: 'training', from: 'Leiter Jugendakademie', subject, shortText: text,
+    bodyText: `${text} Tabelle und Bestenlisten findest du unter Jugend › Jugendwettbewerbe.`,
+  }));
+}
+
+/** Spielfest: alle Kinder der Klasse spielen mit (nur Einsätze, keine Ergebnisse). */
+function festDay(g: Game, st: YouthCompsState, comp: YcComp, d: string): void {
+  const f = comp.fest!;
+  if (f.d.includes(d)) {
+    const c = g.clubs[g.managedClubId];
+    const m = (st.stats[comp.key] ??= {});
+    for (const id of c?.youthPlayerIds ?? []) {
+      const p = g.youthPlayers[id];
+      if (!p || youthAgeClass(p.age) !== comp.cls) continue;
+      (m[id] ??= [0, 0, 0, 0, 0, 0, 0])[0]++;
+      st.people[id] ??= [p.fullName, p.clubId, p.naturalPosition];
+      p.development.ovrProgress = (p.development.ovrProgress ?? 0) + 0.006;
+      if (p.moraleScore != null) p.moraleScore = Math.min(100, p.moraleScore + 1);
+    }
+  }
+  if (d >= f.d[f.d.length - 1] || !f.d.length) { comp.done = true; comp.winner = null; }
 }

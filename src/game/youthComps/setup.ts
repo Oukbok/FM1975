@@ -13,7 +13,8 @@ import {
 import { seasonStartYear } from '../../data/timeline';
 import type { Game } from '../state';
 import { fixturesFor, koRounds, koStart, leagueDates, uylGroupDates } from './schedule';
-import { germanPool, hash32, lvOf, modelStrength, refStrength, regionOf, rng32, tierOfClub } from './sim';
+import { ycOpts, germanPool, hash32, lvOf, modelStrength, refStrength, regionOf, rng32, tierOfClub } from './sim';
+import { buildLowerComps } from './lower';
 import { leagueTable } from './table';
 import type { YcComp, YcLeague, YouthCompsState } from './types';
 
@@ -271,5 +272,8 @@ export function setupSeason(g: Game, st: YouthCompsState, prevComps?: YcComp[]):
   if (ddr) comps.push(ddr);
   const fu = uylFormat(y0);
   if (fu) { const u = buildUyl(g, st, fu, y0, r); if (u) comps.push(u); }
+  // C- bis G-Jugend: nur die Staffel des eigenen Vereins (game/youthComps/lower.ts).
+  if (ycOpts.lower) comps.push(...buildLowerComps(g, st, y0, prevComps));
+  st.low = 1;
   st.comps = comps;
 }

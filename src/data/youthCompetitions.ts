@@ -47,12 +47,17 @@
 // Fortschreibung: nach dem letzten belegten Stand (Nachwuchsliga, 64er-Pokal, UYL 2024).
 // =============================================================================
 
-export type YcKey = 'u19' | 'u17' | 'pokal' | 'ddr' | 'uyl';
-export type YcCls = 'A' | 'B';
+import type { YcLowCls, YcLowKey } from './youthLowerLeagues';
+
+/** Wettbewerbe; C- bis G-Jugend (u15 … u7) siehe data/youthLowerLeagues.ts. */
+export type YcKey = 'u19' | 'u17' | 'pokal' | 'ddr' | 'uyl' | YcLowKey;
+export type YcCls = 'A' | 'B' | YcLowCls;
 export type YcFormat =
   | 'lv16' | 'rl8' | 'bl4' | 'nwl' | 'ddr'
   | 'cup16' | 'cup21' | 'cup32' | 'cup64'
-  | 'uyl1' | 'uyl2' | 'uyl3';
+  | 'uyl1' | 'uyl2' | 'uyl3'
+  /** C- bis F-Jugend: Staffel des eigenen Vereins mit Tabelle; Spielfeste ohne Tabelle. */
+  | 'stf' | 'fest';
 
 /** Landesverbände (DFB, ab 1990 inkl. NOFV). */
 export type Lv =
@@ -169,18 +174,24 @@ export function compLabel(key: YcKey, y0: number): string {
     case 'pokal': return y0 < 2002 ? 'DFB-Jugend-Kicker-Pokal' : 'DFB-Junioren-Vereinspokal';
     case 'ddr': return ddrYouthName(y0);
     case 'uyl': return 'UEFA Youth League';
+    default: return `${LOW_LETTER[key]}-Jugend`;
   }
 }
+const LOW_LETTER: Record<YcLowKey, string> = { u15: 'C', u13: 'D', u11: 'E', u9: 'F', u7: 'G' };
+const LOW_U: Record<YcLowKey, string> = { u15: 'U15', u13: 'U13', u11: 'U11', u9: 'U9', u7: 'U7' };
 export function sectionLabel(key: YcKey, y0: number): string {
   if (key === 'u19' || key === 'pokal') return y0 < 1996 ? 'A-Jugend (U19)' : 'A-Junioren (U19)';
   if (key === 'u17') return y0 < 2000 ? 'B-Jugend (U17)' : 'B-Junioren (U17)';
   if (key === 'ddr') return 'DDR';
-  return 'Europa';
+  if (key === 'uyl') return 'Europa';
+  return `${LOW_LETTER[key]}-${y0 < 2000 ? 'Jugend' : 'Junioren'} (${LOW_U[key]})${key === 'u7' ? ' · Bambini' : ''}`;
 }
 /** Titelbezeichnung (Vereins-Historie, Nachrichten). */
 export const TITLE_OF: Record<YcKey, string> = {
   u19: 'Deutscher A-Jugend-Meister', u17: 'Deutscher B-Jugend-Meister', pokal: 'DFB-Junioren-Pokalsieger',
   ddr: 'DDR-Juniorenmeister', uyl: 'Sieger der UEFA Youth League',
+  // C–G: genauer Titel je Staffel in YcComp.title (data/youthLowerLeagues.ts lowTitle)
+  u15: 'C-Jugend-Meister', u13: 'D-Jugend-Meister', u11: 'E-Jugend-Meister', u9: 'F-Jugend-Meister', u7: 'Bambini',
 };
 
 // -----------------------------------------------------------------------------
