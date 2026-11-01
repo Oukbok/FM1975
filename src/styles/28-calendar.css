@@ -1,0 +1,115 @@
+/* =============================================================================
+   Kalender-Overlay (src/shell/CalendarOverlay.tsx): erscheint, solange die Zeit
+   läuft. Unschärfe über `filter` auf den Inhaltsflächen (.cal-live in GameShell)
+   statt `backdrop-filter` auf dem Overlay: der geblurrte Hintergrund wird nur beim
+   Tageswechsel neu gezeichnet, nicht in jedem Bild der Gleit-Animation
+   (gemessen in Chromium ohne GPU: backdrop-filter ≈ 4–5 fps, filter ≈ 50 fps).
+   Die Kopfleiste (z-index 40) liegt über dem Overlay und wird selbst gedämpft –
+   nur der Weiter/Pause-Knopf bleibt klar und klickbar.
+   ========================================================================== */
+.co-root {
+  position: fixed; inset: 0; z-index: 39;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(7, 10, 15, 0.5);
+  opacity: 0; transition: opacity 280ms ease;
+  cursor: pointer;
+}
+.co-root.is-on { opacity: 1; }
+
+.co-center {
+  --co-w: 132px;
+  --co-gap: 12px;
+  --co-pitch: calc(var(--co-w) + var(--co-gap));
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  transform: translateY(10px); transition: transform 280ms ease;
+}
+.co-root.is-on .co-center { transform: none; }
+
+.co-date {
+  font-family: var(--font-display); font-weight: 500; font-size: 30px;
+  letter-spacing: 1.2px; text-transform: uppercase; color: var(--text);
+}
+.co-hint { font-size: 13px; letter-spacing: 0.6px; color: var(--text-3); }
+
+/* Streifen: Breite = 11 Karten. Karten liegen absolut und gleiten per transform;
+   die Maske blendet die äußeren Tage aus (auch die zwölfte/dreizehnte Karte, die
+   gerade herein- bzw. hinausgleitet). */
+.co-strip {
+  position: relative;
+  width: calc(var(--co-pitch) * 11 - var(--co-gap));
+  height: 268px; /* 236 px Karte + Luft oben/unten für Rahmen und Etikett „Heute“ (Maske schneidet am Rand) */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 13%, #000 87%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 13%, #000 87%, transparent 100%);
+}
+.co-card {
+  position: absolute; left: 0; top: 16px; bottom: 16px; width: var(--co-w);
+  display: flex; flex-direction: column;
+  padding: 12px 10px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(22, 25, 31, 0.94);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  text-align: center;
+  transition: transform var(--co-slide, 500ms) cubic-bezier(0.33, 0, 0.2, 1), opacity 300ms ease;
+  will-change: transform;
+}
+.co-snap .co-card { transition: none; }
+.co-card.is-past { opacity: 0.55; }
+.co-today-frame {
+  position: absolute; left: -4px; top: 12px; bottom: 12px; width: calc(var(--co-w) + 8px); z-index: 2;
+  border: 1px solid var(--accent); border-radius: 10px;
+  box-shadow: inset 0 3px 0 var(--accent);
+  pointer-events: none;
+}
+.co-today-frame span {
+  position: absolute; left: 50%; top: -9px; transform: translateX(-50%);
+  padding: 0 8px; background: var(--accent); color: var(--accent-ink); border-radius: 4px;
+  font-family: var(--font-display); font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; line-height: 18px;
+}
+
+.co-head { display: flex; flex-direction: column; align-items: center; line-height: 1; gap: 3px; }
+.co-wd { font-family: var(--font-display); font-size: 12px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-3); }
+.co-day { font-family: var(--font-display); font-weight: 500; font-size: 34px; color: var(--text); }
+.co-mon { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); }
+.co-card.is-today .co-day { color: var(--accent); }
+
+.co-body { flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; padding-top: 8px; border-top: 1px solid var(--border-soft); margin-top: 10px; }
+.co-match, .co-ev { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; width: 100%; }
+.co-crest { display: inline-flex; height: 52px; align-items: center; }
+.co-opp {
+  font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.15;
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.co-sub { display: flex; gap: 6px; align-items: baseline; font-size: 11px; color: var(--text-2); }
+.co-res { font-family: var(--font-display); font-size: 14px; color: var(--text); }
+.co-comp {
+  font-size: 10.5px; letter-spacing: 0.4px; color: var(--text-3); line-height: 1.2;
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.co-ev-ico { display: inline-flex; color: var(--text-2); opacity: 0.85; }
+.co-ev-lbl {
+  font-size: 12.5px; font-weight: 600; color: var(--text-2); line-height: 1.2;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.co-more { display: flex; flex-direction: column; gap: 3px; padding-top: 6px; border-top: 1px solid var(--border-soft); }
+.co-more-row { display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: var(--text-3); min-width: 0; }
+.co-more-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.co-more-row .game-icon { flex: 0 0 auto; opacity: 0.7; }
+
+/* Hintergrund während des Zeitlaufs: Inhalt, Untermenü, Footer und Foto geblurrt. */
+.app-main, .top-nav, .dashx-foot { transition: filter 280ms ease; }
+.cal-live .app-main, .cal-live .top-nav, .cal-live .dashx-foot { filter: blur(7px); }
+.app-shell::before { transition: filter 280ms ease; }
+.cal-live.app-shell::before { filter: blur(7px) saturate(0.6) brightness(0.8); }
+
+/* Kopfleiste während des Zeitlaufs: Inhalt geblurrt + gedämpft, nicht klickbar;
+   nur der Weiter/Pause-Knopf liegt darüber. */
+.hd-bar > :not(.hd-right), .hd-right > :not(.hd-continue) { transition: filter 280ms ease, opacity 280ms ease; }
+.cal-live .hd-bar > :not(.hd-right),
+.cal-live .hd-right > :not(.hd-continue) { filter: blur(4px); opacity: 0.35; pointer-events: none; }
+.cal-live .hd-continue { position: relative; z-index: 2; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.45); }
+
+@media (prefers-reduced-motion: reduce) {
+  .co-card { transition: none; }
+  .co-root, .co-center { transition-duration: 1ms; }
+}

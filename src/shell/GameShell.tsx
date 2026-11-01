@@ -65,7 +65,7 @@ import { briefingLog, briefingOfRecord, clearPendingBriefing } from '../game/sea
 import { Dashboard } from '../views/zentrale/Dashboard';
 import { NewsView } from '../views/zentrale/NewsView';
 import { PresseView } from '../views/zentrale/PresseView';
-import { CalendarStrip } from './CalendarStrip';
+import { CalendarOverlay } from './CalendarOverlay';
 import { MENU_STRUCTURE, Screen, TopNav } from './navigation';
 import { processDay as processGameDay } from '../game/day';
 import { DrawShow } from '../screens/draw/DrawShow';
@@ -114,7 +114,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   // damit beide Zugänge dasselbe Modal öffnen.
   const [clubEditorOpen, setClubEditorOpen] = useState(false);
   const runningRef = useRef(false);
-  useEffect(() => { runningRef.current = running; }, [running]);
+  useEffect(() => { runningRef.current = running; if (running) setMenuOpen(false); }, [running]);
 
   const g = game;
   const myClub = g.clubs[g.managedClubId];
@@ -218,14 +218,17 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   // das fuellende Flex-Layout (Boxen mit fixer Geometrie, Kalenderstreifen oben).
   // Seit dem Seiten-Umbau nutzen ALLE Seiten das Zentrale-Raster (src/ui/DashPage.tsx).
   const isDashLike = true;
-  // Szenen-Seiten (gezeichnetes Bild füllt alles unter der Menüleiste): ohne Kalenderstreifen,
-  // Footer und Hintergrundfoto.
+  // Szenen-Seiten (gezeichnetes Bild füllt alles unter der Menüleiste): ohne Footer und
+  // Hintergrundfoto.
   const isScene = screen === 'stadium';
+  // Kalender-Overlay (CalendarOverlay.tsx): nur solange die Zeit läuft und kein Popup offen ist.
+  const calLive = running && !textMatch && !liveMatchId && !ratingCeremony && !pendingBriefing && !devReveal
+    && drawQueue.length === 0 && !showSettings && !saveLoadMode && !clubEditorOpen;
 
   return (
     // Vereinsprofil: jeder <ClubLink> im Spiel öffnet es (components/club/ClubProfileContext.tsx).
     <ClubProfileProvider g={g} onChange={rerender}>
-    <div className={`app-shell ${isZentrale ? 'shell-zentrale' : ''} ${isDashLike ? 'shell-dashlike' : ''} ${isScene ? 'shell-scene' : ''}`}>
+    <div className={`app-shell ${isZentrale ? 'shell-zentrale' : ''} ${isDashLike ? 'shell-dashlike' : ''} ${isScene ? 'shell-scene' : ''} ${calLive ? 'cal-live' : ''}`}>
       {/* ---------------- HEADER (eine Leiste) ---------------- */}
       <header className={`hd-bar ${isZentrale ? 'hd-bar--zentrale' : ''}`}>
         {/* Logo */}
@@ -344,8 +347,6 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
 
       {/* ---------------- HAUPTINHALT ---------------- */}
       <main className="app-main">
-        {/* Universeller Kalender-Streifen: identisch auf JEDER Seite (wie Header/Footer). */}
-        {!isScene && <CalendarStrip g={g} onGoto={setScreen} />}
         {screen === 'dashboard' && <Dashboard g={g} onGoto={setScreen} onWatch={(id) => setLiveMatchId(id)} onOpenEditor={() => setClubEditorOpen(true)} />}
         {screen === 'table' && <TableView g={g} />}
         {screen === 'fixtures' && <FixturesView g={g} onWatch={(id) => setLiveMatchId(id)} />}
@@ -399,6 +400,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
       )}
 
       {/* ---------------- IN-GAME-OVERLAYS ---------------- */}
+      <CalendarOverlay g={g} show={calLive} speedMs={g.calendar.speedMs} delayMs={150} onPause={() => setRunning(false)} />
       {showSettings && (
         <SettingsModal settings={settings} onClose={() => setShowSettings(false)} onSave={onUpdateSettings} />
       )}

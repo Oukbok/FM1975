@@ -97,54 +97,6 @@
   .dashx-cat { grid-template-columns: 1fr; grid-template-rows: auto; row-gap: 14px; padding: 8px 0; }
 }
 
-/* --- Freistehender Kalenderstreifen: dunkle Tageskarten im Referenz-Stil --- */
-/* Rechte Kante um eine space-evenly-Luecke (2.5% der Grid-Breite) einruecken,
-   damit der Kalenderstreifen buendig mit der rechten Box-Spalte abschliesst. */
-.dashx-caltop { display: flex; justify-content: flex-end; margin-bottom: 0; padding-right: 2.5%; }
-.kbstrip { display: flex; align-items: stretch; justify-content: flex-end; gap: 10px; padding: 0; cursor: pointer; }
-.kbsheet {
-  position: relative;
-  flex: 0 0 120px;
-  width: 120px;
-  min-height: 150px;
-  display: flex;
-  flex-direction: column;
-  padding: 10px 10px 11px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: linear-gradient(180deg, #1c1f25 0%, #181b21 100%);
-  text-align: center;
-  overflow: hidden;
-}
-/* Kopf: grosse Tageszahl oben links, Wochentag klein darunter. */
-.kbsheet-head { display: flex; flex-direction: column; align-items: center; line-height: 1; }
-.kbday { font-size: 26px; font-weight: 800; line-height: 1; color: var(--text); }
-.kbwd { font-size: 11px; font-weight: 700; color: var(--text-3); letter-spacing: 0.6px; margin-top: 3px; }
-/* Icon zentral, nimmt den freien Raum ein. */
-.kbsheet-ico { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; min-height: 34px; }
-.kbsheet-ico .game-icon { display: block; }
-/* Label unten mittig. */
-.kbsheet-lbl {
-  font-size: 11px; font-weight: 700; color: var(--text-2);
-  letter-spacing: 0.2px; line-height: 1.1;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-  overflow: hidden; min-height: 26px;
-}
-/* Spieltag: orange Tageszahl (Fussball-Icon kommt aus den Daten). */
-.kbsheet.is-match .kbday { color: var(--orange); }
-/* Spieltag-Ball optisch verdoppelt, ohne das Zellen-Layout zu vergroessern. */
-.kbsheet.is-match .kbsheet-ico .game-icon { transform: scale(2); transform-origin: center; }
-/* Aktiver Tag (Heute): cremefarbener Hintergrund mit dunkler Schrift, orange Rand – sofort erkennbar. */
-.kbsheet.is-today {
-  border-color: var(--orange);
-  background: linear-gradient(180deg, #f6eedb 0%, #ece0c4 100%);
-  box-shadow: 0 0 0 1px rgba(255, 159, 67, 0.6), 0 0 16px rgba(255, 159, 67, 0.3);
-}
-.kbsheet.is-today .kbday { color: #22252b; }
-.kbsheet.is-today .kbwd { color: #6b5532; }
-.kbsheet.is-today .kbsheet-lbl { color: #8a4b0c; }
-.kbsheet.is-today .kbsheet-ico .game-icon { filter: brightness(0) opacity(0.75); }
-
 /* --- Karten-Kopfzeile --- */
 .dxh { display: flex; align-items: center; gap: 9px; padding-bottom: 9px; margin-bottom: 12px; border-bottom: 1px solid var(--border-soft); }
 .dxh-ico { display: inline-flex; color: var(--accent); flex: 0 0 auto; }

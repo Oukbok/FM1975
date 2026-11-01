@@ -33,7 +33,7 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
   // eine Aktivität. Standardmäßig AUS → ein einfacher Klick springt zum Event.
   const [planMode, setPlanMode] = useState(false);
 
-  // Gemeinsame Event-Quelle mit dem Header-Kalender: pro Tag das wichtigste Event
+  // Gemeinsame Event-Quelle mit dem Kalender-Overlay (shell/CalendarOverlay.tsx): pro Tag das wichtigste Event
   // (Gegner H/A, Pokal, Transferfenster, Bewertung, …) inkl. Icon + Farbakzent.
   const eventMap = buildStripEventMap(g);
 
