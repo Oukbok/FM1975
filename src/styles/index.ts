@@ -29,4 +29,5 @@ import './26-winter.css';
 import './26-grounds.css';
 import './27-briefing.css';
 import './28-season-intro.css';
+import './28-stadium.css';
 import './29-look.css'; // zuletzt: ruhige Gesamtoptik

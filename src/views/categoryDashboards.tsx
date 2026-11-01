@@ -6,7 +6,8 @@ import { TIMELINE } from '../data/timeline';
 import { ROUND_NAMES, nextPlayerTie } from '../engine/cup';
 import { economyScale, yearOf } from '../engine/economy';
 import { nextPlayerEuroTie } from '../engine/euro';
-import { computeMonthly, totalExpense, totalIncome } from '../engine/finances';
+import { computeMonthly, expectedAttendanceRate, totalExpense, totalIncome } from '../engine/finances';
+import { priceOf, seatPriceScale } from '../engine/seating';
 import { FACILITIES, facilityAvailable, MAX_LEVEL } from '../engine/infrastructure';
 import { getAvailablePlayers } from '../engine/transfers';
 import { getFormation } from '../data/formations';
@@ -378,9 +379,9 @@ export function VereinDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) =>
       <DashBox title="Stadion" icon="stadium" onClick={() => onGoto('stadium')} right={myClub.stadium.name}>
         <div className="dkpis">
           <Kpi value={myClub.stadium.capacity.toLocaleString('de-DE')} label="Plätze" />
-          <Kpi value={`${Math.round(myClub.stadium.averageAttendanceRate * 100)} %`} label="Auslastung" />
+          <Kpi value={`${Math.round(expectedAttendanceRate(myClub, undefined, yearOf(g.calendar.currentDate)) * 100)} %`} label="Auslastung" />
         </div>
-        <KV k="Ticketpreis" v={fmtDMfull(myClub.stadium.ticketPrice)} />
+        <KV k="Stehplatz" v={fmtDMfull(priceOf(myClub, 'steh', yearOf(g.calendar.currentDate)) * seatPriceScale(myClub, yearOf(g.calendar.currentDate)))} />
         <Meter label="Zustand" value={myClub.stadium.condition} color={condBar(myClub.stadium.condition)} />
       </DashBox>
 

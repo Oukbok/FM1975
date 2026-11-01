@@ -4,9 +4,8 @@
 // (step() je Minute + Eingriffe des Trainers). Ergebnisse werden in finish()
 // identisch verbucht.
 // =============================================================================
-import { allSeaterEuro, euroCapacity, roofAttendanceFactor } from '../stadiumBlocks';
+import { simulateSeatSales, type SeatSale } from '../seating';
 import { attendanceRestriction } from '../../data/history';
-import { attendanceDemand, fairTicketPrice } from '../economy';
 import type { Club, InjurySeverity, Player } from '../../types';
 import { positionSuitability } from '../positions';
 import { eraRules, seasonYearOf, type EraRules } from './era';
@@ -58,6 +57,8 @@ export class MatchSim {
   readonly weather: Weather;
   readonly live: boolean;
   readonly attendance: number;
+  /** Verkauf je Platzkategorie (für die Buchung, nicht im Spielstand). */
+  readonly seatSale: SeatSale;
   minute = 0;
   stoppage = 0;
   period: 1 | 2 | 3 | 4 | 5 = 1;
@@ -86,10 +87,13 @@ export class MatchSim {
     this.derby = !!homeClub.city && homeClub.city === awayClub.city;
     this.weather = rollWeather(opts.date, this.rng);
     const month = opts.date ? Number(opts.date.slice(5, 7)) : 9;
-    const euroSeated = opts.competition === 'Europapokal' && allSeaterEuro(opts.year) && (opts.date ?? '9999') >= '1998-07-01' && homeClub.stadium.blocks?.length;
-    const cap = euroSeated ? euroCapacity(homeClub.stadium.blocks!, homeClub.stadium.capacity) : homeClub.stadium.capacity;
-    const raw = estimateAttendance(homeClub, awayClub, this.derby, opts.year, this.rng) * roofAttendanceFactor(homeClub, this.weather, month);
-    this.attendance = Math.min(cap, Math.round(raw * attendanceRestriction(opts.date)));
+    // Zuschauer je Platzkategorie (engine/seating.ts): eigene Nachfrage für Steh, Sitz, Dach, Premium,
+    // Business, Logen und Gästeblock; im Europapokal ab 1998/99 nur Sitzplätze.
+    this.seatSale = simulateSeatSales(homeClub, awayClub, {
+      year: opts.year, date: opts.date, away: awayClub, derby: this.derby, weather: this.weather, month,
+      euro: opts.competition === 'Europapokal', restriction: attendanceRestriction(opts.date),
+    }, this.rng);
+    this.attendance = this.seatSale.attendance;
     const humanSides = new Set(opts.humanSides ?? []);
     const humanClubs = new Set(opts.humanClubIds ?? []);
     this.home = this.makeTeam('home', homeClub, humanSides.has('home'), humanClubs.has(homeClub.id));
@@ -457,22 +461,4 @@ function rollWeather(date: string | undefined, rng: () => number): Weather {
   if (month === 12 || month <= 2) return r < 0.14 ? 'schnee' : r < 0.42 ? 'regen' : r < 0.52 ? 'nebel' : r < 0.85 ? 'bewoelkt' : 'sonnig';
   if (month >= 6 && month <= 8) return r < 0.22 ? 'hitze' : r < 0.32 ? 'regen' : r < 0.75 ? 'sonnig' : 'bewoelkt';
   return r < 0.3 ? 'regen' : r < 0.4 ? 'wind' : r < 0.7 ? 'bewoelkt' : 'sonnig';
-}
-
-/**
- * Zuschauer eines Heimspiels: Kapazität × Grund-Auslastung des Vereins (Erfolg, Stimmung)
- * × Preis-Reaktion × Gegner (große Namen ziehen) × Derby × Nachfrage der Epoche.
- */
-function estimateAttendance(c: Club, away: Club, derby: boolean, year: number | undefined, rng: () => number): number {
-  const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
-  const cap = c.stadium?.capacity ?? 30000;
-  const baseRate = c.stadium?.averageAttendanceRate ?? 0.5;
-  const reputation = c.reputation ?? 50;
-  const ticketPrice = c.stadium?.ticketPrice ?? 8;
-  const refPrice = fairTicketPrice(reputation);
-  const priceFactor = clamp(1 - ((ticketPrice - refPrice) / refPrice) * 0.5, 0.6, 1.15);
-  const opponent = clamp(1 + ((away?.reputation ?? 65) - 70) / 120, 0.88, 1.2);
-  const demand = year != null ? attendanceDemand(year) : 1;
-  const rate = clamp(baseRate * priceFactor * opponent * (derby ? 1.15 : 1) * demand + (rng() - 0.5) * 0.1, 0.12, 1.0);
-  return Math.round(cap * rate);
 }

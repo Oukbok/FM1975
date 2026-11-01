@@ -8,7 +8,7 @@ import { Game } from '../../../game/state';
 import { Club, FacilityKey } from '../../../types';
 import { ClubGrounds, GroundsModuleKey } from '../../../types/grounds';
 import { GROUNDS_BY_KEY, GROUNDS_CATEGORIES, GroundsLevelDef, INFRA_AREA, permitMonths } from '../../../data/groundsCatalog';
-import { areaUsed, checkNext, condMult, hospitalityOccupancy, isOutdated, levelOf, mdScale, merchSlump, renovateCost } from '../../../engine/grounds';
+import { areaUsed, checkNext, condMult, isOutdated, levelOf, mdScale, merchSlump, renovateCost } from '../../../engine/grounds';
 import { DM_PER_EUR, currencyForYear, economyScale as economyScaleOf, formatMoney, revenueScale } from '../../../engine/economy';
 import { commercialMultiplier } from '../../../engine/clubEconomy';
 import { CATERING_UPKEEP } from '../../../engine/finances';
@@ -36,7 +36,7 @@ export function effectLines(key: GroundsModuleKey, d: GroundsLevelDef, club: Clu
   const out: string[] = [];
   if (d.spaces) out.push(`${num(d.spaces)} Stellplätze, Parkgebühr ${money(1.5 * md, year)} je Pkw`);
   if (d.transitCap) out.push(`Anreise +${num(d.transitCap)} Personen je Spiel`);
-  if (d.seats) out.push(`${num(d.seats)} Business-Plätze à ${money(12 * md, year)} je Spiel (Belegung ~${Math.round(hospitalityOccupancy(club) * 100)} %)`);
+  if (d.vipMult) out.push(`Business-Seats und Logen im Stadion: +${Math.round(d.vipMult * 100)} % Nachfrage, +${Math.round(d.vipMult * 50)} % Preisbereitschaft`);
   if (d.lux) out.push(`${num(d.lux)} Lux`);
   if (d.att) out.push(`Auslastung ${pct(d.att)}`);
   if (d.mood) out.push(`Fan-Stimmung ${d.mood > 0 ? '+' : ''}${d.mood.toString().replace('.', ',')}`);

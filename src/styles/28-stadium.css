@@ -1,0 +1,100 @@
+/* =============================================================================
+   STADION – direkte Bedienung in der Szene (views/verein/StadiumView.tsx,
+   stadium/BlockConfigurator.tsx, stadium/TicketSheet.tsx). Ruhig: Schiefer-
+   flächen, Akzentfarbe nur für Auswahl, Vorschau und Handlung.
+   ============================================================================= */
+.sv-wrap .gr-svg { width: 100%; }
+.sv-wrap { --sv-glass: rgba(17, 20, 26, 0.96); }
+.sv-muted { color: var(--text-3); font-size: 12.5px; }
+.sv-sub { color: var(--text-3); font-size: 12px; font-weight: 500; margin-top: 1px; }
+.sv-grow { flex: 1; }
+.num { font-variant-numeric: tabular-nums; }
+.pos { color: var(--green); }
+.neg { color: var(--red); }
+
+/* Kennzahlen oben links */
+.sv-kpis { position: absolute; top: 12px; left: 12px; display: flex; gap: 1px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); background: var(--border); }
+.sv-kpis > div { display: flex; flex-direction: column; gap: 1px; padding: 7px 14px; background: var(--sv-glass); min-width: 92px; }
+.sv-kpis b { font-family: var(--font-display); font-size: 19px; font-weight: 600; color: var(--text); letter-spacing: 0.01em; }
+.sv-kpis span { font-size: 11.5px; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.sv-kpis .sv-kpi-plan b { color: var(--accent); }
+.sv-kpis .sv-kpi-build span { text-transform: none; letter-spacing: 0; }
+
+/* Leiste unten */
+.sv-bar { position: absolute; left: 12px; right: 12px; bottom: 12px; display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 10px;
+  background: var(--sv-glass); border: 1px solid var(--border); }
+.sv-hint { margin-left: auto; color: var(--text-3); font-size: 13px; }
+.sv-seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.sv-seg button { padding: 5px 12px; border: 0; border-right: 1px solid var(--border); background: transparent; color: var(--text-2); font-family: var(--font-ui); font-size: 13px; font-weight: 600; cursor: pointer; }
+.sv-seg button:last-child { border-right: 0; }
+.sv-seg button:hover { background: var(--panel-hover); color: var(--text); }
+.sv-seg button.on { background: var(--accent-soft); color: var(--accent); }
+.sv-modes button { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; }
+
+/* Popover am Objekt */
+.sv-pop { position: absolute; z-index: 5; overflow: auto; padding: 14px 16px; border-radius: 12px; background: var(--sv-glass); border: 1px solid var(--border);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5); }
+.sv-pop .gd { gap: 8px; }
+.sv-pop-body { display: flex; flex-direction: column; gap: 8px; }
+.sv-pop-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; font-size: 18px; }
+.sv-pop-head b { font-family: var(--font-display); font-weight: 600; letter-spacing: 0.02em; }
+.sv-x { position: static !important; }
+.sv-sec { margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--border-soft); font-size: 11.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-3); }
+.sv-tier { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px; border-radius: 8px; background: rgba(255, 255, 255, 0.025); border: 1px solid var(--border-soft); }
+.sv-tier-h { display: flex; justify-content: space-between; font-size: 13.5px; font-weight: 600; color: var(--text-2); }
+.sv-tier .sv-seg { align-self: flex-start; }
+.sv-rows { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--text-2); }
+.sv-rows input[type=range] { flex: 1; accent-color: var(--accent); }
+.sv-rows b { color: var(--text); min-width: 22px; text-align: center; }
+.sv-inline { display: inline-flex; gap: 6px; }
+.sv-btns { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.sv-step { width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text); font-size: 16px; line-height: 1; cursor: pointer; }
+.sv-step:hover:not(:disabled) { border-color: var(--text-3); }
+.sv-step:disabled { opacity: 0.35; cursor: not-allowed; }
+.sv-check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-2); cursor: pointer; }
+.sv-check input { accent-color: var(--accent); }
+.sv-cmp { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 12px; font-size: 13.5px; align-items: baseline; }
+.sv-cmp > span:nth-child(3n + 1), .sv-cmp2 > span:nth-child(odd) { color: var(--text-3); }
+.sv-cmp2 { grid-template-columns: auto 1fr; }
+.sv-note { font-size: 12.5px; color: var(--text-2); line-height: 1.4; }
+.sv-note.acc { color: var(--accent); font-weight: 600; }
+.sv-link { align-self: flex-start; background: none; border: 0; padding: 0; color: var(--text-3); font-size: 12.5px; text-decoration: underline; cursor: pointer; }
+
+/* Führungslinie Popover → Objekt */
+.sv-lead { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
+.sv-lead line { stroke: rgba(241, 244, 248, 0.45); stroke-width: 1.2; stroke-dasharray: 4 4; }
+.sv-lead circle { fill: var(--accent); stroke: rgba(12, 15, 21, 0.9); stroke-width: 2; }
+
+/* Geister-Vorschau eines geplanten Blocks */
+.sv-ghost { opacity: 0.82; }
+.sv-ghost polygon[stroke-dasharray] { animation: svDash 1.4s linear infinite; }
+@keyframes svDash { to { stroke-dashoffset: -24; } }
+@media (prefers-reduced-motion: reduce) { .sv-ghost polygon[stroke-dasharray] { animation: none; } }
+
+/* Tickets & Nachfrage */
+.sv-sheet { position: absolute; left: 12px; right: 12px; margin: 0 auto; max-width: 1280px; bottom: 64px; z-index: 4; max-height: 52%; overflow: auto; padding: 12px 16px; border-radius: 12px;
+  background: var(--sv-glass); border: 1px solid var(--border); box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.35); }
+.sv-sheet-head { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+.sv-sheet-head b { font-family: var(--font-display); font-size: 17px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.sv-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.sv-table th { text-align: left; padding: 6px 8px; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); border-bottom: 1px solid var(--border); }
+.sv-table td { padding: 6px 8px; border-bottom: 1px solid var(--border-soft); vertical-align: middle; }
+.sv-table .r { text-align: right; }
+.sv-table .c { text-align: center; }
+.sv-table tr.off td { color: var(--text-3); }
+.sv-table tr.off .sv-cat, .sv-table tr.none .sv-cat { color: var(--text-3); }
+.sv-table tfoot td { border-bottom: 0; padding-top: 8px; }
+.sv-table .strong { font-weight: 700; color: var(--text); }
+.sv-cat { font-weight: 600; color: var(--text); }
+.sv-price { display: inline-flex; align-items: center; gap: 8px; }
+.sv-price .num { min-width: 78px; text-align: center; font-weight: 600; color: var(--text); }
+.sv-dem { display: flex; flex-direction: column; gap: 3px; min-width: 200px; }
+.sv-dem-track { position: relative; height: 8px; border-radius: 4px; background: rgba(255, 255, 255, 0.06); }
+.sv-dem-band { position: absolute; top: 0; bottom: 0; border-radius: 4px; background: rgba(179, 188, 200, 0.45); }
+.sv-dem-cap { position: absolute; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: var(--text); }
+.sv-dem-txt { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--text-2); }
+.sv-dem-txt .pos { color: var(--green); }
+.sv-dem-txt .neg { color: var(--text-3); }
+.sv-spark { display: inline-flex; align-items: flex-end; gap: 2px; height: 22px; }
+.sv-spark i { width: 6px; border-radius: 1px; background: rgba(179, 188, 200, 0.5); }
+.sv-spark i.full { background: var(--text); }

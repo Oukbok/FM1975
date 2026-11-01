@@ -1,4 +1,5 @@
 import { economyScale, yearOf } from '../../engine/economy';
+import { expectedSale, priceOf, saleRevenue } from '../../engine/seating';
 import { PHILOSOPHY_INFO, PHILOSOPHY_LABEL, fanEra } from '../../engine/environment';
 import { ensureEnvironment } from '../../game/environmentGame';
 import { cateringMatchIncome, expectedAttendance, expectedAttendanceRate, matchdayIncome, clubPriceScale } from '../../engine/finances';
@@ -21,7 +22,8 @@ export function FansView({ g }: { g: Game }) {
   const era = fanEra(year);
   const expRate = expectedAttendanceRate(myClub, undefined, year);
   const expVisitors = expectedAttendance(myClub, undefined, year);
-  const ticket = Math.round(expVisitors * st.ticketPrice * md);
+  const sale = expectedSale(myClub, year);
+  const ticket = Object.values(saleRevenue(myClub, sale.sold, year)).reduce((a, v) => a + (v ?? 0), 0);
   const catering = cateringMatchIncome(myClub, expVisitors, md);
   const programme = matchdayIncome(expVisitors, md);
   const members = env.members;
@@ -50,7 +52,7 @@ export function FansView({ g }: { g: Game }) {
             {row && row.form.length > 0 && <KV k="Form" v={<FormDots form={row.form} />} />}
             <KV k="Erw. Auslastung" v={`${Math.round(expRate * 100)} %`} />
             <KV k="Kapazität" v={st.capacity.toLocaleString('de-DE')} />
-            <KV k="Ticketpreis" v={fmtDMfull(st.ticketPrice * md)} />
+            <KV k="Stehplatz" v={fmtDMfull(priceOf(myClub, 'steh', year) * md)} />
             <KV k="Ansehen" v={myClub.reputation} />
             <KV k="Leitbild erfüllt" v={`${env.identity} %`} color={vColor(env.identity)} />
             <KV k="Medien-Druck" v={Math.round(env.mediaPressure)} />

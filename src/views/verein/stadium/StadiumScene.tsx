@@ -1,5 +1,9 @@
 // =============================================================================
-// STADION-ZEICHNUNG (leeres Stadion, erhöhte Schrägansicht): Vorplatz mit
+// STADION-ZEICHNUNG (leeres Stadion, erhöhte Schrägansicht). Der Bildausschnitt
+// ist fest auf das größtmögliche Stadion plus Umfeld ausgelegt (RING): beim
+// Ausbau wachsen nur die Tribünen, Kamera und Vorplatz bleiben gleich.
+// Rund ums Stadion: Buden, Fanshop, Parkplatz … (StadiumSurround), anklickbar.
+// Vorplatz mit
 // Bäumen, Rasen mit Mähstreifen und vollständigen Linien, Tore mit Netz,
 // Werbebanden, Trainerbänke, Eckfahnen, weiche Schatten, vier Blöcke
 // (StadiumBlockShape) und Flutlichtmasten je Epoche. Die Kamera schaut von
@@ -8,10 +12,11 @@
 // =============================================================================
 import type { ReactNode } from 'react';
 import { BLOCK_NAME, blockCapacity } from '../../../engine/stadiumBlocks';
-import type { BlockId, StadiumBlock } from '../../../types';
+import type { BlockId, StadiumBlock, StadiumTier } from '../../../types';
 import { shade } from '../grounds/isoKit';
 import { D, GAP, V3, W, depth, face, hash, hull, mapper, proj, pts, roofGeo, seg, tierGeometry } from './geo';
 import { SceneColors, StadiumBlockShape, blockShadowPoints } from './StadiumBlockShape';
+import { RING, VENUE_SPOTS, Venue, VenueShape, venueDepth, venueLabelAt } from './StadiumSurround';
 
 export { tierGeometry } from './geo';
 export type { SceneColors } from './StadiumBlockShape';
@@ -149,11 +154,44 @@ export interface StadiumSceneProps {
   building?: BlockId | null;
   /** Weitere Blöcke, die zur Planung gehören (ganze Seite). */
   group?: BlockId[];
-  onSelect: (id: BlockId | null) => void;
+  /** Geplante (noch nicht gebaute) Blöcke: als Vorschau gezeichnet. */
+  ghost?: BlockId[];
+  /** Tribünen anklickbar (sonst abgeblendet). */
+  blocksActive?: boolean;
+  venues?: Venue[];
+  /** Aktive Plätze (sonst abgeblendet). */
+  venueActive?: (v: Venue) => boolean;
+  selectedVenue?: string | null;
+  onVenue?: (v: Venue, e: { clientX: number; clientY: number }) => void;
+  onSelect: (id: BlockId | null, e?: { clientX: number; clientY: number }) => void;
   onHover: (id: BlockId | null) => void;
 }
 
-export function StadiumScene({ blocks, colors, year, month, selected, hover, building, group, onSelect, onHover }: StadiumSceneProps) {
+/** Größtmögliches Stadion (3 Ränge × 36 Reihen, volles Dach, Anzeigetafel) – Bezug für den festen Bildausschnitt. */
+const MAX_TIERS: StadiumTier[] = [{ seat: 'schale', rows: 36 }, { seat: 'schale', rows: 36 }, { seat: 'schale', rows: 36 }];
+let FRAME: { x0: number; y0: number; w: number; h: number } | null = null;
+function fixedFrame(): { x0: number; y0: number; w: number; h: number } {
+  if (FRAME) return FRAME;
+  const ids: BlockId[] = ['main_n', 'main_m', 'main_s', 'opp_n', 'opp_m', 'opp_s', 'north_w', 'north_e', 'south_w', 'south_e', 'curve_nw', 'curve_ne', 'curve_sw', 'curve_se'];
+  const bx: [number, number][] = [];
+  for (const id of ids) {
+    const b: StadiumBlock = { id, tiers: MAX_TIERS, roof: 'full', vip: true, lounges: 6, scoreboard: true };
+    const { len, at } = mapper(b);
+    const geo = tierGeometry(b), l = geo[geo.length - 1], rg = roofGeo(b)!;
+    for (const u of [0, len]) for (const v of [0, l.v1 + 0.3]) for (const z of [0, rg.zF + 2.8]) bx.push(proj(at(u, v, z)));
+  }
+  // Umfeld-Ring: Plätze liegen knapp außerhalb der größten Tribünen.
+  const R = RING + 3.5;
+  for (const [x, y] of [[-R, D / 2], [W + R, D / 2], [W / 2, -R], [W / 2, D + R], ...Object.values(VENUE_SPOTS)]) { bx.push(proj([x - 3, y - 2, 0])); bx.push(proj([x + 3, y + 2, 0])); bx.push(proj([x, y, 5.5])); }
+  const x0 = Math.min(...bx.map((p) => p[0])) - 10, x1 = Math.max(...bx.map((p) => p[0])) + 10;
+  const y0 = Math.min(...bx.map((p) => p[1])) - 10, y1 = Math.max(...bx.map((p) => p[1])) + 6;
+  FRAME = { x0, y0, w: x1 - x0, h: y1 - y0 };
+  return FRAME;
+}
+const evPt = (e: { clientX: number; clientY: number }) => ({ clientX: e.clientX, clientY: e.clientY });
+
+export function StadiumScene(p: StadiumSceneProps) {
+  const { blocks, colors, year, month, selected, hover, building, group, onSelect, onHover } = p;
   const era = year < 1990 ? 0 : year < 2010 ? 1 : 2;
   const winter = month === 12 || month <= 2;
   const grass = winter && year < 1995 ? '#8fa88a' : era === 0 ? '#4f9545' : '#4a9a43';
@@ -167,28 +205,22 @@ export function StadiumScene({ blocks, colors, year, month, selected, hover, bui
   }
   const mo = mastOffOf(ext);
   const masts: [number, number][] = [[-mo, -mo], [W + mo, -mo], [W + mo, D + mo], [-mo, D + mo]];
-  // Ausschnitt aus allen Eckpunkten
-  const bx: [number, number][] = [];
-  for (const b of blocks) {
-    const { len, at } = mapper(b);
-    const geo = tierGeometry(b), l = geo[geo.length - 1], rg = roofGeo(b);
-    const zt = Math.max(l.zt + 0.5, rg ? rg.zF + (era >= 1 ? 2.8 : 0.2) : 0, b.scoreboard ? (rg ? rg.zB : l.zt) + 3.2 : 0);
-    for (const u of [0, len]) for (const v of [0, l.v1 + 0.3]) for (const z of [0, zt]) bx.push(proj(at(u, v, z)));
-  }
-  if (showMasts) for (const [x, y] of masts) bx.push(proj([x, y, MAST_H + 1.6]));
-  const x0 = Math.min(...bx.map((p) => p[0])) - 18, x1 = Math.max(...bx.map((p) => p[0])) + 18;
-  const y0 = Math.min(...bx.map((p) => p[1])) - 14, y1 = Math.max(...bx.map((p) => p[1])) + 14;
+  const { x0, y0, w: fw, h: fh } = fixedFrame();
   const [cx, cy] = proj([W / 2, D / 2, 0]);
-  const R = ext + 1.6;
+  const R = RING + 5.2; // Vorplatz; dahinter Rasen bis über den Bildrand
+  const LR = RING + 70;
+  const lawn: V3[] = [[-LR, -LR, 0], [W + LR, -LR, 0], [W + LR, D + LR, 0], [-LR, D + LR, 0]];
   const plaza: V3[] = [[-R, -R, 0], [W + R, -R, 0], [W + R, D + R, 0], [-R, D + R, 0]];
   const trees: { x: number; y: number; k: number }[] = [];
-  const T = R + 1.6;
+  const T = RING + 6.5;
   let k = 0;
   for (let t = -T; t <= W + T; t += 3.1) { trees.push({ x: t, y: -T, k: k++ }); trees.push({ x: t, y: D + T, k: k++ }); }
   for (let t = -T + 3.1; t < D + T; t += 3.1) { trees.push({ x: -T, y: t, k: k++ }); trees.push({ x: W + T, y: t, k: k++ }); }
   const treeNodes = trees.filter((t) => hash(t.k * 1.7) > 0.25).map((t) => ({ d: depth([t.x, t.y, 0]), n: <Tree key={`t${t.k}`} x={t.x + (hash(t.k) - 0.5)} y={t.y + (hash(t.k + 9) - 0.5)} winter={winter} k={t.k} /> }));
+  const blocksActive = p.blocksActive !== false;
+  const ghost = new Set(p.ghost ?? []);
 
-  // Blöcke und Masten nach Kameratiefe
+  // Blöcke, Plätze und Masten nach Kameratiefe
   const items: { d: number; n: ReactNode }[] = [];
   for (const b of blocks) {
     const id = b.id;
@@ -196,14 +228,26 @@ export function StadiumScene({ blocks, colors, year, month, selected, hover, bui
     const geo = tierGeometry(b);
     const inSel = selected === id || !!group?.includes(id);
     const on = inSel || hover === id;
+    const dim = !blocksActive ? 0.55 : selected && !on ? 0.82 : 1;
     items.push({ d: depth(at(len / 2, geo[geo.length - 1].v1 / 2, 0)), n: (
-      <g key={id} className={`gr-obj ${inSel ? 'sel' : ''}`} opacity={selected && !on ? 0.82 : 1}
-        onClick={(e) => { e.stopPropagation(); onSelect(id); }} onMouseEnter={() => onHover(id)} onMouseLeave={() => onHover(null)}>
+      <g key={id} className={`gr-obj ${inSel ? 'sel' : ''} ${ghost.has(id) ? 'sv-ghost' : ''}`} opacity={dim} pointerEvents={blocksActive ? undefined : 'none'}
+        onClick={(e) => { e.stopPropagation(); onSelect(id, evPt(e)); }} onMouseEnter={() => onHover(id)} onMouseLeave={() => onHover(null)}>
         <StadiumBlockShape b={b} colors={colors} era={era} year={year} />
+        {ghost.has(id) && <polygon points={pl(hull(blockShadowPoints(b).concat(blockTopPoints(b))))} fill="none" stroke="#F2A541" strokeWidth={2} strokeDasharray="7 5" pointerEvents="none" />}
         {building === id && (() => {
           const [x, yb] = proj(at(len * 0.8, 3, 0)), [, yt] = proj(at(len * 0.8, 3, 15));
           return <g stroke="#e0a23a" strokeWidth={3} fill="none" strokeLinecap="round"><line x1={x} y1={yb} x2={x} y2={yt} /><line x1={x - 50} y1={yt + 8} x2={x + 95} y2={yt - 6} /><line x1={x + 80} y1={yt - 5} x2={x + 80} y2={yt + 50} strokeWidth={1} stroke="#cfd5db" /></g>;
         })()}
+      </g>
+    ) });
+  }
+  for (const v of p.venues ?? []) {
+    const active = p.venueActive ? p.venueActive(v) : true;
+    const sel = p.selectedVenue === v.key;
+    items.push({ d: venueDepth(v), n: (
+      <g key={`v${v.key}`} data-venue={v.key} className={`gr-obj sv-venue ${sel ? 'sel' : ''}`} opacity={active ? 1 : 0.4} pointerEvents={active ? undefined : 'none'}
+        onClick={(e) => { e.stopPropagation(); p.onVenue?.(v, evPt(e)); }}>
+        <VenueShape v={v} era={era} primary={colors.primary} />
       </g>
     ) });
   }
@@ -220,15 +264,15 @@ export function StadiumScene({ blocks, colors, year, month, selected, hover, bui
     const text = `${BLOCK_NAME[id]} · ${blockCapacity(b).toLocaleString('de-DE')}`;
     return (
       <g key={`lb${id}`} pointerEvents="none">
-        <rect x={x - text.length * 3.9 - 10} y={y - 28} width={text.length * 7.8 + 20} height={24} rx={6} fill="rgba(20,15,18,0.92)" stroke="#F2A541" />
-        <text x={x} y={y - 11} textAnchor="middle" fill="#fff" fontSize={13} fontWeight={800}>{text}</text>
+        <rect x={x - text.length * 3.9 - 10} y={y - 28} width={text.length * 7.8 + 20} height={24} rx={6} fill="rgba(16,19,24,0.92)" stroke="rgba(255,255,255,0.18)" />
+        <text x={x} y={y - 11} textAnchor="middle" fill="#fff" fontSize={13} fontWeight={700}>{text}</text>
       </g>
     );
   };
 
   return (
-    <svg className="gr-svg" viewBox={`${x0.toFixed(0)} ${y0.toFixed(0)} ${(x1 - x0).toFixed(0)} ${(y1 - y0).toFixed(0)}`} preserveAspectRatio="xMidYMid meet"
-      onClick={(e) => { if ((e.target as Element).tagName === 'svg') onSelect(null); }}>
+    <svg className="gr-svg" viewBox={`${x0.toFixed(0)} ${y0.toFixed(0)} ${fw.toFixed(0)} ${fh.toFixed(0)}`} preserveAspectRatio="xMidYMid meet"
+      onClick={(e) => { if ((e.target as Element).tagName === 'svg' || (e.target as Element).classList?.contains('sv-ground')) onSelect(null); }}>
       <defs>
         <radialGradient id="stGround" cx="50%" cy="50%" r="50%">
           <stop offset="0" stopColor={winter ? '#c3cdc8' : '#5f8a4e'} stopOpacity={0.75} />
@@ -238,11 +282,12 @@ export function StadiumScene({ blocks, colors, year, month, selected, hover, bui
         <radialGradient id="flGlow"><stop offset="0" stopColor="#fff6cf" stopOpacity={0.45} /><stop offset="1" stopColor="#fff6cf" stopOpacity={0} /></radialGradient>
         <filter id="stBlur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4" /></filter>
       </defs>
-      <ellipse cx={cx} cy={cy} rx={(x1 - x0) * 0.62} ry={(y1 - y0) * 0.62} fill="url(#stGround)" onClick={() => onSelect(null)} />
-      <polygon points={pts(plaza)} fill={winter ? '#c9cbc8' : era === 0 ? '#a29d92' : '#aeaaa2'} stroke={shade(winter ? '#c9cbc8' : '#aeaaa2', 0.85)} strokeWidth={1.5} />
-      {Array.from({ length: 7 }, (_, i) => {
-        const f = (i + 1) / 8;
-        return <g key={`pv${i}`} stroke="#000" strokeOpacity={0.05} strokeWidth={1}>
+      <polygon className="sv-ground" points={pts(lawn)} fill={winter ? '#aeb8b2' : era === 0 ? '#566b4f' : '#55704f'} />
+      <ellipse className="sv-ground" cx={cx} cy={cy} rx={fw * 0.62} ry={fh * 0.62} fill="url(#stGround)" />
+      <polygon className="sv-ground" points={pts(plaza)} fill={winter ? '#c9cbc8' : era === 0 ? '#9f9c95' : '#aaa9a5'} stroke={shade(winter ? '#c9cbc8' : '#aaa9a5', 0.85)} strokeWidth={1.5} />
+      {Array.from({ length: 11 }, (_, i) => {
+        const f = (i + 1) / 12;
+        return <g key={`pv${i}`} stroke="#000" strokeOpacity={0.05} strokeWidth={1} pointerEvents="none">
           <polyline points={pl([proj([-R + (W + 2 * R) * f, -R, 0]), proj([-R + (W + 2 * R) * f, D + R, 0])])} />
           <polyline points={pl([proj([-R, -R + (D + 2 * R) * f, 0]), proj([W + R, -R + (D + 2 * R) * f, 0])])} />
         </g>;
@@ -260,7 +305,36 @@ export function StadiumScene({ blocks, colors, year, month, selected, hover, bui
       ))}
       {items.map((it) => it.n)}
       {treeNodes.filter((t) => t.d >= dMid).sort((a, b) => a.d - b.d).map((t) => t.n)}
+      {(p.venues ?? []).filter((v) => p.selectedVenue === v.key || (p.venueActive ? p.venueActive(v) : true)).map((v) => <VenueTag key={`vt${v.key}`} v={v} strong={p.selectedVenue === v.key} />)}
       {(hover ?? selected) && by[(hover ?? selected)!] && label((hover ?? selected)!)}
     </svg>
+  );
+}
+
+/** Oberkante eines Blocks (für die Umriss-Vorschau). */
+function blockTopPoints(b: StadiumBlock): [number, number][] {
+  const F = mapper(b);
+  const geo = tierGeometry(b), last = geo[geo.length - 1];
+  const rg = roofGeo(b);
+  const out: [number, number][] = [];
+  const n = F.curve ? 8 : 1;
+  for (let k = 0; k <= n; k++) {
+    const u = (F.len * k) / n;
+    out.push(proj(F.at(u, last.v1, last.zt + 0.35)), proj(F.at(u, 0, 0.4)));
+    if (rg) out.push(proj(F.at(u, rg.vS, rg.zF)), proj(F.at(u, rg.vB, rg.zB)));
+  }
+  return out;
+}
+
+function VenueTag({ v, strong }: { v: Venue; strong: boolean }) {
+  const [x, y] = venueLabelAt(v);
+  const lv = v.kind === 'tickets' ? '' : v.level ? ` · ${v.level}/${v.max}` : ' · frei';
+  const text = `${v.name}${lv}`;
+  const w = text.length * 8.4 + 18;
+  return (
+    <g pointerEvents="none" opacity={strong ? 1 : 0.86}>
+      <rect x={x - w / 2} y={y - 25} width={w} height={25} rx={6} fill="rgba(16,19,24,0.86)" stroke={strong ? '#F2A541' : 'rgba(255,255,255,0.14)'} />
+      <text x={x} y={y - 7.5} textAnchor="middle" fill={v.level || v.kind === 'tickets' ? '#f1f4f8' : '#b3bcc8'} fontSize={15} fontWeight={600}>{text}</text>
+    </g>
   );
 }

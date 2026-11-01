@@ -14,6 +14,7 @@
 import { CalendarEngine } from '../engine/calendar';
 import { lastRevenue } from '../engine/clubEconomy';
 import { book } from '../engine/finances';
+import { scaleFanPrices } from '../engine/seating';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { eventFrequency } from '../engine/randomEvents';
 import { generateYouthPlayer } from '../engine/youth';
@@ -123,7 +124,7 @@ const EVENTS: ClubEvent[] = [
     }),
     resolve: (g, club, choice) => {
       const env = ensureEnvironment(g);
-      if (choice === 'preise') { club.stadium.ticketPrice = Math.round(club.stadium.ticketPrice * 0.9 * 100) / 100; env.fanMood = clamp(env.fanMood + 8, 0, 100); return { text: 'Die Kurve nimmt das Angebot an. Die Einnahmen pro Spiel sinken etwas.' }; }
+      if (choice === 'preise') { scaleFanPrices(club, Number(g.calendar.currentDate.slice(0, 4)), 0.9); env.fanMood = clamp(env.fanMood + 8, 0, 100); return { text: 'Die Kurve nimmt das Angebot an. Die Einnahmen pro Spiel sinken etwas.' }; }
       if (choice === 'gespraech') { env.fanMood = clamp(env.fanMood + 4, 0, 100); return { text: 'Das Gespräch beruhigt die Lage – vorerst.' }; }
       env.fanMood = clamp(env.fanMood - 6, 0, 100);
       return { text: 'Die ersten 12 Minuten herrscht Schweigen im Stadion. Die Stimmung bleibt gereizt.' };

@@ -38,6 +38,7 @@ import { migrateAiClubs } from './game/aiClubs';
 import { migrateFinanceLevel } from './game/financeMigration';
 import { migrateWinter } from './game/winterShared';
 import { migrateGrounds } from './game/groundsGame';
+import { migrateSeating } from './game/seatingGame';
 import { migrateYouthInvest } from './game/youthInvest';
 import { migrateBriefing } from './game/seasonBriefing';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -323,6 +324,7 @@ export default function App() {
     try { migrateWinter(s.game); } catch (err) { console.error('Winter-Nachrüstung fehlgeschlagen:', err); }
     // Stadionumfeld (v11-Sammel-Update): Lage, Fläche, epochentypische Ausstattung nachrüsten.
     try { migrateGrounds(s.game); } catch (err) { console.error('Umfeld-Nachrüstung fehlgeschlagen:', err); }
+    try { migrateSeating(s.game); } catch (err) { console.error('Platzkategorien-Nachrüstung fehlgeschlagen:', err); }
     // Nachwuchs-Investitionen (v11): Bausteine aus der alten Akademie-Stufe ableiten.
     try { migrateYouthInvest(s.game); } catch (err) { console.error('Nachwuchs-Nachrüstung fehlgeschlagen:', err); }
     // Saison-Briefing: Archiv ab der aktuellen Saison, beim Laden kein automatisches Popup.

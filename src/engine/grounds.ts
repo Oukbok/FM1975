@@ -209,9 +209,13 @@ export function groundsMoodBonus(gr: ClubGrounds | undefined, year: number, toda
 // -----------------------------------------------------------------------------
 export interface MoneyItem { label: string; amount: number; kind: 'matchday' | 'commercial' | 'facilities' | 'other' }
 
-/** Besetzung der Business-Plätze (0,4–1). */
-export function hospitalityOccupancy(club: Club): number {
-  return clamp(0.45 + (club.reputation ?? 50) / 200, 0.4, 0.98);
+/** Hospitality-Multiplikator für Business-Seats und Logen im Stadion (1 = ohne). */
+export function hospitalityMultiplier(club: Club, year: number): number {
+  const gr = club.grounds;
+  if (!gr) return 1;
+  const st = gr.modules.hospitality;
+  const d = levelDef('hospitality', st?.level ?? 0);
+  return 1 + (d?.vipMult ?? 0) * condMult(st, GROUNDS_BY_KEY.hospitality, year);
 }
 
 /** Posten eines Heimspiels (nominal) – ohne zu buchen. Auch für die Vorschau. */
@@ -235,12 +239,7 @@ export function matchdayItems(club: Club, gr: ClubGrounds, attendance: number, y
     const amount = Math.round((attendance * ph + (d.perMatch ?? 0)) * md);
     if (amount) items.push({ label: d.name, amount, kind: amount > 0 ? 'matchday' : 'facilities' });
   }
-  // Hospitality
-  const seats = eff(gr, 'hospitality', 'seats', year);
-  if (seats > 0) {
-    const occ = hospitalityOccupancy(club) * clamp(commercialMultiplier(club, year), 0.7, 1.5);
-    items.push({ label: `Business-Plätze (${Math.round(seats * Math.min(1, occ))} belegt)`, amount: Math.round(seats * Math.min(1, occ) * 12 * md), kind: 'commercial' });
-  }
+  // Hospitality: wirkt als Multiplikator auf Business-Seats und Logen im Stadion (engine/seating.ts).
   return items;
 }
 

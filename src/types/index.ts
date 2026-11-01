@@ -627,6 +627,37 @@ export interface Stadium {
   blockProject?: BlockProject;
   /** Preismix bei Einführung der Blöcke (Bezug für den Ticket-Faktor). */
   priceBase?: number;
+  /** Platzkategorien: Preise, Zuschauerpotenzial, Kontingente (engine/seating.ts). Fehlt in alten Spielständen. */
+  seating?: StadiumSeating;
+}
+
+/** Platzkategorie im Stadion (data/seatingCatalog.ts). */
+export type SeatCat = 'steh' | 'sitz' | 'dach' | 'premium' | 'business' | 'loge' | 'gast';
+export type SeatNums = Partial<Record<SeatCat, number>>;
+
+/** Verkauf eines Heimspiels je Kategorie (eigener Verein, letzte Spiele). */
+export interface SeatMatchLog {
+  date: string;
+  opponent: string;
+  sold: SeatNums;
+  cap: SeatNums;
+  /** Erlös nominal je Kategorie. */
+  rev: SeatNums;
+}
+
+/** Platzkategorien eines Stadions. */
+export interface StadiumSeating {
+  /** Zuschauerpotenzial (Personen je Heimspiel bei Zuspruch 1 und Nachfrage 1975). */
+  market: number;
+  /** Preise je Kategorie in 1975-Basis (Anzeige × Preis-Skala); Business je Platz, Loge je Loge und Spiel. */
+  prices: SeatNums;
+  /** Kontingente je Kategorie (KI-Vereine; eigener Verein: aus den Blöcken abgeleitet). */
+  caps?: SeatNums;
+  /** Letzte Heimspiele (eigener Verein, höchstens 8). */
+  log?: SeatMatchLog[];
+  /** Saisonbilanz je Kategorie (eigener Verein, nominal). */
+  season?: { id: string; games: number; rev: SeatNums; sold: SeatNums };
+  prevSeason?: { id: string; games: number; rev: SeatNums; sold: SeatNums };
 }
 
 /** Platzart eines Rangs. */

@@ -2,6 +2,7 @@
 // Spielende: Noten, Ergebnis, Statistik, gespeicherte Ereignisse und das
 // Verbuchen bei den Spielern (Saison/Karriere, Spielliste, Verletzungen).
 // =============================================================================
+import { SEAT_SALES } from '../seating';
 import type { Injury, InjurySeverity, InjuryType, MatchEventType, Player } from '../../types';
 import { POSITION_GROUPS } from '../../types';
 import { logMatch, recordInjury } from '../history';
@@ -200,6 +201,7 @@ export function finishMatch(sim: MatchSim, opts: FinishOptions): MatchOutcome {
     attendance: opts.attendance ?? sim.attendance,
     manOfTheMatchId: motm,
   };
+  if (opts.attendance == null) SEAT_SALES.set(result, sim.seatSale); // Verkauf je Platzkategorie für die Buchung
 
   const logged = opts.logClubIds ?? [];
   if (logged.includes(H.club.id) || logged.includes(A.club.id)) {
