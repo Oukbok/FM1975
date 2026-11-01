@@ -66,8 +66,10 @@ export function StepSetup({ d, set, chooseDataset }: {
       <section className="ng-box">
         <h3 className="ng-box-title"><Icon name="youth" size={20} /> Talente &amp; Stars</h3>
         <p className="ng-note">Alle Spieler entwickeln sich nach denselben Regeln: Talent, Training, Spielpraxis, Charakter und etwas Glück.</p>
-        <p className="ng-note">Die meisten Profis erreichen ihren Höhepunkt mit 26 bis 29. Weltklasse (85+) ist selten – in der 1. Liga gibt es meist nur rund ein Dutzend solcher Spieler.</p>
-        <p className="ng-note ng-push">Ganz selten wächst ein Jahrhunderttalent heran, das schon mit 18 oder 19 zur Spitze gehört. Wo es auftaucht, weiß vorher niemand – vielleicht in deiner Akademie.</p>
+        <p className="ng-note">Ganz selten wächst ein Jahrhunderttalent heran, das schon mit 18 oder 19 zur Spitze gehört. Wo es auftaucht, weiß vorher niemand – vielleicht in deiner Akademie.</p>
+        <div className="ng-fact ng-push"><span>Höhepunkt der meisten Profis</span><b>26–29 Jahre</b></div>
+        <div className="ng-fact"><span>Weltklasse (85+) in der 1. Liga</span><b>10–15 Spieler</b></div>
+        <div className="ng-fact"><span>Jahrhunderttalent</span><b>alle 10–20 Jahre</b></div>
       </section>
     </div>
   );

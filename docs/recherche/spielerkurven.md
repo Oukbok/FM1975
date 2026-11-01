@@ -129,20 +129,33 @@ Stärke
 ## 4. Umsetzung im Spiel (Kurzfassung)
 
 - **Potenzial** fein auf der OVR-Skala statt im Sterne-Raster. Akademie-Talente: ~52 %
-  Durchschnitt (64–72), ~38 % solide (73–79), ~9 % hoch (80–86), ~1–2 % Ausnahmetalent
-  (≥ 85, Exponential-Schwanz mit Mittel 3,2: ~21 % davon ≥ 90, ~8 % ≥ 93, ~2 % ≥ 96).
+  Durchschnitt (64–72), ~38 % solide (73–79), ~8 % hoch (80–85, 85 selten), ~1,2–2 % Ausnahmetalent
+  (≥ 85, Exponential-Schwanz mit Mittel 2,8: ~17 % davon ≥ 90, ~6 % ≥ 93, ~1 % ≥ 96).
   Erzeugte junge Profis nutzen denselben Schwanz (1,2 %).
 - **Frühreife** (verdeckt, −1 … +1): bis 20 bis zu ±40 % Tempo, 23–27 umgekehrt (Spätentwickler
   holen auf); große Talente sind im Schnitt frühreifer. In der Jugend hebt sie die
-  altersgerechte Obergrenze um bis zu 7 %.
+  altersgerechte Obergrenze um bis zu 7 %; bei Profis bis 24 begrenzt ein altersgerechter
+  Reifegrad (Anteil des Potenzials: 79 % mit 18, 88 % mit 20, 95 % mit 22, ±8 % Frühreife)
+  das Tempo.
 - **Langlebigkeit** (verdeckt): Abbau ±1,5 Jahre; zusätzlich bremsen Training und
   Professionalität wie bisher.
 - **Frühstarter:** profireife 16–19-Jährige (Stärke ≥ Kaderniveau − 6) rücken zum 1. Juli
   zu den Profis auf; beim eigenen Verein gibt es einen Hinweis.
 - **Weltklasse-Bremse** ab 82 wie bisher, für Ausnahmetalente (Potenzial > 88) bis zu
-  7 Punkte später. Das Liga-Gleichgewicht führt sie anteilig zum Ziel 12,5 Spieler ≥ 85.
-- **Startkader 1975:** junge Spieler sind altersgerecht schwächer (18 J. ≈ −9), nur selten
-  ist ein Junger schon auf dem Niveau der Etablierten.
+  6 Punkte später. Das Liga-Gleichgewicht (PI-Regler auf 12,5 Spieler ≥ 85) verschiebt die
+  Bremse (eine spätere Bremse wirkt nur bis 88) und bei dauerhafter Abweichung das
+  Talent-Angebot neuer Spieler (0,7 … 1,3-fache Häufigkeit hoher Potenziale).
+- **Startkader 1975 / neu erzeugte Kader:** junge Spieler sind altersgerecht schwächer
+  (18 J. ≈ −9), nur selten ist ein Junger schon auf dem Niveau der Etablierten. Starke Kader
+  bringen ihre etablierten Stars mit (Schnitt 72,5 → ~0,6 je Verein, 85–91, 23–29 Jahre) und
+  mit 5 % je jungem Spieler einen kommenden Star (Potenzial ≥ 84) – sonst klafft Mitte der
+  80er eine Lücke, bis die ersten Akademie-Jahrgänge reif sind.
+- **Epochen-Ausgleich:** Die Bremse setzt 1983–1992 1,5 Punkte später, 1993–2001 0,5,
+  2002–2014 2 und ab 2015 1 Punkt früher ein; Sportwissenschaft und Leistungszentren
+  würden sonst die Spitze aufblähen. Ist die Spitze dicht besetzt, bleiben
+  Weltklasse-Kandidaten bis zu 2,5 Punkte unter ihrem Potenzial und alternde Stars (83+)
+  bauen bis 1,6-fach schneller ab (bei zu wenigen bis halb so schnell; dann wachsen Spieler mit Potenzial ab 82 bis zu
+  2 Punkte darüber hinaus).
 
 ## Quellen
 

@@ -7,7 +7,7 @@ import { Player, Position, PlayerAttributes, AttributeKey, createEmptyStats, pot
 import { wageForOverall } from './economy';
 import { weightsFor, positionSuitability } from './positions';
 import { pickOrigin, makeName, Origin } from '../data/origins';
-import { exceptionalPotential } from './talent';
+import { exceptionalPotential, getTalentSupply } from './talent';
 
 export interface NewPlayerSpec {
   id: string;
@@ -88,9 +88,9 @@ export function rollBasePotential(age: number, strength: number, rng: () => numb
   const room = Math.pow(Math.max(0, 99 - strength) / 25, 0.9);
   let pot = strength + headroomByAge * (0.2 + u * 1.2) * room;
   // Weltklasse ist selten: oberhalb von ELITE_SOFT zählt nur ein Teil der Luft nach oben.
-  if (pot > ELITE_SOFT) pot = ELITE_SOFT + (pot - ELITE_SOFT) * ELITE_KEEP;
+  if (pot > ELITE_SOFT) pot = ELITE_SOFT + (pot - ELITE_SOFT) * ELITE_KEEP * getTalentSupply();
   // Seltenes Ausnahmetalent: derselbe Ausreißer-Schwanz wie in den Akademien (engine/talent.ts).
-  if (age <= 20 && rng() < 0.012) pot = Math.max(pot, exceptionalPotential(rng));
+  if (age <= 20 && rng() < 0.012 * getTalentSupply()) pot = Math.max(pot, exceptionalPotential(rng));
   return clamp(pot, strength, 99);
 }
 

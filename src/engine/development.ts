@@ -85,7 +85,6 @@ export function baseWeeklyRate(age: number, declineShift: number): number {
   if (age <= 20) return 0.11;
   if (age <= 24) return 0.065;
   if (age <= 28) return a <= 27 ? 0.025 : 0.01;
-  if (a <= 28) return 0; // spät einsetzender Abbau: Plateau
   if (a <= 30) return -0.03;
   if (a <= 32) return -0.055;
   if (a <= 34) return -0.08;
@@ -138,8 +137,21 @@ function moraleFactor(p: Player): number {
   return { very_low: 0.88, low: 0.94, okay: 1, good: 1.04, excellent: 1.08 }[p.morale] ?? 1;
 }
 
+/**
+ * Erreichbares Potenzial: Ist die Spitze der 1. Liga dicht besetzt (Bremse
+ * früher), bleiben Weltklasse-Kandidaten (Potenzial ≥ 85) bis zu 2,5 Punkte
+ * unter ihrem Potenzial – die Konkurrenz um die Spitze ist größer. Fehlt
+ * Weltklasse, wachsen Spieler mit Potenzial ab 82 bis zu 2 Punkte darüber hinaus.
+ */
+function reachablePotential(p: Player): number {
+  const pot = truePotential(p);
+  const s = eliteShift + eraOffset;
+  if (s < 0) return pot >= 85 ? Math.max(84, pot + s * 0.5) : pot;
+  return pot >= 82 ? pot + Math.min(2, s * 0.4) : pot;
+}
+
 function distanceFactor(p: Player): number {
-  const gap = truePotential(p) - (p.development.currentAbility ?? p.overall);
+  const gap = reachablePotential(p) - (p.development.currentAbility ?? p.overall);
   if (gap <= 0) return 0;
   // Weiche Bremse: die letzten Punkte sind am schwersten (nur mit sehr guten Bedingungen erreichbar).
   const f = Math.min(1, gap / 10);
@@ -149,19 +161,36 @@ function distanceFactor(p: Player): number {
 /**
  * Weltklasse-Bremse: Ab ELITE_FROM wird jeder weitere Punkt deutlich schwerer
  * (je Punkt −15 %, mindestens 20 % Tempo). Ausnahmetalente (wahres Potenzial
- * über 88) spüren sie später – bis zu 7 Punkte –, weil die Weltklasse für sie
+ * über 88) spüren sie später – bis zu 6 Punkte –, weil die Weltklasse für sie
  * noch nicht „die letzten Punkte“ sind.
  * Das Liga-Gleichgewicht (game/leagueBalance.ts) verschiebt den Beginn um
- * −5 … +3 Punkte, wenn die 1. Liga zu viele oder zu wenige Spieler ≥ 85 hat.
+ * −5 … +4 Punkte, wenn die 1. Liga zu viele oder zu wenige Spieler ≥ 85 hat.
  */
 const ELITE_FROM = 82;
 let eliteShift = 0;
-export function setEliteShift(points: number): void { eliteShift = clamp(points, -5, 3); }
+/**
+ * Epochen-Ausgleich der Bremse (Vorsteuerung): Mit dem Startkader altern die
+ * ersten Stars bis Mitte der 80er heraus, ab 2000 entwickeln Sportwissenschaft
+ * und Leistungszentren deutlich mehr Spitzenspieler. Ohne Ausgleich gäbe es
+ * 1985–1994 nur ~6 und 2005–2014 ~17 Spieler ≥ 85 (Simulation, 4 Läufe).
+ */
+let eraOffset = 0;
+export function eraEliteOffset(year: number): number {
+  if (year < 1983) return 0;
+  if (year < 1993) return 1.5;
+  if (year < 2002) return -0.5;
+  if (year < 2015) return -2;
+  return -1;
+}
+export function setEliteShift(points: number): void { eliteShift = clamp(points, -5, 4); }
 export function eliteBrake(p: Player, training = 1): number {
   // Spitzentraining (große Vereine, gute Anlagen) schiebt die Bremse bis zu 3 Punkte nach hinten:
   // Weltklasse reift eher bei den Spitzenvereinen – der Abstand zu den Kellerkindern bleibt spürbar.
-  const talentRoom = clamp((truePotential(p) - 88) * 0.7, 0, 7);
-  const over = p.overall - (ELITE_FROM + eliteShift + clamp((training - 0.9) * 8, 0, 3) + talentRoom);
+  const talentRoom = clamp((truePotential(p) - 88) * 0.6, 0, 6);
+  // Eine spätere Bremse (zu wenige 85er in der Liga) hilft nur bis 88 – die Weltspitze bleibt rar.
+  const total = eliteShift + eraOffset;
+  const shift = p.overall >= 88 ? Math.min(0, total) : total;
+  const over = p.overall - (ELITE_FROM + shift + clamp((training - 0.9) * 8, 0, 3) + talentRoom);
   if (over <= 0) return 1;
   return Math.max(0.2, 1 - over * 0.15);
 }
@@ -176,6 +205,7 @@ export function weeklyDevelopment(
   ctxFor: (club: Club) => ClubDevContext,
 ): void {
   const era = eraFactors(year);
+  eraOffset = eraEliteOffset(year);
   const ctxCache = new Map<string, ClubDevContext>();
   for (const p of Object.values(players)) {
     if (p.isYouth) continue;
@@ -204,12 +234,16 @@ export function weeklyDevelopment(
       pts = base * training * practiceFactor(p) * characterFactor(p) * environment * moraleFactor(p)
         * distanceFactor(p) * era.growth * (ctx?.playerFactor ? ctx.playerFactor(p) : 1)
         * maturityGrowth(p) // Frühreife: schneller bis 20, Spätentwickler holen mit 23–27 auf
-        * (p.age <= 24 && p.overall >= ageCeiling(p, truePotential(p)) ? 0.15 : 1) // altersgerechter Reifegrad
+        * (p.age <= 24 && p.overall >= ageCeiling(p, truePotential(p)) ? 0.3 : 1) // altersgerechter Reifegrad
         * eliteBrake(p, training); // die letzten Punkte zur Weltklasse sind die schwersten
     } else {
       // Abbau: gutes Training und Professionalität bremsen ihn (bis −35 %), stoppen ihn nicht.
       const brake = clamp(1 - (training - 0.9) * 0.6 - ((d.professionalism ?? 50) - 50) / 400, 0.65, 1.15);
-      pts = base * brake;
+      // Konkurrenzdruck an der Spitze: Ist die 1. Liga mit Weltklasse dicht besetzt (Bremse
+      // früher), verlieren alternde Stars (≥ 83) schneller ihren Platz; fehlt Weltklasse,
+      // halten sie sich länger (0,5- … 1,6-faches Tempo).
+      const top = p.overall >= 83 ? clamp(1 - (eliteShift + eraOffset) * 0.12, 0.5, 1.6) : 1;
+      pts = base * brake * top;
     }
     d.devPoints = (d.devPoints ?? 0) + pts;
   }
@@ -304,7 +338,7 @@ function applyRatingToPlayer(p: Player, type: RatingType, dateISO: string): { ch
   const cap = MAX_STEP[type];
   change = clamp(change, -cap, cap);
   // Nie über das wahre Potenzial (+1 Toleranz) wachsen.
-  if (change > 0) change = Math.min(change, Math.max(0, truePotential(p) + 1 - p.overall));
+  if (change > 0) change = Math.min(change, Math.max(0, reachablePotential(p) + 1 - p.overall));
   d.devPoints = pts - change;
   // Nicht ausgezahlte Reste begrenzen (keine endlose Ansammlung).
   d.devPoints = clamp(d.devPoints, -4, 4);

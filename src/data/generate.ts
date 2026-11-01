@@ -6,7 +6,7 @@ import { datasetCrest, datasetKits } from './dataset/apply';
 // =============================================================================
 
 import { createPlayer } from '../engine/playerFactory';
-import { seedClubStars } from '../engine/clubStars';
+import { maybeRisingStar, seedClubStars } from '../engine/clubStars';
 import { ORIGINS, Origin } from './origins';
 import {
   Player, Club, PlayerAttributes, Position, AttributeKey,
@@ -208,6 +208,7 @@ function makePlayer(clubId: string, index: number, pos: Position, strength: numb
   p.form = ri(45, 75);
   p.transferListed = rng() < 0.08;
   p.contract.expiryDate = `${1976 + ri(0, 5)}-06-30`;
+  maybeRisingStar(p, strength, rng); // kommende Stars (engine/clubStars.ts)
   return p;
 }
 

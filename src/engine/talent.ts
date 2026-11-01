@@ -60,12 +60,12 @@ export function declineShiftOf(p: Player): number {
  * Altersgerechter Reifegrad: Anteil des Potenzials, den ein Profi in diesem
  * Alter typischerweise erreicht (Kurven in docs/recherche/spielerkurven.md:
  * Normalprofi 66/73 mit 21, Kimmich 80/88, Messi 89/97 mit 20). Frühreife
- * verschiebt um bis zu ±7 %. Darüber wächst ein Spieler nur noch sehr langsam.
+ * verschiebt um bis zu ±8 %. Darüber wächst ein Spieler nur noch sehr langsam.
  */
-const RIPENESS: Record<number, number> = { 16: 0.66, 17: 0.72, 18: 0.77, 19: 0.82, 20: 0.86, 21: 0.9, 22: 0.93, 23: 0.96, 24: 0.98 };
+const RIPENESS: Record<number, number> = { 16: 0.68, 17: 0.74, 18: 0.79, 19: 0.84, 20: 0.88, 21: 0.92, 22: 0.95, 23: 0.97, 24: 0.99 };
 export function ageCeiling(p: Player, truePot: number): number {
   const f = p.age >= 25 ? 1 : RIPENESS[Math.max(16, p.age)] ?? 1;
-  return truePot * Math.min(1, f + 0.07 * maturity(p));
+  return truePot * Math.min(1, f + 0.08 * maturity(p));
 }
 
 /** Zuschlag zur altersgerechten Obergrenze in der Jugend (frühreif bis +7 %). */
@@ -74,12 +74,22 @@ export function youthMaturityCap(p: Player): number {
 }
 
 /**
+ * Talent-Angebot (0,5 … 1,5): das Liga-Gleichgewicht (game/leagueBalance.ts)
+ * senkt die Häufigkeit hoher Potenziale neuer Spieler, wenn die 1. Liga dauerhaft
+ * zu viele Spieler ≥ 85 hat (und hebt sie bei zu wenigen). Bestehende Spieler
+ * bleiben unverändert.
+ */
+let talentSupply = 1;
+export function setTalentSupply(f: number): void { talentSupply = clamp(f, 0.5, 1.5); }
+export function getTalentSupply(): number { return talentSupply; }
+
+/**
  * Seltener Ausreißer-Schwanz des Potenzials: ab 85 fällt die Häufigkeit je
- * Punkt um rund 27 % (Exponential mit Mittel 3,2). Von 100 solchen Talenten
- * haben ~21 ein Potenzial ≥ 90, ~8 ≥ 93, ~2 ≥ 96.
+ * Punkt um rund 30 % (Exponential mit Mittel 2,8). Von 100 solchen Talenten
+ * haben ~17 ein Potenzial ≥ 90, ~6 ≥ 93, ~1 ≥ 96.
  */
 export function exceptionalPotential(rand: () => number): number {
-  const tail = -Math.log(Math.max(1e-6, 1 - rand())) * 3.2;
+  const tail = -Math.log(Math.max(1e-6, 1 - rand())) * 2.8;
   return Math.round(clamp(85 + tail, 85, 99));
 }
 
@@ -89,8 +99,9 @@ export function exceptionalPotential(rand: () => number): number {
  */
 export function youthTalentPotential(rand: () => number, lift: number): number {
   const roll = rand();
-  if (roll < 0.012 + lift * 0.08) return exceptionalPotential(rand); // Ausnahmetalent
-  if (roll < 0.10 + lift * 0.5) return Math.round(80 + rand() * 6);  // hohes Talent 80–86
+  const exc = (0.012 + lift * 0.04) * talentSupply;
+  if (roll < exc) return exceptionalPotential(rand);                       // Ausnahmetalent
+  if (roll < exc + (0.078 + lift * 0.36) * talentSupply) return Math.round(80 + rand() * 5); // hohes Talent 80–85 (85 selten)
   if (roll < 0.48 + lift) return Math.round(73 + rand() * 7);        // solides Talent 73–79
   return Math.round(64 + rand() * 9);                                // Durchschnitt 64–72
 }

@@ -28,6 +28,7 @@ import { academyQualityBonus } from './infrastructure';
 import { academyGrowthOf, academyLevelOf, ageCapBonus, cpuPromotionPolicy, intakeCountOf } from './youthAcademy';
 import { ageFactor, potentialFactor } from './weeklyTraining';
 import { youthMaturityCap, youthTalentPotential, maturityGrowth } from './talent';
+import { maybeRisingStar } from './clubStars';
 
 // -----------------------------------------------------------------------------
 // Deterministischer RNG (mulberry32) — aus einem String-Seed abgeleitet.
@@ -316,9 +317,13 @@ export function academyStartingCohort(club: Club, currentDate: string): Player[]
   const level = academyLevelOf(club);
   const perYear = level >= 4 ? 2 : 1;
   const players: Player[] = [];
+  const rs = mulberry32(hashSeed(`${club.id}|kommende-stars`));
   for (let age = YOUTH_ENTRY_AGE; age < YOUTH_GRADUATE_AGE; age++) {
     for (let i = 0; i < perYear; i++) {
-      players.push(generateYouthPlayer(club.id, `init_${age}_${i}`, currentDate, level, age));
+      const yp = generateYouthPlayer(club.id, `init_${age}_${i}`, currentDate, level, age);
+      // Der Jugend-Stamm zum Spielstart enthält auch kommende Stars (engine/clubStars.ts).
+      if (age >= 12 && maybeRisingStar(yp, 70, rs, 0.1)) yp.scoutedPotentialMax = Math.max(yp.scoutedPotentialMax ?? 0, yp.potentialStars);
+      players.push(yp);
     }
   }
   return players;
