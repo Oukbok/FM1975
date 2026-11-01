@@ -1,0 +1,80 @@
+/* =============================================================================
+   Positionsvertrautheit (Spielerprofil › Attribute) + Schlüsselattribute in Blau
+   ============================================================================= */
+
+/* Schlüsselattribute: kräftiger blauer Strich; wichtige: schlank und heller */
+.pp-tier-core .pp-bar-lbl::before, .pp-tier-core .pp-attr-lbl::before { background: var(--pos-key); }
+.pp-tier-use .pp-bar-lbl::before {
+  content: ''; display: inline-block; width: 1.5px; height: 10px; margin-right: 8.5px; border-radius: 1px;
+  background: var(--pos-key-2); opacity: 0.8; vertical-align: -1px;
+}
+.pp-key-hint::before { background: var(--pos-key); }
+.pp-lg-core { background: var(--pos-key); }
+.pp-lg-use { background: var(--pos-key-2); height: 2px !important; }
+
+/* Spielfeld mit allen Positionen */
+.psk-hint { font-size: 11px; color: var(--text-4); }
+.psk-pitch {
+  position: relative; height: 384px; margin-top: 2px;
+  background: rgba(255, 255, 255, 0.015); border-radius: 6px;
+}
+.psk-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.psk-lines * { fill: none; stroke: var(--border); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.psk-chip {
+  position: absolute; transform: translate(-50%, -50%);
+  width: 62px; padding: 5px 0 6px; border-radius: 5px; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  background: var(--panel-2); border: 1px solid var(--border); font-family: inherit;
+  transition: border-color 0.12s, box-shadow 0.12s;
+}
+.psk-chip:hover { border-color: var(--text-3); }
+.psk-chip:active { transform: translate(-50%, calc(-50% + 1px)); }
+.psk-chip-code {
+  position: relative; font-family: var(--font-display); font-size: 15px; font-weight: 600;
+  letter-spacing: 0.8px; color: var(--text-2); line-height: 1;
+}
+.psk-chip-bar { width: 44px; height: 3px; border-radius: 2px; background: rgba(0, 0, 0, 0.35); overflow: hidden; }
+.psk-chip-bar > span { display: block; height: 100%; background: rgba(255, 255, 255, 0.55); }
+.psk-chip.psk-natural, .psk-sw.psk-natural { background: var(--fam-1); border-color: var(--fam-1); }
+.psk-chip.psk-good, .psk-sw.psk-good { background: var(--fam-2); border-color: var(--fam-2); }
+.psk-chip.psk-ok, .psk-sw.psk-ok { background: var(--fam-3); border-color: var(--fam-3); }
+.psk-chip.psk-natural .psk-chip-code, .psk-chip.psk-good .psk-chip-code { color: var(--text); }
+.psk-chip.psk-natural .psk-chip-bar > span, .psk-chip.psk-good .psk-chip-bar > span { background: rgba(255, 255, 255, 0.85); }
+.psk-chip.psk-none .psk-chip-code { color: var(--text-3); }
+.psk-chip.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.psk-chip-train {
+  position: absolute; right: -9px; top: -2px; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--accent);
+}
+
+.psk-legend { display: flex; gap: 14px; font-size: 11.5px; color: var(--text-3); margin-top: 8px; }
+.psk-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.psk-sw { width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--border); background: var(--panel-2); }
+
+/* Gewählte Position */
+.psk-tag {
+  display: inline-block; margin-left: 8px; padding: 1px 7px 2px; border-radius: 4px; vertical-align: 2px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase;
+  color: var(--text); background: var(--panel-2); border: 1px solid var(--border);
+}
+.psk-tag.psk-natural { background: var(--fam-1); border-color: var(--fam-1); }
+.psk-tag.psk-good { background: var(--fam-2); border-color: var(--fam-2); }
+.psk-tag.psk-ok { background: var(--fam-3); border-color: var(--fam-3); }
+.psk-tag.psk-none { color: var(--text-3); }
+.psk-fam { margin-top: 8px; }
+.psk-fam-head { display: flex; align-items: baseline; gap: 8px; font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px; }
+.psk-fam-head b { font-size: 14px; color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: 0; }
+.psk-fam-head em { margin-left: auto; font-style: normal; text-transform: none; letter-spacing: 0; color: var(--text-3); }
+.psk-fam-track { position: relative; height: 5px; border-radius: 3px; background: var(--bar-track); margin-top: 6px; }
+.psk-fam-fill { height: 100%; border-radius: 3px; background: var(--bar-fill); }
+.psk-fam-fill.psk-natural { background: var(--fam-1); }
+.psk-fam-fill.psk-good { background: var(--fam-1); opacity: 0.72; }
+.psk-fam-fill.psk-ok { background: var(--fam-1); opacity: 0.45; }
+.psk-fam-peak { position: absolute; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: var(--text-3); border-radius: 1px; }
+.psk-status { font-size: 12.5px; color: var(--text-3); margin-top: 7px; line-height: 1.4; }
+.psk-train-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.psk-note { font-size: 12px; color: var(--text-3); margin-top: 6px; }
+.psk-train-row .psk-note { margin-top: 0; }
+
+/* Taktik: Wirkung im Spiel – 13 Zeilen ohne Scrollen */
+.tx-effect .tx-eff { padding: 2px 0; font-size: 14px; }

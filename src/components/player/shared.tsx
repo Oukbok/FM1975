@@ -150,7 +150,7 @@ export function Bar({ label, value, max = 100, tone = 'q', tier }: {
   label: string; value: number; max?: number; tone?: 'q' | 'cond'; tier?: AttrTier | 'dim';
 }) {
   const pct = Math.max(0, Math.min(100, (value / max) * 100));
-  const fill = tier === 'core' ? 'var(--accent)' : tone === 'cond' ? condBar(value) : vBar(value);
+  const fill = tier === 'core' ? 'var(--pos-key)' : tone === 'cond' ? condBar(value) : vBar(value);
   const col = tone === 'cond' ? condColor(value) : vColor(value);
   return (
     <div className={`pp-bar-row${tier ? ' pp-tier-' + tier : ''}`}>

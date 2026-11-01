@@ -1,70 +1,79 @@
-// Reiter „Attribute“: Positionswahl (alle Positionen, die der Spieler beherrscht) →
-// positionsbezogenes Profil-Netz + alle Werte; Schlüsselattribute der gewählten Position
-// hervorgehoben (Bernstein), für die Position unwichtige Werte gedimmt.
+// Reiter „Attribute“: Spielfeld mit allen Positionen (Vertrautheit in Grünstufen, je Position
+// ein Fortschrittsbalken), beste Position vorausgewählt; Klick wählt eine andere Position →
+// deren Eignung, Vertrautheit (mit Höchstwert) und Positionstraining (eigene Spieler).
+// Rechts alle Werte; für die gewählte Position wichtige Attribute mit blauem Strich
+// (kräftig = Schlüsselattribut, schlank/heller = wichtig), unwichtige gedimmt.
 // Gewichtung direkt aus der Engine (engine/positions.ts `weightsFor`, epochenabhängig).
 import { useState } from 'react';
 import { Player, Position } from '../../types';
-import { POSITION_NAMES_DE } from '../../engine/positions';
+import { POSITION_NAMES_DE, positionSuitability } from '../../engine/positions';
 import {
-  ATTR_DE, ATTR_SHORT, AttrKey, AttrTier, groupsFor, sortedKeys, groupAvg, attrTiers,
-  positionChoices, POS_KIND_DE, Section, Bar,
-} from './shared';
+  dayNum, floorOf, IDLE_DAYS, peakOf, rankedPositions, setTrainingPosition, skillOf, skillTier, TIER_DE, TRAIN_CAP,
+} from '../../engine/positionSkill';
+import { useClubProfile } from '../club/ClubLink';
+import { ATTR_DE, groupsFor, sortedKeys, groupAvg, attrTiers, Section, Bar, utcDate } from './shared';
+import PositionPitch, { TierLegend } from './PositionPitch';
 
-/** Netz über die (bis zu 8) wichtigsten Attribute der Position; Skala 20–100. */
-function Radar({ p, keys, tiers }: { p: Player; keys: AttrKey[]; tiers: Map<AttrKey, AttrTier> }) {
-  const n = keys.length;
-  const R = 88, CX = 200, CY = 136;
-  const scale = (v: number) => (R * Math.max(0, Math.min(80, v - 20))) / 80;
-  const pt = (i: number, r: number) => {
-    const a = -Math.PI / 2 + (i * 2 * Math.PI) / n;
-    return [CX + Math.cos(a) * r, CY + Math.sin(a) * r];
-  };
-  const poly = (r: (i: number) => number) => keys.map((_, i) => pt(i, r(i)).join(',')).join(' ');
-  return (
-    <svg viewBox="0 0 400 272" className="pp-radar">
-      {[40, 60, 80, 100].map((v) => <polygon key={v} points={poly(() => scale(v))} fill="none" stroke="var(--border)" strokeWidth="1" />)}
-      {keys.map((_, i) => { const [x, y] = pt(i, R); return <line key={i} x1={CX} y1={CY} x2={x} y2={y} stroke="var(--border-soft)" strokeWidth="1" />; })}
-      <polygon points={poly((i) => scale(p.attributes[keys[i]]))} fill="var(--accent-soft)" stroke="var(--accent)" strokeWidth="1.6" strokeLinejoin="round" />
-      {keys.map((k, i) => { const [x, y] = pt(i, scale(p.attributes[k])); return <circle key={k} cx={x} cy={y} r="2.6" fill="var(--accent)" />; })}
-      {keys.map((k, i) => {
-        const [x, y] = pt(i, R + 14);
-        const anchor = Math.abs(x - CX) < 8 ? 'middle' : x > CX ? 'start' : 'end';
-        return (
-          <text key={k} x={x} y={y} textAnchor={anchor} dominantBaseline="middle" className={`pp-radar-lbl${tiers.get(k) === 'core' ? ' core' : ''}`}>
-            {ATTR_SHORT[k] ?? ATTR_DE[k]} <tspan className="pp-radar-val">{Math.round(p.attributes[k])}</tspan>
-          </text>
-        );
-      })}
-    </svg>
-  );
-}
+const dateOf = (day: number) => new Date(day * 86_400_000).toISOString().slice(0, 10);
 
 export default function AttributesTab({ p }: { p: Player }) {
-  const choices = positionChoices(p);
-  const [pos, setPos] = useState<Position>(p.naturalPosition);
-  const sel = choices.find((c) => c.pos === pos) ?? choices[0];
-  const tiers = attrTiers(sel.pos);
-  const radarKeys = [...tiers.keys()].slice(0, 8);
+  const g = useClubProfile()?.game;
+  const [, force] = useState(0);
+  const ranked = rankedPositions(p, positionSuitability);
+  const [pos, setPos] = useState<Position>(ranked[0].pos);
+  const tiers = attrTiers(pos);
+  const suit = positionSuitability(p, pos);
+  const v = skillOf(p, pos);
+  const peak = peakOf(p, pos);
+  const tier = skillTier(v);
+  const ps = p.positionSkill;
+  const train = ps?.train;
+  const today = g?.calendar.currentDate;
+  const mine = !!g && p.clubId === g.managedClubId;
+  const usedDay = ps?.used?.[pos];
+  const idle = today && ps ? dayNum(today) - (usedDay ?? ps.t0) : 0;
+  let status: string;
+  if (pos === p.naturalPosition) status = 'Stammposition – baut nicht ab.';
+  else if (train === pos) status = `Wird trainiert: Training allein bringt ihn bis ${TRAIN_CAP}, den Rest holt er sich in Spielen.`;
+  else if (usedDay != null && idle < IDLE_DAYS) status = `Zuletzt auf dieser Position am ${utcDate(dateOf(usedDay))}.`;
+  else if (v > floorOf(p, pos) + 0.5 && idle >= IDLE_DAYS) status = `Lange nicht gespielt – baut langsam ab (nie unter ${Math.round(floorOf(p, pos))}).`;
+  else status = usedDay != null ? `Zuletzt auf dieser Position am ${utcDate(dateOf(usedDay))}.` : 'Noch nicht auf dieser Position eingesetzt.';
+
+  const toggleTrain = () => {
+    if (!today) return;
+    setTrainingPosition(p, train === pos ? null : pos, today);
+    force((n) => n + 1);
+  };
+
   return (
     <div className="pp-grid pp-grid-attr">
       <div className="pp-stack">
-        <Section title="Position">
-          <div className="pp-posbar" role="tablist">
-            {choices.map((c) => (
-              <button key={c.pos} role="tab" aria-selected={c.pos === sel.pos}
-                className={`pp-posbtn${c.pos === sel.pos ? ' on' : ''}`} onClick={() => setPos(c.pos)}
-                title={`${POSITION_NAMES_DE[c.pos]} – Eignung ${c.value}`}>
-                <span className="pp-posbtn-code">{c.pos}</span>
-                <span className="pp-posbtn-val">{c.value}</span>
-                <span className="pp-posbtn-kind">{POS_KIND_DE[c.kind]}</span>
-              </button>
-            ))}
-          </div>
+        <Section title="Positionen" right={<span className="psk-hint">Klick wählt eine Position</span>}>
+          <PositionPitch p={p} sel={pos} train={train} onSelect={setPos} />
+          <TierLegend />
           <div className="pp-pos-head">
-            <span className="pp-pos-name">{POSITION_NAMES_DE[sel.pos]}</span>
-            <span className="pp-pos-suit">Eignung <b>{sel.value}</b></span>
+            <span className="pp-pos-name">{POSITION_NAMES_DE[pos]} <span className={`psk-tag psk-${tier}`}>{TIER_DE[tier]}</span></span>
+            <span className="pp-pos-suit">Eignung <b>{suit}</b></span>
           </div>
-          <Radar p={p} keys={radarKeys} tiers={tiers} />
+          <div className="psk-fam">
+            <div className="psk-fam-head"><span>Vertrautheit</span><b>{Math.round(v)}</b>{peak > v + 0.5 && <em>Höchstwert {Math.round(peak)}</em>}</div>
+            <div className="psk-fam-track">
+              <div className={`psk-fam-fill psk-${tier}`} style={{ width: `${v}%` }} />
+              {peak > v + 0.5 && <div className="psk-fam-peak" style={{ left: `${peak}%` }} title={`Höchstwert ${Math.round(peak)}`} />}
+            </div>
+            <div className="psk-status">{status}</div>
+          </div>
+          {mine && pos !== p.naturalPosition && (
+            <div className="psk-train-row">
+              <button type="button" className={`btn btn-sm psk-train ${train === pos ? 'btn-ghost' : 'btn-primary'}`} onClick={toggleTrain}>
+                {train === pos ? 'Training beenden' : 'Position trainieren'}
+              </button>
+              {train && train !== pos && <span className="psk-note">ersetzt das Training als {POSITION_NAMES_DE[train]}</span>}
+            </div>
+          )}
+          {mine && pos === p.naturalPosition && train && (
+            <div className="psk-note">Positionstraining: {POSITION_NAMES_DE[train]} ({Math.round(skillOf(p, train))})</div>
+          )}
           <div className="pp-legend">
             <span><i className="pp-lg-core" />Schlüsselattribut</span>
             <span><i className="pp-lg-use" />wichtig</span>
@@ -73,7 +82,7 @@ export default function AttributesTab({ p }: { p: Player }) {
         </Section>
       </div>
       <div className="pp-attr-cols">
-        {groupsFor(p, sel.pos).map((grp) => (
+        {groupsFor(p, pos).map((grp) => (
           <Section key={grp.title} title={grp.title} right={`Ø ${groupAvg(p, grp.keys)}`}>
             {sortedKeys(grp.keys).map((k) => (
               <Bar key={k} label={ATTR_DE[k]} value={Math.round(p.attributes[k])} tier={tiers.get(k) ?? 'dim'} />
