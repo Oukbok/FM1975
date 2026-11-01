@@ -71,6 +71,7 @@ import { processDay as processGameDay } from '../game/day';
 import { DrawShow } from '../screens/draw/DrawShow';
 import { compCup } from '../game/cupDraw';
 import type { DrawComp } from '../types/draw';
+import { setWikiOpener } from '../ui/InfoTip';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 // =============================================================================
@@ -82,6 +83,9 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   onLoad: (slot: string) => void; onUpdateSettings: (s: AppSettings) => void;
 }) {
   const [screen, setScreen] = useState<Screen>('dashboard');
+  // i-Hilfen: „Mehr im Wiki“ öffnet den Artikel (ui/InfoTip.tsx)
+  const [wikiArticle, setWikiArticle] = useState<{ id: string; n: number } | null>(null);
+  useEffect(() => setWikiOpener((id) => { setWikiArticle((w) => ({ id, n: (w?.n ?? 0) + 1 })); setScreen('wiki'); }), []);
   const [running, setRunning] = useState(false);
   const [liveMatchId, setLiveMatchId] = useState<string | null>(null);
   // Textmodus: laufende Live-Simulation des eigenen Spiels (eigene Oberfläche ohne Menü)
@@ -365,7 +369,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'chronicle' && <ChronicleView g={g} />}
         {screen === 'ruhmeshalle' && <HallOfFameView g={g} />}
         {screen === 'news' && <NewsView g={g} onRead={rerender} />}
-        {screen === 'wiki' && <WikiView g={g} />}
+        {screen === 'wiki' && <WikiView key={wikiArticle?.n ?? 0} g={g} openArticle={wikiArticle?.id} />}
         {screen === 'tactics' && <TacticsView g={g as any} onChange={rerender} />}
         {screen === 'stadium' && <StadiumView g={g} onChange={rerender} onGoto={(sc) => setScreen(sc)} />}
         {/* Kategorie-Dashboards */}

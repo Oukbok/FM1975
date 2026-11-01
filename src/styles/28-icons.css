@@ -1,0 +1,58 @@
+/* =============================================================================
+   Zustands-Symbole (components/status/) + i-Hilfen (ui/InfoTip.tsx)
+   ============================================================================= */
+
+/* --- Frische / Form / Moral als farbiges Symbol ----------------------------- */
+.st-icon {
+  display: inline-flex; align-items: center; gap: 5px;
+  vertical-align: middle; line-height: 1; cursor: default;
+  border-radius: 3px; outline: none;
+}
+.st-icon svg { display: block; flex: none; }
+.st-icon:focus-visible { box-shadow: 0 0 0 2px var(--border); }
+.st-icon .st-val { color: var(--text); font-variant-numeric: tabular-nums; font-weight: 600; font-size: 0.95em; }
+/* Gruppe aus mehreren Symbolen (z. B. Karte auf dem Feld) */
+.st-group { display: inline-flex; align-items: center; gap: 6px; }
+
+/* --- i-Hilfe ---------------------------------------------------------------- */
+.itip {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px; margin: 0 0 0 6px; padding: 0;
+  border: 1px solid var(--text-4); border-radius: 50%;
+  background: transparent; color: var(--text-3);
+  font: italic 600 9.5px/1 Georgia, 'Times New Roman', serif;
+  text-transform: none; letter-spacing: 0;
+  vertical-align: middle; cursor: help; flex: none;
+  position: relative; top: -1px;
+  transition: color .12s, border-color .12s;
+}
+.itip:hover, .itip.open, .itip:focus-visible { color: var(--text); border-color: var(--text-2); outline: none; }
+.itip:focus-visible { box-shadow: 0 0 0 2px var(--border); }
+/* Treffer etwas größer als das Symbol (Touch) */
+.itip::after { content: ''; position: absolute; inset: -6px; }
+
+.itip-pop {
+  position: fixed; z-index: 10000;
+  background: var(--elevated); color: var(--text-2);
+  border: 1px solid var(--border); border-radius: 6px;
+  box-shadow: var(--shadow);
+  padding: 10px 12px 11px;
+  font-family: var(--font-ui, 'Barlow', system-ui, sans-serif);
+  font-size: 12.5px; line-height: 1.45; font-weight: 400;
+  text-transform: none; letter-spacing: 0; text-align: left; white-space: normal;
+  pointer-events: auto;
+}
+.itip-title {
+  color: var(--text); font-weight: 600; font-size: 12.5px; margin-bottom: 4px;
+}
+.itip-text { color: var(--text-2); }
+.itip-wiki {
+  margin-top: 8px; padding: 0; border: 0; background: none; cursor: pointer;
+  color: var(--text-3); font: inherit; font-size: 11.5px; text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.itip-wiki:hover, .itip-wiki:focus-visible { color: var(--text); outline: none; }
+
+/* In Box-Titeln (Oswald, Großbuchstaben) und Kennzahl-Beschriftungen */
+.dxh-title .itip { margin-left: 8px; top: -2px; }
+.dkpi-lbl .itip { width: 12px; height: 12px; font-size: 8.5px; margin-left: 4px; }

@@ -22,10 +22,10 @@ export const CHRONICLE_WIKI_ENTRY: WikiArticle = {
   body: 'Interaktive Zeitleiste aller historischen Meilensteine von 1975 bis in die 2030er.',
 };
 
-export function WikiView({ g }: { g: Game }) {
+export function WikiView({ g, openArticle }: { g: Game; openArticle?: string }) {
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState<string>('all');
-  const [openId, setOpenId] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>(openArticle ?? null);
 
   // Passt der Chronik-Eintrag zum aktuellen Suchtext?
   const q = query.trim().toLowerCase();

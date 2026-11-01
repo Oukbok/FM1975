@@ -7,15 +7,19 @@
 // =============================================================================
 import { type ReactNode } from 'react';
 import Icon, { type IconName } from '../components/Icon';
+import { InfoTip } from './InfoTip';
+import type { InfoKey } from '../data/infoTexts';
 
 export function DashPage({ children, rows = 2, className = '' }: { children: ReactNode; rows?: 1 | 2; className?: string }) {
   return <div className={`dpage dpage-r${rows} ${className}`}>{children}</div>;
 }
 
 export function DashBox({
-  title, icon, right, children, span = 1, rows = 1, onClick, className = '', flush = false,
+  title, icon, right, children, span = 1, rows = 1, onClick, className = '', flush = false, info,
 }: {
   title: ReactNode;
+  /** i-Hilfe am Titel (Schlüssel in data/infoTexts.ts) */
+  info?: InfoKey;
   icon?: IconName;
   right?: ReactNode;
   children?: ReactNode;
@@ -36,7 +40,7 @@ export function DashBox({
     >
       <div className="dxh">
         {icon && <span className="dxh-ico"><Icon name={icon} size={20} /></span>}
-        <span className="dxh-title">{title}</span>
+        <span className="dxh-title">{title}{info && <InfoTip k={info} />}</span>
         {right != null && <span className="dxh-right">{right}</span>}
       </div>
       <div className={`dbox-body ${flush ? 'flush' : ''}`}>{children}</div>
@@ -45,32 +49,32 @@ export function DashBox({
 }
 
 /** Große Kennzahl mit Beschriftung (Kachel). */
-export function Kpi({ value, label, sub, color }: { value: ReactNode; label: string; sub?: ReactNode; color?: string }) {
+export function Kpi({ value, label, sub, color, info }: { value: ReactNode; label: string; sub?: ReactNode; color?: string; info?: InfoKey }) {
   return (
     <div className="dkpi">
       <div className="dkpi-val" style={color ? { color } : undefined}>{value}</div>
-      <div className="dkpi-lbl">{label}</div>
+      <div className="dkpi-lbl">{label}{info && <InfoTip k={info} />}</div>
       {sub != null && <div className="dkpi-sub">{sub}</div>}
     </div>
   );
 }
 
 /** Zeile Beschriftung – Wert. */
-export function KV({ k, v, color, strong }: { k: ReactNode; v: ReactNode; color?: string; strong?: boolean }) {
+export function KV({ k, v, color, strong, info }: { k: ReactNode; v: ReactNode; color?: string; strong?: boolean; info?: InfoKey }) {
   return (
     <div className="dkv">
-      <span className="dkv-k">{k}</span>
+      <span className="dkv-k">{k}{info && <InfoTip k={info} />}</span>
       <span className="dkv-v" style={{ color, fontWeight: strong ? 900 : undefined }}>{v}</span>
     </div>
   );
 }
 
 /** Horizontaler Balken mit Wert (0–100 oder max). */
-export function Meter({ label, value, max = 100, color, text }: { label: ReactNode; value: number; max?: number; color?: string; text?: ReactNode }) {
+export function Meter({ label, value, max = 100, color, text, info }: { label: ReactNode; value: number; max?: number; color?: string; text?: ReactNode; info?: InfoKey }) {
   const pct = Math.max(0, Math.min(100, max > 0 ? (value / max) * 100 : 0));
   return (
     <div className="dmeter">
-      <span className="dmeter-lbl">{label}</span>
+      <span className="dmeter-lbl">{label}{info && <InfoTip k={info} />}</span>
       <span className="dmeter-track"><span className="dmeter-fill" style={{ width: `${pct}%`, background: color ?? 'var(--bar-fill-hi)' }} /></span>
       <span className="dmeter-val">{text ?? Math.round(value)}</span>
     </div>
