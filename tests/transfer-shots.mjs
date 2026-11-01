@@ -83,9 +83,10 @@ if (over) errors.push('Verhandlung: waagerechter Überlauf in einer Box');
 await page.locator('.modal-xl .modal-close').click();
 
 // 3) Eigener Spieler: Bindung, Klauseln
-await nav('Kader', 'Kader');
-const row = page.locator('.dtable tbody tr, .sq-row').first();
-if (await row.count()) {
+await nav('Kader', 'Übersicht');
+const row = page.locator('.dtable tbody tr').first();
+if (!(await row.count())) errors.push('Kaderliste nicht gefunden');
+else {
   await row.click();
   await page.waitForSelector('.pp-modal', { timeout: 4000 }).catch(() => errors.push('Eigenes Spielerprofil öffnet nicht'));
   if (await page.locator('.pp-modal').count()) {

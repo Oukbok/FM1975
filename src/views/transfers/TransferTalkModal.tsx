@@ -95,6 +95,8 @@ function ClubTalkBox({ g, t, onChange }: { g: Game; t: TransferTalk; onChange: (
         </div>
         <button className="btn btn-primary talk-send" onClick={send}>Angebot abgeben</button>
       </div>
+      <div className="dsec">So rechnet der Verein</div>
+      <div className="dnote">Raten zählen mit 93 % (drei Raten 89 %), eine Weiterverkaufsbeteiligung zur Hälfte ihres Anteils, eine Erfolgsprämie zu 45 %. Einen Tauschspieler rechnet er nach eigenem Bedarf an – und nur, wenn der Spieler selbst wechseln will. Zu niedrige Angebote kosten Geduld.</div>
     </DashBox>
   );
 }

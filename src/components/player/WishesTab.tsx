@@ -43,7 +43,8 @@ export default function WishesTab({ p }: { p: Player }) {
     }
   }
   const sat = Math.round(p.contract.satisfaction ?? 60);
-  const risk = !tempter ? 'gering' : tempter.score >= 60 || sat < 45 ? 'hoch' : tempter.score >= 50 || sat < 55 ? 'mittel' : 'gering';
+  const tScore = tempter?.score ?? 0;
+  const risk = sat < 45 || (tScore >= 62 && sat < 70) ? 'hoch' : sat < 55 || tScore >= 56 ? 'mittel' : 'gering';
   const year = Number(g.calendar.currentDate.slice(0, 4));
   const c = p.contract;
   const clauses = [
