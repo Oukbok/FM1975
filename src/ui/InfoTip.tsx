@@ -9,6 +9,7 @@
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { INFO_TEXTS, type InfoKey } from '../data/infoTexts';
+import { placeNear, uiScale } from './floating';
 
 let wikiOpener: ((articleId: string) => void) | null = null;
 /** Von GameShell gesetzt: öffnet das Wiki mit einem Artikel. Rückgabe = Abmelden. */
@@ -39,7 +40,7 @@ export function InfoTip({ k, title, text, wiki, className }: {
   const timer = useRef<number | undefined>(undefined);
   const [open, setOpen] = useState(false);
   const [pinned, setPinned] = useState(false);
-  const [pos, setPos] = useState<{ left: number; top: number } | null>(null);
+  const [pos, setPos] = useState<{ left: number; top: number; s: number } | null>(null);
 
   const close = useCallback(() => { setOpen(false); setPinned(false); setPos(null); }, []);
   const later = (fn: () => void, ms: number) => { window.clearTimeout(timer.current); timer.current = window.setTimeout(fn, ms); };
@@ -48,14 +49,11 @@ export function InfoTip({ k, title, text, wiki, className }: {
   // Lage berechnen (nach dem Rendern, damit die Höhe bekannt ist)
   useLayoutEffect(() => {
     if (!open || !btn.current) return;
-    const r = btn.current.getBoundingClientRect();
-    const h = pop.current?.offsetHeight ?? 100;
-    const vw = window.innerWidth, vh = window.innerHeight;
-    let left = r.left + r.width / 2 - W / 2;
-    left = Math.max(GAP, Math.min(vw - W - GAP, left));
-    let top = r.bottom + 6;
-    if (top + h > vh - GAP) top = Math.max(GAP, r.top - h - 6);
-    setPos((p) => (p && p.left === left && p.top === top ? p : { left, top }));
+    // Größe folgt der UI-Skalierung (DisplayFrame), Lage in Bildschirm-Pixeln
+    const s = uiScale();
+    const h = (pop.current?.offsetHeight ?? 100) * s;
+    const { left, top } = placeNear(btn.current.getBoundingClientRect(), W * s, h, GAP);
+    setPos((p) => (p && p.left === left && p.top === top && p.s === s ? p : { left, top, s }));
   }, [open, head, body]);
 
   // Schließen: Esc, Klick daneben, Scrollen/Größe
@@ -101,7 +99,7 @@ export function InfoTip({ k, title, text, wiki, className }: {
       </button>
       {open && typeof document !== 'undefined' && createPortal(
         <div ref={pop} id={id} role="tooltip" className="itip-pop"
-          style={{ width: W, left: pos?.left ?? -9999, top: pos?.top ?? -9999 }}
+          style={{ width: W, left: pos?.left ?? -9999, top: pos?.top ?? -9999, transform: `scale(${pos?.s ?? 1})`, transformOrigin: 'top left' }}
           onMouseEnter={() => window.clearTimeout(timer.current)} onMouseLeave={hoverOut}
           onClick={stop} onPointerDown={stop}>
           {head && <div className="itip-title">{head}</div>}

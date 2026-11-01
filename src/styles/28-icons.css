@@ -80,3 +80,17 @@
 .ckd-donut-lbl:has(.itip) { white-space: nowrap; }
 .ckd-donut-lbl .itip { width: 11px; height: 11px; font-size: 8px; margin-left: 3px; }
 .lu-card-top .lu-cap { flex: none; }
+
+/* --- Sofort-Einblendung der Zustands-Symbole (StatusTip.tsx) ---------------- */
+.st-tip {
+  position: fixed; z-index: 10001; transform-origin: top left; pointer-events: none;
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+  background: var(--elevated); border: 1px solid var(--border); border-radius: 5px;
+  box-shadow: var(--shadow); padding: 5px 9px;
+  font-family: var(--font-ui, 'Barlow', system-ui, sans-serif); font-size: 12.5px; line-height: 1.2;
+  font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--text-2);
+}
+.st-tip b { color: var(--text); font-weight: 600; }
+.st-tip-val { font-variant-numeric: tabular-nums; }
+.st-tip-dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.itip-pop { transform-origin: top left; }
