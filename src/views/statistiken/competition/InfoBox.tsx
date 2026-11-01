@@ -59,7 +59,7 @@ export function InfoBox({ g, snap }: { g: Game; snap: CompSnapshot | null }) {
   const myGroups = rounds.flatMap((r) => (r.groups ?? []).filter((gr) => gr.rows.some((x) => x.id === mid)).map((gr) => ({ r, gr })));
   const nextGroup = snap.source === 'live' && !nextMine ? rounds.flatMap((r) => (r.matches ?? []).filter((m) => m.mine && m.hg == null).map((m) => ({ r, m })))[0] : undefined;
   const euroKey = snap.key === 'ec' || snap.key === 'cwc' || snap.key === 'uefa' ? snap.key : null;
-  const bonus = snap.source === 'live' && euroKey && rounds.some((r) => r.groups?.length) ? groupBonusEur(euroKey, seasonStartYear(snap.season) + 1) : null;
+  const bonus = snap.source === 'live' && euroKey && rounds.some((r) => r.groups?.length) ? groupBonusEur(euroKey, seasonStartYear(snap.season)) : null;
   const nextLegDate = nextMine?.t.legDates?.find((d, i) => i >= (nextMine.t.legs?.length ?? 0)) ?? nextMine?.t.date;
   return (
     <DashBox title={mine.length ? 'Dein Weg' : 'Saisonbilanz'} icon={mine.length ? 'dashBall' : 'trophy'} right={snap.label}>

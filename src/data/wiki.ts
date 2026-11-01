@@ -2563,8 +2563,10 @@ Parallel zur 1. Liga läuft der **Landespokal** als reiner **K.-o.-Wettbewerb**.
 ## Spielmodus je Begegnung
 - **Ein Spiel entscheidet** (Single-Leg). Der **zuerst gezogene Verein hat Heimrecht** – ab 1982/83 spielt ein **Amateurverein gegen Profis immer zu Hause** (siehe *Pokalauslosung*).
 - Steht es nach **90 Minuten** unentschieden, folgt die **Verlängerung** (2 × 15 Minuten).
-- Bleibt es auch nach **120 Minuten** gleich, entscheidet das **Elfmeterschießen** (Best-of-5, danach „Sudden Death").
-- In der Anzeige stehen **n.V.** (nach Verlängerung) bzw. **i.E.** (im Elfmeterschießen) hinter dem Ergebnis; bei Elfmeterschießen zusätzlich der Elfmeterstand.
+- **Bis 1990/91: Wiederholungsspiel.** Steht es auch nach 120 Minuten unentschieden, wird das Spiel **mit getauschtem Heimrecht wiederholt** (eine Woche später, über die Feiertage schon nach drei Tagen). Erst wenn auch die Wiederholung nach Verlängerung unentschieden endet, entscheidet das Elfmeterschießen. Das **Endspiel** wurde zuletzt **1977** wiederholt (Köln – Hertha 1:1 n. V., 1:0) – im Spiel bis 1976/77, danach Elfmeterschießen im Finale.
+- **Ab 1991/92:** nach der Verlängerung direkt **Elfmeterschießen** (Best-of-5, danach „Sudden Death").
+- In der Anzeige stehen **n.V.** bzw. **i.E.** hinter dem Ergebnis; Wiederholungen mit dem Ergebnis des ersten Spiels („Wdh., zuvor 1:1 n. V.“). Im Kalender steht der Wiederholungstermin nur, wenn dein Verein ein Wiederholungsspiel hat.
+- Quelle: DFB-Pokal-Regeln („replayed with the home field right reversed“, Abschaffung der Wiederholungen 1991).
 
 ## Auslosung
 - **Jede Runde wird an einem eigenen Termin ausgelost** (die 1. Hauptrunde im Sommer, die Folgerunden am Wochenende nach der Vorrunde) — es gibt keinen festen Turnierpfad. Termine, Regeln und die Ziehungs-Show: *Pokalauslosung*.
@@ -2591,20 +2593,22 @@ Liegt zwischen zwei Europapokal-Runden die Winterpause, wird Mitte Dezember gelo
 ## Regeln der Ziehung
 - **Landespokal bis 1981/82:** ein Lostopf, der zuerst gezogene Verein hat Heimrecht.
 - **Landespokal ab 1982/83:** In der 1. Hauptrunde gibt es **zwei Töpfe** (Amateure, Profis); jede Paarung beginnt mit einer Amateurkugel. In allen Runden bis zum Halbfinale hat ein **Amateurverein gegen Profis Heimrecht** – auch wenn die Profikugel zuerst kam.
-- **Europapokal:** In der ersten Runde sind die stärkeren Vereine **gesetzt** und treffen auf Ungesetzte; je Paarung entscheidet das Los, aus welchem Topf die erste Kugel kommt – der zuerst gezogene Verein hat Heimrecht (im Spiel gibt es nur ein Spiel je Runde). **Länderschutz** in der ersten Runde (im Europa-Pokal auch in der zweiten): Passt die gezogene Kugel nicht, geht sie zurück in den Topf und wartet auf die nächste Paarung.
-- Vereinfachung: Im Spiel gibt es im Europapokal keine Gruppenphase und je Runde **ein** Spiel.
+- **Europapokal (K.-o.-Runden):** In der ersten Runde sind die stärkeren Vereine **gesetzt** und treffen auf Ungesetzte; je Paarung entscheidet das Los, aus welchem Topf die erste Kugel kommt – der zuerst gezogene Verein hat im Hinspiel Heimrecht. **Länderschutz** in der ersten Runde (im Europa-Pokal bis 2003 auch in der zweiten): Passt die gezogene Kugel nicht, geht sie zurück in den Topf. Nach einer Gruppen- oder Ligaphase sind die **besser Platzierten gesetzt**, spielen zuerst auswärts und haben das Rückspiel daheim; Duelle aus derselben Gruppe oder demselben Land sind ausgeschlossen.
+- **Gruppenauslosung:** Lostöpfe nach Stärke (in der zweiten Gruppenphase 1999–2003: Gruppensieger und Gruppenzweite), aus jedem Topf ein Verein je Gruppe, keine zwei Vereine eines Landes in einer Gruppe. Die Kugel geht in die erste Gruppe, in die sie passen darf. **Ligaphase** (ab 2024/25): Töpfe nach Stärke, jeder Verein bekommt zwei Gegner aus jedem Topf (Konferenz-Liga: einen), keine Gegner aus dem eigenen Land.
 
 ## Wie wird gespielt? (Regeln dieser Runde)
-Vor jeder Ziehung zeigt der Startbildschirm die Regeln der Runde – so, wie das Spiel sie tatsächlich austrägt, mit dem historischen Vorbild als Hinweis darunter:
-- **Ein Spiel** je Runde, kein Hin- und Rückspiel – im Landespokal wie im Europapokal. *Im Original* spielt der Europapokal Hin- und Rückspiel (Endspiele der Landesmeister und Pokalsieger als ein Spiel, das Europa-Pokal-Finale bis 1996/97 mit Rückspiel).
-- **Bei Unentschieden** Verlängerung über zweimal 15 Minuten, danach Elfmeterschießen – in allen Epochen. *Im Original* gab es im Landespokal bis 1990/91 ein **Wiederholungsspiel** mit getauschtem Heimrecht (Endspiele zuletzt 1977); erst ab 1991/92 folgt das Elfmeterschießen direkt.
-- **Auswärtstore** zählen im Spiel nie doppelt (es gibt ja nur ein Spiel). *Im Original* galt die Auswärtstorregel im Europapokal bis 2020/21; seit 2021/22 ist sie abgeschafft.
-- Dazu Lostöpfe, Heimrecht, Setzliste und Länderschutz der Runde und wohin die Sieger kommen. Ab 1991/92 (Landesmeister) bzw. 2004/05 (Europa-Pokal) weist der Bildschirm darauf hin, dass das Vorbild eine Gruppenphase spielt.
+Vor jeder Ziehung zeigt der Startbildschirm die Regeln der Runde – genau so, wie das Spiel sie austrägt, und das ist das historische Vorbild der Saison (*Europapokal — Formate je Epoche*):
+- **Hin- und Rückspiel** im Europapokal mit Gesamtergebnis, **Auswärtstorregel** bis 2020/21 (auch in der Verlängerung), Verlängerung und Elfmeterschießen erst im Rückspiel; Endspiele als ein Spiel (das Europa-Pokal-Finale bis 1996/97 mit Rückspiel).
+- **Gruppenphase/Ligaphase** mit Punkten je Sieg, Wertung bei Punktgleichheit und wohin welcher Platz führt (auch der Wechsel in einen anderen Wettbewerb).
+- **Landespokal:** ein Spiel, bis 1990/91 mit Wiederholungsspiel (Endspiel bis 1976/77), danach Verlängerung und Elfmeterschießen.
+- Dazu Lostöpfe, Heimrecht, Setzliste und Länderschutz der Runde. In der ersten Runde nennt der Bildschirm das Format der Saison; Qualifikationsrunden werden im Spiel nicht ausgespielt.
+- Spielstände aus älteren Versionen spielen den **laufenden** Wettbewerb noch im alten Modus (ein Spiel je Runde) zu Ende – der Startbildschirm sagt das dann so.
 
 ## Die Ziehungs-Show
 Am Auslosungstag hält die Zeit an und die Show öffnet im Vollbild mit dem **Startbildschirm** (Wettbewerb, Runde, Termin, Ort, Regeln). Die Ziehung beginnt erst mit **Mit der Auslosung beginnen** (oder Leertaste/Enter); **Ergebnis sofort zeigen** (Esc) springt gleich zur Übersicht. Danach rollen die Kugeln aus dem Topf, öffnen sich, Losnummer, Wappen und Name erscheinen groß, die Paarungsliste baut sich auf, der Kommentar ordnet ein („Ein Kracher!“, „Der Amateurverein hat Heimrecht“). Die Bühne passt zur Epoche (Fernsehstudio der 70er, TV-Studio, Fußballmuseum, Verbandssaal, Gala in Monaco). Am Ende steht **dein Los**: Gegner, Termin, Heim/Auswärts und der Stärkevergleich; ein Klick aufs Wappen öffnet das Vereinsprofil.
 - **Tempo** langsam/normal/schnell (etwas ruhiger als früher: eine Ziehung dauert rund 30 % länger), **Pause** (Leertaste), **Bis zu meiner Ziehung**, **Überspringen** (Esc; Esc in der Zusammenfassung schließt).
-- **Nach der Ziehung** oben drei Reiter: **Dein Los** (bzw. das Topspiel, wenn dein Verein nicht dabei ist), **Alle Paarungen** (Gastgeber links, Land bzw. Amateur/Profi, Stärke, dein Verein hervorgehoben) und **Turnierbaum** (bisherige Runden mit Ergebnissen, n. V./i. E., die neue Runde, spätere Runden noch offen). Weil jede Runde neu gelost wird, ordnet der Baum die gespielten Begegnungen nachträglich so, dass die Sieger zu ihrer nächsten Paarung führen.
+- **Nach der Ziehung** oben drei Reiter: **Dein Los** (bzw. das Topspiel, wenn dein Verein nicht dabei ist), **Alle Paarungen** (Gastgeber des Hinspiels links, Land bzw. Amateur/Profi, Stärke, dein Verein hervorgehoben) und **Turnierbaum** (bisherige K.-o.-Runden mit Hin- und Rückspiel klein und Gesamtstand fett, n. V./i. E./Auswärtstore, die neue Runde, spätere Runden noch offen). Weil jede Runde neu gelost wird, ordnet der Baum die gespielten Begegnungen nachträglich so, dass die Sieger zu ihrer nächsten Paarung führen; er beginnt mit der ersten Runde nach Gruppen-, Ligaphase oder Zwischenrunde.
+- **Gruppenauslosung:** Die Kugeln füllen rechts die Gruppen; am Ende **Deine Gruppe** (bzw. **Deine Gegner** in der Ligaphase) und **Alle Gruppen** (bzw. **Alle Töpfe**).
 - Wer reduzierte Bewegung im System eingestellt hat, sieht die Ziehung ohne rollende Kugeln.
 - **Einstellungen › Pokalauslosung:** *Immer*, *Mit eigenem Verein* (Standard) oder *Nur Nachricht*. Eine Nachricht mit allen Paarungen kommt in jedem Fall.
 - **Wiederholung:** In *Statistiken › Pokal* und *International* steht an jeder gelosten Runde der Knopf **Auslosung**. Auf dem Startbildschirm führt **Direkt zur Übersicht** zu Paarungen und Turnierbaum, ohne die Ziehung erneut abzuspielen.
@@ -2651,62 +2655,117 @@ Am Auslosungstag hält die Zeit an und die Show öffnet im Vollbild mit dem **St
   {
     id: 'euro-overview',
     category: 'euro',
-    title: 'Europapokal — Die drei Wettbewerbe',
-    keywords: ['europapokal', 'europa', 'landesmeister', 'pokalsieger', 'uefa', 'ec', 'cwc', 'international', 'europacup'],
-    body: `## Drei Wettbewerbe wie 1975
-Parallel zur Liga und zum Landespokal laufen die **drei europäischen Wettbewerbe der Ära** — genau wie 1975/76. Sie haben eine eigene Seite (**International** in der Navigation) mit den Begegnungen je Wettbewerb.
+    title: 'Europapokal — Die Wettbewerbe',
+    keywords: ['europapokal', 'europa', 'landesmeister', 'meisterliga', 'pokalsieger', 'uefa', 'europa-liga', 'konferenz-liga', 'ec', 'cwc', 'international', 'europacup'],
+    body: `## Drei Wettbewerbe, die sich wandeln
+Parallel zur Liga und zum Landespokal laufen die europäischen Wettbewerbe der jeweiligen Zeit (Seite **Statistiken › International**):
 
-| Kürzel | Wettbewerb | Feld | deutsche Plätze |
-|---|---|---|---|
-| ec | Europapokal der Landesmeister | 16 | 1 (Meister) |
-| cwc | Europapokal der Pokalsieger | 16 | 1 (Landespokalsieger) |
-| uefa | Europa-Pokal | 32 | 3 (Ligaplätze 2–4) |
+| Fach | bis | danach |
+|---|---|---|
+| Pokal der Landesmeister | 1991/92 | **Meisterliga** (ab 1992/93, Gruppenphase schon ab 1991/92, Ligaphase ab 2024/25) |
+| Pokal der Pokalsieger | 1998/99 | ruht bis 2020/21, ab 2021/22 **Konferenz-Liga** |
+| Europa-Pokal | 2008/09 | **Europa-Liga** (ab 2009/10) |
 
-- **Europapokal der Landesmeister:** 16 Teams — **15 ausländische** Vereine + der **deutsche Meister**.
-- **Europapokal der Pokalsieger:** 16 Teams — **15 ausländische** Vereine + der **deutsche Landespokalsieger**.
-- **Europa-Pokal:** 32 Teams — **29 ausländische** Vereine + **3 deutsche** (Ligaplätze 2–4).
-
-Das Feld geht in jedem Wettbewerb exakt auf (16/16/32).
+Formate, Feldgrößen und Weiterleitungen je Saison: *Europapokal — Formate je Epoche*.
 
 ## Ausländische Teilnehmer
 - In der **ersten Saison** stammen die ausländischen Klubs aus dem Datensatz (\`src/data/europe.ts\`), angelehnt an die Spitzenvereine des Jahres 1975, mit erfundenen Namen (z. B. Madrid Weiß, Liverpool Rot, Amsterdam, Turin Schwarz-Weiß).
-- **Ab der zweiten Saison** qualifizieren sich die Auslandsvereine sportlich über ihre eigenen Ligen (siehe **Europa im Hintergrund**).
-- Ihre **Stärke** liegt auf der Skala ~55–82 (plausible Spielwerte, keine exakten historischen Tabellenplätze).
-- Sie werden als leichte Einträge geführt (Name/Stadt/Land/Stärke/Farben) — **kein voller Kader**, solange dein Verein nicht gegen sie spielt.
+- **Ab der zweiten Saison** qualifizieren sich die Auslandsvereine sportlich über ihre eigenen Ligen (siehe **Europa im Hintergrund**) – mit so vielen Vereinen, wie das Format der Saison braucht (bis zu 48 im Europa-Pokal).
+- Ihre **Stärke** liegt auf der Skala ~55–82. Sie werden als leichte Einträge geführt; einen vollen Kader bekommen sie, sobald sie deinem Verein zugelost werden.
 
 ## Erste Saison 1975/76 — feste historische Starter
-Für die allererste Saison gibt es noch keine gespielte Vorsaison. Deshalb sind die deutschen Starter fest auf die realen Europapokal-Teilnehmer 1975/76 gesetzt (Basis Saison 1974/75):
 - **Landesmeister-Pokal:** Mönchengladbach (Meister 1974/75)
 - **Pokalsieger-Pokal:** Frankfurt Rot (Landespokalsieger 1974/75)
 - **Europa-Pokal:** Berlin Blau, Offenbach, Duisburg (Ligaplätze 2–4)
 
-Ab 1976/77 werden die deutschen Teilnehmer dynamisch aus dem Spielstand ermittelt (siehe **Qualifikation**).`,
+Ab 1976/77 werden die deutschen Teilnehmer aus dem Spielstand ermittelt (siehe **Qualifikation**).`,
+  },
+  {
+    id: 'euro-formats',
+    category: 'euro',
+    title: 'Europapokal — Formate je Epoche',
+    keywords: ['format', 'gruppenphase', 'ligaphase', 'hinspiel', 'rückspiel', 'auswärtstore', 'auswärtstorregel', 'zwischenrunde', 'play-offs', 'sechzehntelfinale', 'gruppendritte', 'meisterliga', 'konferenz-liga', 'europa-liga'],
+    body: `## Hin- und Rückspiel
+- Alle K.-o.-Runden mit **Hin- und Rückspiel**; das **Gesamtergebnis** entscheidet. Das Rückspiel hat der Gegner des Hinspiels daheim.
+- **Auswärtstorregel bis 2020/21:** Bei gleichem Gesamtergebnis kommt weiter, wer mehr Tore auswärts erzielt hat – auch Tore in der Verlängerung des Rückspiels zählen. Seit 2021/22 abgeschafft (UEFA-Beschluss vom 24.06.2021).
+- **Verlängerung und Elfmeterschießen nur im Rückspiel**, das Hinspiel endet nach 90 Minuten.
+- **Endspiele** als ein Spiel (Landesmeister/Meisterliga, Pokalsieger, Konferenz-Liga); das **Europa-Pokal-Finale bis 1996/97 mit Hin- und Rückspiel**, ab 1997/98 ein Spiel.
+- Im Textmodus steht beim Rückspiel unter dem Spielstand **Hinspiel, Gesamtstand** und wer gerade (auch durch Auswärtstore) vorn liegt.
+
+## Formate im Spiel
+| Saison | Meisterliga / Landesmeister | Europa-Pokal / Europa-Liga | Pokalsieger / Konferenz-Liga |
+|---|---|---|---|
+| 1975/76–1990/91 | 16 Teams, K.-o. ab Achtelfinale | 32 Teams, K.-o., Finale Hin/Rück (bis 1996/97) | 16 Teams, K.-o. |
+| 1991/92–1992/93 | 2. Runde (16), zwei Vierergruppen, Gruppensieger ins Finale | wie oben | wie oben |
+| 1993/94 | 2. Runde, zwei Vierergruppen, Halbfinale als ein Spiel beim Gruppensieger | wie oben | wie oben |
+| 1994/95–1996/97 | vier Vierergruppen, die ersten zwei ins Viertelfinale | wie oben | wie oben |
+| 1997/98–1998/99 | sechs Vierergruppen, Sieger + zwei beste Zweite ins Viertelfinale | Finale ein Spiel | letzte Saison 1998/99 |
+| 1999/00–2002/03 | zwei Gruppenphasen (8 und 4 Gruppen), Dritte → 3. Runde Europa-Pokal | 48 Teams ab 2. Runde, 3. Runde mit 8 Gruppendritten | – |
+| 2003/04 | acht Gruppen, Achtelfinale, Dritte → 3. Runde Europa-Pokal | wie oben (3. Runde im Februar) | – |
+| 2004/05–2008/09 | acht Gruppen, Achtelfinale, Dritte → Sechzehntelfinale | acht Fünfergruppen (4 Spiele), Platz 1–3 + 8 Dritte → Sechzehntelfinale | – |
+| 2009/10–2020/21 | wie oben | zwölf Vierergruppen, Platz 1–2 + 8 Dritte → Sechzehntelfinale | – |
+| 2021/22–2023/24 | acht Gruppen, Dritte → Zwischenrunde Europa-Liga | acht Gruppen: Sieger → Achtelfinale, Zweite → Zwischenrunde gegen CL-Dritte, Dritte → Konferenz-Liga | acht Gruppen: Sieger → Achtelfinale, Zweite → Zwischenrunde gegen EL-Dritte |
+| ab 2024/25 | Ligaphase 36 Teams, 8 Spiele; 1–8 Achtelfinale, 9–24 Play-offs | Ligaphase 36 Teams, 8 Spiele | Ligaphase 36 Teams, 6 Spiele |
+
+Nach 2026 bleibt das letzte Format bestehen.
+
+## Gruppen und Ligaphase
+- **Punkte:** Sieg 2 Punkte bis 1994/95, danach 3. Unentschieden 1 Punkt.
+- **Wertung bei Punktgleichheit:** bis 1998/99 Tordifferenz, Tore, Auswärtstore; 1999/00–2023/24 zuerst der **direkte Vergleich** (Punkte, Tordifferenz, Tore, Auswärtstore), dann Tordifferenz und Tore; in der Ligaphase Tordifferenz, Tore, Auswärtstore, Siege, Auswärtssiege. Zuletzt entscheidet im Spiel die Stärke (statt Koeffizient/Los).
+- Spieltage liegen im Kalender (meist Mittwoch, Europa-Liga und Konferenz-Liga donnerstags), kollisionsfrei zu Liga und Landespokal.
+- In *Statistiken › International* zeigt die Ansicht **Gruppen** bzw. **Ligaphase** alle Tabellen: grün = weiter, gedämpft grün = Zwischenrunde/Play-offs, grau = Wechsel in einen anderen Wettbewerb. Unter **Runden** stehen die Spiele je Spieltag.
+
+## Vereinfachungen
+- Qualifikations- und frühe Runden werden nicht ausgespielt; das Feld beginnt mit der Runde der Tabelle (z. B. Landesmeister bis 1990/91 im Achtelfinale).
+- Startplätze nach dem Rang Deutschlands in der Fünfjahreswertung des Spiels, nicht nach der echten UEFA-Liste jedes Jahres; kein Extraplatz für den Titelverteidiger.
+- Quellen und Details: \`src/data/euroFormats.ts\`.`,
   },
   {
     id: 'euro-qualification',
     category: 'euro',
-    title: 'Europapokal — Qualifikation & K.-o.-Format',
-    keywords: ['qualifikation', 'meister', 'vizemeister', 'pokalsieger', 'finalist', 'kaskade', 'ko', 'verlängerung', 'elfmeter', 'auslosung'],
-    body: `## Deutsche Qualifikation (ab 1976/77)
-Die Europapokal-Saison X/Y wird aus der **Vorsaison** gespeist:
+    title: 'Europapokal — Qualifikation & Startplätze',
+    keywords: ['qualifikation', 'meister', 'vizemeister', 'pokalsieger', 'finalist', 'kaskade', 'startplätze', 'rang', 'koeffizient'],
+    body: `## Deutsche Startplätze (ab 1976/77)
+Wie viele deutsche Vereine starten, hängt vom **Rang Deutschlands** in der Fünfjahreswertung des Spiels ab (siehe *Europa im Hintergrund*):
 
-- **Landesmeister-Pokal (ec):** der **Meister** der Vorsaison (Endtabelle 1. Liga, Platz 1).
-- **Pokalsieger-Pokal (cwc):** der **Landespokalsieger** der Vorsaison. Ist er zugleich Meister (also schon im Landesmeister-Pokal), rückt der **Pokalfinalist** (Verlierer des Finales) nach; ist auch der nicht ermittelbar, der **Vizemeister**.
-- **Europa-Pokal:** die nächsten **3 Ligaplätze ab Platz 2** (also 2, 3, 4). Kein Verein darf doppelt qualifiziert sein: bereits für ec/cwc qualifizierte Vereine werden entfernt und die Startplätze **kaskadieren nach unten** (Platz 5, 6, …), bis genau 3 Europapokal-Starter feststehen.
+| Saison | Meisterliga | Europa-Pokal / Europa-Liga (inkl. Pokalsieger ab 1999) | Pokalsieger / Konferenz-Liga |
+|---|---|---|---|
+| bis 1996/97 | 1 (Meister) | Rang 1–3: 4, Rang 4–8: 3, sonst 2 | 1 (Pokalsieger) |
+| 1997/98–1998/99 | Rang 1–8: 2 | wie oben | 1 |
+| 1999/00–2017/18 | Rang 1–3: 4, Rang 4–6: 3, sonst 2 | Rang 1–6: 3 | – |
+| ab 2018/19 | Rang 1–4: 4 | 2 (ab 2021/22) | 1 (ab 2021/22) |
 
-Die deutschen Starter sind immer volle Vereine des Spielstands. Nur dein Verein wird real gemanagt; die übrigen deutschen laufen wie die ausländischen per Stärke.
+- **Meisterliga:** die ersten Plätze der 1. Liga.
+- **Pokalsieger-Pokal (bis 1998/99):** der Landespokalsieger; ist er schon in der Meisterliga, der Pokalfinalist, sonst der nächste Ligaplatz. Ab 1999/00 spielt der Pokalsieger im Europa-Pokal bzw. in der Europa-Liga.
+- **Europa-Pokal / Europa-Liga, Konferenz-Liga:** die nächsten Ligaplätze. Kein Verein ist doppelt qualifiziert; die Plätze kaskadieren nach unten.
 
-## K.-o.-Format — ein Spiel pro Runde
-- **Ein Spiel entscheidet** je Runde (kein Hin- und Rückspiel — „basic"). Der **zuerst gezogene Verein hat Heimrecht**.
-- Steht es nach **90 Minuten** unentschieden, folgt die **Verlängerung**; bleibt es auch danach gleich, entscheidet das **Elfmeterschießen**.
-- In der Anzeige stehen **n.V.** (nach Verlängerung) bzw. **i.E.** (im Elfmeterschießen) hinter dem Ergebnis.
-- **Runden je Wettbewerb:**
-  - Landesmeister-Pokal & Pokalsieger-Pokal (16 Teams): Achtelfinale, Viertelfinale, Halbfinale, Finale.
-  - Europa-Pokal (32 Teams): 1. Runde, Achtelfinale, Viertelfinale, Halbfinale, Finale.
+## Wechsel zwischen den Wettbewerben
+Gruppendritte der Meisterliga spielen 1999/00–2023/24 im Europa-Pokal bzw. in der Europa-Liga weiter, Gruppendritte der Europa-Liga 2021/22–2023/24 in der Konferenz-Liga (Tabelle in *Formate je Epoche*). Ab 2024/25 gibt es keinen Wechsel mehr.`,
+  },
+  {
+    id: 'euro-simulation',
+    category: 'euro',
+    title: 'Europapokal — Simulation, Bestenlisten, Einnahmen & Prämien',
+    keywords: ['simulation', 'kader', 'stärke', 'preisgeld', 'prämie', 'startgeld', 'tabelle', 'zone', 'matchengine', 'bestenliste', 'torschützen', 'belastung'],
+    body: `## Wie gespielt wird
+- **Spiele deines Vereins** (Hin- und Rückspiel, Gruppenspiele) laufen über die **volle Match-Engine** mit Textmodus. Ausländische Gegner bekommen beim Zulosen einmalig einen vollen Kader passend zu ihrer Stärke.
+- **Alle anderen Europapokalspiele** laufen im Hintergrund: Tore nach Stärke mit Heimvorteil (früher größer als heute), dazu **Torschützen, Vorlagen, Karten, Einsätze und Zu-null-Spiele**. Deutsche Vereine nehmen ihre echten Spieler, Auslandsvereine einen festen Kurzkader von 16 Spielern, der sich über die Jahre erneuert.
+- Deshalb zählen die **Bestenlisten** je Wettbewerb **alle Spiele** – auch Gruppenspiele und Spiele ohne deutsche Beteiligung. Statistik je Wettbewerb getrennt (wer als Gruppendritter wechselt, hat zwei Einträge).
 
-## Auslosung & Termine
-- **Jede Runde wird neu ausgelost** — kein fester Turnierpfad –, und zwar am historischen Termin in Zürich, Genf, Nyon oder Monaco, mit Setzliste und Länderschutz (Details: *Pokalauslosung* im Bereich Landespokal). Alle Auslosungen leiten ihren Zufall aus einem **festen Seed** ab (reproduzierbar).
-- Die europäischen Runden liegen historisch über die Saison verteilt (Herbst-Runden, Frühjahr Viertel-/Halbfinale, Mai Finale) auf **Mitte-der-Woche-Terminen** und werden **kollisionsfrei zu Liga- und Landespokal-Terminen** geplant (bei Kollision tageweise verschoben).`,
+## Einnahmen & Prämien
+- **Jedes Heimspiel** bringt Einnahmen (Eintritt je Platzkategorie, Fanartikel, Catering, TV) – im K.-o.-Modus also zwei Spiele je Runde, in der Gruppe drei Heimspiele. Das gilt für alle deutschen Vereine.
+- **Startgeld** zu Saisonbeginn (stark steigend mit Meisterliga und Ligaphase, siehe Finanzen).
+- **Prämie je gewonnener K.-o.-Runde** (DM von 1975 × Wirtschaftsskala; Finale 120.000, Halbfinale 60.000, Viertelfinale 30.000, Achtelfinale 15.000, davor 10.000 bzw. 8.000 – in den anderen Wettbewerben 80 %; ab 1992 in der Meisterliga bis zum Fünffachen).
+- **Prämie je Sieg/Unentschieden in Gruppe und Ligaphase** nach den Verteilungen des Verbands: Meisterliga 2005/06 321.000/161.000 €, 2009/10 800.000/400.000 €, 2016/17 1,5 Mio./500.000 €, 2024/25 2,1 Mio./700.000 €; Europa-Liga 2010/11 140.000/70.000 €, 2018/19 570.000/190.000 €, ab 2024/25 450.000/150.000 €; Konferenz-Liga 400.000/133.000 €. Davor im Spiel zurückgerechnet (Annahme).
+
+## Belastung
+Jedes Europapokalspiel kostet Frische und bewegt die Form – bei dir wie bei den KI-Vereinen. Mit Hin- und Rückspiel und sechs bis acht Gruppenspielen kommen deutlich mehr englische Wochen zusammen als früher.
+
+## Nachrichten
+- **Auslosung, Hinspiel, Rückspiel, Gruppenspiel und Gruppen-Abschluss** melden sich nur, wenn dein Verein beteiligt ist; europäische Titelträger erscheinen als Chronik-Notiz.
+
+## Alte Spielstände
+Ein laufender Europapokal aus einer älteren Version spielt bis Saisonende im alten Modus (ein Spiel je Runde); ab der nächsten Saison gilt das historische Format.`,
   },
   {
     id: 'euro-world',
@@ -2727,8 +2786,8 @@ Rund **20 Länder** mit je **1. und 2. Liga** (über 700 Vereine) werden im Hint
 - Das **Niveau der Länder** verschiebt sich über die Jahrzehnte (z. B. wird England ab den 1990ern stärker, Osteuropa schwächer).
 
 ## Koeffizienten (Fünfjahreswertung)
-- Jede Europapokal-Saison bringt Punkte: 1 für die Teilnahme, 2 je gewonnener Runde, 2 Bonus für den Titel. Der Landeswert ist der Schnitt der Starter eines Landes, summiert über die **letzten fünf Saisons**.
-- Danach richten sich die Startplätze: Die **Meister der 15 bestplatzierten Länder** spielen im Landesmeister-Pokal, deren **Pokalsieger** im Pokalsieger-Pokal (ist der Pokalsieger schon Meister, rückt der Nächste der Tabelle nach). Im **Europa-Pokal** erhalten die Länder auf Rang 1–2 drei Plätze, Rang 3–9 zwei, Rang 10–18 einen.
+- Jede Europapokal-Saison bringt Punkte: 1 für die Teilnahme, 2 je gewonnener K.-o.-Runde, 1 je Sieg und 0,5 je Unentschieden in Gruppe/Ligaphase, 2 Bonus für den Titel. Der Landeswert ist der Schnitt der Starter eines Landes, summiert über die **letzten fünf Saisons**.
+- Danach richten sich die Startplätze (Tabelle in *Qualifikation & Startplätze*): Meister der bestplatzierten Länder, ab 1997/98 auch Zweite und Dritte der Spitzenländer in der Meisterliga, Pokalsieger im Pokalsieger-Pokal (ab 1999/00 im Europa-Pokal), dazu die nächsten Plätze nach Rang. Wie viele Auslandsvereine starten, richtet sich nach dem Format der Saison.
 - Auch für **Deutschland** wird der Koeffizient mitgeführt.
 
 ## Geschichte

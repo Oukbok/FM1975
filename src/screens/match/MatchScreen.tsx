@@ -192,7 +192,7 @@ function TickerNow({ line, revealing, mySide }: { line: Line | null; revealing: 
   );
 }
 
-/** Rückspiel: Hinspiel, Gesamtstand und (bis 2020/21) die Auswärtstore live. */
+/** Rückspiel: Hinspiel (wie die Anzeigetafel: heutiges Heimteam zuerst), Gesamtstand und (bis 2020/21) die Auswärtstore live. */
 function AggLine({ fl, hs, as, homeName, awayName }: { fl: NonNullable<OwnMatchInfo['firstLeg']>; hs: number; as: number; homeName: string; awayName: string }) {
   // Heim des Rückspiels war im Hinspiel Gast.
   const aggH = hs + fl.ag, aggA = as + fl.hg;
@@ -203,7 +203,7 @@ function AggLine({ fl, hs, as, homeName, awayName }: { fl: NonNullable<OwnMatchI
   } else note = `${aggH > aggA ? homeName : awayName} liegt vorn`;
   return (
     <div className="ms-agg">
-      Hinspiel {fl.hg}:{fl.ag} · Gesamt <b>{aggH}:{aggA}</b><span className="ms-agg-note">{note}</span>
+      Hinspiel {fl.ag}:{fl.hg} · Gesamt <b>{aggH}:{aggA}</b><span className="ms-agg-note">{note}</span>
     </div>
   );
 }

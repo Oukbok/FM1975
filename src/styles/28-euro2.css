@@ -13,6 +13,8 @@
 
 /* Gruppen */
 .cmp-groups { display: flex; flex-direction: column; }
+.cmp-groups .gt-root:not(.wide) .gt-grid { grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); }
+.cmp-groups .gt-root:not(.wide) .gt-row { padding-top: 7px; padding-bottom: 7px; }
 .gt-leg { display: inline-flex; align-items: center; gap: 6px; margin-right: 12px; }
 .gt-leg .gt-key { margin-left: 0; }
 .gt-key.po { background: color-mix(in srgb, var(--pos) 45%, transparent); }
@@ -41,17 +43,18 @@
 .dr-gcard { border: 1px solid var(--border-soft); border-radius: 6px; background: var(--bg-2); padding: 4px 8px 6px; }
 .dr-gcard.mine { border-color: var(--accent); }
 .dr-gcard.fresh { background: var(--panel-2); }
-.dr-gname { font-family: var(--font-display); font-size: 15px; letter-spacing: 1px; color: var(--text-3); text-transform: uppercase; }
-.dr-gslot { display: flex; align-items: center; gap: 6px; height: 26px; font-size: 15px; min-width: 0; }
+.dr-gname { font-family: var(--font-display); font-size: 16px; letter-spacing: 1px; color: var(--text-3); text-transform: uppercase; }
+.dr-gslot { display: flex; align-items: center; gap: 8px; height: 30px; font-size: 17px; min-width: 0; }
 .dr-gslot > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dr-gslot.empty { color: var(--text-4); }
 .dr-gslot.me span { color: var(--accent); font-weight: 700; }
 .dr-gslot.fresh { animation: ms-in 0.4s ease-out; }
-.dr-ov-groups { flex: 1 1 auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; padding-top: 14px; min-height: 0; overflow-y: auto; align-content: start; }
+.dr-ov-groups { flex: 1 1 auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; padding: 16px 0; min-height: 0; overflow-y: auto; align-content: center; }
 .dr-ov-groups.g6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.dr-ov-groups .dr-gcard { padding: 10px 14px; }
-.dr-ov-groups .dr-gslot { height: 40px; font-size: 20px; gap: 10px; }
-.dr-ov-groups .dr-gname { font-size: 20px; }
+.dr-ov-groups .dr-gcard { padding: 14px 20px; }
+.dr-ov-groups .dr-gslot { height: 50px; font-size: 24px; gap: 14px; }
+.dr-ov-groups.dense .dr-gslot { height: 38px; font-size: 20px; }
+.dr-ov-groups .dr-gname { font-size: 20px; margin-bottom: 4px; }
 .dr-gsum { display: flex; flex-direction: column; align-items: center; gap: 18px; animation: ms-in 0.5s ease-out; width: min(760px, 100%); }
 .dr-gsum .dr-gcard { width: 100%; padding: 12px 18px; }
 .dr-gsum .dr-gslot { height: 52px; font-size: 26px; gap: 14px; }

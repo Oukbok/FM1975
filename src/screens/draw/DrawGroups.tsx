@@ -13,11 +13,11 @@ import type { ShowClub } from './drawScript';
 export const isGroupDraw = (rec: DrawRecord) => !!rec.groups?.length;
 export const isLeagueDraw = (rec: DrawRecord) => !!rec.opponents;
 
-function Slot({ c, fresh }: { c: ShowClub | null; fresh?: boolean }) {
+function Slot({ c, fresh, crest = 22 }: { c: ShowClub | null; fresh?: boolean; crest?: number }) {
   if (!c) return <div className="dr-gslot empty"><span>–</span></div>;
   return (
     <div className={`dr-gslot ${c.mine ? 'me' : ''} ${fresh ? 'fresh' : ''}`}>
-      <ClubLink id={c.id}><ClubCrest club={c.crest} size={22} /></ClubLink><span>{c.name}</span>
+      <ClubLink id={c.id}><ClubCrest club={c.crest} size={crest} /></ClubLink><span>{c.name}</span>
     </div>
   );
 }
@@ -86,7 +86,7 @@ export function GroupSummary({ rec, clubs, myId, onClose }: { rec: DrawRecord; c
       ) : show && (
         <div className={`dr-gcard ${mine ? 'mine' : ''}`}>
           <div className="dr-gname">{rec.opponents ? 'Ligaphase' : `Gruppe ${show.name}`}</div>
-          {show.ids.slice(0, 6).map((id) => <Slot key={id} c={clubs(id)} />)}
+          {show.ids.slice(0, 6).map((id) => <Slot key={id} c={clubs(id)} crest={40} />)}
         </div>
       )}
       <button className="dr-close" onClick={onClose}>{opp ? 'Alle Töpfe' : 'Alle Gruppen'}</button>
@@ -104,11 +104,11 @@ export function GroupsOverview({ rec, clubs }: { rec: DrawRecord; clubs: (id: st
         <span>{league ? `Ligaphase · ${rec.balls.length} Vereine in ${rec.pots.length} Töpfen` : `${cards.length} Gruppen`}</span>
         <span className="dr-dim">{league ? 'Gegner je Verein: im Vereinsprofil und unter Statistiken › International' : 'Erster Spieltag'} · {new Date(rec.matchDate + 'T00:00:00Z').toLocaleDateString('de-DE', { timeZone: 'UTC' })}</span>
       </div>
-      <div className={`dr-ov-groups ${cards.length === 6 || cards.length > 8 ? 'g6' : ''}`}>
+      <div className={`dr-ov-groups ${cards.length === 6 || cards.length > 8 ? 'g6' : ''} ${cards.length > 8 || league ? 'dense' : ''}`}>
         {cards.map((c) => (
           <div key={c.name} className={`dr-gcard ${c.ids.some((id) => clubs(id).mine) ? 'mine' : ''}`}>
             <div className="dr-gname">{c.name}</div>
-            {c.ids.map((id) => <Slot key={id} c={clubs(id)} />)}
+            {c.ids.map((id) => <Slot key={id} c={clubs(id)} crest={league || cards.length > 8 ? 26 : 34} />)}
           </div>
         ))}
       </div>

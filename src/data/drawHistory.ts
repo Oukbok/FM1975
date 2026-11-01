@@ -119,7 +119,8 @@ export function drawDateFor(
 
 /** Rundenname mit Artikel: „die 1. Hauptrunde“ / „das Achtelfinale“ (gen: „der …“ / „des Achtelfinales“). */
 export function roundArticle(name: string, kasus: 'nom' | 'gen' = 'nom'): string {
-  const fem = /^\d/.test(name);
+  const fem = /^\d|phase$|runde$|Play-offs/i.test(name);
+  if (/Play-offs/i.test(name)) return kasus === 'gen' ? `der ${name}` : `die ${name}`;
   if (kasus === 'gen') return fem ? `der ${name}` : `des ${name}s`;
   return fem ? `die ${name}` : `das ${name}`;
 }
