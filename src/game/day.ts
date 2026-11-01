@@ -56,6 +56,8 @@ import { groundsDaily } from './groundsGame';
 import { DrawNotice, cupDrawsDaily, ensureDrawn, hasScheduledDraw } from './cupDraw';
 import { monthlySponsoring } from './sponsorGame';
 import { promoteEarlyTalents } from './talentGame';
+import { aiDressingRoomsWeekly, dressingRoomDaily } from './dressingRoomGame';
+import { dressingRoomIncidents } from './dressingRoomEvents';
 import { PlayerDevReveal } from '../types';
 import { fmtDM, fmtDMfull, fmtDateFull, setDisplayYear } from '../ui/format';
 import { RatingResult as _RatingResult } from '../engine/development';
@@ -522,6 +524,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   winterBreakDaily(g, today);   // Formdrift in der Winterpause (game/winterShared.ts)
   advanceDivisionsTo(g, today); // Sim-Ligen nach eigenem Spielplan (game/season.ts)
   groundsDaily(g, today); // Stadionumfeld: Bauvorhaben, Spiele, Monat, Saison (game/groundsGame.ts)
+  { const room = dressingRoomDaily(g, today); if (room) dressingRoomIncidents(g, today, room); } // Kabine (game/dressingRoomGame.ts)
   if (utcDom === 1) {
     monthlyTrainingReport(g, today);
     monthlySquadHarmony(g, today);
@@ -614,6 +617,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   // WOCHEN-ENTWICKLUNG: sonntags Auswertung des versteckten Entwicklungs-Akkus
   // -------------------------------------------------------------------------
   if (utcDay === 0) {
+    aiDressingRoomsWeekly(g); // Kabine der KI-Vereine: Stimmung → Moral
     // Wochen-Entwicklung läuft still im Hintergrund: die Spielerwerte werden
     // direkt verändert (runWeeklyDevelopment mutiert die Attribute/OVR), aber
     // es erscheint KEIN Popup und der Lauf pausiert nicht mehr. Eine Meldung

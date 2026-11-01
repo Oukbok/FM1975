@@ -8,7 +8,9 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   // Winter: Hallenfußball + Trainingslager
   | 'halle' | 'trainingslager'
   // Saison-Briefing (Archiv)
-  | 'briefing';
+  | 'briefing'
+  // Kabine (Kader › Kabine)
+  | 'kabine';
 
 // =============================================================================
 // MENÜ-STRUKTUR (zweistufige Top-Navigation)
@@ -41,6 +43,7 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'cat-kader', label: 'Kader', icon: 'squad' },
     { screen: 'squad', label: 'Übersicht', icon: 'squad' },
     { screen: 'vertraege', label: 'Verträge', icon: 'contracts' },
+    { screen: 'kabine', label: 'Kabine', icon: 'squad' },
     { screen: 'training', label: 'Training', icon: 'training' },
     { screen: 'trainingslager', label: 'Trainingslager', icon: 'weather' },
     { screen: 'youth', label: 'Jugend', icon: 'youth' },

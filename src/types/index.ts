@@ -483,6 +483,8 @@ export interface Player {
   frische: number;
   /** Moral. */
   morale: PlayerMorale;
+  /** Moral 0–100 (nur eigener Verein, Kabine: engine/dressingRoom.ts); `morale` ist die daraus abgeleitete Stufe. */
+  moraleScore?: number;
   /** Verfügbarkeit. */
   availability: PlayerAvailability;
   /** Aktuelle Verletzung (falls vorhanden). */
@@ -1093,6 +1095,8 @@ export interface Club {
   youthPlayerIds: string[];
   /** Nachwuchs-Investitionen (Bausteine, Etat, Ruf; engine/youthAcademy.ts). Optional für alte Spielstände. */
   youthInvest?: import('../engine/youthAcademy').YouthInvest;
+  /** Kabine: Teamstimmung, Kapitän/Mannschaftsrat, Konflikte, Gespräche (engine/dressingRoom.ts). */
+  dressingRoom?: import('../engine/dressingRoom').DressingRoomState;
   /** Ausbaustufen des Vereinsgeländes. */
   infrastructure: ClubInfrastructure;
   /** Stadion. */

@@ -1,0 +1,166 @@
+// =============================================================================
+// Kabine – Bausteine: Faktorliste, Verlauf, Spieler im Fokus, Maßnahmen.
+// =============================================================================
+import { useState } from 'react';
+import {
+  DRAnalysis, DRFactor, MORALE_LABEL, TALK_INFO, TALK_LABEL, TIER_LABEL, TalkKind, moraleStepOf, talkOdds, teamEventDefs,
+} from '../../../engine/dressingRoom';
+import { economyScale, yearOf } from '../../../engine/economy';
+import { personaOf, personaTitle } from '../../../engine/persona';
+import {
+  appointCaptain, eventState, meetingState, roomOf, talkState, talkTo, teamEvent, teamMeeting, toggleCouncil,
+} from '../../../game/dressingRoomGame';
+import { Game } from '../../../game/state';
+import { condBar, condColor, fmtDay, fmtPrice } from '../../../ui/format';
+
+const sign = (v: number) => (v > 0 ? `+${v}` : `${v}`);
+
+/** Liste von Einflussgrößen mit Vorzeichen (größte zuerst). */
+export function FactorList({ items, max = 9, empty }: { items: DRFactor[]; max?: number; empty?: string }) {
+  if (!items.length) return <div className="dnote">{empty ?? 'Nichts Besonderes.'}</div>;
+  return (
+    <div className="kb-factors">
+      {items.slice(0, max).map((f, i) => (
+        <div key={i} className="kb-factor">
+          <span className="kb-f-lbl">{f.label}</span>
+          <span className={`kb-f-val ${f.value > 0 ? 'up' : f.value < 0 ? 'down' : ''}`}>{sign(f.value)}</span>
+        </div>
+      ))}
+      {items.length > max && <div className="dnote">… und {items.length - max} kleinere Faktoren</div>}
+    </div>
+  );
+}
+
+/** Ruhige Verlaufslinie der Teamstimmung (Monatswerte). */
+export function MoodSpark({ points }: { points: number[] }) {
+  if (points.length < 2) return null;
+  const w = 260, h = 46;
+  const xs = points.map((_, i) => (i / (points.length - 1)) * w);
+  const ys = points.map((v) => h - 4 - (Math.max(0, Math.min(100, v)) / 100) * (h - 8));
+  return (
+    <svg className="kb-spark" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
+      <line x1={0} x2={w} y1={h - 4 - 0.5 * (h - 8)} y2={h - 4 - 0.5 * (h - 8)} className="kb-spark-mid" />
+      <polyline points={xs.map((x, i) => `${x},${ys[i]}`).join(' ')} className="kb-spark-line" />
+    </svg>
+  );
+}
+
+/** Spieler im Fokus: Moral mit Gründen, Einfluss, Außenseiter-Gründe, Gespräch. */
+export function PlayerFocus({ g, a, pid, onChange }: { g: Game; a: DRAnalysis; pid: string; onChange: () => void }) {
+  const [msg, setMsg] = useState<{ pid: string; text: string } | null>(null);
+  const p = g.players[pid];
+  const o = a.byId[pid];
+  if (!p || !o) return <div className="dnote">Wähle einen Spieler im Kreis oder in der Liste.</div>;
+  const dr = roomOf(g.clubs[g.managedClubId]);
+  const score = Math.round(p.moraleScore ?? 60);
+  const trend = o.target - score;
+  const ts = talkState(g, pid);
+  const pe = personaOf(p);
+  const cap = dr.captainId === pid;
+  const inCouncil = !!dr.council?.includes(pid);
+  const pledge = dr.pledges?.find((x) => x.pid === pid);
+  const act = (f: () => { text: string }) => { setMsg({ pid, text: f().text }); onChange(); };
+  return (
+    <div className="kb-focus">
+      <div className="kb-focus-head">
+        <span className="pos-badge">{p.naturalPosition}</span>
+        <span className="kb-focus-name">{p.fullName}</span>
+        <span className="kb-pill">{TIER_LABEL[o.tier]}</span>
+        {cap && <span className="kb-pill">Kapitän</span>}
+        {inCouncil && <span className="kb-pill">Mannschaftsrat</span>}
+      </div>
+      <div className="dnote">{p.age} Jahre · {p.nationality} · {o.language}{o.barrier > 0.05 ? ` (Barriere ${Math.round(o.barrier * 100)} %)` : ''} · {a.groups.find((x) => x.id === o.group)?.label} · {personaTitle(pe)}</div>
+      <div className="kb-cols">
+        <div>
+          <div className="kb-big">
+            <span className="kb-big-val" style={{ color: condColor(score) }}>{score}</span>
+            <span className="kb-big-lbl">Moral · {MORALE_LABEL[moraleStepOf(score)]} · Ziel {o.target} {Math.abs(trend) < 2 ? '(stabil)' : trend > 0 ? '(steigt)' : '(sinkt)'}</span>
+          </div>
+          <div className="kb-bar"><i style={{ width: `${score}%`, background: condBar(score) }} /><b style={{ left: `${o.target}%` }} title={`Zielwert ${o.target}`} /></div>
+        </div>
+        <div>
+          <div className="kb-big">
+            <span className="kb-big-val">{o.influence}</span>
+            <span className="kb-big-lbl">Einfluss</span>
+          </div>
+          <div className="kb-bar"><i style={{ width: `${o.influence}%`, background: 'var(--bar-fill)' }} /></div>
+        </div>
+      </div>
+      <div className="dsec">Einzelgespräch</div>
+      <div className="kb-talks">
+        {(['loben', 'kritisieren', 'einsatz', 'beruhigen'] as TalkKind[]).map((k) => {
+          const odds = talkOdds(k, p, o, score);
+          const off = !!ts.nextOn || (k === 'einsatz' && !!pledge);
+          return (
+            <button key={k} className="btn btn-sm btn-ghost kb-talk" disabled={off} title={TALK_INFO[k]} onClick={() => act(() => talkTo(g, pid, k))}>
+              <span>{TALK_LABEL[k]}</span><small>{odds.hint}</small>
+            </button>
+          );
+        })}
+      </div>
+      <div className="dnote">
+        {ts.nextOn ? `Nächstes Gespräch ab ${fmtDay(ts.nextOn)}. ` : ''}
+        {ts.count ? `${ts.count} Gespräch${ts.count > 1 ? 'e' : ''} in den letzten 60 Tagen – Wirkung ${Math.round(ts.wear * 100)} %. ` : ''}
+        {pledge ? `Einsatz zugesagt bis ${fmtDay(pledge.until)}.` : ''}
+      </div>
+      <div className="dbtnrow mt8">
+        {!cap && <button className="btn btn-sm btn-ghost" onClick={() => act(() => appointCaptain(g, pid))}>Zum Kapitän ernennen</button>}
+        {!cap && <button className="btn btn-sm btn-ghost" onClick={() => act(() => toggleCouncil(g, pid))}>{inCouncil ? 'Aus dem Mannschaftsrat nehmen' : 'In den Mannschaftsrat berufen'}</button>}
+      </div>
+      {msg && msg.pid === pid && <div className="kb-result">{msg.text}</div>}
+      <div className="kb-cols">
+        <div>
+          <div className="dsec">Warum diese Moral?</div>
+          <FactorList items={o.moraleWhy} />
+        </div>
+        <div>
+          {o.outsiderWhy.length > 0 && <>
+            <div className="dsec">{o.outsider ? 'Außen vor, weil' : 'Achtung'}</div>
+            {o.outsiderWhy.map((r) => <div key={r} className="kb-reason">{r}</div>)}
+          </>}
+          <div className="dsec">Woher der Einfluss?</div>
+          <FactorList items={o.influenceWhy} max={7} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Maßnahmen für die ganze Mannschaft: Sitzung, Teamevent, Führung. */
+export function TeamActions({ g, onChange }: { g: Game; onChange: () => void }) {
+  const [msg, setMsg] = useState<string | null>(null);
+  const club = g.clubs[g.managedClubId];
+  const dr = roomOf(club);
+  const today = g.calendar.currentDate;
+  const ms = meetingState(g), es = eventState(g);
+  const scale = economyScale(yearOf(today));
+  const act = (f: () => { text: string }) => { setMsg(f().text); onChange(); };
+  const name = (id?: string) => (id ? g.players[id]?.lastName ?? '–' : '–');
+  return (
+    <div>
+      <div className="dsec">Mannschaftssitzung</div>
+      <div className="dbtnrow">
+        <button className="btn btn-sm btn-ghost" disabled={!!ms.nextOn} onClick={() => act(() => teamMeeting(g, 'aufbauen'))} title="Hilft vor allem bei gedrückter Stimmung, wenn die Führungsspieler mitziehen.">Aufbauen</button>
+        <button className="btn btn-sm btn-ghost" disabled={!!ms.nextOn} onClick={() => act(() => teamMeeting(g, 'klartext'))} title="Wirkt in der Krise bei professionellen Mannschaften – nach Siegen kommt er schlecht an.">Klartext</button>
+      </div>
+      <div className="dnote">{ms.nextOn ? `Wieder möglich ab ${fmtDay(ms.nextOn)}. ` : ''}{ms.wear < 1 ? `Wirkung zurzeit ${Math.round(ms.wear * 100)} % – zu viele Sitzungen nutzen sich ab.` : 'Sparsam einsetzen – jede weitere Sitzung wirkt schwächer.'}</div>
+      <div className="dsec">Teamevent</div>
+      {teamEventDefs(yearOf(today)).map((d) => {
+        const cost = Math.round(d.cost * scale);
+        return (
+          <div key={d.kind} className="dlist-row">
+            <span className="grow" title={d.text}>{d.label}</span>
+            <span className="meta">{fmtPrice(d.cost)}</span>
+            <button className="btn btn-sm btn-ghost" disabled={!!es.nextOn || club.finances.balance < cost} onClick={() => act(() => teamEvent(g, d.kind))}>Ausrichten</button>
+          </div>
+        );
+      })}
+      <div className="dnote">{es.nextOn ? `Nächstes Teamevent ab ${fmtDay(es.nextOn)}.` : es.wear < 1 ? `Wirkung zurzeit ${Math.round(es.wear * 100)} % (kurz nach dem letzten Event).` : 'Hebt Stimmung und Zusammenhalt, Außenseiter kommen ins Gespräch.'}</div>
+      <div className="dsec">Führung</div>
+      <div className="dkv"><span className="dkv-k">Kapitän</span><span className="dkv-v">{name(dr.captainId)}{dr.captainSince ? <span className="muted"> · seit {fmtDay(dr.captainSince)}</span> : null}</span></div>
+      <div className="dkv"><span className="dkv-k">Mannschaftsrat</span><span className="dkv-v">{dr.council?.length ? dr.council.map(name).join(', ') : 'nicht besetzt'}</span></div>
+      <div className="dnote">Kapitän und Mannschaftsrat bestimmst du beim Spieler im Fokus.</div>
+      {msg && <div className="kb-result">{msg}</div>}
+    </div>
+  );
+}

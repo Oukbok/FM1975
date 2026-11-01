@@ -44,6 +44,7 @@ import { migrateSponsorship } from './game/sponsorGame';
 import { migrateBriefing } from './game/seasonBriefing';
 import { migrateLegacyLegends } from './game/playerMigration';
 import { migratePersonas } from './game/playerWishesGame';
+import { migrateDressingRoom } from './game/dressingRoomGame';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 // =============================================================================
@@ -338,6 +339,8 @@ export default function App() {
     try { migrateLegacyLegends(s.game); } catch (err) { console.error('Legenden-Bereinigung fehlgeschlagen:', err); }
     // Transfer 2.0: Spielerpersönlichkeit (Wünsche, Gehaltsforderung) nachrüsten.
     try { migratePersonas(s.game); } catch (err) { console.error('Persönlichkeits-Nachrüstung fehlgeschlagen:', err); }
+    // Kabine: Moral 0–100 und Kabinenzustand des eigenen Vereins nachrüsten.
+    try { migrateDressingRoom(s.game); } catch (err) { console.error('Kabinen-Nachrüstung fehlgeschlagen:', err); }
     gameRef.current = s.game;
     setCurrentSlot(slot);
     setInGame(true);

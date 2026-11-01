@@ -1,0 +1,76 @@
+/* =============================================================================
+   KABINE (Kader › Kabine) – views/kader/DressingRoomView.tsx + kabine/
+   Ruhig und monochrom: Moral über condColor/condBar, Bernstein nur für Auswahl.
+   ============================================================================= */
+.kb-kpis { grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; }
+.kb-kpis .dkpi { padding: 8px 6px; }
+.kb-kpis .dkpi-val { font-family: var(--font-display); font-weight: 600; font-size: 28px; color: var(--text); }
+.kb-kpis .dkpi-lbl { font-size: 11.5px; }
+
+.kb-factors { display: flex; flex-direction: column; }
+.kb-factor { display: flex; justify-content: space-between; gap: 10px; padding: 3px 2px; border-bottom: 1px solid var(--border-soft); font-size: 14.5px; }
+.kb-factor:last-child { border-bottom: none; }
+.kb-f-lbl { color: var(--text-2); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kb-f-val { font-weight: 700; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.kb-f-val.up { color: var(--pos); }
+.kb-f-val.down { color: var(--neg); }
+
+.kb-spark { width: 100%; height: 40px; margin-top: 8px; display: block; }
+.kb-spark-line { fill: none; stroke: var(--bar-fill-hi); stroke-width: 1.6; vector-effect: non-scaling-stroke; }
+.kb-spark-mid { stroke: var(--border); stroke-dasharray: 3 4; vector-effect: non-scaling-stroke; }
+
+/* Kreis */
+.kb-legend { font-size: 13px; color: var(--text-3); }
+.kb-circle-wrap { display: flex; justify-content: center; }
+.kb-circle { width: 100%; max-height: 600px; display: block; }
+.kb-ring { fill: none; stroke: var(--border); stroke-width: 1; }
+.kb-ring-out { stroke-dasharray: 3 5; }
+.kb-band { fill: rgba(255, 255, 255, 0.015); }
+.kb-ring-lbl { fill: var(--text-4); font-size: 12px; letter-spacing: 0.6px; text-transform: uppercase; }
+.kb-sector { stroke: var(--border-soft); stroke-width: 1; stroke-dasharray: 2 5; }
+.kb-sector-lbl { fill: var(--text-3); font-size: 15px; }
+.kb-conflict { stroke: var(--neg); stroke-width: 1.4; stroke-dasharray: 5 4; opacity: 0.7; }
+.kb-node { cursor: pointer; }
+.kb-dot { stroke: rgba(12, 15, 21, 0.9); stroke-width: 1.5; }
+.kb-dot.sel { stroke: var(--accent); stroke-width: 2.5; }
+.kb-out { fill: none; stroke: var(--text-3); stroke-width: 1; stroke-dasharray: 2 3; }
+.kb-cap { fill: var(--bg); font-size: 11px; font-weight: 800; pointer-events: none; }
+.kb-name { fill: var(--text-2); font-size: 13.5px; }
+.kb-name.sel { fill: var(--accent); }
+.kb-node:hover .kb-name { fill: var(--text); }
+
+.kb-groups { margin-top: 6px; display: flex; flex-direction: column; }
+.kb-group { display: flex; gap: 10px; padding: 4px 2px; border-bottom: 1px solid var(--border-soft); font-size: 14px; }
+.kb-group-lbl { flex: 0 0 170px; color: var(--text-2); font-weight: 700; }
+.kb-group-mem { color: var(--text-3); min-width: 0; }
+.kb-neg { color: var(--neg); }
+
+/* Liste */
+.kb-table td { padding: 5px 8px; font-size: 15px; }
+.kb-td-name { max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kb-table tr.kb-sel td { background: var(--accent-soft); }
+.kb-table tr.kb-sel .kb-td-name { color: var(--accent); }
+.kb-mini { display: inline-block; width: 44px; height: 5px; margin-right: 8px; border-radius: 2px; background: var(--bar-track); vertical-align: middle; overflow: hidden; }
+.kb-mini i { display: block; height: 100%; background: var(--bar-fill); }
+
+/* Spieler im Fokus */
+.kb-focus-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 2px; }
+.kb-focus-name { font-family: var(--font-display); font-size: 19px; font-weight: 500; color: var(--text); margin-right: 4px; }
+.kb-pill { font-size: 11.5px; font-weight: 700; color: var(--text-2); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+.kb-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; margin-top: 8px; }
+.kb-big { display: flex; align-items: baseline; gap: 8px; }
+.kb-big-val { font-family: var(--font-display); font-size: 30px; font-weight: 600; color: var(--text); line-height: 1; }
+.kb-big-lbl { font-size: 13px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.4px; }
+.kb-bar { position: relative; height: 6px; border-radius: 3px; background: var(--bar-track); margin: 6px 0 4px; }
+.kb-bar i { display: block; height: 100%; border-radius: 3px; }
+.kb-bar b { position: absolute; top: -3px; width: 2px; height: 12px; background: var(--text-2); }
+.kb-reason { font-size: 14px; color: var(--text-2); padding: 2px 0; }
+.kb-talks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.kb-talk { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 6px 4px; }
+.kb-talk small { font-size: 11px; color: var(--text-3); text-transform: none; font-weight: 500; }
+.kb-result { margin-top: 8px; padding: 7px 10px; border-left: 3px solid var(--accent); background: var(--panel-2); font-size: 14.5px; color: var(--text); border-radius: 4px; }
+
+/* Vorfälle */
+.kb-incident { padding: 8px 0 10px; border-bottom: 1px solid var(--border-soft); }
+.kb-inc-subj { font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.kb-wrap { white-space: normal !important; }
