@@ -18,6 +18,7 @@ import { CupRounds } from '../statistiken/competition/CupRounds';
 import { LeagueTable } from '../statistiken/competition/LeagueTable';
 import { StatsBox } from '../statistiken/competition/StatsBox';
 import { YouthInfoBox } from './youthcomp/YouthInfoBox';
+import { youthPlayerCard } from './youthcomp/YouthPlayerCard';
 
 /** Standard: Liga/Staffel des eigenen Vereins in der A-Jugend, sonst Endrunde. */
 function defaultKey(g: Game, season: string): string {
@@ -96,7 +97,7 @@ export function YouthCompetitionsView({ g }: { g: Game }) {
           : snap.kind === 'league' ? <LeagueTable key={`${season}-${effKey}`} g={g} snap={snap} />
           : <CupRounds g={g} snap={snap} />}
       </DashBox>
-      <StatsBox key={`st-${season}-${effKey}`} g={g} snap={snap} />
+      <StatsBox key={`st-${season}-${effKey}`} g={g} snap={snap} playerCard={(pid, close) => youthPlayerCard(g, snap, pid, close)} />
       <YouthInfoBox g={g} snap={snap} />
     </DashPage>
   );
