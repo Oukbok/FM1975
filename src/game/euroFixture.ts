@@ -69,3 +69,27 @@ export function euroStatus(cup: import('../types').CupState, id: string): string
   }
   return 'ausgeschieden';
 }
+
+/**
+ * Könnte der eigene Verein an diesem Pokal-/Europapokal-Termin spielen? (Trainingslager,
+ * Hallenturniere.) Neuer Modus: Wiederholungstermine nur mit eigenem Wiederholungsspiel,
+ * Europapokal nur, solange der Verein im Wettbewerb ist bzw. ein Spiel an diesem Termin hat.
+ */
+export function mayPlayOn(g: Game, ev: CalendarEvent): boolean {
+  const fx = ownFixtureOn(g, ev);
+  if (fx) return true;
+  if (fx === undefined) {
+    if (ev.type === 'euro_matchday' && ev.euroComp && isV2(g.euroCups?.[ev.euroComp])) {
+      const cup = g.euroCups![ev.euroComp]!;
+      return inEuroCup(cup, g.managedClubId) && !/ausgeschieden|Sieger/.test(euroStatus(cup, g.managedClubId));
+    }
+    return true; // alter Modus bzw. Landespokal (erstes Spiel): wie bisher
+  }
+  // Runde noch nicht gelost: möglich, solange der Verein im Wettbewerb ist.
+  if (ev.type === 'euro_matchday' && ev.euroComp && ev.cupRoundIndex != null) {
+    const cup = g.euroCups?.[ev.euroComp];
+    const round = cup?.rounds[ev.cupRoundIndex];
+    if (cup && round && !round.drawn) return inEuroCup(cup, g.managedClubId) && !/ausgeschieden|Sieger/.test(euroStatus(cup, g.managedClubId));
+  }
+  return false;
+}

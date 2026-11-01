@@ -62,7 +62,7 @@ export function InfoBox({ g, snap }: { g: Game; snap: CompSnapshot | null }) {
   const bonus = snap.source === 'live' && euroKey && rounds.some((r) => r.groups?.length) ? groupBonusEur(euroKey, seasonStartYear(snap.season)) : null;
   const nextLegDate = nextMine?.t.legDates?.find((d, i) => i >= (nextMine.t.legs?.length ?? 0)) ?? nextMine?.t.date;
   return (
-    <DashBox title={mine.length ? 'Dein Weg' : 'Saisonbilanz'} icon={mine.length ? 'dashBall' : 'trophy'} right={snap.label}>
+    <DashBox title={mine.length || myGroups.length ? 'Dein Weg' : 'Saisonbilanz'} icon={mine.length || myGroups.length ? 'dashBall' : 'trophy'} right={snap.label}>
       {snap.winner ? <KV k="Sieger" v={T(snap.winner)} strong /> : <KV k="Sieger" v="steht noch aus" />}
       {snap.final && <KV k="Endspiel" v={<span className="cmp-inline">{T(snap.final.winner)} {snap.final.score} {T(snap.final.runnerUp)}</span>} />}
       {nextMine && <>
