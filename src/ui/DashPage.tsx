@@ -1,7 +1,7 @@
 // =============================================================================
 // DashPage / DashBox — einheitliches Seitenraster wie die Zentrale.
 // Gleiche Geometrie wie das Zentrale-Dashboard (3 Spalten à 30 %, gleiche Lücken,
-// 2 Reihen zwischen Kalenderstreifen und Footer). Boxen können über mehrere
+// 2 Reihen zwischen Untermenü und Footer). Boxen können über mehrere
 // Spalten/Reihen gehen (`span`, `rows`); der Inhalt einer Box scrollt intern,
 // die Seite selbst nie.
 // =============================================================================

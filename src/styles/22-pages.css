@@ -1,7 +1,7 @@
 /* =============================================================================
    Einheitliche Seiten wie die Zentrale (DashPage/DashBox, src/ui/DashPage.tsx)
    Geometrie = .dashx-cat: 3 Spalten à 30 %, 2,5 % Lücken (Rand = Zwischenraum),
-   zwei feste Reihen zwischen Kalenderstreifen und Footer.
+   zwei feste Reihen zwischen Untermenü und Footer.
    ========================================================================== */
 .dpage {
   display: grid;
