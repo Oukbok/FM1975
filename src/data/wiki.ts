@@ -480,7 +480,7 @@ Jeder Spieler gehört einer Gruppe an: **Führungskreis**, **Sprachgruppen** (ab
 Selten (höchstens alle drei Wochen) meldet sich die Kabine im Postfach und unter „Vorfälle“: **Streit** zweier Spieler, ein **Führungsspieler fordert etwas** für die Mannschaft (je nach Epoche Siegprämie, Masseur, Familienbereich, freie Tage, Social-Media-Freiheiten), ein **Neuzugang findet keinen Anschluss** (Pate, Sprachkurs), der **Mannschaftsrat wünscht sich einen Teamabend**, **Grüppchenbildung nach einer Niederlagenserie** oder die Frage nach einer **Kabinenpredigt** nach einer hohen Niederlage. Ohne Antwort gilt nach sieben Tagen die vorsichtige Standardwahl.
 
 ## Ohne Eingreifen
-Die Kabine läuft meist von selbst ordentlich. Krisen entstehen vor allem durch Niederlagenserien, viele Neuzugänge mit Sprachproblemen, unzufriedene Stammkräfte auf der Bank und Konflikte. Eingreifen hilft spürbar – ständiges Eingreifen nutzt sich ab.
+Die Kabine läuft meist von selbst ordentlich. Krisen entstehen vor allem durch Niederlagenserien, viele Neuzugänge mit Sprachproblemen, unzufriedene Stammkräfte auf der Bank und Konflikte. Steckt die Stimmung vier Wochen unter 35, raufen sich die Spieler selbst zusammen (mit einem anerkannten Kapitän stärker) – eine Dauerkrise gibt es also nicht, aber schneller geht es mit dir. Eingreifen hilft spürbar – ständiges Eingreifen nutzt sich ab.
 
 ## KI-Vereine
 Bei den anderen Vereinen folgt die Stimmung den letzten Ergebnissen; die Moral ihrer Spieler wandert wöchentlich in diese Richtung (Stammkräfte ohne Einsätze und Unzufriedene eine Stufe tiefer).

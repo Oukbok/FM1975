@@ -51,6 +51,10 @@ export interface DressingRoomState {
   meetings?: string[];
   /** Teamevents (Daten der letzten 180 Tage). */
   events?: string[];
+  /** Seit wann die Stimmung in der Krise ist (unter 35). */
+  lowSince?: string;
+  /** Letzte Selbstheilung (Spieler raufen sich zusammen). */
+  rally?: string;
   /** Letzter Kabinenvorfall (Ereignis mit Entscheidung). */
   lastIncident?: string;
   /** Zusagen „Du spielst“ aus Einzelgesprächen. */
@@ -334,12 +338,12 @@ export function analyzeRoom(xs: DRPlayerIn[], ctx: DRContext, scores: Record<str
   const closed = groups.filter((gr) => gr.id.startsWith('lang-') && gr.members.reduce((a, id) => a + byId[id].barrier, 0) / gr.members.length >= 0.4).length;
   push(cw, 'Abgeschottete Sprachgruppen', -4 * closed);
   const outs = players.filter((o) => o.outsider).map((o) => o.id);
-  push(cw, 'Außenseiter', -3 * outs.length);
+  push(cw, 'Außenseiter', -Math.min(12, 3 * outs.length));
   push(cw, 'Konflikte', -6 * ctx.conflicts.length);
   const top = ranked[0]?.p;
   if (top) push(cw, `Führung durch ${top.lastName}`, clamp(((top.attributes.leadership ?? 50) - 55) * 0.2 + ((scores[top.id] ?? 60) - 60) * 0.1, -8, 8));
   const restless = xs.filter((x) => !ctx.offSeason && x.rank <= 11 && x.p.age >= 21 && x.share < 0.4 && !x.p.injury).length;
-  push(cw, 'Unruhe auf der Bank', -2 * restless);
+  push(cw, 'Unruhe auf der Bank', -Math.min(8, 2 * restless));
   const cb = new Map<string, number>();
   for (const b of ctx.boosts) if (b.pid === '#c') cb.set(b.label, (cb.get(b.label) ?? 0) + boostNow(b, ctx.today));
   for (const [l, v] of cb) push(cw, l, v);
@@ -353,7 +357,7 @@ export function analyzeRoom(xs: DRPlayerIn[], ctx: DRContext, scores: Record<str
   const leadMorale = lead.reduce((a, x) => a + (scores[x.p.id] ?? 60) * inf.get(x.p.id)!.value, 0) / wsum;
   push(mw, 'Laune der Führungsspieler', (leadMorale - 60) * 0.35);
   push(mw, 'Zusammenhalt', (cohesion - 60) * 0.3);
-  push(mw, 'Außenseiter', -2.5 * Math.max(0, outs.length - 1));
+  push(mw, 'Außenseiter', -Math.min(8, 2.5 * Math.max(0, outs.length - 1)));
   push(mw, 'Konflikte', -4 * ctx.conflicts.length);
   const mb = new Map<string, number>();
   for (const b of ctx.boosts) if (b.pid === '*') mb.set(b.label, (mb.get(b.label) ?? 0) + boostNow(b, ctx.today));

@@ -211,11 +211,35 @@ export function dressingRoomDaily(g: Game, today: string): DRAnalysis | null {
   }
   dr.mood = Math.round((dr.mood + (a.moodTarget - dr.mood) * 0.06) * 10) / 10;
   dr.cohesion = a.cohesion;
+  rallyIfStuck(g, dr, a, today);
   if (today.slice(8) === '01') {
     (dr.history ??= []).push({ date: today, mood: Math.round(dr.mood), cohesion: a.cohesion, outsiders: a.outsiders.length });
     if (dr.history.length > 30) dr.history.splice(0, dr.history.length - 30);
   }
   return a;
+}
+
+/**
+ * Keine Dauerkrise: Steckt die Stimmung vier Wochen unter 35, raufen sich die
+ * Spieler selbst zusammen (Kapitän/Führungsspieler rufen die Mannschaft
+ * zusammen) – höchstens alle 6 Wochen, stärker mit einem anerkannten Kapitän.
+ */
+function rallyIfStuck(g: Game, dr: DressingRoomState, a: DRAnalysis, today: string): void {
+  if (dr.mood >= 35) { dr.lowSince = undefined; return; }
+  dr.lowSince ??= today;
+  if (days(dr.lowSince, today) < 28 || (dr.rally && days(dr.rally, today) < 42)) return;
+  const cap = dr.captainId ? g.players[dr.captainId] : undefined;
+  const strong = !!cap && (a.byId[cap.id]?.influence ?? 0) >= 60;
+  addBoost(dr, '*', strong ? 12 : 9, 'Spieler raufen sich zusammen', today, 45);
+  addBoost(dr, '#c', 6, 'Aussprache ohne Trainer', today, 45);
+  dr.rally = today; dr.lowSince = today;
+  const who = cap ? cap.fullName : 'Die Führungsspieler';
+  logRoom(dr, today, `${cap ? cap.lastName : 'Die Führungsspieler'} ruft die Mannschaft ohne Trainer zusammen.`);
+  pushMessage(g.messages, makeMessage({
+    date: today, category: 'general', from: 'Co-Trainer', subject: 'Die Mannschaft rauft sich zusammen',
+    shortText: `${who} hat die Spieler zu einer Aussprache ohne Trainer zusammengerufen.`,
+    bodyText: `Nach Wochen schlechter Stimmung hat ${who} die Mannschaft zu einer Aussprache ohne Trainerteam zusammengerufen. Die Luft ist etwas klarer. Mit Gesprächen, einer Sitzung oder einem Teamevent kannst du nachlegen (Kader › Kabine).`,
+  }));
 }
 
 /** KI-Vereine: sonntags, günstig gerechnet (Stimmung → Moral-Stufen). */
