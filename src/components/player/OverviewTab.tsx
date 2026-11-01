@@ -6,6 +6,7 @@ import {
   ATTR_DE, groupsFor, sortedKeys, keyAttributes, attrTiers, PITCH_POS, ratingFor, positionsOf, utcDate,
   Section, Line, Stat, AttrRow,
 } from './shared';
+import { InfoTip } from '../../ui/InfoTip';
 
 export function Pitch({ player }: { player: Player }) {
   return (
@@ -88,10 +89,10 @@ export default function OverviewTab({ p }: { p: Player }) {
         </Section>
         <Section title="Vertrag">
           <div className="pp-list">
-            <Line label="Marktwert" value={fmtPrice(p.contract.transferValue)} strong />
+            <Line label={<>Marktwert<InfoTip k="marktwert" /></>} value={fmtPrice(p.contract.transferValue)} strong />
             <Line label={`Gehalt / ${wageUnit()}`} value={fmtWage(p.contract.weeklyWage, { unit: false })} />
             <Line label="Vertrag bis" value={utcDate(p.contract.expiryDate)} />
-            <Line label="Zufriedenheit" value={`${p.contract.satisfaction} %`} color={vColor(p.contract.satisfaction)} />
+            <Line label={<>Zufriedenheit<InfoTip k="zufriedenheit" /></>} value={`${p.contract.satisfaction} %`} color={vColor(p.contract.satisfaction)} />
           </div>
         </Section>
       </div>

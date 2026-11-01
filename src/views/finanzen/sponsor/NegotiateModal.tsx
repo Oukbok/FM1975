@@ -82,7 +82,7 @@ export function NegotiateModal({ g, offerId, onClose, onChange }: { g: Game; off
             )) : <div className="dnote">Keine besonderen Klauseln.</div>}
             <div className="dnote mt8">{def.desc}</div>
           </DashBox>
-          <DashBox title="Gegenangebot" icon="negotiations" span={2}>
+          <DashBox title="Gegenangebot" info="verhandeln" icon="negotiations" span={2}>
             <div className="talk-form">
               <label className="talk-row"><span>Jahreswert</span>
                 <input type="range" min={1} max={1.5} step={0.01} value={factor} onChange={(e) => setFactor(Number(e.target.value))} />

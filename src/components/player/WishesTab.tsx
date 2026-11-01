@@ -14,6 +14,7 @@ import { fmtPrice, fmtWage } from '../../ui/format';
 import Icon from '../Icon';
 import { Line, Section } from './shared';
 import { InterestLight, ReasonList, TraitBands, WishList } from './WishesParts';
+import { InfoTip } from '../../ui/InfoTip';
 
 const pct = (x: number) => `${Math.round(Math.abs(x) * 100)} %`;
 
@@ -56,9 +57,9 @@ export default function WishesTab({ p }: { p: Player }) {
 
   return (
     <div className="pp-grid pp-grid-wishes">
-      <Section title="Charakter" icon={<Icon name="squad" size={15} />} right={mine ? 'bekannt' : k >= 0.6 ? 'gut gescoutet' : k >= 0.35 ? 'grob bekannt' : 'kaum bekannt'}>
+      <Section title={<>Charakter<InfoTip k="persoenlichkeit" /></>} icon={<Icon name="squad" size={15} />} right={mine ? 'bekannt' : k >= 0.6 ? 'gut gescoutet' : k >= 0.35 ? 'grob bekannt' : 'kaum bekannt'}>
         <div className="wish-title">{k >= 0.35 || mine ? personaTitle(pe) : 'Unbekannter Typ'}</div>
-        <div className="dnote">{PHASE_LABEL[careerPhase(p)]}</div>
+        <div className="dnote">{PHASE_LABEL[careerPhase(p)]}<InfoTip k="karrierephase" /></div>
         <TraitBands pe={pe} knowledge={k} seed={p.id} />
         {!mine && <div className="dnote mt8">Spannen statt Werte: Je besser dein Scouting (und je länger ihr verhandelt), desto genauer das Bild.</div>}
       </Section>
@@ -71,11 +72,11 @@ export default function WishesTab({ p }: { p: Player }) {
           <Line label="Vertrag bis" value={`30.06.${p.contract.expiryDate.slice(0, 4)}`} />
           {rivalId && <Line label="Erzrivale seines Vereins" value={g.clubs[rivalId]?.name ?? '—'} />}
         </div>
-        <div className="pp-section-title mt14">Wünsche</div>
+        <div className="pp-section-title mt14">Wünsche<InfoTip k="versprechen" /></div>
         <WishList wishes={promiseList} known={known} />
         {known && <div className="dnote mt8">Diese Punkte kannst du in der Verhandlung als Versprechen anbieten. Gebrochene Versprechen kosten Zufriedenheit, Kabinenfrieden und Glaubwürdigkeit.</div>}
         {mine && <>
-          <div className="pp-section-title mt14">Vertragsklauseln</div>
+          <div className="pp-section-title mt14">Vertragsklauseln<InfoTip k="spielerKlauseln" /></div>
           {clauses.length ? <ul className="pp-bullets">{clauses.map((x) => <li key={x}>{x}</li>)}</ul> : <div className="dnote">Keine Sonderklauseln.</div>}
         </>}
       </Section>
@@ -84,14 +85,14 @@ export default function WishesTab({ p }: { p: Player }) {
         <Section title="Bindung an den Verein" icon={<Icon name="contracts" size={15} />}>
           <div className="pp-list">
             <Line label="Zufriedenheit" value={`${sat} / 100`} color={sat >= 60 ? 'var(--green)' : sat >= 45 ? 'var(--yellow)' : 'var(--red)'} strong />
-            <Line label="Wechselgefahr" value={risk} color={risk === 'hoch' ? 'var(--red)' : risk === 'mittel' ? 'var(--yellow)' : 'var(--green)'} />
+            <Line label={<>Wechselgefahr<InfoTip k="wechselgefahr" /></>} value={risk} color={risk === 'hoch' ? 'var(--red)' : risk === 'mittel' ? 'var(--yellow)' : 'var(--green)'} />
             {tempter && risk !== 'gering' && <Line label="Reizvollster Verein" value={tempter.name} />}
             <Line label="Offene Versprechen" value={(p.promises ?? []).filter((x) => !x.result).length || 'keine'} />
           </div>
           <div className="dnote mt8">Ehrgeizige, wenig loyale Spieler werden von größeren Vereinen gelockt. Wer sich wohlfühlt und loyal ist, verlängert eher – und manchmal zu besseren Bedingungen für dich.</div>
         </Section>
       ) : st && w ? (
-        <Section title={`Interesse an ${own.shortName}`} icon={<Icon name="transfers" size={15} />}>
+        <Section title={<>Interesse an {own.shortName}<InfoTip k="interesse" /></>} icon={<Icon name="transfers" size={15} />}>
           {st.dealBreaker && k >= 0.35 ? <div className="wish-block">{st.dealBreaker}</div> : <InterestLight score={st.interest} knowledge={k} />}
           <ReasonList reasons={w.appeal.factors} knowledge={k} />
           <div className="pp-section-title mt14">Gehaltsvorstellung</div>
@@ -100,7 +101,7 @@ export default function WishesTab({ p }: { p: Player }) {
             <Line label={st.agent ? 'Forderung des Beraters' : 'Seine Forderung'} value={k >= 0.35 ? fmtWage(st.agentWage) : '—'} />
             <Line label="Bereitschaft" value={k < 0.5 ? 'unbekannt' : st.cut > 0.04 ? `würde etwa ${pct(st.cut)} verzichten` : st.cut < -0.04 ? `verlangt etwa ${pct(st.cut)} Aufschlag` : 'keine Abstriche'}
               color={k < 0.5 ? undefined : st.cut > 0.04 ? 'var(--green)' : st.cut < -0.04 ? 'var(--orange)' : undefined} />
-            <Line label="Berater" value={st.agent ? `ja – Provision etwa ${fmtPrice(st.agentFee)}` : 'nein, verhandelt selbst'} />
+            <Line label={<>Berater<InfoTip k="berater" /></>} value={st.agent ? `ja – Provision etwa ${fmtPrice(st.agentFee)}` : 'nein, verhandelt selbst'} />
             {st.signingFee > 0 && <Line label="Handgeld erwartet" value={`etwa ${fmtPrice(st.signingFee)}`} />}
             <Line label="Wunschlaufzeit" value={`${st.years[0]}–${st.years[1]} Jahre`} />
           </div>

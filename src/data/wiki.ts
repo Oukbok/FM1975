@@ -387,18 +387,23 @@ Nach jedem Spiel wird die Form der eingesetzten Spieler neu berechnet aus:
 Nicht eingesetzte Spieler driften nur langsam Richtung 50.
 Training kann die Form leicht heben; Überlastung (hohe Intensität bei niedriger Fitness) senkt sie.
 
-## Anzeige (Indikator)
-| Form | Label | Pfeil | Farbe |
-|------|-------|-------|-------|
-| ≥ 75 | Bestform | ▲▲ | Grün |
-| 60–74 | gut | ▲ | Grün |
-| 45–59 | normal | ▬ | Gelb |
-| 30–44 | schwach | ▼ | Orange |
-| < 30 | Formkrise | ▼▼ | Rot |
+## Anzeige (Daumen-Symbol)
+In Kader, Aufstellung und Spielerprofil zeigt ein **Daumen** die Form: nach oben = gut, waagerecht = normal, nach unten = schlecht. Fahre mit der Maus darüber, um den genauen Wert zu sehen (z. B. „Form 62/100 – gute Form“).
+| Form | Daumen | Farbe | Wort |
+|------|--------|-------|------|
+| ≥ 68 | nach oben | Dunkelgrün | Topform |
+| 56–67 | schräg nach oben | Hellgrün | gute Form |
+| 44–55 | waagerecht | Gelb | durchschnittlich |
+| 32–43 | schräg nach unten | Orange | schwache Form |
+| < 32 | nach unten | Rot | Formtief |
+
+## Moral (Smiley)
+Die Moral hat fünf Stufen (sehr unzufrieden … sehr glücklich). Für die Anzeige wird sie auf 0–100 umgerechnet (10/30/50/70/90) und als **Smiley** gezeigt – von traurig in Rot bis strahlend in Dunkelgrün.
 
 ## Code
 - \`engine/form.ts\`: \`updatePlayerForm\`, \`applyMatchEffects\`, \`applyTrainingForm\`, \`formIndicator\`.
-- Feld: \`Player.form\` (0–100).`,
+- Feld: \`Player.form\` (0–100).
+- Anzeige: \`components/status/\` (\`FormIcon\`, \`MoraleIcon\`, Umrechnung und Stufen in \`statusScale.ts\`).`,
   },
   {
     id: 'condition-fitness',
@@ -451,8 +456,11 @@ Nach einem harten Spiel braucht ein Spieler damit **mehrere Tage** bis zur volle
 ## Wirkung im Spiel
 Frische fließt als eigener **Frische-Faktor** in die effektive Tagesstärke ein: \`0.7 + frische/100 * 0.3\` (0,7–1,0). Volle Frische = voller Wert; sehr niedrige Frische senkt die physische Leistung spürbar (bis −30 %), aber nicht vernichtend. Effektivstärke = \`Overall * Form * Fitness * Frische\`.
 
-## Anzeige
-Eigene Kachel **„Frisch (x/100)"** im Spielerprofil, direkt neben **„Fit"**. Farbcodiert: Grün > 75, Gelb 60–75, Orange 45–59, Rot < 45.
+## Anzeige (Batterie-Symbol)
+Frische erscheint überall als **Batterie**: Der Füllstand entspricht dem Wert, die Farbe der Stufe – Dunkelgrün ab 90 (voll erholt), Hellgrün 75–89, Gelb 60–74, Orange 45–59, Rot unter 45 (erschöpft). Mit der Maus darüber siehst du den genauen Wert, im Spielerprofil steht er daneben. Im Textmodus zeigt dieselbe Batterie die **Kraft** während des Spiels.
+
+## Erklärungen (i-Symbol)
+Hinter vielen Begriffen im Spiel steht ein kleines **i**. Maus darüber, antippen oder per Tastatur fokussieren zeigt eine kurze Erklärung, oft mit Verweis auf den passenden Wiki-Artikel.
 
 ## Speicherstände
 Save-Version **7**: Altstände ohne Frische werden beim Laden nachgerüstet (\`retrofitFrische\`: Frische = vorhandene Fitness, ersatzweise 100).

@@ -63,6 +63,14 @@
   --neg: var(--red);
   --warn: var(--yellow);
 
+  /* --- Zustands-Skala (Frische/Form/Moral als Symbole, components/status/):
+     5 = sehr gut … 1 = schlecht. Gedämpft, aber eindeutig unterscheidbar. --- */
+  --st-5: #2f9e5e;   /* dunkelgrün */
+  --st-4: #8cc96b;   /* hellgrün */
+  --st-3: #d7be5a;   /* gelb */
+  --st-2: #e08a48;   /* orange */
+  --st-1: #e0545f;   /* rot */
+
   /* --- Struktur --- */
   --border: #303339;
   --border-soft: #24272d;

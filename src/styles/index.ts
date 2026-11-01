@@ -38,4 +38,5 @@ import './28-leagues.css';
 import './28-calendar.css';
 import './28-kabine.css';
 import './28-training.css';
+import './28-icons.css';
 import './29-look.css'; // zuletzt: ruhige Gesamtoptik

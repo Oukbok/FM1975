@@ -9,6 +9,7 @@ import type { Formation } from '../../data/formations';
 import { PITCH_GRID, type GridPoint } from '../../data/pitchGrid';
 import { positionSuitability, suitabilityColor } from '../../engine/positions';
 import PitchSVG from './PitchSVG';
+import { PlayerForm, PlayerFreshness } from '../status';
 
 export interface SlotPreview { slotId: string; x: number; y: number; position: Position; grid: GridPoint | null; swapWith: string | null }
 
@@ -16,16 +17,15 @@ const isOut = (p: Player) => p.availability !== 'available' || !!p.injury || p.s
 
 function Card({ p, pos, captain, small }: { p: Player; pos: Position; captain: boolean; small?: boolean }) {
   const suit = positionSuitability(p, pos);
-  const fr = Math.round(p.frische ?? 100);
   return (
     <div className={`lu-card ${small ? 'sm' : ''} ${isOut(p) ? 'out' : ''}`} style={{ borderLeftColor: suitabilityColor(suit) }}>
       <div className="lu-card-top">
         <span className="lu-card-pos">{pos}</span>
         {captain && <span className="lu-cap" title="Kapitän">K</span>}
+        <span className="lu-card-st"><PlayerFreshness p={p} size={13} /><PlayerForm p={p} size={13} /></span>
         <span className="lu-card-suit" title="Eignung auf dieser Position">{suit}</span>
       </div>
       <div className="lu-card-name">{p.lastName}</div>
-      <span className="lu-card-fr" title={`Frische ${fr}`}><span style={{ width: `${fr}%`, background: fr < 70 ? 'var(--orange)' : 'var(--text-2)' }} /></span>
     </div>
   );
 }

@@ -11,6 +11,7 @@ import { catAvailable, ensureSeating, fanPriceIndex, priceOf, refPrice, seatPric
 import { demandEstimate, forecastStaff, ownCaps, resetSeatPrices, setSeatPrice } from '../../../game/seatingGame';
 import type { Game } from '../../../game/state';
 import type { SeatCat } from '../../../types';
+import { InfoTip } from '../../../ui/InfoTip';
 
 const n0 = (v: number) => Math.round(v).toLocaleString('de-DE');
 
@@ -60,7 +61,7 @@ export function TicketSheet({ g, onChange, onClose }: { g: Game; onChange: () =>
   return (
     <div className="sv-sheet" onClick={(e) => e.stopPropagation()}>
       <div className="sv-sheet-head">
-        <b>Tickets &amp; Nachfrage</b>
+        <b>Tickets &amp; Nachfrage<InfoTip k="ticketpreis" /></b>
         <span className="sv-muted">Nachfrage geschätzt für das nächste Heimspiel gegen einen durchschnittlichen Gegner</span>
         <span className="sv-grow" />
         <button className="dchip" onClick={() => { resetSeatPrices(g); force((x) => x + 1); onChange(); }}>Richtpreise übernehmen</button>
@@ -68,7 +69,7 @@ export function TicketSheet({ g, onChange, onClose }: { g: Game; onChange: () =>
       </div>
       <table className="sv-table">
         <thead>
-          <tr><th>Kategorie</th><th className="r">Kontingent</th><th className="c">Preis je Spiel</th><th>Geschätzte Nachfrage</th><th className="c">Letzte Heimspiele</th><th className="r">Erlös je Spiel</th><th className="r">Saison {season?.id ?? ''}</th></tr>
+          <tr><th>Kategorie<InfoTip k="platzarten" /></th><th className="r">Kontingent</th><th className="c">Preis je Spiel</th><th>Geschätzte Nachfrage<InfoTip k="nachfrageGeschaetzt" /></th><th className="c">Letzte Heimspiele</th><th className="r">Erlös je Spiel</th><th className="r">Saison {season?.id ?? ''}</th></tr>
         </thead>
         <tbody>
           {rows.map((r) => (

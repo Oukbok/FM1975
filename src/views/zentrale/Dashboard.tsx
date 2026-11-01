@@ -15,13 +15,15 @@ import { Screen } from '../../shell/navigation';
 import { Match, POSITION_GROUPS } from '../../types';
 import { fmtDMfull, fmtDateFull, fmtDateShort, zoneClass } from '../../ui/format';
 import { BalanceChart } from '../finanzen/FinancesView';
+import { InfoTip } from '../../ui/InfoTip';
+import type { InfoKey } from '../../data/infoTexts';
 
 // =============================================================================
 // DASHBOARD
 // =============================================================================
 // Kleiner Donut-Ring (Ø Stärke / Ø Alter / Teamchemie) im Mockup-Stil.
 // ring=false zeigt nur die blanke Zahl (in der Akzentfarbe) ohne Kringel.
-export function Donut({ value, frac, color, label, ring = true }: { value: string; frac: number; color: string; label: string; ring?: boolean }) {
+export function Donut({ value, frac, color, label, ring = true, info }: { value: string; frac: number; color: string; label: string; ring?: boolean; info?: InfoKey }) {
   const r = 25;
   const circ = 2 * Math.PI * r;
   const off = circ * (1 - Math.max(0, Math.min(1, frac)));
@@ -42,7 +44,7 @@ export function Donut({ value, frac, color, label, ring = true }: { value: strin
       ) : (
         <div className="ckd-donut-plain"><span className="ckd-donut-num" style={{ color }}>{value}</span></div>
       )}
-      <span className="ckd-donut-lbl">{label}</span>
+      <span className="ckd-donut-lbl">{label}{info && <InfoTip k={info} />}</span>
     </div>
   );
 }
@@ -178,7 +180,7 @@ export function Dashboard({ g, onGoto, onWatch, onOpenEditor }: {
           <div className="cvb2-list">
             <div className="cvb2-lrow"><span className="cvb2-lk">Ziele</span><span className="cvb2-lv">{myClub.boardExpectation}</span></div>
             <div className="cvb2-lrow"><span className="cvb2-lk">Stadt</span><span className="cvb2-lv">{myClub.city}</span></div>
-            <div className="cvb2-lrow"><span className="cvb2-lk">Ruf National</span><span className="cvb2-lv cvb-stars">{[0, 1, 2, 3, 4].map((i) => <span key={i} className={i < repGold ? 'on' : ''}>★</span>)}</span></div>
+            <div className="cvb2-lrow"><span className="cvb2-lk">Ruf National<InfoTip k="ansehen" /></span><span className="cvb2-lv cvb-stars">{[0, 1, 2, 3, 4].map((i) => <span key={i} className={i < repGold ? 'on' : ''}>★</span>)}</span></div>
             <div className="cvb2-lrow"><span className="cvb2-lk">Finanzstatus</span><span className="cvb2-lv">{finStatus}</span></div>
             <div className="cvb2-lrow"><span className="cvb2-lk">Vorstand</span><span className={`cvb2-lv ${boardCls}`}><i className="cvb-dot" />{boardLabel}</span></div>
             <div className="cvb2-lrow"><span className="cvb2-lk">Vereinsfarben</span><span className="cvb2-lv cvb2-colors">{colorFarben.map((c, i) => <i key={i} className="cvb2-swatch" style={{ background: c }} />)}</span></div>
@@ -360,7 +362,7 @@ export function Dashboard({ g, onGoto, onWatch, onOpenEditor }: {
               <div className="ckd3-donuts">
                 <Donut value={String(avgOvr)} frac={avgOvr / 100} color="var(--text)" label="Ø Stärke" ring={false} />
                 <Donut value={String(Math.round(avgAge))} frac={avgAge / 40} color="var(--text)" label="Ø Alter" ring={false} />
-                <Donut value={String(teamChemie)} frac={teamChemie / 100} color={teamChemie < 50 ? 'var(--red)' : 'var(--text-2)'} label="Teamchemie" />
+                <Donut value={String(teamChemie)} frac={teamChemie / 100} color={teamChemie < 50 ? 'var(--red)' : 'var(--text-2)'} label="Teamchemie" info="teamchemie" />
               </div>
             </div>
           </div>

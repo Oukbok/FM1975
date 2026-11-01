@@ -8,6 +8,8 @@ import {
   CAMP_ALTITUDE_DELAY, CampOutlook, CampStatus, campWeather, entourageFactor, groundLabel, gymLabel, kitchenLabel, lodgingAltitude, regenLabel,
 } from '../../engine/trainingCamp';
 import { fmtDM } from '../../ui/format';
+import { InfoTip } from '../../ui/InfoTip';
+import type { InfoKey } from '../../data/infoTexts';
 
 const MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
 const pct = (v: number) => `${Math.round(v * 100)} %`;
@@ -166,8 +168,8 @@ export function LodgingTable({ d, lodgings, selected, year, rep, scale, compare,
 // -----------------------------------------------------------------------------
 // Vorschau der Wirkung
 // -----------------------------------------------------------------------------
-function Cell({ k, v, tone }: { k: string; v: string; tone?: 'good' | 'bad' | 'warn' }) {
-  return <div className={`camp-cell ${tone ?? ''}`}><span>{k}</span><b>{v}</b></div>;
+function Cell({ k, v, tone, info }: { k: string; v: string; tone?: 'good' | 'bad' | 'warn'; info?: InfoKey }) {
+  return <div className={`camp-cell ${tone ?? ''}`}><span>{k}{info && <InfoTip k={info} />}</span><b>{v}</b></div>;
 }
 
 export function OutlookList({ o, squad, scale, youthFocus }: { o: CampOutlook; squad: number; scale: number; youthFocus: boolean }) {
@@ -181,8 +183,8 @@ export function OutlookList({ o, squad, scale, youthFocus }: { o: CampOutlook; s
       <Cell k="Form" v={`${sign(o.formLo)} … ${sign(o.formHi)}`} tone={o.formHi < 0 ? 'warn' : undefined} />
       <Cell k={youthFocus ? 'Entw. Junge / Rest' : 'Entwicklung'} v={youthFocus ? `+${num(o.devYouth)} / +${num(o.dev)}` : `+${num(o.dev)}`} />
       {o.altitudeFitness > 0
-        ? <Cell k={`Höhe, nach ${CAMP_ALTITUDE_DELAY} Tagen`} v={`${sign(o.altitudeFitness)} Kondition`} tone="good" />
-        : <Cell k="Frische bei Rückkehr" v={`${frische >= 0 ? '+' : '−'}${Math.abs(frische)}`} tone={frische < -8 ? 'warn' : undefined} />}
+        ? <Cell k={`Höhe, nach ${CAMP_ALTITUDE_DELAY} Tagen`} info="hoehentraining" v={`${sign(o.altitudeFitness)} Kondition`} tone="good" />
+        : <Cell k="Frische bei Rückkehr" info="frische" v={`${frische >= 0 ? '+' : '−'}${Math.abs(frische)}`} tone={frische < -8 ? 'warn' : undefined} />}
       <Cell k="Moral-Chance" v={pct(o.morale)} tone={o.morale >= 0.45 ? 'good' : undefined} />
       <Cell k="Zufriedenheit" v={`${o.satisfaction >= 0 ? '+' : '−'}${Math.abs(o.satisfaction)}${o.starGrumble ? ', Stars murren' : ''}`} tone={o.starGrumble || o.satisfaction < 0 ? 'warn' : undefined} />
       <Cell k="Disziplin" v={incidents >= 0.5 ? verst(Math.round(incidents)) : o.disciplineGain > 0.1 ? 'gestärkt' : 'unauffällig'}

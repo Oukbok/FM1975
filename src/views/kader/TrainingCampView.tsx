@@ -93,7 +93,7 @@ export function TrainingCampView({ g, onChange }: { g: Game; onChange: () => voi
 
   return (
     <DashPage>
-      <DashBox title={mode === 'verlauf' ? 'Verlauf' : `Ziele ${season === 'summer' ? 'Sommer' : 'Winter'} ${year}`} icon="weather" rows={2}
+      <DashBox title={mode === 'verlauf' ? 'Verlauf' : `Ziele ${season === 'summer' ? 'Sommer' : 'Winter'} ${year}`} info="trainingslager" icon="weather" rows={2}
         right={<span className="dbtnrow">
           <button className={`dchip ${season === 'summer' && mode === 'ziele' ? 'on' : ''}`} onClick={() => switchSeason('summer')}>Sommer</button>
           <button className={`dchip ${season === 'winter' && mode === 'ziele' ? 'on' : ''}`} onClick={() => switchSeason('winter')}>Winter</button>

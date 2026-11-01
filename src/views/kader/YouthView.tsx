@@ -113,7 +113,7 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
         )}
       </DashBox>
 
-      <DashBox title="Jugendakademie" icon="facilities" right={`Ruf ${Math.round(inv.reputation)}`}>
+      <DashBox title="Jugendakademie" info="ausbildung" icon="facilities" right={`Ruf ${Math.round(inv.reputation)}`}>
         <Meter label="Ausbildungsqualität" value={inv.quality} text={`${Math.round(inv.quality)}`} />
         {YOUTH_AGE_CLASS_ORDER.map((cls) => (
           <Meter key={cls} label={`${YOUTH_AGE_CLASS_LABEL[cls]} · ${YOUTH_AGE_CLASS_RANGE[cls].split(' · ')[0]}`} value={byClass[cls].length} max={Math.max(YOUTH_TEAM_SIZE[cls], maxClass)}

@@ -2,7 +2,8 @@
 import { Player } from '../../types';
 import { vColor } from '../../ui/format';
 import Icon from '../Icon';
-import { AVAIL_DE, INJURY_TYPE_DE, INJURY_SEV_DE, utcDate, frischeOf, Section, Line, Bar } from './shared';
+import { AVAIL_DE, INJURY_TYPE_DE, INJURY_SEV_DE, utcDate, Section, Line, Bar } from './shared';
+import { StatusLine, freshness100 } from '../status';
 
 export default function MedicalTab({ p }: { p: Player }) {
   const inj = p.injury;
@@ -32,7 +33,7 @@ export default function MedicalTab({ p }: { p: Player }) {
       </Section>
       <div className="pp-stack">
       <Section title="Belastung & Körper" icon={<Icon name="training" size={15} />}>
-        <Bar label="Frische" value={frischeOf(p)} tone="cond" />
+        <StatusLine kind="frische" value={freshness100(p)} />
         <Bar label="Fitness" value={Math.round(p.attributes.fitness)} tone="cond" />
         <Bar label="Robustheit" value={Math.round(p.attributes.strength)} />
         <div className="pp-list mt8">

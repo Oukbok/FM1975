@@ -6,6 +6,11 @@ import { ClubFinances } from '../../types';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtCompactDM, fmtDateShort, fmtFullDM, fmtPrice, fmtWage, wageUnit } from '../../ui/format';
 import { type ReactNode } from 'react';
+import type { InfoKey } from '../../data/infoTexts';
+
+/** i-Hilfen an einzelnen Umsatzarten (nur, wo nicht selbsterklärend). */
+const INCOME_INFO: Partial<Record<string, InfoKey>> = { tvMoney: 'tvGeld', commercial: 'vermarktung', membership: 'mitglieder', catering: 'catering' };
+const EXPENSE_INFO: Partial<Record<string, InfoKey>> = { operations: 'betrieb', wages: 'gehaltsquote' };
 
 export const INCOME_ROWS: { key: keyof ClubFinances['income']; label: string; icon: ReactNode }[] = [
   { key: 'ticketSales', label: 'Stadioneinnahmen', icon: <Icon name="stadium" /> },
@@ -125,20 +130,20 @@ export function FinancesView({ g }: { g: Game }) {
 
   return (
     <DashPage>
-      <DashBox title="Kontostand" icon="finances" span={2} right={`Saison ${g.season}`}>
+      <DashBox title="Kontostand" info="kontostand" icon="finances" span={2} right={`Saison ${g.season}`}>
         <div className="dgrid2" style={{ gridTemplateColumns: '1fr 2fr', alignItems: 'center' }}>
           <div>
-            <Kpi value={fmtFullDM(fin.balance)} label="Kontostand" color={fin.balance < 0 ? 'var(--red)' : undefined} />
+            <Kpi value={fmtFullDM(fin.balance)} label="Kontostand" info="kontostand" color={fin.balance < 0 ? 'var(--red)' : undefined} />
             <KV k="Saldo Saison" v={sign(net)} color={net >= 0 ? 'var(--green)' : 'var(--red)'} />
-            <KV k="Monatssaldo (fix)" v={sign(monthly.net)} color={monthly.net >= 0 ? 'var(--green)' : 'var(--red)'} />
-            <KV k="Transferbudget" v={fmtPrice(fin.transferBudget)} />
-            <KV k={`Gehälter / Budget pro ${wageUnit()}`} v={`${fmtWage(weekly, { unit: false })} / ${fmtWage(wageBudget, { unit: false })}`} color={weekly > wageBudget ? 'var(--red)' : undefined} />
+            <KV k="Monatssaldo (fix)" info="saldoMonat" v={sign(monthly.net)} color={monthly.net >= 0 ? 'var(--green)' : 'var(--red)'} />
+            <KV k="Transferbudget" info="transferbudget" v={fmtPrice(fin.transferBudget)} />
+            <KV k={`Gehälter / Budget pro ${wageUnit()}`} info="gehaltsbudget" v={`${fmtWage(weekly, { unit: false })} / ${fmtWage(wageBudget, { unit: false })}`} color={weekly > wageBudget ? 'var(--red)' : undefined} />
           </div>
           <BalanceChart points={fin.balanceHistory ?? []} current={fin.balance} currentDate={g.calendar.currentDate} />
         </div>
       </DashBox>
 
-      <DashBox title="Prognose Saisonende" icon="stats" right={warnings.length ? `${warnings.length} Warnung(en)` : undefined}>
+      <DashBox title="Prognose Saisonende" info="prognose" icon="stats" right={warnings.length ? `${warnings.length} Warnung(en)` : undefined}>
         <div className="dkpis">
           <Kpi value={fmtCompactDM(forecast.projectedEndBalance)} label="Endkontostand" color={forecast.projectedEndBalance < 0 ? 'var(--red)' : undefined} />
         </div>
@@ -148,16 +153,16 @@ export function FinancesView({ g }: { g: Game }) {
         {warnings.map((w, i) => <div key={i} className="dnote mt8" style={{ color: 'var(--orange)', fontSize: 15 }}>{w}</div>)}
       </DashBox>
 
-      <DashBox className="dbox-wide-lbl" title="Einnahmen (Saison)" icon="dashFinanzen" right={fmtCompactDM(income)}>
+      <DashBox className="dbox-wide-lbl" title="Einnahmen (Saison)" info="einnahmen" icon="dashFinanzen" right={fmtCompactDM(income)}>
         {INCOME_ROWS.map((r) => (
-          <Meter key={String(r.key)} label={<span className="dfin-lbl">{r.icon} {r.label}</span>} value={fin.income[r.key]} max={maxIncome}
+          <Meter key={String(r.key)} label={<span className="dfin-lbl">{r.icon} {r.label}</span>} info={INCOME_INFO[r.key]} value={fin.income[r.key]} max={maxIncome}
             text={fin.income[r.key] > 0 ? fmtCompactDM(fin.income[r.key]) : '–'} color="var(--green)" />
         ))}
       </DashBox>
 
-      <DashBox className="dbox-wide-lbl" title="Ausgaben (Saison)" icon="dashFinanzen" right={fmtCompactDM(expense)}>
+      <DashBox className="dbox-wide-lbl" title="Ausgaben (Saison)" info="ausgaben" icon="dashFinanzen" right={fmtCompactDM(expense)}>
         {EXPENSE_ROWS.map((r) => (
-          <Meter key={String(r.key)} label={<span className="dfin-lbl">{r.icon} {r.label}</span>} value={fin.expenses[r.key] ?? 0} max={maxExpense}
+          <Meter key={String(r.key)} label={<span className="dfin-lbl">{r.icon} {r.label}</span>} info={EXPENSE_INFO[r.key]} value={fin.expenses[r.key] ?? 0} max={maxExpense}
             text={(fin.expenses[r.key] ?? 0) > 0 ? fmtCompactDM(fin.expenses[r.key] ?? 0) : '–'} color="var(--orange)" />
         ))}
       </DashBox>

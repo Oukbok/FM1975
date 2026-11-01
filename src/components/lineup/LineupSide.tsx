@@ -43,8 +43,8 @@ export function TacticHead({ t, formation, set, xiAvg, suitAvg, familiar, xiCoun
       </div>
       <div className="lu-meters">
         <Meter label="Ø Stärke" value={xiAvg} max={99} color="var(--text-2)" />
-        <Meter label="Ø Eignung" value={suitAvg} max={99} color={suitabilityColor(suitAvg)} />
-        <Meter label="Vertraute Positionen" value={familiar} max={Math.max(1, xiCount)} color="var(--text-2)" text={`${familiar}/${xiCount}`} />
+        <Meter label="Ø Eignung" info="eignung" value={suitAvg} max={99} color={suitabilityColor(suitAvg)} />
+        <Meter label="Vertraute Positionen" info="vertrautheit" value={familiar} max={Math.max(1, xiCount)} color="var(--text-2)" text={`${familiar}/${xiCount}`} />
       </div>
       <div className="dnote">Anweisungen: Spieltag › Taktik. Vertraut = Stamm- oder Nebenposition.</div>
     </>

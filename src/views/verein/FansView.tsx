@@ -40,28 +40,28 @@ export function FansView({ g }: { g: Game }) {
 
   return (
     <DashPage>
-      <DashBox title="Fankurve" icon="fans" span={2} right={<span style={{ color: vColor(mood) }}>{moodText}</span>}>
+      <DashBox title="Fankurve" info="fanStimmung" icon="fans" span={2} right={<span style={{ color: vColor(mood) }}>{moodText}</span>}>
         <div className="fan-layout">
           <FanCrowd mood={mood} formPoints={last5.length ? pts : -1} attendance={expRate} year={year} seed={`${myClub.id}|${g.calendar.currentDate.slice(0, 7)}`}
             primary={myClub.colors?.primary ?? '#c0392b'} secondary={myClub.colors?.secondary ?? '#ffffff'} />
           <div className="fan-side">
             <div className="dkpis">
-              <Kpi value={mood} label="Fan-Stimmung" color={vColor(mood)} />
+              <Kpi value={mood} label="Fan-Stimmung" info="fanStimmung" color={vColor(mood)} />
               <Kpi value={home.length ? avgAtt.toLocaleString('de-DE') : expVisitors.toLocaleString('de-DE')} label={home.length ? 'Ø Heimspiel' : 'erwartet'} />
             </div>
             {row && row.form.length > 0 && <KV k="Form" v={<FormDots form={row.form} />} />}
-            <KV k="Erw. Auslastung" v={`${Math.round(expRate * 100)} %`} />
+            <KV k="Erw. Auslastung" info="auslastung" v={`${Math.round(expRate * 100)} %`} />
             <KV k="Kapazität" v={st.capacity.toLocaleString('de-DE')} />
             <KV k="Stehplatz" v={fmtDMfull(priceOf(myClub, 'steh', year) * md)} />
-            <KV k="Ansehen" v={myClub.reputation} />
-            <KV k="Leitbild erfüllt" v={`${env.identity} %`} color={vColor(env.identity)} />
-            <KV k="Medien-Druck" v={Math.round(env.mediaPressure)} />
+            <KV k="Ansehen" info="ansehen" v={myClub.reputation} />
+            <KV k="Leitbild erfüllt" info="leitbild" v={`${env.identity} %`} color={vColor(env.identity)} />
+            <KV k="Medien-Druck" info="medienDruck" v={Math.round(env.mediaPressure)} />
             <div className="dnote mt8">Je besser Stimmung und Ergebnisse, desto voller und lauter die Kurve.</div>
           </div>
         </div>
       </DashBox>
 
-      <DashBox title="Mitglieder" icon="dashVerein">
+      <DashBox title="Mitglieder" info="mitglieder" icon="dashVerein">
         <div className="dkpis">
           <Kpi value={members.toLocaleString('de-DE')} label="Mitglieder" />
           <Kpi value={`${env.memberTrend >= 0 ? '+' : ''}${(env.memberTrend * 1200).toFixed(1)} %`} label="Trend / Jahr" color={env.memberTrend >= 0 ? 'var(--green)' : 'var(--red)'} />
@@ -77,10 +77,10 @@ export function FansView({ g }: { g: Game }) {
         )) : <Empty icon="dashBall">Noch kein Heimspiel.</Empty>}
       </DashBox>
 
-      <DashBox title="Identität & Rivalen" icon="dashVerein" right={era.name}>
+      <DashBox title="Identität & Rivalen" info="leitbild" icon="dashVerein" right={era.name}>
         <KV k="Leitbild" v={PHILOSOPHY_LABEL[env.philosophy]} strong />
         <div className="dnote">{PHILOSOPHY_INFO[env.philosophy]}</div>
-        <KV k="Tradition" v={env.tradition} />
+        <KV k="Tradition" info="tradition" v={env.tradition} />
         <div className="dsec">Rivalen</div>
         {env.rivals.length ? env.rivals.map((id) => <KV key={id} k={g.clubs[id]?.name ?? g.simClubs?.[id]?.name ?? id} v="Derby" />) : <div className="dnote">Kein Derbygegner in der Liga.</div>}
         <div className="dsec">Fankultur</div>

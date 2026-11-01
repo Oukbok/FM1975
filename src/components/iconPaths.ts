@@ -594,3 +594,27 @@ export const ICON_MARKUP: Record<string, string> = Object.fromEntries(
     v.replace(/%BASE%/g, BASE).replace(/%ACCENT%/g, ACCENT),
   ]),
 );
+
+// =============================================================================
+// ZUSTANDS-SYMBOLE (Frische / Form / Moral) — einfarbig über `currentColor`
+// =============================================================================
+// Nicht Teil des festen Duotone-Sets oben: Die Farbe kommt aus der Zustands-
+// Skala (`--st-1 … --st-5`, siehe components/status/statusScale.ts). viewBox 0 0 24 24.
+export const STATUS_SHAPES = {
+  /** Batterie-Gehäuse (Frische); der Füllstand wird in FreshnessIcon gezeichnet. */
+  batteryBody: 'M3.2 5.6h15.6a2.2 2.2 0 0 1 2.2 2.2v8.4a2.2 2.2 0 0 1-2.2 2.2H3.2A2.2 2.2 0 0 1 1 16.2V7.8a2.2 2.2 0 0 1 2.2-2.2Z',
+  batteryTip: 'M21.6 9.4h.6a.8.8 0 0 1 .8.8v3.6a.8.8 0 0 1-.8.8h-.6Z',
+  /** Daumen hoch als Umriss (Form): Ärmel + Hand, gedreht je Stufe um (12, 12). Nach Lucide „thumbs-up“ (ISC). */
+  thumbCuff: 'M7 10v12',
+  thumb: 'M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z',
+  /** Smiley (Moral): Kopf, Augen und Mund je Stufe 1–5. */
+  face: 'M12 2.6a9.4 9.4 0 1 1 0 18.8 9.4 9.4 0 0 1 0-18.8Z',
+  eyes: 'M8.9 8.7a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Zm6.2 0a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Z',
+  mouth: [
+    'M7.8 17.2Q12 12.6 16.2 17.2',
+    'M8.4 16.4Q12 14.2 15.6 16.4',
+    'M8.4 15.4H15.6',
+    'M8.4 14.4Q12 17 15.6 14.4',
+    'M7.6 13.6Q12 19.4 16.4 13.6Z',
+  ],
+} as const;

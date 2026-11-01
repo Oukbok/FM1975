@@ -14,6 +14,7 @@ import { ClubLink } from './club/ClubLink';
 import PitchSVG from './lineup/PitchSVG';
 import { effectiveFormation } from './lineup/lineupOps';
 import { level, STYLE_DE, STYLE_DESC, STYLES } from './lineup/LineupSide';
+import { InfoTip } from '../ui/InfoTip';
 
 // Loses Game-Interface (Vollstruktur liegt in game/state.ts).
 interface G {
@@ -50,7 +51,7 @@ export default function TacticsView({ g, onChange }: { g: G; onChange: () => voi
 
   return (
     <DashPage>
-      <DashBox title="Mentalität" icon="tactics" right={STYLE_DE[t.style] ?? t.style}>
+      <DashBox title="Mentalität" info="mentalitaet" icon="tactics" right={STYLE_DE[t.style] ?? t.style}>
         <div className="lu-seg" role="group">
           {STYLES.map((s) => <button key={s} className={t.style === s ? 'on' : ''} onClick={() => set({ style: s })}>{STYLE_DE[s]}</button>)}
         </div>
@@ -62,7 +63,7 @@ export default function TacticsView({ g, onChange }: { g: G; onChange: () => voi
         <div className="dnote">Mehr Einsatz gewinnt Zweikämpfe und macht Druck, kostet aber Kraft und Frische und erhöht Verletzungs- und Kartenrisiko. Im Textmodus kannst du die Ausrichtung im Spiel verschieben und Zurufe geben.</div>
       </DashBox>
 
-      <DashBox title="Mit Ball" icon="matchball">
+      <DashBox title="Mit Ball" info="mitBall" icon="matchball">
         <Slider label="Tempo" lo="bedächtig" hi="hohes Tempo" value={t.tempo} onChange={(v) => set({ tempo: v })} />
         <Slider label="Breite" lo="über die Mitte" hi="über die Flügel" value={t.widthFocus ?? 50} onChange={(v) => set({ widthFocus: v })} />
         <div className="lu-mlabel">Aufbauspiel</div>
@@ -72,19 +73,19 @@ export default function TacticsView({ g, onChange }: { g: G; onChange: () => voi
         </div>
       </DashBox>
 
-      <DashBox title="Gegen den Ball" icon="shield">
+      <DashBox title="Gegen den Ball" info="gegenBall" icon="shield">
         <Slider label="Pressinghöhe" lo="abwartend" hi="hohes Pressing" value={t.pressing} onChange={(v) => set({ pressing: v })} />
         <Slider label="Abwehrlinie" lo="tief" hi="hoch" value={t.defensiveLine} onChange={(v) => set({ defensiveLine: v })} />
         <Slider label="Zweikampfhärte" lo="fair" hi="kompromisslos" value={t.tackleHardness ?? 50} onChange={(v) => set({ tackleHardness: v })} />
         <div className="dnote">Härte gewinnt mehr Zweikämpfe, bringt aber Fouls und Karten.</div>
-        <div className="lu-mlabel">Abseitsfalle</div>
+        <div className="lu-mlabel">Abseitsfalle<InfoTip k="abseitsfalle" /></div>
         <div className="lu-seg tx-toggle">
           <button className={t.offsideTrap ? 'on' : ''} onClick={() => set({ offsideTrap: true })}>An</button>
           <button className={!t.offsideTrap ? 'on' : ''} onClick={() => set({ offsideTrap: false })}>Aus</button>
         </div>
       </DashBox>
 
-      <DashBox title="Formation" icon="lineup" right={getFormation(t.formation).label}>
+      <DashBox title="Formation" info="formation" icon="lineup" right={getFormation(t.formation).label}>
         <div className="tx-mini">
           <div className="lu-pitch">
             <div className="lu-field">
@@ -104,7 +105,7 @@ export default function TacticsView({ g, onChange }: { g: G; onChange: () => voi
         </div>
       </DashBox>
 
-      <DashBox title="Wirkung im Spiel" icon="stats" right="ggü. neutral">
+      <DashBox title="Wirkung im Spiel" info="wirkung" icon="stats" right="ggü. neutral">
         <div className="tx-effect">
           {eff.map(([label, f, bad]) => {
             const d = Math.max(-1, Math.min(1, (f - 1) / 0.3));

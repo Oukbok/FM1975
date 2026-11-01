@@ -2,6 +2,7 @@ import { FOCUS_INFO, FOCUS_LABEL, PHASE_LABEL, SeasonPhase, TrainingFocus, phase
 import { Game } from '../../game/state';
 import { MAX_FOERDER, setFoerder } from '../../game/staffGame';
 import { DashBox } from '../../ui/DashPage';
+import { InfoTip } from '../../ui/InfoTip';
 
 // =============================================================================
 // Trainingsphilosophie je Saisonphase + Förderspieler (wenig Klickarbeit pro
@@ -29,7 +30,7 @@ export function PhilosophyBox({ g, onChange }: { g: Game; onChange: () => void }
   const cur = focus[now] ?? 'balance';
 
   return (
-    <DashBox title="Philosophie & Förderspieler" icon="contracts" right={PHASE_LABEL[now].split(' ')[0]}>
+    <DashBox title="Philosophie & Förderspieler" info="philosophie" icon="contracts" right={PHASE_LABEL[now].split(' ')[0]}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 12px' }}>
         {PHASES.map((ph) => (
           <label key={ph} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -41,7 +42,7 @@ export function PhilosophyBox({ g, onChange }: { g: Game; onChange: () => void }
         ))}
       </div>
       <div className="dnote">{FOCUS_INFO[cur]}</div>
-      <div className="dsec">Förderspieler ({foerder.length}/{MAX_FOERDER})</div>
+      <div className="dsec">Förderspieler ({foerder.length}/{MAX_FOERDER})<InfoTip k="foerderspieler" /></div>
       <div className="dnote">Bekommen +25 % Entwicklungstempo, der Rest des Kaders etwas weniger Aufmerksamkeit (−3 %).</div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 6 }}>
         {squad.filter((p) => p.age <= 24 || foerder.includes(p.id)).slice(0, 14).map((p) => (

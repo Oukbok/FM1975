@@ -18,6 +18,7 @@ import { makeMessage, pushMessage } from '../../../engine/messages';
 import { KV, Meter } from '../../../ui/DashPage';
 import { vColor } from '../../../ui/format';
 import Icon from '../../../components/Icon';
+import { InfoTip } from '../../../ui/InfoTip';
 
 const pct = (v: number) => `${v > 0 ? '+' : ''}${(v * 100).toFixed(1).replace('.', ',').replace(',0', '')} %`;
 const num = (v: number) => Math.round(v).toLocaleString('de-DE');
@@ -101,7 +102,7 @@ export function ModuleDetail({ g, club, gr, year, onChange, onClose, k }: Props 
           {next.upkeep > 0 && <KV k="Unterhalt danach" v={`${money(next.upkeep * mdScale(year), year)} / Monat`} />}
           {chk.areaNeed > 0 && <KV k="Fläche" v={`+${chk.areaNeed} Parzelle(n)`} />}
           <KV k="Dauer" v={negotiate ? 'Verhandlung 6–10 Wochen' : `${next.permit ? `Genehmigung ~${Math.round(permitMonths(year))} Mon. + ` : ''}Bau ~${Math.max(1, Math.round(next.days / 30))} Mon.`} />
-          {next.permit && !negotiate && <div className="dnote">Anwohner können protestieren: Verzögerung, Auflagen (+12 %) oder Ablehnung (90 % zurück).</div>}
+          {next.permit && !negotiate && <div className="dnote">Anwohner können protestieren: Verzögerung, Auflagen (+12 %) oder Ablehnung (90 % zurück).<InfoTip k="anwohner" /></div>}
           <button className="btn btn-primary mt8" disabled={!chk.ok} onClick={() => act(startGroundsBuild(g, k))}>
             {negotiate ? 'Mit der Stadt verhandeln' : lv ? 'Ausbauen' : 'Bauen'}
           </button>

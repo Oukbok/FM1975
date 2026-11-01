@@ -1,0 +1,96 @@
+/* =============================================================================
+   Zustands-Symbole (components/status/) + i-Hilfen (ui/InfoTip.tsx)
+   ============================================================================= */
+
+/* --- Frische / Form / Moral als farbiges Symbol ----------------------------- */
+.st-icon {
+  display: inline-flex; align-items: center; gap: 5px;
+  vertical-align: middle; line-height: 1; cursor: default;
+  border-radius: 3px; outline: none;
+}
+.st-icon svg { display: block; flex: none; }
+.st-icon:focus-visible { box-shadow: 0 0 0 2px var(--border); }
+.st-icon .st-val { color: var(--text); font-variant-numeric: tabular-nums; font-weight: 600; font-size: 0.95em; }
+/* Gruppe aus mehreren Symbolen (z. B. Karte auf dem Feld) */
+.st-group { display: inline-flex; align-items: center; gap: 6px; }
+
+/* --- i-Hilfe ---------------------------------------------------------------- */
+.itip {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px; margin: 0 0 0 6px; padding: 0;
+  border: 1px solid var(--text-3); border-radius: 50%;
+  background: transparent; color: var(--text-2);
+  font: italic 600 9.5px/1 Georgia, 'Times New Roman', serif;
+  text-transform: none; letter-spacing: 0;
+  vertical-align: middle; cursor: help; flex: none;
+  position: relative; top: -1px;
+  transition: color .12s, border-color .12s;
+}
+.itip { opacity: .7; }
+.itip:hover, .itip.open, .itip:focus-visible { opacity: 1; color: var(--text); border-color: var(--text-2); outline: none; }
+.itip:focus-visible { box-shadow: 0 0 0 2px var(--border); }
+/* Treffer etwas größer als das Symbol (Touch) */
+.itip::after { content: ''; position: absolute; inset: -6px; }
+
+.itip-pop {
+  position: fixed; z-index: 10000;
+  background: var(--elevated); color: var(--text-2);
+  border: 1px solid var(--border); border-radius: 6px;
+  box-shadow: var(--shadow);
+  padding: 10px 12px 11px;
+  font-family: var(--font-ui, 'Barlow', system-ui, sans-serif);
+  font-size: 12.5px; line-height: 1.45; font-weight: 400;
+  text-transform: none; letter-spacing: 0; text-align: left; white-space: normal;
+  pointer-events: auto;
+}
+.itip-title {
+  color: var(--text); font-weight: 600; font-size: 12.5px; margin-bottom: 4px;
+}
+.itip-text { color: var(--text-2); }
+.itip-wiki {
+  margin-top: 8px; padding: 0; border: 0; background: none; cursor: pointer;
+  color: var(--text-3); font: inherit; font-size: 11.5px; text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.itip-wiki:hover, .itip-wiki:focus-visible { color: var(--text); outline: none; }
+
+/* In Box-Titeln (Oswald, Großbuchstaben) und Kennzahl-Beschriftungen */
+.dxh-title .itip { margin-left: 8px; top: -2px; }
+.dkpi-lbl .itip { width: 12px; height: 12px; font-size: 8.5px; margin-left: 4px; }
+
+/* --- Aufstellung: Symbole in Liste und auf den Karten ---------------------- */
+.lu-table td.lu-c-st { text-align: center; }
+.lu-table th.lu-h-fr { width: 76px; }
+.lu-table th.lu-h-moral { width: 64px; }
+.lu-table th.lu-h-fr, .lu-table th.lu-h-form, .lu-table th.lu-h-moral { text-align: center; }
+.lu-card-st { display: inline-flex; align-items: center; gap: 3px; margin-left: auto; }
+.lu-card-st + .lu-card-suit { margin-left: 5px; }
+.lu-card-name { margin-bottom: 2px; }
+
+/* --- Spielerprofil: Zustandszeilen im Raster der Balken -------------------- */
+.st-line .st-line-mid { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.st-line .st-line-word { font-size: 13px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.st-line .pp-bar-val { color: var(--text); }
+.pp-bar-lbl .itip, .pp-section-title .itip { margin-left: 5px; }
+
+/* --- Textmodus: Kraft als Batterie ----------------------------------------- */
+.ms-energy-ico { display: flex; justify-content: center; }
+
+/* Zentrale: Beschriftung unter dem Teamchemie-Ring bleibt einzeilig */
+.ckd-donut-lbl:has(.itip) { white-space: nowrap; }
+.ckd-donut-lbl .itip { width: 11px; height: 11px; font-size: 8px; margin-left: 3px; }
+.lu-card-top .lu-cap { flex: none; }
+
+/* --- Sofort-Einblendung der Zustands-Symbole (StatusTip.tsx) ---------------- */
+.st-tip {
+  position: fixed; z-index: 10001; transform-origin: top left; pointer-events: none;
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+  background: var(--elevated); border: 1px solid var(--border); border-radius: 5px;
+  box-shadow: var(--shadow); padding: 5px 9px;
+  font-family: var(--font-ui, 'Barlow', system-ui, sans-serif); font-size: 12.5px; line-height: 1.2;
+  font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--text-2);
+}
+.st-tip b { color: var(--text); font-weight: 600; }
+.st-tip-val { font-variant-numeric: tabular-nums; }
+.st-tip-dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.itip-pop { transform-origin: top left; }

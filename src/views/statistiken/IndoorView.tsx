@@ -89,7 +89,7 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
         {note && <div className="dnote mt8" style={{ color: 'var(--accent)' }}>{note}</div>}
       </DashBox>
 
-      <DashBox title="Hallenfußball" icon="trophy" right={phase === 'masters' ? `Endrunde ${wy}` : undefined}>
+      <DashBox title="Hallenfußball" info="halle" icon="trophy" right={phase === 'masters' ? `Endrunde ${wy}` : undefined}>
         <div className="dnote" style={{ marginBottom: 8 }}>{ownPhaseStatus}</div>
         {phase === 'masters' && (
           <>
@@ -158,7 +158,7 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
         )}
       </DashBox>
 
-      <DashBox title="Masters-Siegerliste" icon="chronicle">
+      <DashBox title="Masters-Siegerliste" info="hallenMasters" icon="chronicle">
         {st.history.some((h) => h.mastersWinner) && <div className="dsec">In deinem Spiel</div>}
         {[...st.history].reverse().filter((h) => h.mastersWinner).map((h) => (
           <div key={h.year} className="dlist-row">

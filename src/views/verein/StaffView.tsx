@@ -94,17 +94,17 @@ export function StaffView({ g, onChange }: { g: Game; onChange: () => void }) {
 
   return (
     <DashPage>
-      <DashBox title="Wirkung des Stabs" icon="staff" right={`${staff.length} Personen`}>
+      <DashBox title="Wirkung des Stabs" info="mitarbeiter" icon="staff" right={`${staff.length} Personen`}>
         <div className="dkpis">
           <Kpi value={fmtStaffWage(monthly, { unit: false })} label={`Personalkosten / ${wageUnit()}`} />
-          <Kpi value={`${coach.extra >= 0 ? '+' : ''}${Math.round(coach.extra * 100)} %`} label="Trainingswirkung" color={coach.extra >= 0 ? 'var(--green)' : 'var(--orange)'} />
+          <Kpi value={`${coach.extra >= 0 ? '+' : ''}${Math.round(coach.extra * 100)} %`} label="Trainingswirkung" info="trainingsplan" color={coach.extra >= 0 ? 'var(--green)' : 'var(--orange)'} />
         </div>
         <Meter label="Betreuung" value={coach.capacity} max={1} text={`${Math.round(coach.capacity * 100)} %`} />
         <Meter label="Verletzungsrisiko" value={fx.injuryReduction} max={STAFF_CAPS.injuryReduction} text={`−${Math.round(fx.injuryReduction * 100)} %`} />
         <Meter label="Ausfallzeit" value={fx.rehabReduction} max={STAFF_CAPS.rehabReduction} text={`−${Math.round(fx.rehabReduction * 100)} %`} />
         <Meter label="Regeneration" value={fx.recovery} max={STAFF_CAPS.recovery} text={`+${fx.recovery.toFixed(1)}/Tag`} />
         <Meter label="Scouting" value={fx.scouting} max={STAFF_CAPS.scouting} text={`+${Math.round(fx.scouting * 100)} %`} />
-        <Meter label="Reichweite" value={fx.reach} max={STAFF_CAPS.reach} text={`+${Math.round(fx.reach * 100)} %`} />
+        <Meter label="Reichweite" info="reichweite" value={fx.reach} max={STAFF_CAPS.reach} text={`+${Math.round(fx.reach * 100)} %`} />
         {msg && <div className="dnote mt8" style={{ color: 'var(--accent)', fontSize: 15 }}>{msg}</div>}
         <div className="dnote mt8">Trainer, Fitness-, Torwart- und Athletiktrainer, Analysten und Psychologen stellst du unter Training › Trainerteam ein. Gute Trainer holen zuverlässiger heraus, was in den Spielern steckt – das Potenzial selbst steigt nicht. Ein Trainer betreut etwa neun Spieler. Wirkung und Effekte sind gedeckelt.</div>
       </DashBox>

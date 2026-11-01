@@ -1,9 +1,10 @@
 import PlayerModal from '../../components/PlayerModal';
-import { formIndicator } from '../../engine/form';
 import { Game } from '../../game/state';
 import { Player } from '../../types';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtDM, vColor, condColor, fmtWage, wageUnit } from '../../ui/format';
+import { PlayerForm, PlayerFreshness, PlayerMorale, MORALE_100, playerMorale100 } from '../../components/status';
+import { InfoTip } from '../../ui/InfoTip';
 import { GROUP_DE, PlayerRow, ScoutStars, avg, groupOf, scoutMid } from '../shared';
 import { useState } from 'react';
 import { demandFor, offerContract } from '../../game/contracts';
@@ -11,9 +12,8 @@ import { demandFor, offerContract } from '../../game/contracts';
 // =============================================================================
 // KADER — sortierbare Kadertabelle, Kaderstruktur, Verfügbarkeit
 // =============================================================================
-export type SquadSort = 'pos' | 'ovr' | 'pot' | 'form' | 'fri' | 'fit' | 'age' | 'apps' | 'goals';
+export type SquadSort = 'pos' | 'ovr' | 'pot' | 'form' | 'fri' | 'fit' | 'mor' | 'age' | 'apps' | 'goals';
 
-const MORALE_DE: Record<string, string> = { very_low: 'sehr schlecht', low: 'schlecht', okay: 'okay', good: 'gut', excellent: 'super' };
 const GROUP_ORDER = ['GK', 'DEF', 'MID', 'ATT'];
 
 export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
@@ -29,6 +29,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
       case 'form': return b.form - a.form;
       case 'fri': return (a.frische ?? 100) - (b.frische ?? 100);
       case 'fit': return b.attributes.fitness - a.attributes.fitness;
+      case 'mor': return playerMorale100(b) - playerMorale100(a);
       case 'age': return a.age - b.age;
       case 'apps': return b.seasonStats.appearances - a.seasonStats.appearances;
       case 'goals': return b.seasonStats.goals - a.seasonStats.goals;
@@ -56,14 +57,12 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
         <table className="dtable">
           <thead><tr>
             <th className="ctr">#</th><th>Name</th><Th k="pos" cls="ctr">Pos</Th><Th k="age" cls="num">Alter</Th>
-            <Th k="ovr" cls="num">Stärke</Th><Th k="pot">Potenzial</Th><Th k="form" cls="num">Form</Th>
-            <Th k="fri" cls="num">Frische</Th><Th k="fit" cls="num">Fitness</Th><th>Moral</th>
+            <Th k="ovr" cls="num">Stärke</Th><Th k="pot">Potenzial<InfoTip k="potenzial" /></Th><Th k="form" cls="ctr">Form</Th>
+            <Th k="fri" cls="ctr">Frische<InfoTip k="frische" /></Th><Th k="fit" cls="num">Fitness<InfoTip k="fitness" /></Th><Th k="mor" cls="ctr">Moral</Th>
             <Th k="apps" cls="num">Sp.</Th><Th k="goals" cls="num">Tore</Th><th>Status</th>
           </tr></thead>
           <tbody>
             {squad.map((pl) => {
-              const fi = formIndicator(pl.form);
-              const fr = Math.round(pl.frische ?? 100);
               return (
                 <tr key={pl.id} className="clickable" onClick={() => setSel(pl.id)}>
                   <td className="ctr muted">{pl.shirtNumber}</td>
@@ -72,10 +71,10 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
                   <td className="num">{pl.age}</td>
                   <td className="num"><b style={{ color: vColor(pl.overall) }}>{pl.overall}</b></td>
                   <td className="nowrap"><ScoutStars p={pl} /></td>
-                  <td className="num nowrap" style={{ color: fi.color, fontWeight: 700 }} title={fi.label}>{fi.arrow} {Math.round(pl.form)}</td>
-                  <td className="num" style={{ color: condColor(fr) }}>{fr}</td>
+                  <td className="ctr"><PlayerForm p={pl} /></td>
+                  <td className="ctr"><PlayerFreshness p={pl} /></td>
                   <td className="num" style={{ color: condColor(pl.attributes.fitness) }}>{Math.round(pl.attributes.fitness)}</td>
-                  <td className="muted">{MORALE_DE[pl.morale] ?? pl.morale}</td>
+                  <td className="ctr"><PlayerMorale p={pl} /></td>
                   <td className="num">{pl.seasonStats.appearances}</td>
                   <td className="num">{pl.seasonStats.goals}</td>
                   <td className={`nowrap ${pl.availability === 'injured' ? 'red' : pl.suspensionMatches > 0 ? 'orange-text' : 'muted'}`}>
@@ -88,7 +87,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
         </table>
       </DashBox>
 
-      <DashBox title="Kaderstruktur" icon="dashKader">
+      <DashBox title="Kaderstruktur" info="kaderbedarf" icon="dashKader">
         <div className="dkpis">
           <Kpi value={Math.round(avg(all.map((x) => x.overall)))} label="Ø Stärke" />
           <Kpi value={avg(all.map((x) => x.age)).toFixed(1)} label="Ø Alter" />
@@ -111,7 +110,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
           ))}
         </> : null}
         <div className="dsec">Wenig Frische</div>
-        {tired.length ? tired.map((x) => <PlayerRow key={x.id} p={x} value={Math.round(x.frische ?? 100)} onClick={() => setSel(x.id)} />)
+        {tired.length ? tired.map((x) => <PlayerRow key={x.id} p={x} value={<PlayerFreshness p={x} showValue />} onClick={() => setSel(x.id)} />)
           : <Empty icon="training">Alle Spieler sind ausgeruht.</Empty>}
       </DashBox>
 

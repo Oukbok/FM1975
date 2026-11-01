@@ -1,4 +1,5 @@
 import ClubCrest from '../components/ClubCrest';
+import { PlayerForm, PlayerFreshness } from '../components/status';
 import { ClubLink } from '../components/club/ClubLink';
 import { EURO_COMP_NAMES } from '../data/europe';
 import { STAFF_BY_ID, staffMonthlyTotal } from '../data/staff';
@@ -86,7 +87,7 @@ export function SpieltagDashboard({ g, onGoto, onWatch }: {
         ) : <Empty icon="lineup">Noch keine Startelf festgelegt.</Empty>}
       </DashBox>
 
-      <DashBox title="Taktik" icon="tactics" onClick={() => onGoto('tactics')} right={TAC_STYLE_DE[t.style] ?? t.style}>
+      <DashBox title="Taktik" info="mentalitaet" icon="tactics" onClick={() => onGoto('tactics')} right={TAC_STYLE_DE[t.style] ?? t.style}>
         <Meter label="Tempo" value={t.tempo} />
         <Meter label="Pressing" value={t.pressing} />
         <Meter label="Abwehrlinie" value={t.defensiveLine} />
@@ -134,7 +135,7 @@ export function KaderDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) => 
         {[...squad].sort((a, b) => b.overall - a.overall).slice(0, 4).map((p) => <PlayerRow key={p.id} p={p} value={p.overall} />)}
       </DashBox>
 
-      <DashBox title="Positionen" icon="tactics" onClick={() => onGoto('squad')}>
+      <DashBox title="Positionen" info="vertrautheit" icon="tactics" onClick={() => onGoto('squad')}>
         {groups.map((gr) => {
           const ps = squad.filter((p) => groupOf(p) === gr).sort((a, b) => b.overall - a.overall);
           return (
@@ -148,8 +149,8 @@ export function KaderDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) => 
         <div className="dnote mt8">Wert = Ø der drei Besten je Mannschaftsteil.</div>
       </DashBox>
 
-      <DashBox title="Belastung" icon="training" onClick={() => onGoto('training')} right="niedrigste Frische">
-        {tired.map((p) => <Meter key={p.id} label={p.fullName} value={p.frische ?? 100} color={condBar(p.frische ?? 100)} />)}
+      <DashBox title="Belastung" icon="training" info="frische" onClick={() => onGoto('training')} right="niedrigste Frische">
+        {tired.map((p) => <PlayerRow key={p.id} p={p} value={<PlayerFreshness p={p} showValue />} sub={<PlayerForm p={p} size={14} />} />)}
       </DashBox>
 
       <DashBox title="Verträge" icon="contracts" onClick={() => onGoto('vertraege')} right={fmtWage(wages)}>
@@ -159,13 +160,13 @@ export function KaderDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) => 
         })}
       </DashBox>
 
-      <DashBox title="Talente" icon="youth" onClick={() => onGoto('squad')} right="bis 21 Jahre">
+      <DashBox title="Talente" info="potenzial" icon="youth" onClick={() => onGoto('squad')} right="bis 21 Jahre">
         {talents.length ? talents.map((p) => (
           <PlayerRow key={p.id} p={p} sub={`${p.age} J. · ${p.overall}`} value={<ScoutStars p={p} />} />
         )) : <Empty icon="youth">Keine jungen Spieler im Profikader.</Empty>}
       </DashBox>
 
-      <DashBox title="Jugendakademie" icon="youth" onClick={() => onGoto('youth')} right={`${youth.length} Talente`}>
+      <DashBox title="Jugendakademie" info="ausbildung" icon="youth" onClick={() => onGoto('youth')} right={`${youth.length} Talente`}>
         {topYouth.length ? topYouth.map((p) => (
           <PlayerRow key={p.id} p={p} sub={`${p.age} J.`} value={p.scoutedPotentialMin != null ? `${p.scoutedPotentialMin}–${p.scoutedPotentialMax}` : '–'} color="var(--text-2)" />
         )) : <Empty icon="youth">Noch keine Talente in der Akademie.</Empty>}
@@ -196,7 +197,7 @@ export function TransfersDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen)
   }).sort((a, b) => a.top - b.top);
   return (
     <DashPage>
-      <DashBox title="Budget" icon="finances" onClick={() => onGoto('transfers')}>
+      <DashBox title="Budget" info="transferbudget" icon="finances" onClick={() => onGoto('transfers')}>
         <div className="dkpis">
           <Kpi value={fmtPrice(fin.transferBudget)} label="Transferbudget" color="var(--green)" />
           <Kpi value={fmtDM(fin.balance)} label="Kontostand" color={fin.balance >= 0 ? 'var(--text)' : 'var(--red)'} />
@@ -205,7 +206,7 @@ export function TransfersDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen)
         {fin.wageBudget > 0 && <Meter label="Gehaltsbudget genutzt" value={wageBill} max={fin.wageBudget} text={`${Math.round((wageBill / fin.wageBudget) * 100)} %`} color={wageBill > fin.wageBudget ? 'var(--red)' : 'var(--accent)'} />}
       </DashBox>
 
-      <DashBox title="Bedarf" icon="squad" onClick={() => onGoto('squad')}>
+      <DashBox title="Bedarf" info="kaderbedarf" icon="squad" onClick={() => onGoto('squad')}>
         {needs.map((n, i) => (
           <div key={n.gr} className="dlist-row">
             <span className="grow"><b>{GROUP_DE[n.gr]}</b> <span className="muted">· {n.n} Spieler</span></span>
@@ -264,7 +265,7 @@ export function FinanzenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) 
   const c = myClub.commerce;
   return (
     <DashPage>
-      <DashBox title="Kassenstand" icon="finances" onClick={() => onGoto('finances')}>
+      <DashBox title="Kassenstand" info="kontostand" icon="finances" onClick={() => onGoto('finances')}>
         <div className="dkpis">
           <Kpi value={fmtDM(fin.balance)} label="Kontostand" color={fin.balance >= 0 ? undefined : 'var(--red)'} />
           <Kpi value={fmtDM(m.net)} label="Saldo pro Monat" color={m.net >= 0 ? 'var(--green)' : 'var(--red)'} />
@@ -272,15 +273,15 @@ export function FinanzenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) 
         <Sparkline values={hist.map((h) => h.balance)} />
       </DashBox>
 
-      <DashBox title="Einnahmen (Saison)" icon="dashFinanzen" onClick={() => onGoto('finances')} right={fmtDM(inc)}>
+      <DashBox title="Einnahmen (Saison)" info="einnahmen" icon="dashFinanzen" onClick={() => onGoto('finances')} right={fmtDM(inc)}>
         {incRows.length ? incRows.slice(0, 7).map(([k, v]) => <Meter key={k} label={INCOME_DE[k] ?? k} value={v} max={incRows[0][1]} text={fmtDM(v)} color="var(--green)" />) : <Empty icon="finances">Noch keine Einnahmen gebucht.</Empty>}
       </DashBox>
 
-      <DashBox title="Ausgaben (Saison)" icon="dashFinanzen" onClick={() => onGoto('finances')} right={fmtDM(exp)}>
+      <DashBox title="Ausgaben (Saison)" info="ausgaben" icon="dashFinanzen" onClick={() => onGoto('finances')} right={fmtDM(exp)}>
         {expRows.length ? expRows.slice(0, 7).map(([k, v]) => <Meter key={k} label={EXPENSE_DE[k] ?? k} value={v} max={expRows[0][1]} text={fmtDM(v)} color="var(--orange)" />) : <Empty icon="finances">Noch keine Ausgaben gebucht.</Empty>}
       </DashBox>
 
-      <DashBox title="Monatliche Fixposten" icon="schedule">
+      <DashBox title="Monatliche Fixposten" info="fixposten" icon="schedule">
         <KV k="Sponsoring" v={`+${fmtDM(m.sponsorship)}`} color="var(--green)" />
         <KV k="Werbung" v={`+${fmtDM(m.advertising)}`} color="var(--green)" />
         <KV k="Mitgliedsbeiträge" v={`+${fmtDM(m.membership)}`} color="var(--green)" />
@@ -289,7 +290,7 @@ export function FinanzenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) 
         <KV k="Stadion & Gebäude" v={`−${fmtDM(m.stadiumMaintenance + m.facilities)}`} color="var(--red)" />
       </DashBox>
 
-      <DashBox title="Sponsoren" icon="sponsoring" onClick={() => onGoto('sponsoring')}>
+      <DashBox title="Sponsoren" info="partnerPyramide" icon="sponsoring" onClick={() => onGoto('sponsoring')}>
         <KV k="Trikot" v={c?.shirtSponsor ? `${c.shirtSponsor.name}` : 'kein Vertrag'} color={c?.shirtSponsor ? undefined : 'var(--orange)'} />
         {c?.shirtSponsor && <KV k="· pro Jahr / Restlaufzeit" v={`${fmtDM(c.shirtSponsor.annualValue * economyScale(yearOf(g.calendar.currentDate)))} · ${c.shirtSponsor.yearsLeft} J.`} />}
         <KV k="Verträge gesamt" v={c?.deals?.length ?? (c?.banden ? 2 : 1)} />
@@ -342,7 +343,7 @@ export function VereinDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) =>
   const conf = myClub.boardConfidence ?? 50;
   return (
     <DashPage>
-      <DashBox title="Vorstand" icon="dashVerein" onClick={() => onGoto('vorstand')}>
+      <DashBox title="Vorstand" info="vorstandVertrauen" icon="dashVerein" onClick={() => onGoto('vorstand')}>
         <div className="dkpis">
           <Kpi value={row ? `${row.position}.` : '–'} label="Tabellenplatz" />
           <Kpi value={`${Math.round(conf)}`} label="Vertrauen" color={condColor(conf)} />
@@ -352,7 +353,7 @@ export function VereinDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) =>
         <div className="dnote mt8">Unter 20 droht die Entlassung.</div>
       </DashBox>
 
-      <DashBox title="Vereinsprofil" icon="stadium">
+      <DashBox title="Vereinsprofil" info="ansehen" icon="stadium">
         <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 8 }}>
           <ClubCrest club={myClub} size={84} />
           <div><div style={{ fontSize: 22, fontWeight: 900 }}>{myClub.name}</div><div className="dnote">gegründet {myClub.founded} · {myClub.city}</div></div>
@@ -361,13 +362,13 @@ export function VereinDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) =>
         <KV k="Vereinsfarben" v={<span className="dswatch"><i style={{ background: myClub.colors.primary }} /><i style={{ background: myClub.colors.secondary }} /></span>} />
       </DashBox>
 
-      <DashBox title="Mitarbeiter" icon="staff" onClick={() => onGoto('staff')} right={`${fmtDM(staffCost)} / Monat`}>
+      <DashBox title="Mitarbeiter" info="mitarbeiter" icon="staff" onClick={() => onGoto('staff')} right={`${fmtDM(staffCost)} / Monat`}>
         {staff.length ? staff.slice(0, 8).map((s) => (
           <div key={s.id} className="dlist-row"><span className="grow">{s.name}</span><span className="meta">{s.effect}</span></div>
         )) : <Empty icon="staff">Noch keine Mitarbeiter angestellt.</Empty>}
       </DashBox>
 
-      <DashBox title="Vereinsgelände" icon="facilities" onClick={() => onGoto('facilities')}>
+      <DashBox title="Vereinsgelände" info="einrichtungen" icon="facilities" onClick={() => onGoto('facilities')}>
         {facs.slice(0, 8).map((f) => (
           <div key={f.key} className="dlist-row">
             <span className="grow">{f.name}</span>
@@ -376,7 +377,7 @@ export function VereinDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) =>
         ))}
       </DashBox>
 
-      <DashBox title="Stadion" icon="stadium" onClick={() => onGoto('stadium')} right={myClub.stadium.name}>
+      <DashBox title="Stadion" info="auslastung" icon="stadium" onClick={() => onGoto('stadium')} right={myClub.stadium.name}>
         <div className="dkpis">
           <Kpi value={myClub.stadium.capacity.toLocaleString('de-DE')} label="Plätze" />
           <Kpi value={`${Math.round(expectedAttendanceRate(myClub, undefined, yearOf(g.calendar.currentDate)) * 100)} %`} label="Auslastung" />
@@ -385,7 +386,7 @@ export function VereinDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) =>
         <Meter label="Zustand" value={myClub.stadium.condition} color={condBar(myClub.stadium.condition)} />
       </DashBox>
 
-      <DashBox title="Fans" icon="fans" onClick={() => onGoto('fans')}>
+      <DashBox title="Fans" info="fanStimmung" icon="fans" onClick={() => onGoto('fans')}>
         <KV k="Ø Zuschauer (letzte Heimspiele)" v={avgAtt ? avgAtt.toLocaleString('de-DE') : '–'} />
         {homeGames.slice(-5).reverse().map((m) => (
           <Meter key={m.id} label={g.clubs[m.awayClubId]?.name ?? '—'} value={m.result!.attendance} max={myClub.stadium.capacity} text={m.result!.attendance.toLocaleString('de-DE')} />

@@ -13,6 +13,8 @@ import { ImportanceDots, InterestLight, ReasonList, WishList, importanceText } f
 import { DashBox, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtPrice, fmtWage, vColor, wageUnit } from '../../ui/format';
 import { WageSlider } from '../../ui/WageSlider';
+import { InfoTip } from '../../ui/InfoTip';
+import type { InfoKey } from '../../data/infoTexts';
 
 // =============================================================================
 // TRANSFERVERHANDLUNG — Vereinsgespräch, Spielergespräch, Wünsche, Verlauf
@@ -27,9 +29,9 @@ function mood(patience: number): { text: string; color: string } {
   return { text: 'gereizt', color: 'var(--red)' };
 }
 
-function Chips({ opts, value, set, label, disabled }: { opts: [number, string, string?][]; value: number; set: (v: number) => void; label: string; disabled?: string }) {
+function Chips({ opts, value, set, label, disabled, info }: { opts: [number, string, string?][]; value: number; set: (v: number) => void; label: string; disabled?: string; info?: InfoKey }) {
   return (
-    <div className="talk-row"><span>{label}</span><div className="dchips">
+    <div className="talk-row"><span>{label}{info && <InfoTip k={info} />}</span><div className="dchips">
       {opts.map(([v, l, tip]) => <button key={String(v)} className={`dchip ${value === v ? 'on' : ''}`} title={disabled ?? tip} disabled={!!disabled && v !== opts[0][0]} onClick={() => set(v)}>{l}</button>)}
     </div></div>
   );
@@ -77,7 +79,7 @@ function ClubTalkBox({ g, t, onChange, notice }: { g: Game; t: TransferTalk; onC
     swapPlayerId: swap || undefined, buyBack: buyBack ? r5k(fee * buyBack) : undefined, loan: loan || undefined, optionFee: loan ? option : undefined,
   }));
   return (
-    <DashBox title="Vereinsgespräch" icon="negotiations" rows={2} right={<span style={{ color: m.color }}>{m.text}</span>}>
+    <DashBox title="Vereinsgespräch" info="verkaeuferposition" icon="negotiations" rows={2} right={<span style={{ color: m.color }}>{m.text}</span>}>
       <KV k="Forderung zuletzt" v={t.round ? fmtPrice(t.currentAsk) : 'noch keine genannt'} strong />
       <KV k="Schätzung Sportdirektor" v={`${fmtPrice(t.estimate[0])} – ${fmtPrice(t.estimate[1])}`} />
       <div className="talk-form">
@@ -86,7 +88,7 @@ function ClubTalkBox({ g, t, onChange, notice }: { g: Game; t: TransferTalk; onC
           <input type="range" min={loan ? 5000 : lo} max={hi} step={5000} value={fee} onChange={(e) => setFee(Number(e.target.value))} />
           <b className="accent-text">{fmtPrice(fee)}</b></label>
         {fee * (loan || rates === 1 ? 1 : 1 / rates) > own.finances.transferBudget && <div className="dnote" style={{ color: 'var(--orange)' }}>Über deinem Transferbudget ({fmtPrice(own.finances.transferBudget)}) – der Vorstand gibt das nicht frei.</div>}
-        {loan && <label className="talk-row"><span>Kaufoption</span>
+        {loan && <label className="talk-row"><span>Kaufoption<InfoTip k="leihe" /></span>
           <input type="range" min={lo} max={hi * 1.3} step={5000} value={option} onChange={(e) => setOption(Number(e.target.value))} />
           <b>{fmtPrice(option)}</b></label>}
         {!loan && <Chips label="Zahlung" value={rates} set={(v) => setRates(v as 1 | 2 | 3)} opts={[[1, 'Sofort'], [2, '2 Raten', 'Hälfte jetzt, Rest in einem Jahr'], ...(year >= CLAUSE_FROM.threeRates ? [[3, '3 Raten', 'Ein Drittel jährlich']] as [number, string, string][] : [])]} />}
@@ -155,8 +157,8 @@ function PlayerTalkBox({ g, t, onChange, notice }: { g: Game; t: TransferTalk; o
         <Chips label="Laufzeit" value={years} set={setYears} opts={[1, 2, 3, 4, 5].map((y) => [y, `${y} J.`] as [number, string])} />
         <Chips label="Handgeld" value={hand} set={setHand} opts={[[0, 'keins'], [0.5, st.signingFee ? fmtPrice(r100(st.signingFee * 0.5)) : fmtPrice(r100(wage * 3))], [1, st.signingFee ? fmtPrice(st.signingFee) : fmtPrice(r100(wage * 6))], [1.6, st.signingFee ? fmtPrice(r100(st.signingFee * 1.6)) : fmtPrice(r100(wage * 10))]]} />
         {st.agent && <Chips label="Beraterprovision" value={agentPct} set={setAgentPct} opts={[[0, 'keine'], [0.5, fmtPrice(r100(st.agentFee * 0.5))], [1, fmtPrice(st.agentFee), 'Die übliche Provision des Beraters']]} />}
-        <Chips label="Treueprämie" value={loyal} set={setLoyal} opts={[[0, 'keine'], [10, fmtPrice(r100(wage * 10)), 'fällig bei Vertragsende, wenn er bleibt'], [26, fmtPrice(r100(wage * 26)), 'fällig bei Vertragsende, wenn er bleibt']]} />
-        <Chips label="Erfolgsklausel" value={raise} set={setRaise} opts={[[0, 'keine'], [0.1, '+10 %', 'mehr Gehalt bei einem Europapokal-Platz'], [0.2, '+20 %', 'mehr Gehalt bei einem Europapokal-Platz']]} />
+        <Chips label="Treueprämie" info="treuepraemie" value={loyal} set={setLoyal} opts={[[0, 'keine'], [10, fmtPrice(r100(wage * 10)), 'fällig bei Vertragsende, wenn er bleibt'], [26, fmtPrice(r100(wage * 26)), 'fällig bei Vertragsende, wenn er bleibt']]} />
+        <Chips label="Erfolgsklausel" info="erfolgsklausel" value={raise} set={setRaise} opts={[[0, 'keine'], [0.1, '+10 %', 'mehr Gehalt bei einem Europapokal-Platz'], [0.2, '+20 %', 'mehr Gehalt bei einem Europapokal-Platz']]} />
         <Chips label="Ausstiegsklausel" value={clause ? 1 : 0} set={(v) => setClause(v === 1)} disabled={year < CLAUSE_FROM.releaseClause ? `erst ab ${CLAUSE_FROM.releaseClause} üblich` : undefined}
           opts={[[0, 'keine'], [1, 'vereinbaren', 'Ein Verein, der die Klausel zahlt, bekommt ihn ohne Verhandlung.']]} />
         <div className="talk-row talk-row-top"><span>Versprechen</span>
@@ -185,7 +187,7 @@ function WishBox({ g, t }: { g: Game; t: TransferTalk }) {
   const known = t.pRound >= 1 || k >= 0.55;
   const pe = personaOf(p);
   return (
-    <DashBox title="Was ihm wichtig ist" icon="watchlist">
+    <DashBox title="Was ihm wichtig ist" info="interesse" icon="watchlist">
       {st.dealBreaker && k >= 0.3 ? <div className="wish-block">{st.dealBreaker}</div> : <InterestLight score={st.interest} knowledge={k} />}
       <div className="dnote">{k >= 0.35 ? `${personaTitle(pe)} · ` : ''}{PHASE_LABEL[careerPhase(p)]}</div>
       <div className="dsec">Für und gegen dich</div>
@@ -195,7 +197,7 @@ function WishBox({ g, t }: { g: Game; t: TransferTalk }) {
         <KV k={st.agent ? 'Berater fordert' : 'Er fordert'} v={fmtWage(st.agentWage)} />
         <KV k="Wunschlaufzeit" v={`${st.years[0]}–${st.years[1]} Jahre`} />
         {st.signingFee > 0 && <KV k="Handgeld" v={`etwa ${fmtPrice(st.signingFee)}`} />}
-        {st.agent && <KV k="Provision" v={fmtPrice(st.agentFee)} />}
+        {st.agent && <KV k="Provision" info="berater" v={fmtPrice(st.agentFee)} />}
         {known && st.cut > 0.04 && <KV k="Verzicht" v={`würde für euch etwa ${Math.round(st.cut * 100)} % weniger nehmen`} color="var(--green)" />}
         {known && st.cut < -0.04 && <KV k="Aufschlag" v={`verlangt etwa ${Math.round(-st.cut * 100)} % mehr`} color="var(--orange)" />}
       </div>
@@ -247,7 +249,7 @@ export function TransferTalkModal({ g, talk, onClose, onChange }: { g: Game; tal
             ? <ClubTalkBox key={`c${talk.round}`} g={g} t={talk} onChange={act} notice={notice} />
             : <PlayerTalkBox key={`p${talk.pRound}`} g={g} t={talk} onChange={act} notice={notice} />}
           <WishBox g={g} t={talk} />
-          <DashBox title="Rahmen" icon="finances">
+          <DashBox title="Rahmen" info="gehaltsbudget" icon="finances">
             {talk.phase === 'club' ? <div className="dnote">Erst wenn du dich mit dem Verein einig bist, darfst du mit {p?.lastName} sprechen.</div> : <ClubDeal g={g} t={talk} />}
             <KV k="Transferbudget" v={fmtPrice(own.finances.transferBudget)} />
             <Meter label="Gehaltsrahmen" value={wages} max={Math.max(1, own.finances.wageBudget)} text={`${Math.round((wages / Math.max(1, own.finances.wageBudget)) * 100)} %`} />

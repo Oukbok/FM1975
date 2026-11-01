@@ -5,12 +5,13 @@
 import { useState, type PointerEvent as RPE } from 'react';
 import type { Player, Position } from '../../types';
 import { positionSuitability, suitabilityColor } from '../../engine/positions';
+import { PlayerForm, PlayerFreshness, PlayerMorale, MORALE_100, playerMorale100 } from '../status';
+import { InfoTip } from '../../ui/InfoTip';
+import type { InfoKey } from '../../data/infoTexts';
 
 export interface ListRow { p: Player; pos: Position | null; slotId?: string; benchIndex?: number }
 
 type SortKey = 'pos' | 'nr' | 'name' | 'eig' | 'fr' | 'form' | 'moral' | 'note' | 'st';
-const MORALE_DE: Record<string, string> = { very_low: 'sehr schlecht', low: 'schlecht', okay: 'okay', good: 'gut', excellent: 'sehr gut' };
-const MORALE_N: Record<string, number> = { very_low: 0, low: 1, okay: 2, good: 3, excellent: 4 };
 const POS_ORDER: Position[] = ['TW', 'LIB', 'VS', 'AV', 'DM', 'ZM', 'FL', 'OM', 'HS', 'MS'];
 
 const fmtNote = (p: Player) => (p.seasonStats?.ratedMatches ? p.seasonStats.averageRating.toFixed(1).replace('.', ',') : '–');
@@ -28,19 +29,19 @@ function sortVal(r: ListRow, k: SortKey, idx: number): number | string {
     case 'eig': return -rowSuit(r);
     case 'fr': return -(p.frische ?? 100);
     case 'form': return -(p.form ?? 50);
-    case 'moral': return -(MORALE_N[p.morale] ?? 2);
+    case 'moral': return -playerMorale100(p);
     case 'note': return p.seasonStats?.ratedMatches ? p.seasonStats.averageRating : 9;
     case 'st': return -p.overall;
     default: return r.slotId || r.benchIndex != null ? idx : POS_ORDER.indexOf(p.naturalPosition) * 100 - p.overall / 100;
   }
 }
 
-const COLS: [SortKey, string, string][] = [
+const COLS: [SortKey, string, string, InfoKey?][] = [
   ['pos', 'Pos', 'Position in der Aufstellung bzw. Stammposition'],
   ['nr', 'Nr', 'Rückennummer'],
   ['name', 'Name', 'Name'],
-  ['eig', 'Eig', 'Eignung auf der Position (Reserve: Stammposition)'],
-  ['fr', 'Frische', 'Frische (Zustand)'],
+  ['eig', 'Eig', 'Eignung auf der Position (Reserve: Stammposition)', 'eignung'],
+  ['fr', 'Frische', 'Frische (Zustand)', 'frische'],
   ['form', 'Form', 'Form'],
   ['moral', 'Moral', 'Moral'],
   ['note', 'Ø Note', 'Durchschnittsnote der Saison'],
@@ -60,7 +61,6 @@ export default function SquadList({ xi, bench, reserve, benchSize, captainId, ho
     const p = r.p;
     const suit = rowSuit(r);
     const drop = r.slotId ? `slot:${r.slotId}` : r.benchIndex != null ? `bench:${r.benchIndex}` : 'reserve';
-    const fr = Math.round(p.frische ?? 100);
     return (
       <tr key={p.id} className={`lu-row ${hover === drop ? 'over' : ''} ${dragId === p.id ? 'dragging' : ''} ${isOut(p) ? 'out' : ''}`}
         data-lu-drop={drop} data-pid={p.id} onPointerDown={(e) => onDown(e, p)}>
@@ -73,12 +73,9 @@ export default function SquadList({ xi, bench, reserve, benchSize, captainId, ho
             : p.suspensionMatches > 0 ? <span className="lu-flag red">gesperrt</span> : null}
         </td>
         <td className="lu-c-num"><span className="lu-suit" style={{ borderColor: suitabilityColor(suit) }}>{suit}</span></td>
-        <td className="lu-c-fr">
-          <span className="lu-fbar"><span style={{ width: `${fr}%`, background: fr < 70 ? 'var(--orange)' : 'var(--text-3)' }} /></span>
-          <span className="lu-num">{fr}</span>
-        </td>
-        <td className="lu-c-num" style={{ color: (p.form ?? 50) < 35 ? 'var(--orange)' : undefined }}>{Math.round(p.form ?? 50)}</td>
-        <td className="lu-c-mor" style={{ color: MORALE_N[p.morale] <= 1 ? 'var(--orange)' : undefined }}>{MORALE_DE[p.morale] ?? p.morale}</td>
+        <td className="lu-c-st"><PlayerFreshness p={p} /></td>
+        <td className="lu-c-st"><PlayerForm p={p} /></td>
+        <td className="lu-c-st"><PlayerMorale p={p} /></td>
         <td className="lu-c-num">{fmtNote(p)}</td>
         <td className="lu-c-num lu-strong">{p.overall}</td>
       </tr>
@@ -97,8 +94,8 @@ export default function SquadList({ xi, bench, reserve, benchSize, captainId, ho
     <div className="lu-list">
       <table className="lu-table">
         <thead>
-          <tr>{COLS.map(([k, label, title]) => (
-            <th key={k} title={title} className={`${sort === k ? 'on' : ''} lu-h-${k}`} onClick={() => setSort(k)}>{label}</th>
+          <tr>{COLS.map(([k, label, title, info]) => (
+            <th key={k} title={title} className={`${sort === k ? 'on' : ''} lu-h-${k}`} onClick={() => setSort(k)}>{label}{info && <InfoTip k={info} />}</th>
           ))}</tr>
         </thead>
         {section('Startelf', `${xi.length}/11`, 'xi', sorted(xi))}
