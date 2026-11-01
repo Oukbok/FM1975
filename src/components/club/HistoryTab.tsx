@@ -5,7 +5,7 @@ import { DashBox, Empty, KV } from '../../ui/DashPage';
 import { fmtDM, fmtDateShort } from '../../ui/format';
 import { ClubTabProps, PlacementChart } from './shared';
 
-const TITLE_ORDER: TitleKind[] = ['meister', 'ddr', 'pokal', 'ec', 'cwc', 'uefa', 'halle'];
+const TITLE_ORDER: TitleKind[] = ['meister', 'ddr', 'pokal', 'ec', 'cwc', 'uefa', 'halle', 'uyl', 'jugendA', 'jugendB', 'jugendPokal', 'jugendDdr'];
 const COMP_DE = { L: 'Liga', P: 'Pokal', E: 'Europa' } as const;
 
 export default function HistoryTab({ g, d, openPlayer }: ClubTabProps) {

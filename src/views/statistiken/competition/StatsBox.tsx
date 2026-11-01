@@ -23,7 +23,7 @@ export function StatsBox({ g, snap }: { g: Game; snap: CompSnapshot | null }) {
   const [cat, setCat] = useState<StatCat>('goals');
   const [ccat, setCcat] = useState<ClubStatCat>('gf');
   const [sel, setSel] = useState<string | null>(null);
-  const p = sel ? g.players[sel] : null;
+  const p = sel ? g.players[sel] ?? g.youthPlayers[sel] : null; // Jugendwettbewerbe: auch Jugendspieler
   const stats = snap?.stats;
   const clubStats = snap?.clubStats;
   const modal = p ? (
@@ -41,7 +41,7 @@ export function StatsBox({ g, snap }: { g: Game; snap: CompSnapshot | null }) {
           <div className="cmp-statlist">
             {list.map((r, i) => {
               const rank = i > 0 && list[i - 1].value === r.value ? '' : `${i + 1}.`;
-              const clickable = !!g.players[r.pid];
+              const clickable = !!(g.players[r.pid] ?? g.youthPlayers[r.pid]);
               return (
                 <div key={r.pid} className={`cmp-stat ${clickable ? 'clickable' : ''} ${r.clubId === g.managedClubId ? 'me' : ''}`} onClick={() => clickable && setSel(r.pid)} title={clickable ? 'Spielerprofil öffnen' : undefined}>
                   <span className="cmp-rank">{rank}</span>

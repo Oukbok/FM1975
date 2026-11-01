@@ -1,0 +1,8 @@
+/* Jugend › Jugendwettbewerbe (Aufbau wie Statistiken › Liga/Pokal, siehe 28-leagues.css) */
+.cmp-select .yc-comp-select { max-width: 330px; }
+.yc-groups .gt-root { min-height: 100%; }
+.yc-groups .gt-grid { grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); overflow: visible; }
+.yc-groups .gt-head, .yc-groups .gt-row { padding: 4px 10px; }
+.yc-info .dnote { line-height: 1.4; }
+.yc-dash-row { padding: 2px 0 6px; border-bottom: 1px solid var(--border-soft); margin-bottom: 6px; }
+.yc-dash-row:last-child { border-bottom: 0; margin-bottom: 0; }
