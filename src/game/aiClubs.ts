@@ -24,7 +24,7 @@ import { recordTransfer } from '../engine/history';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { createPlayer } from '../engine/playerFactory';
 import { refreshOverall } from '../engine/development';
-import { capBase, frenzy, playerStance, sellerPosition, softCap } from '../engine/transferMarket';
+import { capBase, frenzy, sellerPosition, softCap } from '../engine/transferMarket';
 import { promoteYouth } from '../engine/youth';
 import { ORIGINS, pickOrigin } from '../data/origins';
 import { coachTactics } from '../engine/aiManager';
@@ -35,6 +35,8 @@ import { sellAbroad } from './aiOffers';
 import { fillSquad, leagueAnchor, MAX_SQUAD, MIN_SQUAD, wageRatioOf } from './squads';
 import { Game } from './state';
 import { aiYouthInvest } from './youthInvest';
+import { willJoin } from './playerWishesGame';
+import { poachStar } from './aiStarMarket';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const r5k = (v: number) => Math.round(v / 5000) * 5000;
@@ -64,7 +66,7 @@ export function isAiClub(g: Game, c: Club): boolean {
   return isLeagueClub(c) && (c.id !== g.managedClubId || sim(g));
 }
 const aiClubs = (g: Game) => Object.values(g.clubs).filter((c) => isAiClub(g, c));
-const squadOf = (g: Game, c: Club) => c.playerIds.map((id) => g.players[id]).filter((p): p is Player => !!p);
+export const squadOf = (g: Game, c: Club) => c.playerIds.map((id) => g.players[id]).filter((p): p is Player => !!p);
 
 function shuffle<T>(xs: T[], rng: () => number): T[] {
   const a = [...xs];
@@ -125,7 +127,7 @@ export function migrateAiClubs(g: Game): void {
 // -----------------------------------------------------------------------------
 // Markttag
 // -----------------------------------------------------------------------------
-interface RoundCtx {
+export interface RoundCtx {
   g: Game; today: string; year: number; winter: boolean; rng: () => number;
   /** Ligaspieler, die grundsätzlich wechseln können. */
   pool: Player[];
@@ -162,10 +164,14 @@ function marketRound(g: Game, today: string, winter: boolean, rng: () => number)
     if (club.playerIds.length > BUY_SQUAD_MAX) sellSurplus(g, club, a, today, 1);
     else if (!winter && club.playerIds.length >= 24) releaseVeteran(g, club, squad, a, today);
     const got = m.arrivals[club.id] ?? 0;
-    if (got >= MAX_IN_SEASON || (!winter && got >= MAX_IN_SUMMER) || (winter && got >= winterBase(m, club) + MAX_IN_WINTER)) continue;
+    // Topvereine holen im Sommer gezielt Stars kleinerer Vereine (game/aiStarMarket.ts).
+    if (!winter && got < MAX_IN_SUMMER && poachStar(ctx, club, a)) { m.arrivals[club.id] = got + 1; continue; }
+    // Zu dünner Kader: Breite hat Vorrang vor Grenzen und Zufall (sonst füllen generierte Nachrücker auf).
+    const short = !winter && club.playerIds.length < MIN_SQUAD;
+    if (!short && (got >= MAX_IN_SEASON || (!winter && got >= MAX_IN_SUMMER) || (winter && got >= winterBase(m, club) + MAX_IN_WINTER))) continue;
     const need = a.order[0];
-    if (!need || need.score < (winter ? 14 : 8)) continue;
-    if (rng() > (winter ? 0.5 : 0.6)) continue; // nicht jeder Verein schlägt an jedem Markttag zu
+    if (!need || need.score < (winter ? 14 : short ? 4 : 8)) continue;
+    if (!short && rng() > (winter ? 0.5 : 0.6)) continue; // nicht jeder Verein schlägt an jedem Markttag zu
     if (actOnNeed(ctx, club, a, need)) m.arrivals[club.id] = got + 1;
   }
 }
@@ -243,13 +249,13 @@ function philosophyYouth(g: Game, club: Club, a: SquadAssessment, today: string,
 // -----------------------------------------------------------------------------
 // Kauf im Inland
 // -----------------------------------------------------------------------------
-function monthsLeft(p: Player, today: string): number {
+export function monthsLeftOf(p: Player, today: string): number {
   const [y, mo] = p.contract.expiryDate.split('-').map(Number);
   const [ty, tm] = today.split('-').map(Number);
   return (y - ty) * 12 + (mo - tm);
 }
 
-function recentlyMoved(p: Player, today: string): boolean {
+export function recentlyMoved(p: Player, today: string): boolean {
   const t = p.history?.transfers;
   const last = t?.[t.length - 1]?.date;
   if (!last) return false;
@@ -266,14 +272,16 @@ function buyDomestic(ctx: RoundCtx, buyer: Club, a: SquadAssessment, need: Group
     && !p.contract.preContractClubId && !recentlyMoved(p, today)
     && p.contract.transferValue * 0.85 <= budget);
   if (!cands.length) return false;
-  const score = (p: Player) => -Math.abs(p.overall - want.ideal) * 2 - p.contract.transferValue / Math.max(1, budget) * 8
+  // Qualitätsbedarf: Stärkere als das Ideal sind willkommen (wenn bezahlbar und er will).
+  const fit = (o: number) => need.quality ? Math.max(0, want.ideal - o) * 2 + Math.max(0, o - want.ideal) * 0.5 : Math.abs(o - want.ideal) * 2;
+  const score = (p: Player) => -fit(p.overall) - p.contract.transferValue / Math.max(1, budget) * 8
     + (phil === 'jugend' ? (26 - p.age) * 0.8 : 0) + (p.transferListed ? 3 : 0) + rng() * 6;
   const ranked = cands.map((p) => ({ p, s: score(p) })).sort((x, y) => y.s - x.s).slice(0, 4);
   for (const { p } of ranked) {
     const seller = g.clubs[p.clubId];
     if (!seller || !isAiClub(g, seller) || seller.playerIds.length <= MIN_SQUAD - 1) continue;
     const sSquad = squadOf(g, seller);
-    const pos = sellerPosition(p, seller, buyer, { year, monthsLeft: monthsLeft(p, today), bosman: bosmanActive(today), squad: sSquad, rival: false, scope: 'germany' });
+    const pos = sellerPosition(p, seller, buyer, { year, monthsLeft: monthsLeftOf(p, today), bosman: bosmanActive(today), squad: sSquad, rival: false, scope: 'germany' });
     if (pos.untouchable && (buyer.reputation ?? 0) < (seller.reputation ?? 0) + 8) continue;
     // Würde der Verkäufer selbst eine Lücke reißen? Dann nur zur vollen Forderung.
     const sNeed = assessSquad(sSquad, seller.tactics?.formation).groups[need.group];
@@ -285,13 +293,12 @@ function buyDomestic(ctx: RoundCtx, buyer: Club, a: SquadAssessment, need: Group
     const maxPay = Math.min(budget, softCap(raw, cap) * frenzy(raw, cap, rng));
     if (maxPay < floor) continue;
     const fee = r5k(clamp((floor + Math.min(pos.asking, maxPay)) / 2, floor, maxPay));
-    // Spieler: will er? (größerer Verein, Stammplatz, Gehalt nach Beraterforderung)
-    const depthRank = squadOf(g, buyer).filter((x) => GROUP_OF[x.naturalPosition] === need.group && x.overall > p.overall).length;
-    const st = playerStance(p, buyer, { year, sellerRep: seller.reputation ?? 60, buyerTier: 1, buyerEuro: false, depthRank, trust: 70 });
-    if (st.interest + 10 + (rng() - 0.5) * 16 < 50) continue;
+    // Spieler: will er? (Persönlichkeit, Vereinsgröße, Stammplatz, Heimat, Rivalität – game/playerWishesGame.ts)
+    const join = willJoin(g, p, buyer, rng);
+    if (!join.ok) continue;
     const name = p.fullName;
     transferPlayer(g, p, seller, buyer, fee, today);
-    p.contract.weeklyWage = Math.max(p.contract.weeklyWage, Math.round(st.minWage));
+    p.contract.weeklyWage = Math.round(join.wishes.demand.min);
     ctx.busy.add(p.id);
     reportDeal(ctx, `${buyer.name} verpflichtet ${name} von ${seller.name} (${fmtPrice(fee)})`, fee, name, buyer, seller.name, need);
     return true;
@@ -317,10 +324,12 @@ function buyExternal(ctx: RoundCtx, club: Club, need: GroupNeed, want: { min: nu
   if (!from) return false;
   // Unterklassige Spieler sind jünger und etwas schwächer; niemand übertrifft das Liganiveau.
   // Fertige Weltklasse kauft man nicht aus dem Nichts: unterklassig höchstens 79, Ausland höchstens 83.
-  const top = lower ? Math.min(want.ideal - 3, ctx.leagueRef - 4, 79) : Math.min(want.ideal, ctx.leagueRef, 83);
+  // Anziehungskraft: Kleine Vereine locken keine fertigen Leistungsträger von außen (Ruf als Obergrenze).
+  const pull = club.reputation + (lower ? 8 : 4);
+  const top = lower ? Math.min(want.ideal - 3, ctx.leagueRef - 4, 79, pull) : Math.min(want.ideal, ctx.leagueRef, 83, pull);
   // Liga-Anker wie bei den Nachrückern: ist die Liga zu stark, kommen etwas schwächere Spieler.
   const strength = Math.round(Math.min(want.min + rng() * Math.max(0, want.ideal - want.min), top) + Math.min(0, ctx.anchor));
-  if (strength < want.min - 1 + Math.min(0, ctx.anchor)) return false;
+  if (strength < want.min - (need.quality ? 1 : 4) + Math.min(0, ctx.anchor)) return false;
   let origin = pickOrigin(year, rng, lower);
   for (let i = 0; !lower && i < 6 && origin.nationality === 'GER'; i++) origin = pickOrigin(year, rng);
   if (!lower && origin.nationality === 'GER') origin = ORIGINS.aut ?? origin;
@@ -344,7 +353,8 @@ function buyExternal(ctx: RoundCtx, club: Club, need: GroupNeed, want: { min: nu
   return true;
 }
 
-function reportDeal(ctx: RoundCtx, line: string, fee: number, name: string, buyer: Club, from: string, need: GroupNeed): void {
+export function reportDeal(ctx: RoundCtx, line: string, fee: number, name: string, buyer: Club, from: string, need: GroupNeed | PosGroup): void {
+  const group = typeof need === 'string' ? need : need.group;
   const m = market(ctx.g);
   m.news.push(line);
   if (m.news.length > 60) m.news.shift();
@@ -353,9 +363,9 @@ function reportDeal(ctx: RoundCtx, line: string, fee: number, name: string, buye
     pushMessage(ctx.g.messages, makeMessage({
       date: ctx.today, category: 'transfer', from: 'Sportpresse',
       subject: `Spitzentransfer: ${name} wechselt zu ${buyer.name}`,
-      shortText: `${fmtPrice(fee)} Ablöse – ${buyer.shortName} verstärkt die ${GROUP_LABEL[need.group]}.`,
+      shortText: `${fmtPrice(fee)} Ablöse – ${buyer.shortName} verstärkt die ${GROUP_LABEL[group]}.`,
       bodyText: `${buyer.name} hat ${name} von ${from} verpflichtet. Die Ablöse beträgt ${fmtPrice(fee)}.\n\n`
-        + `Der Verein hatte Bedarf in der ${GROUP_LABEL[need.group]}${buyer.coach ? ` – Trainer ${buyer.coach.name} bekommt seinen Wunschspieler` : ''}.`,
+        + `Der Verein hatte Bedarf in der ${GROUP_LABEL[group]}${buyer.coach ? ` – Trainer ${buyer.coach.name} bekommt seinen Wunschspieler` : ''}.`,
     }));
   }
 }

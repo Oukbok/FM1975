@@ -37,10 +37,12 @@ import { advanceDivisionsTo, emitMatchMessage, simulateMatchday, startNextSeason
 import { inWinterBreak, winterBreakDaily } from './winterShared';
 import { OwnMatchInfo, findOwnMatchDue, isPrepared } from './ownMatch';
 import { Game, bumpMorale } from './state';
-import { contractReminders, handleContractExpiry } from './contracts';
+import { contractReminders, handleContractExpiry, transferPlayer } from './contracts';
 import { monthlySquadHarmony, rollAiOffers } from './aiOffers';
 import { checkPromises } from './promises';
 import { transferTalkDaily } from './transferTalks';
+import { buyBackDaily, contractClausesDaily } from './playerWishesGame';
+import { repairSquadLists } from './squads';
 import { applyEuphoria, monthlyClubEvents } from './clubEventsGame';
 import { announceUpcomingRules } from './ruleNotice';
 import { monthlyYouthRecruit } from './youthRecruit';
@@ -498,6 +500,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
   aiClubsDaily(g, today);
   rollAiOffers(g, today);
   checkPromises(g, today);
+  contractClausesDaily(g, today); // Treueprämie, Erfolgsklausel, Leihe mit Kaufoption (game/playerWishesGame.ts)
+  buyBackDaily(g, today, (p, from, to, fee) => { transferPlayer(g, p, from, to, fee, today); repairSquadLists(g); });
   transferTalkDaily(g, today);
   // Winter-Systeme: Hallenturniere/Masters (game/indoorGame.ts) und Trainingslager (game/trainingCampGame.ts).
   indoorDaily(g, today);

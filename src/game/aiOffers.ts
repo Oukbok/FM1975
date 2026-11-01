@@ -18,7 +18,8 @@ import { recordTransfer } from '../engine/history';
 import { aiMaxPay, capBase, cappedMarketValue, frenzy, softCap } from '../engine/transferMarket';
 import { coefSum } from '../engine/world';
 import { archiveRetired } from './archive';
-import { breakPromise } from './promises';
+import { breakNoRivalSale, breakPromise } from './promises';
+import { rivalsOf, wishesFor } from './playerWishesGame';
 import { squadLevel } from '../engine/contractTalks';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { shiftMorale } from '../engine/randomEvents';
@@ -39,9 +40,11 @@ function squadOf(g: Game, club: Club): Player[] {
   return club.playerIds.map((id) => g.players[id]).filter(Boolean);
 }
 
-/** Will der Spieler den Wechsel? (größerer Verein, unzufrieden) */
-function wantsMove(p: Player, own: Club, buyer: Club): boolean {
-  return (buyer.reputation - own.reputation >= 5 && (p.development.ambition ?? 50) >= 55) || (p.contract.satisfaction ?? 60) < 45;
+/** Will der Spieler den Wechsel? (Persönlichkeit: Größe, Stammplatz, Heimat, Rivalität; unzufrieden) */
+function wantsMove(g: Game, p: Player, buyer: Club, abroad = false): boolean {
+  const w = wishesFor(g, p, buyer, { abroad });
+  if (w.appeal.dealBreaker) return false;
+  return w.appeal.score >= 56 || (p.contract.satisfaction ?? 60) < 45;
 }
 
 function pickBidder(g: Game, p: Player, own: Club, fee: number): Club | null {
@@ -78,7 +81,7 @@ export function rollAiOffers(g: Game, today: string): void {
   const year = Number(today.slice(0, 4));
   const squad = squadOf(g, own);
   const level = squadLevel(squad);
-  const cands = squad.filter((p) => p.age <= 31 && !p.isYouth && !p.contract.preContractClubId)
+  const cands = squad.filter((p) => p.age <= 31 && !p.isYouth && !p.contract.preContractClubId && !p.loan)
     .sort((a, b) => b.overall - a.overall).slice(0, 10);
   for (const p of cands) {
     const sat = p.contract.satisfaction ?? 60;
@@ -116,7 +119,7 @@ export function rollAiOffers(g: Game, today: string): void {
       return;
     }
     const fee = Math.round(maxPay * (0.72 + Math.random() * 0.18) / 5000) * 5000;
-    const wish = abroad ? (p.development.ambition ?? 50) >= 45 || sat < 55 : wantsMove(p, own, g.clubs[buyerId]);
+    const wish = abroad ? wantsMove(g, p, { ...own, id: buyerId, reputation: 92, city: '', coach: undefined }, true) || sat < 55 : wantsMove(g, p, g.clubs[buyerId]);
     const msg = makeMessage({
       date: today, category: 'transfer', from: buyerName,
       subject: `${buyerName} bietet ${fmtPrice(fee)} für ${p.fullName}`,
@@ -153,6 +156,7 @@ CHOICE_HANDLERS[OFFER_TYPE] = (g, ref, choice) => {
   const bigger = Number(ref.data?.bigger ?? 0) === 1;
   const today = g.calendar.currentDate;
   const sell = (amount: number) => {
+    if (buyer && rivalsOf(g, own.id).includes(buyer.id)) breakNoRivalSale(g, p, buyer.name, today);
     if (buyer) transferPlayer(g, p, own, buyer, amount, today);
     else sellAbroad(g, p, own, buyerName, amount, today);
     repairSquadLists(g);

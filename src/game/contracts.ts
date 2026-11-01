@@ -20,6 +20,8 @@ import { isForeignId } from '../engine/world';
 import { Club, Player } from '../types';
 import { fmtPrice } from '../ui/format';
 import { repairSquadLists, wageRatioOf } from './squads';
+import { freeAgentDestination, preferredClub } from './playerWishesGame';
+import { personaOf } from '../engine/persona';
 import { Game } from './state';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -94,14 +96,28 @@ export function offerContract(g: Game, playerId: string, wage: number, years: nu
 // -----------------------------------------------------------------------------
 // Wechsel eines Spielers (Vertragsende / Vorvertrag)
 // -----------------------------------------------------------------------------
+/** Neuer Verein für einen eigenen Spieler (Vertragsende/Vorvertrag): nach seinen Wünschen. */
 function pickBuyer(g: Game, p: Player, exclude: string, seed: string): Club | null {
   const cands = Object.values(g.clubs).filter((c) => c.id !== exclude && c.id !== g.managedClubId && !isForeignId(c.id)
     && Math.abs((c.reputation ?? 60) - p.overall) <= 14 && c.playerIds.length < 30);
   if (!cands.length) return null;
-  cands.sort((a, b) => b.reputation - a.reputation);
-  // Bessere Spieler gehen eher zu größeren Vereinen.
-  const i = Math.floor(Math.pow(hashRand(seed), 1.6) * cands.length);
-  return cands[i] ?? cands[0];
+  let i = 0;
+  return preferredClub(g, p, cands, () => hashRand(seed + i++)) ?? cands.sort((a, b) => b.reputation - a.reputation)[0];
+}
+
+/**
+ * KI-Spieler mit auslaufendem Vertrag: Der Verein lässt Schwache/Alte gehen;
+ * ehrgeizige Leistungsträger gehen, wenn ein reizvollerer Verein sie braucht.
+ * Ab Bosman (ablösefrei) deutlich häufiger als vorher.
+ */
+function aiWantsToLeave(g: Game, p: Player, club: Club, bosman: boolean, r: number): boolean {
+  const sq = squadOf(g, club).map((x) => x.overall).sort((a, b) => b - a);
+  const level = sq.slice(0, 11).reduce((a, b) => a + b, 0) / Math.max(1, Math.min(11, sq.length));
+  const notWanted = p.overall < level - 9 || (p.age >= 31 && p.overall < level - 3);
+  if (notWanted) return r < (bosman ? 0.7 : 0.45);
+  const pe = personaOf(p);
+  const urge = (pe.ehrgeiz - pe.loyalitaet) / 200 + (55 - (p.contract.satisfaction ?? 60)) / 150 + (p.overall - (club.reputation ?? 60)) / 60;
+  return r < clamp((bosman ? 0.14 : 0.05) + urge, 0.02, bosman ? 0.5 : 0.25);
 }
 
 /** Wechsel eines Spielers (Ablöse in 1975-Basis, 0 = ablösefrei). Gehalt/Laufzeit werden neu gesetzt. */
@@ -159,9 +175,9 @@ export function handleContractExpiry(g: Game, today: string): void {
 
       // Vorvertrag: Wechsel steht fest.
       const pre = p.contract.preContractClubId ? g.clubs[p.contract.preContractClubId] : undefined;
-      // Eigener Spieler ohne Verlängerung geht; KI-Spieler wechseln selten.
-      const leaves = !stale && (pre || mine || r < (bosman ? 0.12 : 0.06)) && p.age < 34;
-      const buyer = leaves ? (pre ?? pickBuyer(g, p, club.id, pid + year)) : null;
+      // Eigener Spieler ohne Verlängerung geht; KI-Spieler entscheiden nach ihren Wünschen.
+      const leaves = !stale && (pre || mine || aiWantsToLeave(g, p, club, bosman, r)) && p.age < 34;
+      const buyer = leaves ? (pre ?? (mine ? pickBuyer(g, p, club.id, pid + year) : freeAgentDestination(g, p, club.id, () => hashRand(pid + year + 'z')))) : null;
       if (buyer) {
         const fee = bosman ? 0 : preBosmanFee(p);
         transferPlayer(g, p, club, buyer, fee, today);

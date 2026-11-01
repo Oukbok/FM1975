@@ -6,8 +6,12 @@
 //      Erfolgsprämie. Der Verkäufer antwortet mit Gegenforderungen; seine
 //      Schmerzgrenze bleibt verdeckt, du siehst nur eine Schätzspanne.
 //      Zu niedrige Angebote kosten Geduld, bei 0 ist das Gespräch beendet.
-//   2. Spielergespräch: Gehalt, Laufzeit, Handgeld, Ausstiegsklausel und bis
-//      zu drei Versprechen. Der Berater nennt eine (überhöhte) Forderung.
+//      Dazu (je nach Epoche): drei Raten, Spieler-Tausch, Rückkaufoption,
+//      Leihe mit Kaufoption. Der Verkäufer bewertet einen Tauschspieler nach
+//      seinem eigenen Bedarf; der Tauschspieler muss selbst wechseln wollen.
+//   2. Spielergespräch: Gehalt, Laufzeit, Handgeld, Ausstiegsklausel,
+//      Treueprämie, Erfolgsklausel, Beraterprovision und Versprechen. Haltung
+//      und Wünsche aus seiner Persönlichkeit (game/playerWishesGame.ts).
 //   3. Abschluss: sofort im Transferfenster (Juli/August, Januar), sonst zum
 //      nächsten Fenster. Ab Bosman können Spieler mit auslaufendem Vertrag
 //      (≤ 6 Monate) ohne Vereinsgespräch einen Vorvertrag unterschreiben.
@@ -19,11 +23,14 @@ import { book } from '../engine/finances';
 import { economyScale, yearOf } from '../engine/economy';
 import { makeMessage, pushMessage } from '../engine/messages';
 import {
-  ClubPackage, PlayerOffer, PROMISES, clubAnswer, estimateRange, hash01, playerAnswer, playerStance, PlayerStance,
-  sellerPosition,
+  CLAUSE_FROM, ClubPackage, PlayerOffer, PROMISES, clubAnswer, estimateRange, hash01, playerAnswer, PlayerStance,
+  sellerPosition, stanceFrom,
 } from '../engine/transferMarket';
+import { assessSquad, GROUP_OF } from '../engine/aiManager';
+import { interestText } from '../engine/playerWishes';
+import { playsEurope, rivalsOf, willJoin, wishesFor } from './playerWishesGame';
 import { isForeignId } from '../engine/world';
-import { Player, POSITION_GROUPS } from '../types';
+import { Club, Player } from '../types';
 import { fmtPrice } from '../ui/format';
 import { transferPlayer } from './contracts';
 import { ensureEnvironment } from './environmentGame';
@@ -79,19 +86,32 @@ export function talkBlocker(g: Game, p: Player): string | null {
   if (p.clubId === g.managedClubId) return 'Er spielt bereits bei dir.';
   if (p.isYouth) return 'Jugendspieler holst du über das Jugend-Scouting.';
   if (!g.clubs[p.clubId] || isForeignId(p.clubId)) return 'Für Spieler ausländischer Vereine fehlen noch die Kontakte.';
+  if (p.clubId.startsWith('ddr') && yearOf(g.calendar.currentDate) < 1990) return 'Spieler aus der DDR-Oberliga dürfen nicht in den Westen wechseln.';
+  if (p.loan) return 'Er ist nur ausgeliehen.';
   if (hasTransferBan(g.clubs[g.managedClubId], g.season)) return 'Transfersperre (Lizenzauflage).';
   if (activeTalks(g).length >= 4 && !talkFor(g, p.id)) return 'Höchstens vier Verhandlungen gleichzeitig.';
   return null;
 }
 
-function scoutKnowledge(g: Game, p: Player): number {
+/** Wie gut kennt dein Stab den Spieler (0..1)? Bestimmt Schätzspannen und die Wunsch-Anzeige. */
+export function scoutKnowledge(g: Game, p: Player): number {
+  if (p.clubId === g.managedClubId) return 1;
   const fx = staffEffectsOf(g);
-  return clamp(0.25 + (fx.scouting ?? 0) * 2.5 + (p.transferListed ? 0.1 : 0), 0, 1);
+  const talk = talkFor(g, p.id);
+  return clamp(0.25 + (fx.scouting ?? 0) * 2.5 + (p.transferListed ? 0.1 : 0) + (talk ? 0.15 + Math.min(0.2, talk.pRound * 0.1) : 0), 0, 1);
 }
 
 function rivals(g: Game, sellerId: string): boolean {
   const env = ensureEnvironment(g);
   return env.rivals.includes(sellerId);
+}
+
+/** Direkter Tabellennachbar (höchstens drei Plätze auseinander, ab dem 6. Spieltag). */
+function competitor(g: Game, a: string, b: string): boolean {
+  const rows = g.table?.rows ?? [];
+  if ((rows[0]?.played ?? 0) < 6) return false;
+  const pa = rows.findIndex((r) => r.clubId === a), pb = rows.findIndex((r) => r.clubId === b);
+  return pa >= 0 && pb >= 0 && Math.abs(pa - pb) <= 3 && Math.min(pa, pb) <= 6;
 }
 
 export function startTalk(g: Game, playerId: string): TransferTalk | string {
@@ -108,7 +128,7 @@ export function startTalk(g: Game, playerId: string): TransferTalk | string {
   const bosman = bosmanActive(today);
   const pos = sellerPosition(p, seller, own, {
     year: yearOf(today), monthsLeft: months, bosman, rival: rivals(g, seller.id), scope: 'germany',
-    squad: seller.playerIds.map((id) => g.players[id]).filter(Boolean),
+    squad: seller.playerIds.map((id) => g.players[id]).filter(Boolean), competitor: competitor(g, own.id, seller.id),
   });
   const freeAgent = bosman && months <= 6;
   const t: TransferTalk = {
@@ -125,7 +145,11 @@ export function startTalk(g: Game, playerId: string): TransferTalk | string {
     t.log.push({ date: today, who: 'info', text: `Dein Sportdirektor schätzt die Forderung von ${seller.name} auf ${fmtPrice(t.estimate[0])} bis ${fmtPrice(t.estimate[1])}.` });
     if (pos.untouchable) t.log.push({ date: today, who: 'verein', text: `${p.lastName} ist für uns eigentlich unverkäuflich. Wenn, dann nur für sehr viel Geld.` });
     else if (pos.notes.includes('Geldsorgen')) t.log.push({ date: today, who: 'info', text: `${seller.name} braucht Geld – das stärkt deine Position.` });
+    if (pos.notes.includes('direkter Konkurrent')) t.log.push({ date: today, who: 'info', text: `Ihr seid direkte Konkurrenten in der Tabelle – ${seller.shortName} verlangt einen Aufschlag.` });
   }
+  const st = stanceFor(g, t);
+  if (st.dealBreaker) t.log.push({ date: today, who: 'spieler', text: `Aus seinem Umfeld heißt es: ${st.dealBreaker}` });
+  else if (st.interest < 36) t.log.push({ date: today, who: 'info', text: `Dein Scout hört: ${p.lastName} reizt ein Wechsel zu euch wenig (${interestText(st.interest).text.toLowerCase()}).` });
   talksOf(g).push(t);
   return t;
 }
@@ -136,19 +160,50 @@ function say(t: TransferTalk, date: string, who: TransferTalk['log'][number]['wh
   t.lastAction = date;
 }
 
+/** Wert eines eigenen Spielers als Tauschobjekt für den Verkäufer (0 = will ihn nicht bzw. er will nicht hin). */
+export function swapValueFor(g: Game, swap: Player, seller: Club): { value: number; reason: string } {
+  if (swap.clubId !== g.managedClubId) return { value: 0, reason: 'Nur eigene Spieler.' };
+  if (swap.loan) return { value: 0, reason: 'Leihspieler kannst du nicht tauschen.' };
+  const a = assessSquad(seller.playerIds.map((id) => g.players[id]).filter(Boolean), seller.tactics?.formation);
+  const need = a.groups[GROUP_OF[swap.naturalPosition]];
+  const fits = swap.overall >= a.level - 8;
+  const factor = (need.score >= 8 ? 0.85 : 0.5) * (fits ? 1 : 0.5) * (swap.age >= 31 ? 0.7 : 1);
+  const join = willJoin(g, swap, seller, () => 0.5);
+  if (!join.ok) return { value: 0, reason: `${swap.lastName} will nicht zu ${seller.shortName}.` };
+  return { value: r5k(swap.contract.transferValue * factor), reason: need.score >= 8 ? 'Bedarf auf seiner Position' : 'kein dringender Bedarf' };
+}
+
 export function clubOffer(g: Game, talkId: string, pkg: ClubPackage): string {
   const t = talksOf(g).find((x) => x.id === talkId);
   if (!t || t.phase !== 'club') return 'Kein offenes Vereinsgespräch.';
   const today = g.calendar.currentDate;
+  const year = yearOf(today);
   const own = g.clubs[g.managedClubId];
   const p = g.players[t.playerId];
   const seller = g.clubs[t.sellerId];
   if (!p || !seller || p.clubId !== seller.id) { t.phase = 'failed'; return 'Der Spieler ist nicht mehr verfügbar.'; }
-  const upfront = pkg.installments ? pkg.fee * 0.5 : pkg.fee;
-  if (upfront > own.finances.transferBudget) return `Der Vorstand gibt das nicht frei: Dein Transferbudget beträgt ${fmtPrice(own.finances.transferBudget)}${pkg.installments ? ' (bei Ratenzahlung zählt die erste Hälfte)' : ''}.`;
+  if (pkg.loan && year < CLAUSE_FROM.loanOption) return `Leihen mit Kaufoption gibt es erst ab ${CLAUSE_FROM.loanOption}.`;
+  if (pkg.buyBack && year < CLAUSE_FROM.buyBack) return `Rückkaufoptionen sind erst ab ${CLAUSE_FROM.buyBack} üblich.`;
+  if (pkg.rates === 3 && year < CLAUSE_FROM.threeRates) return `Drei Raten akzeptiert vor ${CLAUSE_FROM.threeRates} niemand.`;
+  if (pkg.loan) {
+    const rank = seller.playerIds.map((id) => g.players[id]).filter(Boolean).sort((a, b) => b.overall - a.overall).findIndex((x) => x.id === p.id);
+    if (rank >= 0 && rank < 11 && p.age > 21) return `${seller.shortName} verleiht keine Stammspieler.`;
+  }
+  // Tauschspieler: Wert neu bestimmen (nicht vom Aufrufer übernehmen).
+  if (pkg.swapPlayerId) {
+    const sw = g.players[pkg.swapPlayerId];
+    const sv = sw ? swapValueFor(g, sw, seller) : { value: 0, reason: 'Spieler nicht gefunden.' };
+    if (!sv.value) return sv.reason;
+    pkg = { ...pkg, swapValue: sv.value };
+  } else pkg = { ...pkg, swapValue: 0 };
+  const share = pkg.installments ? 1 / (pkg.rates ?? 2) : 1;
+  const upfront = pkg.fee * share;
+  if (upfront > own.finances.transferBudget) return `Der Vorstand gibt das nicht frei: Dein Transferbudget beträgt ${fmtPrice(own.finances.transferBudget)}${pkg.installments ? ' (bei Ratenzahlung zählt die erste Rate)' : ''}.`;
   t.round += 1;
-  const extras = [pkg.installments && 'in zwei Raten', pkg.sellOn > 0 && `${Math.round(pkg.sellOn * 100)} % Weiterverkaufsbeteiligung`, pkg.bonus > 0 && `${fmtPrice(pkg.bonus)} Erfolgsprämie`].filter(Boolean).join(', ');
-  say(t, today, 'du', `Angebot: ${fmtPrice(pkg.fee)}${extras ? ` (${extras})` : ''}.`);
+  const swapP = pkg.swapPlayerId ? g.players[pkg.swapPlayerId] : undefined;
+  const extras = [pkg.loan && `als Leihe, Kaufoption ${fmtPrice(pkg.optionFee ?? 0)}`, pkg.installments && `in ${pkg.rates ?? 2} Raten`, pkg.sellOn > 0 && `${Math.round(pkg.sellOn * 100)} % Weiterverkaufsbeteiligung`,
+    pkg.bonus > 0 && `${fmtPrice(pkg.bonus)} Erfolgsprämie`, swapP && `plus ${swapP.fullName}`, pkg.buyBack && `Rückkaufoption ${fmtPrice(pkg.buyBack)}`].filter(Boolean).join(', ');
+  say(t, today, 'du', `Angebot: ${fmtPrice(pkg.fee)}${pkg.loan ? ' Leihgebühr' : ''}${extras ? ` (${extras})` : ''}.`);
   const rnd = () => hash01(`${t.id}|${t.round}|${pkg.fee}`);
   const ans = clubAnswer({ asking: t.asking, walkaway: t.walkaway, hardness: t.hardness, untouchable: t.untouchable, patience: t.patience, notes: [] },
     t.currentAsk, pkg, t.round, t.patience, rnd);
@@ -156,7 +211,8 @@ export function clubOffer(g: Game, talkId: string, pkg: ClubPackage): string {
     t.pkg = pkg;
     t.phase = 'player';
     say(t, today, 'verein', ans.text);
-    say(t, today, 'info', `Jetzt musst du ${p.fullName} überzeugen. Sein Berater fordert ${fmtPrice(stanceFor(g, t).agentWage)} pro Woche.`);
+    const st = stanceFor(g, t);
+    say(t, today, 'info', `Jetzt musst du ${p.fullName} überzeugen. ${st.agent ? `Sein Berater fordert ${fmtPrice(st.agentWage)} pro Woche${st.agentFee ? ` und ${fmtPrice(st.agentFee)} Provision` : ''}.` : `Er verhandelt selbst und fordert ${fmtPrice(st.agentWage)} pro Woche.`}`);
     return ans.text;
   }
   if (ans.kind === 'breakoff') {
@@ -166,23 +222,17 @@ export function clubOffer(g: Game, talkId: string, pkg: ClubPackage): string {
   }
   t.patience -= ans.patienceLoss;
   t.currentAsk = ans.ask;
-  const msg = `${ans.text} Unsere Forderung: ${fmtPrice(ans.ask)}.`;
+  const msg = `${ans.text} Unsere Forderung: ${fmtPrice(ans.ask)}${pkg.swapValue ? ` (deinen Tauschspieler rechnen wir mit ${fmtPrice(pkg.swapValue)} an)` : ''}.`;
   say(t, today, 'verein', msg);
   return msg;
 }
 
-/** Haltung des Spielers (deterministisch aus Spieler, Käufer und Lage). */
+/** Haltung des Spielers (deterministisch aus Persönlichkeit, Käufer und Lage). */
 export function stanceFor(g: Game, t: TransferTalk): PlayerStance {
   const p = g.players[t.playerId];
   const own = g.clubs[g.managedClubId];
-  const seller = g.clubs[t.sellerId];
-  const grp = POSITION_GROUPS[p.naturalPosition];
-  const depthRank = own.playerIds.map((id) => g.players[id]).filter((x) => x && POSITION_GROUPS[x.naturalPosition] === grp && x.overall > p.overall).length;
-  const pos = g.table.rows.findIndex((r) => r.clubId === own.id) + 1;
-  return playerStance(p, own, {
-    year: yearOf(g.calendar.currentDate), sellerRep: seller?.reputation ?? 60, buyerTier: g.leagues?.playerDivision?.tier ?? 1,
-    buyerEuro: pos > 0 && pos <= 5 && (g.leagues?.playerDivision?.tier ?? 1) === 1, depthRank, trust: trustOf(g),
-  });
+  const w = wishesFor(g, p, own, { freeAgent: !!t.freeAgent });
+  return stanceFrom(w.appeal, w.demand, w.promises);
 }
 
 export function playerOffer(g: Game, talkId: string, offer: PlayerOffer): string {
@@ -192,19 +242,24 @@ export function playerOffer(g: Game, talkId: string, offer: PlayerOffer): string
   const own = g.clubs[g.managedClubId];
   const p = g.players[t.playerId];
   if (!p || p.clubId !== t.sellerId) { t.phase = 'failed'; return 'Der Spieler ist nicht mehr verfügbar.'; }
+  if (offer.releaseClause && yearOf(today) < CLAUSE_FROM.releaseClause) return `Ausstiegsklauseln sind in Deutschland erst ab ${CLAUSE_FROM.releaseClause} üblich.`;
   // Gehaltsrahmen
   const wages = own.playerIds.reduce((s, id) => s + (g.players[id]?.contract.weeklyWage ?? 0), 0) + offer.wage;
   if (own.finances.wageBudget > 0 && wages > own.finances.wageBudget * 1.15) {
     return `Der Vorstand gibt das Gehalt nicht frei: Die Gehälter lägen bei ${Math.round((wages / own.finances.wageBudget) * 100)} % des Gehaltsrahmens (Grenze 115 %).`;
   }
-  if (offer.signingFee > own.finances.transferBudget - (t.pkg ? (t.pkg.installments ? t.pkg.fee * 0.5 : t.pkg.fee) : 0)) {
-    return 'Für dieses Handgeld reicht das Transferbudget nicht.';
+  const fee = t.pkg ? t.pkg.fee / (t.pkg.installments ? (t.pkg.rates ?? 2) : 1) : 0;
+  if (offer.signingFee + (offer.agentFee ?? 0) > own.finances.transferBudget - fee) {
+    return 'Für Handgeld und Provision reicht das Transferbudget nicht.';
   }
   t.pRound += 1;
   const st = stanceFor(g, t);
   const promises = offer.promises.map((x) => PROMISES[x].label).join(', ');
-  say(t, today, 'du', `${fmtPrice(offer.wage)} pro Woche, ${offer.years} Jahre${offer.signingFee ? `, Handgeld ${fmtPrice(offer.signingFee)}` : ''}${offer.releaseClause ? ', Ausstiegsklausel' : ''}${promises ? ` · Versprechen: ${promises}` : ''}.`);
-  const ans = playerAnswer(p, st, offer, trustOf(g), t.pRound - 1, () => hash01(`${t.id}|p${t.pRound}|${offer.wage}`));
+  const extras = [offer.signingFee && `Handgeld ${fmtPrice(offer.signingFee)}`, offer.agentFee && `Provision ${fmtPrice(offer.agentFee)}`,
+    offer.loyaltyBonus && `Treueprämie ${fmtPrice(offer.loyaltyBonus)}`, offer.successRaise && `+${Math.round(offer.successRaise * 100)} % bei Europapokal`,
+    offer.releaseClause && 'Ausstiegsklausel'].filter(Boolean).join(', ');
+  say(t, today, 'du', `${fmtPrice(offer.wage)} pro Woche, ${offer.years} Jahre${extras ? `, ${extras}` : ''}${promises ? ` · Versprechen: ${promises}` : ''}.`);
+  const ans = playerAnswer(p, st, offer, trustOf(g), t.pRound - 1, () => hash01(`${t.id}|p${t.pRound}|${offer.wage}`), playsEurope(g, own.id));
   if (ans.accepted) {
     t.terms = offer;
     t.phase = 'agreed';
@@ -214,7 +269,7 @@ export function playerOffer(g: Game, talkId: string, offer: PlayerOffer): string
     say(t, today, 'info', `Einigung erzielt. Der Wechsel wird ${when} vollzogen.`);
     return `${ans.text} Der Wechsel wird ${when} vollzogen.`;
   }
-  t.pPatience -= 25;
+  t.pPatience -= st.dealBreaker ? 100 : 25;
   say(t, today, 'spieler', `${ans.text}${ans.hint ? ' ' + ans.hint : ''}`);
   if (t.pPatience <= 0) {
     t.phase = 'failed';
@@ -236,35 +291,58 @@ function completeTalk(g: Game, t: TransferTalk): string {
   const seller = g.clubs[t.sellerId];
   const p = g.players[t.playerId];
   if (!p || !seller || !t.terms || p.clubId !== seller.id) { t.phase = 'failed'; return 'Der Wechsel ist geplatzt.'; }
-  const fee = t.freeAgent ? 0 : t.pkg?.fee ?? 0;
-  const upfront = t.pkg?.installments ? Math.round(fee * 0.5) : fee;
+  const pkg = t.pkg;
+  const swap = pkg?.swapPlayerId ? g.players[pkg.swapPlayerId] : undefined;
+  if (pkg?.swapPlayerId && (!swap || swap.clubId !== own.id)) { t.phase = 'failed'; say(t, today, 'info', 'Der Tauschspieler ist nicht mehr da – der Wechsel platzt.'); return 'Der Wechsel ist geplatzt.'; }
+  const fee = t.freeAgent ? 0 : pkg?.fee ?? 0;
+  const rates = pkg?.installments ? (pkg.rates ?? 2) : 1;
+  const upfront = Math.round(fee / rates);
+  const oldWage = p.contract.weeklyWage;
   transferPlayer(g, p, seller, own, upfront, today);
-  if (t.pkg?.installments && fee > upfront) {
-    (g.transferInstallments ??= []).push({ due: CalendarEngine.addDays(today, 365), amount: fee - upfront, from: own.id, to: seller.id, name: p.fullName, kind: 'rate' });
-    own.finances.transferBudget -= fee - upfront;
+  for (let k = 1; k < rates; k++) {
+    (g.transferInstallments ??= []).push({ due: CalendarEngine.addDays(today, 365 * k), amount: Math.round((fee - upfront) / (rates - 1)), from: own.id, to: seller.id, name: p.fullName, kind: 'rate' });
   }
-  if (t.pkg?.bonus) (g.transferInstallments ??= []).push({ due: `${seasonEndYear(today)}-06-30`, amount: t.pkg.bonus, from: own.id, to: seller.id, name: p.fullName, kind: 'bonus', playerId: p.id });
-  if (t.pkg?.sellOn) p.sellOn = { clubId: seller.id, pct: t.pkg.sellOn };
+  if (rates > 1) own.finances.transferBudget -= fee - upfront;
+  if (pkg?.bonus) (g.transferInstallments ??= []).push({ due: `${seasonEndYear(today)}-06-30`, amount: pkg.bonus, from: own.id, to: seller.id, name: p.fullName, kind: 'bonus', playerId: p.id });
+  if (pkg?.sellOn) p.sellOn = { clubId: seller.id, pct: pkg.sellOn };
+  if (pkg?.buyBack) p.contract.buyBack = { clubId: seller.id, fee: pkg.buyBack, until: `${seasonEndYear(today) + 2}-06-30` };
+  if (pkg?.loan) p.loan = { fromClubId: seller.id, until: `${seasonEndYear(today)}-06-30`, optionFee: pkg.optionFee ?? 0, wage: oldWage };
+  if (swap) {
+    transferPlayer(g, swap, own, seller, 0, today);
+    say(t, today, 'info', `${swap.fullName} wechselt im Tausch zu ${seller.name}.`);
+  }
   // Vertrag nach Einigung (transferPlayer setzt Standardwerte)
-  p.contract.weeklyWage = Math.round(t.terms.wage);
-  p.contract.expiryDate = `${seasonEndYear(today) + t.terms.years - (Number(today.slice(5, 7)) >= 7 ? 1 : 0)}-06-30`;
-  p.contract.releaseClause = t.terms.releaseClause ? r5k(Math.max(fee, p.contract.transferValue) * 1.8) : undefined;
+  const terms = t.terms;
+  p.contract.weeklyWage = Math.round(terms.wage);
+  p.contract.expiryDate = `${seasonEndYear(today) + terms.years - (Number(today.slice(5, 7)) >= 7 ? 1 : 0)}-06-30`;
+  if (pkg?.loan && p.contract.expiryDate <= p.loan!.until) p.contract.expiryDate = `${seasonEndYear(today) + 1}-06-30`;
+  p.contract.releaseClause = terms.releaseClause ? r5k(Math.max(fee, p.contract.transferValue) * 1.8) : undefined;
+  p.contract.loyaltyBonus = terms.loyaltyBonus || undefined;
+  p.contract.successRaise = terms.successRaise || undefined;
+  p.contract.noRivalSale = terms.promises.includes('keinRivale') || undefined;
   p.contract.satisfaction = 80;
   const scale = economyScale(yearOf(today));
-  if (t.terms.signingFee > 0) {
-    book(own.finances, today, -Math.round(t.terms.signingFee * scale), 'transfer_expense', `Handgeld ${p.fullName}`, true);
-    own.finances.transferBudget -= t.terms.signingFee;
+  if (terms.signingFee > 0) {
+    book(own.finances, today, -Math.round(terms.signingFee * scale), 'transfer_expense', `Handgeld ${p.fullName}`, true);
+    own.finances.transferBudget -= terms.signingFee;
   }
-  if (t.terms.promises.includes('umzug')) book(own.finances, today, -Math.round(Math.max(1000, marketWage(p) * 4) * scale), 'other', `Umzug & Familie ${p.fullName}`, true);
-  givePromises(g, p, t.terms.promises, today);
+  if (terms.agentFee) {
+    book(own.finances, today, -Math.round(terms.agentFee * scale), 'transfer_expense', `Beraterprovision ${p.fullName}`, true);
+    own.finances.transferBudget -= terms.agentFee;
+  }
+  if (terms.promises.includes('umzug')) book(own.finances, today, -Math.round(Math.max(1000, marketWage(p) * 4) * scale), 'other', `Umzug & Familie ${p.fullName}`, true);
+  givePromises(g, p, terms.promises, today);
   repairSquadLists(g);
   t.phase = 'done';
-  const text = `${p.fullName} wechselt ${fee ? `für ${fmtPrice(fee)} ` : 'ablösefrei '}von ${seller.name} zu dir.`;
+  const text = pkg?.loan ? `${p.fullName} kommt für eine Saison auf Leihbasis von ${seller.name} (Leihgebühr ${fmtPrice(fee)}, Kaufoption ${fmtPrice(pkg.optionFee ?? 0)}).`
+    : `${p.fullName} wechselt ${fee ? `für ${fmtPrice(fee)} ` : 'ablösefrei '}von ${seller.name} zu dir${swap ? ` – ${swap.fullName} geht im Tausch` : ''}.`;
   say(t, today, 'info', text);
+  const clauses = [terms.releaseClause && `Ausstiegsklausel ${fmtPrice(p.contract.releaseClause ?? 0)}`, terms.loyaltyBonus && `Treueprämie ${fmtPrice(terms.loyaltyBonus)} bei Vertragsende`,
+    terms.successRaise && `+${Math.round(terms.successRaise * 100)} % Gehalt bei Europapokal-Platz`, pkg?.buyBack && `Rückkaufoption für ${seller.shortName}: ${fmtPrice(pkg.buyBack)} (2 Jahre)`].filter(Boolean);
   pushMessage(g.messages, makeMessage({
     date: today, category: 'transfer', from: 'Sportdirektor', subject: `Transfer perfekt: ${p.fullName}`,
     shortText: text,
-    bodyText: `${text}\n\nVertrag bis 30.06.${p.contract.expiryDate.slice(0, 4)}, ${fmtPrice(p.contract.weeklyWage)} pro Woche.${t.terms.promises.length ? `\nVersprechen: ${t.terms.promises.map((x) => PROMISES[x].label).join(', ')} – sie werden am Saisonende geprüft.` : ''}`,
+    bodyText: `${text}\n\nVertrag bis 30.06.${p.contract.expiryDate.slice(0, 4)}, ${fmtPrice(p.contract.weeklyWage)} pro Woche.${clauses.length ? `\nKlauseln: ${clauses.join(', ')}.` : ''}${terms.promises.length ? `\nVersprechen: ${terms.promises.map((x) => PROMISES[x].label).join(', ')} – sie werden am Saisonende geprüft.` : ''}`,
   }));
   return text;
 }
