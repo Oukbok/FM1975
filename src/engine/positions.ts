@@ -104,15 +104,31 @@ export const POSITION_NAMES_DE: Record<Position, string> = {
 };
 
 /**
- * Vertrautheits-Faktor: wie gut kennt der Spieler die Position?
- *  - Stammposition            → 1.00
- *  - Nebenposition            → 0.92
- *  - selbe Positionsgruppe    → 0.82
- *  - benachbarte Gruppe       → 0.70
- *  - weit entfernte Gruppe    → 0.55
- *  - TW-Sonderfall (falsch)   → 0.30
+ * Vertrautheits-Faktor aus der Positionsvertrautheit (0–100, `Player.positionSkill`):
+ * 100 bzw. ≥ 95 → 1.00, 90 → 0.97, 75 → 0.89, 60 → 0.80, 50 → 0.73, 30 → 0.60, 0 → 0.30.
+ * Vorberechnet als Tabelle in ganzen Schritten.
  */
-function familiarity(player: Player, pos: Position): number {
+const FAM_TABLE: number[] = Array.from({ length: 101 }, (_, i) => Math.min(1, 0.3 + 0.7 * Math.pow(i / 95, 0.75)));
+export function famFactor(v: number): number {
+  const i = Math.round(v < 0 ? 0 : v > 100 ? 100 : v);
+  return FAM_TABLE[i];
+}
+
+/** Zähler, der bei jeder Änderung einer Positionsvertrautheit steigt (für Zwischenspeicher). */
+let skillRev = 0;
+export function bumpSkillRev(): void { skillRev++; }
+export function getSkillRev(): number { return skillRev; }
+
+/**
+ * Vertrautheits-Faktor: wie gut kennt der Spieler die Position?
+ * Mit `positionSkill` (alle Spieler nach der Nachrüstung) aus der Vertrautheit 0–100.
+ * Ohne (Rohspieler bei der Erzeugung) die alte Faustregel:
+ *  Stammposition 1.00 · Nebenposition 0.92 · selbe Gruppe 0.82 · Nachbargruppe 0.70 ·
+ *  weit entfernt 0.55 · Torwart ↔ Feld 0.30.
+ */
+export function familiarity(player: Player, pos: Position): number {
+  const v = player.positionSkill?.v[pos];
+  if (v != null) return famFactor(v);
   if (player.naturalPosition === pos) return 1.0;
   if (player.secondaryPositions?.includes(pos)) return 0.92;
 
@@ -186,6 +202,12 @@ export function weightsFor(pos: Position): PositionWeights {
  *  3. × Vertrautheit mit der Position.
  */
 export function positionSuitability(player: Player, pos: Position): number {
+  const rating = rawSuitability(player, pos) * familiarity(player, pos);
+  return Math.max(1, Math.min(99, Math.round(rating)));
+}
+
+/** Positionsstärke allein aus den Attributen (ohne Vertrautheit, ungerundet). */
+export function rawSuitability(player: Player, pos: Position): number {
   const weights = weightsFor(pos);
   let sum = 0;
   let wsum = 0;
@@ -201,8 +223,7 @@ export function positionSuitability(player: Player, pos: Position): number {
   // Eine klare Schwäche in einem Kernwert kostet (z. B. ein Vorstopper ohne Kopfball).
   const gap = base - weakest;
   const penalty = gap > 15 ? (gap - 15) * 0.12 : 0;
-  const rating = (base - penalty) * familiarity(player, pos);
-  return Math.max(1, Math.min(99, Math.round(rating)));
+  return base - penalty;
 }
 
 /** Eignung für alle Positionen auf einmal (für die Kader-/Aufstellungs-UI). */

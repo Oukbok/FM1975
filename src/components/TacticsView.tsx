@@ -42,9 +42,9 @@ export default function TacticsView({ g, onChange }: { g: G; onChange: () => voi
   const m = tacticMods(t, 0, null, 0, 1);
   const eff: [string, number, boolean][] = [
     ['Angriffswucht', m.att, false], ['Abwehr', m.def, false], ['Ballkontrolle', m.ctrl, false],
-    ['Angriffe je Minute', m.rate, false], ['Konterstärke', m.counter, false], ['Flankenspiel', m.cross, false],
+    ['Angriffe je Minute', m.rate, false], ['Zweikämpfe', m.duel, false], ['Konterstärke', m.counter, false], ['Flankenspiel', m.cross, false],
     ['Konteranfälligkeit', m.exposed, true], ['Fehler im Aufbau', m.errors, true], ['Kraftverbrauch', m.drain, true],
-    ['Fouls', m.foul, true], ['Karten', m.cards, true],
+    ['Fouls', m.foul, true], ['Karten', m.cards, true], ['Verletzungsrisiko', m.injury, true],
   ];
   const pct = (f: number) => { const v = Math.round((f - 1) * 100); return v === 0 ? '±0 %' : `${v > 0 ? '+' : '−'}${Math.abs(v)} %`; };
 
@@ -58,7 +58,8 @@ export default function TacticsView({ g, onChange }: { g: G; onChange: () => voi
         <KV k="Formation" v={getFormation(t.formation).label} />
         <KV k="Aufbau · Breite" v={`${t.buildup === 'long' ? 'lang' : 'kurz'} · ${level(t.widthFocus, 'Mitte', 'normal', 'Flügel')}`} />
         <KV k="Pressing · Linie" v={`${level(t.pressing, 'abwartend', 'normal', 'hoch')} · ${level(t.defensiveLine, 'tief', 'normal', 'hoch')}`} />
-        <div className="dnote mt8">Im Textmodus kannst du die Ausrichtung während des Spiels zusätzlich verschieben und Zurufe geben. Formation und Spieler stellst du unter Spieltag › Aufstellung.</div>
+        <Slider label="Einsatz" lo="kräfteschonend" hi="volle Kraft" value={t.effort ?? 50} onChange={(v) => set({ effort: v })} />
+        <div className="dnote">Mehr Einsatz gewinnt Zweikämpfe und macht Druck, kostet aber Kraft und Frische und erhöht Verletzungs- und Kartenrisiko. Im Textmodus kannst du die Ausrichtung im Spiel verschieben und Zurufe geben.</div>
       </DashBox>
 
       <DashBox title="Mit Ball" icon="matchball">
@@ -75,6 +76,7 @@ export default function TacticsView({ g, onChange }: { g: G; onChange: () => voi
         <Slider label="Pressinghöhe" lo="abwartend" hi="hohes Pressing" value={t.pressing} onChange={(v) => set({ pressing: v })} />
         <Slider label="Abwehrlinie" lo="tief" hi="hoch" value={t.defensiveLine} onChange={(v) => set({ defensiveLine: v })} />
         <Slider label="Zweikampfhärte" lo="fair" hi="kompromisslos" value={t.tackleHardness ?? 50} onChange={(v) => set({ tackleHardness: v })} />
+        <div className="dnote">Härte gewinnt mehr Zweikämpfe, bringt aber Fouls und Karten.</div>
         <div className="lu-mlabel">Abseitsfalle</div>
         <div className="lu-seg tx-toggle">
           <button className={t.offsideTrap ? 'on' : ''} onClick={() => set({ offsideTrap: true })}>An</button>

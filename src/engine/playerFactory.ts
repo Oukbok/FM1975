@@ -6,6 +6,7 @@
 import { Player, Position, PlayerAttributes, AttributeKey, createEmptyStats, potentialToStars, clampStars } from '../types';
 import { wageForOverall } from './economy';
 import { weightsFor, positionSuitability } from './positions';
+import { ensurePositionSkill } from './positionSkill';
 import { pickOrigin, makeName, Origin } from '../data/origins';
 import { exceptionalPotential, getTalentSupply } from './talent';
 
@@ -110,7 +111,7 @@ export function createPlayer(spec: NewPlayerSpec): Player {
   const value = Math.round(overall * overall * 1000 * (age < 24 ? 1.5 : age < 29 ? 1.2 : 0.6));
   const scoutBias = Math.round((rng() - 0.5) * 4) / 4; // −0,5 … +0,5 Sterne
   const stars = potentialToStars(basePotential);
-  return {
+  const player: Player = {
     id: spec.id,
     firstName, lastName, fullName: `${firstName} ${lastName}`,
     shirtNumber: spec.shirt ?? 0,
@@ -144,4 +145,6 @@ export function createPlayer(spec: NewPlayerSpec): Player {
     seasonStats: createEmptyStats(), careerStats: createEmptyStats(),
     trainingLoad: 0, transferListed: false,
   };
+  ensurePositionSkill(player, date); // Positionsvertrautheit (engine/positionSkill.ts)
+  return player;
 }

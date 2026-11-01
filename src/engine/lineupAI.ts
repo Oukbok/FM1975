@@ -173,6 +173,7 @@ export function buildAutoTactics(
     tempo: existing?.tempo ?? clamp(vary(50, 20)),
     defensiveLine: existing?.defensiveLine ?? clamp(vary(50, 18)),
     tackleHardness: existing?.tackleHardness ?? clamp(vary(50, 18)),
+    effort: existing?.effort ?? 50,
     offsideTrap: existing?.offsideTrap ?? rng() < 0.35,
     widthFocus: existing?.widthFocus ?? clamp(vary(50, 22)),
     buildup: existing?.buildup ?? (rng() < 0.5 ? 'short' : 'long'),

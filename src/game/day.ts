@@ -55,6 +55,7 @@ import { campDaily } from './trainingCampGame';
 import { groundsDaily } from './groundsGame';
 import { DrawNotice, cupDrawsDaily, ensureDrawn, hasScheduledDraw } from './cupDraw';
 import { monthlySponsoring } from './sponsorGame';
+import { monthlyPositions, ownPositionTraining } from './positionsGame';
 import { promoteEarlyTalents } from './talentGame';
 import { PlayerDevReveal } from '../types';
 import { fmtDM, fmtDMfull, fmtDateFull, setDisplayYear } from '../ui/format';
@@ -369,6 +370,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
     // Winterpause: Training baut Fitness auf, aber keine Spielform (kein Form-Plus).
     const breakForm = inWinterBreak(g, today) ? new Map(myClub.playerIds.map((id) => [id, g.players[id]?.form ?? 0])) : null;
     applyDailyTraining(myClub, g.players, g.trainingPlan.days[planIdx], false);
+    // Positionstraining (eine Zielposition je Spieler, game/positionsGame.ts)
+    { const d = g.trainingPlan.days[planIdx]; if (d?.slot1 || d?.slot2) ownPositionTraining(g, today, 0.8 + 0.4 * ((myClub.trainingSchedule?.facilitiesQuality ?? 70) / 100)); }
     if (breakForm) for (const [id, f] of breakForm) { const p = g.players[id]; if (p && p.form > f) p.form = f; }
     applyFocusLoad(g, myClub, today, staffEffectsOf(g).injuryReduction);
     // Übrige Liga regeneriert normal; Manager-Verein ist über das Training abgedeckt.
@@ -534,6 +537,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
     monthlyClubBusiness(g, today);
     // Sponsoring 2.0: Verlängerungen, neue Interessenten, Pflichtreisen, Image (game/sponsorGame.ts).
     monthlySponsoring(g, today);
+    // Positionsvertrautheit: Abbau ungenutzter Positionen, KI-Positionstraining (game/positionsGame.ts).
+    monthlyPositions(g, today);
     for (const club of Object.values(g.clubs)) {
       if (club.finances.lastMonthlyBooking === curMonth) continue;
       const isMine = club.id === g.managedClubId;

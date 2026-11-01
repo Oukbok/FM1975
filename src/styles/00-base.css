@@ -53,6 +53,12 @@
   --orange: #d98a5b;
   --red: #e0646f;
   --gold: #d9b26a;
+  /* Positionen: Schlüsselattribute (blau) und Vertrautheit (Grünstufen) */
+  --pos-key: #5a9ef0;        /* Schlüsselattribut: kräftiger Strich + Balken */
+  --pos-key-2: #9fc4f2;      /* wichtig: schlanker, hellerer Strich */
+  --fam-1: #4aa877;          /* natürlich */
+  --fam-2: #2e7352;          /* gut */
+  --fam-3: #263f37;          /* ausreichend */
   --pos: var(--green);
   --neg: var(--red);
   --warn: var(--yellow);
