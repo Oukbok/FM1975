@@ -6,7 +6,7 @@ import type { Club, Player, Position, Tactics } from '../../types';
 import { POSITION_GROUPS } from '../../types';
 import { getFormation } from '../../data/formations';
 import { withLayout } from '../../data/pitchGrid';
-import { getEraYear, positionSuitability } from '../positions';
+import { getEraYear, getSkillRev, positionSuitability } from '../positions';
 import type { MPlayer, Mentality, ShoutId, Side } from './types';
 
 const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
@@ -60,10 +60,10 @@ export function rating(m: MPlayer): number {
 // Aufstellung
 // -----------------------------------------------------------------------------
 
-/** Positionsstärke mit Zwischenspeicher (gültig, solange Overall und Spieljahr gleich bleiben). */
+/** Positionsstärke mit Zwischenspeicher (gültig, solange Overall, Spieljahr und Positionsvertrautheiten gleich bleiben). */
 const suitCache = new WeakMap<Player, { stamp: string; v: Partial<Record<Position, number>> }>();
 export function cachedSuitability(p: Player, pos: Position): number {
-  const stamp = `${p.overall}|${getEraYear()}`;
+  const stamp = `${p.overall}|${getEraYear()}|${getSkillRev()}`;
   let c = suitCache.get(p);
   if (!c || c.stamp !== stamp) { c = { stamp, v: {} }; suitCache.set(p, c); }
   return c.v[pos] ?? (c.v[pos] = positionSuitability(p, pos));
@@ -253,12 +253,14 @@ export interface TacticMods {
   cards: number;
   /** Zweikampf. */
   duel: number;
+  /** Verletzungsrisiko der eigenen Spieler. */
+  injury: number;
 }
 
 const norm = (v: number | undefined) => ((v ?? 50) - 50) / 50;
 
 export function tacticMods(t: Tactics | undefined, mentality: Mentality, shout: ShoutId | null, shoutPower: number, talk: number): TacticMods {
-  const m: TacticMods = { att: 1, def: 1, ctrl: 1, rate: 1, foul: 1, drain: 1, cross: 1, exposed: 1, counter: 1, trap: 0, errors: 1, cards: 1, duel: 1 };
+  const m: TacticMods = { att: 1, def: 1, ctrl: 1, rate: 1, foul: 1, drain: 1, cross: 1, exposed: 1, counter: 1, trap: 0, errors: 1, cards: 1, duel: 1, injury: 1 };
   switch (t?.style) {
     case 'attacking': m.att *= 1.07; m.def *= 0.95; m.rate *= 1.1; m.exposed *= 1.15; break;
     case 'defensive': m.att *= 0.93; m.def *= 1.06; m.rate *= 0.88; m.exposed *= 0.85; break;
@@ -274,7 +276,21 @@ export function tacticMods(t: Tactics | undefined, mentality: Mentality, shout: 
   m.drain *= 1 + press * 0.25 + tempo * 0.15;
   m.foul *= 1 + hard * 0.35 + press * 0.12;
   m.cards *= 1 + hard * 0.3;
-  m.duel *= 1 + hard * 0.05;
+  // Härte gewinnt Zweikämpfe (Balleroberung, Abwehr) – auf Kosten von Fouls und Karten.
+  m.duel *= 1 + hard * 0.08;
+  m.def *= 1 + hard * 0.02;
+  m.ctrl *= 1 + hard * 0.01;
+  // Einsatz: mehr Zweikämpfe/Pressing/Wucht, aber schnellerer Kraftverlust, mehr Verletzungen und Karten.
+  const eff = norm(t?.effort);
+  m.duel *= 1 + eff * 0.07;
+  m.def *= 1 + eff * 0.02;
+  m.ctrl *= 1 + eff * 0.015;
+  m.att *= 1 + eff * 0.015;
+  m.rate *= 1 + eff * 0.03;
+  m.drain *= 1 + eff * 0.3;
+  m.foul *= 1 + eff * 0.1;
+  m.cards *= 1 + eff * 0.08;
+  m.injury *= 1 + eff * 0.3;
   m.cross *= 1 + width * 0.35 + (t?.buildup === 'long' ? 0.15 : 0);
   m.trap = t?.offsideTrap ? 1 : 0;
   // Ausrichtung im Spiel

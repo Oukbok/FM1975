@@ -95,11 +95,11 @@ const TACTIC_STYLE: Record<CoachStyle, TacticStyle> = {
 };
 
 /** Grundwerte je Stil (Mittel wie die bisherige Zufallstaktik, damit die Balance bleibt). */
-const STYLE_BASE: Record<CoachStyle, { pressing: number; tempo: number; line: number; width: number; long: number }> = {
-  offensiv: { pressing: 60, tempo: 58, line: 58, width: 56, long: 0.4 },
-  ausgewogen: { pressing: 50, tempo: 50, line: 50, width: 50, long: 0.5 },
-  defensiv: { pressing: 42, tempo: 44, line: 40, width: 46, long: 0.5 },
-  konter: { pressing: 46, tempo: 60, line: 40, width: 52, long: 0.7 },
+const STYLE_BASE: Record<CoachStyle, { pressing: number; tempo: number; line: number; width: number; long: number; effort: number }> = {
+  offensiv: { pressing: 60, tempo: 58, line: 58, width: 56, long: 0.4, effort: 58 },
+  ausgewogen: { pressing: 50, tempo: 50, line: 50, width: 50, long: 0.5, effort: 50 },
+  defensiv: { pressing: 42, tempo: 44, line: 40, width: 46, long: 0.5, effort: 52 },
+  konter: { pressing: 46, tempo: 60, line: 40, width: 52, long: 0.7, effort: 54 },
 };
 
 /** Formationsbewertung: Besetzbarkeit + Vorliebe des Trainers + Zeitgeist (Libero stirbt aus). */
@@ -133,7 +133,7 @@ export function coachTactics(club: Club, players: Record<string, Player>, coach:
     ...club.tactics,
     style: TACTIC_STYLE[coach.style],
     pressing: t(b.pressing + h('p')), tempo: t(b.tempo + h('t')), defensiveLine: t(b.line + h('l')),
-    widthFocus: t(b.width + h('w')), tackleHardness: t(50 + h('h')),
+    widthFocus: t(b.width + h('w')), tackleHardness: t(50 + h('h')), effort: t(b.effort + h('e') * 0.75),
     buildup: hash01(coach.id + 'b') < b.long ? 'long' : 'short',
     offsideTrap: hash01(coach.id + 'o') < (coach.style === 'offensiv' ? 0.5 : 0.3),
   };

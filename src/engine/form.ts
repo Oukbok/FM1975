@@ -56,10 +56,10 @@ export function applyMatchFatigue(player: Player, minutes: number): void {
  * Ein voller Einsatz kostet ~25–40 Punkte, leicht gedämpft durch hohe Ausdauer.
  * Skaliert mit den Einsatzminuten (Einwechslungen kosten anteilig weniger).
  */
-export function applyMatchFreshnessDrain(player: Player, minutes: number): void {
+export function applyMatchFreshnessDrain(player: Player, minutes: number, effortFactor = 1): void {
   if (typeof player.frische !== 'number') player.frische = 100;
   const staminaFactor = 1 - (player.attributes.stamina - 50) / 250; // ~0.8–1.2
-  const drain = (minutes / 90) * (25 + Math.random() * 15) * staminaFactor; // ~25–40 bei 90 Min.
+  const drain = (minutes / 90) * (25 + Math.random() * 15) * staminaFactor * effortFactor; // ~25–40 bei 90 Min.
   player.frische = clamp100(player.frische - drain);
 }
 
@@ -93,6 +93,8 @@ export function applyMatchEffects(
   const resultDelta = side === 'W' ? 5 : side === 'D' ? 1 : -5;
   const starters = selectStarters(club, players);
   const starterIds = new Set(starters.map((p) => p.id));
+  // Einsatz-Regler der Taktik: volle Kraft kostet mehr Frische, schonendes Spiel weniger.
+  const effortF = 1 + (((club.tactics?.effort ?? 50) - 50) / 50) * 0.15;
 
   for (const p of starters) {
     // Individuelle Note 0–10: um 6 herum, beeinflusst von Overall & Ergebnis.
@@ -100,7 +102,7 @@ export function applyMatchEffects(
     const rating = Math.max(1, Math.min(10, base + (Math.random() - 0.45) * 3));
     updatePlayerForm(p, resultDelta, rating);
     applyMatchFatigue(p, 90);
-    applyMatchFreshnessDrain(p, 90);
+    applyMatchFreshnessDrain(p, 90, effortF);
   }
 
   // Nicht eingesetzte, einsatzfähige Spieler: nur leichte Drift Richtung 50.
