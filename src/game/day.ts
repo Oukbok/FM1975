@@ -52,6 +52,7 @@ import { monthlyClubBusiness } from './clubBusiness';
 import { indoorDaily } from './indoorGame';
 import { campDaily } from './trainingCampGame';
 import { groundsDaily } from './groundsGame';
+import { DrawNotice, cupDrawsDaily, ensureDrawn, hasScheduledDraw } from './cupDraw';
 import { PlayerDevReveal } from '../types';
 import { fmtDM, fmtDMfull, fmtDateFull, setDisplayYear } from '../ui/format';
 import { RatingResult as _RatingResult } from '../engine/development';
@@ -69,6 +70,11 @@ export interface DayUi {
    * wird das Spiel wie jedes andere im Spieltag simuliert.
    */
   onOwnMatchDue?(info: OwnMatchInfo): void;
+  /**
+   * Heute wurde ausgelost (game/cupDraw.ts). Rückgabe true = die Oberfläche
+   * zeigt die Ziehung, der Vorlauf hält an. Fehlt der Rückruf: nur Nachricht.
+   */
+  onCupDraw?(d: DrawNotice): boolean;
 }
 
 /** Oberfläche ohne Reaktion – für Simulationen und Tests. */
@@ -193,9 +199,11 @@ export function processDay(g: Game, ui: DayUi): boolean {
         ui.onSeasonEnd();
         stopForAction = true;
         break;
+      case 'cup_draw': break; // Ziehung unten (cupDrawsDaily)
       case 'cup_matchday': {
         const cup = g.cup;
         const ri = ev.cupRoundIndex;
+        if (ri != null) ensureDrawn(g, 'cup', ri, today);
         if (cup && ri != null && cup.rounds[ri] && cup.rounds[ri].drawn) {
           const round = cup.rounds[ri];
           const prize = cup.prizeByRound[ri];
@@ -229,10 +237,12 @@ export function processDay(g: Game, ui: DayUi): boolean {
           }
           // Nächste Runde auslosen (bzw. Sieger küren) und Nachricht erzeugen.
           if (ri < cup.rounds.length - 1) {
-            const winners = roundWinners(round);
-            drawRound(cup, ri + 1, winners, mid);
             cup.currentRoundIndex = ri + 1;
-            pushMessage(g.messages, cupNextDrawMessage(cup, g.clubs, mid, ri + 1, today));
+            // Neues Verfahren: Ziehung am eigenen Termin (game/cupDraw.ts).
+            if (!hasScheduledDraw(cup, ri + 1)) {
+              drawRound(cup, ri + 1, roundWinners(round), mid);
+              pushMessage(g.messages, cupNextDrawMessage(cup, g.clubs, mid, ri + 1, today));
+            }
           } else {
             cup.winnerClubId = round.ties[0]?.winnerClubId ?? null;
             if (cup.winnerClubId && cup.winnerClubId !== mid) {
@@ -251,6 +261,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
         const comp = ev.euroComp;
         const cup = comp ? g.euroCups?.[comp] : null;
         const ri = ev.cupRoundIndex;
+        if (comp && ri != null) ensureDrawn(g, comp, ri, today);
         if (comp && cup && ri != null && cup.rounds[ri] && cup.rounds[ri].drawn) {
           const round = cup.rounds[ri];
           const prize = cup.prizeByRound[ri];
@@ -288,11 +299,12 @@ export function processDay(g: Game, ui: DayUi): boolean {
           }
           // Nächste Runde auslosen (bzw. Sieger küren) und Nachricht erzeugen.
           if (ri < cup.rounds.length - 1) {
-            const winners = roundWinners(round);
-            drawEuroRound(cup, comp, ri + 1, winners, mid);
             cup.currentRoundIndex = ri + 1;
-            const dmsg = euroDrawMessage(comp, cup, g.clubs, g.euroClubs ?? {}, mid, ri + 1, today);
-            if (dmsg) pushMessage(g.messages, dmsg);
+            if (!hasScheduledDraw(cup, ri + 1)) {
+              drawEuroRound(cup, comp, ri + 1, roundWinners(round), mid);
+              const dmsg = euroDrawMessage(comp, cup, g.clubs, g.euroClubs ?? {}, mid, ri + 1, today);
+              if (dmsg) pushMessage(g.messages, dmsg);
+            }
           } else {
             cup.winnerClubId = round.ties[0]?.winnerClubId ?? null;
             // Dezente Chronik-Notiz, sofern nicht der Spielerverein Sieger ist.
@@ -652,6 +664,11 @@ export function processDay(g: Game, ui: DayUi): boolean {
           + `\nDie Effekte wirken sofort auf den Kader.`,
       }));
     }
+  }
+
+  // Pokalauslosungen des Tages (nach den Spielen, wie die Ziehung am Abend).
+  for (const d of cupDrawsDaily(g, today)) {
+    if (ui.onCupDraw?.(d)) stopForAction = true;
   }
 
   // Pause nur, wenn heute eine neue Entscheidung ansteht (Ereignis mit Auswahl).

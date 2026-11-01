@@ -50,6 +50,20 @@ export function SettingsScreen({ settings, onBack, onSave }: {
         </div>
       </div>
 
+      {/* --- Pokalauslosung --- */}
+      <div className="card mt16">
+        <h3 style={{ margin: '0 0 4px' }}>Pokalauslosung</h3>
+        <p className="dim mini" style={{ margin: '0 0 14px' }}>
+          Am Auslosungstag zeigt das Spiel die Ziehung als Show (Zeit steht still). Eine Nachricht kommt immer; Wiederholungen findest du unter Statistiken › Pokal und International.
+        </p>
+        <div className="seg-group">
+          {([['immer', 'Immer'], ['eigener', 'Mit eigenem Verein'], ['aus', 'Nur Nachricht']] as const).map(([v, l]) => (
+            <button key={v} type="button" className={`seg-btn ${(s.drawShow ?? 'eigener') === v ? 'active' : ''}`}
+              onClick={() => setS({ ...s, drawShow: v })}>{l}</button>
+          ))}
+        </div>
+      </div>
+
       {/* --- Anzeige & Auflösung --- */}
       <div className="card mt16">
         <h3 style={{ margin: '0 0 4px' }}>Anzeige</h3>

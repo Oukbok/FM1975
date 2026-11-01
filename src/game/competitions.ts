@@ -6,6 +6,7 @@ import { cupWinnersCupActive } from '../data/history';
 import { makeMessage } from '../engine/messages';
 import { Club, CupState, CupTie, GameCalendar, InboxMessage, Match } from '../types';
 import { hashSeed } from './state';
+import { scheduleDraws } from './cupDraw';
 
 /** Fügt für jede Pokalrunde ein Kalender-Event ein (chronologisch einsortiert). */
 export function addCupCalendarEvents(calendar: GameCalendar, cup: CupState): void {
@@ -80,6 +81,7 @@ export function buildEuroCupsForSeason(
   managedClubId: string,
   calendar: GameCalendar,
   foreign?: Record<EuroCompId, string[]> | null,
+  deferDraw = false,
 ): { ec: CupState | null; cwc: CupState | null; uefa: CupState | null } {
   // Ausländische Starter: aus der Europa-Simulation (engine/world.ts) oder – in der
   // ersten Saison/alten Spielständen – der historische Satz aus data/europe.ts.
@@ -113,8 +115,10 @@ export function buildEuroCupsForSeason(
       hashSeed(`${seedBase}:euro:${comp}`),
       earliest,
       managedClubId,
+      deferDraw,
     );
     addEuroCalendarEvents(calendar, comp, cup);
+    if (deferDraw) scheduleDraws(cup, comp, calendar);
     out[comp] = cup;
   }
   return out;

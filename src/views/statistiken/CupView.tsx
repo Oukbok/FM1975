@@ -1,5 +1,6 @@
 import ClubCrest from '../../components/ClubCrest';
 import { ClubLink } from '../../components/club/ClubLink';
+import Icon from '../../components/Icon';
 import { CalendarEngine } from '../../engine/calendar';
 import { decisionBadge, nextPlayerTie } from '../../engine/cup';
 import { Game } from '../../game/state';
@@ -10,7 +11,7 @@ import { fmtDMfull, fmtDateShort } from '../../ui/format';
 // =============================================================================
 // DFB-POKAL (Turnierbaum + eigener Weg)
 // =============================================================================
-export function CupView({ g, onWatch }: { g: Game; onWatch: (id: string) => void }) {
+export function CupView({ g, onWatch, onReplayDraw }: { g: Game; onWatch: (id: string) => void; onReplayDraw?: (roundIndex: number) => void }) {
   const cup = g.cup;
   const mid = g.managedClubId;
   if (!cup) {
@@ -71,9 +72,14 @@ export function CupView({ g, onWatch }: { g: Game; onWatch: (id: string) => void
               <div className="cup-col-head">
                 <span>{round.name}</span>
                 <span className="dim mini">{CalendarEngine.formatDate(round.date)}</span>
+                {round.draw && onReplayDraw && (
+                  <button className="dchip cup-draw-replay" onClick={() => onReplayDraw(round.index)} title={`Auslosung vom ${CalendarEngine.formatDate(round.draw.date)} ansehen`}>
+                    <Icon name="play" size={14} /> Auslosung
+                  </button>
+                )}
               </div>
               {round.drawn ? round.ties.map((tie) => <TieRow key={tie.id} tie={tie} />)
-                : <div className="cup-tie cup-tie-pending"><span className="dim mini">Noch nicht ausgelost</span></div>}
+                : <div className="cup-tie cup-tie-pending"><span className="dim mini">{round.drawDate ? `Auslosung am ${CalendarEngine.formatDate(round.drawDate)}` : 'Noch nicht ausgelost'}</span></div>}
             </div>
           ))}
         </div>

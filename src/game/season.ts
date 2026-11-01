@@ -26,7 +26,9 @@ import { DivisionMeta, LeagueDivision, LeagueGroup, advanceDivision, buildDivisi
 import { MatchEngine } from '../engine/match';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { Club, Match } from '../types';
-import { addCupCalendarEvents, buildEuroCupsForSeason, cupDateSet, cupDrawMessage, euroDrawMessage, leagueDateSet } from './competitions';
+import { addCupCalendarEvents, buildEuroCupsForSeason, cupDateSet, euroDrawMessage, leagueDateSet } from './competitions';
+import { nextDrawDate, scheduleDraws } from './cupDraw';
+import { CalendarEngine } from '../engine/calendar';
 import { Game, bestOffer, hashSeed, migrateCommerce, offerToContract } from './state';
 
 // -----------------------------------------------------------------------------
@@ -336,9 +338,11 @@ export function startNextSeason(g: Game): void {
   const amateurIds = allAm.slice(0, Math.max(0, 32 - blClubIds.length));
   const cup = createCup(
     blClubIds, amateurIds, leagueDateSet(fixtures),
-    hashSeed(g.managedClubId + ':' + nextStartYear), calendar.seasonStartDate, g.managedClubId,
+    hashSeed(g.managedClubId + ':' + nextStartYear), calendar.seasonStartDate, g.managedClubId, true,
   );
   addCupCalendarEvents(calendar, cup);
+  // Auslosung erst am historischen Termin (game/cupDraw.ts).
+  scheduleDraws(cup, 'cup', calendar);
   g.cup = cup;
   g.calendar = calendar;
   g.season = newSeason;
@@ -396,7 +400,7 @@ export function startNextSeason(g: Game): void {
   g.euroCups = buildEuroCupsForSeason(
     euroQuals, euroClubs, leagueDateSet(fixtures, otherDivisions), cupDateSet(cup),
     g.managedClubId + ':' + nextStartYear, calendar.seasonStartDate, g.managedClubId, calendar,
-    worldRes.participants,
+    worldRes.participants, true,
   );
   for (const comp of ['ec', 'cwc', 'uefa'] as EuroCompId[]) {
     const ec = g.euroCups[comp];
@@ -454,13 +458,14 @@ export function startNextSeason(g: Game): void {
       + `${ruleText}`,
   }));
 
-  pushMessage(g.messages, cupDrawMessage(cup, g.clubs, g.managedClubId, calendar.currentDate));
+  const firstDraw = nextDrawDate(cup);
   pushMessage(g.messages, makeMessage({
     date: calendar.currentDate, category: 'board', from: 'Vereinsvorstand',
     subject: `Die neue Saison ${newSeason} beginnt`,
     shortText: `Spielplan und Landespokal für ${newSeason} stehen fest.`,
-    bodyText: `Willkommen zur Saison ${newSeason}! Der Spielplan der Liga und die 1. Runde des `
-      + `Landespokals wurden ausgelost. Die Vorbereitung läuft – nutze die Transferphase und das Training.`,
+    bodyText: `Willkommen zur Saison ${newSeason}! Der Spielplan der Liga steht. `
+      + (firstDraw ? `Die ${firstDraw.round} des Landespokals wird am ${CalendarEngine.formatDate(firstDraw.date)} ausgelost. ` : '')
+      + `Die Vorbereitung läuft – nutze die Transferphase und das Training.`,
   }));
   // Saisonbilanz als Station festhalten, Saisonstatistik für die neue Saison leeren.
   closeSeason(g.players, g.clubs, oldSeason);

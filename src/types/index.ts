@@ -1280,6 +1280,7 @@ export type EventType =
   | 'press_conference'
   | 'cup_matchday'      // Landespokal-Runde
   | 'euro_matchday'     // Europapokal-Runde (ec/cwc/uefa)
+  | 'cup_draw'          // Auslosung einer Pokal-/Europapokalrunde (game/cupDraw.ts)
   | 'custom';
 
 /** Ein Ereignis im Spielkalender. */
@@ -1654,6 +1655,10 @@ export interface CupRound {
   drawn: boolean;
   /** Alle Begegnungen dieser Runde. */
   ties: CupTie[];
+  /** Termin der Auslosung (game/cupDraw.ts); fehlt in alten Spielständen = Auslosung direkt nach der Vorrunde. */
+  drawDate?: string;
+  /** Ablauf der Ziehung (Kugeln, Töpfe) für Show und Wiederholung. */
+  draw?: import('./draw').DrawRecord;
 }
 
 /** Gesamtzustand des Landespokal-Wettbewerbs einer Saison. */

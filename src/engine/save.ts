@@ -247,6 +247,10 @@ export interface AppSettings {
   eventFrequency?: 'wenige' | 'normal' | 'viele';
   /** Saison-Briefing zu Spielbeginn und Saisonwechsel automatisch öffnen (Standard an). */
   briefingAuto?: boolean;
+  /** Pokalauslosung als Show: immer, nur mit eigenem Verein (Standard) oder nur Nachricht. */
+  drawShow?: 'immer' | 'eigener' | 'aus';
+  /** Tempo der Ziehungs-Show. */
+  drawSpeed?: 'langsam' | 'normal' | 'schnell';
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -261,6 +265,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
   matchHalftimeTalk: true,
   eventFrequency: 'normal',
   briefingAuto: true,
+  drawShow: 'eigener',
+  drawSpeed: 'normal',
 };
 
 export function loadSettings(): AppSettings {
