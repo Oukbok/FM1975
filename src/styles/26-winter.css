@@ -3,3 +3,47 @@
 .dlist-row.win-me .grow, .dlist-row.win-me b { color: var(--accent); }
 .dlist-row.win-locked { opacity: 0.45; }
 .dlist-row .dbtnrow .dchip { padding: 3px 8px; font-size: 13px; }
+
+/* Trainingslager: Ziel-Steckbrief, Unterkunfts-Vergleich, Abwägung (views/kader/TrainingCampView.tsx + campParts.tsx) */
+.camp-dest .camp-ai { color: var(--text-3); font-size: 13px; font-weight: 600; }
+.camp-facts { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; color: var(--text-2); margin-bottom: 6px; }
+.camp-facts em { font-style: normal; font-size: 11px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; color: var(--text-3); margin-right: 6px; }
+.camp-destnote { margin-bottom: 8px; }
+.camp-table { font-size: 14.5px; }
+.camp-table td { padding: 6px 8px; vertical-align: middle; }
+.camp-table .camp-lname { font-weight: 700; color: var(--text); }
+.camp-table .camp-lsub { font-size: 12.5px; }
+.camp-table tr.camp-row-sel td { background: var(--accent-soft); }
+.camp-table tr.camp-row-sel td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+.camp-pips { display: inline-flex; gap: 3px; vertical-align: middle; }
+.camp-pips i { width: 8px; height: 8px; border-radius: 2px; background: var(--border); }
+.camp-pips i.on { background: var(--text-2); }
+.camp-pips.warn i.on { background: var(--orange); }
+.camp-focus .dchip { padding: 3px 9px; }
+.camp-focustext { margin: 6px 0 4px; min-height: 42px; }
+.camp-trade { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.camp-trade span { font-size: 12.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border); }
+.camp-trade .good { color: var(--green); }
+.camp-trade .bad { color: var(--orange); }
+.camp-oblig { font-size: 13.5px; color: var(--accent); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: var(--radius-sm); padding: 6px 10px; margin: 4px 0 6px; }
+.dlist-row .grow.camp-wrap { white-space: normal; font-size: 14px; }
+.camp-table th.camp-cmp, .camp-table td.camp-cmp { border-left: 1px solid var(--border-soft); }
+.camp-table .camp-lsub.warn { color: var(--orange); }
+.camp-pips i { background: var(--panel-hover); }
+.camp-pips i.on { background: var(--text); }
+.camp-cells { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.camp-cell { display: flex; flex-direction: column; gap: 2px; padding: 6px 9px; border: 1px solid var(--border-soft); border-radius: var(--radius-sm); background: var(--bg-2); min-width: 0; }
+.camp-cell span { font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.camp-cell b { font-size: 15px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.camp-cell.good b { color: var(--green); }
+.camp-cell.warn b { color: var(--orange); }
+.camp-cell.bad b { color: var(--red); }
+.camp-climate { display: flex; align-items: flex-end; gap: 4px; margin-top: 12px; }
+.camp-climate-lbl { font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-3); align-self: center; margin-right: 8px; }
+.camp-climate-lbl:last-child { margin: 0 0 0 8px; font-weight: 600; text-transform: none; letter-spacing: 0; }
+.camp-month { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 34px; height: 46px; gap: 3px; }
+.camp-month i { width: 14px; border-radius: 2px; background: var(--text-3); }
+.camp-month b { font-size: 11px; font-weight: 700; color: var(--text-3); }
+.camp-month.off { opacity: 0.45; }
+.camp-month.on i { background: var(--accent); }
+.camp-month.on b { color: var(--accent); }

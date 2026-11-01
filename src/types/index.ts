@@ -996,6 +996,8 @@ export interface ClubCommerce {
   shirtOffers?: SponsorOffer[];
   /** Aktuelle Banden-Angebote (je Saison neu). */
   bandenOffers?: SponsorOffer[];
+  /** Sponsor-Klauseln: Pflicht-Trainingslager (Ziel-ID aus data/campDestinations.ts) je Saison/Fenster; gelesen in game/trainingCampGame.ts. */
+  campObligations?: { destId: string; season: string; window: 'winter' | 'summer' }[];
 }
 
 /** Ein 1. Liga-Verein. */

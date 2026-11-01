@@ -8,7 +8,9 @@ import { CalendarEngine } from '../src/engine/calendar';
 import { allTournaments, indoorDaily, setOwnIndoorDecision } from '../src/game/indoorGame';
 import { bookCamp, cancelCamp, ownBooking, quoteCamp } from '../src/game/trainingCampGame';
 import { campState, indoorState, migrateWinter, ownCampDays, winterWindow } from '../src/game/winterShared';
-import { destinationsFor } from '../src/engine/trainingCamp';
+import { CAMP_FOCUS_ORDER, campCostBase, campOutlook, destinationsFor } from '../src/engine/trainingCamp';
+import { CAMP_LODGINGS, lodgingsFor } from '../src/data/campLodgings';
+import { campObligation } from '../src/game/trainingCampGame';
 import { CAMP_DESTINATIONS } from '../src/data/campDestinations';
 import { INDOOR_LAST_WINTER, MASTERS_LAST_WINTER, indoorPhase } from '../src/data/indoorHistory';
 import { runIndoorTournament } from '../src/engine/indoor';
@@ -44,6 +46,49 @@ expect(!ok('summer', 2014, 99, 'asien') && ok('summer', 2015, 90, 'asien'), 'Asi
 expect(!ok('summer', 2013, 99, 'usatour') && ok('summer', 2014, 90, 'usatour'), 'USA-Tour vor 2014');
 expect(!ok('summer', 1980, 90, 'kanaren') && !ok('winter', 1990, 90, 'tegernsee'), 'Saisonbindung der Ziele falsch');
 const unlocked = (y: number) => CAMP_DESTINATIONS.filter((d) => d.seasons.some((s) => ok(s, y, 100, d.id))).map((d) => d.id);
+// 1b) Ziele je Epoche (Normalverein, Ansehen 55), Unterkünfte, Wirkung der Wahl
+const count = (y: number, rep: number) => CAMP_DESTINATIONS.filter((d) => d.seasons.some((s) => ok(s, y, rep, d.id))).length;
+expect(count(1975, 55) >= 12, `1975 zu wenige Ziele (${count(1975, 55)})`);
+expect(count(1985, 55) > count(1975, 55) && count(2000, 55) > count(1985, 55), 'Ziele wachsen nicht mit den Epochen');
+expect(!CAMP_DESTINATIONS.some((d) => d.region === 'fern' && d.access[0].from < 1984), 'Fernreise vor 1984');
+expect(!CAMP_DESTINATIONS.some((d) => d.region === 'sueden' && d.access[0].from < 1980), 'Süden vor 1980');
+for (const d of CAMP_DESTINATIONS) {
+  expect(!!CAMP_LODGINGS[d.id]?.length, `${d.id}: keine Unterkünfte`);
+  for (let y = d.access[0].from; y <= 2040; y++) expect(lodgingsFor(d.id, y).length > 0, `${d.id} ${y}: keine buchbare Unterkunft`);
+}
+const multi = CAMP_DESTINATIONS.filter((d) => lodgingsFor(d.id, 1975).length >= 2 && d.access[0].from === 1975).length;
+expect(multi >= 10, `1975 zu wenige Ziele mit Auswahl an Unterkünften (${multi})`);
+{
+  const d = CAMP_DESTINATIONS.find((x) => x.id === 'tegernsee')!;
+  const [cheap, , lux] = lodgingsFor('tegernsee', 2000);
+  const base = { d, season: 'summer' as const, days: 9, tests: 2, year: 2000, rep: 60, start: '2000-07-10' };
+  const oc = campOutlook({ ...base, l: cheap, focus: 'kondition' });
+  const ot = campOutlook({ ...base, l: cheap, focus: 'taktik' });
+  const or = campOutlook({ ...base, l: cheap, focus: 'regeneration' });
+  const og = campOutlook({ ...base, l: cheap, focus: 'teamgeist' });
+  const oj = campOutlook({ ...base, l: cheap, focus: 'jugend' });
+  expect(oc.fitness > ot.fitness && ot.dev > oc.dev, 'Kondition/Taktik ohne Unterschied');
+  expect(or.injury < oc.injury && or.heal > 0 && or.campFrische > oc.campFrische, 'Regeneration wirkt nicht');
+  expect(og.morale > oc.morale, 'Mannschaftsgeist wirkt nicht');
+  expect(oj.devYouth > oj.dev * 2, 'Jugendintegration wirkt nicht');
+  const ol = campOutlook({ ...base, l: lux, focus: 'ausgewogen' });
+  const oa = campOutlook({ ...base, l: cheap, focus: 'ausgewogen' });
+  expect(ol.discipline > oa.discipline && ol.satisfaction > oa.satisfaction, 'Luxus: keine Abwägung Komfort/Disziplin');
+  expect(campCostBase(d, lux, 9, 60) > campCostBase(d, cheap, 9, 60) * 1.8, 'Luxus kaum teurer');
+  const eng = CAMP_DESTINATIONS.find((x) => x.id === 'engadin')!;
+  const oe = campOutlook({ d: eng, l: lodgingsFor('engadin', 2000)[0], focus: 'kondition', season: 'summer', days: 10, tests: 1, year: 2000, rep: 60, start: '2000-07-10' });
+  expect(oe.altitudeFitness > 3, 'Höhentraining ohne verzögerte Wirkung');
+  const tim = CAMP_DESTINATIONS.find((x) => x.id === 'timmendorf')!;
+  const tl = lodgingsFor('timmendorf', 1985)[0];
+  const ow = campOutlook({ d: tim, l: tl, focus: 'ausgewogen', season: 'winter', days: 7, tests: 0, year: 1985, rep: 50, start: '1985-01-10' });
+  const hen = CAMP_DESTINATIONS.find((x) => x.id === 'hennef')!;
+  const oh = campOutlook({ d: hen, l: lodgingsFor('hennef', 1985)[0], focus: 'ausgewogen', season: 'winter', days: 7, tests: 0, year: 1985, rep: 50, start: '1985-01-10' });
+  expect(oh.weatherLoss < ow.weatherLoss && oh.fitness > ow.fitness, 'Halle hilft im Winter nicht');
+  const wk = campCostBase(CAMP_DESTINATIONS[0], lodgingsFor('sportschule', 1975)[0], 7, 50);
+  expect(wk >= 8000 && wk <= 16000, `Sportschule 1975 eine Woche: ${wk}`);
+  console.log(`Ziele Ansehen 55: 1975 ${count(1975, 55)} | 1985 ${count(1985, 55)} | 2000 ${count(2000, 55)} | 2020 ${count(2020, 55)}; Sportschule 1975/Woche ${wk} DM; `
+    + `Tegernsee Kond/Takt/Reg Fitness ${oc.fitness}/${ot.fitness}/${or.fitness}, Höhe +${oe.altitudeFitness}; Schwerpunkte ${CAMP_FOCUS_ORDER.length}`);
+}
 console.log(`Ziele (Spitzenverein): 1975 ${unlocked(1975).join('/')} | 1992 ${unlocked(1992).join('/')} | 2011 ${unlocked(2011).join('/')} | 2021 ${unlocked(2021).join('/')}`);
 
 // 2) Hallen-Phasen
@@ -169,7 +214,8 @@ function runWinter(g: Game, season: string, beforeEachDay?: (d: string) => void)
   const cs = campState(g);
   expect(cs.bookings.filter((b) => b.done).length === 2, `Lager nicht abgeschlossen (${cs.bookings.map((b) => b.id + ':' + b.done).join(',')})`);
   expect(cs.ai.filter((a) => a.clubId).length >= 15, 'KI-Vereine fahren nicht ins Lager');
-  expect(cs.ai.every((a) => !a.destId || ['sportschule', 'tegernsee'].includes(a.destId)), 'KI 1975 mit unzulässigem Ziel');
+  expect(cs.ai.every((a) => !a.destId || CAMP_DESTINATIONS.find((d) => d.id === a.destId)!.access[0].from <= 1976), 'KI 1975 mit unzulässigem Ziel');
+  expect(cs.ai.every((a) => !a.destId || !!a.lodgingId && !!a.focus), 'KI ohne Unterkunft/Schwerpunkt');
   const cur = indoorState(g).current!;
   expect(cur.phase === 'invitational' && !cur.masters && cur.tournaments.every((t) => t.done), 'Einladungsturniere 1975/76 nicht gespielt');
   expect(indoorState(g).history.some((h) => h.year === 1976), 'Historie 1976 fehlt');
@@ -181,5 +227,36 @@ function runWinter(g: Game, season: string, beforeEachDay?: (d: string) => void)
   const txt = cancelCamp(g2, ownBooking(g2, 'summer')!.id);
   expect(txt.includes('erstattet') && g2.clubs[g2.managedClubId].finances.balance > b0, 'Storno ohne Erstattung');
   console.log(`1975/76: ${cur.tournaments.length} Einladungsturniere, Sieger ${cur.tournaments.map((t) => g.clubs[t.result!.ranking[0]]?.shortName ?? t.result!.ranking[0]).join(', ')} | Lager: ${cs.history.map((h) => h.note).join(' | ')} | KI-Ziele ${[...new Set(cs.ai.map((a) => a.destId).filter(Boolean))].join('/')}`);
+}
+// 6) Sponsor-Pflicht (club.commerce.campObligations) + Migration alter Buchungen
+{
+  const g = fresh();
+  const own = g.clubs[g.managedClubId];
+  own.commerce = { ...(own.commerce ?? { cateringMode: 'verpachtung' as any }), campObligations: [{ destId: 'tegernsee', season: g.season, window: 'summer' }] };
+  expect(campObligation(g, own, 'summer') === 'tegernsee' && !campObligation(g, own, 'winter'), 'Pflicht nicht erkannt');
+  const e = quoteCamp(g, 'sportschule', 'summer', '1975-07-20', 6).error ?? '';
+  expect(e.includes('Sponsor'), `anderes Ziel trotz Pflicht buchbar (${e})`);
+  expect(!destinationsFor('summer', 1975, own.reputation, 'tegernsee').some((x) => x.d.id !== 'tegernsee' && x.status.ok), 'Liste nicht gesperrt');
+  const err = bookCamp(g, 'tegernsee', 'summer', '1975-07-20', 6, 1, { lodgingId: 'seehotel', focus: 'teamgeist' });
+  expect(!err, `Pflichtziel nicht buchbar: ${err}`);
+  const b = ownBooking(g, 'summer')!;
+  expect(b.lodgingId === 'seehotel' && b.focus === 'teamgeist', 'Unterkunft/Schwerpunkt nicht gespeichert');
+  // Pflicht mit hoher Ansehensgrenze (Katar 2011 nur ≥ 82) gilt auch für kleine Vereine.
+  expect(destinationsFor('winter', 2012, 40, 'katar').find((x) => x.d.id === 'katar')!.status.ok, 'Pflichtziel an Ansehen gescheitert');
+  // KI hält sich an Pflichten.
+  const ai = Object.values(g.clubs).filter((c) => c.id !== g.managedClubId).slice(0, 5);
+  for (const c of ai) c.commerce = { ...(c.commerce ?? { cateringMode: 'verpachtung' as any }), campObligations: [{ destId: 'harz', season: g.season, window: 'summer' }] };
+  let guard = 0;
+  while (g.calendar.currentDate < '1975-07-25' && guard++ < 60) processDay(g, HEADLESS_UI);
+  const cs = campState(g);
+  for (const c of ai) {
+    const a = cs.ai.find((x) => x.clubId === c.id && x.season === 'summer');
+    if (a) expect(a.destId === 'harz', `KI ${c.shortName} ignoriert Pflicht (${a.destId})`);
+  }
+  // Migration: Buchung ohne Unterkunft/Schwerpunkt → Standard.
+  delete (b as any).lodgingId; delete (b as any).focus;
+  migrateWinter(g); migrateWinter(g);
+  expect(b.lodgingId === 'gasthof' && b.focus === 'ausgewogen', `Migration falsch (${b.lodgingId}/${b.focus})`);
+  console.log(`Sponsor-Pflicht ok: KI ${ai.map((c) => cs.ai.find((x) => x.clubId === c.id && x.season === 'summer')?.destId ?? '-').join('/')}`);
 }
 console.log('Winter-Test OK');

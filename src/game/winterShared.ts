@@ -10,6 +10,8 @@ import type { IndoorResult, IndoorSquad, TourStat } from '../engine/indoor';
 import { CalendarEngine } from '../engine/calendar';
 import { findWinterBreak } from '../engine/winterBreak';
 import { Game } from './state';
+import type { CampFocus } from '../engine/trainingCamp';
+import { defaultLodging } from '../data/campLodgings';
 
 // -----------------------------------------------------------------------------
 // Hallenfußball
@@ -86,6 +88,9 @@ export interface CampBooking {
   season: CampSeason;
   start: string;
   end: string;
+  /** Unterkunft/Anlage (data/campLodgings.ts) und Trainingsschwerpunkt; alte Stände: Standard per Migration. */
+  lodgingId?: string;
+  focus?: CampFocus;
   /** Anzahl Testspiele vor Ort. */
   tests: number;
   /** Gebuchte Kosten (nominal). */
@@ -95,9 +100,11 @@ export interface CampBooking {
   done: boolean;
   /** Ergebnisnotiz nach Rückkehr. */
   report?: string;
+  /** Höhentraining: verzögerte Fitness-Wirkung (fällig am Datum). */
+  delayed?: { due: string; fitness: number; done?: boolean };
 }
 
-export interface AiCampEntry { clubId: string; destId: string; season: CampSeason; start: string; end: string; applied: boolean }
+export interface AiCampEntry { clubId: string; destId: string; season: CampSeason; start: string; end: string; applied: boolean; lodgingId?: string; focus?: CampFocus }
 
 export interface CampState {
   v: 1;
@@ -129,6 +136,13 @@ export function migrateWinter(g: Game): void {
   s.history ??= []; s.titles ??= {}; s.wins ??= {}; s.snub ??= 0;
   const c = campState(g);
   c.bookings ??= []; c.ai ??= []; c.history ??= [];
+  // Buchungen vor der Unterkunfts-Wahl: Standard-Unterkunft + ausgewogener Schwerpunkt (idempotent).
+  for (const b of [...c.bookings, ...c.ai]) {
+    if (!b.destId) continue;
+    const y = parseInt(b.start.slice(0, 4), 10);
+    b.lodgingId ??= defaultLodging(b.destId, y)?.id;
+    b.focus ??= 'ausgewogen';
+  }
 }
 
 /** Alle Tage (inklusive) zwischen zwei ISO-Daten. */
