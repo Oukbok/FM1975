@@ -194,6 +194,7 @@ export function createEuroCup(
   seed: number,
   earliest: string,
   managedClubId: string,
+  deferDraw = false,
 ): CupState {
   const participantIds = [...germanIds, ...foreignIds];
 
@@ -228,7 +229,7 @@ export function createEuroCup(
     winnerClubId: null,
   };
 
-  drawEuroRound(cup, comp, 0, participantIds, managedClubId);
+  if (!deferDraw) drawEuroRound(cup, comp, 0, participantIds, managedClubId);
   return cup;
 }
 

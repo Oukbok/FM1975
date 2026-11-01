@@ -88,6 +88,7 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
       switch (ev.type) {
         case 'matchday': consider('fixtures', 100); break;
         case 'cup_matchday': consider('cup', 95); break;
+        case 'cup_draw': consider(ev.euroComp ? 'international' : 'cup', 35); break;
         case 'transfer_window_open':
         case 'transfer_window_close': consider('transfers', 30); break;
         case 'rating_update': consider('table', 25); break;

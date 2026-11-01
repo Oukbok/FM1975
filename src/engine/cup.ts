@@ -182,6 +182,8 @@ export function drawRound(
  * @param seed            fester Seed für Reproduzierbarkeit
  * @param earliest        frühestes zulässiges Datum (Saisonstart bzw. akt. Datum)
  * @param managedClubId   Verein des Nutzers (für involvesPlayerClub-Markierung)
+ * @param deferDraw       true = 1. Hauptrunde NICHT sofort losen (Ziehung am
+ *                        Auslosungstag, game/cupDraw.ts)
  */
 export function createCup(
   blClubIds: string[],
@@ -190,6 +192,7 @@ export function createCup(
   seed: number,
   earliest: string,
   managedClubId: string,
+  deferDraw = false,
 ): CupState {
   const participantIds = [...blClubIds, ...amateurClubIds];
 
@@ -228,7 +231,7 @@ export function createCup(
     winnerClubId: null,
   };
 
-  drawRound(cup, 0, participantIds, managedClubId);
+  if (!deferDraw) drawRound(cup, 0, participantIds, managedClubId);
   return cup;
 }
 

@@ -25,7 +25,8 @@ import { academyStartingCohort, generateYouthPlayer } from '../engine/youth';
 import { initWorld } from '../engine/world';
 import { makeCandidates } from '../engine/staffPeople';
 import { allocateTv, commercialAnnualFor, isLeagueClub, refreshMarketValues } from '../engine/clubEconomy';
-import { addCupCalendarEvents, buildEuroCupsForSeason, cupDateSet, cupDrawMessage, euroDrawMessage, leagueDateSet } from './competitions';
+import { addCupCalendarEvents, buildEuroCupsForSeason, cupDateSet, euroDrawMessage, leagueDateSet } from './competitions';
+import { scheduleDraws } from './cupDraw';
 import { buildDivision, DivisionMeta, simClubFromClub } from '../engine/leagues';
 import { buildProClub } from '../data/generate';
 import { seasonExpectation } from '../engine/environment';
@@ -98,8 +99,11 @@ export function createNewGame(opts: NewGameOptions): Game {
     hashSeed(opts.managedClubId + ':1980'),
     calendar.seasonStartDate,
     opts.managedClubId,
+    true,
   );
   addCupCalendarEvents(calendar, cup);
+  // Auslosung erst am historischen Termin (game/cupDraw.ts, Mitte Juli 1975).
+  scheduleDraws(cup, 'cup', calendar);
   const welcome = makeMessage({
     date: calendar.currentDate,
     category: 'board',
@@ -109,7 +113,6 @@ export function createNewGame(opts: NewGameOptions): Game {
     bodyText: `Sehr geehrte(r) ${opts.manager.name},\n\nherzlich willkommen als neue(r) Cheftrainer(in) von ${club.name}! Wir freuen uns auf die Zusammenarbeit in der Saison 1975/76.\n\nUnser Ziel: ${club.boardExpectation}\n\nDie Mannschaft steht bereit, der Kader ist einsatzfähig. Nutze das Training und den Transfermarkt klug. Wir vertrauen auf dein Geschick.\n\nSportliche Grüße\nDer Vorstand von ${club.name}`,
     actionRequired: false,
   });
-  const cupDraw = cupDrawMessage(cup, world.clubs, opts.managedClubId, calendar.currentDate);
   // --- Europapokal 1975/76: feste historische deutsche Starter aufsetzen ---
   const euroClubs = allEuroClubs();
   const euroQuals = computeGermanEuroQualifiers(
@@ -118,7 +121,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   );
   const euroCups = buildEuroCupsForSeason(
     euroQuals, euroClubs, leagueDateSet([...fixtures, ...generateFixtures(clubList, '1975-08-15', { tier: 1 })]), cupDateSet(cup),
-    opts.managedClubId + ':1975', calendar.seasonStartDate, opts.managedClubId, calendar,
+    opts.managedClubId + ':1975', calendar.seasonStartDate, opts.managedClubId, calendar, null, true,
   );
   const euroDrawMsgs: InboxMessage[] = [];
   (['ec', 'cwc', 'uefa'] as EuroCompId[]).forEach((comp) => {
@@ -150,7 +153,7 @@ export function createNewGame(opts: NewGameOptions): Game {
     fixtures, table, calendar,
     pointSystem, managedClubId: opts.managedClubId, season: '1975/76',
     manager: opts.manager, difficulty: opts.difficulty, injuriesEnabled: opts.injuriesEnabled,
-    messages: [cupDraw, ...euroDrawMsgs, welcome],
+    messages: [...euroDrawMsgs, welcome],
     trainingPlan: createDefaultWeeklyPlan(),
     cup,
     euroCups,

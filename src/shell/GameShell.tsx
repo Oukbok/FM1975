@@ -68,6 +68,9 @@ import { PresseView } from '../views/zentrale/PresseView';
 import { CalendarStrip } from './CalendarStrip';
 import { MENU_STRUCTURE, Screen, TopNav } from './navigation';
 import { processDay as processGameDay } from '../game/day';
+import { DrawShow } from '../screens/draw/DrawShow';
+import { compCup } from '../game/cupDraw';
+import type { DrawComp } from '../types/draw';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 // =============================================================================
@@ -86,6 +89,10 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   const watchedRef = useRef(false);
   const [saveMsg, setSaveMsg] = useState('');
   const [devReveal, setDevReveal] = useState<PlayerDevReveal[] | null>(null);
+  // Pokalauslosungen: Warteschlange der Shows (live am Auslosungstag oder Wiederholung).
+  const [drawQueue, setDrawQueue] = useState<{ comp: DrawComp; roundIndex: number; replay?: boolean; n: number }[]>([]);
+  const drawSeq = useRef(0);
+  const replayDraw = useCallback((comp: DrawComp, roundIndex: number) => setDrawQueue((q) => [...q, { comp, roundIndex, replay: true, n: ++drawSeq.current }]), []);
   const [ratingCeremony, setRatingCeremony] = useState<{ results: RatingResult[]; type: 'medium' | 'large'; anlass: string } | null>(null);
   // In-Game-Overlays: Menü-Dropdown, Einstellungen, Speichern/Laden-Popup.
   const [menuOpen, setMenuOpen] = useState(false);
@@ -154,10 +161,16 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
       onOwnMatchDue: () => setRunning(false),
       onRatingCeremony: (c) => setRatingCeremony(c),
       onSeasonEnd: () => { if (settings.autosave) doSave(); },
+      onCupDraw: (d) => {
+        const mode = settings.drawShow ?? 'eigener';
+        if (mode === 'aus' || (mode === 'eigener' && !d.involvesMe)) return false;
+        setDrawQueue((q) => [...q, { comp: d.comp, roundIndex: d.roundIndex, n: ++drawSeq.current }]);
+        return true;
+      },
     });
     if (!ok) setRunning(false);
     return ok;
-  }, [g, settings.autosave, doSave, myClub]);
+  }, [g, settings.autosave, settings.drawShow, doSave, myClub]);
 
   useEffect(() => {
     if (!running) return;
@@ -167,7 +180,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.code === 'Space' && !liveMatchId && !textMatch && !g.briefing?.pending) {
+      if (e.code === 'Space' && !liveMatchId && !textMatch && !g.briefing?.pending && !drawOpenRef.current) {
         const tag = (e.target as HTMLElement)?.tagName;
         if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
         e.preventDefault();
@@ -177,6 +190,8 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [liveMatchId, textMatch]);
+  const drawOpenRef = useRef(false);
+  useEffect(() => { drawOpenRef.current = drawQueue.length > 0; }, [drawQueue]);
 
   const seasonOver = CalendarEngine.isSeasonOver(g.calendar);
 
@@ -343,7 +358,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'marketing' && <MarketingView g={g} onChange={rerender} />}
         {screen === 'calendar' && <CalendarView g={g} onChange={rerender} onGoto={setScreen} />}
         {screen === 'briefing' && <BriefingView g={g} onGoto={setScreen} onOpen={() => setRunning(false)} />}
-        {screen === 'cup' && <CupView g={g} onWatch={(id) => setLiveMatchId(id)} />}
+        {screen === 'cup' && <CupView g={g} onWatch={(id) => setLiveMatchId(id)} onReplayDraw={(ri) => replayDraw('cup', ri)} />}
         {screen === 'chronicle' && <ChronicleView g={g} />}
         {screen === 'ruhmeshalle' && <HallOfFameView g={g} />}
         {screen === 'news' && <NewsView g={g} onRead={rerender} />}
@@ -365,7 +380,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'sponsoring' && <SponsoringView g={g} onGoto={setScreen} onChange={rerender} />}
         {screen === 'fans' && <FansView g={g} />}
         {screen === 'vorstand' && <BoardView g={g} onChange={rerender} />}
-        {screen === 'international' && <InternationalView g={g} onWatch={(id) => setLiveMatchId(id)} />}
+        {screen === 'international' && <InternationalView g={g} onWatch={(id) => setLiveMatchId(id)} onReplayDraw={replayDraw} />}
         {screen === 'halle' && <IndoorView g={g} onChange={rerender} />}
         {screen === 'trainingslager' && <TrainingCampView g={g} onChange={rerender} />}
       </main>
@@ -405,6 +420,18 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
           onComplete={() => completeOwnMatch(g, textMatch.info, textMatch.sim, true)}
           onFinish={() => { watchedRef.current = true; processDay(); setTextMatch(null); rerender(); }} />
       )}
+
+      {/* Ziehungs-Show: erst wenn Spielbericht/Textmodus/Zeremonie/Briefing zu sind. */}
+      {(() => {
+        const d = drawQueue[0];
+        if (!d || textMatch || liveMatchId || ratingCeremony || pendingBriefing) return null;
+        const rec = compCup(g, d.comp)?.rounds[d.roundIndex]?.draw;
+        if (!rec) { setTimeout(() => setDrawQueue((q) => q.slice(1)), 0); return null; }
+        return (
+          <DrawShow key={d.n} g={g} rec={rec} replay={d.replay} settings={settings} onSettings={onUpdateSettings}
+            onClose={() => { setDrawQueue((q) => q.slice(1)); rerender(); }} />
+        );
+      })()}
 
       {liveMatchId && (
         <MatchModal g={g} matchId={liveMatchId} onClose={() => { setLiveMatchId(null); rerender(); }} />

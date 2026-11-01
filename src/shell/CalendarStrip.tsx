@@ -57,6 +57,9 @@ export function buildStripEventMap(g: Game): Map<string, StripEvent> {
         consider({ date: ev.date, icon: 'trophy', line, accent: 'gold', isMatch: true, prio: 95 });
         break;
       }
+      case 'cup_draw':
+        consider({ date: ev.date, icon: 'trophy', line: 'Auslosung', accent: undefined, isMatch: false, prio: 35 });
+        break;
       case 'transfer_window_open':
         consider({ date: ev.date, icon: 'transfers', line: 'Transferfenster', accent: undefined, isMatch: false, prio: 30 });
         break;

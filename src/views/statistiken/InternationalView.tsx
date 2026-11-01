@@ -1,5 +1,6 @@
 import ClubCrest from '../../components/ClubCrest';
 import { ClubLink } from '../../components/club/ClubLink';
+import Icon from '../../components/Icon';
 import { EURO_COMP_NAMES, EURO_COMP_SHORT, EuroCompId } from '../../data/europe';
 import { CalendarEngine } from '../../engine/calendar';
 import { decisionBadge, roundWinners } from '../../engine/cup';
@@ -13,7 +14,7 @@ import { fmtDMfull } from '../../ui/format';
 import { useState } from 'react';
 
 // --- INTERNATIONAL ----------------------------------------------------------
-export function InternationalView({ g, onWatch }: { g: Game; onWatch: (id: string) => void }) {
+export function InternationalView({ g, onWatch, onReplayDraw }: { g: Game; onWatch: (id: string) => void; onReplayDraw?: (comp: EuroCompId, roundIndex: number) => void }) {
   const euroCups = g.euroCups;
   const [comp, setComp] = useState<EuroCompId>('ec');
   // Eingeklappte Runden merken (key = comp-roundIndex). Gespielte Runden sind
@@ -112,8 +113,12 @@ export function InternationalView({ g, onWatch }: { g: Game; onWatch: (id: strin
               <div className={`deuro-head ${allPlayed ? 'clickable' : ''}`} onClick={() => { if (allPlayed) setCollapsed((st) => ({ ...st, [key]: !isCollapsed })); }}>
                 <b>{round.name}</b>
                 <span className="dnote">{CalendarEngine.formatDate(round.date)}{allPlayed ? (isCollapsed ? ' · aufklappen' : ' · zuklappen') : ''}</span>
+                {round.draw && onReplayDraw && (
+                  <button className="dchip cup-draw-replay" onClick={(e) => { e.stopPropagation(); onReplayDraw(comp, round.index); }}
+                    title={`Auslosung in ${round.draw.venue} ansehen`}><Icon name="play" size={14} /> Auslosung</button>
+                )}
               </div>
-              {!round.drawn ? <div className="dnote">Noch nicht ausgelost.</div>
+              {!round.drawn ? <div className="dnote">{round.drawDate ? `Auslosung am ${CalendarEngine.formatDate(round.drawDate)}.` : 'Noch nicht ausgelost.'}</div>
                 : isCollapsed ? <div className="dnote">Abgeschlossen – weiter: {winners.map((w) => teamInfo(w).short).join(', ')}</div>
                 : <div className="deuro-ties">{round.ties.map((tie) => <TieRow key={tie.id} tie={tie} />)}</div>}
             </div>

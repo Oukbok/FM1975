@@ -30,4 +30,5 @@ import './26-grounds.css';
 import './27-briefing.css';
 import './28-season-intro.css';
 import './28-stadium.css';
+import './28-draw.css';
 import './29-look.css'; // zuletzt: ruhige Gesamtoptik

@@ -1,0 +1,216 @@
+/* =============================================================================
+   ZIEHUNGS-SHOW (Pokalauslosung) – Vollbild wie der Textmodus (23-match-screen)
+   Bühne je Epoche nur über Licht/Rahmen: studio70, studio90, museum, uefa70,
+   uefa90, uefaGala. Eine Akzentfarbe (Bernstein), Flächen in Schiefer.
+   ============================================================================= */
+.dr-root {
+  position: fixed; inset: 0; z-index: 900;
+  display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 18px;
+  padding: 24px 40px 28px;
+  background:
+    radial-gradient(ellipse at 50% -20%, rgba(255, 255, 255, 0.05), transparent 55%),
+    linear-gradient(180deg, #0f1218 0%, var(--bg) 40%);
+  color: var(--text); font-family: var(--font-ui);
+}
+.dr-root svg.game-icon { width: auto; height: auto; }
+.dr-dim { color: var(--text-2); }
+
+/* --- Kopfzeile --- */
+.dr-top { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+.dr-top-l, .dr-top-r { display: flex; align-items: center; gap: 22px; font-size: 19px; }
+.dr-top-l > svg { color: var(--accent); }
+.dr-comp { font-family: var(--font-display); font-weight: 600; font-size: 26px; letter-spacing: 1px; text-transform: uppercase; }
+.dr-speed .seg-btn { font-size: 16px; padding: 8px 16px; }
+.dr-pill {
+  display: inline-block; padding: 3px 14px; border-radius: 99px; border: 1px solid var(--accent); color: var(--accent);
+  font-family: var(--font-display); font-weight: 600; font-size: 16px; text-transform: uppercase; letter-spacing: 1.2px;
+}
+.dr-pill.dim { border-color: var(--border); color: var(--text-2); }
+
+/* --- Hauptbereich --- */
+.dr-main { display: grid; grid-template-columns: 500px minmax(0, 1fr) 640px; gap: 20px; min-height: 0; }
+.dr-panel-head {
+  display: flex; justify-content: space-between; align-items: center; padding: 14px 20px;
+  font-family: var(--font-display); font-size: 21px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+/* --- Lostöpfe --- */
+.dr-pots { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+.dr-pot {
+  flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; border-radius: var(--radius);
+  background: var(--panel); border: 1px solid var(--border); overflow: hidden; transition: border-color 0.3s;
+}
+.dr-pot.active { border-color: var(--accent); }
+.dr-pot-head { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 20px 4px; }
+.dr-pot-name { font-family: var(--font-display); font-size: 22px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+.dr-pot-count { color: var(--text-2); font-size: 18px; font-variant-numeric: tabular-nums; }
+.dr-bowl { position: relative; height: 130px; margin: 4px 18px 6px; flex: 0 0 auto; }
+.dr-bowl-glass { position: absolute; inset: 0; width: 100%; height: 100%; }
+.dr-bowl-balls {
+  position: absolute; left: 34px; right: 34px; bottom: 16px; display: flex; flex-wrap: wrap-reverse; justify-content: center; gap: 0 2px;
+}
+.dr-bowl-ball { display: inline-flex; margin-top: -8px; }
+.dr-pot.active .dr-bowl-ball { animation: dr-jiggle 0.9s ease-in-out infinite; }
+.dr-pot-list { overflow-y: auto; min-height: 0; padding: 4px 0 10px; border-top: 1px solid var(--border-soft); }
+.dr-pot-row { display: grid; grid-template-columns: 34px 26px minmax(0, 1fr); align-items: center; gap: 10px; padding: 5px 20px; font-size: 18px; }
+.dr-pot-row.out { opacity: 0.32; }
+.dr-pot-row.out .dr-pot-club { text-decoration: line-through; text-decoration-color: var(--text-3); }
+.dr-pot-row.mine .dr-pot-club { color: var(--accent); font-weight: 700; }
+.dr-no { color: var(--text-3); font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+.dr-pot-club { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* --- Bühne --- */
+.dr-center { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 16px; min-height: 0; }
+.dr-stagebox {
+  position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; overflow: hidden;
+  border-radius: var(--radius); background: var(--panel); border: 1px solid var(--border);
+}
+.dr-lights { position: absolute; inset: 0; pointer-events: none; }
+.dr-progress {
+  position: absolute; left: 0; right: 0; bottom: 18px; text-align: center; color: var(--text-3);
+  font-family: var(--font-display); font-size: 18px; letter-spacing: 2px; text-transform: uppercase;
+}
+
+/* Epochen-Bühnen (nur Licht und Rahmen) */
+.dr-stage-studio70 .dr-stagebox { border-radius: 46px; box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.65); }
+.dr-stage-studio70 .dr-lights {
+  background:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.018) 0 2px, transparent 2px 5px),
+    radial-gradient(ellipse at 50% 38%, rgba(255, 255, 255, 0.07), transparent 62%);
+}
+.dr-stage-studio90 .dr-lights {
+  background:
+    radial-gradient(ellipse 34% 70% at 50% -8%, rgba(255, 255, 255, 0.10), transparent 70%),
+    linear-gradient(180deg, transparent 70%, rgba(255, 255, 255, 0.03));
+}
+.dr-stage-museum .dr-lights {
+  background:
+    linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.05) 42%, transparent 54%),
+    linear-gradient(65deg, transparent 46%, rgba(255, 255, 255, 0.04) 56%, transparent 66%),
+    linear-gradient(180deg, transparent 82%, rgba(242, 165, 65, 0.06));
+}
+.dr-stage-uefa70 .dr-lights, .dr-stage-uefa90 .dr-lights, .dr-stage-uefaGala .dr-lights {
+  background:
+    radial-gradient(circle at 50% 46%, transparent 0 300px, rgba(255, 255, 255, 0.05) 301px 303px, transparent 304px),
+    radial-gradient(ellipse at 50% 40%, rgba(255, 255, 255, 0.06), transparent 65%);
+}
+.dr-stage-uefaGala .dr-lights::before, .dr-stage-uefaGala .dr-lights::after {
+  content: ''; position: absolute; top: -10%; width: 26%; height: 120%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), transparent 75%);
+  filter: blur(8px); transform-origin: top center; animation: dr-sweep 9s ease-in-out infinite alternate;
+}
+.dr-stage-uefaGala .dr-lights::before { left: 18%; transform: rotate(18deg); }
+.dr-stage-uefaGala .dr-lights::after { right: 18%; transform: rotate(-18deg); animation-delay: -4s; }
+
+/* Einleitung */
+.dr-intro { position: relative; text-align: center; animation: ms-in 0.6s ease-out; max-width: 1000px; }
+.dr-intro-kicker { color: var(--text-2); font-size: 24px; letter-spacing: 3px; text-transform: uppercase; }
+.dr-intro-title { font-family: var(--font-display); font-size: 150px; font-weight: 700; line-height: 1; letter-spacing: 12px; text-transform: uppercase; margin: 14px 0 6px; }
+.dr-intro-round { font-family: var(--font-display); font-size: 46px; color: var(--accent); letter-spacing: 4px; text-transform: uppercase; }
+.dr-rules { list-style: none; padding: 0; margin: 34px auto 0; display: grid; gap: 10px; font-size: 22px; color: var(--text-2); }
+.dr-rules li::before { content: ''; display: inline-block; width: 8px; height: 8px; margin: 0 14px 4px 0; border-radius: 50%; background: var(--accent); }
+
+/* Kugel rollt + öffnet */
+.dr-reveal { position: relative; display: flex; flex-direction: column; align-items: center; gap: 26px; }
+.dr-roll { display: inline-flex; filter: drop-shadow(0 26px 22px rgba(0, 0, 0, 0.55)); }
+.dr-roll.l { animation: dr-roll-l 0.95s cubic-bezier(.2, .75, .3, 1.04) both; }
+.dr-roll.r { animation: dr-roll-r 0.95s cubic-bezier(.2, .75, .3, 1.04) both; }
+.dr-roll.still { animation: ms-in 0.2s ease-out both; }
+.dr-open { position: relative; width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; }
+.dr-half { position: absolute; inset: 0; display: inline-flex; }
+.dr-half.top { clip-path: inset(0 0 50% 0); animation: dr-split-up 0.7s ease-out both; }
+.dr-half.bot { clip-path: inset(50% 0 0 0); animation: dr-split-dn 0.7s ease-out both; }
+.dr-slip {
+  position: relative; z-index: 1; padding: 10px 26px; border-radius: 6px; background: var(--text); color: var(--bg);
+  font-family: var(--font-display); font-weight: 700; font-size: 34px; letter-spacing: 2px; text-transform: uppercase; white-space: nowrap;
+  animation: dr-slip 0.7s cubic-bezier(.2, 1.4, .4, 1) both;
+}
+
+/* Gezogener Verein groß */
+.dr-card { display: flex; align-items: center; gap: 46px; animation: ms-pop 0.5s cubic-bezier(.2, 1.5, .4, 1) both; }
+.dr-card-crest { display: inline-flex; filter: drop-shadow(0 16px 26px rgba(0, 0, 0, 0.5)); }
+.dr-card-no { color: var(--text-3); font-size: 22px; letter-spacing: 2px; text-transform: uppercase; }
+.dr-card-name { font-family: var(--font-display); font-size: 88px; font-weight: 700; line-height: 1.05; letter-spacing: 2px; text-transform: uppercase; max-width: 1050px; overflow-wrap: anywhere; }
+.dr-card-meta { color: var(--text-2); font-size: 24px; margin: 8px 0 14px; }
+.dr-card.mine .dr-card-name { color: var(--accent); text-shadow: 0 0 34px var(--accent-glow); }
+.dr-card.rejected { opacity: 0.65; }
+.dr-card.rejected .dr-card-name { text-decoration: line-through; text-decoration-color: var(--text-3); }
+
+/* Paarung (zweite Kugel) */
+.dr-pairing { display: grid; grid-template-columns: 540px auto 540px; align-items: center; gap: 40px; }
+.dr-side { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; min-width: 0; }
+.dr-side .club-link { display: inline-flex; filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.5)); }
+.dr-side.fresh { animation: ms-pop 0.5s cubic-bezier(.2, 1.5, .4, 1) both; }
+.dr-side-name { font-family: var(--font-display); font-size: 50px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; max-width: 100%; line-height: 1.08; overflow-wrap: anywhere; }
+.dr-side-lbl { color: var(--text-3); font-size: 19px; letter-spacing: 3px; text-transform: uppercase; }
+.dr-side.mine .dr-side-name { color: var(--accent); }
+.dr-vs { font-family: var(--font-display); font-size: 34px; color: var(--text-3); letter-spacing: 4px; text-transform: uppercase; }
+.dr-note { display: inline-flex; align-items: center; gap: 10px; color: var(--text-2); font-size: 21px; animation: ms-in 0.4s ease-out; }
+
+/* Kommentarzeile */
+.dr-now {
+  display: flex; align-items: center; min-height: 112px; padding: 20px 34px; border-radius: var(--radius);
+  background: var(--panel); border: 1px solid var(--border);
+}
+.dr-now.tone-mine { box-shadow: inset 5px 0 0 var(--accent); }
+.dr-now.tone-hot { box-shadow: inset 5px 0 0 var(--text-2); }
+.dr-now.tone-rule { box-shadow: inset 5px 0 0 var(--text-3); }
+.dr-now-txt { font-size: 32px; font-weight: 600; line-height: 1.3; animation: ms-in 0.35s ease-out; }
+.dr-now-txt.dim { color: var(--text-3); }
+.dr-root.paused .dr-now-txt.dim { color: var(--accent); }
+
+/* --- Paarungsliste --- */
+.dr-pairs { display: flex; flex-direction: column; min-height: 0; border-radius: var(--radius); background: var(--panel); border: 1px solid var(--border); overflow: hidden; }
+.dr-prows { overflow-y: auto; min-height: 0; padding: 6px 0; }
+.dr-prow {
+  display: grid; grid-template-columns: 34px minmax(0, 1fr) 18px minmax(0, 1fr) auto; align-items: center; gap: 10px;
+  padding: 8px 18px; font-size: 18px; border-bottom: 1px solid var(--border-soft);
+}
+.dr-prow.fresh { animation: ms-in 0.4s ease-out; background: var(--panel-2); }
+.dr-prow.mine { box-shadow: inset 4px 0 0 var(--accent); }
+.dr-prow.mine .dr-pclub span { color: var(--accent); font-weight: 700; }
+.dr-pno { color: var(--text-3); font-weight: 700; font-variant-numeric: tabular-nums; }
+.dr-pdash { color: var(--text-3); text-align: center; }
+.dr-pclub { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.dr-pclub > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dr-qm { display: inline-flex; width: 30px; height: 30px; align-items: center; justify-content: center; border-radius: 50%; border: 1px dashed var(--text-3); color: var(--text-3); animation: ms-breathe 1.1s ease-in-out infinite; }
+.dr-tag { font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 99px; background: var(--panel-2); color: var(--text-2); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* --- Zusammenfassung --- */
+.dr-summary { position: relative; display: flex; flex-direction: column; align-items: center; gap: 26px; animation: ms-in 0.5s ease-out; }
+.dr-sum-kicker { font-family: var(--font-display); font-size: 30px; letter-spacing: 4px; text-transform: uppercase; color: var(--text-2); }
+.dr-sum-pair { display: grid; grid-template-columns: 500px auto 500px; align-items: center; gap: 30px; }
+.dr-sum-mid { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.dr-sum-date { font-size: 24px; color: var(--text); font-weight: 600; white-space: nowrap; }
+.dr-sum-bars { display: grid; gap: 10px; width: 760px; }
+.dr-bar { display: grid; grid-template-columns: 90px 1fr 56px; align-items: center; gap: 14px; font-size: 20px; }
+.dr-bar-lbl { font-weight: 800; color: var(--text-2); }
+.dr-bar-track { height: 12px; border-radius: 6px; background: var(--bg-2); overflow: hidden; }
+.dr-bar-track span { display: block; height: 100%; background: var(--text-2); animation: dr-grow 0.9s ease-out both; }
+.dr-bar.mine .dr-bar-track span { background: var(--accent); }
+.dr-bar-val { text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
+.dr-sum-line { color: var(--text-2); font-size: 23px; }
+.dr-close {
+  display: inline-flex; align-items: center; gap: 10px; padding: 14px 34px; border-radius: 12px; border: none; cursor: pointer;
+  background: var(--accent); color: var(--accent-ink); font-family: var(--font-display); font-size: 24px; font-weight: 600;
+  letter-spacing: 1.5px; text-transform: uppercase;
+}
+.dr-close:hover { filter: brightness(1.08); }
+
+/* Wiederholungs-Knopf in Statistiken › Pokal / International */
+.cup-draw-replay { display: inline-flex; align-items: center; gap: 4px; margin-left: 8px; }
+.cup-draw-replay svg.game-icon { width: auto; height: auto; }
+
+@keyframes dr-roll-l { 0% { opacity: 0; transform: translateX(-820px) rotate(-760deg); } 15% { opacity: 1; } 100% { transform: translateX(0) rotate(0); } }
+@keyframes dr-roll-r { 0% { opacity: 0; transform: translateX(820px) rotate(760deg); } 15% { opacity: 1; } 100% { transform: translateX(0) rotate(0); } }
+@keyframes dr-split-up { 0% { transform: none; opacity: 1; } 100% { transform: translateY(-110px) rotate(-12deg); opacity: 0; } }
+@keyframes dr-split-dn { 0% { transform: none; opacity: 1; } 100% { transform: translateY(110px) rotate(10deg); opacity: 0; } }
+@keyframes dr-slip { 0% { transform: scale(0.2); opacity: 0; } 40% { opacity: 1; } 100% { transform: scale(1); } }
+@keyframes dr-jiggle { 0%, 100% { transform: translate(0, 0); } 30% { transform: translate(1px, -3px); } 70% { transform: translate(-1px, 1px); } }
+@keyframes dr-sweep { from { opacity: 0.6; } to { opacity: 1; margin-left: 4%; } }
+@keyframes dr-grow { from { width: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .dr-root *, .dr-root *::before, .dr-root *::after { animation: none !important; transition: none !important; }
+}

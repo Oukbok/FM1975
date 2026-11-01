@@ -2411,14 +2411,46 @@ Parallel zur 1. Liga läuft der **Landespokal** als reiner **K.-o.-Wettbewerb**.
 5. **Finale** (2 → 1 = Pokalsieger)
 
 ## Spielmodus je Begegnung
-- **Ein Spiel entscheidet** (Single-Leg). Der **zuerst gezogene Verein hat Heimrecht**.
+- **Ein Spiel entscheidet** (Single-Leg). Der **zuerst gezogene Verein hat Heimrecht** – ab 1982/83 spielt ein **Amateurverein gegen Profis immer zu Hause** (siehe *Pokalauslosung*).
 - Steht es nach **90 Minuten** unentschieden, folgt die **Verlängerung** (2 × 15 Minuten).
 - Bleibt es auch nach **120 Minuten** gleich, entscheidet das **Elfmeterschießen** (Best-of-5, danach „Sudden Death").
 - In der Anzeige stehen **n.V.** (nach Verlängerung) bzw. **i.E.** (im Elfmeterschießen) hinter dem Ergebnis; bei Elfmeterschießen zusätzlich der Elfmeterstand.
 
-## Auslosung (deterministisch)
-- **Nach jeder Runde wird neu ausgelost** — es gibt keinen festen Turnierpfad.
+## Auslosung
+- **Jede Runde wird an einem eigenen Termin ausgelost** (die 1. Hauptrunde im Sommer, die Folgerunden am Wochenende nach der Vorrunde) — es gibt keinen festen Turnierpfad. Termine, Regeln und die Ziehungs-Show: *Pokalauslosung*.
 - Alle Auslosungen leiten ihren Zufall aus einem **festen Pokal-Seed** ab. Derselbe Spielstart erzeugt reproduzierbar denselben Wettbewerb.`,
+  },
+  {
+    id: 'cup-draw',
+    category: 'cup',
+    title: 'Pokalauslosung — Termine, Regeln & Ziehungs-Show',
+    keywords: ['auslosung', 'ziehung', 'losfee', 'lostopf', 'heimrecht', 'amateure', 'setzliste', 'länderschutz', 'zürich', 'genf', 'nyon', 'monaco', 'sportstudio', 'wiederholung'],
+    body: `## Wann wird gelost?
+Die Paarungen entstehen erst **am Tag der Auslosung** – vorher steht im Pokalbaum „Auslosung am …“, im Kalender ist der Termin eingetragen. Die Spieltermine selbst ändern sich dadurch nicht.
+
+| Wettbewerb | Epoche | 1. Runde | Folgerunden |
+|---|---|---|---|
+| Landespokal | bis 2016/17 | Samstag Mitte Juli, Fernsehstudio | Samstag nach der Vorrunde |
+| Landespokal | ab 2017/18 | erster Sonntag der Saison, Fußballmuseum Dortmund (historisch schon im Juni) | Sonntag nach der Vorrunde |
+| Europapokal | bis 1989/90 | Anfang Juli, Zürich | Freitag nach der Vorrunde |
+| Europapokal | 1990–1997 | Mitte Juli, Genf | Genf, ab 1995 Nyon |
+| Europapokal | ab 1998 | Ende August, Monaco (zum Supercup) | Nyon |
+
+Liegt zwischen zwei Europapokal-Runden die Winterpause, wird Mitte Dezember gelost. Das **Finale** wird nicht gelost: Die Halbfinalsieger stehen fest.
+
+## Regeln der Ziehung
+- **Landespokal bis 1981/82:** ein Lostopf, der zuerst gezogene Verein hat Heimrecht.
+- **Landespokal ab 1982/83:** In der 1. Hauptrunde gibt es **zwei Töpfe** (Amateure, Profis); jede Paarung beginnt mit einer Amateurkugel. In allen Runden bis zum Halbfinale hat ein **Amateurverein gegen Profis Heimrecht** – auch wenn die Profikugel zuerst kam.
+- **Europapokal:** In der ersten Runde sind die stärkeren Vereine **gesetzt** und treffen auf Ungesetzte; je Paarung entscheidet das Los, aus welchem Topf die erste Kugel kommt – der zuerst gezogene Verein hat Heimrecht (im Spiel gibt es nur ein Spiel je Runde). **Länderschutz** in der ersten Runde (im Europa-Pokal auch in der zweiten): Passt die gezogene Kugel nicht, geht sie zurück in den Topf und wartet auf die nächste Paarung.
+- Vereinfachung: Im Spiel gibt es im Europapokal keine Gruppenphase und je Runde **ein** Spiel.
+
+## Die Ziehungs-Show
+Am Auslosungstag hält die Zeit an und die Ziehung läuft im Vollbild – Kugeln rollen aus dem Topf, öffnen sich, Losnummer, Wappen und Name erscheinen groß, die Paarungsliste baut sich auf, der Kommentar ordnet ein („Ein Kracher!“, „Der Amateurverein hat Heimrecht“). Die Bühne passt zur Epoche (Fernsehstudio der 70er, TV-Studio, Fußballmuseum, Verbandssaal, Gala in Monaco). Am Ende steht **dein Los**: Gegner, Termin, Heim/Auswärts und der Stärkevergleich; ein Klick aufs Wappen öffnet das Vereinsprofil.
+- **Tempo** langsam/normal/schnell, **Pause** (Leertaste), **Bis zu meiner Ziehung**, **Überspringen** (Esc; Esc in der Zusammenfassung schließt).
+- Wer reduzierte Bewegung im System eingestellt hat, sieht die Ziehung ohne rollende Kugeln.
+- **Einstellungen › Pokalauslosung:** *Immer*, *Mit eigenem Verein* (Standard) oder *Nur Nachricht*. Eine Nachricht mit allen Paarungen kommt in jedem Fall.
+- **Wiederholung:** In *Statistiken › Pokal* und *International* steht an jeder gelosten Runde der Knopf **Auslosung**.
+- Spielstände aus früheren Versionen: Die laufende Saison wird wie bisher direkt nach der Vorrunde gelost; die Show gibt es ab der nächsten Saison.`,
   },
   {
     id: 'cup-flow',
@@ -2437,7 +2469,7 @@ Parallel zur 1. Liga läuft der **Landespokal** als reiner **K.-o.-Wettbewerb**.
 
 ## CPU-Begegnungen
 - Alle anderen Begegnungen einer Runde werden **automatisch simuliert** (mit der Aufstellungs-KI).
-- Ergebnisse, Weiterkommen und Auslosung der nächsten Runde erhältst du als **Nachricht** in der Kategorie **Pokal**.
+- Ergebnisse und Weiterkommen erhältst du als **Nachricht** in der Kategorie **Pokal**; die Auslosung der nächsten Runde folgt am Auslosungstag (Nachricht und – je nach Einstellung – Ziehungs-Show).
 
 ## Preisgeld & Einnahmen
 - **Rundenabhängiges Preisgeld** (pro gewonnener Begegnung, in DM von 1975, später × Wirtschaftsskala):
@@ -2515,7 +2547,7 @@ Die deutschen Starter sind immer volle Vereine des Spielstands. Nur dein Verein 
   - Europa-Pokal (32 Teams): 1. Runde, Achtelfinale, Viertelfinale, Halbfinale, Finale.
 
 ## Auslosung & Termine
-- **Nach jeder Runde wird neu ausgelost** — kein fester Turnierpfad. Alle Auslosungen leiten ihren Zufall aus einem **festen Seed** ab (reproduzierbar).
+- **Jede Runde wird neu ausgelost** — kein fester Turnierpfad –, und zwar am historischen Termin in Zürich, Genf, Nyon oder Monaco, mit Setzliste und Länderschutz (Details: *Pokalauslosung* im Bereich Landespokal). Alle Auslosungen leiten ihren Zufall aus einem **festen Seed** ab (reproduzierbar).
 - Die europäischen Runden liegen historisch über die Saison verteilt (Herbst-Runden, Frühjahr Viertel-/Halbfinale, Mai Finale) auf **Mitte-der-Woche-Terminen** und werden **kollisionsfrei zu Liga- und Landespokal-Terminen** geplant (bei Kollision tageweise verschoben).`,
   },
   {

@@ -249,6 +249,10 @@ export interface AppSettings {
   briefingAuto?: boolean;
   /** Auftakt-Animation vor dem Saison-Briefing (views/zentrale/briefing/SeasonIntro.tsx). */
   briefingIntro?: boolean;
+  /** Pokalauslosung als Show: immer, nur mit eigenem Verein (Standard) oder nur Nachricht. */
+  drawShow?: 'immer' | 'eigener' | 'aus';
+  /** Tempo der Ziehungs-Show. */
+  drawSpeed?: 'langsam' | 'normal' | 'schnell';
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -264,6 +268,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
   eventFrequency: 'normal',
   briefingAuto: true,
   briefingIntro: true,
+  drawShow: 'eigener',
+  drawSpeed: 'normal',
 };
 
 export function loadSettings(): AppSettings {
