@@ -83,3 +83,20 @@
 .cmp-topscorer { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 6px 0 10px; border-bottom: 1px solid var(--border-soft); margin-bottom: 8px; }
 .cmp-ts-clubs { display: inline-flex; gap: 10px; flex: 1 1 auto; }
 .cmp-prize .dkv { padding: 2px 0; }
+
+/* Wettbewerbsseiten (Liga, Pokal, International, Jugend): links Tabelle/Baum über die volle Höhe,
+   rechts sechs Statistik-Boxen (2 × 3), darunter die Info-Box über beide Spalten. */
+.dpage.cmp-page {
+  grid-template-columns: 46% 23.5% 23.5%; column-gap: 1.5%;
+  grid-template-rows: repeat(3, minmax(0, 1fr)) minmax(0, 1.05fr); row-gap: 14px; padding: 28px 0;
+}
+.cmp-page > .cmp-main { grid-column: 1 / 2 !important; grid-row: 1 / -1 !important; }
+.cmp-page > .cmp-statbox { grid-column: auto / span 1 !important; grid-row: auto / span 1 !important; }
+.cmp-page > .dbox:last-child:not(.cmp-statbox):not(.cmp-main) { grid-column: 2 / 4 !important; grid-row: 4 !important; }
+.cmp-statbox .dxh { padding-top: 10px; padding-bottom: 6px; }
+.cmp-statbox .dxh-title { font-size: 15px; }
+.cmp-statbox .dbox-body { overflow-y: auto; padding-top: 0; }
+.cmp-statbox .cmp-stat { grid-template-columns: 22px minmax(0, 1.2fr) minmax(0, 1fr) 28px; gap: 6px; padding: 3px 2px; font-size: 13.5px; }
+.cmp-statbox .cmp-stat.club { grid-template-columns: 26px minmax(0, 1fr) 34px; }
+.cmp-statbox .cmp-val { font-size: 15px; }
+.cmp-statbox .cmp-pclub { font-size: 12px; }

@@ -1908,7 +1908,7 @@ Archiviert werden:
 Höchstens 4000 Einträge; darüber fallen zuerst die unauffälligsten fremden Karrieren heraus.
 
 ## Ruhmeshalle
-Unter **Statistiken → Ruhmeshalle** siehst du die größten Karrieren, deine Vereinslegenden (nach Einsätzen), die Rekordhalter und die Weltklassespieler (Spitze 85+) im Ruhestand.`,
+Unter **Verein → Ruhmeshalle** siehst du die größten Karrieren, deine Vereinslegenden (nach Einsätzen), die Rekordhalter und die Weltklassespieler (Spitze 85+) im Ruhestand.`,
   },
   {
     id: 'development-talent',
