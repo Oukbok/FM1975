@@ -2,6 +2,17 @@ import { Game } from '../../game/state';
 import type { ArchivedPlayer } from '../../game/archive';
 import { DashBox, DashPage, Empty, KV } from '../../ui/DashPage';
 import { vColor } from '../../ui/format';
+import { recordBook, type TitleKind } from '../../game/clubRecords';
+import { compClubName } from '../../game/competitionView';
+
+/** Vereine mit den meisten Titeln einer Art (inkl. Historie ab 1963/64, game/clubPool.ts). */
+function titleLeaders(g: Game, kind: TitleKind): { id: string; n: number; last: string }[] {
+  const titles = recordBook(g)?.titles ?? {};
+  return Object.entries(titles)
+    .map(([id, list]) => { const own = list.filter(([k]) => k === kind); return { id, n: own.length, last: own.map(([, s]) => s).sort().pop() ?? '' }; })
+    .filter((x) => x.n > 0)
+    .sort((a, b) => b.n - a.n || b.last.localeCompare(a.last));
+}
 
 // =============================================================================
 // RUHMESHALLE — Karrieren nach dem Karriereende (Spieler-Archiv)
@@ -56,6 +67,16 @@ export function HallOfFameView({ g }: { g: Game }) {
       </DashBox>
 
       <DashBox title="Rekorde & Weltklasse" icon="chronicle">
+        {(() => {
+          const m = titleLeaders(g, 'meister')[0];
+          const p = titleLeaders(g, 'pokal')[0];
+          const d = titleLeaders(g, 'ddr')[0];
+          return <>
+            {m && <KV k="Rekordmeister (seit 1963/64)" v={`${compClubName(g, m.id, g.season)} (${m.n})`} />}
+            {p && <KV k="Rekord-Pokalsieger" v={`${compClubName(g, p.id, g.season)} (${p.n})`} />}
+            {d && <KV k="DDR-Rekordmeister" v={`${compClubName(g, d.id, g.season)} (${d.n})`} />}
+          </>;
+        })()}
         {topScorer ? <KV k="Meiste Tore" v={`${topScorer.name} (${topScorer.goals})`} /> : null}
         {mostApps ? <KV k="Meiste Einsätze" v={`${mostApps.name} (${mostApps.apps})`} /> : null}
         <div className="dsec">Weltklasse im Ruhestand – Spitze 85+ ({worldClass.length})</div>

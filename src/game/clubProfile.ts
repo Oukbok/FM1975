@@ -1,4 +1,5 @@
 import { seasonStartYear } from '../data/timeline';
+import { historicClubInfo, historicClubName } from '../data/history/historicClubs';
 import { EURO_COMP_NAMES } from '../data/europe';
 import { isLeagueClub, lastRevenue } from '../engine/clubEconomy';
 import { divisionLabel, simDisplayName } from '../engine/leagues';
@@ -20,6 +21,9 @@ export function clubView(g: Game, id: string, year?: number): { id: string; name
   const s = g.simClubs[id];
   // Zeit-korrekter Name (z. B. „Karl-Marx-Stadt" vor 1990, sonst „Chemnitz").
   if (s) return { id: s.id, name: year != null ? simDisplayName(s, year) : s.name, shortName: s.shortName, city: s.city, colors: s.colors };
+  // Historische Vereine, die der Spielstand nicht (mehr) kennt (data/history/historicClubs.ts).
+  const h = historicClubInfo(id);
+  if (h) return { id, name: historicClubName(id, year) ?? h.name, shortName: h.shortName, city: h.city, colors: h.colors };
   return { id, name: id, shortName: id.slice(0, 3).toUpperCase(), city: '', colors: { primary: '#444', secondary: '#fff' } };
 }
 

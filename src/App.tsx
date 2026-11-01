@@ -39,6 +39,7 @@ import { migrateFinanceLevel } from './game/financeMigration';
 import { migrateWinter } from './game/winterShared';
 import { migrateGrounds } from './game/groundsGame';
 import { migrateSeating } from './game/seatingGame';
+import { migrateLeaguePool } from './game/clubPool';
 import { migrateYouthInvest } from './game/youthInvest';
 import { migrateSponsorship } from './game/sponsorGame';
 import { migrateBriefing } from './game/seasonBriefing';
@@ -329,6 +330,8 @@ export default function App() {
     // Stadionumfeld (v11-Sammel-Update): Lage, Fläche, epochentypische Ausstattung nachrüsten.
     try { migrateGrounds(s.game); } catch (err) { console.error('Umfeld-Nachrüstung fehlgeschlagen:', err); }
     try { migrateSeating(s.game); } catch (err) { console.error('Platzkategorien-Nachrüstung fehlgeschlagen:', err); }
+    // Vereins-Pool (Amateurligen) + Historie 1963–1975 (game/clubPool.ts).
+    try { migrateLeaguePool(s.game); } catch (err) { console.error('Liga-Historie-Nachrüstung fehlgeschlagen:', err); }
     // Nachwuchs-Investitionen (v11): Bausteine aus der alten Akademie-Stufe ableiten.
     try { migrateYouthInvest(s.game); } catch (err) { console.error('Nachwuchs-Nachrüstung fehlgeschlagen:', err); }
     // Sponsoring 2.0: Trikot-/Bandenvertrag übernehmen, Werbeflächen der Epoche (game/sponsorGame.ts).

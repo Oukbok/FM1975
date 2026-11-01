@@ -184,8 +184,11 @@ Die 3 Absteiger füllen die 2. Liga wieder auf: Sie werden so verteilt, dass **j
 - Steigt dein Verein auf oder ab, **folgt die volle Match-Engine deinem Verein** in die neue Liga/Staffel. Spielplan, Tabelle und Landespokal-Feld passen sich automatisch an (18 → 34 Spieltage bzw. 20 → 38 Spieltage).
 - Du erhältst eine Vorstands-Nachricht zum Auf- bzw. Abstieg; eine Sportredaktions-Meldung fasst alle Auf-/Absteiger zusammen.
 
+## Amateurligen: Tausch mit dem Vereins-Pool
+Unterhalb der untersten simulierten Liga liegen die **Amateurligen** als Vereins-Pool: frühere Bundesligisten wie **Oberhausen**, **Neunkirchen** oder **Berlin Neukölln** (Tasmania), die Absteiger der 2. Liga 1975 und Amateur-Spitzenvereine (z. B. Kiel, Trier, Freiburg). Jede Saison tauschen die Schlechtesten der untersten Liga mit den stärksten Pool-Vereinen ihrer Region – bei zwei Staffeln **je 4**, eingleisig **3**, ab drei Staffeln **je 2**. Wer in den Pool fällt, kann später zurückkehren; steigt ein Pool-Verein bis in deine Liga auf, bekommt er wie jeder Aufsteiger einen vollen Kader. Ligareformen besetzen neue Plätze zuerst aus dem Pool, erst danach mit fiktiven Platzhaltern.
+
 ## Ausblick
-Eine 3. Ebene existiert 1975/76 noch nicht — daher gibt es (noch) keinen Abstieg **aus** der 2. Liga. Die historischen Ligareformen (eingleisige 2. Liga **1981/82**, Regionalliga **1994/95**, 3. Liga **2008/09**) sind als datengetriebenes **Reformsystem** umgesetzt und greifen automatisch beim jeweiligen Saisonwechsel — Details siehe Artikel „Ligareformen (historischer Umbau)“. Die DDR-Integration 1991/92 dockt als weiterer Reform-Datensatz an.`,
+Die historischen Ligareformen (eingleisige 2. Liga **1981/82**, Regionalliga **1994/95**, 3. Liga **2008/09**) sind als datengetriebenes **Reformsystem** umgesetzt und greifen automatisch beim jeweiligen Saisonwechsel — Details siehe Artikel „Ligareformen (historischer Umbau)“. Die DDR-Integration 1991/92 dockt als weiterer Reform-Datensatz an.`,
   },
 
   {
@@ -250,10 +253,12 @@ Von Saisonstart 1975/76 an läuft **parallel** zum bundesdeutschen Ligasystem ei
 - **DDR-Oberliga** – oberste DDR-Ebene, **14 Vereine**.
 - **DDR-Liga** – vereinfachter Unterbau, eine Staffel (**12 Vereine**).
 
+Jede Saison steigen die **zwei Letzten der Oberliga** ab und die **zwei Besten der DDR-Liga** auf; die zwei Letzten der DDR-Liga tauschen mit dem DDR-Pool (u. a. Stralsund, Stendal, Steinach, Neubrandenburg, Gera, Eisenhüttenstadt).
+
 Beide werden – wie alle Nicht-Spielerligen – **performant per Stärke simuliert** und haben ihre **eigenen Tabellen**. Im Bereich **Tabelle** lassen sie sich über den Liga-Umschalter auswählen (klar beschriftet als „DDR-Oberliga“ / „DDR-Liga“).
 
 ## Rechtssichere Städtenamen
-Alle Vereine tragen reine **Städtenamen** (keine geschützten realen Vereinsnamen/Logos). Prägende DDR-Standorte sind vertreten: **Dresden, Rostock, Berlin (Ost), Magdeburg, Jena, Erfurt, Halle, Chemnitz, Leipzig, Brandenburg**. „**Berlin (Ost)**“ ist dabei klar von West-Berlin unterschieden. Die restlichen Plätze füllen **klar fiktive Platzhalterstädte** (z. B. Ostheim, Elbstadt, Spreewald).
+Alle Vereine tragen reine **Städtenamen** (keine geschützten realen Vereinsnamen/Logos). Die Oberliga entspricht dem echten Teilnehmerfeld **1975/76**: **Dresden, Berlin (Ost), Magdeburg, Jena, Leipzig, Frankfurt (Oder), Erfurt, Halle, Karl-Marx-Stadt, Zwickau, Aue, Riesa, Leipzig Grün, Cottbus**. „**Berlin (Ost)**“ ist klar von West-Berlin unterschieden. In der DDR-Liga spielen u. a. Rostock, Brandenburg und Berlin Köpenick; die restlichen Plätze füllen **klar fiktive Platzhalterstädte**.
 
 ## Zeit-korrekte Umbenennung (Chemnitz ↔ Karl-Marx-Stadt)
 Historische Umbenennungen werden über eine **kanonische Identität** (\`canonicalId\`) plus **historischen Namen** (\`historicalName\`) und **Umbenennungsjahr** (\`renamedYear\`) modelliert. Beispiel **Chemnitz**: bis 1989 wird der Verein als **„Karl-Marx-Stadt“** angezeigt, ab 1990 als **„Chemnitz“** – die Tabelle zeigt stets den zum Spieljahr passenden Namen.
@@ -273,6 +278,27 @@ Die einmalig vergrößerte 1. Liga (und die vergrößerte 2. Liga) werden **ab d
 
 ## Reihenfolge der Reformen
 Die 1981er-Reform (eingleisige 2. Liga) liegt vor der Wiedervereinigung, die Regionalliga-Reform (1994/95) danach. Alle Reformen greifen sauber ineinander, und dein eigener Verein bleibt jederzeit geschützt (fällt nie aus der Simulation).`,
+  },
+
+  {
+    id: 'leagues-history',
+    category: 'leagues',
+    title: 'Ligen, Pokale, Historie & Bestenlisten',
+    keywords: ['tabelle', 'historie', 'archiv', 'saison', 'torschützen', 'vorlagen', 'scorer', 'gelb', 'rot', 'weiße weste', 'zu null', 'turnierbaum', 'runden', 'bundesliga', '1963', 'pool', 'amateur'],
+    body: `## Eine Seite für jeden Wettbewerb
+Unter **Statistiken › Liga, Pokal und International** siehst du jeden Wettbewerb im gleichen Aufbau: links groß die **Tabelle** (umschaltbar Gesamt / Heim / Auswärts / Form) bzw. beim Pokal der **Turnierbaum** oder die **Rundenliste** mit Rundenwahl, rechts die **Statistik** und darunter Saisonbilanz bzw. „Dein Weg“. Oben wählst du **Saison** und **Wettbewerb**: alle Ligen aller Ebenen, die DDR-Ligen, Landespokal, Europapokale und – für die zuletzt beendete Saison – die Auslandsligen.
+
+## Bestenlisten
+Die Match-Engine zählt je Wettbewerb: **Tore, Vorlagen, Scorer** (Tore + Vorlagen), **Gelbe Karten, Rote Karten** (Gelb-Rot zählt mit) und die **Weiße Weste** (Spiele ohne Gegentor eines Torhüters). Ligen ohne volle Kader werden vereinsweise simuliert – dort zeigt die Statistik **Vereinswerte** (Tore, Gegentore, Siege, Zu-null-Spiele). Im Europapokal zählen die voll simulierten Spiele mit deutscher Beteiligung.
+
+## Archiv
+Am Saisonende werden alle Abschlusstabellen, alle Pokalrunden und die **besten 10** (Pokale: 5) jeder Kategorie archiviert. So kannst du jede vergangene Saison wieder aufrufen.
+
+## Historie vor Spielbeginn (1963/64–1974/75)
+Die echten Abschlusstabellen der Bundesliga seit 1963/64, der 2. Liga Nord/Süd 1974/75 und der DDR-Oberliga, alle Pokal- und Europapokal-Endspiele sowie der Verein des Torschützenkönigs sind hinterlegt – übertragen auf die Spiel-Vereine (Städtenamen). Sie stehen auch in der **Vereins-Historie** (Endplätze, Titel), in der **Ruhmeshalle** (Rekordmeister) und in der **Chronik**. Namen echter Spieler werden nicht verwendet.
+
+## Vereine unterhalb der Ligen
+Frühere Bundesligisten, die 1975 nur noch in den Amateurligen spielen, existieren als Vereine im **Pool** und können über den Auf-/Abstieg zurückkehren (siehe „Auf- und Abstiegsregeln“).`,
   },
 
   // ---------------------------------------------------------------------------
