@@ -120,6 +120,8 @@ export interface Game {
   appliedReforms: string[];
   /** Arbeitslose Trainer (Trainerkarussell, game/coachCarousel.ts). */
   coachPool?: import('../types').ClubCoach[];
+  /** Arbeitsmarkt für Trainerteam/Mitarbeiter aller Vereine (game/staffWorld.ts). */
+  staffWorld?: import('./staffWorld').StaffWorld;
   /** Kaderplanung der KI-Vereine in der laufenden Saison (game/aiClubs.ts). */
   aiMarket?: import('./aiClubs').AiMarketState;
   /**

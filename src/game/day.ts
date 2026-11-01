@@ -3,6 +3,7 @@
 // Jugend, Entwicklung …). Ohne Oberfläche – die Shell reagiert über `ui`.
 // Rückgabe: true = Vorlauf darf weiterlaufen, false = anhalten (Aktion nötig).
 // =============================================================================
+import { weekdayIdx } from '../engine/trainingPlan';
 import { setEraYear } from '../engine/positions';
 import { snapshotAttributes } from '../engine/history';
 import { ACTIVITY_DEFS, activityIncomeBase } from '../data/activities';
@@ -28,7 +29,7 @@ import { makeMessage, pushMessage } from '../engine/messages';
 import { dailyRecovery } from '../engine/training';
 import { setTransferDate } from '../engine/transfers';
 import { aiClubsDaily, aiWindowClose } from './aiClubs';
-import { applyDailyTraining } from '../engine/weeklyTraining';
+import { ownTrainingDay } from './trainingWeek';
 import { applyYouthGem, GEM_CHANCE_YOUTH, maybeMakeGem } from '../engine/gems';
 import { academyIntake, ageYouthPlayers, developYouthWeekly, graduateYouth } from '../engine/youth';
 import { cupNextDrawMessage, cupResultMessage, euroDrawMessage, euroResultMessage, euroWinnerChronicle } from './competitions';
@@ -356,9 +357,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   // TRAINING & REGENERATION
   // -------------------------------------------------------------------------
   const userIds = new Set(myClub.playerIds);
-  // Wochentag als Plan-Index (0=Mo … 6=So), UTC-basiert.
   const utcDay = new Date(today + 'T00:00:00Z').getUTCDay(); // 0=So … 6=Sa
-  const planIdx = (utcDay + 6) % 7;
   // War heute ein Pflichtspiel des Manager-Vereins? Dann kein Training.
   const isMyMatchDay = todaysEvents.some(
     (ev) => ev.type === 'matchday' && (() => {
@@ -371,9 +370,10 @@ export function processDay(g: Game, ui: DayUi): boolean {
     // Manager-Verein trainiert gemäß Wochenplan (füllt den Entwicklungs-Akku).
     // Winterpause: Training baut Fitness auf, aber keine Spielform (kein Form-Plus).
     const breakForm = inWinterBreak(g, today) ? new Map(myClub.playerIds.map((id) => [id, g.players[id]?.form ?? 0])) : null;
-    applyDailyTraining(myClub, g.players, g.trainingPlan.days[planIdx], false);
+    // Trainingsplan mit Spiel-Sperren, Trainerteam und Belastungsverletzungen (game/trainingWeek.ts).
+    ownTrainingDay(g, myClub, today);
     // Positionstraining (eine Zielposition je Spieler, game/positionsGame.ts)
-    { const d = g.trainingPlan.days[planIdx]; if (d?.slot1 || d?.slot2) ownPositionTraining(g, today, 0.8 + 0.4 * ((myClub.trainingSchedule?.facilitiesQuality ?? 70) / 100)); }
+    { const d = g.trainingPlan.days[weekdayIdx(today)]; if (d?.slot1 || d?.slot2) ownPositionTraining(g, today, 0.8 + 0.4 * ((myClub.trainingSchedule?.facilitiesQuality ?? 70) / 100)); }
     if (breakForm) for (const [id, f] of breakForm) { const p = g.players[id]; if (p && p.form > f) p.form = f; }
     applyFocusLoad(g, myClub, today, staffEffectsOf(g).injuryReduction);
     // Übrige Liga regeneriert normal; Manager-Verein ist über das Training abgedeckt.

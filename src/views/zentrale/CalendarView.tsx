@@ -263,7 +263,7 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
           ))}
         </div>
         <div className="dnote" style={{ marginBottom: 8 }}>{def.desc}</div>
-        <div className="dnote clickable" style={{ marginBottom: 8, color: 'var(--accent)' }} onClick={() => onGoto('trainingslager')}>Trainingslager buchst du unter Kader › Trainingslager.</div>
+        <div className="dnote clickable" style={{ marginBottom: 8, color: 'var(--accent)' }} onClick={() => onGoto('trainingslager')}>Trainingslager buchst du unter Training › Trainingslager.</div>
         {planType !== 'friendly' && (
           <label className="cal-days">
             Dauer: <b>{days}</b> Tag(e)

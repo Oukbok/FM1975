@@ -173,13 +173,13 @@ export function seasonTasks(g: Game, sit?: BriefingSituation, changes: GameChang
   const canStillBook = CalendarEngine.addDays(today, CAMP_LEAD_DAYS) <= latestStart;
   const summerDest = destinationsFor('summer', y0, rep).filter((x) => x.status.ok).length;
   if (summerDest > 0 && canStillBook && !ownBooking(g, 'summer')) {
-    add({ id: 'camp-summer', level: 'wichtig', icon: 'weather', where: 'Kader › Trainingslager',
+    add({ id: 'camp-summer', level: 'wichtig', icon: 'weather', where: 'Training › Trainingslager',
       title: 'Sommer-Trainingslager buchen',
       text: `${summerDest} Ziele stehen dir offen. Ein Lager in der Vorbereitung bringt Fitness und Teamgeist – buche mindestens ${CAMP_LEAD_DAYS} Tage im Voraus.` });
   }
   const winterDest = destinationsFor('winter', y0 + 1, rep).filter((x) => x.status.ok).length;
   if (winterDest > 0 && !ownBooking(g, 'winter')) {
-    add({ id: 'camp-winter', level: 'tipp', icon: 'weather', where: 'Kader › Trainingslager',
+    add({ id: 'camp-winter', level: 'tipp', icon: 'weather', where: 'Training › Trainingslager',
       title: 'Winterlager vormerken',
       text: 'Früh gebucht ist günstiger als kurzfristig – plane die Winterpause schon jetzt.' });
   }
@@ -191,18 +191,18 @@ export function seasonTasks(g: Game, sit?: BriefingSituation, changes: GameChang
   if (duty && y0 >= duty - 3) {
     const miss = nlzMissing(club, inv);
     if (miss.length) {
-      add({ id: 'nlz', level: y0 >= duty - 1 ? 'dringend' : 'wichtig', icon: 'facilities', where: 'Kader › Akademie',
+      add({ id: 'nlz', level: y0 >= duty - 1 ? 'dringend' : 'wichtig', icon: 'facilities', where: 'Jugend › Akademie',
         title: y0 >= duty ? 'Leistungszentrum unvollständig' : `Leistungszentrum bis ${duty} nötig`,
         text: `Für die Lizenz fehlt noch: ${miss.slice(0, 3).join(', ')}${miss.length > 3 ? ' …' : ''}. Bauten brauchen Zeit.` });
     }
   }
   const talents = club.youthPlayerIds.map((id) => g.players[id]).filter((p): p is Player => !!p && p.age >= 17 && p.potentialStars >= 4);
   if (talents.length) {
-    add({ id: 'talents', level: 'tipp', icon: 'youth', where: 'Kader › Jugend',
+    add({ id: 'talents', level: 'tipp', icon: 'youth', where: 'Jugend › Mannschaften',
       title: talents.length === 1 ? `Talent ${nameOf(talents[0])} ist so weit` : `${talents.length} Talente drängen nach oben`,
       text: `${listNames(talents)} – hochziehen und Einsatzzeit geben, sonst stagniert die Entwicklung.` });
   } else if (inv.quality < 30) {
-    add({ id: 'youth-low', level: 'tipp', icon: 'youth', where: 'Kader › Akademie',
+    add({ id: 'youth-low', level: 'tipp', icon: 'youth', where: 'Jugend › Akademie',
       title: 'Nachwuchsarbeit ausbauen',
       text: 'Deine Ausbildungsqualität ist niedrig. Investitionen wirken erst nach Jahren – darum früh anfangen.' });
   }

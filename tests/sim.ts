@@ -376,6 +376,18 @@ function topSummary() {
   console.log(`TOP Meister: ${t.length} verschiedene: ${t.map(([id, n]) => name(id) + ' ' + n).join(', ')} | Höchstwert je Herkunft: ${[...topStat.peak.entries()].map(([k, v]) => k + ' ' + v).join(', ')}`);
 }
 
+/** Trainer-Arbeitsmarkt je Saison (game/staffWorld.ts). */
+function staffReport(game: Game) {
+  const w = game.staffWorld;
+  if (!w) return;
+  const ps = w.people, free = ps.filter((m) => !m.clubId), ex = ps.filter((m) => m.exPro);
+  const q = ps.map((m) => m.quality).sort((a, b) => a - b);
+  const l = w.log[w.log.length - 1];
+  const roles: Record<string, number> = {};
+  for (const m of free) roles[m.roleId] = (roles[m.roleId] ?? 0) + 1;
+  console.log(`   STAFF ${ps.length} Personen (${free.length} frei), Ex-Profis ${Math.round(ex.length / Math.max(1, ps.length) * 100)} %, Qualität Ø ${avg(q).toFixed(1)} max ${q[q.length - 1]}, neu ${l?.exPros ?? 0} Ex-Profis/${l?.outsiders ?? 0} Quereinsteiger, Aufstiege ${l?.promoted ?? 0}, Abgänge ${l?.retired ?? 0}, KI-Einstellungen ${l?.hires ?? 0} | frei je Rolle: ${Object.entries(roles).map(([k, v]) => k + ' ' + v).join(', ')}`);
+}
+
 const t0 = Date.now();
 report(g);
 // Kabine (KABINE=1): Stimmung je Saison, Außenseiter, Gruppen, Vorfälle, Moral-Verteilung.
@@ -411,6 +423,7 @@ for (let s = 0; s < seasons; s++) {
   if (process.env.AI) aiReport(g);
   if (process.env.KABINE) kabineReport(g);
   startNextSeason(g);
+  if (process.env.STAFF) staffReport(g);
 }
 if (process.env.AI && aiTotals.seasons) {
   const s = aiTotals.seasons, a = Math.max(1, aiTotals.arrivals);

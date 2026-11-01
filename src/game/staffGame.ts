@@ -15,12 +15,20 @@ import {
   migrateStaff, phaseOf, specialistBoost, StaffMember, staffEffectsFromMembers, staffSeasonTurnover, TrainingFocus,
   trainingCourseCost,
 } from '../engine/staffPeople';
+import { skillsFromQuality } from '../engine/staffSkills';
+import { aiStaffExtras, staffWorldSeason } from './staffWorld';
+import { ownStaffSeason } from './trainerTeam';
+import { planDevFactor } from './trainingWeek';
 
 export const MAX_FOERDER = 3;
 
 /** Alte Spielstände: Rollen-Liste in Personen umwandeln; Rollen-Spiegel aktuell halten. */
 export function ensureStaff(g: Game): StaffMember[] {
   if (!g.staff) g.staff = migrateStaff(g.hiredStaff ?? [], yearOf(g.calendar.currentDate), Math.random);
+  for (const m of g.staff) {
+    if (!m.skills) skillsFromQuality(m, Math.random);
+    if (!m.contractEnd) m.contractEnd = `${yearOf(g.calendar.currentDate) + (Number(g.calendar.currentDate.slice(5, 7)) >= 7 ? 2 : 1)}-06-30`;
+  }
   g.hiredStaff = g.staff.map((m) => m.roleId);
   return g.staff;
 }
@@ -40,10 +48,14 @@ export function devContextFor(g: Game, date: string): (club: Club) => ClubDevCon
   const staff = ensureStaff(g);
   const focus = currentFocus(g, date);
   const foerder = new Set(g.foerderSpieler ?? []);
+  const aiExtra = aiStaffExtras(g);
+  const plan = planDevFactor(g);
   return (club) => {
     if (club.id !== g.managedClubId) {
-      // KI-Vereine: Trainerstab-Qualität über die Vereinsgröße angenähert.
-      const extra = Math.max(-0.03, Math.min(0.1, ((club.reputation ?? 60) - 60) / 350));
+      // KI-Vereine: Vereinsgröße und (halb) das eigene Trainerteam vom Arbeitsmarkt (game/staffWorld.ts).
+      const byRep = Math.max(-0.03, Math.min(0.1, ((club.reputation ?? 60) - 60) / 350));
+      const team = aiExtra.get(club.id);
+      const extra = team == null ? byRep : (byRep + team) / 2;
       return { training: clubTrainingFactor(club, extra), environment: 1 };
     }
     const rep = coachingReport(staff, club.playerIds.length, year);
@@ -52,7 +64,7 @@ export function devContextFor(g: Game, date: string): (club: Club) => ClubDevCon
       training: clubTrainingFactor(club, rep.extra),
       environment: 1,
       playerFactor: (p: Player) => {
-        let f = specialistBoost(staff, p, year) * focusEffect(focus, p).dev;
+        let f = specialistBoost(staff, p, year) * focusEffect(focus, p).dev * plan;
         if (foerder.size) f *= foerder.has(p.id) ? (capOk ? 1.25 : 1.15) : 0.97;
         return f;
       },
@@ -176,13 +188,16 @@ export function staffSeasonChange(g: Game, date: string): void {
   const pick = () => (rivals.length ? rivals[Math.floor(Math.random() * rivals.length)].name : 'einem Verein aus dem Ausland');
   const res = staffSeasonTurnover(staff, club?.reputation ?? 60, yearOf(date), Math.random, pick);
   g.hiredStaff = staff.map((m) => m.roleId);
+  // Trainerteam: Lernen/Vertragsenden des eigenen Stabs, dann der ganze Arbeitsmarkt.
+  ownStaffSeason(g, date);
+  staffWorldSeason(g, date);
   if (res.left.length) {
     pushMessage(g.messages, makeMessage({
       date, category: 'board', from: 'Geschäftsstelle',
       subject: `Personal: ${res.left.length} Abgang${res.left.length > 1 ? 'änge' : ''}`,
       shortText: res.left.map((l) => l.m.name).join(', '),
       bodyText: res.left.map((l) => `• ${l.m.name} (${STAFF_BY_ID[l.m.roleId]?.name ?? ''}, Qualität ${l.m.quality}) ${l.reason}.`).join('\n')
-        + '\n\nDie Stellen kannst du unter Verein → Mitarbeiter neu besetzen.',
+        + '\n\nDie Stellen besetzt du unter Training › Trainerteam bzw. Verein › Mitarbeiter neu.',
     }));
   }
 }

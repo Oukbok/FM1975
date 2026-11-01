@@ -22,7 +22,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     season: '2000/01',
     headline: 'Neustart nach dem EM-Debakel',
     football: [
-      { topic: 'taktik', title: 'Lehren aus der EM 2000', text: 'Nach dem Vorrunden-Aus bei der EM in Belgien und den Niederlanden ziehen Liga und DFB Konsequenzen: Ab 2001/02 braucht jeder Erstligist ein Nachwuchsleistungszentrum, ab 2002/03 auch jeder Zweitligist.', inGame: 'Plane jetzt: Ab 2001/02 kostet ein fehlendes Leistungszentrum in der 1. Liga jedes Jahr eine Geldstrafe (Kader › Akademie).' },
+      { topic: 'taktik', title: 'Lehren aus der EM 2000', text: 'Nach dem Vorrunden-Aus bei der EM in Belgien und den Niederlanden ziehen Liga und DFB Konsequenzen: Ab 2001/02 braucht jeder Erstligist ein Nachwuchsleistungszentrum, ab 2002/03 auch jeder Zweitligist.', inGame: 'Plane jetzt: Ab 2001/02 kostet ein fehlendes Leistungszentrum in der 1. Liga jedes Jahr eine Geldstrafe (Jugend › Akademie).' },
       { topic: 'liga', title: 'WM 2006 kommt nach Deutschland', text: 'Am 6. Juli 2000 vergibt die FIFA die Weltmeisterschaft 2006 an Deutschland. Die Planungen für neue Arenen beginnen.' },
       { topic: 'geld', title: 'Kirch zahlt Milliarden', text: 'Die Kirch-Gruppe hat die Bundesliga-Rechte bis 2004 für rund drei Milliarden DM gekauft. Sat.1 zeigt die Zusammenfassungen bei „ran“, Premiere die Live-Spiele.' },
       { topic: 'geld', title: 'Stadionnamen zu verkaufen', text: 'Namensrechte werden zur neuen Einnahmequelle: Im Sommer 2001 wird das Hamburger Volksparkstadion zur „AOL Arena“.', inGame: 'Ab sofort kannst du die Namensrechte an deinem Stadion verkaufen.' },
@@ -209,7 +209,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     football: [
       { topic: 'geld', title: 'Finanzielles Fairplay', text: 'Die UEFA beschließt 2010 das Finanzielle Fairplay: Wer europäisch spielen will, darf auf Dauer nicht mehr ausgeben, als er einnimmt.', inGame: 'Ab 2011/12 prüft das Spiel nach jeder Saison die Bilanz der letzten Jahre.' },
       { topic: 'liga', title: 'WM-Vergaben an Russland und Katar', text: 'Im Dezember 2010 vergibt die FIFA die WM 2018 an Russland und die WM 2022 an Katar. Die Kritik reißt nicht ab.' },
-      { topic: 'taktik', title: 'Winterlager in Katar', text: 'Im Januar 2011 schlägt der FC Bayern sein Winterquartier erstmals in Doha auf: perfekte Plätze, gute Sponsorenkontakte.', inGame: 'Katar wird als Winterziel für Spitzenvereine buchbar (Kader › Trainingslager).' },
+      { topic: 'taktik', title: 'Winterlager in Katar', text: 'Im Januar 2011 schlägt der FC Bayern sein Winterquartier erstmals in Doha auf: perfekte Plätze, gute Sponsorenkontakte.', inGame: 'Katar wird als Winterziel für Spitzenvereine buchbar (Training › Trainingslager).' },
       { topic: 'taktik', title: 'Ballbesitz als Maßstab', text: 'Spaniens Weltmeister und der FC Barcelona machen Kurzpassspiel und sofortiges Pressing zum Vorbild für ganz Europa.' },
       { topic: 'liga', title: 'Frauen-WM in Deutschland', text: 'Im Sommer 2011 richtet Deutschland die Frauen-WM aus; die Stadien sind gut gefüllt, die Quoten hoch.' },
       { topic: 'geld', title: 'Trikots weltweit online', text: 'Vereine verkaufen Fanartikel über eigene Onlineshops in alle Welt.', inGame: 'Ein internationaler Onlineshop ist baubar.' },

@@ -9,6 +9,7 @@ import { candidatesFor, ensureStaff, fireStaff, hireStaff, sendToCourse, staffEf
 import { DashBox, DashPage, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtDM, fmtStaffWage, wageUnit } from '../../ui/format';
 import { useState } from 'react';
+import { TEAM_ROLE_IDS } from '../../engine/staffSkills';
 
 // =============================================================================
 // MITARBEITER 2.0 — Wirkung des Stabs + je Bereich eine Box mit Personen
@@ -105,11 +106,13 @@ export function StaffView({ g, onChange }: { g: Game; onChange: () => void }) {
         <Meter label="Scouting" value={fx.scouting} max={STAFF_CAPS.scouting} text={`+${Math.round(fx.scouting * 100)} %`} />
         <Meter label="Reichweite" value={fx.reach} max={STAFF_CAPS.reach} text={`+${Math.round(fx.reach * 100)} %`} />
         {msg && <div className="dnote mt8" style={{ color: 'var(--accent)', fontSize: 15 }}>{msg}</div>}
-        <div className="dnote mt8">Gute Trainer holen zuverlässiger heraus, was in den Spielern steckt – das Potenzial selbst steigt nicht. Ein Trainer betreut etwa neun Spieler. Wirkung und Effekte sind gedeckelt.</div>
+        <div className="dnote mt8">Trainer, Fitness-, Torwart- und Athletiktrainer, Analysten und Psychologen stellst du unter Training › Trainerteam ein. Gute Trainer holen zuverlässiger heraus, was in den Spielern steckt – das Potenzial selbst steigt nicht. Ein Trainer betreut etwa neun Spieler. Wirkung und Effekte sind gedeckelt.</div>
       </DashBox>
 
       {groups.map((grp) => {
-        const roles = STAFF_ROLES.filter((r) => r.group === grp);
+        // Trainerteam-Rollen verwaltest du unter Training › Trainerteam.
+        const roles = STAFF_ROLES.filter((r) => r.group === grp && !TEAM_ROLE_IDS.has(r.id));
+        if (!roles.length) return null;
         const now = roles.filter((r) => staffAvailable(r, curYear));
         const later = roles.filter((r) => !staffAvailable(r, curYear)).sort((a, b) => a.unlockYear - b.unlockYear);
         const filled = now.filter((r) => byRole.has(r.id));

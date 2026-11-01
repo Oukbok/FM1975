@@ -560,7 +560,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
         topic: 'liga',
         title: 'Elf Wochen Winterpause',
         text: 'Ab 1986/87 ruht die Bundesliga rund elf Wochen. Hallenturniere und Trainingslager füllen die Lücke.',
-        inGame: 'Hallenturniere und Winterlager unter Statistiken › Halle bzw. Kader › Trainingslager',
+        inGame: 'Hallenturniere und Winterlager unter Statistiken › Halle bzw. Training › Trainingslager',
       },
       {
         topic: 'medien',
@@ -812,7 +812,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
         topic: 'taktik',
         title: 'Ab in die Wärme',
         text: 'Im Januar 1992 fliegt Schalke als erster Bundesligist ins Winterlager an die türkische Riviera, Leverkusen nach Florida. Bisher ging es auf die Kanaren – oder auf gefrorene Plätze daheim.',
-        inGame: 'Neue Ziele unter Kader › Trainingslager',
+        inGame: 'Neue Ziele unter Training › Trainingslager',
       },
     ],
     society: [

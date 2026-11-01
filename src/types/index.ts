@@ -1500,6 +1500,8 @@ export type TrainingBlockCategory =
   | 'heading'       // Kopfball
   | 'mental'        // Mentaltraining
   | 'matchplay'     // Spielformen / Match Practice
+  | 'analysis'      // Video-/Spielanalyse
+  | 'athletics'     // Athletik & Stabilisation
   | 'recovery';     // Regeneration
 
 /** Intensität eines Trainingsblocks (bestimmt Fitness-Kosten & Lerntempo). */
@@ -1513,7 +1515,10 @@ export type BlockIntensity = 'low' | 'medium' | 'high';
 export interface TrainingBlock {
   id: string;
   name: string;
+  /** Icon-Name aus components/iconPaths.ts. */
   icon: string;
+  /** Erst ab diesem Jahr im Trainingsplan verfügbar (fehlt = schon 1975). */
+  unlockYear?: number;
   category: TrainingBlockCategory;
   intensity: BlockIntensity;
   /** Belastungswert (Fitness-Kosten-Basis pro Einheit, 0..10). */

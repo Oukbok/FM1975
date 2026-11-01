@@ -37,7 +37,11 @@ import { MarketingView } from '../views/finanzen/MarketingView';
 import { SponsoringView } from '../views/finanzen/SponsoringView';
 import { DevelopmentReveal, RatingCeremony } from '../views/kader/DevelopmentReveal';
 import { SquadView } from '../views/kader/SquadView';
-import { TrainingView } from '../views/kader/TrainingView';
+import { TrainingPlanView } from '../views/training/TrainingPlanView';
+import { TrainerTeamView } from '../views/training/TrainerTeamView';
+import { TrainingDashboard } from '../views/training/TrainingDashboard';
+import { JugendDashboard } from '../views/jugend/JugendDashboard';
+import { YouthCompetitionsView } from '../views/jugend/YouthCompetitionsView';
 import { VertraegeView } from '../views/kader/VertraegeView';
 import { YouthView } from '../views/kader/YouthView';
 import { AcademyView } from '../views/kader/AcademyView';
@@ -353,7 +357,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'fixtures' && <FixturesView g={g} onWatch={(id) => setLiveMatchId(id)} />}
         {screen === 'squad' && <SquadView g={g} onChange={rerender} />}
         {screen === 'lineup' && <LineupView g={g as any} onChange={rerender} />}
-        {screen === 'training' && <TrainingView g={g} onTrained={rerender} />}
+        {screen === 'training' && <TrainingPlanView g={g} onChange={rerender} />}
         {screen === 'transfers' && <TransfersView g={g} onDone={rerender} />}
         {screen === 'finances' && <FinancesView g={g} />}
         {screen === 'youth' && <YouthView g={g} onChange={rerender} />}
@@ -389,6 +393,10 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'halle' && <IndoorView g={g} onChange={rerender} />}
         {screen === 'trainingslager' && <TrainingCampView g={g} onChange={rerender} />}
         {screen === 'kabine' && <DressingRoomView g={g} onChange={rerender} />}
+        {screen === 'trainerteam' && <TrainerTeamView g={g} onChange={rerender} />}
+        {screen === 'cat-training' && <TrainingDashboard g={g} onGoto={setScreen} />}
+        {screen === 'cat-jugend' && <JugendDashboard g={g} onGoto={setScreen} />}
+        {screen === 'jugendwettbewerbe' && <YouthCompetitionsView g={g} />}
       </main>
 
       {/* Persistenter Footer auf ALLEN Seiten (Dashboard inklusive) - voll buendig

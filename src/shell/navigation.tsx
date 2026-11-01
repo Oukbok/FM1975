@@ -10,12 +10,14 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   // Saison-Briefing (Archiv)
   | 'briefing'
   // Kabine (Kader › Kabine)
-  | 'kabine';
+  | 'kabine'
+  // Training (Kategorie) + Jugend (Kategorie)
+  | 'cat-training' | 'trainerteam' | 'cat-jugend' | 'jugendwettbewerbe';
 
 // =============================================================================
 // MENÜ-STRUKTUR (zweistufige Top-Navigation)
 // =============================================================================
-// Reihe 1 = 7 Hauptkategorien (Klick öffnet das jeweilige Kategorie-Dashboard),
+// Reihe 1 = 9 Hauptkategorien (Klick öffnet das jeweilige Kategorie-Dashboard),
 // Reihe 2 = Unterpunkte der aktiven Kategorie. Alle Symbole im Set-C-Stil.
 export interface SubItem { screen: Screen; label: string; icon: IconName }
 
@@ -44,10 +46,18 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'squad', label: 'Übersicht', icon: 'squad' },
     { screen: 'vertraege', label: 'Verträge', icon: 'contracts' },
     { screen: 'kabine', label: 'Kabine', icon: 'squad' },
-    { screen: 'training', label: 'Training', icon: 'training' },
+  ] },
+  { key: 'training', label: 'Training', icon: 'training', dash: 'cat-training', subs: [
+    { screen: 'cat-training', label: 'Training', icon: 'training' },
+    { screen: 'training', label: 'Trainingsplan', icon: 'training' },
     { screen: 'trainingslager', label: 'Trainingslager', icon: 'weather' },
-    { screen: 'youth', label: 'Jugend', icon: 'youth' },
+    { screen: 'trainerteam', label: 'Trainerteam', icon: 'whistle' },
+  ] },
+  { key: 'jugend', label: 'Jugend', icon: 'youth', dash: 'cat-jugend', subs: [
+    { screen: 'cat-jugend', label: 'Jugend', icon: 'youth' },
     { screen: 'akademie', label: 'Akademie', icon: 'facilities' },
+    { screen: 'youth', label: 'Mannschaften', icon: 'youth' },
+    { screen: 'jugendwettbewerbe', label: 'Jugendwettbewerbe', icon: 'trophy' },
   ] },
   { key: 'transfers', label: 'Transfers', icon: 'transfers', dash: 'cat-transfers', subs: [
     { screen: 'cat-transfers', label: 'Transfers', icon: 'transfers' },

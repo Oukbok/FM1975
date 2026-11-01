@@ -5,6 +5,7 @@
 import { Player, Position, Club } from '../types';
 import { Game } from './state';
 import { archiveRetired } from './archive';
+import { staffFromRetired } from './staffWorld';
 import { createPlayer } from '../engine/playerFactory';
 import { isLeagueClub, marketWage } from '../engine/clubEconomy';
 import { clubWageLevel } from '../engine/economy';
@@ -127,6 +128,7 @@ export function manageSquads(game: Game, date: string, autoManageMine = false): 
         club.playerIds = club.playerIds.filter((x) => x !== id);
         if (club.id === mine) retiredMine.push(p);
         archiveRetired(game, p, date);
+        staffFromRetired(game, p, date);
         delete game.players[id];
       }
     }

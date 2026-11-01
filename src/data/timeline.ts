@@ -340,7 +340,7 @@ export const TIMELINE: TimelineEvent[] = [
     description:
       'Im Januar 1992 fährt Schalke 04 als erster Bundesligist an die türkische Riviera, Leverkusen '
       + 'fliegt nach Orlando. Bis dahin ging es im Winter auf die Kanaren oder nach Spanien – oder '
-      + 'auf gefrorene Plätze in der Heimat. Neue Ziele unter „Kader › Trainingslager“.',
+      + 'auf gefrorene Plätze in der Heimat. Neue Ziele unter „Training › Trainingslager“.',
   },
   {
     id: 'camp-qatar-2010',

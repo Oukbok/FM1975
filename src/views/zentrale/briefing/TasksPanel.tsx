@@ -14,9 +14,10 @@ export function screenOfWhere(where?: string): Screen | null {
   if (!where) return null;
   const [cat, sub] = where.split('›').map((s) => s.trim());
   const c = MENU_STRUCTURE.find((x) => x.label === cat);
-  if (!c) return null;
-  if (!sub) return c.dash;
-  return c.subs.find((s) => s.label === sub)?.screen ?? null;
+  if (c && !sub) return c.dash;
+  // Unterpunkt auch in anderer Kategorie suchen (ältere Pfade nach Menü-Umbau, z. B. „Kader › Akademie“).
+  return c?.subs.find((s) => s.label === sub)?.screen
+    ?? MENU_STRUCTURE.flatMap((x) => x.subs).find((s) => s.label === sub)?.screen ?? null;
 }
 
 export type Navigate = (where: string) => void;

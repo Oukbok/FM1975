@@ -140,7 +140,7 @@ function perspectiveTarget(g: Game, club: Club, inv: YouthInvest): number {
 
 /**
  * Die alten Vereinsgelände-Stufen „Jugendakademie“ und „NLZ“ (engine/infrastructure.ts)
- * werden nicht mehr eigens ausgebaut, sondern spiegeln die Akademie (Kader › Akademie).
+ * werden nicht mehr eigens ausgebaut, sondern spiegeln die Akademie (Jugend › Akademie).
  * Alte Leser (Vereinsumfeld, Jugend-Scouting, Legenden, Anzeigen) bleiben so stimmig.
  */
 export function syncLegacyAcademy(club: Club, year: number): void {

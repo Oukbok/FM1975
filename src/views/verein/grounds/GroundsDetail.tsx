@@ -136,7 +136,7 @@ export function FacilityDetail({ g, club, gr, year, onChange, onClose, k, onGoto
   const upkeep = k === 'catering' ? CATERING_UPKEEP[mode][Math.max(1, level)] * economyScaleOf(year)
     : FAC_UPKEEP_BASE[k] && !(plot) ? FAC_UPKEEP_BASE[k]! * LEVEL_MULT[Math.max(1, level)] * economyScaleOf(year) : 0;
   const obsolete = def.obsoleteYear != null && year >= def.obsoleteYear;
-  // Jugendakademie und NLZ werden über Kader › Akademie gesteuert (game/youthInvest.ts);
+  // Jugendakademie und NLZ werden über Jugend › Akademie gesteuert (game/youthInvest.ts);
   // hier spiegeln sie nur deren Stand (syncLegacyAcademy).
   const viaAcademy = k === 'youthAcademy' || k === 'nlz';
   const doUpgrade = () => {

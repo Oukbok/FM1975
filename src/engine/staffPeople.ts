@@ -18,6 +18,7 @@
 import { STAFF_BY_ID, STAFF_CAPS, STAFF_COST_BASE, StaffEffects, StaffRole } from '../data/staff';
 import { makeName, pickOrigin } from '../data/origins';
 import { Player } from '../types';
+import type { CoachSkill, ExProInfo } from './staffSkills';
 
 export type CoachSpecialty = 'allround' | 'athletik' | 'technik' | 'taktik' | 'torwart' | 'mental' | 'jugend';
 
@@ -41,6 +42,21 @@ export interface StaffMember {
   /** Gehaltsfaktor relativ zur Kostenklasse der Rolle. */
   salaryFactor: number;
   hired: string;
+  // --- Trainerteam (engine/staffSkills.ts, game/staffWorld.ts); fehlt bei alten Spielständen ---
+  /** Fachgebiete heute (1–20); `quality` folgt daraus je Rolle. */
+  skills?: Partial<Record<CoachSkill, number>>;
+  /** Erreichbarer Höchststand je Fachgebiet (Lernen im Beruf). */
+  pot?: Partial<Record<CoachSkill, number>>;
+  /** Ehemaliger Profi (Karriere-Eckdaten). */
+  exPro?: ExProInfo;
+  /** Nationalität (Kürzel). */
+  nat?: string;
+  /** Vertragsende (ISO). */
+  contractEnd?: string;
+  /** Nur Arbeitsmarkt: Verein, bei dem die Person angestellt ist (fehlt = vereinslos). */
+  clubId?: string;
+  /** Nur Arbeitsmarkt: seit wann vereinslos (Jahr). */
+  freeSince?: number;
 }
 
 /** Trainingsphilosophie je Saisonphase (wenig Klickarbeit, spürbare Wirkung). */

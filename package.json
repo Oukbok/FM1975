@@ -29,7 +29,8 @@
     "test:talent": "node scripts/run-ts.mjs tests/talent-test.ts",
     "test:positions": "node scripts/run-ts.mjs tests/positions-test.ts",
     "test:leagues": "node scripts/run-ts.mjs tests/leagues-test.ts",
-    "test:dressing": "node scripts/run-ts.mjs tests/dressing-test.ts"
+    "test:dressing": "node scripts/run-ts.mjs tests/dressing-test.ts",
+    "test:staff": "node scripts/run-ts.mjs tests/staff-test.ts"
   },
   "dependencies": {
     "lz-string": "1.5.0",

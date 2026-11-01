@@ -47,7 +47,7 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
   {
     id: 'ausdauerlauf',
     name: 'Ausdauerlauf',
-    icon: '🏃',
+    icon: 'trEndurance',
     category: 'conditioning',
     intensity: 'high',
     load: 6,
@@ -57,7 +57,7 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
   {
     id: 'kondition',
     name: 'Konditionszirkel',
-    icon: '💪',
+    icon: 'trCircuit',
     category: 'conditioning',
     intensity: 'medium',
     load: 3.5,
@@ -67,7 +67,7 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
   {
     id: 'sprinttraining',
     name: 'Sprinttraining',
-    icon: '⚡',
+    icon: 'trSpeed',
     category: 'speed',
     intensity: 'high',
     load: 5.5,
@@ -77,7 +77,7 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
   {
     id: 'beweglichkeit',
     name: 'Beweglichkeit & Balance',
-    icon: '🤸',
+    icon: 'trAgility',
     category: 'speed',
     intensity: 'medium',
     load: 3,
@@ -87,7 +87,7 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
   {
     id: 'krafttraining',
     name: 'Krafttraining',
-    icon: '🏋️',
+    icon: 'trStrength',
     category: 'strength',
     intensity: 'high',
     load: 5.5,
@@ -97,7 +97,7 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
   {
     id: 'technik',
     name: 'Technikschulung',
-    icon: '⚽',
+    icon: 'trTechnique',
     category: 'technique',
     intensity: 'medium',
     load: 3,
@@ -107,7 +107,7 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
   {
     id: 'dribbling',
     name: 'Dribbling & Finten',
-    icon: '🕺',
+    icon: 'trDribbling',
     category: 'technique',
     intensity: 'medium',
     load: 3,
@@ -117,7 +117,7 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
   {
     id: 'passspiel',
     name: 'Passspiel',
-    icon: '🎯',
+    icon: 'trPassing',
     category: 'passing',
     intensity: 'medium',
     load: 3,
@@ -127,7 +127,7 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
   {
     id: 'flanken',
     name: 'Flankentraining',
-    icon: '↗️',
+    icon: 'trCrossing',
     category: 'passing',
     intensity: 'low',
     load: 2,
@@ -137,7 +137,7 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
   {
     id: 'torschuss',
     name: 'Abschlusstraining',
-    icon: '🥅',
+    icon: 'trShooting',
     category: 'shooting',
     intensity: 'medium',
     load: 3.5,
@@ -147,7 +147,7 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
   {
     id: 'kopfball',
     name: 'Kopfballtraining',
-    icon: '🗣️',
+    icon: 'trHeading',
     category: 'heading',
     intensity: 'medium',
     load: 3.5,
@@ -157,7 +157,7 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
   {
     id: 'verteidigung',
     name: 'Zweikampf & Verteidigung',
-    icon: '🛡️',
+    icon: 'trDefending',
     category: 'defending',
     intensity: 'high',
     load: 5,
@@ -167,7 +167,7 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
   {
     id: 'taktik',
     name: 'Taktik & Positionsspiel',
-    icon: '📋',
+    icon: 'trTactics',
     category: 'tactics',
     intensity: 'low',
     load: 2,
@@ -177,7 +177,7 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
   {
     id: 'spielform',
     name: 'Spielform (Match Practice)',
-    icon: '🆚',
+    icon: 'trMatch',
     category: 'matchplay',
     intensity: 'high',
     load: 5,
@@ -190,7 +190,7 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
   {
     id: 'torwart',
     name: 'Torwarttraining',
-    icon: '🧤',
+    icon: 'trGoalkeeper',
     category: 'goalkeeping',
     intensity: 'medium',
     load: 3.5,
@@ -203,7 +203,7 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
   {
     id: 'standards',
     name: 'Standardsituationen',
-    icon: '🚩',
+    icon: 'trSetpiece',
     category: 'setpieces',
     intensity: 'low',
     load: 2,
@@ -213,7 +213,9 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
   {
     id: 'mental',
     name: 'Mentaltraining',
-    icon: '🧠',
+    // Sportpsychologie im Profialltag erst ab den 2000ern (Rolle Sportpsychologe in data/staff.ts ab 2003).
+    unlockYear: 2003,
+    icon: 'trMental',
     category: 'mental',
     intensity: 'low',
     load: 1.5,
@@ -223,14 +225,56 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
   {
     id: 'regeneration',
     name: 'Regeneration',
-    icon: '🧖',
+    icon: 'trRecovery',
     category: 'recovery',
     intensity: 'low',
     load: -4,
     attributes: {},
     description: 'Auslaufen, Massage, Physio. Kein Lerneffekt, aber starke Erholung.',
   },
+  // --- Spätere Epochen ---------------------------------------------------------
+  {
+    id: 'pressing',
+    name: 'Pressing & Umschalten',
+    // Sacchis AC Mailand (ab 1987) machte das Pressing populär, in Deutschland u. a. Rangnick in den 90ern.
+    unlockYear: 1988,
+    icon: 'trPressing',
+    category: 'tactics',
+    intensity: 'high',
+    load: 5,
+    attributes: { workRate: 0.8, teamwork: 0.7, positioning: 0.5, stamina: 0.4, decisions: 0.4 },
+    description: 'Gemeinsames Anlaufen, Ballgewinn und schnelles Umschalten in die Spitze.',
+  },
+  {
+    id: 'videoanalyse',
+    name: 'Videoanalyse',
+    // Systematische Videoanalyse ab den 90ern (Prozone 1995, Amisco 1996; Rolle Videoanalyst ab 1993).
+    unlockYear: 1993,
+    icon: 'trVideo',
+    category: 'analysis',
+    intensity: 'low',
+    load: 0.5,
+    attributes: { decisions: 0.8, positioning: 0.7, vision: 0.5, concentration: 0.4 },
+    description: 'Szenen des letzten Spiels und des Gegners. Kaum Belastung, mehr Spielverständnis.',
+  },
+  {
+    id: 'athletik',
+    name: 'Athletik & Stabilisation',
+    // Funktionelles Athletiktraining: DFB 2004 mit US-Fitnesstrainern (Verstegen), danach in der Liga Standard.
+    unlockYear: 2004,
+    icon: 'trAthletics',
+    category: 'athletics',
+    intensity: 'medium',
+    load: 3.5,
+    attributes: { strength: 0.6, balance: 0.7, agility: 0.5, acceleration: 0.4, stamina: 0.3 },
+    description: 'Rumpf, Stabilität und Sprungkraft – beugt Verletzungen vor.',
+  },
 ];
+
+/** Ab wann ein Block im Trainingsplan zur Verfügung steht. */
+export function blockAvailable(b: TrainingBlock, year: number): boolean {
+  return year >= (b.unlockYear ?? 0);
+}
 
 /** Schneller Zugriff auf einen Block per ID. */
 export const BLOCKS_BY_ID: Record<string, TrainingBlock> = Object.fromEntries(
@@ -334,6 +378,8 @@ export function applyDailyTraining(
   players: Record<string, Player>,
   day: DaySlots,
   isMatchDay: boolean,
+  /** Optional: Lernfaktor je Block (Trainerteam, Epoche) – Standard 1. */
+  blockFactor?: (b: TrainingBlock) => number,
 ): number {
   if (isMatchDay) return 0;
 
@@ -379,7 +425,7 @@ export function applyDailyTraining(
       for (const [attr, weight] of Object.entries(block.attributes) as [AttributeKey, number][]) {
         const cur = p.attributes[attr] as number;
         if (cur >= 99) continue;
-        let gain = BASE_GAIN * weight * aFactor * pFactor * learn * facilities * freshness;
+        let gain = BASE_GAIN * weight * aFactor * pFactor * learn * facilities * freshness * (blockFactor ? blockFactor(block) : 1);
         // Extraeinheit bringt etwas mehr Lernreiz (aber auch mehr Belastung).
         if (isExtra[i]) gain *= 1.15;
         // In 0.1-Schritten akkumulieren.
