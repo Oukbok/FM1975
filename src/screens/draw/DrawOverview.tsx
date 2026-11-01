@@ -29,7 +29,7 @@ export function PairsOverview({ rec, clubs, myId }: { rec: DrawRecord; clubs: (i
   const n = rec.pairs.length;
   const cols = n > 4 ? 2 : 1;
   const rows = Math.ceil(n / cols);
-  const size = rows <= 4 ? 'lg' : 'md';
+  const size = rows <= 4 ? 'big' : 'mid';
   const euro = rec.comp !== 'cup';
   const sub = (c: ShowClub) => [euro ? c.country : c.amateur ? 'Amateurverein' : 'Profiverein', `Stärke ${c.strength}`].join(' · ');
   return (
@@ -38,16 +38,16 @@ export function PairsOverview({ rec, clubs, myId }: { rec: DrawRecord; clubs: (i
         <span>{n} Paarungen · gespielt am {fmtDateFull(rec.matchDate)}</span>
         <span className="dr-dim">Links steht der Gastgeber</span>
       </div>
-      <div className={`dr-ov-grid ${size}`} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))` }}>
+      <div className={`dr-ov-grid dr-ov-${size}`} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))` }}>
         {rec.pairs.map((p, i) => {
           const h = clubs(p.home), a = clubs(p.away);
           const mine = p.home === myId || p.away === myId;
           return (
             <div key={i} className={`dr-ov-card ${mine ? 'mine' : ''}`}>
               <span className="dr-pno">{i + 1}</span>
-              <OvClub c={h} sub={sub(h)} side="home" crest={size === 'lg' ? 72 : 44} />
+              <OvClub c={h} sub={sub(h)} side="home" crest={size === 'big' ? 72 : 44} />
               <span className="dr-ov-mid">{p.swapped ? <span className="dr-tag" title="Heimrecht für den Amateurverein">Heimrecht</span> : <span className="dr-pdash">–</span>}</span>
-              <OvClub c={a} sub={sub(a)} side="away" crest={size === 'lg' ? 72 : 44} />
+              <OvClub c={a} sub={sub(a)} side="away" crest={size === 'big' ? 72 : 44} />
             </div>
           );
         })}

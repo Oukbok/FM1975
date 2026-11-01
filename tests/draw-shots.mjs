@@ -83,8 +83,9 @@ await page.waitForTimeout(300);
 await shot('08_pause');
 await page.keyboard.press('Space');
 await page.keyboard.press('Escape');
-if (await waitFor('.dr-summary, .dr-ov-cols')) { await page.waitForTimeout(1000); await shot('09_zusammenfassung'); }
-await page.click('.dr-tabs button:has-text("Alle Paarungen")');
+if (await waitFor('.dr-summary, .dr-ov-grid')) { await page.waitForTimeout(1000); await shot('09_zusammenfassung'); }
+if (await page.locator('.dr-close').isVisible().catch(() => false)) await page.click('.dr-close');
+else await page.click('.dr-tabs button:has-text("Alle Paarungen")');
 await page.waitForTimeout(500);
 await shot('09b_alle_paarungen');
 await page.click('.dr-tabs button:has-text("Turnierbaum")');
@@ -94,6 +95,10 @@ await page.click('.dr-top-r button:has-text("Schließen")');
 await page.waitForTimeout(400);
 const closed = !(await page.locator('.dr-root').isVisible().catch(() => false));
 console.log('Show geschlossen:', closed);
+// Weitere Ziehungen am selben Tag (z. B. drei Europapokale in Monaco) wegklicken.
+for (let i = 0; i < 6 && await page.locator('.dr-root').isVisible().catch(() => false); i++) {
+  await page.keyboard.press('Escape'); await page.waitForTimeout(300); await page.keyboard.press('Escape'); await page.waitForTimeout(300);
+}
 
 // Wiederholung aus Statistiken › Pokal / International
 const isEuro = /Landesmeister|Pokalsieger|Europa-Pokal/.test(await page.locator('body').innerText().catch(() => ''));

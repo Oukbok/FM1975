@@ -239,8 +239,8 @@
 .dr-ov-name { font-family: var(--font-display); font-size: 24px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dr-ov-sub { color: var(--text-3); font-size: 15px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .dr-ov-club.me .dr-ov-name { color: var(--accent); }
-.dr-ov-grid.lg .dr-ov-name { font-size: 32px; }
-.dr-ov-grid.lg .dr-ov-sub { font-size: 18px; }
+.dr-ov-grid.dr-ov-big .dr-ov-name { font-size: 32px; }
+.dr-ov-grid.dr-ov-big .dr-ov-sub { font-size: 18px; }
 
 /* Turnierbaum (components/competition/CupBracket.tsx) */
 .dr-bracket { padding: 14px 18px; }
@@ -278,7 +278,7 @@
 .cb-root.dense .cb-tie.empty { height: 51px; }
 
 /* Gruppenübersicht (components/competition/GroupTables.tsx) */
-.gt-root { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+.gt-root { flex: 1 1 auto; width: 100%; display: flex; flex-direction: column; gap: 12px; min-height: 0; }
 .gt-legend { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; color: var(--text-2); font-size: 15px; }
 .gt-key { display: inline-block; width: 4px; height: 16px; margin-left: 12px; border-radius: 1px; }
 .gt-key.adv { background: var(--pos); }

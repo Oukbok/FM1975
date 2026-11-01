@@ -184,7 +184,7 @@ export function PairsPanel({ rec, clubs, shown }: { rec: DrawRecord; clubs: Club
 }
 
 /** Ende: dein Los groß (Gegner, Termin, Heim/Auswärts, Stärkevergleich). */
-export function DrawSummary({ rec, clubs, myId, endLine, onClose }: { rec: DrawRecord; clubs: Clubs; myId: string; endLine: string; onClose: () => void }) {
+export function DrawSummary({ rec, clubs, myId, endLine, onClose, closeLabel = 'Schließen' }: { rec: DrawRecord; clubs: Clubs; myId: string; endLine: string; onClose: () => void; closeLabel?: string }) {
   const my = rec.pairs.find((p) => p.home === myId || p.away === myId);
   const top = [...rec.pairs].sort((x, y) => Math.min(clubs[y.home].strength, clubs[y.away].strength) - Math.min(clubs[x.home].strength, clubs[x.away].strength))[0];
   const show = my ?? top;
@@ -216,7 +216,7 @@ export function DrawSummary({ rec, clubs, myId, endLine, onClose }: { rec: DrawR
         ))}
       </div>
       <div className="dr-sum-line">{verdict} {endLine}</div>
-      <button className="dr-close" onClick={onClose}>Schließen</button>
+      <button className="dr-close" onClick={onClose}>{closeLabel}</button>
     </div>
   );
 }

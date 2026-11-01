@@ -130,7 +130,7 @@ export function DrawShow({ g, rec, replay, settings, onSettings, onClose }: {
             {p.phase === 'intro' && (
               <DrawIntro rec={rec} cup={cup} startYear={startYear} show={show} replay={replay} onStart={p.start} onOverview={toOverview} />
             )}
-            {p.phase === 'done' && <DrawSummary rec={rec} clubs={clubs} myId={myId} endLine="" onClose={onClose} />}
+            {p.phase === 'done' && <DrawSummary rec={rec} clubs={clubs} myId={myId} endLine="" onClose={() => setTab('pairs')} closeLabel="Alle Paarungen" />}
             {ball && <StageReveal rec={rec} clubs={clubs} ball={ball} phase={p.phase} step={p.step} reduced={p.reduced} />}
             {p.phase !== 'intro' && p.phase !== 'done' && (
               <div className="dr-progress">Paarung {pairNo} von {rec.pairs.length}</div>
