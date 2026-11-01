@@ -41,7 +41,30 @@ export function ensureYouthComps(g: Game, today: string): YouthCompsState {
 
 /** Idempotente Nachrüstung beim Laden (App.tsx). */
 export function migrateYouthComps(g: Game): void {
-  if (!youthCompsOf(g)) ensureYouthComps(g, g.calendar.currentDate);
+  const st = youthCompsOf(g);
+  if (!st) { ensureYouthComps(g, g.calendar.currentDate); return; }
+  slimPeople(st);
+}
+
+/** Nur schlanke Einträge [Name, Verein, Position]: falls ein Spielstand ganze Spielerobjekte enthält, kürzen. */
+export function slimPeople(st: YouthCompsState): number {
+  let n = 0;
+  const fix = (m: Record<string, unknown> | undefined) => {
+    if (!m) return;
+    for (const [id, v] of Object.entries(m)) {
+      if (Array.isArray(v) && v.length === 3 && v.every((x) => typeof x === 'string')) continue;
+      const o = (v ?? {}) as { fullName?: string; firstName?: string; lastName?: string; clubId?: string; naturalPosition?: string };
+      m[id] = [o.fullName ?? (`${o.firstName ?? ''} ${o.lastName ?? ''}`.trim() || id), o.clubId ?? '', o.naturalPosition ?? ''];
+      n++;
+    }
+  };
+  fix(st.people as Record<string, unknown>);
+  for (const a of st.archive) fix(a.people as Record<string, unknown>);
+  // Statistik: nur Zahlentupel.
+  for (const m of Object.values(st.stats)) for (const [id, t] of Object.entries(m ?? {})) {
+    if (!Array.isArray(t) || t.length !== 7 || t.some((x) => typeof x !== 'number')) { delete m![id]; n++; }
+  }
+  return n;
 }
 
 function catchUp(g: Game, st: YouthCompsState, until: string): void {

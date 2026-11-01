@@ -6,3 +6,7 @@
 .yc-info .dnote { line-height: 1.4; }
 .yc-dash-row { padding: 2px 0 6px; border-bottom: 1px solid var(--border-soft); margin-bottom: 6px; }
 .yc-dash-row:last-child { border-bottom: 0; margin-bottom: 0; }
+.yc-card { max-width: 440px; width: 100%; }
+.yc-card .mx-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.yc-card-name { display: flex; align-items: center; gap: 8px; margin: 4px 0 0; font-family: var(--font-display); font-weight: 500; font-size: 24px; }
+.yc-card .mx-body { padding-top: 8px; }

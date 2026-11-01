@@ -148,6 +148,15 @@ ycOpts.prune = true;
   check(fx.filter((f) => f[0] >= '1976-02-15').every((f) => f[3] < 0), 'Migration: künftige Spieltage offen');
   migrateYouthComps(m);
   check(youthCompsOf(m) === st, 'Migration idempotent');
+  // Spielstände mit ganzen Spielerobjekten in youthComps werden gekürzt.
+  const yp = Object.values(m.youthPlayers)[0];
+  (st.people as any)[yp.id] = JSON.parse(JSON.stringify(yp));
+  (st.stats as any).u19 = { ...(st.stats.u19 ?? {}), [yp.id]: JSON.parse(JSON.stringify(yp)) };
+  migrateYouthComps(m);
+  check(JSON.stringify(st.people[yp.id]) === JSON.stringify([yp.fullName, yp.clubId, yp.naturalPosition]), 'Migration: Spielerobjekt → [Name, Verein, Position]');
+  check(!(st.stats.u19 ?? {})[yp.id], 'Migration: ungültiger Statistik-Eintrag entfernt');
+  const leak = JSON.stringify(st).includes('"attributes"') || JSON.stringify(st).includes('"contract"');
+  check(!leak, 'youthComps enthält keine Spielerobjekte');
   check(myYouthStandings(m).some((s) => s.compKey === 'u19' && s.pos), 'Eigene Lage (Kategorie-Übersicht)');
 }
 

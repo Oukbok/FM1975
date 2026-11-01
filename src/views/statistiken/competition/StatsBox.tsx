@@ -2,7 +2,7 @@
 // Statistik-Box rechts: Torschützen, Vorlagen, Scorer, Gelbe, Rote (inkl. Gelb-Rot),
 // Weiße Weste – oder Vereinswerte, wenn eine Liga vereinsweise simuliert wird.
 // =============================================================================
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import PlayerModal from '../../../components/PlayerModal';
 import type { ClubStatCat, CompSnapshot } from '../../../game/competitionView';
@@ -20,15 +20,22 @@ const CAT_TITLE: Record<StatCat, string> = {
 const CLUB_LABEL: Record<ClubStatCat, string> = { gf: 'Tore', ga: 'Gegentore', w: 'Siege', cs: 'Zu null', ti: 'Meistertitel' };
 const CLUB_TITLE: Record<ClubStatCat, string> = { gf: 'Bester Angriff', ga: 'Beste Abwehr', w: 'Meiste Siege', cs: 'Spiele ohne Gegentor', ti: 'Meistertitel seit 1975' };
 
-export function StatsBox({ g, snap }: { g: Game; snap: CompSnapshot | null }) {
+export function StatsBox({ g, snap, playerCard }: {
+  g: Game; snap: CompSnapshot | null;
+  /** Optional (Jugend): eigene kleine Karte statt Spielerprofil; null = normales Profil (falls vorhanden). */
+  playerCard?: (pid: string, close: () => void) => ReactNode | null;
+}) {
   const [cat, setCat] = useState<StatCat>('goals');
   const [ccat, setCcat] = useState<ClubStatCat>('gf');
   const [sel, setSel] = useState<string | null>(null);
-  const p = sel ? g.players[sel] ?? g.youthPlayers[sel] : null; // Jugendwettbewerbe: auch Jugendspieler
+  const card = sel && playerCard ? playerCard(sel, () => setSel(null)) : null;
+  // Profikader oder eigene Jugend: volles Spielerprofil.
+  const own = sel ? g.youthPlayers[sel] : undefined;
+  const p = sel && !card ? g.players[sel] ?? (own?.clubId === g.managedClubId ? own : null) : null;
   const stats = snap?.stats;
   const clubStats = snap?.clubStats;
   // Über ein Portal: die Box (Glas-Effekt) würde ein festes Popup sonst auf ihre Größe beschneiden.
-  const modal = p ? createPortal(
+  const modal = card ? createPortal(card, document.body) : p ? createPortal(
     <PlayerModal player={p} club={g.clubs[p.clubId]} squad={g.clubs[p.clubId]?.playerIds.map((id) => g.players[id]).filter(Boolean)}
       today={g.calendar.currentDate} season={g.season} onClose={() => setSel(null)} />,
     document.body,
@@ -44,7 +51,7 @@ export function StatsBox({ g, snap }: { g: Game; snap: CompSnapshot | null }) {
           <div className="cmp-statlist">
             {list.map((r, i) => {
               const rank = i > 0 && list[i - 1].value === r.value ? '' : `${i + 1}.`;
-              const clickable = !!(g.players[r.pid] ?? g.youthPlayers[r.pid]);
+              const clickable = !!playerCard || !!g.players[r.pid] || g.youthPlayers[r.pid]?.clubId === g.managedClubId;
               return (
                 <div key={r.pid} className={`cmp-stat ${clickable ? 'clickable' : ''} ${r.clubId === g.managedClubId ? 'me' : ''}`} onClick={() => clickable && setSel(r.pid)} title={clickable ? 'Spielerprofil öffnen' : undefined}>
                   <span className="cmp-rank">{rank}</span>
