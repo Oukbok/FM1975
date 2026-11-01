@@ -142,7 +142,7 @@ Stärke
 - **Frühstarter:** profireife 16–19-Jährige (Stärke ≥ Kaderniveau − 6) rücken zum 1. Juli
   zu den Profis auf; beim eigenen Verein gibt es einen Hinweis.
 - **Weltklasse-Bremse** ab 82 wie bisher, für Ausnahmetalente (Potenzial > 88) bis zu
-  6 Punkte später. Das Liga-Gleichgewicht (PI-Regler auf 12,5 Spieler ≥ 85) verschiebt die
+  5 Punkte später. Das Liga-Gleichgewicht (PI-Regler auf 12,5 Spieler ≥ 85) verschiebt die
   Bremse (eine spätere Bremse wirkt nur bis 88) und bei dauerhafter Abweichung das
   Talent-Angebot neuer Spieler (0,7 … 1,3-fache Häufigkeit hoher Potenziale).
 - **Startkader 1975 / neu erzeugte Kader:** junge Spieler sind altersgerecht schwächer
@@ -151,7 +151,7 @@ Stärke
   mit 5 % je jungem Spieler einen kommenden Star (Potenzial ≥ 84) – sonst klafft Mitte der
   80er eine Lücke, bis die ersten Akademie-Jahrgänge reif sind.
 - **Epochen-Ausgleich:** Die Bremse setzt 1983–1992 1,5 Punkte später, 1993–2001 0,5,
-  2002–2014 2 und ab 2015 1 Punkt früher ein; Sportwissenschaft und Leistungszentren
+  2002–2014 2 und ab 2015 1,8 Punkte früher ein; Sportwissenschaft und Leistungszentren
   würden sonst die Spitze aufblähen. Ist die Spitze dicht besetzt, bleiben
   Weltklasse-Kandidaten bis zu 2,5 Punkte unter ihrem Potenzial und alternde Stars (83+)
   bauen bis 1,6-fach schneller ab (bei zu wenigen bis halb so schnell; dann wachsen Spieler mit Potenzial ab 82 bis zu

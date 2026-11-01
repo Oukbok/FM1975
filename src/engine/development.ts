@@ -161,7 +161,7 @@ function distanceFactor(p: Player): number {
 /**
  * Weltklasse-Bremse: Ab ELITE_FROM wird jeder weitere Punkt deutlich schwerer
  * (je Punkt −15 %, mindestens 20 % Tempo). Ausnahmetalente (wahres Potenzial
- * über 88) spüren sie später – bis zu 6 Punkte –, weil die Weltklasse für sie
+ * über 88) spüren sie später – bis zu 5 Punkte –, weil die Weltklasse für sie
  * noch nicht „die letzten Punkte“ sind.
  * Das Liga-Gleichgewicht (game/leagueBalance.ts) verschiebt den Beginn um
  * −5 … +4 Punkte, wenn die 1. Liga zu viele oder zu wenige Spieler ≥ 85 hat.
@@ -180,13 +180,13 @@ export function eraEliteOffset(year: number): number {
   if (year < 1993) return 1.5;
   if (year < 2002) return -0.5;
   if (year < 2015) return -2;
-  return -1;
+  return -1.8;
 }
 export function setEliteShift(points: number): void { eliteShift = clamp(points, -5, 4); }
 export function eliteBrake(p: Player, training = 1): number {
   // Spitzentraining (große Vereine, gute Anlagen) schiebt die Bremse bis zu 3 Punkte nach hinten:
   // Weltklasse reift eher bei den Spitzenvereinen – der Abstand zu den Kellerkindern bleibt spürbar.
-  const talentRoom = clamp((truePotential(p) - 88) * 0.6, 0, 6);
+  const talentRoom = clamp((truePotential(p) - 88) * 0.5, 0, 5);
   // Eine spätere Bremse (zu wenige 85er in der Liga) hilft nur bis 88 – die Weltspitze bleibt rar.
   const total = eliteShift + eraOffset;
   const shift = p.overall >= 88 ? Math.min(0, total) : total;
