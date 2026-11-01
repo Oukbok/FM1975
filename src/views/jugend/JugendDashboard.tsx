@@ -53,7 +53,7 @@ export function JugendDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) =>
           return (
             <div key={c} className="yc-team-row" title={`${YOUTH_AGE_CLASS_LABEL[c]}: ${n} Spieler`}>
               <span className="yc-team-cls">{c === 'G' ? 'Bambini' : `${c}-Jugend`}</span>
-              <span className="yc-team-league">{t?.league ?? t?.compLabel ?? 'kein Wettbewerb'}</span>
+              <span className="yc-team-league">{t?.league && /^(Vorrunde|Liga A|Staffel)/.test(t.league) ? `${t.compLabel} · ${t.league}` : t?.league ?? t?.compLabel ?? 'kein Wettbewerb'}</span>
               <span className="yc-team-pos">{where}</span>
             </div>
           );
