@@ -113,8 +113,8 @@ export function seasonTasks(g: Game, sit?: BriefingSituation, changes: GameChang
   const running = expiring.filter((p) => p.contract.expiryDate >= today);
   if (expired.length) {
     add({ id: 'contracts-expired', level: 'dringend', icon: 'contracts', where: 'Kader › Verträge',
-      title: expired.length === 1 ? `Vertrag von ${nameOf(expired[0])} ist abgelaufen` : `${expired.length} Verträge sind abgelaufen`,
-      text: `${listNames(expired)} – ohne gültigen Vertrag. Verlängere oder lass die Spieler ziehen.` });
+      title: expired.length === 1 ? `Vertrag von ${nameOf(expired[0])} endet jetzt` : `${expired.length} Verträge enden jetzt`,
+      text: `${listNames(expired)} – der Vertrag ist zum 30.06. ausgelaufen. Ohne Verlängerung verlassen sie den Verein beim Saisonstart (game/contracts.ts).`.replace(' (game/contracts.ts)', '') });
   }
   if (running.length) {
     const bosman = bosmanActive(seasonEnd);
