@@ -245,10 +245,9 @@ export function StadiumScene(p: StadiumSceneProps) {
     const active = p.venueActive ? p.venueActive(v) : true;
     const sel = p.selectedVenue === v.key;
     items.push({ d: venueDepth(v), n: (
-      <g key={`v${v.key}`} className={`gr-obj sv-venue ${sel ? 'sel' : ''}`} opacity={active ? 1 : 0.4} pointerEvents={active ? undefined : 'none'}
+      <g key={`v${v.key}`} data-venue={v.key} className={`gr-obj sv-venue ${sel ? 'sel' : ''}`} opacity={active ? 1 : 0.4} pointerEvents={active ? undefined : 'none'}
         onClick={(e) => { e.stopPropagation(); p.onVenue?.(v, evPt(e)); }}>
         <VenueShape v={v} era={era} primary={colors.primary} />
-        {(sel || active) && <VenueTag v={v} strong={sel} />}
       </g>
     ) });
   }
@@ -306,6 +305,7 @@ export function StadiumScene(p: StadiumSceneProps) {
       ))}
       {items.map((it) => it.n)}
       {treeNodes.filter((t) => t.d >= dMid).sort((a, b) => a.d - b.d).map((t) => t.n)}
+      {(p.venues ?? []).filter((v) => p.selectedVenue === v.key || (p.venueActive ? p.venueActive(v) : true)).map((v) => <VenueTag key={`vt${v.key}`} v={v} strong={p.selectedVenue === v.key} />)}
       {(hover ?? selected) && by[(hover ?? selected)!] && label((hover ?? selected)!)}
     </svg>
   );

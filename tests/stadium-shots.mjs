@@ -60,7 +60,7 @@ await page.locator('.sv-sheet .sv-x').click();
 // Gastronomie-Filter + Würstchenbuden
 await page.locator('.sv-modes button:has-text("Gastronomie")').click();
 await page.waitForTimeout(200);
-await page.locator('.gr-svg g.sv-venue').filter({ hasText: 'Würstchenbuden' }).first().click({ force: true });
+await page.locator('.gr-svg g[data-venue=catering]').click({ force: true });
 await page.waitForTimeout(300);
 await page.screenshot({ path: `${outDir}/${tag}_5_buden.png` });
 console.log(errors.length ? 'FEHLER:\n' + errors.join('\n') : 'ok, keine JS-Fehler');
