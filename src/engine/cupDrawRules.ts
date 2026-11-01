@@ -21,6 +21,10 @@ export interface DrawInput {
   countryOf: (id: string) => string;
   strengthOf: (id: string) => number;
   nameOf: (id: string) => string;
+  /** Europapokal 2.0: feste Töpfe [ungesetzt, gesetzt] (z. B. Gruppenzweite / Gruppensieger). */
+  fixedPots?: { label: string; ids: string[] }[];
+  /** Zusätzlicher Schutz (z. B. keine Vereine derselben Gruppe). */
+  forbid?: (a: string, b: string) => boolean;
 }
 
 export interface DrawOutput {
@@ -50,7 +54,7 @@ function shuffle<T>(arr: T[], rnd: () => number): T[] {
 /** Ein Versuch; `null`, wenn der Länderschutz am Ende nicht aufging. */
 function attempt(inp: DrawInput, rnd: () => number, potIdx: Map<string, number>, numbers: Map<string, number>): { balls: DrawBall[]; pairs: DrawPair[] } | null {
   const { rules } = inp;
-  const clash = (a: string, b: string) => rules.countryProtection && inp.countryOf(a) === inp.countryOf(b);
+  const clash = (a: string, b: string) => (rules.countryProtection && inp.countryOf(a) === inp.countryOf(b)) || !!inp.forbid?.(a, b);
   const balls: DrawBall[] = [];
   const pairs: DrawPair[] = [];
   const ball = (id: string, pair: number, rejected = false) =>
@@ -119,7 +123,9 @@ export function runDraw(inp: DrawInput): DrawOutput {
   const { rules } = inp;
   // Töpfe bilden.
   let pots: { label: string; ids: string[] }[];
-  if (rules.twoPots) {
+  if (inp.fixedPots && inp.fixedPots.length === 2 && inp.fixedPots.every((p) => p.ids.length)) {
+    pots = inp.fixedPots.map((p) => ({ label: p.label, ids: [...p.ids] }));
+  } else if (rules.twoPots) {
     const am = inp.ids.filter(inp.isAmateur);
     const pro = inp.ids.filter((id) => !inp.isAmateur(id));
     pots = am.length && pro.length
@@ -147,6 +153,6 @@ export function runDraw(inp: DrawInput): DrawOutput {
     if (res) return { pots, ...res };
   }
   // Länderschutz nicht erfüllbar → ohne Schutz losen.
-  const res = attempt({ ...run, rules: { ...effRules, countryProtection: false } }, rnd, potIdx, numbers)!;
+  const res = attempt({ ...run, forbid: undefined, rules: { ...effRules, countryProtection: false } }, rnd, potIdx, numbers)!;
   return { pots, ...res };
 }

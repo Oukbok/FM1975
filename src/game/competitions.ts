@@ -7,6 +7,8 @@ import { makeMessage } from '../engine/messages';
 import { Club, CupState, CupTie, GameCalendar, InboxMessage, Match } from '../types';
 import { hashSeed } from './state';
 import { scheduleDraws } from './cupDraw';
+import { enableCupReplays } from './cupReplay';
+import { buildEuroCupsV2, EURO_COMPS } from './euroSetup';
 
 /** Fügt für jede Pokalrunde ein Kalender-Event ein (chronologisch einsortiert). */
 export function addCupCalendarEvents(calendar: GameCalendar, cup: CupState): void {
@@ -26,6 +28,8 @@ export function addCupCalendarEvents(calendar: GameCalendar, cup: CupState): voi
   }
   calendar.events.sort((a, b) => a.date.localeCompare(b.date));
   void cnt;
+  // Neuer Pokal: Wiederholungsspiele nach historischer Regel (game/cupReplay.ts).
+  enableCupReplays(cup, calendar);
 }
 
 /** Baut die Menge aller Liga-Spieltag-Daten (für kollisionsfreie Pokaltermine). */
@@ -44,7 +48,7 @@ export function leagueDateSet(fixtures: Match[], others: { tier: number; fixture
 /** Menge aller Landespokal-Termine (zur Kollisionsvermeidung der Euro-Termine). */
 export function cupDateSet(cup: CupState | null | undefined): Set<string> {
   const s = new Set<string>();
-  if (cup) for (const r of cup.rounds) s.add(r.date);
+  if (cup) for (const r of cup.rounds) for (const d of r.dates ?? [r.date]) s.add(d);
   return s;
 }
 
@@ -83,6 +87,14 @@ export function buildEuroCupsForSeason(
   foreign?: Record<EuroCompId, string[]> | null,
   deferDraw = false,
 ): { ec: CupState | null; cwc: CupState | null; uefa: CupState | null } {
+  // Neuer Modus (neues Spiel, Saisonwechsel): Format je Saison (game/euroSetup.ts).
+  if (deferDraw) {
+    const startYear = Number(earliest.slice(0, 4)) - (Number(earliest.slice(5, 7)) >= 7 ? 0 : 1);
+    const avoid = new Set<string>([...leagueDates, ...cupDates]);
+    const cups = buildEuroCupsV2(quals, euroClubs, avoid, (comp) => hashSeed(`${seedBase}:euro:${comp}`), startYear, earliest, calendar, foreign ?? null);
+    for (const comp of EURO_COMPS) if (cups[comp]) scheduleDraws(cups[comp]!, comp, calendar);
+    return cups;
+  }
   // Ausländische Starter: aus der Europa-Simulation (engine/world.ts) oder – in der
   // ersten Saison/alten Spielständen – der historische Satz aus data/europe.ts.
   const foreignByComp: Record<EuroCompId, string[]> = foreign

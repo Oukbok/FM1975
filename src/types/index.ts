@@ -1,3 +1,4 @@
+import type { CupRoundV2 } from './euro2';
 // =============================================================================
 // FOOTBALL MANAGER 1980 — Zentrale Typ-Definitionen
 // 1. Liga Saison 1980/81
@@ -1376,6 +1377,8 @@ export interface CalendarEvent {
   cupRoundIndex?: number;
   /** Optional: Europapokal-Wettbewerb (bei type 'euro_matchday'). */
   euroComp?: 'ec' | 'cwc' | 'uefa';
+  /** Optional: Spieltermin innerhalb der Runde (0 = Hinspiel/1. Spieltag, 1 = Rückspiel/Wiederholung …). */
+  leg?: number;
   /** Optional zugehörige Club-ID. */
   clubId?: string;
   /** Optional zugehörige Player-ID. */
@@ -1720,10 +1723,14 @@ export interface CupTie {
   penalties: { home: number; away: number } | null;
   /** Sieger der Begegnung (Club-ID), null bis entschieden. */
   winnerClubId: string | null;
+  /** Europapokal 2.0: Hin-/Rückspiel bzw. Landespokal: erstes Spiel + Wiederholung (types/euro2.ts). */
+  legs?: import('./euro2').CupLeg[];
+  /** Entschieden durch die Auswärtstorregel. */
+  awayGoalsWin?: boolean;
 }
 
 /** Eine Runde im Landespokal (z.B. Achtelfinale). */
-export interface CupRound {
+export interface CupRound extends CupRoundV2 {
   /** Index der Runde (0-basiert). */
   index: number;
   /** Anzeigename der Runde (z.B. "Achtelfinale"). */
@@ -1758,6 +1765,12 @@ export interface CupState {
   prizeByRound: number[];
   /** Pokalsieger (Club-ID) am Saisonende, sonst null. */
   winnerClubId: string | null;
+  /** Europapokal 2.0 / Wiederholungsspiele: Modus ab dieser Saison (fehlt = alter Modus bis Saisonende). */
+  v2?: 1;
+  /** Statistik aller Spiele dieses Wettbewerbs (Bestenlisten): Spieler-ID → Tupel. */
+  xstats?: Record<string, import('./euro2').XTuple>;
+  /** Namen der Kurzkader-Spieler ausländischer Vereine: ID → [Name, Verein, Position]. */
+  xpeople?: Record<string, [string, string, string]>;
 }
 
 // -----------------------------------------------------------------------------

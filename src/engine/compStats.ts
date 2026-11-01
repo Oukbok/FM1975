@@ -19,13 +19,26 @@ export function compCodeOf(competition: 'Liga' | 'Pokal' | 'Europapokal'): CompC
   return competition === 'Pokal' ? 'P' : competition === 'Europapokal' ? 'E' : 'L';
 }
 
+/**
+ * Europapokal 2.0: Statistik eines Wettbewerbs liegt am Wettbewerb (`CupState.xstats`),
+ * damit Vereine, die von einem Europapokal in einen anderen wechseln, je Wettbewerb
+ * getrennt gezählt werden. Während eines Spiels mit voller Match-Engine setzt der
+ * Aufrufer das Ziel (game/euroFlow.ts, game/ownMatch.ts).
+ */
+let euroSink: Record<string, CompTuple> | null = null;
+export function withEuroSink<T>(sink: Record<string, CompTuple> | null | undefined, fn: () => T): T {
+  const prev = euroSink;
+  euroSink = sink ?? null;
+  try { return fn(); } finally { euroSink = prev; }
+}
+
 export function addCompStats(
   p: Player, code: CompCode,
   m: { goals: number; assists: number; yellow: number; yellowRed: number; red: number }, cleanKeeper: boolean,
 ): void {
   const pw = p as WithComp;
   const all = (pw.compStats ??= {});
-  const t = (all[code] ??= [0, 0, 0, 0, 0, 0, 0]);
+  const t = code === 'E' && euroSink ? (euroSink[p.id] ??= [0, 0, 0, 0, 0, 0, 0]) : (all[code] ??= [0, 0, 0, 0, 0, 0, 0]);
   t[0]++; t[1] += m.goals; t[2] += m.assists; t[3] += m.yellow; t[4] += m.yellowRed; t[5] += m.red;
   if (cleanKeeper) t[6]++;
 }

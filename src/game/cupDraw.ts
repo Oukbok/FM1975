@@ -17,6 +17,8 @@ import { makeMessage, pushMessage } from '../engine/messages';
 import type { CupState, CupTie, GameCalendar } from '../types';
 import type { DrawComp, DrawRecord } from '../types/draw';
 import { hashSeed, type Game } from './state';
+import { drawMessageV2, performDrawV2 } from './euroDraw';
+import { isV2 } from './euroSetup';
 
 export const DRAW_COMPS: DrawComp[] = ['cup', 'ec', 'cwc', 'uefa'];
 
@@ -32,7 +34,11 @@ export function scheduleDraws(cup: CupState, comp: DrawComp, calendar: GameCalen
   const startYear = seasonStartYearOf(cup.rounds[0]?.date ?? calendar.seasonStartDate);
   cup.rounds.forEach((round, i) => {
     if (round.drawn) return;
-    const d = drawDateFor(comp, i, cup.rounds.length, startYear, round.date, i > 0 ? cup.rounds[i - 1].date : null, calendar.seasonStartDate);
+    // Europapokal 2.0: Finale/feste Paarungen ohne Ziehung; Termin nach dem letzten Spiel der Vorrunde.
+    if (round.drawMode === 'none' || round.drawMode === 'fixed') return;
+    const prev = i > 0 ? cup.rounds[i - 1] : null;
+    const prevDate = prev ? (prev.dates?.[prev.dates.length - 1] ?? prev.date) : null;
+    const d = drawDateFor(comp, i, cup.rounds.length, startYear, round.date, prevDate, calendar.seasonStartDate);
     if (!d) return;
     round.drawDate = d;
     calendar.events.push({
@@ -74,6 +80,7 @@ function participantsOf(cup: CupState, ri: number): string[] | null {
 
 /** Führt die Ziehung einer Runde durch (legt Begegnungen + Ablauf an). */
 export function performDraw(g: Game, comp: DrawComp, cup: CupState, ri: number, today: string): DrawRecord | null {
+  if (comp !== 'cup' && isV2(cup)) return performDrawV2(g, comp, cup, ri, today);
   const round = cup.rounds[ri];
   const ids = participantsOf(cup, ri);
   if (!round || round.drawn || !ids || ids.length < 2) return null;
@@ -111,6 +118,7 @@ export function performDraw(g: Game, comp: DrawComp, cup: CupState, ri: number, 
 
 /** Nachricht zur Ziehung (Landespokal immer, Europapokal nur mit eigenem Verein). */
 export function drawMessage(g: Game, comp: DrawComp, cup: CupState, rec: DrawRecord): void {
+  if (comp !== 'cup' && isV2(cup)) { drawMessageV2(g, comp, cup, rec); return; }
   const mid = g.managedClubId;
   const round = cup.rounds[rec.roundIndex];
   const my = round.ties.find((t) => t.homeClubId === mid || t.awayClubId === mid);
@@ -149,7 +157,7 @@ export function cupDrawsDaily(g: Game, today: string): DrawNotice[] {
       if (!rec) return;
       drawMessage(g, comp, cup, rec);
       const mid = g.managedClubId;
-      out.push({ comp, roundIndex: ri, involvesMe: rec.pairs.some((p) => p.home === mid || p.away === mid) });
+      out.push({ comp, roundIndex: ri, involvesMe: rec.pairs.some((p) => p.home === mid || p.away === mid) || !!rec.groups?.some((x) => x.ids.includes(mid)) });
     });
   }
   return out;
