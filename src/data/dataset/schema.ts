@@ -17,7 +17,6 @@ import type { TimelineEvent } from '../timeline';
 import type { LeagueReform, DivisionTarget } from '../reforms';
 import type { StaffRole } from '../staff';
 import type { MarketingArea } from '../marketing';
-import type { LegendSeed } from '../legends';
 import type { Kit, FacilityKey } from '../../types';
 import type { HistoryConfig } from '../history';
 
@@ -92,7 +91,8 @@ export interface Dataset {
     /** Gesperrte Namenskombinationen („Vorname Nachname“). */
     blocked: string[];
   };
-  legends: LegendSeed[];
+  /** Veraltet (Legenden entfernt): wird beim Anwenden ignoriert, bleibt nur für alte Dateien lesbar. */
+  legends?: unknown[];
   economy: {
     /** Erlös-Basis der 1. Liga in EUR je Stützjahr. */
     anchors: { year: number; value: number }[];

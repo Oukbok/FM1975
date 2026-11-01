@@ -21,7 +21,7 @@ const M = (v: number) => `${(v / 1e6).toFixed(2)} Mio.`;
 const g: Game = createNewGame({
   managedClubId: 'mgl',
   manager: { name: 'Test', nationality: 'GER', birthYear: 1940, style: 'balanced', background: 'newcomer' } as any,
-  difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300, legendMode: 'fictional',
+  difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300,
 });
 (g as any).simAutoManage = true;
 

@@ -7,21 +7,31 @@
 //   verglichen. Liegt sie zu hoch, werden neue Jugendjahrgänge etwas schwächer
 //   erzeugt (zu niedrig: etwas stärker). Bestehende Spieler werden nie
 //   nachträglich verändert.
-// • Breite der Spitze: Gibt es in der 1. Liga mehr als ELITE_MAX Spieler mit
-//   Stärke ≥ 85, setzt die Weltklasse-Bremse der Entwicklung früher ein (bei
-//   zu wenigen später) – Weltklasse bleibt selten und begehrt.
+// • Breite der Spitze: Weicht die Zahl der Spieler mit Stärke ≥ 85 in der
+//   1. Liga vom Ziel (ELITE_TARGET, Korridor 10–15) ab, verschiebt sich die
+//   Weltklasse-Bremse der Entwicklung anteilig (zu viele → früher, zu wenige →
+//   später). Ohne Rücksprung auf 0 im Korridor, damit nichts aufschaukelt.
 // =============================================================================
 import { makeMessage, pushMessage } from '../engine/messages';
-import { setYouthPotentialShift } from '../engine/youth';
+import { setYouthPotentialShift, setYouthSalt } from '../engine/youth';
 import { setEliteShift } from '../engine/development';
+import { setTalentSupply } from '../engine/talent';
 import { leagueClubs } from './season';
 import { Game } from './state';
 
 const TARGET: Record<number, number> = { 1: 72.5 };
-const SHIFT_MIN = -0.6, SHIFT_MAX = 0.3;
-/** Zielkorridor der Spieler ≥ 85 in der 1. Liga. */
-const ELITE_MIN = 8, ELITE_MAX = 13;
-const ELITE_STEP = 0.5;
+const SHIFT_MIN = -0.6, SHIFT_MAX = 0.5;
+/** Ziel der Spieler ≥ 85 in der 1. Liga (Recherche: 10–15, docs/recherche/spielerkurven.md). */
+const ELITE_TARGET = 12.5;
+/**
+ * PI-Regler: Sofortanteil (Punkte Bremse je Spieler Abweichung) plus langsamer
+ * Gedächtnisanteil (je Saison, begrenzt auf ±2). Spieler brauchen Jahre bis zur
+ * Weltklasse – ein reiner Summen-Regler schaukelte sich deshalb auf (zu wenige
+ * 85er in den 80ern, zu viele in den 2000ern). Der Gedächtnisanteil steuert
+ * zusätzlich das Talent-Angebot neuer Spieler (engine/talent.ts): Die Bremse
+ * allein kann nicht verhindern, dass Spieler ihr Potenzial irgendwann erreichen.
+ */
+const ELITE_P = 0.4, ELITE_I = 0.05, ELITE_I_MAX = 2;
 
 /** Stärke aller Spieler der eigenen Liga (außer eigener Verein) vor der Bewertung merken. */
 export function snapshotLeague(g: Game): Map<string, number> {
@@ -61,9 +71,11 @@ export function seasonLeagueBalance(g: Game): void {
   if ((g.leagues?.playerDivision?.tier ?? 1) !== 1) {
     lb0.shift = Math.round(lb0.shift * 0.8 * 100) / 100;
     lb0.elite = Math.round((lb0.elite ?? 0) * 0.8 * 100) / 100;
+    lb0.eliteI = Math.round((lb0.eliteI ?? 0) * 0.8 * 100) / 100;
     g.leagueBalance = lb0;
     setYouthPotentialShift(lb0.shift);
     setEliteShift(lb0.elite);
+    setTalentSupply(supplyOf(lb0.eliteI));
     return;
   }
   const ps = leagueClubs(g).flatMap((c) => c.playerIds.map((id) => g.players[id]).filter(Boolean));
@@ -77,13 +89,12 @@ export function seasonLeagueBalance(g: Game): void {
   lb.shift = Math.round(Math.max(SHIFT_MIN, Math.min(SHIFT_MAX, lb.shift)) * 100) / 100;
   // Breite der Spitze: zu viele Weltklasse-Spieler → Bremse greift früher (negativ).
   const n85 = ps.filter((p) => p.overall >= 85).length;
-  let elite = lb.elite ?? 0;
-  // Deutlich zu viele Weltklassespieler (> ELITE_MAX + 4): doppelt so schnell nachziehen.
-  if (n85 > ELITE_MAX + 4) elite -= ELITE_STEP * 2;
-  else if (n85 > ELITE_MAX) elite -= ELITE_STEP;
-  else if (n85 < ELITE_MIN) elite += ELITE_STEP;
-  else elite *= 0.5;
-  lb.elite = Math.round(Math.max(-5, Math.min(3, elite)) * 100) / 100;
+  const err = ELITE_TARGET - n85;
+  lb.eliteI = Math.round(Math.max(-ELITE_I_MAX, Math.min(ELITE_I_MAX, (lb.eliteI ?? 0) + err * ELITE_I)) * 100) / 100;
+  const elite = err * ELITE_P + lb.eliteI;
+  lb.elite = Math.round(Math.max(-5, Math.min(4, elite)) * 100) / 100;
+  // Talent-Angebot neuer Spieler: folgt dem Gedächtnisanteil (dauerhafte Abweichung).
+  setTalentSupply(supplyOf(lb.eliteI));
   lb.history.push({ season: g.season, avg: Math.round(avg * 10) / 10, shift: lb.shift, n85, elite: lb.elite });
   if (lb.history.length > 60) lb.history.splice(0, lb.history.length - 60);
   g.leagueBalance = lb;
@@ -91,8 +102,13 @@ export function seasonLeagueBalance(g: Game): void {
   setEliteShift(lb.elite);
 }
 
+/** Talent-Angebot aus dem Gedächtnisanteil des Weltklasse-Reglers (±2 → 0,7 … 1,3). */
+function supplyOf(eliteI: number | undefined): number { return 1 + (eliteI ?? 0) * 0.15; }
+
 /** Beim Laden/Tageswechsel den gespeicherten Wert setzen. */
 export function applyLeagueBalance(g: Game): void {
+  setYouthSalt(g.youthSalt ?? '');
   setYouthPotentialShift(g.leagueBalance?.shift ?? 0);
   setEliteShift(g.leagueBalance?.elite ?? 0);
+  setTalentSupply(supplyOf(g.leagueBalance?.eliteI));
 }

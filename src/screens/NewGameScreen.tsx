@@ -4,7 +4,6 @@ import { applyDataset } from '../data/dataset/apply';
 import { BUILTIN_ID } from '../data/dataset/builtin';
 import { cachedDataset } from '../data/dataset/storage';
 import { AppSettings } from '../engine/save';
-import { loadLegendNames } from '../data/legendNames';
 import { Difficulty, ManagerBackground, ManagerProfile, ManagerStyle, NewGameOptions } from '../types';
 import { LeagueKey } from './newgame/clubPreview';
 import { StepSetup } from './newgame/StepSetup';
@@ -25,8 +24,6 @@ export const BG_DE: Record<ManagerBackground, { label: string; desc: string }> =
   rookie: { label: 'Newcomer', desc: 'Unbeschriebenes Blatt mit Ambitionen.' },
 };
 
-export type LegendMode = 'off' | 'fictional' | 'custom';
-
 /** Gemeinsamer Zustand aller Schritte. */
 export interface NewGameDraft {
   datasetId: string;
@@ -34,7 +31,6 @@ export interface NewGameDraft {
   injuries: boolean;
   realistic: boolean;
   speedMs: number;
-  legendMode: LegendMode;
   league: LeagueKey;
   clubId: string;
   name: string;
@@ -53,11 +49,9 @@ const STEPS: { label: string; sub: string; icon: 'settings' | 'dashVerein' | 'sq
 export function NewGameScreen({ defaults, onBack, onStart }: {
   defaults: AppSettings; onBack: () => void; onStart: (o: NewGameOptions) => void;
 }) {
-  const customNames = Object.keys(loadLegendNames()).length;
   const [step, setStep] = useState(0);
   const [d, setD] = useState<NewGameDraft>(() => ({
     datasetId: BUILTIN_ID, difficulty: 'normal', injuries: true, realistic: true, speedMs: defaults.speedMs,
-    legendMode: customNames ? 'custom' : 'fictional',
     league: 'tier1', clubId: [...getClubSeeds()].sort((a, b) => b.reputation - a.reputation)[0]?.id ?? '',
     name: '', nationality: 'Deutschland', birthYear: 1940, style: 'balanced', background: 'ex_pro',
   }));
@@ -77,7 +71,7 @@ export function NewGameScreen({ defaults, onBack, onStart }: {
     };
     onStart({
       managedClubId: d.clubId, manager, difficulty: d.difficulty, realisticSquads: d.realistic,
-      injuriesEnabled: d.injuries, speedMs: d.speedMs, datasetId: d.datasetId, legendMode: d.legendMode,
+      injuriesEnabled: d.injuries, speedMs: d.speedMs, datasetId: d.datasetId,
     });
   };
   const last = step === STEPS.length - 1;
@@ -102,7 +96,7 @@ export function NewGameScreen({ defaults, onBack, onStart }: {
       </header>
 
       <main className={`ng-body ${step === 1 ? '' : 'center'}`}>
-        {step === 0 && <StepSetup d={d} set={set} customNames={customNames} chooseDataset={chooseDataset} />}
+        {step === 0 && <StepSetup d={d} set={set} chooseDataset={chooseDataset} />}
         {step === 1 && <StepClub d={d} set={set} />}
         {step === 2 && <StepManager d={d} set={set} />}
       </main>

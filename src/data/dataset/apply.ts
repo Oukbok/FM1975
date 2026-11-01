@@ -15,7 +15,6 @@ import { STAFF_BY_ID, STAFF_ROLES } from '../staff';
 import { MARKETING_AREAS, MARKETING_BY_ID } from '../marketing';
 import { MIX, ORIGINS, Origin } from '../origins';
 import { BLOCKED_NAMES } from '../namePools';
-import { LEGENDS } from '../legends';
 import { ANCHORS, REVENUE_MIX, resetEconomyCache } from '../../engine/economy';
 import { HISTORY } from '../history';
 import { TRANSFER_RECORD_ANCHORS } from '../transferRecords';
@@ -99,8 +98,6 @@ export function applyDataset(ds: Dataset | null): void {
   replaceArray(MIX, d.names?.mix, base.names.mix);
   BLOCKED_NAMES.clear();
   for (const n of d.names?.blocked ?? base.names.blocked) BLOCKED_NAMES.add(n);
-
-  replaceArray(LEGENDS, d.legends, base.legends);
 
   replaceArray(ANCHORS, d.economy?.anchors, base.economy.anchors);
   ANCHORS.sort((a, b) => a.year - b.year);

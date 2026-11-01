@@ -1,25 +1,19 @@
 import Icon from '../../components/Icon';
 import { cachedSummaries } from '../../data/dataset/storage';
 import { Difficulty } from '../../types';
-import type { LegendMode, NewGameDraft } from '../NewGameScreen';
+import type { NewGameDraft } from '../NewGameScreen';
 
-// Schritt 1: Spielwelt — Datensatz, Spieloptionen, historische Spieler, Tempo
+// Schritt 1: Spielwelt — Datensatz, Spieloptionen, Tempo, Hinweis zu Talenten
 const DIFF: [Difficulty, string, string][] = [
   ['easy', 'Leicht', 'Zum Kennenlernen.'],
   ['normal', 'Normal', 'Der vorgesehene Weg.'],
   ['hard', 'Schwer', 'Für erfahrene Manager.'],
 ];
-const LEGEND: [LegendMode, string][] = [['off', 'Aus'], ['fictional', 'Fiktive Legenden'], ['custom', 'Eigene Namensdatei']];
 
-export function StepSetup({ d, set, customNames, chooseDataset }: {
-  d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void; customNames: number; chooseDataset: (id: string) => void;
+export function StepSetup({ d, set, chooseDataset }: {
+  d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void; chooseDataset: (id: string) => void;
 }) {
   const datasets = cachedSummaries();
-  const legendText = d.legendMode === 'off'
-    ? 'Keine Legenden: Alle Talente entstehen zufällig.'
-    : d.legendMode === 'custom'
-      ? `Legenden tragen die Namen aus deiner Namensdatei (${customNames} Einträge, nur in diesem Browser).`
-      : 'Erfundene Ausnahmespieler tauchen zu festen Jahrgängen auf – ob sie Stars werden, entscheidet das Spiel.';
   return (
     <div className="ng-grid3">
       <section className="ng-box">
@@ -70,17 +64,12 @@ export function StepSetup({ d, set, customNames, chooseDataset }: {
       </section>
 
       <section className="ng-box">
-        <h3 className="ng-box-title"><Icon name="youth" size={20} /> Historische Spieler</h3>
-        <div className="ng-list">
-          {LEGEND.map(([k, l]) => (
-            <button key={k} className={`ng-card ${d.legendMode === k ? 'on' : ''}`} disabled={k === 'custom' && !customNames}
-              onClick={() => set({ legendMode: k })}>
-              <b>{l}</b>
-              <small>{k === 'off' ? 'Nur zufällige Talente' : k === 'fictional' ? 'Empfohlen' : customNames ? `${customNames} Namen geladen` : 'Keine Namensdatei geladen'}</small>
-            </button>
-          ))}
-        </div>
-        <p className="ng-note ng-push">{legendText}{!customNames && ' Eine eigene Namensdatei lädst du in den Einstellungen.'}</p>
+        <h3 className="ng-box-title"><Icon name="youth" size={20} /> Talente &amp; Stars</h3>
+        <p className="ng-note">Alle Spieler entwickeln sich nach denselben Regeln: Talent, Training, Spielpraxis, Charakter und etwas Glück.</p>
+        <p className="ng-note">Ganz selten wächst ein Jahrhunderttalent heran, das schon mit 18 oder 19 zur Spitze gehört. Wo es auftaucht, weiß vorher niemand – vielleicht in deiner Akademie.</p>
+        <div className="ng-fact ng-push"><span>Höhepunkt der meisten Profis</span><b>26–29 Jahre</b></div>
+        <div className="ng-fact"><span>Weltklasse (85+) in der 1. Liga</span><b>10–15 Spieler</b></div>
+        <div className="ng-fact"><span>Jahrhunderttalent</span><b>alle 10–20 Jahre</b></div>
       </section>
     </div>
   );

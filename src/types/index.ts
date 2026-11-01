@@ -387,12 +387,6 @@ export interface PlayerDevelopment {
   scoutBias?: number;
   /** Verborgenes Juwel: entfaltet mit `boostAge` einen Schub von `boost` Potenzialpunkten. */
   gem?: { boostAge: number; boost: number; done?: boolean };
-  /** Fiktive Legende (data/legends.ts). */
-  legendId?: string;
-  /** Legenden 2.0: Entwicklungsschub (Seltenheit), Kurve und Signatur-Werte. */
-  legendBoost?: number;
-  legendCurve?: 'frueh' | 'normal' | 'spaet';
-  legendSignature?: { attr: AttributeKey; min: number; max: number }[];
   /** Fördervertrag (Jugend): schützt vor Abwerbung, bis zur Saison (Startjahr) gültig. */
   protectedUntil?: number;
   /**
@@ -1789,8 +1783,6 @@ export interface NewGameOptions {
   speedMs: number;
   /** Datensatz (data/dataset), Standard „builtin“. */
   datasetId?: string;
-  /** Historische Spieler: aus, fiktive Legenden (Standard), eigene Namensdatei. */
-  legendMode?: 'off' | 'fictional' | 'custom';
 }
 
 // -----------------------------------------------------------------------------

@@ -98,7 +98,7 @@ Betroffen: \`engine/calendar.ts\`, \`engine/league.ts\` und jede neue datumsbezo
     title: 'Datensätze & Datensatz-Editor (Modding)',
     keywords: ['datensatz', 'editor', 'modding', 'mod', 'wappen', 'trikot', 'vereine', 'import', 'export', 'json'],
     body: `## Was ist ein Datensatz?
-Ein Datensatz ist eine einzelne JSON-Datei (\`<id>.fm1975.json\`), die festlegt, womit ein **neues Spiel** startet: Vereine aller Ligen, Wappen und Trikots, Europa (Länder, Starter der ersten Saison), Chronik-Ereignisse, Ligareformen, Einrichtungen, Mitarbeiter-Rollen, Marketing-Kanäle, Namen und Herkünfte, Legenden, Wirtschaftskurven und besondere Zeitabschnitte. Der eingebaute Datensatz **Standard (1975)** entspricht den Werten im Code.
+Ein Datensatz ist eine einzelne JSON-Datei (\`<id>.fm1975.json\`), die festlegt, womit ein **neues Spiel** startet: Vereine aller Ligen, Wappen und Trikots, Europa (Länder, Starter der ersten Saison), Chronik-Ereignisse, Ligareformen, Einrichtungen, Mitarbeiter-Rollen, Marketing-Kanäle, Namen und Herkünfte, Wirtschaftskurven und besondere Zeitabschnitte. Der eingebaute Datensatz **Standard (1975)** entspricht den Werten im Code.
 
 ## Der Editor
 Der Datensatz-Editor ist eine eigene Seite unter **/editor/** (Hauptmenü → Datensätze → Editor öffnen).
@@ -482,7 +482,7 @@ Beim Start erscheint ein Menü mit:
 - **Spiel verlassen** – schließt/entkoppelt die laufende Partie.
 
 ## Neues Spiel in drei Schritten
-1. **Spielwelt:** Datensatz, Schwierigkeit, Verletzungen, realistische Kader, Spieltempo und **Historische Spieler** (Aus, fiktive Legenden oder eigene Namensdatei). Start ist immer der 1. Juli 1975.
+1. **Spielwelt:** Datensatz, Schwierigkeit, Verletzungen, realistische Kader, Spieltempo; dazu ein Hinweis, wie Talente und Stars entstehen. Start ist immer der 1. Juli 1975.
 2. **Verein:** Links wählst du die Liga (1. Liga, 2. Liga Nord, 2. Liga Süd; die DDR-Oberliga kommt erst 1991 ins Spiel). In der Mitte siehst du alle Vereine der Liga als Wappen – sortierbar nach Stärke, Name oder Region. Rechts zeigt die Detailkarte Trikots, Stadion, Kapazität, Ansehen, Finanzkraft, die geschätzte Kaderstärke im Ligavergleich, das Ziel des Vorstands und die Rivalen. Kaderstärke und Ziel sind **Einschätzungen**: Die echten Kader entstehen beim Start, das endgültige Saisonziel richtet sich danach.
 3. **Manager:** Name, Nationalität, Geburtsjahr, Spielstil und Trainer-Hintergrund, daneben eine Zusammenfassung. „Karriere starten“ erzeugt die Spielwelt.
 
@@ -663,13 +663,14 @@ Je Spieler siehst du **Name, Verein, Position, Alter** sowie **alter → neuer O
 Nach der Winter- und der Saison-Bewertung meldet der **Liga-Ticker** die größten Gewinner und Verlierer der anderen Vereine deiner Liga. Junge Spieler mit großen Sprüngen sind die Transferziele von morgen.
 
 ## Liga-Gleichgewicht
-Zum 1. Juli vergleicht das Spiel die Durchschnittsstärke der 1. Liga mit dem Zielwert **72,5**. Liegt sie mehr als einen Punkt darüber, werden die **neuen** Jugendjahrgänge aller Akademien um 0,1 Sterne Potenzial schwächer erzeugt (bis −0,6), liegt sie darunter, etwas stärker (bis +0,3); im Zielkorridor läuft die Korrektur wieder aus. Bestehende Spieler werden nie nachträglich verändert. So bleibt die Liga über Jahrzehnte vergleichbar, ohne dass dein Kader bestraft wird.
+Zum 1. Juli vergleicht das Spiel die Durchschnittsstärke der 1. Liga mit dem Zielwert **72,5**. Liegt sie mehr als einen Punkt darüber, werden die **neuen** Jugendjahrgänge aller Akademien um 0,1 Sterne Potenzial schwächer erzeugt (bis −0,6), liegt sie darunter, etwas stärker (bis +0,5); im Zielkorridor läuft die Korrektur wieder aus. Bestehende Spieler werden nie nachträglich verändert. So bleibt die Liga über Jahrzehnte vergleichbar, ohne dass dein Kader bestraft wird.
 
 ## Weltklasse ist selten
-Spieler mit Stärke **85 oder mehr** sind die Ausnahme: In der 1. Liga gibt es davon meist nur **rund 8 bis 13** – oft sind Legenden darunter, gelegentlich ein Star aus einer Akademie.
-- **Erzeugte Spieler** (Startkader, Aufsteiger, Nachrücker, Zugänge aus dem Ausland oder von unterklassigen Vereinen) kommen nie als fertige Weltklasse ins Spiel: höchstens 84 (Nachrücker 82, Ausland 83, unterklassig 79). Auch ihr verdecktes Potenzial wird oberhalb von 82 deutlich gestaucht – nur seltene Ausnahmetalente haben wirklich Luft bis ganz nach oben.
-- **Weltklasse-Bremse:** Ab Stärke 82 wird jeder weitere Punkt schwerer (je Punkt rund 15 % langsamer, höchstens auf ein Fünftel des Tempos). Spitzentraining (gute Anlagen, großer Verein) schiebt den Beginn um bis zu 3 Punkte nach hinten – Weltklasse reift eher bei den Großen. Legenden spüren die Bremse etwas schwächer (90 %).
-- **Breite der Spitze:** Zum 1. Juli zählt das Liga-Gleichgewicht auch die Spieler ab 85 in der 1. Liga. Sind es mehr als 13, setzt die Bremse im Folgejahr einen halben Punkt früher ein (bei deutlich mehr als 17 einen ganzen; bis 5 Punkte), bei weniger als 8 entsprechend später; im Korridor läuft die Verschiebung wieder aus.
+Spieler mit Stärke **85 oder mehr** sind die Ausnahme: In der 1. Liga gibt es davon meist nur **rund 10 bis 15**, Spieler mit 90 oder mehr höchstens ein, zwei. Unter 21 Jahren sind 80er schon selten (meist null bis drei), 85er eine Sensation. Wie Stars entstehen, steht unter **Talente & Spielerkurven**.
+- **Erzeugte Spieler** (Startkader, Aufsteiger, Nachrücker, Zugänge aus dem Ausland oder von unterklassigen Vereinen) kommen fast nie als fertige Weltklasse ins Spiel: höchstens 84 (Nachrücker 82, Ausland 83, unterklassig 79), junge Spieler altersgerecht schwächer. Auch ihr verdecktes Potenzial wird oberhalb von 82 deutlich gestaucht – nur seltene Ausnahmetalente haben wirklich Luft bis ganz nach oben. Einzige Ausnahme: Ein starker Kader, der neu ins Spiel kommt (Spielstart 1975 oder ein Verein aus der Hintergrund-Simulation), bringt seine etablierten Leistungsträger mit – je nach Kaderschnitt bis zu drei Spieler mit 85–91 im Alter von 23 bis 29. Unter seinen jungen Spielern (bis 23) steckt zudem mit 5 % ein kommender Star mit Weltklasse-Potenzial.
+- **Weltklasse-Bremse:** Ab Stärke 82 wird jeder weitere Punkt schwerer (je Punkt rund 15 % langsamer, höchstens auf ein Fünftel des Tempos). Spitzentraining (gute Anlagen, großer Verein) schiebt den Beginn um bis zu 3 Punkte nach hinten – Weltklasse reift eher bei den Großen. Ausnahmetalente (verdecktes Potenzial über 88) spüren sie bis zu 5 Punkte später.
+- **Breite der Spitze:** Zum 1. Juli zählt das Liga-Gleichgewicht auch die Spieler ab 85 in der 1. Liga und vergleicht mit dem Ziel 12,5. Je Spieler Abweichung verschiebt sich die Bremse im Folgejahr um 0,4 Punkte, dazu kommt ein langsamer Anteil aus den Vorjahren (insgesamt −5 bis +4): bei zu vielen früher, bei zu wenigen später. Die spätere Bremse hilft nur bis 88 – Spieler mit 90 oder mehr bleiben rar. Bleibt die Abweichung über Jahre bestehen, ändert sich auch das **Talent-Angebot**: Neue Talente und neu erzeugte junge Spieler haben dann seltener (oder häufiger) Weltklasse-Potenzial. Bestehende Spieler werden nie verändert.
+- **Epochen-Ausgleich:** Sportwissenschaft und Leistungszentren bringen ab etwa 2000 mehr Spitzenspieler hervor, Mitte der 80er klafft dagegen eine Lücke, wenn die Stars der 70er abtreten. Die Bremse setzt deshalb 1983–1994 etwas später und ab 2002 etwas früher ein. Ist die Spitze dicht besetzt, bleiben Weltklasse-Kandidaten bis zu 2,5 Punkte unter ihrem Potenzial, und alternde Stars (83+) bauen schneller ab; fehlt Weltklasse, halten sie sich länger, und Spieler mit Potenzial ab 82 können bis zu 2 Punkte darüber hinauswachsen.
 Für dich heißt das: Ein 85er ist ein echter Unterschiedsspieler – teuer, begehrt und schwer zu ersetzen.`,
   },
   {
@@ -1733,42 +1734,38 @@ Beendet ein Spieler seine Karriere, wird er aus dem Spielstand entfernt. Bemerke
 Archiviert werden:
 - alle Spieler, die zuletzt bei **deinem Verein** waren,
 - Karrieren mit **Spitzenstärke ab 78** oder **250 Einsätzen**,
-- alle **fiktiven Legenden**.
 
 Höchstens 4000 Einträge; darüber fallen zuerst die unauffälligsten fremden Karrieren heraus.
 
 ## Ruhmeshalle
-Unter **Statistiken → Ruhmeshalle** siehst du die größten Karrieren, deine Vereinslegenden (nach Einsätzen), die Rekordhalter und die Legenden im Ruhestand.`,
+Unter **Statistiken → Ruhmeshalle** siehst du die größten Karrieren, deine Vereinslegenden (nach Einsätzen), die Rekordhalter und die Weltklassespieler (Spitze 85+) im Ruhestand.`,
   },
   {
-    id: 'development-legends',
+    id: 'development-talent',
     category: 'development',
-    title: 'Legenden',
-    keywords: ['legende', 'jahrhunderttalent', 'ausnahmetalent', 'gerücht', 'akademie', 'geheimtipp', 'archetyp', 'namensdatei', 'historische spieler'],
-    body: `## Ausnahmespieler zu festen Jahrgängen
-Über 450 erfundene **Legenden** sind über die Jahrgänge 1940–2010 verteilt (dazu einige handverlesene bis in die 2020er): je Jahrgang vier deutsche und zwei aus dem Ausland. Wer sie wird, steht fest – **was** aus ihnen wird, nicht.
+    title: 'Talente & Spielerkurven',
+    keywords: ['talent', 'jahrhunderttalent', 'ausnahmetalent', 'frühreif', 'spätentwickler', 'frühstarter', 'höhepunkt', 'karriere', 'weltklasse', 'potenzial'],
+    body: `## Jeder Spieler folgt denselben Regeln
+Es gibt keine fest geplanten Stars: Die Startkader sind in jedem Spiel gleich, wer daraus und aus den Akademien zum Star wird, würfelt jedes Spiel neu aus. Jeder Spieler – ob aus deiner Akademie, einem anderen Verein oder dem Ausland – entwickelt sich nach denselben Regeln: **Talent** (verdecktes Potenzial), **Training**, **Spielpraxis**, **Charakter**, **Umfeld** und etwas Glück.
 
-### Profil einer Legende
-- **Seltenheit** – Weltklasse, Nationalspieler oder Publikumsliebling. Sie legt einen verdeckten **Talent-Korridor** fest (Weltklasse 4,0–5,0 ★, Nationalspieler 3,5–4,5 ★, Publikumsliebling 3,0–4,0 ★). Beim Auftauchen würfelt das Spiel daraus das wahre Ziel aus: Von zehn Weltklasse-Legenden werden etwa sieben Stars, zwei gute Profis, eine bleibt hinter den Erwartungen; Nationalspieler werden meist gute Profis um 80, nur wenige Stars (85+). Weltklasse ist selten: Mit den handverlesenen Legenden bringt im Schnitt nicht einmal jeder Jahrgang eine hervor. Deine Scouts sehen nur den Korridor.
-- **Archetyp** – Torwart-Katze, Libero, Ausputzer, Manndecker, Abräumer, Regisseur, Motor, Spielmacher, Flügelflitzer, Strafraumstürmer, Kopfballungeheuer, Dribbelkünstler, Freistoß-Spezialist … Er bestimmt, welche Attribute von Anfang an herausragen.
-- **Signatur-Werte** – ein oder zwei Attribute, die im Höhepunkt einen festen Bereich erreichen (z. B. Kopfball 90–95). Sie wachsen bevorzugt.
-- **Entwicklungskurve** – Frühstarter springen mit 17–20, Spätzünder erst mit 22–26.
-- **Charakter** – Professionalität und Ehrgeiz wie bei allen Spielern.
+## Typische Kurven
+- **Normalprofi:** Stammspieler mit 22–23, Höhepunkt mit 26–29 um 73, ab 31 spürbarer Abbau.
+- **Bundesliga-Topspieler:** oft früh im Profikader, aber erst mit 26–29 auf der Höhe (um 80–83), manchmal Nationalspieler erst mit 28.
+- **Weltstar:** Durchbruch mit 20–21, Weltklasse (85+) ab etwa 23, Plateau bis 30 um 88.
+- **Jahrhunderttalent:** mit 17 im Profikader, mit 19–21 schon Weltklasse, danach acht bis zehn Jahre über 93. So etwas gibt es in der ganzen Fußballwelt nur alle 10–20 Jahre – in der Bundesliga noch seltener.
 
-### Wann und wo sie auftauchen
-- **Spielstart 1975:** Legenden, die 1975 schon 15 oder älter sind, stehen bereits im Kader – passend zur Karrierephase, bevorzugt bei Vereinen ihrer Region (Weltklasse eher bei großen Vereinen). Die Jüngsten spielen in einer Jugendakademie.
-- **Jedes Jahr am 1. Juli** erscheint der Jahrgang mit 15 Jahren: zu 60 % beim historischen Jugendverein bzw. in seiner Region, zu 30 % beim Verein der Region mit der **besten Jugendabteilung** – liegt dein Verein in der Region und hat die bessere Akademie, landet er bei dir –, zu 10 % als **Geheimtipp** bei einem Amateurverein.
-- **Geheimtipps** hört jeder: Unter Transfers → Talente anderer Vereine kannst du sie für eine kleine Ablöse holen. Nach einer Saison schnappt sie sich sonst der Verein der Region mit der besten Jugend.
-- **Ausländische Legenden** reifen in ihrer Heimat und erscheinen als **Auslandstalente** – je mehr Scouts, desto eher siehst du sie. Ab 16 kannst du sie holen (Ausbildungsentschädigung, nicht jeder will umziehen). Mit 18 wechseln sie sonst vielleicht zu einem anderen deutschen Verein (vor 1990 selten, nach dem Bosman-Urteil häufiger) – oder machen im Ausland Karriere.
-- **DDR-Legenden** kommen erst nach der Wende (ab Sommer 1991) in die gesamtdeutschen Ligen.
+## Was die Kurve formt
+- **Potenzial:** Die meisten Talente reichen für die 2. Liga oder einen Platz im Kader eines Erstligisten. Nur etwa 1–2 von 100 Akademie-Talenten haben Weltklasse-Potenzial (85+), und davon wieder nur ein kleiner Teil 93 oder mehr. Bessere Nachwuchsarbeit erhöht die Chance etwas.
+- **Frühreife (verdeckt):** Frühreife Spieler wachsen bis 20 deutlich schneller und sind mit 16–19 schon weiter; Spätentwickler holen zwischen 23 und 27 auf. Große Talente zeigen sich meist früh.
+- **Langlebigkeit (verdeckt):** verschiebt den Abbau um bis zu anderthalb Jahre. Gutes Training und Professionalität bremsen ihn zusätzlich.
+- **Spielpraxis:** Ein junges Talent ohne Einsätze entfaltet sein Potenzial nicht ganz – mit viel Spielzeit manchmal mehr als erwartet.
+- **Verletzungen:** Schwere Verletzungen in jungen Jahren kosten Entfaltung.
 
-### Entwicklung
-- Legenden lernen schneller als andere (Weltklasse am meisten) und bekommen in jungen Jahren ihre Spielpraxis (zweite Mannschaft, Leihe). Sie werden nie aus der Jugend fortgeschickt und als junge Spieler nicht aussortiert.
-- Ob sie ihr Ziel erreichen, hängt trotzdem von **Training, Spielpraxis und Umfeld** ab. Ihre spätere Karriere – Wechsel, Ausland, Karriereende – entsteht im Spiel.
-- Steigt ihr Verein aus deiner Liga ab, wechselt die Legende zu einem Verein, der bleibt.
+## Frühstarter
+Zum 1. Juli ziehen die Vereine Jugendspieler von 16 bis 19 hoch, die schon auf dem Niveau ihrer Profimannschaft spielen. Das sind nur sehr wenige. Spielt ein solches Talent in **deiner** Jugend, meldet sich der Leiter der Jugendakademie – hochziehen musst du es selbst. Ausnahmetalente schickt beim Jahrgangsabschluss niemand fort; notfalls wird der Kader kurz größer.
 
-### Einstellung „Historische Spieler“
-Beim neuen Spiel wählst du **Aus** (keine Legenden), **Fiktive Legenden** (Standard) oder **Eigene Namensdatei**. Die Namensdatei lädst du unter Einstellungen → Historische Spieler: eine JSON-Datei \`{ "lg_1954_1": "Vorname Nachname", … }\`. Sie bleibt in deinem Browser und wird nie mit dem Spiel ausgeliefert; die Vorlage dort enthält alle Legenden-IDs. Eigene Legenden legst du im Datensatz-Editor an.`,
+## Ältere Spielstände
+Früher gab es fiktive „Legenden“ mit festen Jahrgängen. Dieses System ist entfernt: Spieler, die in einem alten Spielstand Legenden waren, bleiben ganz normale Spieler mit ihrem bisherigen Können und Potenzial.`,
   },
   {
     id: 'stadium-blocks',
@@ -1931,7 +1928,7 @@ Den Kern bilden die **Akademie-Talente** (je nach Ausbaustufe 1–4 pro Jahr). A
 
 Zum **1. Juli** rücken alle auf. Danach:
 - **Abgänge:** bis 11 Jahre 4 %, bis 15 Jahre 8 %, darüber 12 % pro Jahr – im schwächsten Drittel fast doppelt so oft, erkennbare Talente (≥ 3,5 Sterne laut Scouts) nur selten. Gründe: aufhören, Schule, Ausbildung, Umzug, andere Sportart, Nachbarverein.
-- **Aussortieren:** Ist eine Mannschaft zu groß, gehen die Schwächsten (Stärke plus erkennbares Potenzial). Legenden und Spieler mit Fördervertrag bleiben.
+- **Aussortieren:** Ist eine Mannschaft zu groß, gehen die Schwächsten (Stärke plus erkennbares Potenzial). Spieler mit Fördervertrag bleiben.
 - **Auffüllen:** Lücken werden mit neuen Spielern auf den fehlenden Positionen geschlossen (je Mannschaft 1–2 Torhüter, sonst etwa 36 % Abwehr, 36 % Mittelfeld, 28 % Angriff).
 
 KI-Vereine behalten schlanke Akademien – so bleiben Spielstände klein.

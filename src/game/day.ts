@@ -10,7 +10,6 @@ import { EURO_COMP_NAMES } from '../data/europe';
 import { marketingIncomeBase, marketingMonthlyBase, marketingReputationNudge } from '../data/marketing';
 import { staffMonthlyTotal } from '../data/staff';
 import { monthlyEnvironmentUpdate } from './environmentGame';
-import { spawnLegends } from './legendsGame';
 import { autoResolveEvents, monthlyEvents } from './eventsGame';
 import { setInjuryRiskHook } from '../engine/injuryRisk';
 import { focusEffect } from '../engine/staffPeople';
@@ -56,6 +55,7 @@ import { campDaily } from './trainingCampGame';
 import { groundsDaily } from './groundsGame';
 import { DrawNotice, cupDrawsDaily, ensureDrawn, hasScheduledDraw } from './cupDraw';
 import { monthlySponsoring } from './sponsorGame';
+import { promoteEarlyTalents } from './talentGame';
 import { PlayerDevReveal } from '../types';
 import { fmtDM, fmtDMfull, fmtDateFull, setDisplayYear } from '../ui/format';
 import { RatingResult as _RatingResult } from '../engine/development';
@@ -420,14 +420,14 @@ export function processDay(g: Game, ui: DayUi): boolean {
     const domNow = new Date(today + 'T00:00:00Z').getUTCDate();
     const yearNow = new Date(today + 'T00:00:00Z').getUTCFullYear();
     if (utcMon === 7 && domNow === 1) {
-      // Fiktive Legenden des Jahrgangs tauchen in einer Akademie auf (data/legends.ts).
       // Liga-Gleichgewicht vor dem neuen Nachwuchs-Jahrgang nachführen.
       seasonLeagueBalance(g);
-      spawnLegends(g, today);
       // Vertragsende: Wechsel (vor Bosman gegen Ablöse) oder Verlängerung (game/contracts.ts).
       handleContractExpiry(g, today);
       // Nachwuchs-Investitionen: Ruf, NLZ-Pflicht, Wettbewerb um Talente (game/youthInvest.ts).
       youthInvestSeasonStart(g, today);
+      // Frühstarter: profireife 16–19-Jährige rücken zu den Profis auf (game/talentGame.ts).
+      promoteEarlyTalents(g, today);
       for (const club of Object.values(g.clubs)) {
         if ((club.infrastructure.lastYouthIntakeYear ?? 0) >= yearNow) continue;
         club.infrastructure.lastYouthIntakeYear = yearNow;

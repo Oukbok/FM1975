@@ -5,7 +5,7 @@
 // Kontostand des eigenen Vereins, Verletzte. Bricht bei Fehlern/NaN ab.
 // =============================================================================
 import { createNewGame } from '../src/game/newGame';
-import { LEGENDS } from '../src/data/legends';
+import { careerSummary, originOfPlayer, trackCareers } from './simCareers';
 import { processDay, HEADLESS_UI } from '../src/game/day';
 import { startNextSeason, leagueClubs } from '../src/game/season';
 import { CalendarEngine } from '../src/engine/calendar';
@@ -24,7 +24,6 @@ const g: Game = createNewGame({
   managedClubId: process.env.CLUB ?? 'mgl',
   manager: { name: 'Sim', nationality: 'GER', birthYear: 1940, style: 'balanced', background: 'newcomer' } as any,
   difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300,
-  legendMode: (process.env.LEGENDS as any) ?? 'fictional',
 });
 
 (g as any).simAutoManage = true; // eigener Verein wird wie ein KI-Verein gepflegt
@@ -264,9 +263,8 @@ function balanceReport(game: Game, ps: Player[]) {
   console.log(`   BAL Neu in der Liga: ${newcomers.map((n) => `${nm(n.id)} Platz ${n.rank} (Top11 ${top11(game.clubs[n.id]).toFixed(1)})`).join(', ') || '-'} | Liga-Top11 Median ${(() => { const t = lc.map(top11).sort((a, b) => a - b); return t[t.length >> 1]?.toFixed(1); })()}`);
   console.log(`   BAL Tore/Sp ${row.tore.toFixed(2)} Heim ${(row.heim * 100).toFixed(0)}% Remis ${(row.remis * 100).toFixed(0)}% | Verl. ${inj} verletzt Nov/Mär ${snap.join('/')} (${Math.round(injDays / Math.max(1, ps.length))} T/Sp.) | TW je Verein 0:${tw.filter((n) => n === 0).length} 1:${tw.filter((n) => n === 1).length} 2+:${tw.filter((n) => n >= 2).length}`
     + ` | Alter ≤21 ${pct((a) => a <= 21)}% 22–25 ${pct((a) => a >= 22 && a <= 25)}% 26–29 ${pct((a) => a >= 26 && a <= 29)}% 30–33 ${pct((a) => a >= 30 && a <= 33)}% ≥34 ${pct((a) => a >= 34)}%`
-    + ` | weg ${gone} (≥31: ${goneOld}) | Jugend-Eigengew. ${youthOrigin} (bester ${Math.max(0, ...ps.filter((p) => p.id.includes('_y_') && !p.development.legendId).map((p) => p.overall))}) U21≥75 ${youngStars}`);
-  const legRar = (p: Player) => { const sd = LEGENDS.find((l) => l.id === p.development.legendId); return sd?.rarity ?? (sd && (sd.peak ?? 0) >= 91 ? 'weltklasse' : 'national'); };
-  const origin = (p: Player) => p.development.legendId ? (p.overall >= 85 ? 'Legende-' + legRar(p).slice(0, 4) : 'Legende') : p.id.includes('_y_') ? 'Jugend' : /_r\d{4}_/.test(p.id) ? 'Nachrücker' : /_t\d{4}_/.test(p.id) ? 'Ausland' : /_p\d+$/.test(p.id) ? 'Start' : 'sonst';
+    + ` | weg ${gone} (≥31: ${goneOld}) | Jugend-Eigengew. ${youthOrigin} (bester ${Math.max(0, ...ps.filter((p) => p.id.includes('_y_')).map((p) => p.overall))}) U21≥75 ${youngStars}`);
+  const origin = (p: Player) => p.id.includes('_y_') ? 'Jugend' : /_r\d{4}_/.test(p.id) ? 'Nachrücker' : /_t\d{4}_/.test(p.id) ? 'Ausland' : /_p\d+$/.test(p.id) ? 'Start' : 'sonst';
   const stars = ps.filter((p) => p.overall >= 85);
   const byO: Record<string, number> = {}; for (const p of stars) byO[origin(p)] = (byO[origin(p)] ?? 0) + 1;
   console.log(`   BAL ≥85 nach Herkunft ${Object.entries(byO).map(([k, v]) => k + ' ' + v).join(', ')} | Ø Alter ${avg(stars.map((p) => p.age)).toFixed(1)}`);
@@ -274,12 +272,12 @@ function balanceReport(game: Game, ps: Player[]) {
 }
 
 // -----------------------------------------------------------------------------
-// YOUTH=1: Akademie-Bilanz. Akademiespieler = ID mit „_y_“ (ohne Legenden),
+// YOUTH=1: Akademie-Bilanz. Akademiespieler = ID mit „_y_“,
 // Herkunftsverein = ID-Präfix. Investition je Verein = Ausbildungsqualität aus
 // game/youthInvest (falls vorhanden), sonst alte Akademie-Stufe × 20.
 // -----------------------------------------------------------------------------
 const yt = { peak: new Map<string, number>(), first80: new Map<string, number>(), first85: new Map<string, number>(), inv: new Map<string, number[]>(), shares: [] as number[] };
-const isAcad = (p: Player) => p.id.includes('_y_') && !p.development.legendId;
+const isAcad = (p: Player) => p.id.includes('_y_');
 const originOf = (id: string) => id.split('_y_')[0];
 function investScore(c: any): number {
   const yi = c.youthInvest;
@@ -338,15 +336,14 @@ function youthSummary(game: Game) {
 // TOP=1: Breite der Spitze (Liga 1): Spieler ≥85/≥80 nach Herkunft, Top-10,
 // Abstand Spitze/Keller, Meister. Zusammenfassung je Jahrzehnt am Ende.
 // -----------------------------------------------------------------------------
-const topStat = { startIds: null as Set<string> | null, rows: [] as { y: number; n85: number; n80: number; avg: number; top10: number; gap: number; leg85: number; champ: string }[], champs: new Map<string, number>(), peak: new Map<string, number>() };
+const topStat = { startIds: null as Set<string> | null, rows: [] as { y: number; n90: number; n85: number; n80: number; u80: number; u85: number; avg: number; top10: number; gap: number; champ: string }[], champs: new Map<string, number>(), peak: new Map<string, number>() };
 function topReport(game: Game, ps: Player[]) {
   if (!topStat.startIds) topStat.startIds = new Set(Object.keys(game.players));
   const y0 = Number(game.season.slice(0, 4));
-  if ((game.leagues?.playerDivision?.tier ?? 1) !== 1) { console.log('   TOP (nicht Liga 1)'); return; }
-  const legRar = (p: Player) => { const sd = LEGENDS.find((l) => l.id === p.development.legendId); return sd?.rarity ?? (sd && (sd.peak ?? 0) >= 91 ? 'weltklasse' : 'national'); };
-  const origin = (p: Player) => p.development.legendId ? (p.overall >= 85 ? 'Legende-' + legRar(p).slice(0, 4) : 'Legende') : p.id.includes('_y_') ? 'Jugend' : /_r\d{4}_/.test(p.id) ? 'Nachrücker'
-    : /_imp\d{4}_/.test(p.id) ? 'KI-Ausland' : /_uk\d{4}_/.test(p.id) ? 'KI-unten' : /_t\d{4}_/.test(p.id) ? 'Welt'
-    : /_p\d+$/.test(p.id) ? (topStat.startIds!.has(p.id) ? 'Start' : 'Aufsteiger') : 'sonst';
+  const isL1 = (game.leagues?.playerDivision?.tier ?? 1) === 1;
+  trackCareers(game, topStat.startIds, isL1 ? new Set(leagueClubs(game).map((c) => c.id)) : null);
+  if (!isL1) { console.log('   TOP (nicht Liga 1)'); return; }
+  const origin = (p: Player) => originOfPlayer(p, topStat.startIds!);
   const ovr = ps.map((p) => p.overall).sort((a, b) => b - a);
   const by = (min: number) => { const o: Record<string, number> = {}; for (const p of ps) if (p.overall >= min) o[origin(p)] = (o[origin(p)] ?? 0) + 1; return Object.entries(o).sort((a, b) => b[1] - a[1]).map(([k, v]) => k + ' ' + v).join(', '); };
   const lc = leagueClubs(game);
@@ -359,11 +356,12 @@ function topReport(game: Game, ps: Player[]) {
   const champ = played > 100 ? game.table.rows?.[0]?.clubId ?? '' : '';
   if (champ) topStat.champs.set(champ, (topStat.champs.get(champ) ?? 0) + 1);
   for (const p of ps) if (p.overall >= 85) topStat.peak.set(origin(p), Math.max(topStat.peak.get(origin(p)) ?? 0, p.overall));
-  const row = { y: y0, n85: ovr.filter((o) => o >= 85).length, n80: ovr.filter((o) => o >= 80).length, avg: avg(ovr), top10: avg(ovr.slice(0, 10)), gap, leg85: ps.filter((p) => p.overall >= 85 && p.development.legendId).length, champ };
+  const u21 = ps.filter((p) => p.age <= 21);
+  const row = { y: y0, n90: ovr.filter((o) => o >= 90).length, n85: ovr.filter((o) => o >= 85).length, n80: ovr.filter((o) => o >= 80).length, u80: u21.filter((p) => p.overall >= 80).length, u85: u21.filter((p) => p.overall >= 85).length, avg: avg(ovr), top10: avg(ovr.slice(0, 10)), gap, champ };
   const lbh = game.leagueBalance?.history?.[game.leagueBalance.history.length - 1] as { elite?: number } | undefined;
   topStat.rows.push(row);
   const pot = ps.filter((p) => p.age <= 23).map((p) => p.development.basePotential ?? p.overall);
-  console.log(`   TOP ≥90 ${ovr.filter((o) => o >= 90).length} ≥85 ${row.n85} [${by(85)}] | ≥80 ${row.n80} [${by(80)}] | max ${ovr[0]} | Top11 Spitze-Keller ${gap.toFixed(1)} (oben ${avg(t11.slice(0, 3)).toFixed(1)} unten ${avg(t11.slice(-3)).toFixed(1)}, ≥85 bei Top-3 ${starsTop3}) | U23 Basis-Pot ≥85: ${pot.filter((x) => x >= 85).length} | Bremse ${lbh?.elite ?? '-'}`);
+  console.log(`   TOP ≥90 ${row.n90} ≥85 ${row.n85} [${by(85)}] | ≥80 ${row.n80} [${by(80)}] | max ${ovr[0]} | Top11 Spitze-Keller ${gap.toFixed(1)} (oben ${avg(t11.slice(0, 3)).toFixed(1)} unten ${avg(t11.slice(-3)).toFixed(1)}, ≥85 bei Top-3 ${starsTop3}) | U21 ≥80 ${row.u80} ≥85 ${row.u85} [${u21.filter((p) => p.overall >= 80).map((p) => `${p.age}J ${p.overall}`).join(', ')}] | U23 Basis-Pot ≥85: ${pot.filter((x) => x >= 85).length} | Bremse ${lbh?.elite ?? '-'}`);
 }
 function topSummary() {
   const name = (id: string) => g.clubs[id]?.shortName ?? g.simClubs?.[id]?.shortName ?? id;
@@ -371,7 +369,7 @@ function topSummary() {
     const r = topStat.rows.filter((x) => x.y >= a && x.y < b);
     if (!r.length) continue;
     const ch = new Set(r.map((x) => x.champ).filter(Boolean));
-    console.log(`TOP ${a}–${b - 1}: ≥85 ${avg(r.map((x) => x.n85)).toFixed(1)} (Leg. ${avg(r.map((x) => x.leg85)).toFixed(1)}) ≥80 ${avg(r.map((x) => x.n80)).toFixed(1)} Ø ${avg(r.map((x) => x.avg)).toFixed(1)} Top10 ${avg(r.map((x) => x.top10)).toFixed(1)} Spitze-Keller ${avg(r.map((x) => x.gap)).toFixed(1)} | Meister ${ch.size} verschiedene`);
+    console.log(`TOP ${a}–${b - 1}: ≥90 ${avg(r.map((x) => x.n90)).toFixed(1)} ≥85 ${avg(r.map((x) => x.n85)).toFixed(1)} (min ${Math.min(...r.map((x) => x.n85))} max ${Math.max(...r.map((x) => x.n85))}) U21≥80 ${avg(r.map((x) => x.u80)).toFixed(1)} U21≥85 ${avg(r.map((x) => x.u85)).toFixed(1)} ≥80 ${avg(r.map((x) => x.n80)).toFixed(1)} Ø ${avg(r.map((x) => x.avg)).toFixed(1)} Top10 ${avg(r.map((x) => x.top10)).toFixed(1)} Spitze-Keller ${avg(r.map((x) => x.gap)).toFixed(1)} | Meister ${ch.size} verschiedene`);
   }
   const t = [...topStat.champs.entries()].sort((a, b) => b[1] - a[1]);
   console.log(`TOP Meister: ${t.length} verschiedene: ${t.map(([id, n]) => name(id) + ' ' + n).join(', ')} | Höchstwert je Herkunft: ${[...topStat.peak.entries()].map(([k, v]) => k + ' ' + v).join(', ')}`);
@@ -432,36 +430,8 @@ if (process.env.BAL) {
   }
 }
 if (process.env.YOUTH) youthSummary(g);
-if (process.env.TOP) topSummary();
+if (process.env.TOP) { topSummary(); careerSummary(); }
 console.log(`fertig in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
-const legends = [...Object.values(g.players), ...Object.values(g.youthPlayers)].filter((p) => p.development.legendId);
-if (process.env.LEGENDLIST) for (const p of legends) console.log('Legende', p.fullName.padEnd(24), p.naturalPosition, 'Alter', p.age, 'OVR', p.overall, 'Verein', g.clubs[p.clubId]?.shortName ?? p.clubId, p.isYouth ? '(Jugend)' : '', 'Hist', p.development.abilityHistory.map((h) => h.ability).join(','));
-
-// Legenden-Bilanz: Höchstwert der Karriere je Seltenheit (nur ab 24 Jahren).
-{
-  const seeds = new Map(LEGENDS.map((l) => [l.id, l]));
-  const rows: Record<string, number[]> = {};
-  for (const p of legends) {
-    if (p.age < 24) continue;
-    const s = seeds.get(p.development.legendId!);
-    const r = s?.rarity ?? 'alt';
-    const best = Math.max(p.overall, ...p.development.abilityHistory.map((h) => h.ability));
-    (rows[r] ??= []).push(best);
-  }
-  for (const [r, xs] of Object.entries(rows)) {
-    const star = xs.filter((x) => x >= 85).length, good = xs.filter((x) => x >= 78 && x < 85).length;
-    console.log(`Legenden ${r.padEnd(10)} n=${xs.length}  Star(≥85) ${star}  gut(78–84) ${good}  darunter ${xs.length - star - good}  Ø Höchstwert ${(xs.reduce((a, b) => a + b, 0) / Math.max(1, xs.length)).toFixed(1)}`);
-  }
-  if (process.env.LEGENDLIST) {
-    const byId = new Map(legends.map((p) => [p.development.legendId!, p]));
-    for (const id of g.spawnedLegends ?? []) {
-      const s = seeds.get(id); if (!s || s.rarity !== 'weltklasse') continue;
-      const p = byId.get(id);
-      console.log('  W', id, s.firstName, s.lastName, s.position, p ? `${p.age} J. OVR ${p.overall} Pot ${p.development.potentialAbility}/${p.development.basePotential}+${p.development.unfold} ★${p.potentialStars} ${g.clubs[p.clubId]?.shortName ?? p.clubId} Hist ${p.development.abilityHistory.map((h) => h.ability).join(',')} | hoch: ${Object.entries(p.attributes).filter(([, v]) => (v as number) >= 93).map(([k, v]) => k + '=' + v).join(' ')} | sig ${JSON.stringify(p.development.legendSignature)}` : 'nicht mehr im Spiel');
-    }
-  }
-  console.log(`Legenden aktiv: ${legends.length}, Interessenten (Geheimtipp/Ausland): ${(g.legendProspects ?? []).length}`);
-}
 // Diagnose: Wer ist ≥ 85?
 {
   const top = leaguePlayers(g).filter((p) => p.overall >= 85).slice(0, 12);

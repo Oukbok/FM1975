@@ -2,7 +2,6 @@
 // Prüfungen des Editors (zusätzlich zu validateDataset aus dem Spiel).
 // =============================================================================
 import { Dataset, validateDataset } from '../data/dataset/schema';
-import { ARCHETYPE_BY_ID, parseSignature } from '../data/legendArchetypes';
 
 export interface Issue { level: 'error' | 'warn'; area: string; text: string }
 
@@ -80,15 +79,6 @@ export function checkDataset(d: Dataset): Issue[] {
     yr('Marketing', m.name, m.unlockYear); yr('Marketing', m.name, m.obsoleteYear);
     if (m.obsoleteYear && m.obsoleteYear <= m.unlockYear) err('Marketing', `${m.name}: veraltet vor der Freischaltung.`);
   }
-  const legIds = new Set<string>();
-  for (const l of d.legends) {
-    const who = `${l.firstName} ${l.lastName}`;
-    if (l.birthYear < 1935 || l.birthYear > 2085) warn('Legenden', `${who}: Geburtsjahr ${l.birthYear} ungewöhnlich.`);
-    if (legIds.has(l.id)) err('Legenden', `Doppelte Legenden-ID: ${l.id}`);
-    legIds.add(l.id);
-    if (l.archetype && !ARCHETYPE_BY_ID[l.archetype]) warn('Legenden', `${who}: unbekannter Archetyp „${l.archetype}“ (Standard je Position wird genutzt).`);
-    for (const sg of l.signature ?? []) if (!parseSignature(sg)) warn('Legenden', `${who}: Signatur-Wert „${sg}“ hat nicht das Format attribut:von-bis.`);
-  }
 
   // Erlös-Mix: Summe der drei Anteile etwa 0,9 (Rest = Prämien/Beiträge).
   for (const m of d.economy.revenueMix) {
@@ -104,7 +94,7 @@ export function checkDataset(d: Dataset): Issue[] {
   const empties: [string, unknown[]][] = [
     ['DDR-Oberliga', d.clubs.ddrOberliga], ['DDR-Liga', d.clubs.ddrLiga], ['Europa: Teilungen', d.europe.splits],
     ['Europa: Sperren', d.europe.exclusions], ['Chronik', d.timeline], ['Ligareformen', d.leagues.reforms],
-    ['Mitarbeiter', d.staff], ['Marketing', d.marketing], ['Legenden', d.legends],
+    ['Mitarbeiter', d.staff], ['Marketing', d.marketing],
   ];
   for (const [area, list] of empties) if (!list.length) warn(area, 'Leere Liste – das Spiel verwendet dafür die Einträge des Standards.');
   return out;

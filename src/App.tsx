@@ -42,6 +42,7 @@ import { migrateSeating } from './game/seatingGame';
 import { migrateYouthInvest } from './game/youthInvest';
 import { migrateSponsorship } from './game/sponsorGame';
 import { migrateBriefing } from './game/seasonBriefing';
+import { migrateLegacyLegends } from './game/playerMigration';
 import { migratePersonas } from './game/playerWishesGame';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -333,6 +334,8 @@ export default function App() {
     try { migrateSponsorship(s.game); } catch (err) { console.error('Sponsoring-Nachrüstung fehlgeschlagen:', err); }
     // Saison-Briefing: Archiv ab der aktuellen Saison, beim Laden kein automatisches Popup.
     try { migrateBriefing(s.game); } catch (err) { console.error('Briefing-Nachrüstung fehlgeschlagen:', err); }
+    // Legenden-System entfernt: frühere Legenden werden ganz normale Spieler.
+    try { migrateLegacyLegends(s.game); } catch (err) { console.error('Legenden-Bereinigung fehlgeschlagen:', err); }
     // Transfer 2.0: Spielerpersönlichkeit (Wünsche, Gehaltsforderung) nachrüsten.
     try { migratePersonas(s.game); } catch (err) { console.error('Persönlichkeits-Nachrüstung fehlgeschlagen:', err); }
     gameRef.current = s.game;

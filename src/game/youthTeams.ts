@@ -59,7 +59,7 @@ function neededPosition(team: Player[], size: number, year: number, r: number): 
 /** Bewertung für Aussortieren/Aufhören: Stärke im Jahrgang plus erkennbares Potenzial. */
 function keepScore(p: Player): number {
   const [lo, hi] = scoutRange(p);
-  return p.overall + ((lo + hi) / 2) * 6 + (p.development.legendId ? 1000 : 0) + (p.development.protectedUntil ? 50 : 0);
+  return p.overall + ((lo + hi) / 2) * 6 + (p.development.protectedUntil ? 50 : 0);
 }
 
 function addPlayer(g: Game, club: Club, p: Player): void {
@@ -117,7 +117,7 @@ export function youthTeamsSeasonChange(g: Game, date: string): string[] {
     const third = Math.ceil(team.length * 2 / 3);
     // Abgänge: eher Ältere und Schwächere; klare Talente bleiben fast immer.
     team.forEach((p, idx) => {
-      if (p.development.legendId || (p.development.protectedUntil ?? 0) >= year) return;
+      if ((p.development.protectedUntil ?? 0) >= year) return;
       const base = p.age <= 11 ? 0.04 : p.age <= 15 ? 0.08 : 0.12;
       const weak = idx >= third ? 1.8 : 1;
       const talent = scoutRange(p)[1] >= 3.5 ? 0.3 : 1;
