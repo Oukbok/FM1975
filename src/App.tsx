@@ -49,6 +49,7 @@ import { migratePositionSkills } from './game/positionsGame';
 import { migrateDressingRoom } from './game/dressingRoomGame';
 import { migrateTrainingPlan } from './game/trainingWeek';
 import { migrateStaffPeople } from './game/staffWorld';
+import { migrateYouthComps } from './game/youthComps/daily';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 // =============================================================================
@@ -350,6 +351,8 @@ export default function App() {
     // Kabine: Moral 0–100 und Kabinenzustand des eigenen Vereins nachrüsten.
     try { migrateDressingRoom(s.game); } catch (err) { console.error('Kabinen-Nachrüstung fehlgeschlagen:', err); }
     try { migrateTrainingPlan(s.game); migrateStaffPeople(s.game); } catch (err) { console.error('Trainerteam-Nachrüstung fehlgeschlagen:', err); }
+    // Jugendwettbewerbe: laufende Saison sofort, vergangene Spieltage werden nachsimuliert.
+    try { migrateYouthComps(s.game); } catch (err) { console.error('Jugendwettbewerbe-Nachrüstung fehlgeschlagen:', err); }
     gameRef.current = s.game;
     setCurrentSlot(slot);
     setInGame(true);

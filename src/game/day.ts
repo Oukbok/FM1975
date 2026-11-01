@@ -29,6 +29,7 @@ import { makeMessage, pushMessage } from '../engine/messages';
 import { dailyRecovery } from '../engine/training';
 import { setTransferDate } from '../engine/transfers';
 import { aiClubsDaily, aiWindowClose } from './aiClubs';
+import { youthCompsDaily } from './youthComps/daily';
 import { ownTrainingDay } from './trainingWeek';
 import { applyYouthGem, GEM_CHANCE_YOUTH, maybeMakeGem } from '../engine/gems';
 import { academyIntake, ageYouthPlayers, developYouthWeekly, graduateYouth } from '../engine/youth';
@@ -521,6 +522,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   contractReminders(g, today);
   announceUpcomingRules(g, today);
   aiClubsDaily(g, today);
+  youthCompsDaily(g, today);
   rollAiOffers(g, today);
   checkPromises(g, today);
   contractClausesDaily(g, today); // Treueprämie, Erfolgsklausel, Leihe mit Kaufoption (game/playerWishesGame.ts)

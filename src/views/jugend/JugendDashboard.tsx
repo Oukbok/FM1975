@@ -2,6 +2,9 @@ import { yearOf } from '../../engine/economy';
 import { originClubOf } from '../../engine/persona';
 import { Game } from '../../game/state';
 import { youthInvestOf } from '../../game/youthInvest';
+import { myYouthStandings } from '../../game/youthComps/view';
+import { clubView } from '../../game/clubProfile';
+import { fmtDateShort } from '../../ui/format';
 import { Screen } from '../../shell/navigation';
 import { YOUTH_AGE_CLASS_LABEL, YOUTH_AGE_CLASS_ORDER, youthAgeClass } from '../../types';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
@@ -20,6 +23,7 @@ export function JugendDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) =>
   const top = youth.filter((p) => p.age >= 13).sort((a, b) => mid(b) - mid(a)).slice(0, 6);
   const byClass = YOUTH_AGE_CLASS_ORDER.map((c) => ({ c, n: youth.filter((p) => youthAgeClass(p.age) === c).length })).filter((x) => x.n > 0).reverse();
   const homegrown = squadOf(g).filter((p) => originClubOf(p.id).homegrown && originClubOf(p.id).clubId === club.id).sort((a, b) => b.overall - a.overall);
+  const standings = myYouthStandings(g);
   const ready = youth.filter((p) => p.age >= 17).sort((a, b) => b.overall - a.overall).slice(0, 5);
   return (
     <DashPage>
@@ -54,7 +58,13 @@ export function JugendDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) =>
       </DashBox>
 
       <DashBox title="Jugendwettbewerbe" icon="trophy" onClick={() => onGoto('jugendwettbewerbe')}>
-        <Empty icon="trophy">Meisterschaften und Pokale der Jugend folgen bald.</Empty>
+        {standings.length ? standings.slice(0, 3).map((s) => (
+          <div key={s.compKey} className="yc-dash-row">
+            <KV k={s.compKey === 'pokal' ? 'Junioren-Pokal' : s.compKey === 'uyl' ? 'UEFA Youth League' : `${s.cls}-Jugend · ${s.league ?? s.compLabel}`} v={s.pos ? `${s.pos}. von ${s.size}` : s.ko ?? '–'} />
+            {s.pos != null && s.ko && <div className="dnote">{s.compKey === 'uyl' ? 'K.-o.-Runde' : 'Endrunde'}: {s.ko}</div>}
+            {s.next && <div className="dnote">{fmtDateShort(s.next.date).dmy} {s.next.home ? 'gegen' : 'bei'} {clubView(g, s.next.opp, year).name}</div>}
+          </div>
+        )) : <Empty icon="trophy">Deine Jugend spielt in dieser Saison in keinem Wettbewerb mehr.</Empty>}
       </DashBox>
     </DashPage>
   );

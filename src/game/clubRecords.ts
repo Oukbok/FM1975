@@ -15,7 +15,7 @@ import { Game } from './state';
 
 /** [Saison, Ebene, Platz, Ligagröße, Liga-Index in `divs`] */
 export type SeasonTuple = [string, number, number, number, number];
-export type TitleKind = 'meister' | 'ddr' | 'pokal' | 'ec' | 'cwc' | 'uefa' | 'halle';
+export type TitleKind = 'meister' | 'ddr' | 'pokal' | 'ec' | 'cwc' | 'uefa' | 'halle' | 'jugendA' | 'jugendB' | 'jugendPokal' | 'jugendDdr' | 'uyl';
 /** Ein Spiel deines Vereins gegen diesen Gegner: [Saison, Datum, Wettbewerb, Heim (1/0), Tore dein Verein, Tore Gegner] */
 export type H2HTuple = [string, string, 'L' | 'P' | 'E', number, number, number];
 
@@ -49,6 +49,8 @@ export const TITLE_DE: Record<TitleKind, string> = {
   meister: 'Deutscher Meister', ddr: 'DDR-Meister', pokal: 'Landespokal',
   ec: 'Europapokal der Landesmeister', cwc: 'Europapokal der Pokalsieger', uefa: 'UEFA-Pokal',
   halle: 'DFB-Hallenpokal (Masters)',
+  jugendA: 'Deutscher A-Jugend-Meister', jugendB: 'Deutscher B-Jugend-Meister', jugendPokal: 'DFB-Junioren-Pokal',
+  jugendDdr: 'DDR-Juniorenmeister', uyl: 'UEFA Youth League',
 };
 
 /** Titel außerhalb des Saisonabschlusses eintragen (z. B. Hallen-Masters, game/indoorGame.ts). */

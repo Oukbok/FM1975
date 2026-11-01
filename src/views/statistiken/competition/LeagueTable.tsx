@@ -57,7 +57,7 @@ export function LeagueTable({ g, snap }: { g: Game; snap: CompSnapshot }) {
               const diff = r.gf - r.ga;
               return (
                 <tr key={r.clubId} className={r.clubId === mid ? 'me' : ''}>
-                  <td className="ctr"><span className={`pos-badge ${m === 'all' ? zoneOf(r.pos, snap.tier, rows.length, historic) : ''}`}>{r.pos}</span></td>
+                  <td className="ctr"><span className={`pos-badge ${m === 'all' ? (snap.zones ? snap.zones[r.pos - 1] ?? '' : zoneOf(r.pos, snap.tier, rows.length, historic)) : ''}`}>{r.pos}</span></td>
                   <td className="nowrap"><TeamName g={g} id={r.clubId} season={snap.season} /></td>
                   <td className="num">{r.p}</td><td className="num">{r.w}</td><td className="num">{r.d}</td><td className="num">{r.l}</td>
                   <td className="num muted">{r.gf}:{r.ga}</td>

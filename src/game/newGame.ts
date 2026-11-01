@@ -40,6 +40,7 @@ import { InboxMessage, NewGameOptions, YOUTH_ENTRY_AGE } from '../types';
 import { setDisplayYear } from '../ui/format';
 import { ensureCoaches } from './coachCarousel';
 import { migrateYouthInvest } from './youthInvest';
+import { migrateYouthComps } from './youthComps/daily';
 import { FINANCE_LEVEL } from './financeMigration';
 import { migrateLeaguePool } from './clubPool';
 
@@ -214,5 +215,6 @@ export function createNewGame(opts: NewGameOptions): Game {
   // Saison-Briefing „So anders ist der Fußball 1975/76“ (game/seasonBriefing.ts).
   recordSeasonBriefing(g0, true);
   migratePositionSkills(g0); // Positionsvertrautheit aller Spieler (game/positionsGame.ts)
+  migrateYouthComps(g0); // Jugendwettbewerbe der Saison (game/youthComps/)
   return g0;
 }

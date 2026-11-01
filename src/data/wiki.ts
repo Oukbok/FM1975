@@ -1524,6 +1524,31 @@ Unter **Verein → Vereinsgelände** siehst du deine Anlage als Zeichnung. Jede 
 Der Baustil folgt der Epoche (Backstein und Satteldach in den 70ern und 80ern, Putz und Flachdach ab 1990, Glas ab 2010), die Jahreszeit ist sichtbar (Herbstlaub, Schnee im Winter), und der Parkplatz füllt sich mit dem Ansehen des Vereins. Ein Klick auf ein Gebäude zeigt Stufe, Wirkung, Fixkosten und den nächsten Ausbau.`,
   },
   {
+    id: 'youth-competitions',
+    category: 'youth',
+    title: 'Jugendwettbewerbe',
+    keywords: ['jugendwettbewerbe', 'a-jugend', 'b-jugend', 'u19', 'u17', 'jugendmeister', 'junioren-bundesliga', 'nachwuchsliga', 'junioren-pokal', 'youth league', 'ddr', 'endrunde', 'verbandsliga', 'regionalliga'],
+    body: `## Was gespielt wird
+Unter **Jugend › Jugendwettbewerbe** laufen die Meisterschaften und Pokale des Nachwuchses – für alle Vereine, nicht nur für dich. Die Seite ist aufgebaut wie Statistiken › Liga: oben Saison und Wettbewerb, links Tabelle, Gruppen oder Endrunde (Turnierbaum oder Runden), rechts die Bestenlisten (Tore, Vorlagen, Scorer, Karten, Weiße Weste) und deine Lage.
+
+## Formate nach Epoche
+- **A-Jugend (U19):** bis 1995/96 Verbandsligen der Landesverbände, deren Meister (16 Plätze) spielen die **Endrunde** im K.-o.-System mit Hin- und Rückspiel, Endspiel in einem Spiel. 1996/97–2002/03 fünf **Regionalligen** (Nord, Nordost, West, Südwest, Süd) und eine Endrunde der letzten Acht. Ab 2003/04 **A-Junioren-Bundesliga** mit drei Staffeln à 14 (Nord/Nordost, West, Süd/Südwest); die drei Meister und der Zweite aus Süd/Südwest spielen das Halbfinale. Ab 2024/25 **DFB-Nachwuchsliga**: Vorrunde in regionalen Gruppen, Hauptrunde Liga A, Achtelfinale in einem Spiel.
+- **B-Jugend (U17):** ab 1976/77 wie die A-Jugend; Regionalligen ab 2000/01, Bundesliga ab 2007/08, Nachwuchsliga ab 2024/25.
+- **DFB-Junioren-Pokal (U19):** ab 1986/87 mit den Pokalsiegern der Landesverbände, ab 2017/18 mit 32 und ab 2025/26 mit 64 Teams. Ein Spiel, Verlängerung, Elfmeterschießen; Amateure haben Heimrecht.
+- **DDR:** Junioren- bzw. Nachwuchsoberliga der 14 Oberligisten (Doppelrunde, ohne Auf- und Abstieg) bis 1990/91.
+- **UEFA Youth League:** ab 2013/14 die Jugend der Champions-League-Vereine (Gruppen, dann K.-o., Final Four in Nyon); ab 2015/16 zusätzlich der Meisterweg mit dem deutschen A-Jugend-Meister des Vorjahres; ab 2024/25 Ligaphase mit 36 Teams.
+In Regionalliga und Bundesliga steigen je Staffel drei Vereine ab; nachrücken die Vereine der Region mit der stärksten Jugend.
+
+## Wie gespielt wird
+Jugendspiele sind sonntags (Europapokal mittwochs), mit Winterpause wie bei den Profis; alles ist vor dem Saisonende entschieden. Die Ergebnisse folgen der **Stärke der A- bzw. B-Jugend**: Bei dir zählt die beste Elf deiner echten Mannschaft (Jugend › Mannschaften). Bei anderen Vereinen ergibt sie sich aus Ausbildungsqualität und Ruf der Akademie (Jugend › Akademie) bzw. der Vereinsgröße; ihre bekannten Talente spielen mit, die übrigen Spieler werden erzeugt.
+
+## Was es bringt
+- Titel (und ein Endspiel) heben den **Ruf der Akademie** – und damit die Anziehungskraft im Wettbewerb um Talente.
+- Siege geben deinen eingesetzten Jugendspielern einen kleinen **Entwicklungsschub**, ein Titel zusätzlich Moral.
+- Meistertitel stehen in der **Vereins-Historie** (Vereinsprofil › Historie); vergangene Saisons bleiben im Archiv (Tabellen, Runden, die besten Spieler je Kategorie).
+Alte Spielstände starten sofort mit der laufenden Saison; bereits vergangene Spieltage werden beim Laden nachgespielt.`,
+  },
+  {
     id: 'youth-overview',
     category: 'youth',
     title: 'Jugendsystem — Überblick',

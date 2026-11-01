@@ -52,6 +52,8 @@ export interface CompSnapshot {
   clubStats?: Partial<Record<ClubStatCat, ClubStatRow[]>>;
   topScorer?: { clubs: string[]; goals: number };
   note?: string;
+  /** Eigene Tabellenzonen je Platz (Index = Platz − 1), z. B. Jugend: Endrunde/Abstieg. */
+  zones?: string[];
 }
 
 const CUP_LABEL = (k: CupKey, season: string) => (k === 'cup' ? 'Landespokal' : k === 'uefa' && seasonStartYear(season) < 1971 ? 'Messepokal' : EURO_COMP_NAMES[k]);

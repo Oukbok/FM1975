@@ -3,6 +3,7 @@
 // Weiße Weste – oder Vereinswerte, wenn eine Liga vereinsweise simuliert wird.
 // =============================================================================
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import PlayerModal from '../../../components/PlayerModal';
 import type { ClubStatCat, CompSnapshot } from '../../../game/competitionView';
 import type { StatCat } from '../../../game/leagueArchive';
@@ -23,12 +24,14 @@ export function StatsBox({ g, snap }: { g: Game; snap: CompSnapshot | null }) {
   const [cat, setCat] = useState<StatCat>('goals');
   const [ccat, setCcat] = useState<ClubStatCat>('gf');
   const [sel, setSel] = useState<string | null>(null);
-  const p = sel ? g.players[sel] : null;
+  const p = sel ? g.players[sel] ?? g.youthPlayers[sel] : null; // Jugendwettbewerbe: auch Jugendspieler
   const stats = snap?.stats;
   const clubStats = snap?.clubStats;
-  const modal = p ? (
+  // Über ein Portal: die Box (Glas-Effekt) würde ein festes Popup sonst auf ihre Größe beschneiden.
+  const modal = p ? createPortal(
     <PlayerModal player={p} club={g.clubs[p.clubId]} squad={g.clubs[p.clubId]?.playerIds.map((id) => g.players[id]).filter(Boolean)}
-      today={g.calendar.currentDate} season={g.season} onClose={() => setSel(null)} />
+      today={g.calendar.currentDate} season={g.season} onClose={() => setSel(null)} />,
+    document.body,
   ) : null;
 
   if (stats) {
@@ -41,7 +44,7 @@ export function StatsBox({ g, snap }: { g: Game; snap: CompSnapshot | null }) {
           <div className="cmp-statlist">
             {list.map((r, i) => {
               const rank = i > 0 && list[i - 1].value === r.value ? '' : `${i + 1}.`;
-              const clickable = !!g.players[r.pid];
+              const clickable = !!(g.players[r.pid] ?? g.youthPlayers[r.pid]);
               return (
                 <div key={r.pid} className={`cmp-stat ${clickable ? 'clickable' : ''} ${r.clubId === g.managedClubId ? 'me' : ''}`} onClick={() => clickable && setSel(r.pid)} title={clickable ? 'Spielerprofil öffnen' : undefined}>
                   <span className="cmp-rank">{rank}</span>
