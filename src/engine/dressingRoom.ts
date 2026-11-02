@@ -69,6 +69,22 @@ export interface DressingRoomState {
   history?: { date: string; mood: number; cohesion: number; outsiders: number }[];
   /** Letzte Maßnahmen/Vorfälle (Anzeige). */
   log?: { date: string; text: string }[];
+  /** Sofortige Moral-Sprünge je Spieler (Anzeige „+6 Siegtor gegen …“, game/moraleJolt.ts). */
+  jolts?: DRJolt[];
+  /** Bis zu diesem Tag sind Spiele für die Moral-Sprünge ausgewertet. */
+  joltScan?: string;
+  /** Spieler, die am Vortag auf der Transferliste standen. */
+  listed?: string[];
+}
+
+/** Sofortiger Moral-Sprung: wirkt sofort, gleitet danach mit dem Tageslauf zum Zielwert zurück. */
+export interface DRJolt { pid: string; date: string; value: number; label: string }
+/** Täglicher Anteil, mit dem die Moral dem Zielwert folgt (game/dressingRoomGame.ts). */
+export const MORALE_GLIDE = 0.08;
+/** Nachwirkung eines Sprungs nach `days` Tagen (ohne neue Ereignisse). */
+export function joltLeft(j: DRJolt, today: string): number {
+  const d = Math.max(0, (Date.parse(today + 'T00:00:00Z') - Date.parse(j.date + 'T00:00:00Z')) / 86400000);
+  return j.value * Math.pow(1 - MORALE_GLIDE, d);
 }
 
 // -----------------------------------------------------------------------------
@@ -159,6 +175,23 @@ export interface DRContext {
   ppg: number | null;
   boosts: DRBoost[];
   conflicts: DRConflict[];
+  /** Lage gemessen am Saisonziel des Vorstands (nur während der Saison). */
+  goal?: DRGoal;
+}
+/** Tabellenlage gegenüber dem Saisonziel. */
+export interface DRGoal {
+  /** Saisonziel des Vorstands (Text). */
+  label: string;
+  pos: number;
+  /** Platz, den das Ziel verlangt. */
+  expected: number;
+  size: number;
+  /** Bisher gespielte Ligaspiele. */
+  played: number;
+  /** Ab diesem Platz Abstiegszone. */
+  dropFrom: number;
+  /** Liga-Spiele in Folge ohne Sieg. */
+  winless: number;
 }
 export interface DRFactor { label: string; value: number }
 export type DRTier = 'fuehrung' | 'stuetze' | 'mitlaeufer' | 'aussen';
@@ -192,6 +225,23 @@ export interface DRAnalysis {
 
 const sum = (fs: DRFactor[]) => fs.reduce((a, f) => a + f.value, 0);
 const push = (fs: DRFactor[], label: string, value: number) => { if (Math.abs(value) >= 0.5) fs.push({ label, value: Math.round(value) }); };
+
+/**
+ * Druck aus der Tabelle: Saisonziel klar verfehlt, Abstiegskampf wider
+ * Erwarten, lange sieglos. Wächst in den ersten zehn Spieltagen auf volle
+ * Stärke (vorher ist die Tabelle wenig aussagekräftig).
+ */
+export function goalFactors(goal: DRGoal): DRFactor[] {
+  const fs: DRFactor[] = [];
+  const w = clamp((goal.played - 3) / 7, 0, 1);
+  const rel = (goal.pos - goal.expected) / Math.max(1, goal.size);
+  if (rel > 0.05 && goal.pos - goal.expected >= 2) push(fs, `Saisonziel verfehlt (Platz ${goal.pos} statt ${goal.expected})`, -clamp(rel * 50, 0, 18) * w);
+  else if (rel < -0.12) push(fs, 'Besser als erwartet', clamp(-rel * 20, 0, 6) * w);
+  if (goal.pos >= goal.dropFrom && goal.expected < goal.dropFrom - 2) push(fs, 'Abstiegskampf wider Erwarten', -8 * w);
+  if (goal.winless >= 3) push(fs, `Seit ${goal.winless} Ligaspielen sieglos`, -clamp((goal.winless - 2) * 2.5, 0, 12));
+  return fs;
+}
+
 
 // -----------------------------------------------------------------------------
 // Einfluss
@@ -352,6 +402,7 @@ export function analyzeRoom(xs: DRPlayerIn[], ctx: DRContext, scores: Record<str
   // 6) Teamstimmung (Zielwert)
   const mw: DRFactor[] = [];
   if (ctx.ppg != null) push(mw, 'Letzte Ergebnisse', clamp((ctx.ppg - 1.35) * 15, -20, 18));
+  if (ctx.goal && !ctx.offSeason) for (const f of goalFactors(ctx.goal)) mw.push(f);
   const lead = ranked.slice(0, 5);
   const wsum = lead.reduce((a, x) => a + inf.get(x.p.id)!.value, 0) || 1;
   const leadMorale = lead.reduce((a, x) => a + (scores[x.p.id] ?? 60) * inf.get(x.p.id)!.value, 0) / wsum;

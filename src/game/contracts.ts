@@ -22,6 +22,7 @@ import { fmtPrice, fmtWage } from '../ui/format';
 import { repairSquadLists, wageRatioOf } from './squads';
 import { freeAgentDestination, preferredClub } from './playerWishesGame';
 import { personaOf } from '../engine/persona';
+import { moraleJolt } from './moraleJolt';
 import { Game } from './state';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -75,6 +76,7 @@ export function offerContract(g: Game, playerId: string, wage: number, years: nu
     p.contract.expiryDate = `${endYear}-06-30`;
     p.contract.satisfaction = clamp((p.contract.satisfaction ?? 60) + 12, 0, 100);
     p.contract.talks = undefined;
+    moraleJolt(g, p, 6, 'Vertrag verlängert', today); // Kabine: sofortiger Moral-Sprung (game/moraleJolt.ts)
     pushMessage(g.messages, makeMessage({
       date: today, category: 'contract', from: 'Sportdirektor',
       subject: `${p.fullName} verlängert bis ${p.contract.expiryDate.slice(0, 4)}`,
@@ -84,6 +86,7 @@ export function offerContract(g: Game, playerId: string, wage: number, years: nu
     return { ok: true, text: res.text };
   }
   p.contract.satisfaction = clamp((p.contract.satisfaction ?? 60) - (wage / dem.wage < 0.8 ? 6 : 2), 0, 100);
+  moraleJolt(g, p, res.breakOff ? -7 : wage / dem.wage < 0.8 ? -4 : -1, res.breakOff ? 'Vertragsgespräche abgebrochen' : wage / dem.wage < 0.8 ? 'Vertragsangebot als Geringschätzung empfunden' : 'Vertragsangebot abgelehnt', today);
   if (res.breakOff) {
     const d = new Date(today + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + 60);
     talks.blockedUntil = d.toISOString().slice(0, 10);

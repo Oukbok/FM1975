@@ -486,12 +486,12 @@ Save-Version **7**: Altstände ohne Frische werden beim Laden nachgerüstet (\`r
     id: 'condition-kabine',
     category: 'condition',
     title: 'Kabine: Moral, Einfluss und Teamstimmung',
-    keywords: ['kabine', 'moral', 'stimmung', 'teamstimmung', 'zusammenhalt', 'einfluss', 'führungsspieler', 'außenseiter', 'clique', 'gruppe', 'kapitän', 'mannschaftsrat', 'gespräch', 'mannschaftssitzung', 'teamevent', 'streit', 'konflikt', 'sprachbarriere', 'kabinenpredigt'],
+    keywords: ['kabine', 'moral', 'stimmung', 'teamstimmung', 'zusammenhalt', 'einfluss', 'führungsspieler', 'außenseiter', 'clique', 'gruppe', 'kapitän', 'mannschaftsrat', 'gespräch', 'mannschaftssitzung', 'teamevent', 'streit', 'konflikt', 'sprachbarriere', 'kabinenpredigt', 'pyramide', 'saisonziel', 'krise', 'moral-sprung'],
     body: `## Worum geht es?
 Unter **Kader › Kabine** siehst du, wie deine Mannschaft innen funktioniert: wer den Ton angibt, wer außen vor ist und warum – und wie es um die **Moral** jedes Spielers steht. Die Moral wirkt über die Tagesform direkt auf die Leistung im Spiel (sehr schlecht ×0,95 bis sehr gut ×1,03).
 
 ## Moral (0–100)
-Jeder Spieler deines Vereins hat eine Moral von 0 bis 100. Sie folgt täglich langsam einem **Zielwert** (etwa 8 % des Abstands pro Tag). Der Zielwert ist die Summe sichtbarer Faktoren – beim Spieler im Fokus steht unter „Warum diese Moral?“ jeder einzelne mit + oder −:
+Jeder Spieler deines Vereins hat eine Moral von 0 bis 100. Sie folgt täglich langsam einem **Zielwert** (etwa 8 % des Abstands pro Tag). Was passiert, wirkt aber **sofort** (siehe „Sofortige Sprünge“). Der Zielwert ist die Summe sichtbarer Faktoren – beim Spieler im Fokus steht unter „Warum diese Moral?“ jeder einzelne mit + oder −:
 - **Spielzeit gemessen an der Rolle:** Wer sich als Stammkraft sieht (Top 11 im Kader) und draußen sitzt, verliert deutlich – Ehrgeizige mehr. Ergänzungsspieler und Talente sind geduldiger. In Sommer- und Winterpause zählt die Spielzeit nicht.
 - **Teamstimmung**, **eigene Form**, **Vertrag und Zufriedenheit** (siehe Kabinenfrieden).
 - **Gehalt deutlich unter Gleichwertigen** (Spieler mit ähnlicher Stärke verdienen viel mehr) – Geldbewusste stört das mehr.
@@ -502,6 +502,15 @@ Jeder Spieler deines Vereins hat eine Moral von 0 bis 100. Sie folgt täglich la
 
 Stufen: unter 24 sehr schlecht, ab 24 schlecht, ab 41 okay, ab 59 gut, ab 77 sehr gut.
 
+## Sofortige Sprünge
+Ereignisse verändern die Moral sofort; danach gleitet sie wieder zum Zielwert zurück (nach einer Woche ist gut die Hälfte des Sprungs verflogen). Beim Spieler im Fokus stehen sie unter „Zuletzt passiert“, z. B. „+6 Siegtor beim 2:1 gegen …“.
+- **Spiele:** Sieg (+2 bis +5 je nach Höhe) bzw. Niederlage (−2 bis −5) für alle, **Tor** (+2, mehrere Tore mehr), **Siegtor** beim Sieg mit einem Tor Unterschied (+4), **Glanzleistung** (Note bis 1,6) bzw. **schwaches Spiel** (ab 5,0), **Platzverweis**. Wer sich als Stammkraft sieht und **nicht aufgestellt** wird, verliert sofort (−3 bis −5, Ehrgeizige mehr); **nur eingewechselt** ärgert Stammkräfte, Talente und Ergänzungsspieler freuen sich über die **Einwechslung**. Ein Spiel zählt höchstens ±10.
+- **Pokal-Aus:** gegen Amateure ein Schock für alle (−5 sofort, dazu Teamstimmung und Zusammenhalt), sonst ein kleiner Dämpfer.
+- **Gespräche** (Lob, Kritik, Einsatzzusage, Beruhigen), **Kapitän/Mannschaftsrat**, **Antworten auf Kabinen-Vorfälle**, **Zusagen** gehalten oder gebrochen: Sprung sofort, dazu ein abklingender Faktor.
+- **Vertrag:** Verlängerung +6, abgelehntes Angebot −1, ein deutlich zu niedriges −4, abgebrochene Gespräche −7.
+- **Transferliste:** draufgesetzt −8, heruntergenommen +4. **Versprechen** gehalten +5, gebrochen −22.
+- Ereignisse aus dem Postfach, Trainingslager oder Hallenturniere, die die Moral-Stufe ändern, erscheinen mit dem Betreff der Nachricht.
+
 ## Einfluss (0–100)
 Wie sehr ein Spieler die Kabine prägt: **Alter und Erfahrung**, **Jahre im Verein**, **Stammplatz**, **Stärke im Kader**, **Kapitän** (+15) und **Mannschaftsrat** (+8), **Führungsqualität** (Attribut), **Auftreten** (Rampenlicht, Ehrgeiz, Professionalität), **Sprachbarriere** und **neu im Verein** (−). Daraus ergibt sich die Rolle: **Führungsspieler** (der Einflussreichste und bis zu drei weitere ab 62), **Stütze** (ab 42), **Mitläufer** – oder **außen vor**.
 
@@ -509,11 +518,11 @@ Wie sehr ein Spieler die Kabine prägt: **Alter und Erfahrung**, **Jahre im Vere
 Gründe werden gewichtet: keine Einsätze, Sprachbarriere (Landsleute im Kader helfen), Gehalt deutlich unter Gleichwertigen, gebrochenes Versprechen, Konflikt (mit einem Führungsspieler besonders schwer), abgelehnter Wechselwunsch, Transferliste, noch nicht angekommen. Erst mehrere Gründe zusammen machen einen Spieler zum Außenseiter. Außenseiter verlieren Moral und drücken Zusammenhalt und Stimmung.
 
 ## Gruppen
-Jeder Spieler gehört einer Gruppe an: **Führungskreis**, **Sprachgruppen** (ab zwei Spielern gleicher Fremdsprache), **Neuzugänge** (ab drei), **Junge Wilde** (bis 22), **Routiniers** (ab 30), **Stammkräfte**, **Ergänzungsspieler**. Der Kabinen-Kreis zeigt innen die Führung, außen die Außenseiter, die Sektoren sind die Gruppen; gestrichelte Linien sind Konflikte.
+Jeder Spieler gehört einer Gruppe an: **Führungskreis**, **Sprachgruppen** (ab zwei Spielern gleicher Fremdsprache), **Neuzugänge** (ab drei), **Junge Wilde** (bis 22), **Routiniers** (ab 30), **Stammkräfte**, **Ergänzungsspieler**. Die **Kabinen-Pyramide** zeigt die Hierarchie: oben die Führungsspieler, darunter Stützen und Mitläufer, unten wer außen vor ist; je Stufe steht links der Einflussreichste. Der Smiley ist die Moral, die kleine Ziffer die Gruppe (Legende unter der Pyramide – zeigst du auf eine Gruppe, werden ihre Mitglieder hervorgehoben), gestrichelte Linien sind Konflikte.
 
 ## Zusammenhalt und Teamstimmung
 **Zusammenhalt** steigt mit gemeinsamen Jahren der Stammkräfte und guter Führung; viele Neuzugänge, abgeschottete Sprachgruppen, Außenseiter, Konflikte und Unruhe auf der Bank senken ihn. Teamevents stärken ihn.
-**Teamstimmung** folgt den letzten fünf Ligaergebnissen, der Laune der Führungsspieler (nach Einfluss gewichtet), dem Zusammenhalt, Außenseitern, Konflikten und deinen Maßnahmen. Sie fließt in die Moral aller Spieler ein.
+**Teamstimmung** folgt den letzten fünf Ligaergebnissen, dem **Saisonziel** (siehe unten), der Laune der Führungsspieler (nach Einfluss gewichtet), dem Zusammenhalt, Außenseitern, Konflikten und deinen Maßnahmen. Sie fließt in die Moral aller Spieler ein.
 
 ## Was du tun kannst
 - **Einzelgespräch:** loben, kritisieren, Einsatz versprechen, beruhigen. Ob es ankommt, hängt von Persönlichkeit, Form und Lage ab (Einschätzung unter dem Knopf). Mit demselben Spieler frühestens nach 10 Tagen wieder; jedes weitere Gespräch innerhalb von 60 Tagen wirkt schwächer (×0,65). Ein **Einsatzversprechen** muss gehalten werden: zwei Startelf-Einsätze in vier Wochen, sonst sinken Moral und Glaubwürdigkeit.
@@ -524,15 +533,22 @@ Jeder Spieler gehört einer Gruppe an: **Führungskreis**, **Sprachgruppen** (ab
 ## Vorfälle
 Selten (höchstens alle drei Wochen) meldet sich die Kabine im Postfach und unter „Vorfälle“: **Streit** zweier Spieler, ein **Führungsspieler fordert etwas** für die Mannschaft (je nach Epoche Siegprämie, Masseur, Familienbereich, freie Tage, Social-Media-Freiheiten), ein **Neuzugang findet keinen Anschluss** (Pate, Sprachkurs), der **Mannschaftsrat wünscht sich einen Teamabend**, **Grüppchenbildung nach einer Niederlagenserie** oder die Frage nach einer **Kabinenpredigt** nach einer hohen Niederlage. Ohne Antwort gilt nach sieben Tagen die vorsichtige Standardwahl.
 
+## Saisonziel und Tabellendruck
+Die Mannschaft kennt das Saisonziel des Vorstands. Ab etwa dem vierten Spieltag (volle Stärke nach zehn) drückt die Tabelle auf die Teamstimmung:
+- **Saisonziel verfehlt:** je weiter du hinter dem verlangten Platz stehst, desto mehr, ab zwei Plätzen Rückstand (bis −18; Meisterschaft = Platz 1, Europapokal = Platz 4, Mittelfeld = Mitte, Klassenerhalt = über dem Strich).
+- **Abstiegskampf wider Erwarten:** auf einem Abstiegsplatz, obwohl mehr verlangt war (−8).
+- **Sieglos:** ab drei Ligaspielen ohne Sieg −2,5 je weiterem Spiel (bis −12).
+- **Besser als erwartet** hebt die Stimmung etwas (bis +6).
+
 ## Ohne Eingreifen
-Die Kabine läuft meist von selbst ordentlich. Krisen entstehen vor allem durch Niederlagenserien, viele Neuzugänge mit Sprachproblemen, unzufriedene Stammkräfte auf der Bank und Konflikte. Steckt die Stimmung vier Wochen unter 35, raufen sich die Spieler selbst zusammen (mit einem anerkannten Kapitän stärker) – eine Dauerkrise gibt es also nicht, aber schneller geht es mit dir. Eingreifen hilft spürbar – ständiges Eingreifen nutzt sich ab.
+Die Kabine läuft meist von selbst ordentlich – an etwa jedem 15. bis 25. Tag ist die Stimmung aber schlecht (unter 35), in Spielzeiten mit klar verfehltem Saisonziel etwa dreimal so oft. Mit Gesprächen (vor allem mit den Führungsspielern), gut dosierten Sitzungen und Teamevents kannst du das deutlich abfedern. Krisen entstehen vor allem durch Niederlagenserien, Tabellendruck, viele Neuzugänge mit Sprachproblemen, unzufriedene Stammkräfte auf der Bank und Konflikte. Steckt die Stimmung gut drei Wochen unter 35, raufen sich die Spieler selbst zusammen (mit einem anerkannten Kapitän stärker) – eine Dauerkrise gibt es also nicht, aber schneller geht es mit dir. Eingreifen hilft spürbar – ständiges Eingreifen nutzt sich ab.
 
 ## KI-Vereine
 Bei den anderen Vereinen folgt die Stimmung den letzten Ergebnissen; die Moral ihrer Spieler wandert wöchentlich in diese Richtung (Stammkräfte ohne Einsätze und Unzufriedene eine Stufe tiefer).
 
 ## Code
-- \`engine/dressingRoom.ts\` (Rechnung), \`game/dressingRoomGame.ts\` (Tageslauf, KI, Aktionen), \`game/dressingRoomEvents.ts\` (Vorfälle), Seite \`views/kader/DressingRoomView.tsx\`.
-- Felder: \`Player.moraleScore\`, \`Club.dressingRoom\`.`,
+- \`engine/dressingRoom.ts\` (Rechnung, Tabellendruck \`goalFactors\`), \`game/dressingRoomGame.ts\` (Tageslauf, KI, Aktionen, \`goalOf\`), \`game/moraleJolt.ts\` (sofortige Sprünge), \`game/dressingRoomEvents.ts\` (Vorfälle), Seite \`views/kader/DressingRoomView.tsx\` + \`kabine/RoomPyramid.tsx\`.
+- Felder: \`Player.moraleScore\`, \`Club.dressingRoom\` (darin \`jolts\`, \`joltScan\`, \`listed\`).`,
   },
 
   // ---------------------------------------------------------------------------

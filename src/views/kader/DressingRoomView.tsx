@@ -1,5 +1,5 @@
 // =============================================================================
-// KABINE (Kader › Kabine) — Teamstimmung, Einfluss, Gruppen, Außenseiter,
+// KABINE (Kader › Kabine) — Teamstimmung, Hierarchie-Pyramide, Gruppen, Außenseiter,
 // Gespräche, Vorfälle und Maßnahmen.
 // Rechnung: engine/dressingRoom.ts · Spielablauf: game/dressingRoomGame.ts ·
 // Vorfälle: game/dressingRoomEvents.ts · Teile: views/kader/kabine/
@@ -12,7 +12,7 @@ import { Game } from '../../game/state';
 import { DashBox, DashPage, Empty, Kpi } from '../../ui/DashPage';
 import { condColor, fmtDay } from '../../ui/format';
 import { MoraleIcon } from '../../components/status';
-import { RoomCircle } from './kabine/RoomCircle';
+import { RoomPyramid } from './kabine/RoomPyramid';
 import { FactorList, MoodSpark, PlayerFocus, TeamActions } from './kabine/RoomParts';
 
 type Sort = 'einfluss' | 'moral';
@@ -58,21 +58,8 @@ export function DressingRoomView({ g, onChange }: { g: Game; onChange: () => voi
         <MoodSpark points={[...(dr.history ?? []).slice(-18).map((h) => h.mood), mood]} />
       </DashBox>
 
-      <DashBox title="Kabinen-Kreis" icon="squad" rows={2} right={<span className="kb-legend">innen Einfluss · Farbe Moral · K Kapitän · R Rat</span>}>
-        <div className="kb-circle-wrap">
-          <RoomCircle a={a} players={g.players} conflicts={dr.conflicts ?? []} captainId={dr.captainId} council={dr.council ?? []} selected={selected} onSelect={setSel} />
-        </div>
-        <div className="kb-groups">
-          {a.groups.map((gr) => (
-            <div key={gr.id} className="kb-group" title={gr.why}>
-              <span className="kb-group-lbl">{gr.label}</span>
-              <span className="kb-group-mem">{gr.members.map(name).join(', ')}</span>
-            </div>
-          ))}
-          {(dr.conflicts ?? []).map((c, i) => (
-            <div key={i} className="kb-group"><span className="kb-group-lbl kb-neg">Konflikt</span><span className="kb-group-mem">{name(c.a)} – {name(c.b)} ({c.reason}, seit {fmtDay(c.since)})</span></div>
-          ))}
-        </div>
+      <DashBox title="Kabinen-Pyramide" icon="squad" rows={2} info="kabine_pyramide" right={<span className="kb-legend">Symbol Moral · K Kapitän · R Rat · Ziffer Gruppe</span>}>
+        <RoomPyramid a={a} players={g.players} conflicts={dr.conflicts ?? []} captainId={dr.captainId} council={dr.council ?? []} selected={selected} onSelect={setSel} />
       </DashBox>
 
       <DashBox title="Spieler" icon="squad" flush right={<span className="dbtnrow">
