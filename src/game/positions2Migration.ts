@@ -128,6 +128,11 @@ function mapLabel(code: string, key: string): string {
   return isLegacy(code) ? mapCode(code, sideForFoot(undefined, key)) : code;
 }
 
+/** Namenslisten „ID → [Name, Verein, Position]“ umrechnen. */
+function fixPeople(rec: Record<string, [string, string, string]> | undefined): void {
+  for (const [id, t] of Object.entries(rec ?? {})) if (Array.isArray(t) && isLegacy(t[2])) t[2] = mapLabel(t[2], id);
+}
+
 /**
  * Positionen 2.0 für einen Spielstand (idempotent). Gibt die Zahl umgerechneter Spieler zurück.
  */
@@ -143,9 +148,14 @@ export function migratePositions2(g: Game): number {
     if (m.exPro && isLegacy(m.exPro.pos)) m.exPro.pos = mapLabel(m.exPro.pos, m.id);
   }
   const cups = g.euroCups ? [g.euroCups.ec, g.euroCups.cwc, g.euroCups.uefa] : [];
-  for (const cup of [g.cup, ...cups]) {
-    for (const [id, x] of Object.entries(cup?.xpeople ?? {})) if (isLegacy(x[2])) x[2] = mapLabel(x[2], id);
-  }
+  for (const cup of [g.cup, ...cups]) fixPeople(cup?.xpeople);
+  // Bestenlisten-Archive (Name, Verein, Position) und weitere Anzeige-Kürzel.
+  const x = g as any;
+  for (const s of x.leagueArchive?.seasons ?? []) fixPeople(s.people);
+  fixPeople(x.youthComps?.people);
+  for (const a of x.youthComps?.archive ?? []) fixPeople(a.people);
+  for (const e of x.youthRace?.entries ?? []) if (isLegacy(e.pos)) e.pos = mapLabel(e.pos, e.name ?? '');
+  for (const r of x.briefing?.records ?? []) { const b = r?.sit?.best; if (b && isLegacy(b.pos)) b.pos = mapLabel(b.pos, b.name ?? ''); }
   if (n) bumpSkillRev();
   return n;
 }
