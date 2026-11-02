@@ -19,7 +19,7 @@ import { makeMessage, pushMessage } from '../engine/messages';
 import { isForeignId } from '../engine/world';
 import { Club, Player } from '../types';
 import { fmtPrice, fmtWage } from '../ui/format';
-import { repairSquadLists, wageRatioOf } from './squads';
+import { assignShirtNumbers, repairSquadLists, wageRatioOf } from './squads';
 import { freeAgentDestination, preferredClub } from './playerWishesGame';
 import { personaOf } from '../engine/persona';
 import { moraleJolt } from './moraleJolt';
@@ -134,6 +134,8 @@ export function transferPlayer(g: Game, p: Player, from: Club, to: Club, fee: nu
   p.contract.weeklyWage = Math.round(Math.max(p.contract.weeklyWage, marketWage(p) * clubWageLevel(to, Number(date.slice(0, 4)))) * (fee === 0 ? 1.15 : 1));
   p.contract.expiryDate = `${Number(date.slice(0, 4)) + yearsFor(p.age, hashRand(p.id + date))}-06-30`;
   p.contract.satisfaction = 78;
+  if (to.playerIds.some((id) => id !== p.id && g.players[id]?.shirtNumber === p.shirtNumber)) p.shirtNumber = 0;
+  assignShirtNumbers(to, g.players);
   // Weiterverkaufsbeteiligung an den früheren Verein.
   const so = p.sellOn;
   if (fee > 0 && so && so.clubId !== to.id && g.clubs[so.clubId]) {

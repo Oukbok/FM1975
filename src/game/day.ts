@@ -43,7 +43,7 @@ import { monthlySquadHarmony, rollAiOffers } from './aiOffers';
 import { checkPromises } from './promises';
 import { transferTalkDaily } from './transferTalks';
 import { buyBackDaily, contractClausesDaily } from './playerWishesGame';
-import { repairSquadLists } from './squads';
+import { assignShirtNumbers, repairSquadLists } from './squads';
 import { applyEuphoria, monthlyClubEvents } from './clubEventsGame';
 import { announceUpcomingRules } from './ruleNotice';
 import { monthlyYouthRecruit } from './youthRecruit';
@@ -541,6 +541,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   rollAiOffers(g, today);
   checkPromises(g, today);
   contractClausesDaily(g, today); // Treueprämie, Erfolgsklausel, Leihe mit Kaufoption (game/playerWishesGame.ts)
+  { const mc = g.clubs[g.managedClubId]; if (mc) assignShirtNumbers(mc, g.players); }
   buyBackDaily(g, today, (p, from, to, fee) => { transferPlayer(g, p, from, to, fee, today); repairSquadLists(g); });
   transferTalkDaily(g, today);
   // Winter-Systeme: Hallenturniere/Masters (game/indoorGame.ts) und Trainingslager (game/trainingCampGame.ts).

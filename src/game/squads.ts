@@ -49,7 +49,27 @@ function neededPosition(game: Game, club: Club): Position {
   return best;
 }
 
-/** @param autoManageMine Auch den eigenen Verein automatisch auffüllen (nur Simulation/Tests). */
+/**
+ * Rückennummern: Spieler ohne Nummer (0) oder mit doppelter Nummer bekommen die kleinste freie
+ * Nummer ihres Kaders (1–99). Wer zuerst im Kader steht, behält seine Nummer. Idempotent.
+ */
+export function assignShirtNumbers(club: Club, players: Record<string, Player>): number {
+  const used = new Set<number>();
+  const need: Player[] = [];
+  for (const id of club.playerIds) {
+    const p = players[id];
+    if (!p) continue;
+    const n = p.shirtNumber;
+    if (!n || n < 1 || n > 99 || used.has(n)) need.push(p); else used.add(n);
+  }
+  let next = 1;
+  for (const p of need) {
+    while (used.has(next) && next < 99) next++;
+    p.shirtNumber = next; used.add(next);
+  }
+  return need.length;
+}
+
 /** Konsistenz: Kaderlisten ohne Geister-IDs/Dubletten, jeder Spieler genau einem Verein zugeordnet. */
 export function repairSquadLists(game: Game): number {
   let fixed = 0;
@@ -67,6 +87,7 @@ export function repairSquadLists(game: Game): number {
     const c = game.clubs[p.clubId];
     if (c && !c.playerIds.includes(p.id) && !p.isYouth) { c.playerIds.push(p.id); fixed++; }
   }
+  for (const club of Object.values(game.clubs)) assignShirtNumbers(club, game.players);
   return fixed;
 }
 
@@ -102,6 +123,7 @@ export function fillSquad(game: Game, club: Club, date: string, min = MIN_SQUAD,
     game.players[p.id] = p;
     club.playerIds.push(p.id);
   }
+  if (n) assignShirtNumbers(club, game.players);
   return n;
 }
 
