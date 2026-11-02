@@ -210,7 +210,8 @@ const rateOf = (xs: SeasonGoal[]) => xs.reduce((a, x) => a + x.crisis, 0) / Math
 const miss = passive.goals.filter(missed), fine = passive.goals.filter((x) => !missed(x));
 console.log(`Saisons mit klar verfehltem Ziel: ${miss.length} (${(rateOf(miss) * 100).toFixed(1)} % Krisentage), übrige ${fine.length} (${(rateOf(fine) * 100).toFixed(1)} %)`);
 if (miss.length >= 2) check(rateOf(miss) >= Math.max(0.1, 2 * rateOf(fine)), 'klar verfehlte Saisonziele: deutlich mehr Krisentage');
-check(passive.longestCrisis < 120, `keine Dauerkrise (längste ${passive.longestCrisis} Tage < 120)`);
+// Saison mit klar verfehltem Ziel darf monatelang kriseln (Wunsch Pascal: häufiger schlechte Stimmung) – aber keine halbe Saison und mehr.
+check(passive.longestCrisis < 150, `keine Dauerkrise (längste ${passive.longestCrisis} Tage < 150)`);
 check(passive.incidents >= seasons * 1.5 && passive.incidents <= seasons * 9, `Vorfälle selten, aber vorhanden (${(passive.incidents / seasons).toFixed(1)} je Saison)`);
 // --- Eingreifen hilft
 check(avg(active.moods) >= avg(passive.moods) + 2, `Eingreifen hebt die Stimmung (+${(avg(active.moods) - avg(passive.moods)).toFixed(1)})`);
