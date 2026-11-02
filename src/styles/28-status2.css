@@ -1,0 +1,27 @@
+/* =============================================================================
+   Zustand 2: Hover mit Erklärsatz (Form), verdeckte Werte als Einschätzung,
+   i-Hilfe hinter jedem Attribut (components/player/AttrTip.tsx)
+   ============================================================================= */
+
+/* Sofort-Einblendung: Wertzeile + optionaler Erklärsatz darunter */
+.st-tip { flex-direction: column; align-items: flex-start; gap: 3px; }
+.st-tip-row { display: inline-flex; align-items: center; gap: 6px; }
+.st-tip-note { color: var(--text-3); font-size: 11.5px; white-space: normal; max-width: 260px; padding-left: 13px; }
+
+/* Verdeckter Wert: Wort statt Zahl, Quelle klein dahinter */
+.pp-bar-row.hid-line { grid-template-columns: 130px 1fr auto; }
+.hid-word { font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hid-word.none { color: var(--text-4); font-style: italic; }
+.hid-src { font-size: 11px; color: var(--text-4); white-space: nowrap; }
+
+/* Attribut-i: gedimmt, bei Zeilen-Hover deutlich */
+.itip.itip-attr { width: 12px; height: 12px; font-size: 8.5px; margin-left: 5px; opacity: .32; }
+.pp-bar-row:hover .itip-attr, .pp-attr-row:hover .itip-attr, .itip-attr.open, .itip-attr:focus-visible { opacity: 1; }
+
+/* Inhalt der Attribut-Hilfe */
+.attr-tip ul { margin: 2px 0 0; padding-left: 15px; }
+.attr-tip li { margin: 1px 0; }
+.attr-tip-h { margin-top: 7px; color: var(--text-3); font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.attr-tip b { color: var(--text); font-weight: 600; }
+.attr-tip-none { margin-top: 6px; color: var(--text-3); font-style: italic; }
+.attr-tip-note { margin-top: 7px; color: var(--text-3); font-size: 11.5px; }

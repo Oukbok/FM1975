@@ -607,6 +607,10 @@ export const STATUS_SHAPES = {
   /** Daumen hoch als Umriss (Form): Ärmel + Hand, gedreht je Stufe um (12, 12). Nach Lucide „thumbs-up“ (ISC). */
   thumbCuff: 'M7 10v12',
   thumb: 'M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z',
+  /** Hantel (Fitness): Stange, innere und äußere Scheiben. */
+  dumbbellBar: 'M7.2 12h9.6',
+  dumbbellPlates: 'M4.3 5h2.9v14H4.3Zm12.5 0h2.9v14h-2.9Z',
+  dumbbellOuter: 'M1.3 8.2h3v7.6h-3Zm18.4 0h3v7.6h-3Z',
   /** Smiley (Moral): Kopf, Augen und Mund je Stufe 1–5. */
   face: 'M12 2.6a9.4 9.4 0 1 1 0 18.8 9.4 9.4 0 0 1 0-18.8Z',
   eyes: 'M8.9 8.7a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Zm6.2 0a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Z',

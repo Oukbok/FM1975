@@ -1,4 +1,5 @@
 // Reiter „Übersicht“: Fähigkeiten | Positionen + Stärken/Schwächen | Saison + Vertrag kompakt
+import { AttrTip } from './AttrTip';
 import { Player } from '../../types';
 import { POSITION_NAMES_DE } from '../../engine/positions';
 import { fmtDM, fmtDMfull, vColor, fmtPrice, fmtWage, wageUnit } from '../../ui/format';
@@ -51,7 +52,7 @@ export default function OverviewTab({ p }: { p: Player }) {
           {groupsFor(p).map((grp) => (
             <div key={grp.title} className="pp-skill-group">
               <div className="pp-skill-gt">{grp.title}</div>
-              {sortedKeys(grp.keys).map((k) => <AttrRow key={k} label={ATTR_DE[k]} value={Math.round(p.attributes[k])} tier={tiers.get(k) === 'core' ? 'core' : undefined} />)}
+              {sortedKeys(grp.keys).map((k) => <AttrRow key={k} label={<>{ATTR_DE[k]}<AttrTip k={k} /></>} value={Math.round(p.attributes[k])} tier={tiers.get(k) === 'core' ? 'core' : undefined} />)}
             </div>
           ))}
         </div>

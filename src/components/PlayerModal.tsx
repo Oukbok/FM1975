@@ -10,8 +10,10 @@ import { Player, Club, renderStars } from '../types';
 import PlayerAvatar from './PlayerAvatar';
 import ClubCrest from './ClubCrest';
 import { scoutRangeText } from '../engine/scouting';
-import { POS_DE, PLAYER_TYPE, AVAIL_DE, utcDate, footLabel, Bar } from './player/shared';
-import { StatusLine, freshness100, form100, morale100, playerMorale100 } from './status';
+import { POS_DE, PLAYER_TYPE, AVAIL_DE, utcDate, footLabel } from './player/shared';
+import { StatusLine, fitness100, freshness100, form100, playerMorale100 } from './status';
+import { useClubProfile } from './club/ClubLink';
+import { HiddenLine } from './player/HiddenLine';
 import { InfoTip } from '../ui/InfoTip';
 import OverviewTab from './player/OverviewTab';
 import AttributesTab from './player/AttributesTab';
@@ -38,6 +40,7 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
   initialTab?: Tab;
 }) {
   const [tab, setTab] = useState<Tab>(initialTab ?? 'overview');
+  const g = useClubProfile()?.game;
   const p = player;
   const availText = p.availability === 'injured' ? `Verletzt (${p.injury?.daysRemaining ?? '?'} Tage)` : AVAIL_DE[p.availability];
 
@@ -80,9 +83,9 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
             <StatusLine kind="frische" value={freshness100(p)} />
             <StatusLine kind="form" value={form100(p)} />
             <StatusLine kind="moral" value={playerMorale100(p)} />
-            <Bar label={<>Fitness<InfoTip k="fitness" /></>} value={Math.round(p.attributes.fitness)} tone="cond" />
-            <Bar label={<>Konstanz<InfoTip k="konstanz" /></>} value={Math.round(p.development.consistency)} />
-            <Bar label={<>Nervenstärke<InfoTip k="nervenstaerke" /></>} value={Math.round(p.development.bigMatchTemperament)} />
+            <StatusLine kind="fitness" value={fitness100(p)} />
+            <HiddenLine g={g} p={p} trait="konstanz" info="konstanz" />
+            <HiddenLine g={g} p={p} trait="nerven" info="nervenstaerke" />
           </div>
 
           <button className="modal-close" onClick={onClose}>×</button>

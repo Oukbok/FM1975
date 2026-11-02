@@ -171,7 +171,7 @@ export function Stat({ label, value, sub }: { label: React.ReactNode; value: Rea
   );
 }
 
-export function AttrRow({ label, value, tier }: { label: string; value: number; tier?: AttrTier }) {
+export function AttrRow({ label, value, tier }: { label: React.ReactNode; value: number; tier?: AttrTier }) {
   return (
     <div className={`pp-attr-row${tier ? ' pp-tier-' + tier : ''}`}>
       <span className="pp-attr-lbl">{label}</span>

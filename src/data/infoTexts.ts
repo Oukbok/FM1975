@@ -22,12 +22,12 @@ export const INFO_TEXTS = {
   },
   fitness: {
     title: 'Fitness',
-    text: 'Grundkondition und Durchhaltevermögen – ein Attribut, das sich über Training langsam aufbaut. Hohe Fitness lässt die Frische nach Spielen weniger stark fallen und schneller zurückkommen.',
+    text: 'Grundkondition – baut sich über Training langsam auf und sinkt durch Einsätze. Geht leicht in die Tagesstärke ein (Fitness 0 = rund 10 % weniger). Hantel dunkelgrün = topfit, rot = kaum belastbar.',
     wiki: 'condition-fitness',
   },
   form: {
     title: 'Form',
-    text: 'Kurzfristige Verfassung (0–100, 50 = Durchschnitt). Gute Noten und Siege heben sie, schwache Spiele senken sie; mit der Zeit pendelt sie zur Mitte. Daumen hoch grün = Topform, waagerecht = normal, nach unten rot = Formtief.',
+    text: 'Form zeigt, wie gut ein Spieler im System zurechtkommt (0–100, 50 = Durchschnitt). Gute Noten, Siege und sinnvolles Training heben sie; sie wirkt leicht auf die Leistung (bis ±2,5 %). Daumen in kräftigem Grün = Topform, blasses Grau-Grün = Formtief.',
     wiki: 'condition-form',
   },
   moral: {
@@ -42,13 +42,13 @@ export const INFO_TEXTS = {
   },
   konstanz: {
     title: 'Konstanz',
-    text: 'Verdeckter Charakterwert: Wie stark die Leistung von Spiel zu Spiel schwankt. Konstante Spieler liefern verlässlich, unkonstante haben mehr Ausreißer nach oben und unten.',
-    wiki: 'development-hidden',
+    text: 'Verdeckter Wert: wie stark die Leistung von Spiel zu Spiel schwankt. Du siehst nur die Einschätzung deines Trainerteams bzw. deiner Scouts – je länger du den Spieler kennst, desto treffsicherer.',
+    wiki: 'player-hidden-values',
   },
   nervenstaerke: {
     title: 'Nervenstärke',
-    text: 'Wie gut ein Spieler mit großen Spielen umgeht – Derbys, Pokal, Europapokal, Entscheidungsspiele. Nervenstarke Spieler steigern sich dort eher, nervöse fallen ab.',
-    wiki: 'development-hidden',
+    text: 'Verdeckter Wert: wie gut ein Spieler mit großen Spielen umgeht – Derbys, Pokal, Europapokal. Du siehst nur die Einschätzung deines Trainerteams bzw. deiner Scouts, keine Zahl.',
+    wiki: 'player-hidden-values',
   },
 
   // ---------------------------------------------------------------- Spieler-Bewertung

@@ -10,7 +10,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 're
 import { createPortal } from 'react-dom';
 import { placeNear, uiScale } from '../../ui/floating';
 
-export function useStatusTip(title: string, detail: string, color: string) {
+export function useStatusTip(title: string, detail: string, color: string, note?: string) {
   const anchor = useRef<HTMLSpanElement>(null);
   const pop = useRef<HTMLDivElement>(null);
   const touch = useRef(false);
@@ -57,8 +57,11 @@ export function useStatusTip(title: string, detail: string, color: string) {
   const layer: ReactNode = open && typeof document !== 'undefined' ? createPortal(
     <div ref={pop} className="st-tip" role="tooltip"
       style={{ left: pos?.left ?? -9999, top: pos?.top ?? -9999, transform: `scale(${pos?.s ?? 1})` }}>
-      <span className="st-tip-dot" style={{ background: color }} />
-      <b>{title}</b> <span className="st-tip-val">{detail}</span>
+      <span className="st-tip-row">
+        <span className="st-tip-dot" style={{ background: color }} />
+        <b>{title}</b> <span className="st-tip-val">{detail}</span>
+      </span>
+      {note && <span className="st-tip-note">{note}</span>}
     </div>,
     document.body,
   ) : null;
