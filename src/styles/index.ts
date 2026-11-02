@@ -45,4 +45,5 @@ import './28-euro2.css';
 import './28-status2.css';
 import './28-misc.css';
 import './28-engine.css';
+import './28-presse.css';
 import './29-look.css'; // zuletzt: ruhige Gesamtoptik
