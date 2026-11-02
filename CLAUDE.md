@@ -61,6 +61,7 @@ React 18 + TypeScript, gebaut mit esbuild. Kein Backend – alles läuft im Brow
 
 ## Arbeitsweise
 - Vor dem Commit: `npm run check` (0 Fehler) und `npm run build`; bei UI-Änderungen zusätzlich `npm run test:ui`.
+- **Vorlage „Test 3 Jahre“** (Frankfurt Rot, Mitte 1978/79; Wunsch Pascal): nach größeren Änderungen neu erzeugen mit `node scripts/make-test-save.mjs` und mitcommitten. Liegt in `public/saves/` (`index.json` + Datei im Speicherformat), im Spiel unter Spiel laden › Vorlagen (`engine/save.ts` `fetchBuiltinSaves`/`importBuiltinSave`, `screens/LoadGameScreen.tsx`).
 - Dateien klein halten (Ziel < 600 Zeilen). Neue Seite = neue Datei unter `src/views/<bereich>/`.
 - Diese Datei aktuell halten, wenn Struktur sich ändert – kurz, ohne Zeilennummern.
 

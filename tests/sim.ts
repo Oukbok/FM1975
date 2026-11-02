@@ -440,7 +440,8 @@ if (process.env.DUMP) {
   const { compressToUTF16 } = await import('lz-string');
   const { writeFileSync } = await import('node:fs');
   const my = g.clubs[g.managedClubId];
-  if (process.env.HUMAN) {
+  if (process.env.TESTSAVE) delete (g as any).simAutoManage; // Vorlage: eigener Verein wieder als Spieler, sonst unverändert
+  else if (process.env.HUMAN) {
     // Für Screenshots: eigenen Verein wieder als Spieler führen, einige Werbeflächen frei mit Angeboten.
     delete (g as any).simAutoManage;
     const { offerFreeSlots } = await import('../src/game/sponsorGame');
@@ -448,7 +449,7 @@ if (process.env.DUMP) {
     my.commerce!.deals = ds.filter((d, i) => d.slot === 'brust' || d.slot === 'banden' || i % 3 !== 1);
     offerFreeSlots(g);
   }
-  const meta = { slot: 'sim', name: 'Simulation', managerName: 'Sim', clubName: my.name, clubId: my.id, season: g.season, gameDate: g.calendar.currentDate, savedAt: new Date().toISOString(), version: 9 };
+  const meta = { slot: 'sim', name: 'Simulation', managerName: 'Sim', clubName: my.name, clubId: my.id, season: g.season, gameDate: g.calendar.currentDate, savedAt: new Date().toISOString(), version: (await import('../src/engine/save')).SAVE_VERSION };
   writeFileSync(process.env.DUMP, 'LZ1:' + compressToUTF16(JSON.stringify({ meta, game: g })));
   console.log('Spielstand geschrieben:', process.env.DUMP);
 }

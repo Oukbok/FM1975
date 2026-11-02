@@ -288,3 +288,37 @@ export function saveSettings(s: AppSettings): void {
     /* ignore */
   }
 }
+
+// -----------------------------------------------------------------------------
+// Vorlagen: mitgelieferte Spielstände (public/saves/index.json + Dateien im
+// Speicherformat „LZ1:…“), für alle Spieler ladbar. Erzeugt mit
+// `node scripts/make-test-save.mjs`. Beim Laden wird die Vorlage in einen
+// eigenen Slot kopiert und dann wie ein normaler Spielstand geöffnet.
+// -----------------------------------------------------------------------------
+export interface BuiltinSave { file: string; name: string; clubName: string; season: string; gameDate: string; note?: string }
+
+/** Liste der Vorlagen (leer, wenn nicht vorhanden oder offline). */
+export async function fetchBuiltinSaves(): Promise<BuiltinSave[]> {
+  try {
+    const r = await fetch('saves/index.json', { cache: 'no-cache' });
+    if (!r.ok) return [];
+    const list = await r.json();
+    return Array.isArray(list) ? list as BuiltinSave[] : [];
+  } catch { return []; }
+}
+
+/** Kopiert eine Vorlage in einen Slot („vorlage-…“) und liefert den Slot-Schlüssel. */
+export async function importBuiltinSave(b: BuiltinSave): Promise<string> {
+  const r = await fetch(`saves/${b.file}`, { cache: 'no-cache' });
+  if (!r.ok) throw new Error(`Vorlage ${b.file} nicht gefunden`);
+  const raw = await r.text();
+  const json = raw.startsWith(LZ_MARKER) ? decompressFromUTF16(raw.slice(LZ_MARKER.length)) : raw;
+  const payload = safeParse<SaveSlot<unknown>>(json);
+  if (!payload?.game) throw new Error('Vorlage ist beschädigt');
+  const slot = `vorlage-${b.file.replace(/\.[a-z]+$/i, '')}`;
+  payload.meta = { ...payload.meta, slot, name: b.name, clubName: b.clubName, season: b.season, gameDate: b.gameDate, savedAt: new Date().toISOString(), version: payload.meta?.version ?? SAVE_VERSION };
+  writeSlot(slot, payload);
+  const idx = readIndex();
+  if (!idx.includes(slot)) writeIndex([...idx, slot]);
+  return slot;
+}
