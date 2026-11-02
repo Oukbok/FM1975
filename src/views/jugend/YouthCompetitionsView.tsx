@@ -60,9 +60,10 @@ export function YouthCompetitionsView({ g }: { g: Game }) {
   const [key, setKey] = useState(() => defaultKey(g, liveSeason));
   useEffect(() => { setSeason(liveSeason); setKey(defaultKey(g, liveSeason)); }, [liveSeason]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Wettbewerb beim Saisonwechsel halten, sonst gleichartigen wählen.
+  // Wettbewerb beim Saisonwechsel halten, sonst gleichartigen wählen; gibt es ihn in der Saison
+  // nicht (oder noch ohne Teilnehmer), auf den ersten gültigen Eintrag springen (eigene Liga zuerst).
   const effKey = opts.some((o) => o.key === key) ? key
-    : opts.find((o) => o.key.split(':')[0] === key.split(':')[0] && o.kind === (key.endsWith(':ko') ? 'cup' : 'league'))?.key ?? opts[0]?.key ?? '';
+    : opts.find((o) => o.key.split(':')[0] === key.split(':')[0] && o.kind === (key.endsWith(':ko') ? 'cup' : 'league'))?.key ?? defaultKey(g, season);
   const snap = effKey ? youthSnapshot(g, season, effKey) : null;
   const sIdx = seasons.findIndex((s) => s.season === season);
   const step = (d: number) => { const n = seasons[sIdx + d]; if (n) setSeason(n.season); };

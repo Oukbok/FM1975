@@ -46,6 +46,7 @@ import { migrateBriefing } from './game/seasonBriefing';
 import { migrateLegacyLegends } from './game/playerMigration';
 import { migratePersonas } from './game/playerWishesGame';
 import { migratePositionSkills } from './game/positionsGame';
+import { migratePositions2 } from './game/positions2Migration';
 import { migrateDressingRoom } from './game/dressingRoomGame';
 import { migrateTrainingPlan } from './game/trainingWeek';
 import { migrateStaffPeople } from './game/staffWorld';
@@ -105,6 +106,8 @@ export default function App() {
     }
     // Positionsbewertung auf das Spieljahr einstellen; ältere Spielstände auf Entwicklung 2.0 heben.
     setEraYear(Number(s.game.calendar.currentDate.slice(0, 4)));
+    // Positionen 2.0: alte Kürzel VS/AV/FL → IV, RV/LV, RA/LA (vor allem, was Positionen bewertet).
+    try { migratePositions2(s.game); } catch (err) { console.error('Positionen-2.0-Umrechnung fehlgeschlagen:', err); }
     for (const p of Object.values(s.game.players)) {
       if (p.isYouth) continue;
       if (p.development.basePotential == null) { ensureDevFields(p); refreshOverall(p); updateScoutEstimate(p, 0.3, p.clubId === s.game.managedClubId); }

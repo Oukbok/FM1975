@@ -12,29 +12,36 @@ import type { CupRoundV2 } from './euro2';
 // -----------------------------------------------------------------------------
 
 /**
- * Spielpositionen im 1980er-Stil (Libero-System).
+ * Spielpositionen, seitengenau wie im Football Manager (Libero bleibt für frühe Epochen).
  * TW  = Torwart
  * LIB = Libero (letzter Mann)
- * VS  = Vorstopper (zentraler Manndecker)
- * AV  = Außenverteidiger
+ * IV  = Innenverteidiger (in Libero-Systemen als Vorstopper/Manndecker)
+ * RV/LV = Rechter/Linker Verteidiger
  * DM  = Defensives Mittelfeld
  * ZM  = Zentrales Mittelfeld
+ * RM/LM = Rechter/Linker Mittelfeldspieler
  * OM  = Offensives Mittelfeld / Spielmacher
- * FL  = Flügelstürmer
- * MS  = Mittelstürmer
+ * RA/LA = Rechtsaußen/Linksaußen
  * HS  = Hängende Spitze / zweiter Stürmer
+ * MS  = Mittelstürmer
+ * Alte Kürzel (Spielstände/Datensätze vor Positionen 2.0): VS → IV, AV → RV/LV, FL → RA/LA
+ * (Umrechnung `game/positions2Migration.ts`, Einlesen `normalizePosition` in `engine/positions.ts`).
  */
 export type Position =
   | 'TW'
   | 'LIB'
-  | 'VS'
-  | 'AV'
+  | 'IV'
+  | 'RV'
+  | 'LV'
   | 'DM'
   | 'ZM'
+  | 'RM'
+  | 'LM'
   | 'OM'
-  | 'FL'
-  | 'MS'
-  | 'HS';
+  | 'RA'
+  | 'LA'
+  | 'HS'
+  | 'MS';
 
 /** Grobe Positionsgruppen für Taktik & Match-Engine. */
 export type PositionGroup = 'GK' | 'DEF' | 'MID' | 'ATT';
@@ -46,14 +53,18 @@ export type PreferredFoot = 'left' | 'right' | 'both';
 export const POSITION_GROUPS: Record<Position, PositionGroup> = {
   TW: 'GK',
   LIB: 'DEF',
-  VS: 'DEF',
-  AV: 'DEF',
+  IV: 'DEF',
+  RV: 'DEF',
+  LV: 'DEF',
   DM: 'MID',
   ZM: 'MID',
+  RM: 'MID',
+  LM: 'MID',
   OM: 'MID',
-  FL: 'ATT',
-  MS: 'ATT',
+  RA: 'ATT',
+  LA: 'ATT',
   HS: 'ATT',
+  MS: 'ATT',
 };
 
 /**
@@ -76,7 +87,7 @@ export interface PositionSkill {
 
 /** Alle Positionen als Array (für Iteration / Auswahl). */
 export const ALL_POSITIONS: Position[] = [
-  'TW', 'LIB', 'VS', 'AV', 'DM', 'ZM', 'OM', 'FL', 'MS', 'HS',
+  'TW', 'LIB', 'IV', 'RV', 'LV', 'DM', 'ZM', 'RM', 'LM', 'OM', 'RA', 'LA', 'HS', 'MS',
 ];
 
 // -----------------------------------------------------------------------------

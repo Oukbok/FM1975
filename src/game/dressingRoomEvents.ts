@@ -18,7 +18,7 @@ import { makeMessage, pushMessage } from '../engine/messages';
 import { personaOf } from '../engine/persona';
 import { MessageChoice, MessageEventRef, Player } from '../types';
 import { CHOICE_HANDLERS } from './eventsGame';
-import { addBoost, logRoom, roomAnalysis, roomInputs, roomOf, setFlag, squadOf, teamEvent, eventState } from './dressingRoomGame';
+import { addBoost, addBoostJolt, logRoom, roomAnalysis, roomInputs, roomOf, setFlag, squadOf, teamEvent, eventState } from './dressingRoomGame';
 import { Game } from './state';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -240,19 +240,19 @@ CHOICE_HANDLERS['kabine_streit'] = (g: Game, ref: MessageEventRef, choice: strin
   if (choice === 'schlichten') {
     const loy = (personaOf(a).loyalitaet + personaOf(b).loyalitaet) / 2;
     if (Math.random() < 0.5 + (dr.council?.length ? 0.1 : 0) + (loy - 50) / 200) {
-      end(); addBoost(dr, a.id, 3, 'Streit beigelegt', today); addBoost(dr, b.id, 3, 'Streit beigelegt', today);
+      end(); addBoostJolt(g, dr, a.id, 3, 'Streit beigelegt', today); addBoostJolt(g, dr, b.id, 3, 'Streit beigelegt', today);
       return { text: `${a.lastName} und ${b.lastName} geben sich die Hand.` };
     }
-    addBoost(dr, a.id, -2, 'Schlichtung gescheitert', today); addBoost(dr, b.id, -2, 'Schlichtung gescheitert', today);
+    addBoostJolt(g, dr, a.id, -2, 'Schlichtung gescheitert', today); addBoostJolt(g, dr, b.id, -2, 'Schlichtung gescheitert', today);
     return { text: 'Das Gespräch endet im Schweigen – der Streit schwelt weiter.' };
   }
   if (choice === 'fuehrung') {
-    addBoost(dr, a.id, 4, 'Rückendeckung vom Trainer', today); addBoost(dr, b.id, -8, 'Trainer stellt sich gegen ihn', today, 45);
+    addBoostJolt(g, dr, a.id, 4, 'Rückendeckung vom Trainer', today); addBoostJolt(g, dr, b.id, -8, 'Trainer stellt sich gegen ihn', today, 45);
     if (conflict) conflict.until = CalendarEngine.addDays(today, 45);
     return { text: `${a.lastName} fühlt sich bestätigt, ${b.lastName} zieht sich zurück.` };
   }
   if (choice === 'strafe') {
-    end(); addBoost(dr, a.id, -5, 'Geldstrafe nach Streit', today); addBoost(dr, b.id, -5, 'Geldstrafe nach Streit', today);
+    end(); addBoostJolt(g, dr, a.id, -5, 'Geldstrafe nach Streit', today); addBoostJolt(g, dr, b.id, -5, 'Geldstrafe nach Streit', today);
     for (const p of [a, b]) p.development.professionalism = clamp((p.development.professionalism ?? 50) + 2, 0, 100);
     return { text: 'Beide zahlen. In der Kabine ist es ruhig – vorerst.', money: { amount: Math.round(2000 * scale), text: `Geldstrafen ${a.lastName}/${b.lastName}` } };
   }
@@ -265,18 +265,18 @@ CHOICE_HANDLERS['kabine_forderung'] = (g: Game, ref: MessageEventRef, choice: st
   const cost = Math.round(Number(ref.data?.cost ?? 0) * scale);
   if (!L) return { text: 'Der Wortführer ist nicht mehr im Verein.' };
   if (choice === 'erfuellen') {
-    addBoost(dr, L.id, 8, 'Forderung erfüllt', today, 45); addBoost(dr, '*', 4, 'Wunsch der Mannschaft erfüllt', today, 40);
+    addBoostJolt(g, dr, L.id, 8, 'Forderung erfüllt', today, 45); addBoost(dr, '*', 4, 'Wunsch der Mannschaft erfüllt', today, 40);
     return { text: `${L.lastName} bedankt sich im Namen der Mannschaft.`, money: cost ? { amount: -cost, text: 'Wunsch der Mannschaft' } : undefined };
   }
   if (choice === 'kompromiss') {
     if (Math.random() < 0.6) {
-      addBoost(dr, L.id, 3, 'Kompromiss angenommen', today); addBoost(dr, '*', 1, 'Kompromiss mit der Mannschaft', today);
+      addBoostJolt(g, dr, L.id, 3, 'Kompromiss angenommen', today); addBoost(dr, '*', 1, 'Kompromiss mit der Mannschaft', today);
       return { text: 'Die Mannschaft akzeptiert den Kompromiss.', money: cost ? { amount: -Math.round(cost / 2), text: 'Kompromiss mit der Mannschaft' } : undefined };
     }
-    addBoost(dr, L.id, -2, 'Kompromiss zu dürftig', today);
+    addBoostJolt(g, dr, L.id, -2, 'Kompromiss zu dürftig', today);
     return { text: `${L.lastName} hatte mehr erwartet.`, money: cost ? { amount: -Math.round(cost / 2), text: 'Kompromiss mit der Mannschaft' } : undefined };
   }
-  addBoost(dr, L.id, -8, 'Forderung abgelehnt', today, 45);
+  addBoostJolt(g, dr, L.id, -8, 'Forderung abgelehnt', today, 45);
   const big = (roomAnalysis(g).byId[L.id]?.influence ?? 0) >= 70;
   if (big) addBoost(dr, '*', -4, `${L.lastName} abgeblitzt`, today, 30);
   return { text: big ? `${L.lastName} ist verärgert – und die Kabine steht hinter ihm.` : `${L.lastName} nimmt es hin.` };
@@ -290,14 +290,14 @@ CHOICE_HANDLERS['kabine_integration'] = (g: Game, ref: MessageEventRef, choice: 
     const m = here(g, ref.data?.m);
     if (!m) return { text: 'Der Pate ist nicht mehr im Verein.' };
     setFlag(dr, `pate:${n.id}`);
-    addBoost(dr, n.id, 8, `Pate: ${m.lastName}`, today, 45); addBoost(dr, m.id, 2, 'Verantwortung als Pate', today);
+    addBoostJolt(g, dr, n.id, 8, `Pate: ${m.lastName}`, today, 45); addBoostJolt(g, dr, m.id, 2, 'Verantwortung als Pate', today);
     return { text: `${m.lastName} nimmt ${n.lastName} unter seine Fittiche.` };
   }
   if (choice === 'sprachkurs') {
-    setFlag(dr, `kurs:${n.id}`); addBoost(dr, n.id, 4, 'Sprachkurs', today, 45);
+    setFlag(dr, `kurs:${n.id}`); addBoostJolt(g, dr, n.id, 4, 'Sprachkurs', today, 45);
     return { text: `${n.lastName} lernt jetzt zweimal die Woche Deutsch.`, money: { amount: -Math.round(2000 * scale), text: `Sprachkurs ${n.lastName}` } };
   }
-  if (Math.random() < 0.5) { addBoost(dr, n.id, -4, 'Fühlt sich allein gelassen', today); return { text: `${n.lastName} zieht sich weiter zurück.` }; }
+  if (Math.random() < 0.5) { addBoostJolt(g, dr, n.id, -4, 'Fühlt sich allein gelassen', today); return { text: `${n.lastName} zieht sich weiter zurück.` }; }
   return { text: `${n.lastName} findet langsam selbst seinen Weg.` };
 };
 
@@ -349,7 +349,7 @@ CHOICE_HANDLERS['kabine_predigt'] = (g: Game, _ref: MessageEventRef, choice: str
     }
     addBoost(dr, '*', -5, 'Kabinenpredigt verfehlt', today, 25);
     const top = roomAnalysis(g).leaders[0];
-    if (top) addBoost(dr, top, -4, 'Fühlt sich vor allen bloßgestellt', today);
+    if (top) addBoostJolt(g, dr, top, -4, 'Fühlt sich vor allen bloßgestellt', today);
     return { text: y >= 2005 ? 'Der laute Ton kommt bei dieser Generation nicht an.' : 'Die Predigt verunsichert mehr, als sie aufrüttelt.' };
   }
   if (choice === 'aufbauen') { addBoost(dr, '*', dr.mood < 45 ? 4 : 0.5, 'Aufbauende Worte', today, 20); return { text: dr.mood < 45 ? 'Die Mannschaft ist dankbar für Rückhalt.' : 'Freundlich, aber ohne große Wirkung.' }; }

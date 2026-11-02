@@ -1,5 +1,5 @@
 /* =============================================================================
-   KABINE (Kader › Kabine) – views/kader/DressingRoomView.tsx + kabine/
+   KABINE (Kader › Kabine) – views/kader/DressingRoomView.tsx + kabine/ (Pyramide)
    Ruhig und monochrom: Moral über condColor/condBar, Bernstein nur für Auswahl.
    ============================================================================= */
 .kb-kpis { grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; }
@@ -19,31 +19,46 @@
 .kb-spark-line { fill: none; stroke: var(--bar-fill-hi); stroke-width: 1.6; vector-effect: non-scaling-stroke; }
 .kb-spark-mid { stroke: var(--border); stroke-dasharray: 3 4; vector-effect: non-scaling-stroke; }
 
-/* Kreis */
+/* Pyramide (kabine/RoomPyramid.tsx) */
 .kb-legend { font-size: 13px; color: var(--text-3); }
-.kb-circle-wrap { display: flex; justify-content: center; }
-.kb-circle { width: 100%; max-height: 600px; display: block; }
-.kb-ring { fill: none; stroke: var(--border); stroke-width: 1; }
-.kb-ring-out { stroke-dasharray: 3 5; }
-.kb-band { fill: rgba(255, 255, 255, 0.015); }
-.kb-ring-lbl { fill: var(--text-4); font-size: 12px; letter-spacing: 0.6px; text-transform: uppercase; }
-.kb-sector { stroke: var(--border-soft); stroke-width: 1; stroke-dasharray: 2 5; }
-.kb-sector-lbl { fill: var(--text-3); font-size: 15px; }
-.kb-conflict { stroke: var(--neg); stroke-width: 1.4; stroke-dasharray: 5 4; opacity: 0.7; }
+.kp-wrap { display: flex; flex-direction: column; gap: 12px; min-height: 100%; }
+.kp-pyr { position: relative; flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; padding-top: 4px; }
+.kp-band { position: relative; flex: 1 0 auto; min-height: 76px; padding: 24px 0 12px; display: flex; align-items: center; justify-content: center; }
+.kp-aussen { flex-grow: 0.6; }
+.kp-band > .kp-nodes { width: 100%; }
+.kp-band + .kp-band { margin-top: 2px; }
+.kp-bg { position: absolute; inset: 0; background: var(--panel-2); border-radius: 2px; }
+.kp-fuehrung .kp-bg { background: rgba(255, 255, 255, 0.075); }
+.kp-stuetze .kp-bg { background: rgba(255, 255, 255, 0.055); }
+.kp-mitlaeufer .kp-bg { background: rgba(255, 255, 255, 0.038); }
+.kp-aussen .kp-bg { background: rgba(255, 255, 255, 0.02); outline: 1px dashed var(--border); outline-offset: -1px; }
+.kp-band-lbl { position: absolute; top: 4px; left: 0; right: 0; text-align: center; font-family: var(--font-display); font-size: 11.5px; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text-3); pointer-events: none; }
+.kp-band-lbl span { margin-left: 6px; color: var(--text-2); }
+.kp-nodes { position: relative; z-index: 2; display: flex; flex-wrap: wrap; justify-content: center; gap: 7px 7px; }
+.kp-empty { color: var(--text-4); font-size: 13px; padding: 4px 0; }
+.kp-node { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px 4px 6px; border: 1px solid var(--border-soft); border-radius: 4px; background: var(--bg-2); cursor: pointer; transition: opacity 0.15s, border-color 0.15s; }
+.kp-node:hover { border-color: var(--border); }
+.kp-node:focus-visible { outline: 1px solid var(--accent); outline-offset: 1px; }
+.kp-node.sel { border-color: var(--accent); }
+.kp-node.sel .kp-name { color: var(--accent); }
+.kp-node.out { border-style: dashed; border-color: var(--text-4); }
+.kp-node.dim { opacity: 0.28; }
+.kp-node .st-icon { display: inline-flex; }
+.kp-name { font-size: 14.5px; color: var(--text-2); white-space: nowrap; }
+.kp-fuehrung .kp-name { color: var(--text); font-weight: 600; }
+.kp-tag { font-size: 10.5px; font-weight: 800; color: var(--text); border: 1px solid var(--text-3); border-radius: 3px; padding: 0 3px; line-height: 13px; }
+.kp-grp { font-size: 10.5px; font-weight: 700; color: var(--text-3); background: var(--bar-track); border-radius: 3px; padding: 0 4px; line-height: 14px; min-width: 14px; text-align: center; }
+.kp-lines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: visible; }
+.kp-lines line { stroke: var(--neg); stroke-width: 1.3; stroke-dasharray: 5 4; opacity: 0.55; }
+.kp-legend { display: flex; flex-direction: column; }
+.kp-leg { display: flex; align-items: baseline; gap: 8px; padding: 4px 2px; border-bottom: 1px solid var(--border-soft); font-size: 13.5px; cursor: default; }
+.kp-leg:last-child { border-bottom: none; }
+.kp-leg:hover, .kp-leg.on { background: var(--panel-2); }
+.kp-leg-lbl { flex: 0 0 150px; color: var(--text-2); font-weight: 700; }
+.kp-leg-mem { color: var(--text-3); min-width: 0; }
+.kp-leg-conf .kp-leg-lbl { color: var(--neg); }
+.kp-conf-mark { flex: 0 0 14px; align-self: center; height: 0; border-top: 1.5px dashed var(--neg); opacity: 0.7; }
 .kb-node { cursor: pointer; }
-.kb-dot { stroke: rgba(12, 15, 21, 0.9); stroke-width: 1.5; }
-.kb-dot.sel { stroke: var(--accent); stroke-width: 2.5; }
-.kb-out { fill: none; stroke: var(--text-3); stroke-width: 1; stroke-dasharray: 2 3; }
-.kb-cap { fill: var(--bg); font-size: 11px; font-weight: 800; pointer-events: none; }
-.kb-name { fill: var(--text-2); font-size: 13.5px; }
-.kb-name.sel { fill: var(--accent); }
-.kb-node:hover .kb-name { fill: var(--text); }
-
-.kb-groups { margin-top: 6px; display: flex; flex-direction: column; }
-.kb-group { display: flex; gap: 10px; padding: 4px 2px; border-bottom: 1px solid var(--border-soft); font-size: 14px; }
-.kb-group-lbl { flex: 0 0 170px; color: var(--text-2); font-weight: 700; }
-.kb-group-mem { color: var(--text-3); min-width: 0; }
-.kb-neg { color: var(--neg); }
 
 /* Liste */
 .kb-table td { padding: 5px 8px; font-size: 15px; }
@@ -64,6 +79,10 @@
 .kb-bar { position: relative; height: 6px; border-radius: 3px; background: var(--bar-track); margin: 6px 0 4px; }
 .kb-bar i { display: block; height: 100%; border-radius: 3px; }
 .kb-bar b { position: absolute; top: -3px; width: 2px; height: 12px; background: var(--text-2); }
+.kb-jolt { align-items: baseline; }
+.kb-jolt .meta { flex: 0 0 auto; font-size: 12.5px; color: var(--text-4); }
+.kb-jolt .kb-f-lbl { flex: 1; }
+.kb-j-left { flex: 0 0 64px; text-align: right; font-size: 12px; color: var(--text-4); }
 .kb-reason { font-size: 14px; color: var(--text-2); padding: 2px 0; }
 .kb-talks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 .kb-talk { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 6px 4px; }

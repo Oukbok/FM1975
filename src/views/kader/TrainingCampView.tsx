@@ -23,7 +23,9 @@ import { campMilestones } from './campParts';
 // =============================================================================
 const SEASONS: CampSeason[] = ['summer', 'winter'];
 
-function BookingCard({ g, s, b, onCancel }: { g: Game; s: CampSeason; b?: CampBooking; onCancel: (id: string) => void }) {
+function BookingCard({ g, s, b, onCancel, onPlan, blocked }: {
+  g: Game; s: CampSeason; b?: CampBooking; onCancel: (id: string) => void; onPlan: (s: CampSeason) => void; blocked: string | null;
+}) {
   const today = g.calendar.currentDate;
   const w = campWindow(g, s);
   const title = s === 'summer' ? 'Sommervorbereitung' : 'Winterpause';
@@ -33,6 +35,13 @@ function BookingCard({ g, s, b, onCancel }: { g: Game; s: CampSeason; b?: CampBo
       <div className="cp-card free">
         <div className="cp-card-head"><span className="cp-kicker">{title}</span><span className="cp-pill">{past ? 'vorbei' : 'frei'}</span></div>
         <div className="cp-card-empty">{past ? 'In diesem Fenster gab es kein Lager.' : `Noch kein Lager geplant. Fenster ${fmtDay(w.from)} – ${fmtDay(w.to)}.`}</div>
+        {!past && (
+          <div className="dbtnrow mt8">
+            <button className="btn btn-ghost cp-card-plan" data-season={s} disabled={!!blocked} title={blocked ?? undefined} onClick={() => onPlan(s)}>
+              {s === 'summer' ? 'Sommerlager planen' : 'Winterlager planen'}
+            </button>
+          </div>
+        )}
       </div>
     );
   }
@@ -86,14 +95,16 @@ export function TrainingCampView({ g, onChange }: { g: Game; onChange: () => voi
     <DashPage>
       <DashBox title="Geplante Lager" icon="kalender" span={2} right={`Saison ${g.season}`}>
         <div className="cp-cards">
-          {SEASONS.map((s) => <BookingCard key={s} g={g} s={s} b={bookings[s]} onCancel={cancel} />)}
+          {SEASONS.map((s) => <BookingCard key={s} g={g} s={s} b={bookings[s]} onCancel={cancel} blocked={blocked[s]} onPlan={(x) => { setMsg(null); setPlanner(x); }} />)}
         </div>
         {msg && <div className="dnote mt8">{msg}</div>}
       </DashBox>
 
       <DashBox title="Planen" icon="weather" info="trainingslager">
         <div className="cp-plan-box">
-          <button className="btn btn-primary cp-plan-btn" disabled={!open.length} onClick={() => { setMsg(null); setPlanner(open[0]); }}>Trainingslager planen</button>
+          <button className="btn btn-primary cp-plan-btn" disabled={!open.length} onClick={() => { setMsg(null); setPlanner(open[0]); }}>
+            {open[0] === 'winter' ? 'Winterlager planen' : open[0] === 'summer' ? 'Sommerlager planen' : 'Trainingslager planen'}
+          </button>
           <div className="cp-plan-note">
             {SEASONS.map((s) => (
               <div key={s} className="dkv"><span className="dkv-k">{s === 'summer' ? 'Sommer' : 'Winter'}</span>
@@ -124,7 +135,7 @@ export function TrainingCampView({ g, onChange }: { g: Game; onChange: () => voi
       </DashBox>
 
       {planner && (
-        <CampPlanner g={g} season={planner} seasons={open} onClose={() => setPlanner(null)}
+        <CampPlanner g={g} season={planner} onClose={() => setPlanner(null)}
           onBooked={(m) => { setPlanner(null); setMsg(m); onChange(); }} />
       )}
     </DashPage>

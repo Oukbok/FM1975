@@ -18,7 +18,7 @@ import type { BuildKind, ChanceKind, MPlayer, ShotOutcome } from './types';
 /** Gesamtskala der Torgefahr (Kalibrierung über `node scripts/matchbench.mjs`). */
 const GOAL_SCALE = 0.82;
 /** Wie stark Schütze und Torwart durchschlagen (Exponenten auf das Verhältnis zu 62). */
-const FIN_EXP = 1.4, GK_EXP = 1.2;
+const FIN_EXP = 1.3, GK_EXP = 1.15;
 
 const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
 

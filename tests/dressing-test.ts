@@ -4,7 +4,10 @@
 //   aktiv  – einfache Trainer-Strategie (Gespräche, Sitzungen, Teamevents,
 //            Kapitän/Mannschaftsrat, kluge Antworten auf Vorfälle)
 // Prüft: verschiedene Konstellationen über die Jahre, ohne Eingreifen keine
-// Dauerkrise, mit Eingreifen messbar besser, Moral im Rahmen, Abnutzung von
+// Dauerkrise, aber gelegentlich schlechte Stimmung (4–8 % Krisentage), mit
+// Eingreifen messbar besser, klar verfehlte Saisonziele → deutlich mehr
+// Krisen (auch im Gegenversuch mit überzogenem Ziel), sofortige Moral-Sprünge
+// nach Spielen/Gesprächen/Transferliste, Moral im Rahmen, Abnutzung von
 // Gesprächen/Sitzungen, Nachrüstung alter Spielstände, KI-Moral beweglich.
 //   npm run test:dressing [-- saisons]      CLUB=… SEED=… für andere Läufe
 // =============================================================================
@@ -15,10 +18,11 @@ import { CalendarEngine } from '../src/engine/calendar';
 import { Game } from '../src/game/state';
 import { economyScale, yearOf } from '../src/engine/economy';
 import { chooseEventOption } from '../src/game/eventsGame';
-import { teamEventDefs, talkOdds, MORALE_STEPS } from '../src/engine/dressingRoom';
+import { teamEventDefs, talkOdds, MORALE_STEPS, analyzeRoom, goalFactors } from '../src/engine/dressingRoom';
 import {
-  appointCaptain, eventState, meetingState, migrateDressingRoom, roomAnalysis, roomInputs, roomOf, squadOf, talkState, talkTo, teamEvent, teamMeeting, toggleCouncil,
+  appointCaptain, eventState, goalOf, meetingState, migrateDressingRoom, roomAnalysis, roomInputs, roomOf, squadOf, talkState, talkTo, teamEvent, teamMeeting, toggleCouncil,
 } from '../src/game/dressingRoomGame';
+import { joltsOf } from '../src/game/moraleJolt';
 
 const seasons = Number(process.argv[2] ?? 30);
 const SEED = Number(process.env.SEED ?? 1975);
@@ -29,10 +33,10 @@ let fails = 0;
 const check = (ok: boolean, what: string) => { console.log(`${ok ? 'OK  ' : 'FEHL'} ${what}`); if (!ok) fails++; };
 const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
 
-function newGame(): Game {
+function newGame(club = process.env.CLUB ?? 'mgl'): Game {
   seed = SEED;
   const g = createNewGame({
-    managedClubId: process.env.CLUB ?? 'mgl',
+    managedClubId: club,
     manager: { name: 'Test', nationality: 'GER', birthYear: 1940, style: 'balanced', background: 'newcomer' } as any,
     difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300,
   });
@@ -96,11 +100,22 @@ function coach(g: Game): void {
     if (!kind) continue;
     talkTo(g, o.id, kind); acts.talks++; t++;
   }
+  // In der Krise: die Führungsspieler stärken (ihre Laune trägt die Stimmung).
+  if (dr.mood < 45) {
+    for (const id of a.leaders) {
+      if (t >= 5) break;
+      const p = g.players[id];
+      if (!p || talkState(g, id).nextOn || (p.moraleScore ?? 60) >= 75) continue;
+      talkTo(g, id, talkOdds('loben', p, a.byId[id], p.moraleScore ?? 60).chance >= 0.5 ? 'loben' : 'beruhigen'); acts.talks++; t++;
+    }
+  }
   const { ctx } = roomInputs(g, club);
-  if (dr.mood < 48 && !meetingState(g).nextOn) { teamMeeting(g, 'aufbauen'); acts.meetings++; }
+  const ms = meetingState(g);
+  if (dr.mood < 48 && !ms.nextOn && ms.wear >= 0.6) { teamMeeting(g, 'aufbauen'); acts.meetings++; }
   const defs = teamEventDefs(yearOf(today));
   if (!eventState(g).nextOn && !ctx.offSeason && ((dr.cohesion ?? 60) < 55 || dr.mood < 50 || a.outsiders.length >= 2)) {
     const ev = club.finances.balance > defs[1].cost * economyScale(yearOf(today)) * 8 ? 'ausflug' : 'abend';
+    // (ohne Geld sagt der Vorstand nein – dann bleibt es bei Gesprächen und Sitzungen)
     if (teamEvent(g, ev).ok) acts.events++;
   }
 }
@@ -109,15 +124,18 @@ function coach(g: Game): void {
 // Lauf
 // -----------------------------------------------------------------------------
 interface SeasonSnap { season: string; mood: number; cohesion: number; outsiders: number; groups: number; langGroups: number; leaders: string; captain: string; lowMorale: number; topGroup: string }
-interface RunStats { label: string; moods: number[]; morale: number[]; crisisDays: number; longestCrisis: number; snaps: SeasonSnap[]; incidents: number; aiSpread: number[]; minScore: number; maxScore: number }
+interface SeasonGoal { season: string; goal: string; pos: number; expected: number; size: number; days: number; crisis: number }
+interface RunStats { label: string; moods: number[]; morale: number[]; crisisDays: number; longestCrisis: number; snaps: SeasonSnap[]; incidents: number; aiSpread: number[]; minScore: number; maxScore: number; goals: SeasonGoal[] }
 
-function run(active: boolean): RunStats {
-  const g = newGame();
-  const st: RunStats = { label: active ? 'aktiv' : 'passiv', moods: [], morale: [], crisisDays: 0, longestCrisis: 0, snaps: [], incidents: 0, aiSpread: [], minScore: 100, maxScore: 0 };
+function run(active: boolean, opts: { club?: string; n?: number; goal?: string } = {}): RunStats {
+  const g = newGame(opts.club);
+  const st: RunStats = { label: active ? 'aktiv' : 'passiv', moods: [], morale: [], crisisDays: 0, longestCrisis: 0, snaps: [], incidents: 0, aiSpread: [], minScore: 100, maxScore: 0, goals: [] };
   let streak = 0, lastInc = '';
-  for (let s = 0; s < seasons; s++) {
+  for (let s = 0; s < (opts.n ?? seasons); s++) {
     let guard = 0;
+    let sDays = 0, sCrisis = 0;
     while (!CalendarEngine.isSeasonOver(g.calendar)) {
+      if (opts.goal) g.clubs[g.managedClubId].boardExpectation = opts.goal; // Gegenversuch: überzogenes Ziel
       const t = g.clubs[g.managedClubId]?.tactics;
       if (t && t.startingXI?.length) { t.startingXI = []; t.lineupMap = undefined; }
       if (active) coach(g);
@@ -127,8 +145,8 @@ function run(active: boolean): RunStats {
       const today = g.calendar.currentDate;
       if (dr) {
         if (dr.lastIncident && dr.lastIncident !== lastInc) { lastInc = dr.lastIncident; st.incidents++; }
-        st.moods.push(dr.mood);
-        if (dr.mood < 35) { st.crisisDays++; streak++; st.longestCrisis = Math.max(st.longestCrisis, streak); } else streak = 0;
+        st.moods.push(dr.mood); sDays++;
+        if (dr.mood < 35) { st.crisisDays++; sCrisis++; streak++; st.longestCrisis = Math.max(st.longestCrisis, streak); } else streak = 0;
         const sq = squadOf(g, club);
         for (const p of sq) {
           const v = p.moraleScore ?? 60;
@@ -151,6 +169,8 @@ function run(active: boolean): RunStats {
       }
       if (++guard > 1000) throw new Error('Saison endet nicht');
     }
+    const gl = goalOf(g, g.clubs[g.managedClubId]);
+    if (gl) st.goals.push({ season: g.season, goal: gl.label, pos: gl.pos, expected: gl.expected, size: gl.size, days: sDays, crisis: sCrisis });
     startNextSeason(g);
   }
   return st;
@@ -163,6 +183,8 @@ const active = run(true);
 console.log(`\nLaufzeit ${((Date.now() - t0) / 1000).toFixed(0)} s, ${seasons} Saisons je Lauf\n`);
 console.log('Saison   | Stimmung | Zusammenh. | Außens. | Gruppen (Sprache) | Moral<41 | Führung (Kapitän)');
 for (const s of passive.snaps) console.log(`${s.season.padEnd(8)} | ${String(s.mood).padStart(8)} | ${String(s.cohesion).padStart(10)} | ${String(s.outsiders).padStart(7)} | ${String(s.groups).padStart(7)} (${s.langGroups})       | ${String(s.lowMorale).padStart(8)} | ${s.leaders} (${s.captain})`);
+console.log('\nSaison   | Ziel                         | Platz (Soll) | Krisentage');
+for (const x of passive.goals) console.log(`${x.season.padEnd(8)} | ${x.goal.padEnd(28)} | ${String(x.pos).padStart(5)} (${String(x.expected).padStart(2)})   | ${x.crisis} (${(x.crisis / Math.max(1, x.days) * 100).toFixed(0)} %)`);
 const summary = (r: RunStats) => `${r.label}: Ø Stimmung ${avg(r.moods).toFixed(1)}, Ø Moral ${avg(r.morale).toFixed(1)}, Krisentage ${(r.crisisDays / Math.max(1, r.moods.length) * 100).toFixed(1)} % (längste ${r.longestCrisis} T.), Ø Außenseiter ${avg(r.snaps.map((s) => s.outsiders)).toFixed(2)}, Moral ${r.minScore.toFixed(0)}–${r.maxScore.toFixed(0)}`;
 console.log('\n' + summary(passive));
 console.log(summary(active));
@@ -180,16 +202,94 @@ const moodRange = Math.max(...passive.snaps.map((s) => s.mood)) - Math.min(...pa
 check(moodRange >= 10, `Stimmung schwankt zwischen den Saisons (Spanne ${moodRange})`);
 // --- Balance ohne Eingreifen
 check(avg(passive.moods) >= 50, `ohne Eingreifen läuft die Kabine meist ordentlich (Ø ${avg(passive.moods).toFixed(1)} ≥ 50)`);
-check(passive.crisisDays / passive.moods.length < 0.12, 'ohne Eingreifen weniger als 12 % Krisentage');
+const crisisRate = (r: { crisisDays: number; moods: number[] }) => r.crisisDays / Math.max(1, r.moods.length);
+check(crisisRate(passive) >= 0.03 && crisisRate(passive) <= 0.1, `ohne Eingreifen gelegentlich schlechte Stimmung: ${(crisisRate(passive) * 100).toFixed(1)} % Krisentage (Ziel 4–8 %, Rahmen 3–10 %)`);
+// Klar verfehlte Ziele (mindestens ein Viertel der Liga hinter dem Soll) → deutlich mehr Krisentage.
+const missed = (x: SeasonGoal) => x.pos - x.expected >= Math.max(3, x.size / 4);
+const rateOf = (xs: SeasonGoal[]) => xs.reduce((a, x) => a + x.crisis, 0) / Math.max(1, xs.reduce((a, x) => a + x.days, 0));
+const miss = passive.goals.filter(missed), fine = passive.goals.filter((x) => !missed(x));
+console.log(`Saisons mit klar verfehltem Ziel: ${miss.length} (${(rateOf(miss) * 100).toFixed(1)} % Krisentage), übrige ${fine.length} (${(rateOf(fine) * 100).toFixed(1)} %)`);
+if (miss.length >= 2) check(rateOf(miss) >= Math.max(0.1, 2 * rateOf(fine)), 'klar verfehlte Saisonziele: deutlich mehr Krisentage');
 check(passive.longestCrisis < 120, `keine Dauerkrise (längste ${passive.longestCrisis} Tage < 120)`);
 check(passive.incidents >= seasons * 1.5 && passive.incidents <= seasons * 9, `Vorfälle selten, aber vorhanden (${(passive.incidents / seasons).toFixed(1)} je Saison)`);
 // --- Eingreifen hilft
 check(avg(active.moods) >= avg(passive.moods) + 2, `Eingreifen hebt die Stimmung (+${(avg(active.moods) - avg(passive.moods)).toFixed(1)})`);
 check(avg(active.morale) >= avg(passive.morale) + 1, `Eingreifen hebt die Moral (+${(avg(active.morale) - avg(passive.morale)).toFixed(1)})`);
-check(active.crisisDays <= passive.crisisDays, 'mit Eingreifen nicht mehr Krisentage');
+check(active.crisisDays <= passive.crisisDays * 0.6, `mit Eingreifen deutlich weniger Krisentage (${(crisisRate(active) * 100).toFixed(1)} % statt ${(crisisRate(passive) * 100).toFixed(1)} %)`);
 // --- Moral im Rahmen
 for (const r of [passive, active]) check(avg(r.morale) >= 45 && avg(r.morale) <= 80 && r.minScore >= 0 && r.maxScore <= 100, `${r.label}: Ø Moral ${avg(r.morale).toFixed(1)} im Rahmen 45–80`);
 check(avg(passive.aiSpread) >= 3, `KI-Vereine: Moral-Stufen beweglich (Ø ${avg(passive.aiSpread).toFixed(1)} verschiedene Stufen)`);
+
+// --- Gegenversuch: gleicher Verein, überzogenes Ziel „Meisterschaft“ (immer klar verfehlt außer als Spitzenteam)
+{
+  const club = process.env.HARD_CLUB ?? 'bre';
+  const n = Math.min(seasons, 6);
+  const base = run(false, { club, n });
+  const hard = run(false, { club, n, goal: 'Meisterschaft' });
+  const hardAct = run(true, { club, n, goal: 'Meisterschaft' });
+  const pos = (r: RunStats) => r.goals.map((x) => x.pos).join('/');
+  console.log(`\nGegenversuch ${club} (${n} Saisons, Plätze ${pos(base)}): eigenes Ziel ${(crisisRate(base) * 100).toFixed(1)} % Krisentage, Ziel Meisterschaft ${(crisisRate(hard) * 100).toFixed(1)} %, mit Eingreifen ${(crisisRate(hardAct) * 100).toFixed(1)} %`);
+  check(crisisRate(hard) >= Math.max(0.1, crisisRate(base) * 1.8), 'überzogenes Saisonziel → deutlich mehr Krisentage');
+  check(crisisRate(hardAct) <= crisisRate(hard) * 0.6, 'auch dann hilft Eingreifen deutlich');
+  // Rechnung: gleicher Kader, Ziel klar verfehlt vs. erreicht
+  const fs = goalFactors({ label: 'Europa-Pokal-Platz', pos: 15, expected: 4, size: 18, played: 15, dropFrom: 16, winless: 5 });
+  const sumF = fs.reduce((a, f) => a + f.value, 0);
+  check(sumF <= -25, `Zielverfehlung drückt die Zielstimmung (${fs.map((f) => `${f.label} ${f.value}`).join(', ')})`);
+  const early = goalFactors({ label: 'Europa-Pokal-Platz', pos: 15, expected: 4, size: 18, played: 2, dropFrom: 16, winless: 0 });
+  check(!early.length, 'nach zwei Spieltagen noch kein Tabellendruck');
+}
+
+// --- Sofortige Moral-Sprünge
+{
+  const g = newGame();
+  const club = g.clubs[g.managedClubId];
+  let found = false;
+  for (let i = 0; i < 200 && !found; i++) {
+    const before = new Map(squadOf(g, club).map((p) => [p.id, p.moraleScore ?? 60]));
+    processDay(g, HEADLESS_UI);
+    const today = g.calendar.currentDate;
+    const dr = roomOf(club);
+    const js = (dr.jolts ?? []).filter((j) => j.date <= today && /gegen /.test(j.label));
+    const recent = js.filter((j) => (Date.parse(today) - Date.parse(j.date)) / 86400000 <= 1);
+    if (recent.length >= 8) {
+      found = true;
+      const j = recent.find((x) => Math.abs(x.value) >= 2) ?? recent[0];
+      const p = g.players[j.pid];
+      const d = (p.moraleScore ?? 60) - (before.get(j.pid) ?? 60);
+      console.log(`\nSprung nach dem Spiel: ${p.lastName} ${j.value > 0 ? '+' : ''}${j.value} „${j.label}“ (Moral ${before.get(j.pid)?.toFixed(1)} → ${p.moraleScore?.toFixed(1)})`);
+      check(Math.abs(d - j.value) <= 1.5 || Math.sign(d) === Math.sign(j.value), 'Spiel verändert die Moral sofort');
+      check(recent.some((x) => /^(Sieg|Niederlage|Tor|Siegtor|Nicht aufgestellt|Eingewechselt|Nur eingewechselt|Glanzleistung|Schwaches)/.test(x.label)), `Sprünge tragen den Anlass (${[...new Set(recent.map((x) => x.label.split(' ')[0]))].join(', ')})`);
+      check(joltsOf(dr, j.pid).length > 0, 'Sprung beim Spieler abrufbar (Anzeige im Fokus)');
+      // Ohne neue Ereignisse gleitet die Moral zurück zum Zielwert.
+      const a = roomAnalysis(g);
+      const gap0 = Math.abs((p.moraleScore ?? 60) - a.byId[p.id].target);
+      for (let k = 0; k < 3; k++) processDay(g, HEADLESS_UI);
+      const gap1 = Math.abs((p.moraleScore ?? 60) - roomAnalysis(g).byId[p.id].target);
+      check(gap1 <= gap0 + 3, `Moral gleitet zurück (Abstand zum Ziel ${gap0.toFixed(1)} → ${gap1.toFixed(1)})`);
+    }
+  }
+  check(found, 'mindestens ein Spiel mit Moral-Sprüngen');
+  // Gespräch: sofort
+  const p = squadOf(g, club)[5];
+  const m0 = p.moraleScore ?? 60;
+  talkTo(g, p.id, 'loben', () => 0);
+  check((p.moraleScore ?? 60) > m0, `Lob wirkt sofort (${m0.toFixed(1)} → ${(p.moraleScore ?? 60).toFixed(1)})`);
+  // Transferliste: sofort am nächsten Tageslauf
+  const q = squadOf(g, club).filter((x) => !x.transferListed)[7];
+  q.transferListed = true;
+  const q0 = q.moraleScore ?? 60;
+  processDay(g, HEADLESS_UI);
+  const lj = joltsOf(roomOf(club), q.id).find((x) => /Transferliste/.test(x.label));
+  check(!!lj && (q.moraleScore ?? 60) < q0, `Transferliste: Sprung ${lj?.value ?? 0} (${q0.toFixed(1)} → ${(q.moraleScore ?? 60).toFixed(1)})`);
+  q.transferListed = false;
+  // Mood-Faktor sichtbar
+  const { xs, ctx } = roomInputs(g, club);
+  const scores = Object.fromEntries(xs.map((x) => [x.p.id, x.p.moraleScore ?? 60]));
+  const hardCtx = { ...ctx, offSeason: false, goal: { label: 'Meisterschaft', pos: 14, expected: 1, size: 18, played: 14, dropFrom: 16, winless: 4 } };
+  const okCtx = { ...ctx, offSeason: false, goal: { label: 'Meisterschaft', pos: 1, expected: 1, size: 18, played: 14, dropFrom: 16, winless: 0 } };
+  const dT = analyzeRoom(xs, okCtx, scores).moodTarget - analyzeRoom(xs, hardCtx, scores).moodTarget;
+  check(dT >= 20, `Zielstimmung: klar verfehlt vs. erreicht −${dT}`);
+}
 
 // --- Abnutzung und Nachrüstung (kleiner Extra-Lauf)
 {

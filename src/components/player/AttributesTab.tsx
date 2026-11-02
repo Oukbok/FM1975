@@ -13,6 +13,7 @@ import {
 import { useClubProfile } from '../club/ClubLink';
 import { ATTR_DE, groupsFor, sortedKeys, groupAvg, attrTiers, Section, Bar, utcDate } from './shared';
 import PositionPitch, { TierLegend } from './PositionPitch';
+import { AttrTip } from './AttrTip';
 
 const dateOf = (day: number) => new Date(day * 86_400_000).toISOString().slice(0, 10);
 
@@ -85,7 +86,7 @@ export default function AttributesTab({ p }: { p: Player }) {
         {groupsFor(p, pos).map((grp) => (
           <Section key={grp.title} title={grp.title} right={`Ø ${groupAvg(p, grp.keys)}`}>
             {sortedKeys(grp.keys).map((k) => (
-              <Bar key={k} label={ATTR_DE[k]} value={Math.round(p.attributes[k])} tier={tiers.get(k) ?? 'dim'} />
+              <Bar key={k} label={<>{ATTR_DE[k]}<AttrTip k={k} /></>} value={Math.round(p.attributes[k])} tier={tiers.get(k) ?? 'dim'} />
             ))}
           </Section>
         ))}

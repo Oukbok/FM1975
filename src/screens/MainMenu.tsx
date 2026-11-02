@@ -57,8 +57,8 @@ export function MainMenu({ settings, onNewGame, onLoad, onUpdateSettings }: {
         </div>
         <nav className="st-menu" aria-label="Hauptmenü">
           <button className="st-btn primary" onClick={() => setView('new')}>Neues Spiel</button>
-          <button className="st-btn" disabled={saves.length === 0} onClick={() => { refreshSaves(); setView('load'); }}>
-            Spiel laden{saves.length > 0 && <span className="cnt">{saves.length}</span>}
+          <button className="st-btn" onClick={() => { refreshSaves(); setView('load'); }}>
+            Spiel laden{saves.filter((x) => !x.slot.startsWith('vorlage-')).length > 0 && <span className="cnt">{saves.filter((x) => !x.slot.startsWith('vorlage-')).length}</span>}
           </button>
           <button className="st-btn" onClick={() => setView('settings')}>Einstellungen</button>
           <button className="st-btn" onClick={() => setView('datasets')}>Datensätze &amp; Editor</button>

@@ -212,8 +212,8 @@ export function coachingReport(members: StaffMember[], squadSize: number, year: 
   return { extra: Math.round(extra * 1000) / 1000, capacity, strength: Math.round(s * 10) / 10 };
 }
 
-const OFFENSIVE = new Set(['OM', 'FL', 'MS', 'HS', 'ZM']);
-const DEFENSIVE = new Set(['LIB', 'VS', 'AV', 'DM']);
+const OFFENSIVE = new Set(['OM', 'RA', 'LA', 'RM', 'LM', 'MS', 'HS', 'ZM', 'FL']);
+const DEFENSIVE = new Set(['LIB', 'IV', 'RV', 'LV', 'DM', 'VS', 'AV']);
 
 /** Spezialisten-Bonus für einen Spieler (Multiplikator 1,00 … 1,10). */
 export function specialistBoost(members: StaffMember[], p: Player, year: number): number {

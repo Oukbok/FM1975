@@ -48,7 +48,7 @@ import { AcademyView } from '../views/kader/AcademyView';
 import { SaveLoadModal, SettingsModal } from '../views/modals/SaveLoadModal';
 import { FixturesView } from '../views/spieltag/FixturesView';
 import { MatchModal } from '../views/spieltag/MatchModal';
-import { ChronicleView } from '../views/statistiken/ChronicleView';
+import { ChronicleModal } from '../views/statistiken/ChronicleModal';
 import { HallOfFameView } from '../views/statistiken/HallOfFameView';
 import { CupView } from '../views/statistiken/CupView';
 import { InternationalView } from '../views/statistiken/InternationalView';
@@ -88,7 +88,10 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   setCurrentSlot: (s: string | null) => void; settings: AppSettings; onExit: () => void;
   onLoad: (slot: string) => void; onUpdateSettings: (s: AppSettings) => void;
 }) {
-  const [screen, setScreen] = useState<Screen>('dashboard');
+  const [screen, setScreenRaw] = useState<Screen>('dashboard');
+  // Chronik ist kein Menüpunkt mehr: 'chronicle' öffnet das große Fenster (Footer rechts).
+  const [chronicleOpen, setChronicleOpen] = useState(false);
+  const setScreen = useCallback((s: Screen) => { if (s === 'chronicle') setChronicleOpen(true); else setScreenRaw(s); }, []);
   // i-Hilfen: „Mehr im Wiki“ öffnet den Artikel (ui/InfoTip.tsx)
   const [wikiArticle, setWikiArticle] = useState<{ id: string; n: number } | null>(null);
   useEffect(() => setWikiOpener((id) => { setWikiArticle((w) => ({ id, n: (w?.n ?? 0) + 1 })); setScreen('wiki'); }), []);
@@ -376,7 +379,6 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'calendar' && <CalendarView g={g} onChange={rerender} onGoto={setScreen} />}
         {screen === 'briefing' && <BriefingView g={g} onGoto={setScreen} onOpen={() => setRunning(false)} />}
         {screen === 'cup' && <CupView g={g} onWatch={(id) => setLiveMatchId(id)} onReplayDraw={(ri) => replayDraw('cup', ri)} />}
-        {screen === 'chronicle' && <ChronicleView g={g} />}
         {screen === 'ruhmeshalle' && <HallOfFameView g={g} />}
         {screen === 'news' && <NewsView g={g} onRead={rerender} />}
         {screen === 'wiki' && <WikiView key={wikiArticle?.n ?? 0} g={g} openArticle={wikiArticle?.id} />}
@@ -413,11 +415,12 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         <footer className="dashx-foot">
           <span className="dashx-foot-l">1975 A FOOTBALL MANAGER</span>
           <span className="dashx-foot-c">SAISON {g.season}</span>
-          <span className="dashx-foot-r">DEUTSCHE FUSSBALLKULTUR. FÜR IMMER.</span>
+          <span className="dashx-foot-r"><button type="button" className="dashx-foot-link" onClick={() => setChronicleOpen(true)}>Chronik des deutschen Fußballs</button></span>
         </footer>
       )}
 
       {/* ---------------- IN-GAME-OVERLAYS ---------------- */}
+      {chronicleOpen && <ChronicleModal g={g} onClose={() => setChronicleOpen(false)} />}
       <CalendarOverlay g={g} show={calLive} speedMs={g.calendar.speedMs} delayMs={150} onPause={() => setRunning(false)} />
       {showSettings && (
         <SettingsModal settings={settings} onClose={() => setShowSettings(false)} onSave={onUpdateSettings} />

@@ -79,7 +79,7 @@ Deutsche Retro-Fußballmanager-Simulation. Der Spielstand startet in der **Saiso
 - Die Umstellung erfolgt ausschließlich über den Chronik-Meilenstein „3-Punkte-Regel" beim Erreichen der Saison **1995/96** — das wirkt **real auf die Tabellenberechnung**.
 
 ## Chronik & Epochen
-- Historische Meilensteine (Rückpassregel, Meisterliga, Bosman, FFP, Torlinientechnik, VAR …) werden zur jeweiligen Saison ausgelöst — siehe Bereich **Chronik** ().`,
+- Historische Meilensteine (Rückpassregel, Meisterliga, Bosman, FFP, Torlinientechnik, VAR …) werden zur jeweiligen Saison ausgelöst — siehe **Chronik des deutschen Fußballs** (Link unten rechts in der Fußleiste; öffnet ein großes Fenster mit Suche, Sprung zur aktuellen Saison und Jahrzehnten).`,
   },
   {
     id: 'core-datetime',
@@ -373,9 +373,12 @@ Goldene Sterne (1.0–5.0 in 0.25-Schritten) zeigen das maximale Niveau (Softcap
     id: 'condition-form',
     category: 'condition',
     title: 'Form-System',
-    keywords: ['form', 'leistung', 'note', 'trend', 'pfeil', 'krise', 'bestform'],
+    keywords: ['form', 'leistung', 'note', 'trend', 'pfeil', 'krise', 'bestform', 'system', 'daumen'],
     body: `## Was ist Form?
-Form ist die **kurzfristige Verfassung** eines Spielers auf einer Skala von **0–100**. Sie verändert sich abhängig davon, wie ein Spieler zuletzt performt hat.
+Form zeigt, **wie gut ein Spieler im System zurechtkommt** – Skala **0–100**, 50 = Durchschnitt. Wer in der Mannschaft gut funktioniert (gute Noten, Siege, sinnvolles Training), steigt; wer sich schwertut, fällt. Ausschläge sind flüchtig.
+
+## Wirkung im Spiel
+Form wirkt bewusst **gering**: Sie geht als Faktor in die Tagesstärke ein – Form 100 bringt **+2,5 %**, Form 0 **−2,5 %** Positionsstärke (\`formFactor\` in \`engine/match/team.ts\`). Ein Spieler in Topform spielt also leicht besser, mehr nicht.
 
 ## Wie ändert sich Form?
 Nach jedem Spiel wird die Form der eingesetzten Spieler neu berechnet aus:
@@ -388,14 +391,14 @@ Nicht eingesetzte Spieler driften nur langsam Richtung 50.
 Training kann die Form leicht heben; Überlastung (hohe Intensität bei niedriger Fitness) senkt sie.
 
 ## Anzeige (Daumen-Symbol)
-In Kader, Aufstellung und Spielerprofil zeigt ein **Daumen** die Form: nach oben = gut, waagerecht = normal, nach unten = schlecht. Fahre mit der Maus darüber, um den genauen Wert zu sehen (z. B. „Form 62/100 – gute Form“).
-| Form | Daumen | Farbe | Wort |
-|------|--------|-------|------|
-| ≥ 68 | nach oben | Dunkelgrün | Topform |
-| 56–67 | schräg nach oben | Hellgrün | gute Form |
-| 44–55 | waagerecht | Gelb | durchschnittlich |
-| 32–43 | schräg nach unten | Orange | schwache Form |
-| < 32 | nach unten | Rot | Formtief |
+In Kader, Aufstellung und Spielerprofil zeigt ein **Daumen nach oben** die Form – immer nach oben, nur die **Grünstufe** ändert sich: blasses Grau-Grün = Formtief, kräftiges Dunkelgrün = Topform (kein Rot). Fahre mit der Maus darüber, um den genauen Wert zu sehen (z. B. „Form 62/100 – kommt gut im System zurecht“).
+| Form | Farbe | Hover | Kurzwort |
+|------|-------|-------|----------|
+| ≥ 68 | kräftiges Dunkelgrün | blüht im System auf | Topform |
+| 56–67 | Grün | kommt gut im System zurecht | gute Form |
+| 44–55 | Hellgrün | kommt im System zurecht | durchschnittlich |
+| 32–43 | blasses Grün | tut sich im System schwer | schwache Form |
+| < 32 | Grau-Grün | kommt im System nicht zurecht | Formtief |
 
 ## Moral (Smiley)
 Die Moral hat fünf Stufen (sehr unzufrieden … sehr glücklich). Für die Anzeige wird sie auf 0–100 umgerechnet (10/30/50/70/90) und als **Smiley** gezeigt – von traurig in Rot bis strahlend in Dunkelgrün.
@@ -422,10 +425,17 @@ Fitness ist die **konditionelle Grundverfassung** eines Spielers (**0–100**) �
 - **Regenerations-Training** (Fokus „Regeneration") mit geringer Last.
 
 ## Wirkung im Spiel
-Fitness fließt als eigener **Fitness-Faktor** in die effektive Tagesstärke ein: \`0.7 + fitness/100 * 0.3\` (0,7–1,0). Niedrige Fitness erhöht außerdem das Verletzungsrisiko.
+Fitness fließt als eigener **Fitness-Faktor** in die Tagesstärke ein: \`0.9 + fitness/100 * 0.1\` (0,9–1,0, \`conditionFactor\` in \`engine/match/team.ts\`). Hartes Training bei niedriger Fitness drückt zudem die Form.
 
-## Anzeige
-Farbcodiert wie Attribute: Grün > 75, Gelb 60–75, Orange/Rot < 60. Im Spielerprofil eigene Kachel **„Fit"** direkt neben **„Frisch"**.
+## Anzeige (Hantel)
+Fitness erscheint als **Hantel** – gestaffelt wie Frische und Moral von Rot bis Dunkelgrün, je fitter, desto voller die Scheiben. Hover zeigt sofort den Wert („Fitness 82/100 – fit“).
+| Fitness | Farbe | Wort |
+|---------|-------|------|
+| ≥ 88 | Dunkelgrün | topfit |
+| 75–87 | Hellgrün | fit |
+| 62–74 | Gelb | ordentlich |
+| 48–61 | Orange | Trainingsrückstand |
+| < 48 | Rot | kaum belastbar |
 
 ## Code
 - Feld: \`Player.attributes.fitness\` (0–100).
@@ -476,12 +486,12 @@ Save-Version **7**: Altstände ohne Frische werden beim Laden nachgerüstet (\`r
     id: 'condition-kabine',
     category: 'condition',
     title: 'Kabine: Moral, Einfluss und Teamstimmung',
-    keywords: ['kabine', 'moral', 'stimmung', 'teamstimmung', 'zusammenhalt', 'einfluss', 'führungsspieler', 'außenseiter', 'clique', 'gruppe', 'kapitän', 'mannschaftsrat', 'gespräch', 'mannschaftssitzung', 'teamevent', 'streit', 'konflikt', 'sprachbarriere', 'kabinenpredigt'],
+    keywords: ['kabine', 'moral', 'stimmung', 'teamstimmung', 'zusammenhalt', 'einfluss', 'führungsspieler', 'außenseiter', 'clique', 'gruppe', 'kapitän', 'mannschaftsrat', 'gespräch', 'mannschaftssitzung', 'teamevent', 'streit', 'konflikt', 'sprachbarriere', 'kabinenpredigt', 'pyramide', 'saisonziel', 'krise', 'moral-sprung'],
     body: `## Worum geht es?
 Unter **Kader › Kabine** siehst du, wie deine Mannschaft innen funktioniert: wer den Ton angibt, wer außen vor ist und warum – und wie es um die **Moral** jedes Spielers steht. Die Moral wirkt über die Tagesform direkt auf die Leistung im Spiel (sehr schlecht ×0,95 bis sehr gut ×1,03).
 
 ## Moral (0–100)
-Jeder Spieler deines Vereins hat eine Moral von 0 bis 100. Sie folgt täglich langsam einem **Zielwert** (etwa 8 % des Abstands pro Tag). Der Zielwert ist die Summe sichtbarer Faktoren – beim Spieler im Fokus steht unter „Warum diese Moral?“ jeder einzelne mit + oder −:
+Jeder Spieler deines Vereins hat eine Moral von 0 bis 100. Sie folgt täglich langsam einem **Zielwert** (etwa 8 % des Abstands pro Tag). Was passiert, wirkt aber **sofort** (siehe „Sofortige Sprünge“). Der Zielwert ist die Summe sichtbarer Faktoren – beim Spieler im Fokus steht unter „Warum diese Moral?“ jeder einzelne mit + oder −:
 - **Spielzeit gemessen an der Rolle:** Wer sich als Stammkraft sieht (Top 11 im Kader) und draußen sitzt, verliert deutlich – Ehrgeizige mehr. Ergänzungsspieler und Talente sind geduldiger. In Sommer- und Winterpause zählt die Spielzeit nicht.
 - **Teamstimmung**, **eigene Form**, **Vertrag und Zufriedenheit** (siehe Kabinenfrieden).
 - **Gehalt deutlich unter Gleichwertigen** (Spieler mit ähnlicher Stärke verdienen viel mehr) – Geldbewusste stört das mehr.
@@ -492,6 +502,15 @@ Jeder Spieler deines Vereins hat eine Moral von 0 bis 100. Sie folgt täglich la
 
 Stufen: unter 24 sehr schlecht, ab 24 schlecht, ab 41 okay, ab 59 gut, ab 77 sehr gut.
 
+## Sofortige Sprünge
+Ereignisse verändern die Moral sofort; danach gleitet sie wieder zum Zielwert zurück (nach einer Woche ist gut die Hälfte des Sprungs verflogen). Beim Spieler im Fokus stehen sie unter „Zuletzt passiert“, z. B. „+6 Siegtor beim 2:1 gegen …“.
+- **Spiele:** Sieg (+2 bis +5 je nach Höhe) bzw. Niederlage (−2 bis −5) für alle, **Tor** (+2, mehrere Tore mehr), **Siegtor** beim Sieg mit einem Tor Unterschied (+4), **Glanzleistung** (Note bis 1,6) bzw. **schwaches Spiel** (ab 5,0), **Platzverweis**. Wer sich als Stammkraft sieht und **nicht aufgestellt** wird, verliert sofort (−3 bis −5, Ehrgeizige mehr); **nur eingewechselt** ärgert Stammkräfte, Talente und Ergänzungsspieler freuen sich über die **Einwechslung**. Ein Spiel zählt höchstens ±10.
+- **Pokal-Aus:** gegen Amateure ein Schock für alle (−5 sofort, dazu Teamstimmung und Zusammenhalt), sonst ein kleiner Dämpfer.
+- **Gespräche** (Lob, Kritik, Einsatzzusage, Beruhigen), **Kapitän/Mannschaftsrat**, **Antworten auf Kabinen-Vorfälle**, **Zusagen** gehalten oder gebrochen: Sprung sofort, dazu ein abklingender Faktor.
+- **Vertrag:** Verlängerung +6, abgelehntes Angebot −1, ein deutlich zu niedriges −4, abgebrochene Gespräche −7.
+- **Transferliste:** draufgesetzt −8, heruntergenommen +4. **Versprechen** gehalten +5, gebrochen −22.
+- Ereignisse aus dem Postfach, Trainingslager oder Hallenturniere, die die Moral-Stufe ändern, erscheinen mit dem Betreff der Nachricht.
+
 ## Einfluss (0–100)
 Wie sehr ein Spieler die Kabine prägt: **Alter und Erfahrung**, **Jahre im Verein**, **Stammplatz**, **Stärke im Kader**, **Kapitän** (+15) und **Mannschaftsrat** (+8), **Führungsqualität** (Attribut), **Auftreten** (Rampenlicht, Ehrgeiz, Professionalität), **Sprachbarriere** und **neu im Verein** (−). Daraus ergibt sich die Rolle: **Führungsspieler** (der Einflussreichste und bis zu drei weitere ab 62), **Stütze** (ab 42), **Mitläufer** – oder **außen vor**.
 
@@ -499,11 +518,11 @@ Wie sehr ein Spieler die Kabine prägt: **Alter und Erfahrung**, **Jahre im Vere
 Gründe werden gewichtet: keine Einsätze, Sprachbarriere (Landsleute im Kader helfen), Gehalt deutlich unter Gleichwertigen, gebrochenes Versprechen, Konflikt (mit einem Führungsspieler besonders schwer), abgelehnter Wechselwunsch, Transferliste, noch nicht angekommen. Erst mehrere Gründe zusammen machen einen Spieler zum Außenseiter. Außenseiter verlieren Moral und drücken Zusammenhalt und Stimmung.
 
 ## Gruppen
-Jeder Spieler gehört einer Gruppe an: **Führungskreis**, **Sprachgruppen** (ab zwei Spielern gleicher Fremdsprache), **Neuzugänge** (ab drei), **Junge Wilde** (bis 22), **Routiniers** (ab 30), **Stammkräfte**, **Ergänzungsspieler**. Der Kabinen-Kreis zeigt innen die Führung, außen die Außenseiter, die Sektoren sind die Gruppen; gestrichelte Linien sind Konflikte.
+Jeder Spieler gehört einer Gruppe an: **Führungskreis**, **Sprachgruppen** (ab zwei Spielern gleicher Fremdsprache), **Neuzugänge** (ab drei), **Junge Wilde** (bis 22), **Routiniers** (ab 30), **Stammkräfte**, **Ergänzungsspieler**. Die **Kabinen-Pyramide** zeigt die Hierarchie: oben die Führungsspieler, darunter Stützen und Mitläufer, unten wer außen vor ist; je Stufe steht links der Einflussreichste. Der Smiley ist die Moral, die kleine Ziffer die Gruppe (Legende unter der Pyramide – zeigst du auf eine Gruppe, werden ihre Mitglieder hervorgehoben), gestrichelte Linien sind Konflikte.
 
 ## Zusammenhalt und Teamstimmung
 **Zusammenhalt** steigt mit gemeinsamen Jahren der Stammkräfte und guter Führung; viele Neuzugänge, abgeschottete Sprachgruppen, Außenseiter, Konflikte und Unruhe auf der Bank senken ihn. Teamevents stärken ihn.
-**Teamstimmung** folgt den letzten fünf Ligaergebnissen, der Laune der Führungsspieler (nach Einfluss gewichtet), dem Zusammenhalt, Außenseitern, Konflikten und deinen Maßnahmen. Sie fließt in die Moral aller Spieler ein.
+**Teamstimmung** folgt den letzten fünf Ligaergebnissen, dem **Saisonziel** (siehe unten), der Laune der Führungsspieler (nach Einfluss gewichtet), dem Zusammenhalt, Außenseitern, Konflikten und deinen Maßnahmen. Sie fließt in die Moral aller Spieler ein.
 
 ## Was du tun kannst
 - **Einzelgespräch:** loben, kritisieren, Einsatz versprechen, beruhigen. Ob es ankommt, hängt von Persönlichkeit, Form und Lage ab (Einschätzung unter dem Knopf). Mit demselben Spieler frühestens nach 10 Tagen wieder; jedes weitere Gespräch innerhalb von 60 Tagen wirkt schwächer (×0,65). Ein **Einsatzversprechen** muss gehalten werden: zwei Startelf-Einsätze in vier Wochen, sonst sinken Moral und Glaubwürdigkeit.
@@ -514,15 +533,22 @@ Jeder Spieler gehört einer Gruppe an: **Führungskreis**, **Sprachgruppen** (ab
 ## Vorfälle
 Selten (höchstens alle drei Wochen) meldet sich die Kabine im Postfach und unter „Vorfälle“: **Streit** zweier Spieler, ein **Führungsspieler fordert etwas** für die Mannschaft (je nach Epoche Siegprämie, Masseur, Familienbereich, freie Tage, Social-Media-Freiheiten), ein **Neuzugang findet keinen Anschluss** (Pate, Sprachkurs), der **Mannschaftsrat wünscht sich einen Teamabend**, **Grüppchenbildung nach einer Niederlagenserie** oder die Frage nach einer **Kabinenpredigt** nach einer hohen Niederlage. Ohne Antwort gilt nach sieben Tagen die vorsichtige Standardwahl.
 
+## Saisonziel und Tabellendruck
+Die Mannschaft kennt das Saisonziel des Vorstands. Ab etwa dem vierten Spieltag (volle Stärke nach zehn) drückt die Tabelle auf die Teamstimmung:
+- **Saisonziel verfehlt:** je weiter du hinter dem verlangten Platz stehst, desto mehr, ab zwei Plätzen Rückstand (bis −18; Meisterschaft = Platz 1, Europapokal = Platz 4, Mittelfeld = Mitte, Klassenerhalt = über dem Strich).
+- **Abstiegskampf wider Erwarten:** auf einem Abstiegsplatz, obwohl mehr verlangt war (−8).
+- **Sieglos:** ab drei Ligaspielen ohne Sieg −2,5 je weiterem Spiel (bis −12).
+- **Besser als erwartet** hebt die Stimmung etwas (bis +6).
+
 ## Ohne Eingreifen
-Die Kabine läuft meist von selbst ordentlich. Krisen entstehen vor allem durch Niederlagenserien, viele Neuzugänge mit Sprachproblemen, unzufriedene Stammkräfte auf der Bank und Konflikte. Steckt die Stimmung vier Wochen unter 35, raufen sich die Spieler selbst zusammen (mit einem anerkannten Kapitän stärker) – eine Dauerkrise gibt es also nicht, aber schneller geht es mit dir. Eingreifen hilft spürbar – ständiges Eingreifen nutzt sich ab.
+Die Kabine läuft meist von selbst ordentlich – an etwa jedem 15. bis 25. Tag ist die Stimmung aber schlecht (unter 35), in Spielzeiten mit klar verfehltem Saisonziel etwa dreimal so oft. Mit Gesprächen (vor allem mit den Führungsspielern), gut dosierten Sitzungen und Teamevents kannst du das deutlich abfedern. Krisen entstehen vor allem durch Niederlagenserien, Tabellendruck, viele Neuzugänge mit Sprachproblemen, unzufriedene Stammkräfte auf der Bank und Konflikte. Steckt die Stimmung gut drei Wochen unter 35, raufen sich die Spieler selbst zusammen (mit einem anerkannten Kapitän stärker) – eine Dauerkrise gibt es also nicht, aber schneller geht es mit dir. Eingreifen hilft spürbar – ständiges Eingreifen nutzt sich ab.
 
 ## KI-Vereine
 Bei den anderen Vereinen folgt die Stimmung den letzten Ergebnissen; die Moral ihrer Spieler wandert wöchentlich in diese Richtung (Stammkräfte ohne Einsätze und Unzufriedene eine Stufe tiefer).
 
 ## Code
-- \`engine/dressingRoom.ts\` (Rechnung), \`game/dressingRoomGame.ts\` (Tageslauf, KI, Aktionen), \`game/dressingRoomEvents.ts\` (Vorfälle), Seite \`views/kader/DressingRoomView.tsx\`.
-- Felder: \`Player.moraleScore\`, \`Club.dressingRoom\`.`,
+- \`engine/dressingRoom.ts\` (Rechnung, Tabellendruck \`goalFactors\`), \`game/dressingRoomGame.ts\` (Tageslauf, KI, Aktionen, \`goalOf\`), \`game/moraleJolt.ts\` (sofortige Sprünge), \`game/dressingRoomEvents.ts\` (Vorfälle), Seite \`views/kader/DressingRoomView.tsx\` + \`kabine/RoomPyramid.tsx\`.
+- Felder: \`Player.moraleScore\`, \`Club.dressingRoom\` (darin \`jolts\`, \`joltScan\`, \`listed\`).`,
   },
 
   // ---------------------------------------------------------------------------
@@ -649,6 +675,24 @@ Die Vorschau im Planer zeigt für jeden Tag das erwartete **Fitness-Delta** (gr�
 - Sinkt die Fitness dauerhaft unter ~35, drohen **Abwertungen durch Übertraining** (siehe Entwicklung).
 - Müde Spieler **lernen langsamer** (die Frische dämpft den Lerneffekt).
 - Verletzte Spieler trainieren nicht (nur Verletzungs-Countdown läuft weiter).`,
+  },
+  {
+    id: 'player-hidden-values',
+    category: 'development',
+    title: 'Verdeckte Werte & Attribut-Wirkung',
+    keywords: ['konstanz', 'nervenstärke', 'verdeckt', 'versteckt', 'einschätzung', 'scout', 'trainerteam', 'verletzungsanfälligkeit', 'attribut', 'wirkung'],
+    body: `## Verdeckte Werte
+**Konstanz**, **Nervenstärke**, **Verletzungsanfälligkeit** und **Entwicklungstempo** sind verdeckt – du siehst nie eine Zahl, nur eine **Einschätzung** („wirkt nervenstark“, „schwankt stark“).
+- **Eigene Spieler:** Das **Trainerteam** urteilt. Je länger der Spieler im Verein ist, desto treffsicherer (nach rund zweieinhalb Jahren „gesichert“).
+- **Fremde Spieler:** Die **Scouts** urteilen – je besser dein Scouting (und je länger ihr verhandelt), desto genauer. Ohne Kenntnis heißt es „noch kein Urteil“.
+- Jede Einschätzung kann **danebenliegen**: Jeder Spieler hat einen festen Schätzfehler, der mit wachsender Kenntnis schrumpft.
+
+## Was beeinflusst ein Attribut?
+Hinter jedem Attribut im Spielerprofil steht ein kleines **i**. Es zeigt, wo der Wert im Spiel direkt gerechnet wird (z. B. Kopfball: Kopfballduelle bei Flanken und Ecken, Kopfball-Abschluss), für welche Positionen er in die **Positionsstärke** eingeht (live aus der Epoche) und welche **Trainingsbausteine** ihn verbessern.
+
+## Code
+- Einschätzung: \`game/hiddenTraits.ts\` (\`hiddenKnowledge\`, \`estimateHidden\`).
+- Attribut-Texte: \`data/attributeInfo.ts\`; Anzeige \`components/player/AttrTip.tsx\`.`,
   },
   {
     id: 'development-hidden',
@@ -815,14 +859,17 @@ Jede Position bewertet bestimmte Attribute stärker als andere. Diese Gewichte (
 |----------|--------------------------|
 | Torwart (TW) | Reflexe 3.0, Fangsicherheit 2.5, 1-gegen-1 2.0, Luftherrschaft 1.5 |
 | Libero (LIB) | Stellungsspiel 2.5, Abfangen 2.2, Manndeckung/Zweikampf 1.8, Passspiel 1.8 |
-| Vorstopper (VS) | Manndeckung 2.8, Zweikampf 2.8, Kopfball 2.2, Kraft 2.0 |
-| Außenverteidiger (AV) | Zweikampf 2.0, Tempo 2.0, Ausdauer 2.0, Manndeckung 1.8 |
+| Innenverteidiger (IV) | Manndeckung 2.8, Zweikampf 2.8, Kopfball 2.2, Kraft 2.0 |
+| Rechter/Linker Verteidiger (RV/LV) | Zweikampf 2.0, Tempo 2.0, Ausdauer 2.0, Manndeckung 1.8 |
 | Defensives MF (DM) | Zweikampf 2.2, Abfangen 2.2, Stellungsspiel 2.0, Passspiel 2.0 |
 | Zentrales MF (ZM) | Passspiel 2.5, Übersicht 2.2, Technik 2.0, Ausdauer 1.8 |
+| Rechter/Linker Mittelfeldspieler (RM/LM) | Flanken 2.2, Ausdauer 2.0, Laufbereitschaft 1.8, Tempo 1.8, Passspiel 1.6 |
 | Offensives MF (OM) | Technik 2.2, Übersicht 2.2, Passspiel 2.0, Dribbling 1.8 |
-| Flügel (FL) | Tempo 2.4, Dribbling 2.2, Flanken 2.0, Antritt 2.0 |
+| Rechtsaußen/Linksaußen (RA/LA) | Tempo 2.4, Dribbling 2.2, Flanken 2.0, Antritt 2.0 |
 | Mittelstürmer (MS) | Abschluss 2.8, Kopfball 2.0, Schusskraft 1.8, Nervenstärke 1.8 |
 | Hängende Spitze (HS) | Abschluss 2.0, Dribbling 2.0, Technik 2.0, erster Kontakt 1.8 |
+
+Rechte und linke Positionen haben dieselben Gewichte; die Seite entscheiden **Vertrautheit** und **starker Fuß** (siehe *Positionen & Seiten*).
 
 Ein Mittelstürmer mit starkem Abschluss erreicht also eine deutlich höhere Eignung als einer mit gleichem Gesamtwert, dessen Stärken aber in der Defensive liegen.
 
@@ -843,10 +890,11 @@ Für jeden Spieler auf jedem Slot zeigt das Feld eine **Eignungszahl** mit Farbc
 - **rot** < 60 (unterer Bereich) – ungeeignet
 
 ### Formel
-\`Eignung = gewichteter Attribut-Mittelwert × Vertrautheits-Faktor\`
+\`Eignung = gewichteter Attribut-Mittelwert × Vertrautheits-Faktor × Fuß-Faktor\`
 
 1. **Gewichteter Mittelwert:** Alle für die Position relevanten Attribute (siehe Positions-Gewichtungen) werden mit ihrem Gewicht multipliziert und gemittelt.
 2. **Vertrautheits-Faktor:** Wie gut kennt der Spieler die Position?
+3. **Fuß-Faktor:** Auf der Seite seines schwachen Fußes verliert ein Spieler 4 % (Verteidiger, Mittelfeld außen). Flügelstürmer auf der „falschen“ Seite verlieren bis 1994 4 %, bis 2004 2 %, danach nichts – inverse Flügel, die nach innen ziehen, sind dann normal. Beidfüßige verlieren nie etwas.
 
 Der Faktor kommt aus der **Positionsvertrautheit** des Spielers (0–100, siehe Artikel *Positionsvertrautheit*):
 
@@ -878,7 +926,7 @@ Jeder Spieler hat für **jede** Position einen eigenen Vertrautheitswert. Im Spi
 Vorausgewählt ist die Position, auf der er am stärksten ist. Klickst du eine andere an, siehst du ihre Eignung und die dafür wichtigen Attribute: **kräftiger blauer Strich** = Schlüsselattribut, **schlanker, hellerer Strich** = ebenfalls wichtig. Unter jeder Position zeigt ein Balken den Fortschritt; eine dezente Marke steht beim bisherigen Höchstwert.
 
 ### Ausgangslage
-Die meisten Spieler haben eine natürliche Position, ein bis zwei gute und einige ausreichende (verwandte Rollen wie VS–LIB, ZM–DM/OM, MS–HS, AV–FL liegen nahe beieinander; passende Attribute helfen). Torhüter sind auf dem Feld kaum zu gebrauchen und umgekehrt.
+Die meisten Spieler haben eine natürliche Position, ein bis zwei gute und einige ausreichende (verwandte Rollen wie IV–LIB, ZM–DM/OM, MS–HS, RV–RM–RA liegen nahe beieinander; passende Attribute helfen). Rechts und links sind getrennte Positionen: Ein rechtsfüßiger Rechtsverteidiger ist links meist nur „ausreichend“, als RM oft „gut“, als LM kaum zu gebrauchen. Beidfüßige wechseln die Seite leichter. Torhüter sind auf dem Feld kaum zu gebrauchen und umgekehrt.
 
 ### Wachstum
 - **Spielen:** Jeder Einsatz auf einer Position steigert die Vertrautheit – schnell, solange sie niedrig ist, dann immer langsamer. Von null auf „gut“ dauert es etwa anderthalb Spielzeiten Stammplatz; junge Spieler lernen schneller, ältere langsamer.
@@ -891,6 +939,41 @@ Wer eine Position über ein Jahr nicht mehr spielt, verlernt sie langsam – nic
 Die Vertrautheit ist der Vertrautheits-Faktor der **Positionseignung** (siehe dort) und wirkt damit überall: Match-Engine, Aufstellungs-KI, Eignungsfarben in der Aufstellung und Einwechslungen. Alle Vereine nutzen das System: Die KI stellt Spieler auch auf guten Nebenpositionen auf und lässt zu Saisonbeginn je Verein höchstens einen jungen Spieler eine Position lernen, auf der die Formation dünn besetzt ist.
 
 *Technik:* \`engine/positionSkill.ts\` (Erzeugung, Wachstum, Abbau), \`game/positionsGame.ts\` (Monat, KI, Nachrüstung), optionales Feld \`Player.positionSkill\`.`,
+  },
+  {
+    id: 'positions-sides',
+    category: 'tactics',
+    title: 'Positionen & Seiten (Kürzel)',
+    keywords: ['position', 'kürzel', 'rv', 'lv', 'rm', 'lm', 'ra', 'la', 'iv', 'vorstopper', 'seite', 'fuß', 'linksfuß'],
+    body: `## Positionen und ihre Kürzel
+Positionen sind **seitengenau** wie im Football Manager:
+
+| Kürzel | Position |
+|--------|----------|
+| TW | Torwart |
+| LIB | Libero – freier Mann hinter der Abwehr, vor allem in den 70ern und 80ern |
+| IV | Innenverteidiger – in Libero-Systemen der Vorstopper/Manndecker |
+| RV / LV | Rechter / Linker Verteidiger |
+| DM | Defensives Mittelfeld |
+| ZM | Zentrales Mittelfeld |
+| RM / LM | Rechter / Linker Mittelfeldspieler |
+| OM | Offensives Mittelfeld |
+| RA / LA | Rechtsaußen / Linksaußen |
+| HS | Hängende Spitze |
+| MS | Mittelstürmer |
+
+Den **Vorstopper** gibt es nicht mehr als eigene Position: Er ist die Rolle des Innenverteidigers vor dem Libero und braucht dieselben Stärken (Manndeckung, Zweikampf, Kopfball). Offensive Außenverteidiger (Schienenspieler in der Fünferkette) sind RV/LV mit etwas höherer Lage auf dem Feld.
+
+### Seite und starker Fuß
+Die meisten Linksverteidiger und Linksaußen sind Linksfüßer, auf rechts dominieren Rechtsfüßer. Wer auf der Seite seines schwachen Fußes spielt, verliert etwas Eignung (siehe *Positionseignung*), und seine Vertrautheit dort ist meist geringer. Beidfüßige sind auf beiden Seiten einsetzbar – ein großer Vorteil.
+
+### Aufstellung
+Im Raster heißen die Felder nach ihrer Lage: links LV/LM/LA, rechts RV/RM/RA. Setzt du einen Spieler frei, gilt die Position des nächstgelegenen Rasterpunkts.
+
+### Alte Spielstände
+Beim Laden werden die früheren Kürzel umgerechnet: VS → IV, AV → RV/LV, FL → RA/LA – die Seite folgt dem starken Fuß, bei Beidfüßigen der bisherigen Seite in der Aufstellung. Die Vertrautheit für neue Positionen (Gegenseite, RM/LM) leitet sich aus den bisherigen Werten ab. Auch die Kader-Planung der KI denkt jetzt in Seiten: Fehlt ein Linksverteidiger, sucht sie gezielt einen.
+
+*Technik:* Helfer \`positionGroup\`, \`sideOf\`, \`roleOf\`, \`mirrorPosition\`, \`isFullBack\`, \`isWide\`, \`footFactor\`, \`normalizePosition\` in \`engine/positions.ts\`; Umrechnung \`game/positions2Migration.ts\`.`,
   },
   {
     id: 'tactic-options',
@@ -1529,7 +1612,7 @@ Der Baustil folgt der Epoche (Backstein und Satteldach in den 70ern und 80ern, P
     title: 'Jugendwettbewerbe',
     keywords: ['jugendwettbewerbe', 'a-jugend', 'b-jugend', 'u19', 'u17', 'jugendmeister', 'junioren-bundesliga', 'nachwuchsliga', 'junioren-pokal', 'youth league', 'ddr', 'endrunde', 'verbandsliga', 'regionalliga', 'c-jugend', 'd-jugend', 'e-jugend', 'f-jugend', 'bambini', 'kreisliga', 'bezirksliga', 'spielfest', 'funino', 'kinderfußball'],
     body: `## Was gespielt wird
-Unter **Jugend › Jugendwettbewerbe** laufen die Meisterschaften und Pokale des Nachwuchses – für alle Vereine, nicht nur für dich. Die Seite ist aufgebaut wie Statistiken › Liga: oben Saison und Wettbewerb, links Tabelle, Gruppen oder Endrunde (Turnierbaum oder Runden), rechts die Bestenlisten (Tore, Vorlagen, Scorer, Karten, Weiße Weste) und deine Lage.
+Unter **Jugend › Jugendwettbewerbe** laufen die Meisterschaften und Pokale des Nachwuchses – für alle Vereine, nicht nur für dich. Die Seite ist aufgebaut wie Statistiken › Liga: oben Saison und Wettbewerb, links Tabelle, Gruppen oder Endrunde (Turnierbaum oder Runden), rechts die Bestenlisten (Tore, Vorlagen, Scorer, Karten, Weiße Weste) und deine Lage. In der Auswahl stehen nur Wettbewerbe, die es in der gewählten Saison gibt und die schon Teilnehmer haben: Ligen und Spielklassen tauchen erst ab dem Jahr ihrer Einführung auf, eine Endrunde erst nach ihrer Auslosung.
 
 ## Formate nach Epoche
 - **A-Jugend (U19):** bis 1995/96 Verbandsligen der Landesverbände, deren Meister (16 Plätze) spielen die **Endrunde** im K.-o.-System mit Hin- und Rückspiel, Endspiel in einem Spiel. 1996/97–2002/03 fünf **Regionalligen** (Nord, Nordost, West, Südwest, Süd) und eine Endrunde der letzten Acht. Ab 2003/04 **A-Junioren-Bundesliga** mit drei Staffeln à 14 (Nord/Nordost, West, Süd/Südwest); die drei Meister und der Zweite aus Süd/Südwest spielen das Halbfinale. Ab 2024/25 **DFB-Nachwuchsliga**: Vorrunde in regionalen Gruppen, Hauptrunde Liga A, Achtelfinale in einem Spiel.
@@ -1903,7 +1986,7 @@ Vor dem Briefing läuft ein kurzer Auftakt (etwa 6 Sekunden): Mittelkreis und Mi
 Unter **Zentrale → Briefing** findest du die Briefings aller Saisons dieses Spiels; „Briefing öffnen“ zeigt dasselbe Fenster ohne Auftakt. Alte Spielstände führen das Archiv ab der Saison, in der sie zuerst geladen werden.
 
 ## Vorschau und Chronik
-Am **2. Januar** kündigt der Verband an, was ab der nächsten Saison gilt. Die Einzelmeldungen der Chronik zum Saisonstart sind im Briefing zusammengefasst; alle Meilensteine stehen weiter unter **Statistiken → Chronik**.`,
+Am **2. Januar** kündigt der Verband an, was ab der nächsten Saison gilt. Die Einzelmeldungen der Chronik zum Saisonstart sind im Briefing zusammengefasst; alle Meilensteine stehen weiter in der **Chronik des deutschen Fußballs** (unten rechts in der Fußleiste).`,
   },
   {
     id: 'chronicle-hall-of-fame',
@@ -2584,16 +2667,24 @@ freigeschaltet, wie sie historisch aufkamen – und zunächst nur für Vereine, 
 | Fernreisen | VAE 1984 (nur Ansehen ≥ 85), Florida 1992, Katar 2011, USA-Tour 2014, Asien-Reise und Südafrika (Kapstadt/Johannesburg, Winter) 2015; Corona-Pausen 2020–2022 | 1984– |
 
 ## Planen
-Der Knopf **Trainingslager planen** öffnet den Planer in drei Schritten; rechts zeigen **Wirkungsbalken** (wie in der Taktik)
-bei jeder Wahl, was das Lager bringt: Fitness, Taktik & Form, Teamgeist, Erholung, Verletzungsrisiko und Kosten im Verhältnis
-zur Kasse.
+Jedes Fenster hat seinen eigenen Knopf (**Sommerlager planen** bzw. **Winterlager planen** auf der Karte des Fensters; der
+große Knopf rechts plant das nächste freie Fenster). Im Planer selbst wechselst du nicht zwischen Sommer und Winter. Er führt
+in drei Schritten; rechts zeigen **Wirkungsbalken** (wie in der Taktik) bei jeder Wahl, was das Lager bringt: Fitness,
+Taktik & Form, Teamgeist, Erholung, Verletzungsrisiko und Kosten im Verhältnis zur Kasse. Jeder Balken zeigt eine **Spanne**
+(heller Bereich) und den Erwartungswert (Strich): Fitness und Form schwanken mit dem Wetter (bei Ausfallrisiko r zwischen
+1 − 0,6·r und 1 + 0,3·r der Erwartung), der Teamgeist mit dem Zufall in der Reisegruppe, die Verletzten zeigen die Zahl, die in
+8 von 10 Lagern nicht überschritten bzw. erreicht wird. Erholung und Kosten stehen vorher fest.
 1. **Zeitraum:** Kalender der Sommervorbereitung bzw. Winterpause. Pflichtspiele und zugesagte Hallenturniere sind gesperrt,
-   die erste Woche (Vorlauf) ebenso; kurzfristige Tage (unter 21 Tagen) sind markiert. Dauer 5–14 Tage.
+   die erste Woche (Vorlauf) ebenso; kurzfristige Tage (unter 21 Tagen) sind markiert. Dauer 5–14 Tage. Fährst du mit der Maus
+   über einen Tag, siehst du das Lager ab diesem Tag als Vorschau; ein **Klick auf den Anreisetag** springt direkt zu den Zielen.
 2. **Ziel & Unterkunft:** Karte mit Umschalter **Deutschland & Alpen, Europa & Mittelmeer, Afrika, Asien & Naher Osten,
-   Amerika, Welt**. Es erscheinen nur Ziele, die es im jeweiligen Jahr schon gab; zu teure oder gesperrte Ziele sind gedimmt.
-   Ein Klick zeigt **Vor- und Nachteile** (Klima im gewählten Monat, Reise und Jetlag, Anlage, Höhe, Ablenkung, Sponsor- und
-   Image-Folgen, andere Vereine vor Ort) und die Unterkünfte mit Gesamtpreis.
-3. **Reisegruppe:** wer mitfährt. Verletzte bleiben zunächst zur Reha daheim (mit Schwerpunkt Regeneration lohnt es, sie
+   Amerika, Welt**. Gezeigt werden nur die Ziele, die für dieses Fenster und Jahr **in Frage kommen** (buchbar); gesperrte
+   (Ansehen, Sponsor-Pflicht, Corona) blendest du mit **gesperrte zeigen** gedimmt ein. Über jedem Punkt zeigen **Sonne**
+   und **Schneeflocke**, ob der Ort im Sommer, im Winter oder in beiden Fenstern gebucht werden kann. Überfahren zeigt eine
+   Kurzinfo (Ort, Jahreszeiten, Klima im Monat), ein Klick **Vor- und Nachteile** (Klima im gewählten Monat, Reise und Jetlag,
+   Anlage, Höhe, Ablenkung, Sponsor- und Image-Folgen, andere Vereine vor Ort) und die Unterkünfte mit Gesamtpreis.
+3. **Reisegruppe:** wer mitfährt; beide Listen (Profis und Jugend) lassen sich über die Spaltenköpfe sortieren. Die
+   **Schwerpunkte** tragen dieselben Symbole wie die Bausteine im Trainingsplan. Verletzte bleiben zunächst zur Reha daheim (mit Schwerpunkt Regeneration lohnt es, sie
    mitzunehmen). Bis zu **6 Spieler aus B- und A-Jugend** können mit – sie lernen im Training mit den Profis besonders viel
    (Entwicklung ×1,3, hohe Moral-Chance). **Gesunde Profis, die daheim bleiben, sind zu 40 % enttäuscht** (Moral −1).
    Die Kosten richten sich nach der Größe der Reisegruppe (Spieler plus rund neun Betreuer); mindestens 11 Spieler.

@@ -6,8 +6,9 @@
 // =============================================================================
 import { simulateSeatSales, type SeatSale } from '../seating';
 import { attendanceRestriction } from '../../data/history';
-import type { Club, InjurySeverity, Player } from '../../types';
-import { positionSuitability } from '../positions';
+import type { Club, InjurySeverity, Player, Position } from '../../types';
+import { POSITION_GROUPS } from '../../types';
+import { mirrorPosition, positionSuitability } from '../positions';
 import { eraRules, seasonYearOf, type EraRules } from './era';
 import { bench, emptyStats, fieldPlayers, initRefs, lineupChanged, onPitch, refresh, type TeamState } from './state';
 import { makeMPlayer, matchBase, rating, resolveLineup } from './team';
@@ -457,7 +458,7 @@ export class MatchSim {
     let best: MPlayer | undefined; let bv = -1;
     for (const b of bench(t)) {
       if ((out.group === 'GK') !== (b.p.naturalPosition === 'TW')) continue;
-      const v = positionSuitability(b.p, out.pos) * b.cond;
+      const v = subValue(b.p, out.pos) * b.cond;
       if (v > bv) { bv = v; best = b; }
     }
     return best;
@@ -542,11 +543,24 @@ export class MatchSim {
       if (budget <= 0 || this.subsLeft(t) <= 0 || c.need < 0.4) break;
       const rep = this.bestReplacement(t, c.m);
       if (!rep) continue;
-      const newR = positionSuitability(rep.p, c.m.pos) * rep.cond;
+      const newR = subValue(rep.p, c.m.pos) * rep.cond;
       if (newR < rating(c.m) * 0.72) continue;
       if (this.substitute(t.side, c.m.id, rep.id, c.m.energy < 60 ? 'muede' : 'taktik')) budget--;
     }
   }
+}
+
+/**
+ * Eignung eines Einwechselspielers: die Position selbst oder (leicht abgewertet) ihr Spiegelbild –
+ * ein Rechtsverteidiger kann auch links aushelfen. Seitengebundene Positionen sollen Wechsel nicht blockieren.
+ */
+function subValue(p: Player, pos: Position): number {
+  const own = positionSuitability(p, pos);
+  const mir = mirrorPosition(pos);
+  let v = mir === pos ? own : Math.max(own, positionSuitability(p, mir) * 0.95);
+  // Spieler derselben Gruppe (z. B. ZM für DM, LA für RM) als Notlösung zulassen
+  if (POSITION_GROUPS[p.naturalPosition] === POSITION_GROUPS[pos]) v = Math.max(v, positionSuitability(p, p.naturalPosition) * 0.86);
+  return v;
 }
 
 function rollWeather(date: string | undefined, rng: () => number): Weather {

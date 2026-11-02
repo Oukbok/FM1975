@@ -71,7 +71,7 @@ export function teamStrength(g: LightGame, id: string): number {
 // Kader für die Statistik
 // -----------------------------------------------------------------------------
 interface Pl { id: string; pos: Position; q: number }
-const SLOTS: Position[] = ['TW', 'TW', 'VS', 'VS', 'AV', 'AV', 'LIB', 'DM', 'ZM', 'ZM', 'OM', 'FL', 'FL', 'MS', 'MS', 'HS'];
+const SLOTS: Position[] = ['TW', 'TW', 'IV', 'IV', 'RV', 'LV', 'LIB', 'DM', 'ZM', 'ZM', 'OM', 'RA', 'LA', 'MS', 'MS', 'HS'];
 
 /** Kurzkader eines ausländischen Vereins (deterministisch je Verein und Jahr). */
 function phantomRoster(cup: CupState, clubId: string, country: string, strength: number, year: number): Pl[] {
@@ -116,9 +116,9 @@ function lineup(roster: Pl[], subs: number): { xi: Pl[]; bench: Pl[] } {
 }
 
 const SCORE_W: Record<string, number> = { GK: 0, DEF: 0.12, MID: 0.38, ATT: 1 };
-const POS_SCORE: Partial<Record<Position, number>> = { MS: 1.25, HS: 1.05, FL: 0.8, OM: 1.4, DM: 0.55, LIB: 0.8 };
+const POS_SCORE: Partial<Record<Position, number>> = { MS: 1.25, HS: 1.05, RA: 0.8, LA: 0.8, RM: 0.8, LM: 0.8, OM: 1.4, DM: 0.55, LIB: 0.8 };
 const ASSIST_W: Record<string, number> = { GK: 0.02, DEF: 0.3, MID: 1, ATT: 0.7 };
-const POS_ASSIST: Partial<Record<Position, number>> = { OM: 1.3, FL: 1.4, AV: 1.6 };
+const POS_ASSIST: Partial<Record<Position, number>> = { OM: 1.3, RA: 1.4, LA: 1.4, RM: 1.4, LM: 1.4, RV: 1.6, LV: 1.6 };
 
 function pick(list: Pl[], w: (p: Pl) => number, r: () => number, not?: Pl): Pl | null {
   const ws = list.map((p) => (p === not ? 0 : Math.max(0, w(p))));

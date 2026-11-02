@@ -3,13 +3,13 @@
 // Jede Fähigkeit ist ein gewichteter Mittelwert passender Attribute (0–100),
 // skaliert mit Tagesform, Kraft und (mild) der Eignung für die gespielte Position.
 // Ein Duell wird logistisch entschieden: 60 gegen 85 gewinnt der Bessere in
-// knapp vier von fünf Fällen – deutlich, aber mit Zufall.
+// gut drei von vier Fällen – deutlich, aber mit Zufall.
 // =============================================================================
 import type { MPlayer } from './types';
 import { cachedSuitability } from './team';
 
 /** Breite der Duell-Kurve: Differenz / DUEL_K = Logit-Vorsprung. */
-export const DUEL_K = 19;
+export const DUEL_K = 21;
 
 export const logistic = (x: number) => 1 / (1 + Math.exp(-x));
 

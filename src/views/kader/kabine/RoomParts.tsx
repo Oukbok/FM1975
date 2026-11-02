@@ -3,13 +3,14 @@
 // =============================================================================
 import { useState } from 'react';
 import {
-  DRAnalysis, DRFactor, MORALE_LABEL, TALK_INFO, TALK_LABEL, TIER_LABEL, TalkKind, moraleStepOf, talkOdds, teamEventDefs,
+  DRAnalysis, DRFactor, MORALE_LABEL, joltLeft, TALK_INFO, TALK_LABEL, TIER_LABEL, TalkKind, moraleStepOf, talkOdds, teamEventDefs,
 } from '../../../engine/dressingRoom';
 import { economyScale, yearOf } from '../../../engine/economy';
 import { personaOf, personaTitle } from '../../../engine/persona';
 import {
   appointCaptain, eventState, meetingState, roomOf, talkState, talkTo, teamEvent, teamMeeting, toggleCouncil,
 } from '../../../game/dressingRoomGame';
+import { joltsOf } from '../../../game/moraleJolt';
 import { Game } from '../../../game/state';
 import { condBar, condColor, fmtDay, fmtPrice } from '../../../ui/format';
 import { MoraleIcon } from '../../../components/status';
@@ -111,6 +112,7 @@ export function PlayerFocus({ g, a, pid, onChange }: { g: Game; a: DRAnalysis; p
       {msg && msg.pid === pid && <div className="kb-result">{msg.text}</div>}
       <div className="kb-cols">
         <div>
+          <JoltList g={g} pid={pid} />
           <div className="dsec">Warum diese Moral?</div>
           <FactorList items={o.moraleWhy} />
         </div>
@@ -124,6 +126,32 @@ export function PlayerFocus({ g, a, pid, onChange }: { g: Game; a: DRAnalysis; p
         </div>
       </div>
     </div>
+  );
+}
+
+/** Sofortige Moral-Sprünge der letzten Wochen (neueste zuerst), mit Nachwirkung. */
+function JoltList({ g, pid }: { g: Game; pid: string }) {
+  const dr = roomOf(g.clubs[g.managedClubId]);
+  const today = g.calendar.currentDate;
+  const js = joltsOf(dr, pid, 4);
+  if (!js.length) return null;
+  return (
+    <>
+      <div className="dsec">Zuletzt passiert</div>
+      <div className="kb-factors">
+        {js.map((j, i) => {
+          const left = Math.round(joltLeft(j, today));
+          return (
+            <div key={i} className="kb-factor kb-jolt">
+              <span className="meta">{fmtDay(j.date).slice(0, 6)}</span>
+              <span className="kb-f-lbl">{j.label}</span>
+              <span className={`kb-f-val ${j.value > 0 ? 'up' : 'down'}`}>{sign(j.value)}</span>
+              <span className="kb-j-left">{left === 0 ? 'verflogen' : `noch ${sign(left)}`}</span>
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 }
 

@@ -11,6 +11,7 @@ import { setEraYear } from '../src/engine/positions';
 import { MatchSim } from '../src/engine/match/sim';
 import { calculateTeamStrength } from '../src/engine/match';
 import type { Club, Player } from '../src/types';
+import { POSITION_GROUPS } from '../src/types';
 import { matchTargets, TARGET_LABELS, type MatchTargets } from '../src/data/matchStats';
 
 const N = Number(process.argv[2] ?? 3000);
@@ -35,13 +36,14 @@ function play(h: Club, a: Club, year: number, s: number, knockout = false) {
 const pct = (x: number) => (x * 100).toFixed(1).padStart(5) + ' %';
 const t0 = Date.now();
 const MODE = process.env.MODE ?? 'all';
+const subsByYear: Record<number, number> = {};
 let shotMix: Record<string, [number, number]> = {}, buildMix: Record<string, [number, number]> = {}, failMix: Record<string, number> = {};
 
 /** Ist-Werte einer Epoche (gleiche Schlüssel wie die Soll-Werte in data/matchStats.ts). */
 function measure(year: number, n: number): Record<keyof MatchTargets, number> & { goalsRaw: number } {
   setEraYear(year);
   const z = { goals: 0, hw: 0, dr: 0, shots: 0, sot: 0, yel: 0, red: 0, corners: 0, fouls: 0, off: 0, pen: 0,
-    head: 0, corner: 0, fk: 0, penG: 0, cnt: 0, long: 0, own: 0, duels: 0, passes: 0, passOk: 0, crosses: 0, crossOk: 0 };
+    head: 0, corner: 0, fk: 0, penG: 0, cnt: 0, long: 0, own: 0, duels: 0, passes: 0, passOk: 0, crosses: 0, crossOk: 0, subs: 0 };
   for (let i = 0; i < n; i++) {
     const h = clubs[i % clubs.length];
     let a = clubs[(i * 7 + 3) % clubs.length];
@@ -56,7 +58,7 @@ function measure(year: number, n: number): Record<keyof MatchTargets, number> & 
       z.fouls += st.fouls; z.off += st.offsides; z.passes += st.passes; z.passOk += st.passesOk;
       z.crosses += st.crosses ?? 0; z.crossOk += st.crossesOk ?? 0;
     }
-    z.duels += H.stats.duels;
+    z.duels += H.stats.duels; z.subs += H.subsUsed + A.subsUsed;
     for (const e of sim.events) {
       const c = e.chance;
       if (e.kind === 'attack_fail') failMix[e.fail ?? '?'] = (failMix[e.fail ?? '?'] ?? 0) + 1;
@@ -85,6 +87,7 @@ function measure(year: number, n: number): Record<keyof MatchTargets, number> & 
     console.log(`${year} Ballverluste: ${Object.entries(failMix).map(([k, v]) => `${k} ${(v / n).toFixed(1)}`).join(' | ')}`);
   }
   shotMix = {}; buildMix = {}; failMix = {};
+  subsByYear[year] = z.subs / n;
   return {
     goalsRaw: z.goals,
     goals: z.goals / n, homeWin: z.hw / n, draw: z.dr / n, shotsPerTeam: z.shots / n / 2, onTargetShare: z.sot / Math.max(1, z.shots),
@@ -115,6 +118,7 @@ if (MODE === 'all' || MODE === 'era') {
     });
     console.log(line);
   }
+  console.log('Wechsel/Spiel'.padEnd(18) + years.map((y) => subsByYear[y].toFixed(2).padStart(22)).join(''));
   console.log(`Abweichungen: ${misses} von ${keys.length * years.length}`);
 }
 if (MODE === 'era') process.exit(0);
@@ -152,7 +156,7 @@ const xi = club.tactics.startingXI.slice();
 // falsche Positionen: Abwehr und Angriff tauschen, Torwart bleibt
 const map = { ...(club.tactics.lineupMap ?? {}) };
 // realistisch falsch: Abwehr und Mittelfeld tauschen (Sturm und Tor bleiben)
-const grp = (s: string) => { const p = players[map[s]]; return p ? (['VS', 'AV', 'LIB'].includes(p.naturalPosition) ? 'D' : ['DM', 'ZM', 'OM'].includes(p.naturalPosition) ? 'M' : 'X') : 'X'; };
+const grp = (s: string) => { const p = players[map[s]]; return p ? (POSITION_GROUPS[p.naturalPosition] === 'DEF' ? 'D' : POSITION_GROUPS[p.naturalPosition] === 'MID' ? 'M' : 'X') : 'X'; };
 const ds = Object.keys(map).filter((s) => grp(s) === 'D'), mids = Object.keys(map).filter((s) => grp(s) === 'M');
 for (let i = 0; i < Math.min(ds.length, mids.length); i++) { const t = map[ds[i]]; map[ds[i]] = map[mids[i]]; map[mids[i]] = t; }
 club.tactics.lineupMap = map;

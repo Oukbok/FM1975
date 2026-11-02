@@ -86,7 +86,6 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'cup', label: 'Pokal', icon: 'trophy' },
     { screen: 'international', label: 'International', icon: 'international' },
     { screen: 'halle', label: 'Halle', icon: 'trophy' },
-    { screen: 'chronicle', label: 'Chronik', icon: 'chronicle' },
   ] },
 ];
 

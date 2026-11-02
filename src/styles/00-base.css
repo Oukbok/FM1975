@@ -70,6 +70,12 @@
   --st-3: #d7be5a;   /* gelb */
   --st-2: #e08a48;   /* orange */
   --st-1: #e0545f;   /* rot */
+  /* Form (Daumen immer hoch): nur Grünstufen, 1 = blasses Grau-Grün … 5 = kräftig dunkelgrün */
+  --fg-5: #23934f;
+  --fg-4: #46ad66;
+  --fg-3: #7cc47c;
+  --fg-2: #a9c9a4;
+  --fg-1: #74827a;
 
   /* --- Struktur --- */
   --border: #303339;

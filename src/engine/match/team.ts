@@ -6,7 +6,7 @@ import type { Club, Player, Position, Tactics } from '../../types';
 import { POSITION_GROUPS } from '../../types';
 import { getFormation } from '../../data/formations';
 import { withLayout } from '../../data/pitchGrid';
-import { getEraYear, getSkillRev, positionSuitability } from '../positions';
+import { getEraYear, getSkillRev, positionSuitability, sideOf } from '../positions';
 import type { MPlayer, Mentality, ShoutId, Side } from './types';
 
 /** Anzahl zwischengespeicherter Fähigkeiten je Spieler (engine/match/skills.ts). */
@@ -19,9 +19,16 @@ export const isAvailable = (p: Player | undefined): p is Player =>
 
 const MORALE: Record<string, number> = { very_low: 0.95, low: 0.975, okay: 1, good: 1.015, excellent: 1.03 };
 
+/**
+ * Form (0–100, 50 = Durchschnitt) zeigt, wie gut der Spieler im System zurechtkommt.
+ * Wirkt bewusst gering: Form 0 → −2,5 %, Form 100 → +2,5 % Positionsstärke.
+ */
+export const FORM_EFFECT = 0.025;
+export const formFactor = (form: number | undefined) => 1 + ((clamp(form ?? 50, 0, 100) - 50) / 50) * FORM_EFFECT;
+
 /** Tagesform: Form, Moral, Fitness und Frische (ohne Positionswert). */
 export function conditionFactor(p: Player): number {
-  const form = 0.94 + (clamp(p.form ?? 50, 0, 100) / 100) * 0.12;
+  const form = formFactor(p.form);
   const morale = MORALE[p.morale] ?? 1;
   const fit = 0.9 + (clamp(p.attributes.fitness ?? 80, 0, 100) / 100) * 0.1;
   const fr = typeof p.frische === 'number' ? p.frische : 100;
@@ -159,12 +166,17 @@ export function resolveLineup(club: Club, players: Record<string, Player>, human
 const ROLE: Record<Position, [number, number, number]> = {
   TW: [0, 0.1, 0],
   LIB: [0.1, 0.5, 1.0],
-  VS: [0.08, 0.3, 1.0],
-  AV: [0.3, 0.45, 0.85],
+  IV: [0.08, 0.3, 1.0],
+  RV: [0.3, 0.45, 0.85],
+  LV: [0.3, 0.45, 0.85],
   DM: [0.3, 0.9, 0.7],
   ZM: [0.55, 1.0, 0.4],
+  // Außen im Mittelfeld: etwas mehr Kontrolle und Rückwärtsarbeit als der Flügelstürmer.
+  RM: [0.9, 0.55, 0.2],
+  LM: [0.9, 0.55, 0.2],
   OM: [0.85, 0.9, 0.15],
-  FL: [1.0, 0.45, 0.12],
+  RA: [1.0, 0.45, 0.12],
+  LA: [1.0, 0.45, 0.12],
   MS: [1.0, 0.3, 0.06],
   HS: [1.0, 0.55, 0.08],
 };
@@ -210,7 +222,7 @@ export function computeUnits(onPitch: MPlayer[], refs: TeamRefs): Units {
       const aer = (at.heading * 0.55 + at.jumping * 0.3 + at.strength * 0.15) * phys;
       if (m.group === 'ATT' || m.pos === 'OM') aerA.push(aer);
       if (m.group === 'DEF') { aerD.push(aer); aerA.push(aer * 0.8); }
-      if (m.pos === 'FL' || m.pos === 'AV' || m.pos === 'OM') cross.push(at.crossing * phys);
+      if (sideOf(m.pos) !== 'C' || m.pos === 'OM') cross.push(at.crossing * phys);
       duel.push((at.tackling * 0.35 + at.strength * 0.25 + at.marking * 0.2 + at.aggression * 0.1 + at.balance * 0.1) * phys);
       pass.push(at.passing * 0.6 + at.vision * 0.2 + at.firstTouch * 0.2);
     }

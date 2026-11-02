@@ -87,10 +87,10 @@ const LAST_NAMES = ['Müller', 'Schmidt', 'Schneider', 'Fischer', 'Weber', 'Meye
 // Positions-Struktur eines Kaders (18 Spieler)
 const SQUAD_TEMPLATE: Position[] = [
   'TW', 'TW',
-  'LIB', 'VS', 'VS', 'AV', 'AV',
-  'DM', 'ZM', 'ZM', 'OM', 'FL', 'FL',
+  'LIB', 'IV', 'IV', 'RV', 'LV',
+  'DM', 'ZM', 'ZM', 'OM', 'RA', 'LA',
   'MS', 'MS', 'HS',
-  'ZM', 'AV',
+  'ZM', 'LV',
 ];
 
 // -----------------------------------------------------------------------------
@@ -119,8 +119,8 @@ function makeAttributes(base: number, pos: Position): PlayerAttributes {
 function computeOverall(a: PlayerAttributes, pos: Position): number {
   let keys: AttributeKey[];
   if (pos === 'TW') keys = ['reflexes', 'handling', 'positioning', 'oneOnOnes', 'aerialReach', 'communication'];
-  else if (['LIB', 'VS', 'AV'].includes(pos)) keys = ['tackling', 'marking', 'positioning', 'strength', 'heading', 'interceptions'];
-  else if (['DM', 'ZM', 'OM'].includes(pos)) keys = ['passing', 'vision', 'technique', 'stamina', 'ballControl', 'decisions'];
+  else if (['LIB', 'IV', 'RV', 'LV'].includes(pos)) keys = ['tackling', 'marking', 'positioning', 'strength', 'heading', 'interceptions'];
+  else if (['DM', 'ZM', 'RM', 'LM', 'OM'].includes(pos)) keys = ['passing', 'vision', 'technique', 'stamina', 'ballControl', 'decisions'];
   else keys = ['shooting', 'dribbling', 'speed', 'composure', 'firstTouch', 'heading'];
   const sum = keys.reduce((s, k) => s + (a[k] as number), 0);
   return Math.round(sum / keys.length);
@@ -506,8 +506,8 @@ const AMATEUR_TOWNS = [
 /** Kader-Struktur eines Amateurvereins (13 Spieler, inkl. 2 TW). */
 const AMATEUR_SQUAD_TEMPLATE: Position[] = [
   'TW', 'TW',
-  'LIB', 'VS', 'AV', 'AV',
-  'DM', 'ZM', 'ZM', 'OM', 'FL',
+  'LIB', 'IV', 'RV', 'LV',
+  'DM', 'ZM', 'ZM', 'OM', 'RA',
   'MS', 'HS',
 ];
 

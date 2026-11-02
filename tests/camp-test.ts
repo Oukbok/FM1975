@@ -80,6 +80,12 @@ const club = g.clubs[g.managedClubId];
   const left = campEffectBars({ o, ...base, stayed: 6 });
   expect(bar(left, 'spirit') < bar(bk, 'spirit'), 'Zuhausegebliebene senken den Teamgeist nicht');
   expect(bk.every((b) => b.d >= -1 && b.d <= 1), 'Balken außerhalb −1…1');
+  // Spannen: lo ≤ Erwartung ≤ hi, Fitness mit Wetter-Spanne, Kosten fest
+  expect(bk.every((b) => b.lo <= b.d + 1e-9 && b.d <= b.hi + 1e-9 && b.lo >= -1 && b.hi <= 1), 'Spanne umschließt den Erwartungswert nicht');
+  const fitB = bk.find((b) => b.key === 'fit')!, cash = bk.find((b) => b.key === 'cash')!;
+  expect(o.weatherRisk <= 0 || fitB.hi > fitB.lo, 'Fitness ohne Spanne trotz Wetterrisiko');
+  expect(cash.lo === cash.hi, 'Kosten haben eine Spanne');
+  expect(bk.find((b) => b.key === 'inj')!.text.length > 0 && bk.find((b) => b.key === 'spirit')!.hi > bk.find((b) => b.key === 'spirit')!.lo, 'Teamgeist ohne Spanne');
 }
 
 // 4) Planung → Buchung → Lager → Archiv

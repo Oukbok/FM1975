@@ -84,14 +84,17 @@ export function positionChoices(p: Player): { pos: Position; kind: PosKind; valu
 export const POS_KIND_DE: Record<PosKind, string> = { natural: 'Stamm', secondary: 'Neben', option: 'möglich' };
 
 export const POS_DE: Record<string, string> = {
-  TW: 'Torwart', LIB: 'Libero', VS: 'Vorstopper', AV: 'Außenverteidiger',
-  DM: 'Defensives Mittelfeld', ZM: 'Zentrales Mittelfeld', OM: 'Offensives Mittelfeld',
-  FL: 'Flügel', MS: 'Mittelstürmer', HS: 'Hängende Spitze',
+  TW: 'Torwart', LIB: 'Libero', IV: 'Innenverteidiger', RV: 'Rechter Verteidiger', LV: 'Linker Verteidiger',
+  DM: 'Defensives Mittelfeld', ZM: 'Zentrales Mittelfeld', RM: 'Rechter Mittelfeldspieler', LM: 'Linker Mittelfeldspieler',
+  OM: 'Offensives Mittelfeld', RA: 'Rechtsaußen', LA: 'Linksaußen', MS: 'Mittelstürmer', HS: 'Hängende Spitze',
+  // alte Kürzel (Archive vor Positionen 2.0)
+  VS: 'Innenverteidiger', AV: 'Außenverteidiger', FL: 'Flügel',
 };
 export const PLAYER_TYPE: Record<string, string> = {
-  TW: 'Torhüter', LIB: 'Ausputzer', VS: 'Innenverteidiger', AV: 'Außenverteidiger',
-  DM: 'Abräumer', ZM: 'Spielmacher', OM: 'Zehner', FL: 'Flügelflitzer',
-  MS: 'Strafraumstürmer', HS: 'Hängende Spitze',
+  TW: 'Torhüter', LIB: 'Ausputzer', IV: 'Abwehrturm', RV: 'Außenverteidiger', LV: 'Außenverteidiger',
+  DM: 'Abräumer', ZM: 'Spielmacher', RM: 'Flankengeber', LM: 'Flankengeber', OM: 'Zehner',
+  RA: 'Flügelflitzer', LA: 'Flügelflitzer', MS: 'Strafraumstürmer', HS: 'Hängende Spitze',
+  VS: 'Abwehrturm', AV: 'Außenverteidiger', FL: 'Flügelflitzer',
 };
 export const MORALE_DE: Record<PlayerMorale, string> = {
   very_low: 'Sehr niedrig', low: 'Niedrig', okay: 'Neutral', good: 'Gut', excellent: 'Ausgezeichnet',
@@ -109,9 +112,9 @@ export const INJURY_SEV_DE: Record<InjurySeverity, string> = {
 };
 
 export const PITCH_POS: Record<Position, { x: number; y: number }> = {
-  TW: { x: 50, y: 90 }, LIB: { x: 50, y: 76 }, VS: { x: 37, y: 72 }, AV: { x: 16, y: 66 },
-  DM: { x: 50, y: 58 }, ZM: { x: 35, y: 48 }, OM: { x: 50, y: 36 }, FL: { x: 17, y: 30 },
-  MS: { x: 50, y: 14 }, HS: { x: 62, y: 24 },
+  TW: { x: 50, y: 90 }, LIB: { x: 50, y: 76 }, IV: { x: 37, y: 72 }, RV: { x: 84, y: 66 }, LV: { x: 16, y: 66 },
+  DM: { x: 50, y: 58 }, ZM: { x: 35, y: 48 }, RM: { x: 84, y: 46 }, LM: { x: 16, y: 46 }, OM: { x: 50, y: 36 },
+  RA: { x: 83, y: 26 }, LA: { x: 17, y: 26 }, MS: { x: 50, y: 14 }, HS: { x: 62, y: 24 },
 };
 
 export const utcDate = (iso?: string) => (iso ? new Date(iso).toLocaleDateString('de-DE', { timeZone: 'UTC' }) : '—');
@@ -171,7 +174,7 @@ export function Stat({ label, value, sub }: { label: React.ReactNode; value: Rea
   );
 }
 
-export function AttrRow({ label, value, tier }: { label: string; value: number; tier?: AttrTier }) {
+export function AttrRow({ label, value, tier }: { label: React.ReactNode; value: number; tier?: AttrTier }) {
   return (
     <div className={`pp-attr-row${tier ? ' pp-tier-' + tier : ''}`}>
       <span className="pp-attr-lbl">{label}</span>

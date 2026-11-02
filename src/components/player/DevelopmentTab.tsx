@@ -3,6 +3,8 @@ import { Player, starsToPotential } from '../../types';
 import { scoutRange, scoutRangeText } from '../../engine/scouting';
 import Icon from '../Icon';
 import { utcDate, Section, Line, ATTR_DE, AttrKey } from './shared';
+import { useClubProfile } from '../club/ClubLink';
+import { hiddenFor } from '../../game/hiddenTraits';
 
 function careerPhase(age: number): { label: string; text: string } {
   if (age <= 20) return { label: 'Talent', text: 'Entwickelt sich noch stark. Spielpraxis und gutes Training zahlen sich jetzt am meisten aus.' };
@@ -66,6 +68,7 @@ function AttributeChanges({ p }: { p: Player }) {
 }
 
 export default function DevelopmentTab({ p }: { p: Player }) {
+  const tempo = hiddenFor(useClubProfile()?.game, p, 'tempo');
   // Nur die Scout-Einschätzung ist sichtbar – das wahre Potenzial bleibt verdeckt.
   const [lo, hi] = scoutRange(p);
   const minOvr = starsToPotential(lo), maxOvr = starsToPotential(hi);
@@ -92,7 +95,7 @@ export default function DevelopmentTab({ p }: { p: Player }) {
             <Line label="Erreichbare Stärke (geschätzt)" value={minOvr === maxOvr ? `${maxOvr}` : `${minOvr}–${maxOvr}`} color="var(--accent)" />
             <Line label="Spielraum (geschätzt)" value={growth > 0 ? `+${growth}` : '±0'} color={growth > 0 ? 'var(--green)' : 'var(--text-2)'} />
             <Line label="Letzte Bewertung" value={last > 0 ? `+${last}` : last < 0 ? `${last}` : '±0'} color={last > 0 ? 'var(--green)' : last < 0 ? 'var(--red)' : 'var(--text-2)'} />
-            <Line label="Entwicklungstempo" value={d.growthRate >= 1.15 ? 'Schnell' : d.growthRate <= 0.85 ? 'Langsam' : 'Normal'} />
+            <Line label={`Entwicklungstempo (${tempo.source})`} value={tempo.word ? tempo.word[0].toUpperCase() + tempo.word.slice(1) : 'noch kein Urteil'} />
           </div>
         </Section>
         <Section title="Karrierephase" icon={<Icon name="chronicle" size={15} />}>

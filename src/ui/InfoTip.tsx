@@ -6,7 +6,7 @@
 // und schließt mit Esc, Klick daneben oder Scrollen. Klick heftet es an.
 // Verweis ins Wiki: GameShell registriert `setWikiOpener`.
 // =============================================================================
-import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { INFO_TEXTS, type InfoKey } from '../data/infoTexts';
 import { placeNear, uiScale } from './floating';
@@ -24,9 +24,9 @@ const GAP = 8;
 export function InfoTip({ k, title, text, wiki, className }: {
   /** Schlüssel in data/infoTexts.ts. */
   k?: InfoKey;
-  /** Alternativ: Titel/Text direkt (nur für Einzelfälle). */
+  /** Alternativ: Titel/Text direkt (nur für Einzelfälle; Text darf Markup sein, z. B. Liste). */
   title?: string;
-  text?: string;
+  text?: ReactNode;
   wiki?: string;
   className?: string;
 }) {

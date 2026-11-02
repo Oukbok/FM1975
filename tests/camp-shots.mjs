@@ -81,17 +81,46 @@ async function openCampPage() {
 }
 await openCampPage();
 await shot('1_seite');
-const planBtn = page.locator('.cp-plan-btn');
-if (await planBtn.isDisabled()) { console.log('Planen gesperrt – keine freien Fenster.'); }
+// Je Fenster ein Knopf auf der Seite (kein Umschalter im Planer); WINTER=1 plant das Winterlager.
+const planBtn = process.env.WINTER ? page.locator('.cp-card-plan[data-season="winter"]') : page.locator('.cp-plan-btn');
+if (!(await planBtn.count()) || await planBtn.isDisabled()) { console.log('Planen gesperrt – keine freien Fenster.'); }
 else {
   await planBtn.click();
-  if (process.env.WINTER) { await page.locator('.cp-season button:has-text("Winter")').click().catch(() => console.log('kein Winterfenster')); }
   await shot('2_zeitraum', 'modal');
-  await page.locator('.cp-foot button:has-text("Weiter")').click();
+  // Dauer verkürzen: kein Tag darf dabei „aufleuchten“ (alle Fenstertage gleich hell).
+  const slider = page.locator('.cp-dur input').first();
+  const dayLook = () => page.evaluate(() => [...document.querySelectorAll('.cp-day.win:not(.range):not(.match):not(.hall):not(.lead):not(.preview):not(:hover)')]
+    .map((b) => b.className + ' => ' + getComputedStyle(b).color + '|' + getComputedStyle(b).backgroundColor + '|' + getComputedStyle(b).opacity));
+  const v0 = Number(await slider.inputValue());
+  const looks = [];
+  for (const n of [v0 - 1, v0 - 2]) {
+    await slider.fill(String(n)); await page.waitForTimeout(200);
+    const lk = await dayLook(); const vals = new Map(); for (const x of lk) { const [c, v] = x.split(' => '); vals.set(v, c); }
+    looks.push(vals.size); if (vals.size > 1) console.log([...vals.entries()]);
+    await shot(`2b_dauer_${n}`, 'modal');
+  }
+  console.log(`Dauer verkürzt: ${looks.every((x) => x <= 1) ? 'alle freien Fenstertage gleich' : 'FEHLER – Tage unterschiedlich hell ' + looks.join('/')}`);
+  // Vorschau beim Überfahren eines möglichen Anreisetags
+  const can = page.locator('.cp-day.can');
+  if (await can.count()) { await can.nth(Math.floor((await can.count()) / 2)).hover(); await shot('2c_vorschau', 'modal'); }
+  // Klick auf einen Anreisetag springt direkt zu den passenden Zielen
+  if (await can.count()) await can.first().click();
+  else await page.locator('.cp-foot button:has-text("Weiter")').click();
   await shot('3_karte', 'modal');
-  // Ort mit Vor-/Nachteilen: ein buchbares Ziel der Startansicht, dann je Kontinent.
+  // Hover über einen Punkt: Punkte dürfen sich nicht bewegen, Infokarte erscheint.
+  const pinPos = () => page.evaluate(() => [...document.querySelectorAll('.cp-pin')].map((g) => g.getAttribute('transform')).join(';')
+    + '#' + [...document.querySelectorAll('.cp-pin-label')].map((t) => t.textContent + t.getAttribute('x')).join(';'));
   const pins = page.locator('.cp-pin.ok');
+  if (await pins.count()) {
+    const before = await pinPos();
+    await pins.nth(Math.min(3, (await pins.count()) - 1)).hover();
+    const after = await pinPos();
+    console.log(`Hover Karte: ${before === after ? 'Punkte/Namen bleiben stehen' : 'FEHLER – Punkte/Namen verschieben sich'}`);
+    await shot('3b_karte_hover', 'modal');
+  }
   if (await pins.count()) { await pins.nth(Math.min(2, (await pins.count()) - 1)).click(); await shot('4_ort', 'modal'); }
+  const lockT = page.locator('.cp-map-toggle input');
+  if (await lockT.count()) { await lockT.check(); await shot('4b_gesperrte', 'modal'); await lockT.uncheck(); }
   const tabs = page.locator('.cp-map-tab:not([disabled])');
   const nt = await tabs.count();
   for (let i = 1; i < nt; i++) {
@@ -107,13 +136,20 @@ else {
   const lods = page.locator('.cp-lodging:not([disabled])');
   if (await lods.count() > 1) await lods.last().click();
   await page.locator('.cp-foot button:has-text("Weiter")').click();
-  await page.locator('.cp-focus .dchip:has-text("Kondition")').click();
+  await page.locator('.cp-focus-b:has-text("Kondition")').click();
   // Einen Profi daheim lassen, einen Jugendspieler einladen
   const rows = page.locator('.cp-squad-main .cp-pl:not(.head)');
   if (await rows.count() > 20) await rows.last().click();
-  const yr = page.locator('.cp-squad-side .cp-pl');
+  const yr = page.locator('.cp-squad-side .cp-pl:not(.head)');
   if (await yr.count()) await yr.first().click();
   await shot('6_reisegruppe', 'modal');
+  // Sortieren über die Spaltenköpfe (Profis nach Stärke, Jugend nach Alter)
+  await page.locator('.cp-squad-main .cp-sort:has-text("Stärke")').click();
+  const ys = page.locator('.cp-squad-side .cp-sort:has-text("Alter")');
+  if (await ys.count()) await ys.click();
+  const ovr = await page.locator('.cp-squad-main .cp-pl-ovr').allInnerTexts();
+  console.log(`Sortierung Stärke: ${ovr.map(Number).every((v, i, a) => i === 0 || a[i - 1] >= v) ? 'ok' : 'FEHLER'}`);
+  await shot('6b_sortiert', 'modal');
   const book = page.locator('.cp-foot .btn-primary');
   if (await book.isEnabled()) { await book.click(); await shot('7_gebucht'); }
   else console.log('Buchen nicht möglich:', await page.locator('.cp-foot-msg').innerText());

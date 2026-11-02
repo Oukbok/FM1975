@@ -20,6 +20,7 @@ import { GROUP_OF } from '../engine/aiManager';
 import { getFormation } from '../data/formations';
 import { CalendarEngine } from '../engine/calendar';
 import { personaOf } from '../engine/persona';
+import { moraleJolt } from './moraleJolt';
 import { Game } from './state';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -39,6 +40,7 @@ function settle(g: Game, p: Player, type: PromiseType, kept: boolean, date: stri
   pr.result = kept ? 'kept' : 'broken';
   if (kept) {
     p.contract.satisfaction = clamp((p.contract.satisfaction ?? 60) + 8, 0, 100);
+    moraleJolt(g, p, 5, `Versprechen eingehalten: ${PROMISES[type].label}`, date);
     g.promiseTrust = clamp(trustOf(g) + 5, 0, 100);
     return;
   }
@@ -48,7 +50,7 @@ function settle(g: Game, p: Player, type: PromiseType, kept: boolean, date: stri
 /** Folgen eines gebrochenen Versprechens: Spieler, Wechselwunsch, Kabine, Glaubwürdigkeit. */
 function brokenConsequences(g: Game, p: Player, label: string, date: string, why?: string): void {
   p.contract.satisfaction = clamp((p.contract.satisfaction ?? 60) - 25, 0, 100);
-  shiftMorale(p, -2);
+  if (!moraleJolt(g, p, -22, `Versprechen gebrochen: ${label}`, date)) shiftMorale(p, -2);
   g.promiseTrust = clamp(trustOf(g) - 15, 0, 100);
   const pe = personaOf(p);
   const wantsOut = pe.loyalitaet < 55 || pe.ehrgeiz >= 65;

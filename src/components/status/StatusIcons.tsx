@@ -1,13 +1,13 @@
 // =============================================================================
-// Zustands-Symbole: Frische (Batterie), Form (Daumen), Moral (Smiley)
+// Zustands-Symbole: Frische (Batterie), Form (Daumen), Moral (Smiley), Fitness (Hantel)
 // =============================================================================
 // Eingang ist immer ein Wert 0–100 (Umrechnung in ./statusScale.ts). Farbe
-// über die Tokens --st-1 (rot) … --st-5 (dunkelgrün). Hover/Fokus/Tippen zeigt
+// über die Tokens --st-1 (rot) … --st-5 (dunkelgrün); Form nur in Grünstufen --fg-1…5. Hover/Fokus/Tippen zeigt
 // den Wert sofort („Frische 83/100 – gut erholt“, ./StatusTip.tsx); `showValue` schreibt die Zahl
 // zusätzlich daneben. Formen in components/iconPaths.ts (`STATUS_SHAPES`).
 // =============================================================================
 import { STATUS_SHAPES as S } from '../iconPaths';
-import { type StatusKind, STATUS_TITLE, statusColor, statusLevel, statusText, statusWord } from './statusScale';
+import { type StatusKind, STATUS_NOTE, STATUS_TITLE, statusColor, statusLevel, statusText, statusTipWord } from './statusScale';
 import { useStatusTip } from './StatusTip';
 
 interface Props {
@@ -26,9 +26,9 @@ function Frame({ kind, value, size = 18, showValue, className, children }: Props
   const v = Math.max(0, Math.min(100, Math.round(value)));
   const lvl = statusLevel(kind, v);
   const text = statusText(kind, v);
-  const tip = useStatusTip(STATUS_TITLE[kind], `${v}/100 – ${statusWord(kind, lvl)}`, statusColor(lvl));
+  const tip = useStatusTip(STATUS_TITLE[kind], `${v}/100 – ${statusTipWord(kind, lvl)}`, statusColor(lvl, kind), STATUS_NOTE[kind]);
   return (
-    <span {...tip.handlers} className={`st-icon st-${kind} st-l${lvl}${className ? ` ${className}` : ''}`} style={{ color: statusColor(lvl) }}
+    <span {...tip.handlers} className={`st-icon st-${kind} st-l${lvl}${className ? ` ${className}` : ''}`} style={{ color: statusColor(lvl, kind) }}
       aria-label={text} role="img" tabIndex={0}>
       <svg width={size} height={size} viewBox="0 0 24 24" overflow="visible" aria-hidden="true" focusable="false">{children}</svg>
       {showValue && <span className="st-val">{v}</span>}
@@ -50,16 +50,27 @@ export function FreshnessIcon(props: Props) {
   );
 }
 
-/** Form: Daumen – Stufe 1 nach unten, 3 waagerecht, 5 nach oben. */
+/** Form: Daumen immer nach oben; die Stufe zeigt nur die Grünstufe (blass … kräftig) und die Füllung. */
 export function FormIcon(props: Props) {
   const lvl = statusLevel('form', Math.round(props.value));
-  const angle = [180, 135, 90, 45, 0][lvl - 1];
   return (
     <Frame {...props} kind="form">
-      <g transform={`rotate(${angle} 12 12)`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d={S.thumb} fill="currentColor" fillOpacity="0.22" />
+      <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d={S.thumb} fill="currentColor" fillOpacity={[0.08, 0.16, 0.24, 0.34, 0.45][lvl - 1]} />
         <path d={S.thumbCuff} />
       </g>
+    </Frame>
+  );
+}
+
+/** Fitness: Hantel in der Farbe der Stufe; je fitter, desto voller die Scheiben. */
+export function FitnessIcon(props: Props) {
+  const lvl = statusLevel('fitness', Math.round(props.value));
+  return (
+    <Frame {...props} kind="fitness">
+      <path d={S.dumbbellBar} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+      <path d={S.dumbbellPlates} fill="currentColor" fillOpacity={[0.15, 0.3, 0.5, 0.75, 1][lvl - 1]} stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+      <path d={S.dumbbellOuter} fill="currentColor" fillOpacity={[0.15, 0.3, 0.5, 0.75, 1][lvl - 1]} stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
     </Frame>
   );
 }

@@ -2,8 +2,8 @@ import PlayerModal from '../../components/PlayerModal';
 import { Game } from '../../game/state';
 import { Player } from '../../types';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
-import { fmtDM, vColor, condColor, fmtWage, wageUnit } from '../../ui/format';
-import { PlayerForm, PlayerFreshness, PlayerMorale, MORALE_100, playerMorale100 } from '../../components/status';
+import { fmtDM, vColor, fmtWage, wageUnit } from '../../ui/format';
+import { PlayerFitness, PlayerForm, PlayerFreshness, PlayerMorale, MORALE_100, playerMorale100 } from '../../components/status';
 import { InfoTip } from '../../ui/InfoTip';
 import { GROUP_DE, PlayerRow, ScoutStars, avg, groupOf, scoutMid } from '../shared';
 import { useState } from 'react';
@@ -58,7 +58,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
           <thead><tr>
             <th className="ctr">#</th><th>Name</th><Th k="pos" cls="ctr">Pos</Th><Th k="age" cls="num">Alter</Th>
             <Th k="ovr" cls="num">Stärke</Th><Th k="pot">Potenzial<InfoTip k="potenzial" /></Th><Th k="form" cls="ctr">Form</Th>
-            <Th k="fri" cls="ctr">Frische<InfoTip k="frische" /></Th><Th k="fit" cls="num">Fitness<InfoTip k="fitness" /></Th><Th k="mor" cls="ctr">Moral</Th>
+            <Th k="fri" cls="ctr">Frische<InfoTip k="frische" /></Th><Th k="fit" cls="ctr">Fitness<InfoTip k="fitness" /></Th><Th k="mor" cls="ctr">Moral</Th>
             <Th k="apps" cls="num">Sp.</Th><Th k="goals" cls="num">Tore</Th><th>Status</th>
           </tr></thead>
           <tbody>
@@ -73,7 +73,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
                   <td className="nowrap"><ScoutStars p={pl} /></td>
                   <td className="ctr"><PlayerForm p={pl} /></td>
                   <td className="ctr"><PlayerFreshness p={pl} /></td>
-                  <td className="num" style={{ color: condColor(pl.attributes.fitness) }}>{Math.round(pl.attributes.fitness)}</td>
+                  <td className="ctr"><PlayerFitness p={pl} /></td>
                   <td className="ctr"><PlayerMorale p={pl} /></td>
                   <td className="num">{pl.seasonStats.appearances}</td>
                   <td className="num">{pl.seasonStats.goals}</td>
