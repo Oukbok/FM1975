@@ -528,6 +528,11 @@ export const INFO_TEXTS = {
     text: 'Spieler auf deiner Liste werden von den Scouts verfolgt. Je länger, desto genauer werden Potenzial-Spanne und Persönlichkeit.',
     wiki: 'youth-gems-scouting',
   },
+  kabine_pyramide: {
+    title: 'Kabinen-Pyramide',
+    text: 'Oben die Führungsspieler, darunter Stützen und Mitläufer, unten wer außen vor ist – je Stufe links der Einflussreichste. Der Smiley zeigt die Moral, die Ziffer die Gruppe (Legende darunter), eine gestrichelte Linie einen Konflikt.',
+    wiki: 'condition-kabine',
+  },
 } satisfies Record<string, InfoText>;
 
 export type InfoKey = keyof typeof INFO_TEXTS;
