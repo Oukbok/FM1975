@@ -1,4 +1,5 @@
 // =============================================================================
+import type { ReactNode } from 'react';
 import { ClubLink } from './club/ClubLink';
 // PlayerModal — großes Spielerprofil mit Reitern (angelehnt an EA Fussball Manager / Football Manager)
 //   Kopf (immer sichtbar): Porträt | Identität + Steckbrief | Zustand
@@ -27,14 +28,18 @@ import CareerTab from './player/CareerTab';
 import WishesTab from './player/WishesTab';
 import type { InfoKey } from '../data/infoTexts';
 
-export type Tab = 'overview' | 'attributes' | 'development' | 'matches' | 'stats' | 'career' | 'contract' | 'wishes' | 'medical' | 'report';
+export type Tab = 'extra' | 'overview' | 'attributes' | 'development' | 'matches' | 'stats' | 'career' | 'contract' | 'wishes' | 'medical' | 'report';
 const TABS: [Tab, string][] = [
   ['overview', 'Übersicht'], ['attributes', 'Attribute'], ['development', 'Entwicklung'], ['matches', 'Spiele'],
   ['stats', 'Statistik'], ['career', 'Karriere'], ['contract', 'Vertrag & Wert'], ['wishes', 'Wünsche'], ['medical', 'Medizin'], ['report', 'Bericht'],
 ];
 
-export default function PlayerModal({ player, club, squad, today, season, onClose, negotiation, initialTab }: {
+export default function PlayerModal({ player, club, squad, today, season, onClose, negotiation, initialTab, extraTab, tag }: {
   player: Player; club?: Club; squad?: Player[]; today?: string; season?: string; onClose: () => void;
+  /** Zusätzlicher erster Reiter (z. B. Jugend: Hochziehen/Fördervertrag bzw. Talent ansprechen). */
+  extraTab?: { label: string; content: ReactNode };
+  /** Ersetzt das Etikett „Jugend“ (z. B. „A-Jugend · U19“). */
+  tag?: string;
   /** Vertragsverhandlung (nur eigener Verein). */
   negotiation?: Negotiation;
   initialTab?: Tab;
@@ -65,7 +70,7 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
               <span className={`pp-avail-dot${p.availability === 'available' ? '' : ' bad'}`} />
               <span className={p.availability === 'available' ? '' : 'pp-status-bad'}>{availText}</span>
               {p.transferListed && <span className="pp-tag">Transferliste</span>}
-              {p.isYouth && <span className="pp-tag">Jugend</span>}
+              {(p.isYouth || tag) && <span className="pp-tag">{tag ?? 'Jugend'}</span>}
             </div>
             <div className="pp-facts">
               <Fact label="Stärke" value={String(p.overall)} big info="staerke" />
@@ -92,10 +97,11 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
         </header>
 
         <nav className="tabs pp-tabs">
-          {TABS.map(([t, l]) => <button key={t} className={`tab ${tab === t ? 'active' : ''}`} onClick={() => setTab(t)}>{l}</button>)}
+          {(extraTab ? [['extra', extraTab.label] as [Tab, string], ...TABS] : TABS).map(([t, l]) => <button key={t} className={`tab ${tab === t ? 'active' : ''}`} onClick={() => setTab(t)}>{l}</button>)}
         </nav>
 
         <div className="pp-body">
+          {tab === 'extra' && extraTab && <div className="pp-extra">{extraTab.content}</div>}
           {tab === 'overview' && <OverviewTab p={p} />}
           {tab === 'attributes' && <AttributesTab p={p} />}
           {tab === 'development' && <DevelopmentTab p={p} />}

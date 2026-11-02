@@ -9,10 +9,10 @@
 .st-tip-note { color: var(--text-3); font-size: 11.5px; white-space: normal; max-width: 260px; padding-left: 13px; }
 
 /* Verdeckter Wert: Wort statt Zahl, Quelle klein dahinter */
-.pp-bar-row.hid-line { grid-template-columns: 130px 1fr auto; }
-.hid-word { font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pp-cond .pp-bar-row.hid-line, .pp-bar-row.hid-line { grid-template-columns: 130px 1fr; row-gap: 0; }
+.hid-word { font-size: 13px; color: var(--text); white-space: nowrap; }
 .hid-word.none { color: var(--text-4); font-style: italic; }
-.hid-src { font-size: 11px; color: var(--text-4); white-space: nowrap; }
+.hid-src { grid-column: 2; font-size: 11px; color: var(--text-4); white-space: nowrap; line-height: 1.2; }
 
 /* Attribut-i: gedimmt, bei Zeilen-Hover deutlich */
 .itip.itip-attr { width: 12px; height: 12px; font-size: 8.5px; margin-left: 5px; opacity: .32; }

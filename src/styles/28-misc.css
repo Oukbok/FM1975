@@ -71,3 +71,7 @@
 .chm-champs .dkv { padding: 3px 0; }
 .chm-side .dmeter { grid-template-columns: 110px 1fr 44px; font-size: 13px; padding: 4px 0; gap: 10px; }
 .chm-side .dkv { font-size: 13px; }
+
+/* Spielerprofil eines Jugendspielers: erster Reiter „Akademie“/„Scouting“ (views/kader/YouthModal.tsx). */
+.pp-extra { height: 100%; }
+.pp-youth-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
