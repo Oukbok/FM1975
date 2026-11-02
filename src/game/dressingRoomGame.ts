@@ -5,7 +5,11 @@
 // game/dressingRoomEvents.ts, Seite views/kader/DressingRoomView.tsx.
 //   • eigener Verein, täglich: Moral 0–100 folgt dem Zielwert (8 %/Tag), die
 //     Stufe `Player.morale` (wirkt in der Match-Engine) wird daraus abgeleitet;
-//     Teamstimmung folgt ihrem Zielwert (6 %/Tag).
+//     Teamstimmung folgt ihrem Zielwert (6 %/Tag) – darin auch der Druck aus
+//     der Tabelle gemessen am Saisonziel (`DRGoal`, engine `goalFactors`).
+//   • Ereignisse lösen sofortige Moral-Sprünge aus (game/moraleJolt.ts: Spiele,
+//     Transferliste, Gespräche, Vorfälle, Pokal-Aus …), danach gleitet die Moral
+//     zum Zielwert zurück.
 //   • KI-Vereine, sonntags: Stimmung aus den letzten Ergebnissen, Moral-Stufen
 //     wandern mit 30 % Wahrscheinlichkeit eine Stufe Richtung Ziel.
 //   • Aktionen: Einzelgespräch (Abklingzeit 10 Tage, nutzt sich ab),
@@ -13,16 +17,18 @@
 //     Kapitän und Mannschaftsrat bestimmen.
 // =============================================================================
 import {
-  DRAnalysis, DRBoost, DRContext, DRPlayerIn, DressingRoomState, TalkKind, TALK_LABEL, TeamEventKind,
+  DRAnalysis, DRBoost, DRContext, DRGoal, DRPlayerIn, DressingRoomState, MORALE_GLIDE, TalkKind, TALK_LABEL, TeamEventKind,
   aiMoodTarget, aiMoraleStep, analyzeRoom, boostNow, languageBarrier, moraleScoreOf, moraleStepOf, MORALE_STEPS, stepRange, talkOdds, teamEventDefs,
 } from '../engine/dressingRoom';
 import { CalendarEngine } from '../engine/calendar';
 import { economyScale, yearOf } from '../engine/economy';
+import { expectedPosition } from '../engine/environment';
 import { book } from '../engine/finances';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { personaOf } from '../engine/persona';
 import { Club, Player } from '../types';
 import { yearsAtClub } from './playerWishesGame';
+import { listingJolts, matchJolts, moraleJolt, pruneJolts } from './moraleJolt';
 import { Game } from './state';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -53,6 +59,12 @@ export function logRoom(dr: DressingRoomState, date: string, text: string): void
   if (dr.log.length > 14) dr.log.length = 14;
 }
 
+/** Spieler-Faktor, der zusätzlich sofort wirkt (Moral springt um denselben Betrag). */
+export function addBoostJolt(g: Game, dr: DressingRoomState, pid: string, value: number, label: string, date: string, half = 30): void {
+  addBoost(dr, pid, value, label, date, half);
+  moraleJolt(g, g.players[pid], value, label, date);
+}
+
 function hasFlag(dr: DressingRoomState, f: string) { return !!dr.flags?.includes(f); }
 export function setFlag(dr: DressingRoomState, f: string) { if (!hasFlag(dr, f)) { (dr.flags ??= []).push(f); if (dr.flags.length > 200) dr.flags.splice(0, dr.flags.length - 200); } }
 
@@ -61,7 +73,27 @@ export function setFlag(dr: DressingRoomState, f: string) { if (!hasFlag(dr, f))
 // -----------------------------------------------------------------------------
 function ownLeague(g: Game, clubId: string) {
   const played = g.fixtures.filter((m) => m.result && (m.homeClubId === clubId || m.awayClubId === clubId));
-  return { played: played.length, last: played.reduce((a, m) => (m.date > a ? m.date : a), '') };
+  return { played: played.length, last: played.reduce((a, m) => (m.date > a ? m.date : a), ''), list: played };
+}
+
+/** Tabellenlage gegenüber dem Saisonziel des Vorstands. */
+export function goalOf(g: Game, club: Club, list?: { date: string; homeClubId: string; result: { homeGoals: number; awayGoals: number } | null }[]): DRGoal | undefined {
+  const rows = g.table.rows;
+  const i = rows.findIndex((r) => r.clubId === club.id);
+  if (i < 0 || !club.boardExpectation) return undefined;
+  const size = rows.length;
+  const label = club.boardExpectation;
+  const expected = /Obere/i.test(label) ? Math.round(size / 2) : expectedPosition(label, size);
+  const own = (list ?? ownLeague(g, club.id).list).slice().sort((a, b) => a.date.localeCompare(b.date));
+  let winless = 0;
+  for (let k = own.length - 1; k >= 0; k--) {
+    const m = own[k];
+    const home = m.homeClubId === club.id;
+    const gf = home ? m.result!.homeGoals : m.result!.awayGoals, ga = home ? m.result!.awayGoals : m.result!.homeGoals;
+    if (gf > ga) break;
+    winless++;
+  }
+  return { label, pos: i + 1, expected, size, played: own.length, dropFrom: size - 2, winless };
 }
 
 export function roomInputs(g: Game, club: Club, today = g.calendar.currentDate): { xs: DRPlayerIn[]; ctx: DRContext } {
@@ -94,7 +126,8 @@ export function roomInputs(g: Game, club: Club, today = g.calendar.currentDate):
       wageGap: clamp((0.65 - ratio) / 0.35, 0, 1),
     };
   });
-  return { xs, ctx: { today, year: yearOf(today), offSeason, squadAvg, mood: dr.mood, ppg, boosts: dr.boosts ?? [], conflicts: dr.conflicts ?? [] } };
+  const goal = goalOf(g, club, lg.list);
+  return { xs, ctx: { today, year: yearOf(today), offSeason, squadAvg, mood: dr.mood, ppg, boosts: dr.boosts ?? [], conflicts: dr.conflicts ?? [], goal } };
 }
 
 /** Analyse der Kabine des eigenen Vereins (für Seite und Tageslauf). */
@@ -129,14 +162,19 @@ function prune(dr: DressingRoomState, today: string): void {
 }
 
 /** Fremde Stufenwechsel (Ereignisse, Trainingslager, Versprechen …) als abklingenden Faktor übernehmen. */
-function syncExternal(dr: DressingRoomState, p: Player, today: string, isNew: boolean): void {
+function syncExternal(g: Game, dr: DressingRoomState, p: Player, today: string, isNew: boolean): void {
   if (isNew || typeof p.moraleScore !== 'number' || !Number.isFinite(p.moraleScore)) { p.moraleScore = moraleScoreOf(p.morale); return; }
   const was = moraleStepOf(p.moraleScore);
   if (was === p.morale) return;
   const d = MORALE_STEPS.indexOf(p.morale) - MORALE_STEPS.indexOf(was);
-  addBoost(dr, p.id, d * 14, d > 0 ? 'Positives Erlebnis (siehe Nachrichten)' : 'Rückschlag (siehe Nachrichten)', today, 30);
+  // Anlass aus den Nachrichten der letzten Tage (z. B. „Versprechen gebrochen“).
+  const msg = g.messages.find((m) => m.relatedId === p.id && days(m.date, today) <= 2);
+  const label = msg ? `${d > 0 ? 'Erlebnis' : 'Rückschlag'}: ${msg.subject}` : d > 0 ? 'Positives Erlebnis (siehe Nachrichten)' : 'Rückschlag (siehe Nachrichten)';
+  addBoost(dr, p.id, d * 14, label, today, 30);
   const [lo, hi] = stepRange(p.morale);
+  const before = p.moraleScore;
   p.moraleScore = clamp(p.moraleScore + d * 14, lo, hi);
+  (dr.jolts ??= []).push({ pid: p.id, date: today, value: Math.round(p.moraleScore - before), label });
 }
 
 function captureDeniedWishes(g: Game, dr: DressingRoomState, club: Club, today: string): void {
@@ -157,9 +195,9 @@ function checkPledges(g: Game, dr: DressingRoomState, today: string): void {
     if (!p || p.clubId !== g.managedClubId) continue;
     const starts = p.seasonStats?.starts ?? 0;
     if (starts < pl.starts0) pl.starts0 = 0;
-    if (starts >= pl.starts0 + 2) { addBoost(dr, p.id, 4, 'Zusage eingehalten', today, 45); continue; }
+    if (starts >= pl.starts0 + 2) { addBoostJolt(g, dr, p.id, 4, 'Zusage eingehalten', today, 45); continue; }
     if (today > pl.until) {
-      addBoost(dr, p.id, -10, 'Zusage nicht eingehalten', today, 60);
+      addBoostJolt(g, dr, p.id, -10, 'Zusage nicht eingehalten', today, 60);
       g.promiseTrust = clamp((g.promiseTrust ?? 70) - 5, 0, 100);
       logRoom(dr, today, `${p.lastName}: Einsatz versprochen, aber nicht gespielt.`);
       pushMessage(g.messages, makeMessage({
@@ -196,18 +234,26 @@ export function dressingRoomDaily(g: Game, today: string): DRAnalysis | null {
   if (squad.length < 11) return null;
   prune(dr, today);
   const seen = new Set(dr.seen ?? squad.map((p) => p.id));
-  for (const p of squad) syncExternal(dr, p, today, !seen.has(p.id));
+  pruneJolts(dr, today);
+  for (const p of squad) syncExternal(g, dr, p, today, !seen.has(p.id));
   dr.seen = club.playerIds.slice();
   captureDeniedWishes(g, dr, club, today);
   ensureLeadership(g, club, today);
   checkPledges(g, dr, today);
+  // Sofortige Sprünge: Glide erst ab morgen, damit der Sprung heute sichtbar bleibt.
+  const jolted = new Set((dr.jolts ?? []).filter((j) => j.date === today).map((j) => j.pid));
+  const scanned = !!dr.joltScan;
+  matchJolts(g, club, squad, today);
+  listingJolts(g, club, squad, today);
+  cupShock(g, dr, club, squad, today, scanned);
+  for (const j of dr.jolts ?? []) if (j.date === today) jolted.add(j.pid);
   const a = roomAnalysis(g, club);
   for (const p of squad) {
     const o = a.byId[p.id];
     if (!o) continue;
     const s = p.moraleScore ?? moraleScoreOf(p.morale);
-    p.moraleScore = Math.round((s + (o.target - s) * 0.08) * 10) / 10;
-    p.morale = moraleStepOf(p.moraleScore);
+    if (!jolted.has(p.id)) p.moraleScore = Math.round((s + (o.target - s) * MORALE_GLIDE) * 10) / 10;
+    p.morale = moraleStepOf(p.moraleScore!);
   }
   dr.mood = Math.round((dr.mood + (a.moodTarget - dr.mood) * 0.06) * 10) / 10;
   dr.cohesion = a.cohesion;
@@ -220,17 +266,41 @@ export function dressingRoomDaily(g: Game, today: string): DRAnalysis | null {
 }
 
 /**
- * Keine Dauerkrise: Steckt die Stimmung vier Wochen unter 35, raufen sich die
+ * Pokal-Aus des eigenen Vereins (Landespokal): gegen Amateure ein Schock für
+ * die ganze Kabine, sonst ein kleiner Dämpfer. Einmal je Begegnung.
+ */
+function cupShock(g: Game, dr: DressingRoomState, club: Club, squad: Player[], today: string, scanned: boolean): void {
+  const cup = g.cup;
+  if (!cup?.rounds) return;
+  const am = new Set(cup.amateurClubIds ?? []);
+  for (const r of cup.rounds) for (const t of r.ties) {
+    if (!t.involvesPlayerClub || !t.winnerClubId || t.winnerClubId === club.id) continue;
+    const f = `cup:${cup.season}:${t.id}`;
+    if (hasFlag(dr, f)) continue;
+    setFlag(dr, f);
+    if (!scanned) continue; // alter Spielstand: nichts rückwirkend
+    const other = g.clubs[t.winnerClubId]?.name ?? 'den Gegner';
+    const shock = am.has(t.winnerClubId);
+    const label = shock ? `Pokal-Aus gegen Amateure (${other})` : `Pokal-Aus gegen ${other}`;
+    addBoost(dr, '*', shock ? -12 : -4, label, today, shock ? 35 : 20);
+    if (shock) addBoost(dr, '#c', -5, label, today, 30);
+    for (const p of squad) moraleJolt(g, p, shock ? -5 : -2, label, today);
+    if (shock) logRoom(dr, today, `${label} – die Kabine ist geschockt.`);
+  }
+}
+
+/**
+ * Keine Dauerkrise: Steckt die Stimmung gut drei Wochen unter 35, raufen sich die
  * Spieler selbst zusammen (Kapitän/Führungsspieler rufen die Mannschaft
- * zusammen) – höchstens alle 6 Wochen, stärker mit einem anerkannten Kapitän.
+ * zusammen) – höchstens alle 5 Wochen, stärker mit einem anerkannten Kapitän.
  */
 function rallyIfStuck(g: Game, dr: DressingRoomState, a: DRAnalysis, today: string): void {
   if (dr.mood >= 35) { dr.lowSince = undefined; return; }
   dr.lowSince ??= today;
-  if (days(dr.lowSince, today) < 28 || (dr.rally && days(dr.rally, today) < 42)) return;
+  if (days(dr.lowSince, today) < 24 || (dr.rally && days(dr.rally, today) < 35)) return;
   const cap = dr.captainId ? g.players[dr.captainId] : undefined;
   const strong = !!cap && (a.byId[cap.id]?.influence ?? 0) >= 60;
-  addBoost(dr, '*', strong ? 12 : 9, 'Spieler raufen sich zusammen', today, 45);
+  addBoost(dr, '*', strong ? 14 : 10, 'Spieler raufen sich zusammen', today, 45);
   addBoost(dr, '#c', 6, 'Aussprache ohne Trainer', today, 45);
   dr.rally = today; dr.lowSince = today;
   const who = cap ? cap.fullName : 'Die Führungsspieler';
@@ -293,12 +363,12 @@ export function talkTo(g: Game, pid: string, kind: TalkKind, rng: () => number =
   const success = rng() < odds.chance;
   let text: string;
   if (kind === 'einsatz') {
-    addBoost(dr, pid, odds.gain * st.wear, 'Einsatz zugesagt', today, 30);
+    addBoostJolt(g, dr, pid, odds.gain * st.wear, 'Einsatz zugesagt', today, 30);
     const until = CalendarEngine.addDays(today, roomInputs(g, club).ctx.offSeason ? 56 : 28);
     (dr.pledges ??= []).push({ pid, date: today, until, starts0: p.seasonStats?.starts ?? 0 });
     text = `${p.lastName} freut sich über die Zusage. Er erwartet bis ${until.split('-').reverse().join('.')} mindestens zwei Startelf-Einsätze.`;
   } else if (success) {
-    addBoost(dr, pid, odds.gain * st.wear, label, today, 30);
+    addBoostJolt(g, dr, pid, odds.gain * st.wear, label, today, 30);
     if (kind === 'kritisieren') p.form = clamp((p.form ?? 50) + 4, 0, 100);
     text = kind === 'loben' ? (odds.needed ? `${p.lastName} nimmt das Lob dankbar an.` : `${p.lastName} nickt – er war ohnehin obenauf.`)
       : kind === 'kritisieren' ? `${p.lastName} schluckt, nimmt die Kritik aber an und zieht im Training an.`
@@ -308,7 +378,7 @@ export function talkTo(g: Game, pid: string, kind: TalkKind, rng: () => number =
       if (c && rng() < 0.4) { dr.conflicts = dr.conflicts!.filter((x) => x !== c); text += ' Den Streit will er begraben.'; }
     }
   } else {
-    addBoost(dr, pid, -odds.loss * st.wear, label, today, 30);
+    addBoostJolt(g, dr, pid, -odds.loss * st.wear, label, today, 30);
     text = kind === 'loben' ? `Das Lob verpufft – ${p.lastName} wirkt unbeeindruckt.`
       : kind === 'kritisieren' ? `${p.lastName} fühlt sich ungerecht behandelt.`
         : `${p.lastName} blockt ab.`;
@@ -387,7 +457,7 @@ export function teamEvent(g: Game, kind: TeamEventKind, free = false): RoomResul
   addBoost(dr, '*', def.mood * st.wear, def.label, today, 40);
   addBoost(dr, '#c', def.cohesion * st.wear, def.label, today, 60);
   const a = roomAnalysis(g, club);
-  for (const id of a.outsiders) addBoost(dr, id, def.outsider * st.wear, `${def.label}: dabei gewesen`, today, 40);
+  for (const id of a.outsiders) addBoostJolt(g, dr, id, def.outsider * st.wear, `${def.label}: dabei gewesen`, today, 40);
   const text = `${def.label}: ${a.outsiders.length ? 'Auch die Außenseiter kommen ins Gespräch.' : 'Gute Stimmung.'}${st.wear < 0.8 ? ' Der Reiz lässt etwas nach – das letzte Event ist nicht lange her.' : ''}`;
   logRoom(dr, today, text);
   return { ok: true, text };
@@ -405,12 +475,12 @@ export function appointCaptain(g: Game, pid: string): RoomResult {
   const rankNoCap = [...a.players].map((o) => ({ id: o.id, v: o.influence - (o.id === dr.captainId ? 15 : 0) })).sort((x, y) => y.v - x.v).findIndex((x) => x.id === pid);
   let text = `${p.lastName} trägt ab sofort die Binde.`;
   if (old && old.clubId === club.id) {
-    addBoost(dr, old.id, -10 * (0.5 + personaOf(old).rampenlicht / 100), 'Binde verloren', today, 60);
+    addBoostJolt(g, dr, old.id, -10 * (0.5 + personaOf(old).rampenlicht / 100), 'Binde verloren', today, 60);
     text += ` ${old.lastName} ist enttäuscht.`;
   }
   if (dr.captainSince && days(dr.captainSince, today) < 60) { addBoost(dr, '*', -4, 'Ständiger Kapitänswechsel', today, 30); text += ' Der schnelle Wechsel sorgt für Unruhe.'; }
   if (rankNoCap > 4) { addBoost(dr, '*', -3, 'Kapitänswahl umstritten', today, 30); text += ' In der Kabine hätten viele einen anderen gewählt.'; }
-  addBoost(dr, pid, 6, 'Zum Kapitän ernannt', today, 60);
+  addBoostJolt(g, dr, pid, 6, 'Zum Kapitän ernannt', today, 60);
   dr.captainId = pid; dr.captainSince = today;
   dr.council = (dr.council ?? []).filter((id) => id !== pid);
   if (club.tactics) club.tactics.captainId = pid;
@@ -428,13 +498,13 @@ export function toggleCouncil(g: Game, pid: string): RoomResult {
   const c = dr.council ?? [];
   if (c.includes(pid)) {
     dr.council = c.filter((x) => x !== pid);
-    addBoost(dr, pid, -5, 'Aus dem Mannschaftsrat entfernt', today, 45);
+    addBoostJolt(g, dr, pid, -5, 'Aus dem Mannschaftsrat entfernt', today, 45);
     logRoom(dr, today, `${p.lastName} ist nicht mehr im Mannschaftsrat.`);
     return { ok: true, text: `${p.lastName} ist nicht mehr im Mannschaftsrat – er nimmt es persönlich.` };
   }
   if (c.length >= 3) return { ok: false, text: 'Der Mannschaftsrat hat schon drei Mitglieder.' };
   dr.council = [...c, pid];
-  addBoost(dr, pid, 4, 'In den Mannschaftsrat berufen', today, 45);
+  addBoostJolt(g, dr, pid, 4, 'In den Mannschaftsrat berufen', today, 45);
   logRoom(dr, today, `${p.lastName} rückt in den Mannschaftsrat.`);
   return { ok: true, text: `${p.lastName} gehört jetzt zum Mannschaftsrat.` };
 }
