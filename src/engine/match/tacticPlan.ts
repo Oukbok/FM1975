@@ -22,6 +22,7 @@ export interface TacticPlan {
   passBias: number;     // eigene Pässe kommen an (kurz/ruhig besser, Tempo/lang riskanter)
   pressBias: number;    // eigenes Pressing: gegnerische Pässe werden eher abgefangen
   tackleBias: number;   // eigene Zweikämpfe in der Abwehr (Härte, Einsatz)
+  workBias: number;     // eigene Laufduelle/Dribblings im Angriff (Einsatz)
   lineHigh: number;     // -1 tief … +1 hoch: Raum hinter der Abwehr / Abseits
   trap: number;         // Abseitsfalle 0/1
   /** Eigene Konter nach Ballgewinn (Faktor). */
@@ -76,11 +77,12 @@ export function tacticPlan(t: Tactics | undefined, year: number, mods?: TacticMo
     highCross,
     longShot: eraLong * (1 - 0.15 * tempo) * (t?.style === 'defensive' ? 1.1 : 1),
     passBias: (long ? -0.15 : 0.1) - 0.25 * tempo,
-    pressBias: 0.3 * press,
-    tackleBias: 0.22 * hard + 0.15 * eff,
+    pressBias: 0.3 * press + 0.1 * line,
+    tackleBias: 0.32 * hard + 0.22 * eff,
+    workBias: 0.15 * eff,
     lineHigh: line,
     trap: t?.offsideTrap ? 1 : 0,
     counter: (t?.style === 'counter' ? 1.55 : t?.style === 'attacking' ? 0.95 : 1) * (1 + 0.25 * tempo) * (1 + 0.3 * press),
-    foul: (1 + 0.55 * hard + 0.2 * press) * (1 + 0.12 * eff),
+    foul: (1 + 0.3 * hard + 0.15 * press) * (1 + 0.1 * eff),
   };
 }

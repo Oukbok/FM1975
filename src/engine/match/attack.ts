@@ -210,7 +210,7 @@ function kurz(sim: MatchSim, T: TeamState, O: TeamState, fT: MPlayer[], fO: MPla
   const def = pickC(sim, O, 5, (m) => defRole(m) * (tackleSkill(m) / 60), icp) ?? icp;
   const att = (dribbleSkill(recv) + boxSkill(recv)) / 2;
   const dv = tackleSkill(def) * O.mods.duel;
-  const p = duelP(att, dv, B.box + adv - O.plan.tackleBias);
+  const p = duelP(att, dv, B.box + adv + T.plan.workBias - O.plan.tackleBias);
   const won = rng() < p;
   countDuel(won ? recv : def, won ? def : recv, won ? T.stats : O.stats, won ? O.stats : T.stats);
   if (won) {
@@ -229,8 +229,8 @@ function flanke(sim: MatchSim, T: TeamState, O: TeamState, fT: MPlayer[], fO: MP
   const crosser = pickC(sim, T, 6, (m) => wideRole(m) * sq(crossSkill(m)))!;
   const wd = pickC(sim, O, 7, wideDefRole)!;
   // Außen gegen Außen: Platz für die Flanke?
-  const free = duelP(crossSkill(crosser) * 0.4 + dribbleSkill(crosser) * 0.3 + paceSkill(crosser) * 0.3, tackleSkill(wd) * O.mods.duel,
-    B.cross + adv * 0.6 - 0.5 * O.plan.tackleBias);
+  const free = duelP(crossSkill(crosser) * 0.55 + dribbleSkill(crosser) * 0.25 + paceSkill(crosser) * 0.2, tackleSkill(wd) * O.mods.duel,
+    B.cross + adv * 0.6 + T.plan.workBias - 0.5 * O.plan.tackleBias);
   crosser.crosses = (crosser.crosses ?? 0) + 1; T.stats.crosses = (T.stats.crosses ?? 0) + 1;
   const freeOk = rng() < free;
   countDuel(freeOk ? crosser : wd, freeOk ? wd : crosser, freeOk ? T.stats : O.stats, freeOk ? O.stats : T.stats);
@@ -248,7 +248,7 @@ function flanke(sim: MatchSim, T: TeamState, O: TeamState, fT: MPlayer[], fO: MP
     }
     const tgt = pickC(sim, T, 8, (m) => airRole(m, false) * sq(aerialSkill(m)), crosser) ?? crosser;
     const dd = pickC(sim, O, 9, (m) => airDefRole(m) * sq(aerialSkill(m)))!;
-    const p = duelP(aerialSkill(tgt) + (cq - 60) * 0.35, aerialSkill(dd), B.air + adv * 0.5 - 0.15 * O.plan.lineHigh);
+    const p = duelP(aerialSkill(tgt) + (cq - 60) * 0.6, aerialSkill(dd), B.air + adv * 0.5 - 0.15 * O.plan.lineHigh);
     const won = rng() < p;
     aerial(T, O, won ? tgt : dd, won ? dd : tgt, won);
     if (won) {
@@ -263,7 +263,7 @@ function flanke(sim: MatchSim, T: TeamState, O: TeamState, fT: MPlayer[], fO: MP
   // Flache Hereingabe / Rückraum
   const tgt = pickC(sim, T, 10, (m) => attRole(m) * sq(boxSkill(m)), crosser) ?? crosser;
   const dd = pickC(sim, O, 11, (m) => defRole(m) * (interceptSkill(m) / 60))!;
-  const p = duelP(boxSkill(tgt) + (cq - 60) * 0.3, interceptSkill(dd), B.low + adv * 0.5);
+  const p = duelP(boxSkill(tgt) + (cq - 60) * 0.55, interceptSkill(dd), B.low + adv * 0.5);
   if (rng() < p) {
     crosser.crossesOk = (crosser.crossesOk ?? 0) + 1; T.stats.crossesOk = (T.stats.crossesOk ?? 0) + 1;
     if (rng() < 0.25) return fail(sim, T, O, 'recycle', tgt, undefined);
@@ -302,7 +302,7 @@ function steil(sim: MatchSim, T: TeamState, O: TeamState, fT: MPlayer[], fO: MPl
     return;
   }
   const chaser = pickC(sim, O, 15, (m) => (m.group === 'DEF' ? 3 : m.pos === 'DM' ? 1 : 0.2) * sq(recoverSkill(m)))!;
-  const p = duelP(paceSkill(runner), recoverSkill(chaser), B.race + adv * 0.5 + 0.45 * O.plan.lineHigh + 0.3 * O.plan.trap);
+  const p = duelP(paceSkill(runner), recoverSkill(chaser), B.race + adv * 0.5 + T.plan.workBias + 0.7 * O.plan.lineHigh + 0.3 * O.plan.trap);
   const won = rng() < p;
   countDuel(won ? runner : chaser, won ? chaser : runner, won ? T.stats : O.stats, won ? O.stats : T.stats);
   if (won) {
@@ -321,7 +321,7 @@ function dribbling(sim: MatchSim, T: TeamState, O: TeamState, fT: MPlayer[], fO:
   const wide = isWidePosition(dr.pos);
   const def = pickC(sim, O, wide ? 40 : 17, (m) => (wide ? wideDefRole(m) : defRole(m)) * (tackleSkill(m) / 60))!;
   dr.dribbles = (dr.dribbles ?? 0) + 1; T.stats.dribbles = (T.stats.dribbles ?? 0) + 1;
-  const p = duelP(dribbleSkill(dr), tackleSkill(def) * O.mods.duel, B.drib + adv - O.plan.tackleBias);
+  const p = duelP(dribbleSkill(dr), tackleSkill(def) * O.mods.duel, B.drib + adv + T.plan.workBias - O.plan.tackleBias);
   const won = rng() < p;
   countDuel(won ? dr : def, won ? def : dr, won ? T.stats : O.stats, won ? O.stats : T.stats);
   if (!won) { def.tackles++; def.impact += 0.04; return fail(sim, T, O, 'tackle', dr, def); }
@@ -391,7 +391,7 @@ export function counter(sim: MatchSim, A: TeamState, D: TeamState, winner?: MPla
     return;
   }
   const chaser = pickC(sim, D, 27, (m) => (m.group === 'DEF' ? 3 : m.pos === 'DM' ? 1.2 : 0.2) * sq(recoverSkill(m)))!;
-  const p = duelP(paceSkill(runner), recoverSkill(chaser), B.counterRace + adv * 0.5 + 0.5 * D.plan.lineHigh);
+  const p = duelP(paceSkill(runner), recoverSkill(chaser), B.counterRace + adv * 0.5 + A.plan.workBias + 0.7 * D.plan.lineHigh);
   const won = rng() < p;
   countDuel(won ? runner : chaser, won ? chaser : runner, won ? A.stats : D.stats, won ? D.stats : A.stats);
   pulse(sim, A.side, 0.4);

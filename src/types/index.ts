@@ -273,6 +273,9 @@ export interface PlayerStats {
   ratingSum: number;
   /** Anzahl bewerteter Spiele. */
   ratedMatches: number;
+  /** Einzelwerte der Match-Engine 2 (optional, alte Spielstände ohne):
+   *  [Schüsse, aufs Tor, Pässe, angekommen, Zweikämpfe, gewonnen]. */
+  detail?: number[];
 }
 
 /** Erzeugt eine leere Statistik. */

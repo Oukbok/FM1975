@@ -137,7 +137,24 @@ export function coachTactics(club: Club, players: Record<string, Player>, coach:
     buildup: hash01(coach.id + 'b') < b.long ? 'long' : 'short',
     offsideTrap: hash01(coach.id + 'o') < (coach.style === 'offensiv' ? 0.5 : 0.3),
   };
+  // Match-Engine 2: Die KI spielt nach ihrem Kader – kopfballstarke Stürmer → hohe Flanken und mehr Breite,
+  // kleine wendige Stürmer → flache Hereingaben, gute Flankengeber außen → mehr über die Flügel.
+  const fit = squadProfile(pool);
+  base.crossStyle = fit.aerial > 66 ? 'high' : fit.aerial < 56 ? 'low' : 'mixed';
+  base.widthFocus = t((base.widthFocus ?? 50) + (fit.crossing - 60) * 0.8 + (fit.aerial - 60) * 0.4);
+  if (fit.aerial > 68 && coach.style !== 'offensiv') base.buildup = hash01(coach.id + 'b2') < 0.6 ? 'long' : base.buildup;
   return buildAutoTactics(club, players, base, chooseFormation(pool, coach, year));
+}
+
+/** Stärken des Kaders für die Spielweise: Luft (beste zwei Stürmer), Flanken (beste zwei Außen). */
+function squadProfile(pool: Player[]): { aerial: number; crossing: number } {
+  const top2 = (xs: number[]) => { const s = xs.sort((a, b) => b - a).slice(0, 2); return s.length ? s.reduce((a, b) => a + b, 0) / s.length : 60; };
+  const fwd = pool.filter((p) => p.naturalPosition === 'MS' || p.naturalPosition === 'HS');
+  const wide = pool.filter((p) => ['RA', 'LA', 'RM', 'LM', 'RV', 'LV'].includes(p.naturalPosition));
+  return {
+    aerial: top2(fwd.map((p) => p.attributes.heading * 0.6 + p.attributes.jumping * 0.25 + p.attributes.strength * 0.15)),
+    crossing: top2(wide.map((p) => p.attributes.crossing)),
+  };
 }
 
 // -----------------------------------------------------------------------------

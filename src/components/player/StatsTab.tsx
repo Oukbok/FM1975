@@ -18,6 +18,10 @@ const ROWS: [string, (s: PlayerStats) => number | string][] = [
   ['Elfmeter gehalten', (s) => s.penaltiesSaved],
   ['Elfmeter verschossen', (s) => s.penaltiesMissed],
   ['Ø Note', (s) => (s.averageRating > 0 ? s.averageRating.toFixed(2) : '—')],
+  // Einzelwerte der Match-Engine (ab dieser Version gezählt)
+  ['Schüsse (aufs Tor)', (s) => (s.detail ? `${s.detail[0]} (${s.detail[1]})` : '—')],
+  ['Pässe angekommen', (s) => (s.detail && s.detail[2] ? `${Math.round((s.detail[3] / s.detail[2]) * 100)} % von ${s.detail[2]}` : '—')],
+  ['Zweikämpfe gewonnen', (s) => (s.detail && s.detail[4] ? `${Math.round((s.detail[5] / s.detail[4]) * 100)} % von ${s.detail[4]}` : '—')],
 ];
 
 const per90 = (n: number, min: number) => (min > 0 ? ((n * 90) / min).toFixed(2) : '—');

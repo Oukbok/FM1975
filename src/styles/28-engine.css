@@ -1,0 +1,17 @@
+/* Taktik › Wirkung im Spiel (gemessen, components/tactics/TacticEffect.tsx) */
+.tx-measured .tx-eff { grid-template-columns: 140px 60px 1fr 64px; gap: 10px; padding: 3px 0; font-size: 14.5px; }
+.tx-measured .tx-eff-n { text-align: right; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.tx-measured .tx-eff-head { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-3); padding-bottom: 2px; }
+.tx-measured .tx-eff-head .tx-eff-n, .tx-measured .tx-eff-head .tx-eff-v { color: var(--text-3); font-weight: 500; }
+.tx-measured .tx-eff-t2 { text-align: center; }
+.tx-measured.busy { opacity: .55; transition: opacity .2s; }
+.tx-measured .dnote { margin-top: 6px; }
+
+/* Spielbericht: Einzelwerte je Spieler */
+.mr-lu-st { display: flex; flex-wrap: wrap; gap: 0 14px; padding: 0 0 5px 44px; font-size: 12.5px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.mr-lu-st span { white-space: nowrap; }
+.mr-lu-st b { color: var(--text-2); font-weight: 600; margin-left: 3px; }
+.mr-lu-toggle { display: inline-flex; gap: 0; margin: 0 0 8px; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+.mr-lu-toggle button { background: transparent; border: 0; color: var(--text-3); font-family: var(--font-display); text-transform: uppercase; letter-spacing: .04em; font-size: 12px; padding: 4px 12px; cursor: pointer; }
+.mr-lu-toggle button.on { background: var(--accent); color: var(--bg); }
+.tx-toggle.tx-toggle3 { grid-template-columns: repeat(3, 1fr); }

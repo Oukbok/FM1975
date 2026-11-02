@@ -133,6 +133,8 @@ export function StatsPanel({ sim }: { sim: MatchSim }) {
     add('Passquote', pct(H.passesOk, H.passes), pct(A.passesOk, A.passes), (v) => `${v} %`);
   }
   if (av.duels) add('Zweikämpfe gewonnen', pct(H.duelsWon, H.duels), pct(A.duelsWon, A.duels), (v) => `${v} %`);
+  if (av.duels) add('Luftduelle gewonnen', pct(H.aerialsWon ?? 0, H.aerials ?? 0), pct(A.aerialsWon ?? 0, A.aerials ?? 0), (v) => `${v} %`);
+  if (av.passes) add('Flanken', H.crosses ?? 0, A.crosses ?? 0);
   if (av.distance) add('Laufleistung', liveKm(sim, sim.home), liveKm(sim, sim.away), (v) => `${v.toFixed(1).replace('.', ',')} km`);
   add('Ecken', H.corners, A.corners);
   add('Fouls', H.fouls, A.fouls);

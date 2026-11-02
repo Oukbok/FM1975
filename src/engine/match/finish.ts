@@ -263,6 +263,8 @@ function commit(sim: MatchSim, grades: Map<string, number>, opts: FinishOptions)
         stats.yellowRedCards += m.yellowRed;
         stats.redCards += m.red;
         if (clean && (m.group === 'GK' || POSITION_GROUPS[player.naturalPosition] === 'DEF')) stats.cleanSheets++;
+        const d = (stats.detail ??= [0, 0, 0, 0, 0, 0]);
+        d[0] += m.shots; d[1] += m.shotsOnTarget; d[2] += m.passes; d[3] += m.passesOk; d[4] += m.duels; d[5] += m.duelsWon;
         stats.ratingSum += g;
         stats.ratedMatches++;
         stats.averageRating = stats.ratedMatches > 0 ? stats.ratingSum / stats.ratedMatches : 0;

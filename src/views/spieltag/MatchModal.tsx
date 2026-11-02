@@ -4,6 +4,7 @@ import { ClubLink } from '../../components/club/ClubLink';
 // mit Noten, Druckphasen. Ausführliche Werte gibt es für Spiele des eigenen
 // Vereins; bei anderen Partien die Eckdaten.
 // =============================================================================
+import { useState } from 'react';
 import ClubCrest from '../../components/ClubCrest';
 import Icon from '../../components/Icon';
 import { eraRules } from '../../engine/match/era';
@@ -37,6 +38,7 @@ function evLabel(e: MatchEventExt): { tag: string; cls: string } {
 }
 
 export function MatchModal({ g, matchId, onClose }: { g: Game; matchId: string; onClose: () => void }) {
+  const [detail, setDetail] = useState(false);
   const found = findMatch(g, matchId);
   if (!found || !found.match.result) return null;
   const m = found.match;
@@ -116,11 +118,17 @@ export function MatchModal({ g, matchId, onClose }: { g: Game; matchId: string; 
           </div>
 
           <div className="mr-box">
-            <div className="mr-box-h">Aufstellungen{rep ? ' und Noten' : ''}</div>
+            <div className="mr-box-h">Aufstellungen{rep ? (detail ? ' und Einzelwerte' : ' und Noten') : ''}</div>
+            {rep?.lineups.home.some((e) => e.st) && (
+              <div className="mr-lu-toggle">
+                <button className={!detail ? 'on' : ''} onClick={() => setDetail(false)}>Noten</button>
+                <button className={detail ? 'on' : ''} onClick={() => setDetail(true)}>Einzelwerte</button>
+              </div>
+            )}
             {rep ? (
               <div className="mr-lineups">
-                <LineupCol g={g} list={rep.lineups.home} />
-                <LineupCol g={g} list={rep.lineups.away} />
+                <LineupCol g={g} list={rep.lineups.home} detail={detail} av={av} />
+                <LineupCol g={g} list={rep.lineups.away} detail={detail} av={av} />
               </div>
             ) : <div className="mr-empty">Für dieses Spiel liegen keine Aufstellungen vor.</div>}
           </div>
@@ -141,6 +149,9 @@ function StatTable({ r, hs, as, av }: { r: MatchResultExt; hs?: TeamStats; as?: 
   if (hs && as && av.bigChances) add('Großchancen', hs.bigChances, as.bigChances);
   if (hs && as && av.passes) { add('Pässe', hs.passes, as.passes); add('Passquote', pct(hs.passesOk, hs.passes), pct(as.passesOk, as.passes), (v) => `${v} %`); }
   if (hs && as && av.duels) add('Zweikämpfe gewonnen', pct(hs.duelsWon, hs.duels), pct(as.duelsWon, as.duels), (v) => `${v} %`);
+  if (hs && as && av.duels && hs.aerials != null && as.aerials != null) add('Luftduelle gewonnen', pct(hs.aerialsWon ?? 0, hs.aerials), pct(as.aerialsWon ?? 0, as.aerials), (v) => `${v} %`);
+  if (hs && as && av.passes && hs.crosses != null && as.crosses != null) add('Flanken', hs.crosses, as.crosses);
+  if (hs && as && av.passes && hs.dribbles != null && as.dribbles != null) add('Dribblings', hs.dribbles, as.dribbles);
   if (hs && as && av.distance) add('Laufleistung', hs.distance, as.distance, (v) => `${v.toFixed(1).replace('.', ',')} km`);
   add('Ecken', r.homeCorners, r.awayCorners);
   add('Fouls', r.homeFouls, r.awayFouls);
@@ -163,26 +174,45 @@ function StatTable({ r, hs, as, av }: { r: MatchResultExt; hs?: TeamStats; as?: 
   );
 }
 
-function LineupCol({ g, list }: { g: Game; list: LineupEntry[] }) {
+function LineupCol({ g, list, detail, av }: { g: Game; list: LineupEntry[]; detail: boolean; av: ReturnType<typeof eraRules>['stats'] }) {
   const nm = shortNamer(list.map((e) => g.players[e.id]));
   return (
     <div className="mr-lu">
       {list.map((e) => {
         const p = g.players[e.id];
         return (
-          <div key={e.id} className={`mr-lu-row ${e.started ? '' : 'sub'}`}>
-            <span className="mr-pos">{e.pos}</span>
-            <span className="mr-nm">
-              {nm(p)}
-              {e.goals > 0 && <span className="mr-tag goal">{e.goals > 1 ? `${e.goals}×` : ''}Tor</span>}
-              {e.assists > 0 && <span className="mr-tag">{e.assists > 1 ? `${e.assists}×` : ''}Vorl.</span>}
-              {e.card && <span className={`mr-card ${e.card === 'Gelb' ? 'y' : 'r'}`} />}
-              {!e.started && <span className="mr-in">{e.in}'</span>}
-            </span>
-            <span className={`mr-grade ${e.grade <= 2 ? 'g-top' : e.grade <= 3 ? 'g-good' : e.grade <= 4 ? 'g-mid' : 'g-bad'}`}>{e.grade.toFixed(1).replace('.', ',')}</span>
+          <div key={e.id}>
+            <div className={`mr-lu-row ${e.started ? '' : 'sub'}`}>
+              <span className="mr-pos">{e.pos}</span>
+              <span className="mr-nm">
+                {nm(p)}
+                {e.goals > 0 && <span className="mr-tag goal">{e.goals > 1 ? `${e.goals}×` : ''}Tor</span>}
+                {e.assists > 0 && <span className="mr-tag">{e.assists > 1 ? `${e.assists}×` : ''}Vorl.</span>}
+                {e.card && <span className={`mr-card ${e.card === 'Gelb' ? 'y' : 'r'}`} />}
+                {!e.started && <span className="mr-in">{e.in}'</span>}
+              </span>
+              <span className={`mr-grade ${e.grade <= 2 ? 'g-top' : e.grade <= 3 ? 'g-good' : e.grade <= 4 ? 'g-mid' : 'g-bad'}`}>{e.grade.toFixed(1).replace('.', ',')}</span>
+            </div>
+            {detail && e.st && <PlayerLine st={e.st} keeper={e.pos === 'TW'} av={av} />}
           </div>
         );
       })}
     </div>
   );
+}
+
+/** Einzelwerte eines Spielers (nur, was es in der Epoche schon gab). */
+function PlayerLine({ st, keeper, av }: { st: number[]; keeper: boolean; av: ReturnType<typeof eraRules>['stats'] }) {
+  const [sh, sot, pa, paOk, du, duW, cr, crOk, dr, drOk, ae, aeW, tk, kp, sv] = st;
+  const cells: [string, string][] = [];
+  if (keeper) cells.push(['Paraden', String(sv)]);
+  else cells.push(['Schüsse', av.shotsOnTarget ? `${sh}/${sot}` : String(sh)]);
+  if (av.passes) cells.push(['Pässe', `${paOk}/${pa}`]);
+  if (av.duels) cells.push(['Zweik.', `${duW}/${du}`]);
+  if (av.duels && ae) cells.push(['Luft', `${aeW}/${ae}`]);
+  if (av.passes && cr) cells.push(['Flanken', `${crOk}/${cr}`]);
+  if (av.duels && dr) cells.push(['Dribbl.', `${drOk}/${dr}`]);
+  if (tk) cells.push(['Ballerob.', String(tk)]);
+  if (kp) cells.push(['Torvorb.', String(kp)]);
+  return <div className="mr-lu-st">{cells.slice(0, 8).map(([l, v]) => <span key={l}>{l} <b>{v}</b></span>)}</div>;
 }

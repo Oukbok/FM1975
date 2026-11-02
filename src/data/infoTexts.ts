@@ -166,6 +166,11 @@ export const INFO_TEXTS = {
     text: 'Pressinghöhe, Abwehrlinie und Zweikampfhärte. Hohes Pressing erobert Bälle weit vorn, verbraucht aber viel Kraft; eine hohe Linie ist anfällig für Steilpässe, harte Zweikämpfe bringen Karten.',
     wiki: 'tactic-options',
   },
+  flankenart: {
+    title: 'Flankenart',
+    text: 'Hoch: Kopfballduelle im Strafraum – lohnt mit kopfballstarken, großen Stürmern. Flach: scharf in den Rückraum, für schnelle, abschlussstarke Angreifer. Wie oft geflankt wird, regelt die Breite.',
+    wiki: 'tactic-options',
+  },
   abseitsfalle: {
     title: 'Abseitsfalle',
     text: 'Die Abwehr rückt gemeinsam heraus, um Gegner ins Abseits zu stellen. Klappt es, ist der Angriff vorbei – verpasst einer den Moment, steht ein Stürmer allein vor dem Tor.',
@@ -173,7 +178,7 @@ export const INFO_TEXTS = {
   },
   wirkung: {
     title: 'Wirkung im Spiel',
-    text: 'Wie deine Einstellungen die Match-Engine gegenüber einer neutralen Taktik verschieben – in Prozent. Grün/hell hilft dir, orange kostet etwas. Kein Wert ist „gratis“.',
+    text: 'Gemessen, nicht geschätzt: Die Match-Engine spielt deine Elf mit deiner und mit neutraler Taktik je 40-mal daheim und auswärts. Links neutral, rechts deine Einstellung; orange = Nachteil. Kein Wert ist „gratis“.',
     wiki: 'tactic-options',
   },
   formation: {

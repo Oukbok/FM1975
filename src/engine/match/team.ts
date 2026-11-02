@@ -292,7 +292,7 @@ export function tacticMods(t: Tactics | undefined, mentality: Mentality, shout: 
   m.def *= 1 + press * 0.02;
   m.exposed *= 1 + line * 0.18 + press * 0.06;
   m.drain *= 1 + press * 0.25 + tempo * 0.15;
-  m.foul *= 1 + hard * 0.35 + press * 0.12;
+  m.foul *= 1 + hard * 0.2 + press * 0.06;
   m.cards *= 1 + hard * 0.3;
   // Härte gewinnt Zweikämpfe (Balleroberung, Abwehr) – auf Kosten von Fouls und Karten.
   m.duel *= 1 + hard * 0.08;

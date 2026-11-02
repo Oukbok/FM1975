@@ -6,8 +6,8 @@
 import { useState } from 'react';
 import type { Player, Tactics } from '../types';
 import { getFormation } from '../data/formations';
-import { positionSuitability, suitabilityColor } from '../engine/positions';
-import { tacticMods } from '../engine/match/team';
+import { getEraYear, positionSuitability, suitabilityColor } from '../engine/positions';
+import { TacticEffect } from './tactics/TacticEffect';
 import { DashBox, DashPage, Empty, KV } from '../ui/DashPage';
 import ClubCrest from './ClubCrest';
 import { ClubLink } from './club/ClubLink';
@@ -39,16 +39,6 @@ export default function TacticsView({ g, onChange }: { g: G; onChange: () => voi
   const opp = oppId ? g.clubs[oppId] : null;
   const oppT: Tactics | null = opp?.tactics ?? null;
 
-  // Wirkung genau so, wie die Match-Engine sie vor dem Anpfiff rechnet (ohne Zurufe/Ausrichtung im Spiel).
-  const m = tacticMods(t, 0, null, 0, 1);
-  const eff: [string, number, boolean][] = [
-    ['Angriffswucht', m.att, false], ['Abwehr', m.def, false], ['Ballkontrolle', m.ctrl, false],
-    ['Angriffe je Minute', m.rate, false], ['Zweikämpfe', m.duel, false], ['Konterstärke', m.counter, false], ['Flankenspiel', m.cross, false],
-    ['Konteranfälligkeit', m.exposed, true], ['Fehler im Aufbau', m.errors, true], ['Kraftverbrauch', m.drain, true],
-    ['Fouls', m.foul, true], ['Karten', m.cards, true], ['Verletzungsrisiko', m.injury, true],
-  ];
-  const pct = (f: number) => { const v = Math.round((f - 1) * 100); return v === 0 ? '±0 %' : `${v > 0 ? '+' : '−'}${Math.abs(v)} %`; };
-
   return (
     <DashPage>
       <DashBox title="Mentalität" info="mentalitaet" icon="tactics" right={STYLE_DE[t.style] ?? t.style}>
@@ -70,6 +60,12 @@ export default function TacticsView({ g, onChange }: { g: G; onChange: () => voi
         <div className="lu-seg tx-toggle">
           <button className={(t.buildup ?? 'short') === 'short' ? 'on' : ''} onClick={() => set({ buildup: 'short' })}>Kurz (Ballbesitz)</button>
           <button className={t.buildup === 'long' ? 'on' : ''} onClick={() => set({ buildup: 'long' })}>Lang (direkt)</button>
+        </div>
+        <div className="lu-mlabel">Flanken<InfoTip k="flankenart" /></div>
+        <div className="lu-seg tx-toggle tx-toggle3">
+          {([['high', 'Hoch'], ['mixed', 'Gemischt'], ['low', 'Flach']] as const).map(([v, l]) => (
+            <button key={v} className={(t.crossStyle ?? 'mixed') === v ? 'on' : ''} onClick={() => set({ crossStyle: v })}>{l}</button>
+          ))}
         </div>
       </DashBox>
 
@@ -105,20 +101,8 @@ export default function TacticsView({ g, onChange }: { g: G; onChange: () => voi
         </div>
       </DashBox>
 
-      <DashBox title="Wirkung im Spiel" info="wirkung" icon="stats" right="ggü. neutral">
-        <div className="tx-effect">
-          {eff.map(([label, f, bad]) => {
-            const d = Math.max(-1, Math.min(1, (f - 1) / 0.3));
-            const color = Math.abs(f - 1) < 0.005 ? 'var(--text-3)' : (f > 1) !== bad ? 'var(--text-2)' : 'var(--orange)';
-            return (
-              <div key={label} className="tx-eff" title={bad ? 'höher = Nachteil' : 'höher = Vorteil'}>
-                <span className="tx-eff-l">{label}</span>
-                <span className="tx-eff-t"><span style={{ left: d < 0 ? `${50 + d * 50}%` : '50%', width: `${Math.abs(d) * 50}%`, background: color }} /></span>
-                <span className="tx-eff-v" style={{ color: color === 'var(--orange)' ? color : undefined }}>{pct(f)}</span>
-              </div>
-            );
-          })}
-        </div>
+      <DashBox title="Wirkung im Spiel" info="wirkung" icon="stats" right="gemessen">
+        <TacticEffect club={myClub} players={g.players} opp={opp} year={getEraYear()} />
       </DashBox>
 
       <DashBox title="Nächster Gegner" icon="watchlist" right={opp?.shortName}>
