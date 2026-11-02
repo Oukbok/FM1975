@@ -441,6 +441,36 @@ export const INFO_TEXTS = {
     text: 'Wie bekannt deine Nachwuchsarbeit ist. Er wächst langsam mit erfolgreichen eigenen Talenten und entscheidet, ob die besten Jugendlichen am 1. Juli zu dir kommen.',
     wiki: 'youth-invest',
   },
+  akaAusbildung: {
+    title: 'Ausbildung',
+    text: 'Die aktuelle Ausbildungsqualität deiner Akademie (0–100). Sie bestimmt, wie schnell Talente lernen, wie reif sie mit 18/19 sind und wie viele Kinder jedes Jahr kommen. „Ziel“ ist der Wert, den dein heutiger Ausbau und Etat auf Dauer tragen.',
+    wiki: 'youth-invest',
+  },
+  akaWeg: {
+    title: 'Weg zum Ziel',
+    text: 'Die Ausbildung steigt nicht sofort: Sie nähert sich dem Ziel um etwa ein Fünftel des Abstands pro Jahr. Der Balken zeigt, wie weit sie schon ist. Kürzungen am Etat oder Ausbau ziehen sie schneller nach unten.',
+    wiki: 'youth-invest',
+  },
+  akaBambini: {
+    title: 'Bambini je Jahrgang',
+    text: 'So viele neue Kinder nimmt deine Akademie jedes Jahr am 1. Juli auf (1–4). Mehr Plätze, ein voller Etat und eine bessere Ausbildung erhöhen die Zahl – und damit die Chance auf ein Ausnahmetalent.',
+    wiki: 'youth-invest',
+  },
+  akaLernrate: {
+    title: 'Lernrate der Talente',
+    text: 'Faktor auf die Entwicklung aller Jugendspieler im Training und in Spielen (etwa ×0,8 bei schwacher bis ×1,65 bei sehr guter Ausbildung). ×1,18 heißt: Deine Talente entwickeln sich 18 % schneller als mit dem Grundwert ×1,0.',
+    wiki: 'youth-invest',
+  },
+  akaReife: {
+    title: 'Reife mit 19 Jahren',
+    text: 'Gut ausgebildete Talente sind am Ende der Jugend weiter: Ihre altersgerechte Höchststärke liegt um diesen Anteil höher. Sie können dadurch früher bei den Profis mithalten.',
+    wiki: 'youth-invest',
+  },
+  akaZweite: {
+    title: 'Zweite Mannschaft',
+    text: 'Gibt Eigengewächsen bis 23, die bei den Profis (noch) nicht spielen, Spielpraxis. Ohne zweite Mannschaft stagnieren sie eher; je höher sie spielt, desto mehr bringt es.',
+    wiki: 'youth-invest',
+  },
   durchlaessigkeit: {
     title: 'Durchlässigkeit',
     text: 'Bekommen eigene Talente Einsatzzeit bei den Profis? Gemessen am Anteil junger Eigengewächse mit Spielpraxis. Hohe Durchlässigkeit macht den Verein für Talente attraktiver.',

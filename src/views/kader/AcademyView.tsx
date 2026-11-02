@@ -114,15 +114,15 @@ export function AcademyView({ g, onChange }: { g: Game; onChange: () => void }) 
 
       <DashBox title="Wirkung" info="ausbildung" icon="training" right={<span className="dnote">verzögert</span>}>
         <div className="dkpis">
-          <Kpi value={Math.round(inv.quality)} label="Ausbildung" sub={`Ziel ${Math.round(target)}`} />
+          <Kpi value={Math.round(inv.quality)} label="Ausbildung" info="akaAusbildung" sub={`Ziel ${Math.round(target)}`} />
           <Kpi value={Math.round(inv.reputation)} label="Ruf" info="jugendRuf" sub={`Platz ${ranked.findIndex((c) => c.id === club.id) + 1} der Liga`} />
           <Kpi value={Math.round(inv.perspective)} label="Durchlässigkeit" info="durchlaessigkeit" />
         </div>
-        <Meter label="Weg zum Ziel" value={target > 0 ? Math.min(inv.quality, target) : 0} max={Math.max(1, target)} text={`${Math.round(inv.quality)} / ${Math.round(target)}`} />
-        <KV k="Bambini je Jahrgang" v={intakeCountOf(club)} />
-        <KV k="Lernrate der Talente" v={`× ${academyGrowthOf(club).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} />
-        <KV k="Reife mit 19 Jahren" v={`+${Math.round(ageCapBonus(club, 19) * 100)} % Spielstärke`} />
-        <KV k="Zweite Mannschaft" v={BLOCK_BY_KEY.reserve.levels[inv.levels.reserve ?? 0].name} />
+        <Meter label="Weg zum Ziel" info="akaWeg" value={target > 0 ? Math.min(inv.quality, target) : 0} max={Math.max(1, target)} text={`${Math.round(inv.quality)} / ${Math.round(target)}`} />
+        <KV k="Bambini je Jahrgang" info="akaBambini" v={intakeCountOf(club)} />
+        <KV k="Lernrate der Talente" info="akaLernrate" v={`× ${academyGrowthOf(club).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} />
+        <KV k="Reife mit 19 Jahren" info="akaReife" v={`+${Math.round(ageCapBonus(club, 19) * 100)} % Spielstärke`} />
+        <KV k="Zweite Mannschaft" info="akaZweite" v={BLOCK_BY_KEY.reserve.levels[inv.levels.reserve ?? 0].name} />
         <div className="dnote mt8">Die Ausbildung folgt dem Ziel um etwa ein Fünftel pro Jahr, der Ruf noch langsamer – er wächst mit erfolgreichen eigenen Talenten. Kürzungen wirken schneller.</div>
       </DashBox>
 
