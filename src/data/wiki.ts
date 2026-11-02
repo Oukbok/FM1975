@@ -72,7 +72,7 @@ Deutsche Retro-Fußballmanager-Simulation. Der Spielstand startet in der **Saiso
 - Der Kalender läuft tageweise. Mit dem **Weiter**-Button oben rechts (oder der **Leertaste**) startest/stoppst du den Auto-Advance.
 - Solange die Zeit läuft, erscheint in der Bildschirmmitte der **Kalenderstreifen** (siehe Artikel „Kalender & planbare Aktivitäten“); der Rest des Bildschirms ist dann unscharf und abgedunkelt, nur der **Pause**-Knopf bleibt bedienbar.
 - Der Button hat eine **feste Größe** und wechselt je nach Kontext die Beschriftung (Weiter / Pause / Simulieren / ▶ Neue Saison), ohne zu springen.
-- An wichtigen Ereignissen (**dein Spiel** – hier hält der Vorlauf unmittelbar vor dem Anpfiff an und öffnet das Match-Fenster im Vor-Anpfiff-Zustand –, **große Saison-Bewertung**, Saisonende) hält das Spiel automatisch an. Die Pause landet dabei **genau auf dem betreffenden Tag** (also z.B. **am Spieltag selbst**, nicht am Folgetag): Das angezeigte Datum in der Zentrale bleibt auf diesem Tag stehen, der Tageswechsel wird erst nachgeholt, sobald du den Vorlauf fortsetzt. Die drei kleinen periodischen Leistungsbewertungen laufen dagegen still im Hintergrund und stoppen den Vorlauf nicht. Am Saisonende wird der **Weiter**-Button zu **„▶ Neue Saison"** und startet die Folgesaison samt fälliger Chronik-Meilensteine.
+- An wichtigen Ereignissen (**dein Spiel** – hier hält der Vorlauf unmittelbar vor dem Anpfiff an und öffnet das Match-Fenster im Vor-Anpfiff-Zustand –, **große Saison-Bewertung**, Saisonende) hält das Spiel automatisch an. Die Pause landet dabei **genau auf dem betreffenden Tag** (also z.B. **am Spieltag selbst**, nicht am Folgetag): Das angezeigte Datum in der Zentrale bleibt auf diesem Tag stehen, der Tageswechsel wird erst nachgeholt, sobald du den Vorlauf fortsetzt. Auch die drei Bewertungsrunden (Herbst, Winter, Saisonende) halten an und zeigen die Bewertungs-Show. Am Saisonende wird der **Weiter**-Button zu **„▶ Neue Saison"** und startet die Folgesaison samt fälliger Chronik-Meilensteine.
 
 ## Punktesystem
 - Das Punktesystem ist **historisch automatisch** und **nicht mehr manuell wählbar**: **2 Punkte pro Sieg bis Saison 1994/95**, **ab Saison 1995/96 automatisch 3 Punkte pro Sieg** (Remis stets 1 Punkt).
@@ -756,7 +756,7 @@ Jeder sichtbare **Attribut-Punkt** speist einen versteckten **OVR-Akkumulator** 
     body: `## Wöchentliche Entwicklung läuft still
 Am Ende jeder Trainingswoche (**sonntags**) wertet der Trainerstab die versteckte Entwicklung aus. Diese wöchentliche Auswertung geschieht **komplett still im Hintergrund**: Die Spielerwerte (Attribute und Gesamtstärke) verändern sich, aber der Vorlauf **hält nicht an** und es erscheint **keine Meldung und kein Popup**. Die neuen Werte findest du jederzeit im **Kader**.
 
-Eine sichtbare Meldung bzw. eine Zeremonie gibt es **ausschließlich** bei der großen Saison-Bewertung (siehe „Periodische Leistungsbewertung" weiter unten) — nicht mehr wöchentlich.
+Eine sichtbare Meldung und die Bewertungs-Show gibt es nur zu den drei Bewertungsrunden (siehe „Periodische Leistungsbewertung" weiter unten) — nicht wöchentlich.
 
 Die folgenden Regeln beschreiben, **wie** die wöchentliche Veränderung berechnet wird (auch wenn sie nicht mehr angezeigt wird):
 
@@ -784,29 +784,29 @@ In **sehr seltenen Fällen** überschreibt ein **unkontrollierbares Lebensereign
 - negativ: „Privatunglück belastet den Spieler", „Feiert zu viel neben dem Platz" …
 
 ## Periodische Leistungsbewertung
-Zusätzlich zur stillen Wochen-Entwicklung wird die gesamte Liga an festen Anlässen neu bewertet:
+Die Entwicklungspunkte aller Profis werden in drei Bewertungsrunden je Saison ausgezahlt:
 
-| Anlass | Zeitpunkt | Sichtbarkeit |
+| Anlass | Zeitpunkt | Auszahlung |
 |---|---|---|
-| Nach dem Sommer-Transferfenster | Tag nach Fensterschluss (**1. September**) | still im Hintergrund |
-| Jahreswechsel | **1. Januar** (Übergang 31.12. → 01.01.) | still im Hintergrund |
-| Nach dem Winter-Transferfenster | Tag nach Fensterschluss (**1. Februar**) | still im Hintergrund |
-| Große Saison-Bewertung | **zwei Wochen nach Saisonende** | Zeremonie + Meldung |
+| Herbst-Bewertung | **3. November** | die Hälfte der Punkte, höchstens ±2 |
+| Winter-Bewertung | **2. Januar** | 70 % der Punkte, höchstens ±3; neue Potenzial-Einschätzung der Scouts |
+| Große Saison-Bewertung | **zwei Wochen vor Saisonende** | alle Punkte, bis ±6; Durchbrüche, Spätzünder, Leistungsknicke, Entfaltung des Potenzials |
 
-### Jeder Spieler bekommt seine Chance
-Bei **jeder** dieser Bewertungen wird **jeder Spieler der Liga** neu bewertet — jeder kann auf- oder abgewertet werden (altersabhängig, gebremst durch das Stern-Potenzial). Auch **dein eigener Verein** wird an allen Terminen mitbewertet.
+Nicht ausgezahlte Punkte bleiben (begrenzt) für die nächste Runde stehen. Eine kleine Unschärfe sorgt dafür, dass knappe Fälle mal so, mal so ausgehen. **Alle Vereine** werden bewertet; gezeigt wird dein Kader. Eine Woche vorher nennt dein Co-Trainer Tendenzen.
 
-### Kleine Bewertungen laufen im Hintergrund
-Die **drei periodischen** Bewertungen (September, Januar, Februar) laufen **still im Hintergrund**: Die Werte deiner und aller anderen Spieler ändern sich, aber der Vorlauf hält **nicht** an und es erscheint **keine Meldung**. Die neuen Werte findest du jederzeit im **Kader**.
+### Die Bewertungs-Show
+Jede Runde hält die Zeit an und öffnet eine Show im Stil der Pokalauslosung: Startbildschirm mit Anlass, Monat, Trainerteam, Anzahl Spieler und den Regeln, dann **Starten**. Danach werden alle Spieler **alphabetisch nach Nachnamen** automatisch aufgerufen – Gesicht, Position, Alter, alte → neue Stärke, Ergebnis (aufgewertet, abgewertet, unverändert) und darunter die **Begründung**. Links siehst du den Kader mit Status, rechts den Zwischenstand (größte Sprünge und Verluste, Ø Veränderung, letzte Runde), unten kommentiert eine Zeile das Geschehen. Steuerung: Tempo **Langsam/Normal/Schnell**, **Pause** (Leertaste), **Bis zum Ende springen** (Esc). Am Ende stehen Gewinner und Verlierer, die Ø Veränderung und der Vergleich zur letzten Runde; ein Klick auf einen Spieler in der Liste zeigt sein Ergebnis noch einmal. In den Einstellungen kannst du die Show abschalten (kompakte Liste) und das Tempo wählen.
 
-### Nur die große Saison-Bewertung wird gefeiert
-Ausschließlich die **große Saison-Bewertung** öffnet ein **Bewertungs-Fenster** (Zeremonie) und schreibt eine **Nachricht** in die Zentrale. Das Fenster enthüllt die Ergebnisse **deines Vereins** nacheinander (die übrigen Vereine ändern sich im Hintergrund). Steuerung:
+### Woher kommt die Auf- oder Abwertung?
+Für deinen Kader schreibt das Spiel jede Woche mit, **welche Ursache wie viele Entwicklungspunkte** gebracht oder gekostet hat – exakt aus der Rechnung, die Summe der Beiträge ergibt die Punkte. Die Begründung nennt die gewichtigsten Ursachen, zuerst die in Richtung des Ergebnisses:
+- **Alter:** Entwicklungsjahre bis Anfang 20, ab etwa 29 natürlicher Abbau; ein robuster Körper verschiebt ihn nach hinten.
+- **Spielpraxis:** Einsatzminuten seit der letzten Runde (auch in der zweiten Mannschaft); wer verletzt fehlt, sammelt keine.
+- **Training:** Anlagen, Trainerteam (Stärke und Größe im Verhältnis zum Kader), Spezialtrainer, Trainingsschwerpunkt, Trainingsplan, Förderspieler.
+- **Charakter und Moral**, die **Epoche** (Sportwissenschaft), der **Reifegrad** (Früh-/Spätentwickler) und der **Abstand zum Potenzial** (die letzten Punkte sind die schwersten; ab 82 die Weltklasse-Bremse).
+- **Einmaliges:** Trainingslager, Hallenturniere, Extraschichten, ein geplatztes Juwel, Durchbruch, Spätzünder, Leistungsknick.
+- **Hinweise:** knappe Entscheidung, Grenze des Potenzials, Höchstwert der Runde, weitere Fortschritte oder fortgesetzter Abbau.
 
-- **x1** — enthüllt den nächsten Spieler einzeln.
-- **x2** — enthüllt zwei Spieler pro Schritt (schneller).
-- **Überspringen** — zeigt sofort die vollständige Ergebnisliste.
-
-Je Spieler siehst du **Name, Verein, Position, Alter** sowie **alter → neuer Overall** mit farbiger Änderung (grün bei Auf-, rot bei Abwertung, grau bei keiner Änderung). Am Ende fasst das Fenster zusammen, wie viele Auf-/Abwertungen es gab; mit **Fertig** schließt du die Zeremonie und das Spiel läuft weiter.
+Die Begründungen der letzten Runden stehen auch im **Spielerprofil › Entwicklung** („Bewertungen und Gründe“). Für Spieler aus älteren Spielständen oder Neuzugänge, deren Punkte noch aus der Zeit vor der Aufzeichnung stammen, steht eine allgemeine Begründung.
 
 ## Liga-Ticker nach den Bewertungen
 Nach der Winter- und der Saison-Bewertung meldet der **Liga-Ticker** die größten Gewinner und Verlierer der anderen Vereine deiner Liga. Junge Spieler mit großen Sprüngen sind die Transferziele von morgen.

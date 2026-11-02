@@ -10,6 +10,7 @@
 //   • Unbeantwortete Entscheidungen werden nach einer Woche mit der vorsichtigen
 //     Standardwahl aufgelöst, damit das Spiel nie hängen bleibt.
 // =============================================================================
+import { addDevPoints } from './devLog';
 import { Club, InboxMessage, MessageChoice, MessageEventRef, Player } from '../types';
 
 export type EventChoice = MessageChoice;
@@ -212,7 +213,7 @@ const DEFS: EventDef[] = [
         bodyText: young
           ? `${p.fullName} bleibt nach dem Training mit ${young.fullName} auf dem Platz und gibt ihm Tipps. Das tut dem Jungen sichtlich gut.`
           : `${p.fullName} kümmert sich um die jungen Spieler.`,
-        apply: () => { if (young) { young.development.devPoints = (young.development.devPoints ?? 0) + 1.2; young.development.professionalism = clamp((young.development.professionalism ?? 50) + 4, 0, 100); } },
+        apply: () => { if (young) { addDevPoints(young, 'mentor', 1.2); young.development.professionalism = clamp((young.development.professionalism ?? 50) + 4, 0, 100); } },
       };
     },
   },
@@ -224,7 +225,7 @@ const DEFS: EventDef[] = [
       subject: `${p.fullName} zerreißt sich im Training`,
       shortText: 'Er ist der Erste auf dem Platz und der Letzte, der geht.',
       bodyText: `${p.fullName} ist derzeit kaum zu bremsen: Extraschichten, Krafttraining, Videostudium. Wenn das so weitergeht, macht er bald einen Sprung.`,
-      apply: () => { p.development.devPoints = (p.development.devPoints ?? 0) + 1.5; },
+      apply: () => { addDevPoints(p, 'fleiss', 1.5); },
     }),
   },
   {

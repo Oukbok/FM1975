@@ -253,6 +253,10 @@ export interface AppSettings {
   drawShow?: 'immer' | 'eigener' | 'aus';
   /** Tempo der Ziehungs-Show. */
   drawSpeed?: 'langsam' | 'normal' | 'schnell';
+  /** Bewertungsrunde als Show (screens/rating/) oder kompakte Liste. */
+  ratingShow?: 'an' | 'aus';
+  /** Tempo der Bewertungs-Show. */
+  ratingSpeed?: 'langsam' | 'normal' | 'schnell';
   /** Gehälter pro Jahr (Standard) oder pro Woche anzeigen und eingeben (ui/format.ts `fmtWage`). */
   wagePeriod?: 'jahr' | 'woche';
 }
@@ -272,6 +276,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
   briefingIntro: true,
   drawShow: 'eigener',
   drawSpeed: 'normal',
+  ratingShow: 'an',
+  ratingSpeed: 'normal',
   wagePeriod: 'jahr',
 };
 

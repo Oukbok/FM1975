@@ -218,18 +218,27 @@ const DEFENSIVE = new Set(['LIB', 'IV', 'RV', 'LV', 'DM', 'VS', 'AV']);
 /** Spezialisten-Bonus für einen Spieler (Multiplikator 1,00 … 1,10). */
 export function specialistBoost(members: StaffMember[], p: Player, year: number): number {
   let b = 0;
-  for (const m of members) {
-    const q = effectiveQuality(m, year) / 20; // 0..1
-    switch (m.specialty) {
-      case 'torwart': if (p.naturalPosition === 'TW') b += 0.08 * q; break;
-      case 'technik': if (OFFENSIVE.has(p.naturalPosition)) b += 0.05 * q; break;
-      case 'taktik': if (DEFENSIVE.has(p.naturalPosition)) b += 0.05 * q; break;
-      case 'athletik': b += 0.025 * q; break;
-      case 'mental': b += 0.02 * q; break;
-      default: break;
-    }
-  }
+  for (const m of members) b += specialistShare(m, p, year);
   return 1 + Math.min(0.1, b);
+}
+
+function specialistShare(m: StaffMember, p: Player, year: number): number {
+  const q = effectiveQuality(m, year) / 20; // 0..1
+  switch (m.specialty) {
+    case 'torwart': return p.naturalPosition === 'TW' ? 0.08 * q : 0;
+    case 'technik': return OFFENSIVE.has(p.naturalPosition) ? 0.05 * q : 0;
+    case 'taktik': return DEFENSIVE.has(p.naturalPosition) ? 0.05 * q : 0;
+    case 'athletik': return 0.025 * q;
+    case 'mental': return 0.02 * q;
+    default: return 0;
+  }
+}
+
+/** Fachgebiet mit dem größten Anteil am Spezialisten-Bonus (für die Begründung der Bewertung). */
+export function topSpecialty(members: StaffMember[], p: Player, year: number): CoachSpecialty | null {
+  let best: CoachSpecialty | null = null, bv = 0;
+  for (const m of members) { const v = specialistShare(m, p, year); if (v > bv) { bv = v; best = m.specialty; } }
+  return best;
 }
 
 /** Wirkung der Trainingsphilosophie auf Entwicklung und Verletzungsrisiko. */
