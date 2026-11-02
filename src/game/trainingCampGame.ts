@@ -4,6 +4,7 @@
 // Lager der KI-Vereine. Rechnung: engine/trainingCamp.ts · Ziele/Quellen:
 // data/campDestinations.ts · Unterkünfte: data/campLodgings.ts · Anschluss: game/day.ts.
 // =============================================================================
+import { addDevPoints } from '../engine/devLog';
 import { CAMP_OPP_LABEL, campDestination } from '../data/campDestinations';
 import { campLodging, defaultLodging, lodgingsFor } from '../data/campLodgings';
 import { CalendarEngine } from '../engine/calendar';
@@ -301,7 +302,7 @@ function finishCamp(g: Game, b: CampBooking, today: string): void {
     p.frische = clamp((p.frische ?? 100) - o.travelFrische + o.campFrische, 30, 100);
     p.form = clamp(p.form + (o.form + o.travelForm) * luck - o.travelForm, 0, 100);
     // Eingeladene Jugendspieler lernen im Training mit den Profis besonders viel.
-    dv.devPoints = (dv.devPoints ?? 0) + (young ? o.devYouth : o.dev) * luck * (invited ? 1.3 : 1);
+    addDevPoints(p, 'lager', (young ? o.devYouth : o.dev) * luck * (invited ? 1.3 : 1));
     if (b.tests) dv.recentMinutes = (dv.recentMinutes ?? 0) + b.tests * (young && (focus === 'jugend' || invited) ? 60 : 40);
     const mChance = invited ? Math.min(0.9, o.morale * 1.6) : young && focus === 'jugend' ? Math.min(0.9, o.morale * 1.5) : o.morale;
     if (rng() < mChance) { p.morale = bumpMorale(p.morale, 1); moraleUp++; }
@@ -312,7 +313,7 @@ function finishCamp(g: Game, b: CampBooking, today: string): void {
     if (rng() < o.discipline * (1.5 - prof / 100)) {
       dv.professionalism = clamp(prof - 3, 0, 100);
       p.form = clamp(p.form - 2, 0, 100);
-      dv.devPoints = (dv.devPoints ?? 0) - 0.2;
+      addDevPoints(p, 'lager_disziplin', -0.2);
       incidents.push(p.fullName);
     } else if (prof < 60 && rng() < o.disciplineGain) {
       dv.professionalism = clamp(prof + 1, 0, 100);

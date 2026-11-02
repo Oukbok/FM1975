@@ -6,6 +6,7 @@
 // und die Entwicklung bekommt einen Schub. Wer früh auf so einen Spieler setzt,
 // wird belohnt – sicher erkennen kann ihn aber niemand.
 // =============================================================================
+import { addDevPoints } from './devLog';
 import { Player, potentialToStars, starsToPotential, clampStars } from '../types';
 
 /** Chance je neuem Talent (Jugendjahrgang). */
@@ -37,6 +38,6 @@ export function applyProGem(p: Player): boolean {
   g.done = true;
   const d = p.development;
   d.basePotential = (d.basePotential ?? p.overall) + g.boost;
-  d.devPoints = (d.devPoints ?? 0) + g.boost * 0.45;
+  addDevPoints(p, 'juwel', g.boost * 0.45);
   return true;
 }

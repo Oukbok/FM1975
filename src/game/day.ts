@@ -165,12 +165,20 @@ export function processDay(g: Game, ui: DayUi): boolean {
         const scoutQ = Math.min(1, 0.3 + (fx.scouting ?? 0) * 2 + dataScoutingBonus(myClub.infrastructure?.dataCenter ?? 1) * 2);
         // ALLE Spieler werden bewertet; gezeigt wird nur der eigene Kader.
         const leagueBefore = type !== 'small' ? snapshotLeague(g) : null;
-        const results = runRatingCeremony(g.players, g.clubs, g.managedClubId, type, today, scoutQ);
+        const results = runRatingCeremony(g.players, g.clubs, g.managedClubId, type, today, scoutQ,
+          type === 'large' ? 'Große Saison-Bewertung' : type === 'medium' ? 'Winter-Bewertung' : 'Herbst-Bewertung');
         for (const pid of myClub.playerIds) {
           const p = g.players[pid];
           if (p) snapshotAttributes(p, today, `${type === 'large' ? 'Saisonbewertung' : type === 'medium' ? 'Winterbewertung' : 'Herbstbewertung'} ${g.season}`);
         }
         const label = type === 'large' ? 'Große Saison-Bewertung' : type === 'medium' ? 'Winter-Bewertung' : 'Herbst-Bewertung';
+        {
+          const rounds = g.ratingRounds ?? (g.ratingRounds = []);
+          const delta = (r: RatingResult) => r.newOverall - r.oldOverall;
+          rounds.push({ date: today, label, n: results.length, ups: results.filter((r) => delta(r) > 0).length,
+            downs: results.filter((r) => delta(r) < 0).length, sum: results.reduce((a, r) => a + delta(r), 0) });
+          if (rounds.length > 12) rounds.splice(0, rounds.length - 12);
+        }
         ui.onRatingCeremony({ results, type: type === 'small' ? 'medium' : type, anlass: label });
         if (leagueBefore) ratingTicker(g, leagueBefore, label, today);
         const ups = results.filter((r) => r.change > 0).length;
@@ -649,7 +657,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
     // direkt verändert (runWeeklyDevelopment mutiert die Attribute/OVR), aber
     // es erscheint KEIN Popup und der Lauf pausiert nicht mehr. Eine Meldung
     // gibt es nur noch bei den großen Auf-/Abwertungsrunden (rating_update).
-    weeklyDevelopment(g.players, g.clubs, yearOf(today), withReserve(devContextFor(g, today), today));
+    weeklyDevelopment(g.players, g.clubs, yearOf(today), withReserve(devContextFor(g, today), today), g.managedClubId);
     // Jugendentwicklung aller Vereine (Talente wachsen; Scouting präzisiert sich).
     // Manager-Verein erhält Boni aus Mitarbeitern (Scouting) und Zukunfts-Bauten
     // (NLZ → Wachstum, Datenanalyse-Zentrum → Scouting) — Block p11.

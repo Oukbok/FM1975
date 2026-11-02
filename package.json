@@ -34,7 +34,8 @@
     "test:camp": "node scripts/run-ts.mjs tests/camp-test.ts",
     "test:youthcomp": "node scripts/run-ts.mjs tests/youthcomp-test.ts",
     "test:euro2": "node scripts/run-ts.mjs tests/euro2-test.ts",
-    "test:engine": "node scripts/run-ts.mjs tests/engine-test.ts"
+    "test:engine": "node scripts/run-ts.mjs tests/engine-test.ts",
+    "test:ratings": "node scripts/run-ts.mjs tests/ratings-test.ts"
   },
   "dependencies": {
     "lz-string": "1.5.0",

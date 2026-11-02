@@ -17,6 +17,8 @@ import { Player, Club, AttributeKey, potentialToStars, clampStars } from '../typ
 import { weightsFor, positionSuitability } from './positions';
 import { updateScoutEstimate } from './scouting';
 import { ageCeiling, declineShiftOf, maturityGrowth } from './talent';
+import { addDevPoints, decompose, DevLog, logPart, newDevLog, RatingReason } from './devLog';
+import { explainRating, PayoutInfo } from './ratingReasons';
 
 /** Ergebnis der Leistungsbewertung je Spieler (auch bei change === 0). */
 export interface RatingResult {
@@ -32,6 +34,10 @@ export interface RatingResult {
   isUserClub: boolean;
   /** Besonderes Ergebnis für die Einblendung. */
   tag?: 'Durchbruch' | 'Spätzünder' | 'Knick' | 'Juwel';
+  /** Begründung aus dem Entwicklungs-Protokoll (engine/ratingReasons.ts), nach Gewicht sortiert. */
+  reasons?: RatingReason[];
+  /** Kein vollständiges Protokoll (alter Spielstand, Neuzugang): allgemeine Begründung. */
+  generic?: boolean;
 }
 
 export type RatingType = 'small' | 'medium' | 'large';
@@ -101,6 +107,10 @@ export interface ClubDevContext {
   environment: number;
   /** Optional: individueller Faktor je Spieler (Spezialtrainer, Förderspieler, Philosophie). */
   playerFactor?: (p: Player) => number;
+  /** Optional (Protokoll eigener Kader): `training` zerlegt in Ursachen, Produkt = training. */
+  trainingParts?: [string, number][];
+  /** Optional (Protokoll eigener Kader): `playerFactor` zerlegt in Ursachen, Produkt = playerFactor(p). */
+  playerParts?: (p: Player) => [string, number][];
   /**
    * Optional: gewichtete Wochenminuten in der zweiten Mannschaft für junge Profis
    * (game/youthInvest.ts). `proMinutes` = Profi-Minuten dieser Woche.
@@ -203,6 +213,8 @@ export function weeklyDevelopment(
   clubs: Record<string, Club>,
   year: number,
   ctxFor: (club: Club) => ClubDevContext,
+  /** Verein, dessen Kader die Ursachen mitprotokolliert (eigener Verein). */
+  logClubId?: string,
 ): void {
   const era = eraFactors(year);
   eraOffset = eraEliteOffset(year);
@@ -211,6 +223,10 @@ export function weeklyDevelopment(
     if (p.isYouth) continue;
     ensureDevFields(p);
     const d = p.development;
+    // Protokoll nur für den eigenen Kader; Abgänge verlieren es.
+    const logging = !!logClubId && p.clubId === logClubId;
+    if (!logging) { if (d.devLog) delete d.devLog; }
+    else if (!d.devLog) d.devLog = newDevLog(d.devPoints ?? 0, Math.abs(d.devPoints ?? 0) > 0.05);
     // Spielpraxis: Minuten seit letzter Woche in den gleitenden Wert einrechnen.
     const total = p.careerStats?.minutesPlayed ?? 0;
     const delta = Math.max(0, total - (d.lastMinutesSeen ?? total));
@@ -222,20 +238,36 @@ export function weeklyDevelopment(
     if (club && !ctx) { ctx = ctxFor(club); ctxCache.set(club.id, ctx); }
     // Zweite Mannschaft: wer bei den Profis nicht spielt, sammelt dort (gewichtete) Minuten.
     if (p.age <= 23 && (ctx?.reserve || d.reserveMinutes)) {
-      d.reserveMinutes = Math.round(((d.reserveMinutes ?? 0) * 0.88 + (ctx?.reserve ? ctx.reserve(p, delta) : 0)) * 10) / 10;
+      const before = d.reserveMinutes ?? 0;
+      d.reserveMinutes = Math.round((before * 0.88 + (ctx?.reserve ? ctx.reserve(p, delta) : 0)) * 10) / 10;
+      if (logging && d.devLog) d.devLog.res += Math.max(0, d.reserveMinutes - before * 0.88);
     } else if (d.reserveMinutes) d.reserveMinutes = 0;
     const training = ctx?.training ?? 0.9;
     const environment = ctx?.environment ?? 1;
+    if (logging && d.devLog) {
+      d.devLog.min += delta; d.devLog.weeks += 1;
+      if (p.injury) d.devLog.inj += 7;
+    }
 
     // Langlebigkeit verschiebt den Abbau je Spieler um bis zu ±1,5 Jahre (engine/talent.ts).
     const base = baseWeeklyRate(p.age, era.declineShift + declineShiftOf(p));
     let pts: number;
+    let factors: [string, number][];
     if (base >= 0) {
-      pts = base * training * practiceFactor(p) * characterFactor(p) * environment * moraleFactor(p)
-        * distanceFactor(p) * era.growth * (ctx?.playerFactor ? ctx.playerFactor(p) : 1)
-        * maturityGrowth(p) // Frühreife: schneller bis 20, Spätentwickler holen mit 23–27 auf
-        * (p.age <= 24 && p.overall >= ageCeiling(p, truePotential(p)) ? 0.3 : 1) // altersgerechter Reifegrad
-        * eliteBrake(p, training); // die letzten Punkte zur Weltklasse sind die schwersten
+      const pf = ctx?.playerFactor ? ctx.playerFactor(p) : 1;
+      factors = [
+        ['praxis', practiceFactor(p)], ['charakter', characterFactor(p)], ['umfeld', environment], ['moral', moraleFactor(p)],
+        ['potenzial', distanceFactor(p)], ['epoche', era.growth],
+        ['reife', maturityGrowth(p)], // Frühreife: schneller bis 20, Spätentwickler holen mit 23–27 auf
+        ['reifegrad', p.age <= 24 && p.overall >= ageCeiling(p, truePotential(p)) ? 0.3 : 1], // altersgerechter Reifegrad
+        ['weltklasse', eliteBrake(p, training)], // die letzten Punkte zur Weltklasse sind die schwersten
+      ];
+      pts = base * training * pf;
+      for (const [, f] of factors) pts *= f;
+      if (logging) {
+        factors.unshift(...(ctx?.trainingParts ?? [['training', training] as [string, number]]));
+        factors.push(...(ctx?.playerParts ? ctx.playerParts(p) : [['individuell', pf] as [string, number]]));
+      }
     } else {
       // Abbau: gutes Training und Professionalität bremsen ihn (bis −35 %), stoppen ihn nicht.
       const brake = clamp(1 - (training - 0.9) * 0.6 - ((d.professionalism ?? 50) - 50) / 400, 0.65, 1.15);
@@ -243,9 +275,24 @@ export function weeklyDevelopment(
       // früher), verlieren alternde Stars (≥ 83) schneller ihren Platz; fehlt Weltklasse,
       // halten sie sich länger (0,5- … 1,6-faches Tempo).
       const top = p.overall >= 83 ? clamp(1 - (eliteShift + eraOffset) * 0.12, 0.5, 1.6) : 1;
+      factors = [['abbau_bremse', brake], ['abbau_spitze', top]];
       pts = base * brake * top;
     }
     d.devPoints = (d.devPoints ?? 0) + pts;
+    if (logging && d.devLog) {
+      // Grundtempo nach Alter (Epoche) + Verschiebung durch Langlebigkeit, dann die Faktoren.
+      const base0 = baseWeeklyRate(p.age, era.declineShift);
+      logPart(p, base >= 0 ? 'alter' : 'abbau', base0);
+      logPart(p, 'langlebig', base - base0);
+      const parts = decompose(base, factors);
+      // Rundungsreste der Zerlegung dem größten Beitrag zuschlagen, damit die Summe exakt bleibt.
+      let sum = base;
+      for (const [, v] of parts) sum += v;
+      const rest = pts - sum;
+      if (parts.length) { let bi = 0; parts.forEach(([, v], i) => { if (Math.abs(v) > Math.abs(parts[bi][1])) bi = i; }); parts[bi][1] += rest; }
+      else logPart(p, base >= 0 ? 'alter' : 'abbau', rest);
+      for (const [k, v] of parts) logPart(p, k, v);
+    }
   }
 }
 
@@ -300,7 +347,7 @@ export function refreshOverall(p: Player): void {
   p.positionRatings = ratings as Player['positionRatings'];
 }
 
-function applyRatingToPlayer(p: Player, type: RatingType, dateISO: string): { change: number; tag?: RatingResult['tag'] } {
+function applyRatingToPlayer(p: Player, type: RatingType, dateISO: string): { change: number; tag?: RatingResult['tag']; info: PayoutInfo } {
   ensureDevFields(p);
   const d = p.development;
   let tag: RatingResult['tag'];
@@ -318,14 +365,14 @@ function applyRatingToPlayer(p: Player, type: RatingType, dateISO: string): { ch
     }
     // Durchbruch: jung, viel Spielpraxis, Entfaltung im Plus.
     if (p.age <= 22 && (d.unfold ?? 0) >= 2 && practiceFactor(p) >= 1.2 && Math.random() < 0.08) {
-      d.devPoints = (d.devPoints ?? 0) + 3 + Math.random() * 2;
+      addDevPoints(p, 'durchbruch', 3 + Math.random() * 2);
       tag = 'Durchbruch';
     } else if (p.age >= 24 && p.age <= 27 && (d.ambition ?? 50) >= 80 && Math.random() < 0.03) {
       d.basePotential = clamp((d.basePotential ?? p.overall) + 3, 30, 97);
-      d.devPoints = (d.devPoints ?? 0) + 3;
+      addDevPoints(p, 'spaetzuender', 3);
       tag = 'Spätzünder';
     } else if ((p.injury && p.injury.severity === 'critical') || (p.trainingLoad > 900 && Math.random() < 0.3)) {
-      d.devPoints = (d.devPoints ?? 0) - 3;
+      addDevPoints(p, 'knick', -3);
       tag = 'Knick';
     }
   }
@@ -335,10 +382,16 @@ function applyRatingToPlayer(p: Player, type: RatingType, dateISO: string): { ch
   // Kleine Unschärfe (±0,6), damit Runden nicht völlig vorhersagbar sind.
   const raw = pts * share + (Math.random() - 0.5) * 1.2;
   let change = Math.trunc(raw);
+  const plain = Math.trunc(pts * share);
   const cap = MAX_STEP[type];
+  let capped: PayoutInfo['capped'] = Math.abs(change) > cap ? 'max' : null;
   change = clamp(change, -cap, cap);
   // Nie über das wahre Potenzial (+1 Toleranz) wachsen.
-  if (change > 0) change = Math.min(change, Math.max(0, reachablePotential(p) + 1 - p.overall));
+  if (change > 0) {
+    const lim = Math.max(0, reachablePotential(p) + 1 - p.overall);
+    if (lim < change) { change = lim; capped = 'pot'; }
+  }
+  const close = !capped && change !== clamp(plain, -cap, cap);
   d.devPoints = pts - change;
   // Nicht ausgezahlte Reste begrenzen (keine endlose Ansammlung).
   d.devPoints = clamp(d.devPoints, -4, 4);
@@ -353,7 +406,17 @@ function applyRatingToPlayer(p: Player, type: RatingType, dateISO: string): { ch
   }
   if (tag === 'Knick' && change >= 0) tag = undefined;
   if (tag === 'Durchbruch' && change < 3) tag = undefined;
-  return { change, tag };
+  return { change, tag, info: { change, pts, rest: d.devPoints, capped, cap, close, tag } };
+}
+
+/** Rest nach der Auszahlung als neues Protokoll; gleiche Richtung → Ursachen anteilig übernehmen. */
+function carryLog(prev: DevLog | undefined, pts: number, rest: number): DevLog {
+  const next = newDevLog(rest, false);
+  if (!prev || prev.partial || Math.abs(rest) < 1e-9 || Math.sign(rest) !== Math.sign(pts) || Math.abs(rest) > Math.abs(pts)) return next;
+  const f = rest / pts;
+  next.start = prev.start * f;
+  for (const [k, v] of Object.entries(prev.parts)) next.parts[k] = v * f;
+  return next;
 }
 
 /**
@@ -368,6 +431,8 @@ export function runRatingCeremony(
   type: RatingType,
   dateISO: string,
   scoutQuality = 0.5,
+  /** Anlass für das Protokoll im Spielerprofil, z. B. „Winter-Bewertung“. */
+  label = 'Bewertung',
 ): RatingResult[] {
   const managed = clubs[managedClubId];
   const managedIds = new Set(managed ? managed.playerIds : []);
@@ -382,11 +447,19 @@ export function runRatingCeremony(
     const tag: RatingResult['tag'] = gemBurst ? 'Juwel' : r.tag;
     if (type !== 'small') updateScoutEstimate(p, managedIds.has(p.id) ? scoutQuality : 0.2, managedIds.has(p.id));
     if (managedIds.has(p.id)) {
+      const d = p.development;
+      const why = explainRating(p, d.devLog, { ...r.info, tag }, Number(dateISO.slice(0, 4)));
       results.push({
         playerId: p.id, playerName: p.fullName, clubId: managedClubId, clubShort: managed?.shortName ?? '—',
         position: p.naturalPosition, age: p.age, oldOverall: old, newOverall: p.overall, change, isUserClub: true, tag,
+        reasons: why.reasons, generic: why.generic || undefined,
       });
-    }
+      const log = d.ratingLog ?? (d.ratingLog = []);
+      log.push({ date: dateISO, label, old, new: p.overall, change: p.overall - old, reasons: why.reasons, generic: why.generic || undefined, tag });
+      if (log.length > 9) log.splice(0, log.length - 9);
+      // Neue Aufzeichnung: der Rest der Punkte ist der Übertrag – anteilig mit seinen Ursachen.
+      d.devLog = carryLog(d.devLog, r.info.pts, d.devPoints ?? 0);
+    } else if (p.development.devLog) delete p.development.devLog;
   }
   // Spannung: erst die Kleinen, die größten Sprünge zuletzt.
   results.sort((a, b) => Math.abs(a.change) - Math.abs(b.change));

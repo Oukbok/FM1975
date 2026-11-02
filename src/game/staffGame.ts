@@ -12,7 +12,7 @@ import { makeMessage, pushMessage } from '../engine/messages';
 import { recordInjury } from '../engine/history';
 import {
   coachingReport, effectiveQuality, FOCUS_LABEL, focusEffect, makeCandidates, memberMonthlySalary, methodFactor,
-  migrateStaff, phaseOf, specialistBoost, StaffMember, staffEffectsFromMembers, staffSeasonTurnover, TrainingFocus,
+  migrateStaff, phaseOf, specialistBoost, StaffMember, topSpecialty, staffEffectsFromMembers, staffSeasonTurnover, TrainingFocus,
   trainingCourseCost,
 } from '../engine/staffPeople';
 import { skillsFromQuality } from '../engine/staffSkills';
@@ -60,14 +60,22 @@ export function devContextFor(g: Game, date: string): (club: Club) => ClubDevCon
     }
     const rep = coachingReport(staff, club.playerIds.length, year);
     const capOk = rep.capacity >= 0.8;
+    const training = clubTrainingFactor(club, rep.extra);
+    const facilities = clubTrainingFactor(club, 0);
+    // Ursachen je Spieler (Produkt = playerFactor) – für die Begründung der Bewertung (engine/devLog.ts).
+    const parts = (p: Player): [string, number][] => [
+      [`spezial:${topSpecialty(staff, p, year) ?? 'allround'}`, specialistBoost(staff, p, year)],
+      [`fokus:${focus}`, focusEffect(focus, p).dev],
+      ['plan', plan],
+      ['foerder', foerder.size ? (foerder.has(p.id) ? (capOk ? 1.25 : 1.15) : 0.97) : 1],
+    ];
     return {
-      training: clubTrainingFactor(club, rep.extra),
+      training,
       environment: 1,
-      playerFactor: (p: Player) => {
-        let f = specialistBoost(staff, p, year) * focusEffect(focus, p).dev * plan;
-        if (foerder.size) f *= foerder.has(p.id) ? (capOk ? 1.25 : 1.15) : 0.97;
-        return f;
-      },
+      // Anlagen/Vereinsgröße ↔ Trainerteam (Rest des Trainingsfaktors).
+      trainingParts: [['anlagen', facilities], ['trainer', training / facilities]],
+      playerFactor: (p: Player) => parts(p).reduce((f, [, x]) => f * x, 1),
+      playerParts: parts,
     };
   };
 }

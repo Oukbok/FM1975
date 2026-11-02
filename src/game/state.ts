@@ -131,6 +131,8 @@ export interface Game {
   financeLevel?: number;
   /** Saison-Briefings: Archiv (Saison + Ausgangslage) und offenes Popup (game/seasonBriefing.ts). */
   briefing?: import('./seasonBriefing').BriefingLog;
+  /** Bilanz der letzten Bewertungsrunden des eigenen Kaders (Vergleich in der Bewertungs-Show). */
+  ratingRounds?: { date: string; label: string; n: number; ups: number; downs: number; sum: number }[];
 }
 
 // Moral-Stufen in aufsteigender Reihenfolge (für Aktivitäts-Effekte, Block p11).

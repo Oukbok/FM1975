@@ -410,6 +410,10 @@ export interface PlayerDevelopment {
   adaptability?: number;
   /** Angesammelte Entwicklungspunkte (OVR-Einheiten) bis zur nächsten Bewertungsrunde. */
   devPoints?: number;
+  /** Ursachen der Entwicklungspunkte seit der letzten Bewertung (nur eigener Kader, engine/devLog.ts). */
+  devLog?: import('../engine/devLog').DevLog;
+  /** Letzte Bewertungen mit Begründung (nur eigener Kader, Reiter Entwicklung). */
+  ratingLog?: import('../engine/devLog').RatingLogEntry[];
   /** Gleitende Einsatzminuten (Pflichtspiele, gewichtet) für den Spielpraxis-Faktor. */
   recentMinutes?: number;
   /** Minutenstand beim letzten Wochenabschluss (zur Differenzbildung). */

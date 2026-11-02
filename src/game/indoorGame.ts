@@ -4,6 +4,7 @@
 // Historie/Quellen: data/indoorHistory.ts · Simulation: engine/indoor.ts ·
 // Spielstand: game/winterShared.ts · Anschluss: game/day.ts (indoorDaily).
 // =============================================================================
+import { addDevPoints } from '../engine/devLog';
 import {
   INDOOR_LAST_WINTER, MASTERS_TEAMS, TEAMS_PER_TOURNAMENT, TOURNAMENT_WIN_BASE, indoorPhase, mastersMoney, mastersVenue,
   topClubEnthusiasm, tournamentCount, tournamentFeeBase, venuesFor, winterYearOf,
@@ -400,7 +401,7 @@ function playTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, today: 
       p.trainingLoad = (p.trainingLoad ?? 0) + 6 * t.days;
       // Spielpraxis: ca. 60 % der Hallenminuten je Spieler (Rotation).
       p.development.recentMinutes = (p.development.recentMinutes ?? 0) + games * 14 * 0.6;
-      if (!top11.has(p.id)) p.development.devPoints = (p.development.devPoints ?? 0) + (p.age <= 23 ? 0.12 : 0.05);
+      if (!top11.has(p.id)) addDevPoints(p, 'halle', p.age <= 23 ? 0.12 : 0.05);
       if (place === 0) p.morale = bumpMorale(p.morale, 1);
       // Hallenboden und Bande: ca. 1,6 % je Spieler und Turniertag (Annahme, vgl. 1989 ~20 Ausfälle [S1]).
       if (g.injuriesEnabled && !p.injury && rng() < 0.016 * t.days * (games / 4)) {
