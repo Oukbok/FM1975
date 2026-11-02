@@ -79,10 +79,23 @@ function verify(g: Game, y0: number, expect: Record<string, string | null>): voi
     check(statGoals === goals, `${tag} ${c.key}: Torschützen (${statGoals}) = Tore (${goals})`);
     if (!isLowKey(c.key) || c.winner === 'mgl') check(titlesOf(g, c.winner!).length > 0 || !!g.euroClubs?.[c.winner!], `${tag} ${c.key}: Titel in der Vereins-Historie`);
   }
-  // Seite: jede Option liefert einen Schnappschuss
-  for (const o of youthCompOptions(g, g.season)) check(!!youthSnapshot(g, g.season, o.key), `${tag}: Schnappschuss ${o.key}`);
+  // Seite: jede Option liefert einen Schnappschuss mit Inhalt (keine leeren Ligen in der Auswahl)
+  noEmptyOptions(g, tag);
   const ownGames = st.comps.reduce((a, c) => a + c.leagues.reduce((s, l) => s + l.fx.filter((f) => f[1] === 'mgl' || f[2] === 'mgl').length, 0), 0);
   console.log(`${tag}: ${st.comps.map((c) => `${c.key}=${c.fmt}(${c.leagues.length} L, ${c.ko.length} R) → ${c.winner}`).join(' · ')} · eigene Ligaspiele ${ownGames} · ${(JSON.stringify(st).length / 1024).toFixed(0)} KB`);
+}
+
+/** Jede angebotene Saison/Option hat Inhalt: Tabelle mit Vereinen, Gruppen, ausgeloste Paarungen oder Spielfeste. */
+function noEmptyOptions(g: Game, tag: string) {
+  for (const so of youthSeasonOptions(g)) {
+    const opts = youthCompOptions(g, so.season);
+    check(opts.length > 0, `${tag} ${so.season}: Saison ohne Wettbewerb angeboten`);
+    for (const o of opts) {
+      const sn = youthSnapshot(g, so.season, o.key);
+      const ok = !!sn && (sn.fest ? sn.fest.count > 0 : sn.groups ? sn.groups.some((x) => x.rows.length) : sn.rounds ? sn.rounds.some((r) => r.ties.length) : (sn.table?.length ?? 0) > 0);
+      check(ok, `${tag} ${so.season}: leerer Eintrag ${o.key} (${o.label})`);
+    }
+  }
 }
 
 // 1) Formate je Epoche (ohne Ausdünnen der Statistik, damit Tore = Torschützen prüfbar ist)
@@ -136,6 +149,8 @@ ycOpts.prune = true;
   console.log(`Spielstand: ${(JSON.stringify(h).length / 1e6).toFixed(2)} Mio. Zeichen, davon Jugendwettbewerbe ${(JSON.stringify(st).length / 1e3).toFixed(0)} Tsd.`);
   check(st.season === '1976/77' && st.archive.some((a) => a.season === '1975/76'), 'Saisonwechsel: Archiv 1975/76, neue Saison');
   check(youthSeasonOptions(h).length === 2, 'Saisonwahl: Archiv + laufend');
+  noEmptyOptions(h, '1976/77 Saisonbeginn');
+  check(!youthCompOptions(h, h.season).some((o) => o.kind === 'cup' && o.key.endsWith(':ko') && !youthSnapshot(h, h.season, o.key)?.rounds?.some((r) => r.ties.length)), 'Endrunde erst nach der Auslosung in der Auswahl');
   const snap = youthSnapshot(h, '1975/76', 'u19:ko');
   check(snap?.rounds?.length === 4 && !!snap.winner && (snap.stats?.goals.length ?? 0) > 0, 'Archiv-Schnappschuss Endrunde mit Bestenliste');
   check(st.comps.some((c) => c.key === 'u17'), '1976/77: B-Jugend beginnt');

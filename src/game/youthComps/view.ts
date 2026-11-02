@@ -38,10 +38,18 @@ export function youthSeasonOptions(g: Game): SeasonOption[] {
   if (!st) return [];
   const out: SeasonOption[] = st.archive.map((a) => ({ season: a.season, source: 'archive' as const }));
   if (!out.some((o) => o.season === st.season)) out.push({ season: st.season, source: 'live' });
-  return out;
+  // Saisons ohne einen einzigen Wettbewerb mit Daten gar nicht anbieten.
+  return out.filter((o) => youthCompOptions(g, o.season).length > 0);
 }
 
-type AnyComp = { key: string; label: string; section: string; leagues: { id: string; name: string; stage: number; group?: boolean }[]; ko: unknown[]; fest?: unknown };
+type AnyLeague = { id: string; name: string; stage: number; group?: boolean; clubs?: string[]; rows?: unknown[] };
+type AnyComp = { key: string; label: string; section: string; leagues: AnyLeague[]; ko: unknown[]; fest?: unknown };
+
+// Keine leeren Einträge in der Auswahl: nur Ligen/Gruppen mit Teilnehmern, K.-o.-Runden mit
+// ausgelosten Paarungen und Spielfeste mit Terminen (live und im Archiv).
+const leagueHasTeams = (l: AnyLeague) => (l.clubs?.length ?? l.rows?.length ?? 0) > 0;
+const koHasTies = (ko: unknown[]) => (ko as { ties?: unknown[]; t?: unknown[] }[]).some((r) => (r.ties ?? r.t ?? []).length > 0);
+const festHasDates = (f: unknown) => typeof f === 'number' ? f > 0 : !!f && ((f as { d?: unknown[] }).d?.length ?? 0) > 0;
 
 /** Reihenfolge der Bereiche: A, B, C … G, DDR, Europa. */
 function sectionRank(sec: string): number {
@@ -64,11 +72,11 @@ export function youthCompOptions(g: Game, season: string): CompOption[] {
   if (!s) return [];
   const out: CompOption[] = [];
   for (const c of s.comps) {
-    if (c.fest) { out.push({ key: `${c.key}:fest`, label: `${c.label} (ohne Tabelle)`, kind: 'league', section: c.section }); continue; }
-    const stages = [...new Set(c.leagues.filter((l) => l.group).map((l) => l.stage))];
-    for (const l of c.leagues.filter((x) => !x.group)) out.push({ key: `${c.key}:${l.id}`, label: c.key === 'ddr' ? l.name : l.name, kind: 'league', section: c.section });
+    if (c.fest) { if (festHasDates(c.fest)) out.push({ key: `${c.key}:fest`, label: `${c.label} (ohne Tabelle)`, kind: 'league', section: c.section }); continue; }
+    const stages = [...new Set(c.leagues.filter((l) => l.group && leagueHasTeams(l)).map((l) => l.stage))];
+    for (const l of c.leagues.filter((x) => !x.group && leagueHasTeams(x))) out.push({ key: `${c.key}:${l.id}`, label: c.key === 'ddr' ? l.name : l.name, kind: 'league', section: c.section });
     for (const stg of stages) out.push({ key: `${c.key}:groups${stg}`, label: `${c.key === 'uyl' ? 'UEFA Youth League' : c.label} – ${stageLabel(c, stg)}`, kind: 'league', section: c.section });
-    if ((c.ko as unknown[]).length) {
+    if (koHasTies(c.ko)) {
       const label = c.key === 'pokal' ? c.label : c.key === 'uyl' ? 'UEFA Youth League – K.-o.-Runde' : `${c.label} – Endrunde`;
       out.push({ key: `${c.key}:ko`, label, kind: 'cup', section: c.section });
     }
