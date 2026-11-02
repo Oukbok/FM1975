@@ -9,9 +9,11 @@ import { attendanceRestriction } from '../../data/history';
 import type { Club, InjurySeverity, Player } from '../../types';
 import { positionSuitability } from '../positions';
 import { eraRules, seasonYearOf, type EraRules } from './era';
-import { bench, emptyStats, initRefs, lineupChanged, onPitch, refresh, type TeamState } from './state';
+import { bench, emptyStats, fieldPlayers, initRefs, lineupChanged, onPitch, refresh, type TeamState } from './state';
 import { makeMPlayer, matchBase, rating, resolveLineup } from './team';
-import { attack, openPlayFoul, maybeInjury, shootoutKick } from './actions';
+import { openPlayFoul, maybeInjury, shootoutKick } from './actions';
+import { aerial, attack } from './attack';
+import { aerialSkill, countDuel, dayForm, dribbleSkill, duelP, duelSkill, refreshSkills, tackleSkill } from './skills';
 import type { MPlayer, Mentality, ShoutId, Side, SimEvent, SimEventKind, TeamTalk } from './types';
 import { other } from './types';
 
@@ -43,6 +45,8 @@ export interface SimOptions {
   competition?: 'Liga' | 'Pokal' | 'Europapokal';
   /** K.-o.-Regel im Detail (Rückspiel mit Gesamtstand, Wiederholungsspiel statt Elfmeter). */
   ko?: KoRule;
+  /** Bedeutung des Spiels 0–1 (z. B. Titel-/Abstiegsentscheidung), zusätzlich zu Derby/Pokal/Europapokal. */
+  stakes?: number;
 }
 
 /**
@@ -55,6 +59,19 @@ export interface SimOptions {
 export interface KoRule { prev?: [number, number]; awayGoals?: boolean; extraTime?: boolean; shootout?: boolean }
 
 const PERIOD_END = [0, 45, 90, 105, 120];
+/** Hintergrund-Zweikämpfe je Minute (dazu kommen die Duelle der Angriffe). */
+const BG_DUELS = 1;
+/** Angriffe ins letzte Drittel je Minute und Team (Grundwert). */
+const ATTACK_PACE = 0.42;
+const bgRole = (m: MPlayer) => (m.group === 'MID' ? 1.4 : m.group === 'ATT' ? 1 : 0.9);
+/** Schnelle Auswahl nach Rolle für Hintergrund-Zweikämpfe (ohne Zwischenarrays). */
+function bgPick(ms: MPlayer[], r: number): MPlayer {
+  let sum = 0;
+  for (let i = 0; i < ms.length; i++) sum += bgRole(ms[i]);
+  let x = r * sum;
+  for (let i = 0; i < ms.length; i++) { x -= bgRole(ms[i]); if (x <= 0) return ms[i]; }
+  return ms[ms.length - 1];
+}
 
 export class MatchSim {
   readonly home: TeamState;
@@ -98,6 +115,7 @@ export class MatchSim {
     this.ko = opts.ko;
     this.live = !!opts.live;
     this.derby = !!homeClub.city && homeClub.city === awayClub.city;
+    this.stakes = Math.min(1, (this.derby ? 0.5 : 0) + (this.knockout ? 0.5 : 0) + (opts.competition === 'Europapokal' ? 0.4 : 0) + (opts.stakes ?? 0));
     this.weather = rollWeather(opts.date, this.rng);
     const month = opts.date ? Number(opts.date.slice(5, 7)) : 9;
     // Zuschauer je Platzkategorie (engine/seating.ts): eigene Nachfrage für Steh, Sitz, Dach, Premium,
@@ -117,16 +135,19 @@ export class MatchSim {
     const lu = resolveLineup(club, this.players, savedLineup, this.era.benchSize);
     const ps: MPlayer[] = lu.xi.map(({ p, pos }) => makeMPlayer(p, side, pos, true, 0));
     for (const p of lu.bench) ps.push(makeMPlayer(p, side, p.naturalPosition, false, 0));
+    // Tagesleistung je Spieler (Konstanz): streut um 1, ohne den Schnitt zu verschieben.
+    for (const m of ps) m.day = dayForm(m, this.rng);
+    refreshSkills();
     const t = club.tactics;
     const xiIds = new Set(lu.xi.map((x) => x.p.id));
     const pick = (id: string | null | undefined) => (id && xiIds.has(id) ? id : null);
     const team: TeamState = {
       side, club, human, players: ps, formation: lu.formation,
-      refs: { attack: 1, control: 1, defense: 1 }, units: null as never, mods: null as never,
+      refs: { attack: 1, control: 1, defense: 1 }, units: null as never, mods: null as never, plan: null as never, year: this.era.year,
       goals: 0, stats: emptyStats(), mentality: 0, subsUsed: 0,
       shout: null, shoutUntil: 0, shoutPower: 0, shoutReadyAt: 0, shoutHistory: [], talk: 1,
       penaltyTakerId: pick(t?.penaltyTakerId), freeKickTakerId: pick(t?.freeKickTakerId),
-      cornerTakerId: pick(t?.cornerTakerId), captainId: pick(t?.captainId), dirty: true, pitch: null,
+      cornerTakerId: pick(t?.cornerTakerId), captainId: pick(t?.captainId), dirty: true, pitch: null, field: null,
     };
     initRefs(team);
     refresh(team, 0);
@@ -145,6 +166,24 @@ export class MatchSim {
     this.events.push(ev);
     return ev;
   }
+
+  /** Grundbedeutung des Spiels (Derby, K.-o.-Spiel, Europapokal, Vorgabe des Aufrufers). */
+  readonly stakes: number;
+
+  /** Druck in diesem Moment (0–1): Bedeutung + knappe Schlussphase. Wirkt über die Nervenstärke (skills.ts nerveF). */
+  pressureNow(): number {
+    let p = this.stakes;
+    if (this.minute >= 75 && Math.abs(this.effDiff('home')) <= 1) p += 0.5;
+    if (this.period >= 3) p += 0.3;
+    return p > 1 ? 1 : p;
+  }
+
+  /** Ereignis nur für Kommentar/Analyse (Ballverluste): ohne Textmodus nicht gespeichert – spart Zeit in Sim-Ligen. */
+  note(kind: SimEventKind, data: Partial<SimEvent> = {}): void {
+    if (this.live || this.trace) this.emit(kind, data);
+  }
+  /** Auch ohne Textmodus alle Ereignisse aufzeichnen (Benchmarks). */
+  trace = false;
 
   /** Ereignisse, die die Nachspielzeit verlängern. */
   incident(weight = 1): void { this.incidents += weight; }
@@ -288,8 +327,8 @@ export class MatchSim {
     const H = this.home, A = this.away;
     const nEvents = this.events.length;
     this.pulse = 0;
-    if (H.dirty || this.minute % 5 === 0) refresh(H, this.minute);
-    if (A.dirty || this.minute % 5 === 0) refresh(A, this.minute);
+    if (H.dirty || this.minute % 10 === 0) refresh(H, this.minute);
+    if (A.dirty || this.minute % 10 === 0) refresh(A, this.minute);
     if (this.minute % 5 === 0) { this.drain(H); this.drain(A); }
     for (const t of [H, A]) if (t.shout && this.minute === t.shoutUntil) { t.shout = null; t.dirty = true; }
 
@@ -303,10 +342,10 @@ export class MatchSim {
     ph = Math.max(0.2, Math.min(0.8, ph));
     H.stats.possession += ph; A.stats.possession += 1 - ph;
     this.passStats(H, ph); this.passStats(A, 1 - ph);
-    this.duels(H, A);
+    this.duels(H, A, ph);
 
     // --- Angriffe ---
-    const pace = this.year < 1990 ? 0.26 : this.year < 2005 ? 0.245 : 0.25;
+    const pace = ATTACK_PACE * (this.year < 1990 ? 1.04 : this.year < 2005 ? 0.98 : 1);
     const late = this.minute > 75 ? 1.06 : 1;
     const rateH = pace * H.mods.rate * (0.75 + 0.5 * ph) * late;
     const rateA = pace * A.mods.rate * (0.75 + 0.5 * (1 - ph)) * late;
@@ -347,19 +386,39 @@ export class MatchSim {
   }
 
   private passStats(t: TeamState, share: number): void {
-    const rate = this.year < 1990 ? 5 : this.year < 2003 ? 6.5 : this.year < 2012 ? 7.5 : 8.5;
+    const rate = this.year < 1985 ? 5.6 : this.year < 1995 ? 6.4 : this.year < 2005 ? 7.6 : this.year < 2015 ? 9 : 9.8;
     const n = rate * share * (0.85 + this.rng() * 0.3);
-    const accBase = 0.5 + (t.units.passing / 100) * 0.38 + (t.club.tactics?.buildup === 'short' ? 0.03 : -0.02);
-    const acc = Math.max(0.55, Math.min(0.93, accBase + (share - 0.5) * 0.15 - (this.weather === 'regen' || this.weather === 'schnee' ? 0.025 : 0)));
+    // Passquote: Epoche (weniger Technik, schlechtere Plätze früher), Passspiel des Teams,
+    // eigene Taktik (kurz/Tempo) und das Pressing des Gegners.
+    const o = this.team(other(t.side));
+    const eraAcc = this.year < 1985 ? 0.69 : this.year < 1995 ? 0.72 : this.year < 2005 ? 0.75 : this.year < 2015 ? 0.78 : 0.8;
+    const accBase = eraAcc + (t.units.passing - 62) / 100 * 0.45 + t.plan.passBias * 0.12 - o.plan.pressBias * 0.08;
+    const acc = Math.max(0.5, Math.min(0.93, accBase + (share - 0.5) * 0.12 - (this.weather === 'regen' || this.weather === 'schnee' ? 0.025 : 0)));
     t.stats.passes += n; t.stats.passesOk += n * acc;
   }
 
-  private duels(H: TeamState, A: TeamState): void {
-    const n = 2.2 + this.rng() * 0.6;
-    const dh = H.units.duel * H.mods.duel, da = A.units.duel * A.mods.duel;
-    const sh = dh ** 3 / (dh ** 3 + da ** 3);
-    H.stats.duels += n; A.stats.duels += n;
-    H.stats.duelsWon += n * sh; A.stats.duelsWon += n * (1 - sh);
+  /**
+   * Zweikämpfe abseits der Torszenen (Mittelfeld, zweite Bälle, Luftduelle): je Minute ein bis drei,
+   * jeweils zwischen zwei konkreten Spielern. Zählt für Spieler- und Teamstatistik.
+   */
+  private duels(H: TeamState, A: TeamState, ph: number): void {
+    const n = BG_DUELS + (this.rng() < 0.5 ? 1 : 0);
+    const fH = fieldPlayers(H), fA = fieldPlayers(A);
+    if (!fH.length || !fA.length) return;
+    const airP = (this.year < 1990 ? 0.32 : 0.27);
+    for (let i = 0; i < n; i++) {
+      const homeBall = this.rng() < ph;
+      const T = homeBall ? H : A, O = homeBall ? A : H;
+      const carrier = bgPick(homeBall ? fH : fA, this.rng());
+      const chal = bgPick(homeBall ? fA : fH, this.rng());
+      const air = this.rng() < airP * (T.club.tactics?.buildup === 'long' ? 1.3 : 1);
+      const bias = (T.mods.duel - O.mods.duel) * 3 + (T.plan.tackleBias - O.plan.tackleBias) * 0.5;
+      const p = air ? duelP(aerialSkill(carrier), aerialSkill(chal), bias) : duelP(duelSkill(carrier) * 0.5 + dribbleSkill(carrier) * 0.5, tackleSkill(chal), bias);
+      const w = this.rng() < p;
+      if (air) aerial(T, O, w ? carrier : chal, w ? chal : carrier, w);
+      else countDuel(w ? carrier : chal, w ? chal : carrier, w ? T.stats : O.stats, w ? O.stats : T.stats);
+      if (!w && !air) chal.tackles++;
+    }
   }
 
   // ---------------------------------------------------------------------------

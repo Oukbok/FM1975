@@ -250,3 +250,31 @@ export function bestPosition(player: Player): { pos: Position; value: number } {
 export function suitabilityColor(v: number): string {
   return v >= 75 ? 'var(--green)' : v >= 60 ? 'var(--yellow)' : v >= 45 ? 'var(--orange)' : 'var(--red)';
 }
+
+// -----------------------------------------------------------------------------
+// Seiten- und Gruppenlogik ohne fest verdrahtete Kürzel (für die Match-Engine).
+// Kennt die heutigen Kürzel (FL = Flügel, AV = Außenverteidiger) und die
+// seitengebundenen (RA/LA/RM/LM/RV/LV), damit spätere Positionen ohne Änderung wirken.
+// -----------------------------------------------------------------------------
+
+/** Positionsgruppe (Tor, Abwehr, Mittelfeld, Angriff); unbekannte Kürzel nach Endbuchstaben. */
+export function positionGroup(pos: string): 'GK' | 'DEF' | 'MID' | 'ATT' {
+  const g = (POSITION_GROUPS as Record<string, 'GK' | 'DEF' | 'MID' | 'ATT' | undefined>)[pos];
+  if (g) return g;
+  if (pos === 'RV' || pos === 'LV' || pos === 'IV') return 'DEF';
+  if (pos === 'RM' || pos === 'LM') return 'MID';
+  return 'ATT';
+}
+
+/** Spielseite: L, R, W (Außen ohne feste Seite) oder C (zentral). */
+export function sideOf(pos: string): 'L' | 'R' | 'W' | 'C' {
+  if (pos === 'LA' || pos === 'LM' || pos === 'LV') return 'L';
+  if (pos === 'RA' || pos === 'RM' || pos === 'RV') return 'R';
+  if (pos === 'FL' || pos === 'AV') return 'W';
+  return 'C';
+}
+
+export const isWidePosition = (pos: string): boolean => sideOf(pos) !== 'C';
+
+/** Mittelstürmer-artige Position (Zielspieler für Flanken und lange Bälle). */
+export const isCentreForward = (pos: string): boolean => pos === 'MS' || pos === 'ST';

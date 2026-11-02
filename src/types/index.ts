@@ -999,6 +999,8 @@ export interface Tactics {
   widthFocus?: number;
   /** Aufbauspiel: kurz (Ballbesitz) oder lang (direkt). */
   buildup?: 'short' | 'long';
+  /** Flankenart: hoch (Kopfball), flach (Rückraum/Fuß) oder gemischt (Standard). */
+  crossStyle?: 'high' | 'low' | 'mixed';
   /** Eigene Lage einzelner Formations-Slots (Slot-ID → Koordinaten in % + abgeleitete Position). */
   slotLayout?: Record<string, { x: number; y: number; position: Position }>;
   /** Aufstellung: gezogene Spieler rasten auf feste Positionsfelder ein (Standard an). */

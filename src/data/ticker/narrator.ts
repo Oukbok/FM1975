@@ -9,6 +9,7 @@ import { MENTALITY_LABEL, other, type Mentality } from '../../engine/match/types
 import type { Club } from '../../types';
 import { AMBIENCE } from './ambience';
 import { CHANCES } from './chances';
+import { DUELS } from './duels';
 import { Speaker, type TextCtx } from './grammar';
 import { LEXICON } from './lexicon';
 import { SITUATIONS } from './situations';
@@ -72,7 +73,7 @@ export class Narrator {
   private labelMem: Record<Side, number> = { home: 0, away: 0 };
 
   constructor(private sim: MatchSim, public opts: NarratorOpts) {
-    this.sp = new Speaker({ ...LEXICON, ...CHANCES, ...SITUATIONS, ...AMBIENCE }, mulberry(Date.now() & 0xffffffff));
+    this.sp = new Speaker({ ...LEXICON, ...CHANCES, ...SITUATIONS, ...AMBIENCE, ...DUELS }, mulberry(Date.now() & 0xffffffff));
   }
 
   private rnd(): number { return Math.random(); }
@@ -164,13 +165,21 @@ export class Narrator {
           out.push(this.line(ev, this.sp.say(ev.kind, this.ctx(ev)), 'phase')); break;
         case 'stoppage': { const n = ev.value as number; out.push(this.line(ev, this.sp.say('stoppage', this.ctx(ev, { nmin: n === 1 ? 'Eine Minute' : `${n} Minuten` })), 'color')); break; }
         case 'flow': out.push(...this.flow(ev)); break;
-        case 'attack_fail': if (this.rnd() < 0.7) out.push(this.line(ev, this.sp.say('fail', this.ctx(ev, { d: this.name(ev.other) })), 'normal')); break;
+        case 'attack_fail': {
+          if (this.rnd() >= 0.7) break;
+          // Duell-Art (Engine 2): passender Text mit Verlierer {p} und Gewinner {d}
+          const c = this.ctx(ev, { d: this.name(ev.other) || this.randomDefender(other(ev.side!)), p: this.name(ev.player) || this.randomAttacker(ev.side!) });
+          const t = (ev.fail && this.sp.say(`fail_${ev.fail}`, c)) || this.sp.say('fail', c);
+          out.push(this.line(ev, t, 'normal'));
+          break;
+        }
         case 'offside': out.push(this.line(ev, this.sp.say('offside', this.ctx(ev)), 'normal')); break;
         case 'corner': {
           if (next?.kind === 'chance' && next.build === 'ecke') break;
           const c = this.ctx(ev, { a: this.name(ev.player) || this.randomAttacker(ev.side!) });
           out.push(this.line(ev, this.sp.say('corner_plain', c), 'normal'));
-          if (this.rnd() < 0.5) out.push(this.line(ev, this.sp.say('corner_cleared', c), 'normal'));
+          // Folgt ein konkretes Duell (Kopfball verloren, Torwart fängt), erzählt das die nächste Zeile.
+          if (!(next?.kind === 'attack_fail' && next.build === 'ecke') && this.rnd() < 0.5) out.push(this.line(ev, this.sp.say('corner_cleared', c), 'normal'));
           break;
         }
         case 'foul': {
@@ -286,7 +295,9 @@ export class Narrator {
 
     // Aufbau (bei Elfmeter kam der Pfiff schon mit dem Foul)
     if (ch.type !== 'penalty' && !ch.ownGoal) {
-      const sym = `b_${build}`;
+      // Aufbau passend zum Duell: flache Hereingabe, Freistoß-Flanke, gewonnenes Laufduell
+      const sym = build === 'flanke' && ch.low ? 'b_flanke_flach' : build === 'flanke' && ch.sp === 'freekick' ? 'b_fk_flanke'
+        : build === 'steilpass' && ev.other && this.rnd() < 0.6 ? 'b_steil_lauf' : build === 'konter' && ev.other && this.rnd() < 0.5 ? 'b_konter_lauf' : `b_${build}`;
       const t = this.sp.say(sym, c) || this.sp.say('b_kurzpass', c);
       out.push(this.line(ev, t, ch.big ? 'chance' : 'normal'));
       if (ch.big && this.rnd() < 0.45) out.push(this.line(ev, this.sp.say('b_spannung', c), 'chance'));

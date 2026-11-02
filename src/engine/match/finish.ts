@@ -150,14 +150,19 @@ function roundStats(s: TeamStats, possShare: number): TeamStats {
   };
 }
 
-/** Laufleistung & Pässe je Spieler (aus Einsatzminuten verteilt). */
+/**
+ * Laufleistung & Pässe je Spieler. Pässe aus Angriffen und Kontern sind schon einzeln gezählt;
+ * die übrigen (Spielaufbau) werden nach Einsatzzeit und Rolle verteilt, die Quote je Spieler
+ * folgt seinem Passspiel. Zweikämpfe werden in der Engine vollständig einzeln entschieden.
+ */
 function distribute(sim: MatchSim, t: TeamState): void {
   const kmPerMin = sim.year < 1985 ? 0.088 : sim.year < 2000 ? 0.1 : sim.year < 2012 ? 0.112 : 0.118;
   const ps = t.players.filter((m) => played(sim, m));
-  let passW = 0, duelW = 0;
+  let passW = 0, realP = 0, realOk = 0;
   const pw = (m: MPlayer) => (m.group === 'MID' ? 1.4 : m.group === 'DEF' ? 1.1 : m.group === 'GK' ? 0.45 : 0.75) * minutesOf(sim, m);
-  const dw = (m: MPlayer) => (m.group === 'GK' ? 0.05 : m.group === 'ATT' ? 1.1 : 1) * minutesOf(sim, m);
-  for (const m of ps) { passW += pw(m); duelW += dw(m); }
+  for (const m of ps) { passW += pw(m); realP += m.passes; realOk += m.passesOk; }
+  const bgPasses = Math.max(0, t.stats.passes - realP), bgOk = Math.max(0, t.stats.passesOk - realOk);
+  const teamAcc = bgPasses > 0 ? bgOk / bgPasses : 0.75;
   let km = 0;
   for (const m of ps) {
     const mins = minutesOf(sim, m);
@@ -165,11 +170,10 @@ function distribute(sim: MatchSim, t: TeamState): void {
     const work = m.group === 'GK' ? 0.5 : 0.82 + (a.workRate / 100) * 0.22 + (a.stamina / 100) * 0.1;
     m.distance = Math.round(mins * kmPerMin * work * 10) / 10;
     km += m.distance;
-    m.passes = Math.round(t.stats.passes * pw(m) / Math.max(1, passW));
-    const acc = clamp(0.55 + a.passing / 100 * 0.35 + (m.group === 'DEF' ? 0.04 : m.group === 'ATT' ? -0.06 : 0), 0.5, 0.95);
-    m.passesOk = Math.round(m.passes * acc);
-    m.duels = Math.round(t.stats.duels * dw(m) / Math.max(1, duelW));
-    m.duelsWon = Math.round(m.duels * clamp(t.stats.duelsWon / Math.max(1, t.stats.duels) + (a.tackling + a.strength - 120) / 400, 0.15, 0.85));
+    const n = Math.round(bgPasses * pw(m) / Math.max(1, passW));
+    const acc = clamp(teamAcc + (a.passing * 0.7 + a.vision * 0.15 + a.firstTouch * 0.15 - 62) / 100 * 0.4 + (m.group === 'DEF' ? 0.04 : m.group === 'ATT' ? -0.07 : 0), 0.4, 0.97);
+    m.passes += n;
+    m.passesOk += Math.round(n * acc);
     m.impact += (m.duelsWon - m.duels / 2) * 0.03;
   }
   t.stats.distance = km;
@@ -211,6 +215,8 @@ export function finishMatch(sim: MatchSim, opts: FinishOptions): MatchOutcome {
       id: m.id, pos: m.pos, in: m.minuteIn, out: m.minuteOut, started: m.started, grade: grades.get(m.id) ?? 3.5,
       goals: m.goals, assists: m.assists,
       card: m.red ? 'Rot' : m.yellowRed ? 'Gelb-Rot' : m.yellow ? 'Gelb' : undefined,
+      st: [m.shots, m.shotsOnTarget, m.passes, m.passesOk, m.duels, m.duelsWon, m.crosses ?? 0, m.crossesOk ?? 0,
+        m.dribbles ?? 0, m.dribblesOk ?? 0, m.aerials ?? 0, m.aerialsWon ?? 0, m.tackles, m.keyPasses, m.saves],
     }));
     const report: MatchReport = {
       year: sim.year, home: hs, away: as, lineups: { home: lineup(H), away: lineup(A) },

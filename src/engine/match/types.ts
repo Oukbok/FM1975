@@ -58,6 +58,22 @@ export interface MPlayer {
   distance: number;
   /** Leistungspunkte für die Note (positiv = gut). */
   impact: number;
+  // --- Einzelduelle (engine/match/skills.ts) ---
+  /** Zwischenspeicher Eignungsfaktor und der `base`, für die er gilt. */
+  fitF?: number;
+  /** Tagesleistung (Konstanz), je Spiel gewürfelt; 1 = normal. */
+  day?: number;
+  /** Zwischengespeicherte Fähigkeiten (skills.ts, refreshSkills). */
+  sk?: number[];
+  skg?: number[];
+  fitBase?: number;
+  /** Flanken (geschlagen / angekommen), Dribblings (versucht / gelungen), Luftduelle (geführt / gewonnen). */
+  crosses?: number;
+  crossesOk?: number;
+  dribbles?: number;
+  dribblesOk?: number;
+  aerials?: number;
+  aerialsWon?: number;
 }
 
 export type ChanceKind = 'big' | 'normal' | 'long' | 'header' | 'freekick' | 'penalty' | 'counter' | 'solo';
@@ -97,8 +113,14 @@ export interface SimEvent {
     disallowed?: boolean;
     /** Torwart vorher mit Parade (Nachschuss). */
     rebound?: boolean;
+    /** Entstehung aus einer Standardsituation (Ecke, Freistoß-Flanke, direkter Freistoß). */
+    sp?: 'corner' | 'freekick';
+    /** Flache Hereingabe (sonst hoch), nur bei Flanken. */
+    low?: boolean;
   };
   card?: 'yellow' | 'yellowRed' | 'red';
+  /** Ballverlust: wie der Angriff endete (Duell-Art) – für den Kommentar. */
+  fail?: 'intercept' | 'tackle' | 'aerial' | 'claim' | 'cross_blocked' | 'race' | 'recycle' | 'longball';
   severity?: InjurySeverity;
   /** Grund für Fehlversuch / VAR / Ansage (frei). */
   detail?: string;
@@ -128,6 +150,15 @@ export interface TeamStats {
   duelsWon: number;
   distance: number;
   saves: number;
+  // Ab Engine 2 (Einzelduelle); in alten Berichten fehlend.
+  crosses?: number;
+  crossesOk?: number;
+  aerials?: number;
+  aerialsWon?: number;
+  dribbles?: number;
+  dribblesOk?: number;
+  /** Konter (Gegenstöße nach Ballgewinn). */
+  counters?: number;
 }
 
 export interface LineupEntry {
@@ -140,6 +171,9 @@ export interface LineupEntry {
   goals: number;
   assists: number;
   card?: 'Gelb' | 'Gelb-Rot' | 'Rot';
+  /** Einzelwerte (Engine 2): [Schüsse, aufs Tor, Pässe, angekommen, Zweikämpfe, gewonnen, Flanken, angekommen,
+   *  Dribblings, gelungen, Luftduelle, gewonnen, Balleroberungen, Schlüsselpässe, Paraden]. */
+  st?: number[];
 }
 
 /** Ausführlicher Bericht (nur für Spiele mit Beteiligung des eigenen Vereins gespeichert). */

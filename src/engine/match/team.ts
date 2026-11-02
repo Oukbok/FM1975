@@ -9,6 +9,9 @@ import { withLayout } from '../../data/pitchGrid';
 import { getEraYear, getSkillRev, positionSuitability } from '../positions';
 import type { MPlayer, Mentality, ShoutId, Side } from './types';
 
+/** Anzahl zwischengespeicherter Fähigkeiten je Spieler (engine/match/skills.ts). */
+export const SKILL_SLOTS = 13;
+
 const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
 
 export const isAvailable = (p: Player | undefined): p is Player =>
@@ -40,6 +43,9 @@ export function makeMPlayer(p: Player, side: Side, pos: Position, started: boole
     goals: 0, ownGoals: 0, assists: 0, yellow: 0, yellowRed: 0, red: 0, shots: 0, shotsOnTarget: 0, xg: 0,
     bigMissed: 0, keyPasses: 0, passes: 0, passesOk: 0, duels: 0, duelsWon: 0, tackles: 0, saves: 0,
     errors: 0, distance: 0, impact: 0,
+    // Felder der Einzelduelle gleich anlegen (stabile Objektform = schnelle Engine)
+    fitF: 1, fitBase: -1, day: 1, sk: new Array<number>(SKILL_SLOTS).fill(0), skg: new Array<number>(SKILL_SLOTS).fill(0),
+    crosses: 0, crossesOk: 0, dribbles: 0, dribblesOk: 0, aerials: 0, aerialsWon: 0,
   };
 }
 
