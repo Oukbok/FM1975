@@ -5,6 +5,7 @@ import { refreshOverall } from '../engine/development';
 import { manageSquads } from './squads';
 import { aiSeasonEnd } from './aiClubs';
 import { closeFinancialSeason, openFinancialSeason } from './seasonFinance';
+import { historicMoney, historicSeasonClose, historicSimClubs, historicWorld, historicWorldAfter } from './historicSteer';
 import { applyForcedRelegation } from './clubBusiness';
 import { staffSeasonChange } from './staffGame';
 import { youthPoachingAtSeasonChange } from './youthMarket';
@@ -202,6 +203,7 @@ export function startNextSeason(g: Game): void {
   const euroQuals = computeGermanEuroQualifiers(g, false);
   // Finanzsaison abschließen (Bilanz, Marke, Ruf) solange Tabelle/Pokale noch vorliegen.
   const prevPerf = closeFinancialSeason(g, oldSeason, g.calendar.currentDate);
+  historicSeasonClose(g, nextStartYear); // Option „Entwicklung der anderen Vereine“
   environmentSeasonChange(g, oldSeason, g.calendar.currentDate);
 
   // --- 1) Sim-Ligen zu Ende simulieren, damit alle Endtabellen feststehen ---
@@ -345,6 +347,7 @@ export function startNextSeason(g: Game): void {
   }
   g.leagues = { playerDivision: membership[playerDivId].meta, otherDivisions, season: newSeason };
   poolDrift(g, newSeason);
+  historicSimClubs(g, nextStartYear);
 
   const calendar = generateSeasonCalendar(fixtures, seasonStart, seasonEnd);
   calendar.speedMs = g.calendar.speedMs;
@@ -373,10 +376,12 @@ export function startNextSeason(g: Game): void {
   // Europa im Hintergrund: abgelaufene Saison aller Auslandsligen durchrechnen,
   // Koeffizienten werten und die ausländischen Starter bestimmen.
   if (!g.world) g.world = initWorld(euroClubs, nextStartYear);
+  historicWorld(g, g.world, euroClubs, nextStartYear);
   const worldRes = advanceWorldSeason(
     g.world, euroClubs, oldSeason, nextStartYear, g.pointSystem === '3-point' ? 3 : 2,
     g.euroCups as any, (id) => !!g.clubs[id] || !!g.simClubs?.[id],
   );
+  historicWorldAfter(g, g.world, euroClubs, nextStartYear);
   for (const note of worldRes.notes) {
     pushMessage(g.messages, makeMessage({
       date: calendar.currentDate, category: 'milestone', from: 'Fußball-Chronik',
@@ -456,6 +461,7 @@ export function startNextSeason(g: Game): void {
   // Saisonbilanz als Station festhalten, Saisonstatistik für die neue Saison leeren.
   closeSeason(g.players, g.clubs, oldSeason);
   manageSquads(g, calendar.currentDate, !!(g as any).simAutoManage);
+  historicMoney(g, nextStartYear, calendar.currentDate);
   openFinancialSeason(g, newSeason, calendar.currentDate, prevPerf);
   staffSeasonChange(g, calendar.currentDate);
   youthPoachingAtSeasonChange(g, calendar.currentDate);

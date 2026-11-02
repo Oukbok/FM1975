@@ -160,6 +160,7 @@ export function createNewGame(opts: NewGameOptions): Game {
     fixtures, table, calendar,
     pointSystem, managedClubId: opts.managedClubId, season: '1975/76',
     manager: opts.manager, difficulty: opts.difficulty, injuriesEnabled: opts.injuriesEnabled,
+    historyMode: opts.historyMode ?? 'off',
     messages: [...euroDrawMsgs, welcome],
     trainingPlan: createDefaultWeeklyPlan(),
     cup,

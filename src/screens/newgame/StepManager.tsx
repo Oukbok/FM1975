@@ -4,6 +4,7 @@ import { cachedSummaries } from '../../data/dataset/storage';
 import { ManagerBackground, ManagerStyle } from '../../types';
 import { BG_DE, STYLE_DE, type NewGameDraft } from '../NewGameScreen';
 import { LEAGUES, leaguePreview } from './clubPreview';
+import { historyModeLabel } from '../../game/historicSteer';
 
 // Schritt 3: Manager — Profil und Zusammenfassung vor dem Start
 const DIFF_DE = { easy: 'Leicht', normal: 'Normal', hard: 'Schwer' } as const;
@@ -62,6 +63,7 @@ export function StepManager({ d, set }: { d: NewGameDraft; set: (p: Partial<NewG
         <div className="ng-kv"><span>Hintergrund</span><b>{BG_DE[d.background].label}</b></div>
         <div className="ng-kv"><span>Datensatz</span><b>{ds?.name ?? 'Standard'}</b></div>
         <div className="ng-kv"><span>Schwierigkeit</span><b>{DIFF_DE[d.difficulty]}</b></div>
+        <div className="ng-kv"><span>Andere Vereine</span><b>{historyModeLabel(d.history)}{d.history === 'off' ? ' (zufällig)' : ' (historisch)'}</b></div>
         <div className="ng-kv"><span>Verletzungen</span><b>{d.injuries ? 'an' : 'aus'}</b></div>
         <div className="ng-kv"><span>Spieltempo</span><b>{d.speedMs} ms/Tag</b></div>
         <p className="ng-note ng-push">Einen Vereinswechsel gibt es nicht: Du führst diesen Verein durch die Jahrzehnte.</p>

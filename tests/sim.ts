@@ -14,6 +14,7 @@ import { Player } from '../src/types';
 import { recordFeeEUR } from '../src/data/transferRecords';
 import { economyScale as econScale } from '../src/engine/economy';
 import { roomAnalysis } from '../src/game/dressingRoomGame';
+import { histModeFromEnv, histSummary, histTrack } from './simHistory';
 
 const seasons = Number(process.argv[2] ?? 3);
 
@@ -28,6 +29,9 @@ const g: Game = createNewGame({
 });
 
 (g as any).simAutoManage = true; // eigener Verein wird wie ein KI-Verein gepflegt
+// HIST=aus|mittel|stark: Entwicklung der anderen Vereine (game/historicSteer.ts), Bericht tests/simHistory.ts.
+const histMode = histModeFromEnv(process.env.HIST);
+if (histMode) g.historyMode = histMode;
 
 const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
 function leaguePlayers(game: Game): Player[] {
@@ -422,6 +426,7 @@ for (let s = 0; s < seasons; s++) {
   report(g);
   if (process.env.AI) aiReport(g);
   if (process.env.KABINE) kabineReport(g);
+  if (histMode) histTrack(g);
   startNextSeason(g);
   if (process.env.STAFF) staffReport(g);
 }
@@ -464,6 +469,7 @@ if (process.env.BAL) {
   }
 }
 if (process.env.YOUTH) youthSummary(g);
+if (histMode) histSummary(g, histMode);
 if (process.env.TOP) { topSummary(); careerSummary(); }
 console.log(`fertig in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 // Diagnose: Wer ist ≥ 85?

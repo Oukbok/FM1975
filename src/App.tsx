@@ -51,6 +51,7 @@ import { migrateDressingRoom } from './game/dressingRoomGame';
 import { migrateTrainingPlan } from './game/trainingWeek';
 import { migrateStaffPeople } from './game/staffWorld';
 import { migrateYouthComps } from './game/youthComps/daily';
+import { migrateHistoryMode } from './game/historicSteer';
 import { migrateYouthContracts } from './engine/youth';
 import { assignShirtNumbers } from './game/squads';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -360,6 +361,7 @@ export default function App() {
     try { for (const c of Object.values(s.game.clubs)) assignShirtNumbers(c, s.game.players); } catch (err) { console.error('Rückennummern-Nachrüstung fehlgeschlagen:', err); }
     try { migrateYouthContracts(s.game); } catch (err) { console.error('Jugendverträge-Nachrüstung fehlgeschlagen:', err); }
     try { migrateYouthComps(s.game); } catch (err) { console.error('Jugendwettbewerbe-Nachrüstung fehlgeschlagen:', err); }
+    migrateHistoryMode(s.game);
     gameRef.current = s.game;
     setCurrentSlot(slot);
     setInGame(true);

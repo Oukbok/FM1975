@@ -1240,6 +1240,34 @@ Fehlen nach dem Sommerfenster immer noch Spieler (unter 20), rücken neue Spiele
 Dein Kader wird nie automatisch verändert. Angebote für deine Spieler kommen bevorzugt von Vereinen, die auf der Position Bedarf haben.`,
   },
   {
+    id: 'ai-history-mode',
+    category: 'ai',
+    title: 'Entwicklung der anderen Vereine (zufällig oder historisch)',
+    keywords: ['historisch', 'geschichte', 'zufällig', 'großklubs', 'bayern', 'münchen', 'madrid', 'manchester', 'option', 'spielstart', 'aus', 'mittel', 'stark'],
+    body: `## Entwicklung der anderen Vereine
+Beim Spielstart wählst du im Schritt **Spielwelt**, wie sich die anderen Vereine über die Jahrzehnte entwickeln. Die Wahl steht danach fest (Zusammenfassung im Schritt **Manager**); alte Spielstände laufen mit **Aus**.
+
+### Die drei Stufen
+- **Aus:** frei und zufällig. Jeder Verein wächst mit Erfolg, Geld und Glück – auch Braunschweig kann eine Ära prägen, auch München Rot kann absteigen.
+- **Mittel:** leicht an der echten Geschichte orientiert. Die historischen Großklubs haben einen spürbaren Vorteil, Überraschungen bleiben aber häufig.
+- **Stark:** deutlich an der Geschichte orientiert. Die echten Großklubs landen meist oben: Mönchengladbach und Hamburg Blau in den 70ern/80ern, München Rot dauerhaft und ab etwa 2012 erdrückend, Dortmund ab Mitte der 90er und in den 2010ern, Bremen und Kaiserslautern in ihren Phasen; im Ausland Liverpool Rot in den 70ern/80ern, Manchester ab 1990, Madrid Weiß und Barcelona, Paris ab 2011.
+
+### Was gelenkt wird – und was nicht
+Jeder Verein mit echtem Vorbild hat eine **Zielkurve** über die Jahre (Titel, Europapokal, Umsatzranking ab 1996). Daran ausgerichtet werden nur die Mittel der KI-Vereine:
+- **Ruf und Marke** – sie bestimmen Zuschauer, Sponsoren, wen der Verein auf dem Star-Markt holen kann, welche Spieler kommen wollen, welchen Trainer er bekommt und wie viel er in den Nachwuchs steckt,
+- **Geld aus dem Umfeld** – Großklubs erhalten zum Saisonstart einen Zufluss (Gönner, Konzern, Investor, Vermarktungsvorsprung), abgestürzte Vereine tragen Altlasten,
+- **Stärke** der nur simulierten Vereine anderer Ligen (und der DDR) – Großklubs drängen nach oben,
+- **Größe** der Auslandsvereine im Europa-Hintergrund.
+
+Es gibt **keine Ergebnisvorgabe** und keinen Eingriff ins Spiel selbst: Ein Großklub mit schlechtem Kader oder Trainer kann trotzdem scheitern.
+
+### Dein Verein
+Für deinen Verein gilt die Kurve **nie** – egal welche Stufe. Wechselst du den Verein, gilt sie wieder für den Verein, den du verlassen hast.
+
+### Fiktive Namen
+Die Vereine tragen Städtenamen. Wo der echte Verein fehlt, trägt der Verein derselben Stadt die Kurve (z. B. **Manchester** für United und City, **London Nord** für Arsenal/Tottenham, **Leipzig** ab 2009 für den neuen Leipziger Spitzenverein).`,
+  },
+  {
     id: 'staff-people',
     category: 'staff',
     title: 'Mitarbeiter als Personen — Qualität, Methoden, Abwerbung',
