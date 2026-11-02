@@ -327,3 +327,7 @@
 @media (prefers-reduced-motion: reduce) {
   .cr-root, .cr-root * { animation-duration: 1ms !important; animation-delay: 0s !important; }
 }
+
+/* Gesperrte Tage sind aria-disabled statt disabled (damit Überfahren gemeldet wird) – gleiche Optik. */
+.cp-day[aria-disabled="true"] { cursor: default; }
+.cp-day[aria-disabled="true"]:hover { border-color: transparent; }

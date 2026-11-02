@@ -71,7 +71,7 @@ export function PlanDates({ g, season, window: w, start, days, onStart, onDays, 
             <div key={m} className="cp-month">
               <div className="cp-month-name">{MON_FULL[mo - 1]} {y}</div>
               <div className="cp-wd">{[1, 2, 3, 4, 5, 6, 0].map((i) => <span key={i}>{WD_SHORT[i]}</span>)}</div>
-              <div className="cp-grid">
+              <div className="cp-grid" onMouseLeave={() => setHov(null)}>
                 {Array.from({ length: pad }, (_, i) => <span key={`p${i}`} className="cp-day blank" />)}
                 {Array.from({ length: nDays }, (_, i) => {
                   const d = `${m}-${String(i + 1).padStart(2, '0')}`;
@@ -89,8 +89,11 @@ export function PlanDates({ g, season, window: w, start, days, onStart, onDays, 
                   const title = match ? opp(d) : hall ? `Hallenturnier: ${hall.name}${hall.own === null ? ' (Einladung offen – wird bei Buchung abgesagt)' : ''}`
                     : !inWin ? 'außerhalb des Fensters' : d < lead ? `Vorlauf: Buchung mindestens ${CAMP_LEAD_DAYS} Tage vorher` : validStarts.has(d) ? `Anreise ${fmtDay(d)}` : 'Kein Lager ab diesem Tag möglich';
                   return (
-                    <button key={d} className={cls} title={title} disabled={!validStarts.has(d)} onClick={() => validStarts.has(d) && onStart(d)}
-                      onMouseEnter={() => setHov(validStarts.has(d) ? d : null)} onMouseLeave={() => setHov((h) => (h === d ? null : h))}>
+                    <button key={d} className={cls} title={title} aria-disabled={!validStarts.has(d)} tabIndex={validStarts.has(d) ? 0 : -1}
+                      onClick={() => validStarts.has(d) && onStart(d)}
+                      // Vorschau nur auf möglichen Anreisetagen wechseln; über gesperrten Tagen und Lücken stehen lassen
+                      // (sonst flackert sie). Gelöscht wird sie erst beim Verlassen des Kalenders.
+                      onMouseEnter={() => { if (validStarts.has(d)) setHov(d); }}>
                       {i + 1}{match && <i className="cp-mark" />}
                     </button>
                   );
