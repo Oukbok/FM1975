@@ -72,7 +72,7 @@ export function CupRounds({ g, snap, onWatch, onReplayDraw }: {
         </div>
       ) : view === 'tree' ? (
         <div className="cmp-scroll">
-          <RoundsBracket rounds={koRounds} renderTeam={(id) => <TeamName g={g} id={id} season={snap.season} size={14} />} onTie={snap.source === 'live' ? watch : undefined} />
+          <RoundsBracket rounds={koRounds} renderTeam={(id) => <TeamName g={g} id={id} season={snap.season} size={24} />} onTie={snap.source === 'live' ? watch : undefined} />
         </div>
       ) : (
         <div className="cmp-scroll">

@@ -36,11 +36,12 @@ export function selectStarters(club: Club, players: Record<string, Player>): Pla
  */
 export function updatePlayerForm(player: Player, resultDelta: number, rating: number): void {
   // Leistungsanteil: Note 6 ist neutral, jede Note darüber/darunter zählt.
-  const perf = (rating - 6) * 2.2;
-  const noise = (Math.random() - 0.5) * 3;
+  const perf = (rating - 6) * 2.4;
+  const noise = (Math.random() - 0.5) * 4;
   let next = player.form + resultDelta + perf + noise;
-  // Sanfte Rückkehr zur Mitte (Formen sind flüchtig).
-  next += (50 - player.form) * 0.05;
+  // Rückkehr zur Mitte (Formen sind flüchtig): eine Siegesserie trägt bis etwa 75–85,
+  // nicht dauerhaft an die 100 – sonst wäre beim Tabellenführer jeder in „Topform“.
+  next += (50 - player.form) * 0.15;
   player.form = clamp100(next);
 }
 
@@ -90,7 +91,7 @@ export function applyMatchEffects(
   players: Record<string, Player>,
   side: SideResult,
 ): void {
-  const resultDelta = side === 'W' ? 5 : side === 'D' ? 1 : -5;
+  const resultDelta = side === 'W' ? 3 : side === 'D' ? 0 : -3;
   const starters = selectStarters(club, players);
   const starterIds = new Set(starters.map((p) => p.id));
   // Einsatz-Regler der Taktik: volle Kraft kostet mehr Frische, schonendes Spiel weniger.

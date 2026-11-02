@@ -139,3 +139,27 @@
 .tt-table td { padding: 7px 6px; }
 .tt-table tbody tr:hover { background: var(--rl-hover); }
 .tt-table tr.sel { background: var(--rl-me-bg); box-shadow: inset 4px 0 0 var(--accent); }
+
+/* ---- Turnierbaum (Statistiken › Pokal/International): Maße der Paarungsliste ---- */
+.rb { gap: 16px; }
+.rb-col { min-width: 190px; }
+.rb-head { font-size: 13px; padding: 0 2px 8px; margin-bottom: 8px; }
+.rb-ties { gap: 10px; }
+.rb-tie { padding: 6px 12px; font-size: 18px; line-height: 30px; border-radius: 6px; }
+.rb-tie.mine { box-shadow: inset 4px 0 0 var(--accent); }
+.rb-team { gap: 10px; color: var(--text-2); }
+.rb-team .cmp-team { gap: 10px; }
+.rb-team.won { color: var(--text); font-weight: 600; }
+.rb-g { font-family: var(--font-display); font-weight: 600; font-size: 19px; min-width: 20px; }
+.rb-gs { gap: 8px; }
+.rb-lg { font-size: 14px; min-width: 14px; }
+.rb-note, .rb-dec, .rb-legs-txt { font-size: 13px; }
+.rb-score-txt { font-size: 15px; }
+.rb-pending { line-height: 30px; }
+.cmp-dot-box { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+
+/* Vertikal zentriert: Inline-Bausteine (Zone, Verein mit Wappen, Formkästchen) nicht auf der
+   Grundlinie ausrichten, sonst sitzen Name/Platz höher als die Zahlen. */
+.dtable td { vertical-align: middle; }
+.dtable td > .rl-z, .dtable td > .cmp-team, .dtable td > .club-link, .dtable td > .rl-club,
+.dtable td > span, .dtable td > a { vertical-align: middle; }

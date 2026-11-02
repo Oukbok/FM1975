@@ -18,7 +18,7 @@ export function TeamName({ g, id, season, short = false, size = 20 }: { g: Game;
     const col = g.euroClubs?.[id]?.colors.primary ?? (isLocalClub(id) ? localClubColor(id) : 'var(--text-4)');
     return (
       <span className="cmp-team" title={country ? `${name} (${country})` : isLocalClub(id) ? `${name} (Ortsverein)` : name}>
-        <span className="cmp-dot" style={{ background: col }} />
+        <span className="cmp-dot-box" style={{ width: size, height: size }}><span className="cmp-dot" style={{ background: col }} /></span>
         <span className="cmp-team-name">{name}</span>
       </span>
     );

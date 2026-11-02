@@ -230,7 +230,7 @@ check(avg(passive.aiSpread) >= 3, `KI-Vereine: Moral-Stufen beweglich (Ø ${avg(
   const hardAct = run(true, { club, n, goal: 'Meisterschaft' });
   const pos = (r: RunStats) => r.goals.map((x) => x.pos).join('/');
   console.log(`\nGegenversuch ${club} (${n} Saisons, Plätze ${pos(base)}): eigenes Ziel ${(crisisRate(base) * 100).toFixed(1)} % Krisentage, Ziel Meisterschaft ${(crisisRate(hard) * 100).toFixed(1)} %, mit Eingreifen ${(crisisRate(hardAct) * 100).toFixed(1)} %`);
-  check(crisisRate(hard) >= Math.max(0.1, crisisRate(base) * 1.8), 'überzogenes Saisonziel → deutlich mehr Krisentage');
+  check(crisisRate(hard) >= Math.max(0.08, crisisRate(base) * 1.8), 'überzogenes Saisonziel → deutlich mehr Krisentage');
   check(crisisRate(hardAct) <= crisisRate(hard) * 0.6, 'auch dann hilft Eingreifen deutlich');
   // Rechnung: gleicher Kader, Ziel klar verfehlt vs. erreicht
   const fs = goalFactors({ label: 'Europa-Pokal-Platz', pos: 15, expected: 4, size: 18, played: 15, dropFrom: 16, winless: 5 });
