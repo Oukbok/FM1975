@@ -104,9 +104,8 @@ function TieRow({ g, snap, t, no, onWatch, watch }: { g: Game; snap: CompSnapsho
     <div className={`rl-row rl-tie ${t.mine ? 'mine' : ''} ${t.matchId && onWatch && snap.source === 'live' ? 'clickable' : ''}`} onClick={() => snap.source === 'live' && watch(t)}>
       <span className="rl-rank">{no}</span>
       <span className={side(t.home)}><TeamName g={g} id={t.home} season={snap.season} size={28} /></span>
-      <span className="cmp-res">{open ? <span className="rl-dash">–</span> : tieScore(t)}</span>
+      <span className="cmp-res">{open ? (t.date ? <span className="rl-dim rl-meta">{CalendarEngine.formatDate(t.date)}{t.legDates?.[1] && t.agg !== false ? ` / ${CalendarEngine.formatDate(t.legDates[1])}` : ''}</span> : <span className="rl-dash">–</span>) : tieScore(t)}</span>
       <span className={side(t.away)}><TeamName g={g} id={t.away} season={snap.season} size={28} /></span>
-      <span className="rl-dim rl-meta">{open && t.date ? `${CalendarEngine.formatDate(t.date)}${t.legDates?.[1] && t.agg !== false ? ` / ${CalendarEngine.formatDate(t.legDates[1])}` : ''}` : ''}</span>
     </div>
   );
 }
@@ -131,7 +130,6 @@ function GroupMatches({ g, snap, round, onWatch }: { g: Game; snap: CompSnapshot
                 <span className="rl-side"><TeamName g={g} id={m.home} season={snap.season} size={22} /></span>
                 <span className="cmp-res">{m.hg == null ? <span className="rl-dash">–</span> : <b>{m.hg}:{m.ag}</b>}</span>
                 <span className="rl-side"><TeamName g={g} id={m.away} season={snap.season} size={22} /></span>
-                <span />
               </div>
             ))}
           </div>

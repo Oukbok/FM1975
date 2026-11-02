@@ -42,7 +42,7 @@
 .rl-row.me, .rl-row.mine { background: var(--rl-me-bg); box-shadow: inset 4px 0 0 var(--accent); }
 .rl-row.me .rl-name, .rl-row.mine .rl-name,
 .rl-row.me .rl-club > span, .rl-row .rl-club.me > span,
-.rl-row.me .cmp-team-name, .rl-row .rl-side.me .cmp-team-name { color: var(--accent); font-weight: 700; }
+.rl-row.me .cmp-team-name, .rl-row.mine .cmp-team-name { color: var(--accent); font-weight: 700; }
 
 /* Kleinere Boxen: gleicher Stil, etwas kleiner */
 .rl-sm { --rl-fs: 16px; --rl-py: 6px; --rl-px: 10px; --rl-crest: 22px; }
@@ -77,11 +77,13 @@
 .rl-z.zone-po { box-shadow: inset 3px 0 0 color-mix(in srgb, var(--pos) 45%, transparent); }
 
 /* ---- Paarungen/Ergebnisse (Pokalrunden, Gruppenspiele, Spielplan) ----------- */
-.rl-tie { grid-template-columns: 34px minmax(0, 1fr) minmax(76px, auto) minmax(0, 1fr) auto; }
+.rl-tie { grid-template-columns: 34px minmax(0, 1fr) 160px minmax(0, 1fr); }
+.rl-sm .rl-tie, .rl-tie.rl-sm { grid-template-columns: 26px minmax(0, 1fr) 64px minmax(0, 1fr); }
 .rl-side { min-width: 0; display: flex; }
 .rl-side.lost .cmp-team-name { color: var(--text-2); }
 .rl-side.won .cmp-team-name { font-weight: 600; }
-.rl-tie .cmp-res { min-width: 76px; }
+.rl-tie .cmp-res { min-width: 0; text-align: center; }
+.rl-tie .cmp-res .rl-meta { text-align: center; white-space: normal; }
 .rl-tie .cmp-res b { font-family: var(--font-display); font-weight: 600; font-size: calc(var(--rl-fs) + 2px); }
 .rl-meta { font-size: calc(var(--rl-fs) - 3px); white-space: nowrap; text-align: right; }
 .cmp-md.rl { gap: 0; }
