@@ -79,7 +79,7 @@ Deutsche Retro-Fußballmanager-Simulation. Der Spielstand startet in der **Saiso
 - Die Umstellung erfolgt ausschließlich über den Chronik-Meilenstein „3-Punkte-Regel" beim Erreichen der Saison **1995/96** — das wirkt **real auf die Tabellenberechnung**.
 
 ## Chronik & Epochen
-- Historische Meilensteine (Rückpassregel, Meisterliga, Bosman, FFP, Torlinientechnik, VAR …) werden zur jeweiligen Saison ausgelöst — siehe Bereich **Chronik** ().`,
+- Historische Meilensteine (Rückpassregel, Meisterliga, Bosman, FFP, Torlinientechnik, VAR …) werden zur jeweiligen Saison ausgelöst — siehe **Chronik des deutschen Fußballs** (Link unten rechts in der Fußleiste; öffnet ein großes Fenster mit Suche, Sprung zur aktuellen Saison und Jahrzehnten).`,
   },
   {
     id: 'core-datetime',
@@ -1557,7 +1557,7 @@ Der Baustil folgt der Epoche (Backstein und Satteldach in den 70ern und 80ern, P
     title: 'Jugendwettbewerbe',
     keywords: ['jugendwettbewerbe', 'a-jugend', 'b-jugend', 'u19', 'u17', 'jugendmeister', 'junioren-bundesliga', 'nachwuchsliga', 'junioren-pokal', 'youth league', 'ddr', 'endrunde', 'verbandsliga', 'regionalliga', 'c-jugend', 'd-jugend', 'e-jugend', 'f-jugend', 'bambini', 'kreisliga', 'bezirksliga', 'spielfest', 'funino', 'kinderfußball'],
     body: `## Was gespielt wird
-Unter **Jugend › Jugendwettbewerbe** laufen die Meisterschaften und Pokale des Nachwuchses – für alle Vereine, nicht nur für dich. Die Seite ist aufgebaut wie Statistiken › Liga: oben Saison und Wettbewerb, links Tabelle, Gruppen oder Endrunde (Turnierbaum oder Runden), rechts die Bestenlisten (Tore, Vorlagen, Scorer, Karten, Weiße Weste) und deine Lage.
+Unter **Jugend › Jugendwettbewerbe** laufen die Meisterschaften und Pokale des Nachwuchses – für alle Vereine, nicht nur für dich. Die Seite ist aufgebaut wie Statistiken › Liga: oben Saison und Wettbewerb, links Tabelle, Gruppen oder Endrunde (Turnierbaum oder Runden), rechts die Bestenlisten (Tore, Vorlagen, Scorer, Karten, Weiße Weste) und deine Lage. In der Auswahl stehen nur Wettbewerbe, die es in der gewählten Saison gibt und die schon Teilnehmer haben: Ligen und Spielklassen tauchen erst ab dem Jahr ihrer Einführung auf, eine Endrunde erst nach ihrer Auslosung.
 
 ## Formate nach Epoche
 - **A-Jugend (U19):** bis 1995/96 Verbandsligen der Landesverbände, deren Meister (16 Plätze) spielen die **Endrunde** im K.-o.-System mit Hin- und Rückspiel, Endspiel in einem Spiel. 1996/97–2002/03 fünf **Regionalligen** (Nord, Nordost, West, Südwest, Süd) und eine Endrunde der letzten Acht. Ab 2003/04 **A-Junioren-Bundesliga** mit drei Staffeln à 14 (Nord/Nordost, West, Süd/Südwest); die drei Meister und der Zweite aus Süd/Südwest spielen das Halbfinale. Ab 2024/25 **DFB-Nachwuchsliga**: Vorrunde in regionalen Gruppen, Hauptrunde Liga A, Achtelfinale in einem Spiel.
@@ -1931,7 +1931,7 @@ Vor dem Briefing läuft ein kurzer Auftakt (etwa 6 Sekunden): Mittelkreis und Mi
 Unter **Zentrale → Briefing** findest du die Briefings aller Saisons dieses Spiels; „Briefing öffnen“ zeigt dasselbe Fenster ohne Auftakt. Alte Spielstände führen das Archiv ab der Saison, in der sie zuerst geladen werden.
 
 ## Vorschau und Chronik
-Am **2. Januar** kündigt der Verband an, was ab der nächsten Saison gilt. Die Einzelmeldungen der Chronik zum Saisonstart sind im Briefing zusammengefasst; alle Meilensteine stehen weiter unter **Statistiken → Chronik**.`,
+Am **2. Januar** kündigt der Verband an, was ab der nächsten Saison gilt. Die Einzelmeldungen der Chronik zum Saisonstart sind im Briefing zusammengefasst; alle Meilensteine stehen weiter in der **Chronik des deutschen Fußballs** (unten rechts in der Fußleiste).`,
   },
   {
     id: 'chronicle-hall-of-fame',
