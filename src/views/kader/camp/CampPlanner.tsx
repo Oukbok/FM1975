@@ -2,7 +2,9 @@
 // TRAININGSLAGER-PLANER – großes Popup in drei Schritten: (1) Zeitraum, (2) Ziel auf
 // der Karte + Unterkunft, (3) Reisegruppe + Schwerpunkt. Rechts durchgehend die
 // Wirkungsbalken (wie in der Taktik), die sich bei jeder Wahl ändern. „Buchen“ legt
-// die Buchung an (game/trainingCampGame.ts `bookCamp`).
+// die Buchung an (game/trainingCampGame.ts `bookCamp`). Der Planer gilt genau einem
+// Fenster (Sommer oder Winter) – gewählt über den Knopf je Fenster auf der Seite.
+// Ein Klick auf einen Anreisetag springt direkt zu den buchbaren Zielen.
 // =============================================================================
 import { useEffect, useMemo, useState } from 'react';
 import { campDestination } from '../../../data/campDestinations';
@@ -34,17 +36,16 @@ export function planBlocked(g: Game, s: CampSeason, booked: boolean): string | n
   return ok ? null : 'kein freier Zeitraum mehr';
 }
 
-export function CampPlanner({ g, season: season0, seasons, onClose, onBooked }: {
-  g: Game; season: CampSeason; seasons: CampSeason[]; onClose: () => void; onBooked: (msg: string) => void;
+export function CampPlanner({ g, season, onClose, onBooked }: {
+  g: Game; season: CampSeason; onClose: () => void; onBooked: (msg: string) => void;
 }) {
   const club = g.clubs[g.managedClubId];
-  const [season, setSeason] = useState<CampSeason>(season0);
   const [step, setStep] = useState(0);
-  const [days, setDays] = useState(season0 === 'summer' ? 9 : 7);
+  const [days, setDays] = useState(season === 'summer' ? 9 : 7);
   const [start, setStart] = useState('');
-  const [destId, setDestId] = useState<string | undefined>(() => campObligation(g, club, season0));
+  const [destId, setDestId] = useState<string | undefined>(() => campObligation(g, club, season));
   const [lodgingId, setLodgingId] = useState<string | undefined>();
-  const [view, setView] = useState<CampMapViewId>(() => homeView(campDestination(campObligation(g, club, season0) ?? '')));
+  const [view, setView] = useState<CampMapViewId>(() => homeView(campDestination(campObligation(g, club, season) ?? '')));
   const [focus, setFocus] = useState<CampFocus>('ausgewogen');
   const [tests, setTests] = useState(2);
   const [squad, setSquad] = useState<Set<string>>(() => new Set(defaultCampSquad(g)));
@@ -90,7 +91,7 @@ export function CampPlanner({ g, season: season0, seasons, onClose, onBooked }: 
   const healthyAlong = pros.filter((p) => squad.has(p.id) && !p.injury).length;
   const stayed = pros.filter((p) => !squad.has(p.id) && !p.injury && p.age > 21).length;
   const bars = campEffectBars({
-    o: o ?? ({ fitness: 0, altitudeFitness: 0, dev: 0, form: 0, morale: 0.3, satisfaction: 0, starGrumble: 0, discipline: 0, campFrische: 0, travelFrische: 0, heal: 0, injury: 0 } as never),
+    o: o ?? ({ fitness: 0, altitudeFitness: 0, dev: 0, form: 0, formLo: 0, formHi: 0, morale: 0.3, satisfaction: 0, starGrumble: 0, discipline: 0, campFrische: 0, travelFrische: 0, heal: 0, injury: 0, weatherRisk: 0 } as never),
     travelers: healthyAlong, youth: youthIds.length, stayed, injuredAlong: squadIds.length - healthyAlong,
     cost: quote?.cost ?? 0, income, balance: club.finances.balance,
   });
@@ -107,11 +108,8 @@ export function CampPlanner({ g, season: season0, seasons, onClose, onBooked }: 
   ];
   const canBook = checks.every((c) => c.ok) && !!quote && !quote.error && club.finances.balance >= quote.cost;
 
-  const switchSeason = (s: CampSeason) => {
-    setSeason(s); setStart(''); setDays(s === 'summer' ? 9 : 7); setErr(null);
-    const ob = campObligation(g, club, s);
-    setDestId(ob); setLodgingId(undefined); setView(homeView(campDestination(ob ?? '')));
-  };
+  const okCount = opts.filter((x) => x.status.ok).length;
+  const pickDate = (d: string) => { setStart(d); setErr(null); setStep(1); };
   const pick = (id: string) => { setDestId(id); setLodgingId(undefined); setErr(null); };
   const doBook = () => {
     if (!dest || !start) return;
@@ -135,20 +133,16 @@ export function CampPlanner({ g, season: season0, seasons, onClose, onBooked }: 
               </button>
             ))}
           </nav>
-          {seasons.length > 1 && (
-            <div className="lu-seg cp-season">
-              {seasons.map((s) => <button key={s} className={s === season ? 'on' : ''} onClick={() => switchSeason(s)}>{s === 'summer' ? 'Sommer' : 'Winter'}</button>)}
-            </div>
-          )}
           <button className="modal-close" onClick={onClose} aria-label="Schließen">×</button>
         </header>
         <div className="cp-body">
           <main className="cp-main">
-            {step === 0 && <PlanDates g={g} season={season} window={w} start={start} days={days} onStart={setStart} onDays={setDays} />}
+            {step === 0 && <PlanDates g={g} season={season} window={w} start={start} days={days} onStart={pickDate} onDays={setDays} okCount={okCount} />}
             {step === 1 && (
               <div className="cp-where">
                 {obligation && <div className="camp-oblig cp-oblig">Sponsor-Vertrag: Pflicht-Trainingslager in {campDestination(obligation)?.name}. Andere Ziele sind für dieses Fenster gesperrt.</div>}
-                <CampMap dests={opts.map((x) => ({ ...x, aiCount: aiCount.get(x.d.id) ?? 0 }))} view={view} onView={setView} selected={destId} onSelect={pick} obligation={obligation} />
+                <CampMap dests={opts.map((x) => ({ ...x, aiCount: aiCount.get(x.d.id) ?? 0 }))} view={view} onView={setView} selected={destId} onSelect={pick} obligation={obligation}
+                  season={season} month={month} />
                 <DestPanel d={dest} status={status} season={season} month={month} year={year} lodgings={lodgings} lodgingId={lodging?.id}
                   onLodging={setLodgingId} pc={pc} costOf={costOf} aiCount={dest ? aiCount.get(dest.id) ?? 0 : 0} />
               </div>
@@ -174,7 +168,7 @@ export function CampPlanner({ g, season: season0, seasons, onClose, onBooked }: 
         </div>
         <footer className="mx-foot cp-foot">
           <span className={`cp-foot-msg ${err || (quote?.error && step === 2) ? 'bad' : ''}`}>
-            {err ?? (step === 2 && quote?.error ? quote.error : step === 0 ? 'Pflichtspiele und zugesagte Hallenturniere sind gesperrt.' : step === 1 ? 'Ziele zeigen sich mit ihrem historischen Jahr; gesperrte Orte sind gedimmt.' : '')}
+            {err ?? (step === 2 && quote?.error ? quote.error : step === 0 ? 'Pflichtspiele und zugesagte Hallenturniere sind gesperrt.' : step === 1 ? `${okCount} Ziele kommen für ${fmtDay(start || w.from)} – ${fmtDay(CalendarEngine.addDays(start || w.from, days - 1))} in Frage; gesperrte Orte sind ausgeblendet.` : '')}
           </span>
           {step > 0 && <button className="btn btn-ghost" onClick={() => setStep(step - 1)}>Zurück</button>}
           {step < 2 && <button className="btn btn-ghost" onClick={() => setStep(step + 1)}>Weiter</button>}

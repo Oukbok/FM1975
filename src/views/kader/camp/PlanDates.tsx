@@ -1,8 +1,13 @@
 // =============================================================================
 // TRAININGSLAGER-PLANER – Schritt 1: Zeitraum. Monatskalender des Fensters
 // (Sommervorbereitung bzw. Winterpause), Pflichtspiele und Hallenturniere gesperrt,
-// Vorlauf/kurzfristiger Aufschlag markiert, Dauer per Regler.
+// Vorlauf/kurzfristiger Aufschlag markiert, Dauer per Regler. Alle Tage im Fenster sehen
+// gleich aus, egal ob ein Lager dort beginnen kann (früher wurden mögliche Anreisetage
+// hell – beim Verkürzen der Dauer „leuchteten“ dadurch einzelne Tage wie der 4. August auf).
+// Wo ein Lager beginnen kann, zeigt die Vorschau beim Überfahren; ein Klick wählt den
+// Anreisetag und springt direkt zu den passenden Zielen (onPick).
 // =============================================================================
+import { useState } from 'react';
 import { CalendarEngine } from '../../../engine/calendar';
 import { CAMP_LEAD_DAYS, CAMP_MAX_DAYS, CAMP_MIN_DAYS, CAMP_SHORT_NOTICE_DAYS } from '../../../engine/trainingCamp';
 import type { Game } from '../../../game/state';
@@ -12,10 +17,13 @@ import { MON_FULL, WD_SHORT, fmtDay } from '../../../ui/format';
 
 const dow = (iso: string) => new Date(iso + 'T00:00:00Z').getUTCDay();
 
-export function PlanDates({ g, season, window: w, start, days, onStart, onDays }: {
+export function PlanDates({ g, season, window: w, start, days, onStart, onDays, okCount }: {
   g: Game; season: CampSeason; window: { from: string; to: string };
   start: string; days: number; onStart: (d: string) => void; onDays: (n: number) => void;
+  /** Zahl der buchbaren Ziele (Hinweis unter dem Kalender). */
+  okCount?: number;
 }) {
+  const [hov, setHov] = useState<string | null>(null);
   const today = g.calendar.currentDate;
   const busy = competitiveDays(g);
   const indoor = ownIndoorDays(g, true);
@@ -39,6 +47,7 @@ export function PlanDates({ g, season, window: w, start, days, onStart, onDays }
     m = mo === 12 ? `${y + 1}-01` : `${y}-${String(mo + 1).padStart(2, '0')}`;
   }
   const validStarts = new Set(daysBetween(w.from, w.to).filter((d) => !checkCampDates(g, season, d, days).error));
+  const hovEnd = hov ? CalendarEngine.addDays(hov, days - 1) : '';
 
   return (
     <div className="cp-dates">
@@ -75,11 +84,13 @@ export function PlanDates({ g, season, window: w, start, days, onStart, onDays }
                     inWin && d < lead ? 'lead' : '', inWin && d >= lead && d < cheap ? 'short' : '',
                     inRange ? (check?.error ? 'range bad' : 'range') : '', d === start ? 'start' : '', d === end ? 'end' : '',
                     validStarts.has(d) ? 'can' : '', d === today ? 'today' : '',
+                    hov && d >= hov && d <= hovEnd ? 'preview' : '', d === hov ? 'preview-start' : '',
                   ].filter(Boolean).join(' ');
                   const title = match ? opp(d) : hall ? `Hallenturnier: ${hall.name}${hall.own === null ? ' (Einladung offen – wird bei Buchung abgesagt)' : ''}`
                     : !inWin ? 'außerhalb des Fensters' : d < lead ? `Vorlauf: Buchung mindestens ${CAMP_LEAD_DAYS} Tage vorher` : validStarts.has(d) ? `Anreise ${fmtDay(d)}` : 'Kein Lager ab diesem Tag möglich';
                   return (
-                    <button key={d} className={cls} title={title} disabled={!validStarts.has(d) && !inRange} onClick={() => validStarts.has(d) && onStart(d)}>
+                    <button key={d} className={cls} title={title} disabled={!validStarts.has(d)} onClick={() => validStarts.has(d) && onStart(d)}
+                      onMouseEnter={() => setHov(validStarts.has(d) ? d : null)} onMouseLeave={() => setHov((h) => (h === d ? null : h))}>
                       {i + 1}{match && <i className="cp-mark" />}
                     </button>
                   );
@@ -99,6 +110,7 @@ export function PlanDates({ g, season, window: w, start, days, onStart, onDays }
       <div className={`cp-dates-sum ${check?.error ? 'bad' : ''}`}>
         {!start ? 'Wähle im Kalender den Anreisetag.' : check?.error ? check.error
           : `Anreise ${fmtDay(start)}, Rückkehr ${fmtDay(end)} · ${days} Tage${check?.surcharge ? ' · kurzfristig: 20 % Aufschlag' : ''}${check?.indoorConflict?.length ? ` · offene Hallen-Einladung wird abgesagt (${check.indoorConflict.join(', ')})` : ''}`}
+        {start && !check?.error && okCount != null && <span className="cp-dates-next">{okCount} {okCount === 1 ? 'Ziel kommt' : 'Ziele kommen'} in Frage – Klick auf einen Anreisetag zeigt sie direkt.</span>}
       </div>
     </div>
   );

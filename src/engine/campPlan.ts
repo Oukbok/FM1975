@@ -98,31 +98,63 @@ export function destinationProsCons(c: ProsConsCtx): ProsCons {
 }
 
 // -----------------------------------------------------------------------------
-// Wirkungsbalken (wie Taktik › Wirkung im Spiel): −1 … +1, `bad` = höher ist schlechter
+// Wirkungsbalken (wie Taktik › Wirkung im Spiel): −1 … +1, `bad` = höher ist schlechter.
+// Jeder Balken trägt eine Spanne `lo`…`hi` (gleiche Skala) – die Unsicherheit der Rechnung:
+// Wetterglück (trainingCampGame `luck` = 1 − 0,6·r … 1 + 0,3·r bei Ausfallrisiko r),
+// Zufall der Stimmung (Binomialstreuung über die Reisegruppe) und der Verletzungen
+// (Poisson, 10.–90. Perzentil). Kosten und Erholung stehen vorher fest.
 // -----------------------------------------------------------------------------
-export interface CampBar { key: string; label: string; d: number; text: string; bad?: boolean; hint: string }
+export interface CampBar { key: string; label: string; d: number; lo: number; hi: number; text: string; bad?: boolean; hint: string }
 export interface CampBarCtx {
   o: CampOutlook; travelers: number; youth: number; stayed: number; injuredAlong: number;
   cost: number; income: number; balance: number;
 }
+/** Poisson-Quantil (kleine λ) – für die Spanne der erwarteten Verletzten. */
+function poissonQ(lambda: number, q: number): number {
+  let p = Math.exp(-lambda), cum = p, k = 0;
+  while (cum < q && k < 50) { k++; p *= lambda / k; cum += p; }
+  return k;
+}
+const SPIRIT_WORDS: [number, string][] = [[0.35, 'stark'], [0.1, 'gut'], [-0.1, 'neutral'], [-Infinity, 'leidet']];
+const spiritWord = (v: number) => SPIRIT_WORDS.find(([t]) => v >= t)![1];
+
 export function campEffectBars(c: CampBarCtx): CampBar[] {
   const { o } = c;
+  const lo = 1 - o.weatherRisk * 0.6, hi = 1 + o.weatherRisk * 0.3;
   const fit = o.fitness + o.altitudeFitness;
-  const tact = o.dev * 2 + o.form / 6;
+  const tactOf = (f: number, form: number) => o.dev * f * 2 + form / 6;
+  const tact = tactOf(1, o.form);
+  const tactLo = tactOf(lo, o.formLo ?? o.form), tactHi = tactOf(hi, o.formHi ?? o.form);
   const spirit = (o.morale - 0.3) * 2.2 + o.satisfaction / 12 - o.starGrumble * 2 - o.discipline * 1.5
     - (c.stayed > 0 ? Math.min(0.5, c.stayed * 0.06) : 0) + (c.youth > 0 ? 0.05 : 0);
+  const n = Math.max(1, c.travelers + c.youth);
+  const spiritSd = 2.2 * Math.sqrt((o.morale * (1 - o.morale)) / n) + 1.5 * Math.sqrt((o.discipline * (1 - o.discipline)) / n);
   const rest = (o.campFrische - o.travelFrische) / 18 + (c.injuredAlong > 0 ? o.heal / 25 : 0);
   const injN = o.injury * (c.travelers + c.youth);
+  const injLo = poissonQ(injN, 0.1), injHi = poissonQ(injN, 0.9);
   const net = c.income - c.cost;
   const share = c.balance > 0 ? -net / c.balance : 1;
   const sgn = (v: number, dig = 1) => `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(dig).replace('.', ',')}`;
+  const span = (a: string, b: string) => (a === b ? a : `${a} … ${b}`);
+  const bar = (key: string, label: string, scale: (v: number) => number, v: number, vLo: number, vHi: number, text: string, hint: string, bad?: boolean): CampBar => {
+    const d = scale(v), x = scale(vLo), y = scale(vHi);
+    return { key, label, d, lo: Math.min(x, y, d), hi: Math.max(x, y, d), text, hint, bad };
+  };
+  const unit = (div: number, min = -1) => (v: number) => clamp(v / div, min, 1);
   return [
-    { key: 'fit', label: 'Fitness', d: clamp(fit / 16, -1, 1), text: sgn(fit), hint: 'Fitness-Aufbau je Spieler (inkl. Höhenreiz)' },
-    { key: 'tact', label: 'Taktik & Form', d: clamp(tact / 1.4, -1, 1), text: sgn(o.form), hint: 'Entwicklungsschritte, Spielformen, Testspiele' },
-    { key: 'spirit', label: 'Teamgeist', d: clamp(spirit, -1, 1), text: spirit >= 0.35 ? 'stark' : spirit >= 0.1 ? 'gut' : spirit > -0.1 ? 'neutral' : 'leidet', hint: `Chance auf bessere Stimmung ${pct(o.morale)}; Zuhausegebliebene, Disziplin und murrende Stars ziehen ab` },
-    { key: 'rest', label: 'Erholung', d: clamp(rest, -1, 1), text: sgn(o.campFrische - o.travelFrische, 0), hint: 'Frische bei der Rückkehr (Reise, Höhe, Regeneration); mitreisende Verletzte' },
-    { key: 'inj', label: 'Verletzungsrisiko', d: clamp(injN / 2.5, 0, 1), text: `≈ ${injN.toFixed(1).replace('.', ',')}`, bad: true, hint: 'Erwartete Verletzte im Lager' },
-    { key: 'cash', label: 'Kosten / Kasse', d: clamp(share / 0.15, -1, 1), text: c.balance > 0 ? `${share > 0 ? '−' : '+'}${pct(Math.abs(share))}` : '–', bad: true, hint: 'Saldo aus Kosten und Erlösen im Verhältnis zum Kontostand' },
+    bar('fit', 'Fitness', unit(16), fit, fit * lo, fit * hi, span(sgn(fit * lo), sgn(fit * hi)),
+      `Fitness-Aufbau je Spieler (inkl. Höhenreiz); Spanne je nach Wetter (Ausfallrisiko ${pct(o.weatherRisk)})`),
+    bar('tact', 'Taktik & Form', unit(1.4), tact, tactLo, tactHi, span(sgn(o.formLo ?? o.form), sgn(o.formHi ?? o.form)),
+      'Entwicklungsschritte, Spielformen, Testspiele; Spanne je nach Wetter'),
+    bar('spirit', 'Teamgeist', unit(1), spirit, spirit - spiritSd, spirit + spiritSd,
+      span(spiritWord(spirit - spiritSd), spiritWord(spirit + spiritSd)),
+      `Chance auf bessere Stimmung ${pct(o.morale)} je Spieler; Zuhausegebliebene, Disziplin und murrende Stars ziehen ab`),
+    bar('rest', 'Erholung', unit(1), rest, rest, rest, sgn(o.campFrische - o.travelFrische, 0),
+      'Frische bei der Rückkehr (Reise, Höhe, Regeneration); steht vorher fest'),
+    bar('inj', 'Verletzungsrisiko', (v) => clamp(v / 2.5, 0, 1), injN, injLo, injHi, injLo === injHi ? `${injLo}` : `${injLo} – ${injHi}`,
+      `Erwartet ${injN.toFixed(1).replace('.', ',')} Verletzte im Lager (Spanne: 8 von 10 Lagern)`, true),
+    bar('cash', 'Kosten / Kasse', unit(0.15), share, share, share, c.balance > 0 ? (Math.abs(share) < 0.005 ? '±0 %' : `${share > 0 ? '−' : '+'}${pct(Math.abs(share))}`) : '–',
+      'Saldo aus Kosten und Erlösen im Verhältnis zum Kontostand; steht vorher fest', true),
   ];
 }
 
