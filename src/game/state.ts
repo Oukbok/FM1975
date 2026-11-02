@@ -53,6 +53,8 @@ export interface Game {
   season: string;
   manager: ManagerProfile;
   difficulty: Difficulty;
+  /** Entwicklung der anderen Vereine: frei (off) oder an der echten Geschichte orientiert (game/historicSteer.ts); fehlt = off. */
+  historyMode?: import('./historicSteer').HistoryMode;
   injuriesEnabled: boolean;
   messages: InboxMessage[];
   /** Wochen-Trainingsplan des Manager-Vereins (7 Tage × 3 Slots). */

@@ -2,6 +2,7 @@ import Icon from '../../components/Icon';
 import { cachedSummaries } from '../../data/dataset/storage';
 import { Difficulty } from '../../types';
 import type { NewGameDraft } from '../NewGameScreen';
+import { HISTORY_MODES } from '../../game/historicSteer';
 
 // Schritt 1: Spielwelt — Datensatz, Spieloptionen, Tempo, Hinweis zu Talenten
 const DIFF: [Difficulty, string, string][] = [
@@ -55,6 +56,15 @@ export function StepSetup({ d, set, chooseDataset }: {
             Realistische Kader
           </label>
         </div>
+        <div className="ng-label">Entwicklung der anderen Vereine</div>
+        <div className="ng-seg3">
+          {HISTORY_MODES.map((m) => (
+            <button key={m.id} className={`ng-card small ${d.history === m.id ? 'on' : ''}`} onClick={() => set({ history: m.id })}>
+              <b>{m.label}</b><small>{m.id === 'off' ? 'Zufällig' : m.id === 'medium' ? 'Leicht historisch' : 'Historisch'}</small>
+            </button>
+          ))}
+        </div>
+        <p className="ng-note">{HISTORY_MODES.find((m) => m.id === d.history)!.desc} Gilt nur für die anderen Vereine, nie für deinen – und steht ab Spielstart fest.</p>
         <div className="ng-label">Spieltempo <b className="accent-text">{d.speedMs} ms/Tag</b> · {d.speedMs <= 600 ? 'schnell' : d.speedMs >= 1200 ? 'langsam' : 'mittel'}</div>
         <div className="ng-speed">
           <input type="range" min={300} max={1600} step={100} value={d.speedMs} onChange={(e) => set({ speedMs: +e.target.value })} />

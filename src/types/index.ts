@@ -1843,6 +1843,8 @@ export interface NewGameOptions {
   speedMs: number;
   /** Datensatz (data/dataset), Standard „builtin“. */
   datasetId?: string;
+  /** Entwicklung der anderen Vereine (game/historicSteer.ts), Standard 'off'. */
+  historyMode?: 'off' | 'medium' | 'strong';
 }
 
 // -----------------------------------------------------------------------------

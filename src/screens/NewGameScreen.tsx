@@ -10,6 +10,7 @@ import { StepSetup } from './newgame/StepSetup';
 import { StepClub } from './newgame/StepClub';
 import { StepManager } from './newgame/StepManager';
 import { useState } from 'react';
+import type { HistoryMode } from '../game/historicSteer';
 
 // -----------------------------------------------------------------------------
 // NEUES SPIEL — Assistent in drei Schritten (wie bei den großen Managerspielen):
@@ -30,6 +31,8 @@ export interface NewGameDraft {
   difficulty: Difficulty;
   injuries: boolean;
   realistic: boolean;
+  /** Entwicklung der anderen Vereine (game/historicSteer.ts). */
+  history: HistoryMode;
   speedMs: number;
   league: LeagueKey;
   clubId: string;
@@ -51,7 +54,7 @@ export function NewGameScreen({ defaults, onBack, onStart }: {
 }) {
   const [step, setStep] = useState(0);
   const [d, setD] = useState<NewGameDraft>(() => ({
-    datasetId: BUILTIN_ID, difficulty: 'normal', injuries: true, realistic: true, speedMs: defaults.speedMs,
+    datasetId: BUILTIN_ID, difficulty: 'normal', injuries: true, realistic: true, history: 'off', speedMs: defaults.speedMs,
     league: 'tier1', clubId: [...getClubSeeds()].sort((a, b) => b.reputation - a.reputation)[0]?.id ?? '',
     name: '', nationality: 'Deutschland', birthYear: 1940, style: 'balanced', background: 'ex_pro',
   }));
@@ -71,7 +74,7 @@ export function NewGameScreen({ defaults, onBack, onStart }: {
     };
     onStart({
       managedClubId: d.clubId, manager, difficulty: d.difficulty, realisticSquads: d.realistic,
-      injuriesEnabled: d.injuries, speedMs: d.speedMs, datasetId: d.datasetId,
+      injuriesEnabled: d.injuries, speedMs: d.speedMs, datasetId: d.datasetId, historyMode: d.history,
     });
   };
   const last = step === STEPS.length - 1;
