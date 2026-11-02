@@ -555,6 +555,30 @@ Bei den anderen Vereinen folgt die Stimmung den letzten Ergebnissen; die Moral i
   // NACHRICHTEN
   // ---------------------------------------------------------------------------
   {
+    id: 'presse',
+    category: 'messages',
+    title: 'Presse: die Sportzeitung',
+    keywords: ['presse', 'zeitung', 'schlagzeile', 'aufmacher', 'artikel', 'gerücht', 'gerüchteküche', 'ausgabe', 'archiv', 'kurz notiert', 'torjäger', 'kommentar'],
+    body: `## Worum geht es?
+Unter **Zentrale › Presse** liest du die Sportzeitung des Spiels. Sie erscheint **montags und donnerstags** (wie die großen Fußball-Fachblätter); dazu gibt es immer die **aktuelle Ausgabe des Tages**. Jede Ausgabe berichtet über die Tage seit der vorigen Ausgabe. Oben rechts blätterst du zu älteren Ausgaben der laufenden Saison.
+
+## Was drinsteht
+- **Aufmacher** mit großer Schlagzeile und Bild – das wichtigste Ereignis, dein Verein wird etwas bevorzugt.
+- **Spielberichte** mit Torschützen, bestem Spieler und Fazit, **Spieltag-Überblick**, **Tabellenspitze** und **Abstiegskampf**.
+- **Transfermarkt** (alle Wechsel der Liga mit Ablöse), **Gerüchteküche** (gute Spieler mit auslaufendem Vertrag oder auf der Transferliste – nur Gerede, nicht bestätigt), **Trainerkarussell**, **Lazarett** (längere Ausfälle).
+- **Pokal** und **Europapokal** (Ergebnisse deutscher Vereine), **Talente** (junge Torschützen), **Rekorde** (Hattricks, Torjäger-Marken, Saison-Rekordkulisse), **Chronik**, **Hinter den Kulissen** (Gerüchte aus deiner Kabine), **Kommentar** zur Form deines Vereins und eine **Vorschau** aufs nächste Spiel.
+- Rechts: Ergebnisse des Spieltags, Tabelle (Spitze und Keller) und Torjäger **zum Erscheinungstag**; unten **Kurz notiert** mit weiteren Meldungen.
+
+## Alles ist anklickbar
+Eine Schlagzeile öffnet den vollen Artikel mit allen Beteiligten und Knöpfen zum Ziel (Spielbericht, Tabelle, Transfermarkt, Kabine …). **Gesichter** öffnen das Spielerprofil, **Wappen und Vereinsnamen** das Vereinsprofil, ein Ergebnis den Spielbericht.
+
+## Epochen
+Blattname und Aufmachung wechseln mit der Zeit (die Blätter sind erfunden). Ab den 2000ern taucht das Netz in den Texten auf, Ablösen stehen bis 2001 in DM, danach in Euro.
+
+## Speicher
+Ausgaben werden nicht gespeichert, sondern beim Lesen aus dem Spielstand zusammengesetzt (Ergebnisse, Spielerverlauf, Trainerhistorie, Pokalrunden, Nachrichten). Dieselbe Ausgabe sieht deshalb immer gleich aus.`,
+  },
+  {
     id: 'messages-system',
     category: 'messages',
     title: 'Nachrichten / E-Mail-System',

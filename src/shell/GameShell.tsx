@@ -410,7 +410,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'cat-verein' && <VereinDashboard g={g} onGoto={setScreen} />}
         {screen === 'cat-statistiken' && <StatistikenDashboard g={g} onGoto={setScreen} />}
         {/* Rudimentäre Einzelseiten */}
-        {screen === 'presse' && <PresseView g={g} />}
+        {screen === 'presse' && <PresseView g={g} onWatch={(id) => setLiveMatchId(id)} onGoto={setScreen} />}
         {screen === 'vertraege' && <VertraegeView g={g} onChange={rerender} />}
         {screen === 'beobachtung' && <BeobachtungView g={g} onChange={rerender} />}
         {screen === 'verhandlungen' && <VerhandlungenView g={g} onChange={rerender} />}

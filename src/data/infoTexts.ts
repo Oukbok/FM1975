@@ -568,6 +568,11 @@ export const INFO_TEXTS = {
     text: 'Oben die Führungsspieler, darunter Stützen und Mitläufer, unten wer außen vor ist – je Stufe links der Einflussreichste. Der Smiley zeigt die Moral, die Ziffer die Gruppe (Legende darunter), eine gestrichelte Linie einen Konflikt.',
     wiki: 'condition-kabine',
   },
+  presse: {
+    title: 'Presse',
+    text: 'Die Sportzeitung erscheint montags und donnerstags, dazu gibt es immer die aktuelle Ausgabe des Tages. Sie fasst Spiele, Tabelle, Transfers, Trainerwechsel, Verletzungen, Pokal und Europapokal zusammen. Schlagzeilen öffnen den Artikel, Gesichter das Spielerprofil, Wappen das Vereinsprofil.',
+    wiki: 'presse',
+  },
 } satisfies Record<string, InfoText>;
 
 export type InfoKey = keyof typeof INFO_TEXTS;
