@@ -117,10 +117,20 @@ export function CampMap({ dests, view, onView, selected, onSelect, obligation, s
   const order = [...shown].sort((a, b) => rank(b) - rank(a) || a.d.name.localeCompare(b.d.name));
   const placed: { x0: number; y0: number; x1: number; y1: number }[] = [];
   // Punkte + Jahreszeiten-Symbole sind Hindernisse für Beschriftungen.
-  for (const x of shown) {
+  // Jahreszeiten-Symbole nur, wo sie frei stehen (dichte Gruppen: in der Infokarte beim Überfahren).
+  type R = { x0: number; y0: number; x1: number; y1: number };
+  const hit = (r: R, q: R) => r.x0 < q.x1 && r.x1 > q.x0 && r.y0 < q.y1 && r.y1 > q.y0;
+  const dots: R[] = shown.map((x) => { const p = px(x.d); return { x0: p.x - 7, x1: p.x + 7, y0: p.y - 7, y1: p.y + 7 }; });
+  const glyphs: R[] = [];
+  const glyphOn = new Set<string>();
+  for (const x of order) {
     const p = px(x.d);
-    placed.push({ x0: p.x - 7, x1: p.x + 7, y0: p.y - 7, y1: p.y + 7 }, { x0: p.x - 14, x1: p.x + 14, y0: p.y - 23, y1: p.y - 10 });
+    const half = x.d.seasons.length > 1 ? 14 : 7;
+    const r = { x0: p.x - half, x1: p.x + half, y0: p.y - 23, y1: p.y - 9 };
+    if (x.d.id !== selected && (glyphs.some((q) => hit(r, q)) || dots.some((q) => hit(r, q)))) continue;
+    glyphs.push(r); glyphOn.add(x.d.id);
   }
+  placed.push(...dots, ...glyphs);
   const labels = new Map<string, { x: number; y: number; anchor: 'start' | 'end' }>();
   const fs = 13;
   const tryPlace = (p: { x: number; y: number }, text: string, fsz: number, gap: number) => {
@@ -217,9 +227,9 @@ export function CampMap({ dests, view, onView, selected, onSelect, obligation, s
                 <circle r={11} className="cp-pin-halo" />
                 {ob && <circle r={9} className="cp-pin-oblig" />}
                 <circle r={5.5} className="cp-pin-dot" />
-                <g className="cp-pin-seasons">
+                {glyphOn.has(x.d.id) && <g className="cp-pin-seasons">
                   {ss.map((s, i) => <SeasonGlyph key={s} s={s} x={ss.length === 1 ? 0 : i === 0 ? -7.5 : 7.5} y={-16} />)}
-                </g>
+                </g>}
               </g>
             );
           })}
