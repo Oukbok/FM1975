@@ -151,8 +151,8 @@ export const GROUP_OF: Record<Position, PosGroup> = {
   RM: 'RF', RA: 'RF', LM: 'LF', LA: 'LF', MS: 'ST', HS: 'ST',
 };
 export const GROUP_LABEL: Record<PosGroup, string> = {
-  TW: 'Tor', IV: 'Innenverteidigung', RV: 'Rechter Verteidiger', LV: 'Linker Verteidiger', ZM: 'Mittelfeld',
-  RF: 'Rechte Außenbahn', LF: 'Linke Außenbahn', ST: 'Sturm',
+  TW: 'Tor', IV: 'Innenverteidigung', RV: 'Abwehr rechts', LV: 'Abwehr links', ZM: 'Mittelfeld',
+  RF: 'Außenbahn rechts', LF: 'Außenbahn links', ST: 'Sturm',
 };
 /** Typische Position einer Gruppe (für Neuzugänge aus dem Ausland). */
 export const GROUP_POS: Record<PosGroup, Position[]> = {
