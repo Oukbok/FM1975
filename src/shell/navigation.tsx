@@ -90,12 +90,16 @@ export const MENU_STRUCTURE: MainCat[] = [
 ];
 
 /** Zweistufige Top-Navigation: Hauptkategorien + Unterpunkte der aktiven Kategorie. */
-export function TopNav({ screen, setScreen, dateLabel }: { screen: Screen; setScreen: (s: Screen) => void; dateLabel?: string }) {
+export function TopNav({ screen, setScreen, dateLabel, onBack }: { screen: Screen; setScreen: (s: Screen) => void; dateLabel?: string; onBack?: () => void }) {
   const matched = MENU_STRUCTURE.find((c) => c.dash === screen || c.subs.some((s) => s.screen === screen));
   const activeCat = matched ?? MENU_STRUCTURE[0];
   return (
     <nav className="top-nav sub-only">
       <div className="tn-sub">
+        {/* Zurück zur vorherigen Seite (bis zu 20); ausgegraut ohne Verlauf, z. B. nach Zeitlauf. */}
+        <button className="tn-back" disabled={!onBack} onClick={onBack} title={onBack ? 'Zurück zur vorherigen Seite' : 'Keine vorherige Seite'} aria-label="Zurück">
+          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg><span>Zurück</span>
+        </button>
         {activeCat.subs.map((s) => (
           <button key={s.screen} className={`tn-sub-item ${screen === s.screen ? 'active' : ''}`} onClick={() => setScreen(s.screen)}>
             <span>{s.label}</span>

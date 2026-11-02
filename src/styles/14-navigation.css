@@ -129,3 +129,12 @@
   .tn-main-item.active .tn-label { display: inline; }
   .tn-ico { width: 22px; height: 22px; }
 }
+
+/* Zurück-Knopf ganz links im Untermenü (shell/navigation.tsx TopNav) */
+.tn-back {
+  display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; margin-right: 18px; padding: 4px 10px;
+  border: 1px solid var(--border); border-radius: 4px; background: transparent; color: var(--text-2);
+  font-family: var(--font-display); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;
+}
+.tn-back:hover:not(:disabled) { color: var(--text); border-color: var(--text-3); }
+.tn-back:disabled { color: var(--text-4); border-color: var(--border-soft); cursor: default; }

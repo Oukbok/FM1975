@@ -91,7 +91,23 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   const [screen, setScreenRaw] = useState<Screen>('dashboard');
   // Chronik ist kein Menüpunkt mehr: 'chronicle' öffnet das große Fenster (Footer rechts).
   const [chronicleOpen, setChronicleOpen] = useState(false);
-  const setScreen = useCallback((s: Screen) => { if (s === 'chronicle') setChronicleOpen(true); else setScreenRaw(s); }, []);
+  // Verlauf für „Zurück“ (bis zu 20 Seiten); wird geleert, sobald Zeit vergeht (neuer Tag).
+  const [history, setHistory] = useState<Screen[]>([]);
+  const screenRef = useRef<Screen>('dashboard');
+  useEffect(() => { screenRef.current = screen; }, [screen]);
+  const setScreen = useCallback((s: Screen) => {
+    if (s === 'chronicle') { setChronicleOpen(true); return; }
+    const cur = screenRef.current;
+    if (s !== cur) setHistory((h) => [...h, cur].slice(-20));
+    setScreenRaw(s);
+  }, []);
+  const goBack = useCallback(() => {
+    setHistory((h) => {
+      if (!h.length) return h;
+      setScreenRaw(h[h.length - 1]);
+      return h.slice(0, -1);
+    });
+  }, []);
   // i-Hilfen: „Mehr im Wiki“ öffnet den Artikel (ui/InfoTip.tsx)
   const [wikiArticle, setWikiArticle] = useState<{ id: string; n: number } | null>(null);
   useEffect(() => setWikiOpener((id) => { setWikiArticle((w) => ({ id, n: (w?.n ?? 0) + 1 })); setScreen('wiki'); }), []);
@@ -188,6 +204,8 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
     return ok;
   }, [g, settings.autosave, settings.drawShow, doSave, myClub]);
 
+  useEffect(() => { setHistory([]); }, [g.calendar.currentDate]);
+
   useEffect(() => {
     if (!running) return;
     const id = setInterval(() => { processDay(); rerender(); }, g.calendar.speedMs);
@@ -281,7 +299,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
           <div className="hd-balance">
             <span className="hd-balance-ico"><Icon name="finances" /></span>
             <span className="hd-balance-lbl">Kontostand:</span>
-            <span className="hd-balance-val">{fmtDMfull(myClub.finances.balance)}</span>
+            <span className={`hd-balance-val ${myClub.finances.balance < 0 ? 'neg' : 'pos'}`}>{fmtDMfull(myClub.finances.balance)}</span>
           </div>
           <span className="hd-sep" aria-hidden="true" />
           <div className="hdr-menu" ref={menuRef}>
@@ -359,7 +377,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
       </header>
 
       {/* ---------------- UNTERMENÜ (Unterpunkte der aktiven Kategorie) ---------------- */}
-      <TopNav screen={screen} setScreen={setScreen} dateLabel={fmtDateFull(g.calendar.currentDate)} />
+      <TopNav screen={screen} setScreen={setScreen} dateLabel={fmtDateFull(g.calendar.currentDate)} onBack={history.length ? goBack : undefined} />
 
       {/* ---------------- HAUPTINHALT ---------------- */}
       <main className="app-main">

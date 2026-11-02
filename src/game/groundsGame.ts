@@ -123,7 +123,7 @@ function scanMatches(g: Game, today: string, year: number): void {
     const gr = home?.grounds;
     if (!gr || m.date <= (since.get(home.id) ?? today)) continue;
     const away = g.clubs[m.awayClubId];
-    const mine = home.id === g.managedClubId;
+    const mine = isMine(g, home); // im automatisch geführten Simulationslauf nicht als eigener Verein melden
     const derby = !!away && (home.city === away.city || sameRegion(home.city ?? '', away.city ?? '')
       || (mine && !!g.environment?.rivals.includes(away.id)));
     const mood = mine ? g.environment?.fanMood ?? 55 : 55;
@@ -153,12 +153,20 @@ function scanMatches(g: Game, today: string, year: number): void {
 function reportLog(g: Game, gr: ClubGrounds, today: string): void {
   const titles = { chaos: 'Anreise-Chaos am Stadion', incident: 'Ausschreitungen beim Heimspiel', police: 'Rechnung für den Polizeieinsatz', license: 'Lizenzauflage', info: 'Vereinsgelände' };
   const from = { chaos: 'Stadionbetrieb', incident: 'Sicherheitsbeauftragter', police: 'Finanzabteilung', license: 'DFB-Lizenzierung', info: 'Bauleitung' };
-  for (const e of gr.log) {
-    if (e.shown) continue;
-    e.shown = true;
-    const hint = e.kind === 'chaos' ? '\n\nMehr Parkplätze oder eine bessere ÖPNV-Anbindung entlasten die Anreise (Verein → Vereinsgelände).'
-      : e.kind === 'incident' ? '\n\nOrdnungsdienst, Fanprojekt und Fanräume senken das Risiko (Verein → Vereinsgelände).' : '';
-    msg(g, today, from[e.kind], titles[e.kind], e.text + hint, e.text);
+  const fresh = gr.log.filter((e) => !e.shown);
+  for (const e of fresh) e.shown = true;
+  // Ältere, nie gemeldete Einträge (z. B. aus einem automatisch geführten Abschnitt) nicht nachträglich einzeln melden.
+  const recent = fresh.filter((e) => e.date >= addDays(today, -14));
+  const byKind = new Map<string, typeof recent>();
+  for (const e of recent) byKind.set(e.kind, [...(byKind.get(e.kind) ?? []), e]);
+  for (const [kind, list] of byKind) {
+    const k = kind as keyof typeof titles;
+    const hint = k === 'chaos' ? '\n\nMehr Parkplätze oder eine bessere ÖPNV-Anbindung entlasten die Anreise (Verein → Vereinsgelände).'
+      : k === 'incident' ? '\n\nOrdnungsdienst, Fanprojekt und Fanräume senken das Risiko (Verein → Vereinsgelände).' : '';
+    if (list.length === 1) { msg(g, list[0].date, from[k], titles[k], list[0].text + hint, list[0].text); continue; }
+    // Mehrere gleiche Meldungen: eine Sammelmeldung statt vieler identischer Betreffzeilen.
+    const lines = [...list].reverse().map((e) => `• ${e.date.slice(8, 10)}.${e.date.slice(5, 7)}.: ${e.text}`).join('\n');
+    msg(g, today, from[k], `${titles[k]} (${list.length}×)`, lines + hint, `${list.length} Vorfälle in den letzten Tagen`);
   }
 }
 

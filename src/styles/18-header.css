@@ -148,3 +148,7 @@
   .hd-bar { gap: 12px; }
   .hd-nav { display: none; }
 }
+
+/* Kontostand: grün bei Guthaben, rot im Minus (Wunsch Pascal) */
+.hd-balance-val.pos { color: var(--pos, var(--green)); }
+.hd-balance-val.neg { color: var(--neg, var(--red)); }
