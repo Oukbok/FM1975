@@ -79,7 +79,7 @@ Deutsche Retro-Fußballmanager-Simulation. Der Spielstand startet in der **Saiso
 - Die Umstellung erfolgt ausschließlich über den Chronik-Meilenstein „3-Punkte-Regel" beim Erreichen der Saison **1995/96** — das wirkt **real auf die Tabellenberechnung**.
 
 ## Chronik & Epochen
-- Historische Meilensteine (Rückpassregel, Meisterliga, Bosman, FFP, Torlinientechnik, VAR …) werden zur jeweiligen Saison ausgelöst — siehe Bereich **Chronik** ().`,
+- Historische Meilensteine (Rückpassregel, Meisterliga, Bosman, FFP, Torlinientechnik, VAR …) werden zur jeweiligen Saison ausgelöst — siehe **Chronik des deutschen Fußballs** (Link unten rechts in der Fußleiste; öffnet ein großes Fenster mit Suche, Sprung zur aktuellen Saison und Jahrzehnten).`,
   },
   {
     id: 'core-datetime',
@@ -1903,7 +1903,7 @@ Vor dem Briefing läuft ein kurzer Auftakt (etwa 6 Sekunden): Mittelkreis und Mi
 Unter **Zentrale → Briefing** findest du die Briefings aller Saisons dieses Spiels; „Briefing öffnen“ zeigt dasselbe Fenster ohne Auftakt. Alte Spielstände führen das Archiv ab der Saison, in der sie zuerst geladen werden.
 
 ## Vorschau und Chronik
-Am **2. Januar** kündigt der Verband an, was ab der nächsten Saison gilt. Die Einzelmeldungen der Chronik zum Saisonstart sind im Briefing zusammengefasst; alle Meilensteine stehen weiter unter **Statistiken → Chronik**.`,
+Am **2. Januar** kündigt der Verband an, was ab der nächsten Saison gilt. Die Einzelmeldungen der Chronik zum Saisonstart sind im Briefing zusammengefasst; alle Meilensteine stehen weiter in der **Chronik des deutschen Fußballs** (unten rechts in der Fußleiste).`,
   },
   {
     id: 'chronicle-hall-of-fame',
