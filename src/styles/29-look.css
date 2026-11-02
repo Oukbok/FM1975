@@ -37,10 +37,9 @@ body { font-variant-numeric: tabular-nums; }
 /* ---- Tabellen --------------------------------------------------------------- */
 .dtable thead th { color: var(--text-3); font-weight: 600; letter-spacing: 0.8px; }
 .dtable th.sorted { color: var(--text); box-shadow: inset 0 -2px 0 var(--accent); }
-.dtable tbody tr:hover, .dlist-row.clickable:hover { background: rgba(255, 255, 255, 0.035); }
-.dtable tbody tr.me td { color: var(--text); font-weight: 700; }
-tr.me { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
-tr.me:hover { background: rgba(242, 165, 65, 0.14); }
+.dlist-row.clickable:hover { background: rgba(255, 255, 255, 0.035); }
+tr.me { background: rgba(255, 255, 255, 0.04); box-shadow: inset 4px 0 0 var(--accent); } /* wie Paarungsliste, 28-rows.css */
+tr.me:hover { background: rgba(255, 255, 255, 0.06); }
 
 /* Positionskürzel: schlichtes Etikett statt Kachel */
 .pos-badge {
@@ -83,8 +82,8 @@ tr.me:hover { background: rgba(242, 165, 65, 0.14); }
 .cnw-subj { color: var(--text-2); font-weight: 600; }
 .cnw-row.is-unread .cnw-subj { color: var(--text); font-weight: 700; }
 .cnw-row.is-unread { box-shadow: inset 2px 0 0 var(--accent); }
-.dxt-row.me td.dxt-club { color: var(--text); font-weight: 700; }
-.dxt-row.me { box-shadow: inset 3px 0 0 var(--accent); }
+.dxt-row.me td.dxt-club { color: var(--accent); font-weight: 700; } /* wie Paarungsliste (28-rows.css) */
+.dxt-row.me { box-shadow: inset 4px 0 0 var(--accent); }
 .dxt-row:hover td.dxt-club { color: var(--text); }
 .cns-cmp-v { color: var(--text-3); font-weight: 700; }
 .cns-cmp-v.better { color: var(--text); }

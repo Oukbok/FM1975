@@ -59,7 +59,7 @@ export function StatsBox({ g, snap, playerCard }: {
                       <div key={r.pid} className={`cmp-stat ${clickable ? 'clickable' : ''} ${r.clubId === g.managedClubId ? 'me' : ''}`} onClick={() => clickable && setSel(r.pid)} title={clickable ? 'Spielerprofil öffnen' : undefined}>
                         <span className="cmp-rank">{rank}</span>
                         <span className="cmp-pname">{r.name}</span>
-                        <span className="cmp-pclub">{r.clubId && <TeamName g={g} id={r.clubId} season={snap!.season} size={14} />}</span>
+                        <span className="cmp-pclub">{r.clubId && <TeamName g={g} id={r.clubId} season={snap!.season} size={16} />}</span>
                         <span className="cmp-val" title={`${r.apps} Spiele`}>{r.value}</span>
                       </div>
                     );
@@ -86,7 +86,7 @@ export function StatsBox({ g, snap, playerCard }: {
                 {list.map((r, i) => (
                   <div key={r.clubId} className={`cmp-stat club ${r.clubId === g.managedClubId ? 'me' : ''}`}>
                     <span className="cmp-rank">{i > 0 && list[i - 1].value === r.value ? '' : `${i + 1}.`}</span>
-                    <span className="cmp-pname"><TeamName g={g} id={r.clubId} season={snap!.season} size={14} /></span>
+                    <span className="cmp-pname"><TeamName g={g} id={r.clubId} season={snap!.season} size={18} /></span>
                     <span className="cmp-val">{r.value}</span>
                   </div>
                 ))}
@@ -106,7 +106,7 @@ export function StatsBox({ g, snap, playerCard }: {
             {HISTORIC_SEASONS.map((s) => ({ s, f: historicFinal(s, snap.key as 'cup') })).filter((x) => x.f).reverse().map(({ s, f }) => (
               <div key={s} className={`cmp-stat club ${s === snap.season ? 'me' : ''}`}>
                 <span className="cmp-rank">{s.slice(2)}</span>
-                <span className="cmp-pname"><TeamName g={g} id={f!.winner} season={s} size={14} /></span>
+                <span className="cmp-pname"><TeamName g={g} id={f!.winner} season={s} size={18} /></span>
                 <span className="cmp-val">{f!.score.split(' ')[0].replace(',', '')}</span>
               </div>
             ))}

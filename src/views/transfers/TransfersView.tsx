@@ -62,7 +62,7 @@ function TalkButton({ g, p, onTalk }: { g: Game; p: Player; onTalk: (id: string)
 function MarketTable({ g, list, onOpen, action }: { g: Game; list: Player[]; onOpen: (id: string) => void; action?: (p: Player) => React.ReactNode }) {
   const today = g.calendar.currentDate;
   return (
-    <table className="dtable">
+    <table className="dtable rl-players">
       <thead><tr>
         <th>Name</th><th>Verein</th><th className="ctr">Pos</th><th className="num">Alter</th><th className="num">Stärke</th>
         <th>Potenzial<InfoTip k="potenzial" /></th><th className="num">Vertrag</th><th className="num">{wageHead()}</th><th className="num">Wert<InfoTip k="marktwert" /></th>{action && <th />}
@@ -72,15 +72,15 @@ function MarketTable({ g, list, onOpen, action }: { g: Game; list: Player[]; onO
           const c = g.clubs[p.clubId];
           return (
             <tr key={p.id} className="clickable" onClick={() => onOpen(p.id)}>
-              <td className="nowrap" style={{ fontWeight: 700 }}>{p.fullName}</td>
-              <td className="nowrap"><ClubLink id={p.clubId}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>{c && <ClubCrest club={c} size={20} />}{c?.shortName}</span></ClubLink></td>
+              <td className="nowrap rl-name">{p.fullName}</td>
+              <td className="nowrap"><ClubLink id={p.clubId}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>{c && <ClubCrest club={c} size={24} />}{c?.shortName}</span></ClubLink></td>
               <td className="ctr"><span className="pos-badge">{p.naturalPosition}</span></td>
               <td className="num">{p.age}</td>
               <td className="num"><b style={{ color: vColor(p.overall) }}>{p.overall}</b></td>
               <td className="nowrap"><ScoutStars p={p} /></td>
               <td className="num muted">{monthsUntil(today, p.contract.expiryDate)} M.</td>
               <td className="num">{fmtWage(p.contract.weeklyWage, { unit: false })}</td>
-              <td className="num" style={{ color: 'var(--accent)' }}>{fmtPrice(p.contract.transferValue)}</td>
+              <td className="num">{fmtPrice(p.contract.transferValue)}</td>
               {action && <td className="num" onClick={(e) => e.stopPropagation()}>{action(p)}</td>}
             </tr>
           );

@@ -54,9 +54,9 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
           <button className={`dchip ${grp === 'all' ? 'on' : ''}`} onClick={() => setGrp('all')}>Alle</button>
           {GROUP_ORDER.map((k) => <button key={k} className={`dchip ${grp === k ? 'on' : ''}`} onClick={() => setGrp(k)}>{GROUP_DE[k]}</button>)}
         </span>}>
-        <table className="dtable">
+        <table className="dtable rl-players">
           <thead><tr>
-            <th className="ctr">#</th><th>Name</th><Th k="pos" cls="ctr">Pos</Th><Th k="age" cls="num">Alter</Th>
+            <th className="rl-rank">#</th><th>Name</th><Th k="pos" cls="ctr">Pos</Th><Th k="age" cls="num">Alter</Th>
             <Th k="ovr" cls="num">Stärke</Th><Th k="pot">Potenzial<InfoTip k="potenzial" /></Th><Th k="form" cls="ctr">Form</Th>
             <Th k="fri" cls="ctr">Frische<InfoTip k="frische" /></Th><Th k="fit" cls="ctr">Fitness<InfoTip k="fitness" /></Th><Th k="mor" cls="ctr">Moral</Th>
             <Th k="apps" cls="num">Sp.</Th><Th k="goals" cls="num">Tore</Th><th>Status</th>
@@ -65,8 +65,8 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
             {squad.map((pl) => {
               return (
                 <tr key={pl.id} className="clickable" onClick={() => setSel(pl.id)}>
-                  <td className="ctr muted">{pl.shirtNumber}</td>
-                  <td className="nowrap" style={{ fontWeight: 700 }}>{pl.fullName}</td>
+                  <td className="rl-rank">{pl.shirtNumber}</td>
+                  <td className="nowrap rl-name">{pl.fullName}</td>
                   <td className="ctr"><span className="pos-badge">{pl.naturalPosition}</span></td>
                   <td className="num">{pl.age}</td>
                   <td className="num"><b style={{ color: vColor(pl.overall) }}>{pl.overall}</b></td>

@@ -109,13 +109,13 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
       <DashBox title={phase === 'masters' ? 'Tour-Wertung' : 'Turniersieger'} icon="stats" flush>
         {phase === 'masters' ? (tour.length ? (
           <table className="dtable">
-            <thead><tr><th className="num">#</th><th>Verein</th><th className="num">T</th><th className="num">Sp</th><th className="num">Pkt</th><th className="num">Ø</th></tr></thead>
+            <thead><tr><th className="rl-rank">#</th><th>Verein</th><th className="num">T</th><th className="num">Sp</th><th className="num">Pkt</th><th className="num">Ø</th></tr></thead>
             <tbody>
               {tour.slice(0, 30).map((s, i) => (
                 <tr key={s.id} className={s.id === mid ? 'me' : ''}>
-                  <td className="num">{i < MASTERS_TEAMS ? <b>{i + 1}</b> : i + 1}</td>
-                  <td className="nowrap"><ClubLink id={s.id}>{indoorShort(g, s.id)}</ClubLink>{cur?.mastersDeclined?.includes(s.id) ? <span className="muted"> (verzichtet)</span> : ''}</td>
-                  <td className="num">{s.tournaments}</td><td className="num">{s.games}</td><td className="num">{s.pts}</td>
+                  <td className="rl-rank"><span className={`rl-z ${i < MASTERS_TEAMS ? 'zone-cl' : ''}`}>{i + 1}</span></td>
+                  <td className="nowrap"><ClubLink id={s.id}><span className="rl-name">{indoorShort(g, s.id)}</span></ClubLink>{cur?.mastersDeclined?.includes(s.id) ? <span className="muted"> (verzichtet)</span> : ''}</td>
+                  <td className="num">{s.tournaments}</td><td className="num">{s.games}</td><td className="num rl-main">{s.pts}</td>
                   <td className="num">{(s.pts / s.games).toFixed(2)}</td>
                 </tr>
               ))}

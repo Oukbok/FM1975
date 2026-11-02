@@ -1,0 +1,141 @@
+/* =============================================================================
+   LISTENSTIL „PAARUNGEN“ (Wunsch Pascal) – Vorbild: Paarungsliste der Pokalauslosung
+   (.dr-prow in 28-draw.css). Gilt für alle Tabellen (.dtable) und Listen mit Vereinen
+   oder Spielern: großzügige Zeilen mit dezenter Trennlinie, laufende Nummer grau links,
+   Wappen ~28 px, Name 18 px Barlow in --text, Zahlen rechtsbündig + tabellarisch,
+   Hauptwert (Punkte …) in Oswald. Eigener Verein: Name Bernstein + feiner Bernstein-Strich
+   links + leicht hellere Zeile. Kleine Boxen: .rl-sm (gleicher Stil, etwas kleiner).
+   Bausteine: .rl (Liste) / .rl-row (Zeile) / .rl-rank / .rl-club / .rl-name / .rl-num /
+   .rl-main / .rl-dim / .me; Tabellen: .dtable (Standard) + Zellklassen .rl-rank/.rl-main.
+   ============================================================================= */
+:root {
+  --rl-fs: 18px;          /* Name/Werte – wie die Paarungsliste */
+  --rl-py: 8px;           /* Zeilen-Innenabstand oben/unten */
+  --rl-px: 14px;          /* links/rechts (erste/letzte Zelle) */
+  --rl-crest: 28px;       /* Wappengröße in Vereinslisten */
+  --rl-me-bg: rgba(255, 255, 255, 0.04);
+  --rl-hover: rgba(255, 255, 255, 0.03);
+}
+
+/* ---- Listen ---------------------------------------------------------------- */
+.rl { display: flex; flex-direction: column; }
+.rl-row {
+  display: grid; align-items: center; gap: 10px; min-height: 46px;
+  padding: var(--rl-py) var(--rl-px); font-size: var(--rl-fs); color: var(--text);
+  border-bottom: 1px solid var(--border-soft); font-variant-numeric: tabular-nums;
+}
+.rl-row:last-child { border-bottom: none; }
+.rl-row.clickable { cursor: pointer; }
+.rl-row.clickable:hover { background: var(--rl-hover); }
+
+/* ---- Zellen (Listen und Tabellen) ----------------------------------------- */
+.rl-rank { color: var(--text-3); font-weight: 700; font-variant-numeric: tabular-nums; }
+.rl-club { display: inline-flex; align-items: center; gap: 10px; min-width: 0; max-width: 100%; }
+.rl-club > span, .rl-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.rl-name { color: var(--text); }
+.rl-num { text-align: right; font-variant-numeric: tabular-nums; }
+.rl-main { font-family: var(--font-display); font-weight: 600; font-size: calc(var(--rl-fs) + 2px); color: var(--text); letter-spacing: 0.2px; }
+.rl-dim { color: var(--text-3); }
+.rl-dash { color: var(--text-3); text-align: center; }
+
+/* Eigener Verein / eigener Spieler */
+.rl-row.me, .rl-row.mine { background: var(--rl-me-bg); box-shadow: inset 4px 0 0 var(--accent); }
+.rl-row.me .rl-name, .rl-row.mine .rl-name,
+.rl-row.me .rl-club > span, .rl-row .rl-club.me > span,
+.rl-row.me .cmp-team-name, .rl-row.mine .cmp-team-name { color: var(--accent); font-weight: 700; }
+
+/* Kleinere Boxen: gleicher Stil, etwas kleiner */
+.rl-sm { --rl-fs: 16px; --rl-py: 6px; --rl-px: 10px; --rl-crest: 22px; }
+.rl-sm .rl-row, .rl-row.rl-sm { min-height: 38px; }
+
+/* ---- Tabellen: .dtable bekommt den Listenstil ------------------------------ */
+.dtable { font-size: var(--rl-fs); color: var(--text); }
+.dtable thead th { font-size: 12.5px; padding: 8px 10px; }
+.dtable td { padding: var(--rl-py) 10px; border-bottom: 1px solid var(--border-soft); height: 46px; }
+.dtable td:first-child, .dtable th:first-child { padding-left: var(--rl-px); }
+.dtable td:last-child, .dtable th:last-child { padding-right: var(--rl-px); }
+.dtable tbody tr:last-child td { border-bottom: none; }
+.dtable tbody tr:hover { background: var(--rl-hover); }
+.dtable td.rl-rank, .dtable th.rl-rank { width: 44px; text-align: left; }
+.dtable td.rl-rank, .dtable tbody tr.me td.rl-rank { color: var(--text-3); font-weight: 700; }
+.dtable td.rl-main { font-size: calc(var(--rl-fs) + 2px); }
+.dtable td.rl-name { font-weight: 600; }
+.dtable .muted { color: var(--text-3); }
+.dtable tbody tr.me, .dtable tbody tr.mine { background: var(--rl-me-bg); box-shadow: inset 4px 0 0 var(--accent); }
+.dtable tbody tr.me:hover { background: rgba(255, 255, 255, 0.06); }
+.dtable tbody tr.me .rl-name, .dtable tbody tr.me .cmp-team-name { color: var(--accent); font-weight: 700; }
+.dtable.rl-sm td { height: 38px; }
+/* Spielerlisten ohne Wappen: etwas flacher, gleicher Charakter */
+.dtable.rl-players td { height: 40px; }
+
+/* Platz mit Tabellenzone: Farbkante links an der Nummer */
+.rl-z { display: inline-block; min-width: 26px; padding-left: 8px; line-height: 22px; }
+.rl-z.zone-cl, .rl-z.zone-eu, .rl-z.zone-rel { background: transparent; color: var(--text-3); }
+.rl-z.zone-cl { box-shadow: inset 3px 0 0 var(--green); }
+.rl-z.zone-eu { box-shadow: inset 3px 0 0 var(--text-2); }
+.rl-z.zone-rel { box-shadow: inset 3px 0 0 var(--red); }
+.rl-z.zone-po { box-shadow: inset 3px 0 0 color-mix(in srgb, var(--pos) 45%, transparent); }
+
+/* ---- Paarungen/Ergebnisse (Pokalrunden, Gruppenspiele, Spielplan) ----------- */
+.rl-tie { grid-template-columns: 34px minmax(0, 1fr) 160px minmax(0, 1fr); }
+.rl-sm .rl-tie, .rl-tie.rl-sm { grid-template-columns: 26px minmax(0, 1fr) 64px minmax(0, 1fr); }
+.rl-side { min-width: 0; display: flex; }
+.rl-side.lost .cmp-team-name { color: var(--text-2); }
+.rl-side.won .cmp-team-name { font-weight: 600; }
+.rl-tie .cmp-res { min-width: 0; text-align: center; }
+.rl-tie .cmp-res .rl-meta { text-align: center; white-space: normal; }
+.rl-tie .cmp-res b { font-family: var(--font-display); font-weight: 600; font-size: calc(var(--rl-fs) + 2px); }
+.rl-meta { font-size: calc(var(--rl-fs) - 3px); white-space: nowrap; text-align: right; }
+.cmp-md.rl { gap: 0; }
+.cmp-md.rl .cmp-md-head { padding: 6px var(--rl-px) 6px; }
+
+/* ---- Bestenlisten (Statistiken › Liga/Pokal, Jugendwettbewerbe): .rl-sm-Maße ---- */
+.cmp-statlist .cmp-stat, .cmp-statbox .cmp-stat {
+  grid-template-columns: 30px minmax(0, 1.25fr) minmax(0, 1fr) 34px; gap: 10px;
+  min-height: 38px; padding: 6px 10px; font-size: 16px; border-bottom: 1px solid var(--border-soft);
+}
+.cmp-statlist .cmp-stat.club, .cmp-statbox .cmp-stat.club { grid-template-columns: 30px minmax(0, 1fr) 40px; }
+.cmp-statlist .cmp-stat:last-child { border-bottom: none; }
+.cmp-stat .cmp-rank { color: var(--text-3); font-weight: 700; text-align: left; }
+.cmp-stat .cmp-pname { color: var(--text); }
+.cmp-statlist .cmp-stat .cmp-pclub, .cmp-statbox .cmp-stat .cmp-pclub { font-size: 14px; color: var(--text-3); }
+.cmp-stat .cmp-pclub .cmp-team-name { color: var(--text-3); }
+.cmp-statlist .cmp-stat .cmp-val, .cmp-statbox .cmp-stat .cmp-val { font-family: var(--font-display); font-weight: 600; font-size: 18px; color: var(--text); }
+.cmp-stat.clickable:hover { background: var(--rl-hover); }
+.cmp-stat.me { background: var(--rl-me-bg); box-shadow: inset 4px 0 0 var(--accent); }
+.cmp-stat.me .cmp-pname, .cmp-stat.me .cmp-pname .cmp-team-name { color: var(--accent); font-weight: 700; }
+
+/* ---- Gruppen-/Ligaphasen-Tabellen (components/competition/GroupTables) ----- */
+.gt-head { padding: 8px 14px; }
+.gt-row { min-height: 44px; padding: 7px 14px; font-size: 17px; gap: 10px; }
+.gt-club { gap: 10px; }
+.gt-pos { color: var(--text-3); font-weight: 700; text-align: left; }
+.gt-pts { font-family: var(--font-display); font-weight: 600; font-size: 19px; color: var(--text); }
+.gt-row.me { background: var(--rl-me-bg); }
+.gt-row.out .gt-club span { color: var(--text-2); }
+.gt-row.me .gt-club span { color: var(--accent); font-weight: 700; }
+
+/* ---- Zentrale: Tabellen-Box (.dxt) – nur Stil, Zeilenhöhen/Boxhöhe unverändert ---- */
+.dxt-row td.dxt-club { font-weight: 500; }
+.dxt-row td.dxt-pos { font-size: 18px; }
+.dxt-row td.dxt-pkt { font-family: var(--font-display); font-weight: 600; font-size: 21px; }
+.dxt-row.me { background: var(--rl-me-bg); }
+.dxt-row.me:hover td { background: rgba(255, 255, 255, 0.06); }
+.dxt-row:hover td { background: var(--rl-hover); }
+.dxt-row:hover td.dxt-club { color: var(--text); }
+.dxt-row.me:hover td.dxt-club { color: var(--accent); }
+.dxt-row td.dxt-club > svg, .dxt-row td.dxt-club > img { width: 20px; height: 20px; }
+
+/* ---- Aufstellung: Kaderliste (components/lineup/SquadList) – .rl-sm-Maße ---- */
+.lu-table { font-size: 16px; }
+.lu-row td { padding: 5px 6px; }
+.lu-row:hover td { background: var(--rl-hover); }
+.lu-row td.lu-c-nr { color: var(--text-3); font-weight: 700; }
+.lu-name { font-weight: 500; color: var(--text); }
+.lu-strong { font-family: var(--font-display); font-weight: 600; font-size: 17px; }
+
+/* ---- Trainerteam › Arbeitsmarkt (.tt-table, viele Spalten): etwas größer, gleicher Charakter ---- */
+.tt-table { font-size: 15px; }
+.tt-table td { padding: 7px 6px; }
+.tt-table tbody tr:hover { background: var(--rl-hover); }
+.tt-table tr.sel { background: var(--rl-me-bg); box-shadow: inset 4px 0 0 var(--accent); }

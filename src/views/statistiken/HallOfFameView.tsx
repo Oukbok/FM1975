@@ -39,7 +39,7 @@ export function HallOfFameView({ g }: { g: Game }) {
     <DashPage>
       <DashBox title="Größte Karrieren" icon="trophy" span={2} rows={2} flush right={`${all.length} archiviert`}>
         {byPeak.length ? (
-          <table className="dtable">
+          <table className="dtable rl-players">
             <thead><tr>
               <th>Spieler</th><th className="ctr">Pos</th><th className="num">Jahre</th><th className="num">Spitze</th>
               <th className="num">Einsätze</th><th className="num">Tore</th><th>Stationen</th>
@@ -47,7 +47,7 @@ export function HallOfFameView({ g }: { g: Game }) {
             <tbody>
               {byPeak.map((a) => (
                 <tr key={a.id}>
-                  <td className="nowrap" style={{ fontWeight: 700 }}>{a.name}</td>
+                  <td className="nowrap rl-name">{a.name}</td>
                   <td className="ctr"><span className="pos-badge">{a.pos}</span></td>
                   <td className="num nowrap">{a.born}–{a.retired}</td>
                   <td className="num" style={{ color: vColor(a.peak), fontWeight: 800 }}>{a.peak}</td>

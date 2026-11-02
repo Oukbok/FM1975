@@ -48,7 +48,7 @@ export function GroupTables({ groups, club, zones, highlightId, wide, extraAdvan
                 return (
                   <div key={r.id} className={`gt-row ${zone(i, r.id)} ${r.id === highlightId ? 'me' : ''}`}>
                     <span className="gt-pos">{i + 1}</span>
-                    <ClubLink id={r.id}><span className="gt-club"><ClubCrest club={c.crest} size={18} /><span>{c.name}</span></span></ClubLink>
+                    <ClubLink id={r.id}><span className="gt-club"><ClubCrest club={c.crest} size={24} /><span>{c.name}</span></span></ClubLink>
                     <span className="gt-num">{r.played}</span>
                     {wide && <><span className="gt-num">{r.won}</span><span className="gt-num">{r.drawn}</span><span className="gt-num">{r.lost}</span></>}
                     <span className="gt-num">{r.gf}:{r.ga}</span>

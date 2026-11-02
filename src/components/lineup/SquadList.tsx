@@ -65,7 +65,7 @@ export default function SquadList({ xi, bench, reserve, benchSize, captainId, ho
       <tr key={p.id} className={`lu-row ${hover === drop ? 'over' : ''} ${dragId === p.id ? 'dragging' : ''} ${isOut(p) ? 'out' : ''}`}
         data-lu-drop={drop} data-pid={p.id} onPointerDown={(e) => onDown(e, p)}>
         <td className="lu-c-pos"><span className={r.pos ? 'lu-pos' : 'lu-pos dim'}>{r.pos ?? p.naturalPosition}</span></td>
-        <td className="lu-c-num">{p.shirtNumber ?? ''}</td>
+        <td className="lu-c-num lu-c-nr">{p.shirtNumber ?? ''}</td>
         <td className="lu-c-name">
           <span className="lu-name">{p.fullName}</span>
           {captainId === p.id && <span className="lu-cap" title="Kapitän">K</span>}
