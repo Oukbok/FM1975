@@ -49,8 +49,8 @@ interface Weights {
 }
 
 const WEIGHTS: Record<Exclude<HistoryMode, 'off'>, Weights> = {
-  medium: { rep: 0.12, brand: 0.06, money: 0.5, sim: 0.2, simK: 30, world: 0.25 },
-  strong: { rep: 0.35, brand: 0.15, money: 1.4, sim: 0.5, simK: 45, world: 0.6 },
+  medium: { rep: 0.08, brand: 0.05, money: 0.3, sim: 0.2, simK: 30, world: 0.25 },
+  strong: { rep: 0.4, brand: 0.15, money: 1.8, sim: 0.5, simK: 55, world: 0.6 },
 };
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -108,7 +108,9 @@ export function historicMoney(g: Game, year: number, date: string): void {
     if (c.id === g.managedClubId) continue;
     const f = germanFactor(c.id, year);
     if (f == null || Math.abs(f - 1) < 0.02) continue;
-    const share = (f - 1) * w.money * (f < 1 ? 0.5 : 1);
+    // Unter 1 halb so stark (Altlasten); ganz oben (ab 1,3) überproportional: Die Weltspitze
+    // setzt sich auch finanziell von den übrigen Großklubs ab (Deloitte: Bayern ≈ 2× Dortmund).
+    const share = (f - 1) * w.money * (f < 1 ? 0.5 : 1 + Math.max(0, f - 1.3) * 4);
     const amount = Math.round(medRev * share);
     if (!amount) continue;
     book(c.finances, date, amount, 'other', amount > 0 ? 'Umfeld: Gönner und Vermarktung' : 'Umfeld: Altlasten', false);
@@ -165,6 +167,24 @@ export function historicWorld(g: Game, world: WorldState, euroClubs: Record<stri
     m.size = clamp(m.size + (t - m.size) * w.world * 0.6, 0, 1);
     // Großklubs: magere Jahre des Generationen-Zyklus abfedern (Geld kauft über Täler hinweg).
     if (f >= 1.15 && m.cycle < 0) m.cycle *= 1 - w.world * 0.6;
+  }
+}
+
+/**
+ * Auslandsvereine nach der Saison-Rechnung (nach advanceWorldSeason): Stärke um einen
+ * kleinen Betrag Richtung Kurve verschieben. Weil engine/world.ts die Stärke jede Saison
+ * zu 40 % zur Zielstärke zieht, pendelt sich der Vorsprung bei etwa dem 2,5-Fachen ein
+ * (Stark: Faktor 1,4 ≈ +5 Punkte, Mittel ≈ +2).
+ */
+export function historicWorldAfter(g: Game, world: WorldState, euroClubs: Record<string, EuroClub>, year: number): void {
+  const w = weightsOf(g);
+  if (!w) return;
+  for (const id of Object.keys(world.meta)) {
+    const ec = euroClubs[id];
+    if (!ec || id === g.managedClubId) continue;
+    const f = foreignFactor(ec.country, ec.name, year);
+    if (f == null || Math.abs(f - 1) < 0.05) continue;
+    ec.strength = Math.round(clamp(ec.strength + (f - 1) * 8 * w.world, 40, 92));
   }
 }
 

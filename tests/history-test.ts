@@ -126,6 +126,6 @@ function play(g: Game, seasons: number) {
   const same = !!st.clubs.muc === !!off.clubs.muc;
   console.log(`     Liga: Aus ${off.leagues.playerDivision.tier}, Stark ${st.leagues.playerDivision.tier}`);
   if (same && !(rep(st, 'muc') > rep(off, 'muc'))) fail(`München Rot: Stark ${rep(st, 'muc')} nicht über Aus ${rep(off, 'muc')}`);
-    ok(`2 Saisons Stark: München Rot Ruf ${rep(st, 'muc')} (Aus ${rep(off, 'muc')}), Offenbach ${rep(st, 'off') || '-'} (Aus ${rep(off, 'off') || '-'})`);
+    ok(`2 Saisons Stark: München Rot Ruf/Sim-Stärke ${rep(st, 'muc')} (Aus ${rep(off, 'muc')}), Offenbach ${rep(st, 'off') || '-'} (Aus ${rep(off, 'off') || '-'})`);
 }
 console.log('Alle Prüfungen bestanden.');

@@ -5,7 +5,7 @@ import { refreshOverall } from '../engine/development';
 import { manageSquads } from './squads';
 import { aiSeasonEnd } from './aiClubs';
 import { closeFinancialSeason, openFinancialSeason } from './seasonFinance';
-import { historicMoney, historicSeasonClose, historicSimClubs, historicWorld } from './historicSteer';
+import { historicMoney, historicSeasonClose, historicSimClubs, historicWorld, historicWorldAfter } from './historicSteer';
 import { applyForcedRelegation } from './clubBusiness';
 import { staffSeasonChange } from './staffGame';
 import { youthPoachingAtSeasonChange } from './youthMarket';
@@ -381,6 +381,7 @@ export function startNextSeason(g: Game): void {
     g.world, euroClubs, oldSeason, nextStartYear, g.pointSystem === '3-point' ? 3 : 2,
     g.euroCups as any, (id) => !!g.clubs[id] || !!g.simClubs?.[id],
   );
+  historicWorldAfter(g, g.world, euroClubs, nextStartYear);
   for (const note of worldRes.notes) {
     pushMessage(g.messages, makeMessage({
       date: calendar.currentDate, category: 'milestone', from: 'Fußball-Chronik',
