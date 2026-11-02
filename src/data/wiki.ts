@@ -373,9 +373,12 @@ Goldene Sterne (1.0–5.0 in 0.25-Schritten) zeigen das maximale Niveau (Softcap
     id: 'condition-form',
     category: 'condition',
     title: 'Form-System',
-    keywords: ['form', 'leistung', 'note', 'trend', 'pfeil', 'krise', 'bestform'],
+    keywords: ['form', 'leistung', 'note', 'trend', 'pfeil', 'krise', 'bestform', 'system', 'daumen'],
     body: `## Was ist Form?
-Form ist die **kurzfristige Verfassung** eines Spielers auf einer Skala von **0–100**. Sie verändert sich abhängig davon, wie ein Spieler zuletzt performt hat.
+Form zeigt, **wie gut ein Spieler im System zurechtkommt** – Skala **0–100**, 50 = Durchschnitt. Wer in der Mannschaft gut funktioniert (gute Noten, Siege, sinnvolles Training), steigt; wer sich schwertut, fällt. Ausschläge sind flüchtig.
+
+## Wirkung im Spiel
+Form wirkt bewusst **gering**: Sie geht als Faktor in die Tagesstärke ein – Form 100 bringt **+2,5 %**, Form 0 **−2,5 %** Positionsstärke (\`formFactor\` in \`engine/match/team.ts\`). Ein Spieler in Topform spielt also leicht besser, mehr nicht.
 
 ## Wie ändert sich Form?
 Nach jedem Spiel wird die Form der eingesetzten Spieler neu berechnet aus:
@@ -388,14 +391,14 @@ Nicht eingesetzte Spieler driften nur langsam Richtung 50.
 Training kann die Form leicht heben; Überlastung (hohe Intensität bei niedriger Fitness) senkt sie.
 
 ## Anzeige (Daumen-Symbol)
-In Kader, Aufstellung und Spielerprofil zeigt ein **Daumen** die Form: nach oben = gut, waagerecht = normal, nach unten = schlecht. Fahre mit der Maus darüber, um den genauen Wert zu sehen (z. B. „Form 62/100 – gute Form“).
-| Form | Daumen | Farbe | Wort |
-|------|--------|-------|------|
-| ≥ 68 | nach oben | Dunkelgrün | Topform |
-| 56–67 | schräg nach oben | Hellgrün | gute Form |
-| 44–55 | waagerecht | Gelb | durchschnittlich |
-| 32–43 | schräg nach unten | Orange | schwache Form |
-| < 32 | nach unten | Rot | Formtief |
+In Kader, Aufstellung und Spielerprofil zeigt ein **Daumen nach oben** die Form – immer nach oben, nur die **Grünstufe** ändert sich: blasses Grau-Grün = Formtief, kräftiges Dunkelgrün = Topform (kein Rot). Fahre mit der Maus darüber, um den genauen Wert zu sehen (z. B. „Form 62/100 – kommt gut im System zurecht“).
+| Form | Farbe | Hover | Kurzwort |
+|------|-------|-------|----------|
+| ≥ 68 | kräftiges Dunkelgrün | blüht im System auf | Topform |
+| 56–67 | Grün | kommt gut im System zurecht | gute Form |
+| 44–55 | Hellgrün | kommt im System zurecht | durchschnittlich |
+| 32–43 | blasses Grün | tut sich im System schwer | schwache Form |
+| < 32 | Grau-Grün | kommt im System nicht zurecht | Formtief |
 
 ## Moral (Smiley)
 Die Moral hat fünf Stufen (sehr unzufrieden … sehr glücklich). Für die Anzeige wird sie auf 0–100 umgerechnet (10/30/50/70/90) und als **Smiley** gezeigt – von traurig in Rot bis strahlend in Dunkelgrün.
@@ -422,10 +425,17 @@ Fitness ist die **konditionelle Grundverfassung** eines Spielers (**0–100**) �
 - **Regenerations-Training** (Fokus „Regeneration") mit geringer Last.
 
 ## Wirkung im Spiel
-Fitness fließt als eigener **Fitness-Faktor** in die effektive Tagesstärke ein: \`0.7 + fitness/100 * 0.3\` (0,7–1,0). Niedrige Fitness erhöht außerdem das Verletzungsrisiko.
+Fitness fließt als eigener **Fitness-Faktor** in die Tagesstärke ein: \`0.9 + fitness/100 * 0.1\` (0,9–1,0, \`conditionFactor\` in \`engine/match/team.ts\`). Hartes Training bei niedriger Fitness drückt zudem die Form.
 
-## Anzeige
-Farbcodiert wie Attribute: Grün > 75, Gelb 60–75, Orange/Rot < 60. Im Spielerprofil eigene Kachel **„Fit"** direkt neben **„Frisch"**.
+## Anzeige (Hantel)
+Fitness erscheint als **Hantel** – gestaffelt wie Frische und Moral von Rot bis Dunkelgrün, je fitter, desto voller die Scheiben. Hover zeigt sofort den Wert („Fitness 82/100 – fit“).
+| Fitness | Farbe | Wort |
+|---------|-------|------|
+| ≥ 88 | Dunkelgrün | topfit |
+| 75–87 | Hellgrün | fit |
+| 62–74 | Gelb | ordentlich |
+| 48–61 | Orange | Trainingsrückstand |
+| < 48 | Rot | kaum belastbar |
 
 ## Code
 - Feld: \`Player.attributes.fitness\` (0–100).
@@ -649,6 +659,24 @@ Die Vorschau im Planer zeigt für jeden Tag das erwartete **Fitness-Delta** (gr�
 - Sinkt die Fitness dauerhaft unter ~35, drohen **Abwertungen durch Übertraining** (siehe Entwicklung).
 - Müde Spieler **lernen langsamer** (die Frische dämpft den Lerneffekt).
 - Verletzte Spieler trainieren nicht (nur Verletzungs-Countdown läuft weiter).`,
+  },
+  {
+    id: 'player-hidden-values',
+    category: 'development',
+    title: 'Verdeckte Werte & Attribut-Wirkung',
+    keywords: ['konstanz', 'nervenstärke', 'verdeckt', 'versteckt', 'einschätzung', 'scout', 'trainerteam', 'verletzungsanfälligkeit', 'attribut', 'wirkung'],
+    body: `## Verdeckte Werte
+**Konstanz**, **Nervenstärke**, **Verletzungsanfälligkeit** und **Entwicklungstempo** sind verdeckt – du siehst nie eine Zahl, nur eine **Einschätzung** („wirkt nervenstark“, „schwankt stark“).
+- **Eigene Spieler:** Das **Trainerteam** urteilt. Je länger der Spieler im Verein ist, desto treffsicherer (nach rund zweieinhalb Jahren „gesichert“).
+- **Fremde Spieler:** Die **Scouts** urteilen – je besser dein Scouting (und je länger ihr verhandelt), desto genauer. Ohne Kenntnis heißt es „noch kein Urteil“.
+- Jede Einschätzung kann **danebenliegen**: Jeder Spieler hat einen festen Schätzfehler, der mit wachsender Kenntnis schrumpft.
+
+## Was beeinflusst ein Attribut?
+Hinter jedem Attribut im Spielerprofil steht ein kleines **i**. Es zeigt, wo der Wert im Spiel direkt gerechnet wird (z. B. Kopfball: Kopfballduelle bei Flanken und Ecken, Kopfball-Abschluss), für welche Positionen er in die **Positionsstärke** eingeht (live aus der Epoche) und welche **Trainingsbausteine** ihn verbessern.
+
+## Code
+- Einschätzung: \`game/hiddenTraits.ts\` (\`hiddenKnowledge\`, \`estimateHidden\`).
+- Attribut-Texte: \`data/attributeInfo.ts\`; Anzeige \`components/player/AttrTip.tsx\`.`,
   },
   {
     id: 'development-hidden',

@@ -4,20 +4,27 @@ import { scoutRange, scoutRangeText } from '../../engine/scouting';
 import Icon from '../Icon';
 import { ATTR_DE, POS_DE, PLAYER_TYPE, Section, Line } from './shared';
 import { strengthsWeaknesses } from './OverviewTab';
+import { useClubProfile } from '../club/ClubLink';
+import type { Game } from '../../game/state';
+import { estimateHidden, hiddenKnowledge } from '../../game/hiddenTraits';
 
 const level = (v: number) => (v >= 80 ? 'herausragend' : v >= 70 ? 'stark' : v >= 60 ? 'solide' : v >= 50 ? 'ausbaufähig' : 'schwach');
 
-function personality(p: Player): string[] {
-  const a = p.attributes, d = p.development;
+function personality(p: Player, g: Game | undefined): string[] {
+  const a = p.attributes;
   const out: string[] = [];
+  // Verdeckte Werte nur als Einschätzung (game/hiddenTraits.ts), erst ab einem belastbaren Eindruck
+  const k = hiddenKnowledge(g, p), own = !!g && p.clubId === g.managedClubId;
+  const kon = k >= 0.45 ? estimateHidden(p, 'konstanz', k, own).word : null;
+  const ner = k >= 0.45 ? estimateHidden(p, 'nerven', k, own).word : null;
   if (a.leadership >= 75) out.push('Führungsspieler, der die Mannschaft mitreißt');
   if (a.aggression >= 78) out.push('geht keinem Zweikampf aus dem Weg – mitunter zu hitzig');
   if (a.workRate >= 78) out.push('enorm laufstark und mannschaftsdienlich');
   if (a.flair >= 78) out.push('kreativ und unberechenbar, für das Besondere zuständig');
-  if (d.consistency >= 75) out.push('sehr konstant in seinen Leistungen');
-  else if (d.consistency < 45) out.push('schwankt stark zwischen guten und schwachen Tagen');
-  if (d.bigMatchTemperament >= 75) out.push('blüht in großen Spielen auf');
-  else if (d.bigMatchTemperament < 45) out.push('wirkt in wichtigen Spielen nervös');
+  if (kon === 'sehr konstant') out.push('sehr konstant in seinen Leistungen');
+  else if (kon === 'schwankt stark') out.push('schwankt stark zwischen guten und schwachen Tagen');
+  if (ner === 'nervenstark') out.push('blüht in großen Spielen auf');
+  else if (ner === 'wirkt nervös') out.push('wirkt in wichtigen Spielen nervös');
   if (a.composure >= 78) out.push('behält auch unter Druck die Ruhe');
   if (out.length === 0) out.push('unauffälliger Charakter ohne besondere Ausschläge');
   return out;
@@ -36,6 +43,7 @@ function role(p: Player, squad?: Player[]): string {
 }
 
 export default function ReportTab({ p, squad }: { p: Player; squad?: Player[] }) {
+  const g = useClubProfile()?.game;
   const { strengths, weaknesses } = strengthsWeaknesses(p);
   const [lo, hi] = scoutRange(p);
   const maxOvr = Math.round((starsToPotential(lo) + starsToPotential(hi)) / 2);
@@ -52,7 +60,7 @@ export default function ReportTab({ p, squad }: { p: Player; squad?: Player[] })
         </p>
         <p className="pp-text">{outlook}</p>
         <div className="pp-section-title mt14">Persönlichkeit</div>
-        <ul className="pp-bullets">{personality(p).map((t) => <li key={t}>{t}</li>)}</ul>
+        <ul className="pp-bullets">{personality(p, g).map((t) => <li key={t}>{t}</li>)}</ul>
       </Section>
       <Section title="Einschätzung" icon={<Icon name="stats" size={15} />}>
         <div className="pp-list">

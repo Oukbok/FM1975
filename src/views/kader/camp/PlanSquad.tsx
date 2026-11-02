@@ -5,12 +5,12 @@
 import { CAMP_FOCUS, CAMP_FOCUS_ORDER, CampFocus } from '../../../engine/trainingCamp';
 import { CAMP_YOUTH_MAX } from '../../../game/campResult';
 import type { Player } from '../../../types';
-import { condColor, vColor } from '../../../ui/format';
+import { vColor } from '../../../ui/format';
+import { PlayerFitness } from '../../../components/status';
 
 const POS_ORDER = ['TW', 'LIB', 'VS', 'AV', 'DM', 'ZM', 'OM', 'FL', 'HS', 'MS'];
 
 function Row({ p, on, onToggle, youth }: { p: Player; on: boolean; onToggle: () => void; youth?: boolean }) {
-  const fit = Math.round(p.attributes.fitness);
   return (
     <label className={`cp-pl ${on ? 'on' : ''} ${p.injury ? 'inj' : ''}`}>
       <input type="checkbox" checked={on} onChange={onToggle} />
@@ -18,7 +18,7 @@ function Row({ p, on, onToggle, youth }: { p: Player; on: boolean; onToggle: () 
       <span className="cp-pl-name">{p.fullName}</span>
       <span className="cp-pl-age">{p.age}</span>
       <span className="cp-pl-ovr" style={{ color: vColor(p.overall) }}>{Math.round(p.overall)}</span>
-      <span className="cp-pl-fit" style={{ color: condColor(fit) }}>{fit}</span>
+      <span className="cp-pl-fit"><PlayerFitness p={p} size={16} /></span>
       <span className="cp-pl-st">{p.injury ? `verletzt, ${p.injury.daysRemaining} T.` : youth ? `${p.age <= 17 ? 'B' : 'A'}-Jugend` : ''}</span>
     </label>
   );

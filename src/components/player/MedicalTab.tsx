@@ -3,11 +3,13 @@ import { Player } from '../../types';
 import { vColor } from '../../ui/format';
 import Icon from '../Icon';
 import { AVAIL_DE, INJURY_TYPE_DE, INJURY_SEV_DE, utcDate, Section, Line, Bar } from './shared';
-import { StatusLine, freshness100 } from '../status';
+import { StatusLine, fitness100, freshness100 } from '../status';
+import { useClubProfile } from '../club/ClubLink';
+import { hiddenFor } from '../../game/hiddenTraits';
 
 export default function MedicalTab({ p }: { p: Player }) {
   const inj = p.injury;
-  const prone = Math.round(p.development.injuryProneness);
+  const prone = hiddenFor(useClubProfile()?.game, p, 'verletzung');
   const hist = p.history?.injuries ?? [];
   return (
     <div className="pp-grid pp-grid-medical">
@@ -34,11 +36,11 @@ export default function MedicalTab({ p }: { p: Player }) {
       <div className="pp-stack">
       <Section title="Belastung & Körper" icon={<Icon name="training" size={15} />}>
         <StatusLine kind="frische" value={freshness100(p)} />
-        <Bar label="Fitness" value={Math.round(p.attributes.fitness)} tone="cond" />
+        <StatusLine kind="fitness" value={fitness100(p)} />
         <Bar label="Robustheit" value={Math.round(p.attributes.strength)} />
         <div className="pp-list mt8">
           <Line label="Trainingsbelastung" value={Math.round(p.trainingLoad)} />
-          <Line label="Verletzungsanfälligkeit" value={prone >= 65 ? 'Hoch' : prone >= 40 ? 'Mittel' : 'Gering'} color={vColor(100 - prone)} />
+          <Line label={`Verletzungsanfälligkeit (${prone.source})`} value={prone.word ?? 'noch kein Urteil'} color={prone.word === 'anfällig' ? 'var(--neg)' : undefined} />
           <Line label="Größe / Gewicht" value={`${p.height} cm · ${p.weight} kg`} />
         </div>
       </Section>
