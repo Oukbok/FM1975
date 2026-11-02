@@ -576,7 +576,7 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
         const age = 21 + Math.floor(ctx.rng() * 8);
         const p = createPlayer({
           id: `${c.id}_t${ctx.year}_${k}_${Math.floor(ctx.rng() * 1e6)}`, clubId: c.id,
-          pos: (['VS', 'ZM', 'MS', 'AV', 'FL', 'OM', 'DM', 'TW'] as const)[Math.floor(ctx.rng() * 8)],
+          pos: (['IV', 'ZM', 'MS', 'RV', 'LA', 'OM', 'DM', 'TW'] as const)[Math.floor(ctx.rng() * 8)],
           age, strength, year: ctx.year, date: ctx.date, rng: ctx.rng, shirt: 0,
         });
         refreshOverall(p);

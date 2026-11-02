@@ -11,7 +11,7 @@ import type { Player } from '../../../types';
 import { vColor } from '../../../ui/format';
 import { PlayerFitness } from '../../../components/status';
 
-const POS_ORDER = ['TW', 'LIB', 'VS', 'AV', 'DM', 'ZM', 'OM', 'FL', 'HS', 'MS'];
+const POS_ORDER = ['TW', 'LIB', 'IV', 'RV', 'LV', 'DM', 'ZM', 'RM', 'LM', 'OM', 'RA', 'LA', 'HS', 'MS'];
 /** Symbole der Schwerpunkte – dieselben wie die Bausteine im Trainingsplan. */
 export const CAMP_FOCUS_ICON: Record<CampFocus, string> = {
   ausgewogen: 'trCircuit', kondition: 'trEndurance', taktik: 'trTactics', teamgeist: 'trMental', regeneration: 'trRecovery', jugend: 'youth',

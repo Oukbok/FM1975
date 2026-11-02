@@ -143,17 +143,21 @@ export function coachTactics(club: Club, players: Record<string, Player>, coach:
 // -----------------------------------------------------------------------------
 // 2) Kaderbewertung
 // -----------------------------------------------------------------------------
-export type PosGroup = 'TW' | 'IV' | 'AV' | 'ZM' | 'FL' | 'ST';
-export const POS_GROUPS: PosGroup[] = ['TW', 'IV', 'AV', 'ZM', 'FL', 'ST'];
+/** Kaderbereiche der KI – Außenverteidiger und Außenbahn seitengenau (Positionen 2.0). */
+export type PosGroup = 'TW' | 'IV' | 'RV' | 'LV' | 'ZM' | 'RF' | 'LF' | 'ST';
+export const POS_GROUPS: PosGroup[] = ['TW', 'IV', 'RV', 'LV', 'ZM', 'RF', 'LF', 'ST'];
 export const GROUP_OF: Record<Position, PosGroup> = {
-  TW: 'TW', LIB: 'IV', VS: 'IV', AV: 'AV', DM: 'ZM', ZM: 'ZM', OM: 'ZM', FL: 'FL', MS: 'ST', HS: 'ST',
+  TW: 'TW', LIB: 'IV', IV: 'IV', RV: 'RV', LV: 'LV', DM: 'ZM', ZM: 'ZM', OM: 'ZM',
+  RM: 'RF', RA: 'RF', LM: 'LF', LA: 'LF', MS: 'ST', HS: 'ST',
 };
 export const GROUP_LABEL: Record<PosGroup, string> = {
-  TW: 'Tor', IV: 'Innenverteidigung', AV: 'Außenverteidigung', ZM: 'Mittelfeld', FL: 'Flügel', ST: 'Sturm',
+  TW: 'Tor', IV: 'Innenverteidigung', RV: 'Abwehr rechts', LV: 'Abwehr links', ZM: 'Mittelfeld',
+  RF: 'Außenbahn rechts', LF: 'Außenbahn links', ST: 'Sturm',
 };
 /** Typische Position einer Gruppe (für Neuzugänge aus dem Ausland). */
 export const GROUP_POS: Record<PosGroup, Position[]> = {
-  TW: ['TW'], IV: ['VS', 'VS', 'LIB'], AV: ['AV'], ZM: ['ZM', 'DM', 'OM'], FL: ['FL'], ST: ['MS', 'MS', 'HS'],
+  TW: ['TW'], IV: ['IV', 'IV', 'LIB'], RV: ['RV'], LV: ['LV'], ZM: ['ZM', 'DM', 'OM'],
+  RF: ['RA', 'RM'], LF: ['LA', 'LM'], ST: ['MS', 'MS', 'HS'],
 };
 
 export interface GroupNeed {
@@ -195,7 +199,7 @@ export function squadLevel11(squad: Player[]): number {
  */
 export function assessSquad(squad: Player[], formationId: string | undefined, longInjuredDays = 9999): SquadAssessment {
   const f = getFormation(formationId);
-  const starters: Record<PosGroup, number> = { TW: 1, IV: 0, AV: 0, ZM: 0, FL: 0, ST: 0 };
+  const starters: Record<PosGroup, number> = { TW: 1, IV: 0, RV: 0, LV: 0, ZM: 0, RF: 0, LF: 0, ST: 0 };
   for (const s of f.slots) if (s.position !== 'TW') starters[GROUP_OF[s.position]]++;
   const level = squadLevel11(squad);
   const groups = {} as Record<PosGroup, GroupNeed>;

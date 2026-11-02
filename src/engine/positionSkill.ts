@@ -12,7 +12,7 @@
 // =============================================================================
 import type { Player, Position, PositionSkill } from '../types';
 import { ALL_POSITIONS } from '../types';
-import { bumpSkillRev, rawSuitability } from './positions';
+import { bumpSkillRev, rawSuitability, roleOf, sideOf, type PosRole } from './positions';
 
 export type SkillTier = 'natural' | 'good' | 'ok' | 'none';
 export const TIER_MIN = { natural: 90, good: 75, ok: 50 } as const;
@@ -40,19 +40,43 @@ function hash01(s: string): number {
   return (h >>> 0) / 4294967296;
 }
 
-/** Verwandtschaft der Feldpositionen (0–1): Wie leicht fällt der Wechsel von A nach B? */
-const REL: Record<Position, Partial<Record<Position, number>>> = {
+/** Verwandtschaft der Rollen (ohne Seite, 0–1): Wie leicht fällt der Wechsel von A nach B? */
+const ROLE_REL: Record<PosRole, Partial<Record<PosRole, number>>> = {
   TW: {},
-  LIB: { VS: 0.85, DM: 0.7, AV: 0.45, ZM: 0.4, OM: 0.15, FL: 0.1, MS: 0.1, HS: 0.1 },
-  VS: { LIB: 0.8, AV: 0.6, DM: 0.6, ZM: 0.3, OM: 0.1, FL: 0.1, MS: 0.2, HS: 0.1 },
-  AV: { VS: 0.55, LIB: 0.35, DM: 0.4, ZM: 0.35, FL: 0.6, OM: 0.2, MS: 0.1, HS: 0.15 },
-  DM: { ZM: 0.8, VS: 0.6, LIB: 0.6, AV: 0.4, OM: 0.4, FL: 0.15, MS: 0.1, HS: 0.15 },
-  ZM: { DM: 0.8, OM: 0.8, AV: 0.3, FL: 0.4, HS: 0.4, LIB: 0.3, VS: 0.25, MS: 0.2 },
-  OM: { ZM: 0.8, HS: 0.8, FL: 0.5, DM: 0.35, MS: 0.45, AV: 0.15, LIB: 0.15, VS: 0.1 },
-  FL: { AV: 0.5, OM: 0.5, HS: 0.55, MS: 0.45, ZM: 0.35, DM: 0.15, VS: 0.1, LIB: 0.05 },
-  MS: { HS: 0.8, FL: 0.45, OM: 0.4, ZM: 0.2, DM: 0.1, VS: 0.2, AV: 0.1, LIB: 0.1 },
-  HS: { MS: 0.8, OM: 0.8, FL: 0.55, ZM: 0.4, DM: 0.15, AV: 0.1, VS: 0.1, LIB: 0.1 },
+  LIB: { IV: 0.85, DM: 0.7, AV: 0.45, ZM: 0.4, SM: 0.15, OM: 0.15, FL: 0.1, MS: 0.1, HS: 0.1 },
+  IV: { LIB: 0.8, AV: 0.6, DM: 0.6, ZM: 0.3, SM: 0.15, OM: 0.1, FL: 0.1, MS: 0.2, HS: 0.1 },
+  AV: { IV: 0.55, LIB: 0.35, DM: 0.4, ZM: 0.35, SM: 0.65, FL: 0.55, OM: 0.2, MS: 0.1, HS: 0.15 },
+  DM: { ZM: 0.8, IV: 0.6, LIB: 0.6, AV: 0.4, OM: 0.4, SM: 0.3, FL: 0.15, MS: 0.1, HS: 0.15 },
+  ZM: { DM: 0.8, OM: 0.8, AV: 0.3, SM: 0.55, FL: 0.4, HS: 0.4, LIB: 0.3, IV: 0.25, MS: 0.2 },
+  SM: { FL: 0.8, AV: 0.6, ZM: 0.6, OM: 0.45, DM: 0.3, HS: 0.35, MS: 0.25, IV: 0.15, LIB: 0.1 },
+  OM: { ZM: 0.8, HS: 0.8, FL: 0.5, SM: 0.45, DM: 0.35, MS: 0.45, AV: 0.15, LIB: 0.15, IV: 0.1 },
+  FL: { SM: 0.8, AV: 0.5, OM: 0.5, HS: 0.55, MS: 0.45, ZM: 0.35, DM: 0.15, IV: 0.1, LIB: 0.05 },
+  MS: { HS: 0.8, FL: 0.45, OM: 0.4, SM: 0.25, ZM: 0.2, DM: 0.1, IV: 0.2, AV: 0.1, LIB: 0.1 },
+  HS: { MS: 0.8, OM: 0.8, FL: 0.55, SM: 0.35, ZM: 0.4, DM: 0.15, AV: 0.1, IV: 0.1, LIB: 0.1 },
 };
+
+/**
+ * Seitenfaktor für den Wechsel von `nat` nach `pos` (Positionen 2.0):
+ * gleiche Seite oder zentral 1; zentral → außen auf der Seite des schwachen Fußes 0,82;
+ * Seitenwechsel 0,6 – beidfüßig oder mit dem starken Fuß auf der neuen Seite 0,85.
+ */
+export function sideFactor(foot: Player['preferredFoot'] | undefined, nat: Position, pos: Position): number {
+  const sp = sideOf(pos);
+  if (sp === 'C') return 1;
+  const fs = foot === 'right' ? 'R' : foot === 'left' ? 'L' : null;
+  const sn = sideOf(nat);
+  if (sn === 'C') return !fs || fs === sp ? 1 : 0.82;
+  if (sn === sp) return 1;
+  return !fs || fs === sp ? 0.85 : 0.6;
+}
+
+/** Verwandtschaft zweier Positionen für einen Spieler (0–1), inkl. Seite und starkem Fuß. */
+export function positionRelation(p: Pick<Player, 'preferredFoot'>, nat: Position, pos: Position): number {
+  if (nat === pos) return 1;
+  const rn = roleOf(nat), rp = roleOf(pos);
+  const base = rn === rp ? 1 : (ROLE_REL[rn][rp] ?? 0.1);
+  return base * sideFactor(p.preferredFoot, nat, pos);
+}
 
 /**
  * Erzeugt die Vertrautheiten eines Spielers (deterministisch aus der ID).
@@ -67,13 +91,13 @@ export function generatePositionSkill(p: Player, day: number): PositionSkill {
   v[nat] = 100;
   if (nat === 'TW') {
     // Torhüter: auf dem Feld kaum zu gebrauchen, manche als Libero/Vorstopper notdürftig.
-    for (const pos of ALL_POSITIONS) if (pos !== 'TW') v[pos] = Math.round(4 + h(pos) * (pos === 'LIB' || pos === 'VS' ? 26 : 14));
+    for (const pos of ALL_POSITIONS) if (pos !== 'TW') v[pos] = Math.round(4 + h(pos) * (pos === 'LIB' || pos === 'IV' ? 26 : 14));
   } else {
     v.TW = Math.round(h('TW') * 7);
     const rawNat = rawSuitability(p, nat);
     const cands = ALL_POSITIONS.filter((pos) => pos !== nat && pos !== 'TW').map((pos) => {
       const fit = rawSuitability(p, pos) - rawNat; // meist negativ; positiv = passt besser
-      const score = (REL[nat][pos] ?? 0.1) * 100 + Math.max(-20, Math.min(10, fit)) * 1.5 + (h('n' + pos) - 0.5) * 22;
+      const score = positionRelation(p, nat, pos) * 100 + Math.max(-20, Math.min(10, fit)) * 1.5 + (h('n' + pos) - 0.5) * 22;
       return { pos, score };
     }).sort((a, b) => b.score - a.score);
     cands.forEach(({ pos, score }, k) => {

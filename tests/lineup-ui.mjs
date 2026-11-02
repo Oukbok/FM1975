@@ -96,7 +96,7 @@ const slotPos = (page, id) => slot(page, id).locator('.lu-card-pos').innerText()
   } });
   check(await slotPos(page, 's11') === 'OM', `Eingerastet auf OM (ist ${await slotPos(page, 's11')})`);
 
-  // Frei verschieben: Haken aus, s10 nach rechts vorne (→ nächster Punkt Rechtsaußen = FL)
+  // Frei verschieben: Haken aus, s10 nach rechts vorne (→ nächster Punkt Rechtsaußen = RA)
   await page.locator('.lu-check input').uncheck();
   const free = await fieldPoint(page, 79, 31);
   await drag(page, await center(slot(page, 's10')), free, { hold: async () => {
@@ -104,7 +104,7 @@ const slotPos = (page, id) => slot(page, id).locator('.lu-card-pos').innerText()
     await page.screenshot({ path: `${outDir}/1975_frei_ziehen_1920.png` });
   } });
   const left = await slot(page, 's10').evaluate((el) => parseFloat(el.style.left));
-  check(await slotPos(page, 's10') === 'FL' && Math.abs(left - 79) < 1.5, `Frei gesetzt bei x≈79 % als FL (ist ${await slotPos(page, 's10')}, x=${left})`);
+  check(await slotPos(page, 's10') === 'RA' && Math.abs(left - 79) < 1.5, `Frei gesetzt bei x≈79 % als RA (ist ${await slotPos(page, 's10')}, x=${left})`);
 
   // Bank: Reservespieler auf Bankplatz 1
   const res2 = page.locator('tbody[data-lu-drop="reserve"] tr.lu-row:not(.out)').first();
@@ -134,7 +134,7 @@ const slotPos = (page, id) => slot(page, id).locator('.lu-card-pos').innerText()
   await page.locator('.lu-formation').selectOption('4-4-2');
   await page.waitForTimeout(200);
   const filled = await page.locator('.lu-slot').evaluateAll((els) => els.filter((e) => e.getAttribute('data-pid')).length);
-  check(filled === 11 && await slotPos(page, 's2') === 'AV', 'Formation 4-4-2 gesetzt, 11 Spieler besetzt');
+  check(filled === 11 && await slotPos(page, 's2') === 'LV', 'Formation 4-4-2 gesetzt, 11 Spieler besetzt');
   await page.screenshot({ path: `${outDir}/1975_442_1920.png` });
   await page.locator('.lu-formation').selectOption('libero-1-4-3-2');
   await page.locator('button.dchip:has-text("Auto")').click();
@@ -142,13 +142,13 @@ const slotPos = (page, id) => slot(page, id).locator('.lu-card-pos').innerText()
   const filled2 = await page.locator('.lu-slot').evaluateAll((els) => els.filter((e) => e.getAttribute('data-pid')).length);
   check(filled2 === 11, 'Auto-Aufstellung besetzt alle 11 Plätze');
 
-  // Erkennbare Aufstellung für das nächste Spiel: Reservespieler auf s10, frei als FL rechts vorne
+  // Erkennbare Aufstellung für das nächste Spiel: Reservespieler auf s10, frei als RA rechts vorne
   const res3 = page.locator('tbody[data-lu-drop="reserve"] tr.lu-row:not(.out)').first();
   const res3Pid = await res3.getAttribute('data-pid');
   const res3Name = (await res3.locator('.lu-name').innerText()).split(' ').pop();
   await drag(page, await center(res3), await center(slot(page, 's10')));
   await drag(page, await center(slot(page, 's10')), await fieldPoint(page, 80, 30));
-  check(await slotPid(page, 's10') === res3Pid && await slotPos(page, 's10') === 'FL', `Testaufstellung: ${res3Name} als FL`);
+  check(await slotPid(page, 's10') === res3Pid && await slotPos(page, 's10') === 'RA', `Testaufstellung: ${res3Name} als RA`);
   // Einstellung „Fest einrasten“ bleibt erhalten (Seite verlassen und zurück)
   await goto(page, 'Taktik');
   await page.screenshot({ path: `${outDir}/1975_taktik_1920.png` });
@@ -173,7 +173,7 @@ const slotPos = (page, id) => slot(page, id).locator('.lu-card-pos').innerText()
     await page.waitForTimeout(2500);
     const rows = await page.locator('.ms-lineup').first().locator('.ms-row').allInnerTexts();
     const mine = rows.find((r) => r.includes(res3Name));
-    check(!!mine && /\bFL\b/.test(mine), `Textmodus: ${res3Name} steht als FL in der Startelf (${(mine ?? '–').replace(/\s+/g, ' ')})`);
+    check(!!mine && /\bRA\b/.test(mine), `Textmodus: ${res3Name} steht als RA in der Startelf (${(mine ?? '–').replace(/\s+/g, ' ')})`);
     await page.screenshot({ path: `${outDir}/1975_textmodus_1920.png` });
   }
   await page.close();

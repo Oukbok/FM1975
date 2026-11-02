@@ -5,7 +5,7 @@
 // =============================================================================
 import { Player, Position, PlayerAttributes, AttributeKey, createEmptyStats, potentialToStars, clampStars } from '../types';
 import { wageForOverall } from './economy';
-import { weightsFor, positionSuitability } from './positions';
+import { weightsFor, positionSuitability, footForSide } from './positions';
 import { ensurePositionSkill } from './positionSkill';
 import { pickOrigin, makeName, Origin } from '../data/origins';
 import { exceptionalPotential, getTalentSupply } from './talent';
@@ -120,7 +120,7 @@ export function createPlayer(spec: NewPlayerSpec): Player {
     dateOfBirth: birthDate(age, year, rng), age,
     height: pos === 'TW' ? 182 + Math.floor(rng() * 14) : 168 + Math.floor(rng() * 24),
     weight: 64 + Math.floor(rng() * 24),
-    preferredFoot: rng() < 0.72 ? 'right' : (rng() < 0.8 ? 'left' : 'both'),
+    preferredFoot: footForSide(pos, rng() < 0.72 ? 'right' : (rng() < 0.8 ? 'left' : 'both'), spec.id),
     naturalPosition: pos, secondaryPositions: [],
     positionRatings: { [pos]: overall },
     attributes, overall,

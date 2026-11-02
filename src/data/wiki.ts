@@ -859,14 +859,17 @@ Jede Position bewertet bestimmte Attribute stärker als andere. Diese Gewichte (
 |----------|--------------------------|
 | Torwart (TW) | Reflexe 3.0, Fangsicherheit 2.5, 1-gegen-1 2.0, Luftherrschaft 1.5 |
 | Libero (LIB) | Stellungsspiel 2.5, Abfangen 2.2, Manndeckung/Zweikampf 1.8, Passspiel 1.8 |
-| Vorstopper (VS) | Manndeckung 2.8, Zweikampf 2.8, Kopfball 2.2, Kraft 2.0 |
-| Außenverteidiger (AV) | Zweikampf 2.0, Tempo 2.0, Ausdauer 2.0, Manndeckung 1.8 |
+| Innenverteidiger (IV) | Manndeckung 2.8, Zweikampf 2.8, Kopfball 2.2, Kraft 2.0 |
+| Rechter/Linker Verteidiger (RV/LV) | Zweikampf 2.0, Tempo 2.0, Ausdauer 2.0, Manndeckung 1.8 |
 | Defensives MF (DM) | Zweikampf 2.2, Abfangen 2.2, Stellungsspiel 2.0, Passspiel 2.0 |
 | Zentrales MF (ZM) | Passspiel 2.5, Übersicht 2.2, Technik 2.0, Ausdauer 1.8 |
+| Rechter/Linker Mittelfeldspieler (RM/LM) | Flanken 2.2, Ausdauer 2.0, Laufbereitschaft 1.8, Tempo 1.8, Passspiel 1.6 |
 | Offensives MF (OM) | Technik 2.2, Übersicht 2.2, Passspiel 2.0, Dribbling 1.8 |
-| Flügel (FL) | Tempo 2.4, Dribbling 2.2, Flanken 2.0, Antritt 2.0 |
+| Rechtsaußen/Linksaußen (RA/LA) | Tempo 2.4, Dribbling 2.2, Flanken 2.0, Antritt 2.0 |
 | Mittelstürmer (MS) | Abschluss 2.8, Kopfball 2.0, Schusskraft 1.8, Nervenstärke 1.8 |
 | Hängende Spitze (HS) | Abschluss 2.0, Dribbling 2.0, Technik 2.0, erster Kontakt 1.8 |
+
+Rechte und linke Positionen haben dieselben Gewichte; die Seite entscheiden **Vertrautheit** und **starker Fuß** (siehe *Positionen & Seiten*).
 
 Ein Mittelstürmer mit starkem Abschluss erreicht also eine deutlich höhere Eignung als einer mit gleichem Gesamtwert, dessen Stärken aber in der Defensive liegen.
 
@@ -887,10 +890,11 @@ Für jeden Spieler auf jedem Slot zeigt das Feld eine **Eignungszahl** mit Farbc
 - **rot** < 60 (unterer Bereich) – ungeeignet
 
 ### Formel
-\`Eignung = gewichteter Attribut-Mittelwert × Vertrautheits-Faktor\`
+\`Eignung = gewichteter Attribut-Mittelwert × Vertrautheits-Faktor × Fuß-Faktor\`
 
 1. **Gewichteter Mittelwert:** Alle für die Position relevanten Attribute (siehe Positions-Gewichtungen) werden mit ihrem Gewicht multipliziert und gemittelt.
 2. **Vertrautheits-Faktor:** Wie gut kennt der Spieler die Position?
+3. **Fuß-Faktor:** Auf der Seite seines schwachen Fußes verliert ein Spieler 4 % (Verteidiger, Mittelfeld außen). Flügelstürmer auf der „falschen“ Seite verlieren bis 1994 4 %, bis 2004 2 %, danach nichts – inverse Flügel, die nach innen ziehen, sind dann normal. Beidfüßige verlieren nie etwas.
 
 Der Faktor kommt aus der **Positionsvertrautheit** des Spielers (0–100, siehe Artikel *Positionsvertrautheit*):
 
@@ -922,7 +926,7 @@ Jeder Spieler hat für **jede** Position einen eigenen Vertrautheitswert. Im Spi
 Vorausgewählt ist die Position, auf der er am stärksten ist. Klickst du eine andere an, siehst du ihre Eignung und die dafür wichtigen Attribute: **kräftiger blauer Strich** = Schlüsselattribut, **schlanker, hellerer Strich** = ebenfalls wichtig. Unter jeder Position zeigt ein Balken den Fortschritt; eine dezente Marke steht beim bisherigen Höchstwert.
 
 ### Ausgangslage
-Die meisten Spieler haben eine natürliche Position, ein bis zwei gute und einige ausreichende (verwandte Rollen wie VS–LIB, ZM–DM/OM, MS–HS, AV–FL liegen nahe beieinander; passende Attribute helfen). Torhüter sind auf dem Feld kaum zu gebrauchen und umgekehrt.
+Die meisten Spieler haben eine natürliche Position, ein bis zwei gute und einige ausreichende (verwandte Rollen wie IV–LIB, ZM–DM/OM, MS–HS, RV–RM–RA liegen nahe beieinander; passende Attribute helfen). Rechts und links sind getrennte Positionen: Ein rechtsfüßiger Rechtsverteidiger ist links meist nur „ausreichend“, als RM oft „gut“, als LM kaum zu gebrauchen. Beidfüßige wechseln die Seite leichter. Torhüter sind auf dem Feld kaum zu gebrauchen und umgekehrt.
 
 ### Wachstum
 - **Spielen:** Jeder Einsatz auf einer Position steigert die Vertrautheit – schnell, solange sie niedrig ist, dann immer langsamer. Von null auf „gut“ dauert es etwa anderthalb Spielzeiten Stammplatz; junge Spieler lernen schneller, ältere langsamer.
@@ -935,6 +939,41 @@ Wer eine Position über ein Jahr nicht mehr spielt, verlernt sie langsam – nic
 Die Vertrautheit ist der Vertrautheits-Faktor der **Positionseignung** (siehe dort) und wirkt damit überall: Match-Engine, Aufstellungs-KI, Eignungsfarben in der Aufstellung und Einwechslungen. Alle Vereine nutzen das System: Die KI stellt Spieler auch auf guten Nebenpositionen auf und lässt zu Saisonbeginn je Verein höchstens einen jungen Spieler eine Position lernen, auf der die Formation dünn besetzt ist.
 
 *Technik:* \`engine/positionSkill.ts\` (Erzeugung, Wachstum, Abbau), \`game/positionsGame.ts\` (Monat, KI, Nachrüstung), optionales Feld \`Player.positionSkill\`.`,
+  },
+  {
+    id: 'positions-sides',
+    category: 'tactics',
+    title: 'Positionen & Seiten (Kürzel)',
+    keywords: ['position', 'kürzel', 'rv', 'lv', 'rm', 'lm', 'ra', 'la', 'iv', 'vorstopper', 'seite', 'fuß', 'linksfuß'],
+    body: `## Positionen und ihre Kürzel
+Positionen sind **seitengenau** wie im Football Manager:
+
+| Kürzel | Position |
+|--------|----------|
+| TW | Torwart |
+| LIB | Libero – freier Mann hinter der Abwehr, vor allem in den 70ern und 80ern |
+| IV | Innenverteidiger – in Libero-Systemen der Vorstopper/Manndecker |
+| RV / LV | Rechter / Linker Verteidiger |
+| DM | Defensives Mittelfeld |
+| ZM | Zentrales Mittelfeld |
+| RM / LM | Rechter / Linker Mittelfeldspieler |
+| OM | Offensives Mittelfeld |
+| RA / LA | Rechtsaußen / Linksaußen |
+| HS | Hängende Spitze |
+| MS | Mittelstürmer |
+
+Den **Vorstopper** gibt es nicht mehr als eigene Position: Er ist die Rolle des Innenverteidigers vor dem Libero und braucht dieselben Stärken (Manndeckung, Zweikampf, Kopfball). Offensive Außenverteidiger (Schienenspieler in der Fünferkette) sind RV/LV mit etwas höherer Lage auf dem Feld.
+
+### Seite und starker Fuß
+Die meisten Linksverteidiger und Linksaußen sind Linksfüßer, auf rechts dominieren Rechtsfüßer. Wer auf der Seite seines schwachen Fußes spielt, verliert etwas Eignung (siehe *Positionseignung*), und seine Vertrautheit dort ist meist geringer. Beidfüßige sind auf beiden Seiten einsetzbar – ein großer Vorteil.
+
+### Aufstellung
+Im Raster heißen die Felder nach ihrer Lage: links LV/LM/LA, rechts RV/RM/RA. Setzt du einen Spieler frei, gilt die Position des nächstgelegenen Rasterpunkts.
+
+### Alte Spielstände
+Beim Laden werden die früheren Kürzel umgerechnet: VS → IV, AV → RV/LV, FL → RA/LA – die Seite folgt dem starken Fuß, bei Beidfüßigen der bisherigen Seite in der Aufstellung. Die Vertrautheit für neue Positionen (Gegenseite, RM/LM) leitet sich aus den bisherigen Werten ab. Auch die Kader-Planung der KI denkt jetzt in Seiten: Fehlt ein Linksverteidiger, sucht sie gezielt einen.
+
+*Technik:* Helfer \`positionGroup\`, \`sideOf\`, \`roleOf\`, \`mirrorPosition\`, \`isFullBack\`, \`isWide\`, \`footFactor\`, \`normalizePosition\` in \`engine/positions.ts\`; Umrechnung \`game/positions2Migration.ts\`.`,
   },
   {
     id: 'tactic-options',

@@ -13,7 +13,7 @@ import { makeMessage, pushMessage } from '../engine/messages';
 import { refreshOverall } from '../engine/development';
 import { GEM_CHANCE_YOUNG_PRO, maybeMakeGem } from '../engine/gems';
 
-const TEMPLATE: Position[] = ['TW', 'TW', 'LIB', 'VS', 'VS', 'AV', 'AV', 'DM', 'ZM', 'ZM', 'OM', 'FL', 'FL', 'MS', 'MS', 'HS', 'ZM', 'AV', 'VS', 'FL'];
+const TEMPLATE: Position[] = ['TW', 'TW', 'LIB', 'IV', 'IV', 'RV', 'LV', 'DM', 'ZM', 'ZM', 'OM', 'RA', 'LA', 'MS', 'MS', 'HS', 'ZM', 'LV', 'IV', 'RM'];
 export const MIN_SQUAD = 20;
 export const MAX_SQUAD = 25;
 /** Notgrenze zum Saisonwechsel für Ligavereine mit Manager-KI (Rest über Transfers/Jugend). */

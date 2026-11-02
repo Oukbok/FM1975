@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { ensurePositionSkill } from './positionSkill';
+import { footForSide } from './positions';
 import { baseMarketValue as proMarketValue } from './clubEconomy';
 /** Jugendspieler ohne Profivertrag: halber Profi-Marktwert (Ausbildungsentschädigung statt Ablöse). */
 const baseMarketValue = (p: Player) => Math.round(proMarketValue(p) * 0.5 / 5000) * 5000;
@@ -63,7 +64,7 @@ const LAST_NAMES = ['Müller', 'Schmidt', 'Schneider', 'Fischer', 'Weber', 'Meye
 
 // Mögliche Positionen für Talente (gewichtete Grundverteilung).
 const YOUTH_POSITIONS: Position[] = [
-  'TW', 'LIB', 'VS', 'VS', 'AV', 'AV', 'DM', 'ZM', 'ZM', 'OM', 'FL', 'FL', 'MS', 'MS', 'HS',
+  'TW', 'LIB', 'IV', 'IV', 'RV', 'LV', 'DM', 'ZM', 'ZM', 'OM', 'RA', 'LA', 'MS', 'MS', 'HS',
 ];
 
 // -----------------------------------------------------------------------------
@@ -93,8 +94,8 @@ function makeYouthAttributes(rand: () => number, base: number, pos: Position): P
 function computeOverall(a: PlayerAttributes, pos: Position): number {
   let keys: AttributeKey[];
   if (pos === 'TW') keys = ['reflexes', 'handling', 'positioning', 'oneOnOnes', 'aerialReach', 'communication'];
-  else if (['LIB', 'VS', 'AV'].includes(pos)) keys = ['tackling', 'marking', 'positioning', 'strength', 'heading', 'interceptions'];
-  else if (['DM', 'ZM', 'OM'].includes(pos)) keys = ['passing', 'vision', 'technique', 'stamina', 'ballControl', 'decisions'];
+  else if (['LIB', 'IV', 'RV', 'LV'].includes(pos)) keys = ['tackling', 'marking', 'positioning', 'strength', 'heading', 'interceptions'];
+  else if (['DM', 'ZM', 'RM', 'LM', 'OM'].includes(pos)) keys = ['passing', 'vision', 'technique', 'stamina', 'ballControl', 'decisions'];
   else keys = ['shooting', 'dribbling', 'speed', 'composure', 'firstTouch', 'heading'];
   const sum = keys.reduce((s, k) => s + (a[k] as number), 0);
   return Math.round(sum / keys.length);
@@ -262,7 +263,7 @@ export function generateYouthPlayer(
     nationality: origin.nationality, origin: origin.id, face: origin.face,
     dateOfBirth: birthDate(rand, useAge, currentYear), age: useAge,
     height: ri(168, 192), weight: ri(60, 82),
-    preferredFoot: rand() < 0.7 ? 'right' : (rand() < 0.7 ? 'left' : 'both'),
+    preferredFoot: footForSide(pos, rand() < 0.7 ? 'right' : (rand() < 0.7 ? 'left' : 'both'), `${clubId}_y_${uniqueSeed}`),
     naturalPosition: pos, secondaryPositions: [],
     positionRatings: { [pos]: overall },
     attributes, overall,
@@ -524,8 +525,8 @@ function pseudo(str: string): number {
 function developmentAttrsFor(pos: Position): AttributeKey[] {
   const common: AttributeKey[] = ['stamina', 'speed', 'strength', 'technique', 'firstTouch', 'passing', 'decisions', 'composure', 'concentration', 'workRate'];
   if (pos === 'TW') return ['reflexes', 'handling', 'positioning', 'oneOnOnes', 'aerialReach', 'communication', 'kicking', 'concentration', 'agility', 'composure'];
-  if (['LIB', 'VS', 'AV'].includes(pos)) return [...common, 'tackling', 'marking', 'positioning', 'heading', 'interceptions'];
-  if (['DM', 'ZM', 'OM'].includes(pos)) return [...common, 'vision', 'ballControl', 'longPassing', 'dribbling', 'positioning'];
+  if (['LIB', 'IV', 'RV', 'LV'].includes(pos)) return [...common, 'tackling', 'marking', 'positioning', 'heading', 'interceptions'];
+  if (['DM', 'ZM', 'RM', 'LM', 'OM'].includes(pos)) return [...common, 'vision', 'ballControl', 'longPassing', 'dribbling', 'positioning'];
   return [...common, 'shooting', 'dribbling', 'ballControl', 'heading', 'shotPower', 'longShots'];
 }
 
