@@ -25,7 +25,7 @@ export function reasonText(k: string, v: number, p: Pick<Player, 'age'>, log?: D
   const [key, sub] = k.split(':');
   switch (key) {
     case 'alter':
-      return p.age <= 20 ? `Alter ${p.age}: Entwicklungsjahre` : p.age <= 24 ? `Alter ${p.age}: noch im Aufbau` : `Alter ${p.age}: kaum noch Steigerung`;
+      return p.age <= 20 ? `Alter ${p.age}: Entwicklungsjahre` : p.age <= 24 ? `Alter ${p.age}: noch im Aufbau` : `Alter ${p.age}: noch leichte Steigerung möglich`;
     case 'abbau': return `Alter ${p.age}: natürlicher Abbau`;
     case 'langlebig': return up ? 'robuster Körper: der Abbau setzt später ein' : 'der Körper baut früher ab als bei anderen';
     case 'training': return up ? 'gute Trainingsbedingungen' : 'schwache Trainingsbedingungen';
@@ -105,7 +105,14 @@ export function explainRating(p: Player, log: DevLog | undefined, info: PayoutIn
     reasons.push({ k: 'generic', v: 0, text: 'Entwicklung aus Alter, Training und Spielpraxis seit der letzten Bewertung (noch ohne Einzelnachweis)' });
     return { reasons: [...reasons, ...notes], generic: true };
   }
-  const all: RatingReason[] = Object.entries(log.parts)
+  // Geburtstag in der Periode: Aufbau- und Abbau-Wochen zu einer Altersursache zusammenfassen.
+  const parts = { ...log.parts };
+  if (parts.alter != null && parts.abbau != null) {
+    const net = parts.alter + parts.abbau;
+    delete parts.alter; delete parts.abbau;
+    parts[net >= 0 ? 'alter' : 'abbau'] = net;
+  }
+  const all: RatingReason[] = Object.entries(parts)
     .filter(([, v]) => Math.abs(v) >= 0.05)
     .map(([k, v]) => ({ k, v, text: reasonText(k, v, p, log, year) }));
   if (Math.abs(log.start) >= 0.3) all.push({ k: 'start', v: log.start, text: reasonText('start', log.start, p, log) });

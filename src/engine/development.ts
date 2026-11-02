@@ -282,7 +282,7 @@ export function weeklyDevelopment(
     if (logging && d.devLog) {
       // Grundtempo nach Alter (Epoche) + Verschiebung durch Langlebigkeit, dann die Faktoren.
       const base0 = baseWeeklyRate(p.age, era.declineShift);
-      logPart(p, base >= 0 ? 'alter' : 'abbau', base0);
+      logPart(p, base0 >= 0 ? 'alter' : 'abbau', base0);
       logPart(p, 'langlebig', base - base0);
       const parts = decompose(base, factors);
       // Rundungsreste der Zerlegung dem größten Beitrag zuschlagen, damit die Summe exakt bleibt.

@@ -82,6 +82,26 @@ export function SettingsScreen({ settings, onBack, onSave }: {
         </div>
       </div>
 
+      {/* --- Bewertungsrunde --- */}
+      <div className="card mt16">
+        <h3 style={{ margin: '0 0 4px' }}>Bewertungsrunde</h3>
+        <p className="dim mini" style={{ margin: '0 0 14px' }}>
+          Auf- und Abwertungen deines Kaders als Show mit Begründung je Spieler oder als kompakte Liste. Die Begründungen stehen immer auch im Spielerprofil (Reiter Entwicklung).
+        </p>
+        <div className="seg-group">
+          {([['an', 'Als Show'], ['aus', 'Kompakte Liste']] as const).map(([v, l]) => (
+            <button key={v} type="button" className={`seg-btn ${(s.ratingShow ?? 'an') === v ? 'active' : ''}`}
+              onClick={() => setS({ ...s, ratingShow: v })}>{l}</button>
+          ))}
+        </div>
+        <div className="seg-group mt8">
+          {([['langsam', 'Langsam'], ['normal', 'Normal'], ['schnell', 'Schnell']] as const).map(([v, l]) => (
+            <button key={v} type="button" className={`seg-btn ${(s.ratingSpeed ?? 'normal') === v ? 'active' : ''}`}
+              onClick={() => setS({ ...s, ratingSpeed: v })}>{l}</button>
+          ))}
+        </div>
+      </div>
+
       {/* --- Anzeige & Auflösung --- */}
       <div className="card mt16">
         <h3 style={{ margin: '0 0 4px' }}>Anzeige</h3>

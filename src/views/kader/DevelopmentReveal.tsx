@@ -158,6 +158,9 @@ export function RatingCeremony({ results, type, anlass, onClose }: {
                   <div className="rc-info">
                     <span className="rc-name">{r.playerName}</span>
                     <span className="dim mini">{r.clubShort} · {r.position} · {r.age} J.</span>
+                    {r.reasons?.length ? (
+                      <span className="dim mini rc-why">{r.reasons.filter((x) => x.v !== 0).slice(0, 2).map((x) => `${x.v > 0 ? '+' : '−'} ${x.text}`).join(' · ') || r.reasons[0].text}</span>
+                    ) : null}
                   </div>
                   <div className="rc-ovr">
                     <b className="rc-old">{r.oldOverall}</b>

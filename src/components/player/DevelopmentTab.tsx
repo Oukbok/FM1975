@@ -67,6 +67,29 @@ function AttributeChanges({ p }: { p: Player }) {
   );
 }
 
+/** Letzte Bewertungen mit Begründung (nur eigener Kader, engine/ratingReasons.ts). */
+function RatingHistory({ p }: { p: Player }) {
+  const log = (p.development.ratingLog ?? []).slice().reverse();
+  if (!log.length) return <div className="pp-note">Die Begründungen erscheinen ab der nächsten Bewertungsrunde (nur dein Kader).</div>;
+  return (
+    <div className="pp-ratings">
+      {log.map((e) => (
+        <div key={e.date} className="pp-rating">
+          <div className="pp-rating-head">
+            <span>{e.label} <span className="dim">· {utcDate(e.date)}</span></span>
+            <span>{e.old} → <b>{e.new}</b> <b style={{ color: e.change > 0 ? 'var(--pos)' : e.change < 0 ? 'var(--neg)' : 'var(--text-3)' }}>{e.change > 0 ? `+${e.change}` : e.change < 0 ? `−${-e.change}` : '±0'}</b></span>
+          </div>
+          <ul className="pp-rating-why">
+            {e.reasons.map((x, i) => (
+              <li key={x.k + i} className={x.v > 0 ? 'plus' : x.v < 0 ? 'minus' : 'note'}><span>{x.v > 0 ? '+' : x.v < 0 ? '−' : '·'}</span> {x.text}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function DevelopmentTab({ p }: { p: Player }) {
   const tempo = hiddenFor(useClubProfile()?.game, p, 'tempo');
   // Nur die Scout-Einschätzung ist sichtbar – das wahre Potenzial bleibt verdeckt.
@@ -84,6 +107,9 @@ export default function DevelopmentTab({ p }: { p: Player }) {
         </Section>
         <Section title="Attribut-Veränderungen" icon={<Icon name="training" size={15} />}>
           <AttributeChanges p={p} />
+        </Section>
+        <Section title="Bewertungen und Gründe" icon={<Icon name="training" size={15} />}>
+          <RatingHistory p={p} />
         </Section>
       </div>
       <div className="pp-stack">

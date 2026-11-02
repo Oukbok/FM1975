@@ -74,6 +74,7 @@ import { CalendarOverlay } from './CalendarOverlay';
 import { MENU_STRUCTURE, Screen, TopNav } from './navigation';
 import { processDay as processGameDay } from '../game/day';
 import { DrawShow } from '../screens/draw/DrawShow';
+import { RatingShow } from '../screens/rating/RatingShow';
 import { CampRecap } from '../views/kader/camp/CampRecap';
 import { compCup } from '../game/cupDraw';
 import type { DrawComp } from '../types/draw';
@@ -501,7 +502,11 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
           onClose={closeBriefing} onGoto={setScreen} />
       )}
 
-      {ratingCeremony && (
+      {ratingCeremony && (settings.ratingShow ?? 'an') !== 'aus' && (
+        <RatingShow g={g} results={ratingCeremony.results} anlass={ratingCeremony.anlass} settings={settings}
+          onSettings={onUpdateSettings} onClose={() => { setRatingCeremony(null); rerender(); }} />
+      )}
+      {ratingCeremony && settings.ratingShow === 'aus' && (
         <RatingCeremony
           results={ratingCeremony.results}
           type={ratingCeremony.type}
