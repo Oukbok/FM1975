@@ -66,7 +66,7 @@ export function DressingRoomView({ g, onChange }: { g: Game; onChange: () => voi
         <button className={`dchip ${sort === 'einfluss' ? 'on' : ''}`} onClick={() => setSort('einfluss')}>Einfluss</button>
         <button className={`dchip ${sort === 'moral' ? 'on' : ''}`} onClick={() => setSort('moral')}>Moral</button>
       </span>}>
-        <table className="dtable kb-table">
+        <table className="dtable kb-table rl-sm">
           <thead><tr><th>Pos</th><th>Spieler</th><th>Rolle</th><th className="num">Einfluss</th><th className="num">Moral</th></tr></thead>
           <tbody>
             {list.map((o) => {

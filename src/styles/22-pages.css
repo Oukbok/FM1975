@@ -80,7 +80,6 @@
 .dtable td.ctr, .dtable th.ctr { text-align: center; }
 .dtable tbody tr:hover { background: rgba(241, 160, 55, 0.05); }
 .dtable tbody tr.clickable { cursor: pointer; }
-.dtable tbody tr.me td { color: var(--accent); font-weight: 800; }
 .dtable .muted { color: var(--text-3); }
 .dtable .nowrap { white-space: nowrap; }
 

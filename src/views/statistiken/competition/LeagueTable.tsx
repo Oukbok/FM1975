@@ -28,9 +28,9 @@ export function LeagueTable({ g, snap }: { g: Game; snap: CompSnapshot }) {
   if (snap.placingsOnly) {
     return (
       <table className="dtable cmp-table">
-        <thead><tr><th className="ctr">#</th><th>Verein</th></tr></thead>
+        <thead><tr><th className="rl-rank">#</th><th>Verein</th></tr></thead>
         <tbody>{rows.map((r) => (
-          <tr key={r.clubId}><td className="ctr"><span className={`pos-badge ${r.pos === 1 ? 'zone-cl' : ''}`}>{r.pos}</span></td><td><TeamName g={g} id={r.clubId} season={snap.season} /></td></tr>
+          <tr key={r.clubId}><td className="rl-rank"><span className={`rl-z ${r.pos === 1 ? 'zone-cl' : ''}`}>{r.pos}</span></td><td><TeamName g={g} id={r.clubId} season={snap.season} size={26} /></td></tr>
         ))}</tbody>
       </table>
     );
@@ -49,7 +49,7 @@ export function LeagueTable({ g, snap }: { g: Game; snap: CompSnapshot }) {
       <div className="cmp-scroll">
         <table className="dtable cmp-table">
           <thead><tr>
-            <th className="ctr">#</th><th>Verein</th><th className="num">Sp</th><th className="num">S</th><th className="num">U</th><th className="num">N</th>
+            <th className="rl-rank">#</th><th>Verein</th><th className="num">Sp</th><th className="num">S</th><th className="num">U</th><th className="num">N</th>
             <th className="num">Tore</th><th className="num">Diff</th><th className="num">{m === 'form' ? 'Pkt (5)' : 'Pkt'}</th>{live && <th>Form</th>}
           </tr></thead>
           <tbody>
@@ -57,12 +57,12 @@ export function LeagueTable({ g, snap }: { g: Game; snap: CompSnapshot }) {
               const diff = r.gf - r.ga;
               return (
                 <tr key={r.clubId} className={r.clubId === mid ? 'me' : ''}>
-                  <td className="ctr"><span className={`pos-badge ${m === 'all' ? (snap.zones ? snap.zones[r.pos - 1] ?? '' : zoneOf(r.pos, snap.tier, rows.length, historic)) : ''}`}>{r.pos}</span></td>
-                  <td className="nowrap"><TeamName g={g} id={r.clubId} season={snap.season} /></td>
+                  <td className="rl-rank"><span className={`rl-z ${m === 'all' ? (snap.zones ? snap.zones[r.pos - 1] ?? '' : zoneOf(r.pos, snap.tier, rows.length, historic)) : ''}`}>{r.pos}</span></td>
+                  <td className="nowrap"><TeamName g={g} id={r.clubId} season={snap.season} size={26} /></td>
                   <td className="num">{r.p}</td><td className="num">{r.w}</td><td className="num">{r.d}</td><td className="num">{r.l}</td>
                   <td className="num muted">{r.gf}:{r.ga}</td>
                   <td className="num">{diff > 0 ? '+' : ''}{diff}</td>
-                  <td className="num"><b>{r.pts}</b>{r.ded ? <sup className="cmp-ded" title={`${r.ded} Punkte Abzug`}>−{r.ded}</sup> : null}</td>
+                  <td className="num rl-main">{r.pts}{r.ded ? <sup className="cmp-ded" title={`${r.ded} Punkte Abzug`}>−{r.ded}</sup> : null}</td>
                   {live && <td><FormDots form={r.form ?? []} /></td>}
                 </tr>
               );

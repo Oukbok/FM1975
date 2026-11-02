@@ -419,13 +419,13 @@ export function StatistikenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Scree
   return (
     <DashPage>
       <DashBox title="Liga" icon="dashTabelle" onClick={() => onGoto('table')} right={row ? `${row.position}. · ${row.points} Pkt.` : undefined}>
-        <table className="dtable">
-          <thead><tr><th>#</th><th>Verein</th><th className="num">Sp</th><th className="num">TD</th><th className="num">Pkt</th></tr></thead>
+        <table className="dtable rl-sm">
+          <thead><tr><th className="rl-rank">#</th><th>Verein</th><th className="num">Sp</th><th className="num">TD</th><th className="num">Pkt</th></tr></thead>
           <tbody>
             {around.map((r) => (
               <tr key={r.clubId} className={r.clubId === myId ? 'me' : ''}>
-                <td>{r.position}</td><td><ClubLink id={r.clubId}>{g.clubs[r.clubId]?.name}</ClubLink></td><td className="num">{r.played}</td>
-                <td className="num">{r.goalDifference > 0 ? '+' : ''}{r.goalDifference}</td><td className="num">{r.points}{r.deduction ? <sup title={`${r.deduction} Punkte Abzug (Überschuldung)`} style={{ color: 'var(--red)', marginLeft: 3 }}>−{r.deduction}</sup> : null}</td>
+                <td className="rl-rank">{r.position}</td><td><ClubLink id={r.clubId}><span className="rl-club">{g.clubs[r.clubId] && <ClubCrest club={g.clubs[r.clubId]} size={22} />}<span className="rl-name">{g.clubs[r.clubId]?.name}</span></span></ClubLink></td><td className="num">{r.played}</td>
+                <td className="num">{r.goalDifference > 0 ? '+' : ''}{r.goalDifference}</td><td className="num rl-main">{r.points}{r.deduction ? <sup title={`${r.deduction} Punkte Abzug (Überschuldung)`} style={{ color: 'var(--red)', marginLeft: 3 }}>−{r.deduction}</sup> : null}</td>
               </tr>
             ))}
           </tbody>

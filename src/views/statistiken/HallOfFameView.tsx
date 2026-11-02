@@ -47,7 +47,7 @@ export function HallOfFameView({ g }: { g: Game }) {
             <tbody>
               {byPeak.map((a) => (
                 <tr key={a.id}>
-                  <td className="nowrap" style={{ fontWeight: 700 }}>{a.name}</td>
+                  <td className="nowrap rl-name">{a.name}</td>
                   <td className="ctr"><span className="pos-badge">{a.pos}</span></td>
                   <td className="num nowrap">{a.born}–{a.retired}</td>
                   <td className="num" style={{ color: vColor(a.peak), fontWeight: 800 }}>{a.peak}</td>

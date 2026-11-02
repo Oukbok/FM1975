@@ -29,7 +29,7 @@ export function VertraegeView({ g, onChange }: { g: Game; onChange?: () => void 
   return (
     <DashPage>
       <DashBox title="Laufende Verträge" info="restlaufzeit" icon="contracts" span={2} rows={2} flush right={`${squad.length} Spieler`}>
-        <table className="dtable">
+        <table className="dtable rl-players">
           <thead><tr>
             <th>Spieler</th><th className="ctr">Pos</th><th className="num">Alter</th><th className="num">Stärke</th>
             <th className="num">{wageHead()}</th><th className="num">Vertrag bis</th><th className="num">Rest<InfoTip k="bosman" /></th>
@@ -40,7 +40,7 @@ export function VertraegeView({ g, onChange }: { g: Game; onChange?: () => void 
               const m = monthsUntil(today, pl.contract.expiryDate);
               return (
                 <tr key={pl.id} className="clickable" onClick={() => setSel(pl.id)}>
-                  <td className="nowrap" style={{ fontWeight: 700 }}>{pl.fullName}</td>
+                  <td className="nowrap rl-name">{pl.fullName}</td>
                   <td className="ctr"><span className="pos-badge">{pl.naturalPosition}</span></td>
                   <td className="num">{pl.age}</td>
                   <td className="num" style={{ color: vColor(pl.overall), fontWeight: 800 }}>{pl.overall}</td>

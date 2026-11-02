@@ -86,8 +86,8 @@ export function CupRounds({ g, snap, onWatch, onReplayDraw }: {
           {!round.drawn ? <div className="dnote">{round.drawDate ? `Auslosung am ${CalendarEngine.formatDate(round.drawDate)}.` : 'Noch nicht ausgelost.'}</div>
             : isGroup(round) ? <GroupMatches g={g} snap={snap} round={round} onWatch={snap.source === 'live' ? watch : undefined} />
             : (
-              <div className="cmp-ties">
-                {round.ties.map((t) => <TieRow key={t.id} g={g} snap={snap} t={t} onWatch={onWatch} watch={watch} />)}
+              <div className="rl cmp-ties">
+                {round.ties.map((t, i) => <TieRow key={t.id} g={g} snap={snap} t={t} no={i + 1} onWatch={onWatch} watch={watch} />)}
               </div>
             )}
         </div>
@@ -96,14 +96,17 @@ export function CupRounds({ g, snap, onWatch, onReplayDraw }: {
   );
 }
 
-function TieRow({ g, snap, t, onWatch, watch }: { g: Game; snap: CompSnapshot; t: TieLite; onWatch?: (id: string) => void; watch: (t: TieLite) => void }) {
+function TieRow({ g, snap, t, no, onWatch, watch }: { g: Game; snap: CompSnapshot; t: TieLite; no: number; onWatch?: (id: string) => void; watch: (t: TieLite) => void }) {
   const done = t.winner != null && (t.hg != null || !!t.scoreText);
   const open = t.hg == null && !t.scoreText && !t.legs?.length;
+  const side = (id: string) => `rl-side ${done ? (t.winner === id ? 'won' : 'lost') : ''}`;
   return (
-    <div className={`cmp-tie ${t.mine ? 'mine' : ''} ${t.matchId && onWatch && snap.source === 'live' ? 'clickable' : ''}`} onClick={() => snap.source === 'live' && watch(t)}>
-      <span className={`cmp-side ${done && t.winner === t.home ? 'won' : ''}`}><TeamName g={g} id={t.home} season={snap.season} /></span>
-      <span className="cmp-res">{open && t.date ? <span className="dnote">{CalendarEngine.formatDate(t.date)}{t.legDates?.[1] && t.agg !== false ? ` / ${CalendarEngine.formatDate(t.legDates[1])}` : ''}</span> : tieScore(t)}</span>
-      <span className={`cmp-side away ${done && t.winner === t.away ? 'won' : ''}`}><TeamName g={g} id={t.away} season={snap.season} /></span>
+    <div className={`rl-row rl-tie ${t.mine ? 'mine' : ''} ${t.matchId && onWatch && snap.source === 'live' ? 'clickable' : ''}`} onClick={() => snap.source === 'live' && watch(t)}>
+      <span className="rl-rank">{no}</span>
+      <span className={side(t.home)}><TeamName g={g} id={t.home} season={snap.season} size={28} /></span>
+      <span className="cmp-res">{open ? <span className="rl-dash">–</span> : tieScore(t)}</span>
+      <span className={side(t.away)}><TeamName g={g} id={t.away} season={snap.season} size={28} /></span>
+      <span className="rl-dim rl-meta">{open && t.date ? `${CalendarEngine.formatDate(t.date)}${t.legDates?.[1] && t.agg !== false ? ` / ${CalendarEngine.formatDate(t.legDates[1])}` : ''}` : ''}</span>
     </div>
   );
 }
@@ -120,13 +123,15 @@ function GroupMatches({ g, snap, round, onWatch }: { g: Game; snap: CompSnapshot
         const list = ms.filter((m) => m.md === md);
         const shown = list.filter((m) => m.mine).concat(list.filter((m) => !m.mine));
         return (
-          <div key={md} className="cmp-md">
+          <div key={md} className="cmp-md rl rl-sm">
             <div className="cmp-md-head">{md + 1}. Spieltag <span className="dnote">{CalendarEngine.formatDate(list[0].date)}</span></div>
             {shown.map((m) => (
-              <div key={m.id} className={`cmp-tie ${m.mine ? 'mine' : ''} ${m.matchId && onWatch ? 'clickable' : ''}`} onClick={() => onWatch?.(m)}>
-                <span className="cmp-side">{!league && <span className="cmp-grp">{m.group}</span>}<TeamName g={g} id={m.home} season={snap.season} /></span>
-                <span className="cmp-res">{m.hg == null ? <span className="dnote">–</span> : <b>{m.hg}:{m.ag}</b>}</span>
-                <span className="cmp-side away"><TeamName g={g} id={m.away} season={snap.season} /></span>
+              <div key={m.id} className={`rl-row rl-tie ${m.mine ? 'mine' : ''} ${m.matchId && onWatch ? 'clickable' : ''}`} onClick={() => onWatch?.(m)}>
+                <span className="rl-rank">{!league ? m.group : ''}</span>
+                <span className="rl-side"><TeamName g={g} id={m.home} season={snap.season} size={22} /></span>
+                <span className="cmp-res">{m.hg == null ? <span className="rl-dash">–</span> : <b>{m.hg}:{m.ag}</b>}</span>
+                <span className="rl-side"><TeamName g={g} id={m.away} season={snap.season} size={22} /></span>
+                <span />
               </div>
             ))}
           </div>

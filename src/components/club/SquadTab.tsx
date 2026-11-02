@@ -48,7 +48,7 @@ export default function SquadTab({ g, d, openPlayer, onTalk, talkErr }: ClubTabP
           <button className={`dchip ${grp === 'all' ? 'on' : ''}`} onClick={() => setGrp('all')}>Alle</button>
           {GROUP_ORDER.map((k) => <button key={k} className={`dchip ${grp === k ? 'on' : ''}`} onClick={() => setGrp(k)}>{GROUP_DE[k]}</button>)}
         </span>}>
-        <table className="dtable">
+        <table className="dtable rl-players">
           <thead><tr>
             <th className="ctr">#</th><th>Name</th><Th k="pos" cls="ctr">Pos</Th><Th k="age" cls="num">Alter</Th>
             <Th k="ovr" cls="num">Stärke</Th><Th k="pot">Potenzial</Th><Th k="val" cls="num">Marktwert</Th><Th k="ctr" cls="num">Vertrag</Th>
@@ -60,7 +60,7 @@ export default function SquadTab({ g, d, openPlayer, onTalk, talkErr }: ClubTabP
               return (
                 <tr key={p.id} className="clickable" onClick={() => openPlayer(p.id)}>
                   <td className="ctr muted">{p.shirtNumber}</td>
-                  <td className="nowrap" style={{ fontWeight: 700 }}>{p.fullName}{p.transferListed && <span className="cmx-tag">Transferliste</span>}</td>
+                  <td className="nowrap rl-name">{p.fullName}{p.transferListed && <span className="cmx-tag">Transferliste</span>}</td>
                   <td className="ctr"><span className="pos-badge">{p.naturalPosition}</span></td>
                   <td className="num">{p.age}</td>
                   <td className="num"><b style={{ color: vColor(p.overall) }}>{p.overall}</b></td>

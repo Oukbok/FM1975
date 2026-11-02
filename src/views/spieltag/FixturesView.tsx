@@ -38,7 +38,7 @@ export function FixturesView({ g, onWatch }: { g: Game; onWatch: (id: string) =>
     <DashPage>
       <DashBox title={`Spielplan ${g.season}`} icon="schedule" span={2} rows={2} right={`${played.length} von ${myMatches.length} gespielt`} flush>
         <table className="dtable">
-          <thead><tr><th className="ctr">ST</th><th>Datum</th><th className="ctr">Ort</th><th>Gegner</th><th className="ctr">Ergebnis</th><th /></tr></thead>
+          <thead><tr><th className="rl-rank">ST</th><th>Datum</th><th className="ctr">Ort</th><th>Gegner</th><th className="ctr">Ergebnis</th><th /></tr></thead>
           <tbody>
             {myMatches.map((m) => {
               const isHome = m.homeClubId === mid;
@@ -48,11 +48,11 @@ export function FixturesView({ g, onWatch }: { g: Game; onWatch: (id: string) =>
               const score = m.result ? (isHome ? `${m.result.homeGoals}:${m.result.awayGoals}` : `${m.result.awayGoals}:${m.result.homeGoals}`) : '–:–';
               return (
                 <tr key={m.id} className={m.matchday === nextMd ? 'me' : ''}>
-                  <td className="ctr"><b>{m.matchday}</b></td>
+                  <td className="rl-rank">{m.matchday}</td>
                   <td className="nowrap muted">{CalendarEngine.formatDate(m.date)}</td>
                   <td className="ctr">{isHome ? 'Heim' : 'Ausw.'}</td>
                   <td>
-                    <ClubLink id={oppId}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>{opp && <ClubCrest club={opp} size={24} />}{opp?.name}</span></ClubLink>
+                    <ClubLink id={oppId}><span className="rl-club">{opp && <ClubCrest club={opp} size={28} />}<span className="rl-name">{opp?.name}</span></span></ClubLink>
                   </td>
                   <td className="ctr"><span className={`dres ${r ? 'dres-' + r : ''}`}>{score}</span></td>
                   <td className="num">{m.status === 'finished' && <button className="dchip" onClick={() => onWatch(m.id)}>Bericht</button>}</td>

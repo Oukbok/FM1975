@@ -97,9 +97,9 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
         {rows.length === 0 ? (
           <Empty icon="youth">{youth.length === 0 ? 'Aktuell keine Talente in der Akademie. Der nächste Bambini-Jahrgang trifft zum 1. Juli ein.' : 'In dieser Altersklasse gibt es derzeit keine Talente.'}</Empty>
         ) : (
-          <table className="dtable">
+          <table className="dtable rl-players">
             <thead><tr>
-              <th className="ctr">Kl.</th><th>Name</th><th className="ctr">Pos</th><Th k="age" cls="num">Alter</Th>
+              <th className="rl-rank">Kl.</th><th>Name</th><th className="ctr">Pos</th><Th k="age" cls="num">Alter</Th>
               <Th k="ovr" cls="num">Stärke</Th><Th k="pot">Potenzial (Scouting)</Th>
               <th className="num" title="Tempo">TMP</th><th className="num" title="Technik">TEC</th><th className="num" title="Passspiel">PAS</th>
               <th className="num" title="Zweikampf">ZWK</th><th className="num" title="Torschuss">TOR</th>
@@ -107,8 +107,8 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
             <tbody>
               {rows.map((pl) => (
                 <tr key={pl.id} className="clickable" onClick={() => setSel(pl.id)}>
-                  <td className="ctr muted">{youthAgeClass(pl.age)}</td>
-                  <td className="nowrap" style={{ fontWeight: 700 }}>{pl.fullName}</td>
+                  <td className="rl-rank">{youthAgeClass(pl.age)}</td>
+                  <td className="nowrap rl-name">{pl.fullName}</td>
                   <td className="ctr"><span className="pos-badge">{pl.naturalPosition}</span></td>
                   <td className="num">{pl.age}</td>
                   <td className="num"><b style={{ color: vColor(pl.overall) }}>{pl.overall}</b></td>

@@ -12,8 +12,7 @@
 .cmp-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 10px; }
 .cmp-chips { display: inline-flex; flex-wrap: wrap; gap: 6px; }
 
-.cmp-table td { padding-top: 5px; padding-bottom: 5px; }
-.cmp-team { display: inline-flex; align-items: center; gap: 8px; min-width: 0; max-width: 100%; }
+.cmp-team { display: inline-flex; align-items: center; gap: 10px; min-width: 0; max-width: 100%; }
 .cmp-team-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cmp-dot { width: 12px; height: 12px; border-radius: 50%; flex: 0 0 auto; border: 1px solid var(--border); }
 .cmp-ded { color: var(--neg); margin-left: 3px; }
