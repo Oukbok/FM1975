@@ -79,12 +79,16 @@
 .cp-step.on { border-color: var(--accent); color: var(--text); }
 .cp-step.on .cp-step-n { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .cp-step.done .cp-step-n { color: var(--text); border-color: var(--text-3); }
-.lu-seg.cp-season { flex: 0 0 auto; display: inline-flex; width: auto; }
-.cp-season button { padding: 6px 14px; }
 .cp-body { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 330px; }
 .cp-main { min-width: 0; min-height: 0; padding: 16px 22px; overflow: hidden; display: flex; flex-direction: column; }
 .cp-side { min-height: 0; overflow-y: auto; padding: 16px 20px; border-left: 1px solid var(--border-soft); background: color-mix(in srgb, var(--bg) 35%, transparent); }
-.cp-side .cp-bars .tx-eff { grid-template-columns: 116px 1fr 70px; gap: 10px; font-size: 14px; padding: 3px 0; }
+.cp-side .cp-bars .tx-eff { grid-template-columns: 112px minmax(0, 1fr) 92px; gap: 8px; font-size: 14px; padding: 3px 0; }
+.cp-side .cp-bars .tx-eff-v { font-size: 13px; white-space: nowrap; }
+/* Spanne: Verbindung zur Mitte (dünn), Bereich lo…hi (halbtransparent), Strich = Erwartung */
+.cp-eff-t > span { position: absolute; top: 0; bottom: 0; border-radius: 4px; }
+.cp-eff-t > .cp-eff-link { top: 3px; bottom: 3px; opacity: 0.45; border-radius: 0; }
+.cp-eff-t > .cp-eff-band { opacity: 0.5; }
+.cp-eff-t > .cp-eff-mark { width: 3px; margin-left: -1.5px; top: -2px; bottom: -2px; border-radius: 1px; opacity: 1; }
 .cp-side .dkv { padding: 3px 0; font-size: 14px; }
 .cp-bars.empty .tx-eff-t > span { display: none; }
 .cp-checks { display: flex; flex-direction: column; gap: 2px; }
@@ -112,8 +116,18 @@
 .cp-day { position: relative; height: 54px; border: 1px solid transparent; border-radius: 4px; background: transparent; color: var(--text-4); font: inherit; font-size: 14px; font-variant-numeric: tabular-nums; padding: 0; cursor: default; }
 .cp-day.blank { visibility: hidden; }
 .cp-day.win { background: var(--panel); color: var(--text-2); }
-.cp-day.win.can { cursor: pointer; color: var(--text); }
-.cp-day.win.can:hover { border-color: var(--text-3); }
+/* Alle Fenstertage gleich hell – ob ein Lager dort beginnen kann, zeigt erst die Vorschau
+   beim Überfahren (sonst „leuchten“ Tage beim Ändern der Dauer auf). Gesperrte Tage
+   bekommen weder Grundknopf-Hover noch Deckkraft-Abzug. */
+.cp-day { transition: none; }
+.cp-day:disabled { opacity: 1; cursor: default; }
+.cp-day:hover, .cp-day:active { transform: none; }
+.cp-day:disabled:hover { border-color: transparent; }
+.cp-day:not(.win):hover { background: transparent; }
+.cp-day.win:hover { background: var(--panel); }
+.cp-day.win.can { cursor: pointer; }
+.cp-day.preview { background: color-mix(in srgb, var(--accent) 7%, var(--panel)); border-color: color-mix(in srgb, var(--accent) 30%, transparent); color: var(--text); }
+.cp-day.preview-start { border-color: var(--accent); }
 .cp-day.lead { background: repeating-linear-gradient(-45deg, var(--panel) 0 4px, var(--bg-2) 4px 8px); color: var(--text-4); }
 .cp-day.short { box-shadow: inset 0 -2px 0 var(--text-4); }
 .cp-day.match { background: color-mix(in srgb, var(--red) 16%, var(--panel)); color: var(--text-2); }
@@ -134,6 +148,7 @@
 .cp-legend .sw.lead { background: repeating-linear-gradient(-45deg, var(--panel) 0 3px, var(--bg-2) 3px 6px); }
 .cp-dates-sum { font-size: 15px; color: var(--text); padding: 10px 14px; border: 1px solid var(--border-soft); border-left: 3px solid var(--text-3); border-radius: 6px; background: var(--bg-2); }
 .cp-dates-sum.bad { border-left-color: var(--orange); color: var(--orange); }
+.cp-dates-next { display: block; margin-top: 3px; font-size: 13px; color: var(--text-3); }
 
 /* Schritt 2: Karte + Ortsdetail */
 .cp-where { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 372px; grid-template-rows: auto minmax(0, 1fr); gap: 10px 18px; }
@@ -148,27 +163,55 @@
 .cp-map-tab:disabled { cursor: default; }
 .cp-map-n { font-size: 11.5px; color: var(--text-3); font-weight: 700; }
 .cp-map { position: relative; flex: 1 1 auto; min-height: 0; border: 1px solid var(--border-soft); border-radius: 6px; background: var(--bg); overflow: hidden; }
-.cp-map svg { position: absolute; inset: 0; display: block; }
-.cp-land { fill: var(--panel-2); stroke: var(--border); stroke-width: 1; }
-.cp-border { fill: none; stroke: color-mix(in srgb, var(--text-4) 55%, transparent); stroke-width: 0.7; }
+.cp-map > svg { position: absolute; inset: 0; display: block; }
+/* Meer: dunkles, kühles Blau aus dem Positions-Blau; Land: Schiefer mit Hauch Relief */
+.cp-sea-0 { stop-color: color-mix(in srgb, var(--pos-key) 21%, var(--bg)); }
+.cp-sea-1 { stop-color: color-mix(in srgb, var(--pos-key) 7%, var(--bg)); }
+.cp-land-0 { stop-color: color-mix(in srgb, var(--text-3) 22%, var(--panel)); }
+.cp-land-1 { stop-color: var(--panel); }
+.cp-grat { fill: none; stroke: color-mix(in srgb, var(--pos-key-2) 9%, transparent); stroke-width: 1; }
+.cp-coast { fill: none; stroke: color-mix(in srgb, var(--pos-key-2) 16%, transparent); stroke-width: 5; stroke-linejoin: round; }
+.cp-land { fill: url(#cpLand); stroke: color-mix(in srgb, var(--pos-key-2) 30%, var(--panel-2)); stroke-width: 0.9; stroke-linejoin: round; }
+.cp-border { fill: none; stroke: color-mix(in srgb, var(--text-3) 45%, transparent); stroke-width: 0.7; stroke-dasharray: 3 2; }
+.cp-city rect { fill: var(--text-4); }
+.cp-city text { fill: var(--text-4); font-family: var(--font-ui); font-weight: 600; letter-spacing: 0.3px; paint-order: stroke; stroke: color-mix(in srgb, var(--pos-key) 8%, var(--bg)); stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
 .cp-pin { cursor: pointer; }
 .cp-pin-hit { fill: transparent; }
-.cp-pin-dot { fill: var(--text-2); stroke: var(--bg); stroke-width: 2; }
-.cp-pin.ok:hover .cp-pin-dot, .cp-pin.ok.hov .cp-pin-dot { fill: var(--text); }
+.cp-pin-dot { fill: var(--text); stroke: var(--bg); stroke-width: 2; }
+.cp-pin-halo { fill: transparent; stroke: transparent; stroke-width: 1.5; transition: fill 0.15s, stroke 0.15s; }
+.cp-pin.ok.hov .cp-pin-halo { fill: color-mix(in srgb, var(--text) 10%, transparent); stroke: color-mix(in srgb, var(--text) 45%, transparent); }
 .cp-pin.locked .cp-pin-dot { fill: var(--panel-2); stroke: var(--text-4); stroke-width: 1.5; }
+.cp-pin.locked.hov .cp-pin-halo { stroke: var(--text-4); }
 .cp-pin.sel .cp-pin-dot { fill: var(--accent); stroke: var(--bg); }
-.cp-pin-halo { fill: var(--accent-glow); }
+.cp-pin.sel .cp-pin-halo { fill: var(--accent-glow); stroke: transparent; }
 .cp-pin-oblig { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
 .cp-pin-leader { stroke: var(--text-4); stroke-width: 1; }
 .cp-pin-true { fill: var(--text-3); }
 .cp-pin-label { fill: var(--text-2); font-family: var(--font-ui); font-weight: 700; paint-order: stroke; stroke: var(--bg); stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
+.cp-pin-label.hov { fill: var(--text); }
 .cp-pin-label.sel { fill: var(--accent); }
 .cp-pin-label.locked { fill: var(--text-4); }
-.cp-map-legend { position: absolute; left: 10px; bottom: 8px; display: flex; gap: 14px; font-size: 12px; color: var(--text-3); background: color-mix(in srgb, var(--bg) 80%, transparent); padding: 4px 8px; border-radius: 4px; }
+.cp-pin.locked .cp-pin-seasons { opacity: 0.5; }
+/* Jahreszeiten-Symbole (Sonne/Flocke) über den Punkten und in Legende/Infokarte */
+.cp-glyph { pointer-events: none; }
+.cp-glyph.sun circle { fill: color-mix(in srgb, var(--yellow) 75%, var(--text)); }
+.cp-glyph.sun line { stroke: color-mix(in srgb, var(--yellow) 75%, var(--text)); stroke-width: 1.4; stroke-linecap: round; }
+.cp-glyph.snow line, .cp-glyph.snow path { fill: none; stroke: var(--pos-key-2); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.cp-pin-seasons .cp-glyph { paint-order: stroke; }
+.cp-season-ico { display: inline-block; vertical-align: -2px; margin-right: 4px; overflow: visible; }
+.cp-map-tip { position: absolute; z-index: 2; transform: translate(-50%, calc(-100% - 26px)); min-width: 200px; max-width: 260px; padding: 8px 11px; border: 1px solid var(--border); border-radius: 6px; background: color-mix(in srgb, var(--bg-2) 94%, transparent); box-shadow: var(--shadow); pointer-events: none; display: flex; flex-direction: column; gap: 2px; font-size: 12.5px; color: var(--text-2); }
+.cp-map-tip.below { transform: translate(-50%, 22px); }
+.cp-map-tip b { font-size: 14px; color: var(--text); }
+.cp-map-tip .bad { color: var(--orange); }
+.cp-map-tip-s { display: flex; gap: 10px; margin: 2px 0; }
+.cp-map-tip-s em { font-style: normal; color: var(--text-3); }
+.cp-map-tip-s em.on { color: var(--text); }
+.cp-map-legend { position: absolute; left: 10px; bottom: 8px; display: flex; align-items: center; gap: 14px; font-size: 12px; color: var(--text-3); background: color-mix(in srgb, var(--bg) 82%, transparent); padding: 4px 10px; border-radius: 4px; }
 .cp-map-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
-.cp-map-legend i.ok { background: var(--text-2); }
-.cp-map-legend i.locked { border: 1.5px solid var(--text-4); }
+.cp-map-legend i.ok { background: var(--text); }
 .cp-map-legend i.oblig { border: 1.5px dashed var(--accent); }
+.cp-map-toggle { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; color: var(--text-2); }
+.cp-map-toggle input { accent-color: var(--accent); margin: 0; }
 
 .cp-dest { grid-column: 2; min-height: 0; overflow-y: auto; padding-right: 4px; }
 .cp-dest.empty { display: flex; align-items: center; justify-content: center; text-align: center; color: var(--text-3); font-size: 14px; border: 1px dashed var(--border); border-radius: 6px; padding: 24px; }
@@ -206,7 +249,7 @@
 .cp-squad-bar .cp-sec { margin: 0 auto 0 0; }
 .cp-pl-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
 .cp-pl-list.youth { flex: 0 0 auto; max-height: 190px; }
-.cp-pl { display: grid; grid-template-columns: 22px 44px minmax(0, 1fr) 36px 44px 48px 92px; align-items: center; gap: 6px; padding: 4px 6px; border-bottom: 1px solid var(--border-soft); font-size: 14px; cursor: pointer; color: var(--text-3); }
+.cp-pl { display: grid; grid-template-columns: 22px 44px minmax(0, 1fr) 50px 62px 66px 82px; align-items: center; gap: 6px; padding: 4px 6px; border-bottom: 1px solid var(--border-soft); font-size: 14px; cursor: pointer; color: var(--text-3); }
 .cp-pl.on { color: var(--text); }
 .cp-pl.head { cursor: default; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-3); }
 .cp-pl input { accent-color: var(--accent); margin: 0; }
@@ -216,8 +259,23 @@
 .cp-pl-age, .cp-pl-ovr, .cp-pl-fit { text-align: right; }
 .cp-pl-st { font-size: 12px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cp-pl.inj .cp-pl-st { color: var(--red); }
-.cp-focus { display: flex; flex-wrap: wrap; gap: 5px; }
-.cp-focus .dchip { padding: 4px 10px; }
+.cp-focus { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.cp-focus-b { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid var(--border-soft); border-radius: 6px; background: var(--bg-2); color: var(--text-2); font: inherit; font-size: 13px; font-weight: 600; text-align: left; cursor: pointer; min-width: 0; }
+.cp-focus-b span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cp-focus-b:hover { border-color: var(--border); background: var(--bg-2); color: var(--text); }
+.cp-focus-b.on { border-color: var(--accent); background: var(--accent-soft); color: var(--text); }
+.cp-focus-b .game-icon { flex: 0 0 auto; width: 24px; height: 24px; }
+.cp-focus-b:not(.on) .game-icon { opacity: 0.85; }
+/* Sortierbare Spaltenköpfe der Reisegruppe */
+.cp-sort { all: unset; cursor: pointer; white-space: nowrap; position: relative; }
+.cp-sort:hover { color: var(--text); }
+.cp-sort.on { color: var(--text); }
+.cp-pl.head .cp-sort { letter-spacing: 0.3px; }
+.cp-sort.on::after { content: ''; display: inline-block; margin-left: 4px; vertical-align: 2px; border-left: 4px solid transparent; border-right: 4px solid transparent; }
+.cp-sort.on.asc::after { border-bottom: 5px solid var(--text-2); }
+.cp-sort.on.desc::after { border-top: 5px solid var(--text-2); }
+.cp-pl.head .cp-h-age, .cp-pl.head .cp-h-ovr, .cp-pl.head .cp-h-fit { text-align: right; }
+.cp-youth { display: flex; flex-direction: column; min-height: 0; }
 .cp-focus-text { font-size: 13.5px; color: var(--text-2); margin: 8px 0 10px; min-height: 38px; }
 
 /* ---------- Zusammenfassung (animiert) ---------- */

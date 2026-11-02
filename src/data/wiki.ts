@@ -2612,16 +2612,24 @@ freigeschaltet, wie sie historisch aufkamen – und zunächst nur für Vereine, 
 | Fernreisen | VAE 1984 (nur Ansehen ≥ 85), Florida 1992, Katar 2011, USA-Tour 2014, Asien-Reise und Südafrika (Kapstadt/Johannesburg, Winter) 2015; Corona-Pausen 2020–2022 | 1984– |
 
 ## Planen
-Der Knopf **Trainingslager planen** öffnet den Planer in drei Schritten; rechts zeigen **Wirkungsbalken** (wie in der Taktik)
-bei jeder Wahl, was das Lager bringt: Fitness, Taktik & Form, Teamgeist, Erholung, Verletzungsrisiko und Kosten im Verhältnis
-zur Kasse.
+Jedes Fenster hat seinen eigenen Knopf (**Sommerlager planen** bzw. **Winterlager planen** auf der Karte des Fensters; der
+große Knopf rechts plant das nächste freie Fenster). Im Planer selbst wechselst du nicht zwischen Sommer und Winter. Er führt
+in drei Schritten; rechts zeigen **Wirkungsbalken** (wie in der Taktik) bei jeder Wahl, was das Lager bringt: Fitness,
+Taktik & Form, Teamgeist, Erholung, Verletzungsrisiko und Kosten im Verhältnis zur Kasse. Jeder Balken zeigt eine **Spanne**
+(heller Bereich) und den Erwartungswert (Strich): Fitness und Form schwanken mit dem Wetter (bei Ausfallrisiko r zwischen
+1 − 0,6·r und 1 + 0,3·r der Erwartung), der Teamgeist mit dem Zufall in der Reisegruppe, die Verletzten zeigen die Zahl, die in
+8 von 10 Lagern nicht überschritten bzw. erreicht wird. Erholung und Kosten stehen vorher fest.
 1. **Zeitraum:** Kalender der Sommervorbereitung bzw. Winterpause. Pflichtspiele und zugesagte Hallenturniere sind gesperrt,
-   die erste Woche (Vorlauf) ebenso; kurzfristige Tage (unter 21 Tagen) sind markiert. Dauer 5–14 Tage.
+   die erste Woche (Vorlauf) ebenso; kurzfristige Tage (unter 21 Tagen) sind markiert. Dauer 5–14 Tage. Fährst du mit der Maus
+   über einen Tag, siehst du das Lager ab diesem Tag als Vorschau; ein **Klick auf den Anreisetag** springt direkt zu den Zielen.
 2. **Ziel & Unterkunft:** Karte mit Umschalter **Deutschland & Alpen, Europa & Mittelmeer, Afrika, Asien & Naher Osten,
-   Amerika, Welt**. Es erscheinen nur Ziele, die es im jeweiligen Jahr schon gab; zu teure oder gesperrte Ziele sind gedimmt.
-   Ein Klick zeigt **Vor- und Nachteile** (Klima im gewählten Monat, Reise und Jetlag, Anlage, Höhe, Ablenkung, Sponsor- und
-   Image-Folgen, andere Vereine vor Ort) und die Unterkünfte mit Gesamtpreis.
-3. **Reisegruppe:** wer mitfährt. Verletzte bleiben zunächst zur Reha daheim (mit Schwerpunkt Regeneration lohnt es, sie
+   Amerika, Welt**. Gezeigt werden nur die Ziele, die für dieses Fenster und Jahr **in Frage kommen** (buchbar); gesperrte
+   (Ansehen, Sponsor-Pflicht, Corona) blendest du mit **gesperrte zeigen** gedimmt ein. Über jedem Punkt zeigen **Sonne**
+   und **Schneeflocke**, ob der Ort im Sommer, im Winter oder in beiden Fenstern gebucht werden kann. Überfahren zeigt eine
+   Kurzinfo (Ort, Jahreszeiten, Klima im Monat), ein Klick **Vor- und Nachteile** (Klima im gewählten Monat, Reise und Jetlag,
+   Anlage, Höhe, Ablenkung, Sponsor- und Image-Folgen, andere Vereine vor Ort) und die Unterkünfte mit Gesamtpreis.
+3. **Reisegruppe:** wer mitfährt; beide Listen (Profis und Jugend) lassen sich über die Spaltenköpfe sortieren. Die
+   **Schwerpunkte** tragen dieselben Symbole wie die Bausteine im Trainingsplan. Verletzte bleiben zunächst zur Reha daheim (mit Schwerpunkt Regeneration lohnt es, sie
    mitzunehmen). Bis zu **6 Spieler aus B- und A-Jugend** können mit – sie lernen im Training mit den Profis besonders viel
    (Entwicklung ×1,3, hohe Moral-Chance). **Gesunde Profis, die daheim bleiben, sind zu 40 % enttäuscht** (Moral −1).
    Die Kosten richten sich nach der Größe der Reisegruppe (Spieler plus rund neun Betreuer); mindestens 11 Spieler.
