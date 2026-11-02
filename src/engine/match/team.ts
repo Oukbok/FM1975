@@ -16,9 +16,16 @@ export const isAvailable = (p: Player | undefined): p is Player =>
 
 const MORALE: Record<string, number> = { very_low: 0.95, low: 0.975, okay: 1, good: 1.015, excellent: 1.03 };
 
+/**
+ * Form (0–100, 50 = Durchschnitt) zeigt, wie gut der Spieler im System zurechtkommt.
+ * Wirkt bewusst gering: Form 0 → −2,5 %, Form 100 → +2,5 % Positionsstärke.
+ */
+export const FORM_EFFECT = 0.025;
+export const formFactor = (form: number | undefined) => 1 + ((clamp(form ?? 50, 0, 100) - 50) / 50) * FORM_EFFECT;
+
 /** Tagesform: Form, Moral, Fitness und Frische (ohne Positionswert). */
 export function conditionFactor(p: Player): number {
-  const form = 0.94 + (clamp(p.form ?? 50, 0, 100) / 100) * 0.12;
+  const form = formFactor(p.form);
   const morale = MORALE[p.morale] ?? 1;
   const fit = 0.9 + (clamp(p.attributes.fitness ?? 80, 0, 100) / 100) * 0.1;
   const fr = typeof p.frische === 'number' ? p.frische : 100;
