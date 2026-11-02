@@ -981,22 +981,32 @@ Beim Laden werden die früheren Kürzel umgerechnet: VS → IV, AV → RV/LV, FL
     title: 'Taktik-Anweisungen & ihre Wirkung',
     keywords: ['taktik', 'tempo', 'pressing', 'abseitsfalle', 'aufbau', 'anweisung'],
     body: `## Taktik-Anweisungen
-Unter **Spieltag › Taktik** stellst du Mentalität und Teamanweisungen ein – gegliedert in *Mit Ball* und *Gegen den Ball*. Alle Einstellungen wirken direkt in der Match-Engine (\`engine/match/team.ts\`, Funktion \`tacticMods\`); der Kasten **Wirkung im Spiel** zeigt genau diese Rechnung als Abweichung vom neutralen Wert (orange = Nachteil, z. B. mehr Fouls oder höhere Konteranfälligkeit).
+Unter **Spieltag › Taktik** stellst du Mentalität und Teamanweisungen ein – gegliedert in *Mit Ball* und *Gegen den Ball*. Die Taktik entscheidet, **auf welchem Weg** deine Elf angreift (Kombination durch die Mitte, Flanke, Steilpass, Dribbling, langer Ball, Konter) und verschiebt die **Einzelduelle** (siehe *So rechnet die Match-Engine*).
 
-### Ausrichtung
-- **Grundausrichtung:** Defensiv / Ausgewogen / Offensiv / Konter. Offensiv: mehr und gefährlichere Angriffe, dafür anfälliger für Konter. Konter: weniger Ballbesitz, aber deutlich gefährlichere Gegenstöße.
-- **Tempo (0–100):** mehr Angriffe pro Minute, aber auch mehr Fehler im Aufbau und höherer Kraftverbrauch.
-- **Pressinghöhe (0–100):** etwas mehr Spielkontrolle und Angriffe, mehr Fouls, mehr Kraftverbrauch; hohe Linie und Pressing öffnen Räume für Konter.
-- **Abwehrlinie (0–100):** Hoch = mehr Konteranfälligkeit für dich, tief = sicherer.
+### Wirkung im Spiel – gemessen
+Der Kasten **Wirkung im Spiel** rechnet nicht mit Schätzwerten: Die Match-Engine spielt deine Mannschaft mit deiner Taktik und mit einer neutralen Taktik je 40-mal daheim und auswärts gegen den nächsten Gegner (ohne Gegner gegen dein eigenes Spiegelbild). Links steht der neutrale Wert, rechts deiner, der Balken zeigt den Unterschied je Spiel (orange = Nachteil). Weil echte Spiele simuliert werden, schwanken kleine Unterschiede etwas.
 
-### Verhalten
-- **Zweikampfhärte (0–100):** Härte gewinnt mehr Zweikämpfe (bis +8 % Zweikampfstärke, etwas mehr Abwehr und Ballkontrolle), kostet aber deutlich mehr Fouls (bis +35 %) und Karten (bis +30 %).
-- **Einsatz (0–100):** Wie viel gibt deine Mannschaft? Volle Kraft bringt mehr gewonnene Zweikämpfe (+7 %), etwas mehr Druck, Abwehr und Spielkontrolle – aber 30 % mehr Kraftverbrauch im Spiel, mehr Frischeverlust danach (+15 %), mehr Verletzungen (+30 %), Fouls und Karten. Kräfteschonend spielt umgekehrt: weniger Wucht, dafür frische, gesunde Spieler (z. B. in englischen Wochen). Die KI-Trainer wählen den Einsatz nach ihrem Stil.
-- **Abseitsfalle (an/aus):** mehr gegnerische Abseitsstellungen, vor allem gegen Steilpässe und Konter.
-- **Breite (0–100):** Hohe Breite = mehr Flanken und Kopfballchancen; wie gefährlich das ist, hängt von deinen Flankengebern und Kopfballspielern ab.
-- **Aufbauspiel:** Kurz (bessere Passquote, mehr Kontrolle) oder lang (mehr lange Bälle und Flanken).
+### Mit Ball
+- **Breite (0–100):** Flügel = deutlich mehr Flanken und Kopfballchancen (gemessen: aus etwa 14 Flanken werden 25 je Spiel), Mitte = Kombinationen, Steilpässe und mehr Distanzschüsse.
+- **Flanken hoch / gemischt / flach:** Hoch führt zu Kopfballduellen (lohnt mit großen, kopfballstarken Stürmern), flach zu Abschlüssen aus dem Rückraum (für schnelle, abschlussstarke Angreifer). Die Flankenqualität des Flankengebers entscheidet mit, ob der Ball ankommt.
+- **Tempo (0–100):** mehr Steilpässe, Dribblings und Konter, weniger Geduld und Distanzschüsse; schlechtere Passquote und mehr Kraftverbrauch.
+- **Aufbauspiel kurz/lang:** Kurz = höhere Passquote; lang = viele lange Bälle auf den Zielspieler (Kopfballduell), dazu Steilpässe – lohnt mit einem starken Mittelstürmer und gegen hohe Abwehrlinien.
 
-Im Textmodus kannst du zusätzlich während des Spiels die **Ausrichtung** ändern und **Zurufe** geben (siehe *Textmodus*).`,
+### Gegen den Ball
+- **Pressinghöhe:** Gegnerische Pässe werden öfter abgefangen, du kommst häufiger zum Konter – kostet aber viel Kraft und bringt Fouls und Karten.
+- **Abwehrlinie:** Hoch = Raum hinter deiner Abwehr (gegnerische Steilpässe und Konter gewinnen leichter das Laufduell), aber mehr Abseits des Gegners; tief = sicher gegen Tempo, dafür mehr Distanzschüsse des Gegners.
+- **Abseitsfalle:** deutlich mehr gegnerische Abseitsstellungen; wird sie überlaufen, ist der Stürmer meist frei durch.
+- **Zweikampfhärte:** gewinnt mehr Zweikämpfe in der Abwehr, kostet aber Fouls, Freistöße, Elfmeter und Karten.
+- **Einsatz:** mehr gewonnene Zweikämpfe und Laufduelle in beide Richtungen, aber mehr Kraftverbrauch, Frischeverlust und Verletzungen.
+
+### Grundausrichtung
+Offensiv: mehr Dribblings und Steilpässe, mehr Schüsse, anfälliger für Konter. Defensiv: weniger Risiko, mehr lange Bälle. Konter: weniger Ballbesitz, aber viel mehr Gegenstöße nach Ballgewinn.
+
+Die **KI-Trainer** spielen nach ihrem Stil und ihrem Kader: kopfballstarke Stürmer → hohe Flanken und mehr Breite (manchmal langer Aufbau), kleine wendige Stürmer → flache Hereingaben, gute Flankengeber → mehr über die Flügel.
+
+Im Textmodus kannst du zusätzlich während des Spiels die **Ausrichtung** ändern und **Zurufe** geben (siehe *Textmodus*).
+
+*Messung für Entwickler:* \`MODE=tactics node scripts/matchbench.mjs\` (Tabelle Einstellung → Wirkung).`,
   },
   {
     id: 'set-pieces',
@@ -1055,32 +1065,44 @@ Der Kommentar wird aus einer Grammatik mit vielen ineinander verschachtelten Bau
     title: 'So rechnet die Match-Engine',
     keywords: ['engine', 'simulation', 'stärke', 'position', 'eignung', 'heimvorteil', 'tore', 'xg', 'chance', 'note', 'kraft', 'frische', 'epoche'],
     body: `## Spielerstärke im Spiel
-Jeder Spieler bringt seine **Positionsstärke** auf der Position mit, auf der er tatsächlich spielt (Attribute nach Positionsgewichten der jeweiligen Epoche, Abzug für deutliche Schwächen, Vertrautheit mit der Position). Dazu kommt die **Tagesform** aus Form, Moral, Fitness und Frische. Während des Spiels sinkt die **Kraft** je nach Ausdauer, Tempo, Pressing, Hitze und Verlängerung; müde Spieler verlieren an Wirkung. Frische Einwechselspieler bringen volle Kraft.
+Jeder Spieler bringt seine **Positionsstärke** auf der Position mit, auf der er tatsächlich spielt, dazu die **Tagesform** aus Form, Moral, Fitness und Frische. Während des Spiels sinkt die **Kraft**; müde Spieler verlieren in jedem Duell bis zu 18 %.
 
-## Mannschaftsteile
-Aus den Spielern auf dem Platz entstehen vier Werte: **Angriff**, **Spielkontrolle**, **Abwehr** und **Torwart**. Jede Position trägt unterschiedlich bei (ein Flügelstürmer viel zum Angriff, ein Sechser viel zu Kontrolle und Abwehr). Fehlt ein Spieler (Platzverweis, Verletzung ohne Wechsel), sinken die Werte spürbar.
+## Jede Aktion ist ein Duell
+Ein Angriff besteht aus mehreren Schritten, und jeder Schritt wird zwischen **zwei konkreten Spielern** mit den passenden Attributen entschieden:
+- **Pass:** Passspiel, Technik, Übersicht, Entscheidungen gegen Abfangen, Stellungsspiel, Konzentration des Verteidigers.
+- **Zweikampf / Dribbling:** Dribbling, Ballkontrolle, Beweglichkeit, Balance, Antritt, Kreativität gegen Tackling, Stärke, Aggressivität, Antritt, Manndeckung, Stellungsspiel.
+- **Flanke:** Erst muss der Außenspieler gegen seinen Gegenspieler zur Flanke kommen, dann zählt sein Wert **Flanken**. Hohe Bälle: **Kopfballduell** (Kopfball, Sprungkraft, Stärke, **Körpergröße**), der Torwart kann mit **Strafraumbeherrschung** abfangen. Flache Bälle: Duell um den Ball im Rückraum.
+- **Steilpass & Konter:** Pass in die Tiefe, dann das **Timing** des Läufers gegen die Abseitslinie, danach das **Laufduell** (Schnelligkeit, Antritt gegen Tempo und Stellungsspiel des Verteidigers).
+- **Langer Ball:** Weiter Pass, Kopfballduell des Zielspielers, Ablage auf den zweiten Mann.
+- **Abschluss:** Abschluss, Schusskraft, Ruhe, Technik (Distanzschuss: Fernschüsse; Kopfball: Kopfball) gegen den Torwart in genau dieser Situation – Reflexe und Stellungsspiel, **Eins gegen eins** bei Großchancen, Strafraumbeherrschung bei Kopfbällen. Verteidiger können Schüsse blocken.
+- **Standards:** Der Eckenschütze (Wert **Ecken**) bzw. Freistoßschütze bestimmt die Qualität der Hereingabe; bei Ecken rücken die Innenverteidiger mit auf. Direkte Freistöße und Elfmeter: Schütze gegen Torwart.
+- **Fouls & Karten:** Ein geschlagener Verteidiger foult umso eher, je aggressiver und schlechter im Tackling er ist und je härter die Taktik; Karten hängen an Aggressivität und Disziplin (Ruhe, Konzentration) – **Erfahrung** hilft in hitzigen Phasen.
+
+Ein Duell 60 gegen 85 gewinnt der Bessere in gut drei von vier Fällen – deutlich, aber mit Zufall. Die Mannschaftsstärke (Angriff gegen Abwehr), der **Heimvorteil** und deine **Ausrichtung** verschieben alle Duelle ein wenig.
+
+### Verdeckte Werte
+- **Konstanz:** Die Tagesleistung schwankt je Spiel – wenig konstante Spieler streuen stärker nach oben und unten, im Schnitt sind sie nicht schlechter.
+- **Nervenstärke (wichtige Spiele) und Ruhe:** wirken unter Druck – Derby, Pokal, Europapokal, Verlängerung, Elfmeter und eine knappe Schlussphase – auf Abschluss und Torwart.
 
 ## Minute für Minute
-- **Ballbesitz** folgt der Spielkontrolle (die führende Mannschaft überlässt dem Gegner etwas mehr den Ball).
-- **Angriffe** entstehen je nach Ballbesitz, Tempo und Ausrichtung. Ob daraus eine **Chance** wird, entscheidet das Verhältnis Angriff gegen Abwehr (inklusive Heimvorteil).
-- Verpufft ein Angriff, gibt es Abseits, Ecke, Foul (vor dem Strafraum mit Freistoß oder Elfmeter) oder einen Ballverlust – mit Kontergefahr.
-- Jede Chance hat eine **Torwahrscheinlichkeit** (Großchance, normaler Schuss, Kopfball, Distanzschuss, Freistoß, Elfmeter). Ob der Ball reingeht, hängt zusätzlich vom Abschluss des Schützen und vom Torwart ab. Fehler im Aufbau führen zu Großchancen.
-- Dazu kommen Fouls, Karten, Verletzungen, Nachspielzeit, und im Pokal Verlängerung und Elfmeterschießen.
-- Die **KI-Trainer** wechseln müde oder schwache Spieler aus und ändern bei Rückstand oder knapper Führung die Ausrichtung.
+- **Ballbesitz** folgt der Spielkontrolle; daneben laufen in jeder Minute Zweikämpfe und Luftduelle im Mittelfeld (rund 220 je Spiel).
+- **Angriffe** entstehen je nach Ballbesitz, Tempo und Ausrichtung; den Weg wählt die Taktik (siehe *Taktik-Anweisungen*). Ein verlorenes Duell beendet den Angriff – und kann einen **Konter** auslösen.
+- Dazu kommen Fehler im Aufbau, Verletzungen, Nachspielzeit, im Pokal Verlängerung und Elfmeterschießen. Die **KI-Trainer** wechseln und ändern bei Rückstand die Ausrichtung.
 
-## Epochen
-- **Heimvorteil:** in den Siebzigern deutlich stärker als heute (damals rund 57 % Heimsiege, um 1995 knapp 47 %, heute gut 40 %). Er wirkt in beide Richtungen: Die Heimelf wird gefährlicher, die Gäste etwas harmloser.
-- **Torschnitt:** rund 3,3 Tore pro Spiel in den Siebzigern und frühen Achtzigern, um 2,9 um die Jahrtausendwende, heute wieder etwa 3,1.
-- **Karten:** früher seltener Gelb; ab 1995 mehr Verwarnungen. Die **Gelb-Rote Karte** gibt es erst ab 1991/92 – vorher bleibt die zweite Gelbe ohne Platzverweis. Die **Gelbsperre** (jede fünfte Gelbe in der Liga) gilt ab 1979/80.
-- **Wechsel und Bank:** 2 Wechsel bei 5 Bankplätzen, ab 1995/96 3 Wechsel (7 Plätze), ab 2020/21 5 Wechsel (9 Plätze).
-- **Videobeweis** ab 2017/18: Treffer können nachträglich aberkannt werden.
-- Regeländerungen gelten immer ab dem **Saisonstart (1. Juli)**, nicht ab Jahresbeginn.
+## Statistik
+Gezählt wird jede Aktion: Schüsse und Schüsse aufs Tor, Pässe (angekommen), Zweikämpfe und Luftduelle (gewonnen), Flanken, Dribblings, Balleroberungen und Torvorlagen je Spieler. Der Spielbericht zeigt sie unter **Einzelwerte**, das Spielerprofil (Reiter Statistik) die Quoten der Saison – jeweils nur, was es in der Epoche schon gab.
+
+## Epochen (Soll-Werte mit Quellen in \`data/matchStats.ts\`)
+- **Torschnitt:** rund 3,3 Tore pro Spiel in den Siebzigern, um 2,9 um die Jahrtausendwende, heute gut 3,1.
+- **Torarten heute:** etwa 16 % Kopfballtore, ein Viertel nach Standards (Ecken ~10 %, Freistöße ~7 %, Elfmeter ~6 %), ~13–15 % nach Kontern, ~12 % aus der Distanz. In den Siebzigern mehr Flanken, Kopfbälle, lange Bälle und Fernschüsse, weniger Pressing und Konter, weniger Pässe (gut 70 % Passquote statt heute über 80 %).
+- **Heimvorteil:** in den Siebzigern deutlich stärker (rund 55 % Heimsiege), heute gut 40 %.
+- **Karten, Wechsel, Videobeweis:** Gelb-Rot ab 1991/92, Gelbsperre ab 1979/80; 2 Wechsel bis 1994, 3 ab 1995/96, 5 ab 2020/21; Videobeweis ab 2017/18. Regeln gelten ab dem **Saisonstart (1. Juli)**.
 
 ## Noten
-Jeder Spieler bekommt eine Note von **1,0 bis 6,0** in halben Schritten. Sie ergibt sich aus seinem Beitrag (Tore, Vorlagen, Schlüsselpässe, Paraden, Zweikämpfe, Fehler, Karten, Gegentore) und seiner Leistung auf der Position. Kurzeinsätze liegen näher an 3,5.
+Jeder Spieler bekommt eine Note von **1,0 bis 6,0** in halben Schritten – aus Toren, Vorlagen, Torvorbereitungen, Paraden, gewonnenen Zweikämpfen, Fehlern, Karten, Gegentoren und seiner Leistung auf der Position.
 
 ## Kalibrierung
-Mit \`node scripts/matchbench.mjs\` werden tausende Spiele je Epoche simuliert und Torschnitt, Heimsiege, Favoritenquote und der Einfluss schlechter Aufstellungen gemessen.`,
+\`node scripts/matchbench.mjs\` simuliert tausende Spiele je Epoche und vergleicht Ist mit Soll; \`MODE=attrs\` misst Attribute 60 gegen 85, \`MODE=tactics\` die Taktik-Wirkung.`,
   },
   {
     id: 'cpu-ai',
