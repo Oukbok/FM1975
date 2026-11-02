@@ -25,7 +25,7 @@ const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
 /** Grund-xG je Chancenart (vor Duell-Qualität). */
 const XG: Record<ChanceKind, [number, number]> = {
   big: [0.26, 0.3], counter: [0.24, 0.26], solo: [0.22, 0.26], normal: [0.06, 0.1], header: [0.05, 0.09],
-  long: [0.04, 0.045], freekick: [0.04, 0.05], penalty: [0.76, 0],
+  long: [0.045, 0.045], freekick: [0.04, 0.05], penalty: [0.76, 0],
 };
 const SIT: Record<ChanceKind, KeeperSituation> = {
   big: 'oneOnOne', counter: 'oneOnOne', solo: 'oneOnOne', normal: 'shot', header: 'air', long: 'long', freekick: 'long', penalty: 'penalty',
@@ -153,7 +153,7 @@ export function shot(sim: MatchSim, T: TeamState, O: TeamState, s: ShotSpec): vo
 export function openPlayFoul(sim: MatchSim, T: TeamState, O: TeamState): void {
   const eraF = sim.year < 1985 ? 1.15 : sim.year < 2000 ? 1.08 : 1.03;
   const derby = sim.derby ? 1.15 : 1;
-  if (sim.rng() >= 0.09 * T.mods.foul * T.plan.foul * eraF * derby) return;
+  if (sim.rng() >= 0.096 * T.mods.foul * T.plan.foul * eraF * derby) return;
   const fouler = weighted(sim.rng, onPitch(T), (m) => (m.group === 'GK' ? 0 : m.group === 'DEF' ? 1.5 : m.group === 'MID' ? 1.4 : 0.8) * (0.4 + m.p.attributes.aggression / 100));
   const victim = weighted(sim.rng, onPitch(O), (m) => (m.group === 'GK' ? 0 : 0.5 + m.p.attributes.dribbling / 100));
   if (!fouler) return;

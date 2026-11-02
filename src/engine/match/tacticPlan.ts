@@ -47,7 +47,7 @@ export function tacticPlan(t: Tactics | undefined, year: number, mods?: TacticMo
   const hard = norm(t?.tackleHardness), eff = norm(t?.effort);
   const long = t?.buildup === 'long';
   // Breite: Flügel ↔ Mitte
-  r.flanke *= 1 + 0.75 * width;
+  r.flanke *= 0.88 * (1 + 0.75 * width);
   r.kurz *= 1 - 0.4 * width;
   r.steil *= 1 - 0.2 * width;
   r.dribbling *= 1 + 0.1 * width;
@@ -71,7 +71,7 @@ export function tacticPlan(t: Tactics | undefined, year: number, mods?: TacticMo
   const eraHigh = year < 1990 ? 0.72 : year < 2005 ? 0.62 : 0.52;
   const cs = t?.crossStyle ?? 'mixed';
   const highCross = cs === 'high' ? Math.min(0.92, eraHigh + 0.25) : cs === 'low' ? Math.max(0.15, eraHigh - 0.35) : eraHigh;
-  const eraLong = year < 1985 ? 0.5 : year < 1995 ? 0.45 : year < 2008 ? 0.38 : 0.3;
+  const eraLong = year < 1985 ? 0.56 : year < 1995 ? 0.5 : year < 2008 ? 0.42 : 0.33;
   return {
     route: r,
     highCross,

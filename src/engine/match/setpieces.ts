@@ -15,7 +15,7 @@ const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
 const sq = (v: number) => (v / 60) * (v / 60);
 
 /** Grund-Logit des Kopfballduells bei Standards (Verteidiger stehen dicht, Angreifer laufen an). */
-const B_SP = -0.3;
+const B_SP = -0.2;
 
 function bestBy(ms: MPlayer[], id: string | null, f: (m: MPlayer) => number): MPlayer | undefined {
   const chosen = id ? ms.find((m) => m.id === id) : undefined;

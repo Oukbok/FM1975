@@ -181,8 +181,8 @@ function attackFoul(sim: MatchSim, T: TeamState, O: TeamState, fouler: MPlayer, 
   O.stats.fouls++;
   sim.emit('foul', { side: O.side, player: fouler.id, other: victim?.id, zone: 'att' });
   card(sim, O, fouler, sev, notbremse);
-  // Vor 1995 etwas mehr Elfmeter (Bundesliga: 0,3 je Spiel in den 70ern, heute 0,25–0,3)
-  if (sim.rng() < inBoxP * (sim.year < 1995 ? 1.4 : 1.1)) penalty(sim, T, O);
+  // Elfmeter je Spiel: Bundesliga 1963–2021 im Schnitt ~0,28, 2018/19 0,30, 2019/20 0,24
+  if (sim.rng() < inBoxP * (sim.year < 1995 ? 1.5 : sim.year < 2010 ? 1.4 : 1.2)) penalty(sim, T, O);
   else freeKick(sim, T, O, victim);
 }
 
@@ -235,7 +235,7 @@ function flanke(sim: MatchSim, T: TeamState, O: TeamState, fT: MPlayer[], fO: MP
   const freeOk = rng() < free;
   countDuel(freeOk ? crosser : wd, freeOk ? wd : crosser, freeOk ? T.stats : O.stats, freeOk ? O.stats : T.stats);
   if (!freeOk) {
-    if (rng() < 0.45) return corner(sim, T, O, crosser);
+    if (rng() < 0.36) return corner(sim, T, O, crosser);
     return fail(sim, T, O, 'cross_blocked', crosser, wd);
   }
   const cq = crossSkill(crosser);
@@ -295,7 +295,7 @@ function steil(sim: MatchSim, T: TeamState, O: TeamState, fT: MPlayer[], fO: MPl
   passed(T, passer, ok);
   if (!ok) { icp.tackles++; return fail(sim, T, O, 'intercept', passer, icp); }
   // Abseitslinie: Timing des Läufers gegen Linie/Falle
-  const offP = (0.4 + 0.18 * O.plan.trap + 0.06 * O.plan.lineHigh) * (sim.year < 1990 ? 1.15 : 1) * 2 * duelP(64, timingSkill(runner));
+  const offP = (0.4 + 0.18 * O.plan.trap + 0.06 * O.plan.lineHigh) * (sim.year < 1990 ? 1.3 : 1.05) * 2 * duelP(64, timingSkill(runner));
   if (rng() < offP) {
     T.stats.offsides++;
     sim.emit('offside', { side: T.side, player: runner.id, assist: passer.id, build: 'steilpass' });
