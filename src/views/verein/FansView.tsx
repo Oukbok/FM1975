@@ -67,7 +67,7 @@ export function FansView({ g }: { g: Game }) {
           <Kpi value={`${env.memberTrend >= 0 ? '+' : ''}${(env.memberTrend * 1200).toFixed(1)} %`} label="Trend / Jahr" color={env.memberTrend >= 0 ? 'var(--green)' : 'var(--red)'} />
         </div>
         <KV k="Beiträge / Jahr" v={fmtDM(members * 40 * scale)} />
-        {(env.history ?? []).slice(-4).map((h) => <KV key={h.season} k={h.season} v={`${h.members.toLocaleString('de-DE')} · Stimmung ${h.fanMood}`} />)}
+        {(env.history ?? []).slice(-4).reverse().map((h) => <KV key={h.season} k={h.season} v={`${h.members.toLocaleString('de-DE')} · Stimmung ${h.fanMood}`} />)}
         <div className="dnote mt8">Erfolg, gute Stimmung und die Fankultur der Epoche lassen die Mitgliederzahl wachsen.</div>
       </DashBox>
 
