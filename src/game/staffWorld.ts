@@ -106,7 +106,7 @@ function tuneTo(m: StaffMember, q: number): void {
 function syntheticExPro(m: StaffMember, rng: () => number): ExProInfo {
   // Erfolg passend zur heutigen Güte (gute Trainer waren eher gute Spieler), mit Streuung.
   const s = Math.round(clamp((m.quality - 6) / 14 + (rng() - 0.5) * 0.3, 0, 0.9) * 100) / 100;
-  return { pos: m.roleId === 'torwarttrainer' ? 'TW' : ['VS', 'ZM', 'MS', 'AV', 'OM'][Math.floor(rng() * 5)], peak: Math.round(62 + s * 25), apps: Math.round(80 + s * 300), titles: s > 0.5 ? 1 : 0, s, clubs: [] };
+  return { pos: m.roleId === 'torwarttrainer' ? 'TW' : ['IV', 'ZM', 'MS', 'RV', 'OM'][Math.floor(rng() * 5)], peak: Math.round(62 + s * 25), apps: Math.round(80 + s * 300), titles: s > 0.5 ? 1 : 0, s, clubs: [] };
 }
 
 function hireInto(m: StaffMember, clubId: string, date: string, years: number): void {

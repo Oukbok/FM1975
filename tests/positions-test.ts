@@ -8,7 +8,12 @@ import { aiPositionPlans, migratePositionSkills, monthlyPositions, tierCounts } 
 import {
   addPositionMinutes, decayPositions, floorOf, IDLE_DAYS, peakOf, setTrainingPosition, skillOf, TRAIN_CAP, trainPositionDays,
 } from '../src/engine/positionSkill';
-import { famFactor, positionSuitability, setEraYear } from '../src/engine/positions';
+import {
+  famFactor, footFactor, mirrorPosition, normalizePosition, positionSuitability, roleOf, setEraYear, sideOf,
+} from '../src/engine/positions';
+import { migratePositions2 } from '../src/game/positions2Migration';
+import { FORMATIONS } from '../src/data/formations';
+import { PITCH_GRID } from '../src/data/pitchGrid';
 import { tacticMods } from '../src/engine/match/team';
 import { MatchSim } from '../src/engine/match/sim';
 import { finishMatch } from '../src/engine/match/finish';
@@ -154,6 +159,71 @@ const ds = duelShare(100, 0);
 console.log(`Spiele Einsatz 100 vs 0: Zweikampfquote ${(ds.share * 100).toFixed(1)} %, Kraft am Ende ${(ds.enH / 3300).toFixed(1)} vs ${(ds.enA / 3300).toFixed(1)}`);
 ok(ds.share > 0.53, 'Einsatz gewinnt keine Zweikämpfe');
 ok(ds.enH < ds.enA, 'Einsatz kostet keine Kraft');
+
+
+// 8) Positionen 2.0: Seiten, Fuß, Raster, Migration alter Spielstände
+setEraYear(1975);
+ok(ALL_POSITIONS.length === 14 && ALL_POSITIONS.every((q) => !['VS', 'AV', 'FL'].includes(q)), 'Positionsliste nicht 2.0');
+ok(sideOf('RV') === 'R' && sideOf('LM') === 'L' && sideOf('IV') === 'C' && mirrorPosition('RA') === 'LA' && mirrorPosition('ZM') === 'ZM', 'Seiten-Helfer falsch');
+ok(roleOf('LV') === 'AV' && roleOf('RM') === 'SM' && roleOf('LA') === 'FL', 'Rollen-Helfer falsch');
+ok(normalizePosition('VS') === 'IV' && normalizePosition('AV', { foot: 'left' }) === 'LV' && normalizePosition('FL', { foot: 'right' }) === 'RA'
+  && normalizePosition('fl', { foot: 'both', side: 'L' }) === 'LA' && normalizePosition('XX') === null, 'Alte Kürzel werden nicht eingelesen');
+// Raster und Formationen: Seite passt zur Lage
+for (const pt of PITCH_GRID) ok(sideOf(pt.position) === 'C' || (sideOf(pt.position) === 'L') === (pt.x < 50), `Rasterpunkt ${pt.id} auf falscher Seite`);
+for (const f of FORMATIONS) for (const sl of f.slots) ok(sideOf(sl.position) === 'C' || (sideOf(sl.position) === 'L') === (sl.x < 50), `${f.id} ${sl.id} auf falscher Seite`);
+// Erzeugung: Außenbahn-Spieler meist mit dem passenden Fuß, Gegenseite deutlich schwächer
+const pros = Object.values(g.players);
+const share = (pos: Position, foot: string) => { const xs = pros.filter((p) => p.naturalPosition === pos); return xs.filter((p) => p.preferredFoot === foot).length / Math.max(1, xs.length); };
+console.log(`Fuß: LV links ${(share('LV', 'left') * 100).toFixed(0)} %, RV rechts ${(share('RV', 'right') * 100).toFixed(0)} %, LA links ${(share('LA', 'left') * 100).toFixed(0)} %`);
+ok(share('LV', 'left') >= 0.55 && share('RV', 'right') >= 0.75 && share('LA', 'left') >= 0.55, 'Fuß passt selten zur Seite');
+const rvs = pros.filter((p) => p.naturalPosition === 'RV' && p.preferredFoot === 'right');
+const lvGood = rvs.filter((p) => skillOf(p, 'LV') >= 75).length / rvs.length;
+const rmAvg = rvs.reduce((q, p) => q + skillOf(p, 'RM'), 0) / rvs.length, lmAvg = rvs.reduce((q, p) => q + skillOf(p, 'LM'), 0) / rvs.length;
+console.log(`Rechtsfüßige RV (${rvs.length}): LV „gut“ ${(lvGood * 100).toFixed(0)} %, Ø RM ${rmAvg.toFixed(0)} / LM ${lmAvg.toFixed(0)}`);
+ok(lvGood < 0.5, 'Gegenseite zu oft gut');
+ok(rmAvg > lmAvg + 8, 'Seite spielt bei Nachbarpositionen keine Rolle');
+// Fuß-Faktor: schwacher Fuß kostet auf der Seite etwas, beidfüßig nichts; inverse Flügel ab 2005 normal
+const fp = { ...rvs[0], preferredFoot: 'right' } as Player;
+ok(footFactor(fp, 'RV') === 1 && footFactor(fp, 'LV') < 1 && footFactor(fp, 'IV') === 1, 'Fuß-Faktor Verteidiger');
+ok(footFactor({ ...fp, preferredFoot: 'both' } as Player, 'LV') === 1, 'Beidfüßig mit Abzug');
+setEraYear(2010); ok(footFactor(fp, 'LA') === 1, 'Inverser Flügel 2010 mit Abzug'); setEraYear(1975);
+ok(footFactor(fp, 'LA') < 1, 'Flügel 1975 auf falscher Seite ohne Abzug');
+
+// Migration: alter Spielstand mit VS/AV/FL
+const legacy = (src: Player, nat: string, foot: Player['preferredFoot'], id: string): Player => {
+  const q = JSON.parse(JSON.stringify(src)) as any;
+  q.id = id; q.naturalPosition = nat; q.preferredFoot = foot; q.secondaryPositions = ['VS'];
+  q.positionRatings = { [nat]: q.overall };
+  q.positionSkill = { v: { TW: 3, LIB: 55, VS: 80, AV: nat === 'AV' ? 100 : 40, DM: 50, ZM: 45, OM: 20, FL: nat === 'FL' ? 100 : 62, MS: 15, HS: 18 }, t0: 2000, used: { AV: 2001 }, train: 'FL' };
+  return q as Player;
+};
+const gm = JSON.parse(JSON.stringify(g)) as typeof g;
+const host = Object.values(gm.clubs).find((c) => c.id !== gm.managedClubId && c.tactics?.lineupMap)!;
+const base0 = gm.players[host.playerIds[0]];
+const lvL = legacy(base0, 'AV', 'left', 'mig_lv'), raR = legacy(base0, 'FL', 'right', 'mig_ra'), avB = legacy(base0, 'AV', 'both', 'mig_both'), vs = legacy(base0, 'VS', 'right', 'mig_iv');
+for (const q of [lvL, raR, avB, vs]) gm.players[q.id] = q;
+// Beidfüßiger stand bisher rechts in der Aufstellung (4-4-2, Slot s5 = x 84)
+host.tactics.formation = '4-4-2';
+host.tactics.lineupMap = { ...(host.tactics.lineupMap ?? {}), s5: avB.id };
+host.tactics.assignedPositions = { [avB.id]: 'AV' as Position, [raR.id]: 'FL' as Position };
+host.tactics.slotLayout = { s9: { x: 84, y: 26, position: 'FL' as Position }, s6: { x: 15, y: 48, position: 'FL' as Position }, s3: { x: 38, y: 72, position: 'VS' as Position } };
+const nMig = migratePositions2(gm);
+ok(nMig === 4, `Migration zählt ${nMig} statt 4`);
+ok(migratePositions2(gm) === 0, 'Migration nicht idempotent');
+ok(lvL.naturalPosition === 'LV' && raR.naturalPosition === 'RA' && avB.naturalPosition === 'RV' && vs.naturalPosition === 'IV', 'Stammposition falsch umgerechnet');
+ok(skillOf(lvL, 'LV') === 100 && skillOf(lvL, 'RV') >= 50 && skillOf(lvL, 'RV') < 75, `Gegenseite LV→RV ${skillOf(lvL, 'RV')}`);
+ok(skillOf(avB, 'LV') >= 75, 'Beidfüßiger auf der Gegenseite nicht gut');
+ok(skillOf(raR, 'RM') >= 75 && skillOf(raR, 'RM') > skillOf(raR, 'LM'), `Flügel → RM ${skillOf(raR, 'RM')} / LM ${skillOf(raR, 'LM')}`);
+ok(skillOf(vs, 'IV') === 100 && lvL.positionSkill!.v.IV === 80, 'VS → IV falsch');
+ok(lvL.positionSkill!.train === 'LA' && raR.positionSkill!.train === 'RA' && lvL.positionSkill!.used?.LV === 2001, 'Training/Einsatz nicht umgerechnet');
+for (const q of [lvL, raR, avB, vs]) {
+  const keys = [...Object.keys(q.positionSkill!.v), ...q.secondaryPositions, ...Object.keys(q.positionRatings)];
+  ok(keys.every((k) => (ALL_POSITIONS as string[]).includes(k)), `${q.id}: alte Kürzel übrig (${keys.join(',')})`);
+  ok(ALL_POSITIONS.every((k) => q.positionSkill!.v[k] != null), `${q.id}: Positionen fehlen`);
+}
+ok(host.tactics.slotLayout!.s9.position === 'RA' && host.tactics.slotLayout!.s6.position === 'LM' && host.tactics.slotLayout!.s3.position === 'IV', 'slotLayout falsch umgerechnet');
+ok(host.tactics.assignedPositions![avB.id] === 'RV' && host.tactics.assignedPositions![raR.id] === 'RA', 'assignedPositions falsch umgerechnet');
+console.log('Positionen 2.0: Seiten, Fuß, Raster und Migration OK');
 
 void ({} as Player); void ('' as Position);
 console.log('Positions-Test OK');

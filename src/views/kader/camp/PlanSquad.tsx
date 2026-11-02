@@ -7,7 +7,7 @@ import { CAMP_YOUTH_MAX } from '../../../game/campResult';
 import type { Player } from '../../../types';
 import { condColor, vColor } from '../../../ui/format';
 
-const POS_ORDER = ['TW', 'LIB', 'VS', 'AV', 'DM', 'ZM', 'OM', 'FL', 'HS', 'MS'];
+const POS_ORDER = ['TW', 'LIB', 'IV', 'RV', 'LV', 'DM', 'ZM', 'RM', 'LM', 'OM', 'RA', 'LA', 'HS', 'MS'];
 
 function Row({ p, on, onToggle, youth }: { p: Player; on: boolean; onToggle: () => void; youth?: boolean }) {
   const fit = Math.round(p.attributes.fitness);

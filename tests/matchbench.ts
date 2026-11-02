@@ -11,6 +11,7 @@ import { setEraYear } from '../src/engine/positions';
 import { MatchSim } from '../src/engine/match/sim';
 import { calculateTeamStrength } from '../src/engine/match';
 import type { Club, Player } from '../src/types';
+import { POSITION_GROUPS } from '../src/types';
 
 const N = Number(process.argv[2] ?? 3000);
 let seed = 7;
@@ -86,7 +87,7 @@ const xi = club.tactics.startingXI.slice();
 // falsche Positionen: Abwehr und Angriff tauschen, Torwart bleibt
 const map = { ...(club.tactics.lineupMap ?? {}) };
 // realistisch falsch: Abwehr und Mittelfeld tauschen (Sturm und Tor bleiben)
-const grp = (s: string) => { const p = players[map[s]]; return p ? (['VS', 'AV', 'LIB'].includes(p.naturalPosition) ? 'D' : ['DM', 'ZM', 'OM'].includes(p.naturalPosition) ? 'M' : 'X') : 'X'; };
+const grp = (s: string) => { const p = players[map[s]]; return p ? (POSITION_GROUPS[p.naturalPosition] === 'DEF' ? 'D' : POSITION_GROUPS[p.naturalPosition] === 'MID' ? 'M' : 'X') : 'X'; };
 const ds = Object.keys(map).filter((s) => grp(s) === 'D'), mids = Object.keys(map).filter((s) => grp(s) === 'M');
 for (let i = 0; i < Math.min(ds.length, mids.length); i++) { const t = map[ds[i]]; map[ds[i]] = map[mids[i]]; map[mids[i]] = t; }
 club.tactics.lineupMap = map;

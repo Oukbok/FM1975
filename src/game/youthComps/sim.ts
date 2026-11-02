@@ -110,7 +110,7 @@ export function modelStrength(g: Game, id: string, cls: YcCls, ref: number, seed
 // Aufstellung (echte + erzeugte Spieler)
 // -----------------------------------------------------------------------------
 export interface YcSlot { id: string; pos: Position; ovr: number; real: boolean }
-const TEMPLATE: Position[] = ['TW', 'VS', 'VS', 'AV', 'AV', 'DM', 'ZM', 'OM', 'FL', 'FL', 'MS'];
+const TEMPLATE: Position[] = ['TW', 'IV', 'IV', 'RV', 'LV', 'DM', 'ZM', 'OM', 'RA', 'LA', 'MS'];
 
 export function virtualId(clubId: string, cls: YcCls, y0: number, i: number): string {
   return `yv.${clubId}.${cls}.${y0}.${i}`;
@@ -172,9 +172,9 @@ export function simGoals(hs: number, as: number, neutral: boolean, r: () => numb
   return [poisson(base * Math.exp(d / 2 + home), r), poisson(base * Math.exp(-d / 2 - (neutral ? 0 : 0.05)), r)];
 }
 
-const GOAL_W: Partial<Record<Position, number>> = { MS: 5, HS: 4.5, FL: 3.5, OM: 3, ZM: 1.6, DM: 1, AV: 0.8, VS: 0.6, LIB: 0.6, TW: 0.02 };
-const ASSIST_W: Partial<Record<Position, number>> = { OM: 4, FL: 4, ZM: 3, HS: 3, MS: 2, DM: 1.5, AV: 1.5, VS: 0.6, LIB: 0.8, TW: 0.1 };
-const CARD_W: Partial<Record<Position, number>> = { VS: 3, DM: 3, AV: 2.5, LIB: 2.5, ZM: 2, OM: 1, FL: 1, MS: 1.2, HS: 1, TW: 0.4 };
+const GOAL_W: Partial<Record<Position, number>> = { MS: 5, HS: 4.5, RA: 3.5, LA: 3.5, OM: 3, RM: 2.4, LM: 2.4, ZM: 1.6, DM: 1, RV: 0.8, LV: 0.8, IV: 0.6, LIB: 0.6, TW: 0.02 };
+const ASSIST_W: Partial<Record<Position, number>> = { OM: 4, RA: 4, LA: 4, RM: 4, LM: 4, ZM: 3, HS: 3, MS: 2, DM: 1.5, RV: 1.5, LV: 1.5, IV: 0.6, LIB: 0.8, TW: 0.1 };
+const CARD_W: Partial<Record<Position, number>> = { IV: 3, DM: 3, RV: 2.5, LV: 2.5, LIB: 2.5, ZM: 2, RM: 1.5, LM: 1.5, OM: 1, RA: 1, LA: 1, MS: 1.2, HS: 1, TW: 0.4 };
 
 function pick(slots: YcSlot[], w: Partial<Record<Position, number>>, r: () => number, skip?: string): YcSlot | null {
   let tot = 0;

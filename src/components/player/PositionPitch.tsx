@@ -1,7 +1,7 @@
 // Spielfeld mit allen Positionen (wie im Football Manager): Färbung nach Vertrautheit
 // (natürlich = kräftiges Grün, gut = mittleres, ausreichend = schwaches, ungeeignet neutral),
-// je Position ein kleiner Fortschrittsbalken. Außenverteidiger und Flügel stehen auf beiden
-// Seiten (eine Position im Spiel). Klick wählt die Position.
+// je Position ein kleiner Fortschrittsbalken. Seitengenau (Positionen 2.0): links LV/LM/LA,
+// rechts RV/RM/RA – jede Seite hat ihre eigene Vertrautheit. Klick wählt die Position.
 import type { Player, Position } from '../../types';
 import { POSITION_NAMES_DE } from '../../engine/positions';
 import { skillOf, skillTier, TIER_DE } from '../../engine/positionSkill';
@@ -9,13 +9,12 @@ import { skillOf, skillTier, TIER_DE } from '../../engine/positionSkill';
 /** Lage auf dem Feld in % (oben = Angriff). */
 const SPOTS: { pos: Position; x: number; y: number }[] = [
   { pos: 'MS', x: 50, y: 6 },
-  { pos: 'HS', x: 50, y: 18 },
-  { pos: 'FL', x: 15, y: 22 }, { pos: 'FL', x: 85, y: 22 },
-  { pos: 'OM', x: 50, y: 30 },
-  { pos: 'ZM', x: 50, y: 42 },
-  { pos: 'DM', x: 50, y: 54 },
-  { pos: 'AV', x: 15, y: 62 }, { pos: 'AV', x: 85, y: 62 },
-  { pos: 'VS', x: 50, y: 66 },
+  { pos: 'HS', x: 50, y: 17 },
+  { pos: 'LA', x: 15, y: 20 }, { pos: 'RA', x: 85, y: 20 },
+  { pos: 'OM', x: 50, y: 29 },
+  { pos: 'LM', x: 15, y: 40 }, { pos: 'ZM', x: 50, y: 41 }, { pos: 'RM', x: 85, y: 40 },
+  { pos: 'DM', x: 50, y: 53 },
+  { pos: 'LV', x: 15, y: 63 }, { pos: 'IV', x: 50, y: 66 }, { pos: 'RV', x: 85, y: 63 },
   { pos: 'LIB', x: 50, y: 78 },
   { pos: 'TW', x: 50, y: 92 },
 ];
@@ -32,11 +31,11 @@ export default function PositionPitch({ p, sel, train, onSelect }: {
         <rect x="24" y="0.5" width="52" height="15" />
         <rect x="24" y="84.5" width="52" height="15" />
       </svg>
-      {SPOTS.map((s, i) => {
+      {SPOTS.map((s) => {
         const v = skillOf(p, s.pos);
         const tier = skillTier(v);
         return (
-          <button key={`${s.pos}${i}`} type="button"
+          <button key={s.pos} type="button"
             className={`psk-chip psk-${tier}${s.pos === sel ? ' on' : ''}`}
             style={{ left: `${s.x}%`, top: `${s.y}%` }}
             title={`${POSITION_NAMES_DE[s.pos]} – ${TIER_DE[tier]} (${Math.round(v)})`}

@@ -20,7 +20,9 @@ export const YOUTH_TEAM_SIZE: Record<YouthAgeClass, number> = { G: 10, F: 12, E:
 export const CLASS_AGES: Record<YouthAgeClass, number[]> = { G: [7], F: [8, 9], E: [10, 11], D: [12, 13], C: [14, 15], B: [16, 17], A: [18, 19] };
 
 const GROUP: Record<string, 'TW' | 'DEF' | 'MID' | 'ATT'> = {
-  TW: 'TW', LIB: 'DEF', VS: 'DEF', AV: 'DEF', DM: 'MID', ZM: 'MID', OM: 'MID', FL: 'ATT', MS: 'ATT', HS: 'ATT',
+  TW: 'TW', LIB: 'DEF', IV: 'DEF', RV: 'DEF', LV: 'DEF', DM: 'MID', ZM: 'MID', RM: 'MID', LM: 'MID', OM: 'MID',
+  RA: 'ATT', LA: 'ATT', MS: 'ATT', HS: 'ATT',
+  VS: 'DEF', AV: 'DEF', FL: 'ATT', // alte Kürzel (falls noch nicht umgerechnet)
 };
 
 function hash01(s: string): number {
@@ -48,9 +50,9 @@ function neededPosition(team: Player[], size: number, year: number, r: number): 
   const gaps: [string, number][] = [['DEF', field * 0.36 - count('DEF')], ['MID', field * 0.36 - count('MID')], ['ATT', field * 0.28 - count('ATT')]];
   gaps.sort((a, b) => b[1] - a[1]);
   const pools: Record<string, Position[]> = {
-    DEF: year < 1995 ? ['LIB', 'VS', 'VS', 'AV', 'AV'] : ['VS', 'VS', 'AV', 'AV'],
-    MID: ['DM', 'ZM', 'ZM', 'OM'],
-    ATT: ['FL', 'FL', 'MS', 'HS'],
+    DEF: year < 1995 ? ['LIB', 'IV', 'IV', 'RV', 'LV'] : ['IV', 'IV', 'RV', 'LV'],
+    MID: ['DM', 'ZM', 'RM', 'LM', 'OM'],
+    ATT: ['RA', 'LA', 'MS', 'HS'],
   };
   const pool = pools[gaps[0][0]];
   return pool[Math.floor(r * pool.length)];

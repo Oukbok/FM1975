@@ -137,7 +137,7 @@ export function lineupHints(t: Tactics, players: Record<string, Player>, benchSi
   for (const { p } of xi) if (p && !isOut(p) && (p.frische ?? 100) < 70) out.push({ level: 'info', text: `${p.lastName} ist müde (Frische ${Math.round(p.frische)}).` });
   // Ausgewogenheit der Formation
   const cnt = (ps: Position[]) => f.slots.filter((s) => ps.includes(s.position)).length;
-  const def = cnt(['LIB', 'VS', 'AV']);
+  const def = cnt(['LIB', 'IV', 'RV', 'LV']);
   if (def < 3) out.push({ level: 'warn', text: `Nur ${def} Abwehrspieler – die Abwehr ist sehr dünn besetzt.` });
   if (def > 6) out.push({ level: 'info', text: `${def} Abwehrspieler – sehr defensiv, vorne fehlt Durchschlagskraft.` });
   if (cnt(['MS', 'HS']) === 0) out.push({ level: 'warn', text: 'Kein Stürmer in der Formation.' });

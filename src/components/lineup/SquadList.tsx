@@ -12,7 +12,7 @@ import type { InfoKey } from '../../data/infoTexts';
 export interface ListRow { p: Player; pos: Position | null; slotId?: string; benchIndex?: number }
 
 type SortKey = 'pos' | 'nr' | 'name' | 'eig' | 'fr' | 'form' | 'moral' | 'note' | 'st';
-const POS_ORDER: Position[] = ['TW', 'LIB', 'VS', 'AV', 'DM', 'ZM', 'FL', 'OM', 'HS', 'MS'];
+const POS_ORDER: Position[] = ['TW', 'LIB', 'IV', 'RV', 'LV', 'DM', 'ZM', 'RM', 'LM', 'OM', 'RA', 'LA', 'HS', 'MS'];
 
 const fmtNote = (p: Player) => (p.seasonStats?.ratedMatches ? p.seasonStats.averageRating.toFixed(1).replace('.', ',') : '–');
 const isOut = (p: Player) => p.availability !== 'available' || !!p.injury || p.suspensionMatches > 0;

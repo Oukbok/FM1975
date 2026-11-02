@@ -3,6 +3,7 @@
 // Verletzungen, Elfmeterschießen.
 // =============================================================================
 import { injuryRiskFactor } from '../injuryRisk';
+import { isFullBack, isWide } from '../positions';
 import type { InjurySeverity } from '../../types';
 import type { MatchSim } from './sim';
 import { lineupChanged, onPitch, type TeamState } from './state';
@@ -138,7 +139,7 @@ function pickShooter(sim: MatchSim, T: TeamState, kind: ChanceKind): MPlayer | u
   }
   return weighted(sim.rng, field, (m) => {
     const a = m.p.attributes;
-    const role = m.pos === 'MS' ? 3.2 : m.pos === 'HS' ? 2.6 : m.pos === 'FL' ? 2 : m.pos === 'OM' ? 1.7 : m.group === 'MID' ? 0.75 : m.pos === 'AV' ? 0.3 : 0.22;
+    const role = m.pos === 'MS' ? 3.2 : m.pos === 'HS' ? 2.6 : isWide(m.pos) ? 2 : m.pos === 'OM' ? 1.7 : m.group === 'MID' ? 0.75 : isFullBack(m.pos) ? 0.3 : 0.22;
     if (kind === 'header') return (role * 0.6 + (m.group === 'DEF' ? 0.7 : 0)) * (a.heading / 60) ** 2;
     if (kind === 'long') return (m.group === 'MID' ? 2 : role * 0.6) * (a.longShots / 60) ** 2;
     return role * (a.shooting / 60) ** 1.5;
@@ -150,7 +151,7 @@ function pickAssister(sim: MatchSim, T: TeamState, shooter: MPlayer, build: Buil
   if (build === 'ecke') return field.find((m) => m.id === T.cornerTakerId) ?? weighted(sim.rng, field, (m) => m.p.attributes.crossing ** 2);
   return weighted(sim.rng, field, (m) => {
     const a = m.p.attributes;
-    const role = m.pos === 'OM' ? 2.6 : m.pos === 'FL' ? 2.2 : m.group === 'MID' ? 1.6 : m.group === 'ATT' ? 1.4 : m.pos === 'AV' ? 0.9 : 0.35;
+    const role = m.pos === 'OM' ? 2.6 : isWide(m.pos) ? 2.2 : m.group === 'MID' ? 1.6 : m.group === 'ATT' ? 1.4 : isFullBack(m.pos) ? 0.9 : 0.35;
     const skill = build === 'flanke' ? a.crossing : build === 'weit' ? a.longPassing : (a.passing + a.vision) / 2;
     return role * (skill / 60) ** 2;
   });

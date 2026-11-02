@@ -55,6 +55,7 @@ export function makeRecruits(g: Game, ev: YouthRecruitEvent, today: string, r: (
       pool: 'talent', potBias, positions: ev.positions, boosts: ev.boosts, weak: ev.weak, foreign: ev.foreign,
       ambition: ev.ambition, professionalism: ev.professionalism,
     });
+    if (ev.id === 'linksfuss') p.preferredFoot = 'left';
     if (i === 1 && players[0]) { p.lastName = players[0].lastName; p.fullName = `${p.firstName} ${p.lastName}`; p.dateOfBirth = players[0].dateOfBirth; }
     p.clubId = '';
     players.push(p);
