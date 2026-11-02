@@ -61,6 +61,11 @@ function scorersOf(m: Match, clubId: string): Map<string, number[]> {
   return out;
 }
 
+/** Spieltag-Schlagzeile ohne doppelte Doppelpunkte/Striche. */
+function spieltagHeadline(c: PressCtx, md: number, top: string): string {
+  return /[:–]/.test(top) ? `${md}. Spieltag · ${top}` : c.say('hl_spieltag', { md, top });
+}
+
 interface Rated { m: Match; score: number; flags: string[]; hero?: string }
 
 /** Wie berichtenswert ist ein Spiel? */
@@ -173,7 +178,7 @@ export function leagueStories(c: PressCtx): LeagueOut {
     const slots = { md, goals, games: games.length, hw, hws: plural(hw, 'Heimsieg', 'Heimsiege'), aws: plural(aw, 'Auswärtssieg', 'Auswärtssiege'), drs: plural(dr, 'Unentschieden', 'Unentschieden') };
     stories.push(story(c, {
       kind: 'spieltag', rubric: 'Bundesliga', date: games[games.length - 1]?.date ?? c.date, weight: 30,
-      headline: c.say('hl_spieltag', { md, top: top ? matchHeadline(c, top) : `${goals} Tore` }),
+      headline: spieltagHeadline(c, md, top ? matchHeadline(c, top) : `${goals} Tore`),
       body: [c.say('st_lead', slots), c.say('st_heim', slots)], results, clubs: [],
       image: top ? { kind: 'club', id: winnerOf(top.m)?.w ?? top.m.homeClubId } : undefined,
       targets: [{ kind: 'screen', screen: 'fixtures', label: 'Spielplan' }, { kind: 'screen', screen: 'table', label: 'Tabelle' }],
