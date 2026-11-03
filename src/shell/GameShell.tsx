@@ -77,6 +77,8 @@ import { LeagueSystemView } from '../views/statistiken/LeagueSystemView';
 import { clearPendingAwards, pendingAwards } from '../game/seasonAwardsGame';
 import { clearPendingGoldenBall, pendingGoldenBall } from '../game/goldenBallGame';
 import { GalaShow } from '../screens/gala/GalaShow';
+import { IndoorShow } from '../screens/indoor/IndoorShow';
+import { pendingIndoorShow, playIndoorShowHeadless } from '../game/indoorGame';
 import { briefingLog, briefingOfRecord, clearPendingBriefing } from '../game/seasonBriefing';
 import { Dashboard } from '../views/zentrale/Dashboard';
 import { NewsView } from '../views/zentrale/NewsView';
@@ -209,6 +211,11 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
     if (awardsDue || galaDue) rerender();
   }, [settings.awardsShow, awardsDue, galaDue, g, rerender]);
   const showAwards = settings.awardsShow !== 'aus';
+  // Hallenturnier deines Vereins als Show (game/indoorGame.ts → screens/indoor/); Einstellung aus = Hintergrund.
+  const indoorDue = pendingIndoorShow(g);
+  const indoorOn = settings.indoorShow !== 'aus';
+  useEffect(() => { if (indoorDue) setRunning(false); }, [indoorDue]);
+  useEffect(() => { if (indoorDue && !indoorOn) { playIndoorShowHeadless(g); rerender(); } }, [indoorDue, indoorOn, g, rerender]);
   // Erstes Training (game/seasonPromisesGame.ts): Versprechen-Popup; unter Playwright nur mit window.__FM_PROMISES__.
   const promisesDue = !!pendingSeasonPromises(g) && (!navigator.webdriver || !!(window as { __FM_PROMISES__?: boolean }).__FM_PROMISES__);
 
@@ -250,10 +257,11 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
       },
       onCampEnd: (id) => { setCampQueue((q) => [...q, id]); return true; },
       onTransferWindow: (k) => { if (settings.transferWindowShow === false) return false; setTwKey(k); return true; },
+      onIndoorShow: () => settings.indoorShow !== 'aus',
     });
     if (!ok) setRunning(false);
     return ok;
-  }, [g, settings.autosave, settings.drawShow, settings.transferWindowShow, doSave, myClub]);
+  }, [g, settings.autosave, settings.drawShow, settings.transferWindowShow, settings.indoorShow, doSave, myClub]);
 
   useEffect(() => { setHistory([]); }, [g.calendar.currentDate]);
 
@@ -276,7 +284,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
     return () => window.removeEventListener('keydown', onKey);
   }, [liveMatchId, textMatch]);
   const drawOpenRef = useRef(false);
-  useEffect(() => { drawOpenRef.current = drawQueue.length > 0 || campQueue.length > 0 || !!twKey; }, [drawQueue, campQueue, twKey]);
+  useEffect(() => { drawOpenRef.current = drawQueue.length > 0 || campQueue.length > 0 || !!twKey || !!indoorDue; }, [drawQueue, campQueue, twKey, indoorDue]);
 
   const seasonOver = CalendarEngine.isSeasonOver(g.calendar);
 
@@ -315,7 +323,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   const isScene = screen === 'stadium';
   // Kalender-Overlay (CalendarOverlay.tsx): nur solange die Zeit läuft und kein Popup offen ist.
   const calLive = running && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !devReveal
-    && drawQueue.length === 0 && !showSettings && !saveLoadMode && !clubEditorOpen;
+    && drawQueue.length === 0 && !showSettings && !saveLoadMode && !clubEditorOpen && !indoorDue;
 
   return (
     // Vereinsprofil: jeder <ClubLink> im Spiel öffnet es (components/club/ClubProfileContext.tsx).
@@ -571,6 +579,11 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
       {/* Bilanz des Trainingslagers: nach Spielbericht/Zeremonie/Briefing/Auslosung. */}
       {campQueue[0] && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && (
         <CampRecap key={campQueue[0]} g={g} bookingId={campQueue[0]} onClose={() => { setCampQueue((q) => q.slice(1)); rerender(); }} />
+      )}
+
+      {/* Hallenturnier als Show: nach Spielbericht/Zeremonie/Briefing/Auslosung/Trainingslager. */}
+      {indoorDue && indoorOn && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && !campQueue.length && (
+        <IndoorShow key={indoorDue.id} g={g} t={indoorDue} settings={settings} onSettings={onUpdateSettings} onClose={rerender} />
       )}
 
       {/* Top-Transfers + Transferbilanz nach dem Fensterschluss: nach allen anderen Pausen-Fenstern. */}

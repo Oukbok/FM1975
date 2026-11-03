@@ -92,8 +92,8 @@ export function playIndoorMatch(a: IndoorSide, b: IndoorSide, stage: IndoorStage
   const penSide: 0 | 1 = r.penaltyAgainst === 'a' ? 0 : 1;
   const sc: [number, number] = [0, 0];
   const ev: IndoorEvent[] = [{ t: 0, kind: 'kickoff', side: 0, score: [0, 0] }];
-  // Szenen ohne Tor: etwa jede zweite Minute in den kurzen, jede dritte in den langen Spielen.
-  const chanceP = ko ? 0.3 : 0.45;
+  // Szenen ohne Tor: etwa jede dritte Minute in den kurzen, jede vierte bis fünfte in den langen Spielen (≈ 8–15 Zeilen).
+  const chanceP = ko ? 0.22 : 0.36;
   let keeperOut = false;
   for (let m = 0; m < minutes; m++) {
     if (halves === 2 && m === minutes / 2) {
@@ -130,10 +130,12 @@ export function playIndoorMatch(a: IndoorSide, b: IndoorSide, stage: IndoorStage
       const who = pickName(atk.field, rng);
       const assist = rng() < 0.55 ? pickName(atk.field, rng, who) : undefined;
       ev.push({ t: gl.t, kind: 'goal', side: gl.side, who, assist, score: [0, 0], empty: keeperOut && gl.side !== own });
+      sc[gl.side]++; // laufender Stand (für die Schlussminute)
     }
   }
   ev.sort((x, y) => x.t - y.t);
   // Stand nach jedem Ereignis nachtragen.
+  sc[0] = 0; sc[1] = 0;
   for (const e of ev) {
     if (e.kind === 'goal') sc[e.side]++;
     e.score = [sc[0], sc[1]];

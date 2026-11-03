@@ -13,7 +13,12 @@ import { CAMP_LODGINGS, lodgingsFor } from '../src/data/campLodgings';
 import { campObligation } from '../src/game/trainingCampGame';
 import { CAMP_DESTINATIONS } from '../src/data/campDestinations';
 import { INDOOR_LAST_WINTER, MASTERS_LAST_WINTER, indoorPhase } from '../src/data/indoorHistory';
-import { runIndoorTournament } from '../src/engine/indoor';
+import { runIndoorTournament, simIndoorMatch, winnerOf } from '../src/engine/indoor';
+import { createIndoorLive, liveResult, playRest } from '../src/engine/indoorLive';
+import { DEFAULT_INDOOR_PLAN, playIndoorMatch, type IndoorPlan } from '../src/engine/indoorMatch';
+import { finishIndoorShow, indoorWinPts, pendingIndoorShow, tournamentEntrants } from '../src/game/indoorGame';
+import { indoorSide, narrate } from '../src/screens/indoor/indoorScript';
+import { hashStr, mulberry32 } from '../src/engine/leagues';
 import { chooseEventOption } from '../src/game/eventsGame';
 import { titlesOf } from '../src/game/clubRecords';
 
@@ -258,5 +263,85 @@ function runWinter(g: Game, season: string, beforeEachDay?: (d: string) => void)
   migrateWinter(g); migrateWinter(g);
   expect(b.lodgingId === 'gasthof' && b.focus === 'ausgewogen', `Migration falsch (${b.lodgingId}/${b.focus})`);
   console.log(`Sponsor-Pflicht ok: KI ${ai.map((c) => cs.ai.find((x) => x.clubId === c.id && x.season === 'summer')?.destId ?? '-').join('/')}`);
+}
+// 6) Hallen-Show: Textmodus mit gleicher Verteilung, Entscheidungen wirken, Live-Ablauf verbucht wie im Hintergrund
+{
+  const A = { id: 'a', strength: 72 }, B = { id: 'b', strength: 66 };
+  const side = (e: typeof A) => ({ ...e, keeper: 'Torwart', field: [{ name: 'Eins', w: 3 }, { name: 'Zwei', w: 2 }, { name: 'Drei', w: 1 }] });
+  const stat = (stage: 'A' | 'F', plan?: IndoorPlan) => {
+    let goals = 0, winA = 0, so = 0;
+    const N = 6000;
+    for (let i = 0; i < N; i++) {
+      const rng = mulberry32(hashStr(`st|${stage}|${i}`));
+      const m = plan ? playIndoorMatch(side(A), side(B), stage, 0, plan, 1991, rng).match : simIndoorMatch(A, B, stage, rng);
+      goals += m.ga + m.gb; if (winnerOf(m) === 'a' || (stage === 'A' && m.ga > m.gb)) winA++; if (m.pa != null) so++;
+    }
+    return { goals: goals / N, win: winA / N, so: so / N };
+  };
+  for (const stage of ['A', 'F'] as const) {
+    const bg = stat(stage), tx = stat(stage, DEFAULT_INDOOR_PLAN);
+    console.log(`Halle ${stage}: Hintergrund Ø ${bg.goals.toFixed(2)} Tore, Sieg ${Math.round(bg.win * 100)} % | Textmodus Ø ${tx.goals.toFixed(2)}, Sieg ${Math.round(tx.win * 100)} %, Neunmeter ${Math.round(tx.so * 100)} %`);
+    expect(Math.abs(bg.goals - tx.goals) / bg.goals < 0.04, `Textmodus ändert die Torzahl (${stage})`);
+    expect(Math.abs(bg.win - tx.win) < 0.03, `Textmodus ändert die Siegquote (${stage})`);
+  }
+  const off = stat('A', { ...DEFAULT_INDOOR_PLAN, style: 'offensiv' }), def = stat('A', { ...DEFAULT_INDOOR_PLAN, style: 'defensiv' });
+  const blk = stat('A', { ...DEFAULT_INDOOR_PLAN, block: true }), base = stat('A', DEFAULT_INDOOR_PLAN);
+  expect(off.goals > base.goals + 0.4 && def.goals < base.goals - 0.4, 'Ausrichtung wirkt nicht auf die Torzahl');
+  expect(blk.win > base.win, 'Stammfünf bringt keinen Vorteil');
+  // Torwart raus: nur ab 1988 und bei Rückstand – mehr Tore in der Schlussminute.
+  let koGoals = 0, koOut = 0, early = 0;
+  for (let i = 0; i < 3000; i++) {
+    const p = playIndoorMatch(side(B), side(A), 'A', 0, { ...DEFAULT_INDOOR_PLAN, keeperOut: true }, 1991, mulberry32(i + 7));
+    if (p.events.some((e) => e.kind === 'keeper_out')) { koOut++; koGoals += p.events.filter((e) => e.kind === 'goal' && e.t >= 660).length; }
+    if (playIndoorMatch(side(B), side(A), 'A', 0, { ...DEFAULT_INDOOR_PLAN, keeperOut: true }, 1980, mulberry32(i + 7)).events.some((e) => e.kind === 'keeper_out')) early++;
+  }
+  expect(koOut > 200 && early === 0, `Torwart raus falsch (ab 1988: ${koOut}, 1980: ${early})`);
+  console.log(`Torwart raus: ${koOut} Spiele, Ø ${(koGoals / koOut).toFixed(2)} Tore in der Schlussminute`);
+  // Kommentar: 8–15 Zeilen im Mittel, Neunmeterschießen mit Schützen.
+  const g0 = fresh();
+  let lines = 0, n = 0, soLines = 0;
+  for (let i = 0; i < 300; i++) {
+    const stage = i % 3 ? 'A' : 'SF';
+    const p = playIndoorMatch(side(A), side(B), stage, 0, DEFAULT_INDOOR_PLAN, 1991, mulberry32(i));
+    const l = narrate(g0, p, 0, { hall: 'Westfalenhalle', city: 'Dortmund', year: 1991, seed: `n${i}` });
+    if (l.some((x) => !x.text.trim() || /[{}#]/.test(x.text))) fail(`Tickerzeile kaputt: ${l.map((x) => x.text).join(' | ')}`);
+    lines += l.length; n++; soLines += l.filter((x) => x.ev.kind === 'so_shot').length;
+  }
+  console.log(`Hallen-Ticker: Ø ${(lines / n).toFixed(1)} Zeilen je Spiel, ${soLines} Neunmeter-Zeilen`);
+  expect(lines / n >= 8 && lines / n <= 16, 'Ticker zu kurz/zu lang');
+  expect(soLines > 0, 'Neunmeterschießen ohne Zeilen');
+
+  // Live-Ablauf in der Saison 1990/91: jedes eigene Turnier als Show, eines bleibt offen (Laden) → Hintergrund.
+  const g = fresh();
+  migrateWinter(g);
+  g.season = '1990/91';
+  let shows = 0, skipped = 0;
+  for (let d = '1990-10-30'; d <= '1991-01-20'; d = CalendarEngine.addDays(d, 1)) {
+    g.calendar.currentDate = d;
+    const waiting = indoorDaily(g, d, () => true);
+    const t = pendingIndoorShow(g);
+    if (!waiting || !t) continue;
+    if (shows === 1 && !skipped) { skipped++; continue; } // Show bleibt offen → nächster Tag spielt im Hintergrund
+    shows++;
+    const { entrants, squads } = tournamentEntrants(g, t);
+    const live = createIndoorLive(entrants, indoorWinPts(g), `${g.season}|${t.id}|live`);
+    const again = createIndoorLive(entrants, indoorWinPts(g), `${g.season}|${t.id}|live`);
+    expect(JSON.stringify(live.groups) === JSON.stringify(again.groups), 'Live-Gruppen nicht reproduzierbar');
+    const mid = g.managedClubId;
+    playRest(live, (s) => (s.a === mid || s.b === mid
+      ? playIndoorMatch(indoorSide(s.a!, live.strength[s.a!], squads.get(s.a!)), indoorSide(s.b!, live.strength[s.b!], squads.get(s.b!)), s.stage, s.a === mid ? 0 : 1, DEFAULT_INDOOR_PLAN, 1991, mulberry32(s.no)).match
+      : null));
+    const res = liveResult(live);
+    expect(res.ranking.length === t.clubIds.length && new Set(res.ranking).size === res.ranking.length, 'Live-Endstand unvollständig');
+    const out = finishIndoorShow(g, t.id, res, 1);
+    expect(!!out && t.done && t.result === res && !indoorState(g).current!.live, 'Show nicht verbucht');
+    expect(out!.place === res.ranking.indexOf(mid) && out!.frische[1] <= out!.frische[0], 'Siegerehrung falsch');
+  }
+  const cur = indoorState(g).current!;
+  expect(shows >= 2 && skipped === 1, `zu wenige Shows (${shows})`);
+  expect(cur.tournaments.every((t) => t.done) && !!cur.masters?.done && !cur.live, 'Winter mit Shows nicht abgeschlossen');
+  expect((cur.tour ?? []).some((s) => s.id === g.managedClubId), 'Show-Ergebnisse fehlen in der Tour');
+  expect(indoorState(g).history.some((h) => h.year === 1991), 'Historie 1991 fehlt (Shows)');
+  console.log(`Hallen-Show 1990/91: ${shows} Turniere live gespielt, 1 offen gebliebenes im Hintergrund nachgeholt, Masters ${cur.masters!.clubIds.includes(g.managedClubId) ? 'mit' : 'ohne'} dir`);
 }
 console.log('Winter-Test OK');

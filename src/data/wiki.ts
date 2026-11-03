@@ -3177,6 +3177,20 @@ Einladungen kommen Anfang November als Nachricht und stehen unter **Statistiken 
 - **Nachteile:** Verletzungen durch Hallenboden und Bande (≈ 1,6 % je Spieler und Turniertag), Frische −9 und Fitness −2 je Tag, kürzere Pause,
   Konflikt mit dem Trainingslager. **Absage:** Fan-Stimmung −1 (Heimturnier −2,5, Masters −1,5) und Verärgerung – wer oft absagt, wird seltener eingeladen.
 
+## Das Turnier spielen (Hallen-Show)
+Am Turniertag deines Vereins hält die Zeit an und das Turnier öffnet sich als eigenes Fenster in der Halle
+(Einstellung **Hallenturniere**: als Show spielen oder im Hintergrund wie bisher).
+- **Startseite:** Format, Spielzeiten, Teilnehmer nach Hallenstärke, Gruppen, Spielplan und dein Hallenkader (Torwart + sieben Feldspieler, die besten fünf bilden den ersten Block).
+- **Spiel für Spiel:** Fremde Spiele laufen als Ergebnisse durch, die Gruppentabellen rechnen live mit. Vor jedem eigenen Spiel triffst du eine kleine Entscheidung:
+  - **Ausrichtung** – defensiv (weniger Tore auf beiden Seiten), ausgewogen oder offensiv (mehr Tore auf beiden Seiten; gut, wenn du aufholen musst).
+  - **Einsatz** – fliegend wechseln oder die **Stammfünf durchspielen** lassen (etwas stärker, aber die fünf werden müder: Frische −2 je Spiel, höheres Verletzungsrisiko).
+  - **Schlussminute** (ab 1988) – liegst du mit ein, zwei Toren hinten, nimmst du den Torwart raus: mehr eigene Chancen, aber der Gegner trifft leichter ins leere Tor.
+- **Kurzer Textmodus oder Ergebnis:** Der Textmodus zeigt rund 8–15 Szenen (Tore, Bande, Pfosten, Paraden, Zeitstrafen, Halbzeit im K.-o., Neunmeterschießen Schuss für Schuss),
+  Tempo wählbar, „Nächste Szene“ per Klick oder Leertaste, „Zum Abpfiff“ springt ans Ende. Die Torerwartung ist dieselbe wie im Hintergrund – nur in Minuten zerlegt.
+- **Alles simulieren** spielt jederzeit den Rest durch (eigene Spiele mit der zuletzt gewählten Entscheidung).
+- **Siegerehrung:** Pokal, Endstand, deine Einnahmen, Fan-Stimmung, Frische der Hallenspieler und Verletzungen. Das Ergebnis steht danach unter **Statistiken › Halle** und zählt für die Tour.
+Schließt du das Spiel mitten im Turnier, öffnet es sich beim Laden wieder; ist der Turniertag vorbei, wird es im Hintergrund nachgeholt.
+
 ## KI-Vereine
 Alle Vereine spielen mit: Teilnahme nach Größe, Epoche und Trainer (offensive und Jugend-Trainer lieber). Spitzenvereine schonen ab Mitte der 90er ihre Stars
 und verzichten öfter auf das Masters – wie 1988, als zehn qualifizierte Bundesligisten absagten.`,

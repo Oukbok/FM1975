@@ -263,6 +263,10 @@ export interface AppSettings {
   drawSpeed?: 'langsam' | 'normal' | 'schnell';
   /** Bewertungsrunde als Show (screens/rating/) oder kompakte Liste. */
   ratingShow?: 'an' | 'aus';
+  /** Hallenturniere deines Vereins als Show spielen (screens/indoor/) oder im Hintergrund (Standard an). */
+  indoorShow?: 'an' | 'aus';
+  /** Tempo des Hallen-Textmodus. */
+  indoorSpeed?: 'langsam' | 'normal' | 'schnell';
   /** Ehrungen (Die Besten der Saison, Gala Goldener Ball) als Fenster zeigen oder nur Nachricht. */
   awardsShow?: 'an' | 'aus';
   /** Tempo der Bewertungs-Show. */

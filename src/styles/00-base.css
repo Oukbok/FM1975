@@ -117,6 +117,29 @@
   --comp-cwc: #3a3f7c;
   --comp-uefa: #2b5877;
 
+  /* --- Hallen-Show (28-indoor.css, screens/indoor/IndoorHall.tsx): Halleninneres kühl und
+     dunkel, Hallenlicht kaltweiß, Boden bis 1990 Kunststoff (graublau), danach Kunstrasen
+     (gedämpftes Grün); Publikum als graue Punkte, Werbefelder neutral --- */
+  --hall-roof: #06080d;
+  --hall-air: #121a28;
+  --hall-light: #e6edf7;
+  --hall-truss: #2a3342;
+  --hall-stand: #161d29;
+  --hall-stand-side: #10161f;
+  --hall-row: rgba(200, 212, 228, 0.07);
+  --hall-floor-0: #4a5a6e;
+  --hall-floor-1: #1c2430;
+  --hall-turf-0: #3d6150;
+  --hall-turf-1: #17241f;
+  --hall-board: #c9d2dd;
+  --hall-ad-0: #2b3646;
+  --hall-ad-1: #3a4658;
+  --hall-ad-2: #222b38;
+  --hall-fan-0: #3a4352;
+  --hall-fan-1: #4d5768;
+  --hall-fan-2: #626d7f;
+  --hall-fan-3: #2c3440;
+
   /* --- Trainingslager-Planer (28-camp2.css): Ortsbild-Zeichnung (gedämpft, kühl) und
      „aufgeklebte“ Papierzettel (kühles Weiß, kein Sepia; Klebestreifen halbtransparent) --- */
   --ls-sky-0: #4f6f93;

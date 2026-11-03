@@ -92,6 +92,20 @@ export function SettingsScreen({ settings, onBack, onSave }: {
         </div>
       </div>
 
+      {/* --- Hallenturniere --- */}
+      <div className="card mt16">
+        <h3 style={{ margin: '0 0 4px' }}>Hallenturniere</h3>
+        <p className="dim mini" style={{ margin: '0 0 14px' }}>
+          Am Turniertag deines Vereins (Winterpause bis 2004) das Hallenturnier als Show spielen – jedes eigene Spiel im kurzen Textmodus oder als Ergebnis, „Alles simulieren“ jederzeit. Aus: Das Turnier läuft im Hintergrund, das Ergebnis kommt als Nachricht.
+        </p>
+        <div className="seg-group">
+          {([['an', 'Als Show spielen'], ['aus', 'Im Hintergrund']] as const).map(([v, l]) => (
+            <button key={v} type="button" className={`seg-btn ${(s.indoorShow ?? 'an') === v ? 'active' : ''}`}
+              onClick={() => setS({ ...s, indoorShow: v })}>{l}</button>
+          ))}
+        </div>
+      </div>
+
       {/* --- Ehrungen --- */}
       <div className="card mt16">
         <h3 style={{ margin: '0 0 4px' }}>Ehrungen</h3>
