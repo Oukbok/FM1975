@@ -1,64 +1,101 @@
-// Reiter „Statistik“: Saison vs. Karriere + abgeleitete Quoten
-import { Player, PlayerStats } from '../../types';
-import Icon from '../Icon';
-import { Section, Stat } from './shared';
+// Reiter „Statistiken“ (Vorbild EA Fussball Manager): Spielerentwicklung als Liniendiagramm,
+// Vereinsspiele (Saison und Karriere nebeneinander, Serien aus der Spielliste), darunter
+// Potenzial und Bewertungen mit Gründen sowie die letzten Spiele.
+import type { MatchLogEntry, Player, PlayerStats } from '../../types';
+import type { Game } from '../../game/state';
+import { useClubProfile } from '../club/ClubLink';
+import { InfoTip } from '../../ui/InfoTip';
+import DevChart from './DevChart';
+import RecentMatches from './MatchesTab';
+import { AttributeChanges, PotentialBox, RatingHistory } from './DevelopmentParts';
+import { Section } from './shared';
 
-const ROWS: [string, (s: PlayerStats) => number | string][] = [
-  ['Einsätze', (s) => s.appearances],
+type Row = [string, (s: PlayerStats) => string | number];
+const avg = (s: PlayerStats) => (s.averageRating > 0 ? s.averageRating.toFixed(2) : '–');
+const pct = (a?: number, b?: number) => (b ? `${Math.round(((a ?? 0) / b) * 100)} %` : '–');
+const per90 = (n: number, min: number) => (min > 0 ? ((n * 90) / min).toFixed(2) : '–');
+
+const LEFT: Row[] = [
+  ['Spiele', (s) => s.appearances],
   ['davon Startelf', (s) => s.starts],
-  ['Einwechslungen', (s) => s.substituteAppearances],
-  ['Minuten', (s) => s.minutesPlayed],
+  ['Minuten gespielt', (s) => s.minutesPlayed.toLocaleString('de-DE')],
   ['Tore', (s) => s.goals],
   ['Vorlagen', (s) => s.assists],
-  ['Scorerpunkte', (s) => s.goals + s.assists],
-  ['Gelbe Karten', (s) => s.yellowCards],
-  ['Gelb-Rote Karten', (s) => s.yellowRedCards],
-  ['Rote Karten', (s) => s.redCards],
+  ['Durchschnittsnote', avg],
+  ['Tore / 90 Min.', (s) => per90(s.goals, s.minutesPlayed)],
+];
+const RIGHT: Row[] = [
+  ['Karten G/GR/R', (s) => `${s.yellowCards}/${s.yellowRedCards}/${s.redCards}`],
   ['Zu-null-Spiele', (s) => s.cleanSheets],
-  ['Elfmeter gehalten', (s) => s.penaltiesSaved],
-  ['Elfmeter verschossen', (s) => s.penaltiesMissed],
-  ['Ø Note', (s) => (s.averageRating > 0 ? s.averageRating.toFixed(2) : '—')],
-  // Einzelwerte der Match-Engine (ab dieser Version gezählt)
-  ['Schüsse (aufs Tor)', (s) => (s.detail ? `${s.detail[0]} (${s.detail[1]})` : '—')],
-  ['Pässe angekommen', (s) => (s.detail && s.detail[2] ? `${Math.round((s.detail[3] / s.detail[2]) * 100)} % von ${s.detail[2]}` : '—')],
-  ['Zweikämpfe gewonnen', (s) => (s.detail && s.detail[4] ? `${Math.round((s.detail[5] / s.detail[4]) * 100)} % von ${s.detail[4]}` : '—')],
+  ['Schüsse (aufs Tor)', (s) => (s.detail ? `${s.detail[0]} (${s.detail[1]})` : '–')],
+  ['Pässe angekommen', (s) => pct(s.detail?.[3], s.detail?.[2])],
+  ['Zweikämpfe gewonnen', (s) => pct(s.detail?.[5], s.detail?.[4])],
 ];
 
-const per90 = (n: number, min: number) => (min > 0 ? ((n * 90) / min).toFixed(2) : '—');
+/** Spieltermine des eigenen Vereins = alle Daten in den Spiellisten des Kaders. */
+function clubDates(g: Game | undefined, p: Player): string[] {
+  if (!g || p.clubId !== g.managedClubId) return [];
+  const set = new Set<string>();
+  for (const id of g.clubs[p.clubId]?.playerIds ?? []) for (const m of g.players[id]?.history?.matches ?? []) set.add(m.date);
+  return [...set].sort();
+}
+const conceded = (m: MatchLogEntry) => Number(m.score.split(':')[1] ?? 0);
+
+/** Serien aus der Spielliste: Spiele in Folge, ohne Tor/Gegentor, Bestnote. */
+function streaks(g: Game | undefined, p: Player) {
+  const list = p.history?.matches ?? [];
+  const mine = new Set(list.map((m) => m.date));
+  const dates = clubDates(g, p);
+  let row = 0;
+  for (let i = dates.length - 1; i >= 0 && mine.has(dates[i]); i--) row++;
+  const tail = (f: (m: MatchLogEntry) => boolean) => { let n = 0; for (let i = list.length - 1; i >= 0 && f(list[i]); i--) n++; return n; };
+  const gk = p.naturalPosition === 'TW';
+  return {
+    row: dates.length ? row : null,
+    dry: list.length ? (gk ? tail((m) => conceded(m) === 0) : tail((m) => m.goals === 0)) : null,
+    gk,
+    best: list.length ? Math.min(...list.map((m) => m.rating)) : null,
+  };
+}
+
+function Grid({ rows, s, c }: { rows: Row[]; s: PlayerStats; c: PlayerStats }) {
+  return (
+    <div className="pp3-kv3">
+      <span /><span className="h">Saison</span><span className="h">Karriere</span>
+      {rows.map(([l, f]) => <Rowx key={l} l={l} a={f(s)} b={f(c)} />)}
+    </div>
+  );
+}
+const Rowx = ({ l, a, b }: { l: string; a: string | number; b: string | number }) => <><span className="l">{l}</span><b>{a}</b><b className="c">{b}</b></>;
 
 export default function StatsTab({ p }: { p: Player }) {
+  const g = useClubProfile()?.game;
   const s = p.seasonStats, c = p.careerStats;
+  const st = streaks(g, p);
   return (
-    <div className="pp-grid pp-grid-stats">
-      <Section title="Zahlen" icon={<Icon name="stats" size={15} />}>
-        <table className="pp-table">
-          <thead><tr><th /><th>Saison</th><th>Karriere</th></tr></thead>
-          <tbody>
-            {ROWS.map(([label, f]) => (
-              <tr key={label}><td>{label}</td><td>{f(s)}</td><td>{f(c)}</td></tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="pp3-stats">
+      <Section title={<>Spielerentwicklung<InfoTip k="spielerentwicklung" /></>}>
+        <DevChart p={p} g={g} />
       </Section>
-      <div className="pp-stack">
-        <Section title="Quoten (Saison)" icon={<Icon name="matchball" size={15} />}>
-          <div className="pp-stat-grid">
-            <Stat label="Tore / 90 Min." value={per90(s.goals, s.minutesPlayed)} />
-            <Stat label="Vorlagen / 90 Min." value={per90(s.assists, s.minutesPlayed)} />
-            <Stat label="Minuten pro Tor" value={s.goals > 0 ? Math.round(s.minutesPlayed / s.goals) : '—'} />
-            <Stat label="Startelf-Quote" value={s.appearances > 0 ? `${Math.round((s.starts / s.appearances) * 100)} %` : '—'} />
-            <Stat label="Ø Minuten / Spiel" value={s.appearances > 0 ? Math.round(s.minutesPlayed / s.appearances) : '—'} />
-            <Stat label="Karten / Spiel" value={s.appearances > 0 ? ((s.yellowCards + s.redCards + s.yellowRedCards) / s.appearances).toFixed(2) : '—'} />
+      <Section title="Vereinsspiele">
+        <div className="pp3-two">
+          <Grid rows={LEFT} s={s} c={c} />
+          <div>
+            <Grid rows={RIGHT} s={s} c={c} />
+            <div className="pp3-serie">
+              <span>Spiele in Folge</span><b>{st.row ?? '–'}</b>
+              <span>{st.gk ? 'Ohne Gegentor in Folge' : 'Spiele ohne Tor in Folge'}</span><b>{st.dry ?? '–'}</b>
+              <span>Bestnote (Spielliste)</span><b>{st.best != null ? st.best.toFixed(1) : '–'}</b>
+            </div>
           </div>
-        </Section>
-        <Section title="Quoten (Karriere)" icon={<Icon name="chronicle" size={15} />}>
-          <div className="pp-stat-grid">
-            <Stat label="Tore / 90 Min." value={per90(c.goals, c.minutesPlayed)} />
-            <Stat label="Vorlagen / 90 Min." value={per90(c.assists, c.minutesPlayed)} />
-            <Stat label="Ø Note" value={c.averageRating > 0 ? c.averageRating.toFixed(2) : '—'} />
-          </div>
-        </Section>
+        </div>
+      </Section>
+      <div className="pp3-two">
+        <PotentialBox p={p} />
+        <Section title="Bewertungen und Gründe"><RatingHistory p={p} /></Section>
       </div>
+      <Section title="Attribut-Veränderungen"><AttributeChanges p={p} /></Section>
+      <RecentMatches p={p} />
     </div>
   );
 }

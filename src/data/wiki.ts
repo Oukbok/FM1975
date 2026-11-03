@@ -870,7 +870,7 @@ Für deinen Kader schreibt das Spiel jede Woche mit, **welche Ursache wie viele 
 - **Einmaliges:** Trainingslager, Hallenturniere, Extraschichten, ein geplatztes Juwel, Durchbruch, Spätzünder, Leistungsknick.
 - **Hinweise:** knappe Entscheidung, Grenze des Potenzials, Höchstwert der Runde, weitere Fortschritte oder fortgesetzter Abbau.
 
-Die Begründungen der letzten Runden stehen auch im **Spielerprofil › Entwicklung** („Bewertungen und Gründe“). Für Spieler aus älteren Spielständen oder Neuzugänge, deren Punkte noch aus der Zeit vor der Aufzeichnung stammen, steht eine allgemeine Begründung.
+Die Begründungen der letzten Runden stehen auch im **Spielerprofil › Statistiken** („Bewertungen und Gründe“). Für Spieler aus älteren Spielständen oder Neuzugänge, deren Punkte noch aus der Zeit vor der Aufzeichnung stammen, steht eine allgemeine Begründung.
 
 ## Liga-Ticker nach den Bewertungen
 Nach der Winter- und der Saison-Bewertung meldet der **Liga-Ticker** die größten Gewinner und Verlierer der anderen Vereine deiner Liga. Junge Spieler mit großen Sprüngen sind die Transferziele von morgen.
@@ -968,14 +968,21 @@ Oben im Profil stehen die **sechs Positionen mit der besten Eignung**; ein Klick
     id: 'player-profile',
     category: 'squad',
     title: 'Spielerprofil – so ist es aufgebaut',
-    keywords: ['spielerprofil', 'profil', 'fähigkeiten', 'trainingsfortschritt', 'trend', 'hütchen', 'allgemein'],
+    keywords: ['spielerprofil', 'profil', 'fähigkeiten', 'trainingsfortschritt', 'trend', 'hütchen', 'allgemein', 'details', 'statistiken', 'stationen', 'spielerentwicklung', 'auszeichnungen', 'aktionsleiste'],
     body: `## Spielerprofil
 Ein Klick auf einen Spieler öffnet sein Profil. Es ist in vier Bereiche geteilt:
 
 - **Oben links:** Rückennummer, Name und Verein, daneben Stärke, Potenzial (nur als Spanne deiner Scouts), Nation, die **sechs besten Positionen** mit ihrer Eignung, starker Fuß, Spielertyp und Charakter (nur, wenn ihr ihn schon kennt).
 - **Oben rechts:** kleines Spielfeld mit allen Positionen (Farbe = Vertrautheit), Saisonbilanz aller Pflichtspiele und Vertragsstatus. Für eigene Spieler startest du hier das **Positionstraining**.
 - **Unten links – Fähigkeiten:** alle Attribute nach Gruppen, immer sichtbar. Blauer Strich = wichtig für die gewählte Position. Ein **grüner Pfeil** (bzw. roter nach unten) zeigt eine Veränderung seit der vorletzten Bewertungsrunde. Das **Hütchen** markiert, was dein Wochentraining gerade am stärksten fördert (nur eigener Kader). „Trainingsfortschritt zeigen“ schreibt hinter jeden Wert, wie viel er sich seit Beginn der Aufzeichnung verändert hat.
-- **Unten rechts – Reiter:** Allgemein (Spielerdaten, Alter, Größe, Gewicht, Fitness, Frische, Erfahrung, Moral, Form, Zufriedenheit, Verfügbarkeit, Disziplin und Führung), Entwicklung, Saison (Zahlen und letzte Spiele), Karriere, Vertrag (mit Vertragsgespräch), Wünsche, Medizin und Bericht. Bei Jugendspielern steht vorn der Reiter Akademie bzw. Scouting.
+- **Unten rechts – Reiter:**
+  - **Allgemein:** Spielerdaten, Alter, Größe, Gewicht, Fitness, Frische, Erfahrung, Moral, Form, Zufriedenheit, Verfügbarkeit, Disziplin und Führung.
+  - **Details:** Anweisungen ans Trainerteam (zusätzliche Position trainieren, Schwerpunkt der Trainingswoche – nur eigener Kader), Aufstellung (Startelf/Bank, Kapitän und Standards), Verfügbarkeit, Belastung und alle **Verletzungen** mit Saison und Ausfallzeit.
+  - **Statistiken:** die **Spielerentwicklung** als Liniendiagramm – jeden Sonntag hält das Spiel für deinen Kader Stärke, Form, Frische, Fitness und Moral fest (bis zu 52 Wochen); Häkchen blenden Linien ein und aus, „Kaderschnitt“ zeigt gestrichelt den Mittelwert deines Kaders. Fährst du mit der Maus über das Diagramm, siehst du die Werte der Woche. Bei anderen Spielern zeigt es die Stärke je Bewertungsrunde. Darunter die Vereinsspiele (Saison und Karriere, Spiele in Folge, Serie ohne Tor bzw. ohne Gegentor), Potenzial, Bewertungen mit Gründen, Attribut-Veränderungen und die letzten Spiele.
+  - **Stationen:** frühere Vereine mit Zeitraum, Ablöse (in der Währung des Wechseljahres), Spielen und Toren; Vereinsspiele der laufenden Saison je Wettbewerb; **Auszeichnungen** (Die Besten der Saison, Goldener Ball) und Titel mit dem Verein; Saisonbilanzen.
+  - **Vertrag:** Vertragsende, Grundgehalt, Marktwert, Ausstiegsklausel und alle Zusatzvereinbarungen, die es gibt – Sieg- und Remisprämie (Mannschaftsregel), Treueprämie, Erfolgsklausel, Rückkaufoption, Weiterverkaufsbeteiligung, Leihe, Vorvertrag –, dazu Zusagen beim Wechsel und das Vertragsgespräch.
+  - **Wünsche** und **Bericht** (Scoutbericht). Bei Jugendspielern steht vorn der Reiter Akademie bzw. Scouting.
+- **Aktionsleiste unten:** runde Knöpfe für Scoutbericht, Spielergespräch, Vertrag verlängern, Transferliste (eigener Kader), Transferverhandlung (fremde Spieler) und Vereinsprofil. Was gerade nicht geht, ist ausgegraut; der Tooltip sagt warum.
 
 Mit den Pfeilen oben rechts (oder den Pfeiltasten) blätterst du durch den Kader, Escape schließt das Profil. Verdeckte Werte wie Konstanz oder Nervenstärke siehst du nie als Zahl – nur als Einschätzung deines Trainerteams bzw. deiner Scouts.`,
   },

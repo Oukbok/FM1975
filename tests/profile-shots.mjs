@@ -50,7 +50,7 @@ async function check(name) {
     const m = document.querySelector('.pp-modal');
     if (!m) return ['kein Profil offen'];
     if (m.scrollHeight - m.clientHeight > 2) out.push(`Fenster scrollt (${m.scrollHeight - m.clientHeight}px)`);
-    for (const sel of ['.pp2-top', '.pp2-id', '.pp2-topright', '.pp2-tabs', '.pp2-skills-head']) {
+    for (const sel of ['.pp2-top', '.pp2-id', '.pp2-topright', '.pp2-tabs', '.pp2-skills-head', '.pp3-actbar']) {
       const el = document.querySelector(sel);
       if (el && (el.scrollHeight - el.clientHeight > 2 || el.scrollWidth - el.clientWidth > 2)) out.push(`${sel} läuft über`);
     }
@@ -74,6 +74,16 @@ async function shoot(prefix) {
     await page.waitForTimeout(250);
     await check(`${prefix}_${label}`);
     await page.screenshot({ path: `${outDir}/${prefix}_${i}_${label}.png` });
+    // Statistiken: Diagramm mit Hover und Kaderschnitt
+    if (label === 'statistiken' && await page.locator('.pp3-chart-plot svg').count()) {
+      const avg = page.locator('.pp3-legend .pp3-chk input').first();
+      if (await page.locator('.pp3-legend .pp3-chk:has-text("Kaderschnitt")').count()) await avg.check();
+      const box = await page.locator('.pp3-chart-plot svg').boundingBox();
+      await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.5);
+      await page.waitForTimeout(150);
+      await page.screenshot({ path: `${outDir}/${prefix}_${i}_${label}_hover.png` });
+      await page.mouse.move(0, 0);
+    }
   }
 }
 const close = async () => { await page.keyboard.press('Escape'); await page.waitForTimeout(150); if (await page.locator('.pp-modal').count()) { await page.locator('.pp-modal .pp2-close, .pp-modal .modal-close').first().click(); await page.waitForTimeout(200); } };
@@ -103,6 +113,18 @@ if (want('kader')) try {
   await close();
   await rows.nth(gk).click(); await shoot('torwart'); await close();
 } catch (e) { errors.push('eigener Kader: ' + e.message.split('\n')[0]); }
+
+// 1b) Aktionsleiste: Tooltip + Spielergespräch aus dem Profil
+if (want('kader')) try {
+  await nav('Kader', 'Übersicht');
+  await page.locator('.dtable tbody tr').nth(4).click(); await page.waitForTimeout(300);
+  await page.locator('.pp3-actwrap').nth(3).hover(); await page.waitForTimeout(150);
+  await page.screenshot({ path: `${outDir}/aktionen_tooltip.png` });
+  await page.locator('.pp3-act').nth(1).click(); await page.waitForTimeout(500);
+  await page.screenshot({ path: `${outDir}/aktionen_gespraech.png` });
+  await page.keyboard.press('Escape'); await page.waitForTimeout(200);
+  await close();
+} catch (e) { errors.push('aktionen: ' + e.message.split('\n')[0]); }
 
 // 2) Vertragsverhandlung (Kader › Verträge, öffnet auf dem Vertrags-Reiter)
 if (want('vertrag')) try {

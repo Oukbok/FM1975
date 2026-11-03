@@ -9,6 +9,8 @@ export interface ClubProfileApi {
   canOpen: (clubId: string | null | undefined) => boolean;
   /** Laufendes Spiel (für Anzeigen ohne eigenen Spielstand-Prop, z. B. Spielerwünsche). */
   game?: import('../../game/state').Game;
+  /** Spielstand geändert (z. B. Transferliste aus dem Spielerprofil) – Seiten neu zeichnen. */
+  onChange?: () => void;
 }
 
 export const ClubProfileCtx = createContext<ClubProfileApi | null>(null);
