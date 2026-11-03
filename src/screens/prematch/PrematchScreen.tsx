@@ -10,6 +10,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Icon from '../../components/Icon';
 import { autoFillLineup } from '../../engine/lineupAI';
+import { promiseLineupPrefs } from '../../game/seasonPromisesGame';
 import { eraRules } from '../../engine/match/era';
 import type { AppSettings } from '../../engine/save';
 import type { OwnMatchInfo } from '../../game/ownMatch';
@@ -55,7 +56,7 @@ export function PrematchScreen({ g, info, settings, onSettings, onStart, onLineu
   const start = (mode: MatchMode) => {
     if (quick === 'auto') {
       const club = g.clubs[g.managedClubId];
-      if (club.tactics) Object.assign(club.tactics, autoFillLineup(club, g.players, club.tactics, eraRules(d.year).benchSize));
+      if (club.tactics) Object.assign(club.tactics, autoFillLineup(club, g.players, club.tactics, eraRules(d.year).benchSize, promiseLineupPrefs(g)));
     }
     if (settings.lastMatchMode !== mode) onSettings({ ...settings, lastMatchMode: mode });
     onStart(mode);

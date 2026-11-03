@@ -9,7 +9,7 @@ import { CAMP_DESTINATIONS, campDestination } from '../src/data/campDestinations
 import { WORLD_BORDERS, WORLD_LAND } from '../src/data/campWorldMap';
 import { CAMP_MAP_VIEWS, campEffectBars, campGrade, destinationProsCons, homeView, inView } from '../src/engine/campPlan';
 import { CAMP_FOCUS, CAMP_FOCUS_ORDER, campCostBase, campOutlook, destinationsFor } from '../src/engine/trainingCamp';
-import { CAMP_AREA_ORDER, CAMP_DRILLS, CAMP_POINTS, presetProgram, programDef, programError, programLabel } from '../src/engine/campProgram';
+import { CAMP_AREA_ORDER, CAMP_DRILLS, CAMP_POINTS, DRILL_COST, applyCampDrills, presetProgram, programDef, programError, programLabel } from '../src/engine/campProgram';
 import { CAMP_CLIMATE } from '../src/data/campDestinations';
 import { lodgingsFor } from '../src/data/campLodgings';
 import { CAMP_MIN_GROUP, bookCamp, checkCampDates, ownBooking, quoteCamp } from '../src/game/trainingCampGame';
@@ -197,6 +197,23 @@ const club = g.clubs[g.managedClubId];
   const h = campState(g4).history.find((x) => x.bookingId === b.id);
   expect(!!h?.program && h.note.includes(programLabel(prog)), 'Verlauf ohne Programm');
   expect(Object.keys(CAMP_DRILLS).every((k) => CAMP_DRILLS[k as keyof typeof CAMP_DRILLS].cost >= 1), 'Inhalt ohne Kosten');
+  // Budget (Balance 2): Inhalte verbrauchen Entwicklungspunkte des Lagers, nie mehr als das Budget, nie über das Potenzial.
+  {
+    let r = 11; const rng = () => { r = (r * 48271) % 2147483647; return r / 2147483647; };
+    const young = Object.values(g4.players).filter((p) => p.age <= 21 && !p.isYouth && p.naturalPosition !== 'TW').slice(0, 30);
+    let ups0 = 0, spent = 0, budget = 0, over = 0;
+    for (const p0 of young) {
+      ups0 += applyCampDrills(structuredClone(p0), ['abwehr', 'aufbau', 'kurzpass', 'langball'], 9, 1, rng, 0).ups.length;
+      const p = structuredClone(p0);
+      const res = applyCampDrills(p, ['abwehr', 'aufbau', 'kurzpass', 'langball'], 9, 1.2, rng, 0.15);
+      spent += res.spent; budget += 0.15;
+      if (res.spent > 0.15 + 1e-6) over++;
+      if (p.overall > p.development.potentialAbility + 1) over++;
+    }
+    expect(ups0 === 0, `Inhalte ohne Budget wirken (${ups0})`);
+    expect(over === 0 && spent > 0 && spent <= budget, `Budget überschritten (${spent.toFixed(2)} von ${budget.toFixed(2)}, ${over} Verstöße)`);
+    expect(DRILL_COST > 0.5 && DRILL_COST <= 1, 'DRILL_COST unplausibel');
+  }
   console.log(`Programm: Fitness Kond/Ausg/Reg ${ok.fitness}/${oe.fitness}/${or.fitness}, Inhalte ${ups.map((x) => `${x.label} ${x.up}`).join(', ')}`);
 }
 console.log('Trainingslager-Planer-Test OK');

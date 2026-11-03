@@ -53,6 +53,20 @@ export const CAMP_FOCUS_ORDER: CampFocus[] = ['ausgewogen', 'kondition', 'taktik
 /** Alter, bis zu dem ein Spieler als Nachwuchs gilt (Jugendintegration). */
 export const CAMP_YOUTH_AGE = 21;
 
+/**
+ * Anteil der Lager-Entwicklung je Alter (Langzeit-Messung tests/simCamp.ts, CAMP=drills):
+ * Ein Lager soll etwa so viel bringen wie gutes Wochentraining über dieselben Tage. Das
+ * Wochentraining wächst ab 22 deutlich langsamer und kehrt ab 28 in den Abbau – ohne
+ * Abschlag brachte ein Lager einem 25-Jährigen das 18-fache, Routiniers glich es den Abbau aus.
+ */
+export function campDevAgeFactor(age: number): number {
+  if (age <= CAMP_YOUTH_AGE) return 1;
+  if (age <= 24) return 0.6;
+  if (age <= 27) return 0.4;
+  if (age <= 30) return 0.3;
+  return 0.25;
+}
+
 /** Kalenderjahr, nach dem ein Lager historisch eingeordnet wird (Winter = Januar-Jahr). */
 export function campYear(season: string, campSeason: CampSeason): number {
   const y0 = parseInt(season.slice(0, 4), 10);

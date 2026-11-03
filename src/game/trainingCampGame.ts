@@ -5,6 +5,7 @@
 // data/campDestinations.ts · Unterkünfte: data/campLodgings.ts · Anschluss: game/day.ts.
 // =============================================================================
 import { addDevPoints } from '../engine/devLog';
+import { distanceFactor } from '../engine/development';
 import { CAMP_OPP_LABEL, campDestination } from '../data/campDestinations';
 import { campLodging, defaultLodging, lodgingsFor } from '../data/campLodgings';
 import { CalendarEngine } from '../engine/calendar';
@@ -17,7 +18,7 @@ import { createMatchInjury } from '../engine/match/finish';
 import { makeMessage, pushMessage } from '../engine/messages';
 import {
   CAMP_ALTITUDE_DELAY, CAMP_FOCUS, CAMP_LEAD_DAYS, CAMP_MAX_DAYS, CAMP_MIN_DAYS, CAMP_REFUND, CAMP_SHORT_NOTICE_DAYS,
-  CAMP_SHORT_NOTICE_SURCHARGE, CAMP_YOUTH_AGE, CampFocus, aiCampChoice, campCostBase, campOutlook, campYear, destinationStatus,
+  CAMP_SHORT_NOTICE_SURCHARGE, CAMP_YOUTH_AGE, CampFocus, campDevAgeFactor, aiCampChoice, campCostBase, campOutlook, campYear, destinationStatus,
 } from '../engine/trainingCamp';
 import type { Club } from '../types';
 import { fmtDM, fmtDay } from '../ui/format';
@@ -314,12 +315,20 @@ function finishCamp(g: Game, b: CampBooking, today: string): void {
     p.attributes.fitness = Math.min(100, p.attributes.fitness + o.fitness * luck);
     p.frische = clamp((p.frische ?? 100) - o.travelFrische + o.campFrische, 30, 100);
     p.form = clamp(p.form + (o.form + o.travelForm) * luck - o.travelForm, 0, 100);
-    // Eingeladene Jugendspieler lernen im Training mit den Profis besonders viel.
-    addDevPoints(p, 'lager', (young ? o.devYouth : o.dev) * luck * (invited ? 1.3 : 1));
+    // Eingeladene Jugendspieler lernen im Training mit den Profis besonders viel; ab 22 weniger
+    // (wie im Wochentraining, `campDevAgeFactor`). Taktik-Inhalte lenken einen Teil davon sofort
+    // auf bestimmte Attribute (+1) und verbrauchen dafür Entwicklungspunkte.
+    // Wie im Wochentraining bremst die Nähe zum Potenzial (`distanceFactor`, die letzten Punkte sind die schwersten).
+    const devGain = (young ? o.devYouth : o.dev) * luck * (invited ? 1.3 : 1) * campDevAgeFactor(p.age) * distanceFactor(p);
+    let drillSpent = 0;
+    if (b.program?.drills.length) {
+      const r = applyCampDrills(p, b.program.drills, days, luck, rng, Math.max(0, devGain));
+      drillSpent = r.spent;
+      for (const x of r.ups) drillUps.set(x.drill, (drillUps.get(x.drill) ?? 0) + 1);
+    }
+    addDevPoints(p, 'lager', devGain - drillSpent);
     if (b.tests) dv.recentMinutes = (dv.recentMinutes ?? 0) + b.tests * (young && (youthFocus || invited) ? 60 : 40);
     const mChance = invited ? Math.min(0.9, o.morale * 1.6) : young && youthFocus ? Math.min(0.9, o.morale * 1.5) : o.morale;
-    // Taktik-Inhalte: gezielte Attribute (Chance auf +1, Akkumulator-Schub).
-    if (b.program?.drills.length) for (const x of applyCampDrills(p, b.program.drills, days, luck, rng)) drillUps.set(x.drill, (drillUps.get(x.drill) ?? 0) + 1);
     if (rng() < mChance) { p.morale = bumpMorale(p.morale, 1); moraleUp++; }
     if (o.starGrumble && p.age >= 28 && rng() < o.starGrumble) { p.morale = bumpMorale(p.morale, -1); grumble.push(p.fullName); }
     if (!invited) p.contract.satisfaction = clamp((p.contract.satisfaction ?? 60) + o.satisfaction, 0, 100);

@@ -562,7 +562,13 @@ Jeder Spieler reagiert nach **Persönlichkeit, Rolle und deiner Glaubwürdigkeit
 Pokal-/Europapokal-Aus, zu viele Verstöße (Frische, Leistung, Platzverweise) brechen ein Versprechen sofort (montags geprüft). Am 2. Januar kommt ein Zwischenstand, beim Saisonwechsel die Bilanz.
 - **Gehalten:** Glaubwürdigkeit +4, wer daran geglaubt hat +3 Moral, Teamstimmung +3; bei Saisonzielen und Ausbauten auch Vorstand und Fans etwas zufriedener.
 - **Gebrochen:** Glaubwürdigkeit −8, wer daran geglaubt hat −5 Moral (dazu ein abklingender Faktor), Teamstimmung −4; bei öffentlichen Versprechen sinken Vorstandsvertrauen und Fanstimmung. Hat ein **Führungsspieler** daran geglaubt, stellt er dich vor der Mannschaft zur Rede (Zusammenhalt sinkt).
-Die **Glaubwürdigkeit** ist dieselbe wie bei Versprechen in Transferverhandlungen.`,
+Die **Glaubwürdigkeit** ist dieselbe wie bei Versprechen in Transferverhandlungen.
+
+## Der Co-Trainer kennt deine Versprechen
+Lässt du automatisch aufstellen (Aufstellung › Auto, Vorschau „Co-Trainer stellt die beste Elf auf“), hält sich der Co-Trainer an offene Team-Versprechen, solange eine Elf mit Torwart übrig bleibt: Wer bei „Wer nicht fit ist, spielt nicht“ knapp an der Frische-Grenze ist (unter 58) oder bei „Wer schlecht spielt, ist draußen“ im letzten Ligaspiel Note 5 hatte, bleibt draußen; bei „Rotation“ setzen die zwei müdesten Feldspieler des letzten Ligaspiels aus; bei „Jugend“ bekommen Spieler bis 21 deutlich Vorrang, solange der Anteil unter dem Ziel liegt; bei „Keine alten Spieler“ bekommen deine Routiniers einen kleinen Vorrang. Eine fest gespeicherte Aufstellung ändert er nicht – die verantwortest du selbst.
+
+## Wie oft halten Versprechen? (Langzeit-Messung)
+30 Saisons mit einem Spitzenverein und einem Abstiegskandidaten, Aufstellung durch den Co-Trainer, ein realistisches Saisonziel plus Team-Versprechen: Realistische Ziele (Realismus ab 0,6 – etwa „Nächstes Jahr international“ beim Favoriten, „Nicht absteigen“) halten in rund **75–100 %** der Saisons, das Vorstandsziel „Meisterschaft“ selbst mit dem stärksten Kader nur etwa jede dritte Saison oder seltener – deshalb gilt es als ehrgeizig. Team-Versprechen halten mit dem Co-Trainer meist: Frische und Rotation praktisch immer, Leistung und Routiniers in 80–100 %, Disziplin (mit etwas weniger harter Gangart) in 83–93 %. Ohne Rücksicht des Co-Trainers waren es bei Rotation 0 %, bei Disziplin 30 %. „Tolle Stimmung“ (60) liegt nahe am Durchschnitt am Saisonende – mal klappt es in drei von vier Saisons, mal nur in jeder zweiten; Teamevents und Gespräche helfen. „Jugend“ hängt davon ab, ob deine Talente mithalten können (mit dem Co-Trainer 33–58 %). Wer Wort hält, steigt schnell auf eine hohe Glaubwürdigkeit; wer reihenweise bricht, landet bei null.`,
   },
   {
     id: 'condition-kabine',
@@ -3131,6 +3137,17 @@ Elfmeter (1), Torwartspiel (2, nur Torhüter). Jeder Inhalt trainiert seine Attr
 Rückkehr bekommt jeder gesunde Mitreisende mit der Chance 0,45 × Tage/9 × Altersfaktor (bis 20: 1,5 · ab 31: 0,4) × Luft nach oben (0,35 + Abstand zum Potenzial/15, höchstens 1) × Wetterglück
 (höchstens 60 %) **+1 auf eines dieser Attribute**; Spieler ohne Luft zum Potenzial lernen nichts mehr. Zusätzlich bekommen
 diese Attribute bei den nächsten Aufwertungen Vorrang. Die Bilanz nennt je Inhalt, wie viele Spieler sich verbessert haben.
+
+**Die Inhalte lenken die Lager-Entwicklung, sie kommen nicht obendrauf:** Jedes +1 verbraucht Entwicklungspunkte, die der
+Spieler im Lager gesammelt hat (0,8 Punkte je Punkt Stärke, mindestens 0,024 je +1 – auch Standards wie Ecken kosten etwas).
+Sind seine Lager-Punkte aufgebraucht oder läge er danach über seinem Potenzial, bleibt es beim Vorrang für die nächsten
+Aufwertungen. Der Rest der Lager-Punkte zählt wie gewohnt in der nächsten Bewertungsrunde (Ursache „Trainingslager“).
+
+**Wie viel bringt ein Lager?** Die Entwicklungspunkte des Lagers folgen dem Alter wie das Wochentraining (bis 21 voll,
+22–24 ×0,6, 25–27 ×0,4, 28–30 ×0,3, ab 31 ×0,25) und der Nähe zum Potenzial (die letzten Punkte sind die schwersten).
+Langzeit-Messung (30 Saisons, Lager im Sommer und Winter mit vollem Taktik-Programm): Ein Lager bringt je Lagertag etwa
+so viel wie gutes Wochentraining über dieselben Tage (bis 21 ≈ 1,2×, 22–27 ≈ 0,9–1,3×) – spürbar, aber kein Ersatz für
+eine gute Trainingswoche. Routiniers halten mit einem Lager ihren Abbau nicht auf.
 
 Feste Schwerpunkte (KI-Vereine und Lager aus älteren Spielständen):
 

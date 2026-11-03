@@ -98,15 +98,19 @@ export interface RealismCtx {
 }
 export function realismOf(id: SeasonPromiseId, c: RealismCtx): number {
   const E = c.expected;
+  // Abgeglichen mit der Langzeit-Messung (tests/simPromises.ts, PROMISES=aware): Selbst der
+  // stärkste Kader wird nur etwa jede dritte Saison Meister; ein Saisonziel „Meisterschaft“
+  // ist deshalb ehrgeizig, „Klassenerhalt“ oder ein Mittelfeldplatz dagegen meist erreichbar.
+  const keep = E >= c.size - 3;
   switch (id) {
-    case 'meister': return E <= 1 ? 0.85 : E <= 2 ? 0.6 : E <= 4 ? 0.35 : E <= 7 ? 0.15 : 0.04;
-    case 'pokal': return c.level > 1 ? 0.08 : E <= 2 ? 0.45 : E <= 5 ? 0.25 : 0.12;
-    case 'international': return E <= 1 ? 0.45 : E <= 4 ? 0.25 : 0.1;
-    case 'aufstieg': return E <= 2 ? 0.75 : E <= 5 ? 0.4 : 0.12;
-    case 'europaNext': return E <= 4 ? 0.8 : E <= 7 ? 0.45 : E <= 10 ? 0.25 : 0.08;
-    case 'klassenerhalt': return E >= c.size - 3 ? 0.6 : 0.95;
-    case 'zielPlus': return 0.45;
-    case 'ziel': return 0.8;
+    case 'meister': return E <= 1 ? 0.35 : E <= 2 ? 0.2 : E <= 4 ? 0.1 : E <= 7 ? 0.04 : 0.02;
+    case 'pokal': return c.level > 1 ? 0.05 : E <= 2 ? 0.25 : E <= 5 ? 0.12 : 0.06;
+    case 'international': return E <= 1 ? 0.15 : E <= 4 ? 0.08 : 0.03;
+    case 'aufstieg': return E <= 2 ? 0.45 : E <= 5 ? 0.25 : 0.08;
+    case 'europaNext': return E <= 4 ? 0.7 : E <= 7 ? 0.4 : E <= 10 ? 0.2 : 0.06;
+    case 'klassenerhalt': return keep ? 0.6 : 0.95;
+    case 'zielPlus': return E <= 2 ? 0.15 : keep ? 0.55 : 0.35;
+    case 'ziel': return E <= 1 ? 0.35 : E <= 2 ? 0.45 : keep ? 0.65 : 0.55;
     default: return 0.8;
   }
 }

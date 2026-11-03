@@ -13,6 +13,8 @@ import type { Club, Player, Tactics } from '../types';
 import { FORMATIONS, getFormation } from '../data/formations';
 import { positionSuitability } from '../engine/positions';
 import { autoFillLineup } from '../engine/lineupAI';
+import { promiseLineupPrefs } from '../game/seasonPromisesGame';
+import type { Game } from '../game/state';
 import { eraRules } from '../engine/match/era';
 import { DashBox, DashPage } from '../ui/DashPage';
 import PlayerModal from './PlayerModal';
@@ -48,7 +50,7 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
   const dragRef = useRef<Drag | null>(null);
   const refresh = () => { force((n) => n + 1); onChange(); };
 
-  if (!t.lineupMap) Object.assign(t, autoFillLineup(club, g.players, t, benchSize));
+  if (!t.lineupMap) Object.assign(t, autoFillLineup(club, g.players, t, benchSize, promiseLineupPrefs(g as unknown as Game)));
   const map = t.lineupMap!;
   const snap = t.snapToGrid !== false;
   const formation = effectiveFormation(t);
@@ -91,7 +93,7 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
     syncLineup(t, benchSize);
     refresh();
   };
-  const doAuto = () => { Object.assign(t, autoFillLineup(club, g.players, t, benchSize)); refresh(); };
+  const doAuto = () => { Object.assign(t, autoFillLineup(club, g.players, t, benchSize, promiseLineupPrefs(g as unknown as Game))); refresh(); };
   const resetLayout = () => { t.slotLayout = undefined; syncLineup(t, benchSize); refresh(); };
 
   // ---------------------------------------------------------------- Ziehen

@@ -17,6 +17,9 @@ import { recordFeeEUR } from '../src/data/transferRecords';
 import { economyScale as econScale } from '../src/engine/economy';
 import { roomAnalysis } from '../src/game/dressingRoomGame';
 import { histModeFromEnv, histSummary, histTrack } from './simHistory';
+import { budgetCheck, budgetInit, budgetSummary } from './simBudget';
+import { promBefore, promInit, promModeFromEnv, promSeasonEnd, promSeasonStart, promSummary } from './simPromises';
+import { campAfter, campBefore, campInit, campModeFromEnv, campSeasonReport, campSeasonStart, campSummary } from './simCamp';
 
 const seasons = Number(process.argv[2] ?? 3);
 
@@ -34,6 +37,11 @@ const g: Game = createNewGame({
 // HIST=aus|mittel|stark: Entwicklung der anderen Vereine (game/historicSteer.ts), Bericht tests/simHistory.ts.
 const histMode = histModeFromEnv(process.env.HIST);
 if (histMode) g.historyMode = histMode;
+// CAMP=drills|plain: eigener Verein bucht jedes Trainingslager (tests/simCamp.ts).
+campInit(g, campModeFromEnv(process.env.CAMP));
+// PROMISES=aware|plain: Versprechen zum ersten Training mit Co-Trainer-Aufstellung (tests/simPromises.ts).
+promInit(promModeFromEnv(process.env.PROMISES));
+budgetInit(!!process.env.BUDGET); // BUDGET=1: Grenzen des Saisonbudgets für einen Menschen nachrechnen (tests/simBudget.ts)
 
 const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
 function leaguePlayers(game: Game): Player[] {
@@ -138,6 +146,9 @@ function report(game: Game) {
     const caps = (c: any) => c.stadium.seating?.caps ?? {};
     const t = tops[0];
     console.log(`   SEATS Spieltag Median ${(medMd / cur / 1e6).toFixed(1)} Mio. (${Math.round((shares[shares.length >> 1] ?? 0) * 100)} % Umsatz) | Spitze ${t ? t.c.shortName + ' ' + (md(t.h) / cur / 1e6).toFixed(1) + ' Mio. (' + Math.round(md(t.h) / t.h!.revenue * 100) + ' %)' : '-'}${t ? ' | Mix ' + t.c.shortName + ' ' + JSON.stringify(caps(t.c)) : ''}`);
+    const sumN = (o: any) => Object.values(o ?? {}).reduce((a: number, v: any) => a + (Number(v) || 0), 0);
+    // Eigener Verein (Kartenverkauf nach Tribünen, game/ticketsGame.ts): Spieltagserlös, Rang in der Liga, Auslastung.
+    { const me = hs.find((x) => x.c.id === game.managedClubId); if (me) { const rank = [...hs].sort((a, b) => md(b.h) - md(a.h)).findIndex((x) => x.c.id === me.c.id) + 1; const log = (me.c.stadium as any).seating?.log ?? []; const fill = log.length ? log.reduce((a: number, x: any) => a + sumN(x.sold) / Math.max(1, sumN(x.cap)), 0) / log.length : NaN; console.log(`   TICKETS eigener Verein ${(md(me.h) / cur / 1e6).toFixed(2)} Mio. (${Math.round(md(me.h) / me.h!.revenue * 100)} % Umsatz, Rang ${rank}/${hs.length}, Median ${(medMd / cur / 1e6).toFixed(2)})${Number.isFinite(fill) ? ` Auslastung Ø ${Math.round(fill * 100)} %` : ''}`); } }
   }
   if (process.env.MINE) {
     const sq = my.playerIds.map((id) => game.players[id]).filter(Boolean);
@@ -428,7 +439,11 @@ for (let s = 0; s < seasons; s++) {
     // Simulation: eigener Verein stellt wie die KI auf (keine eingefrorene Startelf).
     const t = g.clubs[g.managedClubId]?.tactics;
     if (t && t.startingXI?.length) { t.startingXI = []; t.lineupMap = undefined; }
+    campBefore(g);
+    promBefore(g);
+    budgetCheck(g);
     processDay(g, HEADLESS_UI);
+    campAfter(g);
     if (process.env.KABINE) kabineTrack(g);
     if (process.env.BAL && /-(11|03)-15$/.test(g.calendar.currentDate)) bal.injSnap.push(leaguePlayers(g).filter((p) => p.injury).length);
     if (++guard > 1000) throw new Error('Saison endet nicht');
@@ -437,8 +452,12 @@ for (let s = 0; s < seasons; s++) {
   if (process.env.AI) aiReport(g);
   if (process.env.KABINE) kabineReport(g);
   if (histMode) histTrack(g);
+  campSeasonReport(g);
   if (process.env.AWARDS) awardsReport(g);
+  const promSt = promSeasonEnd(g), promSeason = g.season;
   startNextSeason(g);
+  campSeasonStart(g);
+  promSeasonStart(g, promSt, promSeason);
   if (process.env.STAFF) staffReport(g);
 }
 if (process.env.AI && aiTotals.seasons) {
@@ -481,6 +500,9 @@ if (process.env.BAL) {
 }
 if (process.env.YOUTH) youthSummary(g);
 if (histMode) histSummary(g, histMode);
+campSummary();
+promSummary();
+budgetSummary();
 if (process.env.TOP) { topSummary(); careerSummary(); }
 console.log(`fertig in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 // Diagnose: Wer ist ≥ 85?
