@@ -13,6 +13,9 @@ import { fmtDM, vColor, fmtPrice, fmtWage, wageHead, wageUnit } from '../../ui/f
 import { GROUP_DE, PlayerRow, ScoutStars, avg, groupOf, monthsUntil, scoutMid, squadOf } from '../shared';
 import { useState } from 'react';
 import { InfoTip } from '../../ui/InfoTip';
+import { PlayerSearchModal } from './search/PlayerSearchModal';
+import { TransferWindowModal } from './window/TransferWindowModal';
+import { activeCount, runSearch, type SearchCriteria } from '../../game/playerSearch';
 
 // =============================================================================
 // TRANSFERS — Transfermarkt, Beobachtung (Scouting-Vorschläge), Verhandlungen
@@ -108,22 +111,28 @@ export function TransfersView({ g, onDone }: { g: Game; onDone: () => void }) {
   const [grp, setGrp] = useState('all');
   const { open, modal } = usePlayerModal(g);
   const talk = useTalk(g, onDone);
-  const all = getAvailablePlayers(g.players, g.managedClubId);
-  const list = all.filter((p) => grp === 'all' || groupOf(p) === grp).slice(0, 60);
+  const [search, setSearch] = useState<SearchCriteria | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [bilanz, setBilanz] = useState(false);
+  const all = search ? runSearch(g, search) : getAvailablePlayers(g.players, g.managedClubId);
+  const list = all.filter((p) => grp === 'all' || groupOf(p) === grp).slice(0, search ? 200 : 60);
   const fin = club.finances;
   const wages = squadOf(g).reduce((s, p) => s + p.contract.weeklyWage, 0);
 
 
   return (
     <DashPage>
-      <DashBox title={`Transfermarkt (${all.length})`} icon="transfers" span={2} rows={2} flush
+      <DashBox title={search ? `Suchergebnis (${all.length})` : `Transfermarkt (${all.length})`} icon="transfers" span={2} rows={2} flush
         right={<span className="dbtnrow">
+          <button className={`dchip ${search ? 'on' : ''}`} onClick={() => setSearchOpen(true)}>Spieler suchen{search ? ` · ${activeCount(search)}` : ''}</button>
+          {search && <button className="dchip" onClick={() => setSearch(null)} title="Wieder alle abgabebereiten Spieler zeigen">Suche aufheben</button>}
+          <button className="dchip" onClick={() => setBilanz(true)}>Transferbilanz</button>
           <button className={`dchip ${grp === 'all' ? 'on' : ''}`} onClick={() => setGrp('all')}>Alle</button>
           {GROUPS.map((k) => <button key={k} className={`dchip ${grp === k ? 'on' : ''}`} onClick={() => setGrp(k)}>{GROUP_DE[k]}</button>)}
         </span>}>
         {list.length ? <MarketTable g={g} list={list} onOpen={open}
           action={(p) => <TalkButton g={g} p={p} onTalk={talk.open} />} />
-          : <Empty icon="transfers">Derzeit keine Spieler auf dem Markt.</Empty>}
+          : <Empty icon="transfers">{search ? 'Keine Spieler zu deiner Suche – lockere die Vorgaben.' : 'Derzeit keine Spieler auf dem Markt.'}</Empty>}
       </DashBox>
 
       <DashBox title="Budget" info="transferbudget" icon="finances">
@@ -140,6 +149,8 @@ export function TransfersView({ g, onDone }: { g: Game; onDone: () => void }) {
       <NeedsBox g={g} />
       {modal}
       {talk.modal}
+      {searchOpen && <PlayerSearchModal g={g} initial={search} onClose={() => setSearchOpen(false)} onSearch={(c) => { setSearch(c); setGrp('all'); setSearchOpen(false); }} />}
+      {bilanz && <TransferWindowModal g={g} onClose={() => setBilanz(false)} />}
     </DashPage>
   );
 }

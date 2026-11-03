@@ -573,6 +573,27 @@ export const INFO_TEXTS = {
     text: 'Die Sportzeitung erscheint montags und donnerstags, dazu gibt es immer die aktuelle Ausgabe des Tages. Sie fasst Spiele, Tabelle, Transfers, Trainerwechsel, Verletzungen, Pokal und Europapokal zusammen. Schlagzeilen öffnen den Artikel, Gesichter das Spielerprofil, Wappen das Vereinsprofil.',
     wiki: 'presse',
   },
+  // ---------------------------------------------------------------- Transferbilanz & Suche
+  transferbilanz: {
+    title: 'Transfer des Fensters',
+    text: 'Der teuerste Wechsel des Fensters (ohne Ablöse: der stärkste Neuzugang). Mit „Verein auswählen“ siehst du den wichtigsten Wechsel eines Vereins. Die Bilanz erscheint am Tag nach jedem Fensterschluss.',
+    wiki: 'transfers-window',
+  },
+  geruechtekueche: {
+    title: 'Gerüchteküche',
+    text: 'Was zum Fensterschluss erzählt wird: gute Spieler der Liga mit auslaufendem Vertrag, auf der Transferliste oder unzufrieden – und welcher größere Verein angeblich interessiert ist. Nur Gerede, nicht bestätigt.',
+    wiki: 'transfers-window',
+  },
+  spielersuche: {
+    title: 'Spieler suchen',
+    text: 'Durchsucht alle Spieler der Vereine mit vollem Kader nach deinen Vorgaben. Werte, die verdeckt sind (Potenzial), filterst du nur über die Einschätzung deiner Scouts. Suchen kannst du benennen und speichern.',
+    wiki: 'transfers-search',
+  },
+  realistisch: {
+    title: 'Nur realistische Transfers',
+    text: 'Zeigt nur Spieler, die nach ihren Wünschen grundsätzlich zu deinem Verein wechseln würden (Reiz deines Vereins, keine Ausschlussgründe wie ein Erzrivale). Ob der abgebende Verein verkauft, ist damit nicht gesagt.',
+    wiki: 'transfers-wishes',
+  },
 } satisfies Record<string, InfoText>;
 
 export type InfoKey = keyof typeof INFO_TEXTS;

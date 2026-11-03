@@ -50,4 +50,5 @@ import './28-rows.css';
 import './28-ratings.css';
 import './28-dash2.css';
 import './28-profile2.css';
+import './28-transfer3.css';
 import './29-look.css'; // zuletzt: ruhige Gesamtoptik

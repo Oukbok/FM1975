@@ -38,6 +38,7 @@ import { givePromises, trustOf } from './promises';
 import { repairSquadLists } from './squads';
 import { staffEffectsOf } from './staffGame';
 import { Game } from './state';
+import { noteLoan } from './transferLog';
 
 export interface TransferTalk {
   id: string;
@@ -317,7 +318,7 @@ function completeTalk(g: Game, t: TransferTalk): string {
   if (pkg?.bonus) (g.transferInstallments ??= []).push({ due: `${seasonEndYear(today)}-06-30`, amount: pkg.bonus, from: own.id, to: seller.id, name: p.fullName, kind: 'bonus', playerId: p.id });
   if (pkg?.sellOn) p.sellOn = { clubId: seller.id, pct: pkg.sellOn };
   if (pkg?.buyBack) p.contract.buyBack = { clubId: seller.id, fee: pkg.buyBack, until: `${seasonEndYear(today) + 2}-06-30` };
-  if (pkg?.loan) p.loan = { fromClubId: seller.id, until: `${seasonEndYear(today)}-06-30`, optionFee: pkg.optionFee ?? 0, wage: oldWage };
+  if (pkg?.loan) { p.loan = { fromClubId: seller.id, until: `${seasonEndYear(today)}-06-30`, optionFee: pkg.optionFee ?? 0, wage: oldWage }; noteLoan(g, p.id); }
   if (swap) {
     transferPlayer(g, swap, own, seller, 0, today);
     say(t, today, 'info', `${swap.fullName} wechselt im Tausch zu ${seller.name}.`);

@@ -29,6 +29,7 @@ import { makeMessage, pushMessage } from '../engine/messages';
 import { dailyRecovery } from '../engine/training';
 import { setTransferDate } from '../engine/transfers';
 import { aiClubsDaily, aiWindowClose } from './aiClubs';
+import { bindTransferLog, transferWindowDue } from './transferLog';
 import { youthCompsDaily } from './youthComps/daily';
 import { ownTrainingDay } from './trainingWeek';
 import { applyYouthGem, GEM_CHANCE_YOUTH, maybeMakeGem } from '../engine/gems';
@@ -91,6 +92,11 @@ export interface DayUi {
    * Zusammenfassung zeigen. Rückgabe true = der Vorlauf hält an.
    */
   onCampEnd?(bookingId: string): boolean;
+  /**
+   * Gestern hat ein Transferfenster geschlossen (game/transferLog.ts) → Top-Transfers +
+   * Transferbilanz zeigen. Rückgabe true = der Vorlauf hält an.
+   */
+  onTransferWindow?(key: string): boolean;
 }
 
 /** Oberfläche ohne Reaktion – für Simulationen und Tests. */
@@ -117,6 +123,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   if (CalendarEngine.isSeasonOver(cal)) { return false; }
 
   const today = cal.currentDate;
+  bindTransferLog(g); // Transferprotokoll: jeder Wechsel des Tages landet im Fenster
   // Verletzungsrisiko im Spiel: medizinisches Personal und Trainingsphilosophie (nur eigener Verein).
   {
     const red = staffEffectsOf(g).injuryReduction;
@@ -722,6 +729,9 @@ export function processDay(g: Game, ui: DayUi): boolean {
   }
   // Rückkehr aus dem Trainingslager: animierte Zusammenfassung.
   for (const id of campsEnded) if (ui.onCampEnd?.(id)) stopForAction = true;
+  // Tag nach dem Fensterschluss: Transferbilanz.
+  const twKey = transferWindowDue(g, today);
+  if (twKey && ui.onTransferWindow?.(twKey)) stopForAction = true;
 
   // Pause nur, wenn heute eine neue Entscheidung ansteht (Ereignis mit Auswahl).
   if (g.messages.some((m) => m.choices?.length && m.eventRef && !m.eventRef.resolved && m.date === today && !decisionsBefore.has(m.id))) {

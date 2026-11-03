@@ -261,7 +261,7 @@ function endLoan(g: Game, p: Player, own: Club, parent: Club, today: string, why
   p.contract.weeklyWage = p.loan?.wage ?? p.contract.weeklyWage;
   p.loan = undefined;
   p.promises = (p.promises ?? []).filter((x) => x.result);
-  recordTransfer(p, own.name, parent.name, 0, today);
+  recordTransfer(p, own.name, parent.name, 0, today, 'back');
   repairSquadLists(g);
   return { text: `${why ? why + ' ' : ''}${p.fullName} kehrt zu ${parent.name} zurück.` };
 }

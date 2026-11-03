@@ -1995,6 +1995,49 @@ Im Transferfenster (Juli/August, Januar) wird sofort gewechselt, sonst zum näch
 Für deine Spieler bieten vor allem KI-Vereine, die auf seiner Position **Bedarf** haben und sich die Ablöse leisten können (Kaderplanung); für Stars melden sich auch einfach die Großen. Sie bieten nach ihrer verdeckten Höchstgrenze. Forderst du 25 % mehr, zahlen sie, wenn es in ihren Rahmen passt – sonst bessern sie oft bis zur Grenze nach oder springen ab.`,
   },
   {
+    id: 'transfers-window',
+    category: 'squad',
+    title: 'Transferbilanz & Top-Transfers',
+    keywords: ['transferbilanz', 'top-transfers', 'transferfenster', 'fensterschluss', 'gerüchteküche', 'trainerkarussell', 'vertragsverlängerung', 'transfer des fensters', 'leihe', 'ablösefrei'],
+    body: `## Wann erscheint sie?
+Am **Tag nach jedem Fensterschluss** (Sommer: 31. August, Winter: 31. Januar) hält das Spiel an. Zuerst kommt die Zeitungsseite **Top-Transfers**: die zehn stärksten Neuzugänge der Vereine **deiner Liga**, die drei besten auf dem Podest. Mit **OK** geht es zur **Transferbilanz**. Abschalten kannst du beides mit „Diesen Bildschirm nicht wieder anzeigen“ oder in den Einstellungen; nachträglich öffnest du sie jederzeit im **Transfermarkt** über „Transferbilanz“ (mit Auswahl des Fensters).
+
+## Was zählt zu einem Fenster?
+Alle Wechsel seit dem letzten Fensterschluss – auch die außerhalb der Fristen, etwa Spieler mit Vertragsende am 1. Juli, Vorverträge, Leih-Rückkehrer oder Verkäufe ins Ausland. Gezählt werden die Vereine mit vollem Kader, die Unterklasse und das Ausland, soweit sie beteiligt sind.
+
+## Aufbau
+- **Links:** deine Liga und der **Transfer des Fensters** – der teuerste Wechsel (ohne Ablöse: der stärkste Neuzugang) mit Potenzial-Einschätzung deiner Scouts, Positionen, Ablöse und Vertragsende.
+- **Reiter Transfers:** alle Wechsel, sortierbar nach jeder Spalte. Rechts filterst du nach national/international, Mannschaftsteil, Mindest-Ablöse und Mindeststärke. „Verein auswählen“ zeigt nur einen Verein.
+- **Verträge:** Verlängerungen der Vereine (im Sommer nach dem Vertragsende, dazu deine eigenen).
+- **Gerüchteküche:** gute Spieler der Liga mit auslaufendem Vertrag, auf der Transferliste oder unzufrieden – und welcher Verein angeblich interessiert ist. Nur Gerede.
+- **Trainerkarussell:** Entlassungen, Rücktritte, Nachfolger und Trainer, die zum Fensterschluss wackeln.
+
+Namen öffnen das Spielerprofil, Wappen und Vereinsnamen das Vereinsprofil. Dein Verein ist hervorgehoben.
+
+## Speicher
+Das Spiel merkt sich die letzten acht Fenster; die beiden neuesten vollständig, ältere mit den 60 bedeutendsten Wechseln. Bei älteren Spielständen wird das laufende Fenster aus den Spielerverläufen nachgebaut – Spieler, die das Spiel schon verlassen haben, fehlen dort.`,
+  },
+  {
+    id: 'transfers-search',
+    category: 'squad',
+    title: 'Spieler suchen',
+    keywords: ['spielersuche', 'suche', 'filter', 'transfermarkt', 'suchprofil', 'realistische transfers', 'eingespieltheit', 'herkunft', 'heimatregion', 'fähigkeiten'],
+    body: `## So funktioniert es
+Im **Transfermarkt** öffnet „Spieler suchen“ ein großes Suchfenster. Durchsucht werden **alle Spieler** der Vereine mit vollem Kader (nicht nur die abgabebereiten). Das Ergebnis erscheint in der Liste des Transfermarkts; „Suche aufheben“ zeigt wieder die abgabebereiten Spieler.
+
+## Vorgaben
+- **Allgemein:** Name, Nationalität, Alter, Stärke, **Potenzial** (nur als Spanne deiner Scouts – ein Spieler passt, wenn sich die Spanne mit deinem Bereich überschneidet), Form, Erfahrung, starker Fuß, Mindestgröße, „Darf nicht verletzt sein“.
+- **Position:** Position oder ganzer Mannschaftsteil, Seite (links/zentral/rechts), „Nur beste Position“ (nur die Stammposition; sonst zählen Nebenpositionen und Spieler, die die Position fast so gut spielen).
+- **Herkunft:** bis zu drei Heimatregionen bzw. Länder („oder“).
+- **Fähigkeiten:** bis zu vier Attribute mit Mindestwert – dieselben Werte, die das Spielerprofil zeigt.
+- **Eingespieltheit:** Positionsvertrautheit (0–100) auf einer Position.
+- **Finanzen:** Marktwert und Gehalt (von/bis), Vertragsstatus (läuft in zwölf Monaten aus / langfristig gebunden), Transferstatus (Transferliste / abgabebereit). Ab **1996** gibt es Ausstiegsklauseln, ab **2005** Rückkaufoptionen – erst dann erscheinen die Häkchen.
+- **Nur realistische Transfers:** nur Spieler, die nach ihren Wünschen grundsätzlich zu dir wechseln würden (siehe „Spielerwünsche“). Ob ihr Verein verkauft, steht auf einem anderen Blatt.
+- **Suchgebiet:** alle Vereine, deine Liga oder Amateure/Unterklasse. Ausländische Vereine führt das Spiel ohne Kader.
+
+Suchen kannst du benennen und speichern; sie liegen im Browser und gelten für alle Spielstände.`,
+  },
+  {
     id: 'transfers-wishes',
     category: 'squad',
     title: 'Spielerwünsche: Persönlichkeit, Wunschverein, Gehalt',

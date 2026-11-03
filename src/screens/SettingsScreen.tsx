@@ -37,6 +37,11 @@ export function SettingsScreen({ settings, onBack, onSave }: {
             <span className={`toggle ${s.briefingIntro !== false ? 'on' : ''}`}></span>
             Auftakt-Animation vor dem Saison-Briefing zeigen
           </label>
+          <label className="toggle-item">
+            <input type="checkbox" checked={s.transferWindowShow !== false} onChange={(e) => setS({ ...s, transferWindowShow: e.target.checked })} />
+            <span className={`toggle ${s.transferWindowShow !== false ? 'on' : ''}`}></span>
+            Top-Transfers und Transferbilanz nach jedem Transferfenster zeigen
+          </label>
         </div>
       </div>
 

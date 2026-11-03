@@ -133,6 +133,8 @@ export interface Game {
   financeLevel?: number;
   /** Saison-Briefings: Archiv (Saison + Ausgangslage) und offenes Popup (game/seasonBriefing.ts). */
   briefing?: import('./seasonBriefing').BriefingLog;
+  /** Transferprotokoll je Fenster (game/transferLog.ts); fehlt = alter Spielstand. */
+  transferLog?: import('./transferLog').TransferLog;
   /** Bilanz der letzten Bewertungsrunden des eigenen Kaders (Vergleich in der Bewertungs-Show). */
   ratingRounds?: { date: string; label: string; n: number; ups: number; downs: number; sum: number }[];
 }
