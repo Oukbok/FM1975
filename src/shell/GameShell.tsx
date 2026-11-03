@@ -67,6 +67,7 @@ import { BoardView } from '../views/verein/BoardView';
 import { StaffView } from '../views/verein/StaffView';
 import { WikiView } from '../views/wiki/WikiView';
 import { CalendarView } from '../views/zentrale/CalendarView';
+import { CareerView } from '../views/zentrale/CareerView';
 import { BriefingView } from '../views/zentrale/BriefingView';
 import { BriefingModal } from '../views/zentrale/BriefingModal';
 import { BudgetModal } from '../views/finanzen/budget/BudgetModal';
@@ -481,6 +482,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'staff' && <StaffView g={g} onChange={rerender} />}
         {screen === 'marketing' && <MarketingView g={g} onChange={rerender} />}
         {screen === 'calendar' && <CalendarView g={g} onChange={rerender} onGoto={setScreen} />}
+        {screen === 'karriere' && <CareerView g={g} onChange={rerender} />}
         {screen === 'briefing' && <BriefingView g={g} onGoto={setScreen} onOpen={() => setRunning(false)} />}
         {screen === 'cup' && <CupView g={g} onWatch={(id) => setLiveMatchId(id)} onReplayDraw={(ri) => replayDraw('cup', ri)} />}
         {screen === 'ruhmeshalle' && <ErfolgeView g={g} />}

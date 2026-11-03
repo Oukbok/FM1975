@@ -26,6 +26,8 @@ import { freeAgentDestination, preferredClub } from './playerWishesGame';
 import { personaOf } from '../engine/persona';
 import { moraleJolt } from './moraleJolt';
 import { Game } from './state';
+import { noteSquad } from './aiSquadLog';
+import { sellAbroad } from './aiOffers';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -135,6 +137,8 @@ export function transferPlayer(g: Game, p: Player, from: Club, to: Club, fee: nu
   p.transferListed = false;
   p.contract.preContractClubId = undefined;
   p.contract.talks = undefined;
+  p.contract.refused = undefined;
+  p.contract.aiLetGo = undefined;
   p.contract.weeklyWage = Math.round(Math.max(p.contract.weeklyWage, marketWage(p) * clubWageLevel(to, Number(date.slice(0, 4)))) * (fee === 0 ? 1.15 : 1));
   p.contract.expiryDate = `${Number(date.slice(0, 4)) + yearsFor(p.age, hashRand(p.id + date))}-06-30`;
   p.contract.satisfaction = 78;
@@ -182,6 +186,15 @@ export function handleContractExpiry(g: Game, today: string): void {
       const stale = Number(p.contract.expiryDate.slice(0, 4)) < year; // in früherer Saison abgelaufen
       const r = hashRand(pid + year);
 
+      // KI-Altstar ohne neuen Vertrag (game/aiContracts.ts): Wechsel zu einem Ligaverein,
+      // der ihn noch will, sonst unterklassig bzw. Karriereende.
+      if (!mine && !stale && p.contract.aiLetGo && !p.contract.preContractClubId) {
+        const dest = p.age < 34 ? freeAgentDestination(g, p, club.id, () => hashRand(pid + year + 'v')) : null;
+        if (dest) transferPlayer(g, p, club, dest, bosman ? 0 : Math.round(preBosmanFee(p) * 0.5), today);
+        else sellAbroad(g, p, club, 'unterklassiger Verein', 0, today);
+        noteSquad(g, bosman || !dest ? 'freeLeaves' : 'paidLeaves');
+        continue;
+      }
       // Vorvertrag: Wechsel steht fest.
       const pre = p.contract.preContractClubId ? g.clubs[p.contract.preContractClubId] : undefined;
       // Eigener Spieler ohne Verlängerung geht; KI-Spieler entscheiden nach ihren Wünschen.
@@ -190,6 +203,7 @@ export function handleContractExpiry(g: Game, today: string): void {
       if (buyer) {
         const fee = bosman ? 0 : preBosmanFee(p);
         transferPlayer(g, p, club, buyer, fee, today);
+        if (!mine) noteSquad(g, fee ? 'paidLeaves' : 'freeLeaves');
         if (mine) { left.push(`${p.fullName} → ${buyer.name}${fee ? ` (Ablöse ${fmtPrice(fee)})` : ' (ablösefrei)'}`); income += fee; }
         continue;
       }
@@ -198,6 +212,8 @@ export function handleContractExpiry(g: Game, today: string): void {
       p.contract.expiryDate = `${year + yearsFor(p.age, r)}-06-30`;
       p.contract.weeklyWage = Math.round((p.contract.weeklyWage + marketWage(p) * Math.min(1, wageRatioOf(g, club))) / 2);
       p.contract.preContractClubId = undefined;
+      p.contract.refused = undefined;
+      p.contract.aiLetGo = undefined;
       if (mine && !stale) renewed.push(`${p.fullName} (bis ${p.contract.expiryDate.slice(0, 4)})`);
       if (!stale) logRenewal(g, p, club.id, today);
     }

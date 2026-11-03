@@ -18,6 +18,7 @@ import { isLeagueClub } from '../engine/clubEconomy';
 import { CalendarEngine } from '../engine/calendar';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { Game, bumpMorale } from './state';
+import { recordNow } from './coachRecord';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const POOL_MAX = 40;
@@ -43,9 +44,10 @@ export function coachProfileText(c: ClubCoach): string {
 }
 
 /** Trainer an den Verein binden: Taktik nach seinem Stil, kleiner Trainereffekt. */
-function install(g: Game, club: Club, coach: ClubCoach, date: string, bounce: boolean): void {
+export function install(g: Game, club: Club, coach: ClubCoach, date: string, bounce: boolean): void {
   coach.since = date;
   coach.pressure = 25;
+  coach.rec = undefined; // Bilanz gilt je Amtszeit (game/coachRecord.ts)
   club.coach = coach;
   club.tactics = coachTactics(club, g.players, coach, yearOfDate(date));
   if (bounce) {
@@ -54,10 +56,10 @@ function install(g: Game, club: Club, coach: ClubCoach, date: string, bounce: bo
 }
 
 /** Trainer verlässt den Verein (Historie; außer im Ruhestand zurück in den Pool). */
-function depart(g: Game, club: Club, date: string, reason: CoachHistoryEntry['reason']): ClubCoach | null {
+export function depart(g: Game, club: Club, date: string, reason: CoachHistoryEntry['reason']): ClubCoach | null {
   const c = club.coach;
   if (!c) return null;
-  (club.coachHistory ??= []).push({ name: c.name, from: c.since, to: date, reason });
+  (club.coachHistory ??= []).push({ name: c.name, from: c.since, to: date, reason, rec: { ...recordNow(g, club.id, c.since, c.rec), upTo: undefined } });
   if (club.coachHistory.length > HISTORY_MAX) club.coachHistory.splice(0, club.coachHistory.length - HISTORY_MAX);
   club.coach = undefined;
   if (reason !== 'ruhestand' && reason !== 'abgeworben') {
@@ -72,7 +74,7 @@ function depart(g: Game, club: Club, date: string, reason: CoachHistoryEntry['re
  * Nachfolger suchen: arbeitslose Trainer im Rahmen des Vereins (keiner, den der
  * Verein gerade selbst entlassen hat) oder ein neuer Name.
  */
-function pickSuccessor(g: Game, club: Club, date: string, rng: () => number): ClubCoach {
+export function pickSuccessor(g: Game, club: Club, date: string, rng: () => number): ClubCoach {
   const rep = club.reputation ?? 60;
   const recent = new Set((club.coachHistory ?? []).slice(-4).map((h) => h.name));
   const pool = g.coachPool ?? [];

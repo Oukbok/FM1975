@@ -7,6 +7,8 @@ import { getFormation } from '../../data/formations';
 import { fmtDateShort } from '../../ui/format';
 import { DashBox, Empty, KV, Meter } from '../../ui/DashPage';
 import { ClubLink } from './ClubLink';
+import { coachRecordOf, recordText } from '../../game/coachRecord';
+import { currentStint, ensureCareer, stintRecord } from '../../game/careerState';
 
 export interface ClubTabProps {
   g: Game;
@@ -28,40 +30,66 @@ export function MatchLine({ m }: { m: ClubMatchLine }) {
   );
 }
 
-// Trainer der KI-Vereine: `Club.coach` / `Club.coachHistory` (game/coachCarousel.ts).
+// Trainer der KI-Vereine: `Club.coach` / `Club.coachHistory` (game/coachCarousel.ts), Bilanz game/coachRecord.ts,
+// du selbst über game/careerState.ts.
 const coachOf = (club?: Club): ClubCoach | undefined => club?.coach;
 const PHIL_DE: Record<string, string> = { jugend: 'Jugend', einkauf: 'Einkauf', ausgewogen: 'Ausgewogen' };
 const REASON_DE: Record<string, string> = { entlassen: 'entlassen', ruhestand: 'Ruhestand', abgeworben: 'abgeworben', vertragsende: 'Vertragsende' };
 
 const MGR_STYLE_DE: Record<string, string> = { defensive: 'defensiv', balanced: 'ausgewogen', attacking: 'offensiv', counter: 'Konter' };
+const COACH_STYLE_DE: Record<string, string> = { offensiv: 'offensiv', ausgewogen: 'ausgewogen', defensiv: 'defensiv', konter: 'Konter' };
+
+/** Amtszeit als „seit 03.1979 · 2,4 Jahre“. */
+function tenure(since: string, today: string): string {
+  const d = Math.max(0, Math.round((Date.parse(today) - Date.parse(since)) / 86400000));
+  return `seit ${since.slice(5, 7)}.${since.slice(0, 4)} · ${d >= 365 ? `${(d / 365).toFixed(1).replace('.', ',')} Jahre` : `${d} Tage`}`;
+}
+
+function Predecessors({ club }: { club?: Club }) {
+  const list = (club?.coachHistory ?? []).slice(-3).reverse();
+  if (!list.length) return null;
+  return <>
+    <div className="dsec">Vorgänger</div>
+    {list.map((h) => (
+      <KV key={h.name + h.to} k={`${h.from.slice(0, 4)}–${h.to.slice(0, 4)} · ${h.human ? 'du' : h.name}`}
+        v={`${h.rec ? `${h.rec.w}-${h.rec.d}-${h.rec.l}` : '–'} · ${REASON_DE[h.reason] ?? h.reason}`} />
+    ))}
+  </>;
+}
 
 export function CoachBox({ g, d }: { g: Game; d: ClubProfileData }) {
+  const today = g.calendar.currentDate;
   if (d.isPlayerClub) {
     const m = g.manager;
+    const st = currentStint(g);
     return (
-      <DashBox title="Trainer" icon="tactics" right="du">
+      <DashBox title="Trainer" icon="tactics" right="du" info="trainerBilanz">
         <div className="cmx-coach-name">{m.name}</div>
-        <KV k="Alter" v={`${Number(g.calendar.currentDate.slice(0, 4)) - m.birthYear} Jahre`} />
-        <KV k="Nationalität" v={m.nationality} />
+        <KV k="Alter · Nationalität" v={`${Number(today.slice(0, 4)) - m.birthYear} · ${m.nationality}`} />
         <KV k="Spielstil" v={MGR_STYLE_DE[m.style] ?? m.style} />
+        <KV k="Amtszeit" v={tenure(st.from, today)} />
+        <KV k={st.recFrom ? `Ligabilanz seit ${st.recFrom}` : 'Ligabilanz'} v={recordText(stintRecord(g, st))} strong />
+        <KV k="Dein Ansehen" v={Math.round(ensureCareer(g).rep)} />
+        <Predecessors club={d.fullClub} />
       </DashBox>
     );
   }
   const c = coachOf(d.fullClub);
+  const rec = d.fullClub ? coachRecordOf(g, d.fullClub) : null;
   return (
-    <DashBox title="Trainer" icon="tactics" right={c ? `seit ${c.since.slice(0, 4)}` : undefined}>
+    <DashBox title="Trainer" icon="tactics" info="trainerBilanz" right={c ? `seit ${c.since.slice(0, 4)}` : undefined}>
       {c ? <>
         <div className="cmx-coach-name">{c.name}</div>
         <KV k="Alter · Nationalität" v={`${c.age} · ${c.nationality}`} />
-        <KV k="Spielstil" v={MGR_STYLE_DE[c.style] ?? c.style} />
-        <KV k="Philosophie" v={PHIL_DE[c.philosophy] ?? c.philosophy} />
-        <KV k="Ansehen" v={Math.round(c.reputation)} />
+        <KV k="Stil · Philosophie" v={`${COACH_STYLE_DE[c.style] ?? c.style} · ${PHIL_DE[c.philosophy] ?? c.philosophy}`} />
         {c.preferredFormation && <KV k="Lieblingssystem" v={getFormation(c.preferredFormation).label} />}
+        <KV k="Amtszeit" v={tenure(c.since, today)} />
+        <KV k={!c.rec && c.since < `${g.season.slice(0, 4)}-07-01` ? `Ligabilanz ${g.season}` : 'Ligabilanz'} v={rec ? recordText(rec) : '–'} strong />
+        {!!rec?.titles && <KV k="Meistertitel" v={rec.titles} />}
+        <KV k="Ansehen" v={Math.round(c.reputation)} />
         <Meter label="Druck vom Vorstand" value={Math.round(c.pressure)} max={100} text={`${Math.round(c.pressure)} %`}
           color={c.pressure >= 70 ? 'var(--red)' : undefined} />
-        {(d.fullClub?.coachHistory ?? []).slice(-2).reverse().map((h) => (
-          <KV key={h.name + h.to} k={`Vorgänger ${h.from.slice(0, 4)}–${h.to.slice(0, 4)}`} v={`${h.name} (${REASON_DE[h.reason] ?? h.reason})`} />
-        ))}
+        <Predecessors club={d.fullClub} />
       </> : <Empty icon="tactics">Trainer: unbekannt</Empty>}
     </DashBox>
   );

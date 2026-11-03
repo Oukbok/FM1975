@@ -1,3 +1,4 @@
+import { careerSeasonStart, careerSeasonSwitchFinish } from './careerGame';
 import { recordSeasonBriefing } from './seasonBriefing';
 import { recordBudgetPlan } from './budgetPlan';
 import { seasonPromiseSnapshot, settleSeasonPromises } from './seasonPromisesGame';
@@ -244,6 +245,9 @@ export function startNextSeason(g: Game): void {
   recordSeasonEnd(g, oldSeason, [...current, ...(isReunify ? [] : ddrDivs.map((d) => ({ id: d.id, tier: d.tier, group: d.group, name: d.name, orderedIds: finalOrder(g, d.id) })))]);
   // Liga-Archiv: Tabellen, Pokalrunden, Bestenlisten (game/leagueArchive.ts).
   archiveSeasonEnd(g, oldSeason);
+  // Trainerkarriere: Saisonbilanz deines Ansehens, angenommenes Angebot wird wirksam
+  // (neue Vereins-ID vor Auf-/Abstieg → dessen Liga wird Spielerliga, game/careerSwitch.ts).
+  const careerSw = careerSeasonStart(g);
 
   // --- 3) Auf-/Abstieg + evtl. Ligareform datengetrieben berechnen ---
   // Liegt für die neue Saison eine noch nicht angewandte Reform vor (z. B. 1981/82
@@ -428,7 +432,9 @@ export function startNextSeason(g: Game): void {
   // --- 9) Nachrichten: Auf-/Abstieg des eigenen Vereins + Ligaüberblick ---
   const newPlayerTier = membership[playerDivId].meta.tier;
   const playerDivName = membership[playerDivId].meta.name;
-  if (newPlayerTier < oldPlayerTier) {
+  if (careerSw) {
+    // Vereinswechsel: Willkommen kommt aus game/careerSwitch.ts, kein Auf-/Abstiegstext.
+  } else if (newPlayerTier < oldPlayerTier) {
     pushMessage(g.messages, makeMessage({
       date: calendar.currentDate, category: 'board', from: 'Vereinsvorstand',
       subject: `Aufstieg! Willkommen in der ${playerDivName}`,
@@ -469,6 +475,7 @@ export function startNextSeason(g: Game): void {
       + (firstDraw ? `Die ${firstDraw.round} des Landespokals wird am ${CalendarEngine.formatDate(firstDraw.date)} ausgelost. ` : '')
       + `Die Vorbereitung läuft – nutze die Transferphase und das Training.`,
   }));
+  careerSeasonSwitchFinish(g, careerSw);
   // Saisonbilanz als Station festhalten, Saisonstatistik für die neue Saison leeren.
   closeSeason(g.players, g.clubs, oldSeason);
   manageSquads(g, calendar.currentDate, !!(g as any).simAutoManage);

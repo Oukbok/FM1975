@@ -403,6 +403,31 @@ export const INFO_TEXTS = {
     text: 'Wie zufrieden der Vorstand mit dir ist (0–100). Es richtet sich nach Saisonziel, Ergebnissen und Finanzen. Unter 40 kürzt er die Transfermittel, unter 20 halbiert er sie.',
     wiki: 'environment-overview',
   },
+  trainerAnsehen: {
+    title: 'Dein Ansehen als Trainer',
+    text: 'Wie gefragt du bist (0–100). Es steigt, wenn du Saisonziele übertriffst und Titel holst, und sinkt bei Misserfolg oder Entlassung. Vereine, deren Größe zu deinem Ansehen passt, machen dir Angebote.',
+    wiki: 'manager-career',
+  },
+  vereinsgroesse: {
+    title: 'Größe des Vereins',
+    text: 'Ruf des Vereins, bereinigt um die Liga (2. Liga −7). Angebote kommen von Vereinen, die größer sind als deiner, aber nicht größer als dein Ansehen erlaubt.',
+    wiki: 'manager-career',
+  },
+  jobangebote: {
+    title: 'Jobangebote',
+    text: 'Andere Vereine wollen dich als Trainer – zum Saisonende oder sofort. Du kannst annehmen, nachverhandeln (Risiko: Rückzug) oder ablehnen. Im Karriere-Modus kann dich der Vorstand auch entlassen.',
+    wiki: 'manager-career',
+  },
+  trainerGehalt: {
+    title: 'Jahresgehalt des Trainers',
+    text: 'Dein Gehalt laut Vertrag (Preisniveau 1975, angezeigt im Wert des Jahres). Es ist eine Kennzahl deiner Karriere und wird nicht über die Vereinskasse gebucht.',
+    wiki: 'manager-career',
+  },
+  trainerBilanz: {
+    title: 'Ligabilanz des Trainers',
+    text: 'Siege, Remis und Niederlagen in Ligaspielen während der Amtszeit, dazu Punkte je Spiel nach 3-Punkte-Wertung (damit Epochen vergleichbar bleiben).',
+    wiki: 'ai-coaches',
+  },
   saisonziel: {
     title: 'Saisonziel',
     text: 'Was der Vorstand von dir erwartet – abhängig von Stärke und Ruf des Vereins. Wer das Ziel übertrifft, gewinnt Vertrauen, wer es klar verfehlt, verliert es.',

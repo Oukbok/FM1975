@@ -29,6 +29,9 @@ import { makeMessage, pushMessage } from '../engine/messages';
 import { dailyRecovery } from '../engine/training';
 import { setTransferDate } from '../engine/transfers';
 import { aiClubsDaily, aiWindowClose } from './aiClubs';
+import { aiContractsDaily } from './aiContracts';
+import { careerDaily } from './careerGame';
+import { aiLoansDaily } from './aiLoans';
 import { bindTransferLog, transferWindowDue } from './transferLog';
 import { youthCompsDaily } from './youthComps/daily';
 import { ownTrainingDay } from './trainingWeek';
@@ -572,8 +575,11 @@ export function processDay(g: Game, ui: DayUi): boolean {
   contractReminders(g, today);
   announceUpcomingRules(g, today);
   aiClubsDaily(g, today);
+  careerDaily(g, today); // Jobangebote an dich, Entlassung im Karriere-Modus (game/careerGame.ts)
   youthCompsDaily(g, today);
   rollAiOffers(g, today);
+  aiContractsDaily(g, today); // KI: vorzeitige Verlängerungen, Altstars, Bosman-Verkäufe, Vorverträge (game/aiContracts.ts)
+  aiLoansDaily(g, today); // KI-Leihen, Anfragen an dich, Rückkehr am 30.6. (game/aiLoans.ts)
   checkPromises(g, today);
   contractClausesDaily(g, today); // Treueprämie, Erfolgsklausel, Leihe mit Kaufoption (game/playerWishesGame.ts)
   { const mc = g.clubs[g.managedClubId]; if (mc) assignShirtNumbers(mc, g.players); }

@@ -8,6 +8,7 @@ import { Game } from '../../game/state';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtDM, fmtPrice, vColor } from '../../ui/format';
 import { InfoTip } from '../../ui/InfoTip';
+import { isCareerMode } from '../../game/careerState';
 
 // =============================================================================
 // VORSTAND — Vertrauen, Rechtsform & Investor, Kredite, Namensrechte, Lizenz
@@ -40,7 +41,9 @@ export function BoardView({ g, onChange }: { g: Game; onChange: () => void }) {
         <Meter label="Vertrauen" value={conf} color={vColor(conf)} />
         <KV k="Transferbudget" info="transferbudget" v={fmtPrice(club.finances.transferBudget)} />
         <div className="dnote mt8">
-          Unter 40 kürzt der Vorstand die Transfermittel, unter 20 halbiert er sie. Entlassen wirst du nicht – aber ohne Vertrauen fehlt das Geld.
+          Unter 40 kürzt der Vorstand die Transfermittel, unter 20 halbiert er sie. {isCareerMode(g)
+            ? 'Im Karriere-Modus droht unter 12 ein Ultimatum und danach die Entlassung – auch ein klar verfehltes Saisonziel kann zum Saisonende den Job kosten.'
+            : 'Entlassen wirst du im Teammanager-Modus nicht – aber ohne Vertrauen fehlt das Geld.'}
         </div>
       </DashBox>
 
