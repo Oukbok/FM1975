@@ -272,7 +272,8 @@ function commit(sim: MatchSim, grades: Map<string, number>, opts: FinishOptions)
       // Positionsvertrautheit wächst mit Einsatzminuten auf der gespielten Position.
       if (date) addPositionMinutes(player, m.pos, mins, date);
       // Bestenlisten je Wettbewerb (Weiße Weste: nur Torhüter).
-      addCompStats(player, compCodeOf(competition), m, clean && m.group === 'GK');
+      // Liga zusätzlich mit Note/Zu-null für die Auszeichnungen der Saison (engine/seasonAwards.ts).
+      addCompStats(player, compCodeOf(competition), m, clean && m.group === 'GK', competition === 'Liga' ? { grade: g, clean } : undefined);
       player.yellowCardCount += m.yellow;
       if (m.red > 0 || m.yellowRed > 0) player.suspensionMatches = Math.max(player.suspensionMatches, m.red > 0 ? 2 : 1);
       // Gelbsperre (ab 1979/80): jede fünfte Gelbe Karte einer Saison (nur Liga) kostet ein Spiel.

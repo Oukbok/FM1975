@@ -12,7 +12,9 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   // Kabine (Kader › Kabine)
   | 'kabine'
   // Training (Kategorie) + Jugend (Kategorie)
-  | 'cat-training' | 'trainerteam' | 'cat-jugend' | 'jugendwettbewerbe';
+  | 'cat-training' | 'trainerteam' | 'cat-jugend' | 'jugendwettbewerbe'
+  // Die Besten der Saison (Statistiken › Auszeichnungen)
+  | 'auszeichnungen';
 
 // =============================================================================
 // MENÜ-STRUKTUR (zweistufige Top-Navigation)
@@ -86,6 +88,7 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'cup', label: 'Pokal', icon: 'trophy' },
     { screen: 'international', label: 'International', icon: 'international' },
     { screen: 'halle', label: 'Halle', icon: 'trophy' },
+    { screen: 'auszeichnungen', label: 'Auszeichnungen', icon: 'trophy' },
   ] },
 ];
 

@@ -43,6 +43,8 @@ import { migrateLeaguePool } from './game/clubPool';
 import { migrateYouthInvest } from './game/youthInvest';
 import { migrateSponsorship } from './game/sponsorGame';
 import { migrateBriefing } from './game/seasonBriefing';
+import { migrateSeasonAwards } from './game/seasonAwardsGame';
+import { migrateGoldenBall } from './game/goldenBallGame';
 import { migrateLegacyLegends } from './game/playerMigration';
 import { migratePersonas } from './game/playerWishesGame';
 import { migratePositionSkills } from './game/positionsGame';
@@ -349,6 +351,8 @@ export default function App() {
     try { migrateSponsorship(s.game); } catch (err) { console.error('Sponsoring-Nachrüstung fehlgeschlagen:', err); }
     // Saison-Briefing: Archiv ab der aktuellen Saison, beim Laden kein automatisches Popup.
     try { migrateBriefing(s.game); } catch (err) { console.error('Briefing-Nachrüstung fehlgeschlagen:', err); }
+    try { migrateGoldenBall(s.game); } catch (err) { console.error('Goldener-Ball-Nachrüstung fehlgeschlagen:', err); }
+    try { migrateSeasonAwards(s.game); } catch (err) { console.error('Auszeichnungen-Nachrüstung fehlgeschlagen:', err); }
     // Legenden-System entfernt: frühere Legenden werden ganz normale Spieler.
     try { migrateLegacyLegends(s.game); } catch (err) { console.error('Legenden-Bereinigung fehlgeschlagen:', err); }
     // Transfer 2.0: Spielerpersönlichkeit (Wünsche, Gehaltsforderung) nachrüsten.

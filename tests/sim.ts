@@ -4,6 +4,8 @@
 // Ausgabe je Saison: Liga-Durchschnitt, Top-Spieler, Altersstruktur, Meister,
 // Kontostand des eigenen Vereins, Verletzte. Bricht bei Fehlern/NaN ab.
 // =============================================================================
+import { awardsOf } from '../src/game/seasonAwardsGame';
+import { AWARD_CATS } from '../src/engine/seasonAwards';
 import { createNewGame } from '../src/game/newGame';
 import { careerSummary, originOfPlayer, trackCareers } from './simCareers';
 import { processDay, HEADLESS_UI } from '../src/game/day';
@@ -411,6 +413,13 @@ function kabineReport(game: Game) {
   console.log(`   KABINE Stimmung Ø ${avg(kab.moods).toFixed(0)} min ${Math.min(...kab.moods).toFixed(0)} | Krisentage ${kab.moods.filter((m) => m < 35).length} | Zusammenhalt ${a.cohesion} | Außenseiter ${a.outsiders.map((id) => game.players[id]?.lastName).join(', ') || '-'} | Gruppen ${a.groups.map((x) => `${x.label} ${x.members.length}`).join(', ')} | Führung ${a.leaders.map((id) => game.players[id]?.lastName).join('/')} | Vorfälle ${kab.incidents} | Moral-Stufen ${steps} | KI-Stimmung ${ai.length ? `${Math.min(...ai).toFixed(0)}–${Math.max(...ai).toFixed(0)}` : '-'}`);
   kab.moods = []; kab.incidents = 0;
 }
+// AWARDS=1: Die Besten der Saison (game/seasonAwardsGame.ts) je Saison.
+function awardsReport(game: Game) {
+  const a = awardsOf(game, game.season);
+  if (!a) { console.log('   AWARDS —'); return; }
+  const best = a.best ? a.cats[a.best][0] : null;
+  console.log(`   AWARDS ${AWARD_CATS.map((c) => { const w = a.cats[c][0]; return w ? `${c} ${w.n.split(' ').pop()} (${w.cn.slice(0, 12)}, ${w.ap} Sp, Note ${w.g.toFixed(2)}, ${w.gl}/${w.as}, ${w.cs} z.n., ${w.pts})` : `${c} —`; }).join(' | ')} | SdS ${best?.n ?? '—'} (${a.best ?? '-'}) | Newc. ${a.rookie ? `${a.rookie.n} ${a.rookie.a}J ${a.rookie.cat}` : '—'}`);
+}
 if (process.env.AI) aiReport(g);
 for (let s = 0; s < seasons; s++) {
   let guard = 0;
@@ -427,6 +436,7 @@ for (let s = 0; s < seasons; s++) {
   if (process.env.AI) aiReport(g);
   if (process.env.KABINE) kabineReport(g);
   if (histMode) histTrack(g);
+  if (process.env.AWARDS) awardsReport(g);
   startNextSeason(g);
   if (process.env.STAFF) staffReport(g);
 }

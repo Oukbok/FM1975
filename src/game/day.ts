@@ -68,6 +68,8 @@ import { dressingRoomIncidents } from './dressingRoomEvents';
 import { PlayerDevReveal } from '../types';
 import { fmtDM, fmtDMfull, fmtDateFull, setDisplayYear } from '../ui/format';
 import { RatingResult as _RatingResult } from '../engine/development';
+import { awardsDaily } from './seasonAwardsGame';
+import { goldenBallDaily } from './goldenBallGame';
 
 export interface DayUi {
   /** Eigenes Spiel wurde gespielt → Spielbericht/Textmodus öffnen. */
@@ -732,6 +734,10 @@ export function processDay(g: Game, ui: DayUi): boolean {
   // Tag nach dem Fensterschluss: Transferbilanz.
   const twKey = transferWindowDue(g, today);
   if (twKey && ui.onTransferWindow?.(twKey)) stopForAction = true;
+  // Die Besten der Saison: am Tag nach dem letzten Ligaspieltag (Popup über game.seasonAwards.pending).
+  if (awardsDaily(g, today)) stopForAction = true;
+  // Goldener Ball (Fußballer des Jahres) am 20. Dezember: Gala über game.goldenBall.pending.
+  if (goldenBallDaily(g, today)) stopForAction = true;
 
   // Pause nur, wenn heute eine neue Entscheidung ansteht (Ereignis mit Auswahl).
   if (g.messages.some((m) => m.choices?.length && m.eventRef && !m.eventRef.resolved && m.date === today && !decisionsBefore.has(m.id))) {

@@ -9,8 +9,13 @@
 // =============================================================================
 import type { Player } from '../types';
 
-/** [Einsätze, Tore, Vorlagen, Gelb, Gelb-Rot, Rot, Zu-null-Spiele als Torhüter] */
-export type CompTuple = [number, number, number, number, number, number, number];
+/**
+ * [Einsätze, Tore, Vorlagen, Gelb, Gelb-Rot, Rot, Zu-null-Spiele als Torhüter,
+ *  optional: Notensumme, benotete Spiele, Zu-null-Spiele auf dem Platz (jede Position)].
+ * Die optionalen Felder 7–9 nutzen die Auszeichnungen der Saison (engine/seasonAwards.ts);
+ * ältere Tupel haben sie nicht (dann gilt der Saisonschnitt aus `seasonStats`).
+ */
+export type CompTuple = [number, number, number, number, number, number, number, number?, number?, number?];
 export type CompCode = 'L' | 'P' | 'E';
 
 type WithComp = Player & { compStats?: Partial<Record<CompCode, CompTuple>> };
@@ -35,12 +40,18 @@ export function withEuroSink<T>(sink: Record<string, CompTuple> | null | undefin
 export function addCompStats(
   p: Player, code: CompCode,
   m: { goals: number; assists: number; yellow: number; yellowRed: number; red: number }, cleanKeeper: boolean,
+  extra?: { grade: number; clean: boolean },
 ): void {
   const pw = p as WithComp;
   const all = (pw.compStats ??= {});
   const t = code === 'E' && euroSink ? (euroSink[p.id] ??= [0, 0, 0, 0, 0, 0, 0]) : (all[code] ??= [0, 0, 0, 0, 0, 0, 0]);
   t[0]++; t[1] += m.goals; t[2] += m.assists; t[3] += m.yellow; t[4] += m.yellowRed; t[5] += m.red;
   if (cleanKeeper) t[6]++;
+  if (extra) {
+    t[7] = Math.round(((t[7] ?? 0) + extra.grade) * 10) / 10;
+    t[8] = (t[8] ?? 0) + 1;
+    t[9] = (t[9] ?? 0) + (extra.clean ? 1 : 0);
+  }
 }
 
 export function compStatsOf(p: Player): Partial<Record<CompCode, CompTuple>> | undefined {

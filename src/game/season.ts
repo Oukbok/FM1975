@@ -1,4 +1,6 @@
 import { recordSeasonBriefing } from './seasonBriefing';
+import { awardSeasonEnd, clearPendingAwards } from './seasonAwardsGame';
+import { clearPendingGoldenBall } from './goldenBallGame';
 import { EuroCompId, allEuroClubs } from '../data/europe';
 import { setEraYear } from '../engine/positions';
 import { refreshOverall } from '../engine/development';
@@ -190,6 +192,10 @@ export function finalOrder(g: Game, divId: string): string[] {
 export function startNextSeason(g: Game): void {
   // Trainerbilanz und -karussell der KI-Vereine, solange die Endtabelle vorliegt.
   aiSeasonEnd(g);
+  // Die Besten der Saison: Rückfall, falls das Saisonende-Ereignis nicht lief (ältere Stände).
+  awardSeasonEnd(g, g.calendar.currentDate, false);
+  clearPendingAwards(g);
+  clearPendingGoldenBall(g); // eine nicht gezeigte Gala des Vorjahres verfällt
   const oldSeason = g.season;
   const nextStartYear = seasonStartYear(g.season) + 1;
   const nextEndYear = nextStartYear + 1;
