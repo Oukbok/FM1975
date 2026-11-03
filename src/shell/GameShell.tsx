@@ -384,7 +384,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
 
       {/* ---------------- HAUPTINHALT ---------------- */}
       <main className="app-main">
-        {screen === 'dashboard' && <Dashboard g={g} onGoto={setScreen} onWatch={(id) => setLiveMatchId(id)} onOpenEditor={() => setClubEditorOpen(true)} />}
+        {screen === 'dashboard' && <Dashboard g={g} onGoto={setScreen} onWatch={(id) => setLiveMatchId(id)} onChange={rerender} onOpenEditor={() => setClubEditorOpen(true)} />}
         {screen === 'table' && <TableView g={g} />}
         {screen === 'fixtures' && <FixturesView g={g} onWatch={(id) => setLiveMatchId(id)} />}
         {screen === 'squad' && <SquadView g={g} onChange={rerender} />}

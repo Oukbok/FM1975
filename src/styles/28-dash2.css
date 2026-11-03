@@ -1,0 +1,234 @@
+/* =============================================================================
+   ZENTRALE – Aufbau „Newscenter“ (src/views/zentrale/Dashboard.tsx + dash/)
+   links schmale Widget-Spalte (scrollt intern) · Mitte Newscenter · rechts
+   Übersicht + Vereinsnachrichten im Medium der Epoche. Seite selbst scrollt nie.
+   ============================================================================= */
+.dz {
+  flex: 1 1 auto; min-height: 0;
+  display: grid; grid-template-columns: 450px minmax(0, 1fr) 430px; gap: 20px;
+  padding: 14px 0 4px; font-family: var(--font-ui);
+}
+.dz-col { min-height: 0; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+.dz-left { overflow-y: auto; overflow-x: hidden; padding-right: 6px; scrollbar-gutter: stable; }
+.dz-left::-webkit-scrollbar, .dz-nlist::-webkit-scrollbar, .dz-wb::-webkit-scrollbar, .dz-rtext::-webkit-scrollbar,
+.dz-app-list::-webkit-scrollbar, .dz-vt-list::-webkit-scrollbar, .dz-lcd-list::-webkit-scrollbar, .dz-heft-list::-webkit-scrollbar { width: 8px; }
+.dz-left::-webkit-scrollbar-thumb, .dz-nlist::-webkit-scrollbar-thumb, .dz-wb::-webkit-scrollbar-thumb, .dz-rtext::-webkit-scrollbar-thumb,
+.dz-app-list::-webkit-scrollbar-thumb, .dz-vt-list::-webkit-scrollbar-thumb, .dz-lcd-list::-webkit-scrollbar-thumb, .dz-heft-list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 4px; }
+
+/* ---- Widget-Rahmen (links + Übersicht) ------------------------------------ */
+.dz-w, .dz-news {
+  background: linear-gradient(180deg, rgba(27, 32, 41, 0.92), rgba(16, 20, 27, 0.94));
+  border: 1px solid var(--border-soft); border-radius: 6px; min-width: 0;
+}
+.dz-w { flex: 0 0 auto; padding: 8px 14px 10px; cursor: pointer; transition: border-color 0.15s; }
+.dz-w:hover, .dz-w:focus-visible { border-color: var(--border); outline: none; }
+.dz-wh {
+  display: flex; align-items: center; gap: 8px; padding-bottom: 6px; margin-bottom: 4px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.dz-wt { font-family: var(--font-display); font-size: 15px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--text-2); display: inline-flex; align-items: center; gap: 4px; }
+.dz-wr { margin-left: auto; font-size: 13.5px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dz-wgo { color: var(--text-4); flex: 0 0 auto; }
+.dz-wr + .dz-wgo { margin-left: 2px; }
+.dz-wt + .dz-wgo { margin-left: auto; }
+.dz-w:hover .dz-wgo { color: var(--text-2); }
+.dz-wb { font-size: 16px; color: var(--text); }
+.dz-dim { color: var(--text-3); }
+.dz-r { text-align: right; }
+.dz-empty { padding: 8px 0 4px; color: var(--text-3); font-size: 15px; }
+.dz-more { grid-column: 1 / -1; padding: 4px 6px 0; color: var(--text-3); font-size: 14px; }
+
+/* Kleine Tabellen (Liga, Spiele, Ausfälle): Zeilen im Listenstil, Spalten per subgrid */
+.dz-grid { display: grid; column-gap: 10px; font-variant-numeric: tabular-nums; }
+.dz-th { font-size: 12.5px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.4px; padding: 2px 0 4px; }
+.dz-tr {
+  display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; align-items: center;
+  min-height: 34px; padding: 0 6px; margin: 0 -6px; border-top: 1px solid var(--border-soft);
+}
+.dz-tr.me { background: var(--rl-me-bg); box-shadow: inset 4px 0 0 var(--accent); }
+.dz-tr.me .dz-cn { color: var(--accent); font-weight: 700; }
+.dz-tr.next { box-shadow: inset 0 1px 0 var(--border); }
+.dz-tr.clickable:hover { background: var(--rl-hover); }
+.dz-club { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.dz-club .club-link, .dz-club .np-crest { min-width: 0; display: inline-flex; align-items: center; }
+.dz-cn { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; display: inline-flex; align-items: center; gap: 6px; }
+.dz-main { font-family: var(--font-display); font-weight: 600; font-size: 18px; }
+.dz-tab { grid-template-columns: 38px minmax(0, 1fr) 50px 40px; }
+.dz-tab .rl-z { min-width: 22px; padding-left: 7px; font-weight: 700; }
+.dz-games { grid-template-columns: 50px 16px minmax(0, 1fr) 14px 44px; }
+.dz-comp { font-size: 12px; font-weight: 700; color: var(--text-3); border: 1px solid var(--border); border-radius: 3px; text-align: center; line-height: 16px; }
+.dz-ha { font-size: 13px; text-align: center; }
+.dz-res-W { color: var(--pos); }
+.dz-res-L { color: var(--neg); }
+.dz-res-D { color: var(--text-2); }
+.dz-abs { grid-template-columns: minmax(0, 1fr) auto auto; }
+.dz-abs .pos-badge { width: 30px; height: 20px; font-size: 11px; border-radius: 4px; }
+.dz-tag { font-size: 12.5px; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--border); color: var(--text-2); }
+.dz-tag.injury { color: var(--neg); border-color: color-mix(in srgb, var(--neg) 45%, transparent); }
+
+/* Wert-Zeilen, Balken, Status */
+.dz-kv { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 4px 0; }
+.dz-kv > span { color: var(--text-2); display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.dz-kv > b { font-weight: 600; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.dz-kv-sum { border-top: 1px solid var(--border-soft); margin-top: 3px; padding-top: 6px; }
+.dz-kv-sum > b { font-family: var(--font-display); font-size: 19px; }
+.dz-kv-sum.neg > b { color: var(--neg); }
+.dz-big { font-family: var(--font-display); font-size: 22px; }
+.dz-bar { display: grid; grid-template-columns: 138px minmax(0, 1fr) 34px; align-items: center; gap: 10px; padding: 4px 0; }
+.dz-bar > span:first-child { color: var(--text-2); display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.dz-track { height: 8px; border-radius: 4px; background: var(--bar-track); overflow: hidden; }
+.dz-track > i { display: block; height: 100%; border-radius: 4px; }
+.dz-bar > b { text-align: right; font-weight: 700; }
+.dz-st { display: grid; grid-template-columns: 138px minmax(0, 1fr) 34px; align-items: center; gap: 10px; padding: 3px 0; }
+.dz-st > span:first-child { color: var(--text-2); display: inline-flex; align-items: center; gap: 4px; }
+.dz-st-mid { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; }
+.dz-st > b { text-align: right; font-weight: 700; }
+
+/* ---- Newscenter ------------------------------------------------------------ */
+.dz-news { display: flex; flex-direction: column; min-height: 0; padding: 12px 20px 10px; }
+.dz-nh { display: flex; align-items: center; gap: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.dz-nh-ico { color: var(--text-3); display: inline-flex; }
+.dz-nh-title { font-family: var(--font-display); font-size: 30px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--text); }
+.dz-nh-count { font-family: var(--font-display); font-size: 19px; color: var(--text-2); margin-left: 10px; }
+.dz-nh-act { margin-left: auto; display: flex; gap: 8px; }
+.dz-nh-act .dchip { font-size: 14px; padding: 4px 12px; border-radius: 4px; }
+.dz-nh-act .dchip:not(:disabled):hover { color: var(--text); border-color: var(--text-3); }
+.dz-nbody { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 24px; padding-top: 8px; }
+.dz-nlist { min-height: 0; overflow-y: auto; }
+.dz-ntable { width: 100%; table-layout: fixed; border-collapse: collapse; }
+.dz-ntable thead th { position: sticky; top: 0; z-index: 1; background: var(--panel); text-align: left; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+.dz-ntable td { height: 40px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-2); font-size: 16px; }
+.dz-ntable tbody tr { cursor: pointer; }
+.dz-ntable .dz-ncol-grp { width: 120px; color: var(--text-3); font-size: 14.5px; }
+.dz-ntable .dz-ncol-date { width: 128px; }
+.dz-ntable .dz-ncol-cat { width: 118px; }
+.dz-ntable tr.grp-start td { border-top: 1px solid var(--border); }
+.dz-ntable tr.grp-start .dz-ncol-grp { color: var(--text-2); font-weight: 600; }
+.dz-nsubj { display: table-cell; }
+.dz-nsubj > span { vertical-align: middle; }
+.dz-nico { color: var(--text-4); vertical-align: middle; margin-right: 8px; }
+.dz-msg.unread td { color: var(--text); }
+.dz-msg.unread .dz-nsubj > span { font-weight: 700; }
+.dz-msg.unread .dz-nico { color: var(--text-2); }
+.dz-ntable tbody tr.me .dz-nsubj > span { color: var(--accent); }
+.dz-act { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-left: 8px; vertical-align: middle; }
+
+.dz-read { min-height: 0; display: flex; flex-direction: column; border-left: 1px solid var(--border-soft); padding-left: 24px; }
+.dz-read-empty { align-items: center; justify-content: center; color: var(--text-3); }
+.dz-rdate { font-family: var(--font-display); font-size: 34px; font-weight: 500; color: var(--text); line-height: 1.1; }
+.dz-rdate > span { font-size: 20px; color: var(--text-3); margin-right: 6px; }
+.dz-rsubj { font-family: var(--font-display); font-size: 23px; font-weight: 500; color: var(--text); margin: 8px 0 4px; line-height: 1.25; }
+.dz-rmeta { font-size: 14.5px; color: var(--text-3); padding-bottom: 10px; border-bottom: 1px solid var(--border-soft); }
+.dz-rtext { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 12px 8px 8px 0; }
+.dz-rlead { font-size: 18px; font-weight: 600; color: var(--text); margin: 0 0 10px; line-height: 1.5; }
+.dz-rbody { font-size: 17px; color: var(--text-2); margin: 0; line-height: 1.65; white-space: pre-wrap; }
+.dz-rtext .dsec { margin-top: 14px; }
+.dz-rfoot { display: flex; align-items: flex-end; gap: 14px; padding-top: 10px; border-top: 1px solid var(--border-soft); min-height: 52px; }
+.dz-rlinks { display: flex; flex-wrap: wrap; gap: 8px; }
+.dz-rlinks .dchip { font-size: 14px; padding: 5px 12px; border-radius: 4px; }
+.dz-rlinks .dchip:hover { color: var(--text); border-color: var(--text-3); }
+.dz-rface {
+  margin-left: auto; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  background: none; border: none; cursor: pointer; color: var(--text); padding: 0; font: inherit;
+}
+.dz-rface svg { display: block; }
+.dz-rface-name { font-weight: 700; font-size: 16px; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dz-rface-sub { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-3); }
+.dz-rface-sub .pos-badge { width: 30px; height: 20px; font-size: 11px; border-radius: 4px; }
+.dz-rface-sub b { font-family: var(--font-display); font-size: 18px; font-weight: 600; }
+.dz-rface:hover .dz-rface-name { color: var(--accent); }
+
+.dz-nfoot { display: flex; align-items: center; gap: 18px; padding-top: 10px; margin-top: 8px; border-top: 1px solid var(--border-soft); font-size: 15px; }
+.dz-nfoot label { display: inline-flex; align-items: center; gap: 12px; color: var(--text-2); }
+.dz-nfoot .dselect { min-width: 220px; border-radius: 4px; }
+.dz-nfoot > .dz-dim { margin-left: auto; font-size: 13.5px; }
+
+/* ---- Übersicht (rechts oben) ---------------------------------------------- */
+.dz-ov { cursor: default; flex: 0 1 auto; min-height: 0; max-height: 46%; display: flex; flex-direction: column; }
+.dz-ov:hover { border-color: var(--border-soft); }
+.dz-ov-body { min-height: 0; overflow-y: auto; }
+.dz-ov-head {
+  display: flex; align-items: center; gap: 8px; width: 100%; padding: 6px 2px; background: none; border: none;
+  color: var(--text); font: inherit; font-size: 16.5px; font-weight: 600; cursor: pointer; text-align: left;
+}
+.dz-ov-head svg { color: var(--text-3); transition: transform 0.15s; flex: 0 0 auto; }
+.dz-ov-head svg.open { transform: rotate(90deg); }
+.dz-ov-head .dz-dim { margin-left: auto; font-weight: 500; font-size: 14px; }
+.dz-ov-head:hover svg { color: var(--text); }
+.dz-ov-list { display: flex; flex-direction: column; padding: 0 0 6px 20px; }
+.dz-ov-item {
+  text-align: left; background: none; border: none; font: inherit; font-size: 15.5px; color: var(--text-2);
+  padding: 4px 8px; border-radius: 4px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.dz-ov-item:hover { background: var(--rl-hover); color: var(--text); }
+.dz-ov-item.mine { color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); font-weight: 600; }
+
+/* ---- Vereinsnachrichten im Medium der Epoche (rechts unten) ---------------- */
+.dz-fan { flex: 1 1 auto; min-height: 0; display: flex; align-items: stretch; justify-content: center; }
+.dz-fan button { font: inherit; text-align: left; cursor: pointer; background: none; border: none; color: inherit; }
+.dz-fan-empty { padding: 14px; opacity: 0.75; font-size: 15px; }
+
+/* Stadionheft (bis Mai 1980): gedrucktes Blatt, kühles Papier */
+.dz-heft {
+  width: 100%; display: flex; flex-direction: column; min-height: 0;
+  background: var(--q-2); color: var(--bg); border-radius: 3px; padding: 16px 18px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45); font-family: Georgia, 'Times New Roman', serif;
+}
+.dz-heft-mast { display: flex; align-items: center; gap: 12px; padding-bottom: 10px; border-bottom: 3px double var(--bg); }
+.dz-heft-mast b { display: block; font-size: 21px; letter-spacing: 0.3px; }
+.dz-heft-mast span { font-size: 13px; text-transform: uppercase; letter-spacing: 1.4px; color: var(--panel-hover); }
+.dz-heft-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding-top: 6px; }
+.dz-heft-item { display: block; width: 100%; padding: 8px 0; border-bottom: 1px solid var(--q-3); font-size: 16px; line-height: 1.35; }
+.dz-heft-item:hover { text-decoration: underline; }
+.dz-heft-date { font-weight: 700; margin-right: 8px; }
+.dz-heft-item .rumor { font-style: italic; }
+
+/* Videotext (Juni 1980 – 1998): Fernseher mit Tafel */
+.dz-tv { width: 100%; display: flex; flex-direction: column; min-height: 0; background: var(--panel-2); border: 1px solid var(--border); border-radius: 18px; padding: 16px 16px 8px; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45); }
+.dz-tv-screen { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; background: var(--bg); border-radius: 10px; padding: 12px 12px 8px; font-family: 'Courier New', ui-monospace, monospace; font-size: 15px; color: var(--text); border: 6px solid var(--bg); }
+.dz-vt-top { display: flex; justify-content: space-between; color: var(--text); font-weight: 700; }
+.dz-vt-band { margin: 8px 0 6px; padding: 4px 8px; background: var(--pos-key); color: var(--text); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.dz-vt-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.dz-vt-item { display: grid; grid-template-columns: 62px minmax(0, 1fr) 34px; gap: 6px; width: 100%; padding: 4px 0; line-height: 1.3; }
+.dz-vt-date { color: var(--pos-key-2); }
+.dz-vt-item .rumor { color: var(--yellow); }
+.dz-vt-page { color: var(--green); text-align: right; }
+.dz-vt-item:hover span:nth-child(2) { text-decoration: underline; }
+.dz-tv-foot { display: flex; align-items: center; gap: 8px; padding-top: 8px; color: var(--text-4); font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; }
+.dz-tv-foot i { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+.dz-tv-foot span { margin-left: auto; }
+
+/* SMS (1999 – Juli 2008): Tastenhandy mit Graustufen-Anzeige */
+.dz-phone {
+  height: 100%; aspect-ratio: 9 / 18; max-width: 100%; display: flex; flex-direction: column; align-items: center;
+  background: var(--panel-2); border: 1px solid var(--border); border-radius: 46px 46px 34px 34px; padding: 18px 18px 22px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+}
+.dz-phone-ear { width: 56px; height: 6px; border-radius: 3px; background: var(--bg); margin-bottom: 14px; }
+.dz-lcd { width: 100%; flex: 1 1 58%; min-height: 0; display: flex; flex-direction: column; background: var(--q-2); color: var(--bg); border-radius: 6px; border: 6px solid var(--bg); padding: 8px 10px; font-family: 'Courier New', ui-monospace, monospace; font-size: 14.5px; }
+.dz-lcd-top { display: flex; justify-content: space-between; font-weight: 700; border-bottom: 2px solid var(--bg); padding-bottom: 4px; margin-bottom: 4px; }
+.dz-lcd-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.dz-lcd-item { display: flex; flex-direction: column; width: 100%; padding: 5px 0; border-bottom: 1px dashed var(--q-3); line-height: 1.25; }
+.dz-lcd-head { font-weight: 700; font-size: 13px; }
+.dz-lcd-item:hover { background: var(--q-1); }
+.dz-keys { width: 82%; flex: 0 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
+.dz-keys i { height: 16px; border-radius: 8px; background: var(--elevated); border: 1px solid var(--border); }
+
+/* Fan-App (ab Juli 2008): Smartphone */
+.dz-smart {
+  height: 100%; aspect-ratio: 9 / 17.5; max-width: 100%; display: flex; flex-direction: column; align-items: center;
+  background: var(--bg); border: 2px solid var(--border); border-radius: 40px; padding: 12px 10px 10px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+}
+.dz-smart-notch { width: 90px; height: 16px; border-radius: 0 0 10px 10px; background: var(--panel-2); margin: -2px 0 6px; }
+.dz-smart-bar { width: 110px; height: 5px; border-radius: 3px; background: var(--text-4); margin-top: 8px; }
+.dz-app { width: 100%; flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; background: var(--bg-2); border-radius: 26px; overflow: hidden; }
+.dz-app-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px 10px; background: var(--panel); border-bottom: 3px solid var(--club, var(--border)); }
+.dz-app-head b { display: block; font-size: 17px; color: var(--text); }
+.dz-app-head span { font-size: 12.5px; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px; }
+.dz-app-sec { padding: 10px 16px 4px; font-family: var(--font-display); font-size: 14px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); }
+.dz-app-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0 8px 8px; }
+.dz-app-item { display: flex; flex-direction: column; gap: 2px; width: 100%; padding: 8px; border-bottom: 1px solid var(--border-soft); border-radius: 6px; font-size: 15.5px; color: var(--text); line-height: 1.3; }
+.dz-app-item:hover { background: var(--rl-hover); }
+.dz-app-date { font-size: 12.5px; color: var(--text-3); }
+.dz-app-item .rumor { font-style: italic; color: var(--text-2); }

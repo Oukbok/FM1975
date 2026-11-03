@@ -560,6 +560,18 @@ Bei den anderen Vereinen folgt die Stimmung den letzten Ergebnissen; die Moral i
   // NACHRICHTEN
   // ---------------------------------------------------------------------------
   {
+    id: 'zentrale',
+    category: 'messages',
+    title: 'Die Zentrale',
+    keywords: ['zentrale', 'dashboard', 'newscenter', 'übersicht', 'fan-app', 'videotext', 'stadionheft', 'sms', 'widgets', 'managerstatus', 'teamstatus'],
+    body: `## Aufbau
+Die **Zentrale** ist deine Startseite. Oben bleibt das Hauptmenü; den Kalender siehst du nur, solange die Zeit läuft (Überblendung).
+- **Links** stehen kleine Übersichten: Ausschnitt der **Ligatabelle** um deinen Verein, **Liste der Spiele** (die letzten zwei Ergebnisse, die nächsten drei Termine; L = Liga, P = Pokal, E = Europapokal), **Budget** der laufenden Saison, **Managerstatus** (Saisonziel, Vertrauen des Vorstands, Fanstimmung, Mediendruck, Leitbild), **Sperren und Verletzungen**, **Teamstatus** (Stärke der Startelf, Fitness, Frische, Form, Moral) und deine **Taktik** in Kurzform. Ein Klick auf ein Kästchen öffnet die passende Seite. Die Spalte lässt sich scrollen.
+- **In der Mitte** liegt das **Newscenter**: links deine Nachrichten (gruppiert nach Heute, Gestern, Diese Woche, Älter; ungelesene fett), rechts die gewählte Nachricht mit Datum, Text, Entscheidungsknöpfen und Sprungzielen. Betrifft sie einen Spieler, siehst du unten rechts sein Gesicht – ein Klick öffnet das Profil. Unten wählst du, welche Nachrichten angezeigt werden.
+- **Rechts oben** die **Übersicht** aller Wettbewerbe der Saison (Deutschland, DDR, international, Auslandsligen der Vorsaison). Ein Klick öffnet Statistiken › Liga, Pokal oder International mit genau diesem Wettbewerb. Dein Verein ist hervorgehoben.
+- **Rechts unten** erfährst du, was die Fans über deinen Verein lesen – im Medium der Zeit: bis Mai 1980 das **Stadionheft**, ab Juni 1980 der **Videotext** von ARD und ZDF, ab 1999 der **SMS-Dienst** aufs Handy, ab Juli 2008 die **Fan-App**. Die Meldungen und Gerüchte stammen aus der Sportzeitung (Zentrale › Presse); ein Klick öffnet den Artikel.`,
+  },
+  {
     id: 'presse',
     category: 'messages',
     title: 'Presse: die Sportzeitung',

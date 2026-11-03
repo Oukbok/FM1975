@@ -1,0 +1,135 @@
+// =============================================================================
+// ZENTRALE – Newscenter (Mitte): Nachrichtenliste gruppiert nach Heute/Gestern/
+// Diese Woche/Älter, Lesebereich der gewählten Nachricht mit Entscheidungen
+// (EventChoices), Sprungzielen und Gesicht des betroffenen Spielers.
+// Daten: g.messages (engine/messages.ts) – dieselben wie Zentrale › Nachrichten.
+// =============================================================================
+import { useState } from 'react';
+import Icon from '../../../components/Icon';
+import PlayerAvatar from '../../../components/PlayerAvatar';
+import { CATEGORY_META, unreadCount } from '../../../engine/messages';
+import type { Game } from '../../../game/state';
+import { MSG_CAT_ICON } from '../../../shell/CalendarStrip';
+import type { Screen } from '../../../shell/navigation';
+import type { InboxMessage, MessageCategory } from '../../../types';
+import { WD_FULL, vColor } from '../../../ui/format';
+import { EventChoices } from '../EventChoices';
+import { msgGroup, msgPlayer, ownGames, type MsgGroup } from './data';
+
+/** Passende Seite je Kategorie (Knopf im Lesebereich). */
+const CAT_TARGET: Partial<Record<MessageCategory, [Screen, string]>> = {
+  transfer: ['verhandlungen', 'Verhandlungen'], injury: ['squad', 'Kader'], match: ['fixtures', 'Spielplan'],
+  board: ['vorstand', 'Vorstand'], contract: ['vertraege', 'Verträge'], training: ['training', 'Trainingsplan'],
+  media: ['presse', 'Presse'], cup: ['cup', 'Pokal'],
+};
+
+const dmy = (iso: string) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
+const wd = (iso: string) => WD_FULL[new Date(iso.slice(0, 10) + 'T00:00:00Z').getUTCDay()];
+
+type Filter = 'all' | 'unread' | MessageCategory;
+
+export function Newscenter({ g, onGoto, onWatch, onChange, openPlayer }: {
+  g: Game; onGoto: (s: Screen) => void; onWatch: (id: string) => void; onChange: () => void; openPlayer: (id: string) => void;
+}) {
+  const msgs = g.messages ?? [];
+  const [filter, setFilter] = useState<Filter>('all');
+  const [selId, setSelId] = useState<string | null>(() => (msgs.find((m) => !m.read) ?? msgs[0])?.id ?? null);
+  const list = msgs.filter((m) => (filter === 'all' ? true : filter === 'unread' ? !m.read : m.category === filter));
+  const sel = (selId && msgs.find((m) => m.id === selId)) || list[0] || null;
+  const unread = unreadCount(msgs);
+  const cats = (Object.keys(CATEGORY_META) as MessageCategory[]).filter((c) => msgs.some((m) => m.category === c));
+  const today = g.calendar.currentDate;
+
+  const open = (m: InboxMessage) => { setSelId(m.id); if (!m.read) { m.read = true; onChange(); } };
+  const allRead = () => { msgs.forEach((m) => (m.read = true)); onChange(); };
+  const markUnread = () => { if (sel && sel.read) { sel.read = false; onChange(); } };
+
+  let lastGroup: MsgGroup | null = null;
+  return (
+    <section className="dz-news">
+      <div className="dz-nh">
+        <span className="dz-nh-ico"><Icon name="news" size={26} /></span>
+        <span className="dz-nh-title">Newscenter</span>
+        <span className="dz-nh-count">{unread > 0 ? `${unread} ungelesen` : 'Alles gelesen'}</span>
+        <span className="dz-nh-act">
+          <button className="dchip" onClick={allRead} disabled={unread === 0} title="Alle Nachrichten als gelesen markieren">Alle gelesen</button>
+          <button className="dchip" onClick={markUnread} disabled={!sel?.read} title="Gewählte Nachricht wieder als ungelesen markieren">Als ungelesen</button>
+          <button className="dchip" onClick={() => onGoto('news')} title="Zentrale › Nachrichten">Posteingang</button>
+        </span>
+      </div>
+
+      <div className="dz-nbody">
+        <div className="dz-nlist">
+          <table className="dtable rl-sm dz-ntable">
+            <thead><tr><th className="dz-ncol-grp">Eingang</th><th>Thema</th><th className="dz-ncol-date">Datum</th><th className="dz-ncol-cat">Kategorie</th></tr></thead>
+            <tbody>
+              {list.length === 0 && <tr><td colSpan={4} className="dz-dim" style={{ textAlign: 'center' }}>Keine Nachrichten.</td></tr>}
+              {list.map((m) => {
+                const grp = msgGroup(m, today);
+                const head = grp !== lastGroup;
+                lastGroup = grp;
+                return (
+                  <tr key={m.id} className={`dz-msg ${m.read ? '' : 'unread'} ${sel?.id === m.id ? 'me' : ''} ${head ? 'grp-start' : ''}`}
+                    data-player={msgPlayer(g, m) ? '1' : '0'} onClick={() => open(m)}>
+                    <td className="dz-ncol-grp">{head ? grp : ''}</td>
+                    <td className="dz-nsubj"><Icon name={MSG_CAT_ICON[m.category] ?? 'news'} size={16} className="dz-nico" /><span>{m.subject}</span>{m.actionRequired && !m.eventRef?.resolved && !m.resultText && <i className="dz-act" title="Entscheidung nötig" />}</td>
+                    <td className="dz-ncol-date">{dmy(m.date)}</td>
+                    <td className="dz-ncol-cat">{CATEGORY_META[m.category]?.label ?? m.category}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <Reader g={g} m={sel} onGoto={onGoto} onWatch={onWatch} onChange={onChange} openPlayer={openPlayer} />
+      </div>
+
+      <div className="dz-nfoot">
+        <label>
+          <span>Angezeigte Nachrichten</span>
+          <select className="dselect" value={filter} onChange={(e) => setFilter(e.target.value as Filter)}>
+            <option value="all">Alle ({msgs.length})</option>
+            <option value="unread">Ungelesen ({unread})</option>
+            {cats.map((c) => <option key={c} value={c}>{CATEGORY_META[c].label} ({msgs.filter((m) => m.category === c).length})</option>)}
+          </select>
+        </label>
+        <span className="dz-dim">Es bleiben die letzten 80 Nachrichten erhalten.</span>
+      </div>
+    </section>
+  );
+}
+
+function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
+  g: Game; m: InboxMessage | null; onGoto: (s: Screen) => void; onWatch: (id: string) => void; onChange: () => void; openPlayer: (id: string) => void;
+}) {
+  if (!m) return <div className="dz-read dz-read-empty">Wähle links eine Nachricht aus.</div>;
+  const p = msgPlayer(g, m);
+  const matchId = !p && m.relatedId && ownGames(g).some((x) => x.matchId === m.relatedId) ? m.relatedId : null;
+  const target = CAT_TARGET[m.category];
+  return (
+    <article className="dz-read" key={m.id}>
+      <div className="dz-rdate"><span>{wd(m.date)}</span> {dmy(m.date)}</div>
+      <h3 className="dz-rsubj">{m.subject}</h3>
+      <div className="dz-rmeta">Von {m.from} · {CATEGORY_META[m.category]?.label}{m.actionRequired && !m.eventRef?.resolved && !m.resultText ? ' · Entscheidung nötig' : ''}</div>
+      <div className="dz-rtext">
+        {m.shortText && m.shortText !== m.bodyText && <p className="dz-rlead">{m.shortText}</p>}
+        <p className="dz-rbody">{m.bodyText}</p>
+        <EventChoices g={g} msg={m} onDone={onChange} />
+      </div>
+      <div className="dz-rfoot">
+        <div className="dz-rlinks">
+          {matchId && <button className="dchip" onClick={() => onWatch(matchId)}>Spielbericht</button>}
+          {p && <button className="dchip" onClick={() => openPlayer(p.id)}>Spielerprofil</button>}
+          {target && <button className="dchip" onClick={() => onGoto(target[0])}>{target[1]}</button>}
+        </div>
+        {p && (
+          <button className="dz-rface" onClick={() => openPlayer(p.id)} title={`${p.fullName} – Spielerprofil öffnen`}>
+            <PlayerAvatar player={p} club={g.clubs[p.clubId]} size={104} />
+            <span className="dz-rface-name">{p.fullName}</span>
+            <span className="dz-rface-sub"><span className="pos-badge">{p.naturalPosition}</span> <span>{p.age} J.</span> <b style={{ color: vColor(p.overall) }}>{p.overall}</b></span>
+          </button>
+        )}
+      </div>
+    </article>
+  );
+}
