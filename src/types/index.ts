@@ -1183,6 +1183,8 @@ export interface Club {
   coachHistory?: CoachHistoryEntry[];
   /** Stadionumfeld (Vereinsgelände 2.0, engine/grounds.ts). Optional → migrateGrounds. */
   grounds?: import('./grounds').ClubGrounds;
+  /** Fanartikel des eigenen Vereins: Sortiment, Lager, Preise, Statistik (game/merchGame.ts). Fehlt bei KI-Vereinen. */
+  merchShop?: import('./merch').MerchShop;
 }
 
 /** Spielstil eines KI-Trainers (bestimmt Ausrichtung/Formation der KI). */

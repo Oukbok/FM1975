@@ -310,6 +310,52 @@ export const INFO_TEXTS = {
     text: 'Du kannst mehr Geld, eine andere Laufzeit oder weniger Klauseln fordern. Je stärker deine Marke im Vergleich zum Angebot, desto eher gibt der Partner nach – überreizt du, zieht er sein Angebot zurück.',
     wiki: 'marketing-overview',
   },
+  // ---------------------------------------------------------------- Fanartikel (Finanzen › Fanartikel)
+  merchSortiment: {
+    title: 'Sortiment & Vorräte',
+    text: 'Was dein Fanshop in dieser Epoche führt, mit Einkaufs- und Verkaufspreis, Bestand und Saisonverkäufen. Gewinn = Verkaufserlös minus Einkauf der Saison; „Vorrat“ sagt, wie viele Wochen der Bestand bei der jetzigen Nachfrage reicht.',
+    wiki: 'merchandise',
+  },
+  merchArtikel: {
+    title: 'Preis, Rabatt, Einkauf',
+    text: 'Zum Richtpreis bringt dein Shop genau so viel wie früher die Pauschale. Teurer heißt deutlich weniger Käufer, Rabatt lockt mehr – vor allem für Ladenhüter. Größere Bestellungen bekommen Mengenrabatt, solange Platz im Lager ist.',
+    wiki: 'merchandise',
+  },
+  merchLager: {
+    title: 'Lager',
+    text: 'Lagerplätze hängen an der Fanshop-Stufe und einem Megastore im Umfeld. Ein Schal braucht einen Platz, ein Ball zwei, Aufnäher kaum etwas. Ist das Lager leer, gehen Kunden ohne Ware nach Hause.',
+    wiki: 'merchandise',
+  },
+  merchNachfrage: {
+    title: 'Nachfrage',
+    text: 'Gekauft wird vor allem am Spieltag: je mehr Zuschauer, je stärker Marke und Ruf, desto mehr. Stars und neue Spitzenspieler ziehen zusätzlich bei Trikots und Postern. Drei Viertel kaufen im Stadion, der Rest in der Woche danach.',
+    wiki: 'merchandise',
+  },
+  merchMarke: {
+    title: 'Marke & Reichweite',
+    text: 'Bekanntheit deines Vereins im Verhältnis zu dem, was Ruf und Liga erwarten lassen. Sie wirkt auf Sponsoring und Fanartikel gleichermaßen.',
+    wiki: 'merchandise',
+  },
+  merchLizenzen: {
+    title: 'Lizenzen weltweit',
+    text: 'Lizenzgeschäft und Versand an Fans im Ausland laufen über Sponsoring 2.0 und brauchen kein eigenes Lager. Nur international bekannte Vereine verdienen hier nennenswert.',
+    wiki: 'merchandise',
+  },
+  merchStatistik: {
+    title: 'Verkäufe je Artikel',
+    text: 'Saisonzahlen je Artikel. „Nicht lieferbar“ zählt Kunden, die wegen leerer Regale nichts bekommen haben. Klick eine Zeile an, um ihre Entwicklung im Diagramm zu sehen.',
+    wiki: 'merchandise',
+  },
+  merchUmsatz: {
+    title: 'Umsatzentwicklung',
+    text: 'Umsatz je Woche der laufenden Saison oder je Saison im Vergleich. Abgerechnet wird jeweils montags. Gewählter Artikel oder Spieler wird hier gezeigt.',
+    wiki: 'merchandise',
+  },
+  merchTrikots: {
+    title: 'Trikots und Poster je Spieler',
+    text: 'Wer bei den Fans zieht: Stärke, Einsätze, Tore, Position, Kapitänsbinde, Eigengewächs und Neuzugang. Ab 1995/96 zählen beflockte Trikots, vorher Poster und Autogrammkarten.',
+    wiki: 'merchandise',
+  },
   werbekanaele: {
     title: 'Werbekanäle',
     text: 'Eigene Werbung kostet monatlich und bringt Ansehen, Mitglieder und etwas Fanartikel-Umsatz. Der Nutzen flacht mit jeder Stufe ab – sportlicher Erfolg bleibt der Hauptantrieb.',

@@ -36,6 +36,7 @@ import { FinanzenDashboard, KaderDashboard, SpieltagDashboard, StatistikenDashbo
 import { FinancesView } from '../views/finanzen/FinancesView';
 import { MarketingView } from '../views/finanzen/MarketingView';
 import { SponsoringView } from '../views/finanzen/SponsoringView';
+import { MerchView } from '../views/finanzen/MerchView';
 import { DevelopmentReveal, RatingCeremony } from '../views/kader/DevelopmentReveal';
 import { SquadView } from '../views/kader/SquadView';
 import { TrainingPlanView } from '../views/training/TrainingPlanView';
@@ -455,6 +456,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'beobachtung' && <BeobachtungView g={g} onChange={rerender} />}
         {screen === 'verhandlungen' && <VerhandlungenView g={g} onChange={rerender} />}
         {screen === 'sponsoring' && <SponsoringView g={g} onGoto={setScreen} onChange={rerender} />}
+        {screen === 'fanartikel' && <MerchView g={g} onChange={rerender} />}
         {screen === 'fans' && <FansView g={g} />}
         {screen === 'vorstand' && <BoardView g={g} onChange={rerender} />}
         {screen === 'international' && <InternationalView g={g} onWatch={(id) => setLiveMatchId(id)} onReplayDraw={replayDraw} />}

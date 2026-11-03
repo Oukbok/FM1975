@@ -344,7 +344,10 @@ export const MERCH_COGS = 0.35;
  */
 export function operationsMonthly(c: Club, year: number, sponsorMonth: number, commercialMonth: number, merchGlobalMonth: number): number {
   const h = c.finances.seasonHistory?.[c.finances.seasonHistory.length - 1];
-  const merchYear = (h?.income.merchandise ?? 0) + merchGlobalMonth * 12;
+  // Eigener Verein mit Fanshop-Lager: Wareneinsatz des Ladens wird beim Einkauf gebucht
+  // (game/merchGame.ts) – hier nur noch für die übrigen Fanartikel-Erlöse.
+  const shopRev = c.merchShop?.archive?.find((a) => a.season === h?.season)?.rev ?? 0;
+  const merchYear = Math.max(0, (h?.income.merchandise ?? 0) - shopRev) + merchGlobalMonth * 12;
   const rev = h?.revenue ?? 0;
   const v = MERCH_COGS * merchYear / 12 + servicingShare(year) * (sponsorMonth + commercialMonth) + adminShare(year) * rev / 12;
   return Math.round(v);

@@ -56,6 +56,7 @@ import { monthlyClubBusiness } from './clubBusiness';
 import { indoorDaily } from './indoorGame';
 import { campDaily } from './trainingCampGame';
 import { groundsDaily } from './groundsGame';
+import { merchDaily } from './merchGame';
 import { DrawNotice, cupDrawsDaily, ensureDrawn, hasScheduledDraw } from './cupDraw';
 import { cupMatchdayV2 } from './cupReplay';
 import { euroMatchdayV2 } from './euroFlow';
@@ -567,6 +568,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   winterBreakDaily(g, today);   // Formdrift in der Winterpause (game/winterShared.ts)
   advanceDivisionsTo(g, today); // Sim-Ligen nach eigenem Spielplan (game/season.ts)
   groundsDaily(g, today); // Stadionumfeld: Bauvorhaben, Spiele, Monat, Saison (game/groundsGame.ts)
+  merchDaily(g, today); // Fanartikel: Wochenabschluss, Nachverkauf, Assistent (game/merchGame.ts)
   { const room = dressingRoomDaily(g, today); if (room) dressingRoomIncidents(g, today, room); } // Kabine (game/dressingRoomGame.ts)
   if (utcDom === 1) {
     monthlyTrainingReport(g, today);

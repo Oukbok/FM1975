@@ -1706,6 +1706,46 @@ Sie füllen freie Flächen zu Saisonbeginn mit dem besten von zwei Angeboten, zi
 Vermarktung kostet: Wareneinsatz der Fanartikel (35 %), Betreuung der Sponsoren (5 % 1975 → 12 % ab 2010) und eine wachsende Geschäftsstelle mit Beratern und Reisen (0 → 5 % des Umsatzes). Große Marken haben davon mehr – ihre Personalquote liegt deshalb niedriger (FC Bayern 2024/25: Personal 47 % des Umsatzes ohne Transfers).`,
   },
   {
+    id: 'merchandise',
+    category: 'finance',
+    title: 'Fanartikel: Sortiment, Lager, Preise',
+    keywords: ['fanartikel', 'merchandising', 'fanshop', 'trikot', 'replika', 'schal', 'wimpel', 'lager', 'rabatt', 'ladenhüter', 'beflockung', 'poster', 'video', 'megastore'],
+    body: `Unter **Finanzen › Fanartikel** führst du den Fanshop deines Vereins selbst. KI-Vereine verkaufen weiter pauschal.
+
+## Sortiment je Epoche
+- **1975:** Schals & Mützen, Wimpel & Aufnäher (für die Kutte), Vereinsmagazin & Jahrbuch, Poster & Autogrammkarten, Bälle & Sportartikel, Vereinsschallplatte.
+- **ab 1978:** Trikot-Replika – zuerst eine Randerscheinung, ab den 1980ern der Renner, später rund 40 % des Umsatzes.
+- **ab 1980/1982:** Accessoires & Haushalt (Tassen, Feuerzeuge, Bettwäsche), Fankleidung (T-Shirts, Sweatshirts, Jacken).
+- **1986–2016:** Video & DVD (Saisonrückblick).
+Wimpel, Aufnäher, Hefte und Poster verlieren über die Jahrzehnte an Gewicht.
+
+## Nachfrage
+Die Nachfrage kommt aus denselben Größen wie bisher: **Zuschauer × Ruf × Fanshop-Stufe × Vermarktung der Epoche × Marke**. Zum **Richtpreis** und mit vollem Lager verkaufst du im Mittel genau so viel wie früher die Pauschale. Drei Viertel kaufen am Spieltag, der Rest als Nachverkauf in der Woche danach. Spitzenspieler und neue Stars heben Trikots und Poster um bis zu 15 %.
+
+## Preis und Rabatt
+- Preis in 5-%-Schritten zwischen 50 und 200 % des Richtpreises. Die Nachfrage reagiert deutlich: +30 % Preis ≈ −38 % Stück.
+- **Rabatt** (bis 50 %) wirkt wie ein niedrigerer Preis und macht vor allem **Ladenhüter** verkäuflich.
+
+## Einkauf und Lager
+- **Stückpreise** folgen den Verbraucherpreisen, nicht den Fußball-Finanzen: ein Schal kostet 1975 12 DM, 1995 gut 22 DM. Trikots haben einen Markenaufschlag (≈ 55 DM 1978, ≈ 120 DM 1995, ≈ 85 € 2015, ≈ 100 € 2024). Dass der Fanartikelmarkt viel stärker wächst als die Preise, zeigt sich in **mehr verkauften Stücken**.
+- Einkaufspreise liegen bei 30–45 % des Richtpreises; der Einkauf wird unter *Betrieb & Vermarktung* gebucht.
+- **Mengenrabatt:** ab 250 Stück 3 %, ab 1.000 6 %, ab 3.000 10 %, ab 8.000 14 %, ab 20.000 18 %.
+- **Lagerplätze** hängen an der Fanshop-Stufe (Vereinsgelände) und einem **Megastore** im Umfeld (+40 % je Stufe); sie wachsen mit dem Fanartikelmarkt. Ein Schal = 1 Platz, Ball 2, Fankleidung 1,5, Aufnäher/Poster 0,3.
+- Ist ein Artikel ausverkauft, gehen Kunden leer aus (Statistik „Nicht lieferbar“).
+
+## Ladenhüter
+Bis 1989 gibt es alle zwei Jahre, danach jede Saison ein **neues Trikotmodell**. Restbestände werden zum Vorjahresmodell: Sie gehen nur noch schleppend weg, mit Rabatt deutlich besser. Oder du gibst sie einem **Restpostenhändler** (15 % des Einkaufspreises).
+
+## Assistent
+Ist der Assistent an (Standard), bestellt er montags nach, sobald ein Artikel unter vier Wochen Vorrat fällt, setzt auf Ladenhüter 30 % Rabatt und räumt Auslaufartikel ab.
+
+## Trikots je Spieler
+Seit **1995/96** tragen Fan-Trikots Namen und feste Rückennummern; gut sechs von zehn Trikots werden beflockt und dem Spieler zugerechnet. Vorher misst das Spiel die Beliebtheit über **Poster und Autogrammkarten**. Es zählen Stärke, Einsätze, Tore, Position (Stürmer vor Torhütern), Kapitänsbinde, Eigengewächs und Neuzugang (erste vier Monate).
+
+## Was nicht im Fanshop steckt
+Lizenzen und Versand an Fans im Ausland (*Fanartikel weltweit*, Sponsoring) sowie Megastore-/Online-Erlöse des Stadionumfelds werden weiter dort gebucht.`,
+  },
+  {
     id: 'finance-elasticity',
     category: 'finance',
     title: 'Platzkategorien, Ticketpreise und Nachfrage',

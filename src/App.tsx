@@ -42,6 +42,7 @@ import { migrateSeating } from './game/seatingGame';
 import { migrateLeaguePool } from './game/clubPool';
 import { migrateYouthInvest } from './game/youthInvest';
 import { migrateSponsorship } from './game/sponsorGame';
+import { migrateMerch } from './game/merchGame';
 import { migrateBriefing } from './game/seasonBriefing';
 import { migrateSeasonAwards } from './game/seasonAwardsGame';
 import { migrateGoldenBall } from './game/goldenBallGame';
@@ -349,6 +350,8 @@ export default function App() {
     try { migrateYouthInvest(s.game); } catch (err) { console.error('Nachwuchs-Nachrüstung fehlgeschlagen:', err); }
     // Sponsoring 2.0: Trikot-/Bandenvertrag übernehmen, Werbeflächen der Epoche (game/sponsorGame.ts).
     try { migrateSponsorship(s.game); } catch (err) { console.error('Sponsoring-Nachrüstung fehlgeschlagen:', err); }
+    // Fanartikel: Laden mit Startbestand für den eigenen Verein (game/merchGame.ts).
+    try { migrateMerch(s.game); } catch (err) { console.error('Fanartikel-Nachrüstung fehlgeschlagen:', err); }
     // Saison-Briefing: Archiv ab der aktuellen Saison, beim Laden kein automatisches Popup.
     try { migrateBriefing(s.game); } catch (err) { console.error('Briefing-Nachrüstung fehlgeschlagen:', err); }
     try { migrateGoldenBall(s.game); } catch (err) { console.error('Goldener-Ball-Nachrüstung fehlgeschlagen:', err); }
