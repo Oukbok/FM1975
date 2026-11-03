@@ -8,7 +8,10 @@
 .bud-head-id { display: flex; flex-direction: column; gap: 2px; }
 .bud-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 0; padding: 0; }
 .bud-page { padding: 12px 24px 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.bud-left { border-right: 1px solid var(--border); }
+.bud-left { border-right: 1px solid var(--border); contain: size; min-height: 0; } /* Höhe gibt die rechte Seite vor */
+.bud-left .bud-adv { flex: 1 1 0; min-height: 0; grid-template-rows: minmax(0, 1fr); }
+.bud-left .bud-adv-who { align-self: start; }
+.bud-left .bud-adv-text { max-height: none; height: 100%; min-height: 0; overflow-y: auto; scrollbar-width: thin; }
 .bud-sec {
   margin: 4px 0 0; font-size: 13px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px;
   display: flex; align-items: center; gap: 6px; padding-bottom: 5px; border-bottom: 1px solid var(--border-soft);

@@ -1583,7 +1583,7 @@ Die Seite warnt automatisch bei: Konto im Minus, negativer Saisonend-Prognose, G
 Zu Spielbeginn und nach jedem Saisonwechsel (direkt nach dem Saison-Briefing) legt dir dein **Finanzberater** das Saisonbudget vor. Verhandelt wird nicht: Du siehst die Saisonziele des Vorstands und verteilst das Geld selbst. Schließt du das Fenster, gilt der Vorschlag des Beraters. Unter **Finanzen › Budget** kannst du jederzeit umschichten und siehst Soll/Ist.
 
 ## Erwartete Einnahmen
-Die Prognose rechnet mit denselben Formeln wie die Buchungen: Fernsehgeld, Sponsoren & Vermarktung, Zuschauer & Spieltag (erwartete Zuschauer je Heimspiel), Fanartikel, Mitgliedsbeiträge und Prämien. Im Pokal sind zwei Runden eingeplant, im Europapokal nur das Startgeld – jede weitere Runde ist Zusatzgeld. Verfügbar ist der Kontostand zu Saisonbeginn plus diese Einnahmen.
+Die Prognose rechnet mit denselben Formeln wie die Buchungen: Fernsehgeld, Sponsoren & Vermarktung, Zuschauer & Spieltag (erwartete Zuschauer je Heimspiel), Fanartikel, Mitgliedsbeiträge und Prämien. Zuschauersperren (Geisterspiele ab März 2020, halbe Ränge 2021/22) rechnet der Berater je Heimspieltermin ein. Im Pokal sind zwei Runden eingeplant, im Europapokal nur das Startgeld – jede weitere Runde ist Zusatzgeld. Verfügbar ist der Kontostand zu Saisonbeginn plus diese Einnahmen.
 
 ## Budgets und ihre Wirkung
 - **Gehälter:** Spieler, Trainerstab, Mitarbeiter und Prämien. Harte Grenze für neue Verträge und Verlängerungen (früher 115 % des Rahmens). Der Berater schlägt rund 60 % des Umsatzes plus Mitarbeiter vor.

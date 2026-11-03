@@ -94,7 +94,7 @@ export function advisorText(c: AdvisorCtx): AdvisorText {
   if (c.loansAnnual > 0) risks.push(`Kreditraten von ${f(c.loansAnnual)} im Jahr sind fest verplant`);
   if (c.balanceBase < 0) risks.push(`wir starten mit ${f(c.balanceBase)} im Minus, Überziehungszinsen fressen jeden Spielraum`);
   if (risks.length) lines.push(`Risiken: ${risks.join('; ')}.`);
-  if (c.euro) lines.push('Europapokal-Prämien über das Startgeld hinaus habe ich bewusst nicht eingeplant – jede Runde ist Zusatzgeld.');
+  if (c.euro) lines.push('Europapokal-Prämien über das Startgeld hinaus plane ich nicht ein – jede Runde ist Zusatzgeld.');
 
   // 5) Reserve und Empfehlung.
   lines.push(c.reservePlanned >= c.reserveMin

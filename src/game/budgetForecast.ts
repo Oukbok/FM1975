@@ -18,6 +18,7 @@ import { marketingIncomeBase, marketingMonthlyBase } from '../data/marketing';
 import { monthlyLoanCost } from '../engine/clubBusiness';
 import { fanEra } from '../engine/environment';
 import { PRIZE_BY_ROUND } from '../engine/cup';
+import { attendanceRestriction } from '../data/history';
 import { Game } from './state';
 
 /** Einnahme-Bereiche des Saisonbudgets (Spalte „Erwartete Einnahmen“). */
@@ -128,6 +129,16 @@ export function forecastSeason(g: Game, club: Club = g.clubs[g.managedClubId]): 
   // Pokal: im Schnitt ein Heimspiel; Europapokal: eine Runde mit Heimspiel (vorsichtig).
   const inEuro = ['ec', 'cwc', 'uefa'].some((k) => (g.euroCups as any)?.[k]?.participantIds?.includes(club.id));
   const cupHome = started ? 0 : 1 + (inEuro ? 1 : 0);
+  // Zuschauersperren (data/history.ts: Geisterspiele ab März 2020, halbe Ränge 2021/22) greifen im
+  // Kartenverkauf der Match-Engine – also auch hier: je Heimspieltermin Anteil der verkauften Plätze.
+  const cap = Math.max(1, club.stadium?.capacity ?? hm.attendance);
+  const openShare = (date: string) => {
+    const f = attendanceRestriction(date);
+    return f >= 1 ? 1 : Math.min(1, (cap * f) / Math.max(1, hm.attendance));
+  };
+  const homeOpen = own.filter((f) => f.homeClubId === club.id).reduce((a, f) => a + openShare(f.date), 0);
+  const cupOpen = cupHome * openShare(`${year}-10-30`);
+  const gamesOpen = homeOpen + cupOpen;
   const gr = club.grounds;
   let grMatch = 0, grMatchCost = 0, grMonth = 0, grMonthCost = 0;
   if (gr) {
@@ -145,14 +156,14 @@ export function forecastSeason(g: Game, club: Club = g.clubs[g.managedClubId]): 
     tv: m.tv * months + cupHome * (2500 + club.reputation * 50) * revenueScale('tv', year)
       + (fin.tvAnnual ? 0 : (6000 + club.reputation * 120) * scale * homeLeft),
     sponsor: (m.sponsorship + m.advertising + m.commercial + mktInc.sponsor * scale) * months,
-    tickets: (hm.tickets + hm.catering + hm.matchday) * (homeLeft + cupHome) + m.cateringLease * months,
-    merch: hm.merch * (homeLeft + cupHome) + (m.merchGlobal + mktInc.merch * scale) * months,
+    tickets: (hm.tickets + hm.catering + hm.matchday) * gamesOpen + m.cateringLease * months,
+    merch: hm.merch * gamesOpen + (m.merchGlobal + mktInc.merch * scale) * months,
     members: m.membership * months,
     prizes: winsLeft * winBonus + drawsLeft * drawBonus + placeMonthly * Math.max(0, months - 2) + cupPrize,
     other: 0,
   };
   // Stadionumfeld: Pachten/Shops monatlich (Vermarktung) und je Heimspiel (Spieltag).
-  rest.tickets += grMatch * (homeLeft + cupHome);
+  rest.tickets += grMatch * gamesOpen;
   rest.sponsor += grMonth * months;
 
   const so = incomeSoFar(fin);
@@ -175,7 +186,7 @@ export function forecastSeason(g: Game, club: Club = g.clubs[g.managedClubId]): 
   return {
     income,
     personnel: Math.round(personnel),
-    operations: Math.round(opsSoFar + opsMonthly * months + grMatchCost * homeLeft),
+    operations: Math.round(opsSoFar + opsMonthly * months + grMatchCost * homeOpen),
     youthRunning: Math.round(youthRunning),
     homeLeft, monthsLeft: months, winsLeft, drawsLeft,
   };
