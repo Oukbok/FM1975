@@ -35,6 +35,8 @@ import { commercialMultiplier } from './clubEconomy';
 import { merchGlobalAnnual, operationsMonthly, sponsorMonthly } from './sponsorship';
 // ANSCHLUSS Stadionumfeld (engine/grounds.ts): Parken, Ordnungsdienst, Hospitality, Anreise-Chaos je Heimspiel.
 import { bookGroundsMatchday } from './grounds';
+// Fanartikel des eigenen Vereins aus dem Lager (engine/merch.ts, game/merchGame.ts).
+import { MATCHDAY_SHARE, sellFromStock } from './merch';
 
 /**
  * Finanzen 2.0: Skalierung je Erlösart aus dem Buchungsdatum. Stadion-Erlöse wachsen
@@ -55,6 +57,11 @@ function scalesFor(club: Club, date: string) {
     // Vermarktung (1975 kaum vorhanden, ab den 1990ern eine eigene Säule) und der Marke.
     merch: (1 + (comm - 1) * 0.55) * commercialMultiplier(club, y),
   };
+}
+
+/** Fanartikel-Potenzial (nominal, Richtpreis) eines Heimspiels mit X Besuchern – wie die Pauschale. */
+export function merchPotential(club: Club, attendance: number, date: string): number {
+  return Math.round(attendance * merchPerHead(club) * scalesFor(club, date).merch);
 }
 
 /** Preis-Skala je Besucher (Eintritt, Catering, Programm, Logen) eines Vereins im Jahr X. */
@@ -287,10 +294,27 @@ const MERCH_FACTOR = [1, 1, 1.15, 1.3, 1.5, 1.75];
  * 1975 kaum mehr als Schals und Wimpel (≈ 0,30 DM je Besucher, ≈ 120.000 DM im Jahr);
  * gebucht × Vermarktungs-Skala, damit Fanartikel ab den 1990ern zur Säule werden.
  */
-function merchPerHead(club: Club): number {
+export function merchPerHead(club: Club): number {
   const base = 0.1 + (club.reputation / 100) * 0.27; // ~0,25–0,35 DM je Zuschauer
   const lvl = Math.max(0, Math.min(5, Math.round(club.infrastructure?.merchandising ?? 1)));
   return base * MERCH_FACTOR[lvl];
+}
+
+/**
+ * Fanartikel eines Heimspiels: KI-Vereine (und Spielstände ohne Laden) pauschal wie bisher;
+ * der eigene Verein verkauft aus seinem Lager (`Club.merchShop`) – am Spieltag 75 % des
+ * Potenzials, der Rest kommt als Nachverkauf in der Folgewoche (game/merchGame.ts).
+ */
+function bookMerch(club: Club, pot: number, date: string, track: boolean, label: string, attendance: number): void {
+  const shop = track ? club.merchShop : undefined;
+  if (!shop) {
+    book(club.finances, date, pot, 'merchandise', `${label} (${attendance.toLocaleString('de-DE')} Besucher)`, track);
+    return;
+  }
+  shop.pot += pot;
+  shop.pending += pot * (1 - MATCHDAY_SHARE);
+  const r = sellFromStock(shop, pot * MATCHDAY_SHARE, yearOf(date));
+  if (r.rev > 0) book(club.finances, date, r.rev, 'merchandise', `Fanshop am Spieltag: ${r.sold.toLocaleString('de-DE')} Artikel (${attendance.toLocaleString('de-DE')} Besucher)`, true);
 }
 
 /**
@@ -316,7 +340,7 @@ export function bookHomeMatch(
     const merch = Math.round(attendance * merchPerHead(club) * sc.merch);
     const catering = cateringMatchIncome(club, attendance, sc.matchday);
     const matchday = matchdayIncome(attendance, sc.matchday);
-    book(fin, date, merch, 'merchandise', `Fanartikel-Verkauf (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
+    bookMerch(club, merch, date, trackDetail, 'Fanartikel-Verkauf', attendance);
     // TV-Gelder: zentral vermarktet, monatliche Rate (bookMonthly).
     if (!fin.tvAnnual) {
       // Alte Spielstände ohne TV-Verteilung: bisherige Heimspiel-Pauschale.
@@ -394,7 +418,7 @@ export function bookCupHomeMatch(
   const tv = Math.round((2500 + club.reputation * 50) * revenueScale('tv', yearOf(date)) * (scale > 0 ? 1 : 0));
   const catering = cateringMatchIncome(club, attendance, sc.matchday);
   const matchday = matchdayIncome(attendance, sc.matchday);
-  book(fin, date, merch, 'merchandise', `Fanartikel-Verkauf Pokalspiel (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
+  bookMerch(club, merch, date, trackDetail, 'Fanartikel-Verkauf Pokalspiel', attendance);
   book(fin, date, tv, 'tv_money', 'TV- und Mediengelder (Pokalspiel)', trackDetail);
   if (catering > 0) book(fin, date, catering, 'catering', `Catering Pokalspiel (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
   if (matchday > 0) book(fin, date, matchday, 'matchday', `Programmhefte Pokalspiel (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);

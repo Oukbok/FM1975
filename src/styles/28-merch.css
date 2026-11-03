@@ -1,0 +1,69 @@
+/* =============================================================================
+   Fanartikel (Finanzen › Fanartikel) – views/finanzen/MerchView.tsx + merch/
+   ============================================================================= */
+.mc-tabs .seg-btn { padding: 5px 14px; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.5px; font-size: 13px; }
+.mc-table { width: 100%; border-collapse: collapse; }
+.mc-table th { text-align: left; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; position: sticky; top: 0; background: var(--panel); z-index: 1; }
+.mc-table th.num, .mc-table td.num { text-align: right; white-space: nowrap; }
+.mc-table tbody tr { cursor: pointer; }
+.mc-table tbody tr.mc-sel { background: var(--accent-soft); box-shadow: inset 4px 0 0 var(--accent); }
+.mc-table tbody tr.mc-sel .rl-name { color: var(--accent); }
+.mc-table tr.mc-sum td { border-top: 1px solid var(--border); font-weight: 700; }
+.mc-tag { margin-left: 8px; padding: 1px 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; font-weight: 500; color: var(--text-3); white-space: nowrap; }
+
+/* Bild-Slots mit Fallback */
+.mc-img { flex: none; width: 96px; height: 96px; border-radius: 6px; border: 1px solid var(--border-soft); background: var(--bg-2); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.mc-img img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85); }
+.mc-img-fb { color: var(--text-4); opacity: 0.8; }
+.mc-img-store { width: 120px; height: 120px; }
+
+.mc-item-head { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 8px; }
+.mc-item-desc { display: flex; flex-direction: column; gap: 4px; color: var(--text-2); font-size: 15px; line-height: 1.35; }
+.mc-ctl { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 3px 0; }
+.mc-step { display: inline-flex; align-items: center; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.mc-step-btn { appearance: none; border: none; background: var(--panel-2); color: var(--text); width: 28px; height: 28px; font-size: 17px; cursor: pointer; }
+.mc-step-btn:hover:not(:disabled) { background: var(--panel-hover); }
+.mc-step-btn:disabled { color: var(--text-4); cursor: default; }
+.mc-step-val { min-width: 128px; padding: 0 10px; text-align: center; font-size: 15px; white-space: nowrap; }
+.mc-step-val .muted { color: var(--text-3); }
+.mc-order { display: flex; align-items: center; gap: 10px; }
+.mc-order input[type=range] { flex: 1; accent-color: var(--accent); }
+.mc-order-n { min-width: 96px; text-align: right; font-family: var(--font-display); font-weight: 500; }
+
+.mc-auto { display: flex; gap: 8px; align-items: center; margin-top: 10px; color: var(--text-2); font-size: 15px; cursor: pointer; }
+.mc-auto input { accent-color: var(--accent); width: 16px; height: 16px; }
+.mc-refill { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
+.mc-refill .mc-step-val { min-width: 90px; }
+
+.mc-store { display: flex; gap: 12px; align-items: flex-start; }
+.mc-store-kv { flex: 1; min-width: 0; }
+
+/* Spieler-Rangliste mit Gesicht */
+.mc-face { display: flex; gap: 14px; align-items: center; padding: 4px 0 10px; border-bottom: 1px solid var(--border-soft); margin-bottom: 4px; }
+.mc-face-txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.mc-face-name { font-family: var(--font-display); font-size: 20px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.4px; }
+.mc-face-n { font-family: var(--font-display); font-size: 30px; font-weight: 600; color: var(--text); line-height: 1.1; }
+.mc-face-n span { font-family: var(--font-ui); font-size: 14px; font-weight: 500; color: var(--text-3); }
+
+/* Diagramm */
+.mc-chart { display: flex; flex-direction: column; height: 100%; min-height: 160px; }
+.mc-chart-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+.mc-chart-title { color: var(--text-2); font-size: 15px; font-weight: 600; }
+.mc-chart-unit { color: var(--text-3); font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.4px; }
+.mc-chart-plot { position: relative; flex: 1; min-height: 120px; overflow: hidden; }
+.mc-chart-plot svg { position: absolute; inset: 0; display: block; }
+.mc-grid { stroke: var(--border-soft); stroke-width: 1; }
+.mc-axis { stroke: var(--border); stroke-width: 1; }
+.mc-tick { fill: var(--text-3); font-size: 12px; font-family: var(--font-ui); }
+.mc-bar { fill: var(--bar-fill); transition: fill 0.12s; }
+.mc-bar.open { fill: var(--q-4); }
+.mc-bar.on { fill: var(--bar-fill-hi); }
+.mc-chart-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--text-3); font-size: 15px; pointer-events: none; }
+.mc-tip { position: absolute; pointer-events: none; min-width: 140px; padding: 6px 10px; border-radius: 6px; background: var(--elevated); border: 1px solid var(--border); box-shadow: var(--shadow); }
+.mc-tip-h { color: var(--text-3); font-size: 12.5px; }
+.mc-tip-v { color: var(--text); font-family: var(--font-display); font-size: 17px; font-weight: 500; }
+.mc-step-btn { padding: 0; margin: 0; display: inline-flex; align-items: center; justify-content: center; line-height: 1; min-width: 0; border-radius: 0; box-shadow: none; }
+.mc-img-fb svg { width: 40px !important; height: 40px !important; }
+/* Summenzeile bleibt beim Scrollen der Box sichtbar */
+.mc-table tr.mc-sum td { position: sticky; bottom: 0; background: var(--panel); z-index: 1; }
+.mc-table tr.mc-sum.mc-sel td { background: color-mix(in srgb, var(--accent) 10%, var(--panel)); }

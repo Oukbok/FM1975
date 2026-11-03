@@ -41,7 +41,8 @@
     "test:press": "node scripts/run-ts.mjs tests/press-test.ts",
     "test:ratings": "node scripts/run-ts.mjs tests/ratings-test.ts",
     "test:history": "node scripts/run-ts.mjs tests/history-test.ts",
-    "test:transferlog": "node scripts/run-ts.mjs tests/transferlog-test.ts"
+    "test:transferlog": "node scripts/run-ts.mjs tests/transferlog-test.ts",
+    "test:merch": "node scripts/run-ts.mjs tests/merch-test.ts"
   },
   "dependencies": {
     "lz-string": "1.5.0",

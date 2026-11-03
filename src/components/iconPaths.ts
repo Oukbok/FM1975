@@ -265,6 +265,11 @@ export const RAW: Record<string, string> = {
     '<circle cx="16" cy="8" r="1.8" fill="%ACCENT%"/>',
 
   // 31) Fans — weißes Herz mit türkiser Herzschlaglinie
+  // Fanartikel: Fan-Trikot (Akzent = Brustring)
+  merch:
+    '<path d="M8.6 3.5 4 5.6 2 10.2l3.1 1.4 1.5-2V20.5h10.8V9.6l1.5 2 3.1-1.4-2-4.6-4.6-2.1c-.5 1.5-1.8 2.4-3.4 2.4S9.1 5 8.6 3.5Z" fill="%BASE%"/>' +
+    '<rect x="6.6" y="11.2" width="10.8" height="2.4" fill="%ACCENT%"/>',
+
   fans:
     '<path d="M12 20S3.5 14.5 3.5 8.8A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 8.5 1.8C20.5 14.5 12 20 12 20Z" fill="%BASE%"/>' +
     '<path d="M6.5 12h2l1.5-3 2 5 1.5-2.5h4" fill="none" stroke="%ACCENT%" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',

@@ -86,6 +86,7 @@ function report(game: Game) {
     const k = (o: Record<string, number>) => Object.entries(o).filter(([, v]) => v).map(([a, v]) => `${a} ${Math.round(v / 1000)}k`).join(', ');
     console.log('   EIN', k(f.income as any));
     console.log('   AUS', k(f.expenses as any));
+    { const ms = my.merchShop; if (ms) { const t = Object.values(ms.items).reduce((a, x) => ({ rev: a.rev + (x?.season.rev ?? 0), cost: a.cost + (x?.season.cost ?? 0), lost: a.lost + (x?.season.lost ?? 0), sold: a.sold + (x?.season.sold ?? 0) }), { rev: 0, cost: 0, lost: 0, sold: 0 }); console.log(`   FANSHOP Umsatz ${Math.round(t.rev / 1000)}k Pauschale ${Math.round(ms.pot / 1000)}k (${(t.rev / Math.max(1, ms.pot) * 100).toFixed(1)} %) Einkauf ${Math.round(t.cost / 1000)}k Fehlmenge ${(t.lost / Math.max(1, t.sold + t.lost) * 100).toFixed(1)} %`); } }
     const lc = leagueClubs(game).filter((c) => !c.id.startsWith('am'));
     // Nur Vereine mit Bilanz der Vorsaison (Aufsteiger haben noch keine).
     const revs = lc.map((c) => c.finances.seasonHistory?.[c.finances.seasonHistory.length - 1]?.revenue ?? 0).filter((v) => v > 0).sort((a, b) => a - b);
