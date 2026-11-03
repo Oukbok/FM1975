@@ -88,7 +88,7 @@ export function aiEarlyRenewals(g: Game, today: string): void {
         if (Number(p.contract.expiryDate.slice(0, 4)) <= endYear) { p.contract.aiLetGo = true; noteSquad(g, 'letGo'); }
         continue;
       }
-      if (!isKeyPlayer(p, squad) || p.contract.refused === season) continue;
+      if (!isKeyPlayer(p, squad) || p.contract.refused) continue; // wer abgelehnt hat, bleibt dabei (bis Wechsel/Vertragsende)
       // Nicht jeder Verein handelt an jedem Stichtag (Verhandlungen dauern).
       const r = hashRand(`${p.id}|ren|${today}`);
       if (r > (bosman ? (months <= 8 ? 0.85 : 0.55) : 0.3)) continue;
