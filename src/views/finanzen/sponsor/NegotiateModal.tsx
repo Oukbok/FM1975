@@ -24,9 +24,11 @@ export function NegotiateModal({ g, offerId, onClose, onChange }: { g: Game; off
   if (!o) {
     return (
       <div className="modal-overlay" onClick={onClose}>
-        <div className="modal" onClick={(e) => e.stopPropagation()} style={{ padding: 28 }}>
-          <p>{reply ?? 'Das Angebot liegt nicht mehr vor.'}</p>
-          <button className="btn btn-primary" onClick={onClose}>Schließen</button>
+        {/* Gleiches Fenster wie die Verhandlung: nach der Antwort springt die Größe nicht. */}
+        <div className="modal modal-xl" onClick={(e) => e.stopPropagation()}>
+          <div className="mx-head"><h2>Verhandlung beendet</h2></div>
+          <div className="mx-body"><p className="dnote" style={{ fontSize: 18 }}>{reply ?? 'Das Angebot liegt nicht mehr vor.'}</p></div>
+          <div className="mx-foot"><button className="btn btn-primary" onClick={onClose}>Schließen</button></div>
         </div>
       </div>
     );

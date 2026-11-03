@@ -107,6 +107,18 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
  * bei offenen Entscheidungen greift dort nicht, sonst bliebe jeder Zeitlauf-Test hängen.
  * `localStorage.fmTestMail = '1'` schaltet sie für den eigenen Test (tests/mailbtn-shots.mjs) wieder ein.
  */
+/**
+ * Fenster gesehen → passende Nachricht der letzten Tage als gelesen markieren, damit dieselbe
+ * Information nicht gleich danach noch einmal als „ungelesen“ im Newscenter wartet.
+ */
+function markShownRead(g: Game, prefix: string, contains = ''): void {
+  const today = g.calendar.currentDate;
+  const from = new Date(Date.parse(today.slice(0, 10) + 'T00:00:00Z') - 3 * 86400000).toISOString().slice(0, 10);
+  for (const m of g.messages ?? []) {
+    if (!m.read && !m.choices?.length && m.date >= from && m.date <= today && m.subject.startsWith(prefix) && m.subject.includes(contains)) m.read = true;
+  }
+}
+
 function automatedRun(): boolean {
   try { return typeof navigator !== 'undefined' && !!navigator.webdriver && localStorage.getItem('fmTestMail') !== '1'; } catch { return false; }
 }
@@ -191,7 +203,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   }, [pendingSeason, autoBriefing, pendingRec, g, rerender]);
   useEffect(() => { if (pendingRec) setRunning(false); }, [pendingRec]);
   const pendingBriefing = useMemo(() => (pendingRec ? briefingOfRecord(pendingRec) : null), [pendingRec]);
-  const closeBriefing = useCallback(() => { clearPendingBriefing(g); rerender(); }, [g, rerender]);
+  const closeBriefing = useCallback(() => { markShownRead(g, 'Saison-Briefing '); clearPendingBriefing(g); rerender(); }, [g, rerender]);
   // Saisonbudget (game/budgetPlan.ts): nach dem Briefing; `popupHold` hält alle späteren Fenster zurück.
   const budgetDue = !pendingBriefing && !!g.budget?.pending && g.budget.pending === g.season;
   useEffect(() => { if (budgetDue) setRunning(false); }, [budgetDue]);
@@ -199,11 +211,11 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   // Die Besten der Saison (game/seasonAwardsGame.ts): Popup nach dem letzten Ligaspieltag.
   const awardsDue = pendingAwards(g);
   useEffect(() => { if (awardsDue) setRunning(false); }, [awardsDue]);
-  const closeAwards = useCallback(() => { clearPendingAwards(g); rerender(); }, [g, rerender]);
+  const closeAwards = useCallback(() => { markShownRead(g, 'Die Besten der Saison'); clearPendingAwards(g); rerender(); }, [g, rerender]);
   // Goldener Ball (game/goldenBallGame.ts): Gala am 20. Dezember.
   const galaDue = pendingGoldenBall(g);
   useEffect(() => { if (galaDue) setRunning(false); }, [galaDue]);
-  const closeGala = useCallback(() => { clearPendingGoldenBall(g); rerender(); }, [g, rerender]);
+  const closeGala = useCallback(() => { if (galaDue) markShownRead(g, `${galaDue.title} ${galaDue.year}`); clearPendingGoldenBall(g); rerender(); }, [g, rerender, galaDue]);
   // Einstellung „Ehrungen als Fenster“ aus: nur Nachricht, Vormerkung sofort löschen.
   useEffect(() => {
     if (settings.awardsShow !== 'aus') return;
@@ -219,6 +231,9 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   useEffect(() => { if (indoorDue && !indoorOn) { playIndoorShowHeadless(g); rerender(); } }, [indoorDue, indoorOn, g, rerender]);
   // Erstes Training (game/seasonPromisesGame.ts): Versprechen-Popup; unter Playwright nur mit window.__FM_PROMISES__.
   const promisesDue = !!pendingSeasonPromises(g) && (!navigator.webdriver || !!(window as { __FM_PROMISES__?: boolean }).__FM_PROMISES__);
+  // Solange ein Pausen-Fenster offen ist (Bewertungsrunde, Entwicklung, Transferbilanz, Erstes Training),
+  // steht die Zeit – sonst liefen im Hintergrund Tage weiter.
+  useEffect(() => { if (ratingCeremony || devReveal || twKey || promisesDue) setRunning(false); }, [ratingCeremony, devReveal, twKey, promisesDue]);
 
   // --- Speichern ---
   const doSave = useCallback((slot?: string, name?: string) => {
@@ -246,7 +261,13 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   const processDay = useCallback((): boolean => {
     const ok = processGameDay(g, {
       // Spielbericht nach „Schnell simulieren“; nach dem Textmodus nicht nochmal.
-      onOwnMatch: (id) => { if (watchedRef.current) watchedRef.current = false; else setLiveMatchId(id); },
+      onOwnMatch: (id) => {
+        if (watchedRef.current) { watchedRef.current = false; return; }
+        // Einstellung „Spielbericht nach dem Simulieren“: nur Pokal/Europapokal bzw. nie (weniger Pflicht-Klicks).
+        const rep = settings.matchReport ?? 'immer';
+        if (rep === 'nie' || (rep === 'pokal' && g.fixtures.some((f) => f.id === id))) return;
+        setLiveMatchId(id);
+      },
       onOwnMatchDue: () => setRunning(false),
       onRatingCeremony: (c) => setRatingCeremony(c),
       onSeasonEnd: () => { if (settings.autosave) doSave(); },
@@ -262,7 +283,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
     });
     if (!ok) setRunning(false);
     return ok;
-  }, [g, settings.autosave, settings.drawShow, settings.transferWindowShow, settings.indoorShow, doSave, myClub]);
+  }, [g, settings.autosave, settings.drawShow, settings.transferWindowShow, settings.indoorShow, settings.matchReport, doSave, myClub]);
 
   useEffect(() => { setHistory([]); }, [g.calendar.currentDate]);
 
@@ -305,8 +326,21 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   // Vorschau „Nächstes Spiel“ (screens/prematch/): ersetzt die zwei Knöpfe, solange sie
   // eingeschaltet ist; geschlossen → ein Knopf „Nächstes Spiel“ öffnet sie wieder.
   const prematchOn = settings.prematchScreen !== false;
-  const showPrematch = !!due && prematchOn && prematchClosed !== due.matchId && !popupHold && !liveMatchId
-    && !ratingCeremony && !devReveal && drawQueue.length === 0 && campQueue.length === 0;
+  // Fensterkette: immer nur EIN Pausen-Fenster zur Zeit, feste Reihenfolge
+  // (Spielbericht/Textmodus/Bewertung/Briefing/Budget → Auslosung → Trainingslager → Hallenturnier → Transferbilanz
+  // → Erstes Training → Goldener Ball → Die Besten der Saison → Vorschau „Nächstes Spiel“).
+  const chainBase = !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !devReveal;
+  const drawOn = chainBase && drawQueue.length > 0;
+  const campOn = chainBase && !drawQueue.length && campQueue.length > 0;
+  // Hallenturnier als Show (screens/indoor/) nach Auslosung/Trainingslager, vor der Transferbilanz.
+  const indoorBusy = !!indoorDue && indoorOn;
+  const indoorShowOn = indoorBusy && chainBase && !drawQueue.length && !campQueue.length;
+  const twOn = !!twKey && chainBase && !drawQueue.length && !campQueue.length && !indoorBusy;
+  const promisesOn = promisesDue && chainBase && !drawQueue.length && !campQueue.length && !indoorBusy && !twKey;
+  const galaOn = !!galaDue && showAwards && chainBase && !drawQueue.length && !campQueue.length && !indoorBusy && !twKey && !promisesDue;
+  const awardsOn = !!awardsDue && showAwards && !galaDue && chainBase && !drawQueue.length && !campQueue.length && !indoorBusy && !twKey && !promisesDue;
+  const showPrematch = !!due && prematchOn && prematchClosed !== due.matchId && chainBase
+    && drawQueue.length === 0 && campQueue.length === 0 && !indoorBusy && !twKey && !promisesOn && !galaOn && !awardsOn;
   // Wichtige Nachrichten (offene Entscheidungen): „Weiter“ gesperrt, Knopf verweist auf die Nachrichten.
   const mustRead = !running && !seasonOver && !automatedRun() && pendingDecisions(g.messages ?? []).length > 0;
   // Header-Button: nur Text (kein Icon/Datum) – Zustand bleibt sprechend.
@@ -569,38 +603,38 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
       {/* Ziehungs-Show: erst wenn Spielbericht/Textmodus/Zeremonie/Briefing zu sind. */}
       {(() => {
         const d = drawQueue[0];
-        if (!d || textMatch || liveMatchId || ratingCeremony || popupHold) return null;
+        if (!d || !drawOn) return null;
         const rec = compCup(g, d.comp)?.rounds[d.roundIndex]?.draw;
         if (!rec) { setTimeout(() => setDrawQueue((q) => q.slice(1)), 0); return null; }
         return (
           <DrawShow key={d.n} g={g} rec={rec} replay={d.replay} settings={settings} onSettings={onUpdateSettings}
-            onClose={() => { setDrawQueue((q) => q.slice(1)); rerender(); }} />
+            onClose={() => { if (!d.replay) markShownRead(g, `Auslosung ${rec.roundName}`); setDrawQueue((q) => q.slice(1)); rerender(); }} />
         );
       })()}
 
       {/* Bilanz des Trainingslagers: nach Spielbericht/Zeremonie/Briefing/Auslosung. */}
-      {campQueue[0] && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && (
+      {campOn && campQueue[0] && (
         <CampRecap key={campQueue[0]} g={g} bookingId={campQueue[0]} onClose={() => { setCampQueue((q) => q.slice(1)); rerender(); }} />
       )}
 
       {/* Hallenturnier als Show: nach Spielbericht/Zeremonie/Briefing/Auslosung/Trainingslager. */}
-      {indoorDue && indoorOn && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && !campQueue.length && (
+      {indoorShowOn && indoorDue && (
         <IndoorShow key={indoorDue.id} g={g} t={indoorDue} settings={settings} onSettings={onUpdateSettings} onClose={rerender} />
       )}
 
       {/* Top-Transfers + Transferbilanz nach dem Fensterschluss: nach allen anderen Pausen-Fenstern. */}
-      {twKey && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && !campQueue.length && (
+      {twOn && twKey && (
         <TransferWindowModal key={twKey} g={g} initialKey={twKey} auto settings={settings} onSettings={onUpdateSettings}
           onClose={() => { setTwKey(null); rerender(); }} />
       )}
-      {promisesDue && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && !campQueue.length && (
+      {promisesOn && (
         <FirstTrainingModal g={g} onClose={rerender} />
       )}
       {/* Die Besten der Saison: nach Spielbericht/Zeremonie/Briefing/Auslosung/Trainingslager. */}
-      {galaDue && showAwards && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && !campQueue.length && (
+      {galaOn && galaDue && (
         <GalaShow g={g} y={galaDue} onClose={closeGala} />
       )}
-      {awardsDue && showAwards && !galaDue && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && !campQueue.length && (
+      {awardsOn && awardsDue && (
         <AwardsModal g={g} s={awardsDue} onClose={closeAwards} onArchive={() => { closeAwards(); setScreen('auszeichnungen'); }} />
       )}
 
@@ -625,7 +659,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
 
       {ratingCeremony && (settings.ratingShow ?? 'an') !== 'aus' && (
         <RatingShow g={g} results={ratingCeremony.results} anlass={ratingCeremony.anlass} settings={settings}
-          onSettings={onUpdateSettings} onClose={() => { setRatingCeremony(null); rerender(); }} />
+          onSettings={onUpdateSettings} onClose={() => { markShownRead(g, `${ratingCeremony.anlass}: `, 'Aufwertungen'); setRatingCeremony(null); rerender(); }} />
       )}
       {ratingCeremony && settings.ratingShow === 'aus' && (
         <RatingCeremony

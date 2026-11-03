@@ -279,6 +279,8 @@ export interface AppSettings {
   transferWindowShow?: boolean;
   /** Vorschau „Nächstes Spiel“ vor jedem eigenen Spiel (screens/prematch/; Standard an). */
   prematchScreen?: boolean;
+  /** Spielbericht nach „Simulieren“: immer (Standard), nur Pokal/Europapokal oder nie (Ergebnis dann nur im Newscenter). */
+  matchReport?: 'immer' | 'pokal' | 'nie';
   /** Zuletzt gewählte Spielart (Hauptknopf der Vorschau). */
   lastMatchMode?: 'sim' | 'text';
 }

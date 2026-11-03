@@ -65,7 +65,9 @@ export function spRecord(g: Game, season = g.season): SeasonPromiseRecord | unde
 }
 export function pendingSeasonPromises(g: Game): string | undefined {
   const st = spState(g);
-  return st?.pending && st.pending === g.season && !spRecord(g) ? st.pending : undefined;
+  // Nur vor dem ersten Ligaspiel: eine liegengebliebene Vormerkung (z. B. aus einem ohne Oberfläche
+  // simulierten Spielstand wie der Vorlage „Test 3 Jahre“) öffnet das Fenster nicht mitten in der Saison.
+  return st?.pending && st.pending === g.season && !spRecord(g) && ownLeaguePlayed(g, g.managedClubId) === 0 ? st.pending : undefined;
 }
 export function clearPendingSeasonPromises(g: Game): void { const st = spState(g); if (st) delete st.pending; }
 

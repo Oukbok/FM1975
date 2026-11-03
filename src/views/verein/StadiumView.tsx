@@ -89,7 +89,9 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
   const popLeft = anchor ? (sel ? (anchor.x < W / 2 ? W - POP_W - 16 : 16)
     : (anchor.x + 28 + POP_W < W - 12 ? anchor.x + 28 : Math.max(12, anchor.x - 28 - POP_W))) : W - POP_W - 16;
   const popTop = sel ? 64 : Math.max(64, Math.min((anchor?.y ?? 64) - 140, H - 520));
-  const popStyle = { left: popLeft, top: popTop, width: POP_W, maxHeight: H - popTop - 70 };
+  // Feste Größe (Wunsch Pascal): Planen/Umschalten im Popover darf es nicht wachsen lassen – Inhalt scrollt intern.
+  const popH = sel ? H - popTop - 70 : Math.min(H - popTop - 70, 620);
+  const popStyle = { left: popLeft, top: popTop, width: POP_W, height: popH, maxHeight: H - popTop - 70 };
   const lead = anchor && (sel || venue) ? (() => {
     const edgeX = popLeft > anchor.x ? popLeft : popLeft + POP_W;
     const y = Math.max(popTop + 24, Math.min(anchor.y, popTop + 260));

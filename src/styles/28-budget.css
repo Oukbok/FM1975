@@ -3,7 +3,7 @@
    Finanzen › Budget (views/finanzen/BudgetView.tsx). Posten in Schieferstufen,
    Reserve grün/rot nur als Signal gegen die Mindestreserve.
    ============================================================================= */
-.modal.modal-xl.bud-modal { max-width: 1500px; height: auto; max-height: 92%; }
+.modal.modal-xl.bud-modal { max-width: 1500px; height: 92%; max-height: 92%; } /* feste Größe (Wunsch Pascal) */
 .bud-head h2 { margin: 0; font-family: var(--font-display); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
 .bud-head-id { display: flex; flex-direction: column; gap: 2px; }
 .bud-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 0; padding: 0; }
