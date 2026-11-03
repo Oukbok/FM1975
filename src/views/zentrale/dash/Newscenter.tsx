@@ -4,8 +4,8 @@
 // (EventChoices), Sprungzielen und Gesicht des betroffenen Spielers.
 // Daten: g.messages (engine/messages.ts) – dieselben wie Zentrale › Nachrichten.
 // =============================================================================
-import { useState } from 'react';
-import { pendingDecisions } from '../../../engine/messages';
+import { useEffect, useState } from 'react';
+import { JUMP_DECISION_EVENT, oldestPendingDecision } from '../../../engine/messages';
 import Icon from '../../../components/Icon';
 import PlayerAvatar from '../../../components/PlayerAvatar';
 import { CATEGORY_META, unreadCount } from '../../../engine/messages';
@@ -34,12 +34,26 @@ export function Newscenter({ g, onGoto, onWatch, onChange, openPlayer }: {
 }) {
   const msgs = g.messages ?? [];
   const [filter, setFilter] = useState<Filter>('all');
-  const [selId, setSelId] = useState<string | null>(() => (pendingDecisions(msgs)[0] ?? msgs.find((m) => !m.read) ?? msgs[0])?.id ?? null);
+  const [selId, setSelId] = useState<string | null>(() => (oldestPendingDecision(msgs) ?? msgs.find((m) => !m.read) ?? msgs[0])?.id ?? null);
   const list = msgs.filter((m) => (filter === 'all' ? true : filter === 'unread' ? !m.read : m.category === filter));
   const sel = (selId && msgs.find((m) => m.id === selId)) || list[0] || null;
   const unread = unreadCount(msgs);
   const cats = (Object.keys(CATEGORY_META) as MessageCategory[]).filter((c) => msgs.some((m) => m.category === c));
   const today = g.calendar.currentDate;
+
+  // Roter Brief „Nachrichten“ (GameShell): zur ältesten Nachricht springen, die eine Entscheidung verlangt.
+  useEffect(() => {
+    const jump = () => {
+      const m = oldestPendingDecision(g.messages ?? []);
+      if (!m) return;
+      setFilter('all'); setSelId(m.id);
+      if (!m.read) { m.read = true; onChange(); }
+      requestAnimationFrame(() => document.getElementById(`dz-msg-${m.id}`)?.scrollIntoView({ block: 'center' }));
+    };
+    jump();
+    window.addEventListener(JUMP_DECISION_EVENT, jump);
+    return () => window.removeEventListener(JUMP_DECISION_EVENT, jump);
+  }, [g]);
 
   const open = (m: InboxMessage) => { setSelId(m.id); if (!m.read) { m.read = true; onChange(); } };
   const allRead = () => { msgs.forEach((m) => (m.read = true)); onChange(); };
@@ -49,7 +63,6 @@ export function Newscenter({ g, onGoto, onWatch, onChange, openPlayer }: {
   return (
     <section className="dz-news">
       <div className="dz-nh">
-        <span className="dz-nh-ico"><Icon name="news" size={26} /></span>
         <span className="dz-nh-title">Newscenter</span>
         <span className="dz-nh-count">{unread > 0 ? `${unread} ungelesen` : 'Alles gelesen'}</span>
         <span className="dz-nh-act">
@@ -70,7 +83,7 @@ export function Newscenter({ g, onGoto, onWatch, onChange, openPlayer }: {
                 const head = grp !== lastGroup;
                 lastGroup = grp;
                 return (
-                  <tr key={m.id} className={`dz-msg ${m.read ? '' : 'unread'} ${sel?.id === m.id ? 'me' : ''} ${head ? 'grp-start' : ''}`}
+                  <tr key={m.id} id={`dz-msg-${m.id}`} className={`dz-msg ${m.read ? '' : 'unread'} ${sel?.id === m.id ? 'me' : ''} ${head ? 'grp-start' : ''}`}
                     data-player={msgPlayer(g, m) ? '1' : '0'} onClick={() => open(m)}>
                     <td className="dz-ncol-grp">{head ? grp : ''}</td>
                     <td className="dz-nsubj"><Icon name={MSG_CAT_ICON[m.category] ?? 'news'} size={16} className="dz-nico" /><span>{m.subject}</span>{m.actionRequired && !m.eventRef?.resolved && !m.resultText && <i className="dz-act" title="Entscheidung nötig" />}</td>

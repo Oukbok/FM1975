@@ -4,7 +4,7 @@
 // Stadtbild, Zuschauer, Wetter und „Über die Stadt“. Unten rechts die Wahl der Spielart:
 // „Simulieren“ (sofortiges Ergebnis) oder „Im Textmodus spielen“ – beide starten exakt
 // die bisherigen Abläufe in shell/GameShell.tsx. Daten: game/prematch.ts.
-// Schalter „Diesen Bildschirm nicht wieder anzeigen“ → AppSettings.prematchScreen = false
+// Ein-/Ausschalten nur in den Einstellungen (AppSettings.prematchScreen) – kein Schalter im Bildschirm (Wunsch Pascal).
 // (dann wieder die zwei Knöpfe oben rechts); die gewählte Art merkt sich `lastMatchMode`.
 // =============================================================================
 import { useEffect, useMemo, useState } from 'react';
@@ -50,7 +50,6 @@ export function PrematchScreen({ g, info, settings, onSettings, onStart, onLineu
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const d = useMemo(() => buildPrematch(g, info), [g, info.matchId]);
   const [quick, setQuick] = useState<QuickLineup>('keep');
-  const [hide, setHide] = useState(false);
   const primary: MatchMode = settings.lastMatchMode ?? 'text';
 
   const start = (mode: MatchMode) => {
@@ -58,7 +57,7 @@ export function PrematchScreen({ g, info, settings, onSettings, onStart, onLineu
       const club = g.clubs[g.managedClubId];
       if (club.tactics) Object.assign(club.tactics, autoFillLineup(club, g.players, club.tactics, eraRules(d.year).benchSize));
     }
-    if (hide || settings.lastMatchMode !== mode) onSettings({ ...settings, lastMatchMode: mode, ...(hide ? { prematchScreen: false } : {}) });
+    if (settings.lastMatchMode !== mode) onSettings({ ...settings, lastMatchMode: mode });
     onStart(mode);
   };
 
@@ -145,11 +144,7 @@ export function PrematchScreen({ g, info, settings, onSettings, onStart, onLineu
       </div>
 
       <footer className="pm-foot">
-        <label className="toggle-item pm-hide">
-          <input type="checkbox" checked={hide} onChange={(e) => setHide(e.target.checked)} />
-          <span className={`toggle ${hide ? 'on' : ''}`} />
-          Diesen Bildschirm nicht wieder anzeigen
-        </label>
+        <span className="pm-foot-gap" />
         <div className="pm-go">
           <button className={`pm-go-btn ${primary === 'sim' ? 'primary' : ''}`} onClick={() => start('sim')} title="Sofortiges Ergebnis, danach der Spielbericht">
             <Icon name="skip" size={34} /><span>Simulieren</span>

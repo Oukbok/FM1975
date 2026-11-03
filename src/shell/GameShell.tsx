@@ -21,7 +21,7 @@ import { drawEuroRound, simulateEuroTie } from '../engine/euro';
 import { book, bookCupHomeMatch, bookCupPrize, bookMonthly } from '../engine/finances';
 import { applyMatchEffects } from '../engine/form';
 import { dataScoutingBonus, medicalRecoveryBonus, medicalRehabBonus, nlzGrowthBonus, rehaRecoveryBonus, rehaRehabBonus } from '../engine/infrastructure';
-import { makeMessage, pendingDecisions, pushMessage } from '../engine/messages';
+import { JUMP_DECISION_EVENT, makeMessage, pendingDecisions, pushMessage } from '../engine/messages';
 import { AppSettings, nextFreeSlot, saveGame } from '../engine/save';
 import { dailyRecovery } from '../engine/training';
 import { runAITransfers, setTransferDate } from '../engine/transfers';
@@ -417,7 +417,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
               </button>
             </div>
           ) : mustRead ? (
-            <button className="hd-continue mail" onClick={() => setScreen('dashboard')}
+            <button className="hd-continue mail" onClick={() => { setScreen('dashboard'); setTimeout(() => window.dispatchEvent(new Event(JUMP_DECISION_EVENT)), 0); }}
               title="Bitte überprüfe deine Nachrichten – eine Entscheidung ist offen.">
               <span className="hd-continue-ico" aria-hidden="true">
                 <svg viewBox="0 0 48 48" width="44" height="44">

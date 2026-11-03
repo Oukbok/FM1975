@@ -79,3 +79,18 @@ export const CATEGORY_META: Record<MessageCategory, { label: string; icon: strin
 export function pendingDecisions(list: InboxMessage[]): InboxMessage[] {
   return list.filter((m) => m.choices?.length && m.eventRef && !m.eventRef.resolved);
 }
+
+/** Älteste Nachricht, die noch eine Entscheidung verlangt (Ziel des roten Briefs „Nachrichten“). */
+export function oldestPendingDecision(list: InboxMessage[]): InboxMessage | undefined {
+  const open = pendingDecisions(list);
+  let best: InboxMessage | undefined, bestIdx = -1;
+  for (const m of open) {
+    const i = list.indexOf(m);
+    // Älter = früheres Datum; bei gleichem Datum die weiter hinten einsortierte (Liste ist neu → alt).
+    if (!best || m.date < best.date || (m.date === best.date && i > bestIdx)) { best = m; bestIdx = i; }
+  }
+  return best;
+}
+
+/** Ereignis: Newscenter springt zur ältesten offenen Entscheidung (auch wenn es schon offen ist). */
+export const JUMP_DECISION_EVENT = 'fm:jump-decision';

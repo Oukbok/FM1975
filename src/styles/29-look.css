@@ -98,3 +98,6 @@ tr.me:hover { background: rgba(255, 255, 255, 0.06); }
 
 /* Weniger Icon-Gewimmel: keine Symbole vor Balken-Beschriftungen */
 .dmeter-lbl .game-icon { display: none; }
+
+/* Keine Symbole in Box-Köpfen (Wunsch Pascal): DashBox rendert kein Icon mehr; Rückfall für ältere Kopfzeilen */
+.dxh-ico, .card-title > .ico, .bf-sec-title > .game-icon, .bf-sec-title > svg { display: none; }

@@ -117,15 +117,15 @@ export function BriefingModal({ b, g, onClose, onGoto, initialTab = 'overview', 
             {tab === 'overview' && (
               <div className="si-overview">
                 <aside className="si-ov-sit">
-                  <h4 className="bf-sec-title"><Icon name="dashVerein" size={20} /> Deine Ausgangslage</h4>
+                  <h4 className="bf-sec-title">Deine Ausgangslage</h4>
                   <Situation sit={b.situation} year={b.startYear} />
                 </aside>
                 <section className="si-ov-main">
-                  <h4 className="bf-sec-title"><Icon name="briefing" size={20} /> {b.title}</h4>
+                  <h4 className="bf-sec-title">{b.title}</h4>
                   <Highlights list={b.highlights} compact />
                 </section>
                 <section className="si-ov-tasks">
-                  <h4 className="bf-sec-title"><Icon name="tactics" size={20} /> Deine Aufgaben
+                  <h4 className="bf-sec-title">Deine Aufgaben
                     {tasks?.length ? <span className="si-sum">{taskSummary(tasks)}</span> : null}</h4>
                   <TaskList tasks={tasks} onNavigate={navigate} limit={4} />
                   {tasks && tasks.length > 4 && <button className="si-more" onClick={() => setTab('tasks')}>Alle {tasks.length} Aufgaben ›</button>}

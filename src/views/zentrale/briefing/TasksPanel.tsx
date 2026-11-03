@@ -60,7 +60,7 @@ export function taskSummary(tasks: SeasonTask[]): string {
 export function EraBand({ era, tips, onNavigate }: { era: EraTipSet; tips: EraTip[]; onNavigate?: Navigate }) {
   return (
     <section className="si-era-band">
-      <h4 className="bf-sec-title"><Icon name="hourglass" size={20} /> Typisch für diese Spielzeit <span className="si-era-name">{era.label}</span></h4>
+      <h4 className="bf-sec-title">Typisch für diese Spielzeit <span className="si-era-name">{era.label}</span></h4>
       <div className="si-era-cards">
         {tips.slice(0, 4).map((t, i) => (
           <article key={i} className="si-era-card">
@@ -79,11 +79,11 @@ export function TasksTab({ tasks, era, tips, onNavigate }: { tasks: SeasonTask[]
   return (
     <div className="si-tasks-tab">
       <section>
-        <h4 className="bf-sec-title"><Icon name="briefing" size={20} /> Deine Aufgaben{tasks?.length ? <span className="bf-count">{tasks.length}</span> : null}</h4>
+        <h4 className="bf-sec-title">Deine Aufgaben{tasks?.length ? <span className="bf-count">{tasks.length}</span> : null}</h4>
         <TaskList tasks={tasks} onNavigate={onNavigate} />
       </section>
       <section>
-        <h4 className="bf-sec-title"><Icon name="hourglass" size={20} /> Typisch für diese Spielzeit</h4>
+        <h4 className="bf-sec-title">Typisch für diese Spielzeit</h4>
         <p className="bf-lead si-era-lead">{era.label} ({era.from}{era.to < 2099 ? `–${era.to}` : ' und später'})</p>
         <div className="si-tips">
           {tips.map((t, i) => (

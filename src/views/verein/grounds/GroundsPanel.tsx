@@ -145,7 +145,7 @@ function BuildList({ club, gr, year, onSelect }: Props) {
           })}
         </div>
       ))}
-      <div className="gp-sec"><Icon name="training" size={18} />Sport &amp; Betrieb</div>
+      <div className="gp-sec">Sport &amp; Betrieb</div>
       {FACILITIES.filter((d) => d.key !== 'stadium' && d.key !== 'catering' && d.key !== 'merchandising').map((d) => facRow(d.key))}
     </>
   );

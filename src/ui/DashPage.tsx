@@ -39,7 +39,6 @@ export function DashBox({
       onClick={onClick}
     >
       <div className="dxh">
-        {icon && <span className="dxh-ico"><Icon name={icon} size={20} /></span>}
         <span className="dxh-title">{title}{info && <InfoTip k={info} />}</span>
         {right != null && <span className="dxh-right">{right}</span>}
       </div>

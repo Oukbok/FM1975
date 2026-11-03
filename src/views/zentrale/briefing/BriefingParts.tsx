@@ -79,7 +79,7 @@ export function DiffTable({ groups }: { groups: DifferenceGroup[] }) {
       <div className="bf-diff-head"><span /><span>Damals</span><span>Heute</span></div>
       {groups.map((g) => (
         <section key={g.topic} className="bf-diff-group">
-          <h4><Icon name={g.icon} size={20} /> {g.label}</h4>
+          <h4>{g.label}</h4>
           {g.items.map((d, i) => <DiffRow key={i} d={d} />)}
         </section>
       ))}
@@ -101,7 +101,7 @@ function DiffList({ title, icon, list, note }: { title: string; icon: string; li
   if (!list.length) return null;
   return (
     <section className="bf-sec">
-      <h4 className="bf-sec-title"><Icon name={icon} size={20} /> {title} <span className="bf-count">{list.length}</span></h4>
+      <h4 className="bf-sec-title">{title} <span className="bf-count">{list.length}</span></h4>
       {list.map((d, i) => (
         <div key={i} className="bf-change">
           <Icon name={topicMeta(d.topic).icon} size={22} />
@@ -150,7 +150,7 @@ export function ChangesTab({ list, first }: { list: GameChange[]; first: boolean
       <div className="bf-changes">
         {kinds.map((k) => (
           <section key={k} className="bf-sec">
-            <h4 className="bf-sec-title"><Icon name={CHANGE_KIND_META[k].icon} size={20} /> {CHANGE_KIND_META[k].label}</h4>
+            <h4 className="bf-sec-title">{CHANGE_KIND_META[k].label}</h4>
             {list.filter((c) => c.kind === k).map((c, i) => (
               <div key={i} className="bf-change">
                 <Icon name={c.icon} size={22} />
