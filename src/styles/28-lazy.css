@@ -1,0 +1,30 @@
+/* Nachladen (shell/LazyFallback.tsx): gleiche Fläche wie die Seite bzw. das Fenster,
+   Hinweis erst nach kurzer Verzögerung sichtbar – schnelle Ladevorgänge flackern nicht. */
+.lazy-page {
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lazy-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 8, 9, 0.5);
+  animation: lazyIn 0.4s ease both;
+}
+.lazy-note {
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  opacity: 0;
+  animation: lazyIn 0.3s ease 0.35s forwards;
+}
+@keyframes lazyIn { from { opacity: 0; } to { opacity: 1; } }

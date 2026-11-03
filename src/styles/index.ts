@@ -66,4 +66,5 @@ import './28-budget.css';
 import './28-pyramid.css';
 import './28-faces.css';
 import './28-career.css';
+import './28-lazy.css';
 import './29-look.css'; // zuletzt: ruhige Gesamtoptik

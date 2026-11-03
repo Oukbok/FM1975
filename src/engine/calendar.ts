@@ -100,7 +100,8 @@ export function generateSeasonCalendar(
   });
 
   events.push({
-    id: eid(), date: seasonEnd, type: 'season_end',
+    // Der 30.6. selbst wird nicht mehr verarbeitet (Saison gilt dann als beendet) → Stichtag 29.6.
+    id: eid(), date: CalendarEngine.addDays(seasonEnd, -1), type: 'season_end',
     title: 'Saisonende', description: `Die Saison ${label} ist beendet.`,
     processed: false, requiresAction: false,
   });

@@ -294,6 +294,8 @@ export function generateYouthPlayer(
     scoutedPotentialMax: scoutMax,
   };
   ensurePositionSkill(youth, currentDate); // Positionsvertrautheit (engine/positionSkill.ts)
+  // Förderverträge: Marktwert wie nach `migrateYouthContracts` gedeckelt – sonst sank er erst beim Laden.
+  youth.contract.transferValue = Math.min(value, baseMarketValue(youth));
   return youth;
 }
 

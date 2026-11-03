@@ -49,6 +49,7 @@
     "test:merch": "node scripts/run-ts.mjs tests/merch-test.ts",
     "test:budget": "node scripts/run-ts.mjs tests/budget-test.ts",
     "test:faces": "node scripts/run-ts.mjs tests/faces-test.ts",
+    "test:season": "node scripts/run-ts.mjs tests/season-test.ts",
     "test:popups": "node scripts/build.mjs && node tests/popup-size.mjs",
     "test:walk": "node scripts/build.mjs && node tests/season-walk.mjs"
   },

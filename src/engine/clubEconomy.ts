@@ -17,7 +17,7 @@
 import { capBase, cappedMarketValue, frenzy, softCap } from './transferMarket';
 import { Club, ClubBrand, ClubFinances, Player, SeasonFinanceRecord } from '../types';
 import { attendanceDemand, clubTier, clubWageLevel, economyScale, revenueShare, tierScale, wageForOverall } from './economy';
-import { facilityUpkeep } from './infrastructure';
+import { applyFacilityEffects, facilityUpkeep } from './infrastructure';
 
 const revenueShareCommercial = (y: number) => revenueShare('commercial', y);
 import { createPlayer } from './playerFactory';
@@ -506,6 +506,7 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
         .sort((a, b) => (c.infrastructure[b] ?? 1) - (c.infrastructure[a] ?? 1));
       if (!keys.length) break;
       (c.infrastructure as any)[keys[0]] = (c.infrastructure[keys[0]] ?? 1) - 1;
+      applyFacilityEffects(c); // Anlagenqualität folgt der Stufe (sonst erst nach dem Laden)
     }
   }
 
@@ -611,6 +612,7 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
     if (keys.length && !blocked) {
       const k = keys[Math.floor(ctx.rng() * keys.length)];
       (c.infrastructure as any)[k] = (c.infrastructure?.[k] ?? 1) + 1;
+      applyFacilityEffects(c); // Anlagenqualität folgt der Stufe (sonst erst nach dem Laden)
     }
     // Ränge nur erweitern, wenn das Stadion (fast) voll ist – sonst wüchsen Zuschauerzahl
     // und Stadionumsatz allein durch den Ausbau.

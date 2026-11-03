@@ -249,7 +249,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
           bodyText: `Die Saison ${g.season} ist beendet. Den Endstand findest du in der Tabelle. Der Vorstand wird das Saisonziel auswerten.\n\nÜber den Button „Neue Saison“ oben rechts startest du die nächste Spielzeit – Spielplan, Landespokal und die fälligen Chronik-Meilensteine werden dann neu aufgesetzt.`,
         }));
         ui.onSeasonEnd();
-        stopForAction = true;
+        // Kein eigener Halt: am nächsten Tag (30.6.) ist die Saison vorbei und der Zeitlauf hält ohnehin.
         break;
       case 'cup_draw': break; // Ziehung unten (cupDrawsDaily)
       case 'cup_matchday': {
