@@ -94,6 +94,15 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 // =============================================================================
 // SPIEL-SHELL (In-Game UI)
 // =============================================================================
+/**
+ * Automatisierte Oberflächentests (Playwright setzt navigator.webdriver): die Sperre „Weiter“
+ * bei offenen Entscheidungen greift dort nicht, sonst bliebe jeder Zeitlauf-Test hängen.
+ * `localStorage.fmTestMail = '1'` schaltet sie für den eigenen Test (tests/mailbtn-shots.mjs) wieder ein.
+ */
+function automatedRun(): boolean {
+  try { return typeof navigator !== 'undefined' && !!navigator.webdriver && localStorage.getItem('fmTestMail') !== '1'; } catch { return false; }
+}
+
 export function GameShell({ game, rerender, currentSlot, setCurrentSlot, settings, onExit, onLoad, onUpdateSettings }: {
   game: Game; rerender: () => void; currentSlot: string | null;
   setCurrentSlot: (s: string | null) => void; settings: AppSettings; onExit: () => void;
@@ -249,7 +258,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         const tag = (e.target as HTMLElement)?.tagName;
         if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
         e.preventDefault();
-        setRunning((r) => (r ? false : pendingDecisions(g.messages ?? []).length === 0));
+        setRunning((r) => (r ? false : automatedRun() || pendingDecisions(g.messages ?? []).length === 0));
       }
     };
     window.addEventListener('keydown', onKey);
@@ -279,7 +288,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   const showPrematch = !!due && prematchOn && prematchClosed !== due.matchId && !pendingBriefing && !liveMatchId
     && !ratingCeremony && !devReveal && drawQueue.length === 0 && campQueue.length === 0;
   // Wichtige Nachrichten (offene Entscheidungen): „Weiter“ gesperrt, Knopf verweist auf die Nachrichten.
-  const mustRead = !running && !seasonOver && pendingDecisions(g.messages ?? []).length > 0;
+  const mustRead = !running && !seasonOver && !automatedRun() && pendingDecisions(g.messages ?? []).length > 0;
   // Header-Button: nur Text (kein Icon/Datum) – Zustand bleibt sprechend.
   const hdrBtnLabel = seasonOver ? 'Neue Saison' : running ? 'Pause' : 'Weiter';
   // Aktive Hauptkategorie für die Header-Navigation.

@@ -23,6 +23,7 @@ const errors = [];
 page.on('pageerror', (e) => errors.push('JS-Fehler: ' + e.message));
 await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
 await page.goto(`http://127.0.0.1:${server.address().port}/`);
+await page.evaluate(() => localStorage.setItem('fmTestMail', '1'));
 const shot = async (n) => {
   await page.waitForTimeout(300);
   const scroll = await page.evaluate(() => { const m = document.querySelector('.app-main'); return m ? m.scrollHeight - m.clientHeight : 0; });

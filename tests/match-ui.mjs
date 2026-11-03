@@ -36,6 +36,8 @@ const closeModals = async () => {
 };
 async function untilMatchDue() {
   for (let i = 0; i < 120; i++) {
+    // Vorschau „Nächstes Spiel“ geschlossen → Kopfknopf öffnet sie wieder.
+    { const pn = page.locator('.hd-continue.pm-next'); if (await pn.isVisible().catch(() => false)) { await pn.click().catch(() => {}); await page.waitForTimeout(600); } }
     if (await page.locator('button:has-text("Textmodus")').isVisible().catch(() => false)) return true;
     await closeModals();
     const w = page.getByRole('button', { name: /weiter/i }).first();

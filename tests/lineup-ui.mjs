@@ -158,6 +158,8 @@ const slotPos = (page, id) => slot(page, id).locator('.lu-card-pos').innerText()
   // Bis zum ersten eigenen Spiel, Textmodus öffnen und Aufstellung prüfen
   let due = false;
   for (let i = 0; i < 150 && !due; i++) {
+    // Vorschau „Nächstes Spiel“ geschlossen → Kopfknopf öffnet sie wieder.
+    { const pn = page.locator('.hd-continue.pm-next'); if (await pn.isVisible().catch(() => false)) { await pn.click().catch(() => {}); await page.waitForTimeout(600); } }
     if (await page.locator('button:has-text("Textmodus")').isVisible().catch(() => false)) { due = true; break; }
     for (const sel of ['button:has-text("Überspringen")', 'button:has-text("Fortsetzen")', 'button:has-text("Schließen")', 'button:has-text("OK")', '.modal-close', '.bf-modal .bf-continue']) {
       const bt = page.locator(sel).first();
@@ -171,7 +173,7 @@ const slotPos = (page, id) => slot(page, id).locator('.lu-card-pos').innerText()
   if (due) {
     await page.click('button:has-text("Textmodus")');
     await page.waitForTimeout(2500);
-    const rows = await page.locator('.ms-lineup').first().locator('.ms-row').allInnerTexts();
+    const rows = await page.locator('.tm-lineup .tm-lt-body > .tm-lt-row:not(.avg):not(.bench)').allInnerTexts();
     const mine = rows.find((r) => r.includes(res3Name));
     check(!!mine && /\bRA\b/.test(mine), `Textmodus: ${res3Name} steht als RA in der Startelf (${(mine ?? '–').replace(/\s+/g, ' ')})`);
     await page.screenshot({ path: `${outDir}/1975_textmodus_1920.png` });
