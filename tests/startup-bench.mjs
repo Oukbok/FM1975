@@ -2,6 +2,7 @@
 // (Vorlage „Test 3 Jahre“), dazu übertragene JS-Bytes beim Start.
 //   npm run build && node tests/startup-bench.mjs [läufe=5]
 //   THROTTLE=4 → CPU-Drosselung (schwacher Rechner), Standard 1
+//   WAIT=2500 → so lange im Hauptmenü warten, bevor geladen wird (Vorladen im Leerlauf), Standard 0
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { extname, join } from 'node:path';
@@ -9,6 +10,7 @@ import { chromium } from 'playwright';
 
 const runs = Number(process.argv[2] ?? 5);
 const throttle = Number(process.env.THROTTLE ?? 1);
+const wait = Number(process.env.WAIT ?? 0);
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.txt': 'text/plain', '.jpg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp' };
 const server = createServer(async (req, res) => {
   let path = decodeURIComponent(new URL(req.url, 'http://x').pathname);
@@ -27,8 +29,6 @@ for (let i = 0; i < runs; i++) {
   await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
   const cdp = await ctx.newCDPSession(page);
   if (throttle > 1) await cdp.send('Emulation.setCPUThrottlingRate', { rate: throttle });
-  let bytes = 0;
-  page.on('response', async (r) => { if (r.url().endsWith('.js')) { try { bytes += (await r.body()).length; } catch { /* */ } } });
   // Spielstand vorab hinterlegen (gleicher Ursprung).
   await page.goto(url + 'saves/index.json');
   await page.evaluate((r) => { localStorage.setItem('fm1980_save_sim', r); localStorage.setItem('fm1980_saves_index', JSON.stringify(['sim'])); }, raw);
@@ -36,7 +36,10 @@ for (let i = 0; i < runs; i++) {
   await page.goto(url);
   await page.waitForSelector('.st-btn.primary', { state: 'visible' });
   menu.push(Date.now() - t0);
-  const startBytes = bytes;
+  // Bis zum Hauptmenü geladene JS-Dateien (vor dem Vorladen im Leerlauf).
+  const startBytes = await page.evaluate(() => performance.getEntriesByType('resource')
+    .filter((e) => e.name.endsWith('.js')).reduce((a, e) => a + (e.decodedBodySize || 0), 0));
+  if (wait) await page.waitForTimeout(wait);
   await page.click('text=Spiel laden');
   const t1 = Date.now();
   await page.click('button:has-text("Laden") >> nth=0');
@@ -48,7 +51,7 @@ for (let i = 0; i < runs; i++) {
 await browser.close();
 server.close();
 const med = (a) => [...a].sort((x, y) => x - y)[Math.floor(a.length / 2)];
-console.log(`Läufe ${runs}, CPU-Drosselung ${throttle}x`);
+console.log(`Läufe ${runs}, CPU-Drosselung ${throttle}x, Wartezeit im Menü ${wait} ms`);
 console.log(`Hauptmenü sichtbar:   Median ${med(menu)} ms  (${menu.join(', ')})`);
 console.log(`Spiel geladen (Shell): Median ${med(game)} ms  (${game.join(', ')})`);
 console.log(`JS beim Start: ${(med(jsBytes) / 1024).toFixed(0)} KiB`);

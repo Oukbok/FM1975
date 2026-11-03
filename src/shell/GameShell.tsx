@@ -13,6 +13,7 @@ import { processDay as processGameDay } from '../game/day';
 import { createOwnMatchSim, findOwnMatchDue, quickSimOwnMatch } from '../game/ownMatch';
 import { startNextSeason } from '../game/season';
 import { Game } from '../game/state';
+import { setEventFrequency } from '../engine/randomEvents';
 import { setWikiOpener } from '../ui/InfoTip';
 import { fmtDateFull } from '../ui/format';
 import { HeaderBar } from './HeaderBar';
@@ -59,6 +60,8 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   // i-Hilfen: „Mehr im Wiki“ öffnet den Artikel (ui/InfoTip.tsx)
   const [wikiArticle, setWikiArticle] = useState<{ id: string; n: number } | null>(null);
   useEffect(() => setWikiOpener((id) => { setWikiArticle((w) => ({ id, n: (w?.n ?? 0) + 1 })); setScreen('wiki'); }), []);
+  // Häufigkeit der Zufallsereignisse (Einstellung) – hier statt in App.tsx, damit das Hauptmenü ohne Spiel-Code startet.
+  useEffect(() => { setEventFrequency(settings.eventFrequency); }, [settings.eventFrequency]);
   // Nachgeladene Seiten/Fenster im Leerlauf vorladen (shell/lazyParts.ts).
   useEffect(() => preloadShellParts(), []);
   const [running, setRunning] = useState(false);

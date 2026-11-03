@@ -1,22 +1,29 @@
-import Icon from '../../components/Icon';
 import { ACTIVITY_DEFS, ActivityType, activityCostBase, activityId, activityIncomeBase, addDaysUTC, daysInRange } from '../../data/activities';
 import { economyScale, yearOf } from '../../engine/economy';
 import { book } from '../../engine/finances';
 import { makeMessage, pushMessage } from '../../engine/messages';
 import { Game } from '../../game/state';
-import { buildStripEventMap } from '../../shell/CalendarStrip';
+import { buildDayEventsMap } from '../../shell/CalendarStrip';
 import { Screen } from '../../shell/navigation';
 import { DashBox, DashPage, Empty, KV } from '../../ui/DashPage';
 import { fmtDM, fmtDay } from '../../ui/format';
 import { useState } from 'react';
 import { ownCampDays, ownIndoorDays } from '../../game/winterShared';
+import { MONTH_LABELS, WD_LABELS } from './calendar/calendarShared';
+import { MonthGrid } from './calendar/MonthGrid';
+import { MonthList } from './calendar/MonthList';
 
 // =============================================================================
-// KALENDER — Monatsansicht, planbare Aktivitäten (Block p11)
+// KALENDER — Monat als Raster oder Liste (alle Termine: Spiele, Auslosungen,
+// Trainingslager, Halle, Transferfenster/-bilanz, Bewertungen, Ehrungen, Budget,
+// Jugendwettbewerbe, Verträge; Quelle shell/CalendarStrip.tsx `buildDayEventsMap`,
+// Klick → Seite des Termins) + planbare Aktivitäten (Block p11).
 // =============================================================================
-export const WD_LABELS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+export { MONTH_LABELS, WD_LABELS };
 
-export const MONTH_LABELS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+type CalMode = 'raster' | 'liste';
+const MODE_KEY = 'fm1975.calendarMode';
+const readMode = (): CalMode => { try { return localStorage.getItem(MODE_KEY) === 'liste' ? 'liste' : 'raster'; } catch { return 'raster'; } };
 
 export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () => void; onGoto: (s: Screen) => void }) {
   const club = g.clubs[g.managedClubId];
@@ -32,10 +39,12 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
   // Planungsmodus: nur wenn aktiv, wählt ein Klick im Kalender einen Starttag für
   // eine Aktivität. Standardmäßig AUS → ein einfacher Klick springt zum Event.
   const [planMode, setPlanMode] = useState(false);
+  const [mode, setModeRaw] = useState<CalMode>(readMode);
+  const setMode = (m: CalMode) => { setModeRaw(m); try { localStorage.setItem(MODE_KEY, m); } catch { /* egal */ } };
 
-  // Gemeinsame Event-Quelle mit dem Kalender-Overlay (shell/CalendarOverlay.tsx): pro Tag das wichtigste Event
-  // (Gegner H/A, Pokal, Transferfenster, Bewertung, …) inkl. Icon + Farbakzent.
-  const eventMap = buildStripEventMap(g);
+  // Gemeinsame Quelle mit dem Kalender-Overlay (shell/CalendarOverlay.tsx): alle Termine je Tag,
+  // wichtigster zuerst, mit Sprungziel `screen`.
+  const dayEvents = buildDayEventsMap(g);
 
   // Blockierte Tage (Pflichtspiele + Pokal + bereits geplante Aktivitäten).
   const blocked = new Map<string, string>(); // iso → Grund
@@ -74,29 +83,8 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
 
   const dayIsFree = (iso: string) => iso >= today && !blocked.has(iso);
 
-  // Sprungziel für einen Tag: das wichtigste Event des Tages → passender Screen.
-  // Gibt null zurück, wenn es kein anspringbares Event gibt.
-  const screenForDate = (iso: string): Screen | null => {
-    let best: { screen: Screen; prio: number } | null = null;
-    const consider = (screen: Screen, prio: number) => {
-      if (!best || prio > best.prio) best = { screen, prio };
-    };
-    if (indoorDays.has(iso)) consider('halle', 60);
-    if (campDays.has(iso)) consider('trainingslager', 55);
-    for (const ev of g.calendar.events) {
-      if (ev.date !== iso) continue;
-      switch (ev.type) {
-        case 'matchday': consider('fixtures', 100); break;
-        case 'cup_matchday': consider('cup', 95); break;
-        case 'cup_draw': consider(ev.euroComp ? 'international' : 'cup', 35); break;
-        case 'transfer_window_open':
-        case 'transfer_window_close': consider('transfers', 30); break;
-        case 'rating_update': consider('table', 25); break;
-        // winter_break / season_end / season_start haben kein eigenes Sprungziel
-      }
-    }
-    return best ? best.screen : null;
-  };
+  // Sprungziel eines Tages: das wichtigste Ereignis mit Ziel.
+  const screenForDate = (iso: string): Screen | null => (dayEvents.get(iso) ?? []).find((e) => e.screen)?.screen ?? null;
 
   const clickDay = (iso: string) => {
     // Planungsmodus: Klick wählt einen freien Starttag für die Aktivität.
@@ -183,96 +171,49 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
 
   const upcoming = (g.activities ?? []).filter((a) => a.endDate >= today).sort((a, b) => a.startDate.localeCompare(b.startDate));
 
-  // Ein Eintrag je Termin: eigenes Ligaspiel mit Gegner (Nachholspiel/verlegt), übrige Spiele
-  // eines Spieltags zusammengefasst (Fr–Mo verteilt, game/fixtureWatch.ts).
+  // Nächste Termine aus derselben Quelle (ab heute, wichtigster je Tag zuerst).
   const nextEvents = (() => {
-    const seen = new Set<string>();
-    const out: { id: string; date: string; title: string }[] = [];
-    for (const e of [...g.calendar.events].filter((x) => x.date >= today && !x.processed).sort((a, b) => a.date.localeCompare(b.date))) {
-      let title = e.title;
-      if (e.type === 'matchday') {
-        const m = g.fixtures.find((x) => x.id === e.matchId);
-        if (m?.involvesPlayerClub) {
-          const heim = m.homeClubId === g.managedClubId;
-          title = `Liga: ${g.clubs[heim ? m.awayClubId : m.homeClubId]?.name ?? ''} (${heim ? 'H' : 'A'})${m.moved?.makeup ? ' · Nachholspiel' : m.moved ? ' · verlegt' : ''}`;
-        } else if (m) title = `Spieltag ${m.matchday}${m.moved?.makeup ? ' (Nachholspiel)' : ''}`;
+    const out: { key: string; date: string; line: string; screen?: Screen }[] = [];
+    for (const [date, list] of [...dayEvents].filter(([d]) => d >= today).sort((a, b) => a[0].localeCompare(b[0]))) {
+      for (const e of list) {
+        if (e.date === today && e.result) continue;
+        out.push({ key: `${date}|${e.line}`, date, line: e.line, screen: e.screen });
+        if (out.length >= 14) return out;
       }
-      const key = `${e.date}|${title}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
-      out.push({ id: e.id, date: e.date, title });
-      if (out.length >= 10) break;
     }
     return out;
   })();
+  const monthDays = cells.filter((c): c is string => !!c);
 
   return (
     <DashPage>
-      <DashBox title={`${MONTH_LABELS[viewM]} ${viewY}`} icon="kalender" span={2} rows={2} info="spielplan"
+      <DashBox title={`${MONTH_LABELS[viewM]} ${viewY}`} span={2} rows={2} info="spielplan"
         right={<span className="dbtnrow">
+          <button className={`dchip ${mode === 'raster' ? 'on' : ''}`} onClick={() => setMode('raster')}>Raster</button>
+          <button className={`dchip ${mode === 'liste' ? 'on' : ''}`} onClick={() => setMode('liste')}>Liste</button>
+          <span className="calm-sep" aria-hidden="true" />
           <button className="dchip" onClick={prevMonth}>‹ Vormonat</button>
           <button className="dchip" onClick={() => { setViewY(todayY); setViewM(todayM); }}>Heute</button>
           <button className="dchip" onClick={nextMonth}>Folgemonat ›</button>
         </span>}>
-        <div className="dnote" style={{ marginBottom: 8 }}>
+        <div className="dnote calm-note">
           {planMode
             ? 'Planungsmodus: Klicke einen freien Tag als Starttag der Aktivität an.'
-            : 'Klicke auf einen Tag mit Termin, um direkt dorthin zu springen.'}
+            : mode === 'liste' ? 'Alle Termine des Monats – klicke einen Termin, um zur passenden Seite zu springen.'
+              : 'Klicke auf einen Tag mit Termin, um direkt dorthin zu springen.'}
         </div>
-        <div className="cal-grid cal-head-row">
-          {WD_LABELS.map((w) => <div key={w} className="cal-wd">{w}</div>)}
-        </div>
-        <div className="cal-grid cal-grid-fill">
-          {cells.map((iso, i) => {
-            if (!iso) return <div key={`b${i}`} className="cal-cell cal-empty" />;
-            const dom = Number(iso.slice(8, 10));
-            const isToday = iso === today;
-            const reason = blocked.get(iso);
-            const past = iso < today;
-            const free = dayIsFree(iso);
-            const inPreview = previewDays.has(iso);
-            const ev = eventMap.get(iso);
-            const accentCls = ev?.accent === 'orange' ? 'cal-acc-orange' : ev?.accent === 'gold' ? 'cal-acc-gold' : '';
-            const jumpable = !planMode && !!screenForDate(iso);
-            const cls = ['cal-cell'];
-            if (isToday) cls.push('cal-today');
-            if (past) cls.push('cal-past');
-            if (reason) cls.push('cal-blocked');
-            else if (free) cls.push('cal-free');
-            if (accentCls) cls.push(accentCls);
-            if (inPreview) cls.push(previewValid ? 'cal-preview' : 'cal-preview-bad');
-            if (jumpable) cls.push('cal-jumpable');
-            if (planMode && free) cls.push('cal-selectable');
-            const title = planMode
-              ? (free ? 'Als Starttag wählen' : (ev ? `${fmtDay(iso)} — ${ev.line}` : reason ? `${fmtDay(iso)} — ${reason}` : fmtDay(iso)))
-              : (ev ? `${fmtDay(iso)} — ${ev.line} (klicken zum Springen)` : reason ? `${fmtDay(iso)} — ${reason}` : fmtDay(iso));
-            return (
-              <div key={iso} className={cls.join(' ')} onClick={() => clickDay(iso)} title={title}>
-                <span className="cal-dom">{dom}</span>
-                {ev ? (
-                  <span className="cal-cell-ev">
-                    <Icon name={ev.icon} className="cal-cell-ico" />
-                    <span className="cal-cell-ev-txt">{ev.line}</span>
-                  </span>
-                ) : reason ? (
-                  <span className="cal-cell-ev cal-cell-ev-generic">
-                    <Icon name="kalender" className="cal-cell-ico" />
-                    <span className="cal-cell-ev-txt">{reason}</span>
-                  </span>
-                ) : null}
-              </div>
-            );
-          })}
-        </div>
-        <div className="cal-legend dim2 mini mt8">
-          <span><i className="lg lg-free" /> frei</span>
-          <span><i className="lg lg-block" /> Spiel/Planung</span>
-          <span><i className="lg lg-today" /> heute</span>
-          <span><i className="lg lg-prev" /> Auswahl</span>
-        </div>
+        {mode === 'liste' && !planMode ? (
+          <div className="calm-scroll"><MonthList g={g} days={monthDays} dayEvents={dayEvents} onGoto={onGoto} /></div>
+        ) : (
+          <MonthGrid cells={cells} today={today} dayEvents={dayEvents} planMode={planMode} onDay={clickDay}
+            stateOf={(iso) => ({
+              blockedReason: blocked.get(iso), free: dayIsFree(iso), selectable: planMode && dayIsFree(iso),
+              preview: previewDays.has(iso) ? (previewValid ? 'ok' : 'bad') : undefined,
+            })} />
+        )}
       </DashBox>
 
-      <DashBox title="Aktivität planen" icon="training" right={`Konto ${fmtDM(club.finances.balance)}`}>
+      <DashBox title="Aktivität planen" right={`Konto ${fmtDM(club.finances.balance)}`}>
         <div className="dbtnrow" style={{ marginBottom: 8 }}>
           {(['friendly', 'teambuilding'] as ActivityType[]).map((t) => (
             <button key={t} className={`dchip ${planType === t ? 'on' : ''}`} onClick={() => { setPlanType(t); setSelStart(null); }}>
@@ -306,7 +247,7 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
         {msg && <div className="dnote mt8" style={{ color: 'var(--accent)' }}>{msg}</div>}
       </DashBox>
 
-      <DashBox title="Termine" icon="schedule">
+      <DashBox title="Termine">
         {upcoming.length > 0 && <div className="dsec">Geplante Aktivitäten</div>}
         {upcoming.map((a) => {
           const ad = ACTIVITY_DEFS[a.type];
@@ -318,34 +259,17 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
             </div>
           );
         })}
-        {(() => {
-          // Winter: gebuchte Trainingslager und Hallenturniere (je Termin eine Zeile).
-          const camps = [...new Map([...campDays.values()].map((b) => [b.id, b])).values()];
-          const halls = [...new Map([...indoorDays.values()].map((t) => [t.id, t])).values()].filter((t) => t.date >= today);
-          if (!camps.length && !halls.length) return null;
-          return (
-            <>
-              <div className="dsec">Trainingslager & Halle</div>
-              {camps.map((b) => (
-                <div key={b.id} className="dlist-row clickable" onClick={() => onGoto('trainingslager')}>
-                  <span className="meta" style={{ minWidth: 92 }}>{fmtDay(b.start)}</span><span className="grow">Trainingslager bis {fmtDay(b.end)}</span>
-                </div>
-              ))}
-              {halls.map((t) => (
-                <div key={t.id} className="dlist-row clickable" onClick={() => onGoto('halle')}>
-                  <span className="meta" style={{ minWidth: 92 }}>{fmtDay(t.date)}</span><span className="grow">{t.name}{t.own === null ? ' (Einladung offen)' : ''}</span>
-                </div>
-              ))}
-            </>
-          );
-        })()}
         <div className="dsec">Nächste Termine</div>
-        {nextEvents.length ? nextEvents.map((e) => (
-          <div key={e.id} className="dlist-row clickable" onClick={() => { const t = screenForDate(e.date); if (t) onGoto(t); }}>
-            <span className="meta" style={{ minWidth: 92 }}>{fmtDay(e.date)}</span>
-            <span className="grow">{e.title}</span>
+        {nextEvents.length ? (
+          <div className="rl rl-sm calm-next">
+            {nextEvents.map((e) => (
+              <div key={e.key} className={`rl-row ${e.screen ? 'clickable' : ''}`} onClick={e.screen ? () => onGoto(e.screen!) : undefined}>
+                <span className="rl-rank">{WD_LABELS[(new Date(e.date + 'T00:00:00Z').getUTCDay() + 6) % 7]} {e.date.slice(8, 10)}.{e.date.slice(5, 7)}.</span>
+                <span className="rl-name">{e.line}</span>
+              </div>
+            ))}
           </div>
-        )) : <Empty icon="schedule">Keine Termine mehr in dieser Saison.</Empty>}
+        ) : <Empty icon="schedule">Keine Termine mehr in dieser Saison.</Empty>}
       </DashBox>
     </DashPage>
   );

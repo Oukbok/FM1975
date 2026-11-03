@@ -2,10 +2,13 @@ import { AppSettings, SaveMeta, deleteSave, listSaves, storageAvailable } from '
 import { NewGameOptions } from '../types';
 import type { Game } from '../game/state';
 import { LoadGameScreen } from './LoadGameScreen';
-import { NewGameScreen } from './NewGameScreen';
 import { SettingsScreen } from './SettingsScreen';
-import { DatasetScreen } from './DatasetScreen';
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
+
+// Assistent „Neues Spiel“ und Datensatz-Verwaltung werden erst beim Öffnen geladen (Code-Splitting).
+const NewGameScreen = lazy(() => import('./NewGameScreen').then((m) => ({ default: m.NewGameScreen })));
+const DatasetScreen = lazy(() => import('./DatasetScreen').then((m) => ({ default: m.DatasetScreen })));
+const loading = <div className="lazy-page" role="status"><span className="lazy-note">Lädt …</span></div>;
 
 // =============================================================================
 // STARTBILDSCHIRM (Menü) – Entwurf „Abendhimmel“: Tribünenfoto mit drei
@@ -29,7 +32,9 @@ export function MainMenu({ settings, onNewGame, onLoad, onUpdateSettings }: {
   if (view === 'new') {
     return (
       <div className="menu-bg ng-host">
-        <NewGameScreen defaults={settings} onBack={() => setView('main')} onStart={onNewGame} onSettings={onUpdateSettings} />
+        <Suspense fallback={loading}>
+          <NewGameScreen defaults={settings} onBack={() => setView('main')} onStart={onNewGame} onSettings={onUpdateSettings} />
+        </Suspense>
       </div>
     );
   }
@@ -76,7 +81,7 @@ export function MainMenu({ settings, onNewGame, onLoad, onUpdateSettings }: {
 
       {view !== 'main' && (
         <div className="st-sub" onClick={(e) => { if (e.target === e.currentTarget) setView('main'); }}>
-          {view === 'datasets' && <DatasetScreen onBack={() => setView('main')} />}
+          {view === 'datasets' && <Suspense fallback={loading}><DatasetScreen onBack={() => setView('main')} /></Suspense>}
           {view === 'load' && (
             <LoadGameScreen
               saves={saves}

@@ -6,14 +6,18 @@ import { yearOf } from './engine/economy';
 import { AppSettings, loadGame, loadSettings, saveSettings } from './engine/save';
 import { Game } from './game/state';
 import { MainMenu } from './screens/MainMenu';
-import { GameShell } from './shell/GameShell';
-import { createNewGame } from './game/newGame';
-import { prepareLoadedGame } from './game/loadMigrations';
 import { NewGameOptions } from './types';
 import { DisplayFrame, applyDisplayMode } from './ui/DisplayFrame';
 import { setDisplayYear, setWagePeriod } from './ui/format';
-import { setEventFrequency } from './engine/randomEvents';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
+
+// Code-Splitting (scripts/build.mjs): Das Hauptmenü startet ohne die Spiel-Shell, ohne
+// Laden-Nachrüstungen und ohne den Spielaufbau. Diese Stücke werden geladen, sobald sie
+// gebraucht werden, und im Leerlauf nach dem Start schon vorgeladen.
+const loadShell = () => import('./shell/GameShell');
+const loadMigrations = () => import('./game/loadMigrations');
+const loadNewGame = () => import('./game/newGame');
+const GameShell = lazy(() => loadShell().then((m) => ({ default: m.GameShell })));
 
 // =============================================================================
 // ROOT: Startmenü ⇄ Spiel
@@ -34,12 +38,12 @@ export default function App() {
   useEffect(() => { hydrateDatasets().then(rerender).catch(() => {}); }, [rerender]);
 
   // --- Neues Spiel starten ---
-  const startGame = useCallback((opts: NewGameOptions, prebuilt?: Game) => {
+  const startGame = useCallback(async (opts: NewGameOptions, prebuilt?: Game) => {
     // Gewählten Datensatz anwenden (Vereine, Ligen, Geschichte …), dann das Spiel erzeugen
     // (bzw. das im Assistenten für „Willkommen beim Verein“ schon erzeugte übernehmen).
     const ds = cachedDataset(opts.datasetId);
     applyDataset(ds);
-    const g0 = prebuilt ?? createNewGame(opts);
+    const g0 = prebuilt ?? (await loadNewGame()).createNewGame(opts);
     g0.datasetId = ds?.meta.id ?? BUILTIN_ID;
     g0.datasetName = ds?.meta.name ?? 'Standard (1975)';
     const calendar = g0.calendar;
@@ -51,10 +55,10 @@ export default function App() {
   }, [rerender]);
 
   // --- Spiel laden ---
-  const doLoad = useCallback((slot: string) => {
+  const doLoad = useCallback(async (slot: string) => {
     const s = loadGame<Game>(slot);
     if (!s) return;
-    prepareLoadedGame(s.game);
+    (await loadMigrations()).prepareLoadedGame(s.game);
     gameRef.current = s.game;
     setCurrentSlot(slot);
     setInGame(true);
@@ -74,14 +78,15 @@ export default function App() {
     // Anzeige-Modus direkt im Klick-Kontext anwenden (Fullscreen-API benötigt
     // eine Nutzer-Geste — der "Speichern"-Klick zählt als solche).
     applyDisplayMode(s.displayMode);
-    setEventFrequency(s.eventFrequency);
   }, []);
 
   // Anzeige-Modus beim Start bestmöglich wiederherstellen (ohne Nutzer-Geste
   // kann der Browser Vollbild ablehnen — das wird sauber abgefangen).
   useEffect(() => {
     applyDisplayMode(settings.displayMode);
-    setEventFrequency(settings.eventFrequency);
+    // Spiel-Stücke im Leerlauf vorladen, damit „Neues Spiel“/„Laden“ nicht warten.
+    const t = setTimeout(() => { loadShell().catch(() => {}); loadMigrations().catch(() => {}); loadNewGame().catch(() => {}); import('./screens/NewGameScreen').catch(() => {}); }, 400);
+    return () => clearTimeout(t);
     // nur einmal beim Mounten
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -95,6 +100,7 @@ export default function App() {
       onUpdateSettings={updateSettings}
     />
   ) : (
+    <Suspense fallback={<div className="lazy-screen" role="status"><span className="lazy-note">Lädt …</span></div>}>
     <GameShell
       game={gameRef.current}
       rerender={rerender}
@@ -105,6 +111,7 @@ export default function App() {
       onLoad={doLoad}
       onUpdateSettings={updateSettings}
     />
+    </Suspense>
   );
 
   return (

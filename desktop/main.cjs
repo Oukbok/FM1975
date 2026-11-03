@@ -13,7 +13,8 @@ const { pathToFileURL } = require('node:url');
 const DIST = app.isPackaged ? path.join(process.resourcesPath, 'dist') : path.join(__dirname, '..', 'dist');
 
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true, stream: true } },
+  // corsEnabled: ES-Module (app.js + nachgeladene Stücke in chunks/, Code-Splitting) laden im CORS-Modus.
+  { scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true, stream: true, corsEnabled: true } },
 ]);
 
 function createWindow() {
@@ -33,13 +34,18 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  protocol.handle('app', (req) => {
+  protocol.handle('app', async (req) => {
     const { pathname } = new URL(req.url);
     let rel = decodeURIComponent(pathname);
     if (rel.endsWith('/')) rel += 'index.html';
     const file = path.normalize(path.join(DIST, rel));
     if (!file.startsWith(DIST)) return new Response('Nicht erlaubt', { status: 403 });
-    return net.fetch(pathToFileURL(file).toString());
+    const res = await net.fetch(pathToFileURL(file).toString());
+    // Module-Skripte verlangen einen JavaScript-MIME-Typ – nicht auf die Erkennung verlassen.
+    if (res.ok && /\.m?js$/.test(file)) {
+      return new Response(res.body, { status: 200, headers: { 'Content-Type': 'text/javascript; charset=utf-8' } });
+    }
+    return res;
   });
   Menu.setApplicationMenu(Menu.buildFromTemplate([
     { label: 'Spiel', submenu: [

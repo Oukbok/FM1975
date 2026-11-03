@@ -20,7 +20,7 @@ writeFileSync(`${out}/index.html`, `<!DOCTYPE html>
   </head>
   <body>
     <div id="root"></div>
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
   </body>
 </html>
 `);
@@ -40,7 +40,7 @@ writeFileSync(`${out}/editor/index.html`, `<!DOCTYPE html>
   </head>
   <body>
     <div id="root"></div>
-    <script src="editor/editor.js"></script>
+    <script type="module" src="editor/editor.js"></script>
   </body>
 </html>
 `);
@@ -49,7 +49,12 @@ const options = {
   entryPoints: { app: 'src/main.tsx', 'editor/editor': 'src/editor/main.tsx' },
   bundle: true,
   outdir: out,
-  format: 'iife',
+  // Code-Splitting: Seiten/Fenster, die per import() nachgeladen werden (src/shell/lazyParts.ts),
+  // landen als eigene Stücke in dist/chunks/. ES-Module laufen unter http(s) (Cloudflare) und
+  // im Electron-Protokoll app:// (desktop/main.cjs), nicht unter file://.
+  format: 'esm',
+  splitting: true,
+  chunkNames: 'chunks/[name]-[hash]',
   target: 'es2020',
   jsx: 'automatic',
   // Bilder liegen in public/assets und werden relativ referenziert ("assets/...").
