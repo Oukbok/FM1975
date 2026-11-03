@@ -43,7 +43,7 @@ async function shot(name) {
   await page.screenshot({ path: `${outDir}/${prefix}_${name}.png` });
   const rep = await page.evaluate(() => {
     const out = [];
-    for (const el of document.querySelectorAll('.rt-root .rt-card, .rt-root .rt-summary, .rt-root .rt-intro, .rt-lrows, .rt-live-body, .dr-now')) {
+    for (const el of document.querySelectorAll('.rt-root .rt-card, .rt-root .rt-summary, .rt-root .rt-intro, .rb2-scroll, .rb2-top-list, .rb2-line')) {
       if (el.scrollWidth > el.clientWidth + 2) out.push(`${el.className.split(' ')[0]}: waagerechter Überlauf ${el.scrollWidth - el.clientWidth}px`);
     }
     const st = document.querySelector('.rt-stage');
@@ -73,7 +73,7 @@ if (!(await page.locator('.rt-root').count())) { console.log('Bewertungs-Show ni
 
 await page.waitForTimeout(700);
 await shot('01_start');
-await page.click('.rt-root button:has-text("Starten")');
+await page.locator('.rt-root .rb2-ok').click();
 await page.waitForTimeout(900); await shot('02_aufruf');
 await page.waitForTimeout(1300); await shot('03_zaehlen');
 await page.waitForTimeout(1700); await shot('04_ergebnis');
@@ -87,7 +87,7 @@ for (let k = 0; k < 40 && n < 3; k++) {
 await page.click('.rt-root button:has-text("Pause")'); await page.waitForTimeout(400); await shot('06_pause');
 await page.click('.rt-root button:has-text("Fortsetzen")');
 await page.click('.rt-root button:has-text("Bis zum Ende springen")'); await page.waitForTimeout(900); await shot('07_bilanz');
-await page.locator('.rt-lrow').nth(2).click(); await page.waitForTimeout(700); await shot('08_rueckblick');
+await page.locator('.rb2-table tr.rt-lrow').nth(2).click(); await page.waitForTimeout(700); await shot('08_rueckblick');
 await page.keyboard.press('Escape'); await page.waitForTimeout(600);
 // Spielerprofil › Entwicklung
 for (let k = 0; k < 4 && await page.locator('.modal-overlay').count(); k++) { await page.locator('.modal-overlay .modal-close, .modal-overlay button:has-text("Schließen")').first().click().catch(() => {}); await page.waitForTimeout(300); }

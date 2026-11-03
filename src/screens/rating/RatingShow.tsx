@@ -1,10 +1,10 @@
 // =============================================================================
-// BEWERTUNGS-SHOW – Vollbild im Stil der Pokalauslosung (screens/draw/).
-// Startbildschirm mit Regeln (RatingIntro.tsx), dann werden alle Spieler
-// alphabetisch automatisch aufgerufen: Gesicht, alte → neue Stärke, Ergebnis,
-// Begründung (engine/ratingReasons.ts). Links der Kader mit Status, rechts der
-// Zwischenstand, unten die Kommentarzeile; am Ende die Bilanz. Die Werte sind
-// bereits angewandt – die Show enthüllt sie nur. Ablauf: useRatingPlayer.ts.
+// BEWERTUNGS-SHOW – Fenster „Auf- und Abwertungsrunde“ (Aufbau nach Pascals Vorbild):
+// oben links Bühne (Start/Spieler/Abschluss), oben rechts Spielerentwicklung (Top 3),
+// unten Überblick aller Spieler mit Grund 1/2, Fußleiste mit Einzelbestätigung, Tempo,
+// „Spieler vor“ und OK. Spieler alphabetisch, Begründung aus engine/ratingReasons.ts.
+// Werte sind bereits angewandt – die Show enthüllt sie nur. Bausteine RatingBoard.tsx,
+// Ablauf useRatingPlayer.ts.
 // =============================================================================
 import { useEffect, useMemo, useState } from 'react';
 import Icon from '../../components/Icon';
@@ -14,7 +14,9 @@ import type { Game } from '../../game/state';
 import { fmtDateFull } from '../../ui/format';
 import type { DrawSpeed } from '../draw/useDrawPlayer';
 import { buildRows, endLine, introLine, scriptFor } from './ratingScript';
-import { LivePanel, PlayerList, RatingSummary, StageCard, type PrevRound } from './RatingParts';
+import type { PrevRound } from './RatingParts';
+import { Overview, StageCard, SummaryCard, TopThree } from './RatingBoard';
+import ClubCrest from '../../components/ClubCrest';
 import { RatingIntro } from './RatingIntro';
 import { useRatingPlayer } from './useRatingPlayer';
 
@@ -26,7 +28,9 @@ export function RatingShow({ g, results, anlass, settings, onSettings, onClose }
   const rows = useMemo(() => buildRows(g, results), [g, results]);
   const steps = useMemo(() => rows.map((r) => ({ delta: r.delta, big: Math.abs(r.delta) >= 2 || (!!r.r.tag && r.delta !== 0) })), [rows]);
   const lines = useMemo(() => scriptFor(rows), [rows]);
-  const p = useRatingPlayer(steps, speed);
+  const [manual, setManual] = useState(!!settings.ratingStepwise);
+  const [hideNext, setHideNext] = useState(false);
+  const p = useRatingPlayer(steps, speed, manual);
   const [picked, setPicked] = useState<number | null>(null);
   const date = g.calendar.currentDate;
   const club = g.clubs[g.managedClubId];
@@ -49,6 +53,7 @@ export function RatingShow({ g, results, anlass, settings, onSettings, onClose }
         return;
       }
       if (e.code === 'Space') { e.preventDefault(); if (p.phase !== 'done') p.togglePause(); }
+      else if (e.key === 'Enter') { e.preventDefault(); if (p.phase !== 'done') p.advance(); }
       else if (e.key === 'Escape') { e.preventDefault(); if (p.phase === 'done') onClose(); else p.skipAll(); }
     };
     window.addEventListener('keydown', onKey);
@@ -63,60 +68,59 @@ export function RatingShow({ g, results, anlass, settings, onSettings, onClose }
     : done ? (picked != null ? lines[picked] : { text: endLine(rows), tone: 'neutral' as const })
     : p.phase === 'hold' ? lines[p.step] : null;
 
+  const prevLine = prev && prev.n
+    ? `Letzte Runde (${prev.label}): ${prev.ups} besser, ${prev.downs} schlechter, Ø ${(prev.sum / prev.n >= 0 ? '+' : '−')}${Math.abs(prev.sum / prev.n).toFixed(2).replace('.', ',')}.`
+    : null;
+  const close = () => { if (hideNext) onSettings({ ...settings, ratingShow: 'aus' }); onClose(); };
+
   return (
-    <div className={`dr-root rt-root ${p.paused ? 'paused' : ''}`} role="dialog" aria-label={`Bewertungsrunde ${anlass}`}>
-      <div className="dr-top">
-        <div className="dr-top-l">
-          <Icon name="training" size={34} />
-          <span className="dr-comp">Bewertungsrunde · {anlass}</span>
-          <span className="dr-dim">{club?.name}</span>
-          <span className="dr-dim">{fmtDateFull(date)}</span>
-        </div>
-        {done ? (
-          <div className="dr-top-r">
-            {picked != null && <button className="ms-btn" onClick={() => setPicked(null)}>Zur Bilanz</button>}
-            <button className="ms-btn" onClick={onClose} title="Esc">Schließen</button>
+    <div className={`rb2-overlay rt-root ${p.paused ? 'paused' : ''}`} role="dialog" aria-label={`Bewertungsrunde ${anlass}`}>
+      <div className="rb2-panel">
+        <div className="rb2-titlebar">
+          {club && <ClubCrest club={club} size={64} />}
+          <div className="rb2-titles">
+            <div className="rb2-title">Auf- und Abwertungsrunde</div>
+            <div className="rb2-subtitle">{club?.name} · {anlass} · {fmtDateFull(date)}</div>
           </div>
-        ) : (
-          <div className="dr-top-r">
-            <div className="seg-group dr-speed">
-              {(['langsam', 'normal', 'schnell'] as DrawSpeed[]).map((v) => (
-                <button key={v} className={`seg-btn ${speed === v ? 'active' : ''}`} onClick={() => setSpeed(v)}>
-                  {v === 'langsam' ? 'Langsam' : v === 'normal' ? 'Normal' : 'Schnell'}
-                </button>
-              ))}
-            </div>
-            {p.started && (
+          <div className="rb2-title-r">
+            {p.started && !done && (
               <button className="ms-btn" onClick={p.togglePause} title="Leertaste">
-                <Icon name={p.paused ? 'play' : 'pause'} size={24} /> {p.paused ? 'Fortsetzen' : 'Pause'}
+                <Icon name={p.paused ? 'play' : 'pause'} size={22} /> {p.paused ? 'Fortsetzen' : 'Pause'}
               </button>
             )}
-            <button className="ms-btn" onClick={p.skipAll} title="Esc">
-              <Icon name="skip" size={24} /> Bis zum Ende springen
-            </button>
-          </div>
-        )}
-      </div>
-
-      <div className={`dr-main rt-main ${intro ? 'intro' : ''}`}>
-        <PlayerList rows={rows} shown={p.shown} current={done ? -1 : p.step}
-          onPick={done ? (i) => setPicked(i) : undefined} picked={done ? picked : null} />
-
-        <div className="dr-center">
-          <div className="dr-stagebox rt-stage">
-            <div className="dr-lights" aria-hidden="true" />
-            {intro && <RatingIntro g={g} label={anlass} date={date} count={rows.length} onStart={p.start} onSkip={p.skipAll} />}
-            {done && picked == null && <RatingSummary rows={rows} prev={prev} label={anlass} onClose={onClose} />}
-            {row && <StageCard key={row.r.playerId} row={row} club={club} phase={done ? 'done' : p.phase} reduced={p.reduced} countMs={countMs} />}
-            {!intro && !done && <div className="dr-progress">Spieler {Math.min(rows.length, p.step + 1)} von {rows.length}</div>}
-          </div>
-          <div className={`dr-now tone-${line?.tone ?? 'neutral'}`}>
-            {line ? <span key={`${p.step}-${p.phase}-${picked}`} className="dr-now-txt">{line.text}</span>
-              : <span className="dr-now-txt dim">{p.paused ? 'Pause' : 'Der nächste Spieler …'}</span>}
+            {!done && <button className="ms-btn" onClick={p.skipAll} title="Esc"><Icon name="skip" size={22} /> Bis zum Ende springen</button>}
           </div>
         </div>
 
-        {!intro && <LivePanel rows={rows} shown={p.shown} prev={prev} />}
+        <div className="rb2-upper">
+          <div className="rb2-stage rt-stage">
+            {intro && <RatingIntro g={g} label={anlass} date={date} count={rows.length} onStart={p.start} onSkip={p.skipAll} />}
+            {done && picked == null && <SummaryCard rows={rows} prevLine={prevLine} />}
+            {row && <StageCard key={row.r.playerId} row={row} club={club} phase={done ? 'done' : p.phase} reduced={p.reduced} countMs={countMs} />}
+            {line && !intro && <div className={`rb2-line tone-${line.tone}`}><span key={`${p.step}-${p.phase}-${picked}`}>{line.text}</span></div>}
+          </div>
+          <TopThree rows={rows} shown={p.shown} club={club} onPick={(i) => { if (done) setPicked(i); }} />
+        </div>
+
+        <Overview rows={rows} shown={p.shown} current={done ? -1 : p.step} picked={done ? picked : null}
+          onPick={(i) => { if (done) setPicked(picked === i ? null : i); }} />
+
+        <div className="rb2-foot">
+          <label className="rb2-check"><input type="checkbox" checked={manual} onChange={(e) => { setManual(e.target.checked); onSettings({ ...settings, ratingSpeed: speed, ratingStepwise: e.target.checked }); }} /> Jeden Spieler einzeln bestätigen</label>
+          <span className="rb2-foot-lbl">Geschwindigkeit</span>
+          <div className="seg-group">
+            {(['langsam', 'normal', 'schnell'] as DrawSpeed[]).map((v) => (
+              <button key={v} className={`seg-btn ${speed === v ? 'active' : ''}`} onClick={() => setSpeed(v)}>
+                {v === 'langsam' ? 'Langsam' : v === 'normal' ? 'Normal' : 'Schnell'}
+              </button>
+            ))}
+          </div>
+          <label className="rb2-check"><input type="checkbox" checked={hideNext} onChange={(e) => setHideNext(e.target.checked)} /> Künftig nur die kurze Liste zeigen</label>
+          <span className="rb2-foot-sp" />
+          {done
+            ? <>{picked != null && <button className="ms-btn" onClick={() => setPicked(null)}>Zur Bilanz</button>}<button className="dr-close rb2-ok" onClick={close} title="Esc">OK</button></>
+            : <button className="dr-close rb2-ok" onClick={p.advance} title="Enter">{intro ? 'Starten' : 'Spieler vor'}</button>}
+        </div>
       </div>
     </div>
   );

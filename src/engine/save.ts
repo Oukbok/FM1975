@@ -257,6 +257,8 @@ export interface AppSettings {
   ratingShow?: 'an' | 'aus';
   /** Tempo der Bewertungs-Show. */
   ratingSpeed?: 'langsam' | 'normal' | 'schnell';
+  /** Bewertungsrunde: nach jedem Spieler auf „Spieler vor“ warten. */
+  ratingStepwise?: boolean;
   /** Gehälter pro Jahr (Standard) oder pro Woche anzeigen und eingeben (ui/format.ts `fmtWage`). */
   wagePeriod?: 'jahr' | 'woche';
 }
