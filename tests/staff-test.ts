@@ -16,6 +16,7 @@ import { ensureStaff } from '../src/game/staffGame';
 import { weekInfos, migrateTrainingPlan } from '../src/game/trainingWeek';
 import { addDaysISO, applyTemplate, effectiveDay, weekEffect, mondayOf, PLAN_TEMPLATES } from '../src/engine/trainingPlan';
 import { BLOCKS_BY_ID } from '../src/engine/weeklyTraining';
+import { applyScheduledTemplate, matchingTemplate, seasonWeeks, setWeekTemplate } from '../src/game/trainingSeason';
 import { isLeagueClub } from '../src/engine/clubEconomy';
 import { STAFF_BY_ID, staffAvailable } from '../src/data/staff';
 
@@ -121,6 +122,21 @@ if (topQ <= lowQ) fail('große Vereine haben kein besseres Trainerteam');
   const prep = eff('vorbereitung'), rest = eff('schonung');
   console.log(`Vorlagen: Vorbereitung Fitness/Tag ${prep.fitnessPerDay}, Risiko ${prep.injuryIndex}, Faktor ${prep.devFactor} | Schonung ${rest.fitnessPerDay}, ${rest.injuryIndex}, ${rest.devFactor} (${PLAN_TEMPLATES.length} Vorlagen)`);
   if (!(prep.injuryIndex > rest.injuryIndex && prep.devFactor > rest.devFactor && prep.fitnessPerDay < rest.fitnessPerDay)) fail('Vorlagen-Wirkung unplausibel');
+  // Langfristig: Vorlage für eine kommende Woche vormerken, Vorschau, Anwendung am Montag
+  {
+    const today = g.calendar.currentDate;
+    const mon2 = addDaysISO(mondayOf(today), 14);
+    applyTemplate(g.trainingPlan, 'standard', 1975);
+    setWeekTemplate(g, mon2, 'schonung');
+    const ws = seasonWeeks(g);
+    const w2 = ws.find((w) => w.monday === mon2), w3 = ws.find((w) => w.monday === addDaysISO(mon2, 7)), w0 = ws[0];
+    if (!w2?.scheduled || w2.tplId !== 'schonung' || w3?.tplId !== 'schonung' || w0.tplId !== 'standard') fail(`Vormerkung in der Vorschau falsch: ${w0.tplId}/${w2?.tplId}/${w3?.tplId}`);
+    if (applyScheduledTemplate(g, addDaysISO(mon2, -1)) !== null) fail('Vormerkung zu früh angewandt');
+    if (applyScheduledTemplate(g, addDaysISO(mon2, 1)) !== 'schonung' || matchingTemplate(g.trainingPlan.days, 1975) !== 'schonung' || g.trainingPlan.schedule) fail('Vormerkung nicht angewandt/aufgeräumt');
+    setWeekTemplate(g, mondayOf(today), 'standard');
+    if (matchingTemplate(g.trainingPlan.days, 1975) !== 'standard' || g.trainingPlan.schedule) fail('Laufende Woche lädt die Vorlage nicht sofort');
+    console.log(`Langfristig: ${ws.length} Wochen bis Saisonende, Vormerkung ok`);
+  }
   // Migration: unbekannter und zu neuer Baustein
   g.trainingPlan.days[0].slot1 = 'gibtsnicht';
   g.trainingPlan.days[0].slot2 = 'videoanalyse';

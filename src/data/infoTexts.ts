@@ -104,6 +104,26 @@ export const INFO_TEXTS = {
     text: 'Bis zu drei Einheiten pro Tag. Hohe Intensität bringt mehr Fortschritt, kostet aber Fitness und Frische; Regeneration baut sie wieder auf. Vor Spieltagen lieber leicht trainieren.',
     wiki: 'training-planner',
   },
+  wochenwirkung: {
+    title: 'Trainingsinfo',
+    text: 'Zustand deines Kaders (Durchschnitt) und was die angezeigte Woche bringt: Fitness je Trainingstag, Verletzungsrisiko, Entwicklungstempo und die Schwerpunkte je Bereich. Die Balken lenken, welche Attribute bei den nächsten Bewertungen wachsen.',
+    wiki: 'training-planner',
+  },
+  trainingIntensitaet: {
+    title: 'Intensität',
+    text: 'Wie hart die Woche ist – gemessen an der Fitness-Bilanz je Trainingstag (Grund-Erholung 10 minus Belastung). Ab „Sehr hart“ sinkt die Fitness, Verletzungen werden wahrscheinlicher und Überlastung bremst die Entwicklung.',
+    wiki: 'training-fitness',
+  },
+  trainingsgruppen: {
+    title: 'Trainingsgruppen',
+    text: 'Dein Kader nach dem, wie er gerade trainiert: Torhüter, Förderspieler, Positionstraining, Angeschlagene (Fitness unter 50) und Verletzte. Alle außer den Verletzten folgen dem Wochenplan; die Gruppen ergeben sich von selbst.',
+    wiki: 'training-planner',
+  },
+  langfristig: {
+    title: 'Saisonverlauf',
+    text: 'Jede kommende Woche bis Saisonende mit den echten Spielterminen und dem Plan, der dann gilt. Wähle eine Woche und eine Vorlage: Ab diesem Montag lädt der Trainerstab die Vorlage in deinen Wochenplan.',
+    wiki: 'training-planner',
+  },
   schwerpunkte: {
     title: 'Schwerpunkte der Woche',
     text: 'Welche Attribute dein Plan diese Woche besonders fördert. Training füllt verdeckte Fortschrittswerte – sichtbar wird ein Punkt erst nach einiger Zeit.',

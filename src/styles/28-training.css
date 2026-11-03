@@ -2,61 +2,7 @@
    TRAINING (Trainingsplan, Trainerteam, Übersicht) – views/training/
    ============================================================================= */
 
-/* ---- Trainingsplan ---- */
-.tp-box .dbox-body { display: flex; flex-direction: column; gap: 8px; }
-.tp-weeknav { display: inline-flex; gap: 6px; align-items: center; }
-.tp-weeknav select { max-width: 220px; }
-.tp-palette {
-  display: flex; flex-wrap: wrap; gap: 6px; padding: 6px; border: 1px solid var(--border-soft);
-  border-radius: 6px; background: var(--bg-2);
-}
-.tp-tile {
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
-  width: 74px; height: 58px; padding: 4px 2px; border: 1px solid var(--border); border-radius: 6px;
-  background: var(--panel-2); color: var(--text-2); cursor: grab; touch-action: none; user-select: none;
-}
-.tp-tile:hover { background: var(--panel-hover); color: var(--text); }
-.tp-tile.sel { border-color: var(--accent); color: var(--text); }
-.tp-tile.free { border-style: dashed; }
-.tp-tile-lbl { font-size: 11px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70px; }
-
-.tp-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; flex: 1; min-height: 0; }
-.tp-day {
-  display: grid; grid-template-rows: auto 1fr 1fr 1fr; gap: 4px; min-height: 0;
-  padding: 4px; border: 1px solid var(--border-soft); border-radius: 6px; background: var(--panel);
-}
-.tp-day.today { border-color: var(--accent); }
-.tp-day-head { display: grid; grid-template-columns: 1fr auto; column-gap: 6px; padding: 2px 4px 4px; border-bottom: 1px solid var(--border-soft); }
-.tp-day-name { font-family: var(--font-display); text-transform: uppercase; letter-spacing: .04em; font-size: 13px; color: var(--text); }
-.tp-day-date { font-size: 12px; color: var(--text-3); }
-.tp-day-sub { grid-column: 1 / -1; font-size: 11px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-.tp-cell {
-  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
-  min-height: 0; border: 1px solid var(--border); border-radius: 5px; background: var(--panel-2);
-  color: var(--text); user-select: none; touch-action: none;
-}
-.tp-cell.filled { cursor: grab; }
-.tp-cell.empty { border-style: dashed; background: transparent; cursor: pointer; }
-.tp-cell.hover { border-color: var(--accent); border-style: solid; background: var(--accent-soft); }
-.tp-cell.dragging { opacity: .35; }
-.tp-cell.locked { background: var(--bg-2); color: var(--text-3); border-style: solid; border-color: var(--border-soft); }
-.tp-cell.lock-match { color: var(--text-2); }
-.tp-cell-slot { position: absolute; top: 2px; left: 5px; font-size: 10px; color: var(--text-4); text-transform: uppercase; letter-spacing: .04em; }
-.tp-cell-name { font-size: 12px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; padding: 0 4px; }
-.tp-cell-free { font-size: 11px; color: var(--text-4); }
-.tp-cell.locked .game-icon { opacity: .7; }
-.tp-ticks { position: absolute; top: 4px; right: 5px; display: inline-flex; gap: 2px; }
-.tp-ticks i { width: 3px; height: 8px; border-radius: 1px; background: var(--border); }
-.tp-ticks i.on { background: var(--text-3); }
-.tp-hint { font-size: 12px; color: var(--text-3); }
-.tp-tpls { flex-wrap: wrap; }
-.tp-ghost {
-  position: fixed; z-index: 9999; pointer-events: none; transform: translate(-50%, -50%);
-  display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 10px;
-  border: 1px solid var(--accent); border-radius: 6px; background: var(--elevated); color: var(--text);
-  font-size: 12px; box-shadow: var(--shadow);
-}
+/* Trainingsplan (vier Reiter): 28-training3.css */
 
 /* ---- Übersicht ---- */
 .td-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 8px; }
@@ -64,7 +10,9 @@
 .td-day.today { border-color: var(--accent); }
 .td-day.match { background: var(--bg-2); }
 .td-day-name { font-size: 11px; color: var(--text-3); text-transform: uppercase; }
-.td-empty { width: 22px; height: 22px; border: 1px dashed var(--border); border-radius: 4px; }
+.td-blk { display: inline-flex; width: 30px; height: 30px; align-items: center; justify-content: center; border-radius: 5px; box-shadow: inset 0 2px 0 var(--trk); background: color-mix(in srgb, var(--trk) 12%, var(--panel-2)); color: color-mix(in srgb, var(--trk) 70%, #ffffff); }
+.td-blk.trk-fit { background: color-mix(in srgb, var(--trk) 7%, var(--panel-2)); }
+.td-empty { width: 30px; height: 30px; border: 1px dashed var(--border); border-radius: 4px; }
 
 /* ---- Trainerteam ---- */
 .tt-msg { margin: 6px 0; font-size: 13px; color: var(--text); padding: 6px 8px; border-left: 3px solid var(--accent); background: var(--bg-2); }
@@ -98,10 +46,6 @@
 .hd-nav-item.active::after { left: 8px; right: 8px; }
 
 /* Symbole: .game-icon misst 1em – Größe hier fest setzen. */
-.tp-tile .game-icon { width: 30px; height: 30px; }
-.tp-cell .game-icon { width: 28px; height: 28px; }
-.tp-ghost .game-icon { width: 30px; height: 30px; }
 .td-day .game-icon { width: 22px; height: 22px; }
-.tp-tile { flex: 1 1 74px; width: auto; max-width: 100px; }
 .modal.tt-modal { max-width: 1180px; }
 .tt-modal .mx-body { padding: 20px 28px 26px; overflow: auto; }

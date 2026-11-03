@@ -38,6 +38,7 @@ import './28-leagues.css';
 import './28-calendar.css';
 import './28-kabine.css';
 import './28-training.css';
+import './28-training3.css';
 import './28-icons.css';
 import './28-camp.css';
 import './28-camp2.css';

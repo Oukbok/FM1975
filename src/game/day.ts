@@ -65,6 +65,7 @@ import { euroMatchdayV2 } from './euroFlow';
 import { isV2 } from './euroSetup';
 import { monthlySponsoring } from './sponsorGame';
 import { monthlyPositions, ownPositionTraining } from './positionsGame';
+import { applyScheduledTemplate } from './trainingSeason';
 import { promoteEarlyTalents } from './talentGame';
 import { aiDressingRoomsWeekly, dressingRoomDaily } from './dressingRoomGame';
 import { dressingRoomIncidents } from './dressingRoomEvents';
@@ -415,6 +416,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
     // Winterpause: Training baut Fitness auf, aber keine Spielform (kein Form-Plus).
     const breakForm = inWinterBreak(g, today) ? new Map(myClub.playerIds.map((id) => [id, g.players[id]?.form ?? 0])) : null;
     // Trainingsplan mit Spiel-Sperren, Trainerteam und Belastungsverletzungen (game/trainingWeek.ts).
+    // Vorgemerkte Wochenvorlage (Training › Langfristig) ab ihrem Montag laden.
+    applyScheduledTemplate(g, today);
     ownTrainingDay(g, myClub, today);
     // Positionstraining (eine Zielposition je Spieler, game/positionsGame.ts)
     { const d = g.trainingPlan.days[weekdayIdx(today)]; if (d?.slot1 || d?.slot2) ownPositionTraining(g, today, 0.8 + 0.4 * ((myClub.trainingSchedule?.facilitiesQuality ?? 70) / 100)); }

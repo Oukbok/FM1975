@@ -1604,6 +1604,8 @@ export interface DaySlots {
  */
 export interface WeeklyTrainingPlan {
   days: DaySlots[];
+  /** Optional: vorgemerkte Wochenvorlagen (Montag ISO → Vorlagen-ID), Training › Langfristig (game/trainingSeason.ts). */
+  schedule?: Record<string, string>;
 }
 
 // -----------------------------------------------------------------------------
