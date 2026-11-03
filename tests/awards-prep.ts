@@ -8,11 +8,13 @@ import { HEADLESS_UI, processDay } from '../src/game/day';
 import { pendingAwards } from '../src/game/seasonAwardsGame';
 import { pendingGoldenBall } from '../src/game/goldenBallGame';
 import { CalendarEngine } from '../src/engine/calendar';
+import { migratePositions2 } from '../src/game/positions2Migration';
 
 const [inp, out] = process.argv.slice(2);
 const raw = readFileSync(inp, 'utf8');
 const data = JSON.parse(raw.startsWith('LZ1:') ? decompressFromUTF16(raw.slice(4))! : raw);
 const g = data.game;
+migratePositions2(g); // ältere Spielstände (alte Positionskürzel)
 const gala = process.env.MODE === 'gala';
 let guard = 0;
 while (!(gala ? pendingGoldenBall(g) : pendingAwards(g)) && !CalendarEngine.isSeasonOver(g.calendar) && guard++ < 400) processDay(g, HEADLESS_UI);

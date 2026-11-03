@@ -75,14 +75,24 @@ export function awardCandidates(g: Game): { cands: AwardCandidate[]; matchdays: 
   for (const p of Object.values(g.players)) {
     if (p.isYouth) continue;
     const row = rowOf.get(p.clubId);
-    const t = compStatsOf(p)?.L;
-    if (!row || !t || !t[0]) continue;
+    if (!row) continue;
+    const cs = compStatsOf(p);
+    const t = cs?.L;
     const cat = POSITION_GROUPS[p.naturalPosition] ?? 'MID';
-    const avg = t[7] != null && t[8] ? t[7] / t[8] : p.seasonStats?.averageRating ?? 0;
+    // Ältere Spielstände: Ligastatistik erst seit dem Update gezählt → aus der Saisonstatistik
+    // (alle Wettbewerbe abzüglich Pokal/Europapokal) ergänzen, wenn diese mehr Spiele kennt.
+    const ss = p.seasonStats;
+    const other = (cs?.P?.[0] ?? 0) + (cs?.E?.[0] ?? 0);
+    const legacy = !!ss && ss.appearances - other > (t?.[0] ?? 0);
+    if (!legacy && (!t || !t[0])) continue;
+    const apps = legacy ? ss.appearances - other : t![0];
+    const avg = !legacy && t![7] != null && t![8] ? t![7]! / t![8]! : ss?.averageRating ?? 0;
     cands.push({
       pid: p.id, name: p.fullName, clubId: p.clubId, clubName: g.clubs[p.clubId]?.name ?? p.clubId,
-      pos: p.naturalPosition, cat, age: p.age, apps: t[0], avg,
-      goals: t[1], assists: t[2], clean: t[9] ?? (cat === 'GK' ? t[6] : 0),
+      pos: p.naturalPosition, cat, age: p.age, apps, avg,
+      goals: legacy ? Math.max(t?.[1] ?? 0, ss.goals - (cs?.P?.[1] ?? 0) - (cs?.E?.[1] ?? 0)) : t![1],
+      assists: legacy ? Math.max(t?.[2] ?? 0, ss.assists - (cs?.P?.[2] ?? 0) - (cs?.E?.[2] ?? 0)) : t![2],
+      clean: legacy ? ss.cleanSheets : t![9] ?? (cat === 'GK' ? t![6] : 0),
       gaPerGame: row.ga, rank: row.rank,
     });
   }

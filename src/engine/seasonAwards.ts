@@ -113,7 +113,7 @@ function reason(c: ScoredCandidate, all: ScoredCandidate[], ctx: AwardContext, l
     if (same.every((x) => x.gaPerGame >= c.gaPerGame)) bits.push('die wenigsten Gegentore aller Stammtorhüter');
   } else if (c.cat === 'DEF') {
     bits.push(`Notenschnitt ${fmtAvg(c.avg)}, ${c.clean} Spiele zu null`);
-    if (c.goals + c.assists >= 6) bits.push(`dazu ${c.goals} Tore und ${c.assists} Vorlagen`);
+    if (c.goals + c.assists >= 6) bits.push(`dazu ${[c.goals ? `${c.goals} ${c.goals === 1 ? 'Tor' : 'Tore'}` : '', c.assists ? `${c.assists} ${c.assists === 1 ? 'Vorlage' : 'Vorlagen'}` : ''].filter(Boolean).join(' und ')}`);
   } else if (c.cat === 'MID') {
     bits.push(`${c.goals} Tore und ${c.assists} Vorlagen, Notenschnitt ${fmtAvg(c.avg)}`);
   } else {
