@@ -666,23 +666,42 @@ Kategorien: transfer, injury, match, board, contract, training, media, general.
     keywords: ['speichern', 'laden', 'save', 'load', 'slot', 'startbildschirm', 'menü', 'einstellungen', 'manager', 'neues spiel', 'vereinswahl', 'liga wählen'],
     body: `## Startbildschirm
 Beim Start erscheint ein Menü mit:
-- **Neues Spiel** – Assistent in drei Schritten: Spielwelt, Verein, Manager.
+- **Neues Spiel** – Assistent in sechs Schritten: Manager, Spielmodus, Spielwelt, Verein, Ligensystem, Willkommen.
 - **Spiel laden** – vorhandene Speicherstände mit Vorschau (Verein, Manager, Datum).
 - **Einstellungen** – Geschwindigkeit, Autosave, Anzeige u.a.
 - **Spiel verlassen** – schließt/entkoppelt die laufende Partie.
 
-## Neues Spiel in drei Schritten
-1. **Spielwelt:** Datensatz, Schwierigkeit, Verletzungen, realistische Kader, Spieltempo; dazu ein Hinweis, wie Talente und Stars entstehen. Start ist immer der 1. Juli 1975.
-2. **Verein:** Links wählst du die Liga (1. Liga, 2. Liga Nord, 2. Liga Süd; die DDR-Oberliga kommt erst 1991 ins Spiel). In der Mitte siehst du alle Vereine der Liga als Wappen – sortierbar nach Stärke, Name oder Region. Rechts zeigt die Detailkarte Trikots, Stadion, Kapazität, Ansehen, Finanzkraft, die geschätzte Kaderstärke im Ligavergleich, das Ziel des Vorstands und die Rivalen. Kaderstärke und Ziel sind **Einschätzungen**: Die echten Kader entstehen beim Start, das endgültige Saisonziel richtet sich danach.
-3. **Manager:** Name, Nationalität, Geburtsjahr, Spielstil und Trainer-Hintergrund, daneben eine Zusammenfassung. „Karriere starten“ erzeugt die Spielwelt.
+## Neues Spiel in sechs Schritten
+1. **Manager:** Vor- und Nachname, Geburtsdatum (Alter am 1. Juli 1975), Nationalität (optional eine zweite), ein Gesicht aus dem Gesichtsgenerator („Anderes Gesicht“), Spielstil, Werdegang und Schwierigkeit. **Lieblingsverein** und **„Niemals trainieren würde ich“** sind Profilangaben; der „Niemals“-Verein taucht im Karrieremodus nicht unter den Angeboten auf.
+2. **Spielmodus:** **Teammanager** – du wählst deinen Verein frei. **Karriere** – als unbekannter Trainer bekommst du drei Angebote schwächerer Vereine (je eins aus der 1. Liga und den beiden 2.-Liga-Staffeln) und nimmst eins an. Dazu die Option **Entwicklung der anderen Vereine** (Aus/Mittel/Stark), Verletzungen, Saison-Briefing, Auftakt-Animation und Spieltempo.
+3. **Spielwelt:** Datensatz und alle Länder, deren Ligen mitlaufen. Deine Liga wird Minute für Minute gerechnet, die übrigen deutschen Ligen und die DDR Spiel für Spiel, das Ausland als Saison im Hintergrund – Rechenzeit kostet fast nur deine eigene Liga.
+4. **Verein:** Land → Liga → Verein, sortierbar nach Stärke, Name oder Region; rechts die große Vorschau mit Wappen, Trikots, Stadion, Ansehen, Finanzkraft, geschätzter Kaderstärke, Ziel des Vorstands und Rivalen. Kaderstärke und Ziel sind **Einschätzungen** – die echten Kader entstehen beim Start.
+5. **Ligensystem:** die Pyramide der Saison 1975/76 (Deutschland, DDR, Ausland) – siehe Artikel „Übersicht Ligensystem“.
+6. **Willkommen:** Die Spielwelt wird schon erzeugt; du siehst Kader, Stärke der ersten Elf, den besten Spieler, Mediendruck, Vertrauen des Vorstands und Stimmung der Fans. „Karriere starten“ übernimmt genau diese Welt, danach folgt das Saison-Briefing.
 
-Über den Stepper oben springst du jederzeit zu einem früheren Schritt zurück. Das **Punktesystem ist historisch automatisch** (2 Punkte bis 1994/95, ab 1995/96 automatisch 3 Punkte) und nicht wählbar.
+Über die Schrittleiste oben springst du jederzeit zu einem früheren Schritt zurück. Das **Punktesystem ist historisch automatisch** (2 Punkte bis 1994/95, ab 1995/96 automatisch 3 Punkte) und nicht wählbar.
 
 ## Speicherstände
 - Gespeichert wird im **Browser (localStorage)**. Der Spielzustand ist ein reines Datenobjekt und damit direkt als JSON serialisierbar.
 - Jeder Slot führt **Metadaten** (Verein, Manager, In-Game-Datum, Zeitstempel) für die Vorschau.
 - Funktionen: \`saveGame\`, \`loadGame\`, \`listSaves\`, \`deleteSave\`, \`nextFreeSlot\` (\`engine/save.ts\`).
 - Globale Einstellungen werden separat unter \`fm1980_settings\` persistiert.`,
+  },
+
+  {
+    id: 'league-system',
+    category: 'save',
+    title: 'Übersicht Ligensystem',
+    keywords: ['ligensystem', 'pyramide', 'ebene', 'aufstieg', 'abstieg', 'amateurligen', 'pool', 'ddr', 'ausland', 'ligareform', 'unterbau'],
+    body: `## Übersicht Ligensystem
+Unter **Statistiken › Ligensystem** (und im Assistenten „Neues Spiel“) siehst du die Ligapyramide der laufenden Saison als klickbare Kästen. Oben wählst du **Deutschland**, **DDR** oder **Ausland** (mit Länderwahl).
+
+- **Kasten:** Name der Liga, Zahl der Vereine, Meister-/Europapokalplätze, Auf- und Absteiger. „Dein Verein“ markiert deine Liga.
+- **Liste links:** die Vereine der gewählten Liga – während der Saison als aktuelle Tabelle, vor dem Start als Prognose nach Stärke. Farbkanten zeigen die Zonen: Meister/Aufstieg, Europapokal/Aufstiegschance, Abstieg.
+- **Unterbau:** Die Amateurligen spielen nicht selbst; ihre besten Vereine rücken im Tausch mit den Absteigern der untersten Liga nach.
+- **Ligareformen:** Unten stehen die kommenden Umbauten (z. B. eingleisige 2. Liga, Wiedervereinigung, 3. Liga); vergangene sind blass.
+
+Die Zahlen folgen denselben Regeln wie der Saisonwechsel – was hier steht, passiert am Saisonende auch.`,
   },
 
   // ---------------------------------------------------------------------------

@@ -163,6 +163,7 @@ select.ng-input { cursor: pointer; }
 .ng-modecard:hover { border-color: var(--text-4); }
 .ng-modecard.on { border-color: var(--accent); background: rgba(28, 32, 40, 0.94); }
 .ng-modecard-ico { width: 64px; height: 64px; border-radius: 8px; display: grid; place-items: center; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-soft); }
+.ng-modecard-ico svg { width: 34px !important; height: 34px !important; color: var(--text-2); }
 .ng-modecard-txt { display: flex; flex-direction: column; gap: 6px; }
 .ng-modecard-txt b { font: 500 26px var(--font-display); letter-spacing: 1.5px; text-transform: uppercase; }
 .ng-modecard-txt small { font-size: 16px; color: var(--text-3); line-height: 1.4; }
@@ -283,3 +284,8 @@ select.ng-input { cursor: pointer; }
 .ng-btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); min-width: 240px; }
 .ng-btn.primary:hover:not(:disabled) { filter: brightness(1.08); }
 .ng-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Willkommen: Leistungsträger unter dem besten Spieler */
+.ng-keyplayers { margin-top: 14px; }
+.ng-keyplayers .rl-row { grid-template-columns: 44px minmax(0, 1fr) 70px 44px; cursor: default; }
+.ng-keyplayers .rl-num { color: var(--text-3); }

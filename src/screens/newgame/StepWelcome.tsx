@@ -6,7 +6,7 @@ import type { Game } from '../../game/state';
 import type { Player } from '../../types';
 import { ageAtStart, fullName, managerFace, type NewGameDraft } from './draft';
 
-// Schritt 6: Willkommen beim Verein — echte Werte aus der eben erzeugten Spielwelt
+// Schritt 6: Willkommen bei deinem Verein — echte Werte aus der eben erzeugten Spielwelt
 const elf = (g: Game, ids: string[]) => ids.map((id) => g.players[id]).filter(Boolean).sort((a, b) => b.overall - a.overall);
 const xiSum = (ps: Player[]) => ps.slice(0, 11).reduce((a, p) => a + p.overall, 0);
 
@@ -52,7 +52,7 @@ export function StepWelcome({ d, game }: { d: NewGameDraft; game: Game | null })
           <span><b>{fullName(d)}</b><small>{ageAtStart(d)} Jahre · {d.nationality}</small></span>
         </div>
         <ClubCrest club={club} size={210} />
-        <h2 className="ng-welcome-title">Willkommen beim<br /><span>{club.name}</span></h2>
+        <h2 className="ng-welcome-title">Willkommen bei<br /><span>{club.name}</span></h2>
         <div className="ng-welcome-sub">{div} · Saison 1975/76 · {club.stadium?.name ?? ''}</div>
       </section>
 
@@ -72,6 +72,16 @@ export function StepWelcome({ d, game }: { d: NewGameDraft; game: Game | null })
               <small><span className="pos-badge">{best.naturalPosition}</span> {best.age} Jahre · {best.nationality}</small>
               <div className="ng-best-ovr">{best.overall}<span>Stärke</span></div>
             </div>
+          </div>
+          <div className="rl rl-sm rl-players ng-keyplayers">
+            {squad.slice(1, 5).map((p) => (
+              <div key={p.id} className="rl-row" data-pid={p.id}>
+                <span className="rl-rank"><span className="pos-badge">{p.naturalPosition}</span></span>
+                <span className="rl-name">{p.fullName}</span>
+                <span className="rl-num">{p.age} J.</span>
+                <span className="rl-main">{p.overall}</span>
+              </div>
+            ))}
           </div>
         </>}
         <div className="ng-kv ng-push"><span>Realistischer Platz nach Stärke</span><b>{realRank}. von {size}</b></div>
