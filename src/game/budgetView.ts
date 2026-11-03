@@ -52,7 +52,7 @@ export function advisorOf(g: Game): AdvisorPerson {
   const st = budgetState(g);
   if (!st.advisor) {
     const r = mulberry32(hashStr(`budget-advisor:${g.managedClubId}`));
-    const n = makeName(pickOrigin(1975, r, true), r);
+    const n = makeName(pickOrigin(1975, r, true), r, Number(g.calendar.currentDate.slice(0, 4)) - 48);
     st.advisor = { name: `${n.firstName} ${n.lastName}` };
   }
   const corp = !!g.clubs[g.managedClubId]?.corporate;

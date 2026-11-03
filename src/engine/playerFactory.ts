@@ -102,7 +102,7 @@ function birthDate(age: number, year: number, rng: () => number): string {
 export function createPlayer(spec: NewPlayerSpec): Player {
   const { rng, pos, age, strength, year, date } = spec;
   const origin = spec.origin ?? pickOrigin(year, rng, spec.domestic);
-  const { firstName, lastName } = makeName(origin, rng);
+  const { firstName, lastName } = makeName(origin, rng, year - age);
   const attributes = makePositionAttributes(pos, strength, age, rng);
   const probe = { attributes, naturalPosition: pos, secondaryPositions: [] } as unknown as Player;
   const overall = positionSuitability(probe, pos);

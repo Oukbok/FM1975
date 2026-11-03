@@ -73,7 +73,7 @@ export function makeCoach(year: number, clubRep: number, date: string, rng: () =
   // Auslandstrainer: früher v. a. aus Österreich, Jugoslawien, Ungarn, den Niederlanden.
   const foreign = weighted(foreignCoachMix(year), rng());
   const origin = domestic || !ORIGINS[foreign] ? pickOrigin(Math.max(1975, year - age + 20), rng, true) : ORIGINS[foreign];
-  const n = makeName(origin, rng);
+  const n = makeName(origin, rng, year - age);
   const style = weighted(styleWeights(year), rng());
   const philosophy = weighted<CoachPhilosophy>(clubRep >= 80
     ? { jugend: 20, einkauf: 45, ausgewogen: 35 }

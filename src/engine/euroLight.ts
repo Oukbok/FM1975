@@ -16,7 +16,7 @@
 // =============================================================================
 import type { Club, CupState, Player, Position } from '../types';
 import type { XTuple } from '../types/euro2';
-import { ORIGINS } from '../data/origins';
+import { ORIGINS, firstNamesFor } from '../data/origins';
 import { POSITION_GROUPS } from '../types';
 import type { KoRule } from './match/sim';
 
@@ -83,7 +83,8 @@ export function phantomRoster(cup: CupState, clubId: string, country: string, st
     const id = `x${hashKey(key).toString(36)}`;
     const r = rng(hashKey(key));
     if (!people[id]) {
-      const first = origin.first[Math.floor(r() * origin.first.length)];
+      const firsts = firstNamesFor(origin, year - 26);
+      const first = firsts[Math.floor(r() * firsts.length)];
       const last = origin.last[Math.floor(r() * origin.last.length)];
       people[id] = [`${first} ${last}`, clubId, pos];
     } else { r(); r(); }

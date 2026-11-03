@@ -133,6 +133,8 @@ export function virtualPerson(g: Game, pid: string): [string, string, string] {
   const rnd = rng32(hash32(pid));
   const country = g.euroClubs?.[club]?.country;
   const o = (country && ORIGINS[COUNTRY_ORIGIN[country] ?? '']) || pickOrigin(y0 + 18, rnd, !country);
+  // Ohne Jahrgang: die Namen werden bei jedem Anzeigen neu aus der ID gebildet und
+  // dürfen sich in bestehenden Spielständen nicht ändern.
   const n = makeName(o, rnd);
   return [`${n.firstName} ${n.lastName}`, club, TEMPLATE[i] ?? 'ZM'];
 }
