@@ -125,7 +125,7 @@
 .np-scorer b { text-align: right; font-family: var(--font-display); font-size: 16px; }
 
 /* ---------------------------------------------------------------- Artikel-Popup */
-.modal.modal-xl.np-article { width: min(92%, 1180px); height: auto; max-height: 88%; }
+.modal.modal-xl.np-article { width: min(92%, 1180px); height: 84%; max-height: 88%; } /* feste Größe (Wunsch Pascal) */
 .np-article .mx-head h2 { font-family: var(--font-display); font-size: 34px; line-height: 1.1; font-weight: 600; }
 .np-rumor-h { font-style: italic; }
 .np-art-body { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 28px; align-items: start; }

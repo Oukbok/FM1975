@@ -211,6 +211,9 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   const showAwards = settings.awardsShow !== 'aus';
   // Erstes Training (game/seasonPromisesGame.ts): Versprechen-Popup; unter Playwright nur mit window.__FM_PROMISES__.
   const promisesDue = !!pendingSeasonPromises(g) && (!navigator.webdriver || !!(window as { __FM_PROMISES__?: boolean }).__FM_PROMISES__);
+  // Solange ein Pausen-Fenster offen ist (Bewertungsrunde, Entwicklung, Transferbilanz, Erstes Training),
+  // steht die Zeit – sonst liefen im Hintergrund Tage weiter.
+  useEffect(() => { if (ratingCeremony || devReveal || twKey || promisesDue) setRunning(false); }, [ratingCeremony, devReveal, twKey, promisesDue]);
 
   // --- Speichern ---
   const doSave = useCallback((slot?: string, name?: string) => {
@@ -296,8 +299,18 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   // Vorschau „Nächstes Spiel“ (screens/prematch/): ersetzt die zwei Knöpfe, solange sie
   // eingeschaltet ist; geschlossen → ein Knopf „Nächstes Spiel“ öffnet sie wieder.
   const prematchOn = settings.prematchScreen !== false;
-  const showPrematch = !!due && prematchOn && prematchClosed !== due.matchId && !popupHold && !liveMatchId
-    && !ratingCeremony && !devReveal && drawQueue.length === 0 && campQueue.length === 0;
+  // Fensterkette: immer nur EIN Pausen-Fenster zur Zeit, feste Reihenfolge
+  // (Spielbericht/Textmodus/Bewertung/Briefing/Budget → Auslosung → Trainingslager → Transferbilanz
+  // → Erstes Training → Goldener Ball → Die Besten der Saison → Vorschau „Nächstes Spiel“).
+  const chainBase = !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !devReveal;
+  const drawOn = chainBase && drawQueue.length > 0;
+  const campOn = chainBase && !drawQueue.length && campQueue.length > 0;
+  const twOn = !!twKey && chainBase && !drawQueue.length && !campQueue.length;
+  const promisesOn = promisesDue && chainBase && !drawQueue.length && !campQueue.length && !twKey;
+  const galaOn = !!galaDue && showAwards && chainBase && !drawQueue.length && !campQueue.length && !twKey && !promisesDue;
+  const awardsOn = !!awardsDue && showAwards && !galaDue && chainBase && !drawQueue.length && !campQueue.length && !twKey && !promisesDue;
+  const showPrematch = !!due && prematchOn && prematchClosed !== due.matchId && chainBase
+    && drawQueue.length === 0 && campQueue.length === 0 && !twKey && !promisesOn && !galaOn && !awardsOn;
   // Wichtige Nachrichten (offene Entscheidungen): „Weiter“ gesperrt, Knopf verweist auf die Nachrichten.
   const mustRead = !running && !seasonOver && !automatedRun() && pendingDecisions(g.messages ?? []).length > 0;
   // Header-Button: nur Text (kein Icon/Datum) – Zustand bleibt sprechend.
@@ -559,7 +572,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
       {/* Ziehungs-Show: erst wenn Spielbericht/Textmodus/Zeremonie/Briefing zu sind. */}
       {(() => {
         const d = drawQueue[0];
-        if (!d || textMatch || liveMatchId || ratingCeremony || popupHold) return null;
+        if (!d || !drawOn) return null;
         const rec = compCup(g, d.comp)?.rounds[d.roundIndex]?.draw;
         if (!rec) { setTimeout(() => setDrawQueue((q) => q.slice(1)), 0); return null; }
         return (
@@ -569,23 +582,23 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
       })()}
 
       {/* Bilanz des Trainingslagers: nach Spielbericht/Zeremonie/Briefing/Auslosung. */}
-      {campQueue[0] && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && (
+      {campOn && campQueue[0] && (
         <CampRecap key={campQueue[0]} g={g} bookingId={campQueue[0]} onClose={() => { setCampQueue((q) => q.slice(1)); rerender(); }} />
       )}
 
       {/* Top-Transfers + Transferbilanz nach dem Fensterschluss: nach allen anderen Pausen-Fenstern. */}
-      {twKey && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && !campQueue.length && (
+      {twOn && twKey && (
         <TransferWindowModal key={twKey} g={g} initialKey={twKey} auto settings={settings} onSettings={onUpdateSettings}
           onClose={() => { setTwKey(null); rerender(); }} />
       )}
-      {promisesDue && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && !campQueue.length && (
+      {promisesOn && (
         <FirstTrainingModal g={g} onClose={rerender} />
       )}
       {/* Die Besten der Saison: nach Spielbericht/Zeremonie/Briefing/Auslosung/Trainingslager. */}
-      {galaDue && showAwards && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && !campQueue.length && (
+      {galaOn && galaDue && (
         <GalaShow g={g} y={galaDue} onClose={closeGala} />
       )}
-      {awardsDue && showAwards && !galaDue && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && !campQueue.length && (
+      {awardsOn && awardsDue && (
         <AwardsModal g={g} s={awardsDue} onClose={closeAwards} onArchive={() => { closeAwards(); setScreen('auszeichnungen'); }} />
       )}
 

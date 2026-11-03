@@ -4,7 +4,7 @@
    Ruhig und festlich: neutrale Karten, Bernstein nur für eigene Spieler und Hauptknopf.
    ============================================================================= */
 
-.modal.modal-xl.aw-modal { max-width: 1480px; height: auto; max-height: 92%; }
+.modal.modal-xl.aw-modal { max-width: 1480px; height: 86%; max-height: 92%; } /* feste Größe (Wunsch Pascal) */
 .aw-head h2 { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
 .aw-body { padding: 20px 28px 18px; display: flex; flex-direction: column; gap: 16px; }
 .aw-foot { align-items: center; }
