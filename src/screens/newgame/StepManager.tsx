@@ -1,72 +1,114 @@
+import { useMemo } from 'react';
 import ClubCrest from '../../components/ClubCrest';
 import Icon from '../../components/Icon';
-import { cachedSummaries } from '../../data/dataset/storage';
-import { ManagerBackground, ManagerStyle } from '../../types';
-import { BG_DE, STYLE_DE, type NewGameDraft } from '../NewGameScreen';
-import { LEAGUES, leaguePreview } from './clubPreview';
-import { historyModeLabel } from '../../game/historicSteer';
+import PlayerAvatar from '../../components/PlayerAvatar';
+import { CountryFlag } from '../../components/competition/CountryFlag';
+import { NATIONALITIES } from '../../data/countryFlags';
+import { ManagerBackground, ManagerStyle, Player } from '../../types';
+import {
+  BG_DE, BIRTH_YEARS, DIFF_DE, MONTHS, NewGameDraft, STYLE_DE, ageAtStart, allPreviewClubs, daysInMonth, fullName, managerFace,
+} from './draft';
 
-// Schritt 3: Manager — Profil und Zusammenfassung vor dem Start
-const DIFF_DE = { easy: 'Leicht', normal: 'Normal', hard: 'Schwer' } as const;
+// Schritt 1: Manager — Persönliches, Porträt, Trainerprofil, Vereine, Schwierigkeit
+const FLAG_OF: Record<string, string> = { Österreich: 'Oesterreich', Dänemark: 'Daenemark', Türkei: 'Tuerkei', Rumänien: 'Rumaenien' };
+
+function ClubSelect({ value, onChange, exclude }: { value: string; onChange: (v: string) => void; exclude?: string }) {
+  const clubs = useMemo(() => allPreviewClubs(), []);
+  const sel = clubs.find((c) => c.id === value);
+  return (
+    <div className="ng-clubsel">
+      <span className="ng-clubsel-crest">{sel ? <ClubCrest club={sel.club} size={30} /> : <span className="ng-crest-empty" />}</span>
+      <select className="ng-input" value={value} onChange={(e) => onChange(e.target.value)}>
+        <option value="">keiner</option>
+        {clubs.filter((c) => c.id !== exclude).map((c) => <option key={c.id} value={c.id}>{c.name} ({c.tier === 1 ? '1. Liga' : '2. Liga'})</option>)}
+      </select>
+    </div>
+  );
+}
 
 export function StepManager({ d, set }: { d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void }) {
-  const club = leaguePreview(d.league).find((c) => c.id === d.clubId);
-  const league = LEAGUES.find((l) => l.key === d.league);
-  const ds = cachedSummaries().find((x) => x.id === d.datasetId);
-  const age = 1975 - d.birthYear;
+  const age = ageAtStart(d);
+  const face = managerFace(d.avatarSeed, fullName(d)) as unknown as Player;
+  const reroll = () => set({ avatarSeed: Math.random().toString(36).slice(2, 8) });
   return (
-    <div className="ng-grid2">
-      <section className="ng-box">
-        <h3 className="ng-box-title"><Icon name="squad" size={20} /> Dein Managerprofil</h3>
-        <div className="ng-form">
-          <label>Name
-            <input autoFocus value={d.name} onChange={(e) => set({ name: e.target.value })} placeholder="z. B. Max Mustermann" maxLength={40} />
-          </label>
-          <label>Nationalität
-            <input value={d.nationality} onChange={(e) => set({ nationality: e.target.value })} />
-          </label>
-          <label><span className="ng-inline">Geburtsjahr <small>({age} Jahre beim Start)</small></span>
-            <input type="number" min={1910} max={1955} value={d.birthYear} onChange={(e) => set({ birthYear: +e.target.value })} />
-          </label>
-          <label>Bevorzugter Spielstil
-            <div className="seg-group">
-              {(Object.keys(STYLE_DE) as ManagerStyle[]).map((s) => (
-                <button key={s} type="button" className={`seg-btn ${d.style === s ? 'active' : ''}`} onClick={() => set({ style: s })}>{STYLE_DE[s]}</button>
-              ))}
+    <div className="ng-cols ng-cols-mgr">
+      <section className="ng-card">
+        <h3 className="ng-h">Persönliches</h3>
+        <div className="ng-person">
+          <div className="ng-fields">
+            <label className="ng-field">Vorname
+              <input className="ng-input" autoFocus value={d.firstName} maxLength={24} placeholder="z. B. Max" onChange={(e) => set({ firstName: e.target.value })} />
+            </label>
+            <label className="ng-field">Nachname
+              <input className="ng-input" value={d.lastName} maxLength={28} placeholder="z. B. Mustermann" onChange={(e) => set({ lastName: e.target.value })} />
+            </label>
+            <div className="ng-field">Geburtsdatum
+              <div className="ng-date">
+                <select className="ng-input" value={d.birthDay} onChange={(e) => set({ birthDay: +e.target.value })}>
+                  {Array.from({ length: daysInMonth(d.birthYear, d.birthMonth) }, (_, i) => <option key={i} value={i + 1}>{i + 1}.</option>)}
+                </select>
+                <select className="ng-input" value={d.birthMonth} onChange={(e) => set({ birthMonth: +e.target.value })}>
+                  {MONTHS.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}
+                </select>
+                <select className="ng-input" value={d.birthYear} onChange={(e) => set({ birthYear: +e.target.value })}>
+                  {BIRTH_YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
+                </select>
+              </div>
             </div>
-          </label>
+          </div>
+          <div className="ng-portrait">
+            <PlayerAvatar player={face} size={150} />
+            <button type="button" className="ng-btn small ghost" onClick={reroll}><Icon name="dice" size={16} /> Anderes Gesicht</button>
+          </div>
         </div>
-        <div className="ng-label">Trainer-Hintergrund</div>
-        <div className="ng-seg4">
+        <div className="ng-kv"><span>Alter beim Start (1. Juli 1975)</span><b>{age} Jahre</b></div>
+        <label className="ng-field">Nationalität
+          <span className="ng-with-flag"><CountryFlag country={FLAG_OF[d.nationality] ?? d.nationality} height={14} />
+            <select className="ng-input" value={d.nationality} onChange={(e) => set({ nationality: e.target.value })}>
+              {NATIONALITIES.map((n) => <option key={n} value={n}>{n}</option>)}
+            </select></span>
+        </label>
+        <label className="ng-field">Zweite Nationalität
+          <select className="ng-input" value={d.nationality2} onChange={(e) => set({ nationality2: e.target.value })}>
+            <option value="">keine</option>
+            {NATIONALITIES.filter((n) => n !== d.nationality).map((n) => <option key={n} value={n}>{n}</option>)}
+          </select>
+        </label>
+      </section>
+
+      <section className="ng-card">
+        <h3 className="ng-h">Trainerprofil</h3>
+        <div className="ng-sublabel">Bevorzugter Spielstil</div>
+        <div className="ng-seg">
+          {(Object.keys(STYLE_DE) as ManagerStyle[]).map((s) => (
+            <button key={s} type="button" className={d.style === s ? 'on' : ''} onClick={() => set({ style: s })}>{STYLE_DE[s]}</button>
+          ))}
+        </div>
+        <div className="ng-sublabel">Werdegang</div>
+        <div className="ng-opts">
           {(Object.keys(BG_DE) as ManagerBackground[]).map((b) => (
-            <button key={b} className={`ng-card small ${d.background === b ? 'on' : ''}`} onClick={() => set({ background: b })}>
+            <button key={b} type="button" className={`ng-opt ${d.background === b ? 'on' : ''}`} onClick={() => set({ background: b })}>
               <b>{BG_DE[b].label}</b><small>{BG_DE[b].desc}</small>
             </button>
           ))}
         </div>
+        <div className="ng-sublabel">Schwierigkeitsgrad</div>
+        <div className="ng-seg">
+          {DIFF_DE.map(([k, l]) => <button key={k} type="button" className={d.difficulty === k ? 'on' : ''} onClick={() => set({ difficulty: k })}>{l}</button>)}
+        </div>
+        <p className="ng-note">{DIFF_DE.find(([k]) => k === d.difficulty)?.[2]}. Spielstil und Werdegang beschreiben dich im Profil.</p>
       </section>
 
-      <section className="ng-box ng-summary">
-        <h3 className="ng-box-title"><Icon name="contracts" size={20} /> Zusammenfassung</h3>
-        {club && (
-          <div className="ng-sum-club">
-            <ClubCrest club={club.club} size={96} />
-            <div>
-              <div className="ng-detail-name">{club.name}</div>
-              <div className="ng-note">{league?.name} · Saison 1975/76</div>
-              <div className="ng-kv"><span>Ziel des Vorstands</span><b className="accent-text">{club.expectation}</b></div>
-            </div>
-          </div>
-        )}
-        <div className="ng-kv"><span>Manager</span><b>{d.name.trim() || '–'}{d.name.trim() ? ` (${age})` : ''}</b></div>
-        <div className="ng-kv"><span>Spielstil</span><b>{STYLE_DE[d.style]}</b></div>
-        <div className="ng-kv"><span>Hintergrund</span><b>{BG_DE[d.background].label}</b></div>
-        <div className="ng-kv"><span>Datensatz</span><b>{ds?.name ?? 'Standard'}</b></div>
-        <div className="ng-kv"><span>Schwierigkeit</span><b>{DIFF_DE[d.difficulty]}</b></div>
-        <div className="ng-kv"><span>Andere Vereine</span><b>{historyModeLabel(d.history)}{d.history === 'off' ? ' (zufällig)' : ' (historisch)'}</b></div>
-        <div className="ng-kv"><span>Verletzungen</span><b>{d.injuries ? 'an' : 'aus'}</b></div>
-        <div className="ng-kv"><span>Spieltempo</span><b>{d.speedMs} ms/Tag</b></div>
-        <p className="ng-note ng-push">Einen Vereinswechsel gibt es nicht: Du führst diesen Verein durch die Jahrzehnte.</p>
+      <section className="ng-card">
+        <h3 className="ng-h">Deine Vereine</h3>
+        <label className="ng-field">Lieblingsverein
+          <ClubSelect value={d.favoriteClubId} onChange={(v) => set({ favoriteClubId: v })} exclude={d.avoidClubId} />
+        </label>
+        <label className="ng-field">Niemals trainieren würde ich
+          <ClubSelect value={d.avoidClubId} onChange={(v) => set({ avoidClubId: v })} exclude={d.favoriteClubId} />
+        </label>
+        <p className="ng-note">Beides steht in deinem Trainerprofil. Der „Niemals“-Verein taucht im Karrieremodus nicht unter den Angeboten auf.
+          Angebote anderer Vereine während der Karriere gibt es noch nicht – du führst deinen Verein durch die Jahrzehnte.</p>
       </section>
     </div>
   );

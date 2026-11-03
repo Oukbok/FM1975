@@ -73,6 +73,7 @@ import { BudgetModal } from '../views/finanzen/budget/BudgetModal';
 import { BudgetView } from '../views/finanzen/BudgetView';
 import { AwardsModal } from '../views/statistiken/awards/AwardsModal';
 import { AwardsView } from '../views/statistiken/awards/AwardsView';
+import { LeagueSystemView } from '../views/statistiken/LeagueSystemView';
 import { clearPendingAwards, pendingAwards } from '../game/seasonAwardsGame';
 import { clearPendingGoldenBall, pendingGoldenBall } from '../game/goldenBallGame';
 import { GalaShow } from '../screens/gala/GalaShow';
@@ -495,6 +496,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'international' && <InternationalView g={g} onWatch={(id) => setLiveMatchId(id)} onReplayDraw={replayDraw} />}
         {screen === 'halle' && <IndoorView g={g} onChange={rerender} />}
         {screen === 'auszeichnungen' && <AwardsView g={g} />}
+        {screen === 'ligensystem' && <LeagueSystemView g={g} />}
         {screen === 'trainingslager' && <TrainingCampView g={g} onChange={rerender} />}
         {screen === 'kabine' && <DressingRoomView g={g} onChange={rerender} />}
         {screen === 'trainerteam' && <TrainerTeamView g={g} onChange={rerender} />}

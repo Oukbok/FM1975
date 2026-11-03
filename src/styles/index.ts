@@ -59,4 +59,5 @@ import './28-trophies.css';
 import './28-merch.css';
 import './28-tickets.css';
 import './28-budget.css';
+import './28-pyramid.css';
 import './29-look.css'; // zuletzt: ruhige Gesamtoptik

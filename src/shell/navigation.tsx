@@ -20,7 +20,9 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   // Kartenverkauf (Verein › Kartenverkauf)
   | 'kartenverkauf'
   // Saisonbudget (Finanzen › Budget)
-  | 'budget';
+  | 'budget'
+  // Übersicht Ligensystem (Statistiken › Ligensystem)
+  | 'ligensystem';
 
 // =============================================================================
 // MENÜ-STRUKTUR (zweistufige Top-Navigation)
@@ -94,6 +96,7 @@ export const MENU_STRUCTURE: MainCat[] = [
   { key: 'statistiken', label: 'Statistiken', icon: 'stats', dash: 'cat-statistiken', subs: [
     { screen: 'cat-statistiken', label: 'Statistiken', icon: 'stats' },
     { screen: 'table', label: 'Liga', icon: 'stats' },
+    { screen: 'ligensystem', label: 'Ligensystem', icon: 'stats' },
     { screen: 'cup', label: 'Pokal', icon: 'trophy' },
     { screen: 'international', label: 'International', icon: 'international' },
     { screen: 'halle', label: 'Halle', icon: 'trophy' },
