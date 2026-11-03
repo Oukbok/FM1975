@@ -81,7 +81,7 @@ async function profile(rowIdx, tag) {
       if (m) await pos.nth(0).click();
     }
   }
-  await page.locator('.pp-modal .modal-close').click();
+  await page.locator('.pp-modal .pp2-close').click();
   await page.waitForTimeout(250);
 }
 await profile(0, 'a');

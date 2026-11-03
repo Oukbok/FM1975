@@ -2,8 +2,7 @@
 import { Player, starsToPotential } from '../../types';
 import { scoutRange, scoutRangeText } from '../../engine/scouting';
 import Icon from '../Icon';
-import { ATTR_DE, POS_DE, PLAYER_TYPE, Section, Line } from './shared';
-import { strengthsWeaknesses } from './OverviewTab';
+import { ATTR_DE, POS_DE, PLAYER_TYPE, Section, Line, strengthsWeaknesses } from './shared';
 import { useClubProfile } from '../club/ClubLink';
 import type { Game } from '../../game/state';
 import { estimateHidden, hiddenKnowledge } from '../../game/hiddenTraits';

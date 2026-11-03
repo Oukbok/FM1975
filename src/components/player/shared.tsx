@@ -47,6 +47,13 @@ export const ATTR_SHORT: Partial<Record<AttrKey, string>> = {
   concentration: 'Konzentration', interceptions: 'Abfangen', positioning: 'Stellungsspiel',
 };
 
+/** Stärken = beste, Schwächen = schwächste der für die Position wichtigen Attribute. */
+export function strengthsWeaknesses(p: Player) {
+  const keys = keyAttributes(p.naturalPosition).slice(0, 10);
+  const byVal = [...keys].sort((a, b) => p.attributes[b] - p.attributes[a]);
+  return { strengths: byVal.slice(0, 3), weaknesses: byVal.slice(-3).reverse() };
+}
+
 export type AttrTier = 'core' | 'use';
 /**
  * Wichtigkeit der Attribute für eine Position – direkt aus den Engine-Gewichten

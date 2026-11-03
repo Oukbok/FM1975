@@ -89,7 +89,7 @@ await page.locator('.cmx-tabs .tab').nth(1).click();
 await page.locator('.cmx-modal .dtable tbody tr').first().click();
 await page.waitForTimeout(300);
 await page.screenshot({ path: `${outDir}/${prefix}_gegner_5_Spielerprofil.png` });
-await page.locator('.pp-club .club-link').click();
+await page.locator('.pp2-club .club-link').click();
 await page.waitForTimeout(300);
 console.log('Spielerprofil → Verein:', (await page.locator('.pp-modal').count()) === 0 ? 'ok (Spielerprofil geschlossen)' : 'Spielerprofil noch offen');
 await closeProfile();

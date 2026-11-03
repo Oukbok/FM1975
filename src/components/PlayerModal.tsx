@@ -1,38 +1,37 @@
 // =============================================================================
-import type { ReactNode } from 'react';
-import { ClubLink } from './club/ClubLink';
-// PlayerModal — großes Spielerprofil mit Reitern (angelehnt an EA Fussball Manager / Football Manager)
-//   Kopf (immer sichtbar): Porträt | Identität + Steckbrief | Zustand
-//   Reiter: Übersicht · Attribute · Entwicklung · Spiele · Statistik · Karriere · Vertrag & Wert · Medizin · Bericht
-//   Die Reiter liegen in src/components/player/.
+// PlayerModal — großes Spielerprofil nach dem Vorbild EA Fussball Manager („Profil 2“)
+//   oben links  Nummer + Name, Verein, Wappen mit Gesicht, Steckbrief (player/ProfileHead)
+//   oben rechts Positionsfeld, Saisonbilanz, Vertragsstatus (player/ProfileTop)
+//   unten links Fähigkeiten – immer sichtbar (player/SkillsPanel)
+//   unten rechts Reiter: [Zusatz] · Allgemein · Entwicklung · Saison · Karriere · Vertrag · Wünsche · Medizin · Bericht
+//   Knöpfe oben rechts: vorheriger/nächster Spieler im Kader (wenn `squad` übergeben), Schließen.
+//   Die Teile liegen in src/components/player/, CSS in styles/28-profile2.css.
 // =============================================================================
-import { useState } from 'react';
-import { Player, Club, renderStars } from '../types';
-import PlayerAvatar from './PlayerAvatar';
-import ClubCrest from './ClubCrest';
-import { scoutRangeText } from '../engine/scouting';
-import { POS_DE, PLAYER_TYPE, AVAIL_DE, utcDate, footLabel } from './player/shared';
-import { StatusLine, fitness100, freshness100, form100, playerMorale100 } from './status';
-import { useClubProfile } from './club/ClubLink';
-import { HiddenLine } from './player/HiddenLine';
-import { InfoTip } from '../ui/InfoTip';
-import OverviewTab from './player/OverviewTab';
-import AttributesTab from './player/AttributesTab';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import type { Player, Club, Position } from '../types';
+import Icon from './Icon';
+import ProfileHead from './player/ProfileHead';
+import ProfileTop from './player/ProfileTop';
+import SkillsPanel from './player/SkillsPanel';
+import { bestPositions } from './player/profileData';
+import GeneralTab from './player/GeneralTab';
 import DevelopmentTab from './player/DevelopmentTab';
-import StatsTab from './player/StatsTab';
+import SeasonTab from './player/SeasonTab';
 import ContractTab, { Negotiation } from './player/ContractTab';
 import MedicalTab from './player/MedicalTab';
 import ReportTab from './player/ReportTab';
-import MatchesTab from './player/MatchesTab';
 import CareerTab from './player/CareerTab';
 import WishesTab from './player/WishesTab';
-import type { InfoKey } from '../data/infoTexts';
 
-export type Tab = 'extra' | 'overview' | 'attributes' | 'development' | 'matches' | 'stats' | 'career' | 'contract' | 'wishes' | 'medical' | 'report';
+export type Tab = 'extra' | 'general' | 'development' | 'season' | 'career' | 'contract' | 'wishes' | 'medical' | 'report'
+  // frühere Reiter (Aufrufer/alte Links) – werden abgebildet
+  | 'overview' | 'attributes' | 'matches' | 'stats';
 const TABS: [Tab, string][] = [
-  ['overview', 'Übersicht'], ['attributes', 'Attribute'], ['development', 'Entwicklung'], ['matches', 'Spiele'],
-  ['stats', 'Statistik'], ['career', 'Karriere'], ['contract', 'Vertrag & Wert'], ['wishes', 'Wünsche'], ['medical', 'Medizin'], ['report', 'Bericht'],
+  ['general', 'Allgemein'], ['development', 'Entwicklung'], ['season', 'Saison'], ['career', 'Karriere'],
+  ['contract', 'Vertrag'], ['wishes', 'Wünsche'], ['medical', 'Medizin'], ['report', 'Bericht'],
 ];
+const OLD_TAB: Partial<Record<Tab, Tab>> = { overview: 'general', attributes: 'general', matches: 'season', stats: 'season' };
+const mapTab = (t: Tab): Tab => OLD_TAB[t] ?? t;
 
 export default function PlayerModal({ player, club, squad, today, season, onClose, negotiation, initialTab, extraTab, tag }: {
   player: Player; club?: Club; squad?: Player[]; today?: string; season?: string; onClose: () => void;
@@ -44,86 +43,84 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
   negotiation?: Negotiation;
   initialTab?: Tab;
 }) {
-  const [tab, setTab] = useState<Tab>(initialTab ?? 'overview');
-  const g = useClubProfile()?.game;
-  const p = player;
-  const availText = p.availability === 'injured' ? `Verletzt (${p.injury?.daysRemaining ?? '?'} Tage)` : AVAIL_DE[p.availability];
+  const [cur, setCur] = useState<Player>(player);
+  useEffect(() => setCur(player), [player]);
+  const p = cur;
+  const [tab, setTab] = useState<Tab>(mapTab(initialTab ?? 'general'));
+  const best = useMemo(() => bestPositions(p), [p]);
+  const [sel, setSel] = useState<Position>(best[0]?.pos ?? p.naturalPosition);
+  useEffect(() => setSel(bestPositions(p)[0]?.pos ?? p.naturalPosition), [p]);
+
+  // Blättern im Kader – nicht bei Zusatz-Reiter (gehört genau zu diesem Spieler)
+  const list = !extraTab && squad ? squad.filter(Boolean) : [];
+  const idx = list.findIndex((x) => x.id === p.id);
+  const canNav = idx >= 0 && list.length > 1;
+  const go = (d: number) => { if (canNav) setCur(list[(idx + d + list.length) % list.length]); };
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA')) return;
+      if (e.key === 'Escape') onClose();
+      else if (e.key === 'ArrowLeft') go(-1);
+      else if (e.key === 'ArrowRight') go(1);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
+
+  // Als Portal in document.body (Jugend, Presse, Bestenlisten) liegt das Fenster außerhalb
+  // des DisplayFrame: dann dessen Skalierung nachbilden, damit es genauso aussieht wie im Spiel.
+  const ref = useRef<HTMLDivElement>(null);
+  const [zoom, setZoom] = useState<number | undefined>(undefined);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el || el.closest('.display-content')) return;
+    const inner = document.querySelector('.display-inner') as HTMLElement | null;
+    const content = document.querySelector('.display-content') as HTMLElement | null;
+    if (!inner || !content || !inner.offsetWidth) return;
+    const fit = inner.getBoundingClientRect().width / inner.offsetWidth;
+    const z = parseFloat(getComputedStyle(content).zoom || '1') || 1;
+    if (fit > 0) setZoom(fit * z);
+  }, []);
+
+  const tabs = extraTab ? [['extra', extraTab.label] as [Tab, string], ...TABS] : TABS;
+  const active = tab === 'extra' && !extraTab ? 'general' : tab;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal pp-modal" onClick={(e) => e.stopPropagation()}>
-        <header className="pp-header" style={{ ['--club' as string]: club?.colors.primary ?? 'var(--border)' }}>
-          <div className="pp-portrait">
-            <PlayerAvatar player={p} club={club} size={210} />
-            {club && <div className="pp-portrait-crest"><ClubLink id={club.id}><ClubCrest club={club} size={40} /></ClubLink></div>}
-          </div>
+    <div className="modal-overlay" onClick={onClose} ref={ref} style={zoom ? { zoom } : undefined}>
+      <div className="modal pp-modal pp2" onClick={(e) => e.stopPropagation()} style={{ ['--club' as string]: club?.colors.primary ?? 'var(--border)' }}>
+        <div className="pp2-actions">
+          {canNav && <>
+            <button type="button" className="pp2-round pp2-nav-prev" onClick={() => go(-1)} title={`Vorheriger Spieler: ${list[(idx - 1 + list.length) % list.length].fullName}`}><Icon name="navPrev" size={18} /></button>
+            <span className="pp2-navpos">{idx + 1}/{list.length}</span>
+            <button type="button" className="pp2-round pp2-nav-next" onClick={() => go(1)} title={`Nächster Spieler: ${list[(idx + 1) % list.length].fullName}`}><Icon name="navNext" size={18} /></button>
+          </>}
+          <button type="button" className="pp2-round pp2-close" onClick={onClose} title="Schließen"><Icon name="close" size={18} /></button>
+        </div>
 
-          <div className="pp-id">
-            <div className="pp-club">{club ? <ClubLink id={club.id}>{club.name}</ClubLink> : 'Vereinslos'}<span className="pp-club-no">Nr. {p.shirtNumber}</span></div>
-            <h2 className="pp-name">{p.fullName}</h2>
-            <div className="pp-sub">
-              {POS_DE[p.naturalPosition] ?? p.naturalPosition} · {PLAYER_TYPE[p.naturalPosition] ?? '—'}
-              {p.secondaryPositions.length > 0 && <span className="pp-sub-sec"> · auch {p.secondaryPositions.join(', ')}</span>}
-              <span className="pp-sub-sec"> · geb. {utcDate(p.dateOfBirth)}</span>
+        <div className="pp2-grid">
+          <ProfileHead p={p} club={club} tag={tag} best={best} sel={sel} onSelect={setSel} />
+          <ProfileTop p={p} sel={sel} best={best.map((b) => b.pos)} onSelect={setSel} />
+          <SkillsPanel p={p} pos={sel} onPos={setSel} />
+          <div className="pp2-right">
+            <nav className={`tabs pp-tabs pp2-tabs${tabs.length > 8 ? ' many' : ''}`}>
+              {tabs.map(([t, l]) => <button key={t} className={`tab ${active === t ? 'active' : ''}`} onClick={() => setTab(t)}>{l}</button>)}
+            </nav>
+            <div className="pp2-tabbody" key={p.id + active}>
+              {active === 'extra' && extraTab && <div className="pp-extra">{extraTab.content}</div>}
+              {active === 'general' && <GeneralTab p={p} />}
+              {active === 'development' && <DevelopmentTab p={p} />}
+              {active === 'season' && <SeasonTab p={p} />}
+              {active === 'career' && <CareerTab p={p} club={club} season={season} />}
+              {active === 'contract' && <ContractTab p={p} squad={squad} today={today} negotiation={negotiation} />}
+              {active === 'wishes' && <WishesTab p={p} />}
+              {active === 'medical' && <MedicalTab p={p} />}
+              {active === 'report' && <ReportTab p={p} squad={squad} />}
             </div>
-            <div className="pp-status">
-              <span className={`pp-avail-dot${p.availability === 'available' ? '' : ' bad'}`} />
-              <span className={p.availability === 'available' ? '' : 'pp-status-bad'}>{availText}</span>
-              {p.transferListed && <span className="pp-tag">Transferliste</span>}
-              {(p.isYouth || tag) && <span className="pp-tag">{tag ?? 'Jugend'}</span>}
-            </div>
-            <div className="pp-facts">
-              <Fact label="Stärke" value={String(p.overall)} big info="staerke" />
-              <Fact label="Potenzial" value={scoutRangeText(p)} info="potenzial" />
-              <Fact label="Alter" value={`${p.age}`} title={`geboren am ${utcDate(p.dateOfBirth)}`} />
-              <Fact label="Nation" value={p.nationality} />
-              <Fact label="Größe" value={`${p.height} cm`} />
-              <Fact label="Gewicht" value={`${p.weight} kg`} />
-              <Fact label="Fuß" value={footLabel(p)} />
-            </div>
           </div>
-
-          <div className="pp-cond">
-            <div className="pp-section-title">Zustand</div>
-            <StatusLine kind="frische" value={freshness100(p)} />
-            <StatusLine kind="form" value={form100(p)} />
-            <StatusLine kind="moral" value={playerMorale100(p)} />
-            <StatusLine kind="fitness" value={fitness100(p)} />
-            <HiddenLine g={g} p={p} trait="konstanz" info="konstanz" />
-            <HiddenLine g={g} p={p} trait="nerven" info="nervenstaerke" />
-          </div>
-
-          <button className="modal-close" onClick={onClose}>×</button>
-        </header>
-
-        <nav className="tabs pp-tabs">
-          {(extraTab ? [['extra', extraTab.label] as [Tab, string], ...TABS] : TABS).map(([t, l]) => <button key={t} className={`tab ${tab === t ? 'active' : ''}`} onClick={() => setTab(t)}>{l}</button>)}
-        </nav>
-
-        <div className="pp-body">
-          {tab === 'extra' && extraTab && <div className="pp-extra">{extraTab.content}</div>}
-          {tab === 'overview' && <OverviewTab p={p} />}
-          {tab === 'attributes' && <AttributesTab p={p} />}
-          {tab === 'development' && <DevelopmentTab p={p} />}
-          {tab === 'matches' && <MatchesTab p={p} />}
-          {tab === 'stats' && <StatsTab p={p} />}
-          {tab === 'career' && <CareerTab p={p} club={club} season={season} />}
-          {tab === 'contract' && <ContractTab p={p} squad={squad} today={today} negotiation={negotiation} />}
-          {tab === 'wishes' && <WishesTab p={p} />}
-          {tab === 'medical' && <MedicalTab p={p} />}
-          {tab === 'report' && <ReportTab p={p} squad={squad} />}
         </div>
       </div>
-    </div>
-  );
-}
-
-function Fact({ label, value, sub, big, title, info }: { label: string; value: string; sub?: string; big?: boolean; title?: string; info?: InfoKey }) {
-  return (
-    <div className={`pp-fact${big ? ' big' : ''}`} title={title}>
-      <div className="pp-fact-lbl">{label}{info && <InfoTip k={info} />}</div>
-      <div className="pp-fact-val">{value}</div>
-      {sub && <div className="pp-fact-sub">{sub}</div>}
     </div>
   );
 }

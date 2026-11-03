@@ -915,7 +915,22 @@ Rechte und linke Positionen haben dieselben Gewichte; die Seite entscheiden **Ve
 Ein Mittelstürmer mit starkem Abschluss erreicht also eine deutlich höhere Eignung als einer mit gleichem Gesamtwert, dessen Stärken aber in der Defensive liegen.
 
 ### Im Spielerprofil
-Im Reiter **Attribute** wählst du oben eine Position: Stammposition, Nebenpositionen und bis zu drei weitere Positionen mit der besten Eignung. Die fünf für diese Position am stärksten gewichteten Attribute sind als **Schlüsselattribute** markiert (Bernstein), die übrigen gewichteten Werte sind normal zu sehen, Attribute ohne Einfluss auf die Position werden gedimmt. Das Netz links zeigt die bis zu acht wichtigsten Attribute der gewählten Position. Die Gewichte gelten für das aktuelle Spieljahr – sie ändern sich mit den Epochen (Rückpassregel, Viererkette, Pressing, Spielaufbau).`,
+Oben im Profil stehen die **sechs Positionen mit der besten Eignung**; ein Klick darauf, auf einen Punkt im kleinen Spielfeld oder die Auswahl „für …“ über den Fähigkeiten wählt eine Position. Die fünf für sie am stärksten gewichteten Attribute tragen einen kräftigen **blauen Strich** (Schlüsselattribute), die übrigen gewichteten einen schlanken hellblauen; „Nur wichtige“ blendet alle Attribute ohne Einfluss auf die Position aus. Die Gewichte gelten für das aktuelle Spieljahr – sie ändern sich mit den Epochen (Rückpassregel, Viererkette, Pressing, Spielaufbau).`,
+  },
+  {
+    id: 'player-profile',
+    category: 'squad',
+    title: 'Spielerprofil – so ist es aufgebaut',
+    keywords: ['spielerprofil', 'profil', 'fähigkeiten', 'trainingsfortschritt', 'trend', 'hütchen', 'allgemein'],
+    body: `## Spielerprofil
+Ein Klick auf einen Spieler öffnet sein Profil. Es ist in vier Bereiche geteilt:
+
+- **Oben links:** Rückennummer, Name und Verein, daneben Stärke, Potenzial (nur als Spanne deiner Scouts), Nation, die **sechs besten Positionen** mit ihrer Eignung, starker Fuß, Spielertyp und Charakter (nur, wenn ihr ihn schon kennt).
+- **Oben rechts:** kleines Spielfeld mit allen Positionen (Farbe = Vertrautheit), Saisonbilanz aller Pflichtspiele und Vertragsstatus. Für eigene Spieler startest du hier das **Positionstraining**.
+- **Unten links – Fähigkeiten:** alle Attribute nach Gruppen, immer sichtbar. Blauer Strich = wichtig für die gewählte Position. Ein **grüner Pfeil** (bzw. roter nach unten) zeigt eine Veränderung seit der vorletzten Bewertungsrunde. Das **Hütchen** markiert, was dein Wochentraining gerade am stärksten fördert (nur eigener Kader). „Trainingsfortschritt zeigen“ schreibt hinter jeden Wert, wie viel er sich seit Beginn der Aufzeichnung verändert hat.
+- **Unten rechts – Reiter:** Allgemein (Spielerdaten, Alter, Größe, Gewicht, Fitness, Frische, Erfahrung, Moral, Form, Zufriedenheit, Verfügbarkeit, Disziplin und Führung), Entwicklung, Saison (Zahlen und letzte Spiele), Karriere, Vertrag (mit Vertragsgespräch), Wünsche, Medizin und Bericht. Bei Jugendspielern steht vorn der Reiter Akademie bzw. Scouting.
+
+Mit den Pfeilen oben rechts (oder den Pfeiltasten) blätterst du durch den Kader, Escape schließt das Profil. Verdeckte Werte wie Konstanz oder Nervenstärke siehst du nie als Zahl – nur als Einschätzung deines Trainerteams bzw. deiner Scouts.`,
   },
   {
     id: 'suitability',
@@ -957,7 +972,7 @@ Das Ergebnis wird auf 1–99 begrenzt. Deshalb kann ein Weltklasse-Stürmer als 
     title: 'Positionsvertrautheit – mehrere Positionen lernen',
     keywords: ['vertrautheit', 'position', 'nebenposition', 'positionstraining', 'umschulen', 'natürlich', 'grün'],
     body: `## Positionsvertrautheit (0–100)
-Jeder Spieler hat für **jede** Position einen eigenen Vertrautheitswert. Im Spielerprofil (Reiter **Attribute**) siehst du alle Positionen auf einem Spielfeld – je grüner, desto vertrauter:
+Jeder Spieler hat für **jede** Position einen eigenen Vertrautheitswert. Im Spielerprofil siehst du oben auf dem kleinen Spielfeld je Position einen Punkt mit „Kürzel|Eignung“ – je grüner der Punkt, desto vertrauter:
 
 - **Natürlich** (≥ 90, kräftiges Grün) – hier spielt er wie zu Hause.
 - **Gut** (75–89, mittleres Grün) – solide einsetzbar, zählt als Nebenposition.
@@ -1131,7 +1146,7 @@ Ein Duell 60 gegen 85 gewinnt der Bessere in gut drei von vier Fällen – deutl
 - Dazu kommen Fehler im Aufbau, Verletzungen, Nachspielzeit, im Pokal Verlängerung und Elfmeterschießen. Die **KI-Trainer** wechseln und ändern bei Rückstand die Ausrichtung.
 
 ## Statistik
-Gezählt wird jede Aktion: Schüsse und Schüsse aufs Tor, Pässe (angekommen), Zweikämpfe und Luftduelle (gewonnen), Flanken, Dribblings, Balleroberungen und Torvorlagen je Spieler. Der Spielbericht zeigt sie unter **Einzelwerte**, das Spielerprofil (Reiter Statistik) die Quoten der Saison – jeweils nur, was es in der Epoche schon gab.
+Gezählt wird jede Aktion: Schüsse und Schüsse aufs Tor, Pässe (angekommen), Zweikämpfe und Luftduelle (gewonnen), Flanken, Dribblings, Balleroberungen und Torvorlagen je Spieler. Der Spielbericht zeigt sie unter **Einzelwerte**, das Spielerprofil (Reiter Saison) die Quoten der Saison – jeweils nur, was es in der Epoche schon gab.
 
 ## Epochen (Soll-Werte mit Quellen in \`data/matchStats.ts\`)
 - **Torschnitt:** rund 3,3 Tore pro Spiel in den Siebzigern, um 2,9 um die Jahrtausendwende, heute gut 3,1.
@@ -2023,7 +2038,7 @@ KI-Vereine kaufen nur Spieler, die auch wollen. Deshalb sammeln sich die Stars b
     title: 'Verträge, Bosman & Kabine',
     keywords: ['vertrag', 'verlängerung', 'bosman', 'ablösefrei', 'vorvertrag', 'angebot', 'zufriedenheit', 'gehaltsgefüge', 'spielzeit'],
     body: `## Verlängern
-Verhandelt wird im Spielerprofil (Reiter **Vertrag & Wert**), frühestens 30 Monate vor Vertragsende. Der Spieler nennt **Haltung**, **Forderung** und **Wunschlaufzeit**:
+Verhandelt wird im Spielerprofil (Reiter **Vertrag**), frühestens 30 Monate vor Vertragsende. Der Spieler nennt **Haltung**, **Forderung** und **Wunschlaufzeit**:
 
 | Einfluss | Wirkung auf die Forderung |
 | --- | --- |
