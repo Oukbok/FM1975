@@ -1,4 +1,5 @@
-// Screenshots des Neues-Spiel-Assistenten in zwei Auflösungen (Start in der 1. und 2. Liga).
+// Screenshots des Neues-Spiel-Assistenten (1920×1080: 1. Liga, 1366×768: 2. Liga Süd, 1280×720: Karrieremodus)
+// und der Seite Statistiken › Ligensystem.
 //   node tests/newgame-shots.mjs [ausgabeordner]
 import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
@@ -17,15 +18,22 @@ const server = createServer(async (req, res) => {
 const url = `http://127.0.0.1:${server.address().port}/`;
 const browser = await chromium.launch();
 const errors = [];
-const runs = [[1920, 1080, undefined, 0], [1280, 720, '2. Liga Süd', 3]];
-for (const [w, h, league, clubIndex] of runs) {
+const runs = [[1920, 1080, undefined, 0, false], [1366, 768, '2. Liga Süd', 3, false], [1280, 720, undefined, 1, true]];
+for (const [w, h, league, clubIndex, career] of runs) {
   const page = await browser.newPage({ viewport: { width: w, height: h } });
   page.on('pageerror', (e) => errors.push(`${w}: ${e.message}`));
   await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
   await page.goto(url);
-  await startNewGame(page, { league, clubIndex, shots: (n) => page.screenshot({ path: `${out}/${w}x${h}_${n}.png` }) });
+  await startNewGame(page, { league, clubIndex, career, shots: (n) => page.screenshot({ path: `${out}/${w}x${h}_${n}.png` }) });
   await page.waitForTimeout(800);
-  await page.screenshot({ path: `${out}/${w}x${h}_4_spiel.png` });
+  await page.screenshot({ path: `${out}/${w}x${h}_7_spiel.png` });
+  // Statistiken › Ligensystem
+  await page.click('.hd-nav-item:has-text("Statistiken"), .tn-cat:has-text("Statistiken")').catch(() => {});
+  await page.click('.tn-sub-item:has-text("Ligensystem")').catch(() => {});
+  await page.waitForSelector('.lp-levels', { timeout: 5000 }).catch(() => {});
+  await page.screenshot({ path: `${out}/${w}x${h}_8_ligensystem.png` });
+  await page.click('.lp-seg button:has-text("Ausland")').catch(() => {});
+  await page.screenshot({ path: `${out}/${w}x${h}_9_ausland.png` });
   await page.close();
 }
 await browser.close();

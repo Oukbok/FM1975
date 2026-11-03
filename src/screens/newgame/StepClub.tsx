@@ -1,117 +1,130 @@
-import ClubCrest from '../../components/ClubCrest';
-import Icon from '../../components/Icon';
-import JerseySVG from '../../components/JerseySVG';
-import { getClubKitDisplay } from '../../data/kits';
-import type { NewGameDraft } from '../NewGameScreen';
-import { ClubPreview, LEAGUES, LeagueKey, SortKey, leaguePreview, sortClubs } from './clubPreview';
 import { useMemo, useState } from 'react';
+import ClubCrest from '../../components/ClubCrest';
+import JerseySVG from '../../components/JerseySVG';
+import { CountryFlag } from '../../components/competition/CountryFlag';
+import { getClubKitDisplay } from '../../data/kits';
+import { ClubPreview, LEAGUES, LeagueKey, SortKey, leaguePreview, sortClubs } from './clubPreview';
+import type { CareerOffer, NewGameDraft } from './draft';
 
-// Schritt 2: Liga & Verein — Ligenbaum, Wappenraster, Detailkarte
-const ROLE_COLOR: Record<ClubPreview['role'], string> = {
-  Favorit: 'var(--accent)', Spitzengruppe: 'var(--green)', Mittelfeld: 'var(--text-2)', Abstiegskampf: 'var(--orange)',
-};
+// Schritt 4: Verein — Teammanager: Land → Liga → Verein; Karriere: drei Angebote.
+// Rechts jeweils die große Vorschau (Wappen, Trikots, Stadion, Stärke, Ziel).
+const repDots = (rep: number) => Math.max(1, Math.min(5, Math.round((rep - 45) / 9)));
 
 function Dots({ n, max = 5 }: { n: number; max?: number }) {
   return <span className="ng-dots">{Array.from({ length: max }, (_, i) => <i key={i} className={i < n ? 'on' : ''} />)}</span>;
 }
 
-/** Ansehen 0–100 → 1–5 Punkte. */
-const repDots = (rep: number) => Math.max(1, Math.min(5, Math.round((rep - 45) / 9)));
-
-function Detail({ c, leagueName, all }: { c: ClubPreview; leagueName: string; all: ClubPreview[] }) {
-  const ladder = [...all].sort((a, b) => a.rank - b.rank);
-  const i = ladder.findIndex((x) => x.id === c.id);
-  const near = ladder.slice(Math.max(0, Math.min(i - 2, ladder.length - 5)), Math.max(0, Math.min(i - 2, ladder.length - 5)) + 5);
+function ClubDetail({ c, leagueName }: { c: ClubPreview; leagueName: string }) {
   const home = getClubKitDisplay(c.club, 'home');
   const away = getClubKitDisplay(c.club, 'away');
+  const pct = Math.round(((c.size - c.rank + 1) / c.size) * 100);
   return (
-    <section className="ng-box ng-detail">
+    <section className="ng-card ng-detail">
       <div className="ng-detail-head">
-        <ClubCrest club={c.club} size={112} />
-        <div>
+        <ClubCrest club={c.club} size={150} />
+        <div className="ng-detail-id">
           <div className="ng-detail-name">{c.name}</div>
-          <div className="ng-note">{c.city} · {c.region}{c.founded ? ` · gegründet ${c.founded}` : ''}</div>
-          <div className="ng-role" style={{ color: ROLE_COLOR[c.role], borderColor: ROLE_COLOR[c.role] }}>{c.role}</div>
+          <div className="ng-detail-sub">{c.city} · {c.region}{c.founded ? ` · gegründet ${c.founded}` : ''}</div>
+          <span className="ng-tag">{c.role}</span>
         </div>
       </div>
-      <div className="ng-kits">
-        <div><JerseySVG {...home} size={120} /><small>Heim</small></div>
-        <div><JerseySVG {...away} size={120} /><small>Auswärts</small></div>
+      <div className="ng-detail-grid">
+        <div className="ng-stat"><span>Liga</span><b>{leagueName}</b></div>
+        <div className="ng-stat"><span>Kaderstärke</span><b>{c.rank}. von {c.size}</b></div>
+        <div className="ng-stat"><span>Ansehen</span><Dots n={repDots(c.reputation)} /></div>
+        <div className="ng-stat"><span>Finanzkraft</span><Dots n={c.finance} /></div>
       </div>
-      <div className="ng-kv"><span>Liga</span><b>{leagueName}</b></div>
+      <div className="ng-meter"><i style={{ width: `${pct}%` }} /></div>
       <div className="ng-kv"><span>Stadion</span><b>{c.stadium}</b></div>
-      <div className="ng-kv"><span>Kapazität</span><b>{c.capacity.toLocaleString('de-DE')}</b></div>
-      <div className="ng-kv"><span>Ansehen</span><Dots n={repDots(c.reputation)} /></div>
-      <div className="ng-kv"><span>Finanzkraft</span><Dots n={c.finance} /></div>
-      <div className="ng-kv"><span>Kaderstärke</span><b>{c.rank}. von {c.size}</b></div>
-      <div className="ng-meter"><i style={{ width: `${Math.round(((c.size - c.rank + 1) / c.size) * 100)}%` }} /></div>
-      <div className="ng-kv"><span>Ziel des Vorstands</span><b className="accent-text">{c.expectation}</b></div>
-      <div className="ng-kv top"><span>Rivalen</span><b>{c.rivals.length ? c.rivals.join(', ') : 'keine in der Region'}</b></div>
-      <div className="ng-label">Im Ligavergleich</div>
-      <div className="ng-ladder">
-        {near.map((x) => (
-          <div key={x.id} className={`ng-ladder-row ${x.id === c.id ? 'on' : ''}`}>
-            <span className="ng-ladder-rank">{x.rank}.</span>
-            <ClubCrest club={x.club} size={26} />
-            <span className="ng-ladder-name">{x.name}</span>
-            <em style={{ color: ROLE_COLOR[x.role] }}>{x.role}</em>
-          </div>
-        ))}
+      <div className="ng-kv"><span>Plätze</span><b>{c.capacity.toLocaleString('de-DE')}</b></div>
+      <div className="ng-kv"><span>Ziel des Vorstands</span><b>{c.expectation}</b></div>
+      <div className="ng-kv"><span>Rivalen</span><b>{c.rivals.length ? c.rivals.join(', ') : 'keine in der Region'}</b></div>
+      <div className="ng-kits">
+        <div><JerseySVG {...home} size={96} /><small>Heim</small></div>
+        <div><JerseySVG {...away} size={96} /><small>Auswärts</small></div>
       </div>
-      <p className="ng-note">Kaderstärke und Finanzkraft sind Einschätzungen im Ligavergleich. Die Kader entstehen beim Start.</p>
+      <p className="ng-note ng-push">Kaderstärke und Finanzkraft sind Einschätzungen im Ligavergleich; die Kader entstehen beim Start.</p>
     </section>
   );
 }
 
-export function StepClub({ d, set }: { d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void }) {
+function ManagerPick({ d, set }: { d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void }) {
   const [sort, setSort] = useState<SortKey>('reputation');
   const previews = useMemo(() => Object.fromEntries(LEAGUES.map((l) => [l.key, leaguePreview(l.key)])) as Record<LeagueKey, ClubPreview[]>, [d.datasetId]);
   const league = LEAGUES.find((l) => l.key === d.league) ?? LEAGUES[0];
-  const list = sortClubs(previews[d.league], sort);
-  const sel = previews[d.league].find((c) => c.id === d.clubId) ?? list[0];
-  const chooseLeague = (k: LeagueKey) => {
-    if (k === d.league) return;
-    set({ league: k, clubId: sortClubs(previews[k], 'reputation')[0]?.id ?? '' });
-  };
-
+  const list = sortClubs(previews[league.key], sort);
+  const sel = previews[league.key].find((c) => c.id === d.clubId) ?? list[0];
+  const chooseLeague = (k: LeagueKey) => { if (k !== d.league) set({ league: k, clubId: sortClubs(previews[k], 'reputation')[0]?.id ?? '' }); };
   return (
-    <div className="ng-club-layout">
-      <section className="ng-box ng-tree">
-        <h3 className="ng-box-title"><Icon name="international" size={20} /> Ligen</h3>
-        <div className="ng-tree-country">Deutschland</div>
-        {LEAGUES.map((l) => (
-          <button key={l.key} className={`ng-tree-item ${d.league === l.key ? 'on' : ''}`} onClick={() => chooseLeague(l.key)}>
-            <span>{l.name}</span><small>{previews[l.key].length}</small>
-          </button>
-        ))}
-        <div className="ng-tree-item off" title="Die Vereine der DDR kommen 1991 mit der Wiedervereinigung in die Ligen.">
-          <span>DDR-Oberliga</span><small>ab 1991</small>
+    <div className="ng-cols ng-cols-club">
+      <section className="ng-card ng-tree">
+        <h3 className="ng-h">Land</h3>
+        <div className="rl rl-sm">
+          <div className="rl-row ng-tree-row on"><span className="ng-tree-flag"><CountryFlag country="Deutschland" height={14} /></span><span className="rl-name">Deutschland</span></div>
+          <div className="rl-row ng-tree-row off" title="DDR-Vereine sind nicht wählbar; sie spielen im Hintergrund mit."><span className="ng-tree-flag"><CountryFlag country="DDR" height={14} /></span><span className="rl-name">DDR</span><span className="rl-num">nicht wählbar</span></div>
         </div>
-        <p className="ng-note">{league.note}</p>
+        <h3 className="ng-h">Liga</h3>
+        <div className="rl rl-sm">
+          {LEAGUES.map((l) => (
+            <button key={l.key} type="button" className={`rl-row ng-tree-row ng-league ${d.league === l.key ? 'on' : ''}`} onClick={() => chooseLeague(l.key)}>
+              <span className="rl-name">{l.name}</span><span className="rl-num">{previews[l.key].length}</span>
+            </button>
+          ))}
+        </div>
+        <p className="ng-note ng-push">{league.note}</p>
       </section>
 
-      <section className="ng-box ng-pick">
-        <div className="ng-pick-bar">
-          <h3 className="ng-box-title"><Icon name="dashVerein" size={20} /> {league.name} · {list.length} Vereine</h3>
-          <div className="seg-group">
+      <section className="ng-card ng-pick">
+        <div className="ng-h-row">
+          <h3 className="ng-h">{league.name}</h3>
+          <div className="ng-seg small">
             {([['reputation', 'Stärke'], ['name', 'Name'], ['region', 'Region']] as [SortKey, string][]).map(([k, l]) => (
-              <button key={k} type="button" className={`seg-btn ${sort === k ? 'active' : ''}`} onClick={() => setSort(k)}>{l}</button>
+              <button key={k} type="button" className={sort === k ? 'on' : ''} onClick={() => setSort(k)}>{l}</button>
             ))}
           </div>
         </div>
-        <div className="ng-crests">
+        <div className="rl ng-clubs">
           {list.map((c) => (
-            <button key={c.id} className={`ng-club ${sel?.id === c.id ? 'on' : ''}`} onClick={() => set({ clubId: c.id })}>
-              <ClubCrest club={c.club} size={92} />
-              <b>{c.shortName}</b>
-              <small>{c.name}</small>
-              <span className="ng-club-meta"><Dots n={repDots(c.reputation)} /><em style={{ color: ROLE_COLOR[c.role] }}>{sort === 'region' ? c.region : c.role}</em></span>
+            <button key={c.id} type="button" className={`rl-row ng-club ${sel?.id === c.id ? 'on' : ''}`} onClick={() => set({ clubId: c.id })}>
+              <span className="rl-club"><ClubCrest club={c.club} size={30} /><span className="rl-name">{c.name}</span></span>
+              <span className="ng-club-role">{sort === 'region' ? c.region : c.role}</span>
+              <Dots n={repDots(c.reputation)} />
             </button>
           ))}
         </div>
       </section>
 
-      {sel && <Detail c={sel} leagueName={league.name} all={previews[d.league]} />}
+      {sel && <ClubDetail c={sel} leagueName={league.name} />}
     </div>
   );
+}
+
+function CareerPick({ d, set, offers }: { d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void; offers: CareerOffer[] }) {
+  const sel = offers.find((o) => o.club.id === d.clubId) ?? offers[0];
+  return (
+    <div className="ng-cols ng-cols-career">
+      <section className="ng-card">
+        <h3 className="ng-h">Deine Angebote</h3>
+        <p className="ng-note">Noch kennt dich keiner. Diese drei Vereine trauen dir den Job zu – wähle eines der Angebote.</p>
+        <div className="ng-offers">
+          {offers.map((o) => (
+            <button key={o.club.id} type="button" className={`ng-offer ${sel?.club.id === o.club.id ? 'on' : ''}`} onClick={() => set({ clubId: o.club.id, league: o.league })}>
+              <ClubCrest club={o.club.club} size={64} />
+              <span className="ng-offer-txt">
+                <b>{o.club.name}</b>
+                <small>{o.leagueName} · Kaderstärke {o.club.rank}. von {o.club.size}</small>
+                <em>Ziel: {o.club.expectation}</em>
+              </span>
+              <span className="ng-radio" aria-hidden />
+            </button>
+          ))}
+        </div>
+      </section>
+      {sel && <ClubDetail c={sel.club} leagueName={sel.leagueName} />}
+    </div>
+  );
+}
+
+export function StepClub({ d, set, offers }: { d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void; offers: CareerOffer[] }) {
+  return d.mode === 'career' ? <CareerPick d={d} set={set} offers={offers} /> : <ManagerPick d={d} set={set} />;
 }

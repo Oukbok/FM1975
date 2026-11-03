@@ -1,0 +1,77 @@
+/* =============================================================================
+   ÜBERSICHT LIGENSYSTEM (components/competition/LeaguePyramid.tsx)
+   Links Vereinsliste der gewählten Liga mit Zonen, rechts die Pyramide als
+   klickbare Kästen. Im Assistenten „Neues Spiel“ und unter Statistiken › Ligensystem.
+   ============================================================================= */
+.lp { height: 100%; min-height: 0; display: flex; flex-direction: column; gap: 14px; }
+.lp-bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.lp-seg { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.lp-seg button {
+  display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px;
+  background: rgba(12, 15, 21, 0.5); border: none; border-right: 1px solid var(--border); color: var(--text-2);
+  font: 500 15px var(--font-display); letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+}
+.lp-seg button:last-child { border-right: none; }
+.lp-seg button.on { background: var(--accent-soft); color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent); }
+.lp-countries { display: flex; flex-wrap: wrap; gap: 4px; flex: 1; min-width: 0; }
+.lp-countries button {
+  display: inline-flex; align-items: center; gap: 5px; padding: 4px 7px; border-radius: 4px;
+  border: 1px solid var(--border-soft); background: none; color: var(--text-3); font: 600 12px var(--font-ui); letter-spacing: 0.8px; cursor: pointer;
+}
+.lp-countries button:hover { color: var(--text); border-color: var(--border); }
+.lp-countries button.on { border-color: var(--accent); color: var(--accent); }
+.lp-season { margin-left: auto; font-size: 15px; color: var(--text-3); }
+
+.lp-main { flex: 1; min-height: 0; display: grid; grid-template-columns: 400px minmax(0, 1fr); gap: 20px; }
+.lp-list { min-height: 0; display: flex; flex-direction: column; border: 1px solid var(--border-soft); border-radius: 6px; background: rgba(10, 13, 18, 0.45); }
+.lp-list-head { padding: 12px 14px 10px; border-bottom: 1px solid var(--border-soft); }
+.lp-list-title { font: 500 24px var(--font-display); letter-spacing: 1px; text-transform: uppercase; }
+.lp-list-sub { display: flex; align-items: center; gap: 8px; font-size: 15px; color: var(--text-2); margin-top: 2px; }
+.lp-list-note { font-size: 12.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-4); margin-top: 6px; }
+.lp-rows { flex: 1; min-height: 0; overflow-y: auto; }
+.lp-rows .rl-row { grid-template-columns: 34px minmax(0, 1fr) 40px; }
+.lp-rows .rl-club, .lp-club { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+.lp-rows .rl-num { color: var(--text-3); font-size: 14px; }
+.lp-dot { width: 14px; height: 14px; margin: 0 4px; flex: none; border-radius: 50%; box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1); }
+.lp-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 10px 14px; border-top: 1px solid var(--border-soft); font-size: 13.5px; color: var(--text-3); }
+.lp-legend span { display: inline-flex; align-items: center; gap: 7px; }
+.lp-legend i { width: 4px; height: 14px; background: transparent !important; }
+.lp-legend i.zone-cl { box-shadow: inset 4px 0 0 var(--green) !important; }
+.lp-legend i.zone-po { box-shadow: inset 4px 0 0 color-mix(in srgb, var(--pos) 45%, transparent) !important; }
+.lp-legend i.zone-rel { box-shadow: inset 4px 0 0 var(--red) !important; }
+.lp-empty { padding: 20px; color: var(--text-3); font-size: 16px; line-height: 1.45; }
+.lp-empty.big { margin: auto; max-width: 520px; text-align: center; font-size: 18px; }
+
+.lp-stage { min-height: 0; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+.lp-levels { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 0; padding: 10px 0; }
+.lp-level { position: relative; display: grid; grid-template-columns: 96px 1fr; align-items: center; padding: 14px 0; }
+.lp-level + .lp-level::before {
+  content: ''; position: absolute; left: calc(96px + 50%); top: -4px; height: 22px; width: 1px;
+  transform: translateX(-48px); background: linear-gradient(var(--border), transparent);
+}
+.lp-level-no { font-size: 12.5px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-4); }
+.lp-boxes { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+.lp-box {
+  position: relative; width: 250px; display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center;
+  padding: 14px 14px 12px; border-radius: 6px; border: 1px solid var(--border); background: rgba(26, 30, 38, 0.92);
+  color: var(--text); font-family: inherit; cursor: pointer; transition: border-color 0.2s, transform 0.2s, background 0.2s;
+}
+.lp-level:first-child .lp-box { width: 300px; }
+.lp-box:hover { border-color: var(--text-4); transform: translateY(-1px); }
+.lp-box b { font: 500 21px var(--font-display); letter-spacing: 1px; text-transform: uppercase; }
+.lp-box small { font-size: 14px; color: var(--text-3); }
+.lp-flow { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 10px; margin-top: 4px; }
+.lp-flow em { font-style: normal; font-size: 13px; color: var(--text-3); }
+.lp-box.on { border-color: var(--accent); background: rgba(34, 38, 46, 0.96); box-shadow: 0 0 0 1px var(--accent) inset; }
+.lp-box.mine::after { content: 'Dein Verein'; position: absolute; top: -9px; right: 10px; padding: 1px 6px; border-radius: 3px; background: var(--accent); color: var(--accent-ink); font: 600 10.5px var(--font-ui); letter-spacing: 0.8px; text-transform: uppercase; }
+.lp-box.pool { border-style: dashed; background: rgba(18, 21, 27, 0.7); }
+.lp-level.pool .lp-box { width: 420px; }
+.lp-note { margin: 0; font-size: 14.5px; color: var(--text-3); text-align: center; }
+.lp-reforms { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding-top: 10px; border-top: 1px solid var(--border-soft); }
+.lp-reforms-lbl { font-size: 12.5px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-4); margin-right: 4px; }
+.lp-reform { display: inline-flex; gap: 8px; align-items: baseline; padding: 4px 9px; border: 1px solid var(--border-soft); border-radius: 4px; font-size: 14px; color: var(--text-2); }
+.lp-reform b { font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+.lp-reform.past { opacity: 0.5; }
+
+/* Statistiken › Ligensystem: Box füllt die Seite */
+.lp-box-page .dbox-body { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }

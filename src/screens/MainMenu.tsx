@@ -1,5 +1,6 @@
 import { AppSettings, SaveMeta, deleteSave, listSaves, storageAvailable } from '../engine/save';
 import { NewGameOptions } from '../types';
+import type { Game } from '../game/state';
 import { LoadGameScreen } from './LoadGameScreen';
 import { NewGameScreen } from './NewGameScreen';
 import { SettingsScreen } from './SettingsScreen';
@@ -14,7 +15,7 @@ export type MenuView = 'main' | 'new' | 'load' | 'settings' | 'datasets';
 
 export function MainMenu({ settings, onNewGame, onLoad, onUpdateSettings }: {
   settings: AppSettings;
-  onNewGame: (o: NewGameOptions) => void;
+  onNewGame: (o: NewGameOptions, prebuilt?: Game) => void;
   onLoad: (slot: string) => void;
   onUpdateSettings: (s: AppSettings) => void;
 }) {
@@ -28,7 +29,7 @@ export function MainMenu({ settings, onNewGame, onLoad, onUpdateSettings }: {
   if (view === 'new') {
     return (
       <div className="menu-bg ng-host">
-        <NewGameScreen defaults={settings} onBack={() => setView('main')} onStart={onNewGame} />
+        <NewGameScreen defaults={settings} onBack={() => setView('main')} onStart={onNewGame} onSettings={onUpdateSettings} />
       </div>
     );
   }

@@ -1826,6 +1826,17 @@ export interface ManagerProfile {
   background: ManagerBackground;
   /** Optionaler Avatar-/Initialen-Seed. */
   avatarSeed: string;
+  // --- Profilangaben aus dem Assistenten „Neues Spiel“ (optional, ohne Spielwirkung) ---
+  firstName?: string;
+  lastName?: string;
+  /** Geburtsdatum (ISO, UTC). */
+  birthDate?: string;
+  nationality2?: string;
+  /** Lieblingsverein / „Niemals trainieren würde ich“ (Vereins-IDs). */
+  favoriteClubId?: string;
+  avoidClubId?: string;
+  /** Spielmodus beim Start: Verein frei gewählt oder Karriere über Angebote. */
+  startMode?: 'manager' | 'career';
 }
 
 /** Trainer-Hintergrund (beeinflusst Startbedingungen leicht / rein narrativ). */

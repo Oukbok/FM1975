@@ -78,11 +78,12 @@ export default function App() {
   useEffect(() => { hydrateDatasets().then(rerender).catch(() => {}); }, [rerender]);
 
   // --- Neues Spiel starten ---
-  const startGame = useCallback((opts: NewGameOptions) => {
-    // Gewählten Datensatz anwenden (Vereine, Ligen, Geschichte …), dann das Spiel erzeugen.
+  const startGame = useCallback((opts: NewGameOptions, prebuilt?: Game) => {
+    // Gewählten Datensatz anwenden (Vereine, Ligen, Geschichte …), dann das Spiel erzeugen
+    // (bzw. das im Assistenten für „Willkommen beim Verein“ schon erzeugte übernehmen).
     const ds = cachedDataset(opts.datasetId);
     applyDataset(ds);
-    const g0 = createNewGame(opts);
+    const g0 = prebuilt ?? createNewGame(opts);
     g0.datasetId = ds?.meta.id ?? BUILTIN_ID;
     g0.datasetName = ds?.meta.name ?? 'Standard (1975)';
     const calendar = g0.calendar;
