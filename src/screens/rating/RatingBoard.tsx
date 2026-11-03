@@ -95,7 +95,7 @@ export function StageCard({ row, club, phase, reduced, countMs }: {
           {holding && <span className={`rb2-verdict ${cls(d)}`}>{verdict}{row.r.tag && d !== 0 ? ` · ${row.r.tag}` : ''}</span>}
         </div>
         {phase === 'call' && <div className="rt-wait"><span /><span /><span /></div>}
-        {holding && (
+        {holding && d !== 0 && (
           <ul className="rt-reasons rb2-reasons">
             {row.reasons.slice(0, 5).map((x, i) => (
               <li key={x.k + i} className={x.v > 0 ? 'plus' : x.v < 0 ? 'minus' : 'note'} style={{ animationDelay: `${0.1 + i * 0.1}s` }}>
@@ -201,8 +201,9 @@ export function Overview({ rows, shown, current, picked, onPick }: {
                   <td className="rl-dim">{row.p ? scoutRangeText(row.p) : '–'}</td>
                   <td className="num">{row.r.oldOverall}</td>
                   <td className={`num rl-main rb2-c-new ${done ? cls(row.delta) : ''}`}>{done ? row.r.newOverall : '·'}</td>
-                  <td className="rb2-c-why">{done ? <Reason x={r1} /> : null}</td>
-                  <td className="rb2-c-why">{done ? <Reason x={r2} /> : null}</td>
+                  {/* Gründe nur bei veränderter Stärke (Wunsch Pascal) */}
+                  <td className="rb2-c-why">{done && row.delta !== 0 ? <Reason x={r1} /> : null}</td>
+                  <td className="rb2-c-why">{done && row.delta !== 0 ? <Reason x={r2} /> : null}</td>
                 </tr>
               );
             })}
