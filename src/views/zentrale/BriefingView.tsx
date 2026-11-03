@@ -4,7 +4,6 @@
 //   „Briefing öffnen“ zeigt das Briefing-Fenster (BriefingModal, ohne Auftakt-Animation).
 // =============================================================================
 import { useMemo, useState } from 'react';
-import Icon from '../../components/Icon';
 import { briefingFor } from '../../data/briefings';
 import { CHANGE_KIND_META } from '../../game/briefingChanges';
 import { BriefingRecord, briefingLog, briefingOfRecord } from '../../game/seasonBriefing';
@@ -58,8 +57,7 @@ export function BriefingView({ g, onGoto, onOpen }: { g: Game; onGoto?: (s: Scre
           <div className="bf-arch-changes">
             {b.inGame.map((c, i) => (
               <div key={i} className="bf-arch-change">
-                <Icon name={c.icon} size={18} />
-                <span><b>{c.title}</b><small>{CHANGE_KIND_META[c.kind].label}</small></span>
+                <b>{c.title}</b><small>{CHANGE_KIND_META[c.kind].label}</small>
               </div>
             ))}
           </div>
