@@ -110,7 +110,7 @@ export function realismOf(id: SeasonPromiseId, c: RealismCtx): number {
     case 'europaNext': return E <= 4 ? 0.7 : E <= 7 ? 0.4 : E <= 10 ? 0.2 : 0.06;
     case 'klassenerhalt': return keep ? 0.6 : 0.95;
     case 'zielPlus': return E <= 2 ? 0.15 : keep ? 0.55 : 0.35;
-    case 'ziel': return E <= 1 ? 0.35 : E <= 2 ? 0.45 : keep ? 0.75 : 0.6;
+    case 'ziel': return E <= 1 ? 0.35 : E <= 2 ? 0.45 : keep ? 0.65 : 0.55;
     default: return 0.8;
   }
 }

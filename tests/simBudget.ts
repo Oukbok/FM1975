@@ -20,7 +20,8 @@ export function budgetCheck(g: Game): void {
   if (!S.on) return;
   const today = g.calendar.currentDate;
   const md = today.slice(5);
-  if (md !== '09-15' && md !== '03-15') return;
+  if ((md !== '09-15' && md !== '03-15') || S.seen === today) return;
+  S.seen = today; // processDay läuft je Kalendertag zweimal (Anzeige, dann Ablauf)
   const p = planFor(g);
   const club = g.clubs[g.managedClubId];
   if (!p || !club) return;
@@ -31,6 +32,7 @@ export function budgetCheck(g: Game): void {
   const scale = economyScale(year);
   const rev = planRevenue(p);
   if (md === '09-15') {
+    if (S.rows.some((r) => r.s === g.season)) return;
     const sp = stadiumPlan(club, year);
     S.rows.push({ s: g.season, use: sum / lim, renew: 0, renewN: 0, tr: (p.chosen.transfers / rev), infra: p.chosen.infra / rev, stad: sp ? p.chosen.infra / sp.cost : -1, res: plannedReserve(p) / rev });
     return;

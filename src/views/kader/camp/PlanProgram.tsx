@@ -84,14 +84,14 @@ export function PlanProgram({ program, setProgram, tests, setTests, travelers, d
           const ex = expected(id);
           return (
             <label key={id} className={`pp-drill ${on ? 'on' : ''} ${can ? '' : 'off'}`}
-              title={`${def.keepers ? 'Nur Torhüter. ' : ''}Erwartet: ${ex < 0.95 ? 'kaum ein Spieler' : `etwa ${Math.round(ex)} Spieler`} mit +1`}>
+              title={`${def.keepers ? 'Nur Torhüter. ' : ''}Erwartet: ${ex < 0.95 ? 'kaum ein Spieler' : `bis zu etwa ${Math.round(ex)} Spieler`} mit +1`}>
               <input type="checkbox" checked={on} disabled={!can} onChange={() => toggleDrill(id)} />
               <span>{def.label}</span><em>({def.cost})</em>
             </label>
           );
         })}
       </div>
-      <div className="pp-hint">Kosten aus den Taktik-Punkten. Jeder Inhalt trainiert seine Attribute gezielt: Chance auf +1 je Spieler (Junge mit Luft nach oben eher), Vorrang bei den nächsten Aufwertungen.</div>
+      <div className="pp-hint">Kosten aus den Taktik-Punkten. Jeder Inhalt trainiert seine Attribute gezielt: Chance auf +1 je Spieler (Junge mit Luft nach oben eher), Vorrang bei den nächsten Aufwertungen. Ein +1 verbraucht Entwicklungspunkte des Lagers – mehr, als das Lager ohnehin bringt, holst du so nicht heraus.</div>
       <label className="cp-dur pp-tests"><span>Testspiele vor Ort <b>{tests}</b></span>
         <input type="range" min={0} max={4} value={tests} onChange={(e) => setTests(Number(e.target.value))} /></label>
     </section>

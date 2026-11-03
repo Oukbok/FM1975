@@ -213,10 +213,10 @@ export function giveSeasonPromises(g: Game, picks: SeasonPromiseId[], today = g.
 // -----------------------------------------------------------------------------
 // Messung
 // -----------------------------------------------------------------------------
-interface Lineups { ids: string[][]; bad: Set<string>[]; cards: { y: number; r: number }; leagueY: number; teamMatches: number }
+interface Lineups { ids: string[][]; dates: string[]; bad: Set<string>[]; cards: { y: number; r: number }; leagueY: number; teamMatches: number }
 
 function ownLeagueLineups(g: Game, me: string): Lineups {
-  const out: Lineups = { ids: [], bad: [], cards: { y: 0, r: 0 }, leagueY: 0, teamMatches: 0 };
+  const out: Lineups = { ids: [], dates: [], bad: [], cards: { y: 0, r: 0 }, leagueY: 0, teamMatches: 0 };
   const list = g.fixtures.filter((m) => m.result).sort((a, b) => a.date.localeCompare(b.date));
   for (const m of list) {
     const res = m.result as typeof m.result & { report?: { lineups: { home: { id: string; started: boolean; grade: number; card?: string }[]; away: { id: string; started: boolean; grade: number; card?: string }[] } } };
@@ -227,6 +227,7 @@ function ownLeagueLineups(g: Game, me: string): Lineups {
     const lu = res!.report?.lineups?.[home ? 'home' : 'away'];
     if (!lu) continue;
     out.ids.push(lu.filter((e) => e.started).map((e) => e.id));
+    out.dates.push(m.date);
     out.bad.push(new Set(lu.filter((e) => e.grade >= SP_LIMITS.badGrade).map((e) => e.id)));
     out.cards.r += lu.filter((e) => e.card === 'Rot' || e.card === 'Gelb-Rot').length;
   }
@@ -257,13 +258,29 @@ export function promiseLineupPrefs(g: Game): LineupPrefs | undefined {
   // Jugend: stärkerer Bonus, solange der Anteil unter dem Ziel liegt.
   let youth = 1;
   if (open.has('jugend')) {
-    const all = L?.ids.reduce((a, x) => a + x.length, 0) ?? 0;
-    const y = L?.ids.reduce((a, x) => a + x.filter((pid) => (g.players[pid]?.age ?? 99) <= 21).length, 0) ?? 0;
-    youth = all && y / all >= SP_LIMITS.youthShare + 0.03 ? 1.05 : 1.2;
+    const { y, all } = L ? youthStarts(g, L, new Set(rec.base.young)) : { y: 0, all: 0 };
+    // Gleitend statt Schalter (sonst pendelt die Elf zwischen allen und keinem Jungen): Ziel + 5 % → ×1,05, darunter bis ×1,35.
+    youth = all ? 1 + clamp((SP_LIMITS.youthShare + 0.05 - y / all) * 3, 0.05, 0.35) : 1.35;
   }
   const vets = new Set(open.has('erfahrung') ? rec.base.vets : []);
-  const weight = (p: Player) => (p.age <= 21 ? youth : 1) * (vets.has(p.id) ? 1.06 : 1) * (last.has(p.id) ? 0.95 : 1);
+  const young = new Set(rec.base.young);
+  const weight = (p: Player) => (p.age <= 21 || young.has(p.id) ? youth : 1) * (vets.has(p.id) ? 1.06 : 1) * (last.has(p.id) ? 0.95 : 1);
   return { rest, weight };
+}
+
+/** Alter am Spieltag (Geburtsdatum, UTC) – wer im Saisonverlauf 22 wird, zählt bis dahin als Jugend. */
+function ageAt(p: Player | undefined, date: string): number {
+  if (!p) return 99;
+  if (!p.dateOfBirth) return p.age;
+  const [y, m, d] = p.dateOfBirth.split('-').map(Number);
+  const [Y, M, D] = date.split('-').map(Number);
+  return Y - y - (M < m || (M === m && D < d) ? 1 : 0);
+}
+/** Startelf-Einsätze von Spielern bis 21 (Alter am Spieltag oder beim ersten Training) und alle Einsätze. */
+function youthStarts(g: Game, L: Lineups, young: Set<string>): { y: number; all: number } {
+  let y = 0, all = 0;
+  L.ids.forEach((x, i) => { all += x.length; y += x.filter((pid) => young.has(pid) || ageAt(g.players[pid], L.dates[i]) <= 21).length; });
+  return { y, all };
 }
 
 export interface SPStatus { s: 'kept' | 'broken' | 'good' | 'risk' | 'open'; text: string }
@@ -318,9 +335,7 @@ function measure(g: Game, rec: SeasonPromiseRecord, id: SeasonPromiseId): SPStat
     }
     case 'jugend': {
       const L = ownLeagueLineups(g, me);
-      const all = L.ids.reduce((a, x) => a + x.length, 0);
-      const yg = new Set(b.young);
-      const y = L.ids.reduce((a, x) => a + x.filter((pid) => yg.has(pid) || (g.players[pid]?.age ?? 99) <= 21).length, 0);
+      const { y, all } = youthStarts(g, L, new Set(b.young));
       const sh = all ? y / all : 0;
       return { s: L.ids.length < 4 ? 'open' : sh >= SP_LIMITS.youthShare ? 'good' : 'risk', text: `${Math.round(sh * 100)} % der Startelf-Einsätze für Spieler bis 21.` };
     }
