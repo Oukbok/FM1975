@@ -73,7 +73,7 @@ const DANGER = /schlie|abbrech|bestätig|unterschreib|annehm|ablehn|kaufen|verka
 
 /** Interaktive Ziele im Fenster (Reiter, Chips, Segmente, Häkchen, Regler, Auswahllisten, Zeilen). */
 const TARGETS = [
-  '[role=tab]', '.tab', '[class$="-tab"]', '[class*="-tab "]', '.dchip', '.seg-btn', '.chip',
+  '[role=tab]', '.tab', '[class$="-tab"]', '[class*="-tab "]', '.dchip', '.seg-btn', '.chip', '[class$="-seg"] > button', '[class*="-seg "] > button',
   'input[type=checkbox]', 'input[type=range]', 'select', '.toggle',
   'tr.clickable', '.rl-row.clickable', '[class$="-row"][role=button]', 'button.ft-card', '.pp-preset',
 ].join(', ');
@@ -85,7 +85,7 @@ const TARGETS = [
  */
 export async function probeWindow(page, name, frameSel, open, opts = {}) {
   const issues = [];
-  const max = opts.max ?? 28;
+  const max = opts.max ?? 40;
   if (open) await open();
   await page.waitForTimeout(opts.settle ?? 500);
   const base = await rectOf(page, frameSel);
@@ -102,31 +102,41 @@ export async function probeWindow(page, name, frameSel, open, opts = {}) {
     try { await fn(); await check(label); } catch (e) { issues.push(`${label}: Fehler ${e.message.split('\n')[0]}`); }
   }
   let reopen = 0;
+  let acted = 0;
   for (let i = 0; i < max; i++) {
-    let t;
     try {
-      const all = root().locator(TARGETS);
-      const n = await all.count();
-      if (i >= n) break;
-      t = all.nth(i);
-      if (!(await t.isVisible().catch(() => false))) continue;
-      const info = await t.evaluate((e) => ({ tag: e.tagName, type: e.getAttribute('type'), txt: (e.innerText || e.getAttribute('aria-label') || e.className || '').toString().trim().slice(0, 30), dis: e.disabled }));
-      if (info.dis) continue;
-      if (info.tag !== 'INPUT' && info.tag !== 'SELECT' && DANGER.test(info.txt)) continue;
-      const label = `${info.tag.toLowerCase()}${info.type ? ':' + info.type : ''} „${info.txt.replace(/\s+/g, ' ')}“`;
+      // Ziel i im Fenster suchen und direkt im Browser bedienen (schnell, ohne Wartezeiten).
       const before = await page.locator('.modal-overlay, .pcm-layer').count();
-      if (info.tag === 'SELECT') {
-        const opts2 = await t.locator('option').count();
-        if (opts2 > 1) await t.selectOption({ index: opts2 - 1 });
-      } else if (info.type === 'range') {
-        await t.focus(); await page.keyboard.press('End'); await check(label + ' (max)'); await page.keyboard.press('Home');
-      } else {
-        await t.click({ timeout: 1200 });
-      }
+      const info = await page.evaluate(({ fs, ts, i, danger }) => {
+        const frames = [...document.querySelectorAll(fs)].filter((e) => e.getBoundingClientRect().width > 0);
+        const fr = frames[frames.length - 1];
+        if (!fr) return { end: true };
+        const all = [...fr.querySelectorAll(ts)];
+        if (i >= all.length) return { end: true };
+        const e = all[i];
+        const r = e.getBoundingClientRect();
+        const txt = (e.innerText || e.getAttribute('aria-label') || e.className || '').toString().trim().replace(/\s+/g, ' ').slice(0, 30);
+        const res = { tag: e.tagName, type: e.getAttribute('type'), txt };
+        if (r.width === 0 || r.height === 0 || e.disabled) return { ...res, skip: true };
+        if (e.tagName !== 'INPUT' && e.tagName !== 'SELECT' && new RegExp(danger, 'i').test(txt)) return { ...res, skip: true };
+        const fire = (el, v) => {
+          const proto = el.tagName === 'SELECT' ? HTMLSelectElement.prototype : HTMLInputElement.prototype;
+          Object.getOwnPropertyDescriptor(proto, 'value').set.call(el, v);
+          el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true }));
+        };
+        if (e.tagName === 'SELECT') { if (e.options.length > 1) fire(e, e.options[e.options.length - 1].value); }
+        else if (e.type === 'range') fire(e, e.max || '100');
+        else { e.dispatchEvent(new MouseEvent('mouseover', { bubbles: true })); e.click(); }
+        return res;
+      }, { fs: frameSel, ts: TARGETS, i, danger: DANGER.source });
+      if (info.end) break;
+      if (info.skip) continue;
+      const label = `${info.tag.toLowerCase()}${info.type ? ':' + info.type : ''} „${info.txt}“`;
+      acted++;
       const r = await check(label);
       // Neues Fenster darüber? (Profil aus einer Zeile o. Ä.) → schließen
       const after = await page.locator('.modal-overlay, .pcm-layer').count();
-      if (after > before) { await page.keyboard.press('Escape'); await page.waitForTimeout(200); if (await page.locator('.modal-overlay, .pcm-layer').count() > before) await page.mouse.click(3, 3); await page.waitForTimeout(200); }
+      if (after > before) { await page.keyboard.press('Escape'); await page.waitForTimeout(150); if (await page.locator('.modal-overlay, .pcm-layer').count() > before) await page.mouse.click(3, 3); await page.waitForTimeout(150); }
       if (!r || !(await rectOf(page, frameSel))) {
         if (!open || ++reopen > 3) { issues.push(`${label}: Fenster geschlossen – Prüfung beendet`); break; }
         await open(); await page.waitForTimeout(400);
@@ -137,10 +147,10 @@ export async function probeWindow(page, name, frameSel, open, opts = {}) {
   try {
     const rows = root().locator('tr, li, .rl-row');
     const n = Math.min(await rows.count(), 6);
-    for (let i = 0; i < n; i++) { await rows.nth(i).hover({ timeout: 800 }).catch(() => {}); }
+    for (let i = 0; i < n; i++) { await rows.nth(i).hover({ timeout: 400, force: true }).catch(() => {}); }
     await check('Hover über Zeilen');
   } catch { /* egal */ }
-  return { name, base, issues };
+  return { name, base, issues, acted };
 }
 
 /** Alle offenen Fenster/Overlays schließen (Escape, Schließen-Knöpfe). */

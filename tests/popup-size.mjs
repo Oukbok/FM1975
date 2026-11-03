@@ -19,7 +19,7 @@ const results = [];
 const report = (r) => {
   const b = r.base && typeof r.base === 'object' ? `${r.base.w}×${r.base.h}` : r.base ?? '-';
   const st = !r.issues.length ? 'fest' : r.issues[0].startsWith('nicht') ? r.issues[0] : 'WÄCHST';
-  console.log(`${r.view} ${r.name.padEnd(30)} ${String(b).padEnd(12)} ${st}`);
+  console.log(`${r.view} ${r.name.padEnd(30)} ${String(b).padEnd(12)} ${st}${r.acted != null ? ` (${r.acted} Bedienschritte)` : ''}`);
   if (st === 'WÄCHST') for (const i of r.issues.slice(0, 6)) console.log('    ' + i);
 };
 const errors = [];
@@ -58,31 +58,57 @@ for (const view of VIEWS) {
     ['briefing', '.si-window', async () => { await nav('Zentrale', 'Briefing'); await click('button:has-text("Briefing öffnen")'); }],
     ['chronik', '.chm-modal', async () => { await closeAll(page); await click('.dashx-foot-link'); }],
     ['gala', '.gb-root', async () => { await nav('Statistiken', 'Auszeichnungen'); await page.locator('.app-main button.rl-row[title*="Gala"]').first().click(); }, { max: 0 }],
-    ['auslosung', '.dr-root', async () => { await nav('Statistiken', 'Pokal'); await click('.app-main .dchip:has-text("Auslosung")'); await page.waitForTimeout(600); }],
-    ['trainingslager', '.cp-modal', async () => { await nav('Kader', 'Trainingslager').catch(() => nav('Training', 'Trainingslager')); await click('button:has-text("Trainingslager planen")'); }],
-    ['sponsor-karte', '.sp3-card', async () => { await nav('Finanzen', 'Sponsoring'); await page.locator('.app-main [data-deal], .app-main .sp3-logo, .app-main .sp3-slot').first().click(); }],
-    ['spielbericht', '.mr-modal', async () => { await nav('Spieltag', 'Spielplan'); await page.locator('.app-main tr.clickable, .app-main .rl-row.clickable').first().click(); }],
+    ['auslosung', '.dr-root', async () => { await nav('Statistiken', 'Pokal'); await click('.app-main .dchip:has-text("Runden")').catch(() => {}); await page.waitForTimeout(300); await click('.app-main .dchip:has-text("Auslosung")'); await page.waitForTimeout(600); }],
+    ['trainingslager', '.cp-modal', async () => { await nav('Training', 'Trainingslager'); await click('.cp-plan-btn'); }],
+    ['sponsor-karte', '.sp3-card', async () => { await nav('Finanzen', 'Sponsoring'); await page.locator('.app-main [data-sp^="deal:"], .app-main [data-sp^="offer:"], .app-main [data-sp^="st:"]').first().click(); }],
+    ['sponsor-verhandlung', '.modal', async () => {
+      await nav('Finanzen', 'Sponsoring');
+      for (const t of ['Hauptsponsor', 'Pyramide', 'Banden', 'Namensrechte']) {
+        await page.locator(`.sp3-tabs .tab:has-text("${t}")`).first().click().catch(() => {});
+        const o = page.locator('.app-main [data-sp^="offer:"]').first();
+        if (await o.count()) { await o.click({ button: 'right' }); await click('.sp3-menu .pcm-item:has-text("Verhandeln")'); return; }
+      }
+    }],
+    ['spielbericht', '.mr-modal', async () => { await nav('Spieltag', 'Spielplan'); await click('.app-main .dchip:has-text("Bericht")'); }],
     ['presse-artikel', '.np-article', async () => { await nav('Zentrale', 'Presse'); await click('.np-lead, .np-teaser'); }],
-    ['nachricht', '.modal', async () => { await nav('Zentrale', 'Nachrichten'); await page.locator('.app-main tr.clickable, .app-main .rl-row, .app-main .news-item').first().click(); }],
-    ['einstellungen', '.modal', async () => { await closeAll(page); await click('.hd-gear, button[aria-label*="Menü"], .hd-menu-btn'); await click('.menu-dd-item:has-text("Einstellungen")'); }],
-    ['speichern', '.modal', async () => { await closeAll(page); await click('.hd-gear, button[aria-label*="Menü"], .hd-menu-btn'); await click('.menu-dd-item:has-text("Speichern")'); }],
-    ['vereinseditor', '.ce-modal', async () => { await closeAll(page); await click('.hd-gear, button[aria-label*="Menü"], .hd-menu-btn'); await click('.menu-dd-item:has-text("Verein")'); }],
-    ['trainerteam', '.tt-modal', async () => { await nav('Training', 'Trainerteam'); await page.locator('.app-main .clickable, .app-main tr.clickable, .app-main .rl-row').first().click(); }],
-    ['stadion-block', '.sv-pop', async () => { await nav('Verein', 'Stadion'); await page.locator('.app-main .sb-block, .app-main [data-block]').nth(1).click(); }],
-    ['vorschau', '.pm-root', async () => { await closeAll(page); if (await page.locator('.hd-continue.pm-next').count()) await click('.hd-continue.pm-next'); }, { max: 12 }],
-  ];
 
-  for (const [name, frame, open, opts] of CASES) {
-    if (ONLY && !ONLY.includes(name)) continue;
-    let res;
-    try {
-      res = await probeWindow(page, name, frame, open, opts ?? {});
-      if (res.base) await page.screenshot({ path: `${outDir}/${view}_${name}.png` });
-    } catch (e) { res = { name, base: null, issues: ['nicht geöffnet: ' + e.message.split('\n')[0]] }; }
-    results.push({ view, ...res });
-    report({ view, ...res });
-    await closeAll(page);
-  }
+    ['einstellungen', '.modal', async () => { await closeAll(page); await click('.hd-gear'); await click('.menu-dd-item:has-text("Einstellungen")'); }],
+    ['speichern', '.modal', async () => { await closeAll(page); await click('.hd-gear'); await click('.menu-dd-item:has-text("Speichern")'); }],
+    ['vereinseditor', '.ce-modal', async () => { await closeAll(page); await click('.hd-gear'); await click('.menu-dd-item:has-text("Editor")'); }],
+    ['trainerteam', '.tt-modal', async () => { await nav('Training', 'Trainerteam'); await click('.app-main .dchip:has-text("Kandidaten")'); await page.waitForTimeout(300); await click('.app-main .dchip:has-text("Verhandeln")'); }, { steps: [['Angebot machen', () => page.locator('.tt-modal .btn-primary').first().click({ timeout: 1500 })], ['nochmal', () => page.locator('.tt-modal .btn-primary').first().click({ timeout: 1500 })]] }],
+    ['stadion-block', '.sv-pop', async () => {
+      await nav('Verein', 'Stadion');
+      const b = page.locator('.gr-svg g.gr-obj:not(.sv-venue)');
+      await b.nth((await b.count()) - 1).click({ force: true, timeout: 3000 });
+    }, { steps: [
+      ['Rang aufstocken', () => page.locator('.sv-pop button:has-text("Rang aufstocken")').first().click({ timeout: 1500 })],
+      ['volles Dach', () => page.locator('.sv-pop .sv-seg button:has-text("volles Dach")').first().click({ timeout: 1500 })],
+      ['Seite ganz', () => page.locator('.sv-pop .sv-seg button').nth(1).click({ timeout: 1500 })],
+    ] }],
+    ['stadion-umfeld', '.sv-pop', async () => {
+      await nav('Verein', 'Stadion');
+      await page.locator('.gr-svg g.sv-venue').first().click({ force: true, timeout: 3000 });
+    }],
+    ['vorschau', '.pm-root', async () => {
+      await closeAll(page);
+      for (let k = 0; k < 60 && !(await page.locator('.pm-root').count()); k++) {
+        if (await page.locator('.hd-continue.pm-next').count()) { await click('.hd-continue.pm-next'); break; }
+        if (await page.locator('.modal-overlay, .rb2-overlay, .gb-root, .tw-panel, .dr-root, .cr-root').count()) { await closeAll(page); continue; }
+        if (!(await page.locator('.hd-continue.running').count())) await page.locator('.hd-continue').first().click({ timeout: 2000 }).catch(() => {});
+        await page.waitForTimeout(2000);
+      }
+    }, { max: 12 }],
+    ['textmodus-wechsel', '.tm-cs', async () => {
+      if (!(await page.locator('.tm-cs').count())) {
+        if (!(await page.locator('.tm-root, .ms-root').count())) {
+          if (!(await page.locator('.pm-root').count()) && await page.locator('.hd-continue.pm-next').count()) await click('.hd-continue.pm-next');
+          await click('.pm-root button:has-text("Textmodus")'); await page.waitForTimeout(1500);
+        }
+        await page.locator('.tm-rpanel .tm-tabs >> text=Team').first().click({ timeout: 3000 }).catch(() => {});
+        await click('.tm-change-btn');
+      }
+    }, { max: 30, steps: [1, 0].map((i) => [`Reiter ${i + 1}`, () => page.locator('.tm-cs-tabs > button').nth(i).click({ timeout: 1500 })]) }],
+  ];
 
   // Seiten-Boxen: Chips/Reiter in DashBoxen dürfen die Box nicht wachsen lassen.
   const PAGES = [['Kader', 'Übersicht'], ['Kader', 'Kabine'], ['Finanzen', 'Budget'], ['Finanzen', 'Sponsoring'], ['Statistiken', 'Liga'], ['Statistiken', 'Pokal'],
@@ -103,12 +129,25 @@ for (const view of VIEWS) {
         await page.waitForTimeout(150);
         if (await page.locator('.modal-overlay, .pcm-layer, .dr-root').count()) { await closeAll(page); continue; }
         const now = await boxes();
-        if (now !== base) issues.push(`„${txt}“: Boxen ${base} → ${now}`);
+        // andere Boxenzahl = anderer Reiter/andere Ansicht (eigenes Raster), kein Wachsen
+        if (now !== base && now.split(' ').length === base.split(' ').length) issues.push(`„${txt}“: Boxen ${base} → ${now}`);
       }
     } catch (e) { issues.push('nicht erreichbar: ' + e.message.split('\n')[0]); }
     results.push({ view, name: `seite ${m} › ${s}`, base: 'Boxen', issues });
     report(results[results.length - 1]);
   }
+  for (const [name, frame, open, opts] of CASES) {
+    if (ONLY && !ONLY.includes(name)) continue;
+    let res;
+    try {
+      res = await probeWindow(page, name, frame, open, opts ?? {});
+      if (res.base) await page.screenshot({ path: `${outDir}/${view}_${name}.png` });
+    } catch (e) { res = { name, base: null, issues: ['nicht geöffnet: ' + e.message.split('\n')[0]] }; }
+    results.push({ view, ...res });
+    report({ view, ...res });
+    await closeAll(page);
+  }
+
   await page.close();
 }
 

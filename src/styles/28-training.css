@@ -47,5 +47,5 @@
 
 /* Symbole: .game-icon misst 1em – Größe hier fest setzen. */
 .td-day .game-icon { width: 22px; height: 22px; }
-.modal.tt-modal { max-width: 1180px; }
+.modal.tt-modal { max-width: 1180px; height: 84%; } /* feste Größe: Antwortzeile lässt das Fenster nicht wachsen */
 .tt-modal .mx-body { padding: 20px 28px 26px; overflow: auto; }
