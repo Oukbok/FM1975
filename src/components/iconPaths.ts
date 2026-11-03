@@ -391,6 +391,12 @@ export const RAW: Record<string, string> = {
     '<rect x="5.9" y="16.8" width="12.2" height="1.05" rx="0.5"/>' +
     '</g>',
 
+  // Kartenverkauf — weisse Eintrittskarte mit Kerben, Bernstein-Abrisslinie
+  ticket:
+    '<path d="M3.5 7.5A1.5 1.5 0 0 1 5 6h14a1.5 1.5 0 0 1 1.5 1.5V10a2 2 0 0 0 0 4v2.5A1.5 1.5 0 0 1 19 18H5a1.5 1.5 0 0 1-1.5-1.5V14a2 2 0 0 0 0-4Z" fill="none" stroke="%BASE%" stroke-width="1.5" stroke-linejoin="round"/>' +
+    '<line x1="15" y1="7.6" x2="15" y2="16.4" stroke="%ACCENT%" stroke-width="1.5" stroke-dasharray="1.6 1.4"/>' +
+    '<rect x="6.6" y="10" width="5.6" height="1.4" rx="0.7" fill="%BASE%"/><rect x="6.6" y="12.7" width="3.8" height="1.4" rx="0.7" fill="%BASE%"/>',
+
   // Catering / Wuerstchenbude — weisser Imbissstand mit tuerkiser Markise
   catering:
     '<path d="M4 9.5 6 5h12l2 4.5Z" fill="none" stroke="%ACCENT%" stroke-width="1.5" stroke-linejoin="round"/>' +

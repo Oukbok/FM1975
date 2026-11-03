@@ -1,0 +1,108 @@
+/* =============================================================================
+   KARTENVERKAUF (views/verein/TicketsView.tsx + tickets/): Übersicht mit
+   Stadion-Draufsicht, Preistabelle Tribüne × Kategorie, Spielliste mit Prognose-
+   Spannen, Besondere Preise. Ruhig: Schiefer, Bernstein nur für Auswahl.
+   ============================================================================= */
+.tk-muted { color: var(--text-3); }
+.tk-strong { font-weight: 700; color: var(--text); }
+.tk-right { font-size: 13px; color: var(--text-3); font-weight: 500; text-transform: none; letter-spacing: 0; }
+
+/* Übersicht + Draufsicht */
+.tk-page .dbox-body { display: flex; flex-direction: column; }
+.tk-over { flex: 1 1 auto; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+.tk-kv .dkv { padding: 4px 2px; font-size: 15px; }
+.tk-map { position: relative; flex: 1 1 auto; min-height: 150px; }
+.tk-map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.tk-turf { fill: var(--turf); }
+.tk-turf-img { opacity: 0.55; filter: saturate(0.6); pointer-events: none; }
+.tk-lines rect, .tk-lines line, .tk-lines circle { fill: none; stroke: var(--turf-line); stroke-width: 0.8; }
+.tk-stand { fill: var(--q-4); stroke: var(--bg); stroke-width: 1; cursor: pointer; transition: fill 0.12s; }
+.tk-stand.hov { fill: var(--q-3); }
+.tk-stand.empty { fill: transparent; stroke: var(--text-4); stroke-dasharray: 3 3; }
+.tk-stand.on { stroke: var(--accent); stroke-width: 2; }
+.tk-hatch-bg { fill: var(--q-4); }
+.tk-hatch-ln { stroke: var(--bg); stroke-width: 2; }
+.tk-tip { position: absolute; z-index: 6; transform: translate(12px, -110%); pointer-events: none; white-space: nowrap; padding: 6px 10px; border-radius: 6px;
+  background: var(--elevated); border: 1px solid var(--border); box-shadow: var(--shadow); font-size: 13px; color: var(--text-2); }
+.tk-tip b { color: var(--text); font-weight: 600; }
+.tk-tip span { color: var(--text-3); }
+
+/* Preistabelle */
+.tk-prices { height: 100%; overflow: auto; }
+.tk-ptab { width: 100%; border-collapse: collapse; font-size: 14px; }
+.tk-ptab th { position: sticky; top: 0; z-index: 1; background: var(--panel); text-align: left; padding: 7px 8px; font-size: 11.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); border-bottom: 1px solid var(--border); white-space: nowrap; }
+.tk-ptab td { padding: 5px 8px; border-bottom: 1px solid var(--border-soft); vertical-align: middle; }
+.tk-ptab .c { text-align: center; }
+.tk-ptab .r { text-align: right; white-space: nowrap; }
+.tk-ptab th:first-child, .tk-ptab td:first-child { padding-left: 14px; }
+.tk-ptab th:last-child, .tk-ptab td:last-child { padding-right: 14px; }
+.tk-ptab tbody tr { cursor: pointer; }
+.tk-ptab tbody tr:hover { background: var(--rl-hover, rgba(255, 255, 255, 0.03)); }
+.tk-ptab tbody tr.sel { background: var(--accent-soft); box-shadow: inset 4px 0 0 var(--accent); }
+.tk-ptab tbody tr.sel .tk-sname { color: var(--accent); }
+.tk-ptab tbody tr.none .tk-sname { color: var(--text-3); }
+.tk-ptab tr.tk-all { cursor: default; background: rgba(255, 255, 255, 0.02); }
+.tk-ptab tr.tk-gast { cursor: default; }
+.tk-ptab tfoot td { border-bottom: 0; padding-top: 9px; padding-bottom: 9px; color: var(--text-2); font-weight: 600; }
+.tk-ptab tfoot .tk-strong { font-family: var(--font-display); font-size: 18px; font-weight: 500; }
+.tk-unit { text-transform: none; letter-spacing: 0; font-weight: 500; }
+.tk-sname { font-weight: 600; color: var(--text); white-space: nowrap; }
+.tk-ssub { font-size: 12px; color: var(--text-3); white-space: nowrap; }
+.tk-step { display: inline-flex; align-items: center; gap: 6px; position: relative; }
+.tk-step button { width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--border); background: transparent; color: var(--text-2); font-size: 14px; line-height: 1; cursor: pointer; padding: 0; }
+.tk-step button:hover { border-color: var(--text-3); color: var(--text); }
+.tk-step b { min-width: 62px; text-align: center; font-weight: 600; color: var(--text); }
+.tk-step.own b { color: var(--accent); }
+.tk-cell-sub { font-size: 12px; color: var(--text-3); white-space: nowrap; margin-top: 1px; }
+.tk-fc { color: var(--text-2); font-weight: 600; }
+
+/* Spiele dieser Saison */
+.tk-games { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.tk-gscroll { flex: 1 1 auto; min-height: 0; overflow: auto; }
+.tk-gtab { width: 100%; }
+.tk-gtab thead th { position: sticky; top: 0; z-index: 1; background: var(--panel); }
+.tk-gtab td { height: 40px; white-space: nowrap; }
+.tk-gtab tbody tr { cursor: pointer; }
+.tk-gtab tbody tr.sel { background: var(--accent-soft); box-shadow: inset 4px 0 0 var(--accent); }
+.tk-gtab tbody tr.done td { color: var(--text-2); }
+.tk-gtab .c { text-align: center; }
+.tk-gtab td:first-child { text-align: left; }
+.tk-gtab .r { text-align: right; }
+.tk-opp { display: inline-flex; align-items: center; gap: 8px; }
+.tk-cat { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 4px; border: 1px solid var(--border); background: transparent;
+  font-family: var(--font-ui); font-size: 12.5px; font-weight: 600; color: var(--text-2); white-space: nowrap; }
+button.tk-cat { cursor: pointer; }
+button.tk-cat:hover { border-color: var(--text-3); color: var(--text); }
+.tk-cat.set { border-color: var(--text-3); color: var(--text); }
+.tk-cat i { font-style: normal; font-size: 10.5px; color: var(--text-4); text-transform: uppercase; letter-spacing: 0.05em; }
+.tk-cat-top { color: var(--text); }
+.tk-detail { flex: 0 0 auto; border-top: 1px solid var(--border); padding: 8px 14px 10px; display: flex; flex-direction: column; gap: 6px; }
+.tk-detail-h { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; font-size: 13.5px; color: var(--text-3); }
+.tk-detail-h b { color: var(--text); font-weight: 600; font-size: 14.5px; }
+.tk-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.tk-chip { display: inline-flex; gap: 7px; align-items: baseline; padding: 3px 9px; border-radius: 4px; border: 1px solid var(--border-soft); font-size: 13px; color: var(--text); }
+.tk-chip-k { color: var(--text-3); font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.tk-chip-ist { color: var(--text-3); }
+.tk-chip-ist b { color: var(--text); font-weight: 600; }
+.tk-chip.out .tk-chip-ist { color: var(--warn); }
+
+/* Besondere Preise */
+.tk-special { display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; }
+.tk-opt { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: var(--text-2); }
+.tk-check { justify-content: flex-start; cursor: pointer; }
+.tk-check input { accent-color: var(--accent); }
+.tk-check .tk-mini { margin-left: auto; }
+.tk-mini { display: inline-flex; align-items: center; gap: 6px; color: var(--text-2); font-size: 13.5px; }
+.tk-mini.off { opacity: 0.4; }
+.tk-mini b { min-width: 46px; text-align: center; color: var(--text); font-weight: 600; }
+.tk-mini button { width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--border); background: transparent; color: var(--text-2); cursor: pointer; padding: 0; line-height: 1; }
+.tk-mini button:disabled { opacity: 0.35; cursor: not-allowed; }
+.tk-sec { margin-top: 6px; padding-top: 8px; border-top: 1px solid var(--border-soft); font-size: 11.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-3); }
+.tk-rec { display: flex; flex-direction: column; gap: 5px; }
+.tk-rec-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--bar-track); gap: 2px; }
+.tk-rec-bar .hit { background: var(--bar-fill-hi); }
+.tk-rec-bar .lo, .tk-rec-bar .hi { background: var(--text-4); }
+.tk-rec-txt { font-size: 13.5px; color: var(--text-2); }
+.tk-rec-txt b { color: var(--text); }
+.tk-staff { font-size: 12.5px; }

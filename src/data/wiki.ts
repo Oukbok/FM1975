@@ -1717,6 +1717,32 @@ Sie füllen freie Flächen zu Saisonbeginn mit dem besten von zwei Angeboten, zi
 Vermarktung kostet: Wareneinsatz der Fanartikel (35 %), Betreuung der Sponsoren (5 % 1975 → 12 % ab 2010) und eine wachsende Geschäftsstelle mit Beratern und Reisen (0 → 5 % des Umsatzes). Große Marken haben davon mehr – ihre Personalquote liegt deshalb niedriger (FC Bayern 2024/25: Personal 47 % des Umsatzes ohne Transfers).`,
   },
   {
+    id: 'tickets-sales',
+    category: 'finance',
+    title: 'Kartenverkauf',
+    keywords: ['kartenverkauf', 'ticket', 'tickets', 'eintritt', 'eintrittspreis', 'tribüne', 'haupttribüne', 'gegentribüne', 'hinter dem tor', 'ecke', 'topzuschlag', 'topspiel', 'rabatt', 'preiskategorie', 'prognose', 'spanne', 'zuschauer'],
+    body: `## Die Seite
+**Verein → Kartenverkauf** (auch über die Kassen auf der Stadionseite): links die Übersicht mit Zuschauerschnitt, letzter Saison, Platz in der Zuschauertabelle der Liga, Fanbasis und Kapazität, dazu eine Draufsicht des Stadions. Rechts die Eintrittspreise, unten die Heimspiele der Saison und die besonderen Preise.
+
+## Acht Tribünen
+Die 14 Blöcke des Stadions sind zu acht Tribünen zusammengefasst: **Haupttribüne** (3 Blöcke, West), **Gegentribüne** (3, Ost), **Hinter dem Tor 1** (2, Nord), **Hinter dem Tor 2** (2, Süd) und die **Ecken 1–4** (die Kurven, im Uhrzeigersinn ab Nordwest). Gebaut wird weiter blockweise auf der Stadionseite; die Tribünen sind nur die Einteilung für die Preise. In der Draufsicht zeigt jede Tribüne beim Überfahren ihre Kapazität und ob gerade gebaut wird.
+
+## Preise je Tribüne
+Jede Platzart (Steh, Sitz offen, Sitz überdacht, ab 1988 Premium, Business, ab 1985 Logen) kann auf jeder Tribüne einen eigenen Preis haben; „Alle Tribünen“ setzt eine Platzart überall gleich. Der Gästeblock hat einen Preis. Die Nachfrage einer Platzart richtet sich nach dem Mittel der Tribünenpreise (nach Plätzen gewichtet); verkauft wird zuerst auf den günstigeren Tribünen – eine teure Haupttribüne bleibt also eher leer als die Ecken. Solange alle Tribünen den Preis der Platzart haben, rechnet das Spiel genau wie ohne Tribünen.
+
+## Preiskategorie je Spiel
+Jedes Heimspiel hat eine Preiskategorie: **Normal**, **Top** (Zuschlag, Standard +25 %) oder **Rabatt** (Standard −25 %). Ein Klick in der Spielliste schaltet automatisch → Normal → Top → Rabatt. Automatisch heißt: Topzuschlag gegen die besten Mannschaften der Tabelle (einstellbar, vor dem 1. Spieltag nach Ansehen) und – wenn eingeschaltet – Rabatt gegen Gegner aus tieferen Ligen (Pokal). Zuschlag und Rabatt gelten für Steh-, Sitz-, Premium- und Gästeplätze; Business-Seats und Logen laufen über Saisonverträge. Höhere Preise verkaufen weniger Karten (Elastizität wie bei den Platzkategorien).
+
+## Prognose als Spanne
+Für jedes kommende Heimspiel siehst du je Tribüne und Platzart eine Spanne, z. B. „Stehplätze Hinter dem Tor 1: 7.800–9.400“. Der tatsächliche Verkauf liegt **gleichmäßig verteilt** in der Spanne – mal am unteren, mal am oberen Ende, mal dazwischen, nie systematisch in der Mitte – und in etwa **jedem zehnten Fall knapp außerhalb**. Die Breite hängt ab von:
+- **Mitarbeitern:** Kaufmännischer Leiter, Marketing-, Event-, CRM-Manager und Datenanalyst machen sie bis zu 55 % enger.
+- **Unsicherheit:** Derby (+20 %), Pokal (+10 %) bzw. Europapokal (+15 %), Wetterbericht mehr als fünf Tage vor dem Spiel noch offen (+25 %) bzw. Regen/Schnee (+10 %), weniger als drei ausgewertete Heimspiele (+20 %).
+Änderst du Preise oder ändert sich der Zuspruch, wandert die Spanne mit. Am Spieltag wird die Spanne gespeichert; nach dem Spiel steht der Ist-Wert daneben („unteres Ende“, „über der Spanne“ …), und die **Prognose-Bilanz** zählt, wie oft die Spannen gestimmt haben. Ausverkauft deckelt die Spanne oben bei den vorhandenen Plätzen.
+
+## Dauerkarten und Freundschaftsspiele
+Dauerkarten gibt es im Spiel (noch) nicht; Freundschaftsspiele bringen einen festen Erlös ohne Kartenverkauf.`,
+  },
+  {
     id: 'merchandise',
     category: 'finance',
     title: 'Fanartikel: Sortiment, Lager, Preise',
@@ -1788,7 +1814,7 @@ Nachfrage × (1 − Elastizität × (Preis/Richtpreis − 1)); günstiger als de
 Die Preise wachsen jede Saison mit dem Richtpreis der Epoche mit (dein Preisniveau bleibt). Das Preisniveau der Fanplätze (Steh, Sitz, Tribüne, Gäste; Stehplätze zählen 1,5-fach) bestimmt die Fanstimmung.
 
 ## Nachfrage nur geschätzt
-Unter **Stadion → Tickets & Nachfrage** siehst du die Nachfrage als **Spanne**, nicht als genaue Zahl. Grundunschärfe: Kurve ±16 %, Sitzplätze ±20 %, Premium ±28 %, Business ±34 %, Logen ±40 %. Genauer wird es durch **Kaufmännischen Leiter, Marketing-/Sponsoringmanager, Stadion-/Eventmanager, Fan-Data/CRM-Manager und Datenanalyst** (je nach Qualität, zusammen höchstens −55 %) und durch Erfahrung: jedes Heimspiel, in dem die Kategorie **nicht** ausverkauft war, verrät mehr. Ausverkauft heißt nur: Die Nachfrage ist mindestens so groß wie das Kontingent.
+Unter **Verein → Kartenverkauf** siehst du den erwarteten Verkauf als **Spanne** je Spiel und Kategorie, nicht als genaue Zahl (siehe *Kartenverkauf*). Grundunschärfe: Kurve ±16 %, Sitzplätze ±20 %, Premium ±28 %, Business ±34 %, Logen ±40 %. Genauer wird es durch **Kaufmännischen Leiter, Marketing-/Sponsoringmanager, Stadion-/Eventmanager, Fan-Data/CRM-Manager und Datenanalyst** (je nach Qualität, zusammen höchstens −55 %) und durch Erfahrung: jedes Heimspiel, in dem die Kategorie **nicht** ausverkauft war, verrät mehr. Ausverkauft heißt nur: Die Nachfrage ist mindestens so groß wie das Kontingent.
 
 ## KI-Vereine
 KI-Vereine haben keine Blöcke, aber Kontingente je Kategorie: Sie bauen ihren Platzmix jede Saison ein Stück in Richtung Epoche um (Sitzplatz-Boom ab den 1990ern, Business-Seats und Logen nach Nachfrage) und erhöhen Preise, wenn sie ausverkauft sind, oder senken sie bei leeren Rängen.
@@ -2318,7 +2344,7 @@ Unter **Verein → Stadion** siehst du dein leeres Stadion von schräg oben, üb
 - **Nord- und Südtribüne** hinter den Toren mit je zwei Blöcken: West und Ost.
 - **Vier Kurven** in den Ecken (Nordwest, Nordost, Südwest, Südost), gebogen um die Eckfahne. Sie schließen das Stadion zur Schüssel.
 
-Gezeichnet werden Stufen, Sitzreihen in Vereinsfarben, Wellenbrecher, Mundlöcher, Dächer, Logen und das Flutlicht der jeweiligen Epoche. Das Dach der Haupttribüne ist durchscheinend, damit das Spielfeld sichtbar bleibt. Der Bildausschnitt ist fest auf das größtmögliche Stadion ausgelegt: Beim Ausbau wachsen nur die Tribünen. Klick auf einen Block öffnet das **Bau-Popover** am Rand, die Szene zeigt den geplanten Block als Vorschau (gestrichelter Umriss), dazu Kapazität, erwartete Zuschauer und Eintritt vorher → nachher. Rund ums Stadion stehen **Würstchenbuden, Fanshop, Megastore, Kassen, Parkplatz, ÖPNV-Haltestelle, Hospitality, Vereinsheim, Fan-Zone und Museum** – anklicken und direkt ausbauen (dieselben Regeln wie auf dem Vereinsgelände). Die Leiste unten filtert, was anklickbar ist (Tribünen, Gastronomie, Handel, Anreise, Hospitality); die **Kassen** bzw. „Tickets & Nachfrage“ öffnen Preise und geschätzte Nachfrage je Platzkategorie.
+Gezeichnet werden Stufen, Sitzreihen in Vereinsfarben, Wellenbrecher, Mundlöcher, Dächer, Logen und das Flutlicht der jeweiligen Epoche. Das Dach der Haupttribüne ist durchscheinend, damit das Spielfeld sichtbar bleibt. Der Bildausschnitt ist fest auf das größtmögliche Stadion ausgelegt: Beim Ausbau wachsen nur die Tribünen. Klick auf einen Block öffnet das **Bau-Popover** am Rand, die Szene zeigt den geplanten Block als Vorschau (gestrichelter Umriss), dazu Kapazität, erwartete Zuschauer und Eintritt vorher → nachher. Rund ums Stadion stehen **Würstchenbuden, Fanshop, Megastore, Kassen, Parkplatz, ÖPNV-Haltestelle, Hospitality, Vereinsheim, Fan-Zone und Museum** – anklicken und direkt ausbauen (dieselben Regeln wie auf dem Vereinsgelände). Die Leiste unten filtert, was anklickbar ist (Tribünen, Gastronomie, Handel, Anreise, Hospitality); die **Kassen** bzw. der Knopf „Kartenverkauf“ führen zur Seite *Kartenverkauf* (Preise je Tribüne, Preiskategorie je Spiel, Prognose-Spannen).
 
 Ältere Spielstände mit vier Blöcken werden beim Laden umgewandelt: Die Kurven übernehmen den Aufbau der Hintertor-Tribünen, Kapazität, Logen und VIP-Bereich bleiben erhalten.
 

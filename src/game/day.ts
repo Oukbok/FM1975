@@ -50,6 +50,7 @@ import { announceUpcomingRules } from './ruleNotice';
 import { monthlyYouthRecruit } from './youthRecruit';
 import { monthlyYouthInvest, withReserve, youthInvestSeasonStart } from './youthInvest';
 import { stadiumDaily } from './stadiumGame';
+import { ticketsDaily } from './ticketsGame';
 import { ensureYouthTeams, fillYouthTeams, youthChangeMessage, youthTeamsSeasonChange } from './youthTeams';
 import { applyLeagueBalance, ratingTicker, seasonLeagueBalance, snapshotLeague } from './leagueBalance';
 import { monthlyClubBusiness } from './clubBusiness';
@@ -135,6 +136,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
     applyLeagueBalance(g);
     ensureYouthTeams(g, today);
     stadiumDaily(g, today);
+    ticketsDaily(g); // Kartenverkauf: Prognose-Schärfe, Topzuschlag-Gegner
     applyEuphoria(g);
   }
   setDisplayYear(yearOf(today));

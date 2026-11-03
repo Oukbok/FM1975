@@ -4,8 +4,8 @@
 //     Logen) mit Geister-Vorschau in der Szene und Vorher → Nachher.
 //   • Buden, Fanshop, Parkplatz, Hospitality … rund ums Stadion anklicken →
 //     dieselben Ausbau-Ansichten wie auf dem Vereinsgelände (GroundsDetail).
-//   • Kassenhäuschen oder „Tickets & Nachfrage“ → Preise und geschätzte Nachfrage
-//     je Platzkategorie (TicketSheet).
+//   • Kassenhäuschen oder „Kartenverkauf“ → Seite Verein › Kartenverkauf (Preise je
+//     Tribüne, Preiskategorie je Spiel, Prognose-Spannen; views/verein/TicketsView.tsx).
 //   • Leiste unten filtert, was anklickbar ist (Tribünen, Gastronomie, Handel …).
 // Kamera und Ausschnitt sind fest (StadiumScene): nur die Tribünen wachsen.
 // =============================================================================
@@ -23,7 +23,6 @@ import { FacilityDetail, ModuleDetail } from './grounds/GroundsDetail';
 import { BlockConfigurator, perMatch } from './stadium/BlockConfigurator';
 import { StadiumScene } from './stadium/StadiumScene';
 import { VENUE_GROUPS, Venue, VenueGroup, venuesOf } from './stadium/StadiumSurround';
-import { TicketSheet } from './stadium/TicketSheet';
 import { InfoTip } from '../../ui/InfoTip';
 
 type Mode = 'alles' | 'tribuenen' | VenueGroup;
@@ -32,7 +31,7 @@ const lum = (hex: string) => { const n = parseInt((hex || '#888888').slice(1), 1
 const fmtD = (iso: string) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
 const POP_W = 420;
 
-export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => void; onGoto?: (s: 'stadium' | 'marketing' | 'akademie') => void }) {
+export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => void; onGoto?: (s: 'stadium' | 'marketing' | 'akademie' | 'kartenverkauf') => void }) {
   useState(() => ensureStadiumBlocks(g)); // ältere Spielstände: Blöcke sofort anlegen
   const club = g.clubs[g.managedClubId];
   const st = club.stadium;
@@ -47,7 +46,6 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
   const [hover, setHover] = useState<BlockId | null>(null);
   const [draft, setDraft] = useState<StadiumBlock | null>(null);
   const [whole, setWhole] = useState(false);
-  const [tickets, setTickets] = useState(false);
   const blocks = st.blocks?.length ? st.blocks : migrateBlocks(club, year); // altes Projekt läuft: nur Vorschau
   const editable = !!st.blocks?.length;
   const planned = draft ? sideTargets(blocks, draft, whole) : [];
@@ -67,7 +65,7 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
     setDraft(b && editable ? JSON.parse(JSON.stringify(b)) : null);
   };
   const selectVenue = (v: Venue, e: { clientX: number; clientY: number }) => {
-    if (v.kind === 'tickets') { close(); setTickets(true); return; }
+    if (v.kind === 'tickets') { close(); onGoto?.('kartenverkauf'); return; }
     setSel(null); setDraft(null); setVenue(v.key); place(e);
   };
   const blocksActive = mode === 'alles' || mode === 'tribuenen' || mode === 'vip';
@@ -78,7 +76,7 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
   const seated = seatedCapacity(blocks);
   const exp = expectedSale(club, year);
   const expRev = Object.values(saleRevenue(club, exp.sold, year)).reduce((a, v) => a + (v ?? 0), 0);
-  const log = st.seating?.log ?? [];
+  const log = (st.seating?.log ?? []).slice(0, 8);
   const avgAtt = log.length ? Math.round(log.reduce((a, e) => a + Object.entries(e.sold).reduce((s, [k, v]) => s + (k === 'loge' ? (v ?? 0) * 11 : v ?? 0), 0), 0) / log.length) : 0;
   const bp = st.blockProject, old = club.stadiumProject;
   const primary = lum(club.colors?.primary ?? '') < 0.18 ? (club.colors?.secondary ?? '#c0392b') : (club.colors?.primary ?? '#c0392b');
@@ -91,7 +89,7 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
   const popLeft = anchor ? (sel ? (anchor.x < W / 2 ? W - POP_W - 16 : 16)
     : (anchor.x + 28 + POP_W < W - 12 ? anchor.x + 28 : Math.max(12, anchor.x - 28 - POP_W))) : W - POP_W - 16;
   const popTop = sel ? 64 : Math.max(64, Math.min((anchor?.y ?? 64) - 140, H - 520));
-  const popStyle = { left: popLeft, top: popTop, width: POP_W, maxHeight: H - popTop - (tickets ? 300 : 70) };
+  const popStyle = { left: popLeft, top: popTop, width: POP_W, maxHeight: H - popTop - 70 };
   const lead = anchor && (sel || venue) ? (() => {
     const edgeX = popLeft > anchor.x ? popLeft : popLeft + POP_W;
     const y = Math.max(popTop + 24, Math.min(anchor.y, popTop + 260));
@@ -138,16 +136,14 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
             </div>
           )}
 
-          {tickets && <TicketSheet g={g} onChange={onChange} onClose={() => setTickets(false)} />}
-
           <div className="sv-bar" onClick={(e) => e.stopPropagation()}>
             <div className="sv-seg sv-modes">
               {([['alles', 'Alles'], ['tribuenen', 'Tribünen'], ...VENUE_GROUPS.map((v) => [v.key, v.name])] as [Mode, string][]).map(([k, n]) => (
                 <button key={k} className={mode === k ? 'on' : ''} onClick={() => { setMode(k); close(); }}>{n}</button>
               ))}
             </div>
-            <button className={`btn btn-sm ${tickets ? 'btn-primary' : ''}`} onClick={() => { setTickets(!tickets); }}>Tickets &amp; Nachfrage</button>
-            <span className="sv-hint">{sel || vdef ? 'Außerhalb klicken schließt die Planung.' : mode === 'tribuenen' ? 'Block anklicken: Ränge, Platzarten, Dach, Logen planen.' : 'Block oder Gebäude anklicken zum Ausbauen – das Kassenhäuschen öffnet die Ticketpreise.'}</span>
+            <button className="btn btn-sm" onClick={() => onGoto?.('kartenverkauf')}>Kartenverkauf</button>
+            <span className="sv-hint">{sel || vdef ? 'Außerhalb klicken schließt die Planung.' : mode === 'tribuenen' ? 'Block anklicken: Ränge, Platzarten, Dach, Logen planen.' : 'Block oder Gebäude anklicken zum Ausbauen – das Kassenhäuschen öffnet den Kartenverkauf.'}</span>
           </div>
         </div>
     </div>

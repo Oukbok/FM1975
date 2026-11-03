@@ -62,6 +62,7 @@ import { BeobachtungView, TransfersView, VerhandlungenView } from '../views/tran
 import { FacilitiesView } from '../views/verein/FacilitiesView';
 import { FansView } from '../views/verein/FansView';
 import { StadiumView } from '../views/verein/StadiumView';
+import { TicketsView } from '../views/verein/TicketsView';
 import { BoardView } from '../views/verein/BoardView';
 import { StaffView } from '../views/verein/StaffView';
 import { WikiView } from '../views/wiki/WikiView';
@@ -473,6 +474,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'sponsoring' && <SponsoringView g={g} onGoto={setScreen} onChange={rerender} />}
         {screen === 'fanartikel' && <MerchView g={g} onChange={rerender} />}
         {screen === 'fans' && <FansView g={g} />}
+        {screen === 'kartenverkauf' && <TicketsView g={g} onChange={rerender} onGoto={(sc) => setScreen(sc)} />}
         {screen === 'vorstand' && <BoardView g={g} onChange={rerender} />}
         {screen === 'international' && <InternationalView g={g} onWatch={(id) => setLiveMatchId(id)} onReplayDraw={replayDraw} />}
         {screen === 'halle' && <IndoorView g={g} onChange={rerender} />}

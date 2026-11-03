@@ -18,11 +18,12 @@
 // Obergrenze, die der Ruf hergibt (seasonDrift).
 // Preise in 1975-Basis; Anzeige/Buchung × seatPriceScale (Spieltagsskala × Liga).
 // =============================================================================
-import type { Club, SeatCat, SeatNums, StadiumBlock, StadiumSeating } from '../types';
+import type { Club, SeatCat, SeatNums, StadiumBlock, StadiumSeating, StandId, TicketPriceCat, TicketSettings } from '../types';
 import {
   BUSINESS_ERA, BUSINESS_REGION, CAT_KEYS, EAST_CITIES, FAN_CATS, GUEST_SHARE, GUEST_SHARE_EURO, LOGE_ERA, LOGE_GUESTS, PREMIUM_SHARE,
-  PRICE_ANCHORS, ROOF_PREF, SEAT_CAT, STEH_SHARE, VIP_AREA_SEATS_PER_LENGTH, lerpTable,
+  MATCH_PRICE_CATS, PRICE_ANCHORS, ROOF_PREF, SEAT_CAT, STANDS, STEH_SHARE, VIP_AREA_SEATS_PER_LENGTH, lerpTable,
 } from '../data/seatingCatalog';
+import { forecastWindows, saleRng, ticketKey, ticketUncertainty, type CatWindows } from './ticketForecast';
 import { attendanceDemand, clubTier, fairTicketPrice, matchdayPriceScale, tierScale } from './economy';
 import { ROOF_COVER, blockLength, tierCapacity } from './stadiumBlocks';
 import { hospitalityMultiplier } from './grounds';
@@ -194,6 +195,10 @@ export interface DemandCtx {
   weather?: string;
   month?: number;
   euro?: boolean;
+  /** Pokalspiel (nur Unsicherheit der Prognose). */
+  cup?: boolean;
+  /** Preisfaktor des Spiels (Topzuschlag/Rabatt) auf die Fan-Kategorien. */
+  mult?: number;
 }
 
 function regionFactor(club: Club, year: number): number {
@@ -230,7 +235,7 @@ export function demandFor(club: Club, ctx: DemandCtx, stehCover = 0.3): Required
   const s = lerpTable(STEH_SHARE, year);
   const pr = catAvailable('premium', year) ? lerpTable(PREMIUM_SHARE, year) * clamp(rep / 70, 0.6, 1.4) : 0;
   const seats = 1 - s - pr, rp = lerpTable(ROOF_PREF, year);
-  const pf = (k: SeatCat) => priceResponse(k, priceOf(club, k, year) / refPrice(club, k, year));
+  const pf = (k: SeatCat) => standResponse(club, k, year, MATCH_PRICE_CATS.includes(k) ? ctx.mult ?? 1 : 1);
   const rain = ctx.weather === 'regen' || ctx.weather === 'schnee';
   const winter = ctx.month != null && (ctx.month >= 11 || ctx.month <= 2);
   const wxOpen = rain ? 0.82 : winter ? 0.9 : 1;
@@ -259,6 +264,11 @@ export interface SeatSale {
   attendance: number;
   /** Gegner (Anzeige im Verlauf). */
   opponent?: string;
+  /** Kartenverkauf des eigenen Vereins: Schlüssel, Preiskategorie/-faktor, Prognose-Spanne am Spieltag. */
+  key?: string;
+  priceCat?: TicketPriceCat;
+  mult?: number;
+  fc?: CatWindows;
 }
 
 /** Wer keinen Platz bekommt, weicht zum Teil aus: [von, nach, Anteil]. */
@@ -287,8 +297,127 @@ export function sellSeats(caps: SeatNums, demand: Required<SeatNums>, rng?: () =
 
 /** Kompletter Verkauf eines Heimspiels (Match-Engine). */
 export function simulateSeatSales(club: Club, away: Club | null, ctx: DemandCtx & { date?: string; restriction?: number }, rng: () => number): SeatSale {
+  if (club.stadium.blocks?.length && ctx.date && away) {
+    for (let i = 0; i < 8; i++) rng(); // Zufallsfolge des Spiels bleibt gleich
+    return { ...ticketedSale(club, away, ctx as DemandCtx & { date: string }), opponent: away.name };
+  }
   const ci = capsFor(club, ctx.year, { euro: ctx.euro, date: ctx.date });
   return { ...sellSeats(ci.caps, demandFor(club, ctx, ci.stehCover), rng, ctx.restriction ?? 1), opponent: away?.name };
+}
+
+/**
+ * Verkauf eines Heimspiels des eigenen Vereins (Blöcke): Preiskategorie des Spiels, Schwankung
+ * je Spiel fest aus dem Schlüssel „Datum|Gegner“ (gleiche Verteilung wie sonst), dazu die
+ * Prognose-Spanne, wie sie am Spieltag angezeigt wird (engine/ticketForecast.ts). Die Seite
+ * Kartenverkauf ruft dieselbe Rechnung für künftige Spiele auf.
+ */
+export function ticketedSale(club: Club, away: Club, ctx: DemandCtx & { date: string; restriction?: number }, daysAhead = 0): SeatSale {
+  const key = ticketKey(ctx.date, away.id);
+  const pc = matchPriceCat(club, away, key, ctx);
+  const c2: DemandCtx = { ...ctx, mult: pc.mult };
+  const ci = capsFor(club, ctx.year, { euro: ctx.euro, date: ctx.date });
+  const restriction = ctx.restriction ?? 1;
+  const sale = sellSeats(ci.caps, demandFor(club, c2, ci.stehCover), saleRng(key), restriction);
+  const t = club.stadium.seating?.tickets;
+  const unc = ticketUncertainty({ derby: ctx.derby, euro: ctx.euro, cup: ctx.cup, weather: ctx.weather, daysAhead, seen: club.stadium.seating?.log?.length ?? 0 });
+  const fc = forecastWindows(sale.sold, ci.caps, key, { staff: t?.staff ?? 0, unc: unc.f, restriction });
+  return { ...sale, key, priceCat: pc.cat, mult: pc.mult, fc };
+}
+
+// -----------------------------------------------------------------------------
+// Kartenverkauf: Tribünenpreise und Preiskategorie je Spiel (nur eigener Verein mit Blöcken)
+// -----------------------------------------------------------------------------
+export const TICKET_DEFAULTS: TicketSettings = { topPct: 25, rabattPct: 25, autoTop: 0, autoRabatt: false };
+export function ensureTickets(club: Club, year: number): TicketSettings {
+  const s = ensureSeating(club, year);
+  return (s.tickets ??= { ...TICKET_DEFAULTS });
+}
+
+/** Preiskategorie eines Heimspiels: gesetzt, sonst automatisch (Topzuschlag/Rabatt), sonst normal. */
+export function matchPriceCat(club: Club, away: Club, key: string, ctx: { euro?: boolean }): { cat: TicketPriceCat; mult: number; auto: boolean } {
+  const t = club.stadium.seating?.tickets;
+  if (!t) return { cat: 'normal', mult: 1, auto: true };
+  let cat = t.match?.[key];
+  const auto = !cat;
+  if (!cat) {
+    if (t.autoTop > 0 && t.topIds?.includes(away.id)) cat = 'top';
+    else if (t.autoRabatt && !ctx.euro && clubTier(away) < 100 && clubTier(club) < 100 && clubTier(away) > clubTier(club)) cat = 'rabatt';
+    else cat = 'normal';
+  }
+  const mult = cat === 'top' ? 1 + t.topPct / 100 : cat === 'rabatt' ? 1 - t.rabattPct / 100 : 1;
+  return { cat, mult, auto };
+}
+
+/** Rohe Kontingente je Tribüne aus den Blöcken. */
+export function rawStandCaps(club: Club): Record<StandId, Required<SeatNums>> | null {
+  const blocks = club.stadium.blocks;
+  if (!blocks?.length) return null;
+  const out = {} as Record<StandId, Required<SeatNums>>;
+  for (const d of STANDS) out[d.id] = blockCaps(blocks.filter((b) => d.blocks.includes(b.id))).caps as Required<SeatNums>;
+  return out;
+}
+
+/** Kontingente je Tribüne, skaliert auf die Kontingente eines Spiels (Gästeblock, Bausperre, Europapokal). */
+export function standCaps(club: Club, caps: SeatNums): Record<StandId, SeatNums> | null {
+  const raw = rawStandCaps(club);
+  if (!raw) return null;
+  const out = {} as Record<StandId, SeatNums>;
+  for (const d of STANDS) out[d.id] = {};
+  for (const k of CAT_KEYS) {
+    if (k === 'gast') continue;
+    const tot = STANDS.reduce((a, d) => a + raw[d.id][k], 0);
+    const f = tot > 0 ? (caps[k] ?? 0) / tot : 0;
+    for (const d of STANDS) out[d.id][k] = Math.round(raw[d.id][k] * f);
+  }
+  return out;
+}
+
+/** Preis einer Kategorie auf einer Tribüne (1975-Basis). */
+export function standPrice(club: Club, s: StandId, k: SeatCat, year: number): number {
+  return club.stadium.seating?.tickets?.stand?.[s]?.[k] ?? priceOf(club, k, year);
+}
+const hasStandPrices = (club: Club, k: SeatCat) => !!club.stadium.blocks?.length && STANDS.some((d) => club.stadium.seating?.tickets?.stand?.[d.id]?.[k] != null);
+
+/** Preisfaktor der Nachfrage einer Kategorie: Mittel über die Tribünen (gewichtet nach Plätzen). */
+export function standResponse(club: Club, k: SeatCat, year: number, mult = 1): number {
+  const ref = refPrice(club, k, year);
+  if (!hasStandPrices(club, k)) return priceResponse(k, (priceOf(club, k, year) * mult) / ref);
+  const raw = rawStandCaps(club)!;
+  let w = 0, v = 0;
+  for (const d of STANDS) { const c = raw[d.id][k]; w += c; v += c * priceResponse(k, (standPrice(club, d.id, k, year) * mult) / ref); }
+  return w > 0 ? v / w : priceResponse(k, (priceOf(club, k, year) * mult) / ref);
+}
+
+/** Verkaufte Plätze einer Kategorie auf die Tribünen verteilen (günstigere Tribünen füllen sich zuerst). */
+export function splitByStand(club: Club, k: SeatCat, year: number, sold: number, caps: SeatNums, mult = 1): Record<StandId, number> | null {
+  const sc = standCaps(club, caps);
+  if (!sc) return null;
+  const ref = refPrice(club, k, year);
+  const out = {} as Record<StandId, number>;
+  const cap = (s: StandId) => sc[s][k] ?? 0;
+  const w = (s: StandId) => cap(s) * priceResponse(k, (standPrice(club, s, k, year) * mult) / ref);
+  let open = STANDS.map((d) => d.id).filter((s) => cap(s) > 0);
+  for (const d of STANDS) out[d.id] = 0;
+  let left = sold;
+  for (let it = 0; it < 8 && left > 0.5 && open.length; it++) {
+    const W = open.reduce((a, s) => a + w(s), 0);
+    if (W <= 0) break;
+    let used = 0;
+    for (const s of open) { const add = Math.min(cap(s) - out[s], (left * w(s)) / W); out[s] += add; used += add; }
+    left -= used;
+    open = open.filter((s) => out[s] < cap(s) - 0.5);
+  }
+  return out;
+}
+
+/** Durchschnittspreis einer Kategorie (1975-Basis) für einen Verkauf: nach Tribünen gewichtet. */
+export function effectivePrice(club: Club, k: SeatCat, year: number, sold: number, caps?: SeatNums, mult = 1): number {
+  if (!hasStandPrices(club, k) || sold <= 0) return priceOf(club, k, year);
+  const split = splitByStand(club, k, year, sold, caps ?? capsFor(club, year).caps, mult);
+  if (!split) return priceOf(club, k, year);
+  let n = 0, v = 0;
+  for (const d of STANDS) { n += split[d.id]; v += split[d.id] * standPrice(club, d.id, k, year); }
+  return n > 0 ? v / n : priceOf(club, k, year);
 }
 
 /** Erwarteter Verkauf ohne Zufall (Vorschau, KI): durchschnittlicher Gegner, trockenes Herbstwetter. */
@@ -299,10 +428,13 @@ export function expectedSale(club: Club, year: number, opts: { awayRep?: number;
 }
 
 /** Erlös je Kategorie (nominal) für einen Verkauf. */
-export function saleRevenue(club: Club, sold: SeatNums, year: number): Required<SeatNums> {
+export function saleRevenue(club: Club, sold: SeatNums, year: number, opts: { mult?: number; caps?: SeatNums } = {}): Required<SeatNums> {
   const sc = seatPriceScale(club, year);
   const out = {} as Required<SeatNums>;
-  for (const k of CAT_KEYS) out[k] = Math.round((sold[k] ?? 0) * priceOf(club, k, year) * sc);
+  for (const k of CAT_KEYS) {
+    const m = MATCH_PRICE_CATS.includes(k) ? opts.mult ?? 1 : 1;
+    out[k] = Math.round((sold[k] ?? 0) * effectivePrice(club, k, year, sold[k] ?? 0, opts.caps, m) * m * sc);
+  }
   return out;
 }
 
@@ -329,7 +461,7 @@ export function fanPriceIndex(club: Club, year: number): number {
   for (const k of FAN_CATS) {
     const c = (caps[k] ?? 0) * (k === 'steh' ? 1.5 : 1);
     if (c <= 0) continue;
-    w += c; v += c * (priceOf(club, k, year) / refPrice(club, k, year));
+    w += c; v += c * (effectivePrice(club, k, year, caps[k] ?? 0, caps) / refPrice(club, k, year));
   }
   return w ? v / w : 1;
 }
@@ -340,6 +472,7 @@ export function syncTicketPrice(club: Club, year: number): void {
 export function scaleFanPrices(club: Club, year: number, f: number): void {
   const s = ensureSeating(club, year);
   for (const k of FAN_CATS) s.prices[k] = round2(priceOf(club, k, year) * f);
+  for (const row of Object.values(s.tickets?.stand ?? {})) for (const k of FAN_CATS) if (row?.[k] != null) row[k] = round2(row[k]! * f);
   syncTicketPrice(club, year);
 }
 
@@ -362,10 +495,15 @@ export function seasonDrift(club: Club, year: number): void {
 // -----------------------------------------------------------------------------
 export const seasonIdOf = (date: string) => { const y = Number(date.slice(0, 4)); const s = Number(date.slice(5, 7)) >= 7 ? y : y - 1; return `${s}/${String((s + 1) % 100).padStart(2, '0')}`; };
 
+/** Verlauf: genug für eine Saison mit Pokal und Europapokal (Prognose gegen Ist auf der Seite Kartenverkauf). */
+export const SEAT_LOG_MAX = 30;
 export function logSeatSale(club: Club, date: string, sale: SeatSale, rev: SeatNums): void {
   const s = ensureSeating(club, Number(date.slice(0, 4)));
-  (s.log ??= []).unshift({ date, opponent: sale.opponent ?? '', sold: { ...sale.sold }, cap: { ...sale.caps }, rev: { ...rev } });
-  if (s.log.length > 8) s.log.length = 8;
+  (s.log ??= []).unshift({
+    date, opponent: sale.opponent ?? '', sold: { ...sale.sold }, cap: { ...sale.caps }, rev: { ...rev },
+    ...(sale.key ? { key: sale.key, fc: sale.fc, priceCat: sale.priceCat } : {}),
+  });
+  if (s.log.length > SEAT_LOG_MAX) s.log.length = SEAT_LOG_MAX;
   const id = seasonIdOf(date);
   if (!s.season || s.season.id !== id) { if (s.season) s.prevSeason = s.season; s.season = { id, games: 0, rev: {}, sold: {} }; }
   s.season.games++;

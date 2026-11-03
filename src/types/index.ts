@@ -690,6 +690,34 @@ export interface SeatMatchLog {
   cap: SeatNums;
   /** Erlös nominal je Kategorie. */
   rev: SeatNums;
+  /** Kartenverkauf (engine/tickets.ts): Schlüssel „Datum|Gegner“, Prognose-Spanne je Kategorie am Spieltag, Preiskategorie. */
+  key?: string;
+  fc?: Partial<Record<SeatCat, [number, number]>>;
+  priceCat?: TicketPriceCat;
+}
+
+/** Preiskategorie eines Heimspiels (Kartenverkauf). */
+export type TicketPriceCat = 'normal' | 'top' | 'rabatt';
+/** Acht Tribünen des Kartenverkaufs (Gruppierung der 14 Blöcke, engine/tickets.ts). */
+export type StandId = 'haupt' | 'ecke1' | 'tor1' | 'ecke2' | 'gegen' | 'ecke3' | 'tor2' | 'ecke4';
+
+/** Einstellungen des Kartenverkaufs (eigener Verein, optional). */
+export interface TicketSettings {
+  /** Preise je Tribüne und Kategorie (1975-Basis); fehlt = Preis der Kategorie. */
+  stand?: Partial<Record<StandId, SeatNums>>;
+  /** Preiskategorie je Heimspiel (Schlüssel „Datum|Gegner“); fehlt = automatisch. */
+  match?: Record<string, TicketPriceCat>;
+  /** Topzuschlag und Rabatt in Prozent. */
+  topPct: number;
+  rabattPct: number;
+  /** Automatischer Topzuschlag gegen die n besten Mannschaften der Tabelle (0 = aus). */
+  autoTop: number;
+  /** Automatischer Rabatt gegen unterklassige Gegner. */
+  autoRabatt: boolean;
+  /** Vereine mit Topzuschlag (vom Spielablauf gepflegt). */
+  topIds?: string[];
+  /** Schärfe der Prognose durch Mitarbeiter 0–0,55 (vom Spielablauf gepflegt). */
+  staff?: number;
 }
 
 /** Platzkategorien eines Stadions. */
@@ -705,6 +733,8 @@ export interface StadiumSeating {
   /** Saisonbilanz je Kategorie (eigener Verein, nominal). */
   season?: { id: string; games: number; rev: SeatNums; sold: SeatNums };
   prevSeason?: { id: string; games: number; rev: SeatNums; sold: SeatNums };
+  /** Kartenverkauf: Tribünenpreise, Preiskategorien je Spiel (fehlt in alten Spielständen). */
+  tickets?: TicketSettings;
 }
 
 /** Platzart eines Rangs. */

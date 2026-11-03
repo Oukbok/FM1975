@@ -16,7 +16,9 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   // Die Besten der Saison (Statistiken › Auszeichnungen)
   | 'auszeichnungen'
   // Fanartikel (Finanzen › Fanartikel)
-  | 'fanartikel';
+  | 'fanartikel'
+  // Kartenverkauf (Verein › Kartenverkauf)
+  | 'kartenverkauf';
 
 // =============================================================================
 // MENÜ-STRUKTUR (zweistufige Top-Navigation)
@@ -82,6 +84,7 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'staff', label: 'Mitarbeiter', icon: 'staff' },
     { screen: 'facilities', label: 'Vereinsgelände', icon: 'facilities' },
     { screen: 'stadium', label: 'Stadion', icon: 'stadium' },
+    { screen: 'kartenverkauf', label: 'Kartenverkauf', icon: 'ticket' },
     { screen: 'fans', label: 'Fans', icon: 'fans' },
     { screen: 'ruhmeshalle', label: 'Erfolge', icon: 'trophy' },
   ] },
