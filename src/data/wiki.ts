@@ -1408,7 +1408,7 @@ Nicht jeder unterschreibt: Ehrgeizige, unzufriedene oder für den Verein zu gute
 Spieler ab 34 – und ab 32, wenn sie nicht mehr zur Stammelf gehören – bekommen keinen neuen Vertrag. Zum 1. Juli wechseln sie zu einem Verein, der sie noch will, oder gehen unterklassig bzw. beenden die Karriere.
 
 ### Bosman-Planung
-Ab 1995/96 verkaufen KI-Vereine Spieler, die nicht verlängern wollen, lieber im letzten Vertragsjahr (Sommer bei höchstens 12, Winter bei höchstens 6 Monaten Restlaufzeit), statt sie ablösefrei zu verlieren. Die Ablöse fällt dann niedriger aus. Findet sich im Inland kein Abnehmer, geht der Spieler oft ins Ausland.
+Ab 1995/96 verkaufen KI-Vereine Spieler, die nicht verlängern wollen, lieber im letzten Vertragsjahr (Sommer bei höchstens 12, Winter bei höchstens 6 Monaten Restlaufzeit), statt sie ablösefrei zu verlieren. Die Ablöse fällt dann niedriger aus. Findet sich im Inland kein Abnehmer, geht der Spieler oft ins Ausland. Wer im Winter noch da ist, wird eher per Vorvertrag umworben – Interessenten warten lieber auf den ablösefreien Wechsel.
 
 ### Vorverträge
 Ab Bosman unterschreiben auslaufende Spieler zwischen Mitte Januar und Mitte März einen **Vorvertrag** bei einem anderen KI-Verein und wechseln am 1. Juli ablösefrei. Dasselbe kann mit deinen Spielern passieren (siehe Verträge).

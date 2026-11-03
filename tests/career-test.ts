@@ -225,13 +225,13 @@ if (log.letGo < 1) fail('keine auslaufenden Altstars');
 const refusers = Object.values(g7.players).filter((p) => p.contract.refused);
 console.log(`KI-Verträge: früh verlängert ${log.early}, abgelehnt ${log.refused}, Altstars ${log.letGo}`);
 aiPreContracts(g7, '1997-01-15');
-aiBosmanSales(g7, '1997-01-12', Math.random);
+aiBosmanSales(g7, '1997-01-25', Math.random);
 const after = g7.aiSquadLog![g7.aiSquadLog!.length - 1];
 console.log(`Bosman-Verkäufe ${after.bosmanSales}, Vorverträge ${after.pre} (Kandidaten ${refusers.length})`);
 if (refusers.length >= 3 && after.bosmanSales + after.pre === 0) fail('weder Bosman-Verkauf noch Vorvertrag');
 // Vor Bosman: kein Verkauf im letzten Jahr, keine Vorverträge
 const g8 = fresh('mgl');
 for (const p of Object.values(g8.players)) { p.contract.refused = '1976'; p.contract.expiryDate = '1977-06-30'; }
-aiBosmanSales(g8, '1977-01-12'); aiPreContracts(g8, '1977-01-15');
+aiBosmanSales(g8, '1977-01-25'); aiPreContracts(g8, '1977-01-15');
 if ((g8.aiSquadLog ?? []).some((e) => e.bosmanSales || e.pre)) fail('Bosman-Planung vor 1995');
 console.log('OK – Trainerkarriere, KI-Leihen und KI-Verträge');

@@ -186,8 +186,8 @@ export function optionWanted(g: Game, p: Player, holder: Club, today: string, rn
   const played = Math.max(g.table.rows.find((r) => r.clubId === holder.id)?.played ?? 0, 2 * Math.max(1, g.table.rows.length - 1));
   const share = (st?.starts ?? 0) / Math.max(1, played);
   const note = st?.ratedMatches ? st.averageRating : 4; // 1 = sehr gut … 6
-  const regular = share >= 0.5 || ((st?.appearances ?? 0) >= played * 0.6 && note <= 3.3);
-  const pBuy = regular ? clamp(0.45 + (3.4 - note) * 0.3 + (share - 0.5) * 0.5, 0.2, 0.85) : share >= 0.3 ? 0.1 : 0.02;
+  const regular = share >= 0.45 || ((st?.appearances ?? 0) >= played * 0.5 && note <= 3.4);
+  const pBuy = regular ? clamp(0.5 + (3.4 - note) * 0.3 + (share - 0.5) * 0.5, 0.25, 0.85) : share >= 0.25 ? 0.15 : 0.02;
   return rng() < pBuy;
 }
 

@@ -8,7 +8,7 @@
 //   bekommen keinen neuen Vertrag (`contract.aiLetGo`, Abgang am 1. Juli in
 //   contracts.ts → handleContractExpiry).
 // • Ab Bosman (Sommer 1995): Wer abgelehnt hat und nur noch ≤ 12 Monate (Sommer)
-//   bzw. ≤ 6 Monate (Winter) Vertrag hat, wird verkauft – lieber Ablöse jetzt
+//   bzw. ≤ 6 Monate (Winter, 25.1. – nach den ersten Vorverträgen) Vertrag hat, wird oft verkauft – lieber Ablöse jetzt
 //   als ablösefrei im Sommer (Abnehmer: KI-Verein mit Bedarf, sonst Ausland).
 // • Ab Bosman, 15.1./15.2./15.3.: Vorverträge zwischen KI-Vereinen mit auslaufenden
 //   Spielern (Wechsel am 1. Juli ablösefrei).
@@ -25,7 +25,7 @@ import { isAiClub, monthsLeftOf, squadOf } from './aiClubs';
 import { sellAbroad } from './aiOffers';
 import { noteSquad } from './aiSquadLog';
 import { transferPlayer } from './contracts';
-import { preferredClub, willJoin } from './playerWishesGame';
+import { willJoin, wishesFor } from './playerWishesGame';
 import { MIN_SQUAD, repairSquadLists, wageRatioOf } from './squads';
 import { logRenewal } from './transferLog';
 import { Game } from './state';
@@ -33,7 +33,8 @@ import { Game } from './state';
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const r5k = (v: number) => Math.round(v / 5000) * 5000;
 const RENEW_DAYS = new Set(['10-01', '02-01', '04-20']);
-const SALE_DAYS = new Set(['07-20', '08-10', '01-12']);
+// Winterverkauf erst nach den ersten Vorverträgen (15.1.): Abnehmer warten lieber auf den ablösefreien Wechsel.
+const SALE_DAYS = new Set(['07-20', '08-10', '01-25']);
 const PRE_DAYS = new Set(['01-15', '02-15', '03-15']);
 
 function hashRand(seed: string): number {
@@ -125,7 +126,7 @@ export function aiBosmanSales(g: Game, today: string, rng: () => number = Math.r
     const cands = squad.filter((p) => p.contract.refused && !p.contract.preContractClubId && !p.loan && !busy.has(p.id)
       && monthsLeftOf(p, today) > 0 && monthsLeftOf(p, today) <= (winter ? 6 : 12));
     for (const p of cands) {
-      if (seller.playerIds.length <= MIN_SQUAD || rng() > 0.7) continue;
+      if (seller.playerIds.length <= MIN_SQUAD || rng() > (winter ? 0.4 : 0.5)) continue;
       const months = monthsLeftOf(p, today);
       const group = GROUP_OF[p.naturalPosition];
       // Abnehmer im Inland: Bedarf, Budget, Spieler will.
@@ -180,13 +181,26 @@ export function aiPreContracts(g: Game, today: string): void {
       const cands = Object.values(g.clubs).filter((b) => b.id !== club.id && isAiClub(g, b) && b.playerIds.length < 30
         && (b.reputation ?? 60) >= (club.reputation ?? 60) - 10
         && p.overall >= (squadOf(g, b).map((x) => x.overall).sort((a, z) => z - a)[15] ?? 0));
-      const buyer = cands.length ? preferredClub(g, p, cands, () => hashRand(`${p.id}|preb|${today}`)) : null;
+      // Wer abgelehnt hat, will weg und ist weniger wählerisch als ein Spieler, der eigentlich bleiben könnte.
+      const buyer = bestPreBuyer(g, p, cands, p.contract.refused ? 28 : 42, () => hashRand(`${p.id}|preb|${today}|${cands.length}`));
       if (!buyer) continue;
       p.contract.preContractClubId = buyer.id;
       g.aiMarket?.news.push(`${p.fullName} (${club.shortName}) unterschreibt Vorvertrag bei ${buyer.name}`);
       noteSquad(g, 'pre');
     }
   }
+}
+
+/** Reizvollster Abnehmer (Spielerwünsche, ablösefrei) ab einer Mindestwertung. */
+function bestPreBuyer(g: Game, p: Player, cands: Club[], min: number, rng: () => number): Club | null {
+  let best: Club | null = null, bestS = -1;
+  for (const c of cands) {
+    const w = wishesFor(g, p, c, { freeAgent: true });
+    if (w.appeal.dealBreaker) continue;
+    const sc = w.appeal.score + rng() * 10;
+    if (sc > bestS) { bestS = sc; best = c; }
+  }
+  return bestS >= min ? best : null;
 }
 
 /** Täglicher Einstieg (game/day.ts). */
