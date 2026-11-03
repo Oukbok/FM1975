@@ -10,6 +10,8 @@ import { InfoTip } from '../../ui/InfoTip';
 import { GROUP_DE, PlayerRow, ScoutStars, avg, groupOf, scoutMid } from '../shared';
 import { useState } from 'react';
 import { demandFor, offerContract } from '../../game/contracts';
+import Icon from '../../components/Icon';
+import { PlayerTalkModal } from './talk/PlayerTalkModal';
 
 // =============================================================================
 // KADER — sortierbare Kadertabelle, Kaderstruktur, Verfügbarkeit
@@ -20,6 +22,7 @@ const GROUP_ORDER = ['GK', 'DEF', 'MID', 'ATT'];
 
 export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
   const [sel, setSel] = useState<string | null>(null);
+  const [talk, setTalk] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SquadSort>('pos');
   const [grp, setGrp] = useState<string>('all');
   const club = g.clubs[g.managedClubId];
@@ -68,7 +71,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
             <th className="rl-rank">#</th><th>Name</th><Th k="pos" cls="ctr">Pos</Th><Th k="age" cls="num">Alter</Th>
             <Th k="ovr" cls="num">Stärke</Th><Th k="pot">Potenzial<InfoTip k="potenzial" /></Th><Th k="form" cls="ctr">Form</Th>
             <Th k="fri" cls="ctr">Frische<InfoTip k="frische" /></Th><Th k="fit" cls="ctr">Fitness<InfoTip k="fitness" /></Th><Th k="mor" cls="ctr">Moral</Th>
-            <Th k="apps" cls="num">Sp.</Th><Th k="goals" cls="num">Tore</Th><th>Status</th>
+            <Th k="apps" cls="num">Sp.</Th><Th k="goals" cls="num">Tore</Th><th>Status</th><th className="ctr" aria-label="Gespräch" />
           </tr></thead>
           <tbody>
             {squad.map((pl) => {
@@ -89,6 +92,8 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
                   <td className={`nowrap ${pl.availability === 'injured' ? 'red' : pl.suspensionMatches > 0 ? 'orange-text' : 'muted'}`}>
                     {pl.availability === 'injured' ? `verletzt (${pl.injury?.daysRemaining} T.)` : pl.suspensionMatches > 0 ? `gesperrt (${pl.suspensionMatches})` : 'fit'}
                   </td>
+                  <td className="ctr">{!pl.isYouth && <button className="ptk-open" title="Gespräch führen" aria-label={`Gespräch mit ${pl.lastName} führen`}
+                    onClick={(e) => { e.stopPropagation(); setTalk(pl.id); }}><Icon name="talk" size={18} /></button>}</td>
                 </tr>
               );
             })}
@@ -123,6 +128,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
           : <Empty icon="training">Alle Spieler sind ausgeruht.</Empty>}
       </DashBox>
 
+      {talk && <PlayerTalkModal g={g} pid={talk} onClose={() => { setTalk(null); onChange?.(); }} onChange={onChange} />}
       {p && <PlayerModal player={p} club={club} squad={all} today={g.calendar.currentDate} season={g.season} onClose={() => setSel(null)}
         negotiation={{ demand: (x) => demandFor(g, x), offer: (x, w, y) => { const r = offerContract(g, x.id, w, y); onChange?.(); return r; } }} />}
     </DashPage>

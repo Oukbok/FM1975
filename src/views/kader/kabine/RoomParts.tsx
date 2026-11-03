@@ -3,17 +3,20 @@
 // =============================================================================
 import { useState } from 'react';
 import {
-  DRAnalysis, DRFactor, MORALE_LABEL, joltLeft, TALK_INFO, TALK_LABEL, TIER_LABEL, TalkKind, moraleStepOf, talkOdds, teamEventDefs,
+  DRAnalysis, DRFactor, MORALE_LABEL, joltLeft, TIER_LABEL, moraleStepOf, teamEventDefs,
 } from '../../../engine/dressingRoom';
 import { economyScale, yearOf } from '../../../engine/economy';
 import { personaOf, personaTitle } from '../../../engine/persona';
 import {
-  appointCaptain, eventState, meetingState, roomOf, talkState, talkTo, teamEvent, teamMeeting, toggleCouncil,
+  appointCaptain, eventState, meetingState, roomOf, talkState, talkWeek, teamEvent, teamMeeting, toggleCouncil,
 } from '../../../game/dressingRoomGame';
 import { joltsOf } from '../../../game/moraleJolt';
 import { Game } from '../../../game/state';
 import { condBar, condColor, fmtDay, fmtPrice } from '../../../ui/format';
 import { MoraleIcon } from '../../../components/status';
+import Icon from '../../../components/Icon';
+import { InfoTip } from '../../../ui/InfoTip';
+import { PlayerTalkModal } from '../talk/PlayerTalkModal';
 
 const sign = (v: number) => (v > 0 ? `+${v}` : `${v}`);
 
@@ -50,6 +53,7 @@ export function MoodSpark({ points }: { points: number[] }) {
 /** Spieler im Fokus: Moral mit Gründen, Einfluss, Außenseiter-Gründe, Gespräch. */
 export function PlayerFocus({ g, a, pid, onChange }: { g: Game; a: DRAnalysis; pid: string; onChange: () => void }) {
   const [msg, setMsg] = useState<{ pid: string; text: string } | null>(null);
+  const [talk, setTalk] = useState(false);
   const p = g.players[pid];
   const o = a.byId[pid];
   if (!p || !o) return <div className="dnote">Wähle einen Spieler im Kreis oder in der Liste.</div>;
@@ -57,6 +61,7 @@ export function PlayerFocus({ g, a, pid, onChange }: { g: Game; a: DRAnalysis; p
   const score = Math.round(p.moraleScore ?? 60);
   const trend = o.target - score;
   const ts = talkState(g, pid);
+  const wk = talkWeek(g);
   const pe = personaOf(p);
   const cap = dr.captainId === pid;
   const inCouncil = !!dr.council?.includes(pid);
@@ -88,23 +93,16 @@ export function PlayerFocus({ g, a, pid, onChange }: { g: Game; a: DRAnalysis; p
           <div className="kb-bar"><i style={{ width: `${o.influence}%`, background: 'var(--bar-fill)' }} /></div>
         </div>
       </div>
-      <div className="dsec">Einzelgespräch</div>
-      <div className="kb-talks">
-        {(['loben', 'kritisieren', 'einsatz', 'beruhigen'] as TalkKind[]).map((k) => {
-          const odds = talkOdds(k, p, o, score);
-          const off = !!ts.nextOn || (k === 'einsatz' && !!pledge);
-          return (
-            <button key={k} className="btn btn-sm btn-ghost kb-talk" disabled={off} title={TALK_INFO[k]} onClick={() => act(() => talkTo(g, pid, k))}>
-              <span>{TALK_LABEL[k]}</span><small>{odds.hint}</small>
-            </button>
-          );
-        })}
+      <div className="dsec">Einzelgespräch<InfoTip k="gespraeche" /></div>
+      <div className="dbtnrow">
+        <button className="btn btn-sm btn-ghost kb-talk-open" onClick={() => setTalk(true)}><Icon name="talk" size={18} /> Gespräch führen</button>
+        <span className="dnote">{ts.nextOn ? `Wieder ab ${fmtDay(ts.nextOn)}. ` : ''}Diese Woche noch {wk.left} von {wk.limit} Treffen.</span>
       </div>
       <div className="dnote">
-        {ts.nextOn ? `Nächstes Gespräch ab ${fmtDay(ts.nextOn)}. ` : ''}
         {ts.count ? `${ts.count} Gespräch${ts.count > 1 ? 'e' : ''} in den letzten 60 Tagen – Wirkung ${Math.round(ts.wear * 100)} %. ` : ''}
         {pledge ? `Einsatz zugesagt bis ${fmtDay(pledge.until)}.` : ''}
       </div>
+      {talk && <PlayerTalkModal g={g} pid={pid} onClose={() => { setTalk(false); onChange(); }} onChange={onChange} />}
       <div className="dbtnrow mt8">
         {!cap && <button className="btn btn-sm btn-ghost" onClick={() => act(() => appointCaptain(g, pid))}>Zum Kapitän ernennen</button>}
         {!cap && <button className="btn btn-sm btn-ghost" onClick={() => act(() => toggleCouncil(g, pid))}>{inCouncil ? 'Aus dem Mannschaftsrat nehmen' : 'In den Mannschaftsrat berufen'}</button>}

@@ -416,6 +416,11 @@ export const RAW: Record<string, string> = {
     '<path d="M7 4.5v12M7 16.5l-3-3M7 16.5l3-3" fill="none" stroke="%BASE%" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>' +
     '<path d="M17 19.5v-12M17 7.5l-3 3M17 7.5l3 3" fill="none" stroke="%ACCENT%" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
 
+  // Spielergespräch — weisse Sprechblase, Akzent-Antwortblase
+  talk:
+    '<path d="M3.5 5.5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v5.5a2 2 0 0 1-2 2H9l-3.6 3v-3h0a2 2 0 0 1-1.9-2Z" fill="none" stroke="%BASE%" stroke-width="1.6" stroke-linejoin="round"/>' +
+    '<path d="M18.5 9.2h.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5h-.4v2.6l-3.1-2.6h-3.4a1.5 1.5 0 0 1-1.5-1.5v-.9" fill="none" stroke="%ACCENT%" stroke-width="1.6" stroke-linejoin="round"/>',
+
   // Textmodus: Pause — zwei weisse Balken
   pause:
     '<rect x="6.5" y="5" width="4" height="14" rx="1" fill="%BASE%"/><rect x="13.5" y="5" width="4" height="14" rx="1" fill="%ACCENT%"/>',

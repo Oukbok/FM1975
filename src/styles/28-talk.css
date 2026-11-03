@@ -1,0 +1,149 @@
+/* =============================================================================
+   SPIELERGESPRÄCH (views/kader/talk/) — aufgeschlagenes Buch, zwei Seiten
+   Kühle Schiefertöne, Bernstein nur für Auswahl und Hauptknopf.
+   ============================================================================= */
+.ptk-overlay { padding: 2%; }
+.ptk-book {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 18px minmax(0, 1fr);
+  zoom: 1.25; /* wie .modal-xl: Popup etwas größer als die Seiten */
+  width: min(100%, 1480px);
+  height: min(100%, 880px);
+  padding: 14px;
+  border-radius: 8px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+}
+.ptk-page {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 36px 26px;
+  background: var(--panel);
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.ptk-left { border-radius: 4px 0 0 4px; box-shadow: inset -14px 0 22px -16px rgba(0, 0, 0, 0.7); }
+.ptk-right { border-radius: 0 4px 4px 0; box-shadow: inset 14px 0 22px -16px rgba(0, 0, 0, 0.7); }
+.ptk-spine { background: linear-gradient(90deg, var(--panel), var(--bg), var(--panel)); border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft); }
+
+/* --- linke Seite --------------------------------------------------------- */
+.ptk-name { display: flex; align-items: baseline; gap: 12px; margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 1.05; color: var(--text); text-transform: none; letter-spacing: 0.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ptk-no { color: var(--text); font-variant-numeric: tabular-nums; }
+.ptk-bar { width: 3px; height: 30px; background: var(--text-3); align-self: center; transform: skewX(-12deg); }
+.ptk-club { margin: 2px 0 0 4px; font-family: var(--font-display); font-size: 21px; color: var(--text-3); letter-spacing: 0.4px; }
+
+.ptk-card { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 22px; align-items: end; margin-top: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.ptk-face { display: flex; align-items: flex-end; justify-content: center; height: 172px; overflow: hidden; }
+.ptk-facts { min-width: 0; overflow: hidden; }
+.ptk-face svg { max-width: 100%; height: auto; }
+.ptk-facts-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 6px; font-size: 16px; color: var(--text-2); }
+.ptk-nat { font-family: var(--font-display); letter-spacing: 0.8px; color: var(--text); }
+.ptk-pot { color: var(--text-2); white-space: nowrap; }
+
+.ptk-row { display: grid; grid-template-columns: 150px minmax(0, 1fr); align-items: center; gap: 10px; min-height: 30px; border-bottom: 1px solid var(--border-soft); font-size: 16px; }
+.ptk-row:last-child { border-bottom: 0; }
+.ptk-k { color: var(--text-2); white-space: nowrap; display: inline-flex; align-items: center; }
+.ptk-v { color: var(--text); display: inline-flex; align-items: center; gap: 8px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ptk-dim { color: var(--text-3); }
+
+.ptk-perf { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.55fr) minmax(0, 0.75fr); gap: 18px; margin-top: 12px; }
+.ptk-h3 { font-family: var(--font-display); font-size: 21px; font-weight: 500; letter-spacing: 0.5px; color: var(--text); padding-bottom: 4px; border-bottom: 1px solid var(--border); margin-bottom: 2px; }
+.ptk-perf-list .ptk-row { min-height: 28px; }
+.ptk-state { display: flex; flex-direction: column; align-items: center; padding-top: 38px; gap: 8px; text-align: center; }
+.ptk-h4 { display: inline-flex; align-items: center; font-family: var(--font-display); font-size: 14px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); }
+.ptk-status { display: flex; align-items: center; justify-content: center; height: 52px; }
+.ptk-status.ok { color: var(--text); }
+.ptk-status.warn { color: var(--yellow); }
+.ptk-status.bad { color: var(--neg); }
+.ptk-state-word { font-size: 15px; color: var(--text-2); }
+.ptk-moral { position: relative; display: flex; align-items: center; justify-content: center; height: 52px; }
+.ptk-delta { position: absolute; left: calc(50% + 26px); bottom: -2px; font-family: var(--font-display); font-weight: 600; font-size: 19px; animation: ptk-pop 1.1s ease-out both; }
+.ptk-delta.up { color: var(--pos); }
+.ptk-delta.down { color: var(--neg); }
+@keyframes ptk-pop {
+  0% { opacity: 0; transform: translateY(10px) scale(0.7); }
+  35% { opacity: 1; transform: translateY(-6px) scale(1.15); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.ptk-scene { flex: 1 1 auto; min-height: 90px; margin-top: 14px; display: flex; align-items: flex-end; border-radius: 4px; overflow: hidden; border: 1px solid var(--border-soft); }
+.ptk-sc { width: 100%; height: 100%; display: block; }
+.ptk-sc { --ptk-skin: #b9a597; --ptk-hair: #2e2a28; } /* Hauttöne wie die Spielergesichter (Zeichnung) */
+.ptk-sky-a { stop-color: var(--panel); }
+.ptk-sky-b { stop-color: var(--panel-2); }
+.ptk-stand { fill: var(--bg-2); }
+.ptk-stand-line { stroke: var(--border-soft); stroke-width: 1.2; }
+.ptk-mast { stroke: var(--border); stroke-width: 3; fill: none; }
+.ptk-lamp { fill: var(--text-2); opacity: 0.5; }
+.ptk-grass { fill: var(--fam-3); opacity: 0.75; }
+.ptk-chalk { stroke: var(--text-3); stroke-width: 2; fill: none; opacity: 0.55; }
+.ptk-chalk-soft { opacity: 0.25; }
+.ptk-bench { fill: var(--panel-2); stroke: var(--border); stroke-width: 1.2; }
+.ptk-ball { fill: var(--text-2); opacity: 0.8; }
+.ptk-skin { fill: var(--ptk-skin); }
+.ptk-hair { fill: var(--ptk-hair); }
+.ptk-jacket { fill: var(--text-4); }
+.ptk-zip { stroke: var(--text-2); stroke-width: 1.4; }
+.ptk-pants { fill: var(--elevated); }
+.ptk-shirt { fill: var(--q-2); }
+.ptk-shorts { fill: var(--elevated); }
+.ptk-leg { stroke: var(--ptk-skin); stroke-width: 6; stroke-linecap: round; }
+.ptk-sock { stroke: var(--q-2); stroke-width: 6.6; stroke-linecap: round; }
+.ptk-arm { stroke: var(--ptk-skin); stroke-width: 6.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+.ptk-arm-jacket { stroke: var(--text-4); stroke-width: 8; }
+.ptk-shoe { stroke: var(--bg); stroke-width: 5; stroke-linecap: round; }
+
+/* --- rechte Seite -------------------------------------------------------- */
+.ptk-tools { position: absolute; top: 22px; right: 26px; display: flex; gap: 10px; }
+.ptk-round { width: 38px; height: 38px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: 1px solid var(--border); background: var(--panel-2); color: var(--text-2); cursor: pointer; }
+.ptk-round:hover { color: var(--text); border-color: var(--text-4); background: var(--panel-hover); }
+.ptk-round:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ptk-book .ptk-round.modal-close { position: static; font-size: 0; }
+.ptk-title { margin: 30px 0 0; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-family: var(--font-display); font-weight: 600; font-size: 40px; letter-spacing: 0.3px; text-transform: none; color: var(--text); }
+.ptk-lead { margin: 22px 0 18px; font-size: 19px; color: var(--text); }
+
+.ptk-topics { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; }
+.ptk-topics-h { display: flex; justify-content: space-between; padding: 0 2px 6px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--text-3); }
+.ptk-topic { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 40px; padding: 0 10px 0 12px; border: 0; border-bottom: 1px solid var(--border-soft); background: transparent; color: var(--text); font: inherit; font-size: 17px; text-align: left; cursor: pointer; }
+.ptk-topic:hover:not(:disabled) { background: var(--panel-hover); }
+.ptk-topic.on { background: var(--accent-soft); }
+.ptk-topic.on::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 3px; border-radius: 2px; background: var(--accent); }
+.ptk-topic.on .ptk-say { color: var(--accent); }
+.ptk-topic:disabled { cursor: default; color: var(--text-4); }
+.ptk-say { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ptk-hint { flex: 0 0 auto; font-size: 14px; color: var(--text-3); }
+.ptk-hint.dim { color: var(--text-4); }
+.ptk-ruled { flex: 0 0 40px; border-bottom: 1px solid var(--border-soft); }
+.ptk-note { margin-top: 10px; font-size: 15px; line-height: 1.45; color: var(--text-3); min-height: 22px; }
+
+.ptk-answer { flex: 1 1 auto; min-height: 0; overflow-y: auto; margin-top: 22px; display: flex; flex-direction: column; gap: 16px; }
+.ptk-said, .ptk-reply { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 12px; align-items: baseline; font-size: 18px; color: var(--text-2); }
+.ptk-who { font-family: var(--font-display); font-size: 14px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); }
+.ptk-reply blockquote { margin: 0; font-size: 23px; line-height: 1.4; color: var(--text); font-style: italic; animation: ptk-fade 0.5s ease-out both; }
+.ptk-gesture { margin-left: 122px; font-size: 16px; color: var(--text-3); animation: ptk-fade 0.5s 0.25s ease-out both; }
+.ptk-effects { display: flex; flex-wrap: wrap; gap: 8px; margin-left: 122px; animation: ptk-fade 0.5s 0.4s ease-out both; }
+.ptk-eff { padding: 4px 10px; border: 1px solid var(--border); border-radius: 4px; font-size: 15px; color: var(--text-2); }
+.ptk-eff.up { color: var(--pos); }
+.ptk-eff.down { color: var(--neg); }
+.ptk-answer .ptk-note { margin-left: 122px; }
+@keyframes ptk-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.ptk-week { display: flex; align-items: center; margin-top: 14px; font-size: 16px; color: var(--text-2); }
+.ptk-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.ptk-act { display: flex; align-items: center; gap: 14px; height: 46px; padding: 0 14px 0 6px; border: 1px solid var(--border); border-radius: 23px; background: var(--panel-2); color: var(--text); font-family: var(--font-display); font-size: 18px; letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer; text-align: left; }
+.ptk-act:hover:not(:disabled) { background: var(--panel-hover); border-color: var(--text-4); }
+.ptk-act-ico { width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--elevated); color: var(--text-2); }
+.ptk-act.main:not(:disabled) { border-color: var(--accent-dim); }
+.ptk-act.main:not(:disabled) .ptk-act-ico { background: var(--accent); color: var(--accent-ink); }
+.ptk-act:disabled { cursor: default; color: var(--text-4); }
+.ptk-act:disabled .ptk-act-ico { color: var(--text-4); }
+
+/* Knopf „Gespräch“ in Listen (Kader › Übersicht) */
+.ptk-open { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 26px; padding: 0; border: 1px solid var(--border-soft); border-radius: 4px; background: transparent; cursor: pointer; opacity: 0.75; }
+.ptk-open:hover { opacity: 1; border-color: var(--border); background: var(--panel-hover); }

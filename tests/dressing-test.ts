@@ -20,8 +20,10 @@ import { economyScale, yearOf } from '../src/engine/economy';
 import { chooseEventOption } from '../src/game/eventsGame';
 import { teamEventDefs, talkOdds, MORALE_STEPS, analyzeRoom, goalFactors } from '../src/engine/dressingRoom';
 import {
-  appointCaptain, eventState, goalOf, meetingState, migrateDressingRoom, roomAnalysis, roomInputs, roomOf, squadOf, talkState, talkTo, teamEvent, teamMeeting, toggleCouncil,
+  appointCaptain, eventState, goalOf, meetingState, migrateDressingRoom, roomAnalysis, roomInputs, roomOf, squadOf, talkState, talkTo, talkWeek, teamEvent, teamMeeting, toggleCouncil, TALK_WEEK_LIMIT,
 } from '../src/game/dressingRoomGame';
+import { holdTalk, talkTopics } from '../src/game/playerTalk';
+import { personaOf } from '../src/engine/persona';
 import { joltsOf } from '../src/game/moraleJolt';
 
 const seasons = Number(process.argv[2] ?? 30);
@@ -88,11 +90,11 @@ function coach(g: Game): void {
       if (o.id !== dr.captainId && !dr.council?.includes(o.id) && o.tier !== 'aussen') { toggleCouncil(g, o.id); acts.council++; }
     }
   }
-  // Gespräche: bis zu drei pro Woche mit den Unzufriedensten.
+  // Gespräche: bis zum Wochenlimit mit den Unzufriedensten.
   const unhappy = a.players.filter((o) => o.outsider || o.target < 48).sort((x, y) => x.target - y.target);
   let t = 0;
   for (const o of unhappy) {
-    if (t >= 3) break;
+    if (t >= 3 || talkWeek(g).left <= 0) break;
     const p = g.players[o.id];
     if (!p || talkState(g, o.id).nextOn) continue;
     const odds = talkOdds('beruhigen', p, o, p.moraleScore ?? 60);
@@ -103,7 +105,7 @@ function coach(g: Game): void {
   // In der Krise: die Führungsspieler stärken (ihre Laune trägt die Stimmung).
   if (dr.mood < 45) {
     for (const id of a.leaders) {
-      if (t >= 5) break;
+      if (t >= 5 || talkWeek(g).left <= 0) break;
       const p = g.players[id];
       if (!p || talkState(g, id).nextOn || (p.moraleScore ?? 60) >= 75) continue;
       talkTo(g, id, talkOdds('loben', p, a.byId[id], p.moraleScore ?? 60).chance >= 0.5 ? 'loben' : 'beruhigen'); acts.talks++; t++;
@@ -338,6 +340,48 @@ check(avg(passive.aiSpread) >= 3, `KI-Vereine: Moral-Stufen beweglich (Ø ${avg(
   check(!!c2.dressingRoom && squadOf(json, c2).every((q) => typeof q.moraleScore === 'number' && MORALE_STEPS.includes(q.morale)), 'Nachrüstung alter Spielstand (idempotent)');
   for (let i = 0; i < 10; i++) processDay(json, HEADLESS_UI);
   check(squadOf(json, c2).every((q) => Number.isFinite(q.moraleScore!)), 'nach Nachrüstung läuft der Tagesablauf');
+}
+
+// --- Spielergespräch (game/playerTalk.ts): Themen, Wochenlimit, Wirkung, Antworten
+{
+  const g = newGame();
+  for (let i = 0; i < 40; i++) processDay(g, HEADLESS_UI);
+  // auf einen Montag stellen
+  while (new Date(g.calendar.currentDate + 'T00:00:00Z').getUTCDay() !== 1) g.calendar.currentDate = CalendarEngine.addDays(g.calendar.currentDate, 1);
+  const club = g.clubs[g.managedClubId];
+  roomOf(club).talks = {};
+  const sq = squadOf(g, club);
+  const tired = sq[2];
+  tired.frische = 60;
+  const fresh = sq[3];
+  fresh.frische = 100;
+  check(talkTopics(g, tired.id).some((t) => t.kind === 'pause'), 'müder Spieler: Thema „Pause gönnen“ angeboten');
+  check(!talkTopics(g, fresh.id).some((t) => t.kind === 'pause'), 'ausgeruhter Spieler: keine Pause angeboten');
+  check(talkTopics(g, fresh.id).length >= 3, `genug Themen (${talkTopics(g, fresh.id).map((t) => t.kind).join(', ')})`);
+  const f0 = tired.frische, m0 = tired.moraleScore ?? 60;
+  const r1 = holdTalk(g, tired.id, 'pause', () => 0.01);
+  check(r1.ok && (tired.frische ?? 0) > f0 && (tired.frische ?? 0) - f0 <= 10, `Pause: Frische ${f0} → ${tired.frische} (${r1.effects.join(', ')})`);
+  check(r1.ok && Math.abs(r1.after - m0) <= 10 && r1.quote.length > 5, `Pause: Moral ${m0.toFixed(1)} → ${r1.after.toFixed(1)}, Antwort „${r1.quote}“`);
+  const r2 = holdTalk(g, sq[4].id, 'fordern', () => 0.99);
+  check(r2.ok && !r2.success && r2.after <= r2.before, `Misserfolg senkt die Moral (${r2.before.toFixed(1)} → ${r2.after.toFixed(1)}) „${r2.quote}“`);
+  holdTalk(g, sq[5].id, 'training', () => 0.3);
+  check(talkWeek(g).left === 0 && TALK_WEEK_LIMIT === 3, `Wochenlimit verbraucht (${talkWeek(g).used}/${TALK_WEEK_LIMIT})`);
+  const r4 = holdTalk(g, sq[6].id, 'training');
+  check(!r4.ok && /Woche/.test(r4.text), `viertes Gespräch abgelehnt („${r4.text}“)`);
+  g.calendar.currentDate = CalendarEngine.addDays(g.calendar.currentDate, 7);
+  check(talkWeek(g).left === TALK_WEEK_LIMIT, 'neue Woche: Kontingent wieder frei');
+  // Persönlichkeit: Ehrgeizige nehmen „höhere Ziele“ eher an
+  const a = roomAnalysis(g);
+  const xs = sq.filter((p) => p.age <= 27).map((p) => ({ e: personaOf(p).ehrgeiz, c: talkOdds('ziele', p, a.byId[p.id], p.moraleScore ?? 60).chance }));
+  const hi = avg(xs.filter((x) => x.e >= 60).map((x) => x.c)), lo = avg(xs.filter((x) => x.e < 45).map((x) => x.c));
+  check(!xs.some((x) => x.e >= 60) || !xs.some((x) => x.e < 45) || hi > lo, `Ehrgeiz wirkt auf „höhere Ziele“ (${(lo * 100).toFixed(0)} % → ${(hi * 100).toFixed(0)} %)`);
+  // Antworten abwechslungsreich
+  const quotes = new Set<string>();
+  for (const p of sq.slice(0, 12)) { roomOf(club).talks = {}; const r = holdTalk(g, p.id, 'ziele'); if (r.ok) quotes.add(r.quote); }
+  check(quotes.size >= 5, `Antworten abwechslungsreich (${quotes.size} verschiedene)`);
+  // alter Spielstand ohne Gesprächsdaten
+  delete roomOf(club).talks;
+  check(talkWeek(g).used === 0, 'ohne gespeicherte Gespräche: Kontingent frei');
 }
 
 console.log(fails ? `\n${fails} Prüfung(en) fehlgeschlagen` : '\nAlle Prüfungen bestanden');
