@@ -2,7 +2,6 @@
 // Saison-Briefing — Bausteine für Popup (BriefingModal) und Archiv (BriefingView)
 // =============================================================================
 import { useState } from 'react';
-import Icon from '../../../components/Icon';
 import { topicMeta } from '../../../data/briefings';
 import type { BriefingItem, DifferenceToToday } from '../../../data/briefings';
 import { formatMoneyShort } from '../../../engine/economy';
@@ -16,7 +15,6 @@ export function Highlights({ list, compact = false }: { list: BriefingHighlight[
     <ol className={`bf-hl ${compact ? 'compact' : ''}`}>
       {list.map((h, i) => (
         <li key={i} className="bf-hl-item">
-          <span className="bf-hl-ico"><Icon name={h.icon} size={compact ? 22 : 28} /></span>
           <span className="bf-hl-main">
             <span className="bf-kicker">{h.kicker}</span>
             <span className="bf-hl-title">{h.title}</span>
@@ -61,10 +59,10 @@ export function ItemGrid({ items, empty }: { items: BriefingItem[]; empty: strin
         const m = topicMeta(it.topic);
         return (
           <article key={i} className="bf-item">
-            <header><Icon name={m.icon} size={26} /><span className="bf-kicker">{m.label}</span></header>
+            <header><span className="bf-kicker">{m.label}</span></header>
             <h3>{it.title}</h3>
             <p>{it.text}</p>
-            {it.inGame && <div className="bf-ingame"><Icon name="unlock" size={16} /><span><b>Im Spiel:</b> {it.inGame}</span></div>}
+            {it.inGame && <div className="bf-ingame"><span><b>Im Spiel:</b> {it.inGame}</span></div>}
           </article>
         );
       })}
@@ -104,7 +102,6 @@ function DiffList({ title, icon, list, note }: { title: string; icon: string; li
       <h4 className="bf-sec-title">{title} <span className="bf-count">{list.length}</span></h4>
       {list.map((d, i) => (
         <div key={i} className="bf-change">
-          <Icon name={topicMeta(d.topic).icon} size={22} />
           <div><b>{d.title}</b><p>{note(d)}</p></div>
         </div>
       ))}
@@ -153,7 +150,6 @@ export function ChangesTab({ list, first }: { list: GameChange[]; first: boolean
             <h4 className="bf-sec-title">{CHANGE_KIND_META[k].label}</h4>
             {list.filter((c) => c.kind === k).map((c, i) => (
               <div key={i} className="bf-change">
-                <Icon name={c.icon} size={22} />
                 <div>
                   <b>{c.title}</b>
                   <p>{c.text}</p>

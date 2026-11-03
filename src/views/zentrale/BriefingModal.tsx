@@ -108,7 +108,7 @@ export function BriefingModal({ b, g, onClose, onGoto, initialTab = 'overview', 
           <nav className="tabs bf-tabs">
             {tabs.map((t) => (
               <button key={t.key} className={`tab ${tab === t.key ? 'active' : ''}`} onClick={() => setTab(t.key)}>
-                <Icon name={t.icon} size={18} /> {t.label}{t.count != null && <span className="bf-count">{t.count}</span>}
+                {t.label}{t.count != null && <span className="bf-count">{t.count}</span>}
               </button>
             ))}
           </nav>
