@@ -1,4 +1,5 @@
 import { recordSeasonBriefing } from './seasonBriefing';
+import { recordBudgetPlan } from './budgetPlan';
 import { migratePositionSkills } from './positionsGame';
 import { ensureStadiumBlocks } from './stadiumGame';
 import { migrateSeating } from './seatingGame';
@@ -215,6 +216,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   initSponsorship(g0);
   // Saison-Briefing „So anders ist der Fußball 1975/76“ (game/seasonBriefing.ts).
   recordSeasonBriefing(g0, true);
+  recordBudgetPlan(g0, { pending: true }); // Saisonbudget (game/budgetPlan.ts)
   migratePositionSkills(g0); // Positionsvertrautheit aller Spieler (game/positionsGame.ts)
   migrateYouthComps(g0); // Jugendwettbewerbe der Saison (game/youthComps/)
   return g0;

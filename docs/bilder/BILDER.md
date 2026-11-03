@@ -88,3 +88,4 @@ Werden beim Zusammenführen der Stränge ergänzt.
 | Fanartikel | `merch/lager.webp` | Lagerraum hinter dem Fanshop, Regale, Kartons, kühl | 480×480 | Box „Lager“ |
 | Kartenverkauf | `tickets/rasen.jpg` | Rasen von oben mit Mähstreifen, kühl, entsättigt | 1200×750 | Draufsicht der Tribünen (Platzhalter vorhanden) |
 | Erfolge | `trophies/<form>.webp` | 12 Formen, siehe Abschnitt 4 | 1000×1100 | Vitrine (freischalten in `src/data/trophyImages.ts`) |
+| Saisonbudget | `budget/berater-<jahrzehnt>.webp` | Porträt des Finanzberaters/Schatzmeisters je Jahrzehnt (Anzug, Akten) | 160×184 (Quelle 640×736) | Budget-Fenster und Finanzen › Budget (Ersatz: gezeichnetes Gesicht) |

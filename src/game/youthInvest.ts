@@ -27,6 +27,7 @@ import { Club, Player } from '../types';
 import { fmtPrice } from '../ui/format';
 import { leagueClubs } from './season';
 import { Game } from './state';
+import { checkBudget, noteBudgetSpend } from './budgetPlan';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const sim = (g: Game) => !!(g as any).simAutoManage;
@@ -94,7 +95,14 @@ export function startUpgrade(g: Game, club: Club, key: YouthBlockKey, date: stri
   const inv = youthInvestOf(club, year);
   const target = (inv.levels[key] ?? 0) + 1;
   const mine = club.id === g.managedClubId;
-  if (q.build > 0) book(club.finances, date, -Math.round(q.build * economyScale(year)), 'facilities', `Nachwuchs: ${q.name}`, mine);
+  const nominal = Math.round(q.build * economyScale(year));
+  if (mine) {
+    // Saisonbudget: Ausbau nur im Rahmen des Jugendbudgets (game/budgetPlan.ts).
+    const block = checkBudget(g, 'youth', nominal);
+    if (block) return block;
+    noteBudgetSpend(g, 'youth', nominal);
+  }
+  if (q.build > 0) book(club.finances, date, -nominal, 'facilities', `Nachwuchs: ${q.name}`, mine);
   if (q.months <= 0) inv.levels[key] = target;
   else inv.builds.push({ key, target, done: addMonths(date, q.months) });
   return q.months <= 0 ? `${q.name} ist ab sofort aktiv.` : `${q.name}: fertig in ${q.months} Monat(en).`;
@@ -179,6 +187,7 @@ export function monthlyYouthInvest(g: Game, today: string): void {
     // tierScale) – sonst fraß das Pflicht-NLZ eines Viertligisten ein Viertel seines Umsatzes.
     const cost = Math.round(annualCostBase(inv) / 12 * tierScale(scale, clubTier(club), 'matchday'));
     if (cost > 0) book(club.finances, today, -cost, 'training_facilities', 'Nachwuchs: Jugendetat, Trainer, Unterhalt', mine && !sim(g));
+    if (mine) noteBudgetSpend(g, 'youth', cost, false); // laufende Kosten aufs Jugendbudget
     // Verzögerte Wirkung: aufwärts ≈ 20 %/Jahr, abwärts schneller (Trainer gehen, Abläufe zerfallen).
     const target = targetQuality(club, inv, year);
     const rate = target >= inv.quality ? 0.019 : 0.035;

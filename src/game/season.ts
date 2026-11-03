@@ -1,4 +1,5 @@
 import { recordSeasonBriefing } from './seasonBriefing';
+import { recordBudgetPlan } from './budgetPlan';
 import { awardSeasonEnd, clearPendingAwards } from './seasonAwardsGame';
 import { clearPendingGoldenBall } from './goldenBallGame';
 import { EuroCompId, allEuroClubs } from '../data/europe';
@@ -477,6 +478,8 @@ export function startNextSeason(g: Game): void {
   for (const p of Object.values(g.players)) if (!p.isYouth) refreshOverall(p);
   // Saison-Briefing („Was ist neu?“) festhalten und zum Anzeigen vormerken.
   recordSeasonBriefing(g);
+  // Saisonbudget des Finanzberaters (game/budgetPlan.ts): Plan anlegen, Popup nach dem Briefing.
+  recordBudgetPlan(g, { pending: true });
 }
 
 /** Erzeugt eine Spielbericht-Nachricht für das Spiel des Nutzers. */

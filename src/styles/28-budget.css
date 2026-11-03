@@ -1,0 +1,124 @@
+/* =============================================================================
+   SAISONBUDGET — Fenster (views/finanzen/budget/BudgetModal.tsx) und Seite
+   Finanzen › Budget (views/finanzen/BudgetView.tsx). Posten in Schieferstufen,
+   Reserve grün/rot nur als Signal gegen die Mindestreserve.
+   ============================================================================= */
+.modal.modal-xl.bud-modal { max-width: 1500px; height: auto; max-height: 92%; }
+.bud-head h2 { margin: 0; font-family: var(--font-display); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+.bud-head-id { display: flex; flex-direction: column; gap: 2px; }
+.bud-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 0; padding: 0; }
+.bud-page { padding: 12px 24px 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.bud-left { border-right: 1px solid var(--border); }
+.bud-sec {
+  margin: 4px 0 0; font-size: 13px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px;
+  display: flex; align-items: center; gap: 6px; padding-bottom: 5px; border-bottom: 1px solid var(--border-soft);
+}
+.bud-foot { align-items: center; }
+.bud-foot-note { flex: 1 1 auto; color: var(--text-3); font-size: 14px; }
+
+/* Saisonziele */
+.bud-goals { display: flex; flex-direction: column; gap: 6px; }
+.bud-goal { display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 10px; padding: 4px 10px; background: var(--panel-2); border: 1px solid var(--border-soft); border-radius: 6px; }
+.bud-goal-ico { color: var(--text-3); display: flex; }
+.bud-goal-t { color: var(--text-2); font-size: 15px; }
+.bud-goal-v { font-family: var(--font-display); font-weight: 500; font-size: 17px; color: var(--text); text-transform: uppercase; letter-spacing: 0.4px; }
+
+/* Finanzberater */
+.bud-adv { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; }
+.bud-adv-who { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 104px; text-align: center; }
+.bud-adv-face svg { border: 1px solid var(--border); }
+.bud-adv-id { display: flex; flex-direction: column; font-size: 13px; line-height: 1.25; }
+.bud-adv-id b { color: var(--text); font-size: 14px; }
+.bud-adv-id span { color: var(--text-3); }
+.bud-adv-text { font-size: 15px; line-height: 1.5; color: var(--text-2); max-height: 380px; overflow: auto; padding-right: 4px; }
+.bud-adv-text p { margin: 0 0 7px; }
+.bud-adv-text .bud-adv-era { color: var(--text); }
+.bud-adv.compact { grid-template-columns: 1fr; }
+.bud-adv.compact .bud-adv-who { flex-direction: row; width: auto; text-align: left; }
+.bud-adv.compact .bud-adv-text { max-height: none; }
+
+/* Reaktionen */
+.bud-react-box { margin-top: auto; }
+.bud-react { display: flex; flex-direction: column; gap: 5px; padding-top: 4px; }
+.bud-react-row { display: grid; grid-template-columns: 110px 1fr 110px; align-items: center; gap: 10px; font-size: 15px; }
+.bud-react-k { color: var(--text-2); }
+.bud-react-track { height: 8px; border-radius: 4px; background: var(--bar-track); overflow: hidden; }
+.bud-react-track > span { display: block; height: 100%; border-radius: 4px; transition: width 0.25s ease, background 0.25s ease; }
+.bud-react-v { color: var(--text); text-align: right; }
+.bud-board { display: flex; justify-content: space-between; color: var(--text-3); font-size: 14px; margin-top: 4px; padding-top: 6px; border-top: 1px solid var(--border-soft); }
+.bud-board b { color: var(--text-2); font-weight: 600; }
+
+/* Einnahmen-Tabelle */
+.bud-inc, .bud-soll { width: 100%; border-collapse: collapse; font-size: 15px; }
+.bud-inc th, .bud-soll th { text-align: left; color: var(--text-3); font-weight: 600; font-size: 13px; padding: 3px 6px; border-bottom: 1px solid var(--border); }
+.bud-inc td, .bud-soll td { padding: 3px 6px; border-bottom: 1px solid var(--border-soft); color: var(--text); }
+.bud-inc .num, .bud-soll .num { text-align: right; white-space: nowrap; }
+.bud-inc .dim, .bud-soll .dim { color: var(--text-3); }
+.bud-inc tr.sum td { font-weight: 600; border-top: 1px solid var(--border); }
+.bud-inc tr.bal td { color: var(--text-2); }
+.bud-modal .neg, .bud-inc .neg, .bud-soll .neg { color: var(--neg); }
+.bud-soll .pos { color: var(--pos); }
+
+/* Farben der Posten (Schieferstufen) */
+.bud-c-wages { background: var(--q-1); }
+.bud-c-transfers { background: var(--q-2); }
+.bud-c-infra { background: var(--q-3); }
+.bud-c-youth { background: var(--q-4); }
+.bud-c-other { background: var(--text-4); opacity: 0.7; }
+.bud-c-reserve { background: var(--pos); opacity: 0.75; }
+.bud-c-reserve.low { background: var(--neg); }
+
+/* Gesamtbalken */
+.bud-stack { display: flex; flex-direction: column; gap: 4px; }
+.bud-stack-bar { display: flex; height: 14px; border-radius: 4px; overflow: hidden; background: var(--bar-track); gap: 1px; }
+.bud-stack-bar > span { display: block; height: 100%; transition: width 0.25s ease; }
+.bud-stack-lbl { font-size: 14px; color: var(--text-2); }
+.bud-stack-lbl .dim { color: var(--text-4); }
+
+/* Säulen */
+.bud-cols { display: flex; flex-direction: column; gap: 6px; }
+.bud-cols-plot {
+  position: relative; height: 140px; margin-top: 10px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; align-items: end;
+  padding: 0 4px 0 78px; border-bottom: 1px solid var(--border);
+}
+.bud-grid { position: absolute; left: 78px; right: 0; border-top: 1px dashed var(--border-soft); pointer-events: none; }
+.bud-grid i { position: absolute; left: -78px; top: -8px; width: 72px; white-space: nowrap; text-align: right; font-style: normal; font-size: 11px; color: var(--text-4); }
+.bud-col { position: relative; height: 100%; background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: flex-end; justify-content: center; }
+.bud-col-bar { width: 72%; border-radius: 3px 3px 0 0; transition: height 0.25s ease; min-height: 2px; }
+.bud-col-bound {
+  position: absolute; bottom: 0; left: 14%; width: 72%; border-radius: 3px 3px 0 0; pointer-events: none;
+  background: repeating-linear-gradient(135deg, rgba(12, 15, 21, 0.38) 0 3px, transparent 3px 7px);
+}
+.bud-col-min { position: absolute; left: 6%; width: 88%; height: 0; border-top: 2px dashed var(--text-2); pointer-events: none; }
+.bud-col.sel .bud-col-bar { outline: 2px solid var(--accent); outline-offset: 2px; }
+.bud-cols-foot { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; padding: 0 4px 0 78px; }
+.bud-colf { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; }
+.bud-colf-name {
+  background: none; border: none; cursor: pointer; padding: 1px 2px; font-family: var(--font-display); text-transform: uppercase;
+  letter-spacing: 0.4px; font-size: 13px; color: var(--text-3); border-bottom: 2px solid transparent;
+}
+.bud-colf.sel .bud-colf-name { color: var(--text); border-bottom-color: var(--accent); }
+.bud-colf-val { font-size: 14px; color: var(--text); white-space: nowrap; }
+.bud-colf-val.neg { color: var(--neg); }
+.bud-colf-steps { display: flex; gap: 6px; min-height: 22px; align-items: center; }
+.bud-colf-fixed { font-size: 12px; color: var(--text-4); }
+.bud-reset { white-space: nowrap; }
+.bud-step {
+  width: 20px; height: 20px; padding: 0; line-height: 18px; border-radius: 4px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--panel-2); color: var(--text-2); font-size: 14px;
+}
+.bud-step:hover { border-color: var(--accent); color: var(--text); }
+
+/* Bearbeiten des gewählten Postens */
+.bud-edit { background: var(--panel-2); border: 1px solid var(--border-soft); border-radius: 6px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+.bud-edit-head { display: flex; justify-content: space-between; align-items: baseline; }
+.bud-edit-head b { font-family: var(--font-display); font-weight: 500; text-transform: uppercase; letter-spacing: 0.4px; font-size: 16px; }
+.bud-edit-head span { font-family: var(--font-display); font-size: 20px; font-weight: 500; }
+.bud-range { width: 100%; accent-color: var(--accent); }
+.bud-tip { margin: 0; color: var(--text-2); font-size: 14.5px; line-height: 1.45; }
+
+/* Seite Finanzen › Budget */
+.bud-page-top { display: flex; flex-direction: column; gap: 10px; }
+.bud-soll-bar { width: 26%; }
+.bud-soll-track { display: block; height: 8px; border-radius: 4px; background: var(--bar-track); overflow: hidden; }
+.bud-soll-track > span { display: block; height: 100%; }

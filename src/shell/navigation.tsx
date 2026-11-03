@@ -18,7 +18,9 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   // Fanartikel (Finanzen › Fanartikel)
   | 'fanartikel'
   // Kartenverkauf (Verein › Kartenverkauf)
-  | 'kartenverkauf';
+  | 'kartenverkauf'
+  // Saisonbudget (Finanzen › Budget)
+  | 'budget';
 
 // =============================================================================
 // MENÜ-STRUKTUR (zweistufige Top-Navigation)
@@ -74,6 +76,7 @@ export const MENU_STRUCTURE: MainCat[] = [
   { key: 'finanzen', label: 'Finanzen', icon: 'finances', dash: 'cat-finanzen', subs: [
     { screen: 'cat-finanzen', label: 'Finanzen', icon: 'finances' },
     { screen: 'finances', label: 'Bilanz', icon: 'finances' },
+    { screen: 'budget', label: 'Budget', icon: 'dashFinanzen' },
     { screen: 'sponsoring', label: 'Sponsoring', icon: 'sponsoring' },
     { screen: 'fanartikel', label: 'Fanartikel', icon: 'merch' },
     { screen: 'marketing', label: 'Marketing', icon: 'marketing' },

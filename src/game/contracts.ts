@@ -10,6 +10,7 @@
 // • Verträge, die schon in einer früheren Saison abgelaufen sind (alte
 //   Spielstände), werden einmalig still verlängert.
 // =============================================================================
+import { wageLimitFactor } from './budgetPlan';
 import { marketWage } from '../engine/clubEconomy';
 import { bosmanActive, contractDemand, evaluateOffer, seasonEndYear } from '../engine/contractTalks';
 import { bookTransfer } from '../engine/finances';
@@ -63,8 +64,9 @@ export function offerContract(g: Game, playerId: string, wage: number, years: nu
   const club = g.clubs[g.managedClubId];
   const wages = squadOf(g, club).reduce((s, x) => s + x.contract.weeklyWage, 0) - p.contract.weeklyWage + wage;
   const budget = club.finances.wageBudget ?? 0;
-  if (budget > 0 && wage > p.contract.weeklyWage && wages > budget * 1.15) {
-    return { ok: false, text: `Der Vorstand gibt das nicht frei: Die Gehälter lägen bei ${Math.round((wages / budget) * 100)} % des Gehaltsrahmens (Grenze 115 %).` };
+  const wf = wageLimitFactor(g); // Saisonbudget: harte Grenze (game/budgetPlan.ts), ohne Plan 115 %
+  if (budget > 0 && wage > p.contract.weeklyWage && wages > budget * wf) {
+    return { ok: false, text: `Der Vorstand gibt das nicht frei: Die Gehälter lägen bei ${Math.round((wages / budget) * 100)} % des Gehaltsbudgets (Grenze ${Math.round(wf * 100)} %).${wf === 1 ? ' Mehr Spielraum schaffst du unter Finanzen › Budget.' : ''}` };
   }
   const season = `${seasonEndYear(today) - 1}`;
   const talks = p.contract.talks && p.contract.talks.season === season ? p.contract.talks : { season, attempts: 0 };
