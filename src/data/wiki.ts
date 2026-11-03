@@ -1692,7 +1692,10 @@ Jede Fläche ist ein eigener Vertrag mit Partner, Branche, Herkunftsland, Jahres
 | Ärmel | 2017/18 | vorher vermarktete die Liga den Ärmel |
 | Krypto/NFT | 2021–22 | Einbruch nach der FTX-Pleite im November 2022 |
 
-Namensrechte am Stadion (ab 2000) laufen weiter über **Stadion › Namensrechte**.
+Namensrechte am Stadion (ab 2000) verkaufst du im Reiter **Namensrechte** (auch unter Verein › Vorstand).
+
+## Die Seite Sponsoring
+Vier Reiter: **Hauptsponsor** (Einnahmen dieser Saison je Art, Brustvertrag mit Prämien und Klauseln, dein Heimtrikot mit Brust-, Ausrüster- und Ärmel-Logo), **Namensrechte** (Stadion von oben mit allen Tribünen, Stadionname und Angebote), **Sponsoren-Pyramide** (Premium-, Neben- und lokale Sponsoren als Logo-Kacheln; gestrichelt = frei, mit Zahl der Angebote; blass = kommt erst in einer späteren Epoche) und **Bandenwerbung** (Spielfeldrand der Epoche: bemalte Holzbanden, Kunststoff, Prismenwender, ab 2010 LED). **Linksklick** auf ein Logo, eine Bande oder Tribüne öffnet die Karteikarte mit allen Daten und Aktionen, **Rechtsklick** (Touch: lange drücken) ein Menü: Annehmen, Verhandeln, Ablehnen, Option ziehen, Auflösen, Namensrechte verkaufen. Die Firmenlogos sind erfunden und werden aus Name, Branche und Jahrzehnt gezeichnet.
 
 ## Was ein Vertrag wert ist
 - Grundlage ist der Marktwert der Fläche für einen durchschnittlichen Erstligisten in diesem Jahr (1975 Brust ≈ 0,25 Mio. DM, 2024 ≈ 9 Mio. €).

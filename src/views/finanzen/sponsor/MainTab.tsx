@@ -16,7 +16,7 @@ import { fmtDM } from '../../../ui/format';
 import { ClauseList, bonusText, partnerMeta, yearly } from './parts';
 import { SponsorJersey } from './SponsorJersey';
 import { SponsorLogo } from './SponsorLogo';
-import { incomeRows, untilSeason, yearsText, type SpCtx, type SpTab } from './model';
+import { SHIRT_SLOTS, incomeRows, untilSeason, yearsText, type SpCtx, type SpTab } from './model';
 import type { SponsorUi } from './useSponsorUi';
 
 export function MainTab({ ctx, ui, onTab, onGoto }: { ctx: SpCtx; ui: SponsorUi; onTab: (t: SpTab) => void; onGoto: (s: Screen) => void }) {
@@ -32,7 +32,9 @@ export function MainTab({ ctx, ui, onTab, onGoto }: { ctx: SpCtx; ui: SponsorUi;
   const brust = deals.find((d) => d.slot === 'brust');
   const ausr = deals.find((d) => d.slot === 'ausruester');
   const aermel = deals.find((d) => d.slot === 'aermel');
-  const brustOffers = offers.filter((o) => o.slot === 'brust');
+  const brustOffers = offers.filter((o) => o.slot === 'brust' && !o.renewal);
+  // Übrige Trikot-Angebote (Ausrüster, Ärmel, Verlängerungen); freie Brust steht schon oben.
+  const shirtOffers = offers.filter((o) => SHIRT_SLOTS.includes(o.slot) && !(o.slot === 'brust' && !brust && !o.renewal));
   const obligations = (club.commerce?.campObligations ?? []).filter((o) => o.season === g.season);
   const log = (club.commerce?.sponsorLog ?? []).slice(0, 4);
   const tv = tvPresence(club, year);
@@ -91,6 +93,16 @@ export function MainTab({ ctx, ui, onTab, onGoto }: { ctx: SpCtx; ui: SponsorUi;
               <PartnerChip ctx={ctx} ui={ui} slot="ausruester" d={ausr} />
               {(aermel || slotOpen(SLOT_BY_ID.aermel, year, ctx.tier)) ? <PartnerChip ctx={ctx} ui={ui} slot="aermel" d={aermel} />
                 : <div className="sp3-pchip locked"><span className="sp3-pchip-lbl">Ärmel</span><span className="dnote">ab 2017/18 vom Verein vermarktet</span></div>}
+            </div>
+            {shirtOffers.length > 0 && <div className="dsec">Angebote für das Trikot</div>}
+            <div className="sp3-offer-list">
+              {shirtOffers.map((o) => (
+                <div key={o.id} className={`sp3-orow ${ui.isOpen({ kind: 'offer', id: o.id }) ? 'on' : ''}`} {...ui.bind({ kind: 'offer', id: o.id }, o.partner)}>
+                  <SponsorLogo name={o.partner} industry={o.industry} year={year} variant="mark" className="sp3-orow-logo" />
+                  <span className="sp3-orow-name"><b>{o.partner}</b><span>{SLOT_BY_ID[o.slot].short}{o.renewal ? ' · Verlängerung' : ''} · {partnerMeta(o)} · {yearsText(o.years)}</span></span>
+                  <b className="sp3-orow-val">{fmtDM(yearly(o.annualValue, year))}</b>
+                </div>
+              ))}
             </div>
           </div>
           <div className="sp3-main-shirt">

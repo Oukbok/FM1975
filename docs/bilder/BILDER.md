@@ -80,3 +80,12 @@ Priorität: **A** = sichtbar auf vielen Seiten bzw. großer Wow-Effekt, **B** = 
 
 ## Offene Bildwünsche aus laufenden Umbauten
 Werden beim Zusammenführen der Stränge ergänzt (Erstes Training, Trainingslager, Sponsoring, Training, Fanartikel, Kartenverkauf).
+
+### Sponsoring (Strang sponsor3, Finanzen › Sponsoring)
+| Datei | Motiv | Größe | Einsatz |
+|---|---|---|---|
+| `sponsor/trikot-<epoche>.webp` (1975, 1990, 2010) | Leeres Heimtrikot frontal, neutral weiß/grau (wird nicht eingefärbt – nur als Lichter/Falten-Ebene über dem gezeichneten Trikot), Schnitt je Epoche | 900×945, Alpha | Reiter Hauptsponsor (`sponsor/SponsorJersey.tsx`, gezeichneter Ersatz: `JerseySVG`) |
+| `sponsor/bande-holz.webp`, `bande-kunststoff.webp`, `bande-led.webp` | Leere Bande frontal ohne Schrift: Holzbretter mit Schrauben / glatte Kunststofftafel im Alurahmen / dunkles LED-Modul mit Pixelraster | 1200×200 | Reiter Bandenwerbung als Struktur über dem Logo (`sponsor/BoardsTab.tsx`, Ersatz: CSS-Struktur) |
+| `sponsor/tribuene-draufsicht.webp` | Stadion von oben, Tribünen ohne Beschriftung, kühl abgedunkelt | 1240×800 | Reiter Namensrechte, Hintergrund der Draufsicht (Ersatz: SVG-Schraffur) |
+| `sponsor/spielfeldrand-<epoche>.webp` | Blick über den Rasen auf Banden + Zuschauer (unscharf), 1978 / 1995 / 2015 | 1920×400 | Reiter Bandenwerbung, Kulisse hinter den Banden (Ersatz: Punkteraster) |
+

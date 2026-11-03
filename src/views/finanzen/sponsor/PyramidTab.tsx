@@ -21,7 +21,7 @@ export function TileView({ tile, ctx, ui }: { tile: Tile; ctx: SpCtx; ui: Sponso
     return (
       <div className={`sp3-tile ${ui.isOpen(t) ? 'on' : ''} ${d.yearsLeft <= 1 ? 'ending' : ''}`} {...ui.bind(t, `${def.short}: ${d.partner}`)}>
         <SponsorLogo name={d.partner} industry={d.industry} year={Number(d.since.slice(0, 4))} className="sp3-tile-logo" />
-        <span className="sp3-tile-cap"><b>{d.partner}</b><span>{def.short} · {fmtDM(yearly(d.annualValue, ctx.year, d.cut))}</span></span>
+        <span className="sp3-tile-cap"><b>{d.partner}</b><span>{def.short}</span><span className="v">{fmtDM(yearly(d.annualValue, ctx.year, d.cut))}</span></span>
       </div>
     );
   }
