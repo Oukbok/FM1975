@@ -1,41 +1,255 @@
 /* =============================================================================
-   Sponsoring 2.0 — Partner-Pyramide, Angebote, Verhandlung (views/finanzen/SponsoringView.tsx)
-   Ruhig: Tabellenzeilen ohne Kästchen, Klauseln als leise Textliste mit Tonpunkt.
+   Sponsoring (views/finanzen/SponsoringView.tsx + sponsor/): Reiter Hauptsponsor,
+   Namensrechte, Sponsoren-Pyramide, Bandenwerbung; Karteikarte, Kontextmenü
+   (.pcm-* aus 28-misc.css). Logos/Banden tragen Markenfarben (Inhalt), die
+   Oberfläche bleibt neutral.
    ============================================================================= */
-.sp-table { display: flex; flex-direction: column; }
-.sp-row {
-  display: grid; grid-template-columns: 92px minmax(0, 1.25fr) minmax(0, 1.4fr) 120px 74px; align-items: center; gap: 12px;
-  padding: 7px 4px; border: 0; border-bottom: 1px solid var(--border-soft); background: transparent; color: var(--text);
-  font: inherit; font-size: 15.5px; text-align: left; cursor: pointer; width: 100%;
-}
-.sp-row:last-child { border-bottom: none; }
-.sp-row:hover { background: var(--panel-hover); }
-.sp-row.on { background: var(--accent-soft); }
-.sp-row.free { cursor: default; }
-.sp-row.free:hover { background: transparent; }
-.sp-slot { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.6px; font-size: 12.5px; color: var(--text-3); }
-.sp-who { display: flex; flex-direction: column; min-width: 0; }
-.sp-who b, .sp-offer-top b { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.sp-meta { color: var(--text-3); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.sp-free { color: var(--text-3); font-style: italic; }
-.sp-val { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
-.sp-cut { display: block; color: var(--orange); font-size: 12px; font-weight: 600; }
-.sp-term { color: var(--text-2); font-size: 13.5px; text-align: right; white-space: nowrap; }
-.sp-cl { min-width: 0; }
 
-.sp-clauses { display: flex; flex-wrap: wrap; gap: 2px 12px; font-size: 13px; color: var(--text-2); }
+/* --- gemeinsam mit Verhandlung (sponsor/NegotiateModal.tsx, parts.tsx) --- */
+.sp-meta { color: var(--text-3); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sp-clauses { display: flex; flex-wrap: wrap; gap: 2px 12px; font-size: 13.5px; color: var(--text-2); }
 .sp-clauses.compact { max-height: 38px; overflow: hidden; }
 .sp-clause { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .sp-clause::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); flex: 0 0 auto; }
 .sp-clause.bad::before { background: var(--orange); }
 .sp-clause.good::before { background: var(--green); }
 .sp-none { color: var(--text-3); font-size: 13px; }
-
-.sp-offer { display: grid; grid-template-columns: minmax(0, 1fr) 140px auto; gap: 14px; align-items: center; padding: 9px 2px; border-bottom: 1px solid var(--border-soft); }
-.sp-offer:last-child { border-bottom: none; }
-.sp-offer-main { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-.sp-offer-top { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
-.sp-offer-val { display: flex; flex-direction: column; align-items: flex-end; font-variant-numeric: tabular-nums; }
 .sp-warn { color: var(--orange); font-size: 14px; margin-bottom: 8px; }
-.sp-reply { font-size: 18px; color: var(--text); margin-bottom: 10px; }
+.sp-reply { font-size: 17px; color: var(--text); margin-bottom: 10px; }
 .sp-crow { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 4px 0; font-size: 14px; }
+
+/* --- Seite + Reiter --- */
+.sp3-page { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
+.sp3-tabs {
+  margin: 8px 2.5% 0; flex: 0 0 auto; padding: 0 8px;
+  background: linear-gradient(180deg, rgba(27, 32, 41, 0.92), rgba(16, 20, 27, 0.94));
+  border: 1px solid var(--border-soft); border-radius: 6px;
+}
+.sp3-tabs .tab { font-family: var(--font-display); font-weight: 500; font-size: 15px; letter-spacing: 1.2px; text-transform: uppercase; padding: 10px 22px; display: inline-flex; align-items: center; gap: 8px; }
+.sp3-tab-n { font-family: var(--font-ui); font-size: 12px; letter-spacing: 0; min-width: 20px; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--border); color: var(--text-2); }
+.sp3-tabs .tab.active .sp3-tab-n { border-color: var(--accent); color: var(--accent); }
+.sp3-page > .dpage { padding-top: 26px; padding-bottom: 40px; row-gap: 26px; }
+.sp3-hint { font-size: 13px; color: var(--text-4); text-transform: none; letter-spacing: 0; }
+
+/* Anklickbare Elemente: Fokus sichtbar, Auswahl = Bernstein */
+[data-sp] { cursor: pointer; outline: none; }
+[data-sp]:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
+
+/* --- Logos --- */
+.sp3-tile-logo, .sp3-orow-logo, .sp3-pchip-logo, .sp3-sheet-logo, .sp3-mini-logo, .sp3-card-logo svg { display: block; }
+
+/* --- Einnahmen --- */
+.sp3-income { display: flex; flex-direction: column; }
+.sp3-inc-row {
+  display: flex; justify-content: space-between; gap: 12px; padding: 7px 2px; border: 0; border-bottom: 1px solid var(--border-soft);
+  background: transparent; color: var(--text-2); font: inherit; font-size: 16px; text-align: left; cursor: pointer;
+}
+.sp3-inc-row b { color: var(--text); font-weight: 600; }
+button.sp3-inc-row:hover { background: var(--panel-hover); }
+.sp3-inc-row.total { cursor: default; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); color: var(--text); font-weight: 700; }
+.sp3-inc-row.total b { font-family: var(--font-display); font-size: 19px; font-weight: 600; }
+.sp3-inc-row.sub { cursor: default; font-size: 14.5px; color: var(--text-3); }
+.sp3-inc-row.sub b { color: var(--text-2); font-weight: 500; }
+.sp3-log { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; }
+
+/* --- Hauptsponsor --- */
+.sp3-main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 3%; height: 100%; min-height: 0; }
+.sp3-main-info { min-width: 0; overflow: auto; padding-right: 4px; }
+.sp3-main-shirt { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 0; }
+.sp3-shirt-cap { margin-top: 6px; font-size: 13px; color: var(--text-4); letter-spacing: 1px; text-transform: uppercase; font-family: var(--font-display); }
+.sp3-sheet-head { display: flex; align-items: center; gap: 14px; padding: 4px 6px 12px 2px; border-radius: 6px; border-left: 3px solid transparent; }
+.sp3-sheet-head:hover { background: var(--panel-hover); }
+.sp3-sheet-head.on { border-left-color: var(--accent); background: var(--accent-soft); }
+.sp3-sheet-logo { width: 72px; height: 72px; border-radius: 6px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35); flex: 0 0 auto; }
+.sp3-sheet-name { font-family: var(--font-display); font-size: 24px; font-weight: 600; letter-spacing: 0.5px; line-height: 1.15; }
+.sp3-empty-title { font-family: var(--font-display); font-size: 22px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-2); margin: 4px 0 6px; }
+
+.sp3-jersey { position: relative; height: min(86%, 560px); max-width: 100%; aspect-ratio: 200 / 210; }
+.sp3-jersey > svg:first-child, .sp3-jersey > img { width: 100% !important; height: 100% !important; filter: drop-shadow(0 16px 26px rgba(0, 0, 0, 0.45)); }
+.sp3-jersey-over { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sp3-zone-hit { fill: transparent; stroke: transparent; }
+.sp3-zone-free { fill: rgba(0, 0, 0, 0.12); stroke: rgba(255, 255, 255, 0.55); stroke-width: 0.8; stroke-dasharray: 3 2; }
+.sp3-zone:hover .sp3-zone-hit, .sp3-zone:focus-visible .sp3-zone-hit { stroke: rgba(255, 255, 255, 0.6); stroke-width: 0.8; }
+.sp3-zone.on .sp3-zone-hit, .sp3-zone.on .sp3-zone-free { stroke: var(--accent); stroke-width: 1.2; }
+.sp3-zone:focus-visible { box-shadow: none; }
+.sp3-zone-txt { font-family: var(--font-display); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; fill: rgba(255, 255, 255, 0.75); pointer-events: none; }
+
+.sp3-partners { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.sp3-pchip { display: flex; align-items: center; gap: 10px; padding: 8px; border: 1px solid var(--border-soft); border-radius: 6px; min-width: 0; background: rgba(255, 255, 255, 0.02); }
+.sp3-pchip:hover { background: var(--panel-hover); }
+.sp3-pchip.on { border-color: var(--accent); }
+.sp3-pchip.locked { flex-direction: column; align-items: flex-start; gap: 2px; cursor: default; opacity: 0.7; }
+.sp3-pchip-logo { width: 40px; height: 40px; flex: 0 0 auto; border-radius: 4px; }
+.sp3-pchip-logo.blank, .sp3-tile-logo.blank { border: 1px dashed rgba(255, 255, 255, 0.22); background: rgba(255, 255, 255, 0.03); }
+.sp3-pchip-txt { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
+.sp3-pchip-txt b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 15px; }
+.sp3-pchip-txt .dnote { font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sp3-pchip-lbl { font-family: var(--font-display); font-size: 11.5px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-3); }
+
+/* --- Angebotszeilen (alle Reiter) --- */
+.sp3-offer-list { display: flex; flex-direction: column; }
+.sp3-orow {
+  display: grid; grid-template-columns: 38px minmax(0, 1fr) auto; align-items: center; gap: 12px;
+  padding: 7px 6px 7px 4px; border-bottom: 1px solid var(--border-soft); border-left: 3px solid transparent;
+}
+.sp3-orow:hover { background: var(--panel-hover); }
+.sp3-orow.on { border-left-color: var(--accent); background: var(--accent-soft); }
+.sp3-orow-logo { width: 38px; height: 38px; border-radius: 4px; }
+.sp3-orow-name { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
+.sp3-orow-name b { font-size: 15.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sp3-orow-name span { font-size: 12.5px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sp3-orow-val { font-weight: 600; white-space: nowrap; }
+.sp3-freenote { margin-top: 10px; font-size: 14px; color: var(--text-2); }
+
+/* --- Pyramide --- */
+.sp3-pyr { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 22px; min-height: 100%; padding: 6px 0; }
+.sp3-pyr-bg { position: absolute; left: 140px; top: 0; height: 100%; width: calc(100% - 140px); pointer-events: none; }
+.sp3-pyr-bg path { fill: rgba(255, 255, 255, 0.025); stroke: var(--border-soft); stroke-width: 0.3; vector-effect: non-scaling-stroke; }
+.sp3-level { position: relative; display: grid; grid-template-columns: 126px minmax(0, 1fr); align-items: center; gap: 14px; }
+
+.sp3-level-lbl { display: flex; flex-direction: column; gap: 2px; }
+.sp3-level-lbl span { font-family: var(--font-display); font-size: 17px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-2); }
+.sp3-level-lbl b { font-size: 14px; font-weight: 600; color: var(--text-3); }
+.sp3-level-tiles {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 0 auto; padding: 10px 12px;
+  border: 1px solid var(--border-soft); border-radius: 8px; background: rgba(12, 15, 21, 0.55);
+}
+.sp3-level.lv0 .sp3-level-tiles { width: 52%; }
+.sp3-level.lv1 .sp3-level-tiles { width: 78%; }
+.sp3-level.lv2 .sp3-level-tiles { width: 100%; }
+.sp3-tile { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 122px; padding: 6px 4px; border-radius: 6px; border: 1px solid transparent; }
+.sp3-tile:hover { background: var(--panel-hover); }
+.sp3-tile.on { border-color: var(--accent); background: var(--accent-soft); }
+.sp3-tile-logo { position: relative; width: 92px; height: 92px; border-radius: 6px; box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35); }
+.sp3-tile.free .sp3-tile-logo, .sp3-tile.locked .sp3-tile-logo { box-shadow: none; display: flex; align-items: center; justify-content: center; }
+.sp3-tile.ending .sp3-tile-cap span { color: var(--orange); }
+.sp3-tile.locked { opacity: 0.55; }
+.sp3-tile-cap { display: flex; flex-direction: column; align-items: center; width: 100%; line-height: 1.2; text-align: center; }
+.sp3-tile-cap b { font-size: 13.5px; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sp3-tile-cap span { font-size: 12px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.sp3-tile.free .sp3-tile-cap b { color: var(--text-3); font-weight: 500; font-style: italic; }
+.sp3-badge { position: absolute; top: -7px; right: -7px; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: var(--accent); color: var(--accent-ink); font-weight: 800; font-size: 12.5px; display: flex; align-items: center; justify-content: center; }
+.sp3-lock { font-size: 12px; color: var(--text-3); text-align: center; padding: 0 6px; }
+
+/* --- Namensrechte --- */
+.sp3-ntable { width: 100%; }
+.sp3-ntable td, .sp3-ntable th { padding-left: 4px; padding-right: 4px; }
+.sp3-ntable .r, .sp3-btable .r { text-align: right; }
+.sp3-trow { border-left: 3px solid transparent; }
+.sp3-trow:hover td { background: var(--panel-hover); }
+.sp3-trow.on td { background: var(--accent-soft); }
+.sp3-trow.on td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+.sp3-trow.total { cursor: default; font-weight: 700; }
+.sp3-trow.total:hover td { background: transparent; }
+.sp3-trow.muted td { color: var(--text-3); }
+.sp3-dim { color: var(--text-4); }
+.sp3-stadium { height: calc(100% - 30px); display: flex; align-items: center; justify-content: center; }
+.sp3-stadium svg { width: 100%; height: 100%; max-height: 100%; }
+.sp3-hatch-bg { fill: #2a2f37; }
+.sp3-hatch-ln { stroke: #353b45; stroke-width: 2.4; }
+.sp3-stand polygon { stroke: var(--bg); stroke-width: 3; transition: filter 0.15s; }
+.sp3-stand:hover polygon { filter: brightness(1.3); }
+.sp3-stand.on polygon { stroke: var(--accent); stroke-width: 2.5; }
+.sp3-stand.empty { opacity: 0.45; }
+.sp3-stand:focus-visible { box-shadow: none; }
+.sp3-stand:focus-visible polygon { stroke: var(--accent); }
+.sp3-stand-plate { fill: #e9edf2; stroke: rgba(0, 0, 0, 0.35); stroke-width: 1; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4)); }
+.sp3-stand.on .sp3-stand-plate { stroke: var(--accent); stroke-width: 2; }
+.sp3-stand-name { font-family: var(--font-display); font-size: 9.5px; font-weight: 600; fill: #1b1f26; letter-spacing: 0.4px; text-transform: uppercase; pointer-events: none; }
+.sp3-stand-sub { font-family: var(--font-ui); font-size: 8.5px; fill: #4c5562; pointer-events: none; }
+.sp3-apron { fill: #24382d; }
+.sp3-ring { stroke: rgba(0, 0, 0, 0.5); stroke-width: 0.5; }
+.sp3-ring.free { fill: #59626e; }
+.sp3-turf { fill: var(--turf); }
+.sp3-turf-stripe { fill: rgba(255, 255, 255, 0.035); }
+.sp3-lines rect, .sp3-lines line, .sp3-lines circle { fill: none; stroke: var(--turf-line); stroke-width: 1.2; }
+.sp3-nameplate rect { fill: rgba(12, 15, 21, 0.86); stroke: rgba(255, 255, 255, 0.35); stroke-width: 1; }
+.sp3-nameplate:hover rect { stroke: rgba(255, 255, 255, 0.7); }
+.sp3-nameplate.on rect { stroke: var(--accent); stroke-width: 2; }
+.sp3-nameplate:focus-visible { box-shadow: none; }
+.sp3-np-name { font-family: var(--font-display); font-size: 12.5px; font-weight: 600; fill: var(--text); letter-spacing: 0.6px; text-transform: uppercase; pointer-events: none; }
+.sp3-np-sub { font-size: 9px; fill: var(--text-3); pointer-events: none; }
+.sp3-legend { display: flex; justify-content: center; gap: 24px; font-size: 13px; color: var(--text-3); height: 26px; align-items: center; }
+.sp3-lg { display: inline-block; width: 22px; height: 5px; margin-right: 8px; vertical-align: middle; border-radius: 1px; background: linear-gradient(90deg, #b5182f 0 33%, #173f6c 33% 66%, #e8b015 66%); }
+
+/* --- Bandenwerbung --- */
+.sp3-pitchside { position: relative; height: 100%; min-height: 160px; display: grid; grid-template-rows: minmax(24px, 0.8fr) auto minmax(22px, 1fr); border-radius: 6px; overflow: hidden; }
+.sp3-crowd {
+  background:
+    radial-gradient(circle at 4px 4px, rgba(210, 218, 230, 0.16) 2.4px, transparent 3px) 0 0 / 11px 10px,
+    radial-gradient(circle at 9px 9px, rgba(210, 218, 230, 0.10) 2.4px, transparent 3px) 0 0 / 13px 12px,
+    linear-gradient(180deg, #11151c, #1d232d);
+}
+.sp3-grass { background: repeating-linear-gradient(90deg, #1f3d2f 0 80px, #234433 80px 160px); box-shadow: inset 0 8px 14px rgba(0, 0, 0, 0.35); }
+.sp3-boards { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; padding: 0 4px; background: #0b0d11; }
+.sp3-board { position: relative; height: clamp(70px, 11vh, 124px); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.sp3-board-face { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.sp3-board-logo { width: 94%; height: 80%; }
+.sp3-board.on { outline: 2px solid var(--accent); outline-offset: -2px; z-index: 1; }
+.sp3-board.free { background: #3a404a; }
+.sp3-board-free { font-size: 13px; color: rgba(238, 241, 245, 0.7); text-align: center; padding: 0 8px; font-style: italic; }
+/* Holz: Bretterfugen, Maserung, Schrauben */
+.sp3-board.holz::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(180deg, transparent 32%, rgba(0, 0, 0, 0.28) 32% 34%, transparent 34% 66%, rgba(0, 0, 0, 0.28) 66% 68%, transparent 68%),
+    repeating-linear-gradient(176deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 9px),
+    radial-gradient(circle at 6px 8px, rgba(0, 0, 0, 0.5) 2px, transparent 2.5px),
+    radial-gradient(circle at calc(100% - 6px) 8px, rgba(0, 0, 0, 0.5) 2px, transparent 2.5px);
+}
+.sp3-board.holz .sp3-board-logo { filter: saturate(0.85) contrast(0.95); }
+.sp3-board.holz.free { background: #d9dde3; }
+.sp3-board.holz .sp3-board-free { color: #2a2f37; font-family: Georgia, serif; }
+/* Druck: glänzende Fläche, Alu-Rahmen */
+.sp3-board.druck::after, .sp3-board.prisma::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 45%, rgba(0, 0, 0, 0.18));
+  box-shadow: inset 0 0 0 2px #9aa3ae;
+}
+/* Prismenwender: senkrechte Lamellen */
+.sp3-board.prisma::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background: repeating-linear-gradient(90deg, transparent 0 9px, rgba(0, 0, 0, 0.22) 9px 10px);
+}
+.sp3-board.prisma .sp3-board-face { animation: sp3-prism 0.6s ease-out; }
+@keyframes sp3-prism { from { transform: scaleX(0.05); opacity: 0.3; } to { transform: scaleX(1); opacity: 1; } }
+/* LED: dunkle Fassung, Pixelraster, Leuchten, Motivwechsel */
+.sp3-board.led { background: #050608; box-shadow: inset 0 0 0 2px #1a1d22; }
+.sp3-board.led .sp3-board-face { filter: brightness(1.12) saturate(1.2); animation: sp3-led 0.5s ease-out; box-shadow: 0 0 18px rgba(255, 255, 255, 0.08); }
+.sp3-board.led::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(circle, transparent 0.9px, rgba(0, 0, 0, 0.45) 1.3px) 0 0 / 3px 3px;
+}
+.sp3-board.led.free { background: #0b0d11; }
+.sp3-board.led .sp3-board-free { color: #6c7685; font-style: normal; letter-spacing: 1px; text-transform: uppercase; font-size: 12px; }
+@keyframes sp3-led { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .sp3-board-face { animation: none !important; } }
+
+.sp3-btable { width: 100%; }
+.sp3-btable td { vertical-align: middle; }
+.sp3-btable td:first-child { width: 210px; padding-left: 15px; }
+.sp3-btable td:last-child, .sp3-btable th:last-child { padding-right: 15px; }
+.sp3-banner { display: block; width: 190px; height: 34px; border-radius: 3px; overflow: hidden; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35); }
+.sp3-banner svg { width: 100%; height: 100%; display: block; }
+.sp3-banner.blank { border: 1px dashed var(--border); box-shadow: none; display: flex; align-items: center; justify-content: center; font-size: 12.5px; color: var(--text-3); }
+
+/* --- Karteikarte --- */
+.sp3-card { max-width: 760px; border-radius: 8px; }
+.sp3-card-head { display: flex; align-items: center; gap: 18px; padding: 20px 22px 14px; border-bottom: 1px solid var(--border-soft); }
+.sp3-card-logo { width: 96px; height: 96px; flex: 0 0 auto; border-radius: 6px; overflow: hidden; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4); }
+.sp3-card-title { flex: 1; min-width: 0; }
+.sp3-card-title h2 { margin: 2px 0; font-family: var(--font-display); font-size: 28px; font-weight: 600; letter-spacing: 0.5px; }
+.sp3-kicker { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-3); font-weight: 700; }
+.sp3-card-sub { color: var(--text-2); font-size: 14.5px; }
+.sp3-card-body { padding: 14px 22px; overflow: auto; font-size: 16px; }
+.sp3-card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.sp3-card-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; padding: 12px 22px 18px; border-top: 1px solid var(--border-soft); }
+.sp3-confirm { color: var(--text-2); font-size: 14.5px; margin-right: 4px; }
+.sp3-mini { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto auto auto; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--border-soft); }
+.sp3-mini-logo { width: 34px; height: 34px; border-radius: 4px; }
+.sp3-mini-name { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; border: 0; background: transparent; color: var(--text); font: inherit; text-align: left; padding: 0; cursor: pointer; }
+.sp3-mini-name b { font-size: 15px; }
+.sp3-mini-name span { font-size: 12.5px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.sp3-mini-name:hover b { color: var(--accent); }
+.sp3-mini-val { white-space: nowrap; font-weight: 600; }
+.sp3-menu .pcm-item:disabled { opacity: 0.45; cursor: default; }
