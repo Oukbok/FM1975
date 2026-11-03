@@ -117,12 +117,17 @@ function pushOffer(g: Game, o: JobOffer): void {
   pushMessage(g.messages, msg);
 }
 
-/** Kandidaten für ein Angebot zum Saisonende (größer als dein Verein, passend zu deinem Ansehen). */
+/**
+ * Kandidaten für ein Angebot zum Saisonende: Vereine, deren Größe zu deinem Ansehen passt
+ * (höchstens Ansehen + 8). Größere als deiner immer; gleich große nur, wenn deine Saison
+ * klar besser läuft als erwartet.
+ */
 export function offerCandidates(g: Game): { id: string; level: number; fav: boolean }[] {
   const c = ensureCareer(g);
   const own = g.managedClubId;
   const l0 = jobLevel(g, own);
   const fav = g.manager?.favoriteClubId;
+  const lateral = successNow(g) > 0.3;
   const ids = [...g.table.rows.map((r) => r.clubId), ...Object.keys(g.simClubs ?? {})];
   const out: { id: string; level: number; fav: boolean }[] = [];
   for (const id of ids) {
@@ -130,8 +135,8 @@ export function offerCandidates(g: Game): { id: string; level: number; fav: bool
     if (c.offers.some((o) => o.clubId === id)) continue;
     const level = jobLevel(g, id);
     const isFav = id === fav;
-    if (level > c.rep + 5) continue;
-    if (level < l0 + 3 && !(isFav && level >= l0 - 5)) continue;
+    if (level > c.rep + 8) continue;
+    if (level < l0 + 2 && !((isFav || lateral) && level >= l0 - 3)) continue;
     out.push({ id, level, fav: isFav });
   }
   return out;
@@ -144,9 +149,9 @@ export function rollJobOffers(g: Game, today: string, rng: () => number = Math.r
   if (!cands.length) return null;
   const l0 = jobLevel(g, g.managedClubId);
   const diff = g.difficulty === 'hard' ? 0.8 : g.difficulty === 'easy' ? 1.2 : 1;
-  const p = clamp(0.04 + (c.rep - l0) / 30 + successNow(g) * 0.12 + (cands.some((x) => x.fav) ? 0.08 : 0), 0, 0.5) * diff;
+  const p = clamp(0.06 + Math.max(0, c.rep - l0) / 25 + successNow(g) * 0.15 + (cands.some((x) => x.fav) ? 0.08 : 0), 0, 0.5) * diff;
   if (rng() >= p) return null;
-  const w = cands.map((x) => (1 / (1 + Math.abs(c.rep - x.level) / 6)) * (x.fav ? 3 : 1));
+  const w = cands.map((x) => (1 / (1 + Math.abs(c.rep - x.level) / 6)) * (x.fav ? 3 : 1) * (x.level >= l0 + 2 ? 1 : 0.4));
   let r = rng() * w.reduce((a, b) => a + b, 0);
   let pick = cands[0];
   for (let i = 0; i < cands.length; i++) { r -= w[i]; if (r <= 0) { pick = cands[i]; break; } }

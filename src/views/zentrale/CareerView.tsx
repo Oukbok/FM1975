@@ -59,7 +59,8 @@ function OfferCard({ g, o, onChange }: { g: Game; o: JobOffer; onChange: () => v
 function StintRow({ g, s, live }: { g: Game; s: CareerStint; live: boolean }) {
   const rec = stintRecord(g, s);
   const club = crestOf(g, s.clubId);
-  const ok = s.seasons.filter((x) => x.ok).length;
+  const judged = s.seasons.filter((x) => x.ok != null);
+  const ok = judged.filter((x) => x.ok).length;
   const titles = s.seasons.flatMap((x) => x.titles ?? []);
   return (
     <div className={`rl-row car-stint ${live ? 'me' : ''}`}>
@@ -67,8 +68,8 @@ function StintRow({ g, s, live }: { g: Game; s: CareerStint; live: boolean }) {
         <ClubLink id={s.clubId}><span className="rl-name">{s.clubName}</span></ClubLink></span>
       <span className="rl-num car-when">{s.from.slice(0, 4)}–{s.to ? s.to.slice(0, 4) : 'heute'}</span>
       <span className="rl-num car-rec" title={`Liga: Siege-Remis-Niederlagen (Punkte je Spiel, 3-Punkte-Wertung)${s.recFrom ? ` – gezählt ab ${s.recFrom}` : ''}`}>{recordText(rec)}</span>
-      <span className="rl-num car-goal" title="Saisonziel erreicht">{s.seasons.length ? `${ok}/${s.seasons.length}` : '–'}</span>
-      <span className="rl-num car-titles">{titles.length ? titles.join(', ') : ''}</span>
+      <span className="rl-num car-goal" title="Saisonziel erreicht">{judged.length ? `${ok}/${judged.length}` : '–'}</span>
+      <span className="rl-num car-titles" title={titles.join(', ')}>{[...new Set(titles)].map((t) => { const n = titles.filter((x) => x === t).length; return n > 1 ? `${n}× ${t}` : t; }).join(', ')}</span>
       <span className="rl-num car-end">{live ? 'im Amt' : s.end === 'entlassen' ? 'entlassen' : 'gewechselt'}</span>
     </div>
   );
@@ -127,7 +128,7 @@ export function CareerView({ g, onChange }: { g: Game; onChange: () => void }) {
       <DashBox title="Karriere-Chronik" icon="briefing" right={c.log.length ? `${c.log.length}` : undefined}>
         {c.log.length || st.seasons.length ? (
           <div className="car-log">
-            {[...c.stints.flatMap((s) => s.seasons.map((x) => ({ date: `${x.season.slice(0, 4)}-06-30`, text: `${x.season}: Platz ${x.pos} (${LEAGUE(x.tier)}) mit ${s.clubName}${x.ok ? ' – Ziel erreicht' : ' – Ziel verfehlt'}${x.dRep ? `, Ansehen ${x.dRep > 0 ? '+' : ''}${x.dRep.toString().replace('.', ',')}` : ''}` }))), ...c.log]
+            {[...c.stints.flatMap((s) => s.seasons.map((x) => ({ date: `${x.season.slice(0, 4)}-06-30`, text: `${x.season}: Platz ${x.pos} (${LEAGUE(x.tier)}) mit ${s.clubName}${x.ok == null ? '' : x.ok ? ' – Ziel erreicht' : ' – Ziel verfehlt'}${x.titles ? ` – ${x.titles.join(', ')}` : ''}${x.dRep ? `, Ansehen ${x.dRep > 0 ? '+' : ''}${x.dRep.toString().replace('.', ',')}` : ''}` }))), ...c.log]
               .sort((a, b) => b.date.localeCompare(a.date)).slice(0, 40).map((e, i) => (
                 <div key={i} className="car-log-row"><span className="car-log-date">{fmtDateShort(e.date).dmy}</span><span>{e.text}</span></div>
               ))}

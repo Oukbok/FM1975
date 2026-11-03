@@ -1436,7 +1436,7 @@ Startwert = Größe deines ersten Vereins, dazu dein Hintergrund (Legende +8, Ex
 Ruf des Vereins, bereinigt um die Liga (2. Liga −7). So lassen sich Vereine aus 1. und 2. Liga vergleichen.
 
 ### Angebote
-- **Zum Saisonende:** An vier Stichtagen (20. Januar, 10. April, 10. Mai, 28. Mai) kann sich ein größerer Verein melden, dessen Größe zu deinem Ansehen passt. Läuft deine Saison besser als erwartet, passiert das häufiger. Dein Herzensverein meldet sich bevorzugt, der Verein, den du nie trainieren würdest, nie.
+- **Zum Saisonende:** An vier Stichtagen (20. Januar, 10. April, 10. Mai, 28. Mai) kann sich ein größerer Verein melden, dessen Größe zu deinem Ansehen passt (höchstens Ansehen + 8); läuft deine Saison klar besser als erwartet, auch ein etwa gleich großer. Läuft deine Saison besser als erwartet, passiert das häufiger. Dein Herzensverein meldet sich bevorzugt, der Verein, den du nie trainieren würdest, nie.
 - **Sofort:** Entlässt ein größerer Verein deiner Liga mitten in der Saison seinen Trainer, fragt er manchmal zuerst bei dir an.
 
 Jedes Angebot nennt Jahresgehalt, Saisonziel und Transferbudget. Du kannst **annehmen**, **nachverhandeln** (mehr Gehalt und Budget – der Verein kann aber abspringen) oder **ablehnen**. Solange ein Angebot offen ist, hält „Weiter“ an. Ohne Antwort gilt es nach Ablauf der Frist als abgelehnt.
