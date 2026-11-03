@@ -29,6 +29,14 @@ export function mulberry32(seed: number): () => number {
   };
 }
 
+/** Wetter eines Spieltags fest aus Datum und Heimverein (Vorschau, Kartenverkauf). */
+export function fixedWeather(date: string, homeId: string): Weather {
+  const key = `wx:${date}:${homeId}`;
+  let h = 2166136261;
+  for (let i = 0; i < key.length; i++) { h ^= key.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return rollWeather(date, mulberry32(h >>> 0));
+}
+
 export type Phase = 'pre' | 'play' | 'halftime' | 'et_break' | 'et_half' | 'shootout' | 'done';
 export type Weather = 'sonnig' | 'bewoelkt' | 'regen' | 'schnee' | 'hitze' | 'wind' | 'nebel';
 
@@ -121,13 +129,15 @@ export class MatchSim {
     this.derby = !!homeClub.city && homeClub.city === awayClub.city;
     this.stakes = Math.min(1, (this.derby ? 0.5 : 0) + (this.knockout ? 0.5 : 0) + (opts.competition === 'Europapokal' ? 0.4 : 0) + (opts.stakes ?? 0));
     const rolled = rollWeather(opts.date, this.rng); // Zufallsfolge bleibt gleich, auch mit Vorgabe
-    this.weather = opts.weather ?? rolled;
+    // Eigenes Stadion (Blöcke): Wetter fest aus Datum und Verein wie in der Vorschau (game/matchWeather.ts),
+    // damit Kartenverkauf und Prognose dasselbe Wetter rechnen.
+    this.weather = opts.weather ?? (homeClub.stadium.blocks?.length && opts.date ? fixedWeather(opts.date, homeClub.id) : rolled);
     const month = opts.date ? Number(opts.date.slice(5, 7)) : 9;
     // Zuschauer je Platzkategorie (engine/seating.ts): eigene Nachfrage für Steh, Sitz, Dach, Premium,
     // Business, Logen und Gästeblock; im Europapokal ab 1998/99 nur Sitzplätze.
     this.seatSale = simulateSeatSales(homeClub, awayClub, {
       year: opts.year, date: opts.date, away: awayClub, derby: this.derby, weather: this.weather, month,
-      euro: opts.competition === 'Europapokal', restriction: attendanceRestriction(opts.date),
+      euro: opts.competition === 'Europapokal', cup: opts.competition === 'Pokal', restriction: attendanceRestriction(opts.date),
     }, this.rng);
     this.attendance = this.seatSale.attendance;
     const humanSides = new Set(opts.humanSides ?? []);

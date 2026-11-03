@@ -345,7 +345,7 @@ export function bookHomeMatch(
 function bookSeatSales(club: Club, result: MatchResult, date: string, track: boolean, prefix: string): void {
   const y = yearOf(date);
   const sale: SeatSale = saleForResult(club, result, y);
-  const rev: SeatNums = saleRevenue(club, sale.sold, y);
+  const rev: SeatNums = saleRevenue(club, sale.sold, y, { mult: sale.mult, caps: sale.caps });
   const n = (v?: number) => (v ?? 0).toLocaleString('de-DE');
   if (!track) {
     const sum = Object.values(rev).reduce((a, v) => a + (v ?? 0), 0);

@@ -4,11 +4,10 @@
 // (game/ownMatch.ts → createMatchSim `weather`) übernimmt genau diese Angabe.
 // Verteilung je Monat wie in der Match-Engine (engine/match/sim.ts `rollWeather`).
 // =============================================================================
-import { hashStr, mulberry32 } from '../engine/leagues';
-import { rollWeather, type Weather } from '../engine/match/sim';
+import { fixedWeather, type Weather } from '../engine/match/sim';
 
 export function forecastWeather(date: string, homeId: string): Weather {
-  return rollWeather(date, mulberry32(hashStr(`wx:${date}:${homeId}`)));
+  return fixedWeather(date, homeId);
 }
 
 /** Anzeige + Wirkung laut Match-Engine (sim.ts, attack.ts, actions.ts, engine/seating.ts). */

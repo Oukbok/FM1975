@@ -34,7 +34,7 @@
 //   • Rollstuhlplätze als Pflicht ab 2002 (Muster-Versammlungsstättenverordnung:
 //     1 % der Besucherplätze); nur Anzeige, kein eigener Markt.
 // =============================================================================
-import type { SeatCat } from '../types';
+import type { BlockId, SeatCat, StandId } from '../types';
 
 export interface SeatCatDef {
   key: SeatCat;
@@ -131,3 +131,25 @@ export function lerpTable(t: [number, number][], year: number): number {
   }
   return t[t.length - 1][1];
 }
+
+// -----------------------------------------------------------------------------
+// Tribünen des Kartenverkaufs (Gruppierung der 14 Blöcke wie im Vorbild EA FM):
+// Haupttribüne (West), Gegentribüne (Ost), Hinter dem Tor 1/2 (Nord/Süd), vier
+// Ecken im Uhrzeigersinn ab Nordwest. Reine Gruppierung – keine Spielstand-Daten.
+// -----------------------------------------------------------------------------
+export interface StandDef { id: StandId; name: string; sub: string; blocks: BlockId[] }
+export const STANDS: StandDef[] = [
+  { id: 'haupt', name: 'Haupttribüne', sub: 'West', blocks: ['main_n', 'main_m', 'main_s'] },
+  { id: 'ecke1', name: 'Ecke 1', sub: 'Nordwest', blocks: ['curve_nw'] },
+  { id: 'tor1', name: 'Hinter dem Tor 1', sub: 'Nord', blocks: ['north_w', 'north_e'] },
+  { id: 'ecke2', name: 'Ecke 2', sub: 'Nordost', blocks: ['curve_ne'] },
+  { id: 'gegen', name: 'Gegentribüne', sub: 'Ost', blocks: ['opp_n', 'opp_m', 'opp_s'] },
+  { id: 'ecke3', name: 'Ecke 3', sub: 'Südost', blocks: ['curve_se'] },
+  { id: 'tor2', name: 'Hinter dem Tor 2', sub: 'Süd', blocks: ['south_w', 'south_e'] },
+  { id: 'ecke4', name: 'Ecke 4', sub: 'Südwest', blocks: ['curve_sw'] },
+];
+export const STAND: Record<StandId, StandDef> = Object.fromEntries(STANDS.map((d) => [d.id, d])) as Record<StandId, StandDef>;
+/** Kategorien mit Tribünenpreis (Gästeblock = eigenes Kontingent, eine Preisstufe). */
+export const STAND_CATS: SeatCat[] = ['steh', 'sitz', 'dach', 'premium', 'business', 'loge'];
+/** Kategorien, für die Topzuschlag/Rabatt eines Spiels gelten (Business/Logen = Saisonverträge). */
+export const MATCH_PRICE_CATS: SeatCat[] = ['steh', 'sitz', 'dach', 'premium', 'gast'];

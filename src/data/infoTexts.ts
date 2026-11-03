@@ -441,6 +441,41 @@ export const INFO_TEXTS = {
     text: 'Höhere Preise bringen mehr je Karte, verkaufen aber weniger. Der beste Preis hängt von Epoche, Erfolg und Gegner ab; leere Ränge kosten zudem Stimmung.',
     wiki: 'finance-elasticity',
   },
+  kartenverkauf: {
+    title: 'Kartenverkauf',
+    text: 'Hier legst du die Eintrittspreise je Tribüne fest und siehst für jedes Heimspiel, wie viele Karten voraussichtlich verkauft werden. Die Draufsicht zeigt die acht Tribünen – fahr darüber für Kapazität und Bauzustand.',
+    wiki: 'tickets-sales',
+  },
+  tribuenen: {
+    title: 'Tribünen',
+    text: 'Die 14 Stadion-Blöcke sind zu acht Tribünen zusammengefasst: Haupt- und Gegentribüne (je 3 Blöcke), Hinter dem Tor 1 und 2 (je 2) und vier Ecken. Jede Tribüne kann je Platzart einen eigenen Preis haben.',
+    wiki: 'tickets-sales',
+  },
+  tribuenenpreise: {
+    title: 'Eintrittspreise je Tribüne',
+    text: 'Günstigere Tribünen füllen sich zuerst, teure bleiben eher leer – die Nachfrage der Platzart richtet sich nach dem Mittel aller Tribünen. „Alle Tribünen“ setzt eine Platzart überall auf denselben Preis.',
+    wiki: 'tickets-sales',
+  },
+  preiskategorie: {
+    title: 'Preiskategorie je Spiel',
+    text: 'Klick schaltet: automatisch → Normal → Top → Rabatt. Top- und Rabattpreise gelten für Steh-, Sitz-, Premium- und Gästeplätze; Business-Seats und Logen laufen über Saisonverträge.',
+    wiki: 'tickets-sales',
+  },
+  prognoseSpanne: {
+    title: 'Prognose als Spanne',
+    text: 'Deine Mitarbeiter schätzen eine Spanne. Der tatsächliche Verkauf landet mal am unteren, mal am oberen Ende, mal dazwischen – und in etwa jedem zehnten Fall knapp daneben. Derby, Pokal, unklares Wetter und wenig Erfahrung machen sie breiter.',
+    wiki: 'tickets-sales',
+  },
+  besonderePreise: {
+    title: 'Besondere Preise',
+    text: 'Topzuschlag und Rabatt in Prozent auf die Fanplätze. Automatisch: Zuschlag gegen die besten Mannschaften der Tabelle, Rabatt gegen Gegner aus tieferen Ligen (Pokal). Einzelne Spiele stellst du in der Spielliste ein.',
+    wiki: 'tickets-sales',
+  },
+  fanbasis: {
+    title: 'Fanbasis',
+    text: 'Eingetragene Vereinsmitglieder. Sie wächst mit Erfolg und Stimmung und trägt den Zuspruch im Stadion.',
+    wiki: 'tickets-sales',
+  },
   ueberdacht: {
     title: 'Überdachung',
     text: 'Anteil der Plätze mit Dach. Bei Regen und Kälte kommen mehr Zuschauer auf überdachte Plätze; ab den 90ern erwarten sie es fast überall.',

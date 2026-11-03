@@ -42,6 +42,7 @@ function carryPrices(c: Club, year: number): void {
   for (const k of CAT_KEYS) {
     const prev = refPrice(c, k, year - 1), now = refPrice(c, k, year);
     if (prev > 0 && s.prices[k] != null) s.prices[k] = Math.round(s.prices[k]! * (now / prev) * 100) / 100;
+    for (const row of Object.values(s.tickets?.stand ?? {})) if (prev > 0 && row?.[k] != null) row[k] = Math.round(row[k]! * (now / prev) * 100) / 100;
   }
 }
 
@@ -144,7 +145,7 @@ export function demandEstimate(g: Game, k: SeatCat, club?: Club): DemandEstimate
   const year = yearOf(today);
   const sale = expectedSale(c, year);
   const truth = sale.demand[k];
-  const log = (c.stadium.seating?.log ?? []).filter((e) => (e.cap[k] ?? 0) > 0);
+  const log = (c.stadium.seating?.log ?? []).slice(0, 8).filter((e) => (e.cap[k] ?? 0) > 0);
   const open = log.filter((e) => (e.sold[k] ?? 0) < (e.cap[k] ?? 0) * 0.97).length;
   const soldOut = log.length > 0 && log.slice(0, 3).every((e) => (e.sold[k] ?? 0) >= (e.cap[k] ?? 0) * 0.97);
   const staff = forecastStaff(g).share;

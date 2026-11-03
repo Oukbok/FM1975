@@ -1,5 +1,5 @@
 // Screenshots der Stadionseite: Übersicht, Bau-Popover am Block mit Vorschau,
-// Tickets & Nachfrage, Umfeld-Popover (Würstchenbuden), Filter „Tribünen“.
+// Kartenverkauf, Umfeld-Popover (Würstchenbuden), Filter „Tribünen“.
 //   node tests/stadium-shots.mjs [ausgabeordner] [kürzel]   (SAVE=… lädt einen Spielstand)
 import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
@@ -52,11 +52,12 @@ if (await roof.count()) await roof.first().click();
 await page.waitForTimeout(300);
 await page.screenshot({ path: `${outDir}/${tag}_3_planung.png` });
 await page.locator('.sv-pop .sv-x').first().click();
-// Tickets & Nachfrage
-await page.locator('.sv-bar button:has-text("Tickets")').click();
-await page.waitForTimeout(300);
+// Kartenverkauf (eigene Seite, Verein › Kartenverkauf) und zurück
+await page.locator('.sv-bar button:has-text("Kartenverkauf")').click();
+await page.waitForTimeout(400);
 await page.screenshot({ path: `${outDir}/${tag}_4_tickets.png` });
-await page.locator('.sv-sheet .sv-x').click();
+await page.locator('.tn-sub-item:has-text("Stadion")').click();
+await page.waitForTimeout(400);
 // Gastronomie-Filter + Würstchenbuden
 await page.locator('.sv-modes button:has-text("Gastronomie")').click();
 await page.waitForTimeout(200);

@@ -26,6 +26,7 @@
     "test:awards": "node scripts/run-ts.mjs tests/awards-test.ts",
     "test:goldenball": "node scripts/run-ts.mjs tests/goldenball-test.ts",
     "test:seats": "node scripts/run-ts.mjs tests/seats-test.ts",
+    "test:tickets": "node scripts/run-ts.mjs tests/tickets-test.ts",
     "test:draw": "node scripts/run-ts.mjs tests/draw-test.ts",
     "test:sponsor": "node scripts/run-ts.mjs tests/sponsor-test.ts",
     "test:talent": "node scripts/run-ts.mjs tests/talent-test.ts",

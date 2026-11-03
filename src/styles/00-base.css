@@ -87,6 +87,9 @@
   --fg-1: #74827a;
 
   /* --- Struktur --- */
+  /* Rasen in Draufsichten (Kartenverkauf) – gleiche Töne wie das Aufstellungsfeld */
+  --turf: #1d3a2d;
+  --turf-line: rgba(235, 242, 238, 0.5);
   --border: #303339;
   --border-soft: #24272d;
   --radius: 14px;
