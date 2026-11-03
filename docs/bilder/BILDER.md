@@ -79,7 +79,7 @@ Priorität: **A** = sichtbar auf vielen Seiten bzw. großer Wow-Effekt, **B** = 
 ---
 
 ## Offene Bildwünsche aus laufenden Umbauten
-Werden beim Zusammenführen der Stränge ergänzt.
+Werden beim Zusammenführen der Stränge ergänzt (Erstes Training, Trainingslager, Sponsoring, Training, Fanartikel, Kartenverkauf).
 
 | Bereich | Datei | Motiv | Größe | Einsatz |
 |---|---|---|---|---|
@@ -89,3 +89,13 @@ Werden beim Zusammenführen der Stränge ergänzt.
 | Kartenverkauf | `tickets/rasen.jpg` | Rasen von oben mit Mähstreifen, kühl, entsättigt | 1200×750 | Draufsicht der Tribünen (Platzhalter vorhanden) |
 | Erfolge | `trophies/<form>.webp` | 12 Formen, siehe Abschnitt 4 | 1000×1100 | Vitrine (freischalten in `src/data/trophyImages.ts`) |
 | Saisonbudget | `budget/berater-<jahrzehnt>.webp` | Porträt des Finanzberaters/Schatzmeisters je Jahrzehnt (Anzug, Akten) | 160×184 (Quelle 640×736) | Budget-Fenster und Finanzen › Budget (Ersatz: gezeichnetes Gesicht) |
+| Neues Spiel / Ligensystem | `leagues/<liga-id>.webp` | Neutrales Liga-Emblem je Spielklasse (Schild/Wimpel, ohne echte Logos/Schrift), Stufe über Farbe/Metall | 64×64 (Quelle 256×256), Alpha | Ligensystem-Pyramide im Assistenten und Statistiken › Ligensystem (Ersatz: Flagge + Stufenzahl) |
+
+### Sponsoring (Strang sponsor3, Finanzen › Sponsoring)
+| Datei | Motiv | Größe | Einsatz |
+|---|---|---|---|
+| `sponsor/trikot-<epoche>.webp` (1975, 1990, 2010) | Leeres Heimtrikot frontal, neutral weiß/grau (wird nicht eingefärbt – nur als Lichter/Falten-Ebene über dem gezeichneten Trikot), Schnitt je Epoche | 900×945, Alpha | Reiter Hauptsponsor (`sponsor/SponsorJersey.tsx`, gezeichneter Ersatz: `JerseySVG`) |
+| `sponsor/bande-holz.webp`, `bande-kunststoff.webp`, `bande-led.webp` | Leere Bande frontal ohne Schrift: Holzbretter mit Schrauben / glatte Kunststofftafel im Alurahmen / dunkles LED-Modul mit Pixelraster | 1200×200 | Reiter Bandenwerbung als Struktur über dem Logo (`sponsor/BoardsTab.tsx`, Ersatz: CSS-Struktur) |
+| `sponsor/tribuene-draufsicht.webp` | Stadion von oben, Tribünen ohne Beschriftung, kühl abgedunkelt | 1240×800 | Reiter Namensrechte, Hintergrund der Draufsicht (Ersatz: SVG-Schraffur) |
+| `sponsor/spielfeldrand-<epoche>.webp` | Blick über den Rasen auf Banden + Zuschauer (unscharf), 1978 / 1995 / 2015 | 1920×400 | Reiter Bandenwerbung, Kulisse hinter den Banden (Ersatz: Punkteraster) |
+
