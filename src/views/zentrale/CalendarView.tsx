@@ -190,7 +190,7 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
 
   return (
     <DashPage>
-      <DashBox title={`${MONTH_LABELS[viewM]} ${viewY}`} icon="kalender" span={2} rows={2}
+      <DashBox title={`${MONTH_LABELS[viewM]} ${viewY}`} icon="kalender" span={2} rows={2} info="spielplan"
         right={<span className="dbtnrow">
           <button className="dchip" onClick={prevMonth}>‹ Vormonat</button>
           <button className="dchip" onClick={() => { setViewY(todayY); setViewM(todayM); }}>Heute</button>

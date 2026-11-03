@@ -49,7 +49,7 @@ export function buildDayEventsMap(g: Game): Map<string, StripEvent[]> {
         if (m && m.involvesPlayerClub) {
           const heim = m.homeClubId === me;
           const opp = heim ? m.awayClubId : m.homeClubId;
-          consider({ date: ev.date, icon: 'matchball', line: `${full(opp)} (${heim ? 'H' : 'A'})`, accent: 'orange', isMatch: true, prio: 100, clubId: opp, home: heim, comp: `Liga · ${m.matchday}. Spieltag`, result: resultOf(m) });
+          consider({ date: ev.date, icon: 'matchball', line: `${full(opp)} (${heim ? 'H' : 'A'})`, accent: 'orange', isMatch: true, prio: 100, clubId: opp, home: heim, comp: `Liga · ${m.matchday}. Spieltag${m.moved ? (m.moved.makeup ? ' (Nachholspiel)' : ' (verlegt)') : ''}`, result: resultOf(m) });
         } else if (m) {
           consider({ date: ev.date, icon: 'schedule', line: `Spieltag ${m.matchday}`, accent: undefined, isMatch: false, prio: 40 });
         }

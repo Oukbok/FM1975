@@ -5,6 +5,9 @@ import { Game } from '../../game/state';
 import { Match } from '../../types';
 import { DashBox, DashPage, Empty, KV, Kpi } from '../../ui/DashPage';
 import { resultFor } from '../shared';
+import { moveLabel } from '../../game/fixtureWatch';
+
+const dm = (d: string) => `${Number(d.slice(8, 10))}.${Number(d.slice(5, 7))}.`;
 
 // =============================================================================
 // SPIELPLAN — eigene Saison, Bilanz Heim/Auswärts, Spieltag der Liga
@@ -24,7 +27,8 @@ function bilanz(ms: Match[], clubId: string) {
 
 export function FixturesView({ g, onWatch }: { g: Game; onWatch: (id: string) => void }) {
   const mid = g.managedClubId;
-  const myMatches = g.fixtures.filter((m) => m.involvesPlayerClub).sort((a, b) => a.matchday - b.matchday);
+  // Nach Datum: Nachholspiele stehen dort, wo sie gespielt werden.
+  const myMatches = g.fixtures.filter((m) => m.involvesPlayerClub).sort((a, b) => a.date.localeCompare(b.date) || a.matchday - b.matchday);
   const played = myMatches.filter((m) => m.status === 'finished');
   const home = bilanz(played.filter((m) => m.homeClubId === mid), mid);
   const away = bilanz(played.filter((m) => m.awayClubId === mid), mid);
@@ -36,7 +40,7 @@ export function FixturesView({ g, onWatch }: { g: Game; onWatch: (id: string) =>
 
   return (
     <DashPage>
-      <DashBox title={`Spielplan ${g.season}`} icon="schedule" span={2} rows={2} right={`${played.length} von ${myMatches.length} gespielt`} flush>
+      <DashBox title={`Spielplan ${g.season}`} icon="schedule" span={2} rows={2} info="spielplan" right={`${played.length} von ${myMatches.length} gespielt`} flush>
         <table className="dtable">
           <thead><tr><th className="rl-rank">ST</th><th>Datum</th><th className="ctr">Ort</th><th>Gegner</th><th className="ctr">Ergebnis</th><th /></tr></thead>
           <tbody>
@@ -49,7 +53,10 @@ export function FixturesView({ g, onWatch }: { g: Game; onWatch: (id: string) =>
               return (
                 <tr key={m.id} className={m.matchday === nextMd ? 'me' : ''}>
                   <td className="rl-rank">{m.matchday}</td>
-                  <td className="nowrap muted">{CalendarEngine.formatDate(m.date)}</td>
+                  <td className="nowrap muted">
+                    {CalendarEngine.formatDate(m.date)}
+                    {m.moved && <span className="fx-tag" title={moveLabel(m) ?? undefined}>{m.moved.makeup ? 'Nachholspiel' : 'verlegt'}</span>}
+                  </td>
                   <td className="ctr">{isHome ? 'Heim' : 'Ausw.'}</td>
                   <td>
                     <ClubLink id={oppId}><span className="rl-club">{opp && <ClubCrest club={opp} size={28} />}<span className="rl-name">{opp?.name}</span></span></ClubLink>
@@ -78,7 +85,7 @@ export function FixturesView({ g, onWatch }: { g: Game; onWatch: (id: string) =>
         {mdMatches.length ? mdMatches.map((m) => (
           <div key={m.id} className={`dlist-row ${m.involvesPlayerClub ? 'clickable' : ''}`} onClick={() => m.status === 'finished' && onWatch(m.id)}>
             <span className="grow" style={{ textAlign: 'right', fontWeight: m.homeClubId === mid ? 900 : 500 }}><ClubLink id={m.homeClubId}>{g.clubs[m.homeClubId]?.shortName}</ClubLink></span>
-            <span className="dres">{m.result ? `${m.result.homeGoals}:${m.result.awayGoals}` : '–:–'}</span>
+            <span className="dres">{m.result ? `${m.result.homeGoals}:${m.result.awayGoals}` : m.moved?.makeup ? dm(m.date) : '–:–'}</span>
             <span className="grow" style={{ fontWeight: m.awayClubId === mid ? 900 : 500 }}><ClubLink id={m.awayClubId}>{g.clubs[m.awayClubId]?.shortName}</ClubLink></span>
           </div>
         )) : <Empty icon="schedule">Kein Spieltag.</Empty>}

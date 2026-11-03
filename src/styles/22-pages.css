@@ -305,3 +305,6 @@
 .st-rows input[type=range] { flex: 1; accent-color: var(--accent); }
 .st-rows b { color: var(--text); }
 .st-wrap .gr-svg { width: calc(100% - 450px); }
+
+/* Spielplan: Nachholspiel / verlegt (game/fixtureWatch.ts) */
+.fx-tag { display: inline-block; margin-left: 8px; padding: 1px 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; font-weight: 600; color: var(--text-3); vertical-align: 1px; }

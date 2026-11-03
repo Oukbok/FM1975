@@ -154,12 +154,8 @@ export function fixtureWatchDaily(g: Game, today: string): void {
 }
 
 /** Hauptspieltag-Kandidaten am Wochenende (bzw. um einen Wochenspieltag herum). */
-function weekendOptions(g: Game, m: Match, base: string): string[] {
-  const y0 = seasonY0(g);
-  const out = [base, addD(base, 1)];
-  if (wdOf(base) === 6) {
-    if (y0 >= 1992) out.push(addD(base, -1));
-  } else out.push(addD(base, -1));
+function weekendOptions(m: Match, base: string): string[] {
+  const out = [base, addD(base, 1), addD(base, -1)];
   if (m.moved?.makeup) out.push(m.date); // Nachholspiel: eigener Termin bleibt Kandidat
   return [...new Set(out)];
 }
@@ -174,8 +170,9 @@ function weekendRepair(g: Game, today: string): void {
     if (now >= WANT_GAP_DAYS) continue;
     const b = m.moved?.makeup ? m.date : base.get(m.matchday) ?? m.date;
     let best = m.date; let bs = now;
-    for (const d of weekendOptions(g, m, b)) {
-      if (d <= today) continue;
+    const fridayOk = seasonY0(g) >= 1992 || now < MIN_GAP_DAYS; // vor 1992 Freitag nur gegen echte Kollision
+    for (const d of weekendOptions(m, b)) {
+      if (d <= today || (wdOf(d) === 5 && wdOf(b) === 6 && !fridayOk)) continue;
       const s = slack(d, list);
       if (s > bs) { best = d; bs = s; }
     }
