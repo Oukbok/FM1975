@@ -724,13 +724,17 @@ Die Zahlen folgen denselben Regeln wie der Saisonwechsel – was hier steht, pas
     title: 'Trainingsplan: Bausteine ziehen',
     keywords: ['training', 'trainingsplan', 'wochenplan', 'baustein', 'block', 'einheit', 'ziehen', 'vorlage', 'spieltag', 'regeneration', 'anreise', 'videoanalyse', 'pressing', 'athletik'],
     body: `## Trainingsplan
-Unter **Training › Trainingsplan** legst du die Trainingswoche fest: **7 Tage** mit je **drei Feldern** – **Vormittag**, **Nachmittag** und **Abend / Zusatz** (die Zusatzeinheit belastet ×1,3, bringt aber auch etwas mehr Lernreiz).
+Unter **Training › Trainingsplan** legst du die Trainingswoche fest: **7 Tage** mit je **drei Feldern** – **Vormittag**, **Nachmittag** und **Abend / Zusatz** (die Zusatzeinheit belastet ×1,3, bringt aber auch etwas mehr Lernreiz). Die Seite hat vier Reiter:
+- **Mannschaftstraining:** die Woche als **Ringbuch** mit einer Kachel je Einheit; Spieltage erscheinen als eigene Spalte mit dem Gegner. Rechts die Bausteine in Reitern (**Fitness, Technik, Taktik, Sonstiges** – nach dem Fachgebiet im Trainerteam, das sie anleitet; die Kachelfarbe zeigt die Gruppe, eine kräftigere Kachel eine höhere Intensität) und die **Trainingsinfo** (Ø Fitness/Frische/Form/Moral, Fitness je Tag, Verletzungsrisiko, Entwicklung, Schwerpunkte). Unter dem Ringbuch: freie Felder und die **Intensität** der Woche.
+- **Individuelle Spieler:** je Spieler das **Trainingsziel** – Mannschaftstraining oder eine **Zusatzposition** (Positionstraining) – mit **Fortschritt** bis zur Trainingsgrenze 85, dazu Fitness, Frische und die Wahl der **Förderspieler** (höchstens drei).
+- **Trainingsgruppen:** dein Kader nach dem, wie er gerade trainiert: Feldspieler, Torhüter, Förderspieler, Positionstraining, **Angeschlagen** (Fitness unter 50 – doppeltes Verletzungsrisiko bei harten Einheiten) und Verletzte (trainieren nicht). Die Gruppen ergeben sich von selbst; daneben, wie gut dein Trainerteam jedes Fach anleitet.
+- **Langfristig:** der **Saisonverlauf** Woche für Woche bis zum 30. Juni – mit den echten Spielterminen, Einheiten, Fitness je Tag, Risiko, Schwerpunkt, Trainingslagern und Winterpause. Wähle eine Woche und eine Vorlage: **ab diesem Montag lädt der Trainerstab die Vorlage** in deinen Wochenplan (die laufende Woche sofort). Darunter die **Philosophie** je Saisonabschnitt.
 
 ### Bedienung
-- **Ziehen:** Baustein aus der Leiste in ein Feld ziehen. Ein belegtes Feld auf ein anderes ziehen **tauscht** beide.
-- **Leeren:** Feld zurück in die Leiste ziehen, auf „Frei“ setzen oder **doppelklicken**.
+- **Ziehen:** Baustein aus den Reitern rechts in ein Feld ziehen. Ein belegtes Feld auf ein anderes ziehen **tauscht** beide.
+- **Leeren:** Feld zurück nach rechts ziehen, auf „Frei“ (Reiter Sonstiges) setzen, **doppelklicken** oder **rechtsklicken**; „Woche leeren“ leert alle Felder.
 - **Ohne Ziehen:** Baustein anklicken (er wird markiert), dann Felder anklicken.
-- **Vorlagen:** Ausgewogen, Vorbereitung, Englische Woche, Taktikwoche, Abschluss & Technik, Schonung.
+- **Vorlagen („Trainingswoche laden“):** Ausgewogen, Vorbereitung, Englische Woche, Taktikwoche, Abschluss & Technik, Schonung.
 - **Diese Woche / Nächste Woche:** Der Plan ist eine Wochenvorlage; die Ansicht zeigt, wie die echten Spiele ihn verändern.
 
 ### Spiele sperren Felder

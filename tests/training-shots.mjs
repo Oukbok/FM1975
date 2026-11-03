@@ -81,6 +81,16 @@ for (const [i, name] of [['4b', 'Individuelle Spieler'], ['4c', 'Trainingsgruppe
   await page.waitForTimeout(300);
   await page.screenshot({ path: `${outDir}/${tag}_${i}_${name.split(' ')[0].toLowerCase()}.png` });
   await noScroll(`Trainingsplan › ${name}`);
+  if (i === '4b') {
+    // Trainingsziel (Zusatzposition) und Förderspieler setzen → Fortschritt/Gruppen sichtbar
+    const sel = page.locator('.tr3-target').nth(3);
+    const val = await sel.locator('option').nth(1).getAttribute('value');
+    await sel.selectOption(val);
+    await page.locator('.tr3-star').nth(10).click();
+    await page.waitForTimeout(200);
+    if (!(await page.locator('.tr3-prog').count())) errors.push('Fortschritt des Positionstrainings fehlt');
+    await page.screenshot({ path: `${outDir}/${tag}_4b2_ziel.png` });
+  }
 }
 // Langfristig: Vorlage für die gewählte Woche vormerken
 await page.locator('.tr3-tpl:has-text("Taktikwoche")').click();

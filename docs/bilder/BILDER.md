@@ -89,6 +89,8 @@ Werden beim Zusammenführen der Stränge ergänzt (Erstes Training, Trainingslag
 | Kartenverkauf | `tickets/rasen.jpg` | Rasen von oben mit Mähstreifen, kühl, entsättigt | 1200×750 | Draufsicht der Tribünen (Platzhalter vorhanden) |
 | Erfolge | `trophies/<form>.webp` | 12 Formen, siehe Abschnitt 4 | 1000×1100 | Vitrine (freischalten in `src/data/trophyImages.ts`) |
 | Saisonbudget | `budget/berater-<jahrzehnt>.webp` | Porträt des Finanzberaters/Schatzmeisters je Jahrzehnt (Anzug, Akten) | 160×184 (Quelle 640×736) | Budget-Fenster und Finanzen › Budget (Ersatz: gezeichnetes Gesicht) |
+| Training | `training/einheit-<baustein-id>.webp` (21 Bausteine, IDs aus `engine/weeklyTraining.ts`) | Piktogramm/Silhouette der Übung (Läufer, Hantel, Kopfball …), einfarbig hell auf transparent, ohne Text | 96×96 (Quelle 384×384), Alpha | Kacheln im Ringbuch und in den Bausteinreitern (Ersatz: Icon; Slot noch nicht verdrahtet) |
+| Training | `training/spieltag-<epoche>.webp` | Matchball/Stollenschuh-Stillleben je Epoche (70er Leder, 90er, heute), kühl | 160×320 | Spieltag-Spalte im Ringbuch (Ersatz: Ball-Symbol + Wappen) |
 | Neues Spiel / Ligensystem | `leagues/<liga-id>.webp` | Neutrales Liga-Emblem je Spielklasse (Schild/Wimpel, ohne echte Logos/Schrift), Stufe über Farbe/Metall | 64×64 (Quelle 256×256), Alpha | Ligensystem-Pyramide im Assistenten und Statistiken › Ligensystem (Ersatz: Flagge + Stufenzahl) |
 
 ### Sponsoring (Strang sponsor3, Finanzen › Sponsoring)

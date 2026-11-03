@@ -16,6 +16,7 @@ import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { condBar, fmtDM, fmtDateShort } from '../../ui/format';
 import { squadOf } from '../shared';
 import { QBar, topSkills } from './teamParts';
+import { blockKind } from './plan/model';
 
 // =============================================================================
 // TRAINING — Kategorie-Übersicht (Woche, Wirkung, Belastung, Team, Markt, Lager)
@@ -47,7 +48,7 @@ export function TrainingDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) 
               <span className="td-day-name">{DAY_SHORT[i]}</span>
               {inf.fixture ? <Icon name="matchball" size={22} /> : SLOT_KEYS.map((k) => {
                 const b = days[i][k] ? BLOCKS_BY_ID[days[i][k] as string] : null;
-                return b ? <Icon key={k} name={b.icon} size={22} /> : <span key={k} className="td-empty" />;
+                return b ? <span key={k} className={`td-blk trk-${blockKind(b)}`}><Icon name={b.icon} size={22} /></span> : <span key={k} className="td-empty" />;
               })}
             </div>
           ))}

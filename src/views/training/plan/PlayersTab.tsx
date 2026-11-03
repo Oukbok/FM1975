@@ -111,7 +111,7 @@ export function PlayersTab({ g, refresh }: { g: Game; refresh: () => void }) {
         <div className="tr3-pfoot">
           <div className="tr3-pfoot-col">
             <span className="tr3-sec">Trainingsziele</span>
-            <span className="tr3-ptext">{training.length ? `${training.length} Spieler lernen eine Zusatzposition.` : 'Niemand trainiert eine Zusatzposition.'} Training allein bringt die Vertrautheit bis {TRAIN_CAP}, den Rest holt sich der Spieler mit Einsätzen.</span>
+            <span className="tr3-ptext">{training.length ? `${training.length === 1 ? 'Ein Spieler lernt' : `${training.length} Spieler lernen`} eine Zusatzposition.` : 'Niemand trainiert eine Zusatzposition.'} Training allein bringt die Vertrautheit bis {TRAIN_CAP}, den Rest holt sich der Spieler mit Einsätzen.</span>
             <button className="tr3-btn" disabled={!training.length} onClick={stopAll}>Positionstraining für alle beenden</button>
           </div>
           <div className="tr3-pfoot-col">

@@ -5,6 +5,8 @@
    ============================================================================= */
 
 /* --- Seite + Reiter --- */
+/* Tönung der Kachelflächen: Anteil der Kennfarbe × --trk-k */
+.tr3-page, .tp-ghost { --trk-k: 1; }
 .tr3-page { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
 .tr3-tabs {
   margin: 8px 2.5% 0; flex: 0 0 auto; padding: 0 8px;
@@ -15,7 +17,7 @@
 .tr3-page > .dpage { padding-top: 22px; padding-bottom: 34px; row-gap: 22px; }
 
 /* Kennfarbe je Bausteingruppe */
-.trk-fit { --trk: var(--trc-fit); }
+.trk-fit { --trk: var(--trc-fit); --trk-k: .55; } /* Rot nur zart tönen – kein warmer Schleier */
 .trk-tech { --trk: var(--trc-tech); }
 .trk-tac { --trk: var(--trc-tac); }
 .trk-misc { --trk: var(--trc-misc); }
@@ -108,10 +110,10 @@
 .tp-cell.filled { cursor: grab; border-color: color-mix(in srgb, var(--trk) 45%, var(--border)); }
 .tp-cell.filled .game-icon, .tp-ghost .game-icon { color: color-mix(in srgb, var(--trk) 70%, #ffffff); }
 .tp-cell.filled::before, .tp-cell.lock-regen::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--trk); }
-.tp-cell.int-0 { background: color-mix(in srgb, var(--trk) 6%, var(--panel-2)); }
-.tp-cell.int-1 { background: color-mix(in srgb, var(--trk) 9%, var(--panel-2)); }
-.tp-cell.int-2 { background: color-mix(in srgb, var(--trk) 14%, var(--panel-2)); }
-.tp-cell.int-3 { background: color-mix(in srgb, var(--trk) 20%, var(--panel-2)); }
+.tp-cell.int-0 { background: color-mix(in srgb, var(--trk) calc(6% * var(--trk-k, 1)), var(--panel-2)); }
+.tp-cell.int-1 { background: color-mix(in srgb, var(--trk) calc(9% * var(--trk-k, 1)), var(--panel-2)); }
+.tp-cell.int-2 { background: color-mix(in srgb, var(--trk) calc(14% * var(--trk-k, 1)), var(--panel-2)); }
+.tp-cell.int-3 { background: color-mix(in srgb, var(--trk) calc(20% * var(--trk-k, 1)), var(--panel-2)); }
 .tp-cell.int-0::before, .tp-cell.int-1::before { opacity: .55; }
 .tp-cell.int-1 .game-icon, .tp-cell.int-0 .game-icon { opacity: .75; }
 .tp-cell.filled:hover { filter: brightness(1.12); }
@@ -170,12 +172,12 @@
 .tp-tile-ico {
   flex: 0 0 auto; width: 48px; height: 48px; display: inline-flex; align-items: center; justify-content: center;
   border-radius: 7px; border: 1px solid color-mix(in srgb, var(--trk) 45%, var(--border));
-  background: color-mix(in srgb, var(--trk) 14%, var(--panel-2)); color: color-mix(in srgb, var(--trk) 70%, #ffffff);
+  background: color-mix(in srgb, var(--trk) calc(14% * var(--trk-k, 1)), var(--panel-2)); color: color-mix(in srgb, var(--trk) 70%, #ffffff);
   box-shadow: inset 0 3px 0 var(--trk);
 }
-.tp-tile-ico.int-1 { background: color-mix(in srgb, var(--trk) 9%, var(--panel-2)); }
-.tp-tile-ico.int-3 { background: color-mix(in srgb, var(--trk) 20%, var(--panel-2)); }
-.tp-tile-ico.int-0 { background: color-mix(in srgb, var(--trk) 6%, var(--panel-2)); }
+.tp-tile-ico.int-1 { background: color-mix(in srgb, var(--trk) calc(9% * var(--trk-k, 1)), var(--panel-2)); }
+.tp-tile-ico.int-3 { background: color-mix(in srgb, var(--trk) calc(20% * var(--trk-k, 1)), var(--panel-2)); }
+.tp-tile-ico.int-0 { background: color-mix(in srgb, var(--trk) calc(6% * var(--trk-k, 1)), var(--panel-2)); }
 .tp-tile-ico .game-icon { width: 28px; height: 28px; }
 .tp-tile-txt { display: flex; flex-direction: column; min-width: 0; }
 .tp-tile-lbl { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
