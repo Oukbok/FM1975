@@ -255,6 +255,8 @@ export interface AppSettings {
   drawSpeed?: 'langsam' | 'normal' | 'schnell';
   /** Bewertungsrunde als Show (screens/rating/) oder kompakte Liste. */
   ratingShow?: 'an' | 'aus';
+  /** Ehrungen (Die Besten der Saison, Gala Goldener Ball) als Fenster zeigen oder nur Nachricht. */
+  awardsShow?: 'an' | 'aus';
   /** Tempo der Bewertungs-Show. */
   ratingSpeed?: 'langsam' | 'normal' | 'schnell';
   /** Bewertungsrunde: nach jedem Spieler auf „Spieler vor“ warten. */

@@ -23,6 +23,8 @@
     "test:grounds": "node scripts/run-ts.mjs tests/grounds-test.ts",
     "test:finance": "node scripts/run-ts.mjs tests/finance-test.ts",
     "test:briefing": "node scripts/run-ts.mjs tests/briefing-test.ts",
+    "test:awards": "node scripts/run-ts.mjs tests/awards-test.ts",
+    "test:goldenball": "node scripts/run-ts.mjs tests/goldenball-test.ts",
     "test:seats": "node scripts/run-ts.mjs tests/seats-test.ts",
     "test:draw": "node scripts/run-ts.mjs tests/draw-test.ts",
     "test:sponsor": "node scripts/run-ts.mjs tests/sponsor-test.ts",

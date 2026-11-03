@@ -20,7 +20,7 @@ import { ORIGINS } from '../data/origins';
 import { POSITION_GROUPS } from '../types';
 import type { KoRule } from './match/sim';
 
-const COUNTRY_ORIGIN: Record<string, string> = {
+export const COUNTRY_ORIGIN: Record<string, string> = {
   England: 'eng', Italien: 'ita', Spanien: 'esp', Frankreich: 'fra', Schottland: 'sco', Niederlande: 'ned',
   Sowjetunion: 'rus', Portugal: 'por', Jugoslawien: 'yug', Griechenland: 'gre', Belgien: 'bel', Ungarn: 'hun',
   Tschechoslowakei: 'cze', Polen: 'pol', Oesterreich: 'aut', Tuerkei: 'tur', Schweiz: 'sui', Schweden: 'swe',
@@ -70,11 +70,11 @@ export function teamStrength(g: LightGame, id: string): number {
 // -----------------------------------------------------------------------------
 // Kader für die Statistik
 // -----------------------------------------------------------------------------
-interface Pl { id: string; pos: Position; q: number }
+export interface Pl { id: string; pos: Position; q: number }
 const SLOTS: Position[] = ['TW', 'TW', 'IV', 'IV', 'RV', 'LV', 'LIB', 'DM', 'ZM', 'ZM', 'OM', 'RA', 'LA', 'MS', 'MS', 'HS'];
 
 /** Kurzkader eines ausländischen Vereins (deterministisch je Verein und Jahr). */
-function phantomRoster(cup: CupState, clubId: string, country: string, strength: number, year: number): Pl[] {
+export function phantomRoster(cup: CupState, clubId: string, country: string, strength: number, year: number): Pl[] {
   const origin = ORIGINS[COUNTRY_ORIGIN[country] ?? 'eng'] ?? ORIGINS.eng;
   const people = (cup.xpeople ??= {});
   return SLOTS.map((pos, slot) => {

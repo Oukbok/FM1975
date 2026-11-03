@@ -1,0 +1,185 @@
+/* =============================================================================
+   DIE BESTEN DER SAISON (.aw-*) – Popup views/statistiken/awards/AwardsModal.tsx,
+   Seite Statistiken › Auszeichnungen (AwardsView.tsx), Bausteine AwardParts.tsx.
+   Ruhig und festlich: neutrale Karten, Bernstein nur für eigene Spieler und Hauptknopf.
+   ============================================================================= */
+
+.aw-modal { max-width: 1480px; height: auto; max-height: 92%; }
+.aw-head h2 { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+.aw-body { padding: 20px 28px 18px; display: flex; flex-direction: column; gap: 16px; }
+.aw-foot { align-items: center; }
+.aw-foot-note { flex: 1 1 auto; color: var(--text-3); font-size: 14px; }
+
+/* Vier Karten */
+.aw-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.aw-card {
+  position: relative; display: flex; flex-direction: column; gap: 12px; min-width: 0;
+  padding: 16px 16px 12px; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--panel-2);
+  animation: awIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--k, 0) * 110ms + 120ms);
+}
+.aw-card::before { content: ''; position: absolute; left: -1px; right: -1px; top: -1px; height: 3px; border-radius: 8px 8px 0 0; background: var(--border); }
+.aw-card.mine::before { background: var(--accent); }
+.aw-card.empty { justify-content: flex-start; }
+.aw-none { color: var(--text-4); font-size: 14px; }
+
+.aw-cat { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-family: var(--font-display); font-size: 14px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); }
+.aw-tag { font-family: var(--font-ui); font-size: 11px; letter-spacing: 0.4px; padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px; color: var(--text-2); }
+
+.aw-hero { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.aw-face { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; overflow: hidden; background: var(--bg-2); border: 1px solid var(--border-soft); }
+.aw-face-none { color: var(--text-3); font-family: var(--font-display); font-weight: 500; }
+.aw-who { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.aw-name { font-family: var(--font-display); font-size: 24px; font-weight: 500; line-height: 1.1; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
+.aw-card.mine .aw-name { color: var(--accent); }
+.aw-link { background: none; border: 0; padding: 0; cursor: pointer; font: inherit; color: inherit; max-width: 100%; }
+button.aw-name { font-family: var(--font-display); font-size: 24px; font-weight: 500; }
+.aw-link:hover, .aw-link:focus-visible { text-decoration: underline; text-underline-offset: 3px; outline: none; }
+.aw-meta { display: flex; align-items: center; gap: 8px; color: var(--text-3); font-size: 14px; }
+.aw-club { display: inline-flex; align-items: center; gap: 7px; min-width: 0; color: var(--text-2); font-size: 15px; }
+.aw-club-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.aw-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft); padding: 8px 0; }
+.aw-kpi { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; }
+.aw-kpi b { font-family: var(--font-display); font-size: 24px; font-weight: 500; color: var(--text); line-height: 1.1; }
+.aw-kpi span { font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-3); white-space: nowrap; }
+.aw-why { margin: 0; color: var(--text-2); font-size: 14px; line-height: 1.4; min-height: 2.8em; }
+
+.aw-rest { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.aw-rest li { display: grid; grid-template-columns: 20px minmax(0, 1fr) minmax(0, auto) 40px; align-items: center; gap: 8px; padding: 6px 0; border-top: 1px solid var(--border-soft); font-size: 15px; }
+.aw-rk { color: var(--text-4); font-variant-numeric: tabular-nums; }
+.aw-rest-name { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; font-size: 15px; }
+.aw-rest-club { color: var(--text-3); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
+.aw-rest-val { text-align: right; color: var(--text-2); }
+.aw-rest li.mine { box-shadow: inset 3px 0 0 var(--accent); padding-left: 6px; }
+.aw-rest li.mine .aw-rest-name { color: var(--accent); }
+
+/* Ehrenzeile: Spieler der Saison + Newcomer */
+.aw-honours { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.aw-honour {
+  display: flex; align-items: center; gap: 12px; padding: 10px 14px; min-width: 0;
+  border: 1px solid var(--border-soft); border-radius: 8px; background: var(--bg-2);
+  animation: awIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: calc(var(--k, 0) * 110ms + 120ms);
+}
+.aw-honour.mine { box-shadow: inset 4px 0 0 var(--accent); }
+.aw-honour-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.aw-honour-title { font-family: var(--font-display); font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); }
+.aw-honour-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.aw-honour-n { font-size: 18px; color: var(--text); font-weight: 600; }
+.aw-honour.mine .aw-honour-n { color: var(--accent); }
+.aw-honour-club { color: var(--text-3); font-size: 14px; }
+.aw-honour-sub { color: var(--text-2); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+@keyframes awIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aw-card, .aw-honour { animation: none; }
+}
+
+/* Seite Statistiken › Auszeichnungen */
+.aw-page-top { display: flex; flex-direction: column; gap: 12px; }
+.aw-grid.compact { gap: 12px; }
+.aw-card.compact { padding: 12px 14px 8px; gap: 8px; }
+.aw-card.compact .aw-name, .aw-card.compact button.aw-name { font-size: 20px; }
+.aw-card.compact .aw-kpi b { font-size: 20px; }
+.aw-card.compact .aw-why { font-size: 13px; min-height: 0; }
+.aw-card.compact .aw-rest li { padding: 4px 0; font-size: 14px; }
+.aw-page .aw-honour { padding: 8px 12px; }
+.aw-pick { display: inline-flex; align-items: center; gap: 10px; }
+.aw-pick-div { color: var(--text-3); font-size: 14px; }
+.aw-pick .dselect { font-size: 14px; padding: 3px 8px; }
+.aw-years tbody tr { cursor: pointer; }
+.aw-years tbody tr.sel td { background: var(--panel-hover); }
+.aw-years td.aw-mine { color: var(--accent); }
+.aw-years td.aw-best { font-weight: 600; }
+.aw-years td .muted { font-size: 13px; }
+
+@media (max-width: 1500px) {
+  .aw-name, button.aw-name { font-size: 21px; }
+  .aw-kpi b { font-size: 21px; }
+}
+
+/* =============================================================================
+   GALA GOLDENER BALL (.gb-*) – screens/gala/GalaShow.tsx + GalaParts.tsx
+   Bühne wie die Trainingslager-Bilanz: dunkel, ruhig, ein heller Lichtkegel.
+   ============================================================================= */
+.gb-root {
+  position: fixed; inset: 0; z-index: 1100; overflow: hidden; cursor: pointer; user-select: none;
+  background: linear-gradient(180deg, var(--bg-2), var(--bg) 60%);
+  color: var(--text); font-family: var(--font-ui);
+  display: grid; grid-template-rows: auto 1fr auto; padding: 3.5vh 5vw 2.5vh;
+}
+.gb-light {
+  position: absolute; left: 50%; top: -20%; width: 70vw; height: 90vh; transform: translateX(-50%); pointer-events: none;
+  background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--text) 9%, transparent), transparent 62%);
+}
+.gb-top { position: relative; text-align: center; }
+.gb-kicker { font-family: var(--font-display); font-size: 18px; letter-spacing: 6px; text-transform: uppercase; color: var(--text-3); animation: awIn 0.6s 0.1s both; }
+.gb-title { margin: 8px 0 4px; font-family: var(--font-display); font-weight: 500; font-size: 56px; letter-spacing: 2px; text-transform: uppercase; line-height: 1.05; animation: awIn 0.7s 0.3s both; }
+.gb-sub { color: var(--text-3); font-size: 18px; animation: awIn 0.6s 0.6s both; }
+
+.gb-intro { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; }
+.gb-intro p { max-width: 640px; text-align: center; color: var(--text-2); font-size: 19px; line-height: 1.45; margin: 0; animation: awIn 0.6s 1.2s both; }
+.gb-trophy { display: block; animation: gbTrophy 1.1s 0.6s cubic-bezier(.2, .9, .25, 1.05) both; filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.5)); }
+
+.gb-stage { position: relative; display: flex; flex-direction: column; align-items: center; gap: 18px; min-height: 0; padding-top: 2vh; }
+.gb-podium { display: grid; grid-template-columns: 1fr 1.15fr 1fr; align-items: end; gap: 22px; width: min(1320px, 100%); }
+.gb-center { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.gb-center .gb-trophy { animation: none; }
+.gb-pod {
+  position: relative; width: 100%; min-height: 300px; border: 1px solid var(--border); border-radius: 8px;
+  background: color-mix(in srgb, var(--panel) 92%, transparent); padding: 18px 18px 14px; cursor: default;
+  display: flex; flex-direction: column;
+}
+.gb-pod.p1 { min-height: 360px; border-color: color-mix(in srgb, var(--gold) 55%, var(--border)); }
+.gb-pod.p2 { min-height: 320px; }
+.gb-pod.mine { box-shadow: inset 0 3px 0 var(--accent); }
+.gb-pod-place { position: absolute; top: 10px; left: 14px; font-family: var(--font-display); font-size: 40px; font-weight: 500; line-height: 1; color: var(--text-4); }
+.gb-pod.p1 .gb-pod-place { color: var(--gold); }
+.gb-pod-hidden { margin: auto; color: var(--text-4); font-family: var(--font-display); letter-spacing: 3px; text-transform: uppercase; font-size: 18px; }
+.gb-pod-in { display: flex; flex-direction: column; align-items: center; gap: 7px; text-align: center; animation: gbReveal 0.75s cubic-bezier(.2, .8, .2, 1) both; }
+.gb-face { display: inline-flex; overflow: hidden; border-radius: 12px; }
+.gb-pod-name { font-family: var(--font-display); font-size: 28px; font-weight: 500; line-height: 1.1; margin-top: 4px; }
+.gb-pod.p1 .gb-pod-name { font-size: 34px; }
+.gb-pod.mine .gb-pod-name { color: var(--accent); }
+.gb-pod-meta { display: flex; align-items: center; gap: 8px; color: var(--text-3); font-size: 14px; }
+.gb-pod-club { font-size: 16px; color: var(--text-2); }
+.gb-nat { display: inline-block; padding: 1px 5px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.6px; color: var(--text-2); background: var(--bg-2); }
+.gb-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft); padding: 7px 0; margin-top: 4px; }
+.gb-kpi { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.gb-kpi b { font-family: var(--font-display); font-size: 22px; font-weight: 500; line-height: 1.1; }
+.gb-kpi span { font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-3); }
+.gb-titles { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
+.gb-title { font-size: 12px; padding: 1px 6px; border: 1px solid var(--border); border-radius: 4px; color: var(--text-2); }
+.gb-why { margin: 2px 0 0; color: var(--text-2); font-size: 14px; line-height: 1.4; }
+.gb-est { margin: 0; color: var(--text-4); font-size: 12px; }
+
+.gb-list { width: min(1100px, 100%); cursor: default; animation: awIn 0.6s 0.1s both; min-height: 0; }
+.gb-list h3 { margin: 0 0 4px; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); font-weight: 700; }
+.gb-rest-row { display: grid; grid-template-columns: 36px minmax(0, 1.4fr) minmax(0, 1.2fr) 44px 64px 104px 84px; align-items: center; gap: 10px; }
+.gb-rest-name { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.gb-rest-name .rl-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gb-rest-club { min-width: 0; overflow: hidden; }
+
+.gb-foot { position: relative; display: flex; align-items: center; justify-content: flex-end; gap: 10px; cursor: default; }
+.gb-foot-note { flex: 1 1 auto; color: var(--text-3); font-size: 15px; }
+
+.gb-archive .rl-row { width: 100%; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.gb-archive .rl-row:hover { background: var(--panel-hover); }
+.aw-dsec { padding: 0 12px; margin-top: 14px; }
+
+@keyframes gbTrophy { from { opacity: 0; transform: translateY(24px) scale(0.85); } to { opacity: 1; transform: none; } }
+@keyframes gbReveal { from { opacity: 0; transform: translateY(16px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .gb-kicker, .gb-title, .gb-sub, .gb-intro p, .gb-trophy, .gb-pod-in, .gb-list { animation: none; }
+}
+@media (max-height: 820px) {
+  .gb-title { font-size: 42px; }
+  .gb-pod, .gb-pod.p1, .gb-pod.p2 { min-height: 0; padding: 12px 14px 10px; }
+  .gb-pod-name { font-size: 22px; } .gb-pod.p1 .gb-pod-name { font-size: 26px; }
+  .gb-why { font-size: 13px; }
+  .gb-kpi b { font-size: 18px; }
+}

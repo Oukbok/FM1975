@@ -573,6 +573,16 @@ export const INFO_TEXTS = {
     text: 'Die Sportzeitung erscheint montags und donnerstags, dazu gibt es immer die aktuelle Ausgabe des Tages. Sie fasst Spiele, Tabelle, Transfers, Trainerwechsel, Verletzungen, Pokal und Europapokal zusammen. Schlagzeilen öffnen den Artikel, Gesichter das Spielerprofil, Wappen das Vereinsprofil.',
     wiki: 'presse',
   },
+  awards_wertung: {
+    title: 'Die Besten der Saison',
+    text: 'Gewertet werden nur Ligaspiele, mindestens die Hälfte der Spieltage. Punkte gibt es für den Notenschnitt, die Einsätze und den Tabellenplatz der Mannschaft, dazu je Position: Torwart und Abwehr für Spiele zu null und wenige Gegentore, Mittelfeld für Tore und Vorlagen, Sturm vor allem für Tore. Spieler der Saison ist, wer sich am deutlichsten von seiner Konkurrenz abhebt.',
+    wiki: 'season-awards',
+  },
+  goldener_ball: {
+    title: 'Goldener Ball',
+    text: 'Am 20. Dezember wählt die Jury den Fußballer des Jahres – bewertet wird das Kalenderjahr: Noten, Tore und Vorlagen, Titel und Klasse. Bis 1994 sind nur Europäer wählbar, ab 1995 alle Spieler europäischer Vereine, ab 2007 Spieler weltweit. Klick auf ein Jahr zeigt die Gala noch einmal.',
+    wiki: 'season-awards',
+  },
 } satisfies Record<string, InfoText>;
 
 export type InfoKey = keyof typeof INFO_TEXTS;

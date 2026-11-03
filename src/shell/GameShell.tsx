@@ -66,6 +66,11 @@ import { WikiView } from '../views/wiki/WikiView';
 import { CalendarView } from '../views/zentrale/CalendarView';
 import { BriefingView } from '../views/zentrale/BriefingView';
 import { BriefingModal } from '../views/zentrale/BriefingModal';
+import { AwardsModal } from '../views/statistiken/awards/AwardsModal';
+import { AwardsView } from '../views/statistiken/awards/AwardsView';
+import { clearPendingAwards, pendingAwards } from '../game/seasonAwardsGame';
+import { clearPendingGoldenBall, pendingGoldenBall } from '../game/goldenBallGame';
+import { GalaShow } from '../screens/gala/GalaShow';
 import { briefingLog, briefingOfRecord, clearPendingBriefing } from '../game/seasonBriefing';
 import { Dashboard } from '../views/zentrale/Dashboard';
 import { NewsView } from '../views/zentrale/NewsView';
@@ -162,6 +167,22 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   useEffect(() => { if (pendingRec) setRunning(false); }, [pendingRec]);
   const pendingBriefing = useMemo(() => (pendingRec ? briefingOfRecord(pendingRec) : null), [pendingRec]);
   const closeBriefing = useCallback(() => { clearPendingBriefing(g); rerender(); }, [g, rerender]);
+  // Die Besten der Saison (game/seasonAwardsGame.ts): Popup nach dem letzten Ligaspieltag.
+  const awardsDue = pendingAwards(g);
+  useEffect(() => { if (awardsDue) setRunning(false); }, [awardsDue]);
+  const closeAwards = useCallback(() => { clearPendingAwards(g); rerender(); }, [g, rerender]);
+  // Goldener Ball (game/goldenBallGame.ts): Gala am 20. Dezember.
+  const galaDue = pendingGoldenBall(g);
+  useEffect(() => { if (galaDue) setRunning(false); }, [galaDue]);
+  const closeGala = useCallback(() => { clearPendingGoldenBall(g); rerender(); }, [g, rerender]);
+  // Einstellung „Ehrungen als Fenster“ aus: nur Nachricht, Vormerkung sofort löschen.
+  useEffect(() => {
+    if (settings.awardsShow !== 'aus') return;
+    if (awardsDue) clearPendingAwards(g);
+    if (galaDue) clearPendingGoldenBall(g);
+    if (awardsDue || galaDue) rerender();
+  }, [settings.awardsShow, awardsDue, galaDue, g, rerender]);
+  const showAwards = settings.awardsShow !== 'aus';
 
   // --- Speichern ---
   const doSave = useCallback((slot?: string, name?: string) => {
@@ -420,6 +441,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'vorstand' && <BoardView g={g} onChange={rerender} />}
         {screen === 'international' && <InternationalView g={g} onWatch={(id) => setLiveMatchId(id)} onReplayDraw={replayDraw} />}
         {screen === 'halle' && <IndoorView g={g} onChange={rerender} />}
+        {screen === 'auszeichnungen' && <AwardsView g={g} />}
         {screen === 'trainingslager' && <TrainingCampView g={g} onChange={rerender} />}
         {screen === 'kabine' && <DressingRoomView g={g} onChange={rerender} />}
         {screen === 'trainerteam' && <TrainerTeamView g={g} onChange={rerender} />}
@@ -483,6 +505,14 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
       {/* Bilanz des Trainingslagers: nach Spielbericht/Zeremonie/Briefing/Auslosung. */}
       {campQueue[0] && !textMatch && !liveMatchId && !ratingCeremony && !pendingBriefing && !drawQueue.length && (
         <CampRecap key={campQueue[0]} g={g} bookingId={campQueue[0]} onClose={() => { setCampQueue((q) => q.slice(1)); rerender(); }} />
+      )}
+
+      {/* Die Besten der Saison: nach Spielbericht/Zeremonie/Briefing/Auslosung/Trainingslager. */}
+      {galaDue && showAwards && !textMatch && !liveMatchId && !ratingCeremony && !pendingBriefing && !drawQueue.length && !campQueue.length && (
+        <GalaShow g={g} y={galaDue} onClose={closeGala} />
+      )}
+      {awardsDue && showAwards && !galaDue && !textMatch && !liveMatchId && !ratingCeremony && !pendingBriefing && !drawQueue.length && !campQueue.length && (
+        <AwardsModal g={g} s={awardsDue} onClose={closeAwards} onArchive={() => { closeAwards(); setScreen('auszeichnungen'); }} />
       )}
 
       {liveMatchId && (

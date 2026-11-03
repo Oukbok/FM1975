@@ -282,6 +282,42 @@ Die 1981er-Reform (eingleisige 2. Liga) liegt vor der Wiedervereinigung, die Reg
   },
 
   {
+    id: 'season-awards',
+    category: 'leagues',
+    title: 'Auszeichnungen: Die Besten der Saison & Goldener Ball',
+    keywords: ['goldener ball', 'fußballer des jahres', 'weltfußballer', 'gala', 'auszeichnung', 'ehrung', 'spieler der saison', 'newcomer', 'torwart', 'abwehr', 'mittelfeld', 'sturm', 'beste', 'elf', 'notenschnitt', 'zu null'],
+    body: `## Worum geht es?
+Am Tag nach dem letzten Ligaspieltag ehrt die Sportredaktion die **besten Spieler auf ihren Positionen** – in vier Kategorien: **Torwart, Abwehr, Mittelfeld und Sturm**, jeweils mit Platz 1 bis 3. Dazu kommen der **Spieler der Saison** und der **Newcomer der Saison** (höchstens 21 Jahre). Ein festliches Fenster zeigt die Geehrten; alle Jahrgänge findest du unter **Statistiken › Auszeichnungen**.
+
+## Welche Liga?
+Geehrt wird in der Liga deines Vereins – nur dort spielen alle Mannschaften mit vollen Kadern und Einzelstatistik. Die Kategorie richtet sich nach der Stammposition des Spielers.
+
+## So wird gewertet
+Es zählen nur **Ligaspiele**. Wertbar ist, wer mindestens **die Hälfte der Spieltage** gespielt hat (Newcomer: 40 %). Jeder bekommt Wertungspunkte:
+- **Leistung:** 3 × (4,0 − Notenschnitt) – der wichtigste Baustein.
+- **Einsätze:** Anteil der Spieltage, bis 1 Punkt.
+- **Mannschaftserfolg:** Meister 1 Punkt, Tabellenletzter 0 – nur leicht gewichtet.
+- **Torwart:** Spiele zu null (× 3 je Spiel) und wenige Gegentore der Mannschaft.
+- **Abwehr:** Spiele zu null (× 2), wenige Gegentore, dazu Tore und Vorlagen.
+- **Mittelfeld:** Tore (× 0,7) und Vorlagen je Spiel × 4.
+- **Sturm:** Tore (und 0,4 × Vorlagen) je Spiel × 5 – Torjäger landen meist vorn.
+
+Den **Spieler der Saison** bestimmt der Abstand zur eigenen Konkurrenz: Wer sich in seinem Mannschaftsteil am deutlichsten von den anderen abhebt, gewinnt – so stehen Torhüter und Stürmer fair gegeneinander.
+
+## Folgen
+Geehrte Spieler aus deinem Kader freuen sich: kleiner Moral-Schub (Sieger mehr als Platz 2 und 3, Spieler der Saison zusätzlich). Die Ehrungen bleiben im Archiv – auch wenn der Spieler später wechselt oder seine Karriere beendet.
+
+## Goldener Ball – Fußballer des Jahres
+Am **20. Dezember** hält der Zeitlauf an: Bei einer **Gala** (bis 2009 und ab 2016 in Paris, 2010–2015 in Zürich) wird der beste Spieler des **Kalenderjahres** geehrt – erst Platz 3, dann Platz 2, dann der Sieger mit dem Goldenen Ball, danach die Plätze 4 bis 10.
+- **Wer ist wählbar?** Bis **1994** nur Spieler mit europäischer Staatsangehörigkeit bei europäischen Vereinen („Europas Fußballer des Jahres“), ab **1995** alle Spieler europäischer Vereine, ab **2007** Spieler aller Ligen weltweit („Weltfußballer des Jahres“) – im Spiel sind die europäischen Ligen simuliert.
+- **Kalenderjahr:** Rückrunde der abgelaufenen Saison (halb gewichtet) plus Hinrunde der laufenden Saison, alle Wettbewerbe. Mindestens 10 Spiele.
+- **Wertung:** 3 × (4,0 − Notenschnitt), Klasse (Stärke über 70), Tore und Vorlagen je Spiel (Sturm am stärksten gewichtet), Spiele zu null für Torwart und Abwehr, dazu **Titel**: Landesmeister-Cup 2 Punkte, Pokalsieger-Cup 1, UEFA-Pokal 0,8, Meisterschaft 1, Pokal 0,5. Unter 20 Spielen gibt es anteilig weniger.
+- **Auslandsstars:** Für die Spitzenvereine Europas kennt das Spiel nur die Stars aus dem Europapokal. Ihre Noten und Torquoten werden aus ihrer Stärke geschätzt – nach dem gleichen Maßstab wie bei den voll simulierten Spielern –, Europapokal-Tore und Titel zählen echt.
+- **Folgen:** Preisträger aus deinem Kader bekommen einen Moral-Schub (Sieger am meisten), ein Sieger hebt zudem das Ansehen deines Vereins leicht.
+- Die Zeremonie lässt sich in den Einstellungen („Ehrungen“) abschalten; alle Sieger stehen unter **Statistiken › Auszeichnungen** – ein Klick auf ein Jahr zeigt die Gala erneut.`,
+  },
+
+  {
     id: 'leagues-history',
     category: 'leagues',
     title: 'Ligen, Pokale, Historie & Bestenlisten',
