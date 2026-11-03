@@ -671,6 +671,21 @@ export const INFO_TEXTS = {
     text: 'Du hast pro Woche (Montag bis Sonntag) Zeit für drei Einzelgespräche, mit demselben Spieler frühestens wieder nach 10 Tagen. Häufige Gespräche mit demselben Spieler nutzen sich ab.',
     wiki: 'condition-kabine',
   },
+  promises_first: {
+    title: 'Erstes Training',
+    text: 'Beim ersten Training jeder Saison kannst du der Mannschaft bis zu fünf Versprechen geben. Jedes wird messbar geprüft – über die Saison und am Saisonende. Gehalten stärkt deine Glaubwürdigkeit, gebrochen kostet Moral und Vertrauen.',
+    wiki: 'season-promises',
+  },
+  promises_reaction: {
+    title: 'Reaktion der Spieler',
+    text: 'Gezeigt sind die einflussreichsten Spieler. Wie sie reagieren, hängt von ihrer Persönlichkeit, Rolle und deiner Glaubwürdigkeit ab: Ehrgeizige mögen große Ziele, glauben unrealistische aber nicht; Stammspieler mögen keine Rotation. Die Reaktion wirkt sofort auf ihre Moral.',
+    wiki: 'season-promises',
+  },
+  promise_trust: {
+    title: 'Glaubwürdigkeit',
+    text: 'Wie sehr dir Spieler Versprechen glauben (Start 70). Gehaltene Versprechen erhöhen sie, gebrochene senken sie – beim ersten Training wie bei Transfers.',
+    wiki: 'season-promises',
+  },
   kabine_pyramide: {
     title: 'Kabinen-Pyramide',
     text: 'Oben die Führungsspieler, darunter Stützen und Mitläufer, unten wer außen vor ist – je Stufe links der Einflussreichste. Der Smiley zeigt die Moral, die Ziffer die Gruppe (Legende darunter), eine gestrichelte Linie einen Konflikt.',

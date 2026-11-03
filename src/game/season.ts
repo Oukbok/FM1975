@@ -1,4 +1,5 @@
 import { recordSeasonBriefing } from './seasonBriefing';
+import { seasonPromiseSnapshot, settleSeasonPromises } from './seasonPromisesGame';
 import { awardSeasonEnd, clearPendingAwards } from './seasonAwardsGame';
 import { clearPendingGoldenBall } from './goldenBallGame';
 import { EuroCompId, allEuroClubs } from '../data/europe';
@@ -207,6 +208,9 @@ export function startNextSeason(g: Game): void {
   // Europapokal-Starter der neuen Saison AUS der abgelaufenen Saison ableiten
   // (Endtabelle + Landespokalsieger) – VOR dem Überschreiben von g.table/g.cup.
   const euroQuals = computeGermanEuroQualifiers(g, false);
+  // Versprechen zum ersten Training: Endstand festhalten, Auswertung nach dem Auf-/Abstieg.
+  const promSnap = seasonPromiseSnapshot(g, Object.values(euroQuals).some((ids) => ids.includes(g.managedClubId)));
+  const promDate = g.calendar.currentDate;
   // Finanzsaison abschließen (Bilanz, Marke, Ruf) solange Tabelle/Pokale noch vorliegen.
   const prevPerf = closeFinancialSeason(g, oldSeason, g.calendar.currentDate);
   historicSeasonClose(g, nextStartYear); // Option „Entwicklung der anderen Vereine“
@@ -476,6 +480,7 @@ export function startNextSeason(g: Game): void {
   setEraYear(Number(calendar.currentDate.slice(0, 4)));
   for (const p of Object.values(g.players)) if (!p.isYouth) refreshOverall(p);
   // Saison-Briefing („Was ist neu?“) festhalten und zum Anzeigen vormerken.
+  settleSeasonPromises(g, promSnap, promDate);
   recordSeasonBriefing(g);
 }
 

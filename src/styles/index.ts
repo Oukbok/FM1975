@@ -54,6 +54,7 @@ import './28-transfer3.css';
 import './28-prematch.css';
 import './28-textmode2.css';
 import './28-awards.css';
+import './28-promises.css';
 import './28-talk.css';
 import './28-trophies.css';
 import './28-merch.css';
