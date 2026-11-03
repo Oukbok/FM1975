@@ -1,9 +1,8 @@
 // =============================================================================
 // Gruppenauslosung in der Show (Europapokal 2.0): Gruppen füllen sich Kugel für
-// Kugel (rechts), am Ende „Deine Gruppe“ bzw. „Deine Gegner“ (Ligaphase) und die
+// Kugel (unten in der Mittelkarte), am Ende „Deine Gruppe“ bzw. „Deine Gegner“ (Ligaphase) und die
 // Übersicht aller Gruppen. Daten: DrawRecord.groups/opponents (game/euroDraw.ts).
 // =============================================================================
-import { useEffect, useRef } from 'react';
 import ClubCrest from '../../components/ClubCrest';
 import { ClubLink } from '../../components/club/ClubLink';
 import type { DrawRecord } from '../../types/draw';
@@ -22,48 +21,42 @@ function Slot({ c, fresh, crest = 22 }: { c: ShowClub | null; fresh?: boolean; c
   );
 }
 
-/** Rechts während der Show: Gruppen mit den bisher gezogenen Vereinen. */
+/** Unten in der Mittelkarte während der Show: Gruppen füllen sich (feste Plätze, nichts springt). */
 export function GroupsPanel({ rec, clubs, shown }: { rec: DrawRecord; clubs: (id: string) => ShowClub; shown: number }) {
   const seen = rec.balls.slice(0, shown);
   const last = seen[seen.length - 1];
-  const ref = useRef<HTMLDivElement | null>(null);
-  useEffect(() => { (ref.current?.querySelector('.dr-gcard.fresh') as HTMLElement | null)?.scrollIntoView?.({ block: 'nearest' }); }, [shown]);
   if (isLeagueDraw(rec)) {
-    // Ligaphase: gezogene Vereine mit ihren Gegnern (Kürzel).
+    // Ligaphase: zuletzt gezogene Vereine mit ihren Gegnern (Kürzel), neueste oben.
     return (
-      <div className="dr-groups">
-        <div className="dr-panel-head"><span>Ligaphase</span><span className="dr-dim">{seen.length} / {rec.balls.length}</span></div>
-        <div className="dr-ggrid" ref={ref} style={{ gridTemplateColumns: '1fr' }}>
-          {[...seen].reverse().slice(0, 14).map((b, i) => {
-            const c = clubs(b.id);
-            const o = rec.opponents![b.id];
-            return (
-              <div key={b.id} className={`dr-gcard ${c.mine ? 'mine' : ''} ${i === 0 ? 'fresh' : ''}`}>
-                <Slot c={c} />
-                <div className="dr-dim" style={{ fontSize: 13 }}>Heim: {o.home.map((x) => clubs(x).short).join(', ')} · Auswärts: {o.away.map((x) => clubs(x).short).join(', ')}</div>
-              </div>
-            );
-          })}
-        </div>
+      <div className="dg-league">
+        {[...seen].reverse().slice(0, 9).map((b, i) => {
+          const c = clubs(b.id);
+          const o = rec.opponents![b.id];
+          return (
+            <div key={b.id} className={`dg-lrow ${c.mine ? 'mine' : ''} ${i === 0 ? 'fresh' : ''}`}>
+              <Slot c={c} crest={34} />
+              <span className="dg-lopp"><b>Heim</b> {o.home.map((x) => clubs(x).short).join(' · ')}</span>
+              <span className="dg-lopp"><b>Auswärts</b> {o.away.map((x) => clubs(x).short).join(' · ')}</span>
+            </div>
+          );
+        })}
       </div>
     );
   }
   const groups = rec.groups ?? [];
   const per = Math.max(...groups.map((gr) => gr.ids.length));
+  const cols = groups.length > 8 ? 8 : groups.length === 6 ? 3 : Math.min(4, groups.length);
   return (
-    <div className="dr-groups">
-      <div className="dr-panel-head"><span>Gruppen</span><span className="dr-dim">{seen.length} / {rec.balls.length}</span></div>
-      <div className={`dr-ggrid ${groups.length > 8 ? 'many' : ''}`} ref={ref}>
-        {groups.map((gr, gi) => {
-          const ids = seen.filter((b) => b.group === gi).map((b) => b.id);
-          return (
-            <div key={gr.name} className={`dr-gcard ${ids.some((id) => clubs(id).mine) ? 'mine' : ''} ${last?.group === gi ? 'fresh' : ''}`}>
-              <div className="dr-gname">Gruppe {gr.name}</div>
-              {Array.from({ length: per }, (_, k) => <Slot key={k} c={ids[k] ? clubs(ids[k]) : null} fresh={ids[k] === last?.id} />)}
-            </div>
-          );
-        })}
-      </div>
+    <div className={`dg-groups ${groups.length > 8 ? 'many' : ''}`} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
+      {groups.map((gr, gi) => {
+        const ids = seen.filter((b) => b.group === gi).map((b) => b.id);
+        return (
+          <div key={gr.name} className={`dg-gcard ${ids.some((id) => clubs(id).mine) ? 'mine' : ''} ${last?.group === gi ? 'fresh' : ''}`}>
+            <div className="dg-gname">Gruppe {gr.name}</div>
+            {Array.from({ length: per }, (_, k) => <Slot key={k} c={ids[k] ? clubs(ids[k]) : null} fresh={ids[k] === last?.id} crest={groups.length > 8 ? 24 : 30} />)}
+          </div>
+        );
+      })}
     </div>
   );
 }

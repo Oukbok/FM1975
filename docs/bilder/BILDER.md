@@ -79,4 +79,12 @@ Priorität: **A** = sichtbar auf vielen Seiten bzw. großer Wow-Effekt, **B** = 
 ---
 
 ## Offene Bildwünsche aus laufenden Umbauten
-Werden beim Zusammenführen der Stränge ergänzt (Erstes Training, Trainingslager, Sponsoring, Training, Fanartikel, Kartenverkauf).
+Werden beim Zusammenführen der Stränge ergänzt.
+
+| Bereich | Datei | Motiv | Größe | Einsatz |
+|---|---|---|---|---|
+| Auslosung | `draw/gala-buehne.webp` | Gala-Bühne mit Scheinwerfern und Lichtwänden, entsättigt, kühl | 1920×1080 | hinter der Auslosungs-Show (Ersatz: gezeichnete Bühne) |
+| Fanartikel | `merch/{schal,wimpel,magazin,poster,ball,musik,trikot,bekleidung,accessoires,video}.webp` | Freisteller auf dunklem Schiefer, 70er/80er-Look, ohne Logos | 384×384 | Sortiment (Ersatz: Icon) |
+| Fanartikel | `merch/lager.webp` | Lagerraum hinter dem Fanshop, Regale, Kartons, kühl | 480×480 | Box „Lager“ |
+| Kartenverkauf | `tickets/rasen.jpg` | Rasen von oben mit Mähstreifen, kühl, entsättigt | 1200×750 | Draufsicht der Tribünen (Platzhalter vorhanden) |
+| Erfolge | `trophies/<form>.webp` | 12 Formen, siehe Abschnitt 4 | 1000×1100 | Vitrine (freischalten in `src/data/trophyImages.ts`) |

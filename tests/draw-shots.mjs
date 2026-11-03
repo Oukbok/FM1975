@@ -1,5 +1,6 @@
-// Bildfolge der Ziehungs-Show: Startbildschirm mit Regeln, Kugel rollt, Kugel offen, Verein,
-// Paarung, eigener Verein, Zusammenfassung, Wiederholung, reduzierte Bewegung.
+// Bildfolge der Gala-Auslosung: Startbildschirm mit Regeln, Kugel rollt, erste Kugel, mitten in der
+// Ziehung, eigene Paarung, Pause, Zusammenfassung, Übersicht, Turnierbaum, Wiederholung (reduziert).
+//   VIEW=1366x768 für kleine Bildschirme, PREFIX=… vor die Dateinamen.
 //   node tests/draw-shots.mjs [ausgabeordner]           (neues Spiel, Juli 1975)
 //   SAVE=…/save1976.txt node tests/draw-shots.mjs …     (Spielstand kurz vor einer Ziehung,
 //     z. B. DUMP=…/save1976.txt UNTIL=1976-07-12 node scripts/sim.mjs 1)
@@ -21,7 +22,8 @@ const server = createServer(async (req, res) => {
 }).listen(0);
 
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+const [vw, vh] = (process.env.VIEW ?? '1920x1080').split('x').map(Number);
+const page = await browser.newPage({ viewport: { width: vw, height: vh } });
 const errors = [];
 page.on('pageerror', (e) => errors.push('JS-Fehler: ' + e.message));
 await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
@@ -60,22 +62,25 @@ for (let i = 0; i < 300 && !found; i++) {
 }
 if (!found) { console.log('Keine Ziehung erreicht'); process.exit(1); }
 const year = (await page.locator('.dr-top-l').innerText()).match(/(19|20)\d\d/)?.[0] ?? 'x';
-const shot = async (name) => { await page.screenshot({ path: `${outDir}/${year}_${name}.png` }); console.log('  ', `${outDir}/${year}_${name}.png`); };
+const pre = (process.env.PREFIX ?? '') + year;
+const shot = async (name) => { await page.screenshot({ path: `${outDir}/${pre}_${name}.png` }); console.log('  ', `${outDir}/${pre}_${name}.png`); };
 const waitFor = async (sel, ms = 15000) => page.locator(sel).first().waitFor({ state: 'visible', timeout: ms }).then(() => true).catch(() => false);
 
 console.log('Ziehung', (await page.locator('.dr-comp').innerText()).trim());
 await page.waitForTimeout(900);
 await shot('01_start');
 await page.click('button:has-text("Mit der Auslosung beginnen")');
-if (await waitFor('.dr-roll')) { await page.waitForTimeout(450); await shot('02_kugel_rollt'); }
-if (await waitFor('.dr-open')) { await page.waitForTimeout(250); await shot('03_kugel_offen'); }
-if (await waitFor('.dr-card')) { await page.waitForTimeout(500); await shot('04_verein'); }
-if (await waitFor('.dr-pairing', 20000)) { await page.waitForTimeout(600); await shot('05_paarung'); }
+if (await waitFor('.dg-ball.roll')) { await page.waitForTimeout(300); await shot('02_kugel_rollt'); }
+if (await waitFor('.dg-prow.fresh, .dg-gcard.fresh, .dg-lrow.fresh')) { await page.waitForTimeout(400); await shot('03_erste_kugel'); }
+// Mitten in der Ziehung: per Weiter-Knopf (rund, unten rechts) ein gutes Stück vorspulen.
+const total = await page.locator('.dg-cell').count();
+for (let i = 0; i < Math.round(total * 1.2); i++) { await page.click('.dg-go'); await page.waitForTimeout(40); }
+await page.waitForTimeout(900);
+await shot('04_mitten');
 const mineBtn = page.locator('button:has-text("Bis zu meiner Ziehung")');
-if (await mineBtn.isVisible().catch(() => false)) {
+if (await mineBtn.isEnabled().catch(() => false) && await mineBtn.isVisible().catch(() => false)) {
   await mineBtn.click();
-  if (await waitFor('.dr-card.mine, .dr-side.mine', 30000)) { await page.waitForTimeout(600); await shot('06_eigener_verein'); }
-  if (await waitFor('.dr-pairing.mine', 15000)) { await page.waitForTimeout(700); await shot('07_eigene_paarung'); }
+  if (await waitFor('.dg-prow.mine, .dg-gcard.mine.fresh, .dg-lrow.mine', 30000)) { await page.waitForTimeout(1200); await shot('07_eigene_paarung'); }
 }
 // Pause per Leertaste
 await page.keyboard.press('Space');
@@ -83,14 +88,16 @@ await page.waitForTimeout(300);
 await shot('08_pause');
 await page.keyboard.press('Space');
 await page.keyboard.press('Escape');
-if (await waitFor('.dr-summary, .dr-ov-grid')) { await page.waitForTimeout(1000); await shot('09_zusammenfassung'); }
+if (await waitFor('.dr-summary, .dr-gsum, .dr-ov-grid')) { await page.waitForTimeout(1000); await shot('09_zusammenfassung'); }
 if (await page.locator('.dr-close').isVisible().catch(() => false)) await page.click('.dr-close');
-else await page.click('.dr-tabs button:has-text("Alle Paarungen")');
+else await page.click('.dr-tabs button >> nth=1');
 await page.waitForTimeout(500);
 await shot('09b_alle_paarungen');
-await page.click('.dr-tabs button:has-text("Turnierbaum")');
-await page.waitForTimeout(500);
-await shot('09c_turnierbaum');
+if (await page.locator('.dr-tabs button:has-text("Turnierbaum")').isVisible().catch(() => false)) {
+  await page.click('.dr-tabs button:has-text("Turnierbaum")');
+  await page.waitForTimeout(500);
+  await shot('09c_turnierbaum');
+}
 await page.click('.dr-top-r button:has-text("Schließen")');
 await page.waitForTimeout(400);
 const closed = !(await page.locator('.dr-root').isVisible().catch(() => false));
@@ -114,7 +121,7 @@ if (await rep.isVisible().catch(() => false)) {
   await page.waitForTimeout(600);
   await page.locator('button:has-text("Schnell")').first().click();
   await page.click('button:has-text("Mit der Auslosung beginnen")');
-  await waitFor('.dr-card', 8000);
+  await page.waitForTimeout(2500);
   await shot('11_wiederholung_reduziert');
   await page.keyboard.press('Escape');
   await page.waitForTimeout(300);

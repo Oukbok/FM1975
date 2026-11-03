@@ -1,7 +1,8 @@
 // =============================================================================
 // Startbildschirm der Auslosung: Wettbewerb, Runde, Termin/Ort und die Regeln
 // dieser Runde (data/drawRuleSheet.ts – so, wie die Engine spielt, mit
-// Hinweis aufs historische Vorbild). Die Ziehung beginnt erst per Knopf.
+// Hinweis aufs historische Vorbild). Steht in der Mittelkarte unter dem vollen
+// Lostopf; die Ziehung beginnt erst per Knopf (oder den runden Startknopf).
 // =============================================================================
 import Icon from '../../components/Icon';
 import type { CupState } from '../../types';
@@ -23,12 +24,9 @@ export function DrawIntro({ rec, cup, startYear, show, replay, onStart, onOvervi
   const teams = rec.pots.reduce((s, p) => s + p.ids.length, 0);
   return (
     <div className="dr-intro">
-      <div className="dr-intro-kicker">{cup ? drawCompLabel(rec.comp, cup) : drawCompName(rec.comp)} {cup?.season ?? ''}</div>
-      <div className="dr-intro-title">Auslosung</div>
-      <div className="dr-intro-round">{rec.roundName}</div>
       <div className="dr-intro-facts">
-        <span>Ziehung {fmtDateFull(rec.date)}</span>
-        <span>{rec.venue} · {show}</span>
+        <span>{cup ? drawCompLabel(rec.comp, cup) : drawCompName(rec.comp)} {cup?.season ?? ''}</span>
+        <span>Ziehung {fmtDateFull(rec.date)} · {rec.venue} · {show}</span>
         <span>{teams} Vereine · {rec.opponents ? 'Ligaphase' : rec.groups?.length ? `${rec.groups.length} Gruppen` : `${rec.pairs.length} Paarungen`} · {rec.groups?.length ? 'erster Spieltag' : 'gespielt am'} {fmtDateFull(rec.matchDate)}</span>
       </div>
       <div className="dr-rulebox">
@@ -45,7 +43,7 @@ export function DrawIntro({ rec, cup, startYear, show, replay, onStart, onOvervi
       </div>
       <div className="dr-intro-actions">
         <button className="dr-close dr-start" onClick={onStart} autoFocus>
-          <Icon name="play" size={24} /> Mit der Auslosung beginnen
+          <Icon name="play" size={22} /> Mit der Auslosung beginnen
         </button>
         <button className="ms-btn" onClick={onOverview}>{replay ? 'Direkt zur Übersicht' : 'Ergebnis sofort zeigen'}</button>
       </div>
