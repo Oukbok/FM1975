@@ -105,7 +105,7 @@ export function aiLoanRound(g: Game, today: string, rng: () => number = Math.ran
       const to = loanTaker(g, p, lender);
       if (!to) continue;
       const fee = year >= 1990 && rng() < 0.4 ? r5k(p.contract.transferValue * 0.08) : 0;
-      const optionFee = year >= CLAUSE_FROM.loanOption && rng() < 0.35 ? r5k(p.contract.transferValue * 1.4) : 0;
+      const optionFee = year >= CLAUSE_FROM.loanOption && rng() < 0.35 ? r5k(p.contract.transferValue * 1.2) : 0;
       if (fee > Math.max(0, to.finances.transferBudget)) continue;
       lendPlayer(g, p, lender, to, today, { fee, optionFee });
       g.aiMarket?.news.push(`${lender.name} verleiht ${p.fullName} (${p.age}) an ${to.name}${optionFee ? ` – Kaufoption ${fmtPrice(optionFee)}` : ''}`);
@@ -180,15 +180,16 @@ export function optionWanted(g: Game, p: Player, holder: Club, today: string, rn
   if (hasTransferBan(holder, g.season)) return false;
   const fee = p.loan?.optionFee ?? 0;
   const nominal = fee * economyScale(yearOf(today));
-  if (holder.finances.balance - nominal < lastRevenue(holder, yearOf(today)) * 0.05) return false;
+  if (holder.finances.balance - nominal < lastRevenue(holder, yearOf(today)) * 0.02) return false;
   const st = p.seasonStats;
   // Ligaspiele der Saison (doppelte Runde); Pokal/Europa zählen in den Einsätzen mit.
   const played = Math.max(g.table.rows.find((r) => r.clubId === holder.id)?.played ?? 0, 2 * Math.max(1, g.table.rows.length - 1));
   const share = (st?.starts ?? 0) / Math.max(1, played);
   const note = st?.ratedMatches ? st.averageRating : 4; // 1 = sehr gut … 6
   const regular = share >= 0.45 || ((st?.appearances ?? 0) >= played * 0.5 && note <= 3.4);
-  const pBuy = regular ? clamp(0.5 + (3.4 - note) * 0.3 + (share - 0.5) * 0.5, 0.25, 0.85) : share >= 0.25 ? 0.15 : 0.02;
-  return rng() < pBuy;
+  const pBuy = regular ? clamp(0.5 + (3.4 - note) * 0.3 + (share - 0.5) * 0.5, 0.25, 0.85) : share >= 0.25 ? 0.2 : 0.03;
+  // Faktor 0,85: gut ein Viertel der vereinbarten Optionen wird gezogen (Soll 20–35 %, docs/recherche/ablösefrei.md).
+  return rng() < pBuy * 0.85;
 }
 
 // -----------------------------------------------------------------------------

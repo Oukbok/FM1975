@@ -49,3 +49,31 @@ Vertragsjahr. Für Letzteres gibt es nur Einzelfälle und die Logik von `sellerP
 | 1995–2004 | 18–30 | 4–10 | 3–8 | Bosman-Anfangsjahre: Vereine binden länger, Markt lernt (≈ 60–80 % des heutigen Niveaus) |
 | 2005–14 | 25–38 | 6–12 | 4–9 | Beratermarkt, Vorverträge üblich |
 | ab 2015 | 30–42 | 8–14 | 4–10 | heutiges Niveau (≈ 24 % der Zugänge ablösefrei, ≈ 2,3+ Abgänge je Verein) |
+
+Kaufoptionen bei KI-Leihen (ab 2000): Soll **20–35 % der vereinbarten Optionen werden gezogen**
+(Größenordnung aus Einzelfällen; Leihen mit Option sind die Ausnahme, gezogen wird nur bei Stammplatz/guten Noten).
+
+## Kalibrierung (`freeAgentEra` in `src/game/aiContracts.ts`, Stand November 2026)
+| Epoche | refuse | preRefused | preKey | fringe |
+|---|---|---|---|---|
+| bis 1994 | 0,04 | 0 | 0 | 0 |
+| 1995–2004 | 0,11 | 0,40 | 0,08 | 0,05 |
+| 2005–14 | 0,19 | 0,55 | 0,14 | 0,30 |
+| ab 2015 | 0,21 | 0,60 | 0,15 | 0,60 |
+
+`fringe` = Chance, dass ein Ergänzungsspieler (ab Platz 16, ab 25 Jahren, Vertrag endet zum Saisonende) am 20.4.
+keinen neuen Vertrag bekommt (`aiLetGo`). Kaufoption: Wahrscheinlichkeit aus Startelf-Anteil/Note × 0,85
+(`optionWanted` in `src/game/aiLoans.ts`), Optionspreis 1,2 × Marktwert, Kassenpuffer 2 % des Umsatzes.
+
+## Ist/Soll (Sim `CLUB=muc AI=1 node scripts/sim.mjs 46`, Mittel aus SEED 1975 und 7, je Saison)
+| Epoche | ablösefreie Abgänge Ist (Soll) | Vorverträge Ist (Soll) | Bosman-Verkäufe Ist (Soll) | Kaufoption gezogen Ist (Soll) |
+|---|---|---|---|---|
+| 1975–84 | 1,6 (0–3) | 0 (0) | 0 (0) | – |
+| 1985–94 | 3,3 (1–5) | 0 (0) | 0 (0) | – |
+| 1995–2004 | 21,0 (18–30) | 5,9 (4–10) | 4,1 (3–8) | 4/18 = 22 % (20–35 %) |
+| 2005–14 | 28,2 (25–38) | 10,1 (6–12) | 7,4 (4–9) | 12/50 = 24 % (20–35 %) |
+| ab 2015 | 33,4 (30–42) | 10,7 (8–14) | 6,6 (4–10) | 7/38 = 18 % (20–35 %) |
+
+Streuung: Einzelläufe schwanken je Epoche um etwa ±2 (Vorverträge/Bosman) bzw. ±3 (Abgänge); die
+Kaufoptionen beruhen auf 10–30 Fällen je Lauf und streuen stark (über alle Läufe mit Faktor 0,85 ≈ 27 %).
+Vor dieser Feinkalibrierung lagen die Vorverträge 1995–2004 bei ≈ 16 je Saison und die Abgänge ab 2015 bei ≈ 22.

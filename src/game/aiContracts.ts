@@ -55,14 +55,15 @@ export function isKeyPlayer(p: Player, squad: Player[]): boolean {
 /**
  * Kalibrierung je Epoche (Soll-Werte und Quellen: docs/recherche/ablösefrei.md):
  * `refuse` Grundneigung, eine Verlängerung abzulehnen; `preRefused`/`preKey` Chance je
- * Stichtag auf einen Vorvertrag (Ablehner bzw. nicht verlängerte Stammkraft).
+ * Stichtag auf einen Vorvertrag (Ablehner bzw. nicht verlängerte Stammkraft); `fringe` Chance, dass ein
+ * Ergänzungsspieler (ab Platz 16, ab 25 Jahren) zum Saisonende keinen neuen Vertrag bekommt.
  * Nach Bosman nehmen ablösefreie Wechsel über die Jahrzehnte zu (Berater, kürzere Bindung).
  */
-export function freeAgentEra(year: number): { refuse: number; preRefused: number; preKey: number } {
-  if (year < 1995) return { refuse: 0.04, preRefused: 0, preKey: 0 };
-  if (year < 2005) return { refuse: 0.1, preRefused: 0.4, preKey: 0.08 };
-  if (year < 2015) return { refuse: 0.14, preRefused: 0.45, preKey: 0.1 };
-  return { refuse: 0.18, preRefused: 0.5, preKey: 0.12 };
+export function freeAgentEra(year: number): { refuse: number; preRefused: number; preKey: number; fringe: number } {
+  if (year < 1995) return { refuse: 0.04, preRefused: 0, preKey: 0, fringe: 0 };
+  if (year < 2005) return { refuse: 0.11, preRefused: 0.4, preKey: 0.08, fringe: 0.05 };
+  if (year < 2015) return { refuse: 0.19, preRefused: 0.55, preKey: 0.14, fringe: 0.3 };
+  return { refuse: 0.21, preRefused: 0.6, preKey: 0.15, fringe: 0.6 };
 }
 
 /** Lehnt der Spieler eine vorzeitige Verlängerung ab? (Persönlichkeit, Zufriedenheit, Größe des Vereins, Epoche) */
@@ -100,6 +101,13 @@ export function aiEarlyRenewals(g: Game, today: string): void {
       // Altstars: ab 34 immer, ab 32 außerhalb der Stammelf – kein neuer Vertrag.
       if (p.age >= 34 || (p.age >= 32 && rank >= 11)) {
         if (Number(p.contract.expiryDate.slice(0, 4)) <= endYear) { p.contract.aiLetGo = true; noteSquad(g, 'letGo'); }
+        continue;
+      }
+      // Nach Bosman lassen Vereine auch Ergänzungsspieler häufiger auslaufen (Kaderumbau ohne Ablöse),
+      // heute deutlich öfter als in den ersten Bosman-Jahren.
+      if (bosman && today.slice(5) === '04-20' && rank >= 15 && p.age >= 25 && Number(p.contract.expiryDate.slice(0, 4)) <= endYear
+        && !isKeyPlayer(p, squad) && hashRand(`${p.id}|fringe|${season}`) < freeAgentEra(Number(today.slice(0, 4))).fringe) {
+        p.contract.aiLetGo = true; noteSquad(g, 'letGo');
         continue;
       }
       if (!isKeyPlayer(p, squad) || p.contract.refused) continue; // wer abgelehnt hat, bleibt dabei (bis Wechsel/Vertragsende)
