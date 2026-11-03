@@ -69,6 +69,8 @@ React 18 + TypeScript, gebaut mit esbuild. Kein Backend – alles läuft im Brow
 - Pillen/Badges sparsam, eckig (4 px), neutral; Positionskürzel als umrandetes Etikett (`.pos-badge`). Übergreifende Optik-Regeln stehen in `styles/29-look.css` (zuletzt geladen); Screenshots Vorher/Nachher: `node tests/look-shots.mjs [ordner]`.
 
 ## Arbeitsweise
+- **Bilderliste** `docs/bilder/BILDER.md` (Wunsch Pascal): jeder neue/umgebaute Bereich trägt dort seine Bildwünsche ein (Motiv, Größe, Datei, Einsatzort); Bilder unter `public/assets/<bereich>/`, immer mit gezeichnetem Ersatz.
+- Weiter-Knopf (`hd-continue` in GameShell, CSS `18-header.css`): feste Breite in allen Zuständen; offene Entscheidung (`pendingDecisions` in `engine/messages.ts`) sperrt „Weiter“ → roter Brief „Nachrichten“ führt ins Newscenter (Screenshots `node tests/mailbtn-shots.mjs`).
 - Vor dem Commit: `npm run check` (0 Fehler) und `npm run build`; bei UI-Änderungen zusätzlich `npm run test:ui`.
 - **Vorlage „Test 3 Jahre“** (Frankfurt Rot, Mitte 1978/79; Wunsch Pascal): nach größeren Änderungen neu erzeugen mit `node scripts/make-test-save.mjs` und mitcommitten. Liegt in `public/saves/` (`index.json` + Datei im Speicherformat), im Spiel unter Spiel laden › Vorlagen (`engine/save.ts` `fetchBuiltinSaves`/`importBuiltinSave`, `screens/LoadGameScreen.tsx`).
 - Dateien klein halten (Ziel < 600 Zeilen). Neue Seite = neue Datei unter `src/views/<bereich>/`.

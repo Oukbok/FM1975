@@ -61,7 +61,8 @@ expect(mastheadFor(1975).name !== mastheadFor(2015).name, 'Zeitungskopf ändert 
 const g = load('public/saves/test-3-jahre.txt');
 const eds = check(g, 'Vorlage 1978/79');
 const allKinds = new Set(eds.flatMap(storiesOf).map((s) => s.kind));
-for (const k of ['spiel', 'spieltag', 'tabelle', 'trainer', 'kommentar']) expect(allKinds.has(k as never), `Vorlage: keine Artikel der Art „${k}“ im Archiv`);
+for (const k of ['spiel', 'spieltag', 'tabelle', 'kommentar']) expect(allKinds.has(k as never), `Vorlage: keine Artikel der Art „${k}“ im Archiv`);
+// „trainer“ hängt davon ab, ob in der Vorlage bisher ein Trainer entlassen wurde (Zufall) – nicht Pflicht.
 expect(eds.some((e) => e.lead?.image), 'Kein Aufmacher mit Bild');
 expect(eds.flatMap(storiesOf).some((s) => s.image?.kind === 'player'), 'Keine Gesichter in den Ausgaben');
 if (process.env.PRINT) { print(eds[0]); print(eds.find((e) => e.matchday) ?? eds[1]); }

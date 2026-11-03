@@ -21,7 +21,7 @@ import { drawEuroRound, simulateEuroTie } from '../engine/euro';
 import { book, bookCupHomeMatch, bookCupPrize, bookMonthly } from '../engine/finances';
 import { applyMatchEffects } from '../engine/form';
 import { dataScoutingBonus, medicalRecoveryBonus, medicalRehabBonus, nlzGrowthBonus, rehaRecoveryBonus, rehaRehabBonus } from '../engine/infrastructure';
-import { makeMessage, pushMessage } from '../engine/messages';
+import { makeMessage, pendingDecisions, pushMessage } from '../engine/messages';
 import { AppSettings, nextFreeSlot, saveGame } from '../engine/save';
 import { dailyRecovery } from '../engine/training';
 import { runAITransfers, setTransferDate } from '../engine/transfers';
@@ -247,7 +247,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         const tag = (e.target as HTMLElement)?.tagName;
         if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
         e.preventDefault();
-        setRunning((r) => !r);
+        setRunning((r) => (r ? false : pendingDecisions(g.messages ?? []).length === 0));
       }
     };
     window.addEventListener('keydown', onKey);
@@ -276,6 +276,8 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   const prematchOn = settings.prematchScreen !== false;
   const showPrematch = !!due && prematchOn && prematchClosed !== due.matchId && !pendingBriefing && !liveMatchId
     && !ratingCeremony && !devReveal && drawQueue.length === 0 && campQueue.length === 0;
+  // Wichtige Nachrichten (offene Entscheidungen): „Weiter“ gesperrt, Knopf verweist auf die Nachrichten.
+  const mustRead = !running && !seasonOver && pendingDecisions(g.messages ?? []).length > 0;
   // Header-Button: nur Text (kein Icon/Datum) – Zustand bleibt sprechend.
   const hdrBtnLabel = seasonOver ? 'Neue Saison' : running ? 'Pause' : 'Weiter';
   // Aktive Hauptkategorie für die Header-Navigation.
@@ -392,6 +394,19 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
                 <span className="hd-continue-lbl">Textmodus</span>
               </button>
             </div>
+          ) : mustRead ? (
+            <button className="hd-continue mail" onClick={() => setScreen('dashboard')}
+              title="Bitte überprüfe deine Nachrichten – eine Entscheidung ist offen.">
+              <span className="hd-continue-ico" aria-hidden="true">
+                <svg viewBox="0 0 48 48" width="44" height="44">
+                  <rect x="5" y="11" width="38" height="27" rx="3" fill="#fff" fillOpacity="0.95" />
+                  <path d="M6 13 L24 27 L42 13" fill="none" stroke="var(--neg)" strokeWidth="3" strokeLinejoin="round" />
+                  <circle cx="39" cy="12" r="6.5" fill="#fff" />
+                  <circle cx="39" cy="12" r="4.5" fill="var(--neg)" />
+                </svg>
+              </span>
+              <span className="hd-continue-txt"><span className="hd-continue-lbl long">Nachrichten</span></span>
+            </button>
           ) : (
             <button
               className={`hd-continue ${running ? 'running' : ''} ${seasonOver ? 'season' : ''}`}

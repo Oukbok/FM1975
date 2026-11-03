@@ -5,6 +5,7 @@
 // Daten: g.messages (engine/messages.ts) – dieselben wie Zentrale › Nachrichten.
 // =============================================================================
 import { useState } from 'react';
+import { pendingDecisions } from '../../../engine/messages';
 import Icon from '../../../components/Icon';
 import PlayerAvatar from '../../../components/PlayerAvatar';
 import { CATEGORY_META, unreadCount } from '../../../engine/messages';
@@ -33,7 +34,7 @@ export function Newscenter({ g, onGoto, onWatch, onChange, openPlayer }: {
 }) {
   const msgs = g.messages ?? [];
   const [filter, setFilter] = useState<Filter>('all');
-  const [selId, setSelId] = useState<string | null>(() => (msgs.find((m) => !m.read) ?? msgs[0])?.id ?? null);
+  const [selId, setSelId] = useState<string | null>(() => (pendingDecisions(msgs)[0] ?? msgs.find((m) => !m.read) ?? msgs[0])?.id ?? null);
   const list = msgs.filter((m) => (filter === 'all' ? true : filter === 'unread' ? !m.read : m.category === filter));
   const sel = (selId && msgs.find((m) => m.id === selId)) || list[0] || null;
   const unread = unreadCount(msgs);

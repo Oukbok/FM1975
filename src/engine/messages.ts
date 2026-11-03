@@ -71,3 +71,11 @@ export const CATEGORY_META: Record<MessageCategory, { label: string; icon: strin
   milestone: { label: 'Meilenstein', icon: '📜' },
   general: { label: 'Allgemein', icon: '📬' },
 };
+
+/**
+ * Wichtige Nachrichten: offene Entscheidungen (Ereignis mit Auswahl, noch nicht gelöst).
+ * Solange es eine gibt, ist „Weiter“ gesperrt und verweist auf die Nachrichten.
+ */
+export function pendingDecisions(list: InboxMessage[]): InboxMessage[] {
+  return list.filter((m) => m.choices?.length && m.eventRef && !m.eventRef.resolved);
+}
