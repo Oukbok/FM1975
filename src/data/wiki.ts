@@ -1428,7 +1428,12 @@ Die anderen Vereine planen ihre Verträge wie ein Sportdirektor (\`game/aiContra
 ### Vorzeitige Verlängerung
 Leistungsträger (die besten 13 des Kaders) und große Talente bekommen rechtzeitig einen neuen Vertrag, wenn ihrer in höchstens 20 Monaten endet. Vor dem Bosman-Urteil eilt das kaum – auch ohne Vertrag gab es eine Ablöse –, deshalb sprechen die Vereine nur im Frühjahr und seltener mit ihren Spielern. Ab Sommer 1995 sind es drei Stichtage (1. Oktober, 1. Februar, 20. April).
 
-Nicht jeder unterschreibt: Ehrgeizige, unzufriedene oder für den Verein zu gute Spieler **lehnen ab**. Nach Bosman passiert das deutlich häufiger.
+Nicht jeder unterschreibt: Ehrgeizige, unzufriedene oder für den Verein zu gute Spieler **lehnen ab**. Nach Bosman passiert das deutlich häufiger – und über die Jahrzehnte immer öfter (Beratermarkt, kürzere Bindung).
+
+### Ablösefrei – wie oft?
+- **Bis 1995** gab es in Deutschland auch nach Vertragsende eine Ablöse. Ablösefrei wechselten fast nur Spieler am Karriereende oder in den Amateurbereich: in der ganzen Liga eine Handvoll pro Saison.
+- **Ab 1995/96** (Bosman) werden es schnell mehr; heute verlässt jeder Bundesligist pro Saison im Schnitt gut zwei Spieler ablösefrei, rund ein Viertel der Zugänge kommt ohne Ablöse.
+- Die KI ist auf diese Größenordnungen eingestellt (Quellen und Soll-Werte: \`docs/recherche/ablösefrei.md\`).
 
 ### Altstars laufen aus
 Spieler ab 34 – und ab 32, wenn sie nicht mehr zur Stammelf gehören – bekommen keinen neuen Vertrag. Zum 1. Juli wechseln sie zu einem Verein, der sie noch will, oder gehen unterklassig bzw. beenden die Karriere.
