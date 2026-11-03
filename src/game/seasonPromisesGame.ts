@@ -237,7 +237,7 @@ function ownLeagueLineups(g: Game, me: string): Lineups {
  * Was der Co-Trainer beim automatischen Aufstellen beachtet, solange Team-Versprechen
  * offen sind (engine/lineupAI.ts `autoFillLineup`): Müde (Frische knapp über der
  * Grenze) und nach einer Note 5 sitzen draußen, Jugend bzw. Routiniers werden
- * bevorzugt, bei „Rotation“ bekommen die Spieler des letzten Ligaspiels einen Abschlag.
+ * bevorzugt, bei „Rotation“ setzen die zwei müdesten Feldspieler des letzten Ligaspiels aus.
  */
 export function promiseLineupPrefs(g: Game): LineupPrefs | undefined {
   const rec = spRecord(g);
@@ -251,12 +251,15 @@ export function promiseLineupPrefs(g: Game): LineupPrefs | undefined {
   const L = open.has('leistung') || open.has('rotation') || open.has('jugend') ? ownLeagueLineups(g, me) : undefined;
   if (open.has('leistung') && L?.bad.length) for (const pid of L.bad[L.bad.length - 1]) rest.add(pid);
   const last = new Set(open.has('rotation') && L?.ids.length ? L.ids[L.ids.length - 1] : []);
+  // Rotation: die zwei müdesten Feldspieler des letzten Ligaspiels setzen aus.
+  if (last.size) [...last].map((pid) => g.players[pid]).filter((p): p is Player => !!p && p.naturalPosition !== 'TW')
+    .sort((x, y) => (x.frische ?? 100) - (y.frische ?? 100)).slice(0, SP_LIMITS.rotation).forEach((p) => rest.add(p.id));
   // Jugend: stärkerer Bonus, solange der Anteil unter dem Ziel liegt.
   let youth = 1;
   if (open.has('jugend')) {
     const all = L?.ids.reduce((a, x) => a + x.length, 0) ?? 0;
     const y = L?.ids.reduce((a, x) => a + x.filter((pid) => (g.players[pid]?.age ?? 99) <= 21).length, 0) ?? 0;
-    youth = all && y / all >= SP_LIMITS.youthShare + 0.03 ? 1.04 : 1.12;
+    youth = all && y / all >= SP_LIMITS.youthShare + 0.03 ? 1.05 : 1.2;
   }
   const vets = new Set(open.has('erfahrung') ? rec.base.vets : []);
   const weight = (p: Player) => (p.age <= 21 ? youth : 1) * (vets.has(p.id) ? 1.06 : 1) * (last.has(p.id) ? 0.95 : 1);

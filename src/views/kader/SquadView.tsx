@@ -1,4 +1,5 @@
 import { autoFillLineup } from '../../engine/lineupAI';
+import { promiseLineupPrefs } from '../../game/seasonPromisesGame';
 import { eraRules } from '../../engine/match/era';
 import PlayerModal from '../../components/PlayerModal';
 import { Game } from '../../game/state';
@@ -29,7 +30,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
   const all = club.playerIds.map((id) => g.players[id]).filter(Boolean);
   // Spieltagskader: Startelf (lineupMap) und Bank (substitutes) farbig hinterlegt.
   const lu = club.tactics?.lineupMap ? club.tactics
-    : autoFillLineup(club, g.players, club.tactics, eraRules(Number(g.calendar.currentDate.slice(0, 4))).benchSize);
+    : autoFillLineup(club, g.players, club.tactics, eraRules(Number(g.calendar.currentDate.slice(0, 4))).benchSize, promiseLineupPrefs(g));
   const xiIds = new Set(Object.values(lu.lineupMap ?? {}));
   const benchIds = new Set((lu.substitutes ?? []).filter((id) => !xiIds.has(id)));
   const roleCls = (id: string) => (xiIds.has(id) ? 'sq-xi' : benchIds.has(id) ? 'sq-bench' : '');

@@ -5,6 +5,7 @@
 // data/campDestinations.ts · Unterkünfte: data/campLodgings.ts · Anschluss: game/day.ts.
 // =============================================================================
 import { addDevPoints } from '../engine/devLog';
+import { distanceFactor } from '../engine/development';
 import { CAMP_OPP_LABEL, campDestination } from '../data/campDestinations';
 import { campLodging, defaultLodging, lodgingsFor } from '../data/campLodgings';
 import { CalendarEngine } from '../engine/calendar';
@@ -317,7 +318,8 @@ function finishCamp(g: Game, b: CampBooking, today: string): void {
     // Eingeladene Jugendspieler lernen im Training mit den Profis besonders viel; ab 22 weniger
     // (wie im Wochentraining, `campDevAgeFactor`). Taktik-Inhalte lenken einen Teil davon sofort
     // auf bestimmte Attribute (+1) und verbrauchen dafür Entwicklungspunkte.
-    const devGain = (young ? o.devYouth : o.dev) * luck * (invited ? 1.3 : 1) * campDevAgeFactor(p.age);
+    // Wie im Wochentraining bremst die Nähe zum Potenzial (`distanceFactor`, die letzten Punkte sind die schwersten).
+    const devGain = (young ? o.devYouth : o.dev) * luck * (invited ? 1.3 : 1) * campDevAgeFactor(p.age) * distanceFactor(p);
     let drillSpent = 0;
     if (b.program?.drills.length) {
       const r = applyCampDrills(p, b.program.drills, days, luck, rng, Math.max(0, devGain));

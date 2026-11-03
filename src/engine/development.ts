@@ -160,7 +160,7 @@ function reachablePotential(p: Player): number {
   return pot >= 82 ? pot + Math.min(2, s * 0.4) : pot;
 }
 
-function distanceFactor(p: Player): number {
+export function distanceFactor(p: Player): number {
   const gap = reachablePotential(p) - (p.development.currentAbility ?? p.overall);
   if (gap <= 0) return 0;
   // Weiche Bremse: die letzten Punkte sind am schwersten (nur mit sehr guten Bedingungen erreichbar).
