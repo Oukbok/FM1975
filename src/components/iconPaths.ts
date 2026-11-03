@@ -401,6 +401,17 @@ export const RAW: Record<string, string> = {
     '<path d="M14 6.5c.8-.8 2-.8 2.8 0M13 4.6c1.4-1.4 3.6-1.4 5 0" fill="none" stroke="%ACCENT%" stroke-width="1.4" stroke-linecap="round"/>',
 
   // Textmodus: Auswechslung — weisser Pfeil raus, tuerkiser Pfeil rein
+  // Textmodus: Verletzung — Kreuz im Kreis
+  injury:
+    '<circle cx="12" cy="12" r="8.2" fill="none" stroke="%BASE%" stroke-width="1.6"/>' +
+    '<path d="M12 7.6v8.8M7.6 12h8.8" fill="none" stroke="%ACCENT%" stroke-width="2.4" stroke-linecap="round"/>',
+
+  // Textmodus: Aufwärmen — laufende Figur mit Bewegungsstrichen
+  warmup:
+    '<circle cx="14.5" cy="4.8" r="1.9" fill="%BASE%"/>' +
+    '<path d="M9 21l2.6-5.2 2.6 2.2v3M13.6 8.2l-2.6 3.4 3.3 2.4M13.6 8.2l3 3.1 2.6-.6M13.6 8.2l-3.8.6-1.6 2.6" fill="none" stroke="%BASE%" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<path d="M3 9.5h3.4M2.4 13h3.2M3.4 16.5h3" fill="none" stroke="%ACCENT%" stroke-width="1.5" stroke-linecap="round"/>',
+
   swap:
     '<path d="M7 4.5v12M7 16.5l-3-3M7 16.5l3-3" fill="none" stroke="%BASE%" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>' +
     '<path d="M17 19.5v-12M17 7.5l-3 3M17 7.5l3 3" fill="none" stroke="%ACCENT%" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',

@@ -4,7 +4,7 @@
 // =============================================================================
 import type { Club, Player, Position, Tactics } from '../../types';
 import { POSITION_GROUPS } from '../../types';
-import { getFormation } from '../../data/formations';
+import { getFormation, type FormationSlot } from '../../data/formations';
 import { withLayout } from '../../data/pitchGrid';
 import { getEraYear, getSkillRev, positionSuitability, sideOf } from '../positions';
 import type { MPlayer, Mentality, ShoutId, Side } from './types';
@@ -53,6 +53,7 @@ export function makeMPlayer(p: Player, side: Side, pos: Position, started: boole
     // Felder der Einzelduelle gleich anlegen (stabile Objektform = schnelle Engine)
     fitF: 1, fitBase: -1, day: 1, sk: new Array<number>(SKILL_SLOTS).fill(0), skg: new Array<number>(SKILL_SLOTS).fill(0),
     crosses: 0, crossesOk: 0, dribbles: 0, dribblesOk: 0, aerials: 0, aerialsWon: 0,
+    warmSince: null, talked: 0,
   };
 }
 
@@ -83,9 +84,11 @@ export function cachedSuitability(p: Player, pos: Position): number {
 }
 
 export interface ResolvedLineup {
-  xi: { p: Player; pos: Position }[];
+  xi: { p: Player; pos: Position; slot?: string }[];
   bench: Player[];
   formation: string;
+  /** Slots der Formation (inkl. eigener Lagen) – für die Spielfeld-Anzeige im Textmodus. */
+  slots?: FormationSlot[];
 }
 
 /**
@@ -142,7 +145,7 @@ export function resolveLineup(club: Club, players: Record<string, Player>, human
 
   const xi = formation.slots
     .filter((s) => slotPlayer[s.id])
-    .map((s) => ({ p: slotPlayer[s.id], pos: s.position }));
+    .map((s) => ({ p: slotPlayer[s.id], pos: s.position, slot: s.id }));
 
   // Bank: gespeicherte Ersatzspieler, dann Beste nach Overall; ein Torwart, wenn möglich
   const bench: Player[] = [];
@@ -155,7 +158,7 @@ export function resolveLineup(club: Club, players: Record<string, Player>, human
   if (!bench.some((p) => p.naturalPosition === 'TW')) pushBench(rest.find((p) => p.naturalPosition === 'TW'));
   for (const p of rest) pushBench(p);
 
-  return { xi, bench, formation: formation.id };
+  return { xi, bench, formation: formation.id, slots: formation.slots };
 }
 
 // -----------------------------------------------------------------------------

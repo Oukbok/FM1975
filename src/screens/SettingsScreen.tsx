@@ -174,14 +174,14 @@ export function SettingsScreen({ settings, onBack, onSave }: {
       <div className="card mt16">
         <h3 style={{ margin: '0 0 4px' }}>Textmodus</h3>
         <p className="dim mini" style={{ margin: '0 0 14px' }}>
-          So läuft dein Spiel im Textmodus ab. Tempo und Spannungsmoment kannst du auch während des Spiels ändern.
+          So läuft dein Spiel im Textmodus ab. Alle Optionen kannst du auch während des Spiels unter „Einstellungen“ ändern.
         </p>
         <label className="dim mini" style={{ display: 'block' }}>Lesetempo</label>
         <div className="seg-group mt4">
-          {(['langsam', 'normal', 'schnell'] as const).map((v) => (
+          {(['langsam', 'normal', 'schnell', 'rasant'] as const).map((v) => (
             <button key={v} type="button" className={`seg-btn ${(s.matchTextSpeed ?? 'normal') === v ? 'active' : ''}`}
               onClick={() => setS({ ...s, matchTextSpeed: v })}>
-              {v === 'langsam' ? 'Langsam' : v === 'normal' ? 'Normal' : 'Schnell'}
+              {v === 'langsam' ? 'Langsam' : v === 'normal' ? 'Normal' : v === 'schnell' ? 'Schnell' : 'Rasant'}
             </button>
           ))}
         </div>
@@ -194,7 +194,12 @@ export function SettingsScreen({ settings, onBack, onSave }: {
           <label className="toggle-item">
             <input type="checkbox" checked={s.matchHalftimeTalk !== false} onChange={(e) => setS({ ...s, matchHalftimeTalk: e.target.checked })} />
             <span className={`toggle ${s.matchHalftimeTalk !== false ? 'on' : ''}`}></span>
-            Halbzeitansprache anbieten
+            Zur Halbzeit anhalten (Wechsel-Bildschirm mit Ansprache)
+          </label>
+          <label className="toggle-item">
+            <input type="checkbox" checked={!!s.matchAutoSubs} onChange={(e) => setS({ ...s, matchAutoSubs: e.target.checked })} />
+            <span className={`toggle ${s.matchAutoSubs ? 'on' : ''}`}></span>
+            Automatische Auswechslungen (Co-Trainer)
           </label>
         </div>
       </div>

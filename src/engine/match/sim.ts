@@ -10,12 +10,13 @@ import type { Club, InjurySeverity, Player, Position } from '../../types';
 import { POSITION_GROUPS } from '../../types';
 import { mirrorPosition, positionSuitability } from '../positions';
 import { eraRules, seasonYearOf, type EraRules } from './era';
-import { bench, emptyStats, fieldPlayers, initRefs, lineupChanged, onPitch, refresh, type TeamState } from './state';
+import { bench, emptyStats, fieldPlayers, initRefs, lineupChanged, onPitch, refresh, tacticsOf, type TeamState } from './state';
 import { makeMPlayer, matchBase, rating, resolveLineup } from './team';
 import { openPlayFoul, maybeInjury, shootoutKick } from './actions';
 import { aerial, attack } from './attack';
 import { aerialSkill, countDuel, dayForm, dribbleSkill, duelP, duelSkill, refreshSkills, tackleSkill } from './skills';
 import type { MPlayer, Mentality, ShoutId, Side, SimEvent, SimEventKind, TeamTalk } from './types';
+import { applyWarmBonus, assistantCoach, drainWarmUps } from './sideline';
 import { other } from './types';
 
 export function mulberry32(seed: number): () => number {
@@ -138,6 +139,8 @@ export class MatchSim {
   private makeTeam(side: Side, club: Club, human: boolean, savedLineup: boolean): TeamState {
     const lu = resolveLineup(club, this.players, savedLineup, this.era.benchSize);
     const ps: MPlayer[] = lu.xi.map(({ p, pos }) => makeMPlayer(p, side, pos, true, 0));
+    const map: Record<string, string> = {};
+    for (const x of lu.xi) if (x.slot) map[x.slot] = x.p.id;
     for (const p of lu.bench) ps.push(makeMPlayer(p, side, p.naturalPosition, false, 0));
     // Tagesleistung je Spieler (Konstanz): streut um 1, ohne den Schnitt zu verschieben.
     for (const m of ps) m.day = dayForm(m, this.rng);
@@ -152,6 +155,8 @@ export class MatchSim {
       shout: null, shoutUntil: 0, shoutPower: 0, shoutReadyAt: 0, shoutHistory: [], talk: 1,
       penaltyTakerId: pick(t?.penaltyTakerId), freeKickTakerId: pick(t?.freeKickTakerId),
       cornerTakerId: pick(t?.cornerTakerId), captainId: pick(t?.captainId), dirty: true, pitch: null, field: null,
+      layout: lu.slots ? { formation: lu.formation, slots: lu.slots, map } : undefined,
+      coach: human ? { autoSubs: false } : undefined,
     };
     initRefs(team);
     refresh(team, 0);
@@ -364,8 +369,8 @@ export class MatchSim {
     maybeInjury(this, H, A); maybeInjury(this, A, H);
 
     // --- KI-Trainer ---
-    if (!H.human) this.aiManager(H);
-    if (!A.human) this.aiManager(A);
+    if (!H.human) this.aiManager(H); else if (H.coach?.autoSubs) assistantCoach(this, H);
+    if (!A.human) this.aiManager(A); else if (A.coach?.autoSubs) assistantCoach(this, A);
 
     // --- Druckphasen ---
     this.mom = this.mom * 0.8 + Math.max(-1, Math.min(1, this.pulse)) * 0.2;
@@ -379,6 +384,7 @@ export class MatchSim {
   }
 
   private drain(t: TeamState): void {
+    if (t.human) drainWarmUps(this, t);
     const heat = this.weather === 'hitze' ? 1.18 : 1;
     const et = this.period >= 3 ? 1.15 : 1;
     for (const m of t.players) {
@@ -415,7 +421,7 @@ export class MatchSim {
       const T = homeBall ? H : A, O = homeBall ? A : H;
       const carrier = bgPick(homeBall ? fH : fA, this.rng());
       const chal = bgPick(homeBall ? fA : fH, this.rng());
-      const air = this.rng() < airP * (T.club.tactics?.buildup === 'long' ? 1.3 : 1);
+      const air = this.rng() < airP * (tacticsOf(T)?.buildup === 'long' ? 1.3 : 1);
       const bias = (T.mods.duel - O.mods.duel) * 3 + (T.plan.tackleBias - O.plan.tackleBias) * 0.5;
       const p = air ? duelP(aerialSkill(carrier), aerialSkill(chal), bias) : duelP(duelSkill(carrier) * 0.5 + dribbleSkill(carrier) * 0.5, tackleSkill(chal), bias);
       const w = this.rng() < p;
@@ -445,6 +451,8 @@ export class MatchSim {
     inn.pos = out.pos;
     inn.group = out.group;
     inn.base = matchBase(inn.p, out.pos);
+    applyWarmBonus(this, inn);
+    if (t.layout) for (const k in t.layout.map) if (t.layout.map[k] === outId) t.layout.map[k] = inId;
     t.subsUsed++;
     lineupChanged(t);
     if (t.captainId === out.id) t.captainId = null;

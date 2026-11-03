@@ -75,6 +75,10 @@
   --st-3: #d7be5a;   /* gelb */
   --st-2: #e08a48;   /* orange */
   --st-1: #e0545f;   /* rot */
+  /* Chancen-Meter im Textmodus (Signal: Aufbau → gefährlich → Abschluss) */
+  --danger-1: #d7be5a;
+  --danger-2: #e08a48;
+  --danger-3: #e0545f;
   /* Form (Daumen immer hoch): nur Grünstufen, 1 = blasses Grau-Grün … 5 = kräftig dunkelgrün */
   --fg-5: #23934f;
   --fg-4: #46ad66;

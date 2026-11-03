@@ -32,7 +32,20 @@ export interface Line {
   pens?: [number, number];
   /** Torschütze (für die Anzeigetafel). */
   scorer?: string;
+  /** Laufende Nummer des Ereignisses (Spielereignisse erst zeigen, wenn erzählt). */
+  seq?: number;
+  /** Art des Ereignisses (Symbol/Filter in der Ereignisliste). */
+  evk?: SimEvent['kind'];
+  /** Torschütze als ID (Saisontore in der Ereignisliste). */
+  scorerId?: string;
+  /** Gefahr der Szene für das Chancen-Meter (1 Aufbau, 2 gefährlich, 3 Abschluss/Großchance). */
+  danger?: 1 | 2 | 3;
 }
+
+/** Namensmarkierung im Text (nur mit `markup`): \uE000id\uE001Name\uE002 – die Oberfläche färbt sie je Team. */
+export const NAME_OPEN = '\uE000', NAME_MID = '\uE001', NAME_CLOSE = '\uE002';
+/** Text ohne Namensmarkierung (z. B. für die Konsole). */
+export const plainText = (s: string): string => s.replace(/\uE000[^\uE001]*\uE001([^\uE002]*)\uE002/g, '$1');
 
 function colorWord(hex: string): string {
   const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i.exec(hex ?? '');
@@ -64,7 +77,7 @@ const SUSPENSE_WORD: Record<string, string[]> = {
   post: ['PFOSTEN!', 'LATTE!'], blocked: ['GEBLOCKT!'],
 };
 
-export interface NarratorOpts { mySide: Side | null; suspense: boolean }
+export interface NarratorOpts { mySide: Side | null; suspense: boolean; /** Spielernamen markieren (Textmodus färbt sie). */ markup?: boolean }
 
 export class Narrator {
   private sp: Speaker;
@@ -80,8 +93,14 @@ export class Narrator {
 
   private dupes: Set<string> | null = null;
 
-  /** Nachname; bei Namensgleichheit auf dem Platz mit Initiale („M. Krüger“). */
+  /** Nachname, mit `markup` als markierter Name. */
   private name(id?: string): string {
+    const n = this.plainName(id);
+    return n && this.opts.markup ? `${NAME_OPEN}${id}${NAME_MID}${n}${NAME_CLOSE}` : n;
+  }
+
+  /** Nachname; bei Namensgleichheit auf dem Platz mit Initiale („M. Krüger“). */
+  private plainName(id?: string): string {
     if (!id) return '';
     const p = this.sim.players[id];
     if (!p) return '';
@@ -141,7 +160,7 @@ export class Narrator {
     if (!text) return null;
     const minute = !ev ? '' : ev.kind === 'halftime' ? 'HZ' : ev.kind === 'fulltime' && ev.detail !== 'et' ? 'Ende'
       : ev.stoppage ? `${ev.minute}+${ev.stoppage}'` : `${ev.minute}'`;
-    return { id: ++this.n, minute, text, kind, side: ev?.side, ...more };
+    return { id: ++this.n, minute, text, kind, side: ev?.side, seq: ev?.seq, evk: ev?.kind, ...more };
   }
 
   /** Alle Ereignisse einer Minute erzählen. */
@@ -170,14 +189,14 @@ export class Narrator {
           // Duell-Art (Engine 2): passender Text mit Verlierer {p} und Gewinner {d}
           const c = this.ctx(ev, { d: this.name(ev.other) || this.randomDefender(other(ev.side!)), p: this.name(ev.player) || this.randomAttacker(ev.side!) });
           const t = (ev.fail && this.sp.say(`fail_${ev.fail}`, c)) || this.sp.say('fail', c);
-          out.push(this.line(ev, t, 'normal'));
+          out.push(this.line(ev, t, 'normal', { danger: ev.zone === 'att' || ev.build === 'ecke' ? 2 : 1 }));
           break;
         }
         case 'offside': out.push(this.line(ev, this.sp.say('offside', this.ctx(ev)), 'normal')); break;
         case 'corner': {
           if (next?.kind === 'chance' && next.build === 'ecke') break;
           const c = this.ctx(ev, { a: this.name(ev.player) || this.randomAttacker(ev.side!) });
-          out.push(this.line(ev, this.sp.say('corner_plain', c), 'normal'));
+          out.push(this.line(ev, this.sp.say('corner_plain', c), 'normal', { danger: 1 }));
           // Folgt ein konkretes Duell (Kopfball verloren, Torwart fängt), erzählt das die nächste Zeile.
           if (!(next?.kind === 'attack_fail' && next.build === 'ecke') && this.rnd() < 0.5) out.push(this.line(ev, this.sp.say('corner_cleared', c), 'normal'));
           break;
@@ -203,6 +222,7 @@ export class Narrator {
         case 'injury': {
           const c = this.ctx(ev);
           out.push(this.line(ev, this.sp.say('injury', c), 'normal'));
+          if (ev.detail === 'wartet') { out.push(this.line(ev, pickOne([`${c.slots.p} humpelt weiter – die Bank wartet auf dein Zeichen.`, `${c.slots.p} beißt auf die Zähne. Du musst entscheiden, ob er raus soll.`]), 'you')); break; }
           const m = this.sim.team(ev.side!).players.find((x) => x.id === ev.player);
           out.push(this.line(ev, this.sp.say(m?.onPitch ? 'injury_on' : 'injury_off', c), 'normal'));
           break;
@@ -224,6 +244,23 @@ export class Narrator {
           const c = this.ctx(ev);
           out.push(this.line(ev, this.sp.say(`shout_${ev.value}`, c), 'you'));
           out.push(this.line(ev, this.sp.say(`shout_${ev.detail ?? 'normal'}`, c), 'normal'));
+          break;
+        }
+        case 'reshape': {
+          if (ev.side === this.opts.mySide) out.push(this.line(ev, ev.detail === 'formation' ? `Umstellung: Deine Elf spielt jetzt im ${ev.value}.` : 'Du stellst um – einige Spieler tauschen die Positionen.', 'you'));
+          else out.push(this.line(ev, `${this.team(ev.side!)} stellt um, jetzt im ${ev.value}.`, 'normal'));
+          break;
+        }
+        case 'warmup': {
+          const p = this.name(ev.player);
+          out.push(this.line(ev, pickOne([`${p} macht sich an der Seitenlinie warm.`, `${p} zieht die Trainingsjacke aus und läuft sich warm.`, `An der Außenlinie dehnt sich ${p} – da bahnt sich etwas an.`]), ev.side === this.opts.mySide ? 'you' : 'normal'));
+          break;
+        }
+        case 'ptalk': {
+          const p = this.name(ev.player);
+          const say = ev.value === 'loben' ? `Daumen hoch für ${p} von der Bank.` : ev.value === 'fordern' ? `Du winkst ${p} an die Seitenlinie: Da muss mehr kommen!` : `Ein paar ruhige Worte an ${p}.`;
+          const echo = ev.detail === 'gut' ? `${p} nickt entschlossen.` : ev.detail === 'schlecht' ? `${p} wirkt eher verstimmt.` : `${p} nimmt es zur Kenntnis.`;
+          out.push(this.line(ev, `${say} ${echo}`, 'you'));
           break;
         }
         case 'talk': out.push(this.line(ev, this.sp.say(`talk_${ev.detail ?? 'neutral'}`, this.ctx(ev)), 'you')); break;
@@ -299,16 +336,17 @@ export class Narrator {
       const sym = build === 'flanke' && ch.low ? 'b_flanke_flach' : build === 'flanke' && ch.sp === 'freekick' ? 'b_fk_flanke'
         : build === 'steilpass' && ev.other && this.rnd() < 0.6 ? 'b_steil_lauf' : build === 'konter' && ev.other && this.rnd() < 0.5 ? 'b_konter_lauf' : `b_${build}`;
       const t = this.sp.say(sym, c) || this.sp.say('b_kurzpass', c);
-      out.push(this.line(ev, t, ch.big ? 'chance' : 'normal'));
-      if (ch.big && this.rnd() < 0.45) out.push(this.line(ev, this.sp.say('b_spannung', c), 'chance'));
+      out.push(this.line(ev, t, ch.big ? 'chance' : 'normal', { danger: ch.big ? 2 : 1 }));
+      if (ch.big && this.rnd() < 0.45) out.push(this.line(ev, this.sp.say('b_spannung', c), 'chance', { danger: 2 }));
     }
     // Abschluss
     if (ch.ownGoal) {
-      out.push(this.line(ev, this.sp.say('b_flanke', this.ctx(ev, { a: this.randomAttacker(side) })), 'normal'));
+      out.push(this.line(ev, this.sp.say('b_flanke', this.ctx(ev, { a: this.randomAttacker(side) })), 'normal', { danger: 2 }));
     } else {
       const sym = ch.type === 'penalty' ? 's_penalty' : ch.type === 'freekick' ? 's_freekick' : ch.type === 'header' ? 's_header'
         : ch.type === 'long' ? 's_long' : ch.type === 'counter' ? 's_counter' : ch.type === 'solo' ? 's_solo' : ch.type === 'big' ? 's_big' : 's_normal';
-      out.push(this.line(ev, this.sp.say(sym, c), ch.big ? 'chance' : 'normal', { score: prev }));
+      const hot = ch.big || ch.type === 'penalty' || ch.xg >= 0.25;
+      out.push(this.line(ev, this.sp.say(sym, c), ch.big ? 'chance' : 'normal', { score: prev, danger: hot ? 3 : 2 }));
     }
     // Spannungsmoment
     const tense = this.opts.suspense && (ch.big || ch.type === 'penalty' || ch.type === 'freekick' || ch.xg >= 0.2);
@@ -319,7 +357,7 @@ export class Narrator {
       word = words[Math.floor(this.rnd() * words.length)];
       if (tense) {
         const good = mine == null ? null : ch.outcome === 'goal' ? mine : !mine;
-        out.push(this.line(ev, word, scored ? 'goal' : 'chance', { suspense: { word, good }, score: scored ? [h, a] : prev }));
+        out.push(this.line(ev, word, scored ? 'goal' : 'chance', { suspense: { word, good }, score: scored ? [h, a] : prev, danger: 3 }));
       }
     }
     // Ausgang
@@ -332,8 +370,8 @@ export class Narrator {
     else osym = `o_${ch.outcome}`;
     let otext = this.sp.say(osym, c);
     if (ch.outcome === 'post' && word) otext = otext.replace(word === 'LATTE!' ? /Pfosten!/ : /Latte!/, word === 'LATTE!' ? 'Latte!' : 'Pfosten!');
-    const scorer = scored ? `${this.name(ev.player)}${ch.type === 'penalty' ? ' (E)' : ch.ownGoal ? ' (ET)' : ''}` : undefined;
-    out.push(this.line(ev, otext, scored ? 'goal' : ch.outcome === 'saved' ? 'save' : ch.big ? 'chance' : 'normal', { score: scored ? [h, a] : undefined, hold: scored ? 1.4 : ch.big ? 1.1 : 1, scorer }));
+    const scorer = scored ? `${this.plainName(ev.player)}${ch.type === 'penalty' ? ' (E)' : ch.ownGoal ? ' (ET)' : ''}` : undefined;
+    out.push(this.line(ev, otext, scored ? 'goal' : ch.outcome === 'saved' ? 'save' : ch.big ? 'chance' : 'normal', { score: scored ? [h, a] : undefined, hold: scored ? 1.4 : ch.big ? 1.1 : 1, scorer, scorerId: scored && !ch.ownGoal ? ev.player : undefined }));
 
     if (ch.disallowed) {
       const v = next?.kind === 'var' ? next : null;
@@ -386,3 +424,5 @@ function mulberry(seed: number): () => number {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
+
+function pickOne<T>(xs: T[]): T { return xs[Math.floor(Math.random() * xs.length)]; }

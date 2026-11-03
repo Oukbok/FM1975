@@ -226,12 +226,17 @@ export function maybeInjury(sim: MatchSim, T: TeamState, O: TeamState): void {
   if (sim.rng() >= 0.12 * (0.5 + prone) * (cand.energy < 50 ? 1.4 : 1) * injuryRiskFactor(cand.p) * T.mods.injury) return;
   const r = sim.rng();
   const severity: InjurySeverity = r < 0.58 ? 'minor' : r < 0.9 ? 'moderate' : 'severe';
+  if (cand.injured && T.coach && !T.coach.autoSubs) return;
   sim.injuries.set(cand.id, severity);
   cand.injured = true;
   sim.incident(1.5);
-  sim.emit('injury', { side: T.side, player: cand.id, severity });
-  // Leicht angeschlagen: spielt manchmal weiter
-  if (severity === 'minor' && sim.rng() < 0.45) { cand.energy = Math.max(20, cand.energy - 15); T.dirty = true; return; }
+  // Leicht angeschlagen: spielt manchmal weiter (Wurf vor der Meldung, damit die Reihenfolge der Zufallszahlen gleich bleibt)
+  const playsOn = severity === 'minor' && sim.rng() < 0.45;
+  // Menschlicher Trainer ohne Co-Trainer-Wechsel: der Verletzte humpelt weiter, bis du reagierst (Textmodus hält an).
+  const waits = !playsOn && T.human && !!T.coach && !T.coach.autoSubs && sim.subsLeft(T) > 0;
+  sim.emit('injury', { side: T.side, player: cand.id, severity, detail: waits ? 'wartet' : undefined });
+  if (playsOn) { cand.energy = Math.max(20, cand.energy - 15); T.dirty = true; return; }
+  if (waits) { cand.energy = Math.min(cand.energy, 35); cand.cond *= 0.9; T.dirty = true; return; }
   const rep = sim.subsLeft(T) > 0 ? sim.bestReplacement(T, cand) : undefined;
   if (rep) sim.substitute(T.side, cand.id, rep.id, 'verletzt');
   else { cand.onPitch = false; cand.minuteOut = sim.minute; lineupChanged(T); }

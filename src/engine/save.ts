@@ -238,11 +238,19 @@ export interface AppSettings {
   /** UI-Skalierung in Prozent (80–150), Default 100. */
   uiScale: number;
   /** Textmodus: Lesetempo des Tickers. */
-  matchTextSpeed?: 'langsam' | 'normal' | 'schnell';
+  matchTextSpeed?: 'langsam' | 'normal' | 'schnell' | 'rasant';
   /** Textmodus: Spannungsmoment bei Großchancen (Text löst sich erst spät auf). */
   matchSuspense?: boolean;
-  /** Textmodus: Halbzeitansprache anbieten. */
+  /** Textmodus: zur Halbzeit anhalten (Wechsel-Bildschirm mit Halbzeitansprache). */
   matchHalftimeTalk?: boolean;
+  /** Textmodus: Co-Trainer wechselt Verletzte/Erschöpfte selbst (engine/match/sideline.ts). */
+  matchAutoSubs?: boolean;
+  /** Textmodus: anhalten, wenn bei dir ein Wechsel ansteht (Verletzung, Platzverweis, Erschöpfung, Co-Trainer). */
+  matchStopSubs?: boolean;
+  /** Textmodus: zur Schlussphase (75.) anhalten. */
+  matchStopLate?: boolean;
+  /** Textmodus: anhalten, wenn deine Elf in Rückstand gerät. */
+  matchStopBehind?: boolean;
   /** Häufigkeit der Zufalls- und Vereinsereignisse. */
   eventFrequency?: 'wenige' | 'normal' | 'viele';
   /** Saison-Briefing zu Spielbeginn und Saisonwechsel automatisch öffnen (Standard an). */
@@ -279,6 +287,10 @@ export const DEFAULT_SETTINGS: AppSettings = {
   matchTextSpeed: 'normal',
   matchSuspense: true,
   matchHalftimeTalk: true,
+  matchAutoSubs: false,
+  matchStopSubs: true,
+  matchStopLate: false,
+  matchStopBehind: false,
   eventFrequency: 'normal',
   briefingAuto: true,
   briefingIntro: true,
