@@ -1,4 +1,5 @@
 import { BLOCKED_NAMES, EXTRA_NAMES } from './namePools';
+import { FIRST_BY_ERA, type FirstNameEra } from './nameEras';
 // =============================================================================
 // Herkünfte: Namenslisten, Nationalität und Gesichtsgruppe (für spätere Porträts).
 // Der Ausländeranteil und die Herkunftsmischung ändern sich je Jahrzehnt.
@@ -16,6 +17,11 @@ export interface Origin {
   face: FaceGroup;
   first: string[];
   last: string[];
+  /**
+   * Vornamen je Geburtsjahrgang: [ab Jahr, Namen] aufsteigend (data/nameEras.ts).
+   * Fehlt das Feld oder ist es leer, gilt `first` für alle Jahrgänge.
+   */
+  firstByEra?: FirstNameEra[];
 }
 
 export const ORIGINS: Record<string, Origin> = {
@@ -127,6 +133,17 @@ export const ORIGINS: Record<string, Origin> = {
   kor: { id: 'kor', nationality: 'KOR', face: 'ostasien',
     first: ['Min-jae', 'Ji-sung', 'Heung-min', 'Jae-sung', 'Dong-won', 'Seung-ho'],
     last: ['Kim', 'Lee', 'Park', 'Choi', 'Jung', 'Kang', 'Cho'] },
+  // Ostdeutsche (nach der Wiedervereinigung im gesamtdeutschen Profifußball).
+  ger_ost: { id: 'ger_ost', nationality: 'GER', face: 'mitteleuropa',
+    first: ['Matthias', 'Steffen', 'Ronny', 'René', 'Enrico', 'Sandro', 'Silvio', 'Maik', 'Torsten', 'Heiko'],
+    last: ['Schulze', 'Lehmann', 'Richter', 'Seidel', 'Kunze', 'Uhlig', 'Lorenz', 'Böttcher', 'Fiedler', 'Ebert', 'Thieme', 'Körner', 'Haase', 'Voigt', 'Hähnel', 'Langer', 'Wendt', 'Reichelt', 'Ullrich', 'Kretschmer', 'Kühn', 'Pfeiffer', 'Heinze', 'Teichmann', 'Gläser', 'Rößler', 'Löffler', 'Schreiter', 'Engelmann', 'Kirchner', 'Herold', 'Grünert', 'Bachmann', 'Riedel', 'Kluge', 'Jahn', 'Lindner', 'Gerlach'] },
+  // Deutsche mit italienischen bzw. jugoslawischen Wurzeln (Kinder der Gastarbeiter).
+  ger_it: { id: 'ger_it', nationality: 'GER', face: 'suedeuropa',
+    first: ['Marco', 'Mario', 'Luca', 'Daniele', 'Salvatore', 'Dario', 'Fabio', 'Matteo'],
+    last: ['Russo', 'Esposito', 'Romano', 'Greco', 'Lombardi', 'Caruso', 'Ferraro', 'Rizzo', 'Gallo', 'Marino', 'Sorrentino', 'Santoro', 'Fontana', 'Moretti', 'Barone', 'Vitale', 'Messina', 'Di Stefano', 'Morelli', 'Pellegrino'] },
+  ger_yu: { id: 'ger_yu', nationality: 'GER', face: 'balkan',
+    first: ['Mario', 'Ivan', 'Dario', 'Marko', 'Denis', 'Edin', 'Alen', 'Luka', 'Filip', 'Damir'],
+    last: ['Jurić', 'Marić', 'Hadžić', 'Begić', 'Mehmedović', 'Ivanović', 'Babić', 'Šarić', 'Hodžić', 'Stanić', 'Delić', 'Mujić', 'Lukić', 'Tomić', 'Kovač', 'Ramić', 'Bešić', 'Grgić'] },
   usa: { id: 'usa', nationality: 'USA', face: 'mitteleuropa',
     first: ['Brian', 'Tyler', 'Josh', 'Chris', 'Matt', 'Weston'],
     last: ['Miller', 'Davis', 'Clark', 'Lewis', 'Walker', 'Young'] },
@@ -135,16 +152,19 @@ export const ORIGINS: Record<string, Origin> = {
 // -----------------------------------------------------------------------------
 // Mischung je Epoche (1. Liga-artige Liga). Werte = Gewichte.
 // Anteil Ausländer: 1975 ≈ 8 %, 1990 ≈ 15 %, 2000 ≈ 35 %, 2010 ≈ 45 %, 2025 ≈ 52 %.
-// Deutsche mit Wurzeln in anderen Ländern werden ab den 1990ern häufiger.
+// Deutsche mit Wurzeln in anderen Ländern werden ab den 1990ern häufiger;
+// Ostdeutsche (ger_ost) erst nach der Wiedervereinigung (Stützjahr 1990 = Mitte
+// aus 1985/1995, damit sich die übrigen Anteile nicht verschieben).
 // -----------------------------------------------------------------------------
 export type Mix = [number, Record<string, number>];
 export const MIX: Mix[] = [
   [1975, { ger: 92, aut: 2, den: 1.5, ned: 1, yug: 1.5, swe: 1, sui: 0.5, bel: 0.5 }],
   [1985, { ger: 88, aut: 2, den: 2, ned: 1.5, yug: 2, swe: 1, nor: 0.5, pol: 0.5, sco: 0.5, kor: 0.3, hun: 0.5, bel: 0.7, ger_tr: 0.5 }],
-  [1995, { ger: 62, ger_tr: 2, ger_pl: 1.5, ger_af: 1, aut: 2, sui: 1.5, den: 2, swe: 1.5, nor: 1, ned: 2, bel: 1, cro: 2, srb: 2, pol: 2, cze: 2, hun: 1, rus: 2, bra: 3, gha: 1.5, nga: 1, cmr: 0.5, tur: 1.5, ita: 0.5, fra: 0.5 }],
-  [2005, { ger: 45, ger_modern: 5, ger_tr: 3, ger_pl: 2, ger_af: 2, aut: 2, sui: 3, den: 2, swe: 1.5, nor: 1, ned: 2.5, bel: 1.5, cro: 3, srb: 2.5, pol: 2.5, cze: 3, hun: 1, rus: 1, bra: 5, arg: 1.5, gha: 1.5, nga: 1, cmr: 1, tur: 2, fra: 1, fra_af: 1, jpn: 1, kor: 0.5, por: 0.5, gre: 1, usa: 0.5 }],
-  [2015, { ger: 20, ger_modern: 22, ger_tr: 3, ger_pl: 2, ger_af: 3, aut: 4, sui: 4, den: 3, swe: 1.5, nor: 1.5, ned: 3, bel: 2, cro: 3, srb: 2, pol: 2.5, cze: 2, hun: 1, bra: 3, arg: 1, gha: 1.5, nga: 1, cmr: 1, tur: 1.5, fra: 2.5, fra_af: 2, jpn: 3, kor: 2, esp: 1.5, por: 1.5, ita: 1, usa: 1.5, mar: 1, eng: 1 }],
-  [2025, { ger: 10, ger_modern: 30, ger_tr: 3, ger_pl: 2, ger_af: 4, aut: 4, sui: 3.5, den: 3.5, swe: 1.5, nor: 2, ned: 3, bel: 2, cro: 2.5, srb: 1.5, pol: 1.5, cze: 1.5, hun: 1.5, bra: 2, arg: 1, gha: 1.5, nga: 1.5, cmr: 1, tur: 1, fra: 3, fra_af: 3, jpn: 3.5, kor: 2, esp: 1.5, por: 2, ita: 1, usa: 2.5, mar: 1.5, eng: 2 }],
+  [1990, { ger: 73.85, ger_ost: 0.4, ger_it: 0.4, ger_yu: 0.35, aut: 2, den: 2, ned: 1.75, yug: 1, swe: 1.25, nor: 0.75, pol: 1.25, sco: 0.25, kor: 0.15, hun: 0.75, bel: 0.85, ger_tr: 1.25, ger_pl: 0.75, ger_af: 0.5, sui: 0.75, cro: 1, srb: 1, cze: 1, rus: 1, bra: 1.5, gha: 0.75, nga: 0.5, cmr: 0.25, tur: 0.75, ita: 0.25, fra: 0.25 }],
+  [1995, { ger: 56, ger_ost: 4.5, ger_it: 0.8, ger_yu: 0.7, ger_tr: 2, ger_pl: 1.5, ger_af: 1, aut: 2, sui: 1.5, den: 2, swe: 1.5, nor: 1, ned: 2, bel: 1, cro: 2, srb: 2, pol: 2, cze: 2, hun: 1, rus: 2, bra: 3, gha: 1.5, nga: 1, cmr: 0.5, tur: 1.5, ita: 0.5, fra: 0.5 }],
+  [2005, { ger: 40.5, ger_ost: 2.5, ger_it: 1, ger_yu: 1, ger_modern: 5, ger_tr: 3, ger_pl: 2, ger_af: 2, aut: 2, sui: 3, den: 2, swe: 1.5, nor: 1, ned: 2.5, bel: 1.5, cro: 3, srb: 2.5, pol: 2.5, cze: 3, hun: 1, rus: 1, bra: 5, arg: 1.5, gha: 1.5, nga: 1, cmr: 1, tur: 2, fra: 1, fra_af: 1, jpn: 1, kor: 0.5, por: 0.5, gre: 1, usa: 0.5 }],
+  [2015, { ger: 18, ger_ost: 1, ger_it: 0.5, ger_yu: 0.5, ger_modern: 22, ger_tr: 3, ger_pl: 2, ger_af: 3, aut: 4, sui: 4, den: 3, swe: 1.5, nor: 1.5, ned: 3, bel: 2, cro: 3, srb: 2, pol: 2.5, cze: 2, hun: 1, bra: 3, arg: 1, gha: 1.5, nga: 1, cmr: 1, tur: 1.5, fra: 2.5, fra_af: 2, jpn: 3, kor: 2, esp: 1.5, por: 1.5, ita: 1, usa: 1.5, mar: 1, eng: 1 }],
+  [2025, { ger: 9, ger_it: 0.5, ger_yu: 0.5, ger_modern: 30, ger_tr: 3, ger_pl: 2, ger_af: 4, aut: 4, sui: 3.5, den: 3.5, swe: 1.5, nor: 2, ned: 3, bel: 2, cro: 2.5, srb: 1.5, pol: 1.5, cze: 1.5, hun: 1.5, bra: 2, arg: 1, gha: 1.5, nga: 1.5, cmr: 1, tur: 1, fra: 3, fra_af: 3, jpn: 3.5, kor: 2, esp: 1.5, por: 2, ita: 1, usa: 2.5, mar: 1.5, eng: 2 }],
 ];
 
 /** Gewichtete Herkunfts-Mischung für ein Jahr (lineare Interpolation zwischen den Stützjahren). */
@@ -175,13 +195,34 @@ export function pickOrigin(year: number, rng: () => number, domestic = false): O
   return ORIGINS[entries[entries.length - 1][0]];
 }
 
-/** Name passend zur Herkunft. */
-export function makeName(o: Origin, rng: () => number): { firstName: string; lastName: string } {
+/**
+ * Vornamen-Pool für einen Geburtsjahrgang. Ohne Jahrgang oder Kohorten die
+ * Grundliste; nahe einer Kohortengrenze (±2 Jahre) mischen beide Stufen.
+ */
+export function firstNamesFor(o: Origin, birthYear?: number): string[] {
+  const eras = o.firstByEra;
+  if (birthYear == null || !Number.isFinite(birthYear) || !eras?.length) return o.first;
+  let i = 0;
+  for (let k = 0; k < eras.length; k++) if (eras[k][0] <= birthYear) i = k;
+  const cur = eras[i][1];
+  const next = eras[i + 1];
+  const prev = i > 0 ? eras[i - 1] : undefined;
+  const pool = next && next[0] - birthYear <= 2 ? [...cur, ...next[1]]
+    : prev && birthYear - eras[i][0] < 2 ? [...cur, ...prev[1]] : cur;
+  return pool.length ? pool : o.first;
+}
+
+/**
+ * Name passend zur Herkunft und – wenn bekannt – zum Geburtsjahrgang.
+ * Verbraucht genau so viele Zufallszahlen wie ohne Jahrgang (Spielablauf bleibt gleich).
+ */
+export function makeName(o: Origin, rng: () => number, birthYear?: number): { firstName: string; lastName: string } {
+  const firsts = firstNamesFor(o, birthYear);
   const pick = (a: string[]) => (a.length ? a[Math.floor(rng() * a.length)] : 'Spieler');
-  let firstName = pick(o.first), lastName = pick(o.last);
+  let firstName = pick(firsts), lastName = pick(o.last);
   // Bekannte reale Kombinationen und Doppelnamen („Thomas Thomas“) vermeiden.
   for (let i = 0; i < 6 && (BLOCKED_NAMES.has(`${firstName} ${lastName}`) || firstName === lastName); i++) {
-    firstName = pick(o.first); lastName = pick(o.last);
+    firstName = pick(firsts); lastName = pick(o.last);
   }
   return { firstName, lastName };
 }
@@ -192,4 +233,10 @@ for (const [id, extra] of Object.entries(EXTRA_NAMES)) {
   if (!o) continue;
   if (extra.first) o.first = [...new Set([...o.first, ...extra.first])];
   if (extra.last) o.last = [...new Set([...o.last, ...extra.last])];
+}
+
+// Vornamen je Jahrgang einmischen (Kopien – Datensätze dürfen sie ändern).
+for (const [id, eras] of Object.entries(FIRST_BY_ERA)) {
+  const o = ORIGINS[id];
+  if (o && !o.firstByEra) o.firstByEra = eras.map(([y, n]) => [y, [...new Set(n)]] as FirstNameEra);
 }

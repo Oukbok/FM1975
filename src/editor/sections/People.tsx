@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Dataset, OriginData } from '../../data/dataset/schema';
 import { Col, Explain, FieldForm, TableEditor } from '../TableEditor';
+import { NameErasEditor } from './NameEras';
 
 // =============================================================================
 // ALLGEMEIN, NAMEN, WIRTSCHAFT, GESCHICHTE
@@ -39,12 +40,12 @@ const FACES = ['mitteleuropa', 'nordeuropa', 'suedeuropa', 'osteuropa', 'balkan'
   .map((f) => ({ value: f, label: f }));
 
 export function NamesSection({ ds, onChange }: P) {
-  const [tab, setTab] = useState<'origins' | 'mix' | 'blocked'>('origins');
+  const [tab, setTab] = useState<'origins' | 'eras' | 'mix' | 'blocked'>('origins');
   const n = ds.names;
   return (
     <div className="ed-section">
       <div className="ed-tabs">
-        {([['origins', 'Herkünfte'], ['mix', 'Mischung je Jahr'], ['blocked', 'Gesperrte Namen']] as const).map(([k, l]) =>
+        {([['origins', 'Herkünfte'], ['eras', 'Vornamen je Jahrgang'], ['mix', 'Mischung je Jahr'], ['blocked', 'Gesperrte Namen']] as const).map(([k, l]) =>
           <button key={k} className={`ed-tab ${tab === k ? 'on' : ''}`} onClick={() => setTab(k)}>{l}</button>)}
       </div>
       {tab === 'origins' && <>
@@ -57,6 +58,7 @@ export function NamesSection({ ds, onChange }: P) {
           ]}
           makeRow={(): OriginData => ({ id: `herkunft${n.origins.length + 1}`, nationality: 'GER', face: 'mitteleuropa', first: [], last: [] })} />
       </>}
+      {tab === 'eras' && <NameErasEditor ds={ds} onChange={onChange} />}
       {tab === 'mix' && <MixEditor ds={ds} onChange={onChange} />}
       {tab === 'blocked' && <>
         <Explain>Namenskombinationen, die nie erzeugt werden (z. B. um Ähnlichkeiten mit echten Personen zu vermeiden). Ein Name pro Zeile: „Vorname Nachname“.</Explain>

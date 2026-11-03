@@ -48,7 +48,7 @@ export function StepWelcome({ d, game }: { d: NewGameDraft; game: Game | null })
     <div className="ng-cols ng-cols-welcome">
       <section className="ng-card ng-welcome-hero">
         <div className="ng-welcome-mgr">
-          <PlayerAvatar player={face} size={64} />
+          <PlayerAvatar player={{ ...face, age: ageAtStart(d) }} size={64} staff year={1975} />
           <span><b>{fullName(d)}</b><small>{ageAtStart(d)} Jahre · {d.nationality}</small></span>
         </div>
         <ClubCrest club={club} size={210} />

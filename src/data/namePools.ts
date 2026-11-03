@@ -105,4 +105,5 @@ export const BLOCKED_NAMES = new Set([
   'Andreas Möller', 'Michael Schulz', 'Paolo Rossi', 'Thiago Silva', 'Diego Costa', 'Henrik Larsson', 'Frank de Boer',
   'Peter Neururer', 'Hans Meyer', 'Thomas Schaaf', 'Werner Lorant', 'Christian Ziege', 'Thomas Helmer', 'Stefan Kuntz',
   'Jürgen Kohler', 'Thomas Berthold', 'Lukas Podolski', 'Marco Reus', 'Mario Gomez', 'Jan Koller', 'Uwe Seeler',
+  'Ji-sung Park', 'Heung-min Son', 'Ilkay Gündogan', 'Ilkay Gündoğan', 'Mesut Özil', 'Jerome Boateng', 'Ivan Rakitić', 'Luka Modrić', 'Marko Arnautović',
 ]);

@@ -122,7 +122,7 @@ export function makeCandidates(roleId: string, year: number, clubRep: number, r:
     const quality = Math.min(repCap, t.q[0] + Math.floor(r() * (t.q[1] - t.q[0] + 1)));
     const age = t.age[0] + Math.floor(r() * (t.age[1] - t.age[0] + 1));
     const origin = pickOrigin(year, r, true);
-    const n = makeName(origin, r);
+    const n = makeName(origin, r, year - age);
     out.push({
       id: `st_${roleId}_${year}_${Math.floor(r() * 1e9)}`,
       roleId, name: `${n.firstName} ${n.lastName}`, age, quality,

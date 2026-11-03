@@ -94,7 +94,15 @@ export function applyDataset(ds: Dataset | null): void {
   // Namen
   const origins = d.names?.origins?.length ? d.names.origins : base.names.origins;
   for (const k of Object.keys(ORIGINS)) delete ORIGINS[k];
-  for (const o of origins) ORIGINS[o.id] = JSON.parse(JSON.stringify(o)) as Origin;
+  for (const o of origins) {
+    const copy = JSON.parse(JSON.stringify(o)) as Origin;
+    // Ältere Dateien kennen keine Jahrgänge: eingebaute Liste derselben Herkunft übernehmen.
+    if (copy.firstByEra === undefined) {
+      const b = base.names.origins.find((x) => x.id === o.id)?.firstByEra;
+      if (b) copy.firstByEra = JSON.parse(JSON.stringify(b));
+    }
+    ORIGINS[o.id] = copy;
+  }
   replaceArray(MIX, d.names?.mix, base.names.mix);
   BLOCKED_NAMES.clear();
   for (const n of d.names?.blocked ?? base.names.blocked) BLOCKED_NAMES.add(n);

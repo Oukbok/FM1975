@@ -1,8 +1,12 @@
 // =============================================================================
-// PlayerAvatar — Deterministisches SVG-Avatar-System
-// 20 Gesichter · 10 Hauttöne · 20 Frisuren (1980er) · Vereinstrikot + Wappen
+// PlayerAvatar — Gesicht einer Person (Spieler, Trainer, Mitarbeiter, Manager)
+// Foto aus public/assets/faces (Register data/faceImages.ts, Zuordnung in
+// components/faces/faceLookup.ts) – sonst das deterministische SVG-Gesicht:
+// 20 Gesichter · 10 Hauttöne (nach Herkunft) · 20 Frisuren · Vereinstrikot + Wappen
 // =============================================================================
+import { useState } from 'react';
 import { Player, Club } from '../types';
+import { faceImageFor, faceFailed, markFaceFailed } from './faces/faceLookup';
 
 // -----------------------------------------------------------------------------
 // Deterministischer Hash aus String (für stabilen Seed pro Spieler)
@@ -48,9 +52,17 @@ export interface AvatarConfig {
 // -----------------------------------------------------------------------------
 // Generator: deterministisch aus player.id
 // -----------------------------------------------------------------------------
+// Hautton-Bereich je Gesichtsgruppe (Herkunft, data/origins.ts). Ohne Gruppe
+// (Mitarbeiter, Manager, alte Daten) wie bisher über alle 10 Töne.
+const SKIN_RANGE: Record<string, [number, number]> = {
+  mitteleuropa: [0, 3], nordeuropa: [0, 2], osteuropa: [0, 3], balkan: [1, 4], suedeuropa: [2, 5],
+  tuerkei: [3, 5], nordafrika: [4, 6], lateinamerika: [2, 8], westafrika: [6, 9], ostasien: [1, 3],
+};
+
 export function generatePlayerAvatar(player: Player, _club?: Club): AvatarConfig {
   const seed = hashString(player.id || player.fullName || 'x');
-  const skinTone = seed % 10;
+  const range = player.face ? SKIN_RANGE[player.face] : undefined;
+  const skinTone = range ? range[0] + (seed % (range[1] - range[0] + 1)) : seed % 10;
   const faceId = Math.floor(seed / 10) % 20;
   const hairStyle = Math.floor(seed / 200) % 20;
   const facialHair = Math.floor(seed / 4000) % 4;
@@ -338,9 +350,42 @@ interface Props {
   /** Preset oder Breite in px. */
   size?: 'small' | 'medium' | 'large' | number;
   className?: string;
+  /** Trainer/Mitarbeiter/Manager: Fotos aus `faces/staff/<epoche>/`. */
+  staff?: boolean;
+  /** Laufendes Spieljahr (Epoche der Mitarbeiterfotos). */
+  year?: number;
 }
 
-export default function PlayerAvatar({ player, club, size = 'medium', className }: Props) {
+/**
+ * Gesicht einer Person. Liegt ein passendes Foto vor, steht es in fester Box über
+ * der Zeichnung (lazy, blendet nach dem Laden ein); sonst nur die Zeichnung.
+ */
+export default function PlayerAvatar(props: Props) {
+  const { player, club, size = 'medium', className, staff, year } = props;
+  const [state, setState] = useState<{ src: string; ok: boolean } | null>(null);
+  const birthYear = player.dateOfBirth ? Number(player.dateOfBirth.slice(0, 4)) : undefined;
+  const img = player.id ? faceImageFor({ id: player.id, face: player.face, birthYear, age: player.age, staff, year }) : null;
+  if (!img || faceFailed(img.src)) return <DrawnAvatar {...props} />;
+  const px = typeof size === 'number' ? size : SIZES[size];
+  const loaded = state?.src === img.src && state.ok;
+  const primary = club?.colors.primary;
+  return (
+    <span className={`pa-photo${loaded ? ' loaded' : ''}${className ? ` ${className}` : ''}`}
+      data-pid={player.id || undefined}
+      style={{ width: px, borderRadius: size === 'small' ? 8 : 12 }}
+      role="img" aria-label={`Porträt ${player.fullName}`}>
+      <DrawnAvatar player={player} club={club} size={px} />
+      <img src={img.src} alt="" loading="lazy" decoding="async" draggable={false}
+        onLoad={() => setState({ src: img.src, ok: true })}
+        onError={() => { markFaceFailed(img.src); setState({ src: img.src, ok: false }); }} />
+      {img.mask && primary && <span className="pa-kit" style={{
+        backgroundColor: primary, WebkitMaskImage: `url(${img.mask})`, maskImage: `url(${img.mask})`,
+      }} />}
+    </span>
+  );
+}
+
+function DrawnAvatar({ player, club, size = 'medium', className }: Props) {
   const cfg = generatePlayerAvatar(player, club);
   const skin = SKIN_TONES[cfg.skinTone];
   const px = typeof size === 'number' ? size : SIZES[size];

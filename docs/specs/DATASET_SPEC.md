@@ -35,7 +35,7 @@ Verbindliche Typen: `src/data/dataset/schema.ts`. Anwenden: `src/data/dataset/ap
 | `facilities` | `FacilityData[]` | `key` (fest, siehe `FacilityKey`), `name, desc, baseCost, unlockYear?, obsoleteYear?`. Wirkung bleibt im Code. |
 | `staff` | `StaffRole[]` | `id, name, group, unlockYear, obsoleteYear?, costClass (K1–K5), effect, injuryReduction?, rehabReduction?, recovery?, scouting?, reach?, flavor?`. |
 | `marketing` | `MarketingArea[]` | `id, name, unlockYear, obsoleteYear?, icon, desc, maxUnits, costPerUnit (DM/Monat), maxBenefit, k`. |
-| `names.origins` | `OriginData[]` | `id, nationality, face, first[], last[]`. `face` ∈ `mitteleuropa, nordeuropa, suedeuropa, osteuropa, balkan, tuerkei, westafrika, lateinamerika, ostasien, nordafrika`. |
+| `names.origins` | `OriginData[]` | `id, nationality, face, first[], last[]`, optional `firstByEra: [abGeburtsjahr, vornamen[]][]` (Vornamen je Jahrgang, aufsteigend; fehlt das Feld, gelten die eingebauten Jahrgänge derselben `id`, `[]` schaltet sie ab). `face` ∈ `mitteleuropa, nordeuropa, suedeuropa, osteuropa, balkan, tuerkei, westafrika, lateinamerika, ostasien, nordafrika`. |
 | `names.mix` | `[jahr, {herkunft: gewicht}][]` | Herkunfts-Mischung je Stützjahr (interpoliert). |
 | `names.blocked` | `string[]` | Gesperrte Kombinationen „Vorname Nachname“. |
 | `legends` | – | **entfernt** (Legenden-System gestrichen, Spieler entwickeln sich organisch). Ältere Dateien dürfen das Feld noch enthalten; es wird beim Anwenden ignoriert. |

@@ -234,7 +234,7 @@ export function makeOutsider(year: number, r: () => number, wantRole?: string): 
   const role = wantRole && STAFF_BY_ID[wantRole] && staffAvailable(STAFF_BY_ID[wantRole], year) ? wantRole : bestRole(pot, year);
   const age = 27 + Math.floor(r() * 22);
   const origin = pickOrigin(Math.max(1975, year - age + 22), r, true);
-  const n = makeName(origin, r);
+  const n = makeName(origin, r, year - age);
   const m = personBase(newId(year, r), role, `${n.firstName} ${n.lastName}`, age, year, pot, 0.7 + r() * 0.2, r);
   m.nat = origin.nationality;
   return m;

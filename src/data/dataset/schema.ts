@@ -48,6 +48,12 @@ export interface OriginData {
   face: string;
   first: string[];
   last: string[];
+  /**
+   * Optional: Vornamen je Geburtsjahrgang, `[abJahr, vornamen[]]` aufsteigend.
+   * Fehlt das Feld (ältere Dateien), gelten die eingebauten Jahrgänge derselben
+   * Herkunfts-ID; eine leere Liste schaltet sie ab (dann nur `first`).
+   */
+  firstByEra?: [number, string[]][];
 }
 
 export interface Dataset {

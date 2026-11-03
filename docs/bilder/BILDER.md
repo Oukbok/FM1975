@@ -26,11 +26,61 @@ Priorität: **A** = sichtbar auf vielen Seiten bzw. großer Wow-Effekt, **B** = 
 | `bg/gala-buehne.webp` | Festliche Bühne mit Scheinwerfern und Lichtpunkt-Raster, dunkelblau | 2560×1440 | Auslosung, Goldener Ball, Saisonehrung |
 
 ## 2. Spielergesichter (A – größter Einzelhebel)
-| Datei | Motiv | Größe | Einsatz |
-|---|---|---|---|
-| `faces/<herkunft>/<epoche>/<nr>.webp` | Porträt Brust aufwärts, neutraler Hintergrund, Trikot neutral grau (Vereinsfarbe wird eingefärbt), Frisuren/Bärte je Jahrzehnt, Herkunft passend (de, ost, tr, yu, it, nl, skandinav., afrik., südamerik. …) | 512×600, Alpha | Spielerprofil, Listen, Presse, Textmodus, Bewertungsrunde |
-| Umfang | je Herkunft × Epoche ca. 40 Gesichter, Alterungsstufen 18/25/32/38 | – | Zuordnung deterministisch aus Spieler-ID |
-| `faces/staff/<epoche>/<nr>.webp` | Trainer, Co-Trainer, Funktionäre, Finanzberater (Anzug, Trainingsjacke) | 512×600 | Trainerteam, Vorstand, Budget-Berater |
+Technik steht (Register `src/data/faceImages.ts`, Zuordnung `src/components/faces/faceLookup.ts`, Anzeige `src/components/PlayerAvatar.tsx`).
+Jedes Bild, das du ablegst, erscheint sofort an **allen** Stellen mit Gesicht: Spielerprofil, Presse,
+Newscenter, Textmodus (Wechsel-Bildschirm), Bewertungsrunde, Erstes Training, Spielergespräch,
+Ehrungen/Gala, Transferverhandlung, Fanartikel – Trainer/Berater/Manager über `faces/staff/`.
+Fehlt ein Bild, zeichnet das Spiel das Gesicht wie bisher (Hautton passend zur Herkunft).
+
+### Ordner und Dateinamen
+`public/assets/faces/<gruppe>/<epoche>/<nr>-<alter>.webp`
+
+| Teil | Werte | Bedeutung |
+|---|---|---|
+| `gruppe` | `mitteleuropa`, `nordeuropa`, `suedeuropa`, `osteuropa`, `balkan`, `tuerkei`, `westafrika`, `lateinamerika`, `ostasien`, `nordafrika`, `staff` | Aussehen nach Herkunft (Tabelle unten); `staff` = Trainer, Berater, Funktionäre, Manager |
+| `epoche` | `1970`, `1980`, `1990`, `2000`, `2010`, `2020` | Spieler: Jahrzehnt, in dem er etwa 25 ist (Frisur/Bart seiner aktiven Zeit – bleibt ein Spielerleben lang gleich). Mitarbeiter: laufendes Spieljahrzehnt (Kleidung der Zeit). Fehlt eine Epoche, nimmt das Spiel die nächstgelegene vorhandene derselben Gruppe. |
+| `nr` | `01`, `02`, … | eine Person. Gleiche Nummer = gleiche Person in verschiedenen Altersstufen. |
+| `alter` | Spieler `18`, `25`, `32`, `38` · Mitarbeiter `35`, `45`, `55`, `65` (optional) | Das Spiel zeigt die Stufe, die dem aktuellen Alter am nächsten liegt – so altert ein Spieler. Ohne Altersangabe (`<nr>.webp`) passt das Bild zu jedem Alter. |
+| Maske (optional) | `<nr>-<alter>-maske.webp` | Trikotfläche weiß/deckend, Rest transparent – damit färbt das Spiel das Trikot in der Vereinsfarbe. Ohne Maske bleibt das Trikot grau. |
+
+Beispiele: `faces/mitteleuropa/1970/01-25.webp`, `faces/mitteleuropa/1970/01-32.webp` (dieselbe Person sieben Jahre älter), `faces/mitteleuropa/1970/01-25-maske.webp`, `faces/staff/1990/04-55.webp`.
+
+### Herkunft → Gruppe (aus `src/data/origins.ts`)
+| Gruppe | Herkünfte im Spiel |
+|---|---|
+| `mitteleuropa` | deutsch (West, Ost/DDR, „modern“), Österreich, Schweiz, Niederlande, Belgien, Frankreich, England, Schottland, USA |
+| `nordeuropa` | Dänemark, Schweden, Norwegen |
+| `suedeuropa` | Italien, Spanien, Portugal, Griechenland, Deutsche mit italienischen Wurzeln |
+| `osteuropa` | Polen, Tschechoslowakei/Tschechien, Ungarn, Sowjetunion/Russland, Deutsche mit polnischen Wurzeln |
+| `balkan` | Jugoslawien, Kroatien, Serbien, Deutsche mit jugoslawischen Wurzeln |
+| `tuerkei` | Türkei, Deutsch-Türken |
+| `westafrika` | Ghana, Nigeria, Kamerun, Deutsche/Franzosen mit afrikanischen Wurzeln |
+| `lateinamerika` | Brasilien, Argentinien |
+| `ostasien` | Japan, Korea |
+| `nordafrika` | Marokko |
+
+### Bildvorgaben
+- **Format:** WebP mit Alpha-Kanal (transparenter Hintergrund), **512 × 600 px**, Qualität ~80, Ziel < 150 KB.
+- **Ausschnitt:** Kopf und Schultern bis Brustmitte; Kopf mittig, Scheitel ca. 60 px unter dem oberen Rand, Kinn bei ca. 60 % der Höhe; Schultern füllen die Breite unten aus (das Bild wird unten bündig eingepasst).
+- **Blick:** frontal bis leicht schräg (max. 15°), Blick in die Kamera, neutraler bis leicht freundlicher Ausdruck; gleichmäßiges, weiches Licht von vorne, kein Bernstein-Schein, keine harten Schatten.
+- **Hintergrund:** transparent (das Spiel legt den dunklen Porträt-Hintergrund darunter).
+- **Trikot:** schlichtes Rundhals- oder Kragentrikot ohne Logo/Schrift/Nummer in **Mittelgrau #808080** mit natürlichen Falten. Mit Maske wird daraus genau die Vereinsfarbe (Falten bleiben); ohne Maske bleibt es grau. Mitarbeiter: Anzug, Trainingsjacke oder Pullover in gedeckten Farben (keine Maske nötig).
+- **Epochenlook:** 1970er lange Haare/Koteletten/Schnauzer, 1980er Vokuhila/Locken/Schnauzer, 1990er Seitenscheitel/Undercut/Spitzbart, 2000er kurz/gegelt/Irokese, 2010er Fade/Dutt/Vollbart, 2020er Fade/Locken/gepflegter Bart. Alterungsstufen: 18 jugendlich, 25 Höhepunkt, 32 erste Falten, 38 grau meliert.
+- **Keine echten Personen** (keine Ähnlichkeit mit realen Spielern), keine Wasserzeichen.
+
+### Umfang (Vorschlag in Stufen)
+1. **Start (spürbar sofort):** `mitteleuropa` 1970 + 1980 je 20 Personen, nur Stufe `25` → 40 Bilder. Deckt die ersten 15 Spieljahre fast vollständig ab.
+2. **Ausbau:** dieselben Personen zusätzlich in `18`, `32`, `38`; `mitteleuropa` 1990–2020; `balkan`, `nordeuropa`, `tuerkei`, `westafrika` je Epoche 10–20 Personen.
+3. **Voll:** je Gruppe × Epoche ca. 40 Personen, alle Altersstufen; `staff` je Epoche 20 Personen in `45`/`55`.
+Je mehr Personen eine Gruppe hat, desto seltener sehen zwei Spieler gleich aus (Zuordnung = fester Hash der Spieler-ID).
+
+### So schaltest du Bilder frei (Schritt für Schritt)
+1. Bilder nach den Vorgaben oben erzeugen und als `.webp` speichern (z. B. mit squoosh.app: „WebP“, Qualität 80, Alpha an).
+2. In den passenden Ordner legen, z. B. `public/assets/faces/mitteleuropa/1970/01-25.webp` (Ordner bei Bedarf anlegen).
+3. Optional die Trikotmaske daneben legen: `01-25-maske.webp` (Trikot weiß, alles andere transparent).
+4. Im Projektordner ausführen: `node scripts/faces-register.mjs` – das Skript prüft alle Dateinamen, zeigt eine Übersicht Gruppe × Epoche und schreibt das Register `src/data/faceImages.ts` neu. Hinweise (falscher Name, PNG statt WebP, zu groß, Maske ohne Bild) stehen darunter. Nur prüfen: `node scripts/faces-register.mjs --check`.
+5. `npm run build` (bzw. `npm run dev`) und ein Spiel laden – die Gesichter erscheinen überall. Kontrolle mit Screenshots: `node tests/faces-shots.mjs test-output/faces` (Profil, Presse, Budget-Berater, Textmodus; meldet fehlende Dateien und Größensprünge).
+6. Bilder **und** `src/data/faceImages.ts` committen. Hinweis: Kommen neue Personen in eine Gruppe, verteilen sich die Spieler dieser Gruppe neu auf die Bilder (die Namen bleiben natürlich gleich).
 
 ## 3. Stadien & Vereinsumfeld (A)
 | Datei | Motiv | Größe | Einsatz |
@@ -83,6 +133,8 @@ Werden beim Zusammenführen der Stränge ergänzt (Erstes Training, Trainingslag
 
 | Bereich | Datei | Motiv | Größe | Einsatz |
 |---|---|---|---|---|
+| Gesichter (Start) | `faces/mitteleuropa/{1970,1980}/{01..20}-25.webp` (+ `-maske.webp`) | 40 Spielerporträts nach Abschnitt 2 – deckt die ersten 15 Spieljahre ab; danach Altersstufen 18/32/38 und weitere Gruppen | 512×600, Alpha | überall mit Gesicht (Ersatz: gezeichnetes Gesicht) |
+| Gesichter Mitarbeiter | `faces/staff/{1970,1990,2010}/{01..10}-55.webp` | Trainer/Berater/Funktionäre in Anzug oder Trainingsjacke der Zeit | 512×600, Alpha | Budget-Berater, Presse (Trainer), Manager im Assistenten |
 | Erstes Training | `promises/erstes-training.webp` | Trainingsauftakt: Spieler im Halbkreis um den Trainer auf dem Trainingsplatz, Hütchen, Zaun; entsättigt, kühl abgedunkelt, Querformat | 1200×340 | Kopf des Versprechen-Popups (Ersatz: gezeichneter Trainingsplatz) |
 | Auslosung | `draw/gala-buehne.webp` | Gala-Bühne mit Scheinwerfern und Lichtwänden, entsättigt, kühl | 1920×1080 | hinter der Auslosungs-Show (Ersatz: gezeichnete Bühne) |
 | Fanartikel | `merch/{schal,wimpel,magazin,poster,ball,musik,trikot,bekleidung,accessoires,video}.webp` | Freisteller auf dunklem Schiefer, 70er/80er-Look, ohne Logos | 384×384 | Sortiment (Ersatz: Icon) |

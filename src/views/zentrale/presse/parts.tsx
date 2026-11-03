@@ -50,7 +50,7 @@ export function StoryImage({ api, img, size }: { api: PressApi; img: PressImage 
   if (img.kind === 'player') return <Face api={api} id={img.id} size={size} />;
   if (img.kind === 'coach') {
     const fake = { id: `coach:${img.id}`, fullName: img.name } as Player;
-    const pic = <span className="np-face np-coach" title={img.name}><PlayerAvatar player={fake} size={size} /></span>;
+    const pic = <span className="np-face np-coach" title={img.name}><PlayerAvatar player={fake} size={size} staff year={Number(api.g.calendar.currentDate.slice(0, 4))} /></span>;
     return img.clubId ? <ClubLink id={img.clubId}>{pic}</ClubLink> : pic;
   }
   return <span className="np-crestimg" style={{ width: size, height: size * 1.15 }}><Crest g={api.g} id={img.id} size={Math.round(size * 0.8)} /></span>;

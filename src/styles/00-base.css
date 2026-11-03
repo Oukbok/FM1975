@@ -14,6 +14,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap');
 
 :root {
+  /* --- Porträt-Hintergrund (Gesichtsbilder/gezeichnete Gesichter) --- */
+  --face-bg-1: #1f2a3a;
+  --face-bg-2: #0f141c;
   /* --- Hintergründe --- */
   --bg: #0c0f15;
   --bg-2: #13161c;

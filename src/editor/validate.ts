@@ -89,6 +89,13 @@ export function checkDataset(d: Dataset): Issue[] {
   const origins = new Set(d.names.origins.map((o) => o.id));
   for (const [y, mix] of d.names.mix) for (const k of Object.keys(mix)) if (!origins.has(k)) err('Namen', `Mischung ${y}: Herkunft „${k}“ existiert nicht.`);
   for (const o of d.names.origins) if (!o.first.length || !o.last.length) err('Namen', `Herkunft „${o.id}“ braucht Vor- und Nachnamen.`);
+  for (const o of d.names.origins) {
+    const eras = o.firstByEra ?? [];
+    for (let i = 0; i < eras.length; i++) {
+      if (!eras[i][1]?.length) warn('Namen', `Herkunft „${o.id}“: Jahrgangsstufe ${eras[i][0]} hat keine Vornamen.`);
+      if (i > 0 && eras[i][0] <= eras[i - 1][0]) warn('Namen', `Herkunft „${o.id}“: Jahrgangsstufen nicht aufsteigend (${eras[i - 1][0]} → ${eras[i][0]}).`);
+    }
+  }
 
   // Leere Listen ersetzt das Spiel beim Anwenden durch den Standard.
   const empties: [string, unknown[]][] = [
