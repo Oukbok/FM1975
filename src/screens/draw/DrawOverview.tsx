@@ -29,7 +29,7 @@ export function PairsOverview({ rec, clubs, myId }: { rec: DrawRecord; clubs: (i
   const n = rec.pairs.length;
   const cols = n > 4 ? 2 : 1;
   const rows = Math.ceil(n / cols);
-  const size = rows <= 4 ? 'big' : 'mid';
+  const size = rows <= 4 ? 'big' : rows <= 8 ? 'mid' : 'small';
   const euro = rec.comp !== 'cup';
   const sub = (c: ShowClub) => [euro ? c.country : c.amateur ? 'Amateurverein' : 'Profiverein', `Stärke ${c.strength}`].join(' · ');
   return (
@@ -45,9 +45,9 @@ export function PairsOverview({ rec, clubs, myId }: { rec: DrawRecord; clubs: (i
           return (
             <div key={i} className={`dr-ov-card ${mine ? 'mine' : ''}`}>
               <span className="dr-pno">{i + 1}</span>
-              <OvClub c={h} sub={sub(h)} side="home" crest={size === 'big' ? 72 : 44} />
+              <OvClub c={h} sub={sub(h)} side="home" crest={size === 'big' ? 72 : size === 'mid' ? 44 : 24} />
               <span className="dr-ov-mid">{p.swapped ? <span className="dr-tag" title="Heimrecht für den Amateurverein">Heimrecht</span> : <span className="dr-pdash">–</span>}</span>
-              <OvClub c={a} sub={sub(a)} side="away" crest={size === 'big' ? 72 : 44} />
+              <OvClub c={a} sub={sub(a)} side="away" crest={size === 'big' ? 72 : size === 'mid' ? 44 : 24} />
             </div>
           );
         })}

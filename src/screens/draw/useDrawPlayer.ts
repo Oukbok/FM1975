@@ -1,7 +1,7 @@
 // =============================================================================
 // Ablaufsteuerung der Ziehungs-Show: Startbildschirm (wartet auf „Mit der
 // Auslosung beginnen“) → je Kugel Rollen, Öffnen, Stehenlassen → Zusammenfassung. Tempo, Pause, Sprung zur eigenen Ziehung,
-// Rest überspringen. Respektiert prefers-reduced-motion (kein Rollen).
+// Rest überspringen, Einzelschritt `next`. Respektiert prefers-reduced-motion (kein Rollen).
 // =============================================================================
 import { useEffect, useMemo, useState } from 'react';
 import type { DrawRecord } from '../../types/draw';
@@ -45,8 +45,8 @@ export function useDrawPlayer(rec: DrawRecord, myId: string, speed: DrawSpeed) {
     const mine = !!ball && (grouped ? ball.id === myId : !!rec.pairs[ball.pair] && (rec.pairs[ball.pair].home === myId || rec.pairs[ball.pair].away === myId));
     let ms: number; let next: () => void;
     if (phase === 'intro') { ms = 500; next = () => { setStep(0); setPhase('roll'); }; }
-    else if (phase === 'roll') { ms = reduced ? 0 : (grouped ? 600 : 950) * f; next = () => setPhase('open'); }
-    else if (phase === 'open') { ms = (reduced ? 200 : grouped ? 450 : 700) * f; next = () => setPhase('hold'); }
+    else if (phase === 'roll') { ms = reduced ? 0 : (grouped ? 550 : 750) * f; next = () => setPhase('open'); }
+    else if (phase === 'open') { ms = (reduced ? 200 : grouped ? 400 : 550) * f; next = () => setPhase('hold'); }
     else {
       ms = (ball?.rejected ? 1300 : pairDone ? (mine ? 3600 : 2200) : mine ? 2200 : 1300) * f;
       next = () => {
@@ -68,6 +68,13 @@ export function useDrawPlayer(rec: DrawRecord, myId: string, speed: DrawSpeed) {
     start: () => { setStarted(true); setPaused(false); },
     togglePause: () => setPaused((p) => !p),
     skipToMine: () => { if (pairStart >= 0 && step < pairStart) { setStarted(true); setPaused(false); setTurbo(true); if (phase === 'intro') { setStep(0); setPhase('roll'); } } },
+    /** Runder Knopf/Pfeil rechts: Start bzw. sofort zum nächsten Schritt (auch in der Pause). */
+    next: () => {
+      if (phase === 'done') return;
+      if (phase === 'intro') { setStarted(true); setStep(0); setPhase('roll'); return; }
+      if (phase !== 'hold') { setPhase('hold'); return; }
+      if (step + 1 >= n) { setStep(n); setPhase('done'); } else { setStep(step + 1); setPhase('roll'); }
+    },
     skipAll: () => { setStep(n); setPhase('done'); setPaused(false); },
   };
 }

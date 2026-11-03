@@ -86,6 +86,19 @@
   --fg-2: #a9c9a4;
   --fg-1: #74827a;
 
+  /* --- Gala-Bühne der Auslosung (28-draw.css): Nachtblau + kühles Scheinwerferlicht,
+     Wettbewerbsfarben gedämpft, nur als ruhiger Akzent auf den Seitenpaneelen --- */
+  --gala-night-0: #05070c;
+  --gala-night-1: #0f1626;
+  --gala-lamp: #e8eef7;
+  --gala-card: #1b212b;
+  --gala-card-2: #121720;
+  --gala-band: #07090d;
+  --comp-cup: #1e5a43;
+  --comp-ec: #1d3a70;
+  --comp-cwc: #3a3f7c;
+  --comp-uefa: #2b5877;
+
   /* --- Struktur --- */
   --border: #303339;
   --border-soft: #24272d;
