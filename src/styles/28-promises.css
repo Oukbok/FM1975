@@ -78,6 +78,7 @@
 .ft-tag { display: inline-block; margin-left: 6px; padding: 0 5px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; font-weight: 500; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.3px; vertical-align: 1px; }
 
 .ft-foot { align-items: center; gap: 14px; }
+.ft-foot .btn { white-space: nowrap; }
 .ft-count { flex: 0 0 auto; font-size: 14px; color: var(--text-3); }
 .ft-count b { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--text); margin-right: 2px; }
 .ft-foot-note { flex: 1 1 auto; font-size: 13px; color: var(--text-3); line-height: 1.35; }

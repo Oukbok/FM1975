@@ -57,8 +57,8 @@ export function ListenerCard({ l, r, picks, club, k }: { l: Listener; r: Reactio
 export function PromiseCard({ def, on, why, realism, disabled, onToggle }: {
   def: SeasonPromiseDef; on: boolean; why?: string; realism: number; disabled: boolean; onToggle: () => void;
 }) {
-  const word = def.cat === 'ziele' ? realismWord(realism) : undefined;
   const blocked = !!why;
+  const word = def.cat === 'ziele' && !blocked ? realismWord(realism) : undefined;
   return (
     <button type="button" role="checkbox" aria-checked={on} disabled={blocked || (disabled && !on)}
       className={`ft-card ${on ? 'on' : ''} ${blocked ? 'blocked' : ''}`} onClick={onToggle} data-sp={def.id}>
