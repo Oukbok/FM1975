@@ -6,7 +6,7 @@
 // linken Box: Saison (Historie ab 1963/64, Archiv, laufend) und Wettbewerb (alle
 // Ligen inkl. DDR, Landespokal, Europapokale, Auslandsligen der letzten Saison).
 // =============================================================================
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { EuroCompId } from '../../../data/europe';
 import { buildSnapshot, competitionOptions, seasonOptions, type CompOption } from '../../../game/competitionView';
 import type { Game } from '../../../game/state';
@@ -21,6 +21,10 @@ import { inEuroCup } from '../../../game/euroFixture';
 
 export type CompStart = 'league' | 'cup' | 'euro';
 
+/** Vorauswahl beim nächsten Öffnen (z. B. aus der Übersicht der Zentrale); wird einmal verbraucht. */
+let pendingPreset: { season: string; key: string } | null = null;
+export function presetCompetition(season: string, key: string): void { pendingPreset = { season, key }; }
+
 function defaultKey(g: Game, opts: CompOption[], start: CompStart): string {
   if (start === 'league') return opts.find((o) => o.key === g.leagues.playerDivision.id)?.key ?? opts.find((o) => o.kind === 'league')?.key ?? opts[0]?.key ?? '';
   if (start === 'cup') return opts.find((o) => o.key === 'cup')?.key ?? opts[0]?.key ?? '';
@@ -33,10 +37,17 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
   g: Game; start: CompStart; onWatch?: (matchId: string) => void; onReplayDraw?: (comp: 'cup' | EuroCompId, roundIndex: number) => void;
 }) {
   const seasons = useMemo(() => seasonOptions(g), [g, g.season]);
-  const [season, setSeason] = useState(g.season);
+  const [preset] = useState(() => pendingPreset);
+  useEffect(() => { pendingPreset = null; }, []);
+  const [season, setSeason] = useState(preset?.season ?? g.season);
   const opts = useMemo(() => competitionOptions(g, season), [g, season]);
-  const [key, setKey] = useState(() => defaultKey(g, competitionOptions(g, g.season), start));
-  useEffect(() => { setSeason(g.season); setKey(defaultKey(g, competitionOptions(g, g.season), start)); }, [start, g.season]); // eslint-disable-line react-hooks/exhaustive-deps
+  const [key, setKey] = useState(() => preset?.key ?? defaultKey(g, competitionOptions(g, g.season), start));
+  const last = useRef(`${start}|${g.season}`);
+  useEffect(() => {
+    if (last.current === `${start}|${g.season}`) return; // Startwerte (inkl. Vorauswahl) stehen schon
+    last.current = `${start}|${g.season}`;
+    setSeason(g.season); setKey(defaultKey(g, competitionOptions(g, g.season), start));
+  }, [start, g.season]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Wettbewerb beim Saisonwechsel halten, sonst gleichartigen wählen.
   const cur = opts.find((o) => o.key === key);
