@@ -61,7 +61,7 @@ export function PoolGrid({ rec, clubs, shown, back, activePot }: {
   const cols = !single && maxPot <= 10 ? maxPot : size === 's' ? 4 : size === 'm' && single ? 4 : size === 'l' && single ? 6 : 8;
   const crest = size === 'xl' ? 26 : size === 'l' ? 34 : size === 'm' ? 42 : 48;
   return (
-    <div className={`dg-pool dg-${size}`}>
+    <div className={`dg-pool dg-${size} ${cols >= 8 ? 'dense' : ''}`}>
       {rec.pots.map((p, pi) => {
         const left = p.ids.filter((id) => !out.has(id)).length;
         return (

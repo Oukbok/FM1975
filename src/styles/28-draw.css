@@ -102,6 +102,9 @@
   display: flex; align-items: center; gap: 10px; height: var(--dg-cell); min-width: 0; font-size: var(--dg-fs);
   transition: opacity 0.55s ease, transform 0.55s ease, visibility 0s linear 0s;
 }
+/* 8 Spalten: etwas enger, damit Namen wie „Mailand Rot-Schwarz“ ausgeschrieben bleiben */
+.dg-pool.dense .dg-pot-grid { column-gap: 12px; }
+.dg-pool.dense .dg-cell { gap: 8px; font-size: calc(var(--dg-fs) - 2px); letter-spacing: -0.1px; }
 .dg-cell-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dg-cell.me .dg-cell-name { color: var(--accent); font-weight: 700; }
 .dg-cell.out { opacity: 0; transform: translateY(6px) scale(0.94); visibility: hidden; transition: opacity 0.55s ease, transform 0.55s ease, visibility 0s linear 0.55s; }
