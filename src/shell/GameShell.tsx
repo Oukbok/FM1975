@@ -17,7 +17,7 @@ import { setEventFrequency } from '../engine/randomEvents';
 import { setWikiOpener } from '../ui/InfoTip';
 import { fmtDateFull } from '../ui/format';
 import { HeaderBar } from './HeaderBar';
-import { preloadShellParts } from './lazyParts';
+import { preloadEarlyParts, preloadShellParts } from './lazyParts';
 import { Screen, TopNav } from './navigation';
 import { PopupLayer } from './PopupLayer';
 import { ScreenRouter } from './ScreenRouter';
@@ -63,7 +63,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   // Häufigkeit der Zufallsereignisse (Einstellung) – hier statt in App.tsx, damit das Hauptmenü ohne Spiel-Code startet.
   useEffect(() => { setEventFrequency(settings.eventFrequency); }, [settings.eventFrequency]);
   // Nachgeladene Seiten/Fenster im Leerlauf vorladen (shell/lazyParts.ts).
-  useEffect(() => preloadShellParts(), []);
+  useEffect(() => { preloadEarlyParts(); return preloadShellParts(); }, []);
   const [running, setRunning] = useState(false);
   const [saveMsg, setSaveMsg] = useState('');
   const [showSettings, setShowSettings] = useState(false);

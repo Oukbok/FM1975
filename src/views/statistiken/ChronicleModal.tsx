@@ -8,52 +8,23 @@
 // und die Deutschen Meister.
 // =============================================================================
 import { useEffect, useMemo, useRef, useState } from 'react';
-import Icon from '../../components/Icon';
-import { TIMELINE, TIMELINE_TYPE_META, seasonStartYear } from '../../data/timeline';
+import { TIMELINE_TYPE_META, seasonStartYear } from '../../data/timeline';
 import { recordBook } from '../../game/clubRecords';
 import { compClubName } from '../../game/competitionView';
 import type { Game } from '../../game/state';
 import { KV, Meter } from '../../ui/DashPage';
-import { CHRON_TYPE_ICON, type ChronState, type TlEvent, type TlType } from './ChronicleView';
-
-const decadeOf = (e: TlEvent) => Math.floor(seasonStartYear(e.season) / 10) * 10;
-const STATE_LABEL: Record<ChronState, string> = { past: 'Erreicht', current: 'Aktuell', future: 'Bevorstehend' };
-
-function Row({ e, state }: { e: TlEvent; state: ChronState }) {
-  return (
-    <div className={`chm-row ${state}`} data-season={e.season}>
-      <div className="chm-when">
-        <span className="chm-year">{e.year}</span>
-        <span className="chm-season">{e.season}</span>
-      </div>
-      <div className="chm-text">
-        <div className="chm-title">{e.title}{e.fictional && <span className="chm-fict">fiktive Zukunft</span>}</div>
-        <div className="chm-desc">{e.description}</div>
-      </div>
-      <div className="chm-meta">
-        <span className="chm-type"><Icon name={CHRON_TYPE_ICON[e.type] ?? 'chronicle'} size={13} />{TIMELINE_TYPE_META[e.type].label}</span>
-        <span className={`chm-state ${state}`}>{STATE_LABEL[state]}</span>
-      </div>
-    </div>
-  );
-}
+import { openWiki } from '../../ui/InfoTip';
+import { CHRONICLE_WIKI_ID, ChronTimeline, chronEvents, chronStateOf, decadeOf, matchChronicle, type TlType } from './ChronicleView';
 
 export function ChronicleModal({ g, onClose }: { g: Game; onClose: () => void }) {
   const [q, setQ] = useState('');
   const [type, setType] = useState<'all' | TlType>('all');
   const listRef = useRef<HTMLDivElement>(null);
   const curYear = seasonStartYear(g.season);
-  const events = useMemo(() => [...TIMELINE].sort((a, b) => seasonStartYear(a.season) - seasonStartYear(b.season)), []);
-  const fired = new Set(g.firedMilestones);
-  const stateOf = (e: TlEvent): ChronState => {
-    const y = seasonStartYear(e.season);
-    return y === curYear ? 'current' : fired.has(e.id) || y < curYear ? 'past' : 'future';
-  };
-  const needle = q.trim().toLowerCase();
-  const shown = events.filter((e) => (type === 'all' || e.type === type)
-    && (!needle || `${e.title} ${e.description} ${e.season} ${e.year}`.toLowerCase().includes(needle)));
+  const events = useMemo(() => chronEvents(), []);
+  const stateOf = chronStateOf(g);
+  const shown = matchChronicle(events, q).filter((e) => type === 'all' || e.type === type);
   const decades = [...new Set(events.map(decadeOf))];
-  const shownDecades = decades.filter((d) => shown.some((e) => decadeOf(e) === d));
   const types = (Object.keys(TIMELINE_TYPE_META) as TlType[]).filter((t) => events.some((e) => e.type === t));
   const passed = events.filter((e) => stateOf(e) !== 'future').length;
   const current = events.filter((e) => stateOf(e) === 'current');
@@ -74,14 +45,6 @@ export function ChronicleModal({ g, onClose }: { g: Game; onClose: () => void })
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
-
-  // „Heute“-Markierung vor dem ersten Eintrag, der nicht vor der aktuellen Saison liegt.
-  const nowIdx = shown.findIndex((e) => seasonStartYear(e.season) >= curYear);
-  const nowLine = (
-    <div className="chm-now" key="now">
-      <span className="chm-now-lbl">Heute · Saison {g.season}</span>
-    </div>
-  );
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -116,17 +79,7 @@ export function ChronicleModal({ g, onClose }: { g: Game; onClose: () => void })
 
           <div className="chm-list" ref={listRef}>
             {!shown.length && <div className="dnote chm-empty">Kein Meilenstein passt zur Suche.</div>}
-            {shownDecades.map((d) => (
-              <section key={d} data-dec={d} className="chm-sec">
-                <div className="chm-dechead">{d}er</div>
-                {shown.filter((e) => decadeOf(e) === d).flatMap((e) => {
-                  const rows = [<Row key={e.id} e={e} state={stateOf(e)} />];
-                  if (shown[nowIdx] === e) rows.unshift(nowLine);
-                  return rows;
-                })}
-              </section>
-            ))}
-            {shown.length > 0 && nowIdx < 0 && nowLine}
+            <ChronTimeline g={g} shown={shown} />
           </div>
 
           <aside className="chm-side">
@@ -143,6 +96,7 @@ export function ChronicleModal({ g, onClose }: { g: Game; onClose: () => void })
               return <Meter key={t} label={TIMELINE_TYPE_META[t].label} value={done} max={Math.max(1, all.length)} text={`${done}/${all.length}`} />;
             })}
             <div className="dnote mt8">Jeder Meilenstein wird zu Beginn seiner Saison wirksam und verändert das Spiel, etwa die 3-Punkte-Regel 1995/96.</div>
+            <button className="dchip mt8" onClick={() => { if (openWiki(CHRONICLE_WIKI_ID)) onClose(); }}>Im Wiki mit Verweisen lesen</button>
             <div className="dsec">Deutsche Meister{champions.length ? ` (seit ${champions[champions.length - 1].season})` : ''}</div>
             <div className="chm-champs">
               {champions.map((x) => <KV key={x.season} k={x.season} v={compClubName(g, x.id, x.season)} />)}

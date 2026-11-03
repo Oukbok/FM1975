@@ -5,19 +5,22 @@ import { hydrateClubOverrides } from './data/clubOverrides';
 import { yearOf } from './engine/economy';
 import { AppSettings, loadGame, loadSettings, saveSettings } from './engine/save';
 import { Game } from './game/state';
-import { MainMenu } from './screens/MainMenu';
+import { MainMenu, preloadNewGameScreen } from './screens/MainMenu';
+import { preloadEarlyParts } from './shell/lazyParts';
 import { NewGameOptions } from './types';
 import { DisplayFrame, applyDisplayMode } from './ui/DisplayFrame';
 import { setDisplayYear, setWagePeriod } from './ui/format';
-import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { lazyNamed } from './ui/lazyNamed';
 
 // Code-Splitting (scripts/build.mjs): Das Hauptmenü startet ohne die Spiel-Shell, ohne
 // Laden-Nachrüstungen und ohne den Spielaufbau. Diese Stücke werden geladen, sobald sie
 // gebraucht werden, und im Leerlauf nach dem Start schon vorgeladen.
-const loadShell = () => import('./shell/GameShell');
+const shell = lazyNamed(() => import('./shell/GameShell'), 'GameShell');
+const GameShell = shell.component;
+const loadShell = shell.preload;
 const loadMigrations = () => import('./game/loadMigrations');
 const loadNewGame = () => import('./game/newGame');
-const GameShell = lazy(() => loadShell().then((m) => ({ default: m.GameShell })));
 
 // =============================================================================
 // ROOT: Startmenü ⇄ Spiel
@@ -85,7 +88,7 @@ export default function App() {
   useEffect(() => {
     applyDisplayMode(settings.displayMode);
     // Spiel-Stücke im Leerlauf vorladen, damit „Neues Spiel“/„Laden“ nicht warten.
-    const t = setTimeout(() => { loadShell().catch(() => {}); loadMigrations().catch(() => {}); loadNewGame().catch(() => {}); import('./screens/NewGameScreen').catch(() => {}); }, 400);
+    const t = setTimeout(() => { loadShell().catch(() => {}); loadMigrations().catch(() => {}); loadNewGame().catch(() => {}); preloadNewGameScreen().catch(() => {}); preloadEarlyParts(); }, 400);
     return () => clearTimeout(t);
     // nur einmal beim Mounten
     // eslint-disable-next-line react-hooks/exhaustive-deps

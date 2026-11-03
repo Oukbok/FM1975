@@ -3045,7 +3045,7 @@ Unter den Werbereglern zeigt der Bereich drei zusätzliche Karten des Finanzsyst
     id: 'calendar-overview',
     category: 'calendar',
     title: 'Kalender & planbare Aktivitäten',
-    keywords: ['kalender', 'monat', 'aktivität', 'trainingslager', 'freundschaftsspiel', 'teambuilding', 'planen', 'freie tage', 'kollision', 'kalenderstreifen', 'zeitlauf', 'pause'],
+    keywords: ['kalender', 'monat', 'aktivität', 'trainingslager', 'freundschaftsspiel', 'teambuilding', 'planen', 'freie tage', 'kollision', 'kalenderstreifen', 'zeitlauf', 'pause', 'termine', 'liste', 'raster', 'saisonende'],
     body: `## Kalenderstreifen während des Zeitlaufs
 Einen festen Kalenderstreifen oben auf den Seiten gibt es nicht mehr – die Seiten nutzen die volle Höhe. Sobald du
 **Weiter** drückst (oder die **Leertaste**), blendet sich in der Bildschirmmitte ein Streifen mit **11 Tagen** ein:
@@ -3062,14 +3062,28 @@ Anhalten kannst du mit dem Knopf, der Leertaste oder einem Klick irgendwo auf de
 selbst an (dein Spieltag, Auslosung, Briefing, Ereignis mit Entscheidung, Saisonende), blendet der Streifen weich aus;
 Popups (Auslosung, Briefing, Textmodus, Spielbericht) erscheinen nie zusammen mit ihm.
 
-## Monatskalender
-Unter **Zentrale › Kalender** siehst du den aktuellen Monat als Tagesraster (Mo–So).
-Du blätterst mit **‹ Vormonat** / **Folgemonat ›**. Die Tage sind farblich markiert:
+## Monatskalender: Raster oder Liste
+Unter **Zentrale › Kalender** siehst du den Monat wahlweise als **Raster** (Mo–So) oder als **Liste**; du
+blätterst mit **‹ Vormonat** / **Folgemonat ›**, **Heute** springt zurück. Die Wahl Raster/Liste merkt sich das Spiel.
 
-- **frei** (grün umrandet, klickbar) — planbar
-- **Spiel/Planung** (rot) — Ligaspiel , Pokalspiel oder bereits geplante Aktivität 
-- **heute** (Bernstein-Rahmen)
-- **Auswahl** (grün = gültiger Zeitraum, rot = Kollision)
+Im **Raster** steht je Tag der wichtigste Termin mit seiner Art (Liga, Pokal, Auslosung …), **+2** zeigt weitere
+Termine an (Mauszeiger auf den Tag zeigt alle). Eigene Ligaspiele haben eine Bernstein-Kante, Pokal und Europapokal eine
+helle Kante, **heute** einen Bernstein-Rahmen. Die **Liste** zeigt alle Termine des Monats Tag für Tag – Spiele mit
+Wappen, Wettbewerb und Ergebnis.
+
+Im Kalender stehen: **eigene Spiele** (Liga, Pokal, Europapokal, Testspiel), die übrigen Spieltage,
+**Auslosungen** (Pokal, Europapokal), **Transferfenster** (öffnet/schließt) und am Tag danach die **Transferbilanz**,
+**Bewertungsrunden** (Herbst, Winter, Saison), **Trainingslager** (Abreise/Rückkehr), **Hallenturniere**,
+**Goldener Ball** (20. Dezember), **Die Besten der Saison** (Tag nach dem letzten Ligaspiel), **Saisonbudget** (Saisonstart),
+Spiele und Spielfeste deiner **Jugendmannschaften**, **Vertragsenden** im Kader sowie Winterpause, Saisonstart und
+**Saisonende** (29. Juni – am 30. Juni ist die Saison vorbei, dann startest du die neue).
+
+**Ein Klick** auf einen Tag oder Termin springt zur passenden Seite: Spielplan, Pokal, International, Transfermarkt,
+Kader (Bewertung), Trainingslager, Halle, Auszeichnungen, Budget, Jugendwettbewerbe, Verträge oder Briefing.
+Rechts unter **Termine** stehen deine geplanten Aktivitäten und die nächsten Termine aus derselben Quelle.
+
+Im **Planungsmodus** („Starttag wählen“) wählst du im Raster einen freien Tag; belegte Tage (Spiele, Halle,
+Trainingslager, andere Aktivitäten) lassen sich nicht wählen, die Auswahl ist grün (gültig) bzw. rot (Kollision).
 
 ## Aktivitäten planen
 Oben wählst du den Typ, bei mehrtägigen Aktivitäten die Dauer, klickst einen **freien Starttag** und bestätigst
@@ -3085,7 +3099,7 @@ Spiel und keiner anderen Aktivität** kollidieren.
 - **Kosten** werden **sofort bei der Planung** vom Vereinskonto gebucht (ära-gerecht skaliert). Noch nicht
   begonnene Aktivitäten lassen sich **stornieren** (Kosten werden erstattet).
 - Die **Effekte** (Fitness/Form/Moral auf den Kader) treten ein, sobald das **Enddatum** im Kalenderlauf erreicht
-  ist (\`App.processDay\`). Der Erlös eines Freundschaftsspiels wird dann als Einnahme gebucht.
+  ist (Tagesablauf \`processDay\` in game/day.ts). Der Erlös eines Freundschaftsspiels wird dann als Einnahme gebucht.
 - Alle Datumsberechnungen laufen konsequent in **UTC**.
 
 **Trainingslager** werden nicht mehr hier, sondern unter **Training › Trainingslager** gebucht (siehe Artikel „Trainingslager“).
@@ -3638,10 +3652,15 @@ Die Tabellen-Markierung der 1. Liga zeigt die europäische Qualifikation:
     body: `## Was ist die Chronik?
 Das Spiel beginnt zum **1. Juli 1975** (Saison **1975/76**) und lässt den deutschen Fußball über die Jahrzehnte
 historisch mitwachsen. Alle großen Regel-, Wettbewerbs-, Rechts-, Technik- und Wirtschafts-**Meilensteine** sind in
-einer zentralen **Chronik** hinterlegt (Bereich **Chronik**, Symbol in der unteren Navigation).
+einer zentralen **Chronik** hinterlegt – als großes Fenster über den Link **„Chronik des deutschen Fußballs“**
+unten rechts in der Fußleiste.
 
-Die vollständige, interaktive Zeitleiste ist **auch direkt hier im Wiki** erreichbar — siehe den Eintrag
-**„Chronik der Epochen – Historische Zeitleiste"** in dieser Kategorie.
+Die vollständige Zeitleiste ist **auch hier im Wiki** ein eigenes Kapitel: **„Chronik der Epochen – Historische
+Zeitleiste"** (Jahrzehnte, Markierung **Heute**, erreichte/aktuelle/bevorstehende Meilensteine). Die **Wiki-Suche**
+durchsucht dabei auch alle Meilensteine (z. B. „Bosman“, „1995“, „Halle“) und zeigt in der Zeitleiste nur die
+Treffer; unter jedem Meilenstein führen **„Im Wiki:“**-Verweise zu den Artikeln über die Spielmechanik dahinter
+(z. B. Bosman-Urteil → Verträge, Meisterliga → Europapokal). Aus dem Kapitel öffnest du das große Fenster, aus dem
+Fenster mit **„Im Wiki mit Verweisen lesen“** wieder das Kapitel.
 
 ## Wie Meilensteine ausgelöst werden
 Jeder Meilenstein ist einer **Auslöse-Saison** zugeordnet. Sobald diese Saison beginnt (Button **„▶ Neue Saison"**),

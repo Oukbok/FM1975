@@ -3,11 +3,15 @@ import { NewGameOptions } from '../types';
 import type { Game } from '../game/state';
 import { LoadGameScreen } from './LoadGameScreen';
 import { SettingsScreen } from './SettingsScreen';
-import { lazy, Suspense, useState } from 'react';
+import { Suspense, useState } from 'react';
+import { lazyNamed } from '../ui/lazyNamed';
 
 // Assistent „Neues Spiel“ und Datensatz-Verwaltung werden erst beim Öffnen geladen (Code-Splitting).
-const NewGameScreen = lazy(() => import('./NewGameScreen').then((m) => ({ default: m.NewGameScreen })));
-const DatasetScreen = lazy(() => import('./DatasetScreen').then((m) => ({ default: m.DatasetScreen })));
+const newGameScreen = lazyNamed(() => import('./NewGameScreen'), 'NewGameScreen');
+const NewGameScreen = newGameScreen.component;
+/** Vom Hauptmenü aus im Leerlauf vorladen (App.tsx). */
+export const preloadNewGameScreen = newGameScreen.preload;
+const DatasetScreen = lazyNamed(() => import('./DatasetScreen'), 'DatasetScreen').component;
 const loading = <div className="lazy-page" role="status"><span className="lazy-note">Lädt …</span></div>;
 
 // =============================================================================

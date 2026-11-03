@@ -1,8 +1,9 @@
 import { WIKI_ARTICLES, WIKI_CATEGORIES, WikiArticle, searchWiki } from '../../data/wiki';
 import { Game } from '../../game/state';
 import { DashBox, DashPage, Empty } from '../../ui/DashPage';
-import { ChronicleView } from '../statistiken/ChronicleView';
-import { useState } from 'react';
+import { CHRONICLE_WIKI_ID, ChronicleView, chronEvents, matchChronicle, type TlEvent } from '../statistiken/ChronicleView';
+import type { Screen } from '../../shell/navigation';
+import { useMemo, useState } from 'react';
 
 // =============================================================================
 // ENTWICKLER-WIKI (durchsuchbar, Kategorien)
@@ -12,7 +13,33 @@ import { useState } from 'react';
  * (ChronicleView) rendert statt Markdown. So ist die „Chronik der Epochen" direkt
  * über die Wiki-Kapitelnavigation erreichbar.
  */
-export const CHRONICLE_WIKI_ID = 'chronicle-timeline';
+export { CHRONICLE_WIKI_ID };
+
+/** Zu allgemeine Stichwörter, die keinen passenden Artikel ergeben. */
+const REL_STOP = new Set(['verein', 'vereine', 'liga', 'ligen', 'europa', 'meister', 'welt', 'punkte', 'system', 'leistung', 'krise', 'video',
+  'lager', 'halle', 'mark', 'euro', 'stab', 'scout', 'weiter', 'saison', 'trainer', 'medien', 'sponsor', 'runde', 'pokal', 'pause', 'gehalt',
+  'transfer', 'lizenz', 'schal', 'streit', 'reform', 'phase', 'trikot']);
+const atWordStart = (text: string, k: string) => new RegExp(`(^|[^a-zäöüß0-9])${k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(text);
+
+/**
+ * Wiki-Artikel zu einem Meilenstein: Stichwörter des Artikels, die als Wortanfang im Titel
+ * des Meilensteins stehen (z. B. „Bosman“, „Meisterliga“, „Trainingslager“), höchstens zwei.
+ */
+function relatedArticles(e: TlEvent): { id: string; title: string }[] {
+  const title = e.title.toLowerCase(), desc = e.description.toLowerCase();
+  return WIKI_ARTICLES
+    .filter((a) => a.category !== 'chronicle')
+    .map((a) => {
+      const kws = (a.keywords ?? []).map((k) => k.toLowerCase()).filter((k) => k.length >= 4 && !REL_STOP.has(k));
+      const t = kws.filter((k) => atWordStart(title, k)).length;
+      const d = kws.filter((k) => !atWordStart(title, k) && atWordStart(desc, k)).length;
+      return { a, t, score: t * 3 + d };
+    })
+    .filter((x) => x.t > 0)
+    .sort((x, y) => y.score - x.score)
+    .slice(0, 2)
+    .map((x) => ({ id: x.a.id, title: x.a.title }));
+}
 
 export const CHRONICLE_WIKI_ENTRY: WikiArticle = {
   id: CHRONICLE_WIKI_ID,
@@ -22,16 +49,17 @@ export const CHRONICLE_WIKI_ENTRY: WikiArticle = {
   body: 'Interaktive Zeitleiste aller historischen Meilensteine von 1975 bis in die 2030er.',
 };
 
-export function WikiView({ g, openArticle }: { g: Game; openArticle?: string }) {
+export function WikiView({ g, openArticle, onGoto }: { g: Game; openArticle?: string; onGoto?: (s: Screen) => void }) {
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState<string>('all');
   const [openId, setOpenId] = useState<string | null>(openArticle ?? null);
 
-  // Passt der Chronik-Eintrag zum aktuellen Suchtext?
+  // Passt der Chronik-Eintrag zum aktuellen Suchtext? Auch jeder einzelne Meilenstein zählt als Treffer.
   const q = query.trim().toLowerCase();
-  const chronMatches = !q
-    || CHRONICLE_WIKI_ENTRY.title.toLowerCase().includes(q)
-    || (CHRONICLE_WIKI_ENTRY.keywords ?? []).some((k) => k.includes(q));
+  const titleHit = CHRONICLE_WIKI_ENTRY.title.toLowerCase().includes(q) || (CHRONICLE_WIKI_ENTRY.keywords ?? []).some((k) => k.includes(q));
+  const milestoneHits = q && !titleHit ? matchChronicle(chronEvents(), q).length : 0;
+  const chronMatches = !q || titleHit || milestoneHits > 0;
+  const relatedMap = useMemo(() => new Map(chronEvents().map((e) => [e.id, relatedArticles(e)])), []);
 
   let results = searchWiki(query);
   if (cat !== 'all') results = results.filter((a) => a.category === cat);
@@ -66,7 +94,10 @@ export function WikiView({ g, openArticle }: { g: Game; openArticle?: string }) 
 
       <DashBox title={shown ? shown.title : 'Artikel'} icon={shown?.id === CHRONICLE_WIKI_ID ? 'chronicle' : 'news'} span={2} rows={2}
         right={shown ? catTitle(shown.category) : undefined}>
-        {shown ? (shown.id === CHRONICLE_WIKI_ID ? <ChronicleView g={g} embedded /> : <WikiBody text={shown.body} />)
+        {shown ? (shown.id === CHRONICLE_WIKI_ID
+          ? <ChronicleView g={g} embedded query={titleHit ? '' : query} related={(e) => relatedMap.get(e.id) ?? []}
+              onArticle={(id) => setOpenId(id)} onOpenModal={onGoto ? () => onGoto('chronicle') : undefined} />
+          : <WikiBody text={shown.body} />)
           : <Empty icon="wiki">Keine Treffer für „{query}“.</Empty>}
       </DashBox>
 
@@ -75,7 +106,7 @@ export function WikiView({ g, openArticle }: { g: Game; openArticle?: string }) 
           <div key={a.id} className={`dmsg ${shown?.id === a.id ? 'sel' : ''}`} onClick={() => setOpenId(a.id)}>
             <span className="dmsg-main">
               <span className="dmsg-top"><b>{catTitle(a.category)}</b></span>
-              <span className="dmsg-subj">{a.title}</span>
+              <span className="dmsg-subj">{a.title}{a.id === CHRONICLE_WIKI_ID && milestoneHits ? ` · ${milestoneHits} Meilenstein${milestoneHits === 1 ? '' : 'e'}` : ''}</span>
             </span>
           </div>
         )) : <Empty icon="wiki">Keine Treffer.</Empty>}

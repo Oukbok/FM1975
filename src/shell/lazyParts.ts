@@ -5,14 +5,26 @@
 // dem Spielstart lädt `preloadShellParts` alles im Leerlauf vor, damit später
 // nichts mehr wartet. Platzhalter beim Laden: shell/LazyFallback.tsx.
 // =============================================================================
-import { lazy } from 'react';
+import { lazyNamed } from '../ui/lazyNamed';
 
 const loaders: (() => Promise<unknown>)[] = [];
+const preloadOf = new Map<unknown, () => Promise<unknown>>();
 
-/** React.lazy für benannte Exporte – behält die Props-Typen der Komponente. */
+/** Benannter Export als nachgeladene Komponente (ui/lazyNamed.ts) – behält die Props-Typen. */
 function lz<M, K extends keyof M>(load: () => Promise<M>, key: K): M[K] {
-  loaders.push(load);
-  return lazy(() => load().then((m) => ({ default: m[key] as never }))) as unknown as M[K];
+  const n = lazyNamed(load, key);
+  loaders.push(n.preload);
+  preloadOf.set(n.component, n.preload);
+  return n.component;
+}
+
+/**
+ * Fenster, die gleich zu Spielbeginn bzw. am ersten Spieltag kommen (Briefing, Budget, Erstes
+ * Training, Vorschau, Spielbericht, Auslosung): sofort laden – vom Hauptmenü aus (App.tsx) und
+ * beim Start der Shell –, damit dort nie ein Platzhalter vor einem Pflicht-Fenster steht.
+ */
+export function preloadEarlyParts(): void {
+  for (const c of [BriefingModal, BudgetModal, FirstTrainingModal, PrematchScreen, MatchModal, DrawShow]) preloadOf.get(c)?.().catch(() => {});
 }
 
 /** Alle Stücke im Leerlauf vorladen (nacheinander, damit der Zeitlauf nicht ruckelt). */
