@@ -77,6 +77,7 @@ export function HistoryDetail({ h }: { h?: CampHistoryEntry }) {
           <KV k="Wetter" v={r.luck >= 1.05 ? 'bestes Wetter' : r.luck <= 0.92 ? 'Ausfälle durchs Wetter' : 'normal'} />
           <KV k="Kosten" v={fmtDM(r.cost)} color="var(--red)" />
           <KV k="Erlöse (Tests · Sponsor)" v={`${fmtDM(r.income)} · ${fmtDM(r.sponsor)}`} />
+          {r.drills?.length ? <KV k="Taktik-Inhalte (Spieler +1)" v={r.drills.map((x) => `${x.label} ${x.up}`).join(' · ')} /> : null}
           {r.fans ? <KV k="Fan-Stimmung" v={sgn(r.fans)} color={r.fans < 0 ? 'var(--red)' : undefined} /> : null}
         </div>
       </div>

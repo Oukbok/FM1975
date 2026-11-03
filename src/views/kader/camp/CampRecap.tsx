@@ -116,6 +116,7 @@ export function CampRecap({ g, bookingId, onClose }: { g: Game; bookingId: strin
           <ul>{r.worst.length ? r.worst.map((p, i) => <PlayerLine key={p.id} p={p} k={i} bad />) : <li className="cr-none">Keine Sorgenkinder.</li>}</ul>
         </section>
       </div>
+      {r.drills?.length ? <div className="cr-alt">Taktik-Inhalte: {r.drills.map((x) => `${x.label} – ${x.up} Spieler verbessert`).join(' · ')}</div> : null}
       {r.altitudeDue && <div className="cr-alt">Höhentraining: Die Zusatzwirkung greift um den {fmtDay(r.altitudeDue)}.</div>}
       <div className="cr-skip">{done ? 'Klick, Leertaste oder Esc – weiter' : 'Klick oder Leertaste – überspringen'}</div>
     </div>

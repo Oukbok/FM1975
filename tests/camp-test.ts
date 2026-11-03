@@ -8,7 +8,9 @@ import type { Game } from '../src/game/state';
 import { CAMP_DESTINATIONS, campDestination } from '../src/data/campDestinations';
 import { WORLD_BORDERS, WORLD_LAND } from '../src/data/campWorldMap';
 import { CAMP_MAP_VIEWS, campEffectBars, campGrade, destinationProsCons, homeView, inView } from '../src/engine/campPlan';
-import { campOutlook, destinationsFor } from '../src/engine/trainingCamp';
+import { CAMP_FOCUS, CAMP_FOCUS_ORDER, campCostBase, campOutlook, destinationsFor } from '../src/engine/trainingCamp';
+import { CAMP_AREA_ORDER, CAMP_DRILLS, CAMP_POINTS, presetProgram, programDef, programError, programLabel } from '../src/engine/campProgram';
+import { CAMP_CLIMATE } from '../src/data/campDestinations';
 import { lodgingsFor } from '../src/data/campLodgings';
 import { CAMP_MIN_GROUP, bookCamp, checkCampDates, ownBooking, quoteCamp } from '../src/game/trainingCampGame';
 import { campGroup, defaultCampSquad, invitableYouth } from '../src/game/campResult';
@@ -149,5 +151,52 @@ const club = g.clubs[g.managedClubId];
   campState(g3).history.unshift({ season: '1974/75', destId: 'harz', campSeason: 'summer', note: 'alt' });
   migrateWinter(g3);
   expect(campState(g3).history[0].note === 'alt', 'alter Verlauf verändert');
+}
+// 6) Trainingsprogramm: Punkteverteilung, Vorlagen ≈ feste Schwerpunkte, Taktik-Inhalte wirken
+{
+  const near = (a: number, b: number, tol: number) => Math.abs(a - b) <= tol;
+  for (const f of CAMP_FOCUS_ORDER) {
+    const p = presetProgram(f), def = programDef(p), old = CAMP_FOCUS[f];
+    expect(!programError(p), `Vorlage ${f} ungültig: ${programError(p)}`);
+    expect(CAMP_AREA_ORDER.reduce((s, a) => s + p.pts[a], 0) === CAMP_POINTS, `Vorlage ${f}: Punktsumme`);
+    for (const k of ['fit', 'morale', 'inj'] as const) expect(near(def[k], old[k], 0.3), `Vorlage ${f}: ${k} ${def[k].toFixed(2)} statt ≈ ${old[k]}`);
+    expect(near(def.frische, old.frische, 5), `Vorlage ${f}: Frische ${def.frische} statt ≈ ${old.frische}`);
+  }
+  const even = programDef(presetProgram('ausgewogen'));
+  expect(['fit', 'dev', 'form', 'morale', 'inj', 'disc', 'cost'].every((k) => (even as any)[k] === 1) && even.frische === 0 && even.heal === 0, 'Ausgewogen ≠ neutral');
+  expect(programLabel(presetProgram('ausgewogen')) === 'Ausgewogen' && programLabel(presetProgram('kondition')) === 'Kondition', 'Kurzname falsch');
+  const bad = presetProgram('ausgewogen'); bad.pts.kondition = 2;
+  expect(!!programError(bad), 'unvollständige Verteilung buchbar');
+  const over = presetProgram('ausgewogen'); over.drills = ['pressing', 'ecken'];
+  expect(!!programError(over), 'Taktik-Inhalte über Budget buchbar');
+  // Wirkung: Programm geht in die Rechnung ein
+  const d = campDestination('tegernsee')!, l = lodgingsFor('tegernsee', 1975)[0];
+  const base = { d, l, focus: 'ausgewogen' as const, season: 'summer' as const, days: 8, tests: 2, year: 1975, rep: 60, start: '1975-07-14' };
+  const kond = presetProgram('ausgewogen'); kond.pts.kondition = 8; kond.pts.regeneration = 0; kond.pts.teamgeist = 1;
+  const reg = presetProgram('ausgewogen'); reg.pts.regeneration = 8; reg.pts.kondition = 0; reg.pts.technik = 1;
+  const ok = campOutlook({ ...base, program: kond }), or = campOutlook({ ...base, program: reg }), oe = campOutlook(base);
+  expect(ok.fitness > oe.fitness && oe.fitness > or.fitness && or.injury < ok.injury && or.campFrische > ok.campFrische && or.heal > 0, 'Punkteverteilung wirkt nicht');
+  expect(campCostBase(d, l, 8, 60, 'ausgewogen', 24, reg) > campCostBase(d, l, 8, 60, 'ausgewogen', 24, kond), 'Regeneration nicht teurer');
+  expect(CAMP_CLIMATE.golf.temp[0] < CAMP_CLIMATE.golf.temp[6] && CAMP_CLIMATE.kap.temp[0] > CAMP_CLIMATE.kap.temp[6], 'Temperaturen je Monat unplausibel');
+  // Buchung mit Programm: Inhalte verbessern Attribute, Bilanz zählt sie
+  const g4 = fresh();
+  const prog = presetProgram('taktik');
+  prog.drills = ['ecken', 'freistoss', 'aufbau', 'kurzpass'];
+  expect(!programError(prog), `Programm ungültig: ${programError(prog)}`);
+  const squad = defaultCampSquad(g4);
+  const attrs = (ids: string[]) => ids.reduce((s, id) => s + ['corners', 'freeKicks', 'longShots', 'heading', 'passing', 'vision', 'composure', 'firstTouch'].reduce((t, k) => t + ((g4.players[id].attributes as any)[k] ?? 0), 0), 0);
+  const before = attrs(squad);
+  expect(!bookCamp(g4, 'sportschule', 'summer', '1975-07-14', 9, 1, { program: prog, squad }), 'Buchung mit Programm');
+  const b = ownBooking(g4, 'summer')!;
+  expect(b.program?.drills.length === 4 && b.program.pts.taktik === prog.pts.taktik, 'Programm nicht gespeichert');
+  for (let i = 0; i < 40 && !b.done; i++) processDay(g4, HEADLESS_UI);
+  const ups = b.result?.drills ?? [];
+  const sum = ups.reduce((s, x) => s + x.up, 0);
+  expect(ups.length === 4 && sum > 0, `Taktik-Inhalte ohne Wirkung (${JSON.stringify(ups)})`);
+  expect(attrs(squad) >= before + Math.min(sum, 1), 'Attribute nicht gestiegen');
+  const h = campState(g4).history.find((x) => x.bookingId === b.id);
+  expect(!!h?.program && h.note.includes(programLabel(prog)), 'Verlauf ohne Programm');
+  expect(Object.keys(CAMP_DRILLS).every((k) => CAMP_DRILLS[k as keyof typeof CAMP_DRILLS].cost >= 1), 'Inhalt ohne Kosten');
+  console.log(`Programm: Fitness Kond/Ausg/Reg ${ok.fitness}/${oe.fitness}/${or.fitness}, Inhalte ${ups.map((x) => `${x.label} ${x.up}`).join(', ')}`);
 }
 console.log('Trainingslager-Planer-Test OK');

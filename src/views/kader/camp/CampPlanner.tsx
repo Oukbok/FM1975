@@ -111,7 +111,8 @@ export function CampPlanner({ g, season, onClose, onBooked }: {
     { label: 'Ziel', ok: !!dest && !!status?.ok, v: dest ? dest.name : 'auf der Karte wählen' },
     { label: 'Unterkunft', ok: !!lodging && !!status?.ok, v: lodging && status?.ok ? lodging.name : '–' },
     { label: 'Reisegruppe', ok: group >= CAMP_MIN_GROUP, v: `${squadIds.length} Profis${youthIds.length ? ` + ${youthIds.length} Jugend` : ''}` },
-    { label: 'Programm', ok: !programError(program), v: `${programLabel(program)}${program.drills.length ? ` + ${program.drills.length} Inhalte` : ''}, ${tests} Tests` },
+    { label: 'Programm', ok: !programError(program), v: `${programLabel(program)}${program.drills.length ? ` + ${program.drills.length} Inhalte` : ''}` },
+    { label: 'Testspiele', ok: true, v: `${tests}` },
   ];
   const canBook = checks.every((c) => c.ok) && !!quote && !quote.error && club.finances.balance >= quote.cost;
 

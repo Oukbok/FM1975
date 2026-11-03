@@ -3061,7 +3061,7 @@ Verteilung; sie treffen ungefähr die früheren festen Schwerpunkte (Tabelle unt
 **Taktik-Inhalte** (Kosten in Klammern, zusammen höchstens so viel wie auf Taktik liegt): Abwehrverhalten (2), Pressing (3),
 Abseitsfalle (2), Konterspiel (2), Spielaufbau (2), Kurzpassspiel (1), Lange Bälle (1), Flanken (2), Ecken (1), Freistöße (1),
 Elfmeter (1), Torwartspiel (2, nur Torhüter). Jeder Inhalt trainiert seine Attribute (z. B. Ecken: Eckbälle, Kopfball): Bei der
-Rückkehr bekommt jeder gesunde Mitreisende mit der Chance 0,2 × Tage/9 × Altersfaktor × Luft nach oben × Wetterglück
+Rückkehr bekommt jeder gesunde Mitreisende mit der Chance 0,45 × Tage/9 × Altersfaktor (bis 20: 1,5 · ab 31: 0,4) × Luft nach oben (0,35 + Abstand zum Potenzial/15, höchstens 1) × Wetterglück
 (höchstens 60 %) **+1 auf eines dieser Attribute**; Spieler ohne Luft zum Potenzial lernen nichts mehr. Zusätzlich bekommen
 diese Attribute bei den nächsten Aufwertungen Vorrang. Die Bilanz nennt je Inhalt, wie viele Spieler sich verbessert haben.
 

@@ -10,7 +10,7 @@
 import type { AttributeKey, Player } from '../types';
 import { refreshOverall } from './development';
 import type { CampFocus, FocusDef } from './trainingCamp';
-import { ageFactor, potentialFactor } from './weeklyTraining';
+import { ageFactor } from './weeklyTraining';
 
 export type CampArea = 'kondition' | 'technik' | 'taktik' | 'kopf' | 'teamgeist' | 'regeneration' | 'jugend';
 export const CAMP_AREA_ORDER: CampArea[] = ['kondition', 'technik', 'taktik', 'kopf', 'teamgeist', 'regeneration', 'jugend'];
@@ -135,8 +135,8 @@ export function programDef(p: CampProgram): FocusDef {
 // -----------------------------------------------------------------------------
 // Wirkung der Taktik-Inhalte (Rückkehr aus dem Lager, nur eigener Verein)
 // -----------------------------------------------------------------------------
-/** Grundchance je Inhalt und Spieler auf +1 in einem trainierten Attribut (9-Tage-Lager, 25 Jahre, viel Luft nach oben). */
-export const DRILL_CHANCE = 0.2;
+/** Grundchance je Inhalt und Spieler auf +1 in einem trainierten Attribut (9-Tage-Lager, 25 Jahre, ≥ 10 Punkte Luft zum Potenzial). */
+export const DRILL_CHANCE = 0.45;
 /** Schub für den Trainings-Akkumulator (lenkt die nächsten Aufwertungen auf diese Attribute). */
 export const DRILL_FOCUS = 1.5;
 
@@ -144,7 +144,9 @@ export const DRILL_FOCUS = 1.5;
 export function drillChance(p: Player, days: number, luck = 1): number {
   const headroom = p.development.potentialAbility - p.development.currentAbility;
   if (headroom <= 0.5) return 0;
-  return clamp(DRILL_CHANCE * (days / 9) * ageFactor(p.age) * potentialFactor(p) * luck, 0, 0.6);
+  // Luft nach oben: schon wenig Abstand zum Potenzial lässt gezieltes Lernen zu (0,35 … 1).
+  const room = clamp(0.35 + headroom / 15, 0, 1);
+  return clamp(DRILL_CHANCE * (days / 9) * ageFactor(p.age) * room * luck, 0, 0.6);
 }
 
 /**
