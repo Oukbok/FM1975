@@ -637,6 +637,11 @@ export const INFO_TEXTS = {
     text: 'Am 20. Dezember wählt die Jury den Fußballer des Jahres – bewertet wird das Kalenderjahr: Noten, Tore und Vorlagen, Titel und Klasse. Bis 1994 sind nur Europäer wählbar, ab 1995 alle Spieler europäischer Vereine, ab 2007 Spieler weltweit. Klick auf ein Jahr zeigt die Gala noch einmal.',
     wiki: 'season-awards',
   },
+  erfolge: {
+    title: 'Vereinspokale',
+    text: 'Alle Titel deines Vereins nach Wettbewerb: Meisterschaften und Staffelsiege, Landespokal, Europapokale, Jugendtitel, Hallen-Masters und Aufstiege – inklusive der Historie seit 1963/64. Klick auf einen Eintrag zeigt die Trophäe mit Endstand, Finale, Trainer und Torjäger der Saison, soweit gespeichert.',
+    wiki: 'club-trophies',
+  },
 } satisfies Record<string, InfoText>;
 
 export type InfoKey = keyof typeof INFO_TEXTS;

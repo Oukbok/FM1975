@@ -2206,7 +2206,28 @@ Archiviert werden:
 Höchstens 4000 Einträge; darüber fallen zuerst die unauffälligsten fremden Karrieren heraus.
 
 ## Ruhmeshalle
-Unter **Verein → Ruhmeshalle** siehst du die größten Karrieren, deine Vereinslegenden (nach Einsätzen), die Rekordhalter und die Weltklassespieler (Spitze 85+) im Ruhestand.`,
+Unter **Verein → Erfolge → Ruhmeshalle** siehst du die größten Karrieren, deine Vereinslegenden (nach Einsätzen), die Rekordhalter und die Weltklassespieler (Spitze 85+) im Ruhestand. Die Titel deines Vereins stehen im Reiter **Vereinspokale** (siehe „Erfolge & Vereinspokale“).`,
+  },
+  {
+    id: 'club-trophies',
+    category: 'chronicle',
+    title: 'Erfolge & Vereinspokale',
+    keywords: ['erfolge', 'vereinspokale', 'trophäen', 'titel', 'meisterschale', 'pokal', 'vitrine', 'aufstieg', 'staffelsieg'],
+    body: `## Die Vitrine
+Unter **Verein → Erfolge → Vereinspokale** steht jeder Titel deines Vereins als Trophäe. Oben wählst du die Kategorie, links die Saison, rechts erscheint die Trophäe groß mit den Eckdaten der Saison.
+
+## Kategorien
+- **Liga** – Deutsche Meisterschaft (Meisterschale), DDR-Meisterschaft (Deckelpokal) und Staffelsiege in der 2. Liga, Regionalliga, Oberliga oder DDR-Liga (Silberteller).
+- **Pokal** – Landespokal. Einen Ligapokal gibt es im Spiel nicht.
+- **Kontinental** – Pokal der Landesmeister (ab 1992 Meisterliga), Pokal der Pokalsieger (ab 2021 Konferenz-Liga) und Europa-Pokal (ab 2009 Europa-Liga) – jeweils unter dem Namen der Saison.
+- **Jugend** – Deutsche A-/B-Jugend-Meisterschaft, Junioren-Pokal, DDR-Juniorenmeister, UEFA Youth League und Staffelsiege der C- bis F-Jugend.
+- **Andere** – Hallen-Masters und Aufstiege ohne Staffelsieg (Medaille).
+
+## Was gezeigt wird
+Nur, was der Spielstand kennt: Endstand und Bilanz der Liga mit Vorsprung, Finale (bei Hin- und Rückspiel beide Ergebnisse), gewonnene K.-o.-Runden, der beste Torschütze deines Vereins im Wettbewerb und der Trainer. Titel aus der Zeit **vor Spielbeginn** (1963/64–1974/75) stammen aus den echten Abschlusstabellen und Endspielen und sind markiert.
+
+## Andere Vereine
+Im **Vereinsprofil** jedes Vereins zeigt der Reiter **Erfolge** dieselbe Vitrine für diesen Verein.`,
   },
   {
     id: 'development-talent',

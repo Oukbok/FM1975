@@ -80,7 +80,7 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'facilities', label: 'Vereinsgelände', icon: 'facilities' },
     { screen: 'stadium', label: 'Stadion', icon: 'stadium' },
     { screen: 'fans', label: 'Fans', icon: 'fans' },
-    { screen: 'ruhmeshalle', label: 'Ruhmeshalle', icon: 'trophy' },
+    { screen: 'ruhmeshalle', label: 'Erfolge', icon: 'trophy' },
   ] },
   { key: 'statistiken', label: 'Statistiken', icon: 'stats', dash: 'cat-statistiken', subs: [
     { screen: 'cat-statistiken', label: 'Statistiken', icon: 'stats' },

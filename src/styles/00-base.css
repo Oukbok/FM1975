@@ -53,6 +53,18 @@
   --orange: #d98a5b;
   --red: #e0646f;
   --gold: #d9b26a;
+  /* Trophäen (views/verein/trophies/): Silber kühl, Vergoldung gedämpft, Sockel Schiefer */
+  --metal-hi: #f6f8fb;
+  --metal-1: #d6dce4;
+  --metal-2: #a9b2be;
+  --metal-3: #6f7884;
+  --metal-4: #353c46;
+  --gilt-hi: #f4e7c4;
+  --gilt-1: #d6bf86;
+  --gilt-2: #a68c55;
+  --gilt-3: #5f5135;
+  --plinth-1: #2b313a;
+  --plinth-2: #12151a;
   /* Positionen: Schlüsselattribute (blau) und Vertrautheit (Grünstufen) */
   /* Zeilen: Startelf / Bank (Aufstellung, Kader-Übersicht) */
   --row-xi: rgba(92, 168, 118, 0.13);
