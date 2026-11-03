@@ -371,21 +371,22 @@ export const CAMP_TRANSPORT_LABEL: Record<CampTransport, string> = { bus: 'Bus',
  * Wetter je Monat (Index 0 = Januar): Risiko ausfallender Einheiten 0–1 und Zustand
  * natürlicher Plätze 0–1 (Frost, Schnee, Regen, Hitze). Grobe Klimawerte (Annahme
  * nach üblichen Klimatabellen): Mitteleuropa im Januar Frost/Schnee, Mittelmeer und
- * Kanaren mild, Golfstaaten im Winter ideal und im Sommer zu heiß.
+ * Kanaren mild, Golfstaaten im Winter ideal und im Sommer zu heiß. `temp` = übliche
+ * Tageshöchsttemperatur in °C (Annahme nach Klimatabellen typischer Orte; nur Anzeige).
  */
-export const CAMP_CLIMATE: Record<CampClimate, { risk: number[]; ground: number[]; label: string }> = {
-  flachland:     { label: 'Mitteleuropa',     risk: [.65, .6, .4, .25, .15, .15, .15, .15, .2, .3, .5, .6],   ground: [.3, .35, .5, .7, .8, .85, .85, .85, .85, .75, .5, .35] },
-  kueste:        { label: 'Küstenklima',      risk: [.7, .65, .45, .3, .2, .2, .2, .2, .25, .4, .6, .65],    ground: [.3, .3, .45, .6, .75, .8, .8, .8, .75, .6, .45, .35] },
-  mittelgebirge: { label: 'Mittelgebirge',    risk: [.8, .75, .55, .35, .2, .2, .2, .2, .25, .4, .6, .75],   ground: [.15, .2, .35, .6, .75, .85, .85, .85, .8, .6, .35, .2] },
-  alpen:         { label: 'Alpen',            risk: [.85, .8, .6, .4, .25, .2, .2, .2, .2, .35, .6, .8],     ground: [.1, .1, .3, .5, .7, .85, .9, .9, .85, .6, .3, .1] },
-  hochalpen:     { label: 'Hochgebirge',      risk: [.9, .9, .8, .6, .4, .25, .25, .25, .3, .5, .8, .9],     ground: [.05, .05, .1, .3, .55, .8, .85, .85, .75, .45, .1, .05] },
-  mittelmeer:    { label: 'Mittelmeer',       risk: [.18, .15, .12, .1, .1, .2, .3, .3, .15, .12, .15, .2],  ground: [.75, .8, .85, .85, .8, .65, .55, .55, .7, .8, .8, .7] },
-  atlantik:      { label: 'Kanaren-Klima',    risk: [.08, .08, .08, .08, .1, .12, .15, .15, .12, .1, .08, .08], ground: [.7, .7, .7, .7, .65, .6, .55, .55, .6, .65, .7, .7] },
-  golf:          { label: 'Golfklima',        risk: [.03, .05, .1, .3, .6, .8, .85, .85, .7, .35, .1, .04],  ground: [.95, .95, .9, .8, .6, .5, .5, .5, .55, .8, .9, .95] },
-  florida:       { label: 'Subtropen',        risk: [.12, .12, .12, .15, .25, .45, .5, .5, .45, .25, .15, .12], ground: [.85, .85, .85, .85, .8, .7, .65, .65, .7, .8, .85, .85] },
-  asien:         { label: 'Sommer in Ostasien', risk: [.3, .3, .3, .3, .35, .45, .45, .45, .4, .3, .3, .3], ground: [.7, .7, .7, .7, .7, .7, .7, .7, .7, .7, .7, .7] },
-  kap:           { label: 'Südsommer',        risk: [.08, .08, .1, .15, .25, .3, .3, .3, .25, .15, .1, .08], ground: [.8, .8, .8, .75, .7, .65, .65, .65, .7, .75, .8, .8] },
-  usa:           { label: 'Sommer in den USA', risk: [.2, .2, .2, .2, .25, .3, .3, .3, .25, .2, .2, .2],     ground: [.8, .8, .8, .8, .8, .8, .8, .8, .8, .8, .8, .8] },
+export const CAMP_CLIMATE: Record<CampClimate, { risk: number[]; ground: number[]; label: string; temp: number[] }> = {
+  flachland:     { label: 'Mitteleuropa',     risk: [.65, .6, .4, .25, .15, .15, .15, .15, .2, .3, .5, .6],   ground: [.3, .35, .5, .7, .8, .85, .85, .85, .85, .75, .5, .35], temp: [3, 4, 9, 14, 19, 22, 24, 24, 20, 14, 8, 4] },
+  kueste:        { label: 'Küstenklima',      risk: [.7, .65, .45, .3, .2, .2, .2, .2, .25, .4, .6, .65],    ground: [.3, .3, .45, .6, .75, .8, .8, .8, .75, .6, .45, .35], temp: [3, 3, 7, 11, 16, 19, 21, 21, 18, 13, 8, 4] },
+  mittelgebirge: { label: 'Mittelgebirge',    risk: [.8, .75, .55, .35, .2, .2, .2, .2, .25, .4, .6, .75],   ground: [.15, .2, .35, .6, .75, .85, .85, .85, .8, .6, .35, .2], temp: [0, 1, 5, 10, 15, 18, 20, 20, 16, 11, 5, 1] },
+  alpen:         { label: 'Alpen',            risk: [.85, .8, .6, .4, .25, .2, .2, .2, .2, .35, .6, .8],     ground: [.1, .1, .3, .5, .7, .85, .9, .9, .85, .6, .3, .1], temp: [1, 3, 8, 12, 17, 20, 23, 22, 18, 13, 6, 2] },
+  hochalpen:     { label: 'Hochgebirge',      risk: [.9, .9, .8, .6, .4, .25, .25, .25, .3, .5, .8, .9],     ground: [.05, .05, .1, .3, .55, .8, .85, .85, .75, .45, .1, .05], temp: [-3, -2, 2, 6, 11, 15, 18, 17, 13, 8, 1, -2] },
+  mittelmeer:    { label: 'Mittelmeer',       risk: [.18, .15, .12, .1, .1, .2, .3, .3, .15, .12, .15, .2],  ground: [.75, .8, .85, .85, .8, .65, .55, .55, .7, .8, .8, .7], temp: [16, 17, 19, 21, 25, 29, 32, 32, 28, 24, 19, 16] },
+  atlantik:      { label: 'Kanaren-Klima',    risk: [.08, .08, .08, .08, .1, .12, .15, .15, .12, .1, .08, .08], ground: [.7, .7, .7, .7, .65, .6, .55, .55, .6, .65, .7, .7], temp: [21, 21, 22, 22, 23, 25, 27, 28, 27, 26, 24, 22] },
+  golf:          { label: 'Golfklima',        risk: [.03, .05, .1, .3, .6, .8, .85, .85, .7, .35, .1, .04],  ground: [.95, .95, .9, .8, .6, .5, .5, .5, .55, .8, .9, .95], temp: [24, 25, 29, 34, 39, 41, 42, 42, 40, 36, 30, 26] },
+  florida:       { label: 'Subtropen',        risk: [.12, .12, .12, .15, .25, .45, .5, .5, .45, .25, .15, .12], ground: [.85, .85, .85, .85, .8, .7, .65, .65, .7, .8, .85, .85], temp: [22, 23, 26, 28, 31, 32, 33, 33, 32, 29, 26, 23] },
+  asien:         { label: 'Sommer in Ostasien', risk: [.3, .3, .3, .3, .35, .45, .45, .45, .4, .3, .3, .3], ground: [.7, .7, .7, .7, .7, .7, .7, .7, .7, .7, .7, .7], temp: [8, 10, 15, 21, 26, 29, 32, 32, 28, 23, 17, 11] },
+  kap:           { label: 'Südsommer',        risk: [.08, .08, .1, .15, .25, .3, .3, .3, .25, .15, .1, .08], ground: [.8, .8, .8, .75, .7, .65, .65, .65, .7, .75, .8, .8], temp: [26, 27, 25, 23, 20, 18, 18, 18, 19, 21, 23, 25] },
+  usa:           { label: 'Sommer in den USA', risk: [.2, .2, .2, .2, .25, .3, .3, .3, .25, .2, .2, .2],     ground: [.8, .8, .8, .8, .8, .8, .8, .8, .8, .8, .8, .8], temp: [5, 7, 12, 18, 23, 28, 30, 29, 25, 19, 12, 6] },
 };
 
 export function campDestination(id: string): CampDestination | undefined {

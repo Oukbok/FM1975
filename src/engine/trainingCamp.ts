@@ -7,6 +7,7 @@ import { CAMP_CLIMATE, CAMP_DESTINATIONS, CampDestination, CampOpp } from '../da
 import { CampLodging, lodgingsFor } from '../data/campLodgings';
 import type { CampSeason } from '../game/winterShared';
 import type { CoachPhilosophy, CoachStyle } from '../types';
+import { CampProgram, programDef } from './campProgram';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const r1 = (v: number) => Math.round(v * 10) / 10;
@@ -28,11 +29,13 @@ export const CAMP_ALTITUDE_DELAY = 12;
 // -----------------------------------------------------------------------------
 export type CampFocus = 'ausgewogen' | 'kondition' | 'taktik' | 'teamgeist' | 'regeneration' | 'jugend';
 
-interface FocusDef {
+export interface FocusDef {
   label: string; text: string;
   fit: number; dev: number; form: number; morale: number; inj: number; disc: number;
   /** Frische bei Rückkehr (Punkte), Heilung laufender Verletzungen (Anteil der Lagertage). */
   frische: number; heal: number; sat: number; cost: number;
+  /** Lernen der Jungen (≤ 21) relativ zu `dev`; Chance auf Disziplingewinn (Faktor). Fehlt = 1. */
+  youth?: number; discGain?: number;
 }
 export const CAMP_FOCUS: Record<CampFocus, FocusDef> = {
   ausgewogen:   { label: 'Ausgewogen', text: 'Kondition, Taktik und Spielformen im üblichen Mix.', fit: 1, dev: 1, form: 1, morale: 1, inj: 1, disc: 1, frische: 0, heal: 0, sat: 0, cost: 1 },
@@ -40,8 +43,12 @@ export const CAMP_FOCUS: Record<CampFocus, FocusDef> = {
   taktik:       { label: 'Taktik', text: 'Spielzüge, Pressing, Standards, Videoanalyse. Bringt Entwicklung und Form, weniger Fitness.', fit: 0.8, dev: 1.5, form: 1.25, morale: 0.9, inj: 0.85, disc: 1, frische: 0, heal: 0, sat: 0, cost: 1.03 },
   teamgeist:    { label: 'Mannschaftsgeist', text: 'Gemeinsame Ausflüge, Abende, Rituale. Stärkt Moral und Zufriedenheit.', fit: 0.75, dev: 0.8, form: 1, morale: 2, inj: 0.8, disc: 1.1, frische: 2, heal: 0, sat: 3, cost: 1.06 },
   regeneration: { label: 'Regeneration', text: 'Wenig Umfänge, viel Physio. Frische Spieler, Verletzte kommen schneller zurück.', fit: 0.55, dev: 0.6, form: 1.15, morale: 1.2, inj: 0.45, disc: 1.2, frische: 12, heal: 0.7, sat: 1, cost: 1.08 },
-  jugend:       { label: 'Jugendintegration', text: 'Junge Spieler (bis 21) trainieren mit, bekommen Einsätze in den Testspielen und Anschluss an die Kabine.', fit: 0.9, dev: 0.85, form: 0.95, morale: 1, inj: 1, disc: 1, frische: 0, heal: 0, sat: 0, cost: 1 },
+  jugend:       { label: 'Jugendintegration', text: 'Junge Spieler (bis 21) trainieren mit, bekommen Einsätze in den Testspielen und Anschluss an die Kabine.', fit: 0.9, dev: 0.85, form: 0.95, morale: 1, inj: 1, disc: 1, frische: 0, heal: 0, sat: 0, cost: 1, youth: 2.4 / 0.85 },
 };
+/** Faktoren eines Lagers: Punkteverteilung (Planer) oder fester Schwerpunkt (KI, alte Buchungen). */
+export function focusDef(focus: CampFocus, program?: CampProgram): FocusDef {
+  return program ? programDef(program) : CAMP_FOCUS[focus];
+}
 export const CAMP_FOCUS_ORDER: CampFocus[] = ['ausgewogen', 'kondition', 'taktik', 'teamgeist', 'regeneration', 'jugend'];
 /** Alter, bis zu dem ein Spieler als Nachwuchs gilt (Jugendintegration). */
 export const CAMP_YOUTH_AGE = 21;
@@ -91,8 +98,8 @@ export function headsFactor(heads: number | undefined): number {
 }
 
 /** Kosten in 1975-Basis (ohne Kurzfrist-Aufschlag); `heads` = mitreisende Spieler (Planer). */
-export function campCostBase(d: CampDestination, l: CampLodging, days: number, rep: number, focus: CampFocus = 'ausgewogen', heads?: number): number {
-  return Math.round((d.travel + l.rate * days * CAMP_FOCUS[focus].cost) * entourageFactor(rep) * headsFactor(heads) / 100) * 100;
+export function campCostBase(d: CampDestination, l: CampLodging, days: number, rep: number, focus: CampFocus = 'ausgewogen', heads?: number, program?: CampProgram): number {
+  return Math.round((d.travel + l.rate * days * focusDef(focus, program).cost) * entourageFactor(rep) * headsFactor(heads) / 100) * 100;
 }
 
 // -----------------------------------------------------------------------------
@@ -157,6 +164,8 @@ export interface CampPlanInput {
   days: number; tests: number; year: number; rep: number;
   /** Starttag (ISO) für das Wetter des Monats; ohne: Juli bzw. Januar. */
   start?: string;
+  /** Punkteverteilung aus dem Planer (ersetzt den festen Schwerpunkt). */
+  program?: CampProgram;
 }
 
 export interface CampOutlook {
@@ -191,7 +200,7 @@ export interface CampOutlook {
 /** Erwartete Wirkung eines Lagers. */
 export function campOutlook(p: CampPlanInput): CampOutlook {
   const { d, l, focus, season, days, tests, year, rep } = p;
-  const f = CAMP_FOCUS[focus];
+  const f = focusDef(focus, p.program);
   const w = campWeather(d, campMonth(p.start, season));
   const turf = hasTurf(l, year), hall = hasHall(l, year);
   const cover = Math.min(0.8, (turf ? 0.6 : 0) + (hall ? 0.35 : 0));
@@ -206,7 +215,8 @@ export function campOutlook(p: CampPlanInput): CampOutlook {
   const trainShare = d.marketing >= 0.8 ? 0.45 : 1;
   const gym = gymLevel(l, year), regen = regenLevel(l, year);
   const kE = l.kitchen * kitchenWeight(year);
-  const runs = l.runs && (focus === 'kondition' || focus === 'ausgewogen') ? RUNS_FIT[l.runs] : 1;
+  const runsOn = p.program ? p.program.pts.kondition >= 3 : focus === 'kondition' || focus === 'ausgewogen';
+  const runs = l.runs && runsOn ? RUNS_FIT[l.runs] : 1;
   const alt = lodgingAltitude(d, l);
   const altShare = alt >= 1500 ? 0.45 : alt >= 1000 ? 0.15 : 0;
 
@@ -215,7 +225,7 @@ export function campOutlook(p: CampPlanInput): CampOutlook {
   const fitness = fitTotal * (alt >= 1500 ? 0.8 : alt >= 1000 ? 0.95 : 1);
   const altitudeFitness = fitTotal * altShare;
   const dev = work * 0.035 * pitch * cap * trainShare * f.dev;
-  const devYouth = focus === 'jugend' ? dev / f.dev * 2.4 : dev;
+  const devYouth = dev * (f.youth ?? 1);
   const o = OPP[d.opp];
   const formRaw = Math.min(6, work * 0.35 * (0.5 + 0.5 * pitch)) * trainShare * f.form * (0.9 + 0.1 * cap) + tests * o.form + kE * 0.3;
   const comfort = l.tier - 2;
@@ -223,9 +233,9 @@ export function campOutlook(p: CampPlanInput): CampOutlook {
   const satisfaction = Math.round(2 + comfort * 1.5 + f.sat);
   const starGrumble = l.tier === 1 && rep >= 70 ? 0.2 : l.tier === 1 && rep >= 60 ? 0.08 : 0;
   const injury = 0.0015 * days * (1 + (1 - pitch) * 2.2) * f.inj * (1 - 0.08 * regen) * (1 - 0.04 * gym)
-    * (l.runs === 'duenen' && focus === 'kondition' ? 1.08 : 1) + tests * o.inj;
+    * (l.runs === 'duenen' && (p.program ? p.program.pts.kondition >= 6 : focus === 'kondition') ? 1.08 : 1) + tests * o.inj;
   const discipline = clamp(l.lure * 0.22 * (1 - l.quiet * 0.5) * f.disc * 0.8, 0, 0.4);
-  const disciplineGain = focus === 'regeneration' ? 0 : clamp(l.quiet * 0.25 * (1 - l.lure), 0, 0.3);
+  const disciplineGain = !p.program && focus === 'regeneration' ? 0 : clamp(l.quiet * 0.25 * (1 - l.lure) * (f.discGain ?? 1), 0, 0.4);
   const travelFrische = d.transport === 'flug' ? d.travelH * 1.6 + Math.abs(d.tz) * 3 : d.travelH * (d.transport === 'bus' ? 0.8 : 0.5);
   const travelForm = Math.abs(d.tz) * 0.7 + (d.transport === 'flug' && d.travelH >= 8 ? 1 : 0);
   const campFrische = f.frische + regen * 2 - (alt >= 1500 ? 6 : 0);

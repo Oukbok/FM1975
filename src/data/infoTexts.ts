@@ -129,6 +129,11 @@ export const INFO_TEXTS = {
     text: 'Ein paar Tage abseits des Alltags im Sommer oder Winter. Je nach Ziel, Unterkunft und Schwerpunkt bringt es Fitness, Zusammenhalt oder Taktik – Reise und hartes Programm kosten aber Frische und Geld.',
     wiki: 'training-camps',
   },
+  campPoints: {
+    title: 'Punkteverteilung im Trainingslager',
+    text: 'Du verteilst 21 Punkte auf sieben Bereiche (höchstens 8 je Bereich). Drei je Bereich entsprechen dem ausgewogenen Lager; mehr Punkte verstärken die Wirkung des Bereichs, weniger schwächen sie. Die Punkte auf Taktik bezahlen die Taktik-Inhalte.',
+    wiki: 'training-camps',
+  },
   hoehentraining: {
     title: 'Höhentraining',
     text: 'Training in der Höhe wirkt verzögert: Erst einige Tage nach der Rückkehr steigt die Fitness spürbar. Direkt danach sind die Spieler eher müde.',

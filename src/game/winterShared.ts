@@ -12,6 +12,7 @@ import { CalendarEngine } from '../engine/calendar';
 import { findWinterBreak } from '../engine/winterBreak';
 import { Game } from './state';
 import type { CampFocus } from '../engine/trainingCamp';
+import type { CampProgram } from '../engine/campProgram';
 import { defaultLodging } from '../data/campLodgings';
 
 // -----------------------------------------------------------------------------
@@ -92,6 +93,8 @@ export interface CampBooking {
   /** Unterkunft/Anlage (data/campLodgings.ts) und Trainingsschwerpunkt; alte Stände: Standard per Migration. */
   lodgingId?: string;
   focus?: CampFocus;
+  /** Trainingsprogramm aus dem Planer (Punkte je Bereich + Taktik-Inhalte); fehlt = fester Schwerpunkt `focus`. */
+  program?: CampProgram;
   /** Anzahl Testspiele vor Ort. */
   tests: number;
   /** Gebuchte Kosten (nominal). */
@@ -137,6 +140,8 @@ export interface CampResult {
   cost: number; income: number; sponsor: number; fans: number;
   /** Höhentraining: Fitness nach der Rückkehr (eingetragen, sobald es greift). */
   altitude?: number; altitudeDue?: string;
+  /** Taktik-Inhalte: Anzahl Spieler mit +1 je Inhalt (nur Lager mit Programm). */
+  drills?: { id: string; label: string; up: number }[];
   best: CampPlayerDelta[]; worst: CampPlayerDelta[];
 }
 
@@ -156,6 +161,7 @@ export interface CampHistoryEntry {
   season: string; destId: string; campSeason: CampSeason; note: string;
   /** Ab dem Planer: Buchung, Zeitraum, Unterkunft, Schwerpunkt und gemessene Wirkung. */
   bookingId?: string; start?: string; end?: string; lodgingId?: string; focus?: CampFocus; result?: CampResult;
+  program?: CampProgram;
 }
 
 type WinterGame = Game & { indoor?: IndoorState; camps?: CampState };

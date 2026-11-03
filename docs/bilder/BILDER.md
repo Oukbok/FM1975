@@ -58,7 +58,7 @@ Priorität: **A** = sichtbar auf vielen Seiten bzw. großer Wow-Effekt, **B** = 
 | Datei | Motiv | Größe | Einsatz |
 |---|---|---|---|
 | `training/einheit-<baustein>.webp` | Illustrationsfotos je Trainingsbaustein (Sprint, Torschuss, Kopfball, Taktiktafel, Kraftraum, Regeneration …) | 400×400 | Kacheln im Wochenplan |
-| `camp/<ziel-id>.webp` | Ortsfoto je Trainingslager-Ziel (Berge, Küste, Wüste, Wald, Stadt), ohne Personen | 1600×1000 | Trainingslager-Planer (großes Ortsfoto, „aufgeklebt“) |
+| `camp/<ziel>.webp` | Ortsfoto je Trainingslager-Ziel (35 Ziele, Motive in `docs/bilder/camp.md`), ohne Personen, kühl | 1280×800 | Trainingslager-Planer (großes Ortsbild, „aufgeklebt“; freischalten in `src/data/campImages.ts`) |
 | `camp/karte-papier.webp` | Papierstruktur/Polaroid-Rahmen mit Klebestreifen | 800×800, Alpha | Aufgeklebte Karten im Planer |
 
 ## 7. Finanzen, Sponsoring, Fanartikel (B)
@@ -91,6 +91,7 @@ Werden beim Zusammenführen der Stränge ergänzt (Erstes Training, Trainingslag
 | Erfolge | `trophies/<form>.webp` | 12 Formen, siehe Abschnitt 4 | 1000×1100 | Vitrine (freischalten in `src/data/trophyImages.ts`) |
 | Saisonbudget | `budget/berater-<jahrzehnt>.webp` | Porträt des Finanzberaters/Schatzmeisters je Jahrzehnt (Anzug, Akten) | 160×184 (Quelle 640×736) | Budget-Fenster und Finanzen › Budget (Ersatz: gezeichnetes Gesicht) |
 | Neues Spiel / Ligensystem | `leagues/<liga-id>.webp` | Neutrales Liga-Emblem je Spielklasse (Schild/Wimpel, ohne echte Logos/Schrift), Stufe über Farbe/Metall | 64×64 (Quelle 256×256), Alpha | Ligensystem-Pyramide im Assistenten und Statistiken › Ligensystem (Ersatz: Flagge + Stufenzahl) |
+| Trainingslager | `camp/<ziel>.webp` | Ortsbild je Ziel (35 Ziele), Landschaft ohne Personen, kühl – Motive je Ziel in `docs/bilder/camp.md` | 1280×800 | Planer › Trainingsprogramm, großes Ortsbild (Ersatz: gezeichnete Landschaft je Typ; freischalten in `src/data/campImages.ts`) |
 
 ### Sponsoring (Strang sponsor3, Finanzen › Sponsoring)
 | Datei | Motiv | Größe | Einsatz |

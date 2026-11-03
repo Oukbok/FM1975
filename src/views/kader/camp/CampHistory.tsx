@@ -5,7 +5,7 @@
 import { campDestination } from '../../../data/campDestinations';
 import { campLodging } from '../../../data/campLodgings';
 import { campGrade } from '../../../engine/campPlan';
-import { CAMP_FOCUS } from '../../../engine/trainingCamp';
+import { campFocusLabel } from '../../../game/trainingCampGame';
 import type { CampHistoryEntry, CampPlayerDelta } from '../../../game/winterShared';
 import { Empty, KV } from '../../../ui/DashPage';
 import { fmtDM, fmtDay } from '../../../ui/format';
@@ -54,7 +54,7 @@ export function HistoryDetail({ h }: { h?: CampHistoryEntry }) {
       <div className="cp-hd-head">
         <div>
           <div className="cp-hd-title">{d?.name ?? h.destId}</div>
-          <div className="cp-hd-sub">{h.start && h.end ? `${fmtDay(h.start)} – ${fmtDay(h.end)}` : h.season} · {l?.name ?? ''} · {CAMP_FOCUS[h.focus ?? 'ausgewogen'].label}</div>
+          <div className="cp-hd-sub">{h.start && h.end ? `${fmtDay(h.start)} – ${fmtDay(h.end)}` : h.season} · {l?.name ?? ''} · {campFocusLabel(h)}</div>
         </div>
         <div className="cp-hd-score"><b>{r.score}</b><span>{campGrade(r.score)}</span></div>
       </div>
@@ -77,6 +77,7 @@ export function HistoryDetail({ h }: { h?: CampHistoryEntry }) {
           <KV k="Wetter" v={r.luck >= 1.05 ? 'bestes Wetter' : r.luck <= 0.92 ? 'Ausfälle durchs Wetter' : 'normal'} />
           <KV k="Kosten" v={fmtDM(r.cost)} color="var(--red)" />
           <KV k="Erlöse (Tests · Sponsor)" v={`${fmtDM(r.income)} · ${fmtDM(r.sponsor)}`} />
+          {r.drills?.length ? <KV k="Taktik-Inhalte (Spieler +1)" v={r.drills.map((x) => `${x.label} ${x.up}`).join(' · ')} /> : null}
           {r.fans ? <KV k="Fan-Stimmung" v={sgn(r.fans)} color={r.fans < 0 ? 'var(--red)' : undefined} /> : null}
         </div>
       </div>

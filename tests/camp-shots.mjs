@@ -136,7 +136,23 @@ else {
   const lods = page.locator('.cp-lodging:not([disabled])');
   if (await lods.count() > 1) await lods.last().click();
   await page.locator('.cp-foot button:has-text("Weiter")').click();
-  await page.locator('.cp-focus-b:has-text("Kondition")').click();
+  // Schritt 3: Trainingsprogramm – Vorlage Kondition, Punkte umschichten, Taktik-Inhalte wählen
+  await shot('5p_programm', 'modal');
+  await page.locator('.pp-preset:has-text("Kondition")').click();
+  await page.locator('button[aria-label="Regeneration weniger"]').click();
+  await page.locator('button[aria-label="Taktik mehr"]').click();
+  for (const t of ['Ecken', 'Spielaufbau', 'Freistöße']) {
+    const dr = page.locator(`.pp-drill:has-text("${t}") input`);
+    if (await dr.isEnabled()) await dr.check();
+  }
+  const left = await page.locator('.pp-left b').innerText();
+  const drills = await page.locator('.pp-drill.on').count();
+  console.log(`Programm: verbleibend ${left}, Inhalte ${drills}, Titel ${await page.locator('.pp-title').innerText()}`);
+  await shot('5q_programm_kondition', 'modal');
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await shot('5r_programm_1366', 'modal');
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.locator('.cp-foot button:has-text("Weiter")').click();
   // Einen Profi daheim lassen, einen Jugendspieler einladen
   const rows = page.locator('.cp-squad-main .cp-pl:not(.head)');
   if (await rows.count() > 20) await rows.last().click();

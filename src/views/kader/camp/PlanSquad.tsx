@@ -1,21 +1,15 @@
 // =============================================================================
-// TRAININGSLAGER-PLANER – Schritt 3: Reisegruppe (Profis, eingeladene Jugendspieler,
-// Verletzte zur Reha mit oder daheim), Trainingsschwerpunkt (mit Symbolen wie im
-// Trainingsplan) und Testspiele. Beide Listen sortierbar über die Spaltenköpfe.
+// TRAININGSLAGER-PLANER – Schritt 4: Reisegruppe (Profis, eingeladene Jugendspieler,
+// Verletzte zur Reha mit oder daheim). Schwerpunkt und Testspiele stehen in Schritt 3
+// (PlanProgram.tsx). Beide Listen sortierbar über die Spaltenköpfe.
 // =============================================================================
 import { useState } from 'react';
-import Icon from '../../../components/Icon';
-import { CAMP_FOCUS, CAMP_FOCUS_ORDER, CampFocus } from '../../../engine/trainingCamp';
 import { CAMP_YOUTH_MAX } from '../../../game/campResult';
 import type { Player } from '../../../types';
 import { vColor } from '../../../ui/format';
 import { PlayerFitness } from '../../../components/status';
 
 const POS_ORDER = ['TW', 'LIB', 'IV', 'RV', 'LV', 'DM', 'ZM', 'RM', 'LM', 'OM', 'RA', 'LA', 'HS', 'MS'];
-/** Symbole der Schwerpunkte – dieselben wie die Bausteine im Trainingsplan. */
-export const CAMP_FOCUS_ICON: Record<CampFocus, string> = {
-  ausgewogen: 'trCircuit', kondition: 'trEndurance', taktik: 'trTactics', teamgeist: 'trMental', regeneration: 'trRecovery', jugend: 'youth',
-};
 
 type SortKey = 'pos' | 'name' | 'age' | 'ovr' | 'fit' | 'st';
 const COLS: { k: SortKey; label: string }[] = [
@@ -69,15 +63,14 @@ function Row({ p, on, onToggle, youth }: { p: Player; on: boolean; onToggle: () 
   );
 }
 
-export function PlanSquad({ pros, youth, squad, invited, setSquad, setInvited, focus, setFocus, tests, setTests }: {
+export function PlanSquad({ pros, youth, squad, invited, setSquad, setInvited }: {
   pros: Player[]; youth: Player[]; squad: Set<string>; invited: Set<string>;
   setSquad: (s: Set<string>) => void; setInvited: (s: Set<string>) => void;
-  focus: CampFocus; setFocus: (f: CampFocus) => void; tests: number; setTests: (n: number) => void;
 }) {
   const [sortP, setSortP] = useState<Sort>({ k: 'pos', desc: false });
   const [sortY, setSortY] = useState<Sort>({ k: 'ovr', desc: true });
   const sorted = sortPlayers(pros, sortP);
-  const youthSorted = sortPlayers(youth.slice(0, 12), sortY);
+  const youthSorted = sortPlayers(youth.slice(0, 16), sortY);
   const toggle = (set: Set<string>, id: string, put: (s: Set<string>) => void, max = 99) => {
     const n = new Set(set);
     if (n.has(id)) n.delete(id); else if (n.size < max) n.add(id);
@@ -100,17 +93,6 @@ export function PlanSquad({ pros, youth, squad, invited, setSquad, setInvited, f
         </div>
       </section>
       <section className="cp-squad-side">
-        <div className="cp-sec">Schwerpunkt</div>
-        <div className="cp-focus">
-          {CAMP_FOCUS_ORDER.map((f) => (
-            <button key={f} className={`cp-focus-b ${focus === f ? 'on' : ''}`} onClick={() => setFocus(f)}>
-              <Icon name={CAMP_FOCUS_ICON[f]} size={26} /><span>{CAMP_FOCUS[f].label}</span>
-            </button>
-          ))}
-        </div>
-        <div className="cp-focus-text">{CAMP_FOCUS[focus].text}</div>
-        <label className="cp-dur"><span>Testspiele vor Ort <b>{tests}</b></span>
-          <input type="range" min={0} max={4} value={tests} onChange={(e) => setTests(Number(e.target.value))} /></label>
         <div className="cp-sec">Jugendspieler einladen <b>{invited.size}</b> / {CAMP_YOUTH_MAX}</div>
         {youth.length ? (
           <div className="cp-youth">
@@ -122,7 +104,7 @@ export function PlanSquad({ pros, youth, squad, invited, setSquad, setInvited, f
         ) : <div className="cp-hint">Keine Spieler aus der B- oder A-Jugend verfügbar.</div>}
         <div className="cp-hint">
           Eingeladene Talente lernen im Training mit den Profis besonders viel. Gesunde Profis, die zu Hause bleiben, sind teils enttäuscht.
-          {injuredAlong ? ` ${injuredAlong} Verletzte reisen mit – sinnvoll vor allem mit Schwerpunkt Regeneration.` : ''}
+          {injuredAlong ? ` ${injuredAlong} Verletzte reisen mit – sinnvoll vor allem mit vielen Punkten auf Regeneration.` : ''}
         </div>
       </section>
     </div>
