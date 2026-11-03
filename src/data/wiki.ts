@@ -1096,7 +1096,7 @@ Das Ergebnis wird auf 1–99 begrenzt. Deshalb kann ein Weltklasse-Stürmer als 
     id: 'position-skill',
     category: 'tactics',
     title: 'Positionsvertrautheit – mehrere Positionen lernen',
-    keywords: ['vertrautheit', 'position', 'nebenposition', 'positionstraining', 'umschulen', 'natürlich', 'grün'],
+    keywords: ['vertrautheit', 'position', 'nebenposition', 'positionstraining', 'umschulen', 'natürlich', 'grün', 'etikett', 'farbe', 'pos'],
     body: `## Positionsvertrautheit (0–100)
 Jeder Spieler hat für **jede** Position einen eigenen Vertrautheitswert. Im Spielerprofil siehst du oben auf dem kleinen Spielfeld je Position einen Punkt mit „Kürzel|Eignung“ – je grüner der Punkt, desto vertrauter:
 
@@ -1117,10 +1117,13 @@ Die meisten Spieler haben eine natürliche Position, ein bis zwei gute und einig
 ### Abbau
 Wer eine Position über ein Jahr nicht mehr spielt, verlernt sie langsam – nicht jeden Monat, sondern zufällig verzögert und umso langsamer, je näher der Wert an der Untergrenze liegt. Er fällt **nie unter 50 % seines Höchstwerts**. Die Stammposition und die gerade trainierte Position bauen nicht ab.
 
+### Positionsetiketten in den Listen
+Die Kürzel in Kader, Aufstellung, Transfermarkt usw. sind nach Mannschaftsteil gefärbt: **Torwart türkis**, **Abwehr grün** (LIB, IV, RV, LV), **Mittelfeld blau** (DM, ZM, RM, LM, OM), **Angriff rot** (RA, LA, HS, MS). Ein Spieler zeigt jede Position, auf der er mindestens **„gut“** (≥ 75) ist – die Stammposition immer. Vorne steht die Position, auf der er am **stärksten** ist (Positionseignung wie oben im Spielerprofil); bei Gleichstand die, auf der er in den **letzten 20 Spielen** am häufigsten stand. Kann er mehr als zwei Positionen, steht hinter den ersten beiden ein **„+“** – fährst du darüber (oder tippst darauf), siehst du alle mit Stufe und Eignung, dazu die „ausreichenden“. Auf dem Spielfeld der Aufstellung steht weiter nur die Position des Platzes, in derselben Farbe.
+
 ### Wirkung
 Die Vertrautheit ist der Vertrautheits-Faktor der **Positionseignung** (siehe dort) und wirkt damit überall: Match-Engine, Aufstellungs-KI, Eignungsfarben in der Aufstellung und Einwechslungen. Alle Vereine nutzen das System: Die KI stellt Spieler auch auf guten Nebenpositionen auf und lässt zu Saisonbeginn je Verein höchstens einen jungen Spieler eine Position lernen, auf der die Formation dünn besetzt ist.
 
-*Technik:* \`engine/positionSkill.ts\` (Erzeugung, Wachstum, Abbau), \`game/positionsGame.ts\` (Monat, KI, Nachrüstung), optionales Feld \`Player.positionSkill\`.`,
+*Technik:* \`engine/positionSkill.ts\` (Erzeugung, Wachstum, Abbau), \`game/positionsGame.ts\` (Monat, KI, Nachrüstung), optionales Feld \`Player.positionSkill\`; Etiketten \`components/PosBadge.tsx\` + \`ui/positionBadges.ts\`.`,
   },
   {
     id: 'positions-sides',

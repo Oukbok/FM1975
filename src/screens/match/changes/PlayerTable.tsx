@@ -31,7 +31,7 @@ export function PlayerTable({ sim, side, d, sel, onPick, onPlayer }: {
       <div key={m.id} className={`tm-cs-row ${onField ? 'field' : 'bench'} ${sel === m.id ? 'sel' : ''} ${tag ?? ''}`}
         role="button" tabIndex={0} onClick={() => onPick(m.id)} onKeyDown={(e) => { if (e.key === 'Enter') onPick(m.id); }}>
         <span className="tm-nr">{m.p.shirtNumber || ''}</span>
-        <span className="tm-pos">{onField ? pos : 'Bank'}</span>
+        <span className={`tm-pos ${onField ? posGroupClass(pos) : ''}`}>{onField ? pos : 'Bank'}</span>
         <span className={`tm-dim ${posGroupClass(m.p.naturalPosition)}`}>{m.p.naturalPosition}</span>
         <span className="tm-namecell">
           <button type="button" className="tm-plink tm-name" onClick={(e) => { e.stopPropagation(); onPlayer(m.id); }}>{m.p.firstName?.[0]}. {m.p.lastName}</button>

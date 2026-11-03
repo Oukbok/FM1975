@@ -63,7 +63,7 @@ tr.me:hover { background: rgba(255, 255, 255, 0.06); }
 .posb.posb-c { width: 72px; gap: 2px; }
 .posb.posb-1 { width: auto; }
 .posb:focus-visible { box-shadow: 0 0 0 1px var(--border); border-radius: 3px; }
-.pb-more { color: var(--text-3); font-weight: 700; font-size: 13px; line-height: 1; padding: 0 1px; }
+.pb-more { color: var(--text-2); font-weight: 700; font-size: 15px; line-height: 1; padding: 0 2px; }
 td.ctr > .posb { justify-content: flex-start; }
 /* Slot-/Kurzkürzel in Aufstellung und Textmodus: nur Schriftfarbe der Gruppe */
 .lu-card-pos[class*='pg-'], .lu-pos[class*='pg-'], .tm-pos[class*='pg-'], .tm-dim[class*='pg-'], .tm-sys-ps [class*='pg-'] {
