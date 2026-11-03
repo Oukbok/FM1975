@@ -25,7 +25,7 @@ import { isAiClub, monthsLeftOf, squadOf } from './aiClubs';
 import { sellAbroad } from './aiOffers';
 import { noteSquad } from './aiSquadLog';
 import { transferPlayer } from './contracts';
-import { freeAgentDestination, willJoin } from './playerWishesGame';
+import { preferredClub, willJoin } from './playerWishesGame';
 import { MIN_SQUAD, repairSquadLists, wageRatioOf } from './squads';
 import { logRenewal } from './transferLog';
 import { Game } from './state';
@@ -174,8 +174,13 @@ export function aiPreContracts(g: Game, today: string): void {
       // Wer abgelehnt hat, sucht aktiv; andere Leistungsträger nur gelegentlich.
       const chance = p.contract.refused ? 0.55 : isKeyPlayer(p, squad) ? 0.12 : 0.05;
       if (hashRand(`${p.id}|pre|${today}`) >= chance) continue;
-      const buyer = freeAgentDestination(g, p, club.id, () => hashRand(`${p.id}|preb|${today}`));
-      if (!buyer || !isAiClub(g, buyer) || buyer.playerIds.length >= 28) continue;
+      // Abnehmer für die neue Saison: KI-Vereine, bei denen er zu den besten 14 gehören würde
+      // (Kadergröße im Winter zählt nicht – zum 1. Juli wird ohnehin umgebaut).
+      const cands = Object.values(g.clubs).filter((b) => b.id !== club.id && isAiClub(g, b) && b.playerIds.length < 30
+        && (b.reputation ?? 60) >= (club.reputation ?? 60) - 6
+        && p.overall >= (squadOf(g, b).map((x) => x.overall).sort((a, z) => z - a)[13] ?? 0));
+      const buyer = cands.length ? preferredClub(g, p, cands, () => hashRand(`${p.id}|preb|${today}`)) : null;
+      if (!buyer) continue;
       p.contract.preContractClubId = buyer.id;
       g.aiMarket?.news.push(`${p.fullName} (${club.shortName}) unterschreibt Vorvertrag bei ${buyer.name}`);
       noteSquad(g, 'pre');

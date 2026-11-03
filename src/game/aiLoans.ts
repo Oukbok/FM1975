@@ -178,7 +178,7 @@ export function aiLoansSeasonEnd(g: Game, today: string, rng: () => number = Mat
     const parent = g.clubs[loan.fromClubId];
     const mineParent = parent?.id === g.managedClubId;
     const level = squadLevel11(squadOf(g, holder));
-    const wants = !loan.noOption && loan.optionFee > 0 && p.overall >= level - 4 && holder.finances.transferBudget >= loan.optionFee && rng() < 0.6;
+    const wants = !loan.noOption && loan.optionFee > 0 && p.overall >= level - 6 && holder.finances.balance > 0 && rng() < 0.6;
     if (wants || !parent) {
       p.loan = undefined;
       if (wants && parent) {
