@@ -74,7 +74,15 @@ export interface MPlayer {
   dribblesOk?: number;
   aerials?: number;
   aerialsWon?: number;
+  // --- Seitenlinie (Textmodus, engine/match/sideline.ts) ---
+  /** Minute, seit der sich der Ersatzspieler aufwärmt (null = sitzt). */
+  warmSince?: number | null;
+  /** Halbzeit (period), in der zuletzt ein Einzelgespräch geführt wurde (0 = keins). */
+  talked?: number;
 }
+
+/** Kurzes Einzelgespräch mit einem Spieler im Spiel (Wechsel-Bildschirm). */
+export type PlayerTalk = 'loben' | 'fordern' | 'beruhigen';
 
 export type ChanceKind = 'big' | 'normal' | 'long' | 'header' | 'freekick' | 'penalty' | 'counter' | 'solo';
 export type ShotOutcome = 'goal' | 'saved' | 'wide' | 'over' | 'post' | 'blocked';
@@ -86,7 +94,8 @@ export type SimEventKind =
   | 'et_start' | 'et_half' | 'et_second' | 'et_end'
   | 'flow' | 'attack_fail' | 'chance' | 'corner' | 'foul' | 'card' | 'offside'
   | 'injury' | 'sub' | 'mentality' | 'shout' | 'talk' | 'var' | 'stoppage'
-  | 'shootout_start' | 'shootout_kick' | 'shootout_end';
+  | 'shootout_start' | 'shootout_kick' | 'shootout_end'
+  | 'reshape' | 'warmup' | 'ptalk';
 
 /** Ein Ereignis der Live-Simulation (reicher als das gespeicherte MatchEvent). */
 export interface SimEvent {

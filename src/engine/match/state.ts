@@ -1,7 +1,8 @@
 // =============================================================================
 // Laufzeit-Zustand einer Mannschaft in der Simulation.
 // =============================================================================
-import type { Club } from '../../types';
+import type { Club, Tactics } from '../../types';
+import type { FormationSlot } from '../../data/formations';
 import type { MPlayer, Mentality, ShoutId, Side, TeamStats } from './types';
 import { tacticPlan, type TacticPlan } from './tacticPlan';
 import { refreshSkills } from './skills';
@@ -39,7 +40,16 @@ export interface TeamState {
   pitch: MPlayer[] | null;
   /** Zwischenspeicher der Feldspieler auf dem Platz. */
   field?: MPlayer[] | null;
+  /** Formation mit Slots und Belegung (Slot-ID → Spieler-ID) – Anzeige/Umstellung im Textmodus. */
+  layout?: { formation: string; slots: FormationSlot[]; map: Record<string, string> };
+  /** Taktik nur für dieses Spiel (Änderungen im Wechsel-Bildschirm); sonst gilt club.tactics. */
+  tactics?: Tactics;
+  /** Menschlicher Trainer: Co-Trainer wechselt selbst (autoSubs) – sonst wartet ein Verletzter auf dich. */
+  coach?: { autoSubs: boolean };
 }
+
+/** Taktik, die gerade gilt (Spiel-Taktik vor Vereins-Taktik). */
+export const tacticsOf = (t: TeamState): Tactics | undefined => t.tactics ?? t.club.tactics;
 
 export function emptyStats(): TeamStats {
   return {
@@ -62,8 +72,8 @@ export function initRefs(t: TeamState): void {
 /** Mannschaftsteile + Taktik neu berechnen. */
 export function refresh(t: TeamState, minute: number): void {
   const active = t.shout && minute < t.shoutUntil ? t.shout : null;
-  t.mods = tacticMods(t.club.tactics, t.mentality, active, active ? t.shoutPower : 0, t.talk);
-  t.plan = tacticPlan(t.club.tactics, t.year, t.mods);
+  t.mods = tacticMods(tacticsOf(t), t.mentality, active, active ? t.shoutPower : 0, t.talk);
+  t.plan = tacticPlan(tacticsOf(t), t.year, t.mods);
   t.units = computeUnits(onPitch(t), t.refs);
   t.dirty = false;
 }
