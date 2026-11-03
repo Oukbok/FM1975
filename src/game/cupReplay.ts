@@ -51,7 +51,7 @@ export function enableCupReplays(cup: CupState, calendar: GameCalendar, avoid?: 
     const from = CalendarEngine.addDays(r.date, isFinal ? MIN_GAP_DAYS : WANT_GAP_DAYS);
     const league = [...busy].filter((x) => x !== r.date);
     let d = isFinal
-      ? findSlotTiered({ preferred: pref, from, maxShift: 10, busy: league })
+      ? findSlotTiered({ preferred: pref, from, to: `${y + 1}-06-29`, maxShift: 10, busy: league }) // 30.6. = Saisonende
       : findCupSlot({ preferred: pref, from, maxShift: 10, skip: holiday }, era.cupDays, league, [...(euroWeeks ?? [])]);
     if (!d) { d = pref; while (busy.has(d)) d = CalendarEngine.addDays(d, 1); }
     busy.add(d);

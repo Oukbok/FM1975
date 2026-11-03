@@ -183,10 +183,28 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
 
   const upcoming = (g.activities ?? []).filter((a) => a.endDate >= today).sort((a, b) => a.startDate.localeCompare(b.startDate));
 
-  const nextEvents = g.calendar.events
-    .filter((e) => e.date >= today && !e.processed)
-    .sort((a, b) => a.date.localeCompare(b.date))
-    .slice(0, 10);
+  // Ein Eintrag je Termin: eigenes Ligaspiel mit Gegner (Nachholspiel/verlegt), übrige Spiele
+  // eines Spieltags zusammengefasst (Fr–Mo verteilt, game/fixtureWatch.ts).
+  const nextEvents = (() => {
+    const seen = new Set<string>();
+    const out: { id: string; date: string; title: string }[] = [];
+    for (const e of [...g.calendar.events].filter((x) => x.date >= today && !x.processed).sort((a, b) => a.date.localeCompare(b.date))) {
+      let title = e.title;
+      if (e.type === 'matchday') {
+        const m = g.fixtures.find((x) => x.id === e.matchId);
+        if (m?.involvesPlayerClub) {
+          const heim = m.homeClubId === g.managedClubId;
+          title = `Liga: ${g.clubs[heim ? m.awayClubId : m.homeClubId]?.name ?? ''} (${heim ? 'H' : 'A'})${m.moved?.makeup ? ' · Nachholspiel' : m.moved ? ' · verlegt' : ''}`;
+        } else if (m) title = `Spieltag ${m.matchday}${m.moved?.makeup ? ' (Nachholspiel)' : ''}`;
+      }
+      const key = `${e.date}|${title}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push({ id: e.id, date: e.date, title });
+      if (out.length >= 10) break;
+    }
+    return out;
+  })();
 
   return (
     <DashPage>

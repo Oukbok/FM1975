@@ -15,6 +15,7 @@
 // =============================================================================
 
 import { calendarEra } from '../data/matchCalendarRules';
+import { cupReplay } from '../data/euroFormats';
 import { findCupSlot, findSlotTiered, wdOf } from './fixtureRules';
 import type { Club, Player, PointSystem, CupState, CupRound, CupTie, Match } from '../types';
 import { MatchEngine } from './match';
@@ -118,7 +119,8 @@ function scheduleRoundDates(
   const out: string[] = [];
   const y0 = Number(preferred[0].slice(0, 4));
   const era = calendarEra(y0);
-  const seasonEnd = `${y0 + 1}-06-30`;
+  // Der 30.6. wird vom Tagesablauf nicht mehr verarbeitet (Saisonende): letzter Spieltermin 29.6.
+  const seasonEnd = `${y0 + 1}-06-29`;
   const lastLeague = [...leagueDates].filter((d) => d <= seasonEnd).sort().pop() ?? preferred[preferred.length - 1];
   let prev = earliest;
   for (let i = 0; i < preferred.length; i++) {
@@ -127,7 +129,8 @@ function scheduleRoundDates(
     let pref = isFinal ? addDays(lastLeague, 7 + ((6 - wdOf(addDays(lastLeague, 7)) + 7) % 7)) : preferred[i];
     if (pref < minDate) pref = minDate;
     const days = isFinal ? [6] : era.cupDays;
-    const q = { preferred: pref, from: minDate, to: isFinal ? seasonEnd : undefined, maxShift: 21 };
+    // Finale mit möglichem Wiederholungsspiel (bis 1976/77) zwei Tage früher fertig.
+    const q = { preferred: pref, from: minDate, to: isFinal ? (cupReplay(y0, true) ? addDays(seasonEnd, -2) : seasonEnd) : undefined, maxShift: 21 };
     const league = [...leagueDates], euro = [...soft];
     let d = findCupSlot(q, days, league, euro)
       ?? findSlotTiered({ ...q, maxShift: 30, preferEarlier: true, busy: league });

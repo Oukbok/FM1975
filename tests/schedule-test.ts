@@ -92,7 +92,7 @@ for (let y = 1975; y <= toYear; y++) {
     cup.rounds.forEach((r, i) => {
       const fin = i === cup.rounds.length - 1;
       check(fin ? wdOf(r.date) === 6 || r.date > `${y + 1}-06-20` : era.cupDays.includes(wdOf(r.date)) || [2, 3, 4].includes(wdOf(r.date)), `${tag}: Pokal ${r.name} am ${r.date} (Wochentag ${wdOf(r.date)})`);
-      check(r.date <= `${y + 1}-06-30`, `${tag}: Pokal ${r.name} nach Saisonende`);
+      check(r.date <= `${y + 1}-06-29`, `${tag}: Pokal ${r.name} nach Saisonende`);
     });
     for (const comp of ['ec', 'cwc', 'uefa'] as EuroCompId[]) {
       const c = g.euroCups?.[comp]; const fmt = euroFormat(comp, y);
@@ -114,7 +114,7 @@ for (let y = 1975; y <= toYear; y++) {
     const deadline = base.get(mds[mds.length - MAKEUP_BEFORE_LAST])!;
     const wb = findWinterBreak([...base.values()], y);
     for (const m of g.fixtures) {
-      check(m.date >= `${y}-07-15` && m.date <= `${y + 1}-06-30`, `${tag}: Spiel ${m.id} am ${m.date}`);
+      check(m.date >= `${y}-07-15` && m.date <= `${y + 1}-06-29`, `${tag}: Spiel ${m.id} am ${m.date}`);
       if (!m.moved) continue;
       if (v.tier === 1 && v.size === 18) {
         if (m.moved.makeup) { st.ppd++; if (/-(12|01|02)-/.test(m.moved.orig)) st.ppdWinter++; if (m.involvesPlayerClub) st.ppdOwn++; } else st.moved++;
