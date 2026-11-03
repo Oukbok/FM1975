@@ -25,6 +25,8 @@ import { hasScheduledDraw } from './cupDraw';
 import { hashSeed, type Game } from './state';
 
 const startYearOf = (cup: CupState) => Number(cup.season.slice(0, 4));
+/** Keine Wiederholungsspiele über die Feiertage (21.12.–6.1.). */
+const holiday = (d: string) => { const md = d.slice(5); return md >= '12-21' || md <= '01-06'; };
 
 /**
  * Neuer Pokal (noch nichts gelost): Wiederholungstermine anlegen und Modus markieren.
@@ -50,7 +52,7 @@ export function enableCupReplays(cup: CupState, calendar: GameCalendar, avoid?: 
     const league = [...busy].filter((x) => x !== r.date);
     let d = isFinal
       ? findSlotTiered({ preferred: pref, from, maxShift: 10, busy: league })
-      : findCupSlot({ preferred: pref, from, maxShift: 10 }, era.cupDays, league, [...(euroWeeks ?? [])]);
+      : findCupSlot({ preferred: pref, from, maxShift: 10, skip: holiday }, era.cupDays, league, [...(euroWeeks ?? [])]);
     if (!d) { d = pref; while (busy.has(d)) d = CalendarEngine.addDays(d, 1); }
     busy.add(d);
     r.dates = [r.date, d];

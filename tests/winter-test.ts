@@ -186,7 +186,7 @@ function runWinter(g: Game, season: string, beforeEachDay?: (d: string) => void)
   const fit0 = own.playerIds.reduce((s, id) => s + g.players[id].attributes.fitness, 0);
   let guard = 0;
   let bookedWinter = false;
-  while (g.calendar.currentDate < '1976-01-05' && guard++ < 400) {
+  while (g.calendar.currentDate < '1976-01-16' && guard++ < 400) { // Winterfenster bis 14.1. (Halle nie neben Pflichtspielen)
     const today = g.calendar.currentDate;
     if (!bookedWinter && today >= '1975-11-10' && indoorState(g).current?.tournaments.length) {
       bookedWinter = true;
