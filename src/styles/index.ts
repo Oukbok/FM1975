@@ -31,6 +31,7 @@ import './27-briefing.css';
 import './28-season-intro.css';
 import './28-stadium.css';
 import './28-draw.css';
+import './28-indoor.css';
 import './28-transfer2.css';
 import './28-sponsor.css';
 import './28-positions.css';

@@ -146,6 +146,7 @@ Werden beim Zusammenführen der Stränge ergänzt (Erstes Training, Trainingslag
 | Training | `training/spieltag-<epoche>.webp` | Matchball/Stollenschuh-Stillleben je Epoche (70er Leder, 90er, heute), kühl | 160×320 | Spieltag-Spalte im Ringbuch (Ersatz: Ball-Symbol + Wappen) |
 | Neues Spiel / Ligensystem | `leagues/<liga-id>.webp` | Neutrales Liga-Emblem je Spielklasse (Schild/Wimpel, ohne echte Logos/Schrift), Stufe über Farbe/Metall | 64×64 (Quelle 256×256), Alpha | Ligensystem-Pyramide im Assistenten und Statistiken › Ligensystem (Ersatz: Flagge + Stufenzahl) |
 | Trainingslager | `camp/<ziel>.webp` | Ortsbild je Ziel (35 Ziele), Landschaft ohne Personen, kühl – Motive je Ziel in `docs/bilder/camp.md` | 1280×800 | Planer › Trainingsprogramm, großes Ortsbild (Ersatz: gezeichnete Landschaft je Typ; freischalten in `src/data/campImages.ts`) |
+| Hallenturnier | `indoor/halle-{70er,80er,90er,2000er}.webp` | Halleninneres je Epoche: Tribünen rundum, Rundumbande mit neutralen Werbeflächen, Hallenlicht unter dem Stahldach; 70er/80er heller Kunststoffboden, ab 90er Kunstrasen-Teppich und Videowürfel; ohne erkennbare Personen/Logos, entsättigt, kühl abgedunkelt | 1920×1080 | Hintergrund der Hallen-Show, Bühne „Nächstes Spiel“ und Siegerehrung (Ersatz: gezeichnete Halle `screens/indoor/IndoorHall.tsx`; freischalten in `src/data/indoorImages.ts`) |
 
 ### Sponsoring (Strang sponsor3, Finanzen › Sponsoring)
 | Datei | Motiv | Größe | Einsatz |

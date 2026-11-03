@@ -52,6 +52,8 @@ export interface IndoorWinter {
   /** Vereine, die ihren Endrunden-Platz nicht wahrgenommen haben. */
   mastersDeclined?: string[];
   finished?: boolean;
+  /** Turnier deines Vereins, das gerade als Show wartet (screens/indoor/, game/indoorGame.ts). */
+  live?: string;
 }
 
 export interface IndoorHistoryEntry {

@@ -85,7 +85,7 @@ export function indoorStrength(squad: Player[]): number {
   return 0.25 * twv + 0.68 * fAvg + 0.07 * bench;
 }
 
-function poisson(lambda: number, rng: Rng): number {
+export function poisson(lambda: number, rng: Rng): number {
   const L = Math.exp(-lambda);
   let k = 0, p = 1;
   do { k++; p *= rng(); } while (p > L && k < 30);
@@ -97,24 +97,42 @@ function poisson(lambda: number, rng: Rng): number {
  * (Endspiele der Masters: 5:3, 6:3, 4:4 … [indoorHistory S2]); Stärkeunterschiede
  * wirken gedämpfter als auf dem Feld (kleiner Raum, Bande, Zufall).
  */
-export function simIndoorMatch(a: IndoorEntrant, b: IndoorEntrant, stage: IndoorStage, rng: Rng): IndoorMatch {
+/** Torerwartung eines Hallenspiels (Zeitstrafe gewürfelt, genau ein Zufallswert). */
+export interface IndoorRates {
+  minutes: number; la: number; lb: number;
+  /** Zeitstrafe gegen Mannschaft a bzw. b (der Gegner bekommt +0,5 Tore Erwartung). */
+  penaltyAgainst?: 'a' | 'b';
+}
+export function indoorRates(a: IndoorEntrant, b: IndoorEntrant, stage: IndoorStage, rng: Rng): IndoorRates {
   const minutes = stage === 'A' || stage === 'B' ? INDOOR_MINUTES.group : INDOOR_MINUTES.knockout;
   const diff = clamp(a.strength - b.strength, -30, 30);
-  let la = minutes * 0.2 * Math.exp(diff / 40);
-  let lb = minutes * 0.2 * Math.exp(-diff / 40);
-  let note: string | undefined;
+  const r: IndoorRates = { minutes, la: minutes * 0.2 * Math.exp(diff / 40), lb: minutes * 0.2 * Math.exp(-diff / 40) };
   // Zwei-Minuten-Strafe (Wechselfehler, Foul an der Bande) [indoorHistory S1/S4].
   const pen = rng();
-  if (pen < 0.07) { lb += 0.5; note = 'Zeitstrafe gegen ' + a.id; }
-  else if (pen < 0.14) { la += 0.5; note = 'Zeitstrafe gegen ' + b.id; }
-  const m: IndoorMatch = { a: a.id, b: b.id, ga: poisson(la, rng), gb: poisson(lb, rng), stage };
-  if (note) m.note = note;
+  if (pen < 0.07) { r.lb += 0.5; r.penaltyAgainst = 'a'; }
+  else if (pen < 0.14) { r.la += 0.5; r.penaltyAgainst = 'b'; }
+  return r;
+}
+
+/** Trefferquote im Neunmeterschießen. */
+export const NINE_METER_HIT = 0.72;
+
+/**
+ * Ein Hallenspiel. Torerwartung ≈ 0,2 Tore je Minute und Mannschaft bei Gleichstand
+ * (Endspiele der Masters: 5:3, 6:3, 4:4 … [indoorHistory S2]); Stärkeunterschiede
+ * wirken gedämpfter als auf dem Feld (kleiner Raum, Bande, Zufall). Der Textmodus
+ * (engine/indoorMatch.ts) zerlegt dieselbe Erwartung in Minuten.
+ */
+export function simIndoorMatch(a: IndoorEntrant, b: IndoorEntrant, stage: IndoorStage, rng: Rng): IndoorMatch {
+  const r = indoorRates(a, b, stage, rng);
+  const m: IndoorMatch = { a: a.id, b: b.id, ga: poisson(r.la, rng), gb: poisson(r.lb, rng), stage };
+  if (r.penaltyAgainst) m.note = 'Zeitstrafe gegen ' + (r.penaltyAgainst === 'a' ? a.id : b.id);
   if (stage !== 'A' && stage !== 'B' && m.ga === m.gb) {
     // Neunmeterschießen: je drei Schützen, danach Entscheidung.
     let pa = 0, pb = 0;
-    for (let i = 0; i < 3; i++) { if (rng() < 0.72) pa++; if (rng() < 0.72) pb++; }
+    for (let i = 0; i < 3; i++) { if (rng() < NINE_METER_HIT) pa++; if (rng() < NINE_METER_HIT) pb++; }
     let guard = 0;
-    while (pa === pb && guard++ < 20) { if (rng() < 0.72) pa++; if (rng() < 0.72) pb++; }
+    while (pa === pb && guard++ < 20) { if (rng() < NINE_METER_HIT) pa++; if (rng() < NINE_METER_HIT) pb++; }
     if (pa === pb) pa++;
     m.pa = pa; m.pb = pb;
   }
@@ -133,13 +151,12 @@ export function sortRows(rows: IndoorRow[]): IndoorRow[] {
   return [...rows].sort((x, y) => y.pts - x.pts || (y.gf - y.ga) - (x.gf - x.ga) || y.gf - x.gf || x.id.localeCompare(y.id));
 }
 
-/** Rundenturnier einer Gruppe. */
-function playGroup(ids: string[], strength: Map<string, number>, stage: 'A' | 'B', winPts: number, rng: Rng, out: IndoorMatch[]): IndoorRow[] {
+/** Tabelle einer Gruppe aus den gespielten Spielen (auch für die Live-Show). */
+export function groupTable(ids: string[], matches: IndoorMatch[], winPts: number): IndoorRow[] {
   const rows = new Map(ids.map((id) => [id, emptyRow(id)]));
-  for (let i = 0; i < ids.length; i++) for (let j = i + 1; j < ids.length; j++) {
-    const m = simIndoorMatch({ id: ids[i], strength: strength.get(ids[i])! }, { id: ids[j], strength: strength.get(ids[j])! }, stage, rng);
-    out.push(m);
-    const ra = rows.get(ids[i])!, rb = rows.get(ids[j])!;
+  for (const m of matches) {
+    const ra = rows.get(m.a), rb = rows.get(m.b);
+    if (!ra || !rb) continue;
     ra.p++; rb.p++; ra.gf += m.ga; ra.ga += m.gb; rb.gf += m.gb; rb.ga += m.ga;
     if (m.ga > m.gb) { ra.w++; rb.l++; ra.pts += winPts; }
     else if (m.ga < m.gb) { rb.w++; ra.l++; rb.pts += winPts; }
@@ -148,16 +165,43 @@ function playGroup(ids: string[], strength: Map<string, number>, stage: 'A' | 'B
   return sortRows([...rows.values()]);
 }
 
+/** Rundenturnier einer Gruppe. */
+function playGroup(ids: string[], strength: Map<string, number>, stage: 'A' | 'B', winPts: number, rng: Rng, out: IndoorMatch[]): IndoorRow[] {
+  const own: IndoorMatch[] = [];
+  for (let i = 0; i < ids.length; i++) for (let j = i + 1; j < ids.length; j++) {
+    own.push(simIndoorMatch({ id: ids[i], strength: strength.get(ids[i])! }, { id: ids[j], strength: strength.get(ids[j])! }, stage, rng));
+  }
+  out.push(...own);
+  return groupTable(ids, own, winPts);
+}
+
+/** Zwei Gruppen in Schlangenlinie nach Stärke (gleich starke Vereine per Zufall). */
+export function seedGroups(entrants: IndoorEntrant[], rng: Rng): [string[], string[]] {
+  const seeded = [...entrants].sort((x, y) => y.strength - x.strength || (rng() - 0.5));
+  const gA: string[] = [], gB: string[] = [];
+  seeded.forEach((e, i) => { const row = Math.floor(i / 2); ((row % 2 === 0) === (i % 2 === 0) ? gA : gB).push(e.id); });
+  return [gA, gB];
+}
+
+/** Endplatzierung aus Gruppentabellen und K.-o.-Spielen (Halbfinale 1/2, Platz 3, Finale). */
+export function finalRanking(tA: IndoorRow[], tB: IndoorRow[], sf1: IndoorMatch, sf2: IndoorMatch, p3: IndoorMatch, fin: IndoorMatch): string[] {
+  const w1 = winnerOf(sf1)!, w2 = winnerOf(sf2)!;
+  const l1 = w1 === sf1.a ? sf1.b : sf1.a, l2 = w2 === sf2.a ? sf2.b : sf2.a;
+  const champ = winnerOf(fin)!;
+  const third = winnerOf(p3)!;
+  const rest = sortRows([...tA.slice(2), ...tB.slice(2)]).map((r) => r.id);
+  return [champ, champ === fin.a ? fin.b : fin.a, third, third === p3.a ? p3.b : p3.a, ...rest];
+}
+
 /**
  * Ein ganzes Turnier: zwei Gruppen (Schlangenlinie nach Stärke), Halbfinale über
  * Kreuz, Spiel um Platz 3, Finale. 6 Teams → Dreiergruppen, 8 Teams → Vierergruppen.
  * `winPts` = Punkte für einen Sieg (2 bis 1995, danach 3 – wie in der Liga).
+ * Live-Variante mit eigenem Textmodus: engine/indoorLive.ts.
  */
 export function runIndoorTournament(entrants: IndoorEntrant[], winPts: number, rng: Rng): IndoorResult {
   const strength = new Map(entrants.map((e) => [e.id, e.strength]));
-  const seeded = [...entrants].sort((x, y) => y.strength - x.strength || (rng() - 0.5));
-  const gA: string[] = [], gB: string[] = [];
-  seeded.forEach((e, i) => { const row = Math.floor(i / 2); ((row % 2 === 0) === (i % 2 === 0) ? gA : gB).push(e.id); });
+  const [gA, gB] = seedGroups(entrants, rng);
   const matches: IndoorMatch[] = [];
   const tA = playGroup(gA, strength, 'A', winPts, rng, matches);
   const tB = playGroup(gB, strength, 'B', winPts, rng, matches);
@@ -170,11 +214,7 @@ export function runIndoorTournament(entrants: IndoorEntrant[], winPts: number, r
   const p3 = simIndoorMatch(ent(l1), ent(l2), 'P3', rng);
   const fin = simIndoorMatch(ent(w1), ent(w2), 'F', rng);
   matches.push(p3, fin);
-  const champ = winnerOf(fin)!;
-  const third = winnerOf(p3)!;
-  const rest = sortRows([...tA.slice(2), ...tB.slice(2)]).map((r) => r.id);
-  const ranking = [champ, champ === w1 ? w2 : w1, third, third === l1 ? l2 : l1, ...rest];
-  return { groups: [gA, gB], tables: [tA, tB], matches, ranking };
+  return { groups: [gA, gB], tables: [tA, tB], matches, ranking: finalRanking(tA, tB, sf1, sf2, p3, fin) };
 }
 
 /** Tour-Wertung: alle Spiele eines Vereins über die Qualifikationsturniere. */

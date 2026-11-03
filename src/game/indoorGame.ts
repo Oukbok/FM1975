@@ -10,7 +10,7 @@ import {
   topClubEnthusiasm, tournamentCount, tournamentFeeBase, venuesFor, winterYearOf,
 } from '../data/indoorHistory';
 import {
-  INDOOR_SQUAD_LABEL, IndoorEntrant, IndoorSquad, TourStat, addResultToTour, indoorStrength, pickIndoorSquad,
+  INDOOR_SQUAD_LABEL, IndoorEntrant, IndoorResult, IndoorSquad, TourStat, addResultToTour, indoorSkill, indoorStrength, pickIndoorSquad,
   runIndoorTournament, tourRanking, winnerOf,
 } from '../engine/indoor';
 import { CalendarEngine } from '../engine/calendar';
@@ -19,12 +19,13 @@ import { book } from '../engine/finances';
 import { recordInjury } from '../engine/history';
 import { hashStr, mulberry32 } from '../engine/leagues';
 import { createMatchInjury } from '../engine/match/finish';
-import { makeMessage, pushMessage } from '../engine/messages';
 import { ensureBrand } from '../engine/clubEconomy';
 import { Player } from '../types';
-import { fmtDM, fmtDay } from '../ui/format';
 import { addTitleRecord } from './clubRecords';
 import { CHOICE_HANDLERS } from './eventsGame';
+import { declinePenalty, indoorName, indoorShort, mastersNews, ownResultMessage, sendInvite } from './indoorNews';
+
+export { indoorName, indoorShort };
 import { Game, bumpMorale } from './state';
 import {
   IndoorDecision, IndoorHistoryEntry, IndoorKind, IndoorTournament, IndoorWinter, competitiveDays, daysBetween, indoorState, ownCampDays,
@@ -33,14 +34,6 @@ import {
 
 type Rng = () => number;
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
-
-/** Anzeigename eines Teilnehmers (voller Verein, Ligaverein, Amateur oder Auslandsgast). */
-export function indoorName(g: Game, id: string): string {
-  return g.clubs[id]?.name ?? g.simClubs[id]?.name ?? g.euroClubs?.[id]?.name ?? id;
-}
-export function indoorShort(g: Game, id: string): string {
-  return g.clubs[id]?.shortName ?? g.simClubs[id]?.shortName ?? g.euroClubs?.[id]?.shortName ?? id;
-}
 
 // -----------------------------------------------------------------------------
 // Teilnehmer-Pool
@@ -216,36 +209,6 @@ export function setupIndoorWinter(g: Game, today: string): IndoorWinter {
   return cur;
 }
 
-function sendInvite(g: Game, t: IndoorTournament, today: string): void {
-  const club = g.clubs[g.managedClubId];
-  const scale = economyScale(yearOf(t.date));
-  const fee = t.kind === 'masters' ? mastersMoney(winterYearOf(g.season)).start : Math.round(tournamentFeeBase(club.reputation) * scale);
-  const others = t.clubIds.filter((id) => id !== g.managedClubId).map((id) => indoorName(g, id));
-  const deadline = CalendarEngine.addDays(t.date, -2) > today ? CalendarEngine.addDays(t.date, -2) : today;
-  const masters = t.kind === 'masters';
-  const msg = makeMessage({
-    date: today, category: 'cup', from: masters ? 'DFB-Spielausschuss' : `Veranstalter ${t.city}`,
-    subject: masters ? `Qualifiziert für das ${t.name}` : `Einladung: ${t.name} (${fmtDay(t.date)})`,
-    shortText: masters ? `Endrunde in der ${t.hall}, ${t.city}. Teilnehmen?` : `${t.hall}, ${t.city}. Antrittsgeld ${fmtDM(fee)}.`,
-    bodyText: (masters
-      ? `Glückwunsch: Über die Hallentour habt ihr euch für die Endrunde des DFB-Hallenpokals qualifiziert – ${t.days} Tage in der ${t.hall} (${t.city}) ab ${fmtDay(t.date)}.\n\n`
-      : `Wir laden euch zum ${t.name} in die ${t.hall} ein (${fmtDay(t.date)}).\n\nBisher zugesagt: ${others.join(', ') || 'noch offen'}.\n\n`)
-      + `Antrittsgeld: ${fee > 0 ? fmtDM(fee) : 'keines'}${masters ? ' – dazu Prämien nach Platzierung' : ' – der Turniersieger bekommt eine Prämie'}.\n\n`
-      + `Fünf Feldspieler plus Torwart, Rundumbande, kurze Spielzeiten. Gut für Spielpraxis von Reservisten und für die Fans – `
-      + `aber der Hallenboden ist hart: Prellungen und Bänderverletzungen sind keine Seltenheit, und die Winterpause wird kürzer.\n\n`
-      + `Du kannst Stammkräfte schicken, gemischt antreten oder den Nachwuchs spielen lassen. Eine Absage verärgert ${masters ? 'den DFB und die Fans' : 'den Veranstalter und die Fans'}.`,
-    actionRequired: true,
-  });
-  msg.choices = [
-    { id: 'stars', label: 'Zusagen – Stammkräfte', hint: 'Beste Titelchance, höchstes Verletzungsrisiko für Leistungsträger' },
-    { id: 'mix', label: 'Zusagen – gemischt', hint: 'Drei Stammkräfte, Rest Reservisten' },
-    { id: 'youth', label: 'Zusagen – Nachwuchs', hint: 'Spielpraxis für Junge, Stars werden geschont' },
-    { id: 'decline', label: 'Absagen', hint: 'Keine Belastung – aber Ärger bei Veranstalter und Fans' },
-  ];
-  msg.eventRef = { type: 'indoor_invite', deadline, defaultChoice: 'mix', data: { tid: t.id } };
-  pushMessage(g.messages, msg);
-}
-
 /** Alle Turniere des laufenden Winters (inkl. Endrunde). */
 export function allTournaments(cur: IndoorWinter | undefined): IndoorTournament[] {
   return cur ? [...cur.tournaments, ...(cur.masters ? [cur.masters] : [])] : [];
@@ -291,26 +254,52 @@ CHOICE_HANDLERS.indoor_invite = (g, ref, choice) => {
 // -----------------------------------------------------------------------------
 // Tagesablauf (game/day.ts)
 // -----------------------------------------------------------------------------
-export function indoorDaily(g: Game, today: string): void {
+/**
+ * `show` (Oberfläche, game/day.ts): true = das Turnier deines Vereins wird heute als
+ * Show gespielt (screens/indoor/) – dann nur vorbereiten und `cur.live` setzen.
+ * Rückgabe: true, wenn eine Show wartet.
+ */
+export function indoorDaily(g: Game, today: string, show?: (t: IndoorTournament) => boolean): boolean {
   const st = indoorState(g);
   const y0 = parseInt(g.season.slice(0, 4), 10);
   if (!st.current || st.current.season !== g.season) {
-    if (today < `${y0}-11-01` || today > `${y0 + 1}-02-28`) return;
+    if (today < `${y0}-11-01` || today > `${y0 + 1}-02-28`) return false;
     if (st.current && !st.current.finished) finishWinter(g, today);
     st.current = setupIndoorWinter(g, today);
   }
   const cur = st.current;
-  if (cur.phase === 'none' || cur.finished) return;
+  if (cur.phase === 'none' || cur.finished) return false;
+  // Eine Show, die über ihren Tag hinaus offen blieb (Laden, Einstellung), läuft im Hintergrund.
+  if (cur.live) {
+    const lt = allTournaments(cur).find((x) => x.id === cur.live);
+    if (!lt || lt.done) cur.live = undefined;
+    else if (CalendarEngine.addDays(lt.date, lt.days - 1) < today) playIndoorShowHeadless(g);
+    else return true;
+  }
+  const due = (t: IndoorTournament) => !t.done && CalendarEngine.addDays(t.date, t.days - 1) <= today;
+  const startShow = (t: IndoorTournament): boolean => {
+    if (!show || !t.clubIds.includes(g.managedClubId) || t.own === 'decline' || !show(t)) return false;
+    prepareTournament(g, cur, t, today, mulberry32(hashStr(`${g.season}|${t.id}|${g.managedClubId}`)));
+    if (!t.clubIds.includes(g.managedClubId)) return false;
+    cur.live = t.id;
+    return true;
+  };
   for (const t of cur.tournaments) {
-    if (!t.done && CalendarEngine.addDays(t.date, t.days - 1) <= today) playTournament(g, cur, t, today);
+    if (!due(t)) continue;
+    if (startShow(t)) return true;
+    playTournament(g, cur, t, today);
   }
   if (cur.masters) {
     const m = cur.masters;
     const quali = cur.tournaments.every((t) => t.done) || today >= CalendarEngine.addDays(m.date, -1);
     if (!m.clubIds.length && quali) buildMastersField(g, cur, today);
-    if (!m.done && m.clubIds.length && CalendarEngine.addDays(m.date, m.days - 1) <= today) playTournament(g, cur, m, today);
+    if (m.clubIds.length && due(m)) {
+      if (startShow(m)) return true;
+      playTournament(g, cur, m, today);
+    }
   }
   if (allTournaments(cur).every((t) => t.done) && (!cur.masters || cur.masters.done)) finishWinter(g, today);
+  return false;
 }
 
 function buildMastersField(g: Game, cur: IndoorWinter, today: string): void {
@@ -338,17 +327,18 @@ function buildMastersField(g: Game, cur: IndoorWinter, today: string): void {
 // -----------------------------------------------------------------------------
 // Turnier spielen
 // -----------------------------------------------------------------------------
-function candidatesOf(g: Game, clubId: string): Player[] {
+export function candidatesOf(g: Game, clubId: string): Player[] {
   const c = g.clubs[clubId];
   if (!c) return [];
   return c.playerIds.map((id) => g.players[id]).filter((p): p is Player => !!p && !p.injury && p.availability !== 'injured');
 }
 
-function playTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, today: string): void {
+/**
+ * Spieltag-Vorbereitung (verändert den Spielstand, genau einmal je Turnier): offene
+ * Entscheidung → gemischt; Absage → Ersatzverein + Ärger; Heimturnier → Fans.
+ */
+function prepareTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, today: string, rng: Rng): void {
   const mid = g.managedClubId;
-  const rng = mulberry32(hashStr(`${g.season}|${t.id}|${mid}`));
-  const st = indoorState(g);
-  // Eigene Entscheidung: offen → gemischt; Absage → Ersatzverein + Ärger.
   if (t.own === null) t.own = 'mix';
   if (t.own === 'decline' && t.clubIds.includes(mid)) {
     t.clubIds = t.clubIds.filter((id) => id !== mid);
@@ -362,7 +352,10 @@ function playTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, today: 
     t.squads[mid] = t.own;
     if (g.clubs[mid]?.city === t.city && g.environment) g.environment.fanMood = clamp(g.environment.fanMood + 0.8, 0, 100);
   }
-  // Teilnehmer und Hallenstärke.
+}
+
+/** Teilnehmer mit Hallenstärke und (bei vollen Vereinen) Hallenkader – ohne Zufall, ohne Änderung. */
+export function tournamentEntrants(g: Game, t: IndoorTournament): { entrants: IndoorEntrant[]; squads: Map<string, Player[]> } {
   const squads = new Map<string, Player[]>();
   const entrants: IndoorEntrant[] = t.clubIds.map((id) => {
     if (g.clubs[id] && !id.startsWith('eu_')) {
@@ -373,8 +366,37 @@ function playTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, today: 
     const base = g.simClubs[id]?.strength ?? g.euroClubs?.[id]?.strength ?? 55;
     return { id, strength: base + 3 };
   });
-  const winPts = g.pointSystem === '3-point' ? 3 : 2;
-  const res = runIndoorTournament(entrants, winPts, rng);
+  return { entrants, squads };
+}
+
+export function indoorWinPts(g: Game): number { return g.pointSystem === '3-point' ? 3 : 2; }
+
+function playTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, today: string): void {
+  const rng = mulberry32(hashStr(`${g.season}|${t.id}|${g.managedClubId}`));
+  prepareTournament(g, cur, t, today, rng);
+  const { entrants, squads } = tournamentEntrants(g, t);
+  const res = runIndoorTournament(entrants, indoorWinPts(g), rng);
+  applyTournament(g, cur, t, res, entrants, squads, today, rng);
+}
+
+/** Wirkung des Turniers auf deinen Verein (für die Siegerehrung der Show). */
+export interface IndoorOutcome {
+  place: number; money: number; injured: string[]; fan: number;
+  /** Mittlere Frische der eingesetzten Spieler vorher/nachher. */
+  frische: [number, number];
+  players: number;
+}
+
+/**
+ * Ergebnis verbuchen: Tour, Titel, Frische/Fitness/Spielpraxis, Verletzungen, Geld,
+ * Nachrichten. `ownBlock` = Spiele, in denen dein Verein die Stammfünf durchspielen
+ * ließ (Show): etwas mehr Müdigkeit und Verletzungsrisiko für die besten fünf.
+ */
+function applyTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, res: IndoorResult, entrants: IndoorEntrant[],
+  squads: Map<string, Player[]>, today: string, rng: Rng, ownBlock = 0): IndoorOutcome | undefined {
+  const mid = g.managedClubId;
+  const st = indoorState(g);
+  const winPts = indoorWinPts(g);
   t.result = res;
   t.strengths = Object.fromEntries(entrants.map((e) => [e.id, Math.round(e.strength * 10) / 10]));
   t.done = true;
@@ -388,6 +410,7 @@ function playTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, today: 
   const year = yearOf(today);
   const scale = economyScale(year);
   const injured: string[] = [];
+  let outcome: IndoorOutcome | undefined;
   for (const id of t.clubIds) {
     const club = g.clubs[id];
     if (!club || id.startsWith('eu_')) continue;
@@ -395,8 +418,15 @@ function playTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, today: 
     const games = res.matches.filter((m) => m.a === id || m.b === id).length;
     const sq = squads.get(id) ?? [];
     const top11 = new Set(candidatesOf(g, id).sort((a, b) => b.overall - a.overall).slice(0, 11).map((p) => p.id));
+    const fan0 = g.environment?.fanMood ?? 0;
+    const fr0 = sq.reduce((s, p) => s + (p.frische ?? 100), 0);
+    // Stammfünf (Show): die fünf stärksten Hallen-Feldspieler.
+    const five = id === mid && ownBlock > 0
+      ? new Set(sq.filter((p) => p.naturalPosition !== 'TW').sort((x, y) => indoorSkill(y) - indoorSkill(x)).slice(0, 5).map((p) => p.id))
+      : new Set<string>();
     for (const p of sq) {
-      p.frische = clamp((p.frische ?? 100) - 9 * t.days, 35, 100);
+      const hard = five.has(p.id) ? ownBlock : 0;
+      p.frische = clamp((p.frische ?? 100) - 9 * t.days - 2 * hard, 35, 100);
       p.attributes.fitness = Math.max(30, p.attributes.fitness - 2 * t.days);
       p.trainingLoad = (p.trainingLoad ?? 0) + 6 * t.days;
       // Spielpraxis: ca. 60 % der Hallenminuten je Spieler (Rotation).
@@ -404,7 +434,7 @@ function playTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, today: 
       if (!top11.has(p.id)) addDevPoints(p, 'halle', p.age <= 23 ? 0.12 : 0.05);
       if (place === 0) p.morale = bumpMorale(p.morale, 1);
       // Hallenboden und Bande: ca. 1,6 % je Spieler und Turniertag (Annahme, vgl. 1989 ~20 Ausfälle [S1]).
-      if (g.injuriesEnabled && !p.injury && rng() < 0.016 * t.days * (games / 4)) {
+      if (g.injuriesEnabled && !p.injury && rng() < 0.016 * t.days * (games / 4) * (1 + 0.15 * hard)) {
         const r = rng();
         const inj = createMatchInjury(r < 0.68 ? 'minor' : r < 0.94 ? 'moderate' : 'severe', today);
         inj.description = inj.type === 'bruise' ? 'Prellung (Bande)' : inj.type === 'ligament' ? 'Bänderriss (Hallenboden)'
@@ -423,24 +453,53 @@ function playTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, today: 
     }
     if (money > 0) book(club.finances, today, money, 'prize_money', `${t.name}: Antrittsgeld/Prämie (Platz ${place + 1})`, id === mid);
     if (t.kind === 'masters' && place === 0) mastersTitleEffects(g, id, cur);
-    if (id === mid) ownResultMessage(g, t, place, money, injured, today);
+    if (id === mid) {
+      ownResultMessage(g, t, place, money, injured, today);
+      const n = Math.max(1, sq.length);
+      outcome = {
+        place, money, injured: [...injured], fan: (g.environment?.fanMood ?? 0) - fan0,
+        frische: [fr0 / n, sq.reduce((s, p) => s + (p.frische ?? 100), 0) / n], players: sq.length,
+      };
+    }
   }
   if (t.kind === 'masters') mastersNews(g, cur, t, today);
+  return outcome;
 }
 
-function declinePenalty(g: Game, t: IndoorTournament, today: string): void {
-  const st = indoorState(g);
-  const home = g.clubs[g.managedClubId]?.city === t.city;
-  const loss = t.kind === 'masters' ? 1.5 : home ? 2.5 : 1;
-  if (g.environment) g.environment.fanMood = clamp(g.environment.fanMood - loss, 0, 100);
-  st.snub += t.kind === 'masters' ? 1.5 : 1;
-  pushMessage(g.messages, makeMessage({
-    date: today, category: 'media', from: 'Pressestelle',
-    subject: t.kind === 'masters' ? 'DFB verärgert über Absage für die Endrunde' : `Absage verärgert ${t.city}`,
-    shortText: home ? 'Die eigenen Fans hatten sich auf das Heimturnier gefreut.' : 'Der Veranstalter ist enttäuscht.',
-    bodyText: `Unsere Absage für das ${t.name} sorgt für Unmut. ${home ? 'Gerade in der eigenen Stadt nehmen uns das viele Fans übel. ' : ''}`
-      + `Veranstalter reden miteinander: Wer häufig absagt, wird seltener eingeladen.\n\nFan-Stimmung −${loss.toLocaleString('de-DE')}.`,
-  }));
+// -----------------------------------------------------------------------------
+// Show (screens/indoor/): Turnier des eigenen Vereins live spielen
+// -----------------------------------------------------------------------------
+/** Turnier, das gerade als Show wartet (oder nichts). */
+export function pendingIndoorShow(g: Game): IndoorTournament | undefined {
+  const cur = indoorState(g).current;
+  if (!cur?.live || cur.season !== g.season) return undefined;
+  const t = allTournaments(cur).find((x) => x.id === cur.live);
+  return t && !t.done ? t : undefined;
+}
+
+/** Show beendet: Ergebnis verbuchen (gleiche Wirkungen wie im Hintergrund). */
+export function finishIndoorShow(g: Game, tid: string, res: IndoorResult, ownBlock: number): IndoorOutcome | undefined {
+  const cur = indoorState(g).current;
+  const t = allTournaments(cur).find((x) => x.id === tid);
+  if (!cur || !t || t.done) return undefined;
+  const { entrants, squads } = tournamentEntrants(g, t);
+  const rng = mulberry32(hashStr(`${g.season}|${t.id}|${g.managedClubId}|show`));
+  const out = applyTournament(g, cur, t, res, entrants, squads, g.calendar.currentDate, rng, ownBlock);
+  cur.live = undefined;
+  indoorDaily(g, g.calendar.currentDate); // Masters-Feld / Winterabschluss nachziehen
+  return out;
+}
+
+/** Show abgeschaltet oder übersprungen: Turnier im Hintergrund wie bisher spielen. */
+export function playIndoorShowHeadless(g: Game): void {
+  const cur = indoorState(g).current;
+  const t = pendingIndoorShow(g);
+  if (!cur || !t) return;
+  const { entrants, squads } = tournamentEntrants(g, t);
+  const rng = mulberry32(hashStr(`${g.season}|${t.id}|${g.managedClubId}|show`));
+  applyTournament(g, cur, t, runIndoorTournament(entrants, indoorWinPts(g), rng), entrants, squads, g.calendar.currentDate, rng);
+  cur.live = undefined;
+  indoorDaily(g, g.calendar.currentDate);
 }
 
 function mastersTitleEffects(g: Game, id: string, cur: IndoorWinter): void {
@@ -454,41 +513,6 @@ function mastersTitleEffects(g: Game, id: string, cur: IndoorWinter): void {
   const b = ensureBrand(club);
   b.regional = clamp(b.regional + 1, 0, 100); b.national = clamp(b.national + 1, 0, 100);
   if (id === g.managedClubId && g.environment) g.environment.fanMood = clamp(g.environment.fanMood + 3, 0, 100);
-}
-
-function ownResultMessage(g: Game, t: IndoorTournament, place: number, money: number, injured: string[], today: string): void {
-  const res = t.result!;
-  const mid = g.managedClubId;
-  const lines = res.matches.filter((m) => m.a === mid || m.b === mid).map((m) => {
-    const home = m.a === mid;
-    const opp = indoorShort(g, home ? m.b : m.a);
-    const gf = home ? m.ga : m.gb, ga = home ? m.gb : m.ga;
-    const pens = m.pa != null ? ` (Neunmeter ${home ? m.pa : m.pb}:${home ? m.pb : m.pa})` : '';
-    const stage = m.stage === 'F' ? 'Finale' : m.stage === 'SF' ? 'Halbfinale' : m.stage === 'P3' ? 'Spiel um Platz 3' : 'Gruppe';
-    return `• ${stage}: ${opp} ${gf}:${ga}${pens}`;
-  });
-  pushMessage(g.messages, makeMessage({
-    date: today, category: 'cup', from: 'Trainerstab',
-    subject: place === 0 ? `${t.name}: Turniersieg!` : `${t.name}: Platz ${place + 1}`,
-    shortText: `${t.squads[mid] ? INDOOR_SQUAD_LABEL[t.squads[mid]] : ''} · Einnahmen ${fmtDM(money)}${injured.length ? ` · ${injured.length} verletzt` : ''}`,
-    bodyText: `${t.name} (${t.hall}, ${t.city})\n\n${lines.join('\n')}\n\nEndplatz: ${place + 1} von ${t.clubIds.length}. Turniersieger: ${indoorName(g, res.ranking[0])}.\n`
-      + `Einnahmen: ${fmtDM(money)}\n`
-      + (injured.length ? `\nVerletzt:\n${injured.map((x) => '• ' + x).join('\n')}\n` : '\nZum Glück ohne Verletzte.\n')
-      + `\nDie eingesetzten Spieler sind müde (Frische gesunken), Reservisten haben Spielpraxis gesammelt.`,
-  }));
-}
-
-function mastersNews(g: Game, cur: IndoorWinter, t: IndoorTournament, today: string): void {
-  const fin = t.result!.matches.find((m) => m.stage === 'F')!;
-  const w = winnerOf(fin)!;
-  if (w === g.managedClubId) return;
-  pushMessage(g.messages, makeMessage({
-    date: today, category: 'cup', from: 'Sportpresse',
-    subject: `${indoorName(g, w)} gewinnt das Hallen-Masters ${cur.winterYear}`,
-    shortText: `Finale in ${t.city}: ${indoorShort(g, fin.a)} – ${indoorShort(g, fin.b)} ${fin.ga}:${fin.gb}${fin.pa != null ? ` (${fin.pa}:${fin.pb} n. N.)` : ''}.`,
-    bodyText: `Die Endrunde des DFB-Hallenpokals in der ${t.hall} ist entschieden: ${indoorName(g, w)} holt den Titel.`
-      + (cur.mastersDeclined?.length ? `\n\nNicht angetreten trotz Qualifikation: ${cur.mastersDeclined.map((id) => indoorShort(g, id)).join(', ')}.` : ''),
-  }));
 }
 
 function finishWinter(g: Game, today: string): void {

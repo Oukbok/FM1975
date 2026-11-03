@@ -104,6 +104,12 @@ export interface DayUi {
    * Transferbilanz zeigen. Rückgabe true = der Vorlauf hält an.
    */
   onTransferWindow?(key: string): boolean;
+  /**
+   * Heute spielt dein Verein ein Hallenturnier (game/indoorGame.ts). Rückgabe true = die
+   * Oberfläche zeigt es als Show (screens/indoor/), der Vorlauf hält an. Fehlt der
+   * Rückruf oder kommt false: Turnier im Hintergrund wie bisher.
+   */
+  onIndoorShow?(tid: string): boolean;
 }
 
 /** Oberfläche ohne Reaktion – für Simulationen und Tests. */
@@ -574,7 +580,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   buyBackDaily(g, today, (p, from, to, fee) => { transferPlayer(g, p, from, to, fee, today); repairSquadLists(g); });
   transferTalkDaily(g, today);
   // Winter-Systeme: Hallenturniere/Masters (game/indoorGame.ts) und Trainingslager (game/trainingCampGame.ts).
-  indoorDaily(g, today);
+  const indoorShow = indoorDaily(g, today, ui.onIndoorShow ? (t) => ui.onIndoorShow!(t.id) : undefined);
   const campsEnded = campDaily(g, today);
   winterBreakDaily(g, today);   // Formdrift in der Winterpause (game/winterShared.ts)
   advanceDivisionsTo(g, today); // Sim-Ligen nach eigenem Spielplan (game/season.ts)
@@ -745,6 +751,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
   }
   // Rückkehr aus dem Trainingslager: animierte Zusammenfassung.
   for (const id of campsEnded) if (ui.onCampEnd?.(id)) stopForAction = true;
+  // Hallenturnier deines Vereins als Show (game.indoor.current.live).
+  if (indoorShow) stopForAction = true;
   // Tag nach dem Fensterschluss: Transferbilanz.
   const twKey = transferWindowDue(g, today);
   if (twKey && ui.onTransferWindow?.(twKey)) stopForAction = true;
