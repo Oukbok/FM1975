@@ -23,6 +23,8 @@ const g = createNewGame({
   difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300,
 });
 const me = g.clubs[g.managedClubId];
+// Saisonbudget (game/budgetPlan.ts) hier ausblenden – geprüft wird die Bau-Logik, die Budgetgrenze prüft test:budget.
+delete (g as any).budget;
 const other = Object.values(g.clubs).find((c) => c.id !== me.id && c.leagueId === me.leagueId)!;
 
 // --- Einführung ---
