@@ -56,7 +56,9 @@ export function PoolGrid({ rec, clubs, shown, back, activePot }: {
   const out = drawnSet(rec, shown);
   const size = boardSize(rec);
   const maxPot = Math.max(...rec.pots.map((p) => p.ids.length));
-  const cols = rec.pots.length > 1 && maxPot <= 10 ? maxPot : size === 's' ? 4 : size === 'm' && rec.pots.length === 1 ? 4 : 8;
+  const single = rec.pots.length === 1;
+  // Ein Topf mit bis zu 40 Vereinen: breitere Felder (6 Spalten), damit lange Namen ausgeschrieben bleiben.
+  const cols = !single && maxPot <= 10 ? maxPot : size === 's' ? 4 : size === 'm' && single ? 4 : size === 'l' && single ? 6 : 8;
   const crest = size === 'xl' ? 26 : size === 'l' ? 34 : size === 'm' ? 42 : 48;
   return (
     <div className={`dg-pool dg-${size}`}>

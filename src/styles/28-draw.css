@@ -5,7 +5,7 @@
    Farben: Tokens --gala-… und --comp-… in 00-base.css; Bernstein nur als Akzent.
    ============================================================================= */
 .dr-root {
-  position: fixed; inset: 0; z-index: 900; overflow: hidden;
+  position: fixed; inset: 0; z-index: 900; overflow: hidden; overflow: clip;
   display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 18px;
   padding: 22px 54px 130px;
   background: var(--gala-night-0);
@@ -170,6 +170,8 @@
   border: 6px solid var(--gala-band); box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.28), 0 12px 28px rgba(0, 0, 0, 0.65);
   transition: transform 0.15s, filter 0.15s;
 }
+/* Duotone-Icons auf Bernstein: Bernsteinanteil dunkel, sonst unsichtbar */
+.dg-go svg.game-icon [fill]:not([fill="none"]), .dr-start svg.game-icon [fill]:not([fill="none"]) { fill: currentColor; }
 .dg-go:hover { transform: scale(1.05); filter: brightness(1.06); }
 .dg-go:disabled { opacity: 0.55; cursor: default; transform: none; }
 
