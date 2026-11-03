@@ -48,6 +48,8 @@ export interface SimOptions {
   ko?: KoRule;
   /** Bedeutung des Spiels 0–1 (z. B. Titel-/Abstiegsentscheidung), zusätzlich zu Derby/Pokal/Europapokal. */
   stakes?: number;
+  /** Wetter vorgeben (Vorschau „Nächstes Spiel“, game/prematch.ts); sonst ausgewürfelt. */
+  weather?: Weather;
 }
 
 /**
@@ -117,7 +119,8 @@ export class MatchSim {
     this.live = !!opts.live;
     this.derby = !!homeClub.city && homeClub.city === awayClub.city;
     this.stakes = Math.min(1, (this.derby ? 0.5 : 0) + (this.knockout ? 0.5 : 0) + (opts.competition === 'Europapokal' ? 0.4 : 0) + (opts.stakes ?? 0));
-    this.weather = rollWeather(opts.date, this.rng);
+    const rolled = rollWeather(opts.date, this.rng); // Zufallsfolge bleibt gleich, auch mit Vorgabe
+    this.weather = opts.weather ?? rolled;
     const month = opts.date ? Number(opts.date.slice(5, 7)) : 9;
     // Zuschauer je Platzkategorie (engine/seating.ts): eigene Nachfrage für Steh, Sitz, Dach, Premium,
     // Business, Logen und Gästeblock; im Europapokal ab 1998/99 nur Sitzplätze.
@@ -563,7 +566,8 @@ function subValue(p: Player, pos: Position): number {
   return v;
 }
 
-function rollWeather(date: string | undefined, rng: () => number): Weather {
+/** Wetter nach Monat (auch für die Vorhersage in game/prematch.ts). */
+export function rollWeather(date: string | undefined, rng: () => number): Weather {
   const month = date ? Number(date.slice(5, 7)) : 9;
   const r = rng();
   if (month === 12 || month <= 2) return r < 0.14 ? 'schnee' : r < 0.42 ? 'regen' : r < 0.52 ? 'nebel' : r < 0.85 ? 'bewoelkt' : 'sonnig';

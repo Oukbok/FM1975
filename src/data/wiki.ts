@@ -1050,12 +1050,23 @@ Der gewählte Schütze wird in der Simulation bei der jeweiligen Standardsituati
   {
     id: 'match',
     category: 'match',
-    title: 'Textmodus und Schnellsimulation',
-    keywords: ['match', 'text', 'textmodus', 'live', 'kommentar', 'simulieren', 'schnell', 'wechsel', 'zuruf', 'halbzeit', 'ansprache', 'spannung', 'statistik', 'xg'],
-    body: `## Dein Spiel: Schnell simulieren oder Textmodus
-Erreicht der Vorlauf einen Tag mit einem Spiel deines Vereins (Liga, Pokal, Europapokal), hält er an. Oben rechts erscheinen dann zwei Knöpfe:
-- **Schnell simulieren:** Das Spiel wird sofort berechnet, danach öffnet sich der Spielbericht.
-- **Textmodus:** Eine eigene Oberfläche ohne Menü. Du verfolgst das Spiel live und greifst ein.
+    title: 'Nächstes Spiel, Textmodus und Simulation',
+    keywords: ['match', 'text', 'textmodus', 'live', 'kommentar', 'simulieren', 'schnell', 'wechsel', 'zuruf', 'halbzeit', 'ansprache', 'spannung', 'statistik', 'xg', 'nächstes spiel', 'vorschau', 'wetter', 'zuschauer', 'distanz', 'stadt'],
+    body: `## Vor dem Anpfiff: „Nächstes Spiel“
+Erreicht der Vorlauf einen Tag mit einem Spiel deines Vereins (Liga, Pokal, Europapokal), hält er an und zeigt die Vorschau **Nächstes Spiel**:
+- **Bühne:** beide Wappen, Tabellenplätze, Stadion und Datum.
+- **Schnelle Aufstellung:** deine Aufstellung übernehmen, den Co-Trainer die beste Elf nach Eignung aufstellen lassen (Taktik bleibt) oder zur Aufstellung wechseln.
+- **Fakten:** Mannschaftsstärke der voraussichtlichen Elf (mit Rang in deiner Liga), Saison bisher (S-U-N, Punkte), Form der letzten fünf Pflichtspiele und das Hinspiel – im Europapokal-Rückspiel mit Hinspielergebnis und Auswärtstorregel.
+- **Historische Daten:** direkter Vergleich der letzten zehn Saisons (Ligaspiele; im Pokal mit Pokalspielen, im Europapokal die Europapokalspiele), H = im Stadion des heutigen Heimvereins, A = beim heutigen Gast.
+- **Karte und Distanz:** beide Orte und die Luftlinie; dazu ein gezeichnetes Stadtbild und ein kurzer Text **Über die Stadt** des Gegners.
+- **Zuschauer:** Kapazität und erwartete Zuschauer – gleiche Rechnung wie am Spieltag (Nachfrage, Gegner, Derby, Monat, Wetter), nur ohne Zufall.
+- **Wetter:** Die Vorhersage ist genau das Wetter, mit dem die Match-Engine das Spiel austrägt. Regen und Schnee bringen mehr Fehler im Aufbau und gefährlichere Fernschüsse und halten Zuschauer von offenen Plätzen fern, Hitze kostet schneller Kraft.
+
+Unten rechts wählst du die Spielart:
+- **Simulieren:** Das Spiel wird sofort berechnet, danach öffnet sich der Spielbericht.
+- **Im Textmodus spielen:** Eine eigene Oberfläche ohne Menü. Du verfolgst das Spiel live und greifst ein.
+
+Hervorgehoben ist die zuletzt gewählte Art. Schließt du die Vorschau (Esc), öffnet der Knopf **Nächstes Spiel** oben rechts sie wieder. Mit **Diesen Bildschirm nicht wieder anzeigen** (auch unter Einstellungen umschaltbar) erscheinen stattdessen direkt oben rechts die zwei Knöpfe *Schnell simulieren* und *Textmodus*.
 
 Beide Wege nutzen **dieselbe Match-Engine** und verbuchen alles identisch (Ergebnis, Statistik, Noten, Spielliste, Verletzungen, Karten).
 

@@ -50,7 +50,7 @@ for (let i = 0; i < 300 && !found; i++) {
     if (skip-- > 0) { await page.keyboard.press('Escape'); await page.waitForTimeout(300); await page.keyboard.press('Escape'); await page.waitForTimeout(300); continue; }
     found = true; break;
   }
-  for (const sel of ['button:has-text("Schnell simulieren")', '.modal-close']) {
+  for (const sel of ['button:has-text("Simulieren")', '.modal-close']) {
     const b = page.locator(sel).first();
     if (await b.isVisible().catch(() => false)) await b.click().catch(() => {});
   }

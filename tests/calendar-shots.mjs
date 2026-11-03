@@ -103,7 +103,8 @@ const advanceUntil = async (sel, name, maxMs) => {
   while (Date.now() < until) {
     if (await page.locator(sel).count()) { await page.waitForTimeout(700); await shot(name); return true; }
     const lbl = (await btn.innerText().catch(() => '')).trim().toLowerCase();
-    if (await page.locator('.hd-match-btns').count()) { await page.click('.hd-match-btns button:has-text("Schnell simulieren")'); await page.waitForTimeout(300); }
+    if (!(await page.locator('.pm-root').count()) && await page.locator('.hd-continue.pm-next').count()) { await page.click('.hd-continue.pm-next'); await page.waitForTimeout(300); }
+    if (await page.locator('.hd-match-btns, .pm-root').count()) { await page.click('.pm-go-btn:has-text("Simulieren"), .hd-match-btns button:has-text("Simulieren")'); await page.waitForTimeout(300); }
     for (const sel2 of ['.modal-close', 'button:has-text("Schließen")', 'button:has-text("Weiter zum")', 'button:has-text("OK")']) {
       const b = page.locator(sel2).first();
       if (await b.isVisible().catch(() => false)) await b.click().catch(() => {});

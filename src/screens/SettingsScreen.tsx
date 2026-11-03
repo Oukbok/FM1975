@@ -37,6 +37,11 @@ export function SettingsScreen({ settings, onBack, onSave }: {
             <span className={`toggle ${s.briefingIntro !== false ? 'on' : ''}`}></span>
             Auftakt-Animation vor dem Saison-Briefing zeigen
           </label>
+          <label className="toggle-item">
+            <input type="checkbox" checked={s.prematchScreen !== false} onChange={(e) => setS({ ...s, prematchScreen: e.target.checked })} />
+            <span className={`toggle ${s.prematchScreen !== false ? 'on' : ''}`}></span>
+            Vorschau „Nächstes Spiel“ vor jedem eigenen Spiel zeigen (sonst Knöpfe oben rechts)
+          </label>
         </div>
       </div>
 

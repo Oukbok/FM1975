@@ -573,6 +573,22 @@ export const INFO_TEXTS = {
     text: 'Die Sportzeitung erscheint montags und donnerstags, dazu gibt es immer die aktuelle Ausgabe des Tages. Sie fasst Spiele, Tabelle, Transfers, Trainerwechsel, Verletzungen, Pokal und Europapokal zusammen. Schlagzeilen öffnen den Artikel, Gesichter das Spielerprofil, Wappen das Vereinsprofil.',
     wiki: 'presse',
   },
+  // ---------------------------------------------------------------- Vorschau „Nächstes Spiel“
+  prematch_staerke: {
+    title: 'Mannschaftsstärke',
+    text: 'Stärke der voraussichtlichen Startelf (0–100) – so, wie die Match-Engine sie aus Positionsstärke und Tagesform rechnet. Die kleine Zahl ist der Rang dieser Elf in deiner Liga. Der Balken darunter zeigt das Kräfteverhältnis.',
+    wiki: 'match',
+  },
+  prematch_aufstellung: {
+    title: 'Schnelle Aufstellung',
+    text: 'Übernimm deine gespeicherte Aufstellung, lass den Co-Trainer nach Eignung die beste Elf und Bank aufstellen (Taktik bleibt) oder wechsle zur Aufstellung. Die Wahl gilt beim Anpfiff.',
+    wiki: 'match',
+  },
+  prematch_zuschauer: {
+    title: 'Erwartete Zuschauer',
+    text: 'Schätzung aus Nachfrage, Gegner, Derby, Monat und Wetter – dieselbe Rechnung wie am Spieltag, nur ohne Zufall. Am Spieltag schwankt die Zahl um einige Prozent.',
+    wiki: 'match',
+  },
 } satisfies Record<string, InfoText>;
 
 export type InfoKey = keyof typeof INFO_TEXTS;

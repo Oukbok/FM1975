@@ -259,6 +259,10 @@ export interface AppSettings {
   ratingSpeed?: 'langsam' | 'normal' | 'schnell';
   /** Gehälter pro Jahr (Standard) oder pro Woche anzeigen und eingeben (ui/format.ts `fmtWage`). */
   wagePeriod?: 'jahr' | 'woche';
+  /** Vorschau „Nächstes Spiel“ vor jedem eigenen Spiel (screens/prematch/; Standard an). */
+  prematchScreen?: boolean;
+  /** Zuletzt gewählte Spielart (Hauptknopf der Vorschau). */
+  lastMatchMode?: 'sim' | 'text';
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {

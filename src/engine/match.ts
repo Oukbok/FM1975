@@ -65,7 +65,7 @@ export function createMatchSim(home: Club, away: Club, players: Record<string, P
   return new MatchSim(home, away, players, {
     year: opts.year ?? yearFor(opts.date), date: opts.date, seed: opts.seed, knockout: opts.knockout,
     humanSides: opts.humanSides, humanClubIds: opts.humanClubIds ?? opts.logClubIds, live: opts.live,
-    competition: opts.competition, ko: opts.ko,
+    competition: opts.competition, ko: opts.ko, weather: opts.weather,
   });
 }
 

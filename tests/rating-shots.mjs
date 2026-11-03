@@ -58,7 +58,7 @@ async function shot(name) {
 const t0 = Date.now();
 let last = '';
 while (!(await page.locator('.rt-root').count()) && Date.now() - t0 < 6 * 60_000) {
-  for (const sel of ['button:has-text("Schnell simulieren")', 'button:has-text("Zum Spielbericht")', '.dr-root:not(.rt-root) button:has-text("Ergebnis sofort zeigen")', '.dr-root:not(.rt-root) button:has-text("Schließen")', 'button:has-text("Schließen")', '.modal-overlay .modal-close']) {
+  for (const sel of ['button:has-text("Simulieren")', 'button:has-text("Zum Spielbericht")', '.dr-root:not(.rt-root) button:has-text("Ergebnis sofort zeigen")', '.dr-root:not(.rt-root) button:has-text("Schließen")', 'button:has-text("Schließen")', '.modal-overlay .modal-close']) {
     const b = page.locator(sel).first();
     if (await b.isVisible().catch(() => false)) await b.click().catch(() => {});
   }

@@ -1,0 +1,213 @@
+/* =============================================================================
+   VORSCHAU „NÄCHSTES SPIEL“ (screens/prematch/) – Vollbild vor jedem eigenen Spiel.
+   Ruhig, neutral-kühl; Vereinsfarbe nur als 3-px-Kante, Bernstein nur für eigenen Verein
+   und Hauptknopf. Ausgelegt für 1920×1080 (kleinere Fenster skaliert DisplayFrame).
+   ============================================================================= */
+.pm-root {
+  position: fixed; inset: 0; z-index: 880;
+  display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 14px;
+  padding: 18px 36px 18px;
+  background:
+    radial-gradient(ellipse at 30% -20%, rgba(255, 255, 255, 0.045), transparent 55%),
+    linear-gradient(180deg, #0f1218 0%, var(--bg) 45%);
+  color: var(--text); font-family: var(--font-ui);
+}
+.pm-root svg.game-icon { width: auto; height: auto; }
+.pm-dim { color: var(--text-4); }
+
+/* --- Kopf --- */
+.pm-top { display: flex; align-items: center; justify-content: space-between; gap: 20px; border-bottom: 1px solid var(--border-soft); padding-bottom: 10px; }
+.pm-top-l { display: flex; align-items: center; gap: 16px; color: var(--text-3); }
+.pm-title { font-family: var(--font-display); font-weight: 600; font-size: 30px; letter-spacing: 1px; text-transform: uppercase; color: var(--text); }
+.pm-comp { font-size: 21px; color: var(--text-2); }
+
+/* --- Körper --- */
+.pm-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; min-height: 0; }
+.pm-card {
+  display: grid; grid-template-rows: minmax(300px, 1fr) auto auto auto auto; min-height: 0;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+}
+.pm-side { display: grid; grid-template-rows: minmax(0, 1fr) auto 470px; gap: 12px; min-height: 0; }
+
+/* --- Bühne --- */
+.pm-stage { position: relative; overflow: hidden; border-bottom: 1px solid var(--border-soft); }
+.pm-stage-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.pm-sky-0 { stop-color: color-mix(in srgb, var(--pos-key) 14%, var(--bg)); }
+.pm-sky-1 { stop-color: color-mix(in srgb, var(--pos-key-2) 10%, var(--panel-2)); }
+.pm-grass-0 { stop-color: color-mix(in srgb, var(--fam-2) 70%, var(--panel)); }
+.pm-grass-1 { stop-color: color-mix(in srgb, var(--fam-2) 45%, var(--bg)); }
+.pm-shade { stop-color: var(--bg); }
+.pm-stand { fill: color-mix(in srgb, var(--text-4) 30%, var(--bg-2)); }
+.pm-stand-top { fill: color-mix(in srgb, var(--text-3) 30%, var(--panel)); }
+.pm-seatrow { stroke: color-mix(in srgb, var(--text-3) 22%, transparent); stroke-width: 1.2; }
+.pm-stair { fill: color-mix(in srgb, var(--text-3) 18%, var(--bg-2)); }
+.pm-roof { fill: color-mix(in srgb, var(--text-3) 22%, var(--bg)); }
+.pm-roof-post { fill: color-mix(in srgb, var(--text-3) 30%, var(--bg)); }
+.pm-lightband { fill: color-mix(in srgb, var(--text) 55%, transparent); }
+.pm-mast path { fill: color-mix(in srgb, var(--text-3) 40%, var(--bg)); }
+.pm-lamp { fill: color-mix(in srgb, var(--text-3) 35%, var(--bg)); }
+.pm-bulb { fill: color-mix(in srgb, var(--text) 80%, transparent); }
+.pm-board { fill: color-mix(in srgb, var(--text-3) 26%, var(--bg-2)); }
+.pm-stripe { fill: rgba(255, 255, 255, 0.035); }
+.pm-line { fill: none; stroke: rgba(255, 255, 255, 0.28); stroke-width: 2; }
+
+.pm-crests { position: absolute; inset: 20px 0 84px; display: flex; justify-content: space-around; align-items: center; }
+.pm-crest { filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.55)); }
+.pm-bar {
+  position: absolute; left: 48px; right: 48px; bottom: 22px; height: 56px;
+  display: grid; grid-template-columns: minmax(0, 1fr) 56px minmax(0, 1fr); align-items: stretch;
+}
+.pm-bar-side {
+  display: flex; align-items: center; gap: 10px; padding: 0 18px; min-width: 0;
+  background: color-mix(in srgb, var(--bg) 82%, transparent); border: 1px solid var(--border);
+  font-family: var(--font-display); font-weight: 600; font-size: 25px; text-transform: uppercase; letter-spacing: 0.6px;
+  box-shadow: inset 0 -3px 0 var(--club, var(--text-3));
+}
+.pm-bar-side.home { justify-content: flex-end; border-radius: 6px 0 0 6px; }
+.pm-bar-side.away { justify-content: flex-start; border-radius: 0 6px 6px 0; }
+.pm-bar-side.mine .pm-bar-name { color: var(--accent); }
+.pm-bar-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pm-bar-pos { color: var(--text-3); font-weight: 500; }
+.pm-bar-mid {
+  display: flex; align-items: center; justify-content: center; color: var(--text-3); font-weight: 700;
+  background: var(--panel-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+}
+
+.pm-venue { text-align: center; padding: 14px 20px 6px; }
+.pm-venue-name { font-family: var(--font-display); font-weight: 600; font-size: 31px; letter-spacing: 0.6px; }
+.pm-venue-date { color: var(--text-2); font-size: 20px; }
+
+.pm-quick { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 28px 8px; }
+.pm-quick-l { color: var(--text-2); font-size: 19px; display: inline-flex; align-items: center; gap: 6px; }
+.pm-select {
+  min-width: 440px; height: 46px; padding: 0 14px; border-radius: 6px; font-size: 18.5px;
+  background: var(--bg-2); color: var(--text); border: 1px solid var(--border);
+}
+
+/* --- Abschnitte --- */
+.pm-sec { padding: 10px 28px 6px; min-width: 0; }
+.pm-h {
+  margin: 0 0 6px; padding-bottom: 5px; border-bottom: 1px solid var(--border-soft);
+  font-family: var(--font-display); font-weight: 600; font-size: 18px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-3);
+  display: flex; align-items: center; gap: 8px;
+}
+.pm-h-note { margin-left: auto; font-family: var(--font-ui); text-transform: none; letter-spacing: 0; font-weight: 500; font-size: 15.5px; color: var(--text-4); }
+
+/* Fakten: links Wert | Mitte Begriff | rechts Wert, darunter Verhältnisbalken */
+.pm-frow {
+  display: grid; grid-template-columns: minmax(0, 1fr) 250px minmax(0, 1fr); align-items: center; row-gap: 7px;
+  padding: 10px 12px 10px; border-bottom: 1px solid var(--border-soft); font-size: 20px;
+}
+.pm-frow:nth-child(odd) { background: rgba(255, 255, 255, 0.015); }
+.pm-fl { display: flex; align-items: center; gap: 10px; }
+.pm-fr { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+.pm-fl b, .pm-fr b { font-family: var(--font-display); font-weight: 500; font-size: 25px; }
+.pm-fc { text-align: center; color: var(--text-2); font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.8px; font-size: 18px; display: inline-flex; justify-content: center; align-items: center; gap: 6px; }
+.pm-rank {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 30px; padding: 0 6px;
+  border: 1px solid var(--border); border-radius: 4px; color: var(--text-2); font-size: 16px; font-weight: 700;
+}
+.pm-rank.empty { visibility: hidden; }
+.pm-split { grid-column: 1 / -1; display: flex; gap: 4px; height: 5px; }
+.pm-split span { display: block; height: 100%; border-radius: 2px; background: var(--bar-fill); opacity: 0.55; }
+.pm-split span.hi { background: var(--bar-fill-hi); opacity: 0.9; }
+.pm-form { display: inline-flex; gap: 4px; }
+.pm-form-x {
+  width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 4px; font-size: 16px; font-weight: 700; border: 1px solid var(--border); color: var(--text-2);
+}
+.pm-form-x.W { border-color: color-mix(in srgb, var(--pos) 60%, transparent); color: var(--pos); }
+.pm-form-x.L { border-color: color-mix(in srgb, var(--neg) 60%, transparent); color: var(--neg); }
+.pm-leg { display: flex; gap: 18px; padding: 12px 12px 4px; font-size: 19px; }
+.pm-leg-l { color: var(--text-3); min-width: 90px; }
+.pm-leg-t { color: var(--text); }
+
+/* Historische Daten */
+.pm-hist { min-height: 0; }
+.pm-h2h-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+.pm-h2h { width: 100%; border-collapse: collapse; font-size: 19px; }
+.pm-h2h th { color: var(--text-3); font-weight: 600; font-size: 16px; text-align: center; padding: 5px 4px; border-bottom: 1px solid var(--border); }
+.pm-h2h td { text-align: center; padding: 6px 4px; border-bottom: 1px solid var(--border-soft); }
+.pm-h2h td:first-child, .pm-h2h th:first-child { text-align: left; }
+.pm-h2h-none { margin: 8px 0 0; font-size: 16px; }
+
+/* --- Rechte Seite --- */
+.pm-pics { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 0; min-height: 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.pm-map, .pm-city { position: relative; min-height: 0; overflow: hidden; }
+.pm-map svg, .pm-city svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.pm-city { border-left: 1px solid var(--border); }
+.pm-sea { fill: color-mix(in srgb, var(--pos-key) 12%, var(--bg)); }
+.pm-land { fill: color-mix(in srgb, var(--text-3) 20%, var(--panel)); stroke: color-mix(in srgb, var(--pos-key-2) 30%, var(--panel-2)); stroke-width: 0.9; stroke-linejoin: round; }
+.pm-border { fill: none; stroke: color-mix(in srgb, var(--text-3) 55%, transparent); stroke-width: 0.8; stroke-dasharray: 3 2; }
+.pm-route { stroke: var(--text-2); stroke-width: 1.6; stroke-dasharray: 5 4; opacity: 0.8; }
+.pm-pin-ring { fill: none; stroke: var(--text); stroke-width: 1.6; opacity: 0.7; }
+.pm-pin-dot { fill: var(--text); }
+.pm-pin.mine .pm-pin-ring { stroke: var(--accent); opacity: 1; }
+.pm-pin.mine .pm-pin-dot { fill: var(--accent); }
+.pm-pin-label {
+  fill: var(--text); font-family: var(--font-ui); font-weight: 600; font-size: 19px;
+  paint-order: stroke; stroke: color-mix(in srgb, var(--pos-key) 10%, var(--bg)); stroke-width: 4px; stroke-linejoin: round;
+}
+.pm-pin.mine .pm-pin-label { fill: var(--accent); }
+.pm-dist { text-align: right; color: var(--text-2); font-size: 19px; padding: 0 4px; }
+.pm-dist b { color: var(--text); font-weight: 600; }
+
+/* Stadtbild (Dämmerung, kühl) */
+.pm-dusk-0 { stop-color: color-mix(in srgb, var(--pos-key) 16%, var(--bg)); }
+.pm-dusk-1 { stop-color: color-mix(in srgb, var(--pos-key-2) 16%, var(--panel)); }
+.pm-dusk-2 { stop-color: color-mix(in srgb, var(--pos-key-2) 24%, var(--panel-2)); }
+.pm-star { fill: var(--text-2); opacity: 0.5; }
+.pm-moon { fill: var(--text-2); opacity: 0.35; }
+.pm-sky-hill2 { fill: color-mix(in srgb, var(--pos-key-2) 12%, var(--panel-2)); }
+.pm-sky-hill { fill: color-mix(in srgb, var(--pos-key-2) 8%, var(--panel)); }
+.pm-bld-far { fill: color-mix(in srgb, var(--text-4) 30%, var(--panel)); }
+.pm-mark, .pm-mark rect, .pm-mark path, .pm-mark circle { fill: color-mix(in srgb, var(--text-4) 22%, var(--bg-2)); }
+.pm-mark-glass { fill: color-mix(in srgb, var(--text-2) 30%, var(--bg-2)) !important; }
+.pm-mark-red { fill: var(--neg) !important; opacity: 0.8; }
+.pm-mark-line, .pm-mark-line path, .pm-mark .pm-mark-line { fill: none !important; stroke: color-mix(in srgb, var(--text-4) 40%, var(--bg-2)); stroke-width: 4; }
+.pm-bld { fill: var(--bg-2); }
+.pm-win { fill: color-mix(in srgb, var(--text) 55%, transparent); }
+.pm-street { fill: var(--bg); }
+.pm-water { fill: color-mix(in srgb, var(--pos-key) 14%, var(--bg)); }
+.pm-ripple { stroke: color-mix(in srgb, var(--pos-key-2) 30%, transparent); stroke-width: 1.4; }
+.pm-bridge { fill: none; stroke: color-mix(in srgb, var(--text-4) 50%, var(--bg-2)); stroke-width: 5; }
+
+/* Zuschauer / Wetter / Stadt */
+.pm-info { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 28px; min-height: 0; }
+.pm-info .pm-sec { padding: 4px 0; }
+.pm-info-col { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.pm-kv { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-soft); font-size: 19px; color: var(--text-2); }
+.pm-kv b { color: var(--text); font-family: var(--font-display); font-weight: 500; font-size: 25px; }
+.pm-meter { height: 4px; margin-top: 8px; border-radius: 2px; background: var(--bar-track); overflow: hidden; }
+.pm-meter span { display: block; height: 100%; background: var(--bar-fill-hi); }
+.pm-weather { display: flex; gap: 14px; align-items: flex-start; }
+.pm-wx { width: 64px; height: 64px; flex: 0 0 auto; }
+.pm-wx-sun circle { fill: var(--text-2); }
+.pm-wx-sun line { stroke: var(--text-2); stroke-width: 2; stroke-linecap: round; }
+.pm-wx-cloud { fill: var(--text-3); }
+.pm-wx-rain { stroke: var(--pos-key-2); stroke-width: 1.8; stroke-linecap: round; fill: none; }
+.pm-wx-snow { fill: var(--text); }
+.pm-wx-l { font-size: 19px; color: var(--text-2); }
+.pm-wx-l b { color: var(--text); font-weight: 600; }
+.pm-wx-n { margin-top: 6px; font-size: 17px; color: var(--text-3); line-height: 1.35; }
+.pm-about { overflow-y: auto; min-height: 0; }
+.pm-about-city { font-family: var(--font-display); font-weight: 600; font-size: 25px; letter-spacing: 0.5px; margin-bottom: 6px; }
+.pm-about p { margin: 0; font-size: 19.5px; line-height: 1.55; color: var(--text-2); }
+
+/* --- Fuß --- */
+.pm-foot { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.pm-hide { font-size: 18px; font-weight: 500; }
+.pm-go { display: flex; gap: 14px; }
+.pm-go-btn {
+  display: inline-flex; align-items: center; gap: 14px; height: 72px; padding: 0 38px;
+  border-radius: 8px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text);
+  font-family: var(--font-display); font-weight: 600; font-size: 25px; letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer;
+}
+.pm-go-btn:hover { background: var(--panel-hover); border-color: var(--text-4); }
+.pm-go-btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.pm-go-btn.primary:hover { filter: brightness(1.07); }
+.pm-go-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Kopfleiste: Knopf „Nächstes Spiel“ (Vorschau wieder öffnen) */
+.hd-continue.pm-next { padding-left: 34px; padding-right: 40px; }
+.hd-continue.pm-next .hd-continue-txt { width: auto; }
