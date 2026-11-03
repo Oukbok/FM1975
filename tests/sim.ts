@@ -31,6 +31,8 @@ const g: Game = createNewGame({
 });
 
 (g as any).simAutoManage = true; // eigener Verein wird wie ein KI-Verein gepflegt
+// HUMAN=1: Jobangebote an dich laufen mit (abgelehnt); HUMAN=accept: das erste Angebot wird angenommen (game/careerGame.ts).
+if (process.env.HUMAN) { (g as any).simCareer = true; if (process.env.HUMAN === 'accept') (g as any).simCareerAccept = true; }
 // HIST=aus|mittel|stark: Entwicklung der anderen Vereine (game/historicSteer.ts), Bericht tests/simHistory.ts.
 const histMode = histModeFromEnv(process.env.HIST);
 if (histMode) g.historyMode = histMode;
@@ -183,6 +185,7 @@ function report(game: Game) {
 // -----------------------------------------------------------------------------
 type AiSnap = { club: Map<string, string>; youth: Set<string>; clubs: Set<string>; date: string };
 let aiPrev: AiSnap | null = null;
+const aiEpochs: Record<string, { n: number; free: number; paid: number; loans: number; bosman: number; early: number; jobs: number }> = {};
 const aiTotals = { seasons: 0, arrivals: 0, transfers: 0, generated: 0, imports: 0, lower: 0, youth: 0, coach: 0, sacked: 0 };
 function aiSnap(game: Game): AiSnap {
   const club = new Map<string, string>();
@@ -217,6 +220,18 @@ function aiReport(game: Game) {
     }
     const counts = [...perClub.values()].sort((a, b) => a - b);
     console.log(`   KI Zugänge ${arrivals} (Ø ${(arrivals / n).toFixed(1)}/Verein, min ${counts[0] ?? 0} max ${counts[counts.length - 1] ?? 0}) | Wechsel Liga ${transfers} | unterklassig ${lower} | Ausland ${imports} | Jugend ${youth} | generiert ${generated} (${(generated / Math.max(1, arrivals) * 100).toFixed(0)} %) | sonst ${other} | Trainerwechsel ${coach} (entlassen ${sacked})`);
+    const L = game.aiSquadLog?.find((e) => e.season === game.season);
+    if (L) {
+      console.log(`   KI-Verträge früh verlängert ${L.early} (abgelehnt ${L.refused}) | Altstars auslaufen ${L.letGo} | Bosman-Verkäufe ${L.bosmanSales} | Vorverträge ${L.pre} | Abgänge Vertragsende ablösefrei ${L.freeLeaves} / mit Ablöse ${L.paidLeaves} | Leihen ${L.loans} (Kaufoption ${L.loanBuys}, von dir ${L.loansFromYou})${process.env.HUMAN ? ` | Jobangebote an dich ${L.jobOffers}` : ''}`);
+      const y = Number(game.season.slice(0, 4));
+      const ep = y < 1985 ? '1975–84' : y < 1995 ? '1985–94' : y < 2005 ? '1995–2004' : y < 2015 ? '2005–14' : 'ab 2015';
+      const e = (aiEpochs[ep] ??= { n: 0, free: 0, paid: 0, loans: 0, bosman: 0, early: 0, jobs: 0 });
+      e.n++; e.free += L.freeLeaves; e.paid += L.paidLeaves; e.loans += L.loans; e.bosman += L.bosmanSales; e.early += L.early; e.jobs += L.jobOffers;
+    }
+    if (process.env.HUMAN && game.career) {
+      const c = game.career;
+      console.log(`   KARRIERE Ansehen ${c.rep.toFixed(1)} | Verein ${game.clubs[game.managedClubId]?.name} | Stationen ${c.stints.map((x) => x.clubName).join(' → ')} | Angebote gesamt ${c.offerCount} | Entlassungen ${c.sacked}${c.pendingMove ? ` | Wechsel zu ${c.pendingMove.clubName} vereinbart` : ''}`);
+    }
     Object.assign(aiTotals, {
       seasons: aiTotals.seasons + 1, arrivals: aiTotals.arrivals + arrivals, transfers: aiTotals.transfers + transfers,
       generated: aiTotals.generated + generated, imports: aiTotals.imports + imports, lower: aiTotals.lower + lower, youth: aiTotals.youth + youth,
@@ -443,6 +458,7 @@ for (let s = 0; s < seasons; s++) {
 }
 if (process.env.AI && aiTotals.seasons) {
   const s = aiTotals.seasons, a = Math.max(1, aiTotals.arrivals);
+  for (const [k, e] of Object.entries(aiEpochs)) console.log(`KI-Epoche ${k} (${e.n} Saisons): ablösefreie Abgänge Ø ${(e.free / e.n).toFixed(1)}, mit Ablöse Ø ${(e.paid / e.n).toFixed(1)}, Bosman-Verkäufe Ø ${(e.bosman / e.n).toFixed(1)}, frühe Verlängerungen Ø ${(e.early / e.n).toFixed(1)}, Leihen Ø ${(e.loans / e.n).toFixed(1)}${process.env.HUMAN ? `, Jobangebote Ø ${(e.jobs / e.n).toFixed(1)}` : ''}`);
   console.log(`KI-Bilanz über ${s} Saisons: Zugänge/Saison ${(aiTotals.arrivals / s).toFixed(1)}, Wechsel in der Liga ${(aiTotals.transfers / s).toFixed(1)}, unterklassig ${(aiTotals.lower / s).toFixed(1)}, Ausland ${(aiTotals.imports / s).toFixed(1)}, Jugend ${(aiTotals.youth / s).toFixed(1)}, generiert ${(aiTotals.generated / s).toFixed(1)} (${(aiTotals.generated / a * 100).toFixed(0)} % der Zugänge), Trainerwechsel ${(aiTotals.coach / s).toFixed(1)} (Entlassungen ${(aiTotals.sacked / s).toFixed(1)})`);
 }
 if (process.env.SAVESIZE) { const j = JSON.stringify(g); console.log(`Spielstand ${(j.length / 1024 / 1024).toFixed(2)} MB (unkomprimiert)`); for (const [k, v] of Object.entries(g)) { const n = JSON.stringify(v ?? null).length; if (n > 50000) console.log('  ', k, (n / 1024).toFixed(0), 'KB'); } const pl = Object.values(g.players); const hist = pl.reduce((a, p) => a + JSON.stringify(p.history ?? {}).length, 0); console.log('   davon Spieler-Historie', (hist / 1024).toFixed(0), 'KB bei', pl.length, 'Spielern'); }

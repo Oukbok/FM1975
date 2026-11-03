@@ -96,10 +96,10 @@ export function aiLoanRound(g: Game, today: string, rng: () => number = Math.ran
   let n = 0;
   const lenders = Object.values(g.clubs).filter((c) => isAiClub(g, c)).sort((a, b) => (b.reputation ?? 0) - (a.reputation ?? 0));
   for (const lender of lenders) {
-    if (lender.playerIds.length <= 21) continue;
+    if (lender.playerIds.length <= 20) continue;
     let k = 0;
     for (const p of loanCandidates(g, lender, today)) {
-      if (k >= 2 || lender.playerIds.length <= 21 || rng() > 0.45 * era) continue;
+      if (k >= 2 || lender.playerIds.length <= 20 || rng() > 0.45 * era) continue;
       const to = loanTaker(g, p, lender);
       if (!to) continue;
       const fee = year >= 1990 && rng() < 0.4 ? r5k(p.contract.transferValue * 0.08) : 0;

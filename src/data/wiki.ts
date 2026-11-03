@@ -1302,6 +1302,8 @@ Weil jede CPU-Aufstellung dieselbe Eignungs- und Taktik-Logik nutzt wie deine, w
     body: `## Trainer der KI-Vereine
 Jeder andere Verein deiner Liga hat einen **Trainer** mit Namen, Alter, Herkunft, Ansehen (0–100) und zwei Eigenschaften (\`engine/aiManager.ts\`, \`game/coachCarousel.ts\`). Dein eigener Verein hat keinen – das bist du.
 
+Im Vereinsprofil (Reiter Übersicht) zeigt die Trainer-Kachel Stil, Philosophie, Amtszeit, die **Ligabilanz** der Amtszeit (Siege-Remis-Niederlagen und Punkte je Spiel nach 3-Punkte-Wertung) und die Vorgänger mit ihrer Bilanz – auch dich, wenn du dort einmal Trainer warst.
+
 ### Stil → Taktik
 - **Offensiv:** Angriffsausrichtung, mehr Pressing und Tempo, höhere Linie.
 - **Ausgewogen:** alles in der Mitte.
@@ -1388,6 +1390,72 @@ Fehlen nach dem Sommerfenster immer noch Spieler (unter 20), rücken neue Spiele
 
 ### Dein Verein
 Dein Kader wird nie automatisch verändert. Angebote für deine Spieler kommen bevorzugt von Vereinen, die auf der Position Bedarf haben.`,
+  },
+  {
+    id: 'ai-contracts-loans',
+    category: 'ai',
+    title: 'Verträge und Leihen der KI-Vereine',
+    keywords: ['ki', 'vertrag', 'verlängerung', 'bosman', 'ablösefrei', 'vorvertrag', 'leihe', 'kaufoption', 'altstar'],
+    body: `## Verträge und Leihen der KI-Vereine
+Die anderen Vereine planen ihre Verträge wie ein Sportdirektor (\`game/aiContracts.ts\`, \`game/aiLoans.ts\`).
+
+### Vorzeitige Verlängerung
+Leistungsträger (die besten 13 des Kaders) und große Talente bekommen rechtzeitig einen neuen Vertrag, wenn ihrer in höchstens 20 Monaten endet. Vor dem Bosman-Urteil eilt das kaum – auch ohne Vertrag gab es eine Ablöse –, deshalb sprechen die Vereine nur im Frühjahr und seltener mit ihren Spielern. Ab Sommer 1995 sind es drei Stichtage (1. Oktober, 1. Februar, 20. April).
+
+Nicht jeder unterschreibt: Ehrgeizige, unzufriedene oder für den Verein zu gute Spieler **lehnen ab**. Nach Bosman passiert das deutlich häufiger.
+
+### Altstars laufen aus
+Spieler ab 34 – und ab 32, wenn sie nicht mehr zur Stammelf gehören – bekommen keinen neuen Vertrag. Zum 1. Juli wechseln sie zu einem Verein, der sie noch will, oder gehen unterklassig bzw. beenden die Karriere.
+
+### Bosman-Planung
+Ab 1995/96 verkaufen KI-Vereine Spieler, die nicht verlängern wollen, lieber im letzten Vertragsjahr (Sommer bei höchstens 12, Winter bei höchstens 6 Monaten Restlaufzeit), statt sie ablösefrei zu verlieren. Die Ablöse fällt dann niedriger aus. Findet sich im Inland kein Abnehmer, geht der Spieler oft ins Ausland.
+
+### Vorverträge
+Ab Bosman unterschreiben auslaufende Spieler im Januar oder März einen **Vorvertrag** bei einem anderen KI-Verein und wechseln am 1. Juli ablösefrei. Dasselbe kann mit deinen Spielern passieren (siehe Verträge).
+
+### Leihen
+Größere Vereine verleihen junge Ersatzspieler (18–22 Jahre, außerhalb der ersten 15) für eine Saison an kleinere Ligavereine mit Bedarf auf ihrer Position. Dort sammeln sie Spielpraxis – Einsatzminuten treiben die Entwicklung. In den 70ern war das selten, ab den 90ern üblich. Ab 2000 gibt es gelegentlich eine **Kaufoption**: Hat sich der Spieler durchgesetzt und der Leihverein Geld, zieht er sie am 30. Juni. Sonst kehrt der Spieler zum Stammverein zurück.
+
+Auch bei dir fragen KI-Vereine an, ob sie einen deiner jungen Ergänzungsspieler ausleihen dürfen. Du entscheidest in den Nachrichten: ausleihen (ab 2000 wahlweise mit Kaufoption) oder ablehnen.
+
+### Im Sim-Bericht
+\`AI=1 node scripts/sim.mjs 30\` zeigt je Saison frühe Verlängerungen, auslaufende Altstars, Bosman-Verkäufe, Vorverträge, ablösefreie Abgänge und Leihen – und am Ende den Schnitt je Epoche.`,
+  },
+  {
+    id: 'manager-career',
+    category: 'ai',
+    title: 'Deine Trainerkarriere: Ansehen, Angebote, Entlassung',
+    keywords: ['karriere', 'jobangebot', 'angebot', 'trainer', 'wechsel', 'entlassung', 'ansehen', 'gehalt', 'vereinswechsel'],
+    body: `## Deine Trainerkarriere
+Unter **Zentrale › Karriere** siehst du dein Ansehen, offene Angebote, deine Stationen und die Karriere-Chronik (\`game/careerGame.ts\`).
+
+### Ansehen (0–100)
+Startwert = Größe deines ersten Vereins, dazu dein Hintergrund (Legende +8, Ex-Profi +3, Neuling −5). Am Saisonende zählt, wie weit du über oder unter dem Saisonziel gelandet bist; Meisterschaft, Pokal, Europapokal und Aufstieg geben zusätzlich Ansehen. Je höher es schon ist, desto langsamer wächst es. Eine Entlassung kostet 6 Punkte.
+
+### Größe eines Vereins
+Ruf des Vereins, bereinigt um die Liga (2. Liga −7). So lassen sich Vereine aus 1. und 2. Liga vergleichen.
+
+### Angebote
+- **Zum Saisonende:** An vier Stichtagen (20. Januar, 10. April, 10. Mai, 28. Mai) kann sich ein größerer Verein melden, dessen Größe zu deinem Ansehen passt. Läuft deine Saison besser als erwartet, passiert das häufiger. Dein Herzensverein meldet sich bevorzugt, der Verein, den du nie trainieren würdest, nie.
+- **Sofort:** Entlässt ein größerer Verein deiner Liga mitten in der Saison seinen Trainer, fragt er manchmal zuerst bei dir an.
+
+Jedes Angebot nennt Jahresgehalt, Saisonziel und Transferbudget. Du kannst **annehmen**, **nachverhandeln** (mehr Gehalt und Budget – der Verein kann aber abspringen) oder **ablehnen**. Solange ein Angebot offen ist, hält „Weiter“ an. Ohne Antwort gilt es nach Ablauf der Frist als abgelehnt.
+
+Dein Gehalt ist eine Kennzahl deiner Karriere und wird nicht über die Vereinskasse gebucht.
+
+### Der Wechsel
+- **Sofort** (nur innerhalb deiner Liga): Du übernimmst noch am selben Tag.
+- **Zum 1. Juli:** Du führst deinen Verein bis zum Saisonende. Beim Saisonwechsel wird die Liga des neuen Vereins zu deiner Liga.
+
+Dein bisheriger Verein bekommt einen Trainer aus dem Trainerkarussell, dein Trainerteam bleibt dort. Beim neuen Verein übernimmst du dessen Trainerteam, der bisherige Trainer geht. Offene Verhandlungen, Entscheidungen, Versprechen und geplante Trainingslager des alten Vereins verfallen. Der Vorstand startet mit Vertrauen 65 und nennt dir ein Saisonziel.
+
+### Entlassung (nur Karriere-Modus)
+Im Teammanager-Modus wirst du nie entlassen. Im Karriere-Modus (Assistent „Neues Spiel“):
+- **Während der Saison:** Fällt das Vertrauen des Vorstands auf 12 oder weniger, stellt er dir ein **Ultimatum**. Bleibt es einen Monat später so niedrig, bist du deinen Job los. Dann melden sich Vereine deiner Liga, die selbst in der Krise stecken – du wählst einen und übernimmst sofort.
+- **Zum Saisonende:** Ein klar verfehltes Saisonziel bei Vertrauen unter 25 beendet die Zusammenarbeit zum 1. Juli; kleinere Vereine bieten dir einen Neuanfang.
+
+### Grenzen
+Volle Kader gibt es nur in deiner Liga; Jobs im Ausland und bei einer Nationalmannschaft gibt es deshalb nicht.`,
   },
   {
     id: 'ai-history-mode',

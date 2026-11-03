@@ -1,7 +1,7 @@
 // =============================================================================
 // KI-VERTRÄGE — vorzeitige Verlängerungen, auslaufende Altstars, Bosman-Planung
 // -----------------------------------------------------------------------------
-// • Stichtage 1.10., 1.2., 20.4.: KI-Vereine sprechen Leistungsträger und Talente
+// • Stichtage 1.10., 1.2., 20.4. (vor Bosman nur 20.4., seltener): KI-Vereine sprechen Leistungsträger und Talente
 //   an, deren Vertrag in höchstens 20 Monaten endet. Die meisten verlängern; wer
 //   ehrgeizig/unzufrieden ist oder über dem Verein steht, lehnt ab
 //   (`contract.refused`). Altstars (ab 32, nicht mehr Stammspieler; ab 34 immer)
@@ -71,6 +71,8 @@ function renewYears(age: number, r: number): number {
 export function aiEarlyRenewals(g: Game, today: string): void {
   if (!RENEW_DAYS.has(today.slice(5))) return;
   const bosman = bosmanActive(today);
+  // Vor Bosman bringt auch ein auslaufender Vertrag noch Ablöse: kaum Eile, nur im Frühjahr.
+  if (!bosman && today.slice(5) !== '04-20') return;
   const season = seasonKey(today);
   const endYear = seasonEndYear(today);
   for (const club of aiClubsOf(g)) {
@@ -89,7 +91,7 @@ export function aiEarlyRenewals(g: Game, today: string): void {
       if (!isKeyPlayer(p, squad) || p.contract.refused === season) continue;
       // Nicht jeder Verein handelt an jedem Stichtag (Verhandlungen dauern).
       const r = hashRand(`${p.id}|ren|${today}`);
-      if (r > (months <= 8 ? 0.85 : 0.55)) continue;
+      if (r > (bosman ? (months <= 8 ? 0.85 : 0.55) : 0.3)) continue;
       if (refusesRenewal(p, club, bosman, hashRand(`${p.id}|ref|${season}`))) {
         p.contract.refused = season;
         noteSquad(g, 'refused');

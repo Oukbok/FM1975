@@ -233,7 +233,7 @@ function sack(g: Game, today: string, midSeason: boolean): boolean {
   let offers: JobOffer[] = [];
   if (midSeason) {
     // Feuerwehr-Jobs: Vereine deiner Liga, deren Trainer am stärksten wackelt.
-    offers = g.table.rows.map((r) => g.clubs[r.clubId]).filter((x) => x && x.id !== own.id && x.coach && jobLevel(g, x.id) <= c.rep + 4)
+    offers = g.table.rows.map((r) => g.clubs[r.clubId]).filter((x) => x && x.id !== own.id && x.coach && jobLevel(g, x.id) <= Math.min(c.rep + 4, l0))
       .sort((a, b) => (b!.coach!.pressure) - (a!.coach!.pressure)).slice(0, 3)
       .map((x) => makeOffer(g, x!.id, 'sofort', `${x!.name} steckt in der Krise und sucht einen Feuerwehrmann.`, today, true));
   } else {
