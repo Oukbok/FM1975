@@ -7,7 +7,7 @@
 //   ab den 90ern üblich); Kaufoption ab 2000 gelegentlich (CLAUSE_FROM.loanOption).
 // • Auch dein Verein wird gefragt: Ein KI-Verein möchte einen deiner jungen
 //   Ergänzungsspieler ausleihen (Nachricht mit Entscheidung).
-// • 30. Juni (und zur Sicherheit beim Saisonwechsel): Rückkehr zum Stammverein;
+// • 29./30. Juni (und zur Sicherheit beim Saisonwechsel): Rückkehr zum Stammverein;
 //   mit Kaufoption bleibt er, wenn der Leihverein ihn will und es sich leisten kann.
 // Nutzt das Leihfeld `Player.loan` der Transferverhandlungen (game/transferTalks.ts).
 // =============================================================================
@@ -20,6 +20,7 @@ import { bookTransfer } from '../engine/finances';
 import { recordTransfer } from '../engine/history';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { CLAUSE_FROM } from '../engine/transferMarket';
+import { hasTransferBan, lastRevenue } from '../engine/clubEconomy';
 import { fmtPrice } from '../ui/format';
 import { isAiClub, monthsLeftOf, squadOf } from './aiClubs';
 import { noteSquad } from './aiSquadLog';
@@ -29,6 +30,7 @@ import { noteLoan } from './transferLog';
 import { Game } from './state';
 
 const r5k = (v: number) => Math.round(v / 5000) * 5000;
+const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const LOAN_DAYS = new Set(['07-27', '08-17', '01-19']);
 const ASK_DAYS = new Set(['07-25', '01-17']);
 const ASK_TYPE = 'ai_loan_request';
@@ -108,6 +110,7 @@ export function aiLoanRound(g: Game, today: string, rng: () => number = Math.ran
       lendPlayer(g, p, lender, to, today, { fee, optionFee });
       g.aiMarket?.news.push(`${lender.name} verleiht ${p.fullName} (${p.age}) an ${to.name}${optionFee ? ` – Kaufoption ${fmtPrice(optionFee)}` : ''}`);
       noteSquad(g, 'loans');
+      if (optionFee) noteSquad(g, 'loanOptions');
       k++; n++;
     }
   }
@@ -168,6 +171,29 @@ CHOICE_HANDLERS[ASK_TYPE] = (g, ref, choice) => {
 // -----------------------------------------------------------------------------
 // Saisonende: Rückkehr oder Kaufoption
 // -----------------------------------------------------------------------------
+/**
+ * Zieht der Leihverein die Kaufoption? Entscheidend ist, wie der Spieler bei ihm
+ * gespielt hat (Startelf-Anteil, Note), nicht seine Stärke allein – und ob die Kasse
+ * die Option hergibt (Kontostand nach Zahlung über einer kleinen Reserve).
+ */
+export function optionWanted(g: Game, p: Player, holder: Club, today: string, rng: () => number): boolean {
+  if (hasTransferBan(holder, g.season)) return false;
+  const fee = p.loan?.optionFee ?? 0;
+  const nominal = fee * economyScale(yearOf(today));
+  if (holder.finances.balance - nominal < lastRevenue(holder, yearOf(today)) * 0.05) return false;
+  const st = p.seasonStats;
+  // Ligaspiele der Saison (doppelte Runde); Pokal/Europa zählen in den Einsätzen mit.
+  const played = Math.max(g.table.rows.find((r) => r.clubId === holder.id)?.played ?? 0, 2 * Math.max(1, g.table.rows.length - 1));
+  const share = (st?.starts ?? 0) / Math.max(1, played);
+  const note = st?.ratedMatches ? st.averageRating : 4; // 1 = sehr gut … 6
+  const regular = share >= 0.5 || ((st?.appearances ?? 0) >= played * 0.6 && note <= 3.3);
+  const pBuy = regular ? clamp(0.45 + (3.4 - note) * 0.3 + (share - 0.5) * 0.5, 0.2, 0.85) : share >= 0.3 ? 0.1 : 0.02;
+  return rng() < pBuy;
+}
+
+// -----------------------------------------------------------------------------
+// Rückkehr
+// -----------------------------------------------------------------------------
 export function aiLoansSeasonEnd(g: Game, today: string, rng: () => number = Math.random): number {
   let n = 0;
   for (const p of Object.values(g.players)) {
@@ -177,8 +203,7 @@ export function aiLoansSeasonEnd(g: Game, today: string, rng: () => number = Mat
     if (!holder || !isAiClub(g, holder)) continue; // deine Leihspieler: Entscheidung in playerWishesGame.ts
     const parent = g.clubs[loan.fromClubId];
     const mineParent = parent?.id === g.managedClubId;
-    const level = squadLevel11(squadOf(g, holder));
-    const wants = !loan.noOption && loan.optionFee > 0 && p.overall >= level - 6 && holder.finances.balance > 0 && rng() < 0.6;
+    const wants = !loan.noOption && loan.optionFee > 0 && optionWanted(g, p, holder, today, rng);
     if (wants || !parent) {
       p.loan = undefined;
       if (wants && parent) {
@@ -220,5 +245,6 @@ export function aiLoansSeasonEnd(g: Game, today: string, rng: () => number = Mat
 export function aiLoansDaily(g: Game, today: string, rng: () => number = Math.random): void {
   aiLoanRound(g, today, rng);
   aiLoanRequests(g, today, rng);
-  if (today.slice(5) === '06-30') aiLoansSeasonEnd(g, today, rng);
+  // Der 30. Juni selbst wird nicht mehr als Spieltag verarbeitet (Saisonende) → am 29.6. abrechnen.
+  if (today.slice(5) === '06-29') aiLoansSeasonEnd(g, `${today.slice(0, 4)}-06-30`, rng);
 }

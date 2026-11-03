@@ -1411,10 +1411,10 @@ Spieler ab 34 – und ab 32, wenn sie nicht mehr zur Stammelf gehören – bekom
 Ab 1995/96 verkaufen KI-Vereine Spieler, die nicht verlängern wollen, lieber im letzten Vertragsjahr (Sommer bei höchstens 12, Winter bei höchstens 6 Monaten Restlaufzeit), statt sie ablösefrei zu verlieren. Die Ablöse fällt dann niedriger aus. Findet sich im Inland kein Abnehmer, geht der Spieler oft ins Ausland.
 
 ### Vorverträge
-Ab Bosman unterschreiben auslaufende Spieler im Januar oder März einen **Vorvertrag** bei einem anderen KI-Verein und wechseln am 1. Juli ablösefrei. Dasselbe kann mit deinen Spielern passieren (siehe Verträge).
+Ab Bosman unterschreiben auslaufende Spieler zwischen Mitte Januar und Mitte März einen **Vorvertrag** bei einem anderen KI-Verein und wechseln am 1. Juli ablösefrei. Dasselbe kann mit deinen Spielern passieren (siehe Verträge).
 
 ### Leihen
-Größere Vereine verleihen junge Ersatzspieler (18–22 Jahre, außerhalb der ersten 15) für eine Saison an kleinere Ligavereine mit Bedarf auf ihrer Position. Dort sammeln sie Spielpraxis – Einsatzminuten treiben die Entwicklung. In den 70ern war das selten, ab den 90ern üblich. Ab 2000 gibt es gelegentlich eine **Kaufoption**: Hat sich der Spieler durchgesetzt und der Leihverein Geld, zieht er sie am 30. Juni. Sonst kehrt der Spieler zum Stammverein zurück.
+Größere Vereine verleihen junge Ersatzspieler (18–22 Jahre, außerhalb der ersten 15) für eine Saison an kleinere Ligavereine mit Bedarf auf ihrer Position. Dort sammeln sie Spielpraxis – Einsatzminuten treiben die Entwicklung. In den 70ern war das selten, ab den 90ern üblich. Ab 2000 gibt es gelegentlich eine **Kaufoption**: Hat der Spieler beim Leihverein regelmäßig in der Startelf gestanden oder gute Noten bekommen und gibt die Kasse die Ablöse her, zieht der Leihverein sie zum Saisonende. Sonst kehrt der Spieler zum Stammverein zurück.
 
 Auch bei dir fragen KI-Vereine an, ob sie einen deiner jungen Ergänzungsspieler ausleihen dürfen. Du entscheidest in den Nachrichten: ausleihen (ab 2000 wahlweise mit Kaufoption) oder ablehnen.
 

@@ -10,7 +10,7 @@
 // • Ab Bosman (Sommer 1995): Wer abgelehnt hat und nur noch ≤ 12 Monate (Sommer)
 //   bzw. ≤ 6 Monate (Winter) Vertrag hat, wird verkauft – lieber Ablöse jetzt
 //   als ablösefrei im Sommer (Abnehmer: KI-Verein mit Bedarf, sonst Ausland).
-// • Ab Bosman, 15.1./15.3.: Vorverträge zwischen KI-Vereinen mit auslaufenden
+// • Ab Bosman, 15.1./15.2./15.3.: Vorverträge zwischen KI-Vereinen mit auslaufenden
 //   Spielern (Wechsel am 1. Juli ablösefrei).
 // Der eigene Verein ist nie betroffen (außer in der Simulation `simAutoManage`).
 // =============================================================================
@@ -34,7 +34,7 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 const r5k = (v: number) => Math.round(v / 5000) * 5000;
 const RENEW_DAYS = new Set(['10-01', '02-01', '04-20']);
 const SALE_DAYS = new Set(['07-20', '08-10', '01-12']);
-const PRE_DAYS = new Set(['01-15', '03-15']);
+const PRE_DAYS = new Set(['01-15', '02-15', '03-15']);
 
 function hashRand(seed: string): number {
   let h = 2166136261;
@@ -172,13 +172,14 @@ export function aiPreContracts(g: Game, today: string): void {
     for (const p of squad) {
       if (p.contract.expiryDate > endDate || p.contract.preContractClubId || p.loan || p.contract.aiLetGo || p.age >= 33) continue;
       // Wer abgelehnt hat, sucht aktiv; andere Leistungsträger nur gelegentlich.
-      const chance = p.contract.refused ? 0.55 : isKeyPlayer(p, squad) ? 0.12 : 0.05;
+      // Nicht verlängerte Stammkräfte (der Verein hat noch nicht verlängert) werden ebenfalls umworben.
+      const chance = p.contract.refused ? 0.7 : isKeyPlayer(p, squad) ? 0.25 : p.age <= 30 ? 0.1 : 0.04;
       if (hashRand(`${p.id}|pre|${today}`) >= chance) continue;
       // Abnehmer für die neue Saison: KI-Vereine, bei denen er zu den besten 14 gehören würde
       // (Kadergröße im Winter zählt nicht – zum 1. Juli wird ohnehin umgebaut).
       const cands = Object.values(g.clubs).filter((b) => b.id !== club.id && isAiClub(g, b) && b.playerIds.length < 30
-        && (b.reputation ?? 60) >= (club.reputation ?? 60) - 6
-        && p.overall >= (squadOf(g, b).map((x) => x.overall).sort((a, z) => z - a)[13] ?? 0));
+        && (b.reputation ?? 60) >= (club.reputation ?? 60) - 10
+        && p.overall >= (squadOf(g, b).map((x) => x.overall).sort((a, z) => z - a)[15] ?? 0));
       const buyer = cands.length ? preferredClub(g, p, cands, () => hashRand(`${p.id}|preb|${today}`)) : null;
       if (!buyer) continue;
       p.contract.preContractClubId = buyer.id;

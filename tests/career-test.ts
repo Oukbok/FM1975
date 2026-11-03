@@ -13,7 +13,7 @@ import { pendingDecisions } from '../src/engine/messages';
 import { chooseEventOption } from '../src/game/eventsGame';
 import { careerDaily, makeOffer, offerCandidates, rollJobOffers } from '../src/game/careerGame';
 import { currentStint, ensureCareer, jobLevel } from '../src/game/careerState';
-import { aiLoanRound, aiLoansSeasonEnd } from '../src/game/aiLoans';
+import { aiLoanRound, aiLoansSeasonEnd, optionWanted } from '../src/game/aiLoans';
 import { aiBosmanSales, aiEarlyRenewals, aiPreContracts } from '../src/game/aiContracts';
 import { coachRecordOf } from '../src/game/coachRecord';
 import { Game } from '../src/game/state';
@@ -191,6 +191,24 @@ for (const p of loaned) {
   if (!to.playerIds.includes(p.id) || from.playerIds.includes(p.id)) fail('Leihspieler doppelt/falsch zugeordnet');
   if ((to.reputation ?? 0) > (from.reputation ?? 0) - 4) fail('Leihe an einen größeren Verein');
   if (p.age > 22) fail('Leihspieler zu alt');
+}
+// Kaufoption: Stammspieler mit guten Noten meist ja, Bankdrücker fast nie, leere Kasse nie.
+{
+  const p = loaned[0], holder = g6.clubs[p.clubId];
+  p.loan!.optionFee = 50000;
+  const st = p.seasonStats;
+  const trial = () => { let n = 0; for (let i = 0; i < 400; i++) if (optionWanted(g6, p, holder, '1992-06-30', Math.random)) n++; return n / 400; };
+  Object.assign(st, { starts: 28, appearances: 30, ratedMatches: 30, averageRating: 2.6 });
+  const good = trial();
+  Object.assign(st, { starts: 2, appearances: 6, ratedMatches: 6, averageRating: 3.8 });
+  const bench = trial();
+  Object.assign(st, { starts: 28, appearances: 30, ratedMatches: 30, averageRating: 2.6 });
+  const bal = holder.finances.balance; holder.finances.balance = 0;
+  const broke = trial();
+  holder.finances.balance = bal;
+  console.log(`Kaufoption: Stammspieler ${(good * 100).toFixed(0)} %, Bank ${(bench * 100).toFixed(0)} %, ohne Geld ${(broke * 100).toFixed(0)} %`);
+  if (good < 0.5 || bench > 0.1 || broke > 0) fail('Kaufoption-Entscheidung unplausibel');
+  p.loan!.optionFee = 0; p.loan!.noOption = true;
 }
 const back = aiLoansSeasonEnd(g6, '1992-06-30');
 if (back !== loans || Object.values(g6.players).some((p) => p.loan)) fail('Leihen enden nicht');

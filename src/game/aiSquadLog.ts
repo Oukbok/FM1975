@@ -24,6 +24,8 @@ export interface AiSquadLogEntry {
   paidLeaves: number;
   /** Neue Leihen (KI ↔ KI). */
   loans: number;
+  /** Davon mit Kaufoption. */
+  loanOptions: number;
   /** Kaufoption gezogen. */
   loanBuys: number;
   /** Leihen deiner Spieler an KI-Vereine. */
@@ -36,7 +38,7 @@ export type AiSquadKey = Exclude<keyof AiSquadLogEntry, 'season'>;
 const MAX = 80;
 
 function blank(season: string): AiSquadLogEntry {
-  return { season, early: 0, refused: 0, letGo: 0, bosmanSales: 0, pre: 0, freeLeaves: 0, paidLeaves: 0, loans: 0, loanBuys: 0, loansFromYou: 0, jobOffers: 0 };
+  return { season, early: 0, refused: 0, letGo: 0, bosmanSales: 0, pre: 0, freeLeaves: 0, paidLeaves: 0, loans: 0, loanOptions: 0, loanBuys: 0, loansFromYou: 0, jobOffers: 0 };
 }
 
 /** Zähler der laufenden Saison (legt sie bei Bedarf an). */
