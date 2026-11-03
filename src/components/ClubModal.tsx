@@ -1,7 +1,7 @@
 // =============================================================================
 // ClubModal — Vereinsprofil im Football-Manager-Stil (großes Popup mit Reitern)
 //   Kopf (immer sichtbar): Wappen | Name, Stadt, Liga | Platz, Ø Stärke, Ansehen
-//   Reiter: Übersicht · Kader · Verein · Historie (in src/components/club/)
+//   Reiter: Übersicht · Kader · Verein · Historie (in src/components/club/) · Erfolge (views/verein/trophies/)
 // Geöffnet wird es überall über <ClubLink> (club/ClubProfileContext.tsx).
 // =============================================================================
 import { useEffect, useState } from 'react';
@@ -18,9 +18,10 @@ import ClubTab from './club/ClubTab';
 import HistoryTab from './club/HistoryTab';
 import OverviewTab from './club/OverviewTab';
 import SquadTab from './club/SquadTab';
+import { TrophyCabinet } from '../views/verein/trophies/TrophyCabinet';
 
-export type ClubTabKey = 'overview' | 'squad' | 'club' | 'history';
-const TABS: [ClubTabKey, string][] = [['overview', 'Übersicht'], ['squad', 'Kader'], ['club', 'Verein'], ['history', 'Historie']];
+export type ClubTabKey = 'overview' | 'squad' | 'club' | 'history' | 'trophies';
+const TABS: [ClubTabKey, string][] = [['overview', 'Übersicht'], ['squad', 'Kader'], ['club', 'Verein'], ['history', 'Historie'], ['trophies', 'Erfolge']];
 
 export default function ClubModal({ g, clubId, nonce, onChange, onClose, onBack }: {
   g: Game; clubId: string; nonce: number; onChange: () => void; onClose: () => void; onBack?: () => void;
@@ -80,6 +81,7 @@ export default function ClubModal({ g, clubId, nonce, onChange, onClose, onBack 
           {tab === 'squad' && <SquadTab {...props} onTalk={onTalk} talkErr={talkErr} />}
           {tab === 'club' && <ClubTab {...props} />}
           {tab === 'history' && <HistoryTab {...props} />}
+          {tab === 'trophies' && <TrophyCabinet g={g} clubId={clubId} className="tro-cab-modal" />}
         </div>
       </div>
 

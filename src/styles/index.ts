@@ -55,4 +55,5 @@ import './28-prematch.css';
 import './28-textmode2.css';
 import './28-awards.css';
 import './28-talk.css';
+import './28-trophies.css';
 import './29-look.css'; // zuletzt: ruhige Gesamtoptik

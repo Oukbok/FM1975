@@ -50,7 +50,7 @@ import { SaveLoadModal, SettingsModal } from '../views/modals/SaveLoadModal';
 import { FixturesView } from '../views/spieltag/FixturesView';
 import { MatchModal } from '../views/spieltag/MatchModal';
 import { ChronicleModal } from '../views/statistiken/ChronicleModal';
-import { HallOfFameView } from '../views/statistiken/HallOfFameView';
+import { ErfolgeView } from '../views/verein/ErfolgeView';
 import { CupView } from '../views/statistiken/CupView';
 import { InternationalView } from '../views/statistiken/InternationalView';
 import { IndoorView } from '../views/statistiken/IndoorView';
@@ -452,7 +452,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'calendar' && <CalendarView g={g} onChange={rerender} onGoto={setScreen} />}
         {screen === 'briefing' && <BriefingView g={g} onGoto={setScreen} onOpen={() => setRunning(false)} />}
         {screen === 'cup' && <CupView g={g} onWatch={(id) => setLiveMatchId(id)} onReplayDraw={(ri) => replayDraw('cup', ri)} />}
-        {screen === 'ruhmeshalle' && <HallOfFameView g={g} />}
+        {screen === 'ruhmeshalle' && <ErfolgeView g={g} />}
         {screen === 'news' && <NewsView g={g} onRead={rerender} />}
         {screen === 'wiki' && <WikiView key={wikiArticle?.n ?? 0} g={g} openArticle={wikiArticle?.id} />}
         {screen === 'tactics' && <TacticsView g={g as any} onChange={rerender} />}
