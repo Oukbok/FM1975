@@ -9,6 +9,7 @@ import type { GBEntry } from '../../game/goldenBallGame';
 import type { Game } from '../../game/state';
 import type { Club, Player } from '../../types';
 import { TeamName } from '../../views/statistiken/competition/parts';
+import PosBadge from '../../components/PosBadge';
 
 const fmt = (v: number) => v.toFixed(2).replace('.', ',');
 
@@ -73,7 +74,7 @@ export function PodiumCard({ g, e, place, shown, season, mine }: { g: Game; e: G
         <div className="gb-pod-in" style={{ '--k': 0 } as CSSProperties}>
           <GalaFace g={g} e={e} size={place === 1 ? 112 : 88} />
           <div className="gb-pod-name">{e.n}</div>
-          <div className="gb-pod-meta"><NatTag nat={e.nat} /><span className="pos-badge">{e.pos}</span><span>{e.a} Jahre</span></div>
+          <div className="gb-pod-meta"><NatTag nat={e.nat} /><PosBadge pos={e.pos} /><span>{e.a} Jahre</span></div>
           <div className="gb-pod-club"><TeamName g={g} id={e.c} season={season} size={22} /></div>
           <div className="gb-kpis">{kpis(e).map((x) => <div key={x.k} className="gb-kpi"><b>{x.v}</b><span>{x.k}</span></div>)}</div>
           {e.tt?.length ? <div className="gb-titles">{e.tt.map((t) => <span key={t} className="gb-honor">{GB_TITLE_LABEL[t]}</span>)}</div> : null}

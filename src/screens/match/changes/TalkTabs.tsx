@@ -11,6 +11,7 @@ import { MoraleIcon, playerMorale100 } from '../../../components/status';
 import { StatsPanel } from '../MatchPanels';
 import { fmtGrade, gradeCls, gradeEarly } from '../board/LineupBoard';
 import type { Draft, TacticPatch } from './draft';
+import { posGroupClass } from '../../../ui/positionBadges';
 
 const TALKS: [TeamTalk, string, string][] = [
   ['loben', 'Loben', 'Bestärkt bei Führung, kann bei Rückstand zu bequem machen.'],
@@ -54,7 +55,7 @@ export function PlayerTalks({ sim, side, d, onChange }: { sim: MatchSim; side: S
           const g = grade(sim, m);
           return (
             <div key={m.id} className={`tm-pt-row ${done ? 'done' : ''}`}>
-              <span className="tm-pos">{m.pos}</span>
+              <span className={`tm-pos ${posGroupClass(m.pos)}`}>{m.pos}</span>
               <span className="tm-name">{m.p.firstName?.[0]}. {m.p.lastName}{m.yellow > 0 && <i className="ms-card y" />}</span>
               <span className={early ? 'tm-dim' : `ms-grade ${gradeCls(g)}`}>{early ? '–' : fmtGrade(g)}</span>
               <MoraleIcon value={playerMorale100(m.p)} size={20} />

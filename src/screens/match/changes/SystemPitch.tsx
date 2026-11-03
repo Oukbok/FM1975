@@ -13,6 +13,7 @@ import { onPitch } from '../../../engine/match/state';
 import type { Side } from '../../../engine/match/types';
 import { vColor } from '../../../ui/format';
 import { draftPlayers, draftStrength, type Draft } from './draft';
+import { posGroupClass } from '../../../ui/positionBadges';
 
 export function SystemPitch({ sim, side, d, sel, onPick, onSwap, onFormation }: {
   sim: MatchSim; side: Side; d: Draft; sel: string | null;
@@ -93,7 +94,7 @@ export function SystemPitch({ sim, side, d, sel, onPick, onSwap, onFormation }: 
             <div key={m.id} className={`tm-sys-b ${sel === m.id ? 'sel' : ''} ${nowOn.has(m.id) ? 'raus' : ''}`} data-dnd={m.id} onPointerDown={(e) => down(e, m.id)}>
               <PlayerAvatar player={m.p} club={t.club} size={44} />
               <span className="tm-sys-name">{m.p.lastName}</span>
-              <span className="tm-sys-ps">{m.p.naturalPosition} | {m.p.overall}</span>
+              <span className="tm-sys-ps"><span className={posGroupClass(m.p.naturalPosition)}>{m.p.naturalPosition}</span> | {m.p.overall}</span>
             </div>
           ))}
         </div>

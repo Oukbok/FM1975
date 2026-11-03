@@ -3,6 +3,7 @@ import { Game } from '../../game/state';
 import { Player, YOUTH_AGE_CLASS_LABEL, YOUTH_AGE_CLASS_ORDER, YOUTH_AGE_CLASS_RANGE, YouthAgeClass, renderStars, youthAgeClass } from '../../types';
 import { fmtDateShort, vColor } from '../../ui/format';
 import { teamStandings, type YouthStanding } from '../../game/youthComps/view';
+import PosBadge from '../../components/PosBadge';
 
 /** Kurz: „ · 3. Platz“ bzw. „ · Spielfeste“ für die Meter-Beschriftung. */
 const placeOf = (t?: YouthStanding) => (!t ? '' : t.fest ? ' · Spielfeste' : t.pos ? ` · ${t.pos}. Platz` : '');
@@ -109,7 +110,7 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
                 <tr key={pl.id} data-pid={pl.id} className="clickable" onClick={() => setSel(pl.id)}>
                   <td className="rl-rank">{youthAgeClass(pl.age)}</td>
                   <td className="nowrap rl-name">{pl.fullName}</td>
-                  <td className="ctr"><span className="pos-badge">{pl.naturalPosition}</span></td>
+                  <td className="ctr"><PosBadge p={pl} /></td>
                   <td className="num">{pl.age}</td>
                   <td className="num"><b style={{ color: vColor(pl.overall) }}>{pl.overall}</b></td>
                   <td><ScoutRange p={pl} /></td>
@@ -137,7 +138,7 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
       <DashBox title="Größte Talente" icon="trophy">
         {top.length ? top.map((x) => (
           <div key={x.id} className="dlist-row clickable" onClick={() => setSel(x.id)}>
-            <span className="pos-badge">{x.naturalPosition}</span>
+            <PosBadge p={x} compact />
             <span className="grow">{x.fullName} <span className="muted">· {x.age} J.</span></span>
             <ScoutRange p={x} />
           </div>

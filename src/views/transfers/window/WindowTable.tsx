@@ -8,6 +8,7 @@ import type { PositionGroup } from '../../../types';
 import { fmtPrice, vColor } from '../../../ui/format';
 import { InfoTip } from '../../../ui/InfoTip';
 import { ClubCell, feeText, fmtDate, potText, PlayerName } from './parts';
+import PosBadge from '../../../components/PosBadge';
 
 const COLS: { k: TLSortKey; label: string; cls?: string }[] = [
   { k: 'name', label: 'Spieler' }, { k: 'pos', label: 'Pos.', cls: 'ctr' }, { k: 'ov', label: 'Stärke', cls: 'num' },
@@ -32,7 +33,7 @@ export function WindowTable({ g, rows, sort, onSort, onOpen }: {
         {rows.map((r) => (
           <tr key={r.i} className={r.own ? 'me' : ''}>
             <td className="nowrap rl-name"><PlayerName row={r} onOpen={onOpen} /></td>
-            <td className="ctr"><span className="pos-badge">{r.e.pos}</span></td>
+            <td className="ctr"><PosBadge pos={r.e.pos} /></td>
             <td className="num"><b style={{ color: vColor(r.e.ov) }}>{r.e.ov}</b></td>
             <td className="nowrap tw-pot">{potText(r)}</td>
             <td className="num">{r.e.age}</td>

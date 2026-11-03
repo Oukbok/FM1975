@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { demandFor, offerContract } from '../../game/contracts';
 import Icon from '../../components/Icon';
 import { PlayerTalkModal } from './talk/PlayerTalkModal';
+import PosBadge from '../../components/PosBadge';
 
 // =============================================================================
 // KADER — sortierbare Kadertabelle, Kaderstruktur, Verfügbarkeit
@@ -80,7 +81,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
                 <tr key={pl.id} data-pid={pl.id} className={`clickable ${roleCls(pl.id)}`} onClick={() => setSel(pl.id)}>
                   <td className="rl-rank">{pl.shirtNumber}</td>
                   <td className="nowrap rl-name">{pl.fullName}</td>
-                  <td className="ctr"><span className="pos-badge">{pl.naturalPosition}</span></td>
+                  <td className="ctr"><PosBadge p={pl} /></td>
                   <td className="num">{pl.age}</td>
                   <td className="num"><b style={{ color: vColor(pl.overall) }}>{pl.overall}</b></td>
                   <td className="nowrap"><ScoutStars p={pl} /></td>

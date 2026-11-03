@@ -17,6 +17,7 @@ import { MoraleIcon } from '../../../components/status';
 import Icon from '../../../components/Icon';
 import { InfoTip } from '../../../ui/InfoTip';
 import { PlayerTalkModal } from '../talk/PlayerTalkModal';
+import PosBadge from '../../../components/PosBadge';
 
 const sign = (v: number) => (v > 0 ? `+${v}` : `${v}`);
 
@@ -70,7 +71,7 @@ export function PlayerFocus({ g, a, pid, onChange }: { g: Game; a: DRAnalysis; p
   return (
     <div className="kb-focus">
       <div className="kb-focus-head">
-        <span className="pos-badge">{p.naturalPosition}</span>
+        <PosBadge p={p} />
         <span className="kb-focus-name">{p.fullName}</span>
         <span className="kb-pill">{TIER_LABEL[o.tier]}</span>
         {cap && <span className="kb-pill">Kapitän</span>}

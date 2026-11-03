@@ -18,6 +18,7 @@ import { downgrade, quoteUpgrade, setCoachCount, setYouthBudget, startUpgrade, y
 import { DashBox, DashPage, Empty, Kpi, KV, Meter } from '../../ui/DashPage';
 import { fmtDay, fmtPrice } from '../../ui/format';
 import { attraction } from '../../engine/youthAcademy';
+import PosBadge from '../../components/PosBadge';
 
 const MILESTONES: { year: number; text: string }[] = [
   { year: 1985, text: 'Partnerschulen, nationales Sichtungsnetz, Kunstrasen & Halle' },
@@ -142,7 +143,7 @@ export function AcademyView({ g, onChange }: { g: Game; onChange: () => void }) 
       <DashBox title="Wettbewerb um Talente" info="talentWettbewerb" icon="watchlist" right={<span className="dnote">Anziehung Platz {attrRank}/{clubs.length}</span>}>
         {!race ? <Empty icon="youth">Der erste Wettbewerb um die besten 12- bis 16-Jährigen findet zum 1. Juli statt.</Empty> : raceRows.length ? raceRows.slice(0, 9).map((e, i) => (
           <div key={i} className="dlist-row">
-            <span className="pos-badge">{e.pos}</span>
+            <PosBadge pos={e.pos} />
             <span className="grow">{e.name} <span className="muted">· {e.age} J.{e.foreign ? ' · Ausland' : ''}{e.home ? ' · aus deiner Stadt' : ''}</span></span>
             {e.to === club.id ? <span className="val" style={{ color: 'var(--green)' }}>Zusage</span>
               : <span className="meta">{e.to ? <ClubLink id={e.to}>{e.toName}</ClubLink> : e.toName}</span>}

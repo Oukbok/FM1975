@@ -12,6 +12,7 @@ import { AWARD_CAT_LABEL, type AwardCat } from '../../../engine/seasonAwards';
 import { clubView } from '../../../game/clubProfile';
 import type { AwardEntry, AwardSeason } from '../../../game/seasonAwardsGame';
 import type { Game } from '../../../game/state';
+import PosBadge from '../../../components/PosBadge';
 
 export const fmtGrade = (v: number) => v.toFixed(2).replace('.', ',');
 
@@ -73,7 +74,7 @@ export function AwardCard({ g, s, cat, k = 0, onPlayer, compact = false }: {
         <AwardFace g={g} e={w} size={compact ? 64 : 92} />
         <div className="aw-who">
           {nameBtn(w, onPlayer)}
-          <div className="aw-meta"><span className="pos-badge">{w.pos}</span><span>{w.a} Jahre</span></div>
+          <div className="aw-meta"><PosBadge pos={w.pos} /><span>{w.a} Jahre</span></div>
           <AwardClub g={g} e={w} season={s.season} size={compact ? 20 : 24} />
         </div>
       </div>

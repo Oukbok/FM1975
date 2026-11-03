@@ -16,6 +16,7 @@ import type { InboxMessage, MessageCategory } from '../../../types';
 import { WD_FULL, vColor } from '../../../ui/format';
 import { EventChoices } from '../EventChoices';
 import { msgGroup, msgPlayer, ownGames, type MsgGroup } from './data';
+import PosBadge from '../../../components/PosBadge';
 
 /** Passende Seite je Kategorie (Knopf im Lesebereich). */
 const CAT_TARGET: Partial<Record<MessageCategory, [Screen, string]>> = {
@@ -140,7 +141,7 @@ function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
           <button className="dz-rface" onClick={() => openPlayer(p.id)} title={`${p.fullName} – Spielerprofil öffnen`}>
             <PlayerAvatar player={p} club={g.clubs[p.clubId]} size={104} />
             <span className="dz-rface-name">{p.fullName}</span>
-            <span className="dz-rface-sub"><span className="pos-badge">{p.naturalPosition}</span> <span>{p.age} J.</span> <b style={{ color: vColor(p.overall) }}>{p.overall}</b></span>
+            <span className="dz-rface-sub"><PosBadge p={p} single /> <span>{p.age} J.</span> <b style={{ color: vColor(p.overall) }}>{p.overall}</b></span>
           </button>
         )}
       </div>

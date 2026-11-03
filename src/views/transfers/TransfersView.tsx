@@ -16,6 +16,7 @@ import { InfoTip } from '../../ui/InfoTip';
 import { PlayerSearchModal } from './search/PlayerSearchModal';
 import { TransferWindowModal } from './window/TransferWindowModal';
 import { activeCount, runSearch, type SearchCriteria } from '../../game/playerSearch';
+import PosBadge from '../../components/PosBadge';
 
 // =============================================================================
 // TRANSFERS — Transfermarkt, Beobachtung (Scouting-Vorschläge), Verhandlungen
@@ -77,7 +78,7 @@ function MarketTable({ g, list, onOpen, action }: { g: Game; list: Player[]; onO
             <tr key={p.id} data-pid={p.id} className="clickable" onClick={() => onOpen(p.id)}>
               <td className="nowrap rl-name">{p.fullName}</td>
               <td className="nowrap"><ClubLink id={p.clubId}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>{c && <ClubCrest club={c} size={24} />}{c?.shortName}</span></ClubLink></td>
-              <td className="ctr"><span className="pos-badge">{p.naturalPosition}</span></td>
+              <td className="ctr"><PosBadge p={p} /></td>
               <td className="num">{p.age}</td>
               <td className="num"><b style={{ color: vColor(p.overall) }}>{p.overall}</b></td>
               <td className="nowrap"><ScoutStars p={p} /></td>
@@ -224,7 +225,7 @@ export function VerhandlungenView({ g, onChange = () => {} }: { g: Game; onChang
           const pl = g.players[t.playerId];
           return (
             <div key={t.id} className="dlist-row clickable" onClick={() => talk.openTalk(t)}>
-              <span className="pos-badge">{pl?.naturalPosition ?? '–'}</span>
+              <PosBadge p={pl} compact />
               <span className="grow"><b>{pl?.fullName ?? 'Spieler'}</b><span className="muted"> · <ClubLink id={t.sellerId}>{g.clubs[t.sellerId]?.shortName}</ClubLink> · {PHASE[t.phase]}</span></span>
               <span className="val" style={{ color: t.phase === 'failed' ? 'var(--red)' : t.phase === 'done' || t.phase === 'agreed' ? 'var(--green)' : 'var(--accent)' }}>{t.phase === 'club' && t.round ? fmtPrice(t.currentAsk) : t.pkg ? fmtPrice(t.pkg.fee) : ''}</span>
             </div>

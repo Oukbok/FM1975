@@ -13,6 +13,7 @@ import { ScoutStars } from '../../../views/shared';
 import { vColor } from '../../../ui/format';
 import { fmtGrade, gradeCls, gradeEarly } from '../board/LineupBoard';
 import { draftPlayers, draftStrength, playerSlot, type Draft } from './draft';
+import { posGroupClass } from '../../../ui/positionBadges';
 
 export function PlayerTable({ sim, side, d, sel, onPick, onPlayer }: {
   sim: MatchSim; side: Side; d: Draft; sel: string | null; onPick: (id: string) => void; onPlayer: (id: string) => void;
@@ -31,7 +32,7 @@ export function PlayerTable({ sim, side, d, sel, onPick, onPlayer }: {
         role="button" tabIndex={0} onClick={() => onPick(m.id)} onKeyDown={(e) => { if (e.key === 'Enter') onPick(m.id); }}>
         <span className="tm-nr">{m.p.shirtNumber || ''}</span>
         <span className="tm-pos">{onField ? pos : 'Bank'}</span>
-        <span className="tm-dim">{m.p.naturalPosition}</span>
+        <span className={`tm-dim ${posGroupClass(m.p.naturalPosition)}`}>{m.p.naturalPosition}</span>
         <span className="tm-namecell">
           <button type="button" className="tm-plink tm-name" onClick={(e) => { e.stopPropagation(); onPlayer(m.id); }}>{m.p.firstName?.[0]}. {m.p.lastName}</button>
           {tag && <span className={`tm-tag ${tag}`}>{tag}</span>}

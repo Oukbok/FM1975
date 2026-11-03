@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { demandFor, offerContract } from '../../game/contracts';
 import { bosmanActive } from '../../engine/contractTalks';
 import { InfoTip } from '../../ui/InfoTip';
+import PosBadge from '../../components/PosBadge';
 
 // =============================================================================
 // VERTRÄGE — Vertragsliste, auslaufende Verträge, Gehaltsstruktur, Zufriedenheit
@@ -41,7 +42,7 @@ export function VertraegeView({ g, onChange }: { g: Game; onChange?: () => void 
               return (
                 <tr key={pl.id} data-pid={pl.id} className="clickable" onClick={() => setSel(pl.id)}>
                   <td className="nowrap rl-name">{pl.fullName}</td>
-                  <td className="ctr"><span className="pos-badge">{pl.naturalPosition}</span></td>
+                  <td className="ctr"><PosBadge p={pl} /></td>
                   <td className="num">{pl.age}</td>
                   <td className="num" style={{ color: vColor(pl.overall), fontWeight: 800 }}>{pl.overall}</td>
                   <td className="num">{fmtWage(pl.contract.weeklyWage, { unit: false })}</td>

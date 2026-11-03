@@ -20,6 +20,7 @@ import { InfoTip } from '../../../ui/InfoTip';
 import { ScoutStars, squadOf } from '../../shared';
 import Icon from '../../../components/Icon';
 import { byPosition } from './model';
+import PosBadge from '../../../components/PosBadge';
 
 const GROUPS: { id: PositionGroup | 'all'; label: string }[] = [
   { id: 'all', label: 'Alle Spieler' }, { id: 'GK', label: 'Torhüter' }, { id: 'DEF', label: 'Abwehr' },
@@ -73,7 +74,7 @@ export function PlayersTab({ g, refresh }: { g: Game; refresh: () => void }) {
                 const options = rankedPositions(p, positionSuitability).map((r) => r.pos).filter((pos) => pos !== p.naturalPosition);
                 return (
                   <tr key={p.id} data-pid={p.id} className={p.injury ? 'tr3-inj' : ''}>
-                    <td><span className="pos-badge">{p.naturalPosition}</span></td>
+                    <td><PosBadge p={p} /></td>
                     <td className="rl-name"><button className="tr3-namebtn" onClick={() => setSel(p.id)}>{p.fullName}</button></td>
                     <td className="r muted">{p.age}</td>
                     <td className="r">{Math.round(p.overall)}</td>

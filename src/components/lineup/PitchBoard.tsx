@@ -10,6 +10,7 @@ import { PITCH_GRID, type GridPoint } from '../../data/pitchGrid';
 import { positionSuitability, suitabilityColor } from '../../engine/positions';
 import PitchSVG from './PitchSVG';
 import { PlayerForm, PlayerFreshness } from '../status';
+import { posGroupClass } from '../../ui/positionBadges';
 
 export interface SlotPreview { slotId: string; x: number; y: number; position: Position; grid: GridPoint | null; swapWith: string | null }
 
@@ -20,7 +21,7 @@ function Card({ p, pos, captain, small }: { p: Player; pos: Position; captain: b
   return (
     <div className={`lu-card ${small ? 'sm' : ''} ${isOut(p) ? 'out' : ''}`} style={{ borderLeftColor: suitabilityColor(suit) }}>
       <div className="lu-card-top">
-        <span className="lu-card-pos">{pos}</span>
+        <span className={`lu-card-pos ${posGroupClass(pos)}`}>{pos}</span>
         {captain && <span className="lu-cap" title="Kapitän">K</span>}
         <span className="lu-card-st"><PlayerFreshness p={p} size={13} /><PlayerForm p={p} size={13} /></span>
         <span className="lu-card-suit" title="Eignung auf dieser Position">{suit}</span>
@@ -56,7 +57,7 @@ export default function PitchBoard({ formation, map, players, captainId, bench, 
                   style={{ left: `${x}%`, top: `${y}%` }} data-lu-drop={`slot:${s.id}`} data-slot={s.id} data-pid={pid ?? ""}
                   onPointerDown={(e) => onSlotDown(e, s.id)}>
                   {p ? <Card p={p} pos={pos} captain={captainId === p.id} />
-                    : <div className="lu-card empty"><div className="lu-card-top"><span className="lu-card-pos">{pos}</span></div><div className="lu-card-name dim">frei</div></div>}
+                    : <div className="lu-card empty"><div className="lu-card-top"><span className={`lu-card-pos ${posGroupClass(pos)}`}>{pos}</span></div><div className="lu-card-name dim">frei</div></div>}
                   {moving && !snap && <div className="lu-live-pos">{preview!.grid?.label}</div>}
                 </div>
               );

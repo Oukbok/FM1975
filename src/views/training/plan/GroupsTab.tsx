@@ -14,6 +14,7 @@ import { Screen } from '../../../shell/navigation';
 import { DashBox, DashPage, Meter } from '../../../ui/DashPage';
 import { squadOf } from '../../shared';
 import { TrainGroup, byPosition, trainingGroups } from './model';
+import PosBadge from '../../../components/PosBadge';
 
 function GroupBox({ gr, rows = 1 }: { gr: TrainGroup; rows?: 1 | 2 }) {
   const list = [...gr.players].sort(byPosition);
@@ -27,7 +28,7 @@ function GroupBox({ gr, rows = 1 }: { gr: TrainGroup; rows?: 1 | 2 }) {
           <tbody>
             {list.map((p) => (
               <tr key={p.id} data-pid={p.id}>
-                <td><span className="pos-badge">{p.naturalPosition}</span></td>
+                <td><PosBadge p={p} /></td>
                 <td className="rl-name">{p.fullName}</td>
                 <td className="r">{Math.round(p.overall)}</td>
                 <td className="c"><PlayerFitness p={p} showValue /></td>

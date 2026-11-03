@@ -79,6 +79,15 @@
   --fam-1: #4aa877;          /* natürlich */
   --fam-2: #2e7352;          /* gut */
   --fam-3: #263f37;          /* ausreichend */
+  /* Positionsetiketten nach Mannschaftsteil (components/PosBadge.tsx, CSS 29-look.css).
+     Grundton je Gruppe; Schrift = Grundton gemischt mit --text, Rand/Fläche = Grundton
+     transparent (color-mix) – damit auf dunklem wie hellem Grund lesbar.
+     Helle Themes können die vier Werte (und --pos-mix) eigens setzen. */
+  --pos-gk: #3fb3aa;         /* Torwart: türkis */
+  --pos-def: #5aae6c;        /* Abwehr: grün */
+  --pos-mid: #5d8fd8;        /* Mittelfeld: blau */
+  --pos-att: #d7625f;        /* Angriff: rot */
+  --pos-mix: 72%;            /* Anteil Grundton in der Schrift (Rest --text) */
   --pos: var(--green);
   --neg: var(--red);
   --warn: var(--yellow);

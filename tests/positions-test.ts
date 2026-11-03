@@ -18,6 +18,7 @@ import { tacticMods } from '../src/engine/match/team';
 import { MatchSim } from '../src/engine/match/sim';
 import { finishMatch } from '../src/engine/match/finish';
 import { ALL_POSITIONS, type Player, type Position } from '../src/types';
+import { BADGE_MIN, playablePositions, posGroupKey, recentPositionCounts } from '../src/ui/positionBadges';
 
 let seed = 11;
 Math.random = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
@@ -224,6 +225,31 @@ for (const q of [lvL, raR, avB, vs]) {
 ok(host.tactics.slotLayout!.s9.position === 'RA' && host.tactics.slotLayout!.s6.position === 'LM' && host.tactics.slotLayout!.s3.position === 'IV', 'slotLayout falsch umgerechnet');
 ok(host.tactics.assignedPositions![avB.id] === 'RV' && host.tactics.assignedPositions![raR.id] === 'RA', 'assignedPositions falsch umgerechnet');
 console.log('Positionen 2.0: Seiten, Fuß, Raster und Migration OK');
+
+// Positionsetiketten (ui/positionBadges.ts): Gruppenfarbe, Schwelle „gut“, stärkste zuerst, Gleichstand nach Einsätzen
+{
+  ok(posGroupKey('TW') === 'gk' && posGroupKey('LIB') === 'def' && posGroupKey('RV') === 'def' && posGroupKey('DM') === 'mid'
+    && posGroupKey('LM') === 'mid' && posGroupKey('RA') === 'att' && posGroupKey('HS') === 'att' && posGroupKey('VS') === 'def' && posGroupKey('xx') === null, 'Gruppenfarben falsch');
+  let multi = 0, more = 0;
+  for (const p of all.slice(0, 600)) {
+    const l = playablePositions(p);
+    ok(l.some((e) => e.pos === p.naturalPosition), `${p.id}: Stammposition fehlt im Etikett`);
+    ok(l.every((e) => e.pos === p.naturalPosition || e.skill >= BADGE_MIN), `${p.id}: Position unter „gut“ im Etikett`);
+    ok(l.every((e, i) => i === 0 || l[i - 1].value >= e.value), `${p.id}: nicht nach Stärke sortiert`);
+    if (l.length > 1) multi++;
+    if (l.length > 2) more++;
+  }
+  ok(multi > 50 && multi < 600, `Mehrfach-Positionen unplausibel: ${multi}/600`);
+  // Gleichstand: gleiche Stärke → häufiger gespielte zuerst
+  const q = JSON.parse(JSON.stringify(all.find((p) => p.naturalPosition === 'RV')!)) as Player;
+  q.positionSkill!.v.LV = 100;
+  const tie = (q.preferredFoot as string) === 'both' || positionSuitability(q, 'RV') === positionSuitability(q, 'LV');
+  q.history = { matches: Array.from({ length: 25 }, (_, i) => ({ date: '1976-01-01', competition: 'Liga' as const, opponent: 'x', home: true, score: '0:0', minutes: 90, goals: 0, assists: 0, rating: 3, pos: (i < 5 ? 'RV' : 'LV') as Position })) };
+  const rc = recentPositionCounts(q);
+  ok(rc.LV === 20 && !rc.RV, `Zählung letzte 20 Spiele falsch: ${JSON.stringify(rc)}`);
+  if (tie) ok(playablePositions(q)[0].pos === 'LV', 'Gleichstand nicht nach Einsätzen entschieden');
+  console.log(`Positionsetiketten OK (mehrere: ${multi}/600, mehr als zwei: ${more}/600)`);
+}
 
 void ({} as Player); void ('' as Position);
 console.log('Positions-Test OK');

@@ -11,6 +11,7 @@ import { vColor } from '../../../ui/format';
 import { InfoTip } from '../../../ui/InfoTip';
 import type { InfoKey } from '../../../data/infoTexts';
 import { AnyCrest, Face, feeText, fmtDate, potText } from './parts';
+import PosBadge from '../../../components/PosBadge';
 
 /** Positionen mit Stärke: Stammposition + bis zu zwei Nebenpositionen. */
 function positionsOf(r: TLRow): { pos: string; v: number }[] {
@@ -37,7 +38,7 @@ export function WindowSide({ g, league, label, top, onOpen }: { g: Game; league:
           <div className={`tw-totw-name ${top.player ? 'clickable' : ''}`} onClick={() => top.player && onOpen(top.e.p)}>{top.e.n}</div>
           <div className="tw-kv"><span>Nationalität</span><b><span className="tw-nat">{top.e.nat}</span></b></div>
           <div className="tw-kv"><span>Potenzial</span><b>{potText(top)}</b></div>
-          <div className="tw-kv"><span>Position</span><b className="tw-posrow">{positionsOf(top).map((x) => <span key={x.pos} className="pos-badge">{x.pos}</span>)}</b></div>
+          <div className="tw-kv"><span>Position</span><b className="tw-posrow">{positionsOf(top).map((x) => <PosBadge key={x.pos} pos={x.pos} />)}</b></div>
           <div className="tw-kv"><span>Stärke</span><b className="tw-posrow">{positionsOf(top).map((x) => <span key={x.pos} className="tw-posv" style={{ color: vColor(x.v) }}>{x.v}</span>)}</b></div>
           <div className="tw-kv"><span>Alter</span><b>{top.e.age}</b></div>
           <div className="tw-kv"><span>Ablöse</span><b>{feeText(top)}</b></div>

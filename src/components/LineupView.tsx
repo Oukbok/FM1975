@@ -25,6 +25,7 @@ import {
   assignToBench, assignToSlot, effectiveFormation, familiarityOf, lineupHints, moveSlot, placementFor, slotOf, syncLineup, toReserve,
 } from './lineup/lineupOps';
 import { InfoTip } from '../ui/InfoTip';
+import { posGroupClass } from '../ui/positionBadges';
 
 // Loses Game-Interface (Vollstruktur liegt in game/state.ts).
 interface G {
@@ -235,7 +236,7 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
 
       {ghost && createPortal(
         <div className="lu-ghost" style={{ left: drag!.cx, top: drag!.cy, transform: `translate(-50%, -50%) scale(${drag!.scale})` }}>
-          <span className="lu-card-pos">{ghost.naturalPosition}</span> {ghost.lastName}
+          <span className={`lu-card-pos ${posGroupClass(ghost.naturalPosition)}`}>{ghost.naturalPosition}</span> {ghost.lastName}
         </div>, document.body)}
       {prof && <PlayerModal player={prof} club={club} squad={squad} today={g.calendar.currentDate} season={g.season} onClose={() => setProfile(null)} />}
     </DashPage>
