@@ -1,9 +1,10 @@
-// Reiter „Vertrag & Wert“: Konditionen, Restlaufzeit, Einordnung im Kader
+// Reiter „Vertrag“ (Vorbild EA Fussball Manager): Vertragsparameter, zusätzliche Vertragsparameter
+// (Prämien, Klauseln, Leihe, Vorvertrag – nur, was es gibt), Zusagen, Einordnung im Kader, Vertragsgespräch.
 import { Player } from '../../types';
-import { fmtDMfull, vColor, fmtPrice, fmtWage, wageUnit } from '../../ui/format';
+import { fmtDMfull, condColor, fmtPrice, fmtWage, wageUnit } from '../../ui/format';
 import { WageSlider } from '../../ui/WageSlider';
 import Icon from '../Icon';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import type { ContractDemand } from '../../engine/contractTalks';
 
 /** Schnittstelle für Vertragsgespräche (vom Aufrufer mit Spielstand belegt). */
@@ -47,7 +48,11 @@ function TalkBox({ p, neg }: { p: Player; neg: Negotiation }) {
     </Section>
   );
 }
-import { utcDate, Section, Line, Stat } from './shared';
+import { utcDate, Section, Line } from './shared';
+import { useClubProfile } from '../club/ClubLink';
+import { PLAYER_DRAW_BONUS, PLAYER_WIN_BONUS } from '../../engine/finances';
+import { PROMISES } from '../../engine/transferMarket';
+import type { Game } from '../../game/state';
 import { InfoTip } from '../../ui/InfoTip';
 
 function monthsLeft(expiry: string, today?: string): number | null {
@@ -63,43 +68,81 @@ function rank<T>(list: T[], self: T, val: (x: T) => number): string {
   return i < 0 ? '—' : `${i + 1}. von ${sorted.length}`;
 }
 
-export default function ContractTab({ p, squad, today, negotiation }: { p: Player; squad?: Player[]; today?: string; negotiation?: Negotiation }) {
+const clubNameOf = (g: Game | undefined, id?: string) =>
+  (id && g ? (g.clubs[id]?.name ?? g.simClubs?.[id]?.name ?? g.euroClubs?.[id]?.name) : undefined) ?? '—';
+
+/** Zusatzparameter aus den Vertragsdaten – nur, was es im Spiel wirklich gibt. */
+function extraParams(g: Game | undefined, p: Player): [ReactNode, ReactNode][] {
   const k = p.contract;
-  const left = monthsLeft(k.expiryDate, today);
+  const out: [ReactNode, ReactNode][] = [];
+  const mine = !!g && p.clubId === g.managedClubId;
+  if (mine && !p.isYouth) {
+    out.push([<>Siegprämie (Mannschaftsregel)</>, fmtPrice(k.weeklyWage * PLAYER_WIN_BONUS)]);
+    out.push([<>Prämie je Remis</>, fmtPrice(k.weeklyWage * PLAYER_DRAW_BONUS)]);
+  }
+  if (k.goalBonus) out.push(['Torprämie', fmtDMfull(k.goalBonus)]);
+  if (k.loyaltyBonus) out.push([<>Treueprämie<InfoTip k="treuepraemie" /></>, `${fmtPrice(k.loyaltyBonus)} zum Vertragsende`]);
+  if (k.successRaise) out.push([<>Erfolgsklausel<InfoTip k="erfolgsklausel" /></>, `+${Math.round(k.successRaise * 100)} % Gehalt bei Europapokal-Platz`]);
+  if (k.noRivalSale) out.push(['Kein Verkauf an Rivalen', 'zugesagt']);
+  if (k.buyBack) out.push(['Rückkaufoption', `${clubNameOf(g, k.buyBack.clubId)} · ${fmtPrice(k.buyBack.fee)} bis ${utcDate(k.buyBack.until)}`]);
+  if (p.sellOn) out.push(['Weiterverkaufsbeteiligung', `${Math.round(p.sellOn.pct * 100)} % an ${clubNameOf(g, p.sellOn.clubId)}`]);
+  if (p.loan) out.push(['Leihe', `von ${clubNameOf(g, p.loan.fromClubId)} bis ${utcDate(p.loan.until)}${p.loan.optionFee ? ` · Kaufoption ${fmtPrice(p.loan.optionFee)}` : ''}`]);
+  if (k.preContractClubId) out.push(['Vorvertrag', `wechselt zum Vertragsende zu ${clubNameOf(g, k.preContractClubId)}`]);
+  return out;
+}
+
+const PROMISE_STATE = { kept: 'eingehalten', broken: 'gebrochen' } as const;
+
+export default function ContractTab({ p, squad, today, negotiation }: { p: Player; squad?: Player[]; today?: string; negotiation?: Negotiation }) {
+  const g = useClubProfile()?.game;
+  const k = p.contract;
+  const left = monthsLeft(k.expiryDate, today ?? g?.calendar.currentDate);
   const inSquad = squad && squad.includes(p) ? squad : undefined;
   const avgWage = inSquad ? inSquad.reduce((s, x) => s + x.contract.weeklyWage, 0) / inSquad.length : 0;
+  const extra = extraParams(g, p);
+  const promises = p.promises ?? [];
   return (
-    <div className="pp-grid pp-grid-contract">
-      <Section title="Konditionen" icon={<Icon name="contracts" size={15} />}>
+    <div className="pp3-contract">
+      <div className="pp3-two">
+      <Section title="Vertragsparameter">
         <div className="pp-list">
-          <Line label={`Gehalt / ${wageUnit()}`} value={fmtWage(k.weeklyWage, { unit: false })} strong />
-          <Line label="Vertrag bis" value={utcDate(k.expiryDate)} />
-          <Line label={<>Restlaufzeit<InfoTip k="restlaufzeit" /></>} value={left === null ? '—' : left >= 12 ? `${Math.floor(left / 12)} J. ${left % 12} M.` : `${left} Monate`} color={left !== null && left <= 6 ? 'var(--orange)' : undefined} />
+          <Line label="Vertragsende" value={utcDate(k.expiryDate)} strong />
+          <Line label={<>Restlaufzeit<InfoTip k="restlaufzeit" /></>} value={left === null ? '—' : left >= 12 ? `${Math.floor(left / 12)} J. ${left % 12} M.` : `${left} Monate`} color={left !== null && left <= 6 ? 'var(--neg)' : undefined} />
+          <Line label={`Grundgehalt / ${wageUnit()}`} value={fmtWage(k.weeklyWage, { unit: false })} />
+          <Line label={<>Marktwert<InfoTip k="marktwert" /></>} value={fmtPrice(k.transferValue)} />
           <Line label={<>Ausstiegsklausel<InfoTip k="ausstiegsklausel" /></>} value={typeof k.releaseClause === 'number' ? fmtPrice(k.releaseClause) : 'keine'} />
-          <Line label="Tor-Prämie" value={k.goalBonus ? fmtDMfull(k.goalBonus) : 'keine'} />
-          <Line label="Transferliste" value={p.transferListed ? 'Ja' : 'Nein'} color={p.transferListed ? 'var(--orange)' : undefined} />
+          <Line label={<>Zufriedenheit<InfoTip k="zufriedenheit" /></>} value={`${Math.round(k.satisfaction)} %`} color={condColor(k.satisfaction)} />
+          <Line label="Transferliste" value={p.transferListed ? 'Ja' : 'Nein'} color={p.transferListed ? 'var(--neg)' : undefined} />
         </div>
       </Section>
-      <div className="pp-stack">
-        <Section title="Wert & Zufriedenheit" icon={<Icon name="finances" size={15} />}>
-          <div className="pp-stat-grid">
-            <Stat label={<>Marktwert<InfoTip k="marktwert" /></>} value={fmtPrice(k.transferValue)} />
-            <Stat label={<>Zufriedenheit<InfoTip k="zufriedenheit" /></>} value={<span style={{ color: vColor(k.satisfaction) }}>{k.satisfaction} %</span>} />
-            <Stat label="Wert / Jahresgehalt" value={k.weeklyWage > 0 ? `${(k.transferValue / (k.weeklyWage * 52)).toFixed(1)}×` : '—'} />
+      <Section title={<>Zusätzliche Vertragsparameter<InfoTip k="spielerKlauseln" /></>}>
+        {extra.length ? (
+          <div className="pp-list">{extra.map(([l, v], i) => <Line key={i} label={l} value={v} />)}</div>
+        ) : <div className="pp-note">Keine Zusatzvereinbarungen.</div>}
+      </Section>
+      </div>
+      {negotiation && <TalkBox p={p} neg={negotiation} />}
+      {promises.length > 0 && (
+        <Section title="Zusagen beim Wechsel">
+          <div className="pp-list">
+            {promises.map((pr, i) => (
+              <Line key={i} label={`${PROMISES[pr.type]?.label ?? pr.type} · ${pr.season}`}
+                value={pr.result ? PROMISE_STATE[pr.result] : 'offen'} color={pr.result === 'broken' ? 'var(--neg)' : pr.result === 'kept' ? 'var(--pos)' : undefined} />
+            ))}
           </div>
         </Section>
-        {inSquad && (
-          <Section title="Einordnung im Kader" icon={<Icon name="squad" size={15} />}>
-            <div className="pp-list">
-              <Line label="Stärke" value={rank(inSquad, p, (x) => x.overall)} />
-              <Line label="Marktwert" value={rank(inSquad, p, (x) => x.contract.transferValue)} />
-              <Line label="Gehalt" value={rank(inSquad, p, (x) => x.contract.weeklyWage)} />
-              <Line label="Gehalt vs. Kaderschnitt" value={avgWage > 0 ? `${Math.round((k.weeklyWage / avgWage) * 100)} %` : '—'} />
-            </div>
-          </Section>
-        )}
-        {negotiation && <TalkBox p={p} neg={negotiation} />}
-      </div>
+      )}
+      {inSquad && (
+        <Section title="Einordnung im Kader">
+          <div className="pp-list">
+            <Line label="Stärke" value={rank(inSquad, p, (x) => x.overall)} />
+            <Line label="Marktwert" value={rank(inSquad, p, (x) => x.contract.transferValue)} />
+            <Line label="Gehalt" value={rank(inSquad, p, (x) => x.contract.weeklyWage)} />
+            <Line label="Gehalt vs. Kaderschnitt" value={avgWage > 0 ? `${Math.round((k.weeklyWage / avgWage) * 100)} %` : '—'} />
+            <Line label="Wert / Jahresgehalt" value={k.weeklyWage > 0 ? `${(k.transferValue / (k.weeklyWage * 52)).toFixed(1)}×` : '—'} />
+          </div>
+        </Section>
+      )}
     </div>
   );
 }

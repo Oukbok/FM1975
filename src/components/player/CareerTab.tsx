@@ -1,46 +1,195 @@
-// Reiter „Karriere“: Stationen je Saison + Transfers
-import { Player, Club } from '../../types';
-import { fmtDM } from '../../ui/format';
-import Icon from '../Icon';
-import { utcDate, Section, Line } from './shared';
+// Reiter „Stationen“ (Vorbild EA Fussball Manager): frühere Stationen Von–bis/Mannschaft/Ablöse/
+// Spiele/Tore (aus Transfers + Saisonbilanzen, engine/history.ts), Vereinsspiele der laufenden
+// Saison je Wettbewerb (engine/compStats.ts), Saisonbilanzen, Auszeichnungen (Die Besten der
+// Saison, Goldener Ball) und Titel mit dem Verein (game/trophyCabinet.ts). Nur vorhandene Daten.
+import { useMemo } from 'react';
+import type { CareerStation, Club, Player, TransferRecord } from '../../types';
+import type { Game } from '../../game/state';
+import { useClubProfile } from '../club/ClubLink';
+import { formatMoneyShort } from '../../engine/economy';
+import { compStatsOf, type CompTuple } from '../../engine/compStats';
+import { AWARD_CATS, AWARD_CAT_LABEL } from '../../engine/seasonAwards';
+import { awardsState } from '../../game/seasonAwardsGame';
+import { goldenBallState } from '../../game/goldenBallGame';
+import { trophiesOf } from '../../game/trophyCabinet';
+import { InfoTip } from '../../ui/InfoTip';
+import { Section, utcDate } from './shared';
+
+interface Spell { club: string; from?: string; to?: string; fee?: number; kind?: string; apps: number; goals: number; current: boolean }
+
+const seasonEnd = (season: string) => `${Number(season.slice(0, 4)) + 1}-06-30`;
+const seasonStart = (season: string) => `${season.slice(0, 4)}-07-01`;
+
+function kindOf(g: Game | undefined, p: Player, t: TransferRecord): string | undefined {
+  for (const w of g?.transferLog?.wins ?? []) {
+    const e = w.e.find((x) => x.p === p.id && x.d === t.date);
+    if (e?.k) return e.k;
+  }
+  return undefined;
+}
+
+/** Vereinsstationen: an jedem Wechsel getrennt, Saisonbilanzen der passenden Station zugeordnet. */
+export function spellsOf(g: Game | undefined, p: Player, clubName: string): Spell[] {
+  const tr = [...(p.history?.transfers ?? [])].sort((a, b) => a.date.localeCompare(b.date));
+  const out: Spell[] = [];
+  if (!tr.length) out.push({ club: clubName, apps: 0, goals: 0, current: true });
+  else {
+    out.push({ club: tr[0].fromClub, to: tr[0].date, apps: 0, goals: 0, current: false });
+    tr.forEach((t, i) => out.push({
+      club: t.toClub, from: t.date, to: tr[i + 1]?.date, fee: t.fee, kind: kindOf(g, p, t),
+      apps: 0, goals: 0, current: i === tr.length - 1,
+    }));
+  }
+  const add = (st: CareerStation) => {
+    const named = out.filter((s) => s.club === st.clubName);
+    const hit = named.find((s) => (!s.from || s.from <= seasonEnd(st.season)) && (!s.to || s.to >= seasonStart(st.season))) ?? named[0];
+    if (hit) { hit.apps += st.appearances; hit.goals += st.goals; }
+  };
+  for (const st of p.history?.stations ?? []) add(st);
+  const cur = out[out.length - 1];
+  cur.apps += p.seasonStats.appearances; cur.goals += p.seasonStats.goals;
+  return out.reverse();
+}
+
+function feeText(s: Spell): string {
+  if (s.fee == null) return '–';
+  if (s.kind === 'loan') return 'Leihe';
+  if (s.kind === 'back') return 'Leihende';
+  return s.fee > 0 ? formatMoneyShort(s.fee, Number(s.from!.slice(0, 4))) : 'ablösefrei';
+}
+
+/** Statistik je Wettbewerb der laufenden Saison (Europapokal 2.0 liegt am Wettbewerb). */
+function compRows(g: Game | undefined, p: Player): { label: string; t?: CompTuple }[] {
+  const cs = compStatsOf(p) ?? {};
+  let e: CompTuple | undefined = cs.E ? [...cs.E] as CompTuple : undefined;
+  for (const cup of Object.values(g?.euroCups ?? {})) {
+    const x = cup?.xstats?.[p.id];
+    if (!x) continue;
+    e ??= [0, 0, 0, 0, 0, 0, 0];
+    for (let i = 0; i < 7; i++) e[i] += x[i];
+  }
+  return [{ label: 'Liga', t: cs.L }, { label: 'Pokal', t: cs.P }, { label: 'Europapokal', t: e }];
+}
+
+const CAT_BEST: Record<string, string> = { GK: 'Bester Torwart', DEF: 'Bester Abwehrspieler', MID: 'Bester Mittelfeldspieler', ATT: 'Bester Stürmer' };
+
+function honoursOf(g: Game | undefined, p: Player) {
+  const list: { when: string; what: string; where?: string; top: boolean }[] = [];
+  let sds = 0, gb = 0;
+  for (const s of awardsState(g as Game)?.seasons ?? []) {
+    for (const cat of AWARD_CATS) {
+      const i = s.cats[cat].findIndex((e) => e.p === p.id);
+      if (i < 0) continue;
+      if (i === 0 && s.best === cat) { sds++; list.push({ when: s.season, what: 'Spieler der Saison', where: s.divName, top: true }); }
+      list.push({ when: s.season, what: i === 0 ? CAT_BEST[cat] : `Platz ${i + 1} · ${AWARD_CAT_LABEL[cat]}`, where: s.divName, top: i === 0 });
+    }
+    if (s.rookie?.p === p.id) list.push({ when: s.season, what: 'Newcomer der Saison', where: s.divName, top: true });
+  }
+  for (const y of goldenBallState(g as Game)?.years ?? []) {
+    const i = y.top.findIndex((e) => e.p === p.id);
+    if (i < 0) continue;
+    if (i === 0) gb++;
+    list.push({ when: String(y.year), what: i === 0 ? y.title : `${y.title} · Platz ${i + 1}`, top: i === 0 });
+  }
+  return { list: list.sort((a, b) => b.when.localeCompare(a.when)), sds, gb };
+}
+
+function titlesWith(g: Game | undefined, p: Player): { season: string; title: string; club: string }[] {
+  if (!g) return [];
+  const out: { season: string; title: string; club: string }[] = [];
+  const cache = new Map<string, ReturnType<typeof trophiesOf>>();
+  for (const st of p.history?.stations ?? []) {
+    if (!g.clubs[st.clubId]) continue;
+    let list = cache.get(st.clubId);
+    if (!list) { try { list = trophiesOf(g, st.clubId); } catch { list = []; } cache.set(st.clubId, list); }
+    for (const t of list) if (t.season === st.season && t.cat !== 'jugend') out.push({ season: st.season, title: t.title, club: st.clubName });
+  }
+  return out.reverse();
+}
+
+const dash = (n: number | undefined) => (n ? n : '–');
 
 export default function CareerTab({ p, club, season }: { p: Player; club?: Club; season?: string }) {
+  const g = useClubProfile()?.game;
+  const clubName = club?.name ?? g?.clubs[p.clubId]?.name ?? '—';
+  const spells = useMemo(() => spellsOf(g, p, clubName), [g, p, clubName]);
+  const comps = compRows(g, p);
+  const hon = useMemo(() => honoursOf(g, p), [g, p]);
+  const titles = useMemo(() => titlesWith(g, p), [g, p]);
   const stations = [...(p.history?.stations ?? [])].reverse();
-  const transfers = [...(p.history?.transfers ?? [])].reverse();
-  const s = p.seasonStats, c = p.careerStats;
+  const c = p.careerStats;
   return (
-    <div className="pp-grid pp-grid-career">
-      <Section title="Stationen" icon={<Icon name="chronicle" size={15} />}>
-        <table className="pp-table">
-          <thead><tr><th>Saison</th><th>Verein</th><th>Spiele</th><th>Tore</th><th>Vorl.</th><th>Ø Note</th></tr></thead>
+    <div className="pp3-career">
+      <Section title={<>Frühere Stationen<InfoTip k="stationen" /></>}>
+        <table className="pp-table pp3-table pp3-spells">
+          <thead><tr><th>Von – bis</th><th>Mannschaft</th><th className="num">Ablöse</th><th className="num">Sp.</th><th className="num">Tore</th></tr></thead>
           <tbody>
-            <tr className="pp-row-current">
-              <td>{season ?? 'aktuell'}</td><td>{club?.name ?? '—'} <span className="dim">(läuft)</span></td>
-              <td>{s.appearances}</td><td>{s.goals}</td><td>{s.assists}</td><td>{s.averageRating > 0 ? s.averageRating.toFixed(2) : '—'}</td>
-            </tr>
-            {stations.slice(0, 12).map((st, i) => (
-              <tr key={i}>
-                <td>{st.season}</td><td>{st.clubName}</td><td>{st.appearances}</td><td>{st.goals}</td><td>{st.assists}</td>
-                <td>{st.averageRating > 0 ? st.averageRating.toFixed(2) : '—'}</td>
+            {spells.map((s, i) => (
+              <tr key={i} className={s.current ? 'pp3-cur' : undefined}>
+                <td>{s.from ? `${utcDate(s.from)} – ${s.current ? 'offen' : s.to ? utcDate(s.to) : '–'}` : s.current ? 'seit Spielbeginn' : `bis ${s.to ? utcDate(s.to) : '–'}`}</td>
+                <td>{s.club}</td>
+                <td className="num">{feeText(s)}</td>
+                <td className="num">{s.apps}</td>
+                <td className="num">{s.goals}</td>
               </tr>
             ))}
-            <tr className="pp-row-total">
-              <td>Gesamt</td><td /><td>{c.appearances}</td><td>{c.goals}</td><td>{c.assists}</td><td>{c.averageRating > 0 ? c.averageRating.toFixed(2) : '—'}</td>
-            </tr>
+            <tr className="pp-row-total"><td>Gesamte Karriere</td><td /><td /><td className="num">{c.appearances}</td><td className="num">{c.goals}</td></tr>
           </tbody>
         </table>
-        {stations.length === 0 && <div className="pp-note">Frühere Saisons werden ab jetzt zum Saisonende festgehalten.</div>}
       </Section>
-      <Section title="Transfers" icon={<Icon name="transfers" size={15} />}>
-        {transfers.length === 0 ? (
-          <div className="pp-note">Noch kein Vereinswechsel im Spiel.</div>
-        ) : (
-          <div className="pp-list">
-            {transfers.slice(0, 10).map((t, i) => (
-              <Line key={i} label={`${utcDate(t.date)} · ${t.fromClub} → ${t.toClub}`} value={t.fee > 0 ? fmtDM(t.fee) : 'ablösefrei'} />
+
+      <Section title="Vereinsspiele je Wettbewerb" right={season}>
+        <table className="pp-table pp3-table pp3-comp">
+          <thead><tr><th>Wettbewerb</th><th className="num">Sp.</th><th className="num">Tore</th><th className="num">Vorl.</th><th className="num">GK</th><th className="num">GRK</th><th className="num">RK</th><th className="num">Ø Note</th></tr></thead>
+          <tbody>
+            {comps.map(({ label, t }) => (
+              <tr key={label}>
+                <td>{label}</td><td className="num">{t?.[0] ?? 0}</td><td className="num">{dash(t?.[1])}</td><td className="num">{dash(t?.[2])}</td>
+                <td className="num">{dash(t?.[3])}</td><td className="num">{dash(t?.[4])}</td><td className="num">{dash(t?.[5])}</td>
+                <td className="num">{t?.[8] ? ((t[7] ?? 0) / t[8]).toFixed(2) : '–'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Section>
+
+      <Section title="Auszeichnungen" right={hon.list.length ? `${hon.list.length}` : undefined}>
+        <div className="pp3-honsum">
+          <div><b>{hon.sds}</b><span>Spieler der Saison</span></div>
+          <div><b>{hon.gb}</b><span>Goldener Ball</span></div>
+          <div><b>{titles.length}</b><span>Titel mit dem Verein</span></div>
+        </div>
+        {hon.list.length === 0 && titles.length === 0 && <div className="pp-note">Noch keine Ehrung und kein Titel seit Spielbeginn.</div>}
+        {(hon.list.length > 0 || titles.length > 0) && (
+          <div className="pp3-honlist">
+            {hon.list.map((h, i) => (
+              <div key={'h' + i} className={`pp3-hon${h.top ? ' top' : ''}`}><span className="w">{h.when}</span><b>{h.what}</b><span className="dim">{h.where ?? ''}</span></div>
+            ))}
+            {titles.map((t, i) => (
+              <div key={'t' + i} className="pp3-hon"><span className="w">{t.season}</span><b>{t.title}</b><span className="dim">{t.club}</span></div>
             ))}
           </div>
         )}
+      </Section>
+
+      <Section title="Saisonbilanzen">
+        <table className="pp-table pp3-table pp3-seasons">
+          <thead><tr><th>Saison</th><th>Verein</th><th className="num">Sp.</th><th className="num">Tore</th><th className="num">Vorl.</th><th className="num">Ø Note</th></tr></thead>
+          <tbody>
+            <tr className="pp3-cur">
+              <td>{season ?? 'aktuell'}</td><td>{clubName} <span className="dim">(läuft)</span></td>
+              <td className="num">{p.seasonStats.appearances}</td><td className="num">{p.seasonStats.goals}</td><td className="num">{p.seasonStats.assists}</td>
+              <td className="num">{p.seasonStats.averageRating > 0 ? p.seasonStats.averageRating.toFixed(2) : '–'}</td>
+            </tr>
+            {stations.slice(0, 20).map((st, i) => (
+              <tr key={i}>
+                <td>{st.season}</td><td>{st.clubName}</td><td className="num">{st.appearances}</td><td className="num">{st.goals}</td>
+                <td className="num">{st.assists}</td><td className="num">{st.averageRating > 0 ? st.averageRating.toFixed(2) : '–'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {stations.length === 0 && <div className="pp-note">Frühere Saisons werden zum Saisonende festgehalten.</div>}
       </Section>
     </div>
   );

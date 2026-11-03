@@ -72,6 +72,7 @@ import { fmtDM, fmtDMfull, fmtDateFull, setDisplayYear } from '../ui/format';
 import { RatingResult as _RatingResult } from '../engine/development';
 import { awardsDaily } from './seasonAwardsGame';
 import { goldenBallDaily } from './goldenBallGame';
+import { recordProfileWeek } from './profileWeeks';
 
 export interface DayUi {
   /** Eigenes Spiel wurde gespielt → Spielbericht/Textmodus öffnen. */
@@ -672,6 +673,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
     // es erscheint KEIN Popup und der Lauf pausiert nicht mehr. Eine Meldung
     // gibt es nur noch bei den großen Auf-/Abwertungsrunden (rating_update).
     weeklyDevelopment(g.players, g.clubs, yearOf(today), withReserve(devContextFor(g, today), today), g.managedClubId);
+    recordProfileWeek(g, today); // Wochenverlauf fürs Spielerprofil (nur eigener Kader)
     // Jugendentwicklung aller Vereine (Talente wachsen; Scouting präzisiert sich).
     // Manager-Verein erhält Boni aus Mitarbeitern (Scouting) und Zukunfts-Bauten
     // (NLZ → Wachstum, Datenanalyse-Zentrum → Scouting) — Block p11.

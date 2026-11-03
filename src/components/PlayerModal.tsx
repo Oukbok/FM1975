@@ -3,7 +3,8 @@
 //   oben links  Nummer + Name, Verein, Wappen mit Gesicht, Steckbrief (player/ProfileHead)
 //   oben rechts Positionsfeld, Saisonbilanz, Vertragsstatus (player/ProfileTop)
 //   unten links Fähigkeiten – immer sichtbar (player/SkillsPanel)
-//   unten rechts Reiter: [Zusatz] · Allgemein · Entwicklung · Saison · Karriere · Vertrag · Wünsche · Medizin · Bericht
+//   unten rechts Reiter: [Zusatz] · Allgemein · Details · Statistiken · Stationen · Vertrag · Wünsche · Bericht,
+//               darunter die Aktionsleiste (player/ActionBar: Bericht, Gespräch, Vertrag, Transferliste …)
 //   Knöpfe oben rechts: vorheriger/nächster Spieler im Kader (wenn `squad` übergeben), Schließen.
 //   Die Teile liegen in src/components/player/, CSS in styles/28-profile2.css.
 // =============================================================================
@@ -15,22 +16,24 @@ import ProfileTop from './player/ProfileTop';
 import SkillsPanel from './player/SkillsPanel';
 import { bestPositions } from './player/profileData';
 import GeneralTab from './player/GeneralTab';
-import DevelopmentTab from './player/DevelopmentTab';
-import SeasonTab from './player/SeasonTab';
+import DetailsTab from './player/DetailsTab';
+import StatsTab from './player/StatsTab';
 import ContractTab, { Negotiation } from './player/ContractTab';
-import MedicalTab from './player/MedicalTab';
 import ReportTab from './player/ReportTab';
 import CareerTab from './player/CareerTab';
 import WishesTab from './player/WishesTab';
+import ActionBar from './player/ActionBar';
 
-export type Tab = 'extra' | 'general' | 'development' | 'season' | 'career' | 'contract' | 'wishes' | 'medical' | 'report'
+export type Tab = 'extra' | 'general' | 'details' | 'stats' | 'career' | 'contract' | 'wishes' | 'report'
   // frühere Reiter (Aufrufer/alte Links) – werden abgebildet
-  | 'overview' | 'attributes' | 'matches' | 'stats';
+  | 'overview' | 'attributes' | 'matches' | 'season' | 'development' | 'medical';
 const TABS: [Tab, string][] = [
-  ['general', 'Allgemein'], ['development', 'Entwicklung'], ['season', 'Saison'], ['career', 'Karriere'],
-  ['contract', 'Vertrag'], ['wishes', 'Wünsche'], ['medical', 'Medizin'], ['report', 'Bericht'],
+  ['general', 'Allgemein'], ['details', 'Details'], ['stats', 'Statistiken'], ['career', 'Stationen'],
+  ['contract', 'Vertrag'], ['wishes', 'Wünsche'], ['report', 'Bericht'],
 ];
-const OLD_TAB: Partial<Record<Tab, Tab>> = { overview: 'general', attributes: 'general', matches: 'season', stats: 'season' };
+const OLD_TAB: Partial<Record<Tab, Tab>> = {
+  overview: 'general', attributes: 'general', matches: 'stats', season: 'stats', development: 'stats', medical: 'details',
+};
 const mapTab = (t: Tab): Tab => OLD_TAB[t] ?? t;
 
 export default function PlayerModal({ player, club, squad, today, season, onClose, negotiation, initialTab, extraTab, tag }: {
@@ -47,6 +50,8 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
   useEffect(() => setCur(player), [player]);
   const p = cur;
   const [tab, setTab] = useState<Tab>(mapTab(initialTab ?? 'general'));
+  const [, bump] = useState(0);
+  const changed = () => bump((n) => n + 1);
   const best = useMemo(() => bestPositions(p), [p]);
   const [sel, setSel] = useState<Position>(best[0]?.pos ?? p.naturalPosition);
   useEffect(() => setSel(bestPositions(p)[0]?.pos ?? p.naturalPosition), [p]);
@@ -110,14 +115,14 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
             <div className="pp2-tabbody" key={p.id + active}>
               {active === 'extra' && extraTab && <div className="pp-extra">{extraTab.content}</div>}
               {active === 'general' && <GeneralTab p={p} />}
-              {active === 'development' && <DevelopmentTab p={p} />}
-              {active === 'season' && <SeasonTab p={p} />}
+              {active === 'details' && <DetailsTab p={p} onChange={changed} />}
+              {active === 'stats' && <StatsTab p={p} />}
               {active === 'career' && <CareerTab p={p} club={club} season={season} />}
               {active === 'contract' && <ContractTab p={p} squad={squad} today={today} negotiation={negotiation} />}
               {active === 'wishes' && <WishesTab p={p} />}
-              {active === 'medical' && <MedicalTab p={p} />}
               {active === 'report' && <ReportTab p={p} squad={squad} />}
             </div>
+            <ActionBar p={p} onTab={setTab} onChange={changed} />
           </div>
         </div>
       </div>

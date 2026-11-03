@@ -308,12 +308,16 @@ export interface CareerStation {
 export interface TransferRecord { date: string; fromClub: string; toClub: string; fee: number; }
 export interface InjuryRecord { date: string; type: InjuryType; severity: InjurySeverity; description: string; days: number; fromTraining: boolean; }
 export interface AttributeSnapshot { date: string; label: string; attributes: Partial<Record<AttributeKey, number>>; }
+/** Wochen-Messpunkt fürs Spielerprofil (game/profileWeeks.ts): Datum, Stärke, Form, Frische, Fitness, Moral (0–100). */
+export interface WeekPoint { d: string; ov: number; f: number; fr: number; fi: number; m: number }
 export interface PlayerHistory {
   matches?: MatchLogEntry[];
   stations?: CareerStation[];
   transfers?: TransferRecord[];
   injuries?: InjuryRecord[];
   attributeSnapshots?: AttributeSnapshot[];
+  /** Wochenverlauf (nur eigener Kader, höchstens 52 Punkte, game/profileWeeks.ts). */
+  weeks?: WeekPoint[];
 }
 
 export function createEmptyStats(): PlayerStats {

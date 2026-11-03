@@ -728,6 +728,21 @@ export const INFO_TEXTS = {
     text: 'Am 20. Dezember wählt die Jury den Fußballer des Jahres – bewertet wird das Kalenderjahr: Noten, Tore und Vorlagen, Titel und Klasse. Bis 1994 sind nur Europäer wählbar, ab 1995 alle Spieler europäischer Vereine, ab 2007 Spieler weltweit. Klick auf ein Jahr zeigt die Gala noch einmal.',
     wiki: 'season-awards',
   },
+  positionstraining: {
+    title: 'Positionstraining',
+    text: 'Dein Trainerteam schult den Spieler zusätzlich auf einer zweiten Position. Training allein hebt die Vertrautheit nur bis zu einer Grenze – den Rest holt er sich mit Einsatzminuten auf dieser Position.',
+    wiki: 'player-profile',
+  },
+  spielerentwicklung: {
+    title: 'Spielerentwicklung',
+    text: 'Jeden Sonntag hält das Spiel für deinen Kader Stärke, Form, Frische, Fitness und Moral fest (bis zu 52 Wochen). „Kaderschnitt“ zeigt gestrichelt den Mittelwert deines Kaders in derselben Woche. Bei anderen Spielern siehst du die Stärke je Bewertungsrunde.',
+    wiki: 'player-profile',
+  },
+  stationen: {
+    title: 'Stationen',
+    text: 'Vereine des Spielers seit Spielbeginn, getrennt an jedem Wechsel. Ablöse in der Währung des Wechseljahres; Spiele und Tore aus den Saisonbilanzen (die laufende Saison zählt mit).',
+    wiki: 'player-profile',
+  },
   erfolge: {
     title: 'Vereinspokale',
     text: 'Alle Titel deines Vereins nach Wettbewerb: Meisterschaften und Staffelsiege, Landespokal, Europapokale, Jugendtitel, Hallen-Masters und Aufstiege – inklusive der Historie seit 1963/64. Klick auf einen Eintrag zeigt die Trophäe mit Endstand, Finale, Trainer und Torjäger der Saison, soweit gespeichert.',
