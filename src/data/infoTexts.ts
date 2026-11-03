@@ -593,6 +593,7 @@ export const INFO_TEXTS = {
     title: 'Nur realistische Transfers',
     text: 'Zeigt nur Spieler, die nach ihren Wünschen grundsätzlich zu deinem Verein wechseln würden (Reiz deines Vereins, keine Ausschlussgründe wie ein Erzrivale). Ob der abgebende Verein verkauft, ist damit nicht gesagt.',
     wiki: 'transfers-wishes',
+  },
   // ---------------------------------------------------------------- Vorschau „Nächstes Spiel“
   prematch_staerke: {
     title: 'Mannschaftsstärke',
