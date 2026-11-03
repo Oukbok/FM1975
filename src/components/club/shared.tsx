@@ -68,7 +68,7 @@ export function CoachBox({ g, d }: { g: Game; d: ClubProfileData }) {
         <KV k="Alter · Nationalität" v={`${Number(today.slice(0, 4)) - m.birthYear} · ${m.nationality}`} />
         <KV k="Spielstil" v={MGR_STYLE_DE[m.style] ?? m.style} />
         <KV k="Amtszeit" v={tenure(st.from, today)} />
-        <KV k="Ligabilanz" v={recordText(stintRecord(g, st))} strong />
+        <KV k={st.recFrom ? `Ligabilanz seit ${st.recFrom}` : 'Ligabilanz'} v={recordText(stintRecord(g, st))} strong />
         <KV k="Dein Ansehen" v={Math.round(ensureCareer(g).rep)} />
         <Predecessors club={d.fullClub} />
       </DashBox>
@@ -84,7 +84,7 @@ export function CoachBox({ g, d }: { g: Game; d: ClubProfileData }) {
         <KV k="Stil · Philosophie" v={`${COACH_STYLE_DE[c.style] ?? c.style} · ${PHIL_DE[c.philosophy] ?? c.philosophy}`} />
         {c.preferredFormation && <KV k="Lieblingssystem" v={getFormation(c.preferredFormation).label} />}
         <KV k="Amtszeit" v={tenure(c.since, today)} />
-        <KV k="Ligabilanz" v={rec ? recordText(rec) : '–'} strong />
+        <KV k={!c.rec && c.since < `${g.season.slice(0, 4)}-07-01` ? `Ligabilanz ${g.season}` : 'Ligabilanz'} v={rec ? recordText(rec) : '–'} strong />
         {!!rec?.titles && <KV k="Meistertitel" v={rec.titles} />}
         <KV k="Ansehen" v={Math.round(c.reputation)} />
         <Meter label="Druck vom Vorstand" value={Math.round(c.pressure)} max={100} text={`${Math.round(c.pressure)} %`}

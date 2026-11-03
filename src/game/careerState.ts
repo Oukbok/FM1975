@@ -9,6 +9,7 @@ import { CoachRecord } from '../types';
 import { seasonExpectation } from '../engine/environment';
 import { isForeignId } from '../engine/world';
 import { recordNow } from './coachRecord';
+import { recordBook } from './clubRecords';
 import { Game } from './state';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -39,8 +40,8 @@ export interface CareerStint {
   seasons: CareerSeason[];
   /** Jahresgehalt (1975-Basis, nur Kennzahl). */
   wage?: number;
-  /** Startdatum geschätzt (alter Spielstand). */
-  approx?: boolean;
+  /** Alter Spielstand: Bilanz erst ab dieser Saison gezählt. */
+  recFrom?: string;
 }
 
 export interface JobOffer {
@@ -162,7 +163,9 @@ export function ensureCareer(g: Game): CareerState {
   }
   const own = g.managedClubId;
   const rep = clamp(jobLevel(g, own) + (BG_BONUS[g.manager?.background] ?? 0) - (isCareerMode(g) ? 3 : 0), 20, 92);
-  g.career = { v: 1, rep, stints: [startStint(g, true)], offers: [], declined: {}, offerCount: 0, sacked: 0, log: [] };
+  const first = startStint(g, true);
+  backfillStint(g, first);
+  g.career = { v: 1, rep, stints: [first], offers: [], declined: {}, offerCount: 0, sacked: 0, log: [] };
   return g.career;
 }
 
@@ -170,11 +173,43 @@ export function ensureCareer(g: Game): CareerState {
 export function startStint(g: Game, initial = false): CareerStint {
   const id = g.managedClubId;
   const startYear = Number(g.season.slice(0, 4));
-  const from = initial ? (startYear <= 1975 ? '1975-07-01' : `${startYear}-07-01`) : g.calendar.currentDate;
+  // Jedes Spiel beginnt 1975/76; vor der Karriere gab es keinen Vereinswechsel → erste Station seit Spielbeginn.
+  const from = initial ? '1975-07-01' : g.calendar.currentDate;
+  const recFrom = initial && startYear > 1975 ? g.season : undefined;
   return {
     clubId: id, clubName: clubNameOf(g, id), from, tier: playerTier(g), seasons: [],
-    wage: managerWageFor(jobLevel(g, id), g.career?.rep ?? jobLevel(g, id)), approx: initial && startYear > 1975 ? true : undefined,
+    wage: managerWageFor(jobLevel(g, id), g.career?.rep ?? jobLevel(g, id)), recFrom,
+    // Bilanz alter Spielstände erst ab der laufenden Saison (frühere Spielpläne sind nicht gespeichert).
+    rec: recFrom ? { w: 0, d: 0, l: 0, upTo: `${startYear}-06-30` } : undefined,
   };
+}
+
+const TITLE_DE: Record<string, string> = { meister: 'Meisterschaft', pokal: 'Pokalsieg', ec: 'Europapokal', cwc: 'Europapokal', uefa: 'Europapokal' };
+
+/**
+ * Alter Spielstand: Saisons und Ligabilanz seit 1975 aus der Vereins-Historie
+ * (game/clubRecords.ts: Endplätze, Titel, direkter Vergleich) nachtragen.
+ */
+function backfillStint(g: Game, st: CareerStint): void {
+  const book = recordBook(g);
+  if (!book) return;
+  const cur = g.season;
+  for (const [season, tier, pos, size] of book.seasons[st.clubId] ?? []) {
+    if (season >= cur || season < '1975/76') continue; // Historie vor Spielbeginn gehört nicht zu dir
+    const titles = (book.titles[st.clubId] ?? []).filter(([, s2]) => s2 === season).map(([k]) => TITLE_DE[k]).filter(Boolean);
+    st.seasons.push({ season, tier, pos, size, titles: titles.length ? titles : undefined });
+  }
+  if (book.h2hClub !== st.clubId) return;
+  const r = { w: 0, d: 0, l: 0 };
+  let n = 0;
+  for (const list of Object.values(book.h2h)) for (const [season, , comp, , a, b] of list) {
+    if (comp !== 'L' || season >= cur) continue;
+    n++;
+    if (a > b) r.w++; else if (a < b) r.l++; else r.d++;
+  }
+  if (!n && st.recFrom) return;
+  st.rec = { ...r, upTo: `${Number(cur.slice(0, 4))}-06-30` };
+  st.recFrom = undefined;
 }
 
 export function currentStint(g: Game): CareerStint {

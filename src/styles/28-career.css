@@ -1,0 +1,27 @@
+/* Zentrale › Karriere (views/zentrale/CareerView.tsx) – Präfix .car-* */
+.car-offers { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+.car-offer {
+  display: flex; flex-direction: column; gap: 6px; padding: 10px 12px;
+  background: var(--panel-2); border: 1px solid var(--border-soft); border-radius: 6px;
+}
+.car-offer-head { display: flex; align-items: center; gap: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border-soft); }
+.car-offer-name { font-family: var(--font-display); font-size: 18px; font-weight: 500; color: var(--text); letter-spacing: 0.3px; }
+.car-offer-sub { font-size: 13px; color: var(--text-3); }
+.car-offer-dl { font-size: 13px; color: var(--text-3); white-space: nowrap; align-self: flex-start; }
+.car-offer-terms .dkv { padding: 3px 0; }
+.car-offer-btns { margin-top: auto; padding-top: 4px; }
+.car-move {
+  margin-bottom: 10px; padding: 8px 12px; border-radius: 4px; font-size: 14px; color: var(--text-2);
+  border: 1px solid var(--border); box-shadow: inset 3px 0 0 var(--accent);
+}
+.car-move b { color: var(--text); }
+
+.car-stints .car-stint { grid-template-columns: minmax(160px, 1.5fr) 96px minmax(150px, 1.2fr) 80px minmax(90px, 1fr) 84px; }
+.car-stint .car-when, .car-stint .car-goal, .car-stint .car-end { color: var(--text-2); }
+.car-stint .car-titles { color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.car-stints-head { color: var(--text-3); font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px; min-height: 30px; }
+
+.car-log { display: flex; flex-direction: column; }
+.car-log-row { display: grid; grid-template-columns: 92px 1fr; gap: 10px; padding: 6px 0; font-size: 14px; color: var(--text-2); border-bottom: 1px solid var(--border-soft); }
+.car-log-row:last-child { border-bottom: none; }
+.car-log-date { color: var(--text-3); font-variant-numeric: tabular-nums; }

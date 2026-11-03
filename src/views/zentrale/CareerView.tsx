@@ -65,9 +65,9 @@ function StintRow({ g, s, live }: { g: Game; s: CareerStint; live: boolean }) {
     <div className={`rl-row car-stint ${live ? 'me' : ''}`}>
       <span className="rl-club">{club && <ClubCrest club={club} size={28} />}
         <ClubLink id={s.clubId}><span className="rl-name">{s.clubName}</span></ClubLink></span>
-      <span className="rl-num car-when">{s.approx ? 'ab ' : ''}{s.from.slice(0, 4)}–{s.to ? s.to.slice(0, 4) : 'heute'}</span>
-      <span className="rl-num car-rec" title="Liga: Siege-Remis-Niederlagen (Punkte je Spiel, 3-Punkte-Wertung)">{recordText(rec)}</span>
-      <span className="rl-num car-goal" title="Saisonziel erreicht">{s.seasons.length ? `${ok}/${s.seasons.length} Ziele` : '–'}</span>
+      <span className="rl-num car-when">{s.from.slice(0, 4)}–{s.to ? s.to.slice(0, 4) : 'heute'}</span>
+      <span className="rl-num car-rec" title={`Liga: Siege-Remis-Niederlagen (Punkte je Spiel, 3-Punkte-Wertung)${s.recFrom ? ` – gezählt ab ${s.recFrom}` : ''}`}>{recordText(rec)}</span>
+      <span className="rl-num car-goal" title="Saisonziel erreicht">{s.seasons.length ? `${ok}/${s.seasons.length}` : '–'}</span>
       <span className="rl-num car-titles">{titles.length ? titles.join(', ') : ''}</span>
       <span className="rl-num car-end">{live ? 'im Amt' : s.end === 'entlassen' ? 'entlassen' : 'gewechselt'}</span>
     </div>
@@ -93,8 +93,8 @@ export function CareerView({ g, onChange }: { g: Game; onChange: () => void }) {
         </div>
         <Meter label={repLabel(c.rep)} value={c.rep} color={vColor(c.rep)} />
         <KV k="Verein" v={own?.name ?? '–'} strong />
-        <KV k="Im Amt seit" v={`${CalendarEngine.formatDate(st.from)}${st.approx ? ' (geschätzt)' : ''} · ${days >= 365 ? `${(days / 365).toFixed(1).replace('.', ',')} Jahre` : `${days} Tage`}`} />
-        <KV k="Ligabilanz" v={recordText(rec)} />
+        <KV k="Im Amt seit" v={`${CalendarEngine.formatDate(st.from)} · ${days >= 365 ? `${(days / 365).toFixed(1).replace('.', ',')} Jahre` : `${days} Tage`}`} />
+        <KV k={st.recFrom ? `Ligabilanz seit ${st.recFrom}` : 'Ligabilanz'} v={recordText(rec)} info="trainerBilanz" />
         {st.wage ? <KV k="Jahresgehalt" v={fmtPrice(st.wage)} info="trainerGehalt" /> : null}
         <KV k="Angebote · Entlassungen" v={`${c.offerCount} · ${c.sacked}`} />
       </DashBox>
@@ -116,6 +116,10 @@ export function CareerView({ g, onChange }: { g: Game; onChange: () => void }) {
 
       <DashBox title="Stationen" icon="trophy" span={2} flush right={`${c.stints.length}`}>
         <div className="rl rl-sm car-stints">
+          <div className="rl-row car-stint car-stints-head">
+            <span>Verein</span><span className="rl-num">Zeitraum</span><span className="rl-num">Ligabilanz</span>
+            <span className="rl-num">Ziele</span><span className="rl-num">Titel</span><span className="rl-num">Ende</span>
+          </div>
           {stints.map((s, i) => <StintRow key={s.clubId + s.from} g={g} s={s} live={i === 0 && !s.to} />)}
         </div>
       </DashBox>
