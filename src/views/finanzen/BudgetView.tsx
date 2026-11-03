@@ -61,7 +61,7 @@ export function BudgetView({ g, onChange }: { g: Game; onChange: () => void }) {
       </DashBox>
 
       <DashBox title="Finanzberater" info="budgetBerater" icon="briefing" rows={2}>
-        <AdvisorBox person={advisorOf(g)} era={adv.era} lines={adv.lines} compact />
+        <AdvisorBox person={advisorOf(g)} era={adv.era} lines={adv.lines} compact year={Number(g.calendar.currentDate.slice(0, 4))} />
       </DashBox>
 
       <DashBox title="Einnahmen: Prognose und Ist" info="budgetPrognose" icon="dashFinanzen">

@@ -49,12 +49,12 @@ export function GoalList({ goals }: { goals: SeasonGoal[] }) {
 }
 
 /** Finanzberater mit Gesicht und 3–6 Sätzen (Einordnung der Epoche + Lage des Vereins). */
-export function AdvisorBox({ person, era, lines, compact }: { person: AdvisorPerson; era: string; lines: string[]; compact?: boolean }) {
+export function AdvisorBox({ person, era, lines, compact, year }: { person: AdvisorPerson; era: string; lines: string[]; compact?: boolean; year?: number }) {
   const fake = { id: person.id, fullName: person.name } as Player;
   return (
     <div className={`bud-adv ${compact ? 'compact' : ''}`}>
       <div className="bud-adv-who">
-        <span className="bud-adv-face"><PlayerAvatar player={fake} size={compact ? 56 : 72} /></span>
+        <span className="bud-adv-face"><PlayerAvatar player={fake} size={compact ? 56 : 72} staff year={year} /></span>
         <span className="bud-adv-id"><b>{person.name}</b><span>{person.role}</span></span>
       </div>
       <div className="bud-adv-text">

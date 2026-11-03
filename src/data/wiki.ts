@@ -342,6 +342,24 @@ Frühere Bundesligisten, die 1975 nur noch in den Amateurligen spielen, existier
   // KADER & SPIELER
   // ---------------------------------------------------------------------------
   {
+    id: 'squad-names-faces',
+    category: 'squad',
+    title: 'Namen, Herkunft & Gesichter',
+    keywords: ['name', 'namen', 'vorname', 'herkunft', 'nationalität', 'gesicht', 'porträt', 'foto', 'jahrgang', 'ddr', 'ausländer'],
+    body: `## Namen nach Herkunft und Jahrgang
+Jeder neu erzeugte Spieler, Trainer und Mitarbeiter bekommt eine **Herkunft** (z. B. deutsch, ostdeutsch, Deutsch-Türke, Deutsch-Italiener, jugoslawisch, niederländisch, skandinavisch, polnisch, westafrikanisch, südamerikanisch). Welche Herkünfte wie oft vorkommen, ändert sich mit den Jahrzehnten – 1975 sind über 90 % der Neuen Deutsche, heute rund die Hälfte. Ostdeutsche Spieler kommen erst nach der Wiedervereinigung in größerer Zahl dazu.
+
+Die **Vornamen** richten sich nach dem **Geburtsjahrgang**: Ein 1975 aufgestellter Kader besteht aus Jahrgängen der 1940er/50er (Klaus, Horst, Manfred), Jugendspieler der 2020er heißen eher Ben, Finn oder Elias. In der DDR geborene Spieler tragen die dort typischen Namen (Ronny, Enrico, Maik), ab Jahrgang 1990 gleichen sie sich dem Westen an. Nachnamen bleiben über die Zeit gleich.
+
+**Bestehende Namen ändern sich nie** – der Name ist die Identität eines Spielers.
+
+## Gesichter
+Jedes Gesicht wird fest aus der Spieler-ID bestimmt: derselbe Spieler sieht immer gleich aus. Liegt ein **Porträtfoto** passend zur Herkunftsgruppe und zum Jahrzehnt seiner aktiven Zeit vor, zeigt das Spiel das Foto (mit Trikot in Vereinsfarben, wo eine Trikotmaske vorliegt) und lässt den Spieler über die Altersstufen 18/25/32/38 altern. Sonst erscheint das gezeichnete Gesicht – der Hautton passt dabei zur Herkunft. Trainer, Berater und Manager nutzen eigene Porträts der jeweiligen Zeit.
+
+## Im Datensatz-Editor
+Unter **Namen › Vornamen je Jahrgang** legst du je Herkunft fest, welche Vornamen ab welchem Geburtsjahr üblich sind (\`abJahr: Name, Name, …\`).`,
+  },
+  {
     id: 'squad-table',
     category: 'squad',
     title: 'Kader-Tabelle',

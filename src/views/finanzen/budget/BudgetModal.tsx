@@ -79,7 +79,7 @@ export function BudgetModal({ g, auto = false, onClose }: {
             <h4 className="bud-sec">Saisonziele des Vorstands</h4>
             <GoalList goals={seasonGoals(g)} />
             <h4 className="bud-sec">Dein Finanzberater<InfoTip k="budgetBerater" /></h4>
-            <AdvisorBox person={person} era={adv.era} lines={adv.lines} />
+            <AdvisorBox person={person} era={adv.era} lines={adv.lines} year={Number(g.calendar.currentDate.slice(0, 4))} />
             <div className="bud-react-box">
               <h4 className="bud-sec">Zu erwartende Reaktionen<InfoTip k="budgetReaktionen" /></h4>
               <ReactionBars r={r} boardStatus={

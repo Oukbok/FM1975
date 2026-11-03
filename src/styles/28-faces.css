@@ -1,0 +1,29 @@
+/* =============================================================================
+   Gesichtsbilder (components/PlayerAvatar.tsx + components/faces/faceLookup.ts)
+   Feste Box im Seitenverhältnis 100:115 – kein Layout-Springen beim Laden.
+   Darunter liegt die Zeichnung als Platzhalter; sie blendet aus, sobald das
+   Foto geladen ist. Trikotfarbe: Maske (Alpha = Trikot) × Vereinsfarbe mit
+   hard-light → Mittelgrau (#808080) wird genau zur Vereinsfarbe, Falten bleiben.
+   ============================================================================= */
+.pa-photo {
+  position: relative; display: block; overflow: hidden; isolation: isolate;
+  max-width: 100%; aspect-ratio: 100 / 115; height: auto;
+  background: linear-gradient(180deg, var(--face-bg-1), var(--face-bg-2));
+}
+.pa-photo > svg { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity .25s ease; }
+.pa-photo.loaded > svg { opacity: 0; }
+.pa-photo > img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center bottom;
+  opacity: 0; transition: opacity .25s ease;
+}
+.pa-photo.loaded > img { opacity: 1; }
+.pa-kit {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0;
+  mix-blend-mode: hard-light;
+  -webkit-mask-size: cover; mask-size: cover;
+  -webkit-mask-position: center bottom; mask-position: center bottom;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  transition: opacity .25s ease;
+}
+.pa-photo.loaded > .pa-kit { opacity: 1; }

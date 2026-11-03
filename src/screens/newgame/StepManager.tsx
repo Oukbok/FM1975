@@ -57,7 +57,7 @@ export function StepManager({ d, set }: { d: NewGameDraft; set: (p: Partial<NewG
             </div>
           </div>
           <div className="ng-portrait">
-            <PlayerAvatar player={face} size={150} />
+            <PlayerAvatar player={{ ...face, age }} size={150} staff year={1975} />
             <button type="button" className="ng-btn small ghost" onClick={reroll}><Icon name="dice" size={16} /> Anderes Gesicht</button>
           </div>
         </div>
