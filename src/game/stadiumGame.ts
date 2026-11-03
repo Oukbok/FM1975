@@ -20,6 +20,7 @@ import {
 } from '../engine/stadiumBlocks';
 import { BlockId, StadiumBlock } from '../types';
 import { ensureEnvironment } from './environmentGame';
+import { checkBudget, noteBudgetSpend } from './budgetPlan';
 import { Game } from './state';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -87,6 +88,9 @@ export function startBlockBuild(g: Game, target: StadiumBlock | StadiumBlock[], 
   const name = targets.length > 1 ? `${BLOCK_NAME[targets[0].id]} und ${targets.length - 1} weitere${targets.length > 2 ? '' : 'r'} Block${targets.length > 2 ? 's' : ''}` : BLOCK_NAME[targets[0].id];
   if (financing === 'cash') {
     if (club.finances.balance < cost) return { ok: false, text: 'Der Kontostand reicht für eine Barzahlung nicht.' };
+    const block = checkBudget(g, 'infra', cost); // Saisonbudget (game/budgetPlan.ts)
+    if (block) return { ok: false, text: block };
+    noteBudgetSpend(g, 'infra', cost);
     book(club.finances, today, -cost, 'facilities', `Umbau ${name} (bar)`, true);
   } else {
     const rev = Math.max(1, (club.finances.seasonHistory ?? []).slice(-1)[0]?.revenue ?? 0);

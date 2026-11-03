@@ -18,6 +18,7 @@ import { boardBudgetShare } from '../engine/environment';
 import { seasonClubBusiness } from './clubBusiness';
 import { seatingNewSeason } from './seatingGame';
 import { sponsorSeasonClose } from './sponsorGame';
+import { closeBudgetPlan } from './budgetPlan';
 
 /** Leistungswert 0..1 der Vorsaison je Verein (für die TV-Verteilung). */
 export type PerfMap = Record<string, number>;
@@ -51,6 +52,7 @@ export function closeFinancialSeason(g: Game, oldSeason: string, date: string): 
       position: pos || n, size: n, tier, cupWinner: g.cup?.winnerClubId === c.id,
       euroPoints: euroPts[c.id] ?? 0, euroTitle: euroWinners.has(c.id),
     }, date);
+    if (c.id === g.managedClubId) closeBudgetPlan(g, oldSeason, date); // Saisonbudget: Soll/Ist (game/budgetPlan.ts)
     closeSeasonFinances(c, oldSeason);
   }
   return perf;

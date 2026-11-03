@@ -3,6 +3,7 @@
 // Namensrechte, Ausgliederung/Investor (Aktionen), Überschuldung (Saisonwechsel).
 // Rechenlogik: engine/clubBusiness.ts.
 // =============================================================================
+import { checkBudget, noteBudgetSpend } from './budgetPlan';
 import { Game } from './state';
 import { Club, NamingRights } from '../types';
 import {
@@ -77,8 +78,13 @@ export function startStadiumBuild(g: Game, financing: 'cash' | 'loan', years: nu
   const year = yearOf(today);
   const plan = stadiumPlan(club, year);
   if (!plan) return 'Kein Ausbau möglich.';
+  if (financing === 'cash') {
+    const block = checkBudget(g, 'infra', plan.cost); // Saisonbudget (game/budgetPlan.ts)
+    if (block) return block;
+  }
   const res = startStadiumProject(club, plan, financing, years, today, year, true);
   if (res.ok) {
+    if (financing === 'cash') noteBudgetSpend(g, 'infra', plan.cost);
     pushMessage(g.messages, makeMessage({
       date: today, category: 'board', from: 'Bauleitung',
       subject: `Baubeginn: ${plan.label}`,

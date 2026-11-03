@@ -43,6 +43,7 @@ import { migrateLeaguePool } from './game/clubPool';
 import { migrateYouthInvest } from './game/youthInvest';
 import { migrateSponsorship } from './game/sponsorGame';
 import { migrateBriefing } from './game/seasonBriefing';
+import { migrateBudget } from './game/budgetPlan';
 import { migrateSeasonAwards } from './game/seasonAwardsGame';
 import { migrateGoldenBall } from './game/goldenBallGame';
 import { migrateLegacyLegends } from './game/playerMigration';
@@ -368,6 +369,7 @@ export default function App() {
     try { migrateYouthComps(s.game); } catch (err) { console.error('Jugendwettbewerbe-Nachrüstung fehlgeschlagen:', err); }
     migrateHistoryMode(s.game);
     try { migrateTransferLog(s.game); } catch (err) { console.error('Transferprotokoll-Nachrüstung fehlgeschlagen:', err); }
+    try { migrateBudget(s.game); } catch (err) { console.error('Saisonbudget-Nachrüstung fehlgeschlagen:', err); }
     gameRef.current = s.game;
     setCurrentSlot(slot);
     setInGame(true);

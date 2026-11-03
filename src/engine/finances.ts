@@ -155,6 +155,23 @@ export function expectedAttendance(club: Club, _ticketPrice?: number, year?: num
   return expectedSale(club, year ?? 1975).attendance;
 }
 
+/**
+ * Erwartete Erlöse eines Ligaheimspiels ohne Zufall, nominal (Saisonbudget, game/budgetForecast.ts):
+ * Eintritt je Platzkategorie, Catering, Programmhefte, Fanartikel im Stadion.
+ */
+export function homeMatchForecast(club: Club, year: number, awayRep?: number): { attendance: number; tickets: number; catering: number; matchday: number; merch: number } {
+  const sc = scalesFor(club, `${year}-09-01`);
+  const exp = expectedSale(club, year, { awayRep });
+  const tickets = Object.values(saleRevenue(club, exp.sold, year)).reduce((a, v) => a + (v ?? 0), 0);
+  return {
+    attendance: exp.attendance,
+    tickets: Math.round(tickets),
+    catering: cateringMatchIncome(club, exp.attendance, sc.matchday),
+    matchday: matchdayIncome(exp.attendance, sc.matchday),
+    merch: Math.round(exp.attendance * merchPerHead(club) * sc.merch),
+  };
+}
+
 /** Programmhefte & sonstige Spieltagserloese eines Heimspiels (era-skaliert). */
 export function matchdayIncome(attendance: number, scale = 1): number {
   return Math.round(attendance * 0.25 * scale);

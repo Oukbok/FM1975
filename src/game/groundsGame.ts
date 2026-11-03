@@ -5,6 +5,7 @@
 // Rechenlogik: engine/grounds.ts · Katalog: data/groundsCatalog.ts.
 // Einstieg: groundsDaily() aus game/day.ts, migrateGrounds() beim Laden.
 // =============================================================================
+import { checkBudget, noteBudgetSpend } from './budgetPlan';
 import { Game } from './state';
 import { Club } from '../types';
 import { ClubGrounds, GroundsModuleKey, GroundsProject } from '../types/grounds';
@@ -268,6 +269,9 @@ export function startGroundsBuild(g: Game, key: GroundsModuleKey): { ok: boolean
   const chk = checkNext(club, gr, key, year);
   if (!chk.ok) return { ok: false, text: chk.reason ?? 'Nicht möglich.' };
   if (gr.projects.length >= 2) return { ok: false, text: 'Es laufen bereits zwei Bauvorhaben.' };
+  const block = checkBudget(g, 'infra', chk.cost ?? 0); // Saisonbudget (game/budgetPlan.ts)
+  if (block) return { ok: false, text: block };
+  noteBudgetSpend(g, 'infra', chk.cost ?? 0);
   if (chk.cost) book(club.finances, today, -chk.cost, 'facilities', `Bauvorhaben ${m.name}: ${chk.def!.name}`, true);
   const p: GroundsProject = { id: `gp_${today}_${key}`, module: key, targetLevel: chk.level, phase: 'build', phaseEnd: addDays(today, chk.def!.days), cost: chk.cost };
   if (chk.def!.permit) {
@@ -351,6 +355,7 @@ function advanceTalk(g: Game, club: Club, gr: ClubGrounds, today: string): void 
     msg(g, today, 'Stadtverwaltung', `ÖPNV: Stadt lehnt ab`, `Die Stadt sieht für „${def.name}“ derzeit kein Geld im Haushalt. Neue Gespräche sind in einem halben Jahr möglich. Bessere Chancen hast du mit mehr Ansehen und ohne Ausschreitungen.`);
     return;
   }
+  if (t.clubShare) noteBudgetSpend(g, 'infra', t.clubShare);
   if (t.clubShare) book(club.finances, today, -t.clubShare, 'facilities', `Vereinsanteil ÖPNV: ${def.name}`, true);
   if (def.days > 60) {
     gr.projects.push({ id: `gp_${today}_transit`, module: 'transit', targetLevel: t.targetLevel, phase: 'build', phaseEnd: addDays(today, def.days), cost: t.clubShare });
@@ -366,6 +371,9 @@ export function buyGroundsLand(g: Game): { ok: boolean; text: string } {
   const price = landPrice(gr, year);
   if (price == null) return { ok: false, text: 'Rund um das Stadion ist kein Grundstück mehr zu haben.' };
   if (club.finances.balance < price) return { ok: false, text: 'Kontostand zu niedrig.' };
+  const blockLand = checkBudget(g, 'infra', price);
+  if (blockLand) return { ok: false, text: blockLand };
+  noteBudgetSpend(g, 'infra', price);
   book(club.finances, today, -price, 'facilities', `Grundstückskauf (+${LAND_PARCEL} Parzellen)`, true);
   gr.area += LAND_PARCEL; gr.landBought++;
   return { ok: true, text: `Grundstück gekauft: +${LAND_PARCEL} Parzellen für ${formatMoney(price, year)}.` };
@@ -380,6 +388,9 @@ export function renovateGrounds(g: Game, key: GroundsModuleKey): { ok: boolean; 
   const cost = renovateCost(gr, key, year);
   if (!st || cost <= 0) return { ok: false, text: 'Keine Sanierung nötig.' };
   if (club.finances.balance < cost) return { ok: false, text: 'Kontostand zu niedrig.' };
+  const blockRen = checkBudget(g, 'infra', cost);
+  if (blockRen) return { ok: false, text: blockRen };
+  noteBudgetSpend(g, 'infra', cost);
   book(club.finances, today, -cost, 'facilities', `Sanierung ${GROUNDS_BY_KEY[key].name}`, true);
   st.condition = 100; st.builtYear = year;
   return { ok: true, text: `${GROUNDS_BY_KEY[key].name} saniert und modernisiert (${formatMoney(cost, year)}).` };

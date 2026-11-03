@@ -16,6 +16,7 @@
 //      nächsten Fenster. Ab Bosman können Spieler mit auslaufendem Vertrag
 //      (≤ 6 Monate) ohne Vereinsgespräch einen Vorvertrag unterschreiben.
 // =============================================================================
+import { wageLimitFactor } from './budgetPlan';
 import { CalendarEngine } from '../engine/calendar';
 import { hasTransferBan, marketWage } from '../engine/clubEconomy';
 import { bosmanActive, monthsLeft, seasonEndYear } from '../engine/contractTalks';
@@ -257,8 +258,10 @@ export function playerOffer(g: Game, talkId: string, offer: PlayerOffer): string
   if (offer.releaseClause && yearOf(today) < CLAUSE_FROM.releaseClause) return refuse(t, today, `Ausstiegsklauseln sind in Deutschland erst ab ${CLAUSE_FROM.releaseClause} üblich.`);
   // Gehaltsrahmen
   const wages = own.playerIds.reduce((s, id) => s + (g.players[id]?.contract.weeklyWage ?? 0), 0) + offer.wage;
-  if (own.finances.wageBudget > 0 && wages > own.finances.wageBudget * 1.15) {
-    return refuse(t, today, `Der Vorstand gibt ${fmtWage(offer.wage)} nicht frei: Die Gehälter lägen bei ${Math.round((wages / own.finances.wageBudget) * 100)} % des Gehaltsrahmens (Grenze 115 %).`);
+  // Saisonbudget (game/budgetPlan.ts): harte Grenze; alte Spielstände ohne Plan wie bisher 115 %.
+  const wf = wageLimitFactor(g);
+  if (own.finances.wageBudget > 0 && wages > own.finances.wageBudget * wf) {
+    return refuse(t, today, `Der Vorstand gibt ${fmtWage(offer.wage)} nicht frei: Die Gehälter lägen bei ${Math.round((wages / own.finances.wageBudget) * 100)} % des Gehaltsbudgets (Grenze ${Math.round(wf * 100)} %).${wf === 1 ? ' Mehr Spielraum schaffst du unter Finanzen › Budget.' : ''}`);
   }
   const fee = t.pkg ? t.pkg.fee / (t.pkg.installments ? (t.pkg.rates ?? 2) : 1) : 0;
   if (offer.signingFee + (offer.agentFee ?? 0) > own.finances.transferBudget - fee) {

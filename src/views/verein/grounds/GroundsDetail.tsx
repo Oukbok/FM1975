@@ -3,6 +3,7 @@
 // einer Einrichtung (engine/infrastructure.ts): Stufe, Wirkung, Zustand,
 // nächster Ausbau mit Kosten/Fläche/Genehmigung, Sanieren, Abreißen.
 // =============================================================================
+import { checkBudget, noteBudgetSpend } from '../../../game/budgetPlan';
 import { useState } from 'react';
 import { Game } from '../../../game/state';
 import { Club, FacilityKey } from '../../../types';
@@ -141,8 +142,13 @@ export function FacilityDetail({ g, club, gr, year, onChange, onClose, k, onGoto
   // hier spiegeln sie nur deren Stand (syncLegacyAcademy).
   const viaAcademy = k === 'youthAcademy' || k === 'nlz';
   const doUpgrade = () => {
+    // Saisonbudget: Ausbau nur im Rahmen des Infrastruktur-Budgets (game/budgetPlan.ts).
+    const chk = canUpgrade(club, k, economyScaleOf(year));
+    const block = chk.ok ? checkBudget(g, 'infra', chk.cost) : null;
+    if (block) { setNote(block); return; }
     const res = upgradeFacility(club, k, g.calendar.currentDate, true);
     if (res.ok) {
+      noteBudgetSpend(g, 'infra', res.cost);
       pushMessage(g.messages, makeMessage({
         date: g.calendar.currentDate, category: 'board', from: 'Vereinsvorstand',
         subject: `Ausbau abgeschlossen: ${def.name} (Stufe ${res.newLevel})`,
