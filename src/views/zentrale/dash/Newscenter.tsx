@@ -4,7 +4,7 @@
 // (EventChoices), Sprungzielen und Gesicht des betroffenen Spielers.
 // Daten: g.messages (engine/messages.ts) – dieselben wie Zentrale › Nachrichten.
 // =============================================================================
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { pendingDecisions } from '../../../engine/messages';
 import Icon from '../../../components/Icon';
 import PlayerAvatar from '../../../components/PlayerAvatar';
@@ -35,6 +35,15 @@ export function Newscenter({ g, onGoto, onWatch, onChange, openPlayer }: {
   const msgs = g.messages ?? [];
   const [filter, setFilter] = useState<Filter>('all');
   const [selId, setSelId] = useState<string | null>(() => (pendingDecisions(msgs)[0] ?? msgs.find((m) => !m.read) ?? msgs[0])?.id ?? null);
+  // Offene Entscheidung im Blick: neue Entscheidung bzw. Klick auf den roten Brief „Nachrichten“
+  // (GameShell, Ereignis `fm:focus-decision`) wählt sie aus – auch wenn die Zentrale schon offen ist.
+  const firstPending = pendingDecisions(msgs)[0]?.id ?? null;
+  useEffect(() => { if (firstPending) setSelId(firstPending); }, [firstPending]);
+  useEffect(() => {
+    const focus = () => { const id = pendingDecisions(g.messages ?? [])[0]?.id; if (id) { setFilter('all'); setSelId(id); } };
+    window.addEventListener('fm:focus-decision', focus);
+    return () => window.removeEventListener('fm:focus-decision', focus);
+  }, [g]);
   const list = msgs.filter((m) => (filter === 'all' ? true : filter === 'unread' ? !m.read : m.category === filter));
   const sel = (selId && msgs.find((m) => m.id === selId)) || list[0] || null;
   const unread = unreadCount(msgs);

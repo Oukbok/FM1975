@@ -107,7 +107,7 @@ export async function probeWindow(page, name, frameSel, open, opts = {}) {
     try {
       // Ziel i im Fenster suchen und direkt im Browser bedienen (schnell, ohne Wartezeiten).
       const before = await page.locator('.modal-overlay, .pcm-layer').count();
-      const info = await page.evaluate(({ fs, ts, i, danger }) => {
+      const info = await page.evaluate(({ fs, ts, i, danger, safe }) => {
         const frames = [...document.querySelectorAll(fs)].filter((e) => e.getBoundingClientRect().width > 0);
         const fr = frames[frames.length - 1];
         if (!fr) return { end: true };
@@ -119,6 +119,10 @@ export async function probeWindow(page, name, frameSel, open, opts = {}) {
         const res = { tag: e.tagName, type: e.getAttribute('type'), txt };
         if (r.width === 0 || r.height === 0 || e.disabled) return { ...res, skip: true };
         if (e.tagName !== 'INPUT' && e.tagName !== 'SELECT' && new RegExp(danger, 'i').test(txt)) return { ...res, skip: true };
+        // Schalter, die Einstellungen ändern („nicht mehr zeigen“ …), nie bedienen; im sicheren Modus gar keine Eingaben.
+        const lbl = (e.closest('label')?.innerText || e.parentElement?.innerText || '').toString();
+        if ((e.tagName === 'INPUT' || e.classList.contains('toggle')) && /nicht (mehr|wieder)|anzeigen|zeigen|automatisch|einzeln/i.test(lbl)) return { ...res, skip: true };
+        if (safe && (e.tagName === 'INPUT' || e.tagName === 'SELECT' || e.classList.contains('toggle'))) return { ...res, skip: true };
         const fire = (el, v) => {
           const proto = el.tagName === 'SELECT' ? HTMLSelectElement.prototype : HTMLInputElement.prototype;
           Object.getOwnPropertyDescriptor(proto, 'value').set.call(el, v);
@@ -128,7 +132,7 @@ export async function probeWindow(page, name, frameSel, open, opts = {}) {
         else if (e.type === 'range') fire(e, e.max || '100');
         else { e.dispatchEvent(new MouseEvent('mouseover', { bubbles: true })); e.click(); }
         return res;
-      }, { fs: frameSel, ts: TARGETS, i, danger: DANGER.source });
+      }, { fs: frameSel, ts: TARGETS, i, danger: DANGER.source, safe: !!opts.safe });
       if (info.end) break;
       if (info.skip) continue;
       const label = `${info.tag.toLowerCase()}${info.type ? ':' + info.type : ''} „${info.txt}“`;

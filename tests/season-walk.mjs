@@ -7,7 +7,7 @@
 //   npm run build && node tests/season-walk.mjs [ordner]
 //   Neues Spiel 1975 (Standard) oder SAVE=public/saves/test-3-jahre.txt; UNTIL=JJJJ-MM-TT (Standard: nach dem
 //   nächsten Saisonwechsel bis zum ersten Ligaspiel + 14 Tage), SPEED=Millisekunden je Tag (Standard 300).
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile, appendFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 import { serveDist, loadSave, probeWindow, openWindows } from './popup-probe.mjs';
 import { startNewGame, skipIntro } from './newgame-flow.mjs';
@@ -23,7 +23,14 @@ const errors = [];
 page.on('pageerror', (e) => errors.push('JS-Fehler: ' + e.message));
 await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
 // Für den Durchgang wie ein echter Spieler: Erstes Training zeigen, Weiter-Sperre bei Entscheidungen an.
-await page.addInitScript(() => { window.__FM_PROMISES__ = true; try { localStorage.setItem('fmTestMail', '1'); } catch { /* egal */ } });
+await page.addInitScript((rep) => {
+  window.__FM_PROMISES__ = true;
+  try {
+    localStorage.setItem('fmTestMail', '1');
+    // REPORT=pokal|nie: Einstellung „Spielbericht nach dem Simulieren“ (Vergleich der Pflicht-Klicks)
+    if (rep) { const s = JSON.parse(localStorage.getItem('fm1980_settings') || '{}'); s.matchReport = rep; localStorage.setItem('fm1980_settings', JSON.stringify(s)); }
+  } catch { /* egal */ }
+}, process.env.REPORT || '');
 if (process.env.SAVE) await loadSave(page, url(), process.env.SAVE);
 else { await page.goto(url()); await startNewGame(page, { keepBriefing: true, speed: process.env.SPEED || '300' }); }
 
@@ -37,11 +44,13 @@ const sizes = [];        // Messungen
 const stacked = [];
 let total = 0;
 const tap = (kind, n = 1) => { clicks[kind] = (clicks[kind] ?? 0) + n; total += n; };
-const note = async (what, extra = '') => { const d = await dateNow(); log.push(`${d.padEnd(28)} ${what}${extra ? ' – ' + extra : ''}`); seen[what] = (seen[what] ?? 0) + 1; };
+const progress = `${outDir}/verlauf.txt`;
+await writeFile(progress, '');
+const note = async (what, extra = '') => { const d = await dateNow(); const l = `${d.padEnd(28)} ${what}${extra ? ' – ' + extra : ''}`; log.push(l); appendFile(progress, l + '\n').catch(() => {}); seen[what] = (seen[what] ?? 0) + 1; };
 const shotOnce = async (kind) => { if (seen[kind] === 1) await page.screenshot({ path: `${outDir}/${String(Object.keys(seen).length).padStart(2, '0')}_${kind}.png` }).catch(() => {}); };
 const probeOnce = async (kind, sel) => {
   if (!PROBE || seen[kind] !== 1) return;
-  const r = await probeWindow(page, kind, sel, null, { max: 16, settle: 200 });
+  const r = await probeWindow(page, kind, sel, null, { max: 16, settle: 200, safe: true });
   sizes.push(r);
 };
 // Neue Nachrichten (Betreff) zwischen zwei Halten – aus dem Newscenter, wenn die Zentrale offen ist.
@@ -108,7 +117,14 @@ for (let step = 0; step < 4000; step++) {
     if (await has('.cr-root')) { await note('Trainingslager-Bilanz'); await shotOnce('Trainingslager-Bilanz'); for (let k = 0; k < 4 && await has('.cr-root'); k++) { await page.locator('.cr-root').click({ position: { x: 20, y: 20 } }); tap('Trainingslager-Bilanz'); await page.waitForTimeout(500); } continue; }
     if (await has('.pm-root')) { await act('Vorschau Nächstes Spiel', '.pm-root', '.pm-go-btn:has-text("Simulieren")', { wait: 700 }); continue; }
     if (await has('.mr-modal')) { await act('Spielbericht', '.mr-modal', '.mr-modal .modal-close'); continue; }
-    if (await has('.reveal-overlay')) { await act('Entwicklung (Liste)', '.reveal-overlay', '.reveal-overlay button'); continue; }
+    if (await has('.reveal-overlay')) {
+      await note('Bewertung (Liste)'); await shotOnce('Bewertung (Liste)');
+      const sk = page.locator('.reveal-overlay button:has-text("Überspringen"), .reveal-overlay button:has-text("Alle")').first();
+      if (await sk.isVisible().catch(() => false)) { await sk.click(); tap('Bewertung (Liste)'); await page.waitForTimeout(300); }
+      const x = page.locator('.reveal-overlay .reveal-close, .reveal-overlay button:has-text("Weiter"), .reveal-overlay button:has-text("Schließen")').first();
+      if (await x.isVisible().catch(() => false)) { await x.click(); tap('Bewertung (Liste)'); } else { await page.locator('.reveal-overlay button').last().click().catch(() => {}); tap('Bewertung (Liste)'); }
+      await page.waitForTimeout(300); continue;
+    }
     if (await has('.modal-overlay')) { const w = await openWindows(page); await note('Sonstiges Fenster', w.join(', ')); await page.keyboard.press('Escape'); tap('Sonstiges'); await page.waitForTimeout(300); continue; }
 
     // Kein Fenster: Kopfknopf

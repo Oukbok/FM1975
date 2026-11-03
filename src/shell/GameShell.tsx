@@ -104,6 +104,18 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
  * bei offenen Entscheidungen greift dort nicht, sonst bliebe jeder Zeitlauf-Test hängen.
  * `localStorage.fmTestMail = '1'` schaltet sie für den eigenen Test (tests/mailbtn-shots.mjs) wieder ein.
  */
+/**
+ * Fenster gesehen → passende Nachricht der letzten Tage als gelesen markieren, damit dieselbe
+ * Information nicht gleich danach noch einmal als „ungelesen“ im Newscenter wartet.
+ */
+function markShownRead(g: Game, prefix: string, contains = ''): void {
+  const today = g.calendar.currentDate;
+  const from = new Date(Date.parse(today.slice(0, 10) + 'T00:00:00Z') - 3 * 86400000).toISOString().slice(0, 10);
+  for (const m of g.messages ?? []) {
+    if (!m.read && !m.choices?.length && m.date >= from && m.date <= today && m.subject.startsWith(prefix) && m.subject.includes(contains)) m.read = true;
+  }
+}
+
 function automatedRun(): boolean {
   try { return typeof navigator !== 'undefined' && !!navigator.webdriver && localStorage.getItem('fmTestMail') !== '1'; } catch { return false; }
 }
@@ -188,7 +200,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   }, [pendingSeason, autoBriefing, pendingRec, g, rerender]);
   useEffect(() => { if (pendingRec) setRunning(false); }, [pendingRec]);
   const pendingBriefing = useMemo(() => (pendingRec ? briefingOfRecord(pendingRec) : null), [pendingRec]);
-  const closeBriefing = useCallback(() => { clearPendingBriefing(g); rerender(); }, [g, rerender]);
+  const closeBriefing = useCallback(() => { markShownRead(g, 'Saison-Briefing '); clearPendingBriefing(g); rerender(); }, [g, rerender]);
   // Saisonbudget (game/budgetPlan.ts): nach dem Briefing; `popupHold` hält alle späteren Fenster zurück.
   const budgetDue = !pendingBriefing && !!g.budget?.pending && g.budget.pending === g.season;
   useEffect(() => { if (budgetDue) setRunning(false); }, [budgetDue]);
@@ -196,11 +208,11 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   // Die Besten der Saison (game/seasonAwardsGame.ts): Popup nach dem letzten Ligaspieltag.
   const awardsDue = pendingAwards(g);
   useEffect(() => { if (awardsDue) setRunning(false); }, [awardsDue]);
-  const closeAwards = useCallback(() => { clearPendingAwards(g); rerender(); }, [g, rerender]);
+  const closeAwards = useCallback(() => { markShownRead(g, 'Die Besten der Saison'); clearPendingAwards(g); rerender(); }, [g, rerender]);
   // Goldener Ball (game/goldenBallGame.ts): Gala am 20. Dezember.
   const galaDue = pendingGoldenBall(g);
   useEffect(() => { if (galaDue) setRunning(false); }, [galaDue]);
-  const closeGala = useCallback(() => { clearPendingGoldenBall(g); rerender(); }, [g, rerender]);
+  const closeGala = useCallback(() => { if (galaDue) markShownRead(g, `${galaDue.title} ${galaDue.year}`); clearPendingGoldenBall(g); rerender(); }, [g, rerender, galaDue]);
   // Einstellung „Ehrungen als Fenster“ aus: nur Nachricht, Vormerkung sofort löschen.
   useEffect(() => {
     if (settings.awardsShow !== 'aus') return;
@@ -241,7 +253,13 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   const processDay = useCallback((): boolean => {
     const ok = processGameDay(g, {
       // Spielbericht nach „Schnell simulieren“; nach dem Textmodus nicht nochmal.
-      onOwnMatch: (id) => { if (watchedRef.current) watchedRef.current = false; else setLiveMatchId(id); },
+      onOwnMatch: (id) => {
+        if (watchedRef.current) { watchedRef.current = false; return; }
+        // Einstellung „Spielbericht nach dem Simulieren“: nur Pokal/Europapokal bzw. nie (weniger Pflicht-Klicks).
+        const rep = settings.matchReport ?? 'immer';
+        if (rep === 'nie' || (rep === 'pokal' && g.fixtures.some((f) => f.id === id))) return;
+        setLiveMatchId(id);
+      },
       onOwnMatchDue: () => setRunning(false),
       onRatingCeremony: (c) => setRatingCeremony(c),
       onSeasonEnd: () => { if (settings.autosave) doSave(); },
@@ -256,7 +274,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
     });
     if (!ok) setRunning(false);
     return ok;
-  }, [g, settings.autosave, settings.drawShow, settings.transferWindowShow, doSave, myClub]);
+  }, [g, settings.autosave, settings.drawShow, settings.transferWindowShow, settings.matchReport, doSave, myClub]);
 
   useEffect(() => { setHistory([]); }, [g.calendar.currentDate]);
 
@@ -430,7 +448,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
               </button>
             </div>
           ) : mustRead ? (
-            <button className="hd-continue mail" onClick={() => setScreen('dashboard')}
+            <button className="hd-continue mail" onClick={() => { setScreen('dashboard'); setTimeout(() => window.dispatchEvent(new Event('fm:focus-decision')), 0); }}
               title="Bitte überprüfe deine Nachrichten – eine Entscheidung ist offen.">
               <span className="hd-continue-ico" aria-hidden="true">
                 <svg viewBox="0 0 48 48" width="44" height="44">
@@ -577,7 +595,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         if (!rec) { setTimeout(() => setDrawQueue((q) => q.slice(1)), 0); return null; }
         return (
           <DrawShow key={d.n} g={g} rec={rec} replay={d.replay} settings={settings} onSettings={onUpdateSettings}
-            onClose={() => { setDrawQueue((q) => q.slice(1)); rerender(); }} />
+            onClose={() => { if (!d.replay) markShownRead(g, `Auslosung ${rec.roundName}`); setDrawQueue((q) => q.slice(1)); rerender(); }} />
         );
       })()}
 
@@ -623,7 +641,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
 
       {ratingCeremony && (settings.ratingShow ?? 'an') !== 'aus' && (
         <RatingShow g={g} results={ratingCeremony.results} anlass={ratingCeremony.anlass} settings={settings}
-          onSettings={onUpdateSettings} onClose={() => { setRatingCeremony(null); rerender(); }} />
+          onSettings={onUpdateSettings} onClose={() => { markShownRead(g, `${ratingCeremony.anlass}: `, 'Aufwertungen'); setRatingCeremony(null); rerender(); }} />
       )}
       {ratingCeremony && settings.ratingShow === 'aus' && (
         <RatingCeremony
