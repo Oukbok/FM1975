@@ -2,6 +2,7 @@ import ClubCrest from '../components/ClubCrest';
 import { snapshotAttributes } from '../engine/history';
 import ClubEditorModal from '../components/ClubEditorModal';
 import { ClubProfileProvider } from '../components/club/ClubProfileContext';
+import { PlayerMenuProvider } from '../components/playerMenu/PlayerContextMenu';
 import Icon from '../components/Icon';
 import LineupView from '../components/LineupView';
 import { MatchScreen } from '../screens/match/MatchScreen';
@@ -263,6 +264,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   return (
     // Vereinsprofil: jeder <ClubLink> im Spiel öffnet es (components/club/ClubProfileContext.tsx).
     <ClubProfileProvider g={g} onChange={rerender}>
+    <PlayerMenuProvider g={g} onChange={rerender} onGoto={(s) => setScreen(s as Screen)}>
     <div className={`app-shell ${isZentrale ? 'shell-zentrale' : ''} ${isDashLike ? 'shell-dashlike' : ''} ${isScene ? 'shell-scene' : ''} ${calLive ? 'cal-live' : ''}`}>
       {/* ---------------- HEADER (eine Leiste) ---------------- */}
       <header className={`hd-bar ${isZentrale ? 'hd-bar--zentrale' : ''}`}>
@@ -515,6 +517,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         />
       )}
     </div>
+    </PlayerMenuProvider>
     </ClubProfileProvider>
   );
 }

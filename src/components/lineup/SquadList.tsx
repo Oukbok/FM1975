@@ -83,7 +83,7 @@ export default function SquadList({ xi, bench, reserve, benchSize, captainId, ho
   };
 
   const section = (title: string, count: string, drop: string, rows: ListRow[], empty?: string) => (
-    <tbody className={`lu-sec ${hover === drop ? 'over' : ''}`} data-lu-drop={drop}>
+    <tbody className={`lu-sec lu-sec-${drop.split(':')[0]} ${hover === drop ? 'over' : ''}`} data-lu-drop={drop}>
       <tr className="lu-sec-head" data-lu-drop={drop}><td colSpan={COLS.length}><span>{title}</span><span className="lu-sec-n">{count}</span></td></tr>
       {rows.map(row)}
       {!rows.length && empty && <tr className="lu-row-empty" data-lu-drop={drop}><td colSpan={COLS.length}>{empty}</td></tr>}

@@ -1,3 +1,5 @@
+import { autoFillLineup } from '../../engine/lineupAI';
+import { eraRules } from '../../engine/match/era';
 import PlayerModal from '../../components/PlayerModal';
 import { Game } from '../../game/state';
 import { Player } from '../../types';
@@ -22,6 +24,12 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
   const [grp, setGrp] = useState<string>('all');
   const club = g.clubs[g.managedClubId];
   const all = club.playerIds.map((id) => g.players[id]).filter(Boolean);
+  // Spieltagskader: Startelf (lineupMap) und Bank (substitutes) farbig hinterlegt.
+  const lu = club.tactics?.lineupMap ? club.tactics
+    : autoFillLineup(club, g.players, club.tactics, eraRules(Number(g.calendar.currentDate.slice(0, 4))).benchSize);
+  const xiIds = new Set(Object.values(lu.lineupMap ?? {}));
+  const benchIds = new Set((lu.substitutes ?? []).filter((id) => !xiIds.has(id)));
+  const roleCls = (id: string) => (xiIds.has(id) ? 'sq-xi' : benchIds.has(id) ? 'sq-bench' : '');
   const cmp = (a: Player, b: Player): number => {
     switch (sortBy) {
       case 'pos': return (GROUP_ORDER.indexOf(groupOf(a)) - GROUP_ORDER.indexOf(groupOf(b))) || (b.overall - a.overall);
@@ -51,6 +59,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
     <DashPage>
       <DashBox title={`Kader (${all.length})`} icon="squad" span={2} rows={2} flush
         right={<span className="dbtnrow">
+          <span className="sq-legend"><span><i className="xi" />Startelf</span><span><i className="bench" />Bank</span></span>
           <button className={`dchip ${grp === 'all' ? 'on' : ''}`} onClick={() => setGrp('all')}>Alle</button>
           {GROUP_ORDER.map((k) => <button key={k} className={`dchip ${grp === k ? 'on' : ''}`} onClick={() => setGrp(k)}>{GROUP_DE[k]}</button>)}
         </span>}>
@@ -64,7 +73,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
           <tbody>
             {squad.map((pl) => {
               return (
-                <tr key={pl.id} className="clickable" onClick={() => setSel(pl.id)}>
+                <tr key={pl.id} data-pid={pl.id} className={`clickable ${roleCls(pl.id)}`} onClick={() => setSel(pl.id)}>
                   <td className="rl-rank">{pl.shirtNumber}</td>
                   <td className="nowrap rl-name">{pl.fullName}</td>
                   <td className="ctr"><span className="pos-badge">{pl.naturalPosition}</span></td>

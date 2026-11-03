@@ -54,6 +54,11 @@
   --red: #e0646f;
   --gold: #d9b26a;
   /* Positionen: Schlüsselattribute (blau) und Vertrautheit (Grünstufen) */
+  /* Zeilen: Startelf / Bank (Aufstellung, Kader-Übersicht) */
+  --row-xi: rgba(92, 168, 118, 0.13);
+  --row-xi-edge: #5ca876;
+  --row-bench: rgba(90, 140, 210, 0.14);
+  --row-bench-edge: #5a8cd2;
   --pos-key: #5a9ef0;        /* Schlüsselattribut: kräftiger Strich + Balken */
   --pos-key-2: #9fc4f2;      /* wichtig: schlanker, hellerer Strich */
   --fam-1: #4aa877;          /* natürlich */

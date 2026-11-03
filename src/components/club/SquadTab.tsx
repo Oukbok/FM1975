@@ -58,7 +58,7 @@ export default function SquadTab({ g, d, openPlayer, onTalk, talkErr }: ClubTabP
             {list.map((p) => {
               const block = running.has(p.id) ? null : talkBlocker(g, p);
               return (
-                <tr key={p.id} className="clickable" onClick={() => openPlayer(p.id)}>
+                <tr key={p.id} data-pid={p.id} className="clickable" onClick={() => openPlayer(p.id)}>
                   <td className="ctr muted">{p.shirtNumber}</td>
                   <td className="nowrap rl-name">{p.fullName}{p.transferListed && <span className="cmx-tag">Transferliste</span>}</td>
                   <td className="ctr"><span className="pos-badge">{p.naturalPosition}</span></td>
@@ -98,14 +98,14 @@ export default function SquadTab({ g, d, openPlayer, onTalk, talkErr }: ClubTabP
       <DashBox title="Vertragslage" icon="contracts" right={d.isPlayerClub ? undefined : 'Gelegenheiten'}>
         <div className="dsec">Vertrag endet in 12 Monaten ({expiring.length})</div>
         {expiring.length ? expiring.slice(0, 4).map((p) => (
-          <div key={p.id} className="dlist-row clickable" onClick={() => openPlayer(p.id)}>
+          <div key={p.id} data-pid={p.id} className="dlist-row clickable" onClick={() => openPlayer(p.id)}>
             <span className="pos-badge">{p.naturalPosition}</span><span className="grow">{p.fullName}</span>
             <span className="val" style={{ color: vColor(p.overall) }}>{p.overall}</span>
           </div>
         )) : <div className="dnote">Niemand.</div>}
         <div className="dsec">Wechselwillig oder auf der Transferliste ({unhappy.length})</div>
         {unhappy.length ? unhappy.slice(0, 4).map((p) => (
-          <div key={p.id} className="dlist-row clickable" onClick={() => openPlayer(p.id)}>
+          <div key={p.id} data-pid={p.id} className="dlist-row clickable" onClick={() => openPlayer(p.id)}>
             <span className="pos-badge">{p.naturalPosition}</span><span className="grow">{p.fullName}</span>
             <span className="val" style={{ color: vColor(p.overall) }}>{p.overall}</span>
           </div>

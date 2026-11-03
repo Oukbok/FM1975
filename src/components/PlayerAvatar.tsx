@@ -359,6 +359,7 @@ export default function PlayerAvatar({ player, club, size = 'medium', className 
       height={px * 1.15}
       viewBox="0 0 100 115"
       className={className}
+      data-pid={player.id || undefined}
       style={{ display: 'block', borderRadius: size === 'small' ? 8 : 12 }}
       role="img"
       aria-label={`Avatar ${player.fullName}`}

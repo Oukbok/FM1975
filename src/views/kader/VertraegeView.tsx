@@ -39,7 +39,7 @@ export function VertraegeView({ g, onChange }: { g: Game; onChange?: () => void 
             {squad.map((pl) => {
               const m = monthsUntil(today, pl.contract.expiryDate);
               return (
-                <tr key={pl.id} className="clickable" onClick={() => setSel(pl.id)}>
+                <tr key={pl.id} data-pid={pl.id} className="clickable" onClick={() => setSel(pl.id)}>
                   <td className="nowrap rl-name">{pl.fullName}</td>
                   <td className="ctr"><span className="pos-badge">{pl.naturalPosition}</span></td>
                   <td className="num">{pl.age}</td>

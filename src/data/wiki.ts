@@ -313,6 +313,11 @@ Frühere Bundesligisten, die 1975 nur noch in den Amateurligen spielen, existier
     body: `## Kader als Tabelle
 Der Kader-Bildschirm zeigt die Mannschaft als **übersichtliche Tabelle** (kein Spielerbild/Avatar), damit du alle wichtigen Werte auf einen Blick vergleichen kannst.
 
+**Farben:** Spieler der aktuellen **Startelf** sind grün hinterlegt, die **Ersatzbank** blau, alle übrigen (nicht im Spieltagskader) ohne Farbe – genauso in der Aufstellung.
+
+## Rechtsklick auf Spieler
+Ein **Rechtsklick** auf einen Spieler – in Listen, Tabellen oder auf sein Gesicht – öffnet ein Menü mit den passenden Aktionen: Spielerprofil, Entwicklung, Vertrag, Wünsche, Medizin, bei eigenen Spielern **Transferliste** und **Zur Aufstellung**, bei fremden Spielern **Transferverhandlung**, dazu der Verein. Auf Touch-Geräten öffnet ein **langer Druck** dasselbe Menü.
+
 ## Spalten
 - **#** Rückennummer
 - **Name**

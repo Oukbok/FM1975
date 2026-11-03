@@ -82,7 +82,7 @@ export default function ClubTab({ g, d, openPlayer }: ClubTabProps) {
         {youth.length ? <>
           <div className="dsec">Größte Talente</div>
           {youth.slice(0, 5).map((p) => (
-            <div key={p.id} className="dlist-row clickable" onClick={() => openPlayer(p.id)}>
+            <div key={p.id} data-pid={p.id} className="dlist-row clickable" onClick={() => openPlayer(p.id)}>
               <span className="pos-badge">{p.naturalPosition}</span>
               <span className="grow">{p.fullName}<span className="muted"> · {p.age} J.</span></span>
               <ScoutStars p={p} />

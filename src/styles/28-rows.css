@@ -163,3 +163,15 @@
 .dtable td { vertical-align: middle; }
 .dtable td > .rl-z, .dtable td > .cmp-team, .dtable td > .club-link, .dtable td > .rl-club,
 .dtable td > span, .dtable td > a { vertical-align: middle; }
+
+/* Startelf / Bank / nicht im Spieltagskader farbig hinterlegt (Wunsch Pascal):
+   Aufstellung (SquadList: tbody .lu-sec-xi/-bench/-reserve) und Kader-Übersicht (tr.sq-xi/.sq-bench). */
+.lu-sec-xi .lu-row td, .dtable tbody tr.sq-xi td { background: var(--row-xi); }
+.lu-sec-bench .lu-row td, .dtable tbody tr.sq-bench td { background: var(--row-bench); }
+.lu-sec-xi .lu-row:hover td, .dtable tbody tr.sq-xi:hover td { background: color-mix(in srgb, var(--row-xi) 100%, rgba(255,255,255,.05)); }
+.lu-sec-bench .lu-row:hover td, .dtable tbody tr.sq-bench:hover td { background: color-mix(in srgb, var(--row-bench) 100%, rgba(255,255,255,.05)); }
+.lu-sec-xi .lu-sec-head td { box-shadow: inset 3px 0 0 var(--row-xi-edge); }
+.lu-sec-bench .lu-sec-head td { box-shadow: inset 3px 0 0 var(--row-bench-edge); }
+.sq-legend { display: inline-flex; align-items: center; gap: 12px; color: var(--text-3); font-size: 13px; }
+.sq-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+.sq-legend .xi { background: var(--row-xi-edge); } .sq-legend .bench { background: var(--row-bench-edge); }

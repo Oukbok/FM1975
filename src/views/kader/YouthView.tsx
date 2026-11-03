@@ -106,7 +106,7 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
             </tr></thead>
             <tbody>
               {rows.map((pl) => (
-                <tr key={pl.id} className="clickable" onClick={() => setSel(pl.id)}>
+                <tr key={pl.id} data-pid={pl.id} className="clickable" onClick={() => setSel(pl.id)}>
                   <td className="rl-rank">{youthAgeClass(pl.age)}</td>
                   <td className="nowrap rl-name">{pl.fullName}</td>
                   <td className="ctr"><span className="pos-badge">{pl.naturalPosition}</span></td>

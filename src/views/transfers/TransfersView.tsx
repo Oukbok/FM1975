@@ -71,7 +71,7 @@ function MarketTable({ g, list, onOpen, action }: { g: Game; list: Player[]; onO
         {list.map((p) => {
           const c = g.clubs[p.clubId];
           return (
-            <tr key={p.id} className="clickable" onClick={() => onOpen(p.id)}>
+            <tr key={p.id} data-pid={p.id} className="clickable" onClick={() => onOpen(p.id)}>
               <td className="nowrap rl-name">{p.fullName}</td>
               <td className="nowrap"><ClubLink id={p.clubId}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>{c && <ClubCrest club={c} size={24} />}{c?.shortName}</span></ClubLink></td>
               <td className="ctr"><span className="pos-badge">{p.naturalPosition}</span></td>

@@ -56,7 +56,7 @@ export function MatchRow({ g, m, clubId = g.managedClubId, onClick }: { g: Game;
 /** Spielerzeile: Positionskürzel · Name · Wert. */
 export function PlayerRow({ p, value, sub, onClick, color }: { p: Player; value?: React.ReactNode; sub?: React.ReactNode; onClick?: () => void; color?: string }) {
   return (
-    <div className={`dlist-row ${onClick ? 'clickable' : ''}`} onClick={onClick}>
+    <div className={`dlist-row ${onClick ? 'clickable' : ''}`} onClick={onClick} data-pid={p.id}>
       <span className="pos-badge">{p.naturalPosition}</span>
       <span className="grow">{p.fullName}{sub != null && <span className="muted"> · {sub}</span>}</span>
       {value != null && <span className="val" style={{ color: color ?? (typeof value === 'number' ? vColor(value) : undefined) }}>{value}</span>}

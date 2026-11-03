@@ -46,7 +46,7 @@ export function PhilosophyBox({ g, onChange }: { g: Game; onChange: () => void }
       <div className="dnote">Bekommen +25 % Entwicklungstempo, der Rest des Kaders etwas weniger Aufmerksamkeit (−3 %).</div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 6 }}>
         {squad.filter((p) => p.age <= 24 || foerder.includes(p.id)).slice(0, 14).map((p) => (
-          <button key={p.id} className={`dchip ${foerder.includes(p.id) ? 'on' : ''}`}
+          <button key={p.id} data-pid={p.id} className={`dchip ${foerder.includes(p.id) ? 'on' : ''}`}
             disabled={!foerder.includes(p.id) && foerder.length >= MAX_FOERDER}
             onClick={() => toggleFoerder(p.id)}>{p.lastName} ({p.age})</button>
         ))}

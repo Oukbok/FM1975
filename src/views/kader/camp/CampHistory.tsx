@@ -33,7 +33,7 @@ function Players({ title, list }: { title: string; list: CampPlayerDelta[] }) {
     <div className="cp-hd-pl">
       <div className="cp-sec">{title}</div>
       {list.length ? list.map((p) => (
-        <div key={p.id} className="cp-hd-row">
+        <div key={p.id} data-pid={p.id} className="cp-hd-row">
           <span className="pos-badge">{p.pos}</span>
           <span className="grow">{p.name}{p.youth ? <span className="muted"> · Jugend</span> : null}</span>
           <span className="cp-hd-v">{p.injured ? <span className="neg">{p.injured}</span> : `Fit ${sgn(p.fit)} · Form ${sgn(p.form)}${p.morale ? ` · Moral ${p.morale > 0 ? '+' : '−'}` : ''}`}</span>
