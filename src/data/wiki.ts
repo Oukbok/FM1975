@@ -524,6 +524,29 @@ Save-Version **7**: Altstände ohne Frische werden beim Laden nachgerüstet (\`r
 - \`engine/save.ts\`: \`SAVE_VERSION = 7\`. \`App.tsx\`: \`retrofitFrische\` beim Laden.`,
   },
   {
+    id: 'season-promises',
+    category: 'condition',
+    title: 'Erstes Training: Versprechen für die Saison',
+    keywords: ['versprechen', 'erstes training', 'ansprache', 'saisonziel', 'glaubwürdigkeit', 'meister', 'aufstieg', 'rotation', 'disziplin', 'jugend', 'börse', 'stadionausbau', 'trainingsauftakt'],
+    body: `## Worum geht es?
+Am **ersten Trainingstag jeder Saison** (vor dem ersten Ligaspiel, nach dem Saison-Briefing) steht die Mannschaft vor dir. In einem Fenster gibst du bis zu **fünf Versprechen** ab – oder keins. Die einflussreichsten Spieler (Kapitän zuerst, dann nach Kabinen-Einfluss) zeigen live, wie sie reagieren. Den Stand findest du jederzeit unter **Kader › Kabine**, Reiter **Versprechen** – dort kannst du die Ansprache auch nachholen, solange noch kein Ligaspiel gespielt ist.
+
+## Die Versprechen (alle messbar)
+**Saisonziele:** Meister (Platz 1; nur höchste Spielklasse) · Pokalsieg · Europapokalsieg (nur als Teilnehmer; mit dem Ausscheiden gebrochen) · Aufstieg (nicht in der höchsten Klasse) · Nicht absteigen · Saisonziel erreichen bzw. übertreffen (Platz aus dem Saisonziel des Vorstands) · Nächstes Jahr international (Startplatz über Liga oder Pokal).
+**Team:** Wer nicht fit ist, spielt nicht (höchstens 3 Startelf-Einsätze mit Frische unter 55) · Wer schlecht spielt, ist draußen (Note 5,0 oder schlechter → nächstes Ligaspiel nicht in der Startelf, 2 Ausnahmen) · Viel rotieren (im Schnitt mindestens 2 neue Spieler je Ligaspiel) · Disziplin (höchstens 2 Platzverweise und nicht mehr Gelbe als der Ligaschnitt) · Tolle Stimmung (Teamstimmung mindestens 60 am Saisonende) · Auf die Jugend setzen (mindestens 12 % der Startelf-Einsätze für Spieler bis 21) · Keine alten Spieler, nur gute (Leistungsträger ab 31 in mindestens 40 % der Ligaspiele in der Startelf).
+**Infrastruktur:** Stadionausbau (mehr Plätze oder neu begonnener Umbau) · Börsengang (Anteilsverkauf an einen Investor; erst nach der Ausgliederung ab 1998) · Ich bleibe treu · Scouting verbessern · Trainingsanlagen ausbauen · Nachwuchsarbeit ausbauen.
+Was gerade nicht passt, ist ausgegraut – mit Grund. Bei Saisonzielen steht, wie kühn das Ziel gemessen am Saisonziel des Vorstands ist (ehrgeizig, gewagt, tollkühn).
+
+## Reaktion der Spieler
+Jeder Spieler reagiert nach **Persönlichkeit, Rolle und deiner Glaubwürdigkeit**: Ehrgeizige und Spieler im Rampenlicht mögen große Ziele – glauben sie aber nur, wenn sie realistisch sind oder du glaubwürdig bist; Profis werden bei Luftschlössern skeptisch. Stammspieler mögen keine Rotation, Ergänzungsspieler schon. Junge freuen sich über die Jugend, Routiniers über die Zusage an die Erfahrenen. Profis mögen Disziplin und Leistungsprinzip, Heimatverbundene und Loyale lehnen den Börsengang ab. Mehr als drei Versprechen wirken wie leeres Gerede. Die Reaktion wirkt **sofort** auf die Moral (bis ±6), die Teamstimmung folgt dem Schnitt. Öffentliche Ziele heben kurz die Fanstimmung.
+
+## Prüfung und Folgen
+Pokal-/Europapokal-Aus, zu viele Verstöße (Frische, Leistung, Platzverweise) brechen ein Versprechen sofort (montags geprüft). Am 2. Januar kommt ein Zwischenstand, beim Saisonwechsel die Bilanz.
+- **Gehalten:** Glaubwürdigkeit +4, wer daran geglaubt hat +3 Moral, Teamstimmung +3; bei Saisonzielen und Ausbauten auch Vorstand und Fans etwas zufriedener.
+- **Gebrochen:** Glaubwürdigkeit −8, wer daran geglaubt hat −5 Moral (dazu ein abklingender Faktor), Teamstimmung −4; bei öffentlichen Versprechen sinken Vorstandsvertrauen und Fanstimmung. Hat ein **Führungsspieler** daran geglaubt, stellt er dich vor der Mannschaft zur Rede (Zusammenhalt sinkt).
+Die **Glaubwürdigkeit** ist dieselbe wie bei Versprechen in Transferverhandlungen.`,
+  },
+  {
     id: 'condition-kabine',
     category: 'condition',
     title: 'Kabine: Moral, Einfluss und Teamstimmung',

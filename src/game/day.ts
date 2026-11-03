@@ -42,6 +42,7 @@ import { Game, bumpMorale } from './state';
 import { contractReminders, handleContractExpiry, transferPlayer } from './contracts';
 import { monthlySquadHarmony, rollAiOffers } from './aiOffers';
 import { checkPromises } from './promises';
+import { seasonPromisesDaily, seasonPromisesFitness } from './seasonPromisesGame';
 import { transferTalkDaily } from './transferTalks';
 import { buyBackDaily, contractClausesDaily } from './playerWishesGame';
 import { assignShirtNumbers, repairSquadLists } from './squads';
@@ -147,6 +148,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
     if (due && !isPrepared(due)) { ui.onOwnMatchDue(due); return false; }
   }
   setTransferDate(today);
+  seasonPromisesFitness(g, today); // „Wer nicht fit ist, spielt nicht“: Frische der Startelf vor dem Anpfiff
   const todaysEvents = CalendarEngine.eventsOn(cal, today).filter((e) => !e.processed);
   let stopForAction = false;
   const decisionsBefore = new Set(g.messages.filter((m) => m.choices?.length).map((m) => m.id));
@@ -416,11 +418,14 @@ export function processDay(g: Game, ui: DayUi): boolean {
     ownTrainingDay(g, myClub, today);
     // Positionstraining (eine Zielposition je Spieler, game/positionsGame.ts)
     { const d = g.trainingPlan.days[weekdayIdx(today)]; if (d?.slot1 || d?.slot2) ownPositionTraining(g, today, 0.8 + 0.4 * ((myClub.trainingSchedule?.facilitiesQuality ?? 70) / 100)); }
+    // Erstes Training der Saison: Versprechen-Popup (game/seasonPromisesGame.ts).
+    { const d = g.trainingPlan.days[weekdayIdx(today)]; if (seasonPromisesDaily(g, today, !!(d?.slot1 || d?.slot2))) stopForAction = true; }
     if (breakForm) for (const [id, f] of breakForm) { const p = g.players[id]; if (p && p.form > f) p.form = f; }
     applyFocusLoad(g, myClub, today, staffEffectsOf(g).injuryReduction);
     // Übrige Liga regeneriert normal; Manager-Verein ist über das Training abgedeckt.
     dailyRecovery(g.players, userIds);
   } else {
+    seasonPromisesDaily(g, today, false);
     // An Spieltagen regenerieren alle normal (Startelf hat Match-Ermüdung).
     dailyRecovery(g.players);
   }

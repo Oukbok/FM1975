@@ -14,9 +14,10 @@ import { condColor, fmtDay } from '../../ui/format';
 import { MoraleIcon } from '../../components/status';
 import { RoomPyramid } from './kabine/RoomPyramid';
 import { FactorList, MoodSpark, PlayerFocus, TeamActions } from './kabine/RoomParts';
+import { PromisesTab } from './promises/PromisesTab';
 
 type Sort = 'einfluss' | 'moral';
-type Tab = 'massnahmen' | 'vorfaelle' | 'verlauf';
+type Tab = 'massnahmen' | 'vorfaelle' | 'verlauf' | 'versprechen';
 
 export function DressingRoomView({ g, onChange }: { g: Game; onChange: () => void }) {
   const club = g.clubs[g.managedClubId];
@@ -86,11 +87,13 @@ export function DressingRoomView({ g, onChange }: { g: Game; onChange: () => voi
         </table>
       </DashBox>
 
-      <DashBox title={tab === 'massnahmen' ? 'Maßnahmen' : tab === 'vorfaelle' ? 'Vorfälle' : 'Verlauf'} icon="staff" right={<span className="dbtnrow">
+      <DashBox title={tab === 'massnahmen' ? 'Maßnahmen' : tab === 'vorfaelle' ? 'Vorfälle' : tab === 'versprechen' ? 'Versprechen' : 'Verlauf'} icon="staff" right={<span className="dbtnrow">
         <button className={`dchip ${tab === 'massnahmen' ? 'on' : ''}`} onClick={() => setTab('massnahmen')}>Maßnahmen</button>
         <button className={`dchip ${tab === 'vorfaelle' ? 'on' : ''}`} onClick={() => setTab('vorfaelle')}>Vorfälle{open.length ? ` (${open.length})` : ''}</button>
         <button className={`dchip ${tab === 'verlauf' ? 'on' : ''}`} onClick={() => setTab('verlauf')}>Verlauf</button>
+        <button className={`dchip ${tab === 'versprechen' ? 'on' : ''}`} onClick={() => setTab('versprechen')}>Versprechen</button>
       </span>}>
+        {tab === 'versprechen' && <PromisesTab g={g} onChange={onChange} />}
         {tab === 'massnahmen' && <TeamActions g={g} onChange={onChange} />}
         {tab === 'vorfaelle' && <>
           {open.length ? open.map((m) => (

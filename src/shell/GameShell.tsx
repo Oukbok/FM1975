@@ -87,6 +87,8 @@ import { processDay as processGameDay } from '../game/day';
 import { DrawShow } from '../screens/draw/DrawShow';
 import { RatingShow } from '../screens/rating/RatingShow';
 import { CampRecap } from '../views/kader/camp/CampRecap';
+import { FirstTrainingModal } from '../views/kader/promises/FirstTrainingModal';
+import { pendingSeasonPromises } from '../game/seasonPromisesGame';
 import { TransferWindowModal } from '../views/transfers/window/TransferWindowModal';
 import { PrematchScreen } from '../screens/prematch/PrematchScreen';
 import { compCup } from '../game/cupDraw';
@@ -207,6 +209,8 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
     if (awardsDue || galaDue) rerender();
   }, [settings.awardsShow, awardsDue, galaDue, g, rerender]);
   const showAwards = settings.awardsShow !== 'aus';
+  // Erstes Training (game/seasonPromisesGame.ts): Versprechen-Popup; unter Playwright nur mit window.__FM_PROMISES__.
+  const promisesDue = !!pendingSeasonPromises(g) && (!navigator.webdriver || !!(window as { __FM_PROMISES__?: boolean }).__FM_PROMISES__);
 
   // --- Speichern ---
   const doSave = useCallback((slot?: string, name?: string) => {
@@ -573,6 +577,9 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
       {twKey && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && !campQueue.length && (
         <TransferWindowModal key={twKey} g={g} initialKey={twKey} auto settings={settings} onSettings={onUpdateSettings}
           onClose={() => { setTwKey(null); rerender(); }} />
+      )}
+      {promisesDue && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && !campQueue.length && (
+        <FirstTrainingModal g={g} onClose={rerender} />
       )}
       {/* Die Besten der Saison: nach Spielbericht/Zeremonie/Briefing/Auslosung/Trainingslager. */}
       {galaDue && showAwards && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && !campQueue.length && (

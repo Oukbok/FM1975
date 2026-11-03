@@ -33,6 +33,7 @@
     "test:positions": "node scripts/run-ts.mjs tests/positions-test.ts",
     "test:leagues": "node scripts/run-ts.mjs tests/leagues-test.ts",
     "test:dressing": "node scripts/run-ts.mjs tests/dressing-test.ts",
+    "test:promises": "node scripts/run-ts.mjs tests/promises-test.ts",
     "test:staff": "node scripts/run-ts.mjs tests/staff-test.ts",
     "test:camp": "node scripts/run-ts.mjs tests/camp-test.ts",
     "test:youthcomp": "node scripts/run-ts.mjs tests/youthcomp-test.ts",
