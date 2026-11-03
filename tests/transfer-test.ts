@@ -74,7 +74,7 @@ console.log(`Versprechen: ${(target.promises ?? []).map((x) => x.type).join(', '
 const trust0 = g.promiseTrust ?? 70;
 if (target.promises?.some((x) => x.type === 'stammplatz')) target.seasonStats.starts = 0;
 g.fixtures.forEach((m, i) => { if (i < 20 && (m.homeClubId === own.id || m.awayClubId === own.id)) m.result = { homeGoals: 1, awayGoals: 0 } as any; });
-checkPromises(g, '1976-06-30');
+checkPromises(g, '1976-06-29');
 const res = (target.promises ?? []).map((x) => `${x.type}:${x.result}`).join(', ');
 console.log(`Prüfung: ${res}; Glaubwürdigkeit ${trust0} → ${g.promiseTrust ?? 70}`);
 if ((target.promises ?? []).some((x) => !x.result)) fail('Offene Versprechen nach der Prüfung');
@@ -177,8 +177,8 @@ console.log(' →', playerOffer(g7, t7.id, { wage: Math.round(st7.agentWage * 1.
 if (t7.phase !== 'done' || !lp.loan || lp.clubId !== o7.id) fail('Leihspieler nicht angekommen (Phase ' + t7.phase + ')');
 if (!lp.contract.releaseClause || !lp.contract.loyaltyBonus || !lp.contract.successRaise) fail('Klauseln nicht übernommen');
 // Saisonende: Kaufoption ziehen
-g7.calendar.currentDate = '2007-06-30';
-contractClausesDaily(g7, '2007-06-30');
+g7.calendar.currentDate = '2007-06-29';
+contractClausesDaily(g7, '2007-06-29');
 const optMsg = g7.messages.find((m) => m.eventRef?.type === 'loan_option' && m.eventRef.playerId === lp.id);
 if (!optMsg) fail('Keine Nachricht zur Kaufoption');
 const res7 = chooseEventOption(g7, optMsg!, 'kaufen');

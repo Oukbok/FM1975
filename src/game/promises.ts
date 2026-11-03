@@ -102,7 +102,8 @@ function leagueMatches(g: Game, clubId: string): number {
 /** Täglich: 2. Januar Mahnung, 30. Juni Prüfung aller offenen Versprechen. */
 export function checkPromises(g: Game, today: string): void {
   const md = today.slice(5);
-  if (md !== '01-02' && md !== '06-30') return;
+  // 29.6. statt 30.6.: der 30.6. wird als Tag nicht mehr verarbeitet (Saison gilt dann schon als beendet).
+  if (md !== '01-02' && md !== '06-29') return;
   const club = g.clubs[g.managedClubId];
   if (!club) return;
   const matches = leagueMatches(g, club.id);

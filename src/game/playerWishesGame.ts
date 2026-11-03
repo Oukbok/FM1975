@@ -185,12 +185,14 @@ export function migratePersonas(g: Game): number {
 // Vertragsklauseln: Treueprämie, Erfolgsgehalt (30. Juni), Leihen
 // -----------------------------------------------------------------------------
 export function contractClausesDaily(g: Game, today: string): void {
-  if (today.slice(5) !== '06-30') return;
+  // 29.6.: der 30.6. wird als Tag nicht mehr verarbeitet (Saison gilt dann schon als beendet, siehe aiLoans.ts).
+  if (today.slice(5) !== '06-29') return;
   const own = g.clubs[g.managedClubId];
   if (!own) return;
   const scale = economyScale(yearOf(today));
   const pos = g.table.rows.findIndex((r) => r.clubId === own.id) + 1;
   const tier = g.leagues?.playerDivision?.tier ?? 1;
+  const end = `${today.slice(0, 4)}-06-30`; // Verträge/Leihen enden am 30.6.
   for (const id of own.playerIds) {
     const p = g.players[id];
     if (!p) continue;
@@ -204,23 +206,23 @@ export function contractClausesDaily(g: Game, today: string): void {
       }));
       p.contract.successRaise = undefined;
     }
-    if (p.contract.loyaltyBonus && p.contract.expiryDate <= today) {
+    if (p.contract.loyaltyBonus && p.contract.expiryDate <= end) {
       book(own.finances, today, -Math.round(p.contract.loyaltyBonus * scale), 'other', `Treueprämie ${p.fullName}`, true);
       p.contract.satisfaction = clamp((p.contract.satisfaction ?? 60) + 6, 0, 100);
       p.contract.loyaltyBonus = undefined;
     }
   }
-  loanSeasonEnd(g, today);
+  loanSeasonEnd(g, today, end);
 }
 
 const LOAN_TYPE = 'loan_option';
 
 /** Saisonende: Für jeden Leihspieler entscheidest du über die Kaufoption. */
-function loanSeasonEnd(g: Game, today: string): void {
+function loanSeasonEnd(g: Game, today: string, end: string): void {
   const own = g.clubs[g.managedClubId];
   for (const id of own.playerIds) {
     const p = g.players[id];
-    if (!p?.loan || p.loan.until > today) continue;
+    if (!p?.loan || p.loan.until > end) continue;
     const parent = g.clubs[p.loan.fromClubId];
     const msg = makeMessage({
       date: today, category: 'transfer', from: 'Sportdirektor', subject: `Kaufoption für ${p.fullName}`,

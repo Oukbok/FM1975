@@ -196,6 +196,8 @@ for (const p of loaned) {
 {
   const p = loaned[0], holder = g6.clubs[p.clubId];
   p.loan!.optionFee = 50000;
+  // Kasse sicher gefüllt – geprüft wird die Leistungsregel; „ohne Geld“ unten setzt sie auf 0.
+  holder.finances.balance = Math.max(holder.finances.balance, 50_000_000);
   const st = p.seasonStats;
   const trial = () => { let n = 0; for (let i = 0; i < 400; i++) if (optionWanted(g6, p, holder, '1992-06-30', Math.random)) n++; return n / 400; };
   Object.assign(st, { starts: 28, appearances: 30, ratedMatches: 30, averageRating: 2.6 });
