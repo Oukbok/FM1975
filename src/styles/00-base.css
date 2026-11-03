@@ -91,6 +91,12 @@
   --danger-1: #d7be5a;
   --danger-2: #e08a48;
   --danger-3: #e0545f;
+  /* Trainingsbausteine je Gruppe (Training › Trainingsplan, views/training/plan/):
+     ruhige, entsättigte Kennfarben – Fitness / Technik / Taktik / Sonstiges */
+  --trc-fit: #c47883;
+  --trc-tech: #83a676;
+  --trc-tac: #7393c2;
+  --trc-misc: #8f9aa8;
   /* Form (Daumen immer hoch): nur Grünstufen, 1 = blasses Grau-Grün … 5 = kräftig dunkelgrün */
   --fg-5: #23934f;
   --fg-4: #46ad66;

@@ -459,7 +459,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'fixtures' && <FixturesView g={g} onWatch={(id) => setLiveMatchId(id)} />}
         {screen === 'squad' && <SquadView g={g} onChange={rerender} />}
         {screen === 'lineup' && <LineupView g={g as any} onChange={rerender} />}
-        {screen === 'training' && <TrainingPlanView g={g} onChange={rerender} />}
+        {screen === 'training' && <TrainingPlanView g={g} onChange={rerender} onGoto={setScreen} />}
         {screen === 'transfers' && <TransfersView g={g} onDone={rerender} />}
         {screen === 'finances' && <FinancesView g={g} />}
         {screen === 'budget' && <BudgetView g={g} onChange={rerender} />}

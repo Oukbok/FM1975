@@ -11,7 +11,7 @@ import { InfoTip } from '../../ui/InfoTip';
 const PHASES: SeasonPhase[] = ['vorbereitung', 'hinrunde', 'winter', 'rueckrunde'];
 const FOCI: TrainingFocus[] = ['balance', 'belastung', 'technik', 'regeneration', 'jugend'];
 
-export function PhilosophyBox({ g, onChange }: { g: Game; onChange: () => void }) {
+export function PhilosophyBox({ g, onChange, hideFoerder = false }: { g: Game; onChange: () => void; hideFoerder?: boolean }) {
   const now = phaseOf(g.calendar.currentDate);
   const focus = g.trainingFocus ?? {};
   const club = g.clubs[g.managedClubId];
@@ -30,7 +30,7 @@ export function PhilosophyBox({ g, onChange }: { g: Game; onChange: () => void }
   const cur = focus[now] ?? 'balance';
 
   return (
-    <DashBox title="Philosophie & Förderspieler" info="philosophie" icon="contracts" right={PHASE_LABEL[now].split(' ')[0]}>
+    <DashBox title={hideFoerder ? 'Philosophie' : 'Philosophie & Förderspieler'} info="philosophie" icon="contracts" right={PHASE_LABEL[now].split(' ')[0]}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 12px' }}>
         {PHASES.map((ph) => (
           <label key={ph} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -42,6 +42,7 @@ export function PhilosophyBox({ g, onChange }: { g: Game; onChange: () => void }
         ))}
       </div>
       <div className="dnote">{FOCUS_INFO[cur]}</div>
+      {!hideFoerder && <>
       <div className="dsec">Förderspieler ({foerder.length}/{MAX_FOERDER})<InfoTip k="foerderspieler" /></div>
       <div className="dnote">Bekommen +25 % Entwicklungstempo, der Rest des Kaders etwas weniger Aufmerksamkeit (−3 %).</div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 6 }}>
@@ -51,6 +52,7 @@ export function PhilosophyBox({ g, onChange }: { g: Game; onChange: () => void }
             onClick={() => toggleFoerder(p.id)}>{p.lastName} ({p.age})</button>
         ))}
       </div>
+      </>}
     </DashBox>
   );
 }

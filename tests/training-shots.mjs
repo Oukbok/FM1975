@@ -55,8 +55,10 @@ await page.locator('.tn-sub-item:has-text("Trainingsplan")').click();
 await page.waitForTimeout(400);
 await page.screenshot({ path: `${outDir}/${tag}_2_plan.png` });
 await noScroll('Trainingsplan');
-// Ziehen: „Torschuss“ aus der Leiste in das erste leere oder gefüllte Feld am Montag (Abend).
-const tile = page.locator('.tp-tile:has-text("Torschuss")');
+// Ziehen: „Abschlusstraining“ aus dem Reiter Technik in das Feld Montag Abend.
+await page.locator('.tr3-ktab:has-text("Technik")').click();
+await page.waitForTimeout(150);
+const tile = page.locator('.tp-tile:has-text("Abschluss")');
 const target = page.locator('.tp-cell[data-day="0"][data-slot="extra"]');
 if (await tile.count() && await target.count()) {
   const a = await tile.boundingBox(), b = await target.boundingBox();
@@ -73,6 +75,19 @@ if (await tile.count() && await target.count()) {
 await page.locator('.tp-weeknav select').selectOption('vorbereitung');
 await page.waitForTimeout(200);
 await page.screenshot({ path: `${outDir}/${tag}_4_vorlage.png` });
+// Weitere Reiter des Trainingsplans
+for (const [i, name] of [['4b', 'Individuelle Spieler'], ['4c', 'Trainingsgruppen'], ['4d', 'Langfristig']]) {
+  await page.locator(`.tr3-tabs .tab:has-text("${name}")`).click();
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${outDir}/${tag}_${i}_${name.split(' ')[0].toLowerCase()}.png` });
+  await noScroll(`Trainingsplan › ${name}`);
+}
+// Langfristig: Vorlage für die gewählte Woche vormerken
+await page.locator('.tr3-tpl:has-text("Taktikwoche")').click();
+await page.waitForTimeout(200);
+if (!(await page.locator('.tr3-mark').count())) errors.push('Vormerkung erscheint nicht im Saisonverlauf');
+await page.screenshot({ path: `${outDir}/${tag}_4e_vormerkung.png` });
+await page.locator('.tr3-tabs .tab:has-text("Mannschaftstraining")').click();
 await page.locator('.tn-sub-item:has-text("Trainerteam")').click();
 await page.waitForTimeout(400);
 await page.locator('.tt-table tbody tr').first().click();
