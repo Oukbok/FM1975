@@ -82,7 +82,7 @@ try {
   await nav('Kader', 'Übersicht');
   await page.locator('.dtable tbody tr').first().click();
   await page.waitForTimeout(500);
-  for (const t of ['Statistik', 'Entwicklung']) {
+  for (const t of ['Saison', 'Entwicklung']) {
     const tab = page.locator(`.pp-tabs button:has-text("${t}"), .modal button:has-text("${t}")`);
     if (await tab.count()) { await tab.first().click(); await shot(`spieler_${t.toLowerCase()}`); }
   }

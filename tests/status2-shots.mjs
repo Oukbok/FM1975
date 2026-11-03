@@ -44,22 +44,20 @@ await page.locator('.dtable tbody tr.clickable').nth(9).click();
 await page.waitForSelector('.pp-modal');
 await page.waitForTimeout(200);
 await shot('04_profil_kopf');
-await page.locator('.pp-tabs .tab:has-text("Attribute")').click();
-await page.waitForTimeout(250);
 await shot('05_attribute');
-const tips = page.locator('.pp-attr-cols .itip-attr');
+const tips = page.locator('.pp2-skills .itip-attr');
 for (const [i, n] of [[0, 'a'], [4, 'b'], [12, 'c']]) {
   if (await tips.count() > i) { await tips.nth(i).hover(); await page.waitForTimeout(400); await shot(`06_attr_tip_${n}`); }
 }
 await page.mouse.move(5, 5);
-await page.locator('.pp-tabs .tab:has-text("Übersicht")').click(); await page.waitForTimeout(200);
+await page.locator('.pp-tabs .tab:has-text("Allgemein")').click(); await page.waitForTimeout(200);
 const ot = page.locator('.itip-attr');
 if (await ot.count()) { await ot.first().hover(); await page.waitForTimeout(400); await shot('07_uebersicht_tip'); }
 await page.mouse.move(5, 5);
 await page.locator('.pp-tabs .tab:has-text("Medizin")').click(); await page.waitForTimeout(200); await shot('08_medizin');
 await page.locator('.pp-tabs .tab:has-text("Bericht")').click(); await page.waitForTimeout(200); await shot('09_bericht');
 await page.locator('.pp-tabs .tab:has-text("Entwicklung")').click(); await page.waitForTimeout(200); await shot('10_entwicklung');
-await page.locator('.pp-modal .modal-close').click();
+await page.locator('.pp-modal .pp2-close').click();
 await page.waitForTimeout(250);
 await nav('Spieltag', 'Aufstellung'); await shot('11_aufstellung');
 const lf = page.locator('.st-form');

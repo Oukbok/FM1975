@@ -582,6 +582,13 @@ export const RAW: Record<string, string> = {
   trFree:
     '<rect x="3.5" y="3.5" width="17" height="17" rx="3" fill="none" stroke="%BASE%" stroke-width="1.6" stroke-dasharray="3 2.6"/>' +
     '<path d="M9 12h6" stroke="%ACCENT%" stroke-width="2" stroke-linecap="round"/>',
+
+  // ---- Spielerprofil: Knöpfe + Trend (einfarbig über currentColor) ----
+  navPrev: '<path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>',
+  navNext: '<path d="M9.5 5.5 16 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>',
+  close: '<path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>',
+  trendUp: '<path d="M12 19.5V5.5M6 11l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>',
+  medCross: '<rect x="3.5" y="3.5" width="17" height="17" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5v9M7.5 12h9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>',
 };
 
 /** Gültige Icon-Namen (englische Keys). */

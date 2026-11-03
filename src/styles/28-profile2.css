@@ -1,0 +1,204 @@
+/* =============================================================================
+   Spielerprofil 2 (Vorbild EA Fussball Manager) – PlayerModal + components/player/*
+   Raster: oben links Steckbrief | oben rechts Feld/Bilanz/Vertrag,
+           unten links Fähigkeiten | unten rechts Reiter. Fenster scrollt nie,
+           Fähigkeiten und Reiterinhalt scrollen intern.
+   ========================================================================== */
+.modal.pp-modal.pp2 { position: relative; }
+.pp2::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px;
+  background: var(--club); opacity: 0.85; z-index: 1;
+}
+.pp2-grid {
+  flex: 1 1 auto; min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 46fr) minmax(0, 54fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 18px 34px;
+  padding: 18px 28px 14px;
+}
+
+/* ---- Knöpfe oben rechts ---- */
+.pp2-actions { position: absolute; top: 14px; right: 18px; display: flex; align-items: center; gap: 8px; z-index: 3; }
+.pp2-round {
+  width: 34px; height: 34px; border-radius: 50%; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--panel-2); border: 1px solid var(--border); color: var(--text-2); cursor: pointer;
+  transition: border-color 0.12s, color 0.12s;
+}
+.pp2-round:hover { border-color: var(--text-3); color: var(--text); }
+.pp2-close { margin-left: 8px; }
+.pp2-navpos { font-size: 12px; color: var(--text-3); min-width: 38px; text-align: center; font-variant-numeric: tabular-nums; }
+
+/* ---- Steckbrief (oben links) ---- */
+.pp2-id { min-width: 0; display: flex; flex-direction: column; }
+.modal .pp2-name {
+  font-family: var(--font-display); font-size: 34px; font-weight: 600; line-height: 1.05; margin: 0;
+  letter-spacing: 0.3px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pp2-no { color: var(--text-3); margin-right: 12px; }
+.pp2-club { display: flex; align-items: center; gap: 4px; margin-top: 2px; font-family: var(--font-display); font-size: 18px; font-weight: 500; color: var(--text-2); letter-spacing: 0.4px; }
+.pp2-club .pp-tag { font-family: var(--font-ui); }
+.pp2-idbody { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 22px; margin-top: 10px; }
+.pp2-portrait { position: relative; height: 184px; }
+.pp2-crest { position: absolute; left: 0; top: 0; }
+.pp2-face { position: absolute; right: 0; bottom: 0; }
+.pp2-face > * { display: block; filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45)); }
+.pp2-face > svg, .pp2-face > img { display: block; }
+.pp2-facts { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.pp2-keyrow { display: flex; align-items: flex-end; gap: 22px; padding-bottom: 6px; border-bottom: 1px solid var(--border-soft); }
+.pp2-kv { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pp2-kv > span { font-size: 10.5px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.8px; }
+.pp2-kv > b { font-size: 16px; font-weight: 600; color: var(--text); white-space: nowrap; display: inline-flex; align-items: center; gap: 7px; }
+.pp2-kv > b.pp2-big { font-family: var(--font-display); font-size: 30px; line-height: 1; font-weight: 600; }
+.pp2-nat {
+  font-style: normal; font-size: 11px; font-weight: 700; letter-spacing: 0.6px; color: var(--text-2);
+  border: 1px solid var(--border); border-radius: 3px; padding: 1px 5px; margin-right: 7px; line-height: 1.3;
+}
+.pp2-postable { border-collapse: separate; border-spacing: 3px 2px; margin: 0 -3px; }
+.pp2-postable th { text-align: left; font-size: 13px; font-weight: 500; color: var(--text-3); padding-right: 10px; width: 74px; }
+.pp2-postable td { width: 46px; padding: 0; text-align: center; }
+.pp2-poscell {
+  width: 100%; padding: 2px 0; font-family: var(--font-display); font-size: 14px; font-weight: 500; letter-spacing: 0.6px;
+  background: var(--panel-2); border: 1px solid var(--border-soft); border-radius: 4px; color: var(--text-2); cursor: pointer;
+}
+.pp2-poscell:hover { border-color: var(--text-3); }
+.pp2-poscell.on { border-color: var(--accent); color: var(--accent); }
+.pp2-posval { background: rgba(255, 255, 255, 0.03); border-radius: 4px; padding: 2px 0 !important; font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums; }
+.pp2-fl { display: grid; grid-template-columns: 84px minmax(0, 1fr); align-items: baseline; gap: 8px; font-size: 14px; padding: 1px 0; }
+.pp2-fl > span { color: var(--text-3); display: inline-flex; align-items: center; }
+.pp2-fl > b { font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pp2-fl em { font-style: normal; color: var(--text-3); font-weight: 500; }
+.pp2-fl b.dim { color: var(--text-3); font-weight: 500; }
+
+/* ---- Feld, Bilanz, Vertrag (oben rechts) ---- */
+.pp2-topright { min-width: 0; display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 24px; padding-top: 30px; }
+.pp2-pitchbox { min-width: 0; }
+.pp2-pitch {
+  position: relative; width: 190px; height: 240px;
+  background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-soft); border-radius: 4px;
+}
+.pp2-spot {
+  position: absolute; transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  background: none; border: none; padding: 0; cursor: pointer; font-family: inherit;
+}
+.pp2-dot {
+  position: relative; display: block; width: 11px; height: 11px; border-radius: 50%;
+  background: var(--panel-2); border: 1px solid var(--border);
+}
+.pp2-spot.psk-natural .pp2-dot { background: var(--fam-1); border-color: var(--fam-1); }
+.pp2-spot.psk-good .pp2-dot { background: var(--fam-2); border-color: var(--fam-2); }
+.pp2-spot.psk-ok .pp2-dot { background: var(--fam-3); border-color: #3d6153; }
+.pp2-spot.faint .pp2-dot { width: 7px; height: 7px; opacity: 0.6; }
+.pp2-spot.on .pp2-dot { box-shadow: 0 0 0 2px var(--accent); }
+.pp2-dot-train { position: absolute; right: -4px; top: -4px; width: 6px; height: 6px; border-radius: 50%; background: var(--pos-key); }
+.pp2-spot-lbl { font-size: 11.5px; font-weight: 600; color: var(--text-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pp2-spot-lbl em { font-style: normal; color: var(--text-4); margin: 0 1px; }
+.pp2-spot.on .pp2-spot-lbl { color: var(--accent); }
+.pp2-spot:hover .pp2-spot-lbl { color: var(--text); }
+.pp2-legend { margin-top: 6px; font-size: 10.5px; gap: 8px; flex-wrap: wrap; }
+
+.pp2-topinfo { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.pp2-bt {
+  display: flex; align-items: baseline; gap: 10px;
+  font-family: var(--font-display); font-size: 16px; font-weight: 500; letter-spacing: 0.4px; color: var(--text);
+  padding-bottom: 4px; border-bottom: 1px solid var(--border); margin-bottom: 4px;
+}
+.pp2-bt-sub { font-family: var(--font-ui); font-size: 12px; color: var(--text-3); letter-spacing: 0; }
+.pp2-bilanz { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.pp2-bilanz th { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; padding: 2px 4px; text-align: center; }
+.pp2-bilanz td { font-size: 16px; font-weight: 600; text-align: center; padding: 3px 4px; color: var(--text); }
+.pp2-kvl { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 3px 0; border-bottom: 1px solid var(--border-soft); font-size: 14px; }
+.pp2-kvl:last-child { border-bottom: none; }
+.pp2-kvl > span { color: var(--text-3); display: inline-flex; align-items: center; }
+.pp2-kvl > b { font-weight: 600; color: var(--text); white-space: nowrap; }
+.pp2-posinfo { border-top: 1px solid var(--border-soft); padding-top: 8px; }
+.pp2-posline { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; font-size: 14px; color: var(--text-2); }
+.pp2-posline > b { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text); letter-spacing: 0.5px; }
+.pp2-posline .psk-train { margin-left: auto; padding: 3px 10px; }
+.pp2-posinfo .psk-status { margin-top: 4px; }
+
+/* ---- Fähigkeiten (unten links) ---- */
+.pp2-skills { min-width: 0; min-height: 0; display: flex; flex-direction: column; border-top: 1px solid var(--border); padding-top: 8px; }
+.pp2-skills-head { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; flex: 0 0 auto; }
+.modal .pp2-h { font-family: var(--font-display); font-size: 22px; font-weight: 600; letter-spacing: 0.4px; margin: 0; color: var(--text); }
+.pp2-seg { display: flex; gap: 6px; }
+.pp2-forpos { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-3); }
+.pp2-select {
+  background: var(--panel-2); color: var(--text); border: 1px solid var(--border); border-radius: 4px;
+  padding: 4px 8px; font: inherit; font-size: 13px;
+}
+.pp2-skill-cols { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 0 30px; padding-right: 4px; align-content: start; }
+.pp2-skill-cols.three { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 20px; }
+.pp2-skill-cols.three .pp2-srow { grid-template-columns: minmax(0, 1fr) 30px 28px; }
+.pp2-skill-col { min-width: 0; }
+.pp2-sgroup { margin-bottom: 6px; }
+.pp2-sgt {
+  font-size: 11.5px; font-weight: 700; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.7px;
+  border-bottom: 1px solid var(--border); padding-bottom: 2px; margin-bottom: 1px;
+}
+.pp2-srow {
+  display: grid; grid-template-columns: minmax(0, 1fr) 38px 30px; align-items: center; gap: 6px;
+  padding: 1px 0; border-bottom: 1px solid var(--border-soft);
+}
+.pp2-srow:last-child { border-bottom: none; }
+.pp2-srow .pp-attr-lbl { font-size: 14px; line-height: 18px; }
+.pp2-sval { font-size: 15px; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+.pp2-smark { display: inline-flex; align-items: center; justify-content: flex-end; gap: 4px; }
+.pp2-trend { display: inline-block; }
+.pp2-trend.up { color: var(--pos); }
+.pp2-trend.down { color: var(--neg); transform: rotate(180deg); }
+.pp2-prog { font-size: 12px; font-weight: 700; color: var(--text-4); font-variant-numeric: tabular-nums; }
+.pp2-prog.up { color: var(--pos); }
+.pp2-prog.down { color: var(--neg); }
+/* Trainingshütchen (Schwerpunkt im Wochentraining) */
+.pp2-cone {
+  display: inline-block; width: 11px; height: 11px; flex: 0 0 auto; background: var(--text-2);
+  clip-path: polygon(38% 0, 62% 0, 92% 82%, 100% 82%, 100% 100%, 0 100%, 0 82%, 8% 82%);
+}
+.pp2-skills-foot { flex: 0 0 auto; display: flex; align-items: center; flex-wrap: wrap; gap: 6px 18px; padding-top: 7px; border-top: 1px solid var(--border-soft); margin-top: 2px; }
+.pp2-check { margin-left: auto; }
+.pp2-skills-foot .pp-legend { margin-top: 0; }
+.pp2-skills-foot .pp-legend i { flex: 0 0 auto; }
+.pp2-lg-core { width: 3px !important; height: 12px !important; border-radius: 1px; background: var(--pos-key); }
+.pp2-lg-use { width: 2px !important; height: 10px !important; border-radius: 1px; background: var(--pos-key-2); }
+.pp2-check { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-2); cursor: pointer; }
+.pp2-check input { accent-color: var(--accent); }
+
+/* ---- Reiter (unten rechts) ---- */
+.pp2-right { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+.pp2-tabs.pp-tabs { padding: 0; margin: 0 0 12px; flex: 0 0 auto; flex-wrap: nowrap; overflow: hidden; }
+.pp2-tabs .tab { padding: 9px 12px; font-size: 13.5px; white-space: nowrap; }
+.pp2-tabs.many .tab { padding: 9px 9px; font-size: 13px; }
+.pp2-tabbody { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; padding-right: 6px; }
+/* bisherige Reiter im schmaleren Feld: Raster wachsen mit dem Inhalt */
+.pp2-tabbody .pp-grid { height: auto; gap: 22px; }
+.pp2-tabbody .pp-grid-matches, .pp2-tabbody .pp-grid-career { grid-template-columns: 1fr; }
+.pp2-tabbody .pp-grid-wishes { grid-template-columns: 1fr 1fr; }
+.pp2-tabbody .pp-grid-wishes > :last-child { grid-column: 1 / -1; }
+.pp2-tabbody .pp-extra { height: auto; }
+.pp2-tabbody .pp-stat-num { font-size: 20px; white-space: nowrap; }
+.pp2-tabbody .pp-grid-contract { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); }
+.pp2-season { display: flex; flex-direction: column; gap: 24px; }
+
+/* Reiter „Allgemein“ */
+.pp2-general { display: flex; flex-direction: column; gap: 16px; }
+.pp2-row > span:last-child { color: var(--text); font-weight: 600; text-align: right; }
+.pp2-row .dim { color: var(--text-3); font-weight: 500; }
+.pp2-tiles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.pp2-tile {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px 9px;
+  background: rgba(255, 255, 255, 0.025); border: 1px solid var(--border-soft); border-radius: 6px; min-width: 0;
+}
+.pp2-tile-lbl { font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.7px; display: inline-flex; align-items: center; }
+.pp2-tile-mid { display: flex; align-items: center; gap: 8px; min-height: 38px; }
+.pp2-tile-big { font-family: var(--font-display); font-size: 32px; font-weight: 500; line-height: 1; color: var(--text); font-variant-numeric: tabular-nums; }
+.pp2-tile-sub { font-size: 12.5px; color: var(--text-2); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.pp2-mini { display: block; width: 70px; height: 4px; border-radius: 2px; background: var(--bar-track); overflow: hidden; margin: 5px auto 3px; }
+.pp2-mini > span { display: block; height: 100%; background: var(--bar-fill-hi); }
+.pp2-avail { color: var(--st-5); display: inline-flex; }
+.pp2-avail.bad { color: var(--neg); }
+.pp2-hidden { margin-top: 4px; }
+.pp2-hidden .pp-bar-row { grid-template-columns: 170px 1fr auto; }
+.pp2-hidden .hid-word { text-align: right; }

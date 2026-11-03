@@ -53,7 +53,7 @@ await page.waitForSelector('.pp-modal');
 await page.locator('.pp-tabs .tab:has-text("Wünsche")').click();
 await page.waitForTimeout(250);
 await shot(`${pre}_1_wuensche_fremd`);
-await page.locator('.pp-modal .modal-close').click();
+await page.locator('.pp-modal .pp2-close').click();
 
 // 2) Verhandlung starten: Vereinsgespräch
 await page.locator('.dtable tbody tr >> nth=1').locator('button:has-text("Verhandeln")').click();

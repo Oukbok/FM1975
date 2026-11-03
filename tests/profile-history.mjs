@@ -24,9 +24,9 @@ console.log('Datum', (await pg.locator('body').innerText()).match(/\d{1,2}\. \w+
 for (let k=0;k<12 && await pg.locator('.modal-overlay').count();k++){ for (const sel of ['button:has-text("Überspringen")','button:has-text("Fortsetzen")','button:has-text("Zum Spielbericht")','button:has-text("Schließen")','.modal-close']) { const x=pg.locator(sel).first(); if (await x.isVisible().catch(()=>false)) { await x.click().catch(()=>{}); break; } } await pg.waitForTimeout(400); }
 console.log('BTN', JSON.stringify(await pg.$$eval('.modal-overlay button', bs=>bs.map(b=>b.innerText.trim()))));await pg.screenshot({path:'/tmp/claude-0/stuck.png'});await pg.locator('.hd-nav-item').nth(2).click();await pg.locator('.tn-sub-item').nth(1).click();await pg.waitForTimeout(400);
 await pg.locator('tbody tr').nth(8).click();await pg.waitForTimeout(500);
-const names=['Übersicht','Attribute','Entwicklung','Spiele','Statistik','Karriere','Vertrag & Wert','Medizin','Bericht'];
+const names=['Allgemein','Entwicklung','Saison','Karriere','Vertrag','Wünsche','Medizin','Bericht'];
 for (let i=0;i<names.length;i++){ await pg.locator('.pp-tabs .tab').nth(i).click(); await pg.waitForTimeout(200);
-  const ov=await pg.evaluate(()=>{const bb=document.querySelector('.pp-body').getBoundingClientRect().bottom; let mx=0; for(const e of document.querySelectorAll('.pp-body *')){mx=Math.max(mx,e.getBoundingClientRect().bottom)}; return Math.round(mx-bb)});
+  const ov=await pg.evaluate(()=>{const bb=document.querySelector('.pp2-tabbody').getBoundingClientRect().bottom; let mx=0; for(const e of document.querySelectorAll('.pp2-tabbody *')){mx=Math.max(mx,e.getBoundingClientRect().bottom)}; return Math.round(mx-bb)});
   console.log(names[i],'ueberhang',ov); await pg.screenshot({path:`/tmp/claude-0/h_${i}.png`}); }
 console.log(errs.length?errs.join('\n'):'Keine JS-Fehler');
 await b.close();s.close();

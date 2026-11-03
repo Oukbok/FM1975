@@ -41,14 +41,13 @@ for (const [row, tag] of [[0, 'tw'], [9, 'b'], [16, 'c']]) {
   await nav('Kader', 'Übersicht');
   await page.locator('.dtable tbody tr.clickable').nth(row).click();
   await page.waitForSelector('.pp-modal');
-  await page.locator('.pp-tabs .tab:has-text("Attribute")').click();
   await page.waitForTimeout(250);
   await shot(`02_attr_${tag}`);
-  const chips = page.locator('.psk-chip');
+  const chips = page.locator('.pp2-spot');
   if (await chips.count() > 3) { await chips.nth(3).click(); await page.waitForTimeout(150); await shot(`03_attr_${tag}_andere`); }
   const train = page.locator('.psk-train');
   if (tag === 'b' && await train.count()) { await train.click(); await page.waitForTimeout(150); await shot(`04_attr_${tag}_training`); }
-  await page.locator('.pp-modal .modal-close').click();
+  await page.locator('.pp-modal .pp2-close').click();
   await page.waitForTimeout(250);
 }
 
