@@ -75,9 +75,11 @@ for (const auto of [true, false]) {
   const sim = new MatchSim(clubs[6], clubs[7], P, { year: 1995, seed: 5, humanSides: ['home'], live: true });
   run(sim, 30);
   const d = initialDraft(sim, 'home');
-  check(Object.keys(d.map).length === 11, 'Entwurf: elf Spieler auf Slots');
+  // Nach Platzverweis/Verletzung können es weniger als elf sein – jeder Feldspieler braucht einen Slot.
+  const n0 = onPitch(sim.home).length;
+  check(Object.keys(d.map).length === n0, `Entwurf: alle ${n0} Feldspieler auf Slots`);
   changeFormation(sim, 'home', d, '4-3-3');
-  check(d.formation === '4-3-3' && Object.keys(d.map).length === 11, 'Formation 4-3-3 im Entwurf');
+  check(d.formation === '4-3-3' && Object.keys(d.map).length === n0, 'Formation 4-3-3 im Entwurf');
   const field = Object.values(d.map)[5];
   const b = bench(sim.home)[0];
   check(swap(sim, 'home', d, field, b.id) === null && draftDiff(sim, 'home', d).ins.length === 1, 'Wechsel im Entwurf geplant');
