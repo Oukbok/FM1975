@@ -50,6 +50,8 @@ export interface BudgetPlan {
   advice: BudgetSplit;
   chosen: BudgetSplit;
   confirmed?: boolean;
+  /** Aus einem alten Spielstand übernommen: Gehaltsgrenze bleibt 115 %, bis du bestätigst. */
+  legacy?: boolean;
   /** Bereits angewandte Reaktionen (Vorstand/Fans), damit erneutes Bestätigen nicht stapelt. */
   applied?: { board: number; fans: number };
   /** Ausgaben für Bau/Akademie seit Saisonbeginn (nominal). */
@@ -65,6 +67,7 @@ const r3 = (v: number) => { // auf drei gültige Stellen runden (ruhigere Zahlen
   const p = Math.pow(10, Math.max(0, Math.floor(Math.log10(Math.abs(v))) - 2));
   return Math.round(v / p) * p;
 };
+const LEGACY_WAGE_FACTOR = 1.15;
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const sim = (g: Game) => !!(g as any).simAutoManage;
 
@@ -167,7 +170,9 @@ export function recordBudgetPlan(g: Game, opts: { pending?: boolean; keepBudgets
   const banned = hasTransferBan(club, g.season);
   if (opts.keepBudgets) {
     // Alter Spielstand mitten in der Saison: bestehende Budgets übernehmen (nichts ändern).
-    const wages = Math.round(fin.wageBudget * 52 * WAGE_OVERHEAD * scale + sa);
+    // Alte Grenze 115 % des Gehaltsrahmens bleibt gültig (wageLimitFactor), also auch im Plan.
+    const wages = Math.round(fin.wageBudget * LEGACY_WAGE_FACTOR * 52 * WAGE_OVERHEAD * scale + sa);
+    p.legacy = true;
     const transfers = Math.round(fin.transferBudget * scale + fin.expenses.transferExpense);
     p.advice = { wages, transfers, infra: r3(Math.max(0, 0.04 * rev)), youth: r3(p.fixed.youthRunning * 1.1), other: p.fixed.operations };
   } else {
@@ -223,7 +228,7 @@ export function reactionsFor(g: Game, p: BudgetPlan, s: BudgetSplit): Reactions 
   const mood = g.environment?.fanMood ?? 55;
   const conf = club?.boardConfidence ?? 60;
   return {
-    board: Math.round(clamp(64 + clamp(reserveGap, -0.6, 0.25) * 110 - Math.max(0, wageRatio - 0.7) * 120 + (conf - 60) / 4 + (s.youth - p.advice.youth) / rev * 60, 2, 98)),
+    board: Math.round(clamp(56 + clamp(reserveGap, -0.6, 0.15) * 110 - Math.max(0, wageRatio - 0.7) * 120 + (conf - 60) / 4 + (s.youth - p.advice.youth) / rev * 60, 2, 98)),
     fans: Math.round(clamp(56 + clamp(amb, -0.5, 0.6) * 70 + (s.infra - p.advice.infra) / rev * 90 + (mood - 55) / 3, 2, 98)),
     sponsors: Math.round(clamp(58 + clamp(amb, -0.5, 0.5) * 35 + (s.infra - p.advice.infra) / rev * 110 - Math.max(0, -reserveGap) * 70, 2, 98)),
   };
@@ -248,6 +253,7 @@ export function confirmBudget(g: Game, chosen: BudgetSplit): BudgetPlan | undefi
   const prev = { ...p.chosen };
   p.chosen = next;
   p.confirmed = true;
+  p.legacy = undefined; // ab jetzt gilt dein Gehaltsbudget als harte Grenze
   const eff = reactionEffects(g, p, next);
   const before = p.applied ?? { board: 0, fans: 0 };
   club.boardConfidence = clamp((club.boardConfidence ?? 60) + eff.board - before.board, 0, 100);
@@ -263,7 +269,25 @@ export function clearPendingBudget(g: Game): void { if (g.budget) g.budget.pendi
 // Grenzen im Spiel
 // -----------------------------------------------------------------------------
 /** Faktor auf den Gehaltsrahmen: mit Saisonbudget harte Grenze, sonst wie früher 115 %. */
-export function wageLimitFactor(g: Game): number { return planFor(g) ? 1 : 1.15; }
+export function wageLimitFactor(g: Game): number {
+  const p = planFor(g);
+  return p && !p.legacy ? 1 : LEGACY_WAGE_FACTOR;
+}
+
+/**
+ * Spielraum für neue Verträge/Gehaltserhöhungen bei dieser Wahl, nominal pro Jahr – in denselben
+ * Einheiten wie die Prüfung in contracts.ts/transferTalks.ts (Grundgehälter gegen Gehaltsbudget × Grenze).
+ */
+export function wageRoomFor(g: Game, p: BudgetPlan, s: BudgetSplit): number {
+  const club = g.clubs[g.managedClubId];
+  if (!club) return 0;
+  const scale = economyScale(yearOf(g.calendar.currentDate));
+  const legacyNow = p.legacy && s.wages === p.chosen.wages;
+  const limit = legacyNow ? club.finances.wageBudget * LEGACY_WAGE_FACTOR
+    : Math.max(0, (s.wages - p.fixed.staffAnnual) / (52 * WAGE_OVERHEAD * scale));
+  const sum = club.playerIds.reduce((a, id) => a + (g.players[id]?.contract.weeklyWage ?? 0), 0);
+  return Math.round((limit - sum) * 52 * scale);
+}
 
 /** Freier Rahmen für Bau (infra) bzw. Akademie-Ausbau (youth), nominal. */
 export function budgetRoom(g: Game, key: 'infra' | 'youth'): number | undefined {

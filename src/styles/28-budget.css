@@ -7,7 +7,7 @@
 .bud-head h2 { margin: 0; font-family: var(--font-display); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
 .bud-head-id { display: flex; flex-direction: column; gap: 2px; }
 .bud-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 0; padding: 0; }
-.bud-page { padding: 16px 26px 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.bud-page { padding: 12px 24px 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .bud-left { border-right: 1px solid var(--border); }
 .bud-sec {
   margin: 4px 0 0; font-size: 13px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px;
@@ -18,7 +18,7 @@
 
 /* Saisonziele */
 .bud-goals { display: flex; flex-direction: column; gap: 6px; }
-.bud-goal { display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 10px; padding: 6px 10px; background: var(--panel-2); border: 1px solid var(--border-soft); border-radius: 6px; }
+.bud-goal { display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 10px; padding: 4px 10px; background: var(--panel-2); border: 1px solid var(--border-soft); border-radius: 6px; }
 .bud-goal-ico { color: var(--text-3); display: flex; }
 .bud-goal-t { color: var(--text-2); font-size: 15px; }
 .bud-goal-v { font-family: var(--font-display); font-weight: 500; font-size: 17px; color: var(--text); text-transform: uppercase; letter-spacing: 0.4px; }
@@ -30,7 +30,7 @@
 .bud-adv-id { display: flex; flex-direction: column; font-size: 13px; line-height: 1.25; }
 .bud-adv-id b { color: var(--text); font-size: 14px; }
 .bud-adv-id span { color: var(--text-3); }
-.bud-adv-text { font-size: 15px; line-height: 1.5; color: var(--text-2); max-height: 330px; overflow: auto; padding-right: 4px; }
+.bud-adv-text { font-size: 15px; line-height: 1.5; color: var(--text-2); max-height: 380px; overflow: auto; padding-right: 4px; }
 .bud-adv-text p { margin: 0 0 7px; }
 .bud-adv-text .bud-adv-era { color: var(--text); }
 .bud-adv.compact { grid-template-columns: 1fr; }
@@ -39,7 +39,7 @@
 
 /* Reaktionen */
 .bud-react-box { margin-top: auto; }
-.bud-react { display: flex; flex-direction: column; gap: 7px; padding-top: 4px; }
+.bud-react { display: flex; flex-direction: column; gap: 5px; padding-top: 4px; }
 .bud-react-row { display: grid; grid-template-columns: 110px 1fr 110px; align-items: center; gap: 10px; font-size: 15px; }
 .bud-react-k { color: var(--text-2); }
 .bud-react-track { height: 8px; border-radius: 4px; background: var(--bar-track); overflow: hidden; }
@@ -51,7 +51,7 @@
 /* Einnahmen-Tabelle */
 .bud-inc, .bud-soll { width: 100%; border-collapse: collapse; font-size: 15px; }
 .bud-inc th, .bud-soll th { text-align: left; color: var(--text-3); font-weight: 600; font-size: 13px; padding: 3px 6px; border-bottom: 1px solid var(--border); }
-.bud-inc td, .bud-soll td { padding: 4px 6px; border-bottom: 1px solid var(--border-soft); color: var(--text); }
+.bud-inc td, .bud-soll td { padding: 3px 6px; border-bottom: 1px solid var(--border-soft); color: var(--text); }
 .bud-inc .num, .bud-soll .num { text-align: right; white-space: nowrap; }
 .bud-inc .dim, .bud-soll .dim { color: var(--text-3); }
 .bud-inc tr.sum td { font-weight: 600; border-top: 1px solid var(--border); }
@@ -78,7 +78,7 @@
 /* Säulen */
 .bud-cols { display: flex; flex-direction: column; gap: 6px; }
 .bud-cols-plot {
-  position: relative; height: 180px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; align-items: end;
+  position: relative; height: 140px; margin-top: 10px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; align-items: end;
   padding: 0 4px 0 78px; border-bottom: 1px solid var(--border);
 }
 .bud-grid { position: absolute; left: 78px; right: 0; border-top: 1px dashed var(--border-soft); pointer-events: none; }

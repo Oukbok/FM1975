@@ -37,6 +37,8 @@ export interface AdvisorCtx {
   /** TV-Topf der nächstniedrigeren Liga relativ zur eigenen (für das Abstiegsrisiko), 0 = keine. */
   tvDropShare: number;
   lastWageRatio?: number;
+  /** Spielraum für neue Verträge pro Jahr (Grundgehälter gegen Gehaltsbudget), nominal. */
+  wageRoom: number;
 }
 
 export interface AdvisorText { era: string; lines: string[]; tips: Record<'wages' | 'transfers' | 'infra' | 'youth' | 'reserve', string> }
@@ -103,11 +105,10 @@ export function advisorText(c: AdvisorCtx): AdvisorText {
     : `Achtung: Geplant sind am Saisonende nur ${f(c.reservePlanned)}, der Vorstand verlangt ${f(c.reserveMin)}. Das wird er dir ankreiden.`);
 
   // Empfehlungen je Posten.
-  const wageRoom = c.b.wages - c.personnelFixed;
   const tips = {
-    wages: wageRoom < 0
-      ? `Das Budget liegt ${f(-wageRoom)} unter den laufenden Personalkosten – neue Verträge und Gehaltserhöhungen gibt der Vorstand nicht frei.`
-      : `Nach den laufenden Verträgen bleiben ${f(wageRoom)} im Jahr für Neuzugänge und Verlängerungen. Mein Vorschlag: ${f(c.advice.wages)}.`,
+    wages: c.wageRoom < 0
+      ? `Die laufenden Verträge liegen schon ${f(-c.wageRoom)} im Jahr über dem Gehaltsbudget – neue Verträge und Gehaltserhöhungen gibt der Vorstand nicht frei. Mein Vorschlag: ${f(c.advice.wages)}.`
+      : `Nach den laufenden Verträgen bleiben ${f(c.wageRoom)} im Jahr für Neuzugänge und Verlängerungen. Das Budget enthält Prämien, Trainerstab und Mitarbeiter. Mein Vorschlag: ${f(c.advice.wages)}.`,
     transfers: c.banned ? 'Transfersperre durch die Lizenzauflagen.'
       : c.typicalFee > 0
         ? `Das reicht für etwa ${Math.max(0, Math.floor(c.b.transfers / c.typicalFee))} Stammspieler-Ablöse(n). Verkäufe füllen das Budget wieder auf. Vorschlag: ${f(c.advice.transfers)}.`

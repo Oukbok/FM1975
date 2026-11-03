@@ -92,6 +92,7 @@ migrateBudget(old);
 const op = planFor(old);
 ok(!!op && !old.budget?.pending, 'Alter Spielstand: Plan angelegt, kein Popup');
 ok(old.clubs[old.managedClubId].finances.wageBudget === wb && old.clubs[old.managedClubId].finances.transferBudget === tbo, 'Migration ändert keine Budgets');
+ok(wageLimitFactor(old) === 1.15, 'Alter Spielstand behält die Gehaltsgrenze 115 %, bis du bestätigst');
 const snap = JSON.stringify(old.budget);
 migrateBudget(old);
 ok(JSON.stringify(old.budget) === snap, 'Zweiter Aufruf ändert nichts (idempotent)');

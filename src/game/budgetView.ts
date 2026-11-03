@@ -12,7 +12,7 @@ import { EURO_COMP_NAMES, EuroCompId } from '../data/europe';
 import { makeName, pickOrigin } from '../data/origins';
 import { mulberry32, hashStr } from '../engine/leagues';
 import { STAFF_BY_ID } from '../data/staff';
-import { BudgetPlan, BudgetSplit, budgetState, planRevenue, plannedReserve } from './budgetPlan';
+import { BudgetPlan, BudgetSplit, budgetState, planRevenue, plannedReserve, wageRoomFor } from './budgetPlan';
 import { strengthShare, sumIncome } from './budgetForecast';
 import { Game } from './state';
 
@@ -94,6 +94,7 @@ export function advisorFor(g: Game, p: BudgetPlan, s: BudgetSplit): AdvisorText 
     banned: hasTransferBan(club, p.season),
     tvDropShare: tier < 4 ? tvPoolFor(tier + 1, year) / Math.max(1, tvPoolFor(tier, year)) : 0,
     lastWageRatio: club.finances.seasonHistory?.slice(-1)[0]?.wageRatio,
+    wageRoom: wageRoomFor(g, p, s),
   };
   return advisorText(ctx);
 }
