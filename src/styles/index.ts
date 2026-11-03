@@ -54,4 +54,5 @@ import './28-transfer3.css';
 import './28-prematch.css';
 import './28-textmode2.css';
 import './28-awards.css';
+import './28-budget.css';
 import './29-look.css'; // zuletzt: ruhige Gesamtoptik

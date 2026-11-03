@@ -1557,6 +1557,31 @@ Spielerkäufe werden als Ausgabe gebucht (Ablöse verringert Kontostand und Tran
 Die Seite warnt automatisch bei: Konto im Minus, negativer Saisonend-Prognose, Gehaltssumme über Gehaltsbudget und negativem festen Monatssaldo. Zum Monatsabschluss erhältst du zusätzlich eine **Finanz-Nachricht** ("Monatsabschluss"), bei Minus eine Vorstandswarnung.`,
   },
   {
+    id: 'finance-budget',
+    category: 'finance',
+    title: 'Saisonbudget & Finanzberater',
+    keywords: ['budget', 'saisonbudget', 'finanzberater', 'reserve', 'gehaltsbudget', 'transferbudget', 'prognose', 'schatzmeister'],
+    body: `## Ablauf
+Zu Spielbeginn und nach jedem Saisonwechsel (direkt nach dem Saison-Briefing) legt dir dein **Finanzberater** das Saisonbudget vor. Verhandelt wird nicht: Du siehst die Saisonziele des Vorstands und verteilst das Geld selbst. Schließt du das Fenster, gilt der Vorschlag des Beraters. Unter **Finanzen › Budget** kannst du jederzeit umschichten und siehst Soll/Ist.
+
+## Erwartete Einnahmen
+Die Prognose rechnet mit denselben Formeln wie die Buchungen: Fernsehgeld, Sponsoren & Vermarktung, Zuschauer & Spieltag (erwartete Zuschauer je Heimspiel), Fanartikel, Mitgliedsbeiträge und Prämien. Im Pokal sind zwei Runden eingeplant, im Europapokal nur das Startgeld – jede weitere Runde ist Zusatzgeld. Verfügbar ist der Kontostand zu Saisonbeginn plus diese Einnahmen.
+
+## Budgets und ihre Wirkung
+- **Gehälter:** Spieler, Trainerstab, Mitarbeiter und Prämien. Harte Grenze für neue Verträge und Verlängerungen (früher 115 % des Rahmens). Der Berater schlägt rund 60 % des Umsatzes plus Mitarbeiter vor.
+- **Transfers:** wird zum Transferbudget (Ablösen, Handgelder, Beraterhonorare). Verkäufe füllen es wieder auf.
+- **Infrastruktur:** Rahmen für bar bezahlte Bauvorhaben an Stadion, Gelände und Einrichtungen. Kreditfinanzierte Bauten belasten es nicht.
+- **Jugend:** laufende Kosten der Akademie plus Ausbauten der Nachwuchs-Bausteine.
+- **Betrieb & Sonstiges:** Stadion, Gebäude, Verwaltung, Vermarktung, Sicherheit, Kreditraten – fest eingeplant.
+- **Reserve:** was am Saisonende übrig bleibt. Der Vorstand verlangt mindestens 8 % des Umsatzes (ab 1988 10 %, ab 2002 12 %; mehr bei Krediten, Lizenzauflagen oder geringem Vertrauen).
+
+## Reaktionen und Bilanz
+Vorstand, Fans und Sponsoren reagieren auf deine Aufteilung (Vertrauen und Stimmung ändern sich beim Bestätigen um wenige Punkte). Am Saisonende schreibt der Berater eine Bilanz: Einnahmen gegen Plan, Ausgaben je Posten, Kontostand gegen Mindestreserve. Hast du selbst bestätigt, bewertet der Vorstand das Ergebnis (+1/+2 bei gehaltener Reserve, bis −6 bei deutlicher Unterschreitung).
+
+## Epochen
+Der Berater ordnet jedes Jahr ein: 1975 lebt ein Verein vom Eintritt (TV-Rechte der ganzen Liga 4,8 Mio. DM), ab 1988 bringt das Privatfernsehen planbares Geld, Bosman (1995) verschiebt Ablösen in Gehälter, die Kirch-Pleite 2002 verlangt mehr Reserve, ab den 2010ern tragen TV und Vermarktung die Etats.`,
+  },
+  {
     id: 'finance-forecast',
     category: 'finance',
     title: 'Verlaufsgraph & Prognose',

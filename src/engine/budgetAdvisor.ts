@@ -6,7 +6,7 @@
 // Formulierungen werden je Saison/Verein deterministisch gewählt.
 // =============================================================================
 import { eraLines } from '../data/budgetEras';
-import { formatMoney } from './economy';
+import { formatMoneyShort } from './economy';
 
 export interface AdvisorCtx {
   year: number;
@@ -54,7 +54,7 @@ const AREA_NAME: Record<keyof AdvisorCtx['shares'], string> = {
 };
 
 export function advisorText(c: AdvisorCtx): AdvisorText {
-  const f = (v: number) => formatMoney(Math.round(v), c.year);
+  const f = (v: number) => formatMoneyShort(Math.round(v), c.year);
   const s = (k: string) => `${c.seed}:${k}`;
   const era = pick(eraLines(c.year), s('era'));
   const lines: string[] = [];

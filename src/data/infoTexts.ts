@@ -637,6 +637,26 @@ export const INFO_TEXTS = {
     text: 'Am 20. Dezember wählt die Jury den Fußballer des Jahres – bewertet wird das Kalenderjahr: Noten, Tore und Vorlagen, Titel und Klasse. Bis 1994 sind nur Europäer wählbar, ab 1995 alle Spieler europäischer Vereine, ab 2007 Spieler weltweit. Klick auf ein Jahr zeigt die Gala noch einmal.',
     wiki: 'season-awards',
   },
+  budgetBerater: {
+    title: 'Finanzberater',
+    text: 'Kaufmännischer Leiter, Schatzmeister oder Geschäftsstelle – wer bei dir die Finanzen führt. Er ordnet jedes Jahr ein, woher das Geld in dieser Epoche kommt, was realistisch ist und wo die Risiken liegen.',
+    wiki: 'finance-budget',
+  },
+  budgetPrognose: {
+    title: 'Erwartete Einnahmen',
+    text: 'Hochrechnung aus denselben Formeln wie die Buchungen: Monatseinnahmen, erwartete Zuschauer je Heimspiel, Pokal mit zwei Runden. Europapokal-Prämien über das Startgeld hinaus sind bewusst nicht eingeplant.',
+    wiki: 'finance-budget',
+  },
+  budgetPosten: {
+    title: 'Budgets',
+    text: 'Gehälter sind eine harte Grenze für neue Verträge, das Transferbudget gilt für Ablösen und Handgelder, Infrastruktur und Jugend für bar bezahlte Bauvorhaben. Die Reserve ist, was am Saisonende übrig bleibt – der Vorstand verlangt ein Minimum.',
+    wiki: 'finance-budget',
+  },
+  budgetReaktionen: {
+    title: 'Reaktionen',
+    text: 'So nehmen Vorstand, Fans und Sponsoren deine Aufteilung auf. Der Vorstand achtet auf Reserve und Personalquote, die Fans auf Ehrgeiz bei Transfers und Ausbau. Bestätigst du, ändern sich Vertrauen und Stimmung sofort ein wenig.',
+    wiki: 'finance-budget',
+  },
 } satisfies Record<string, InfoText>;
 
 export type InfoKey = keyof typeof INFO_TEXTS;

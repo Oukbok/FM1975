@@ -67,6 +67,8 @@ import { WikiView } from '../views/wiki/WikiView';
 import { CalendarView } from '../views/zentrale/CalendarView';
 import { BriefingView } from '../views/zentrale/BriefingView';
 import { BriefingModal } from '../views/zentrale/BriefingModal';
+import { BudgetModal } from '../views/finanzen/budget/BudgetModal';
+import { BudgetView } from '../views/finanzen/BudgetView';
 import { AwardsModal } from '../views/statistiken/awards/AwardsModal';
 import { AwardsView } from '../views/statistiken/awards/AwardsView';
 import { clearPendingAwards, pendingAwards } from '../game/seasonAwardsGame';
@@ -173,6 +175,10 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   useEffect(() => { if (pendingRec) setRunning(false); }, [pendingRec]);
   const pendingBriefing = useMemo(() => (pendingRec ? briefingOfRecord(pendingRec) : null), [pendingRec]);
   const closeBriefing = useCallback(() => { clearPendingBriefing(g); rerender(); }, [g, rerender]);
+  // Saisonbudget (game/budgetPlan.ts): nach dem Briefing; `popupHold` hält alle späteren Fenster zurück.
+  const budgetDue = !pendingBriefing && !!g.budget?.pending && g.budget.pending === g.season;
+  useEffect(() => { if (budgetDue) setRunning(false); }, [budgetDue]);
+  const popupHold = !!pendingBriefing || budgetDue;
   // Die Besten der Saison (game/seasonAwardsGame.ts): Popup nach dem letzten Ligaspieltag.
   const awardsDue = pendingAwards(g);
   useEffect(() => { if (awardsDue) setRunning(false); }, [awardsDue]);
@@ -243,7 +249,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.code === 'Space' && !liveMatchId && !textMatch && !g.briefing?.pending && !drawOpenRef.current) {
+      if (e.code === 'Space' && !liveMatchId && !textMatch && !g.briefing?.pending && !g.budget?.pending && !drawOpenRef.current) {
         const tag = (e.target as HTMLElement)?.tagName;
         if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
         e.preventDefault();
@@ -274,7 +280,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   // Vorschau „Nächstes Spiel“ (screens/prematch/): ersetzt die zwei Knöpfe, solange sie
   // eingeschaltet ist; geschlossen → ein Knopf „Nächstes Spiel“ öffnet sie wieder.
   const prematchOn = settings.prematchScreen !== false;
-  const showPrematch = !!due && prematchOn && prematchClosed !== due.matchId && !pendingBriefing && !liveMatchId
+  const showPrematch = !!due && prematchOn && prematchClosed !== due.matchId && !popupHold && !liveMatchId
     && !ratingCeremony && !devReveal && drawQueue.length === 0 && campQueue.length === 0;
   // Header-Button: nur Text (kein Icon/Datum) – Zustand bleibt sprechend.
   const hdrBtnLabel = seasonOver ? 'Neue Saison' : running ? 'Pause' : 'Weiter';
@@ -290,7 +296,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   // Hintergrundfoto.
   const isScene = screen === 'stadium';
   // Kalender-Overlay (CalendarOverlay.tsx): nur solange die Zeit läuft und kein Popup offen ist.
-  const calLive = running && !textMatch && !liveMatchId && !ratingCeremony && !pendingBriefing && !devReveal
+  const calLive = running && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !devReveal
     && drawQueue.length === 0 && !showSettings && !saveLoadMode && !clubEditorOpen;
 
   return (
@@ -429,6 +435,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         {screen === 'training' && <TrainingPlanView g={g} onChange={rerender} />}
         {screen === 'transfers' && <TransfersView g={g} onDone={rerender} />}
         {screen === 'finances' && <FinancesView g={g} />}
+        {screen === 'budget' && <BudgetView g={g} onChange={rerender} />}
         {screen === 'youth' && <YouthView g={g} onChange={rerender} />}
         {screen === 'akademie' && <AcademyView g={g} onChange={rerender} />}
         {screen === 'facilities' && <FacilitiesView g={g} onChange={rerender} onGoto={(sc) => setScreen(sc)} />}
@@ -518,7 +525,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
       {/* Ziehungs-Show: erst wenn Spielbericht/Textmodus/Zeremonie/Briefing zu sind. */}
       {(() => {
         const d = drawQueue[0];
-        if (!d || textMatch || liveMatchId || ratingCeremony || pendingBriefing) return null;
+        if (!d || textMatch || liveMatchId || ratingCeremony || popupHold) return null;
         const rec = compCup(g, d.comp)?.rounds[d.roundIndex]?.draw;
         if (!rec) { setTimeout(() => setDrawQueue((q) => q.slice(1)), 0); return null; }
         return (
@@ -528,20 +535,20 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
       })()}
 
       {/* Bilanz des Trainingslagers: nach Spielbericht/Zeremonie/Briefing/Auslosung. */}
-      {campQueue[0] && !textMatch && !liveMatchId && !ratingCeremony && !pendingBriefing && !drawQueue.length && (
+      {campQueue[0] && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && (
         <CampRecap key={campQueue[0]} g={g} bookingId={campQueue[0]} onClose={() => { setCampQueue((q) => q.slice(1)); rerender(); }} />
       )}
 
       {/* Top-Transfers + Transferbilanz nach dem Fensterschluss: nach allen anderen Pausen-Fenstern. */}
-      {twKey && !textMatch && !liveMatchId && !ratingCeremony && !pendingBriefing && !drawQueue.length && !campQueue.length && (
+      {twKey && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && !campQueue.length && (
         <TransferWindowModal key={twKey} g={g} initialKey={twKey} auto settings={settings} onSettings={onUpdateSettings}
           onClose={() => { setTwKey(null); rerender(); }} />
       )}
       {/* Die Besten der Saison: nach Spielbericht/Zeremonie/Briefing/Auslosung/Trainingslager. */}
-      {galaDue && showAwards && !textMatch && !liveMatchId && !ratingCeremony && !pendingBriefing && !drawQueue.length && !campQueue.length && (
+      {galaDue && showAwards && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && !campQueue.length && (
         <GalaShow g={g} y={galaDue} onClose={closeGala} />
       )}
-      {awardsDue && showAwards && !galaDue && !textMatch && !liveMatchId && !ratingCeremony && !pendingBriefing && !drawQueue.length && !campQueue.length && (
+      {awardsDue && showAwards && !galaDue && !textMatch && !liveMatchId && !ratingCeremony && !popupHold && !drawQueue.length && !campQueue.length && (
         <AwardsModal g={g} s={awardsDue} onClose={closeAwards} onArchive={() => { closeAwards(); setScreen('auszeichnungen'); }} />
       )}
 
@@ -561,6 +568,8 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         <BriefingModal b={pendingBriefing} g={g} auto intro={settings.briefingIntro !== false}
           onClose={closeBriefing} onGoto={setScreen} />
       )}
+
+      {budgetDue && !textMatch && !liveMatchId && <BudgetModal g={g} auto onClose={rerender} />}
 
       {ratingCeremony && (settings.ratingShow ?? 'an') !== 'aus' && (
         <RatingShow g={g} results={ratingCeremony.results} anlass={ratingCeremony.anlass} settings={settings}

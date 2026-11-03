@@ -37,5 +37,15 @@ export async function closeBriefing(page) {
   try { await btn.waitFor({ state: 'visible', timeout: 4000 }); } catch { return false; }
   await btn.click();
   await page.locator('.bf-modal').waitFor({ state: 'detached', timeout: 4000 }).catch(() => {});
+  await closeBudget(page);
+  return true;
+}
+
+/** Schließt das Saisonbudget (öffnet nach dem Briefing) mit „Budget bestätigen“, falls es offen ist. */
+export async function closeBudget(page) {
+  const btn = page.locator('.bud-modal .bud-confirm');
+  try { await btn.waitFor({ state: 'visible', timeout: 2500 }); } catch { return false; }
+  await btn.click();
+  await page.locator('.bud-modal').waitFor({ state: 'detached', timeout: 4000 }).catch(() => {});
   return true;
 }

@@ -14,7 +14,9 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   // Training (Kategorie) + Jugend (Kategorie)
   | 'cat-training' | 'trainerteam' | 'cat-jugend' | 'jugendwettbewerbe'
   // Die Besten der Saison (Statistiken › Auszeichnungen)
-  | 'auszeichnungen';
+  | 'auszeichnungen'
+  // Saisonbudget (Finanzen › Budget)
+  | 'budget';
 
 // =============================================================================
 // MENÜ-STRUKTUR (zweistufige Top-Navigation)
@@ -70,6 +72,7 @@ export const MENU_STRUCTURE: MainCat[] = [
   { key: 'finanzen', label: 'Finanzen', icon: 'finances', dash: 'cat-finanzen', subs: [
     { screen: 'cat-finanzen', label: 'Finanzen', icon: 'finances' },
     { screen: 'finances', label: 'Bilanz', icon: 'finances' },
+    { screen: 'budget', label: 'Budget', icon: 'dashFinanzen' },
     { screen: 'sponsoring', label: 'Sponsoring', icon: 'sponsoring' },
     { screen: 'marketing', label: 'Marketing', icon: 'marketing' },
   ] },

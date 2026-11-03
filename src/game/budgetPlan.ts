@@ -127,8 +127,11 @@ function adviceFor(g: Game, club: Club, p: BudgetPlan, boardRelease: number, ban
   const rev = planRevenue(p);
   // Gehaltsrahmen wie bisher (game/seasonFinance.ts): 60 % des Umsatzes für Spieler, Stab und Prämien,
   // dazu die Mitarbeiter des Vereins.
-  const wages = r3(0.6 * rev + p.fixed.staffAnnual);
+  // Liegt der laufende Kader schon darüber, gibt der Berater 5 % Luft über den laufenden Kosten
+  // frei, soweit die Reserve das trägt (sonst wären ab dem ersten Tag alle Verträge gesperrt).
   const youthRun = p.fixed.youthRunning;
+  const wageRoom = planFunds(p) - p.fixed.operations - youthRun - p.reserveMin;
+  const wages = r3(Math.max(0.6 * rev + p.fixed.staffAnnual, Math.min(p.fixed.personnel * 1.05, wageRoom)));
   let rest = planFunds(p) - Math.max(wages, p.fixed.personnel) - p.fixed.operations - youthRun - p.reserveMin;
   const transfers = banned ? 0 : r3(clamp(Math.min(boardRelease, rest), 0, Infinity));
   rest -= transfers;
