@@ -162,7 +162,7 @@ if (!process.env.NORUN) {
   let last = '', stuck = 0;
   while (!seen && Date.now() - t0 < 8 * 60_000) {
     if (await page.locator('.cr-root').count()) { seen = true; break; }
-    for (const sel of ['button:has-text("Schnell simulieren")', 'button:has-text("Zum Spielbericht")', 'button:has-text("Überspringen")', 'button:has-text("Schließen")', '.modal-overlay .modal-close']) {
+    for (const sel of ['button:has-text("Simulieren")', 'button:has-text("Zum Spielbericht")', 'button:has-text("Überspringen")', 'button:has-text("Schließen")', '.modal-overlay .modal-close']) {
       const b = page.locator(sel).first();
       if (await b.isVisible().catch(() => false)) await b.click().catch(() => {});
     }

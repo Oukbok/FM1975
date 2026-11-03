@@ -18,6 +18,7 @@ import { euroCompName } from '../data/euroFormats';
 import { isV2, cupStartYear } from './euroSetup';
 import { legKoRule } from './euroFlow';
 import { cupKoRule } from './cupReplay';
+import { forecastWeather } from './matchWeather';
 
 export interface OwnMatchInfo {
   kind: 'liga' | 'pokal' | 'euro';
@@ -137,7 +138,7 @@ export function isPrepared(info: OwnMatchInfo): boolean {
 }
 
 /** Ausländischen Gegner bei Bedarf als vollen Verein anlegen (wie im Europapokal-Ablauf). */
-function ensureClubs(g: Game, info: OwnMatchInfo): boolean {
+export function ensureClubs(g: Game, info: OwnMatchInfo): boolean {
   for (const id of [info.homeId, info.awayId]) {
     if (g.clubs[id]) continue;
     const euro = g.euroClubs?.[id];
@@ -153,6 +154,7 @@ export function createOwnMatchSim(g: Game, info: OwnMatchInfo, live = true): Mat
   return createMatchSim(g.clubs[info.homeId], g.clubs[info.awayId], g.players, {
     date: info.date, knockout: info.knockout, humanSides: live ? [info.side] : [],
     humanClubIds: [g.managedClubId], live, competition: info.competition, ko: info.knockout ? info.ko : undefined,
+    weather: forecastWeather(info.date, info.homeId),
   });
 }
 

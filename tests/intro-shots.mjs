@@ -43,9 +43,10 @@ if (process.env.SAVE) {
   // Bis zum Saisonende weiterlaufen lassen, dann „Neue Saison“.
   // Popups unterwegs (Saison-Bewertung, Spielberichte) schließen, eigene Spiele schnell simulieren.
   for (let i = 0; i < 240 && !(await page.locator('.hd-continue.season').count()); i++) {
+    const quick = page.locator('.pm-go-btn:has-text("Simulieren"), .hd-match-btns button').first();
+    if (await quick.count()) { await quick.click().catch(() => {}); await page.waitForTimeout(300); }
     const close = page.locator('.modal-close, .rc-close, button:has-text("Schließen")').first();
     if (await close.count()) await close.click().catch(() => {});
-    const quick = page.locator('.hd-match-btns button').first();
     if (await quick.count()) await quick.click().catch(() => {});
     else if (!(await page.locator('.hd-continue.running').count())) await page.locator('.hd-continue').first().click().catch(() => {});
     await page.waitForTimeout(500);

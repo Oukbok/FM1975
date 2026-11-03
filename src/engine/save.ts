@@ -263,6 +263,10 @@ export interface AppSettings {
   wagePeriod?: 'jahr' | 'woche';
   /** Top-Transfers + Transferbilanz nach jedem Fensterschluss zeigen (views/transfers/window/, Standard an). */
   transferWindowShow?: boolean;
+  /** Vorschau „Nächstes Spiel“ vor jedem eigenen Spiel (screens/prematch/; Standard an). */
+  prematchScreen?: boolean;
+  /** Zuletzt gewählte Spielart (Hauptknopf der Vorschau). */
+  lastMatchMode?: 'sim' | 'text';
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {

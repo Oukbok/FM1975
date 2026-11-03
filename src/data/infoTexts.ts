@@ -593,6 +593,21 @@ export const INFO_TEXTS = {
     title: 'Nur realistische Transfers',
     text: 'Zeigt nur Spieler, die nach ihren Wünschen grundsätzlich zu deinem Verein wechseln würden (Reiz deines Vereins, keine Ausschlussgründe wie ein Erzrivale). Ob der abgebende Verein verkauft, ist damit nicht gesagt.',
     wiki: 'transfers-wishes',
+  // ---------------------------------------------------------------- Vorschau „Nächstes Spiel“
+  prematch_staerke: {
+    title: 'Mannschaftsstärke',
+    text: 'Stärke der voraussichtlichen Startelf (0–100) – so, wie die Match-Engine sie aus Positionsstärke und Tagesform rechnet. Die kleine Zahl ist der Rang dieser Elf in deiner Liga. Der Balken darunter zeigt das Kräfteverhältnis.',
+    wiki: 'match',
+  },
+  prematch_aufstellung: {
+    title: 'Schnelle Aufstellung',
+    text: 'Übernimm deine gespeicherte Aufstellung, lass den Co-Trainer nach Eignung die beste Elf und Bank aufstellen (Taktik bleibt) oder wechsle zur Aufstellung. Die Wahl gilt beim Anpfiff.',
+    wiki: 'match',
+  },
+  prematch_zuschauer: {
+    title: 'Erwartete Zuschauer',
+    text: 'Schätzung aus Nachfrage, Gegner, Derby, Monat und Wetter – dieselbe Rechnung wie am Spieltag, nur ohne Zufall. Am Spieltag schwankt die Zahl um einige Prozent.',
+    wiki: 'match',
   },
 } satisfies Record<string, InfoText>;
 

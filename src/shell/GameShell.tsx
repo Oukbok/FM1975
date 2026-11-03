@@ -78,6 +78,7 @@ import { DrawShow } from '../screens/draw/DrawShow';
 import { RatingShow } from '../screens/rating/RatingShow';
 import { CampRecap } from '../views/kader/camp/CampRecap';
 import { TransferWindowModal } from '../views/transfers/window/TransferWindowModal';
+import { PrematchScreen } from '../screens/prematch/PrematchScreen';
 import { compCup } from '../game/cupDraw';
 import type { DrawComp } from '../types/draw';
 import { setWikiOpener } from '../ui/InfoTip';
@@ -128,6 +129,8 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   // Rückkehr aus dem Trainingslager: Buchungs-IDs für die animierte Zusammenfassung.
   const [campQueue, setCampQueue] = useState<string[]>([]);
   const [twKey, setTwKey] = useState<string | null>(null); // Transferbilanz nach Fensterschluss
+  // Vorschau „Nächstes Spiel“: für dieses Spiel weggeklickt (Match-ID).
+  const [prematchClosed, setPrematchClosed] = useState<string | null>(null);
   const [ratingCeremony, setRatingCeremony] = useState<{ results: RatingResult[]; type: 'medium' | 'large'; anlass: string } | null>(null);
   // In-Game-Overlays: Menü-Dropdown, Einstellungen, Speichern/Laden-Popup.
   const [menuOpen, setMenuOpen] = useState(false);
@@ -247,6 +250,11 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
     const sim = createOwnMatchSim(g, due, true);
     if (sim) setTextMatch({ sim, info: due });
   };
+  // Vorschau „Nächstes Spiel“ (screens/prematch/): ersetzt die zwei Knöpfe, solange sie
+  // eingeschaltet ist; geschlossen → ein Knopf „Nächstes Spiel“ öffnet sie wieder.
+  const prematchOn = settings.prematchScreen !== false;
+  const showPrematch = !!due && prematchOn && prematchClosed !== due.matchId && !pendingBriefing && !liveMatchId
+    && !ratingCeremony && !devReveal && drawQueue.length === 0 && campQueue.length === 0;
   // Header-Button: nur Text (kein Icon/Datum) – Zustand bleibt sprechend.
   const hdrBtnLabel = seasonOver ? 'Neue Saison' : running ? 'Pause' : 'Weiter';
   // Aktive Hauptkategorie für die Header-Navigation.
@@ -347,7 +355,12 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
             )}
           </div>
           <span className="hd-sep" aria-hidden="true" />
-          {due ? (
+          {due && prematchOn ? (
+            <button className="hd-continue pm-next" onClick={() => setPrematchClosed(null)} title="Vorschau öffnen und Spielart wählen">
+              <span className="hd-continue-ico" aria-hidden="true"><Icon name="matchball" size={34} /></span>
+              <span className="hd-continue-txt"><span className="hd-continue-lbl">Nächstes Spiel</span></span>
+            </button>
+          ) : due ? (
             <div className="hd-match-btns">
               <button className="hd-continue compact" onClick={quickSim} title="Sofortiges Ergebnis">
                 <span className="hd-continue-ico" aria-hidden="true"><Icon name="skip" size={34} /></span>
@@ -465,6 +478,13 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
           onClose={() => setClubEditorOpen(false)}
           onSaved={(clubId, patch) => { if (clubId === g.managedClubId) Object.assign(myClub, patch); rerender(); doSave(); }}
         />
+      )}
+
+      {showPrematch && due && (
+        <PrematchScreen g={g} info={due} settings={settings} onSettings={onUpdateSettings}
+          onStart={(mode) => { setPrematchClosed(due.matchId); if (mode === 'sim') quickSim(); else startText(); }}
+          onLineup={() => { setPrematchClosed(due.matchId); setScreen('lineup'); }}
+          onClose={() => setPrematchClosed(due.matchId)} />
       )}
 
       {textMatch && (

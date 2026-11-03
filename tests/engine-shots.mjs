@@ -54,13 +54,13 @@ await page.waitForTimeout(500);
 
 // Bis zum eigenen Spiel, schnell simulieren, Spielbericht
 for (let i = 0; i < 150; i++) {
-  if (await page.locator('button:has-text("Schnell simulieren")').isVisible().catch(() => false)) break;
+  if (await page.locator('button:has-text("Simulieren")').isVisible().catch(() => false)) break;
   await closeModals();
   const w = page.getByRole('button', { name: /weiter/i }).first();
   if (await w.isVisible().catch(() => false)) await w.click().catch(() => {});
   await page.waitForTimeout(700);
 }
-await page.click('button:has-text("Schnell simulieren")').catch(() => {});
+await page.click('button:has-text("Simulieren")').catch(() => {});
 await page.waitForTimeout(2500);
 if (await page.locator('.mr-modal').isVisible().catch(() => false)) {
   await page.screenshot({ path: `${outDir}/03_bericht.png` });

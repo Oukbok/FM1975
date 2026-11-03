@@ -100,7 +100,7 @@ await page.screenshot({ path: `${outDir}/11_zurueck.png` });
 
 // Nächstes Spiel schnell simulieren → Spielbericht
 if (await untilMatchDue()) {
-  await page.click('button:has-text("Schnell simulieren")');
+  await page.click('button:has-text("Simulieren")');
   await page.waitForTimeout(1200);
   await page.screenshot({ path: `${outDir}/12_bericht.png` });
 }
