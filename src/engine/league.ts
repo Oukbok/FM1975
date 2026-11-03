@@ -40,8 +40,10 @@ export function generateFixtures(
     for (let i = 0; i < half; i++) {
       const a = arr[i];
       const b = arr[n - 1 - i];
-      // Heimrecht abwechselnd, damit es sich verteilt
-      if ((r + i) % 2 === 0) dayMatches.push({ home: a, away: b });
+      // Heimrecht nach Berger: der feste Verein wechselt je Runde, die übrigen Paarungen nach
+      // Tischposition. Damit wechseln sich Heim- und Auswärtsspiele ab (höchstens zwei in Folge);
+      // die alte Regel (r + i) % 2 erzeugte ganze Hinrunden nur auswärts bzw. nur zu Hause.
+      if (i === 0 ? r % 2 === 0 : i % 2 === 1) dayMatches.push({ home: a, away: b });
       else dayMatches.push({ home: b, away: a });
     }
     firstLeg.push(dayMatches);
