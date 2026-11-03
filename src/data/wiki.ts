@@ -486,7 +486,7 @@ Save-Version **7**: Altstände ohne Frische werden beim Laden nachgerüstet (\`r
     id: 'condition-kabine',
     category: 'condition',
     title: 'Kabine: Moral, Einfluss und Teamstimmung',
-    keywords: ['kabine', 'moral', 'stimmung', 'teamstimmung', 'zusammenhalt', 'einfluss', 'führungsspieler', 'außenseiter', 'clique', 'gruppe', 'kapitän', 'mannschaftsrat', 'gespräch', 'mannschaftssitzung', 'teamevent', 'streit', 'konflikt', 'sprachbarriere', 'kabinenpredigt', 'pyramide', 'saisonziel', 'krise', 'moral-sprung'],
+    keywords: ['kabine', 'moral', 'stimmung', 'teamstimmung', 'zusammenhalt', 'einfluss', 'führungsspieler', 'außenseiter', 'clique', 'gruppe', 'kapitän', 'mannschaftsrat', 'gespräch', 'spielergespräch', 'mannschaftssitzung', 'teamevent', 'streit', 'konflikt', 'sprachbarriere', 'kabinenpredigt', 'pyramide', 'saisonziel', 'krise', 'moral-sprung'],
     body: `## Worum geht es?
 Unter **Kader › Kabine** siehst du, wie deine Mannschaft innen funktioniert: wer den Ton angibt, wer außen vor ist und warum – und wie es um die **Moral** jedes Spielers steht. Die Moral wirkt über die Tagesform direkt auf die Leistung im Spiel (sehr schlecht ×0,95 bis sehr gut ×1,03).
 
@@ -525,7 +525,18 @@ Jeder Spieler gehört einer Gruppe an: **Führungskreis**, **Sprachgruppen** (ab
 **Teamstimmung** folgt den letzten fünf Ligaergebnissen, dem **Saisonziel** (siehe unten), der Laune der Führungsspieler (nach Einfluss gewichtet), dem Zusammenhalt, Außenseitern, Konflikten und deinen Maßnahmen. Sie fließt in die Moral aller Spieler ein.
 
 ## Was du tun kannst
-- **Einzelgespräch:** loben, kritisieren, Einsatz versprechen, beruhigen. Ob es ankommt, hängt von Persönlichkeit, Form und Lage ab (Einschätzung unter dem Knopf). Mit demselben Spieler frühestens nach 10 Tagen wieder; jedes weitere Gespräch innerhalb von 60 Tagen wirkt schwächer (×0,65). Ein **Einsatzversprechen** muss gehalten werden: zwei Startelf-Einsätze in vier Wochen, sonst sinken Moral und Glaubwürdigkeit.
+- **Spielergespräch** (Knopf „Gespräch führen“ beim Spieler im Fokus oder das Sprechblasen-Symbol in Kader › Übersicht): Es öffnet sich ein Buch – links der Spieler mit Form, Fitness, Frische, Saisonwerten, Status und Moral, rechts die **Gesprächsthemen, die gerade passen**. Ob es ankommt, hängt von Persönlichkeit, Form und Lage ab (Einschätzung des Trainerteams neben dem Thema). Nach dem Gespräch antwortet der Spieler, links siehst du die Veränderung der Moral. Mit demselben Spieler frühestens nach 10 Tagen wieder; jedes weitere Gespräch innerhalb von 60 Tagen wirkt schwächer (×0,65). **Pro Woche (Montag bis Sonntag) hast du Zeit für drei Treffen.**
+  - **Du hast gut trainiert!** – kleines Lob bei guter Form (Moral +3 bis +5, Form +1).
+  - **Starke Leistung zuletzt** – nach einer guten Note oder in Topform; wer ohnehin sehr zufrieden ist, nickt nur.
+  - **Gib im Training alles!** – Profis und Ehrgeizige ziehen an (Form +3), Unprofessionelle fühlen sich gegängelt (Moral −4).
+  - **Ich gönne dir eine Pause** – nur bei müden Spielern (Frische unter 80): Frische +8, dazu etwas Moral. Wer nicht müde ist, fühlt sich aussortiert.
+  - **Im nächsten Spiel brauche ich dich in Topform** – wenn innerhalb einer Woche ein Ligaspiel ansteht: Ehrgeizige und Nervenstarke legen zu (Form +3), andere spüren nur Druck.
+  - **Höhere Ziele** – spornt Ehrgeizige und junge Spieler an (Form +2), Ältere hören das ungern.
+  - **Kritik nach schwacher Leistung** – wie „Kritisieren“: weckt Profis (Form +4), kann aber nach hinten losgehen; Führungsspieler tragen Ärger in die Kabine.
+  - **Du bekommst deine Chancen** – das **Einsatzversprechen**: hebt die Laune sofort, muss aber gehalten werden (zwei Startelf-Einsätze in vier Wochen), sonst sinken Moral und Glaubwürdigkeit.
+  - **Was bedrückt dich?** – für Unzufriedene, Außenseiter und Streithähne; Loyale und Familienmenschen öffnen sich.
+  - **Wir planen langfristig mit dir** – bei Vertragsende in höchstens 18 Monaten oder Unzufriedenheit: Loyale glauben dir, je nach deiner Glaubwürdigkeit (Vertragszufriedenheit +5); Geldbewusste wollen ein Angebot sehen.
+  - **Führungsrolle** – für einflussreiche Spieler: gelingt es, steigt seine Moral und die Teamstimmung leicht.
 - **Mannschaftssitzung** (alle 14 Tage): „Aufbauen“ hilft bei gedrückter Stimmung, wenn die Führungsspieler mitziehen; „Klartext“ wirkt in der Krise bei professionellen Mannschaften, nach Siegen kommt er schlecht an. Zu viele Sitzungen schaden.
 - **Teamevent** (alle 30 Tage, kostet Geld): je nach Epoche Kegelabend, Dampferfahrt, Kartbahn, Hochseilgarten, Kurztrip. Hebt Stimmung und Zusammenhalt, Außenseiter kommen ins Gespräch. Ohne Geld auf dem Konto gibt der Vorstand nichts frei.
 - **Kapitän und Mannschaftsrat** (bis zu drei Spieler): stärkt Einfluss und Moral der Gewählten. Wer die Binde verliert, ist enttäuscht; ein Kapitän ohne Rückhalt in der Kabine ist umstritten.

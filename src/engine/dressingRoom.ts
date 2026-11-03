@@ -438,20 +438,43 @@ export function aiMoraleStep(mood: number, p: Player, rank: number): number {
 // -----------------------------------------------------------------------------
 // Einzelgespräch: Erfolgsaussicht nach Persönlichkeit und Lage
 // -----------------------------------------------------------------------------
-export type TalkKind = 'loben' | 'kritisieren' | 'einsatz' | 'beruhigen';
-export const TALK_LABEL: Record<TalkKind, string> = { loben: 'Loben', kritisieren: 'Kritisieren', einsatz: 'Einsatz versprechen', beruhigen: 'Beruhigen' };
+export type TalkKind = 'loben' | 'kritisieren' | 'einsatz' | 'beruhigen'
+  // Spielergespräch (views/kader/talk/, game/playerTalk.ts)
+  | 'training' | 'fordern' | 'pause' | 'topform' | 'ziele' | 'zukunft' | 'fuehrung';
+export const TALK_LABEL: Record<TalkKind, string> = {
+  loben: 'Loben', kritisieren: 'Kritisieren', einsatz: 'Einsatz versprechen', beruhigen: 'Beruhigen',
+  training: 'Training loben', fordern: 'Mehr Einsatz fordern', pause: 'Pause gönnen', topform: 'Topform fordern',
+  ziele: 'Höhere Ziele', zukunft: 'Zukunft zusichern', fuehrung: 'Führungsrolle',
+};
 export const TALK_INFO: Record<TalkKind, string> = {
   loben: 'Wirkt bei guter Form und bei Spielern, die gern im Mittelpunkt stehen.',
   kritisieren: 'Weckt Ehrgeizige und Profis bei schwacher Form – kann nach hinten losgehen.',
   einsatz: 'Hebt die Laune sofort. Er muss in den nächsten vier Wochen zweimal in der Startelf stehen.',
   beruhigen: 'Hilft Unzufriedenen, Außenseitern und Streithähnen – Loyale und Familienmenschen hören zu.',
+  training: 'Kleines Lob für gute Trainingsleistungen – kommt bei Profis in Form fast immer an.',
+  fordern: 'Verlangt mehr im Training: bei Erfolg etwas Form, Unprofessionelle fühlen sich gegängelt.',
+  pause: 'Ein freier Tag für müde Spieler: Frische steigt etwas. Wer nicht müde ist, fühlt sich aussortiert.',
+  topform: 'Vor dem nächsten Spiel: Ehrgeizige und Nervenstarke legen zu, andere spüren nur Druck.',
+  ziele: 'Spornt Ehrgeizige und junge Spieler an – Ältere hören das ungern.',
+  zukunft: 'Bei auslaufendem Vertrag oder Unzufriedenheit: Loyale glauben dir, je nach deiner Glaubwürdigkeit.',
+  fuehrung: 'Für einflussreiche Spieler: stärkt Selbstbewusstsein, gelingt es, zieht die Kabine leicht mit.',
 };
 export interface TalkOdds { chance: number; gain: number; loss: number; hint: string; needed: boolean }
+/** Lage für die Gesprächsthemen des Spielergesprächs (fehlt = neutral). */
+export interface TalkCtx {
+  /** Glaubwürdigkeit des Trainers 0–100 (game/promises.ts). */
+  trust?: number;
+  /** Nächstes Pflichtspiel in höchstens 7 Tagen. */
+  matchSoon?: boolean;
+  /** Monate bis Vertragsende. */
+  contractMonths?: number;
+}
 
-export function talkOdds(kind: TalkKind, p: Player, out: DRPlayerOut | undefined, score: number): TalkOdds {
+export function talkOdds(kind: TalkKind, p: Player, out: DRPlayerOut | undefined, score: number, ctx: TalkCtx = {}): TalkOdds {
   const pe = personaOf(p);
   const prof = p.development.professionalism ?? 50;
   const form = p.form ?? 50;
+  const fri = typeof p.frische === 'number' ? p.frische : 100;
   let chance = 0.5, gain = 6, loss = 0, needed = true;
   switch (kind) {
     case 'loben':
@@ -469,6 +492,43 @@ export function talkOdds(kind: TalkKind, p: Player, out: DRPlayerOut | undefined
       needed = !!out && (out.target < 55 || out.outsider || out.moraleWhy.some((f) => f.label.startsWith('Konflikt')));
       chance = needed ? 0.45 + (pe.loyalitaet - 50) / 200 + (pe.familie - 50) / 300 + ((p.development.adaptability ?? 50) - 50) / 250 : 0.2;
       gain = needed ? 7 : 1; loss = 2;
+      break;
+    case 'training':
+      needed = form >= 52 && score < 85;
+      chance = 0.62 + (form - 55) / 120 + (prof - 50) / 300 + (pe.rampenlicht - 50) / 400;
+      gain = score < 60 ? 5 : 3; loss = 1;
+      break;
+    case 'fordern':
+      needed = form < 55;
+      chance = 0.42 + (prof - 50) / 140 + (pe.ehrgeiz - 50) / 260 - (score < 40 ? 0.15 : 0) + (needed ? 0.08 : -0.1);
+      gain = 2; loss = 4;
+      break;
+    case 'pause':
+      needed = fri < 75;
+      chance = needed ? 0.92 - (pe.ehrgeiz - 50) / 400 : 0.35 - (pe.ehrgeiz - 50) / 250;
+      gain = needed ? 3 : 1; loss = 3;
+      break;
+    case 'topform':
+      needed = !!ctx.matchSoon;
+      chance = 0.45 + (pe.ehrgeiz - 50) / 200 + ((p.attributes.composure ?? 50) - 50) / 200 + (prof - 50) / 300 - (score < 40 ? 0.15 : 0);
+      gain = 2; loss = 3;
+      break;
+    case 'ziele':
+      needed = p.age <= 27;
+      chance = 0.36 + (pe.ehrgeiz - 50) / 120 + (p.age <= 23 ? 0.1 : 0) - (p.age >= 31 ? 0.15 : 0);
+      gain = 4; loss = 4;
+      break;
+    case 'zukunft': {
+      const months = ctx.contractMonths ?? 24;
+      needed = months <= 18 || (p.contract.satisfaction ?? 60) < 50;
+      chance = 0.4 + (pe.loyalitaet - 50) / 150 + ((ctx.trust ?? 70) - 70) / 150 - (pe.geld - 50) / 250 + (needed ? 0 : -0.15);
+      gain = needed ? 6 : 2; loss = 3;
+      break;
+    }
+    case 'fuehrung':
+      needed = (out?.influence ?? 0) >= 50;
+      chance = 0.42 + (pe.rampenlicht - 50) / 200 + ((p.attributes.leadership ?? 50) - 50) / 160 + (needed ? 0.1 : -0.2);
+      gain = 5; loss = 2;
       break;
   }
   chance = clamp(chance, 0.05, 1);

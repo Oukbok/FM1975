@@ -18,6 +18,13 @@ export function setWikiOpener(fn: ((articleId: string) => void) | null): () => v
   return () => { if (wikiOpener === fn) wikiOpener = null; };
 }
 
+/** Wiki-Artikel öffnen (z. B. Info-Knopf in Popups); false, wenn kein Wiki angemeldet ist. */
+export function openWiki(articleId: string): boolean {
+  if (!wikiOpener) return false;
+  wikiOpener(articleId);
+  return true;
+}
+
 const W = 290;
 const GAP = 8;
 

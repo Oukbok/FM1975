@@ -563,6 +563,16 @@ export const INFO_TEXTS = {
     text: 'Spieler auf deiner Liste werden von den Scouts verfolgt. Je länger, desto genauer werden Potenzial-Spanne und Persönlichkeit.',
     wiki: 'youth-gems-scouting',
   },
+  charakter: {
+    title: 'Charakter',
+    text: 'Die Einschätzung deines Trainerteams aus den beiden stärksten Charakterzügen. Sie bestimmt mit, wie ein Spieler auf Lob, Kritik oder Druck reagiert.',
+    wiki: 'condition-kabine',
+  },
+  gespraeche: {
+    title: 'Spielergespräche',
+    text: 'Du hast pro Woche (Montag bis Sonntag) Zeit für drei Einzelgespräche, mit demselben Spieler frühestens wieder nach 10 Tagen. Häufige Gespräche mit demselben Spieler nutzen sich ab.',
+    wiki: 'condition-kabine',
+  },
   kabine_pyramide: {
     title: 'Kabinen-Pyramide',
     text: 'Oben die Führungsspieler, darunter Stützen und Mitläufer, unten wer außen vor ist – je Stufe links der Einflussreichste. Der Smiley zeigt die Moral, die Ziffer die Gruppe (Legende darunter), eine gestrichelte Linie einen Konflikt.',

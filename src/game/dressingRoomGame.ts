@@ -12,12 +12,13 @@
 //     zum Zielwert zurück.
 //   • KI-Vereine, sonntags: Stimmung aus den letzten Ergebnissen, Moral-Stufen
 //     wandern mit 30 % Wahrscheinlichkeit eine Stufe Richtung Ziel.
-//   • Aktionen: Einzelgespräch (Abklingzeit 10 Tage, nutzt sich ab),
+//   • Aktionen: Einzelgespräch (Abklingzeit 10 Tage, nutzt sich ab, höchstens
+//     TALK_WEEK_LIMIT je Woche; Themen/Antworten im Spielergespräch game/playerTalk.ts),
 //     Mannschaftssitzung (14 Tage), Teamevent (30 Tage, kostet Geld),
 //     Kapitän und Mannschaftsrat bestimmen.
 // =============================================================================
 import {
-  DRAnalysis, DRBoost, DRContext, DRGoal, DRPlayerIn, DressingRoomState, MORALE_GLIDE, TalkKind, TALK_LABEL, TeamEventKind,
+  DRAnalysis, DRBoost, DRContext, DRGoal, DRPlayerIn, DressingRoomState, MORALE_GLIDE, TalkCtx, TalkKind, TALK_LABEL, TeamEventKind,
   aiMoodTarget, aiMoraleStep, analyzeRoom, boostNow, languageBarrier, moraleScoreOf, moraleStepOf, MORALE_STEPS, stepRange, talkOdds, teamEventDefs,
 } from '../engine/dressingRoom';
 import { CalendarEngine } from '../engine/calendar';
@@ -37,6 +38,8 @@ const days = (a: string, b: string) => (Date.parse(b + 'T00:00:00Z') - Date.pars
 export const TALK_COOLDOWN = 10;
 export const MEETING_COOLDOWN = 14;
 export const EVENT_COOLDOWN = 30;
+/** Einzelgespräche je Woche (Montag–Sonntag, alle Spieler zusammen). */
+export const TALK_WEEK_LIMIT = 3;
 
 // -----------------------------------------------------------------------------
 // Zustand
@@ -333,7 +336,21 @@ export function aiDressingRoomsWeekly(g: Game): void {
 // -----------------------------------------------------------------------------
 // Trainer-Aktionen
 // -----------------------------------------------------------------------------
-export interface RoomResult { ok: boolean; text: string }
+export interface RoomResult { ok: boolean; text: string; success?: boolean; before?: number; after?: number }
+
+/** Montag der laufenden Woche (UTC). */
+function weekStart(today: string): string {
+  const wd = (new Date(today + 'T00:00:00Z').getUTCDay() + 6) % 7;
+  return CalendarEngine.addDays(today, -wd);
+}
+
+/** Gesprächs-Kontingent der laufenden Woche (aus den gespeicherten Gesprächsdaten). */
+export function talkWeek(g: Game): { used: number; left: number; limit: number; resets: string } {
+  const dr = roomOf(g.clubs[g.managedClubId]);
+  const mon = weekStart(g.calendar.currentDate);
+  const used = Object.values(dr.talks ?? {}).flat().filter((d) => d >= mon).length;
+  return { used, left: Math.max(0, TALK_WEEK_LIMIT - used), limit: TALK_WEEK_LIMIT, resets: CalendarEngine.addDays(mon, 7) };
+}
 
 export function talkState(g: Game, pid: string): { nextOn?: string; wear: number; count: number } {
   const dr = roomOf(g.clubs[g.managedClubId]);
@@ -345,7 +362,7 @@ export function talkState(g: Game, pid: string): { nextOn?: string; wear: number
   return { nextOn, wear: Math.pow(0.65, ds.length) * (busy > 6 ? 0.7 : 1), count: ds.length };
 }
 
-export function talkTo(g: Game, pid: string, kind: TalkKind, rng: () => number = Math.random): RoomResult {
+export function talkTo(g: Game, pid: string, kind: TalkKind, rng: () => number = Math.random, ctx?: TalkCtx): RoomResult {
   const club = g.clubs[g.managedClubId];
   const p = g.players[pid];
   const today = g.calendar.currentDate;
@@ -353,14 +370,16 @@ export function talkTo(g: Game, pid: string, kind: TalkKind, rng: () => number =
   const dr = roomOf(club);
   const st = talkState(g, pid);
   if (st.nextOn) return { ok: false, text: `Ihr habt gerade erst gesprochen – wieder ab ${st.nextOn.split('-').reverse().join('.')}.` };
+  const wk = talkWeek(g);
+  if (wk.left <= 0) return { ok: false, text: `Diese Woche hast du keine Zeit mehr für Einzelgespräche – wieder ab ${wk.resets.split('-').reverse().join('.')}.` };
   if (kind === 'einsatz' && dr.pledges?.some((x) => x.pid === pid)) return { ok: false, text: `${p.lastName} hat deine Zusage schon.` };
   const a = roomAnalysis(g, club);
   const o = a.byId[pid];
   const score = p.moraleScore ?? moraleScoreOf(p.morale);
-  const odds = talkOdds(kind, p, o, score);
+  const odds = talkOdds(kind, p, o, score, ctx);
   (dr.talks ??= {})[pid] = [...(dr.talks[pid] ?? []), today];
   const label = `Gespräch: ${TALK_LABEL[kind].toLowerCase()}`;
-  const success = rng() < odds.chance;
+  const success = kind === 'einsatz' || rng() < odds.chance;
   let text: string;
   if (kind === 'einsatz') {
     addBoostJolt(g, dr, pid, odds.gain * st.wear, 'Einsatz zugesagt', today, 30);
@@ -372,7 +391,7 @@ export function talkTo(g: Game, pid: string, kind: TalkKind, rng: () => number =
     if (kind === 'kritisieren') p.form = clamp((p.form ?? 50) + 4, 0, 100);
     text = kind === 'loben' ? (odds.needed ? `${p.lastName} nimmt das Lob dankbar an.` : `${p.lastName} nickt – er war ohnehin obenauf.`)
       : kind === 'kritisieren' ? `${p.lastName} schluckt, nimmt die Kritik aber an und zieht im Training an.`
-        : `${p.lastName} wirkt erleichtert, dass du zuhörst.`;
+        : kind === 'beruhigen' ? `${p.lastName} wirkt erleichtert, dass du zuhörst.` : `${p.lastName} nimmt es gut auf.`;
     if (kind === 'beruhigen') {
       const c = (dr.conflicts ?? []).find((x) => x.a === pid || x.b === pid);
       if (c && rng() < 0.4) { dr.conflicts = dr.conflicts!.filter((x) => x !== c); text += ' Den Streit will er begraben.'; }
@@ -381,12 +400,12 @@ export function talkTo(g: Game, pid: string, kind: TalkKind, rng: () => number =
     addBoostJolt(g, dr, pid, -odds.loss * st.wear, label, today, 30);
     text = kind === 'loben' ? `Das Lob verpufft – ${p.lastName} wirkt unbeeindruckt.`
       : kind === 'kritisieren' ? `${p.lastName} fühlt sich ungerecht behandelt.`
-        : `${p.lastName} blockt ab.`;
+        : kind === 'beruhigen' ? `${p.lastName} blockt ab.` : `${p.lastName} reagiert verstimmt.`;
     if (kind === 'kritisieren' && (o?.influence ?? 0) >= 60) { addBoost(dr, '*', -3, `${p.lastName} macht Stimmung gegen dich`, today, 21); text += ' Als Führungsspieler trägt er das in die Kabine.'; }
   }
   if (st.count >= 2) text += ' (Ihr sprecht oft – die Worte nutzen sich ab.)';
   logRoom(dr, today, `${TALK_LABEL[kind]} – ${p.lastName}: ${text}`);
-  return { ok: true, text };
+  return { ok: true, text, success, before: score, after: p.moraleScore ?? score };
 }
 
 function leadMorale(g: Game, a: DRAnalysis): number {
