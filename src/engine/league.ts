@@ -8,6 +8,7 @@ import {
 } from '../types';
 import type { LeagueKind } from '../data/winterBreaks';
 import { seasonSchedule } from './winterBreak';
+import { spreadWeekend } from './fixtureRules';
 
 // -----------------------------------------------------------------------------
 // Spielplan: Round-Robin (Kreis-Algorithmus / "Berger-Tabellen")
@@ -23,7 +24,7 @@ const BYE = '__spielfrei__';
 export function generateFixtures(
   clubs: Club[],
   seasonStart = '1975-08-15',
-  opts: { tier?: number; kind?: LeagueKind } = {},
+  opts: { tier?: number; kind?: LeagueKind; spread?: boolean } = {},
 ): Match[] {
   const ids = clubs.map((c) => c.id);
   // Ungerade Vereinszahl: ein Verein ist pro Spieltag spielfrei.
@@ -74,6 +75,9 @@ export function generateFixtures(
     });
   });
 
+  // Spieltag nach der Epoche auf Fr/Sa/So/Mo verteilen (nur die Liga deines Vereins –
+  // simulierte Ligen spielen ihren Spieltag geschlossen am Hauptspieltag).
+  if (opts.spread) spreadWeekend(matches, y0, opts.tier ?? 1, opts.kind === 'ddr');
   return matches;
 }
 

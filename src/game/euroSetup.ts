@@ -10,6 +10,8 @@
 import { EURO_FIRST_SEASON_GERMAN, type EuroClub, type EuroCompId } from '../data/europe';
 import { accessSlots, euroCompName, euroFormat, type EuroFormat } from '../data/euroFormats';
 import { seasonLabel } from '../engine/calendar';
+import { MIN_GAP_DAYS, WANT_GAP_DAYS } from '../data/matchCalendarRules';
+import { findSlot } from '../engine/fixtureRules';
 import type { CupRound, CupState, GameCalendar, LeagueTable } from '../types';
 
 export const EURO_COMPS: EuroCompId[] = ['ec', 'cwc', 'uefa'];
@@ -33,21 +35,46 @@ const addDays = (iso: string, n: number) => {
 };
 const weekday = (iso: string) => new Date(iso + 'T00:00:00Z').getUTCDay();
 
-/** Wochentag-genaue, kollisionsfreie Termine aller Spieltage eines Formats. */
-export function scheduleFormat(fmt: EuroFormat, startYear: number, avoid: Set<string>, earliest: string): string[][] {
-  let prev = addDays(earliest, 1);
+/**
+ * Wochentag-genaue Termine aller Spieltage eines Formats nach dem Rahmenterminkalender
+ * (data/matchCalendarRules.ts): Spieltag der Woche laut Format (Mi bzw. Do), mindestens
+ * drei Tage Abstand zu Liga-Hauptspieltagen (`avoid`; Donnerstag zwei Tage – die Teilnehmer
+ * spielen danach sonntags, game/fixtureWatch.ts) und zu Landespokal-Terminen (`cupDates`),
+ * notfalls zwei Tage; zwei Spieltage desselben Wettbewerbs mindestens drei Tage auseinander.
+ */
+export function scheduleFormat(fmt: EuroFormat, startYear: number, avoid: Set<string>, earliest: string, cupDates?: Set<string>): string[][] {
+  let prev = addDays(earliest, -2);
+  const league = [...avoid].filter((d) => !cupDates?.has(d));
+  const cup = cupDates ? [...cupDates] : [];
+  const leagueGap = fmt.weekday === 4 ? MIN_GAP_DAYS : WANT_GAP_DAYS;
   return fmt.stages.map((st) => st.dates.map((md) => {
     const y = Number(md.slice(0, 2)) >= 7 ? startYear : startYear + 1;
     let d = `${y}-${md}`;
     // Auf den Spieltag der Woche schieben (nächstgelegener, höchstens drei Tage).
     const delta = ((fmt.weekday - weekday(d)) + 7) % 7;
     d = addDays(d, delta <= 3 ? delta : delta - 7);
-    const min = addDays(prev, 2);
+    const min = addDays(prev, WANT_GAP_DAYS);
     if (d < min) d = min;
-    while (avoid.has(d)) d = addDays(d, 1);
-    prev = d;
-    return d;
+    const q = { preferred: d, weekdays: [fmt.weekday], from: min, maxShift: 10 };
+    let hit = findSlot({ ...q, rules: [{ busy: league, gap: leagueGap }, { busy: cup, gap: WANT_GAP_DAYS }] })
+      ?? findSlot({ ...q, rules: [{ busy: league, gap: MIN_GAP_DAYS }, { busy: cup, gap: MIN_GAP_DAYS }] })
+      ?? findSlot({ ...q, weekdays: [2, 3, 4], rules: [{ busy: league, gap: MIN_GAP_DAYS }, { busy: cup, gap: MIN_GAP_DAYS }] })
+      ?? findSlot({ ...q, weekdays: [], maxShift: 21, rules: [{ busy: league, gap: MIN_GAP_DAYS }, { busy: cup, gap: MIN_GAP_DAYS }] });
+    if (!hit) { hit = d; while (avoid.has(hit) || cupDates?.has(hit)) hit = addDays(hit, 1); }
+    prev = hit;
+    return hit;
   }));
+}
+
+/** Europapokal-Wochen einer Saison (alle aktiven Wettbewerbe, ohne Rücksicht auf die Liga) – der Landespokal meidet sie. */
+export function euroFrameDates(startYear: number): Set<string> {
+  const out = new Set<string>();
+  for (const comp of EURO_COMPS) {
+    const fmt = euroFormat(comp, startYear);
+    if (!fmt) continue;
+    for (const ds of scheduleFormat(fmt, startYear, new Set(), `${startYear}-07-01`)) for (const d of ds) out.add(d);
+  }
+  return out;
 }
 
 // -----------------------------------------------------------------------------
@@ -70,9 +97,9 @@ function prizeFor(comp: EuroCompId, fmt: EuroFormat, i: number): number {
 
 export function createEuroCupV2(
   comp: EuroCompId, fmt: EuroFormat, participantIds: string[], avoid: Set<string>,
-  seed: number, startYear: number, earliest: string,
+  seed: number, startYear: number, earliest: string, cupDates?: Set<string>,
 ): CupState {
-  const dates = scheduleFormat(fmt, startYear, avoid, earliest);
+  const dates = scheduleFormat(fmt, startYear, avoid, earliest, cupDates);
   const rounds: CupRound[] = fmt.stages.map((st, index) => ({
     index, name: st.name, date: dates[index][0], drawn: false, ties: [],
     kind: st.kind, key: st.key, legs: st.kind === 'ko' ? st.legs : undefined, dates: dates[index],
@@ -217,6 +244,7 @@ export function buildEuroCupsV2(
   earliest: string,
   calendar: GameCalendar,
   foreign: Record<EuroCompId, string[]> | null,
+  cupDates?: Set<string>,
 ): Record<EuroCompId, CupState | null> {
   const out: Record<EuroCompId, CupState | null> = { ec: null, cwc: null, uefa: null };
   const used = new Set<string>(EURO_COMPS.flatMap((c) => quals[c] ?? []));
@@ -236,7 +264,7 @@ export function buildEuroCupsV2(
       const rest = Object.values(euroClubs).filter((c) => !used.has(c.id)).sort((a, b) => b.strength - a.strength || a.id.localeCompare(b.id));
       for (const c of rest) { if (ids.length >= fmt.field) break; ids.push(c.id); used.add(c.id); }
     }
-    const cup = createEuroCupV2(comp, fmt, ids, avoid, seedOf(comp), startYear, earliest);
+    const cup = createEuroCupV2(comp, fmt, ids, avoid, seedOf(comp), startYear, earliest, cupDates);
     addEuroCalendarEventsV2(calendar, comp, cup);
     out[comp] = cup;
   }

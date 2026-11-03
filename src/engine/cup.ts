@@ -14,6 +14,8 @@
 // dem festen Pokal-Seed ab → jeder Spielstart erzeugt denselben Wettbewerb.
 // =============================================================================
 
+import { calendarEra } from '../data/matchCalendarRules';
+import { findCupSlot, findSlotTiered, wdOf } from './fixtureRules';
 import type { Club, Player, PointSystem, CupState, CupRound, CupTie, Match } from '../types';
 import { MatchEngine } from './match';
 
@@ -91,7 +93,7 @@ export function seededShuffle<T>(arr: T[], seed: number): T[] {
 }
 
 // -----------------------------------------------------------------------------
-// TERMIN-PLANUNG (Kollisionsfrei zu Liga-Spieltagen)
+// TERMIN-PLANUNG (Rahmenterminkalender, engine/fixtureRules.ts)
 // -----------------------------------------------------------------------------
 
 function addDays(dateISO: string, days: number): string {
@@ -101,23 +103,39 @@ function addDays(dateISO: string, days: number): string {
 }
 
 /**
- * Bestimmt die Termine der fünf Runden. Jeder Termin liegt nach `earliest`,
- * mit Mindestabstand zur Vorrunde, und weicht Liga-Spieltagen (leagueDates)
- * per Verschiebung um je einen Tag aus.
+ * Bestimmt die Termine der fünf Runden nach dem Rahmenterminkalender
+ * (data/matchCalendarRules.ts): Runden dienstags/mittwochs (bis 1985 mittwochs) mit
+ * mindestens drei Tagen Abstand zu allen Liga-Hauptspieltagen und Europapokal-Wochen
+ * (`leagueDates`), notfalls zwei Tage; Endspiel samstags frühestens eine Woche nach dem
+ * letzten Spieltag (bis 30.6.). Abstand zwischen zwei Runden mindestens zehn Tage.
  */
 function scheduleRoundDates(
   earliest: string,
   leagueDates: Set<string>,
   preferred: string[],
+  soft: Set<string> = new Set(),
 ): string[] {
   const out: string[] = [];
+  const y0 = Number(preferred[0].slice(0, 4));
+  const era = calendarEra(y0);
+  const seasonEnd = `${y0 + 1}-06-30`;
+  const lastLeague = [...leagueDates].filter((d) => d <= seasonEnd).sort().pop() ?? preferred[preferred.length - 1];
   let prev = earliest;
   for (let i = 0; i < preferred.length; i++) {
-    let d = preferred[i];
+    const isFinal = i === preferred.length - 1;
     const minDate = addDays(prev, i === 0 ? 3 : 10);
-    if (d < minDate) d = minDate;
-    // Kollision mit Liga-Spieltag oder zu dicht an der Vorrunde → +1 Tag
-    while (leagueDates.has(d) || d <= prev) d = addDays(d, 1);
+    let pref = isFinal ? addDays(lastLeague, 7 + ((6 - wdOf(addDays(lastLeague, 7)) + 7) % 7)) : preferred[i];
+    if (pref < minDate) pref = minDate;
+    const days = isFinal ? [6] : era.cupDays;
+    const q = { preferred: pref, from: minDate, to: isFinal ? seasonEnd : undefined, maxShift: 21 };
+    const league = [...leagueDates], euro = [...soft];
+    let d = findCupSlot(q, days, league, euro)
+      ?? findSlotTiered({ ...q, maxShift: 30, preferEarlier: true, busy: league });
+    if (!d) {
+      // Letzter Rückfall (sehr volle Saison): alte Regel, Tag für Tag weiter.
+      d = pref;
+      while (leagueDates.has(d) || d <= prev) d = addDays(d, 1);
+    }
     out.push(d);
     prev = d;
   }
@@ -184,6 +202,7 @@ export function drawRound(
  * @param managedClubId   Verein des Nutzers (für involvesPlayerClub-Markierung)
  * @param deferDraw       true = 1. Hauptrunde NICHT sofort losen (Ziehung am
  *                        Auslosungstag, game/cupDraw.ts)
+ * @param euroWeeks       Europapokal-Termine der Saison (Pokal meidet sie, game/euroSetup.ts `euroFrameDates`)
  */
 export function createCup(
   blClubIds: string[],
@@ -193,6 +212,7 @@ export function createCup(
   earliest: string,
   managedClubId: string,
   deferDraw = false,
+  euroWeeks?: Set<string>,
 ): CupState {
   const participantIds = [...blClubIds, ...amateurClubIds];
 
@@ -208,6 +228,7 @@ export function createCup(
     earliest,
     leagueDates,
     preferredDatesForYear(seasonStartYear),
+    euroWeeks,
   );
 
   const rounds: CupRound[] = ROUND_NAMES.map((name, index) => ({

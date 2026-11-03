@@ -1349,6 +1349,23 @@ export interface Match {
   events: MatchEvent[];
   /** Ob am Spiel ein vom Nutzer kontrollierter Verein beteiligt ist. */
   involvesPlayerClub: boolean;
+  /** Verlegt/abgesagt (game/fixtureWatch.ts): Ursprungstermin, Grund, Anzahl Absagen. */
+  moved?: MatchMove;
+}
+
+/** Grund einer Spielverlegung: Wetter (Nachholspiel) oder Terminkonflikt (Wochenendverlegung). */
+export type MatchMoveReason = 'schnee' | 'frost' | 'nebel' | 'regen' | 'europapokal' | 'pokal' | 'termin';
+
+export interface MatchMove {
+  /** Ursprünglicher Termin laut Spielplan. */
+  orig: string;
+  why: MatchMoveReason;
+  /** Tag der Entscheidung (Absage/Verlegung). */
+  on: string;
+  /** Anzahl der Wetter-Absagen. */
+  n: number;
+  /** Nachholspiel unter der Woche (nach Absage). */
+  makeup?: boolean;
 }
 
 // -----------------------------------------------------------------------------

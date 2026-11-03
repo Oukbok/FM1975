@@ -9,9 +9,10 @@ import { hashSeed } from './state';
 import { scheduleDraws } from './cupDraw';
 import { enableCupReplays } from './cupReplay';
 import { buildEuroCupsV2, EURO_COMPS } from './euroSetup';
+import { matchdayBaseDates } from '../engine/fixtureRules';
 
 /** Fügt für jede Pokalrunde ein Kalender-Event ein (chronologisch einsortiert). */
-export function addCupCalendarEvents(calendar: GameCalendar, cup: CupState): void {
+export function addCupCalendarEvents(calendar: GameCalendar, cup: CupState, avoid?: Set<string>, euroWeeks?: Set<string>): void {
   let cnt = 0;
   for (const round of cup.rounds) {
     calendar.events.push({
@@ -29,15 +30,20 @@ export function addCupCalendarEvents(calendar: GameCalendar, cup: CupState): voi
   calendar.events.sort((a, b) => a.date.localeCompare(b.date));
   void cnt;
   // Neuer Pokal: Wiederholungsspiele nach historischer Regel (game/cupReplay.ts).
-  enableCupReplays(cup, calendar);
+  enableCupReplays(cup, calendar, avoid, euroWeeks);
 }
 
-/** Baut die Menge aller Liga-Spieltag-Daten (für kollisionsfreie Pokaltermine). */
+/**
+ * Menge der Liga-Hauptspieltage (je Spieltag das häufigste Datum, verlegte Spiele mit
+ * Ursprungstermin) – Grundlage für kollisionsfreie Pokal-/Europapokaltermine. Spiele, die
+ * nach der Epoche freitags/sonntags/montags liegen, rückt game/fixtureWatch.ts bei Bedarf
+ * an den Hauptspieltag (`harmonizeSeason`).
+ */
 export function leagueDateSet(fixtures: Match[], others: { tier: number; fixtures: Match[] }[] = []): Set<string> {
-  const s = new Set(fixtures.map((m) => m.date));
+  const s = new Set(matchdayBaseDates(fixtures).values());
   // Weitere West-Ligen (Europapokal-Starter können in einer anderen Liga spielen
   // als dein Verein); DDR-Ligen (tier ≥ 100) spielen keinen West-Europapokal.
-  for (const d of others) if (d.tier < 100) for (const m of d.fixtures) s.add(m.date);
+  for (const d of others) if (d.tier < 100) for (const x of matchdayBaseDates(d.fixtures).values()) s.add(x);
   return s;
 }
 
@@ -91,7 +97,7 @@ export function buildEuroCupsForSeason(
   if (deferDraw) {
     const startYear = Number(earliest.slice(0, 4)) - (Number(earliest.slice(5, 7)) >= 7 ? 0 : 1);
     const avoid = new Set<string>([...leagueDates, ...cupDates]);
-    const cups = buildEuroCupsV2(quals, euroClubs, avoid, (comp) => hashSeed(`${seedBase}:euro:${comp}`), startYear, earliest, calendar, foreign ?? null);
+    const cups = buildEuroCupsV2(quals, euroClubs, avoid, (comp) => hashSeed(`${seedBase}:euro:${comp}`), startYear, earliest, calendar, foreign ?? null, cupDates);
     for (const comp of EURO_COMPS) if (cups[comp]) scheduleDraws(cups[comp]!, comp, calendar);
     return cups;
   }

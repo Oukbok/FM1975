@@ -4,6 +4,7 @@
 // Historie/Quellen: data/indoorHistory.ts · Simulation: engine/indoor.ts ·
 // Spielstand: game/winterShared.ts · Anschluss: game/day.ts (indoorDaily).
 // =============================================================================
+import { INDOOR_GAP_DAYS } from '../data/matchCalendarRules';
 import { addDevPoints } from '../engine/devLog';
 import {
   INDOOR_LAST_WINTER, MASTERS_TEAMS, TEAMS_PER_TOURNAMENT, TOURNAMENT_WIN_BASE, indoorPhase, mastersMoney, mastersVenue,
@@ -150,7 +151,11 @@ export function setupIndoorWinter(g: Game, today: string): IndoorWinter {
   if (phase === 'none') return cur;
   const rng = mulberry32(hashStr(`indoor|${g.season}|${g.managedClubId}`));
   const win = winterWindow(g);
-  const busy = competitiveDays(g);
+  // Rahmenterminkalender: Halle nie am Tag vor/nach einem Pflichtspiel – weder für dich
+  // noch für die KI-Teilnehmer (alle Pokal-/Europapokaltermine zählen).
+  const busy = new Set<string>();
+  const pflicht = [...competitiveDays(g), ...g.calendar.events.filter((e) => e.type === 'cup_matchday' || e.type === 'euro_matchday').map((e) => e.date)];
+  for (const d of pflicht) for (let k = -(INDOOR_GAP_DAYS - 1); k <= INDOOR_GAP_DAYS - 1; k++) busy.add(CalendarEngine.addDays(d, k));
   const mastersDays = phase === 'masters' ? mastersWeekend(win, winterYear, busy) : [];
   // Tour/Einladungsturniere vor der Endrunde, sonst bis Ende Januar (Februar gehört
   // in langen Pausen dem Trainingslager).
