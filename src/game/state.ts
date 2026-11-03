@@ -139,6 +139,10 @@ export interface Game {
   transferLog?: import('./transferLog').TransferLog;
   /** Bilanz der letzten Bewertungsrunden des eigenen Kaders (Vergleich in der Bewertungs-Show). */
   ratingRounds?: { date: string; label: string; n: number; ups: number; downs: number; sum: number }[];
+  /** Kaderplanung der KI über die Saisons: Verlängerungen, Bosman, Leihen (game/aiSquadLog.ts). */
+  aiSquadLog?: import('./aiSquadLog').AiSquadLogEntry[];
+  /** Deine Trainerkarriere: Ansehen, Stationen, Jobangebote, Vereinswechsel (game/careerGame.ts). */
+  career?: import('./careerState').CareerState;
 }
 
 // Moral-Stufen in aufsteigender Reihenfolge (für Aktivitäts-Effekte, Block p11).

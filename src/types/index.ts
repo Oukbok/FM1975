@@ -370,6 +370,10 @@ export interface Contract {
   noRivalSale?: boolean;
   /** Rückkaufoption des abgebenden Vereins (1975-Basis, gilt bis `until`). */
   buyBack?: { clubId: string; fee: number; until: string };
+  /** KI-Vereine: Spieler hat eine vorzeitige Verlängerung abgelehnt (Saison, game/aiContracts.ts) – Bosman-Verkaufskandidat. */
+  refused?: string;
+  /** KI-Vereine: Vertrag läuft bewusst aus (Altstar, game/aiContracts.ts). */
+  aiLetGo?: boolean;
 }
 
 // -----------------------------------------------------------------------------
@@ -575,7 +579,7 @@ export interface Player {
   /** Persönlichkeit (verdeckt, engine/persona.ts). Optional → wird beim Lesen erzeugt. */
   persona?: import('../engine/persona').PlayerPersona;
   /** Leihe mit Kaufoption: Stammverein, Ende, Kaufoption (1975-Basis). */
-  loan?: { fromClubId: string; until: string; optionFee: number; wage: number };
+  loan?: { fromClubId: string; until: string; optionFee: number; wage: number; /** Leihe ohne Kaufoption (KI-Leihen, game/aiLoans.ts). */ noOption?: boolean };
   /** Herkunft (Namens-/Gesichtsgruppe), siehe data/origins.ts. */
   origin?: string;
   face?: string;
@@ -1242,7 +1246,12 @@ export interface ClubCoach {
   preferredFormation?: string;
   /** Druck vom Vorstand 0–100. */
   pressure: number;
+  /** Ligabilanz der abgeschlossenen Saisons im Amt (game/coachRecord.ts); fehlt bei alten Spielständen. */
+  rec?: CoachRecord;
 }
+
+/** Ligabilanz eines Trainers: Siege/Remis/Niederlagen, Titel. */
+export interface CoachRecord { w: number; d: number; l: number; titles?: number; /** Spiele bis zu diesem Datum sind enthalten. */ upTo?: string }
 
 /** Eintrag der Trainerhistorie eines Vereins. */
 export interface CoachHistoryEntry {
@@ -1250,6 +1259,10 @@ export interface CoachHistoryEntry {
   from: string;
   to: string;
   reason: 'entlassen' | 'ruhestand' | 'abgeworben' | 'vertragsende';
+  /** Ligabilanz in dieser Amtszeit (fehlt bei alten Einträgen). */
+  rec?: CoachRecord;
+  /** Eintrag gehört zu dir als Trainer (game/careerGame.ts). */
+  human?: boolean;
 }
 
 // -----------------------------------------------------------------------------

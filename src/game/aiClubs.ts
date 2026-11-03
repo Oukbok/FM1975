@@ -37,6 +37,8 @@ import { Game } from './state';
 import { aiYouthInvest } from './youthInvest';
 import { willJoin } from './playerWishesGame';
 import { poachStar } from './aiStarMarket';
+import { aiLoansSeasonEnd } from './aiLoans';
+import { coachRecordsSeasonEnd } from './coachRecord';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const r5k = (v: number) => Math.round(v / 5000) * 5000;
@@ -116,6 +118,9 @@ export function aiClubsDaily(g: Game, today: string, rng: () => number = Math.ra
 
 /** Vor dem Saisonwechsel (Endtabelle liegt noch vor): Trainerbilanz und Karussell. */
 export function aiSeasonEnd(g: Game, rng: () => number = Math.random): void {
+  // Leihen enden spätestens jetzt (falls der 30. Juni nicht lief), Trainerbilanz der Saison sichern.
+  aiLoansSeasonEnd(g, g.calendar.currentDate, rng);
+  coachRecordsSeasonEnd(g);
   coachSeasonReview(g, g.calendar.currentDate, rng);
 }
 
