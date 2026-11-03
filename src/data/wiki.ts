@@ -1051,7 +1051,7 @@ Der gewählte Schütze wird in der Simulation bei der jeweiligen Standardsituati
     id: 'match',
     category: 'match',
     title: 'Textmodus und Schnellsimulation',
-    keywords: ['match', 'text', 'textmodus', 'live', 'kommentar', 'simulieren', 'schnell', 'wechsel', 'zuruf', 'halbzeit', 'ansprache', 'spannung', 'statistik', 'xg'],
+    keywords: ['match', 'text', 'textmodus', 'live', 'kommentar', 'simulieren', 'schnell', 'wechsel', 'zuruf', 'halbzeit', 'ansprache', 'spannung', 'statistik', 'xg', 'aufwärmen', 'co-trainer', 'schiedsrichter', 'formation', 'chancen-meter', 'wechsel-bildschirm'],
     body: `## Dein Spiel: Schnell simulieren oder Textmodus
 Erreicht der Vorlauf einen Tag mit einem Spiel deines Vereins (Liga, Pokal, Europapokal), hält er an. Oben rechts erscheinen dann zwei Knöpfe:
 - **Schnell simulieren:** Das Spiel wird sofort berechnet, danach öffnet sich der Spielbericht.
@@ -1060,22 +1060,29 @@ Erreicht der Vorlauf einen Tag mit einem Spiel deines Vereins (Liga, Pokal, Euro
 Beide Wege nutzen **dieselbe Match-Engine** und verbuchen alles identisch (Ergebnis, Statistik, Noten, Spielliste, Verletzungen, Karten).
 
 ## Der Textmodus
-- **Anzeigetafel** mit Spielstand, Torschützen und Spielminute (inklusive Nachspielzeit).
-- **Druckphasen:** Balken je Minute zeigen, wer gerade drückt (oben Heim, unten Gast).
-- **Ticker:** Chancen bauen sich über mehrere Zeilen auf (Aufbau, Abschluss, Ausgang, Echo). Jede Zeile bleibt so lange stehen, dass du sie lesen kannst, dann folgt direkt die nächste.
-- **Spannungsmoment:** Bei Großchancen, Elfmetern und direkten Freistößen flimmert zuerst unleserlicher Text, der sich erst dann zu **TOR!**, **GEHALTEN!**, **DANEBEN!** oder **LATTE!** auflöst.
-- **Deine Elf:** Kraft (Balken) und Live-Note jedes Spielers, Karten, Tore, Vorlagen.
-- **Rechts:** Taktik (Ausrichtung, Zurufe), Statistik, gegnerische Aufstellung.
+- **Kopf:** beide Wappen, Leiste „(Platz) Heim – Gast (Platz)“ mit Ergebnis und darunter dem Halbzeitstand, Trainer und **Mannschaftsstärke** beider Teams, die Spieluhr als Kreis.
+- **Chancen-Meter:** Zwischen den Teams zeigt ein Meter mit sieben Feldern, wer gerade angreift und wie gefährlich es wird – ein Feld Gelb (Aufbau), zwei Orange (gefährlich), drei Rot (Abschluss, Großchance), jeweils in Richtung der angreifenden Mannschaft. Danach gleitet es zur Mitte zurück.
+- **Zeitleiste 0–90** (bzw. 120): Tore, Karten, Wechsel und Verletzungen beider Teams (oben Heim, unten Gast), Druckphasen als feine Balken und der Ball als Fortschritt.
+- **Ereignisliste:** Tabelle Min. | Erg. | Symbol | Wappen | Ereignis, neueste oben. Jede Szene ist ein Block – Aufbau, Verlauf und Abschluss stehen untereinander. Spielernamen erscheinen mit Position, deine in Bernstein, die des Gegners hellblau; ein Klick öffnet das Spielerprofil. Tore stehen fett mit „1:0 Name (n. Tor in dieser Saison)“. Reiter filtern: **Alles, Highlights, Tore, Wechsel, Karten**.
+- **Spannungsmoment:** Bei Großchancen, Elfmetern und direkten Freistößen flimmert im Block zuerst unleserlicher Text, der sich erst dann zu **TOR!**, **GEHALTEN!**, **DANEBEN!** oder **LATTE!** auflöst.
+- **Schiedsrichter:** Name, Linie und Stimmung – abgeleitet aus Fouls und Karten dieses Spiels. Er hat keinen eigenen Einfluss, die Kartenhärte folgt der Epoche.
+- **Rechts:** Reiter **Team** (deine Aufstellung mit Live-Note, Stärke, Kraft, Fitness, Karten/Verletzung; Bank mit Aufwärmen, ausgewechselte Spieler rot), **Taktik** (Ausrichtung, Zurufe), **Gegner**, **Live** (Tabelle mit dem aktuellen Spielstand), **Statistik** und **Tabelle** (vor dem Anpfiff).
 
-## Eingreifen
-- **Wechseln:** Spieler auf dem Platz anklicken, dann einen Ersatzspieler wählen. Der Neue übernimmt die Position; seine **Eignung** für die Position wird angezeigt. Wechsel je nach Epoche: **2** (bis 1994), **3** (ab 1995), **5** (ab 2020).
-- **Ausrichtung:** Mauern, Defensiv, Normal, Offensiv, Alles nach vorne. Wirkt sofort auf Angriffshäufigkeit, Stabilität und Konteranfälligkeit.
-- **Zurufe:** sechs kurze Anweisungen (Mehr Druck, Ruhe reinbringen, Kompakt stehen, Über die Flügel, Konzentration, Zweikämpfe annehmen). Ein Zuruf wirkt etwa **zehn Minuten**, danach brauchst du eine kurze Pause. Wie gut er ankommt, hängt auch vom Kapitän ab. Wer immer wieder dasselbe ruft, wird überhört.
-- **Halbzeitansprache:** Loben, ruhig analysieren oder Kabinenpredigt. Lob hilft bei Führung, eine Predigt bei Rückstand. Falscher Ton kann schaden.
-- Verletzt sich ein Spieler, wird er automatisch ersetzt, wenn noch Wechsel übrig sind.
+## Wechsel und Taktik: der Wechsel-Bildschirm
+Wechsel, Umstellungen und Ansprachen laufen über einen eigenen Bildschirm. Er öffnet sich über **Wechsel / Taktik** (oben rechts) bzw. die Knöpfe **Aufstellung, Taktik, Individuelle Anweisungen**, zur **Halbzeit** und wenn eine Option das Spiel anhält. Das Spiel steht so lange still; alles ist ein Entwurf und gilt erst mit **Bestätigen** (Abbrechen verwirft ihn).
+- **Aufstellung:** links die Spielerliste (Startelf und Bank mit Note, Stärke auf der Position, Fitness, Kraft, Form, Moral und Potenzial-Einschätzung der Scouts), rechts das **Spielsystem** mit Formationswahl und dem Feld mit Gesichtern und „Position | Stärke“, die Bank daneben. Wechseln oder Positionen tauschen: zwei Spieler nacheinander anklicken (Liste oder Feld) oder auf dem Feld ziehen. Ein Bankspieler auf einem Platz bedeutet eine Einwechslung (grün „rein“, der Ausgewechselte rot „raus“). Eine neue Formation verteilt deine Elf nach Eignung auf die Positionen. **Mannschaftsstärke** und **verbleibende Wechsel** rechnen sofort mit. Wechsel je nach Epoche: **2** (bis 1994), **3** (ab 1995), **5** (ab 2020).
+- **Taktik öffnen:** Ausrichtung sowie Tempo, Breite, Pressing, Abwehrlinie, Einsatz und Aufbauspiel **nur für dieses Spiel** – deine gespeicherte Taktik bleibt unverändert.
+- **Halbzeitansprache** (nur in der Pause): Loben, ruhig analysieren oder Kabinenpredigt, daneben die Statistik zur Pause. Lob hilft bei Führung, eine Predigt bei Rückstand; falscher Ton kann schaden.
+- **Spielergespräche:** ein kurzes Wort an einzelne Spieler, einmal je Halbzeit. **Loben** stärkt Spieler, die gut spielen; **Mehr fordern** weckt schwache, kränkt aber starke; **Beruhigen** hilft Verwarnten und Nervösen. Die Wirkung ist klein (rund ±1–2 % Tagesleistung).
 
-## Tempo und Optionen
-Lesetempo **Langsam / Normal / Schnell**, **Pause** (auch Leertaste) und **Bis zur Pause / Bis zum Ende** (spult ohne Lesepausen vor). Tempo, Spannungsmoment und Halbzeitansprache lassen sich in den **Einstellungen** dauerhaft festlegen.
+## Aufwärmen
+Ein Klick auf das Lauf-Symbol in der Bank schickt einen Ersatzspieler zum Aufwärmen („Alle Spieler aufwärmen“, „Aufwärmen abbrechen“). Nach **drei Minuten** ist er warm: Eingewechselt bringt er etwas mehr Kraft mit (+4) und kommt schneller ins Spiel (+1 % Tagesleistung). Wer länger als zehn Minuten an der Linie läuft, verliert langsam etwas Kraft.
+
+## Optionen (Knopf „Einstellungen“)
+- **Automatische Auswechslungen:** Dein Co-Trainer wärmt bei nachlassender Kraft einen Ersatz auf und wechselt Erschöpfte und Verletzte selbst aus; den letzten Wechsel hebt er bis zur Schlussphase auf. Ausrichtung und Taktik bleiben deine Sache.
+- Ohne Co-Trainer **humpelt ein Verletzter weiter**, bis du ihn auswechselst – das Spiel hält dann immer an. Hast du keinen Wechsel mehr, muss er raus und deine Elf spielt in Unterzahl.
+- **Zur Halbzeit anhalten**, **Bei Auswechslungen anhalten** (Verletzung, Platzverweis, ein Spieler am Ende seiner Kräfte, Wechsel des Co-Trainers), **Zur Schlussphase anhalten** (75. Minute), **Bei Rückstand anhalten**, **Spannungsmomente** und die **Schnelligkeit** (Langsam, Normal, Schnell, Rasant). Alles wird gespeichert und gilt auch beim nächsten Spiel.
+- **Pause** (runder Knopf unten rechts oder Leertaste) und **Vorspulen** bis zur Pause bzw. zum Ende – angehalten wird trotzdem, wenn eine Option greift.
 
 ## Statistik passend zur Zeit
 Angezeigt wird nur, was es damals schon gab: Schüsse, Ecken, Fouls, Karten und Abseits immer; **Schüsse aufs Tor** ab 1985, **Ballbesitz** ab 1992, **Zweikampfquote** ab 1998, **Pässe, Passquote und Laufleistung** ab 2003, **Großchancen** ab 2013, **Expected Goals** ab 2016. Auch der Kommentar verändert sich: Libero und Bananenflanke in den Siebzigern, Gegenpressing und Halbräume heute, Videobeweis ab 2017.

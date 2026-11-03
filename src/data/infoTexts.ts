@@ -403,6 +403,23 @@ export const INFO_TEXTS = {
     wiki: 'staff-people',
   },
 
+  // ---------------------------------------------------------------- Textmodus
+  textmodusOptionen: {
+    title: 'Optionen im Textmodus',
+    text: 'Automatische Auswechslungen: Dein Co-Trainer wärmt Ersatz auf und wechselt Erschöpfte und Verletzte selbst. Ohne ihn humpelt ein Verletzter weiter, bis du reagierst – das Spiel hält dann immer an. Die Anhalte-Optionen öffnen den Wechsel-Bildschirm zur Halbzeit, zur Schlussphase, bei Rückstand oder wenn bei dir ein Wechsel ansteht.',
+    wiki: 'match',
+  },
+  mannschaftsstaerke: {
+    title: 'Mannschaftsstärke',
+    text: 'Durchschnitt der Tagesstärke deiner Elf auf ihren Positionen – mit Form, Moral, Frische und der Kraft im Spiel. Fehlt ein Spieler (Platzverweis), zählt sein Platz mit null.',
+    wiki: 'match',
+  },
+  schiedsrichter: {
+    title: 'Schiedsrichter',
+    text: 'Name und Einschätzung des Unparteiischen. Seine Linie und Stimmung werden aus Fouls und Karten dieses Spiels abgeleitet – er hat keinen eigenen Einfluss auf die Simulation, die Kartenhärte folgt der Epoche.',
+    wiki: 'match',
+  },
+
   // ---------------------------------------------------------------- Stadion
   stadionBloecke: {
     title: 'Stadion-Blöcke',

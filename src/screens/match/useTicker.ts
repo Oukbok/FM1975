@@ -6,17 +6,26 @@
 // =============================================================================
 import { useCallback, useEffect, useReducer, useRef } from 'react';
 import type { MatchSim } from '../../engine/match/sim';
-import type { Line, Narrator } from '../../data/ticker/narrator';
+import type { SimEvent } from '../../engine/match/types';
+import { plainText, type Line, type Narrator } from '../../data/ticker/narrator';
 
-export type TextSpeed = 'langsam' | 'normal' | 'schnell';
+export type TextSpeed = 'langsam' | 'normal' | 'schnell' | 'rasant';
+export const SPEEDS: TextSpeed[] = ['langsam', 'normal', 'schnell', 'rasant'];
 
 const TIMING: Record<TextSpeed, { base: number; perChar: number; suspense: number; quiet: number }> = {
   langsam: { base: 1700, perChar: 46, suspense: 2700, quiet: 650 },
   normal: { base: 1050, perChar: 29, suspense: 2100, quiet: 380 },
   schnell: { base: 520, perChar: 14, suspense: 1350, quiet: 170 },
+  rasant: { base: 200, perChar: 5, suspense: 750, quiet: 60 },
 };
 
-export interface TickerCfg { speed: TextSpeed; suspense: boolean; halftimeTalk: boolean }
+export interface TickerCfg {
+  speed: TextSpeed; suspense: boolean;
+  /** Zur Halbzeit anhalten (Wechsel-Bildschirm mit Ansprache). */
+  halftimeTalk: boolean;
+  /** Prüft neue Ereignisse: Grund zum Anhalten (Option) oder null. */
+  stopCheck?: (evs: SimEvent[]) => string | null;
+}
 
 interface TickerState {
   queue: Line[];
@@ -30,6 +39,11 @@ interface TickerState {
   halftimePending: boolean;
   halftimeDone: boolean;
   ended: boolean;
+  /** Angehalten wegen einer Option (Grund) – der Wechsel-Bildschirm öffnet sich. */
+  stop: string | null;
+  pendingStop: string | null;
+  /** Höchste bereits erzählte Ereignisnummer (Spielereignisse/Zeitleiste ohne Vorgriff). */
+  shownSeq: number;
   timer: ReturnType<typeof setTimeout> | null;
 }
 
@@ -48,6 +62,7 @@ export function useTicker(sim: MatchSim, nar: Narrator, cfg: TickerCfg) {
   const ref = useRef<TickerState>({
     queue: [], history: [], current: null, revealing: false, score: [0, 0], pens: null, clock: "0'",
     paused: false, halftimePending: false, halftimeDone: false, ended: false, timer: null,
+    stop: null, pendingStop: null, shownSeq: 0,
   });
 
   const schedule = useCallback((ms: number) => {
@@ -61,26 +76,30 @@ export function useTicker(sim: MatchSim, nar: Narrator, cfg: TickerCfg) {
     if (line.score) s.score = line.score;
     if (line.pens) s.pens = line.pens;
     if (line.minute && line.minute !== 'i.E.') s.clock = line.minute;
+    if (line.seq && line.seq > s.shownSeq) s.shownSeq = line.seq;
     s.history.unshift(line);
     if (s.history.length > 260) s.history.length = 260;
   };
 
   const delayFor = (line: Line) => {
     const t = TIMING[cfgRef.current.speed];
-    return (t.base + line.text.length * t.perChar) * (line.hold ?? 1);
+    return (t.base + plainText(line.text).length * t.perChar) * (line.hold ?? 1);
   };
 
   const tick = () => {
     const s = ref.current;
     s.timer = null;
-    if (s.paused || s.halftimePending || s.ended) return;
+    if (s.paused || s.halftimePending || s.ended || s.stop) return;
     if (!s.queue.length) {
       if (sim.finished) { s.ended = true; s.clock = 'Ende'; force(); return; }
+      if (s.pendingStop) { s.stop = s.pendingStop; s.pendingStop = null; force(); return; }
       if (sim.phase === 'halftime' && !s.halftimeDone) {
         s.halftimeDone = true;
         if (cfgRef.current.halftimeTalk) { s.halftimePending = true; force(); return; }
       }
       const evs = sim.step();
+      const why = cfgRef.current.stopCheck?.(evs);
+      if (why && !s.pendingStop) s.pendingStop = why;
       s.queue.push(...nar.narrate(evs));
       if (!s.queue.length) {
         s.clock = clockOf(sim);
@@ -123,8 +142,10 @@ export function useTicker(sim: MatchSim, nar: Narrator, cfg: TickerCfg) {
     const r = fn();
     const lines = nar.narrate(sim.events.slice(from));
     const s = ref.current;
-    s.queue.unshift(...lines);
-    if (!s.timer && !s.paused && !s.halftimePending && !s.revealing) schedule(150);
+    // Angehalten (Pause/Wechsel-Bildschirm): eigene Eingriffe sofort in die Liste, sonst vor alle wartenden Zeilen.
+    if (s.paused || s.halftimePending || s.stop) { for (const l of lines) if (!l.suspense) publish(l); }
+    else s.queue.unshift(...lines);
+    if (!s.timer && !s.paused && !s.halftimePending && !s.stop && !s.revealing) schedule(150);
     force();
     return r;
   }, [sim, nar, schedule]);
@@ -136,9 +157,11 @@ export function useTicker(sim: MatchSim, nar: Narrator, cfg: TickerCfg) {
     force();
   }, [schedule]);
 
+  /** Halbzeit bzw. Halt wegen einer Option beenden – weiter geht's. */
   const finishHalftime = useCallback(() => {
     const s = ref.current;
     s.halftimePending = false;
+    s.stop = null;
     schedule(300);
     force();
   }, [schedule]);
@@ -152,10 +175,16 @@ export function useTicker(sim: MatchSim, nar: Narrator, cfg: TickerCfg) {
     for (const l of s.queue) if (!l.suspense) publish(l);
     s.queue = [];
     let guard = 0;
-    do {
+    let why: string | null = s.pendingStop;
+    s.pendingStop = null;
+    while (!why) {
       const evs = sim.step();
+      why = cfgRef.current.stopCheck?.(evs) ?? null;
       for (const l of nar.narrate(evs)) if (!l.suspense) publish(l);
-    } while (!sim.finished && (sim.phase === 'play' || sim.phase === 'shootout') && guard++ < 400);
+      if (sim.finished || (sim.phase !== 'play' && sim.phase !== 'shootout') || guard++ >= 400) break;
+    }
+    if (why && !sim.finished) s.stop = why;
+    if (sim.events.length) s.shownSeq = sim.events[sim.events.length - 1].seq;
     s.score = sim.score();
     s.clock = clockOf(sim);
     s.current = s.history[0] ?? null;
@@ -165,7 +194,7 @@ export function useTicker(sim: MatchSim, nar: Narrator, cfg: TickerCfg) {
     }
     if (sim.finished) s.ended = true;
     force();
-    if (!s.ended && !s.halftimePending && !s.paused) schedule(400);
+    if (!s.ended && !s.halftimePending && !s.stop && !s.paused) schedule(400);
   }, [sim, nar, schedule]);
 
   return { state: ref.current, act, setPaused, finishHalftime, skip };

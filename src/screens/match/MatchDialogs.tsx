@@ -1,39 +1,11 @@
 // =============================================================================
-// Halbzeitansprache und Abschluss des Textmodus.
+// Abschluss des Textmodus (Halbzeitansprache: changes/TalkTabs.tsx).
 // =============================================================================
 import Icon from '../../components/Icon';
 import type { MatchSim } from '../../engine/match/sim';
-import type { MatchOutcome, Side, TeamTalk } from '../../engine/match/types';
+import type { MatchOutcome, Side } from '../../engine/match/types';
 import type { Game } from '../../game/state';
 import { shortNamer } from './names';
-
-const TALKS: [TeamTalk, string, string][] = [
-  ['loben', 'Loben', 'Bestärkt bei Führung, kann bei Rückstand zu bequem machen.'],
-  ['analyse', 'Ruhig analysieren', 'Sachlich, kleiner Effekt, kaum Risiko.'],
-  ['predigt', 'Kabinenpredigt', 'Weckt bei Rückstand auf, verunsichert bei Führung.'],
-];
-
-export function HalftimeDialog({ sim, side, onTalk }: { sim: MatchSim; side: Side; onTalk: (t: TeamTalk | null) => void }) {
-  const [h, a] = sim.score();
-  const mine = side === 'home' ? h : a, theirs = side === 'home' ? a : h;
-  const mood = mine > theirs ? 'Deine Elf führt.' : mine < theirs ? 'Deine Elf liegt zurück.' : 'Es ist alles offen.';
-  return (
-    <div className="ms-dialog-bg">
-      <div className="ms-dialog">
-        <div className="ms-dialog-head"><Icon name="whistle" size={30} /> Halbzeit – {h}:{a}</div>
-        <p className="ms-dialog-p">{mood} Was sagst du deiner Mannschaft in der Kabine?</p>
-        <div className="ms-talks">
-          {TALKS.map(([id, label, hint]) => (
-            <button key={id} className="ms-talk" onClick={() => onTalk(id)}>
-              <b>{label}</b><span>{hint}</span>
-            </button>
-          ))}
-        </div>
-        <button className="ms-btn ghost" onClick={() => onTalk(null)}>Nichts sagen</button>
-      </div>
-    </div>
-  );
-}
 
 export function EndPanel({ g, sim, side, outcome, onClose }: {
   g: Game; sim: MatchSim; side: Side; outcome: MatchOutcome | null; onClose: () => void;
