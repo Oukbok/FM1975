@@ -111,9 +111,15 @@ for (let step = 0; step < 4000; step++) {
       }
       await page.waitForTimeout(300); continue;
     }
-    if (await has('.gb-root')) { await act('Goldener Ball', '.gb-root', '.gb-root .btn-primary', { repeat: 20, wait: 500 }); continue; }
+    if (await has('.gb-root')) {
+      // kürzester Weg: „Überspringen“ (zum Sieger), dann „Weiter“
+      const sk = page.locator('.gb-root footer button:has-text("Überspringen")');
+      if (await sk.isVisible().catch(() => false)) { await note('Goldener Ball'); await shotOnce('Goldener Ball'); await sk.click(); tap('Goldener Ball'); await page.waitForTimeout(500); }
+      if (await has('.gb-root')) { const b = page.locator('.gb-root .btn-primary').first(); await b.click().catch(() => {}); tap('Goldener Ball'); await page.waitForTimeout(400); }
+      continue;
+    }
     if (await has('.aw-modal')) { await act('Die Besten der Saison', '.aw-modal', '.aw-modal .aw-foot .btn-primary'); continue; }
-    if (await has('.tw-panel')) { await act('Transferbilanz', '.tw-panel', '.tw-foot button:has-text("OK"), .tw-foot .btn-primary'); continue; }
+    if (await has('.tw-panel')) { await act('Transferbilanz', '.tw-panel', '.tw-foot button:has-text("Schließen")'); continue; }
     if (await has('.cr-root')) { await note('Trainingslager-Bilanz'); await shotOnce('Trainingslager-Bilanz'); for (let k = 0; k < 4 && await has('.cr-root'); k++) { await page.locator('.cr-root').click({ position: { x: 20, y: 20 } }); tap('Trainingslager-Bilanz'); await page.waitForTimeout(500); } continue; }
     if (await has('.pm-root')) { await act('Vorschau Nächstes Spiel', '.pm-root', '.pm-go-btn:has-text("Simulieren")', { wait: 700 }); continue; }
     if (await has('.mr-modal')) { await act('Spielbericht', '.mr-modal', '.mr-modal .modal-close'); continue; }
@@ -135,6 +141,9 @@ for (let step = 0; step < 4000; step++) {
       await page.locator('.hd-continue.mail').click(); tap('Entscheidung'); await page.waitForTimeout(400);
       // Nachricht mit offener Entscheidung suchen und erste Option wählen
       let done = false;
+      // Ist die offene Entscheidung schon ausgewählt (roter Brief wählt sie an), reicht ein Klick.
+      const pre = page.locator('.dz-read .dchip.on');
+      if (await pre.count()) { const t = await page.locator('.dz-rsubj').innerText().catch(() => ''); await pre.first().click(); tap('Entscheidung'); log.push(`${''.padEnd(28)}   entschieden: ${t} (direkt angewählt)`); done = true; }
       const rows = page.locator('.dz-msg');
       const n = Math.min(await rows.count(), 30);
       for (let i = 0; i < n && !done; i++) {

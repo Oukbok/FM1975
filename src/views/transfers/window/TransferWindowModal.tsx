@@ -147,7 +147,7 @@ export function TransferWindowModal({ g, initialKey, auto, settings, onSettings,
             </label>
           )}
           {page === 'top'
-            ? <button className="btn btn-primary" onClick={() => setPage('bilanz')}>OK</button>
+            ? <><button className="btn btn-ghost" onClick={close}>Schließen</button><button className="btn btn-primary" onClick={() => setPage('bilanz')}>OK</button></>
             : <button className="btn btn-primary" onClick={close}>Schließen</button>}
         </div>
       </div>
