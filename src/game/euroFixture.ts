@@ -10,8 +10,7 @@ import type { Game } from './state';
 export interface OwnFixture { opp: string; home: boolean; match: Match | null; comp: string }
 
 /** `null` = kein eigenes Spiel an diesem Termin; `undefined` = alter Modus (Aufrufer entscheidet). */
-export function ownFixtureOn(g: Game, ev: CalendarEvent): OwnFixture | null | undefined {
-  const me = g.managedClubId;
+export function ownFixtureOn(g: Game, ev: CalendarEvent, me = g.managedClubId): OwnFixture | null | undefined {
   const slot = ev.leg ?? 0;
   if (ev.type === 'cup_matchday') {
     const cup = g.cup;
@@ -75,13 +74,13 @@ export function euroStatus(cup: import('../types').CupState, id: string): string
  * Hallenturniere.) Neuer Modus: Wiederholungstermine nur mit eigenem Wiederholungsspiel,
  * Europapokal nur, solange der Verein im Wettbewerb ist bzw. ein Spiel an diesem Termin hat.
  */
-export function mayPlayOn(g: Game, ev: CalendarEvent): boolean {
-  const fx = ownFixtureOn(g, ev);
+export function mayPlayOn(g: Game, ev: CalendarEvent, me = g.managedClubId): boolean {
+  const fx = ownFixtureOn(g, ev, me);
   if (fx) return true;
   if (fx === undefined) {
     if (ev.type === 'euro_matchday' && ev.euroComp && isV2(g.euroCups?.[ev.euroComp])) {
       const cup = g.euroCups![ev.euroComp]!;
-      return inEuroCup(cup, g.managedClubId) && !/ausgeschieden|Sieger/.test(euroStatus(cup, g.managedClubId));
+      return inEuroCup(cup, me) && !/ausgeschieden|Sieger/.test(euroStatus(cup, me));
     }
     return true; // alter Modus bzw. Landespokal (erstes Spiel): wie bisher
   }
@@ -89,7 +88,7 @@ export function mayPlayOn(g: Game, ev: CalendarEvent): boolean {
   if (ev.type === 'euro_matchday' && ev.euroComp && ev.cupRoundIndex != null) {
     const cup = g.euroCups?.[ev.euroComp];
     const round = cup?.rounds[ev.cupRoundIndex];
-    if (cup && round && !round.drawn) return inEuroCup(cup, g.managedClubId) && !/ausgeschieden|Sieger/.test(euroStatus(cup, g.managedClubId));
+    if (cup && round && !round.drawn) return inEuroCup(cup, me) && !/ausgeschieden|Sieger/.test(euroStatus(cup, me));
   }
   return false;
 }

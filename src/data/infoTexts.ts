@@ -14,6 +14,12 @@ export interface InfoText {
 }
 
 export const INFO_TEXTS = {
+  // ---------------------------------------------------------------- Spielplan
+  spielplan: {
+    title: 'Spielplan & Termine',
+    text: 'Kein Verein spielt an zwei Tagen hintereinander – zwischen zwei Pflichtspielen liegen mindestens zwei Tage. Pokal und Europapokal haben eigene Wochen; Wetter kann Spiele absagen (früher oft, heute selten), das Nachholspiel liegt dann unter der Woche, spätestens vor den letzten zwei Spieltagen.',
+    wiki: 'match-calendar',
+  },
   // ---------------------------------------------------------------- Spieler-Zustand
   frische: {
     title: 'Frische',

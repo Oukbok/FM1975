@@ -29,6 +29,8 @@ import { initWorld } from '../engine/world';
 import { makeCandidates } from '../engine/staffPeople';
 import { allocateTv, commercialAnnualFor, isLeagueClub, refreshMarketValues } from '../engine/clubEconomy';
 import { addCupCalendarEvents, buildEuroCupsForSeason, cupDateSet, euroDrawMessage, leagueDateSet } from './competitions';
+import { euroFrameDates } from './euroSetup';
+import { harmonizeSeason } from './fixtureWatch';
 import { scheduleDraws } from './cupDraw';
 import { buildDivision, DivisionMeta, simClubFromClub } from '../engine/leagues';
 import { buildProClub } from '../data/generate';
@@ -77,7 +79,7 @@ export function createNewGame(opts: NewGameOptions): Game {
     playerDivMeta = { id: `tier2-${group}`, name: `2. Liga ${group === 'nord' ? 'Nord' : 'Süd'}`, tier: 2, group };
   }
   const clubList = Object.values(world.clubs);
-  const fixtures = generateFixtures(clubList, '1975-08-15', { tier: playerDivMeta.tier });
+  const fixtures = generateFixtures(clubList, '1975-08-15', { tier: playerDivMeta.tier, spread: true });
   for (const m of fixtures) {
     m.involvesPlayerClub = m.homeClubId === opts.managedClubId || m.awayClubId === opts.managedClubId;
   }
@@ -100,16 +102,20 @@ export function createNewGame(opts: NewGameOptions): Game {
   Object.assign(world.clubs, amateurs.clubs);
   Object.assign(world.players, amateurs.players);
   const blClubIds = clubList.map((c) => c.id);
+  // Rahmenterminkalender: Pokalrunden meiden Liga-Hauptspieltage und Europapokal-Wochen.
+  const cupAvoid = leagueDateSet(fixtures);
+  const euroWeeks = euroFrameDates(1975);
   const cup = createCup(
     blClubIds,
     Object.keys(amateurs.clubs).slice(0, Math.max(0, 32 - blClubIds.length)),
-    leagueDateSet(fixtures),
+    cupAvoid,
     hashSeed(opts.managedClubId + ':1980'),
     calendar.seasonStartDate,
     opts.managedClubId,
     true,
+    euroWeeks,
   );
-  addCupCalendarEvents(calendar, cup);
+  addCupCalendarEvents(calendar, cup, cupAvoid, euroWeeks);
   // Auslosung erst am historischen Termin (game/cupDraw.ts, Mitte Juli 1975).
   scheduleDraws(cup, 'cup', calendar);
   const welcome = makeMessage({
@@ -219,5 +225,6 @@ export function createNewGame(opts: NewGameOptions): Game {
   recordBudgetPlan(g0, { pending: true }); // Saisonbudget (game/budgetPlan.ts)
   migratePositionSkills(g0); // Positionsvertrautheit aller Spieler (game/positionsGame.ts)
   migrateYouthComps(g0); // Jugendwettbewerbe der Saison (game/youthComps/)
+  harmonizeSeason(g0); // Rahmenterminkalender: Wochenendspiele an Pokal-/Europapokalwochen (game/fixtureWatch.ts)
   return g0;
 }

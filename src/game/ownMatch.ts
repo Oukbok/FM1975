@@ -63,11 +63,11 @@ export function findOwnMatchDue(g: Game): OwnMatchInfo | null {
     if (ev.type === 'matchday' && ev.matchId) {
       const m0 = g.fixtures.find((m) => m.id === ev.matchId);
       if (!m0 || m0.status !== 'scheduled') continue;
-      const m = g.fixtures.find((x) => x.matchday === m0.matchday && x.involvesPlayerClub && x.status === 'scheduled');
+      const m = g.fixtures.find((x) => x.matchday === m0.matchday && x.involvesPlayerClub && x.status === 'scheduled' && x.date <= today);
       if (!m) continue;
       return {
         kind: 'liga', homeId: m.homeClubId, awayId: m.awayClubId, date: m.date, competition: 'Liga', knockout: false,
-        label: `Liga · ${m.matchday}. Spieltag`, matchId: m.id, side: m.homeClubId === mid ? 'home' : 'away',
+        label: `Liga · ${m.matchday}. Spieltag${m.moved?.makeup ? ' (Nachholspiel)' : ''}`, matchId: m.id, side: m.homeClubId === mid ? 'home' : 'away',
       };
     }
     if (ev.type === 'cup_matchday' && ev.cupRoundIndex != null && isV2(g.cup)) {

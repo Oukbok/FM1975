@@ -35,6 +35,8 @@ import { MatchEngine } from '../engine/match';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { Club, Match } from '../types';
 import { addCupCalendarEvents, buildEuroCupsForSeason, cupDateSet, euroDrawMessage, leagueDateSet } from './competitions';
+import { euroFrameDates } from './euroSetup';
+import { harmonizeSeason } from './fixtureWatch';
 import { nextDrawDate, scheduleDraws } from './cupDraw';
 import { CalendarEngine } from '../engine/calendar';
 import { Game, bestOffer, hashSeed, migrateCommerce, offerToContract } from './state';
@@ -43,8 +45,10 @@ import { sponsorSeasonStart } from './sponsorGame';
 // -----------------------------------------------------------------------------
 // Spieltag simulieren + Form/Fitness-Effekte + Nachrichten
 // -----------------------------------------------------------------------------
-export function simulateMatchday(game: Game, matchday: number): void {
-  const dayMatches = game.fixtures.filter((m) => m.matchday === matchday && m.status === 'scheduled');
+export function simulateMatchday(game: Game, matchday: number, today?: string): void {
+  // Mit `today`: nur die Spiele dieses Tages (Fr/Sa/So/Mo-Verteilung, verlegte Spiele und
+  // Nachholspiele haben eigene Termine, game/fixtureWatch.ts).
+  const dayMatches = game.fixtures.filter((m) => m.matchday === matchday && m.status === 'scheduled' && (!today || m.date <= today));
   for (const match of dayMatches) {
     const home = game.clubs[match.homeClubId];
     const away = game.clubs[match.awayClubId];
@@ -334,7 +338,7 @@ export function startNextSeason(g: Game): void {
 
   // --- 6) Spielerliga: neuer Spielplan + Tabelle (volle Engine) ---
   const playerClubList = playerIds.map((id) => g.clubs[id]).filter(Boolean) as Club[];
-  const fixtures = generateFixtures(playerClubList, fixturesStart, { tier: membership[playerDivId].meta.tier });
+  const fixtures = generateFixtures(playerClubList, fixturesStart, { tier: membership[playerDivId].meta.tier, spread: true });
   for (const m of fixtures) {
     m.involvesPlayerClub = m.homeClubId === g.managedClubId || m.awayClubId === g.managedClubId;
   }
@@ -371,11 +375,14 @@ export function startNextSeason(g: Game): void {
   const allAm = Object.keys(g.clubs).filter((id) => id.startsWith('am'));
   const blClubIds = playerClubList.map((c) => c.id);
   const amateurIds = allAm.slice(0, Math.max(0, 32 - blClubIds.length));
+  // Rahmenterminkalender: Pokalrunden meiden Liga-Hauptspieltage und Europapokal-Wochen.
+  const cupAvoid = leagueDateSet(fixtures);
+  const euroWeeks = euroFrameDates(nextStartYear);
   const cup = createCup(
-    blClubIds, amateurIds, leagueDateSet(fixtures),
-    hashSeed(g.managedClubId + ':' + nextStartYear), calendar.seasonStartDate, g.managedClubId, true,
+    blClubIds, amateurIds, cupAvoid,
+    hashSeed(g.managedClubId + ':' + nextStartYear), calendar.seasonStartDate, g.managedClubId, true, euroWeeks,
   );
-  addCupCalendarEvents(calendar, cup);
+  addCupCalendarEvents(calendar, cup, cupAvoid, euroWeeks);
   // Auslosung erst am historischen Termin (game/cupDraw.ts).
   scheduleDraws(cup, 'cup', calendar);
   g.cup = cup;
@@ -404,7 +411,7 @@ export function startNextSeason(g: Game): void {
     }));
   }
   g.euroCups = buildEuroCupsForSeason(
-    euroQuals, euroClubs, leagueDateSet(fixtures, otherDivisions), cupDateSet(cup),
+    euroQuals, euroClubs, leagueDateSet(fixtures, otherDivisions.filter((d) => d.tier === 1)), cupDateSet(cup),
     g.managedClubId + ':' + nextStartYear, calendar.seasonStartDate, g.managedClubId, calendar,
     worldRes.participants, true,
   );
@@ -414,6 +421,8 @@ export function startNextSeason(g: Game): void {
     const dmsg = euroDrawMessage(comp, ec, g.clubs, euroClubs, g.managedClubId, 0, calendar.currentDate);
     if (dmsg) pushMessage(g.messages, dmsg);
   }
+  // Rahmenterminkalender: Fr/So/Mo-Spiele an Pokal-/Europapokalwochen anpassen (game/fixtureWatch.ts).
+  harmonizeSeason(g);
 
   // --- 8b) Ligareform: Meilenstein-Nachricht + Reform als angewandt vormerken ---
   // Wurde diese Saison eine Struktur-Reform ausgeführt, meldet die Fußball-Chronik

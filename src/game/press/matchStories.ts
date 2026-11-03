@@ -3,6 +3,7 @@
 // Vorschau, Torjäger. Alles aus g.fixtures rekonstruiert (auch für ältere
 // Ausgaben: Tabelle und Torjäger zum Stichtag).
 // =============================================================================
+import { POSTPONE_TEXT, type PostponeReason } from '../../data/matchCalendarRules';
 import type { Match } from '../../types';
 import type { PressCtx } from './context';
 import { plural, scoreOf, story, winnerOf } from './context';
@@ -139,7 +140,7 @@ function matchStory(c: PressCtx, x: Rated, posAfter: Map<string, number>): Press
   const people = [...new Set([x.hero, r.manOfTheMatchId, ...m.events.filter((e) => GOAL.has(e.type)).map((e) => e.playerId)].filter((id): id is string => !!id && !!c.player(id)))].slice(0, 6);
   return story(c, {
     kind: 'spiel', rubric: 'Bundesliga', date: m.date, weight: 40 + x.score,
-    headline: matchHeadline(c, x), dek: `${m.matchday}. Spieltag · ${slots.h} – ${slots.a} ${scoreOf(m)}`,
+    headline: matchHeadline(c, x), dek: `${m.matchday}. Spieltag${m.moved?.makeup ? ' (Nachholspiel)' : ''} · ${slots.h} – ${slots.a} ${scoreOf(m)}`,
     body, image: heroP ? { kind: 'player', id: heroP.id } : { kind: 'club', id: wl?.w ?? m.homeClubId },
     people, clubs: [m.homeClubId, m.awayClubId], results: [resultOf(m)],
     targets: [{ kind: 'match', id: m.id, label: 'Spielbericht' }, { kind: 'screen', screen: 'table', label: 'Tabelle' }],
@@ -182,6 +183,23 @@ export function leagueStories(c: PressCtx): LeagueOut {
       body: [c.say('st_lead', slots), c.say('st_heim', slots)], results, clubs: [],
       image: top ? { kind: 'club', id: winnerOf(top.m)?.w ?? top.m.homeClubId } : undefined,
       targets: [{ kind: 'screen', screen: 'fixtures', label: 'Spielplan' }, { kind: 'screen', screen: 'table', label: 'Tabelle' }],
+    }));
+  }
+
+  // Spielabsagen (game/fixtureWatch.ts): Wetter – Nachholspiel unter der Woche.
+  const ppd = g.fixtures.filter((m) => m.moved?.makeup && c.inWindow(m.moved.on));
+  if (ppd.length) {
+    const why = POSTPONE_TEXT[ppd[0].moved!.why as PostponeReason];
+    const own = ppd.find((m) => m.homeClubId === c.my || m.awayClubId === c.my);
+    const pairs = ppd.map((m) => `${c.name(m.homeClubId)} – ${c.name(m.awayClubId)} (neu: ${weekdayOf(m.date)}, ${Number(m.date.slice(8, 10))}.${Number(m.date.slice(5, 7))}.)`);
+    stories.push(story(c, {
+      kind: 'spieltag', rubric: 'Spielabsagen', date: ppd[0].moved!.on, weight: own ? 45 : 14 + ppd.length * 3,
+      headline: ppd.length > 1 ? `${why?.short ?? 'Wetter'}: ${ppd.length} Spiele abgesagt` : `${why?.short ?? 'Wetter'}: ${c.name(ppd[0].homeClubId)} – ${c.name(ppd[0].awayClubId)} abgesagt`,
+      body: [`${why?.long ?? 'Der Platz ist unbespielbar.'} ${ppd.length > 1 ? 'Abgesagt wurden:' : 'Abgesagt wurde:'} ${pairs.join('; ')}.`,
+        'Die Nachholspiele finden unter der Woche statt – spätestens vor den letzten zwei Spieltagen.'],
+      clubs: [...new Set(ppd.flatMap((m) => [m.homeClubId, m.awayClubId]))].slice(0, 4),
+      image: { kind: 'club', id: (own ?? ppd[0]).homeClubId },
+      targets: [{ kind: 'screen', screen: 'fixtures', label: 'Spielplan' }],
     }));
   }
 
@@ -266,7 +284,7 @@ export function leagueStories(c: PressCtx): LeagueOut {
     const days = (Date.parse(next.date) - Date.parse(c.date)) / 864e5;
     stories.push(story(c, {
       kind: 'vorschau', rubric: 'Vorschau', date: next.date, weight: days <= 3 ? 40 : days <= 6 ? 24 : 10,
-      headline: c.say('hl_vorschau', s, Number(s.hp) <= 6 && Number(s.ap) <= 6 ? ['top'] : []), dek: `${next.matchday}. Spieltag`, body: [c.say('vs_body', s), c.say('vs_body', s)],
+      headline: c.say('hl_vorschau', s, Number(s.hp) <= 6 && Number(s.ap) <= 6 ? ['top'] : []), dek: `${next.matchday}. Spieltag${next.moved?.makeup ? ' · Nachholspiel' : next.moved ? ' · verlegt' : ''}`, body: [c.say('vs_body', s), c.say('vs_body', s)],
       image: { kind: 'club', id: next.homeClubId === c.my ? next.awayClubId : next.homeClubId }, clubs: [next.homeClubId, next.awayClubId],
       targets: [{ kind: 'screen', screen: 'lineup', label: 'Aufstellung' }, { kind: 'screen', screen: 'fixtures', label: 'Spielplan' }],
     }));

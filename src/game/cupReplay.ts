@@ -5,10 +5,12 @@
 // schießen; das Endspiel zuletzt 1976/77 (Final-Wiederholung 1977). Ab 1991/92
 // Verlängerung und Elfmeterschießen im ersten Spiel.
 // Jede Runde bekommt einen Wiederholungstermin (`CupRound.dates[1]`, eine Woche
-// später, Finale zwei Tage später), kollisionsfrei zur eigenen Liga. Alte Spielstände
+// später, Finale zwei Tage später) nach dem Rahmenterminkalender (Abstände zur Liga). Alte Spielstände
 // (ohne `CupState.v2`) spielen den laufenden Pokal wie bisher zu Ende.
 // =============================================================================
 import { cupReplay } from '../data/euroFormats';
+import { MIN_GAP_DAYS, WANT_GAP_DAYS, calendarEra } from '../data/matchCalendarRules';
+import { findCupSlot, findSlotTiered } from '../engine/fixtureRules';
 import { CalendarEngine } from '../engine/calendar';
 import { MatchEngine, type KoRule } from '../engine/match';
 import { economyScale, yearOf } from '../engine/economy';
@@ -23,21 +25,35 @@ import { hasScheduledDraw } from './cupDraw';
 import { hashSeed, type Game } from './state';
 
 const startYearOf = (cup: CupState) => Number(cup.season.slice(0, 4));
+/** Keine Wiederholungsspiele über die Feiertage (21.12.–6.1.). */
+const holiday = (d: string) => { const md = d.slice(5); return md >= '12-21' || md <= '01-06'; };
 
-/** Neuer Pokal (noch nichts gelost): Wiederholungstermine anlegen und Modus markieren. */
-export function enableCupReplays(cup: CupState, calendar: GameCalendar): void {
+/**
+ * Neuer Pokal (noch nichts gelost): Wiederholungstermine anlegen und Modus markieren.
+ * Termin nach dem Rahmenterminkalender (engine/fixtureRules.ts): eine Woche später am
+ * Pokal-Wochentag, mindestens drei (notfalls zwei) Tage Abstand zu Liga-Hauptspieltagen,
+ * Europapokal-Wochen (`avoid`) und den anderen Pokalrunden; Finale zwei Tage später.
+ */
+export function enableCupReplays(cup: CupState, calendar: GameCalendar, avoid?: Set<string>, euroWeeks?: Set<string>): void {
   if (cup.v2 || cup.rounds.some((r) => r.drawn)) return;
   cup.v2 = 1;
   const y = startYearOf(cup);
-  const busy = new Set(calendar.events.filter((e) => e.type === 'matchday' || e.type === 'cup_matchday').map((e) => e.date));
+  const busy = new Set(avoid ?? calendar.events.filter((e) => e.type === 'matchday').map((e) => e.date));
+  for (const r of cup.rounds) busy.add(r.date);
+  const era = calendarEra(y);
   cup.rounds.forEach((r, i) => {
     const isFinal = i === cup.rounds.length - 1;
     if (!cupReplay(y, isFinal)) { r.dates = [r.date]; return; }
-    let d = CalendarEngine.addDays(r.date, isFinal ? 2 : 7);
+    let pref = CalendarEngine.addDays(r.date, isFinal ? 2 : 7);
     // Nicht über die Feiertage: dann schon nach drei Tagen.
-    const md = d.slice(5);
-    if (md >= '12-21' || md <= '01-06') d = CalendarEngine.addDays(r.date, 3);
-    while (busy.has(d)) d = CalendarEngine.addDays(d, 1);
+    const md = pref.slice(5);
+    if (md >= '12-21' || md <= '01-06') pref = CalendarEngine.addDays(r.date, 3);
+    const from = CalendarEngine.addDays(r.date, isFinal ? MIN_GAP_DAYS : WANT_GAP_DAYS);
+    const league = [...busy].filter((x) => x !== r.date);
+    let d = isFinal
+      ? findSlotTiered({ preferred: pref, from, to: `${y + 1}-06-29`, maxShift: 10, busy: league }) // 30.6. = Saisonende
+      : findCupSlot({ preferred: pref, from, maxShift: 10, skip: holiday }, era.cupDays, league, [...(euroWeeks ?? [])]);
+    if (!d) { d = pref; while (busy.has(d)) d = CalendarEngine.addDays(d, 1); }
     busy.add(d);
     r.dates = [r.date, d];
     calendar.events.push({

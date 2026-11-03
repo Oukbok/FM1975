@@ -13,6 +13,7 @@
 
 /** Kategorie eines Wiki-Artikels. */
 import { YOUTH_RECRUIT_EVENTS } from './youthRecruitEvents';
+import { CALENDAR_ERAS } from './matchCalendarRules';
 
 export interface WikiCategory {
   id: string;
@@ -3115,11 +3116,43 @@ Ab 2027/28 wird die heutige Regel fortgeschrieben (Annahme: WM 2034 wieder im Wi
 - **Saisonende** je Epoche: bis 1991 Mitte Juni, danach Ende Mai, in WM-Jahren Mitte Mai oder früher (1986: 26. April). Die 2. Liga beginnt eine bzw. (ab 2009) zwei Wochen früher.
 - **DDR-Oberliga/DDR-Liga** (bis 1990/91): 26 Spieltage ab Mitte August, Pause von Mitte Dezember bis Ende Februar (9–11 Wochen), Saisonende Ende Mai.
 - Laufende Saisons behalten ihren Spielplan; die neuen Termine gelten ab dem nächsten Saisonwechsel.
-- Pokal- und Europapokalrunden weichen allen Ligaspieltagen aus (Europapokal auch denen der anderen West-Ligen).
+- Wochentage, Pokal-/Europapokaltermine, Mindestabstände, Spielabsagen und Nachholspiele: Artikel **„Spielplan & Termine“**.
 
 ## In der Pause
 - **Hallenturniere** und das **Hallen-Masters** (Mitte Januar) liegen in der Pause, ebenso das **Winter-Trainingslager** (KI-Vereine in den letzten vier Wochen vor dem Rückrundenstart).
 - **Frische und Fitness** erholen sich täglich. Ohne Spielrhythmus driftet die **Form** aller Spieler leicht zur Mitte (0,5 % je Tag): Formstarke verlieren in drei Wochen ≈ 1–2 Punkte, in elf Wochen ≈ 6; Formschwache fangen sich. Training bringt in der Pause Fitness, aber kein Form-Plus.`,
+  },
+  {
+    id: 'match-calendar',
+    category: 'calendar',
+    title: 'Spielplan & Termine',
+    keywords: ['spielplan', 'termine', 'nachholspiel', 'absage', 'spielabsage', 'verlegung', 'schnee', 'frost', 'nebel', 'rasenheizung', 'freitagsspiel', 'sonntagsspiel', 'montagsspiel', 'englische woche', 'pokalwoche', 'europapokal', 'donnerstag', 'ruhetage', 'abstand', 'hallenturnier', 'rahmenterminkalender'],
+    body: `## Die Grundregeln (alle Epochen)
+- **Kein Verein spielt an zwei aufeinanderfolgenden Tagen.** Zwischen zwei Pflichtspielen liegen mindestens **zwei Tage** (≈ 48 Stunden), angestrebt werden **zwei Ruhetage** (≈ 72 Stunden).
+- **Pokalwochen und Europapokalwochen** sind getrennt: Landespokal-Runden liegen dienstags/mittwochs in Wochen ohne Europapokal, mit drei Tagen Abstand zum Wochenende. Der Europapokal wird danach angesetzt und weicht Liga und Pokal aus.
+- **Hallenturniere** liegen in der Winterpause und **nie am Tag vor oder nach einem Pflichtspiel** – weder für dich noch für die anderen Teilnehmer.
+- Der **erste und die letzten zwei Spieltage** finden zeitgleich statt (Saisonfinale am Samstag); das **Pokalendspiel** ist ein Samstag, frühestens eine Woche nach dem letzten Spieltag.
+
+## Je Epoche
+| Epoche | 1. Liga | Pokal | Europapokal | Wetter |
+|---|---|---|---|---|
+${CALENDAR_ERAS.map((e) => `| ${e.label} | ${e.league} | ${e.cup} | ${e.euro} | ${e.weather} |`).join('\n')}
+
+Die 2. Liga: ${CALENDAR_ERAS.map((e) => `${e.label}: ${e.league2}`).join(' · ')}
+
+Verteilte Spieltage (Freitag bis Montag) gibt es nur an normalen Wochenenden – rund um englische Wochen sowie am ersten und an den letzten zwei Spieltagen spielen alle am Samstag (bzw. Mittwoch). Simulierte Ligen spielen ihren Spieltag geschlossen am Hauptspieltag.
+
+## Verlegungen
+- **Europapokal am Donnerstag** (UEFA-Pokal ab 1999, Europa League, Conference League): Der Verein spielt am folgenden Wochenende **sonntags**. Liegt ein Freitags-, Sonntags- oder Montagsspiel zu dicht an einem Pokal- oder Europapokalspiel, rückt es innerhalb des Wochenendes. Das prüft der Spielausschuss rund zwölf Tage im Voraus – nur für Vereine, die noch im Wettbewerb sind. Du bekommst eine Nachricht „Spielverlegung“.
+
+## Spielabsagen und Nachholspiele
+- Am **Vortag** wird der Platz begangen. Schnee, gefrorener Boden, dichter Nebel oder Dauerregen können ein Ligaspiel absagen. Das Wetter ist dasselbe, das die Vorschau „Nächstes Spiel“ zeigt.
+- Wie oft das passiert, hängt von der **Rasenheizung** ab: In den 70ern hatten nur wenige Stadien eine – im Winter fallen dann jede Saison mehrere Spiele aus (im Schnitt rund acht in der 1. Liga). In den 80ern und 90ern wird es seltener, heute ist eine Absage die Ausnahme (Rasenheizung ist Lizenzauflage). Nebel bleibt ein Risiko, wird mit besseren Flutlichtanlagen aber seltener.
+- Das **Nachholspiel** liegt unter der Woche (Mittwoch bzw. ab 1986 Dienstag/Mittwoch), mit zwei Ruhetagen zu allen anderen Spielen beider Vereine, **nicht in der Winterpause** und **spätestens vor den letzten zwei Spieltagen**. Findet sich kein Termin mehr, wird gespielt (Schneeräumung, Ausweichstadion). Ein Spiel wird höchstens zweimal abgesagt.
+- Kalender, Spielplan (Spieltag › Spielplan), Vorschau „Nächstes Spiel“ und Presse zeigen „Nachholspiel“; die Tabelle zählt ein Nachholspiel erst, wenn es gespielt ist.
+
+## Alte Spielstände
+Laufende Saisons behalten ihre Termine. Der Spielausschuss repariert nur künftige Kollisionen (Spiele an Folgetagen) durch Verlegung innerhalb des Wochenendes; die neuen Regeln gelten vollständig ab dem nächsten Saisonwechsel.`,
   },
   {
     id: 'training-camps',

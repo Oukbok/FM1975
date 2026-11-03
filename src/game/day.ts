@@ -3,6 +3,7 @@
 // Jugend, Entwicklung …). Ohne Oberfläche – die Shell reagiert über `ui`.
 // Rückgabe: true = Vorlauf darf weiterlaufen, false = anhalten (Aktion nötig).
 // =============================================================================
+import { fixtureWatchDaily } from './fixtureWatch';
 import { weekdayIdx } from '../engine/trainingPlan';
 import { setEraYear } from '../engine/positions';
 import { snapshotAttributes } from '../engine/history';
@@ -153,6 +154,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
   }
   setDisplayYear(yearOf(today));
   setEraYear(yearOf(today));
+  // Terminwart: Platzbegehung für morgen, Wochenend-Verlegungen (game/fixtureWatch.ts).
+  fixtureWatchDaily(g, today);
   if (ui.onOwnMatchDue) {
     const due = findOwnMatchDue(g);
     if (due && !isPrepared(due)) { ui.onOwnMatchDue(due); return false; }
@@ -171,8 +174,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
           const match = g.fixtures.find((m) => m.id === ev.matchId);
           if (match && match.status === 'scheduled') {
             const md = match.matchday;
-            const playerMatch = g.fixtures.find((m) => m.matchday === md && m.involvesPlayerClub);
-            simulateMatchday(g, md);
+            const playerMatch = g.fixtures.find((m) => m.matchday === md && m.involvesPlayerClub && m.status === 'scheduled' && m.date <= today);
+            simulateMatchday(g, md, today);
             if (playerMatch && playerMatch.result) {
               emitMatchMessage(g, playerMatch);
               ui.onOwnMatch(playerMatch.id); // Textmodus öffnen
