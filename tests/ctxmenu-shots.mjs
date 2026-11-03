@@ -54,7 +54,7 @@ await page.keyboard.press('Escape'); await page.mouse.click(5, 5); await page.wa
 await page.locator('.app-main tbody tr[data-pid]').nth(3).click({ button: 'right' });
 await page.locator('.pcm-item:has-text("Vertrag")').click(); await page.waitForTimeout(500);
 await shot('kader_vertrag');
-await page.locator('.pp-modal .modal-close').click(); await page.waitForTimeout(200);
+await page.locator('.pp2-close').click(); await page.waitForTimeout(200);
 await nav('Spieltag', 'Aufstellung');
 await shot('aufstellung');
 await page.locator('.lu-row[data-pid]').nth(2).click({ button: 'right' }); await page.waitForTimeout(300);
