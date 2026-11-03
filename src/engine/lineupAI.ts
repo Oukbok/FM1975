@@ -61,11 +61,12 @@ export function assignToFormation(
   formation: Formation,
   pool: Player[],
   benchSize = 5,
+  opts: { weight?: (p: Player) => number; benchPool?: Player[] } = {},
 ): LineupAssignment {
   const pairs: { slotId: string; playerId: string; value: number }[] = [];
   for (const slot of formation.slots) {
     for (const p of pool) {
-      pairs.push({ slotId: slot.id, playerId: p.id, value: positionSuitability(p, slot.position) });
+      pairs.push({ slotId: slot.id, playerId: p.id, value: positionSuitability(p, slot.position) * (opts.weight ? opts.weight(p) : 1) });
     }
   }
   pairs.sort((a, b) => b.value - a.value);
@@ -89,7 +90,7 @@ export function assignToFormation(
   // Startelf in Slot-Reihenfolge
   const startingXI = formation.slots.map((s) => lineupMap[s.id]).filter(Boolean) as string[];
   // Ersatzbank: beste verbleibende Spieler
-  const rest = pool.filter((p) => !usedPlayers.has(p.id)).sort((a, b) => b.overall - a.overall);
+  const rest = (opts.benchPool ?? pool).filter((p) => !usedPlayers.has(p.id)).sort((a, b) => b.overall - a.overall);
   const bench = rest.slice(0, benchSize);
   // Ein Ersatztorwart gehört auf die Bank, wenn einer da ist.
   if (benchSize > 0 && !bench.some((p) => p.naturalPosition === 'TW')) {
@@ -189,20 +190,32 @@ export function buildAutoTactics(
 }
 
 /**
+ * Wünsche an die automatische Aufstellung (Versprechen zum ersten Training, game/seasonPromisesGame.ts
+ * `promiseLineupPrefs`): `rest` = möglichst nicht in die Startelf (müde, nach schlechter Note),
+ * `weight` = Faktor auf die Eignung (z. B. Jugend bevorzugen).
+ */
+export interface LineupPrefs { rest?: Set<string>; weight?: (p: Player) => number }
+
+/**
  * „Auto-Aufstellen" für den Manager-Verein: besetzt nur die Startelf/Bank neu
  * (per Eignung) und lässt die bestehenden Taktik-Feineinstellungen unangetastet.
- * Behält die aktuell gewählte Formation bei, sofern vorhanden.
+ * Behält die aktuell gewählte Formation bei, sofern vorhanden. Mit `prefs` hält
+ * sich der Co-Trainer an deine Versprechen, solange genug Spieler übrig bleiben.
  */
 export function autoFillLineup(
   club: Club,
   players: Record<string, Player>,
   tactics: Tactics,
   benchSize = 5,
+  prefs?: LineupPrefs,
 ): Tactics {
   const pool = availablePlayers(club, players);
   // Eigene Slot-Lagen bleiben erhalten und werden nach ihrer Position besetzt.
   const formation = withLayout(getFormation(tactics.formation), tactics.slotLayout);
-  const asg = assignToFormation(formation, pool, benchSize);
+  const fresh = prefs?.rest?.size ? pool.filter((p) => !prefs.rest!.has(p.id)) : pool;
+  // Nur ausweichen, wenn noch eine Elf mit Torwart übrig bleibt.
+  const xiPool = fresh.length >= formation.slots.length && fresh.some((p) => p.naturalPosition === 'TW') ? fresh : pool;
+  const asg = assignToFormation(formation, xiPool, benchSize, { weight: prefs?.weight, benchPool: pool });
   const xiPlayers = asg.startingXI.map((id) => players[id]).filter(Boolean) as Player[];
 
   return {

@@ -17,6 +17,7 @@ import { recordFeeEUR } from '../src/data/transferRecords';
 import { economyScale as econScale } from '../src/engine/economy';
 import { roomAnalysis } from '../src/game/dressingRoomGame';
 import { histModeFromEnv, histSummary, histTrack } from './simHistory';
+import { campAfter, campBefore, campInit, campModeFromEnv, campSeasonReport, campSeasonStart, campSummary } from './simCamp';
 
 const seasons = Number(process.argv[2] ?? 3);
 
@@ -34,6 +35,8 @@ const g: Game = createNewGame({
 // HIST=aus|mittel|stark: Entwicklung der anderen Vereine (game/historicSteer.ts), Bericht tests/simHistory.ts.
 const histMode = histModeFromEnv(process.env.HIST);
 if (histMode) g.historyMode = histMode;
+// CAMP=drills|plain: eigener Verein bucht jedes Trainingslager (tests/simCamp.ts).
+campInit(g, campModeFromEnv(process.env.CAMP));
 
 const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
 function leaguePlayers(game: Game): Player[] {
@@ -428,7 +431,9 @@ for (let s = 0; s < seasons; s++) {
     // Simulation: eigener Verein stellt wie die KI auf (keine eingefrorene Startelf).
     const t = g.clubs[g.managedClubId]?.tactics;
     if (t && t.startingXI?.length) { t.startingXI = []; t.lineupMap = undefined; }
+    campBefore(g);
     processDay(g, HEADLESS_UI);
+    campAfter(g);
     if (process.env.KABINE) kabineTrack(g);
     if (process.env.BAL && /-(11|03)-15$/.test(g.calendar.currentDate)) bal.injSnap.push(leaguePlayers(g).filter((p) => p.injury).length);
     if (++guard > 1000) throw new Error('Saison endet nicht');
@@ -437,8 +442,10 @@ for (let s = 0; s < seasons; s++) {
   if (process.env.AI) aiReport(g);
   if (process.env.KABINE) kabineReport(g);
   if (histMode) histTrack(g);
+  campSeasonReport(g);
   if (process.env.AWARDS) awardsReport(g);
   startNextSeason(g);
+  campSeasonStart(g);
   if (process.env.STAFF) staffReport(g);
 }
 if (process.env.AI && aiTotals.seasons) {
@@ -481,6 +488,7 @@ if (process.env.BAL) {
 }
 if (process.env.YOUTH) youthSummary(g);
 if (histMode) histSummary(g, histMode);
+campSummary();
 if (process.env.TOP) { topSummary(); careerSummary(); }
 console.log(`fertig in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 // Diagnose: Wer ist ≥ 85?

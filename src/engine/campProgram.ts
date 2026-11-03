@@ -9,6 +9,7 @@
 // =============================================================================
 import type { AttributeKey, Player } from '../types';
 import { refreshOverall } from './development';
+import { familiarity, footFactor, rawSuitability } from './positions';
 import type { CampFocus, FocusDef } from './trainingCamp';
 import { ageFactor } from './weeklyTraining';
 
@@ -135,10 +136,18 @@ export function programDef(p: CampProgram): FocusDef {
 // -----------------------------------------------------------------------------
 // Wirkung der Taktik-Inhalte (Rückkehr aus dem Lager, nur eigener Verein)
 // -----------------------------------------------------------------------------
+// Die Inhalte lenken die Entwicklung des Lagers auf bestimmte Attribute: ein +1 kommt
+// sofort, kostet aber Entwicklungspunkte des Lagers (`DRILL_COST` je Punkt Stärke).
+// Mehr als `budget / DRILL_COST` Stärke bringen sie nie – so bleibt ein Lager auch mit
+// vollem Programm etwa beim Wochentraining derselben Tage (Messung tests/simCamp.ts).
 /** Grundchance je Inhalt und Spieler auf +1 in einem trainierten Attribut (9-Tage-Lager, 25 Jahre, ≥ 10 Punkte Luft zum Potenzial). */
 export const DRILL_CHANCE = 0.45;
 /** Schub für den Trainings-Akkumulator (lenkt die nächsten Aufwertungen auf diese Attribute). */
 export const DRILL_FOCUS = 1.5;
+/** Entwicklungspunkte des Lagers je Punkt Stärke aus Taktik-Inhalten (< 1 = kleiner Bonus fürs gezielte Lernen). */
+export const DRILL_COST = 0.8;
+/** Mindest-Gegenwert eines +1 in Stärkepunkten (Standards zählen in der Match-Engine, kaum in der Stärke). */
+export const DRILL_MIN_GAIN = 0.03;
 
 /** Chance auf +1 für einen Spieler (Vorschau im Planer und Rechnung). */
 export function drillChance(p: Player, days: number, luck = 1): number {
@@ -149,14 +158,22 @@ export function drillChance(p: Player, days: number, luck = 1): number {
   return clamp(DRILL_CHANCE * (days / 9) * ageFactor(p.age) * room * luck, 0, 0.6);
 }
 
+/** Stärke auf der eigenen Position ungerundet (wie positionSuitability ohne Rundung). */
+const rawStrength = (p: Player) => rawSuitability(p, p.naturalPosition) * familiarity(p, p.naturalPosition) * footFactor(p, p.naturalPosition);
+
 /**
  * Wendet die Taktik-Inhalte auf einen Spieler an: Akkumulator-Schub auf die Attribute
- * und mit `drillChance` +1 auf eines davon. Liefert die gestiegenen Attribute je Inhalt.
+ * und mit `drillChance` +1 auf eines davon, solange das Budget (Entwicklungspunkte des
+ * Lagers für diesen Spieler) reicht und die Stärke unter dem Potenzial bleibt. Liefert
+ * die gestiegenen Attribute je Inhalt und die verbrauchten Entwicklungspunkte.
  */
-export function applyCampDrills(p: Player, drills: CampDrillId[], days: number, luck: number, rng: () => number): { drill: CampDrillId; attr: AttributeKey }[] {
-  const out: { drill: CampDrillId; attr: AttributeKey }[] = [];
+export function applyCampDrills(p: Player, drills: CampDrillId[], days: number, luck: number, rng: () => number, budget = Infinity): { ups: { drill: CampDrillId; attr: AttributeKey }[]; spent: number } {
+  const ups: { drill: CampDrillId; attr: AttributeKey }[] = [];
+  let spent = 0;
   const keeper = p.naturalPosition === 'TW';
   const acc = (p.development.attributeProgress ??= {});
+  const pot = p.development.potentialAbility;
+  const attrs = p.attributes as unknown as Record<string, number>;
   for (const id of drills) {
     const def = CAMP_DRILLS[id];
     if (!def || !!def.keepers !== keeper) continue;
@@ -168,11 +185,18 @@ export function applyCampDrills(p: Player, drills: CampDrillId[], days: number, 
     let x = rng() * total;
     let attr = keys[keys.length - 1];
     for (const a of keys) { x -= def.attrs[a] ?? 1; if (x <= 0) { attr = a; break; } }
-    (p.attributes as unknown as Record<string, number>)[attr] = Math.min(99, (p.attributes[attr] ?? 50) + 1);
-    out.push({ drill: id, attr });
+    const before = rawStrength(p);
+    attrs[attr] = Math.min(99, (p.attributes[attr] ?? 50) + 1);
+    const after = rawStrength(p);
+    // Auch Attribute ohne Gewicht auf der eigenen Position (Standards) kosten etwas.
+    const cost = Math.max(DRILL_MIN_GAIN, after - before) * DRILL_COST;
+    // Budget erschöpft oder über dem Potenzial: zurücknehmen (der Akkumulator-Schub bleibt).
+    if (spent + cost > budget + 1e-9 || after > pot + 0.5) { attrs[attr] -= 1; continue; }
+    spent += cost;
+    ups.push({ drill: id, attr });
   }
-  if (out.length) refreshOverall(p);
-  return out;
+  if (ups.length) refreshOverall(p);
+  return { ups, spent: Math.round(spent * 1000) / 1000 };
 }
 
 /** Nächster fester Schwerpunkt (gespeichert an der Buchung für ältere Anzeigen). */

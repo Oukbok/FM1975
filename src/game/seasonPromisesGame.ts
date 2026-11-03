@@ -27,6 +27,7 @@ import { moraleJolt } from './moraleJolt';
 import { trustOf } from './promises';
 import { ownFixtures } from './trainingWeek';
 import type { Club, Player } from '../types';
+import type { LineupPrefs } from '../engine/lineupAI';
 import type { Game } from './state';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -230,6 +231,36 @@ function ownLeagueLineups(g: Game, me: string): Lineups {
     out.cards.r += lu.filter((e) => e.card === 'Rot' || e.card === 'Gelb-Rot').length;
   }
   return out;
+}
+
+/**
+ * Was der Co-Trainer beim automatischen Aufstellen beachtet, solange Team-Versprechen
+ * offen sind (engine/lineupAI.ts `autoFillLineup`): Müde (Frische knapp über der
+ * Grenze) und nach einer Note 5 sitzen draußen, Jugend bzw. Routiniers werden
+ * bevorzugt, bei „Rotation“ bekommen die Spieler des letzten Ligaspiels einen Abschlag.
+ */
+export function promiseLineupPrefs(g: Game): LineupPrefs | undefined {
+  const rec = spRecord(g);
+  if (!rec || rec.done || rec.club !== g.managedClubId) return undefined;
+  const open = new Set(rec.picks.filter((p) => !p.r).map((p) => p.id));
+  if (!['fitness', 'leistung', 'jugend', 'erfahrung', 'rotation'].some((id) => open.has(id as SeasonPromiseId))) return undefined;
+  const me = rec.club;
+  const rest = new Set<string>();
+  const club = g.clubs[me];
+  if (open.has('fitness')) for (const pid of club.playerIds) if ((g.players[pid]?.frische ?? 100) < SP_LIMITS.fitFresh + 3) rest.add(pid);
+  const L = open.has('leistung') || open.has('rotation') || open.has('jugend') ? ownLeagueLineups(g, me) : undefined;
+  if (open.has('leistung') && L?.bad.length) for (const pid of L.bad[L.bad.length - 1]) rest.add(pid);
+  const last = new Set(open.has('rotation') && L?.ids.length ? L.ids[L.ids.length - 1] : []);
+  // Jugend: stärkerer Bonus, solange der Anteil unter dem Ziel liegt.
+  let youth = 1;
+  if (open.has('jugend')) {
+    const all = L?.ids.reduce((a, x) => a + x.length, 0) ?? 0;
+    const y = L?.ids.reduce((a, x) => a + x.filter((pid) => (g.players[pid]?.age ?? 99) <= 21).length, 0) ?? 0;
+    youth = all && y / all >= SP_LIMITS.youthShare + 0.03 ? 1.04 : 1.12;
+  }
+  const vets = new Set(open.has('erfahrung') ? rec.base.vets : []);
+  const weight = (p: Player) => (p.age <= 21 ? youth : 1) * (vets.has(p.id) ? 1.06 : 1) * (last.has(p.id) ? 0.95 : 1);
+  return { rest, weight };
 }
 
 export interface SPStatus { s: 'kept' | 'broken' | 'good' | 'risk' | 'open'; text: string }
