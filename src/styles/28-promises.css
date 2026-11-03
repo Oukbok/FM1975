@@ -4,7 +4,9 @@
    Ruhig: neutrale Karten, Bernstein nur für Auswahl und Hauptknopf.
    ============================================================================= */
 
-.modal.modal-xl.ft-modal { max-width: 1560px; height: auto; max-height: 94%; }
+.modal.modal-xl.ft-modal { max-width: 1560px; height: 90%; max-height: 94%; }
+/* Feste Größe: Auswählen darf das Fenster nicht wachsen lassen (Wunsch Pascal) – Inhalt scrollt intern. */
+.ft-modal .ft-body { flex: 1 1 auto; min-height: 0; overflow: auto; }
 .ft-head { display: flex; align-items: center; gap: 16px; }
 .ft-head h2 { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
 .ft-head-crest { flex: 0 0 auto; display: inline-flex; }
