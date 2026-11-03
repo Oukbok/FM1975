@@ -111,6 +111,49 @@
   --comp-cwc: #3a3f7c;
   --comp-uefa: #2b5877;
 
+  /* --- Trainingslager-Planer (28-camp2.css): Ortsbild-Zeichnung (gedämpft, kühl) und
+     „aufgeklebte“ Papierzettel (kühles Weiß, kein Sepia; Klebestreifen halbtransparent) --- */
+  --ls-sky-0: #4f6f93;
+  --ls-sky-1: #a9bccd;
+  --ls-sky-grey-0: #6b7886;
+  --ls-sky-grey-1: #c3ccd5;
+  --ls-sun: #eef0e6;
+  --ls-cloud: rgba(240, 244, 248, 0.55);
+  --ls-far: #5d7489;
+  --ls-mid: #3f5a4d;
+  --ls-tree: #2f4a3c;
+  --ls-trunk: #3a3f45;
+  --ls-grass: #557a5a;
+  --ls-grass-dry: #7d8d6a;
+  --ls-rock: #77828e;
+  --ls-snow: #e7edf3;
+  --ls-snow-2: #cfd8e1;
+  --ls-sea: #3f6b88;
+  --ls-sea-line: rgba(230, 238, 245, 0.45);
+  --ls-sand: #b9b6a6;
+  --ls-sand-2: #a4a293;
+  --ls-house: #cdd4dc;
+  --ls-house-white: #e6eaee;
+  --ls-roof: #5b636d;
+  --ls-win: #44505c;
+  --ls-tower: #8a96a3;
+  --ls-pitch: #4e7b52;
+  --ls-line: rgba(240, 246, 242, 0.8);
+  --paper: #e9edf1;
+  --paper-2: #d7dde3;
+  --paper-ink: #39424d;
+  --paper-ink-2: #6b7581;
+  --paper-sea: #c8d5df;
+  --paper-land: #9fb09c;
+  --paper-border: #f4f6f8;
+  --paper-road: #f7f8f9;
+  --paper-road-edge: #aab3bd;
+  --paper-pitch: #8fb08f;
+  --paper-turf: #6f9479;
+  --paper-water: #b7cbd9;
+  --tape: rgba(225, 232, 238, 0.62);
+  --tape-edge: rgba(255, 255, 255, 0.5);
+
   /* --- Struktur --- */
   /* Rasen in Draufsichten (Kartenverkauf) – gleiche Töne wie das Aufstellungsfeld */
   --turf: #1d3a2d;

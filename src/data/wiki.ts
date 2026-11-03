@@ -3002,7 +3002,7 @@ freigeschaltet, wie sie historisch aufkamen – und zunächst nur für Vereine, 
 ## Planen
 Jedes Fenster hat seinen eigenen Knopf (**Sommerlager planen** bzw. **Winterlager planen** auf der Karte des Fensters; der
 große Knopf rechts plant das nächste freie Fenster). Im Planer selbst wechselst du nicht zwischen Sommer und Winter. Er führt
-in drei Schritten; rechts zeigen **Wirkungsbalken** (wie in der Taktik) bei jeder Wahl, was das Lager bringt: Fitness,
+in vier Schritten (Reiter oben); rechts zeigen **Wirkungsbalken** (wie in der Taktik) bei jeder Wahl, was das Lager bringt: Fitness,
 Taktik & Form, Teamgeist, Erholung, Verletzungsrisiko und Kosten im Verhältnis zur Kasse. Jeder Balken zeigt eine **Spanne**
 (heller Bereich) und den Erwartungswert (Strich): Fitness und Form schwanken mit dem Wetter (bei Ausfallrisiko r zwischen
 1 − 0,6·r und 1 + 0,3·r der Erwartung), der Teamgeist mit dem Zufall in der Reisegruppe, die Verletzten zeigen die Zahl, die in
@@ -3016,8 +3016,11 @@ Taktik & Form, Teamgeist, Erholung, Verletzungsrisiko und Kosten im Verhältnis 
    und **Schneeflocke**, ob der Ort im Sommer, im Winter oder in beiden Fenstern gebucht werden kann. Überfahren zeigt eine
    Kurzinfo (Ort, Jahreszeiten, Klima im Monat), ein Klick **Vor- und Nachteile** (Klima im gewählten Monat, Reise und Jetlag,
    Anlage, Höhe, Ablenkung, Sponsor- und Image-Folgen, andere Vereine vor Ort) und die Unterkünfte mit Gesamtpreis.
-3. **Reisegruppe:** wer mitfährt; beide Listen (Profis und Jugend) lassen sich über die Spaltenköpfe sortieren. Die
-   **Schwerpunkte** tragen dieselben Symbole wie die Bausteine im Trainingsplan. Verletzte bleiben zunächst zur Reha daheim (mit Schwerpunkt Regeneration lohnt es, sie
+3. **Trainingsprogramm:** links die Karte **Trainingsschwerpunkt** mit der **Punkteverteilung** (siehe unten), den
+   **Taktik-Inhalten** und den Testspielen; rechts der Ort groß im Bild – mit aufgeklebter **Länderkarte** (Markierung, Heimatort
+   als Quadrat), einer **Skizze der Anlage** (Plätze, Halle, Kunstrasen, Unterkunft, Laufstrecke), **Entfernung (Luftlinie)** von
+   deiner Stadt und der **voraussichtlichen Tageshöchsttemperatur** im Monat (Klimatabelle, nur Anzeige).
+4. **Reisegruppe:** wer mitfährt; beide Listen (Profis und Jugend) lassen sich über die Spaltenköpfe sortieren. Verletzte bleiben zunächst zur Reha daheim (mit viel Regeneration lohnt es, sie
    mitzunehmen). Bis zu **6 Spieler aus B- und A-Jugend** können mit – sie lernen im Training mit den Profis besonders viel
    (Entwicklung ×1,3, hohe Moral-Chance). **Gesunde Profis, die daheim bleiben, sind zu 40 % enttäuscht** (Moral −1).
    Die Kosten richten sich nach der Größe der Reisegruppe (Spieler plus rund neun Betreuer); mindestens 11 Spieler.
@@ -3037,7 +3040,33 @@ Das **Wetter** kommt aus einer Klimatabelle je Monat: Januar in Mitteleuropa und
 gefrorenen Plätzen, Mittelmeer und Kanaren mild, die Golfstaaten im Winter ideal. **Rummel** (Zaungäste, Presse, Berater) kostet
 etwas Trainingszeit; heimatnahe Lager bringen dafür Fan-Stimmung.
 
-## Trainingsschwerpunkt
+## Trainingsschwerpunkt: Punkteverteilung
+Du verteilst **21 Punkte** auf sieben Bereiche (0–8 je Bereich); gebucht werden kann erst, wenn alle Punkte verteilt sind.
+**3 Punkte je Bereich = Ausgewogen.** Jeder Punkt über bzw. unter 3 verschiebt die Faktoren der Lager-Rechnung (Abweichung
+d = (Punkte − 3) / 21, also −0,14 … +0,24):
+
+| Bereich | Wirkung je Punkt mehr |
+|---|---|
+| Kondition | Fitness (×1,3·d), Verletzungen (×0,9·d), Frische −26·d, Moral etwas weniger; Laufstrecken wirken ab 3 Punkten |
+| Technik & Spielformen | Entwicklungspunkte (×1,8·d), etwas Form |
+| Taktik | Form (×1,2·d), etwas Entwicklung; die Punkte **bezahlen die Taktik-Inhalte** |
+| Disziplin & Kopf | weniger Disziplinverstöße (×−2,2·d), mehr Professionalität bei Abgeschiedenheit (×3·d) |
+| Mannschaftsgeist | Moral-Chance (×3,6·d), Zufriedenheit +12·d, etwas weniger Fitness, Kosten etwas höher |
+| Regeneration | Verletzungen (×−2,2·d), Frische +50·d, mitreisende Verletzte heilen schneller (Anteil 3·d der Lagertage), weniger Fitness, Kosten etwas höher |
+| Jugendintegration | Spieler bis 21: Entwicklung bis ×2,8; ab 6 Punkten mehr Testspiel-Minuten und Moral für die Jungen |
+
+Die **Vorlagen** (Ausgewogen, Kondition, Taktik, Mannschaftsgeist, Regeneration, Jugendintegration) setzen eine passende
+Verteilung; sie treffen ungefähr die früheren festen Schwerpunkte (Tabelle unten). Die Wirkungsbalken rechts folgen jeder Änderung.
+
+**Taktik-Inhalte** (Kosten in Klammern, zusammen höchstens so viel wie auf Taktik liegt): Abwehrverhalten (2), Pressing (3),
+Abseitsfalle (2), Konterspiel (2), Spielaufbau (2), Kurzpassspiel (1), Lange Bälle (1), Flanken (2), Ecken (1), Freistöße (1),
+Elfmeter (1), Torwartspiel (2, nur Torhüter). Jeder Inhalt trainiert seine Attribute (z. B. Ecken: Eckbälle, Kopfball): Bei der
+Rückkehr bekommt jeder gesunde Mitreisende mit der Chance 0,2 × Tage/9 × Altersfaktor × Luft nach oben × Wetterglück
+(höchstens 60 %) **+1 auf eines dieser Attribute**; Spieler ohne Luft zum Potenzial lernen nichts mehr. Zusätzlich bekommen
+diese Attribute bei den nächsten Aufwertungen Vorrang. Die Bilanz nennt je Inhalt, wie viele Spieler sich verbessert haben.
+
+Feste Schwerpunkte (KI-Vereine und Lager aus älteren Spielständen):
+
 | Schwerpunkt | Wirkung |
 |---|---|
 | Ausgewogen | üblicher Mix |

@@ -22,6 +22,7 @@ import {
 import type { Club } from '../types';
 import { fmtDM, fmtDay } from '../ui/format';
 import { campGrade } from '../engine/campPlan';
+import { CAMP_DRILLS, CampProgram, applyCampDrills, programError, programLabel } from '../engine/campProgram';
 import { buildCampResult, campGroup, playerDelta, snap, spiritOf } from './campResult';
 import { setOwnIndoorDecision } from './indoorGame';
 import { leagueClubs } from './season';
@@ -72,6 +73,8 @@ export function campObligationMet(g: Game, clubId: string, s: CampSeason): boole
 // -----------------------------------------------------------------------------
 export interface CampChoice {
   lodgingId?: string; focus?: CampFocus;
+  /** Trainingsprogramm (Punkte + Taktik-Inhalte); ersetzt `focus` in der Rechnung. */
+  program?: CampProgram;
   /** Reisegruppe aus dem Planer (Profis / eingeladene Jugendspieler); fehlt = alle Profis. */
   squad?: string[]; youth?: string[];
 }
@@ -116,7 +119,8 @@ export function quoteCamp(g: Game, destId: string, s: CampSeason, start: string,
   if (!l) return { ...q, error: 'Diese Unterkunft ist in diesem Jahr nicht buchbar.' };
   const heads = opt.squad ? opt.squad.length + (opt.youth?.length ?? 0) : undefined;
   if (heads != null && heads < CAMP_MIN_GROUP) return { ...q, error: `Mindestens ${CAMP_MIN_GROUP} Spieler müssen mitfahren.` };
-  q.costBase = campCostBase(d, l, days, club.reputation, opt.focus ?? 'ausgewogen', heads);
+  if (opt.program) { const pe = programError(opt.program); if (pe) return { ...q, error: pe }; }
+  q.costBase = campCostBase(d, l, days, club.reputation, opt.focus ?? 'ausgewogen', heads, opt.program);
   const dc = checkCampDates(g, s, start, days);
   q.surcharge = dc.surcharge;
   q.cost = Math.round(q.costBase * economyScale(yearOf(start)) * (q.surcharge ? 1 + CAMP_SHORT_NOTICE_SURCHARGE : 1));
@@ -142,6 +146,7 @@ export function bookCamp(g: Game, destId: string, s: CampSeason, start: string, 
   book(club.finances, today, -q.cost, 'training_facilities', `Trainingslager ${d.name} (Buchung)`, true);
   campState(g).bookings.push({
     id: `camp-${g.season}-${s}`, destId, lodgingId: l.id, focus, season: s, start, end: q.end,
+    ...(opt.program ? { program: { pts: { ...opt.program.pts }, drills: [...opt.program.drills] } } : {}),
     tests: clamp(Math.round(tests), 0, 4), cost: q.cost, bookedOn: today, done: false,
     ...(opt.squad ? { squad: [...opt.squad], youth: [...(opt.youth ?? [])] } : {}),
   });
@@ -150,13 +155,19 @@ export function bookCamp(g: Game, destId: string, s: CampSeason, start: string, 
     subject: `Trainingslager gebucht: ${d.name}`,
     shortText: `${l.name}, ${fmtDay(start)} – ${fmtDay(q.end)}, ${fmtDM(q.cost)}.`,
     bodyText: `Unterkunft, Plätze und Reise sind gebucht: ${l.name} in ${d.place} (${d.country}), ${fmtDay(start)} bis ${fmtDay(q.end)}.\n`
-      + `Schwerpunkt: ${CAMP_FOCUS[focus].label}. Testspiele vor Ort: ${tests}.\n`
+      + `Schwerpunkt: ${campFocusLabel({ focus, program: opt.program })}. Testspiele vor Ort: ${tests}.\n`
+      + (opt.program?.drills.length ? `Taktik-Inhalte: ${opt.program.drills.map((x) => CAMP_DRILLS[x].label).join(', ')}.\n` : '')
       + (opt.squad ? `Reisegruppe: ${opt.squad.length} Profis${opt.youth?.length ? ` und ${opt.youth.length} Jugendspieler` : ''}.\n` : '')
       + `Kosten: ${fmtDM(q.cost)}${q.surcharge ? ' (inkl. Aufschlag für kurzfristige Buchung)' : ''}.\n`
       + (q.indoorConflict?.length ? `\nOffene Hallen-Einladungen im Zeitraum wurden abgesagt: ${q.indoorConflict.join(', ')}.\n` : '')
       + `\nEine Stornierung bringt nur noch ${Math.round(CAMP_REFUND * 100)} % zurück.`,
   }));
   return null;
+}
+
+/** Anzeigename des Schwerpunkts einer Buchung bzw. eines Verlaufseintrags. */
+export function campFocusLabel(b: { focus?: CampFocus; program?: CampProgram }): string {
+  return b.program ? programLabel(b.program) : CAMP_FOCUS[b.focus ?? 'ausgewogen'].label;
 }
 
 export function cancelCamp(g: Game, id: string): string {
@@ -250,7 +261,7 @@ function arrival(g: Game, b: CampBooking, today: string): void {
   const d = campDestination(b.destId);
   if (!d) return;
   const l = campLodging(b.destId, b.lodgingId);
-  const f = CAMP_FOCUS[b.focus ?? 'ausgewogen'];
+  const f = b.program ? { label: campFocusLabel(b), text: 'Trainingsprogramm nach deiner Punkteverteilung.' } : CAMP_FOCUS[b.focus ?? 'ausgewogen'];
   pushMessage(g.messages, makeMessage({
     date: today, category: 'training', from: 'Teammanager',
     subject: `Ankunft im Trainingslager: ${d.place}`,
@@ -270,7 +281,9 @@ function finishCamp(g: Game, b: CampBooking, today: string): void {
   if (!l) return;
   const focus = b.focus ?? 'ausgewogen';
   const days = daysBetween(b.start, b.end).length;
-  const o = campOutlook({ d, l, focus, season: b.season, days, tests: b.tests, year, rep: club.reputation, start: b.start });
+  const o = campOutlook({ d, l, focus, season: b.season, days, tests: b.tests, year, rep: club.reputation, start: b.start, program: b.program });
+  const youthFocus = b.program ? b.program.pts.jugend >= 6 : focus === 'jugend';
+  const drillUps = new Map<string, number>();
   const rng = mulberry32(hashStr(`camp|${b.id}|${today}`));
   // Wetter dieses Mal: Glück oder Pech gegenüber dem Mittel (Spanne wie in der Vorschau).
   const luck = 1 - o.weatherRisk * 0.6 + rng() * o.weatherRisk * 0.9;
@@ -303,8 +316,10 @@ function finishCamp(g: Game, b: CampBooking, today: string): void {
     p.form = clamp(p.form + (o.form + o.travelForm) * luck - o.travelForm, 0, 100);
     // Eingeladene Jugendspieler lernen im Training mit den Profis besonders viel.
     addDevPoints(p, 'lager', (young ? o.devYouth : o.dev) * luck * (invited ? 1.3 : 1));
-    if (b.tests) dv.recentMinutes = (dv.recentMinutes ?? 0) + b.tests * (young && (focus === 'jugend' || invited) ? 60 : 40);
-    const mChance = invited ? Math.min(0.9, o.morale * 1.6) : young && focus === 'jugend' ? Math.min(0.9, o.morale * 1.5) : o.morale;
+    if (b.tests) dv.recentMinutes = (dv.recentMinutes ?? 0) + b.tests * (young && (youthFocus || invited) ? 60 : 40);
+    const mChance = invited ? Math.min(0.9, o.morale * 1.6) : young && youthFocus ? Math.min(0.9, o.morale * 1.5) : o.morale;
+    // Taktik-Inhalte: gezielte Attribute (Chance auf +1, Akkumulator-Schub).
+    if (b.program?.drills.length) for (const x of applyCampDrills(p, b.program.drills, days, luck, rng)) drillUps.set(x.drill, (drillUps.get(x.drill) ?? 0) + 1);
     if (rng() < mChance) { p.morale = bumpMorale(p.morale, 1); moraleUp++; }
     if (o.starGrumble && p.age >= 28 && rng() < o.starGrumble) { p.morale = bumpMorale(p.morale, -1); grumble.push(p.fullName); }
     if (!invited) p.contract.satisfaction = clamp((p.contract.satisfaction ?? 60) + o.satisfaction, 0, 100);
@@ -347,24 +362,28 @@ function finishCamp(g: Game, b: CampBooking, today: string): void {
     playerDelta(p, before.get(p.id)!, group.youth.includes(p), injuredBy.get(p.id), incidents.includes(p.fullName)));
   b.result = buildCampResult(g, { b, luck, group, before, spiritBefore, deltas, healed, income, sponsor, fans: fan });
   if (b.delayed) b.result.altitudeDue = b.delayed.due;
+  if (b.program?.drills.length) b.result.drills = b.program.drills.map((id) => ({ id, label: CAMP_DRILLS[id].label, up: drillUps.get(id) ?? 0 }));
   const fitTxt = (o.fitness * luck).toFixed(1);
   const formV = (o.form + o.travelForm) * luck - o.travelForm;
-  const note = `${d.name} (${l.name}, ${CAMP_FOCUS[focus].label}): Fitness +${fitTxt}, Form ${formV >= 0 ? '+' : ''}${formV.toFixed(1)}, ${injured.length} verletzt${incidents.length ? `, ${incidents.length} Disziplinverstöße` : ''}`;
+  const focusTxt = campFocusLabel(b);
+  const note = `${d.name} (${l.name}, ${focusTxt}): Fitness +${fitTxt}, Form ${formV >= 0 ? '+' : ''}${formV.toFixed(1)}, ${injured.length} verletzt${incidents.length ? `, ${incidents.length} Disziplinverstöße` : ''}`;
   b.report = note;
   campState(g).history.push({
     season: g.season, destId: d.id, campSeason: b.season, note,
     bookingId: b.id, start: b.start, end: b.end, lodgingId: l.id, focus, result: b.result,
+    ...(b.program ? { program: b.program } : {}),
   });
   if (campState(g).history.length > 60) campState(g).history.shift();
   pushMessage(g.messages, makeMessage({
     date: today, category: 'training', from: 'Trainerstab',
     subject: `Zurück aus dem Trainingslager (${d.place})`,
     shortText: note,
-    bodyText: `Bilanz des Trainingslagers in ${d.place} (${l.name}, Schwerpunkt ${CAMP_FOCUS[focus].label}):\n\n`
+    bodyText: `Bilanz des Trainingslagers in ${d.place} (${l.name}, Schwerpunkt ${focusTxt}):\n\n`
       + `• Gesamteindruck: ${campGrade(b.result.score)} (${b.result.score} von 100)\n`
       + `• Kondition: +${fitTxt} Fitness je Spieler${luck < 0.95 ? ' (Wetter hat Einheiten gekostet)' : luck > 1.05 ? ' (bestes Wetter)' : ''}\n`
       + (o.altitudeFitness > 0 ? `• Höhentraining (${o.altitude} m): weitere +${(o.altitudeFitness * luck).toFixed(1)} Fitness in etwa ${CAMP_ALTITUDE_DELAY} Tagen\n` : '')
-      + `• Taktik & Technik: zusätzliche Entwicklungsschritte${focus === 'jugend' || group.youth.length ? ' – besonders für die Jungen' : ''}; ${moraleUp} Spieler mit besserer Stimmung\n`
+      + (b.result.drills?.length ? `• Taktik-Inhalte: ${b.result.drills.map((x) => `${x.label} (${x.up} Spieler verbessert)`).join(', ')}\n` : '')
+      + `• Taktik & Technik: zusätzliche Entwicklungsschritte${youthFocus || group.youth.length ? ' – besonders für die Jungen' : ''}; ${moraleUp} Spieler mit besserer Stimmung\n`
       + (grumble.length ? `• Unmut über die einfache Unterkunft: ${grumble.join(', ')}\n` : '')
       + (leftOut.length ? `• Enttäuscht, weil sie zu Hause bleiben mussten: ${leftOut.join(', ')}\n` : '')
       + (incidents.length ? `• Disziplin: Zapfenstreich verpasst – ${incidents.join(', ')}\n` : steadier ? `• Disziplin: Die Abgeschiedenheit hat ${steadier} Spielern gutgetan.\n` : '')

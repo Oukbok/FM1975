@@ -3,10 +3,10 @@ import { campDestination } from '../../data/campDestinations';
 import { campLodging, defaultLodging } from '../../data/campLodgings';
 import { campEffectBars } from '../../engine/campPlan';
 import { economyScale, yearOf } from '../../engine/economy';
-import { CAMP_FOCUS, campOutlook, campYear } from '../../engine/trainingCamp';
+import { campOutlook, campYear } from '../../engine/trainingCamp';
 import { campGroup } from '../../game/campResult';
 import { Game } from '../../game/state';
-import { campObligation, campWindow, cancelCamp, ownBooking } from '../../game/trainingCampGame';
+import { campFocusLabel, campObligation, campWindow, cancelCamp, ownBooking } from '../../game/trainingCampGame';
 import { CampBooking, CampSeason, campState, daysBetween } from '../../game/winterShared';
 import { DashBox, DashPage, KV } from '../../ui/DashPage';
 import { fmtDM, fmtDay } from '../../ui/format';
@@ -51,7 +51,7 @@ function BookingCard({ g, s, b, onCancel, onPlan, blocked }: {
   const l = campLodging(b.destId, b.lodgingId) ?? defaultLodging(b.destId, year);
   const state = b.done ? 'zurück' : b.start <= today ? 'läuft' : 'geplant';
   const grp = campGroup(g, b);
-  const o = d && l ? campOutlook({ d, l, focus: b.focus ?? 'ausgewogen', season: s, days: daysBetween(b.start, b.end).length, tests: b.tests, year, rep: club.reputation, start: b.start }) : null;
+  const o = d && l ? campOutlook({ d, l, focus: b.focus ?? 'ausgewogen', season: s, days: daysBetween(b.start, b.end).length, tests: b.tests, year, rep: club.reputation, start: b.start, program: b.program }) : null;
   const scale = economyScale(yearOf(b.start));
   const bars = o ? campEffectBars({
     o, travelers: grp.pros.filter((p) => !p.injury).length, youth: grp.youth.length, stayed: grp.stayed.filter((p) => !p.injury && p.age > 21).length,
@@ -64,7 +64,7 @@ function BookingCard({ g, s, b, onCancel, onPlan, blocked }: {
       <div className="cp-card-sub">{d?.place} · {fmtDay(b.start)} – {fmtDay(b.end)}</div>
       <div className="cp-card-kv">
         <span><em>Unterkunft</em>{l?.name ?? 'Standard'}</span>
-        <span><em>Schwerpunkt · Tests</em>{CAMP_FOCUS[b.focus ?? 'ausgewogen'].label} · {b.tests}</span>
+        <span><em>Schwerpunkt · Tests</em>{campFocusLabel(b)} · {b.tests}</span>
         <span><em>Reisegruppe</em>{grp.pros.length} Profis{grp.youth.length ? ` + ${grp.youth.length} Jugend` : ''}</span>
         <span><em>Kosten</em>{fmtDM(b.cost)}</span>
       </div>

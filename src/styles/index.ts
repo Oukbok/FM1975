@@ -40,6 +40,7 @@ import './28-kabine.css';
 import './28-training.css';
 import './28-icons.css';
 import './28-camp.css';
+import './28-camp2.css';
 import './28-youthcomp.css';
 import './28-euro2.css';
 import './28-status2.css';

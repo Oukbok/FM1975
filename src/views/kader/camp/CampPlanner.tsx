@@ -1,6 +1,7 @@
 // =============================================================================
-// TRAININGSLAGER-PLANER – großes Popup in drei Schritten: (1) Zeitraum, (2) Ziel auf
-// der Karte + Unterkunft, (3) Reisegruppe + Schwerpunkt. Rechts durchgehend die
+// TRAININGSLAGER-PLANER – großes Popup in vier Reitern: (1) Zeitraum, (2) Ziel auf
+// der Karte + Unterkunft, (3) Trainingsprogramm (Punkteverteilung, Taktik-Inhalte, Ort
+// groß mit Länderkarte und Anlagen-Skizze – Vorbild EA FM), (4) Reisegruppe. Rechts durchgehend die
 // Wirkungsbalken (wie in der Taktik), die sich bei jeder Wahl ändern. „Buchen“ legt
 // die Buchung an (game/trainingCampGame.ts `bookCamp`). Der Planer gilt genau einem
 // Fenster (Sommer oder Winter) – gewählt über den Knopf je Fenster auf der Seite.
@@ -10,9 +11,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { campDestination } from '../../../data/campDestinations';
 import { lodgingsFor } from '../../../data/campLodgings';
 import { CampMapViewId, campEffectBars, destinationProsCons, homeView } from '../../../engine/campPlan';
+import { CampProgram, presetProgram, programError, programFocus, programLabel } from '../../../engine/campProgram';
+import { cityGeo } from '../../../data/prematch/cityGeo';
 import { CalendarEngine } from '../../../engine/calendar';
 import { economyScale, yearOf } from '../../../engine/economy';
-import { CAMP_FOCUS, CampFocus, campMonth, campOutlook, campYear, destinationsFor } from '../../../engine/trainingCamp';
+import { campMonth, campOutlook, campYear, destinationsFor } from '../../../engine/trainingCamp';
 import { defaultCampSquad, invitableYouth } from '../../../game/campResult';
 import type { Game } from '../../../game/state';
 import { CAMP_MIN_GROUP, bookCamp, campObligation, campWindow, checkCampDates, quoteCamp } from '../../../game/trainingCampGame';
@@ -24,8 +27,11 @@ import { DestPanel } from './DestPanel';
 import { EffectBars } from './EffectBars';
 import { PlanDates } from './PlanDates';
 import { PlanSquad } from './PlanSquad';
+import { CampShowcase } from './CampShowcase';
+import { PlanProgram } from './PlanProgram';
 
-const STEPS = ['Zeitraum', 'Ziel & Unterkunft', 'Reisegruppe'];
+const STEPS = ['Zeitraum', 'Ziel & Unterkunft', 'Trainingsprogramm', 'Reisegruppe'];
+const LAST = STEPS.length - 1;
 
 /** Kann für dieses Fenster noch geplant werden? Liefert null oder den Grund. */
 export function planBlocked(g: Game, s: CampSeason, booked: boolean): string | null {
@@ -46,7 +52,7 @@ export function CampPlanner({ g, season, onClose, onBooked }: {
   const [destId, setDestId] = useState<string | undefined>(() => campObligation(g, club, season));
   const [lodgingId, setLodgingId] = useState<string | undefined>();
   const [view, setView] = useState<CampMapViewId>(() => homeView(campDestination(campObligation(g, club, season) ?? '')));
-  const [focus, setFocus] = useState<CampFocus>('ausgewogen');
+  const [program, setProgram] = useState<CampProgram>(() => presetProgram('ausgewogen'));
   const [tests, setTests] = useState(2);
   const [squad, setSquad] = useState<Set<string>>(() => new Set(defaultCampSquad(g)));
   const [invited, setInvited] = useState<Set<string>>(() => new Set());
@@ -81,12 +87,13 @@ export function CampPlanner({ g, season, onClose, onBooked }: {
   const youth = invitableYouth(g);
   const squadIds = pros.filter((p) => squad.has(p.id)).map((p) => p.id);
   const youthIds = youth.filter((p) => invited.has(p.id)).map((p) => p.id);
-  const choice = { lodgingId: lodging?.id, focus, squad: squadIds, youth: youthIds };
+  const focus = programFocus(program);
+  const choice = { lodgingId: lodging?.id, focus, program, squad: squadIds, youth: youthIds };
   const scale = economyScale(yearOf(start || w.from));
   const month = campMonth(start || undefined, season);
   const quote = dest && lodging ? quoteCamp(g, dest.id, season, start || w.from, days, choice) : null;
   const costOf = (l: typeof lodging) => (dest && l ? quoteCamp(g, dest.id, season, start || w.from, days, { ...choice, lodgingId: l.id }).cost : 0);
-  const o = dest && lodging && status?.ok ? campOutlook({ d: dest, l: lodging, focus, season, days, tests, year, rep: club.reputation, start: start || undefined }) : null;
+  const o = dest && lodging && status?.ok ? campOutlook({ d: dest, l: lodging, focus, season, days, tests, year, rep: club.reputation, start: start || undefined, program }) : null;
   const income = o ? Math.round((o.testIncome + o.sponsorBase) * scale) : 0;
   const healthyAlong = pros.filter((p) => squad.has(p.id) && !p.injury).length;
   const stayed = pros.filter((p) => !squad.has(p.id) && !p.injury && p.age > 21).length;
@@ -104,10 +111,11 @@ export function CampPlanner({ g, season, onClose, onBooked }: {
     { label: 'Ziel', ok: !!dest && !!status?.ok, v: dest ? dest.name : 'auf der Karte wählen' },
     { label: 'Unterkunft', ok: !!lodging && !!status?.ok, v: lodging && status?.ok ? lodging.name : '–' },
     { label: 'Reisegruppe', ok: group >= CAMP_MIN_GROUP, v: `${squadIds.length} Profis${youthIds.length ? ` + ${youthIds.length} Jugend` : ''}` },
-    { label: 'Schwerpunkt', ok: true, v: `${CAMP_FOCUS[focus].label}, ${tests} Tests` },
+    { label: 'Programm', ok: !programError(program), v: `${programLabel(program)}${program.drills.length ? ` + ${program.drills.length} Inhalte` : ''}, ${tests} Tests` },
   ];
   const canBook = checks.every((c) => c.ok) && !!quote && !quote.error && club.finances.balance >= quote.cost;
 
+  const home = cityGeo(club.city, 'Deutschland')?.geo ?? null;
   const okCount = opts.filter((x) => x.status.ok).length;
   const pickDate = (d: string) => { setStart(d); setErr(null); setStep(1); };
   const pick = (id: string) => { setDestId(id); setLodgingId(undefined); setErr(null); };
@@ -147,8 +155,15 @@ export function CampPlanner({ g, season, onClose, onBooked }: {
                   onLodging={setLodgingId} pc={pc} costOf={costOf} aiCount={dest ? aiCount.get(dest.id) ?? 0 : 0} />
               </div>
             )}
-            {step === 2 && <PlanSquad pros={pros} youth={youth} squad={squad} invited={invited} setSquad={setSquad} setInvited={setInvited}
-              focus={focus} setFocus={setFocus} tests={tests} setTests={setTests} />}
+            {step === 2 && (
+              <div className="cp-prog">
+                <PlanProgram program={program} setProgram={setProgram} tests={tests} setTests={setTests} days={days}
+                  travelers={[...pros.filter((p) => squad.has(p.id) && !p.injury), ...youth.filter((p) => invited.has(p.id))]} />
+                <CampShowcase d={dest} l={lodging} locked={status && !status.ok ? status.reason : undefined} year={year} month={month}
+                  home={home} homeName={club.city || club.name} onPickDest={() => setStep(1)} />
+              </div>
+            )}
+            {step === 3 && <PlanSquad pros={pros} youth={youth} squad={squad} invited={invited} setSquad={setSquad} setInvited={setInvited} />}
           </main>
           <aside className="cp-side">
             <div className="cp-sec">Erwartete Wirkung</div>
@@ -167,11 +182,11 @@ export function CampPlanner({ g, season, onClose, onBooked }: {
           </aside>
         </div>
         <footer className="mx-foot cp-foot">
-          <span className={`cp-foot-msg ${err || (quote?.error && step === 2) ? 'bad' : ''}`}>
-            {err ?? (step === 2 && quote?.error ? quote.error : step === 0 ? 'Pflichtspiele und zugesagte Hallenturniere sind gesperrt.' : step === 1 ? `${okCount} Ziele kommen für ${fmtDay(start || w.from)} – ${fmtDay(CalendarEngine.addDays(start || w.from, days - 1))} in Frage; gesperrte Orte sind ausgeblendet.` : '')}
+          <span className={`cp-foot-msg ${err || (quote?.error && step >= 2) ? 'bad' : ''}`}>
+            {err ?? (step >= 2 && quote?.error ? quote.error : step === 0 ? 'Pflichtspiele und zugesagte Hallenturniere sind gesperrt.' : step === 1 ? `${okCount} Ziele kommen für ${fmtDay(start || w.from)} – ${fmtDay(CalendarEngine.addDays(start || w.from, days - 1))} in Frage; gesperrte Orte sind ausgeblendet.` : '')}
           </span>
           {step > 0 && <button className="btn btn-ghost" onClick={() => setStep(step - 1)}>Zurück</button>}
-          {step < 2 && <button className="btn btn-ghost" onClick={() => setStep(step + 1)}>Weiter</button>}
+          {step < LAST && <button className="btn btn-ghost" onClick={() => setStep(step + 1)}>Weiter</button>}
           <button className="btn btn-primary" disabled={!canBook} onClick={doBook}>Trainingslager buchen</button>
         </footer>
       </div>

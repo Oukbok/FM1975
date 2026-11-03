@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import { campDestination } from '../../../data/campDestinations';
 import { campLodging } from '../../../data/campLodgings';
 import { campGrade } from '../../../engine/campPlan';
-import { CAMP_FOCUS } from '../../../engine/trainingCamp';
+import { campFocusLabel } from '../../../game/trainingCampGame';
 import type { Game } from '../../../game/state';
 import { CampPlayerDelta, campState } from '../../../game/winterShared';
 import { fmtDM, fmtDay } from '../../../ui/format';
@@ -75,7 +75,7 @@ export function CampRecap({ g, bookingId, onClose }: { g: Game; bookingId: strin
       <div className="cr-top">
         <div className="cr-kicker">Trainingslager beendet · {fmtDay(b.start)} – {fmtDay(b.end)}</div>
         <h1 className="cr-place">{d?.name ?? b.destId}</h1>
-        <div className="cr-sub">{l?.name ?? ''} · Schwerpunkt {CAMP_FOCUS[b.focus ?? 'ausgewogen'].label} · {r.travelers} Profis{r.youth ? ` + ${r.youth} Jugend` : ''}</div>
+        <div className="cr-sub">{l?.name ?? ''} · Schwerpunkt {campFocusLabel(b)} · {r.travelers} Profis{r.youth ? ` + ${r.youth} Jugend` : ''}</div>
       </div>
       <div className="cr-mid">
         <div className="cr-gauge">
