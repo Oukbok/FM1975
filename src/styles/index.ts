@@ -48,4 +48,5 @@ import './28-engine.css';
 import './28-presse.css';
 import './28-rows.css';
 import './28-ratings.css';
+import './28-transfer3.css';
 import './29-look.css'; // zuletzt: ruhige Gesamtoptik

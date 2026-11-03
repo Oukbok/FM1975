@@ -32,8 +32,16 @@ export function recordInjury(p: Player, inj: Injury): void {
   if (list.length > MAX_INJURIES) list.splice(0, list.length - MAX_INJURIES);
 }
 
-export function recordTransfer(p: Player, fromClub: string, toClub: string, fee: number, date: string): void {
+/** Art eines Wechsels für das Transferprotokoll (game/transferLog.ts): Leihe bzw. Rückkehr. */
+export type TransferKind = 'loan' | 'back';
+type TransferSink = (p: Player, fromClub: string, toClub: string, fee: number, date: string, kind?: TransferKind) => void;
+let transferSink: TransferSink | null = null;
+/** Transferprotokoll anhängen (game/transferLog.ts `bindTransferLog`); null = aus. */
+export function setTransferSink(fn: TransferSink | null): void { transferSink = fn; }
+
+export function recordTransfer(p: Player, fromClub: string, toClub: string, fee: number, date: string, kind?: TransferKind): void {
   (hist(p).transfers ??= []).push({ date, fromClub, toClub, fee });
+  transferSink?.(p, fromClub, toClub, fee, date, kind);
 }
 
 /** Momentaufnahme aller Attribute (z. B. bei Spielbeginn und jeder großen Bewertung). */

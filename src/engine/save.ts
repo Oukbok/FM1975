@@ -261,6 +261,8 @@ export interface AppSettings {
   ratingStepwise?: boolean;
   /** Gehälter pro Jahr (Standard) oder pro Woche anzeigen und eingeben (ui/format.ts `fmtWage`). */
   wagePeriod?: 'jahr' | 'woche';
+  /** Top-Transfers + Transferbilanz nach jedem Fensterschluss zeigen (views/transfers/window/, Standard an). */
+  transferWindowShow?: boolean;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {

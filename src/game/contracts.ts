@@ -15,6 +15,7 @@ import { bosmanActive, contractDemand, evaluateOffer, seasonEndYear } from '../e
 import { bookTransfer } from '../engine/finances';
 import { clubWageLevel, economyScale, yearOf } from '../engine/economy';
 import { recordTransfer } from '../engine/history';
+import { logRenewal } from './transferLog';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { isForeignId } from '../engine/world';
 import { Club, Player } from '../types';
@@ -76,6 +77,7 @@ export function offerContract(g: Game, playerId: string, wage: number, years: nu
     p.contract.expiryDate = `${endYear}-06-30`;
     p.contract.satisfaction = clamp((p.contract.satisfaction ?? 60) + 12, 0, 100);
     p.contract.talks = undefined;
+    logRenewal(g, p, club.id, today);
     moraleJolt(g, p, 6, 'Vertrag verlängert', today); // Kabine: sofortiger Moral-Sprung (game/moraleJolt.ts)
     pushMessage(g.messages, makeMessage({
       date: today, category: 'contract', from: 'Sportdirektor',
@@ -195,6 +197,7 @@ export function handleContractExpiry(g: Game, today: string): void {
       p.contract.weeklyWage = Math.round((p.contract.weeklyWage + marketWage(p) * Math.min(1, wageRatioOf(g, club))) / 2);
       p.contract.preContractClubId = undefined;
       if (mine && !stale) renewed.push(`${p.fullName} (bis ${p.contract.expiryDate.slice(0, 4)})`);
+      if (!stale) logRenewal(g, p, club.id, today);
     }
   }
   if (left.length || renewed.length) repairSquadLists(g);

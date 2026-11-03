@@ -76,6 +76,7 @@ import { processDay as processGameDay } from '../game/day';
 import { DrawShow } from '../screens/draw/DrawShow';
 import { RatingShow } from '../screens/rating/RatingShow';
 import { CampRecap } from '../views/kader/camp/CampRecap';
+import { TransferWindowModal } from '../views/transfers/window/TransferWindowModal';
 import { compCup } from '../game/cupDraw';
 import type { DrawComp } from '../types/draw';
 import { setWikiOpener } from '../ui/InfoTip';
@@ -125,6 +126,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   const replayDraw = useCallback((comp: DrawComp, roundIndex: number) => setDrawQueue((q) => [...q, { comp, roundIndex, replay: true, n: ++drawSeq.current }]), []);
   // Rückkehr aus dem Trainingslager: Buchungs-IDs für die animierte Zusammenfassung.
   const [campQueue, setCampQueue] = useState<string[]>([]);
+  const [twKey, setTwKey] = useState<string | null>(null); // Transferbilanz nach Fensterschluss
   const [ratingCeremony, setRatingCeremony] = useState<{ results: RatingResult[]; type: 'medium' | 'large'; anlass: string } | null>(null);
   // In-Game-Overlays: Menü-Dropdown, Einstellungen, Speichern/Laden-Popup.
   const [menuOpen, setMenuOpen] = useState(false);
@@ -200,10 +202,11 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         return true;
       },
       onCampEnd: (id) => { setCampQueue((q) => [...q, id]); return true; },
+      onTransferWindow: (k) => { if (settings.transferWindowShow === false) return false; setTwKey(k); return true; },
     });
     if (!ok) setRunning(false);
     return ok;
-  }, [g, settings.autosave, settings.drawShow, doSave, myClub]);
+  }, [g, settings.autosave, settings.drawShow, settings.transferWindowShow, doSave, myClub]);
 
   useEffect(() => { setHistory([]); }, [g.calendar.currentDate]);
 
@@ -226,7 +229,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
     return () => window.removeEventListener('keydown', onKey);
   }, [liveMatchId, textMatch]);
   const drawOpenRef = useRef(false);
-  useEffect(() => { drawOpenRef.current = drawQueue.length > 0 || campQueue.length > 0; }, [drawQueue, campQueue]);
+  useEffect(() => { drawOpenRef.current = drawQueue.length > 0 || campQueue.length > 0 || !!twKey; }, [drawQueue, campQueue, twKey]);
 
   const seasonOver = CalendarEngine.isSeasonOver(g.calendar);
 
@@ -483,6 +486,12 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
       {/* Bilanz des Trainingslagers: nach Spielbericht/Zeremonie/Briefing/Auslosung. */}
       {campQueue[0] && !textMatch && !liveMatchId && !ratingCeremony && !pendingBriefing && !drawQueue.length && (
         <CampRecap key={campQueue[0]} g={g} bookingId={campQueue[0]} onClose={() => { setCampQueue((q) => q.slice(1)); rerender(); }} />
+      )}
+
+      {/* Top-Transfers + Transferbilanz nach dem Fensterschluss: nach allen anderen Pausen-Fenstern. */}
+      {twKey && !textMatch && !liveMatchId && !ratingCeremony && !pendingBriefing && !drawQueue.length && !campQueue.length && (
+        <TransferWindowModal key={twKey} g={g} initialKey={twKey} auto settings={settings} onSettings={onUpdateSettings}
+          onClose={() => { setTwKey(null); rerender(); }} />
       )}
 
       {liveMatchId && (
