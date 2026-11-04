@@ -103,6 +103,25 @@ for (const [m, s, n] of PAGES) {
   await setTheme('abendhimmel');
 }
 
+// --- Zusatz (EXTRA=1): Fenster/Zeichnungen in hellen Styles prüfen -----------------
+if (process.env.EXTRA) {
+  for (const t of ['papier', 'hellkuehl', 'kontrast']) {
+    await setTheme(t);
+    try {
+      await nav('Kader', 'Übersicht');
+      await page.locator('.dtable tbody tr').first().click();
+      await page.waitForTimeout(600);
+      await page.screenshot({ path: `${outDir}/extra_profil_${t}.png` });
+      await page.keyboard.press('Escape'); await page.waitForTimeout(200);
+      await nav('Verein', 'Stadion'); await page.screenshot({ path: `${outDir}/extra_stadion_${t}.png` });
+      await nav('Verein', 'Erfolge'); await page.screenshot({ path: `${outDir}/extra_erfolge_${t}.png` });
+      await nav('Spieltag', 'Aufstellung'); await page.screenshot({ path: `${outDir}/extra_aufstellung_${t}.png` });
+      await nav('Finanzen', 'Sponsoring'); await page.screenshot({ path: `${outDir}/extra_sponsoring_${t}.png` });
+    } catch (e) { errors.push(`extra ${t}: ${e.message.split('\n')[0]}`); }
+  }
+  await setTheme('abendhimmel');
+}
+
 // --- Textmodus -------------------------------------------------------------------
 if (!process.env.NOTEXT) {
   const closeModals = async () => {
@@ -144,7 +163,7 @@ if (!process.env.NOTEXT) {
 }
 
 // --- Kontaktbögen: je Seite 10 Kacheln (5 × 2) ---------------------------------
-const sheet = await browser.newPage({ viewport: { width: 2000, height: 760 } });
+const sheet = await browser.newPage({ viewport: { width: 3000, height: 1100 } });
 for (const [p, list] of Object.entries(shots)) {
   const tiles = await Promise.all(list.map(async ({ theme, file }) => ({
     theme, src: 'data:image/png;base64,' + (await readFile(file)).toString('base64'),
