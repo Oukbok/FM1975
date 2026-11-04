@@ -24,11 +24,11 @@
 
 /* Gefahren-/Entlassen-Button */
 .btn-danger {
-  background: rgba(224, 100, 111, 0.12);
-  border-color: rgba(224, 100, 111, 0.5);
+  background: rgba(var(--red-rgb), 0.12);
+  border-color: rgba(var(--red-rgb), 0.5);
   color: var(--red);
 }
-.btn-danger:hover { background: rgba(224, 100, 111, 0.2); border-color: var(--red); }
+.btn-danger:hover { background: rgba(var(--red-rgb), 0.2); border-color: var(--red); }
 
 /* ---- Mitarbeiter ---------------------------------------------------------- */
 .staff-fx-grid {
@@ -136,11 +136,11 @@
 /* Anspringbares Event (Normalmodus) bzw. wählbarer Starttag (Planungsmodus). */
 .cal-jumpable, .cal-selectable { cursor: pointer; }
 .cal-jumpable:hover, .cal-selectable:hover { border-color: var(--accent); background: var(--accent-soft); transform: translateY(-1px); }
-.cal-blocked { background: rgba(224, 100, 111, 0.08); border-color: rgba(224, 100, 111, 0.25); }
+.cal-blocked { background: rgba(var(--red-rgb), 0.08); border-color: rgba(var(--red-rgb), 0.25); }
 .cal-today { box-shadow: inset 0 0 0 2px var(--accent); }
 .cal-today .cal-dom { color: var(--accent); }
-.cal-preview { border-color: var(--green); background: rgba(91, 191, 139, 0.16); cursor: pointer; }
-.cal-preview-bad { border-color: var(--red); background: rgba(224, 100, 111, 0.16); }
+.cal-preview { border-color: var(--green); background: rgba(var(--green-rgb), 0.16); cursor: pointer; }
+.cal-preview-bad { border-color: var(--red); background: rgba(var(--red-rgb), 0.16); }
 
 /* Event-Anzeige in der Tages-Zelle (aus buildStripEventMap) */
 .cal-cell-ev {
@@ -184,9 +184,9 @@
 .cal-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .lg { width: 12px; height: 12px; border-radius: 3px; display: inline-block; border: 1px solid var(--border); }
 .lg-free { background: var(--panel-2); border-color: var(--green); }
-.lg-block { background: rgba(224, 100, 111, 0.25); border-color: rgba(224, 100, 111, 0.5); }
+.lg-block { background: rgba(var(--red-rgb), 0.25); border-color: rgba(var(--red-rgb), 0.5); }
 .lg-today { background: transparent; box-shadow: inset 0 0 0 2px var(--accent); border-color: var(--accent); }
-.lg-prev { background: rgba(91, 191, 139, 0.4); border-color: var(--green); }
+.lg-prev { background: rgba(var(--green-rgb), 0.4); border-color: var(--green); }
 
 .cal-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
 .cal-list-item { display: flex; align-items: center; gap: 12px; }
@@ -227,7 +227,7 @@
 .seg-btn:hover { background: var(--panel-hover); color: var(--text); }
 .seg-btn.active {
   background: var(--accent);
-  color: #281606;
+  color: var(--accent-ink);
 }
 
 /* Rahmen: Automatisch (nur UI-Skalierung via zoom) */
@@ -237,7 +237,7 @@
 .display-outer {
   position: fixed;
   inset: 0;
-  background: #05080e;
+  background: var(--bg);
   overflow: hidden;
   z-index: 0;
 }
@@ -248,7 +248,7 @@
   transform-origin: center center;
   overflow: auto;
   background: var(--bg);
-  box-shadow: 0 0 0 1px var(--border-soft), 0 24px 80px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 0 1px var(--border-soft), 0 24px 80px rgba(var(--shade-rgb), 0.6);
 }
 /* Innerhalb eines festen Rahmens füllen die Grund-Container den Rahmen
    (statt sich am Viewport per 100vh zu orientieren). */

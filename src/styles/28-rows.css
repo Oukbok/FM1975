@@ -13,8 +13,8 @@
   --rl-py: 8px;           /* Zeilen-Innenabstand oben/unten */
   --rl-px: 14px;          /* links/rechts (erste/letzte Zelle) */
   --rl-crest: 28px;       /* Wappengröße in Vereinslisten */
-  --rl-me-bg: rgba(255, 255, 255, 0.04);
-  --rl-hover: rgba(255, 255, 255, 0.03);
+  --rl-me-bg: rgba(var(--ink-rgb), 0.04);
+  --rl-hover: rgba(var(--ink-rgb), 0.03);
 }
 
 /* ---- Listen ---------------------------------------------------------------- */
@@ -62,7 +62,7 @@
 .dtable td.rl-name { font-weight: 600; }
 .dtable .muted { color: var(--text-3); }
 .dtable tbody tr.me, .dtable tbody tr.mine { background: var(--rl-me-bg); box-shadow: inset 4px 0 0 var(--accent); }
-.dtable tbody tr.me:hover { background: rgba(255, 255, 255, 0.06); }
+.dtable tbody tr.me:hover { background: rgba(var(--ink-rgb), 0.06); }
 .dtable tbody tr.me .rl-name, .dtable tbody tr.me .cmp-team-name { color: var(--accent); font-weight: 700; }
 .dtable.rl-sm td { height: 38px; }
 /* Spielerlisten ohne Wappen: etwas flacher, gleicher Charakter */
@@ -120,7 +120,7 @@
 .dxt-row td.dxt-pos { font-size: 18px; }
 .dxt-row td.dxt-pkt { font-family: var(--font-display); font-weight: 600; font-size: 21px; }
 .dxt-row.me { background: var(--rl-me-bg); }
-.dxt-row.me:hover td { background: rgba(255, 255, 255, 0.06); }
+.dxt-row.me:hover td { background: rgba(var(--ink-rgb), 0.06); }
 .dxt-row:hover td { background: var(--rl-hover); }
 .dxt-row:hover td.dxt-club { color: var(--text); }
 .dxt-row.me:hover td.dxt-club { color: var(--accent); }
@@ -168,8 +168,8 @@
    Aufstellung (SquadList: tbody .lu-sec-xi/-bench/-reserve) und Kader-Übersicht (tr.sq-xi/.sq-bench). */
 .lu-sec-xi .lu-row td, .dtable tbody tr.sq-xi td { background: var(--row-xi); }
 .lu-sec-bench .lu-row td, .dtable tbody tr.sq-bench td { background: var(--row-bench); }
-.lu-sec-xi .lu-row:hover td, .dtable tbody tr.sq-xi:hover td { background: color-mix(in srgb, var(--row-xi) 100%, rgba(255,255,255,.05)); }
-.lu-sec-bench .lu-row:hover td, .dtable tbody tr.sq-bench:hover td { background: color-mix(in srgb, var(--row-bench) 100%, rgba(255,255,255,.05)); }
+.lu-sec-xi .lu-row:hover td, .dtable tbody tr.sq-xi:hover td { background: color-mix(in srgb, var(--row-xi) 100%, rgba(var(--ink-rgb), .05)); }
+.lu-sec-bench .lu-row:hover td, .dtable tbody tr.sq-bench:hover td { background: color-mix(in srgb, var(--row-bench) 100%, rgba(var(--ink-rgb), .05)); }
 .lu-sec-xi .lu-sec-head td { box-shadow: inset 3px 0 0 var(--row-xi-edge); }
 .lu-sec-bench .lu-sec-head td { box-shadow: inset 3px 0 0 var(--row-bench-edge); }
 .sq-legend { display: inline-flex; align-items: center; gap: 12px; color: var(--text-3); font-size: 13px; }

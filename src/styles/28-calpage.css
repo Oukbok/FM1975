@@ -8,7 +8,7 @@
 .cal-grid-fill { gap: 6px; }
 .cal-grid-fill .cal-cell {
   min-height: 100px; padding: 8px 10px 9px; gap: 6px;
-  background: rgba(255, 255, 255, 0.025); border: 1px solid var(--border-soft); border-radius: 6px;
+  background: rgba(var(--ink-rgb), 0.025); border: 1px solid var(--border-soft); border-radius: 6px;
   transition: background 0.12s, border-color 0.12s;
 }
 .cal-wd { font-size: 14px; font-weight: 600; letter-spacing: 1.2px; color: var(--text-3); padding: 6px 0; }
@@ -18,16 +18,16 @@
   color: var(--text-2); line-height: 1;
 }
 .cal-grid-fill .cal-free .cal-dom { color: var(--text-2); }   /* keine Grün-Zahlen mehr */
-.cal-grid-fill .cal-blocked { background: rgba(255, 255, 255, 0.045); border-color: var(--border); }
+.cal-grid-fill .cal-blocked { background: rgba(var(--ink-rgb), 0.045); border-color: var(--border); }
 
 /* Vergangene Tage: gedimmt, nicht nur halbtransparent */
-.cal-grid-fill .cal-past { opacity: 1; background: transparent; border-color: rgba(255, 255, 255, 0.03); }
+.cal-grid-fill .cal-past { opacity: 1; background: transparent; border-color: rgba(var(--ink-rgb), 0.03); }
 .cal-grid-fill .cal-past .cal-dom { color: var(--text-4); }
 .cal-grid-fill .cal-past .cal-ev-txt, .cal-grid-fill .cal-past .cal-code { color: var(--text-4); }
-.cal-grid-fill .cal-past .cal-ev { box-shadow: inset 3px 0 0 rgba(255, 255, 255, 0.08); }
+.cal-grid-fill .cal-past .cal-ev { box-shadow: inset 3px 0 0 rgba(var(--ink-rgb), 0.08); }
 
 /* Heute: gefülltes Datumsfeld + Etikett, deutlich anders als ein Spieltag */
-.cal-grid-fill .cal-today { box-shadow: none; background: rgba(255, 255, 255, 0.07); border-color: rgba(255, 255, 255, 0.35); }
+.cal-grid-fill .cal-today { box-shadow: none; background: rgba(var(--ink-rgb), 0.07); border-color: rgba(var(--ink-rgb), 0.35); }
 .cal-grid-fill .cal-today .cal-dom {
   display: inline-flex; align-items: center; justify-content: center; min-width: 38px; height: 32px; padding: 0 6px;
   border-radius: 5px; background: var(--today-bg); color: var(--today-text); font-weight: 600;
@@ -58,10 +58,10 @@
 
 /* Klickbar / Planung – ruhig, ohne Bernstein-Schein */
 .cal-grid-fill .cal-jumpable:hover, .cal-grid-fill .cal-selectable:hover {
-  background: rgba(255, 255, 255, 0.08); border-color: var(--btn-border-hover); transform: none;
+  background: rgba(var(--ink-rgb), 0.08); border-color: var(--btn-border-hover); transform: none;
 }
 .cal-grid-fill .cal-preview { background: var(--sel-bg); border-color: var(--sel-border); }
-.cal-grid-fill .cal-preview-bad { background: rgba(224, 100, 111, 0.12); border-color: rgba(224, 100, 111, 0.55); }
+.cal-grid-fill .cal-preview-bad { background: rgba(var(--red-rgb), 0.12); border-color: rgba(var(--red-rgb), 0.55); }
 
 /* Legende */
 .cal-legend { display: flex; flex-wrap: wrap; gap: 22px; align-items: center; margin-top: 12px; font-size: 15px; color: var(--text-2); }
@@ -71,7 +71,7 @@
 .lg2-cup { --cal-k: var(--cal-cup); }
 .lg2-euro { --cal-k: var(--cal-euro); }
 .lg2-winter { --cal-k: var(--cal-winter); }
-.lg2-past { width: 18px; height: 18px; border-radius: 3px; box-shadow: none; border: 1px solid rgba(255, 255, 255, 0.06); background: transparent; }
+.lg2-past { width: 18px; height: 18px; border-radius: 3px; box-shadow: none; border: 1px solid rgba(var(--ink-rgb), 0.06); background: transparent; }
 .lg2-prev { width: 18px; height: 18px; border-radius: 3px; box-shadow: none; background: var(--sel-bg); border: 1px solid var(--sel-border); }
 .lg2-today {
   width: auto; min-width: 26px; height: 22px; padding: 0 4px; border-radius: 4px; box-shadow: none;

@@ -8,8 +8,8 @@
   display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 14px;
   padding: 18px 36px 18px;
   background:
-    radial-gradient(ellipse at 30% -20%, rgba(255, 255, 255, 0.045), transparent 55%),
-    linear-gradient(180deg, #0f1218 0%, var(--bg) 45%);
+    radial-gradient(ellipse at 30% -20%, rgba(var(--ink-rgb), 0.045), transparent 55%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg) 45%);
   color: var(--text); font-family: var(--font-ui);
 }
 .pm-root svg.game-icon { width: auto; height: auto; }
@@ -48,11 +48,11 @@
 .pm-lamp { fill: color-mix(in srgb, var(--text-3) 35%, var(--bg)); }
 .pm-bulb { fill: color-mix(in srgb, var(--text) 80%, transparent); }
 .pm-board { fill: color-mix(in srgb, var(--text-3) 26%, var(--bg-2)); }
-.pm-stripe { fill: rgba(255, 255, 255, 0.035); }
-.pm-line { fill: none; stroke: rgba(255, 255, 255, 0.28); stroke-width: 2; }
+.pm-stripe { fill: rgba(var(--ink-rgb), 0.035); }
+.pm-line { fill: none; stroke: rgba(var(--ink-rgb), 0.28); stroke-width: 2; }
 
 .pm-crests { position: absolute; inset: 20px 0 84px; display: flex; justify-content: space-around; align-items: center; }
-.pm-crest { filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.55)); }
+.pm-crest { filter: drop-shadow(0 8px 18px rgba(var(--shade-rgb), 0.55)); }
 .pm-bar {
   position: absolute; left: 48px; right: 48px; bottom: 22px; height: 56px;
   display: grid; grid-template-columns: minmax(0, 1fr) 56px minmax(0, 1fr); align-items: stretch;
@@ -99,7 +99,7 @@
   display: grid; grid-template-columns: minmax(0, 1fr) 250px minmax(0, 1fr); align-items: center; row-gap: 7px;
   padding: 10px 12px 10px; border-bottom: 1px solid var(--border-soft); font-size: 20px;
 }
-.pm-frow:nth-child(odd) { background: rgba(255, 255, 255, 0.015); }
+.pm-frow:nth-child(odd) { background: rgba(var(--ink-rgb), 0.015); }
 .pm-fl { display: flex; align-items: center; gap: 10px; }
 .pm-fr { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
 .pm-fl b, .pm-fr b { font-family: var(--font-display); font-weight: 500; font-size: 25px; }
@@ -205,7 +205,7 @@
   font-family: var(--font-display); font-weight: 600; font-size: 25px; letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer;
 }
 .pm-go-btn:hover { background: var(--panel-hover); border-color: var(--text-4); }
-.pm-go-btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.pm-go-btn.primary { background: var(--primary); border-color: var(--primary); color: var(--primary-ink); }
 .pm-go-btn.primary:hover { filter: brightness(1.07); }
 .pm-go-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 

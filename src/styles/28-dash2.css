@@ -13,11 +13,11 @@
 .dz-left::-webkit-scrollbar, .dz-nlist::-webkit-scrollbar, .dz-wb::-webkit-scrollbar, .dz-rtext::-webkit-scrollbar,
 .dz-fn-list::-webkit-scrollbar, .dz-app-list::-webkit-scrollbar, .dz-vt-list::-webkit-scrollbar, .dz-lcd-list::-webkit-scrollbar, .dz-heft-list::-webkit-scrollbar { width: 8px; }
 .dz-left::-webkit-scrollbar-thumb, .dz-nlist::-webkit-scrollbar-thumb, .dz-wb::-webkit-scrollbar-thumb, .dz-rtext::-webkit-scrollbar-thumb,
-.dz-fn-list::-webkit-scrollbar-thumb, .dz-app-list::-webkit-scrollbar-thumb, .dz-vt-list::-webkit-scrollbar-thumb, .dz-lcd-list::-webkit-scrollbar-thumb, .dz-heft-list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 4px; }
+.dz-fn-list::-webkit-scrollbar-thumb, .dz-app-list::-webkit-scrollbar-thumb, .dz-vt-list::-webkit-scrollbar-thumb, .dz-lcd-list::-webkit-scrollbar-thumb, .dz-heft-list::-webkit-scrollbar-thumb { background: rgba(var(--ink-rgb), 0.12); border-radius: 4px; }
 
 /* ---- Widget-Rahmen (links + Übersicht) ------------------------------------ */
 .dz-w, .dz-news {
-  background: linear-gradient(180deg, rgba(27, 32, 41, 0.92), rgba(16, 20, 27, 0.94));
+  background: linear-gradient(180deg, rgba(var(--panel-rgb), 0.92), rgba(var(--bg-rgb), 0.94));
   border: 1px solid var(--border-soft); border-radius: 6px; min-width: 0;
 }
 .dz-w { flex: 0 0 auto; padding: 8px 14px 10px; cursor: pointer; transition: border-color 0.15s; }

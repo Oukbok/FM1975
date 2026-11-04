@@ -55,15 +55,15 @@
 .cs-title span { font-size: 14px; color: var(--text-2); }
 .cs-title .cs-locked { color: var(--orange); }
 .cs-stage { position: relative; flex: 1 1 auto; min-height: 0; container-type: size; }
-.cs-photo { position: absolute; left: 0; top: 0; width: 74%; aspect-ratio: 16 / 10; max-height: 62%; padding: 7px; background: var(--paper-border); box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5); }
+.cs-photo { position: absolute; left: 0; top: 0; width: 74%; aspect-ratio: 16 / 10; max-height: 62%; padding: 7px; background: var(--paper-border); box-shadow: 0 10px 28px rgba(var(--shade-rgb), 0.5); }
 .cs-photo > svg, .cs-photo > img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.cs-polaroid, .cs-paper { position: absolute; margin: 0; background: var(--paper); box-shadow: 0 12px 26px rgba(0, 0, 0, 0.55), 0 1px 0 var(--paper-2) inset; }
+.cs-polaroid, .cs-paper { position: absolute; margin: 0; background: var(--paper); box-shadow: 0 12px 26px rgba(var(--shade-rgb), 0.55), 0 1px 0 var(--paper-2) inset; }
 .cs-polaroid { right: 1%; top: 7%; width: 31%; max-width: 280px; padding: 10px 10px 0; transform: rotate(4deg); z-index: 2; }
 .cs-polaroid svg { display: block; width: 100%; height: auto; }
 .cs-polaroid figcaption { padding: 8px 2px 10px; font-family: var(--font-display); font-size: 15px; letter-spacing: 0.6px; color: var(--paper-ink); text-transform: uppercase; text-align: center; }
 .cs-paper { left: 5%; top: min(52%, calc(74cqw * 0.625 - 70px)); width: 44%; max-width: 400px; padding: 8px; transform: rotate(-3deg); z-index: 3; background: linear-gradient(170deg, var(--paper), var(--paper-2)); }
 .cs-paper svg { display: block; width: 100%; height: auto; }
-.cs-tape { position: absolute; left: 50%; top: -12px; width: 92px; height: 26px; margin-left: -46px; background: var(--tape); border-left: 1px dashed var(--tape-edge); border-right: 1px dashed var(--tape-edge); transform: rotate(-4deg); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15); }
+.cs-tape { position: absolute; left: 50%; top: -12px; width: 92px; height: 26px; margin-left: -46px; background: var(--tape); border-left: 1px dashed var(--tape-edge); border-right: 1px dashed var(--tape-edge); transform: rotate(-4deg); box-shadow: 0 1px 2px rgba(var(--shade-rgb), 0.15); }
 .cs-paper .cs-tape { left: 12%; transform: rotate(-18deg); }
 .cs-facts { position: absolute; right: 0; top: calc(min(62cqh, 46.25cqw) + 22px); width: 46%; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 18px; }
 .cs-facts div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }

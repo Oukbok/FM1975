@@ -55,11 +55,11 @@
 .tr3-rings i {
   width: 9px; height: 26px; border-radius: 5px;
   background: linear-gradient(90deg, var(--metal-4), var(--metal-2) 35%, var(--metal-1) 55%, var(--metal-3));
-  box-shadow: 0 2px 3px rgba(0, 0, 0, .55);
+  box-shadow: 0 2px 3px rgba(var(--shade-rgb), .55);
 }
 .tr3-rings::before {
   content: ''; position: absolute; left: -6px; right: -6px; top: 20px; height: 8px; border-radius: 3px;
-  background: repeating-linear-gradient(90deg, rgba(0, 0, 0, .45) 0 4px, transparent 4px 9px); opacity: .35;
+  background: repeating-linear-gradient(90deg, rgba(var(--shade-rgb), .45) 0 4px, transparent 4px 9px); opacity: .35;
 }
 .tr3-sheet {
   flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr));
@@ -71,7 +71,7 @@
   border-right: 1px solid var(--border-soft);
 }
 .tr3-col:last-child { border-right: none; }
-.tr3-col.today { background: rgba(255, 255, 255, 0.025); box-shadow: inset 0 3px 0 var(--accent); }
+.tr3-col.today { background: rgba(var(--ink-rgb), 0.025); box-shadow: inset 0 3px 0 var(--accent); }
 .tr3-colhead {
   display: flex; align-items: baseline; justify-content: center; gap: 8px; margin: 0 -7px; padding: 8px 4px 7px;
   border-bottom: 1px solid var(--border-soft); background: var(--panel-2);
@@ -84,7 +84,7 @@
 .tr3-matchcol {
   grid-row: 2 / span 3; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
   margin-top: 0; border-radius: 6px; border: 1px solid var(--border-soft);
-  background: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.018) 0 2px, transparent 2px 6px), var(--bg-2);
+  background: repeating-linear-gradient(180deg, rgba(var(--ink-rgb), 0.018) 0 2px, transparent 2px 6px), var(--bg-2);
   color: var(--text-2); text-align: center; padding: 10px 4px;
 }
 .tr3-matchcol .game-icon { width: 30px; height: 30px; color: var(--text-3); }
@@ -102,7 +102,7 @@
 }
 .tp-cell .game-icon { width: 40px; height: 40px; }
 .tp-cell.filled { cursor: grab; border-color: color-mix(in srgb, var(--trk) 45%, var(--border)); }
-.tp-cell.filled .game-icon, .tp-ghost .game-icon { color: color-mix(in srgb, var(--trk) 70%, #ffffff); }
+.tp-cell.filled .game-icon, .tp-ghost .game-icon { color: color-mix(in srgb, var(--trk) 70%, var(--text-hi)); }
 .tp-cell.filled::before, .tp-cell.lock-regen::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--trk); }
 .tp-cell.int-0 { background: color-mix(in srgb, var(--trk) calc(6% * var(--trk-k, 1)), var(--panel-2)); }
 .tp-cell.int-1 { background: color-mix(in srgb, var(--trk) calc(9% * var(--trk-k, 1)), var(--panel-2)); }
@@ -112,7 +112,7 @@
 .tp-cell.int-1 .game-icon, .tp-cell.int-0 .game-icon { opacity: .75; }
 .tp-cell.filled:hover { filter: brightness(1.12); }
 .tp-cell.empty { border-style: dashed; background: transparent; cursor: pointer; }
-.tp-cell.empty:hover { background: rgba(255, 255, 255, 0.025); }
+.tp-cell.empty:hover { background: rgba(var(--ink-rgb), 0.025); }
 .tp-cell.hover { border-color: var(--accent); border-style: solid; background: var(--accent-soft); }
 .tp-cell.dragging { opacity: .3; }
 .tp-cell.locked { background: var(--bg-2); color: var(--text-3); border-style: solid; border-color: var(--border-soft); }
@@ -123,7 +123,7 @@
 .tp-cell.filled .tp-cell-name { color: var(--text); }
 .tp-cell-free { font-size: 12px; color: var(--text-4); }
 .tp-ticks { position: absolute; top: 6px; right: 7px; display: inline-flex; gap: 2px; }
-.tp-ticks i { width: 3px; height: 9px; border-radius: 1px; background: rgba(255, 255, 255, 0.12); }
+.tp-ticks i { width: 3px; height: 9px; border-radius: 1px; background: rgba(var(--ink-rgb), 0.12); }
 .tp-ticks i.on { background: var(--text-2); }
 
 /* unter dem Ringbuch */
@@ -161,12 +161,12 @@
   border: 1px solid transparent; border-radius: 6px; background: transparent; color: var(--text); cursor: grab;
   touch-action: none; user-select: none; text-align: left; font: inherit;
 }
-.tp-tile:hover { background: rgba(255, 255, 255, 0.035); }
+.tp-tile:hover { background: rgba(var(--ink-rgb), 0.035); }
 .tp-tile.sel { border-color: var(--accent); background: var(--accent-soft); }
 .tp-tile-ico {
   flex: 0 0 auto; width: 48px; height: 48px; display: inline-flex; align-items: center; justify-content: center;
   border-radius: 7px; border: 1px solid color-mix(in srgb, var(--trk) 45%, var(--border));
-  background: color-mix(in srgb, var(--trk) calc(14% * var(--trk-k, 1)), var(--panel-2)); color: color-mix(in srgb, var(--trk) 70%, #ffffff);
+  background: color-mix(in srgb, var(--trk) calc(14% * var(--trk-k, 1)), var(--panel-2)); color: color-mix(in srgb, var(--trk) 70%, var(--text-hi));
   box-shadow: inset 0 3px 0 var(--trk);
 }
 .tp-tile-ico.int-1 { background: color-mix(in srgb, var(--trk) calc(9% * var(--trk-k, 1)), var(--panel-2)); }
@@ -239,7 +239,7 @@
 
 /* =============================== Langfristig =============================== */
 .tr3-long .dbox-body.flush { display: flex; flex-direction: column; min-height: 0; }
-.tr3-month td { height: 30px !important; padding-top: 10px !important; font-family: var(--font-display); font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); background: rgba(255, 255, 255, 0.02); }
+.tr3-month td { height: 30px !important; padding-top: 10px !important; font-family: var(--font-display); font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); background: rgba(var(--ink-rgb), 0.02); }
 .tr3-wrow { cursor: pointer; }
 .tr3-wrow.sel { background: var(--accent-soft) !important; box-shadow: inset 4px 0 0 var(--accent); }
 .tr3-wrow.cur td:first-child { color: var(--text); }
@@ -256,7 +256,7 @@
 }
 .tr3-tpl b { font-size: 15px; font-weight: 600; }
 .tr3-tpl span { font-size: 12.5px; color: var(--text-3); }
-.tr3-tpl:hover:not(:disabled) { background: rgba(255, 255, 255, 0.035); }
+.tr3-tpl:hover:not(:disabled) { background: rgba(var(--ink-rgb), 0.035); }
 .tr3-tpl.on { border-color: var(--accent); background: var(--accent-soft); }
 .tr3-tpl:disabled { opacity: .45; cursor: default; }
 .tr3-long > .dbox:nth-child(2) .dbox-body { display: flex; flex-direction: column; min-height: 0; }

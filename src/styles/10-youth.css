@@ -3,8 +3,8 @@
    ============================================================================= */
 .youth-hero {
   padding: 18px 20px;
-  background: linear-gradient(120deg, rgba(241, 160, 55, 0.10), transparent 70%);
-  border-color: rgba(241, 160, 55, 0.28);
+  background: linear-gradient(120deg, rgba(var(--accent-rgb), 0.10), transparent 70%);
+  border-color: rgba(var(--accent-rgb), 0.28);
 }
 .youth-hero-title {
   font-size: 22px;

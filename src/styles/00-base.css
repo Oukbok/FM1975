@@ -31,6 +31,16 @@
   --accent-ink: #241405;   /* Text auf Akzentflächen */
   --accent-glow: rgba(242, 165, 65, 0.25);
   --accent-soft: rgba(242, 165, 65, 0.10);
+  --accent-rgb: 242, 165, 65;   /* für rgba(var(--accent-rgb), a) */
+  /* Hauptknopf (Weiter, .btn-primary, .b3-primary, „Simulieren“) – eigene Tokens, damit ein
+     Theme den Akzent zurücknehmen und nur den Hauptknopf farbig lassen kann. */
+  --primary: var(--accent);
+  --primary-2: var(--accent-dim);
+  --primary-hover: #f6c27f;
+  --primary-ink: var(--accent-ink);
+  --primary-glow: var(--accent-glow);
+  --primary-run: #e7d8b4;        /* Weiter-Knopf während der Zeitlauf läuft */
+  --primary-run-ink: #3a3020;
   /* Überschriften-/Knopfschrift wie der Startbildschirm */
   --font-display: 'Oswald', 'Barlow', system-ui, sans-serif;
 
@@ -39,6 +49,7 @@
   --text-2: #aeb7c3;
   --text-3: #7c8693;
   --text-4: #59626e;
+  --text-hi: #ffffff;   /* hellste Schrift (große Kennzahlen); helle Themes: dunkel */
 
   /* --- Qualitätsskala (monochrom) für Attribute/Stärke: hell = gut, dunkel = schwach.
      Keine Ampelfarben für Werte – Farbe ist Hervorhebungen und echten Signalen vorbehalten. --- */
@@ -201,6 +212,25 @@
   --turf-line: rgba(235, 242, 238, 0.5);
   --border: #303339;
   --border-soft: #24272d;
+  --border-strong: #45484e;
+  /* RGB-Tripel für Überlagerungen: rgba(var(--ink-rgb), a) = „heller als die Fläche“
+     (in hellen Themes dunkel), --shade-rgb = Schatten/Mulden, --bg-rgb/--panel-rgb =
+     halbtransparente Flächen, --deep-rgb = Abdunkelung über Fotos/Fenstern (immer dunkel). */
+  --ink-rgb: 255, 255, 255;
+  --shade-rgb: 0, 0, 0;
+  --bg-rgb: 12, 15, 21;
+  --panel-rgb: 28, 32, 40;
+  --deep-rgb: 6, 8, 12;
+  --red-rgb: 224, 100, 111;
+  --green-rgb: 91, 191, 139;
+  --yellow-rgb: 215, 180, 94;
+  /* Hintergrundfoto (.app-shell::before) */
+  --photo-veil: linear-gradient(180deg, rgba(8, 12, 18, 0.12) 0%, rgba(8, 12, 18, 0.18) 60%, rgba(8, 12, 18, 0.34) 100%);
+  --photo-veil-zentrale: linear-gradient(180deg, rgba(8, 12, 18, 0.22) 0%, rgba(8, 12, 18, 0.32) 55%, rgba(8, 12, 18, 0.45) 100%);
+  --photo-filter: saturate(0.9) contrast(1.04);
+  --photo-filter-zentrale: saturate(0.55) contrast(1.06) brightness(0.92);
+  --photo-opacity: 1;
+  color-scheme: dark;
   --radius: 14px;
   --radius-sm: 9px;
   --shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
@@ -294,8 +324,8 @@ body {
 
 ::-webkit-scrollbar { width: 9px; height: 9px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #383b41; border-radius: 6px; }
-::-webkit-scrollbar-thumb:hover { background: #45484e; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
 
 h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.2px; }
 
@@ -324,9 +354,10 @@ h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.2px; }
   /* Kühler, neutraler Abdunkel-Verlauf statt warmem Braun; Foto leicht entsättigt,
      damit kein Sepia-Schleier über den Boxen liegt. */
   background:
-    linear-gradient(180deg, rgba(8, 12, 18, 0.12) 0%, rgba(8, 12, 18, 0.18) 60%, rgba(8, 12, 18, 0.34) 100%),
+    var(--photo-veil),
     url('assets/stadion-hintergrund.jpg') center top / cover no-repeat;
-  filter: saturate(0.9) contrast(1.04);
+  filter: var(--photo-filter);
+  opacity: var(--photo-opacity);
 }
 /* Zentrale: eigenes Manager-Buero-Motiv grossflaechig hinter/ausserhalb der
    Boxen. Ein leichter Abdunkel-Verlauf darueber (oben 5%, Mitte 15%, unten 30%)
@@ -335,9 +366,10 @@ h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.2px; }
   /* Büro-Foto ist stark holzbraun: entsättigen und kühl abdunkeln, sonst färbt es
      über die halbtransparenten Boxen alles sepia. */
   background:
-    linear-gradient(180deg, rgba(8, 12, 18, 0.22) 0%, rgba(8, 12, 18, 0.32) 55%, rgba(8, 12, 18, 0.45) 100%),
+    var(--photo-veil-zentrale),
     url('assets/zentrale-hintergrund.png?v=2') center center / cover no-repeat;
-  filter: saturate(0.55) contrast(1.06) brightness(0.92);
+  filter: var(--photo-filter-zentrale);
+  opacity: var(--photo-opacity);
 }
 /* Dashboard-aehnliche Seiten (Zentrale + Kategorie-Dashboards): Inhaltsbereich als
    volle Hoehen-Flexspalte, damit der Footer immer am unteren Rand klebt und die
@@ -382,7 +414,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.2px; }
   gap: 16px;
   padding: 14px var(--bar-pad);
   margin-bottom: 6px;
-  background: linear-gradient(180deg, var(--bg) 55%, rgba(12, 15, 21, 0.85) 100%);
+  background: linear-gradient(180deg, var(--bg) 55%, rgba(var(--bg-rgb), 0.85) 100%);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border-soft);
 }
@@ -457,11 +489,11 @@ h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.2px; }
   overflow: hidden;
   background: var(--panel);
   border: 1px solid var(--border-soft);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 1px 3px rgba(var(--shade-rgb), 0.35);
   transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
 }
 .cal-sheet.clickable { cursor: pointer; }
-.cal-sheet.clickable:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45); }
+.cal-sheet.clickable:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(var(--shade-rgb), 0.45); }
 
 /* Kopfstreifen (Monat / HEUTE) */
 .cal-sheet-head {
@@ -471,8 +503,8 @@ h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.2px; }
   font-weight: 800;
   letter-spacing: 1.1px;
   text-transform: uppercase;
-  color: #0c0f15;
-  background: #82796f;
+  color: var(--bg);
+  background: var(--text-3);
   padding: 3px 0;
 }
 .cal-sheet-day {
@@ -519,18 +551,18 @@ h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.2px; }
 /* Heute — Akzent */
 .cal-sheet.today {
   border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent), 0 3px 12px rgba(241, 160, 55, 0.28);
+  box-shadow: 0 0 0 1px var(--accent), 0 3px 12px rgba(var(--accent-rgb), 0.28);
   transform: translateY(-1px);
 }
-.cal-sheet.today .cal-sheet-head { background: var(--accent); color: #281606; }
-.cal-sheet.today .cal-sheet-day { color: #fff; }
+.cal-sheet.today .cal-sheet-head { background: var(--accent); color: var(--accent-ink); }
+.cal-sheet.today .cal-sheet-day { color: var(--text-hi); }
 
 /* Vergangenes — gedimmt */
 .cal-sheet.past { opacity: 0.62; }
 
 /* Leerplatzhalter */
 .cal-sheet.empty {
-  background: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0 6px, transparent 6px 12px);
+  background: repeating-linear-gradient(135deg, rgba(var(--ink-rgb), 0.02) 0 6px, transparent 6px 12px);
   border-style: dashed;
   border-color: var(--border-soft);
   box-shadow: none;
@@ -538,7 +570,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.2px; }
 }
 
 /* Akzentfarben Kopfstreifen */
-.cal-sheet.acc-orange .cal-sheet-head { background: var(--orange); color: #2a1500; }
+.cal-sheet.acc-orange .cal-sheet-head { background: var(--orange); color: var(--accent-ink); }
 .cal-sheet.acc-gold .cal-sheet-head { background: var(--gold); color: #2a2200; }
 
 /* Responsive Leiter: Kacheln schrumpfen, damit Wappen links + Buttons rechts
@@ -586,7 +618,7 @@ button {
   font-weight: 600;
   transition: background 0.15s, border-color 0.15s, transform 0.08s, box-shadow 0.15s;
 }
-button:hover { background: var(--panel-hover); border-color: #45484e; }
+button:hover { background: var(--panel-hover); border-color: var(--border-strong); }
 button:active { transform: translateY(1px); }
 button:disabled { opacity: 0.4; cursor: not-allowed; }
 button.active {
@@ -596,13 +628,13 @@ button.active {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
   border: none;
-  color: #291706;
+  color: var(--primary-ink);
   font-weight: 800;
-  box-shadow: 0 4px 18px var(--accent-glow);
+  box-shadow: 0 4px 18px var(--primary-glow);
 }
-.btn-primary:hover { background: linear-gradient(135deg, #f4b766, #cc7117); box-shadow: 0 6px 24px var(--accent-glow); }
+.btn-primary:hover { background: linear-gradient(135deg, var(--primary-hover), var(--primary-2)); box-shadow: 0 6px 24px var(--primary-glow); }
 
 .btn-continue {
   display: inline-flex;
@@ -613,8 +645,8 @@ button.active {
   border-radius: 12px;
 }
 .btn-continue.paused {
-  background: linear-gradient(135deg, var(--accent), var(--accent-dim));
-  color: #291706;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: var(--primary-ink);
 }
 .btn-continue.paused:hover { box-shadow: 0 6px 24px var(--accent-glow); }
 
@@ -629,7 +661,7 @@ button.active {
      kraeftiger als die gewuenschte Endfarbe: der helle Stadion-Hintergrund hellt
      durch die Transparenz wieder auf. Dezenter Verlauf (oben heller, unten
      dunkler) wie auf den Vorlage-Boxen. */
-  background: linear-gradient(180deg, rgba(33, 36, 42, 0.90), rgba(20, 23, 29, 0.90));
+  background: linear-gradient(180deg, rgba(var(--panel-rgb), 0.90), rgba(var(--bg-rgb), 0.90));
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 16px;
@@ -639,7 +671,7 @@ button.active {
   transition: border-color 0.18s, transform 0.18s, box-shadow 0.18s;
 }
 .card.hoverable:hover {
-  border-color: rgba(241, 160, 55, 0.4);
+  border-color: rgba(var(--accent-rgb), 0.4);
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
@@ -728,7 +760,7 @@ button.active {
   justify-content: center;
   gap: 4px;
   padding: 8px 12px;
-  background: linear-gradient(180deg, rgba(19, 22, 28, 0.85), var(--bg-2));
+  background: linear-gradient(180deg, rgba(var(--bg-rgb), 0.85), var(--bg-2));
   backdrop-filter: blur(14px);
   border-top: 1px solid var(--border);
 }
@@ -779,7 +811,7 @@ th {
 tbody tr { border-bottom: 1px solid var(--border-soft); transition: background 0.12s; }
 tbody tr:hover { background: var(--panel-hover); }
 tr.me { background: var(--accent-soft); }
-tr.me:hover { background: rgba(241, 160, 55, 0.16); }
+tr.me:hover { background: rgba(var(--accent-rgb), 0.16); }
 .clickable { cursor: pointer; }
 
 /* Tabellenzonen */
@@ -794,9 +826,9 @@ tr.me:hover { background: rgba(241, 160, 55, 0.16); }
   font-size: 12px;
   background: var(--panel-2);
 }
-.zone-cl { background: rgba(91, 191, 139, 0.18); color: var(--green); box-shadow: inset 3px 0 0 var(--green); }
-.zone-eu { background: rgba(241, 160, 55, 0.16); color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
-.zone-rel { background: rgba(224, 100, 111, 0.16); color: var(--red); box-shadow: inset 3px 0 0 var(--red); }
+.zone-cl { background: rgba(var(--green-rgb), 0.18); color: var(--green); box-shadow: inset 3px 0 0 var(--green); }
+.zone-eu { background: rgba(var(--accent-rgb), 0.16); color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+.zone-rel { background: rgba(var(--red-rgb), 0.16); color: var(--red); box-shadow: inset 3px 0 0 var(--red); }
 
 /* ---------------------------------------------------------------------------
    Formkreise (W/D/L)
@@ -811,7 +843,7 @@ tr.me:hover { background: rgba(241, 160, 55, 0.16); }
   border-radius: 50%;
   font-size: 10px;
   font-weight: 800;
-  color: #291706;
+  color: var(--accent-ink);
 }
 .form-pill.W { background: var(--green); }
 .form-pill.D { background: var(--text-3); color: var(--text); }
@@ -860,8 +892,8 @@ tr.me:hover { background: rgba(241, 160, 55, 0.16); }
   background: var(--panel-2);
   border: 1px solid var(--border);
 }
-.pill.home { color: var(--green); border-color: rgba(91, 191, 139,0.4); }
-.pill.away { color: var(--accent); border-color: rgba(241, 160, 55,0.4); }
+.pill.home { color: var(--green); border-color: rgba(var(--green-rgb), 0.4); }
+.pill.away { color: var(--accent); border-color: rgba(var(--accent-rgb), 0.4); }
 
 .crest {
   border-radius: 8px;
@@ -871,7 +903,7 @@ tr.me:hover { background: rgba(241, 160, 55, 0.16); }
   font-weight: 900;
   color: #fff;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0,0.4);
+  box-shadow: 0 2px 8px rgba(var(--shade-rgb), 0.4);
   overflow: hidden;
 }
 
@@ -906,7 +938,7 @@ input[type="range"] { padding: 0; accent-color: var(--accent); }
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(10, 8, 9, 0.78);
+  background: rgba(var(--deep-rgb), 0.78);
   backdrop-filter: blur(6px);
   display: flex;
   align-items: center;

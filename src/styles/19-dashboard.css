@@ -140,7 +140,7 @@
    tbody-tr:hover ueberdeckt). Die farbige Zonen-Kante (box-shadow) bleibt. */
 .dxt-row { cursor: pointer; }
 .dxt-row:hover td { background: var(--panel-hover); color: var(--text); }
-.dxt-row.me:hover td { background: rgba(241, 160, 55, 0.16); }
+.dxt-row.me:hover td { background: rgba(var(--accent-rgb), 0.16); }
 .dxt-row:hover td.dxt-club { color: var(--accent); }
 .dxt-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-soft); font-size: 16.5px; color: var(--text-3); }
 .dxt-legend span { display: inline-flex; align-items: center; gap: 6px; }
@@ -151,11 +151,11 @@
 
 /* --- Finanzen --- */
 .dxf-top { display: flex; align-items: stretch; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
-.dxf-balance { display: flex; flex-direction: column; gap: 4px; justify-content: center; min-width: 0; flex: 1 1 auto; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 12px 14px; }
+.dxf-balance { display: flex; flex-direction: column; gap: 4px; justify-content: center; min-width: 0; flex: 1 1 auto; background: rgba(var(--ink-rgb), 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 12px 14px; }
 .dxf-balance-lbl { font-size: 16.5px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.4px; }
 .dxf-balance-val { font-size: 31px; font-weight: 900; color: var(--accent); line-height: 1.05; white-space: nowrap; }
 .dxf-balance-val.neg { color: var(--red); }
-.dxf-stats { display: flex; flex-direction: column; gap: 5px; flex: 0 0 auto; min-width: 148px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 8px 12px; }
+.dxf-stats { display: flex; flex-direction: column; gap: 5px; flex: 0 0 auto; min-width: 148px; background: rgba(var(--ink-rgb), 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 8px 12px; }
 .dxf-stat { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
 .dxf-lbl { font-size: 18px; color: var(--text-3); }
 .dxf-val { font-size: 18.5px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
@@ -174,19 +174,19 @@
 .cvb2-v { color: var(--text); font-weight: 600; font-size: 16px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cvb2-sep { height: 0; background: transparent; margin: 6px 0 0; }
 .cvb2-cols { display: flex; gap: 24px; align-items: stretch; }
-.cvb2-list { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 3px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 6px 10px; }
+.cvb2-list { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 3px; background: rgba(var(--ink-rgb), 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 6px 10px; }
 .cvb2-lrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 15px; }
 /* Vereinsgelaende-Stufen (rechte Haelfte, gleiche Breite wie Feldliste) */
-.cvb2-facs { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 3px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 6px 10px; }
+.cvb2-facs { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 3px; background: rgba(var(--ink-rgb), 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 6px 10px; }
 .cvb2-frow { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 15px; }
 .cvb2-fname { color: var(--text-2); font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cvb2-fpips { display: inline-flex; gap: 4px; flex: 0 0 auto; }
-.cvb2-fpip { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.14); }
+.cvb2-fpip { width: 8px; height: 8px; border-radius: 50%; background: rgba(var(--ink-rgb), 0.14); }
 .cvb2-fpip.on { background: var(--accent); }
 .cvb2-lk { flex: 0 0 auto; color: var(--text-3); }
 .cvb2-lv { flex: 1 1 auto; color: var(--text); font-weight: 600; text-align: right; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cvb2-colors { display: inline-flex; gap: 6px; justify-content: flex-end; }
-.cvb2-swatch { display: inline-block; width: 15px; height: 15px; border-radius: 3px; border: 1px solid rgba(255, 255, 255, 0.22); }
+.cvb2-swatch { display: inline-block; width: 15px; height: 15px; border-radius: 3px; border: 1px solid rgba(var(--ink-rgb), 0.22); }
 .cvb-stars { letter-spacing: 2px; }
 .cvb-stars span { color: var(--text-3); }
 .cvb-stars span.on { color: var(--gold); }
@@ -207,15 +207,15 @@
      Platz der Namen mit ausfüllen können. */
   height: 156px;
   background:
-    linear-gradient(180deg, rgba(10, 13, 19, 0.34) 0%, rgba(10, 13, 19, 0.72) 100%),
+    linear-gradient(180deg, rgba(var(--deep-rgb), 0.34) 0%, rgba(var(--deep-rgb), 0.72) 100%),
     url('assets/stadion-zuschauer.jpg?v=1') center / cover no-repeat;
 }
 /* Wappen-Reihe füllt die gesamte Foto-Höhe; jede Seite ist eine Spalte
    (großes Wappen + Name als Bildunterschrift darunter). */
 .cns-photo-crests { display: flex; align-items: center; justify-content: center; height: 100%; }
 .cns-vs-side { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
-.cns-vs { flex: 0 0 auto; font-size: 39px; font-weight: 900; color: #fff; letter-spacing: 1px; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.65); }
-.cns-nm { max-width: 100%; text-align: center; font-size: 18px; font-weight: 800; color: #fff; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75); }
+.cns-vs { flex: 0 0 auto; font-size: 39px; font-weight: 900; color: #fff; letter-spacing: 1px; text-shadow: 0 2px 8px rgba(var(--shade-rgb), 0.65); }
+.cns-nm { max-width: 100%; text-align: center; font-size: 18px; font-weight: 800; color: #fff; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 4px rgba(var(--shade-rgb), 0.75); }
 /* Doppelter Trennstrich: zwei dünne Linien dicht untereinander. */
 .cns-dsep { display: flex; flex-direction: column; gap: 2px; margin: 5px 0; }
 .cns-dsep > span { display: block; height: 1px; background: var(--border); }
@@ -226,7 +226,7 @@
 .cns-meta-ico { display: inline-flex; align-items: center; color: var(--accent); flex: 0 0 auto; }
 /* Direktvergleich der beiden Vereine im "Naechstes Spiel"-Block */
 .cns-cmp { display: flex; flex-direction: column; gap: 4px; margin-top: 5px; margin-bottom: 8px; }
-.cns-cmp-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; padding: 2px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.cns-cmp-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; padding: 2px 0; border-bottom: 1px solid rgba(var(--ink-rgb), 0.05); }
 .cns-cmp-row:last-child { border-bottom: none; }
 .cns-cmp-l { font-size: 12px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--text-3); text-align: center; white-space: nowrap; }
 .cns-cmp-v { font-size: 18px; font-weight: 800; color: var(--text-2); }
@@ -238,18 +238,18 @@
 .cns-cmp-row > .cns-form:last-child { justify-content: flex-start; }
 .cns-fp { width: 20px; height: 20px; border-radius: 5px; font-size: 12px; font-weight: 800; font-style: normal; display: inline-flex; align-items: center; justify-content: center; color: #0d1016; }
 .cns-fp-W { background: var(--green); }
-.cns-fp-D { background: #a39a8e; }
-.cns-fp-L { background: #ff5d5d; }
+.cns-fp-D { background: var(--text-3); }
+.cns-fp-L { background: var(--red); }
 
 /* Hintergrund der Zentrale-Boxen (leicht transparent, ohne Muster) */
 .shell-zentrale .dashx > .card {
   background:
-    radial-gradient(120% 80% at 50% -10%, rgba(255, 255, 255, 0.035), transparent 60%),
-    linear-gradient(180deg, rgba(33, 36, 42, 0.74), rgba(20, 23, 29, 0.78));
+    radial-gradient(120% 80% at 50% -10%, rgba(var(--ink-rgb), 0.035), transparent 60%),
+    linear-gradient(180deg, rgba(var(--panel-rgb), 0.74), rgba(var(--bg-rgb), 0.78));
 }
 
 /* --- Termine --- */
-.ctm { display: flex; flex-direction: column; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 2px 12px; }
+.ctm { display: flex; flex-direction: column; background: rgba(var(--ink-rgb), 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 2px 12px; }
 .ctm-row { display: flex; align-items: center; gap: 10px; padding: 9px 2px; border-bottom: 1px solid var(--border-soft); font-size: 18.5px; }
 .ctm-row:last-child { border-bottom: none; }
 .ctm-wd { flex: 0 0 24px; color: var(--text-3); font-weight: 700; }
@@ -258,7 +258,7 @@
 .ctm-txt { flex: 1 1 auto; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* --- Nachrichten (Dashboard-Box) --- */
-.cnw { display: flex; flex-direction: column; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 2px 12px; }
+.cnw { display: flex; flex-direction: column; background: rgba(var(--ink-rgb), 0.03); border: 1px solid var(--border); border-radius: 9px; padding: 2px 12px; }
 .cnw-row { display: flex; align-items: center; gap: 11px; padding: 9px 2px; border-bottom: 1px solid var(--border-soft); }
 .cnw-row:last-child { border-bottom: none; }
 .cnw-ico { flex: 0 0 auto; display: inline-flex; align-items: center; }
@@ -293,7 +293,7 @@
 .ckd2-pos-bar { flex: 0 0 4px; width: 4px; height: 22px; border-radius: 2px; }
 .ckd2-pos-lbl { flex: 0 0 50px; font-size: 20px; font-weight: 700; color: var(--text-2); letter-spacing: 0.4px; }
 .ckd2-pos-num { flex: 0 0 auto; font-size: 27px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
-.ckd2-donuts { display: flex; justify-content: space-around; gap: 10px; margin-top: auto; padding: 9px 10px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 9px; }
+.ckd2-donuts { display: flex; justify-content: space-around; gap: 10px; margin-top: auto; padding: 9px 10px; background: rgba(var(--ink-rgb), 0.03); border: 1px solid var(--border); border-radius: 9px; }
 .ckd-donut { display: flex; flex-direction: column; align-items: center; gap: 5px; }
 .ckd-donut-ring { position: relative; width: 62px; height: 62px; }
 .ckd-donut-svg { width: 62px; height: 62px; transform: rotate(-90deg); }
@@ -374,7 +374,7 @@
   font-size: 14px;
   font-weight: 700;
   color: var(--text-2);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(var(--ink-rgb), 0.04);
   border: 1px solid var(--border);
   border-radius: 8px;
   letter-spacing: 0.3px;

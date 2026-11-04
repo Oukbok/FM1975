@@ -43,7 +43,7 @@
 .pp2-portrait { position: relative; height: 184px; }
 .pp2-crest { position: absolute; left: 0; top: 0; }
 .pp2-face { position: absolute; right: 0; bottom: 0; }
-.pp2-face > * { display: block; filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45)); }
+.pp2-face > * { display: block; filter: drop-shadow(0 6px 14px rgba(var(--shade-rgb), 0.45)); }
 .pp2-face > svg, .pp2-face > img { display: block; }
 .pp2-facts { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
 .pp2-keyrow { display: flex; align-items: flex-end; gap: 22px; padding-bottom: 6px; border-bottom: 1px solid var(--border-soft); }
@@ -64,7 +64,7 @@
 }
 .pp2-poscell:hover { border-color: var(--text-3); }
 .pp2-poscell.on { border-color: var(--accent); color: var(--accent); }
-.pp2-posval { background: rgba(255, 255, 255, 0.03); border-radius: 4px; padding: 2px 0 !important; font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums; }
+.pp2-posval { background: rgba(var(--ink-rgb), 0.03); border-radius: 4px; padding: 2px 0 !important; font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums; }
 .pp2-fl { display: grid; grid-template-columns: 84px minmax(0, 1fr); align-items: baseline; gap: 8px; font-size: 14px; padding: 1px 0; }
 .pp2-fl > span { color: var(--text-3); display: inline-flex; align-items: center; }
 .pp2-fl > b { font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -76,7 +76,7 @@
 .pp2-pitchbox { min-width: 0; }
 .pp2-pitch {
   position: relative; width: 190px; height: 240px;
-  background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-soft); border-radius: 4px;
+  background: rgba(var(--ink-rgb), 0.02); border: 1px solid var(--border-soft); border-radius: 4px;
 }
 .pp2-spot {
   position: absolute; transform: translate(-50%, -50%);
@@ -189,7 +189,7 @@
 .pp2-tiles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
 .pp2-tile {
   display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px 9px;
-  background: rgba(255, 255, 255, 0.025); border: 1px solid var(--border-soft); border-radius: 6px; min-width: 0;
+  background: rgba(var(--ink-rgb), 0.025); border: 1px solid var(--border-soft); border-radius: 6px; min-width: 0;
 }
 .pp2-tile-lbl { font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.7px; display: inline-flex; align-items: center; }
 .pp2-tile-mid { display: flex; align-items: center; gap: 8px; min-height: 38px; }
@@ -260,7 +260,7 @@
 
 /* Auszeichnungen */
 .pp3-honsum { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 8px; }
-.pp3-honsum > div { display: flex; align-items: baseline; gap: 8px; padding: 7px 10px; background: rgba(255, 255, 255, 0.025); border: 1px solid var(--border-soft); border-radius: 6px; }
+.pp3-honsum > div { display: flex; align-items: baseline; gap: 8px; padding: 7px 10px; background: rgba(var(--ink-rgb), 0.025); border: 1px solid var(--border-soft); border-radius: 6px; }
 .pp3-honsum b { font-family: var(--font-display); font-size: 22px; font-weight: 500; color: var(--text); line-height: 1; }
 .pp3-honsum span { font-size: 12.5px; color: var(--text-3); }
 .pp3-honlist { display: flex; flex-direction: column; }

@@ -54,7 +54,7 @@
 .menu-dd-item svg { width: 18px; height: 18px; flex: 0 0 auto; }
 .menu-dd-item:hover { background: var(--panel-2); }
 .menu-dd-item.danger { color: var(--red); }
-.menu-dd-item.danger:hover { background: rgba(224, 100, 111, 0.12); }
+.menu-dd-item.danger:hover { background: rgba(var(--red-rgb), 0.12); }
 .menu-dd-sep { height: 1px; margin: 4px 6px; background: var(--border); }
 
 
@@ -64,7 +64,7 @@
   width: min(560px, 94vw); max-height: 86vh;
   background: var(--panel); border: 1px solid var(--border); border-radius: 18px;
   padding: 22px 22px 18px; display: flex; flex-direction: column;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, .55);
+  box-shadow: 0 24px 60px rgba(var(--shade-rgb), .55);
 }
 .rc-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .rc-head .reveal-close { position: static; width: 34px; height: 34px; font-size: 16px; }
@@ -84,7 +84,7 @@
   border-left: 3px solid var(--text-3);
   animation: rc-in .28s ease;
 }
-.rc-row.up { border-left-color: #38d39f; }
+.rc-row.up { border-left-color: var(--green); }
 .rc-row.down { border-left-color: var(--red); }
 .rc-row.flat { border-left-color: var(--text-3); }
 .rc-row.newest { box-shadow: 0 0 0 1px var(--accent) inset; }
@@ -95,7 +95,7 @@
 .rc-old { color: var(--text-2); }
 .rc-arrow { color: var(--text-3); }
 .rc-delta { font-size: 12px; font-weight: 700; min-width: 40px; text-align: right; }
-.rc-delta.up { color: #38d39f; }
+.rc-delta.up { color: var(--green); }
 .rc-delta.down { color: var(--red); }
 .rc-delta.flat { color: var(--text-3); }
 .rc-controls { display: flex; gap: 8px; align-items: center; margin-top: 14px; }

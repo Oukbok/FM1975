@@ -10,7 +10,7 @@
 .co-root {
   position: fixed; inset: 0; z-index: 39;
   display: flex; align-items: center; justify-content: center;
-  background: rgba(7, 10, 15, 0.5);
+  background: rgba(var(--deep-rgb), 0.5);
   opacity: 0; transition: opacity 280ms ease;
   cursor: pointer;
 }
@@ -47,8 +47,8 @@
   padding: 12px 10px 10px;
   border: 1px solid var(--border);
   border-radius: 8px;
-  background: rgba(22, 25, 31, 0.94);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  background: rgba(var(--panel-rgb), 0.94);
+  box-shadow: 0 10px 30px rgba(var(--shade-rgb), 0.35);
   text-align: center;
   transition: transform var(--co-slide, 500ms) cubic-bezier(0.33, 0, 0.2, 1), opacity 300ms ease;
   will-change: transform;
@@ -107,7 +107,7 @@
 .hd-bar > :not(.hd-right), .hd-right > :not(.hd-continue) { transition: filter 280ms ease, opacity 280ms ease; }
 .cal-live .hd-bar > :not(.hd-right),
 .cal-live .hd-right > :not(.hd-continue) { filter: blur(4px); opacity: 0.35; pointer-events: none; }
-.cal-live .hd-continue { position: relative; z-index: 2; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.45); }
+.cal-live .hd-continue { position: relative; z-index: 2; box-shadow: 0 0 0 1px rgba(var(--shade-rgb), 0.3), 0 8px 24px rgba(var(--shade-rgb), 0.45); }
 
 @media (prefers-reduced-motion: reduce) {
   .co-card { transition: none; }

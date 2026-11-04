@@ -8,7 +8,7 @@
 .sub3-page { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
 .sub3-tabs {
   margin: 8px 2.5% 0; flex: 0 0 auto; padding: 0 8px;
-  background: linear-gradient(180deg, rgba(27, 32, 41, 0.92), rgba(16, 20, 27, 0.94));
+  background: linear-gradient(180deg, rgba(var(--panel-rgb), 0.92), rgba(var(--bg-rgb), 0.94));
   border: 1px solid var(--border-soft); border-radius: 6px;
 }
 .sub3-tabs .tab {
