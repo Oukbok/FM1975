@@ -65,7 +65,7 @@ export const WIKI_ARTICLES: WikiArticle[] = [
     id: 'core-overview',
     category: 'core',
     title: 'Spielüberblick',
-    keywords: ['bundesliga', '1975', 'saison', 'punkte', 'weiter', 'epoche', 'chronik'],
+    keywords: ['bundesliga', '1975', 'saison', 'punkte', 'weiter', 'epoche', 'chronik', 'menü', 'reiter', 'drittes menü'],
     body: `## 1975 – A Football Manager
 Deutsche Retro-Fußballmanager-Simulation. Der Spielstand startet in der **Saison 1975/76** (18 Vereine, 34 Spieltage) im Libero-Zeitalter und lässt sich über Jahrzehnte fortführen — Saison für Saison. Startdatum: **1. Juli 1975** (UTC).
 
@@ -74,6 +74,11 @@ Deutsche Retro-Fußballmanager-Simulation. Der Spielstand startet in der **Saiso
 - Solange die Zeit läuft, erscheint in der Bildschirmmitte der **Kalenderstreifen** (siehe Artikel „Kalender & planbare Aktivitäten“); der Rest des Bildschirms ist dann unscharf und abgedunkelt, nur der **Pause**-Knopf bleibt bedienbar.
 - Der Button hat eine **feste Größe** und wechselt je nach Kontext die Beschriftung (Weiter / Pause / Simulieren / ▶ Neue Saison), ohne zu springen.
 - An wichtigen Ereignissen (**dein Spiel** – hier hält der Vorlauf unmittelbar vor dem Anpfiff an und öffnet das Match-Fenster im Vor-Anpfiff-Zustand –, **große Saison-Bewertung**, Saisonende) hält das Spiel automatisch an. Die Pause landet dabei **genau auf dem betreffenden Tag** (also z.B. **am Spieltag selbst**, nicht am Folgetag): Das angezeigte Datum in der Zentrale bleibt auf diesem Tag stehen, der Tageswechsel wird erst nachgeholt, sobald du den Vorlauf fortsetzt. Auch die drei Bewertungsrunden (Herbst, Winter, Saisonende) halten an und zeigen die Bewertungs-Show. Am Saisonende wird der **Weiter**-Button zu **„▶ Neue Saison"** und startet die Folgesaison samt fälliger Chronik-Meilensteine.
+
+## Menüs: Kategorie › Unterpunkt › Reiter
+- Oben wählst du die **Kategorie** (Zentrale, Spieltag, Kader …), darunter den **Unterpunkt**. Hat eine Seite mehrere gleichrangige Ansichten, steht direkt darunter eine **Reiterleiste** (das „dritte Menü“), z. B. Training › Trainingsplan (Mannschaftstraining, Individuelle Spieler, Trainingsgruppen, Langfristig), Jugend › Mannschaften (A- bis G-Jugend und Alle), Kader › Übersicht und Transfers › Transfermarkt (Mannschaftsteile), Transfers › Beobachtung, Finanzen › Sponsoring und Fanartikel, Verein › Erfolge, Zentrale › Presse (Ausgaben) sowie Jugend › Jugendwettbewerbe (Altersklassen).
+- Die kleine Zahl im Reiter zählt, was dahinter steckt (Spieler, Angebote). Der zuletzt gewählte Reiter bleibt beim Seitenwechsel erhalten.
+- Umschalter, die nur den Inhalt **einer Box** ändern (z. B. Kabine › Maßnahmen/Vorfälle, Budget › Aufteilung/Vorjahre), bleiben im Kopf dieser Box.
 
 ## Punktesystem
 - Das Punktesystem ist **historisch automatisch** und **nicht mehr manuell wählbar**: **2 Punkte pro Sieg bis Saison 1994/95**, **ab Saison 1995/96 automatisch 3 Punkte pro Sieg** (Remis stets 1 Punkt).
@@ -2066,7 +2071,7 @@ Jeder Verein besitzt eine **Jugendakademie**. Ihre **Nachwuchs-Investitionen** (
 
 Die Jugendakademie ist ein **eigenständiger Bildschirm** (Bereich **Jugend**, Symbol in der unteren Navigation).
 Dort sind alle Talente **nach Altersklassen** (Jahrgängen) gruppiert — von der G-Jugend (Bambini) bis zur A-Jugend:
-- Register/Filter für **Alle** sowie jede Altersklasse **G · F · E · D · C · B · A** mit Anzahl.
+- Reiterleiste unter dem Menü (**Jugend › Mannschaften**): **A-Jugend** bis **Bambini** (G-Jugend) und **Alle**, jeweils mit Anzahl der Spieler.
 - Je Altersklasse eine eigene Tabelle mit Position, Alter, Gesamtstärke (OVR) und Attributen (farbcodiert).
 - Das **geschätzte Potenzial** wird als **goldene Sterne-Spanne** angezeigt (nicht als exakter Wert!).
 - Klick auf ein Talent öffnet die Detailansicht mit Altersklasse, allen Attributen und der Schaltfläche **Hochziehen in den Profikader**.
