@@ -46,10 +46,10 @@
 .ct-head-r { min-width: 0; display: grid; gap: 6px; }
 .ct-name { font-family: var(--font-display); font-weight: 600; font-size: 27px; line-height: 1.1; text-transform: uppercase; letter-spacing: 0.4px; }
 .ct-sub { display: flex; align-items: center; gap: 8px; color: var(--text-2); font-size: 17px; white-space: nowrap; overflow: hidden; }
-.ct-kpis { display: grid; grid-template-columns: minmax(0, 0.75fr) minmax(0, 1fr) minmax(0, 1.35fr); border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft); margin: 4px 0 2px; }
+.ct-kpis { display: grid; grid-template-columns: minmax(0, 0.7fr) minmax(0, 1fr) minmax(0, 1.5fr); border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft); margin: 4px 0 2px; }
 .ct-kpis > div { display: grid; justify-items: center; padding: 8px 4px; }
 .ct-kpis > div + div { border-left: 1px solid var(--border-soft); }
-.ct-kpis b { font-family: var(--font-display); font-weight: 500; font-size: 22px; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.ct-kpis b { font-family: var(--font-display); font-weight: 500; font-size: 20px; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
 .ct-kpis span { color: var(--text-3); font-size: 14.5px; text-transform: uppercase; letter-spacing: 0.6px; }
 
 /* Wichtigkeit: drei Punkte */

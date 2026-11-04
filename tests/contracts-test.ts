@@ -78,7 +78,7 @@ import('../src/game/aiOffers').then(async ({ rollAiOffers, monthlySquadHarmony }
   const pid = m.eventRef!.playerId!;
   const n0 = c4.playerIds.length;
   console.log(chooseEventOption(g4, m, 'annehmen'));
-  if (g4.players[pid].clubId === c4.id || c4.playerIds.length !== n0 - 1) fail('Verkauf nicht vollzogen');
+  if (g4.players[pid]?.clubId === c4.id || c4.playerIds.length !== n0 - 1) fail('Verkauf nicht vollzogen');
   for (const id of c4.playerIds) g4.players[id].development.recentMinutes = 0;
   for (let i = 0; i < 6; i++) monthlySquadHarmony(g4, `1990-1${i % 3}-01`);
   const sat = c4.playerIds.map((id) => g4.players[id].contract.satisfaction);
