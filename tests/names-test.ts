@@ -90,7 +90,7 @@ const GENERIC = new Set(['west', 'kim', 'man', 'real', 'focus', 'total', 'expres
 // Ortsnamen/Wörter, die zufällig nah an einer Marke liegen (Kapstadt ~ Karstadt).
 const WORDS_OK = new Set(['kapstadt', 'insel']);
 const norm = (s: string) => s.toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
-  .normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
+  .normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
 function lev(a: string, b: string): number {
   if (Math.abs(a.length - b.length) > 2) return 99;
   const d = Array.from({ length: b.length + 1 }, (_, i) => i);
