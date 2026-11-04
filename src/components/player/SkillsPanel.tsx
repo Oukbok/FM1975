@@ -14,6 +14,7 @@ import { AttrTip } from './AttrTip';
 import { ATTR_DE, GK_GROUP, GROUPS, attrTiers, sortedKeys, type AttrKey } from './shared';
 import { attrChanges, trainingTargets } from './profileData';
 import { SPOTS } from './PositionPitch';
+import Select from '../../ui/Select';
 
 const G = Object.fromEntries(GROUPS.map((g) => [g.title, g])) as Record<string, (typeof GROUPS)[number]>;
 
@@ -45,9 +46,9 @@ export default function SkillsPanel({ p, pos, onPos }: { p: Player; pos: Positio
           <button type="button" className={`dchip${onlyKey ? ' on' : ''}`} onClick={() => setOnlyKey(true)}>Nur wichtige</button>
         </div>
         <label className="pp2-forpos">für
-          <select className="pp2-select" value={pos} onChange={(e) => onPos(e.target.value as Position)}>
+          <Select className="pp2-select" value={pos} onChange={(v) => onPos(v as Position)}>
             {[...SPOTS].reverse().map((s) => <option key={s.pos} value={s.pos}>{s.pos} · {POSITION_NAMES_DE[s.pos]}</option>)}
-          </select>
+          </Select>
         </label>
       </div>
 

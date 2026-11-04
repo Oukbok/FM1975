@@ -25,6 +25,7 @@ import {
   assignToBench, assignToSlot, effectiveFormation, familiarityOf, lineupHints, moveSlot, placementFor, slotOf, syncLineup, toReserve,
 } from './lineup/lineupOps';
 import { InfoTip } from '../ui/InfoTip';
+import Select from '../ui/Select';
 
 // Loses Game-Interface (Vollstruktur liegt in game/state.ts).
 interface G {
@@ -209,10 +210,10 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
 
       <DashBox title="Aufstellung" info="formation" icon="lineup" rows={2} right={
         <span className="lu-tools">
-          <select className="lu-formation" value={t.formation} onChange={(e) => changeFormation(e.target.value)} title="Formation">
+          <Select className="lu-formation" value={t.formation} onChange={(v) => changeFormation(v)} title="Formation">
             <optgroup label="Libero-Systeme">{libero.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}</optgroup>
             <optgroup label="Ketten-Systeme">{chain.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}</optgroup>
-          </select>
+          </Select>
           <label className="lu-check" title="Gezogene Spieler rasten auf feste Positionsfelder ein">
             <input type="checkbox" checked={snap} onChange={(e) => set({ snapToGrid: e.target.checked })} /> Fest einrasten<InfoTip k="festEinrasten" />
           </label>

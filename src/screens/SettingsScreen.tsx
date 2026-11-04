@@ -1,6 +1,7 @@
 import { AppSettings, DisplayMode } from '../engine/save';
 import { RESOLUTION_GROUPS } from '../ui/DisplayFrame';
 import { useState } from 'react';
+import Select from '../ui/Select';
 
 // -----------------------------------------------------------------------------
 // EINSTELLUNGEN
@@ -162,9 +163,9 @@ export function SettingsScreen({ settings, onBack, onSave }: {
         </p>
 
         <label className="dim mini" style={{ display: 'block' }}>Auflösung</label>
-        <select
+        <Select
           value={s.resolution}
-          onChange={(e) => setS({ ...s, resolution: e.target.value })}
+          onChange={(v) => setS({ ...s, resolution: v })}
           style={{ marginTop: 4 }}
         >
           <option value="auto">Automatisch (native Desktop-Auflösung)</option>
@@ -175,7 +176,7 @@ export function SettingsScreen({ settings, onBack, onSave }: {
               ))}
             </optgroup>
           ))}
-        </select>
+        </Select>
 
         <label className="dim mini mt16" style={{ display: 'block' }}>Anzeige-Modus</label>
         <div className="seg-group mt4">

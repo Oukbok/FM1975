@@ -13,6 +13,7 @@ import { GalaShow } from '../../../screens/gala/GalaShow';
 import type { Game } from '../../../game/state';
 import { DashBox, DashPage, Empty } from '../../../ui/DashPage';
 import { AwardCard, AwardHonours } from './AwardParts';
+import Select from '../../../ui/Select';
 
 export function AwardsView({ g }: { g: Game }) {
   const seasons = [...(awardsState(g)?.seasons ?? [])].reverse();
@@ -38,9 +39,9 @@ export function AwardsView({ g }: { g: Game }) {
         right={(
           <span className="aw-pick">
             <span className="aw-pick-div">{s.divName}</span>
-            <select className="dselect" value={s.season} onChange={(e) => setPick(e.target.value)} aria-label="Saison wählen">
+            <Select className="dselect" value={s.season} onChange={(v) => setPick(v)} aria-label="Saison wählen">
               {seasons.map((x) => <option key={x.season} value={x.season}>{x.season}</option>)}
-            </select>
+            </Select>
           </span>
         )}>
         <div className="aw-page-top">

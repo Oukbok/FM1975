@@ -1,0 +1,174 @@
+/* =============================================================================
+   KNOPF-SYSTEM „modern“ (Wunsch Pascal: kleine orangene Kästchen ersetzen)
+   – lädt nach 29-look.css, gilt im ganzen Spiel.
+   Neue Klassen:  .b3 (Knopf, Größen .b3-s / Standard / .b3-l, Zustand .on),
+                  .seg3 (Segment-Gruppe, Kinder <button class="on">),
+                  .sel3 (Auswahlliste, ui/Select.tsx).
+   Altklassen werden hier auf dasselbe Aussehen gebracht (.dchip, .chip,
+   .seg-group/.seg-btn, .lu-seg, .ng-seg, .lp-seg, .sv-seg, .mr-lu-toggle,
+   .ms-chip, .tm-chip, .cp-map-tab, .lp-countries, .btn-sm …).
+   Farben NUR über Tokens (00-base.css: --btn-*, --sel-*, --focus-ring,
+   --pop-*), damit Themes sie austauschen können. Auswahl = ruhige helle
+   Fläche, nicht Bernstein.
+   ============================================================================= */
+
+/* ---- Einzelknopf ----------------------------------------------------------- */
+.b3, .dchip, .chip, .ms-chip, .tm-chip, .cp-map-tab, .lp-countries button, .pp-preset, .bf-toggle {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: var(--btn-h-m); padding: 0 16px; box-sizing: border-box;
+  border-radius: var(--btn-radius); border: 1px solid var(--btn-border);
+  background: var(--btn-bg); color: var(--btn-text);
+  font-family: var(--font-ui); font-size: var(--btn-font); font-weight: 600; letter-spacing: 0.2px;
+  line-height: 1.15; white-space: nowrap; cursor: pointer;
+  transition: background 0.14s, border-color 0.14s, color 0.14s;
+}
+.b3:hover:not(:disabled), .dchip:hover:not(:disabled), .chip:hover:not(:disabled), .ms-chip:hover:not(:disabled),
+.tm-chip:hover:not(:disabled), .cp-map-tab:hover:not(:disabled), .lp-countries button:hover:not(:disabled),
+.pp-preset:hover:not(:disabled), .bf-toggle:hover:not(:disabled) {
+  background: var(--btn-bg-hover); border-color: var(--btn-border-hover); color: var(--btn-text-hover);
+}
+.b3:active:not(:disabled), .dchip:active:not(:disabled), .chip:active:not(:disabled) { background: var(--btn-bg-press); transform: none; }
+.b3.on, .b3.active, .dchip.on, .chip.active, .ms-chip.on, .tm-chip.on, .cp-map-tab.on, .lp-countries button.on, .pp-preset.on {
+  background: var(--sel-bg); border-color: var(--sel-border); color: var(--sel-text); font-weight: 700;
+}
+.b3:disabled, .dchip:disabled, .chip:disabled, .ms-chip:disabled, .tm-chip:disabled, .cp-map-tab:disabled, .lp-countries button:disabled {
+  opacity: 0.42; cursor: not-allowed;
+}
+.b3-s, .dchip.b3-s { min-height: var(--btn-h-s); padding: 0 12px; font-size: 14px; }
+.b3-l { min-height: var(--btn-h-l); padding: 0 22px; font-size: 16.5px; }
+.b3 .game-icon, .dchip .game-icon { width: 18px; height: 18px; flex: 0 0 auto; }
+/* Primär (Hauptknopf einer Box) – einzige Stelle mit Akzentfläche */
+.b3.b3-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.b3.b3-primary:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); filter: brightness(1.06); }
+/* Zähler im Knopf („B (18)“, „Ungelesen 4“) */
+.b3-n { color: var(--text-3); font-weight: 600; font-size: 0.9em; }
+.on > .b3-n, .active > .b3-n { color: var(--text-2); }
+
+/* Kleine Aktionsknöpfe (btn-sm) – größer und ruhiger, nicht mehr fummelig */
+.btn-sm { min-height: 34px; padding: 0 14px; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: var(--btn-radius); }
+.btn-ghost { background: var(--btn-bg); border-color: var(--btn-border); color: var(--btn-text); }
+.btn-ghost:hover:not(:disabled) { background: var(--btn-bg-hover); border-color: var(--btn-border-hover); color: var(--btn-text-hover); }
+
+/* Gewählt-Zustand allgemeiner Knöpfe: ruhig statt Bernstein */
+button.active:not(.tab):not(.btn-primary):not(.hd-nav-item):not(.tn-sub-item) {
+  background: var(--sel-bg); border-color: var(--sel-border); color: var(--sel-text);
+}
+
+/* Reihen von Knöpfen */
+.dchips, .dbtnrow, .chip-row, .b3-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+/* ---- Segment-Gruppe -------------------------------------------------------- */
+.seg3, .seg-group, .lu-seg, .ng-seg, .lp-seg, .sv-seg, .mr-lu-toggle {
+  display: inline-flex; align-items: stretch; gap: 2px; padding: 3px;
+  min-height: var(--btn-h-m); box-sizing: border-box;
+  border: 1px solid var(--btn-border); border-radius: calc(var(--btn-radius) + 2px);
+  background: rgba(0, 0, 0, 0.18); overflow: visible;
+}
+.lu-seg { display: grid; }            /* Raster (gleich breite Felder) bleibt */
+.ng-seg, .lp-seg { display: flex; }
+.seg3 > button, .seg-group > .seg-btn, .seg-group > button, .lu-seg > button, .ng-seg > button,
+.lp-seg > button, .sv-seg > button, .mr-lu-toggle > button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: calc(var(--btn-h-m) - 8px); padding: 0 14px; margin: 0;
+  border: 0; border-radius: var(--btn-radius); background: transparent; color: var(--btn-text);
+  font-family: var(--font-ui); font-size: var(--btn-font); font-weight: 600; letter-spacing: 0.2px;
+  text-transform: none; white-space: nowrap; cursor: pointer; box-shadow: none;
+  transition: background 0.14s, color 0.14s;
+}
+.seg3 > button:hover:not(:disabled), .seg-group > .seg-btn:hover:not(:disabled), .seg-group > button:hover:not(:disabled),
+.lu-seg > button:hover:not(:disabled), .ng-seg > button:hover:not(:disabled), .lp-seg > button:hover:not(:disabled),
+.sv-seg > button:hover:not(:disabled), .mr-lu-toggle > button:hover:not(:disabled) {
+  background: var(--btn-bg-hover); color: var(--btn-text-hover);
+}
+.seg3 > button.on, .seg3 > button.active, .seg-group > .seg-btn.active, .seg-group > button.active, .seg-group > button.on,
+.lu-seg > button.on, .ng-seg > button.on, .lp-seg > button.on, .sv-seg > button.on, .mr-lu-toggle > button.on {
+  background: var(--sel-bg); color: var(--sel-text); font-weight: 700;
+  box-shadow: inset 0 0 0 1px var(--sel-border), inset 0 -2px 0 var(--sel-mark);
+}
+.seg3 > button:disabled, .seg-group > button:disabled, .lu-seg > button:disabled { opacity: 0.4; cursor: not-allowed; }
+.seg3-s { min-height: var(--btn-h-s); padding: 2px; }
+.seg3-s > button { min-height: calc(var(--btn-h-s) - 6px); padding: 0 10px; font-size: 14px; }
+.seg3-l { min-height: var(--btn-h-l); }
+.seg3-l > button { min-height: calc(var(--btn-h-l) - 8px); padding: 0 20px; font-size: 16.5px; }
+.seg3-fill { display: flex; width: 100%; }
+.seg3-fill > button { flex: 1 1 0; min-width: 0; }
+.rb2-seg .seg-btn.active .rb2-trend { color: inherit; }
+
+/* ---- Fokus (Tastatur) -------------------------------------------------------- */
+.b3:focus-visible, .dchip:focus-visible, .chip:focus-visible, .sel3:focus-visible, .btn-sm:focus-visible,
+.seg3 > button:focus-visible, .seg-group > button:focus-visible, .lu-seg > button:focus-visible,
+.ng-seg > button:focus-visible, .lp-seg > button:focus-visible, .sv-seg > button:focus-visible {
+  outline: 2px solid var(--focus-ring); outline-offset: 2px;
+}
+
+/* ---- Auswahlliste (ui/Select.tsx) ---------------------------------------------- */
+.sel3 {
+  display: inline-flex; align-items: center; justify-content: space-between; gap: 10px;
+  min-height: var(--btn-h-m); height: var(--btn-h-m); width: 240px; max-width: 100%;
+  padding: 0 10px 0 14px; box-sizing: border-box;
+  border-radius: var(--btn-radius); border: 1px solid var(--btn-border); background: var(--btn-bg);
+  color: var(--text); font-family: var(--font-ui); font-size: var(--btn-font); font-weight: 600;
+  text-align: left; cursor: pointer; transition: background 0.14s, border-color 0.14s;
+}
+.sel3:hover:not(:disabled) { background: var(--btn-bg-hover); border-color: var(--btn-border-hover); }
+.sel3.open { border-color: var(--sel-border); background: var(--btn-bg-hover); }
+.sel3:disabled { opacity: 0.45; cursor: not-allowed; }
+.sel3:active:not(:disabled) { transform: none; }
+.sel3-val { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sel3-val.ph { color: var(--text-3); }
+.sel3-chev { flex: 0 0 auto; color: var(--text-3); transition: transform 0.15s; }
+.sel3.open .sel3-chev { transform: rotate(180deg); color: var(--text-2); }
+.sel3-s { min-height: var(--btn-h-s); height: var(--btn-h-s); font-size: 14px; padding: 0 8px 0 11px; }
+.sel3-l { min-height: var(--btn-h-l); height: var(--btn-h-l); font-size: 16.5px; }
+
+.sel3-pop {
+  position: fixed; z-index: 10050; transform-origin: top left; box-sizing: border-box;
+  background: var(--pop-bg); border: 1px solid var(--pop-border); border-radius: 8px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55); padding: 4px;
+  font-family: var(--font-ui); color: var(--text);
+}
+.sel3-pop.up { transform-origin: bottom left; }
+.sel3-list { overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+.sel3-opt {
+  display: flex; align-items: center; gap: 10px; min-height: 38px; padding: 0 10px 0 12px;
+  border-radius: 5px; font-size: 15.5px; font-weight: 500; color: var(--text-2); cursor: pointer;
+  user-select: none;
+}
+.sel3-opt-lbl { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sel3-opt.act { background: var(--pop-hover); color: var(--text); }
+.sel3-opt.sel { color: var(--sel-text); font-weight: 700; background: var(--sel-bg); }
+.sel3-opt.off { color: var(--text-4); cursor: not-allowed; }
+.sel3-opt.off.act { background: transparent; }
+.sel3-check { flex: 0 0 auto; color: var(--text-2); }
+.sel3-group {
+  padding: 10px 12px 4px; font-size: 12.5px; font-weight: 700; letter-spacing: 0.9px;
+  text-transform: uppercase; color: var(--text-3);
+}
+.sel3-div { height: 1px; margin: 4px 6px; background: var(--border); }
+.sel3-empty { padding: 10px 12px; color: var(--text-3); font-size: 14.5px; }
+
+/* Show-Fenster (Textmodus, Auslosung, Halle): Segmente eine Stufe größer */
+.ms-speed > .seg-btn, .dr-speed > .seg-btn, .ix-plan .seg-group > .seg-btn, .ix-ctrl .seg-group > .seg-btn {
+  min-height: calc(var(--btn-h-l) - 8px); padding: 0 18px; font-size: 16.5px;
+}
+
+/* Altklassen der früheren <select>-Felder (dselect, tt-select, pp2-select …) liegen jetzt
+   auf dem Auswahlknopf: Breiten bleiben, Aussehen kommt einheitlich von .sel3. */
+button.sel3.sel3 {
+  height: var(--btn-h-m); min-height: var(--btn-h-m); padding: 0 10px 0 14px;
+  border-radius: var(--btn-radius); border: 1px solid var(--btn-border); background: var(--btn-bg);
+  color: var(--text); font-family: var(--font-ui); font-size: var(--btn-font); font-weight: 600;
+  text-transform: none; letter-spacing: 0.1px; box-shadow: none;
+}
+button.sel3.sel3:hover:not(:disabled) { background: var(--btn-bg-hover); border-color: var(--btn-border-hover); }
+button.sel3.sel3.open { background: var(--btn-bg-hover); border-color: var(--sel-border); }
+button.sel3.sel3.sel3-s { height: var(--btn-h-s); min-height: var(--btn-h-s); font-size: 14px; padding: 0 8px 0 11px; }
+button.sel3.sel3.sel3-l { height: var(--btn-h-l); min-height: var(--btn-h-l); font-size: 16.5px; }
+.ng-sel, .ng-date .sel3, .ng-clubsel .sel3 { width: 100%; min-width: 0; }
+.pm-select.sel3 { width: 440px; }
+.dbox .pd-select, .pd-select.sel3 { width: 100%; }
+.tm-cs-lhead .sel3, .tm-sys-head .sel3 { width: 220px; }
+
+/* Quadratischer Symbolknopf (Vor/Zurück neben Auswahllisten, Kopfzeile) */
+.b3.b3-icon { width: var(--btn-h-m); min-width: var(--btn-h-m); padding: 0; }
+.b3.b3-icon.b3-s { width: var(--btn-h-s); min-width: var(--btn-h-s); }

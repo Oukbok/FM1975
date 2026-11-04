@@ -16,6 +16,7 @@ import type { InboxMessage, MessageCategory } from '../../../types';
 import { WD_FULL, vColor } from '../../../ui/format';
 import { EventChoices } from '../EventChoices';
 import { msgGroup, msgPlayer, ownGames, type MsgGroup } from './data';
+import Select from '../../../ui/Select';
 
 /** Passende Seite je Kategorie (Knopf im Lesebereich). */
 const CAT_TARGET: Partial<Record<MessageCategory, [Screen, string]>> = {
@@ -101,11 +102,11 @@ export function Newscenter({ g, onGoto, onWatch, onChange, openPlayer }: {
       <div className="dz-nfoot">
         <label>
           <span>Angezeigte Nachrichten</span>
-          <select className="dselect" value={filter} onChange={(e) => setFilter(e.target.value as Filter)}>
+          <Select className="dselect" value={filter} onChange={(v) => setFilter(v as Filter)}>
             <option value="all">Alle ({msgs.length})</option>
             <option value="unread">Ungelesen ({unread})</option>
             {cats.map((c) => <option key={c} value={c}>{CATEGORY_META[c].label} ({msgs.filter((m) => m.category === c).length})</option>)}
-          </select>
+          </Select>
         </label>
         <span className="dz-dim">Es bleiben die letzten 80 Nachrichten erhalten.</span>
       </div>

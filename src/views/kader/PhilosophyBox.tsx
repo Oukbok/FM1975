@@ -3,6 +3,7 @@ import { Game } from '../../game/state';
 import { MAX_FOERDER, setFoerder } from '../../game/staffGame';
 import { DashBox } from '../../ui/DashPage';
 import { InfoTip } from '../../ui/InfoTip';
+import Select from '../../ui/Select';
 
 // =============================================================================
 // Trainingsphilosophie je Saisonphase + Förderspieler (wenig Klickarbeit pro
@@ -35,9 +36,9 @@ export function PhilosophyBox({ g, onChange, hideFoerder = false }: { g: Game; o
         {PHASES.map((ph) => (
           <label key={ph} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <span style={{ fontSize: 13, fontWeight: ph === now ? 900 : 600, color: ph === now ? 'var(--accent)' : 'var(--text-2)' }}>{PHASE_LABEL[ph]}</span>
-            <select className="pd-select" value={focus[ph] ?? 'balance'} onChange={(e) => setFocus(ph, e.target.value as TrainingFocus)}>
+            <Select className="pd-select" value={focus[ph] ?? 'balance'} onChange={(v) => setFocus(ph, v as TrainingFocus)}>
               {FOCI.map((f) => <option key={f} value={f}>{FOCUS_LABEL[f]}</option>)}
-            </select>
+            </Select>
           </label>
         ))}
       </div>

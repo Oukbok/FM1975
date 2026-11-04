@@ -1,7 +1,6 @@
 /* =============================================================================
    Fanartikel (Finanzen › Fanartikel) – views/finanzen/MerchView.tsx + merch/
    ============================================================================= */
-.mc-tabs .seg-btn { padding: 5px 14px; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.5px; font-size: 13px; }
 .mc-table { width: 100%; border-collapse: collapse; }
 .mc-table th { text-align: left; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; position: sticky; top: 0; background: var(--panel); z-index: 1; }
 .mc-table th.num, .mc-table td.num { text-align: right; white-space: nowrap; }

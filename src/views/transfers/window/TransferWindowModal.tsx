@@ -20,6 +20,7 @@ import { NewsBox, NewsList, WindowSide } from './WindowSide';
 import { WindowFilters, WindowTable } from './WindowTable';
 import { TopTransfersPage } from './TopTransfersPage';
 import { fmtDate } from './parts';
+import Select from '../../../ui/Select';
 
 type Tab = 'transfers' | 'vertraege' | 'geruechte' | 'trainer';
 const TABS: { k: Tab; label: string }[] = [
@@ -85,9 +86,9 @@ export function TransferWindowModal({ g, initialKey, auto, settings, onSettings,
           <span className="tw-sp" />
           {wins.length > 1 && (
             <label className="tw-select">Fenster
-              <select value={win.key} onChange={(e) => { setKey(e.target.value); setFilter({ ...filter, club: '' }); }}>
+              <Select value={win.key} onChange={(v) => { setKey(v); setFilter({ ...filter, club: '' }); }}>
                 {wins.map((w) => <option key={w.key} value={w.key}>{windowLabel(w.key)}</option>)}
-              </select>
+              </Select>
             </label>
           )}
           <button className={`dchip ${page === 'top' ? 'on' : ''}`} onClick={() => setPage(page === 'top' ? 'bilanz' : 'top')}>
@@ -140,10 +141,10 @@ export function TransferWindowModal({ g, initialKey, auto, settings, onSettings,
           <span className="tw-sp" />
           {page === 'bilanz' && (
             <label className="tw-select">Verein auswählen
-              <select value={club} onChange={(e) => setFilter({ ...filter, club: e.target.value })}>
+              <Select value={club} onChange={(v) => setFilter({ ...filter, club: v })}>
                 <option value="">Alle Vereine</option>
                 {clubs.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
+              </Select>
             </label>
           )}
           {page === 'top'

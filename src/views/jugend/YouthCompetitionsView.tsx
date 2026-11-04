@@ -21,6 +21,8 @@ import { StatsBox } from '../statistiken/competition/StatsBox';
 import { FestDates, FestSide } from './youthcomp/YouthFestView';
 import { YouthInfoBox } from './youthcomp/YouthInfoBox';
 import { youthPlayerCard } from './youthcomp/YouthPlayerCard';
+import Icon from '../../components/Icon';
+import Select from '../../ui/Select';
 
 /** Standard: Liga/Staffel des eigenen Vereins in der A-Jugend, sonst Endrunde. */
 function defaultKey(g: Game, season: string): string {
@@ -81,18 +83,18 @@ export function YouthCompetitionsView({ g }: { g: Game }) {
 
   const header = (
     <span className="cmp-select">
-      <button className="dchip" disabled={sIdx <= 0} onClick={() => step(-1)} title="Vorherige Saison">‹</button>
-      <select className="dselect" value={season} onChange={(e) => setSeason(e.target.value)} title="Saison">
+      <button className="b3 b3-icon" disabled={sIdx <= 0} onClick={() => step(-1)} title="Vorherige Saison" aria-label="Vorherige Saison"><Icon name="navPrev" size={18} /></button>
+      <Select className="dselect" value={season} onChange={(v) => setSeason(v)} title="Saison">
         {seasons.map((s) => <option key={s.season} value={s.season}>{s.season}{s.source === 'live' ? ' (laufend)' : ''}</option>)}
-      </select>
-      <button className="dchip" disabled={sIdx >= seasons.length - 1} onClick={() => step(1)} title="Nächste Saison">›</button>
-      <select className="dselect yc-comp-select" value={effKey} onChange={(e) => setKey(e.target.value)} title="Wettbewerb">
+      </Select>
+      <button className="b3 b3-icon" disabled={sIdx >= seasons.length - 1} onClick={() => step(1)} title="Nächste Saison" aria-label="Nächste Saison"><Icon name="navNext" size={18} /></button>
+      <Select className="dselect yc-comp-select" value={effKey} onChange={(v) => setKey(v)} title="Wettbewerb">
         {sections.map((sec) => (
           <optgroup key={sec} label={sec}>
             {opts.filter((o) => o.section === sec).map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
           </optgroup>
         ))}
-      </select>
+      </Select>
     </span>
   );
 

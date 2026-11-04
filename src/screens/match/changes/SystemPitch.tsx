@@ -13,6 +13,7 @@ import { onPitch } from '../../../engine/match/state';
 import type { Side } from '../../../engine/match/types';
 import { vColor } from '../../../ui/format';
 import { draftPlayers, draftStrength, type Draft } from './draft';
+import Select from '../../../ui/Select';
 
 export function SystemPitch({ sim, side, d, sel, onPick, onSwap, onFormation }: {
   sim: MatchSim; side: Side; d: Draft; sel: string | null;
@@ -60,9 +61,9 @@ export function SystemPitch({ sim, side, d, sel, onPick, onSwap, onFormation }: 
     <div className="tm-sys" ref={box} onPointerMove={move} onPointerUp={up} onPointerCancel={() => setDrag(null)}>
       <div className="tm-sys-head">
         <span className="tm-sec">Spielsystem</span>
-        <select value={d.formation} onChange={(e) => onFormation(e.target.value)} aria-label="Formation">
+        <Select value={d.formation} onChange={(v) => onFormation(v)} aria-label="Formation">
           {formations.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}
-        </select>
+        </Select>
       </div>
       <div className="tm-sys-main">
         <div className="lu-pitch tm-sys-pitch">

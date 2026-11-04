@@ -66,4 +66,5 @@ import './28-budget.css';
 import './28-pyramid.css';
 import './28-faces.css';
 import './28-career.css';
-import './29-look.css'; // zuletzt: ruhige Gesamtoptik
+import './29-look.css'; // ruhige Gesamtoptik
+import './29-buttons.css'; // zuletzt: Knopf-System + Auswahlliste (Tokens --btn-*/--sel-*)

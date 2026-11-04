@@ -58,8 +58,8 @@ tr.me:hover { background: rgba(255, 255, 255, 0.06); }
 }
 .pill.home { color: var(--text); border-color: var(--border); }
 .pill.away { color: var(--text-2); border-color: var(--border); }
-.dchip { border-radius: 4px; font-weight: 600; }
-.dchip.on { background: var(--accent-soft); }
+
+
 
 /* Formleiste S/U/N: kleiner, gedämpft */
 .dform i { width: 18px; height: 18px; border-radius: 3px; font-size: 10.5px; font-weight: 700; color: var(--bg); }

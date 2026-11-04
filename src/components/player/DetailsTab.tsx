@@ -11,6 +11,7 @@ import { StatusLine, fitness100, freshness100 } from '../status';
 import { HiddenLine } from './HiddenLine';
 import { trainingTargets } from './profileData';
 import { ATTR_DE, AVAIL_DE, INJURY_SEV_DE, INJURY_TYPE_DE, Bar, Line, Section, utcDate } from './shared';
+import Select from '../../ui/Select';
 
 /** Saison zu einem Datum (Juli–Juni), z. B. „1978/79“. */
 export function seasonOfDate(iso: string): string {
@@ -39,10 +40,10 @@ function CoachOrders({ p, onChange }: { p: Player; onChange: () => void }) {
       <div className="pp-list">
         <div className="pp-line pp3-orderline">
           <span className="pp-line-lbl">Zusätzliche Position trainieren</span>
-          <select className="pp2-select" value={train ?? ''} onChange={(e) => set(e.target.value)}>
+          <Select className="pp2-select" value={train ?? ''} onChange={(v) => set(v)}>
             <option value="">keine</option>
             {options.map((pos) => <option key={pos} value={pos}>{pos} · {POSITION_NAMES_DE[pos]} ({Math.round(skillOf(p, pos))})</option>)}
-          </select>
+          </Select>
         </div>
         {train && <div className="pp-note">Training allein bringt die Vertrautheit als {POSITION_NAMES_DE[train]} bis {TRAIN_CAP}, den Rest holt er sich in Spielen.</div>}
         <Line label="Wochentraining fördert vor allem" value={focus.length ? focus.slice(0, 6).join(', ') : '—'} />

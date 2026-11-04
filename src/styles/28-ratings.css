@@ -85,7 +85,6 @@
   letter-spacing: 1px; text-transform: uppercase; color: var(--text);
 }
 .rb2-dim { color: var(--text-3); font-family: var(--font-ui); font-size: 15px; font-weight: 500; letter-spacing: 0; text-transform: none; }
-.rb2-seg .seg-btn { padding: 4px 10px; display: inline-flex; align-items: center; }
 .rb2-seg .seg-btn.active .rb2-trend { color: var(--bg-1, #111); }
 
 /* Spielerentwicklung (Top 3) */

@@ -197,6 +197,32 @@
   --shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
   --shadow-lg: 0 18px 55px rgba(0, 0, 0, 0.6);
 
+  /* --- Knopf-System (29-buttons.css: .b3, .seg3, Altklassen .dchip/.chip/.seg-btn …)
+     und Auswahlliste (ui/Select.tsx). Auswahl ruhig hell statt Bernstein-Fläche;
+     Themes überschreiben nur diese Tokens. --- */
+  --btn-h-s: 32px;
+  --btn-h-m: 40px;
+  --btn-h-l: 48px;
+  --btn-radius: 6px;
+  --btn-font: 15px;
+  --btn-bg: rgba(255, 255, 255, 0.045);
+  --btn-bg-hover: rgba(255, 255, 255, 0.09);
+  --btn-bg-press: rgba(255, 255, 255, 0.12);
+  --btn-border: rgba(255, 255, 255, 0.10);
+  --btn-border-hover: rgba(255, 255, 255, 0.22);
+  --btn-text: var(--text-2);
+  --btn-text-hover: var(--text);
+  --sel-bg: rgba(255, 255, 255, 0.14);      /* gewählter Knopf/Eintrag */
+  --sel-border: rgba(255, 255, 255, 0.42);
+  --sel-text: var(--text);
+  --sel-mark: var(--accent);                /* feiner Strich am gewählten Segment */
+  --focus-ring: rgba(170, 196, 230, 0.75);  /* Tastaturfokus (kühl, nicht Bernstein) */
+  --pop-bg: #1e2228;                        /* offene Auswahlliste / Popover */
+  --pop-border: rgba(255, 255, 255, 0.14);
+  --pop-hover: rgba(255, 255, 255, 0.08);
+  --today-bg: #e9edf2;                      /* Kalender: Datumsfeld „Heute“ */
+  --today-text: #12151a;
+
   /* --- Layout-Breiten (Full-Bleed-Balken, zentrierte Inhalte) --- */
   --bar-max: 1360px;      /* zentrierte Spaltenbreite für Kopf-/Menüleiste */
   --content-max: 3000px;  /* Deckelung für den Inhaltsbereich auf sehr breiten Screens */

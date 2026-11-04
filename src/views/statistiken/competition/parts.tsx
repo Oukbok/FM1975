@@ -8,6 +8,7 @@ import { clubView } from '../../../game/clubProfile';
 import { compClubName, foreignCountry } from '../../../game/competitionView';
 import type { Game } from '../../../game/state';
 import { seasonStartYear } from '../../../data/timeline';
+import Seg from '../../../ui/Seg';
 import { isLocalClub, localClubColor } from '../../../game/youthComps/localClubs';
 
 /** Verein mit Wappen (deutsch) bzw. Farbpunkt (Ausland), klickbar wenn Profil vorhanden. */
@@ -33,13 +34,7 @@ export function TeamName({ g, id, season, short = false, size = 20 }: { g: Game;
 }
 
 export function Chips<T extends string | number>({ value, options, onChange }: { value: T; options: { v: T; label: ReactNode; disabled?: boolean; title?: string }[]; onChange: (v: T) => void }) {
-  return (
-    <span className="cmp-chips">
-      {options.map((o) => (
-        <button key={String(o.v)} className={`dchip ${value === o.v ? 'on' : ''}`} disabled={o.disabled} title={o.title} onClick={() => onChange(o.v)}>{o.label}</button>
-      ))}
-    </span>
-  );
+  return <Seg<T> className="cmp-chips" value={value} options={options} onChange={onChange} />;
 }
 
 /** Tabellenzone: Meister/Europa/Abstieg (1. Liga), Aufstieg (2. Liga), Meister/Abstieg (DDR, Historie). */
