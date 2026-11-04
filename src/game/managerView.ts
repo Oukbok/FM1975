@@ -10,7 +10,7 @@ import { seasonStartYear } from '../data/timeline';
 import { economyScale, yearOf } from '../engine/economy';
 import type { CupState } from '../types';
 import { ensureCareer } from './careerState';
-import { seasonsOf } from './clubRecords';
+import { recordBook, seasonsOf } from './clubRecords';
 import { archivedSeason, type ArchCup } from './leagueArchive';
 import {
   addToWDL, cloneTally, Comp, emptyWDL, ensureMgr, MgrGame, MgrPlayer, MgrStreak, MgrTally, MgrTransfer, MILESTONES,
@@ -38,6 +38,7 @@ export interface SeasonRow {
 
 export interface PlayerLine { id: string; name: string; pos: string; apps: number; goals: number; from: string; to: string; hg: boolean; active: boolean }
 export interface RecordLine { k: string; v: string; sub?: string }
+export interface OppLine { id: string; name: string; r: WDL }
 
 export interface CareerData {
   from: string;
@@ -54,6 +55,12 @@ export interface CareerData {
   buys: MgrTransfer[];
   sells: MgrTransfer[];
   repSeries: { season: string; rep: number }[];
+  /** Lieblingsgegner / Angstgegner (mind. 4 Pflichtspiele). */
+  oppBest: OppLine[];
+  oppWorst: OppLine[];
+  /** Saisonziele erreicht / bewertet. */
+  goalsOk: number;
+  goalsJudged: number;
 }
 
 export const ppg = (r: WDL) => { const n = r[0] + r[1] + r[2]; return n ? (r[0] * 3 + r[1]) / n : 0; };
@@ -85,7 +92,14 @@ function reachLive(cup: CupState | null | undefined, id: string): string | undef
 }
 
 const EURO_KEYS: EuroCompId[] = ['ec', 'cwc', 'uefa'];
-const EURO_SHORT = (k: EuroCompId, season: string) => euroCompName(k, seasonStartYear(season)).replace('Pokal der ', '');
+/** Kurzname eines Europapokals für Tabellen (Langname über euroCompName). */
+export function euroShort(k: EuroCompId, season: string): string {
+  const y = seasonStartYear(season);
+  if (k === 'ec') return y >= 1992 ? 'Meisterliga' : 'Landesmeister-Cup';
+  if (k === 'cwc') return y >= 2021 ? 'Konferenz-Liga' : 'Pokalsieger-Cup';
+  return euroCompName(k, y);
+}
+const EURO_SHORT = euroShort;
 
 function seasonCups(g: Game, season: string, id: string, live: boolean): { cup?: string; euro?: string } {
   if (live) {
@@ -101,8 +115,9 @@ function seasonCups(g: Game, season: string, id: string, live: boolean): { cup?:
 }
 
 const SKIP_TITLES = new Set(['jugendC', 'jugendD', 'jugendE', 'jugendF']);
-const SHORT_TITLE = (e: TrophyEntry) => e.kind === 'meister' ? 'Meister' : e.kind === 'pokal' ? 'Pokalsieger' : e.kind === 'aufstieg' ? 'Aufstieg'
-  : e.kind === 'staffel' ? 'Staffelsieger' : e.cat === 'kontinental' ? e.title : e.cat === 'jugend' ? 'Jugendtitel' : e.title;
+const SHORT_TITLE = (e: TrophyEntry) => e.kind === 'meister' ? 'Meister' : e.kind === 'pokal' ? 'Landespokal' : e.kind === 'aufstieg' ? 'Aufstieg'
+  : e.kind === 'staffel' ? 'Staffelsieger' : e.kind === 'ec' || e.kind === 'cwc' || e.kind === 'uefa' ? euroShort(e.kind, e.season)
+  : e.cat === 'jugend' ? 'Jugendtitel' : e.title;
 
 export function careerData(g: Game): CareerData | null {
   const c = ensureCareer(g);
@@ -124,7 +139,7 @@ export function careerData(g: Game): CareerData | null {
   const seasons: SeasonRow[] = Object.keys(log.seasons).sort().map((s) => {
     const r = log.seasons[s];
     const p = place.get(s);
-    return { season: s, tier: p?.tier, league: p?.league, pos: p?.pos, size: p?.size, ...goals.get(s), ...seasonCups(g, s, me, false), titles: titlesBy.get(s) ?? [], rep: r.rep, L: r.L, coach: r.coach };
+    return { season: s, tier: p?.tier, league: p?.league?.replace(/^Deutschland /, ''), pos: p?.pos, size: p?.size, ...goals.get(s), ...seasonCups(g, s, me, false), titles: titlesBy.get(s) ?? [], rep: r.rep, L: r.L, coach: r.coach };
   });
   const liveRec = { L: emptyWDL(), P: emptyWDL(), E: emptyWDL() } as Record<Comp, WDL>;
   for (const x of live) addToWDL(liveRec[x[1]], x);
@@ -186,11 +201,31 @@ export function careerData(g: Game): CareerData | null {
     tout += Math.round((club.finances.expenses.transferExpense ?? 0) / sc);
   }
 
+  // Gegner: direkter Vergleich seit Amtsantritt (Vereins-Historie + laufende Saison).
+  const opp = new Map<string, OppLine>();
+  const addOpp = (id: string, name: string, x: MgrGame) => {
+    const o = opp.get(id) ?? { id, name, r: emptyWDL() };
+    addToWDL(o.r, x); opp.set(id, o);
+  };
+  const book = recordBook(g);
+  if (book && book.h2hClub === me) {
+    for (const [id, list] of Object.entries(book.h2h)) for (const t of list) {
+      if (t[0] < log.from || t[0] >= g.season) continue;
+      addOpp(id, g.clubs[id]?.name ?? g.simClubs?.[id]?.name ?? g.euroClubs?.[id]?.name ?? id, [t[1], t[2], id, t[3], t[4], t[5], '']);
+    }
+  }
+  for (const x of live) addOpp(x[2], x[6], x);
+  const oppList = [...opp.values()].filter((o) => games(o.r) >= 6);
+  const oppBest = [...oppList].sort((a, b) => ppg(b.r) - ppg(a.r) || games(b.r) - games(a.r)).slice(0, 3);
+  const oppWorst = [...oppList].sort((a, b) => ppg(a.r) - ppg(b.r) || games(b.r) - games(a.r)).filter((o) => !oppBest.includes(o)).slice(0, 3);
+  const judged = done.filter((s) => s.ok != null);
+
   const repSeries = seasons.filter((s) => s.rep != null).map((s) => ({ season: s.season, rep: s.rep! }));
   return {
     from: log.from, seasonsDone: done.length, totals, seasons: seasons.reverse(), tally,
     nextMile: next ? { n: next, left: next - tally.n } : undefined,
     titles, records, players: pl, tin, tout, buys: log.buys, sells: log.sells, repSeries,
+    oppBest, oppWorst, goalsOk: judged.filter((s) => s.ok).length, goalsJudged: judged.length,
   };
 }
 

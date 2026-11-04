@@ -2,18 +2,41 @@
 // Spieler mit den meisten Einsätzen/Toren unter dir, Eigengewächse.
 import PosBadge from '../../../components/PosBadge';
 import { pointsPerGame } from '../../../game/coachRecord';
-import { headCoachRows } from '../../../game/headCoaches';
+import { headCoachNow, headCoachRows } from '../../../game/headCoaches';
+import { economyScale, yearOf } from '../../../engine/economy';
+import { memberMonthlySalary } from '../../../engine/staffPeople';
 import type { MgrTransfer } from '../../../game/managerLog';
 import type { CareerData, PlayerLine } from '../../../game/managerView';
 import type { Game } from '../../../game/state';
 import { DashBox, DashPage, Empty, KV } from '../../../ui/DashPage';
-import { fmtPrice } from '../../../ui/format';
+import { fmtPrice, fmtStaffWage } from '../../../ui/format';
 import { ClubCell, dmy } from './parts';
 
 const END_DE: Record<string, string> = {
   entlassen: 'entlassen', vertragsende: 'Vertragsende', abgeworben: 'abgeworben', ruhestand: 'Ruhestand', gegangen: 'gegangen',
 };
 const span = (a: string, b?: string) => `${a.slice(5, 7)}.${a.slice(0, 4)} – ${b ? `${b.slice(5, 7)}.${b.slice(0, 4)}` : 'heute'}`;
+
+/** Der Cheftrainer im Amt: Eckdaten und Stand beim Vorstand. */
+function CoachNow({ g }: { g: Game }) {
+  const m = headCoachNow(g);
+  if (!m) return null;
+  const scale = economyScale(yearOf(g.calendar.currentDate));
+  const backed = g.career?.press?.backed;
+  const conf = g.clubs[g.managedClubId]?.boardConfidence ?? 60;
+  return (
+    <div className="car-coach-now">
+      <div className="dsec">Im Amt: {m.name}</div>
+      <div className="car-coach-kv">
+        <KV k="Alter" v={m.age} />
+        <KV k="Vertrag bis" v={m.contractEnd ? `30.06.${m.contractEnd.slice(0, 4)}` : '–'} />
+        <KV k="Gehalt" v={fmtStaffWage(memberMonthlySalary(m, scale))} />
+        <KV k="Laufbahn" v={m.exPro ? `Ex-Profi (${m.exPro.pos}, ${m.exPro.apps} Spiele)` : 'Fußballlehrer'} />
+        <KV k="Stand beim Vorstand" v={backed && backed.coachId === m.id ? 'von dir gestützt – Vorstand prüft nach' : conf < 30 ? 'in der Kritik' : conf < 45 ? 'unter Beobachtung' : 'unumstritten'} info="vorstandsdruck" />
+      </div>
+    </div>
+  );
+}
 
 function Coaches({ g }: { g: Game }) {
   const rows = headCoachRows(g);
@@ -77,6 +100,7 @@ export function PeopleTab({ g, d }: { g: Game; d: CareerData }) {
     <DashPage className="car-page">
       <DashBox title="Deine Trainer" span={2} flush info="deineTrainer" right={`${headCoachRows(g).length}`}>
         <Coaches g={g} />
+        <CoachNow g={g} />
       </DashBox>
 
       <DashBox title="Transferbilanz" info="karriereTransfers">

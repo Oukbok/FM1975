@@ -49,7 +49,7 @@ function state(g: Game): BoardPressureState {
 
 const openPressure = (g: Game) => g.messages.some((m) => m.eventRef?.type === PRESSURE_TYPE && !m.eventRef.resolved);
 
-function askAboutCoach(g: Game, today: string, endOfSeason: boolean): void {
+export function askAboutCoach(g: Game, today: string, endOfSeason: boolean): void {
   const club = g.clubs[g.managedClubId];
   const coach = headCoachNow(g);
   if (!club || !coach) return;

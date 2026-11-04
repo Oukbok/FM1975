@@ -13,7 +13,7 @@ export function SeasonsTab({ g, d }: { g: Game; d: CareerData }) {
         <table className="dtable rl-sm car-seasons">
           <thead>
             <tr>
-              <th>Saison</th><th>Liga</th><th className="rl-num">Platz</th><th>Saisonziel</th><th className="rl-num">Bilanz</th>
+              <th>Saison</th><th>Liga</th><th className="rl-num">Platz</th><th>Saisonziel</th><th className="rl-num">Liga S-U-N</th>
               <th>Pokal</th><th>Europapokal</th><th>Titel</th><th className="rl-num">Ansehen</th>
             </tr>
           </thead>
@@ -29,8 +29,8 @@ export function SeasonsTab({ g, d }: { g: Game; d: CareerData }) {
                 </td>
                 <td className="rl-num">{wdlText(s.L)}</td>
                 <td className="car-cut">{s.cup ?? '–'}</td>
-                <td className="car-cut">{s.euro ?? '–'}</td>
-                <td className="car-cut car-strong">{s.titles.join(', ')}</td>
+                <td className="car-cut" title={s.euro}>{s.euro ?? "–"}</td>
+                <td className="car-cut car-strong" title={s.titles.join(", ")}>{s.titles.join(", ")}</td>
                 <td className="rl-num">{s.rep != null ? Math.round(s.rep) : '–'}</td>
               </tr>
             ))}

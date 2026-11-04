@@ -1,6 +1,7 @@
 // Zentrale › Karriere, Reiter „Bilanz“: Managerbilanz, Ansehen je Saison, Wettbewerbe, Titel & Rekorde, Meilensteine.
-import { repLabel } from '../../../game/careerState';
-import type { CareerData } from '../../../game/managerView';
+import { currentStint, repLabel } from '../../../game/careerState';
+import { headCoachNow } from '../../../game/headCoaches';
+import type { CareerData, OppLine } from '../../../game/managerView';
 import { games } from '../../../game/managerView';
 import { trophyTally } from '../../../game/trophyCabinet';
 import type { Game } from '../../../game/state';
@@ -9,6 +10,16 @@ import { vColor } from '../../../ui/format';
 import { ClubCell, COMP_DE, dmy, ppgText, wdlText } from './parts';
 import { RepChart } from './RepChart';
 
+function OppRow({ g, o }: { g: Game; o: OppLine }) {
+  return (
+    <div className="rl-row car-opp">
+      <ClubCell g={g} id={o.id} name={o.name} />
+      <span className="rl-num car-dim">{games(o.r)} Sp · {wdlText(o.r)}</span>
+      <span className="rl-num rl-main">{ppgText(o.r)}</span>
+    </div>
+  );
+}
+
 export function BilanzTab({ g, d, rep }: { g: Game; d: CareerData; rep: number }) {
   const club = g.clubs[g.managedClubId];
   const all = d.totals.all;
@@ -16,6 +27,11 @@ export function BilanzTab({ g, d, rep }: { g: Game; d: CareerData; rep: number }
   const tally = trophyTally(d.titles.filter((t) => t.cat !== 'jugend'));
   const youth = d.titles.filter((t) => t.cat === 'jugend').length;
   const miles = [...d.tally.miles].reverse();
+  const st = currentStint(g);
+  const since = st.from;
+  const days = Math.max(0, Math.round((Date.parse(g.calendar.currentDate) - Date.parse(since)) / 86400000));
+  const yearsText = days >= 365 ? `${(days / 365).toFixed(1).replace('.', ',')} Jahre` : `${days} Tage`;
+  const coach = headCoachNow(g);
   return (
     <DashPage className="car-page">
       <DashBox title="Managerbilanz" info="managerBilanz" right={`seit ${d.from}`}>
@@ -25,10 +41,14 @@ export function BilanzTab({ g, d, rep }: { g: Game; d: CareerData; rep: number }
           <Kpi value={years} label={years === 1 ? 'Saison' : 'Saisons'} />
         </div>
         <KV k="Verein" v={club.name} strong />
+        <KV k="Im Amt seit" v={`${dmy(since)} · ${yearsText}`} />
         <KV k="Siege · Remis · Niederlagen" v={wdlText(all)} />
         <KV k="Tore" v={`${all[3]}:${all[4]}`} />
+        <KV k="Saisonziele erreicht" v={d.goalsJudged ? `${d.goalsOk} von ${d.goalsJudged}` : '–'} info="saisonziel" />
         <KV k="Titel" v={tally.reduce((a, t) => a + t.n, 0) || '–'} />
-        <Meter label={repLabel(rep)} value={rep} color={vColor(rep)} info="trainerAnsehen" text={Math.round(rep)} />
+        <KV k="Cheftrainer" v={coach?.name ?? 'nicht besetzt'} info="deineTrainer" />
+        <KV k="Ruf in der Branche" v={repLabel(rep)} />
+        <Meter label="Ansehen" value={rep} color={vColor(rep)} info="trainerAnsehen" text={Math.round(rep)} />
       </DashBox>
 
       <DashBox title="Ansehen je Saison" span={2} info="trainerAnsehen" right={d.repSeries.length ? `${d.repSeries.length} Saisons` : undefined}>
@@ -56,6 +76,12 @@ export function BilanzTab({ g, d, rep }: { g: Game; d: CareerData; rep: number }
             </tr>
           </tbody>
         </table>
+        {(d.oppBest.length > 0 || d.oppWorst.length > 0) && <div className="car-opps">
+          <div className="dsec">Lieblingsgegner</div>
+          {d.oppBest.map((o) => <OppRow key={o.id} g={g} o={o} />)}
+          <div className="dsec">Angstgegner</div>
+          {d.oppWorst.map((o) => <OppRow key={o.id} g={g} o={o} />)}
+        </div>}
       </DashBox>
 
       <DashBox title="Titel & Rekorde" right={tally.length ? `${tally.reduce((a, t) => a + t.n, 0)} Titel` : undefined}>

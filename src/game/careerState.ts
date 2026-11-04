@@ -275,6 +275,6 @@ export function careerLog(g: Game, text: string): void {
 
 /** Wörtliche Einordnung des Ansehens. */
 export function repLabel(rep: number): string {
-  return rep >= 85 ? 'Legende der Branche' : rep >= 75 ? 'Spitzenmanager' : rep >= 65 ? 'Gefragter Bundesliga-Manager'
+  return rep >= 85 ? 'Legende der Branche' : rep >= 75 ? 'Spitzenmanager' : rep >= 65 ? 'Gefragter Manager'
     : rep >= 55 ? 'Etablierter Manager' : rep >= 45 ? 'Solider Manager' : 'Unbeschriebenes Blatt';
 }

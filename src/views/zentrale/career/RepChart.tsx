@@ -20,8 +20,8 @@ export function RepChart({ points, liveLast }: { points: { season: string; rep: 
   const pad = { l: 40, r: 16, t: 14, b: 26 };
   const iw = w - pad.l - pad.r, ih = h - pad.t - pad.b;
   const vals = points.map((p) => p.rep);
-  const lo = Math.max(0, Math.floor((Math.min(...vals, 50) - 5) / 10) * 10);
-  const hi = Math.min(100, Math.ceil((Math.max(...vals, 50) + 5) / 10) * 10);
+  const lo = Math.max(0, Math.floor((Math.min(...vals) - 4) / 5) * 5);
+  const hi = Math.min(100, Math.max(lo + 10, Math.ceil((Math.max(...vals) + 4) / 5) * 5));
   const n = points.length;
   const x = (i: number) => pad.l + (n <= 1 ? iw / 2 : (i / (n - 1)) * iw);
   const y = (v: number) => pad.t + ih - ((v - lo) / Math.max(1, hi - lo)) * ih;
