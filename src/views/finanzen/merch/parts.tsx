@@ -46,15 +46,6 @@ export function Stepper({ value, onChange, step, min, max, fmt, label }: {
 
 export type MerchTab = 'allgemein' | 'statistik';
 
-export function MerchTabs({ tab, setTab }: { tab: MerchTab; setTab: (t: MerchTab) => void }) {
-  return (
-    <span className="seg-group mc-tabs" onClick={(e) => e.stopPropagation()}>
-      <button className={`seg-btn ${tab === 'allgemein' ? 'active' : ''}`} onClick={() => setTab('allgemein')}>Allgemein</button>
-      <button className={`seg-btn ${tab === 'statistik' ? 'active' : ''}`} onClick={() => setTab('statistik')}>Statistiken</button>
-    </span>
-  );
-}
-
 /** Stückpreis (1975-Basis) als Betrag des Jahres (Verbraucherpreise × Markenaufschlag), mit Pfennig/Cent. */
 export const unitPrice = (d: MerchItemDef, base: number, year: number) => fmtSmallMoney(base * itemPriceScale(d, year), year);
 

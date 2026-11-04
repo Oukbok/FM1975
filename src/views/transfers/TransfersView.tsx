@@ -12,6 +12,7 @@ import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtDM, vColor, fmtPrice, fmtWage, wageHead, wageUnit } from '../../ui/format';
 import { GROUP_DE, PlayerRow, ScoutStars, avg, groupOf, monthsUntil, scoutMid, squadOf } from '../shared';
 import { useState } from 'react';
+import { SubTabsPage, useSubTab } from '../../ui/SubTabs';
 import { InfoTip } from '../../ui/InfoTip';
 import { PlayerSearchModal } from './search/PlayerSearchModal';
 import { TransferWindowModal } from './window/TransferWindowModal';
@@ -108,7 +109,7 @@ function NeedsBox({ g }: { g: Game }) {
 // --- TRANSFERMARKT ----------------------------------------------------------
 export function TransfersView({ g, onDone }: { g: Game; onDone: () => void }) {
   const club = g.clubs[g.managedClubId];
-  const [grp, setGrp] = useState('all');
+  const [grp, setGrp] = useSubTab<string>('transfers.markt', 'all');
   const { open, modal } = usePlayerModal(g);
   const talk = useTalk(g, onDone);
   const [search, setSearch] = useState<SearchCriteria | null>(null);
@@ -120,15 +121,18 @@ export function TransfersView({ g, onDone }: { g: Game; onDone: () => void }) {
   const wages = squadOf(g).reduce((s, p) => s + p.contract.weeklyWage, 0);
 
 
+  // Drittes Menü: Mannschaftsteile (ui/SubTabs); Suche/Transferbilanz bleiben im Box-Kopf
+  const tabs = [{ id: 'all', label: 'Alle', count: all.length },
+    ...GROUPS.map((k) => ({ id: k, label: GROUP_DE[k], count: all.filter((p) => groupOf(p) === k).length }))];
+
   return (
+    <SubTabsPage tabs={tabs} active={grp} onSelect={setGrp}>
     <DashPage>
-      <DashBox title={search ? `Suchergebnis (${all.length})` : `Transfermarkt (${all.length})`} icon="transfers" span={2} rows={2} flush
+      <DashBox title={(search ? 'Suchergebnis' : 'Transfermarkt') + (grp === 'all' ? '' : ` · ${GROUP_DE[grp]}`)} span={2} rows={2} flush
         right={<span className="dbtnrow">
           <button className={`dchip ${search ? 'on' : ''}`} onClick={() => setSearchOpen(true)}>Spieler suchen{search ? ` · ${activeCount(search)}` : ''}</button>
           {search && <button className="dchip" onClick={() => setSearch(null)} title="Wieder alle abgabebereiten Spieler zeigen">Suche aufheben</button>}
           <button className="dchip" onClick={() => setBilanz(true)}>Transferbilanz</button>
-          <button className={`dchip ${grp === 'all' ? 'on' : ''}`} onClick={() => setGrp('all')}>Alle</button>
-          {GROUPS.map((k) => <button key={k} className={`dchip ${grp === k ? 'on' : ''}`} onClick={() => setGrp(k)}>{GROUP_DE[k]}</button>)}
         </span>}>
         {list.length ? <MarketTable g={g} list={list} onOpen={open}
           action={(p) => <TalkButton g={g} p={p} onTalk={talk.open} />} />
@@ -152,13 +156,14 @@ export function TransfersView({ g, onDone }: { g: Game; onDone: () => void }) {
       {searchOpen && <PlayerSearchModal g={g} initial={search} onClose={() => setSearchOpen(false)} onSearch={(c) => { setSearch(c); setGrp('all'); setSearchOpen(false); }} />}
       {bilanz && <TransferWindowModal g={g} onClose={() => setBilanz(false)} />}
     </DashPage>
+    </SubTabsPage>
   );
 }
 
 // --- BEOBACHTUNGSLISTE (Scouting-Vorschläge aus der Liga) --------------------
 type ScoutMode = 'contract' | 'young' | 'need';
 export function BeobachtungView({ g, onChange = () => {} }: { g: Game; onChange?: () => void }) {
-  const [mode, setMode] = useState<ScoutMode>('need');
+  const [mode, setMode] = useSubTab<ScoutMode>('transfers.beobachtung', 'need');
   const { open, modal } = usePlayerModal(g);
   const talk = useTalk(g, onChange);
   const today = g.calendar.currentDate;
@@ -174,11 +179,10 @@ export function BeobachtungView({ g, onChange = () => {} }: { g: Game; onChange?
   const label: Record<ScoutMode, string> = { need: `Verstärkung ${GROUP_DE[weakest.k]}`, contract: 'Vertrag läuft aus', young: 'Junge Talente (bis 21)' };
 
   return (
+    <SubTabsPage active={mode} onSelect={setMode}
+      tabs={(['need', 'contract', 'young'] as ScoutMode[]).map((m) => ({ id: m, label: label[m], count: lists[m].length }))}>
     <DashPage>
-      <DashBox title="Scouting-Vorschläge" info="beobachtung" icon="watchlist" span={2} rows={2} flush
-        right={<span className="dbtnrow">
-          {(['need', 'contract', 'young'] as ScoutMode[]).map((m) => <button key={m} className={`dchip ${mode === m ? 'on' : ''}`} onClick={() => setMode(m)}>{label[m]} ({lists[m].length})</button>)}
-        </span>}>
+      <DashBox title={`Scouting-Vorschläge · ${label[mode]}`} info="beobachtung" span={2} rows={2} flush>
         {list.length ? <MarketTable g={g} list={list} onOpen={open} action={(p) => <TalkButton g={g} p={p} onTalk={talk.open} />} /> : <Empty icon="watchlist">Keine passenden Spieler gefunden.</Empty>}
       </DashBox>
 
@@ -196,6 +200,7 @@ export function BeobachtungView({ g, onChange = () => {} }: { g: Game; onChange?
       {modal}
       {talk.modal}
     </DashPage>
+    </SubTabsPage>
   );
 }
 
