@@ -215,7 +215,7 @@
   --sel-bg: rgba(255, 255, 255, 0.14);      /* gewählter Knopf/Eintrag */
   --sel-border: rgba(255, 255, 255, 0.42);
   --sel-text: var(--text);
-  --sel-mark: var(--accent);                /* feiner Strich am gewählten Segment */
+  --sel-mark: transparent;                  /* optionaler Strich am gewählten Segment (Themes: z. B. var(--accent)) */
   --focus-ring: rgba(170, 196, 230, 0.75);  /* Tastaturfokus (kühl, nicht Bernstein) */
   --pop-bg: #1e2228;                        /* offene Auswahlliste / Popover */
   --pop-border: rgba(255, 255, 255, 0.14);

@@ -661,8 +661,9 @@ Bei den anderen Vereinen folgt die Stimmung den letzten Ergebnissen; die Moral i
     keywords: ['zentrale', 'dashboard', 'newscenter', 'übersicht', 'fan-app', 'videotext', 'stadionheft', 'sms', 'widgets', 'managerstatus', 'teamstatus'],
     body: `## Aufbau
 Die **Zentrale** ist deine Startseite. Oben bleibt das Hauptmenü; den Kalender siehst du nur, solange die Zeit läuft (Überblendung).
+- **Zurück / Vorwärts:** Die beiden Pfeile links unter dem Hauptmenü bringen dich zur vorherigen Seite bzw. nach einem Zurück wieder vorwärts (je bis zu 20 Schritte, auch mit Alt+← / Alt+→). Sobald Zeit vergeht, beginnt der Verlauf neu.
 - **Links** stehen kleine Übersichten: Ausschnitt der **Ligatabelle** um deinen Verein, **Liste der Spiele** (die letzten zwei Ergebnisse, die nächsten drei Termine; L = Liga, P = Pokal, E = Europapokal), **Budget** der laufenden Saison, **Managerstatus** (Saisonziel, Vertrauen des Vorstands, Fanstimmung, Mediendruck, Leitbild), **Sperren und Verletzungen**, **Teamstatus** (Stärke der Startelf, Fitness, Frische, Form, Moral) und deine **Taktik** in Kurzform. Ein Klick auf ein Kästchen öffnet die passende Seite. Die Spalte lässt sich scrollen.
-- **In der Mitte** liegt das **Newscenter**: links deine Nachrichten (gruppiert nach Heute, Gestern, Diese Woche, Älter; ungelesene fett), rechts die gewählte Nachricht mit Datum, Text, Entscheidungsknöpfen und Sprungzielen. Betrifft sie einen Spieler, siehst du unten rechts sein Gesicht – ein Klick öffnet das Profil. Unten wählst du, welche Nachrichten angezeigt werden.
+- **In der Mitte** liegt das **Newscenter**: links deine Nachrichten (gruppiert nach Heute, Gestern, Diese Woche, Älter; ungelesene fett), rechts die gewählte Nachricht mit Datum, Text, Entscheidungsknöpfen und Sprungzielen. Betrifft sie einen Spieler, siehst du unten rechts sein Gesicht – ein Klick öffnet das Profil. Oben filterst du mit großen Knöpfen: **Alle**, **Ungelesen**, **Entscheidungen** (alles, was noch eine Antwort von dir braucht), **Spiele** (Liga und Pokal), **Transfers** (mit Verträgen) und **Verein** (Vorstand, Presse, Training, Medizin, Allgemeines); jede einzelne Kategorie wählst du über die Liste **Kategorie**. In der Liste steht die Kategorie als ruhige Textspalte, Nachrichten mit offener Entscheidung tragen das Etikett **Entscheidung**.
 - **Offene Entscheidung:** Solange eine Nachricht eine Entscheidung verlangt, wird oben rechts aus „Weiter“ der rote Brief **Nachrichten**. Ein Klick darauf öffnet die Zentrale und wählt die offene Entscheidung direkt aus. Hast du ein Fenster wie Auslosung, Bewertungsrunde, Saison-Briefing oder Die Besten der Saison gesehen, gilt die passende Nachricht danach schon als gelesen. Solche Fenster kommen immer einzeln nacheinander (zuerst Spielbericht, Bewertung, Briefing und Budget, dann Auslosung, Trainingslager-Bilanz, Transferbilanz, Erstes Training, Goldener Ball, Die Besten der Saison, zuletzt die Vorschau „Nächstes Spiel“); solange eines offen ist, steht die Zeit.
 - **Rechts oben** die **Übersicht** aller Wettbewerbe der Saison (Deutschland, DDR, international, Auslandsligen der Vorsaison). Ein Klick öffnet Statistiken › Liga, Pokal oder International mit genau diesem Wettbewerb. Dein Verein ist hervorgehoben.
 - **Rechts unten** erfährst du, was die Fans über deinen Verein lesen – im Medium der Zeit: bis Mai 1980 das **Stadionheft**, ab Juni 1980 der **Videotext** von ARD und ZDF, ab 1999 der **SMS-Dienst** aufs Handy, ab Juli 2008 die **Fan-App**. Die Meldungen und Gerüchte stammen aus der Sportzeitung (Zentrale › Presse); ein Klick öffnet den Artikel.`,
@@ -3064,12 +3065,13 @@ Popups (Auslosung, Briefing, Textmodus, Spielbericht) erscheinen nie zusammen mi
 
 ## Monatskalender
 Unter **Zentrale › Kalender** siehst du den aktuellen Monat als Tagesraster (Mo–So).
-Du blätterst mit **‹ Vormonat** / **Folgemonat ›**. Die Tage sind farblich markiert:
+Du blätterst mit den Pfeilen **‹** / **›** neben dem Monatsnamen, **Heute** springt zurück zum aktuellen Monat.
 
-- **frei** (grün umrandet, klickbar) — planbar
-- **Spiel/Planung** (rot) — Ligaspiel , Pokalspiel oder bereits geplante Aktivität 
-- **heute** (Bernstein-Rahmen)
-- **Auswahl** (grün = gültiger Zeitraum, rot = Kollision)
+- **Heute** hat ein helles, gefülltes Datumsfeld und das Etikett „Heute“.
+- **Vergangene Tage** sind gedimmt.
+- Jeder Termin steht als gut lesbare Zeile im Tag: oben das **Kürzel des Wettbewerbs** (Liga, Pokal, EC, Halle, TL = Trainingslager, Test), darunter Gegner mit (H)/(A) und nach dem Spiel das Ergebnis. Eine **feine Farbkante** links unterscheidet die Wettbewerbe (Liga hell, Pokal gold, Europapokal blau, Halle/Trainingslager grün); die Legende steht unter dem Raster.
+- Tage mit Spiel oder geplanter Aktivität sind etwas heller hinterlegt; freie Tage sind schlicht.
+- Im Planungsmodus zeigt eine helle Markierung den gewählten Zeitraum, eine rote eine Kollision.
 
 ## Aktivitäten planen
 Oben wählst du den Typ, bei mehrtägigen Aktivitäten die Dauer, klickst einen **freien Starttag** und bestätigst
