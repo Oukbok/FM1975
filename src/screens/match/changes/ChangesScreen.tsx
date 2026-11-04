@@ -110,7 +110,7 @@ export function ChangesScreen({ sim, side, reason, halftime, initialTab, initial
             </div>
             <div className="tm-cs-right">
               {pane === 'system'
-                ? <SystemPitch sim={sim} side={side} d={d} sel={sel} onPick={pick} onSwap={doSwap}
+                ? <SystemPitch sim={sim} side={side} d={d} sel={sel} onPick={pick} onSwap={doSwap} onNote={setMsg}
                     onFormation={(id) => upd((x) => { changeFormation(sim, side, x, id); })} />
                 : <TacticPane sim={sim} side={side} d={d} onMentality={(m) => upd((x) => { x.mentality = m; })}
                     onTactic={(p) => upd((x) => { x.tactics = { ...x.tactics, ...p }; })} />}

@@ -23,6 +23,7 @@ import { PrematchFacts, PrematchHistory } from './PrematchFacts';
 import { PrematchMap } from './PrematchMap';
 import { PrematchStage } from './PrematchStage';
 import Select from '../../ui/Select';
+import { effectiveFormation } from '../../components/lineup/lineupOps';
 
 type QuickLineup = 'keep' | 'auto' | 'goto';
 export type MatchMode = 'sim' | 'text';
@@ -53,6 +54,14 @@ export function PrematchScreen({ g, info, settings, onSettings, onStart, onLineu
   const d = useMemo(() => buildPrematch(g, info), [g, info.matchId]);
   const [quick, setQuick] = useState<QuickLineup>('keep');
   const primary: MatchMode = settings.lastMatchMode ?? 'text';
+  // Freie Plätze in der gespeicherten Aufstellung (leer gezogen oder verletzt/gesperrt):
+  // beim Anpfiff besetzt sie der Co-Trainer slotgenau mit dem Passendsten (engine/match/team.ts).
+  const open = (() => {
+    const t = g.clubs[g.managedClubId]?.tactics;
+    if (!t?.lineupMap) return 0;
+    const ok = (id?: string) => { const p = id ? g.players[id] : undefined; return !!p && p.availability === 'available' && !p.injury && !(p.suspensionMatches > 0); };
+    return effectiveFormation(t).slots.filter((s) => !ok(t.lineupMap![s.id])).length;
+  })();
 
   const start = (mode: MatchMode) => {
     if (quick === 'auto') {
@@ -90,7 +99,8 @@ export function PrematchScreen({ g, info, settings, onSettings, onStart, onLineu
             <div className="pm-venue-date">{fmtDateFull(info.date)}</div>
           </div>
           <div className="pm-quick">
-            <span className="pm-quick-l">Schnelle Aufstellung <InfoTip k="prematch_aufstellung" /></span>
+            <span className="pm-quick-l">Schnelle Aufstellung <InfoTip k="prematch_aufstellung" />
+              {open > 0 && quick === 'keep' && <span className="pm-quick-warn" title="Freie Plätze besetzt der Co-Trainer beim Anpfiff mit dem Passendsten">Aufstellung unvollständig ({11 - open}/11)</span>}</span>
             <Select className="pm-select" size="l" value={quick} onChange={(raw) => {
               const v = raw as QuickLineup;
               if (v === 'goto') onLineup(); else setQuick(v);

@@ -258,6 +258,11 @@
 .tm-sys-b:hover { background: var(--panel-hover); }
 .tm-sys-b.sel { background: var(--accent-soft); box-shadow: inset 0 0 0 2px var(--accent); }
 .tm-sys-b.raus .tm-sys-name { color: var(--red); }
+.tm-sys-slot, .tm-sys-b { touch-action: none; }
+.tm-sys-slot.over, .tm-sys-b.over { background: var(--accent-soft); box-shadow: 0 0 0 2px var(--accent); }
+.tm-sys-bench { border-radius: 6px; outline: 1px dashed transparent; outline-offset: 2px; }
+.tm-sys-bench.live { outline-color: var(--border); }
+.tm-sys-bench.no { outline: 2px solid var(--neg); }
 .tm-sys-ghost { position: absolute; z-index: 20; transform: translate(-50%, -50%); pointer-events: none; display: flex; flex-direction: column; align-items: center; font-size: 15px; font-weight: 600; opacity: 0.9; }
 
 /* Ansprache, Gespräche, Spiel-Taktik */
