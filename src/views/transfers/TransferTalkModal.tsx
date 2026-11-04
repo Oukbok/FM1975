@@ -15,6 +15,7 @@ import { fmtPrice, fmtWage, vColor, wageUnit } from '../../ui/format';
 import { WageSlider } from '../../ui/WageSlider';
 import { InfoTip } from '../../ui/InfoTip';
 import type { InfoKey } from '../../data/infoTexts';
+import Select from '../../ui/Select';
 
 // =============================================================================
 // TRANSFERVERHANDLUNG — Vereinsgespräch, Spielergespräch, Wünsche, Verlauf
@@ -96,10 +97,10 @@ function ClubTalkBox({ g, t, onChange, notice }: { g: Game; t: TransferTalk; onC
         {!loan && <Chips label="Erfolgsprämie" value={bonus} set={setBonus} opts={[[0, 'keine'], [0.1, '+10 %', 'fällig bei mindestens 20 Einsätzen'], [0.25, '+25 %', 'fällig bei mindestens 20 Einsätzen']]} />}
         {!loan && year >= CLAUSE_FROM.buyBack && <Chips label="Rückkaufoption" value={buyBack} set={setBuyBack} opts={[[0, 'keine'], [1.5, `${fmtPrice(r5k(fee * 1.5))}`, 'Der Verkäufer darf ihn zwei Jahre lang zu diesem Preis zurückholen.']]} />}
         <div className="talk-row"><span>Spieler-Tausch</span>
-          <select className="talk-select" value={swap} onChange={(e) => setSwap(e.target.value)}>
+          <Select className="talk-select" value={swap} onChange={(v) => setSwap(v)}>
             <option value="">kein Tausch</option>
             {swaps.map((x) => <option key={x.id} value={x.id}>{x.fullName} ({x.naturalPosition}, {x.overall})</option>)}
-          </select>
+          </Select>
           <span className="muted">{swInfo ? (swInfo.value ? `zählt etwa ${fmtPrice(swInfo.value)}` : swInfo.reason) : ''}</span>
         </div>
         <button className="btn btn-primary talk-send" onClick={send}>Angebot abgeben</button>

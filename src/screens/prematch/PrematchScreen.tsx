@@ -22,6 +22,7 @@ import { CitySkyline } from './CitySkyline';
 import { PrematchFacts, PrematchHistory } from './PrematchFacts';
 import { PrematchMap } from './PrematchMap';
 import { PrematchStage } from './PrematchStage';
+import Select from '../../ui/Select';
 
 type QuickLineup = 'keep' | 'auto' | 'goto';
 export type MatchMode = 'sim' | 'text';
@@ -90,14 +91,14 @@ export function PrematchScreen({ g, info, settings, onSettings, onStart, onLineu
           </div>
           <div className="pm-quick">
             <span className="pm-quick-l">Schnelle Aufstellung <InfoTip k="prematch_aufstellung" /></span>
-            <select className="pm-select" value={quick} onChange={(e) => {
-              const v = e.target.value as QuickLineup;
+            <Select className="pm-select" size="l" value={quick} onChange={(raw) => {
+              const v = raw as QuickLineup;
               if (v === 'goto') onLineup(); else setQuick(v);
             }}>
               <option value="keep">Aktuelle Aufstellung übernehmen</option>
               <option value="auto">Co-Trainer stellt die beste Elf auf</option>
               <option value="goto">Zur Aufstellung wechseln …</option>
-            </select>
+            </Select>
           </div>
           <PrematchFacts d={d} />
           <PrematchHistory d={d} />

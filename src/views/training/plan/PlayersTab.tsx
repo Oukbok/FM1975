@@ -21,6 +21,7 @@ import { ScoutStars, squadOf } from '../../shared';
 import Icon from '../../../components/Icon';
 import { byPosition } from './model';
 import PosBadge from '../../../components/PosBadge';
+import Select from '../../../ui/Select';
 
 const GROUPS: { id: PositionGroup | 'all'; label: string }[] = [
   { id: 'all', label: 'Alle Spieler' }, { id: 'GK', label: 'Torhüter' }, { id: 'DEF', label: 'Abwehr' },
@@ -51,9 +52,9 @@ export function PlayersTab({ g, refresh }: { g: Game; refresh: () => void }) {
     <DashPage rows={1} className="tr3-players">
       <DashBox title="Individuelle Spieler" icon="squad" span={3} flush info="positionstraining"
         right={<span className="tp-weeknav">
-          <select className="tt-select" value={grp} onChange={(e) => setGrp(e.target.value as PositionGroup | 'all')}>
+          <Select className="tt-select" value={grp} onChange={(v) => setGrp(v as PositionGroup | 'all')}>
             {GROUPS.map((x) => <option key={x.id} value={x.id}>{x.label}</option>)}
-          </select>
+          </Select>
         </span>}>
         <div className="tr3-tablewrap">
           <table className="dtable rl-players tr3-ptable">
@@ -87,10 +88,10 @@ export function PlayersTab({ g, refresh }: { g: Game; refresh: () => void }) {
                     </td>
                     <td>
                       {p.injury ? <span className="tr3-injtxt">verletzt · noch {p.injury.daysRemaining} Tage</span> : (
-                        <select className="tt-select tr3-target" value={t ?? ''} onChange={(e) => setTarget(p, e.target.value)}>
+                        <Select className="tt-select tr3-target" value={t ?? ''} onChange={(v) => setTarget(p, v)}>
                           <option value="">Mannschaftstraining</option>
                           {options.map((pos) => <option key={pos} value={pos}>{POSITION_NAMES_DE[pos]} ({Math.round(skillOf(p, pos))})</option>)}
-                        </select>
+                        </Select>
                       )}
                     </td>
                     <td>

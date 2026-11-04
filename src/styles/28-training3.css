@@ -17,7 +17,7 @@
 
 .tr3-lbl { font-size: 13px; color: var(--text-3); text-transform: none; letter-spacing: 0; font-family: var(--font-ui); font-weight: 500; }
 .tp-weeknav { display: inline-flex; gap: 8px; align-items: center; }
-.tp-weeknav select { max-width: 240px; }
+.tp-weeknav .sel3 { max-width: 240px; }
 .tr3-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 7px 14px;
   border: 1px solid var(--border); border-radius: 6px; background: var(--panel-2); color: var(--text);

@@ -18,12 +18,11 @@
 
 /* --- Kopfzeile der Aufstellung (Formation, Einrasten, Auto) --- */
 .lu-tools { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; text-transform: none; letter-spacing: 0; font-weight: 600; }
-.lu-formation, .lu-role select {
+.lu-formation, .lu-role .sel3 {
   background: var(--panel-2); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-sm);
   padding: 6px 10px; font: 600 15px var(--font-ui);
 }
 .lu-formation { max-width: 150px; }
-.lu-tools .dchip { padding: 4px 10px; font-size: 14px; }
 .lu-check { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; color: var(--text-2); cursor: pointer; }
 .lu-check input { accent-color: var(--accent); width: 16px; height: 16px; }
 
@@ -139,7 +138,7 @@
 .lu-meters .dmeter { font-size: 15px; padding: 4px 0; grid-template-columns: 180px 1fr 60px; }
 .lu-roles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
 .lu-role { display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: var(--text-3); }
-.lu-role select { width: 100%; }
+.lu-role .sel3 { width: 100%; }
 .lu-hints { list-style: none; margin: 0; padding: 0; font-size: 15px; }
 .lu-hints li { position: relative; padding: 5px 0 5px 16px; border-bottom: 1px solid var(--border-soft); color: var(--text-2); }
 .lu-hints li::before { content: ''; position: absolute; left: 2px; top: 13px; width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); }

@@ -10,6 +10,7 @@ import { readFile, mkdir } from 'node:fs/promises';
 import { extname, join, basename } from 'node:path';
 import { chromium } from 'playwright';
 import { startNewGame } from './newgame-flow.mjs';
+import { pickOption, optionsOf, valueOf } from './select3.mjs';
 
 const outDir = process.argv[2] || 'test-output/lineup';
 await mkdir(outDir, { recursive: true });
@@ -113,14 +114,14 @@ const slotPos = (page, id) => slot(page, id).locator('.lu-card-pos').innerText()
   check(await page.locator('.lu-bslot[data-lu-drop="bench:0"]').getAttribute('data-pid') === res2Pid, 'Reservespieler auf die Bank gezogen');
 
   // Kapitän + Elfmeter setzen
-  const capSel = page.locator('select[data-role="captainId"]');
-  const capVal = await capSel.locator('option').nth(3).getAttribute('value');
-  await capSel.selectOption(capVal);
-  const penSel = page.locator('select[data-role="penaltyTakerId"]');
-  const penVal = await penSel.locator('option').nth(2).getAttribute('value');
-  await penSel.selectOption(penVal);
+  const capSel = page.locator('.sel3[data-role="captainId"]');
+  const capVal = (await optionsOf(page, capSel))[3].value;
+  await pickOption(page, capSel, capVal);
+  const penSel = page.locator('.sel3[data-role="penaltyTakerId"]');
+  const penVal = (await optionsOf(page, penSel))[2].value;
+  await pickOption(page, penSel, penVal);
   check(await page.locator(`.lu-slot[data-pid="${capVal}"] .lu-cap`).count() === 1, 'Kapitänsbinde auf der Karte');
-  check(await penSel.inputValue() === penVal, 'Elfmeterschütze gesetzt');
+  check(await valueOf(penSel) === penVal, 'Elfmeterschütze gesetzt');
 
   // Klick öffnet das Spielerprofil
   await slot(page, 's1').click();
@@ -131,12 +132,12 @@ const slotPos = (page, id) => slot(page, id).locator('.lu-card-pos').innerText()
   await page.screenshot({ path: `${outDir}/1975_bearbeitet_1920.png` });
 
   // Formation wechseln und zurück: Elf bleibt vollständig, eigene Lagen werden verworfen
-  await page.locator('.lu-formation').selectOption('4-4-2');
+  await pickOption(page, page.locator('.lu-formation'), '4-4-2');
   await page.waitForTimeout(200);
   const filled = await page.locator('.lu-slot').evaluateAll((els) => els.filter((e) => e.getAttribute('data-pid')).length);
   check(filled === 11 && await slotPos(page, 's2') === 'LV', 'Formation 4-4-2 gesetzt, 11 Spieler besetzt');
   await page.screenshot({ path: `${outDir}/1975_442_1920.png` });
-  await page.locator('.lu-formation').selectOption('libero-1-4-3-2');
+  await pickOption(page, page.locator('.lu-formation'), 'libero-1-4-3-2');
   await page.locator('button.dchip:has-text("Auto")').click();
   await page.waitForTimeout(200);
   const filled2 = await page.locator('.lu-slot').evaluateAll((els) => els.filter((e) => e.getAttribute('data-pid')).length);
@@ -192,7 +193,7 @@ for (const file of saves) {
     // Spätere Epoche: modernes System zeigen (FORM_<jahr>=… überschreibt)
     const year = (basename(file).match(/(19|20)\d\d/) ?? [''])[0];
     const form = process.env[`FORM_${year}`] ?? (Number(year) >= 1995 ? '4-2-3-1' : '');
-    if (form) { await page.locator('.lu-formation').selectOption(form); await page.waitForTimeout(200); }
+    if (form) { await pickOption(page, page.locator('.lu-formation'), form); await page.waitForTimeout(200); }
     check(await page.locator('.lu-slot').count() === 11, `${tag}: 11 Positionsfelder`);
     const scroll = await page.evaluate(() => { const m = document.querySelector('.app-main'); return m ? m.scrollHeight - m.clientHeight : 0; });
     check(scroll <= 2, `${tag}: Seite scrollt nicht (${scroll}px)`);

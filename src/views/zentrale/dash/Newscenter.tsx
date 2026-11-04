@@ -6,17 +6,16 @@
 // =============================================================================
 import { useEffect, useState } from 'react';
 import { JUMP_DECISION_EVENT, oldestPendingDecision } from '../../../engine/messages';
-import Icon from '../../../components/Icon';
 import PlayerAvatar from '../../../components/PlayerAvatar';
 import { CATEGORY_META, unreadCount } from '../../../engine/messages';
 import type { Game } from '../../../game/state';
-import { MSG_CAT_ICON } from '../../../shell/CalendarStrip';
 import type { Screen } from '../../../shell/navigation';
 import type { InboxMessage, MessageCategory } from '../../../types';
 import { WD_FULL, vColor } from '../../../ui/format';
 import { EventChoices } from '../EventChoices';
 import { msgGroup, msgPlayer, ownGames, type MsgGroup } from './data';
 import PosBadge from '../../../components/PosBadge';
+import { InboxFilterBar, matchesFilter, needsDecision, type InboxFilter } from '../inboxFilter';
 
 /** Passende Seite je Kategorie (Knopf im Lesebereich). */
 const CAT_TARGET: Partial<Record<MessageCategory, [Screen, string]>> = {
@@ -28,18 +27,15 @@ const CAT_TARGET: Partial<Record<MessageCategory, [Screen, string]>> = {
 const dmy = (iso: string) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
 const wd = (iso: string) => WD_FULL[new Date(iso.slice(0, 10) + 'T00:00:00Z').getUTCDay()];
 
-type Filter = 'all' | 'unread' | MessageCategory;
-
 export function Newscenter({ g, onGoto, onWatch, onChange, openPlayer }: {
   g: Game; onGoto: (s: Screen) => void; onWatch: (id: string) => void; onChange: () => void; openPlayer: (id: string) => void;
 }) {
   const msgs = g.messages ?? [];
-  const [filter, setFilter] = useState<Filter>('all');
+  const [filter, setFilter] = useState<InboxFilter>('all');
   const [selId, setSelId] = useState<string | null>(() => (oldestPendingDecision(msgs) ?? msgs.find((m) => !m.read) ?? msgs[0])?.id ?? null);
-  const list = msgs.filter((m) => (filter === 'all' ? true : filter === 'unread' ? !m.read : m.category === filter));
+  const list = msgs.filter((m) => matchesFilter(m, filter));
   const sel = (selId && msgs.find((m) => m.id === selId)) || list[0] || null;
   const unread = unreadCount(msgs);
-  const cats = (Object.keys(CATEGORY_META) as MessageCategory[]).filter((c) => msgs.some((m) => m.category === c));
   const today = g.calendar.currentDate;
 
   // Roter Brief „Nachrichten“ (GameShell): zur ältesten Nachricht springen, die eine Entscheidung verlangt.
@@ -67,11 +63,12 @@ export function Newscenter({ g, onGoto, onWatch, onChange, openPlayer }: {
         <span className="dz-nh-title">Newscenter</span>
         <span className="dz-nh-count">{unread > 0 ? `${unread} ungelesen` : 'Alles gelesen'}</span>
         <span className="dz-nh-act">
-          <button className="dchip" onClick={allRead} disabled={unread === 0} title="Alle Nachrichten als gelesen markieren">Alle gelesen</button>
-          <button className="dchip" onClick={markUnread} disabled={!sel?.read} title="Gewählte Nachricht wieder als ungelesen markieren">Als ungelesen</button>
-          <button className="dchip" onClick={() => onGoto('news')} title="Zentrale › Nachrichten">Posteingang</button>
+          <button className="b3" onClick={allRead} disabled={unread === 0} title="Alle Nachrichten als gelesen markieren">Alle gelesen</button>
+          <button className="b3" onClick={markUnread} disabled={!sel?.read} title="Gewählte Nachricht wieder als ungelesen markieren">Als ungelesen</button>
+          <button className="b3" onClick={() => onGoto('news')} title="Zentrale › Nachrichten">Posteingang</button>
         </span>
       </div>
+      <InboxFilterBar msgs={msgs} value={filter} onChange={setFilter} />
 
       <div className="dz-nbody">
         <div className="dz-nlist">
@@ -87,7 +84,7 @@ export function Newscenter({ g, onGoto, onWatch, onChange, openPlayer }: {
                   <tr key={m.id} id={`dz-msg-${m.id}`} className={`dz-msg ${m.read ? '' : 'unread'} ${sel?.id === m.id ? 'me' : ''} ${head ? 'grp-start' : ''}`}
                     data-player={msgPlayer(g, m) ? '1' : '0'} onClick={() => open(m)}>
                     <td className="dz-ncol-grp">{head ? grp : ''}</td>
-                    <td className="dz-nsubj"><Icon name={MSG_CAT_ICON[m.category] ?? 'news'} size={16} className="dz-nico" /><span>{m.subject}</span>{m.actionRequired && !m.eventRef?.resolved && !m.resultText && <i className="dz-act" title="Entscheidung nötig" />}</td>
+                    <td className="dz-nsubj">{needsDecision(m) && <i className="dz-act lead" title="Entscheidung nötig">Entscheidung</i>}<span>{m.subject}</span></td>
                     <td className="dz-ncol-date">{dmy(m.date)}</td>
                     <td className="dz-ncol-cat">{CATEGORY_META[m.category]?.label ?? m.category}</td>
                   </tr>
@@ -100,15 +97,7 @@ export function Newscenter({ g, onGoto, onWatch, onChange, openPlayer }: {
       </div>
 
       <div className="dz-nfoot">
-        <label>
-          <span>Angezeigte Nachrichten</span>
-          <select className="dselect" value={filter} onChange={(e) => setFilter(e.target.value as Filter)}>
-            <option value="all">Alle ({msgs.length})</option>
-            <option value="unread">Ungelesen ({unread})</option>
-            {cats.map((c) => <option key={c} value={c}>{CATEGORY_META[c].label} ({msgs.filter((m) => m.category === c).length})</option>)}
-          </select>
-        </label>
-        <span className="dz-dim">Es bleiben die letzten 80 Nachrichten erhalten.</span>
+        <span className="dz-dim">{list.length} von {msgs.length} Nachrichten · es bleiben die letzten 80 erhalten.</span>
       </div>
     </section>
   );
@@ -133,9 +122,9 @@ function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
       </div>
       <div className="dz-rfoot">
         <div className="dz-rlinks">
-          {matchId && <button className="dchip" onClick={() => onWatch(matchId)}>Spielbericht</button>}
-          {p && <button className="dchip" onClick={() => openPlayer(p.id)}>Spielerprofil</button>}
-          {target && <button className="dchip" onClick={() => onGoto(target[0])}>{target[1]}</button>}
+          {matchId && <button className="b3" onClick={() => onWatch(matchId)}>Spielbericht</button>}
+          {p && <button className="b3" onClick={() => openPlayer(p.id)}>Spielerprofil</button>}
+          {target && <button className="b3" onClick={() => onGoto(target[0])}>{target[1]}</button>}
         </div>
         {p && (
           <button className="dz-rface" onClick={() => openPlayer(p.id)} title={`${p.fullName} – Spielerprofil öffnen`}>

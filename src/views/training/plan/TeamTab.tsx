@@ -26,6 +26,7 @@ import { PaletteTile, PlanCell } from '../planParts';
 import { BlockKind, KIND_TABS, blockKind, leaderText } from './model';
 import { useBlockDrag } from './useBlockDrag';
 import type { PlanTab } from './model';
+import Select from '../../../ui/Select';
 
 const SLOT_SHORT: Record<SlotKey, string> = { slot1: 'Vormittag', slot2: 'Nachmittag', extra: 'Abend' };
 let lastKind: BlockKind = 'fit';
@@ -68,10 +69,10 @@ export function TeamTab({ g, refresh, onTab }: { g: Game; refresh: () => void; o
       <DashBox title="Wochenplan" icon="training" rows={2} className="tr3-weekbox"
         right={<span className="tp-weeknav">
           <span className="tr3-lbl">Trainingswoche laden</span>
-          <select className="tt-select" value="" onChange={(e) => { if (e.target.value) { applyTemplate(plan, e.target.value, year); refresh(); } }}>
+          <Select className="tt-select" value="" onChange={(v) => { if (v) { applyTemplate(plan, v, year); refresh(); } }}>
             <option value="">Vorlage wählen …</option>
             {PLAN_TEMPLATES.map((t) => <option key={t.id} value={t.id}>{t.name} – {t.desc}</option>)}
-          </select>
+          </Select>
         </span>}>
         <div className="tr3-folder">
           {[0, 1].map((o) => (

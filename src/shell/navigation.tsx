@@ -1,4 +1,4 @@
-import { type IconName } from '../components/Icon';
+import Icon, { type IconName } from '../components/Icon';
 
 export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | 'training' | 'transfers' | 'finances' | 'youth' | 'facilities' | 'cup' | 'chronicle' | 'news' | 'wiki' | 'staff' | 'marketing' | 'calendar'
   // Kategorie-Dashboards (Übersichtsseiten je Hauptkategorie)
@@ -108,16 +108,21 @@ export const MENU_STRUCTURE: MainCat[] = [
 ];
 
 /** Zweistufige Top-Navigation: Hauptkategorien + Unterpunkte der aktiven Kategorie. */
-export function TopNav({ screen, setScreen, dateLabel, onBack }: { screen: Screen; setScreen: (s: Screen) => void; dateLabel?: string; onBack?: () => void }) {
+export function TopNav({ screen, setScreen, dateLabel, onBack, onForward }: { screen: Screen; setScreen: (s: Screen) => void; dateLabel?: string; onBack?: () => void; onForward?: () => void }) {
   const matched = MENU_STRUCTURE.find((c) => c.dash === screen || c.subs.some((s) => s.screen === screen));
   const activeCat = matched ?? MENU_STRUCTURE[0];
   return (
     <nav className="top-nav sub-only">
       <div className="tn-sub">
-        {/* Zurück zur vorherigen Seite (bis zu 20); ausgegraut ohne Verlauf, z. B. nach Zeitlauf. */}
-        <button className="tn-back" disabled={!onBack} onClick={onBack} title={onBack ? 'Zurück zur vorherigen Seite' : 'Keine vorherige Seite'} aria-label="Zurück">
-          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg><span>Zurück</span>
-        </button>
+        {/* Zurück/Vorwärts (je bis zu 20 Seiten, Alt+←/→); ausgegraut ohne Verlauf, z. B. nach Zeitlauf. */}
+        <span className="tn-hist">
+          <button className="tn-back" disabled={!onBack} onClick={onBack} title={onBack ? 'Zurück zur vorherigen Seite (Alt+←)' : 'Keine vorherige Seite'} aria-label="Zurück">
+            <Icon name="navPrev" size={18} />
+          </button>
+          <button className="tn-back tn-fwd" disabled={!onForward} onClick={onForward} title={onForward ? 'Vorwärts (Alt+→)' : 'Keine nächste Seite'} aria-label="Vorwärts">
+            <Icon name="navNext" size={18} />
+          </button>
+        </span>
         {activeCat.subs.map((s) => (
           <button key={s.screen} className={`tn-sub-item ${screen === s.screen ? 'active' : ''}`} onClick={() => setScreen(s.screen)}>
             <span>{s.label}</span>

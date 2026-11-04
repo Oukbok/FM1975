@@ -130,11 +130,13 @@
   .tn-ico { width: 22px; height: 22px; }
 }
 
-/* Zurück-Knopf ganz links im Untermenü (shell/navigation.tsx TopNav) */
+/* Zurück/Vorwärts ganz links im Untermenü (shell/navigation.tsx TopNav): zwei gleich große Symbolknöpfe */
+.tn-hist { display: inline-flex; gap: 6px; flex: 0 0 auto; margin-right: 18px; }
 .tn-back {
-  display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; margin-right: 18px; padding: 4px 10px;
-  border: 1px solid var(--border); border-radius: 4px; background: transparent; color: var(--text-2);
-  font-family: var(--font-display); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+  width: 36px; height: 32px; padding: 0; margin: 0;
+  border: 1px solid var(--btn-border); border-radius: var(--btn-radius); background: var(--btn-bg); color: var(--text-2); cursor: pointer;
 }
-.tn-back:hover:not(:disabled) { color: var(--text); border-color: var(--text-3); }
-.tn-back:disabled { color: var(--text-4); border-color: var(--border-soft); cursor: default; }
+.tn-back:hover:not(:disabled) { color: var(--text); border-color: var(--btn-border-hover); background: var(--btn-bg-hover); }
+.tn-back:disabled { color: var(--text-4); border-color: var(--border-soft); background: transparent; cursor: default; opacity: 1; }
+.tn-back:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
