@@ -1,9 +1,9 @@
-// Trainerkarriere-Test ohne UI (game/careerGame.ts, game/careerSwitch.ts) + KI-Leihen/Verträge:
+// Managerkarriere-Test ohne UI (game/careerGame.ts, headCoaches.ts, boardPressure.ts, managerLog.ts) + KI-Leihen/Verträge:
 //   npm run test:career
-// 1) Ansehen/Angebote, Nachricht mit Entscheidung (Weiter-Sperre)
-// 2) Sofortwechsel in der eigenen Liga: Spielstand konsistent, alter Verein KI, Speichern/Laden
-// 3) Wechsel zum Saisonende in die 2. Liga (Sim-Verein wird Spielerliga)
-// 4) Entlassung im Karriere-Modus (Ultimatum → Entlassung → Pflichtwahl)
+// 1) Keine Jobangebote/Wechsel mehr – auch bei hohem Ansehen eine ganze Saison lang
+// 2) Migration: offene Angebote/Entlassungs-Wahl/zugesagter Wechsel alter Spielstände verfallen, „Weiter“ frei
+// 3) Cheftrainer-Historie + Vorstandsdruck gegen den Trainer (Rückendeckung, Entlassung), nie Entlassung des Managers
+// 4) Managerbilanz über den Saisonwechsel, Speichern/Laden, Rekonstruktion alter Spielstände
 // 5) KI-Leihen (Hin und Rückkehr), KI-Verträge (frühe Verlängerung, Bosman-Verkauf, Vorvertrag)
 import { createNewGame } from '../src/game/newGame';
 import { processDay, HEADLESS_UI } from '../src/game/day';
@@ -11,11 +11,15 @@ import { startNextSeason } from '../src/game/season';
 import { CalendarEngine } from '../src/engine/calendar';
 import { pendingDecisions } from '../src/engine/messages';
 import { chooseEventOption } from '../src/game/eventsGame';
-import { careerDaily, makeOffer, offerCandidates, rollJobOffers } from '../src/game/careerGame';
-import { currentStint, ensureCareer, jobLevel } from '../src/game/careerState';
+import { migrateCareer } from '../src/game/careerGame';
+import { ensureCareer } from '../src/game/careerState';
+import { boardPressureDaily, ownStanding, PRESSURE_TYPE } from '../src/game/boardPressure';
+import { headCoachNow, headCoachRows, openCoachEntry } from '../src/game/headCoaches';
+import { candidatesFor, hireStaff } from '../src/game/staffGame';
+import { ensureMgr } from '../src/game/managerLog';
+import { careerData, games } from '../src/game/managerView';
 import { aiLoanRound, aiLoansSeasonEnd, optionWanted } from '../src/game/aiLoans';
 import { aiBosmanSales, aiEarlyRenewals, aiPreContracts } from '../src/game/aiContracts';
-import { coachRecordOf } from '../src/game/coachRecord';
 import { Game } from '../src/game/state';
 
 let seed = 1975;
@@ -24,157 +28,132 @@ function fail(msg: string): never { console.error('FEHLER:', msg); process.exit(
 function fresh(club = 'boc', mode: 'manager' | 'career' = 'manager'): Game {
   return createNewGame({
     managedClubId: club,
-    manager: { name: 'Test Trainer', nationality: 'GER', birthYear: 1940, style: 'balanced', background: 'ex_pro', startMode: mode } as any,
+    manager: { name: 'Test Manager', nationality: 'GER', birthYear: 1940, style: 'balanced', background: 'ex_pro', startMode: mode } as any,
     difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300,
   });
 }
-function run(g: Game, until: string, max = 400): void {
+function run(g: Game, until: string, max = 1200): void {
   let guard = 0;
-  while (g.calendar.currentDate < until && !CalendarEngine.isSeasonOver(g.calendar) && guard++ < max) {
-    // Entscheidungen der Karriere sofort beantworten lassen (sonst Frist).
-    processDay(g, HEADLESS_UI);
-  }
+  while (g.calendar.currentDate < until && !CalendarEngine.isSeasonOver(g.calendar) && guard++ < max) processDay(g, HEADLESS_UI);
 }
-/** Spielstand-Konsistenz: Kaderlisten, Trainer, Markierungen. */
-function consistent(g: Game, label: string): void {
-  const own = g.clubs[g.managedClubId];
-  if (!own) fail(`${label}: eigener Verein fehlt`);
-  if (own.coach) fail(`${label}: eigener Verein hat einen KI-Trainer`);
-  if (!own.isPlayerControlled) fail(`${label}: eigener Verein nicht als Spielerverein markiert`);
-  if (!g.table.rows.some((r) => r.clubId === own.id)) fail(`${label}: eigener Verein nicht in der Tabelle der Spielerliga`);
-  for (const c of Object.values(g.clubs)) {
-    if (c.id !== own.id && c.isPlayerControlled) fail(`${label}: ${c.name} noch als Spielerverein markiert`);
-    for (const id of c.playerIds) if (g.players[id]?.clubId !== c.id) fail(`${label}: ${id} in Kaderliste von ${c.name}, gehört aber ${g.players[id]?.clubId}`);
-  }
-  for (const m of g.fixtures) if (m.involvesPlayerClub !== (m.homeClubId === own.id || m.awayClubId === own.id)) fail(`${label}: involvesPlayerClub falsch`);
-  for (const r of g.table.rows) {
-    const c = g.clubs[r.clubId];
-    if (c && c.id !== own.id && !c.coach) fail(`${label}: ${c.name} ohne Trainer`);
-  }
-  const st = currentStint(g);
-  if (st.clubId !== own.id || st.to) fail(`${label}: laufende Station passt nicht`);
-}
-function roundtrip(g: Game): Game {
-  const s = JSON.stringify(g);
-  return JSON.parse(s) as Game;
-}
+const roundtrip = (g: Game): Game => JSON.parse(JSON.stringify(g)) as Game;
+const careerMsgs = (g: Game) => g.messages.filter((m) => m.eventRef?.type === 'career_offer' || m.eventRef?.type === 'career_sacked');
 
 // -----------------------------------------------------------------------------
-// 1) Ansehen und Angebote
+// 1) Keine Jobangebote, kein Wechsel – eine ganze Saison im Karriere-Modus mit Ansehen 90
 // -----------------------------------------------------------------------------
-const g = fresh('boc');
+const g = fresh('boc', 'career');
 const c = ensureCareer(g);
 if (c.rep < 20 || c.rep > 95) fail(`Ansehen unplausibel ${c.rep}`);
-if (c.stints.length !== 1 || c.stints[0].clubId !== 'boc') fail('Startstation fehlt');
-console.log(`Start: Bochum, Größe ${jobLevel(g, 'boc')}, Ansehen ${c.rep}`);
-c.rep = 85; // sehr gefragt
-const cands = offerCandidates(g);
-if (!cands.length) fail('keine Kandidaten für Angebote');
-if (cands.some((x) => x.id === 'boc')) fail('eigener Verein als Kandidat');
-let offer = null;
-for (let i = 0; i < 40 && !offer; i++) offer = rollJobOffers(g, '1976-04-10');
-if (!offer) fail('kein Angebot trotz hohem Ansehen');
-if (offer.when !== 'saisonende' || offer.wage <= 0 || !offer.goal) fail('Angebot unvollständig');
-const pend = pendingDecisions(g.messages);
-if (!pend.some((m) => m.eventRef?.data?.offer === offer!.id)) fail('Angebot sperrt „Weiter“ nicht');
-console.log(`Angebot: ${offer.clubName} (${offer.tier}. Liga), Gehalt ${offer.wage}, Ziel ${offer.goal}, Budget ${offer.budget}`);
-// Ablehnen räumt auf.
-const msg = g.messages.find((m) => m.eventRef?.data?.offer === offer!.id)!;
-chooseEventOption(g, msg, 'nein');
-if (c.offers.length) fail('abgelehntes Angebot bleibt offen');
-if (c.declined[offer.clubId] !== g.season) fail('Ablehnung nicht gemerkt');
+c.rep = 90;
+g.clubs.boc.boardConfidence = 5; // früher: Ultimatum + Entlassung
+hireStaff(g, candidatesFor(g, 'cheftrainer')[0]);
+const firstCoach = headCoachNow(g);
+if (!firstCoach || openCoachEntry(g)?.id !== firstCoach.id) fail('Cheftrainer nicht in der Historie');
+run(g, '1976-07-01');
+if (!CalendarEngine.isSeasonOver(g.calendar)) fail('Saison nicht zu Ende');
+if (g.managedClubId !== 'boc') fail('Vereinswechsel trotz Abschaltung');
+if (c.offers.length || c.offerCount || c.sacked || c.pendingMove || careerMsgs(g).length) fail('Jobangebot/Entlassung ausgelöst');
+const pressMsgs = g.messages.filter((m) => m.eventRef?.type === PRESSURE_TYPE);
+console.log(`Saison 1975/76 mit Ansehen 90 und Vertrauen ab 5: keine Angebote, kein Wechsel; Druck-Nachrichten gegen den Trainer: ${pressMsgs.length}, Trainer: ${headCoachRows(g).map((e) => `${e.name} (${e.live ? 'im Amt' : e.end})`).join(', ')}`);
 
 // -----------------------------------------------------------------------------
-// 2) Sofortwechsel in der eigenen Liga
+// 4) Saisonwechsel: Managerbilanz, Trainerbilanz, Laden, Rekonstruktion
 // -----------------------------------------------------------------------------
-run(g, '1975-10-01');
-const oldId = g.managedClubId;
-const old = g.clubs[oldId];
-const ownStaff = (g.staff ?? []).length;
-const target = g.table.rows.map((r) => g.clubs[r.clubId]).find((x) => x && x.id !== oldId && x.coach)!;
-const targetCoach = target.coach!.name;
-const targetStaff = (g.staffWorld?.people ?? []).filter((m) => m.clubId === target.id).length;
-const sofort = makeOffer(g, target.id, 'sofort', 'Test.', g.calendar.currentDate);
-ensureCareer(g).offers.push(sofort);
-const sm = { id: 'x', date: g.calendar.currentDate, category: 'board', from: 't', subject: 's', shortText: '', bodyText: '', read: false,
-  choices: [{ id: 'ja', label: 'Annehmen' }], eventRef: { type: 'career_offer', deadline: '1975-10-05', defaultChoice: 'nein', data: { offer: sofort.id } } } as any;
-g.messages.push(sm);
-// Eine offene Entscheidung des alten Vereins verfällt mit dem Wechsel.
-g.messages.push({ ...sm, id: 'y', eventRef: { type: 'ai_offer', deadline: '1975-10-05', data: {} } });
-chooseEventOption(g, sm, 'ja');
-if (g.managedClubId !== target.id) fail('Sofortwechsel nicht vollzogen');
-consistent(g, 'Sofortwechsel');
-if (!old.coach) fail('alter Verein ohne Nachfolger');
-if (old.merchShop) fail('alter Verein behält den Fanartikel-Laden');
-const oh = old.coachHistory?.[old.coachHistory.length - 1];
-if (!oh?.human || oh.reason !== 'abgeworben') fail('Trainerhistorie des alten Vereins ohne dich');
-const th = target.coachHistory?.[target.coachHistory.length - 1];
-if (th?.name !== targetCoach || th.reason !== 'entlassen' || !th.rec) fail('Vorgänger beim neuen Verein fehlt/ohne Bilanz');
-if ((g.staff ?? []).length !== targetStaff) fail(`Trainerteam nicht übernommen (${g.staff?.length} statt ${targetStaff})`);
-if ((g.staffWorld?.people ?? []).filter((m) => m.clubId === oldId).length < ownStaff) fail('dein altes Team ist nicht beim alten Verein geblieben');
-if (g.messages.find((m) => m.id === 'y')?.eventRef?.resolved !== 'verfallen') fail('Entscheidung des alten Vereins nicht verfallen');
-if (ensureCareer(g).stints.length !== 2 || ensureCareer(g).stints[0].to == null) fail('Stationen nach Wechsel falsch');
-if (!target.tactics.startingXI?.length) fail('neue Mannschaft ohne Aufstellung');
-console.log(`Sofortwechsel: ${old.name} → ${target.name}; Nachfolger ${old.coach!.name}; Team ${g.staff?.length}; ${target.name} Vorgänger ${th.name} (${th.rec.w}-${th.rec.d}-${th.rec.l})`);
-// Speichern/Laden und weiterspielen.
+const row = g.table.rows.find((r) => r.clubId === 'boc')!;
+const coachBefore = openCoachEntry(g);
+startNextSeason(g);
+const mlog = ensureMgr(g)!;
+const s0 = mlog.seasons['1975/76'];
+if (!s0 || mlog.last !== '1975/76') fail('Saison 1975/76 nicht in der Managerbilanz');
+if (s0.L[0] !== row.won || s0.L[1] !== row.drawn || s0.L[2] !== row.lost) fail(`Ligabilanz ${s0.L} ≠ Tabelle ${row.won}-${row.drawn}-${row.lost}`);
+if (mlog.n !== games(s0.L) + games(s0.P) + games(s0.E)) fail('Spielzahl der Managerbilanz falsch');
+if (!mlog.miles.some(([n]) => n === 1) || (mlog.n >= 50 && !mlog.miles.some(([n]) => n === 50))) fail('Meilensteine fehlen');
+if (!Object.keys(mlog.players).length) fail('keine Spieler in der Managerbilanz');
+if (s0.rep == null) fail('Ansehen der Saison fehlt');
+if (coachBefore && !coachBefore.to && !(coachBefore.rec && coachBefore.rec.upTo)) fail('Trainerbilanz nicht fortgeschrieben');
+const again = JSON.stringify(mlog);
+ensureMgr(g); migrateCareer(g); // erneutes Anlegen/Bereinigen darf nichts ändern
+if (JSON.stringify(ensureMgr(g)) !== again) fail('Managerbilanz nicht idempotent');
+console.log(`Managerbilanz 1975/76: Liga ${s0.L.join('/')} · Pokal ${s0.P.join('/')} · ${mlog.n} Pflichtspiele, Spieler ${Object.keys(mlog.players).length}, Rekordsieg ${mlog.big[0]?.slice(4, 6).join(':') ?? '–'}`);
 const g2 = roundtrip(g);
-run(g2, '1975-11-15');
-consistent(g2, 'nach Laden');
-const rec = coachRecordOf(g2, g2.clubs[oldId]);
-if (!rec) fail('Bilanz des Nachfolgers fehlt');
-console.log(`Weitergespielt bis ${g2.calendar.currentDate}: Nachfolger bei ${g2.clubs[oldId].name} ${rec.w}-${rec.d}-${rec.l}`);
+run(g2, '1976-10-15');
+const d2 = careerData(g2)!;
+if (!d2 || d2.tally.n <= mlog.n) fail('laufende Saison fehlt in der Anzeige');
+if (d2.seasons.length !== 2 || !d2.seasons[0].live) fail('Saisons-Tabelle falsch');
+// Rekonstruktion (alter Spielstand ohne Managerbilanz): Liga aus dem Archiv wie gespeichert.
+const g3 = roundtrip(g);
+delete (g3.career as any).mgr;
+const rebuilt = ensureMgr(g3)!;
+if (JSON.stringify(rebuilt.seasons['1975/76']?.L) !== JSON.stringify(s0.L)) fail(`Rekonstruktion Liga ${rebuilt.seasons['1975/76']?.L} ≠ ${s0.L}`);
+if (rebuilt.n !== mlog.n) fail(`Rekonstruktion Spielzahl ${rebuilt.n} ≠ ${mlog.n}`);
+console.log(`Rekonstruktion alter Spielstand: ${rebuilt.n} Spiele, Liga ${rebuilt.seasons['1975/76'].L.join('/')}`);
 
 // -----------------------------------------------------------------------------
-// 3) Wechsel zum Saisonende in die 2. Liga
+// 2) Migration alter Spielstände
 // -----------------------------------------------------------------------------
-const g3 = fresh('han');
-const sims = Object.values(g3.simClubs).filter((s) => s.tier === 2 && !s.ddr);
-const dest = sims.sort((a, b) => b.strength - a.strength)[0];
-const so = makeOffer(g3, dest.id, 'saisonende', 'Test.', '1976-05-10');
-const cs = ensureCareer(g3);
-cs.pendingMove = { ...so, fromId: 'han', reason: 'wechsel' };
-run(g3, '1976-07-01', 1200);
-if (!CalendarEngine.isSeasonOver(g3.calendar)) fail('Saison nicht zu Ende');
-startNextSeason(g3);
-if (g3.managedClubId !== dest.id) fail('Wechsel zum Saisonende nicht vollzogen');
-processDay(g3, HEADLESS_UI); // Aufsteiger bekommen ihre Trainer am ersten Tag (ensureCoaches)
-processDay(g3, HEADLESS_UI);
-consistent(g3, 'Saisonwechsel');
-if (!g3.clubs[dest.id] || g3.simClubs[dest.id]) fail('neuer Verein nicht als voller Verein aufgebaut');
-console.log(`Saisonwechsel: Hannover → ${g3.clubs[dest.id].name} (Spielerliga ${g3.leagues.playerDivision.name}), Ansehen ${ensureCareer(g3).rep}`);
-if (cs.stints[0].seasons.length !== 1) fail('Saisonbilanz der alten Station fehlt');
-const g3b = roundtrip(g3);
-run(g3b, '1976-09-15');
-consistent(g3b, 'neue Saison nach Laden');
+const gm = fresh('han');
+const cm = ensureCareer(gm);
+const fake = (id: string, type: string) => ({ id, date: gm.calendar.currentDate, category: 'board', from: 't', subject: 's', shortText: '', bodyText: '', read: false,
+  actionRequired: true, choices: [{ id: 'ja', label: 'Annehmen' }], eventRef: { type, deadline: '1975-12-31', defaultChoice: 'nein', data: { offer: 'jo_x' } } }) as any;
+gm.messages.push(fake('a', 'career_offer'), fake('b', 'career_sacked'));
+cm.offers.push({ id: 'jo_x', clubId: 'mgl', clubName: 'Mönchengladbach', tier: 1, level: 80, when: 'saisonende', wage: 1, goal: 'x', budget: 1, date: '1975-08-01', deadline: '1975-12-31' } as any);
+cm.pendingMove = { ...cm.offers[0], fromId: 'han', reason: 'wechsel' } as any;
+cm.lastChance = gm.season;
+if (pendingDecisions(gm.messages).length < 2) fail('Testaufbau: Entscheidungen fehlen');
+migrateCareer(gm); migrateCareer(gm);
+if (pendingDecisions(gm.messages).some((m) => m.eventRef?.type.startsWith('career_'))) fail('Karriere-Entscheidung sperrt „Weiter“ weiter');
+if (cm.offers.length || cm.pendingMove || cm.lastChance || cm.mode !== 2) fail('Migration unvollständig');
+cm.pendingMove = { ...(fake('c', 'x') as any), clubId: 'mgl', fromId: 'han', reason: 'wechsel' }; // Altlast ohne Laden
+run(gm, '1976-07-01');
+startNextSeason(gm);
+if (gm.managedClubId !== 'han') fail('Wechsel aus Altlast vollzogen');
+console.log('Migration: Angebote/Entlassungs-Wahl verfallen, zugesagter Wechsel entfällt');
 
 // -----------------------------------------------------------------------------
-// 4) Entlassung im Karriere-Modus
+// 3) Vorstandsdruck gegen den Trainer
 // -----------------------------------------------------------------------------
-const g4 = fresh('mgl', 'career');
-run(g4, '1975-10-31');
-const c4 = ensureCareer(g4);
-g4.clubs[g4.managedClubId].boardConfidence = 5;
-g4.calendar.currentDate = '1975-11-01';
-careerDaily(g4, '1975-11-01');
-if (c4.lastChance !== g4.season) fail('kein Ultimatum');
-g4.clubs[g4.managedClubId].boardConfidence = 8;
-careerDaily(g4, '1975-12-01');
-const sackMsg = pendingDecisions(g4.messages).find((m) => m.eventRef?.type === 'career_sacked');
-if (!sackMsg || c4.sacked !== 1) fail('keine Entlassung nach Ultimatum');
-if (!sackMsg.choices?.length || sackMsg.choices.some((x) => x.id === 'nein')) fail('Entlassung ohne Pflichtwahl');
-const before = g4.managedClubId;
-chooseEventOption(g4, sackMsg, sackMsg.choices[0].id);
-if (g4.managedClubId === before) fail('nach Entlassung kein neuer Verein');
-consistent(g4, 'nach Entlassung');
-if (g4.clubs[before].coachHistory?.slice(-1)[0]?.reason !== 'entlassen') fail('Entlassung nicht in der Trainerhistorie');
-console.log(`Entlassung: ${g4.clubs[before].name} → ${g4.clubs[g4.managedClubId].name}, Ansehen ${c4.rep}`);
-// Teammanager-Modus: nie entlassen
-const g5 = fresh('mgl');
-g5.clubs['mgl'].boardConfidence = 2;
-run(g5, '1975-10-31');
-g5.clubs['mgl'].boardConfidence = 2;
-careerDaily(g5, '1975-11-01'); careerDaily(g5, '1975-12-01');
-if (ensureCareer(g5).sacked || g5.managedClubId !== 'mgl') fail('Teammanager wurde entlassen');
+const gp = fresh('mgl', 'career');
+hireStaff(gp, candidatesFor(gp, 'cheftrainer')[0]);
+const coach = headCoachNow(gp)!;
+openCoachEntry(gp)!.from = '1975-07-01';
+run(gp, '1975-10-31');
+const club = gp.clubs.mgl;
+const at = (d: string, conf: number) => { gp.calendar.currentDate = d; club.boardConfidence = conf; boardPressureDaily(gp, d); };
+at('1975-11-01', 10);
+const ask = pendingDecisions(gp.messages).find((m) => m.eventRef?.type === PRESSURE_TYPE);
+if (!ask || ask.eventRef?.data?.coach !== coach.id) fail('keine Druck-Nachricht gegen den Trainer');
+if (!ask.choices?.some((x) => x.id === 'entlassen') || !ask.choices.some((x) => x.id === 'stuetzen')) fail('Wahl fehlt');
+chooseEventOption(gp, ask, 'stuetzen');
+const st = ensureCareer(gp).press!;
+if (!st.backed || club.boardConfidence !== 8 || openCoachEntry(gp)?.backed !== 1) fail('Rückendeckung nicht gemerkt');
+at('1975-11-15', 8); // zu früh für die Nachprüfung
+if (!st.backed) fail('Nachprüfung zu früh');
+st.backed.gap = 50; // damals weit hinter dem Ziel → jetzt deutlich besser
+at('1975-12-02', 8);
+if (st.backed || club.boardConfidence !== 12) fail(`Nachprüfung (Wende) falsch: Vertrauen ${club.boardConfidence}`);
+// Zweite Runde: Abstand zum Ziel unverändert → −10 (außer das Ziel ist ohnehin erreicht → +4).
+const gapNow = (() => { const o = ownStanding(gp); return o.pos - o.exp; })();
+st.backed = { coachId: coach.id, date: '1975-11-01', gap: gapNow, conf: 30 };
+at('1975-12-03', 30);
+const confAfter = club.boardConfidence;
+if (st.backed || confAfter !== (gapNow <= 0 ? 34 : 20)) fail(`Nachprüfung ohne Wende: ${confAfter} (Abstand ${gapNow})`);
+st.n = 0; st.last = undefined;
+at('1976-01-01', 15);
+const ask2 = pendingDecisions(gp.messages).find((m) => m.eventRef?.type === PRESSURE_TYPE);
+if (!ask2) fail('zweite Druck-Nachricht fehlt');
+chooseEventOption(gp, ask2, 'entlassen');
+if (headCoachNow(gp)) fail('Trainer nicht entlassen');
+const ended = headCoachRows(gp)[0];
+if (ended.live || ended.end !== 'entlassen' || !ended.pressured) fail('Entlassung nicht in „Deine Trainer“');
+if (club.coachHistory?.slice(-1)[0]?.name !== coach.name) fail('Entlassung nicht in der Vereins-Trainerhistorie');
+if (club.boardConfidence !== 21) fail(`Vertrauen nach Entlassung ${club.boardConfidence}`);
+// Ohne Trainer: einmalige Mahnung, keine Entscheidung.
+st.n = 0; st.last = undefined;
+at('1976-02-01', 5); at('1976-03-01', 5);
+if (gp.messages.filter((m) => m.subject === 'Vorstand vermisst einen Cheftrainer').length !== 1) fail('Mahnung ohne Trainer nicht genau einmal');
+if (gp.managedClubId !== 'mgl' || careerMsgs(gp).length) fail('Manager entlassen');
+console.log(`Vorstandsdruck: Rückendeckung (+4 bei Wende, ${confAfter === 20 ? '−10 ohne' : '+4 Ziel erreicht'}), Entlassung auf Druck → ${ended.name} ${ended.r.w}-${ended.r.d}-${ended.r.l}, Mahnung ohne Trainer`);
 
 // -----------------------------------------------------------------------------
 // 5) KI-Leihen und KI-Verträge
@@ -236,4 +215,4 @@ const g8 = fresh('mgl');
 for (const p of Object.values(g8.players)) { p.contract.refused = '1976'; p.contract.expiryDate = '1977-06-30'; }
 aiBosmanSales(g8, '1977-01-25'); aiPreContracts(g8, '1977-01-15');
 if ((g8.aiSquadLog ?? []).some((e) => e.bosmanSales || e.pre)) fail('Bosman-Planung vor 1995');
-console.log('OK – Trainerkarriere, KI-Leihen und KI-Verträge');
+console.log('OK – Managerkarriere, Vorstandsdruck, Managerbilanz, KI-Leihen und KI-Verträge');
