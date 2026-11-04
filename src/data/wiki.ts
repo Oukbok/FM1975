@@ -3119,7 +3119,8 @@ Ab 2027/28 wird die heutige Regel fortgeschrieben (Annahme: WM 2034 wieder im Wi
 - Wochentage, Pokal-/Europapokaltermine, Mindestabstände, Spielabsagen und Nachholspiele: Artikel **„Spielplan & Termine“**.
 
 ## In der Pause
-- **Hallenturniere** und das **Hallen-Masters** (Mitte Januar) liegen in der Pause, ebenso das **Winter-Trainingslager** (KI-Vereine in den letzten vier Wochen vor dem Rückrundenstart).
+- Die Pause gilt für **alle Pflichtspiele**: Auch der **Landespokal** spielt nicht zwischen dem letzten Spieltag vor und dem ersten nach der Pause. Fällt eine Runde (z. B. das Viertelfinale) in die Pause, rückt sie in die erste Pokalwoche danach – so wie der DFB-Pokal damals vor der Pause oder ab Februar/März spielte. Europapokalspiele im Dezember gibt es weiterhin; für ihre Teilnehmer beginnt die Pause erst danach.
+- **Deine Winterpause** beginnt zwei Tage nach deinem letzten Pflichtspiel (Liga, Pokal, Europapokal) und endet drei Tage vor dem ersten danach. Nur in diesem Fenster liegen deine **Hallenturniere**, das **Hallen-Masters** (Mitte Januar) und das **Winter-Trainingslager** (KI-Vereine in den letzten vier Wochen vor dem Rückrundenstart).
 - **Frische und Fitness** erholen sich täglich. Ohne Spielrhythmus driftet die **Form** aller Spieler leicht zur Mitte (0,5 % je Tag): Formstarke verlieren in drei Wochen ≈ 1–2 Punkte, in elf Wochen ≈ 6; Formschwache fangen sich. Training bringt in der Pause Fitness, aber kein Form-Plus.`,
   },
   {
@@ -3130,7 +3131,8 @@ Ab 2027/28 wird die heutige Regel fortgeschrieben (Annahme: WM 2034 wieder im Wi
     body: `## Die Grundregeln (alle Epochen)
 - **Kein Verein spielt an zwei aufeinanderfolgenden Tagen.** Zwischen zwei Pflichtspielen liegen mindestens **zwei Tage** (≈ 48 Stunden), angestrebt werden **zwei Ruhetage** (≈ 72 Stunden).
 - **Pokalwochen und Europapokalwochen** sind getrennt: Landespokal-Runden liegen dienstags/mittwochs in Wochen ohne Europapokal, mit drei Tagen Abstand zum Wochenende. Der Europapokal wird danach angesetzt und weicht Liga und Pokal aus.
-- **Hallenturniere** liegen in der Winterpause und **nie am Tag vor oder nach einem Pflichtspiel** – weder für dich noch für die anderen Teilnehmer.
+- **Hallenturniere** gibt es nur, wenn die Winterpause eines Vereins begonnen hat: frühestens zwei Tage nach seinem letzten Pflichtspiel vor der Pause (Liga, Pokal inklusive Wiederholungsspiel, Europapokal) und spätestens drei Tage vor dem ersten danach – für dich und für jeden anderen Teilnehmer. Heiligabend, der 1. Weihnachtstag, Silvester und Neujahr bleiben hallenfrei.
+- Der **Landespokal** spielt nie in der Winterpause.
 - Der **erste und die letzten zwei Spieltage** finden zeitgleich statt (Saisonfinale am Samstag); das **Pokalendspiel** ist ein Samstag, frühestens eine Woche nach dem letzten Spieltag.
 
 ## Je Epoche
@@ -3152,7 +3154,7 @@ Verteilte Spieltage (Freitag bis Montag) gibt es nur an normalen Wochenenden –
 - Kalender, Spielplan (Spieltag › Spielplan), Vorschau „Nächstes Spiel“ und Presse zeigen „Nachholspiel“; die Tabelle zählt ein Nachholspiel erst, wenn es gespielt ist.
 
 ## Alte Spielstände
-Laufende Saisons behalten ihre Termine. Der Spielausschuss repariert nur künftige Kollisionen (Spiele an Folgetagen) durch Verlegung innerhalb des Wochenendes; die neuen Regeln gelten vollständig ab dem nächsten Saisonwechsel.`,
+Laufende Saisons behalten ihre Termine. Der Spielausschuss repariert nur künftige Kollisionen (Spiele an Folgetagen) durch Verlegung innerhalb des Wochenendes; die neuen Regeln gelten vollständig ab dem nächsten Saisonwechsel. Liegt in einem alten Spielstand ein künftiges **Hallenturnier** in deiner Pflichtspielzeit (etwa vor einer Pokalrunde im Dezember), verlegt der Veranstalter es in deine Winterpause; gibt es keinen freien Tag, entfällt deine Teilnahme ohne Ärger. Beides kündigt eine kurze Nachricht an.`,
   },
   {
     id: 'training-camps',
@@ -3298,7 +3300,7 @@ Jugendintegration). Sie zahlen über ihre Finanzen und bekommen rund ein Drittel
 - **1976–1987:** Einladungsturniere mit Bundesligisten (Dortmund, Berlin, Stuttgart, München, Frankfurt) – ohne Endrunde.
 - **1988–2001: DFB-Hallenpokal.** Qualifikationsturniere (1988: 18, bis 1997: 16, ab 1998: 4), Wertung nach **Durchschnittspunkten je Spiel**
   (ein einziges Turnier kann reichen), die **8 Besten** spielen das **Hallen-Masters** (Frankfurter Festhalle, Westfalenhalle Dortmund, Olympiahalle München – Ort wie in der Wirklichkeit).
-- **Termine:** Alle Turniere liegen in der echten Winterpause der Saison (Artikel „Winterpause & Spielplan“), nie auf Pflichtspieltagen. Die Tour-Turniere laufen bis kurz vor dem
+- **Termine:** Hallenturniere gibt es erst, wenn die Bundesliga – und für den einzelnen Verein auch Pokal und Europapokal – in der Winterpause ist: frühestens zwei Tage nach dem letzten Pflichtspiel eines Teilnehmers, spätestens drei Tage vor seinem ersten danach (Artikel „Winterpause & Spielplan“). Wer im Dezember noch Europapokal spielt, wird erst danach eingeladen bzw. ersetzt. Heiligabend, 1. Weihnachtstag, Silvester und Neujahr sind hallenfrei. Die Tour-Turniere laufen bis kurz vor dem
   **Masters**, das wie historisch **Mitte Januar** stattfindet (Wochenende um den 13.1.); ohne Masters enden die Turniere Ende Januar – der Februar der langen Pausen gehört dem Trainingslager.
 - **2002–2004:** nur noch wenige Regionalturniere. **Danach findet nichts mehr statt** (Chronik: „Hallen-Masters abgeschafft“).
 
