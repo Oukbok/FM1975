@@ -11,7 +11,6 @@
 .pp-k { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); }
 .pp-title { font-family: var(--font-display); font-weight: 500; font-size: 22px; letter-spacing: 0.5px; color: var(--text); text-transform: uppercase; }
 .pp-presets { display: flex; flex-wrap: wrap; gap: 5px; }
-.pp-preset { padding: 3px 8px; font-size: 12.5px; }
 .pp-preset.on { border-color: var(--accent); color: var(--text); }
 .pp-sec { display: flex; align-items: center; gap: 6px; margin-top: 6px; padding-bottom: 5px; border-bottom: 1px solid var(--border-soft); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); }
 .pp-sec-v { margin-left: auto; text-transform: none; letter-spacing: 0; font-size: 13px; color: var(--text-2); }

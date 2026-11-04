@@ -16,6 +16,7 @@ import type { Game } from '../../game/state';
 import type { Player } from '../../types';
 import Icon from '../Icon';
 import type { IconName } from '../iconPaths';
+import PosBadge from '../PosBadge';
 
 interface MenuState { pid: string; x: number; y: number }
 interface Item { label: string; icon: IconName; run: () => void; sep?: boolean; danger?: boolean }
@@ -122,7 +123,7 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
           <div className="pcm" role="menu" style={{ left, top, width: W }} onMouseDown={(e) => e.stopPropagation()}
             onKeyDown={(e) => { if (e.key === 'Escape') close(); }}>
             <div className="pcm-head">
-              <span className="pos-badge">{p.naturalPosition}</span>
+              <PosBadge p={p} single />
               <span className="pcm-name">{p.fullName}</span>
               <span className="pcm-sub">{p.age} J. · {p.overall}</span>
             </div>

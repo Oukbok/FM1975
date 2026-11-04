@@ -65,7 +65,7 @@ export function clubCommitments(g: Game, id: string, conservative: boolean, excl
   return out;
 }
 
-function cupPossible(g: Game, ev: CalendarEvent, id: string): boolean {
+export function cupPossible(g: Game, ev: CalendarEvent, id: string): boolean {
   const cup = g.cup!;
   if (!aliveInCup(g, id)) return false;
   const round = ev.cupRoundIndex != null ? cup.rounds[ev.cupRoundIndex] : undefined;

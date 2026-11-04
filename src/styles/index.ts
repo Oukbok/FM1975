@@ -33,10 +33,12 @@ import './28-stadium.css';
 import './28-draw.css';
 import './28-indoor.css';
 import './28-transfer2.css';
+import './28-subtabs.css'; // drittes Menü (ui/SubTabs.tsx)
 import './28-sponsor.css';
 import './28-positions.css';
 import './28-leagues.css';
 import './28-calendar.css';
+import './28-calpage.css'; // Kalenderseite (Zentrale › Kalender): Heute, Kürzel, ruhige Flächen
 import './28-kabine.css';
 import './28-training.css';
 import './28-training3.css';
@@ -66,4 +68,5 @@ import './28-budget.css';
 import './28-pyramid.css';
 import './28-faces.css';
 import './28-career.css';
-import './29-look.css'; // zuletzt: ruhige Gesamtoptik
+import './29-look.css'; // ruhige Gesamtoptik
+import './29-buttons.css'; // zuletzt: Knopf-System + Auswahlliste (Tokens --btn-*/--sel-*)

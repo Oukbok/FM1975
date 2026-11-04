@@ -7,6 +7,7 @@ import { fmtDM, fmtPrice, fmtWage, vColor, wageUnit } from '../../ui/format';
 import { ScoutStars, scoutMid } from '../../views/shared';
 import JerseySVG, { type JerseyPattern } from '../JerseySVG';
 import { ClubTabProps } from './shared';
+import PosBadge from '../PosBadge';
 
 const CLASS_DE = ['', 'Spitzengruppe', 'oberes Mittelfeld', 'unteres Mittelfeld', 'Schlussgruppe'];
 const fmtNum = (n: number) => n.toLocaleString('de-DE');
@@ -83,7 +84,7 @@ export default function ClubTab({ g, d, openPlayer }: ClubTabProps) {
           <div className="dsec">Größte Talente</div>
           {youth.slice(0, 5).map((p) => (
             <div key={p.id} data-pid={p.id} className="dlist-row clickable" onClick={() => openPlayer(p.id)}>
-              <span className="pos-badge">{p.naturalPosition}</span>
+              <PosBadge p={p} compact />
               <span className="grow">{p.fullName}<span className="muted"> · {p.age} J.</span></span>
               <ScoutStars p={p} />
             </div>

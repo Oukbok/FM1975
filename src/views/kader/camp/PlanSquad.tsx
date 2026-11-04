@@ -8,6 +8,7 @@ import { CAMP_YOUTH_MAX } from '../../../game/campResult';
 import type { Player } from '../../../types';
 import { vColor } from '../../../ui/format';
 import { PlayerFitness } from '../../../components/status';
+import PosBadge from '../../../components/PosBadge';
 
 const POS_ORDER = ['TW', 'LIB', 'IV', 'RV', 'LV', 'DM', 'ZM', 'RM', 'LM', 'OM', 'RA', 'LA', 'HS', 'MS'];
 
@@ -53,7 +54,7 @@ function Row({ p, on, onToggle, youth }: { p: Player; on: boolean; onToggle: () 
   return (
     <label className={`cp-pl ${on ? 'on' : ''} ${p.injury ? 'inj' : ''}`}>
       <input type="checkbox" checked={on} onChange={onToggle} />
-      <span className="pos-badge">{p.naturalPosition}</span>
+      <PosBadge p={p} compact />
       <span className="cp-pl-name">{p.fullName}</span>
       <span className="cp-pl-age">{p.age}</span>
       <span className="cp-pl-ovr" style={{ color: vColor(p.overall) }}>{Math.round(p.overall)}</span>

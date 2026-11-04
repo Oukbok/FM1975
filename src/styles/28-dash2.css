@@ -11,9 +11,9 @@
 .dz-col { min-height: 0; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
 .dz-left { overflow-y: auto; overflow-x: hidden; padding-right: 6px; scrollbar-gutter: stable; }
 .dz-left::-webkit-scrollbar, .dz-nlist::-webkit-scrollbar, .dz-wb::-webkit-scrollbar, .dz-rtext::-webkit-scrollbar,
-.dz-app-list::-webkit-scrollbar, .dz-vt-list::-webkit-scrollbar, .dz-lcd-list::-webkit-scrollbar, .dz-heft-list::-webkit-scrollbar { width: 8px; }
+.dz-fn-list::-webkit-scrollbar, .dz-app-list::-webkit-scrollbar, .dz-vt-list::-webkit-scrollbar, .dz-lcd-list::-webkit-scrollbar, .dz-heft-list::-webkit-scrollbar { width: 8px; }
 .dz-left::-webkit-scrollbar-thumb, .dz-nlist::-webkit-scrollbar-thumb, .dz-wb::-webkit-scrollbar-thumb, .dz-rtext::-webkit-scrollbar-thumb,
-.dz-app-list::-webkit-scrollbar-thumb, .dz-vt-list::-webkit-scrollbar-thumb, .dz-lcd-list::-webkit-scrollbar-thumb, .dz-heft-list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 4px; }
+.dz-fn-list::-webkit-scrollbar-thumb, .dz-app-list::-webkit-scrollbar-thumb, .dz-vt-list::-webkit-scrollbar-thumb, .dz-lcd-list::-webkit-scrollbar-thumb, .dz-heft-list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 4px; }
 
 /* ---- Widget-Rahmen (links + Übersicht) ------------------------------------ */
 .dz-w, .dz-news {
@@ -91,8 +91,6 @@
 .dz-nh-title { font-family: var(--font-display); font-size: 30px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--text); }
 .dz-nh-count { font-family: var(--font-display); font-size: 19px; color: var(--text-2); margin-left: 10px; }
 .dz-nh-act { margin-left: auto; display: flex; gap: 8px; }
-.dz-nh-act .dchip { font-size: 14px; padding: 4px 12px; border-radius: 4px; }
-.dz-nh-act .dchip:not(:disabled):hover { color: var(--text); border-color: var(--text-3); }
 .dz-nbody { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 24px; padding-top: 8px; }
 .dz-nlist { min-height: 0; overflow-y: auto; }
 .dz-ntable { width: 100%; table-layout: fixed; border-collapse: collapse; }
@@ -125,8 +123,6 @@
 .dz-rtext .dsec { margin-top: 14px; }
 .dz-rfoot { display: flex; align-items: flex-end; gap: 14px; padding-top: 10px; border-top: 1px solid var(--border-soft); min-height: 52px; }
 .dz-rlinks { display: flex; flex-wrap: wrap; gap: 8px; }
-.dz-rlinks .dchip { font-size: 14px; padding: 5px 12px; border-radius: 4px; }
-.dz-rlinks .dchip:hover { color: var(--text); border-color: var(--text-3); }
 .dz-rface {
   margin-left: auto; display: flex; flex-direction: column; align-items: center; gap: 2px;
   background: none; border: none; cursor: pointer; color: var(--text); padding: 0; font: inherit;
@@ -168,67 +164,14 @@
 .dz-fan button { font: inherit; text-align: left; cursor: pointer; background: none; border: none; color: inherit; }
 .dz-fan-empty { padding: 14px; opacity: 0.75; font-size: 15px; }
 
-/* Stadionheft (bis Mai 1980): gedrucktes Blatt, kühles Papier */
-.dz-heft {
-  width: 100%; display: flex; flex-direction: column; min-height: 0;
-  background: var(--q-2); color: var(--bg); border-radius: 3px; padding: 16px 18px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45); font-family: Georgia, 'Times New Roman', serif;
-}
-.dz-heft-mast { display: flex; align-items: center; gap: 12px; padding-bottom: 10px; border-bottom: 3px double var(--bg); }
-.dz-heft-mast b { display: block; font-size: 21px; letter-spacing: 0.3px; }
-.dz-heft-mast span { font-size: 13px; text-transform: uppercase; letter-spacing: 1.4px; color: var(--panel-hover); }
-.dz-heft-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding-top: 6px; }
-.dz-heft-item { display: block; width: 100%; padding: 8px 0; border-bottom: 1px solid var(--q-3); font-size: 16px; line-height: 1.35; }
-.dz-heft-item:hover { text-decoration: underline; }
-.dz-heft-date { font-weight: 700; margin-right: 8px; }
-.dz-heft-item .rumor { font-style: italic; }
-
-/* Videotext (Juni 1980 – 1998): Fernseher mit Tafel */
-.dz-tv { width: 100%; display: flex; flex-direction: column; min-height: 0; background: var(--panel-2); border: 1px solid var(--border); border-radius: 18px; padding: 16px 16px 8px; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45); }
-.dz-tv-screen { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; background: var(--bg); border-radius: 10px; padding: 12px 12px 8px; font-family: 'Courier New', ui-monospace, monospace; font-size: 15px; color: var(--text); border: 6px solid var(--bg); }
-.dz-vt-top { display: flex; justify-content: space-between; color: var(--text); font-weight: 700; }
-.dz-vt-band { margin: 8px 0 6px; padding: 4px 8px; background: var(--pos-key); color: var(--text); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
-.dz-vt-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
-.dz-vt-item { display: grid; grid-template-columns: 62px minmax(0, 1fr) 34px; gap: 6px; width: 100%; padding: 4px 0; line-height: 1.3; }
-.dz-vt-date { color: var(--pos-key-2); }
-.dz-vt-item .rumor { color: var(--yellow); }
-.dz-vt-page { color: var(--green); text-align: right; }
-.dz-vt-item:hover span:nth-child(2) { text-decoration: underline; }
-.dz-tv-foot { display: flex; align-items: center; gap: 8px; padding-top: 8px; color: var(--text-4); font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; }
-.dz-tv-foot i { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
-.dz-tv-foot span { margin-left: auto; }
-
-/* SMS (1999 – Juli 2008): Tastenhandy mit Graustufen-Anzeige */
-.dz-phone {
-  height: 100%; aspect-ratio: 9 / 18; max-width: 100%; display: flex; flex-direction: column; align-items: center;
-  background: var(--panel-2); border: 1px solid var(--border); border-radius: 46px 46px 34px 34px; padding: 18px 18px 22px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
-}
-.dz-phone-ear { width: 56px; height: 6px; border-radius: 3px; background: var(--bg); margin-bottom: 14px; }
-.dz-lcd { width: 100%; flex: 1 1 58%; min-height: 0; display: flex; flex-direction: column; background: var(--q-2); color: var(--bg); border-radius: 6px; border: 6px solid var(--bg); padding: 8px 10px; font-family: 'Courier New', ui-monospace, monospace; font-size: 14.5px; }
-.dz-lcd-top { display: flex; justify-content: space-between; font-weight: 700; border-bottom: 2px solid var(--bg); padding-bottom: 4px; margin-bottom: 4px; }
-.dz-lcd-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
-.dz-lcd-item { display: flex; flex-direction: column; width: 100%; padding: 5px 0; border-bottom: 1px dashed var(--q-3); line-height: 1.25; }
-.dz-lcd-head { font-weight: 700; font-size: 13px; }
-.dz-lcd-item:hover { background: var(--q-1); }
-.dz-keys { width: 82%; flex: 0 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
-.dz-keys i { height: 16px; border-radius: 8px; background: var(--elevated); border: 1px solid var(--border); }
-
-/* Fan-App (ab Juli 2008): Smartphone */
-.dz-smart {
-  height: 100%; aspect-ratio: 9 / 17.5; max-width: 100%; display: flex; flex-direction: column; align-items: center;
-  background: var(--bg); border: 2px solid var(--border); border-radius: 40px; padding: 12px 10px 10px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
-}
-.dz-smart-notch { width: 90px; height: 16px; border-radius: 0 0 10px 10px; background: var(--panel-2); margin: -2px 0 6px; }
-.dz-smart-bar { width: 110px; height: 5px; border-radius: 3px; background: var(--text-4); margin-top: 8px; }
-.dz-app { width: 100%; flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; background: var(--bg-2); border-radius: 26px; overflow: hidden; }
-.dz-app-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px 10px; background: var(--panel); border-bottom: 3px solid var(--club, var(--border)); }
-.dz-app-head b { display: block; font-size: 17px; color: var(--text); }
-.dz-app-head span { font-size: 12.5px; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px; }
-.dz-app-sec { padding: 10px 16px 4px; font-family: var(--font-display); font-size: 14px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); }
-.dz-app-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0 8px 8px; }
-.dz-app-item { display: flex; flex-direction: column; gap: 2px; width: 100%; padding: 8px; border-bottom: 1px solid var(--border-soft); border-radius: 6px; font-size: 15.5px; color: var(--text); line-height: 1.3; }
-.dz-app-item:hover { background: var(--rl-hover); }
-.dz-app-date { font-size: 12.5px; color: var(--text-3); }
-.dz-app-item .rumor { font-style: italic; color: var(--text-2); }
+/* Vereinsnachrichten: ruhige Liste (Medium der Epoche nur als Unterzeile) */
+.dz-fn { width: 100%; display: flex; flex-direction: column; min-height: 0; background: var(--panel); border: 1px solid var(--border-soft); border-radius: 8px; }
+.dz-fn-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 14px 16px 10px; border-bottom: 1px solid var(--border-soft); }
+.dz-fn-title { font-family: var(--font-display); font-size: 18px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); }
+.dz-fn-sub { font-size: 14px; color: var(--text-3); white-space: nowrap; }
+.dz-fn-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.dz-fn-item { display: grid; grid-template-columns: 78px minmax(0, 1fr); gap: 12px; align-items: baseline; width: 100%; padding: 11px 16px; border-bottom: 1px solid var(--border-soft); }
+.dz-fn-item:hover { background: var(--rl-hover); }
+.dz-fn-date { font-family: var(--font-display); font-size: 15px; color: var(--text-3); white-space: nowrap; }
+.dz-fn-text { font-size: 16.5px; line-height: 1.35; color: var(--text); }
+.dz-fn-tag { display: inline-block; margin-right: 8px; padding: 1px 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 12.5px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-3); vertical-align: 1px; }

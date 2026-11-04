@@ -10,6 +10,7 @@ import { PITCH_GRID, type GridPoint } from '../../data/pitchGrid';
 import { positionSuitability, suitabilityColor } from '../../engine/positions';
 import PitchSVG from './PitchSVG';
 import { PlayerForm, PlayerFreshness } from '../status';
+import { posGroupClass } from '../../ui/positionBadges';
 
 export interface SlotPreview { slotId: string; x: number; y: number; position: Position; grid: GridPoint | null; swapWith: string | null }
 
@@ -20,7 +21,7 @@ function Card({ p, pos, captain, small }: { p: Player; pos: Position; captain: b
   return (
     <div className={`lu-card ${small ? 'sm' : ''} ${isOut(p) ? 'out' : ''}`} style={{ borderLeftColor: suitabilityColor(suit) }}>
       <div className="lu-card-top">
-        <span className="lu-card-pos">{pos}</span>
+        <span className={`lu-card-pos ${posGroupClass(pos)}`}>{pos}</span>
         {captain && <span className="lu-cap" title="Kapitän">K</span>}
         <span className="lu-card-st"><PlayerFreshness p={p} size={13} /><PlayerForm p={p} size={13} /></span>
         <span className="lu-card-suit" title="Eignung auf dieser Position">{suit}</span>
@@ -30,9 +31,11 @@ function Card({ p, pos, captain, small }: { p: Player; pos: Position; captain: b
   );
 }
 
-export default function PitchBoard({ formation, map, players, captainId, bench, benchSize, hover, preview, dragSlot, snap, onSlotDown, onPlayerDown }: {
+export default function PitchBoard({ formation, map, players, captainId, bench, benchSize, hover, preview, dragSlot, snap, reserveCount, full, note, lifted, dragPid, onSlotDown, onPlayerDown }: {
   formation: Formation; map: Record<string, string>; players: Record<string, Player>; captainId: string | null;
   bench: Player[]; benchSize: number; hover: string | null; preview: SlotPreview | null; dragSlot: string | null; snap: boolean;
+  /** Spieler in der Reserve; full = Ziel beim Ziehen ist voll; note = Hinweis nach abgewiesener Ablage; lifted = gezogene Karte hängt am Zeiger. */
+  reserveCount: number; full: 'bench' | 'xi' | null; note: string | null; lifted: boolean; dragPid: string | null;
   onSlotDown: (e: RPE, slotId: string) => void; onPlayerDown: (e: RPE, p: Player) => void;
 }) {
   const showGrid = !!dragSlot && snap;
@@ -52,11 +55,11 @@ export default function PitchBoard({ formation, map, players, captainId, bench, 
               const x = moving ? preview!.x : s.x, y = moving ? preview!.y : s.y;
               const pos = moving ? preview!.position : s.position;
               return (
-                <div key={s.id} className={`lu-slot ${hover === `slot:${s.id}` ? 'over' : ''} ${dragSlot === s.id ? 'dragging' : ''} ${s.position === 'TW' ? 'gk' : ''}`}
+                <div key={s.id} className={`lu-slot ${hover === `slot:${s.id}` ? 'over' : ''} ${dragSlot === s.id ? 'dragging' : ''} ${dragSlot === s.id && lifted ? 'lifted' : ''} ${s.position === 'TW' ? 'gk' : ''}`}
                   style={{ left: `${x}%`, top: `${y}%` }} data-lu-drop={`slot:${s.id}`} data-slot={s.id} data-pid={pid ?? ""}
                   onPointerDown={(e) => onSlotDown(e, s.id)}>
                   {p ? <Card p={p} pos={pos} captain={captainId === p.id} />
-                    : <div className="lu-card empty"><div className="lu-card-top"><span className="lu-card-pos">{pos}</span></div><div className="lu-card-name dim">frei</div></div>}
+                    : <div className="lu-card empty"><div className="lu-card-top"><span className={`lu-card-pos ${posGroupClass(pos)}`}>{pos}</span></div><div className="lu-card-name dim">frei</div></div>}
                   {moving && !snap && <div className="lu-live-pos">{preview!.grid?.label}</div>}
                 </div>
               );
@@ -64,18 +67,28 @@ export default function PitchBoard({ formation, map, players, captainId, bench, 
           </div>
         </div>
       </div>
-      <div className="lu-bench" data-lu-drop="bench:end">
-        <div className="lu-bench-head"><span>Ersatzbank</span><span className="lu-sec-n">{bench.length}/{benchSize}</span></div>
-        <div className="lu-bench-row" style={{ gridTemplateColumns: `repeat(${benchSize}, minmax(0, 1fr))` }}>
-          {Array.from({ length: benchSize }, (_, i) => {
-            const p = bench[i];
-            return (
-              <div key={i} className={`lu-bslot ${hover === `bench:${i}` ? 'over' : ''}`} data-lu-drop={`bench:${i}`}
-                onPointerDown={p ? (e) => onPlayerDown(e, p) : undefined} data-pid={p?.id}>
-                {p ? <Card p={p} pos={p.naturalPosition} captain={false} small /> : <div className="lu-card sm empty"><div className="lu-card-name dim">frei</div></div>}
-              </div>
-            );
-          })}
+      <div className="lu-bench-wrap">
+        <div className={`lu-bench lu-dropzone ${hover?.startsWith('bench:') ? (full === 'bench' ? 'full' : 'over') : ''}`} data-lu-drop="bench:end">
+          <div className="lu-bench-head">
+            <span>Ersatzbank</span><span className="lu-sec-n">{bench.length}/{benchSize}</span>
+            {(full === 'bench' && hover?.startsWith('bench:')) ? <span className="lu-zone-note neg">Bank voll – auf einen Bankspieler ziehen</span>
+              : note ? <span className="lu-zone-note neg" role="status">{note}</span> : null}
+          </div>
+          <div className="lu-bench-row" style={{ gridTemplateColumns: `repeat(${benchSize}, minmax(0, 1fr))` }}>
+            {Array.from({ length: benchSize }, (_, i) => {
+              const p = bench[i];
+              return (
+                <div key={i} className={`lu-bslot ${hover === `bench:${i}` && full !== 'bench' ? 'over' : ''} ${p ? '' : 'free'} ${p && lifted && p.id === dragPid ? 'lifted' : ''}`} data-lu-drop={`bench:${i}`}
+                  onPointerDown={p ? (e) => onPlayerDown(e, p) : undefined} data-pid={p?.id}>
+                  {p ? <Card p={p} pos={p.naturalPosition} captain={false} small /> : <div className="lu-card sm empty"><div className="lu-card-name dim">frei</div></div>}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className={`lu-reserve lu-dropzone ${hover === 'reserve' ? 'over' : ''}`} data-lu-drop="reserve">
+          <div className="lu-bench-head"><span>Reserve</span><span className="lu-sec-n">{reserveCount}</span></div>
+          <div className="lu-reserve-box" data-lu-drop="reserve">hierher ziehen</div>
         </div>
       </div>
     </div>

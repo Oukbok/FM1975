@@ -124,7 +124,7 @@ export function lineupHints(t: Tactics, players: Record<string, Player>, benchSi
   const out: Hint[] = [];
   const xi = f.slots.map((s) => ({ s, p: map[s.id] ? players[map[s.id]] : undefined }));
   const filled = xi.filter((x) => x.p).length;
-  if (filled < 11) out.push({ level: 'warn', text: `Startelf unvollständig (${filled}/11) – freie Plätze besetzt das Spiel vor dem Anpfiff mit dem Passendsten.` });
+  if (filled < 11) out.push({ level: 'warn', text: `Aufstellung unvollständig (${filled}/11) – freie Plätze besetzt der Co-Trainer beim Anpfiff mit dem Passendsten.` });
   const gk = xi.find((x) => x.s.position === 'TW');
   if (gk?.p && gk.p.naturalPosition !== 'TW') out.push({ level: 'warn', text: `Im Tor steht kein Torwart (${gk.p.lastName}).` });
   for (const { p } of xi) if (p && isOut(p)) out.push({ level: 'warn', text: `${p.lastName} ist nicht einsatzfähig (${p.injury ? 'verletzt' : 'gesperrt'}) – wird vor dem Spiel ersetzt.` });

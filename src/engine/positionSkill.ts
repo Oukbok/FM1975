@@ -2,9 +2,13 @@
 // Positionsvertrautheit (0–100 je Position) – wie im Football Manager:
 //  - Erzeugung: deterministisch aus Spieler-ID, Stammposition, Nebenpositionen und
 //    Attributen. Meist eine natürliche, 1–2 gute und einige ausreichende Positionen.
-//  - Wachstum: Einsatzminuten auf der Position (Match-Engine, `match/finish.ts`) und
-//    Positionstraining (eine Zielposition je Spieler; eigenes Training täglich,
-//    KI-Vereine monatlich in `game/positionsGame.ts`). Training allein endet bei 85.
+//  - Wachstum (Wunsch Pascal): Einsatzminuten auf der Position (Match-Engine,
+//    `match/finish.ts`) und Positionstraining (eine Zielposition je Spieler; eigenes
+//    Training täglich, KI-Vereine monatlich in `game/positionsGame.ts`). Bis 80 linear:
+//    eine Saison Stammplatz (30 × 90 Min.) ≈ +40, Positionstraining ≈ +15, zusammen ≈ +50
+//    (Alter 26–29, verwandte Position etwas mehr, fremde etwas weniger – `similarityRate`).
+//    Ab 80 deutlich langsamer (`slowdown`): von 80 auf 95 dauert etwa eine weitere Saison.
+//    Training allein endet bei 85. Messung: `node scripts/run-ts.mjs tests/posLearnBench.ts`.
 //  - Abbau: nach über einem Jahr ohne Einsatz langsam und zufällig verzögert,
 //    nie unter 50 % des Höchstwerts. Stammposition und Trainingsziel bauen nicht ab.
 //  - Wirkung: `familiarity` in `positions.ts` (Faktor auf die Positionsstärke) –
@@ -32,6 +36,8 @@ export function dayNum(iso: string): number {
 }
 
 const r1 = (x: number) => Math.round(x * 10) / 10;
+/** Werte werden auf 0,001 gespeichert, damit kleine Trainingsschritte nicht weggerundet werden. */
+const r2 = (x: number) => Math.round(x * 1000) / 1000;
 
 function hash01(s: string): number {
   let h = 2166136261;
@@ -136,10 +142,10 @@ function setSkill(p: Player, pos: Position, nv: number): void {
   const ps = p.positionSkill!;
   const old = ps.v[pos] ?? 0;
   const peak = Math.max(ps.pk?.[pos] ?? 0, old, nv);
-  nv = r1(Math.max(0, Math.min(100, nv)));
+  nv = r2(Math.max(0, Math.min(100, nv)));
   if (nv === old) return;
   ps.v[pos] = nv;
-  if (peak > nv) (ps.pk ??= {})[pos] = r1(peak);
+  if (peak > nv) (ps.pk ??= {})[pos] = r2(peak);
   else if (ps.pk) { delete ps.pk[pos]; if (!Object.keys(ps.pk).length) delete ps.pk; }
   if (skillTier(old) !== skillTier(nv)) syncSecondary(p);
   // Zwischenspeicher der Positionsstärke nur bei spürbarer Änderung verwerfen (Faktor rechnet ganzzahlig).
@@ -160,6 +166,25 @@ export function learnRate(age: number): number {
   return age <= 21 ? 1.3 : age <= 25 ? 1.1 : age <= 29 ? 1.0 : age <= 32 ? 0.8 : 0.6;
 }
 
+/** Lernen je 90 Einsatzminuten unterhalb von {@link SLOW_FROM} (Alter 26–29, Verwandtschaft 0,3). */
+export const LEARN_PER_90 = 1.33;
+/** Lernen je Positionstrainingstag unterhalb von {@link SLOW_FROM} (Qualität 1). */
+export const TRAIN_PER_DAY = 0.065;
+/** Ab hier geht es deutlich langsamer. */
+export const SLOW_FROM = 80;
+/** Tempo genau bei {@link SLOW_FROM}; darüber fällt es linear bis 0 bei 100. */
+const SLOW_RATE = 0.55;
+
+/** Bremsfaktor nach aktuellem Wert: 1 bis 80, darüber 0,55 × (100 − v) / 20. */
+export function slowdown(v: number): number {
+  return v < SLOW_FROM ? 1 : SLOW_RATE * Math.max(0, 100 - v) / (100 - SLOW_FROM);
+}
+
+/** Verwandte Positionen lernen sich schneller: 0,9 (fremd) … 1,25 (sehr ähnlich), 1,0 bei Verwandtschaft 0,3. */
+export function similarityRate(p: Player, pos: Position): number {
+  return 0.85 + 0.5 * positionRelation(p, p.naturalPosition, pos);
+}
+
 /** Einsatzminuten auf einer Position verbuchen (Match-Engine). */
 export function addPositionMinutes(p: Player, pos: Position, minutes: number, today: string): void {
   if (minutes <= 0) return;
@@ -167,8 +192,8 @@ export function addPositionMinutes(p: Player, pos: Position, minutes: number, to
   (ps.used ??= {})[pos] = dayNum(today);
   const v = ps.v[pos] ?? 0;
   if (v >= 100) return;
-  const gain = 3.2 * ((100 - v) / 100) * Math.min(1.35, minutes / 90) * learnRate(p.age);
-  setSkill(p, pos, v + Math.max(0.1, gain));
+  const gain = LEARN_PER_90 * Math.min(1.35, minutes / 90) * learnRate(p.age) * similarityRate(p, pos) * slowdown(v);
+  setSkill(p, pos, Math.min(100, v + gain));
 }
 
 /** Zielposition fürs Training setzen (null = Training beenden). */
@@ -191,7 +216,8 @@ export function trainPositionDays(p: Player, days: number, today: string, qualit
   const v = ps.v[t] ?? 0;
   if (v >= TRAIN_CAP) return false;
   let nv = v;
-  for (let i = 0; i < days; i++) nv += 0.3 * ((TRAIN_CAP - nv) / 100) * learnRate(p.age) * quality;
+  const rate = TRAIN_PER_DAY * learnRate(p.age) * similarityRate(p, t) * quality;
+  for (let i = 0; i < days && nv < TRAIN_CAP; i++) nv += rate * slowdown(nv);
   nv = Math.min(TRAIN_CAP, nv);
   const before = skillTier(v);
   setSkill(p, t, nv);

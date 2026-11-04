@@ -11,6 +11,22 @@ import { createPortal } from 'react-dom';
 import { placeNear, uiScale } from '../../ui/floating';
 
 export function useStatusTip(title: string, detail: string, color: string, note?: string) {
+  return useFloatTip(() => (
+    <>
+      <span className="st-tip-row">
+        <span className="st-tip-dot" style={{ background: color }} />
+        <b>{title}</b> <span className="st-tip-val">{detail}</span>
+      </span>
+      {note && <span className="st-tip-note">{note}</span>}
+    </>
+  ), detail);
+}
+
+/**
+ * Allgemeine Sofort-Einblendung (gleiches Verhalten wie {@link useStatusTip}):
+ * `render` liefert den Inhalt erst beim Öffnen, `dep` löst eine neue Lageberechnung aus.
+ */
+export function useFloatTip(render: () => ReactNode, dep?: unknown, className = '') {
   const anchor = useRef<HTMLSpanElement>(null);
   const pop = useRef<HTMLDivElement>(null);
   const touch = useRef(false);
@@ -22,7 +38,7 @@ export function useStatusTip(title: string, detail: string, color: string, note?
     const s = uiScale();
     const { left, top } = placeNear(anchor.current.getBoundingClientRect(), pop.current.offsetWidth * s, pop.current.offsetHeight * s, 6, 5);
     setPos({ left, top, s });
-  }, [open, detail]);
+  }, [open, dep]);
 
   // Angeheftet (Touch): Tippen daneben, Scrollen oder Esc schließt
   useEffect(() => {
@@ -55,13 +71,9 @@ export function useStatusTip(title: string, detail: string, color: string, note?
   };
 
   const layer: ReactNode = open && typeof document !== 'undefined' ? createPortal(
-    <div ref={pop} className="st-tip" role="tooltip"
+    <div ref={pop} className={`st-tip${className ? ` ${className}` : ''}`} role="tooltip"
       style={{ left: pos?.left ?? -9999, top: pos?.top ?? -9999, transform: `scale(${pos?.s ?? 1})` }}>
-      <span className="st-tip-row">
-        <span className="st-tip-dot" style={{ background: color }} />
-        <b>{title}</b> <span className="st-tip-val">{detail}</span>
-      </span>
-      {note && <span className="st-tip-note">{note}</span>}
+      {render()}
     </div>,
     document.body,
   ) : null;

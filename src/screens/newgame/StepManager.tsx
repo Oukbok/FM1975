@@ -8,6 +8,7 @@ import { ManagerBackground, ManagerStyle, Player } from '../../types';
 import {
   BG_DE, BIRTH_YEARS, DIFF_DE, MONTHS, NewGameDraft, STYLE_DE, ageAtStart, allPreviewClubs, daysInMonth, fullName, managerFace,
 } from './draft';
+import Select from '../../ui/Select';
 
 // Schritt 1: Manager — Persönliches, Porträt, Trainerprofil, Vereine, Schwierigkeit
 const FLAG_OF: Record<string, string> = { Österreich: 'Oesterreich', Dänemark: 'Daenemark', Türkei: 'Tuerkei', Rumänien: 'Rumaenien' };
@@ -18,10 +19,10 @@ function ClubSelect({ value, onChange, exclude }: { value: string; onChange: (v:
   return (
     <div className="ng-clubsel">
       <span className="ng-clubsel-crest">{sel ? <ClubCrest club={sel.club} size={30} /> : <span className="ng-crest-empty" />}</span>
-      <select className="ng-input" value={value} onChange={(e) => onChange(e.target.value)}>
+      <Select className="ng-sel" size="l" value={value} onChange={(v) => onChange(v)}>
         <option value="">keiner</option>
         {clubs.filter((c) => c.id !== exclude).map((c) => <option key={c.id} value={c.id}>{c.name} ({c.tier === 1 ? '1. Liga' : '2. Liga'})</option>)}
-      </select>
+      </Select>
     </div>
   );
 }
@@ -44,15 +45,15 @@ export function StepManager({ d, set }: { d: NewGameDraft; set: (p: Partial<NewG
             </label>
             <div className="ng-field">Geburtsdatum
               <div className="ng-date">
-                <select className="ng-input" value={d.birthDay} onChange={(e) => set({ birthDay: +e.target.value })}>
+                <Select className="ng-sel" size="l" value={d.birthDay} onChange={(v) => set({ birthDay: +v })}>
                   {Array.from({ length: daysInMonth(d.birthYear, d.birthMonth) }, (_, i) => <option key={i} value={i + 1}>{i + 1}.</option>)}
-                </select>
-                <select className="ng-input" value={d.birthMonth} onChange={(e) => set({ birthMonth: +e.target.value })}>
+                </Select>
+                <Select className="ng-sel" size="l" value={d.birthMonth} onChange={(v) => set({ birthMonth: +v })}>
                   {MONTHS.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}
-                </select>
-                <select className="ng-input" value={d.birthYear} onChange={(e) => set({ birthYear: +e.target.value })}>
+                </Select>
+                <Select className="ng-sel" size="l" value={d.birthYear} onChange={(v) => set({ birthYear: +v })}>
                   {BIRTH_YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
-                </select>
+                </Select>
               </div>
             </div>
           </div>
@@ -64,15 +65,15 @@ export function StepManager({ d, set }: { d: NewGameDraft; set: (p: Partial<NewG
         <div className="ng-kv"><span>Alter beim Start (1. Juli 1975)</span><b>{age} Jahre</b></div>
         <label className="ng-field">Nationalität
           <span className="ng-with-flag"><CountryFlag country={FLAG_OF[d.nationality] ?? d.nationality} height={14} />
-            <select className="ng-input" value={d.nationality} onChange={(e) => set({ nationality: e.target.value })}>
+            <Select className="ng-sel" size="l" value={d.nationality} onChange={(v) => set({ nationality: v })}>
               {NATIONALITIES.map((n) => <option key={n} value={n}>{n}</option>)}
-            </select></span>
+            </Select></span>
         </label>
         <label className="ng-field">Zweite Nationalität
-          <select className="ng-input" value={d.nationality2} onChange={(e) => set({ nationality2: e.target.value })}>
+          <Select className="ng-sel" size="l" value={d.nationality2} onChange={(v) => set({ nationality2: v })}>
             <option value="">keine</option>
             {NATIONALITIES.filter((n) => n !== d.nationality).map((n) => <option key={n} value={n}>{n}</option>)}
-          </select>
+          </Select>
         </label>
       </section>
 

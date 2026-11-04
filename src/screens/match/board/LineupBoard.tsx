@@ -12,6 +12,7 @@ import { bench } from '../../../engine/match/state';
 import type { MPlayer, Side } from '../../../engine/match/types';
 import { vColor } from '../../../ui/format';
 import { shortNamer } from '../names';
+import { posGroupClass } from '../../../ui/positionBadges';
 
 export const fmtGrade = (g: number) => g.toFixed(1).replace('.', ',');
 export const gradeCls = (g: number) => (g <= 2 ? 'g-top' : g <= 3 ? 'g-good' : g <= 4 ? 'g-mid' : 'g-bad');
@@ -55,7 +56,7 @@ export function LineupBoard({ sim, mySide, view, act, onPlayer }: {
             return (
               <div key={b.id} className={`tm-lt-row bench ${warming ? 'warming' : ''}`}>
                 <span className="tm-nr">{b.p.shirtNumber || ''}</span>
-                <span className="tm-pos">{b.p.naturalPosition}</span>
+                <span className={`tm-pos ${posGroupClass(b.p.naturalPosition)}`}>{b.p.naturalPosition}</span>
                 <button type="button" className="tm-plink tm-name" onClick={() => onPlayer(b.id)}>{nm(b.p)}</button>
                 <span className="tm-dim">–</span>
                 <span style={{ color: vColor(b.p.overall) }}>{b.p.overall}</span>
@@ -95,7 +96,7 @@ function Row({ sim, m, name, early, dim, onPlayer }: { sim: MatchSim; m: MPlayer
   return (
     <div className={`tm-lt-row ${dim ? 'out' : ''} ${m.injured && m.onPitch ? 'hurt' : ''}`}>
       <span className="tm-nr">{m.p.shirtNumber || ''}</span>
-      <span className="tm-pos">{m.pos}</span>
+      <span className={`tm-pos ${posGroupClass(m.pos)}`}>{m.pos}</span>
       <span className="tm-namecell">
         <button type="button" className="tm-plink tm-name" onClick={() => onPlayer(m.id)}>{name}{cap ? ' (K)' : ''}</button>
         {m.goals > 0 && <span className="tm-tag"><Icon name="matchball" size={16} />{m.goals > 1 ? m.goals : ''}</span>}

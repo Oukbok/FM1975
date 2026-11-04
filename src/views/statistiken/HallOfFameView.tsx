@@ -4,6 +4,7 @@ import { DashBox, DashPage, Empty, KV } from '../../ui/DashPage';
 import { vColor } from '../../ui/format';
 import { recordBook, type TitleKind } from '../../game/clubRecords';
 import { compClubName } from '../../game/competitionView';
+import PosBadge from '../../components/PosBadge';
 
 /** Vereine mit den meisten Titeln einer Art (inkl. Historie ab 1963/64, game/clubPool.ts). */
 function titleLeaders(g: Game, kind: TitleKind): { id: string; n: number; last: string }[] {
@@ -20,7 +21,7 @@ function titleLeaders(g: Game, kind: TitleKind): { id: string; n: number; last: 
 function Row({ a, value, sub }: { a: ArchivedPlayer; value: React.ReactNode; sub?: string }) {
   return (
     <div className="dlist-row">
-      <span className="pos-badge">{a.pos}</span>
+      <PosBadge pos={a.pos} />
       <span className="grow">{a.name}<span className="muted"> · {sub ?? `${a.born}–${a.retired}`}</span></span>
       <span className="val">{value}</span>
     </div>
@@ -48,7 +49,7 @@ export function HallOfFameView({ g }: { g: Game }) {
               {byPeak.map((a) => (
                 <tr key={a.id}>
                   <td className="nowrap rl-name">{a.name}</td>
-                  <td className="ctr"><span className="pos-badge">{a.pos}</span></td>
+                  <td className="ctr"><PosBadge pos={a.pos} /></td>
                   <td className="num nowrap">{a.born}–{a.retired}</td>
                   <td className="num" style={{ color: vColor(a.peak), fontWeight: 800 }}>{a.peak}</td>
                   <td className="num">{a.apps}</td>

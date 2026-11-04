@@ -12,6 +12,7 @@ import { Club, Player } from '../../../types';
 import { InfoTip } from '../../../ui/InfoTip';
 import { vColor } from '../../../ui/format';
 import { Glyph, ScenePhase, TalkScene } from './TalkScene';
+import PosBadge from '../../../components/PosBadge';
 
 export interface MoraleAnim { from: number; to: number; key: number }
 
@@ -57,7 +58,7 @@ export function TalkLeft({ p, club, phase, anim }: { p: Player; club?: Club; pha
             <span className="ptk-nat">{p.nationality}</span>
             <span className="ptk-pot">{scoutRangeText(p)}<InfoTip k="potenzial" /></span>
           </div>
-          <Row k="Position" v={<><span className="pos-badge">{p.naturalPosition}</span>{p.secondaryPositions.length > 0 && <span className="ptk-dim"> auch {p.secondaryPositions.join(', ')}</span>}</>} />
+          <Row k="Position" v={<PosBadge p={p} />} />
           <Row k="Stärke" v={<b style={{ color: vColor(p.overall) }}>{p.overall}</b>} />
           <Row k="Fuß" v={footLabel(p)} />
           <Row k="Spielertyp" v={PLAYER_TYPE[p.naturalPosition] ?? '–'} />

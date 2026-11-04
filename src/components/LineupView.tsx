@@ -25,6 +25,8 @@ import {
   assignToBench, assignToSlot, effectiveFormation, familiarityOf, lineupHints, moveSlot, placementFor, slotOf, syncLineup, toReserve,
 } from './lineup/lineupOps';
 import { InfoTip } from '../ui/InfoTip';
+import { posGroupClass } from '../ui/positionBadges';
+import Select from '../ui/Select';
 
 // Loses Game-Interface (Vollstruktur liegt in game/state.ts).
 interface G {
@@ -36,9 +38,31 @@ interface G {
 }
 
 type Src = { kind: 'slot'; slotId: string } | { kind: 'player'; pid: string };
-interface Drag { src: Src; pid: string | null; sx: number; sy: number; active: boolean; cx: number; cy: number; scale: number; target: string | null; preview: SlotPreview | null }
+/** Wo das Ziehen begann: Spielfeld (Verschieben möglich), Bank oder Kaderliste. */
+type Origin = 'pitch' | 'bench' | 'list';
+interface Drag {
+  src: Src; pid: string | null; origin: Origin; touch: boolean; armed: boolean;
+  sx: number; sy: number; active: boolean; cx: number; cy: number; scale: number;
+  target: string | null; preview: SlotPreview | null;
+  /** Ziel ist voll (Ablage wird abgewiesen). */
+  full: 'bench' | 'xi' | null;
+}
+/** Touch: so lange halten, bis das Ziehen beginnt (Kontextmenü erst nach 550 ms). */
+const TOUCH_HOLD_MS = 260;
 
 const isAvail = (p: Player | undefined): p is Player => !!p && p.availability === 'available' && !p.injury && !(p.suspensionMatches > 0);
+
+/** Kurztext am Geist: wohin der Spieler beim Loslassen kommt. */
+function dropLabel(target: string | null, full: Drag['full']): string {
+  if (full === 'bench') return 'Bank voll';
+  if (full === 'xi') return 'Startelf voll';
+  if (!target) return 'zurück';
+  if (target.startsWith('slot:')) return 'Startelf';
+  if (target.startsWith('bench:')) return 'Ersatzbank';
+  if (target === 'reserve') return 'Reserve';
+  if (target === 'xi') return 'Startelf';
+  return '';
+}
 
 export default function LineupView({ g, onChange }: { g: G; onChange: () => void }) {
   const club: Club = g.clubs[g.managedClubId];
@@ -48,6 +72,8 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
   const [drag, setDrag] = useState<Drag | null>(null);
   const [profile, setProfile] = useState<string | null>(null);
   const dragRef = useRef<Drag | null>(null);
+  const [note, setNote] = useState<string | null>(null);
+  const noteTimer = useRef(0);
   const refresh = () => { force((n) => n + 1); onChange(); };
 
   if (!t.lineupMap) Object.assign(t, autoFillLineup(club, g.players, t, benchSize, promiseLineupPrefs(g as unknown as Game)));
@@ -97,47 +123,67 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
   const resetLayout = () => { t.slotLayout = undefined; syncLineup(t, benchSize); refresh(); };
 
   // ---------------------------------------------------------------- Ziehen
+  // Maus: Ziehen ab 5 px Bewegung. Touch: erst nach kurzem Halten (langer Druck),
+  // vorher gehört die Bewegung dem Scrollen der Liste. Escape bricht ab.
   const fieldPct = (cx: number, cy: number) => {
     const el = document.querySelector('.lu-field');
     if (!el) return null;
     const r = el.getBoundingClientRect();
     return { x: ((cx - r.left) / r.width) * 100, y: ((cy - r.top) / r.height) * 100 };
   };
+  const benchList = () => (t.substitutes ?? []).filter((id) => !xiIds.has(id)).slice(0, benchSize);
 
   const compute = (d: Drag) => {
-    d.target = null; d.preview = null;
+    d.target = null; d.preview = null; d.full = null;
     let key: string | null = null;
-    for (const el of document.elementsFromPoint(d.cx, d.cy)) {
-      const k = (el as HTMLElement).dataset?.luDrop;
+    // closest(): Tabellenzeilen/-abschnitte liefert elementsFromPoint nicht selbst, nur ihre Zellen.
+    for (const hit of document.elementsFromPoint(d.cx, d.cy)) {
+      const el = hit.closest('[data-lu-drop]') as HTMLElement | null;
+      const k = el?.dataset.luDrop;
       if (!k) continue;
-      if (d.src.kind === 'slot' && k === `slot:${d.src.slotId}` && (el as HTMLElement).classList.contains('lu-slot')) continue;
+      if (d.src.kind === 'slot' && k === `slot:${d.src.slotId}` && el!.classList.contains('lu-slot') && d.origin === 'pitch') continue;
       key = k; break;
     }
     if (!key) return;
     if (key === 'pitch' || (d.src.kind === 'slot' && key === `slot:${d.src.slotId}`)) {
       const pt = fieldPct(d.cx, d.cy);
       if (!pt) return;
-      if (d.src.kind === 'slot') {
+      if (d.src.kind === 'slot' && d.origin === 'pitch') {
         const base = getFormation(t.formation).slots.find((s) => s.id === (d.src as { slotId: string }).slotId);
         if (!base || base.position === 'TW') return;
         const p = placementFor(t, d.src.slotId, pt.x, pt.y, snap);
         d.preview = { slotId: d.src.slotId, x: p.x, y: p.y, position: p.position, grid: p.grid, swapWith: null };
         d.target = 'move';
       } else {
-        // Aus der Liste aufs Feld: nächstgelegener Slot
+        // Aus Liste/Bank aufs Feld: nächstgelegener Slot
         let best = formation.slots[0], bd = Infinity;
         for (const s of formation.slots) { const dd = Math.hypot((s.x - pt.x) * 0.68, (s.y - pt.y) * 1.05); if (dd < bd) { bd = dd; best = s; } }
+        if (d.src.kind === 'slot' && best.id === d.src.slotId) return;
         d.target = `slot:${best.id}`;
       }
+      if (d.target?.startsWith('slot:') && d.src.kind === 'slot') d.preview = { slotId: d.src.slotId, x: 0, y: 0, position: 'ZM', grid: null, swapWith: d.target.slice(5) };
       return;
     }
     d.target = key;
     if (d.src.kind === 'slot' && key.startsWith('slot:')) d.preview = { slotId: d.src.slotId, x: 0, y: 0, position: 'ZM', grid: null, swapWith: key.slice(5) };
+    const pid = d.pid;
+    if (!pid) { if (!key.startsWith('slot:')) d.target = null; return; }
+    // Bank voll: allgemeine Ablage auf die Bank geht nur, wenn ein Platz frei ist –
+    // sonst direkt auf einen Bankspieler ziehen (Tausch).
+    const bl = benchList();
+    const benchIdx = key.startsWith('bench:') && key !== 'bench:end' ? Number(key.slice(6)) : -1;
+    if (!bl.includes(pid) && bl.length >= benchSize && (key === 'bench:end' || (benchIdx >= 0 && !bl[benchIdx]))) d.full = 'bench';
+    if (key === 'xi' && !slotOf(t, pid) && formation.slots.every((s) => map[s.id])) d.full = 'xi';
+    if (key === 'xi' && slotOf(t, pid)) d.target = null;
   };
 
   const apply = (d: Drag) => {
     const k = d.target;
     if (!k) return;
+    if (d.full) {
+      flash(d.full === 'bench' ? `Ersatzbank voll (${benchSize}/${benchSize}) – zum Tauschen direkt auf einen Bankspieler ziehen.` : 'Startelf voll – zum Tauschen direkt auf einen Spieler auf dem Feld ziehen.');
+      return;
+    }
     const pid = d.pid;
     if (k === 'move' && d.src.kind === 'slot' && d.preview) { moveSlot(t, d.src.slotId, d.preview.x, d.preview.y, snap, benchSize); return; }
     if (k.startsWith('slot:')) {
@@ -148,7 +194,8 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
     }
     if (!pid) return;
     if (k.startsWith('bench:')) {
-      const i = k === 'bench:end' ? Math.min((t.substitutes ?? []).filter((id) => id !== pid).length, benchSize - 1) : Number(k.slice(6));
+      const bl = benchList();
+      const i = k === 'bench:end' ? (bl.includes(pid) ? bl.length - 1 : bl.length) : Math.min(Number(k.slice(6)), bl.includes(pid) ? bl.length - 1 : bl.length);
       assignToBench(t, pid, i, benchSize);
     } else if (k === 'reserve') toReserve(t, pid, benchSize);
     else if (k === 'xi' && !slotOf(t, pid)) {
@@ -158,61 +205,96 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
     }
   };
 
-  const begin = (e: RPE, src: Src, pid: string | null) => {
-    if (e.button !== 0) return;
-    e.preventDefault();
+  const flash = (text: string) => {
+    setNote(text);
+    window.clearTimeout(noteTimer.current);
+    noteTimer.current = window.setTimeout(() => setNote(null), 4000);
+  };
+
+  const begin = (e: RPE, src: Src, pid: string | null, origin: Origin) => {
+    if (e.button !== 0 || dragRef.current) return;
+    const touch = e.pointerType === 'touch';
+    if (!touch) e.preventDefault();
     const field = document.querySelector('.lu-field') as HTMLElement | null;
     const scale = field ? field.getBoundingClientRect().width / Math.max(1, field.offsetWidth) : 1;
-    const d: Drag = { src, pid, sx: e.clientX, sy: e.clientY, active: false, cx: e.clientX, cy: e.clientY, scale, target: null, preview: null };
+    const d: Drag = { src, pid, origin, touch, armed: !touch, sx: e.clientX, sy: e.clientY, active: false, cx: e.clientX, cy: e.clientY, scale, target: null, preview: null, full: null };
     dragRef.current = d;
+    let hold = 0;
+    const end = () => {
+      window.clearTimeout(hold);
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', cancel);
+      window.removeEventListener('keydown', key, true);
+      window.removeEventListener('touchmove', block);
+      dragRef.current = null;
+      setDrag(null);
+    };
     const move = (ev: PointerEvent) => {
       const cur = dragRef.current;
-      if (!cur) return;
+      if (!cur || ev.pointerId !== e.pointerId) return;
       cur.cx = ev.clientX; cur.cy = ev.clientY;
-      if (!cur.active && Math.hypot(ev.clientX - cur.sx, ev.clientY - cur.sy) > 5) cur.active = true;
+      const dist = Math.hypot(ev.clientX - cur.sx, ev.clientY - cur.sy);
+      // Touch vor dem langen Druck: Bewegung = Scrollen → kein Ziehen.
+      if (!cur.armed) { if (dist > 8) end(); return; }
+      if (!cur.active && dist > (cur.touch ? 6 : 5)) cur.active = true;
       if (!cur.active) return;
       compute(cur);
       setDrag({ ...cur });
     };
-    const up = () => {
-      window.removeEventListener('pointermove', move);
-      window.removeEventListener('pointerup', up);
+    const up = (ev: PointerEvent) => {
+      if (ev.pointerId !== e.pointerId) return;
       const cur = dragRef.current;
-      dragRef.current = null;
-      setDrag(null);
+      const wasArmedTouch = cur?.touch && cur.armed;
+      end();
       if (!cur) return;
-      if (!cur.active) { if (cur.pid) setProfile(cur.pid); return; }
+      if (!cur.active) { if (cur.pid && !wasArmedTouch) setProfile(cur.pid); return; }
       apply(cur);
       refresh();
     };
+    const cancel = () => end();
+    const key = (ev: KeyboardEvent) => { if (ev.key === 'Escape') { ev.preventDefault(); ev.stopPropagation(); end(); } };
+    const block = (ev: TouchEvent) => { if (dragRef.current?.armed && ev.cancelable) ev.preventDefault(); };
     window.addEventListener('pointermove', move);
     window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', cancel);
+    window.addEventListener('keydown', key, true);
+    window.addEventListener('touchmove', block, { passive: false });
+    if (touch) hold = window.setTimeout(() => {
+      const cur = dragRef.current;
+      if (!cur) return;
+      cur.armed = true;
+      navigator.vibrate?.(8);
+      setDrag({ ...cur });
+    }, TOUCH_HOLD_MS);
   };
-  const onSlotDown = (e: RPE, slotId: string) => begin(e, { kind: 'slot', slotId }, map[slotId] ?? null);
-  const onPlayerDown = (e: RPE, p: Player) => {
+  const onSlotDown = (e: RPE, slotId: string) => begin(e, { kind: 'slot', slotId }, map[slotId] ?? null, 'pitch');
+  const onPlayerDown = (e: RPE, p: Player, origin: Origin = 'list') => {
     const sid = slotOf(t, p.id);
-    begin(e, sid ? { kind: 'slot', slotId: sid } : { kind: 'player', pid: p.id }, p.id);
+    begin(e, sid ? { kind: 'slot', slotId: sid } : { kind: 'player', pid: p.id }, p.id, origin);
   };
 
   const hover = drag?.target === 'move' ? null : drag?.target ?? null;
   const dragPid = drag?.pid ?? null;
-  const ghost = drag && drag.src.kind === 'player' && dragPid ? g.players[dragPid] : null;
+  // Geister-Karte folgt dem Zeiger, außer beim Verschieben auf dem Feld (dort wandert die Karte selbst).
+  const ghost = drag?.active && dragPid && drag.target !== 'move' ? g.players[dragPid] : null;
+  const ghostPos = drag?.src.kind === 'slot' ? formation.slots.find((s) => s.id === (drag.src as { slotId: string }).slotId)?.position : undefined;
   const prof = profile ? g.players[profile] : null;
   const libero = FORMATIONS.filter((f) => f.libero), chain = FORMATIONS.filter((f) => !f.libero);
 
   return (
-    <DashPage className={`lu-page ${drag ? 'lu-dragging' : ''}`}>
+    <DashPage className={`lu-page ${drag ? 'lu-dragging' : ''} ${drag?.active ? 'lu-drag-live' : ''}`}>
       <DashBox title="Kader" icon="squad" rows={2} flush right={`${squad.length} Spieler`}>
         <SquadList xi={xiRows} bench={benchRows} reserve={reserveRows} benchSize={benchSize} captainId={t.captainId}
-          hover={hover} dragId={dragPid} onDown={onPlayerDown} />
+          hover={hover} dragId={drag?.active ? dragPid : null} full={drag?.full ?? null} onDown={(e, p) => onPlayerDown(e, p, 'list')} />
       </DashBox>
 
       <DashBox title="Aufstellung" info="formation" icon="lineup" rows={2} right={
         <span className="lu-tools">
-          <select className="lu-formation" value={t.formation} onChange={(e) => changeFormation(e.target.value)} title="Formation">
+          <Select className="lu-formation" value={t.formation} onChange={(v) => changeFormation(v)} title="Formation">
             <optgroup label="Libero-Systeme">{libero.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}</optgroup>
             <optgroup label="Ketten-Systeme">{chain.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}</optgroup>
-          </select>
+          </Select>
           <label className="lu-check" title="Gezogene Spieler rasten auf feste Positionsfelder ein">
             <input type="checkbox" checked={snap} onChange={(e) => set({ snapToGrid: e.target.checked })} /> Fest einrasten<InfoTip k="festEinrasten" />
           </label>
@@ -222,7 +304,8 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
       }>
         <PitchBoard formation={formation} map={map} players={g.players} captainId={t.captainId} bench={benchPlayers} benchSize={benchSize}
           hover={hover} preview={drag?.preview ?? null} dragSlot={drag?.src.kind === 'slot' ? drag.src.slotId : null} snap={snap}
-          onSlotDown={onSlotDown} onPlayerDown={onPlayerDown} />
+          reserveCount={reserveRows.length} full={drag?.full ?? null} note={note} lifted={!!ghost} dragPid={dragPid}
+          onSlotDown={onSlotDown} onPlayerDown={(e, p) => onPlayerDown(e, p, 'bench')} />
       </DashBox>
 
       <DashBox title="Taktik" icon="tactics" right={getFormation(t.formation).label}>
@@ -234,8 +317,11 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
       </DashBox>
 
       {ghost && createPortal(
-        <div className="lu-ghost" style={{ left: drag!.cx, top: drag!.cy, transform: `translate(-50%, -50%) scale(${drag!.scale})` }}>
-          <span className="lu-card-pos">{ghost.naturalPosition}</span> {ghost.lastName}
+        <div className={`lu-ghost ${drag!.full ? 'no' : ''}`} style={{ left: drag!.cx, top: drag!.cy, transform: `translate(14px, 14px) scale(${drag!.scale})`, transformOrigin: '0 0' }}>
+          <span className={`lu-card-pos ${posGroupClass(ghostPos ?? ghost.naturalPosition)}`}>{ghostPos ?? ghost.naturalPosition}</span>
+          <span className="lu-ghost-name">{ghost.lastName}</span>
+          <span className="lu-ghost-st">{ghost.overall}</span>
+          <span className="lu-ghost-to">{dropLabel(drag!.target, drag!.full)}</span>
         </div>, document.body)}
       {prof && <PlayerModal player={prof} club={club} squad={squad} today={g.calendar.currentDate} season={g.season} onClose={() => setProfile(null)} />}
     </DashPage>

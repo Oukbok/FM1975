@@ -295,6 +295,8 @@ export interface MatchLogEntry {
   /** Note 1.0–6.0 */
   rating: number;
   card?: 'Gelb' | 'Gelb-Rot' | 'Rot';
+  /** Gespielte Position (seit den farbigen Positionsetiketten; ältere Einträge ohne). */
+  pos?: Position;
 }
 export interface CareerStation {
   season: string;

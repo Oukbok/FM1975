@@ -113,3 +113,21 @@
 .bf-arch-change .game-icon { flex: 0 0 auto; margin-top: 2px; }
 .bf-arch-change span { display: flex; flex-direction: column; min-width: 0; }
 .bf-arch-change small { color: var(--text-3); font-size: 12px; }
+
+/* Ruhiger, größer, ohne Symbole (Wunsch Pascal): Kategorie grau statt Bernstein, keine Farbkante */
+.bf-kicker { color: var(--text-3); font-size: 13px; }
+.bf-ingame b { color: var(--text); }
+.bf-hl-item { border-left: 1px solid var(--border-soft); }
+.bf-hl.compact { display: flex; flex-direction: column; gap: 0; }
+.bf-hl.compact .bf-hl-item { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 18px; align-items: baseline; background: none; border: none; border-bottom: 1px solid var(--border-soft); border-radius: 0; padding: 14px 4px; }
+.bf-hl.compact .bf-hl-main { display: contents; }
+.bf-hl.compact .bf-kicker { grid-column: 1; grid-row: 1 / span 2; padding-top: 3px; }
+.bf-hl.compact .bf-hl-title { grid-column: 2; font-size: 19px; font-weight: 700; }
+.bf-hl.compact .bf-hl-text { grid-column: 2; font-size: 16.5px; line-height: 1.45; }
+.bf-arch-title { font-size: 19px; margin-bottom: 4px; }
+.bf-arch-change { display: flex; flex-direction: column; gap: 3px; padding: 13px 4px; font-size: 17px; }
+.bf-arch-change b { font-weight: 700; color: var(--text); }
+.bf-arch-change small { font-size: 14.5px; color: var(--text-3); }
+.bf-change { padding: 12px 0; }
+.bf-change b { font-size: 17.5px; }
+.bf-change p { font-size: 16px; line-height: 1.45; }

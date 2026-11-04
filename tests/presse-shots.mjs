@@ -69,7 +69,7 @@ await shot('3_artikel');
 const face = page.locator('.np-article .np-who').first();
 if (await face.count()) { await face.click(); await shot('4_profil'); await page.keyboard.press('Escape'); await page.waitForTimeout(300); }
 for (let k = 0; k < 3 && await page.locator('.modal-overlay').count(); k++) { await page.locator('.modal-close').last().click().catch(() => {}); await page.waitForTimeout(250); }
-const older = page.locator('.np-nav-list .dchip').nth(2);
+const older = page.locator('.sub3-tabs .tab').nth(2);
 if (await older.count()) { await older.click(); await shot('5_aeltere_ausgabe'); }
 const res = page.locator('.np-res.clickable').first();
 if (await res.count()) { await res.click(); await shot('6_spielbericht'); }

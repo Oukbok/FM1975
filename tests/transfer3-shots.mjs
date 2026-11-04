@@ -7,6 +7,7 @@ import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { chromium } from 'playwright';
+import { pickOption, optionsOf, valueOf } from './select3.mjs';
 
 const outDir = process.argv[2] || 'test-output/transfer3';
 const prefix = process.env.PREFIX || '';
@@ -45,7 +46,7 @@ for (const [w, h] of [[1920, 1080], [1366, 768]]) {
       if (r.right > innerWidth + 1 || r.bottom > innerHeight + 1 || r.left < -1 || r.top < -1) out.push(`Panel ragt aus dem Bild (${Math.round(r.width)}×${Math.round(r.height)})`);
       for (const el of root.querySelectorAll('*')) {
         const cs = getComputedStyle(el);
-        if (el.scrollWidth > el.clientWidth + 2 && cs.overflowX !== 'visible' && cs.overflowX !== 'hidden' && el.clientWidth > 0 && !el.matches('select, input')) out.push(`waagrechter Scroll: ${el.className}`);
+        if (el.scrollWidth > el.clientWidth + 2 && cs.overflowX !== 'visible' && cs.overflowX !== 'hidden' && el.clientWidth > 0 && !el.matches('select, input, .sel3')) out.push(`waagrechter Scroll: ${el.className}`);
       }
       if (root.scrollWidth > root.clientWidth + 2) out.push('Panel breiter als sein Rahmen');
       return out;
@@ -74,8 +75,8 @@ for (const [w, h] of [[1920, 1080], [1366, 768]]) {
         await shot(n, '.tw-panel');
       }
       await page.locator('.tw-tab:has-text("Transfers")').first().click();
-      const opts = await page.locator('.tw-foot select option').count();
-      if (opts > 3) { await page.locator('.tw-foot select').selectOption({ index: 3 }); await shot('6_verein', '.tw-panel'); }
+      const opts = (await optionsOf(page, page.locator('.tw-foot .sel3').last())).length;
+      if (opts > 3) { await pickOption(page, page.locator('.tw-foot .sel3').last(), { index: 3 }); await shot('6_verein', '.tw-panel'); }
       await page.locator('.tw-foot button:has-text("Schließen")').click();
       await page.waitForTimeout(300);
     } catch (e) { errors.push(`${tag}: kein Transferbilanz-Popup nach Fensterschluss (${e.message.split('\n')[0]})`); }
@@ -90,8 +91,8 @@ for (const [w, h] of [[1920, 1080], [1366, 768]]) {
   await page.locator('.dchip:has-text("Spieler suchen")').click();
   await page.waitForSelector('.ps-panel');
   await shot('7_suche', '.ps-panel');
-  await page.locator('.ps-row:has-text("Position") select').first().selectOption('DEF');
-  await page.locator('.ps-attr select').first().selectOption('heading');
+  await pickOption(page, page.locator('.ps-row:has-text("Position") .sel3').first(), 'DEF');
+  await pickOption(page, page.locator('.ps-attr .sel3').first(), 'heading');
   await page.locator('.ps-row:has-text("Alter") input').nth(1).fill('28');
   await shot('8_suche_vorgaben', '.ps-panel');
   await page.locator('.ps-foot button:has-text("Suchen")').click();

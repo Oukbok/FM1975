@@ -10,7 +10,8 @@ import PlayerAvatar from '../../../components/PlayerAvatar';
 import { DashBox, Empty } from '../../../ui/DashPage';
 import { MerchChart, type ChartSeries } from './MerchChart';
 import { shownItems } from './MerchGeneral';
-import { MerchTabs, Signed, money, n0, type MerchTab } from './parts';
+import { Signed, money, n0, type MerchTab } from './parts';
+import PosBadge from '../../../components/PosBadge';
 
 interface Props { g: Game; club: Club; shop: MerchShop; year: number; tab: MerchTab; setTab: (t: MerchTab) => void }
 type Focus = { kind: 'all' } | { kind: 'item'; id: MerchItemId } | { kind: 'player'; id: string };
@@ -39,7 +40,7 @@ function ItemTable({ shop, year, tab, setTab, focus, setFocus }: Props & { focus
   const items = shownItems(shop, year);
   const isAll = focus.kind === 'all';
   return (
-    <DashBox title="Verkäufe je Artikel" info="merchStatistik" icon="merch" span={2} right={<MerchTabs tab={tab} setTab={setTab} />} flush>
+    <DashBox title="Verkäufe je Artikel" info="merchStatistik" icon="merch" span={2} flush>
       <table className="dtable rl-sm mc-table">
         <thead><tr>
           <th>Artikel</th><th className="num">Verkauft</th><th className="num">Einnahmen</th><th className="num">Ausgaben</th>
@@ -102,7 +103,7 @@ function PlayerBox({ g, club, shop, year, focus, setFocus }: Props & { focus: Fo
               <tr key={r.p.id} data-pid={r.p.id} className={r.p.id === sel?.p.id ? 'mc-sel' : ''} onClick={() => setFocus({ kind: 'player', id: r.p.id })}>
                 <td className="rl-rank">{i + 1}</td>
                 <td className="rl-name">{r.p.fullName}</td>
-                <td><span className="pos-badge">{r.p.naturalPosition}</span></td>
+                <td><PosBadge p={r.p} /></td>
                 <td className="num rl-main">{n0(r.n)}</td>
               </tr>
             ))}

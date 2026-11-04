@@ -18,12 +18,11 @@
 
 /* --- Kopfzeile der Aufstellung (Formation, Einrasten, Auto) --- */
 .lu-tools { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; text-transform: none; letter-spacing: 0; font-weight: 600; }
-.lu-formation, .lu-role select {
+.lu-formation, .lu-role .sel3 {
   background: var(--panel-2); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-sm);
   padding: 6px 10px; font: 600 15px var(--font-ui);
 }
 .lu-formation { max-width: 150px; }
-.lu-tools .dchip { padding: 4px 10px; font-size: 14px; }
 .lu-check { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; color: var(--text-2); cursor: pointer; }
 .lu-check input { accent-color: var(--accent); width: 16px; height: 16px; }
 
@@ -111,8 +110,9 @@
 .lu-card-name.dim { color: var(--text-3); font-weight: 600; }
 .lu-card-fr { display: block; height: 3px; border-radius: 2px; background: rgba(255,255,255,.10); overflow: hidden; }
 .lu-card-fr > span { display: block; height: 100%; }
-.lu-bench { flex: 0 0 auto; }
-.lu-bench-head { display: flex; gap: 10px; font: 600 14px var(--font-display); text-transform: uppercase; letter-spacing: .6px; color: var(--text-2); margin-bottom: 6px; }
+.lu-bench-wrap { flex: 0 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) 104px; gap: 8px; }
+.lu-bench { min-width: 0; }
+.lu-bench-head { display: flex; align-items: baseline; gap: 10px; min-width: 0; white-space: nowrap; font: 600 14px var(--font-display); text-transform: uppercase; letter-spacing: .6px; color: var(--text-2); margin-bottom: 6px; }
 .lu-bench-row { display: grid; gap: 6px; }
 .lu-bslot { min-width: 0; cursor: grab; touch-action: none; }
 .lu-bslot.over .lu-card { outline: 2px solid var(--accent); outline-offset: 1px; }
@@ -120,9 +120,34 @@
 .lu-card.sm .lu-card-name { font-size: 13px; }
 .lu-card.sm.empty { height: 100%; min-height: 50px; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
 .lu-ghost {
-  position: fixed; z-index: 9999; pointer-events: none; white-space: nowrap; padding: 6px 12px; border-radius: 6px;
-  background: var(--elevated); border: 1px solid var(--accent); color: var(--text); font: 700 15px var(--font-ui); box-shadow: var(--shadow);
+  position: fixed; z-index: 9999; pointer-events: none; white-space: nowrap; padding: 6px 10px 6px 12px; border-radius: 6px;
+  display: flex; align-items: center; gap: 8px;
+  background: var(--elevated); border: 1px solid var(--accent); border-left-width: 3px; color: var(--text); font: 700 15px var(--font-ui); box-shadow: var(--shadow);
 }
+.lu-ghost-st { font: 600 15px var(--font-display); color: var(--text-2); }
+.lu-ghost-to { font: 600 12px var(--font-display); text-transform: uppercase; letter-spacing: .5px; color: var(--text-3); padding-left: 8px; border-left: 1px solid var(--border); }
+.lu-ghost.no { border-color: var(--neg); }
+.lu-ghost.no .lu-ghost-to { color: var(--neg); }
+
+/* --- Ziehen & Ablegen: Ablageziele (Bank, Reserve, freie Plätze) --- */
+.lu-dropzone { border-radius: var(--radius-sm); outline: 1px dashed transparent; outline-offset: 3px; transition: outline-color .12s, background-color .12s; }
+.lu-reserve { display: flex; flex-direction: column; min-width: 0; }
+.lu-reserve-box {
+  flex: 1 1 auto; min-height: 50px; display: flex; align-items: center; justify-content: center; text-align: center;
+  border: 1px dashed var(--border); border-radius: 6px; color: var(--text-4); font-size: 13px; background: rgba(13,17,23,.25);
+}
+.lu-zone-note { margin-left: auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; font: 600 13px var(--font-ui); text-transform: none; letter-spacing: 0; }
+.lu-zone-note.neg { color: var(--neg); }
+.lu-drag-live .lu-dropzone { outline-color: var(--border); }
+.lu-drag-live .lu-dropzone.over { outline: 2px solid var(--accent); background: var(--accent-soft); }
+.lu-drag-live .lu-dropzone.full { outline: 2px solid var(--neg); background: color-mix(in srgb, var(--neg) 8%, transparent); }
+.lu-drag-live .lu-reserve-box { color: var(--text-2); border-color: var(--text-3); }
+.lu-drag-live .lu-dropzone.over .lu-reserve-box { color: var(--accent); border-color: var(--accent); }
+.lu-drag-live .lu-card.empty { border-color: var(--text-3); background: rgba(13,17,23,.6); }
+.lu-drag-live .lu-card.empty .lu-card-name { color: var(--text-2); }
+.lu-slot.lifted .lu-card, .lu-bslot.lifted .lu-card { opacity: .35; }
+.lu-drag-live .lu-sec.over .lu-sec-head td { background: var(--accent-soft); }
+.lu-sec.full .lu-sec-head td { color: var(--neg); }
 
 /* --- Rechte Spalte --- */
 .lu-seg { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
@@ -139,7 +164,7 @@
 .lu-meters .dmeter { font-size: 15px; padding: 4px 0; grid-template-columns: 180px 1fr 60px; }
 .lu-roles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
 .lu-role { display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: var(--text-3); }
-.lu-role select { width: 100%; }
+.lu-role .sel3 { width: 100%; }
 .lu-hints { list-style: none; margin: 0; padding: 0; font-size: 15px; }
 .lu-hints li { position: relative; padding: 5px 0 5px 16px; border-bottom: 1px solid var(--border-soft); color: var(--text-2); }
 .lu-hints li::before { content: ''; position: absolute; left: 2px; top: 13px; width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); }
