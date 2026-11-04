@@ -352,7 +352,7 @@ export function VereinDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) =>
         </div>
         <KV k="Saisonziel" v={myClub.boardExpectation} />
         <Meter label="Vertrauen des Vorstands" value={conf} color={condBar(conf)} />
-        <div className="dnote mt8">Unter 20 droht die Entlassung.</div>
+        <div className="dnote mt8">Unter 40 kürzt der Vorstand die Transfermittel, unter 20 halbiert er sie.</div>
       </DashBox>
 
       <DashBox title="Vereinsprofil" info="ansehen" icon="stadium">

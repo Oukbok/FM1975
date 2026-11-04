@@ -59,6 +59,7 @@ import { migrateStaffPeople } from './game/staffWorld';
 import { migrateYouthComps } from './game/youthComps/daily';
 import { migrateHistoryMode } from './game/historicSteer';
 import { migrateTransferLog } from './game/transferLog';
+import { migrateCareer } from './game/careerGame';
 import { migrateYouthContracts } from './engine/youth';
 import { assignShirtNumbers } from './game/squads';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -379,6 +380,7 @@ export default function App() {
     try { migrateYouthComps(s.game); } catch (err) { console.error('Jugendwettbewerbe-Nachrüstung fehlgeschlagen:', err); }
     migrateHistoryMode(s.game);
     try { migrateTransferLog(s.game); } catch (err) { console.error('Transferprotokoll-Nachrüstung fehlgeschlagen:', err); }
+    try { migrateCareer(s.game); } catch (err) { console.error('Karriere-Bereinigung fehlgeschlagen:', err); }
     try { migrateBudget(s.game); } catch (err) { console.error('Saisonbudget-Nachrüstung fehlgeschlagen:', err); }
     gameRef.current = s.game;
     setCurrentSlot(slot);

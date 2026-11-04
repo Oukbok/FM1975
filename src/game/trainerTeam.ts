@@ -17,6 +17,7 @@ import { effectiveQuality, memberMonthlySalary, StaffMember } from '../engine/st
 import { acceptsOffer, CoachSkill, demandFactor, learnSeason, skillsFromQuality, TEAM_ROLE_LABEL } from '../engine/staffSkills';
 import { ensureStaff } from './staffGame';
 import { ensureStaffWorld } from './staffWorld';
+import { closeHeadCoach, syncHeadCoach } from './headCoaches';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -84,6 +85,7 @@ export function offerContract(g: Game, personId: string, offerFactor: number, ye
   if (old) {
     const sev = severanceOf(g, old);
     book(club.finances, today, -sev, 'staff_wages', `Abfindung ${old.name}`, true);
+    closeHeadCoach(g, old.id, 'entlassen');
     staff.splice(staff.indexOf(old), 1);
     toMarket(g, old);
     lines.push(`${old.name} geht (Abfindung bezahlt).`);
@@ -96,6 +98,7 @@ export function offerContract(g: Game, personId: string, offerFactor: number, ye
   };
   staff.push(hired);
   g.hiredStaff = staff.map((x) => x.roleId);
+  syncHeadCoach(g);
   return { ok: true, text: [`${m.name} ist neuer ${roleLabel(m.roleId)} (bis ${hired.contractEnd!.slice(0, 4)}).`, ...lines].join(' ') };
 }
 
@@ -107,6 +110,7 @@ export function dismiss(g: Game, memberId: string): string {
   if (!m || !club) return '';
   const sev = severanceOf(g, m);
   book(club.finances, g.calendar.currentDate, -sev, 'staff_wages', `Abfindung ${m.name}`, true);
+  closeHeadCoach(g, m.id, 'entlassen');
   staff.splice(staff.indexOf(m), 1);
   g.hiredStaff = staff.map((x) => x.roleId);
   toMarket(g, m);
@@ -143,6 +147,7 @@ export function ownStaffSeason(g: Game, date: string, rng: () => number = Math.r
         m.salaryFactor = Math.max(m.salaryFactor, demandOf(g, m));
         gone.push(`• ${m.name} (${roleLabel(m.roleId)}) verlängert automatisch bis ${m.contractEnd.slice(0, 4)}.`);
       } else {
+        closeHeadCoach(g, m.id, 'vertragsende', date);
         staff.splice(staff.indexOf(m), 1);
         toMarket(g, m);
         gone.push(`• ${m.name} (${roleLabel(m.roleId)}) verlässt den Verein nach Vertragsende.`);

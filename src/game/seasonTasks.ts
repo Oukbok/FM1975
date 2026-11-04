@@ -163,7 +163,7 @@ export function seasonTasks(g: Game, sit?: BriefingSituation, changes: GameChang
   if (conf < 35) {
     add({ id: 'board', level: conf < 20 ? 'dringend' : 'wichtig', icon: 'dashVerein', where: 'Verein › Vorstand',
       title: 'Der Vorstand wird ungeduldig',
-      text: `Vertrauen nur ${conf}/100. Ein guter Saisonstart ist Pflicht – sonst droht die Entlassung.` });
+      text: `Vertrauen nur ${conf}/100. Ein guter Saisonstart ist Pflicht – sonst kürzt er die Mittel und stellt deinen Trainer infrage.` });
   }
 
   // --- Trainingslager -------------------------------------------------------

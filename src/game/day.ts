@@ -578,7 +578,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   contractReminders(g, today);
   announceUpcomingRules(g, today);
   aiClubsDaily(g, today);
-  careerDaily(g, today); // Jobangebote an dich, Entlassung im Karriere-Modus (game/careerGame.ts)
+  careerDaily(g, today); // Managerkarriere: Trainer-Historie, Vorstandsdruck gegen den Trainer (game/careerGame.ts)
   youthCompsDaily(g, today);
   rollAiOffers(g, today);
   aiContractsDaily(g, today); // KI: vorzeitige Verlängerungen, Altstars, Bosman-Verkäufe, Vorverträge (game/aiContracts.ts)

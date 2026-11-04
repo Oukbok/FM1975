@@ -1343,9 +1343,11 @@ Weil jede CPU-Aufstellung dieselbe Eignungs- und Taktik-Logik nutzt wie deine, w
     title: 'Trainer der KI-Vereine',
     keywords: ['trainer', 'ki', 'coach', 'stil', 'philosophie', 'formation', 'libero', 'gegner'],
     body: `## Trainer der KI-Vereine
-Jeder andere Verein deiner Liga hat einen **Trainer** mit Namen, Alter, Herkunft, Ansehen (0–100) und zwei Eigenschaften (\`engine/aiManager.ts\`, \`game/coachCarousel.ts\`). Dein eigener Verein hat keinen – das bist du.
+Jeder andere Verein deiner Liga hat einen **Trainer** mit Namen, Alter, Herkunft, Ansehen (0–100) und zwei Eigenschaften (\`engine/aiManager.ts\`, \`game/coachCarousel.ts\`). Dort entscheidet der Vorstand über den Trainer: Steigt der Druck zu weit, wird er entlassen und ein Nachfolger kommt aus dem Trainerpool (Trainerkarussell).
 
-Im Vereinsprofil (Reiter Übersicht) zeigt die Trainer-Kachel Stil, Philosophie, Amtszeit, die **Ligabilanz** der Amtszeit (Siege-Remis-Niederlagen und Punkte je Spiel nach 3-Punkte-Wertung) und die Vorgänger mit ihrer Bilanz – auch dich, wenn du dort einmal Trainer warst.
+Bei deinem Verein bist du der **Manager**: Den Cheftrainer stellst du selbst ein (Training › Trainerteam) und entlässt ihn auch. Der Vorstand kann dir einen Trainerwechsel nur nahelegen – siehe „Deine Managerkarriere“.
+
+Im Vereinsprofil (Reiter Übersicht) zeigt die Trainer-Kachel Stil, Philosophie, Amtszeit, die **Ligabilanz** der Amtszeit (Siege-Remis-Niederlagen und Punkte je Spiel nach 3-Punkte-Wertung) und die Vorgänger mit ihrer Bilanz. Bei deinem Verein zeigt sie dich als Manager und deinen Cheftrainer; Vorgänger sind deine früheren Cheftrainer.
 
 ### Stil → Taktik
 - **Offensiv:** Angriffsausrichtung, mehr Pressing und Tempo, höhere Linie.
@@ -1467,38 +1469,33 @@ Auch bei dir fragen KI-Vereine an, ob sie einen deiner jungen Ergänzungsspieler
   {
     id: 'manager-career',
     category: 'ai',
-    title: 'Deine Trainerkarriere: Ansehen, Angebote, Entlassung',
-    keywords: ['karriere', 'jobangebot', 'angebot', 'trainer', 'wechsel', 'entlassung', 'ansehen', 'gehalt', 'vereinswechsel'],
-    body: `## Deine Trainerkarriere
-Unter **Zentrale › Karriere** siehst du dein Ansehen, offene Angebote, deine Stationen und die Karriere-Chronik (\`game/careerGame.ts\`).
+    title: 'Deine Managerkarriere: Bilanz, Trainer, Vorstand',
+    keywords: ['karriere', 'manager', 'bilanz', 'trainer', 'cheftrainer', 'entlassung', 'ansehen', 'vorstand', 'rückendeckung', 'meilenstein', 'rekord', 'eigengewächs'],
+    body: `## Deine Managerkarriere
+Du führst **einen Verein über die Jahrzehnte** – als Manager mit der Gesamtverantwortung. Den Cheftrainer und das übrige Trainerteam stellst du selbst ein (Training › Trainerteam); sie sind Angestellte des Vereins. Jobangebote anderer Vereine, Vereinswechsel und eine Entlassung gibt es nicht – auch nicht im Karriere-Modus (dort wählst du zu Beginn nur einen von drei kleineren Vereinen).
+
+### Zentrale › Karriere
+Drei Reiter, alles aus dem echten Spielverlauf (\`game/managerLog.ts\`, \`game/managerView.ts\`):
+- **Bilanz:** alle Pflichtspiele seit deinem Amtsantritt (Liga, Landespokal, Europapokal; die laufende Saison zählt mit), Punkte je Spiel nach 3-Punkte-Wertung, Bilanz je Wettbewerb, dein **Ansehen je Saison** als Verlauf, Titel und Rekorde (beste Platzierung, beste Ligasaison, meiste Tore, beste Abwehr, längste Sieges- und Ungeschlagen-Serie) sowie **Meilensteine** (1., 50., 100., 250., 500. … Pflichtspiel).
+- **Saisons:** jede Saison mit Liga, Platz, Saisonziel (erreicht/verfehlt), Ligabilanz, erreichter Pokal- und Europapokalrunde, Titeln und Ansehen; dazu deine höchsten Siege und Niederlagen.
+- **Trainer & Spieler:** **Deine Trainer** – alle Cheftrainer unter dir mit Amtszeit, Ligabilanz, Punkten je Spiel und wie ihre Zeit endete (entlassen, Vertragsende, abgeworben, Ruhestand); die **Transferbilanz** deiner Amtszeit (Einnahmen, Ausgaben, teuerste Zu- und Abgänge – Beträge über das Preisniveau 1975 vergleichbar); die Spieler mit den meisten Einsätzen und Toren unter dir und deine **Eigengewächse**.
+
+Alte Spielstände werden aus Vereins-Historie, Liga-Archiv, Spielerstationen und Finanzbilanzen nachgetragen, soweit das gespeichert ist.
 
 ### Ansehen (0–100)
-Startwert = Größe deines ersten Vereins, dazu dein Hintergrund (Legende +8, Ex-Profi +3, Neuling −5). Am Saisonende zählt, wie weit du über oder unter dem Saisonziel gelandet bist; Meisterschaft, Pokal, Europapokal und Aufstieg geben zusätzlich Ansehen. Je höher es schon ist, desto langsamer wächst es. Eine Entlassung kostet 6 Punkte.
+Startwert = Größe deines Vereins, dazu dein Hintergrund (Legende +8, Ex-Profi +3, Neuling −5). Am Saisonende zählt, wie weit du über oder unter dem Saisonziel gelandet bist; Meisterschaft, Pokal, Europapokal und Aufstieg geben zusätzlich Ansehen. Je höher es schon ist, desto langsamer wächst es.
 
-### Größe eines Vereins
-Ruf des Vereins, bereinigt um die Liga (2. Liga −7). So lassen sich Vereine aus 1. und 2. Liga vergleichen.
+### Vorstandsdruck – gegen den Trainer, nicht gegen dich
+Läuft es sportlich klar schlechter als das Ziel, richtet sich der Druck gegen deinen **Cheftrainer** (\`game/boardPressure.ts\`). Der Vorstand prüft am 1. jedes Monats von Oktober bis April (ab 8 Ligaspielen) und nach der Saison am 5. Juni: Vertrauen unter 30 oder klar hinter dem Ziel bei Vertrauen unter 45 (am Saisonende: Ziel um mehr als zwei Plätze verfehlt, Vertrauen unter 35). Dann legt er dir per Nachricht einen Trainerwechsel nahe – „Weiter“ hält an, bis du entscheidest (Frist 5 Tage):
+- **Trainer entlassen:** Abfindung (halbe Restlaufzeit, mindestens zwei Monatsgehälter), der Vorstand sieht, dass du handelst (Vertrauen +6). Den Nachfolger suchst du unter Training › Trainerteam aus.
+- **Rückendeckung geben** (auch ohne Antwort): Der Trainer bleibt, Vertrauen −2. Einen Monat später prüft der Vorstand nach: Ist der Abstand zum Ziel um mindestens zwei Plätze kleiner geworden oder das Ziel erreicht, gibt es +4 – sonst −10.
 
-### Angebote
-- **Zum Saisonende:** An vier Stichtagen (20. Januar, 10. April, 10. Mai, 28. Mai) kann sich ein größerer Verein melden, dessen Größe zu deinem Ansehen passt (höchstens Ansehen + 8); läuft deine Saison klar besser als erwartet, auch ein etwa gleich großer. Läuft deine Saison besser als erwartet, passiert das häufiger. Dein Herzensverein meldet sich bevorzugt, der Verein, den du nie trainieren würdest, nie.
-- **Sofort:** Entlässt ein größerer Verein deiner Liga mitten in der Saison seinen Trainer, fragt er manchmal zuerst bei dir an.
+Höchstens zwei solche Nachrichten je Saison, mindestens 45 Tage auseinander; ein neuer Trainer hat 60 Tage Schonfrist. Ohne Cheftrainer mahnt der Vorstand einmal je Saison an, die Bank zu besetzen.
 
-Jedes Angebot nennt Jahresgehalt, Saisonziel und Transferbudget. Du kannst **annehmen**, **nachverhandeln** (mehr Gehalt und Budget – der Verein kann aber abspringen) oder **ablehnen**. Solange ein Angebot offen ist, hält „Weiter“ an. Ohne Antwort gilt es nach Ablauf der Frist als abgelehnt.
+**Was dich trifft:** nur das Vertrauen. Unter 40 kürzt der Vorstand die Transfermittel, unter 20 halbiert er sie, und dein nächstes Saisonbudget gibt er nach dem Vertrauen frei (Finanzen › Budget). Entlassen wirst du nie – warum: Du sollst deinen Verein über Jahrzehnte formen; schlechte Phasen kosten Geld und Spielraum, nicht das Spiel.
 
-Dein Gehalt ist eine Kennzahl deiner Karriere und wird nicht über die Vereinskasse gebucht.
-
-### Der Wechsel
-- **Sofort** (nur innerhalb deiner Liga): Du übernimmst noch am selben Tag.
-- **Zum 1. Juli:** Du führst deinen Verein bis zum Saisonende. Beim Saisonwechsel wird die Liga des neuen Vereins zu deiner Liga.
-
-Dein bisheriger Verein bekommt einen Trainer aus dem Trainerkarussell, dein Trainerteam bleibt dort. Beim neuen Verein übernimmst du dessen Trainerteam, der bisherige Trainer geht. Offene Verhandlungen, Entscheidungen, Versprechen und geplante Trainingslager des alten Vereins verfallen. Der Vorstand startet mit Vertrauen 65 und nennt dir ein Saisonziel.
-
-### Entlassung (nur Karriere-Modus)
-Im Teammanager-Modus wirst du nie entlassen. Im Karriere-Modus (Assistent „Neues Spiel“):
-- **Während der Saison:** Fällt das Vertrauen des Vorstands auf 12 oder weniger, stellt er dir ein **Ultimatum**. Bleibt es einen Monat später so niedrig, bist du deinen Job los. Dann melden sich Vereine deiner Liga, die selbst in der Krise stecken – du wählst einen und übernimmst sofort.
-- **Zum Saisonende:** Ein klar verfehltes Saisonziel bei Vertrauen unter 25 beendet die Zusammenarbeit zum 1. Juli; kleinere Vereine bieten dir einen Neuanfang.
-
-### Grenzen
-Volle Kader gibt es nur in deiner Liga; Jobs im Ausland und bei einer Nationalmannschaft gibt es deshalb nicht.`,
+### Alte Spielstände
+Offene Jobangebote, Ultimaten und zugesagte Vereinswechsel aus früheren Versionen werden beim Laden als „hinfällig“ abgelegt und halten „Weiter“ nicht mehr an.`,
   },
   {
     id: 'ai-history-mode',

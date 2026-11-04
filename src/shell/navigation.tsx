@@ -23,7 +23,7 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   | 'budget'
   // Übersicht Ligensystem (Statistiken › Ligensystem)
   | 'ligensystem'
-  // Trainerkarriere (Zentrale › Karriere)
+  // Managerkarriere (Zentrale › Karriere)
   | 'karriere';
 
 // =============================================================================

@@ -7,6 +7,8 @@
 import { awardsOf } from '../src/game/seasonAwardsGame';
 import { AWARD_CATS } from '../src/engine/seasonAwards';
 import { createNewGame } from '../src/game/newGame';
+import { headCoachNow, headCoachRows } from '../src/game/headCoaches';
+import { candidatesFor, hireStaff } from '../src/game/staffGame';
 import { careerSummary, originOfPlayer, trackCareers } from './simCareers';
 import { processDay, HEADLESS_UI } from '../src/game/day';
 import { startNextSeason, leagueClubs } from '../src/game/season';
@@ -34,7 +36,7 @@ const g: Game = createNewGame({
 });
 
 (g as any).simAutoManage = true; // eigener Verein wird wie ein KI-Verein gepflegt
-// HUMAN=1: Jobangebote an dich laufen mit (abgelehnt); HUMAN=accept: das erste Angebot wird angenommen (game/careerGame.ts).
+// HUMAN=1: Managerkarriere wie ein Mensch (Cheftrainer besetzen, Vorstandsdruck gegen den Trainer, game/careerGame.ts).
 if (process.env.HUMAN) { (g as any).simCareer = true; if (process.env.HUMAN === 'accept') (g as any).simCareerAccept = true; }
 // HIST=aus|mittel|stark: Entwicklung der anderen Vereine (game/historicSteer.ts), Bericht tests/simHistory.ts.
 const histMode = histModeFromEnv(process.env.HIST);
@@ -241,7 +243,8 @@ function aiReport(game: Game) {
     }
     if (process.env.HUMAN && game.career) {
       const c = game.career;
-      console.log(`   KARRIERE Ansehen ${c.rep.toFixed(1)} | Verein ${game.clubs[game.managedClubId]?.name} | Stationen ${c.stints.map((x) => x.clubName).join(' → ')} | Angebote gesamt ${c.offerCount} | Entlassungen ${c.sacked}${c.pendingMove ? ` | Wechsel zu ${c.pendingMove.clubName} vereinbart` : ''}`);
+      const press = game.messages.filter((m) => m.eventRef?.type === 'board_coach').length;
+      console.log(`   KARRIERE Ansehen ${c.rep.toFixed(1)} | Verein ${game.clubs[game.managedClubId]?.name} | Cheftrainer ${headCoachRows(game).map((e) => `${e.name.split(' ').pop()}${e.live ? '' : ` (${e.end})`}`).join(' → ')} | Druck-Nachrichten (Postfach) ${press} | Vertrauen ${game.clubs[game.managedClubId]?.boardConfidence}`);
     }
     Object.assign(aiTotals, {
       seasons: aiTotals.seasons + 1, arrivals: aiTotals.arrivals + arrivals, transfers: aiTotals.transfers + transfers,
@@ -450,6 +453,8 @@ function awardsReport(game: Game) {
 if (process.env.AI) aiReport(g);
 for (let s = 0; s < seasons; s++) {
   let guard = 0;
+  // HUMAN=1: Trainerbank wie ein Mensch besetzen (Managerkarriere, game/headCoaches.ts).
+  if (process.env.HUMAN && !headCoachNow(g)) hireStaff(g, candidatesFor(g, 'cheftrainer')[0]);
   while (!CalendarEngine.isSeasonOver(g.calendar)) {
     // Simulation: eigener Verein stellt wie die KI auf (keine eingefrorene Startelf).
     const t = g.clubs[g.managedClubId]?.tactics;

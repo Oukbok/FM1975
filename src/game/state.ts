@@ -141,7 +141,7 @@ export interface Game {
   ratingRounds?: { date: string; label: string; n: number; ups: number; downs: number; sum: number }[];
   /** Kaderplanung der KI über die Saisons: Verlängerungen, Bosman, Leihen (game/aiSquadLog.ts). */
   aiSquadLog?: import('./aiSquadLog').AiSquadLogEntry[];
-  /** Deine Trainerkarriere: Ansehen, Stationen, Jobangebote, Vereinswechsel (game/careerGame.ts). */
+  /** Deine Managerkarriere: Ansehen, Trainer-Historie, Vorstandsdruck, Managerbilanz (game/careerGame.ts). */
   career?: import('./careerState').CareerState;
 }
 
