@@ -43,6 +43,7 @@ import { migrateSeating } from './game/seatingGame';
 import { migrateLeaguePool } from './game/clubPool';
 import { migrateYouthInvest } from './game/youthInvest';
 import { migrateSponsorship } from './game/sponsorGame';
+import { migrateSponsorNames } from './game/sponsorRenameMigration';
 import { migrateMerch } from './game/merchGame';
 import { migrateBriefing } from './game/seasonBriefing';
 import { migrateBudget } from './game/budgetPlan';
@@ -353,6 +354,8 @@ export default function App() {
     try { migrateLeaguePool(s.game); } catch (err) { console.error('Liga-Historie-Nachrüstung fehlgeschlagen:', err); }
     // Nachwuchs-Investitionen (v11): Bausteine aus der alten Akademie-Stufe ableiten.
     try { migrateYouthInvest(s.game); } catch (err) { console.error('Nachwuchs-Nachrüstung fehlgeschlagen:', err); }
+    // Echt klingende Firmen-/Hallennamen alter Stände ersetzen (data/sponsorRenames.ts).
+    try { migrateSponsorNames(s.game); } catch (err) { console.error('Sponsornamen-Umbenennung fehlgeschlagen:', err); }
     // Sponsoring 2.0: Trikot-/Bandenvertrag übernehmen, Werbeflächen der Epoche (game/sponsorGame.ts).
     try { migrateSponsorship(s.game); } catch (err) { console.error('Sponsoring-Nachrüstung fehlgeschlagen:', err); }
     // Fanartikel: Laden mit Startbestand für den eigenen Verein (game/merchGame.ts).
