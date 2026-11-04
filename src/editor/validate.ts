@@ -2,6 +2,8 @@
 // Prüfungen des Editors (zusätzlich zu validateDataset aus dem Spiel).
 // =============================================================================
 import { Dataset, validateDataset } from '../data/dataset/schema';
+import { LEGEND_TYPES } from '../data/legends/types';
+import { ALL_POSITIONS } from '../types';
 
 export interface Issue { level: 'error' | 'warn'; area: string; text: string }
 
@@ -94,6 +96,38 @@ export function checkDataset(d: Dataset): Issue[] {
     for (let i = 0; i < eras.length; i++) {
       if (!eras[i][1]?.length) warn('Namen', `Herkunft „${o.id}“: Jahrgangsstufe ${eras[i][0]} hat keine Vornamen.`);
       if (i > 0 && eras[i][0] <= eras[i - 1][0]) warn('Namen', `Herkunft „${o.id}“: Jahrgangsstufen nicht aufsteigend (${eras[i - 1][0]} → ${eras[i][0]}).`);
+    }
+  }
+
+  // Legenden (Ausnahmetalente): Pflichtfelder, Wertebereiche, Verein passend zum Land.
+  const lids = new Set<string>(), lnames = new Set<string>();
+  const west = new Set([...d.clubs.tier1, ...d.clubs.secondNord, ...d.clubs.secondSued].map((c) => c.id));
+  const east = new Set([...d.clubs.ddrOberliga, ...d.clubs.ddrLiga].map((c) => c.id));
+  for (const l of d.legendsV2 ?? []) {
+    const nm = `${l.firstName ?? ''} ${l.lastName ?? ''}`.trim() || l.id || '?';
+    const A = 'Legenden';
+    if (!l.id || !SLUG.test(l.id)) err(A, `${nm}: ID „${l.id ?? ''}“ – nur Kleinbuchstaben, Ziffern, _ und -.`);
+    if (lids.has(l.id)) err(A, `ID „${l.id}“ doppelt.`);
+    lids.add(l.id);
+    if (!l.firstName?.trim() || !l.lastName?.trim()) err(A, `${l.id}: Vor- und Nachname fehlen.`);
+    if (lnames.has(nm)) warn(A, `Name „${nm}“ doppelt.`);
+    lnames.add(nm);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(l.birth ?? '')) err(A, `${nm}: Geburtsdatum „${l.birth ?? ''}“ muss die Form JJJJ-MM-TT haben.`);
+    else {
+      const y = Number(l.birth.slice(0, 4));
+      if (y < 1940 || y > 2085) warn(A, `${nm}: Geburtsjahr ${y} – vor 1941 Geborene erscheinen nicht (1975 älter als 34).`);
+    }
+    if (!ALL_POSITIONS.includes(l.pos)) err(A, `${nm}: unbekannte Position „${l.pos}“.`);
+    for (const p of l.pos2 ?? []) if (!ALL_POSITIONS.includes(p)) err(A, `${nm}: unbekannte Nebenposition „${p}“.`);
+    if (!LEGEND_TYPES.some((t) => t.id === l.type)) err(A, `${nm}: unbekannter Spielertyp „${l.type}“.`);
+    if (!(l.potential >= 50 && l.potential <= 99)) err(A, `${nm}: Potenzial ${l.potential} muss zwischen 50 und 99 liegen.`);
+    else if (l.potential < 80) warn(A, `${nm}: Potenzial unter 80 – kein Ausnahmetalent.`);
+    for (const k of ['maturity', 'longevity'] as const) if (!(l[k] >= -1 && l[k] <= 1)) err(A, `${nm}: ${k === 'maturity' ? 'Frühreife' : 'Langlebigkeit'} muss zwischen −1 und 1 liegen.`);
+    for (const [k, v] of Object.entries(l.hidden ?? {})) if (!(typeof v === 'number' && v >= 0 && v <= 100)) err(A, `${nm}: verdeckter Wert „${k}“ muss zwischen 0 und 100 liegen.`);
+    if (!l.hidden) err(A, `${nm}: verdeckte Werte fehlen.`);
+    if (l.club) {
+      const ok = l.country === 'GER' ? west.has(l.club) : l.country === 'DDR' ? west.has(l.club) || east.has(l.club) : false;
+      if (!ok) err(A, `${nm}: Jugendverein „${l.club}“ gehört nicht zu den Vereinen seines Landes im Datensatz.`);
     }
   }
 

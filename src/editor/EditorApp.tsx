@@ -10,12 +10,13 @@ import { EuropeSection } from './sections/Europe';
 import { FacilitiesSection, LeaguesSection, MarketingSection, StaffSection, TimelineSection } from './sections/Rules';
 import { EconomySection, GeneralSection, HistorySection, NamesSection } from './sections/People';
 import { CheckSection } from './sections/Check';
+import { LegendsSection } from './sections/Legends';
 
 // =============================================================================
 // DATENSATZ-EDITOR (eigenständige Seite unter /editor/)
 // Arbeitskopie im Browser, Prüfen, Export als Datei, Übernahme ins Spiel.
 // =============================================================================
-type Sec = 'general' | 'clubs' | 'europe' | 'timeline' | 'leagues' | 'facilities' | 'staff' | 'marketing' | 'names' | 'economy' | 'history' | 'check';
+type Sec = 'general' | 'clubs' | 'europe' | 'timeline' | 'leagues' | 'facilities' | 'staff' | 'marketing' | 'names' | 'legends' | 'economy' | 'history' | 'check';
 
 const SECTIONS: { key: Sec; label: string; icon: IconName; title: string }[] = [
   { key: 'general', label: 'Allgemein', icon: 'settings', title: 'Allgemein' },
@@ -27,6 +28,7 @@ const SECTIONS: { key: Sec; label: string; icon: IconName; title: string }[] = [
   { key: 'staff', label: 'Mitarbeiter', icon: 'staff', title: 'Mitarbeiter-Rollen' },
   { key: 'marketing', label: 'Marketing', icon: 'marketing', title: 'Marketing-Kanäle' },
   { key: 'names', label: 'Namen', icon: 'squad', title: 'Namen & Herkünfte' },
+  { key: 'legends', label: 'Legenden', icon: 'trophy', title: 'Ausnahmetalente der Fußballgeschichte' },
   { key: 'economy', label: 'Wirtschaft', icon: 'finances', title: 'Wirtschaft' },
   { key: 'history', label: 'Geschichte', icon: 'kalender', title: 'Besondere Zeitabschnitte' },
   { key: 'check', label: 'Prüfen', icon: 'whistle', title: 'Prüfen & Übernehmen' },
@@ -117,7 +119,7 @@ export default function EditorApp() {
   const body: Record<Sec, ReactNode> = {
     general: <GeneralSection {...p} />, clubs: <ClubsSection {...p} />, europe: <EuropeSection {...p} />,
     timeline: <TimelineSection {...p} />, leagues: <LeaguesSection {...p} />, facilities: <FacilitiesSection {...p} />,
-    staff: <StaffSection {...p} />, marketing: <MarketingSection {...p} />, names: <NamesSection {...p} />,
+    staff: <StaffSection {...p} />, marketing: <MarketingSection {...p} />, names: <NamesSection {...p} />, legends: <LegendsSection {...p} />,
     economy: <EconomySection {...p} />, history: <HistorySection {...p} />,
     check: <CheckSection ds={ds} issues={issues} onCheck={runCheck} onExport={doExport} onStore={doStore} />,
   };

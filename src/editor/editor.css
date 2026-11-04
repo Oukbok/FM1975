@@ -162,3 +162,7 @@ textarea.ed-in { resize: vertical; line-height: 1.4; }
   .ed-split { flex-direction: column; }
   .ed-side { width: 100%; }
 }
+
+/* --- Legenden: breitere Seitenleiste mit eigenem Bildlauf --- */
+.ed-side.ed-legend { width: 380px; max-height: 70vh; overflow: auto; }
+.ed-side.ed-legend .ed-form { grid-template-columns: 1fr; }

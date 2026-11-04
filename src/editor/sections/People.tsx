@@ -25,7 +25,7 @@ export function GeneralSection({ ds, onChange }: P) {
       <div className="ed-stats">
         <Stat n={c.tier1.length} l="1. Liga" /><Stat n={c.secondNord.length + c.secondSued.length} l="2. Liga" />
         <Stat n={c.ddrOberliga.length + c.ddrLiga.length} l="DDR" /><Stat n={ds.europe.countries.length} l="Länder" />
-        <Stat n={ds.timeline.length} l="Chronik" />
+        <Stat n={ds.timeline.length} l="Chronik" /><Stat n={ds.legendsV2?.length ?? 100} l="Legenden" />
         <Stat n={Object.keys(ds.crests ?? {}).length} l="Wappen" /><Stat n={Object.keys(ds.kits ?? {}).length} l="Trikotsätze" />
       </div>
     </div>

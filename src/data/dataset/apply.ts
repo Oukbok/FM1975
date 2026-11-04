@@ -117,7 +117,10 @@ export function applyDataset(ds: Dataset | null): void {
   resetEconomyCache();
 
   // Ausnahmetalente: fehlt das Feld → eingebaute Liste; leere Liste = keine.
-  const legends = Array.isArray(d.legendsV2) ? d.legendsV2 : base.legendsV2 ?? [];
+  // Unvollständige Einträge (fremde Dateien) werden übergangen statt das Spiel zu stören.
+  const legends = (Array.isArray(d.legendsV2) ? d.legendsV2 : base.legendsV2 ?? []).filter((l) => l && typeof l.id === 'string'
+    && typeof l.firstName === 'string' && typeof l.lastName === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(l.birth ?? '')
+    && typeof l.pos === 'string' && Number.isFinite(l.potential) && l.hidden && typeof l.hidden === 'object');
   LEGENDS.splice(0, LEGENDS.length, ...JSON.parse(JSON.stringify(legends)));
 
   const h = d.history ?? base.history;

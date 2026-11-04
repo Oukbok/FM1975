@@ -83,7 +83,7 @@ Transfermarkt für Verletzungshistorie und Einsatzjahre). Geburtsdaten nach Wiki
 | zoffoli | Dino Zoff | Elio Zaffetti | 1942-02-28 | ITA | TW | 91 |
 | rossari | Paolo Rossi | Pino Rossetto | 1956-09-23 | ITA | MS | 90 |
 | baresini | Franco Baresi | Fulvio Baressano | 1960-05-08 | ITA | LIB | 94 |
-| maldinetti | Paolo Maldini | Piero Maldinetti | 1968-06-26 | ITA | LV | 95 |
+| maldinetti | Paolo Maldini | Pietro Maldinetti | 1968-06-26 | ITA | LV | 95 |
 | baggiani | Roberto Baggio | Rodolfo Baggiani | 1967-02-18 | ITA | HS | 94 |
 | pierro | Alessandro Del Piero | Alessio Dal Pierotti | 1974-11-09 | ITA | HS | 91 |
 | cannavelli | Fabio Cannavaro | Flavio Cannavelli | 1973-09-13 | ITA | IV | 90 |

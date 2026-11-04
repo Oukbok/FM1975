@@ -846,9 +846,20 @@ Die Vorschau im Planer zeigt für jeden Tag das erwartete **Fitness-Delta** (gr�
     id: 'player-hidden-values',
     category: 'development',
     title: 'Verdeckte Werte & Attribut-Wirkung',
-    keywords: ['konstanz', 'nervenstärke', 'verdeckt', 'versteckt', 'einschätzung', 'scout', 'trainerteam', 'verletzungsanfälligkeit', 'attribut', 'wirkung'],
+    keywords: ['konstanz', 'nervenstärke', 'trainingsfleiß', 'fleiß', 'entwicklungstempo', 'ausnahmetalent', 'verdeckt', 'versteckt', 'einschätzung', 'scout', 'trainerteam', 'verletzungsanfälligkeit', 'attribut', 'wirkung'],
     body: `## Verdeckte Werte
-**Konstanz**, **Nervenstärke**, **Verletzungsanfälligkeit** und **Entwicklungstempo** sind verdeckt – du siehst nie eine Zahl, nur eine **Einschätzung** („wirkt nervenstark“, „schwankt stark“).
+**Konstanz**, **Nervenstärke**, **Verletzungsanfälligkeit**, **Entwicklungstempo** und **Trainingsfleiß** sind verdeckt – schon in der Jugend. Du siehst nie eine Zahl, nur eine **Einschätzung** („Nerven aus Stahl“, „schwankt stark“, „trainiert wie ein Weltmeister“).
+
+### So wirken sie
+- **Konstanz:** wie stark die Tagesleistung schwankt (bis etwa ±15 % je Spiel). Unbeständige Spieler haben zudem öfter schwache Tage (Mittel bis ≈ −1 %), sehr konstante öfter gute.
+- **Nervenstärke:** in Derbys, Pokal, Europapokal, engen Schlussphasen und im Elfmeterschießen bis etwa ±6 % Leistung.
+- **Verletzungsanfälligkeit:** robuste Spieler verletzen sich im Spiel nur gut halb so oft wie anfällige; auch im Training.
+- **Entwicklungstempo:** wie schnell ein Spieler lernt – in der Jugend und als Profi ×0,8 (langsam) bis ×1,2 (sehr schnell).
+- **Trainingsfleiß** (mit Ehrgeiz): Profis entwickeln sich ×0,7 bis ×1,3, Jugendspieler ×0,85 bis ×1,15; Fleiß bremst im Alter auch den Abbau.
+- Dazu verdeckt: **Frühreife** (früh fertig oder Spätentwickler) und **Langlebigkeit** (verschiebt den Abbau um bis zu anderthalb Jahre).
+
+### Ausnahmetalente der Geschichte
+Im Datensatz können bekannte Ausnahmetalente der Fußballgeschichte stecken. Sie entstehen wie alle anderen Spieler irgendwo in der Spielwelt und werden nicht besonders angekündigt – ob aus ihnen Weltklasse wird, entscheiden Umfeld, Einsatzzeit und Verletzungen. Beim Spielstart kannst du sie abschalten (Option „Ausnahmetalente der Geschichte“).
 - **Eigene Spieler:** Das **Trainerteam** urteilt. Je länger der Spieler im Verein ist, desto treffsicherer (nach rund zweieinhalb Jahren „gesichert“).
 - **Fremde Spieler:** Die **Scouts** urteilen – je besser dein Scouting (und je länger ihr verhandelt), desto genauer. Ohne Kenntnis heißt es „noch kein Urteil“.
 - Jede Einschätzung kann **danebenliegen**: Jeder Spieler hat einen festen Schätzfehler, der mit wachsender Kenntnis schrumpft.
@@ -857,7 +868,8 @@ Die Vorschau im Planer zeigt für jeden Tag das erwartete **Fitness-Delta** (gr�
 Hinter jedem Attribut im Spielerprofil steht ein kleines **i**. Es zeigt, wo der Wert im Spiel direkt gerechnet wird (z. B. Kopfball: Kopfballduelle bei Flanken und Ecken, Kopfball-Abschluss), für welche Positionen er in die **Positionsstärke** eingeht (live aus der Epoche) und welche **Trainingsbausteine** ihn verbessern.
 
 ## Code
-- Einschätzung: \`game/hiddenTraits.ts\` (\`hiddenKnowledge\`, \`estimateHidden\`).
+- Einschätzung: \`game/hiddenTraits.ts\` (\`hiddenKnowledge\`, \`estimateHidden\`), Worte \`data/hiddenTraitWords.ts\`.
+- Wirkung: \`engine/talent.ts\` (\`tempoFactor\`, \`diligenceFactor\`, Körperuhr), \`engine/development.ts\`, \`engine/match/skills.ts\` (\`dayForm\`, \`nerveF\`).
 - Attribut-Texte: \`data/attributeInfo.ts\`; Anzeige \`components/player/AttrTip.tsx\`.`,
   },
   {

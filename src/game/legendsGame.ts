@@ -10,9 +10,10 @@
 //    Wer 1975 schon 18 ist, steht im Startkader; 15–17-Jährige in der Jugend.
 //  • DDR-Jahrgänge vor der Wende: wechseln zum 1.7.1990 als Profi in den Westen.
 //  • Ausland (keine vollen Kader außerhalb der Spielerliga): wächst unsichtbar
-//    im Heimatland auf und wechselt mit 18–22 (frühreif früher) als junger Profi
-//    zu einem Verein der Spielerliga; 1975 bereits 20-Jährige gleich im Startkader.
-//    Ziel gewichtet nach Ruf (große Vereine holen die Stars), nie der eigene Verein.
+//    im Heimatland auf und wechselt mit 18–22 (frühreif früher) bzw. – knapp die
+//    Hälfte – erst mit 23–27 als Profi zu einem Verein der Spielerliga; 1975
+//    bereits 20-Jährige gleich im Startkader. Ziel mild nach Ruf gewichtet, Vereine
+//    mit Legenden seltener (Verteilung über die Liga), nie der eigene Verein.
 //  • Verein verlässt die Spielerliga (Abstieg): Legenden wechseln vorher still zu
 //    einem verbleibenden Verein (sonst gingen sie mit dem Kader verloren).
 // Alte Spielstände (ohne `legends2`) bekommen keine Legenden.
@@ -53,13 +54,27 @@ function pickWeighted(list: Club[], w: (c: Club) => number, rng: () => number): 
   return list[list.length - 1];
 }
 export const youthWeight = (c: Club) => Math.pow(academyLevelOf(c), 2.5);
-export const proWeight = (c: Club) => Math.pow(Math.max(0.3, ((c.reputation ?? 50) - 35) / 15), 3);
+/** Ruf zählt, aber mild: Spitzenvereine (Ruf 85) etwa dreimal so oft wie Mittelklasse (Ruf 55). */
+export const proWeight = (c: Club) => 0.5 + Math.max(0, (c.reputation ?? 50) - 45) / 15;
+/** Vereine, die schon Ausnahmetalente haben, sind seltener Ziel (Verteilung über die Liga). */
+function spread(g: Game, w: (c: Club) => number): (c: Club) => number {
+  const ids = legendIds(g);
+  const n = new Map<string, number>();
+  for (const id of ids) { const p = g.players[id] ?? g.youthPlayers[id]; if (p) n.set(p.clubId, (n.get(p.clubId) ?? 0) + 1); }
+  return (c) => w(c) / (1 + 1.5 * (n.get(c.id) ?? 0));
+}
 
 const isDomestic = (def: LegendDef) => def.country === 'GER' || (def.country === 'DDR' && Number(def.birth.slice(0, 4)) + 15 >= REUNIFY + 1);
 
-/** Wechselalter eines Auslands-Talents (18–22, frühreif früher; fest je Spielstand). */
+/**
+ * Wechselalter eines Auslands-Talents (fest je Spielstand): gut die Hälfte kommt jung
+ * (18–22, frühreif früher), die übrigen erst im besten Alter (23–27) – wie die Stars,
+ * die früher nach ein paar Jahren in der Heimat in die Bundesliga wechselten.
+ */
 export function joinAge(def: LegendDef, s: string): number {
-  const r = seededRng(`${def.id}|${s}|join`)();
+  const rng = seededRng(`${def.id}|${s}|join`);
+  const late = rng() < 0.45, r = rng();
+  if (late) return 23 + Math.floor(r * 5);
   return Math.max(18, Math.min(22, Math.round(20 - def.maturity * 1.5 + (r - 0.5) * 2.4)));
 }
 
@@ -126,7 +141,7 @@ function spawnOne(g: Game, def: LegendDef, date: string, start: boolean): void {
   if (route.kind === 'youth') {
     // Vorgegebener Verein spielt (noch) nicht in der Spielerliga: bis 17 warten, dann gewichtet.
     if (def.club && !fixedOk && ageOn(def.birth, date) < 17) return;
-    const club = fixedOk ? fixed! : pickWeighted(clubs, youthWeight, rng)!;
+    const club = fixedOk ? fixed! : pickWeighted(clubs, spread(g, youthWeight), rng)!;
     const p = makeLegendYouth(def, { clubId: club.id, date, salt: s, academyLevel: academyLevelOf(club) });
     g.youthPlayers[p.id] = p;
     club.youthPlayerIds.push(p.id);
@@ -135,7 +150,7 @@ function spawnOne(g: Game, def: LegendDef, date: string, start: boolean): void {
   }
   // Profi: Startkader bzw. stiller Wechsel nach Deutschland – nie zum eigenen Verein.
   const pool = clubs.filter((c) => c.id !== g.managedClubId);
-  const club = fixedOk && fixed!.id !== g.managedClubId ? fixed! : pickWeighted(pool.length ? pool : clubs, proWeight, rng)!;
+  const club = fixedOk && fixed!.id !== g.managedClubId ? fixed! : pickWeighted(pool.length ? pool : clubs, spread(g, proWeight), rng)!;
   const p = makeLegendPro(def, { clubId: club.id, date, salt: s }, start ? rng() : rng() * 0.6);
   g.players[p.id] = p;
   club.playerIds.push(p.id);
@@ -180,7 +195,7 @@ export function rescueLegends(g: Game, stay: Set<string>, date: string): void {
     if (!p || stay.has(p.clubId) || !g.clubs[p.clubId] || p.loan) continue;
     const from = g.clubs[p.clubId];
     const rng = seededRng(`${pid}|${salt(g)}|rescue|${date}`);
-    const to = pickWeighted(targets, youth ? youthWeight : proWeight, rng)!;
+    const to = pickWeighted(targets, spread(g, youth ? youthWeight : proWeight), rng)!;
     if (youth) {
       from.youthPlayerIds = from.youthPlayerIds.filter((id) => id !== pid);
       to.youthPlayerIds.push(pid);
