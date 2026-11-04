@@ -14,7 +14,7 @@
 import { CalendarEngine } from '../engine/calendar';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { fmtDay } from '../ui/format';
-import { BreakCache } from './indoorWindow';
+import { BreakCache, indoorHoliday } from './indoorWindow';
 import type { Game } from './state';
 import { IndoorTournament, IndoorWinter, daysBetween, ownCampDays } from './winterShared';
 
@@ -86,7 +86,7 @@ function newDate(g: Game, cur: IndoorWinter, t: IndoorTournament, today: string,
     .sort((a, b) => Math.abs(Date.parse(a) - Date.parse(t.date)) - Math.abs(Date.parse(b) - Date.parse(t.date)) || a.localeCompare(b));
   for (const d of cands) {
     const days = span(t, d);
-    if (days.some((x) => camp.has(x))) continue;
+    if (days.some((x) => camp.has(x) || indoorHoliday(x))) continue;
     const clash = all.some((o) => o !== t && !o.done && span(o).some((x) => days.includes(x)) && o.clubIds.some((id) => t.clubIds.includes(id)));
     if (clash) continue;
     if (t.clubIds.every((id) => bc.fits(id, d, t.days))) return d;

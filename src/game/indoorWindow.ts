@@ -87,3 +87,9 @@ export class BreakCache {
     return this.busy.get(id)!.every((d) => daysDiff(end, d) >= INDOOR_GAP_DAYS || daysDiff(d, date) >= INDOOR_GAP_DAYS);
   }
 }
+
+/** Feiertage ohne Hallenturniere: Heiligabend, 1. Weihnachtstag, Silvester, Neujahr. */
+export function indoorHoliday(d: string): boolean {
+  const md = d.slice(5);
+  return md === '12-24' || md === '12-25' || md === '12-31' || md === '01-01';
+}

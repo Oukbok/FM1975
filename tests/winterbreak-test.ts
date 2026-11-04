@@ -8,7 +8,9 @@ import { Game } from '../src/game/state';
 import { CalendarEngine, generateSeasonCalendar, seasonLabel } from '../src/engine/calendar';
 import { generateFixtures } from '../src/engine/league';
 import { createCup } from '../src/engine/cup';
-import { findWinterBreak, seasonSchedule } from '../src/engine/winterBreak';
+import { findWinterBreak, inCupWinterBreak, seasonSchedule } from '../src/engine/winterBreak';
+import { BreakCache } from '../src/game/indoorWindow';
+import { reconcileIndoor } from '../src/game/indoorReconcile';
 import { WEST_BREAKS, winterBreakFor } from '../src/data/winterBreaks';
 import { addCupCalendarEvents, leagueDateSet } from '../src/game/competitions';
 import { allTournaments, setupIndoorWinter } from '../src/game/indoorGame';
@@ -103,6 +105,7 @@ for (const y of [1976, 1984, 1986, 1987, 1990, 1993, 1996, 1997, 1998, 2000, 200
   g.cup = cup; g.euroCups = { ec: null, cwc: null, uefa: null } as any;
   const league = leagueDateSet(g.fixtures);
   for (const r of cup.rounds) check(!league.has(r.date), `${g.season}: Pokalrunde ${r.name} am Ligaspieltag ${r.date}`);
+  for (const r of cup.rounds) for (const d of r.dates ?? [r.date]) check(!inCupWinterBreak(d, y), `${g.season}: Pokal ${r.name} am ${d} in der Winterpause`);
   const win = winterWindow(g);
   const wb = findWinterBreak(g.fixtures.map((m) => m.date), y)!;
   const wbEv = g.calendar.events.find((e) => e.type === 'winter_break')!;
@@ -121,12 +124,48 @@ for (const y of [1976, 1984, 1986, 1987, 1990, 1993, 1996, 1997, 1998, 2000, 200
       check(!busy.has(d), `${g.season}: ${t.name} am ${d} kollidiert mit Pflichtspiel`);
     }
   }
+  const bc = new BreakCache(g);
+  for (const t of ts) for (const id of t.clubIds) check(bc.fits(id, t.date, t.days), `${g.season}: ${t.name} – ${id} nicht in seiner Winterpause`);
   const m = st.current.masters;
   if (phase === 'masters') {
     check(!!m && m.date.slice(5, 7) === '01', `${g.season}: Masters nicht im Januar (${m?.date})`);
     check(ts.filter((t) => t !== m).every((t) => t.date < m!.date), `${g.season}: Tour-Turnier nach dem Masters`);
   }
   console.log(`${g.season}: Pause ${wb.last} → ${wb.first} (${(days(wb.last, wb.first) / 7).toFixed(1)} Wo.), Fenster ${win.from}–${win.to}, ${ts.length} Hallenturniere${m ? `, Masters ${m.date}` : ''}, Pokal ${cup.rounds.map((r) => r.date.slice(5)).join(' ')}`);
+}
+
+// 3b) Alter Spielstand (wie Dez. 1978 im Spiel): Pokal 20.12. + Wiederholung 23.12. in der
+//     Pause, Hallenturnier 18.12. → wird verlegt (Nachricht), zweiter Abgleich ändert nichts.
+{
+  const y = 1978;
+  const g = fresh();
+  const clubs = leagueClubs(g);
+  g.season = seasonLabel(y);
+  g.fixtures = generateFixtures(clubs, `${y}-08-15`, { tier: 1 });
+  for (const m of g.fixtures) m.involvesPlayerClub = m.homeClubId === g.managedClubId || m.awayClubId === g.managedClubId;
+  g.calendar = generateSeasonCalendar(g.fixtures, `${y}-07-01`, `${y + 1}-06-30`);
+  const cup = createCup(clubs.map((c) => c.id), Object.keys(g.clubs).filter((id) => id.startsWith('am')).slice(0, 14), leagueDateSet(g.fixtures), 7 + y, `${y}-07-01`, g.managedClubId);
+  cup.rounds[2].date = '1978-12-20';
+  addCupCalendarEvents(g.calendar, cup);
+  g.calendar.events.push({ id: 'cupev_2_1', date: '1978-12-23', type: 'cup_matchday', title: 'Landespokal: Viertelfinale (Wiederholungsspiele)', description: '', cupRoundIndex: 2, leg: 1, processed: false, requiresAction: false } as any);
+  cup.rounds[2].dates = ['1978-12-20', '1978-12-23'];
+  g.cup = cup; g.euroCups = { ec: null, cwc: null, uefa: null } as any;
+  const st = indoorState(g);
+  st.current = setupIndoorWinter(g, `${y}-11-02`);
+  const win = winterWindow(g);
+  check(win.from === '1978-12-25', `Altstand 1978: Pause deines Vereins ab ${win.from} statt 25.12. (nach der Pokal-Wiederholung)`);
+  const t = st.current.tournaments[0];
+  if (!t.clubIds.includes(g.managedClubId)) { t.clubIds = [g.managedClubId, ...t.clubIds.slice(0, 5)]; t.own = null; }
+  t.date = '1978-12-18';
+  const msgs = g.messages.length;
+  const n1 = reconcileIndoor(g, st.current, '1978-12-01', () => undefined);
+  const n2 = reconcileIndoor(g, st.current, '1978-12-01', () => undefined);
+  check(n1 >= 1 && n2 === 0, `Altstand 1978: Abgleich nicht idempotent (${n1}, ${n2})`);
+  check(t.date >= win.from && t.date <= win.to, `Altstand 1978: Turnier am ${t.date} nicht in der Pause`);
+  check(g.messages.length > msgs && g.messages[0].subject.startsWith('Hallenturnier'), 'Altstand 1978: keine Nachricht zur Verlegung');
+  const bc = new BreakCache(g);
+  for (const x of allTournaments(st.current)) for (const id of x.clubIds) check(bc.fits(id, x.date, x.days), `Altstand 1978: ${x.name} ${x.date} – ${id} außerhalb der Pause`);
+  console.log(`Altstand 1978/79: Pokal 20.12./23.12. → Pause ab ${win.from}; Turnier 18.12. → ${t.date} (${g.messages[0].subject})`);
 }
 
 // 4) Echte Saison im Tagesablauf: Liga/Pokal/Europapokal kollisionsfrei, Sim-Ligen

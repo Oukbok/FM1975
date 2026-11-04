@@ -24,7 +24,7 @@ import { ensureBrand } from '../engine/clubEconomy';
 import { Player } from '../types';
 import { addTitleRecord } from './clubRecords';
 import { CHOICE_HANDLERS } from './eventsGame';
-import { BreakCache } from './indoorWindow';
+import { BreakCache, indoorHoliday } from './indoorWindow';
 import { reconcileIndoor } from './indoorReconcile';
 import { declinePenalty, indoorName, indoorShort, mastersNews, ownResultMessage, sendInvite } from './indoorNews';
 
@@ -157,8 +157,8 @@ export function setupIndoorWinter(g: Game, today: string): IndoorWinter {
   // Tour/Einladungsturniere vor der Endrunde, sonst bis Ende Januar (Februar gehört
   // in langen Pausen dem Trainingslager).
   const tourEnd = mastersDays.length ? CalendarEngine.addDays(mastersDays[0], -2) : `${winterYear}-01-31`;
-  let days = daysBetween(win.from, win.to < tourEnd ? win.to : tourEnd).filter((d) => d > today && !busy.has(d) && !mastersDays.includes(d));
-  if (!days.length) days = daysBetween(win.from, win.to).filter((d) => d > today && !busy.has(d) && !mastersDays.includes(d));
+  let days = daysBetween(win.from, win.to < tourEnd ? win.to : tourEnd).filter((d) => d > today && !busy.has(d) && !mastersDays.includes(d) && !indoorHoliday(d));
+  if (!days.length) days = daysBetween(win.from, win.to).filter((d) => d > today && !busy.has(d) && !mastersDays.includes(d) && !indoorHoliday(d));
   const kind: IndoorKind = phase === 'invitational' ? 'invite' : phase === 'masters' ? 'qualifier' : 'regional';
   const n = tournamentCount(winterYear);
   const venues = venuesFor(winterYear);
