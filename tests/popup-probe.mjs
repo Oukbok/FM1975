@@ -75,7 +75,7 @@ const DANGER = /schlie|abbrech|bestätig|unterschreib|annehm|ablehn|kaufen|verka
 const TARGETS = [
   '[role=tab]', '.tab', '[class$="-tab"]', '[class*="-tab "]', '.dchip', '.seg-btn', '.seg3 > button', '.chip', '[class$="-seg"] > button', '[class*="-seg "] > button',
   'input[type=checkbox]', 'input[type=range]', 'select', '.sel3', '.toggle',
-  'tr.clickable', '.rl-row.clickable', '[class$="-row"][role=button]', 'button.ft-card', '.pp-preset',
+  'tr.clickable', '.rl-row.clickable', '[class$="-row"][role=button]', 'button.ft-card', '.pp-preset', '.cp-step',
 ].join(', ');
 
 /**

@@ -362,14 +362,20 @@ function prepareTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, toda
     t.squads[mid] = t.own;
     if (g.clubs[mid]?.city === t.city && g.environment) g.environment.fanMood = clamp(g.environment.fanMood + 0.8, 0, 100);
   }
+  // Mindestens 4 Teilnehmer (zwei Gruppen à 2) – sonst fehlt ein Halbfinalist.
+  // Erst Vereine in der Winterpause, notfalls jeder freie Verein aus dem Pool.
+  for (let i = 0; t.clubIds.length < 4 && i < 8; i++) {
+    if (!substituteIndoor(g, cur, t, rng) && !substituteIndoor(g, cur, t, rng, true)) break;
+  }
 }
 
 /** Ersatzverein für einen frei gewordenen Platz (nur Vereine, die an dem Tag Winterpause haben). */
-function substituteIndoor(g: Game, cur: IndoorWinter, t: IndoorTournament, rng: Rng): string | undefined {
+function substituteIndoor(g: Game, cur: IndoorWinter, t: IndoorTournament, rng: Rng, relaxed = false): string | undefined {
   const mid = g.managedClubId;
   const bc = new BreakCache(g);
   const busy = new Set(allTournaments(cur).filter((x) => x.date === t.date).flatMap((x) => x.clubIds));
-  const sub = buildPool(g).filter((p) => p.kind === 'league' && !busy.has(p.id) && p.id !== mid && bc.fits(p.id, t.date, t.days))
+  const sub = buildPool(g).filter((p) => (relaxed || p.kind === 'league') && !busy.has(p.id) && !t.clubIds.includes(p.id) && p.id !== mid
+      && (relaxed || bc.fits(p.id, t.date, t.days)))
     .sort((a, b) => (t.kind === 'masters' ? 0 : a.tier - b.tier) || b.strength - a.strength)
     .find((p) => !(cur.mastersDeclined ?? []).includes(p.id) || t.kind !== 'masters');
   if (sub) { t.clubIds.push(sub.id); t.squads[sub.id] = aiSquad(g, sub.id, cur.winterYear, rng); }
