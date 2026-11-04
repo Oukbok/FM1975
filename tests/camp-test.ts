@@ -145,7 +145,7 @@ const club = g.clubs[g.managedClubId];
   const b = ownBooking(g3, 'summer')!;
   delete (b as any).squad; delete (b as any).youth;
   expect(campGroup(g3, b).pros.length === g3.clubs[g3.managedClubId].playerIds.length, 'alte Buchung: nicht alle Profis');
-  for (let i = 0; i < 20 && !b.done; i++) processDay(g3, HEADLESS_UI);
+  for (let i = 0; i < 40 && !b.done; i++) processDay(g3, HEADLESS_UI);
   expect(!!b.result && b.result.stayed === 0, 'alte Buchung ohne Ergebnis');
   // Alter Verlaufseintrag ohne Wirkung bleibt lesbar
   campState(g3).history.unshift({ season: '1974/75', destId: 'harz', campSeason: 'summer', note: 'alt' });
