@@ -11,6 +11,7 @@ import type { Player } from '../../types';
 import { vColor } from '../../ui/format';
 import { AnyCrest } from '../../views/transfers/window/parts';
 import { STAGE_LABEL, indoorName, indoorShort } from './indoorScript';
+import PosBadge from '../../components/PosBadge';
 
 export function IxClub({ g, id, size = 26, short }: { g: Game; id: string | null; size?: number; short?: boolean }) {
   if (!id) return <span className="ix-club open"><span className="ix-crest" style={{ width: size, height: size }} /><span className="ix-name">offen</span></span>;
@@ -110,7 +111,7 @@ export function SquadPanel({ squad }: { squad: Player[] }) {
   const field = squad.filter((p) => p.naturalPosition !== 'TW').sort((a, b) => indoorSkill(b) - indoorSkill(a));
   const row = (p: Player, tag: string) => (
     <div key={p.id} className="rl-row ix-prow" data-pid={p.id}>
-      <span className="pos-badge">{p.naturalPosition}</span>
+      <PosBadge p={p} compact />
       <span className="rl-name">{p.fullName}</span>
       <span className="ix-dim">{tag}</span>
       <span className="rl-num rl-main" style={{ color: vColor(indoorSkill(p)) }}>{Math.round(indoorSkill(p))}</span>

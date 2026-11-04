@@ -8,7 +8,7 @@ import { Game } from '../../game/state';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtDM, fmtPrice, vColor } from '../../ui/format';
 import { InfoTip } from '../../ui/InfoTip';
-import { isCareerMode } from '../../game/careerState';
+import { headCoachNow } from '../../game/headCoaches';
 
 // =============================================================================
 // VORSTAND — Vertrauen, Rechtsform & Investor, Kredite, Namensrechte, Lizenz
@@ -30,6 +30,9 @@ export function BoardView({ g, onChange }: { g: Game; onChange: () => void }) {
   const debt = debtSummary(club, year);
   const loans = club.loans ?? [];
   const ffp = club.finances.ffp;
+  const coach = headCoachNow(g);
+  const backed = g.career?.press?.backed;
+  const coachLine = coach ? `${coach.name}${backed && backed.coachId === coach.id ? ' · von dir gestützt, Vorstand prüft nach' : ''}` : 'nicht besetzt';
 
   return (
     <DashPage>
@@ -41,10 +44,10 @@ export function BoardView({ g, onChange }: { g: Game; onChange: () => void }) {
         <Meter label="Vertrauen" value={conf} color={vColor(conf)} />
         <KV k="Transferbudget" info="transferbudget" v={fmtPrice(club.finances.transferBudget)} />
         <div className="dnote mt8">
-          Unter 40 kürzt der Vorstand die Transfermittel, unter 20 halbiert er sie. {isCareerMode(g)
-            ? 'Im Karriere-Modus droht unter 12 ein Ultimatum und danach die Entlassung – auch ein klar verfehltes Saisonziel kann zum Saisonende den Job kosten.'
-            : 'Entlassen wirst du im Teammanager-Modus nicht – aber ohne Vertrauen fehlt das Geld.'}
+          Unter 40 kürzt der Vorstand die Transfermittel, unter 20 halbiert er sie; auch dein nächstes Saisonbudget gibt er nach dem Vertrauen frei.
+          Als Manager wirst du nie entlassen – läuft es klar schlechter als das Ziel, legt dir der Vorstand aber einen Trainerwechsel nahe.<InfoTip k="vorstandsdruck" />
         </div>
+        {coachLine && <KV k="Cheftrainer" v={coachLine} />}
       </DashBox>
 
       <DashBox title="Rechtsform & Investor" info="rechtsform" icon="contracts" right={corp ? 'Kapitalgesellschaft' : 'e. V.'}>

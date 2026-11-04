@@ -38,11 +38,11 @@
 .tk-ptab th:first-child, .tk-ptab td:first-child { padding-left: 14px; }
 .tk-ptab th:last-child, .tk-ptab td:last-child { padding-right: 14px; }
 .tk-ptab tbody tr { cursor: pointer; }
-.tk-ptab tbody tr:hover { background: var(--rl-hover, rgba(255, 255, 255, 0.03)); }
+.tk-ptab tbody tr:hover { background: var(--rl-hover, rgba(var(--ink-rgb), 0.03)); }
 .tk-ptab tbody tr.sel { background: var(--accent-soft); box-shadow: inset 4px 0 0 var(--accent); }
 .tk-ptab tbody tr.sel .tk-sname { color: var(--accent); }
 .tk-ptab tbody tr.none .tk-sname { color: var(--text-3); }
-.tk-ptab tr.tk-all { cursor: default; background: rgba(255, 255, 255, 0.02); }
+.tk-ptab tr.tk-all { cursor: default; background: rgba(var(--ink-rgb), 0.02); }
 .tk-ptab tr.tk-gast { cursor: default; }
 .tk-ptab tfoot td { border-bottom: 0; padding-top: 9px; padding-bottom: 9px; color: var(--text-2); font-weight: 600; }
 .tk-ptab tfoot .tk-strong { font-family: var(--font-display); font-size: 18px; font-weight: 500; }

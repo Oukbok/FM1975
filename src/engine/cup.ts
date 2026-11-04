@@ -19,6 +19,7 @@ import { cupReplay } from '../data/euroFormats';
 import { findCupSlot, findSlotTiered, wdOf } from './fixtureRules';
 import type { Club, Player, PointSystem, CupState, CupRound, CupTie, Match } from '../types';
 import { MatchEngine } from './match';
+import { cupWinterBreak } from './winterBreak';
 
 // -----------------------------------------------------------------------------
 // KONSTANTEN
@@ -122,22 +123,27 @@ function scheduleRoundDates(
   // Der 30.6. wird vom Tagesablauf nicht mehr verarbeitet (Saisonende): letzter Spieltermin 29.6.
   const seasonEnd = `${y0 + 1}-06-29`;
   const lastLeague = [...leagueDates].filter((d) => d <= seasonEnd).sort().pop() ?? preferred[preferred.length - 1];
+  // Winterpause: keine Pokalrunde zwischen dem letzten Spieltag davor und dem ersten danach.
+  const br = cupWinterBreak(y0);
+  const skip = (d: string) => d > br.last && d < br.first;
   let prev = earliest;
   for (let i = 0; i < preferred.length; i++) {
     const isFinal = i === preferred.length - 1;
     const minDate = addDays(prev, i === 0 ? 3 : 10);
     let pref = isFinal ? addDays(lastLeague, 7 + ((6 - wdOf(addDays(lastLeague, 7)) + 7) % 7)) : preferred[i];
     if (pref < minDate) pref = minDate;
+    // Wunschtermin in der Pause (z. B. Viertelfinale Mitte Dezember): erste Pokalwoche danach.
+    if (skip(pref)) pref = addDays(br.first, 4);
     const days = isFinal ? [6] : era.cupDays;
     // Finale mit möglichem Wiederholungsspiel (bis 1976/77) zwei Tage früher fertig.
-    const q = { preferred: pref, from: minDate, to: isFinal ? (cupReplay(y0, true) ? addDays(seasonEnd, -2) : seasonEnd) : undefined, maxShift: 21 };
+    const q = { preferred: pref, from: minDate, to: isFinal ? (cupReplay(y0, true) ? addDays(seasonEnd, -2) : seasonEnd) : undefined, maxShift: 21, skip };
     const league = [...leagueDates], euro = [...soft];
     let d = findCupSlot(q, days, league, euro)
       ?? findSlotTiered({ ...q, maxShift: 30, preferEarlier: true, busy: league });
     if (!d) {
       // Letzter Rückfall (sehr volle Saison): alte Regel, Tag für Tag weiter.
       d = pref;
-      while (leagueDates.has(d) || d <= prev) d = addDays(d, 1);
+      while (leagueDates.has(d) || d <= prev || skip(d)) d = addDays(d, 1);
     }
     out.push(d);
     prev = d;

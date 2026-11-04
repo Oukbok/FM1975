@@ -8,6 +8,7 @@ import { Screen } from '../../shell/navigation';
 import { DashBox, DashPage, Empty, KV } from '../../ui/DashPage';
 import { fmtDM, fmtDay } from '../../ui/format';
 import { useState } from 'react';
+import Icon from '../../components/Icon';
 import { ownCampDays, ownIndoorDays } from '../../game/winterShared';
 import { MONTH_LABELS, WD_LABELS } from './calendar/calendarShared';
 import { MonthGrid } from './calendar/MonthGrid';
@@ -187,14 +188,14 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
 
   return (
     <DashPage>
-      <DashBox title={`${MONTH_LABELS[viewM]} ${viewY}`} span={2} rows={2} info="spielplan"
+      <DashBox className="cal-box" title={`${MONTH_LABELS[viewM]} ${viewY}`} span={2} rows={2} info="spielplan"
         right={<span className="dbtnrow">
-          <button className={`dchip ${mode === 'raster' ? 'on' : ''}`} onClick={() => setMode('raster')}>Raster</button>
-          <button className={`dchip ${mode === 'liste' ? 'on' : ''}`} onClick={() => setMode('liste')}>Liste</button>
+          <button className={`b3 ${mode === 'raster' ? 'on' : ''}`} onClick={() => setMode('raster')}>Raster</button>
+          <button className={`b3 ${mode === 'liste' ? 'on' : ''}`} onClick={() => setMode('liste')}>Liste</button>
           <span className="calm-sep" aria-hidden="true" />
-          <button className="dchip" onClick={prevMonth}>‹ Vormonat</button>
-          <button className="dchip" onClick={() => { setViewY(todayY); setViewM(todayM); }}>Heute</button>
-          <button className="dchip" onClick={nextMonth}>Folgemonat ›</button>
+          <button className="b3 b3-icon" onClick={prevMonth} title="Vormonat" aria-label="Vormonat"><Icon name="navPrev" size={18} /></button>
+          <button className="b3" onClick={() => { setViewY(todayY); setViewM(todayM); }} disabled={viewY === todayY && viewM === todayM}>Heute</button>
+          <button className="b3 b3-icon" onClick={nextMonth} title="Folgemonat" aria-label="Folgemonat"><Icon name="navNext" size={18} /></button>
         </span>}>
         <div className="dnote calm-note">
           {planMode
@@ -216,7 +217,7 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
       <DashBox title="Aktivität planen" right={`Konto ${fmtDM(club.finances.balance)}`}>
         <div className="dbtnrow" style={{ marginBottom: 8 }}>
           {(['friendly', 'teambuilding'] as ActivityType[]).map((t) => (
-            <button key={t} className={`dchip ${planType === t ? 'on' : ''}`} onClick={() => { setPlanType(t); setSelStart(null); }}>
+            <button key={t} className={`b3 ${planType === t ? 'on' : ''}`} onClick={() => { setPlanType(t); setSelStart(null); }}>
               {ACTIVITY_DEFS[t].name}
             </button>
           ))}
@@ -236,11 +237,11 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
         {planMode && <KV k="Zeitraum" v={selStart ? `${fmtDay(selStart)} – ${fmtDay(previewEnd)}${previewValid ? '' : ' (belegt)'}` : 'Starttag im Kalender wählen'} color={selStart && !previewValid ? 'var(--red)' : undefined} />}
         <div className="dbtnrow mt8">
           {!planMode ? (
-            <button className="btn btn-sm" onClick={startPlanning}>Starttag wählen</button>
+            <button className="b3" onClick={startPlanning}>Starttag wählen</button>
           ) : (
             <>
-              <button className="btn btn-sm btn-ghost" onClick={cancelPlanning}>Abbrechen</button>
-              <button className="btn btn-sm" disabled={!selStart || !previewValid} onClick={confirmPlan}>Einplanen</button>
+              <button className="b3" onClick={cancelPlanning}>Abbrechen</button>
+              <button className="b3 b3-primary" disabled={!selStart || !previewValid} onClick={confirmPlan}>Einplanen</button>
             </>
           )}
         </div>
@@ -255,7 +256,7 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
           return (
             <div key={a.id} className="dlist-row">
               <span className="grow">{ad.name} <span className="muted">· {fmtDay(a.startDate)} – {fmtDay(a.endDate)}{running ? ' · läuft' : ''}</span></span>
-              {!running && a.startDate > today && <button className="dchip" onClick={() => cancelActivity(a.id)}>Stornieren</button>}
+              {!running && a.startDate > today && <button className="b3 b3-s" onClick={() => cancelActivity(a.id)}>Stornieren</button>}
             </div>
           );
         })}

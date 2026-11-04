@@ -5,13 +5,13 @@
    ============================================================================= */
 .rb2-overlay {
   position: fixed; inset: 0; z-index: 900; display: flex; align-items: center; justify-content: center;
-  background: rgba(8, 11, 16, 0.72); backdrop-filter: blur(6px);
+  background: rgba(var(--deep-rgb), 0.72); backdrop-filter: blur(6px);
 }
 .rb2-panel {
   width: min(1640px, 94%); height: 92%;
   display: grid; grid-template-rows: auto minmax(0, 46fr) minmax(0, 54fr) auto; gap: 14px;
   padding: 18px 24px 16px; background: var(--bg-1, var(--panel)); border: 1px solid var(--border);
-  border-radius: 8px; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55); color: var(--text);
+  border-radius: 8px; box-shadow: 0 30px 80px rgba(var(--shade-rgb), 0.55); color: var(--text);
 }
 .rb2-panel svg.game-icon { width: auto; height: auto; }
 .rb2-titlebar { display: flex; align-items: center; gap: 18px; padding-bottom: 10px; border-bottom: 1px solid var(--border-soft); }
@@ -85,7 +85,6 @@
   letter-spacing: 1px; text-transform: uppercase; color: var(--text);
 }
 .rb2-dim { color: var(--text-3); font-family: var(--font-ui); font-size: 15px; font-weight: 500; letter-spacing: 0; text-transform: none; }
-.rb2-seg .seg-btn { padding: 4px 10px; display: inline-flex; align-items: center; }
 .rb2-seg .seg-btn.active .rb2-trend { color: var(--bg-1, #111); }
 
 /* Spielerentwicklung (Top 3) */
@@ -96,7 +95,7 @@
   padding: 8px 6px; background: transparent; border: none; border-bottom: 1px solid var(--border); color: var(--text);
   font: inherit; text-align: left; cursor: pointer; animation: ms-in 0.35s ease-out;
 }
-.rb2-top-row:hover { background: var(--rl-hover, rgba(255,255,255,.03)); }
+.rb2-top-row:hover { background: var(--rl-hover, rgba(var(--ink-rgb), .03)); }
 .rb2-top-rank { font-family: var(--font-display); font-size: 34px; font-weight: 600; color: var(--text-3); text-align: center; }
 .rb2-top-face { display: inline-flex; border-radius: 4px; overflow: hidden; }
 .rb2-top-txt { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
@@ -123,7 +122,7 @@
 .rb2-table tr.open td { color: var(--text-3); }
 .rb2-table tr.done { cursor: pointer; }
 .rb2-table tr.done td { animation: ms-in 0.3s ease-out; }
-.rb2-table tr.cur { background: var(--rl-me-bg, rgba(255,255,255,.04)); box-shadow: inset 4px 0 0 var(--accent); }
+.rb2-table tr.cur { background: var(--rl-me-bg, rgba(var(--ink-rgb), .04)); box-shadow: inset 4px 0 0 var(--accent); }
 .rb2-table tr.cur .rb2-c-name b { color: var(--accent); }
 .rb2-c-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rb2-c-name b { font-weight: 600; }

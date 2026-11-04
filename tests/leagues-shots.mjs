@@ -11,6 +11,7 @@ import { readFile, mkdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { chromium } from 'playwright';
 import { startNewGame } from './newgame-flow.mjs';
+import { pickOption, optionsOf } from './select3.mjs';
 
 const outDir = process.argv[2] || 'test-output/leagues';
 const prefix = process.argv[3] || 'neu';
@@ -53,13 +54,13 @@ async function go(label) {
   await page.locator(`.tn-sub-item:has-text("${label}")`).first().click();
   await page.waitForTimeout(400);
 }
-const seasonSel = () => page.locator('.cmp-select select').nth(0);
-const compSel = () => page.locator('.cmp-select select').nth(1);
+const seasonSel = () => page.locator('.cmp-select .sel3').nth(0);
+const compSel = () => page.locator('.cmp-select .sel3').nth(1);
 
 await go('Liga');
 await shot('liga');
 for (const [label, n] of [['Heim', 'liga_heim'], ['Form', 'liga_form']]) {
-  const b = page.locator(`.cmp-main .dchip:has-text("${label}")`);
+  const b = page.locator(`.cmp-main .cmp-chips button:has-text("${label}")`);
   if (await b.count()) { await b.first().click(); await shot(n); }
 }
 // Statistik-Reiter
@@ -68,50 +69,50 @@ for (const [label, n] of [['Vorlagen', 'stat_vorlagen'], ['Rot', 'stat_rot'], ['
   if (await b.count()) { await b.first().click(); await shot(n); }
 }
 // Weitere Ligen der laufenden Saison
-const opts = await compSel().locator('option').allTextContents();
+const opts = (await optionsOf(page, compSel())).map((o) => o.label);
 for (const want of ['2. Liga Nord', 'DDR-Oberliga', 'Regionalliga Nord', '3. Liga']) {
   const o = opts.find((t) => t.startsWith(want));
-  if (o) { await compSel().selectOption({ label: o }); await shot(`liga_${want.replace(/\W+/g, '_')}`); }
+  if (o) { await pickOption(page, compSel(), { label: o }); await shot(`liga_${want.replace(/\W+/g, '_')}`); }
 }
 // Historie
-await seasonSel().selectOption('1968/69');
-await compSel().selectOption('tier1');
+await pickOption(page, seasonSel(), '1968/69');
+await pickOption(page, compSel(), 'tier1');
 await shot('hist_1968_liga');
-await compSel().selectOption('ddr-oberliga');
+await pickOption(page, compSel(), 'ddr-oberliga');
 await shot('hist_1968_ddr');
-await seasonSel().selectOption('1974/75');
-await compSel().selectOption('tier2-sued');
+await pickOption(page, seasonSel(), '1974/75');
+await pickOption(page, compSel(), 'tier2-sued');
 await shot('hist_1974_2liga_sued');
-await seasonSel().selectOption('1969/70');
-await compSel().selectOption('cup');
+await pickOption(page, seasonSel(), '1969/70');
+await pickOption(page, compSel(), 'cup');
 await shot('hist_1969_pokal');
 
 // Pokal laufend
 await go('Pokal');
 await shot('pokal_baum');
-const runden = page.locator('.cmp-main .dchip:has-text("Runden")');
+const runden = page.locator('.cmp-main .cmp-chips button:has-text("Runden")');
 if (await runden.count()) { await runden.first().click(); await shot('pokal_runden'); }
-const firstRound = page.locator('.cmp-toolbar .cmp-chips').nth(1).locator('.dchip').first();
+const firstRound = page.locator('.cmp-toolbar .cmp-chips').nth(1).locator('button').first();
 if (await firstRound.count()) { await firstRound.click(); await shot('pokal_runde1'); }
 
 await go('International');
 await shot('international');
-const euroOpts = await compSel().locator('option').allTextContents();
+const euroOpts = (await optionsOf(page, compSel())).map((o) => o.label);
 const uefa = euroOpts.find((t) => t.startsWith('Europa-Pokal'));
-if (uefa) { await compSel().selectOption({ label: uefa }); await shot('international_uefa'); }
+if (uefa) { await pickOption(page, compSel(), { label: uefa }); await shot('international_uefa'); }
 // Archiv-Saison (falls vorhanden): vorletzte Saison
-const seasons = await seasonSel().locator('option').allTextContents();
+const seasons = (await optionsOf(page, seasonSel())).map((o) => o.label);
 const archived = seasons.filter((s) => !/laufend|vor Spielbeginn/.test(s));
 if (archived.length) {
-  await seasonSel().selectOption(archived[archived.length - 1].slice(0, 7));
-  await compSel().selectOption('cup');
+  await pickOption(page, seasonSel(), archived[archived.length - 1].slice(0, 7));
+  await pickOption(page, compSel(), 'cup');
   await shot('archiv_pokal');
-  await compSel().selectOption('tier1');
+  await pickOption(page, compSel(), 'tier1');
   await shot('archiv_liga');
-  const ausland = (await compSel().locator('option').allTextContents())[0];
-  const auslandOpt = page.locator('.cmp-select select').nth(1).locator('optgroup[label="Ausland"] option').first();
-  if (await auslandOpt.count()) { await compSel().selectOption(await auslandOpt.getAttribute('value')); await shot('archiv_ausland'); }
-  void ausland;
+  // Erster Eintrag der Gruppe „Ausland“ (Gruppenüberschrift in der offenen Liste)
+  await compSel().click();
+  const auslandOpt = page.locator('.sel3-pop .sel3-group:text-is("Ausland") + [role=option]').first();
+  if (await auslandOpt.count()) { await auslandOpt.click(); await shot('archiv_ausland'); } else await page.keyboard.press('Escape');
 }
 
 await browser.close();

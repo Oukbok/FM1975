@@ -1,9 +1,12 @@
 // =============================================================================
-// TRAINERKARRIERE — Zustand, Ansehen, Stationen (ohne Spielablauf)
+// MANAGERKARRIERE — Zustand, Ansehen, Stationen (ohne Spielablauf)
 // -----------------------------------------------------------------------------
 // Optionales Feld `game.career` (fehlt bei alten Spielständen → `ensureCareer`
-// legt es an, idempotent). Ablauf (Angebote, Entlassung) in game/careerGame.ts,
-// Vereinswechsel in game/careerSwitch.ts.
+// legt es an, idempotent). Du bist über Jahrzehnte Manager deines Vereins:
+// Jobangebote, Vereinswechsel und Entlassung sind abgeschaltet (Code in
+// game/careerGame.ts/careerSwitch.ts bleibt, wird aber nie ausgelöst).
+// Dazu: Cheftrainer-Historie (headCoaches.ts), Vorstandsdruck gegen den Trainer
+// (boardPressure.ts), Managerbilanz (managerLog.ts).
 // =============================================================================
 import { CoachRecord } from '../types';
 import { seasonExpectation } from '../engine/environment';
@@ -87,8 +90,47 @@ export interface CareerState {
   sacked: number;
   /** Chronik der Karriere (kurz). */
   log: CareerEvent[];
-  /** Vorstand hat eine letzte Chance gegeben (Saison). */
+  /** Vorstand hat eine letzte Chance gegeben (Saison). Alt – Entlassungen gibt es nicht mehr. */
   lastChance?: string;
+  /** Deine Cheftrainer (Angestellte) in zeitlicher Folge (game/headCoaches.ts). */
+  coaches?: HeadCoachEntry[];
+  /** Vorstandsdruck gegen den Trainer (game/boardPressure.ts). */
+  press?: BoardPressureState;
+  /** Managerbilanz über alle Jahrzehnte (game/managerLog.ts). */
+  mgr?: import('./managerLog').MgrLog;
+  /** 2 = Jobangebote/Vereinswechsel/Entlassung abgeschaltet, Altlasten bereinigt (careerGame.ts `migrateCareer`). */
+  mode?: 2;
+}
+
+/** Ein Cheftrainer unter dir (Angestellter des Vereins). */
+export interface HeadCoachEntry {
+  /** ID der Person (StaffMember.id). */
+  id: string;
+  name: string;
+  from: string;
+  to?: string;
+  end?: 'entlassen' | 'vertragsende' | 'abgeworben' | 'ruhestand' | 'gegangen';
+  /** Ligabilanz (gespeicherter Teil bis `upTo`, laufende Saison kommt live dazu). */
+  rec?: CoachRecord;
+  /** Bilanz erst ab dieser Saison gezählt (alter Spielstand). */
+  recFrom?: string;
+  /** Wie oft du ihm gegen den Vorstand den Rücken gestärkt hast. */
+  backed?: number;
+  /** Auf Druck des Vorstands entlassen. */
+  pressured?: boolean;
+}
+
+export interface BoardPressureState {
+  /** Saison der Zähler. */
+  season: string;
+  /** Druck-Nachrichten in dieser Saison. */
+  n: number;
+  /** Datum der letzten Druck-Nachricht. */
+  last?: string;
+  /** Rückendeckung, die noch bewertet wird: Abstand zum Ziel und Vertrauen zum Zeitpunkt. */
+  backed?: { coachId: string; date: string; gap: number; conf: number };
+  /** Saison, in der der Vorstand das Fehlen eines Cheftrainers angemahnt hat. */
+  noCoach?: string;
 }
 
 const BG_BONUS: Record<string, number> = { legend: 8, ex_pro: 3, tactician: 0, rookie: -5 };
@@ -233,6 +275,6 @@ export function careerLog(g: Game, text: string): void {
 
 /** Wörtliche Einordnung des Ansehens. */
 export function repLabel(rep: number): string {
-  return rep >= 85 ? 'Weltklasse-Trainer' : rep >= 75 ? 'Spitzentrainer' : rep >= 65 ? 'Gefragter Bundesliga-Trainer'
-    : rep >= 55 ? 'Etablierter Trainer' : rep >= 45 ? 'Solider Trainer' : 'Unbeschriebenes Blatt';
+  return rep >= 85 ? 'Legende der Branche' : rep >= 75 ? 'Spitzenmanager' : rep >= 65 ? 'Gefragter Manager'
+    : rep >= 55 ? 'Etablierter Manager' : rep >= 45 ? 'Solider Manager' : 'Unbeschriebenes Blatt';
 }

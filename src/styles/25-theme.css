@@ -27,4 +27,4 @@ h1, h2 {
 .hd-nav-item, .tn-sub-item, .dxh-title, .page-head-title, .hd-continue-lbl, .btn-primary { text-transform: uppercase; font-weight: 600; }
 .dxh-title, .page-head-title { letter-spacing: 1.5px; }
 /* Akzentflächen: dunkle, warme Schrift wie „Neues Spiel“ auf dem Startbildschirm */
-.btn-primary, .menu-btn.primary { color: var(--accent-ink); }
+.btn-primary, .menu-btn.primary { color: var(--primary-ink); }

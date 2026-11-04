@@ -1,20 +1,15 @@
 // =============================================================================
-// TRAINERKARRIERE IM SPIELABLAUF — Jobangebote, Entlassung, Saisonbilanz
+// MANAGERKARRIERE IM SPIELABLAUF — Ansehen, Saisonbilanz, Vorstandsdruck
 // -----------------------------------------------------------------------------
-// • Ansehen (0–100, game/careerState.ts) steigt mit Über-Erfüllung des Saisonziels,
-//   Titeln und Aufstiegen, sinkt bei Misserfolg und Entlassung.
-// • Angebote zum Saisonende (Stichtage 20.1., 10.4., 10.5., 28.5.): größere
-//   Vereine aus 1. und 2. Liga, deren Größe zu deinem Ansehen passt. Läuft deine
-//   Saison besser als erwartet, melden sie sich häufiger.
-// • Sofort-Angebote: Entlässt ein größerer Verein deiner Liga mitten in der Saison
-//   seinen Trainer, fragt er manchmal zuerst bei dir an.
-// • Entscheidung per Nachricht (Weiter-Sperre über pendingDecisions): annehmen,
-//   nachverhandeln (Gehalt/Budget, Risiko: Rückzug) oder ablehnen.
-// • Nur im Karriere-Modus (Assistent „Neues Spiel“ › Modus) kann dich der
-//   Vorstand entlassen: mitten in der Saison nach einem Ultimatum (dann
-//   Feuerwehr-Angebote aus deiner Liga) oder zum Saisonende (Angebote kleinerer
-//   Vereine). Eine Wahl ist dann Pflicht.
-// Ausland und Nationalmannschaft: nicht möglich (nur deutsche Ligen haben volle Kader).
+// Wunsch Pascal: Du bist über Jahrzehnte Manager deines Vereins. Es gibt keine
+// Jobangebote, keinen Vereinswechsel und keine Entlassung mehr (auch nicht im
+// Karriere-Modus). Der Code für Angebote/Wechsel/Entlassung unten bleibt
+// erhalten, wird aber nie ausgelöst; `migrateCareer` räumt offene Angebote,
+// Ultimaten und zugesagte Wechsel alter Spielstände ab (idempotent).
+// Täglich (`careerDaily`): Cheftrainer-Historie abgleichen (headCoaches.ts),
+// Vorstandsdruck gegen den Trainer (boardPressure.ts).
+// Saisonwechsel (`careerSeasonStart`): Ansehen, Trainerbilanz, Managerbilanz
+// (managerLog.ts).
 // =============================================================================
 import { CalendarEngine } from '../engine/calendar';
 import { yearOf } from '../engine/economy';
@@ -29,6 +24,10 @@ import {
   managerWageFor, playerTier, tierOf,
 } from './careerState';
 import { careerSeasonSwitchStart, careerSeasonSwitchFinish, switchClubNow } from './careerSwitch';
+import { addRecord, leagueRecordSince } from './coachRecord';
+import { boardPressureDaily } from './boardPressure';
+import { headCoachSeasonEnd, syncHeadCoach } from './headCoaches';
+import { ensureMgr, mgrSeasonEnd } from './managerLog';
 import { Game } from './state';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -309,14 +308,33 @@ function boardCheck(g: Game, today: string): void {
 // -----------------------------------------------------------------------------
 // Täglicher Einstieg und Saisonwechsel
 // -----------------------------------------------------------------------------
-export function careerDaily(g: Game, today: string, rng: () => number = Math.random): void {
+/**
+ * Alte Spielstände: offene Jobangebote, Entlassungs-Wahl, Ultimatum und zugesagten Wechsel
+ * abräumen (Vereinswechsel und Entlassung gibt es nicht mehr). Idempotent.
+ */
+export function migrateCareer(g: Game): void {
+  for (const m of g.messages) {
+    const ref = m.eventRef;
+    if (!ref || ref.resolved || (ref.type !== OFFER_TYPE && ref.type !== SACK_TYPE)) continue;
+    ref.resolved = 'verfallen';
+    m.actionRequired = false;
+    m.resultText = 'Hinfällig – du bleibst Manager deines Vereins. Vereinswechsel und Entlassungen gibt es nicht mehr.';
+  }
+  const c = g.career;
+  if (!c) return;
+  if (c.offers?.length) c.offers = [];
+  c.pendingMove = undefined;
+  c.lastChance = undefined;
+  c.mode = 2;
+}
+
+export function careerDaily(g: Game, today: string, _rng: () => number = Math.random): void {
   if (!active(g) || !g.clubs[g.managedClubId]) return;
   const c = ensureCareer(g);
-  // Verfallene Angebote aufräumen (Nachricht wird über autoResolveEvents entschieden).
-  c.offers = c.offers.filter((o) => o.deadline >= today || g.messages.some((m) => m.eventRef?.data?.offer === o.id && !m.eventRef.resolved));
-  boardCheck(g, today);
-  sackedTodayOffer(g, today, rng);
-  if (OFFER_DAYS.has(today.slice(5))) rollJobOffers(g, today, rng);
+  if (c.mode !== 2 || c.offers.length || c.pendingMove) migrateCareer(g);
+  syncHeadCoach(g);
+  ensureMgr(g);
+  boardPressureDaily(g, today);
 }
 
 /** Saisonbilanz für dein Ansehen (startNextSeason, Endtabelle liegt noch vor). */
@@ -327,6 +345,8 @@ export function careerSeasonReview(g: Game): CareerState | null {
   const own = g.clubs[g.managedClubId];
   const o = ownPos(g);
   const tier = playerTier(g);
+  // Ligabilanz der Station fortschreiben (vorher ging sie mit dem Spielplan verloren).
+  st.rec = addRecord(st.rec, { ...leagueRecordSince(g, st.clubId, st.from, st.rec?.upTo), upTo: g.calendar.currentDate });
   const titles: string[] = [];
   if (tier === 1 && o.pos === 1) titles.push('Meisterschaft');
   if (g.cup?.winnerClubId === own.id) titles.push('Pokalsieg');
@@ -343,12 +363,18 @@ export function careerSeasonReview(g: Game): CareerState | null {
   return c;
 }
 
-/** Aufruf aus startNextSeason: Bilanz → ggf. Wechsel (Start). */
+/** Aufruf aus startNextSeason: Ansehen, Trainer- und Managerbilanz. Kein Vereinswechsel mehr (immer null). */
 export function careerSeasonStart(g: Game): ReturnType<typeof careerSeasonSwitchStart> {
-  if (!g.career && !isCareerMode(g) && !g.clubs[g.managedClubId]) return null;
+  if (!g.clubs[g.managedClubId]) return null;
+  if (g.career) migrateCareer(g);
+  ensureMgr(g); // vor der Saisonbilanz anlegen, damit eine Rekonstruktion die laufende Saison nicht doppelt zählt
   careerSeasonReview(g);
-  if (g.career) resolveOtherOffers(g); // offene Angebote verfallen mit dem Saisonwechsel
-  return careerSeasonSwitchStart(g);
+  headCoachSeasonEnd(g);
+  mgrSeasonEnd(g);
+  return null;
 }
 
+/** Nicht mehr genutzt (kein Vereinswechsel); bleibt für die Schnittstelle in season.ts. */
 export { careerSeasonSwitchFinish };
+// Alte Abläufe (Angebote, Sofortwechsel, Entlassung) – werden nicht mehr ausgelöst.
+export const _legacyCareer = { boardCheck, sackedTodayOffer, rollJobOffers, switchClubNow, careerSeasonSwitchStart };

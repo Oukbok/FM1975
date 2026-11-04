@@ -1,3 +1,4 @@
+import { rescueLegends } from './legendsGame';
 import { careerSeasonStart, careerSeasonSwitchFinish } from './careerGame';
 import { recordSeasonBriefing } from './seasonBriefing';
 import { recordBudgetPlan } from './budgetPlan';
@@ -249,8 +250,7 @@ export function startNextSeason(g: Game): void {
   recordSeasonEnd(g, oldSeason, [...current, ...(isReunify ? [] : ddrDivs.map((d) => ({ id: d.id, tier: d.tier, group: d.group, name: d.name, orderedIds: finalOrder(g, d.id) })))]);
   // Liga-Archiv: Tabellen, Pokalrunden, Bestenlisten (game/leagueArchive.ts).
   archiveSeasonEnd(g, oldSeason);
-  // Trainerkarriere: Saisonbilanz deines Ansehens, angenommenes Angebot wird wirksam
-  // (neue Vereins-ID vor Auf-/Abstieg → dessen Liga wird Spielerliga, game/careerSwitch.ts).
+  // Managerkarriere: Ansehen, Trainer- und Managerbilanz (kein Vereinswechsel mehr; careerSw ist immer null)
   const careerSw = careerSeasonStart(g);
 
   // --- 3) Auf-/Abstieg + evtl. Ligareform datengetrieben berechnen ---
@@ -310,6 +310,8 @@ export function startNextSeason(g: Game): void {
       }
     }
   }
+  // Ausnahmetalente bleiben in der Spielerliga (game/legendsGame.ts).
+  rescueLegends(g, playerSet, seasonStart);
   // 5b) Voll → Sim für volle Vereine, die die Spielerliga verlassen (Amateur-
   //     vereine des Pokals bleiben unangetastet).
   for (const c of Object.values(g.clubs)) {

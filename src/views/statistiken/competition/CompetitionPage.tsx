@@ -18,6 +18,8 @@ import { StatsBox } from './StatsBox';
 import { EuropeBox } from '../EuropeBox';
 import { compClubName } from '../../../game/competitionView';
 import { inEuroCup } from '../../../game/euroFixture';
+import Icon from '../../../components/Icon';
+import Select from '../../../ui/Select';
 
 export type CompStart = 'league' | 'cup' | 'euro';
 
@@ -60,18 +62,18 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
 
   const header = (
     <span className="cmp-select">
-      <button className="dchip" disabled={sIdx <= 0} onClick={() => step(-1)} title="Vorherige Saison">‹</button>
-      <select className="dselect" value={season} onChange={(e) => setSeason(e.target.value)} title="Saison">
+      <button className="b3 b3-icon" disabled={sIdx <= 0} onClick={() => step(-1)} title="Vorherige Saison" aria-label="Vorherige Saison"><Icon name="navPrev" size={18} /></button>
+      <Select className="dselect" width={200} value={season} onChange={(v) => setSeason(v)} title="Saison">
         {seasons.map((s) => <option key={s.season} value={s.season}>{s.season}{s.source === 'live' ? ' (laufend)' : s.source === 'history' ? ' (vor Spielbeginn)' : ''}</option>)}
-      </select>
-      <button className="dchip" disabled={sIdx >= seasons.length - 1} onClick={() => step(1)} title="Nächste Saison">›</button>
-      <select className="dselect" value={effKey} onChange={(e) => setKey(e.target.value)} title="Wettbewerb">
+      </Select>
+      <button className="b3 b3-icon" disabled={sIdx >= seasons.length - 1} onClick={() => step(1)} title="Nächste Saison" aria-label="Nächste Saison"><Icon name="navNext" size={18} /></button>
+      <Select className="dselect" width={250} value={effKey} onChange={(v) => setKey(v)} title="Wettbewerb">
         {sections.map((sec) => (
           <optgroup key={sec} label={sec}>
             {opts.filter((o) => o.section === sec).map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
           </optgroup>
         ))}
-      </select>
+      </Select>
     </span>
   );
 

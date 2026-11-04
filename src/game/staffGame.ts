@@ -18,6 +18,7 @@ import {
 import { skillsFromQuality } from '../engine/staffSkills';
 import { aiStaffExtras, staffWorldSeason } from './staffWorld';
 import { ownStaffSeason } from './trainerTeam';
+import { closeHeadCoach, syncHeadCoach } from './headCoaches';
 import { planDevFactor } from './trainingWeek';
 
 export const MAX_FOERDER = 3;
@@ -97,9 +98,10 @@ export function candidatesFor(g: Game, roleId: string): StaffMember[] {
 export function hireStaff(g: Game, cand: StaffMember): string {
   const staff = ensureStaff(g);
   const old = staff.find((m) => m.roleId === cand.roleId);
-  if (old) staff.splice(staff.indexOf(old), 1);
+  if (old) { closeHeadCoach(g, old.id, 'entlassen'); staff.splice(staff.indexOf(old), 1); }
   staff.push({ ...cand, hired: g.calendar.currentDate });
   g.hiredStaff = staff.map((m) => m.roleId);
+  syncHeadCoach(g);
   const role = STAFF_BY_ID[cand.roleId];
   return `${cand.name} ist neuer ${role?.name ?? 'Mitarbeiter'}${old ? ` (ersetzt ${old.name})` : ''}.`;
 }
@@ -113,6 +115,7 @@ export function fireStaff(g: Game, memberId: string): string {
   const club = g.clubs[g.managedClubId];
   const sev = memberMonthlySalary(m, scale) * 2;
   if (club) book(club.finances, g.calendar.currentDate, -sev, 'staff_wages', `Abfindung ${m.name}`, true);
+  closeHeadCoach(g, m.id, 'entlassen');
   staff.splice(staff.indexOf(m), 1);
   g.hiredStaff = staff.map((x) => x.roleId);
   return `${m.name} wurde entlassen (Abfindung bezahlt).`;
@@ -195,6 +198,7 @@ export function staffSeasonChange(g: Game, date: string): void {
   const rivals = Object.values(g.clubs).filter((c) => c.id !== g.managedClubId && !c.id.startsWith('am') && !c.id.startsWith('eu_') && !c.id.startsWith('w_') && (c.reputation ?? 0) >= (club?.reputation ?? 60));
   const pick = () => (rivals.length ? rivals[Math.floor(Math.random() * rivals.length)].name : 'einem Verein aus dem Ausland');
   const res = staffSeasonTurnover(staff, club?.reputation ?? 60, yearOf(date), Math.random, pick);
+  for (const l of res.left) closeHeadCoach(g, l.m.id, l.reason.startsWith('geht in den Ruhestand') ? 'ruhestand' : 'abgeworben', date);
   g.hiredStaff = staff.map((m) => m.roleId);
   // Trainerteam: Lernen/Vertragsenden des eigenen Stabs, dann der ganze Arbeitsmarkt.
   ownStaffSeason(g, date);

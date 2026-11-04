@@ -1,0 +1,275 @@
+/* =============================================================================
+   THEMES (Wunsch Pascal: 10 Styles zum Ausprobieren, Auswahl oben rechts)
+   -----------------------------------------------------------------------------
+   `data-theme` + `data-tone` am <html> (ui/themes.ts). Ein Theme setzt NUR Tokens
+   aus 00-base.css :root – keine Regeln für einzelne Bereiche. „Abendhimmel“ =
+   :root ohne Überschreibung. Helle Themes: gemeinsamer Block [data-tone="light"],
+   Bühnen (Auslosung, Halle, Gala, Auftakt, Vorschau, Szenen, Startmenü) bleiben
+   dunkel (Block am Ende). Neue Farben immer als Token in 00-base.css anlegen und
+   hier für helle Themes mitsetzen.
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   2 · Abendhimmel ruhig – Auswahl über Helligkeit, Bernstein nur am Hauptknopf
+   --------------------------------------------------------------------------- */
+:root[data-theme="ruhig"] {
+  --icon-accent: #c3cad4;
+  --accent: #dfe4ea;
+  --accent-dim: #aeb7c3;
+  --accent-ink: #12151a;
+  --accent-rgb: 223, 228, 234;
+  --accent-glow: rgba(223, 228, 234, 0.14);
+  --accent-soft: rgba(223, 228, 234, 0.07);
+  --primary: #f2a541;
+  --primary-2: #c27a1e;
+  --primary-ink: #241405;
+  --primary-glow: rgba(242, 165, 65, 0.22);
+}
+
+/* ---------------------------------------------------------------------------
+   3 · Schiefer kühl – blaugraue Flächen, blaugrauer Akzent
+   --------------------------------------------------------------------------- */
+:root[data-theme="schiefer"] {
+  --icon-accent: var(--accent);
+  --bg: #0d1117; --bg-2: #121821; --panel: #18202b; --panel-2: #1f2834; --panel-hover: #26303d; --elevated: #27313e;
+  --bg-rgb: 13, 17, 23; --panel-rgb: 26, 34, 46;
+  --border: #2c3644; --border-soft: #212a36; --border-strong: #3c4858;
+  --text: #e8eef5; --text-2: #a9b6c6; --text-3: #7a8799; --text-4: #586475;
+  --accent: #8eb0d6; --accent-dim: #6386ad; --accent-ink: #0b1420;
+  --accent-rgb: 142, 176, 214; --accent-glow: rgba(142, 176, 214, 0.22); --accent-soft: rgba(142, 176, 214, 0.10);
+  --primary-hover: #a9c4e2; --primary-run: #c9d6e4; --primary-run-ink: #18222e;
+  --sel-bg: rgba(142, 176, 214, 0.16); --sel-border: rgba(142, 176, 214, 0.55); --sel-mark: var(--accent);
+  --pop-bg: #1b2430;
+  --photo-filter: saturate(0.45) contrast(1.04) hue-rotate(8deg);
+  --photo-filter-zentrale: saturate(0.3) contrast(1.06) brightness(0.88);
+}
+
+/* ---------------------------------------------------------------------------
+   4 · Stadion-Nacht – dunkel mit gedämpftem Rasengrün
+   --------------------------------------------------------------------------- */
+:root[data-theme="stadionnacht"] {
+  --icon-accent: var(--accent);
+  --bg: #0a0f0d; --bg-2: #0f1613; --panel: #151d19; --panel-2: #1b2520; --panel-hover: #222d27; --elevated: #232e28;
+  --bg-rgb: 10, 15, 13; --panel-rgb: 22, 30, 26;
+  --border: #29352f; --border-soft: #1f2924; --border-strong: #3a4840;
+  --text: #ebf2ee; --text-2: #a8b8af; --text-3: #788a80; --text-4: #56665d;
+  --accent: #7cc39a; --accent-dim: #4f9a70; --accent-ink: #07160e;
+  --accent-rgb: 124, 195, 154; --accent-glow: rgba(124, 195, 154, 0.22); --accent-soft: rgba(124, 195, 154, 0.10);
+  --primary-hover: #98d2b0; --primary-run: #cfe3d6; --primary-run-ink: #14231a;
+  --sel-bg: rgba(124, 195, 154, 0.14); --sel-border: rgba(124, 195, 154, 0.5); --sel-mark: var(--accent);
+  --pop-bg: #18211c;
+  --photo-filter: saturate(0.6) contrast(1.05) brightness(0.85);
+  --photo-filter-zentrale: saturate(0.35) contrast(1.06) brightness(0.8);
+}
+
+/* ---------------------------------------------------------------------------
+   8 · Retro 1975 – Anthrazit (neutral, kein Sepia), Senfgelb nur als Akzent,
+       eckige Knöpfe wie Anzeigetafeln
+   --------------------------------------------------------------------------- */
+:root[data-theme="retro"] {
+  --icon-accent: var(--accent);
+  --bg: #121212; --bg-2: #171717; --panel: #1e1e1e; --panel-2: #262626; --panel-hover: #2d2d2d; --elevated: #2e2e2e;
+  --bg-rgb: 18, 18, 18; --panel-rgb: 32, 32, 32;
+  --border: #353535; --border-soft: #282828; --border-strong: #4a4a4a;
+  --text: #f1f1ee; --text-2: #b6b6b2; --text-3: #85857f; --text-4: #5f5f5a;
+  --accent: #d9a822; --accent-dim: #a87f12; --accent-ink: #1a1400;
+  --accent-rgb: 217, 168, 34; --accent-glow: rgba(217, 168, 34, 0.2); --accent-soft: rgba(217, 168, 34, 0.09);
+  --primary-hover: #e6bd4c; --primary-run: #e8e2cc; --primary-run-ink: #2a2614;
+  --sel-mark: var(--accent);
+  --btn-radius: 2px; --radius: 4px; --radius-sm: 3px;
+  --pop-bg: #222222;
+  --pos-gk: #3fa8a0; --pos-def: #6aa85a; --pos-mid: #6a8fc8; --pos-att: #cf5a4f;
+  --photo-filter: grayscale(1) contrast(1.1) brightness(0.8);
+  --photo-filter-zentrale: grayscale(1) contrast(1.1) brightness(0.72);
+}
+
+/* ---------------------------------------------------------------------------
+   9 · Modern 2025 – fast schwarz, Neon sparsam
+   --------------------------------------------------------------------------- */
+:root[data-theme="modern"] {
+  --icon-accent: var(--accent);
+  --bg: #060708; --bg-2: #0b0c0e; --panel: #111316; --panel-2: #171a1e; --panel-hover: #1d2025; --elevated: #1e2126;
+  --bg-rgb: 6, 7, 8; --panel-rgb: 17, 19, 22;
+  --border: #23262b; --border-soft: #181b1f; --border-strong: #353940;
+  --text: #f4f6f8; --text-2: #a7adb5; --text-3: #7d848e; --text-4: #555b64;
+  --accent: #c8f53c; --accent-dim: #94bd1c; --accent-ink: #0d1400;
+  --accent-rgb: 200, 245, 60; --accent-glow: rgba(200, 245, 60, 0.18); --accent-soft: rgba(200, 245, 60, 0.07);
+  --primary-hover: #d8fa6e; --primary-run: #e5e9ee; --primary-run-ink: #101317;
+  --sel-bg: rgba(255, 255, 255, 0.10); --sel-border: rgba(200, 245, 60, 0.6); --sel-mark: var(--accent);
+  --radius: 10px; --btn-radius: 8px;
+  --pop-bg: #15171b;
+  --photo-opacity: 0.35;
+  --photo-filter: grayscale(1) brightness(0.6);
+  --photo-filter-zentrale: grayscale(1) brightness(0.55);
+}
+
+/* ---------------------------------------------------------------------------
+   10 · Graphit monochrom – ganz ohne Farbakzent (Signale Grün/Rot bleiben)
+   --------------------------------------------------------------------------- */
+:root[data-theme="graphit"] {
+  --icon-accent: #a9adb3;
+  --bg: #101112; --bg-2: #151617; --panel: #1b1c1e; --panel-2: #222325; --panel-hover: #292a2d; --elevated: #2a2b2e;
+  --bg-rgb: 16, 17, 18; --panel-rgb: 29, 30, 32;
+  --border: #323336; --border-soft: #262729; --border-strong: #46474b;
+  --text: #eeeff0; --text-2: #b0b2b6; --text-3: #86888c; --text-4: #5f6165;
+  --accent: #e4e6e9; --accent-dim: #b5b8bd; --accent-ink: #121315;
+  --accent-rgb: 228, 230, 233; --accent-glow: rgba(228, 230, 233, 0.12); --accent-soft: rgba(228, 230, 233, 0.06);
+  --primary: #e4e6e9; --primary-2: #c4c7cc; --primary-hover: #ffffff; --primary-ink: #121315;
+  --primary-glow: rgba(228, 230, 233, 0.12); --primary-run: #9fa3a9; --primary-run-ink: #121315;
+  --pos-gk: #9aa0a6; --pos-def: #9aa0a6; --pos-mid: #9aa0a6; --pos-att: #9aa0a6;
+  --pos-key: #c9ccd1; --pos-key-2: #8d9198;
+  --trc-fit: #9a9da2; --trc-tech: #9a9da2; --trc-tac: #9a9da2; --trc-misc: #9a9da2;
+  --cal-cup: #a7aab0; --cal-euro: #c9ccd1; --cal-winter: #8d9198;
+  --pop-bg: #1f2022;
+  --photo-filter: grayscale(1) contrast(1.05) brightness(0.8);
+  --photo-filter-zentrale: grayscale(1) contrast(1.05) brightness(0.75);
+}
+
+/* ===========================================================================
+   HELLE THEMES – gemeinsame Grundlage
+   =========================================================================== */
+:root[data-tone="light"] {
+  color-scheme: light;
+  --ink-rgb: 20, 28, 40;           /* „Aufhellung“ wird in hell zur leichten Abdunkelung */
+  --shade-rgb: 30, 40, 55;
+  --deep-rgb: 10, 14, 20;
+  --text-hi: #0d1117;
+  --icon-base: #3a4350; --icon-knock: #ffffff;
+  --face-bg-1: #c9d3df; --face-bg-2: #9fadbd;
+  /* Werte-Skala: dunkel = gut (umgekehrt zum dunklen Grund) */
+  --q-1: #10151c; --q-2: #39424e; --q-3: #67717e; --q-4: #97a0ab;
+  --bar-track: rgba(20, 28, 40, 0.08);
+  --bar-fill: #7d8794; --bar-fill-hi: #3b4450;
+  /* Signale auf hellem Grund dunkler */
+  --green: #2d8a57; --yellow: #a77d12; --orange: #b85f2c; --red: #c23845; --gold: #a07a22;
+  --red-rgb: 194, 56, 69; --green-rgb: 45, 138, 87; --yellow-rgb: 167, 125, 18;
+  --st-5: #1f7a45; --st-4: #4f9a3c; --st-3: #b08c12; --st-2: #c46a28; --st-1: #c23845;
+  --fg-5: #1a7a41; --fg-4: #2f9452; --fg-3: #5aa964; --fg-2: #8fb98a; --fg-1: #9aa59e;
+  --danger-1: #b08c12; --danger-2: #c46a28; --danger-3: #c23845;
+  --fam-1: #2e9a62; --fam-2: #6cbf90; --fam-3: #b9dcc8;
+  --pos-key: #2f6fd0; --pos-key-2: #7aa5e6;
+  --pos-gk: #138a82; --pos-def: #2f8a45; --pos-mid: #2f63b8; --pos-att: #b8403c;
+  --pos-mix: 100%;
+  --trc-fit: #b05a68; --trc-tech: #5e8a50; --trc-tac: #4e72aa; --trc-misc: #6d7886;
+  --row-xi: rgba(46, 140, 80, 0.10); --row-xi-edge: #2e8c50;
+  --row-bench: rgba(47, 100, 190, 0.09); --row-bench-edge: #2f64be;
+  --cal-liga: #5b6573; --cal-cup: #a07a22; --cal-euro: #2f64be; --cal-winter: #2f8a7a; --cal-info: #97a0ab;
+  --turf: #3f7a55; --turf-line: rgba(255, 255, 255, 0.7);
+  --shadow: 0 2px 10px rgba(20, 30, 45, 0.10);
+  --shadow-lg: 0 12px 40px rgba(20, 30, 45, 0.18);
+  /* Knöpfe/Auswahl */
+  --btn-bg: rgba(20, 28, 40, 0.04);
+  --btn-bg-hover: rgba(20, 28, 40, 0.08);
+  --btn-bg-press: rgba(20, 28, 40, 0.12);
+  --btn-border: rgba(20, 28, 40, 0.16);
+  --btn-border-hover: rgba(20, 28, 40, 0.32);
+  --sel-bg: rgba(20, 28, 40, 0.09);
+  --sel-border: rgba(20, 28, 40, 0.55);
+  --focus-ring: rgba(40, 90, 180, 0.6);
+  --pop-bg: #ffffff;
+  --pop-border: rgba(20, 28, 40, 0.16);
+  --pop-hover: rgba(20, 28, 40, 0.06);
+  --today-bg: #1a222d; --today-text: #ffffff;
+  --primary-run: #2b3440; --primary-run-ink: #ffffff;
+  /* Hintergrundfoto nur als blasser Hauch */
+  --photo-veil: linear-gradient(180deg, rgba(244, 246, 249, 0.86), rgba(244, 246, 249, 0.92));
+  --photo-veil-zentrale: linear-gradient(180deg, rgba(244, 246, 249, 0.86), rgba(244, 246, 249, 0.92));
+  --photo-filter: grayscale(1) contrast(0.9);
+  --photo-filter-zentrale: grayscale(1) contrast(0.9);
+  --photo-opacity: 1;
+}
+
+/* ---------------------------------------------------------------------------
+   5 · Papier hell – warmes Weiß (ohne Sepia), Tinten-Indigo
+   --------------------------------------------------------------------------- */
+:root[data-theme="papier"] {
+  --icon-accent: var(--accent);
+  --bg: #efeee9; --bg-2: #e7e6e0; --panel: #fbfaf7; --panel-2: #f2f1ec; --panel-hover: #ebeae4; --elevated: #ffffff;
+  --bg-rgb: 239, 238, 233; --panel-rgb: 251, 250, 247;
+  --border: #d6d4cc; --border-soft: #e4e2db; --border-strong: #bcb9b0;
+  --text: #1c1f24; --text-2: #4a4f57; --text-3: #6f747c; --text-4: #9a9ea5;
+  --accent: #3d4a9e; --accent-dim: #2e3a84; --accent-ink: #ffffff;
+  --accent-rgb: 61, 74, 158; --accent-glow: rgba(61, 74, 158, 0.2); --accent-soft: rgba(61, 74, 158, 0.08);
+  --primary-hover: #4b59b3;
+  --sel-mark: var(--accent);
+  --photo-veil: linear-gradient(180deg, rgba(239, 238, 233, 0.9), rgba(239, 238, 233, 0.95));
+  --photo-veil-zentrale: linear-gradient(180deg, rgba(239, 238, 233, 0.9), rgba(239, 238, 233, 0.95));
+}
+
+/* ---------------------------------------------------------------------------
+   6 · Hell kühl – Weiß/Hellgrau, blauer Akzent
+   --------------------------------------------------------------------------- */
+:root[data-theme="hellkuehl"] {
+  --icon-accent: var(--accent);
+  --bg: #e7ebf0; --bg-2: #dde3ea; --panel: #ffffff; --panel-2: #f3f5f8; --panel-hover: #eaeef3; --elevated: #ffffff;
+  --bg-rgb: 231, 235, 240; --panel-rgb: 255, 255, 255;
+  --border: #cfd6df; --border-soft: #e0e5eb; --border-strong: #b3bcc8;
+  --text: #121821; --text-2: #3f4957; --text-3: #667180; --text-4: #96a0ad;
+  --accent: #2563c9; --accent-dim: #1b4fa6; --accent-ink: #ffffff;
+  --accent-rgb: 37, 99, 201; --accent-glow: rgba(37, 99, 201, 0.2); --accent-soft: rgba(37, 99, 201, 0.08);
+  --primary-hover: #3672d6;
+  --sel-bg: rgba(37, 99, 201, 0.09); --sel-border: rgba(37, 99, 201, 0.6); --sel-text: #0f2d63;
+  --sel-mark: var(--accent);
+}
+
+/* ---------------------------------------------------------------------------
+   7 · Hell Kontrast – sehr klar: Schwarz auf Weiß, ein Akzent
+   --------------------------------------------------------------------------- */
+:root[data-theme="kontrast"] {
+  --icon-accent: var(--accent);
+  --bg: #ededed; --bg-2: #e2e2e2; --panel: #ffffff; --panel-2: #f5f5f5; --panel-hover: #ebebeb; --elevated: #ffffff;
+  --bg-rgb: 237, 237, 237; --panel-rgb: 255, 255, 255;
+  --border: #9a9a9a; --border-soft: #cfcfcf; --border-strong: #5a5a5a;
+  --text: #000000; --text-2: #262626; --text-3: #4a4a4a; --text-4: #727272;
+  --accent: #0044cc; --accent-dim: #00339a; --accent-ink: #ffffff;
+  --accent-rgb: 0, 68, 204; --accent-glow: rgba(0, 68, 204, 0.2); --accent-soft: rgba(0, 68, 204, 0.08);
+  --primary: #000000; --primary-2: #000000; --primary-hover: #262626; --primary-ink: #ffffff; --primary-glow: rgba(0, 0, 0, 0.15);
+  --primary-run: #0044cc; --primary-run-ink: #ffffff;
+  --q-1: #000000; --q-2: #262626; --q-3: #555555; --q-4: #8a8a8a;
+  --btn-border: rgba(0, 0, 0, 0.45); --btn-border-hover: rgba(0, 0, 0, 0.8);
+  --sel-bg: #000000; --sel-border: #000000; --sel-text: #ffffff;
+  --photo-opacity: 0;
+}
+
+/* ===========================================================================
+   Bühnen bleiben in hellen Themes dunkel: Auslosung, Halle, Gala, Auftakt,
+   Vorschau „Nächstes Spiel“, Szenen (Stadion), Startmenü, Bewertungs-Show.
+   Hier die dunklen Grundtokens von :root zurücksetzen.
+   =========================================================================== */
+:root[data-tone="light"] :is(.dr-root, .ix-root, .gb-root, .si-stage, .pm-root, .scene-page, .shell-scene, .menu-bg, .st-start, .rb2-panel, .cr-root) {
+  color-scheme: dark;
+  --bg: #0c0f15; --bg-2: #13161c; --panel: #1a1d23; --panel-2: #22252b; --panel-hover: #292c32; --elevated: #2a2d33;
+  --bg-rgb: 12, 15, 21; --panel-rgb: 28, 32, 40; --ink-rgb: 255, 255, 255; --shade-rgb: 0, 0, 0;
+  --border: #303339; --border-soft: #24272d; --border-strong: #45484e;
+  --text: #eef1f5; --text-2: #aeb7c3; --text-3: #7c8693; --text-4: #59626e; --text-hi: #ffffff;
+  --icon-base: #f2eeea; --icon-knock: #14171d;
+  --q-1: #f3f5f8; --q-2: #c3cad4; --q-3: #8d97a4; --q-4: #626b77;
+  --bar-track: rgba(255, 255, 255, 0.06); --bar-fill: #8a94a1; --bar-fill-hi: #c9d0d9;
+  --green: #5bbf8b; --yellow: #d7b45e; --orange: #d98a5b; --red: #e0646f; --gold: #d9b26a;
+  --pos-mix: 72%;
+  --pos-gk: #3fb3aa; --pos-def: #5aae6c; --pos-mid: #5d8fd8; --pos-att: #d7625f;
+  --btn-bg: rgba(255, 255, 255, 0.045); --btn-bg-hover: rgba(255, 255, 255, 0.09); --btn-bg-press: rgba(255, 255, 255, 0.12);
+  --btn-border: rgba(255, 255, 255, 0.10); --btn-border-hover: rgba(255, 255, 255, 0.22);
+  --sel-bg: rgba(255, 255, 255, 0.14); --sel-border: rgba(255, 255, 255, 0.42); --sel-text: #eef1f5;
+  --pop-bg: #1e2228; --pop-border: rgba(255, 255, 255, 0.14); --pop-hover: rgba(255, 255, 255, 0.08);
+  --face-bg-1: #1f2a3a; --face-bg-2: #0f141c;
+  --shadow: 0 6px 24px rgba(0, 0, 0, 0.45); --shadow-lg: 0 18px 55px rgba(0, 0, 0, 0.6);
+}
+
+/* Halbtransparente Modal-Abdunkelung in hell etwas leichter */
+:root[data-tone="light"] .modal-overlay { background: rgba(30, 38, 50, 0.45); }
+
+/* ---------------------------------------------------------------------------
+   Auswahlliste der Styles (ui/ThemePicker.tsx): Farbfelder je Eintrag
+   --------------------------------------------------------------------------- */
+.thm-opt { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+.thm-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.thm-sw { display: inline-flex; flex: none; min-width: 30px; border: 1px solid var(--border-strong); border-radius: 3px; overflow: hidden; }
+.thm-sw > span { flex: none; width: 9px; height: 18px; }
+.thm-sw > span:last-child { width: 12px; }
+.hd-right > .thm-pick { flex: 0 0 auto; }
+/* In der Kopfleiste nur das Farbfeld (feste 64 px); die offene Liste zeigt die Namen. */
+.hd-right > .thm-pick .thm-name { display: none; }
+.hd-right > .thm-pick .thm-sw > span { width: 6px; height: 22px; }
+.hd-right > .thm-pick { margin-right: -8px; }
+.hd-right > .thm-pick .thm-sw { min-width: 0; }

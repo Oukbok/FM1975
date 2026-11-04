@@ -4,7 +4,7 @@
 // einen anderen Slot = Positionstausch, Bankspieler auf einen Slot = Wechsel.
 // Ein Klick ohne Ziehen wählt aus (wie in der Liste).
 // =============================================================================
-import { useRef, useState, type PointerEvent as RPE } from 'react';
+import { useEffect, useRef, useState, type PointerEvent as RPE } from 'react';
 import PlayerAvatar from '../../../components/PlayerAvatar';
 import PitchSVG from '../../../components/lineup/PitchSVG';
 import { FORMATIONS } from '../../../data/formations';
@@ -13,15 +13,28 @@ import { onPitch } from '../../../engine/match/state';
 import type { Side } from '../../../engine/match/types';
 import { vColor } from '../../../ui/format';
 import { draftPlayers, draftStrength, type Draft } from './draft';
+import { posGroupClass } from '../../../ui/positionBadges';
+import Select from '../../../ui/Select';
 
-export function SystemPitch({ sim, side, d, sel, onPick, onSwap, onFormation }: {
+export function SystemPitch({ sim, side, d, sel, onPick, onSwap, onFormation, onNote }: {
   sim: MatchSim; side: Side; d: Draft; sel: string | null;
   onPick: (key: string) => void; onSwap: (a: string, b: string) => void; onFormation: (id: string) => void;
+  /** Hinweis bei abgewiesener Ablage (Feldspieler auf freie Bankfläche). */
+  onNote?: (text: string) => void;
 }) {
   const t = sim.team(side);
   const { benchList } = draftPlayers(sim, side, d);
   const nowOn = new Set(onPitch(t).map((m) => m.id));
-  const [drag, setDrag] = useState<{ key: string; x: number; y: number; moved: boolean } | null>(null);
+  const [drag, setDrag] = useState<{ key: string; x: number; y: number; moved: boolean; over: string | null } | null>(null);
+  // Escape bricht das Ziehen ab (Spieler bleibt, wo er war).
+  useEffect(() => {
+    if (!drag?.moved) return;
+    const key = (e: KeyboardEvent) => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); setDrag(null); } };
+    window.addEventListener('keydown', key, true);
+    return () => window.removeEventListener('keydown', key, true);
+  }, [!!drag?.moved]);
+  const targetAt = (x: number, y: number) => (document.elementFromPoint(x, y)?.closest('[data-dnd]') as HTMLElement | null)?.dataset.dnd ?? null;
+  const fieldKeys = new Set(d.slots.map((s) => d.map[s.id] ?? `slot:${s.id}`));
   const start = useRef<{ x: number; y: number } | null>(null);
   const box = useRef<HTMLDivElement>(null);
   /** Zeigerposition → Koordinaten im (skalierten) Bildschirm. */
@@ -38,20 +51,24 @@ export function SystemPitch({ sim, side, d, sel, onPick, onSwap, onFormation }: 
     if (e.button !== 0) return;
     (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
     start.current = { x: e.clientX, y: e.clientY };
-    setDrag({ key, x: e.clientX, y: e.clientY, moved: false });
+    setDrag({ key, x: e.clientX, y: e.clientY, moved: false, over: null });
   };
   const move = (e: RPE) => {
     if (!drag || !start.current) return;
     const moved = drag.moved || Math.hypot(e.clientX - start.current.x, e.clientY - start.current.y) > 6;
-    setDrag({ ...drag, x: e.clientX, y: e.clientY, moved });
+    const over = moved ? targetAt(e.clientX, e.clientY) : null;
+    setDrag({ ...drag, x: e.clientX, y: e.clientY, moved, over: over === drag.key ? null : over });
   };
   const up = (e: RPE) => {
     if (!drag) return;
     const d0 = drag;
     setDrag(null);
     if (!d0.moved) { onPick(d0.key); return; }
-    const el = document.elementFromPoint(e.clientX, e.clientY)?.closest('[data-dnd]') as HTMLElement | null;
-    const target = el?.dataset.dnd;
+    const target = targetAt(e.clientX, e.clientY);
+    if (target === 'bench') {
+      if (fieldKeys.has(d0.key)) onNote?.('Auf die Bank nur per Wechsel: zieh den Spieler direkt auf den Bankspieler, der für ihn kommt.');
+      return;
+    }
     if (target && target !== d0.key) onSwap(d0.key, target);
   };
   const ghostOf = drag?.moved ? sim.players[drag.key] : undefined;
@@ -60,9 +77,9 @@ export function SystemPitch({ sim, side, d, sel, onPick, onSwap, onFormation }: 
     <div className="tm-sys" ref={box} onPointerMove={move} onPointerUp={up} onPointerCancel={() => setDrag(null)}>
       <div className="tm-sys-head">
         <span className="tm-sec">Spielsystem</span>
-        <select value={d.formation} onChange={(e) => onFormation(e.target.value)} aria-label="Formation">
+        <Select value={d.formation} onChange={(v) => onFormation(v)} aria-label="Formation">
           {formations.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}
-        </select>
+        </Select>
       </div>
       <div className="tm-sys-main">
         <div className="lu-pitch tm-sys-pitch">
@@ -73,7 +90,7 @@ export function SystemPitch({ sim, side, d, sel, onPick, onSwap, onFormation }: 
               const m = id ? t.players.find((x) => x.id === id) : undefined;
               const key = id ?? `slot:${s.id}`;
               return (
-                <div key={s.id} className={`tm-sys-slot ${sel === key ? 'sel' : ''} ${m && !nowOn.has(m.id) ? 'rein' : ''} ${drag?.moved && drag.key === key ? 'dragging' : ''}`}
+                <div key={s.id} className={`tm-sys-slot ${sel === key ? 'sel' : ''} ${drag?.over === key ? 'over' : ''} ${m && !nowOn.has(m.id) ? 'rein' : ''} ${drag?.moved && drag.key === key ? 'dragging' : ''}`}
                   style={{ left: `${s.x}%`, top: `${s.y}%` }} data-dnd={key} onPointerDown={(e) => down(e, key)}>
                   {m ? (
                     <>
@@ -87,13 +104,13 @@ export function SystemPitch({ sim, side, d, sel, onPick, onSwap, onFormation }: 
             })}
           </div>
         </div>
-        <div className="tm-sys-bench">
+        <div className={`tm-sys-bench ${drag?.moved ? 'live' : ''} ${drag?.over === 'bench' && fieldKeys.has(drag.key) ? 'no' : ''}`} data-dnd="bench">
           <div className="tm-sec">Bank</div>
           {benchList.map((m) => (
-            <div key={m.id} className={`tm-sys-b ${sel === m.id ? 'sel' : ''} ${nowOn.has(m.id) ? 'raus' : ''}`} data-dnd={m.id} onPointerDown={(e) => down(e, m.id)}>
+            <div key={m.id} className={`tm-sys-b ${sel === m.id ? 'sel' : ''} ${drag?.over === m.id ? 'over' : ''} ${nowOn.has(m.id) ? 'raus' : ''}`} data-dnd={m.id} onPointerDown={(e) => down(e, m.id)}>
               <PlayerAvatar player={m.p} club={t.club} size={44} />
               <span className="tm-sys-name">{m.p.lastName}</span>
-              <span className="tm-sys-ps">{m.p.naturalPosition} | {m.p.overall}</span>
+              <span className="tm-sys-ps"><span className={posGroupClass(m.p.naturalPosition)}>{m.p.naturalPosition}</span> | {m.p.overall}</span>
             </div>
           ))}
         </div>

@@ -73,9 +73,9 @@ const DANGER = /schlie|abbrech|bestätig|unterschreib|annehm|ablehn|kaufen|verka
 
 /** Interaktive Ziele im Fenster (Reiter, Chips, Segmente, Häkchen, Regler, Auswahllisten, Zeilen). */
 const TARGETS = [
-  '[role=tab]', '.tab', '[class$="-tab"]', '[class*="-tab "]', '.dchip', '.seg-btn', '.chip', '[class$="-seg"] > button', '[class*="-seg "] > button',
-  'input[type=checkbox]', 'input[type=range]', 'select', '.toggle',
-  'tr.clickable', '.rl-row.clickable', '[class$="-row"][role=button]', 'button.ft-card', '.pp-preset',
+  '[role=tab]', '.tab', '[class$="-tab"]', '[class*="-tab "]', '.dchip', '.seg-btn', '.seg3 > button', '.chip', '[class$="-seg"] > button', '[class*="-seg "] > button',
+  'input[type=checkbox]', 'input[type=range]', 'select', '.sel3', '.toggle',
+  'tr.clickable', '.rl-row.clickable', '[class$="-row"][role=button]', 'button.ft-card', '.pp-preset', '.cp-step',
 ].join(', ');
 
 /**
@@ -118,17 +118,24 @@ export async function probeWindow(page, name, frameSel, open, opts = {}) {
         const txt = (e.innerText || e.getAttribute('aria-label') || e.className || '').toString().trim().replace(/\s+/g, ' ').slice(0, 30);
         const res = { tag: e.tagName, type: e.getAttribute('type'), txt };
         if (r.width === 0 || r.height === 0 || e.disabled) return { ...res, skip: true };
-        if (e.tagName !== 'INPUT' && e.tagName !== 'SELECT' && new RegExp(danger, 'i').test(txt)) return { ...res, skip: true };
+        const isSel3 = e.classList.contains('sel3'); // eigene Auswahlliste (ui/Select.tsx)
+        if (e.tagName !== 'INPUT' && e.tagName !== 'SELECT' && !isSel3 && new RegExp(danger, 'i').test(txt)) return { ...res, skip: true };
         // Schalter, die Einstellungen ändern („nicht mehr zeigen“ …), nie bedienen; im sicheren Modus gar keine Eingaben.
         const lbl = (e.closest('label')?.innerText || e.parentElement?.innerText || '').toString();
         if ((e.tagName === 'INPUT' || e.classList.contains('toggle')) && /nicht (mehr|wieder)|anzeigen|zeigen|automatisch|einzeln/i.test(lbl)) return { ...res, skip: true };
-        if (safe && (e.tagName === 'INPUT' || e.tagName === 'SELECT' || e.classList.contains('toggle'))) return { ...res, skip: true };
+        if (safe && (e.tagName === 'INPUT' || e.tagName === 'SELECT' || isSel3 || e.classList.contains('toggle'))) return { ...res, skip: true };
         const fire = (el, v) => {
           const proto = el.tagName === 'SELECT' ? HTMLSelectElement.prototype : HTMLInputElement.prototype;
           Object.getOwnPropertyDescriptor(proto, 'value').set.call(el, v);
           el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true }));
         };
         if (e.tagName === 'SELECT') { if (e.options.length > 1) fire(e, e.options[e.options.length - 1].value); }
+        else if (isSel3) {
+          // Öffnen (React rendert die Liste beim Klick synchron), letzten freien Eintrag wählen
+          e.click();
+          const opts = [...document.querySelectorAll('.sel3-pop [role=option]:not([aria-disabled])')];
+          if (opts.length) opts[opts.length - 1].click(); else e.click();
+        }
         else if (e.type === 'range') fire(e, e.max || '100');
         else { e.dispatchEvent(new MouseEvent('mouseover', { bubbles: true })); e.click(); }
         return res;

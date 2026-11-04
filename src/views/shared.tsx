@@ -5,6 +5,7 @@ import { Match, Player, POSITION_GROUPS } from '../types';
 import { fmtDateShort, vColor } from '../ui/format';
 import { scoutRange, scoutRangeText } from '../engine/scouting';
 import { DM_PER_EUR, currencyForYear } from '../engine/economy';
+import PosBadge from '../components/PosBadge';
 
 export const squadOf = (g: Game, clubId = g.managedClubId): Player[] =>
   (g.clubs[clubId]?.playerIds ?? []).map((id) => g.players[id]).filter(Boolean);
@@ -57,7 +58,7 @@ export function MatchRow({ g, m, clubId = g.managedClubId, onClick }: { g: Game;
 export function PlayerRow({ p, value, sub, onClick, color }: { p: Player; value?: React.ReactNode; sub?: React.ReactNode; onClick?: () => void; color?: string }) {
   return (
     <div className={`dlist-row ${onClick ? 'clickable' : ''}`} onClick={onClick} data-pid={p.id}>
-      <span className="pos-badge">{p.naturalPosition}</span>
+      <PosBadge p={p} compact />
       <span className="grow">{p.fullName}{sub != null && <span className="muted"> · {sub}</span>}</span>
       {value != null && <span className="val" style={{ color: color ?? (typeof value === 'number' ? vColor(value) : undefined) }}>{value}</span>}
     </div>

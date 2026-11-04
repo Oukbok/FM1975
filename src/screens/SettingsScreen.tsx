@@ -1,6 +1,9 @@
 import { AppSettings, DisplayMode } from '../engine/save';
 import { RESOLUTION_GROUPS } from '../ui/DisplayFrame';
 import { useState } from 'react';
+import ThemePicker from '../ui/ThemePicker';
+import { themeOf } from '../ui/themes';
+import Select from '../ui/Select';
 
 // -----------------------------------------------------------------------------
 // EINSTELLUNGEN
@@ -154,6 +157,16 @@ export function SettingsScreen({ settings, onBack, onSave }: {
         </div>
       </div>
 
+      {/* --- Style (ui/themes.ts) --- */}
+      <div className="card mt16">
+        <h3 style={{ margin: '0 0 4px' }}>Style</h3>
+        <p className="dim mini" style={{ margin: '0 0 14px' }}>
+          Farben und Helligkeit der Oberfläche. Auch oben rechts in der Kopfleiste wählbar; dort wirkt die Wahl sofort.
+        </p>
+        <ThemePicker settings={s} onSettings={setS} width={300} />
+        <p className="dim mini" style={{ margin: '8px 0 0' }}>{themeOf(s.theme).note}</p>
+      </div>
+
       {/* --- Anzeige & Auflösung --- */}
       <div className="card mt16">
         <h3 style={{ margin: '0 0 4px' }}>Anzeige</h3>
@@ -162,9 +175,9 @@ export function SettingsScreen({ settings, onBack, onSave }: {
         </p>
 
         <label className="dim mini" style={{ display: 'block' }}>Auflösung</label>
-        <select
+        <Select
           value={s.resolution}
-          onChange={(e) => setS({ ...s, resolution: e.target.value })}
+          onChange={(v) => setS({ ...s, resolution: v })}
           style={{ marginTop: 4 }}
         >
           <option value="auto">Automatisch (native Desktop-Auflösung)</option>
@@ -175,7 +188,7 @@ export function SettingsScreen({ settings, onBack, onSave }: {
               ))}
             </optgroup>
           ))}
-        </select>
+        </Select>
 
         <label className="dim mini mt16" style={{ display: 'block' }}>Anzeige-Modus</label>
         <div className="seg-group mt4">

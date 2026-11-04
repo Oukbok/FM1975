@@ -12,6 +12,7 @@ import type { RatingReason } from '../../engine/devLog';
 import type { Club } from '../../types';
 import type { ShowRow } from './ratingScript';
 import type { RatingPhase } from './useRatingPlayer';
+import PosBadge from '../../components/PosBadge';
 
 export const sgn = (d: number) => (d > 0 ? `+${d}` : d < 0 ? `−${-d}` : '±0');
 export const cls = (d: number) => (d > 0 ? 'up' : d < 0 ? 'down' : 'flat');
@@ -81,7 +82,7 @@ export function StageCard({ row, club, phase, reduced, countMs }: {
     <div key={row.r.playerId} className={`rt-card rb2-card ${holding ? cls(d) : ''}`}>
       <div className="rb2-face">{p ? <PlayerAvatar player={p} club={club} size={150} /> : <div className="rb2-face-empty" />}</div>
       <div className="rb2-info">
-        <div className="rb2-kicker"><span className="pos-badge">{row.r.position}</span> {row.r.age} Jahre{p ? ` · Nr. ${p.shirtNumber}` : ''}</div>
+        <div className="rb2-kicker"><PosBadge pos={row.r.position} /> {row.r.age} Jahre{p ? ` · Nr. ${p.shirtNumber}` : ''}</div>
         <div className="rb2-name"><span className="rb2-first">{row.first}</span> {row.last}</div>
         <div className="rb2-values">
           <span className="rb2-old">{row.r.oldOverall}</span>
@@ -152,7 +153,7 @@ export function TopThree({ rows, shown, club, onPick }: { rows: ShowRow[]; shown
               <span className="rb2-top-face">{r.p && <PlayerAvatar player={r.p} club={club} size={62} />}</span>
               <span className="rb2-top-txt">
                 <span className="rb2-top-name">{r.first} {r.last}</span>
-                <span className="rb2-top-sub"><span className="pos-badge">{r.r.position}</span>
+                <span className="rb2-top-sub"><PosBadge pos={r.r.position} />
                   {topReasons(r, 2).map((x, j) => <span key={j} className="rb2-top-why"><Trend d={Math.sign(x.v)} size={11} />{short(x.text)}</span>)}
                 </span>
               </span>
@@ -195,7 +196,7 @@ export function Overview({ rows, shown, current, picked, onPick }: {
                   onClick={done ? () => onPick(i) : undefined}>
                   <td className="rb2-c-st">{done ? <Trend d={row.delta} /> : <span className="rb2-open" />}</td>
                   <td className="num rl-dim">{row.p?.shirtNumber ?? ''}</td>
-                  <td><span className="pos-badge">{row.r.position}</span></td>
+                  <td><PosBadge pos={row.r.position} /></td>
                   <td className="rb2-c-name"><b>{row.last}</b>, {row.first}</td>
                   <td className="num">{row.r.age}</td>
                   <td className="rl-dim">{row.p ? scoutRangeText(row.p) : '–'}</td>

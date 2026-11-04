@@ -22,6 +22,7 @@ import { Screen, TopNav } from './navigation';
 import { PopupLayer } from './PopupLayer';
 import { ScreenRouter } from './ScreenRouter';
 import { chainFlags, usePopupQueue } from './usePopupQueue';
+import { useScreenHistory } from './useScreenHistory';
 
 /**
  * Automatisierte Oberflächentests (Playwright setzt navigator.webdriver): die Sperre „Weiter“
@@ -37,26 +38,9 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   setCurrentSlot: (s: string | null) => void; settings: AppSettings; onExit: () => void;
   onLoad: (slot: string) => void; onUpdateSettings: (s: AppSettings) => void;
 }) {
-  const [screen, setScreenRaw] = useState<Screen>('dashboard');
-  // Chronik ist kein Menüpunkt: 'chronicle' öffnet das große Fenster (Footer rechts).
-  const [chronicleOpen, setChronicleOpen] = useState(false);
-  // Verlauf für „Zurück“ (bis zu 20 Seiten); wird geleert, sobald Zeit vergeht (neuer Tag).
-  const [history, setHistory] = useState<Screen[]>([]);
-  const screenRef = useRef<Screen>('dashboard');
-  useEffect(() => { screenRef.current = screen; }, [screen]);
-  const setScreen = useCallback((s: Screen) => {
-    if (s === 'chronicle') { setChronicleOpen(true); return; }
-    const cur = screenRef.current;
-    if (s !== cur) setHistory((h) => [...h, cur].slice(-20));
-    setScreenRaw(s);
-  }, []);
-  const goBack = useCallback(() => {
-    setHistory((h) => {
-      if (!h.length) return h;
-      setScreenRaw(h[h.length - 1]);
-      return h.slice(0, -1);
-    });
-  }, []);
+  // Seitenwahl + Verlauf Zurück/Vorwärts (Alt+←/→), Chronik-Fenster (shell/useScreenHistory.ts).
+  const nav = useScreenHistory(game.calendar.currentDate);
+  const { screen, setScreen, chronicleOpen, setChronicleOpen } = nav;
   // i-Hilfen: „Mehr im Wiki“ öffnet den Artikel (ui/InfoTip.tsx)
   const [wikiArticle, setWikiArticle] = useState<{ id: string; n: number } | null>(null);
   useEffect(() => setWikiOpener((id) => { setWikiArticle((w) => ({ id, n: (w?.n ?? 0) + 1 })); setScreen('wiki'); }), []);
@@ -96,7 +80,6 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
     return ok;
   }, [g, dayUi, settings.autosave, doSave]);
 
-  useEffect(() => { setHistory([]); }, [g.calendar.currentDate]);
 
   useEffect(() => {
     if (!running) return;
@@ -151,7 +134,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
     <ClubProfileProvider g={g} onChange={rerender}>
     <PlayerMenuProvider g={g} onChange={rerender} onGoto={(s) => setScreen(s as Screen)}>
     <div className={`app-shell ${screen === 'dashboard' ? 'shell-zentrale' : ''} shell-dashlike ${isScene ? 'shell-scene' : ''} ${calLive ? 'cal-live' : ''}`}>
-      <HeaderBar g={g} screen={screen} setScreen={setScreen} saveMsg={saveMsg} running={running} seasonOver={seasonOver}
+      <HeaderBar g={g} settings={settings} onSettings={onUpdateSettings} screen={screen} setScreen={setScreen} saveMsg={saveMsg} running={running} seasonOver={seasonOver}
         due={due} prematchOn={prematchOn} mustRead={mustRead}
         menu={{
           settings: () => setShowSettings(true), wiki: () => setScreen('wiki'), editor: () => setClubEditorOpen(true),
@@ -165,7 +148,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         }} />
 
       {/* Untermenü (Unterpunkte der aktiven Kategorie) */}
-      <TopNav screen={screen} setScreen={setScreen} dateLabel={fmtDateFull(g.calendar.currentDate)} onBack={history.length ? goBack : undefined} />
+      <TopNav screen={screen} setScreen={setScreen} dateLabel={fmtDateFull(g.calendar.currentDate)} onBack={nav.onBack} onForward={nav.onForward} />
 
       <main className="app-main">
         <ScreenRouter screen={screen} g={g} rerender={rerender} setScreen={setScreen} wikiArticle={wikiArticle}

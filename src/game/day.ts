@@ -37,6 +37,7 @@ import { bindTransferLog, transferWindowDue } from './transferLog';
 import { youthCompsDaily } from './youthComps/daily';
 import { ownTrainingDay } from './trainingWeek';
 import { applyYouthGem, GEM_CHANCE_YOUTH, maybeMakeGem } from '../engine/gems';
+import { legendsDaily } from './legendsGame';
 import { academyIntake, ageYouthPlayers, developYouthWeekly, graduateYouth } from '../engine/youth';
 import { cupNextDrawMessage, cupResultMessage, euroDrawMessage, euroResultMessage, euroWinnerChronicle } from './competitions';
 import { advanceDivisionsTo, emitMatchMessage, simulateMatchday, startNextSeason } from './season';
@@ -569,6 +570,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
     }
   }
 
+  legendsDaily(g, today); // 1. Juli: Ausnahmetalente der Fußballgeschichte (still, game/legendsGame.ts)
+
   // -------------------------------------------------------------------------
   // MONATSABSCHLUSS: am 1. eines Monats Gehälter, Fixkosten, Sponsoring buchen.
   // -------------------------------------------------------------------------
@@ -578,7 +581,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   contractReminders(g, today);
   announceUpcomingRules(g, today);
   aiClubsDaily(g, today);
-  careerDaily(g, today); // Jobangebote an dich, Entlassung im Karriere-Modus (game/careerGame.ts)
+  careerDaily(g, today); // Managerkarriere: Trainer-Historie, Vorstandsdruck gegen den Trainer (game/careerGame.ts)
   youthCompsDaily(g, today);
   rollAiOffers(g, today);
   aiContractsDaily(g, today); // KI: vorzeitige Verlängerungen, Altstars, Bosman-Verkäufe, Vorverträge (game/aiContracts.ts)

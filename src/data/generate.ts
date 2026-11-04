@@ -74,7 +74,7 @@ export const CLUB_SEEDS: ClubSeed[] = [
   { id: 'kre', name: 'Krefeld', shortName: 'KRE', city: 'Krefeld', founded: 1905, primary: '#E2001A', secondary: '#0055A5', reputation: 66, stadium: 'Seidenweber-Stadion', capacity: 34500 },
   { id: 'kar', name: 'Karlsruhe', shortName: 'KAR', city: 'Karlsruhe', founded: 1894, primary: '#0033A0', secondary: '#FFFFFF', reputation: 67, stadium: 'Schlossgarten-Stadion', capacity: 35000 },
   { id: 'han', name: 'Hannover', shortName: 'HAN', city: 'Hannover', founded: 1896, primary: '#00963E', secondary: '#000000', reputation: 68, stadium: 'Leine-Stadion', capacity: 60000 },
-  { id: 'boc', name: 'Bochum', shortName: 'BOC', city: 'Bochum', founded: 1848, primary: '#005CA9', secondary: '#FFFFFF', reputation: 66, stadium: 'Hellweg-Stadion', capacity: 40000 },
+  { id: 'boc', name: 'Bochum', shortName: 'BOC', city: 'Bochum', founded: 1848, primary: '#005CA9', secondary: '#FFFFFF', reputation: 66, stadium: 'Stadion an der Castroper', capacity: 40000 },
   { id: 'off', name: 'Offenbach', shortName: 'OFF', city: 'Offenbach', founded: 1901, primary: '#E30613', secondary: '#FFFFFF', reputation: 65, stadium: 'Stadion am Mainbogen', capacity: 30000 },
 ];
 

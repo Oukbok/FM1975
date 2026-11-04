@@ -7,15 +7,17 @@ import type { OwnMatchInfo } from '../game/ownMatch';
 import type { Game } from '../game/state';
 import { fmtDMfull } from '../ui/format';
 import { MENU_STRUCTURE, Screen } from './navigation';
+import type { AppSettings } from '../engine/save';
+import ThemePicker from '../ui/ThemePicker';
 
 export interface HeaderMenu {
   settings: () => void; wiki: () => void; editor: () => void;
   save: () => void; load: () => void; exit: () => void;
 }
 
-export function HeaderBar({ g, screen, setScreen, saveMsg, menu, running, seasonOver, due, prematchOn, mustRead,
+export function HeaderBar({ g, settings, onSettings, screen, setScreen, saveMsg, menu, running, seasonOver, due, prematchOn, mustRead,
   onOpenPrematch, onQuickSim, onStartText, onReadMail, onContinue }: {
-  g: Game; screen: Screen; setScreen: (s: Screen) => void; saveMsg: string; menu: HeaderMenu;
+  g: Game; settings: AppSettings; onSettings: (s: AppSettings) => void; screen: Screen; setScreen: (s: Screen) => void; saveMsg: string; menu: HeaderMenu;
   running: boolean; seasonOver: boolean; due: OwnMatchInfo | null; prematchOn: boolean; mustRead: boolean;
   onOpenPrematch: () => void; onQuickSim: () => void; onStartText: () => void; onReadMail: () => void; onContinue: () => void;
 }) {
@@ -67,6 +69,7 @@ export function HeaderBar({ g, screen, setScreen, saveMsg, menu, running, season
           <span className={`hd-balance-val ${myClub.finances.balance < 0 ? 'neg' : 'pos'}`}>{fmtDMfull(myClub.finances.balance)}</span>
         </div>
         <span className="hd-sep" aria-hidden="true" />
+        <ThemePicker settings={settings} onSettings={onSettings} width={64} />
         <div className="hdr-menu" ref={menuRef}>
           <button className="hd-gear" aria-haspopup="true" aria-expanded={menuOpen} onClick={() => setMenuOpen((o) => !o)} title="Menü & Einstellungen">
             <Icon name="settings" />

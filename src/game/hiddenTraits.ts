@@ -16,7 +16,11 @@ import { yearsAtClub } from './playerWishesGame';
 import { scoutKnowledge } from './transferTalks';
 import { staffEffectsOf } from './staffGame';
 
-export type HiddenTrait = 'konstanz' | 'nerven' | 'verletzung' | 'tempo';
+import { HIDDEN_LABEL, HIDDEN_WORDS, type HiddenTrait } from '../data/hiddenTraitWords';
+import { tempoOf } from '../engine/talent';
+
+export type { HiddenTrait };
+export { HIDDEN_LABEL };
 
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
 
@@ -26,20 +30,9 @@ function trueValue(p: Player, t: HiddenTrait): number {
   if (t === 'konstanz') return d.consistency ?? 50;
   if (t === 'nerven') return d.bigMatchTemperament ?? 50;
   if (t === 'verletzung') return d.injuryProneness ?? 30;
-  return clamp(((d.growthRate ?? 1) - 0.5) / 1.5 * 100, 0, 100);
+  if (t === 'fleiss') return d.professionalism ?? 55;
+  return tempoOf(p);
 }
-
-/** Wörter je Wert, von niedrig nach hoch, mit den Untergrenzen der Stufen. */
-const WORDS: Record<HiddenTrait, [number, string][]> = {
-  konstanz: [[0, 'schwankt stark'], [42, 'mal so, mal so'], [60, 'meist verlässlich'], [75, 'sehr konstant']],
-  nerven: [[0, 'wirkt nervös'], [42, 'unauffällig'], [60, 'wirkt gefestigt'], [75, 'nervenstark']],
-  verletzung: [[0, 'robust'], [30, 'normal'], [55, 'anfällig']],
-  tempo: [[0, 'langsam'], [22, 'normal'], [44, 'schnell']],
-};
-
-export const HIDDEN_LABEL: Record<HiddenTrait, string> = {
-  konstanz: 'Konstanz', nerven: 'Nervenstärke', verletzung: 'Verletzungsanfälligkeit', tempo: 'Entwicklungstempo',
-};
 
 /**
  * Wie gut kennt dein Verein diesen Spieler (0–1)?
@@ -60,6 +53,8 @@ export function hiddenKnowledge(g: Game | undefined, p: Player): number {
 export interface HiddenEstimate {
   /** Urteil, z. B. „wirkt nervenstark“; `null` = noch kein Urteil. */
   word: string | null;
+  /** Stufe des Urteils (0 = unterste, siehe data/hiddenTraitWords.ts); −1 = kein Urteil. */
+  level: number;
   /** Wer urteilt. */
   source: 'Trainerteam' | 'Scouts';
   /** Sicherheit in Worten. */
@@ -71,14 +66,14 @@ export function estimateHidden(p: Player, t: HiddenTrait, knowledge: number, own
   const source = own ? 'Trainerteam' : 'Scouts';
   const k = clamp(knowledge, 0, 1);
   const certainty = k >= 0.75 ? 'gesichert' : k >= 0.45 ? 'Einschätzung' : 'erster Eindruck';
-  if (k < 0.2) return { word: null, source, certainty };
+  if (k < 0.2) return { word: null, level: -1, source, certainty };
   // Fester Schätzfehler je Spieler und Wert, schrumpft mit der Kenntnis (bis ±24 → ±2).
   const err = 26 - 24 * k;
   const v = trueValue(p, t) + (hash01(`${p.id}|hidden|${t}`) * 2 - 1) * err;
-  const words = WORDS[t];
-  let word = words[0][1];
-  for (const [min, w] of words) if (v >= min) word = w;
-  return { word, source, certainty };
+  const words = HIDDEN_WORDS[t];
+  let level = 0;
+  words.forEach(([min], i) => { if (v >= min) level = i; });
+  return { word: words[level][1], level, source, certainty };
 }
 
 /** Bequemer Zugriff: Einschätzung aus Sicht deines Vereins. */

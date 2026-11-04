@@ -35,11 +35,13 @@ import { ensureYouthTeams } from './youthTeams';
 import { migrateAiClubs } from './aiClubs';
 import { migrateFinanceLevel } from './financeMigration';
 import { migrateWinter } from './winterShared';
+import { migrateIndoorDates } from './indoorGame';
 import { migrateGrounds } from './groundsGame';
 import { migrateSeating } from './seatingGame';
 import { migrateLeaguePool } from './clubPool';
 import { migrateYouthInvest } from './youthInvest';
 import { migrateSponsorship } from './sponsorGame';
+import { migrateSponsorNames } from './sponsorRenameMigration';
 import { migrateMerch } from './merchGame';
 import { migrateBriefing } from './seasonBriefing';
 import { migrateBudget } from './budgetPlan';
@@ -55,6 +57,7 @@ import { migrateStaffPeople } from './staffWorld';
 import { migrateYouthComps } from './youthComps/daily';
 import { migrateHistoryMode } from './historicSteer';
 import { migrateTransferLog } from './transferLog';
+import { migrateCareer } from './careerGame';
 import { assignShirtNumbers } from './squads';
 
 /** Bereitet einen gerade gelesenen Spielstand zum Weiterspielen vor (verändert `g`). */
@@ -308,6 +311,8 @@ export function prepareLoadedGame(g: Game): void {
   try { migrateFinanceLevel(g); } catch (err) { console.error('Finanz-Umstellung fehlgeschlagen:', err); }
   // Hallenfußball + Trainingslager (v11 Sammel-Update): optionale Felder nachrüsten.
   try { migrateWinter(g); } catch (err) { console.error('Winter-Nachrüstung fehlgeschlagen:', err); }
+  // Hallentermine nur in der Winterpause (Wunsch Pascal): künftige Termine in Pflichtspielzeit verlegen/absagen.
+  try { migrateIndoorDates(g); } catch (err) { console.error('Hallentermine-Abgleich fehlgeschlagen:', err); }
   // Stadionumfeld (v11-Sammel-Update): Lage, Fläche, epochentypische Ausstattung nachrüsten.
   try { migrateGrounds(g); } catch (err) { console.error('Umfeld-Nachrüstung fehlgeschlagen:', err); }
   try { migrateSeating(g); } catch (err) { console.error('Platzkategorien-Nachrüstung fehlgeschlagen:', err); }
@@ -315,6 +320,8 @@ export function prepareLoadedGame(g: Game): void {
   try { migrateLeaguePool(g); } catch (err) { console.error('Liga-Historie-Nachrüstung fehlgeschlagen:', err); }
   // Nachwuchs-Investitionen (v11): Bausteine aus der alten Akademie-Stufe ableiten.
   try { migrateYouthInvest(g); } catch (err) { console.error('Nachwuchs-Nachrüstung fehlgeschlagen:', err); }
+  // Echt klingende Firmen-/Hallennamen alter Stände ersetzen (data/sponsorRenames.ts).
+  try { migrateSponsorNames(g); } catch (err) { console.error('Sponsornamen-Umbenennung fehlgeschlagen:', err); }
   // Sponsoring 2.0: Trikot-/Bandenvertrag übernehmen, Werbeflächen der Epoche (game/sponsorGame.ts).
   try { migrateSponsorship(g); } catch (err) { console.error('Sponsoring-Nachrüstung fehlgeschlagen:', err); }
   // Fanartikel: Laden mit Startbestand für den eigenen Verein (game/merchGame.ts).
@@ -338,5 +345,6 @@ export function prepareLoadedGame(g: Game): void {
   try { migrateYouthComps(g); } catch (err) { console.error('Jugendwettbewerbe-Nachrüstung fehlgeschlagen:', err); }
   migrateHistoryMode(g);
   try { migrateTransferLog(g); } catch (err) { console.error('Transferprotokoll-Nachrüstung fehlgeschlagen:', err); }
+  try { migrateCareer(g); } catch (err) { console.error('Karriere-Bereinigung fehlgeschlagen:', err); }
   try { migrateBudget(g); } catch (err) { console.error('Saisonbudget-Nachrüstung fehlgeschlagen:', err); }
 }

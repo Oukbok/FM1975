@@ -18,6 +18,7 @@ import { BLOCKED_NAMES } from '../namePools';
 import { ANCHORS, REVENUE_MIX, resetEconomyCache } from '../../engine/economy';
 import { HISTORY } from '../history';
 import { TRANSFER_RECORD_ANCHORS } from '../transferRecords';
+import { LEGENDS } from '../legends';
 import { Dataset } from './schema';
 import { BUILTIN_ID, builtinDataset } from './builtin';
 
@@ -114,6 +115,13 @@ export function applyDataset(ds: Dataset | null): void {
   replaceArray(TRANSFER_RECORD_ANCHORS, d.economy?.transferRecords, base.economy.transferRecords ?? []);
   TRANSFER_RECORD_ANCHORS.sort((a, b) => a.year - b.year);
   resetEconomyCache();
+
+  // Ausnahmetalente: fehlt das Feld → eingebaute Liste; leere Liste = keine.
+  // Unvollständige Einträge (fremde Dateien) werden übergangen statt das Spiel zu stören.
+  const legends = (Array.isArray(d.legendsV2) ? d.legendsV2 : base.legendsV2 ?? []).filter((l) => l && typeof l.id === 'string'
+    && typeof l.firstName === 'string' && typeof l.lastName === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(l.birth ?? '')
+    && typeof l.pos === 'string' && Number.isFinite(l.potential) && l.hidden && typeof l.hidden === 'object');
+  LEGENDS.splice(0, LEGENDS.length, ...JSON.parse(JSON.stringify(legends)));
 
   const h = d.history ?? base.history;
   HISTORY.cupWinnersCupLastSeason = h.cupWinnersCupLastSeason ?? base.history.cupWinnersCupLastSeason;

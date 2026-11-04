@@ -8,6 +8,7 @@ import { positionSuitability, suitabilityColor } from '../../engine/positions';
 import { PlayerForm, PlayerFreshness, PlayerMorale, MORALE_100, playerMorale100 } from '../status';
 import { InfoTip } from '../../ui/InfoTip';
 import type { InfoKey } from '../../data/infoTexts';
+import { posGroupClass } from '../../ui/positionBadges';
 
 export interface ListRow { p: Player; pos: Position | null; slotId?: string; benchIndex?: number }
 
@@ -48,9 +49,12 @@ const COLS: [SortKey, string, string, InfoKey?][] = [
   ['st', 'Stärke', 'Gesamtstärke'],
 ];
 
-export default function SquadList({ xi, bench, reserve, benchSize, captainId, hover, dragId, onDown }: {
+/** Abschnitt eines Ablageziels: Startelf (Slots/xi), Bank oder Reserve. */
+const drop2kind = (k: string | null) => !k ? null : k.startsWith('slot:') || k === 'xi' ? 'xi' : k.startsWith('bench:') ? 'bench' : k === 'reserve' ? 'reserve' : null;
+
+export default function SquadList({ xi, bench, reserve, benchSize, captainId, hover, dragId, full, onDown }: {
   xi: ListRow[]; bench: ListRow[]; reserve: ListRow[]; benchSize: number; captainId: string | null;
-  hover: string | null; dragId: string | null;
+  hover: string | null; dragId: string | null; full: 'bench' | 'xi' | null;
   onDown: (e: RPE, p: Player) => void;
 }) {
   const [sort, setSort] = useState<SortKey>('pos');
@@ -62,9 +66,9 @@ export default function SquadList({ xi, bench, reserve, benchSize, captainId, ho
     const suit = rowSuit(r);
     const drop = r.slotId ? `slot:${r.slotId}` : r.benchIndex != null ? `bench:${r.benchIndex}` : 'reserve';
     return (
-      <tr key={p.id} className={`lu-row ${hover === drop ? 'over' : ''} ${dragId === p.id ? 'dragging' : ''} ${isOut(p) ? 'out' : ''}`}
+      <tr key={p.id} className={`lu-row ${hover === drop && drop !== 'reserve' && !full ? 'over' : ''} ${dragId === p.id ? 'dragging' : ''} ${isOut(p) ? 'out' : ''}`}
         data-lu-drop={drop} data-pid={p.id} onPointerDown={(e) => onDown(e, p)}>
-        <td className="lu-c-pos"><span className={r.pos ? 'lu-pos' : 'lu-pos dim'}>{r.pos ?? p.naturalPosition}</span></td>
+        <td className="lu-c-pos"><span className={`${r.pos ? 'lu-pos' : 'lu-pos dim'} ${posGroupClass(r.pos ?? p.naturalPosition)}`}>{r.pos ?? p.naturalPosition}</span></td>
         <td className="lu-c-num lu-c-nr">{p.shirtNumber ?? ''}</td>
         <td className="lu-c-name">
           <span className="lu-name">{p.fullName}</span>
@@ -82,8 +86,9 @@ export default function SquadList({ xi, bench, reserve, benchSize, captainId, ho
     );
   };
 
+  const kind = drop2kind(hover);
   const section = (title: string, count: string, drop: string, rows: ListRow[], empty?: string) => (
-    <tbody className={`lu-sec lu-sec-${drop.split(':')[0]} ${hover === drop ? 'over' : ''}`} data-lu-drop={drop}>
+    <tbody className={`lu-sec lu-sec-${drop.split(':')[0]} ${kind === drop2kind(drop) && !hover?.startsWith('slot:') ? (full ? 'full' : 'over') : ''}`} data-lu-drop={drop}>
       <tr className="lu-sec-head" data-lu-drop={drop}><td colSpan={COLS.length}><span>{title}</span><span className="lu-sec-n">{count}</span></td></tr>
       {rows.map(row)}
       {!rows.length && empty && <tr className="lu-row-empty" data-lu-drop={drop}><td colSpan={COLS.length}>{empty}</td></tr>}

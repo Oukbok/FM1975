@@ -51,7 +51,7 @@
 .cmx-cmp-v { font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text-2); }
 .cmx-cmp-v.r { text-align: right; }
 .cmx-cmp-v.hi { color: var(--accent); }
-.cmx-cmp-track { height: 9px; border-radius: 5px; background: rgba(255, 255, 255, 0.07); overflow: hidden; display: flex; }
+.cmx-cmp-track { height: 9px; border-radius: 5px; background: rgba(var(--ink-rgb), 0.07); overflow: hidden; display: flex; }
 .cmx-cmp-track.l { justify-content: flex-end; }
 .cmx-cmp-fill { display: block; height: 100%; border-radius: 5px; background: var(--text-3); }
 .cmx-cmp-fill.hi { background: var(--accent); }
@@ -72,8 +72,8 @@
 /* Historie */
 .cmx-chart-wrap { height: calc(100% - 6px); min-height: 160px; display: flex; flex-direction: column; }
 .cmx-chart { width: 100%; flex: 1 1 auto; min-height: 0; }
-.cmx-band { fill: rgba(255, 255, 255, 0.025); }
-.cmx-band.alt { fill: rgba(255, 255, 255, 0.055); }
+.cmx-band { fill: rgba(var(--ink-rgb), 0.025); }
+.cmx-band.alt { fill: rgba(var(--ink-rgb), 0.055); }
 .cmx-axis { fill: var(--text-3); font-size: 12px; font-weight: 700; font-family: var(--font-ui); }
 .cmx-val { fill: var(--text-2); font-size: 11px; font-weight: 700; font-family: var(--font-ui); }
 .cmx-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }

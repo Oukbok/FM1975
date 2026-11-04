@@ -15,6 +15,7 @@ import type { AttributeKey, Position } from '../../../types';
 import { InfoTip } from '../../../ui/InfoTip';
 import { ATTR_DE } from '../../../components/player/shared';
 import { fmtPrice, fmtWage, wageHead } from '../../../ui/format';
+import Select from '../../../ui/Select';
 
 const POSITIONS: Position[] = ['TW', 'LIB', 'IV', 'LV', 'RV', 'DM', 'ZM', 'LM', 'RM', 'OM', 'LA', 'RA', 'HS', 'MS'];
 const GROUP_OPTS = [{ v: 'GK', l: 'Torwart (alle)' }, { v: 'DEF', l: 'Abwehr (alle)' }, { v: 'MID', l: 'Mittelfeld (alle)' }, { v: 'ATT', l: 'Angriff (alle)' }];
@@ -98,23 +99,23 @@ export function PlayerSearchModal({ g, initial, onSearch, onClose }: {
               <div className="ps-sec-h">Allgemein</div>
               <Row label="Name"><input type="text" value={c.name} placeholder="Name enthält …" onChange={(e) => set('name', e.target.value)} /></Row>
               <Row label="Nationalität">
-                <select value={c.nat} onChange={(e) => set('nat', e.target.value)}>
+                <Select value={c.nat} onChange={(v) => set('nat', v)}>
                   <option value="">Alle</option><option value="GER">Deutschland</option><option value="foreign">Alle Ausländer</option>
                   {nats.map((n) => <option key={n} value={n}>{n}</option>)}
-                </select>
+                </Select>
               </Row>
               <Row label="Alter"><Pair a={<Num label="Alter min." v={c.ageMin} min={15} max={45} onChange={(v) => set('ageMin', v)} />} b={<Num label="Alter max." v={c.ageMax} min={15} max={45} onChange={(v) => set('ageMax', v)} />} /></Row>
               <Row label="Stärke"><Pair a={<Num label="Stärke min." v={c.ovMin} min={0} max={99} onChange={(v) => set('ovMin', v)} />} b={<Num label="Stärke max." v={c.ovMax} min={0} max={99} onChange={(v) => set('ovMax', v)} />} /></Row>
               <Row label="Potenzial" info="potenzial">
-                <Pair a={<select value={c.potMin} onChange={(e) => set('potMin', Number(e.target.value))}>{STARS.map((s) => <option key={s} value={s}>{s ? `${s.toLocaleString('de-DE')} ★` : 'alle'}</option>)}</select>}
-                  b={<select value={c.potMax} onChange={(e) => set('potMax', Number(e.target.value))}>{STARS.filter((s) => s > 0).map((s) => <option key={s} value={s}>{s.toLocaleString('de-DE')} ★</option>)}</select>} />
+                <Pair a={<Select value={c.potMin} onChange={(v) => set('potMin', Number(v))}>{STARS.map((s) => <option key={s} value={s}>{s ? `${s.toLocaleString('de-DE')} ★` : 'alle'}</option>)}</Select>}
+                  b={<Select value={c.potMax} onChange={(v) => set('potMax', Number(v))}>{STARS.filter((s) => s > 0).map((s) => <option key={s} value={s}>{s.toLocaleString('de-DE')} ★</option>)}</Select>} />
               </Row>
               <Row label="Form ab"><Num label="Form min." v={c.formMin} min={0} max={100} onChange={(v) => set('formMin', v)} /></Row>
               <Row label="Erfahrung ab"><Num label="Erfahrung min." v={c.expMin} min={0} max={99} onChange={(v) => set('expMin', v)} /></Row>
               <Row label="Starker Fuß">
-                <select value={c.foot} onChange={(e) => set('foot', e.target.value as SearchCriteria['foot'])}>
+                <Select value={c.foot} onChange={(v) => set('foot', v as SearchCriteria['foot'])}>
                   <option value="">Egal</option><option value="left">Links</option><option value="right">Rechts</option><option value="both">Beidfüßig</option>
-                </select>
+                </Select>
               </Row>
               <Row label="Größe ab (cm)"><Num label="Größe min." v={c.heightMin} min={0} max={210} onChange={(v) => set('heightMin', v)} /></Row>
               <div className="ps-checks"><Chk on={c.notInjured} label="Darf nicht verletzt sein" set={(v) => set('notInjured', v)} /></div>
@@ -122,11 +123,11 @@ export function PlayerSearchModal({ g, initial, onSearch, onClose }: {
             <section className="ps-sec">
               <div className="ps-sec-h">Position</div>
               <Row label="Position">
-                <select value={c.pos} onChange={(e) => set('pos', e.target.value)}>
+                <Select value={c.pos} onChange={(v) => set('pos', v)}>
                   <option value="">Alle</option>
                   {GROUP_OPTS.map((o) => <option key={o.v} value={o.v}>{o.l}</option>)}
                   {POSITIONS.map((p) => <option key={p} value={p}>{p} – {POSITION_NAMES_DE[p]}</option>)}
-                </select>
+                </Select>
               </Row>
               <Row label="Seite">
                 <div className="ps-checks">
@@ -144,11 +145,11 @@ export function PlayerSearchModal({ g, initial, onSearch, onClose }: {
             <section className="ps-sec">
               <div className="ps-sec-h">Herkunft</div>
               {[0, 1, 2].map((i) => (i <= c.origins.length) && (
-                <select key={i} value={c.origins[i] ?? ''} onChange={(e) => setOrigin(i, e.target.value)}>
+                <Select key={i} value={c.origins[i] ?? ''} onChange={(v) => setOrigin(i, v)}>
                   <option value="">–</option>
                   <optgroup label="Heimatregion">{origins.map((o) => <option key={o} value={o}>{o}</option>)}</optgroup>
                   <optgroup label="Land"><option value="nat:GER">Deutschland</option>{nats.map((n) => <option key={n} value={`nat:${n}`}>{n}</option>)}</optgroup>
-                </select>
+                </Select>
               ))}
               <div className="ps-hint">Heimatregion = Raum seines Heimat- bzw. Ausbildungsvereins. Mehrere Angaben gelten als „oder“.</div>
             </section>
@@ -156,10 +157,10 @@ export function PlayerSearchModal({ g, initial, onSearch, onClose }: {
               <div className="ps-sec-h">Fähigkeiten</div>
               {[...c.attrs, ...(c.attrs.length < MAX_ATTRS ? [null] : [])].map((a, i) => (
                 <div key={i} className="ps-attr">
-                  <select value={a?.k ?? ''} onChange={(e) => setAttr(i, e.target.value as AttributeKey | '')}>
+                  <Select value={a?.k ?? ''} onChange={(v) => setAttr(i, v as AttributeKey | '')}>
                     <option value="">{a ? 'entfernen' : 'Fähigkeit wählen …'}</option>
                     {ATTR_KEYS.map((k) => <option key={k} value={k}>{ATTR_DE[k]}</option>)}
-                  </select>
+                  </Select>
                   {a ? <Num label={`${ATTR_DE[a.k]} min.`} v={a.min} min={1} max={99} onChange={(v) => setAttr(i, a.k, v)} /> : <span className="ps-hint">Min. Wert</span>}
                 </div>
               ))}
@@ -168,10 +169,10 @@ export function PlayerSearchModal({ g, initial, onSearch, onClose }: {
             <section className="ps-sec">
               <div className="ps-sec-h">Eingespieltheit</div>
               <div className="ps-attr">
-                <select value={c.famPos} onChange={(e) => set('famPos', e.target.value as Position | '')}>
+                <Select value={c.famPos} onChange={(v) => set('famPos', v as Position | '')}>
                   <option value="">Position wählen …</option>
                   {POSITIONS.map((p) => <option key={p} value={p}>{p} – {POSITION_NAMES_DE[p]}</option>)}
-                </select>
+                </Select>
                 <Num label="Vertrautheit min." v={c.famMin} min={0} max={100} onChange={(v) => set('famMin', v)} />
               </div>
               <div className="ps-hint">Positionsvertrautheit 0–100: ab 90 natürlich, ab 75 gut, ab 50 ausreichend.</div>
@@ -183,10 +184,10 @@ export function PlayerSearchModal({ g, initial, onSearch, onClose }: {
             <section className="ps-save">
               <div className="ps-sec-h">Suche laden/speichern</div>
               <div className="ps-save-row">
-                <select value={pick} onChange={(e) => doLoad(e.target.value)}>
+                <Select value={pick} onChange={(v) => doLoad(v)}>
                   <option value="">{saved.length ? 'Gespeicherte Suche laden …' : 'Keine gespeicherten Suchen'}</option>
                   {saved.map((s) => <option key={s.name} value={s.name}>{s.name}</option>)}
-                </select>
+                </Select>
                 <button className="btn btn-sm btn-ghost" disabled={!pick} onClick={doDelete}>Löschen</button>
               </div>
               <div className="ps-save-row">
@@ -197,24 +198,24 @@ export function PlayerSearchModal({ g, initial, onSearch, onClose }: {
             <section className="ps-sec">
               <div className="ps-sec-h">Finanzen</div>
               <Row label="Marktwert" info="marktwert">
-                <Pair a={<select value={c.valueMin} onChange={(e) => set('valueMin', Number(e.target.value))}>{VALUES.map((v) => <option key={v} value={v}>{v ? fmtPrice(v) : 'alle'}</option>)}</select>}
-                  b={<select value={c.valueMax} onChange={(e) => set('valueMax', Number(e.target.value))}>{VALUES.map((v) => <option key={v} value={v}>{v ? fmtPrice(v) : 'alle'}</option>)}</select>} />
+                <Pair a={<Select value={c.valueMin} onChange={(v) => set('valueMin', Number(v))}>{VALUES.map((v) => <option key={v} value={v}>{v ? fmtPrice(v) : 'alle'}</option>)}</Select>}
+                  b={<Select value={c.valueMax} onChange={(v) => set('valueMax', Number(v))}>{VALUES.map((v) => <option key={v} value={v}>{v ? fmtPrice(v) : 'alle'}</option>)}</Select>} />
               </Row>
               <Row label={wageHead()}>
-                <Pair a={<select value={c.wageMin} onChange={(e) => set('wageMin', Number(e.target.value))}>{WAGES.map((v) => <option key={v} value={v}>{v ? fmtWage(v, { unit: false }) : 'alle'}</option>)}</select>}
-                  b={<select value={c.wageMax} onChange={(e) => set('wageMax', Number(e.target.value))}>{WAGES.map((v) => <option key={v} value={v}>{v ? fmtWage(v, { unit: false }) : 'alle'}</option>)}</select>} />
+                <Pair a={<Select value={c.wageMin} onChange={(v) => set('wageMin', Number(v))}>{WAGES.map((v) => <option key={v} value={v}>{v ? fmtWage(v, { unit: false }) : 'alle'}</option>)}</Select>}
+                  b={<Select value={c.wageMax} onChange={(v) => set('wageMax', Number(v))}>{WAGES.map((v) => <option key={v} value={v}>{v ? fmtWage(v, { unit: false }) : 'alle'}</option>)}</Select>} />
               </Row>
               <Row label="Vertragsstatus">
-                <select value={c.contract} onChange={(e) => set('contract', e.target.value as SearchCriteria['contract'])}>
+                <Select value={c.contract} onChange={(v) => set('contract', v as SearchCriteria['contract'])}>
                   <option value="">Alle</option>
                   <option value="expiring">{opt.bosman ? 'Läuft aus (≤ 12 Monate, dann ablösefrei)' : 'Läuft aus (≤ 12 Monate)'}</option>
                   <option value="long">Langfristig gebunden (&gt; 2 Jahre)</option>
-                </select>
+                </Select>
               </Row>
               <Row label="Transferstatus">
-                <select value={c.transfer} onChange={(e) => set('transfer', e.target.value as SearchCriteria['transfer'])}>
+                <Select value={c.transfer} onChange={(v) => set('transfer', v as SearchCriteria['transfer'])}>
                   <option value="">Alle</option><option value="listed">Auf der Transferliste</option><option value="available">Abgabebereit (Liste oder unzufrieden)</option>
-                </select>
+                </Select>
               </Row>
               <div className="ps-checks">
                 {opt.releaseClause && <Chk on={c.releaseClause} label="Ausstiegsklausel" set={(v) => set('releaseClause', v)} />}
@@ -224,11 +225,11 @@ export function PlayerSearchModal({ g, initial, onSearch, onClose }: {
             </section>
             <section className="ps-sec">
               <div className="ps-sec-h">Suchgebiet</div>
-              <select value={c.area} onChange={(e) => set('area', e.target.value as SearchCriteria['area'])}>
+              <Select value={c.area} onChange={(v) => set('area', v as SearchCriteria['area'])}>
                 <option value="">Alle Vereine</option>
                 <option value="league">{g.leagues?.playerDivision?.name ?? 'Eigene Liga'}</option>
                 <option value="lower">Amateure und Unterklasse</option>
-              </select>
+              </Select>
               <div className="ps-hint">Ausländische Vereine führt das Spiel ohne Kader – Spieler aus dem Ausland holen die Vereine über Angebote.</div>
             </section>
           </div>

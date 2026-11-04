@@ -27,6 +27,16 @@
 //  [FS]  flashscore.de, „Bundesliga-Start 2026 wegen WM erst am 28. August, nur 14
 //        Spiele vor Winterpause“: 2026/27 Pause ab 21.12.2026, Wiederbeginn 8.1.2027,
 //        letzter Spieltag 22.5.2027; 2. Liga ab 7.8.2026.
+//  [DS]  DSFS, „Bundesliga – Statistische Auswertungen: Zeiten“ (dsfs.de, 01/2024):
+//        längste Pausen 1986/87–1988/89 (Anfang Dezember bis ~20. Februar), 1989/90 bis
+//        23./24.2.; 2015/16 20.12.–22.1.; 2018/19 23.12.2018–18.1.2019; frühe Bundesliga-
+//        Jahre meist vier bis fünf Wochen, ab Anfang der 90er wieder kürzer.
+//  [WF]  worldfootball.net, Spielplan 1. FC Nürnberg 1978/79: Pause 16.12.1978 → 20.1.1979
+//        (Nachholspiel 23.12.), DFB-Pokal 3. Runde 29.11.1978; DFB-Datencenter: Pokal-
+//        Viertelfinale 1979/80 am 5.4.1980 – Pokalrunden lagen vor oder nach der Pause.
+//  Nachprüfung November 2026: RSSSF duit78 (1977/78: 19. Spieltag 17.12.1977, 20. am
+//        7.1.1978 – kurze Pause im WM-Jahr) und duit79 (1978/79: 18. Spieltag 16.12.1978,
+//        19. am 13.1.1979) bestätigen die Tabelle.
 //  [S1]  sport1.de (siehe data/indoorHistory.ts): Winterpause seit 1986/87 elf Wochen,
 //        später auf sechs Wochen verkürzt – deckt sich mit den Spielplänen oben
 //        (1986/87–1996/97 9–11 Wochen, ab 1997/98 meist 6 Wochen; Ausreißer 1998/99).
@@ -97,6 +107,7 @@ export const WEST_BREAKS: WinterBreakRow[] = [
   { y0: 2015, last: '2015-12-19', first: '2016-01-23', src: 'BL' },
   { y0: 2016, last: '2016-12-21', first: '2017-01-21', before: 16, src: 'BL, SA' },
   { y0: 2017, last: '2017-12-16', first: '2018-01-13', src: 'RS, BL' },
+  { y0: 2018, last: '2018-12-22', first: '2019-01-19', src: 'DS (Rückrunde ab Fr 18.1.2019)' },
   { y0: 2019, last: '2019-12-21', first: '2020-01-18', src: 'RS' },
   { y0: 2021, last: '2021-12-18', first: '2022-01-08', src: 'RS' },
   { y0: 2022, last: '2022-11-12', first: '2023-01-21', before: 15, start: '2022-08-06', special: true, src: 'RS (WM in Katar 20.11.–18.12.2022)' },

@@ -57,6 +57,26 @@ const title = await page.locator('.ed-side-title').innerText();
 if (title !== 'Testhausen 75') fail(`Umbenennen nicht in der Vorschau: ${title}`);
 await page.screenshot({ path: `${outDir}/clubs-edited.png` });
 
+// Legenden: Eintrag wählen, verdeckten Wert und Verein ändern, neuen Eintrag anlegen; Prüfung meldet Fehler bei falschem Datum.
+await page.click('.ed-nav-item[data-sec="legends"]');
+await page.waitForTimeout(150);
+const lrows = await page.locator('.ed-table tbody tr').count();
+if (lrows !== 100) fail(`Legenden: ${lrows} statt 100 Einträge`);
+await page.locator('.ed-table tbody tr').nth(5).click();
+const legSide = page.locator('.ed-legend');
+await legSide.locator('.ed-field:has-text("Konstanz") input').fill('42');
+await legSide.locator('.ed-field:has-text("Jugendverein") select').selectOption({ index: 3 });
+await page.screenshot({ path: `${outDir}/legends-edited.png` });
+await page.locator('.ed-table-bar button:has-text("Hinzufügen")').click();
+await page.waitForTimeout(120);
+await page.locator('.ed-table tbody tr').last().locator('td').nth(3).locator('input').fill('2012-13-40');
+await page.click('.ed-tools >> text=Prüfen');
+await page.waitForTimeout(150);
+if (!await page.locator('.ed-issue.error:has-text("Geburtsdatum")').count()) fail('Legenden: falsches Geburtsdatum nicht gemeldet');
+await page.click('.ed-nav-item[data-sec="legends"]');
+await page.locator('.ed-table tbody tr').last().locator('.ed-mini.danger').click();
+await page.screenshot({ path: `${outDir}/legends-added.png` });
+
 // Meta-ID setzen, prüfen, exportieren.
 await page.click('.ed-nav-item[data-sec="general"]');
 await page.locator('.ed-field').first().locator('input').fill('testsatz');

@@ -3,8 +3,6 @@
    views/statistiken/competition/, components/competition/RoundsBracket.tsx
    ========================================================================== */
 .cmp-select { display: inline-flex; align-items: center; gap: 6px; }
-.cmp-select .dchip { padding: 3px 9px; font-size: 15px; line-height: 1.2; }
-.cmp-select .dselect { font-size: 14px; padding: 4px 8px; max-width: 220px; }
 
 .cmp-main .dbox-body { display: flex; flex-direction: column; overflow: hidden; }
 .cmp-league, .cmp-cup { display: flex; flex-direction: column; min-height: 0; flex: 1 1 auto; }
@@ -63,7 +61,6 @@
 /* Statistik */
 .cmp-stats .dbox-body { display: flex; flex-direction: column; }
 .cmp-stats .cmp-toolbar { margin-bottom: 4px; }
-.cmp-stats .dchip { padding: 2px 8px; font-size: 12px; }
 .cmp-statlist { display: flex; flex-direction: column; }
 .cmp-stat {
   display: grid; grid-template-columns: 26px minmax(0, 1.3fr) minmax(0, 1fr) 34px 46px; align-items: center; gap: 8px;

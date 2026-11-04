@@ -19,16 +19,7 @@
 .sp-crow { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 4px 0; font-size: 14px; }
 
 /* --- Seite + Reiter --- */
-.sp3-page { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
-.sp3-tabs {
-  margin: 8px 2.5% 0; flex: 0 0 auto; padding: 0 8px;
-  background: linear-gradient(180deg, rgba(27, 32, 41, 0.92), rgba(16, 20, 27, 0.94));
-  border: 1px solid var(--border-soft); border-radius: 6px;
-}
-.sp3-tabs .tab { font-family: var(--font-display); font-weight: 500; font-size: 15px; letter-spacing: 1.2px; text-transform: uppercase; padding: 10px 22px; display: inline-flex; align-items: center; gap: 8px; }
-.sp3-tab-n { font-family: var(--font-ui); font-size: 12px; letter-spacing: 0; min-width: 20px; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--border); color: var(--text-2); }
-.sp3-tabs .tab.active .sp3-tab-n { border-color: var(--accent); color: var(--accent); }
-.sp3-page > .dpage { padding-top: 26px; padding-bottom: 40px; row-gap: 26px; }
+/* Reiterleiste = drittes Menü: ui/SubTabs.tsx, CSS 28-subtabs.css */
 .sp3-hint { font-size: 13px; color: var(--text-4); text-transform: none; letter-spacing: 0; }
 
 /* Anklickbare Elemente: Fokus sichtbar, Auswahl = Bernstein */
@@ -60,27 +51,27 @@ button.sp3-inc-row:hover { background: var(--panel-hover); }
 .sp3-sheet-head { display: flex; align-items: center; gap: 14px; padding: 4px 6px 12px 2px; border-radius: 6px; border-left: 3px solid transparent; }
 .sp3-sheet-head:hover { background: var(--panel-hover); }
 .sp3-sheet-head.on { border-left-color: var(--accent); background: var(--accent-soft); }
-.sp3-sheet-logo { width: 72px; height: 72px; border-radius: 6px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35); flex: 0 0 auto; }
+.sp3-sheet-logo { width: 72px; height: 72px; border-radius: 6px; box-shadow: 0 2px 10px rgba(var(--shade-rgb), 0.35); flex: 0 0 auto; }
 .sp3-sheet-name { font-family: var(--font-display); font-size: 24px; font-weight: 600; letter-spacing: 0.5px; line-height: 1.15; }
 .sp3-empty-title { font-family: var(--font-display); font-size: 22px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-2); margin: 4px 0 6px; }
 
 .sp3-jersey { position: relative; height: min(86%, 560px); max-width: 100%; aspect-ratio: 200 / 210; }
-.sp3-jersey > svg:first-child, .sp3-jersey > img { width: 100% !important; height: 100% !important; filter: drop-shadow(0 16px 26px rgba(0, 0, 0, 0.45)); }
+.sp3-jersey > svg:first-child, .sp3-jersey > img { width: 100% !important; height: 100% !important; filter: drop-shadow(0 16px 26px rgba(var(--shade-rgb), 0.45)); }
 .sp3-jersey-over { position: absolute; inset: 0; width: 100%; height: 100%; }
 .sp3-zone-hit { fill: transparent; stroke: transparent; }
-.sp3-zone-free { fill: rgba(0, 0, 0, 0.12); stroke: rgba(255, 255, 255, 0.55); stroke-width: 0.8; stroke-dasharray: 3 2; }
-.sp3-zone:hover .sp3-zone-hit, .sp3-zone:focus-visible .sp3-zone-hit { stroke: rgba(255, 255, 255, 0.6); stroke-width: 0.8; }
+.sp3-zone-free { fill: rgba(var(--shade-rgb), 0.12); stroke: rgba(var(--ink-rgb), 0.55); stroke-width: 0.8; stroke-dasharray: 3 2; }
+.sp3-zone:hover .sp3-zone-hit, .sp3-zone:focus-visible .sp3-zone-hit { stroke: rgba(var(--ink-rgb), 0.6); stroke-width: 0.8; }
 .sp3-zone.on .sp3-zone-hit, .sp3-zone.on .sp3-zone-free { stroke: var(--accent); stroke-width: 1.2; }
 .sp3-zone:focus-visible { box-shadow: none; }
-.sp3-zone-txt { font-family: var(--font-display); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; fill: rgba(255, 255, 255, 0.75); pointer-events: none; }
+.sp3-zone-txt { font-family: var(--font-display); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; fill: rgba(var(--ink-rgb), 0.75); pointer-events: none; }
 
 .sp3-partners { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.sp3-pchip { display: flex; align-items: center; gap: 10px; padding: 8px; border: 1px solid var(--border-soft); border-radius: 6px; min-width: 0; background: rgba(255, 255, 255, 0.02); }
+.sp3-pchip { display: flex; align-items: center; gap: 10px; padding: 8px; border: 1px solid var(--border-soft); border-radius: 6px; min-width: 0; background: rgba(var(--ink-rgb), 0.02); }
 .sp3-pchip:hover { background: var(--panel-hover); }
 .sp3-pchip.on { border-color: var(--accent); }
 .sp3-pchip.locked { flex-direction: column; align-items: flex-start; gap: 2px; cursor: default; opacity: 0.7; }
 .sp3-pchip-logo { width: 40px; height: 40px; flex: 0 0 auto; border-radius: 4px; }
-.sp3-pchip-logo.blank, .sp3-tile-logo.blank { border: 1px dashed rgba(255, 255, 255, 0.22); background: rgba(255, 255, 255, 0.03); }
+.sp3-pchip-logo.blank, .sp3-tile-logo.blank { border: 1px dashed rgba(var(--ink-rgb), 0.22); background: rgba(var(--ink-rgb), 0.03); }
 .sp3-pchip-txt { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
 .sp3-pchip-txt b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 15px; }
 .sp3-pchip-txt .dnote { font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -104,7 +95,7 @@ button.sp3-inc-row:hover { background: var(--panel-hover); }
 /* --- Pyramide --- */
 .sp3-pyr { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 22px; min-height: 100%; padding: 6px 0; }
 .sp3-pyr-bg { position: absolute; left: 140px; top: 0; height: 100%; width: calc(100% - 140px); pointer-events: none; }
-.sp3-pyr-bg path { fill: rgba(255, 255, 255, 0.025); stroke: var(--border-soft); stroke-width: 0.3; vector-effect: non-scaling-stroke; }
+.sp3-pyr-bg path { fill: rgba(var(--ink-rgb), 0.025); stroke: var(--border-soft); stroke-width: 0.3; vector-effect: non-scaling-stroke; }
 .sp3-level { position: relative; display: grid; grid-template-columns: 126px minmax(0, 1fr); align-items: center; gap: 14px; }
 
 .sp3-level-lbl { display: flex; flex-direction: column; gap: 2px; }
@@ -112,7 +103,7 @@ button.sp3-inc-row:hover { background: var(--panel-hover); }
 .sp3-level-lbl b { font-size: 14px; font-weight: 600; color: var(--text-3); }
 .sp3-level-tiles {
   display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 0 auto; padding: 10px 12px;
-  border: 1px solid var(--border-soft); border-radius: 8px; background: rgba(12, 15, 21, 0.55);
+  border: 1px solid var(--border-soft); border-radius: 8px; background: rgba(var(--bg-rgb), 0.55);
 }
 .sp3-level.lv0 .sp3-level-tiles { min-width: 46%; max-width: 70%; }
 .sp3-level.lv1 .sp3-level-tiles { min-width: 70%; max-width: 88%; }
@@ -120,7 +111,7 @@ button.sp3-inc-row:hover { background: var(--panel-hover); }
 .sp3-tile { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 128px; padding: 6px 4px; border-radius: 6px; border: 1px solid transparent; }
 .sp3-tile:hover { background: var(--panel-hover); }
 .sp3-tile.on { border-color: var(--accent); background: var(--accent-soft); }
-.sp3-tile-logo { position: relative; width: 104px; height: 104px; border-radius: 6px; box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35); }
+.sp3-tile-logo { position: relative; width: 104px; height: 104px; border-radius: 6px; box-shadow: 0 3px 12px rgba(var(--shade-rgb), 0.35); }
 .sp3-tile.free .sp3-tile-logo, .sp3-tile.locked .sp3-tile-logo { box-shadow: none; display: flex; align-items: center; justify-content: center; }
 .sp3-tile.locked { opacity: 0.55; }
 .sp3-tile-cap { display: flex; flex-direction: column; align-items: center; width: 100%; line-height: 1.2; text-align: center; }
@@ -152,18 +143,18 @@ button.sp3-inc-row:hover { background: var(--panel-hover); }
 .sp3-stand.empty { opacity: 0.45; }
 .sp3-stand:focus-visible { box-shadow: none; }
 .sp3-stand:focus-visible polygon { stroke: var(--accent); }
-.sp3-stand-plate { fill: #e9edf2; stroke: rgba(0, 0, 0, 0.35); stroke-width: 1; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4)); }
+.sp3-stand-plate { fill: #e9edf2; stroke: rgba(var(--shade-rgb), 0.35); stroke-width: 1; filter: drop-shadow(0 2px 3px rgba(var(--shade-rgb), 0.4)); }
 .sp3-stand.on .sp3-stand-plate { stroke: var(--accent); stroke-width: 2; }
 .sp3-stand-name { font-family: var(--font-display); font-size: 9.5px; font-weight: 600; fill: #1b1f26; letter-spacing: 0.4px; text-transform: uppercase; pointer-events: none; }
 .sp3-stand-sub { font-family: var(--font-ui); font-size: 8.5px; fill: #4c5562; pointer-events: none; }
 .sp3-apron { fill: #24382d; }
-.sp3-ring { stroke: rgba(0, 0, 0, 0.5); stroke-width: 0.5; }
+.sp3-ring { stroke: rgba(var(--shade-rgb), 0.5); stroke-width: 0.5; }
 .sp3-ring.free { fill: #59626e; }
 .sp3-turf { fill: var(--turf); }
-.sp3-turf-stripe { fill: rgba(255, 255, 255, 0.035); }
+.sp3-turf-stripe { fill: rgba(var(--ink-rgb), 0.035); }
 .sp3-lines rect, .sp3-lines line, .sp3-lines circle { fill: none; stroke: var(--turf-line); stroke-width: 1.2; }
-.sp3-nameplate rect { fill: rgba(12, 15, 21, 0.86); stroke: rgba(255, 255, 255, 0.35); stroke-width: 1; }
-.sp3-nameplate:hover rect { stroke: rgba(255, 255, 255, 0.7); }
+.sp3-nameplate rect { fill: rgba(var(--bg-rgb), 0.86); stroke: rgba(var(--ink-rgb), 0.35); stroke-width: 1; }
+.sp3-nameplate:hover rect { stroke: rgba(var(--ink-rgb), 0.7); }
 .sp3-nameplate.on rect { stroke: var(--accent); stroke-width: 2; }
 .sp3-nameplate:focus-visible { box-shadow: none; }
 .sp3-np-name { font-family: var(--font-display); font-size: 12.5px; font-weight: 600; fill: var(--text); letter-spacing: 0.6px; text-transform: uppercase; pointer-events: none; }
@@ -179,7 +170,7 @@ button.sp3-inc-row:hover { background: var(--panel-hover); }
     radial-gradient(circle at 9px 9px, rgba(210, 218, 230, 0.10) 2.4px, transparent 3px) 0 0 / 13px 12px,
     linear-gradient(180deg, #11151c, #1d232d);
 }
-.sp3-grass { background: repeating-linear-gradient(90deg, #1f3d2f 0 80px, #234433 80px 160px); box-shadow: inset 0 8px 14px rgba(0, 0, 0, 0.35); }
+.sp3-grass { background: repeating-linear-gradient(90deg, #1f3d2f 0 80px, #234433 80px 160px); box-shadow: inset 0 8px 14px rgba(var(--shade-rgb), 0.35); }
 .sp3-boards { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; padding: 0 4px; background: #0b0d11; }
 .sp3-board { position: relative; height: clamp(70px, 11vh, 124px); display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .sp3-board-face { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
@@ -191,10 +182,10 @@ button.sp3-inc-row:hover { background: var(--panel-hover); }
 .sp3-board.holz::after {
   content: ''; position: absolute; inset: 0; pointer-events: none;
   background:
-    linear-gradient(180deg, transparent 32%, rgba(0, 0, 0, 0.28) 32% 34%, transparent 34% 66%, rgba(0, 0, 0, 0.28) 66% 68%, transparent 68%),
-    repeating-linear-gradient(176deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 9px),
-    radial-gradient(circle at 6px 8px, rgba(0, 0, 0, 0.5) 2px, transparent 2.5px),
-    radial-gradient(circle at calc(100% - 6px) 8px, rgba(0, 0, 0, 0.5) 2px, transparent 2.5px);
+    linear-gradient(180deg, transparent 32%, rgba(var(--shade-rgb), 0.28) 32% 34%, transparent 34% 66%, rgba(var(--shade-rgb), 0.28) 66% 68%, transparent 68%),
+    repeating-linear-gradient(176deg, rgba(var(--ink-rgb), 0.05) 0 2px, transparent 2px 9px),
+    radial-gradient(circle at 6px 8px, rgba(var(--shade-rgb), 0.5) 2px, transparent 2.5px),
+    radial-gradient(circle at calc(100% - 6px) 8px, rgba(var(--shade-rgb), 0.5) 2px, transparent 2.5px);
 }
 .sp3-board.holz .sp3-board-logo { filter: saturate(0.85) contrast(0.95); }
 .sp3-board.holz.free { background: #d9dde3; }
@@ -202,22 +193,22 @@ button.sp3-inc-row:hover { background: var(--panel-hover); }
 /* Druck: glänzende Fläche, Alu-Rahmen */
 .sp3-board.druck::after, .sp3-board.prisma::after {
   content: ''; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 45%, rgba(0, 0, 0, 0.18));
+  background: linear-gradient(180deg, rgba(var(--ink-rgb), 0.16), transparent 45%, rgba(var(--shade-rgb), 0.18));
   box-shadow: inset 0 0 0 2px #9aa3ae;
 }
 /* Prismenwender: senkrechte Lamellen */
 .sp3-board.prisma::before {
   content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
-  background: repeating-linear-gradient(90deg, transparent 0 9px, rgba(0, 0, 0, 0.22) 9px 10px);
+  background: repeating-linear-gradient(90deg, transparent 0 9px, rgba(var(--shade-rgb), 0.22) 9px 10px);
 }
 .sp3-board.prisma .sp3-board-face { animation: sp3-prism 0.6s ease-out; }
 @keyframes sp3-prism { from { transform: scaleX(0.05); opacity: 0.3; } to { transform: scaleX(1); opacity: 1; } }
 /* LED: dunkle Fassung, Pixelraster, Leuchten, Motivwechsel */
 .sp3-board.led { background: #050608; box-shadow: inset 0 0 0 2px #1a1d22; }
-.sp3-board.led .sp3-board-face { filter: brightness(1.12) saturate(1.2); animation: sp3-led 0.5s ease-out; box-shadow: 0 0 18px rgba(255, 255, 255, 0.08); }
+.sp3-board.led .sp3-board-face { filter: brightness(1.12) saturate(1.2); animation: sp3-led 0.5s ease-out; box-shadow: 0 0 18px rgba(var(--ink-rgb), 0.08); }
 .sp3-board.led::after {
   content: ''; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(circle, transparent 0.9px, rgba(0, 0, 0, 0.45) 1.3px) 0 0 / 3px 3px;
+  background: radial-gradient(circle, transparent 0.9px, rgba(var(--shade-rgb), 0.45) 1.3px) 0 0 / 3px 3px;
 }
 .sp3-board.led.free { background: #0b0d11; }
 .sp3-board.led .sp3-board-free { color: #6c7685; font-style: normal; letter-spacing: 1px; text-transform: uppercase; font-size: 12px; }
@@ -228,14 +219,14 @@ button.sp3-inc-row:hover { background: var(--panel-hover); }
 .sp3-btable td { vertical-align: middle; }
 .sp3-btable td:first-child { width: 210px; padding-left: 15px; }
 .sp3-btable td:last-child, .sp3-btable th:last-child { padding-right: 15px; }
-.sp3-banner { display: block; width: 190px; height: 34px; border-radius: 3px; overflow: hidden; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35); }
+.sp3-banner { display: block; width: 190px; height: 34px; border-radius: 3px; overflow: hidden; box-shadow: 0 1px 4px rgba(var(--shade-rgb), 0.35); }
 .sp3-banner svg { width: 100%; height: 100%; display: block; }
 .sp3-banner.blank { border: 1px dashed var(--border); box-shadow: none; display: flex; align-items: center; justify-content: center; font-size: 12.5px; color: var(--text-3); }
 
 /* --- Karteikarte --- */
 .sp3-card { max-width: 760px; border-radius: 8px; }
 .sp3-card-head { display: flex; align-items: center; gap: 18px; padding: 20px 22px 14px; border-bottom: 1px solid var(--border-soft); }
-.sp3-card-logo { width: 96px; height: 96px; flex: 0 0 auto; border-radius: 6px; overflow: hidden; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4); }
+.sp3-card-logo { width: 96px; height: 96px; flex: 0 0 auto; border-radius: 6px; overflow: hidden; box-shadow: 0 4px 16px rgba(var(--shade-rgb), 0.4); }
 .sp3-card-title { flex: 1; min-width: 0; }
 .sp3-card-title h2 { margin: 2px 0; font-family: var(--font-display); font-size: 28px; font-weight: 600; letter-spacing: 0.5px; }
 .sp3-kicker { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-3); font-weight: 700; }

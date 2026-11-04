@@ -9,6 +9,7 @@ import { isVirtual } from '../../../game/youthComps/sim';
 import type { YcSnapshot } from '../../../game/youthComps/view';
 import { KV } from '../../../ui/DashPage';
 import { TeamName } from '../../statistiken/competition/parts';
+import PosBadge from '../../../components/PosBadge';
 
 const LABEL: Record<StatCat, string> = { goals: 'Tore', assists: 'Vorlagen', scorer: 'Scorer', yellow: 'Gelbe Karten', red: 'Rote Karten', clean: 'Zu-null-Spiele' };
 
@@ -26,7 +27,7 @@ export function youthPlayerCard(g: Game, snap: YcSnapshot | null, pid: string, c
         <div className="mx-head">
           <div>
             <div className="mx-sub">{snap.compLabel} · {snap.season}</div>
-            <h2 className="yc-card-name">{any.name}{any.pos && <span className="pos-badge cmp-pos">{any.pos}</span>}</h2>
+            <h2 className="yc-card-name">{any.name}{any.pos && <PosBadge pos={any.pos} className="cmp-pos" />}</h2>
           </div>
           <button className="dchip" onClick={close} title="Schließen">×</button>
         </div>

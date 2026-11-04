@@ -216,7 +216,7 @@
 .tm-cs-left { display: flex; flex-direction: column; min-height: 0; gap: 10px; }
 .tm-cs-lhead { display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center; font-size: 17px; color: var(--text-2); }
 .tm-cs-lhead b { color: var(--text); font-family: var(--font-display); font-size: 22px; font-weight: 600; }
-.tm-cs-lhead select, .tm-sys-head select { font: inherit; font-size: 17px; padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text); min-width: 220px; }
+.tm-cs-lhead .sel3, .tm-sys-head .sel3 { font: inherit; font-size: 17px; padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text); min-width: 220px; }
 .tm-cs-table { flex: 1; min-height: 0; display: flex; flex-direction: column; border-radius: 6px; background: var(--panel); border: 1px solid var(--border); }
 .tm-cs-row { display: grid; grid-template-columns: 40px 54px 54px minmax(0, 1fr) 54px 46px 40px 46px 42px 46px 112px; gap: 8px; align-items: center; padding: 4px 14px; font-size: 16px; border-bottom: 1px solid var(--border-soft); cursor: pointer; }
 .tm-cs-row > span:nth-child(n+5) { text-align: center; }
@@ -246,18 +246,23 @@
 .tm-sys-main { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: 14px; }
 .tm-sys-pitch { justify-self: center; }
 .tm-sys-slot { position: absolute; transform: translate(-50%, -50%); width: 110px; display: flex; flex-direction: column; align-items: center; cursor: grab; border-radius: 6px; padding: 2px 0; z-index: 2; }
-.tm-sys-slot:hover { background: rgba(255, 255, 255, 0.06); }
+.tm-sys-slot:hover { background: rgba(var(--ink-rgb), 0.06); }
 .tm-sys-slot.sel { background: var(--accent-soft); box-shadow: 0 0 0 2px var(--accent); }
 .tm-sys-slot.rein .tm-sys-name { color: var(--green); }
 .tm-sys-slot.dragging { opacity: 0.35; }
-.tm-sys-name { font-size: 15px; font-weight: 600; color: var(--text); text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8); white-space: nowrap; max-width: 118px; overflow: hidden; text-overflow: ellipsis; }
-.tm-sys-ps { font-size: 13px; color: var(--text-2); text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8); }
+.tm-sys-name { font-size: 15px; font-weight: 600; color: var(--text); text-shadow: 0 1px 2px rgba(var(--shade-rgb), 0.8); white-space: nowrap; max-width: 118px; overflow: hidden; text-overflow: ellipsis; }
+.tm-sys-ps { font-size: 13px; color: var(--text-2); text-shadow: 0 1px 2px rgba(var(--shade-rgb), 0.8); }
 .tm-sys-empty { font-size: 14px; color: var(--text-3); text-align: center; padding: 18px 0; border: 1px dashed var(--text-4); border-radius: 6px; width: 70px; }
 .tm-sys-bench { overflow-y: auto; min-height: 0; display: flex; flex-direction: column; gap: 6px; }
 .tm-sys-b { display: flex; flex-direction: column; align-items: center; padding: 4px 0; border-radius: 6px; cursor: grab; }
 .tm-sys-b:hover { background: var(--panel-hover); }
 .tm-sys-b.sel { background: var(--accent-soft); box-shadow: inset 0 0 0 2px var(--accent); }
 .tm-sys-b.raus .tm-sys-name { color: var(--red); }
+.tm-sys-slot, .tm-sys-b { touch-action: none; }
+.tm-sys-slot.over, .tm-sys-b.over { background: var(--accent-soft); box-shadow: 0 0 0 2px var(--accent); }
+.tm-sys-bench { border-radius: 6px; outline: 1px dashed transparent; outline-offset: 2px; }
+.tm-sys-bench.live { outline-color: var(--border); }
+.tm-sys-bench.no { outline: 2px solid var(--neg); }
 .tm-sys-ghost { position: absolute; z-index: 20; transform: translate(-50%, -50%); pointer-events: none; display: flex; flex-direction: column; align-items: center; font-size: 15px; font-weight: 600; opacity: 0.9; }
 
 /* Ansprache, Gespräche, Spiel-Taktik */

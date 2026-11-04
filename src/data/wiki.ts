@@ -65,7 +65,7 @@ export const WIKI_ARTICLES: WikiArticle[] = [
     id: 'core-overview',
     category: 'core',
     title: 'Spielüberblick',
-    keywords: ['bundesliga', '1975', 'saison', 'punkte', 'weiter', 'epoche', 'chronik'],
+    keywords: ['bundesliga', '1975', 'saison', 'punkte', 'weiter', 'epoche', 'chronik', 'menü', 'reiter', 'drittes menü'],
     body: `## 1975 – A Football Manager
 Deutsche Retro-Fußballmanager-Simulation. Der Spielstand startet in der **Saison 1975/76** (18 Vereine, 34 Spieltage) im Libero-Zeitalter und lässt sich über Jahrzehnte fortführen — Saison für Saison. Startdatum: **1. Juli 1975** (UTC).
 
@@ -74,6 +74,11 @@ Deutsche Retro-Fußballmanager-Simulation. Der Spielstand startet in der **Saiso
 - Solange die Zeit läuft, erscheint in der Bildschirmmitte der **Kalenderstreifen** (siehe Artikel „Kalender & planbare Aktivitäten“); der Rest des Bildschirms ist dann unscharf und abgedunkelt, nur der **Pause**-Knopf bleibt bedienbar.
 - Der Button hat eine **feste Größe** und wechselt je nach Kontext die Beschriftung (Weiter / Pause / Simulieren / ▶ Neue Saison), ohne zu springen.
 - An wichtigen Ereignissen (**dein Spiel** – hier hält der Vorlauf unmittelbar vor dem Anpfiff an und öffnet das Match-Fenster im Vor-Anpfiff-Zustand –, **große Saison-Bewertung**, Saisonende) hält das Spiel automatisch an. Die Pause landet dabei **genau auf dem betreffenden Tag** (also z.B. **am Spieltag selbst**, nicht am Folgetag): Das angezeigte Datum in der Zentrale bleibt auf diesem Tag stehen, der Tageswechsel wird erst nachgeholt, sobald du den Vorlauf fortsetzt. Auch die drei Bewertungsrunden (Herbst, Winter, Saisonende) halten an und zeigen die Bewertungs-Show. Am Saisonende wird der **Weiter**-Button zu **„▶ Neue Saison"** und startet die Folgesaison samt fälliger Chronik-Meilensteine.
+
+## Menüs: Kategorie › Unterpunkt › Reiter
+- Oben wählst du die **Kategorie** (Zentrale, Spieltag, Kader …), darunter den **Unterpunkt**. Hat eine Seite mehrere gleichrangige Ansichten, steht direkt darunter eine **Reiterleiste** (das „dritte Menü“), z. B. Training › Trainingsplan (Mannschaftstraining, Individuelle Spieler, Trainingsgruppen, Langfristig), Jugend › Mannschaften (A- bis G-Jugend und Alle), Kader › Übersicht und Transfers › Transfermarkt (Mannschaftsteile), Transfers › Beobachtung, Finanzen › Sponsoring und Fanartikel, Verein › Erfolge, Zentrale › Presse (Ausgaben) sowie Jugend › Jugendwettbewerbe (Altersklassen).
+- Die kleine Zahl im Reiter zählt, was dahinter steckt (Spieler, Angebote). Der zuletzt gewählte Reiter bleibt beim Seitenwechsel erhalten.
+- Umschalter, die nur den Inhalt **einer Box** ändern (z. B. Kabine › Maßnahmen/Vorfälle, Budget › Aufteilung/Vorjahre), bleiben im Kopf dieser Box.
 
 ## Punktesystem
 - Das Punktesystem ist **historisch automatisch** und **nicht mehr manuell wählbar**: **2 Punkte pro Sieg bis Saison 1994/95**, **ab Saison 1995/96 automatisch 3 Punkte pro Sieg** (Remis stets 1 Punkt).
@@ -661,8 +666,9 @@ Bei den anderen Vereinen folgt die Stimmung den letzten Ergebnissen; die Moral i
     keywords: ['zentrale', 'dashboard', 'newscenter', 'übersicht', 'fan-app', 'videotext', 'stadionheft', 'sms', 'widgets', 'managerstatus', 'teamstatus'],
     body: `## Aufbau
 Die **Zentrale** ist deine Startseite. Oben bleibt das Hauptmenü; den Kalender siehst du nur, solange die Zeit läuft (Überblendung).
+- **Zurück / Vorwärts:** Die beiden Pfeile links unter dem Hauptmenü bringen dich zur vorherigen Seite bzw. nach einem Zurück wieder vorwärts (je bis zu 20 Schritte, auch mit Alt+← / Alt+→). Sobald Zeit vergeht, beginnt der Verlauf neu.
 - **Links** stehen kleine Übersichten: Ausschnitt der **Ligatabelle** um deinen Verein, **Liste der Spiele** (die letzten zwei Ergebnisse, die nächsten drei Termine; L = Liga, P = Pokal, E = Europapokal), **Budget** der laufenden Saison, **Managerstatus** (Saisonziel, Vertrauen des Vorstands, Fanstimmung, Mediendruck, Leitbild), **Sperren und Verletzungen**, **Teamstatus** (Stärke der Startelf, Fitness, Frische, Form, Moral) und deine **Taktik** in Kurzform. Ein Klick auf ein Kästchen öffnet die passende Seite. Die Spalte lässt sich scrollen.
-- **In der Mitte** liegt das **Newscenter**: links deine Nachrichten (gruppiert nach Heute, Gestern, Diese Woche, Älter; ungelesene fett), rechts die gewählte Nachricht mit Datum, Text, Entscheidungsknöpfen und Sprungzielen. Betrifft sie einen Spieler, siehst du unten rechts sein Gesicht – ein Klick öffnet das Profil. Unten wählst du, welche Nachrichten angezeigt werden.
+- **In der Mitte** liegt das **Newscenter**: links deine Nachrichten (gruppiert nach Heute, Gestern, Diese Woche, Älter; ungelesene fett), rechts die gewählte Nachricht mit Datum, Text, Entscheidungsknöpfen und Sprungzielen. Betrifft sie einen Spieler, siehst du unten rechts sein Gesicht – ein Klick öffnet das Profil. Oben filterst du mit großen Knöpfen: **Alle**, **Ungelesen**, **Entscheidungen** (alles, was noch eine Antwort von dir braucht), **Spiele** (Liga und Pokal), **Transfers** (mit Verträgen) und **Verein** (Vorstand, Presse, Training, Medizin, Allgemeines); jede einzelne Kategorie wählst du über die Liste **Kategorie**. In der Liste steht die Kategorie als ruhige Textspalte, Nachrichten mit offener Entscheidung tragen das Etikett **Entscheidung**.
 - **Offene Entscheidung:** Solange eine Nachricht eine Entscheidung verlangt, wird oben rechts aus „Weiter“ der rote Brief **Nachrichten**. Ein Klick darauf öffnet die Zentrale und wählt die offene Entscheidung direkt aus. Hast du ein Fenster wie Auslosung, Bewertungsrunde, Saison-Briefing oder Die Besten der Saison gesehen, gilt die passende Nachricht danach schon als gelesen. Solche Fenster kommen immer einzeln nacheinander (zuerst Spielbericht, Bewertung, Briefing und Budget, dann Auslosung, Trainingslager-Bilanz, Transferbilanz, Erstes Training, Goldener Ball, Die Besten der Saison, zuletzt die Vorschau „Nächstes Spiel“); solange eines offen ist, steht die Zeit.
 - **Rechts oben** die **Übersicht** aller Wettbewerbe der Saison (Deutschland, DDR, international, Auslandsligen der Vorsaison). Ein Klick öffnet Statistiken › Liga, Pokal oder International mit genau diesem Wettbewerb. Dein Verein ist hervorgehoben.
 - **Rechts unten** erfährst du, was die Fans über deinen Verein lesen – im Medium der Zeit: bis Mai 1980 das **Stadionheft**, ab Juni 1980 der **Videotext** von ARD und ZDF, ab 1999 der **SMS-Dienst** aufs Handy, ab Juli 2008 die **Fan-App**. Die Meldungen und Gerüchte stammen aus der Sportzeitung (Zentrale › Presse); ein Klick öffnet den Artikel.`,
@@ -840,9 +846,20 @@ Die Vorschau im Planer zeigt für jeden Tag das erwartete **Fitness-Delta** (gr�
     id: 'player-hidden-values',
     category: 'development',
     title: 'Verdeckte Werte & Attribut-Wirkung',
-    keywords: ['konstanz', 'nervenstärke', 'verdeckt', 'versteckt', 'einschätzung', 'scout', 'trainerteam', 'verletzungsanfälligkeit', 'attribut', 'wirkung'],
+    keywords: ['konstanz', 'nervenstärke', 'trainingsfleiß', 'fleiß', 'entwicklungstempo', 'ausnahmetalent', 'verdeckt', 'versteckt', 'einschätzung', 'scout', 'trainerteam', 'verletzungsanfälligkeit', 'attribut', 'wirkung'],
     body: `## Verdeckte Werte
-**Konstanz**, **Nervenstärke**, **Verletzungsanfälligkeit** und **Entwicklungstempo** sind verdeckt – du siehst nie eine Zahl, nur eine **Einschätzung** („wirkt nervenstark“, „schwankt stark“).
+**Konstanz**, **Nervenstärke**, **Verletzungsanfälligkeit**, **Entwicklungstempo** und **Trainingsfleiß** sind verdeckt – schon in der Jugend. Du siehst nie eine Zahl, nur eine **Einschätzung** („Nerven aus Stahl“, „schwankt stark“, „trainiert wie ein Weltmeister“).
+
+### So wirken sie
+- **Konstanz:** wie stark die Tagesleistung schwankt (bis etwa ±15 % je Spiel). Unbeständige Spieler haben zudem öfter schwache Tage (Mittel bis ≈ −1 %), sehr konstante öfter gute.
+- **Nervenstärke:** in Derbys, Pokal, Europapokal, engen Schlussphasen und im Elfmeterschießen bis etwa ±6 % Leistung.
+- **Verletzungsanfälligkeit:** robuste Spieler verletzen sich im Spiel nur gut halb so oft wie anfällige; auch im Training.
+- **Entwicklungstempo:** wie schnell ein Spieler lernt – in der Jugend und als Profi ×0,8 (langsam) bis ×1,2 (sehr schnell).
+- **Trainingsfleiß** (mit Ehrgeiz): Profis entwickeln sich ×0,7 bis ×1,3, Jugendspieler ×0,85 bis ×1,15; Fleiß bremst im Alter auch den Abbau.
+- Dazu verdeckt: **Frühreife** (früh fertig oder Spätentwickler) und **Langlebigkeit** (verschiebt den Abbau um bis zu anderthalb Jahre).
+
+### Ausnahmetalente der Geschichte
+Im Datensatz können bekannte Ausnahmetalente der Fußballgeschichte stecken. Sie entstehen wie alle anderen Spieler irgendwo in der Spielwelt und werden nicht besonders angekündigt – ob aus ihnen Weltklasse wird, entscheiden Umfeld, Einsatzzeit und Verletzungen. Beim Spielstart kannst du sie abschalten (Option „Ausnahmetalente der Geschichte“).
 - **Eigene Spieler:** Das **Trainerteam** urteilt. Je länger der Spieler im Verein ist, desto treffsicherer (nach rund zweieinhalb Jahren „gesichert“).
 - **Fremde Spieler:** Die **Scouts** urteilen – je besser dein Scouting (und je länger ihr verhandelt), desto genauer. Ohne Kenntnis heißt es „noch kein Urteil“.
 - Jede Einschätzung kann **danebenliegen**: Jeder Spieler hat einen festen Schätzfehler, der mit wachsender Kenntnis schrumpft.
@@ -851,7 +868,8 @@ Die Vorschau im Planer zeigt für jeden Tag das erwartete **Fitness-Delta** (gr�
 Hinter jedem Attribut im Spielerprofil steht ein kleines **i**. Es zeigt, wo der Wert im Spiel direkt gerechnet wird (z. B. Kopfball: Kopfballduelle bei Flanken und Ecken, Kopfball-Abschluss), für welche Positionen er in die **Positionsstärke** eingeht (live aus der Epoche) und welche **Trainingsbausteine** ihn verbessern.
 
 ## Code
-- Einschätzung: \`game/hiddenTraits.ts\` (\`hiddenKnowledge\`, \`estimateHidden\`).
+- Einschätzung: \`game/hiddenTraits.ts\` (\`hiddenKnowledge\`, \`estimateHidden\`), Worte \`data/hiddenTraitWords.ts\`.
+- Wirkung: \`engine/talent.ts\` (\`tempoFactor\`, \`diligenceFactor\`, Körperuhr), \`engine/development.ts\`, \`engine/match/skills.ts\` (\`dayForm\`, \`nerveF\`).
 - Attribut-Texte: \`data/attributeInfo.ts\`; Anzeige \`components/player/AttrTip.tsx\`.`,
   },
   {
@@ -987,10 +1005,14 @@ Die Formation wählst du oben im Spielfeld:
 
 Beim Wechsel der Formation bleibt deine Startelf zusammen und wird bestmöglich auf die neuen Positionen verteilt; eigene Positionsänderungen werden dabei verworfen.
 
-### Ziehen und Tauschen
-- Spieler aus der **Liste** oder von der **Bank** auf eine Karte im Feld ziehen setzt ihn dort ein (der bisherige Spieler tauscht den Platz). Lässt du ihn irgendwo auf dem Rasen los, kommt er auf die nächstgelegene Position.
+### Ziehen und Tauschen (Drag & Drop)
+Alles lässt sich ziehen – Karten auf dem Feld, Bankspieler und jede Zeile der Kaderliste. Ziele sind die Karten und freien Plätze auf dem Feld, die Bankplätze, das Feld **Reserve** neben der Bank sowie die drei Abschnitte der Liste. Beim Ziehen hängt eine kleine Karte am Zeiger, die zeigt, wohin der Spieler beim Loslassen kommt; Bank und Reserve sind als Ablagezonen umrandet, das aktuelle Ziel leuchtet.
+- Spieler aus der **Liste** oder von der **Bank** auf eine Karte im Feld ziehen setzt ihn dort ein (der bisherige Spieler tauscht den Platz – ein Bankspieler geht dafür auf die Bank, ein Reservespieler in die Reserve). Lässt du ihn irgendwo auf dem Rasen los, kommt er auf die nächstgelegene Position.
 - Eine **Karte auf eine andere Karte** ziehen tauscht die beiden Spieler.
-- Auf die Bank oder in die Reserve ziehen nimmt einen Spieler aus der Startelf.
+- Eine Karte auf die **Ersatzbank** ziehen: Der Platz in der Aufstellung wird **frei**, der Spieler setzt sich auf den nächsten freien Bankplatz. Ist die Bank voll, wird die Ablage abgewiesen (rot markiert) – lass ihn dann direkt auf einen Bankspieler fallen, die beiden tauschen.
+- Eine Karte in die **Reserve** ziehen (Feld neben der Bank oder Abschnitt in der Liste): Der Platz wird frei, der Spieler gehört nicht zum Spieltagskader.
+- Freie Plätze bleiben als gestrichelte Karte „frei“ stehen und sind selbst Ablageziel. Hinweis „Aufstellung unvollständig“ rechts und in der Vorschau „Nächstes Spiel“.
+- **Escape** bricht das Ziehen ab, der Spieler bleibt, wo er war. Auf Touch-Geräten den Spieler kurz gedrückt halten, bis er sich anhebt, dann ziehen (ohne Halten scrollt die Liste). Ein langer Druck ohne Bewegung öffnet weiterhin das Spieler-Menü, ein Rechtsklick ebenso.
 - Ein einfacher Klick auf Karte oder Zeile öffnet das Spielerprofil.
 
 ### Positionen verschieben
@@ -1004,7 +1026,7 @@ Die so entstandene Position zählt im Spiel genauso wie eine Formationsposition 
 **Auto** besetzt alle Positionen nach bestmöglicher Eignung (nur einsatzfähige Spieler) und füllt die Bank samt Ersatztorwart – Formation, eigene Positionen und Anweisungen bleiben erhalten.
 
 ### Was vor dem Anpfiff passiert
-Das Spiel nimmt genau diese Aufstellung. Fällt ein Spieler bis dahin aus (verletzt, gesperrt), rückt auf seine Position der passendste Freie. Freie Bankplätze füllt das Spiel mit den besten Übrigen auf, bevorzugt mit einem Ersatztorwart.`,
+Das Spiel nimmt genau diese Aufstellung. Fällt ein Spieler bis dahin aus (verletzt, gesperrt) oder hast du einen Platz leer gezogen, setzt der Co-Trainer beim Anpfiff auf genau diese Position den passendsten freien Spieler – mit elf Mann wird immer angepfiffen. Freie Bankplätze füllt er mit den besten Übrigen auf, bevorzugt mit einem Ersatztorwart. Willst du das nicht dem Zufall überlassen, wähle in der Vorschau „Nächstes Spiel“ *Co-Trainer stellt die beste Elf auf* oder besetze die Plätze selbst.`,
   },
   {
     id: 'position-weights',
@@ -1096,7 +1118,7 @@ Das Ergebnis wird auf 1–99 begrenzt. Deshalb kann ein Weltklasse-Stürmer als 
     id: 'position-skill',
     category: 'tactics',
     title: 'Positionsvertrautheit – mehrere Positionen lernen',
-    keywords: ['vertrautheit', 'position', 'nebenposition', 'positionstraining', 'umschulen', 'natürlich', 'grün'],
+    keywords: ['vertrautheit', 'position', 'nebenposition', 'positionstraining', 'umschulen', 'natürlich', 'grün', 'etikett', 'farbe', 'pos'],
     body: `## Positionsvertrautheit (0–100)
 Jeder Spieler hat für **jede** Position einen eigenen Vertrautheitswert. Im Spielerprofil siehst du oben auf dem kleinen Spielfeld je Position einen Punkt mit „Kürzel|Eignung“ – je grüner der Punkt, desto vertrauter:
 
@@ -1111,16 +1133,23 @@ Vorausgewählt ist die Position, auf der er am stärksten ist. Klickst du eine a
 Die meisten Spieler haben eine natürliche Position, ein bis zwei gute und einige ausreichende (verwandte Rollen wie IV–LIB, ZM–DM/OM, MS–HS, RV–RM–RA liegen nahe beieinander; passende Attribute helfen). Rechts und links sind getrennte Positionen: Ein rechtsfüßiger Rechtsverteidiger ist links meist nur „ausreichend“, als RM oft „gut“, als LM kaum zu gebrauchen. Beidfüßige wechseln die Seite leichter. Torhüter sind auf dem Feld kaum zu gebrauchen und umgekehrt.
 
 ### Wachstum
-- **Spielen:** Jeder Einsatz auf einer Position steigert die Vertrautheit – schnell, solange sie niedrig ist, dann immer langsamer. Von null auf „gut“ dauert es etwa anderthalb Spielzeiten Stammplatz; junge Spieler lernen schneller, ältere langsamer.
-- **Positionstraining:** Im Spielerprofil wählst du für einen eigenen Spieler **eine** Zielposition („Position trainieren“). Er lernt dann an jedem Trainingstag dazu – bessere Trainingsanlagen helfen. Training allein bringt ihn höchstens auf **85**; den letzten Schliff zur natürlichen Position holt er sich nur in Spielen. Erreicht er eine neue Stufe, meldet sich der Trainerstab.
+Umschulen braucht Zeit: Als Faustregel bringt **eine Saison Stammplatz auf der neuen Position mit Positionstraining etwa +50 Punkte** (Spieler um die 27).
+- **Spielen:** Jeder Einsatz auf einer Position steigert die Vertrautheit gleichmäßig – rund **+40 in einer Saison** mit 30 vollen Spielen. Kurzeinsätze zählen anteilig.
+- **Positionstraining:** Im Spielerprofil wählst du für einen eigenen Spieler **eine** Zielposition („Position trainieren“). Er lernt dann an jedem Trainingstag dazu – bessere Trainingsanlagen helfen –, aber deutlich langsamer als im Spiel: etwa **+15 je Saison**. Training allein bringt ihn höchstens auf **85**; den letzten Schliff holt er sich nur in Spielen. Erreicht er eine neue Stufe, meldet sich der Trainerstab.
+- **Ähnliche Positionen** lernt er schneller: Ist die neue Rolle der Stammposition verwandt (ZM → OM, RV → RM, IV → DM), schafft er mit Spielen und Training eher **+60 bis +65** je Saison; bei ganz fremden Rollen (IV → RA) eher +45 bis +50. Die Seite des starken Fußes zählt mit.
+- **Ab 80 geht es deutlich langsamer:** Die letzten Punkte bis zur natürlichen Position kosten etwa noch einmal eine Saison Stammplatz (80 → ≈ 95).
+- **Alter:** Junge Spieler lernen schneller (mit 19 etwa +65 je Saison), ab Anfang 30 deutlich langsamer (mit 34 etwa +30).
 
 ### Abbau
 Wer eine Position über ein Jahr nicht mehr spielt, verlernt sie langsam – nicht jeden Monat, sondern zufällig verzögert und umso langsamer, je näher der Wert an der Untergrenze liegt. Er fällt **nie unter 50 % seines Höchstwerts**. Die Stammposition und die gerade trainierte Position bauen nicht ab.
 
+### Positionsetiketten in den Listen
+Die Kürzel in Kader, Aufstellung, Transfermarkt usw. sind nach Mannschaftsteil gefärbt: **Torwart türkis**, **Abwehr grün** (LIB, IV, RV, LV), **Mittelfeld blau** (DM, ZM, RM, LM, OM), **Angriff rot** (RA, LA, HS, MS). Ein Spieler zeigt jede Position, auf der seine Vertrautheit mindestens **80** beträgt – die Stammposition immer. Vorne steht die Position, auf der er am **stärksten** ist (Positionseignung wie oben im Spielerprofil); bei Gleichstand die, auf der er in den **letzten 20 Spielen** am häufigsten stand. Kann er mehr als zwei Positionen, steht hinter den ersten beiden ein **„+“** – fährst du darüber (oder tippst darauf), siehst du alle mit Stufe und Eignung, dazu die Positionen, die noch unter 80 liegen (ab 50). Auf dem Spielfeld der Aufstellung steht weiter nur die Position des Platzes, in derselben Farbe.
+
 ### Wirkung
 Die Vertrautheit ist der Vertrautheits-Faktor der **Positionseignung** (siehe dort) und wirkt damit überall: Match-Engine, Aufstellungs-KI, Eignungsfarben in der Aufstellung und Einwechslungen. Alle Vereine nutzen das System: Die KI stellt Spieler auch auf guten Nebenpositionen auf und lässt zu Saisonbeginn je Verein höchstens einen jungen Spieler eine Position lernen, auf der die Formation dünn besetzt ist.
 
-*Technik:* \`engine/positionSkill.ts\` (Erzeugung, Wachstum, Abbau), \`game/positionsGame.ts\` (Monat, KI, Nachrüstung), optionales Feld \`Player.positionSkill\`.`,
+*Technik:* \`engine/positionSkill.ts\` (Erzeugung, Wachstum, Abbau), \`game/positionsGame.ts\` (Monat, KI, Nachrüstung), optionales Feld \`Player.positionSkill\`; Etiketten \`components/PosBadge.tsx\` + \`ui/positionBadges.ts\`.`,
   },
   {
     id: 'positions-sides',
@@ -1239,7 +1268,7 @@ Beide Wege nutzen **dieselbe Match-Engine** und verbuchen alles identisch (Ergeb
 
 ## Wechsel und Taktik: der Wechsel-Bildschirm
 Wechsel, Umstellungen und Ansprachen laufen über einen eigenen Bildschirm. Er öffnet sich über **Wechsel / Taktik** (oben rechts) bzw. die Knöpfe **Aufstellung, Taktik, Individuelle Anweisungen**, zur **Halbzeit** und wenn eine Option das Spiel anhält. Das Spiel steht so lange still; alles ist ein Entwurf und gilt erst mit **Bestätigen** (Abbrechen verwirft ihn).
-- **Aufstellung:** links die Spielerliste (Startelf und Bank mit Note, Stärke auf der Position, Fitness, Kraft, Form, Moral und Potenzial-Einschätzung der Scouts), rechts das **Spielsystem** mit Formationswahl und dem Feld mit Gesichtern und „Position | Stärke“, die Bank daneben. Wechseln oder Positionen tauschen: zwei Spieler nacheinander anklicken (Liste oder Feld) oder auf dem Feld ziehen. Ein Bankspieler auf einem Platz bedeutet eine Einwechslung (grün „rein“, der Ausgewechselte rot „raus“). Eine neue Formation verteilt deine Elf nach Eignung auf die Positionen. **Mannschaftsstärke** und **verbleibende Wechsel** rechnen sofort mit. Wechsel je nach Epoche: **2** (bis 1994), **3** (ab 1995), **5** (ab 2020).
+- **Aufstellung:** links die Spielerliste (Startelf und Bank mit Note, Stärke auf der Position, Fitness, Kraft, Form, Moral und Potenzial-Einschätzung der Scouts), rechts das **Spielsystem** mit Formationswahl und dem Feld mit Gesichtern und „Position | Stärke“, die Bank daneben. Wechseln oder Positionen tauschen: zwei Spieler nacheinander anklicken (Liste oder Feld) oder auf dem Feld ziehen (Escape bricht ab). Ein Bankspieler auf einem Platz bedeutet eine Einwechslung; umgekehrt kommt ein Feldspieler nur per Wechsel auf die Bank – zieh ihn direkt auf den Bankspieler, der für ihn kommt (grün „rein“, der Ausgewechselte rot „raus“). Eine neue Formation verteilt deine Elf nach Eignung auf die Positionen. **Mannschaftsstärke** und **verbleibende Wechsel** rechnen sofort mit. Wechsel je nach Epoche: **2** (bis 1994), **3** (ab 1995), **5** (ab 2020).
 - **Taktik öffnen:** Ausrichtung sowie Tempo, Breite, Pressing, Abwehrlinie, Einsatz und Aufbauspiel **nur für dieses Spiel** – deine gespeicherte Taktik bleibt unverändert.
 - **Halbzeitansprache** (nur in der Pause): Loben, ruhig analysieren oder Kabinenpredigt, daneben die Statistik zur Pause. Lob hilft bei Führung, eine Predigt bei Rückstand; falscher Ton kann schaden.
 - **Spielergespräche:** ein kurzes Wort an einzelne Spieler, einmal je Halbzeit. **Loben** stärkt Spieler, die gut spielen; **Mehr fordern** weckt schwache, kränkt aber starke; **Beruhigen** hilft Verwarnten und Nervösen. Die Wirkung ist klein (rund ±1–2 % Tagesleistung).
@@ -1326,9 +1355,11 @@ Weil jede CPU-Aufstellung dieselbe Eignungs- und Taktik-Logik nutzt wie deine, w
     title: 'Trainer der KI-Vereine',
     keywords: ['trainer', 'ki', 'coach', 'stil', 'philosophie', 'formation', 'libero', 'gegner'],
     body: `## Trainer der KI-Vereine
-Jeder andere Verein deiner Liga hat einen **Trainer** mit Namen, Alter, Herkunft, Ansehen (0–100) und zwei Eigenschaften (\`engine/aiManager.ts\`, \`game/coachCarousel.ts\`). Dein eigener Verein hat keinen – das bist du.
+Jeder andere Verein deiner Liga hat einen **Trainer** mit Namen, Alter, Herkunft, Ansehen (0–100) und zwei Eigenschaften (\`engine/aiManager.ts\`, \`game/coachCarousel.ts\`). Dort entscheidet der Vorstand über den Trainer: Steigt der Druck zu weit, wird er entlassen und ein Nachfolger kommt aus dem Trainerpool (Trainerkarussell).
 
-Im Vereinsprofil (Reiter Übersicht) zeigt die Trainer-Kachel Stil, Philosophie, Amtszeit, die **Ligabilanz** der Amtszeit (Siege-Remis-Niederlagen und Punkte je Spiel nach 3-Punkte-Wertung) und die Vorgänger mit ihrer Bilanz – auch dich, wenn du dort einmal Trainer warst.
+Bei deinem Verein bist du der **Manager**: Den Cheftrainer stellst du selbst ein (Training › Trainerteam) und entlässt ihn auch. Der Vorstand kann dir einen Trainerwechsel nur nahelegen – siehe „Deine Managerkarriere“.
+
+Im Vereinsprofil (Reiter Übersicht) zeigt die Trainer-Kachel Stil, Philosophie, Amtszeit, die **Ligabilanz** der Amtszeit (Siege-Remis-Niederlagen und Punkte je Spiel nach 3-Punkte-Wertung) und die Vorgänger mit ihrer Bilanz. Bei deinem Verein zeigt sie dich als Manager und deinen Cheftrainer; Vorgänger sind deine früheren Cheftrainer.
 
 ### Stil → Taktik
 - **Offensiv:** Angriffsausrichtung, mehr Pressing und Tempo, höhere Linie.
@@ -1428,19 +1459,26 @@ Die anderen Vereine planen ihre Verträge wie ein Sportdirektor (\`game/aiContra
 ### Vorzeitige Verlängerung
 Leistungsträger (die besten 13 des Kaders) und große Talente bekommen rechtzeitig einen neuen Vertrag, wenn ihrer in höchstens 20 Monaten endet. Vor dem Bosman-Urteil eilt das kaum – auch ohne Vertrag gab es eine Ablöse –, deshalb sprechen die Vereine nur im Frühjahr und seltener mit ihren Spielern. Ab Sommer 1995 sind es drei Stichtage (1. Oktober, 1. Februar, 20. April).
 
-Nicht jeder unterschreibt: Ehrgeizige, unzufriedene oder für den Verein zu gute Spieler **lehnen ab**. Nach Bosman passiert das deutlich häufiger.
+Nicht jeder unterschreibt: Ehrgeizige, unzufriedene oder für den Verein zu gute Spieler **lehnen ab**. Nach Bosman passiert das deutlich häufiger – und über die Jahrzehnte immer öfter (Beratermarkt, kürzere Bindung).
+
+### Ablösefrei – wie oft?
+- **Bis 1995** gab es in Deutschland auch nach Vertragsende eine Ablöse. Ablösefrei wechselten fast nur Spieler am Karriereende oder in den Amateurbereich: in der ganzen Liga eine Handvoll pro Saison.
+- **Ab 1995/96** (Bosman) werden es schnell mehr; heute verlässt jeder Bundesligist pro Saison im Schnitt gut zwei Spieler ablösefrei, rund ein Viertel der Zugänge kommt ohne Ablöse.
+- Die KI ist auf diese Größenordnungen eingestellt (Quellen und Soll-Werte: \`docs/recherche/ablösefrei.md\`).
 
 ### Altstars laufen aus
 Spieler ab 34 – und ab 32, wenn sie nicht mehr zur Stammelf gehören – bekommen keinen neuen Vertrag. Zum 1. Juli wechseln sie zu einem Verein, der sie noch will, oder gehen unterklassig bzw. beenden die Karriere.
+
+Nach Bosman lassen die Vereine auch **Ergänzungsspieler** (ab Platz 16 im Kader, ab 25 Jahren) öfter auslaufen, statt ihnen einen neuen Vertrag zu geben – in den ersten Bosman-Jahren selten, heute bei gut zwei Dritteln von ihnen. So entsteht der Großteil der ablösefreien Abgänge.
 
 ### Bosman-Planung
 Ab 1995/96 verkaufen KI-Vereine Spieler, die nicht verlängern wollen, lieber im letzten Vertragsjahr (Sommer bei höchstens 12, Winter bei höchstens 6 Monaten Restlaufzeit), statt sie ablösefrei zu verlieren. Die Ablöse fällt dann niedriger aus. Findet sich im Inland kein Abnehmer, geht der Spieler oft ins Ausland. Wer im Winter noch da ist, wird eher per Vorvertrag umworben – Interessenten warten lieber auf den ablösefreien Wechsel.
 
 ### Vorverträge
-Ab Bosman unterschreiben auslaufende Spieler zwischen Mitte Januar und Mitte März einen **Vorvertrag** bei einem anderen KI-Verein und wechseln am 1. Juli ablösefrei. Dasselbe kann mit deinen Spielern passieren (siehe Verträge).
+Ab Bosman unterschreiben auslaufende Spieler zwischen Mitte Januar und Mitte März einen **Vorvertrag** bei einem anderen KI-Verein und wechseln am 1. Juli ablösefrei. Dasselbe kann mit deinen Spielern passieren (siehe Verträge). In der Liga sind das in den ersten Bosman-Jahren etwa 6–7 pro Saison, ab 2005 rund 9 und heute etwa 11 – vor allem Spieler, die eine Verlängerung abgelehnt haben.
 
 ### Leihen
-Größere Vereine verleihen junge Ersatzspieler (18–22 Jahre, außerhalb der ersten 15) für eine Saison an kleinere Ligavereine mit Bedarf auf ihrer Position. Dort sammeln sie Spielpraxis – Einsatzminuten treiben die Entwicklung. In den 70ern war das selten, ab den 90ern üblich. Ab 2000 gibt es gelegentlich eine **Kaufoption**: Hat der Spieler beim Leihverein regelmäßig in der Startelf gestanden oder gute Noten bekommen und gibt die Kasse die Ablöse her, zieht der Leihverein sie zum Saisonende. Sonst kehrt der Spieler zum Stammverein zurück.
+Größere Vereine verleihen junge Ersatzspieler (18–22 Jahre, außerhalb der ersten 15) für eine Saison an kleinere Ligavereine mit Bedarf auf ihrer Position. Dort sammeln sie Spielpraxis – Einsatzminuten treiben die Entwicklung. In den 70ern war das selten, ab den 90ern üblich. Ab 2000 gibt es gelegentlich eine **Kaufoption**: Hat der Spieler beim Leihverein regelmäßig in der Startelf gestanden oder gute Noten bekommen und gibt die Kasse die Ablöse her, zieht der Leihverein sie zum Saisonende – das passiert bei gut einem Viertel der vereinbarten Optionen (bei Stammspielern meist, bei Ergänzungsspielern selten, bei kaum eingesetzten fast nie). Sonst kehrt der Spieler zum Stammverein zurück.
 
 Auch bei dir fragen KI-Vereine an, ob sie einen deiner jungen Ergänzungsspieler ausleihen dürfen. Du entscheidest in den Nachrichten: ausleihen (ab 2000 wahlweise mit Kaufoption) oder ablehnen.
 
@@ -1450,38 +1488,33 @@ Auch bei dir fragen KI-Vereine an, ob sie einen deiner jungen Ergänzungsspieler
   {
     id: 'manager-career',
     category: 'ai',
-    title: 'Deine Trainerkarriere: Ansehen, Angebote, Entlassung',
-    keywords: ['karriere', 'jobangebot', 'angebot', 'trainer', 'wechsel', 'entlassung', 'ansehen', 'gehalt', 'vereinswechsel'],
-    body: `## Deine Trainerkarriere
-Unter **Zentrale › Karriere** siehst du dein Ansehen, offene Angebote, deine Stationen und die Karriere-Chronik (\`game/careerGame.ts\`).
+    title: 'Deine Managerkarriere: Bilanz, Trainer, Vorstand',
+    keywords: ['karriere', 'manager', 'bilanz', 'trainer', 'cheftrainer', 'entlassung', 'ansehen', 'vorstand', 'rückendeckung', 'meilenstein', 'rekord', 'eigengewächs'],
+    body: `## Deine Managerkarriere
+Du führst **einen Verein über die Jahrzehnte** – als Manager mit der Gesamtverantwortung. Den Cheftrainer und das übrige Trainerteam stellst du selbst ein (Training › Trainerteam); sie sind Angestellte des Vereins. Jobangebote anderer Vereine, Vereinswechsel und eine Entlassung gibt es nicht – auch nicht im Karriere-Modus (dort wählst du zu Beginn nur einen von drei kleineren Vereinen).
+
+### Zentrale › Karriere
+Drei Reiter, alles aus dem echten Spielverlauf (\`game/managerLog.ts\`, \`game/managerView.ts\`):
+- **Bilanz:** alle Pflichtspiele seit deinem Amtsantritt (Liga, Landespokal, Europapokal; die laufende Saison zählt mit), Punkte je Spiel nach 3-Punkte-Wertung, Bilanz je Wettbewerb, dein **Ansehen je Saison** als Verlauf, Titel und Rekorde (beste Platzierung, beste Ligasaison, meiste Tore, beste Abwehr, längste Sieges- und Ungeschlagen-Serie) sowie **Meilensteine** (1., 50., 100., 250., 500. … Pflichtspiel).
+- **Saisons:** jede Saison mit Liga, Platz, Saisonziel (erreicht/verfehlt), Ligabilanz, erreichter Pokal- und Europapokalrunde, Titeln und Ansehen; dazu deine höchsten Siege und Niederlagen.
+- **Trainer & Spieler:** **Deine Trainer** – alle Cheftrainer unter dir mit Amtszeit, Ligabilanz, Punkten je Spiel und wie ihre Zeit endete (entlassen, Vertragsende, abgeworben, Ruhestand); die **Transferbilanz** deiner Amtszeit (Einnahmen, Ausgaben, teuerste Zu- und Abgänge – Beträge über das Preisniveau 1975 vergleichbar); die Spieler mit den meisten Einsätzen und Toren unter dir und deine **Eigengewächse**.
+
+Alte Spielstände werden aus Vereins-Historie, Liga-Archiv, Spielerstationen und Finanzbilanzen nachgetragen, soweit das gespeichert ist.
 
 ### Ansehen (0–100)
-Startwert = Größe deines ersten Vereins, dazu dein Hintergrund (Legende +8, Ex-Profi +3, Neuling −5). Am Saisonende zählt, wie weit du über oder unter dem Saisonziel gelandet bist; Meisterschaft, Pokal, Europapokal und Aufstieg geben zusätzlich Ansehen. Je höher es schon ist, desto langsamer wächst es. Eine Entlassung kostet 6 Punkte.
+Startwert = Größe deines Vereins, dazu dein Hintergrund (Legende +8, Ex-Profi +3, Neuling −5). Am Saisonende zählt, wie weit du über oder unter dem Saisonziel gelandet bist; Meisterschaft, Pokal, Europapokal und Aufstieg geben zusätzlich Ansehen. Je höher es schon ist, desto langsamer wächst es.
 
-### Größe eines Vereins
-Ruf des Vereins, bereinigt um die Liga (2. Liga −7). So lassen sich Vereine aus 1. und 2. Liga vergleichen.
+### Vorstandsdruck – gegen den Trainer, nicht gegen dich
+Läuft es sportlich klar schlechter als das Ziel, richtet sich der Druck gegen deinen **Cheftrainer** (\`game/boardPressure.ts\`). Der Vorstand prüft am 1. jedes Monats von Oktober bis April (ab 8 Ligaspielen) und nach der Saison am 5. Juni: Vertrauen unter 30 oder klar hinter dem Ziel bei Vertrauen unter 45 (am Saisonende: Ziel um mehr als zwei Plätze verfehlt, Vertrauen unter 35). Dann legt er dir per Nachricht einen Trainerwechsel nahe – „Weiter“ hält an, bis du entscheidest (Frist 5 Tage):
+- **Trainer entlassen:** Abfindung (halbe Restlaufzeit, mindestens zwei Monatsgehälter), der Vorstand sieht, dass du handelst (Vertrauen +6). Den Nachfolger suchst du unter Training › Trainerteam aus.
+- **Rückendeckung geben** (auch ohne Antwort): Der Trainer bleibt, Vertrauen −2. Einen Monat später prüft der Vorstand nach: Ist der Abstand zum Ziel um mindestens zwei Plätze kleiner geworden oder das Ziel erreicht, gibt es +4 – sonst −10.
 
-### Angebote
-- **Zum Saisonende:** An vier Stichtagen (20. Januar, 10. April, 10. Mai, 28. Mai) kann sich ein größerer Verein melden, dessen Größe zu deinem Ansehen passt (höchstens Ansehen + 8); läuft deine Saison klar besser als erwartet, auch ein etwa gleich großer. Läuft deine Saison besser als erwartet, passiert das häufiger. Dein Herzensverein meldet sich bevorzugt, der Verein, den du nie trainieren würdest, nie.
-- **Sofort:** Entlässt ein größerer Verein deiner Liga mitten in der Saison seinen Trainer, fragt er manchmal zuerst bei dir an.
+Höchstens zwei solche Nachrichten je Saison, mindestens 45 Tage auseinander; ein neuer Trainer hat 60 Tage Schonfrist. Ohne Cheftrainer mahnt der Vorstand einmal je Saison an, die Bank zu besetzen.
 
-Jedes Angebot nennt Jahresgehalt, Saisonziel und Transferbudget. Du kannst **annehmen**, **nachverhandeln** (mehr Gehalt und Budget – der Verein kann aber abspringen) oder **ablehnen**. Solange ein Angebot offen ist, hält „Weiter“ an. Ohne Antwort gilt es nach Ablauf der Frist als abgelehnt.
+**Was dich trifft:** nur das Vertrauen. Unter 40 kürzt der Vorstand die Transfermittel, unter 20 halbiert er sie, und dein nächstes Saisonbudget gibt er nach dem Vertrauen frei (Finanzen › Budget). Entlassen wirst du nie – warum: Du sollst deinen Verein über Jahrzehnte formen; schlechte Phasen kosten Geld und Spielraum, nicht das Spiel.
 
-Dein Gehalt ist eine Kennzahl deiner Karriere und wird nicht über die Vereinskasse gebucht.
-
-### Der Wechsel
-- **Sofort** (nur innerhalb deiner Liga): Du übernimmst noch am selben Tag.
-- **Zum 1. Juli:** Du führst deinen Verein bis zum Saisonende. Beim Saisonwechsel wird die Liga des neuen Vereins zu deiner Liga.
-
-Dein bisheriger Verein bekommt einen Trainer aus dem Trainerkarussell, dein Trainerteam bleibt dort. Beim neuen Verein übernimmst du dessen Trainerteam, der bisherige Trainer geht. Offene Verhandlungen, Entscheidungen, Versprechen und geplante Trainingslager des alten Vereins verfallen. Der Vorstand startet mit Vertrauen 65 und nennt dir ein Saisonziel.
-
-### Entlassung (nur Karriere-Modus)
-Im Teammanager-Modus wirst du nie entlassen. Im Karriere-Modus (Assistent „Neues Spiel“):
-- **Während der Saison:** Fällt das Vertrauen des Vorstands auf 12 oder weniger, stellt er dir ein **Ultimatum**. Bleibt es einen Monat später so niedrig, bist du deinen Job los. Dann melden sich Vereine deiner Liga, die selbst in der Krise stecken – du wählst einen und übernimmst sofort.
-- **Zum Saisonende:** Ein klar verfehltes Saisonziel bei Vertrauen unter 25 beendet die Zusammenarbeit zum 1. Juli; kleinere Vereine bieten dir einen Neuanfang.
-
-### Grenzen
-Volle Kader gibt es nur in deiner Liga; Jobs im Ausland und bei einer Nationalmannschaft gibt es deshalb nicht.`,
+### Alte Spielstände
+Offene Jobangebote, Ultimaten und zugesagte Vereinswechsel aus früheren Versionen werden beim Laden als „hinfällig“ abgelegt und halten „Weiter“ nicht mehr an.`,
   },
   {
     id: 'ai-history-mode',
@@ -1860,7 +1893,7 @@ Jede Fläche ist ein eigener Vertrag mit Partner, Branche, Herkunftsland, Jahres
 Namensrechte am Stadion (ab 2000) verkaufst du im Reiter **Namensrechte** (auch unter Verein › Vorstand).
 
 ## Die Seite Sponsoring
-Vier Reiter: **Hauptsponsor** (Einnahmen dieser Saison je Art, Brustvertrag mit Prämien und Klauseln, dein Heimtrikot mit Brust-, Ausrüster- und Ärmel-Logo), **Namensrechte** (Stadion von oben mit allen Tribünen, Stadionname und Angebote), **Sponsoren-Pyramide** (Premium-, Neben- und lokale Sponsoren als Logo-Kacheln; gestrichelt = frei, mit Zahl der Angebote; blass = kommt erst in einer späteren Epoche) und **Bandenwerbung** (Spielfeldrand der Epoche: bemalte Holzbanden, Kunststoff, Prismenwender, ab 2010 LED). **Linksklick** auf ein Logo, eine Bande oder Tribüne öffnet die Karteikarte mit allen Daten und Aktionen, **Rechtsklick** (Touch: lange drücken) ein Menü: Annehmen, Verhandeln, Ablehnen, Option ziehen, Auflösen, Namensrechte verkaufen. Die Firmenlogos sind erfunden und werden aus Name, Branche und Jahrzehnt gezeichnet.
+Vier Reiter: **Hauptsponsor** (Einnahmen dieser Saison je Art, Brustvertrag mit Prämien und Klauseln, dein Heimtrikot mit Brust-, Ausrüster- und Ärmel-Logo), **Namensrechte** (Stadion von oben mit allen Tribünen, Stadionname und Angebote), **Sponsoren-Pyramide** (Premium-, Neben- und lokale Sponsoren als Logo-Kacheln; gestrichelt = frei, mit Zahl der Angebote; blass = kommt erst in einer späteren Epoche) und **Bandenwerbung** (Spielfeldrand der Epoche: bemalte Holzbanden, Kunststoff, Prismenwender, ab 2010 LED). **Linksklick** auf ein Logo, eine Bande oder Tribüne öffnet die Karteikarte mit allen Daten und Aktionen, **Rechtsklick** (Touch: lange drücken) ein Menü: Annehmen, Verhandeln, Ablehnen, Option ziehen, Auflösen, Namensrechte verkaufen. Alle Firmen und ihre Logos sind erfunden – Ähnlichkeiten mit echten Marken sind nicht gewollt. Die Logos werden aus Name, Branche und Jahrzehnt gezeichnet (später teils als Bild). Ältere Spielstände mit früheren Firmennamen werden beim Laden auf die heutigen Namen umgestellt.
 
 ## Was ein Vertrag wert ist
 - Grundlage ist der Marktwert der Fläche für einen durchschnittlichen Erstligisten in diesem Jahr (1975 Brust ≈ 0,25 Mio. DM, 2024 ≈ 9 Mio. €).
@@ -2066,7 +2099,7 @@ Jeder Verein besitzt eine **Jugendakademie**. Ihre **Nachwuchs-Investitionen** (
 
 Die Jugendakademie ist ein **eigenständiger Bildschirm** (Bereich **Jugend**, Symbol in der unteren Navigation).
 Dort sind alle Talente **nach Altersklassen** (Jahrgängen) gruppiert — von der G-Jugend (Bambini) bis zur A-Jugend:
-- Register/Filter für **Alle** sowie jede Altersklasse **G · F · E · D · C · B · A** mit Anzahl.
+- Reiterleiste unter dem Menü (**Jugend › Mannschaften**): **A-Jugend** bis **Bambini** (G-Jugend) und **Alle**, jeweils mit Anzahl der Spieler.
 - Je Altersklasse eine eigene Tabelle mit Position, Alter, Gesamtstärke (OVR) und Attributen (farbcodiert).
 - Das **geschätzte Potenzial** wird als **goldene Sterne-Spanne** angezeigt (nicht als exakter Wert!).
 - Klick auf ein Talent öffnet die Detailansicht mit Altersklasse, allen Attributen und der Schaltfläche **Hochziehen in den Profikader**.
@@ -3064,12 +3097,14 @@ Popups (Auslosung, Briefing, Textmodus, Spielbericht) erscheinen nie zusammen mi
 
 ## Monatskalender: Raster oder Liste
 Unter **Zentrale › Kalender** siehst du den Monat wahlweise als **Raster** (Mo–So) oder als **Liste**; du
-blätterst mit **‹ Vormonat** / **Folgemonat ›**, **Heute** springt zurück. Die Wahl Raster/Liste merkt sich das Spiel.
+blätterst mit den Pfeilen **‹** / **›**, **Heute** springt zurück zum aktuellen Monat. Die Wahl Raster/Liste merkt sich das Spiel.
 
-Im **Raster** steht je Tag der wichtigste Termin mit seiner Art (Liga, Pokal, Auslosung …), **+2** zeigt weitere
-Termine an (Mauszeiger auf den Tag zeigt alle). Eigene Ligaspiele haben eine Bernstein-Kante, Pokal und Europapokal eine
-helle Kante, **heute** einen Bernstein-Rahmen. Die **Liste** zeigt alle Termine des Monats Tag für Tag – Spiele mit
-Wappen, Wettbewerb und Ergebnis.
+- **Heute** hat ein helles, gefülltes Datumsfeld und das Etikett „Heute“; **vergangene Tage** sind gedimmt.
+- Im **Raster** steht je Tag der wichtigste Termin als gut lesbare Zeile: oben das **Kürzel** (Liga, Pokal, EC, Halle,
+  TL = Trainingslager, Test, Auslosung, Transfers …), darunter Gegner mit (H)/(A) und nach dem Spiel das Ergebnis.
+  **+2** zeigt weitere Termine an (der Mauszeiger auf dem Tag zeigt alle). Eine **feine Farbkante** links unterscheidet
+  die Wettbewerbe (Liga hell, Pokal gold, Europapokal blau, Halle/Trainingslager grün); die Legende steht unter dem Raster.
+- Die **Liste** zeigt alle Termine des Monats Tag für Tag – Spiele mit Wappen, Wettbewerb und Ergebnis.
 
 Im Kalender stehen: **eigene Spiele** (Liga, Pokal, Europapokal, Testspiel), die übrigen Spieltage,
 **Auslosungen** (Pokal, Europapokal), **Transferfenster** (öffnet/schließt) und am Tag danach die **Transferbilanz**,
@@ -3083,7 +3118,7 @@ Kader (Bewertung), Trainingslager, Halle, Auszeichnungen, Budget, Jugendwettbewe
 Rechts unter **Termine** stehen deine geplanten Aktivitäten und die nächsten Termine aus derselben Quelle.
 
 Im **Planungsmodus** („Starttag wählen“) wählst du im Raster einen freien Tag; belegte Tage (Spiele, Halle,
-Trainingslager, andere Aktivitäten) lassen sich nicht wählen, die Auswahl ist grün (gültig) bzw. rot (Kollision).
+Trainingslager, andere Aktivitäten) lassen sich nicht wählen. Eine helle Markierung zeigt den gewählten Zeitraum, eine rote eine Kollision.
 
 ## Aktivitäten planen
 Oben wählst du den Typ, bei mehrtägigen Aktivitäten die Dauer, klickst einen **freien Starttag** und bestätigst
@@ -3133,7 +3168,8 @@ Ab 2027/28 wird die heutige Regel fortgeschrieben (Annahme: WM 2034 wieder im Wi
 - Wochentage, Pokal-/Europapokaltermine, Mindestabstände, Spielabsagen und Nachholspiele: Artikel **„Spielplan & Termine“**.
 
 ## In der Pause
-- **Hallenturniere** und das **Hallen-Masters** (Mitte Januar) liegen in der Pause, ebenso das **Winter-Trainingslager** (KI-Vereine in den letzten vier Wochen vor dem Rückrundenstart).
+- Die Pause gilt für **alle Pflichtspiele**: Auch der **Landespokal** spielt nicht zwischen dem letzten Spieltag vor und dem ersten nach der Pause. Fällt eine Runde (z. B. das Viertelfinale) in die Pause, rückt sie in die erste Pokalwoche danach – so wie der DFB-Pokal damals vor der Pause oder ab Februar/März spielte. Europapokalspiele im Dezember gibt es weiterhin; für ihre Teilnehmer beginnt die Pause erst danach.
+- **Deine Winterpause** beginnt zwei Tage nach deinem letzten Pflichtspiel (Liga, Pokal, Europapokal) und endet drei Tage vor dem ersten danach. Nur in diesem Fenster liegen deine **Hallenturniere**, das **Hallen-Masters** (Mitte Januar) und das **Winter-Trainingslager** (KI-Vereine in den letzten vier Wochen vor dem Rückrundenstart).
 - **Frische und Fitness** erholen sich täglich. Ohne Spielrhythmus driftet die **Form** aller Spieler leicht zur Mitte (0,5 % je Tag): Formstarke verlieren in drei Wochen ≈ 1–2 Punkte, in elf Wochen ≈ 6; Formschwache fangen sich. Training bringt in der Pause Fitness, aber kein Form-Plus.`,
   },
   {
@@ -3144,7 +3180,8 @@ Ab 2027/28 wird die heutige Regel fortgeschrieben (Annahme: WM 2034 wieder im Wi
     body: `## Die Grundregeln (alle Epochen)
 - **Kein Verein spielt an zwei aufeinanderfolgenden Tagen.** Zwischen zwei Pflichtspielen liegen mindestens **zwei Tage** (≈ 48 Stunden), angestrebt werden **zwei Ruhetage** (≈ 72 Stunden).
 - **Pokalwochen und Europapokalwochen** sind getrennt: Landespokal-Runden liegen dienstags/mittwochs in Wochen ohne Europapokal, mit drei Tagen Abstand zum Wochenende. Der Europapokal wird danach angesetzt und weicht Liga und Pokal aus.
-- **Hallenturniere** liegen in der Winterpause und **nie am Tag vor oder nach einem Pflichtspiel** – weder für dich noch für die anderen Teilnehmer.
+- **Hallenturniere** gibt es nur, wenn die Winterpause eines Vereins begonnen hat: frühestens zwei Tage nach seinem letzten Pflichtspiel vor der Pause (Liga, Pokal inklusive Wiederholungsspiel, Europapokal) und spätestens drei Tage vor dem ersten danach – für dich und für jeden anderen Teilnehmer. Heiligabend, der 1. Weihnachtstag, Silvester und Neujahr bleiben hallenfrei.
+- Der **Landespokal** spielt nie in der Winterpause.
 - Der **erste und die letzten zwei Spieltage** finden zeitgleich statt (Saisonfinale am Samstag); das **Pokalendspiel** ist ein Samstag, frühestens eine Woche nach dem letzten Spieltag.
 
 ## Je Epoche
@@ -3166,7 +3203,7 @@ Verteilte Spieltage (Freitag bis Montag) gibt es nur an normalen Wochenenden –
 - Kalender, Spielplan (Spieltag › Spielplan), Vorschau „Nächstes Spiel“ und Presse zeigen „Nachholspiel“; die Tabelle zählt ein Nachholspiel erst, wenn es gespielt ist.
 
 ## Alte Spielstände
-Laufende Saisons behalten ihre Termine. Der Spielausschuss repariert nur künftige Kollisionen (Spiele an Folgetagen) durch Verlegung innerhalb des Wochenendes; die neuen Regeln gelten vollständig ab dem nächsten Saisonwechsel.`,
+Laufende Saisons behalten ihre Termine. Der Spielausschuss repariert nur künftige Kollisionen (Spiele an Folgetagen) durch Verlegung innerhalb des Wochenendes; die neuen Regeln gelten vollständig ab dem nächsten Saisonwechsel. Liegt in einem alten Spielstand ein künftiges **Hallenturnier** in deiner Pflichtspielzeit (etwa vor einer Pokalrunde im Dezember), verlegt der Veranstalter es in deine Winterpause; gibt es keinen freien Tag, entfällt deine Teilnahme ohne Ärger. Beides kündigt eine kurze Nachricht an.`,
   },
   {
     id: 'training-camps',
@@ -3312,7 +3349,7 @@ Jugendintegration). Sie zahlen über ihre Finanzen und bekommen rund ein Drittel
 - **1976–1987:** Einladungsturniere mit Bundesligisten (Dortmund, Berlin, Stuttgart, München, Frankfurt) – ohne Endrunde.
 - **1988–2001: DFB-Hallenpokal.** Qualifikationsturniere (1988: 18, bis 1997: 16, ab 1998: 4), Wertung nach **Durchschnittspunkten je Spiel**
   (ein einziges Turnier kann reichen), die **8 Besten** spielen das **Hallen-Masters** (Frankfurter Festhalle, Westfalenhalle Dortmund, Olympiahalle München – Ort wie in der Wirklichkeit).
-- **Termine:** Alle Turniere liegen in der echten Winterpause der Saison (Artikel „Winterpause & Spielplan“), nie auf Pflichtspieltagen. Die Tour-Turniere laufen bis kurz vor dem
+- **Termine:** Hallenturniere gibt es erst, wenn die Bundesliga – und für den einzelnen Verein auch Pokal und Europapokal – in der Winterpause ist: frühestens zwei Tage nach dem letzten Pflichtspiel eines Teilnehmers, spätestens drei Tage vor seinem ersten danach (Artikel „Winterpause & Spielplan“). Wer im Dezember noch Europapokal spielt, wird erst danach eingeladen bzw. ersetzt. Heiligabend, 1. Weihnachtstag, Silvester und Neujahr sind hallenfrei. Die Tour-Turniere laufen bis kurz vor dem
   **Masters**, das wie historisch **Mitte Januar** stattfindet (Wochenende um den 13.1.); ohne Masters enden die Turniere Ende Januar – der Februar der langen Pausen gehört dem Trainingslager.
 - **2002–2004:** nur noch wenige Regionalturniere. **Danach findet nichts mehr statt** (Chronik: „Hallen-Masters abgeschafft“).
 

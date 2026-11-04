@@ -80,7 +80,7 @@
 .pcm-layer { position: fixed; inset: 0; z-index: 2000; }
 .pcm {
   position: fixed; display: flex; flex-direction: column; padding: 6px 0; border-radius: 6px;
-  background: var(--panel-2, var(--panel)); border: 1px solid var(--border); box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
+  background: var(--panel-2, var(--panel)); border: 1px solid var(--border); box-shadow: 0 14px 40px rgba(var(--shade-rgb), 0.5);
   font-family: var(--font-ui); color: var(--text); animation: ms-in 0.12s ease-out;
 }
 .pcm-head { display: flex; align-items: center; gap: 8px; padding: 6px 12px 8px; border-bottom: 1px solid var(--border-soft); margin-bottom: 4px; }
@@ -91,7 +91,7 @@
   color: var(--text); font: inherit; font-size: 14.5px; text-align: left; cursor: pointer;
 }
 .pcm-item svg { color: var(--text-3); }
-.pcm-item:hover, .pcm-item:focus-visible { background: var(--rl-me-bg, rgba(255,255,255,.05)); box-shadow: inset 3px 0 0 var(--accent); outline: none; }
+.pcm-item:hover, .pcm-item:focus-visible { background: var(--rl-me-bg, rgba(var(--ink-rgb), .05)); box-shadow: inset 3px 0 0 var(--accent); outline: none; }
 .pcm-item.sep { border-top: 1px solid var(--border-soft); margin-top: 4px; padding-top: 10px; }
 .pcm-note { padding: 8px 14px 4px; color: var(--neg); font-size: 13px; }
 

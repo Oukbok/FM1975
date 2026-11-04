@@ -52,11 +52,25 @@ export function isKeyPlayer(p: Player, squad: Player[]): boolean {
   return (rank >= 0 && rank < 13) || (p.age <= 23 && p.potentialStars >= 3.5);
 }
 
-/** Lehnt der Spieler eine vorzeitige Verlängerung ab? (Persönlichkeit, Zufriedenheit, Größe des Vereins) */
-export function refusesRenewal(p: Player, club: Club, bosman: boolean, r: number): boolean {
+/**
+ * Kalibrierung je Epoche (Soll-Werte und Quellen: docs/recherche/ablösefrei.md):
+ * `refuse` Grundneigung, eine Verlängerung abzulehnen; `preRefused`/`preKey` Chance je
+ * Stichtag auf einen Vorvertrag (Ablehner bzw. nicht verlängerte Stammkraft); `fringe` Chance, dass ein
+ * Ergänzungsspieler (ab Platz 16, ab 25 Jahren) zum Saisonende keinen neuen Vertrag bekommt.
+ * Nach Bosman nehmen ablösefreie Wechsel über die Jahrzehnte zu (Berater, kürzere Bindung).
+ */
+export function freeAgentEra(year: number): { refuse: number; preRefused: number; preKey: number; fringe: number } {
+  if (year < 1995) return { refuse: 0.04, preRefused: 0, preKey: 0, fringe: 0 };
+  if (year < 2005) return { refuse: 0.11, preRefused: 0.4, preKey: 0.08, fringe: 0.05 };
+  if (year < 2015) return { refuse: 0.19, preRefused: 0.55, preKey: 0.14, fringe: 0.3 };
+  return { refuse: 0.21, preRefused: 0.6, preKey: 0.15, fringe: 0.7 };
+}
+
+/** Lehnt der Spieler eine vorzeitige Verlängerung ab? (Persönlichkeit, Zufriedenheit, Größe des Vereins, Epoche) */
+export function refusesRenewal(p: Player, club: Club, bosman: boolean, r: number, year = 2000): boolean {
   const pe = personaOf(p);
   const urge = (pe.ehrgeiz - pe.loyalitaet) / 220 + (55 - (p.contract.satisfaction ?? 60)) / 160 + (p.overall - (club.reputation ?? 60)) / 70;
-  return r < clamp((bosman ? 0.12 : 0.04) + urge, 0.03, bosman ? 0.55 : 0.3);
+  return r < clamp((bosman ? freeAgentEra(year).refuse : 0.04) + urge, 0.03, bosman ? 0.55 : 0.3);
 }
 
 function renewYears(age: number, r: number): number {
@@ -89,11 +103,18 @@ export function aiEarlyRenewals(g: Game, today: string): void {
         if (Number(p.contract.expiryDate.slice(0, 4)) <= endYear) { p.contract.aiLetGo = true; noteSquad(g, 'letGo'); }
         continue;
       }
+      // Nach Bosman lassen Vereine auch Ergänzungsspieler häufiger auslaufen (Kaderumbau ohne Ablöse),
+      // heute deutlich öfter als in den ersten Bosman-Jahren.
+      if (bosman && today.slice(5) === '04-20' && rank >= 15 && p.age >= 25 && Number(p.contract.expiryDate.slice(0, 4)) <= endYear
+        && !isKeyPlayer(p, squad) && hashRand(`${p.id}|fringe|${season}`) < freeAgentEra(Number(today.slice(0, 4))).fringe) {
+        p.contract.aiLetGo = true; noteSquad(g, 'letGo');
+        continue;
+      }
       if (!isKeyPlayer(p, squad) || p.contract.refused) continue; // wer abgelehnt hat, bleibt dabei (bis Wechsel/Vertragsende)
       // Nicht jeder Verein handelt an jedem Stichtag (Verhandlungen dauern).
       const r = hashRand(`${p.id}|ren|${today}`);
       if (r > (bosman ? (months <= 8 ? 0.85 : 0.55) : 0.3)) continue;
-      if (refusesRenewal(p, club, bosman, hashRand(`${p.id}|ref|${season}`))) {
+      if (refusesRenewal(p, club, bosman, hashRand(`${p.id}|ref|${season}`), Number(today.slice(0, 4)))) {
         p.contract.refused = season;
         noteSquad(g, 'refused');
         continue;
@@ -174,7 +195,8 @@ export function aiPreContracts(g: Game, today: string): void {
       if (p.contract.expiryDate > endDate || p.contract.preContractClubId || p.loan || p.contract.aiLetGo || p.age >= 33) continue;
       // Wer abgelehnt hat, sucht aktiv; andere Leistungsträger nur gelegentlich.
       // Nicht verlängerte Stammkräfte (der Verein hat noch nicht verlängert) werden ebenfalls umworben.
-      const chance = p.contract.refused ? 0.7 : isKeyPlayer(p, squad) ? 0.25 : p.age <= 30 ? 0.1 : 0.04;
+      const era = freeAgentEra(Number(today.slice(0, 4)));
+      const chance = p.contract.refused ? era.preRefused : isKeyPlayer(p, squad) ? era.preKey : p.age <= 30 ? era.preKey * 0.4 : 0.02;
       if (hashRand(`${p.id}|pre|${today}`) >= chance) continue;
       // Abnehmer für die neue Saison: KI-Vereine, bei denen er zu den besten 14 gehören würde
       // (Kadergröße im Winter zählt nicht – zum 1. Juli wird ohnehin umgebaut).

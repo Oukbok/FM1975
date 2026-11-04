@@ -9,6 +9,7 @@ import { DashBox, Empty, KV, Meter } from '../../ui/DashPage';
 import { ClubLink } from './ClubLink';
 import { coachRecordOf, recordText } from '../../game/coachRecord';
 import { currentStint, ensureCareer, stintRecord } from '../../game/careerState';
+import { headCoachRows } from '../../game/headCoaches';
 
 export interface ClubTabProps {
   g: Game;
@@ -36,7 +37,6 @@ const coachOf = (club?: Club): ClubCoach | undefined => club?.coach;
 const PHIL_DE: Record<string, string> = { jugend: 'Jugend', einkauf: 'Einkauf', ausgewogen: 'Ausgewogen' };
 const REASON_DE: Record<string, string> = { entlassen: 'entlassen', ruhestand: 'Ruhestand', abgeworben: 'abgeworben', vertragsende: 'Vertragsende' };
 
-const MGR_STYLE_DE: Record<string, string> = { defensive: 'defensiv', balanced: 'ausgewogen', attacking: 'offensiv', counter: 'Konter' };
 const COACH_STYLE_DE: Record<string, string> = { offensiv: 'offensiv', ausgewogen: 'ausgewogen', defensiv: 'defensiv', konter: 'Konter' };
 
 /** Amtszeit als „seit 03.1979 · 2,4 Jahre“. */
@@ -62,14 +62,19 @@ export function CoachBox({ g, d }: { g: Game; d: ClubProfileData }) {
   if (d.isPlayerClub) {
     const m = g.manager;
     const st = currentStint(g);
+    const hc = headCoachRows(g).find((e) => e.live);
     return (
-      <DashBox title="Trainer" icon="tactics" right="du" info="trainerBilanz">
+      <DashBox title="Manager & Trainer" icon="tactics" right="du" info="deineTrainer">
         <div className="cmx-coach-name">{m.name}</div>
         <KV k="Alter · Nationalität" v={`${Number(today.slice(0, 4)) - m.birthYear} · ${m.nationality}`} />
-        <KV k="Spielstil" v={MGR_STYLE_DE[m.style] ?? m.style} />
-        <KV k="Amtszeit" v={tenure(st.from, today)} />
+        <KV k="Im Amt" v={tenure(st.from, today)} />
         <KV k={st.recFrom ? `Ligabilanz seit ${st.recFrom}` : 'Ligabilanz'} v={recordText(stintRecord(g, st))} strong />
         <KV k="Dein Ansehen" v={Math.round(ensureCareer(g).rep)} />
+        <div className="dsec">Cheftrainer</div>
+        {hc ? <>
+          <KV k={hc.name} v={tenure(hc.from, today)} />
+          <KV k="Ligabilanz" v={recordText(hc.r)} />
+        </> : <KV k="Cheftrainer" v="nicht besetzt" />}
         <Predecessors club={d.fullClub} />
       </DashBox>
     );

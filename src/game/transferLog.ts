@@ -21,6 +21,7 @@ import { setTransferSink, type TransferKind } from '../engine/history';
 import { hashStr } from '../engine/leagues';
 import type { Player } from '../types';
 import type { Game } from './state';
+import { noteMgrTransfer } from './managerLog';
 
 export interface TLEntry {
   /** Datum */ d: string;
@@ -162,6 +163,7 @@ export function bindTransferLog(g: Game): void {
     const cur = g.players[p.id] ?? g.youthPlayers?.[p.id];
     if (cur && cur !== p) return; // anderer Spielstand
     logTransfer(g, p, from, to, fee, date, kind);
+    noteMgrTransfer(g, p, from, to, fee, date); // Rekordtransfers deiner Amtszeit (game/managerLog.ts)
   });
 }
 

@@ -19,6 +19,7 @@ import type { StaffRole } from '../staff';
 import type { MarketingArea } from '../marketing';
 import type { Kit, FacilityKey } from '../../types';
 import type { HistoryConfig } from '../history';
+import type { LegendDef } from '../legends/types';
 
 export const DATASET_FORMAT = 'fm1975-dataset';
 export const DATASET_VERSION = 1;
@@ -99,6 +100,11 @@ export interface Dataset {
   };
   /** Veraltet (Legenden entfernt): wird beim Anwenden ignoriert, bleibt nur für alte Dateien lesbar. */
   legends?: unknown[];
+  /**
+   * Ausnahmetalente der Fußballgeschichte (data/legends/types.ts). Fehlt das Feld,
+   * gilt die eingebaute Liste; eine leere Liste schaltet sie ab.
+   */
+  legendsV2?: LegendDef[];
   economy: {
     /** Erlös-Basis der 1. Liga in EUR je Stützjahr. */
     anchors: { year: number; value: number }[];

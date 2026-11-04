@@ -17,7 +17,7 @@ body { font-variant-numeric: tabular-nums; }
 .dbox-link:hover { color: var(--accent); }
 
 /* Kennzahl-Kacheln: weiß statt Bernstein, flacher Rahmen */
-.dkpi { border-radius: 6px; background: rgba(255, 255, 255, 0.025); border: 1px solid var(--border-soft); }
+.dkpi { border-radius: 6px; background: rgba(var(--ink-rgb), 0.025); border: 1px solid var(--border-soft); }
 .dkpi-val { color: var(--text); font-family: var(--font-display); font-weight: 500; letter-spacing: 0.3px; }
 .dkpi-lbl { color: var(--text-3); font-weight: 600; font-size: 11.5px; letter-spacing: 0.8px; }
 
@@ -37,16 +37,49 @@ body { font-variant-numeric: tabular-nums; }
 /* ---- Tabellen --------------------------------------------------------------- */
 .dtable thead th { color: var(--text-3); font-weight: 600; letter-spacing: 0.8px; }
 .dtable th.sorted { color: var(--text); box-shadow: inset 0 -2px 0 var(--accent); }
-.dlist-row.clickable:hover { background: rgba(255, 255, 255, 0.035); }
-tr.me { background: rgba(255, 255, 255, 0.04); box-shadow: inset 4px 0 0 var(--accent); } /* wie Paarungsliste, 28-rows.css */
-tr.me:hover { background: rgba(255, 255, 255, 0.06); }
+.dlist-row.clickable:hover { background: rgba(var(--ink-rgb), 0.035); }
+tr.me { background: rgba(var(--ink-rgb), 0.04); box-shadow: inset 4px 0 0 var(--accent); } /* wie Paarungsliste, 28-rows.css */
+tr.me:hover { background: rgba(var(--ink-rgb), 0.06); }
 
-/* Positionskürzel: schlichtes Etikett statt Kachel */
+/* Positionskürzel: schlichtes Etikett, Farbe je Mannschaftsteil (components/PosBadge.tsx) */
 .pos-badge {
   width: auto; min-width: 30px; height: 20px; padding: 0 5px; border-radius: 3px;
-  background: transparent; border: 1px solid rgba(255, 255, 255, 0.14); color: var(--text-2);
-  font-size: 11.5px; font-weight: 600; letter-spacing: 0.6px;
+  background: transparent; border: 1px solid rgba(var(--ink-rgb), 0.14); color: var(--text-2);
+  font-size: 11.5px; font-weight: 600; letter-spacing: 0.6px; box-sizing: border-box;
 }
+.pg-gk { --pg: var(--pos-gk); }
+.pg-def { --pg: var(--pos-def); }
+.pg-mid { --pg: var(--pos-mid); }
+.pg-att { --pg: var(--pos-att); }
+.pos-badge[class*='pg-'] {
+  color: color-mix(in srgb, var(--pg) var(--pos-mix), var(--text));
+  border-color: color-mix(in srgb, var(--pg) 50%, transparent);
+  background: color-mix(in srgb, var(--pg) 13%, transparent);
+}
+.pos-badge.pb-c { min-width: 27px; height: 18px; padding: 0 3px; font-size: 10.5px; letter-spacing: 0.3px; }
+.pos-badge.pb-empty { color: var(--text-4); }
+/* Mehrere Positionen: feste Breite für „2 Etiketten + +“, damit Spalten nicht springen */
+.posb { display: inline-flex; align-items: center; gap: 3px; width: 82px; justify-content: flex-start; vertical-align: middle; outline: none; cursor: default; }
+.posb.posb-c { width: 72px; gap: 2px; }
+.posb.posb-1 { width: auto; }
+.posb:focus-visible { box-shadow: 0 0 0 1px var(--border); border-radius: 3px; }
+.pb-more { color: var(--text-2); font-weight: 700; font-size: 15px; line-height: 1; padding: 0 2px; }
+td.ctr > .posb { justify-content: flex-start; }
+/* Slot-/Kurzkürzel in Aufstellung und Textmodus: nur Schriftfarbe der Gruppe */
+.lu-card-pos[class*='pg-'], .lu-pos[class*='pg-'], .tm-pos[class*='pg-'], .tm-dim[class*='pg-'], .tm-sys-ps [class*='pg-'] {
+  color: color-mix(in srgb, var(--pg) var(--pos-mix), var(--text));
+}
+.lu-pos.dim[class*='pg-'] { opacity: 0.7; }
+/* Einblendung: alle einsetzbaren Positionen mit Stufe */
+.st-tip.pb-tip { flex-direction: column; align-items: stretch; gap: 4px; padding: 7px 10px; }
+.pb-tip-head { color: var(--text-3); font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; }
+.pb-tip-row { display: grid; grid-template-columns: 30px 1fr auto 24px 26px; align-items: center; gap: 8px; }
+.pb-tip-name { color: var(--text); }
+.pb-tip-tier { color: var(--text-3); font-size: 11.5px; }
+.pb-tip-tier.t-natural { color: var(--fam-1); }
+.pb-tip-val { text-align: right; font-weight: 600; }
+.pb-tip-games { color: var(--text-3); font-size: 11.5px; text-align: right; }
+.pb-tip-note { color: var(--text-3); font-size: 11.5px; }
 
 /* Potenzial-Spanne / Sterne: neutral (kein Gelb) */
 .dscout, .stars { color: var(--text-2); }
@@ -58,8 +91,8 @@ tr.me:hover { background: rgba(255, 255, 255, 0.06); }
 }
 .pill.home { color: var(--text); border-color: var(--border); }
 .pill.away { color: var(--text-2); border-color: var(--border); }
-.dchip { border-radius: 4px; font-weight: 600; }
-.dchip.on { background: var(--accent-soft); }
+
+
 
 /* Formleiste S/U/N: kleiner, gedämpft */
 .dform i { width: 18px; height: 18px; border-radius: 3px; font-size: 10.5px; font-weight: 700; color: var(--bg); }
@@ -90,10 +123,10 @@ tr.me:hover { background: rgba(255, 255, 255, 0.06); }
 
 /* Tabellenzonen am Platz-Kürzel: Farbkante statt Kachel */
 .pos-badge.zone-cl, .pos-badge.zone-eu, .pos-badge.zone-rel { border-color: transparent; border-radius: 2px; }
-.pos-badge.zone-cl { background: rgba(91, 191, 139, 0.10); color: var(--text); box-shadow: inset 3px 0 0 var(--green); }
-.pos-badge.zone-eu { background: rgba(255, 255, 255, 0.05); color: var(--text); box-shadow: inset 3px 0 0 var(--text-2); }
-.pos-badge.zone-rel { background: rgba(224, 100, 111, 0.10); color: var(--text); box-shadow: inset 3px 0 0 var(--red); }
-.zone-eu { background: rgba(255, 255, 255, 0.05); color: var(--text); box-shadow: inset 3px 0 0 var(--text-2); }
+.pos-badge.zone-cl { background: rgba(var(--green-rgb), 0.10); color: var(--text); box-shadow: inset 3px 0 0 var(--green); }
+.pos-badge.zone-eu { background: rgba(var(--ink-rgb), 0.05); color: var(--text); box-shadow: inset 3px 0 0 var(--text-2); }
+.pos-badge.zone-rel { background: rgba(var(--red-rgb), 0.10); color: var(--text); box-shadow: inset 3px 0 0 var(--red); }
+.zone-eu { background: rgba(var(--ink-rgb), 0.05); color: var(--text); box-shadow: inset 3px 0 0 var(--text-2); }
 .dxt-row.zone-eu td.dxt-pos { color: var(--text-2); box-shadow: inset 3px 0 0 var(--text-2); }
 
 /* Weniger Icon-Gewimmel: keine Symbole vor Balken-Beschriftungen */

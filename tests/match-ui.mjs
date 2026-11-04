@@ -7,6 +7,7 @@ import { readFile, mkdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { chromium } from 'playwright';
 import { startNewGame } from './newgame-flow.mjs';
+import { pickOption, optionsOf, valueOf } from './select3.mjs';
 
 const outDir = process.argv[2] || 'test-output/match';
 await mkdir(outDir, { recursive: true });
@@ -120,14 +121,33 @@ if (!sawHalf && (await confirmStop()) !== 'halbzeit') {
     await page.mouse.move(b1.x + 40, b1.y + 30, { steps: 4 });
     await page.mouse.move(b2.x + b2.width / 2, b2.y + b2.height / 2, { steps: 8 });
     await page.screenshot({ path: `${outDir}/10_ziehen.png` });
+    if (!(await page.locator('.tm-sys-slot.over').count())) fail('Ablageziel beim Ziehen nicht hervorgehoben');
     await page.mouse.up();
+    // Feldspieler auf freie Bankfläche: kein Wechsel, Hinweis; Escape bricht ab
+    const bench = await page.locator('.tm-sys-bench').boundingBox();
+    const b3 = await page.locator('.tm-sys-slot').nth(5).boundingBox();
+    if (bench && b3) {
+      await page.mouse.move(b3.x + b3.width / 2, b3.y + b3.height / 2); await page.mouse.down();
+      await page.mouse.move(b3.x + 40, b3.y + 30, { steps: 4 });
+      await page.mouse.move(bench.x + bench.width / 2, bench.y + bench.height - 6, { steps: 8 });
+      await page.mouse.up();
+      await page.waitForTimeout(150);
+      if (!(await page.locator('.tm-cs-msg:has-text("nur per Wechsel")').count())) fail('Hinweis „Auf die Bank nur per Wechsel“ fehlt');
+      await page.mouse.move(b3.x + b3.width / 2, b3.y + b3.height / 2); await page.mouse.down();
+      await page.mouse.move(b3.x + 60, b3.y + 40, { steps: 4 });
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(100);
+      if (await page.locator('.tm-sys-ghost').count()) fail('Escape bricht das Ziehen im Wechsel-Bildschirm nicht ab');
+      await page.mouse.up();
+      if (!(await page.locator('.tm-cs').count())) fail('Escape hat den Wechsel-Bildschirm geschlossen');
+    }
   }
   await page.locator('.tm-cs-row.field').nth(6).click();
   await page.locator('.tm-cs-row.bench').nth(0).click();
   await page.waitForTimeout(200);
   if (!(await page.locator('.tm-tag.rein').count())) fail('Geplanter Wechsel nicht markiert');
   await page.screenshot({ path: `${outDir}/11_wechsel_geplant.png` });
-  await page.locator('.tm-sys-head select').selectOption({ index: 1 });
+  await pickOption(page, page.locator('.tm-sys-head .sel3'), { index: 1 });
   await page.waitForTimeout(200);
   await page.screenshot({ path: `${outDir}/12_formation.png` });
   await page.click('.tm-cs-lfoot >> text=Taktik öffnen');

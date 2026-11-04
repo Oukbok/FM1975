@@ -32,6 +32,8 @@ export interface NewGameDraft {
   speedMs: number;
   briefingAuto: boolean;
   briefingIntro: boolean;
+  /** Ausnahmetalente der Fußballgeschichte (game/legendsGame.ts), Standard an. */
+  legends: boolean;
   mode: StartMode;
   /** Zufallssaat der Karriere-Angebote (fest ab Assistent-Start). */
   offerSeed: number;
@@ -116,7 +118,7 @@ export function managerProfile(d: NewGameDraft): ManagerProfile {
 export function gameOptions(d: NewGameDraft): NewGameOptions {
   return {
     managedClubId: d.clubId, manager: managerProfile(d), difficulty: d.difficulty, realisticSquads: true,
-    injuriesEnabled: d.injuries, speedMs: d.speedMs, datasetId: d.datasetId, historyMode: d.history,
+    injuriesEnabled: d.injuries, speedMs: d.speedMs, datasetId: d.datasetId, historyMode: d.history, legends: d.legends,
   };
 }
 

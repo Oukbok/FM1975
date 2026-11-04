@@ -32,7 +32,7 @@ import {
 import { academyQualityBonus } from './infrastructure';
 import { academyGrowthOf, academyLevelOf, ageCapBonus, cpuPromotionPolicy, intakeCountOf } from './youthAcademy';
 import { ageFactor, potentialFactor } from './weeklyTraining';
-import { youthMaturityCap, youthTalentPotential, maturityGrowth } from './talent';
+import { youthMaturityCap, youthTalentPotential, maturityGrowth, tempoFactor, diligenceFactor } from './talent';
 import { maybeRisingStar } from './clubStars';
 
 // -----------------------------------------------------------------------------
@@ -467,7 +467,8 @@ export function developYouthWeekly(
 
     const aFactor = ageFactor(p.age);
     const pFactor = potentialFactor(p);
-    const weekGain = YOUTH_BASE_GAIN * aFactor * pFactor * growth * (p.age >= 14 ? maturityGrowth(p) : 1);
+    // Verdeckte Werte: Entwicklungstempo und Trainingsfleiß (engine/talent.ts), im Mittel ≈ 1.
+    const weekGain = YOUTH_BASE_GAIN * aFactor * pFactor * growth * (p.age >= 14 ? maturityGrowth(p) : 1) * tempoFactor(p) * diligenceFactor(p);
 
     // --- Akkumulator über eine Auswahl entwicklungsrelevanter Attribute füllen
     const devAttrs = developmentAttrsFor(p.naturalPosition);

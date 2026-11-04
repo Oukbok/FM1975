@@ -287,6 +287,7 @@ function commit(sim: MatchSim, grades: Map<string, number>, opts: FinishOptions)
           score: isHome ? `${H.goals}:${A.goals}` : `${A.goals}:${H.goals}`,
           minutes: mins, goals: m.goals, assists: m.assists, rating: g,
           card: m.red ? 'Rot' : m.yellowRed ? 'Gelb-Rot' : m.yellow ? 'Gelb' : undefined,
+          pos: m.pos,
         });
       }
     }

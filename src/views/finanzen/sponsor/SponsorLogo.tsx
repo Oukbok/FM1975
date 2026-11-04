@@ -7,8 +7,13 @@
 //   ab 2005   flach      – moderne Groteske, ruhige Fläche, Zeichen im Kreis
 // Varianten: 'tile' (Kachel 1:1), 'banner' (Bande 6:1), 'chest' (Druck auf dem
 // Trikot, ohne Fläche, Farbe gegen die Trikotfarbe), 'mark' (nur Zeichen).
+// Bild-Slot: ist für die Firma ein Logo in data/sponsorLogos.ts eingetragen
+// (`public/assets/sponsor/logos/<slug>.webp`, 600×300 transparent), zeigt jede Variante
+// das Bild im selben viewBox (feste Box, kein Springen); bei Ladefehler wieder die Zeichnung.
 // =============================================================================
+import { useState } from 'react';
 import type { SponsorIndustry } from '../../../types/sponsor';
+import { sponsorLogoImage } from '../../../data/sponsorLogos';
 
 export type LogoVariant = 'tile' | 'banner' | 'chest' | 'mark';
 export type LogoEra = 'classic' | 'bold' | 'flat';
@@ -144,6 +149,20 @@ export function SponsorLogo({ name, industry, year, variant = 'tile', ink, class
 }) {
   const s = logoSpec(name, industry, year);
   const label = `Logo ${name}`;
+  const src = sponsorLogoImage(name);
+  const [broken, setBroken] = useState<string | null>(null);
+  if (src && broken !== src) {
+    const box = variant === 'mark' ? [40, 40] : variant === 'chest' ? [120, 50] : variant === 'banner' ? [300, 50] : [100, 100];
+    const pad = variant === 'chest' ? 0 : variant === 'mark' ? 3 : 6;
+    const r = s.era === 'flat' ? 10 : s.era === 'bold' ? 6 : 2;
+    return (
+      <svg viewBox={`0 0 ${box[0]} ${box[1]}`} className={className} role="img" aria-label={label} preserveAspectRatio="xMidYMid meet">
+        {(variant === 'tile' || variant === 'mark') && <rect width={box[0]} height={box[1]} rx={variant === 'mark' ? 6 : r} fill={s.bg} />}
+        <image href={src} x={pad} y={pad} width={box[0] - pad * 2} height={box[1] - pad * 2} preserveAspectRatio="xMidYMid meet"
+          onError={() => setBroken(src)} />
+      </svg>
+    );
+  }
   if (variant === 'mark') {
     return (
       <svg viewBox="0 0 40 40" className={className} role="img" aria-label={label}>
