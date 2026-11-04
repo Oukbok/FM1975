@@ -1,6 +1,8 @@
 import { AppSettings, DisplayMode } from '../engine/save';
 import { RESOLUTION_GROUPS } from '../ui/DisplayFrame';
 import { useState } from 'react';
+import ThemePicker from '../ui/ThemePicker';
+import { themeOf } from '../ui/themes';
 import Select from '../ui/Select';
 
 // -----------------------------------------------------------------------------
@@ -153,6 +155,16 @@ export function SettingsScreen({ settings, onBack, onSave }: {
               onClick={() => setS({ ...s, ratingSpeed: v })}>{l}</button>
           ))}
         </div>
+      </div>
+
+      {/* --- Style (ui/themes.ts) --- */}
+      <div className="card mt16">
+        <h3 style={{ margin: '0 0 4px' }}>Style</h3>
+        <p className="dim mini" style={{ margin: '0 0 14px' }}>
+          Farben und Helligkeit der Oberfläche. Auch oben rechts in der Kopfleiste wählbar; dort wirkt die Wahl sofort.
+        </p>
+        <ThemePicker settings={s} onSettings={setS} width={300} />
+        <p className="dim mini" style={{ margin: '8px 0 0' }}>{themeOf(s.theme).note}</p>
       </div>
 
       {/* --- Anzeige & Auflösung --- */}
