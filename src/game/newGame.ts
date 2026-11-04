@@ -124,7 +124,7 @@ export function createNewGame(opts: NewGameOptions): Game {
     from: 'Vereinsvorstand',
     subject: `Willkommen bei ${club.name}, ${opts.manager.name}!`,
     shortText: 'Der Vorstand heißt dich willkommen und nennt das Saisonziel.',
-    bodyText: `Sehr geehrte(r) ${opts.manager.name},\n\nherzlich willkommen als neue(r) Cheftrainer(in) von ${club.name}! Wir freuen uns auf die Zusammenarbeit in der Saison 1975/76.\n\nUnser Ziel: ${club.boardExpectation}\n\nDie Mannschaft steht bereit, der Kader ist einsatzfähig. Nutze das Training und den Transfermarkt klug. Wir vertrauen auf dein Geschick.\n\nSportliche Grüße\nDer Vorstand von ${club.name}`,
+    bodyText: `Sehr geehrte(r) ${opts.manager.name},\n\nherzlich willkommen als neue(r) Manager(in) von ${club.name}! Wir freuen uns auf die Zusammenarbeit in der Saison 1975/76.\n\nUnser Ziel: ${club.boardExpectation}\n\nDie Mannschaft steht bereit, der Kader ist einsatzfähig. Nutze Training, Trainerteam und Transfermarkt klug – einen Cheftrainer stellst du unter Training › Trainerteam ein. Wir vertrauen auf dein Geschick.\n\nSportliche Grüße\nDer Vorstand von ${club.name}`,
     actionRequired: false,
   });
   // --- Europapokal 1975/76: feste historische deutsche Starter aufsetzen ---

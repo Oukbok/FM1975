@@ -406,33 +406,58 @@ export const INFO_TEXTS = {
   // ---------------------------------------------------------------- Verein & Umfeld
   vorstandVertrauen: {
     title: 'Vertrauen des Vorstands',
-    text: 'Wie zufrieden der Vorstand mit dir ist (0–100). Es richtet sich nach Saisonziel, Ergebnissen und Finanzen. Unter 40 kürzt er die Transfermittel, unter 20 halbiert er sie.',
-    wiki: 'environment-overview',
+    text: 'Wie zufrieden der Vorstand mit dir als Manager ist (0–100) – nach Saisonziel, Ergebnissen und Finanzen. Unter 40 kürzt er die Transfermittel, unter 20 halbiert er sie, und er gibt danach dein nächstes Saisonbudget frei. Entlassen wirst du nie; läuft es schlecht, legt er dir einen Trainerwechsel nahe.',
+    wiki: 'manager-career',
   },
   trainerAnsehen: {
-    title: 'Dein Ansehen als Trainer',
-    text: 'Wie gefragt du bist (0–100). Es steigt, wenn du Saisonziele übertriffst und Titel holst, und sinkt bei Misserfolg oder Entlassung. Vereine, deren Größe zu deinem Ansehen passt, machen dir Angebote.',
+    title: 'Dein Ansehen als Manager',
+    text: 'Wie angesehen du in der Branche bist (0–100). Es steigt, wenn du Saisonziele übertriffst, Titel holst oder aufsteigst, und sinkt bei Misserfolg. Je höher es schon ist, desto langsamer wächst es.',
     wiki: 'manager-career',
   },
   vereinsgroesse: {
     title: 'Größe des Vereins',
-    text: 'Ruf des Vereins, bereinigt um die Liga (2. Liga −7). Angebote kommen von Vereinen, die größer sind als deiner, aber nicht größer als dein Ansehen erlaubt.',
+    text: 'Ruf des Vereins, bereinigt um die Liga (2. Liga −7). So lassen sich Vereine aus 1. und 2. Liga vergleichen.',
     wiki: 'manager-career',
   },
   jobangebote: {
     title: 'Jobangebote',
-    text: 'Andere Vereine wollen dich als Trainer – zum Saisonende oder sofort. Du kannst annehmen, nachverhandeln (Risiko: Rückzug) oder ablehnen. Im Karriere-Modus kann dich der Vorstand auch entlassen.',
+    text: 'Gibt es nicht: Du bleibst über alle Jahrzehnte Manager deines Vereins. Trainer stellst du selbst ein und entlässt sie, wenn nötig.',
     wiki: 'manager-career',
   },
   trainerGehalt: {
-    title: 'Jahresgehalt des Trainers',
-    text: 'Dein Gehalt laut Vertrag (Preisniveau 1975, angezeigt im Wert des Jahres). Es ist eine Kennzahl deiner Karriere und wird nicht über die Vereinskasse gebucht.',
+    title: 'Jahresgehalt',
+    text: 'Dein Gehalt als Manager (Preisniveau 1975, angezeigt im Wert des Jahres). Es ist eine Kennzahl und wird nicht über die Vereinskasse gebucht.',
     wiki: 'manager-career',
   },
   trainerBilanz: {
-    title: 'Ligabilanz des Trainers',
-    text: 'Siege, Remis und Niederlagen in Ligaspielen während der Amtszeit, dazu Punkte je Spiel nach 3-Punkte-Wertung (damit Epochen vergleichbar bleiben).',
+    title: 'Bilanz und Punkte je Spiel',
+    text: 'Siege, Remis und Niederlagen, dazu Punkte je Spiel nach 3-Punkte-Wertung (damit Epochen vergleichbar bleiben). Bei Trainern zählen die Ligaspiele der Amtszeit.',
     wiki: 'ai-coaches',
+  },
+  managerBilanz: {
+    title: 'Deine Managerbilanz',
+    text: 'Alle Pflichtspiele deines Vereins seit deinem Amtsantritt – Liga, Landespokal und Europapokal, auch die laufende Saison. Freundschafts- und Hallenspiele zählen nicht.',
+    wiki: 'manager-career',
+  },
+  deineTrainer: {
+    title: 'Deine Trainer',
+    text: 'Alle Cheftrainer, die du eingestellt hast, mit Amtszeit, Ligabilanz und wie die Amtszeit endete. Der Cheftrainer ist dein Angestellter: Du stellst ihn unter Training › Trainerteam ein und entlässt ihn auch – auf Druck des Vorstands oder aus eigenem Entschluss.',
+    wiki: 'manager-career',
+  },
+  karriereTransfers: {
+    title: 'Transferbilanz deiner Amtszeit',
+    text: 'Ablösesummen aller Käufe und Verkäufe seit deinem Amtsantritt. Beträge aus verschiedenen Jahrzehnten werden über das Preisniveau 1975 vergleichbar gemacht und im Geldwert des heutigen Jahres angezeigt.',
+    wiki: 'manager-career',
+  },
+  eigengewaechse: {
+    title: 'Eigengewächse',
+    text: 'Spieler aus deiner eigenen Jugend, die unter dir mindestens ein Pflichtspiel für die Profis bestritten haben – mit ihren Einsätzen.',
+    wiki: 'manager-career',
+  },
+  vorstandsdruck: {
+    title: 'Druck auf den Trainer',
+    text: 'Läuft es klar schlechter als das Saisonziel, legt dir der Vorstand nahe, den Cheftrainer zu entlassen. Gibst du ihm Rückendeckung, prüft der Vorstand einen Monat später nach: Bleibt die Wende aus, verlierst du deutlich Vertrauen.',
+    wiki: 'manager-career',
   },
   saisonziel: {
     title: 'Saisonziel',
