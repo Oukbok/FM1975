@@ -86,6 +86,7 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
   const benchIds = new Set(benchPlayers.map((p) => p.id));
 
   const xiRows: ListRow[] = formation.slots.filter((s) => map[s.id] && g.players[map[s.id]]).map((s) => ({ p: g.players[map[s.id]], pos: s.position, slotId: s.id }));
+  const freeSlots = formation.slots.filter((sl) => !(map[sl.id] && g.players[map[sl.id]])).map((sl) => ({ slotId: sl.id, pos: sl.position }));
   const benchRows: ListRow[] = benchPlayers.map((p, i) => ({ p, pos: null, benchIndex: i }));
   const reserveRows: ListRow[] = squad.filter((p) => !xiIds.has(p.id) && !benchIds.has(p.id)).map((p) => ({ p, pos: null }));
   const xiPlayers = xiRows.map((r) => r.p);
@@ -285,7 +286,7 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
   return (
     <DashPage className={`lu-page ${drag ? 'lu-dragging' : ''} ${drag?.active ? 'lu-drag-live' : ''}`}>
       <DashBox title="Kader" icon="squad" rows={2} flush right={`${squad.length} Spieler`}>
-        <SquadList xi={xiRows} bench={benchRows} reserve={reserveRows} benchSize={benchSize} captainId={t.captainId}
+        <SquadList xi={xiRows} free={freeSlots} slotOrder={formation.slots.map((sl) => sl.id)} bench={benchRows} reserve={reserveRows} benchSize={benchSize} captainId={t.captainId}
           hover={hover} dragId={drag?.active ? dragPid : null} full={drag?.full ?? null} onDown={(e, p) => onPlayerDown(e, p, 'list')} />
       </DashBox>
 

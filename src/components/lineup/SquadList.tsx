@@ -2,7 +2,7 @@
 // Aufstellung: Kaderliste links (Startelf / Ersatzbank / Reserve) mit Spalten
 // und Sortierung je Abschnitt. Zeilen sind Ziehquelle und Ablageziel.
 // =============================================================================
-import { useState, type PointerEvent as RPE } from 'react';
+import { useState, type PointerEvent as RPE, type ReactNode } from 'react';
 import type { Player, Position } from '../../types';
 import { positionSuitability, suitabilityColor } from '../../engine/positions';
 import { PlayerForm, PlayerFreshness, PlayerMorale, MORALE_100, playerMorale100 } from '../status';
@@ -52,8 +52,11 @@ const COLS: [SortKey, string, string, InfoKey?][] = [
 /** Abschnitt eines Ablageziels: Startelf (Slots/xi), Bank oder Reserve. */
 const drop2kind = (k: string | null) => !k ? null : k.startsWith('slot:') || k === 'xi' ? 'xi' : k.startsWith('bench:') ? 'bench' : k === 'reserve' ? 'reserve' : null;
 
-export default function SquadList({ xi, bench, reserve, benchSize, captainId, hover, dragId, full, onDown }: {
-  xi: ListRow[]; bench: ListRow[]; reserve: ListRow[]; benchSize: number; captainId: string | null;
+/** Unbesetzter Platz der Startelf (bleibt in der Liste als leere Position stehen). */
+export interface FreeSlot { slotId: string; pos: Position }
+
+export default function SquadList({ xi, free = [], slotOrder = [], bench, reserve, benchSize, captainId, hover, dragId, full, onDown }: {
+  xi: ListRow[]; free?: FreeSlot[]; slotOrder?: string[]; bench: ListRow[]; reserve: ListRow[]; benchSize: number; captainId: string | null;
   hover: string | null; dragId: string | null; full: 'bench' | 'xi' | null;
   onDown: (e: RPE, p: Player) => void;
 }) {
@@ -86,12 +89,35 @@ export default function SquadList({ xi, bench, reserve, benchSize, captainId, ho
     );
   };
 
+  const freeRow = (f: FreeSlot) => {
+    const drop = `slot:${f.slotId}`;
+    return (
+      <tr key={`free-${f.slotId}`} className={`lu-row lu-row-free ${hover === drop && !full ? 'over' : ''}`} data-lu-drop={drop}>
+        <td className="lu-c-pos"><span className={`lu-pos ${posGroupClass(f.pos)}`}>{f.pos}</span></td>
+        <td className="lu-c-num lu-c-nr" />
+        <td className="lu-c-name"><span className="lu-name lu-free">frei</span></td>
+        <td className="lu-c-num"><span className="lu-suit lu-ghost">00</span></td>
+        <td className="lu-c-st" /><td className="lu-c-st" /><td className="lu-c-st" />
+        <td className="lu-c-num" /><td className="lu-c-num" />
+      </tr>
+    );
+  };
+  /** Startelf: bei Sortierung nach Position in Formationsreihenfolge mit leeren Plätzen dazwischen, sonst leere Plätze am Ende. */
+  const xiBody = () => {
+    if (sort === 'pos' && slotOrder.length) {
+      const bySlot = new Map(xi.map((r) => [r.slotId, r]));
+      const freeBy = new Map(free.map((f) => [f.slotId, f]));
+      return slotOrder.map((id) => { const r = bySlot.get(id); if (r) return row(r); const f = freeBy.get(id); return f ? freeRow(f) : null; });
+    }
+    return [...sorted(xi).map(row), ...free.map(freeRow)];
+  };
+
   const kind = drop2kind(hover);
-  const section = (title: string, count: string, drop: string, rows: ListRow[], empty?: string) => (
+  const section = (title: string, count: string, drop: string, rows: ListRow[], empty?: string, body?: ReactNode) => (
     <tbody className={`lu-sec lu-sec-${drop.split(':')[0]} ${kind === drop2kind(drop) && !hover?.startsWith('slot:') ? (full ? 'full' : 'over') : ''}`} data-lu-drop={drop}>
       <tr className="lu-sec-head" data-lu-drop={drop}><td colSpan={COLS.length}><span>{title}</span><span className="lu-sec-n">{count}</span></td></tr>
-      {rows.map(row)}
-      {!rows.length && empty && <tr className="lu-row-empty" data-lu-drop={drop}><td colSpan={COLS.length}>{empty}</td></tr>}
+      {body ?? rows.map(row)}
+      {!rows.length && !body && empty && <tr className="lu-row-empty" data-lu-drop={drop}><td colSpan={COLS.length}>{empty}</td></tr>}
     </tbody>
   );
 
@@ -103,7 +129,7 @@ export default function SquadList({ xi, bench, reserve, benchSize, captainId, ho
             <th key={k} title={title} className={`${sort === k ? 'on' : ''} lu-h-${k}`} onClick={() => setSort(k)}>{label}{info && <InfoTip k={info} />}</th>
           ))}</tr>
         </thead>
-        {section('Startelf', `${xi.length}/11`, 'xi', sorted(xi))}
+        {section('Startelf', `${xi.length}/11`, 'xi', xi, undefined, xiBody())}
         {section('Ersatzbank', `${bench.length}/${benchSize}`, 'bench:end', sorted(bench), 'Spieler hierher ziehen')}
         {section('Reserve', `${reserve.length}`, 'reserve', sorted(reserve), 'Keine weiteren Spieler')}
       </table>

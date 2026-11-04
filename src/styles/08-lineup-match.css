@@ -277,3 +277,9 @@
   .live-side { max-width: none; flex-direction: row; flex-wrap: wrap; }
   .live-side .live-box { flex: 1 1 220px; }
 }
+/* Unbesetzter Platz der Startelf: Zeile bleibt als leere Position stehen (Ablageziel). */
+.lu-row-free td { border-bottom: 1px solid var(--border-soft); }
+.lu-row-free .lu-free { color: var(--text-4); font-style: italic; }
+.lu-row-free .lu-pos { opacity: .7; }
+.lu-row-free.over td { background: var(--sel-bg); }
+.lu-row-free .lu-ghost { visibility: hidden; } /* gleiche Zeilenhöhe wie besetzte Plätze */
