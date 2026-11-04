@@ -781,7 +781,7 @@ export const INFO_TEXTS = {
   },
   prematch_aufstellung: {
     title: 'Schnelle Aufstellung',
-    text: 'Übernimm deine gespeicherte Aufstellung, lass den Co-Trainer nach Eignung die beste Elf und Bank aufstellen (Taktik bleibt) oder wechsle zur Aufstellung. Die Wahl gilt beim Anpfiff.',
+    text: 'Übernimm deine gespeicherte Aufstellung, lass den Co-Trainer nach Eignung die beste Elf und Bank aufstellen (Taktik bleibt) oder wechsle zur Aufstellung. Die Wahl gilt beim Anpfiff. Hast du Plätze leer gezogen, besetzt sie der Co-Trainer beim Anpfiff mit dem Passendsten.',
     wiki: 'match',
   },
   prematch_zuschauer: {

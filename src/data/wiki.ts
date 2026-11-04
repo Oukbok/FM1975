@@ -987,10 +987,14 @@ Die Formation wählst du oben im Spielfeld:
 
 Beim Wechsel der Formation bleibt deine Startelf zusammen und wird bestmöglich auf die neuen Positionen verteilt; eigene Positionsänderungen werden dabei verworfen.
 
-### Ziehen und Tauschen
-- Spieler aus der **Liste** oder von der **Bank** auf eine Karte im Feld ziehen setzt ihn dort ein (der bisherige Spieler tauscht den Platz). Lässt du ihn irgendwo auf dem Rasen los, kommt er auf die nächstgelegene Position.
+### Ziehen und Tauschen (Drag & Drop)
+Alles lässt sich ziehen – Karten auf dem Feld, Bankspieler und jede Zeile der Kaderliste. Ziele sind die Karten und freien Plätze auf dem Feld, die Bankplätze, das Feld **Reserve** neben der Bank sowie die drei Abschnitte der Liste. Beim Ziehen hängt eine kleine Karte am Zeiger, die zeigt, wohin der Spieler beim Loslassen kommt; Bank und Reserve sind als Ablagezonen umrandet, das aktuelle Ziel leuchtet.
+- Spieler aus der **Liste** oder von der **Bank** auf eine Karte im Feld ziehen setzt ihn dort ein (der bisherige Spieler tauscht den Platz – ein Bankspieler geht dafür auf die Bank, ein Reservespieler in die Reserve). Lässt du ihn irgendwo auf dem Rasen los, kommt er auf die nächstgelegene Position.
 - Eine **Karte auf eine andere Karte** ziehen tauscht die beiden Spieler.
-- Auf die Bank oder in die Reserve ziehen nimmt einen Spieler aus der Startelf.
+- Eine Karte auf die **Ersatzbank** ziehen: Der Platz in der Aufstellung wird **frei**, der Spieler setzt sich auf den nächsten freien Bankplatz. Ist die Bank voll, wird die Ablage abgewiesen (rot markiert) – lass ihn dann direkt auf einen Bankspieler fallen, die beiden tauschen.
+- Eine Karte in die **Reserve** ziehen (Feld neben der Bank oder Abschnitt in der Liste): Der Platz wird frei, der Spieler gehört nicht zum Spieltagskader.
+- Freie Plätze bleiben als gestrichelte Karte „frei“ stehen und sind selbst Ablageziel. Hinweis „Aufstellung unvollständig“ rechts und in der Vorschau „Nächstes Spiel“.
+- **Escape** bricht das Ziehen ab, der Spieler bleibt, wo er war. Auf Touch-Geräten den Spieler kurz gedrückt halten, bis er sich anhebt, dann ziehen (ohne Halten scrollt die Liste). Ein langer Druck ohne Bewegung öffnet weiterhin das Spieler-Menü, ein Rechtsklick ebenso.
 - Ein einfacher Klick auf Karte oder Zeile öffnet das Spielerprofil.
 
 ### Positionen verschieben
@@ -1004,7 +1008,7 @@ Die so entstandene Position zählt im Spiel genauso wie eine Formationsposition 
 **Auto** besetzt alle Positionen nach bestmöglicher Eignung (nur einsatzfähige Spieler) und füllt die Bank samt Ersatztorwart – Formation, eigene Positionen und Anweisungen bleiben erhalten.
 
 ### Was vor dem Anpfiff passiert
-Das Spiel nimmt genau diese Aufstellung. Fällt ein Spieler bis dahin aus (verletzt, gesperrt), rückt auf seine Position der passendste Freie. Freie Bankplätze füllt das Spiel mit den besten Übrigen auf, bevorzugt mit einem Ersatztorwart.`,
+Das Spiel nimmt genau diese Aufstellung. Fällt ein Spieler bis dahin aus (verletzt, gesperrt) oder hast du einen Platz leer gezogen, setzt der Co-Trainer beim Anpfiff auf genau diese Position den passendsten freien Spieler – mit elf Mann wird immer angepfiffen. Freie Bankplätze füllt er mit den besten Übrigen auf, bevorzugt mit einem Ersatztorwart. Willst du das nicht dem Zufall überlassen, wähle in der Vorschau „Nächstes Spiel“ *Co-Trainer stellt die beste Elf auf* oder besetze die Plätze selbst.`,
   },
   {
     id: 'position-weights',
@@ -1246,7 +1250,7 @@ Beide Wege nutzen **dieselbe Match-Engine** und verbuchen alles identisch (Ergeb
 
 ## Wechsel und Taktik: der Wechsel-Bildschirm
 Wechsel, Umstellungen und Ansprachen laufen über einen eigenen Bildschirm. Er öffnet sich über **Wechsel / Taktik** (oben rechts) bzw. die Knöpfe **Aufstellung, Taktik, Individuelle Anweisungen**, zur **Halbzeit** und wenn eine Option das Spiel anhält. Das Spiel steht so lange still; alles ist ein Entwurf und gilt erst mit **Bestätigen** (Abbrechen verwirft ihn).
-- **Aufstellung:** links die Spielerliste (Startelf und Bank mit Note, Stärke auf der Position, Fitness, Kraft, Form, Moral und Potenzial-Einschätzung der Scouts), rechts das **Spielsystem** mit Formationswahl und dem Feld mit Gesichtern und „Position | Stärke“, die Bank daneben. Wechseln oder Positionen tauschen: zwei Spieler nacheinander anklicken (Liste oder Feld) oder auf dem Feld ziehen. Ein Bankspieler auf einem Platz bedeutet eine Einwechslung (grün „rein“, der Ausgewechselte rot „raus“). Eine neue Formation verteilt deine Elf nach Eignung auf die Positionen. **Mannschaftsstärke** und **verbleibende Wechsel** rechnen sofort mit. Wechsel je nach Epoche: **2** (bis 1994), **3** (ab 1995), **5** (ab 2020).
+- **Aufstellung:** links die Spielerliste (Startelf und Bank mit Note, Stärke auf der Position, Fitness, Kraft, Form, Moral und Potenzial-Einschätzung der Scouts), rechts das **Spielsystem** mit Formationswahl und dem Feld mit Gesichtern und „Position | Stärke“, die Bank daneben. Wechseln oder Positionen tauschen: zwei Spieler nacheinander anklicken (Liste oder Feld) oder auf dem Feld ziehen (Escape bricht ab). Ein Bankspieler auf einem Platz bedeutet eine Einwechslung; umgekehrt kommt ein Feldspieler nur per Wechsel auf die Bank – zieh ihn direkt auf den Bankspieler, der für ihn kommt (grün „rein“, der Ausgewechselte rot „raus“). Eine neue Formation verteilt deine Elf nach Eignung auf die Positionen. **Mannschaftsstärke** und **verbleibende Wechsel** rechnen sofort mit. Wechsel je nach Epoche: **2** (bis 1994), **3** (ab 1995), **5** (ab 2020).
 - **Taktik öffnen:** Ausrichtung sowie Tempo, Breite, Pressing, Abwehrlinie, Einsatz und Aufbauspiel **nur für dieses Spiel** – deine gespeicherte Taktik bleibt unverändert.
 - **Halbzeitansprache** (nur in der Pause): Loben, ruhig analysieren oder Kabinenpredigt, daneben die Statistik zur Pause. Lob hilft bei Führung, eine Predigt bei Rückstand; falscher Ton kann schaden.
 - **Spielergespräche:** ein kurzes Wort an einzelne Spieler, einmal je Halbzeit. **Loben** stärkt Spieler, die gut spielen; **Mehr fordern** weckt schwache, kränkt aber starke; **Beruhigen** hilft Verwarnten und Nervösen. Die Wirkung ist klein (rund ±1–2 % Tagesleistung).
