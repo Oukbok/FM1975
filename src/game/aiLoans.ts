@@ -188,8 +188,9 @@ export function optionWanted(g: Game, p: Player, holder: Club, today: string, rn
   const note = st?.ratedMatches ? st.averageRating : 4; // 1 = sehr gut … 6
   const regular = share >= 0.45 || ((st?.appearances ?? 0) >= played * 0.5 && note <= 3.4);
   const pBuy = regular ? clamp(0.5 + (3.4 - note) * 0.3 + (share - 0.5) * 0.5, 0.25, 0.85) : share >= 0.25 ? 0.2 : 0.03;
-  // Faktor 0,85: gut ein Viertel der vereinbarten Optionen wird gezogen (Soll 20–35 %, docs/recherche/ablösefrei.md).
-  return rng() < pBuy * 0.85;
+  // Ergibt gut ein Viertel gezogene Optionen (Soll 20–35 %, docs/recherche/ablösefrei.md): Stammspieler meist,
+  // Ergänzungsspieler selten, wer kaum spielte fast nie.
+  return rng() < pBuy;
 }
 
 // -----------------------------------------------------------------------------

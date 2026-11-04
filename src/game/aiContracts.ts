@@ -63,7 +63,7 @@ export function freeAgentEra(year: number): { refuse: number; preRefused: number
   if (year < 1995) return { refuse: 0.04, preRefused: 0, preKey: 0, fringe: 0 };
   if (year < 2005) return { refuse: 0.11, preRefused: 0.4, preKey: 0.08, fringe: 0.05 };
   if (year < 2015) return { refuse: 0.19, preRefused: 0.55, preKey: 0.14, fringe: 0.3 };
-  return { refuse: 0.21, preRefused: 0.6, preKey: 0.15, fringe: 0.6 };
+  return { refuse: 0.21, preRefused: 0.6, preKey: 0.15, fringe: 0.7 };
 }
 
 /** Lehnt der Spieler eine vorzeitige Verlängerung ab? (Persönlichkeit, Zufriedenheit, Größe des Vereins, Epoche) */
