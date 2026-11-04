@@ -53,8 +53,11 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
   const [, bump] = useState(0);
   const changed = () => bump((n) => n + 1);
   const best = useMemo(() => bestPositions(p), [p]);
-  const [sel, setSel] = useState<Position>(best[0]?.pos ?? p.naturalPosition);
-  useEffect(() => setSel(bestPositions(p)[0]?.pos ?? p.naturalPosition), [p]);
+  // Gewählte Position je Spieler: beim Blättern sofort die beste Position des neuen Spielers
+  // (ohne Zwischenbild mit der Auswahl des vorigen – sonst blitzt „Position trainieren“ auf).
+  const [pick, setPick] = useState<{ id: string; pos: Position } | null>(null);
+  const sel: Position = pick && pick.id === p.id ? pick.pos : (best[0]?.pos ?? p.naturalPosition);
+  const setSel = (pos: Position) => setPick({ id: p.id, pos });
 
   // Blättern im Kader – nicht bei Zusatz-Reiter (gehört genau zu diesem Spieler)
   const list = !extraTab && squad ? squad.filter(Boolean) : [];

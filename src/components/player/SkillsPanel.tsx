@@ -4,7 +4,7 @@
 // `weightsFor`). Trendpfeil = Veränderung seit der vorletzten Bewertung, Hütchen = Schwerpunkt
 // des laufenden Wochentrainings (eigener Kader). Schalter: nur wichtige Attribute bzw.
 // Trainingsfortschritt seit der ältesten Momentaufnahme.
-import { useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import type { Player, Position } from '../../types';
 import { POSITION_NAMES_DE } from '../../engine/positions';
 import { useClubProfile } from '../club/ClubLink';
@@ -37,6 +37,7 @@ export default function SkillsPanel({ p, pos, onPos }: { p: Player; pos: Positio
   const hasProgress = !!ch.sinceLabel && Object.keys(ch.since).length > 0;
   const showProg = progress && hasProgress;
 
+  const colsRef = useFitRows([p.id, pos, onlyKey, showProg]);
   return (
     <section className="pp2-skills">
       <div className="pp2-skills-head">
@@ -52,7 +53,7 @@ export default function SkillsPanel({ p, pos, onPos }: { p: Player; pos: Positio
         </label>
       </div>
 
-      <div className={`pp2-skill-cols${columns(p, pos).length > 2 ? ' three' : ''}`}>
+      <div ref={colsRef} className={`pp2-skill-cols${columns(p, pos).length > 2 ? ' three' : ''}`}>
         {columns(p, pos).map((col, ci) => (
           <div key={ci} className="pp2-skill-col">
             {col.map((grp) => {
@@ -104,4 +105,31 @@ function SkillRow({ k, v, tier, trend, prog, target }: {
       <span className="pp2-sval" style={{ color: vColor(v) }}>{v}</span>
     </div>
   );
+}
+
+/**
+ * Fähigkeiten passen immer ohne Scrollen in die Box: Reicht die Höhe nicht (andere Schrift,
+ * kleines Fenster), werden die Zeilen schrittweise enger (Variable --sk-pad/--sk-lh), nie größer
+ * als im Grundzustand. Läuft vor dem Zeichnen, damit nichts springt.
+ */
+function useFitRows(deps: unknown[]) {
+  const ref = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const fit = () => {
+      const steps: [number, number][] = [[1, 18], [0, 18], [0, 17], [0, 16], [0, 15], [0, 14], [0, 13]];
+      for (const [pad, lh] of steps) {
+        el.style.setProperty('--sk-pad', `${pad}px`);
+        el.style.setProperty('--sk-lh', `${lh}px`);
+        if (el.scrollHeight <= el.clientHeight + 0.5) break;
+      }
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(el);
+    document.fonts?.ready.then(fit).catch(() => {});
+    return () => ro.disconnect();
+  }, deps); // eslint-disable-line react-hooks/exhaustive-deps
+  return ref;
 }

@@ -150,11 +150,13 @@
 }
 .pp2-srow {
   display: grid; grid-template-columns: minmax(0, 1fr) 38px 30px; align-items: center; gap: 6px;
-  padding: 1px 0; border-bottom: 1px solid var(--border-soft);
+  padding: var(--sk-pad, 1px) 0; border-bottom: 1px solid var(--border-soft);
 }
 .pp2-srow:last-child { border-bottom: none; }
-.pp2-srow .pp-attr-lbl { font-size: 14px; line-height: 18px; }
-.pp2-sval { font-size: 15px; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+.pp2-srow .pp-attr-lbl { font-size: 14px; line-height: var(--sk-lh, 18px); }
+/* Kein Scrollbalken für Rundungsreste (useFitRows passt die Zeilen an die Höhe an). */
+.pp2-skill-cols { scrollbar-gutter: auto; }
+.pp2-sval { line-height: var(--sk-lh, 18px); font-size: 15px; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
 .pp2-smark { display: inline-flex; align-items: center; justify-content: flex-end; gap: 4px; }
 .pp2-trend { display: inline-block; }
 .pp2-trend.up { color: var(--pos); }
