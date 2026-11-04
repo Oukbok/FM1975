@@ -78,28 +78,35 @@
   position: relative; width: 190px; height: 240px;
   background: rgba(var(--ink-rgb), 0.02); border: 1px solid var(--border-soft); border-radius: 4px;
 }
+/* Punkt = Ankerpunkt: Knopf fest um den Punkt zentriert, Beschriftung schwebt darunter
+   (verschiebt nichts), kein Drück-Versatz – Klick trifft sofort. */
 .pp2-spot {
   position: absolute; transform: translate(-50%, -50%);
-  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  width: 26px; height: 26px; display: grid; place-items: center;
   background: none; border: none; padding: 0; cursor: pointer; font-family: inherit;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
 }
+.pp2-spot:active, .pp2-spot:focus { transform: translate(-50%, -50%); }
 .pp2-dot {
-  position: relative; display: block; width: 11px; height: 11px; border-radius: 50%;
-  background: var(--panel-2); border: 1px solid var(--border);
+  position: relative; display: block; width: 11px; height: 11px; border-radius: 50%; box-sizing: border-box;
+  background: var(--panel-2); border: 1px solid var(--border); pointer-events: none;
 }
 .pp2-spot.psk-natural .pp2-dot { background: var(--fam-1); border-color: var(--fam-1); }
 .pp2-spot.psk-good .pp2-dot { background: var(--fam-2); border-color: var(--fam-2); }
-.pp2-spot.psk-ok .pp2-dot { background: var(--fam-3); border-color: #3d6153; }
-.pp2-spot.faint .pp2-dot { width: 7px; height: 7px; opacity: 0.6; }
-.pp2-spot.on .pp2-dot { box-shadow: 0 0 0 2px var(--accent); }
+.pp2-spot.psk-ok .pp2-dot { background: var(--fam-3); border-color: var(--fam-3); }
+.pp2-spot.faint .pp2-dot { transform: scale(0.64); opacity: 0.6; }
+.pp2-spot.on .pp2-dot { transform: none; opacity: 1; box-shadow: 0 0 0 2px var(--accent); }
 .pp2-dot-train { position: absolute; right: -4px; top: -4px; width: 6px; height: 6px; border-radius: 50%; background: var(--pos-key); }
-.pp2-spot-lbl { font-size: 11.5px; font-weight: 600; color: var(--text-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pp2-spot-lbl {
+  position: absolute; left: 50%; top: 21px; transform: translateX(-50%); pointer-events: none;
+  font-size: 11.5px; font-weight: 600; color: var(--text-2); white-space: nowrap; font-variant-numeric: tabular-nums;
+}
 .pp2-spot-lbl em { font-style: normal; color: var(--text-4); margin: 0 1px; }
 .pp2-spot.on .pp2-spot-lbl { color: var(--accent); }
 .pp2-spot:hover .pp2-spot-lbl { color: var(--text); }
 .pp2-legend { margin-top: 6px; font-size: 10.5px; gap: 8px; flex-wrap: wrap; }
 
-.pp2-topinfo { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.pp2-topinfo { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
 .pp2-bt {
   display: flex; align-items: baseline; gap: 10px;
   font-family: var(--font-display); font-size: 16px; font-weight: 500; letter-spacing: 0.4px; color: var(--text);
@@ -116,7 +123,10 @@
 .pp2-posinfo { border-top: 1px solid var(--border-soft); padding-top: 8px; }
 .pp2-posline { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; font-size: 14px; color: var(--text-2); }
 .pp2-posline > b { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text); letter-spacing: 0.5px; }
-.pp2-posline .psk-train { margin-left: auto; padding: 3px 10px; }
+.pp2-posline .psk-train { margin-left: auto; padding: 0 10px; height: 30px; line-height: 28px; }
+/* Feste Zeilenhöhe: mit und ohne „Position trainieren“ (natürliche Position) gleich hoch – nichts rutscht. */
+.pp2-posline { height: 32px; flex-wrap: nowrap; white-space: nowrap; }
+.pp2-posinfo .psk-status { height: 2.8em; overflow: hidden; }
 .pp2-posinfo .psk-status { margin-top: 4px; }
 
 /* ---- Fähigkeiten (unten links) ---- */
@@ -133,7 +143,7 @@
 .pp2-skill-cols.three { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 20px; }
 .pp2-skill-cols.three .pp2-srow { grid-template-columns: minmax(0, 1fr) 30px 28px; }
 .pp2-skill-col { min-width: 0; }
-.pp2-sgroup { margin-bottom: 6px; }
+.pp2-sgroup { margin-bottom: 4px; }
 .pp2-sgt {
   font-size: 11.5px; font-weight: 700; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.7px;
   border-bottom: 1px solid var(--border); padding-bottom: 2px; margin-bottom: 1px;
