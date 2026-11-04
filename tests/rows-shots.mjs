@@ -60,7 +60,7 @@ for (const [m, s, n] of PAGES) {
 // Pokal: Rundenansicht
 try {
   await nav('Statistiken', 'Pokal');
-  const b = page.locator('.cmp-main .dchip:has-text("Runden")');
+  const b = page.locator('.cmp-main .cmp-chips button:has-text("Runden")');
   if (await b.count()) { await b.first().click(); await shot('pokal_runden'); }
 } catch (e) { errors.push('pokal_runden: ' + e.message.split('\n')[0]); }
 // Vereinsprofil (Kader + Historie) aus der Tabelle

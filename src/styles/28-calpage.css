@@ -78,3 +78,8 @@
   background: var(--today-bg); color: var(--today-text); font-family: var(--font-display); font-size: 13px; font-weight: 600;
   display: inline-flex; align-items: center; justify-content: center;
 }
+
+/* Monatsraster füllt die Box (Zellen wachsen mit, Box scrollt erst bei sehr kleiner Höhe) */
+.cal-box .dbox-body { display: flex; flex-direction: column; }
+.cal-box .cal-grid-fill { flex: 1 1 auto; grid-auto-rows: minmax(84px, 1fr); }
+.cal-grid-fill .cal-cell.cal-empty { background: transparent; border-color: transparent; }

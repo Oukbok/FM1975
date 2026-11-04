@@ -205,3 +205,21 @@ button.sel3.sel3.sel3-l { height: var(--btn-h-l); min-height: var(--btn-h-l); fo
 .ev-choice-h { font-size: 14.5px; font-weight: 500; color: var(--text-3); line-height: 1.3; }
 .ev-result { margin-top: 14px; padding: 10px 14px; border-left: 3px solid var(--sel-border); background: var(--btn-bg); color: var(--text); font-size: 16px; border-radius: 0 var(--btn-radius) var(--btn-radius) 0; }
 .dz-ntable td.dz-ncol-cat { color: var(--text-3); font-size: 15px; }
+
+/* ---- Auswahl-Karten und kleine Wahlknöpfe anderer Bereiche ---------------------
+   Früher Bernstein-Rahmen/-Schein; jetzt dieselbe ruhige Auswahl wie die Knöpfe. */
+.pp-posbtn.on, .cp-focus-b.on, .tr3-tpl.on, .ms-shout.on, .tm-warm.on, .tm-talk-opt.on, .sp3-pchip.on, .sp3-tile.on,
+.pp3-act.on, .tr3-star.on, .ng-opt.on, .ng-offer.on, .ng-modecard.on, .cp-lodging.on, .club-pick.sel, .tp-tile.sel,
+.ms-btn.on, .lp-box.on, .psk-chip.on {
+  border-color: var(--sel-border); background: var(--sel-bg); color: var(--sel-text);
+}
+.ng-opt.on, .cp-lodging.on { box-shadow: inset 3px 0 0 var(--sel-border); }
+.lp-box.on, .psk-chip.on { box-shadow: 0 0 0 1px var(--sel-border) inset; }
+.pp-posbtn.on .pp-posbtn-code, .pp2-poscell.on, .pp3-act.on, .tr3-star.on, .ng-badge.on { color: var(--sel-text); }
+.pp2-poscell.on, .ng-badge.on { border-color: var(--sel-border); }
+.ng-badge.on { background: var(--sel-bg); }
+/* Schalter (Einstellungen, Assistent): an = helle Spur, weißer Knopf */
+.toggle.on { background: var(--sel-bg); border-color: var(--sel-border); }
+.toggle.on::after { background: var(--text); }
+.ng-toggle.on .ng-switch { background: var(--sel-bg); border-color: var(--sel-border); }
+.ng-toggle.on .ng-switch::after { background: var(--text); }

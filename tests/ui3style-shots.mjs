@@ -64,8 +64,9 @@ try {
 // Stadion: Bau-Popover eines Blocks
 try {
   await nav('Verein', 'Stadion');
-  const blk = page.locator('.sb-block, [data-block]').first();
-  if (await blk.count()) { await blk.click({ force: true }); await shot('stadion_bau'); }
+  const blk = page.locator('.gr-svg g.gr-obj:not(.sv-venue)');
+  const nb = await blk.count();
+  if (nb) { await blk.nth(nb - 1).click({ force: true }); await shot('stadion_bau'); }
 } catch (e) { errors.push('stadion_bau: ' + e.message.split('\n')[0]); }
 // Nachrichten mit Entscheidung (erste Nachricht mit Auswahl öffnen)
 try {

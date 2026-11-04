@@ -7,6 +7,7 @@ import { readFile, mkdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { chromium } from 'playwright';
 import { startNewGame } from './newgame-flow.mjs';
+import { pickOption, optionsOf, valueOf } from './select3.mjs';
 
 const outDir = process.argv[2] || 'test-output/match';
 await mkdir(outDir, { recursive: true });
@@ -127,7 +128,7 @@ if (!sawHalf && (await confirmStop()) !== 'halbzeit') {
   await page.waitForTimeout(200);
   if (!(await page.locator('.tm-tag.rein').count())) fail('Geplanter Wechsel nicht markiert');
   await page.screenshot({ path: `${outDir}/11_wechsel_geplant.png` });
-  await page.locator('.tm-sys-head select').selectOption({ index: 1 });
+  await pickOption(page, page.locator('.tm-sys-head .sel3'), { index: 1 });
   await page.waitForTimeout(200);
   await page.screenshot({ path: `${outDir}/12_formation.png` });
   await page.click('.tm-cs-lfoot >> text=Taktik öffnen');

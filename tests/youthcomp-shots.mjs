@@ -8,6 +8,7 @@ import { readFile, mkdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { chromium } from 'playwright';
 import { startNewGame } from './newgame-flow.mjs';
+import { pickOption, optionsOf } from './select3.mjs';
 
 const outDir = process.argv[2] || 'test-output/yc';
 const prefix = process.argv[3] || 'neu';
@@ -51,26 +52,26 @@ await shot('jugend_uebersicht');
 await page.locator('.tn-sub-item:has-text("Jugendwettbewerbe")').first().click();
 await page.waitForTimeout(500);
 await shot('yc_liga');
-const compSel = () => page.locator('.cmp-select select').nth(1);
-const seasonSel = () => page.locator('.cmp-select select').nth(0);
-const opts = await compSel().locator('option').allTextContents();
+const compSel = () => page.locator('.cmp-select .sel3').nth(1);
+const seasonSel = () => page.locator('.cmp-select .sel3').nth(0);
+const opts = (await optionsOf(page, compSel())).map((o) => o.label);
 console.log('Optionen:', opts.join(' | '));
 for (const [want, n] of [['A-Jugendmeisterschaft – Endrunde', 'yc_endrunde'], ['A-Junioren-Bundesliga – Endrunde', 'yc_endrunde'], ['Nachwuchsliga U19 – Endrunde', 'yc_endrunde'],
   ['Verbandsliga', 'yc_c'], ['Bayernliga', 'yc_c'], ['C-Junioren-Regionalliga', 'yc_c'], ['Bezirksliga', 'yc_d'], ['Kreisliga', 'yc_e'], ['ohne Tabelle', 'yc_fest'],
   ['UEFA Youth League – Gruppenphase', 'yc_uyl_gruppen'], ['UEFA Youth League – K.-o.-Runde', 'yc_uyl_ko'], ['DFB-J', 'yc_pokal'], ['DDR-', 'yc_ddr'], ['Staffel West', 'yc_staffel_west']]) {
   const i = opts.findLastIndex((t) => t.includes(want));
   if (i < 0) continue;
-  await compSel().selectOption({ index: i });
+  await pickOption(page, compSel(), { index: i });
   await shot(n);
-  const runden = page.locator('.cmp-main .dchip:has-text("Runden")');
+  const runden = page.locator('.cmp-main .cmp-chips button:has-text("Runden")');
   if (n.endsWith('endrunde') && await runden.count()) { await runden.first().click(); await shot(`${n}_runden`); }
 }
 for (const [label, n] of [['Vorlagen', 'stat_vorlagen'], ['Weiße Weste', 'stat_weste']]) {
   const b = page.locator(`.cmp-stats .dchip:has-text("${label}")`);
   if (await b.count()) { await b.first().click(); await shot(n); }
 }
-const so = await seasonSel().locator('option').allTextContents();
-if (so.length > 1) { await seasonSel().selectOption({ index: so.length - 2 }); await shot('yc_vorsaison'); }
+const so = (await optionsOf(page, seasonSel())).map((o) => o.label);
+if (so.length > 1) { await pickOption(page, seasonSel(), { index: so.length - 2 }); await shot('yc_vorsaison'); }
 // Spielerprofil aus der Bestenliste
 const clickable = page.locator('.cmp-stat.clickable').first();
 if (await clickable.count()) { await clickable.click(); await page.waitForTimeout(400); await shot('yc_spieler'); }

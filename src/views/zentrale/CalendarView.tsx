@@ -222,7 +222,7 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
 
   return (
     <DashPage>
-      <DashBox title={`${MONTH_LABELS[viewM]} ${viewY}`} icon="kalender" span={2} rows={2} info="spielplan"
+      <DashBox className="cal-box" title={`${MONTH_LABELS[viewM]} ${viewY}`} icon="kalender" span={2} rows={2} info="spielplan"
         right={<span className="dbtnrow">
           <button className="b3 b3-icon" onClick={prevMonth} title="Vormonat" aria-label="Vormonat"><Icon name="navPrev" size={18} /></button>
           <button className="b3" onClick={() => { setViewY(todayY); setViewM(todayM); }} disabled={viewY === todayY && viewM === todayM}>Heute</button>
@@ -310,11 +310,11 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
         {planMode && <KV k="Zeitraum" v={selStart ? `${fmtDay(selStart)} – ${fmtDay(previewEnd)}${previewValid ? '' : ' (belegt)'}` : 'Starttag im Kalender wählen'} color={selStart && !previewValid ? 'var(--red)' : undefined} />}
         <div className="dbtnrow mt8">
           {!planMode ? (
-            <button className="btn btn-sm" onClick={startPlanning}>Starttag wählen</button>
+            <button className="b3" onClick={startPlanning}>Starttag wählen</button>
           ) : (
             <>
-              <button className="btn btn-sm btn-ghost" onClick={cancelPlanning}>Abbrechen</button>
-              <button className="btn btn-sm" disabled={!selStart || !previewValid} onClick={confirmPlan}>Einplanen</button>
+              <button className="b3" onClick={cancelPlanning}>Abbrechen</button>
+              <button className="b3 b3-primary" disabled={!selStart || !previewValid} onClick={confirmPlan}>Einplanen</button>
             </>
           )}
         </div>

@@ -58,7 +58,7 @@ for (const view of VIEWS) {
     ['briefing', '.si-window', async () => { await nav('Zentrale', 'Briefing'); await click('button:has-text("Briefing öffnen")'); }],
     ['chronik', '.chm-modal', async () => { await closeAll(page); await click('.dashx-foot-link'); }],
     ['gala', '.gb-root', async () => { await nav('Statistiken', 'Auszeichnungen'); await page.locator('.app-main button.rl-row[title*="Gala"]').first().click(); }, { max: 0 }],
-    ['auslosung', '.dr-root', async () => { await nav('Statistiken', 'Pokal'); await click('.app-main .dchip:has-text("Runden")').catch(() => {}); await page.waitForTimeout(300); await click('.app-main .dchip:has-text("Auslosung")'); await page.waitForTimeout(600); }],
+    ['auslosung', '.dr-root', async () => { await nav('Statistiken', 'Pokal'); await click('.app-main .cmp-chips button:has-text("Runden")').catch(() => {}); await page.waitForTimeout(300); await click('.app-main .dchip:has-text("Auslosung")'); await page.waitForTimeout(600); }],
     ['trainingslager', '.cp-modal', async () => { await nav('Training', 'Trainingslager'); await click('.cp-plan-btn'); }],
     ['sponsor-karte', '.sp3-card', async () => { await nav('Finanzen', 'Sponsoring'); await page.locator('.app-main [data-sp^="deal:"], .app-main [data-sp^="offer:"], .app-main [data-sp^="st:"]').first().click(); }],
     ['sponsor-verhandlung', '.modal', async () => {
@@ -119,7 +119,7 @@ for (const view of VIEWS) {
       await nav(m, s);
       const boxes = () => page.evaluate(() => [...document.querySelectorAll('.app-main .dbox')].map((b) => { const r = b.getBoundingClientRect(); return `${Math.round(r.width)}×${Math.round(r.height)}`; }).join(' '));
       const base = await boxes();
-      const chips = page.locator('.app-main .dbox .dchip, .app-main .dbox .tab, .app-main .dbox .seg-btn, .app-main .dbox input[type=checkbox]');
+      const chips = page.locator('.app-main .dbox .dchip, .app-main .dbox .tab, .app-main .dbox .seg-btn, .app-main .dbox .seg3 > button, .app-main .dbox input[type=checkbox]');
       const n = Math.min(await chips.count(), 14);
       for (let i = 0; i < n; i++) {
         const c = chips.nth(i);

@@ -6,6 +6,7 @@ import { readFile, mkdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { chromium } from 'playwright';
 import { startNewGame } from './newgame-flow.mjs';
+import { pickOption, optionsOf, valueOf } from './select3.mjs';
 
 const outDir = process.argv[2] || 'test-output/training';
 await mkdir(outDir, { recursive: true });
@@ -72,7 +73,7 @@ if (await tile.count() && await target.count()) {
   const txt = await target.innerText();
   if (!txt.includes('Torschuss')) errors.push(`Ziehen hat das Feld nicht belegt (${txt})`);
 }
-await page.locator('.tp-weeknav select').selectOption('vorbereitung');
+await pickOption(page, page.locator('.tp-weeknav .sel3'), 'vorbereitung');
 await page.waitForTimeout(200);
 await page.screenshot({ path: `${outDir}/${tag}_4_vorlage.png` });
 // Weitere Reiter des Trainingsplans
@@ -84,8 +85,7 @@ for (const [i, name] of [['4b', 'Individuelle Spieler'], ['4c', 'Trainingsgruppe
   if (i === '4b') {
     // Trainingsziel (Zusatzposition) und Förderspieler setzen → Fortschritt/Gruppen sichtbar
     const sel = page.locator('.tr3-target').nth(3);
-    const val = await sel.locator('option').nth(1).getAttribute('value');
-    await sel.selectOption(val);
+    await pickOption(page, sel, { index: 1 });
     await page.locator('.tr3-star').nth(10).click();
     await page.waitForTimeout(200);
     if (!(await page.locator('.tr3-prog').count())) errors.push('Fortschritt des Positionstrainings fehlt');
