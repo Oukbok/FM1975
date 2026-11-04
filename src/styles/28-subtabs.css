@@ -35,3 +35,10 @@
 @media (max-width: 1500px) {
   .sub3-tabs .tab { padding: 9px 16px; font-size: 14px; letter-spacing: 1px; }
 }
+
+/* Wettbewerbsseite unter einer Leiste (Jugend › Jugendwettbewerbe): gleiche
+   Aufteilung wie .dpage.cmp-page (46/23,5/23,5), aber in fr – bündig mit der Leiste. */
+.sub3-page > .dpage.cmp-page {
+  grid-template-columns: minmax(0, 46fr) minmax(0, 23.5fr) minmax(0, 23.5fr); column-gap: 1.5%;
+  padding: 18px 2.5% 24px; row-gap: 14px;
+}
