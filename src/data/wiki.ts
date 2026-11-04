@@ -1447,19 +1447,26 @@ Die anderen Vereine planen ihre Verträge wie ein Sportdirektor (\`game/aiContra
 ### Vorzeitige Verlängerung
 Leistungsträger (die besten 13 des Kaders) und große Talente bekommen rechtzeitig einen neuen Vertrag, wenn ihrer in höchstens 20 Monaten endet. Vor dem Bosman-Urteil eilt das kaum – auch ohne Vertrag gab es eine Ablöse –, deshalb sprechen die Vereine nur im Frühjahr und seltener mit ihren Spielern. Ab Sommer 1995 sind es drei Stichtage (1. Oktober, 1. Februar, 20. April).
 
-Nicht jeder unterschreibt: Ehrgeizige, unzufriedene oder für den Verein zu gute Spieler **lehnen ab**. Nach Bosman passiert das deutlich häufiger.
+Nicht jeder unterschreibt: Ehrgeizige, unzufriedene oder für den Verein zu gute Spieler **lehnen ab**. Nach Bosman passiert das deutlich häufiger – und über die Jahrzehnte immer öfter (Beratermarkt, kürzere Bindung).
+
+### Ablösefrei – wie oft?
+- **Bis 1995** gab es in Deutschland auch nach Vertragsende eine Ablöse. Ablösefrei wechselten fast nur Spieler am Karriereende oder in den Amateurbereich: in der ganzen Liga eine Handvoll pro Saison.
+- **Ab 1995/96** (Bosman) werden es schnell mehr; heute verlässt jeder Bundesligist pro Saison im Schnitt gut zwei Spieler ablösefrei, rund ein Viertel der Zugänge kommt ohne Ablöse.
+- Die KI ist auf diese Größenordnungen eingestellt (Quellen und Soll-Werte: \`docs/recherche/ablösefrei.md\`).
 
 ### Altstars laufen aus
 Spieler ab 34 – und ab 32, wenn sie nicht mehr zur Stammelf gehören – bekommen keinen neuen Vertrag. Zum 1. Juli wechseln sie zu einem Verein, der sie noch will, oder gehen unterklassig bzw. beenden die Karriere.
+
+Nach Bosman lassen die Vereine auch **Ergänzungsspieler** (ab Platz 16 im Kader, ab 25 Jahren) öfter auslaufen, statt ihnen einen neuen Vertrag zu geben – in den ersten Bosman-Jahren selten, heute bei gut zwei Dritteln von ihnen. So entsteht der Großteil der ablösefreien Abgänge.
 
 ### Bosman-Planung
 Ab 1995/96 verkaufen KI-Vereine Spieler, die nicht verlängern wollen, lieber im letzten Vertragsjahr (Sommer bei höchstens 12, Winter bei höchstens 6 Monaten Restlaufzeit), statt sie ablösefrei zu verlieren. Die Ablöse fällt dann niedriger aus. Findet sich im Inland kein Abnehmer, geht der Spieler oft ins Ausland. Wer im Winter noch da ist, wird eher per Vorvertrag umworben – Interessenten warten lieber auf den ablösefreien Wechsel.
 
 ### Vorverträge
-Ab Bosman unterschreiben auslaufende Spieler zwischen Mitte Januar und Mitte März einen **Vorvertrag** bei einem anderen KI-Verein und wechseln am 1. Juli ablösefrei. Dasselbe kann mit deinen Spielern passieren (siehe Verträge).
+Ab Bosman unterschreiben auslaufende Spieler zwischen Mitte Januar und Mitte März einen **Vorvertrag** bei einem anderen KI-Verein und wechseln am 1. Juli ablösefrei. Dasselbe kann mit deinen Spielern passieren (siehe Verträge). In der Liga sind das in den ersten Bosman-Jahren etwa 6–7 pro Saison, ab 2005 rund 9 und heute etwa 11 – vor allem Spieler, die eine Verlängerung abgelehnt haben.
 
 ### Leihen
-Größere Vereine verleihen junge Ersatzspieler (18–22 Jahre, außerhalb der ersten 15) für eine Saison an kleinere Ligavereine mit Bedarf auf ihrer Position. Dort sammeln sie Spielpraxis – Einsatzminuten treiben die Entwicklung. In den 70ern war das selten, ab den 90ern üblich. Ab 2000 gibt es gelegentlich eine **Kaufoption**: Hat der Spieler beim Leihverein regelmäßig in der Startelf gestanden oder gute Noten bekommen und gibt die Kasse die Ablöse her, zieht der Leihverein sie zum Saisonende. Sonst kehrt der Spieler zum Stammverein zurück.
+Größere Vereine verleihen junge Ersatzspieler (18–22 Jahre, außerhalb der ersten 15) für eine Saison an kleinere Ligavereine mit Bedarf auf ihrer Position. Dort sammeln sie Spielpraxis – Einsatzminuten treiben die Entwicklung. In den 70ern war das selten, ab den 90ern üblich. Ab 2000 gibt es gelegentlich eine **Kaufoption**: Hat der Spieler beim Leihverein regelmäßig in der Startelf gestanden oder gute Noten bekommen und gibt die Kasse die Ablöse her, zieht der Leihverein sie zum Saisonende – das passiert bei gut einem Viertel der vereinbarten Optionen (bei Stammspielern meist, bei Ergänzungsspielern selten, bei kaum eingesetzten fast nie). Sonst kehrt der Spieler zum Stammverein zurück.
 
 Auch bei dir fragen KI-Vereine an, ob sie einen deiner jungen Ergänzungsspieler ausleihen dürfen. Du entscheidest in den Nachrichten: ausleihen (ab 2000 wahlweise mit Kaufoption) oder ablehnen.
 
