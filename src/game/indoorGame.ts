@@ -566,6 +566,17 @@ function finishWinter(g: Game, today: string): void {
   void today;
 }
 
+/**
+ * Beim Laden (App.tsx, idempotent): künftige Hallentermine alter Spielstände, die in die
+ * Pflichtspielzeit eines Teilnehmers fallen, verlegen bzw. absagen (game/indoorReconcile.ts).
+ */
+export function migrateIndoorDates(g: Game): number {
+  const cur = indoorState(g).current;
+  if (!cur || cur.season !== g.season || cur.finished || cur.phase === 'none') return 0;
+  const today = g.calendar.currentDate;
+  return reconcileIndoor(g, cur, today, (t) => substituteIndoor(g, cur, t, mulberry32(hashStr(`${g.season}|${t.id}|sub|${today}`))));
+}
+
 /** Ob in diesem Winter überhaupt noch Hallenturniere stattfinden (für die Anzeige). */
 export function indoorStillActive(winterYear: number): boolean {
   return winterYear <= INDOOR_LAST_WINTER;
