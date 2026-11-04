@@ -15,8 +15,8 @@
      das Menü das Logo bei keiner Auflösung überdecken. Ein dezenter dunkler
      Verlauf legt sich über das Bild und hält Logo/Menü stets gut lesbar. */
   background:
-    radial-gradient(1100px 520px at 50% -8%, rgba(241, 160, 55, 0.12), transparent 62%),
-    linear-gradient(180deg, rgba(10, 7, 8, 0.45), rgba(10, 7, 8, 0.72)),
+    radial-gradient(1100px 520px at 50% -8%, rgba(var(--accent-rgb), 0.12), transparent 62%),
+    linear-gradient(180deg, rgba(var(--deep-rgb), 0.45), rgba(var(--deep-rgb), 0.72)),
     url('assets/start-tribuene.jpg') center / cover no-repeat,
     var(--bg);
 }
@@ -44,7 +44,7 @@
   height: auto;
   margin: 0 auto;
   object-fit: contain;
-  filter: drop-shadow(0 8px 26px rgba(0, 0, 0, 0.55));
+  filter: drop-shadow(0 8px 26px rgba(var(--shade-rgb), 0.55));
   user-select: none;
   -webkit-user-drag: none;
 }
@@ -123,7 +123,7 @@
 .menu-btn.primary {
   background: linear-gradient(180deg, var(--accent), var(--accent-dim));
   border-color: var(--accent);
-  color: #291706;
+  color: var(--accent-ink);
   font-weight: 800;
 }
 .menu-btn.primary:hover:not(:disabled) { filter: brightness(1.08); }
@@ -240,7 +240,7 @@
    ============================================================================= */
 .st-start {
   --st-accent: #f2a541;
-  --st-on: #241405;
+  --st-on: var(--accent-ink);
   --st-ink: #fbf3e6;
   --st-muted: #ecd9c4;
   --st-panel: 20, 15, 18;
@@ -283,18 +283,18 @@
   top: 0;
   bottom: 0;
   pointer-events: none;
-  background: rgba(6, 4, 10, 0);
+  background: rgba(var(--deep-rgb), 0);
   transition: background 0.5s;
 }
 .st-shade.s0 { left: 0; width: 26.2%; }
 .st-shade.s1 { left: 26.2%; width: 46.3%; }
 .st-shade.s2 { left: 72.5%; right: 0; }
-.st-shade.dim { background: rgba(6, 4, 10, 0.62); }
+.st-shade.dim { background: rgba(var(--deep-rgb), 0.62); }
 .st-scrim {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(10, 6, 12, 0.55) 0%, rgba(10, 6, 12, 0) 28%, rgba(10, 6, 12, 0) 72%, rgba(8, 10, 8, 0.78) 100%);
+  background: linear-gradient(180deg, rgba(var(--deep-rgb), 0.55) 0%, rgba(var(--deep-rgb), 0) 28%, rgba(var(--deep-rgb), 0) 72%, rgba(8, 10, 8, 0.78) 100%);
 }
 .st-logo {
   position: absolute;
@@ -303,7 +303,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
+  text-shadow: 0 4px 24px rgba(var(--shade-rgb), 0.55);
 }
 .st-logo .y {
   font-family: 'Oswald', 'Barlow', sans-serif;
@@ -398,4 +398,4 @@
   backdrop-filter: blur(3px);
 }
 .st-sub > * { width: 100%; max-width: 720px; margin: auto 0; }
-.st-note { position: absolute; left: 56px; bottom: 96px; font-size: 13px; color: #ffb4a6; text-shadow: 0 2px 8px rgba(0, 0, 0,0.7); }
+.st-note { position: absolute; left: 56px; bottom: 96px; font-size: 13px; color: #ffb4a6; text-shadow: 0 2px 8px rgba(var(--shade-rgb), 0.7); }

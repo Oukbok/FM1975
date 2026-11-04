@@ -139,6 +139,7 @@ Werden beim Zusammenführen der Stränge ergänzt (Erstes Training, Trainingslag
 | Auslosung | `draw/gala-buehne.webp` | Gala-Bühne mit Scheinwerfern und Lichtwänden, entsättigt, kühl | 1920×1080 | hinter der Auslosungs-Show (Ersatz: gezeichnete Bühne) |
 | Karriere | `career/manager-buero.webp` (optional) | Manager-Büro der Epoche (Schreibtisch, Vereinswimpel, Telefon), entsättigt, kühl abgedunkelt; derzeit nicht eingebunden – die Seite kommt ohne Bild aus | 1200×340 | denkbarer Kopf von Zentrale › Karriere |
 | Fanartikel | `merch/{schal,wimpel,magazin,poster,ball,musik,trikot,bekleidung,accessoires,video}.webp` | Freisteller auf dunklem Schiefer, 70er/80er-Look, ohne Logos | 384×384 | Sortiment (Ersatz: Icon) |
+| Styles (hell) | `stadion-hintergrund-hell.webp` (optional) | Stadion bei Tageslicht, sehr hell und kontrastarm (fast weiß), ohne Menschen im Vordergrund – für die hellen Styles „Papier/Hell kühl“; bis dahin wird das Abend-Foto entsättigt und stark aufgehellt (`--photo-veil` in `styles/30-themes.css`) | 2560×1440 | Hintergrund hinter den Boxen in hellen Styles (Ersatz: aufgehelltes Abend-Foto) |
 | Fanartikel | `merch/lager.webp` | Lagerraum hinter dem Fanshop, Regale, Kartons, kühl | 480×480 | Box „Lager“ |
 | Kartenverkauf | `tickets/rasen.jpg` | Rasen von oben mit Mähstreifen, kühl, entsättigt | 1200×750 | Draufsicht der Tribünen (Platzhalter vorhanden) |
 | Erfolge | `trophies/<form>.webp` | 12 Formen, siehe Abschnitt 4 | 1000×1100 | Vitrine (freischalten in `src/data/trophyImages.ts`) |

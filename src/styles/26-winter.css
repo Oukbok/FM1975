@@ -1,5 +1,5 @@
 /* Hallenfußball (views/statistiken/IndoorView.tsx) + Trainingslager (views/kader/TrainingCampView.tsx) */
-.dlist-row.win-sel { background: rgba(242, 165, 65, 0.08); box-shadow: inset 3px 0 0 var(--accent); }
+.dlist-row.win-sel { background: rgba(var(--accent-rgb), 0.08); box-shadow: inset 3px 0 0 var(--accent); }
 .dlist-row.win-me .grow, .dlist-row.win-me b { color: var(--accent); }
 .dlist-row.win-locked { opacity: 0.45; }
 

@@ -28,8 +28,8 @@
   border-radius: 4px;
   overflow: hidden;
 }
-.ptk-left { border-radius: 4px 0 0 4px; box-shadow: inset -14px 0 22px -16px rgba(0, 0, 0, 0.7); }
-.ptk-right { border-radius: 0 4px 4px 0; box-shadow: inset 14px 0 22px -16px rgba(0, 0, 0, 0.7); }
+.ptk-left { border-radius: 4px 0 0 4px; box-shadow: inset -14px 0 22px -16px rgba(var(--shade-rgb), 0.7); }
+.ptk-right { border-radius: 0 4px 4px 0; box-shadow: inset 14px 0 22px -16px rgba(var(--shade-rgb), 0.7); }
 .ptk-spine { background: linear-gradient(90deg, var(--panel), var(--bg), var(--panel)); border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft); }
 
 /* --- linke Seite --------------------------------------------------------- */

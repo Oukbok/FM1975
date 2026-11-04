@@ -17,7 +17,7 @@
 
 .tro-cats {
   grid-column: 1 / -1; display: flex; align-items: stretch; gap: 2px; padding: 0 8px;
-  background: linear-gradient(180deg, rgba(27, 32, 41, 0.9), rgba(16, 20, 27, 0.92));
+  background: linear-gradient(180deg, rgba(var(--panel-rgb), 0.9), rgba(var(--bg-rgb), 0.92));
   border: 1px solid var(--border-soft); border-radius: 6px;
 }
 .tro-cab-modal .tro-cats { background: transparent; border: 0; border-bottom: 1px solid var(--border-soft); border-radius: 0; padding: 0; }
@@ -44,9 +44,9 @@
 .tro-col-s { width: 92px; color: var(--text-2); }
 .tro-row { cursor: pointer; }
 .tro-row td { transition: background 160ms ease; }
-.tro-row:hover td { background: rgba(255, 255, 255, 0.035); }
+.tro-row:hover td { background: rgba(var(--ink-rgb), 0.035); }
 .tro-row:focus-visible { outline: 1px solid var(--accent); outline-offset: -1px; }
-.tro-row.sel td { background: rgba(255, 255, 255, 0.06); }
+.tro-row.sel td { background: rgba(var(--ink-rgb), 0.06); }
 .tro-row.sel td:first-child { box-shadow: inset 4px 0 0 var(--accent); color: var(--text); }
 .tro-row.sel .tro-t { color: var(--accent); }
 .tro-t { color: var(--text); }
@@ -68,7 +68,7 @@
   content: ''; position: absolute; inset: 0; pointer-events: none;
   background:
     radial-gradient(42% 52% at 36% 56%, rgba(214, 222, 232, 0.10), transparent 70%),
-    radial-gradient(70% 30% at 36% 96%, rgba(0, 0, 0, 0.35), transparent 70%);
+    radial-gradient(70% 30% at 36% 96%, rgba(var(--shade-rgb), 0.35), transparent 70%);
 }
 .tro-show {
   position: relative; height: 100%; min-height: 0;
@@ -81,7 +81,7 @@
 .tro-title { font-size: 17px; font-weight: 600; color: var(--text-2); }
 .tro-subline { font-size: 14px; color: var(--text-3); }
 .tro-pedestal { grid-column: 1; grid-row: 2; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 8px 0 0; animation: tro-rise 560ms cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-.tro-art { display: block; height: 100%; width: auto; max-width: 100%; max-height: 100%; filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.45)); }
+.tro-art { display: block; height: 100%; width: auto; max-width: 100%; max-height: 100%; filter: drop-shadow(0 18px 22px rgba(var(--shade-rgb), 0.45)); }
 .tro-photo { object-fit: contain; }
 .tro-facts { grid-column: 2; grid-row: 1 / -1; align-self: center; display: flex; flex-direction: column; gap: 2px; padding-left: 18px; border-left: 1px solid var(--border-soft); animation: tro-fade 420ms 120ms ease both; }
 .tro-fact { display: flex; flex-direction: column; padding: 8px 0; border-bottom: 1px solid var(--border-soft); }

@@ -38,8 +38,8 @@
 .b3-l { min-height: var(--btn-h-l); padding: 0 22px; font-size: 16.5px; }
 .b3 .game-icon, .dchip .game-icon { width: 18px; height: 18px; flex: 0 0 auto; }
 /* Primär (Hauptknopf einer Box) – einzige Stelle mit Akzentfläche */
-.b3.b3-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; }
-.b3.b3-primary:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); filter: brightness(1.06); }
+.b3.b3-primary { background: var(--primary); border-color: var(--primary); color: var(--primary-ink); font-weight: 700; }
+.b3.b3-primary:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); color: var(--primary-ink); filter: brightness(1.06); }
 /* Zähler im Knopf („B (18)“, „Ungelesen 4“) */
 .b3-n { color: var(--text-3); font-weight: 600; font-size: 0.9em; }
 .on > .b3-n, .active > .b3-n { color: var(--text-2); }
@@ -62,7 +62,7 @@ button.active:not(.tab):not(.btn-primary):not(.hd-nav-item):not(.tn-sub-item) {
   display: inline-flex; align-items: stretch; gap: 2px; padding: 3px;
   min-height: var(--btn-h-m); box-sizing: border-box;
   border: 1px solid var(--btn-border); border-radius: calc(var(--btn-radius) + 2px);
-  background: rgba(0, 0, 0, 0.18); overflow: visible;
+  background: rgba(var(--shade-rgb), 0.18); overflow: visible;
 }
 .lu-seg { display: grid; }            /* Raster (gleich breite Felder) bleibt */
 .ng-seg, .lp-seg { display: flex; }
@@ -124,7 +124,7 @@ button.active:not(.tab):not(.btn-primary):not(.hd-nav-item):not(.tn-sub-item) {
 .sel3-pop {
   position: fixed; z-index: 10050; transform-origin: top left; box-sizing: border-box;
   background: var(--pop-bg); border: 1px solid var(--pop-border); border-radius: 8px;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55); padding: 4px;
+  box-shadow: 0 14px 40px rgba(var(--shade-rgb), 0.55); padding: 4px;
   font-family: var(--font-ui); color: var(--text);
 }
 .sel3-pop.up { transform-origin: bottom left; }

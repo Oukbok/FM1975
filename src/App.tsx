@@ -63,6 +63,7 @@ import { migrateCareer } from './game/careerGame';
 import { migrateYouthContracts } from './engine/youth';
 import { assignShirtNumbers } from './game/squads';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { applyTheme } from './ui/themes';
 
 // =============================================================================
 // ROOT: Startmenü ⇄ Spiel
@@ -413,6 +414,7 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  applyTheme(settings.theme); // Optik-Theme sofort (Attribute am <html>)
   setWagePeriod(settings.wagePeriod); // Gehaltsanzeige pro Jahr/Woche (vor dem Rendern der Seiten)
   const content = (!inGame || !gameRef.current) ? (
     <MainMenu

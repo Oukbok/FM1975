@@ -4,7 +4,7 @@
    flächen, Akzentfarbe nur für Auswahl, Vorschau und Handlung.
    ============================================================================= */
 .sv-wrap .gr-svg { width: 100%; }
-.sv-wrap { --sv-glass: rgba(17, 20, 26, 0.96); }
+.sv-wrap { --sv-glass: rgba(var(--bg-rgb), 0.96); }
 .sv-muted { color: var(--text-3); font-size: 12.5px; }
 .sv-sub { color: var(--text-3); font-size: 12px; font-weight: 500; margin-top: 1px; }
 .sv-grow { flex: 1; }
@@ -33,14 +33,14 @@
 
 /* Popover am Objekt */
 .sv-pop { position: absolute; z-index: 5; overflow: auto; padding: 14px 16px; border-radius: 12px; background: var(--sv-glass); border: 1px solid var(--border);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5); }
+  box-shadow: 0 14px 40px rgba(var(--shade-rgb), 0.5); }
 .sv-pop .gd { gap: 8px; }
 .sv-pop-body { display: flex; flex-direction: column; gap: 8px; }
 .sv-pop-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; font-size: 18px; }
 .sv-pop-head b { font-family: var(--font-display); font-weight: 600; letter-spacing: 0.02em; }
 .sv-x { position: static !important; }
 .sv-sec { margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--border-soft); font-size: 11.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-3); }
-.sv-tier { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px; border-radius: 8px; background: rgba(255, 255, 255, 0.025); border: 1px solid var(--border-soft); }
+.sv-tier { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px; border-radius: 8px; background: rgba(var(--ink-rgb), 0.025); border: 1px solid var(--border-soft); }
 .sv-tier-h { display: flex; justify-content: space-between; font-size: 13.5px; font-weight: 600; color: var(--text-2); }
 .sv-tier .sv-seg { align-self: flex-start; }
 .sv-rows { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--text-2); }
@@ -63,7 +63,7 @@
 /* Führungslinie Popover → Objekt */
 .sv-lead { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
 .sv-lead line { stroke: rgba(241, 244, 248, 0.45); stroke-width: 1.2; stroke-dasharray: 4 4; }
-.sv-lead circle { fill: var(--accent); stroke: rgba(12, 15, 21, 0.9); stroke-width: 2; }
+.sv-lead circle { fill: var(--accent); stroke: rgba(var(--bg-rgb), 0.9); stroke-width: 2; }
 
 /* Geister-Vorschau eines geplanten Blocks */
 .sv-ghost { opacity: 0.82; }
