@@ -46,7 +46,7 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
     applyDataset(cachedDataset(BUILTIN_ID)); // Vorschau immer auf dem gewählten Datensatz
     return {
       datasetId: BUILTIN_ID, difficulty: 'normal', injuries: true, history: 'off', speedMs: defaults.speedMs,
-      briefingAuto: defaults.briefingAuto !== false, briefingIntro: defaults.briefingIntro !== false,
+      briefingAuto: defaults.briefingAuto !== false, briefingIntro: defaults.briefingIntro !== false, legends: true,
       mode: 'manager', offerSeed: Math.floor(Math.random() * 2 ** 31),
       league: 'tier1', clubId: topClub(),
       firstName: '', lastName: '', birthDay: 1, birthMonth: 1, birthYear: 1940,

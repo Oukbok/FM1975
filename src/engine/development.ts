@@ -16,7 +16,7 @@ import { applyProGem } from './gems';
 import { Player, Club, AttributeKey, potentialToStars, clampStars } from '../types';
 import { weightsFor, positionSuitability } from './positions';
 import { updateScoutEstimate } from './scouting';
-import { ageCeiling, declineShiftOf, maturityGrowth } from './talent';
+import { ageCeiling, declineShiftOf, maturityGrowth, tempoFactor } from './talent';
 import { addDevPoints, decompose, DevLog, logPart, newDevLog, RatingReason } from './devLog';
 import { explainRating, PayoutInfo } from './ratingReasons';
 
@@ -256,7 +256,8 @@ export function weeklyDevelopment(
     if (base >= 0) {
       const pf = ctx?.playerFactor ? ctx.playerFactor(p) : 1;
       factors = [
-        ['praxis', practiceFactor(p)], ['charakter', characterFactor(p)], ['umfeld', environment], ['moral', moraleFactor(p)],
+        ['praxis', practiceFactor(p)], ['charakter', characterFactor(p)], ['tempo', tempoFactor(p)], // verdecktes Entwicklungstempo
+        ['umfeld', environment], ['moral', moraleFactor(p)],
         ['potenzial', distanceFactor(p)], ['epoche', era.growth],
         ['reife', maturityGrowth(p)], // Frühreife: schneller bis 20, Spätentwickler holen mit 23–27 auf
         ['reifegrad', p.age <= 24 && p.overall >= ageCeiling(p, truePotential(p)) ? 0.3 : 1], // altersgerechter Reifegrad

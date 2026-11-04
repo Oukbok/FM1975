@@ -417,6 +417,13 @@ export interface PlayerDevelopment {
   /** Charakter (1–100, verdeckt): Professionalität, Ehrgeiz, Anpassungsfähigkeit. */
   professionalism?: number;
   ambition?: number;
+  /**
+   * Entwicklungstempo 0–100 (verdeckt). Fehlt es, gilt ein fester Wert aus der
+   * Spieler-ID (engine/talent.ts `tempoOf`). `growthRate` ist nur noch Altbestand.
+   */
+  tempo?: number;
+  /** Feste Körperuhr statt der Ableitung aus der ID: Frühreife `m` und Langlebigkeit `l` (−1 … +1). */
+  clock?: { m: number; l: number };
   adaptability?: number;
   /** Angesammelte Entwicklungspunkte (OVR-Einheiten) bis zur nächsten Bewertungsrunde. */
   devPoints?: number;
@@ -1930,6 +1937,8 @@ export interface NewGameOptions {
   datasetId?: string;
   /** Entwicklung der anderen Vereine (game/historicSteer.ts), Standard 'off'. */
   historyMode?: 'off' | 'medium' | 'strong';
+  /** Ausnahmetalente der Fußballgeschichte (game/legendsGame.ts), Standard an. */
+  legends?: boolean;
 }
 
 // -----------------------------------------------------------------------------

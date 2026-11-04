@@ -1,3 +1,4 @@
+import { rescueLegends } from './legendsGame';
 import { careerSeasonStart, careerSeasonSwitchFinish } from './careerGame';
 import { recordSeasonBriefing } from './seasonBriefing';
 import { recordBudgetPlan } from './budgetPlan';
@@ -309,6 +310,8 @@ export function startNextSeason(g: Game): void {
       }
     }
   }
+  // Ausnahmetalente bleiben in der Spielerliga (game/legendsGame.ts).
+  rescueLegends(g, playerSet, seasonStart);
   // 5b) Voll → Sim für volle Vereine, die die Spielerliga verlassen (Amateur-
   //     vereine des Pokals bleiben unangetastet).
   for (const c of Object.values(g.clubs)) {

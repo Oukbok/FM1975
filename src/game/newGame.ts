@@ -46,6 +46,7 @@ import { migrateYouthInvest } from './youthInvest';
 import { migrateYouthComps } from './youthComps/daily';
 import { FINANCE_LEVEL } from './financeMigration';
 import { migrateLeaguePool } from './clubPool';
+import { initLegends } from './legendsGame';
 
 export function createNewGame(opts: NewGameOptions): Game {
   setEraYear(1975);
@@ -225,6 +226,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   recordBudgetPlan(g0, { pending: true }); // Saisonbudget (game/budgetPlan.ts)
   migratePositionSkills(g0); // Positionsvertrautheit aller Spieler (game/positionsGame.ts)
   migrateYouthComps(g0); // Jugendwettbewerbe der Saison (game/youthComps/)
+  initLegends(g0, opts.legends !== false); // Ausnahmetalente der Fußballgeschichte (still, game/legendsGame.ts)
   harmonizeSeason(g0); // Rahmenterminkalender: Wochenendspiele an Pokal-/Europapokalwochen (game/fixtureWatch.ts)
   return g0;
 }

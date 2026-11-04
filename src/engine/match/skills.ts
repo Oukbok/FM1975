@@ -35,8 +35,10 @@ export function phys(m: MPlayer): number {
 export const energyF = (m: MPlayer): number => 0.82 + 0.18 * m.energy / 100;
 
 /**
- * Tagesleistung aus der Konstanz: niedrige Konstanz streut stärker (gleiches Mittel),
- * Erfahrung stabilisiert leicht. Wird je Spiel einmal gewürfelt (MatchSim).
+ * Tagesleistung aus der Konstanz: niedrige Konstanz streut stärker, Erfahrung stabilisiert
+ * leicht. Unbeständige Spieler haben zudem häufiger schwache Tage: das Mittel liegt je
+ * 10 Punkte Konstanz unter 62 um 0,25 % tiefer (bei 30 ≈ −0,8 %), darüber entsprechend
+ * höher (bei 95 ≈ +0,8 %). Wird je Spiel einmal gewürfelt (MatchSim).
  */
 export function dayForm(m: MPlayer, rng: () => number): number {
   const cons = m.p.development?.consistency ?? 60;
@@ -44,7 +46,8 @@ export function dayForm(m: MPlayer, rng: () => number): number {
   const sigma = Math.max(0.01, 0.015 + (100 - cons) / 100 * 0.055 - exp / 100 * 0.01);
   // Summe von drei Gleichverteilungen ≈ Normalverteilung (Mittel 0, Streuung 1)
   const g = (rng() + rng() + rng() - 1.5) * 2;
-  return Math.max(0.85, Math.min(1.15, 1 + g * sigma));
+  const mean = (cons - 62) * 0.00025;
+  return Math.max(0.85, Math.min(1.15, 1 + mean + g * sigma));
 }
 
 /**

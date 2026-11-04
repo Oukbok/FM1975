@@ -403,6 +403,8 @@ function playTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, today: 
   const rng = mulberry32(hashStr(`${g.season}|${t.id}|${g.managedClubId}`));
   prepareTournament(g, cur, t, today, rng);
   const { entrants, squads } = tournamentEntrants(g, t);
+  // Zu wenige Teilnehmer (z. B. Absagen nach Verlegungen): Turnier fällt aus statt abzustürzen.
+  if (entrants.length < 4) { cur.tournaments = cur.tournaments.filter((x) => x !== t); if (cur.masters === t) cur.masters = undefined; return; }
   const res = runIndoorTournament(entrants, indoorWinPts(g), rng);
   applyTournament(g, cur, t, res, entrants, squads, today, rng);
 }

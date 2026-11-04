@@ -54,6 +54,7 @@ export function StepMode({ d, set, chooseMode }: { d: NewGameDraft; set: (p: Par
             <Toggle on={d.injuries} onChange={(v) => set({ injuries: v })} label="Verletzungen" text="Spieler können sich in Spielen und im Training verletzen." />
             <Toggle on={d.briefingAuto} onChange={(v) => set({ briefingAuto: v })} label="Saison-Briefing & Tipps" text="Zu jedem Saisonstart: was neu ist, deine Aufgaben und Tipps zur Epoche." />
             <Toggle on={d.briefingIntro} onChange={(v) => set({ briefingIntro: v && d.briefingAuto })} label="Auftakt-Animation" text="Kurze Einstimmung vor dem Briefing." />
+            <Toggle on={d.legends} onChange={(v) => set({ legends: v })} label="Ausnahmetalente der Geschichte" text="Große Talente der Fußballgeschichte wachsen irgendwo in der Spielwelt heran – unerkannt wie alle anderen." />
           </div>
           <p className="ng-note ng-push">Es gibt keinen Vereinswechsel und keine Entlassung: Du führst deinen Verein als Manager durch die Jahrzehnte und stellst deine Trainer selbst ein. Sinkt das Vertrauen des Vorstands stark, kürzt er dein Transferbudget und legt dir einen Trainerwechsel nahe.</p>
         </section>

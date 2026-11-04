@@ -51,6 +51,11 @@ export const INFO_TEXTS = {
     text: 'Verdeckter Wert: wie stark die Leistung von Spiel zu Spiel schwankt. Du siehst nur die Einschätzung deines Trainerteams bzw. deiner Scouts – je länger du den Spieler kennst, desto treffsicherer.',
     wiki: 'player-hidden-values',
   },
+  trainingsfleiss: {
+    title: 'Trainingsfleiß',
+    text: 'Verdeckter Wert: wie professionell ein Spieler arbeitet. Fleißige Spieler entwickeln sich schneller und bauen im Alter langsamer ab. Du siehst nur die Einschätzung deines Trainerteams bzw. deiner Scouts.',
+    wiki: 'player-hidden-values',
+  },
   nervenstaerke: {
     title: 'Nervenstärke',
     text: 'Verdeckter Wert: wie gut ein Spieler mit großen Spielen umgeht – Derbys, Pokal, Europapokal. Du siehst nur die Einschätzung deines Trainerteams bzw. deiner Scouts, keine Zahl.',

@@ -5,7 +5,8 @@ import Icon from '../Icon';
 import { ATTR_DE, POS_DE, PLAYER_TYPE, Section, Line, strengthsWeaknesses } from './shared';
 import { useClubProfile } from '../club/ClubLink';
 import type { Game } from '../../game/state';
-import { estimateHidden, hiddenKnowledge } from '../../game/hiddenTraits';
+import { estimateHidden, hiddenKnowledge, type HiddenTrait } from '../../game/hiddenTraits';
+import { HIDDEN_REPORT, HIDDEN_WORDS } from '../../data/hiddenTraitWords';
 
 const level = (v: number) => (v >= 80 ? 'herausragend' : v >= 70 ? 'stark' : v >= 60 ? 'solide' : v >= 50 ? 'ausbaufähig' : 'schwach');
 
@@ -14,16 +15,20 @@ function personality(p: Player, g: Game | undefined): string[] {
   const out: string[] = [];
   // Verdeckte Werte nur als Einschätzung (game/hiddenTraits.ts), erst ab einem belastbaren Eindruck
   const k = hiddenKnowledge(g, p), own = !!g && p.clubId === g.managedClubId;
-  const kon = k >= 0.45 ? estimateHidden(p, 'konstanz', k, own).word : null;
-  const ner = k >= 0.45 ? estimateHidden(p, 'nerven', k, own).word : null;
+  // Sätze nur für die äußeren Stufen (data/hiddenTraitWords.ts HIDDEN_REPORT)
+  const said = (t: HiddenTrait) => {
+    if (k < 0.45) return;
+    const e = estimateHidden(p, t, k, own), r = HIDDEN_REPORT[t], top = HIDDEN_WORDS[t].length - 1;
+    if (!r || e.level < 0) return;
+    if (e.level === top && (r.top ?? r.high)) out.push((r.top ?? r.high)!);
+    else if (e.level === top - 1 && r.high && r.top) out.push(r.high);
+    else if (e.level === 0 && r.low) out.push(r.low);
+  };
   if (a.leadership >= 75) out.push('Führungsspieler, der die Mannschaft mitreißt');
   if (a.aggression >= 78) out.push('geht keinem Zweikampf aus dem Weg – mitunter zu hitzig');
   if (a.workRate >= 78) out.push('enorm laufstark und mannschaftsdienlich');
   if (a.flair >= 78) out.push('kreativ und unberechenbar, für das Besondere zuständig');
-  if (kon === 'sehr konstant') out.push('sehr konstant in seinen Leistungen');
-  else if (kon === 'schwankt stark') out.push('schwankt stark zwischen guten und schwachen Tagen');
-  if (ner === 'nervenstark') out.push('blüht in großen Spielen auf');
-  else if (ner === 'wirkt nervös') out.push('wirkt in wichtigen Spielen nervös');
+  said('konstanz'); said('nerven'); said('fleiss'); said('verletzung');
   if (a.composure >= 78) out.push('behält auch unter Druck die Ruhe');
   if (out.length === 0) out.push('unauffälliger Charakter ohne besondere Ausschläge');
   return out;
