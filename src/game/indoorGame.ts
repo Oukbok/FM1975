@@ -24,6 +24,8 @@ import { ensureBrand } from '../engine/clubEconomy';
 import { Player } from '../types';
 import { addTitleRecord } from './clubRecords';
 import { CHOICE_HANDLERS } from './eventsGame';
+import { BreakCache } from './indoorWindow';
+import { reconcileIndoor } from './indoorReconcile';
 import { declinePenalty, indoorName, indoorShort, mastersNews, ownResultMessage, sendInvite } from './indoorNews';
 
 export { indoorName, indoorShort };
@@ -144,6 +146,8 @@ export function setupIndoorWinter(g: Game, today: string): IndoorWinter {
   if (phase === 'none') return cur;
   const rng = mulberry32(hashStr(`indoor|${g.season}|${g.managedClubId}`));
   const win = winterWindow(g);
+  // Winterpause je Verein (game/indoorWindow.ts): Halle erst nach dem letzten Pflichtspiel.
+  const bc = new BreakCache(g);
   // Rahmenterminkalender: Halle nie am Tag vor/nach einem Pflichtspiel – weder für dich
   // noch für die KI-Teilnehmer (alle Pokal-/Europapokaltermine zählen).
   const busy = new Set<string>();
@@ -185,7 +189,7 @@ export function setupIndoorWinter(g: Game, today: string): IndoorWinter {
   const ordered = [...cur.tournaments].sort((a, b) => Number(b.city === own?.city) - Number(a.city === own?.city) || (rng() - 0.5));
   for (const t of ordered) {
     if (invites <= 0) break;
-    if (ownDates.has(t.date) || campDays.has(t.date)) continue;
+    if (ownDates.has(t.date) || campDays.has(t.date) || !bc.fits(g.managedClubId, t.date, t.days)) continue;
     t.own = null; t.clubIds.push(g.managedClubId); ownDates.add(t.date); invites--;
   }
   // KI-Teilnehmer je Turnier.
@@ -195,7 +199,7 @@ export function setupIndoorWinter(g: Game, today: string): IndoorWinter {
   for (const t of cur.tournaments) {
     const used = dayUse.get(t.date) ?? new Set<string>();
     dayUse.set(t.date, used);
-    const ai = pool.filter((p) => p.id !== g.managedClubId && !used.has(p.id) && (count.get(p.id) ?? 0) < cap);
+    const ai = pool.filter((p) => p.id !== g.managedClubId && !used.has(p.id) && (count.get(p.id) ?? 0) < cap && bc.fits(p.id, t.date, t.days));
     let slots = TEAMS_PER_TOURNAMENT - t.clubIds.length;
     const guestRate = kind === 'invite' ? 0.5 : kind === 'qualifier' ? 0.25 : 0;
     const extra: PoolClub[] = [];
@@ -274,6 +278,8 @@ export function indoorDaily(g: Game, today: string, show?: (t: IndoorTournament)
   }
   const cur = st.current;
   if (cur.phase === 'none' || cur.finished) return false;
+  // Termine in Pflichtspielzeit (alte Spielstände, Nachholspiele) verlegen bzw. absagen.
+  reconcileIndoor(g, cur, today, (t) => substituteIndoor(g, cur, t, mulberry32(hashStr(`${g.season}|${t.id}|sub|${today}`))));
   // Eine Show, die über ihren Tag hinaus offen blieb (Laden, Einstellung), läuft im Hintergrund.
   if (cur.live) {
     const lt = allTournaments(cur).find((x) => x.id === cur.live);
@@ -311,6 +317,7 @@ function buildMastersField(g: Game, cur: IndoorWinter, today: string): void {
   const m = cur.masters!;
   const rng = mulberry32(hashStr(`masters|${g.season}`));
   const pool = new Map(buildPool(g).map((p) => [p.id, p]));
+  const bc = new BreakCache(g);
   const ranking = tourRanking(cur.tour ?? []).filter((s) => pool.get(s.id)?.kind === 'league');
   // Auffüllen, falls die Tour zu klein war (z. B. Spielstand mitten im Winter geladen).
   const extra = [...pool.values()].filter((p) => p.kind === 'league' && !ranking.some((r) => r.id === p.id)).sort((a, b) => b.strength - a.strength);
@@ -318,6 +325,8 @@ function buildMastersField(g: Game, cur: IndoorWinter, today: string): void {
   cur.mastersDeclined = [];
   for (const id of order) {
     if (m.clubIds.length >= MASTERS_TEAMS) break;
+    // Noch Pflichtspiele an den Endrunden-Tagen (z. B. Europapokal): kein Platz in der Halle.
+    if (!bc.fits(id, m.date, m.days)) continue;
     if (id === g.managedClubId) {
       m.clubIds.push(id); m.own = null; sendInvite(g, m, today);
       continue;
@@ -347,16 +356,24 @@ function prepareTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, toda
   if (t.own === null) t.own = 'mix';
   if (t.own === 'decline' && t.clubIds.includes(mid)) {
     t.clubIds = t.clubIds.filter((id) => id !== mid);
-    const busy = new Set(allTournaments(cur).filter((x) => x.date === t.date).flatMap((x) => x.clubIds));
-    const sub = buildPool(g).filter((p) => p.kind === 'league' && !busy.has(p.id) && p.id !== mid)
-      .sort((a, b) => (t.kind === 'masters' ? 0 : a.tier - b.tier) || b.strength - a.strength)
-      .find((p) => !(cur.mastersDeclined ?? []).includes(p.id) || t.kind !== 'masters');
-    if (sub) { t.clubIds.push(sub.id); t.squads[sub.id] = aiSquad(g, sub.id, cur.winterYear, rng); }
+    substituteIndoor(g, cur, t, rng);
     declinePenalty(g, t, today);
   } else if (t.own && t.own !== 'decline') {
     t.squads[mid] = t.own;
     if (g.clubs[mid]?.city === t.city && g.environment) g.environment.fanMood = clamp(g.environment.fanMood + 0.8, 0, 100);
   }
+}
+
+/** Ersatzverein für einen frei gewordenen Platz (nur Vereine, die an dem Tag Winterpause haben). */
+function substituteIndoor(g: Game, cur: IndoorWinter, t: IndoorTournament, rng: Rng): string | undefined {
+  const mid = g.managedClubId;
+  const bc = new BreakCache(g);
+  const busy = new Set(allTournaments(cur).filter((x) => x.date === t.date).flatMap((x) => x.clubIds));
+  const sub = buildPool(g).filter((p) => p.kind === 'league' && !busy.has(p.id) && p.id !== mid && bc.fits(p.id, t.date, t.days))
+    .sort((a, b) => (t.kind === 'masters' ? 0 : a.tier - b.tier) || b.strength - a.strength)
+    .find((p) => !(cur.mastersDeclined ?? []).includes(p.id) || t.kind !== 'masters');
+  if (sub) { t.clubIds.push(sub.id); t.squads[sub.id] = aiSquad(g, sub.id, cur.winterYear, rng); }
+  return sub?.id;
 }
 
 /** Teilnehmer mit Hallenstärke und (bei vollen Vereinen) Hallenkader – ohne Zufall, ohne Änderung. */

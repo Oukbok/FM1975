@@ -110,3 +110,21 @@ export function findWinterBreak(dates: Iterable<string>, y0: number): { last: st
   }
   return best;
 }
+
+/**
+ * Pflichtspielfreie Winterpause für den Landespokal (West): Runden und Wiederholungsspiele
+ * liegen vor dem letzten Ligaspieltag vor der Pause oder nach dem ersten danach – nie
+ * dazwischen (historisch: DFB-Pokal im Dezember vor der Pause, sonst ab Februar/März, z. B.
+ * Viertelfinale 1979/80 am 5.4.1980, DFB-Datencenter). Gilt für alle West-Ligen, deren
+ * Spielpläne dieselben Pausen-Eckdaten haben (data/winterBreaks.ts).
+ */
+export function cupWinterBreak(y0: number): { last: string; first: string } {
+  const br = winterBreakFor(y0, 'west');
+  return { last: br.last, first: br.first };
+}
+
+/** Liegt `d` in der Winterpause (strikt zwischen letztem und erstem Spieltag)? */
+export function inCupWinterBreak(d: string, y0: number): boolean {
+  const br = cupWinterBreak(y0);
+  return d > br.last && d < br.first;
+}
