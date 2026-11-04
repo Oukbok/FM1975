@@ -149,6 +149,7 @@ Werden beim Zusammenführen der Stränge ergänzt (Erstes Training, Trainingslag
 | Trainingslager | `camp/<ziel>.webp` | Ortsbild je Ziel (35 Ziele), Landschaft ohne Personen, kühl – Motive je Ziel in `docs/bilder/camp.md` | 1280×800 | Planer › Trainingsprogramm, großes Ortsbild (Ersatz: gezeichnete Landschaft je Typ; freischalten in `src/data/campImages.ts`) |
 | Hallenturnier | `indoor/halle-{70er,80er,90er,2000er}.webp` | Halleninneres je Epoche: Tribünen rundum, Rundumbande mit neutralen Werbeflächen, Hallenlicht unter dem Stahldach; 70er/80er heller Kunststoffboden, ab 90er Kunstrasen-Teppich und Videowürfel; ohne erkennbare Personen/Logos, entsättigt, kühl abgedunkelt | 1920×1080 | Hintergrund der Hallen-Show, Bühne „Nächstes Spiel“ und Siegerehrung (Ersatz: gezeichnete Halle `screens/indoor/IndoorHall.tsx`; freischalten in `src/data/indoorImages.ts`) |
 
+| Sponsoring | `sponsor/logos/<slug-firmenname>.webp` | Logo je fiktiver Sponsorfirma aus `src/data/sponsorNames.ts` (rund 120 Firmen, Branche/Land/Zeitraum dort), Stil je Jahrzehnt: 70er Schriftzug/Wappen, 80er kantig, 90er Verlauf/kursiv, ab 2000 flach/modern; erfunden, keine Ähnlichkeit zu echten Marken | 600×300, Alpha (einfarbig hell + optional farbig) | Trikot, Banden, Pyramide, Karteikarte (Ersatz: gezeichnetes Logo `sponsor/SponsorLogo.tsx`; Bild-Slot noch zu verdrahten) |
 ### Sponsoring (Strang sponsor3, Finanzen › Sponsoring)
 | Datei | Motiv | Größe | Einsatz |
 |---|---|---|---|

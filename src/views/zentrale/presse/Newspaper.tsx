@@ -3,6 +3,7 @@
 // Ergebnisse/Tabelle/Torjäger, Kurzmeldungen. Jede Schlagzeile öffnet den
 // Artikel, Gesichter das Spielerprofil, Wappen/Vereinsnamen das Vereinsprofil.
 // =============================================================================
+import { useLayoutEffect, useRef, useState } from 'react';
 import { ClubLink } from '../../../components/club/ClubLink';
 import { fmtDateFull } from '../../../ui/format';
 import { weekdayOf } from '../../../game/press/calendar';
@@ -73,15 +74,35 @@ function Lead({ api, s }: { api: PressApi; s: PressStory }) {
 export function Newspaper({ api, ed }: { api: PressApi; ed: PressEdition }) {
   const g = api.g, my = g.managedClubId;
   const year = Number(ed.date.slice(0, 4));
+  // Die Seite passt immer in die Box (Wunsch Pascal: kein Scrollen nötig). Reicht der Platz nicht,
+  // fallen zuerst Kurzmeldungen, dann die hinteren Spaltenartikel und Torjäger weg (`cut` Stufen).
+  const ref = useRef<HTMLDivElement>(null);
+  const [cut, setCut] = useState(0);
+  useLayoutEffect(() => {
+    const box = ref.current?.closest('.dbox-body') as HTMLElement | null;
+    if (!box) return;
+    const over = () => box.scrollHeight > box.clientHeight + 1;
+    if (over() && cut < 40) setCut((c) => c + 1);
+  });
+  useLayoutEffect(() => {
+    const onResize = () => setCut(0);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+  const allBriefs = [...ed.stories.slice(9), ...ed.briefs];
+  const briefCut = Math.min(cut, allBriefs.length);
+  const mainCut = Math.min(Math.max(0, cut - allBriefs.length), 6);
+  const sideCut = Math.max(0, cut - allBriefs.length - 6);
   const cols: PressStory[][] = [[], [], []];
-  const main = ed.stories.slice(0, 9);
+  const main = ed.stories.slice(0, 9 - mainCut);
   main.forEach((s, i) => cols[i % 3].push(s));
-  const briefs = [...ed.stories.slice(9), ...ed.briefs];
+  const briefs = allBriefs.slice(0, allBriefs.length - briefCut);
+  const scorers = ed.scorers.slice(0, Math.max(0, ed.scorers.length - sideCut));
   const n = ed.table.length;
   const top = ed.table.slice(0, 5), bottom = n > 8 ? ed.table.slice(-3) : [];
   const zone = (pos: number) => pos === 1 ? 'np-z-top' : pos > n - 3 ? 'np-z-down' : '';
   return (
-    <div className={`np-sheet ${eraClass(year)}`}>
+    <div ref={ref} className={`np-sheet ${eraClass(year)}`}>
       <header className="np-mast">
         <div className="np-mast-l">Ausgabe Nr. {ed.number}<br />{ed.volume}. Jahrgang</div>
         <div className="np-mast-c">
@@ -146,10 +167,10 @@ export function Newspaper({ api, ed }: { api: PressApi; ed: PressEdition }) {
               </table>
             </section>
           )}
-          {ed.scorers.length > 0 && (
+          {scorers.length > 0 && (
             <section>
               <div className="np-sec">Torjäger</div>
-              {ed.scorers.map((s) => (
+              {scorers.map((s) => (
                 <div key={s.id} className={`np-scorer ${s.clubId === my ? 'me' : ''}`}>
                   <Face api={api} id={s.id} size={28} />
                   <span className="np-scorer-name" role="button" tabIndex={0} onClick={() => api.openPlayer(s.id)}>{s.name}</span>
