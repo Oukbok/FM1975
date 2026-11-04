@@ -626,11 +626,13 @@ export const RAW: Record<string, string> = {
 /** Gültige Icon-Namen (englische Keys). */
 export type IconName = keyof typeof RAW;
 
-/** Roh-Markup mit fest ersetzten Farben (für den React-Einsatz). */
+/** Roh-Markup mit Farb-Tokens (für den React-Einsatz; .svg-Dateien behalten die festen Werte). */
 export const ICON_MARKUP: Record<string, string> = Object.fromEntries(
   Object.entries(RAW).map(([k, v]) => [
     k,
-    v.replace(/%BASE%/g, BASE).replace(/%ACCENT%/g, ACCENT),
+    // Farben über Tokens (Themes, styles/30-themes.css); Rückfall = feste Werte des Sets.
+    v.replace(/%BASE%/g, `var(--icon-base, ${BASE})`).replace(/%ACCENT%/g, `var(--icon-accent, ${ACCENT})`)
+      .replace(/"#14171d"/g, '"var(--icon-knock, #14171d)"').replace(/"#0c0f15"/g, '"var(--icon-knock, #0c0f15)"'),
   ]),
 );
 

@@ -432,7 +432,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
             <span className={`hd-balance-val ${myClub.finances.balance < 0 ? 'neg' : 'pos'}`}>{fmtDMfull(myClub.finances.balance)}</span>
           </div>
           <span className="hd-sep" aria-hidden="true" />
-          <ThemePicker settings={settings} onSettings={onUpdateSettings} width={196} />
+          <ThemePicker settings={settings} onSettings={onUpdateSettings} width={64} />
           <div className="hdr-menu" ref={menuRef}>
             <button
               className="hd-gear"

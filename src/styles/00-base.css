@@ -49,7 +49,11 @@
   --text-2: #aeb7c3;
   --text-3: #7c8693;
   --text-4: #59626e;
-  --text-hi: #ffffff;   /* hellste Schrift (große Kennzahlen); helle Themes: dunkel */
+  --text-hi: #ffffff;
+  /* UI-Symbole (components/iconPaths.ts, Duotone): Grundform, Akzentteil, Ausstanzung */
+  --icon-base: #f2eeea;
+  --icon-accent: #f1a037;
+  --icon-knock: #14171d;   /* hellste Schrift (große Kennzahlen); helle Themes: dunkel */
 
   /* --- Qualitätsskala (monochrom) für Attribute/Stärke: hell = gut, dunkel = schwach.
      Keine Ampelfarben für Werte – Farbe ist Hervorhebungen und echten Signalen vorbehalten. --- */

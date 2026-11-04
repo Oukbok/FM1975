@@ -13,6 +13,7 @@
    2 · Abendhimmel ruhig – Auswahl über Helligkeit, Bernstein nur am Hauptknopf
    --------------------------------------------------------------------------- */
 :root[data-theme="ruhig"] {
+  --icon-accent: #c3cad4;
   --accent: #dfe4ea;
   --accent-dim: #aeb7c3;
   --accent-ink: #12151a;
@@ -29,6 +30,7 @@
    3 · Schiefer kühl – blaugraue Flächen, blaugrauer Akzent
    --------------------------------------------------------------------------- */
 :root[data-theme="schiefer"] {
+  --icon-accent: var(--accent);
   --bg: #0d1117; --bg-2: #121821; --panel: #18202b; --panel-2: #1f2834; --panel-hover: #26303d; --elevated: #27313e;
   --bg-rgb: 13, 17, 23; --panel-rgb: 26, 34, 46;
   --border: #2c3644; --border-soft: #212a36; --border-strong: #3c4858;
@@ -46,6 +48,7 @@
    4 · Stadion-Nacht – dunkel mit gedämpftem Rasengrün
    --------------------------------------------------------------------------- */
 :root[data-theme="stadionnacht"] {
+  --icon-accent: var(--accent);
   --bg: #0a0f0d; --bg-2: #0f1613; --panel: #151d19; --panel-2: #1b2520; --panel-hover: #222d27; --elevated: #232e28;
   --bg-rgb: 10, 15, 13; --panel-rgb: 22, 30, 26;
   --border: #29352f; --border-soft: #1f2924; --border-strong: #3a4840;
@@ -64,6 +67,7 @@
        eckige Knöpfe wie Anzeigetafeln
    --------------------------------------------------------------------------- */
 :root[data-theme="retro"] {
+  --icon-accent: var(--accent);
   --bg: #121212; --bg-2: #171717; --panel: #1e1e1e; --panel-2: #262626; --panel-hover: #2d2d2d; --elevated: #2e2e2e;
   --bg-rgb: 18, 18, 18; --panel-rgb: 32, 32, 32;
   --border: #353535; --border-soft: #282828; --border-strong: #4a4a4a;
@@ -83,6 +87,7 @@
    9 · Modern 2025 – fast schwarz, Neon sparsam
    --------------------------------------------------------------------------- */
 :root[data-theme="modern"] {
+  --icon-accent: var(--accent);
   --bg: #060708; --bg-2: #0b0c0e; --panel: #111316; --panel-2: #171a1e; --panel-hover: #1d2025; --elevated: #1e2126;
   --bg-rgb: 6, 7, 8; --panel-rgb: 17, 19, 22;
   --border: #23262b; --border-soft: #181b1f; --border-strong: #353940;
@@ -102,6 +107,7 @@
    10 · Graphit monochrom – ganz ohne Farbakzent (Signale Grün/Rot bleiben)
    --------------------------------------------------------------------------- */
 :root[data-theme="graphit"] {
+  --icon-accent: #a9adb3;
   --bg: #101112; --bg-2: #151617; --panel: #1b1c1e; --panel-2: #222325; --panel-hover: #292a2d; --elevated: #2a2b2e;
   --bg-rgb: 16, 17, 18; --panel-rgb: 29, 30, 32;
   --border: #323336; --border-soft: #262729; --border-strong: #46474b;
@@ -128,6 +134,7 @@
   --shade-rgb: 30, 40, 55;
   --deep-rgb: 10, 14, 20;
   --text-hi: #0d1117;
+  --icon-base: #3a4350; --icon-knock: #ffffff;
   --face-bg-1: #c9d3df; --face-bg-2: #9fadbd;
   /* Werte-Skala: dunkel = gut (umgekehrt zum dunklen Grund) */
   --q-1: #10151c; --q-2: #39424e; --q-3: #67717e; --q-4: #97a0ab;
@@ -176,6 +183,7 @@
    5 · Papier hell – warmes Weiß (ohne Sepia), Tinten-Indigo
    --------------------------------------------------------------------------- */
 :root[data-theme="papier"] {
+  --icon-accent: var(--accent);
   --bg: #efeee9; --bg-2: #e7e6e0; --panel: #fbfaf7; --panel-2: #f2f1ec; --panel-hover: #ebeae4; --elevated: #ffffff;
   --bg-rgb: 239, 238, 233; --panel-rgb: 251, 250, 247;
   --border: #d6d4cc; --border-soft: #e4e2db; --border-strong: #bcb9b0;
@@ -192,6 +200,7 @@
    6 · Hell kühl – Weiß/Hellgrau, blauer Akzent
    --------------------------------------------------------------------------- */
 :root[data-theme="hellkuehl"] {
+  --icon-accent: var(--accent);
   --bg: #e7ebf0; --bg-2: #dde3ea; --panel: #ffffff; --panel-2: #f3f5f8; --panel-hover: #eaeef3; --elevated: #ffffff;
   --bg-rgb: 231, 235, 240; --panel-rgb: 255, 255, 255;
   --border: #cfd6df; --border-soft: #e0e5eb; --border-strong: #b3bcc8;
@@ -207,6 +216,7 @@
    7 · Hell Kontrast – sehr klar: Schwarz auf Weiß, ein Akzent
    --------------------------------------------------------------------------- */
 :root[data-theme="kontrast"] {
+  --icon-accent: var(--accent);
   --bg: #ededed; --bg-2: #e2e2e2; --panel: #ffffff; --panel-2: #f5f5f5; --panel-hover: #ebebeb; --elevated: #ffffff;
   --bg-rgb: 237, 237, 237; --panel-rgb: 255, 255, 255;
   --border: #9a9a9a; --border-soft: #cfcfcf; --border-strong: #5a5a5a;
@@ -232,6 +242,7 @@
   --bg-rgb: 12, 15, 21; --panel-rgb: 28, 32, 40; --ink-rgb: 255, 255, 255; --shade-rgb: 0, 0, 0;
   --border: #303339; --border-soft: #24272d; --border-strong: #45484e;
   --text: #eef1f5; --text-2: #aeb7c3; --text-3: #7c8693; --text-4: #59626e; --text-hi: #ffffff;
+  --icon-base: #f2eeea; --icon-knock: #14171d;
   --q-1: #f3f5f8; --q-2: #c3cad4; --q-3: #8d97a4; --q-4: #626b77;
   --bar-track: rgba(255, 255, 255, 0.06); --bar-fill: #8a94a1; --bar-fill-hi: #c9d0d9;
   --green: #5bbf8b; --yellow: #d7b45e; --orange: #d98a5b; --red: #e0646f; --gold: #d9b26a;
@@ -253,8 +264,10 @@
    --------------------------------------------------------------------------- */
 .thm-opt { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
 .thm-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.thm-sw { display: inline-flex; flex: 0 0 auto; border: 1px solid var(--border-strong); border-radius: 3px; overflow: hidden; }
-.thm-sw > span { width: 9px; height: 18px; }
+.thm-sw { display: inline-flex; flex: none; min-width: 30px; border: 1px solid var(--border-strong); border-radius: 3px; overflow: hidden; }
+.thm-sw > span { flex: none; width: 9px; height: 18px; }
 .thm-sw > span:last-child { width: 12px; }
 .hd-right > .thm-pick { flex: 0 0 auto; }
-@media (max-width: 1500px) { .hd-right > .thm-pick .thm-name { font-size: 14px; } }
+/* In der Kopfleiste nur das Farbfeld (feste 64 px); die offene Liste zeigt die Namen. */
+.hd-right > .thm-pick .thm-name { display: none; }
+.hd-right > .thm-pick .thm-sw > span { height: 22px; }

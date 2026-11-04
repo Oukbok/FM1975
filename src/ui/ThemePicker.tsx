@@ -16,7 +16,7 @@ export const THEME_OPTIONS: SelectOption[] = THEMES.map((t, i) => ({
   value: t.id,
   text: t.name,
   group: i === 0 ? 'Dunkel' : t.id === 'papier' ? 'Hell' : t.id === 'retro' ? 'Dunkel (weitere)' : undefined,
-  label: <span className="thm-opt"><Swatch c={t.swatch} /><span className="thm-name">{i + 1} · {t.name}</span></span>,
+  label: <span className="thm-opt"><Swatch c={t.swatch} /><span className="thm-name">{t.name}</span></span>,
 }));
 
 export default function ThemePicker({ settings, onSettings, width = 210, size = 'm' }: {

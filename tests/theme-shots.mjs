@@ -36,7 +36,11 @@ page.on('pageerror', (e) => errors.push('JS-Fehler: ' + e.message));
 await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
 await page.goto(`http://127.0.0.1:${server.address().port}/`);
 const raw = await readFile(process.env.SAVE || 'public/saves/test-3-jahre.txt', 'utf8');
-await page.evaluate((r) => { localStorage.setItem('fm1980_save_sim', r); localStorage.setItem('fm1980_saves_index', JSON.stringify(['sim'])); }, raw);
+await page.evaluate((r) => {
+  localStorage.setItem('fm1980_save_sim', r); localStorage.setItem('fm1980_saves_index', JSON.stringify(['sim']));
+  // Shows aus, damit der Weg zum nächsten Spiel nicht an Hallen-/Auslosungs-/Ehrungsfenstern hängt.
+  localStorage.setItem('fm1980_settings', JSON.stringify({ indoorShow: 'aus', drawShow: 'aus', awardsShow: 'aus', ratingShow: 'aus', transferWindowShow: false, matchReport: 'nie' }));
+}, raw);
 await page.reload();
 await page.click('text=Spiel laden');
 await page.click('button:has-text("Laden") >> nth=0');
@@ -55,6 +59,8 @@ else {
   if (stored !== 'papier') errors.push(`Style nicht gespeichert (${stored})`);
   const ov = await page.evaluate(() => { const h = document.querySelector('.hd-bar'); return h ? h.scrollWidth - h.clientWidth : 0; });
   if (ov > 2) errors.push(`Kopfleiste läuft über (${ov}px)`);
+  const hidden = await page.evaluate(() => [...document.querySelectorAll('.hd-nav-item')].filter((b) => { const r = b.getBoundingClientRect(); const n = b.parentElement.getBoundingClientRect(); return r.right > n.right + 1 || r.width < 5; }).map((b) => b.textContent));
+  if (hidden.length) errors.push(`Menüpunkte abgeschnitten: ${hidden.join(', ')}`);
   await pickOption(page, picker, 'abendhimmel');
 }
 
@@ -100,21 +106,24 @@ for (const [m, s, n] of PAGES) {
 // --- Textmodus -------------------------------------------------------------------
 if (!process.env.NOTEXT) {
   const closeModals = async () => {
-    for (const sel of ['button:has-text("Überspringen")', 'button:has-text("Fortsetzen")', 'button:has-text("Schließen")', 'button:has-text("OK")', '.modal-close', '.dr-root button:has-text("Ergebnis sofort zeigen")']) {
+    for (const sel of ['button:has-text("Überspringen")', 'button:has-text("Fortsetzen")', 'button:has-text("Schließen")', 'button:has-text("Fertig")', 'button:has-text("OK")', '.reveal-close', '.modal:not(.pm-root) .modal-close', '.dr-root button:has-text("Ergebnis sofort zeigen")']) {
       const b = page.locator(sel).first();
-      if (await b.isVisible().catch(() => false)) await b.click().catch(() => {});
+      if (await b.isVisible().catch(() => false)) await b.click({ timeout: 1500 }).catch(() => {});
     }
   };
   await nav('Zentrale', null);
   for (let i = 0; i < 160; i++) {
-    if (await page.locator('button:has-text("Textmodus")').isVisible().catch(() => false)) break;
+    if (await page.locator('.pm-go-btn:has-text("Textmodus")').first().isVisible().catch(() => false)) break;
     await closeModals();
-    const w = page.getByRole('button', { name: /weiter/i }).first();
-    if (await w.isVisible().catch(() => false)) await w.click().catch(() => {});
+    // Zeit laufen lassen (nur starten, wenn sie steht – ein zweiter Klick hielte sie an)
+    const lbl = (await page.locator('.hd-continue').first().innerText({ timeout: 1000 }).catch(() => '')).trim().toUpperCase();
+    if (lbl === 'WEITER' || lbl === 'NEUE SAISON') await page.locator('.hd-continue').first().click({ timeout: 2000 }).catch(() => {});
     await page.waitForTimeout(700);
+    if (i === 12) await page.screenshot({ path: outDir + '/_debug.png' });
+    if (i % 5 === 0) console.log('Textmodus-Suche', i, await page.locator('.hd-continue').first().innerText().catch(() => '?'), await page.locator('.hd-date, .tn-date').first().innerText().catch(() => ''));
   }
   try {
-    await page.click('button:has-text("Textmodus")');
+    await page.locator('.pm-go-btn:has-text("Textmodus")').first().click();
     await page.waitForTimeout(1500);
     for (let i = 0; i < 60; i++) {
       const min = await page.locator('.tm-clock-txt b').innerText().catch(() => '0');
