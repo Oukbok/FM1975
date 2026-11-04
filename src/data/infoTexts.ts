@@ -801,8 +801,8 @@ export const INFO_TEXTS = {
   },
   positionstraining: {
     title: 'Positionstraining',
-    text: 'Dein Trainerteam schult den Spieler zusätzlich auf einer zweiten Position. Training allein hebt die Vertrautheit nur bis zu einer Grenze – den Rest holt er sich mit Einsatzminuten auf dieser Position.',
-    wiki: 'player-profile',
+    text: 'Dein Trainerteam schult den Spieler zusätzlich auf einer zweiten Position – etwa +15 Vertrautheit je Saison, höchstens bis 85. Viel schneller lernt er durch Einsätze dort (eine Saison Stammplatz ≈ +40, verwandte Rollen etwas mehr); ab 80 geht es deutlich langsamer.',
+    wiki: 'position-skill',
   },
   spielerentwicklung: {
     title: 'Spielerentwicklung',

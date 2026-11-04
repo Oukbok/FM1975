@@ -13,7 +13,7 @@
 import type { Player } from '../types';
 import { POSITION_NAMES_DE } from '../engine/positions';
 import { TIER_DE } from '../engine/positionSkill';
-import { fallbackPositions, playablePositions, posGroupClass, RECENT_GAMES, type PosEntry } from '../ui/positionBadges';
+import { BADGE_MIN, fallbackPositions, playablePositions, posGroupClass, RECENT_GAMES, type PosEntry } from '../ui/positionBadges';
 import { vColor } from '../ui/format';
 import { useFloatTip } from './status/StatusTip';
 
@@ -71,7 +71,7 @@ function PosTipBody({ p, list }: { p: Player; list: PosEntry[] }) {
     <>
       <span className="pb-tip-head">Einsetzbar auf {list.length === 1 ? '1 Position' : `${list.length} Positionen`}</span>
       {list.map((e) => <TipRow key={e.pos} e={e} />)}
-      {ok.length > 0 && <span className="pb-tip-note">Ausreichend: {ok.map((e) => e.pos).join(', ')}</span>}
+      {ok.length > 0 && <span className="pb-tip-note">Noch unter {BADGE_MIN}: {ok.map((e) => `${e.pos} ${Math.floor(e.skill)}`).join(', ')}</span>}
       <span className="pb-tip-note">Stärkste Position zuerst{anyGames ? `; × = Einsätze in den letzten ${RECENT_GAMES} Spielen` : ''}.</span>
     </>
   );

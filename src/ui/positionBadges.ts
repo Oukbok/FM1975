@@ -5,8 +5,8 @@
 // (DM/ZM/RM/LM/OM), Angriff rot (RA/LA/HS/MS) – Gruppe aus `positionGroup`.
 //
 // Mehrere Positionen: Ein Spieler „kann“ eine Position, wenn seine
-// Positionsvertrautheit dort mindestens „gut“ ist (≥ 75, `TIER_MIN.good` –
-// dieselbe Schwelle wie `secondaryPositions`); die Stammposition zählt immer.
+// Positionsvertrautheit dort mindestens 80 ist (Wunsch Pascal; strenger als die
+// Stufe „gut“ ab 75 bzw. `secondaryPositions`); die Stammposition zählt immer.
 // Reihenfolge: stärkste Position zuerst (Positionsstärke `positionSuitability`
 // = dieselbe Rechnung wie „Beste Positionen“ im Spielerprofil), bei Gleichstand
 // die in den letzten 20 Spielen am häufigsten gespielte (`history.matches[].pos`,
@@ -33,8 +33,8 @@ export function posGroupClass(code: string | null | undefined): string {
   return k ? `pg-${k}` : '';
 }
 
-/** Ab dieser Vertrautheit wird eine Position als weiteres Etikett gezeigt („gut“). */
-export const BADGE_MIN = TIER_MIN.good;
+/** Ab dieser Vertrautheit wird eine Position als weiteres Etikett gezeigt (Wunsch Pascal: 80). */
+export const BADGE_MIN = 80;
 /** So viele zurückliegende Spiele zählen beim Gleichstand. */
 export const RECENT_GAMES = 20;
 
@@ -70,7 +70,7 @@ function byStrength(p: Player) {
 }
 
 /**
- * Positionen, auf denen der Spieler einsetzbar ist (Vertrautheit ≥ „gut“, Stammposition immer),
+ * Positionen, auf denen der Spieler einsetzbar ist (Vertrautheit ≥ {@link BADGE_MIN}, Stammposition immer),
  * stärkste zuerst. Ohne Vertrautheitsdaten: Stamm- + Nebenpositionen.
  */
 export function playablePositions(p: Player): PosEntry[] {
@@ -81,11 +81,11 @@ export function playablePositions(p: Player): PosEntry[] {
   return cand.map((pos) => entry(p, pos, counts)).sort(byStrength(p));
 }
 
-/** Positionen mit Stufe „ausreichend“ (für die Einblendung), stärkste zuerst. */
+/** Positionen mit Vertrautheit 50 bis unter {@link BADGE_MIN} (für die Einblendung), stärkste zuerst. */
 export function fallbackPositions(p: Player): PosEntry[] {
   if (!p.positionSkill) return [];
   const counts = recentPositionCounts(p);
   return ALL_POSITIONS
-    .filter((pos) => pos !== p.naturalPosition && skillTier(skillOf(p, pos)) === 'ok')
+    .filter((pos) => pos !== p.naturalPosition && skillOf(p, pos) >= TIER_MIN.ok && skillOf(p, pos) < BADGE_MIN)
     .map((pos) => entry(p, pos, counts)).sort(byStrength(p));
 }

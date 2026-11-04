@@ -67,12 +67,29 @@ const dateOf = (n: number) => new Date(Date.UTC(1975, 7, 1) + n * 86_400_000).to
 for (let i = 0; i < 34; i++) addPositionMinutes(p1, target, 90, dateOf(d += 7));
 const v1 = skillOf(p1, target);
 console.log(`Einsätze: ${p1.naturalPosition}→${target} ${v0} → ${v1} nach 34 Spielen (Eignung ${s0} → ${positionSuitability(p1, target)})`);
-ok(v1 > 60 && v1 < 85, 'Wachstum durch Einsätze unplausibel');
+ok(v1 - v0 > 30 && v1 - v0 < 60, 'Wachstum durch Einsätze unplausibel (Ziel ≈ +40 je Saison ohne Training)');
 for (let i = 0; i < 20; i++) addPositionMinutes(p1, target, 90, dateOf(d += 7));
 console.log(`  nach 54 Spielen: ${skillOf(p1, target)}`);
-ok(skillOf(p1, target) >= 75, 'nach anderthalb Saisons nicht gut');
+ok(skillOf(p1, target) >= 65, 'nach anderthalb Saisons noch zu niedrig');
 ok(positionSuitability(p1, target) > s0, 'Eignung steigt nicht mit der Vertrautheit');
+for (let i = 0; i < 40; i++) addPositionMinutes(p1, target, 90, dateOf(d += 7));
 ok(p1.secondaryPositions.includes(target), 'Nebenpositionen nicht nachgeführt');
+
+// 3b) Lerntempo (Wunsch Pascal): ähnliche Position schneller, ab 80 deutlich langsamer, Training < Spiele
+{
+  const mk = (nat: Position, pos: Position, v: number) => ({ id: `lt-${nat}-${pos}-${v}`, naturalPosition: nat, preferredFoot: 'right', age: 27, secondaryPositions: [],
+    positionSkill: { v: { [nat]: 100, [pos]: v }, t0: 0 } }) as unknown as Player;
+  const games = (q: Player, pos: Position, n: number) => { for (let i = 0; i < n; i++) addPositionMinutes(q, pos, 90, '1976-03-01'); return skillOf(q, pos); };
+  const sim = games(mk('RV', 'RM', 20), 'RM', 30) - 20, far = games(mk('MS', 'ZM', 20), 'ZM', 30) - 20;
+  const high = games(mk('MS', 'ZM', 80), 'ZM', 30) - 80;
+  const tq = mk('MS', 'ZM', 20); setTrainingPosition(tq, 'ZM', '1976-07-01'); trainPositionDays(tq, 230, '1977-06-01');
+  const tr = skillOf(tq, 'ZM') - 20;
+  console.log(`Lerntempo je Saison: ähnlich +${sim.toFixed(1)}, fremd +${far.toFixed(1)}, ab 80 +${high.toFixed(1)}, nur Training +${tr.toFixed(1)}`);
+  ok(far > 30 && far < 45, `Einsätze fremde Position: ${far}`);
+  ok(sim > far * 1.1 && sim < far * 1.45, `ähnliche Position nicht etwas schneller: ${sim} vs ${far}`);
+  ok(high < far * 0.45, `ab 80 nicht deutlich langsamer: ${high}`);
+  ok(tr > 8 && tr < far * 0.6, `Training allein: ${tr}`);
+}
 
 // 4) Positionstraining: bis höchstens TRAIN_CAP
 const p2 = field.find((p) => p !== p1 && p.age <= 23)!;
@@ -83,7 +100,7 @@ trainPositionDays(p2, 100, '1975-12-01');
 const tv1 = skillOf(p2, t2);
 trainPositionDays(p2, 2000, '1980-12-01');
 console.log(`Training: ${t2} ${tv0} → ${tv1} nach 100 Tagen, Deckel ${skillOf(p2, t2)}`);
-ok(tv1 - tv0 >= 10 && tv1 - tv0 <= 40, 'Trainingsfortschritt unplausibel');
+ok(tv1 - tv0 >= 4 && tv1 - tv0 <= 15, 'Trainingsfortschritt unplausibel');
 ok(skillOf(p2, t2) <= TRAIN_CAP, 'Training über den Deckel');
 
 // 5) Abbau: nicht vor IDLE_DAYS, langsam, nie unter 50 % des Höchstwerts
@@ -226,7 +243,7 @@ ok(host.tactics.slotLayout!.s9.position === 'RA' && host.tactics.slotLayout!.s6.
 ok(host.tactics.assignedPositions![avB.id] === 'RV' && host.tactics.assignedPositions![raR.id] === 'RA', 'assignedPositions falsch umgerechnet');
 console.log('Positionen 2.0: Seiten, Fuß, Raster und Migration OK');
 
-// Positionsetiketten (ui/positionBadges.ts): Gruppenfarbe, Schwelle „gut“, stärkste zuerst, Gleichstand nach Einsätzen
+// Positionsetiketten (ui/positionBadges.ts): Gruppenfarbe, Schwelle 80, stärkste zuerst, Gleichstand nach Einsätzen
 {
   ok(posGroupKey('TW') === 'gk' && posGroupKey('LIB') === 'def' && posGroupKey('RV') === 'def' && posGroupKey('DM') === 'mid'
     && posGroupKey('LM') === 'mid' && posGroupKey('RA') === 'att' && posGroupKey('HS') === 'att' && posGroupKey('VS') === 'def' && posGroupKey('xx') === null, 'Gruppenfarben falsch');
@@ -234,11 +251,12 @@ console.log('Positionen 2.0: Seiten, Fuß, Raster und Migration OK');
   for (const p of all.slice(0, 600)) {
     const l = playablePositions(p);
     ok(l.some((e) => e.pos === p.naturalPosition), `${p.id}: Stammposition fehlt im Etikett`);
-    ok(l.every((e) => e.pos === p.naturalPosition || e.skill >= BADGE_MIN), `${p.id}: Position unter „gut“ im Etikett`);
+    ok(l.every((e) => e.pos === p.naturalPosition || e.skill >= BADGE_MIN), `${p.id}: Position unter ${BADGE_MIN} im Etikett`);
     ok(l.every((e, i) => i === 0 || l[i - 1].value >= e.value), `${p.id}: nicht nach Stärke sortiert`);
     if (l.length > 1) multi++;
     if (l.length > 2) more++;
   }
+  ok(BADGE_MIN === 80, 'Etiketten-Schwelle nicht 80');
   ok(multi > 50 && multi < 600, `Mehrfach-Positionen unplausibel: ${multi}/600`);
   // Gleichstand: gleiche Stärke → häufiger gespielte zuerst
   const q = JSON.parse(JSON.stringify(all.find((p) => p.naturalPosition === 'RV')!)) as Player;
