@@ -135,10 +135,12 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
   const compute = (d: Drag) => {
     d.target = null; d.preview = null; d.full = null;
     let key: string | null = null;
-    for (const el of document.elementsFromPoint(d.cx, d.cy)) {
-      const k = (el as HTMLElement).dataset?.luDrop;
+    // closest(): Tabellenzeilen/-abschnitte liefert elementsFromPoint nicht selbst, nur ihre Zellen.
+    for (const hit of document.elementsFromPoint(d.cx, d.cy)) {
+      const el = hit.closest('[data-lu-drop]') as HTMLElement | null;
+      const k = el?.dataset.luDrop;
       if (!k) continue;
-      if (d.src.kind === 'slot' && k === `slot:${d.src.slotId}` && (el as HTMLElement).classList.contains('lu-slot') && d.origin === 'pitch') continue;
+      if (d.src.kind === 'slot' && k === `slot:${d.src.slotId}` && el!.classList.contains('lu-slot') && d.origin === 'pitch') continue;
       key = k; break;
     }
     if (!key) return;
@@ -314,7 +316,7 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
       </DashBox>
 
       {ghost && createPortal(
-        <div className={`lu-ghost ${drag!.full ? 'no' : ''}`} style={{ left: drag!.cx, top: drag!.cy, transform: `translate(-50%, -50%) scale(${drag!.scale})` }}>
+        <div className={`lu-ghost ${drag!.full ? 'no' : ''}`} style={{ left: drag!.cx, top: drag!.cy, transform: `translate(14px, 14px) scale(${drag!.scale})`, transformOrigin: '0 0' }}>
           <span className={`lu-card-pos ${posGroupClass(ghostPos ?? ghost.naturalPosition)}`}>{ghostPos ?? ghost.naturalPosition}</span>
           <span className="lu-ghost-name">{ghost.lastName}</span>
           <span className="lu-ghost-st">{ghost.overall}</span>
