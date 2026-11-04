@@ -9,6 +9,7 @@ import { startTalk } from '../../game/transferTalks';
 import { PlayerTalkModal } from '../../views/kader/talk/PlayerTalkModal';
 import { TransferTalkModal } from '../../views/transfers/TransferTalkModal';
 import Icon from '../Icon';
+import { openContractScreen } from '../../screens/contract/contractOpen';
 import type { IconName } from '../iconPaths';
 
 interface Act { key: string; icon: IconName; tip: string; run?: () => void; on?: boolean; group: number }
@@ -29,7 +30,7 @@ export default function ActionBar({ p, onTab, onChange }: { p: Player; onTab: (t
   const acts: Act[] = [
     { key: 'report', icon: 'watchlist', tip: 'Scoutbericht', run: () => onTab('report'), group: 0 },
     { key: 'talk', icon: 'talk', tip: own ? 'Spielergespräch' : `Spielergespräch – ${onlyOwn.toLowerCase()}`, run: own ? () => setTalk(true) : undefined, group: 1 },
-    { key: 'contract', icon: 'contracts', tip: own ? 'Vertrag verlängern' : `Vertrag verlängern – ${onlyOwn.toLowerCase()}`, run: own ? () => onTab('contract') : undefined, group: 1 },
+    { key: 'contract', icon: 'contracts', tip: own ? 'Vertrag verlängern (Verhandlungstisch)' : `Vertrag verlängern – ${onlyOwn.toLowerCase()}`, run: own ? () => openContractScreen({ kind: 'renew', pid: p.id }) : undefined, group: 1 },
     {
       key: 'list', icon: 'transfers', on: own && p.transferListed,
       tip: own ? (p.transferListed ? 'Von der Transferliste nehmen' : 'Auf die Transferliste setzen') : `Transferliste – ${onlyOwn.toLowerCase()}`,

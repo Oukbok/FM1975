@@ -280,6 +280,12 @@ export interface PlayerOffer {
   successRaise?: number;
   /** Provision für den Berater (Einmalzahlung). */
   agentFee?: number;
+  /** Vertrag 2.0 (Verhandlungstisch): Gegenwert weiterer Bausteine als Wochengehalt (kann negativ sein). */
+  extrasWeekly?: number;
+  /** Höhe der Ausstiegsklausel (sonst Standard 1,8 × Ablöse/Marktwert). */
+  releaseAmount?: number;
+  /** Weitere Bausteine, die beim Wechsel in den Vertrag geschrieben werden (game/contractClausesGame.ts). */
+  extras?: { appearance: number; goal: number; cleanSheet: number; title: number; stay: number; raise: number; option: 'none' | 'club' | 'player'; relegation: number; fixedFee: number };
 }
 
 export interface PlayerAnswer { accepted: boolean; score: number; text: string; hint?: string }
@@ -297,7 +303,8 @@ export function effectiveWage(p: Player, o: PlayerOffer, euroLikely: boolean): n
   const pe = personaOf(p);
   const weeks = Math.max(1, o.years * 52);
   return o.wage + (o.signingFee / weeks) * (0.6 + pe.geld / 125) + ((o.loyaltyBonus ?? 0) / weeks) * 0.55
-    + (o.successRaise ?? 0) * o.wage * (euroLikely ? 0.6 : 0.3) * (0.5 + pe.ehrgeiz / 100);
+    + (o.successRaise ?? 0) * o.wage * (euroLikely ? 0.6 : 0.3) * (0.5 + pe.ehrgeiz / 100)
+    + (o.extrasWeekly ?? 0);
 }
 
 export function playerAnswer(p: Player, st: PlayerStance, o: PlayerOffer, trust: number, round: number, rnd: () => number, euroLikely = false): PlayerAnswer {

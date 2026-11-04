@@ -869,6 +869,72 @@ export const INFO_TEXTS = {
     text: 'So nehmen Vorstand, Fans und Sponsoren deine Aufteilung auf. Der Vorstand achtet auf Reserve und Personalquote, die Fans auf Ehrgeiz bei Transfers und Ausbau. Bestätigst du, ändern sich Vertrauen und Stimmung sofort ein wenig.',
     wiki: 'finance-budget',
   },
+  // --- Vertragsverhandlung 2.0 (screens/contract/) ---
+  v2_tisch: {
+    title: 'Verhandlungstisch',
+    text: 'Links steht seine Forderung, rechts dein Angebot. Er bewertet das ganze Paket: Was ihm wichtig ist (Punkte), zählt mehr. Zu schwache Angebote kosten Geduld – bei null bricht er ab und redet einige Wochen nicht mehr mit dir.',
+    wiki: 'squad-contracts2',
+  },
+  v2_gehalt: {
+    title: 'Grundgehalt',
+    text: 'Festes Gehalt, auch wenn er nicht spielt. Es zählt gegen die harte Grenze deines Gehaltsbudgets – Prämien und Einmalzahlungen nicht.',
+    wiki: 'squad-contracts2',
+  },
+  v2_laufzeit: {
+    title: 'Laufzeit',
+    text: 'Junge Ehrgeizige wollen kurz (um bald weiterzuziehen), Routiniers lang (Sicherheit). Außerhalb seiner Wunschspanne kostet jedes Jahr viel Zustimmung.',
+    wiki: 'squad-contracts2',
+  },
+  v2_handgeld: {
+    title: 'Handgeld',
+    text: 'Einmalzahlung bei Unterschrift, bezahlt aus dem Transferbudget. Geschäftstüchtige und ältere Spieler schätzen sie oft mehr, als sie dich kostet – dann kannst du beim Gehalt sparen.',
+    wiki: 'squad-contracts2',
+  },
+  v2_praemien: {
+    title: 'Leistungsprämien',
+    text: 'Je Einsatz, Tor bzw. Spiel ohne Gegentor – gebucht nach jedem Spiel. Sie kosten nur, wenn er spielt und trifft; ehrgeizige Stammspieler mögen sie, Ergänzungsspieler weniger.',
+    wiki: 'squad-contracts2',
+  },
+  v2_titel: {
+    title: 'Titel- und Klassenerhalt-Prämie',
+    text: 'Einmalig je Titel (Meisterschaft/Staffelsieg, Pokalsieg) bzw. wenn ihr die Klasse haltet. Er bewertet sie nach euren Chancen.',
+    wiki: 'squad-contracts2',
+  },
+  v2_staffel: {
+    title: 'Gehaltssteigerung',
+    text: 'Gestaffeltes Gehalt: zu jedem Saisonstart steigt es um den vereinbarten Anteil. Günstig im ersten Jahr, teurer am Ende.',
+    wiki: 'squad-contracts2',
+  },
+  v2_festablose: {
+    title: 'Festgeschriebene Ablöse',
+    text: 'Vor dem Bosman-Urteil (1995) kostet ein Spieler auch nach Vertragsende Ablöse. Ein niedriger, festgeschriebener Betrag macht ihn frei – das will er, für dich bedeutet es weniger Erlös.',
+    wiki: 'squad-contracts2',
+  },
+  v2_option: {
+    title: 'Verlängerungsoption',
+    text: 'Vereinsoption (ab 1990): Du kannst den Vertrag in seiner letzten Saison einseitig um ein Jahr verlängern. Spieleroption (ab 2000): Er entscheidet am Vertragsende. Freiheitsliebende Spieler hassen Vereinsoptionen.',
+    wiki: 'squad-contracts2',
+  },
+  v2_abstieg: {
+    title: 'Abstiegsklausel',
+    text: 'Steigt ihr ab, sinkt sein Gehalt zum Saisonstart um den vereinbarten Anteil. Familienmenschen und Ältere wollen das ungern.',
+    wiki: 'squad-contracts2',
+  },
+  v2_zusagen: {
+    title: 'Rollen und Zusagen',
+    text: 'Zusagen wie Stammplatz oder Kapitänsbinde werden am Saisonende geprüft (ab März: in der nächsten Saison). Gebrochene Zusagen kosten Glaubwürdigkeit und Kabinenfrieden.',
+    wiki: 'squad-contracts2',
+  },
+  v2_geduld: {
+    title: 'Geduld',
+    text: 'Jede Ablehnung kostet Geduld – knapp daneben wenig, ein beleidigendes Angebot viel. Bei null oder nach sieben Runden bricht er ab, ist gekränkt und will erst nach einigen Wochen wieder reden.',
+    wiki: 'squad-contracts2',
+  },
+  v2_kosten: {
+    title: 'Kosten über die Laufzeit',
+    text: 'Grundgehalt mit Staffelung, erwartete Prämien (nach Einsätzen, Toren und euren Chancen) und Einmalzahlungen – nominal in der Währung der Zeit.',
+    wiki: 'squad-contracts2',
+  },
 } satisfies Record<string, InfoText>;
 
 export type InfoKey = keyof typeof INFO_TEXTS;

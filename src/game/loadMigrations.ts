@@ -49,6 +49,7 @@ import { migrateSeasonAwards } from './seasonAwardsGame';
 import { migrateGoldenBall } from './goldenBallGame';
 import { migrateLegacyLegends } from './playerMigration';
 import { migratePersonas } from './playerWishesGame';
+import { migrateContracts2 } from './contractClausesGame';
 import { migratePositionSkills } from './positionsGame';
 import { migratePositions2 } from './positions2Migration';
 import { migrateDressingRoom } from './dressingRoomGame';
@@ -347,4 +348,5 @@ export function prepareLoadedGame(g: Game): void {
   try { migrateTransferLog(g); } catch (err) { console.error('Transferprotokoll-Nachrüstung fehlgeschlagen:', err); }
   try { migrateCareer(g); } catch (err) { console.error('Karriere-Bereinigung fehlgeschlagen:', err); }
   try { migrateBudget(g); } catch (err) { console.error('Saisonbudget-Nachrüstung fehlgeschlagen:', err); }
+  try { migrateContracts2(g); } catch (err) { console.error('Vertrag-2.0-Nachrüstung fehlgeschlagen:', err); }
 }

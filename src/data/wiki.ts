@@ -1076,7 +1076,7 @@ Ein Klick auf einen Spieler öffnet sein Profil. Es ist in vier Bereiche geteilt
   - **Stationen:** frühere Vereine mit Zeitraum, Ablöse (in der Währung des Wechseljahres), Spielen und Toren; Vereinsspiele der laufenden Saison je Wettbewerb; **Auszeichnungen** (Die Besten der Saison, Goldener Ball) und Titel mit dem Verein; Saisonbilanzen.
   - **Vertrag:** Vertragsende, Grundgehalt, Marktwert, Ausstiegsklausel und alle Zusatzvereinbarungen, die es gibt – Sieg- und Remisprämie (Mannschaftsregel), Treueprämie, Erfolgsklausel, Rückkaufoption, Weiterverkaufsbeteiligung, Leihe, Vorvertrag –, dazu Zusagen beim Wechsel und das Vertragsgespräch.
   - **Wünsche** und **Bericht** (Scoutbericht). Bei Jugendspielern steht vorn der Reiter Akademie bzw. Scouting.
-- **Aktionsleiste unten:** runde Knöpfe für Scoutbericht, Spielergespräch, Vertrag verlängern, Transferliste (eigener Kader), Transferverhandlung (fremde Spieler) und Vereinsprofil. Was gerade nicht geht, ist ausgegraut; der Tooltip sagt warum.
+- **Aktionsleiste unten:** runde Knöpfe für Scoutbericht, Spielergespräch, Vertrag verlängern (öffnet den Verhandlungstisch), Transferliste (eigener Kader), Transferverhandlung (fremde Spieler) und Vereinsprofil. Was gerade nicht geht, ist ausgegraut; der Tooltip sagt warum.
 
 Mit den Pfeilen oben rechts (oder den Pfeiltasten) blätterst du durch den Kader, Escape schließt das Profil. Verdeckte Werte wie Konstanz oder Nervenstärke siehst du nie als Zahl – nur als Einschätzung deines Trainerteams bzw. deiner Scouts.`,
   },
@@ -2415,12 +2415,56 @@ Grundlage ist das **Marktgehalt** (Stärke, Liga-Niveau), dazu Karrierephase, Ge
 KI-Vereine kaufen nur Spieler, die auch wollen. Deshalb sammeln sich die Stars bei den großen Vereinen: Die angesehensten Vereine holen im Sommer gezielt die Leistungsträger kleinerer Vereine, die Kleinen kassieren Ablöse und kaufen günstiger nach. Spieler ohne Vertrag suchen sich ihren Wunschverein unter den Vereinen, die sie brauchen; ehrgeizige Leistungsträger kleiner Vereine verlängern seltener. Von außen (Ausland, untere Ligen) bekommt ein Verein nur Spieler, die zu seinem Ansehen passen.`,
   },
   {
+    id: 'squad-contracts2',
+    category: 'squad',
+    title: 'Vertragsverhandlung: der Verhandlungstisch',
+    keywords: ['verhandlungstisch', 'vertragsverhandlung', 'handgeld', 'einsatzprämie', 'torprämie', 'zu-null-prämie', 'titelprämie', 'klassenerhalt', 'staffelung', 'gehaltssteigerung', 'ausstiegsklausel', 'festgeschriebene ablöse', 'option', 'vereinsoption', 'spieleroption', 'abstiegsklausel', 'berater', 'provision', 'geduld', 'gegenangebot', 'bluff'],
+    body: `## Der Bildschirm
+Den Verhandlungstisch öffnest du über den Knopf **Vertrag** im Spielerprofil, das Rechtsklick-Menü („Vertrag verlängern“), Vertragsnachrichten im Newscenter, Kader › Verträge (auslaufende Verträge) und – beim Spielergespräch eines Transfers – über „Am Verhandlungstisch“. Solange er offen ist, steht die Zeit.
+- **Links** der Spieler: Stärke, Potenzial, Persönlichkeit als Einschätzung (nie als Zahl), Karrierephase, bisheriger Vertrag und was ihm wichtig ist.
+- **Mitte** alle Vertragspunkte: seine **Forderung**, **dein Angebot** (Regler bzw. Umschalter) und wie **wichtig** ihm der Punkt ist (ein bis drei Punkte). Unten erklärt ein Streifen den Punkt unter dem Zeiger.
+- **Rechts** Stimmung und Geduld, der Gesprächsverlauf mit Spieler, Berater und Sportdirektor, und die **Auswirkung**: Gehaltsbudget danach (harte Grenze), Kosten der ersten Saison und über die Laufzeit (nominal), Handgeld + Provision gegen das Transferbudget.
+
+## Vertragspunkte je Epoche
+| Punkt | ab | Wirkung |
+| --- | --- | --- |
+| Grundgehalt, Laufzeit, Handgeld | 1975 | Handgeld zahlt das Transferbudget |
+| Einsatz-, Tor-, Zu-null-Prämie | 1975 | gebucht nach jedem Spiel (Tor nur Feldspieler, Zu-null nur Torwart/Abwehr) |
+| Titel- und Klassenerhalt-Prämie | 1975 | am Saisonende bzw. nach dem Auf-/Abstieg |
+| Treueprämie, Erfolgsklausel, Zusagen | 1975 | wie beim Transfer |
+| Gehaltssteigerung (Staffelung) | 1985 | zu jedem Saisonstart |
+| Abstiegsklausel | 1985 | Gehaltskürzung nach einem Abstieg |
+| Festgeschriebene Ablöse | bis 1995 | Ablöse, wenn er nach Vertragsende geht (vor Bosman) |
+| Vereinsoption / Spieleroption | 1990 / 2000 | ein Jahr mehr – du bzw. er entscheidet |
+| Ausstiegsklausel | 1996 | wer sie zahlt, bekommt ihn ohne Verhandlung |
+| Beraterprovision | wenn er einen Berater hat | in den 70ern selten (Anwalt), nach Bosman fast immer |
+
+Bis 1972 begrenzte das Lizenzspielerstatut Gehalt und Handgeld; ab 1975 ist alles frei verhandelbar.
+
+## Wie er rechnet
+Er bewertet das **ganze Paket** in „Gehalt pro Woche“. Jeder Punkt zählt mit seinem persönlichen Faktor: Geschäftstüchtige und ältere Spieler mögen **Handgeld** (oft mehr, als es dich kostet), ehrgeizige Stammspieler **Prämien**, Familienmenschen hassen **Abstiegsklauseln**, Freiheitsliebende (ehrgeizig, abenteuerlustig, jung) wollen eine niedrige **festgeschriebene Ablöse** bzw. **Ausstiegsklausel** und keine **Vereinsoption**. Junge Ehrgeizige wollen kurze Laufzeiten, Routiniers lange.
+Daraus entsteht **Paketlogik**: Bietest du mehr von dem, was ihm viel bedeutet, darf das Gehalt sinken. Er sagt es dir manchmal selbst.
+
+## Runden, Geduld, Abbruch
+- Er (bzw. sein Berater) eröffnet mit einer Forderung über seiner echten Schmerzgrenze.
+- Lehnt er ab, kostet das **Geduld**: knapp daneben wenig, deutlich daneben mehr, ein **beleidigendes** Angebot sehr viel (dazu Moral −4).
+- Nach jeder Ablehnung nennt er ein **Gegenangebot** (Spalte Forderung): Bei Punkten, die ihm wenig bedeuten, kommt er dir entgegen, bei wichtigen kaum. Ein Gegenangebot reicht ihm immer – „Forderung übernehmen“ ist also ein sicherer, aber teurer Weg.
+- Bei Geduld null oder nach sieben Runden **bricht er ab**: Moral −7 und einige Wochen keine Gespräche (nach einer Beleidigung zwei Monate).
+- **Berater-Bluff**: „Es gibt andere Interessenten“ – manchmal stimmt es (ein reizvoller Verein, der ihn braucht), dann verlangt er etwas mehr. Dein Sportdirektor prüft das Gerücht, je besser dein Scouting-Stab, desto verlässlicher.
+
+## Nach der Unterschrift
+Gehalt und Laufzeit gelten sofort (Laufzeit ab der nächsten Saison). Handgeld und Provision werden gebucht, Zusagen landen bei den Versprechen (ab März gelten sie für die nächste Saison). Vereinsoption: in der letzten Vertragssaison am Verhandlungstisch „Option ziehen“. Spieleroption: Am Vertragsende bleibt er ein Jahr, wenn er zufrieden ist und nicht nach Höherem strebt.
+
+## KI-Vereine
+Die anderen Vereine verhandeln vereinfacht und zahlen Prämien pauschal (Sieg- und Punktprämien für den ganzen Kader) – die Balance der Liga bleibt dadurch gleich.`,
+  },
+  {
     id: 'squad-contracts',
     category: 'squad',
     title: 'Verträge, Bosman & Kabine',
     keywords: ['vertrag', 'verlängerung', 'bosman', 'ablösefrei', 'vorvertrag', 'angebot', 'zufriedenheit', 'gehaltsgefüge', 'spielzeit'],
     body: `## Verlängern
-Verhandelt wird im Spielerprofil (Reiter **Vertrag**), frühestens 30 Monate vor Vertragsende. Der Spieler nennt **Haltung**, **Forderung** und **Wunschlaufzeit**:
+Verhandelt wird am **Verhandlungstisch** (siehe „Vertragsverhandlung: der Verhandlungstisch“), frühestens 30 Monate vor Vertragsende. Der Spieler nennt **Haltung**, **Forderung** und **Wunschlaufzeit**:
 
 | Einfluss | Wirkung auf die Forderung |
 | --- | --- |
@@ -2431,11 +2475,11 @@ Verhandelt wird im Spielerprofil (Reiter **Vertrag**), frühestens 30 Monate vor
 | Ehrgeiz | ± bis 12 % |
 | Bosman (ab 1996) | im letzten Vertragsjahr +10 % |
 
-Ob er überhaupt will, hängt von Zufriedenheit, Moral, Ehrgeiz, **Loyalität** und dem **Ansehen deines Vereins im Verhältnis zu seiner Stärke** ab („gern“, „offen“, „zögerlich“, „ablehnend“). Geldgierige fordern bis zu 17 % mehr, Loyale etwas weniger. Knapp unter der Forderung entscheidet ein kleiner Zufall. Nach drei gescheiterten Angeboten bricht er die Gespräche für zwei Monate ab. Der Vorstand gibt keine Erhöhung frei, wenn die Gehälter danach über 115 % des Gehaltsrahmens lägen.
+Ob er überhaupt will, hängt von Zufriedenheit, Moral, Ehrgeiz, **Loyalität** und dem **Ansehen deines Vereins im Verhältnis zu seiner Stärke** ab („gern“, „offen“, „zögerlich“, „ablehnend“). Geldgierige fordern bis zu 17 % mehr, Loyale etwas weniger. Wie er ein ganzes Paket aus Gehalt, Prämien, Klauseln und Zusagen bewertet, wann er Geduld verliert und abbricht, steht im Artikel zum Verhandlungstisch. Der Vorstand gibt keine Erhöhung frei, wenn die Gehälter danach über dem Gehaltsbudget lägen (alte Spielstände ohne bestätigtes Saisonbudget: 115 %).
 
 ## Vertragsende und Bosman
 Wer am 30. Juni ohne neuen Vertrag ist, wechselt zum 1. Juli:
-- **bis Sommer 1995:** gegen eine Ablöse (60 % des Marktwerts) – so war es vor dem Bosman-Urteil.
+- **bis Sommer 1995:** gegen eine Ablöse (60 % des Marktwerts bzw. die im Vertrag festgeschriebene Ablöse) – so war es vor dem Bosman-Urteil.
 - **ab Sommer 1996:** **ablösefrei**. Zusätzlich können andere Vereine ab dem 15. Januar **Vorverträge** mit deinen auslaufenden Leistungsträgern schließen – dann ist er weg, außer du verkaufst ihn im Winter.
 
 Der Sportdirektor erinnert dich am 2. Januar und am 1. April an alle Verträge, die im Sommer enden.

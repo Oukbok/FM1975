@@ -5,6 +5,7 @@ import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { vColor, fmtPrice, fmtWage, wageHead, wageUnit } from '../../ui/format';
 import { PlayerRow, monthsUntil } from '../shared';
 import { useState } from 'react';
+import { openContractScreen } from '../../screens/contract/contractOpen';
 import { demandFor, offerContract } from '../../game/contracts';
 import { bosmanActive } from '../../engine/contractTalks';
 import { InfoTip } from '../../ui/InfoTip';
@@ -73,11 +74,11 @@ export function VertraegeView({ g, onChange }: { g: Game; onChange?: () => void 
       <DashBox title="Handlungsbedarf" info="zufriedenheit" icon="negotiations" right={`Ø Zufriedenheit ${avgSat}`}>
         <div className="dsec">Laufen in 12 Monaten aus ({expiring.length})</div>
         {expiring.length ? expiring.slice(0, 5).map((x) => (
-          <PlayerRow key={x.id} p={x} sub={CalendarEngine.formatDate(x.contract.expiryDate)} value={`${monthsUntil(today, x.contract.expiryDate)} M.`} color="var(--yellow)" onClick={() => setSel(x.id)} />
+          <PlayerRow key={x.id} p={x} sub={CalendarEngine.formatDate(x.contract.expiryDate)} value={`${monthsUntil(today, x.contract.expiryDate)} M.`} color="var(--yellow)" onClick={() => openContractScreen({ kind: 'renew', pid: x.id })} />
         )) : <Empty icon="contracts">Keine Verträge laufen bald aus.</Empty>}
         <div className="dsec">Unzufriedenste Spieler</div>
         {unhappy.map((x) => <PlayerRow key={x.id} p={x} value={Math.round(x.contract.satisfaction)} onClick={() => setSel(x.id)} />)}
-        <div className="dnote mt8">{bosmanActive(today) ? 'Seit dem Bosman-Urteil gehen Spieler nach Vertragsende ablösefrei – und können im Winter Vorverträge woanders unterschreiben.' : 'Spieler ohne neuen Vertrag wechseln im Sommer – noch gegen Ablöse (bis zum Bosman-Urteil 1995).'} Verhandeln: Spieler anklicken, Reiter „Vertrag & Wert“.</div>
+        <div className="dnote mt8">{bosmanActive(today) ? 'Seit dem Bosman-Urteil gehen Spieler nach Vertragsende ablösefrei – und können im Winter Vorverträge woanders unterschreiben.' : 'Spieler ohne neuen Vertrag wechseln im Sommer – noch gegen Ablöse (bis zum Bosman-Urteil 1995).'} Auslaufende Verträge oben anklicken öffnet den Verhandlungstisch.</div>
       </DashBox>
 
       {p && <PlayerModal player={p} club={club} squad={squad} today={today} season={g.season} onClose={() => setSel(null)} initialTab="contract"

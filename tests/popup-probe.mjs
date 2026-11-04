@@ -167,7 +167,7 @@ export async function probeWindow(page, name, frameSel, open, opts = {}) {
 /** Alle offenen Fenster/Overlays schließen (Escape, Schließen-Knöpfe). */
 export async function closeAll(page) {
   for (let k = 0; k < 8; k++) {
-    const n = await page.locator('.modal-overlay, .pcm-layer, .tw-panel, .si-root, .gb-root, .cr-root, .dr-root, .rb2-overlay').count();
+    const n = await page.locator('.modal-overlay, .pcm-layer, .tw-panel, .si-root, .gb-root, .cr-root, .dr-root, .rb2-overlay, .ct-root').count();
     if (!n) return;
     await page.keyboard.press('Escape'); await page.waitForTimeout(150);
     const x = page.locator('.modal-close, .pp2-close, .ptk-x, .sp3-x, button:has-text("Schließen"), .bf-continue, .tw-foot button:has-text("OK"), .aw-close').last();

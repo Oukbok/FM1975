@@ -356,12 +356,33 @@ export interface Contract {
   transferValue: number;
   /** Optionale Ausstiegsklausel in DM. */
   releaseClause?: number;
-  /** Tor-Prämie pro Tor in DM. */
+  /** Torprämie je Pflichtspieltor (1975-Basis, Vertragsverhandlung 2.0). */
   goalBonus?: number;
+  /** Einsatzprämie je Pflichtspiel (1975-Basis, game/contractClausesGame.ts). */
+  appearanceBonus?: number;
+  /** Zu-null-Prämie je Spiel ohne Gegentor (1975-Basis). */
+  cleanSheetBonus?: number;
+  /** Titelprämie je Meisterschaft/Staffelsieg bzw. Pokalsieg (1975-Basis). */
+  titleBonus?: number;
+  /** Klassenerhalt-Prämie (1975-Basis). */
+  stayBonus?: number;
+  /** Gestaffeltes Gehalt: Steigerung je Saison (Anteil); `raisedFor` = zuletzt angewandt. */
+  annualRaise?: number;
+  raisedFor?: string;
+  /** Festgeschriebene Ablöse nach Vertragsende (vor Bosman, 1975-Basis). */
+  fixedFee?: number;
+  /** Verlängerungsoption um ein Jahr (Verein bzw. Spieler entscheidet). */
+  option?: 'club' | 'player';
+  /** Gehaltskürzung nach einem Abstieg (Anteil). */
+  relegationCut?: number;
+  /** Schon gebuchte Einsätze/Tore/Zu-null-Spiele der Saison (Prämien). */
+  bonusPaid?: { season: string; apps: number; goals: number; cs: number };
+  /** Unterschrift: Datum, Handgeld, Provision (Anzeige). */
+  signed?: { date: string; signing?: number; agent?: number };
   /** Zufriedenheit des Spielers mit dem Vertrag (0–100). */
   satisfaction: number;
-  /** Vertragsgespräche der laufenden Saison (Verhandlung, game/contracts.ts). */
-  talks?: { season: string; attempts: number; blockedUntil?: string };
+  /** Vertragsgespräche der laufenden Saison (Verhandlung, game/contracts.ts; `neg` = Gespräch 2.0, game/contractTalk.ts). */
+  talks?: { season: string; attempts: number; blockedUntil?: string; neg?: import('../game/contractTalk').NegState };
   /** Vorvertrag bei einem anderen Verein (ab Bosman): Wechsel zum Vertragsende. */
   preContractClubId?: string;
   /** Treueprämie (1975-Basis), fällig bei Vertragsende, wenn er bis dahin bleibt (game/playerWishesGame.ts). */

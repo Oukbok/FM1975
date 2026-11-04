@@ -28,6 +28,7 @@ import { moraleJolt } from './moraleJolt';
 import { Game } from './state';
 import { noteSquad } from './aiSquadLog';
 import { sellAbroad } from './aiOffers';
+import { clearContractExtras } from './contractClausesGame';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -139,6 +140,7 @@ export function transferPlayer(g: Game, p: Player, from: Club, to: Club, fee: nu
   p.contract.talks = undefined;
   p.contract.refused = undefined;
   p.contract.aiLetGo = undefined;
+  clearContractExtras(p.contract); // Vertrag 2.0: Bausteine gelten nur beim alten Verein
   p.contract.weeklyWage = Math.round(Math.max(p.contract.weeklyWage, marketWage(p) * clubWageLevel(to, Number(date.slice(0, 4)))) * (fee === 0 ? 1.15 : 1));
   p.contract.expiryDate = `${Number(date.slice(0, 4)) + yearsFor(p.age, hashRand(p.id + date))}-06-30`;
   p.contract.satisfaction = 78;
@@ -195,13 +197,26 @@ export function handleContractExpiry(g: Game, today: string): void {
         noteSquad(g, bosman || !dest ? 'freeLeaves' : 'paidLeaves');
         continue;
       }
+      // Spieleroption (Vertrag 2.0): Er entscheidet, ob er ein Jahr dranhängt.
+      if (mine && !stale && p.contract.option === 'player' && !p.contract.preContractClubId) {
+        const pe = personaOf(p);
+        const stays = (p.contract.satisfaction ?? 60) >= 45 && !(p.overall > (club.reputation ?? 60) + 4 && pe.ehrgeiz >= 60) && p.age < 34;
+        p.contract.option = undefined;
+        if (stays) {
+          p.contract.expiryDate = `${year + 1}-06-30`;
+          renewed.push(`${p.fullName} (Spieleroption gezogen, bis ${year + 1})`);
+          logRenewal(g, p, club.id, today);
+          continue;
+        }
+      }
       // Vorvertrag: Wechsel steht fest.
       const pre = p.contract.preContractClubId ? g.clubs[p.contract.preContractClubId] : undefined;
       // Eigener Spieler ohne Verlängerung geht; KI-Spieler entscheiden nach ihren Wünschen.
       const leaves = !stale && (pre || mine || aiWantsToLeave(g, p, club, bosman, r)) && p.age < 34;
       const buyer = leaves ? (pre ?? (mine ? pickBuyer(g, p, club.id, pid + year) : freeAgentDestination(g, p, club.id, () => hashRand(pid + year + 'z')))) : null;
       if (buyer) {
-        const fee = bosman ? 0 : preBosmanFee(p);
+        // Vor Bosman: festgeschriebene Ablöse (Vertrag 2.0) statt der üblichen Entschädigung.
+        const fee = bosman ? 0 : (mine && p.contract.fixedFee != null ? p.contract.fixedFee : preBosmanFee(p));
         transferPlayer(g, p, club, buyer, fee, today);
         if (!mine) noteSquad(g, fee ? 'paidLeaves' : 'freeLeaves');
         if (mine) { left.push(`${p.fullName} → ${buyer.name}${fee ? ` (Ablöse ${fmtPrice(fee)})` : ' (ablösefrei)'}`); income += fee; }
@@ -253,10 +268,10 @@ export function contractReminders(g: Game, today: string): void {
     const bosman = bosmanActive(`${endYear}-07-01`);
     expiring.sort((a, b) => b.overall - a.overall);
     pushMessage(g.messages, makeMessage({
-      date: today, category: 'contract', from: 'Sportdirektor',
+      date: today, category: 'contract', from: 'Sportdirektor', relatedId: expiring[0].id, // wichtigster zuerst → Knopf „Verhandlungstisch“
       subject: `${expiring.length} Vertr${expiring.length === 1 ? 'ag läuft' : 'äge laufen'} im Sommer aus`,
       shortText: bosman ? 'Ohne Verlängerung gehen sie ablösefrei.' : 'Ohne Verlängerung gehen sie – gegen Ablöse.',
-      bodyText: `Diese Verträge enden am 30.06.${endYear}:\n\n${expiring.map((p) => `${p.fullName} (${p.naturalPosition}, ${p.age} J., Stärke ${p.overall})`).join('\n')}\n\nVerhandeln kannst du im Spielerprofil unter „Vertrag & Wert“.`,
+      bodyText: `Diese Verträge enden am 30.06.${endYear}:\n\n${expiring.map((p) => `${p.fullName} (${p.naturalPosition}, ${p.age} J., Stärke ${p.overall})`).join('\n')}\n\nVerhandeln kannst du am Verhandlungstisch (Spielerprofil › Vertrag oder Kader › Verträge).${expiring.some((p) => p.contract.option === 'club') ? ' Bei Spielern mit Vereinsoption kannst du sie dort auch einfach ziehen.' : ''}`,
     }));
   }
 

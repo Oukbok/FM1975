@@ -42,6 +42,7 @@ import { nextDrawDate, scheduleDraws } from './cupDraw';
 import { CalendarEngine } from '../engine/calendar';
 import { Game, bestOffer, hashSeed, migrateCommerce, offerToContract } from './state';
 import { sponsorSeasonStart } from './sponsorGame';
+import { contractSeasonStart } from './contractClausesGame';
 
 // -----------------------------------------------------------------------------
 // Spieltag simulieren + Form/Fitness-Effekte + Nachrichten
@@ -393,6 +394,8 @@ export function startNextSeason(g: Game): void {
 
   // --- 7c) Sponsoring 2.0: Laufzeiten, Abstiegsklauseln, Angebote, KI-Abschlüsse (game/sponsorGame.ts) ---
   sponsorSeasonStart(g, newSeason, calendar.seasonStartDate);
+  // Vertrag 2.0: Abstiegsklausel, gestaffelte Gehälter, Klassenerhalt-Prämien (game/contractClausesGame.ts)
+  contractSeasonStart(g);
 
   // --- 8a) Europapokale der neuen Saison (drei Wettbewerbe, EC/CWC/Europa-Verband) ---
   const euroClubs = g.euroClubs ?? allEuroClubs();

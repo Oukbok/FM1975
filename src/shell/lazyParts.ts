@@ -94,6 +94,7 @@ export const StatistikenDashboard = lz(() => import('../views/categoryDashboards
 // --- Fenster & Shows ------------------------------------------------------
 export const MatchScreen = lz(() => import('../screens/match/MatchScreen'), 'MatchScreen');
 export const PrematchScreen = lz(() => import('../screens/prematch/PrematchScreen'), 'PrematchScreen');
+export const ContractScreen = lz(() => import('../screens/contract/ContractScreen'), 'ContractScreen');
 export const MatchModal = lz(() => import('../views/spieltag/MatchModal'), 'MatchModal');
 export const DrawShow = lz(() => import('../screens/draw/DrawShow'), 'DrawShow');
 export const RatingShow = lz(() => import('../screens/rating/RatingShow'), 'RatingShow');

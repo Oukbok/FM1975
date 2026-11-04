@@ -52,6 +52,17 @@ for (const view of VIEWS) {
       await page.locator('.app-main tr[data-pid], .app-main .rl-row[data-pid]').nth(2).click({ button: 'right' });
       await page.locator('.pcm-item:has-text("Verhandl"), .pcm-item:has-text("Transfer")').first().click();
     }],
+    // Verhandlungstisch (screens/contract/): Rechtsklick › „Vertrag verlängern“; Regler/Umschalter + eine Runde.
+    ['verhandlungstisch', '.ct-root', async () => {
+      await nav('Kader', 'Übersicht');
+      await page.locator('.app-main tbody tr[data-pid]').nth(4).click({ button: 'right' });
+      await click('.pcm-item:has-text("Vertrag verlängern")');
+      await page.waitForSelector('.ct-root', { timeout: 4000 });
+    }, { steps: [
+      ['Angebot machen', () => page.locator('.ct-root .ct-send').first().click({ timeout: 1500 })],
+      ['Forderung übernehmen', () => page.locator('.ct-root button:has-text("Forderung übernehmen")').first().click({ timeout: 1500 })],
+      ['Zusage', () => page.locator('.ct-root .ct-chip').first().click({ timeout: 1500 })],
+    ] }],
     ['spielersuche', '.ps-panel', async () => { await nav('Transfers', 'Transfermarkt'); await click('.dchip:has-text("Spieler suchen")'); }],
     ['transferbilanz', '.tw-panel', async () => { await nav('Transfers', 'Transfermarkt'); await click('.dchip:has-text("Transferbilanz")'); }],
     ['budget', '.bud-modal', async () => { await nav('Finanzen', 'Budget'); await click('.dchip:has-text("Budget anpassen")'); }],

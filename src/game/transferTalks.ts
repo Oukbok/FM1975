@@ -40,6 +40,7 @@ import { repairSquadLists } from './squads';
 import { staffEffectsOf } from './staffGame';
 import { Game } from './state';
 import { noteLoan } from './transferLog';
+import { applyTransferExtras, extrasLine } from './contractClausesGame';
 
 export interface TransferTalk {
   id: string;
@@ -272,7 +273,7 @@ export function playerOffer(g: Game, talkId: string, offer: PlayerOffer): string
   const promises = offer.promises.map((x) => PROMISES[x].label).join(', ');
   const extras = [offer.signingFee && `Handgeld ${fmtPrice(offer.signingFee)}`, offer.agentFee && `Provision ${fmtPrice(offer.agentFee)}`,
     offer.loyaltyBonus && `Treueprämie ${fmtPrice(offer.loyaltyBonus)}`, offer.successRaise && `+${Math.round(offer.successRaise * 100)} % bei Europapokal`,
-    offer.releaseClause && 'Ausstiegsklausel'].filter(Boolean).join(', ');
+    offer.releaseClause && 'Ausstiegsklausel', offer.extras && extrasLine(offer.extras)].filter(Boolean).join(', ');
   say(t, today, 'du', `Gehalt ${fmtWage(offer.wage)}, ${offer.years} Jahre${extras ? `, ${extras}` : ''}${promises ? ` · Versprechen: ${promises}` : ''}.`);
   const ans = playerAnswer(p, st, offer, trustOf(g), t.pRound - 1, () => hash01(`${t.id}|p${t.pRound}|${offer.wage}`), playsEurope(g, own.id));
   if (ans.accepted) {
@@ -331,7 +332,8 @@ function completeTalk(g: Game, t: TransferTalk): string {
   p.contract.weeklyWage = Math.round(terms.wage * 1e4) / 1e4; // ungerundet: angezeigt = vereinbart
   p.contract.expiryDate = `${seasonEndYear(today) + terms.years - (Number(today.slice(5, 7)) >= 7 ? 1 : 0)}-06-30`;
   if (pkg?.loan && p.contract.expiryDate <= p.loan!.until) p.contract.expiryDate = `${seasonEndYear(today) + 1}-06-30`;
-  p.contract.releaseClause = terms.releaseClause ? r5k(Math.max(fee, p.contract.transferValue) * 1.8) : undefined;
+  p.contract.releaseClause = terms.releaseClause ? (terms.releaseAmount ?? r5k(Math.max(fee, p.contract.transferValue) * 1.8)) : undefined;
+  if (terms.extras) applyTransferExtras(g, p, terms.extras, today); // Vertrag 2.0: Prämien, Staffelung, Option, Abstiegsklausel
   p.contract.loyaltyBonus = terms.loyaltyBonus || undefined;
   p.contract.successRaise = terms.successRaise || undefined;
   p.contract.noRivalSale = terms.promises.includes('keinRivale') || undefined;

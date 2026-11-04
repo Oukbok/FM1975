@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { openContractScreen } from '../../screens/contract/contractOpen';
 import { ClubLink } from '../../components/club/ClubLink';
 import PlayerAvatar from '../../components/PlayerAvatar';
 import ClubCrest from '../../components/ClubCrest';
@@ -172,6 +173,7 @@ function PlayerTalkBox({ g, t, onChange, notice }: { g: Game; t: TransferTalk; o
             ))}
           </ul></div>
         <button className="btn btn-primary talk-send" onClick={send}>Vorschlag machen</button>
+        <button className="btn talk-send" onClick={() => openContractScreen({ kind: 'transfer', talkId: t.id })}>Am Verhandlungstisch (alle Vertragspunkte)</button>
         <Refused text={notice} />
       </div>
     </DashBox>

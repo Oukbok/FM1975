@@ -5,6 +5,7 @@
 // Daten: g.messages (engine/messages.ts) – dieselben wie Zentrale › Nachrichten.
 // =============================================================================
 import { useEffect, useState } from 'react';
+import { openContractScreen } from '../../../screens/contract/contractOpen';
 import { JUMP_DECISION_EVENT, oldestPendingDecision } from '../../../engine/messages';
 import PlayerAvatar from '../../../components/PlayerAvatar';
 import { CATEGORY_META, unreadCount } from '../../../engine/messages';
@@ -124,6 +125,9 @@ function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
         <div className="dz-rlinks">
           {matchId && <button className="b3" onClick={() => onWatch(matchId)}>Spielbericht</button>}
           {p && <button className="b3" onClick={() => openPlayer(p.id)}>Spielerprofil</button>}
+          {p && m.category === 'contract' && p.clubId === g.managedClubId && !p.isYouth && g.players[p.id] && (
+            <button className="b3" onClick={() => openContractScreen({ kind: 'renew', pid: p.id })}>Verhandlungstisch</button>
+          )}
           {target && <button className="b3" onClick={() => onGoto(target[0])}>{target[1]}</button>}
         </div>
         {p && (

@@ -23,6 +23,7 @@ import { PopupLayer } from './PopupLayer';
 import { ScreenRouter } from './ScreenRouter';
 import { chainFlags, usePopupQueue } from './usePopupQueue';
 import { useScreenHistory } from './useScreenHistory';
+import { CONTRACT_SCREEN_EVENT, ContractOpenReq } from '../screens/contract/contractOpen';
 
 /**
  * Automatisierte Oberflächentests (Playwright setzt navigator.webdriver): die Sperre „Weiter“
@@ -58,6 +59,14 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   const g = game;
   const myClub = g.clubs[g.managedClubId];
   const q = usePopupQueue(g, settings, rerender, setRunning);
+  // Verhandlungstisch (screens/contract/): von überall per Ereignis geöffnet, hält die Zeit an.
+  const [contractReq, setContractReq] = useState<(ContractOpenReq & { n: number }) | null>(null);
+  useEffect(() => {
+    let n = 0;
+    const on = (e: Event) => { const d = (e as CustomEvent<ContractOpenReq>).detail; if (d) { setRunning(false); setContractReq({ ...d, n: ++n }); } };
+    window.addEventListener(CONTRACT_SCREEN_EVENT, on);
+    return () => window.removeEventListener(CONTRACT_SCREEN_EVENT, on);
+  }, []);
 
   // --- Speichern ---
   const doSave = useCallback((slot?: string, name?: string) => {
@@ -90,7 +99,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   const drawOpenRef = useRef(false);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.code === 'Space' && !q.liveMatchId && !q.textMatch && !g.briefing?.pending && !g.budget?.pending && !drawOpenRef.current) {
+      if (e.code === 'Space' && !q.liveMatchId && !q.textMatch && !g.briefing?.pending && !g.budget?.pending && !drawOpenRef.current && !document.querySelector('.ct-root')) {
         const tag = (e.target as HTMLElement)?.tagName;
         if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
         e.preventDefault();
@@ -127,7 +136,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   const isScene = screen === 'stadium';
   // Kalender-Overlay (CalendarOverlay.tsx): nur solange die Zeit läuft und kein Popup offen ist.
   const calLive = running && !q.textMatch && !q.liveMatchId && !q.ratingCeremony && !q.popupHold && !q.devReveal
-    && q.drawQueue.length === 0 && !showSettings && !saveLoadMode && !clubEditorOpen && !q.indoorDue;
+    && q.drawQueue.length === 0 && !showSettings && !saveLoadMode && !clubEditorOpen && !q.indoorDue && !contractReq;
 
   return (
     // Vereinsprofil: jeder <ClubLink> im Spiel öffnet es (components/club/ClubProfileContext.tsx).
@@ -173,6 +182,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
           saveLoadMode, closeSaveLoad: () => setSaveLoadMode(null),
           clubEditorOpen, closeClubEditor: () => setClubEditorOpen(false),
           currentSlot, doSave, onLoad,
+          contractReq, closeContract: () => { setContractReq(null); rerender(); },
         }} />
     </div>
     </PlayerMenuProvider>

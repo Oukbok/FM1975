@@ -10,6 +10,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom';
 import PlayerModal, { type Tab } from '../PlayerModal';
 import { useClubProfile } from '../club/ClubLink';
+import { openContractScreen } from '../../screens/contract/contractOpen';
 import { startTalk } from '../../game/transferTalks';
 import { TransferTalkModal } from '../../views/transfers/TransferTalkModal';
 import type { Game } from '../../game/state';
@@ -83,7 +84,9 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
     const show = (tab: Tab) => () => { setProfile({ pid: p.id, tab }); close(); };
     items.push({ label: 'Spielerprofil', icon: 'squad', run: show('overview') });
     items.push({ label: 'Entwicklung', icon: 'training', run: show('development') });
-    items.push({ label: mine ? 'Vertrag verlängern' : 'Vertrag & Marktwert', icon: 'contracts', run: show('contract') });
+    items.push(mine && !p.isYouth
+      ? { label: 'Vertrag verlängern', icon: 'contracts', run: () => { openContractScreen({ kind: 'renew', pid: p.id }); close(); } }
+      : { label: 'Vertrag & Marktwert', icon: 'contracts', run: show('contract') });
     items.push({ label: 'Wünsche', icon: 'watchlist', run: show('wishes') });
     items.push({ label: 'Medizin', icon: 'facilities', run: show('medical') });
     if (mine && !p.isYouth) {

@@ -98,6 +98,8 @@ export interface Game {
   promiseTrust?: number;
   /** Fällige Raten und Erfolgsprämien aus Transfers (1975-Basis). */
   transferInstallments?: { due: string; amount: number; from: string; to: string; name: string; kind: 'rate' | 'bonus'; playerId?: string }[];
+  /** Vertragsverhandlung 2.0: Liga-Ebene/Klassenerhalt-Prämien (game/contractClausesGame.ts). */
+  contracts2?: import('./contractClausesGame').Contracts2State;
   /** Laufende Transferverhandlungen (game/transferTalks.ts). */
   transferTalks?: import('./transferTalks').TransferTalk[];
   /** Sperrzeiten der Vereinsereignisse (Typ → Datum). */

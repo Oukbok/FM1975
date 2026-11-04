@@ -20,6 +20,8 @@ export const fmtDMfull = (n: number) => formatMoney(n, _displayYear);
  */
 export const fmtPrice = (base: number) => formatMoneyShort(base * economyScale(_displayYear), _displayYear);
 export const fmtPriceFull = (base: number) => formatMoney(Math.round(base * economyScale(_displayYear)), _displayYear);
+/** Preisschild, kleine Beträge (unter 10.000 nominal) voll ausgeschrieben – z. B. Prämien je Einsatz. */
+export const fmtPriceAuto = (base: number) => (Math.abs(base * economyScale(_displayYear)) < 10000 ? fmtPriceFull(base) : fmtPrice(base));
 
 // -----------------------------------------------------------------------------
 // GEHÄLTER — intern immer Wochengehalt in 1975-Basis (`contract.weeklyWage`,

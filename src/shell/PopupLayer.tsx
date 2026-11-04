@@ -11,6 +11,7 @@ import { LazyWin } from './LazyFallback';
 import * as P from './lazyParts';
 import type { Screen } from './navigation';
 import { ChainFlags, markShownRead, PopupQueue } from './usePopupQueue';
+import type { ContractOpenReq } from '../screens/contract/contractOpen';
 
 export interface MenuWindows {
   chronicleOpen: boolean; closeChronicle: () => void;
@@ -20,6 +21,9 @@ export interface MenuWindows {
   currentSlot: string | null;
   doSave: (slot?: string, name?: string) => void;
   onLoad: (slot: string) => void;
+  /** Verhandlungstisch (screens/contract/), liegt über allem. */
+  contractReq: (ContractOpenReq & { n: number }) | null;
+  closeContract: () => void;
 }
 
 export function PopupLayer({ g, settings, onSettings, rerender, q, f, due, calLive, setRunning, quickSim, startText, finishText, setScreen, w }: {
@@ -122,6 +126,11 @@ export function PopupLayer({ g, settings, onSettings, rerender, q, f, due, calLi
           <P.RatingCeremony results={q.ratingCeremony.results} type={q.ratingCeremony.type} anlass={q.ratingCeremony.anlass}
             onClose={() => { q.setRatingCeremony(null); rerender(); }} />
         </LazyWin>
+      )}
+
+      {/* Verhandlungstisch: aus Profil/Rechtsklick/Nachrichten/Transferverhandlung geöffnet, über allen Fenstern. */}
+      {w.contractReq && (
+        <LazyWin><P.ContractScreen key={w.contractReq.n} g={g} req={w.contractReq} onClose={w.closeContract} onChange={rerender} /></LazyWin>
       )}
     </>
   );
