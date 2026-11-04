@@ -137,6 +137,7 @@ Werden beim Zusammenführen der Stränge ergänzt (Erstes Training, Trainingslag
 | Gesichter Mitarbeiter | `faces/staff/{1970,1990,2010}/{01..10}-55.webp` | Trainer/Berater/Funktionäre in Anzug oder Trainingsjacke der Zeit | 512×600, Alpha | Budget-Berater, Presse (Trainer), Manager im Assistenten |
 | Erstes Training | `promises/erstes-training.webp` | Trainingsauftakt: Spieler im Halbkreis um den Trainer auf dem Trainingsplatz, Hütchen, Zaun; entsättigt, kühl abgedunkelt, Querformat | 1200×340 | Kopf des Versprechen-Popups (Ersatz: gezeichneter Trainingsplatz) |
 | Auslosung | `draw/gala-buehne.webp` | Gala-Bühne mit Scheinwerfern und Lichtwänden, entsättigt, kühl | 1920×1080 | hinter der Auslosungs-Show (Ersatz: gezeichnete Bühne) |
+| Karriere | `career/manager-buero.webp` (optional) | Manager-Büro der Epoche (Schreibtisch, Vereinswimpel, Telefon), entsättigt, kühl abgedunkelt; derzeit nicht eingebunden – die Seite kommt ohne Bild aus | 1200×340 | denkbarer Kopf von Zentrale › Karriere |
 | Fanartikel | `merch/{schal,wimpel,magazin,poster,ball,musik,trikot,bekleidung,accessoires,video}.webp` | Freisteller auf dunklem Schiefer, 70er/80er-Look, ohne Logos | 384×384 | Sortiment (Ersatz: Icon) |
 | Fanartikel | `merch/lager.webp` | Lagerraum hinter dem Fanshop, Regale, Kartons, kühl | 480×480 | Box „Lager“ |
 | Kartenverkauf | `tickets/rasen.jpg` | Rasen von oben mit Mähstreifen, kühl, entsättigt | 1200×750 | Draufsicht der Tribünen (Platzhalter vorhanden) |
