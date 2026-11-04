@@ -223,3 +223,4 @@ button.sel3.sel3.sel3-l { height: var(--btn-h-l); min-height: var(--btn-h-l); fo
 .toggle.on::after { background: var(--text); }
 .ng-toggle.on .ng-switch { background: var(--sel-bg); border-color: var(--sel-border); }
 .ng-toggle.on .ng-switch::after { background: var(--text); }
+.dz-act.lead { margin: 0 10px 0 0; }

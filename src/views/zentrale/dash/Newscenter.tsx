@@ -83,7 +83,7 @@ export function Newscenter({ g, onGoto, onWatch, onChange, openPlayer }: {
                   <tr key={m.id} id={`dz-msg-${m.id}`} className={`dz-msg ${m.read ? '' : 'unread'} ${sel?.id === m.id ? 'me' : ''} ${head ? 'grp-start' : ''}`}
                     data-player={msgPlayer(g, m) ? '1' : '0'} onClick={() => open(m)}>
                     <td className="dz-ncol-grp">{head ? grp : ''}</td>
-                    <td className="dz-nsubj"><span>{m.subject}</span>{needsDecision(m) && <i className="dz-act" title="Entscheidung nötig">Entscheidung</i>}</td>
+                    <td className="dz-nsubj">{needsDecision(m) && <i className="dz-act lead" title="Entscheidung nötig">Entscheidung</i>}<span>{m.subject}</span></td>
                     <td className="dz-ncol-date">{dmy(m.date)}</td>
                     <td className="dz-ncol-cat">{CATEGORY_META[m.category]?.label ?? m.category}</td>
                   </tr>
