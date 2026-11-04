@@ -39,6 +39,7 @@ export function reasonText(k: string, v: number, p: Pick<Player, 'age'>, log?: D
       return log ? `kaum Spielpraxis (${min} min${res}${inj})` : 'kaum Spielpraxis';
     }
     case 'charakter': return up ? 'professionelle Einstellung und Ehrgeiz' : 'mangelnde Professionalität';
+    case 'tempo': return up ? 'lernt schnell' : 'lernt langsam';
     case 'umfeld': return up ? 'ruhiges, erfolgreiches Umfeld' : 'Unruhe im Verein';
     case 'moral': return up ? 'gute Moral' : 'schlechte Moral';
     case 'potenzial': return 'nahe an seinem Leistungsvermögen: die letzten Punkte sind die schwersten';

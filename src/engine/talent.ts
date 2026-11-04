@@ -34,12 +34,35 @@ function rawPotential(p: Player): number {
 
 /** Frühreife −1 (Spätentwickler) … +1 (frühreif). Große Talente zeigen sich eher früh. */
 export function maturity(p: Player): number {
+  const c = p.development?.clock;
+  if (c) return clamp(c.m, -1, 1); // fest eingestellte Körperuhr (Datensatz, game/legendFactory.ts)
   return clamp(tri(p.id + '|reife') * 0.8 + Math.max(0, rawPotential(p) - 86) * 0.06, -1, 1);
 }
 
 /** Langlebigkeit −1 … +1 (verschiebt den Abbau). */
 export function longevity(p: Player): number {
+  const c = p.development?.clock;
+  if (c) return clamp(c.l, -1, 1);
   return tri(p.id + '|dauer');
+}
+
+/**
+ * Entwicklungstempo 0–100 (verdeckt): wie schnell ein Spieler im Training lernt.
+ * Fehlt der Wert, entsteht er fest aus der Spieler-ID (20–80, mittig gehäuft).
+ */
+export function tempoOf(p: Player): number {
+  const t = p.development?.tempo;
+  return t != null ? clamp(t, 0, 100) : Math.round(50 + 30 * tri(p.id + '|tempo'));
+}
+
+/** Lernfaktor aus dem Entwicklungstempo: 0,8 (sehr langsam) … 1,0 (Mittel 50) … 1,2 (sehr schnell). */
+export function tempoFactor(p: Player): number {
+  return 0.8 + tempoOf(p) * 0.004;
+}
+
+/** Trainingsfleiß (Professionalität) in der Jugend: 0,85 … 1,15, Mittel ≈ 1. */
+export function diligenceFactor(p: Player): number {
+  return 0.85 + clamp(p.development?.professionalism ?? 55, 0, 100) * 0.0028;
 }
 
 /** Wachstumsfaktor der Profi-Entwicklung nach Alter und Frühreife. */

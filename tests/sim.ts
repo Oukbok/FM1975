@@ -19,6 +19,7 @@ import { roomAnalysis } from '../src/game/dressingRoomGame';
 import { histModeFromEnv, histSummary, histTrack } from './simHistory';
 import { budgetCheck, budgetInit, budgetSummary } from './simBudget';
 import { promBefore, promInit, promModeFromEnv, promSeasonEnd, promSeasonStart, promSummary } from './simPromises';
+import { legSummary, legTrack } from './simLegends';
 import { campAfter, campBefore, campInit, campModeFromEnv, campSeasonReport, campSeasonStart, campSummary } from './simCamp';
 
 const seasons = Number(process.argv[2] ?? 3);
@@ -31,6 +32,7 @@ const g: Game = createNewGame({
   managedClubId: process.env.CLUB ?? 'mgl',
   manager: { name: 'Sim', nationality: 'GER', birthYear: 1940, style: 'balanced', background: 'newcomer' } as any,
   difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300,
+  legends: process.env.LEG !== '0', // LEG=0: ohne Ausnahmetalente (Vergleich)
 });
 
 (g as any).simAutoManage = true; // eigener Verein wird wie ein KI-Verein gepflegt
@@ -469,6 +471,7 @@ for (let s = 0; s < seasons; s++) {
   if (histMode) histTrack(g);
   campSeasonReport(g);
   if (process.env.AWARDS) awardsReport(g);
+  if (process.env.LEGENDS) legTrack(g);
   const promSt = promSeasonEnd(g), promSeason = g.season;
   startNextSeason(g);
   campSeasonStart(g);
@@ -520,6 +523,7 @@ campSummary();
 promSummary();
 budgetSummary();
 if (process.env.TOP) { topSummary(); careerSummary(); }
+if (process.env.LEGENDS) legSummary(g);
 console.log(`fertig in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 // Diagnose: Wer ist ≥ 85?
 {

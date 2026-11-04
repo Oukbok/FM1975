@@ -86,6 +86,7 @@ export default function GeneralTab({ p }: { p: Player }) {
         <div className="pp2-hidden">
           <HiddenLine g={g} p={p} trait="konstanz" info="konstanz" />
           <HiddenLine g={g} p={p} trait="nerven" info="nervenstaerke" />
+          <HiddenLine g={g} p={p} trait="fleiss" info="trainingsfleiss" />
         </div>
       </Section>
     </div>
