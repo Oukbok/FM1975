@@ -21,7 +21,7 @@ export function TrainingPlanView({ g, onChange, onGoto }: { g: Game; onChange: (
   const [, setTick] = useState(0);
   const refresh = () => { setTick((t) => t + 1); onChange(); };
   return (
-    <SubTabsPage className="tr3-page" tabs={PLAN_TABS} active={tab} onSelect={setTab}>
+    <SubTabsPage className="tr3-page" tabsClassName="tr3-tabs" tabs={PLAN_TABS} active={tab} onSelect={setTab}>
       {tab === 'team' && <TeamTab g={g} refresh={refresh} onTab={setTab} />}
       {tab === 'players' && <PlayersTab g={g} refresh={refresh} />}
       {tab === 'groups' && <GroupsTab g={g} onGoto={(s) => onGoto?.(s)} />}

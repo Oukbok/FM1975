@@ -37,7 +37,7 @@ export function SponsoringView({ g, onGoto, onChange }: { g: Game; onGoto: (s: S
     banden: ctx.offers.filter((o) => o.slot === 'banden' || o.slot === 'wetten').length,
   };
   return (
-    <SubTabsPage className="sp3-page" active={tab} onSelect={setTab}
+    <SubTabsPage className="sp3-page" tabsClassName="sp3-tabs" active={tab} onSelect={setTab}
       tabs={TABS.map((t) => ({ ...t, count: counts[t.id] || undefined }))}>
       {tab === 'haupt' && <MainTab ctx={ctx} ui={ui} onTab={setTab} onGoto={onGoto} />}
       {tab === 'namen' && <NamingTab ctx={ctx} ui={ui} />}
