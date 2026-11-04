@@ -15,7 +15,9 @@ import { Game } from '../src/game/state';
 import { CalendarEngine, generateSeasonCalendar, seasonLabel } from '../src/engine/calendar';
 import { generateFixtures } from '../src/engine/league';
 import { createCup } from '../src/engine/cup';
-import { findWinterBreak } from '../src/engine/winterBreak';
+import { findWinterBreak, inCupWinterBreak } from '../src/engine/winterBreak';
+import { winterBreakFor } from '../src/data/winterBreaks';
+import { BreakCache } from '../src/game/indoorWindow';
 import { addD, dayDiff, matchdayBaseDates, wdOf } from '../src/engine/fixtureRules';
 import { addCupCalendarEvents, buildEuroCupsForSeason, cupDateSet, leagueDateSet } from '../src/game/competitions';
 import { euroFrameDates } from '../src/game/euroSetup';
@@ -48,6 +50,7 @@ const amIds = Object.keys(g.clubs).filter((id) => id.startsWith('am'));
 
 interface Stat { seasons: number; ppd: number; ppdWinter: number; moved: number; gap2: number; ppdOwn: number }
 const byEra = new Map<string, Stat>();
+let indoorAll = 0, indoorOwn = 0;
 const gapKinds: Record<string, number> = {};
 
 function buildSeason(y: number, tier: number, size: number) {
@@ -94,6 +97,23 @@ for (let y = 1975; y <= toYear; y++) {
       check(fin ? wdOf(r.date) === 6 || r.date > `${y + 1}-06-20` : era.cupDays.includes(wdOf(r.date)) || [2, 3, 4].includes(wdOf(r.date)), `${tag}: Pokal ${r.name} am ${r.date} (Wochentag ${wdOf(r.date)})`);
       check(r.date <= `${y + 1}-06-29`, `${tag}: Pokal ${r.name} nach Saisonende`);
     });
+    // Winterpause: kein Pokalspiel (auch keine Wiederholung) in der Pause; Halle nur in der
+    // Pause jedes Teilnehmers (nach seinem letzten Pflichtspiel davor, vor dem ersten danach).
+    for (const r of cup.rounds) for (const d of r.dates ?? [r.date]) check(!inCupWinterBreak(d, y), `${tag}: Pokal ${r.name} am ${d} in der Winterpause`);
+    {
+      const bc = new BreakCache(g);
+      for (const t of allTournaments(indoorState(g).current)) {
+        for (const id of t.clubIds) check(bc.fits(id, t.date, t.days), `${tag}: ${t.name} ${t.date} – ${id} nicht in der Winterpause (${JSON.stringify(bc.window(id))})`);
+        if (t.clubIds.includes(g.managedClubId)) indoorOwn++;
+        indoorAll++;
+      }
+      const wbL = findWinterBreak([...matchdayBaseDates(g.fixtures).values()], y);
+      const hist = winterBreakFor(y);
+      if (wbL && v.size === 18 && v.tier === 1) {
+        const w = dayDiff(wbL.last, wbL.first) / 7, hw = dayDiff(hist.last, hist.first) / 7;
+        check(Math.abs(w - hw) <= 1, `${tag}: Pause ${w.toFixed(1)} Wochen statt ${hw.toFixed(1)} (historisch)`);
+      }
+    }
     for (const comp of ['ec', 'cwc', 'uefa'] as EuroCompId[]) {
       const c = g.euroCups?.[comp]; const fmt = euroFormat(comp, y);
       if (!c || !fmt) continue;
@@ -149,6 +169,7 @@ for (const [k, s] of byEra) {
   console.log(`   ${k.padEnd(12)} ${String(s.seasons).padStart(7)}  ${(s.ppd / n).toFixed(1).padStart(14)} (${(s.ppdWinter / n).toFixed(1)})${''.padEnd(10)}${(s.ppdOwn / n).toFixed(1).padStart(6)}  ${(s.moved / n).toFixed(1).padStart(21)}  ${(s.gap2 / n).toFixed(1).padStart(14)}`);
 }
 console.log('   Abstand 2 Tage nach Art:', JSON.stringify(gapKinds));
+console.log(`   Hallenturniere geprüft: ${indoorAll} (mit eigenem Verein ${indoorOwn}) – alle Teilnehmer in ihrer Winterpause`);
 const eraRows = [...byEra.values()];
 if (eraRows.length >= 4) {
   const first = eraRows[0], last = eraRows[eraRows.length - 1];

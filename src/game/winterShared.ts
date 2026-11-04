@@ -10,6 +10,7 @@ import type { IndoorPhase } from '../data/indoorHistory';
 import type { IndoorResult, IndoorSquad, TourStat } from '../engine/indoor';
 import { CalendarEngine } from '../engine/calendar';
 import { findWinterBreak } from '../engine/winterBreak';
+import { clubBreakWindow } from './indoorWindow';
 import { Game } from './state';
 import type { CampFocus } from '../engine/trainingCamp';
 import type { CampProgram } from '../engine/campProgram';
@@ -227,11 +228,16 @@ export function ownCampDays(g: Game): Map<string, CampBooking> {
 }
 
 /**
- * Freies Winterfenster der laufenden Saison: zwei Tage nach dem letzten Spieltag vor
- * der Winterpause bis drei Tage vor dem ersten danach (Liga deines Vereins). Die Lage
- * der Pause kommt aus dem Spielplan (historisch je Saison, data/winterBreaks.ts).
+ * Freies Winterfenster der laufenden Saison: zwei Tage nach dem letzten Pflichtspiel vor
+ * der Winterpause bis drei Tage vor dem ersten danach – Liga, Landespokal und Europapokal
+ * deines Vereins (game/indoorWindow.ts). Die Lage der Liga-Pause kommt aus dem Spielplan
+ * (historisch je Saison, data/winterBreaks.ts). Andere Saison: nur die Liga.
  */
 export function winterWindow(g: Game, season = g.season): { from: string; to: string } {
+  if (season === g.season) {
+    const w = clubBreakWindow(g, g.managedClubId);
+    if (w) return w;
+  }
   const y0 = parseInt(season.slice(0, 4), 10);
   const wb = findWinterBreak(g.fixtures.map((m) => m.date), y0);
   if (!wb) return { from: `${y0}-12-07`, to: `${y0}-12-30` };

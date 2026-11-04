@@ -37,6 +37,7 @@ import { ensureYouthTeams } from './game/youthTeams';
 import { migrateAiClubs } from './game/aiClubs';
 import { migrateFinanceLevel } from './game/financeMigration';
 import { migrateWinter } from './game/winterShared';
+import { migrateIndoorDates } from './game/indoorGame';
 import { migrateGrounds } from './game/groundsGame';
 import { migrateSeating } from './game/seatingGame';
 import { migrateLeaguePool } from './game/clubPool';
@@ -343,6 +344,8 @@ export default function App() {
     try { migrateFinanceLevel(s.game); } catch (err) { console.error('Finanz-Umstellung fehlgeschlagen:', err); }
     // Hallenfußball + Trainingslager (v11 Sammel-Update): optionale Felder nachrüsten.
     try { migrateWinter(s.game); } catch (err) { console.error('Winter-Nachrüstung fehlgeschlagen:', err); }
+    // Hallentermine nur in der Winterpause (Wunsch Pascal): künftige Termine in Pflichtspielzeit verlegen/absagen.
+    try { migrateIndoorDates(s.game); } catch (err) { console.error('Hallentermine-Abgleich fehlgeschlagen:', err); }
     // Stadionumfeld (v11-Sammel-Update): Lage, Fläche, epochentypische Ausstattung nachrüsten.
     try { migrateGrounds(s.game); } catch (err) { console.error('Umfeld-Nachrüstung fehlgeschlagen:', err); }
     try { migrateSeating(s.game); } catch (err) { console.error('Platzkategorien-Nachrüstung fehlgeschlagen:', err); }
