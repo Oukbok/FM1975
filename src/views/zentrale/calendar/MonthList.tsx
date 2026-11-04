@@ -6,6 +6,7 @@ import type { StripEvent } from '../../../shell/CalendarStrip';
 import type { Screen } from '../../../shell/navigation';
 import { Empty } from '../../../ui/DashPage';
 import { WD_LABELS } from './calendarShared';
+import { eventKind } from './MonthGrid';
 
 export function MonthList({ g, days, dayEvents, onGoto }: {
   g: Game; days: string[]; dayEvents: Map<string, StripEvent[]>; onGoto: (s: Screen) => void;
@@ -28,7 +29,7 @@ export function MonthList({ g, days, dayEvents, onGoto }: {
           <div key={`${iso}-${i}`} className={cls.join(' ')} onClick={ev.screen ? () => onGoto(ev.screen!) : undefined}
             title={ev.screen ? 'Klicken zum Öffnen' : undefined}>
             <span className="rl-rank calm-date">{first ? <><span className="calm-wd">{wd}</span> {iso.slice(8, 10)}.{iso.slice(5, 7)}.</> : null}</span>
-            <span className="calm-kind">{ev.kind ?? ''}</span>
+            <span className={`calm-kind cal-k-${eventKind(ev).k}`}>{ev.kind ?? ''}</span>
             <span className="rl-club">
               {club ? <ClubCrest club={club} size={26} /> : <span className="calm-nocrest" aria-hidden="true" />}
               <span className="rl-name">{ev.line}</span>

@@ -20,21 +20,21 @@ for (const [w, h] of [[1920, 1080], [1366, 768]]) {
   for (let i = 0; i < 3 && await page.locator('.bf-continue').count(); i++) { await page.locator('.bf-continue').click(); await page.waitForTimeout(200); }
   await page.locator('.hd-nav-item:has-text("Zentrale")').first().click();
   await page.locator('.tn-sub-item:has-text("Kalender")').first().click();
-  await page.waitForSelector('.calm-grid');
+  await page.waitForSelector('.cal-grid-fill');
   const box = () => page.evaluate(() => { const b = document.querySelector('.app-main .dbox'); const r = b?.getBoundingClientRect(); return r ? `${Math.round(r.width)}×${Math.round(r.height)}` : ''; });
   const size0 = await box();
   const shot = async (n) => { await page.waitForTimeout(250); await page.screenshot({ path: `${outDir}/${prefix}_${w}_${n}.png` }); };
   await shot('raster');
-  await page.locator('.dchip:has-text("Liste")').click();
+  await page.locator('.b3:has-text("Liste")').click();
   await page.waitForSelector('.calm-list, .dbox .empty, .dempty', { timeout: 3000 }).catch(() => {});
   if (await box() !== size0) errors.push(`${w}: Box ändert die Größe Raster → Liste (${size0} → ${await box()})`);
   await shot('liste');
-  for (let m = 1; m <= 2; m++) { await page.locator('.dchip:has-text("Folgemonat")').click(); await shot(`liste_plus${m}`); }
-  await page.locator('.dchip:has-text("Raster")').click();
+  for (let m = 1; m <= 2; m++) { await page.locator('button[aria-label="Folgemonat"]').click(); await shot(`liste_plus${m}`); }
+  await page.locator('.b3:has-text("Raster")').click();
   await shot('raster_plus2');
   // Klick auf einen Termin → Seite
-  await page.locator('.dchip:has-text("Heute")').click();
-  await page.locator('.dchip:has-text("Liste")').click();
+  await page.locator('.cal-box .b3:has-text("Heute")').click();
+  await page.locator('.b3:has-text("Liste")').click();
   const row = page.locator('.calm-row.clickable').first();
   if (await row.count()) {
     const label = (await row.innerText()).replace(/\s+/g, ' ').slice(0, 60);
