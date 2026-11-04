@@ -18,8 +18,7 @@
 .tw-title { font-family: var(--font-display); font-size: 32px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; line-height: 1.1; }
 .tw-head-sub { color: var(--text-3); font-size: 15px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; padding-top: 6px; }
 .tw-select { display: inline-flex; align-items: center; gap: 10px; color: var(--text-3); font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
-.tw-select select { min-width: 210px; padding: 6px 10px; font-size: 15px; text-transform: none; letter-spacing: 0; }
-.tw-head .dchip { padding: 5px 14px; font-size: 14px; }
+.tw-select .sel3 { min-width: 210px; padding: 6px 10px; font-size: 15px; text-transform: none; letter-spacing: 0; }
 
 /* Reiter */
 .tw-tabs { display: flex; align-items: stretch; gap: 4px; padding: 0 24px; border-bottom: 1px solid var(--border); background: var(--bg-2); }
@@ -142,7 +141,7 @@
 .ps-sec-h { font-family: var(--font-display); font-size: 20px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 2px; display: flex; align-items: center; gap: 6px; }
 .ps-row { display: grid; grid-template-columns: 150px minmax(0, 1fr); align-items: center; gap: 10px; min-height: 34px; font-size: 15.5px; color: var(--text-2); }
 .ps-row > :last-child { min-width: 0; }
-.ps-row input[type="text"], .ps-row select, .ps-pair select, .ps-attr select { width: 100%; padding: 5px 8px; font-size: 15px; }
+.ps-row input[type="text"], .ps-row .sel3, .ps-pair .sel3, .ps-attr .sel3 { width: 100%; padding: 5px 8px; font-size: 15px; }
 .ps-pair { display: grid; grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 8px; }
 .ps-pair > span { color: var(--text-3); font-size: 13.5px; }
 .ps-num { width: 100%; padding: 5px 8px; font-size: 15px; text-align: right; }
@@ -153,7 +152,7 @@
 .ps-hint { color: var(--text-3); font-size: 13.5px; line-height: 1.35; }
 .ps-save { border: 1px solid var(--border-soft); border-radius: 6px; background: var(--bg-2); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
 .ps-save-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
-.ps-save-row input, .ps-save-row select { padding: 5px 8px; font-size: 15px; width: 100%; }
+.ps-save-row input, .ps-save-row .sel3 { padding: 5px 8px; font-size: 15px; width: 100%; }
 .ps-foot { display: flex; align-items: center; gap: 14px; padding: 12px 24px; border-top: 1px solid var(--border-soft); background: var(--bg-2); }
 .ps-foot .btn { min-width: 130px; }
 .ps-count { color: var(--text-3); font-size: 15px; }

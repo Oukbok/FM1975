@@ -781,7 +781,7 @@ export const INFO_TEXTS = {
   },
   prematch_aufstellung: {
     title: 'Schnelle Aufstellung',
-    text: 'Übernimm deine gespeicherte Aufstellung, lass den Co-Trainer nach Eignung die beste Elf und Bank aufstellen (Taktik bleibt) oder wechsle zur Aufstellung. Die Wahl gilt beim Anpfiff.',
+    text: 'Übernimm deine gespeicherte Aufstellung, lass den Co-Trainer nach Eignung die beste Elf und Bank aufstellen (Taktik bleibt) oder wechsle zur Aufstellung. Die Wahl gilt beim Anpfiff. Hast du Plätze leer gezogen, besetzt sie der Co-Trainer beim Anpfiff mit dem Passendsten.',
     wiki: 'match',
   },
   prematch_zuschauer: {
@@ -801,8 +801,8 @@ export const INFO_TEXTS = {
   },
   positionstraining: {
     title: 'Positionstraining',
-    text: 'Dein Trainerteam schult den Spieler zusätzlich auf einer zweiten Position. Training allein hebt die Vertrautheit nur bis zu einer Grenze – den Rest holt er sich mit Einsatzminuten auf dieser Position.',
-    wiki: 'player-profile',
+    text: 'Dein Trainerteam schult den Spieler zusätzlich auf einer zweiten Position – etwa +15 Vertrautheit je Saison, höchstens bis 85. Viel schneller lernt er durch Einsätze dort (eine Saison Stammplatz ≈ +40, verwandte Rollen etwas mehr); ab 80 geht es deutlich langsamer.',
+    wiki: 'position-skill',
   },
   spielerentwicklung: {
     title: 'Spielerentwicklung',

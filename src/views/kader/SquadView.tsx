@@ -10,9 +10,11 @@ import { PlayerFitness, PlayerForm, PlayerFreshness, PlayerMorale, MORALE_100, p
 import { InfoTip } from '../../ui/InfoTip';
 import { GROUP_DE, PlayerRow, ScoutStars, avg, groupOf, scoutMid } from '../shared';
 import { useState } from 'react';
+import { SubTabsPage, useSubTab } from '../../ui/SubTabs';
 import { demandFor, offerContract } from '../../game/contracts';
 import Icon from '../../components/Icon';
 import { PlayerTalkModal } from './talk/PlayerTalkModal';
+import PosBadge from '../../components/PosBadge';
 
 // =============================================================================
 // KADER — sortierbare Kadertabelle, Kaderstruktur, Verfügbarkeit
@@ -25,7 +27,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
   const [sel, setSel] = useState<string | null>(null);
   const [talk, setTalk] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SquadSort>('pos');
-  const [grp, setGrp] = useState<string>('all');
+  const [grp, setGrp] = useSubTab<string>('kader.uebersicht', 'all');
   const club = g.clubs[g.managedClubId];
   const all = club.playerIds.map((id) => g.players[id]).filter(Boolean);
   // Spieltagskader: Startelf (lineupMap) und Bank (substitutes) farbig hinterlegt.
@@ -59,13 +61,16 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
   const tired = [...all].filter((x) => (x.frische ?? 100) < 80).sort((a, b) => (a.frische ?? 100) - (b.frische ?? 100)).slice(0, 5);
   const wages = all.reduce((s, x) => s + x.contract.weeklyWage, 0);
 
+  // Drittes Menü: Mannschaftsteile (ui/SubTabs)
+  const tabs = [{ id: 'all', label: 'Alle', count: all.length },
+    ...GROUP_ORDER.map((k) => ({ id: k, label: GROUP_DE[k], count: all.filter((x) => groupOf(x) === k).length }))];
+
   return (
+    <SubTabsPage tabs={tabs} active={grp} onSelect={setGrp}>
     <DashPage>
-      <DashBox title={`Kader (${all.length})`} icon="squad" span={2} rows={2} flush
+      <DashBox title={grp === 'all' ? `Kader (${all.length})` : `${GROUP_DE[grp]} (${squad.length})`} span={2} rows={2} flush
         right={<span className="dbtnrow">
           <span className="sq-legend"><span><i className="xi" />Startelf</span><span><i className="bench" />Bank</span></span>
-          <button className={`dchip ${grp === 'all' ? 'on' : ''}`} onClick={() => setGrp('all')}>Alle</button>
-          {GROUP_ORDER.map((k) => <button key={k} className={`dchip ${grp === k ? 'on' : ''}`} onClick={() => setGrp(k)}>{GROUP_DE[k]}</button>)}
         </span>}>
         <table className="dtable rl-players">
           <thead><tr>
@@ -80,7 +85,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
                 <tr key={pl.id} data-pid={pl.id} className={`clickable ${roleCls(pl.id)}`} onClick={() => setSel(pl.id)}>
                   <td className="rl-rank">{pl.shirtNumber}</td>
                   <td className="nowrap rl-name">{pl.fullName}</td>
-                  <td className="ctr"><span className="pos-badge">{pl.naturalPosition}</span></td>
+                  <td className="ctr"><PosBadge p={pl} /></td>
                   <td className="num">{pl.age}</td>
                   <td className="num"><b style={{ color: vColor(pl.overall) }}>{pl.overall}</b></td>
                   <td className="nowrap"><ScoutStars p={pl} /></td>
@@ -133,5 +138,6 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
       {p && <PlayerModal player={p} club={club} squad={all} today={g.calendar.currentDate} season={g.season} onClose={() => setSel(null)}
         negotiation={{ demand: (x) => demandFor(g, x), offer: (x, w, y) => { const r = offerContract(g, x.id, w, y); onChange?.(); return r; } }} />}
     </DashPage>
+    </SubTabsPage>
   );
 }

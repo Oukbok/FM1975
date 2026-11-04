@@ -131,23 +131,50 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   const [screen, setScreenRaw] = useState<Screen>('dashboard');
   // Chronik ist kein Menüpunkt mehr: 'chronicle' öffnet das große Fenster (Footer rechts).
   const [chronicleOpen, setChronicleOpen] = useState(false);
-  // Verlauf für „Zurück“ (bis zu 20 Seiten); wird geleert, sobald Zeit vergeht (neuer Tag).
-  const [history, setHistory] = useState<Screen[]>([]);
+  // Verlauf für „Zurück“/„Vorwärts“ (je bis zu 20 Seiten); wird geleert, sobald Zeit vergeht (neuer Tag).
+  const [hist, setHist] = useState<{ back: Screen[]; fwd: Screen[] }>({ back: [], fwd: [] });
+  const histRef = useRef(hist);
+  histRef.current = hist;
   const screenRef = useRef<Screen>('dashboard');
   useEffect(() => { screenRef.current = screen; }, [screen]);
   const setScreen = useCallback((s: Screen) => {
     if (s === 'chronicle') { setChronicleOpen(true); return; }
     const cur = screenRef.current;
-    if (s !== cur) setHistory((h) => [...h, cur].slice(-20));
+    if (s !== cur) setHist((h) => ({ back: [...h.back, cur].slice(-20), fwd: [] }));
+    screenRef.current = s;
     setScreenRaw(s);
   }, []);
   const goBack = useCallback(() => {
-    setHistory((h) => {
-      if (!h.length) return h;
-      setScreenRaw(h[h.length - 1]);
-      return h.slice(0, -1);
-    });
+    const h = histRef.current;
+    if (!h.back.length) return;
+    const to = h.back[h.back.length - 1];
+    const cur = screenRef.current;
+    setHist({ back: h.back.slice(0, -1), fwd: [...h.fwd, cur].slice(-20) });
+    screenRef.current = to;
+    setScreenRaw(to);
   }, []);
+  const goForward = useCallback(() => {
+    const h = histRef.current;
+    if (!h.fwd.length) return;
+    const to = h.fwd[h.fwd.length - 1];
+    const cur = screenRef.current;
+    setHist({ back: [...h.back, cur].slice(-20), fwd: h.fwd.slice(0, -1) });
+    screenRef.current = to;
+    setScreenRaw(to);
+  }, []);
+  // Tastatur: Alt+← / Alt+→ (nicht in Eingabefeldern)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (!e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      e.preventDefault();
+      if (e.key === 'ArrowLeft') goBack(); else goForward();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [goBack, goForward]);
   // i-Hilfen: „Mehr im Wiki“ öffnet den Artikel (ui/InfoTip.tsx)
   const [wikiArticle, setWikiArticle] = useState<{ id: string; n: number } | null>(null);
   useEffect(() => setWikiOpener((id) => { setWikiArticle((w) => ({ id, n: (w?.n ?? 0) + 1 })); setScreen('wiki'); }), []);
@@ -285,7 +312,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
     return ok;
   }, [g, settings.autosave, settings.drawShow, settings.transferWindowShow, settings.indoorShow, settings.matchReport, doSave, myClub]);
 
-  useEffect(() => { setHistory([]); }, [g.calendar.currentDate]);
+  useEffect(() => { setHist({ back: [], fwd: [] }); }, [g.calendar.currentDate]);
 
   useEffect(() => {
     if (!running) return;
@@ -497,7 +524,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
       </header>
 
       {/* ---------------- UNTERMENÜ (Unterpunkte der aktiven Kategorie) ---------------- */}
-      <TopNav screen={screen} setScreen={setScreen} dateLabel={fmtDateFull(g.calendar.currentDate)} onBack={history.length ? goBack : undefined} />
+      <TopNav screen={screen} setScreen={setScreen} dateLabel={fmtDateFull(g.calendar.currentDate)} onBack={hist.back.length ? goBack : undefined} onForward={hist.fwd.length ? goForward : undefined} />
 
       {/* ---------------- HAUPTINHALT ---------------- */}
       <main className="app-main">

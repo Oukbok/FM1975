@@ -54,7 +54,7 @@ for (const [w, h] of [[1920, 1080], [1366, 768]]) {
   await shot('allgemein_manuell');
   await page.locator('.mc-auto input').click();
   // Statistiken
-  await page.locator('.mc-tabs .seg-btn:has-text("Statistiken")').first().click();
+  await page.locator('.sub3-tabs .tab:has-text("Statistiken")').first().click();
   await page.waitForTimeout(400);
   const bar = page.locator('.mc-chart-plot svg g').last();
   if (await bar.count()) await bar.hover().catch(() => {});

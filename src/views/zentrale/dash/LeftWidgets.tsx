@@ -16,6 +16,7 @@ import { condBar, condColor, fmtDM, fmtPrice, vColor, zoneClass } from '../../..
 import { InfoTip } from '../../../ui/InfoTip';
 import { Crest, clubShort } from '../presse/parts';
 import { absences, budgetOf, ownGames, teamStatus } from './data';
+import PosBadge from '../../../components/PosBadge';
 
 type Go = (s: Screen) => void;
 
@@ -149,7 +150,7 @@ function AbsenceWidget({ g, onGoto, openPlayer }: { g: Game; onGoto: Go; openPla
           <span className="dz-th">Spieler</span><span className="dz-th" /><span className="dz-th dz-r">Dauer noch</span>
           {list.slice(0, 6).map((a) => (
             <div key={a.p.id + a.kind} className="dz-tr clickable" onClick={(e) => { e.stopPropagation(); openPlayer(a.p.id); }}>
-              <span className="dz-cn"><span className="pos-badge">{a.p.naturalPosition}</span> {a.p.lastName || a.p.fullName}</span>
+              <span className="dz-cn"><PosBadge p={a.p} single /> {a.p.lastName || a.p.fullName}</span>
               <span className={`dz-tag ${a.kind}`}>{a.kind === 'injury' ? 'Verletzt' : 'Gesperrt'}</span>
               <span className="dz-r">{a.text}</span>
             </div>

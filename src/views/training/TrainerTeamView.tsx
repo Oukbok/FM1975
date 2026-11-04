@@ -10,6 +10,7 @@ import { DashBox, DashPage, Empty, Kpi } from '../../ui/DashPage';
 import { fmtDMfull as fmtDM, fmtDM as fmtDMshort } from '../../ui/format';
 import { PersonDetail, QBar, StaffNegotiation, originText, topSkills } from './teamParts';
 import { useState } from 'react';
+import Select from '../../ui/Select';
 
 // =============================================================================
 // TRAINING › TRAINERTEAM — dein Team (Stärken, Vertrag, Gehalt) und der
@@ -77,10 +78,10 @@ export function TrainerTeamView({ g, onChange }: { g: Game; onChange: () => void
 
       <DashBox title="Arbeitsmarkt" icon="staff" span={2}
         right={<span className="tt-filter">
-          <select className="tt-select" value={role} onChange={(e) => setRole(e.target.value)}>
+          <Select className="tt-select" value={role} onChange={(v) => setRole(v)}>
             <option value="all">Alle Rollen</option>
             {TEAM_ROLES.filter((r) => avail.includes(r.id)).map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}
-          </select>
+          </Select>
           <button className={`dchip ${onlyFree ? 'on' : ''}`} onClick={() => setOnlyFree((v) => !v)}>nur vereinslos</button>
         </span>}>
         {market.length ? (

@@ -20,6 +20,7 @@ import ClubCrest from './ClubCrest';
 import JerseySVG from './JerseySVG';
 import { defaultKit } from '../data/kits';
 import { getClubOverrideForClub, setClubOverride, KitOverride } from '../data/clubOverrides';
+import Select from '../ui/Select';
 
 /** Maximale Kantenlänge des gespeicherten Wappens (localStorage schonen). */
 const MAX_CREST_PX = 256;
@@ -184,15 +185,15 @@ function KitEditor({
             </label>
             <label className="ce-field">
               <span className="ce-field-lbl">Muster</span>
-              <select
+              <Select
                 className="ce-select"
                 value={state.design.pattern}
-                onChange={(e) => onChange({ ...state, design: { ...state.design, pattern: e.target.value as KitPattern } })}
+                onChange={(v) => onChange({ ...state, design: { ...state.design, pattern: v as KitPattern } })}
               >
                 {PATTERN_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>{o.label}</option>
                 ))}
-              </select>
+              </Select>
             </label>
           </>
         ) : (
@@ -325,17 +326,17 @@ export default function ClubEditorModal({
           <section className="ce-section">
             <label className="ce-field ce-team-pick">
               <span className="ce-field-lbl">Verein</span>
-              <select
+              <Select
                 className="ce-select"
                 value={selectedId}
-                onChange={(e) => setSelectedId(e.target.value)}
+                onChange={(v) => setSelectedId(v)}
               >
                 {sortedClubs.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}{c.id === club.id ? ' (dein Verein)' : ''}
                   </option>
                 ))}
-              </select>
+              </Select>
             </label>
           </section>
 

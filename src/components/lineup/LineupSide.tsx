@@ -7,6 +7,7 @@ import type { Formation } from '../../data/formations';
 import { suitabilityColor } from '../../engine/positions';
 import { KV, Meter } from '../../ui/DashPage';
 import type { Hint } from './lineupOps';
+import Select from '../../ui/Select';
 
 export const STYLE_DE: Record<string, string> = { defensive: 'Defensiv', balanced: 'Ausgewogen', attacking: 'Offensiv', counter: 'Konter' };
 export const STYLE_DESC: Record<string, string> = {
@@ -69,11 +70,11 @@ export function RolesAndHints({ t, xi, hints, set }: { t: Tactics; xi: Player[];
           return (
             <label key={key} className="lu-role">
               <span>{label}</span>
-              <select value={xi.some((p) => p.id === v) ? v : ''} data-role={key}
-                onChange={(e) => set({ [key]: e.target.value || null } as Partial<Tactics>)}>
+              <Select value={xi.some((p) => p.id === v) ? v : ''} data-role={key}
+                onChange={(v) => set({ [key]: v || null } as Partial<Tactics>)}>
                 <option value="">{key === 'captainId' ? 'keiner' : 'automatisch (Bester)'}</option>
                 {sorted.map((p) => <option key={p.id} value={p.id}>{p.lastName} ({Math.round(p.attributes[attr])})</option>)}
-              </select>
+              </Select>
             </label>
           );
         })}

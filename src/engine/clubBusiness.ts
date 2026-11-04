@@ -158,10 +158,11 @@ export function advanceStadiumProject(club: Club, date: string): string | null {
 // Namensrechte (ab 2000)
 // -----------------------------------------------------------------------------
 export const NAMING_RIGHTS_YEAR = 2000;
-const FIRMS = [
+// Fiktive Firmen (keine echten Marken; Prüfung npm run test:names).
+export const NAMING_FIRMS = [
   'Nordlicht Versicherung', 'Rheintal Energie', 'Hanse Logistik', 'Alpenblick Bank', 'Kronenquell Brauerei',
-  'Westfalen Stahl', 'Mainufer Finanz', 'Elbe Telekom', 'Lindenhof Autohaus', 'Sonnwerk Solar', 'Brückner Bau',
-  'Taunus Software', 'Weserwerft', 'Spreeblick Medien', 'Bergland Mobilfunk', 'Isartal Versand',
+  'Lippetal Stahl', 'Mainufer Finanz', 'Elbe Funknetz', 'Lindenhof Autohaus', 'Sonnwerk Solar', 'Steinhauer Bau',
+  'Taunus Software', 'Weserkai Werft', 'Spreeblick Medien', 'Bergland Mobilfunk', 'Isartal Versand',
 ];
 const ARENA = ['Arena', 'Park', 'Stadion', 'Sportpark'];
 
@@ -178,10 +179,10 @@ export function namingOffers(club: Club, year: number, season: string): NamingRi
   const out: NamingRights[] = [];
   const used = new Set<number>();
   for (let i = 0; i < 3; i++) {
-    let k = hash(`${club.id}:${season}:${i}`) % FIRMS.length;
-    while (used.has(k)) k = (k + 1) % FIRMS.length;
+    let k = hash(`${club.id}:${season}:${i}`) % NAMING_FIRMS.length;
+    while (used.has(k)) k = (k + 1) % NAMING_FIRMS.length;
     used.add(k);
-    const firm = FIRMS[k];
+    const firm = NAMING_FIRMS[k];
     const years = [3, 5, 8][i];
     const factor = [0.9, 1, 1.12][i] * (0.9 + (hash(`${firm}:${season}`) % 20) / 100);
     const word = ARENA[hash(firm) % ARENA.length];
@@ -203,7 +204,8 @@ export function namingAnnualNominal(nr: NamingRights, club: Club, year: number):
 // -----------------------------------------------------------------------------
 export const CORPORATE_YEAR = 1998;
 export const MAX_INVESTOR_SHARE = 49;
-const INVESTORS = ['Kessler Holding', 'Brandt & Söhne Beteiligungen', 'Atlas Sportkapital', 'Vogelsang Industrie', 'Meridian Partners', 'Falkenstein Gruppe'];
+// Fiktive Firmen (keine echten Marken; Prüfung npm run test:names, Umbenennung alter Stände data/sponsorRenames.ts).
+export const INVESTORS = ['Brennecke Holding', 'Rosenbaum & Söhne Beteiligungen', 'Atlas Sportkapital', 'Falkenried Industrie', 'Lindwurm Partners', 'Falkenstein Gruppe'];
 
 /** Einmaliges Kapital der Ausgliederung (Anteile an Fans, Sponsoren, Mitglieder): 12 % des Umsatzes. */
 export function corporateCapital(revenue: number): number {

@@ -91,8 +91,6 @@
 .dz-nh-title { font-family: var(--font-display); font-size: 30px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--text); }
 .dz-nh-count { font-family: var(--font-display); font-size: 19px; color: var(--text-2); margin-left: 10px; }
 .dz-nh-act { margin-left: auto; display: flex; gap: 8px; }
-.dz-nh-act .dchip { font-size: 14px; padding: 4px 12px; border-radius: 4px; }
-.dz-nh-act .dchip:not(:disabled):hover { color: var(--text); border-color: var(--text-3); }
 .dz-nbody { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 24px; padding-top: 8px; }
 .dz-nlist { min-height: 0; overflow-y: auto; }
 .dz-ntable { width: 100%; table-layout: fixed; border-collapse: collapse; }
@@ -125,8 +123,6 @@
 .dz-rtext .dsec { margin-top: 14px; }
 .dz-rfoot { display: flex; align-items: flex-end; gap: 14px; padding-top: 10px; border-top: 1px solid var(--border-soft); min-height: 52px; }
 .dz-rlinks { display: flex; flex-wrap: wrap; gap: 8px; }
-.dz-rlinks .dchip { font-size: 14px; padding: 5px 12px; border-radius: 4px; }
-.dz-rlinks .dchip:hover { color: var(--text); border-color: var(--text-3); }
 .dz-rface {
   margin-left: auto; display: flex; flex-direction: column; align-items: center; gap: 2px;
   background: none; border: none; cursor: pointer; color: var(--text); padding: 0; font: inherit;

@@ -15,6 +15,7 @@ import { MoraleIcon } from '../../components/status';
 import { RoomPyramid } from './kabine/RoomPyramid';
 import { FactorList, MoodSpark, PlayerFocus, TeamActions } from './kabine/RoomParts';
 import { PromisesTab } from './promises/PromisesTab';
+import PosBadge from '../../components/PosBadge';
 
 type Sort = 'einfluss' | 'moral';
 type Tab = 'massnahmen' | 'vorfaelle' | 'verlauf' | 'versprechen';
@@ -75,7 +76,7 @@ export function DressingRoomView({ g, onChange }: { g: Game; onChange: () => voi
               const s = Math.round(p.moraleScore ?? 60);
               return (
                 <tr key={o.id} className={`clickable ${o.id === selected ? 'kb-sel' : ''}`} onClick={() => setSel(o.id)}>
-                  <td><span className="pos-badge">{p.naturalPosition}</span></td>
+                  <td><PosBadge p={p} /></td>
                   <td className="kb-td-name">{p.lastName}{o.id === dr.captainId ? ' (K)' : dr.council?.includes(o.id) ? ' (R)' : ''}{o.outsiderWhy[0] && <span className="muted"> · {o.outsiderWhy[0]}</span>}</td>
                   <td className="muted nowrap">{TIER_LABEL[o.tier]}</td>
                   <td className="num"><span className="kb-mini"><i style={{ width: `${o.influence}%` }} /></span>{o.influence}</td>

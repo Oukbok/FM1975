@@ -4,6 +4,7 @@ import { Player } from '../../types';
 import { DashBox, Empty, KV } from '../../ui/DashPage';
 import { fmtDM, fmtDateShort } from '../../ui/format';
 import { ClubTabProps, PlacementChart } from './shared';
+import PosBadge from '../PosBadge';
 
 const TITLE_ORDER: TitleKind[] = ['meister', 'ddr', 'pokal', 'ec', 'cwc', 'uefa', 'halle', 'uyl', 'jugendA', 'jugendB', 'jugendPokal', 'jugendDdr', 'jugendC', 'jugendD', 'jugendE', 'jugendF'];
 const COMP_DE = { L: 'Liga', P: 'Pokal', E: 'Europa' } as const;
@@ -122,7 +123,7 @@ export default function HistoryTab({ g, d, openPlayer }: ClubTabProps) {
 function Rec({ p, value, onClick, away }: { p: Player; value: string; onClick: () => void; away: boolean }) {
   return (
     <div className="dlist-row clickable" onClick={onClick}>
-      <span className="pos-badge">{p.naturalPosition}</span>
+      <PosBadge p={p} compact />
       <span className="grow">{p.fullName}{away && <span className="muted"> · ehemalig</span>}</span>
       <span className="val">{value}</span>
     </div>
@@ -132,7 +133,7 @@ function Rec({ p, value, onClick, away }: { p: Player; value: string; onClick: (
 function TransferRow({ p, fee, date, other, dir, onClick }: { p: Player; fee: number; date: string; other: string; dir: string; onClick: () => void }) {
   return (
     <div className="dlist-row clickable" onClick={onClick}>
-      <span className="pos-badge">{p.naturalPosition}</span>
+      <PosBadge p={p} compact />
       <span className="grow">{p.fullName}<span className="muted"> · {dir} {other} · {date.slice(0, 4)}</span></span>
       <span className="val">{fmtDM(fee)}</span>
     </div>

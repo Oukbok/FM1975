@@ -7,14 +7,7 @@
 /* --- Seite + Reiter --- */
 /* Tönung der Kachelflächen: Anteil der Kennfarbe × --trk-k */
 .tr3-page, .tp-ghost { --trk-k: 1; }
-.tr3-page { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
-.tr3-tabs {
-  margin: 8px 2.5% 0; flex: 0 0 auto; padding: 0 8px;
-  background: linear-gradient(180deg, rgba(27, 32, 41, 0.92), rgba(16, 20, 27, 0.94));
-  border: 1px solid var(--border-soft); border-radius: 6px;
-}
-.tr3-tabs .tab { font-family: var(--font-display); font-weight: 500; font-size: 15px; letter-spacing: 1.2px; text-transform: uppercase; padding: 10px 22px; }
-.tr3-page > .dpage { padding-top: 22px; padding-bottom: 34px; row-gap: 22px; }
+/* Reiterleiste = drittes Menü: ui/SubTabs.tsx, CSS 28-subtabs.css */
 
 /* Kennfarbe je Bausteingruppe */
 .trk-fit { --trk: var(--trc-fit); --trk-k: .55; } /* Rot nur zart tönen – kein warmer Schleier */
@@ -24,7 +17,7 @@
 
 .tr3-lbl { font-size: 13px; color: var(--text-3); text-transform: none; letter-spacing: 0; font-family: var(--font-ui); font-weight: 500; }
 .tp-weeknav { display: inline-flex; gap: 8px; align-items: center; }
-.tp-weeknav select { max-width: 240px; }
+.tp-weeknav .sel3 { max-width: 240px; }
 .tr3-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 7px 14px;
   border: 1px solid var(--border); border-radius: 6px; background: var(--panel-2); color: var(--text);
@@ -36,7 +29,8 @@
 .tr3-sec { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
 
 /* =============================== Mannschaftstraining =============================== */
-.dpage.tr3-team { grid-template-columns: 59% 35.5%; column-gap: 2%; }
+/* fr statt %: beide Boxen enden bündig mit der Reiterleiste (Regel drittes Menü) */
+.sub3-page > .dpage.tr3-team { grid-template-columns: minmax(0, 59fr) minmax(0, 35.5fr); column-gap: 2.1%; }
 .tr3-weekbox .dbox-body { display: flex; flex-direction: column; gap: 0; min-height: 0; }
 
 /* Mappenreiter über dem Ringbuch */

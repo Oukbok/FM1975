@@ -216,7 +216,7 @@
 .tm-cs-left { display: flex; flex-direction: column; min-height: 0; gap: 10px; }
 .tm-cs-lhead { display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center; font-size: 17px; color: var(--text-2); }
 .tm-cs-lhead b { color: var(--text); font-family: var(--font-display); font-size: 22px; font-weight: 600; }
-.tm-cs-lhead select, .tm-sys-head select { font: inherit; font-size: 17px; padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text); min-width: 220px; }
+.tm-cs-lhead .sel3, .tm-sys-head .sel3 { font: inherit; font-size: 17px; padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text); min-width: 220px; }
 .tm-cs-table { flex: 1; min-height: 0; display: flex; flex-direction: column; border-radius: 6px; background: var(--panel); border: 1px solid var(--border); }
 .tm-cs-row { display: grid; grid-template-columns: 40px 54px 54px minmax(0, 1fr) 54px 46px 40px 46px 42px 46px 112px; gap: 8px; align-items: center; padding: 4px 14px; font-size: 16px; border-bottom: 1px solid var(--border-soft); cursor: pointer; }
 .tm-cs-row > span:nth-child(n+5) { text-align: center; }
@@ -258,6 +258,11 @@
 .tm-sys-b:hover { background: var(--panel-hover); }
 .tm-sys-b.sel { background: var(--accent-soft); box-shadow: inset 0 0 0 2px var(--accent); }
 .tm-sys-b.raus .tm-sys-name { color: var(--red); }
+.tm-sys-slot, .tm-sys-b { touch-action: none; }
+.tm-sys-slot.over, .tm-sys-b.over { background: var(--accent-soft); box-shadow: 0 0 0 2px var(--accent); }
+.tm-sys-bench { border-radius: 6px; outline: 1px dashed transparent; outline-offset: 2px; }
+.tm-sys-bench.live { outline-color: var(--border); }
+.tm-sys-bench.no { outline: 2px solid var(--neg); }
 .tm-sys-ghost { position: absolute; z-index: 20; transform: translate(-50%, -50%); pointer-events: none; display: flex; flex-direction: column; align-items: center; font-size: 15px; font-weight: 600; opacity: 0.9; }
 
 /* Ansprache, Gespräche, Spiel-Taktik */

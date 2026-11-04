@@ -5,6 +5,7 @@ import { ensureEnvironment } from '../../game/environmentGame';
 import type { Game } from '../../game/state';
 import type { Player } from '../../types';
 import { ageAtStart, fullName, managerFace, type NewGameDraft } from './draft';
+import PosBadge from '../../components/PosBadge';
 
 // Schritt 6: Willkommen bei deinem Verein — echte Werte aus der eben erzeugten Spielwelt
 const elf = (g: Game, ids: string[]) => ids.map((id) => g.players[id]).filter(Boolean).sort((a, b) => b.overall - a.overall);
@@ -69,14 +70,14 @@ export function StepWelcome({ d, game }: { d: NewGameDraft; game: Game | null })
             <PlayerAvatar player={best} club={club} size={120} />
             <div>
               <b>{best.fullName}</b>
-              <small><span className="pos-badge">{best.naturalPosition}</span> {best.age} Jahre · {best.nationality}</small>
+              <small><PosBadge p={best} single /> {best.age} Jahre · {best.nationality}</small>
               <div className="ng-best-ovr">{best.overall}<span>Stärke</span></div>
             </div>
           </div>
           <div className="rl rl-sm rl-players ng-keyplayers">
             {squad.slice(1, 5).map((p) => (
               <div key={p.id} className="rl-row" data-pid={p.id}>
-                <span className="rl-rank"><span className="pos-badge">{p.naturalPosition}</span></span>
+                <span className="rl-rank"><PosBadge p={p} single /></span>
                 <span className="rl-name">{p.fullName}</span>
                 <span className="rl-num">{p.age} J.</span>
                 <span className="rl-main">{p.overall}</span>

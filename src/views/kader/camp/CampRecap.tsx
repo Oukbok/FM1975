@@ -13,6 +13,7 @@ import { campFocusLabel } from '../../../game/trainingCampGame';
 import type { Game } from '../../../game/state';
 import { CampPlayerDelta, campState } from '../../../game/winterShared';
 import { fmtDM, fmtDay } from '../../../ui/format';
+import PosBadge from '../../../components/PosBadge';
 
 export const RECAP_MS = 12500;
 const sgn = (v: number, dig = 1) => `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(dig).replace('.', ',')}`;
@@ -23,7 +24,7 @@ function PlayerLine({ p, k, bad }: { p: CampPlayerDelta; k: number; bad?: boolea
   ].filter(Boolean);
   return (
     <li className={`cr-pl ${bad ? 'bad' : ''}`} style={{ ['--k' as string]: k }}>
-      <span className="pos-badge">{p.pos}</span>
+      <PosBadge pos={p.pos} />
       <span className="cr-pl-name">{p.name}{p.youth ? <em> · Jugend</em> : null}</span>
       <span className="cr-pl-what">{parts.join(' · ') || 'blieb zu Hause'}</span>
     </li>

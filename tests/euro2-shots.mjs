@@ -9,6 +9,7 @@ import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { chromium } from 'playwright';
+import { pickOption, optionsOf, valueOf } from './select3.mjs';
 
 const outDir = process.argv[2] || 'test-output/euro2';
 const prefix = process.argv[3] || 'e2';
@@ -100,11 +101,11 @@ if (mode === 'groups') {
     if (await gr.isVisible().catch(() => false)) { await gr.click(); await page.waitForTimeout(400); await shot('04_spieltage'); }
   }
   // Andere Wettbewerbe der Saison (Europa-Pokal mit Gruppendritten)
-  const sel = page.locator('.cmp-select select').nth(1);
-  const opts = await sel.locator('option').allInnerTexts();
+  const sel = page.locator('.cmp-select .sel3').nth(1);
+  const opts = (await optionsOf(page, sel)).map((o) => o.label);
   const other = opts.find((o) => /Europa-Pokal|Europa-Liga/.test(o));
   if (other) {
-    await sel.selectOption({ label: other }); await page.waitForTimeout(600); await shot('05_europapokal');
+    await pickOption(page, sel, { label: other }); await page.waitForTimeout(600); await shot('05_europapokal');
     const t2 = page.locator('.cmp-toolbar button:has-text("Turnierbaum")');
     if (await t2.isVisible().catch(() => false)) { await t2.click(); await page.waitForTimeout(500); await shot('06_europapokal_baum'); }
   }

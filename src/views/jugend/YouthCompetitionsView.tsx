@@ -17,10 +17,28 @@ import { youthCompOptions, youthSeasonOptions, youthSnapshot, type YcSnapshot } 
 import { DashBox, DashPage, Empty } from '../../ui/DashPage';
 import { CupRounds } from '../statistiken/competition/CupRounds';
 import { LeagueTable } from '../statistiken/competition/LeagueTable';
+import { SubTabsPage } from '../../ui/SubTabs';
 import { StatsBox } from '../statistiken/competition/StatsBox';
 import { FestDates, FestSide } from './youthcomp/YouthFestView';
 import { YouthInfoBox } from './youthcomp/YouthInfoBox';
 import { youthPlayerCard } from './youthcomp/YouthPlayerCard';
+import Icon from '../../components/Icon';
+import Select from '../../ui/Select';
+
+/** Eintrag einer Altersklasse (Reiter des dritten Menüs): eigene Liga/Staffel zuerst. */
+function sectionKey(g: Game, season: string, section: string): string {
+  const opts = youthCompOptions(g, season).filter((o) => o.section === section);
+  const mid = g.managedClubId;
+  for (const o of opts) {
+    if (o.kind !== 'league') continue;
+    const s = youthSnapshot(g, season, o.key);
+    if (s?.table?.some((r) => r.clubId === mid) || s?.groups?.some((x) => x.rows.some((r) => r.id === mid))) return o.key;
+  }
+  return opts[0]?.key ?? '';
+}
+
+/** Kurzname der Altersklasse für den Reiter: „A-Jugend (U19)“ → „A-Jugend“. */
+const shortSection = (sec: string) => sec.replace(/ \(.*$/, '');
 
 /** Standard: Liga/Staffel des eigenen Vereins in der A-Jugend, sonst Endrunde. */
 function defaultKey(g: Game, season: string): string {
@@ -68,6 +86,8 @@ export function YouthCompetitionsView({ g }: { g: Game }) {
   const sIdx = seasons.findIndex((s) => s.season === season);
   const step = (d: number) => { const n = seasons[sIdx + d]; if (n) setSeason(n.season); };
   const sections = [...new Set(opts.map((o) => o.section))];
+  const curSection = opts.find((o) => o.key === effKey)?.section ?? sections[0] ?? '';
+  const inSection = opts.filter((o) => o.section === curSection);
 
   if (!seasons.length) {
     return (
@@ -81,22 +101,23 @@ export function YouthCompetitionsView({ g }: { g: Game }) {
 
   const header = (
     <span className="cmp-select">
-      <button className="dchip" disabled={sIdx <= 0} onClick={() => step(-1)} title="Vorherige Saison">‹</button>
-      <select className="dselect" value={season} onChange={(e) => setSeason(e.target.value)} title="Saison">
+      <button className="b3 b3-icon" disabled={sIdx <= 0} onClick={() => step(-1)} title="Vorherige Saison" aria-label="Vorherige Saison"><Icon name="navPrev" size={18} /></button>
+      <Select className="dselect" value={season} onChange={(v) => setSeason(v)} title="Saison">
         {seasons.map((s) => <option key={s.season} value={s.season}>{s.season}{s.source === 'live' ? ' (laufend)' : ''}</option>)}
-      </select>
-      <button className="dchip" disabled={sIdx >= seasons.length - 1} onClick={() => step(1)} title="Nächste Saison">›</button>
-      <select className="dselect yc-comp-select" value={effKey} onChange={(e) => setKey(e.target.value)} title="Wettbewerb">
-        {sections.map((sec) => (
-          <optgroup key={sec} label={sec}>
-            {opts.filter((o) => o.section === sec).map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
-          </optgroup>
-        ))}
-      </select>
+      </Select>
+      <button className="b3 b3-icon" disabled={sIdx >= seasons.length - 1} onClick={() => step(1)} title="Nächste Saison" aria-label="Nächste Saison"><Icon name="navNext" size={18} /></button>
+      {inSection.length > 1 && (
+        <Select className="dselect yc-comp-select" value={effKey} onChange={(v) => setKey(v)} title="Wettbewerb">
+          {inSection.map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
+        </Select>
+      )}
     </span>
   );
+  // Drittes Menü: Altersklassen/Bereiche der Saison (ui/SubTabs), Wettbewerbe darin per Auswahl
+  const tabs = sections.map((sec) => ({ id: sec, label: shortSection(sec), title: sec }));
 
   return (
+    <SubTabsPage tabs={tabs} active={curSection} onSelect={(sec) => setKey(sectionKey(g, season, sec))}>
     <DashPage className="cmp-page">
       <DashBox title={snap ? snap.label : 'Wettbewerb'} icon={snap?.kind === 'cup' ? 'trophy' : 'dashTabelle'} span={2} rows={2} right={header} className="cmp-main yc-main">
         {!snap ? <Empty icon="stats">Für diese Auswahl liegen keine Daten vor.</Empty>
@@ -109,5 +130,6 @@ export function YouthCompetitionsView({ g }: { g: Game }) {
         : <StatsBox key={`st-${season}-${effKey}`} g={g} snap={snap} playerCard={(pid, close) => youthPlayerCard(g, snap, pid, close)} />}
       <YouthInfoBox g={g} snap={snap} />
     </DashPage>
+    </SubTabsPage>
   );
 }

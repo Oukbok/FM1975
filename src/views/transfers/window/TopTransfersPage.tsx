@@ -10,6 +10,7 @@ import type { Game } from '../../../game/state';
 import type { TLRow } from '../../../game/transferLogView';
 import { vColor } from '../../../ui/format';
 import { AnyCrest, ClubCell, Face, feeText, fmtDate, PlayerName } from './parts';
+import PosBadge from '../../../components/PosBadge';
 
 const eraClass = (year: number) => (year < 1986 ? 'np-e1' : year < 1998 ? 'np-e2' : year < 2012 ? 'np-e3' : 'np-e4');
 
@@ -58,7 +59,7 @@ export function TopTransfersPage({ g, league, label, date, rows, onOpen }: {
                   <tr key={r.i} className={r.own ? 'me' : ''}>
                     <td className="num rl-rank">{i + 1}</td>
                     <td className="nowrap rl-name"><PlayerName row={r} onOpen={onOpen} /></td>
-                    <td className="ctr"><span className="pos-badge">{r.e.pos}</span></td>
+                    <td className="ctr"><PosBadge pos={r.e.pos} /></td>
                     <td className="num">{r.e.age}</td>
                     <td className="num"><b style={{ color: vColor(r.e.ov) }}>{r.e.ov}</b></td>
                     <td className="num nowrap">{feeText(r)}</td>

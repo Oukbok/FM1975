@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { SubTabsPage } from '../../ui/SubTabs';
 import { createPortal } from 'react-dom';
 import PlayerModal from '../../components/PlayerModal';
 import { buildEdition, pressIssues } from '../../game/press/edition';
@@ -30,23 +31,21 @@ export function PresseView({ g, onWatch, onGoto }: { g: Game; onWatch: (matchId:
   const p = playerId ? g.players[playerId] ?? g.youthPlayers[playerId] : null;
   const api: PressApi = { g, openPlayer: setPlayerId, openStory: setStoryId, onWatch: (id) => { setStoryId(null); onWatch(id); } };
 
+  // Drittes Menü: die letzten acht Ausgaben (ui/SubTabs); ältere über „Ältere“ im Box-Kopf
+  const shown = issues.slice(0, 8).map((d, i) => i);
+  if (idx >= 8) shown.push(idx);
+  const tabs = shown.map((i) => ({ id: String(i), label: i === 0 ? 'Heute' : dm(issues[i]), title: i === 0 ? 'Aktuelle Ausgabe' : `Ausgabe vom ${dm(issues[i])}` }));
   const nav = (
     <span className="np-nav">
       <button className="dchip" disabled={idx >= issues.length - 1} onClick={() => setSel(idx + 1)} title="Ältere Ausgabe">Ältere</button>
-      <span className="np-nav-list">
-        {issues.slice(0, 8).map((d, i) => (
-          <button key={d} className={`dchip ${i === idx ? 'on' : ''}`} onClick={() => setSel(i)} title={i === 0 ? 'Aktuelle Ausgabe' : `Ausgabe vom ${dm(d)}`}>
-            {i === 0 ? 'Heute' : dm(d)}
-          </button>
-        ))}
-      </span>
       <button className="dchip" disabled={idx === 0} onClick={() => setSel(idx - 1)} title="Neuere Ausgabe">Neuere</button>
     </span>
   );
 
   return (
+    <SubTabsPage tabs={tabs} active={String(idx)} onSelect={(t) => setSel(Number(t))}>
     <DashPage className="np-page">
-      <DashBox title="Presse" icon="presse" info="presse" span={3} rows={2} right={nav} flush className="np-box">
+      <DashBox title={idx === 0 ? 'Aktuelle Ausgabe' : `Ausgabe vom ${dm(date)}`} info="presse" span={3} rows={2} right={nav} flush className="np-box">
         <Newspaper key={date} api={api} ed={ed} />
         {story && createPortal(
           <ArticleModal api={api} s={story} ed={ed} onClose={() => setStoryId(null)} onGoto={onGoto} />, document.body)}
@@ -55,5 +54,6 @@ export function PresseView({ g, onWatch, onGoto }: { g: Game; onWatch: (matchId:
             today={today} season={g.season} onClose={() => setPlayerId(null)} />, document.body)}
       </DashBox>
     </DashPage>
+    </SubTabsPage>
   );
 }

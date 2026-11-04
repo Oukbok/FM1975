@@ -8,6 +8,7 @@ import { readFile, mkdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { chromium } from 'playwright';
 import { startNewGame } from './newgame-flow.mjs';
+import { pickOption, optionsOf, valueOf } from './select3.mjs';
 
 const outDir = process.argv[2] || 'test-output/club';
 await mkdir(outDir, { recursive: true });
@@ -95,16 +96,16 @@ console.log('Spielerprofil → Verein:', (await page.locator('.pp-modal').count(
 await closeProfile();
 
 // 2) Sim-Verein (andere Liga)
-const sel = page.locator('select.dselect').first();
-const opts = await sel.locator('option').count();
+const sel = page.locator('.sel3.dselect').first();
+const opts = (await sel.count()) ? (await optionsOf(page, sel)).length : 0;
 if (opts > 1) {
-  await sel.selectOption({ index: 1 });
+  await pickOption(page, sel, { index: 1 });
   await page.waitForTimeout(300);
   await page.locator('.dtable tbody tr.clickable').first().click();
   await page.waitForSelector('.cmx-modal');
   await shootProfile('simverein');
   await closeProfile();
-  await sel.selectOption({ index: 0 });
+  await pickOption(page, sel, { index: 0 });
   await page.waitForTimeout(200);
 }
 

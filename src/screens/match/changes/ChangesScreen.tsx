@@ -15,6 +15,7 @@ import { applyDraft, changeFormation, draftDiff, draftTeamStrength, initialDraft
 import { PlayerTable } from './PlayerTable';
 import { SystemPitch } from './SystemPitch';
 import { HalftimeTalk, PlayerTalks, TacticPane } from './TalkTabs';
+import Select from '../../../ui/Select';
 
 export type ChangesTab = 'aufstellung' | 'ansprache' | 'gespraeche';
 
@@ -84,9 +85,9 @@ export function ChangesScreen({ sim, side, reason, halftime, initialTab, initial
               <div className="tm-cs-lhead">
                 <span className="tm-sec">Spielerliste</span>
                 <span>Mannschaftsstärke: <b>{draftTeamStrength(sim, side, d)}</b> <InfoTip k="mannschaftsstaerke" /></span>
-                <label className="tm-cs-ment">Ausrichtung <select value={d.mentality} onChange={(e) => upd((x) => { x.mentality = Number(e.target.value) as Mentality; })} aria-label="Ausrichtung">
+                <label className="tm-cs-ment">Ausrichtung <Select value={d.mentality} onChange={(v) => upd((x) => { x.mentality = Number(v) as Mentality; })} aria-label="Ausrichtung">
                   {([-2, -1, 0, 1, 2] as Mentality[]).map((m) => <option key={m} value={m}>{MENTALITY_LABEL[m]}</option>)}
-                </select></label>
+                </Select></label>
               </div>
               <PlayerTable sim={sim} side={side} d={d} sel={sel} onPick={pick} onPlayer={onPlayer} />
               <div className="tm-cs-lfoot">
@@ -109,7 +110,7 @@ export function ChangesScreen({ sim, side, reason, halftime, initialTab, initial
             </div>
             <div className="tm-cs-right">
               {pane === 'system'
-                ? <SystemPitch sim={sim} side={side} d={d} sel={sel} onPick={pick} onSwap={doSwap}
+                ? <SystemPitch sim={sim} side={side} d={d} sel={sel} onPick={pick} onSwap={doSwap} onNote={setMsg}
                     onFormation={(id) => upd((x) => { changeFormation(sim, side, x, id); })} />
                 : <TacticPane sim={sim} side={side} d={d} onMentality={(m) => upd((x) => { x.mentality = m; })}
                     onTactic={(p) => upd((x) => { x.tactics = { ...x.tactics, ...p }; })} />}

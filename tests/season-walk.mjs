@@ -142,13 +142,13 @@ for (let step = 0; step < 4000; step++) {
       // Nachricht mit offener Entscheidung suchen und erste Option wählen
       let done = false;
       // Ist die offene Entscheidung schon ausgewählt (roter Brief wählt sie an), reicht ein Klick.
-      const pre = page.locator('.dz-read .dchip.on');
+      const pre = page.locator('.dz-read .ev-choice');
       if (await pre.count()) { const t = await page.locator('.dz-rsubj').innerText().catch(() => ''); await pre.first().click(); tap('Entscheidung'); log.push(`${''.padEnd(28)}   entschieden: ${t} (direkt angewählt)`); done = true; }
       const rows = page.locator('.dz-msg');
       const n = Math.min(await rows.count(), 30);
       for (let i = 0; i < n && !done; i++) {
         await rows.nth(i).click(); await page.waitForTimeout(150);
-        const c = page.locator('.dz-read .dchip.on');
+        const c = page.locator('.dz-read .ev-choice');
         if (await c.count()) { const t = await page.locator('.dz-rsubj').innerText().catch(() => ''); await c.first().click(); tap('Entscheidung', 2); log.push(`${''.padEnd(28)}   entschieden: ${t} (Zeile ${i + 1})`); done = true; }
       }
       if (!done) { log.push('   TOTER KLICK: Nachrichten-Knopf ohne auffindbare Entscheidung'); idle++; }
