@@ -16,6 +16,8 @@ import { loadGame, saveGame } from '../src/engine/save';
 import { prepareLoadedGame } from '../src/game/loadMigrations';
 import { Game } from '../src/game/state';
 import type { Match } from '../src/types';
+import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 
 // --- Umgebung: localStorage für engine/save.ts, fester Zufall ---------------
 const store = new Map<string, string>();
@@ -27,11 +29,18 @@ const store = new Map<string, string>();
   get length() { return store.size; },
   clear: () => store.clear(),
 };
+// Feste Uhr: IDs/Zeitstempel (msg-…, tx-…, lastUpdated) hängen sonst an Date.now().
+const RealDate = Date;
+const FIXED_NOW = RealDate.UTC(2026, 0, 1);
+(globalThis as any).Date = class extends RealDate {
+  constructor(...a: any[]) { if (a.length) super(...(a as [any])); else super(FIXED_NOW); }
+  static now() { return FIXED_NOW; }
+};
 let seed = 1975;
 const setSeed = (s: number) => { seed = s; };
 Math.random = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
 
-const SEASONS = Math.max(1, Number(process.argv[2] ?? 1));
+const SEASONS = Math.max(1, Number(process.argv[2]) || 1);
 let fails = 0;
 const ok = (c: boolean, msg: string) => { console.log(`${c ? 'OK  ' : 'FEHL'} ${msg}`); if (!c) fails++; };
 
@@ -55,6 +64,20 @@ function tick(g: Game): void {
     const due = findOwnMatchDue(g);
     if (due) { quickSimOwnMatch(g, due); processDay(g, ui); }
   }
+}
+
+if (process.argv.includes('--det')) {
+  setSeed(4711);
+  const gx = createNewGame({
+    managedClubId: 'fra',
+    manager: { name: 'Test', nationality: 'GER', birthYear: 1940, style: 'balanced', background: 'newcomer' } as any,
+    difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300,
+  });
+  (gx as any).simAutoManage = true;
+  for (let i = 0; i < 120; i++) tick(gx);
+  const json = JSON.stringify(gx);
+  console.log(`DET ${gx.calendar.currentDate} ${createHash('sha1').update(json).digest('hex')} ${json.length}`);
+  process.exit(0);
 }
 
 /** Nach dem Laden: dieselben Schritte wie App.tsx `doLoad`. */
@@ -223,6 +246,14 @@ for (let i = 0; i < 120 && g.calendar.currentDate < until; i++) {
 }
 ok(errs === 0 && g.fixtures.some((m) => m.status === 'finished'), `Neue Saison läuft an (${g.calendar.currentDate}, ${g.fixtures.filter((m) => m.status === 'finished').length} Spiele gespielt)`);
 checkLoad(g, 'neue Saison');
+
+// Deterministisch: zwei frische Prozesse mit gleichem Startwert → 120 Tage identischer Spielstand
+// (eigene Prozesse, weil Module Zustand wie Epoche/Zähler halten, den ein neues Spiel nicht zurücksetzt).
+{
+  const runDet = () => execFileSync(process.execPath, ['scripts/run-ts.mjs', 'tests/season-test.ts', '--det'], { encoding: 'utf8' }).trim().split('\n').pop()!;
+  const h1 = runDet(), h2 = runDet();
+  ok(h1 === h2 && /^DET /.test(h1), `Gleicher Startwert → gleicher Verlauf in zwei Läufen (${h1.slice(4, 40)})`);
+}
 
 console.log(fails ? `\n${fails} Prüfung(en) fehlgeschlagen` : '\nAlle Prüfungen bestanden');
 process.exit(fails ? 1 : 0);

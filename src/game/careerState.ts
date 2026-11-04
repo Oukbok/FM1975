@@ -207,7 +207,7 @@ export function ensureCareer(g: Game): CareerState {
   const rep = clamp(jobLevel(g, own) + (BG_BONUS[g.manager?.background] ?? 0) - (isCareerMode(g) ? 3 : 0), 20, 92);
   const first = startStint(g, true);
   backfillStint(g, first);
-  g.career = { v: 1, rep, stints: [first], offers: [], declined: {}, offerCount: 0, sacked: 0, log: [] };
+  g.career = { v: 1, rep, stints: [first], offers: [], declined: {}, offerCount: 0, sacked: 0, log: [], mode: 2 };
   return g.career;
 }
 
