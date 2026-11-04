@@ -118,6 +118,19 @@ for (let step = 0; step < 4000; step++) {
       if (await has('.gb-root')) { const b = page.locator('.gb-root .btn-primary').first(); await b.click().catch(() => {}); tap('Goldener Ball'); await page.waitForTimeout(400); }
       continue;
     }
+    if (await has('.ix-root')) {
+      // Hallen-Show: kürzester Weg „Alles simulieren“, dann „Schließen“ (Siegerehrung).
+      await note('Hallenturnier', await page.locator('.ix-root').getAttribute('aria-label').catch(() => ''));
+      await shotOnce('Hallenturnier');
+      for (let k = 0; k < 20 && await has('.ix-root'); k++) {
+        const close = page.locator('.ix-root .ix-btn:has-text("Schließen")').first();
+        const all = page.locator('.ix-root .ix-btn:has-text("Alles simulieren"):not([disabled])').first();
+        if (await close.isVisible().catch(() => false)) await close.click();
+        else if (await all.isVisible().catch(() => false)) await all.click();
+        tap('Hallenturnier'); await page.waitForTimeout(700);
+      }
+      continue;
+    }
     if (await has('.aw-modal')) { await act('Die Besten der Saison', '.aw-modal', '.aw-modal .aw-foot .btn-primary'); continue; }
     if (await has('.tw-panel')) { await act('Transferbilanz', '.tw-panel', '.tw-foot button:has-text("Schließen")'); continue; }
     if (await has('.cr-root')) { await note('Trainingslager-Bilanz'); await shotOnce('Trainingslager-Bilanz'); for (let k = 0; k < 4 && await has('.cr-root'); k++) { await page.locator('.cr-root').click({ position: { x: 20, y: 20 } }); tap('Trainingslager-Bilanz'); await page.waitForTimeout(500); } continue; }
