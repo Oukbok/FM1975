@@ -12,8 +12,8 @@ const F = (name: string, country = 'DE', from?: number, to?: number): SponsorFir
 export const SPONSOR_FIRMS: Record<SponsorIndustry, SponsorFirm[]> = {
   spirituosen: [F('Falkenhorst Kräuterlikör'), F('Heidekrug Korn'), F('Lotsenbitter'), F('Doppelkorn Brakelmann'), F('Amaro Ventoso', 'IT'), F('Weinbrand Goldhügel')],
   brauerei: [F('Kesselberg Bräu'), F('Rheinperle Pils'), F('Brauerei Sonnwiese'), F('Kogge Bräu'), F('Abtei Hohenwald'), F('Steinbock Bräu'), F('Lindenhof Export'), F('Polder Bier', 'NL')],
-  tabak: [F('Kompass Zigaretten'), F('Kommodore Tabak'), F('Silberstreif Filter'), F('Pfeifenhaus Nordtabak')],
-  versicherung: [F('Deichland Versicherung'), F('Kontor Leben'), F('Ankerhof Assekuranz'), F('Domblick Versicherungen'), F('Gotthard Rück', 'CH'), F('Mutuelle Clairval', 'FR'), F('Thamesgate Insurance', 'GB')],
+  tabak: [F('Kompass Zigaretten'), F('Leuchtfeuer Tabak'), F('Silberstreif Filter'), F('Pfeifenhaus Nordtabak')],
+  versicherung: [F('Deichgraf Versicherung'), F('Kontor Leben'), F('Ankerhof Assekuranz'), F('Domblick Versicherungen'), F('Gotthard Rück', 'CH'), F('Mutuelle Clairval', 'FR'), F('Thamesgate Insurance', 'GB')],
   bank: [F('Kontorbank Nord'), F('Heimatkasse'), F('Rheintaler Kreditbank'), F('Brunnenthal Sparbank'), F('Säntis Privatbank', 'CH'), F('Marmara Kredi', 'TR'), F('Pearl Gulf Bank', 'QA'), F('Grachten Bank', 'NL')],
   auto: [F('Merlin Automobile'), F('Kronwagen'), F('Ruhrwagen'), F('Lohwald Autohäuser'), F('Turino Motori', 'IT'), F('Lumière Automobiles', 'FR'), F('Hayashi Motors', 'JP'), F('Hanmoo Motors', 'KR'), F('Tianhe Motors', 'CN', 2015)],
   elektronik: [F('Hansa Elektro'), F('Wellenwerk Radio'), F('Nordklang Phono'), F('Kaiyo Denki', 'JP', 1978), F('Shinrai Electronics', 'JP', 1978), F('Asahina Audio', 'JP', 1978), F('Atlas Computers', 'US', 1980, 1995), F('Corvid Micro', 'US', 1982, 2000), F('Polderlicht', 'NL'), F('Hanbit Electronics', 'KR', 1995), F('Jinxiu Electronics', 'CN', 2012)],

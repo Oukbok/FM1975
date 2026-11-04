@@ -205,7 +205,7 @@ export function namingAnnualNominal(nr: NamingRights, club: Club, year: number):
 export const CORPORATE_YEAR = 1998;
 export const MAX_INVESTOR_SHARE = 49;
 // Fiktive Firmen (keine echten Marken; Prüfung npm run test:names, Umbenennung alter Stände data/sponsorRenames.ts).
-export const INVESTORS = ['Brennecke Holding', 'Hollmann & Söhne Beteiligungen', 'Atlas Sportkapital', 'Falkenried Industrie', 'Lindwurm Partners', 'Falkenstein Gruppe'];
+export const INVESTORS = ['Brennecke Holding', 'Rosenbaum & Söhne Beteiligungen', 'Atlas Sportkapital', 'Falkenried Industrie', 'Lindwurm Partners', 'Falkenstein Gruppe'];
 
 /** Einmaliges Kapital der Ausgliederung (Anteile an Fans, Sponsoren, Mitglieder): 12 % des Umsatzes. */
 export function corporateCapital(revenue: number): number {

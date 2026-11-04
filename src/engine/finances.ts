@@ -196,7 +196,7 @@ export const SHIRT_TIERS = [
 ];
 
 export const SHIRT_SPONSOR_NAMES = [
-  'Lohwald Bekleidung', 'Deichland Versicherung', 'Siegtal Metallwerke', 'Kesselberg Bräu',
+  'Lohwald Bekleidung', 'Deichgraf Versicherung', 'Siegtal Metallwerke', 'Kesselberg Bräu',
   'Hansa Elektro', 'Kontorbank Nord', 'Elbgummi Reifen', 'Schuhhaus Brenner',
   'Weltmarke Kaffee', 'Möbel Wohnwerk', 'Greifen Chemie', 'Sonnen Molkerei',
 ];

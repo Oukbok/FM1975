@@ -24,9 +24,9 @@ const FIRMS: Record<string, string> = {
   'Bergbräu': 'Steinbock Bräu',
   'Oranje Bier': 'Polder Bier',
   'Kapitän Zigaretten': 'Kompass Zigaretten',
-  'Ambassador Tabak': 'Kommodore Tabak',
+  'Ambassador Tabak': 'Leuchtfeuer Tabak',
   'Golden Mile': 'Silberstreif Filter',
-  'Nordsee Versicherung': 'Deichland Versicherung',
+  'Nordsee Versicherung': 'Deichgraf Versicherung',
   'Hanse Leben': 'Kontor Leben',
   'Merkur Assekuranz': 'Ankerhof Assekuranz',
   'Rheinland Versicherungen': 'Domblick Versicherungen',
@@ -94,7 +94,7 @@ const FIRMS: Record<string, string> = {
   'Weserwerft': 'Weserkai Werft',
   'Brückner Bau': 'Steinhauer Bau',
   'Kessler Holding': 'Brennecke Holding',
-  'Brandt & Söhne Beteiligungen': 'Hollmann & Söhne Beteiligungen',
+  'Brandt & Söhne Beteiligungen': 'Rosenbaum & Söhne Beteiligungen',
   'Vogelsang Industrie': 'Falkenried Industrie',
   'Meridian Partners': 'Lindwurm Partners',
 };
@@ -114,6 +114,8 @@ function arenaRenames(): Record<string, string> {
 /** Hallen-/Stadionnamen mit echtem Sponsor (data/indoorHistory.ts). */
 const VENUES: Record<string, string> = {
   'Erdgas Arena': 'Mehrzweckhalle',
+  // Vereinsstadion Bochum: Hellweg ist auch eine Baumarktkette → Lage an der Castroper Straße.
+  'Hellweg-Stadion': 'Stadion an der Castroper',
 };
 
 /** Vollständige Zuordnung alt → neu. */
