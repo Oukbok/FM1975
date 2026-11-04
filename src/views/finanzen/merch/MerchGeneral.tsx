@@ -16,7 +16,7 @@ import { computeMonthly, expectedAttendance } from '../../../engine/finances';
 import { economyScale } from '../../../engine/economy';
 import { DashBox, KV, Meter } from '../../../ui/DashPage';
 import { fmtDM, fmtDMfull } from '../../../ui/format';
-import { MerchImage, MerchTabs, Signed, Stepper, money, n0, unitPrice, type MerchTab } from './parts';
+import { MerchImage, Signed, Stepper, money, n0, unitPrice, type MerchTab } from './parts';
 
 interface Props { g: Game; club: Club; shop: MerchShop; year: number; tab: MerchTab; setTab: (t: MerchTab) => void; onChange: () => void }
 
@@ -45,7 +45,7 @@ function StockBox({ g, club, shop, year, tab, setTab, sel, setSel }: Props & { s
   const today = g.calendar.currentDate;
   const items = shownItems(shop, year);
   return (
-    <DashBox title="Sortiment & Vorräte" info="merchSortiment" icon="merch" span={2} right={<MerchTabs tab={tab} setTab={setTab} />} flush>
+    <DashBox title="Sortiment & Vorräte" info="merchSortiment" icon="merch" span={2} flush>
       <table className="dtable rl-sm mc-table">
         <thead><tr>
           <th>Artikel</th><th className="num">Einkauf</th><th className="num">Preis</th><th className="num">Bestand</th>

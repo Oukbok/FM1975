@@ -12,6 +12,7 @@ import { PlayerRow } from '../shared';
 import { YouthModal } from './YouthModal';
 import { YOUTH_TEAM_SIZE } from '../../game/youthTeams';
 import { useState } from 'react';
+import { SubTabsPage, useSubTab, type SubTab } from '../../ui/SubTabs';
 import { youthInvestOf } from '../../game/youthInvest';
 import { yearOf } from '../../engine/economy';
 
@@ -38,7 +39,7 @@ export function ScoutRange({ p }: { p: Player }) {
 export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
   const [sel, setSel] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<YouthSort>('pot');
-  const [classFilter, setClassFilter] = useState<YouthAgeClass | 'ALL'>('A');
+  const [classFilter, setClassFilter] = useSubTab<YouthAgeClass | 'ALL'>('jugend.mannschaften', 'A');
   const club = g.clubs[g.managedClubId];
   const inv = youthInvestOf(club, yearOf(g.calendar.currentDate));
 
@@ -77,17 +78,20 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
   const teams = teamStandings(g);
   const maxClass = Math.max(1, ...YOUTH_AGE_CLASS_ORDER.map((c) => byClass[c].length));
 
+  // Drittes Menü: A- bis G-Jugend + Alle (Wunsch Pascal)
+  const tabs: SubTab<YouthAgeClass | 'ALL'>[] = [
+    ...[...YOUTH_AGE_CLASS_ORDER].reverse().map((cls) => ({
+      id: cls, label: cls === 'G' ? 'Bambini' : `${cls}-Jugend`, count: byClass[cls].length,
+      title: YOUTH_AGE_CLASS_RANGE[cls],
+    })),
+    { id: 'ALL', label: 'Alle', count: youth.length },
+  ];
+  const boxTitle = classFilter === 'ALL' ? `Alle Talente (${youth.length})` : `${YOUTH_AGE_CLASS_LABEL[classFilter]} (${byClass[classFilter].length})`;
+
   return (
+    <SubTabsPage tabs={tabs} active={classFilter} onSelect={setClassFilter}>
     <DashPage>
-      <DashBox title={`Talente (${youth.length})`} icon="youth" span={2} rows={2} flush
-        right={<span className="dbtnrow">
-          <button className={`dchip ${classFilter === 'ALL' ? 'on' : ''}`} onClick={() => setClassFilter('ALL')}>Alle</button>
-          {YOUTH_AGE_CLASS_ORDER.map((cls) => (
-            <button key={cls} className={`dchip ${classFilter === cls ? 'on' : ''}`} onClick={() => setClassFilter(cls)} disabled={byClass[cls].length === 0}>
-              {cls} ({byClass[cls].length})
-            </button>
-          ))}
-        </span>}>
+      <DashBox title={boxTitle} span={2} rows={2} flush>
         {classFilter !== 'ALL' && teams[classFilter] && (
           <div className="yc-team-strip">
             {YOUTH_AGE_CLASS_LABEL[classFilter]}: {teams[classFilter]!.league ?? teams[classFilter]!.compLabel}
@@ -126,7 +130,7 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
         )}
       </DashBox>
 
-      <DashBox title="Jugendakademie" info="ausbildung" icon="facilities" right={`Ruf ${Math.round(inv.reputation)}`}>
+      <DashBox title="Jugendakademie" info="ausbildung" right={`Ruf ${Math.round(inv.reputation)}`}>
         <Meter label="Ausbildungsqualität" value={inv.quality} text={`${Math.round(inv.quality)}`} />
         {YOUTH_AGE_CLASS_ORDER.map((cls) => (
           <Meter key={cls} label={teams[cls] ? `${cls === 'G' ? 'Bambini' : `${cls}-Jugend`}${placeOf(teams[cls])}` : `${YOUTH_AGE_CLASS_LABEL[cls]} · ${YOUTH_AGE_CLASS_RANGE[cls].split(' · ')[0]}`} value={byClass[cls].length} max={Math.max(YOUTH_TEAM_SIZE[cls], maxClass)}
@@ -135,7 +139,7 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
         <div className="dnote mt8">Jede Altersklasse hat eine volle Mannschaft. Die meisten spielen aus Freude am Fußball – Profi wird nur, wer genug Potenzial hat. Zum 1. Juli rücken alle auf, einige hören auf, Lücken werden aufgefüllt. Investitionen steuerst du unter Kader → Akademie.</div>
       </DashBox>
 
-      <DashBox title="Größte Talente" icon="trophy">
+      <DashBox title="Größte Talente">
         {top.length ? top.map((x) => (
           <div key={x.id} className="dlist-row clickable" onClick={() => setSel(x.id)}>
             <PosBadge p={x} compact />
@@ -157,5 +161,6 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
         />
       )}
     </DashPage>
+    </SubTabsPage>
   );
 }

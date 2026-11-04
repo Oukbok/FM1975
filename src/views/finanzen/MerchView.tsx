@@ -3,6 +3,7 @@ import { yearOf } from '../../engine/economy';
 import { ensureMerchShop } from '../../game/merchGame';
 import { Game } from '../../game/state';
 import { DashPage, DashBox, Empty } from '../../ui/DashPage';
+import { SubTabsPage } from '../../ui/SubTabs';
 import { MerchGeneral } from './merch/MerchGeneral';
 import { MerchStats } from './merch/MerchStats';
 import type { MerchTab } from './merch/parts';
@@ -24,8 +25,11 @@ export function MerchView({ g, onChange }: { g: Game; onChange: () => void }) {
   if (!shop || !club) return <DashPage><DashBox title="Fanartikel" span={3} rows={2}><Empty>Kein Verein.</Empty></DashBox></DashPage>;
   const p = { g, club, shop, year, tab, setTab: pick };
   return (
-    <DashPage className="mc-page">
-      {tab === 'allgemein' ? <MerchGeneral {...p} onChange={onChange} /> : <MerchStats {...p} />}
-    </DashPage>
+    <SubTabsPage active={tab} onSelect={pick}
+      tabs={[{ id: 'allgemein', label: 'Allgemein' }, { id: 'statistik', label: 'Statistiken' }]}>
+      <DashPage className="mc-page">
+        {tab === 'allgemein' ? <MerchGeneral {...p} onChange={onChange} /> : <MerchStats {...p} />}
+      </DashPage>
+    </SubTabsPage>
   );
 }
