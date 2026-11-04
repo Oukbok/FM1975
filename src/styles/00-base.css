@@ -222,6 +222,12 @@
   --pop-hover: rgba(255, 255, 255, 0.08);
   --today-bg: #e9edf2;                      /* Kalender: Datumsfeld „Heute“ */
   --today-text: #12151a;
+  /* Kalender: feine Kante je Wettbewerb (statt Mini-Symbolen) */
+  --cal-liga: #c3cad4;
+  --cal-cup: #c9ad72;
+  --cal-euro: #6f9fd8;
+  --cal-winter: #7fb0a6;
+  --cal-info: #59626e;
 
   /* --- Layout-Breiten (Full-Bleed-Balken, zentrierte Inhalte) --- */
   --bar-max: 1360px;      /* zentrierte Spaltenbreite für Kopf-/Menüleiste */

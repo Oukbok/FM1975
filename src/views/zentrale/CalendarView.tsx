@@ -4,7 +4,7 @@ import { economyScale, yearOf } from '../../engine/economy';
 import { book } from '../../engine/finances';
 import { makeMessage, pushMessage } from '../../engine/messages';
 import { Game } from '../../game/state';
-import { buildStripEventMap } from '../../shell/CalendarStrip';
+import { buildStripEventMap, type StripEvent } from '../../shell/CalendarStrip';
 import { Screen } from '../../shell/navigation';
 import { DashBox, DashPage, Empty, KV } from '../../ui/DashPage';
 import { fmtDM, fmtDay } from '../../ui/format';
@@ -17,6 +17,20 @@ import { ownCampDays, ownIndoorDays } from '../../game/winterShared';
 export const WD_LABELS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 
 export const MONTH_LABELS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+
+/** Art eines Tages-Ereignisses für Kürzel + feine Farbkante (statt Mini-Symbol). */
+function eventKind(ev: StripEvent): { k: string; code: string } {
+  const comp = ev.comp ?? '';
+  if (ev.isMatch) {
+    if (comp.startsWith('Liga')) return { k: 'liga', code: 'Liga' };
+    if (comp.startsWith('Pokal ·') || comp === 'Pokal' || comp.startsWith('Landespokal')) return { k: 'cup', code: 'Pokal' };
+    if (comp.startsWith('Test')) return { k: 'other', code: 'Test' };
+    return { k: 'euro', code: 'EC' };
+  }
+  if (ev.line.startsWith('Halle')) return { k: 'winter', code: 'Halle' };
+  if (ev.line === 'Trainingslager' || ev.line === 'Lager') return { k: 'winter', code: 'TL' };
+  return { k: 'info', code: '' };
+}
 
 export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () => void; onGoto: (s: Screen) => void }) {
   const club = g.clubs[g.managedClubId];
@@ -210,9 +224,9 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
     <DashPage>
       <DashBox title={`${MONTH_LABELS[viewM]} ${viewY}`} icon="kalender" span={2} rows={2} info="spielplan"
         right={<span className="dbtnrow">
-          <button className="dchip" onClick={prevMonth}>‹ Vormonat</button>
-          <button className="dchip" onClick={() => { setViewY(todayY); setViewM(todayM); }}>Heute</button>
-          <button className="dchip" onClick={nextMonth}>Folgemonat ›</button>
+          <button className="b3 b3-icon" onClick={prevMonth} title="Vormonat" aria-label="Vormonat"><Icon name="navPrev" size={18} /></button>
+          <button className="b3" onClick={() => { setViewY(todayY); setViewM(todayM); }} disabled={viewY === todayY && viewM === todayM}>Heute</button>
+          <button className="b3 b3-icon" onClick={nextMonth} title="Folgemonat" aria-label="Folgemonat"><Icon name="navNext" size={18} /></button>
         </span>}>
         <div className="dnote" style={{ marginBottom: 8 }}>
           {planMode
@@ -232,50 +246,51 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
             const free = dayIsFree(iso);
             const inPreview = previewDays.has(iso);
             const ev = eventMap.get(iso);
-            const accentCls = ev?.accent === 'orange' ? 'cal-acc-orange' : ev?.accent === 'gold' ? 'cal-acc-gold' : '';
+            const kind = ev ? eventKind(ev) : reason ? { k: 'plan', code: '' } : null;
             const jumpable = !planMode && !!screenForDate(iso);
             const cls = ['cal-cell'];
             if (isToday) cls.push('cal-today');
             if (past) cls.push('cal-past');
             if (reason) cls.push('cal-blocked');
             else if (free) cls.push('cal-free');
-            if (accentCls) cls.push(accentCls);
+            if (kind) cls.push(`cal-k-${kind.k}`);
             if (inPreview) cls.push(previewValid ? 'cal-preview' : 'cal-preview-bad');
             if (jumpable) cls.push('cal-jumpable');
             if (planMode && free) cls.push('cal-selectable');
             const title = planMode
               ? (free ? 'Als Starttag wählen' : (ev ? `${fmtDay(iso)} — ${ev.line}` : reason ? `${fmtDay(iso)} — ${reason}` : fmtDay(iso)))
-              : (ev ? `${fmtDay(iso)} — ${ev.line} (klicken zum Springen)` : reason ? `${fmtDay(iso)} — ${reason}` : fmtDay(iso));
+              : (ev ? `${fmtDay(iso)} — ${ev.comp ? ev.comp + ': ' : ''}${ev.line} (klicken zum Springen)` : reason ? `${fmtDay(iso)} — ${reason}` : fmtDay(iso));
             return (
               <div key={iso} className={cls.join(' ')} onClick={() => clickDay(iso)} title={title}>
-                <span className="cal-dom">{dom}</span>
-                {ev ? (
-                  <span className="cal-cell-ev">
-                    <Icon name={ev.icon} className="cal-cell-ico" />
-                    <span className="cal-cell-ev-txt">{ev.line}</span>
+                <span className="cal-top">
+                  <span className="cal-dom">{dom}</span>
+                  {isToday && <span className="cal-today-tag">Heute</span>}
+                </span>
+                {(ev || reason) && (
+                  <span className="cal-ev">
+                    {kind?.code && <span className="cal-code">{kind.code}</span>}
+                    <span className="cal-ev-txt">{ev ? (ev.result ? `${ev.line} ${ev.result}` : ev.line) : reason}</span>
                   </span>
-                ) : reason ? (
-                  <span className="cal-cell-ev cal-cell-ev-generic">
-                    <Icon name="kalender" className="cal-cell-ico" />
-                    <span className="cal-cell-ev-txt">{reason}</span>
-                  </span>
-                ) : null}
+                )}
               </div>
             );
           })}
         </div>
-        <div className="cal-legend dim2 mini mt8">
-          <span><i className="lg lg-free" /> frei</span>
-          <span><i className="lg lg-block" /> Spiel/Planung</span>
-          <span><i className="lg lg-today" /> heute</span>
-          <span><i className="lg lg-prev" /> Auswahl</span>
+        <div className="cal-legend">
+          <span><i className="lg2 lg2-today">10</i> Heute</span>
+          <span><i className="lg2 lg2-liga" /> Liga</span>
+          <span><i className="lg2 lg2-cup" /> Pokal</span>
+          <span><i className="lg2 lg2-euro" /> Europapokal</span>
+          <span><i className="lg2 lg2-winter" /> Halle / Lager</span>
+          <span><i className="lg2 lg2-past" /> vorbei</span>
+          {planMode && <span><i className="lg2 lg2-prev" /> Auswahl</span>}
         </div>
       </DashBox>
 
       <DashBox title="Aktivität planen" icon="training" right={`Konto ${fmtDM(club.finances.balance)}`}>
         <div className="dbtnrow" style={{ marginBottom: 8 }}>
           {(['friendly', 'teambuilding'] as ActivityType[]).map((t) => (
-            <button key={t} className={`dchip ${planType === t ? 'on' : ''}`} onClick={() => { setPlanType(t); setSelStart(null); }}>
+            <button key={t} className={`b3 ${planType === t ? 'on' : ''}`} onClick={() => { setPlanType(t); setSelStart(null); }}>
               {ACTIVITY_DEFS[t].name}
             </button>
           ))}
@@ -314,7 +329,7 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
           return (
             <div key={a.id} className="dlist-row">
               <span className="grow">{ad.name} <span className="muted">· {fmtDay(a.startDate)} – {fmtDay(a.endDate)}{running ? ' · läuft' : ''}</span></span>
-              {!running && a.startDate > today && <button className="dchip" onClick={() => cancelActivity(a.id)}>Stornieren</button>}
+              {!running && a.startDate > today && <button className="b3 b3-s" onClick={() => cancelActivity(a.id)}>Stornieren</button>}
             </div>
           );
         })}

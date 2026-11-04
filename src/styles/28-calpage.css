@@ -1,0 +1,80 @@
+/* =============================================================================
+   KALENDERSEITE (Zentrale › Kalender) – Wunsch Pascal: Heute klar anders,
+   vergangene Tage gedimmt, Ereignisse als gut lesbare Zeilen mit Textkürzel
+   und feiner Farbkante je Wettbewerb, keine Mini-Symbole, keine Grün-Zahlen.
+   Tokens: --today-*, --cal-* (00-base.css). Ersetzt die Zellen-Optik aus
+   13-staff-marketing-calendar.css (Klassen bleiben, Kalender-Overlay unberührt).
+   ============================================================================= */
+.cal-grid-fill { gap: 6px; }
+.cal-grid-fill .cal-cell {
+  min-height: 100px; padding: 8px 10px 9px; gap: 6px;
+  background: rgba(255, 255, 255, 0.025); border: 1px solid var(--border-soft); border-radius: 6px;
+  transition: background 0.12s, border-color 0.12s;
+}
+.cal-wd { font-size: 14px; font-weight: 600; letter-spacing: 1.2px; color: var(--text-3); padding: 6px 0; }
+.cal-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-height: 30px; }
+.cal-grid-fill .cal-dom {
+  font-family: var(--font-display); font-size: 22px; font-weight: 500; letter-spacing: 0.3px;
+  color: var(--text-2); line-height: 1;
+}
+.cal-grid-fill .cal-free .cal-dom { color: var(--text-2); }   /* keine Grün-Zahlen mehr */
+.cal-grid-fill .cal-blocked { background: rgba(255, 255, 255, 0.045); border-color: var(--border); }
+
+/* Vergangene Tage: gedimmt, nicht nur halbtransparent */
+.cal-grid-fill .cal-past { opacity: 1; background: transparent; border-color: rgba(255, 255, 255, 0.03); }
+.cal-grid-fill .cal-past .cal-dom { color: var(--text-4); }
+.cal-grid-fill .cal-past .cal-ev-txt, .cal-grid-fill .cal-past .cal-code { color: var(--text-4); }
+.cal-grid-fill .cal-past .cal-ev { box-shadow: inset 3px 0 0 rgba(255, 255, 255, 0.08); }
+
+/* Heute: gefülltes Datumsfeld + Etikett, deutlich anders als ein Spieltag */
+.cal-grid-fill .cal-today { box-shadow: none; background: rgba(255, 255, 255, 0.07); border-color: rgba(255, 255, 255, 0.35); }
+.cal-grid-fill .cal-today .cal-dom {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 38px; height: 32px; padding: 0 6px;
+  border-radius: 5px; background: var(--today-bg); color: var(--today-text); font-weight: 600;
+}
+.cal-today-tag {
+  font-family: var(--font-display); font-size: 14px; font-weight: 500; letter-spacing: 1.2px;
+  text-transform: uppercase; color: var(--text);
+}
+
+/* Ereignis: eine gut lesbare Zeile, Kürzel + Text, feine Kante je Wettbewerb */
+.cal-ev {
+  display: flex; flex-direction: column; gap: 2px; margin-top: auto; min-width: 0;
+  padding: 2px 0 2px 9px; box-shadow: inset 3px 0 0 var(--cal-k, var(--cal-info));
+}
+.cal-code {
+  font-size: 12.5px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); line-height: 1.2;
+}
+.cal-ev-txt {
+  font-size: 16.5px; font-weight: 600; line-height: 1.2; color: var(--text);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-width: 0;
+}
+.cal-k-liga { --cal-k: var(--cal-liga); }
+.cal-k-cup { --cal-k: var(--cal-cup); }
+.cal-k-euro { --cal-k: var(--cal-euro); }
+.cal-k-winter { --cal-k: var(--cal-winter); }
+.cal-k-other { --cal-k: var(--cal-liga); }
+.cal-k-info .cal-ev-txt, .cal-k-plan .cal-ev-txt { color: var(--text-2); font-weight: 500; font-size: 15.5px; }
+
+/* Klickbar / Planung – ruhig, ohne Bernstein-Schein */
+.cal-grid-fill .cal-jumpable:hover, .cal-grid-fill .cal-selectable:hover {
+  background: rgba(255, 255, 255, 0.08); border-color: var(--btn-border-hover); transform: none;
+}
+.cal-grid-fill .cal-preview { background: var(--sel-bg); border-color: var(--sel-border); }
+.cal-grid-fill .cal-preview-bad { background: rgba(224, 100, 111, 0.12); border-color: rgba(224, 100, 111, 0.55); }
+
+/* Legende */
+.cal-legend { display: flex; flex-wrap: wrap; gap: 22px; align-items: center; margin-top: 12px; font-size: 15px; color: var(--text-2); }
+.cal-legend span { display: inline-flex; align-items: center; gap: 8px; }
+.lg2 { display: inline-block; width: 14px; height: 18px; font-style: normal; box-shadow: inset 3px 0 0 var(--cal-k, var(--cal-info)); }
+.lg2-liga { --cal-k: var(--cal-liga); }
+.lg2-cup { --cal-k: var(--cal-cup); }
+.lg2-euro { --cal-k: var(--cal-euro); }
+.lg2-winter { --cal-k: var(--cal-winter); }
+.lg2-past { width: 18px; height: 18px; border-radius: 3px; box-shadow: none; border: 1px solid rgba(255, 255, 255, 0.06); background: transparent; }
+.lg2-prev { width: 18px; height: 18px; border-radius: 3px; box-shadow: none; background: var(--sel-bg); border: 1px solid var(--sel-border); }
+.lg2-today {
+  width: auto; min-width: 26px; height: 22px; padding: 0 4px; border-radius: 4px; box-shadow: none;
+  background: var(--today-bg); color: var(--today-text); font-family: var(--font-display); font-size: 13px; font-weight: 600;
+  display: inline-flex; align-items: center; justify-content: center;
+}
