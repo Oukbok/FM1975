@@ -69,7 +69,7 @@ export const INDOOR_VENUES: IndoorVenue[] = [
   { city: 'Frankfurt', hall: 'Festhalle', capacity: 7850 },
   { city: 'Leipzig', hall: 'Messehalle', capacity: 6000, from: 1991 },
   { city: 'Oldenburg', hall: 'Weser-Ems-Halle', capacity: 5000, from: 1988 },
-  { city: 'Riesa', hall: 'Erdgas Arena', capacity: 5000, from: 1996 },
+  { city: 'Riesa', hall: 'Mehrzweckhalle', capacity: 5000, from: 1996 },
 ];
 
 export function venuesFor(winterYear: number): IndoorVenue[] {

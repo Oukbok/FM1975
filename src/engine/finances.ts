@@ -195,13 +195,13 @@ export const SHIRT_TIERS = [
   { label: 'Premium', tier: 500000 },
 ];
 
-const SHIRT_SPONSOR_NAMES = [
-  'Adler Bekleidung', 'Nordsee Versicherung', 'Rheinmetall', 'Bavaria Bräu',
-  'Hansa Elektro', 'Merkur Bank', 'Continental Reifen', 'Salamander',
-  'Weltmarke Kaffee', 'Union Möbel', 'Phoenix Chemie', 'Sonnen Molkerei',
+export const SHIRT_SPONSOR_NAMES = [
+  'Lohwald Bekleidung', 'Deichland Versicherung', 'Siegtal Metallwerke', 'Kesselberg Bräu',
+  'Hansa Elektro', 'Kontorbank Nord', 'Elbgummi Reifen', 'Schuhhaus Brenner',
+  'Weltmarke Kaffee', 'Möbel Wohnwerk', 'Greifen Chemie', 'Sonnen Molkerei',
 ];
-const BANDEN_PARTNER_NAMES = [
-  'Regio Werbung', 'Plakat & Co.', 'Stadion-Marketing GmbH', 'Fortuna Media',
+export const BANDEN_PARTNER_NAMES = [
+  'Regio Werbung', 'Plakat & Co.', 'Stadion-Marketing GmbH', 'Säulen Media',
   'City Reklame', 'Panorama Werbung', 'Arena Promotion',
 ];
 
