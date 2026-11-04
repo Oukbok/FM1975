@@ -59,21 +59,22 @@ Kaufoptionen bei KI-Leihen (ab 2000): Soll **20–35 % der vereinbarten Optionen
 | bis 1994 | 0,04 | 0 | 0 | 0 |
 | 1995–2004 | 0,11 | 0,40 | 0,08 | 0,05 |
 | 2005–14 | 0,19 | 0,55 | 0,14 | 0,30 |
-| ab 2015 | 0,21 | 0,60 | 0,15 | 0,60 |
+| ab 2015 | 0,21 | 0,60 | 0,15 | 0,70 |
 
 `fringe` = Chance, dass ein Ergänzungsspieler (ab Platz 16, ab 25 Jahren, Vertrag endet zum Saisonende) am 20.4.
-keinen neuen Vertrag bekommt (`aiLetGo`). Kaufoption: Wahrscheinlichkeit aus Startelf-Anteil/Note × 0,85
-(`optionWanted` in `src/game/aiLoans.ts`), Optionspreis 1,2 × Marktwert, Kassenpuffer 2 % des Umsatzes.
+keinen neuen Vertrag bekommt (`aiLetGo`). Kaufoption: Wahrscheinlichkeit aus Startelf-Anteil/Note ohne weiteren Abschlag
+(`optionWanted` in `src/game/aiLoans.ts`: Stammspieler 25–85 %, Ergänzungsspieler 20 %, kaum eingesetzt 3 %), Optionspreis 1,2 × Marktwert, Kassenpuffer 2 % des Umsatzes.
 
-## Ist/Soll (Sim `CLUB=muc AI=1 node scripts/sim.mjs 46`, Mittel aus SEED 1975 und 7, je Saison)
+## Ist/Soll (Sim `CLUB=muc AI=1 node scripts/sim.mjs 46`, Mittel aus SEED 1975 und 42, je Saison)
 | Epoche | ablösefreie Abgänge Ist (Soll) | Vorverträge Ist (Soll) | Bosman-Verkäufe Ist (Soll) | Kaufoption gezogen Ist (Soll) |
 |---|---|---|---|---|
-| 1975–84 | 1,6 (0–3) | 0 (0) | 0 (0) | – |
-| 1985–94 | 3,3 (1–5) | 0 (0) | 0 (0) | – |
-| 1995–2004 | 21,0 (18–30) | 5,9 (4–10) | 4,1 (3–8) | 4/18 = 22 % (20–35 %) |
-| 2005–14 | 28,2 (25–38) | 10,1 (6–12) | 7,4 (4–9) | 12/50 = 24 % (20–35 %) |
-| ab 2015 | 33,4 (30–42) | 10,7 (8–14) | 6,6 (4–10) | 7/38 = 18 % (20–35 %) |
+| 1975–84 | 1,3 (0–5) | 0 (0) | 0 (0) | – |
+| 1985–94 | 2,6 (0–5) | 0 (0) | 0 (0) | – |
+| 1995–2004 | 24,0 (18–30) | 6,7 (4–10) | 4,2 (3–8) | 5/25 = 20 % (20–35 %) |
+| 2005–14 | 29,8 (25–38) | 9,1 (6–12) | 7,1 (4–9) | 19/58 = 33 % (20–35 %) |
+| ab 2015 | 37,9 (30–42) | 11,3 (8–14) | 7,7 (4–10) | 7/26 = 27 % (20–35 %) |
 
 Streuung: Einzelläufe schwanken je Epoche um etwa ±2 (Vorverträge/Bosman) bzw. ±3 (Abgänge); die
-Kaufoptionen beruhen auf 10–30 Fällen je Lauf und streuen stark (über alle Läufe mit Faktor 0,85 ≈ 27 %).
-Vor dieser Feinkalibrierung lagen die Vorverträge 1995–2004 bei ≈ 16 je Saison und die Abgänge ab 2015 bei ≈ 22.
+Kaufoptionen gibt es erst ab 2000 und sie beruhen auf 10–35 Fällen je Lauf – über alle Epochen und Läufe
+werden 31/109 = 28 % gezogen. Vor dieser Runde (Faktor 0,85, `fringe` ab 2015 0,6) lagen die Kaufoptionen
+bei 12–20 % und die Abgänge ab 2015 mit ≈ 32 knapp an der Untergrenze.
