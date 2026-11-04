@@ -31,7 +31,7 @@ export function LegendsSection({ ds, onChange }: P) {
   const cols: Col[] = [
     { key: 'firstName', label: 'Vorname', width: 110 }, { key: 'lastName', label: 'Nachname', width: 140 },
     { key: 'birth', label: 'Geburt', width: 100, hint: 'JJJJ-MM-TT' },
-    { key: 'country', label: 'Land', type: 'select', options: COUNTRY_OPTS, width: 150 },
+    { key: 'country', label: 'Land', type: 'select', options: COUNTRY_OPTS, width: 180 },
     { key: 'pos', label: 'Pos.', type: 'select', options: POS_OPTS, width: 70 },
     { key: 'potential', label: 'Potenzial', type: 'number', width: 80 },
   ];
@@ -43,7 +43,7 @@ export function LegendsSection({ ds, onChange }: P) {
   });
   return (
     <div className="ed-section">
-      <Explain>Ausnahmetalente der Fußballgeschichte erscheinen in jedem neuen Spielstand (Option beim Spielstart, Standard an) – still, ohne Nachricht oder Markierung. Ab 15 tauchen sie als Jugendspieler auf, ältere stehen 1975 schon im Kader; Talente aus Ländern ohne volle Kader wachsen im Ausland auf und wechseln mit 18–22 zu einem Verein der Spielerliga. <b>Verein leer</b> = zufällig, Vereine mit besserer Jugendarbeit sind wahrscheinlicher. Die <b>verdeckten Werte</b> (0–100) erscheinen im Spiel nie als Zahl, nur als Einschätzung. Bitte nur erfundene Namen eintragen.</Explain>
+      <Explain>Ausnahmetalente der Fußballgeschichte erscheinen in jedem neuen Spielstand (Option beim Spielstart, Standard an) – still, ohne Nachricht oder Markierung. Ab 15 tauchen sie als Jugendspieler auf, ältere stehen 1975 schon im Kader; Talente aus Ländern ohne volle Kader wachsen im Ausland auf und wechseln mit 18–27 zu einem Verein der Spielerliga. <b>Verein leer</b> = zufällig, Vereine mit besserer Jugendarbeit sind wahrscheinlicher. Die <b>verdeckten Werte</b> (0–100) erscheinen im Spiel nie als Zahl, nur als Einschätzung. Bitte nur erfundene Namen eintragen.</Explain>
       <div className="ed-split">
         <TableEditor rows={rows} cols={cols} onChange={onChange} makeRow={make} selected={sel} onSelect={setSel} searchKeys={['id', 'firstName', 'lastName', 'country']} />
         {cur && <LegendForm key={sel} ds={ds} l={cur} onChange={onChange} />}

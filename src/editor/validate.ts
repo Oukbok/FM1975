@@ -112,7 +112,8 @@ export function checkDataset(d: Dataset): Issue[] {
     if (!l.firstName?.trim() || !l.lastName?.trim()) err(A, `${l.id}: Vor- und Nachname fehlen.`);
     if (lnames.has(nm)) warn(A, `Name „${nm}“ doppelt.`);
     lnames.add(nm);
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(l.birth ?? '')) err(A, `${nm}: Geburtsdatum „${l.birth ?? ''}“ muss die Form JJJJ-MM-TT haben.`);
+    const bt = Date.parse(`${l.birth}T00:00:00Z`);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(l.birth ?? '') || !Number.isFinite(bt) || new Date(bt).toISOString().slice(0, 10) !== l.birth) err(A, `${nm}: Geburtsdatum „${l.birth ?? ''}“ muss ein gültiges Datum JJJJ-MM-TT sein.`);
     else {
       const y = Number(l.birth.slice(0, 4));
       if (y < 1940 || y > 2085) warn(A, `${nm}: Geburtsjahr ${y} – vor 1941 Geborene erscheinen nicht (1975 älter als 34).`);
