@@ -1,0 +1,37 @@
+/* =============================================================================
+   Drittes Menü (Reiterleiste unter dem Untermenü) – ui/SubTabs.tsx
+   Vorbild Training › Trainingsplan. Regel: Leiste und Boxen darunter haben
+   dieselben Außenkanten (2,5 % Rand links/rechts wie das Seitenraster); keine Box
+   ragt seitlich über die Leiste hinaus. Eigene Spaltenaufteilungen unter einer
+   Leiste daher immer in fr (Summe = volle Breite), nie in % der Seite.
+   ========================================================================== */
+.sub3-page { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
+.sub3-tabs {
+  margin: 8px 2.5% 0; flex: 0 0 auto; padding: 0 8px;
+  background: linear-gradient(180deg, rgba(27, 32, 41, 0.92), rgba(16, 20, 27, 0.94));
+  border: 1px solid var(--border-soft); border-radius: 6px;
+}
+.sub3-tabs .tab {
+  font-family: var(--font-display); font-weight: 500; font-size: 15px; letter-spacing: 1.2px; text-transform: uppercase;
+  padding: 10px 22px; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+}
+.sub3-tabs .tab:disabled { color: var(--text-4); cursor: default; opacity: .6; }
+.sub3-tabs .tab:disabled:hover { color: var(--text-4); }
+.sub3-n {
+  font-family: var(--font-ui); font-size: 12px; letter-spacing: 0; min-width: 20px; padding: 1px 6px; text-align: center;
+  border-radius: 4px; border: 1px solid var(--border); color: var(--text-2);
+}
+.sub3-tabs .tab.active .sub3-n { border-color: var(--accent); color: var(--accent); }
+
+/* Seitenraster unter der Leiste: Außenkanten = Leiste (Rand 2,5 %), drei Spalten
+   à 30 % der Seite (Lücke 2,5 % der Seite = 2,632 % der Innenbreite). */
+.sub3-page > .dpage {
+  padding: 22px 2.5% 34px; row-gap: 22px;
+  justify-content: stretch;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 2.632%;
+}
+
+@media (max-width: 1500px) {
+  .sub3-tabs .tab { padding: 9px 16px; font-size: 14px; letter-spacing: 1px; }
+}

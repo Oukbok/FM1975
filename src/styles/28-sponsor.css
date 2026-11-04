@@ -19,16 +19,7 @@
 .sp-crow { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 4px 0; font-size: 14px; }
 
 /* --- Seite + Reiter --- */
-.sp3-page { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
-.sp3-tabs {
-  margin: 8px 2.5% 0; flex: 0 0 auto; padding: 0 8px;
-  background: linear-gradient(180deg, rgba(27, 32, 41, 0.92), rgba(16, 20, 27, 0.94));
-  border: 1px solid var(--border-soft); border-radius: 6px;
-}
-.sp3-tabs .tab { font-family: var(--font-display); font-weight: 500; font-size: 15px; letter-spacing: 1.2px; text-transform: uppercase; padding: 10px 22px; display: inline-flex; align-items: center; gap: 8px; }
-.sp3-tab-n { font-family: var(--font-ui); font-size: 12px; letter-spacing: 0; min-width: 20px; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--border); color: var(--text-2); }
-.sp3-tabs .tab.active .sp3-tab-n { border-color: var(--accent); color: var(--accent); }
-.sp3-page > .dpage { padding-top: 26px; padding-bottom: 40px; row-gap: 26px; }
+/* Reiterleiste = drittes Menü: ui/SubTabs.tsx, CSS 28-subtabs.css */
 .sp3-hint { font-size: 13px; color: var(--text-4); text-transform: none; letter-spacing: 0; }
 
 /* Anklickbare Elemente: Fokus sichtbar, Auswahl = Bernstein */
