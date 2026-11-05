@@ -167,7 +167,7 @@ export function simMatchGoals(
 export function simFixtures(clubIds: string[], seasonStart: string, tier = 2): Match[] {
   const stubs = clubIds.map((id) => ({ id }) as Club);
   // DDR-Ligen (tier ≥ 100) im DDR-Rhythmus (lange Winterpause bis Ende Februar).
-  return generateFixtures(stubs, seasonStart, { tier, kind: tier >= 100 ? 'ddr' : 'west' });
+  return generateFixtures(stubs, seasonStart, { tier: tier >= 200 ? (tier % 10) : tier, kind: tier >= 100 && tier < 200 ? 'ddr' : 'west' });
 }
 
 export function simTable(

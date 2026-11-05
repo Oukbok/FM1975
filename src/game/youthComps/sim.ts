@@ -62,7 +62,7 @@ export const regionOf = (g: Game, id: string): YcRegion => LV_REGION[lvOf(g, id)
 export function germanPool(g: Game, ddr: boolean): string[] {
   const out: string[] = [];
   for (const c of Object.values(g.clubs)) if (!c.id.startsWith('am') && !isForeignId(c.id) && isDdr(g, c.id) === ddr) out.push(c.id);
-  for (const s of Object.values(g.simClubs)) if ((s.tier >= 100) === ddr && !g.clubs[s.id]) out.push(s.id);
+  for (const s of Object.values(g.simClubs)) if (s.tier < 200 && (s.tier >= 100) === ddr && !g.clubs[s.id]) out.push(s.id);
   return out;
 }
 

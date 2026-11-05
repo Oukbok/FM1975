@@ -41,6 +41,7 @@ import { setHomeOrigin } from '../data/origins';
 import { composeHome, ddrSeedsFor, secondSimClubs } from './worldCompose';
 import { amateurTownsFor, clampStartYear, fillLowerTiers, padSecondTier, reformsAppliedAt, seedPreStartHistory, seedStartPool, startEuroQualifiers } from './startYear';
 import { needsOverlay, worldOverlay } from '../engine/worldData';
+import { buildFullCountries } from './fullCountries';
 import { setHomeLabel, type LeagueDivision, type LeagueGroup } from '../engine/leagues';
 import { applyTimelineEffect, fireTimelineForSeason } from './season';
 import { Game, hashSeed, migrateCommerce } from './state';
@@ -225,6 +226,9 @@ export function createNewGame(opts: NewGameOptions): Game {
   // Meilensteine bis zur Startsaison sofort auslösen (Effekte); erklärt werden sie im Saison-Briefing.
   for (let y = 1975; y <= year; y++) fireTimelineForSeason(g0, seasonLabelOf(y), calendar.currentDate, true);
   if (!isGer) g0.pointSystem = pointSystem; // Chronik-Effekte sind deutsch; Punkteregel des Landes
+  // Weitere Länder Spiel für Spiel (game/fullCountries.ts).
+  const full = (opts.fullCountries ?? []).filter((cc) => cc !== home && !(isGer && cc === 'gdr') && COUNTRY_BY_CC[cc]);
+  if (full.length) { g0.fullCountries = full; buildFullCountries(g0, ligaStart); }
   for (const pid of g0.clubs[g0.managedClubId]?.playerIds ?? []) {
     const p = g0.players[pid];
     if (p) snapshotAttributes(p, calendar.currentDate, 'Spielbeginn');

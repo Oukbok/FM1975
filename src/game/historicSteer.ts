@@ -142,7 +142,7 @@ export function historicSimClubs(g: Game, year: number): void {
   const topWest = topSim(false).length ? median(topSim(false)) : fullTop.length ? median(fullTop) : null;
   const topDdr = topSim(true).length ? median(topSim(true)) : null;
   for (const s of Object.values(g.simClubs)) {
-    if (s.id === g.managedClubId) continue;
+    if (s.id === g.managedClubId || s.tier >= 200) continue; // Länder Spiel für Spiel (game/fullCountries.ts)
     const f = germanFactor(s.canonicalId ?? s.id, year);
     if (f == null) continue;
     const top = s.tier > 100 ? topDdr : topWest;
