@@ -87,3 +87,12 @@
 .player-link { cursor: pointer; border-radius: 3px; }
 .player-link:hover { text-decoration: underline; text-decoration-color: rgba(var(--ink-rgb), 0.45); text-underline-offset: 3px; }
 .player-link:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+/* Schlichtes Profil eines Auslandsvereins (club/ForeignClubModal.tsx) – gleiche feste Größe */
+.fcm-body { display: flex; flex-direction: column; gap: 14px; padding: 22px; overflow: auto; }
+.fcm-body .dbox { flex: 0 0 auto; max-width: 720px; }
+.fcm-crest { display: inline-flex; align-items: center; justify-content: center; width: 84px; height: 84px; flex: none;
+  border-radius: 8px; border: 4px solid; font: 600 22px var(--font-display); color: var(--text-hi); text-shadow: 0 1px 2px rgba(var(--shade-rgb), 0.6); }
+.fcm-note { color: var(--text-3); max-width: 720px; }
+/* Wappen/Vereinsnamen mit data-club öffnen per Klick das Vereinsprofil (ClubProfileContext) */
+[data-club] { cursor: pointer; }
+:is(button, [role="button"], .clickable, [data-dnd], [data-lu-drop], [data-noclub]) [data-club] { cursor: inherit; }

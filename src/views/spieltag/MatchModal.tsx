@@ -3,6 +3,7 @@
 // mit Noten, Druckphasen. Ausführliche Werte gibt es für Spiele des eigenen
 // Vereins; bei anderen Partien die Eckdaten.
 // =============================================================================
+import { PlayerLink } from '../../components/playerMenu/PlayerLink';
 import { useState } from 'react';
 import { ClubLink } from '../../components/club/ClubLink';
 import FaceThumb from '../../components/FaceThumb';
@@ -79,7 +80,7 @@ export function MatchModal({ g, matchId, onClose }: { g: Game; matchId: string; 
             </div>
             <div className={`mr-team ${m.awayClubId === myId ? 'mine' : ''}`}><ClubLink id={m.awayClubId} block className="mr-team-link"><ClubCrest club={a} size={92} /><b>{a?.name}</b></ClubLink></div>
           </div>
-          {motm && <div className="mr-motm">Spieler des Spiels: <b>{motm.firstName} {motm.lastName}</b></div>}
+          {motm && <div className="mr-motm">Spieler des Spiels: <PlayerLink id={motm.id}><b>{motm.firstName} {motm.lastName}</b></PlayerLink></div>}
         </div>
 
         {rep?.momentum?.length ? (
@@ -187,7 +188,7 @@ function LineupCol({ g, list, detail, av }: { g: Game; list: LineupEntry[]; deta
               <span className="mr-pos">{e.pos}</span>
               <span className="mr-nm">
                 <FaceThumb p={p} size={18} />
-                <span className="mr-nm-t">{nm(p)}</span>
+                <span className="mr-nm-t"><PlayerLink id={e.id}>{nm(p)}</PlayerLink></span>
                 {e.goals > 0 && <span className="mr-tag goal">{e.goals > 1 ? `${e.goals}×` : ''}Tor</span>}
                 {e.assists > 0 && <span className="mr-tag">{e.assists > 1 ? `${e.assists}×` : ''}Vorl.</span>}
                 {e.card && <span className={`mr-card ${e.card === 'Gelb' ? 'y' : 'r'}`} />}

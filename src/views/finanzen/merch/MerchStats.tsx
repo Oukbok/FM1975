@@ -1,4 +1,5 @@
 // Fanartikel › Statistiken: Verkäufe je Artikel, Umsatzentwicklung, Trikots (bzw. Poster) je Spieler.
+import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
 import { useState } from 'react';
 import type { Club, Player } from '../../../types';
 import type { MerchItemId, MerchShop } from '../../../types/merch';
@@ -91,7 +92,7 @@ function PlayerBox({ g, club, shop, year, focus, setFocus }: Props & { focus: Fo
           <div className="mc-face">
             <PlayerAvatar player={sel.p} club={sel.p.clubId === club.id ? club : g.clubs[sel.p.clubId]} size={112} />
             <div className="mc-face-txt">
-              <div className="mc-face-name">{sel.p.fullName}</div>
+              <div className="mc-face-name"><PlayerLink id={sel.p.id}>{sel.p.fullName}</PlayerLink></div>
               <div className="dnote">{sel.p.clubId === club.id ? `Nr. ${sel.p.shirtNumber} · ${sel.p.naturalPosition}` : 'nicht mehr im Verein'}{isNewcomer(sel.p, club, today) ? ' · Neuzugang' : ''}</div>
               <div className="mc-face-n">{n0(sel.n)}<span> {flock ? 'Trikots' : 'Stück'}</span></div>
             </div>
@@ -102,7 +103,7 @@ function PlayerBox({ g, club, shop, year, focus, setFocus }: Props & { focus: Fo
             {rows.map((r, i) => (
               <tr key={r.p.id} data-pid={r.p.id} className={r.p.id === sel?.p.id ? 'mc-sel' : ''} onClick={() => setFocus({ kind: 'player', id: r.p.id })}>
                 <td className="rl-rank">{i + 1}</td>
-                <td className="rl-name">{r.p.fullName}</td>
+                <td className="rl-name"><PlayerLink id={r.p.id}>{r.p.fullName}</PlayerLink></td>
                 <td><PosBadge p={r.p} /></td>
                 <td className="num rl-main">{n0(r.n)}</td>
               </tr>

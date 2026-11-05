@@ -1,4 +1,5 @@
 import { Game } from '../../game/state';
+import { PlayerLink } from '../../components/playerMenu/PlayerLink';
 import type { ArchivedPlayer } from '../../game/archive';
 import { DashBox, DashPage, Empty, KV } from '../../ui/DashPage';
 import { vColor } from '../../ui/format';
@@ -22,7 +23,7 @@ function Row({ a, value, sub }: { a: ArchivedPlayer; value: React.ReactNode; sub
   return (
     <div className="dlist-row">
       <PosBadge pos={a.pos} />
-      <span className="grow">{a.name}<span className="muted"> · {sub ?? `${a.born}–${a.retired}`}</span></span>
+      <span className="grow"><PlayerLink id={a.id}>{a.name}</PlayerLink><span className="muted"> · {sub ?? `${a.born}–${a.retired}`}</span></span>
       <span className="val">{value}</span>
     </div>
   );
@@ -48,7 +49,7 @@ export function HallOfFameView({ g }: { g: Game }) {
             <tbody>
               {byPeak.map((a) => (
                 <tr key={a.id}>
-                  <td className="nowrap rl-name">{a.name}</td>
+                  <td className="nowrap rl-name"><PlayerLink id={a.id}>{a.name}</PlayerLink></td>
                   <td className="ctr"><PosBadge pos={a.pos} /></td>
                   <td className="num nowrap">{a.born}–{a.retired}</td>
                   <td className="num" style={{ color: vColor(a.peak), fontWeight: 800 }}>{a.peak}</td>

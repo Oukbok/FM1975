@@ -3,6 +3,7 @@
 // Karte je Mannschaftsteil (Gesicht, Wappen, Name, Kennzahlen, Begründung, Plätze 2/3),
 // Ehrenzeile (Spieler der Saison / Newcomer). CSS 28-awards.css (.aw-*).
 // =============================================================================
+import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
 import type { CSSProperties } from 'react';
 import ClubCrest from '../../../components/ClubCrest';
 import { ClubLink } from '../../../components/club/ClubLink';
@@ -48,7 +49,7 @@ export function awardKpis(cat: AwardCat, e: AwardEntry): { k: string; v: string 
 const nameBtn = (e: AwardEntry, onPlayer?: (pid: string) => void, cls = 'aw-name') => (
   onPlayer
     ? <button type="button" className={`${cls} aw-link`} onClick={() => onPlayer(e.p)}>{e.n}</button>
-    : <span className={cls}>{e.n}</span>
+    : <span className={cls}><PlayerLink id={e.p}>{e.n}</PlayerLink></span>
 );
 
 /** Karte eines Mannschaftsteils: Sieger groß, Plätze 2 und 3 darunter. */

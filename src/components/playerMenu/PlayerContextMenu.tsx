@@ -8,6 +8,7 @@
 // =============================================================================
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { PlayerProfileCtx, type PlayerProfileApi } from './PlayerLink';
+import { nextProfileZ } from '../../ui/stackZ';
 import { createPortal } from 'react-dom';
 import PlayerModal, { type Tab } from '../PlayerModal';
 import { useClubProfile } from '../club/ClubLink';
@@ -33,7 +34,7 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
   g: Game; onChange: () => void; onGoto?: (screen: string) => void; children: ReactNode;
 }) {
   const [menu, setMenu] = useState<MenuState | null>(null);
-  const [profile, setProfile] = useState<{ pid: string; tab: Tab } | null>(null);
+  const [profile, setProfile] = useState<{ pid: string; tab: Tab; z?: number } | null>(null);
   const [talkId, setTalkId] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const clubApi = useClubProfile();
@@ -82,7 +83,7 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
 
   const items: Item[] = [];
   if (p && menu) {
-    const show = (tab: Tab) => () => { setProfile({ pid: p.id, tab }); close(); };
+    const show = (tab: Tab) => () => { setProfile({ pid: p.id, tab, z: nextProfileZ() }); close(); };
     items.push({ label: 'Spielerprofil', icon: 'squad', run: show('overview') });
     items.push({ label: 'Entwicklung', icon: 'training', run: show('development') });
     items.push(mine && !p.isYouth
@@ -118,7 +119,7 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
   const pp = profile ? playerOf(g, profile.pid) : undefined;
   // Profil-API für <PlayerLink> (jeder Spielername öffnet das Profil)
   const profileApi = useMemo<PlayerProfileApi>(() => ({
-    open: (pid, tab = 'general') => { if (playerOf(g, pid)) { setMenu(null); setProfile({ pid, tab }); } },
+    open: (pid, tab = 'general') => { if (playerOf(g, pid)) { setMenu(null); setProfile({ pid, tab, z: nextProfileZ() }); } },
     canOpen: (pid) => !!pid && !!playerOf(g, pid),
   }), [g]);
   const talk = talkId ? (g.transferTalks ?? []).find((t) => t.id === talkId) : undefined;
@@ -149,7 +150,7 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
       )}
       {pp && createPortal(
         <PlayerModal key={`${pp.id}-${profile!.tab}`} player={pp} club={g.clubs[pp.clubId]} squad={squad}
-          today={g.calendar.currentDate} season={g.season} initialTab={profile!.tab} onClose={() => setProfile(null)} />,
+          today={g.calendar.currentDate} season={g.season} initialTab={profile!.tab} zIndex={profile!.z} onClose={() => setProfile(null)} />,
         document.body,
       )}
       {talk && <TransferTalkModal g={g} talk={talk} onClose={() => setTalkId(null)} onChange={onChange} />}

@@ -70,8 +70,8 @@ function StadiumBackdrop({ year, capacity }: { year: number; capacity: number })
 export function PrematchStage({ home, away, year, capacity }: { home: PrematchSide; away: PrematchSide; year: number; capacity: number }) {
   const label = (s: PrematchSide, left: boolean) => {
     const pos = s.position != null ? `(${s.position})` : '';
-    return left ? <>{pos && <span className="pm-bar-pos">{pos}</span>}<span className="pm-bar-name">{s.name}</span></>
-      : <><span className="pm-bar-name">{s.name}</span>{pos && <span className="pm-bar-pos">{pos}</span>}</>;
+    return left ? <>{pos && <span className="pm-bar-pos">{pos}</span>}<span className="pm-bar-name" data-club={s.id}>{s.name}</span></>
+      : <><span className="pm-bar-name" data-club={s.id}>{s.name}</span>{pos && <span className="pm-bar-pos">{pos}</span>}</>;
   };
   return (
     <div className="pm-stage">

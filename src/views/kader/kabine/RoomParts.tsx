@@ -1,6 +1,7 @@
 // =============================================================================
 // Kabine – Bausteine: Faktorliste, Verlauf, Spieler im Fokus, Maßnahmen.
 // =============================================================================
+import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
 import { useState } from 'react';
 import {
   DRAnalysis, DRFactor, MORALE_LABEL, joltLeft, TIER_LABEL, moraleStepOf, teamEventDefs,
@@ -72,7 +73,7 @@ export function PlayerFocus({ g, a, pid, onChange }: { g: Game; a: DRAnalysis; p
     <div className="kb-focus">
       <div className="kb-focus-head">
         <PosBadge p={p} />
-        <span className="kb-focus-name">{p.fullName}</span>
+        <span className="kb-focus-name"><PlayerLink id={p.id}>{p.fullName}</PlayerLink></span>
         <span className="kb-pill">{TIER_LABEL[o.tier]}</span>
         {cap && <span className="kb-pill">Kapitän</span>}
         {inCouncil && <span className="kb-pill">Mannschaftsrat</span>}

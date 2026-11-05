@@ -47,14 +47,14 @@ export function Stage({ g, sim, info, score, pens, clock, revealing, shownSeq, h
         <ClubCrest club={H} size={128} />
         <div className="tm-bar">
           <div className={`tm-bar-team home ${side === 'home' ? 'mine' : ''}`}>
-            {rh != null && <span className="tm-rank">({rh})</span>}<span className="tm-bar-name">{H.name}</span>
+            {rh != null && <span className="tm-rank">({rh})</span>}<span className="tm-bar-name" data-club={H.id}>{H.name}</span>
           </div>
           <div className={`tm-bar-score ${revealing ? 'tense' : ''}`}>
             <div>{score[0]}<span>:</span>{score[1]}</div>
             {ht && <small aria-label="Halbzeitstand">[{ht[0]}] [{ht[1]}]</small>}
           </div>
           <div className={`tm-bar-team away ${side === 'away' ? 'mine' : ''}`}>
-            <span className="tm-bar-name">{A.name}</span>{ra != null && <span className="tm-rank">({ra})</span>}
+            <span className="tm-bar-name" data-club={A.id}>{A.name}</span>{ra != null && <span className="tm-rank">({ra})</span>}
           </div>
         </div>
         <ClubCrest club={A} size={128} />

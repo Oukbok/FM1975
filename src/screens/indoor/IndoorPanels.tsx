@@ -3,6 +3,7 @@
 // Teilnehmer und Hallenkader (Startseite). Listenstil „Paarungen“ (28-rows.css),
 // eigener Verein Bernstein. CSS 28-indoor.css (.ix-*).
 // =============================================================================
+import { PlayerLink } from '../../components/playerMenu/PlayerLink';
 import { ClubLink } from '../../components/club/ClubLink';
 import { indoorSkill, type IndoorMatch } from '../../engine/indoor';
 import { liveTables, type IndoorLive, type LiveSlot } from '../../engine/indoorLive';
@@ -112,7 +113,7 @@ export function SquadPanel({ squad }: { squad: Player[] }) {
   const row = (p: Player, tag: string) => (
     <div key={p.id} className="rl-row ix-prow" data-pid={p.id}>
       <PosBadge p={p} compact />
-      <span className="rl-name">{p.fullName}</span>
+      <span className="rl-name"><PlayerLink id={p.id}>{p.fullName}</PlayerLink></span>
       <span className="ix-dim">{tag}</span>
       <span className="rl-num rl-main" style={{ color: vColor(indoorSkill(p)) }}>{Math.round(indoorSkill(p))}</span>
     </div>

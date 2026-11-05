@@ -37,8 +37,10 @@ const OLD_TAB: Partial<Record<Tab, Tab>> = {
 };
 const mapTab = (t: Tab): Tab => OLD_TAB[t] ?? t;
 
-export default function PlayerModal({ player, club, squad, today, season, onClose, negotiation, initialTab, extraTab, tag }: {
+export default function PlayerModal({ player, club, squad, today, season, onClose, negotiation, initialTab, extraTab, tag, zIndex }: {
   player: Player; club?: Club; squad?: Player[]; today?: string; season?: string; onClose: () => void;
+  /** Stapelhöhe (ui/stackZ.ts), wenn von überall geöffnet. */
+  zIndex?: number;
   /** Zusätzlicher erster Reiter (z. B. Jugend: Hochziehen/Fördervertrag bzw. Talent ansprechen). */
   extraTab?: { label: string; content: ReactNode };
   /** Ersetzt das Etikett „Jugend“ (z. B. „A-Jugend · U19“). */
@@ -105,7 +107,7 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
   const active = tab === 'extra' && !extraTab ? 'general' : tab;
 
   return (
-    <div className="modal-overlay" onClick={onClose} ref={ref} style={zoom ? { zoom } : undefined}>
+    <div className="modal-overlay" onClick={onClose} ref={ref} style={zoom || zIndex ? { zoom, zIndex } : undefined}>
       <div className="modal pp-modal pp2" onClick={(e) => e.stopPropagation()} style={{ ['--club' as string]: club?.colors.primary ?? 'var(--border)' }}>
         <div className="pp2-actions">
           {canNav && <>

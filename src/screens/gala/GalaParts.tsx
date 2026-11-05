@@ -2,6 +2,7 @@
 // GALA GOLDENER BALL — Bausteine: Pokal (SVG), Nationalitäts-Etikett, Preisträger-Karte,
 // Liste der Plätze 4–10. CSS 28-awards.css (.gb-*).
 // =============================================================================
+import { PlayerLink } from '../../components/playerMenu/PlayerLink';
 import type { CSSProperties } from 'react';
 import PlayerAvatar, { hasFacePhoto } from '../../components/PlayerAvatar';
 import { GB_TITLE_LABEL } from '../../engine/goldenBall';
@@ -74,7 +75,7 @@ export function PodiumCard({ g, e, place, shown, season, mine }: { g: Game; e: G
       {shown ? (
         <div className="gb-pod-in" style={{ '--k': 0 } as CSSProperties}>
           <GalaFace g={g} e={e} size={place === 1 ? 112 : 88} />
-          <div className="gb-pod-name">{e.n}</div>
+          <div className="gb-pod-name"><PlayerLink id={e.p}>{e.n}</PlayerLink></div>
           <div className="gb-pod-meta"><NatTag nat={e.nat} /><PosBadge pos={e.pos} /><span>{e.a} Jahre</span></div>
           <div className="gb-pod-club"><TeamName g={g} id={e.c} season={season} size={22} /></div>
           <div className="gb-kpis">{kpis(e).map((x) => <div key={x.k} className="gb-kpi"><b>{x.v}</b><span>{x.k}</span></div>)}</div>
@@ -96,7 +97,7 @@ export function GalaRest({ g, top, mine, season }: { g: Game; top: GBEntry[]; mi
       {top.slice(3).map((e, i) => (
         <div key={e.p} className={`rl-row gb-rest-row ${e.c === mine ? 'me' : ''}`} style={{ '--k': i } as CSSProperties}>
           <span className="rl-rank">{i + 4}</span>
-          <span className="gb-rest-name"><NatTag nat={e.nat} /><span className="rl-name">{e.n}</span></span>
+          <span className="gb-rest-name"><NatTag nat={e.nat} /><span className="rl-name"><PlayerLink id={e.p}>{e.n}</PlayerLink></span></span>
           <span className="gb-rest-club"><TeamName g={g} id={e.c} season={season} size={18} short /></span>
           <span className="rl-num">{e.pos}</span>
           <span className="rl-num">{e.ap} Sp.</span>

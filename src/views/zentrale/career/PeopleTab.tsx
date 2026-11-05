@@ -1,5 +1,6 @@
 // Zentrale › Karriere, Reiter „Trainer & Spieler“: deine Cheftrainer, Transferbilanz,
 // Spieler mit den meisten Einsätzen/Toren unter dir, Eigengewächse.
+import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
 import PosBadge from '../../../components/PosBadge';
 import { pointsPerGame } from '../../../game/coachRecord';
 import { headCoachNow, headCoachRows } from '../../../game/headCoaches';
@@ -73,7 +74,7 @@ function PlayerList({ list, val, empty }: { list: PlayerLine[]; val: (p: PlayerL
         <div key={p.id} className={`rl-row car-pl ${p.active ? '' : 'gone'}`} data-pid={p.active ? p.id : undefined}>
           <span className="rl-rank">{i + 1}</span>
           <PosBadge pos={p.pos} />
-          <span className="car-pl-name"><span className="rl-name">{p.name}</span><span className="car-dim">{p.from === p.to ? p.from : `${p.from.slice(0, 4)}–${p.to.slice(5)}`}{p.active ? ' · im Kader' : ''}</span></span>
+          <span className="car-pl-name"><span className="rl-name"><PlayerLink id={p.id}>{p.name}</PlayerLink></span><span className="car-dim">{p.from === p.to ? p.from : `${p.from.slice(0, 4)}–${p.to.slice(5)}`}{p.active ? ' · im Kader' : ''}</span></span>
           <span className="rl-num rl-main">{val(p)}</span>
         </div>
       ))}

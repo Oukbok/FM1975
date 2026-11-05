@@ -3,6 +3,8 @@
 // Oben die vier Karten der gewählten Saison, unten alle Jahrgänge und die
 // meistgeehrten Spieler. Daten: game.seasonAwards (game/seasonAwardsGame.ts).
 // =============================================================================
+import { ClubLink } from '../../../components/club/ClubLink';
+import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import PlayerModal from '../../../components/PlayerModal';
@@ -69,11 +71,11 @@ export function AwardsView({ g }: { g: Game }) {
                   const w = x.cats[c][0];
                   return (
                     <td key={c} className={`nowrap ${w?.c === (x.mine ?? mine) ? 'aw-mine' : ''} ${x.best === c ? 'aw-best' : ''}`} title={w ? `${w.n} (${w.cn})${x.best === c ? ' – Spieler der Saison' : ''}` : ''}>
-                      {w ? w.n : '—'}<span className="muted"> {w ? w.cn : ''}</span>
+                      {w ? <PlayerLink id={w.p}>{w.n}</PlayerLink> : '—'}<span className="muted"> {w ? <ClubLink id={w.c}>{w.cn}</ClubLink> : ''}</span>
                     </td>
                   );
                 })}
-                <td className={`nowrap ${x.rookie?.c === (x.mine ?? mine) ? 'aw-mine' : ''}`}>{x.rookie ? x.rookie.n : '—'}</td>
+                <td className={`nowrap ${x.rookie?.c === (x.mine ?? mine) ? 'aw-mine' : ''}`}>{x.rookie ? <PlayerLink id={x.rookie.p}>{x.rookie.n}</PlayerLink> : '—'}</td>
               </tr>
             ))}
           </tbody>
@@ -89,7 +91,7 @@ export function AwardsView({ g }: { g: Game }) {
               return (
                 <button type="button" key={y.year} className={`rl-row ${w.c === (y.mine ?? mine) ? 'me' : ''}`} onClick={() => setGala(y.year)} title="Gala noch einmal ansehen">
                   <span className="rl-rank">{y.year}</span>
-                  <span className="rl-name grow">{w.n}<span className="muted"> · {w.cn}</span></span>
+                  <span className="rl-name grow"><PlayerLink id={w.p}>{w.n}</PlayerLink><span className="muted"> · <ClubLink id={w.c}>{w.cn}</ClubLink></span></span>
                   <span className="rl-num">{w.nat}</span>
                 </button>
               );
@@ -102,7 +104,7 @@ export function AwardsView({ g }: { g: Game }) {
             {tallies.map((t, i) => (
               <div key={t.p} className="rl-row">
                 <span className="rl-rank">{i + 1}</span>
-                <span className="rl-name grow">{t.n}<span className="muted"> · {t.cn}</span></span>
+                <span className="rl-name grow"><PlayerLink id={t.p}>{t.n}</PlayerLink><span className="muted"> · {t.cn}</span></span>
                 <span className="rl-num" title="Spieler der Saison">{t.best ? `${t.best}× SdS` : ''}</span>
                 <span className="rl-main">{t.wins}×</span>
               </div>
