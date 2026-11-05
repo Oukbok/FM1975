@@ -51,6 +51,7 @@ import * as ukr1 from './clubs/ukr'; import * as ukr2 from './seasons/ukr'; add(
 import * as srb1 from './clubs/srb'; import * as srb2 from './seasons/srb'; add('srb', srb1, srb2);
 import * as cro1 from './clubs/cro'; import * as cro2 from './seasons/cro'; add('cro', cro1, cro2);
 import * as cze1 from './clubs/cze'; import * as cze2 from './seasons/cze'; add('cze', cze1, cze2);
+import * as svk1 from './clubs/svk'; import * as svk2 from './seasons/svk'; add('svk', svk1, svk2);
 // ------------------------------------------------------------------------------
 
 /** Daten eines Landes eintragen (auch für Tests mit Beispieldaten aus tests/fixtures/). */
