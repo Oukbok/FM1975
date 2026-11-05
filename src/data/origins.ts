@@ -167,8 +167,37 @@ export const MIX: Mix[] = [
   [2025, { ger: 9, ger_it: 0.5, ger_yu: 0.5, ger_modern: 30, ger_tr: 3, ger_pl: 2, ger_af: 4, aut: 4, sui: 3.5, den: 3.5, swe: 1.5, nor: 2, ned: 3, bel: 2, cro: 2.5, srb: 1.5, pol: 1.5, cze: 1.5, hun: 1.5, bra: 2, arg: 1, gha: 1.5, nga: 1.5, cmr: 1, tur: 1, fra: 3, fra_af: 3, jpn: 3.5, kor: 2, esp: 1.5, por: 2, ita: 1, usa: 2.5, mar: 1.5, eng: 2 }],
 ];
 
+// -----------------------------------------------------------------------------
+// Heimatland (Weltdaten, Wunsch Pascal): führt der Spieler einen Verein außerhalb
+// Deutschlands, tauschen „Einheimische“ und Deutsche ihre Rollen in der Mischung –
+// alle deutschen Herkünfte gehen auf die Herkunft des Heimatlandes über, dessen
+// bisheriges Gewicht auf 'ger'. null = Deutschland (unverändert).
+// -----------------------------------------------------------------------------
+let homeOrigin: string | null = null;
+export function setHomeOrigin(id: string | null): void { homeOrigin = id && id !== 'ger' && ORIGINS[id] ? id : null; }
+export function getHomeOrigin(): string | null { return homeOrigin; }
+/** Nationalitätskürzel der Einheimischen ('GER' bzw. Heimatland). */
+export function homeNationality(): string { return homeOrigin ? ORIGINS[homeOrigin]?.nationality ?? 'GER' : 'GER'; }
+
+function swapHome(mix: Record<string, number>): Record<string, number> {
+  if (!homeOrigin) return mix;
+  const out: Record<string, number> = {};
+  let dom = 0;
+  for (const [k, w] of Object.entries(mix)) {
+    if (ORIGINS[k]?.nationality === 'GER') dom += w;
+    else if (k !== homeOrigin) out[k] = w;
+  }
+  out[homeOrigin] = dom;
+  out.ger = (out.ger ?? 0) + (mix[homeOrigin] ?? 0) + 0.5;
+  return out;
+}
+
 /** Gewichtete Herkunfts-Mischung für ein Jahr (lineare Interpolation zwischen den Stützjahren). */
 export function originMixForYear(year: number): Record<string, number> {
+  return swapHome(baseMixForYear(year));
+}
+
+function baseMixForYear(year: number): Record<string, number> {
   if (year <= MIX[0][0]) return MIX[0][1];
   for (let i = 1; i < MIX.length; i++) {
     const [y1, m1] = MIX[i];
@@ -187,7 +216,7 @@ export function originMixForYear(year: number): Record<string, number> {
 export function pickOrigin(year: number, rng: () => number, domestic = false): Origin {
   const mix = originMixForYear(year);
   // Robust gegenüber Datensätzen: unbekannte Herkünfte überspringen.
-  let entries = Object.entries(mix).filter(([k, w]) => w > 0 && ORIGINS[k] && (!domestic || ORIGINS[k].nationality === 'GER'));
+  let entries = Object.entries(mix).filter(([k, w]) => w > 0 && ORIGINS[k] && (!domestic || ORIGINS[k].nationality === homeNationality()));
   if (!entries.length) entries = Object.keys(ORIGINS).slice(0, 1).map((k) => [k, 1] as [string, number]);
   const total = entries.reduce((s, [, w]) => s + w, 0);
   let r = rng() * total;

@@ -163,3 +163,6 @@ Werden beim Zusammenführen der Stränge ergänzt (Erstes Training, Trainingslag
 | `sponsor/tribuene-draufsicht.webp` | Stadion von oben, Tribünen ohne Beschriftung, kühl abgedunkelt | 1240×800 | Reiter Namensrechte, Hintergrund der Draufsicht (Ersatz: SVG-Schraffur) |
 | `sponsor/spielfeldrand-<epoche>.webp` | Blick über den Rasen auf Banden + Zuschauer (unscharf), 1978 / 1995 / 2015 | 1920×400 | Reiter Bandenwerbung, Kulisse hinter den Banden (Ersatz: Punkteraster) |
 
+| `world/flagge-<cc>.webp` (z. B. `flagge-eng`, `flagge-ita`, alle Codes aus `data/world/countries.ts`) | Vereinfachte Landesflagge als leicht gewelltes Stoffstück, gedämpfte Farben, ohne Wappen | 120×80 | Assistent Spielwelt/Verein, Ligensystem (Ersatz: gezeichnete Flagge `CountryFlag`, `data/countryFlags.ts`; neue Länder wie Wales/Irland/Bulgarien haben dort noch keine Flagge → neutrales Feld) |
+| `world/epoche-<jahr>.webp` (1975, 1985, 1995, 2005, 2015, 2025) | Stadionszene der Epoche (Stehplätze und Zäune 1975, Sitzplätze 1995, LED-Banden 2025), kühl abgedunkelt | 1920×1080 | Hintergrund Assistent beim gewählten Startjahr (Ersatz: Tribünenfoto) |
+| Wappen der Weltdaten-Vereine | keine Bilder nötig – Wappen entstehen aus Farben/Kürzel; eigene Wappen per Editor (`crests` je Vereins-ID) | – | überall |

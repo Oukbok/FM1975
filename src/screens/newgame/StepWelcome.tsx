@@ -1,3 +1,4 @@
+import { seasonLabelOf } from '../../data/world/countries';
 import ClubCrest from '../../components/ClubCrest';
 import PlayerAvatar from '../../components/PlayerAvatar';
 import { expectedPosition } from '../../engine/environment';
@@ -24,7 +25,7 @@ function Status({ title, value, text, invert }: { title: string; value: number; 
 
 export function StepWelcome({ d, game }: { d: NewGameDraft; game: Game | null }) {
   if (!game) {
-    return <div className="ng-wait"><span className="ng-spinner" /><b>Die Spielwelt wird aufgebaut</b><small>Kader, Spielpläne und Ligen für 1975/76 …</small></div>;
+    return <div className="ng-wait"><span className="ng-spinner" /><b>Die Spielwelt wird aufgebaut</b><small>Kader, Spielpläne und Ligen für {seasonLabelOf(d.startYear)} …</small></div>;
   }
   const club = game.clubs[game.managedClubId];
   const squad = elf(game, club.playerIds);
@@ -49,12 +50,12 @@ export function StepWelcome({ d, game }: { d: NewGameDraft; game: Game | null })
     <div className="ng-cols ng-cols-welcome">
       <section className="ng-card ng-welcome-hero">
         <div className="ng-welcome-mgr">
-          <PlayerAvatar player={{ ...face, age: ageAtStart(d) }} size={64} staff year={1975} />
+          <PlayerAvatar player={{ ...face, age: ageAtStart(d) }} size={64} staff year={d.startYear} />
           <span><b>{fullName(d)}</b><small>{ageAtStart(d)} Jahre · {d.nationality}</small></span>
         </div>
         <ClubCrest club={club} size={210} />
         <h2 className="ng-welcome-title">Willkommen bei<br /><span>{club.name}</span></h2>
-        <div className="ng-welcome-sub">{div} · Saison 1975/76 · {club.stadium?.name ?? ''}</div>
+        <div className="ng-welcome-sub">{div} · Saison {seasonLabelOf(d.startYear)} · {club.stadium?.name ?? ''}</div>
       </section>
 
       <section className="ng-card">

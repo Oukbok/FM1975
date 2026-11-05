@@ -11,16 +11,18 @@ import { FacilitiesSection, LeaguesSection, MarketingSection, StaffSection, Time
 import { EconomySection, GeneralSection, HistorySection, NamesSection } from './sections/People';
 import { CheckSection } from './sections/Check';
 import { LegendsSection } from './sections/Legends';
+import { WorldSection } from './sections/World';
 
 // =============================================================================
 // DATENSATZ-EDITOR (eigenständige Seite unter /editor/)
 // Arbeitskopie im Browser, Prüfen, Export als Datei, Übernahme ins Spiel.
 // =============================================================================
-type Sec = 'general' | 'clubs' | 'europe' | 'timeline' | 'leagues' | 'facilities' | 'staff' | 'marketing' | 'names' | 'legends' | 'economy' | 'history' | 'check';
+type Sec = 'general' | 'clubs' | 'world' | 'europe' | 'timeline' | 'leagues' | 'facilities' | 'staff' | 'marketing' | 'names' | 'legends' | 'economy' | 'history' | 'check';
 
 const SECTIONS: { key: Sec; label: string; icon: IconName; title: string }[] = [
   { key: 'general', label: 'Allgemein', icon: 'settings', title: 'Allgemein' },
   { key: 'clubs', label: 'Vereine', icon: 'dashVerein', title: 'Vereine, Wappen & Trikots' },
+  { key: 'world', label: 'Weltdaten', icon: 'international', title: 'Weltdaten: Länder, Vereine, Saisons' },
   { key: 'europe', label: 'Europa', icon: 'international', title: 'Europa & Europapokal' },
   { key: 'timeline', label: 'Chronik', icon: 'chronicle', title: 'Chronik & Regeländerungen' },
   { key: 'leagues', label: 'Ligen', icon: 'dashTabelle', title: 'Ligasystem & Reformen' },
@@ -117,7 +119,7 @@ export default function EditorApp() {
   const nErr = issues?.filter((i) => i.level === 'error').length ?? 0;
   const p = { ds, onChange };
   const body: Record<Sec, ReactNode> = {
-    general: <GeneralSection {...p} />, clubs: <ClubsSection {...p} />, europe: <EuropeSection {...p} />,
+    general: <GeneralSection {...p} />, clubs: <ClubsSection {...p} />, world: <WorldSection {...p} />, europe: <EuropeSection {...p} />,
     timeline: <TimelineSection {...p} />, leagues: <LeaguesSection {...p} />, facilities: <FacilitiesSection {...p} />,
     staff: <StaffSection {...p} />, marketing: <MarketingSection {...p} />, names: <NamesSection {...p} />, legends: <LegendsSection {...p} />,
     economy: <EconomySection {...p} />, history: <HistorySection {...p} />,

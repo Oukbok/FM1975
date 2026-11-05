@@ -40,7 +40,12 @@ import { euroFrameDates } from './euroSetup';
 import { harmonizeSeason } from './fixtureWatch';
 import { nextDrawDate, scheduleDraws } from './cupDraw';
 import { CalendarEngine } from '../engine/calendar';
-import { Game, bestOffer, hashSeed, migrateCommerce, offerToContract } from './state';
+import { Game, bestOffer, hashSeed, homeCountryOf, migrateCommerce, offerToContract } from './state';
+import { countryPointSystem } from '../data/world/countries';
+import { homeExcluded } from './startYear';
+import { buildFullCountries, fullCountryResults, isFullDivision } from './fullCountries';
+
+const isGermanHome = (g: Game) => homeCountryOf(g) === 'ger';
 import { sponsorSeasonStart } from './sponsorGame';
 import { contractSeasonStart } from './contractClausesGame';
 
@@ -109,7 +114,7 @@ export function leagueClubs(game: Game): Club[] {
 /** Wendet den Spiel-Effekt eines Meilensteins an (Punktesystem, Feature-Flag). */
 export function applyTimelineEffect(g: Game, ev: TimelineEvent): void {
   if (!ev.effect) return;
-  if (ev.effect.pointSystem) {
+  if (ev.effect.pointSystem && (!g.homeCountry || g.homeCountry === 'ger')) {
     g.pointSystem = ev.effect.pointSystem;
     // Tabelle mit dem neuen Punktesystem SOFORT neu berechnen, damit z. B. die
     // Umstellung auf 3 Punkte 1995/96 die Tabellenrechnung wirklich verändert.
@@ -216,6 +221,9 @@ export function startNextSeason(g: Game): void {
   // Europapokal-Starter der neuen Saison AUS der abgelaufenen Saison ableiten
   // (Endtabelle + Landespokalsieger) – VOR dem Überschreiben von g.table/g.cup.
   const euroQuals = computeGermanEuroQualifiers(g, false);
+  // Punkteregel des Heimatlandes (Deutschland: Chronik-Meilenstein 1995/96).
+  if (!isGermanHome(g)) g.pointSystem = countryPointSystem(homeCountryOf(g), nextStartYear);
+  if (homeExcluded(homeCountryOf(g), nextStartYear)) { euroQuals.ec = []; euroQuals.cwc = []; euroQuals.uefa = []; }
   // Versprechen zum ersten Training: Endstand festhalten, Auswertung nach dem Auf-/Abstieg.
   const promSnap = seasonPromiseSnapshot(g, Object.values(euroQuals).some((ids) => ids.includes(g.managedClubId)));
   const promDate = g.calendar.currentDate;
@@ -230,6 +238,7 @@ export function startNextSeason(g: Game): void {
   }
 
   const oldPlayerTier = g.leagues.playerDivision.tier;
+  const fullResults = fullCountryResults(g);
 
   // --- 2) Endstände ALLER aktuellen Divisionen einlesen (Spielerliga + Sim) ---
   const pd = g.leagues.playerDivision;
@@ -245,6 +254,7 @@ export function startNextSeason(g: Game): void {
   const ddrDivs = g.leagues.otherDivisions.filter((d) => d.id.startsWith('ddr-'));
   for (const div of g.leagues.otherDivisions) {
     if (div.id.startsWith('ddr-') && !isReunify) continue;
+    if (isFullDivision(div)) continue; // Länder Spiel für Spiel: eigener Auf-/Abstieg (game/fullCountries.ts)
     current.push({ id: div.id, tier: div.tier, group: div.group, name: div.name, orderedIds: finalOrder(g, div.id) });
   }
   // Vereinsprofil-Historie (Endplätze, Titel, direkter Vergleich) vor dem Überschreiben sichern.
@@ -265,6 +275,7 @@ export function startNextSeason(g: Game): void {
     cityOf: (id) => g.clubs[id]?.city ?? g.simClubs[id]?.city ?? '',
     appliedReforms: g.appliedReforms,
     protectedId: g.managedClubId,
+    ...(isGermanHome(g) ? {} : { targets: current.filter((c) => c.tier < 100).map((c) => ({ id: c.id, tier: c.tier, group: c.group, name: c.name, teamCount: c.orderedIds.length })) }),
   });
 
   // Neue Plätze zuerst aus dem Vereins-Pool besetzen (game/clubPool.ts), dann fiktive
@@ -285,7 +296,10 @@ export function startNextSeason(g: Game): void {
   for (const d of res.divisions) membership[d.meta.id] = { ids: d.ids, meta: d.meta };
   // Sollgrößen absichern (Reform-/Relegationssonderfälle dürfen keine Liga
   // dauerhaft verzerren). Ausnahme: die bewusst übergroße Wiedervereinigungssaison.
-  if (!isReunify) balanceDivisions(membership, structureForSeason(newSeason), (id) => clubStrengthFor(g, id), g.managedClubId);
+  // Anderes Heimatland (Weltdaten): Ligagrößen bleiben, keine deutschen Reformen.
+  const homeTargets = isGermanHome(g) ? structureForSeason(newSeason)
+    : current.filter((c) => c.tier < 100).map((c) => ({ id: c.id, tier: c.tier, group: c.group, name: c.name, teamCount: c.orderedIds.length }));
+  if (!isReunify) balanceDivisions(membership, homeTargets, (id) => clubStrengthFor(g, id), g.managedClubId);
   // Auf-/Abstieg zwischen unterster simulierter Liga und Amateurligen (Vereins-Pool).
   if (!res.reform) pooled.push(...poolExchange(g, membership, current, newSeason, g.managedClubId));
 
@@ -406,8 +420,10 @@ export function startNextSeason(g: Game): void {
   historicWorld(g, g.world, euroClubs, nextStartYear);
   const worldRes = advanceWorldSeason(
     g.world, euroClubs, oldSeason, nextStartYear, g.pointSystem === '3-point' ? 3 : 2,
-    g.euroCups as any, (id) => !!g.clubs[id] || !!g.simClubs?.[id],
+    g.euroCups as any, (id) => !!g.clubs[id] || (!!g.simClubs?.[id] && g.simClubs[id].tier < 200),
+    fullResults,
   );
+  buildFullCountries(g, fixturesStart);
   historicWorldAfter(g, g.world, euroClubs, nextStartYear);
   for (const note of worldRes.notes) {
     pushMessage(g.messages, makeMessage({

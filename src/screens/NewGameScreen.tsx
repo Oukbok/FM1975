@@ -1,5 +1,4 @@
 import Icon, { type IconName } from '../components/Icon';
-import { getClubSeeds } from '../data/generate';
 import { applyDataset } from '../data/dataset/apply';
 import { BUILTIN_ID } from '../data/dataset/builtin';
 import { cachedDataset } from '../data/dataset/storage';
@@ -15,6 +14,9 @@ import { StepWorld } from './newgame/StepWorld';
 import { StepClub } from './newgame/StepClub';
 import { StepLeagues } from './newgame/StepLeagues';
 import { StepWelcome } from './newgame/StepWelcome';
+import { leaguePreview, sortClubs } from './newgame/clubPreview';
+import { playableCountries } from '../game/worldCompose';
+import { COUNTRY_BY_CC, countryExists, seasonLabelOf } from '../data/world/countries';
 
 // -----------------------------------------------------------------------------
 // NEUES SPIEL — Assistent in sechs Schritten (Vorbild: große Managerspiele):
@@ -25,16 +27,21 @@ import { StepWelcome } from './newgame/StepWelcome';
 // -----------------------------------------------------------------------------
 export type { NewGameDraft } from './newgame/draft';
 
-const STEPS: { label: string; sub: string; icon: IconName; title: string; lead: string; fill?: boolean }[] = [
-  { label: 'Manager', sub: 'Persönliches & Profil', icon: 'squad', title: 'Dein Manager', lead: 'Wer übernimmt im Sommer 1975 die Trainerbank? Name, Herkunft und dein Profil als Trainer.' },
-  { label: 'Spielmodus', sub: 'Modus & Optionen', icon: 'settings', title: 'Spielmodus wählen', lead: 'Wie beginnt deine Karriere – und nach welchen Regeln entwickelt sich die Welt um dich herum?' },
-  { label: 'Spielwelt', sub: 'Datensatz & Länder', icon: 'international', title: 'Die Spielwelt', lead: 'Datensatz und alle Länder, deren Ligen im Hintergrund mitspielen.', fill: true },
-  { label: 'Verein', sub: 'Land, Liga, Verein', icon: 'dashVerein', title: 'Verein auswählen', lead: 'Bei welchem Verein beginnst du? Du bleibst ihm treu – über alle Jahrzehnte.', fill: true },
-  { label: 'Ligensystem', sub: 'Übersicht', icon: 'stats', title: 'Übersicht Ligensystem', lead: 'So ist der Fußball 1975/76 aufgebaut. Klick auf eine Liga, um ihre Vereine zu sehen.', fill: true },
-  { label: 'Start', sub: 'Willkommen', icon: 'newGame', title: 'Dein erster Arbeitstag', lead: 'Mannschaft, Vorstand und Fans warten. Alles bereit für die Saison 1975/76.' },
-];
+type StepDef = { label: string; sub: string; icon: IconName; title: string; lead: string; fill?: boolean };
+function stepsFor(year: number): StepDef[] {
+  const se = seasonLabelOf(year);
+  return [
+    { label: 'Manager', sub: 'Persönliches & Profil', icon: 'squad', title: 'Dein Manager', lead: `Wer übernimmt im Sommer ${year} die Trainerbank? Name, Herkunft und dein Profil als Trainer.` },
+    { label: 'Spielmodus', sub: 'Modus & Optionen', icon: 'settings', title: 'Spielmodus wählen', lead: 'Wie beginnt deine Karriere – und nach welchen Regeln entwickelt sich die Welt um dich herum?' },
+    { label: 'Spielwelt', sub: 'Startjahr & Länder', icon: 'international', title: 'Die Spielwelt', lead: 'Startjahr, Datensatz und alle Länder, deren Ligen mitspielen.', fill: true },
+    { label: 'Verein', sub: 'Land, Liga, Verein', icon: 'dashVerein', title: 'Verein auswählen', lead: 'Bei welchem Verein beginnst du? Du bleibst ihm treu – über alle Jahrzehnte.', fill: true },
+    { label: 'Ligensystem', sub: 'Übersicht', icon: 'stats', title: 'Übersicht Ligensystem', lead: `So ist der Fußball ${se} aufgebaut. Klick auf eine Liga, um ihre Vereine zu sehen.`, fill: true },
+    { label: 'Start', sub: 'Willkommen', icon: 'newGame', title: 'Dein erster Arbeitstag', lead: `Mannschaft, Vorstand und Fans warten. Alles bereit für die Saison ${se}.` },
+  ];
+}
 
-const topClub = () => [...getClubSeeds()].sort((a, b) => b.reputation - a.reputation)[0]?.id ?? '';
+/** Stärkster Verein der 1. Liga eines Landes im Startjahr. */
+const topClub = (cc = 'ger', year = 1975) => sortClubs(leaguePreview('tier1', cc, year), 'reputation')[0]?.id ?? '';
 
 export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
   defaults: AppSettings; onBack: () => void;
@@ -48,7 +55,7 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
       datasetId: BUILTIN_ID, difficulty: 'normal', injuries: true, history: 'off', speedMs: defaults.speedMs,
       briefingAuto: defaults.briefingAuto !== false, briefingIntro: defaults.briefingIntro !== false, legends: true,
       mode: 'manager', offerSeed: Math.floor(Math.random() * 2 ** 31),
-      league: 'tier1', clubId: topClub(),
+      league: 'tier1', clubId: topClub(), startYear: 1975, country: 'ger', fullCountries: [],
       firstName: '', lastName: '', birthDay: 1, birthMonth: 1, birthYear: 1940,
       nationality: 'Deutschland', nationality2: '', avatarSeed: Math.random().toString(36).slice(2, 8),
       favoriteClubId: '', avoidClubId: '', style: 'balanced', background: 'ex_pro',
@@ -58,9 +65,22 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
 
   const chooseDataset = (id: string) => {
     applyDataset(cachedDataset(id));
-    set({ datasetId: id, league: 'tier1', clubId: topClub(), favoriteClubId: '', avoidClubId: '' });
+    const cc = playableCountries(d.startYear).includes(d.country) ? d.country : 'ger';
+    set({ datasetId: id, country: cc, league: 'tier1', clubId: topClub(cc, d.startYear), favoriteClubId: '', avoidClubId: '' });
   };
-  const offers = useMemo(() => careerOffers(d.offerSeed, d.avoidClubId), [d.offerSeed, d.avoidClubId, d.datasetId]);
+  /** Startjahr wählen: Land bleibt, wenn es im Jahr spielbar ist; Verein = Spitzenverein. */
+  const chooseYear = (y: number) => {
+    const cc = playableCountries(y).includes(d.country) ? d.country : 'ger';
+    const full = d.fullCountries.filter((c) => COUNTRY_BY_CC[c] && countryExists(COUNTRY_BY_CC[c], y));
+    set({ startYear: y, birthYear: d.birthYear + (y - d.startYear), country: cc, fullCountries: full, league: 'tier1', clubId: topClub(cc, y) });
+  };
+  const chooseCountry = (cc: string) => {
+    if (cc === d.country) return;
+    set({ country: cc, league: 'tier1', clubId: topClub(cc, d.startYear), fullCountries: d.fullCountries.filter((c) => c !== cc) });
+  };
+  const toggleFull = (cc: string) => set({ fullCountries: d.fullCountries.includes(cc) ? d.fullCountries.filter((c) => c !== cc) : [...d.fullCountries, cc] });
+  const offers = useMemo(() => careerOffers(d.offerSeed, d.avoidClubId, d.country, d.startYear), [d.offerSeed, d.avoidClubId, d.datasetId, d.country, d.startYear]);
+  const STEPS = stepsFor(d.startYear);
   const chooseMode = (m: NewGameDraft['mode']) => {
     if (m === d.mode) return;
     if (m === 'career' && offers[0]) set({ mode: m, clubId: offers[0].club.id, league: offers[0].league });
@@ -71,7 +91,8 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
   const optsKey = JSON.stringify({ ...gameOptions(d), speedMs: 0 });
   const [built, setBuilt] = useState<{ key: string; game: Game } | null>(null);
   useEffect(() => {
-    if (step !== STEPS.length - 1 || built?.key === optsKey) return;
+    // Ab „Ligensystem“ vorab bauen: die Übersicht zeigt dann genau die Welt des Startjahres.
+    if (step < STEPS.length - 2 || built?.key === optsKey) return;
     const t = setTimeout(() => {
       applyDataset(cachedDataset(d.datasetId));
       setBuilt({ key: optsKey, game: createNewGame(gameOptions(d)) });
@@ -120,9 +141,9 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
           </div>
           {step === 0 && <StepManager d={d} set={set} />}
           {step === 1 && <StepMode d={d} set={set} chooseMode={chooseMode} />}
-          {step === 2 && <StepWorld d={d} chooseDataset={chooseDataset} />}
-          {step === 3 && <StepClub d={d} set={set} offers={offers} />}
-          {step === 4 && <StepLeagues d={d} />}
+          {step === 2 && <StepWorld d={d} chooseDataset={chooseDataset} chooseYear={chooseYear} toggleFull={toggleFull} />}
+          {step === 3 && <StepClub d={d} set={set} offers={offers} chooseCountry={chooseCountry} />}
+          {step === 4 && <StepLeagues d={d} game={ready} />}
           {step === 5 && <StepWelcome d={d} game={ready} />}
         </div>
       </main>

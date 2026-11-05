@@ -1,4 +1,5 @@
 import { PlannedActivity } from '../data/activities';
+import { COUNTRY_BY_CC } from '../data/world/countries';
 import { EuroClub } from '../data/europe';
 import type { WorldState } from '../engine/world';
 import type { SeasonPhase, StaffMember, TrainingFocus } from '../engine/staffPeople';
@@ -147,7 +148,18 @@ export interface Game {
   career?: import('./careerState').CareerState;
   /** Ausnahmetalente der Fußballgeschichte: an/aus und bereits erschienene (game/legendsGame.ts). Fehlt = keine. */
   legends2?: import('./legendsGame').LegendsState;
+  /** Startjahr der Karriere (Weltdaten); fehlt = 1975. */
+  startYear?: number;
+  /** Heimatland (data/world/countries.ts); fehlt = 'ger'. */
+  homeCountry?: string;
+  /** Spiel für Spiel simulierte weitere Länder (game/fullCountries.ts); fehlt = keine. */
+  fullCountries?: string[];
 }
+
+/** Heimatland des Spielstands (fehlt = Deutschland). */
+export const homeCountryOf = (g: { homeCountry?: string }): string => g.homeCountry ?? 'ger';
+/** Länder-Schlüssel des Heimatlandes wie `EuroClub.country` („Deutschland“, „England“ …). */
+export const homeCountryKey = (g: { homeCountry?: string }): string => COUNTRY_BY_CC[homeCountryOf(g)]?.key ?? 'Deutschland';
 
 // Moral-Stufen in aufsteigender Reihenfolge (für Aktivitäts-Effekte, Block p11).
 export const MORALE_ORDER: import('../types').PlayerMorale[] = ['very_low', 'low', 'okay', 'good', 'excellent'];

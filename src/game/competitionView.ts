@@ -5,6 +5,8 @@
 // Historie vor Spielbeginn (data/history/). Die Seiten in views/statistiken/
 // (Liga, Pokal, International) lesen nur diesen Schnappschuss.
 // =============================================================================
+import { COUNTRY_BY_CC } from '../data/world/countries';
+import { homeCountryOf } from './state';
 import { isLocalClub, localClubName } from './youthComps/localClubs';
 import { EURO_COMP_NAMES } from '../data/europe';
 import { HIST_FOREIGN, HIST_TOP_SCORERS } from '../data/history/finals';
@@ -112,7 +114,8 @@ function tieLegs(t: CupTie): Pick<TieLite, 'legs' | 'agg' | 'awayGoals' | 'legDa
 // Auswahl
 // -----------------------------------------------------------------------------
 export function seasonOptions(g: Game): SeasonOption[] {
-  const out: SeasonOption[] = HISTORIC_SEASONS.map((season) => ({ season, source: 'history' as Source }));
+  // Historie 1963–1975 gehört zu Deutschland (andere Heimatländer: erst ab Spielbeginn).
+  const out: SeasonOption[] = homeCountryOf(g) === 'ger' ? HISTORIC_SEASONS.map((season) => ({ season, source: 'history' as Source })) : [];
   for (const s of leagueArchive(g)?.seasons ?? []) if (!out.some((o) => o.season === s.season)) out.push({ season: s.season, source: 'archive' });
   if (!out.some((o) => o.season === g.season)) out.push({ season: g.season, source: 'live' });
   return out.sort((a, b) => a.season.localeCompare(b.season));
@@ -122,7 +125,9 @@ function sourceOf(g: Game, season: string): Source | null {
   return seasonOptions(g).find((o) => o.season === season)?.source ?? null;
 }
 
-const leagueSection = (tier: number) => (tier >= 100 ? 'DDR' : 'Deutschland');
+/** Abschnitt einer Liga in der Auswahl: Heimatland (Weltdaten), DDR, bzw. Länder Spiel für Spiel. */
+const leagueSection = (tier: number, g?: Game) => (tier >= 200 ? 'Länder Spiel für Spiel' : tier >= 100 ? 'DDR' : homeName(g));
+const homeName = (g?: Game) => (g ? COUNTRY_BY_CC[homeCountryOf(g)]?.name ?? 'Deutschland' : 'Deutschland');
 const tierSort = (a: { tier: number; id: string }, b: { tier: number; id: string }) => a.tier - b.tier || a.id.localeCompare(b.id);
 
 export function competitionOptions(g: Game, season: string): CompOption[] {
@@ -135,7 +140,7 @@ export function competitionOptions(g: Game, season: string): CompOption[] {
   }
   if (src === 'archive') {
     const a = archivedSeason(g, season)!;
-    for (const d of [...a.divisions].sort(tierSort)) out.push({ key: d.id, label: d.name, kind: 'league', section: leagueSection(d.tier) });
+    for (const d of [...a.divisions].sort(tierSort)) out.push({ key: d.id, label: d.name, kind: 'league', section: leagueSection(d.tier, g) });
     for (const k of ['cup', 'ec', 'cwc', 'uefa'] as CupKey[]) if (a.cups[k]) out.push({ key: k, label: CUP_LABEL(k, season), kind: 'cup', section: k === 'cup' ? 'Pokal' : 'Europa' });
     // Auslandsligen: letzte Abschlusstabelle der Welt-Simulation gehört zur zuletzt beendeten Saison.
     if (g.world && season === seasonLabel(seasonStartYear(g.season) - 1)) {
@@ -146,7 +151,7 @@ export function competitionOptions(g: Game, season: string): CompOption[] {
   if (src === 'live') {
     const pd = g.leagues.playerDivision;
     const divs = [{ id: pd.id, name: pd.name, tier: pd.tier }, ...g.leagues.otherDivisions.map((d) => ({ id: d.id, name: d.name, tier: d.tier }))].sort(tierSort);
-    for (const d of divs) out.push({ key: d.id, label: d.name, kind: 'league', section: leagueSection(d.tier) });
+    for (const d of divs) out.push({ key: d.id, label: d.name, kind: 'league', section: leagueSection(d.tier, g) });
     if (g.cup) out.push({ key: 'cup', label: CUP_LABEL('cup', season), kind: 'cup', section: 'Pokal' });
     for (const k of ['ec', 'cwc', 'uefa'] as const) if (g.euroCups?.[k]) out.push({ key: k, label: CUP_LABEL(k, season), kind: 'cup', section: 'Europa' });
   }

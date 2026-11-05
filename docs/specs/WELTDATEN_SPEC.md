@@ -66,3 +66,16 @@ export interface SeasonRow {
 - `euro` immer füllen (welche Vereine des Landes in welchem Wettbewerb der Saison spielten) –
   daraus bauen sich die Europapokal-Felder beim Start in einem beliebigen Jahr.
 - Wo etwas unsicher ist: Eintrag trotzdem, Unsicherheit in der Recherche-Datei notieren.
+
+## Einbinden (Spiellogik, Strang world-core)
+
+- **Neues Land = eine Zeile** im Block „Länder“ von `src/data/world/index.ts`:
+  `import * as xx1 from './clubs/xx'; import * as xx2 from './seasons/xx'; add('xx', xx1, xx2);`
+  (`add` sucht `CLUBS_XX`/`SEASONS_XX` selbst). Das Land muss in `src/data/world/countries.ts` stehen
+  (Name, Existenz, Herkunft, Punkteregel, Hintergrund-Schlüssel = `worldSeed`-Name/Flagge).
+- Fehlt ein Land/eine Saison: Hintergrund wie bisher (erfundene Städtevereine), Deutschland mit den
+  Vereinen von 1975; fehlende 2. Liga (Top 8) aus der nächstgelegenen Saison (`completeRow` in
+  `game/worldCompose.ts`). Als Heimatland wählbar ist ein Land nur mit Daten für das Startjahr.
+- Im Spiel heißen Hintergrund-Vereine `w_<id>`; Vereine des Heimatlandes behalten ihre ID.
+- Stärke beim Start = Tabelle der **Vorsaison** (nicht der Ausgang der Startsaison).
+- Deutschland 1975/76 = Startvereine (`sameAsSeeds1975`) → der Start 1975 bleibt der alte Aufbau.

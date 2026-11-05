@@ -19,6 +19,7 @@ import { ANCHORS, REVENUE_MIX, resetEconomyCache } from '../../engine/economy';
 import { HISTORY } from '../history';
 import { TRANSFER_RECORD_ANCHORS } from '../transferRecords';
 import { LEGENDS } from '../legends';
+import { setWorldOverride } from '../world/index';
 import { Dataset } from './schema';
 import { BUILTIN_ID, builtinDataset } from './builtin';
 
@@ -122,6 +123,22 @@ export function applyDataset(ds: Dataset | null): void {
     && typeof l.firstName === 'string' && typeof l.lastName === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(l.birth ?? '')
     && typeof l.pos === 'string' && Number.isFinite(l.potential) && l.hidden && typeof l.hidden === 'object');
   LEGENDS.splice(0, LEGENDS.length, ...JSON.parse(JSON.stringify(legends)));
+
+  // Weltdaten: nur ein eigener Datensatz überschreibt (eingebaut = Länderdateien im Code).
+  // Deutschland: geänderte Namen/Kürzel/Städte/Farben gelten auch für die Startvereine.
+  const wd = ds && ds !== base && d.meta?.id !== BUILTIN_ID ? d.worldData : undefined;
+  const bw = base.worldData ?? {};
+  const own: Record<string, NonNullable<Dataset['worldData']>[string]> = {};
+  for (const [cc, w] of Object.entries(wd ?? {})) if (JSON.stringify(w) !== JSON.stringify(bw[cc])) own[cc] = w;
+  setWorldOverride(Object.keys(own).length ? own as never : null);
+  for (const rc of own.ger?.clubs ?? []) {
+    const t1 = CLUB_SEEDS.find((c) => c.id === rc.id);
+    if (t1) Object.assign(t1, { name: rc.name, shortName: rc.short, city: rc.city, primary: rc.colors.primary, secondary: rc.colors.secondary });
+    const t2 = [...SECOND_LIGA_NORD_SEEDS, ...SECOND_LIGA_SUED_SEEDS].find((c) => c.id === rc.id);
+    if (t2) Object.assign(t2, { name: rc.name, shortName: rc.short, city: rc.city, primary: rc.colors.primary, secondary: rc.colors.secondary });
+    const dd = [...DDR_OBERLIGA_SEEDS, ...DDR_LIGA_SEEDS].find((c) => c.id === rc.id);
+    if (dd) Object.assign(dd, { name: rc.name, shortName: rc.short, city: rc.city, colors: { ...rc.colors } });
+  }
 
   const h = d.history ?? base.history;
   HISTORY.cupWinnersCupLastSeason = h.cupWinnersCupLastSeason ?? base.history.cupWinnersCupLastSeason;

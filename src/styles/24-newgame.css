@@ -289,3 +289,15 @@ select.ng-input { cursor: pointer; }
 .ng-keyplayers { margin-top: 14px; }
 .ng-keyplayers .rl-row { grid-template-columns: 44px minmax(0, 1fr) 70px 44px; cursor: default; }
 .ng-keyplayers .rl-num { color: var(--text-3); }
+
+/* Startjahr (StepWorld, Weltdaten) */
+.ng-year { display: grid; grid-template-columns: 48px 1fr 48px; align-items: center; gap: 10px; }
+.ng-year-step { height: 48px; padding: 0; justify-content: center; font-family: var(--font-display); font-size: 24px; }
+.ng-year-val { text-align: center; display: flex; flex-direction: column; }
+.ng-year-val b { font-family: var(--font-display); font-weight: 600; font-size: 56px; line-height: 1; color: var(--text-hi, var(--text)); }
+.ng-year-val small { font-size: 14px; color: var(--text-3); letter-spacing: 0.6px; }
+.ng-year-range { width: 100%; accent-color: var(--accent); margin: 10px 0 8px; }
+.ng-year-stops { margin-bottom: 8px; }
+.ng-year-stops button { flex: 1; }
+.ng-era { margin: 0 0 12px; padding-left: 18px; color: var(--text-2); font-size: 14.5px; line-height: 1.55; min-height: 116px; }
+.ng-cleagues small { color: var(--text-3); }

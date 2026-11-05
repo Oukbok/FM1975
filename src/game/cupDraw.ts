@@ -16,7 +16,7 @@ import { CalendarEngine } from '../engine/calendar';
 import { makeMessage, pushMessage } from '../engine/messages';
 import type { CupState, CupTie, GameCalendar } from '../types';
 import type { DrawComp, DrawRecord } from '../types/draw';
-import { hashSeed, type Game } from './state';
+import { hashSeed, homeCountryKey, type Game } from './state';
 import { drawMessageV2, performDrawV2 } from './euroDraw';
 import { isV2 } from './euroSetup';
 import { euroCompName } from '../data/euroFormats';
@@ -73,7 +73,7 @@ export function drawClubName(g: Game, id: string): string {
   return g.clubs[id]?.name ?? g.euroClubs?.[id]?.name ?? g.simClubs?.[id]?.name ?? id;
 }
 export function drawCountry(g: Game, id: string): string {
-  return g.euroClubs?.[id]?.country ?? 'Deutschland';
+  return g.euroClubs?.[id]?.country ?? homeCountryKey(g);
 }
 
 function participantsOf(cup: CupState, ri: number): string[] | null {

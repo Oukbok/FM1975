@@ -1,4 +1,4 @@
-import { EURO_COMP_NAMES, EuroClub, EuroCompId } from '../data/europe';
+import { EURO_COMP_NAMES, EURO_FOREIGN_COUNT, EuroClub, EuroCompId } from '../data/europe';
 import { CalendarEngine } from '../engine/calendar';
 import { decisionBadge } from '../engine/cup';
 import { createEuroCup } from '../engine/euro';
@@ -108,6 +108,13 @@ export function buildEuroCupsForSeason(
     : { ec: [], cwc: [], uefa: [] };
   if (!foreign) {
     for (const c of Object.values(euroClubs)) if (c.id.startsWith('eu_')) foreignByComp[c.comp].push(c.id);
+    // Weltdaten ersetzen die bekannten Starter einzelner Länder (engine/worldData.ts): Lücken
+    // mit den stärksten übrigen Auslandsvereinen füllen, damit die Felder voll bleiben.
+    const used = new Set(Object.values(foreignByComp).flat());
+    const rest = Object.values(euroClubs).filter((c) => !used.has(c.id) && !c.id.startsWith('eu_')).sort((a, b) => b.strength - a.strength || a.id.localeCompare(b.id));
+    for (const comp of ['ec', 'cwc', 'uefa'] as EuroCompId[]) {
+      while (foreignByComp[comp].length < EURO_FOREIGN_COUNT[comp] && rest.length) foreignByComp[comp].push(rest.shift()!.id);
+    }
   }
 
   const comps: EuroCompId[] = ['ec', 'cwc', 'uefa'];

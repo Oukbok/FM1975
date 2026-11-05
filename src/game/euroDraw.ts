@@ -18,7 +18,7 @@ import type { CupRound, CupState, CupTie } from '../types';
 import type { DrawRecord } from '../types/draw';
 import type { CupLeg } from '../types/euro2';
 import { cupStartYear } from './euroSetup';
-import { hashSeed, type Game } from './state';
+import { hashSeed, homeCountryKey, type Game } from './state';
 
 const emptyLeg = (home: string, away: string, date: string): CupLeg =>
   ({ home, away, date, played: false, homeGoals: null, awayGoals: null, decision: null, penalties: null, match: null });
@@ -60,7 +60,7 @@ const strengthOf = (g: Game) => (id: string): number => {
   }
   return g.euroClubs?.[id]?.strength ?? g.simClubs?.[id]?.strength ?? c?.reputation ?? 50;
 };
-const countryOf = (g: Game) => (id: string) => g.euroClubs?.[id]?.country ?? 'Deutschland';
+const countryOf = (g: Game) => (id: string) => g.euroClubs?.[id]?.country ?? homeCountryKey(g);
 const nameOf = (g: Game) => (id: string) => g.clubs[id]?.name ?? g.euroClubs?.[id]?.name ?? g.simClubs?.[id]?.name ?? id;
 
 /** Paarung ohne Ziehung (Finale; Halbfinale 1993/94: A1–B2, B1–A2 beim Gruppensieger). */

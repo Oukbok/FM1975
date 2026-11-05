@@ -20,6 +20,7 @@ import type { MarketingArea } from '../marketing';
 import type { Kit, FacilityKey } from '../../types';
 import type { HistoryConfig } from '../history';
 import type { LegendDef } from '../legends/types';
+import type { RealClub, SeasonRow } from '../world/types';
 
 export const DATASET_FORMAT = 'fm1975-dataset';
 export const DATASET_VERSION = 1;
@@ -105,6 +106,13 @@ export interface Dataset {
    * gilt die eingebaute Liste; eine leere Liste schaltet sie ab.
    */
   legendsV2?: LegendDef[];
+  /**
+   * Weltdaten (docs/specs/WELTDATEN_SPEC.md): je Land (Code, z. B. 'ger', 'eng') alle Vereine
+   * und je Saison (Startjahr als Schlüssel) die Ligen, Pokalsieger, Europapokal-Teilnehmer.
+   * Fehlt das Feld oder ein Land, gelten die eingebauten Daten. Deutschland: gleiche IDs wie
+   * `clubs`; geänderte Namen/Farben gelten auch für die Startvereine.
+   */
+  worldData?: Record<string, { clubs: RealClub[]; seasons: Record<string, SeasonRow> }>;
   economy: {
     /** Erlös-Basis der 1. Liga in EUR je Stützjahr. */
     anchors: { year: number; value: number }[];
@@ -147,6 +155,14 @@ export function validateDataset(d: unknown): string[] {
   for (const k of ['secondNord', 'secondSued'] as const) {
     const l = x.clubs?.[k];
     if (l && l.length % 2 !== 0) errs.push(`${k === 'secondNord' ? '2. Liga Nord' : '2. Liga Süd'} braucht eine gerade Zahl an Vereinen.`);
+  }
+  if (x.worldData && typeof x.worldData === 'object') {
+    for (const [cc, w] of Object.entries(x.worldData)) {
+      if (!w || !Array.isArray(w.clubs) || typeof w.seasons !== 'object') { errs.push(`Weltdaten ${cc}: Vereine/Saisons fehlen.`); continue; }
+      for (const [y, row] of Object.entries(w.seasons)) {
+        if (!Array.isArray(row?.t1)) errs.push(`Weltdaten ${cc} ${y}: 1. Liga fehlt.`);
+      }
+    }
   }
   return errs;
 }

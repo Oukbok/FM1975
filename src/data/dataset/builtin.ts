@@ -16,6 +16,7 @@ import { ANCHORS, REVENUE_MIX } from '../../engine/economy';
 import { HISTORY } from '../history';
 import { TRANSFER_RECORD_ANCHORS } from '../transferRecords';
 import { LEGENDS } from '../legends';
+import { builtinWorldData } from '../world/index';
 import { DATASET_FORMAT, DATASET_VERSION, Dataset } from './schema';
 
 export const BUILTIN_ID = 'builtin';
@@ -62,5 +63,6 @@ export function snapshotCurrent(id: string, name: string): Dataset {
     economy: { anchors: ANCHORS, revenueMix: REVENUE_MIX, transferRecords: TRANSFER_RECORD_ANCHORS },
     history: HISTORY,
     legendsV2: LEGENDS,
+    worldData: builtinWorldData(),
   } as Dataset);
 }

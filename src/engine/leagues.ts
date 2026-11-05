@@ -92,8 +92,12 @@ export function groupLabel(group: LeagueGroup): string {
   }
 }
 
+/** Name des Heimatlandes für Beschriftungen (Weltdaten; Standard Deutschland). */
+let homeLabel = 'Deutschland';
+export function setHomeLabel(name: string): void { homeLabel = name || 'Deutschland'; }
+
 export function divisionLabel(tier: number, group: LeagueGroup): string {
-  if (tier === 1) return 'Deutschland 1. Liga';
+  if (tier === 1) return `${homeLabel} 1. Liga`;
   if (tier === 2) {
     if (group) return `2. Liga ${groupLabel(group)}`;
     return '2. Liga';
@@ -163,7 +167,7 @@ export function simMatchGoals(
 export function simFixtures(clubIds: string[], seasonStart: string, tier = 2): Match[] {
   const stubs = clubIds.map((id) => ({ id }) as Club);
   // DDR-Ligen (tier ≥ 100) im DDR-Rhythmus (lange Winterpause bis Ende Februar).
-  return generateFixtures(stubs, seasonStart, { tier, kind: tier >= 100 ? 'ddr' : 'west' });
+  return generateFixtures(stubs, seasonStart, { tier: tier >= 200 ? (tier % 10) : tier, kind: tier >= 100 && tier < 200 ? 'ddr' : 'west' });
 }
 
 export function simTable(

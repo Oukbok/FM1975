@@ -43,7 +43,7 @@ import { cupNextDrawMessage, cupResultMessage, euroDrawMessage, euroResultMessag
 import { advanceDivisionsTo, emitMatchMessage, simulateMatchday, startNextSeason } from './season';
 import { inWinterBreak, winterBreakDaily } from './winterShared';
 import { OwnMatchInfo, findOwnMatchDue, isPrepared } from './ownMatch';
-import { Game, bumpMorale } from './state';
+import { Game, bumpMorale, homeCountryOf } from './state';
 import { contractReminders, handleContractExpiry, transferPlayer } from './contracts';
 import { monthlySquadHarmony, rollAiOffers } from './aiOffers';
 import { checkPromises } from './promises';
@@ -583,7 +583,9 @@ export function processDay(g: Game, ui: DayUi): boolean {
   announceUpcomingRules(g, today);
   aiClubsDaily(g, today);
   careerDaily(g, today); // Managerkarriere: Trainer-Historie, Vorstandsdruck gegen den Trainer (game/careerGame.ts)
-  youthCompsDaily(g, today);
+  // Jugendwettbewerbe und Hallenturniere gibt es nur in Deutschland (Heimatland, Weltdaten).
+  const germanHome = homeCountryOf(g) === 'ger';
+  if (germanHome) youthCompsDaily(g, today);
   rollAiOffers(g, today);
   aiContractsDaily(g, today); // KI: vorzeitige Verlängerungen, Altstars, Bosman-Verkäufe, Vorverträge (game/aiContracts.ts)
   aiLoansDaily(g, today); // KI-Leihen, Anfragen an dich, Rückkehr am 30.6. (game/aiLoans.ts)
@@ -595,7 +597,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   buyBackDaily(g, today, (p, from, to, fee) => { transferPlayer(g, p, from, to, fee, today); repairSquadLists(g); });
   transferTalkDaily(g, today);
   // Winter-Systeme: Hallenturniere/Masters (game/indoorGame.ts) und Trainingslager (game/trainingCampGame.ts).
-  const indoorShow = indoorDaily(g, today, ui.onIndoorShow ? (t) => ui.onIndoorShow!(t.id) : undefined);
+  const indoorShow = germanHome ? indoorDaily(g, today, ui.onIndoorShow ? (t) => ui.onIndoorShow!(t.id) : undefined) : null;
   const campsEnded = campDaily(g, today);
   winterBreakDaily(g, today);   // Formdrift in der Winterpause (game/winterShared.ts)
   advanceDivisionsTo(g, today); // Sim-Ligen nach eigenem Spielplan (game/season.ts)

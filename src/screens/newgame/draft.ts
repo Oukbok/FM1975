@@ -3,7 +3,7 @@
 // =============================================================================
 import { Difficulty, ManagerBackground, ManagerProfile, ManagerStyle, NewGameOptions } from '../../types';
 import type { HistoryMode } from '../../game/historicSteer';
-import { LEAGUES, LeagueKey, ClubPreview, leaguePreview } from './clubPreview';
+import { LEAGUES, LeagueKey, ClubPreview, leaguePreview, leaguesFor } from './clubPreview';
 
 export const STYLE_DE: Record<ManagerStyle, string> = { defensive: 'Defensiv', balanced: 'Ausgeglichen', attacking: 'Offensiv' };
 
@@ -39,6 +39,12 @@ export interface NewGameDraft {
   offerSeed: number;
   league: LeagueKey;
   clubId: string;
+  /** Startjahr (Saison-Start), Standard 1975. */
+  startYear: number;
+  /** Heimatland (data/world/countries.ts), Standard 'ger'. */
+  country: string;
+  /** Weitere Länder Spiel für Spiel (sonst Hintergrund). */
+  fullCountries: string[];
   firstName: string;
   lastName: string;
   birthDay: number;
@@ -57,16 +63,18 @@ export const START_ISO = '1975-07-01';
 export const MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
 /** Jahrgänge: 20 bis 65 Jahre beim Spielstart. */
 export const BIRTH_YEARS = Array.from({ length: 46 }, (_, i) => 1955 - i);
+/** Jahrgänge für ein Startjahr (20 bis 65 Jahre alt). */
+export const birthYearsFor = (start: number) => Array.from({ length: 46 }, (_, i) => start - 20 - i);
 
 export const daysInMonth = (y: number, m: number) => new Date(Date.UTC(y, m, 0)).getUTCDate();
 export function birthIso(d: NewGameDraft): string {
   const day = Math.min(d.birthDay, daysInMonth(d.birthYear, d.birthMonth));
   return `${d.birthYear}-${String(d.birthMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
-/** Alter am 1. Juli 1975. */
+/** Alter am 1. Juli des Startjahres. */
 export function ageAtStart(d: NewGameDraft): number {
   const before = d.birthMonth > 7 || (d.birthMonth === 7 && d.birthDay > 1);
-  return 1975 - d.birthYear - (before ? 1 : 0);
+  return (d.startYear ?? 1975) - d.birthYear - (before ? 1 : 0);
 }
 export const fullName = (d: NewGameDraft) => `${d.firstName.trim()} ${d.lastName.trim()}`.trim();
 export const nameOk = (d: NewGameDraft) => d.firstName.trim().length >= 1 && d.lastName.trim().length >= 2;
@@ -85,10 +93,10 @@ function rng(seed: number) {
 export interface CareerOffer { club: ClubPreview; league: LeagueKey; leagueName: string }
 
 /** Kandidaten: untere Hälfte beider 2.-Liga-Staffeln + die drei schwächsten Erstligisten; ein Angebot je Liga, wenn möglich. */
-export function careerOffers(seed: number, avoidId: string): CareerOffer[] {
+export function careerOffers(seed: number, avoidId: string, cc = 'ger', year = 1975): CareerOffer[] {
   const r = rng(seed);
-  const pools = LEAGUES.map((l) => {
-    const list = leaguePreview(l.key).filter((c) => c.id !== avoidId);
+  const pools = leaguesFor(cc, year).map((l) => {
+    const list = leaguePreview(l.key, cc, year).filter((c) => c.id !== avoidId);
     const weak = list.filter((c) => (l.tier === 1 ? c.rank > c.size - 4 : c.rank > c.size / 2));
     return { l, weak };
   });
@@ -119,6 +127,9 @@ export function gameOptions(d: NewGameDraft): NewGameOptions {
   return {
     managedClubId: d.clubId, manager: managerProfile(d), difficulty: d.difficulty, realisticSquads: true,
     injuriesEnabled: d.injuries, speedMs: d.speedMs, datasetId: d.datasetId, historyMode: d.history, legends: d.legends,
+    ...(d.startYear !== 1975 ? { startYear: d.startYear } : {}),
+    ...(d.country !== 'ger' ? { country: d.country } : {}),
+    ...(d.fullCountries.length ? { fullCountries: [...d.fullCountries] } : {}),
   };
 }
 

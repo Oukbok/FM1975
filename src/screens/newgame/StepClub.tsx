@@ -3,7 +3,9 @@ import ClubCrest from '../../components/ClubCrest';
 import JerseySVG from '../../components/JerseySVG';
 import { CountryFlag } from '../../components/competition/CountryFlag';
 import { getClubKitDisplay } from '../../data/kits';
-import { ClubPreview, LEAGUES, LeagueKey, SortKey, leaguePreview, sortClubs } from './clubPreview';
+import { ClubPreview, LeagueKey, SortKey, leaguePreview, leaguesFor, sortClubs } from './clubPreview';
+import { COUNTRY_BY_CC } from '../../data/world/countries';
+import { playableCountries } from '../../game/worldCompose';
 import type { CareerOffer, NewGameDraft } from './draft';
 
 // Schritt 4: Verein — Teammanager: Land → Liga → Verein; Karriere: drei Angebote.
@@ -48,30 +50,36 @@ function ClubDetail({ c, leagueName }: { c: ClubPreview; leagueName: string }) {
   );
 }
 
-function ManagerPick({ d, set }: { d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void }) {
+function ManagerPick({ d, set, chooseCountry }: { d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void; chooseCountry: (cc: string) => void }) {
   const [sort, setSort] = useState<SortKey>('reputation');
-  const previews = useMemo(() => Object.fromEntries(LEAGUES.map((l) => [l.key, leaguePreview(l.key)])) as Record<LeagueKey, ClubPreview[]>, [d.datasetId]);
-  const league = LEAGUES.find((l) => l.key === d.league) ?? LEAGUES[0];
-  const list = sortClubs(previews[league.key], sort);
-  const sel = previews[league.key].find((c) => c.id === d.clubId) ?? list[0];
+  const leagues = useMemo(() => leaguesFor(d.country, d.startYear), [d.datasetId, d.country, d.startYear]);
+  const previews = useMemo(() => Object.fromEntries(leagues.map((l) => [l.key, leaguePreview(l.key, d.country, d.startYear)])) as Record<LeagueKey, ClubPreview[]>, [leagues]);
+  const countries = useMemo(() => playableCountries(d.startYear), [d.datasetId, d.startYear]);
+  const league = leagues.find((l) => l.key === d.league) ?? leagues[0];
+  const list = sortClubs(previews[league.key] ?? [], sort);
+  const sel = (previews[league.key] ?? []).find((c) => c.id === d.clubId) ?? list[0];
   const chooseLeague = (k: LeagueKey) => { if (k !== d.league) set({ league: k, clubId: sortClubs(previews[k], 'reputation')[0]?.id ?? '' }); };
   return (
     <div className="ng-cols ng-cols-club">
       <section className="ng-card ng-tree">
         <h3 className="ng-h">Land</h3>
-        <div className="rl rl-sm">
-          <div className="rl-row ng-tree-row on"><span className="ng-tree-flag"><CountryFlag country="Deutschland" height={14} /></span><span className="rl-name">Deutschland</span></div>
-          <div className="rl-row ng-tree-row off" title="DDR-Vereine sind nicht wählbar; sie spielen im Hintergrund mit."><span className="ng-tree-flag"><CountryFlag country="DDR" height={14} /></span><span className="rl-name">DDR</span><span className="rl-num">nicht wählbar</span></div>
+        <div className="rl rl-sm ng-countries">
+          {countries.map((cc) => (
+            <button key={cc} type="button" data-cc={cc} className={`rl-row ng-tree-row ${d.country === cc ? 'on' : ''}`} onClick={() => chooseCountry(cc)}>
+              <span className="ng-tree-flag"><CountryFlag country={COUNTRY_BY_CC[cc].key} height={14} /></span><span className="rl-name">{COUNTRY_BY_CC[cc].name}</span>
+            </button>
+          ))}
+          {d.country === 'ger' && d.startYear <= 1990 && <div className="rl-row ng-tree-row off" title="DDR-Vereine sind nicht wählbar; sie spielen im Hintergrund mit."><span className="ng-tree-flag"><CountryFlag country="DDR" height={14} /></span><span className="rl-name">DDR</span><span className="rl-num">nicht wählbar</span></div>}
         </div>
         <h3 className="ng-h">Liga</h3>
         <div className="rl rl-sm">
-          {LEAGUES.map((l) => (
+          {leagues.map((l) => (
             <button key={l.key} type="button" className={`rl-row ng-tree-row ng-league ${d.league === l.key ? 'on' : ''}`} onClick={() => chooseLeague(l.key)}>
-              <span className="rl-name">{l.name}</span><span className="rl-num">{previews[l.key].length}</span>
+              <span className="rl-name">{l.name}</span><span className="rl-num">{previews[l.key]?.length ?? 0}</span>
             </button>
           ))}
         </div>
-        <p className="ng-note ng-push">{league.note}</p>
+        <p className="ng-note ng-push">{league.note}{countries.length === 1 ? ' Weitere Länder sind wählbar, sobald für das Startjahr echte Vereine hinterlegt sind (Editor › Weltdaten).' : ''}</p>
       </section>
 
       <section className="ng-card ng-pick">
@@ -125,6 +133,6 @@ function CareerPick({ d, set, offers }: { d: NewGameDraft; set: (p: Partial<NewG
   );
 }
 
-export function StepClub({ d, set, offers }: { d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void; offers: CareerOffer[] }) {
-  return d.mode === 'career' ? <CareerPick d={d} set={set} offers={offers} /> : <ManagerPick d={d} set={set} />;
+export function StepClub({ d, set, offers, chooseCountry }: { d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void; offers: CareerOffer[]; chooseCountry: (cc: string) => void }) {
+  return d.mode === 'career' ? <CareerPick d={d} set={set} offers={offers} /> : <ManagerPick d={d} set={set} chooseCountry={chooseCountry} />;
 }

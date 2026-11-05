@@ -19,7 +19,8 @@ import { LEAGUE_REFORMS, structureForSeason } from '../data/reforms';
 import { seasonStartYear } from '../data/timeline';
 import { LeagueGroup, SimClub, simDisplayName } from '../engine/leagues';
 import { germanRank, initWorld } from '../engine/world';
-import type { Game } from './state';
+import { homeCountryOf, type Game } from './state';
+import { COUNTRY_BY_CC } from '../data/world/countries';
 
 export type PyramidSide = 'west' | 'ddr' | 'abroad';
 export type PyrZone = 'zone-cl' | 'zone-po' | 'zone-rel' | '';
@@ -215,12 +216,12 @@ export function pyramidFromGame(g: Game): PyramidData {
   const countries = Object.values(g.world?.countries ?? {});
   return {
     season,
-    west: { side: 'west', key: 'west', title: 'Deutschland', levels: westLv, available: true },
+    west: { side: 'west', key: homeCountryOf(g) === 'ger' ? 'west' : COUNTRY_BY_CC[homeCountryOf(g)]?.key ?? 'west', title: COUNTRY_BY_CC[homeCountryOf(g)]?.name ?? 'Deutschland', levels: westLv, available: true },
     ddr: ddrOpen
       ? { side: 'ddr', key: 'ddr', title: 'DDR', levels: ddrLv, available: true, note: 'Die DDR spielt bis 1991 in eigenen Ligen und läuft im Hintergrund mit.' }
       : { side: 'ddr', key: 'ddr', title: 'DDR', levels: [], available: false, note: 'Seit der Wiedervereinigung 1991/92 spielen die Vereine aus dem Osten in der gesamtdeutschen Pyramide.' },
     abroad: abroadSystems(countries, (g.euroClubs ?? {}) as never, false),
-    reforms: reformList(season),
+    reforms: homeCountryOf(g) === 'ger' ? reformList(season) : [],
   };
 }
 
