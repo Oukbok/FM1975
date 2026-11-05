@@ -1,0 +1,33 @@
+// Vereine Island 1975–2025 (verfremdet). Quellen/echte Namen: docs/recherche/weltvereine_isl.md
+import type { RealClub } from '../types';
+
+export const CLUBS_ISL: RealClub[] = [
+  { id: 'isl-akranes', name: "Akranes", short: 'AKR', city: "Akranes", colors: { primary: '#FFD100', secondary: '#000000' } },
+  { id: 'isl-akureyri-gelb-blau', name: "Akureyri Gelb-Blau", short: 'KAA', city: "Akureyri", colors: { primary: '#FFD100', secondary: '#0055A5' } },
+  { id: 'isl-akureyri-rot-weiss', name: "Akureyri Rot-Weiß", short: 'THO', city: "Akureyri", colors: { primary: '#E30613', secondary: '#FFFFFF' } },
+  { id: 'isl-borgarnes', name: "Borgarnes", short: 'SKA', city: "Borgarnes", colors: { primary: '#FFD100', secondary: '#000000' } },
+  { id: 'isl-gardabaer', name: "Garðabær", short: 'STJ', city: "Garðabær", colors: { primary: '#0055A5', secondary: '#FFFFFF' } },
+  { id: 'isl-gardur', name: "Garður", short: 'VID', city: "Garður", colors: { primary: '#FFFFFF', secondary: '#0055A5' } },
+  { id: 'isl-grindavik', name: "Grindavík", short: 'GRI', city: "Grindavík", colors: { primary: '#FFD100', secondary: '#0055A5' } },
+  { id: 'isl-hafnarfjoerdur-rot', name: "Hafnarfjörður Rot", short: 'HAU', city: "Hafnarfjörður", colors: { primary: '#E30613', secondary: '#FFFFFF' } },
+  { id: 'isl-hafnarfjoerdur-schwarz-weiss', name: "Hafnarfjörður Schwarz-Weiß", short: 'FHH', city: "Hafnarfjörður", colors: { primary: '#000000', secondary: '#FFFFFF' } },
+  { id: 'isl-husavik', name: "Húsavík", short: 'VOL', city: "Húsavík", colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'isl-isafjoerdur', name: "Ísafjörður", short: 'VES', city: "Ísafjörður", colors: { primary: '#0055A5', secondary: '#FFFFFF' } },
+  { id: 'isl-keflavik', name: "Keflavík", short: 'KEF', city: "Keflavík", colors: { primary: '#0055A5', secondary: '#FFFFFF' } },
+  { id: 'isl-kopavogur-gruen', name: "Kópavogur Grün", short: 'BRE', city: "Kópavogur", colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'isl-kopavogur-rot', name: "Kópavogur Rot", short: 'HKK', city: "Kópavogur", colors: { primary: '#E30613', secondary: '#FFFFFF' } },
+  { id: 'isl-mosfellsbaer', name: "Mosfellsbær", short: 'AFT', city: "Mosfellsbær", colors: { primary: '#E30613', secondary: '#000000' } },
+  { id: 'isl-olafsfjoerdur', name: "Ólafsfjörður", short: 'LEF', city: "Ólafsfjörður", colors: { primary: '#FFD100', secondary: '#000000' } },
+  { id: 'isl-reykjavik-arbaer', name: "Reykjavík Árbær", short: 'FYL', city: "Reykjavík", colors: { primary: '#FF6600', secondary: '#000000' } },
+  { id: 'isl-reykjavik-blau', name: "Reykjavík Blau", short: 'FRA', city: "Reykjavík", colors: { primary: '#0055A5', secondary: '#FFFFFF' } },
+  { id: 'isl-reykjavik-breidholt', name: "Reykjavík Breiðholt", short: 'LEI', city: "Reykjavík", colors: { primary: '#0055A5', secondary: '#FFFFFF' } },
+  { id: 'isl-reykjavik-grafarvogur', name: "Reykjavík Grafarvogur", short: 'FJO', city: "Reykjavík", colors: { primary: '#FFD100', secondary: '#0055A5' } },
+  { id: 'isl-reykjavik-laugardalur', name: "Reykjavík Laugardalur", short: 'THR', city: "Reykjavík", colors: { primary: '#FFFFFF', secondary: '#E30613' } },
+  { id: 'isl-reykjavik-rot', name: "Reykjavík Rot", short: 'VAL', city: "Reykjavík", colors: { primary: '#E30613', secondary: '#FFFFFF' } },
+  { id: 'isl-reykjavik-rot-schwarz', name: "Reykjavík Rot-Schwarz", short: 'VIK', city: "Reykjavík", colors: { primary: '#E30613', secondary: '#000000' } },
+  { id: 'isl-reykjavik-schwarz-weiss', name: "Reykjavík Schwarz-Weiß", short: 'KRR', city: "Reykjavík", colors: { primary: '#000000', secondary: '#FFFFFF' } },
+  { id: 'isl-reykjavik-sued', name: "Reykjavík Süd", short: 'IRR', city: "Reykjavík", colors: { primary: '#FFFFFF', secondary: '#0055A5' } },
+  { id: 'isl-selfoss', name: "Selfoss", short: 'SEL', city: "Selfoss", colors: { primary: '#6CACE4', secondary: '#FFFFFF' } },
+  { id: 'isl-seltjarnarnes', name: "Seltjarnarnes", short: 'GRO', city: "Seltjarnarnes", colors: { primary: '#0055A5', secondary: '#FFFFFF' } },
+  { id: 'isl-vestmannaeyjar', name: "Vestmannaeyjar", short: 'IBV', city: "Vestmannaeyjar", colors: { primary: '#FFFFFF', secondary: '#0055A5' } },
+];
