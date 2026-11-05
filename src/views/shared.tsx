@@ -1,4 +1,5 @@
 // Gemeinsame, rein darstellende Helfer für die Seiten (keine Spiellogik).
+import FaceThumb from '../components/FaceThumb';
 import ClubCrest from '../components/ClubCrest';
 import { Game } from '../game/state';
 import { Match, Player, POSITION_GROUPS } from '../types';
@@ -55,10 +56,12 @@ export function MatchRow({ g, m, clubId = g.managedClubId, onClick }: { g: Game;
 }
 
 /** Spielerzeile: Positionskürzel · Name · Wert. */
-export function PlayerRow({ p, value, sub, onClick, color }: { p: Player; value?: React.ReactNode; sub?: React.ReactNode; onClick?: () => void; color?: string }) {
+export function PlayerRow({ p, value, sub, onClick, color, face }: { p: Player; value?: React.ReactNode; sub?: React.ReactNode; onClick?: () => void; color?: string;
+  /** Miniatur-Kopf vor dem Namen (Bestenlisten). */ face?: boolean }) {
   return (
     <div className={`dlist-row ${onClick ? 'clickable' : ''}`} onClick={onClick} data-pid={p.id}>
       <PosBadge p={p} compact />
+      {face && <FaceThumb p={p} size={22} className="dl-face" />}
       <span className="grow">{p.fullName}{sub != null && <span className="muted"> · {sub}</span>}</span>
       {value != null && <span className="val" style={{ color: color ?? (typeof value === 'number' ? vColor(value) : undefined) }}>{value}</span>}
     </div>

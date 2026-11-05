@@ -357,6 +357,8 @@ interface Props {
   year?: number;
   /** Sofort sichtbar (Profil-Kopf, Gespräch …): nicht lazy, hohe Ladepriorität. */
   priority?: boolean;
+  /** Ohne Foto nichts zeigen statt der Zeichnung (Miniaturen in Listen, FaceThumb). */
+  photoOnly?: boolean;
 }
 
 type FacePerson = Pick<Player, 'id' | 'face' | 'dateOfBirth' | 'age'>;
@@ -396,10 +398,10 @@ export function preloadFace(player: FacePerson | undefined | null, staff?: boole
  * das Bild des vorigen Spielers stehen. Ohne Foto die Zeichnung.
  */
 export default function PlayerAvatar(props: Props) {
-  const { player, club, size = 'medium', className, staff, year, priority } = props;
+  const { player, club, size = 'medium', className, staff, year, priority, photoOnly } = props;
   const [state, setState] = useState<{ src: string; ok: boolean } | null>(null);
   const img = faceSrcOf(player, staff, year);
-  if (!img || (state?.src === img.src && !state.ok)) return <DrawnAvatar {...props} />;
+  if (!img || (state?.src === img.src && !state.ok)) return photoOnly ? null : <DrawnAvatar {...props} />;
   const px = typeof size === 'number' ? size : SIZES[size];
   const loaded = ready.has(img.src) || (state?.src === img.src && state.ok);
   const primary = club?.colors.primary;

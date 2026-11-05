@@ -96,3 +96,6 @@
 .cmp-statbox .cmp-stat.club { grid-template-columns: 26px minmax(0, 1fr) 34px; }
 .cmp-statbox .cmp-val { font-size: 15px; }
 .cmp-statbox .cmp-pclub { font-size: 12px; }
+/* Bestenlisten: Miniatur-Kopf vor dem Namen (components/FaceThumb.tsx) */
+.cmp-pn { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cmp-pname > .fthumb { margin: -3px 0; }

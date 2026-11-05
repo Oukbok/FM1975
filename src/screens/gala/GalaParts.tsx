@@ -3,7 +3,7 @@
 // Liste der Plätze 4–10. CSS 28-awards.css (.gb-*).
 // =============================================================================
 import type { CSSProperties } from 'react';
-import PlayerAvatar from '../../components/PlayerAvatar';
+import PlayerAvatar, { hasFacePhoto } from '../../components/PlayerAvatar';
 import { GB_TITLE_LABEL } from '../../engine/goldenBall';
 import type { GBEntry } from '../../game/goldenBallGame';
 import type { Game } from '../../game/state';
@@ -52,7 +52,8 @@ export function NatTag({ nat }: { nat: string }) {
 export function GalaFace({ g, e, size }: { g: Game; e: GBEntry; size: number }) {
   const p = g.players[e.p] ?? ({ id: e.p, fullName: e.n } as Player);
   const c = g.clubs[e.c] ?? (g.euroClubs?.[e.c] ? ({ colors: g.euroClubs[e.c].colors, shortName: g.euroClubs[e.c].shortName } as unknown as Club) : undefined);
-  return <span className="gb-face" style={{ width: size, height: size * 1.15 }}><PlayerAvatar player={p} club={c} size={size} /></span>;
+  const photo = hasFacePhoto(p);
+  return <span className="gb-face" style={{ width: size, height: size * 1.15 }}><PlayerAvatar key={p.id} player={p} club={c} size={photo ? Math.round(size * 1.15 * 512 / 600) : size} /></span>;
 }
 
 function kpis(e: GBEntry): { k: string; v: string }[] {

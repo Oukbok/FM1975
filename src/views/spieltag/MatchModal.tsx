@@ -1,10 +1,11 @@
 // =============================================================================
-import { ClubLink } from '../../components/club/ClubLink';
 // SPIELBERICHT – großes Fenster: Verlauf, zeitgemäße Statistik, Aufstellungen
 // mit Noten, Druckphasen. Ausführliche Werte gibt es für Spiele des eigenen
 // Vereins; bei anderen Partien die Eckdaten.
 // =============================================================================
 import { useState } from 'react';
+import { ClubLink } from '../../components/club/ClubLink';
+import FaceThumb from '../../components/FaceThumb';
 import ClubCrest from '../../components/ClubCrest';
 import Icon from '../../components/Icon';
 import { eraRules } from '../../engine/match/era';
@@ -185,7 +186,8 @@ function LineupCol({ g, list, detail, av }: { g: Game; list: LineupEntry[]; deta
             <div className={`mr-lu-row ${e.started ? '' : 'sub'}`}>
               <span className="mr-pos">{e.pos}</span>
               <span className="mr-nm">
-                {nm(p)}
+                <FaceThumb p={p} size={18} />
+                <span className="mr-nm-t">{nm(p)}</span>
                 {e.goals > 0 && <span className="mr-tag goal">{e.goals > 1 ? `${e.goals}×` : ''}Tor</span>}
                 {e.assists > 0 && <span className="mr-tag">{e.assists > 1 ? `${e.assists}×` : ''}Vorl.</span>}
                 {e.card && <span className={`mr-card ${e.card === 'Gelb' ? 'y' : 'r'}`} />}

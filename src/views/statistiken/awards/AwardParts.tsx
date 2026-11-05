@@ -6,7 +6,7 @@
 import type { CSSProperties } from 'react';
 import ClubCrest from '../../../components/ClubCrest';
 import { ClubLink } from '../../../components/club/ClubLink';
-import PlayerAvatar from '../../../components/PlayerAvatar';
+import PlayerAvatar, { hasFacePhoto } from '../../../components/PlayerAvatar';
 import { seasonStartYear } from '../../../data/timeline';
 import { AWARD_CAT_LABEL, type AwardCat } from '../../../engine/seasonAwards';
 import { clubView } from '../../../game/clubProfile';
@@ -19,6 +19,8 @@ export const fmtGrade = (v: number) => v.toFixed(2).replace('.', ',');
 /** Gesicht des Spielers (falls er noch im Spielstand ist), sonst Initialen. */
 export function AwardFace({ g, e, size }: { g: Game; e: AwardEntry; size: number }) {
   const p = g.players[e.p] ?? g.youthPlayers?.[e.p];
+  // Foto: ganzer freigestellter Kopf inkl. Hals in der Höhe der Box (kein Kreis, kein Beschnitt)
+  if (p && hasFacePhoto(p)) return <span className="aw-face" style={{ width: size, height: size }}><PlayerAvatar key={p.id} player={p} club={g.clubs[p.clubId]} size={Math.round(size * 512 / 600)} /></span>;
   if (p) return <span className="aw-face" style={{ width: size, height: size }}><PlayerAvatar player={p} club={g.clubs[p.clubId]} size={size} /></span>;
   const ini = e.n.split(' ').map((s) => s[0]).slice(0, 2).join('');
   return <span className="aw-face aw-face-none" style={{ width: size, height: size, fontSize: size * 0.34 }}>{ini}</span>;

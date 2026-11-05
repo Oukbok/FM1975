@@ -6,7 +6,8 @@
 // Verhandlung, Verein. Das Browser-Menü wird dort unterdrückt, sonst nicht.
 // Provider in GameShell (innerhalb des ClubProfileProvider).
 // =============================================================================
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { PlayerProfileCtx, type PlayerProfileApi } from './PlayerLink';
 import { createPortal } from 'react-dom';
 import PlayerModal, { type Tab } from '../PlayerModal';
 import { useClubProfile } from '../club/ClubLink';
@@ -115,11 +116,16 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
   const top = menu ? Math.min(menu.y, window.innerHeight - H - 8) : 0;
 
   const pp = profile ? playerOf(g, profile.pid) : undefined;
+  // Profil-API für <PlayerLink> (jeder Spielername öffnet das Profil)
+  const profileApi = useMemo<PlayerProfileApi>(() => ({
+    open: (pid, tab = 'general') => { if (playerOf(g, pid)) { setMenu(null); setProfile({ pid, tab }); } },
+    canOpen: (pid) => !!pid && !!playerOf(g, pid),
+  }), [g]);
   const talk = talkId ? (g.transferTalks ?? []).find((t) => t.id === talkId) : undefined;
   const squad = pp ? (g.clubs[pp.clubId]?.playerIds ?? []).map((id) => g.players[id]).filter(Boolean) as Player[] : undefined;
 
   return (
-    <>
+    <PlayerProfileCtx.Provider value={profileApi}>
       {children}
       {menu && p && createPortal(
         <div className="pcm-layer" onMouseDown={close} onContextMenu={(e) => { e.preventDefault(); close(); }}>
@@ -147,6 +153,6 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
         document.body,
       )}
       {talk && <TransferTalkModal g={g} talk={talk} onClose={() => setTalkId(null)} onChange={onChange} />}
-    </>
+    </PlayerProfileCtx.Provider>
   );
 }

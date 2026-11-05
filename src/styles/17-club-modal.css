@@ -83,3 +83,7 @@
 .cmx-title { display: flex; align-items: flex-start; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--border-soft); }
 .cmx-title-n { font-family: var(--font-display); font-size: 22px; color: var(--accent); min-width: 40px; }
 .cmx-title-seasons { display: block; }
+/* Spielernamen (components/playerMenu/PlayerLink.tsx): Name bleibt, ruhige Unterstreichung */
+.player-link { cursor: pointer; border-radius: 3px; }
+.player-link:hover { text-decoration: underline; text-decoration-color: rgba(var(--ink-rgb), 0.45); text-underline-offset: 3px; }
+.player-link:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
