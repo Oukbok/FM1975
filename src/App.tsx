@@ -12,6 +12,7 @@ import { DisplayFrame, applyDisplayMode } from './ui/DisplayFrame';
 import { setDisplayYear, setWagePeriod } from './ui/format';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { lazyNamed } from './ui/lazyNamed';
+import { installClickSound } from './ui/clickSound';
 
 // Code-Splitting (scripts/build.mjs): Das Hauptmenü startet ohne die Spiel-Shell, ohne
 // Laden-Nachrüstungen und ohne den Spielaufbau. Diese Stücke werden geladen, sobald sie
@@ -25,6 +26,8 @@ const loadNewGame = () => import('./game/newGame');
 // =============================================================================
 // ROOT: Startmenü ⇄ Spiel
 // =============================================================================
+installClickSound();
+
 export default function App() {
   const gameRef = useRef<Game | null>(null);
   const [inGame, setInGame] = useState(false);

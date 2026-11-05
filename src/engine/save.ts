@@ -261,6 +261,10 @@ export interface AppSettings {
   drawShow?: 'immer' | 'eigener' | 'aus';
   /** Markierung: Standard der Auslosungs-Show auf „immer“ umgestellt (Wunsch Pascal). */
   drawShowV?: number;
+  /** Lautstärke des Klickgeräuschs 0–100 (Ton an/aus = soundEnabled). */
+  clickVolume?: number;
+  /** Markierung: Klickgeräusch einmalig eingeschaltet (vorher war Ton ein Platzhalter, Standard aus). */
+  soundV?: number;
   /** Tempo der Ziehungs-Show. */
   drawSpeed?: 'langsam' | 'normal' | 'schnell';
   /** Bewertungsrunde als Show (screens/rating/) oder kompakte Liste. */
@@ -292,7 +296,9 @@ export interface AppSettings {
 export const DEFAULT_SETTINGS: AppSettings = {
   speedMs: 900,
   autosave: true,
-  soundEnabled: false,
+  soundEnabled: true,
+  soundV: 1,
+  clickVolume: 60,
   resolution: 'auto',
   displayMode: 'window',
   uiScale: 100,
@@ -318,6 +324,8 @@ export function loadSettings(): AppSettings {
   const s: AppSettings = { ...DEFAULT_SETTINGS, ...(safeParse<Partial<AppSettings>>(localStorage.getItem(SETTINGS_KEY)) ?? {}) };
   // Auslosungen großer Pokale immer zeigen (Wunsch Pascal): alter Standard „eigener“ einmalig auf „immer“.
   if ((s.drawShowV ?? 0) < 2) { if (s.drawShow === 'eigener') s.drawShow = 'immer'; s.drawShowV = 2; }
+  // Klickgeräusch (Wunsch Pascal): der alte Platzhalter „Ton“ stand auf aus – einmalig einschalten.
+  if ((s.soundV ?? 0) < 1) { s.soundEnabled = true; s.soundV = 1; }
   return s;
 }
 
@@ -328,6 +336,14 @@ export function saveSettings(s: AppSettings): void {
   } catch {
     /* ignore */
   }
+  settingsListeners.forEach((f) => f(s));
+}
+
+const settingsListeners = new Set<(s: AppSettings) => void>();
+/** Rückruf bei jedem Speichern der Einstellungen (z. B. Klickgeräusch). */
+export function onSettingsSaved(f: (s: AppSettings) => void): () => void {
+  settingsListeners.add(f);
+  return () => { settingsListeners.delete(f); };
 }
 
 // -----------------------------------------------------------------------------

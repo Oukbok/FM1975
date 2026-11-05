@@ -2,6 +2,7 @@ import { AppSettings, DisplayMode } from '../engine/save';
 import { RESOLUTION_GROUPS } from '../ui/DisplayFrame';
 import { useState } from 'react';
 import Select from '../ui/Select';
+import { previewClick } from '../ui/clickSound';
 
 // -----------------------------------------------------------------------------
 // EINSTELLUNGEN
@@ -26,8 +27,16 @@ export function SettingsScreen({ settings, onBack, onSave }: {
           <label className="toggle-item">
             <input type="checkbox" checked={s.soundEnabled} onChange={(e) => setS({ ...s, soundEnabled: e.target.checked })} />
             <span className={`toggle ${s.soundEnabled ? 'on' : ''}`}></span>
-            Ton/Effekte (Platzhalter)
+            Klickgeräusch
           </label>
+          {s.soundEnabled && (
+            <label className="dim mini" style={{ display: 'block', paddingLeft: 4 }}>
+              Lautstärke: <b className="accent-text">{s.clickVolume ?? 60}%</b>
+              <input type="range" min={5} max={100} step={5} value={s.clickVolume ?? 60}
+                onChange={(e) => setS({ ...s, clickVolume: +e.target.value })}
+                onPointerUp={(e) => previewClick(+(e.target as HTMLInputElement).value)} style={{ width: '100%' }} />
+            </label>
+          )}
           <label className="toggle-item">
             <input type="checkbox" checked={s.briefingAuto !== false} onChange={(e) => setS({ ...s, briefingAuto: e.target.checked })} />
             <span className={`toggle ${s.briefingAuto !== false ? 'on' : ''}`}></span>
