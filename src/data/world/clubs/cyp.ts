@@ -1,0 +1,47 @@
+// =============================================================================
+// Weltdaten cyp: alle Vereine der erfassten Ligen 1975/76–2025/26 (verfremdete Namen).
+// Echte Namen und Quellen: docs/recherche/weltvereine_cyp.md. Format: docs/specs/WELTDATEN_SPEC.md.
+// =============================================================================
+import type { RealClub } from '../types';
+
+export const CLUBS_CYP: RealClub[] = [
+  { id: 'cyp-achna', name: 'Achna', short: 'ACH', city: 'Dasaki Achnas', colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'cyp-aradippou', name: 'Aradippou', short: 'ARA', city: 'Aradippou', colors: { primary: '#003399', secondary: '#FFFFFF' } },
+  { id: 'cyp-aradippou-gruen', name: 'Aradippou Grün', short: 'ARG', city: 'Aradippou', colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'cyp-assia', name: 'Assia', short: 'ASS', city: 'Nikosia', colors: { primary: '#003399', secondary: '#FFFFFF' } },
+  { id: 'cyp-athienou', name: 'Athienou', short: 'ATH', city: 'Athienou', colors: { primary: '#003399', secondary: '#FFFFFF' } },
+  { id: 'cyp-ayia-napa', name: 'Ayia Napa', short: 'AYN', city: 'Ayia Napa', colors: { primary: '#003399', secondary: '#FFFFFF' } },
+  { id: 'cyp-chloraka', name: 'Chloraka', short: 'CHL', city: 'Chloraka', colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'cyp-deryneia', name: 'Deryneia', short: 'DER', city: 'Deryneia', colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'cyp-famagusta-blau', name: 'Famagusta Blau', short: 'FAB', city: 'Larnaka', colors: { primary: '#003399', secondary: '#FFFFFF' } },
+  { id: 'cyp-famagusta-rot', name: 'Famagusta Rot', short: 'FAR', city: 'Larnaka', colors: { primary: '#D71920', secondary: '#FFFFFF' } },
+  { id: 'cyp-geroskipou', name: 'Geroskipou', short: 'GER', city: 'Geroskipou', colors: { primary: '#003399', secondary: '#FFFFFF' } },
+  { id: 'cyp-katokopia', name: 'Katokopia', short: 'KAT', city: 'Peristerona', colors: { primary: '#D71920', secondary: '#FFFFFF' } },
+  { id: 'cyp-keryneia', name: 'Keryneia', short: 'KER', city: 'Nikosia', colors: { primary: '#00843D', secondary: '#FFD200' } },
+  { id: 'cyp-kouklia', name: 'Kouklia', short: 'KOU', city: 'Kouklia', colors: { primary: '#D71920', secondary: '#FFFFFF' } },
+  { id: 'cyp-kyperounta', name: 'Kyperounta', short: 'KYP', city: 'Kyperounta', colors: { primary: '#D71920', secondary: '#FFFFFF' } },
+  { id: 'cyp-lakatamia', name: 'Lakatamia', short: 'LAK', city: 'Lakatamia', colors: { primary: '#003399', secondary: '#FFFFFF' } },
+  { id: 'cyp-larnaka-gelb-gruen', name: 'Larnaka Gelb-Grün', short: 'LGG', city: 'Larnaka', colors: { primary: '#FFD200', secondary: '#00843D' } },
+  { id: 'cyp-larnaka-gruen', name: 'Larnaka Grün', short: 'LGR', city: 'Larnaka', colors: { primary: '#00843D', secondary: '#FFD200' } },
+  { id: 'cyp-larnaka-rot-blau', name: 'Larnaka Rot-Blau', short: 'LRB', city: 'Larnaka', colors: { primary: '#D71920', secondary: '#003399' } },
+  { id: 'cyp-larnaka-rot-weiss', name: 'Larnaka Rot-Weiß', short: 'LRW', city: 'Larnaka', colors: { primary: '#D71920', secondary: '#FFFFFF' } },
+  { id: 'cyp-limassol-blau-weiss', name: 'Limassol Blau-Weiß', short: 'LIB', city: 'Limassol', colors: { primary: '#003399', secondary: '#FFFFFF' } },
+  { id: 'cyp-limassol-gelb-blau', name: 'Limassol Gelb-Blau', short: 'LIG', city: 'Limassol', colors: { primary: '#FFD200', secondary: '#003399' } },
+  { id: 'cyp-limassol-gruen-weiss', name: 'Limassol Grün-Weiß', short: 'LGW', city: 'Limassol', colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'cyp-morfou', name: 'Morfou', short: 'MOR', city: 'Nikosia', colors: { primary: '#FFD200', secondary: '#000000' } },
+  { id: 'cyp-nikosia-gelb-blau', name: 'Nikosia Gelb-Blau', short: 'NGB', city: 'Nikosia', colors: { primary: '#FFD200', secondary: '#003399' } },
+  { id: 'cyp-nikosia-gruen', name: 'Nikosia Grün', short: 'NIG', city: 'Nikosia', colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'cyp-nikosia-schwarz-gruen', name: 'Nikosia Schwarz-Grün', short: 'NSG', city: 'Nikosia', colors: { primary: '#000000', secondary: '#00843D' } },
+  { id: 'cyp-nikosia-weiss-gruen', name: 'Nikosia Weiß-Grün', short: 'NWG', city: 'Nikosia', colors: { primary: '#FFFFFF', secondary: '#00843D' } },
+  { id: 'cyp-oroklini', name: 'Oroklini', short: 'ORO', city: 'Oroklini', colors: { primary: '#D71920', secondary: '#FFFFFF' } },
+  { id: 'cyp-pano-polemidia', name: 'Pano Polemidia', short: 'PPO', city: 'Pano Polemidia', colors: { primary: '#D71920', secondary: '#FFFFFF' } },
+  { id: 'cyp-paphos', name: 'Paphos', short: 'PAP', city: 'Paphos', colors: { primary: '#003399', secondary: '#FFD200' } },
+  { id: 'cyp-paphos-blau-weiss', name: 'Paphos Blau-Weiß', short: 'PBW', city: 'Paphos', colors: { primary: '#003399', secondary: '#FFFFFF' } },
+  { id: 'cyp-paphos-gelb', name: 'Paphos Gelb', short: 'PGE', city: 'Paphos', colors: { primary: '#FFD200', secondary: '#003399' } },
+  { id: 'cyp-paphos-rot', name: 'Paphos Rot', short: 'PRO', city: 'Paphos', colors: { primary: '#D71920', secondary: '#FFFFFF' } },
+  { id: 'cyp-paralimni', name: 'Paralimni', short: 'PAR', city: 'Paralimni', colors: { primary: '#D71920', secondary: '#003399' } },
+  { id: 'cyp-peyia', name: 'Peyia', short: 'PEY', city: 'Peyia', colors: { primary: '#D71920', secondary: '#FFD200' } },
+  { id: 'cyp-sotira', name: 'Sotira', short: 'SOT', city: 'Sotira', colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'cyp-ypsonas', name: 'Ypsonas', short: 'YPS', city: 'Ypsonas', colors: { primary: '#D71920', secondary: '#000000' } },
+  { id: 'cyp-zakaki', name: 'Zakaki', short: 'ZAK', city: 'Limassol', colors: { primary: '#003399', secondary: '#FFFFFF' } },
+];
