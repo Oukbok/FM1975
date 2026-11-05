@@ -1,18 +1,14 @@
-// Screenshots Weltdaten: Assistent mit Startjahr + Länderwahl (Spielwelt, Verein, Ligensystem)
+// Screenshots Weltdaten: Assistent mit Startjahr + Länderwahl (Spielwelt, Verein, Ligensystem) mit den eingebauten Weltdaten
 // und ein Spiel in England (Zentrale, Tabelle, Ligensystem). Voraussetzung: npm run build.
 //   node tests/world-shots.mjs [ordner]   (VIEW=1366x768)
 import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
-import { execFileSync } from 'node:child_process';
 import { extname, join } from 'node:path';
 import { chromium } from 'playwright';
 import { closeBriefing } from './newgame-flow.mjs';
 
 const out = process.argv[2] || 'test-output/world';
 await mkdir(out, { recursive: true });
-const dsFile = `${out}/welt-test.json`;
-execFileSync(process.execPath, ['scripts/run-ts.mjs', 'tests/world-prep.ts', dsFile], { stdio: 'inherit' });
-const dataset = JSON.parse(await readFile(dsFile, 'utf8'));
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.webp': 'image/webp' };
 const server = createServer(async (req, res) => {
   let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
@@ -27,14 +23,6 @@ const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
 await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
 await page.goto(url);
-// Datensatz in IndexedDB ablegen (wie „Ins Spiel übernehmen“ im Editor), dann neu laden.
-await page.evaluate((d) => new Promise((ok, bad) => {
-  const r = indexedDB.open('fm1975-datasets', 1);
-  r.onupgradeneeded = () => { if (!r.result.objectStoreNames.contains('datasets')) r.result.createObjectStore('datasets'); };
-  r.onsuccess = () => { const t = r.result.transaction('datasets', 'readwrite'); t.objectStore('datasets').put(d, d.meta.id); t.oncomplete = ok; t.onerror = () => bad(t.error); };
-  r.onerror = () => bad(r.error);
-}), dataset);
-await page.reload();
 const shot = async (n) => { await page.waitForTimeout(400); await page.screenshot({ path: `${out}/${W}x${H}_${n}.png` }); };
 const next = () => page.click('.ng-foot button:has-text("Weiter")');
 
@@ -49,7 +37,6 @@ await next();
 // Spielwelt: Standard 1975 zeigen, dann Datensatz + Startjahr 1985.
 await page.waitForSelector('.ng-ctable');
 await shot('1_spielwelt_1975');
-await page.click('.ng-opt:has-text("Welt-Test")');
 await page.click('.ng-year-stops button:has-text("1985")');
 await page.click('.ng-crow[data-cc="ita"] .ng-seg button:has-text("Spiel für Spiel")').catch(() => {});
 await shot('2_spielwelt_1985');
