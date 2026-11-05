@@ -245,7 +245,7 @@
 .shell-zentrale .dashx > .card {
   background:
     radial-gradient(120% 80% at 50% -10%, rgba(var(--ink-rgb), 0.035), transparent 60%),
-    linear-gradient(180deg, rgba(var(--panel-rgb), 0.74), rgba(var(--bg-rgb), 0.78));
+    linear-gradient(180deg, rgba(var(--panel-rgb), calc(0.74 * var(--glass))), rgba(var(--bg-rgb), calc(0.78 * var(--glass))));
 }
 
 /* --- Termine --- */

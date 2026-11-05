@@ -24,7 +24,8 @@
   padding: 7px 15px 12px;
   background:
     radial-gradient(120% 80% at 50% -10%, rgba(var(--ink-rgb), 0.035), transparent 60%),
-    linear-gradient(180deg, rgba(var(--panel-rgb), 0.88), rgba(var(--bg-rgb), 0.92));
+    linear-gradient(180deg, rgba(var(--panel-rgb), calc(0.88 * var(--glass))), rgba(var(--bg-rgb), calc(0.92 * var(--glass))));
+  backdrop-filter: var(--glass-filter); -webkit-backdrop-filter: var(--glass-filter);
 }
 .dbox.clickable { cursor: pointer; }
 .dbox .dxh-right { text-transform: none; }

@@ -17,7 +17,7 @@
 
 .tro-cats {
   grid-column: 1 / -1; display: flex; align-items: stretch; gap: 2px; padding: 0 8px;
-  background: linear-gradient(180deg, rgba(var(--panel-rgb), 0.9), rgba(var(--bg-rgb), 0.92));
+  background: linear-gradient(180deg, rgba(var(--panel-rgb), calc(0.9 * var(--glass))), rgba(var(--bg-rgb), calc(0.92 * var(--glass))));
   border: 1px solid var(--border-soft); border-radius: 6px;
 }
 .tro-cab-modal .tro-cats { background: transparent; border: 0; border-bottom: 1px solid var(--border-soft); border-radius: 0; padding: 0; }

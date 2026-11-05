@@ -234,6 +234,16 @@
   --photo-filter: saturate(0.9) contrast(1.04);
   --photo-filter-zentrale: saturate(0.55) contrast(1.06) brightness(0.92);
   --photo-opacity: 1;
+  /* Motiv (Pascal reicht eigene Fotos nach; Themes/Test können es tauschen) */
+  --photo-url: url('assets/stadion-hintergrund.jpg');
+  --photo-url-zentrale: url('assets/zentrale-hintergrund.png?v=2');
+  --photo-pos: center top;
+  /* Glas: Deckkraft-Faktor der Boxen über dem Foto (1 = bisherige Deckkraft, 0,6 = deutlich
+     durchscheinend) und Filter dahinter (z. B. blur(14px) = Milchglas). Gilt für DashBox,
+     Zentrale-Widgets, Reiterleisten, .card – nicht für Fenster. */
+  --glass: 1;
+  --glass-filter: none;
+  --card-filter: blur(10px);
   color-scheme: dark;
   --radius: 14px;
   --radius-sm: 9px;
@@ -263,6 +273,18 @@
   --pop-bg: #1e2228;                        /* offene Auswahlliste / Popover */
   --pop-border: rgba(255, 255, 255, 0.14);
   --pop-hover: rgba(255, 255, 255, 0.08);
+  /* Gewählter KNOPF bzw. gewähltes Segment (.b3.on, .seg3 > .on, button.active): eigene
+     Tokens, damit ein Theme Knöpfe weiß füllen kann, ohne gewählte Zeilen/Karten
+     (--sel-*) mitzufärben. Standard = wie --sel-*. */
+  --btn-on-bg: var(--sel-bg);
+  --btn-on-border: var(--sel-border);
+  --btn-on-text: var(--sel-text);
+  --btn-on-mark: var(--sel-mark);
+  --btn-on-shadow: 0 0 0 transparent;   /* z. B. Schein um den gewählten Knopf */
+  --seg-bg: rgba(var(--shade-rgb), 0.18);  /* Mulde der Segment-Gruppe */
+  /* Gesperrte Knöpfe: klar erkennbar, aber lesbar (früher 0,42 → „Heute“ kaum lesbar) */
+  --btn-off-opacity: 0.6;
+  --btn-off-text: var(--text-2);
   --today-bg: #e9edf2;                      /* Kalender: Datumsfeld „Heute“ */
   --today-text: #12151a;
   /* Kalender: feine Kante je Wettbewerb (statt Mini-Symbolen) */
@@ -359,7 +381,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.2px; }
      damit kein Sepia-Schleier über den Boxen liegt. */
   background:
     var(--photo-veil),
-    url('assets/stadion-hintergrund.jpg') center top / cover no-repeat;
+    var(--photo-url) var(--photo-pos) / cover no-repeat;
   filter: var(--photo-filter);
   opacity: var(--photo-opacity);
 }
@@ -371,7 +393,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.2px; }
      über die halbtransparenten Boxen alles sepia. */
   background:
     var(--photo-veil-zentrale),
-    url('assets/zentrale-hintergrund.png?v=2') center center / cover no-repeat;
+    var(--photo-url-zentrale) center center / cover no-repeat;
   filter: var(--photo-filter-zentrale);
   opacity: var(--photo-opacity);
 }
@@ -665,13 +687,13 @@ button.active {
      kraeftiger als die gewuenschte Endfarbe: der helle Stadion-Hintergrund hellt
      durch die Transparenz wieder auf. Dezenter Verlauf (oben heller, unten
      dunkler) wie auf den Vorlage-Boxen. */
-  background: linear-gradient(180deg, rgba(var(--panel-rgb), 0.90), rgba(var(--bg-rgb), 0.90));
+  background: linear-gradient(180deg, rgba(var(--panel-rgb), calc(0.90 * var(--glass))), rgba(var(--bg-rgb), calc(0.90 * var(--glass))));
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 16px;
   box-shadow: var(--shadow);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: var(--card-filter);
+  -webkit-backdrop-filter: var(--card-filter);
   transition: border-color 0.18s, transform 0.18s, box-shadow 0.18s;
 }
 .card.hoverable:hover {

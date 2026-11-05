@@ -80,7 +80,7 @@ const ROW_H = 38;
 
 export default function Select({
   value, onChange, options, children, className, style, disabled, title, placeholder,
-  size = 'm', width, popWidth, align = 'left', ...rest
+  size = 'm', width, popWidth, listHeight = MAX_H, align = 'left', ...rest
 }: {
   value: string | number | undefined | null;
   onChange: (v: string) => void;
@@ -97,6 +97,8 @@ export default function Select({
   width?: number | string;
   /** Breite der offenen Liste in UI-Pixeln (Standard: Knopfbreite, mind. 180). */
   popWidth?: number;
+  /** Höhe der offenen Liste in UI-Pixeln (Standard 340), danach Scroll. */
+  listHeight?: number;
   align?: 'left' | 'right';
   'aria-label'?: string;
   'data-role'?: string;
@@ -155,7 +157,7 @@ export default function Select({
     const s = uiScale();
     const r = btn.current.getBoundingClientRect();
     const w = Math.max(popWidth ?? r.width / s, 180);
-    const h = Math.min(MAX_H, (pop.current?.scrollHeight ?? MAX_H)) * s;
+    const h = Math.min(listHeight, (pop.current?.scrollHeight ?? listHeight)) * s;
     const vw = window.innerWidth, vh = window.innerHeight, gap = 8;
     let left = align === 'right' ? r.right - w * s : r.left;
     left = Math.max(gap, Math.min(vw - w * s - gap, left));
@@ -163,7 +165,7 @@ export default function Select({
     let up = false;
     if (top + h > vh - gap && r.top - h - 4 > gap) { top = r.top - h - 4; up = true; }
     setPos((p) => (p && p.left === left && p.top === top && p.w === w && p.s === s ? p : { left, top, w, s, up }));
-  }, [open, popWidth, align, rows.length]);
+  }, [open, popWidth, listHeight, align, rows.length]);
 
   // Beim Öffnen zur gewählten Zeile springen (mittig), danach aktive Zeile sichtbar halten
   const jumped = useRef(false);
@@ -222,7 +224,7 @@ export default function Select({
       if (k.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); typeAhead(k); }
       return;
     }
-    const page = Math.max(1, Math.floor(MAX_H / ROW_H) - 1);
+    const page = Math.max(1, Math.floor(listHeight / ROW_H) - 1);
     if (k === 'ArrowDown') { e.preventDefault(); setActive((a) => step(a, 1)); }
     else if (k === 'ArrowUp') { e.preventDefault(); setActive((a) => step(a, -1)); }
     else if (k === 'Home') { e.preventDefault(); setActive(step(-1, 1)); }
@@ -273,7 +275,7 @@ export default function Select({
           }}
           onMouseDown={(e) => e.preventDefault()}
         >
-          <div ref={list} className="sel3-list" role="listbox" id={listId} style={{ maxHeight: MAX_H }}>
+          <div ref={list} className="sel3-list" role="listbox" id={listId} style={{ maxHeight: listHeight }}>
             {rows.map((r, k) => {
               if (r.kind === 'div') return <div key={`d${k}`} className="sel3-div" role="separator" />;
               if (r.kind === 'group') return <div key={`g${k}`} className="sel3-group" role="presentation">{r.label}</div>;

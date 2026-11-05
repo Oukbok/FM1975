@@ -83,6 +83,8 @@ for (const view of VIEWS) {
     ['spielbericht', '.mr-modal', async () => { await nav('Spieltag', 'Spielplan'); await click('.app-main .dchip:has-text("Bericht")'); }],
     ['presse-artikel', '.np-article', async () => { await nav('Zentrale', 'Presse'); await click('.np-lead, .np-teaser'); }],
 
+    // Style-Auswahl oben rechts (ui/ThemePicker.tsx, 30 Styles in Gruppen): feste Listenhöhe, scrollt intern
+    ['style-liste', '.sel3-pop', async () => { await closeAll(page); await click('.hd-right .thm-pick'); }, { max: 0 }],
     ['einstellungen', '.modal', async () => { await closeAll(page); await click('.hd-gear'); await click('.menu-dd-item:has-text("Einstellungen")'); }],
     ['speichern', '.modal', async () => { await closeAll(page); await click('.hd-gear'); await click('.menu-dd-item:has-text("Speichern")'); }],
     ['vereinseditor', '.ce-modal', async () => { await closeAll(page); await click('.hd-gear'); await click('.menu-dd-item:has-text("Editor")'); }],
