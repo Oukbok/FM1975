@@ -1,29 +1,48 @@
 /* =============================================================================
    Gesichtsbilder (components/PlayerAvatar.tsx + components/faces/faceLookup.ts)
-   Feste Box im Seitenverhältnis 100:115 – kein Layout-Springen beim Laden.
-   Darunter liegt die Zeichnung als Platzhalter; sie blendet aus, sobald das
-   Foto geladen ist. Trikotfarbe: Maske (Alpha = Trikot) × Vereinsfarbe mit
-   hard-light → Mittelgrau (#808080) wird genau zur Vereinsfarbe, Falten bleiben.
+   Freigestellter Kopf (PNG/WebP mit Alpha) OHNE Kasten/Hintergrund in fester Box
+   (Seitenverhältnis 100:115) – kein Layout-Springen beim Laden. Gibt es ein Foto,
+   wird keine Zeichnung gerendert; bis zum Laden steht ein ruhiger neutraler Umriss.
+   Unten läuft der Hals weich aus. Trikotfarbe: Maske (Alpha = Trikot) × Vereinsfarbe
+   mit hard-light → Mittelgrau (#808080) wird genau zur Vereinsfarbe, Falten bleiben.
    ============================================================================= */
 .pa-photo {
-  position: relative; display: block; overflow: hidden; isolation: isolate;
-  max-width: 100%; aspect-ratio: 100 / 115; height: auto;
-  background: linear-gradient(180deg, var(--face-bg-1), var(--face-bg-2));
+  position: relative; display: block; isolation: isolate;
+  max-width: 100%; aspect-ratio: 100 / 115; height: auto; flex: none;
 }
-.pa-photo > svg { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity .25s ease; }
-.pa-photo.loaded > svg { opacity: 0; }
+/* Platzhalter bis zum Laden: dezenter Kopf-Umriss, kein Aufblitzen */
+.pa-photo::before {
+  content: ''; position: absolute; left: 22%; right: 22%; top: 16%; bottom: 4%;
+  border-radius: 46% 46% 40% 40% / 42% 42% 50% 50%;
+  background: rgba(var(--ink-rgb), 0.06);
+  transition: opacity .15s ease;
+}
+.pa-photo.loaded::before { opacity: 0; }
 .pa-photo > img {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; object-position: center bottom;
-  opacity: 0; transition: opacity .25s ease;
+  object-fit: contain; object-position: center bottom;
+  opacity: 0; transition: opacity .15s ease;
+  -webkit-mask-image: linear-gradient(180deg, #000 86%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 86%, transparent 100%);
 }
 .pa-photo.loaded > img { opacity: 1; }
 .pa-kit {
   position: absolute; inset: 0; pointer-events: none; opacity: 0;
   mix-blend-mode: hard-light;
-  -webkit-mask-size: cover; mask-size: cover;
+  -webkit-mask-size: contain; mask-size: contain;
   -webkit-mask-position: center bottom; mask-position: center bottom;
   -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-  transition: opacity .25s ease;
+  transition: opacity .15s ease;
 }
 .pa-photo.loaded > .pa-kit { opacity: 1; }
+
+/* Miniatur-Kopf in Listen (components/FaceThumb.tsx): feste Größe, Zeilenhöhe bleibt */
+.fthumb { display: inline-block; flex: none; vertical-align: middle; line-height: 0; }
+.fthumb .pa-photo > img { -webkit-mask-image: linear-gradient(180deg, #000 80%, transparent 100%); mask-image: linear-gradient(180deg, #000 80%, transparent 100%); }
+
+/* Rahmen-Kästen, die früher hinter dem Gesicht lagen (Kreis/Box mit Fläche):
+   mit Foto ohne Fläche/Rahmen – der freigestellte Kopf steht frei. Die Zeichnung
+   (Rückfall) behält ihren Kasten. */
+:is(.aw-face, .rb2-face, .ft-face-img):has(> .pa-photo) { background: none; border-color: transparent; border-radius: 0; }
+.rb2-face:has(> .pa-photo) > .pa-photo,
+.ptk-face > .pa-photo, .dz-rface > .pa-photo, .ct-head > .pa-photo, .gb-face > .pa-photo { filter: drop-shadow(0 6px 12px rgba(var(--shade-rgb), 0.45)); }

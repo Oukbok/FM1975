@@ -1,5 +1,5 @@
 // Kopf links im Spielerprofil (Vorbild EA Fussball Manager): Rückennummer + Name groß, Verein,
-// Wappen mit Gesicht davor, daneben Steckbrief – Stärke, Potenzial (Scout-Spanne), Nation,
+// Wappen links oben, freigestellter Kopf schräg rechts unten davor (ohne Kasten), daneben Steckbrief – Stärke, Potenzial (Scout-Spanne), Nation,
 // Tabelle der sechs besten Positionen (Eignung), Fuß, Spielertyp, Charakter (Einschätzung).
 import type { Player, Club, Position } from '../../types';
 import PlayerAvatar from '../PlayerAvatar';
@@ -45,8 +45,8 @@ export default function ProfileHead({ p, club, tag, best, sel, onSelect }: {
       </div>
       <div className="pp2-idbody">
         <div className="pp2-portrait">
-          {club && <div className="pp2-crest"><ClubCrest club={club} size={112} /></div>}
-          <div className="pp2-face"><PlayerAvatar player={p} club={club} size={150} /></div>
+          {club && <div className="pp2-crest"><ClubCrest club={club} size={124} /></div>}
+          <div className="pp2-face"><PlayerAvatar key={p.id} player={p} club={club} size={160} priority /></div>
         </div>
         <div className="pp2-facts">
           <div className="pp2-keyrow">

@@ -52,7 +52,7 @@ export function TalkLeft({ p, club, phase, anim }: { p: Player; club?: Club; pha
       </header>
 
       <div className="ptk-card">
-        <div className="ptk-face"><PlayerAvatar player={p} club={club} size={150} /></div>
+        <div className="ptk-face"><PlayerAvatar key={p.id} player={p} club={club} size={150} priority /></div>
         <div className="ptk-facts">
           <div className="ptk-facts-top">
             <span className="ptk-nat">{p.nationality}</span>

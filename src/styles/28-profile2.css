@@ -43,7 +43,9 @@
 .pp2-portrait { position: relative; height: 184px; }
 .pp2-crest { position: absolute; left: 0; top: 0; }
 .pp2-face { position: absolute; right: 0; bottom: 0; }
-.pp2-face > * { display: block; filter: drop-shadow(0 6px 14px rgba(var(--shade-rgb), 0.45)); }
+.pp2-face > * { display: block; filter: drop-shadow(0 8px 16px rgba(var(--shade-rgb), 0.5)); }
+/* Wappen dahinter etwas zurückgenommen, damit der Kopf davor steht */
+.pp2-crest { opacity: 0.92; }
 .pp2-face > svg, .pp2-face > img { display: block; }
 .pp2-facts { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
 .pp2-keyrow { display: flex; align-items: flex-end; gap: 22px; padding-bottom: 6px; border-bottom: 1px solid var(--border-soft); }

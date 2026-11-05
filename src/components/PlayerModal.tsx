@@ -11,6 +11,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { Player, Club, Position } from '../types';
 import Icon from './Icon';
+import { preloadFace } from './PlayerAvatar';
 import ProfileHead from './player/ProfileHead';
 import ProfileTop from './player/ProfileTop';
 import SkillsPanel from './player/SkillsPanel';
@@ -64,6 +65,14 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
   const idx = list.findIndex((x) => x.id === p.id);
   const canNav = idx >= 0 && list.length > 1;
   const go = (d: number) => { if (canNav) setCur(list[(idx + d + list.length) % list.length]); };
+  // Fotos der Nachbarn vorab laden – beim Blättern steht das neue Gesicht sofort.
+  useEffect(() => {
+    if (!canNav) return;
+    for (const d of [1, -1, 2, -2]) preloadFace(list[(idx + d + list.length * 2) % list.length]);
+    // danach der übrige Kader im Leerlauf
+    const t = setTimeout(() => list.forEach((x) => preloadFace(x)), 600);
+    return () => clearTimeout(t);
+  }, [p.id, canNav, idx, list.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

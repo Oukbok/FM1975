@@ -32,7 +32,7 @@ export function ContractPlayer({ g, p, d, knowledge, promiseOptions }: {
   return (
     <aside className="ct-card ct-player">
       <div className="ct-head">
-        <PlayerAvatar player={p} club={club} size={124} />
+        <PlayerAvatar player={p} club={club} size={124} priority />
         <div className="ct-head-r">
           <div className="ct-name">{p.fullName}</div>
           <div className="ct-sub">{club && <ClubCrest club={club} size={24} />}<span>{club?.name}</span></div>

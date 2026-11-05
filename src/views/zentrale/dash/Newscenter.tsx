@@ -132,7 +132,7 @@ function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
         </div>
         {p && (
           <button className="dz-rface" onClick={() => openPlayer(p.id)} title={`${p.fullName} – Spielerprofil öffnen`}>
-            <PlayerAvatar player={p} club={g.clubs[p.clubId]} size={104} />
+            <PlayerAvatar key={p.id} player={p} club={g.clubs[p.clubId]} size={104} priority />
             <span className="dz-rface-name">{p.fullName}</span>
             <span className="dz-rface-sub"><PosBadge p={p} single /> <span>{p.age} J.</span> <b style={{ color: vColor(p.overall) }}>{p.overall}</b></span>
           </button>

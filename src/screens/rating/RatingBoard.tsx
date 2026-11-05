@@ -80,7 +80,7 @@ export function StageCard({ row, club, phase, reduced, countMs }: {
   const verdict = d > 0 ? 'Aufgewertet' : d < 0 ? 'Abgewertet' : 'Unverändert';
   return (
     <div key={row.r.playerId} className={`rt-card rb2-card ${holding ? cls(d) : ''}`}>
-      <div className="rb2-face">{p ? <PlayerAvatar player={p} club={club} size={150} /> : <div className="rb2-face-empty" />}</div>
+      <div className="rb2-face">{p ? <PlayerAvatar key={p.id} player={p} club={club} size={150} priority /> : <div className="rb2-face-empty" />}</div>
       <div className="rb2-info">
         <div className="rb2-kicker"><PosBadge pos={row.r.position} /> {row.r.age} Jahre{p ? ` · Nr. ${p.shirtNumber}` : ''}</div>
         <div className="rb2-name"><span className="rb2-first">{row.first}</span> {row.last}</div>
