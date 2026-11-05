@@ -1,0 +1,32 @@
+// Vereine Kroatien (verfremdet). Quellen/echte Namen: docs/recherche/weltvereine_cro.md
+import type { RealClub } from '../types';
+
+export const CLUBS_CRO: RealClub[] = [
+  { id: 'cro-belisce', name: "Belišće", short: 'BEL', city: "Belišće", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cro-cakovec', name: "Čakovec", short: 'CAK', city: "Čakovec", colors: { primary: '#C8102E', secondary: '#000000' } },
+  { id: 'cro-dubrovnik', name: "Dubrovnik", short: 'DUB', city: "Dubrovnik", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cro-koprivnica', name: "Koprivnica", short: 'KOP', city: "Koprivnica", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cro-kostrena', name: "Kostrena", short: 'KOS', city: "Kostrena", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cro-metkovic', name: "Metković", short: 'MET', city: "Metković", colors: { primary: '#C8102E', secondary: '#FFFFFF' } },
+  { id: 'cro-osijek', name: "Osijek", short: 'OSI', city: "Osijek", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cro-pula', name: "Pula", short: 'PUL', city: "Pula", colors: { primary: '#FFD700', secondary: '#00843D' } },
+  { id: 'cro-rijeka', name: "Rijeka", short: 'RIJ', city: "Rijeka", colors: { primary: '#FFFFFF', secondary: '#0033A0' } },
+  { id: 'cro-sibenik', name: "Šibenik", short: 'SIB', city: "Šibenik", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cro-sisak', name: "Sisak", short: 'SIS', city: "Sisak", colors: { primary: '#C8102E', secondary: '#FFFFFF' } },
+  { id: 'cro-slavonski-brod', name: "Slavonski Brod", short: 'SBR', city: "Slavonski Brod", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cro-split', name: "Split", short: 'SPL', city: "Split", colors: { primary: '#FFFFFF', secondary: '#005DAA' } },
+  { id: 'cro-split-rot', name: "Split Rot", short: 'SPR', city: "Split", colors: { primary: '#C8102E', secondary: '#0033A0' } },
+  { id: 'cro-varazdin', name: "Varaždin", short: 'VAR', city: "Varaždin", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cro-velika', name: "Velika", short: 'VEL', city: "Velika", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cro-velika-gorica', name: "Velika Gorica", short: 'VGO', city: "Velika Gorica", colors: { primary: '#C8102E', secondary: '#FFFFFF' } },
+  { id: 'cro-vinkovci', name: "Vinkovci", short: 'VIN', city: "Vinkovci", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cro-vukovar', name: "Vukovar", short: 'VUK', city: "Vukovar", colors: { primary: '#0033A0', secondary: '#C8102E' } },
+  { id: 'cro-zadar', name: "Zadar", short: 'ZAD', city: "Zadar", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cro-zagreb', name: "Zagreb", short: 'ZAG', city: "Zagreb", colors: { primary: '#0057B7', secondary: '#FFFFFF' } },
+  { id: 'cro-zagreb-blau', name: "Zagreb Blau", short: 'ZGB', city: "Zagreb", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cro-zagreb-rot-weiss', name: "Zagreb Rot-Weiß", short: 'ZRW', city: "Zagreb", colors: { primary: '#C8102E', secondary: '#FFFFFF' } },
+  { id: 'cro-zagreb-rudes', name: "Zagreb Rudeš", short: 'ZRU', city: "Zagreb", colors: { primary: '#FFD700', secondary: '#000000' } },
+  { id: 'cro-zagreb-sesvete', name: "Zagreb Sesvete", short: 'ZSE', city: "Zagreb", colors: { primary: '#C8102E', secondary: '#FFFFFF' } },
+  { id: 'cro-zagreb-weiss', name: "Zagreb Weiß", short: 'ZGW', city: "Zagreb", colors: { primary: '#FFFFFF', secondary: '#C8102E' } },
+  { id: 'cro-zapresic', name: "Zaprešić", short: 'ZAP', city: "Zaprešić", colors: { primary: '#FFD700', secondary: '#000000' } },
+];
