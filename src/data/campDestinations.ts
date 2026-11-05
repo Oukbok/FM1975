@@ -205,7 +205,7 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
     id: 'zillertal', name: 'Zillertal', geo: [47.23, 11.88], place: 'Zell am Ziller / Gerlos', country: 'Österreich', region: 'alpen',
     seasons: S, access: from(1977), climate: 'alpen', altitude: 600, transport: 'bus', travelH: 8, tz: 0, travel: 2600,
     opp: 'regional', testIncome: 4500, marketing: 0.03, buzz: 0.3,
-    note: 'Tal mit Tradition: Werder Bremen kommt seit rund 15 Jahren nach Zell-Gerlos [C16]. Gasthöfe im Talschluss oder Sporthotels im Ort.',
+    note: 'Tal mit Tradition: Ein Bundesligist aus dem Norden kommt seit rund 15 Jahren nach Zell-Gerlos [C16]. Gasthöfe im Talschluss oder Sporthotels im Ort.',
   },
   {
     id: 'salzburgerland', name: 'Salzburger Land', geo: [47.43, 12.85], place: 'Saalfelden / Maria Alm / Leogang', country: 'Österreich', region: 'alpen',

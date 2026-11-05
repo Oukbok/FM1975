@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ClubLink } from '../../components/club/ClubLink';
 import {
-  INDOOR_LAST_WINTER, MASTERS_FIRST_WINTER, MASTERS_LAST_WINTER, MASTERS_TEAMS, REAL_MASTERS, indoorPhase, mastersMoney,
+  INDOOR_LAST_WINTER, MASTERS_FIRST_WINTER, MASTERS_LAST_WINTER, MASTERS_TEAMS, indoorPhase, mastersMoney,
   mastersTv, mastersVenue, winterYearOf,
 } from '../../data/indoorHistory';
 import { INDOOR_SQUAD_LABEL, IndoorMatch, winnerOf } from '../../engine/indoor';
@@ -47,7 +47,6 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
   };
 
   // Reale Sieger nur bis zum aktuellen Winter (keine Vorschau auf die Zukunft).
-  const realSoFar = REAL_MASTERS.filter((r) => r.year < wy || (r.year === wy && !!cur?.masters?.done)).reverse();
   const title = (id: string) => st.titles[id] ?? 0;
   const ownPhaseStatus = phase === 'none'
     ? (wy > INDOOR_LAST_WINTER ? `Seit ${INDOOR_LAST_WINTER + 1} keine Hallenturniere mehr` : 'Noch keine Hallensaison')
@@ -145,15 +144,7 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
             <span className="meta">{h.city}</span>
           </div>
         ))}
-        <div className="dsec">Wirklichkeit {MASTERS_FIRST_WINTER}–{MASTERS_LAST_WINTER}</div>
-        {!realSoFar.length && <div className="dnote">Noch keine offizielle Endrunde – bis 1987 sind Hallenturniere reine Einladungsturniere.</div>}
-        {realSoFar.map((r) => (
-          <div key={r.year} className="dlist-row">
-            <span className="meta" style={{ minWidth: 40 }}>{r.year}</span>
-            <span className="grow">{r.winner} <span className="muted">{r.score} {r.runnerUp}{r.note ? ` (${r.note})` : ''}</span></span>
-            <span className="meta">{r.city}</span>
-          </div>
-        ))}
+        {!st.history.some((h) => h.mastersWinner) && <div className="dnote">Noch keine Endrunde in deinem Spiel – das Hallen-Masters gibt es von {MASTERS_FIRST_WINTER} bis {MASTERS_LAST_WINTER}.</div>}
       </DashBox>
     </DashPage>
   );

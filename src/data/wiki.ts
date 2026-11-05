@@ -2061,7 +2061,7 @@ KI-Vereine haben keine Blöcke, aber Kontingente je Kategorie: Sie bauen ihren P
 ## Größenordnung
 Ein Erstligist nimmt 1975 je Heimspiel rund 150.000 DM Eintritt (≈ 70 % des Umsatzes inkl. Catering und Programm), ein Spitzenverein 2024 mit voller Arena rund 6–8 Mio. € (FC Bayern 2023: ≈ 121 Mio. € Spieltagserlöse, ≈ 5,2 Mio. € je Heimspiel).
 
-Quellen: Allianz Arena (fcbayern.com: 106 Logen, 2.200 Business-Plätze, 227 Plätze für Menschen mit Behinderung), Westfalenstadion 1974 mit 17.000 von 54.000 Sitzplätzen (bvb.de), Eintracht Frankfurt Hospitality (Loge ab 640 € je Platz und Spiel, Business ab ≈ 360 €), Stehplatz-Dauerkarten 2024/25 (Schnitt 213 €), UEFA-Gästekontingent 5 %. Annahmen: VIP-Bereiche 1980, Logen 1985, Gästeblock 1984, Premium 1988.`,
+Quellen: Vereinsangaben großer Bundesligisten (Arena 2026: 106 Logen, 2.200 Business-Plätze, 227 Plätze für Menschen mit Behinderung; ein WM-Stadion von 1974 mit 17.000 von 54.000 Sitzplätzen; Hospitality: Loge ab 640 € je Platz und Spiel, Business ab ≈ 360 €), Stehplatz-Dauerkarten 2024/25 (Schnitt 213 €), UEFA-Gästekontingent 5 %. Annahmen: VIP-Bereiche 1980, Logen 1985, Gästeblock 1984, Premium 1988.`,
   },
   {
     id: 'facilities-grounds',
