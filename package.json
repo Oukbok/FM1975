@@ -52,6 +52,7 @@
     "test:budget": "node scripts/run-ts.mjs tests/budget-test.ts",
     "test:faces": "node scripts/run-ts.mjs tests/faces-test.ts",
     "test:season": "node scripts/run-ts.mjs tests/season-test.ts",
+    "test:world": "node scripts/run-ts.mjs tests/world-test.ts",
     "test:popups": "node scripts/build.mjs && node tests/popup-size.mjs",
     "test:walk": "node scripts/build.mjs && node tests/season-walk.mjs",
     "test:legends": "node scripts/run-ts.mjs tests/legends-test.ts && node tests/legends-ui.mjs"
