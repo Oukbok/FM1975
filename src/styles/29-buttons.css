@@ -233,3 +233,16 @@ button.sel3.sel3.sel3-l { height: var(--btn-h-l); min-height: var(--btn-h-l); fo
 .ng-toggle.on .ng-switch { background: var(--sel-bg); border-color: var(--sel-border); }
 .ng-toggle.on .ng-switch::after { background: var(--text); }
 .dz-act.lead { margin: 0 10px 0 0; }
+
+/* Haupt-/Weiter-Knöpfe (Wunsch Pascal): beim Hover grün statt grau – Weiter in der Kopfleiste,
+   runder Knopf und Start der Shows (Auslosung, Bewertung), Vorschau „Nächstes Spiel“, Hauptknöpfe. */
+button.hd-continue:hover:not(:disabled):not(.mail), button.dr-close:hover:not(:disabled),
+button.pm-go-btn.primary:hover:not(:disabled), button.b3.b3-primary:hover:not(:disabled),
+button.btn-primary:hover:not(:disabled), button.ix-btn.primary:hover:not(:disabled),
+button.ng-btn.primary:hover:not(:disabled) {
+  background: var(--go-hover); border-color: var(--go-hover); color: var(--go-hover-ink); filter: none;
+}
+button.dg-go:hover:not(:disabled) {
+  background: radial-gradient(circle at 38% 32%, var(--go-hover-hi), var(--go-hover) 52%, var(--go-hover-2));
+  color: var(--go-hover-ink); filter: none;
+}

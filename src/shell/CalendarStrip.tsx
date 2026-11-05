@@ -62,6 +62,10 @@ export function buildDayEventsMap(g: Game): Map<string, StripEvent[]> {
           const heim = m.homeClubId === me;
           const opp = heim ? m.awayClubId : m.homeClubId;
           consider({ date: ev.date, icon: 'matchball', line: `${full(opp)} (${heim ? 'H' : 'A'})`, accent: 'orange', isMatch: true, prio: 100, clubId: opp, home: heim, comp: `Liga · ${m.matchday}. Spieltag${m.moved ? (m.moved.makeup ? ' (Nachholspiel)' : ' (verlegt)') : ''}`, result: resultOf(m), screen: 'fixtures', kind: 'Liga' });
+        } else if (m?.moved?.makeup) {
+          // Nachholspiel anderer Vereine (z. B. Platz unbespielbar): als einzelnes Spiel zeigen,
+          // nicht als ganzer Spieltag – sonst sieht der Tag wie ein Spieltag ohne eigenes Spiel aus.
+          consider({ date: ev.date, icon: 'schedule', line: `Nachholspiel: ${full(m.homeClubId)} – ${full(m.awayClubId)}`, accent: undefined, isMatch: false, prio: 35, screen: 'fixtures', kind: 'Liga', comp: `Liga · ${m.matchday}. Spieltag (Nachholspiel)`, result: resultOf(m) });
         } else if (m) {
           consider({ date: ev.date, icon: 'schedule', line: `Spieltag ${m.matchday}`, accent: undefined, isMatch: false, prio: 40, screen: 'table', kind: 'Liga' });
         }

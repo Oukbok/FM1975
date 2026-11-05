@@ -104,6 +104,8 @@
   --pos-att: #d7625f;        /* Angriff: rot */
   --pos-mix: 72%;            /* Anteil Grundton in der Schrift (Rest --text) */
   --pos: var(--green);
+  /* Hover der Haupt-/Weiter-Knöpfe (Wunsch Pascal: grün statt grau) */
+  --go-hover: #4fb383; --go-hover-2: #2f8a5e; --go-hover-ink: #06180f; --go-hover-hi: #a8e3c4;
   --neg: var(--red);
   --warn: var(--yellow);
 
