@@ -193,7 +193,7 @@ export function SponsorCard({ g, t, onClose, onOpen, onTalk, onAct, onNaming, on
           <KV k="Jahreswert" v={fmtDM(namingAnnualNominal(nr, club, year))} strong />
           <KV k="Laufzeit" v={`${nr.fromYear} bis 30.06.${nr.untilYear}`} />
         </> : <div className="dnote">{year < NAMING_RIGHTS_YEAR
-          ? 'Stadionnamen werden in dieser Epoche noch nicht verkauft. In Deutschland kam das erst um 2000 auf (Hamburg 2001: „AOL Arena“). Ab 2000 melden sich Interessenten.'
+          ? 'Stadionnamen werden in dieser Epoche noch nicht verkauft. In Deutschland kam das erst um 2000 auf (Hamburg 2001 als einer der ersten Vereine). Ab 2000 melden sich Interessenten.'
           : 'Der Stadionname ist frei. Interessenten findest du unten.'}</div>}
         {offers.length > 0 && <div className="dsec">Angebote</div>}
         {offers.map((x, i) => (
