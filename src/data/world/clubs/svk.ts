@@ -1,0 +1,31 @@
+// Vereine Slowakei (verfremdet). Quellen/echte Namen: docs/recherche/weltvereine_svk.md
+import type { RealClub } from '../types';
+
+export const CLUBS_SVK: RealClub[] = [
+  { id: 'svk-banska-bystrica', name: "Banská Bystrica", short: 'BBY', city: "Banská Bystrica", colors: { primary: '#C8102E', secondary: '#FFFFFF' } },
+  { id: 'svk-bardejov', name: "Bardejov", short: 'BAR', city: "Bardejov", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'svk-bratislava', name: "Bratislava", short: 'BRT', city: "Bratislava", colors: { primary: '#0068B4', secondary: '#FFFFFF' } },
+  { id: 'svk-bratislava-gelb', name: "Bratislava Gelb-Schwarz", short: 'BGS', city: "Bratislava", colors: { primary: '#FFD700', secondary: '#000000' } },
+  { id: 'svk-bratislava-petrzalka', name: "Bratislava Petržalka", short: 'BPE', city: "Bratislava", colors: { primary: '#FFD700', secondary: '#000000' } },
+  { id: 'svk-dubnica', name: "Dubnica", short: 'DUB', city: "Dubnica nad Váhom", colors: { primary: '#C8102E', secondary: '#FFFFFF' } },
+  { id: 'svk-dunajska-streda', name: "Dunajská Streda", short: 'DAC', city: "Dunajská Streda", colors: { primary: '#FFD700', secondary: '#0033A0' } },
+  { id: 'svk-humenne', name: "Humenné", short: 'HUM', city: "Humenné", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'svk-komarno', name: "Komárno", short: 'KOM', city: "Komárno", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'svk-kosice', name: "Košice", short: 'KOS', city: "Košice", colors: { primary: '#FFD700', secondary: '#0033A0' } },
+  { id: 'svk-kosice-blau', name: "Košice Blau", short: 'KOB', city: "Košice", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'svk-michalovce', name: "Michalovce", short: 'MIC', city: "Michalovce", colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'svk-myjava', name: "Myjava", short: 'MYJ', city: "Myjava", colors: { primary: '#C8102E', secondary: '#FFFFFF' } },
+  { id: 'svk-nitra', name: "Nitra", short: 'NIT', city: "Nitra", colors: { primary: '#FFD700', secondary: '#C8102E' } },
+  { id: 'svk-podbrezova', name: "Podbrezová", short: 'POD', city: "Podbrezová", colors: { primary: '#C8102E', secondary: '#0033A0' } },
+  { id: 'svk-pohronie', name: "Pohronie", short: 'POH', city: "Žiar nad Hronom", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'svk-presov', name: "Prešov", short: 'PRE', city: "Prešov", colors: { primary: '#000000', secondary: '#C8102E' } },
+  { id: 'svk-puchov', name: "Púchov", short: 'PUC', city: "Púchov", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'svk-ruzomberok', name: "Ružomberok", short: 'RUZ', city: "Ružomberok", colors: { primary: '#C8102E', secondary: '#FFFFFF' } },
+  { id: 'svk-senec', name: "Senec", short: 'SNC', city: "Senec", colors: { primary: '#C8102E', secondary: '#FFFFFF' } },
+  { id: 'svk-senica', name: "Senica", short: 'SEN', city: "Senica", colors: { primary: '#C8102E', secondary: '#000000' } },
+  { id: 'svk-skalica', name: "Skalica", short: 'SKA', city: "Skalica", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'svk-trencin', name: "Trenčín", short: 'TRE', city: "Trenčín", colors: { primary: '#C8102E', secondary: '#FFFFFF' } },
+  { id: 'svk-trnava', name: "Trnava", short: 'TRN', city: "Trnava", colors: { primary: '#C8102E', secondary: '#000000' } },
+  { id: 'svk-zilina', name: "Žilina", short: 'ZIL', city: "Žilina", colors: { primary: '#FFD700', secondary: '#00843D' } },
+  { id: 'svk-zlate-moravce', name: "Zlaté Moravce", short: 'ZMO', city: "Zlaté Moravce", colors: { primary: '#FFD700', secondary: '#0033A0' } },
+];

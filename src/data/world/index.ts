@@ -59,6 +59,19 @@ import * as cyp1 from './clubs/cyp'; import * as cyp2 from './seasons/cyp'; add(
 import * as isr1 from './clubs/isr'; import * as isr2 from './seasons/isr'; add('isr', isr1, isr2);
 import * as mlt1 from './clubs/mlt'; import * as mlt2 from './seasons/mlt'; add('mlt', mlt1, mlt2);
 import * as alb1 from './clubs/alb'; import * as alb2 from './seasons/alb'; add('alb', alb1, alb2);
+import * as urs1 from './clubs/urs'; import * as urs2 from './seasons/urs'; add('urs', urs1, urs2);
+import * as pol1 from './clubs/pol'; import * as pol2 from './seasons/pol'; add('pol', pol1, pol2);
+import * as hun1 from './clubs/hun'; import * as hun2 from './seasons/hun'; add('hun', hun1, hun2);
+import * as tch1 from './clubs/tch'; import * as tch2 from './seasons/tch'; add('tch', tch1, tch2);
+import * as yug1 from './clubs/yug'; import * as yug2 from './seasons/yug'; add('yug', yug1, yug2);
+import * as rou1 from './clubs/rou'; import * as rou2 from './seasons/rou'; add('rou', rou1, rou2);
+import * as bul1 from './clubs/bul'; import * as bul2 from './seasons/bul'; add('bul', bul1, bul2);
+import * as rus1 from './clubs/rus'; import * as rus2 from './seasons/rus'; add('rus', rus1, rus2);
+import * as ukr1 from './clubs/ukr'; import * as ukr2 from './seasons/ukr'; add('ukr', ukr1, ukr2);
+import * as srb1 from './clubs/srb'; import * as srb2 from './seasons/srb'; add('srb', srb1, srb2);
+import * as cro1 from './clubs/cro'; import * as cro2 from './seasons/cro'; add('cro', cro1, cro2);
+import * as cze1 from './clubs/cze'; import * as cze2 from './seasons/cze'; add('cze', cze1, cze2);
+import * as svk1 from './clubs/svk'; import * as svk2 from './seasons/svk'; add('svk', svk1, svk2);
 // ------------------------------------------------------------------------------
 
 /** Daten eines Landes eintragen (auch für Tests mit Beispieldaten aus tests/fixtures/). */

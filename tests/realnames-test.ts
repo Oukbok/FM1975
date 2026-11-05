@@ -105,7 +105,7 @@ const BRANDS: RegExp[] = [
   /\bVolkswagen\b/, /\bJägermeister\b/, /\bQatar Airways\b/, /\bEmirates\b/, /\bEtihad\b/, /\bTelekom\b/, /\bAdidas\b/i,
   /\bPuma\b/, /\bNike\b/, /\bHermes\b/, /\bAspire\b/, /\bCommerzbank\b/, /\bAudi\b/, /\bOpel\b/, /\bSAP\b/, /\bGazprom\b/,
   /\bEvonik\b/, /\bTipico\b/, /\bInternational Champions Cup\b/,
-  /\bARD\b/, /\bZDF\b/, /\bRTL\b/, /\bSat\.1\b/i, /\bPremiere\b/, /\bSky\b/, /\bDAZN\b/, /\bKirch(?:-|s?\b|Media)/, /\bISPR\b/, /\bUFA\b/i,
+  /\bARD\b/, /\bZDF\b/, /\bRTL\b/, /\bSat\.1\b/i, /\bPremiere\b/, /\bSky\b/, /\bDAZN\b/, /\bKirch(?:-|s?\b|Media)/, /\bISPR\b/, /\bUFA\b/,
   /\bDSF\b/, /\bDF1\b/, /\bSport1\b/, /\bEurosport\b/, /\bNetflix\b/, /\bAmazon\b/, /\bMagentaSport\b/, /\bSportschau\b/,
   /\bSportstudio\b/, /„ran“/, /\bUnity ?Media\b/, /\bBig Brother\b/, /\bBBC\b/, /\bITV\b/, /\bCanal\+/, /\bMediaset\b/,
 ];
@@ -136,7 +136,7 @@ const hitOf = (s: string) => RULES.find(([, r]) => r.test(s));
 const must = ['der FC Bayern', 'Gladbach gegen Bayern', 'Eintracht Braunschweig', 'Dynamo Dresden', 'Real Madrid', 'Allianz Arena',
   'Franz Beckenbauer', 'Pelé und Uli Hoeneß', 'Özil', 'Der Kaiser übernimmt', 'beim HSV', '1. FC Köln', 'Karlsruher SC', 'SV Werder', 'Happels Pressing', 'Hansa Rostock', 'Manchester United', 'Ajax Amsterdam', 'ARD und ZDF', 'bei Sky', 'Kirch-Pleite'];
 const free = ['München Rot', 'Mönchengladbach', 'Hamburg Blau', 'Gelsenkirchen', 'Dresden', 'Regionalliga Bayern', 'in Bayern',
-  'Bergisch Gladbach', 'Madrid Weiß', 'Mailand Rot-Schwarz', 'Liverpool Rot', 'Porto', 'Daumen hoch', 'Kaiserslautern', 'Bosman-Urteil', 'Bezahlsender', 'Kirchheim', 'Premieren-Abend'];
+  'Bergisch Gladbach', 'Madrid Weiß', 'Mailand Rot-Schwarz', 'Liverpool Rot', 'Porto', 'Daumen hoch', 'Kaiserslautern', 'Bosman-Urteil', 'Bezahlsender', 'Kirchheim', 'Premieren-Abend', 'Ufa'];
 const missed = must.filter((s) => !hitOf(s)), wrong = free.filter((s) => hitOf(s));
 ok(!missed.length, `Sperrliste erkennt Beispiele${missed.length ? ' – verfehlt: ' + missed.join(', ') : ''}`);
 ok(!wrong.length, `Spielnamen/Orte bleiben frei${wrong.length ? ' – fälschlich: ' + wrong.join(', ') : ''}`);

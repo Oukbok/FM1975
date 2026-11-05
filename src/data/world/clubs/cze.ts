@@ -1,0 +1,33 @@
+// Vereine Tschechien (verfremdet). Quellen/echte Namen: docs/recherche/weltvereine_cze.md
+import type { RealClub } from '../types';
+
+export const CLUBS_CZE: RealClub[] = [
+  { id: 'cze-blsany', name: "Blšany", short: 'BLS', city: "Blšany", colors: { primary: '#FFD700', secondary: '#000000' } },
+  { id: 'cze-bruenn', name: "Brünn", short: 'BRU', city: "Brünn", colors: { primary: '#C8102E', secondary: '#FFFFFF' } },
+  { id: 'cze-budejovice', name: "České Budějovice", short: 'CBU', city: "České Budějovice", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cze-cheb', name: "Cheb", short: 'CHE', city: "Cheb", colors: { primary: '#C8102E', secondary: '#000000' } },
+  { id: 'cze-drnovice', name: "Drnovice", short: 'DRN', city: "Drnovice", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cze-hradec', name: "Hradec Králové", short: 'HRK', city: "Hradec Králové", colors: { primary: '#000000', secondary: '#FFFFFF' } },
+  { id: 'cze-jablonec', name: "Jablonec", short: 'JAB', city: "Jablonec", colors: { primary: '#00843D', secondary: '#000000' } },
+  { id: 'cze-jihlava', name: "Jihlava", short: 'JIH', city: "Jihlava", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cze-karvina', name: "Karviná", short: 'KAR', city: "Karviná", colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'cze-kladno', name: "Kladno", short: 'KLA', city: "Kladno", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cze-liberec', name: "Liberec", short: 'LIB', city: "Liberec", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cze-mlada-boleslav', name: "Mladá Boleslav", short: 'MBO', city: "Mladá Boleslav", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cze-most', name: "Most", short: 'MOS', city: "Most", colors: { primary: '#C8102E', secondary: '#000000' } },
+  { id: 'cze-olmuetz', name: "Olmütz", short: 'OLM', city: "Olmütz", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cze-opava', name: "Opava", short: 'OPA', city: "Opava", colors: { primary: '#FFD700', secondary: '#0033A0' } },
+  { id: 'cze-ostrava', name: "Ostrava", short: 'OST', city: "Ostrava", colors: { primary: '#0068B4', secondary: '#FFFFFF' } },
+  { id: 'cze-ostrava-vitkovice', name: "Ostrava Vítkovice", short: 'OSV', city: "Ostrava", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
+  { id: 'cze-pardubice', name: "Pardubice", short: 'PAR', city: "Pardubice", colors: { primary: '#C8102E', secondary: '#FFFFFF' } },
+  { id: 'cze-pilsen', name: "Pilsen", short: 'PIL', city: "Pilsen", colors: { primary: '#C8102E', secondary: '#0033A0' } },
+  { id: 'cze-prag-gelb-rot', name: "Prag Gelb-Rot", short: 'PGR', city: "Prag", colors: { primary: '#FFD700', secondary: '#A50021' } },
+  { id: 'cze-prag-gruen', name: "Prag Grün", short: 'PRG', city: "Prag", colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'cze-prag-rot', name: "Prag Rot", short: 'PRR', city: "Prag", colors: { primary: '#A50021', secondary: '#FFFFFF' } },
+  { id: 'cze-prag-rot-weiss', name: "Prag Rot-Weiß", short: 'PRW', city: "Prag", colors: { primary: '#FFFFFF', secondary: '#C8102E' } },
+  { id: 'cze-prag-zizkov', name: "Prag Žižkov", short: 'PRZ', city: "Prag", colors: { primary: '#FFFFFF', secondary: '#C8102E' } },
+  { id: 'cze-pribram', name: "Příbram", short: 'PRI', city: "Příbram", colors: { primary: '#000000', secondary: '#C8102E' } },
+  { id: 'cze-teplice', name: "Teplice", short: 'TEP', city: "Teplice", colors: { primary: '#FFD700', secondary: '#0033A0' } },
+  { id: 'cze-uherske-hradiste', name: "Uherské Hradiště", short: 'UHH', city: "Uherské Hradiště", colors: { primary: '#C8102E', secondary: '#0033A0' } },
+  { id: 'cze-zlin', name: "Zlín", short: 'ZLI', city: "Zlín", colors: { primary: '#FFD700', secondary: '#0033A0' } },
+];
