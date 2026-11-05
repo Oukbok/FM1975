@@ -1,0 +1,31 @@
+// Vereine Irland 1975–2025 (verfremdet). Quellen/echte Namen: docs/recherche/weltvereine_irl.md
+import type { RealClub } from '../types';
+
+export const CLUBS_IRL: RealClub[] = [
+  { id: 'irl-athlone', name: "Athlone", short: 'ATH', city: "Athlone", colors: { primary: '#0055A5', secondary: '#000000' } },
+  { id: 'irl-ballybofey', name: "Ballybofey", short: 'FIN', city: "Ballybofey", colors: { primary: '#0055A5', secondary: '#FFFFFF' } },
+  { id: 'irl-bray', name: "Bray", short: 'BRA', city: "Bray", colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'irl-cobh', name: "Cobh", short: 'COB', city: "Cobh", colors: { primary: '#7C2033', secondary: '#6CACE4' } },
+  { id: 'irl-cork', name: "Cork", short: 'COR', city: "Cork", colors: { primary: '#00843D', secondary: '#E30613' } },
+  { id: 'irl-cork-gruen-weiss', name: "Cork Grün-Weiß", short: 'CKH', city: "Cork", colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'irl-cork-weiss', name: "Cork Weiß", short: 'CKC', city: "Cork", colors: { primary: '#FFFFFF', secondary: '#00843D' } },
+  { id: 'irl-derry', name: "Derry", short: 'DER', city: "Derry", colors: { primary: '#E30613', secondary: '#FFFFFF' } },
+  { id: 'irl-drogheda', name: "Drogheda", short: 'DRO', city: "Drogheda", colors: { primary: '#7C2033', secondary: '#6CACE4' } },
+  { id: 'irl-dublin-drumcondra', name: "Dublin Drumcondra", short: 'HOM', city: "Dublin", colors: { primary: '#0055A5', secondary: '#FFFFFF' } },
+  { id: 'irl-dublin-gruen', name: "Dublin Grün", short: 'SHA', city: "Dublin", colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'irl-dublin-inchicore', name: "Dublin Inchicore", short: 'STP', city: "Dublin", colors: { primary: '#C8102E', secondary: '#FFFFFF' } },
+  { id: 'irl-dublin-rot', name: "Dublin Rot", short: 'SHE', city: "Dublin", colors: { primary: '#E30613', secondary: '#FFFFFF' } },
+  { id: 'irl-dublin-rot-schwarz', name: "Dublin Rot-Schwarz", short: 'BOH', city: "Dublin", colors: { primary: '#E30613', secondary: '#000000' } },
+  { id: 'irl-dublin-universitaet', name: "Dublin Universität", short: 'UCD', city: "Dublin", colors: { primary: '#6CACE4', secondary: '#002F6C' } },
+  { id: 'irl-dundalk', name: "Dundalk", short: 'DUN', city: "Dundalk", colors: { primary: '#FFFFFF', secondary: '#000000' } },
+  { id: 'irl-fingal', name: "Fingal", short: 'FNG', city: "Dublin", colors: { primary: '#0055A5', secondary: '#000000' } },
+  { id: 'irl-galway', name: "Galway", short: 'GAL', city: "Galway", colors: { primary: '#7C2033', secondary: '#FFFFFF' } },
+  { id: 'irl-kilkenny', name: "Kilkenny", short: 'KIL', city: "Kilkenny", colors: { primary: '#000000', secondary: '#FFB81C' } },
+  { id: 'irl-limerick', name: "Limerick", short: 'LIM', city: "Limerick", colors: { primary: '#0055A5', secondary: '#FFFFFF' } },
+  { id: 'irl-longford', name: "Longford", short: 'LON', city: "Longford", colors: { primary: '#E30613', secondary: '#000000' } },
+  { id: 'irl-monaghan', name: "Monaghan", short: 'MON', city: "Monaghan", colors: { primary: '#0055A5', secondary: '#FFFFFF' } },
+  { id: 'irl-sligo', name: "Sligo", short: 'SLI', city: "Sligo", colors: { primary: '#E30613', secondary: '#FFFFFF' } },
+  { id: 'irl-thurles', name: "Thurles", short: 'THU', city: "Thurles", colors: { primary: '#0055A5', secondary: '#FFFFFF' } },
+  { id: 'irl-waterford', name: "Waterford", short: 'WAT', city: "Waterford", colors: { primary: '#0055A5', secondary: '#FFFFFF' } },
+  { id: 'irl-wexford', name: "Wexford", short: 'WEX', city: "Wexford", colors: { primary: '#5B2C82', secondary: '#FFFFFF' } },
+];
