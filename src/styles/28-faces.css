@@ -1,29 +1,63 @@
 /* =============================================================================
    Gesichtsbilder (components/PlayerAvatar.tsx + components/faces/faceLookup.ts)
-   Feste Box im Seitenverhältnis 100:115 – kein Layout-Springen beim Laden.
-   Darunter liegt die Zeichnung als Platzhalter; sie blendet aus, sobald das
-   Foto geladen ist. Trikotfarbe: Maske (Alpha = Trikot) × Vereinsfarbe mit
-   hard-light → Mittelgrau (#808080) wird genau zur Vereinsfarbe, Falten bleiben.
+   Freigestellter Kopf (PNG/WebP mit Alpha) OHNE Kasten/Hintergrund in fester Box
+   (Seitenverhältnis der Bilder 512:600, unten bündig, nie beschnitten) – kein Layout-Springen beim Laden. Gibt es ein Foto,
+   wird keine Zeichnung gerendert; bis zum Laden steht ein ruhiger neutraler Umriss.
+   Trikotfarbe: Maske (Alpha = Trikot) × Vereinsfarbe
+   mit hard-light → Mittelgrau (#808080) wird genau zur Vereinsfarbe, Falten bleiben.
    ============================================================================= */
 .pa-photo {
-  position: relative; display: block; overflow: hidden; isolation: isolate;
-  max-width: 100%; aspect-ratio: 100 / 115; height: auto;
-  background: linear-gradient(180deg, var(--face-bg-1), var(--face-bg-2));
+  position: relative; display: block; isolation: isolate;
+  max-width: 100%; aspect-ratio: 512 / 600; height: auto; flex: none;
 }
-.pa-photo > svg { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity .25s ease; }
-.pa-photo.loaded > svg { opacity: 0; }
+/* Platzhalter bis zum Laden: dezenter Kopf-Umriss, kein Aufblitzen */
+.pa-photo::before {
+  content: ''; position: absolute; left: 22%; right: 22%; top: 16%; bottom: 4%;
+  border-radius: 46% 46% 40% 40% / 42% 42% 50% 50%;
+  background: rgba(var(--ink-rgb), 0.06);
+  transition: opacity .15s ease;
+}
+.pa-photo.loaded::before { opacity: 0; }
 .pa-photo > img {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; object-position: center bottom;
-  opacity: 0; transition: opacity .25s ease;
+  object-fit: contain; object-position: center bottom;
+  opacity: 0; transition: opacity .15s ease;
 }
 .pa-photo.loaded > img { opacity: 1; }
 .pa-kit {
   position: absolute; inset: 0; pointer-events: none; opacity: 0;
   mix-blend-mode: hard-light;
-  -webkit-mask-size: cover; mask-size: cover;
+  -webkit-mask-size: contain; mask-size: contain;
   -webkit-mask-position: center bottom; mask-position: center bottom;
   -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-  transition: opacity .25s ease;
+  transition: opacity .15s ease;
 }
 .pa-photo.loaded > .pa-kit { opacity: 1; }
+
+/* Miniatur-Kopf in Listen (components/FaceThumb.tsx): feste Größe, Zeilenhöhe bleibt */
+.fthumb { display: inline-block; flex: none; vertical-align: middle; line-height: 0; }
+
+/* Rahmen-Kästen, die früher hinter dem Gesicht lagen (Kreis/Box mit Fläche):
+   mit Foto ohne Fläche/Rahmen – der freigestellte Kopf steht frei. Die Zeichnung
+   (Rückfall) behält ihren Kasten. */
+:is(.aw-face, .rb2-face, .ft-face-img, .gb-face, .rb2-top-face):has(> .pa-photo) {
+  background: none; border-color: transparent; border-radius: 0; overflow: visible; align-items: flex-end; justify-content: center;
+}
+/* Boxen mit fester Höhe: Kopf inkl. Hals füllt die Höhe, Breite folgt dem Bildformat */
+:is(.aw-face, .ft-face-img, .gb-face) > .pa-photo { height: 100%; width: auto !important; }
+.rb2-face:has(> .pa-photo) > .pa-photo,
+.ptk-face > .pa-photo, .dz-rface > .pa-photo, .ct-head > .pa-photo, .gb-face > .pa-photo { filter: drop-shadow(0 6px 12px rgba(var(--shade-rgb), 0.45)); }
+/* Einsatzorte: Kopf ragt etwas in den Zeilen-Innenabstand, Zeilenhöhe bleibt */
+.dlist-row > .dl-face { margin: -4px -2px -4px 0; }
+.mr-nm > .fthumb { margin: -4px 0; }
+.mr-nm-t { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+/* Aufstellung › Kaderliste: kleiner Kopf vor dem Namen (Zeilenhöhe bleibt) */
+.lu-row .lu-face { margin: -5px 6px -5px 0; }
+/* Aufstellung › Spielfeld/Bank: kleiner Kopf vor dem Nachnamen, Kartengröße bleibt */
+/* Feld: Kopf mittig über der Karte (Karte bleibt gleich groß, Ziehen läuft über den Slot) */
+.lu-slot .lu-card { position: relative; }
+.lu-card-head { position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); margin-bottom: -3px; pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgba(var(--shade-rgb), 0.5)); }
+/* Bank: kleiner Kopf vor dem Nachnamen */
+.lu-card-name > .lu-card-face { margin: -4px 4px -4px 0; vertical-align: middle; }
+.lu-card-name > .lu-card-face:empty { display: none; }

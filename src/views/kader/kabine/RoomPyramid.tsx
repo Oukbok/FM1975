@@ -5,6 +5,7 @@
 // Kapitän/Mannschaftsrat, kleine Ziffer = Gruppe (Legende darunter; Zeigen
 // auf eine Gruppe hebt ihre Mitglieder hervor), gestrichelte Linie = Konflikt.
 // =============================================================================
+import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { DRAnalysis, DRConflict, DRTier } from '../../../engine/dressingRoom';
 import { Player } from '../../../types';
@@ -84,7 +85,7 @@ export function RoomPyramid({ a, players, conflicts, captainId, council, selecte
                     <div key={o.id} data-pid={o.id} className={cls} role="button" tabIndex={0} aria-label={`${p.fullName}, Einfluss ${o.influence}`}
                       onClick={() => onSelect(o.id)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(o.id); } }}>
                       <MoraleIcon value={p.moraleScore ?? 60} size={19} />
-                      <span className="kp-name">{p.lastName}</span>
+                      <span className="kp-name"><PlayerLink id={p.id}>{p.lastName}</PlayerLink></span>
                       {(cap || rat) && <span className="kp-tag">{cap ? 'K' : 'R'}</span>}
                       {n != null && <span className="kp-grp">{n}</span>}
                     </div>

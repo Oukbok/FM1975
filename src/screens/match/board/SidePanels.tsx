@@ -71,7 +71,7 @@ export function TablePanel({ g, sim, info, live }: { g: Game; sim: MatchSim; inf
           <div key={r.clubId} className={`tm-tb-row ${r.clubId === mine ? 'me' : ''} ${r.clubId === opp ? 'opp' : ''}`}>
             <span className="tm-tb-pl">{i + 1}{moved > 0 ? <em className="up">+{moved}</em> : moved < 0 ? <em className="dn">{moved}</em> : null}</span>
             <span>{c && <ClubCrest club={c} size={24} />}</span>
-            <span className="tm-tb-name">{c?.name ?? r.clubId}</span>
+            <span className="tm-tb-name" data-club={r.clubId}>{c?.name ?? r.clubId}</span>
             <span>{r.played}</span><span>{r.goalsFor}:{r.goalsAgainst}</span>
             <span>{r.goalDifference > 0 ? `+${r.goalDifference}` : r.goalDifference}</span><b>{r.points}</b>
           </div>

@@ -2,6 +2,7 @@
 // Transferbilanz: linke Spalte (Liga + „Transfer des Fensters“) und die
 // Nachrichten-Kästen Vertragsverlängerungen / Gerüchteküche / Trainerkarussell.
 // =============================================================================
+import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
 import { ClubLink } from '../../../components/club/ClubLink';
 import { positionSuitability } from '../../../engine/positions';
 import type { Game } from '../../../game/state';
@@ -43,7 +44,7 @@ export function WindowSide({ g, league, label, top, onOpen }: { g: Game; league:
           <div className="tw-kv"><span>Alter</span><b>{top.e.age}</b></div>
           <div className="tw-kv"><span>Ablöse</span><b>{feeText(top)}</b></div>
           <div className="tw-kv"><span>Vertragsende</span><b>{fmtDate(top.expiry)}</b></div>
-          <p className="tw-totw-text">{top.e.n} wechselt von {top.fromName} zu {top.toName}.</p>
+          <p className="tw-totw-text"><PlayerLink id={top.e.p}>{top.e.n}</PlayerLink> wechselt von <ClubLink id={top.fromId}>{top.fromName}</ClubLink> zu <ClubLink id={top.toId}>{top.toName}</ClubLink>.</p>
         </div>
       ) : <div className="tw-empty">Kein Wechsel in diesem Fenster.</div>}
     </aside>

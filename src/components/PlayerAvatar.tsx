@@ -1,12 +1,13 @@
 // =============================================================================
 // PlayerAvatar — Gesicht einer Person (Spieler, Trainer, Mitarbeiter, Manager)
 // Foto aus public/assets/faces (Register data/faceImages.ts, Zuordnung in
-// components/faces/faceLookup.ts) – sonst das deterministische SVG-Gesicht:
+// components/faces/faceLookup.ts; freigestellter Kopf ohne Kasten) – nur ohne Foto
+// das deterministische SVG-Gesicht:
 // 20 Gesichter · 10 Hauttöne (nach Herkunft) · 20 Frisuren · Vereinstrikot + Wappen
 // =============================================================================
 import { useState } from 'react';
 import { Player, Club } from '../types';
-import { faceImageFor, faceFailed, markFaceFailed } from './faces/faceLookup';
+import { faceImageFor, faceFailed, markFaceFailed, type FaceImage } from './faces/faceLookup';
 
 // -----------------------------------------------------------------------------
 // Deterministischer Hash aus String (für stabilen Seed pro Spieler)
@@ -354,31 +355,66 @@ interface Props {
   staff?: boolean;
   /** Laufendes Spieljahr (Epoche der Mitarbeiterfotos). */
   year?: number;
+  /** Sofort sichtbar (Profil-Kopf, Gespräch …): nicht lazy, hohe Ladepriorität. */
+  priority?: boolean;
+  /** Ohne Foto nichts zeigen statt der Zeichnung (Miniaturen in Listen, FaceThumb). */
+  photoOnly?: boolean;
+}
+
+type FacePerson = Pick<Player, 'id' | 'face' | 'dateOfBirth' | 'age'>;
+
+/** Foto-Adresse einer Person oder null (dann gezeichnetes Gesicht). */
+export function faceSrcOf(player: FacePerson, staff?: boolean, year?: number): FaceImage | null {
+  if (!player.id) return null;
+  const birthYear = player.dateOfBirth ? Number(player.dateOfBirth.slice(0, 4)) : undefined;
+  const img = faceImageFor({ id: player.id, face: player.face, birthYear, age: player.age, staff, year });
+  return img && !faceFailed(img.src) ? img : null;
+}
+
+/** Hat die Person ein Foto? */
+export const hasFacePhoto = (player: FacePerson, staff?: boolean, year?: number) => !!faceSrcOf(player, staff, year);
+
+// Bereits geladene Fotos: beim erneuten Zeigen sofort sichtbar (kein Ausblenden/Einblenden).
+const ready = new Set<string>();
+const pending = new Map<string, HTMLImageElement>();
+
+/** Foto vorab laden (Blättern im Profil, sichtbare Kaderlisten). */
+export function preloadFace(player: FacePerson | undefined | null, staff?: boolean, year?: number): void {
+  if (!player || typeof Image === 'undefined') return;
+  const img = faceSrcOf(player, staff, year);
+  if (!img || ready.has(img.src) || pending.has(img.src)) return;
+  const el = new Image();
+  el.decoding = 'async';
+  pending.set(img.src, el);
+  el.onload = () => { pending.delete(img.src); ready.add(img.src); };
+  el.onerror = () => { pending.delete(img.src); markFaceFailed(img.src); };
+  el.src = img.src;
 }
 
 /**
- * Gesicht einer Person. Liegt ein passendes Foto vor, steht es in fester Box über
- * der Zeichnung (lazy, blendet nach dem Laden ein); sonst nur die Zeichnung.
+ * Gesicht einer Person. Liegt ein Foto vor, wird NUR das Foto gezeigt – freigestellter
+ * Kopf ohne Kasten in fester Box (bis zum Laden ein ruhiger neutraler Umriss, keine
+ * Zeichnung). Das <img> hängt per key an der Bildadresse: beim Blättern bleibt nie
+ * das Bild des vorigen Spielers stehen. Ohne Foto die Zeichnung.
  */
 export default function PlayerAvatar(props: Props) {
-  const { player, club, size = 'medium', className, staff, year } = props;
+  const { player, club, size = 'medium', className, staff, year, priority, photoOnly } = props;
   const [state, setState] = useState<{ src: string; ok: boolean } | null>(null);
-  const birthYear = player.dateOfBirth ? Number(player.dateOfBirth.slice(0, 4)) : undefined;
-  const img = player.id ? faceImageFor({ id: player.id, face: player.face, birthYear, age: player.age, staff, year }) : null;
-  if (!img || faceFailed(img.src)) return <DrawnAvatar {...props} />;
+  const img = faceSrcOf(player, staff, year);
+  if (!img || (state?.src === img.src && !state.ok)) return photoOnly ? null : <DrawnAvatar {...props} />;
   const px = typeof size === 'number' ? size : SIZES[size];
-  const loaded = state?.src === img.src && state.ok;
+  const loaded = ready.has(img.src) || (state?.src === img.src && state.ok);
   const primary = club?.colors.primary;
+  const prio = priority ? { fetchpriority: 'high' } as Record<string, string> : undefined;
   return (
     <span className={`pa-photo${loaded ? ' loaded' : ''}${className ? ` ${className}` : ''}`}
-      data-pid={player.id || undefined}
-      style={{ width: px, borderRadius: size === 'small' ? 8 : 12 }}
+      data-pid={player.id || undefined} data-face={img.key}
+      style={{ width: px }}
       role="img" aria-label={`Porträt ${player.fullName}`}>
-      <DrawnAvatar player={player} club={club} size={px} />
-      <img src={img.src} alt="" loading="lazy" decoding="async" draggable={false}
-        onLoad={() => setState({ src: img.src, ok: true })}
+      <img key={img.src} src={img.src} alt="" loading={priority ? 'eager' : 'lazy'} decoding="async" draggable={false} {...prio}
+        onLoad={() => { ready.add(img.src); setState({ src: img.src, ok: true }); }}
         onError={() => { markFaceFailed(img.src); setState({ src: img.src, ok: false }); }} />
-      {img.mask && primary && <span className="pa-kit" style={{
+      {img.mask && primary && <span key={img.mask} className="pa-kit" style={{
         backgroundColor: primary, WebkitMaskImage: `url(${img.mask})`, maskImage: `url(${img.mask})`,
       }} />}
     </span>

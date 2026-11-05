@@ -23,8 +23,8 @@ import { TrophyCabinet } from '../views/verein/trophies/TrophyCabinet';
 export type ClubTabKey = 'overview' | 'squad' | 'club' | 'history' | 'trophies';
 const TABS: [ClubTabKey, string][] = [['overview', 'Übersicht'], ['squad', 'Kader'], ['club', 'Verein'], ['history', 'Historie'], ['trophies', 'Erfolge']];
 
-export default function ClubModal({ g, clubId, nonce, onChange, onClose, onBack }: {
-  g: Game; clubId: string; nonce: number; onChange: () => void; onClose: () => void; onBack?: () => void;
+export default function ClubModal({ g, clubId, nonce, onChange, onClose, onBack, zIndex }: {
+  g: Game; clubId: string; nonce: number; onChange: () => void; onClose: () => void; onBack?: () => void; zIndex?: number;
 }) {
   const [tab, setTab] = useState<ClubTabKey>('overview');
   const [selPlayer, setSelPlayer] = useState<string | null>(null);
@@ -55,7 +55,7 @@ export default function ClubModal({ g, clubId, nonce, onChange, onClose, onBack 
   const props = { g, d, openPlayer: setSelPlayer };
 
   return (
-    <div className="modal-overlay cmx-overlay" onClick={onClose}>
+    <div className="modal-overlay cmx-overlay" onClick={onClose} style={zIndex ? { zIndex } : undefined}>
       <div className="modal modal-xl cmx-modal" onClick={(e) => e.stopPropagation()}>
         <div className="mx-head cmx-head" style={{ ['--club' as string]: d.colors.primary }}>
           {onBack && <button className="cmx-back" onClick={onBack} title="Zurück zum vorherigen Verein"><Icon name="swap" size={16} /> Zurück</button>}

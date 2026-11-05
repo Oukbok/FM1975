@@ -1,5 +1,6 @@
 // Kalender › Monat als Liste (Stil „Paarungen“, styles/28-rows.css): alle Termine des
 // Monats Tag für Tag, Spiele mit Wappen und Ergebnis; Klick springt zur passenden Seite.
+import { ClubLink } from '../../../components/club/ClubLink';
 import ClubCrest from '../../../components/ClubCrest';
 import type { Game } from '../../../game/state';
 import type { StripEvent } from '../../../shell/CalendarStrip';
@@ -31,7 +32,7 @@ export function MonthList({ g, days, dayEvents, onGoto }: {
             <span className="rl-rank calm-date">{first ? <><span className="calm-wd">{wd}</span> {iso.slice(8, 10)}.{iso.slice(5, 7)}.</> : null}</span>
             <span className={`calm-kind cal-k-${eventKind(ev).k}`}>{ev.kind ?? ''}</span>
             <span className="rl-club">
-              {club ? <ClubCrest club={club} size={26} /> : <span className="calm-nocrest" aria-hidden="true" />}
+              {club ? <ClubLink id={club.id}><ClubCrest club={club} size={26} /></ClubLink> : <span className="calm-nocrest" aria-hidden="true" />}
               <span className="rl-name">{ev.line}</span>
             </span>
             <span className="calm-comp">{ev.comp ?? ''}</span>

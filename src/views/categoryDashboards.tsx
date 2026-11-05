@@ -433,11 +433,11 @@ export function StatistikenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Scree
       </DashBox>
 
       <DashBox title="Torjäger" icon="matchball" onClick={() => onGoto('table')}>
-        {scorers.length ? scorers.map((p) => <PlayerRow key={p.id} p={p} sub={<ClubLink id={p.clubId}>{g.clubs[p.clubId]?.shortName}</ClubLink>} value={p.seasonStats.goals} />) : <Empty icon="matchball">Noch keine Tore gefallen.</Empty>}
+        {scorers.length ? scorers.map((p) => <PlayerRow key={p.id} p={p} face sub={<ClubLink id={p.clubId}>{g.clubs[p.clubId]?.shortName}</ClubLink>} value={p.seasonStats.goals} />) : <Empty icon="matchball">Noch keine Tore gefallen.</Empty>}
       </DashBox>
 
       <DashBox title="Beste Noten" icon="stats" right="ab 3 Spielen">
-        {rated.length ? rated.map((p) => <PlayerRow key={p.id} p={p} sub={<ClubLink id={p.clubId}>{g.clubs[p.clubId]?.shortName}</ClubLink>} value={p.seasonStats.averageRating.toFixed(2)} color="var(--green)" />) : <Empty icon="stats">Noch zu wenige Spiele.</Empty>}
+        {rated.length ? rated.map((p) => <PlayerRow key={p.id} p={p} face sub={<ClubLink id={p.clubId}>{g.clubs[p.clubId]?.shortName}</ClubLink>} value={p.seasonStats.averageRating.toFixed(2)} color="var(--green)" />) : <Empty icon="stats">Noch zu wenige Spiele.</Empty>}
       </DashBox>
 
       <DashBox title="Landespokal" icon="trophy" onClick={() => onGoto('cup')}>

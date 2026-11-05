@@ -1,4 +1,7 @@
 // Gemeinsame, rein darstellende Helfer für die Seiten (keine Spiellogik).
+import { PlayerLink } from '../components/playerMenu/PlayerLink';
+import { ClubLink } from '../components/club/ClubLink';
+import FaceThumb from '../components/FaceThumb';
 import ClubCrest from '../components/ClubCrest';
 import { Game } from '../game/state';
 import { Match, Player, POSITION_GROUPS } from '../types';
@@ -47,19 +50,21 @@ export function MatchRow({ g, m, clubId = g.managedClubId, onClick }: { g: Game;
   return (
     <div className={`dlist-row ${onClick ? 'clickable' : ''}`} onClick={onClick}>
       <span className="meta" style={{ minWidth: 64 }}>{fmtDateShort(m.date).dmy}</span>
-      {opp && <ClubCrest club={opp} size={26} />}
-      <span className="grow">{opp?.name ?? '—'} <span className="muted">({home ? 'H' : 'A'})</span></span>
+      {opp && <ClubLink id={opp.id}><ClubCrest club={opp} size={26} /></ClubLink>}
+      <span className="grow">{opp ? <ClubLink id={opp.id}>{opp.name}</ClubLink> : '—'} <span className="muted">({home ? 'H' : 'A'})</span></span>
       <span className={`dres ${r ? 'dres-' + r : ''}`}>{score}</span>
     </div>
   );
 }
 
 /** Spielerzeile: Positionskürzel · Name · Wert. */
-export function PlayerRow({ p, value, sub, onClick, color }: { p: Player; value?: React.ReactNode; sub?: React.ReactNode; onClick?: () => void; color?: string }) {
+export function PlayerRow({ p, value, sub, onClick, color, face }: { p: Player; value?: React.ReactNode; sub?: React.ReactNode; onClick?: () => void; color?: string;
+  /** Miniatur-Kopf vor dem Namen (Bestenlisten). */ face?: boolean }) {
   return (
     <div className={`dlist-row ${onClick ? 'clickable' : ''}`} onClick={onClick} data-pid={p.id}>
       <PosBadge p={p} compact />
-      <span className="grow">{p.fullName}{sub != null && <span className="muted"> · {sub}</span>}</span>
+      {face && <FaceThumb p={p} size={22} className="dl-face" />}
+      <span className="grow">{onClick ? p.fullName : <PlayerLink id={p.id}>{p.fullName}</PlayerLink>}{sub != null && <span className="muted"> · {sub}</span>}</span>
       {value != null && <span className="val" style={{ color: color ?? (typeof value === 'number' ? vColor(value) : undefined) }}>{value}</span>}
     </div>
   );

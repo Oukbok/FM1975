@@ -3,6 +3,7 @@
 // Ergebnisse/Tabelle/Torjäger, Kurzmeldungen. Jede Schlagzeile öffnet den
 // Artikel, Gesichter das Spielerprofil, Wappen/Vereinsnamen das Vereinsprofil.
 // =============================================================================
+import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { ClubLink } from '../../../components/club/ClubLink';
 import { fmtDateFull } from '../../../ui/format';
@@ -56,7 +57,7 @@ function Lead({ api, s }: { api: PressApi; s: PressStory }) {
     <article className={`np-lead ${s.own ? 'own' : ''}`} {...open(api, s.id)}>
       <div className="np-lead-img">
         <StoryImage api={api} img={s.image} size={face ? 150 : 130} />
-        {s.image?.kind === 'player' && <div className="np-caption">{api.g.players[s.image.id]?.fullName ?? ''}</div>}
+        {s.image?.kind === 'player' && <div className="np-caption"><PlayerLink id={s.image.id}>{api.g.players[s.image.id]?.fullName ?? ''}</PlayerLink></div>}
       </div>
       <div className="np-lead-main">
         <Rubric s={s} />

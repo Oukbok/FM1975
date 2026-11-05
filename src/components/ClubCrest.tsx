@@ -23,6 +23,7 @@ export default function ClubCrest({ club, size = 40 }: { club: Club; size?: numb
         width={size}
         height={size}
         alt={club.name}
+        data-club={club.id || undefined}
         style={{ width: size, height: size, objectFit: 'contain', flexShrink: 0, display: 'inline-block', verticalAlign: 'middle' }}
       />
     );
@@ -30,7 +31,7 @@ export default function ClubCrest({ club, size = 40 }: { club: Club; size?: numb
   const { primary, secondary } = club.colors;
   const label = club.shortName.slice(0, 3);
   return (
-    <svg width={size} height={size} viewBox="0 0 40 40" style={{ flexShrink: 0 }} aria-label={club.name}>
+    <svg width={size} height={size} viewBox="0 0 40 40" style={{ flexShrink: 0 }} aria-label={club.name} data-club={club.id || undefined}>
       <path d="M20 2 L36 7 V21 C36 30 29 36 20 39 C11 36 4 30 4 21 V7 Z" fill={primary} stroke={secondary} strokeWidth="1.5" />
       <path d="M20 2 L36 7 V21 C36 30 29 36 20 39 Z" fill="rgba(0,0,0,0.12)" />
       <text x="20" y="24" textAnchor="middle" fontSize={label.length > 2 ? 10 : 13} fontWeight="900"

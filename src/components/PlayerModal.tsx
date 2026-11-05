@@ -11,6 +11,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { Player, Club, Position } from '../types';
 import Icon from './Icon';
+import { preloadFace } from './PlayerAvatar';
 import ProfileHead from './player/ProfileHead';
 import ProfileTop from './player/ProfileTop';
 import SkillsPanel from './player/SkillsPanel';
@@ -36,8 +37,10 @@ const OLD_TAB: Partial<Record<Tab, Tab>> = {
 };
 const mapTab = (t: Tab): Tab => OLD_TAB[t] ?? t;
 
-export default function PlayerModal({ player, club, squad, today, season, onClose, negotiation, initialTab, extraTab, tag }: {
+export default function PlayerModal({ player, club, squad, today, season, onClose, negotiation, initialTab, extraTab, tag, zIndex }: {
   player: Player; club?: Club; squad?: Player[]; today?: string; season?: string; onClose: () => void;
+  /** Stapelhöhe (ui/stackZ.ts), wenn von überall geöffnet. */
+  zIndex?: number;
   /** Zusätzlicher erster Reiter (z. B. Jugend: Hochziehen/Fördervertrag bzw. Talent ansprechen). */
   extraTab?: { label: string; content: ReactNode };
   /** Ersetzt das Etikett „Jugend“ (z. B. „A-Jugend · U19“). */
@@ -64,6 +67,14 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
   const idx = list.findIndex((x) => x.id === p.id);
   const canNav = idx >= 0 && list.length > 1;
   const go = (d: number) => { if (canNav) setCur(list[(idx + d + list.length) % list.length]); };
+  // Fotos der Nachbarn vorab laden – beim Blättern steht das neue Gesicht sofort.
+  useEffect(() => {
+    if (!canNav) return;
+    for (const d of [1, -1, 2, -2]) preloadFace(list[(idx + d + list.length * 2) % list.length]);
+    // danach der übrige Kader im Leerlauf
+    const t = setTimeout(() => list.forEach((x) => preloadFace(x)), 600);
+    return () => clearTimeout(t);
+  }, [p.id, canNav, idx, list.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -96,7 +107,7 @@ export default function PlayerModal({ player, club, squad, today, season, onClos
   const active = tab === 'extra' && !extraTab ? 'general' : tab;
 
   return (
-    <div className="modal-overlay" onClick={onClose} ref={ref} style={zoom ? { zoom } : undefined}>
+    <div className="modal-overlay" onClick={onClose} ref={ref} style={zoom || zIndex ? { zoom, zIndex } : undefined}>
       <div className="modal pp-modal pp2" onClick={(e) => e.stopPropagation()} style={{ ['--club' as string]: club?.colors.primary ?? 'var(--border)' }}>
         <div className="pp2-actions">
           {canNav && <>

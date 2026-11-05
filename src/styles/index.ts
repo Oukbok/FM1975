@@ -72,5 +72,4 @@ import './28-contract.css';
 import './28-lazy.css';
 import './29-look.css'; // ruhige Gesamtoptik
 import './29-buttons.css'; // Knopf-System + Auswahlliste (Tokens --btn-*/--sel-*)
-import './30-themes.css'; // zuletzt: Themes (ui/themes.ts) überschreiben nur Tokens
-import './31-themes-ruhig.css'; // 20 Varianten „Ruhig – neu“ (nur Tokens)
+import './30-theme.css'; // zuletzt: Look „Ruhig Flutlicht“ (nur Tokens)

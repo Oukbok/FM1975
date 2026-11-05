@@ -11,6 +11,7 @@ import type { StatCat } from '../../../game/leagueArchive';
 import type { Game } from '../../../game/state';
 import { DashBox } from '../../../ui/DashPage';
 import { TeamName } from './parts';
+import FaceThumb from '../../../components/FaceThumb';
 import { HISTORIC_SEASONS, historicFinal } from '../../../data/history/seasons';
 
 const CAT_TITLE: Record<StatCat, string> = {
@@ -60,7 +61,7 @@ export function StatsBox({ g, snap, playerCard }: {
                     return (
                       <div key={r.pid} className={`cmp-stat ${clickable ? 'clickable' : ''} ${r.clubId === g.managedClubId ? 'me' : ''}`} onClick={() => clickable && setSel(r.pid)} title={clickable ? 'Spielerprofil öffnen' : undefined}>
                         <span className="cmp-rank">{rank}</span>
-                        <span className="cmp-pname">{r.name}</span>
+                        <span className="cmp-pname"><FaceThumb p={g.players[r.pid] ?? g.youthPlayers[r.pid]} club={r.clubId ? g.clubs[r.clubId] : undefined} /><span className="cmp-pn">{r.name}</span></span>
                         <span className="cmp-pclub">{r.clubId && <TeamName g={g} id={r.clubId} season={snap!.season} size={16} />}</span>
                         <span className="cmp-val" title={`${r.apps} Spiele`}>{r.value}</span>
                       </div>

@@ -4,6 +4,7 @@
 // Rechnung: engine/dressingRoom.ts · Spielablauf: game/dressingRoomGame.ts ·
 // Vorfälle: game/dressingRoomEvents.ts · Teile: views/kader/kabine/
 // =============================================================================
+import { PlayerLink } from '../../components/playerMenu/PlayerLink';
 import { useState } from 'react';
 import { MORALE_LABEL, moraleStepOf, TIER_LABEL } from '../../engine/dressingRoom';
 import { ensureLeadership, roomAnalysis, roomOf, squadOf } from '../../game/dressingRoomGame';
@@ -77,7 +78,7 @@ export function DressingRoomView({ g, onChange }: { g: Game; onChange: () => voi
               return (
                 <tr key={o.id} className={`clickable ${o.id === selected ? 'kb-sel' : ''}`} onClick={() => setSel(o.id)}>
                   <td><PosBadge p={p} /></td>
-                  <td className="kb-td-name">{p.lastName}{o.id === dr.captainId ? ' (K)' : dr.council?.includes(o.id) ? ' (R)' : ''}{o.outsiderWhy[0] && <span className="muted"> · {o.outsiderWhy[0]}</span>}</td>
+                  <td className="kb-td-name"><PlayerLink id={p.id}>{p.lastName}</PlayerLink>{o.id === dr.captainId ? ' (K)' : dr.council?.includes(o.id) ? ' (R)' : ''}{o.outsiderWhy[0] && <span className="muted"> · {o.outsiderWhy[0]}</span>}</td>
                   <td className="muted nowrap">{TIER_LABEL[o.tier]}</td>
                   <td className="num"><span className="kb-mini"><i style={{ width: `${o.influence}%` }} /></span>{o.influence}</td>
                   <td className="num"><MoraleIcon value={s} size={16} /> <span>{s}</span></td>

@@ -106,3 +106,6 @@
 .cmp-table tr.cmp-cur td:first-child { box-shadow: inset 4px 0 0 var(--accent); color: var(--text); }
 .cmp-empty-note { padding: 12px 0; }
 .cmp-main .dxh-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Bestenlisten: Miniatur-Kopf vor dem Namen (components/FaceThumb.tsx) */
+.cmp-pn { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cmp-pname > .fthumb { margin: -3px 0; }
