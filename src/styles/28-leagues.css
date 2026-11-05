@@ -96,3 +96,13 @@
 .cmp-statbox .cmp-stat.club { grid-template-columns: 26px minmax(0, 1fr) 34px; }
 .cmp-statbox .cmp-val { font-size: 15px; }
 .cmp-statbox .cmp-pclub { font-size: 12px; }
+
+/* Länderwahl (game/competitionCountry.ts, competition/CountryParts.tsx) */
+.cmp-cflag { display: inline-flex; margin-right: 8px; vertical-align: -2px; }
+.cmp-caption { flex: 0 0 auto; margin: 0 0 8px; font-size: 14px; color: var(--text-3); text-transform: uppercase; letter-spacing: .5px; font-family: var(--font-display); }
+.cmp-roster { display: grid; grid-template-columns: 1fr 1fr; column-gap: 18px; }
+.cmp-roster .rl-row { min-height: 40px; display: flex; align-items: center; border-bottom: 1px solid var(--border-soft); }
+.cmp-table tr.cmp-cur td { background: rgba(var(--ink-rgb), 0.06); }
+.cmp-table tr.cmp-cur td:first-child { box-shadow: inset 4px 0 0 var(--accent); color: var(--text); }
+.cmp-empty-note { padding: 12px 0; }
+.cmp-main .dxh-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

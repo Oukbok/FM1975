@@ -17,6 +17,7 @@ import { migrateLeaguePool, isPoolClub } from '../src/game/clubPool';
 import { seasonsOf, titlesOf } from '../src/game/clubRecords';
 import { compStatsOf } from '../src/engine/compStats';
 import { buildSnapshot, competitionOptions, seasonOptions } from '../src/game/competitionView';
+import { countryOptions, countrySeasons, countrySnapshot, statsCountries } from '../src/game/competitionCountry';
 
 const seasons = Number(process.argv[2] ?? 10);
 let seed = 1977;
@@ -137,6 +138,28 @@ if (past) {
   check(snap?.table?.length === 18 && (snap.stats?.goals?.length ?? 0) > 0, 'Archiv-Saison mit Tabelle und Bestenliste');
   const cs = buildSnapshot(g, past.season, 'cup');
   check((cs?.rounds?.length ?? 0) >= 4, 'Archiv-Pokal mit Runden');
+}
+
+// 3b) Länderwahl (game/competitionCountry.ts): DDR, Hintergrund-Länder, Pokal ohne Simulation
+{
+  const cs = statsCountries(g);
+  check(cs[0].mode === 'home' && cs.some((c) => c.cc === 'gdr') && cs.some((c) => c.mode === 'world'), 'Länderliste: Heimat, DDR, Hintergrund');
+  const ddr = cs.find((c) => c.cc === 'gdr')!;
+  const ds = countrySeasons(g, ddr);
+  check(ds.some((s) => s.source === 'history') && ds.some((s) => s.source === 'live'), 'DDR: Historie + laufende Saison');
+  const dl = countrySnapshot(g, ddr, g.season, 'live', countryOptions(g, ddr, g.season, 'live').find((o) => o.kind === 'league')!.key);
+  check((dl?.table?.length ?? 0) >= 10, 'DDR-Oberliga laufend mit Tabelle');
+  const bg = cs.find((c) => c.mode === 'world')!;
+  const bs = countrySeasons(g, bg);
+  const done = [...bs].reverse().find((s) => s.source === 'world');
+  check(!!done && bs.some((s) => s.source === 'roster'), `${bg.name}: abgeschlossene Saison + Teilnehmer`);
+  if (done) {
+    const w = countrySnapshot(g, bg, done.season, 'world', 'w1');
+    check((w?.table?.length ?? 0) >= 8 && !!w?.caption?.includes('Abschlusstabelle'), `${bg.name}: Abschlusstabelle ${done.season}`);
+  }
+  const cup = countrySnapshot(g, bg, g.season, 'roster', 'xcup');
+  check(!!cup?.winners && !!cup.note?.includes('nicht Spiel für Spiel'), `${bg.name}: Pokal ehrlich „nicht simuliert“`);
+  console.log(`Länderwahl: ${cs.length} Länder, DDR ${ds.length} Saisons, ${bg.name} ${bs.length} Saisons`);
 }
 
 // 4) Alter Spielstand: Pool + Historie nachrüsten (idempotent)

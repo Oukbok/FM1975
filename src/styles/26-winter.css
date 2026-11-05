@@ -45,3 +45,14 @@
 .camp-month.off { opacity: 0.45; }
 .camp-month.on i { background: var(--accent); }
 .camp-month.on b { color: var(--accent); }
+
+/* Halle – Masters-Wertung (views/statistiken/indoor/MastersBox.tsx) */
+.mst-box .dbox-body { display: flex; flex-direction: column; overflow: hidden; }
+.mst-hint { flex: 0 0 auto; padding: 0 15px 8px; font-size: 13px; }
+.mst-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.mst-table th, .mst-table td { padding-left: 6px; padding-right: 6px; }
+.mst-table .mst-st { font-size: 12.5px; color: var(--text-3); white-space: nowrap; text-align: right; }
+.mst-table tr.mst-cut td { border-bottom: 2px solid var(--border); }
+.mst-table tr.mst-guests td { border-top: 2px solid var(--border-soft); }
+.mst-table tr.mst-dim td { color: var(--text-4); }
+.mst-empty { padding: 8px 15px; }

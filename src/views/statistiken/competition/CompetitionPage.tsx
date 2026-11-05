@@ -4,11 +4,17 @@
 // Einheitliches Layout: links groß Tabelle bzw. Turnierbaum/Runden, rechts oben die
 // Statistik (Bestenlisten), rechts unten Saisonbilanz/Dein Weg. Oben im Kopf der
 // linken Box: Saison (Historie ab 1963/64, Archiv, laufend) und Wettbewerb (alle
-// Ligen inkl. DDR, Landespokal, Europapokale, Auslandsligen der letzten Saison).
+// Ligen, Landespokal, Europapokale). Davor die Länderwahl (Wunsch Pascal): Heimatland,
+// DDR, Länder Spiel für Spiel und Hintergrund-Länder (game/competitionCountry.ts).
 // =============================================================================
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { EuroCompId } from '../../../data/europe';
-import { buildSnapshot, competitionOptions, seasonOptions, type CompOption } from '../../../game/competitionView';
+import { competitionOptions, type CompOption } from '../../../game/competitionView';
+import {
+  countryOfKey, countryOptions, countrySeasons, countrySnapshot, pickSeason, seasonSuffix, statsCountries, type StatsCountry,
+} from '../../../game/competitionCountry';
+import { useSubTab } from '../../../ui/SubTabs';
+import { Caption, CountrySelect, RosterList, WinnersList } from './CountryParts';
 import type { Game } from '../../../game/state';
 import { DashBox, DashPage, Empty } from '../../../ui/DashPage';
 import { CupRounds } from './CupRounds';
@@ -35,39 +41,66 @@ function defaultKey(g: Game, opts: CompOption[], start: CompStart): string {
   return opts.find((o) => o.key === mineIn)?.key ?? opts.find((o) => o.section === 'Europa')?.key ?? opts[0]?.key ?? '';
 }
 
+/** Erster Wettbewerb eines anderen Landes: gleiche Art wie bisher (Liga/Pokal). */
+function keyFor(g: Game, c: StatsCountry, opts: CompOption[], start: CompStart, kind?: 'league' | 'cup'): string {
+  if (c.mode === 'home' && !kind) return defaultKey(g, opts, start);
+  const want = kind ?? (start === 'cup' ? 'cup' : 'league');
+  return opts.find((o) => o.kind === want && o.section !== 'Europa')?.key ?? opts[0]?.key ?? '';
+}
+
 export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
   g: Game; start: CompStart; onWatch?: (matchId: string) => void; onReplayDraw?: (comp: 'cup' | EuroCompId, roundIndex: number) => void;
 }) {
-  const seasons = useMemo(() => seasonOptions(g), [g, g.season]);
-  const [preset] = useState(() => pendingPreset);
+  const countries = useMemo(() => statsCountries(g), [g, g.season]);
+  const [preset] = useState(() => (pendingPreset ? { ...pendingPreset, ...countryOfKey(g, pendingPreset.season, pendingPreset.key) } : null));
   useEffect(() => { pendingPreset = null; }, []);
-  const [season, setSeason] = useState(preset?.season ?? g.season);
-  const opts = useMemo(() => competitionOptions(g, season), [g, season]);
-  const [key, setKey] = useState(() => preset?.key ?? defaultKey(g, competitionOptions(g, g.season), start));
+  const [remCc, remember] = useSubTab<string>(`cmp-country-${start}`, countries[0].cc);
+  const [cc, setCcState] = useState(() => preset?.cc ?? (start === 'euro' ? countries[0].cc : remCc));
+  const country = countries.find((c) => c.cc === cc) ?? countries[0];
+  const seasons = useMemo(() => countrySeasons(g, country), [g, g.season, country]); // eslint-disable-line react-hooks/exhaustive-deps
+  const [seasonState, setSeason] = useState(() => preset?.season ?? pickSeason(countrySeasons(g, country), g.season));
+  const season = seasons.some((s) => s.season === seasonState) ? seasonState : pickSeason(seasons, seasonState);
+  const src = seasons.find((s) => s.season === season)?.source ?? 'live';
+  const opts = useMemo(() => countryOptions(g, country, season, src), [g, country, season, src]);
+  const [key, setKeyState] = useState(() => preset?.key ?? keyFor(g, country, countryOptions(g, country, season, src), start));
+  const [kind, setKind] = useState<'league' | 'cup' | undefined>(undefined);
+  const setKey = (k: string) => { setKeyState(k); setKind(opts.find((o) => o.key === k)?.kind); };
   const last = useRef(`${start}|${g.season}`);
   useEffect(() => {
     if (last.current === `${start}|${g.season}`) return; // Startwerte (inkl. Vorauswahl) stehen schon
     last.current = `${start}|${g.season}`;
-    setSeason(g.season); setKey(defaultKey(g, competitionOptions(g, g.season), start));
+    const list = countrySeasons(g, country);
+    const s = pickSeason(list, g.season);
+    setSeason(s); setKeyState(keyFor(g, country, countryOptions(g, country, s, list.find((x) => x.season === s)?.source ?? 'live'), start));
   }, [start, g.season]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const changeCountry = (v: string) => {
+    const c = countries.find((x) => x.cc === v) ?? countries[0];
+    const list = countrySeasons(g, c);
+    const s = pickSeason(list, season);
+    const curKind = kind ?? opts.find((o) => o.key === key)?.kind;
+    setCcState(c.cc); remember(c.cc); setSeason(s);
+    setKeyState(keyFor(g, c, countryOptions(g, c, s, list.find((x) => x.season === s)?.source ?? 'live'), start, c.mode === 'home' && !kind ? undefined : curKind));
+  };
 
   // Wettbewerb beim Saisonwechsel halten, sonst gleichartigen wählen.
   const cur = opts.find((o) => o.key === key);
-  const effKey = cur ? key : (opts.find((o) => o.kind === (key.startsWith('tier') || key.startsWith('ddr') || key.startsWith('w:') ? 'league' : 'cup') && o.section !== 'Ausland')?.key ?? opts[0]?.key ?? '');
-  const snap = buildSnapshot(g, season, effKey);
+  const wantKind = kind ?? (key === 'cup' || key === 'xcup' || ['ec', 'cwc', 'uefa'].includes(key) ? 'cup' : 'league');
+  const effKey = cur ? key : (opts.find((o) => o.kind === wantKind && o.section !== 'Europa')?.key ?? opts[0]?.key ?? '');
+  const snap = countrySnapshot(g, country, season, src, effKey);
   const sIdx = seasons.findIndex((s) => s.season === season);
   const step = (d: number) => { const n = seasons[sIdx + d]; if (n) setSeason(n.season); };
   const sections = [...new Set(opts.map((o) => o.section))];
-  const src = seasons[sIdx]?.source;
 
   const header = (
     <span className="cmp-select">
+      <CountrySelect countries={countries} value={country.cc} onChange={changeCountry} />
       <button className="b3 b3-icon" disabled={sIdx <= 0} onClick={() => step(-1)} title="Vorherige Saison" aria-label="Vorherige Saison"><Icon name="navPrev" size={18} /></button>
-      <Select className="dselect" width={200} value={season} onChange={(v) => setSeason(v)} title="Saison">
-        {seasons.map((s) => <option key={s.season} value={s.season}>{s.season}{s.source === 'live' ? ' (laufend)' : s.source === 'history' ? ' (vor Spielbeginn)' : ''}</option>)}
+      <Select className="dselect cmp-season" width={150} popWidth={260} value={season} onChange={(v) => setSeason(v)} title="Saison">
+        {seasons.map((s) => <option key={s.season} value={s.season}>{s.season}{seasonSuffix(s)}</option>)}
       </Select>
       <button className="b3 b3-icon" disabled={sIdx >= seasons.length - 1} onClick={() => step(1)} title="Nächste Saison" aria-label="Nächste Saison"><Icon name="navNext" size={18} /></button>
-      <Select className="dselect" width={250} value={effKey} onChange={(v) => setKey(v)} title="Wettbewerb">
+      <Select className="dselect cmp-comp" width={190} popWidth={260} value={effKey} onChange={(v) => setKey(v)} title="Wettbewerb">
         {sections.map((sec) => (
           <optgroup key={sec} label={sec}>
             {opts.filter((o) => o.section === sec).map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
@@ -77,15 +110,20 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
     </span>
   );
 
+  const main = !snap ? <Empty icon="stats">Für diese Auswahl liegen keine Daten vor.</Empty>
+    : snap.winners ? <><Caption snap={snap} /><WinnersList g={g} snap={snap} /></>
+    : snap.kind === 'league' && snap.roster ? <><Caption snap={snap} /><RosterList g={g} snap={snap} /></>
+    : snap.kind === 'league' && !snap.table?.length && snap.emptyText ? <><Caption snap={snap} /><Empty icon="stats">{snap.emptyText}</Empty></>
+    : snap.kind === 'league' ? <><Caption snap={snap} /><LeagueTable key={`${country.cc}-${season}-${effKey}`} g={g} snap={snap} /></>
+    : <CupRounds g={g} snap={snap} onWatch={onWatch}
+      onReplayDraw={onReplayDraw && src === 'live' ? (ri) => onReplayDraw(effKey as 'cup' | EuroCompId, ri) : undefined} />;
+
   return (
     <DashPage className="cmp-page">
-      <DashBox title={snap ? snap.label : 'Wettbewerb'} icon={snap?.kind === 'cup' ? 'trophy' : 'dashTabelle'} span={2} rows={2} right={header} className="cmp-main">
-        {!snap ? <Empty icon="stats">Für diese Auswahl liegen keine Daten vor.</Empty>
-          : snap.kind === 'league' ? <LeagueTable key={`${season}-${effKey}`} g={g} snap={snap} />
-          : <CupRounds g={g} snap={snap} onWatch={onWatch}
-            onReplayDraw={onReplayDraw && src === 'live' ? (ri) => onReplayDraw(effKey as 'cup' | EuroCompId, ri) : undefined} />}
+      <DashBox title={snap ? snap.label : 'Wettbewerb'} icon={snap?.kind === 'cup' ? 'trophy' : 'dashTabelle'} span={2} rows={2} right={header} className="cmp-main" info={start === 'euro' ? undefined : 'ligaLand'}>
+        {main}
       </DashBox>
-      <StatsBox key={`st-${season}-${effKey}`} g={g} snap={snap} />
+      <StatsBox key={`st-${country.cc}-${season}-${effKey}`} g={g} snap={snap} />
       {snap && src === 'live' && ['ec', 'cwc', 'uefa'].includes(snap.key) && !snap.rounds?.some((r) => r.ties.some((t) => t.mine) || r.groups?.some((gr) => gr.rows.some((x) => x.id === g.managedClubId)))
         ? <EuropeBox g={g} germans={(g.euroCups?.[snap.key as EuroCompId]?.participantIds ?? []).filter((id) => !g.euroClubs?.[id])} teamName={(id) => compClubName(g, id, season)} />
         : <InfoBox g={g} snap={snap} />}

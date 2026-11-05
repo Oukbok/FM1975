@@ -5,6 +5,7 @@
 // diese schmalen Zugriffe gelesen; Altstände ohne Felder bekommen sie per
 // `migrateWinter` (Aufruf in App.tsx beim Laden) bzw. beim ersten Tag.
 // =============================================================================
+import type { BoardArchive } from './indoorMasters';
 import { mayPlayOn } from './euroFixture';
 import type { IndoorPhase } from '../data/indoorHistory';
 import type { IndoorResult, IndoorSquad, TourStat } from '../engine/indoor';
@@ -68,6 +69,8 @@ export interface IndoorHistoryEntry {
   own?: string;
   /** Turniersieger (Einladungs-/Qualifikationsturniere): Vereins-IDs. */
   winners?: string[];
+  /** Endwertung des Winters (Masters-Wertung bzw. Hallensaison, game/indoorMasters.ts); fehlt bei alten Spielständen. */
+  board?: BoardArchive;
 }
 
 export interface IndoorState {

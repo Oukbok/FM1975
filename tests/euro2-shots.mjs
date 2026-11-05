@@ -101,7 +101,7 @@ if (mode === 'groups') {
     if (await gr.isVisible().catch(() => false)) { await gr.click(); await page.waitForTimeout(400); await shot('04_spieltage'); }
   }
   // Andere Wettbewerbe der Saison (Europa-Pokal mit Gruppendritten)
-  const sel = page.locator('.cmp-select .sel3').nth(1);
+  const sel = page.locator('.cmp-select .sel3').nth(2); // Land | Saison | Wettbewerb
   const opts = (await optionsOf(page, sel)).map((o) => o.label);
   const other = opts.find((o) => /Europa-Pokal|Europa-Liga/.test(o));
   if (other) {
