@@ -20,6 +20,17 @@ export const INFO_TEXTS = {
     text: 'Kein Verein spielt an zwei Tagen hintereinander – zwischen zwei Pflichtspielen liegen mindestens zwei Tage. Pokal und Europapokal haben eigene Wochen; Wetter kann Spiele absagen (früher oft, heute selten), das Nachholspiel liegt dann unter der Woche, spätestens vor den letzten zwei Spieltagen.',
     wiki: 'match-calendar',
   },
+  // ---------------------------------------------------------------- Weltdaten (Assistent)
+  startjahr: {
+    title: 'Startjahr',
+    text: 'Die Welt entsteht so, wie sie in dieser Saison war: Ligen, Europapokal-Teilnehmer, Regeln und Preise der Epoche. Ansehen und Kaderstärke richten sich nach der Vorsaison – wie die Startsaison ausgeht, ist offen.',
+    wiki: 'world-start',
+  },
+  simtiefe: {
+    title: 'Simulationstiefe',
+    text: 'Deine Liga läuft mit vollen Kadern. „Spiel für Spiel“ rechnet ein Land mit Spielplan, Tabelle und Auf-/Abstieg; „Hintergrund“ einmal je Saison. Beides kostet kaum Rechenzeit.',
+    wiki: 'world-start',
+  },
   // ---------------------------------------------------------------- Spieler-Zustand
   frische: {
     title: 'Frische',

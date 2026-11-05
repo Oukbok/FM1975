@@ -1,4 +1,5 @@
 import { CountryFlag } from '../../components/competition/CountryFlag';
+import { InfoTip } from '../../ui/InfoTip';
 import { cachedSummaries } from '../../data/dataset/storage';
 import { COUNTRY_SEEDS } from '../../data/worldSeed';
 import { WORLD_COUNTRIES, countryExists, countryPointSystem, seasonLabelOf } from '../../data/world/countries';
@@ -53,7 +54,7 @@ export function StepWorld({ d, chooseDataset, chooseYear, toggleFull }: {
   return (
     <div className="ng-cols ng-cols-world">
       <section className="ng-card">
-        <h3 className="ng-h">Startjahr</h3>
+        <h3 className="ng-h">Startjahr <InfoTip k="startjahr" /></h3>
         <div className="ng-year">
           <button type="button" className="ng-btn ghost ng-year-step" aria-label="Ein Jahr früher" disabled={y <= MIN_START_YEAR} onClick={() => chooseYear(y - 1)}>−</button>
           <div className="ng-year-val"><b>{y}</b><small>Saison {seasonLabelOf(y)}</small></div>
@@ -82,7 +83,7 @@ export function StepWorld({ d, chooseDataset, chooseYear, toggleFull }: {
 
       <section className="ng-card">
         <div className="ng-h-row">
-          <h3 className="ng-h">Länder {seasonLabelOf(y)}</h3>
+          <h3 className="ng-h">Länder {seasonLabelOf(y)} <InfoTip k="simtiefe" /></h3>
           <span className="ng-h-side">{rows.length} Länder · {withData} mit echten Vereinen · {total.toLocaleString('de-DE')} Vereine</span>
         </div>
         <div className="ng-ctable">

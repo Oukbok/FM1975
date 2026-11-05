@@ -770,6 +770,30 @@ Unter **Statistiken › Ligensystem** (und im Assistenten „Neues Spiel“) sie
 Die Zahlen folgen denselben Regeln wie der Saisonwechsel – was hier steht, passiert am Saisonende auch.`,
   },
 
+  {
+    id: 'world-start',
+    category: 'leagues',
+    title: 'Startjahr, Länder & Weltdaten',
+    keywords: ['startjahr', 'start', 'jahr', 'länder', 'land', 'heimatland', 'england', 'italien', 'spanien', 'weltdaten', 'editor', 'simulation', 'spiel für spiel', 'hintergrund', 'echte vereine'],
+    body: `## Startjahr, Länder & Weltdaten
+Im Assistenten „Neues Spiel“ wählst du unter **Spielwelt** das **Startjahr** (1975 bis 2025, Standard 1975). Die Welt entsteht dann so, wie sie in dieser Saison war:
+- **Ligen:** Zusammensetzung der 1. und 2. Liga aus den Weltdaten (echte Vereine mit verfremdeten Namen: Stadt, bei mehreren Vereinen einer Stadt plus Farbe). Fehlt eine Saison, nimmt das Spiel die nächstgelegene bzw. die Vereine von 1975.
+- **Struktur und Regeln der Epoche:** in Deutschland die Ligareformen bis zum Startjahr (eingleisige 2. Liga, Regionalligen, 3. Liga), die DDR bis 1990/91, Punkteregel des Landes, Währung, Europapokal-Format und die echten Europapokal-Teilnehmer der Saison.
+- **Stärke:** Ansehen und Kaderstärke richten sich nach der Tabelle der **Vorsaison** – der Ausgang der Startsaison ist nicht vorgegeben.
+- **Vorgeschichte:** Endplätze und Titel der Jahre davor stehen in der Vereins-Historie; Spieler und Ausnahmetalente sind im passenden Alter.
+
+### Heimatland
+Unter **Verein** wählst du zuerst das **Land**: Deutschland immer, dazu jedes Land, für das im Startjahr Weltdaten vorliegen. In einem anderen Land spielen die Einheimischen dieses Landes, es gilt dessen Punkteregel, es gibt keine deutschen Ligareformen, keine Hallenturniere und keine deutschen Jugendwettbewerbe; Deutschland läuft dann im Hintergrund mit.
+
+### Simulationstiefe
+- **Deine Liga:** volle Kader, jedes Spiel mit der Match-Engine.
+- **Spiel für Spiel:** im Assistenten je Land wählbar – Spielplan, Tabelle Spieltag für Spieltag, Auf- und Abstieg; zu sehen unter Statistiken › Liga („Länder Spiel für Spiel“). Die Endtabelle bestimmt Meister und Europapokal-Starter des Landes.
+- **Hintergrund:** einmal je Saison durchgerechnet (Meister, Pokalsieger, Koeffizient).
+
+### Editor
+Im Datensatz-Editor (Bereich **Weltdaten**) sind alle Länder – auch Deutschland – bearbeitbar: Vereine (Name, Kürzel, Stadt, Farben) und je Saison 1./2. Liga in Tabellenreihenfolge, Pokalsieger und Europapokal-Teilnehmer. Geänderte deutsche Namen gelten auch für die Startvereine von 1975.`,
+  },
+
   // ---------------------------------------------------------------------------
   // PLATZHALTER FÜR SPÄTERE BLÖCKE
   // ---------------------------------------------------------------------------
