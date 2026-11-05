@@ -47,6 +47,7 @@ import * as yug1 from './clubs/yug'; import * as yug2 from './seasons/yug'; add(
 import * as rou1 from './clubs/rou'; import * as rou2 from './seasons/rou'; add('rou', rou1, rou2);
 import * as bul1 from './clubs/bul'; import * as bul2 from './seasons/bul'; add('bul', bul1, bul2);
 import * as rus1 from './clubs/rus'; import * as rus2 from './seasons/rus'; add('rus', rus1, rus2);
+import * as ukr1 from './clubs/ukr'; import * as ukr2 from './seasons/ukr'; add('ukr', ukr1, ukr2);
 // ------------------------------------------------------------------------------
 
 /** Daten eines Landes eintragen (auch für Tests mit Beispieldaten aus tests/fixtures/). */
