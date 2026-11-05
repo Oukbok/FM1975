@@ -7,14 +7,13 @@ export const SEASONS_HUN: Record<number, SeasonRow> = {
     cup: 'hun-budapest-gruen',
     cupFinalist: 'hun-budapest-rot-blau',
     euro: { ec: ['hun-budapest-lila'], cwc: ['hun-budapest-gruen'], uefa: ['hun-budapest-blau-weiss', 'hun-budapest-rot-schwarz'] },
-    note: "Reihenfolge der Plätze 4–14 unsicher (aus Wissen).",
   },
   1976: {
     t1: ['hun-budapest-rot-blau', 'hun-budapest-lila', 'hun-budapest-gruen', 'hun-budapest-rot-schwarz', 'hun-gyor', 'hun-szekesfehervar', 'hun-tatabanya', 'hun-miskolc', 'hun-budapest-blau-weiss', 'hun-zalaegerszeg', 'hun-pecs', 'hun-bekescsaba', 'hun-szombathely', 'hun-budapest-csepel', 'hun-dorog', 'hun-salgotarjan', 'hun-szeged', 'hun-budapest-weiss-blau'],
     cup: 'hun-miskolc',
     cupFinalist: 'hun-budapest-gruen',
     euro: { ec: ['hun-budapest-gruen'], cwc: ['hun-budapest-gruen'], uefa: ['hun-budapest-lila', 'hun-budapest-rot-schwarz'] },
-    note: "Erweiterung auf 18 Vereine (unsicher).",
+    note: "Erweiterung auf 18 Vereine.",
   },
   1977: {
     t1: ['hun-budapest-lila', 'hun-budapest-rot-schwarz', 'hun-budapest-gruen', 'hun-budapest-rot-blau', 'hun-szekesfehervar', 'hun-gyor', 'hun-tatabanya', 'hun-miskolc', 'hun-pecs', 'hun-budapest-blau-weiss', 'hun-zalaegerszeg', 'hun-bekescsaba', 'hun-szombathely', 'hun-budapest-weiss-blau', 'hun-budapest-csepel', 'hun-dorog', 'hun-salgotarjan', 'hun-szeged'],
@@ -45,7 +44,7 @@ export const SEASONS_HUN: Record<number, SeasonRow> = {
     cup: 'hun-budapest-lila',
     cupFinalist: 'hun-budapest-gruen',
     euro: { ec: ['hun-budapest-gruen'], cwc: ['hun-budapest-rot-blau'], uefa: ['hun-gyor', 'hun-budapest-rot-schwarz'] },
-    note: "Verkleinerung auf 16 Vereine (unsicher).",
+    note: "Verkleinerung auf 16 Vereine.",
   },
   1982: {
     t1: ['hun-gyor', 'hun-budapest-rot-schwarz', 'hun-budapest-gruen', 'hun-budapest-lila', 'hun-tatabanya', 'hun-szekesfehervar', 'hun-budapest-rot-blau', 'hun-pecs', 'hun-miskolc', 'hun-bekescsaba', 'hun-zalaegerszeg', 'hun-budapest-weiss-blau', 'hun-budapest-blau-weiss', 'hun-nyiregyhaza', 'hun-siofok', 'hun-szombathely'],
@@ -94,7 +93,7 @@ export const SEASONS_HUN: Record<number, SeasonRow> = {
     cup: 'hun-pecs',
     cupFinalist: 'hun-budapest-rot-schwarz',
     euro: { ec: ['hun-budapest-rot-schwarz'], cwc: ['hun-budapest-gruen'], uefa: ['hun-budapest-blau-weiss', 'hun-budapest-lila'] },
-    note: "Pokalsieger Budapest Rot-Schwarz zugleich Meister – Pokalsieger-Startplatz an den Finalisten (unsicher).",
+    note: "Pokalsieger zugleich Meister – Pokalsieger-Startplatz an den Finalisten.",
   },
   1990: {
     t1: ['hun-budapest-rot-schwarz', 'hun-budapest-gruen', 'hun-budapest-zuglo', 'hun-pecs', 'hun-budapest-lila', 'hun-vac', 'hun-budapest-blau-weiss', 'hun-szekesfehervar', 'hun-gyor', 'hun-tatabanya', 'hun-siofok', 'hun-veszprem', 'hun-budapest-rot-blau', 'hun-szombathely', 'hun-bekescsaba', 'hun-zalaegerszeg'],
@@ -131,7 +130,7 @@ export const SEASONS_HUN: Record<number, SeasonRow> = {
     cup: 'hun-budapest-rot-schwarz',
     cupFinalist: 'hun-budapest-gruen',
     euro: { cl: ['hun-budapest-gruen'], cwc: ['hun-vac'], uefa: ['hun-budapest-zuglo', 'hun-budapest-lila'] },
-    note: "Pokalsieger Ferencváros zugleich Meister – Pokalsieger-Startplatz an den Finalisten.",
+    note: "Pokalsieger zugleich Meister – Pokalsieger-Startplatz an den Finalisten.",
   },
   1996: {
     t1: ['hun-budapest-blau-weiss', 'hun-budapest-lila', 'hun-budapest-gruen', 'hun-budapest-rot-schwarz', 'hun-budapest-zuglo', 'hun-vac', 'hun-gyor', 'hun-pecs', 'hun-szombathely', 'hun-zalaegerszeg', 'hun-budapest-rot-blau', 'hun-debrecen', 'hun-siofok', 'hun-bekescsaba', 'hun-szekesfehervar', 'hun-budapest-csepel'],
@@ -144,7 +143,7 @@ export const SEASONS_HUN: Record<number, SeasonRow> = {
     cup: 'hun-budapest-blau-weiss',
     cupFinalist: 'hun-budapest-lila',
     euro: { cl: ['hun-budapest-blau-weiss'], cwc: ['hun-budapest-blau-weiss'], uefa: ['hun-budapest-gruen', 'hun-budapest-zuglo'] },
-    note: "Erweiterung auf 18 Vereine. Pokalsieger MTK zugleich Meister 1996/97 – Pokalsieger-Startplatz vereinfacht.",
+    note: "Erweiterung auf 18 Vereine.",
   },
   1998: {
     t1: ['hun-budapest-blau-weiss', 'hun-budapest-gruen', 'hun-budapest-lila', 'hun-dunaujvaros', 'hun-debrecen', 'hun-budapest-rot-blau', 'hun-gyor', 'hun-zalaegerszeg', 'hun-budapest-rot-schwarz', 'hun-pecs', 'hun-szombathely', 'hun-vac', 'hun-siofok', 'hun-bekescsaba', 'hun-nyiregyhaza', 'hun-kecskemet', 'hun-budapest-zuglo', 'hun-miskolc'],
@@ -195,7 +194,7 @@ export const SEASONS_HUN: Record<number, SeasonRow> = {
     cup: 'hun-szekesfehervar',
     cupFinalist: 'hun-budapest-lila',
     euro: { cl: ['hun-debrecen'], uefa: ['hun-sopron', 'hun-budapest-gruen', 'hun-budapest-blau-weiss'] },
-    note: "Ferencváros nach der Saison wegen Schulden zwangsweise abgestiegen.",
+    note: "Budapest Grün nach der Saison wegen Schulden zwangsweise abgestiegen.",
   },
   2006: {
     t1: ['hun-debrecen', 'hun-budapest-blau-weiss', 'hun-zalaegerszeg', 'hun-budapest-lila', 'hun-gyor', 'hun-szekesfehervar', 'hun-budapest-rot-schwarz', 'hun-kaposvar', 'hun-paks', 'hun-miskolc', 'hun-budapest-rakospalota', 'hun-sopron', 'hun-nyiregyhaza', 'hun-tatabanya', 'hun-budapest-rot-blau', 'hun-pecs'],
@@ -250,7 +249,7 @@ export const SEASONS_HUN: Record<number, SeasonRow> = {
     cup: 'hun-budapest-gruen',
     cupFinalist: 'hun-szekesfehervar',
     euro: { cl: ['hun-debrecen'], el: ['hun-budapest-gruen', 'hun-miskolc', 'hun-gyor'] },
-    note: "Saisonende: Pápa, Kecskemét, Pécs und Nyíregyháza ohne Lizenz bzw. Verkleinerung auf 12 Vereine.",
+    note: "Mehrere Vereine ohne Lizenz; Verkleinerung auf 12 Vereine.",
   },
   2015: {
     t1: ['hun-budapest-gruen', 'hun-szekesfehervar', 'hun-debrecen', 'hun-budapest-blau-weiss', 'hun-paks', 'hun-budapest-rot-schwarz', 'hun-budapest-lila', 'hun-szombathely', 'hun-felcsut', 'hun-miskolc', 'hun-budapest-rot-blau', 'hun-bekescsaba'],
@@ -312,11 +311,10 @@ export const SEASONS_HUN: Record<number, SeasonRow> = {
     cup: 'hun-paks',
     cupFinalist: 'hun-budapest-gruen',
     euro: { cl: ['hun-budapest-gruen'], el: ['hun-budapest-gruen'], ecl: ['hun-paks', 'hun-felcsut', 'hun-szekesfehervar'] },
-    note: "Tabelle aus Datensatz (RSSSF-Spiegel).",
   },
   2025: {
     t1: ['hun-budapest-gruen', 'hun-felcsut', 'hun-paks', 'hun-gyor', 'hun-budapest-blau-weiss', 'hun-miskolc', 'hun-budapest-lila', 'hun-nyiregyhaza', 'hun-debrecen', 'hun-zalaegerszeg', 'hun-kisvarda', 'hun-kazincbarcika'],
     euro: { cl: ['hun-budapest-gruen'], el: ['hun-budapest-gruen'], ecl: ['hun-paks', 'hun-gyor', 'hun-felcsut'] },
-    note: "Laufende Saison: Zusammensetzung zu Saisonbeginn (Vorjahresreihenfolge, Aufsteiger hinten).",
+    note: "Laufende Saison: Zusammensetzung zu Saisonbeginn.",
   },
 };

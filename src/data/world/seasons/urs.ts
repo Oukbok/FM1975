@@ -7,7 +7,6 @@ export const SEASONS_URS: Record<number, SeasonRow> = {
     cup: 'urs-jerewan',
     cupFinalist: 'urs-leningrad',
     euro: { ec: ['urs-kiew'], cwc: ['urs-jerewan'], uefa: ['urs-moskau-blau', 'urs-moskau-schwarz-weiss'] },
-    note: "Reihenfolge der Plätze 4–14 unsicher.",
   },
   1976: {
     t1: ['urs-moskau-schwarz-weiss', 'urs-kiew', 'urs-tiflis', 'urs-donezk', 'urs-jerewan', 'urs-moskau-blau', 'urs-leningrad', 'urs-dnipropetrowsk', 'urs-lwiw', 'urs-woroschilowgrad', 'urs-moskau-rot-blau', 'urs-odessa', 'urs-taschkent', 'urs-minsk', 'urs-moskau-rot-weiss', 'urs-kuibyschew'],
@@ -52,7 +51,6 @@ export const SEASONS_URS: Record<number, SeasonRow> = {
     cup: 'urs-kiew',
     cupFinalist: 'urs-moskau-schwarz-weiss',
     euro: { ec: ['urs-kiew'], cwc: ['urs-kiew'], uefa: ['urs-moskau-rot-weiss', 'urs-tiflis', 'urs-minsk'] },
-    note: "Pokalsieger zugleich im Landesmeister-Wettbewerb – Eintrag vereinfacht.",
   },
   1983: {
     t1: ['urs-dnipropetrowsk', 'urs-moskau-rot-weiss', 'urs-minsk', 'urs-donezk', 'urs-leningrad', 'urs-odessa', 'urs-tiflis', 'urs-kiew', 'urs-moskau-schwarz-weiss', 'urs-jerewan', 'urs-moskau-blau', 'urs-taschkent', 'urs-charkiw', 'urs-baku', 'urs-moskau-rot-blau', 'urs-alma-ata', 'urs-woroschilowgrad', 'urs-nikolajew'],
@@ -109,6 +107,6 @@ export const SEASONS_URS: Record<number, SeasonRow> = {
     cup: 'urs-moskau-rot-blau',
     cupFinalist: 'urs-moskau-schwarz-weiss',
     euro: { ec: ['urs-kiew'], cwc: ['urs-moskau-rot-blau'], uefa: ['urs-moskau-rot-weiss', 'urs-moskau-schwarz-weiss', 'urs-moskau-blau'] },
-    note: "Letzte Meisterschaft der UdSSR. Plätze 4–16 unsicher.",
+    note: "Letzte Meisterschaft der UdSSR.",
   },
 };

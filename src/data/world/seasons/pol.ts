@@ -7,7 +7,6 @@ export const SEASONS_POL: Record<number, SeasonRow> = {
     cup: 'pol-breslau',
     cupFinalist: 'pol-sosnowiec',
     euro: { ec: ['pol-chorzow'], cwc: ['pol-sosnowiec'], uefa: ['pol-mielec', 'pol-warschau-gruen'] },
-    note: "Reihenfolge der Plätze 4–14 unsicher (aus Wissen).",
   },
   1976: {
     t1: ['pol-breslau', 'pol-lodz-rot', 'pol-sosnowiec', 'pol-krakau-rot', 'pol-mielec', 'pol-warschau-gruen', 'pol-lodz-weiss', 'pol-zabrze', 'pol-posen', 'pol-chorzow', 'pol-oppeln', 'pol-stettin', 'pol-bytom-gruen', 'pol-gdynia', 'pol-tychy', 'pol-rybnik'],
@@ -111,7 +110,7 @@ export const SEASONS_POL: Record<number, SeasonRow> = {
     cup: 'pol-kattowitz',
     cupFinalist: 'pol-chorzow',
     euro: { ec: ['pol-posen'], cwc: ['pol-legnica'], uefa: ['pol-kattowitz', 'pol-lodz-rot'] },
-    note: "Legia Warszawa und ŁKS wurden nach dem letzten Spieltag Punkte aberkannt (Spielmanipulation) – Meister wurde Lech Poznań; eingetragen ist die gewertete Tabelle.",
+    note: "Warschau Grün-Weiß und Łódź Weiß wurden nach dem letzten Spieltag Punkte aberkannt (Spielmanipulation) – Meister wurde Posen.",
   },
   1993: {
     t1: ['pol-warschau-gruen', 'pol-kattowitz', 'pol-zabrze', 'pol-posen', 'pol-lodz-weiss', 'pol-lodz-rot', 'pol-krakau-nowa-huta', 'pol-stettin', 'pol-pniewy', 'pol-lubin', 'pol-chorzow', 'pol-sosnowiec', 'pol-mielec', 'pol-posen-gruen', 'pol-krakau-rot', 'pol-tarnobrzeg', 'pol-stalowa-wola', 'pol-posen-rot'],
@@ -154,7 +153,7 @@ export const SEASONS_POL: Record<number, SeasonRow> = {
     cup: 'pol-wronki',
     cupFinalist: 'pol-krakau-rot',
     euro: { cl: ['pol-lodz-rot'], uefa: ['pol-wronki', 'pol-warschau-gruen', 'pol-warschau-schwarz'] },
-    note: "Wisła Kraków (Meister 1998/99) für die Europapokal-Saison 1999/2000 gesperrt.",
+    note: "Meister Krakau Rot für die Europapokal-Saison 1999/2000 gesperrt.",
   },
   2000: {
     t1: ['pol-krakau-rot', 'pol-stettin', 'pol-warschau-gruen', 'pol-warschau-schwarz', 'pol-wronki', 'pol-lodz-rot', 'pol-zabrze', 'pol-plock', 'pol-wodzislaw', 'pol-lubin', 'pol-chorzow', 'pol-posen', 'pol-olsztyn', 'pol-ostrowiec', 'pol-radzionkow', 'pol-belchatow'],
@@ -193,7 +192,7 @@ export const SEASONS_POL: Record<number, SeasonRow> = {
     cup: 'pol-plock',
     cupFinalist: 'pol-lubin',
     euro: { cl: ['pol-krakau-rot'], uefa: ['pol-grodzisk', 'pol-warschau-gruen', 'pol-lubin'] },
-    note: "Amica Wronki ging nach der Saison in Lech Poznań auf.",
+    note: "Wronki ging nach der Saison in Posen auf.",
   },
   2006: {
     t1: ['pol-lubin', 'pol-belchatow', 'pol-grodzisk', 'pol-warschau-gruen', 'pol-posen', 'pol-krakau-rot', 'pol-kielce', 'pol-krakau-rot-weiss', 'pol-lodz-weiss', 'pol-wodzislaw', 'pol-zabrze', 'pol-lodz-rot', 'pol-stettin', 'pol-plock', 'pol-gdynia', 'pol-leczna'],
@@ -206,14 +205,14 @@ export const SEASONS_POL: Record<number, SeasonRow> = {
     cup: 'pol-warschau-gruen',
     cupFinalist: 'pol-krakau-rot',
     euro: { cl: ['pol-lubin'], uefa: ['pol-grodzisk', 'pol-belchatow'] },
-    note: "Korona Kielce und Zagłębie Lubin nach Abschluss wegen Bestechung zwangsweise abgestiegen.",
+    note: "Kielce und Lubin nach Abschluss wegen Bestechung zwangsweise abgestiegen.",
   },
   2008: {
     t1: ['pol-krakau-rot', 'pol-warschau-gruen', 'pol-posen', 'pol-warschau-schwarz', 'pol-belchatow', 'pol-danzig', 'pol-chorzow', 'pol-bytom-blau', 'pol-gliwice', 'pol-bialystok', 'pol-breslau', 'pol-gdynia', 'pol-wodzislaw', 'pol-krakau-rot-weiss', 'pol-zabrze', 'pol-lodz-weiss'],
     cup: 'pol-posen',
     cupFinalist: 'pol-chorzow',
     euro: { cl: ['pol-krakau-rot'], uefa: ['pol-warschau-gruen', 'pol-posen'] },
-    note: "Groclin Grodzisk ging in Polonia Warszawa auf.",
+    note: "Grodzisk ging in Warschau Schwarz-Weiß auf.",
   },
   2009: {
     t1: ['pol-posen', 'pol-krakau-rot', 'pol-chorzow', 'pol-warschau-gruen', 'pol-belchatow', 'pol-bialystok', 'pol-danzig', 'pol-kielce', 'pol-warschau-schwarz', 'pol-breslau', 'pol-bytom-blau', 'pol-krakau-rot-weiss', 'pol-gdynia', 'pol-lubin', 'pol-wodzislaw', 'pol-gliwice'],
@@ -238,14 +237,14 @@ export const SEASONS_POL: Record<number, SeasonRow> = {
     cup: 'pol-warschau-gruen',
     cupFinalist: 'pol-breslau',
     euro: { cl: ['pol-breslau'], el: ['pol-warschau-gruen', 'pol-chorzow', 'pol-posen', 'pol-breslau'] },
-    note: "Polonia Warszawa nach der Saison ohne Lizenz zwangsweise abgestiegen. Tabelle aus Datensatz (football-data).",
+    note: "Warschau Schwarz-Weiß nach der Saison ohne Lizenz zwangsweise abgestiegen.",
   },
   2013: {
     t1: ['pol-warschau-gruen', 'pol-posen', 'pol-chorzow', 'pol-krakau-rot', 'pol-danzig', 'pol-zabrze', 'pol-breslau', 'pol-stettin', 'pol-bialystok', 'pol-bydgoszcz', 'pol-bielsko', 'pol-gliwice', 'pol-kielce', 'pol-krakau-rot-weiss', 'pol-lodz-rot', 'pol-lubin'],
     cup: 'pol-bydgoszcz',
     cupFinalist: 'pol-lubin',
     euro: { cl: ['pol-warschau-gruen'], el: ['pol-posen', 'pol-breslau', 'pol-gliwice', 'pol-warschau-gruen'] },
-    note: "Ab 2013/14 Meister- und Abstiegsrunde mit halbierten Punkten; Reihenfolge aus Datensatz nach Spielen berechnet, mit Wissen abgeglichen.",
+    note: "Ab 2013/14 Meister- und Abstiegsrunde mit halbierten Punkten.",
   },
   2014: {
     t1: ['pol-posen', 'pol-warschau-gruen', 'pol-bialystok', 'pol-breslau', 'pol-krakau-rot-weiss', 'pol-krakau-rot', 'pol-danzig', 'pol-gliwice', 'pol-zabrze', 'pol-kielce', 'pol-chorzow', 'pol-bielsko', 'pol-leczna', 'pol-stettin', 'pol-bydgoszcz', 'pol-belchatow'],
@@ -302,25 +301,22 @@ export const SEASONS_POL: Record<number, SeasonRow> = {
     cup: 'pol-warschau-gruen',
     cupFinalist: 'pol-czestochowa',
     euro: { cl: ['pol-posen'], ecl: ['pol-czestochowa', 'pol-stettin', 'pol-danzig', 'pol-posen'] },
-    note: "Tabelle aus Datensatz (football-data).",
   },
   2023: {
     t1: ['pol-bialystok', 'pol-breslau', 'pol-warschau-gruen', 'pol-stettin', 'pol-posen', 'pol-zabrze', 'pol-czestochowa', 'pol-lubin', 'pol-lodz-rot', 'pol-gliwice', 'pol-mielec', 'pol-niepolomice', 'pol-krakau-rot-weiss', 'pol-kielce', 'pol-radom', 'pol-posen-gruen', 'pol-chorzow', 'pol-lodz-weiss'],
     cup: 'pol-krakau-rot',
     cupFinalist: 'pol-stettin',
     euro: { cl: ['pol-czestochowa'], el: ['pol-czestochowa'], ecl: ['pol-warschau-gruen', 'pol-posen', 'pol-stettin'] },
-    note: "Tabelle aus Datensatz (football-data).",
   },
   2024: {
     t1: ['pol-posen', 'pol-czestochowa', 'pol-bialystok', 'pol-stettin', 'pol-warschau-gruen', 'pol-krakau-rot-weiss', 'pol-lublin', 'pol-kattowitz', 'pol-zabrze', 'pol-gliwice', 'pol-kielce', 'pol-radom', 'pol-lodz-rot', 'pol-danzig', 'pol-lubin', 'pol-mielec', 'pol-breslau', 'pol-niepolomice'],
     cup: 'pol-warschau-gruen',
     cupFinalist: 'pol-stettin',
     euro: { cl: ['pol-bialystok'], el: ['pol-krakau-rot'], ecl: ['pol-warschau-gruen', 'pol-breslau', 'pol-bialystok', 'pol-krakau-rot'] },
-    note: "Tabelle aus Datensatz (RSSSF-Spiegel).",
   },
   2025: {
     t1: ['pol-posen', 'pol-czestochowa', 'pol-bialystok', 'pol-stettin', 'pol-warschau-gruen', 'pol-krakau-rot-weiss', 'pol-lublin', 'pol-kattowitz', 'pol-zabrze', 'pol-gliwice', 'pol-kielce', 'pol-radom', 'pol-lodz-rot', 'pol-danzig', 'pol-lubin', 'pol-gdynia', 'pol-nieciecza', 'pol-plock'],
     euro: { cl: ['pol-posen'], el: ['pol-warschau-gruen'], ecl: ['pol-czestochowa', 'pol-bialystok'] },
-    note: "Laufende Saison: Zusammensetzung zu Saisonbeginn (Vorjahresreihenfolge, Aufsteiger hinten).",
+    note: "Laufende Saison: Zusammensetzung zu Saisonbeginn.",
   },
 };

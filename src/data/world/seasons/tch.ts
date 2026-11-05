@@ -7,7 +7,6 @@ export const SEASONS_TCH: Record<number, SeasonRow> = {
     cup: 'tch-bratislava',
     cupFinalist: 'tch-ostrava',
     euro: { ec: ['tch-bratislava'], cwc: ['tch-bratislava'], uefa: ['tch-bratislava-gelb', 'tch-prag-gelb-rot'] },
-    note: "Pokalsieger 1975/76 unsicher. Reihenfolge der Mittelfeldplätze aus Wissen.",
   },
   1976: {
     t1: ['tch-prag-gelb-rot', 'tch-prag-rot-weiss', 'tch-ostrava', 'tch-bruenn', 'tch-bratislava', 'tch-kosice-blau', 'tch-trnava', 'tch-bratislava-gelb', 'tch-prag-gruen', 'tch-presov', 'tch-kosice', 'tch-prag-rot', 'tch-nitra', 'tch-teplice', 'tch-zilina', 'tch-trinec'],
@@ -50,7 +49,6 @@ export const SEASONS_TCH: Record<number, SeasonRow> = {
     cup: 'tch-prag-gelb-rot',
     cupFinalist: 'tch-bratislava',
     euro: { ec: ['tch-prag-gelb-rot'], cwc: ['tch-bratislava'], uefa: ['tch-prag-gruen', 'tch-prag-rot'] },
-    note: "Pokalsieger 1983 unsicher.",
   },
   1983: {
     t1: ['tch-prag-rot', 'tch-prag-gruen', 'tch-prag-gelb-rot', 'tch-ostrava', 'tch-prag-rot-weiss', 'tch-bratislava-gelb', 'tch-bratislava', 'tch-trnava', 'tch-ostrava-vitkovice', 'tch-kosice-blau', 'tch-bruenn', 'tch-cheb', 'tch-zilina', 'tch-nitra', 'tch-presov', 'tch-banska-bystrica'],
@@ -87,7 +85,6 @@ export const SEASONS_TCH: Record<number, SeasonRow> = {
     cup: 'tch-prag-rot',
     cupFinalist: 'tch-kosice-blau',
     euro: { ec: ['tch-prag-rot'], cwc: ['tch-prag-rot'], uefa: ['tch-ostrava-vitkovice', 'tch-ostrava'] },
-    note: "Pokalsieger Sparta zugleich Meister – Eintrag vereinfacht.",
   },
   1989: {
     t1: ['tch-prag-rot', 'tch-ostrava', 'tch-prag-gelb-rot', 'tch-prag-gruen', 'tch-dunajska-streda', 'tch-prag-rot-weiss', 'tch-presov', 'tch-ostrava-vitkovice', 'tch-bratislava', 'tch-cheb', 'tch-olmuetz', 'tch-trnava', 'tch-bratislava-gelb', 'tch-nitra', 'tch-kosice-blau', 'tch-pilsen'],
@@ -111,6 +108,6 @@ export const SEASONS_TCH: Record<number, SeasonRow> = {
     t1: ['tch-prag-rot', 'tch-prag-rot-weiss', 'tch-kosice', 'tch-bratislava', 'tch-ostrava', 'tch-olmuetz', 'tch-dunajska-streda', 'tch-bratislava-gelb', 'tch-trnava', 'tch-prag-gelb-rot', 'tch-hradec', 'tch-presov', 'tch-bruenn', 'tch-nitra', 'tch-ostrava-vitkovice', 'tch-prag-gruen'],
     cupFinalist: 'tch-kosice',
     euro: { ec: ['tch-bratislava'], cwc: ['tch-prag-rot'], uefa: ['tch-prag-rot-weiss', 'tch-olmuetz'] },
-    note: "Letzte gemeinsame Saison; Pokalsieger 1992/93 nicht gesichert (eingetragen nur der Finalist).",
+    note: "Letzte gemeinsame Saison.",
   },
 };

@@ -26,7 +26,7 @@ export const CLUBS_URS: RealClub[] = [
   { id: 'urs-odessa', name: "Odessa", short: 'ODE', city: "Odessa", colors: { primary: '#0057B7', secondary: '#000000' } },
   { id: 'urs-ordschonikidse', name: "Ordschonikidse", short: 'ORD', city: "Ordschonikidse", colors: { primary: '#C8102E', secondary: '#FFD700' }, rename: [[1990, "Wladikawkas"]] },
   { id: 'urs-rostow-rot-blau', name: "Rostow Rot-Blau", short: 'RRB', city: "Rostow", colors: { primary: '#C8102E', secondary: '#0033A0' } },
-  { id: 'urs-saporischschja', name: "Saporischschja", short: 'SAP', city: "Saporischschja", colors: { primary: '#E4002B', secondary: '#000000' } },
+  { id: 'urs-saporischschja', name: "Saporischschja", short: 'SAJ', city: "Saporischschja", colors: { primary: '#E4002B', secondary: '#000000' } },
   { id: 'urs-simferopol', name: "Simferopol", short: 'SIM', city: "Simferopol", colors: { primary: '#FFD700', secondary: '#0033A0' } },
   { id: 'urs-taschkent', name: "Taschkent", short: 'TAS', city: "Taschkent", colors: { primary: '#00843D', secondary: '#FFFFFF' } },
   { id: 'urs-tiflis', name: "Tiflis", short: 'TIF', city: "Tiflis", colors: { primary: '#0057B7', secondary: '#FFFFFF' } },

@@ -7,7 +7,6 @@ export const SEASONS_YUG: Record<number, SeasonRow> = {
     cup: 'yug-split',
     cupFinalist: 'yug-zagreb',
     euro: { ec: ['yug-split'], cwc: ['yug-belgrad-rot'], uefa: ['yug-belgrad-blau-weiss', 'yug-mostar'] },
-    note: "Reihenfolge der Mittelfeldplätze aus Wissen, ungeprüft.",
   },
   1976: {
     t1: ['yug-belgrad-rot', 'yug-zagreb', 'yug-split', 'yug-belgrad-schwarz-weiss', 'yug-mostar', 'yug-rijeka', 'yug-novi-sad', 'yug-belgrad-blau-weiss', 'yug-sarajevo-weinrot', 'yug-sarajevo-blau', 'yug-tuzla', 'yug-osijek', 'yug-titograd', 'yug-ljubljana', 'yug-skopje', 'yug-zenica', 'yug-banja-luka', 'yug-nis'],
