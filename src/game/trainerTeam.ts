@@ -117,15 +117,33 @@ export function dismiss(g: Game, memberId: string): string {
   return `${m.name} wurde entlassen (Abfindung bezahlt).`;
 }
 
-/** Vertrag des eigenen Mitarbeiters um `years` verlängern – zur aktuellen Forderung. */
+/** Verlängerung erst im letzten Vertragsjahr (≤ 12 Monate Restlaufzeit), höchstens bis 4 Jahre über das laufende Spieljahr hinaus. */
+export const EXTEND_WINDOW_MONTHS = 12;
+export const EXTEND_MAX_YEARS = 4;
+
+/** Darf der Vertrag jetzt verlängert werden? Grund für die Anzeige, falls nicht. */
+export function canExtend(g: Game, m: StaffMember): { ok: boolean; reason?: string } {
+  const today = g.calendar.currentDate;
+  if (!m.contractEnd || m.contractEnd <= today) return { ok: true };
+  const left = monthsLeft(m, today);
+  if (left > EXTEND_WINDOW_MONTHS) return { ok: false, reason: `Vertrag läuft noch bis ${m.contractEnd.slice(0, 4)} – Verlängerung erst im letzten Vertragsjahr` };
+  return { ok: true };
+}
+
+/** Vertrag des eigenen Mitarbeiters um `years` verlängern – zur aktuellen Forderung (nur im letzten Vertragsjahr). */
 export function extendContract(g: Game, memberId: string, years: number): string {
   const m = ensureStaff(g).find((x) => x.id === memberId);
   if (!m) return '';
-  const base = m.contractEnd && m.contractEnd > g.calendar.currentDate ? yearOf(m.contractEnd) : yearOf(g.calendar.currentDate);
-  m.contractEnd = `${base + years}-06-30`;
+  const can = canExtend(g, m);
+  if (!can.ok) return can.reason ?? '';
+  const today = g.calendar.currentDate;
+  const base = m.contractEnd && m.contractEnd > today ? yearOf(m.contractEnd) : yearOf(today);
+  const seasonEnd = yearOf(today) + (Number(today.slice(5, 7)) >= 7 ? 1 : 0);
+  const end = Math.min(base + years, seasonEnd + EXTEND_MAX_YEARS);
+  m.contractEnd = `${end}-06-30`;
   m.salaryFactor = Math.max(m.salaryFactor, demandOf(g, m));
   m.loyalty = clamp(m.loyalty + 5, 0, 100);
-  return `${m.name} verlängert bis ${m.contractEnd.slice(0, 4)}.`;
+  return `${m.name} verlängert bis ${end}.`;
 }
 
 // -----------------------------------------------------------------------------

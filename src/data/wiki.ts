@@ -1602,7 +1602,7 @@ Jede Person hat acht Fachgebiete (1–20): **Taktik, Technik, Fitness, Torwart, 
 - **Verhandlung:** Jede Person nennt eine Gehaltsforderung. Ein großer Verein und eine lange Laufzeit geben bis zu etwa 14 % Spielraum; nach drei Absagen ist Schluss.
 - **Abwerben:** Angestellte anderer Vereine kosten **sechs Monatsgehälter Ablöse** und wechseln nur zu einem mindestens etwa gleich großen Verein.
 - **Entlassen:** Abfindung = halbe Restlaufzeit (mindestens zwei, höchstens 18 Monatsgehälter). Die Person kehrt auf den Arbeitsmarkt zurück.
-- **Vertragsende** (30.6.): Treue Leute verlängern zu ihrer aktuellen Forderung, andere gehen. Mit „+2 Jahre“ verlängerst du vorher selbst.
+- **Vertragsende** (30.6.): Treue Leute verlängern zu ihrer aktuellen Forderung, andere gehen. Mit „+2 Jahre“ verlängerst du vorher selbst – aber erst im letzten Vertragsjahr (höchstens 12 Monate Restlaufzeit) und nie weiter als 4 Jahre über die laufende Saison hinaus.
 
 ### Wirkung
 - Lernfaktor je Trainingsbaustein (siehe „Trainingsplan“), weniger Trainingsverletzungen durch Fitness/Medizin.

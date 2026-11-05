@@ -5,7 +5,7 @@ import { STAFF_BY_ID } from '../../data/staff';
 import { Game } from '../../game/state';
 import { ensureStaff } from '../../game/staffGame';
 import { ensureStaffWorld, marketForRole } from '../../game/staffWorld';
-import { demandOf, dismiss, extendContract, monthsLeft, roleLabel, severanceOf } from '../../game/trainerTeam';
+import { canExtend, demandOf, dismiss, extendContract, monthsLeft, roleLabel, severanceOf } from '../../game/trainerTeam';
 import { DashBox, DashPage, Empty, Kpi } from '../../ui/DashPage';
 import { fmtDMfull as fmtDM, fmtDM as fmtDMshort } from '../../ui/format';
 import { PersonDetail, QBar, StaffNegotiation, originText, topSkills } from './teamParts';
@@ -67,7 +67,11 @@ export function TrainerTeamView({ g, onChange }: { g: Game; onChange: () => void
                 <div className="dnote">bis {m.contractEnd?.slice(0, 4) ?? '–'}{left <= 6 ? <span className="tt-warn"> · läuft aus</span> : ''} · {fmtDM(memberMonthlySalary(m, scale))}/Monat</div>
               </div>
               <div className="tt-row-btns" onClick={(e) => e.stopPropagation()}>
-                <button className="dchip" title={`Neue Forderung ${fmtDM(memberMonthlySalary({ ...m, salaryFactor: Math.max(m.salaryFactor, demandOf(g, m)) }, scale))}/Monat`} onClick={() => refresh(extendContract(g, m.id, 2))}>+2 Jahre</button>
+                {(() => { const ce = canExtend(g, m); return (
+                  <button className="dchip" disabled={!ce.ok}
+                    title={ce.ok ? `Neue Forderung ${fmtDM(memberMonthlySalary({ ...m, salaryFactor: Math.max(m.salaryFactor, demandOf(g, m)) }, scale))}/Monat` : ce.reason}
+                    onClick={() => refresh(extendContract(g, m.id, 2))}>+2 Jahre</button>
+                ); })()}
                 <button className="dchip" title={`Abfindung ${fmtDM(severanceOf(g, m))}`} onClick={() => { if (confirm(`${m.name} entlassen? Abfindung ${fmtDM(severanceOf(g, m))}.`)) { setSel(null); refresh(dismiss(g, m.id)); } }}>Entlassen</button>
               </div>
             </div>
