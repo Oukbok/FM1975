@@ -44,6 +44,7 @@ import * as den1 from './clubs/den'; import * as den2 from './seasons/den'; add(
 import * as nor1 from './clubs/nor'; import * as nor2 from './seasons/nor'; add('nor', nor1, nor2);
 import * as irl1 from './clubs/irl'; import * as irl2 from './seasons/irl'; add('irl', irl1, irl2);
 import * as nir1 from './clubs/nir'; import * as nir2 from './seasons/nir'; add('nir', nir1, nir2);
+import * as fin1 from './clubs/fin'; import * as fin2 from './seasons/fin'; add('fin', fin1, fin2);
 // ------------------------------------------------------------------------------
 
 /** Daten eines Landes eintragen (auch für Tests mit Beispieldaten aus tests/fixtures/). */
