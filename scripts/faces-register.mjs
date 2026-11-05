@@ -44,7 +44,7 @@ for (const abs of walk(ROOT)) {
   let key = rel.slice(0, -5);
   const isMask = key.endsWith('-maske');
   if (isMask) key = key.slice(0, -6);
-  const m = key.match(/^([a-z_]+)\/(\d{4})\/(\d{1,3})(?:-(\d{2}))?$/);
+  const m = key.match(/^([a-z_]+)\/(\d{4})\/(\d{1,4})(?:-(\d{2}))?$/);
   if (!m) { problems.push(`${rel}: Name passt nicht zu <gruppe>/<epoche>/<nr>[-<alter>].webp`); continue; }
   const [, group, epoch, , age] = m;
   const isStaff = group === 'staff';

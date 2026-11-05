@@ -24,7 +24,7 @@ let cache: { n: number; idx: Index } | null = null;
 
 /** Zerlegt `<gruppe>/<epoche>/<nr>[-<alter>]` – null bei ungültigem Namen. */
 export function parseFaceKey(key: string): { group: string; epoch: number; nr: string; age: number } | null {
-  const m = key.match(/^([a-z_]+)\/(\d{4})\/(\d{1,3})(?:-(\d{2}))?$/);
+  const m = key.match(/^([a-z_]+)\/(\d{4})\/(\d{1,4})(?:-(\d{2}))?$/);
   if (!m) return null;
   const epoch = Number(m[2]);
   if (!(FACE_EPOCHS as readonly number[]).includes(epoch)) return null;
