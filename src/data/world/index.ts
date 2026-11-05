@@ -42,6 +42,15 @@ import * as por1 from './clubs/por'; import * as por2 from './seasons/por'; add(
 import * as fra1 from './clubs/fra'; import * as fra2 from './seasons/fra'; add('fra', fra1, fra2);
 import * as ned1 from './clubs/ned'; import * as ned2 from './seasons/ned'; add('ned', ned1, ned2);
 import * as bel1 from './clubs/bel'; import * as bel2 from './seasons/bel'; add('bel', bel1, bel2);
+import * as swe1 from './clubs/swe'; import * as swe2 from './seasons/swe'; add('swe', swe1, swe2);
+import * as den1 from './clubs/den'; import * as den2 from './seasons/den'; add('den', den1, den2);
+import * as nor1 from './clubs/nor'; import * as nor2 from './seasons/nor'; add('nor', nor1, nor2);
+import * as irl1 from './clubs/irl'; import * as irl2 from './seasons/irl'; add('irl', irl1, irl2);
+import * as nir1 from './clubs/nir'; import * as nir2 from './seasons/nir'; add('nir', nir1, nir2);
+import * as fin1 from './clubs/fin'; import * as fin2 from './seasons/fin'; add('fin', fin1, fin2);
+import * as isl1 from './clubs/isl'; import * as isl2 from './seasons/isl'; add('isl', isl1, isl2);
+import * as wal1 from './clubs/wal'; import * as wal2 from './seasons/wal'; add('wal', wal1, wal2);
+import * as lux1 from './clubs/lux'; import * as lux2 from './seasons/lux'; add('lux', lux1, lux2);
 // ------------------------------------------------------------------------------
 
 /** Daten eines Landes eintragen (auch für Tests mit Beispieldaten aus tests/fixtures/). */
