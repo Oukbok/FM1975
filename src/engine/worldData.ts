@@ -18,7 +18,7 @@ import { DDR_LIGA_SEEDS, DDR_OBERLIGA_SEEDS } from '../data/ddr';
 import { COUNTRY_BY_CC, COUNTRY_BY_KEY, countryExists, WORLD_COUNTRIES } from '../data/world/countries';
 import { worldSeason } from '../data/world/index';
 import type { EuroComp, SeasonRow } from '../data/world/types';
-import { countryLevelOf, identOf } from '../game/worldCompose';
+import { completeRow, countryLevelOf, identOf } from '../game/worldCompose';
 import { applySplits, euroParticipants, fillCountry, makeCountry, WorldState } from './world';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -44,7 +44,8 @@ function strengthFor(level: number, share: number, tier: number): number {
   return Math.round(clamp(tier === 0 ? level + 9 - share * 16 : level - 6 - share * 8, 40, 90));
 }
 
-function dataCountry(w: WorldState, euroClubs: Record<string, EuroClub>, cc: string, year: number, row: SeasonRow, r: () => number): void {
+function dataCountry(w: WorldState, euroClubs: Record<string, EuroClub>, cc: string, year: number, row0: SeasonRow, r: () => number): void {
+  const row = completeRow(cc, year, row0);
   const def = COUNTRY_BY_CC[cc];
   const key = def.key;
   let c = w.countries[key];

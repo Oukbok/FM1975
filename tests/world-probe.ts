@@ -14,8 +14,10 @@ const ui: DayUi = { onOwnMatch: () => {}, onRatingCeremony: () => {}, onSeasonEn
 function tick(g: Game) { if (!processDay(g, ui)) { const due = findOwnMatchDue(g); if (due) { quickSimOwnMatch(g, due); processDay(g, ui); } } }
 const [club, year, country, days, reg] = process.argv.slice(2);
 if (reg) registerCountryData('eng', CLUBS_ENG, SEASONS_ENG);
+const { composeHome } = await import('../src/game/worldCompose');
+const autoClub = club === 'auto' ? composeHome(country, Number(year))?.tier1[Number(process.env.PICK ?? 3)]?.id ?? 'fra' : club;
 const t0 = Date.now();
-const g = createNewGame({ managedClubId: club, manager: { name: 'T', nationality: 'GER', birthYear: 1940, style: 'balanced', background: 'rookie' } as any, difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300, startYear: Number(year), country } as any);
+const g = createNewGame({ managedClubId: autoClub, manager: { name: 'T', nationality: 'GER', birthYear: 1940, style: 'balanced', background: 'rookie' } as any, difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300, startYear: Number(year), country } as any);
 (g as any).simAutoManage = true;
 console.log('neu', Date.now() - t0, 'ms', g.season, g.leagues.playerDivision.name, Object.keys(g.clubs).length, g.leagues.otherDivisions.map((d) => `${d.id}:${d.clubIds.length}`).join(' '), g.pointSystem);
 console.log('euro', Object.entries(g.euroCups ?? {}).map(([k, c]) => `${k}:${c?.participantIds.length ?? '-'} eigene ${c?.participantIds.filter((id) => g.clubs[id] || g.simClubs[id]).map((id) => g.clubs[id]?.name ?? g.simClubs[id]?.name).join('/')} fremd ${c?.participantIds.filter((id) => !g.clubs[id] && !g.simClubs[id]).slice(0, 4).map((id) => g.euroClubs?.[id]?.name + '(' + g.euroClubs?.[id]?.country + ')').join(',')}`).join(' | '));

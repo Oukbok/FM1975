@@ -21,6 +21,8 @@ const BUILTIN: Record<string, CountryWorld> = {};
 /** Überschreibungen aus dem aktiven Datensatz (Editor). */
 let OVERRIDE: Record<string, CountryWorld> = {};
 
+const cache = new Map<string, Map<string, RealClub>>();
+
 type Mod = Record<string, unknown>;
 function add(cc: string, ...mods: Mod[]): void {
   const up = cc.toUpperCase();
@@ -30,8 +32,13 @@ function add(cc: string, ...mods: Mod[]): void {
 }
 
 // --- Länder (eine Zeile je Land) ---------------------------------------------
-// (noch keine – die Recherche liefert clubs/<cc>.ts + seasons/<cc>.ts)
-void add;
+import * as ger1 from './clubs/ger'; import * as ger2 from './seasons/ger'; add('ger', ger1, ger2);
+import * as gdr1 from './clubs/gdr'; import * as gdr2 from './seasons/gdr'; add('gdr', gdr1, gdr2);
+import * as eng1 from './clubs/eng'; import * as eng2 from './seasons/eng'; add('eng', eng1, eng2);
+import * as sco1 from './clubs/sco'; import * as sco2 from './seasons/sco'; add('sco', sco1, sco2);
+import * as ita1 from './clubs/ita'; import * as ita2 from './seasons/ita'; add('ita', ita1, ita2);
+import * as esp1 from './clubs/esp'; import * as esp2 from './seasons/esp'; add('esp', esp1, esp2);
+import * as por1 from './clubs/por'; import * as por2 from './seasons/por'; add('por', por1, por2);
 // ------------------------------------------------------------------------------
 
 /** Daten eines Landes eintragen (auch für Tests mit Beispieldaten aus tests/fixtures/). */
@@ -48,8 +55,6 @@ export function setWorldOverride(o: Record<string, CountryWorld> | null | undefi
   OVERRIDE = o ? JSON.parse(JSON.stringify(o)) : {};
   cache.clear();
 }
-
-const cache = new Map<string, Map<string, RealClub>>();
 
 /** Wirksame Daten eines Landes: Überschreibung > eingebaut > keine. */
 export function countryWorld(cc: string): CountryWorld | null {

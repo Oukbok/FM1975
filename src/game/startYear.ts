@@ -147,3 +147,22 @@ export function homeExcluded(home: string, year: number): boolean {
   const key = COUNTRY_BY_CC[home]?.key;
   return home !== 'ger' && EURO_EXCLUSIONS.some((e) => e.country === key && year >= e.from && year <= e.to);
 }
+
+/**
+ * Deutschland mit Weltdaten: hat die simulierte 2. Liga weniger Vereine als die Struktur des
+ * Spiels (z. B. 18 statt 20 ab 1994), mit den stärksten Pool-Vereinen auffüllen – sonst
+ * verschieben die Größenkorrekturen beim Saisonwechsel ungerade Zahlen in die Regionalligen.
+ */
+export function padSecondTier(g: Game, year: number, ligaStart: string): void {
+  const season = seasonLabelOf(year);
+  for (const t of structureForSeason(season).filter((x) => x.tier === 2)) {
+    const i = g.leagues.otherDivisions.findIndex((d) => d.id === t.id);
+    if (i < 0) continue;
+    const d = g.leagues.otherDivisions[i];
+    if (d.clubIds.length >= t.teamCount) continue;
+    const pool = Object.values(g.simClubs).filter((s) => s.tier === POOL_TIER).sort((a, b) => b.strength - a.strength || a.id.localeCompare(b.id));
+    const ids = [...d.clubIds];
+    for (const s of pool) { if (ids.length >= t.teamCount) break; s.tier = 2; s.group = t.group as LeagueGroup; ids.push(s.id); }
+    g.leagues.otherDivisions[i] = buildDivision({ id: d.id, name: d.name, tier: d.tier, group: d.group }, ids, g.pointSystem, season, ligaStart);
+  }
+}

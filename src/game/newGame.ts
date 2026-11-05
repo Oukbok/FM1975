@@ -39,7 +39,7 @@ import { buildDdrDivisions, buildSecondLigaSimClubs, historicPointSystem } from 
 import { COUNTRY_BY_CC, countryOrigin, countryPointSystem, seasonLabelOf } from '../data/world/countries';
 import { setHomeOrigin } from '../data/origins';
 import { composeHome, ddrSeedsFor, secondSimClubs } from './worldCompose';
-import { amateurTownsFor, clampStartYear, fillLowerTiers, reformsAppliedAt, seedPreStartHistory, seedStartPool, startEuroQualifiers } from './startYear';
+import { amateurTownsFor, clampStartYear, fillLowerTiers, padSecondTier, reformsAppliedAt, seedPreStartHistory, seedStartPool, startEuroQualifiers } from './startYear';
 import { needsOverlay, worldOverlay } from '../engine/worldData';
 import { setHomeLabel, type LeagueDivision, type LeagueGroup } from '../engine/leagues';
 import { applyTimelineEffect, fireTimelineForSeason } from './season';
@@ -220,7 +220,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   if (comp) seedStartPool(g0, home, year); // übrige Vereine des Landes (Weltdaten)
   migrateLeaguePool(g0);
   // Ebenen unterhalb der 2. Liga, die es im Startjahr schon gibt (Regionalligen, 3. Liga).
-  if (isGer && !legacy) fillLowerTiers(g0, year, ligaStart);
+  if (isGer && !legacy) { padSecondTier(g0, year, ligaStart); fillLowerTiers(g0, year, ligaStart); }
   if (!legacy) seedPreStartHistory(g0, home, year);
   // Meilensteine bis zur Startsaison sofort auslösen (Effekte); erklärt werden sie im Saison-Briefing.
   for (let y = 1975; y <= year; y++) fireTimelineForSeason(g0, seasonLabelOf(y), calendar.currentDate, true);

@@ -11,7 +11,8 @@ import { CLUB_SEEDS, ClubSeed, SECOND_LIGA_NORD_SEEDS, SECOND_LIGA_SUED_SEEDS, S
 import { DDR_LIGA_SEEDS, DDR_OBERLIGA_SEEDS } from '../data/ddr';
 import { historicClubInfo } from '../data/history/historicClubs';
 import { COUNTRY_SEEDS, COUNTRY_TRENDS } from '../data/worldSeed';
-import { COUNTRY_BY_CC, countryExists, WORLD_COUNTRIES } from '../data/world/countries';
+import { COUNTRY_BY_CC, countryExists, seasonLabelOf, WORLD_COUNTRIES } from '../data/world/countries';
+import { structureForSeason } from '../data/reforms';
 import { realClub, realClubName, worldSeason } from '../data/world/index';
 import type { SeasonRow } from '../data/world/types';
 import type { LeagueGroup, SimClub } from '../engine/leagues';
@@ -63,7 +64,8 @@ interface Ident { id: string; name: string; shortName: string; city: string; pri
 
 /** Name/Farben eines Vereins: Weltdaten > Seeds des Spiels > Historie. */
 export function identOf(cc: string, id: string, year: number): Ident | null {
-  const rc = realClub(cc, id);
+  // Deutschland ab 1991/92 nutzt die DDR-IDs (clubs/gdr.ts) mit.
+  const rc = realClub(cc, id) ?? (cc === 'ger' ? realClub('gdr', id) : cc === 'gdr' ? realClub('ger', id) : undefined);
   const seed = cc === 'ger' ? CLUB_SEEDS.find((s) => s.id === id) : undefined;
   const sec = cc === 'ger' ? [...SECOND_LIGA_NORD_SEEDS, ...SECOND_LIGA_SUED_SEEDS].find((s) => s.id === id) : undefined;
   const ddr = cc === 'ger' || cc === 'gdr' ? [...DDR_OBERLIGA_SEEDS, ...DDR_LIGA_SEEDS].find((s) => s.id === id) : undefined;
@@ -116,7 +118,7 @@ function hashCode(s: string): number {
  * Überschreibung liefert null (= bisheriger Weg, unverändert).
  */
 export function composeHome(cc: string, year: number): ComposedHome | null {
-  const row = worldSeason(cc, year);
+  let row = worldSeason(cc, year);
   if (cc === 'ger' && year === 1975 && row && sameAsSeeds1975(row)) return null;
   if (!row) {
     if (cc !== 'ger' || year === 1975) return null;
@@ -127,6 +129,7 @@ export function composeHome(cc: string, year: number): ComposedHome | null {
       : [{ group: null, name: '2. Liga', clubs: [...SECOND_LIGA_NORD_SEEDS, ...SECOND_LIGA_SUED_SEEDS].sort((a, b) => b.strength - a.strength).slice(0, 20).map((s) => ({ ...s })) }];
     return { cc, year, tier1: CLUB_SEEDS.map((s) => ({ ...s })), second, fromData: false, row: null };
   }
+  row = completeRow(cc, year, row);
   const share = rankShare(cc, year, row);
   const tier1 = row.t1.map((id) => toTier1Seed(cc, id, year, share.get(id) ?? 0.5, row.t1.length)).filter(Boolean) as ClubSeed[];
   // Neu zusammengesetzt: echte Vereine bleiben ihren Seeds treu (Stadion), Ansehen aus dem Rang.
@@ -192,7 +195,10 @@ export function ddrSeedsFor(year: number): { ober: SimClub[]; liga: SimClub[] } 
   const liga = mk([...(row.t2 ?? []), ...(row.t2b ?? [])], 102);
   if (ober.length % 2) ober.pop();
   if (liga.length % 2) liga.pop();
-  return ober.length >= 6 ? { ober, liga: liga.length >= 6 ? liga : DDR_LIGA_SEEDS.map((s) => ({ ...s })) } : null;
+  const oberIds = new Set(ober.map((s) => s.id));
+  const fallback = DDR_LIGA_SEEDS.filter((s) => !oberIds.has(s.id)).map((s) => ({ ...s }));
+  if (fallback.length % 2) fallback.pop();
+  return ober.length >= 6 ? { ober, liga: liga.length >= 6 ? liga : fallback } : null;
 }
 
 /** Zweitligisten der Zusammensetzung als Sim-Vereine (Ebene 2, Staffel je Gruppe). */
@@ -212,4 +218,29 @@ export function sameAsSeeds1975(row: SeasonRow): boolean {
   if (!same(row.t1, CLUB_SEEDS.map((s) => s.id))) return false;
   if (!row.t2?.length && !row.t2b?.length) return true;
   return same(row.t2, SECOND_LIGA_NORD_SEEDS.map((s) => s.id)) && same(row.t2b, SECOND_LIGA_SUED_SEEDS.map((s) => s.id));
+}
+
+/**
+ * Lücken der Daten schließen: fehlende 2. Liga (Top-8-Länder) aus der nächstgelegenen Saison
+ * mit 2. Liga (ohne die Erstligisten dieser Saison); Deutschland: zwei Staffeln zu einer, wenn
+ * das Spiel im Jahr eine eingleisige 2. Liga führt (Wiedervereinigungssaison 1991/92).
+ */
+export function completeRow(cc: string, year: number, row: SeasonRow): SeasonRow {
+  let out = row;
+  if (!row.t2?.length && COUNTRY_BY_CC[cc]?.top8) {
+    for (let d = 1; d <= 12; d++) {
+      const near = worldSeason(cc, year - d)?.t2?.length ? worldSeason(cc, year - d) : worldSeason(cc, year + d)?.t2?.length ? worldSeason(cc, year + d) : null;
+      if (!near) continue;
+      const t2 = [...(near.t2 ?? []), ...(near.t2b ?? [])].filter((id) => !row.t1.includes(id));
+      out = { ...row, t2 };
+      break;
+    }
+  }
+  if (cc === 'ger' && out.t2b?.length && !structureForSeason(seasonLabelOf(year)).some((t) => t.id === 'tier2-nord')) {
+    const a = out.t2 ?? [], b = out.t2b ?? [];
+    const merged: string[] = [];
+    for (let i = 0; i < Math.max(a.length, b.length); i++) { if (a[i]) merged.push(a[i]); if (b[i]) merged.push(b[i]); }
+    out = { ...out, t2: merged, t2b: undefined };
+  }
+  return out;
 }
