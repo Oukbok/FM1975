@@ -191,6 +191,16 @@ export const INFO_TEXTS = {
     text: 'Von 1976 bis 2004 gab es im Winter Hallenturniere. Eine Zusage bringt Antrittsgeld, Prämien und – in der eigenen Stadt – etwas Fan-Stimmung, kostet aber deutlich Frische und birgt Verletzungsrisiko.',
     wiki: 'indoor-football',
   },
+  hallenWertung: {
+    title: 'Masters-Wertung',
+    text: 'Gewertet werden alle Spiele der Qualifikationsturniere: entscheidend ist der Schnitt (Ø Punkte je Spiel), bei Gleichstand die Tordifferenz je Spiel, dann die Tore – ein starkes Turnier kann reichen. Die besten 8 Vereine der beiden oberen Ligen fahren zum Masters; wer verzichtet oder noch ein Pflichtspiel hat, macht Platz für Nachrücker. Ohne Masters (vor 1988, nach 2001) zählen Turniersiege, dann Punkte.',
+    wiki: 'indoor-football',
+  },
+  ligaLand: {
+    title: 'Land wählen',
+    text: 'Schalte durch die Ligen anderer Länder: Heimatland, DDR und Länder „Spiel für Spiel“ mit voller Tabelle, Länder im Hintergrund mit der Abschluss-Reihenfolge (die Saison wird dort erst am Saisonende in einem Zug gerechnet). Saisons vor Spielbeginn kommen aus den Weltdaten.',
+    wiki: 'world-start',
+  },
   hallenMasters: {
     title: 'Hallen-Masters',
     text: 'Das Finalturnier der Hallensaison (1988–2001) für die besten Mannschaften der Tour. Ein Sieg bringt eine Prämie, für die Liga zählt er nicht.',

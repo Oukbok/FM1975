@@ -54,8 +54,10 @@ async function go(label) {
   await page.locator(`.tn-sub-item:has-text("${label}")`).first().click();
   await page.waitForTimeout(400);
 }
-const seasonSel = () => page.locator('.cmp-select .sel3').nth(0);
-const compSel = () => page.locator('.cmp-select .sel3').nth(1);
+// Kopf: Land | Saison | Wettbewerb (Länderwahl: competition/CountryParts.tsx)
+const countrySel = () => page.locator('.cmp-select .sel3').nth(0);
+const seasonSel = () => page.locator('.cmp-select .sel3').nth(1);
+const compSel = () => page.locator('.cmp-select .sel3').nth(2);
 
 await go('Liga');
 await shot('liga');
@@ -70,7 +72,7 @@ for (const [label, n] of [['Vorlagen', 'stat_vorlagen'], ['Rot', 'stat_rot'], ['
 }
 // Weitere Ligen der laufenden Saison
 const opts = (await optionsOf(page, compSel())).map((o) => o.label);
-for (const want of ['2. Liga Nord', 'DDR-Oberliga', 'Regionalliga Nord', '3. Liga']) {
+for (const want of ['2. Liga Nord', 'Regionalliga Nord', '3. Liga']) {
   const o = opts.find((t) => t.startsWith(want));
   if (o) { await pickOption(page, compSel(), { label: o }); await shot(`liga_${want.replace(/\W+/g, '_')}`); }
 }
@@ -78,8 +80,10 @@ for (const want of ['2. Liga Nord', 'DDR-Oberliga', 'Regionalliga Nord', '3. Lig
 await pickOption(page, seasonSel(), '1968/69');
 await pickOption(page, compSel(), 'tier1');
 await shot('hist_1968_liga');
+await pickOption(page, countrySel(), 'gdr');
 await pickOption(page, compSel(), 'ddr-oberliga');
 await shot('hist_1968_ddr');
+await pickOption(page, countrySel(), 'ger');
 await pickOption(page, seasonSel(), '1974/75');
 await pickOption(page, compSel(), 'tier2-sued');
 await shot('hist_1974_2liga_sued');

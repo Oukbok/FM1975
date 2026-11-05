@@ -58,7 +58,7 @@ for (const [m, s, n] of PAGES) {
 // Auswahlliste (ui/Select) geöffnet: Statistiken › Liga, Saison
 try {
   await nav('Statistiken', 'Liga');
-  await page.locator('.cmp-select .sel3').nth(1).click(); await shot('liga_auswahl_offen');
+  await page.locator('.cmp-select .sel3').nth(2).click(); await shot('liga_auswahl_offen');
   await page.keyboard.press('Escape');
 } catch (e) { errors.push('liga_auswahl: ' + e.message.split('\n')[0]); }
 // Stadion: Bau-Popover eines Blocks

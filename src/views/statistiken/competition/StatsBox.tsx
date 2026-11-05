@@ -17,7 +17,7 @@ const CAT_TITLE: Record<StatCat, string> = {
   goals: 'Torschützen', assists: 'Vorlagengeber', scorer: 'Scorer (Tore + Vorlagen)', yellow: 'Gelbe Karten',
   red: 'Rote Karten (inkl. Gelb-Rot)', clean: 'Weiße Weste (Zu-null-Spiele der Torhüter)',
 };
-const CLUB_TITLE: Record<ClubStatCat, string> = { gf: 'Bester Angriff', ga: 'Beste Abwehr', w: 'Meiste Siege', cs: 'Spiele ohne Gegentor', ti: 'Meistertitel seit 1975' };
+const CLUB_TITLE: Record<ClubStatCat, string> = { gf: 'Bester Angriff', ga: 'Beste Abwehr', w: 'Meiste Siege', cs: 'Spiele ohne Gegentor', ti: 'Meistertitel seit Spielbeginn', cw: 'Pokalsiege' };
 
 const CATS: StatCat[] = ['goals', 'assists', 'scorer', 'yellow', 'red', 'clean'];
 const BOX_TITLE: Record<StatCat, string> = { goals: 'Torschützen', assists: 'Vorlagen', scorer: 'Scorer', yellow: 'Gelbe Karten', red: 'Rote Karten', clean: 'Weiße Weste' };
@@ -35,6 +35,8 @@ export function StatsBox({ g, snap, playerCard }: {
   const p = sel && !card ? g.players[sel] ?? (own?.clubId === g.managedClubId ? own : null) : null;
   const stats = snap?.stats;
   const clubStats = snap?.clubStats;
+  // Nicht simulierter Pokal (Länderwahl): Pokalsiege statt Zu-null-Spielen.
+  const clubCats = clubStats?.cw ? CLUB_CATS.map((c) => (c === 'cs' ? 'cw' : c)) : CLUB_CATS;
   const empty = snap?.source === 'live' ? 'Noch keine Einträge.' : 'Keine Einträge.';
   // Über ein Portal: die Box (Glas-Effekt) würde ein festes Popup sonst auf ihre Größe beschneiden.
   const modal = card ? createPortal(card, document.body) : p ? createPortal(
@@ -77,7 +79,7 @@ export function StatsBox({ g, snap, playerCard }: {
   // Ohne Einzelstatistik: Vereinswerte (+ Torschützenkönig bzw. Endspiele aus der Historie)
   return (
     <>
-      {CLUB_CATS.map((cc) => {
+      {clubCats.map((cc) => {
         const list = clubStats?.[cc] ?? [];
         return (
           <DashBox key={cc} title={<span title={CLUB_TITLE[cc]}>{CLUB_TITLE[cc]}</span>} className="cmp-statbox">

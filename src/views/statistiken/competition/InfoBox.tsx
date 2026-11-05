@@ -16,6 +16,16 @@ export function InfoBox({ g, snap }: { g: Game; snap: CompSnapshot | null }) {
   if (!snap) return <DashBox title="Saison" icon="chronicle"><div className="dnote">–</div></DashBox>;
   const T = (id: string) => <TeamName g={g} id={id} season={snap.season} size={16} />;
 
+  // Länderwahl: Stand aus Weltdaten/Hintergrund – Stichpunkte statt Tabellen-Auswertung.
+  if (snap.facts) {
+    return (
+      <DashBox title="Saisonbilanz" icon="chronicle" right={snap.label}>
+        {snap.facts.map((f, i) => <KV key={i} k={f.k} v={f.id ? T(f.id) : f.text ?? '–'} strong={i === 0 && !!f.id} />)}
+        {snap.note && <div className="dnote mt8">{snap.note}</div>}
+      </DashBox>
+    );
+  }
+
   if (snap.kind === 'league') {
     const rows = snap.table ?? [];
     const my = rows.find((r) => r.clubId === mid);

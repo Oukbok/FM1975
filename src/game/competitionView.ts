@@ -6,6 +6,7 @@
 // (Liga, Pokal, International) lesen nur diesen Schnappschuss.
 // =============================================================================
 import { COUNTRY_BY_CC } from '../data/world/countries';
+import { identOf } from './worldCompose';
 import { homeCountryOf } from './state';
 import { isLocalClub, localClubName } from './youthComps/localClubs';
 import { EURO_COMP_NAMES } from '../data/europe';
@@ -59,7 +60,7 @@ export interface RoundLite {
   matches?: { id: string; md: number; date: string; group: string; home: string; away: string; hg: number | null; ag: number | null; matchId?: string; mine: boolean }[];
 }
 export interface StatRow { pid: string; name: string; clubId: string; pos: string; value: number; apps: number }
-export type ClubStatCat = 'gf' | 'ga' | 'w' | 'cs' | 'ti';
+export type ClubStatCat = 'gf' | 'ga' | 'w' | 'cs' | 'ti' | 'cw';
 export interface ClubStatRow { clubId: string; value: number }
 
 export interface CompSnapshot {
@@ -79,6 +80,16 @@ export interface CompSnapshot {
   note?: string;
   /** Eigene Tabellenzonen je Platz (Index = Platz − 1), z. B. Jugend: Endrunde/Abstieg. */
   zones?: string[];
+  /** Länderwahl (game/competitionCountry.ts): Zeile über der Tabelle, z. B. „Abschlusstabelle 1977/78“. */
+  caption?: string;
+  /** Nur Teilnehmer (Hintergrund-Saison läuft noch): Liste ohne Platzierung. */
+  roster?: boolean;
+  /** Pokal ohne Runden (nicht simuliert): Siegerliste je Saison. */
+  winners?: { season: string; winner: string | null; finalist?: string }[];
+  /** Saisonbilanz als Stichpunkte statt aus der Tabelle (Info-Box). */
+  facts?: { k: string; id?: string; text?: string }[];
+  /** Text statt leerer Tabelle. */
+  emptyText?: string;
 }
 
 const CUP_LABEL = (k: CupKey, season: string) => (k === 'cup' ? 'Landespokal' : euroCompName(k, seasonStartYear(season)) ?? EURO_COMP_NAMES[k]);
@@ -383,6 +394,8 @@ export function compClubName(g: Game, id: string, season: string, short = false)
   const year = seasonStartYear(season);
   const eu = g.euroClubs?.[id];
   if (eu) return short ? eu.shortName : eu.name;
+  const wd = worldDataIdent(id, year);
+  if (wd) return short ? wd.ident.shortName : wd.ident.name;
   const hf = HIST_FOREIGN[id];
   if (hf) return hf.name;
   if (isLocalClub(id)) return localClubName(id); // erzeugte Ortsvereine der Jugendstaffeln
@@ -393,5 +406,17 @@ export function compClubName(g: Game, id: string, season: string, short = false)
 }
 
 export function foreignCountry(g: Game, id: string): string | undefined {
-  return g.euroClubs?.[id]?.country ?? HIST_FOREIGN[id]?.country;
+  return g.euroClubs?.[id]?.country ?? HIST_FOREIGN[id]?.country ?? worldDataIdent(id, 2000)?.country;
+}
+
+/** Verein aus den Weltdaten (`w_<id>`), der im Spielstand nicht (mehr) existiert – z. B. Saisons vor dem Startjahr. */
+function worldDataIdent(id: string, year: number): { ident: NonNullable<ReturnType<typeof identOf>>; country: string } | null {
+  if (!id.startsWith('w_')) return null;
+  const real = id.slice(2);
+  const pre = real.split('-')[0];
+  for (const cc of COUNTRY_BY_CC[pre] && pre !== real ? [pre] : ['ger', 'gdr']) {
+    const ident = identOf(cc, real, year);
+    if (ident) return { ident, country: COUNTRY_BY_CC[cc].key };
+  }
+  return null;
 }

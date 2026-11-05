@@ -57,7 +57,12 @@ export interface WorldSeasonRecord {
   season: string;
   champions: Record<string, string>;
   cupWinners: Record<string, string>;
+  /** Abschluss-Reihenfolge der 1. Liga je Land (nur die letzten WORLD_TABLES_KEEP Saisons; optional). */
+  tables?: Record<string, string[]>;
 }
+
+/** So viele Saisons behält die Welt-Historie die Abschluss-Reihenfolge (Spielstand-Größe). */
+export const WORLD_TABLES_KEEP = 10;
 
 export interface WorldState {
   version: 1;
@@ -416,6 +421,7 @@ export function advanceWorldSeason(
     c.titles[champ] = (c.titles[champ] ?? 0) + 1;
     rec.champions[c.name] = champ;
     rec.cupWinners[c.name] = cupWinner;
+    (rec.tables ??= {})[c.name] = [...t1];
 
     // Größe: Meister/Spitzenplätze wachsen, Absteiger schrumpfen.
     t1.forEach((id, i) => {
@@ -463,6 +469,7 @@ export function advanceWorldSeason(
   w.participants = participants;
   w.history.push(rec);
   if (w.history.length > 60) w.history.shift();
+  for (let i = 0; i < w.history.length - WORLD_TABLES_KEEP; i++) delete w.history[i].tables;
   return { notes, participants };
 }
 

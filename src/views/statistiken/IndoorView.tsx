@@ -4,7 +4,8 @@ import {
   INDOOR_LAST_WINTER, MASTERS_FIRST_WINTER, MASTERS_LAST_WINTER, MASTERS_TEAMS, REAL_MASTERS, indoorPhase, mastersMoney,
   mastersTv, mastersVenue, winterYearOf,
 } from '../../data/indoorHistory';
-import { INDOOR_SQUAD_LABEL, IndoorMatch, tourRanking, winnerOf } from '../../engine/indoor';
+import { INDOOR_SQUAD_LABEL, IndoorMatch, winnerOf } from '../../engine/indoor';
+import { MastersBox } from './indoor/MastersBox';
 import { allTournaments, indoorName, indoorShort, setOwnIndoorDecision } from '../../game/indoorGame';
 import { Game } from '../../game/state';
 import { IndoorDecision, IndoorTournament, indoorState } from '../../game/winterShared';
@@ -12,7 +13,7 @@ import { DashBox, DashPage, Empty, KV, Meter } from '../../ui/DashPage';
 import { fmtDM, fmtDay } from '../../ui/format';
 
 // =============================================================================
-// HALLE — Hallenturniere der Winterpause, Tour-Wertung, Hallen-Masters (1976–2004)
+// HALLE — Hallenturniere der Winterpause, Masters-Wertung (indoor/MastersBox.tsx), Hallen-Masters (1976–2004)
 // Spielablauf: game/indoorGame.ts · Historie: data/indoorHistory.ts
 // =============================================================================
 const PHASE_TEXT: Record<string, string> = {
@@ -45,7 +46,6 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
     return <span style={{ color: 'var(--green)' }}>Zusage · {INDOOR_SQUAD_LABEL[t.own]}</span>;
   };
 
-  const tour = tourRanking(cur?.tour ?? []);
   // Reale Sieger nur bis zum aktuellen Winter (keine Vorschau auf die Zukunft).
   const realSoFar = REAL_MASTERS.filter((r) => r.year < wy || (r.year === wy && !!cur?.masters?.done)).reverse();
   const title = (id: string) => st.titles[id] ?? 0;
@@ -106,29 +106,7 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
         <div className="dnote mt8">Plus: Antrittsgeld, Fans, Spielpraxis für Reservisten, Moral bei Titeln. Minus: harter Boden und Bande (Verletzungen), müde Spieler, kürzere Pause, Konflikt mit dem Trainingslager.</div>
       </DashBox>
 
-      <DashBox title={phase === 'masters' ? 'Tour-Wertung' : 'Turniersieger'} icon="stats" flush>
-        {phase === 'masters' ? (tour.length ? (
-          <table className="dtable">
-            <thead><tr><th className="rl-rank">#</th><th>Verein</th><th className="num">T</th><th className="num">Sp</th><th className="num">Pkt</th><th className="num">Ø</th></tr></thead>
-            <tbody>
-              {tour.slice(0, 30).map((s, i) => (
-                <tr key={s.id} className={s.id === mid ? 'me' : ''}>
-                  <td className="rl-rank"><span className={`rl-z ${i < MASTERS_TEAMS ? 'zone-cl' : ''}`}>{i + 1}</span></td>
-                  <td className="nowrap"><ClubLink id={s.id}><span className="rl-name">{indoorShort(g, s.id)}</span></ClubLink>{cur?.mastersDeclined?.includes(s.id) ? <span className="muted"> (verzichtet)</span> : ''}</td>
-                  <td className="num">{s.tournaments}</td><td className="num">{s.games}</td><td className="num rl-main">{s.pts}</td>
-                  <td className="num">{(s.pts / s.games).toFixed(2)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : <Empty icon="stats">Noch keine Qualifikationsturniere gespielt.</Empty>) : (
-          <div style={{ padding: '0 15px' }}>
-            {list.filter((t) => t.done).length ? list.filter((t) => t.done).map((t) => (
-              <div key={t.id} className="dlist-row"><span className="grow">{t.city}</span><b>{indoorName(g, t.result!.ranking[0])}</b></div>
-            )) : <Empty icon="trophy">Noch keine Turniere gespielt.</Empty>}
-          </div>
-        )}
-      </DashBox>
+      <MastersBox g={g} st={st} cur={cur} wy={wy} />
 
       <DashBox title={!sel ? 'Turnier' : sel.kind === 'masters' ? sel.name : `Turnier ${sel.city} ${fmtDay(sel.date)}`} icon="matchball">
         {!sel ? <Empty icon="matchball">Kein Turnier ausgewählt.</Empty> : !sel.done || !sel.result ? (

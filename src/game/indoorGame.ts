@@ -4,6 +4,7 @@
 // Historie/Quellen: data/indoorHistory.ts · Simulation: engine/indoor.ts ·
 // Spielstand: game/winterShared.ts · Anschluss: game/day.ts (indoorDaily).
 // =============================================================================
+import { mastersBoard, packBoard } from './indoorMasters';
 import { INDOOR_GAP_DAYS } from '../data/matchCalendarRules';
 import { addDevPoints } from '../engine/devLog';
 import {
@@ -560,6 +561,8 @@ function finishWinter(g: Game, today: string): void {
   }
   const entry: IndoorHistoryEntry = { year: cur.winterYear, phase: cur.phase, own, winners: cur.tournaments.filter((t) => t.done).map((t) => t.result!.ranking[0]) };
   const m = cur.masters;
+  const board = packBoard(mastersBoard(g, cur, cur.winterYear, (id) => indoorShort(g, id)));
+  if (board) entry.board = board;
   if (m?.done && m.result) {
     const fin = m.result.matches.find((x) => x.stage === 'F')!;
     entry.mastersWinner = m.result.ranking[0];

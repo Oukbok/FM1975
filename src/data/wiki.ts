@@ -329,7 +329,14 @@ Am **20. Dezember** hält der Zeitlauf an: Bei einer **Gala** (bis 2009 und ab 2
     title: 'Ligen, Pokale, Historie & Bestenlisten',
     keywords: ['tabelle', 'historie', 'archiv', 'saison', 'torschützen', 'vorlagen', 'scorer', 'gelb', 'rot', 'weiße weste', 'zu null', 'turnierbaum', 'runden', 'bundesliga', '1963', 'pool', 'amateur'],
     body: `## Eine Seite für jeden Wettbewerb
-Unter **Statistiken › Liga, Pokal und International** siehst du jeden Wettbewerb im gleichen Aufbau: links groß die **Tabelle** (umschaltbar Gesamt / Heim / Auswärts / Form) bzw. beim Pokal der **Turnierbaum** oder die **Rundenliste** mit Rundenwahl, rechts die **Statistik** und darunter Saisonbilanz bzw. „Dein Weg“. Oben wählst du **Saison** und **Wettbewerb**: alle Ligen aller Ebenen, die DDR-Ligen, Landespokal, Europapokale und – für die zuletzt beendete Saison – die Auslandsligen.
+Unter **Statistiken › Liga, Pokal und International** siehst du jeden Wettbewerb im gleichen Aufbau: links groß die **Tabelle** (umschaltbar Gesamt / Heim / Auswärts / Form) bzw. beim Pokal der **Turnierbaum** oder die **Rundenliste** mit Rundenwahl, rechts die **Statistik** und darunter Saisonbilanz bzw. „Dein Weg“. Oben wählst du **Land**, **Saison** und **Wettbewerb**: alle Ligen aller Ebenen, Landespokal und Europapokale; DDR und Auslandsligen über die Länderwahl.
+
+## Länder wählen
+Ganz links im Kopf wählst du das **Land** (Auswahl merkt sich bis zum Neuladen); Saison-Pfeile und Wettbewerbe richten sich danach:
+- **Heimatland:** wie oben – laufende Saison, Archiv, Historie; bei späterem Startjahr zusätzlich die Saisons davor aus den Weltdaten (nur Reihenfolge der Abschlusstabelle).
+- **DDR** (bis 1990/91) und **Länder „Spiel für Spiel“:** volle Tabelle Spieltag für Spieltag, frühere Saisons aus dem Archiv.
+- **Länder im Hintergrund:** dort wird eine Saison erst am Saisonende in einem Zug gerechnet. Für die laufende Saison siehst du deshalb die **Teilnehmer** (alphabetisch), für abgeschlossene Saisons die **Abschlusstabelle** (nur Platzierungen; gespeichert für die letzten 10 Saisons, davor Meister und Pokalsieger).
+- **Pokale anderer Länder** werden nicht Spiel für Spiel simuliert: Statistiken › Pokal zeigt dann ehrlich nur die **Sieger** je Saison (vor Spielbeginn mit Finalgegner aus den Weltdaten) und die Rangliste der Pokalsiege.
 
 ## Bestenlisten
 Die Match-Engine zählt je Wettbewerb: **Tore, Vorlagen, Scorer** (Tore + Vorlagen), **Gelbe Karten, Rote Karten** (Gelb-Rot zählt mit) und die **Weiße Weste** (Spiele ohne Gegentor eines Torhüters). Ligen ohne volle Kader werden vereinsweise simuliert – dort zeigt die Statistik **Vereinswerte** (Tore, Gegentore, Siege, Zu-null-Spiele). Im Europapokal zählen die voll simulierten Spiele mit deutscher Beteiligung.
@@ -787,8 +794,8 @@ Unter **Verein** wählst du zuerst das **Land**: Deutschland immer, dazu jedes L
 
 ### Simulationstiefe
 - **Deine Liga:** volle Kader, jedes Spiel mit der Match-Engine.
-- **Spiel für Spiel:** im Assistenten je Land wählbar – Spielplan, Tabelle Spieltag für Spieltag, Auf- und Abstieg; zu sehen unter Statistiken › Liga („Länder Spiel für Spiel“). Die Endtabelle bestimmt Meister und Europapokal-Starter des Landes.
-- **Hintergrund:** einmal je Saison durchgerechnet (Meister, Pokalsieger, Koeffizient).
+- **Spiel für Spiel:** im Assistenten je Land wählbar – Spielplan, Tabelle Spieltag für Spieltag, Auf- und Abstieg; zu sehen unter Statistiken › Liga (Länderwahl, Gruppe „Spiel für Spiel“). Die Endtabelle bestimmt Meister und Europapokal-Starter des Landes.
+- **Hintergrund:** einmal je Saison durchgerechnet (Meister, Pokalsieger, Koeffizient); unter Statistiken › Liga mit Abschlusstabelle bzw. Teilnehmern der laufenden Saison.
 
 ### Editor
 Im Datensatz-Editor (Bereich **Weltdaten**) sind alle Länder – auch Deutschland – bearbeitbar: Vereine (Name, Kürzel, Stadt, Farben) und je Saison 1./2. Liga in Tabellenreihenfolge, Pokalsieger und Europapokal-Teilnehmer. Geänderte deutsche Namen gelten auch für die Startvereine von 1975.`,
@@ -3425,6 +3432,9 @@ Jugendintegration). Sie zahlen über ihre Finanzen und bekommen rund ein Drittel
 Sechs Teams je Turnier (zwei Dreiergruppen, Halbfinale, Spiel um Platz 3, Finale); Masters mit zwei Vierergruppen über zwei Tage.
 Fünf Feldspieler plus Torwart, Rundumbande, Gruppenspiele 12 Minuten, K.-o.-Spiele 2 × 10 Minuten, Neunmeterschießen bei Remis,
 Zwei-Minuten-Strafen. Die Hallenstärke zählt Technik, Ballkontrolle, Antritt und Wendigkeit stärker als Kopfball und Härte; Außenseiter gewinnen öfter als draußen.
+
+## Masters-Wertung
+Unter **Statistiken › Halle** zeigt die Box **Masters-Wertung** alle Teams mit ihren Punkten aus den Qualifikationsturnieren: Turniere, Spiele, Punkte, Tore und der **Schnitt (Ø Punkte je Spiel)**, nach dem wie in der Wirklichkeit sortiert wird (dann Tordifferenz je Spiel, dann Tore). Eine Linie trennt die **8 Masters-Plätze**; startberechtigt sind nur Vereine der beiden oberen Ligen (Gäste aus dem Ausland und Amateure stehen grau darunter). Steht das Feld, siehst du **dabei**, **Nachrücker**, **verzichtet** (Spitzenvereine sagen manchmal ab) und **verhindert** (Pflichtspiel an den Masters-Tagen); nach dem Masters die Endplatzierung. Vor dem ersten Turnier stehen alle gemeldeten Teams bei 0. In Wintern ohne Masters (vor 1988, 2002–2004) zählt die **Hallen-Wertung** nach Turniersiegen, dann Punkten. Über die kleine Auswahl rechts oben siehst du die Endwertung früherer Winter.
 
 ## Deine Entscheidung
 Einladungen kommen Anfang November als Nachricht und stehen unter **Statistiken › Halle**: **Stammkräfte**, **gemischt**, **Nachwuchs** oder **Absage**.
