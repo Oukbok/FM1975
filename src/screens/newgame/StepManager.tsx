@@ -6,7 +6,7 @@ import { CountryFlag } from '../../components/competition/CountryFlag';
 import { NATIONALITIES } from '../../data/countryFlags';
 import { ManagerBackground, ManagerStyle, Player } from '../../types';
 import {
-  BG_DE, BIRTH_YEARS, DIFF_DE, MONTHS, NewGameDraft, STYLE_DE, ageAtStart, allPreviewClubs, daysInMonth, fullName, managerFace,
+  BG_DE, birthYearsFor, DIFF_DE, MONTHS, NewGameDraft, STYLE_DE, ageAtStart, allPreviewClubs, daysInMonth, fullName, managerFace,
 } from './draft';
 import Select from '../../ui/Select';
 
@@ -52,17 +52,17 @@ export function StepManager({ d, set }: { d: NewGameDraft; set: (p: Partial<NewG
                   {MONTHS.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}
                 </Select>
                 <Select className="ng-sel" size="l" value={d.birthYear} onChange={(v) => set({ birthYear: +v })}>
-                  {BIRTH_YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
+                  {birthYearsFor(d.startYear).map((y) => <option key={y} value={y}>{y}</option>)}
                 </Select>
               </div>
             </div>
           </div>
           <div className="ng-portrait">
-            <PlayerAvatar player={{ ...face, age }} size={150} staff year={1975} />
+            <PlayerAvatar player={{ ...face, age }} size={150} staff year={d.startYear} />
             <button type="button" className="ng-btn small ghost" onClick={reroll}><Icon name="dice" size={16} /> Anderes Gesicht</button>
           </div>
         </div>
-        <div className="ng-kv"><span>Alter beim Start (1. Juli 1975)</span><b>{age} Jahre</b></div>
+        <div className="ng-kv"><span>Alter beim Start (1. Juli {d.startYear})</span><b>{age} Jahre</b></div>
         <label className="ng-field">Nationalität
           <span className="ng-with-flag"><CountryFlag country={FLAG_OF[d.nationality] ?? d.nationality} height={14} />
             <Select className="ng-sel" size="l" value={d.nationality} onChange={(v) => set({ nationality: v })}>

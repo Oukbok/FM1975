@@ -49,13 +49,17 @@ export function LeaguePyramid({ data, mineId, className = '' }: { data: PyramidD
     const next = s === 'west' ? data.west : s === 'ddr' ? data.ddr : data.abroad.find((a) => a.key === (c ?? country));
     setSelId(findDiv(next, mineId)?.id);
   };
-  const cName = side === 'abroad' ? countryInfo(sys?.key ?? '').name : side === 'ddr' ? 'DDR' : 'Deutschland (West)';
+  // Heimatland (Weltdaten): Reiter/Flagge nach dem Land der eigenen Liga; DDR nur für Deutschland.
+  const homeFlag = data.west.key === 'west' ? 'Deutschland' : data.west.key;
+  const isGer = homeFlag === 'Deutschland';
+  const sides = SIDES.filter((s) => s.k !== 'ddr' || isGer).map((s) => (s.k === 'west' ? { ...s, label: data.west.title, country: homeFlag } : s));
+  const cName = side === 'abroad' ? countryInfo(sys?.key ?? '').name : side === 'ddr' ? 'DDR' : isGer ? 'Deutschland (West)' : data.west.title;
 
   return (
     <div className={`lp ${className}`}>
       <div className="lp-bar">
         <div className="lp-seg" role="tablist">
-          {SIDES.map((s) => (
+          {sides.map((s) => (
             <button key={s.k} role="tab" aria-selected={side === s.k} className={side === s.k ? 'on' : ''} onClick={() => pick(s.k)}>
               {s.country && <CountryFlag country={s.country} height={14} />}{s.label}
             </button>
@@ -78,7 +82,7 @@ export function LeaguePyramid({ data, mineId, className = '' }: { data: PyramidD
           {sel ? <>
             <div className="lp-list-head">
               <div className="lp-list-title">{sel.name}</div>
-              <div className="lp-list-sub"><CountryFlag country={side === 'abroad' ? sys?.key ?? '' : side === 'ddr' ? 'DDR' : 'Deutschland'} height={12} />{cName} · {sel.clubs.length} Vereine</div>
+              <div className="lp-list-sub"><CountryFlag country={side === 'abroad' ? sys?.key ?? '' : side === 'ddr' ? 'DDR' : homeFlag} height={12} />{cName} · {sel.clubs.length} Vereine</div>
               <div className="lp-list-note">{sel.order === 'table' ? 'Aktuelle Tabelle' : sel.order === 'pool' ? 'Nach Stärke – kein Spielbetrieb im Spiel' : 'Prognose nach Stärke'}</div>
             </div>
             <div className="rl rl-sm lp-rows">

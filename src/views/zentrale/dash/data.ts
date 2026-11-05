@@ -1,6 +1,8 @@
 // =============================================================================
 // ZENTRALE – reine Anzeige-Daten der Widgets (keine Spiellogik, nichts gespeichert).
 // =============================================================================
+import { COUNTRY_BY_CC } from '../../../data/world/countries';
+import { homeCountryOf } from '../../../game/state';
 import { seasonLabel } from '../../../engine/calendar';
 import { totalIncome } from '../../../engine/finances';
 import { competitionOptions, type CompOption } from '../../../game/competitionView';
@@ -115,8 +117,9 @@ export function overviewSections(g: Game): OvSection[] {
     : o.key === 'cup' ? !!g.cup?.rounds.some((r) => r.ties.some((t) => t.homeClubId === me || t.awayClubId === me) || r.entrants?.includes(me))
     : inEuroCup(g.euroCups?.[o.key as 'ec' | 'cwc' | 'uefa'], me));
   const it = (o: CompOption, season: string): OvItem => ({ ...o, season, mine: mineOf(o) && season === g.season });
-  const de = live.filter((o) => o.section === 'Deutschland' || o.section === 'Pokal').map((o) => it(o, g.season));
-  const out: OvSection[] = [{ key: 'de', label: 'Deutschland', items: de }];
+  const homeName = COUNTRY_BY_CC[homeCountryOf(g)]?.name ?? 'Deutschland';
+  const de = live.filter((o) => o.section === homeName || o.section === 'Pokal').map((o) => it(o, g.season));
+  const out: OvSection[] = [{ key: 'de', label: homeName, items: de }];
   const ddr = live.filter((o) => o.section === 'DDR').map((o) => it(o, g.season));
   if (ddr.length) out.push({ key: 'ddr', label: 'DDR', items: ddr });
   const eu = live.filter((o) => o.section === 'Europa').map((o) => it(o, g.season));

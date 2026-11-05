@@ -41,7 +41,7 @@ import { setHomeOrigin } from '../data/origins';
 import { composeHome, ddrSeedsFor, secondSimClubs } from './worldCompose';
 import { amateurTownsFor, clampStartYear, fillLowerTiers, reformsAppliedAt, seedPreStartHistory, seedStartPool, startEuroQualifiers } from './startYear';
 import { needsOverlay, worldOverlay } from '../engine/worldData';
-import type { LeagueDivision, LeagueGroup } from '../engine/leagues';
+import { setHomeLabel, type LeagueDivision, type LeagueGroup } from '../engine/leagues';
 import { applyTimelineEffect, fireTimelineForSeason } from './season';
 import { Game, hashSeed, migrateCommerce } from './state';
 import { initSponsorship } from './sponsorGame';
@@ -63,6 +63,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   const startISO = `${year}-07-01`;
   const fxStart = `${year}-08-15`;
   setHomeOrigin(isGer ? null : countryOrigin(home));
+  setHomeLabel(COUNTRY_BY_CC[home].name);
   setEraYear(year);
   // Punktesystem historisch fest ableiten (Deutschland: 3 Punkte ab 1995/96 über den Meilenstein;
   // andere Länder nach ihrem Einführungsjahr, data/world/countries.ts).

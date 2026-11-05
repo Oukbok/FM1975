@@ -42,6 +42,7 @@ import { nextDrawDate, scheduleDraws } from './cupDraw';
 import { CalendarEngine } from '../engine/calendar';
 import { Game, bestOffer, hashSeed, homeCountryOf, migrateCommerce, offerToContract } from './state';
 import { countryPointSystem } from '../data/world/countries';
+import { homeExcluded } from './startYear';
 
 const isGermanHome = (g: Game) => homeCountryOf(g) === 'ger';
 import { sponsorSeasonStart } from './sponsorGame';
@@ -221,6 +222,7 @@ export function startNextSeason(g: Game): void {
   const euroQuals = computeGermanEuroQualifiers(g, false);
   // Punkteregel des Heimatlandes (Deutschland: Chronik-Meilenstein 1995/96).
   if (!isGermanHome(g)) g.pointSystem = countryPointSystem(homeCountryOf(g), nextStartYear);
+  if (homeExcluded(homeCountryOf(g), nextStartYear)) { euroQuals.ec = []; euroQuals.cwc = []; euroQuals.uefa = []; }
   // Versprechen zum ersten Training: Endstand festhalten, Auswertung nach dem Auf-/Abstieg.
   const promSnap = seasonPromiseSnapshot(g, Object.values(euroQuals).some((ids) => ids.includes(g.managedClubId)));
   const promDate = g.calendar.currentDate;

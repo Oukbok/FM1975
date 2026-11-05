@@ -92,8 +92,12 @@ export function groupLabel(group: LeagueGroup): string {
   }
 }
 
+/** Name des Heimatlandes für Beschriftungen (Weltdaten; Standard Deutschland). */
+let homeLabel = 'Deutschland';
+export function setHomeLabel(name: string): void { homeLabel = name || 'Deutschland'; }
+
 export function divisionLabel(tier: number, group: LeagueGroup): string {
-  if (tier === 1) return 'Deutschland 1. Liga';
+  if (tier === 1) return `${homeLabel} 1. Liga`;
   if (tier === 2) {
     if (group) return `2. Liga ${groupLabel(group)}`;
     return '2. Liga';

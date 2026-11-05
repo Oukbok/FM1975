@@ -1,4 +1,5 @@
 import { PlannedActivity } from '../data/activities';
+import { COUNTRY_BY_CC } from '../data/world/countries';
 import { EuroClub } from '../data/europe';
 import type { WorldState } from '../engine/world';
 import type { SeasonPhase, StaffMember, TrainingFocus } from '../engine/staffPeople';
@@ -157,6 +158,8 @@ export interface Game {
 
 /** Heimatland des Spielstands (fehlt = Deutschland). */
 export const homeCountryOf = (g: { homeCountry?: string }): string => g.homeCountry ?? 'ger';
+/** Länder-Schlüssel des Heimatlandes wie `EuroClub.country` („Deutschland“, „England“ …). */
+export const homeCountryKey = (g: { homeCountry?: string }): string => COUNTRY_BY_CC[homeCountryOf(g)]?.key ?? 'Deutschland';
 
 // Moral-Stufen in aufsteigender Reihenfolge (für Aktivitäts-Effekte, Block p11).
 export const MORALE_ORDER: import('../types').PlayerMorale[] = ['very_low', 'low', 'okay', 'good', 'excellent'];

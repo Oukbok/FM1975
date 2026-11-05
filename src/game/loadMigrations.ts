@@ -4,7 +4,8 @@
 // idempotent. Genutzt von App.tsx (Laden) und tests/season-test.ts.
 // =============================================================================
 import { setHomeOrigin } from '../data/origins';
-import { countryOrigin } from '../data/world/countries';
+import { COUNTRY_BY_CC, countryOrigin } from '../data/world/countries';
+import { setHomeLabel } from '../engine/leagues';
 import { applyDataset } from '../data/dataset/apply';
 import { BUILTIN_ID } from '../data/dataset/builtin';
 import { cachedDataset } from '../data/dataset/storage';
@@ -79,6 +80,7 @@ export function prepareLoadedGame(g: Game): void {
   }
   // Heimatland (Weltdaten): Herkunft der Einheimischen für neue Spieler/Jugend.
   setHomeOrigin(g.homeCountry && g.homeCountry !== 'ger' ? countryOrigin(g.homeCountry) : null);
+  setHomeLabel(COUNTRY_BY_CC[g.homeCountry ?? 'ger']?.name ?? 'Deutschland');
   // Positionsbewertung auf das Spieljahr einstellen; ältere Spielstände auf Entwicklung 2.0 heben.
   setEraYear(Number(g.calendar.currentDate.slice(0, 4)));
   // Positionen 2.0: alte Kürzel VS/AV/FL → IV, RV/LV, RA/LA (vor allem, was Positionen bewertet).

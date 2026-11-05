@@ -6,7 +6,7 @@
 // Weltdaten läuft weiter über den alten Weg in newGame.ts.
 // =============================================================================
 import { CLUB_SEEDS, SECOND_LIGA_NORD_SEEDS, SECOND_LIGA_SUED_SEEDS } from '../data/generate';
-import { COUNTRY_SEEDS } from '../data/worldSeed';
+import { COUNTRY_SEEDS, EURO_EXCLUSIONS } from '../data/worldSeed';
 import { COUNTRY_BY_CC, seasonLabelOf } from '../data/world/countries';
 import { worldSeason } from '../data/world/index';
 import { makePlaceholder, structureForSeason, LEAGUE_REFORMS } from '../data/reforms';
@@ -90,6 +90,7 @@ export function startCountryRank(home: string, year: number): number {
 export function startEuroQualifiers(g: Pick<Game, 'clubs' | 'simClubs'>, home: string, year: number, comp: ComposedHome | null): Record<EuroCompId, string[]> {
   const exists = (id: string) => !!g.clubs[id] || !!g.simClubs[id];
   const out: Record<EuroCompId, string[]> = { ec: [], cwc: [], uefa: [] };
+  if (homeExcluded(home, year)) return out;
   const euro = (comp?.row ?? worldSeason(home, year))?.euro;
   if (euro) {
     for (const [k, ids] of Object.entries(euro) as [EuroComp, string[]][]) {
@@ -139,4 +140,10 @@ export function amateurTownsFor(home: string, usedCities: Set<string>): string[]
   const seed = COUNTRY_SEEDS.find((s) => s.name === COUNTRY_BY_CC[home]?.key);
   const towns = (seed?.cities ?? []).filter((c) => !usedCities.has(c));
   return towns.length >= 6 ? towns : [...towns, ...['Nord', 'Süd', 'Ost', 'West', 'Mitte', 'Hafen', 'Altstadt', 'Neustadt'].map((x) => `${COUNTRY_BY_CC[home]?.name ?? ''} ${x}`.trim())];
+}
+
+/** Heimatland in der Saison vom Europapokal ausgeschlossen (z. B. England 1985–1990). */
+export function homeExcluded(home: string, year: number): boolean {
+  const key = COUNTRY_BY_CC[home]?.key;
+  return home !== 'ger' && EURO_EXCLUSIONS.some((e) => e.country === key && year >= e.from && year <= e.to);
 }
