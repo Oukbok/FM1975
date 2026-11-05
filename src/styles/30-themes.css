@@ -251,6 +251,9 @@
   --btn-bg: rgba(255, 255, 255, 0.045); --btn-bg-hover: rgba(255, 255, 255, 0.09); --btn-bg-press: rgba(255, 255, 255, 0.12);
   --btn-border: rgba(255, 255, 255, 0.10); --btn-border-hover: rgba(255, 255, 255, 0.22);
   --sel-bg: rgba(255, 255, 255, 0.14); --sel-border: rgba(255, 255, 255, 0.42); --sel-text: #eef1f5;
+  --btn-text: #aeb7c3; --btn-text-hover: #eef1f5; --btn-off-text: #aeb7c3;
+  --btn-on-bg: rgba(255, 255, 255, 0.14); --btn-on-border: rgba(255, 255, 255, 0.42); --btn-on-text: #eef1f5;
+  --btn-on-mark: transparent; --btn-on-shadow: 0 0 0 transparent; --seg-bg: rgba(0, 0, 0, 0.18);
   --pop-bg: #1e2228; --pop-border: rgba(255, 255, 255, 0.14); --pop-hover: rgba(255, 255, 255, 0.08);
   --face-bg-1: #1f2a3a; --face-bg-2: #0f141c;
   --shadow: 0 6px 24px rgba(0, 0, 0, 0.45); --shadow-lg: 0 18px 55px rgba(0, 0, 0, 0.6);

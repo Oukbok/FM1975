@@ -29,10 +29,15 @@
 }
 .b3:active:not(:disabled), .dchip:active:not(:disabled), .chip:active:not(:disabled) { background: var(--btn-bg-press); transform: none; }
 .b3.on, .b3.active, .dchip.on, .chip.active, .ms-chip.on, .tm-chip.on, .cp-map-tab.on, .lp-countries button.on, .pp-preset.on {
-  background: var(--sel-bg); border-color: var(--sel-border); color: var(--sel-text); font-weight: 700;
+  background: var(--btn-on-bg); border-color: var(--btn-on-border); color: var(--btn-on-text); font-weight: 700;
+  box-shadow: var(--btn-on-shadow);
+}
+/* Gewählt + Hover: bleibt die gewählte Fläche (sonst springt ein weißer Knopf auf grau) */
+.b3.on:hover:not(:disabled), .dchip.on:hover:not(:disabled), .chip.active:hover:not(:disabled) {
+  background: var(--btn-on-bg); border-color: var(--btn-on-border); color: var(--btn-on-text); filter: brightness(1.05);
 }
 .b3:disabled, .dchip:disabled, .chip:disabled, .ms-chip:disabled, .tm-chip:disabled, .cp-map-tab:disabled, .lp-countries button:disabled {
-  opacity: 0.42; cursor: not-allowed;
+  opacity: var(--btn-off-opacity); color: var(--btn-off-text); cursor: not-allowed;
 }
 .b3-s, .dchip.b3-s { min-height: var(--btn-h-s); padding: 0 12px; font-size: 14px; }
 .b3-l { min-height: var(--btn-h-l); padding: 0 22px; font-size: 16.5px; }
@@ -42,7 +47,7 @@
 .b3.b3-primary:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); color: var(--primary-ink); filter: brightness(1.06); }
 /* Zähler im Knopf („B (18)“, „Ungelesen 4“) */
 .b3-n { color: var(--text-3); font-weight: 600; font-size: 0.9em; }
-.on > .b3-n, .active > .b3-n { color: var(--text-2); }
+.on > .b3-n, .active > .b3-n { color: inherit; opacity: 0.75; }
 
 /* Kleine Aktionsknöpfe (btn-sm) – größer und ruhiger, nicht mehr fummelig */
 .btn-sm { min-height: 34px; padding: 0 14px; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: var(--btn-radius); }
@@ -51,7 +56,7 @@
 
 /* Gewählt-Zustand allgemeiner Knöpfe: ruhig statt Bernstein */
 button.active:not(.tab):not(.btn-primary):not(.hd-nav-item):not(.tn-sub-item) {
-  background: var(--sel-bg); border-color: var(--sel-border); color: var(--sel-text);
+  background: var(--btn-on-bg); border-color: var(--btn-on-border); color: var(--btn-on-text);
 }
 
 /* Reihen von Knöpfen */
@@ -62,7 +67,7 @@ button.active:not(.tab):not(.btn-primary):not(.hd-nav-item):not(.tn-sub-item) {
   display: inline-flex; align-items: stretch; gap: 2px; padding: 3px;
   min-height: var(--btn-h-m); box-sizing: border-box;
   border: 1px solid var(--btn-border); border-radius: calc(var(--btn-radius) + 2px);
-  background: rgba(var(--shade-rgb), 0.18); overflow: visible;
+  background: var(--seg-bg); overflow: visible;
 }
 .lu-seg { display: grid; }            /* Raster (gleich breite Felder) bleibt */
 .ng-seg, .lp-seg { display: flex; }
@@ -82,10 +87,14 @@ button.active:not(.tab):not(.btn-primary):not(.hd-nav-item):not(.tn-sub-item) {
 }
 .seg3 > button.on, .seg3 > button.active, .seg-group > .seg-btn.active, .seg-group > button.active, .seg-group > button.on,
 .lu-seg > button.on, .ng-seg > button.on, .lp-seg > button.on, .sv-seg > button.on, .mr-lu-toggle > button.on {
-  background: var(--sel-bg); color: var(--sel-text); font-weight: 700;
-  box-shadow: inset 0 0 0 1px var(--sel-border), inset 0 -2px 0 var(--sel-mark);
+  background: var(--btn-on-bg); color: var(--btn-on-text); font-weight: 700;
+  box-shadow: inset 0 0 0 1px var(--btn-on-border), inset 0 -2px 0 var(--btn-on-mark), var(--btn-on-shadow);
 }
-.seg3 > button:disabled, .seg-group > button:disabled, .lu-seg > button:disabled { opacity: 0.4; cursor: not-allowed; }
+.seg3 > button.on:hover:not(:disabled), .seg-group > .seg-btn.active:hover:not(:disabled), .seg-group > button.active:hover:not(:disabled),
+.seg-group > button.on:hover:not(:disabled), .lu-seg > button.on:hover:not(:disabled), .sv-seg > button.on:hover:not(:disabled) {
+  background: var(--btn-on-bg); color: var(--btn-on-text);
+}
+.seg3 > button:disabled, .seg-group > button:disabled, .lu-seg > button:disabled { opacity: var(--btn-off-opacity); color: var(--btn-off-text); cursor: not-allowed; }
 .seg3-s { min-height: var(--btn-h-s); padding: 2px; }
 .seg3-s > button { min-height: calc(var(--btn-h-s) - 6px); padding: 0 10px; font-size: 14px; }
 .seg3-l { min-height: var(--btn-h-l); }
@@ -112,7 +121,7 @@ button.active:not(.tab):not(.btn-primary):not(.hd-nav-item):not(.tn-sub-item) {
 }
 .sel3:hover:not(:disabled) { background: var(--btn-bg-hover); border-color: var(--btn-border-hover); }
 .sel3.open { border-color: var(--sel-border); background: var(--btn-bg-hover); }
-.sel3:disabled { opacity: 0.45; cursor: not-allowed; }
+.sel3:disabled { opacity: var(--btn-off-opacity); cursor: not-allowed; }
 .sel3:active:not(:disabled) { transform: none; }
 .sel3-val { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sel3-val.ph { color: var(--text-3); }

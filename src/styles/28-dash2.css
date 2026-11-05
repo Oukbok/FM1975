@@ -17,7 +17,8 @@
 
 /* ---- Widget-Rahmen (links + Übersicht) ------------------------------------ */
 .dz-w, .dz-news {
-  background: linear-gradient(180deg, rgba(var(--panel-rgb), 0.92), rgba(var(--bg-rgb), 0.94));
+  background: linear-gradient(180deg, rgba(var(--panel-rgb), calc(0.92 * var(--glass))), rgba(var(--bg-rgb), calc(0.94 * var(--glass))));
+  backdrop-filter: var(--glass-filter); -webkit-backdrop-filter: var(--glass-filter);
   border: 1px solid var(--border-soft); border-radius: 6px; min-width: 0;
 }
 .dz-w { flex: 0 0 auto; padding: 8px 14px 10px; cursor: pointer; transition: border-color 0.15s; }
