@@ -54,6 +54,7 @@ import { migrateYouthComps } from './youthComps/daily';
 import { FINANCE_LEVEL } from './financeMigration';
 import { migrateLeaguePool } from './clubPool';
 import { initLegends } from './legendsGame';
+import { migrateContracts2 } from './contractClausesGame';
 
 export function createNewGame(opts: NewGameOptions): Game {
   // Startjahr/Heimatland (Wunsch Pascal, Weltdaten): Standard 1. Juli 1975 in Deutschland.
@@ -266,6 +267,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   migratePositionSkills(g0); // Positionsvertrautheit aller Spieler (game/positionsGame.ts)
   migrateYouthComps(g0); // Jugendwettbewerbe der Saison (game/youthComps/)
   initLegends(g0, opts.legends !== false); // Ausnahmetalente der Fußballgeschichte (still, game/legendsGame.ts)
+  migrateContracts2(g0); // Vertragsbausteine-Zustand von Beginn an (wie beim Laden, game/contractClausesGame.ts)
   harmonizeSeason(g0); // Rahmenterminkalender: Wochenendspiele an Pokal-/Europapokalwochen (game/fixtureWatch.ts)
   return g0;
 }
