@@ -34,3 +34,8 @@ if (process.env.NEXT) {
   for (let i = 0; i < 60; i++) tick(g);
   console.log('weiter', g.calendar.currentDate, 'eigener', g.clubs[g.managedClubId]?.name, 'Liga', g.leagues.playerDivision.name);
 }
+if (process.env.LEG) {
+  const done = Object.entries(g.legends2?.done ?? {});
+  const pl = done.filter(([, id]) => id !== '-').map(([, id]) => g.players[id] ?? g.youthPlayers[id]).filter(Boolean);
+  console.log('Legenden', done.length, 'erschienen', pl.length, pl.slice(0, 6).map((p) => `${p.fullName} ${p.age} J. ${p.overall}`).join(' | '));
+}
