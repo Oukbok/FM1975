@@ -49,7 +49,7 @@ ok(Math.abs(me.finances.transferBudget * scale - p.advice.transfers) < 2000, `Tr
 const adv = advisorFor(g, p, p.chosen);
 ok(adv.lines.length >= 3 && adv.lines.length <= 7 && adv.era.includes('1973'), `Berater: ${adv.lines.length} Sätze + Epoche („${adv.era.slice(0, 60)}…“)`);
 ok(!!advisorOf(g).name && seasonGoals(g).length >= 1, `Berater ${advisorOf(g).name} (${advisorOf(g).role}), Ziele: ${seasonGoals(g).map((s) => `${s.title}: ${s.goal}`).join(', ')}`);
-ok(wageLimitFactor(g) === 1, 'Mit Plan gilt das Gehaltsbudget als harte Grenze');
+ok(wageLimitFactor(g) === 1.1, 'Mit Plan gilt das Gehaltsbudget mit 10 % Spielraum als Grenze');
 
 // --- 2) Wirkung ---------------------------------------------------------------------------
 const tb0 = me.finances.transferBudget, conf0 = me.boardConfidence ?? 60;
@@ -60,8 +60,8 @@ console.log(`     Reaktionen: Vorstand ${r.board}, Fans ${r.fans}, Sponsoren ${r
 confirmBudget(g, { ...p.chosen, transfers: p.advice.transfers });
 ok(Math.abs(me.finances.transferBudget - tb0) < 1001 && me.boardConfidence === conf0, 'Zurück auf den Vorschlag: Budget und Vertrauen wie vorher (kein Stapeln)');
 
-// Gehaltsgrenze: Budget = laufende Kosten → keine Erhöhung.
-confirmBudget(g, { ...p.chosen, wages: p.fixed.personnel * 0.98 });
+// Gehaltsgrenze: Budget deutlich unter den laufenden Kosten → auch mit 110 % keine Erhöhung.
+confirmBudget(g, { ...p.chosen, wages: p.fixed.personnel * 0.85 });
 const star = me.playerIds.map((id) => g.players[id]).sort((a, b) => b.overall - a.overall)[0];
 const res = offerContract(g, star.id, star.contract.weeklyWage * 1.5, 3);
 ok(!res.ok && /Gehaltsbudget/.test(res.text), `Vertragsverlängerung über dem Gehaltsbudget gesperrt („${res.text.slice(0, 70)}…“)`);
