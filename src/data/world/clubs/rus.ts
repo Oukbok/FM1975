@@ -49,7 +49,7 @@ export const CLUBS_RUS: RealClub[] = [
   { id: 'rus-tomsk', name: "Tomsk", short: 'TOM', city: "Tomsk", colors: { primary: '#00843D', secondary: '#FFFFFF' } },
   { id: 'rus-tosno', name: "Tosno", short: 'TOS', city: "Tosno", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
   { id: 'rus-tula', name: "Tula", short: 'TUL', city: "Tula", colors: { primary: '#C8102E', secondary: '#FFD700' } },
-  { id: 'rus-ufa', name: "Ufa", short: 'UFA', city: "Ufa", colors: { primary: '#0033A0', secondary: '#00843D' } },
+  { id: 'rus-ufa', name: "Ufa", short: 'UFI', city: "Ufa", colors: { primary: '#0033A0', secondary: '#00843D' } },
   { id: 'rus-wladikawkas', name: "Wladikawkas", short: 'WLA', city: "Wladikawkas", colors: { primary: '#C8102E', secondary: '#FFD700' } },
   { id: 'rus-wladiwostok', name: "Wladiwostok", short: 'WLD', city: "Wladiwostok", colors: { primary: '#FFD700', secondary: '#0033A0' } },
   { id: 'rus-wolgograd', name: "Wolgograd", short: 'WOL', city: "Wolgograd", colors: { primary: '#0033A0', secondary: '#FFFFFF' } },
