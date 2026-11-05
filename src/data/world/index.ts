@@ -39,6 +39,7 @@ import * as sco1 from './clubs/sco'; import * as sco2 from './seasons/sco'; add(
 import * as ita1 from './clubs/ita'; import * as ita2 from './seasons/ita'; add('ita', ita1, ita2);
 import * as esp1 from './clubs/esp'; import * as esp2 from './seasons/esp'; add('esp', esp1, esp2);
 import * as por1 from './clubs/por'; import * as por2 from './seasons/por'; add('por', por1, por2);
+import * as urs1 from './clubs/urs'; import * as urs2 from './seasons/urs'; add('urs', urs1, urs2);
 // ------------------------------------------------------------------------------
 
 /** Daten eines Landes eintragen (auch für Tests mit Beispieldaten aus tests/fixtures/). */
