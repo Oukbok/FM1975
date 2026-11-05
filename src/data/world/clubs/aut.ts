@@ -1,0 +1,46 @@
+// =============================================================================
+// Weltdaten aut: alle Vereine der erfassten Ligen 1975/76–2025/26 (verfremdete Namen).
+// Echte Namen und Quellen: docs/recherche/weltvereine_aut.md. Format: docs/specs/WELTDATEN_SPEC.md.
+// =============================================================================
+import type { RealClub } from '../types';
+
+export const CLUBS_AUT: RealClub[] = [
+  { id: 'aut-altach', name: 'Altach', short: 'ALT', city: 'Altach', colors: { primary: '#000000', secondary: '#FFD200' } },
+  { id: 'aut-bregenz', name: 'Bregenz', short: 'BRE', city: 'Bregenz', colors: { primary: '#000000', secondary: '#FFFFFF' } },
+  { id: 'aut-eisenstadt', name: 'Eisenstadt', short: 'EIS', city: 'Eisenstadt', colors: { primary: '#003399', secondary: '#FFD200' } },
+  { id: 'aut-graz-rot', name: 'Graz Rot', short: 'GRR', city: 'Graz', colors: { primary: '#D71920', secondary: '#FFFFFF' } },
+  { id: 'aut-graz-schwarz-weiss', name: 'Graz Schwarz-Weiß', short: 'GSW', city: 'Graz', colors: { primary: '#000000', secondary: '#FFFFFF' } },
+  { id: 'aut-groedig', name: 'Grödig', short: 'GRÖ', city: 'Grödig', colors: { primary: '#003399', secondary: '#FFFFFF' } },
+  { id: 'aut-hartberg', name: 'Hartberg', short: 'HAR', city: 'Hartberg', colors: { primary: '#003399', secondary: '#FFFFFF' } },
+  { id: 'aut-innsbruck', name: 'Innsbruck', short: 'INN', city: 'Innsbruck', colors: { primary: '#000000', secondary: '#00843D' } },
+  { id: 'aut-kapfenberg', name: 'Kapfenberg', short: 'KAP', city: 'Kapfenberg', colors: { primary: '#D71920', secondary: '#FFFFFF' } },
+  { id: 'aut-klagenfurt', name: 'Klagenfurt', short: 'KLA', city: 'Klagenfurt', colors: { primary: '#5B2A86', secondary: '#FFFFFF' } },
+  { id: 'aut-krems', name: 'Krems', short: 'KRE', city: 'Krems', colors: { primary: '#000000', secondary: '#FFFFFF' } },
+  { id: 'aut-leoben', name: 'Leoben', short: 'LEO', city: 'Leoben', colors: { primary: '#000000', secondary: '#003399' } },
+  { id: 'aut-linz-blau-weiss', name: 'Linz Blau-Weiß', short: 'LBW', city: 'Linz', colors: { primary: '#003399', secondary: '#FFFFFF' } },
+  { id: 'aut-linz-schwarz-weiss', name: 'Linz Schwarz-Weiß', short: 'LSW', city: 'Linz', colors: { primary: '#000000', secondary: '#FFFFFF' } },
+  { id: 'aut-lustenau', name: 'Lustenau', short: 'LUS', city: 'Lustenau', colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'aut-maria-enzersdorf', name: 'Maria Enzersdorf', short: 'MEN', city: 'Maria Enzersdorf', colors: { primary: '#000000', secondary: '#D71920' } },
+  { id: 'aut-mattersburg', name: 'Mattersburg', short: 'MAT', city: 'Mattersburg', colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'aut-moedling', name: 'Mödling', short: 'MOD', city: 'Mödling', colors: { primary: '#D71920', secondary: '#FFFFFF' } },
+  { id: 'aut-neusiedl', name: 'Neusiedl', short: 'NEU', city: 'Neusiedl am See', colors: { primary: '#003399', secondary: '#FFFFFF' } },
+  { id: 'aut-pasching', name: 'Pasching', short: 'PAS', city: 'Pasching', colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'aut-ried', name: 'Ried', short: 'RIE', city: 'Ried im Innkreis', colors: { primary: '#000000', secondary: '#00843D' } },
+  { id: 'aut-salzburg', name: 'Salzburg', short: 'SBG', city: 'Salzburg', colors: { primary: '#5B2A86', secondary: '#FFFFFF' } },
+  { id: 'aut-salzburg-nonntal', name: 'Salzburg-Nonntal', short: 'SAN', city: 'Salzburg', colors: { primary: '#000000', secondary: '#FFD200' } },
+  { id: 'aut-spittal', name: 'Spittal', short: 'SPI', city: 'Spittal an der Drau', colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'aut-st-poelten', name: 'St. Pölten', short: 'STP', city: 'St. Pölten', colors: { primary: '#003399', secondary: '#FFFFFF' } },
+  { id: 'aut-st-veit', name: 'St. Veit', short: 'STV', city: 'St. Veit an der Glan', colors: { primary: '#003399', secondary: '#FFFFFF' } },
+  { id: 'aut-steyr', name: 'Steyr', short: 'STE', city: 'Steyr', colors: { primary: '#D71920', secondary: '#FFFFFF' } },
+  { id: 'aut-stockerau', name: 'Stockerau', short: 'STO', city: 'Stockerau', colors: { primary: '#D71920', secondary: '#000000' } },
+  { id: 'aut-wattens', name: 'Wattens', short: 'WAT', city: 'Wattens', colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'aut-wels', name: 'Wels', short: 'WEL', city: 'Wels', colors: { primary: '#D71920', secondary: '#FFFFFF' } },
+  { id: 'aut-wien-blau-gelb', name: 'Wien Blau-Gelb', short: 'WBG', city: 'Wien', colors: { primary: '#003DA5', secondary: '#FFD100' } },
+  { id: 'aut-wien-favoriten', name: 'Wien-Favoriten', short: 'WFA', city: 'Wien', colors: { primary: '#003399', secondary: '#FFFFFF' } },
+  { id: 'aut-wien-gruen', name: 'Wien Grün', short: 'WIG', city: 'Wien', colors: { primary: '#006A44', secondary: '#FFFFFF' } },
+  { id: 'aut-wien-schwarz-weiss', name: 'Wien Schwarz-Weiß', short: 'WSW', city: 'Wien', colors: { primary: '#000000', secondary: '#FFFFFF' } },
+  { id: 'aut-wien-simmering', name: 'Wien-Simmering', short: 'WSI', city: 'Wien', colors: { primary: '#00843D', secondary: '#FFFFFF' } },
+  { id: 'aut-wien-violett', name: 'Wien Violett', short: 'WIV', city: 'Wien', colors: { primary: '#520E36', secondary: '#FFFFFF' } },
+  { id: 'aut-wiener-neustadt', name: 'Wiener Neustadt', short: 'WNE', city: 'Wiener Neustadt', colors: { primary: '#003399', secondary: '#FFFFFF' } },
+  { id: 'aut-wolfsberg', name: 'Wolfsberg', short: 'WOL', city: 'Wolfsberg', colors: { primary: '#000000', secondary: '#FFFFFF' } },
+];
