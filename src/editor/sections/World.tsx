@@ -62,8 +62,9 @@ function IdList({ label, ids, known, onSet }: { label: string; ids?: string[]; k
   );
 }
 
-function SeasonEditor({ entry, year, onChange }: { entry: Entry; year: number; onChange: () => void }) {
-  const known = useMemo(() => new Map(entry.clubs.map((c) => [c.id, c])), [entry.clubs, entry.clubs.length]);
+function SeasonEditor({ entry, partner, year, onChange }: { entry: Entry; partner?: Entry; year: number; onChange: () => void }) {
+  // Deutschland nutzt ab 1991/92 die IDs der DDR-Vereine (und umgekehrt).
+  const known = useMemo(() => new Map([...(partner?.clubs ?? []), ...entry.clubs].map((c) => [c.id, c])), [entry.clubs, entry.clubs.length, partner]);
   const row = entry.seasons[year] as SeasonRow | undefined;
   if (!row) {
     const prev = Object.keys(entry.seasons).map(Number).filter((y) => y < year).sort((a, b) => b - a)[0];
@@ -186,7 +187,7 @@ export function WorldSection({ ds, onChange }: { ds: Dataset; onChange: () => vo
                       {YEARS.map((y) => <option key={y} value={y}>{seasonLabelOf(y)}{entry.seasons[y] ? ' · Daten' : ''}</option>)}
                     </select>
                   </div>
-                  <SeasonEditor entry={entry} year={year} onChange={onChange} />
+                  <SeasonEditor entry={entry} partner={wd[cc === 'ger' ? 'gdr' : cc === 'gdr' ? 'ger' : ''] } year={year} onChange={onChange} />
                 </>
               )}
             </>

@@ -142,6 +142,9 @@ export function checkDataset(d: Dataset): Issue[] {
       ids.add(c.id);
       if (!c.name?.trim()) err(A, `Verein „${c.id}“ hat keinen Namen.`);
     }
+    // Deutschland nutzt ab 1991/92 die IDs der DDR-Vereine (und umgekehrt).
+    const partner = cc === 'ger' ? 'gdr' : cc === 'gdr' ? 'ger' : '';
+    const known = new Set([...ids, ...(partner ? (d.worldData?.[partner]?.clubs ?? []).map((c) => c.id) : [])]);
     for (const [y, r] of Object.entries(w.seasons ?? {})) {
       const lists: [string, string[] | undefined][] = [['1. Liga', r.t1], ['2. Liga', r.t2], ['2. Liga (2. Staffel)', r.t2b]];
       const seen = new Set<string>();
@@ -149,12 +152,12 @@ export function checkDataset(d: Dataset): Issue[] {
         if (!l) continue;
         if (l.length % 2) warn(A, `${y}: ${nm} mit ungerader Zahl (${l.length}) – der Letzte fällt im Spiel weg.`);
         for (const id of l) {
-          if (!ids.has(id)) err(A, `${y}: ${nm} – unbekannte ID „${id}“.`);
+          if (!known.has(id)) err(A, `${y}: ${nm} – unbekannte ID „${id}“.`);
           if (seen.has(id)) err(A, `${y}: „${id}“ steht in mehreren Ligen.`);
           seen.add(id);
         }
       }
-      for (const id of [r.cup, r.cupFinalist, ...Object.values(r.euro ?? {}).flat()]) if (id && !ids.has(id)) err(A, `${y}: Pokal/Europapokal – unbekannte ID „${id}“.`);
+      for (const id of [r.cup, r.cupFinalist, ...Object.values(r.euro ?? {}).flat()]) if (id && !known.has(id)) err(A, `${y}: Pokal/Europapokal – unbekannte ID „${id}“.`);
     }
   }
 
