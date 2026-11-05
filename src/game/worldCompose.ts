@@ -192,7 +192,8 @@ export function ddrSeedsFor(year: number): { ober: SimClub[]; liga: SimClub[] } 
     };
   }).filter(Boolean) as SimClub[];
   const ober = mk(row.t1, 101);
-  const liga = mk([...(row.t2 ?? []), ...(row.t2b ?? [])], 102);
+  // DDR-Liga in mehreren Staffeln: das Spiel führt eine Staffel (16 Stärkste nach der Vorsaison).
+  const liga = mk([...(row.t2 ?? []), ...(row.t2b ?? [])], 102).sort((a, b) => b.strength - a.strength || a.id.localeCompare(b.id)).slice(0, 16);
   if (ober.length % 2) ober.pop();
   if (liga.length % 2) liga.pop();
   const oberIds = new Set(ober.map((s) => s.id));

@@ -191,7 +191,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   }
   const leagues = { playerDivision: playerDivMeta, otherDivisions, season };
   // Parallele DDR-Ligapyramide (bis zur Wiedervereinigung 1991/92) ergänzen.
-  if (isGer && year <= 1990) leagues.otherDivisions.push(...buildDdrDivisions(simClubs, pointSystem, season, ligaStart, ddrSeedsFor(year) ?? undefined));
+  if (isGer && year <= 1990) leagues.otherDivisions.push(...buildDdrDivisions(simClubs, pointSystem, season, ligaStart, legacy ? undefined : ddrSeedsFor(year) ?? undefined));
   const g0: Game = {
     clubs: world.clubs, players: world.players, youthPlayers: world.youthPlayers,
     fixtures, table, calendar,
