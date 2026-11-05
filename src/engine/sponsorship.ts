@@ -398,10 +398,10 @@ export function clauseTone(k: SponsorClause): 'good' | 'bad' | 'neutral' {
 
 /** Fernsehen der Epoche (Anzeige: TV-Präsenz der Werbeflächen). */
 export function tvEraText(year: number): string {
-  if (year < 1984) return 'ARD/ZDF: Zusammenfassungen in der Sportschau, kaum Live-Spiele';
-  if (year < 1988) return 'Privatfernsehen startet, die Bundesliga bleibt bei ARD/ZDF';
-  if (year < 1992) return 'UFA/RTL: mehr Sendezeit, erste Live-Spiele';
-  if (year < 2000) return 'SAT.1 „ran“ und Premiere: Bundesliga als Fernsehshow, Live-Spiele im Pay-TV';
+  if (year < 1984) return 'Öffentlich-rechtliches Fernsehen: Zusammenfassungen am Samstag, kaum Live-Spiele';
+  if (year < 1988) return 'Privatfernsehen startet, die Bundesliga bleibt bei den Öffentlich-Rechtlichen';
+  if (year < 1992) return 'Privatfernsehen kauft die Liga: mehr Sendezeit, erste Live-Spiele';
+  if (year < 2000) return 'Privatsender mit großer Samstagsshow, Live-Spiele im Bezahlfernsehen';
   if (year < 2010) return 'Alle Spiele live im Pay-TV, Highlights im Free-TV';
   return 'Weltweite Ausstrahlung, Streaming und Social Media – jede Bande läuft in Dutzenden Ländern';
 }

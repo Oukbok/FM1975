@@ -87,7 +87,7 @@ export const DIFFERENCES: DifferenceToToday[] = [
   {
     from: 1975, to: 2016, topic: 'regeln',
     title: 'Kein Videobeweis',
-    then: 'Was der Schiedsrichter sieht, gilt – Fehlentscheidungen werden in der Sportschau diskutiert, nicht korrigiert.',
+    then: 'Was der Schiedsrichter sieht, gilt – Fehlentscheidungen werden in der Sportsendung am Samstag diskutiert, nicht korrigiert.',
     today: 'Seit 2017/18 prüft der Video-Assistent Tore, Elfmeter, Rote Karten und Verwechslungen.',
   },
   {
@@ -269,7 +269,7 @@ export const DIFFERENCES: DifferenceToToday[] = [
   {
     from: 1975, to: 1987, topic: 'geld',
     title: 'Fernsehgeld ist Nebensache',
-    then: 'ARD und ZDF zahlen der ganzen Liga nur wenige Millionen DM pro Saison. Das Geld kommt von der Kasse am Stadion.',
+    then: 'Die öffentlich-rechtlichen Sender zahlen der ganzen Liga nur wenige Millionen DM pro Saison. Das Geld kommt von der Kasse am Stadion.',
     today: 'Die Medienerlöse der Bundesliga liegen bei über einer Milliarde Euro pro Saison.',
   },
   {
@@ -343,7 +343,7 @@ export const DIFFERENCES: DifferenceToToday[] = [
   {
     from: 1975, to: 1983, topic: 'medien',
     title: 'Kein Privatfernsehen',
-    then: 'Es gibt nur ARD, ZDF und die Dritten Programme.',
+    then: 'Es gibt nur die zwei öffentlich-rechtlichen Programme und die Dritten.',
     today: 'Dutzende Sender und Streamingdienste konkurrieren um Fußballrechte.',
   },
   {

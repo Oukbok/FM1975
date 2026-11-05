@@ -142,12 +142,12 @@ export const TOURNAMENT_WIN_BASE = 6000;
 
 /** Fernsehen der Endrunde [S1]. */
 export function mastersTv(winterYear: number): string {
-  if (winterYear <= 1988) return 'ARD-Dritte ab dem Halbfinale';
-  if (winterYear <= 1993) return 'ARD-Dritte / Sportschau';
-  if (winterYear === 1994) return 'nur Bezahlfernsehen (Premiere)';
-  if (winterYear === 1995) return 'DSF und RTL';
-  if (winterYear <= 1999) return 'ARD und DSF';
-  return 'DSF und SAT.1 (bis 3 Mio. Zuschauer)';
+  if (winterYear <= 1988) return 'Dritte Programme ab dem Halbfinale';
+  if (winterYear <= 1993) return 'Dritte Programme / Sportsendung am Samstag';
+  if (winterYear === 1994) return 'nur Bezahlfernsehen';
+  if (winterYear === 1995) return 'Sportspartensender und ein großer Privatsender';
+  if (winterYear <= 1999) return 'Öffentlich-Rechtliche und ein Sportspartensender';
+  return 'Sportspartensender und ein großer Privatsender (bis 3 Mio. Zuschauer)';
 }
 
 /** Spielzeiten (Annahme): Gruppenspiele 12 Minuten, Halbfinale/Finale 2 × 10 Minuten. */

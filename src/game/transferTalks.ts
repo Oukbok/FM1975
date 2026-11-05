@@ -262,7 +262,7 @@ export function playerOffer(g: Game, talkId: string, offer: PlayerOffer): string
   // Saisonbudget (game/budgetPlan.ts): harte Grenze; alte Spielstände ohne Plan wie bisher 115 %.
   const wf = wageLimitFactor(g);
   if (own.finances.wageBudget > 0 && wages > own.finances.wageBudget * wf) {
-    return refuse(t, today, `Der Vorstand gibt ${fmtWage(offer.wage)} nicht frei: Die Gehälter lägen bei ${Math.round((wages / own.finances.wageBudget) * 100)} % des Gehaltsbudgets (Grenze ${Math.round(wf * 100)} %).${wf === 1 ? ' Mehr Spielraum schaffst du unter Finanzen › Budget.' : ''}`);
+    return refuse(t, today, `Der Vorstand gibt ${fmtWage(offer.wage)} nicht frei: Die Gehälter lägen bei ${Math.round((wages / own.finances.wageBudget) * 100)} % des Gehaltsbudgets (Grenze ${Math.round(wf * 100)} %).${wf < 1.15 ? ' Mehr Spielraum schaffst du unter Finanzen › Budget.' : ''}`);
   }
   const fee = t.pkg ? t.pkg.fee / (t.pkg.installments ? (t.pkg.rates ?? 2) : 1) : 0;
   if (offer.signingFee + (offer.agentFee ?? 0) > own.finances.transferBudget - fee) {

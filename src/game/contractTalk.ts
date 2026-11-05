@@ -163,7 +163,7 @@ export function budgetRefusal(g: Game, p: Player | null, t: ContractTerms): stri
   const wf = wageLimitFactor(g);
   const old = p && p.clubId === club.id ? p.contract.weeklyWage : 0;
   if (budget > 0 && t.wage > old && wages > budget * wf) {
-    return `Der Vorstand gibt das nicht frei: Die Gehälter lägen bei ${Math.round((wages / budget) * 100)} % des Gehaltsbudgets (Grenze ${Math.round(wf * 100)} %).${wf === 1 ? ' Mehr Spielraum schaffst du unter Finanzen › Budget.' : ''}`;
+    return `Der Vorstand gibt das nicht frei: Die Gehälter lägen bei ${Math.round((wages / budget) * 100)} % des Gehaltsbudgets (Grenze ${Math.round(wf * 100)} %).${wf < 1.15 ? ' Mehr Spielraum schaffst du unter Finanzen › Budget.' : ''}`;
   }
   const once = t.signing + t.agent;
   if (once > 0 && once > Math.max(0, club.finances.transferBudget)) return `Handgeld und Provision (${fmtPrice(once)}) übersteigen dein Transferbudget (${fmtPrice(Math.max(0, club.finances.transferBudget))}).`;

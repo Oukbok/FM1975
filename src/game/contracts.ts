@@ -69,7 +69,7 @@ export function offerContract(g: Game, playerId: string, wage: number, years: nu
   const budget = club.finances.wageBudget ?? 0;
   const wf = wageLimitFactor(g); // Saisonbudget: harte Grenze (game/budgetPlan.ts), ohne Plan 115 %
   if (budget > 0 && wage > p.contract.weeklyWage && wages > budget * wf) {
-    return { ok: false, text: `Der Vorstand gibt das nicht frei: Die Gehälter lägen bei ${Math.round((wages / budget) * 100)} % des Gehaltsbudgets (Grenze ${Math.round(wf * 100)} %).${wf === 1 ? ' Mehr Spielraum schaffst du unter Finanzen › Budget.' : ''}` };
+    return { ok: false, text: `Der Vorstand gibt das nicht frei: Die Gehälter lägen bei ${Math.round((wages / budget) * 100)} % des Gehaltsbudgets (Grenze ${Math.round(wf * 100)} %).${wf < 1.15 ? ' Mehr Spielraum schaffst du unter Finanzen › Budget.' : ''}` };
   }
   const season = `${seasonEndYear(today) - 1}`;
   const talks = p.contract.talks && p.contract.talks.season === season ? p.contract.talks : { season, attempts: 0 };

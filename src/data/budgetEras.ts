@@ -12,7 +12,7 @@ export const BUDGET_ERAS: BudgetEra[] = [
   // Quellen: docs/recherche/FINANZEN_Recherche_1975.md (Trikotwerbung seit Herbst 1973 zugelassen;
   // TV-Rechte 1975/76 insgesamt 4,8 Mio. DM – Spiegel „TV-Gelder von 1965 bis heute“; Eintritt wichtigste Säule).
   { from: 1975, to: 1977, lines: [
-    'Wir leben von den Zuschauern: Eintritt, Würstchen und Programmhefte sind unser wichtigstes Standbein. Trikotwerbung ist erst seit Herbst 1973 erlaubt, und für die Fernsehrechte zahlen ARD und ZDF 1975/76 der ganzen Bundesliga zusammen nur 4,8 Mio. DM.',
+    'Wir leben von den Zuschauern: Eintritt, Würstchen und Programmhefte sind unser wichtigstes Standbein. Trikotwerbung ist erst seit Herbst 1973 erlaubt, und für die Fernsehrechte zahlen die öffentlich-rechtlichen Sender 1975/76 der ganzen Bundesliga zusammen nur 4,8 Mio. DM.',
     'Das Geld kommt über die Kassenhäuschen. Fernsehgeld ist ein kleiner Zuschuss – die Sender zahlen der ganzen Bundesliga 1975/76 gerade 4,8 Mio. DM –, und Trikotwerbung gibt es erst seit 1973.',
   ] },
   // Quelle: docs/recherche/transferrekorde.md (1976 erster Wechsel für 1 Mio. DM, Roger Van Gool nach Köln).
@@ -33,7 +33,7 @@ export const BUDGET_ERAS: BudgetEra[] = [
   ] },
   // Quellen: engine/tvMoney.ts (1992/93 rund 145 Mio. DM); docs/recherche/FINANZEN_Recherche_Entwicklung_1980_heute.md (Sat.1 „ran“).
   { from: 1992, to: 1995, lines: [
-    'Seit 1992/93 zahlt das Privatfernsehen rund 145 Mio. DM für die Liga – Sat.1 zeigt „ran“. Die TV-Gelder holen bei uns zu den Zuschauern auf.',
+    'Seit 1992/93 zahlt das Privatfernsehen rund 145 Mio. DM für die Liga – ein Privatsender zeigt sie als große Samstagsshow. Die TV-Gelder holen bei uns zu den Zuschauern auf.',
     'Die neuen Fernsehverträge verändern die Rechnung: Rund 145 Mio. DM fließen seit 1992/93 an die Liga. Der Spieltag bleibt wichtig, ist aber nicht mehr alles.',
   ] },
   // Quelle: docs/recherche/FINANZEN_Recherche_Entwicklung_1980_heute.md (Bosman-Urteil 15.12.1995:
@@ -44,13 +44,13 @@ export const BUDGET_ERAS: BudgetEra[] = [
   ] },
   // Quelle: engine/tvMoney.ts (Kirch-Vertrag 2000/01: 355 Mio. € für die Bundesliga).
   { from: 2000, to: 2001, lines: [
-    'Der Kirch-Vertrag bringt der Bundesliga ab 2000/01 rund 355 Mio. € im Jahr – so viel Fernsehgeld gab es noch nie. Plane trotzdem nicht jede Mark fest ein: Solche Verträge hängen an einem einzigen Geldgeber.',
-    'Fernsehgeld in Rekordhöhe: Kirch zahlt der Liga rund 355 Mio. € pro Saison. Das Fernsehen ist jetzt unsere größte planbare Einnahme.',
+    'Der Vertrag mit der Mediengruppe bringt der Bundesliga ab 2000/01 rund 355 Mio. € im Jahr – so viel Fernsehgeld gab es noch nie. Plane trotzdem nicht jede Mark fest ein: Solche Verträge hängen an einem einzigen Geldgeber.',
+    'Fernsehgeld in Rekordhöhe: Die Mediengruppe zahlt der Liga rund 355 Mio. € pro Saison. Das Fernsehen ist jetzt unsere größte planbare Einnahme.',
   ] },
   // Quellen: engine/economy.ts (Euro ab 2002); data/history.ts tvMarketFactor + engine/tvMoney.ts (Kirch-Pleite 2002, TV-Delle).
   { from: 2002, to: 2004, lines: [
-    'Seit 2002 rechnen wir in Euro. Und die Kirch-Pleite zeigt, wie schnell Fernsehgeld wegbrechen kann: Die Liga bekommt weniger als im Vertrag stand. Der Vorstand will deshalb mehr Reserve sehen.',
-    'Neue Währung, alte Sorgen: Nach der Pleite der Kirch-Gruppe 2002 sind die TV-Gelder gesunken. Eine ordentliche Reserve ist jetzt Pflicht, nicht Kür.',
+    'Seit 2002 rechnen wir in Euro. Und die Pleite der Mediengruppe zeigt, wie schnell Fernsehgeld wegbrechen kann: Die Liga bekommt weniger als im Vertrag stand. Der Vorstand will deshalb mehr Reserve sehen.',
+    'Neue Währung, alte Sorgen: Nach der Pleite der Rechte-Mediengruppe 2002 sind die TV-Gelder gesunken. Eine ordentliche Reserve ist jetzt Pflicht, nicht Kür.',
   ] },
   // Quelle: docs/recherche/FINANZEN_Recherche_Entwicklung_1980_heute.md (2000er/2010er: Ausgliederungen,
   // Mehrsäulenmodell, Sponsoring/Hospitality/Merchandising gewinnen gegenüber Eintritt).

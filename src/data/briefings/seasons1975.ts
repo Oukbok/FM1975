@@ -47,8 +47,8 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       },
       {
         topic: 'medien',
-        title: 'Sportschau statt Live-Bilder',
-        text: 'Live im Fernsehen läuft die Bundesliga praktisch nie. Am Samstag hörst du die Konferenz im Radio, abends zeigen Sportschau und Sportstudio Zusammenfassungen.',
+        title: 'Zusammenfassung statt Live-Bilder',
+        text: 'Live im Fernsehen läuft die Bundesliga praktisch nie. Am Samstag hörst du die Konferenz im Radio, abends zeigen die Sportsendungen der Öffentlich-Rechtlichen Zusammenfassungen.',
       },
       {
         topic: 'taktik',
@@ -70,7 +70,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'alltag',
         title: 'Drei Programme, Wählscheibe',
-        text: 'Fernsehen heißt ARD, ZDF und das Dritte, in vielen Wohnzimmern noch in Schwarz-Weiß. Telefoniert wird mit Wählscheibe, Ferngespräche sind teuer.',
+        text: 'Fernsehen heißt zwei öffentlich-rechtliche Programme und das Dritte, in vielen Wohnzimmern noch in Schwarz-Weiß. Telefoniert wird mit Wählscheibe, Ferngespräche sind teuer.',
       },
       {
         topic: 'alltag',
@@ -80,7 +80,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'kultur',
         title: 'Schlaghosen und Schlager',
-        text: 'In der ZDF-Hitparade läuft deutscher Schlager, im Radio ABBA und Disco. Schlaghosen, lange Haare und Koteletten sieht man auch auf dem Mannschaftsfoto.',
+        text: 'In der Schlagerparade im Fernsehen läuft deutscher Schlager, im Radio ABBA und Disco. Schlaghosen, lange Haare und Koteletten sieht man auch auf dem Mannschaftsfoto.',
       },
     ],
   },
@@ -313,7 +313,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'alltag',
         title: 'Videotext startet',
-        text: 'Im Juni 1980 beginnen ARD und ZDF mit dem Videotext. Bald lassen sich Ergebnisse auch abseits der Sportschau am Fernseher nachlesen.',
+        text: 'Im Juni 1980 beginnen die öffentlich-rechtlichen Sender mit dem Videotext. Bald lassen sich Ergebnisse auch abseits der Sportsendungen am Fernseher nachlesen.',
       },
       {
         topic: 'kultur',
@@ -412,7 +412,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'alltag',
         title: 'Der Videorekorder',
-        text: 'VHS, Betamax und Video 2000 kämpfen um die Wohnzimmer. Wer einen Rekorder hat, kann die Sportschau aufnehmen.',
+        text: 'VHS, Betamax und Video 2000 kämpfen um die Wohnzimmer. Wer einen Rekorder hat, kann die Sportsendung am Samstag aufnehmen.',
       },
     ],
   },
@@ -430,7 +430,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'medien',
         title: 'Neue Sender, alte Rechte',
-        text: 'Ab Januar 1984 senden die ersten Privatsender. Die Bundesliga-Bilder bleiben aber vorerst bei ARD und ZDF.',
+        text: 'Ab Januar 1984 senden die ersten Privatsender. Die Bundesliga-Bilder bleiben aber vorerst bei den Öffentlich-Rechtlichen.',
       },
       {
         topic: 'liga',
@@ -457,7 +457,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'medien',
         title: 'Kabelfernsehen',
-        text: 'Am 1. und 2. Januar 1984 starten im Kabelpilotprojekt Ludwigshafen und aus Luxemburg die ersten privaten Programme, darunter RTL plus.',
+        text: 'Am 1. und 2. Januar 1984 starten im Kabelpilotprojekt Ludwigshafen und aus Luxemburg die ersten privaten Programme.',
       },
     ],
   },
@@ -474,7 +474,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'medien',
         title: 'Live im ganzen Land',
-        text: 'Am 11. Dezember 1984 überträgt die ARD erstmals ein Bundesligaspiel bundesweit live: das Nachholspiel Mönchengladbach gegen München Rot.',
+        text: 'Am 11. Dezember 1984 überträgt das öffentlich-rechtliche Fernsehen erstmals ein Bundesligaspiel bundesweit live: das Nachholspiel Mönchengladbach gegen München Rot.',
       },
       {
         topic: 'geld',
@@ -643,8 +643,8 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
     football: [
       {
         topic: 'geld',
-        title: 'RTL plus kauft die Liga',
-        text: 'Für rund 40 Millionen DM pro Saison sichert sich die Ufa für RTL plus die Bundesliga-Rechte – etwa das Sechzigfache von 1965. Statt der Sportschau zeigt die Sendung „Anpfiff“ die Tore.',
+        title: 'Privatfernsehen kauft die Liga',
+        text: 'Für rund 40 Millionen DM pro Saison sichert sich eine Rechteagentur für einen Privatsender die Bundesliga-Rechte – etwa das Sechzigfache von 1965. Statt der öffentlich-rechtlichen Samstags-Sportsendung zeigt eine neue Privatsender-Sendung die Tore.',
         inGame: 'TV-Erlöse steigen deutlich',
       },
       {
@@ -749,7 +749,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'medien',
         title: 'Bezahlfernsehen live',
-        text: 'Am 2. März 1991 zeigt der Abosender Premiere erstmals ein Bundesligaspiel live – der Beginn des Pay-TV-Fußballs.',
+        text: 'Am 2. März 1991 zeigt ein Abosender erstmals ein Bundesligaspiel live – der Beginn des Pay-TV-Fußballs.',
       },
       {
         topic: 'taktik',
@@ -862,8 +862,8 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       },
       {
         topic: 'medien',
-        title: '„ran“ auf Sat.1',
-        text: 'Die Kirch-Gruppe zahlt über ihre Agentur ISPR 700 Millionen DM für fünf Jahre. Sat.1 inszeniert die Bundesliga ab August 1992 als große Samstagsshow.',
+        title: 'Fußball als Samstagsshow',
+        text: 'Eine Münchner Mediengruppe zahlt über ihre Rechteagentur 700 Millionen DM für fünf Jahre. Ihr Privatsender inszeniert die Bundesliga ab August 1992 als große Samstagsshow.',
       },
       {
         topic: 'liga',
@@ -894,8 +894,8 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       },
       {
         topic: 'medien',
-        title: 'RTL überholt die Öffentlichen',
-        text: 'Die Privatsender holen auf, 1993 wird RTL zum meistgesehenen Sender.',
+        title: 'Privatsender überholen die Öffentlichen',
+        text: 'Die Privatsender holen auf, 1993 wird erstmals ein Privatsender zum meistgesehenen Programm.',
       },
       {
         topic: 'kultur',
@@ -922,7 +922,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'medien',
         title: 'Sport rund um die Uhr',
-        text: 'Seit Januar 1993 sendet das Deutsche Sportfernsehen (DSF). Fußball läuft zunehmend auch abseits der großen Sender.',
+        text: 'Seit Januar 1993 sendet ein eigener Sportspartensender. Fußball läuft zunehmend auch abseits der großen Sender.',
       },
       {
         topic: 'liga',
@@ -1073,7 +1073,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'medien',
         title: 'Digitales Bezahlfernsehen',
-        text: 'Im Juli 1996 startet Kirchs digitales Abo-Fernsehen DF1. Der Kampf um Pay-TV-Kunden beginnt.',
+        text: 'Im Juli 1996 startet das erste digitale Abo-Fernsehen. Der Kampf um Pay-TV-Kunden beginnt.',
       },
     ],
     society: [
@@ -1260,8 +1260,8 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       },
       {
         topic: 'kultur',
-        title: '„Big Brother“',
-        text: 'Ab März 2000 läuft auf RTL II „Big Brother“ – das Reality-TV ist da.',
+        title: 'Reality-TV im Container',
+        text: 'Ab März 2000 läuft im Privatfernsehen eine Container-Show – das Reality-TV ist da.',
       },
     ],
   },

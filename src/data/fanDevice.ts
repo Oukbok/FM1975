@@ -26,7 +26,7 @@ export interface FanDevice {
 /** Medium am Datum `iso` (UTC). */
 export function fanDeviceFor(iso: string): FanDevice {
   if (iso < '1980-06-01') return { kind: 'heft', title: 'Stadionheft', hint: 'Vereinsnachrichten aus dem Stadionheft – vor dem Videotext das wichtigste Blatt der Fans.' };
-  if (iso < '1999-01-01') return { kind: 'videotext', title: 'Videotext', hint: 'Videotext von ARD und ZDF (seit Juni 1980): Kurzmeldungen auf Tafel 200 ff.' };
+  if (iso < '1999-01-01') return { kind: 'videotext', title: 'Videotext', hint: 'Videotext der öffentlich-rechtlichen Sender (seit Juni 1980): Kurzmeldungen auf Tafel 200 ff.' };
   if (iso < '2008-07-10') return { kind: 'sms', title: 'SMS-Dienst', hint: 'Vereinsnachrichten als SMS aufs Handy – um 2000 wird das Handy zum Massenmedium.' };
   return { kind: 'app', title: 'Fan-App', hint: 'Vereinsnachrichten und Gerüchte in der Fan-App (App Store seit Juli 2008).' };
 }

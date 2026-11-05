@@ -68,6 +68,8 @@ const r3 = (v: number) => { // auf drei gültige Stellen runden (ruhigere Zahlen
   return Math.round(v / p) * p;
 };
 const LEGACY_WAGE_FACTOR = 1.15;
+/** Spielraum über dem bestätigten Gehaltsbudget (Wunsch Pascal: nicht ganz hart, 110 %). */
+export const PLAN_WAGE_FACTOR = 1.1;
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const sim = (g: Game) => !!(g as any).simAutoManage;
 
@@ -271,7 +273,7 @@ export function clearPendingBudget(g: Game): void { if (g.budget) g.budget.pendi
 /** Faktor auf den Gehaltsrahmen: mit Saisonbudget harte Grenze, sonst wie früher 115 %. */
 export function wageLimitFactor(g: Game): number {
   const p = planFor(g);
-  return p && !p.legacy ? 1 : LEGACY_WAGE_FACTOR;
+  return p && !p.legacy ? PLAN_WAGE_FACTOR : LEGACY_WAGE_FACTOR;
 }
 
 /**
@@ -284,7 +286,7 @@ export function wageRoomFor(g: Game, p: BudgetPlan, s: BudgetSplit): number {
   const scale = economyScale(yearOf(g.calendar.currentDate));
   const legacyNow = p.legacy && s.wages === p.chosen.wages;
   const limit = legacyNow ? club.finances.wageBudget * LEGACY_WAGE_FACTOR
-    : Math.max(0, (s.wages - p.fixed.staffAnnual) / (52 * WAGE_OVERHEAD * scale));
+    : Math.max(0, (s.wages - p.fixed.staffAnnual) / (52 * WAGE_OVERHEAD * scale)) * PLAN_WAGE_FACTOR;
   const sum = club.playerIds.reduce((a, id) => a + (g.players[id]?.contract.weeklyWage ?? 0), 0);
   return Math.round((limit - sum) * 52 * scale);
 }

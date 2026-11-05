@@ -24,7 +24,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     football: [
       { topic: 'taktik', title: 'Lehren aus der EM 2000', text: 'Nach dem Vorrunden-Aus bei der EM in Belgien und den Niederlanden ziehen Liga und DFB Konsequenzen: Ab 2001/02 braucht jeder Erstligist ein Nachwuchsleistungszentrum, ab 2002/03 auch jeder Zweitligist.', inGame: 'Plane jetzt: Ab 2001/02 kostet ein fehlendes Leistungszentrum in der 1. Liga jedes Jahr eine Geldstrafe (Jugend › Akademie).' },
       { topic: 'liga', title: 'WM 2006 kommt nach Deutschland', text: 'Am 6. Juli 2000 vergibt die FIFA die Weltmeisterschaft 2006 an Deutschland. Die Planungen für neue Arenen beginnen.' },
-      { topic: 'geld', title: 'Kirch zahlt Milliarden', text: 'Die Kirch-Gruppe hat die Bundesliga-Rechte bis 2004 für rund drei Milliarden DM gekauft. Sat.1 zeigt die Zusammenfassungen bei „ran“, Premiere die Live-Spiele.' },
+      { topic: 'geld', title: 'Mediengruppe zahlt Milliarden', text: 'Eine Münchner Mediengruppe hat die Bundesliga-Rechte bis 2004 für rund drei Milliarden DM gekauft. Ihr Privatsender zeigt die Zusammenfassungen in einer großen Samstagsshow, ihr Bezahlsender die Live-Spiele.' },
       { topic: 'geld', title: 'Stadionnamen zu verkaufen', text: 'Namensrechte werden zur neuen Einnahmequelle: Im Sommer 2001 trägt das Hamburger Stadion erstmals den Namen eines Internetdienstes.', inGame: 'Ab sofort kannst du die Namensrechte an deinem Stadion verkaufen.' },
       { topic: 'liga', title: 'Regionalliga nur noch zweigleisig', text: 'Die dritte Liga schrumpft von vier auf zwei Regionalliga-Staffeln (Nord und Süd).' },
       { topic: 'liga', title: 'Letztes Hallen-Masters', text: 'Im Januar 2001 steigt in Dortmund die letzte Endrunde des DFB-Hallenpokals.', inGame: 'Letzter Winter mit Hallentour und Masters-Endrunde (Statistiken › Halle).' },
@@ -34,7 +34,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'alltag', title: 'UMTS-Milliarden', text: 'Im August 2000 bringt die Versteigerung der UMTS-Mobilfunklizenzen dem Bund fast 100 Milliarden DM. Handy und SMS sind längst Alltag, auch für Spielstände.' },
       { topic: 'politik', title: 'Die Börsenblase platzt', text: 'Die Kurse am Neuen Markt brechen ein. Viele Kleinanleger, die mit Internet-Aktien reich werden wollten, verlieren Geld.' },
       { topic: 'alltag', title: 'BSE-Krise', text: 'Im November 2000 wird der erste BSE-Fall bei einem in Deutschland geborenen Rind bekannt. Rindfleisch verschwindet von vielen Speisekarten.' },
-      { topic: 'kultur', title: 'Reality-TV', text: 'Seit März 2000 läuft „Big Brother“ auf RTL II und wird zum Dauergesprächsthema.' },
+      { topic: 'kultur', title: 'Reality-TV', text: 'Seit März 2000 läuft eine Container-Show im Privatfernsehen und wird zum Dauergesprächsthema.' },
     ],
   },
   // ---------------------------------------------------------------------------
@@ -46,7 +46,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'taktik', title: 'Leistungszentrum ist Lizenzpflicht', text: 'Seit dieser Saison bekommt nur noch eine Erstliga-Lizenz, wer ein Nachwuchsleistungszentrum betreibt.', inGame: 'Erstligisten ohne vollständiges Leistungszentrum zahlen jährlich eine Geldstrafe, der Ruf der Akademie leidet.' },
       { topic: 'liga', title: 'Die DFL übernimmt', text: 'Seit Sommer 2001 organisiert und vermarktet die Deutsche Fußball Liga (DFL) die beiden Bundesligen. Der DFB bleibt für Nationalteams, Pokal und Amateure zuständig.' },
       { topic: 'liga', title: 'Hallen-Masters abgeschafft', text: 'Der DFB stellt den Hallenpokal ein: kürzere Winterpause, Verletzungsangst und Absagen der Topklubs. Nur regionale Hallenturniere laufen noch.', inGame: 'Im Winter gibt es nur noch regionale Hallenturniere ohne Masters.' },
-      { topic: 'geld', title: 'Kirch-Imperium wankt', text: 'Im April 2002 meldet KirchMedia Insolvenz an. Die Vereine bangen um vereinbarte Fernsehgelder.' },
+      { topic: 'geld', title: 'Medienimperium wankt', text: 'Im April 2002 meldet die Mediengruppe der Bundesliga-Rechte Insolvenz an. Die Vereine bangen um vereinbarte Fernsehgelder.' },
       { topic: 'liga', title: 'WM erstmals in Asien', text: 'Die WM 2002 findet im Sommer erstmals in Asien und erstmals mit zwei Gastgebern statt: Japan und Südkorea.' },
     ],
     society: [
@@ -59,9 +59,9 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
   // ---------------------------------------------------------------------------
   {
     season: '2002/03',
-    headline: 'Kirch-Pleite und Transferfenster',
+    headline: 'Medienpleite und Transferfenster',
     football: [
-      { topic: 'geld', title: 'Weniger Fernsehgeld', text: 'Nach der Kirch-Pleite fließt deutlich weniger TV-Geld als vereinbart. Mehrere Vereine geraten in finanzielle Schwierigkeiten.', inGame: 'Die TV-Einnahmen sinken für zwei Spielzeiten spürbar.' },
+      { topic: 'geld', title: 'Weniger Fernsehgeld', text: 'Nach der Pleite der Mediengruppe fließt deutlich weniger TV-Geld als vereinbart. Mehrere Vereine geraten in finanzielle Schwierigkeiten.', inGame: 'Die TV-Einnahmen sinken für zwei Spielzeiten spürbar.' },
       { topic: 'liga', title: 'Feste Wechselperioden', text: 'FIFA und UEFA führen verbindliche Transferfenster ein: Wechsel sind nur noch im Sommer und in einem kurzen Winterfenster möglich.' },
       { topic: 'taktik', title: 'DFB-Talentförderprogramm', text: 'Der DFB startet 2002 ein bundesweites Netz von Stützpunkten, an denen Talente ab elf Jahren zusätzlich trainiert werden.', inGame: 'Alle Scouting-Netze finden mehr herausragende Talente.' },
       { topic: 'taktik', title: 'NLZ auch in der 2. Liga', text: 'Ab dieser Saison ist das Nachwuchsleistungszentrum auch für Zweitligisten Lizenzbedingung.', inGame: 'Auch in der 2. Liga gibt es ohne Leistungszentrum Geldstrafen.' },
@@ -122,7 +122,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'medien', title: 'Die Ultras prägen die Kurve', text: 'Ultragruppen mit großen Choreografien bestimmen die Stimmung – und protestieren gegen Kommerz und Anstoßzeiten.', inGame: 'Neue Fan-Epoche „Ultra-Kultur“: Die Stimmung schwankt stärker, Ticketpreise werden kritischer gesehen.' },
       { topic: 'geld', title: 'Logen und Business-Seats', text: 'Hospitality wird zur festen Einnahmesäule der neuen Arenen; die Anforderungen an Flutlicht steigen.', inGame: 'Premium-Hospitality und Flutlicht mit 1.400 Lux sind baubar.' },
       { topic: 'taktik', title: 'Fitness nach US-Vorbild', text: 'Die Nationalelf arbeitet mit amerikanischen Fitnessexperten und Gummibändern. In der Liga wird erst gespottet, dann kopiert.' },
-      { topic: 'medien', title: 'Überraschung beim Pay-TV', text: 'Im Dezember 2005 sichert sich der Kabelanbieter Unity Media („arena“) die Pay-TV-Rechte ab 2006/07; Premiere geht leer aus.' },
+      { topic: 'medien', title: 'Überraschung beim Pay-TV', text: 'Im Dezember 2005 sichert sich ein Kabelnetzbetreiber mit neuem Sender die Pay-TV-Rechte ab 2006/07; der bisherige Bezahlsender geht leer aus.' },
     ],
     society: [
       { topic: 'politik', title: 'Erste Kanzlerin', text: 'Im November 2005 wird Angela Merkel als erste Frau Bundeskanzlerin einer großen Koalition.' },
@@ -138,7 +138,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     football: [
       { topic: 'liga', title: 'Der WM-Effekt', text: 'Nach der Heim-WM strömen mehr Familien und neue Fans in die modernisierten Stadien.', inGame: 'Die Zuschauernachfrage steigt ligaweit spürbar.' },
       { topic: 'taktik', title: 'Der Assistent übernimmt', text: 'Der bisherige Assistent wird im Juli 2006 Bundestrainer und setzt auf schnelles Kurzpassspiel.' },
-      { topic: 'medien', title: 'Bundesliga bei arena', text: 'Live-Spiele laufen nun beim Pay-TV-Sender arena; viele Fans brauchen neue Receiver oder Kabelverträge. Die ARD-„Sportschau“ bleibt.' },
+      { topic: 'medien', title: 'Neuer Bezahlsender', text: 'Live-Spiele laufen nun beim neuen Pay-TV-Sender des Kabelnetzbetreibers; viele Fans brauchen neue Receiver oder Kabelverträge. Die Zusammenfassung am Samstag im öffentlich-rechtlichen Fernsehen bleibt.' },
       { topic: 'medien', title: 'Fanmeile vor dem Stadion', text: 'Großbildleinwände und Fan-Zonen nach WM-Vorbild tauchen auch an Bundesliga-Spieltagen auf.', inGame: 'Fan-Zone mit Großbildleinwand baubar (Verein › Gelände).' },
       { topic: 'geld', title: 'Stadion als Ausflugsziel', text: 'Führungen durch Kabine und Spielertunnel werden beliebt und bringen zusätzliche Einnahmen.', inGame: 'Arena-Touren sind baubar.' },
     ],
@@ -155,7 +155,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     headline: 'Das Smartphone kommt',
     football: [
       { topic: 'liga', title: 'Wieder Weltmeisterinnen', text: 'Im September 2007 verteidigen die deutschen Frauen in China ihren WM-Titel – ohne ein einziges Gegentor im Turnier.' },
-      { topic: 'medien', title: 'Premiere zurück', text: 'Nach dem Fehlstart von arena zeigt Premiere die Live-Spiele wieder, per Sublizenz.' },
+      { topic: 'medien', title: 'Der alte Bezahlsender ist zurück', text: 'Nach dem Fehlstart des Kabelsenders zeigt der alte Bezahlsender die Live-Spiele wieder, per Sublizenz.' },
       { topic: 'liga', title: 'Letzter Ligapokal', text: 'Im Juli 2007 wird der DFL-Ligapokal zum letzten Mal ausgespielt.' },
       { topic: 'liga', title: 'Kampf um die 3. Liga', text: 'Zur Saison 2008/09 kommt eine eingleisige 3. Liga. Die Regionalligisten spielen um die Startplätze.', inGame: 'In der Regionalliga zählt diese Saison doppelt: Die Besten jeder Staffel qualifizieren sich für die neue 3. Liga.' },
       { topic: 'liga', title: 'EM in den Alpen', text: 'Im Juni 2008 richten Österreich und die Schweiz gemeinsam die EM aus.' },
@@ -190,7 +190,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     headline: 'Europa League und Vuvuzelas',
     football: [
       { topic: 'liga', title: 'Aus UEFA-Pokal wird Europa League', text: 'Der zweite Europapokal heißt jetzt Europa League und spielt eine Gruppenphase mit 48 Teams.', inGame: 'Der Europa-Pokal hat eine Gruppenphase mit mehr Spielen und höheren Prämien.' },
-      { topic: 'medien', title: 'Premiere wird Sky', text: 'Im Juli 2009 wird aus Premiere Sky Deutschland. Die ARD-„Sportschau“ zeigt weiter die Zusammenfassungen.' },
+      { topic: 'medien', title: 'Neuer Name im Bezahlfernsehen', text: 'Im Juli 2009 übernimmt ein internationaler Medienkonzern den Bezahlsender und gibt ihm einen neuen Namen. Die Samstags-Sportsendung im öffentlich-rechtlichen Fernsehen zeigt weiter die Zusammenfassungen.' },
       { topic: 'geld', title: 'Neuer TV-Vertrag', text: 'Bis 2013 erhält die Liga gut 400 Mio. Euro pro Saison aus der nationalen Vermarktung.' },
       { topic: 'regeln', title: 'Torrichter im Test', text: 'In der Europa League stehen versuchsweise zwei zusätzliche Schiedsrichterassistenten an den Torlinien.' },
       { topic: 'liga', title: 'WM in Südafrika', text: 'Im Sommer 2010 findet die WM erstmals in Afrika statt. Der Klang der Vuvuzelas wird zum Markenzeichen.' },
@@ -277,7 +277,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
   // ---------------------------------------------------------------------------
   {
     season: '2014/15',
-    headline: 'Weltmeister, Mindestlohn und Netflix',
+    headline: 'Weltmeister, Mindestlohn und Streaming',
     football: [
       { topic: 'liga', title: 'Mit dem vierten Stern', text: 'Im Juli 2014 hat Deutschland in Rio den WM-Titel gewonnen. Das Interesse am Fußball ist riesig.' },
       { topic: 'taktik', title: 'Sommerreise nach Amerika', text: 'Spitzenvereine nutzen die Vorbereitung für Marketingreisen in die USA.', inGame: 'Für große Vereine wird eine USA-Reise im Sommer buchbar.' },
@@ -288,7 +288,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     ],
     society: [
       { topic: 'alltag', title: 'Der Mindestlohn kommt', text: 'Seit dem 1. Januar 2015 gilt ein gesetzlicher Mindestlohn von 8,50 Euro pro Stunde.' },
-      { topic: 'kultur', title: 'Netflix startet', text: 'Im September 2014 startet Netflix in Deutschland; Serien werden „am Stück“ geschaut.' },
+      { topic: 'kultur', title: 'Streaming startet', text: 'Im September 2014 startet der große Serien-Streamingdienst in Deutschland; Serien werden „am Stück“ geschaut.' },
       { topic: 'kultur', title: 'Ice Bucket Challenge', text: 'Im Sommer 2014 kippen sich Prominente und Profis Eiswasser über den Kopf, um Spenden für ALS-Forschung zu sammeln.' },
       { topic: 'politik', title: 'Griechenland-Krise', text: 'Im Sommer 2015 steht Griechenland kurz vor dem Austritt aus dem Euro.' },
     ],
@@ -336,7 +336,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     football: [
       { topic: 'regeln', title: 'Der Video-Assistent', text: 'Seit 2017/18 überprüft der Video-Assistent in der Bundesliga Tore, Elfmeter, Rote Karten und Verwechslungen.', inGame: 'In der 1. Liga gibt es Video-Überprüfungen.' },
       { topic: 'liga', title: 'Fußball am Montag', text: 'Erstmals finden einzelne Bundesligaspiele am Montagabend statt. Fans protestieren mit Bannern und Boykotten.' },
-      { topic: 'geld', title: 'TV-Geld über einer Milliarde', text: 'Der neue Medienvertrag bringt im Schnitt rund 1,16 Milliarden Euro pro Saison; Eurosport zeigt Freitags- und Montagsspiele.' },
+      { topic: 'geld', title: 'TV-Geld über einer Milliarde', text: 'Der neue Medienvertrag bringt im Schnitt rund 1,16 Milliarden Euro pro Saison; ein Sportsender zeigt Freitags- und Montagsspiele.' },
       { topic: 'geld', title: '222 Millionen', text: 'Im August 2017 wechselt Neymar für 222 Mio. Euro nach Paris. Die Preise im ganzen Markt ziehen an.' },
       { topic: 'liga', title: 'WM in Russland', text: 'Im Sommer 2018 setzt die FIFA bei einer WM erstmals den Video-Assistenten ein.' },
     ],
@@ -354,7 +354,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     football: [
       { topic: 'liga', title: 'Nach dem WM-Aus', text: 'Nach dem Vorrunden-Aus 2018 debattiert Deutschland über Ausbildung, Spielidee und Nachwuchsleistungszentren.' },
       { topic: 'liga', title: 'Nations League', text: 'Im September 2018 startet die UEFA Nations League und ersetzt viele Freundschaftsspiele.' },
-      { topic: 'medien', title: 'Königsklasse im Pay-TV', text: 'Die Champions League läuft ab 2018/19 fast nur noch bei Sky und DAZN.' },
+      { topic: 'medien', title: 'Königsklasse im Pay-TV', text: 'Die Champions League läuft ab 2018/19 fast nur noch im Bezahlfernsehen und beim Streaming.' },
       { topic: 'regeln', title: 'VAR in Europa', text: 'Ab dem Achtelfinale 2018/19 setzt auch die Champions League den Video-Assistenten ein.' },
       { topic: 'liga', title: 'Frauen-WM in Frankreich', text: 'Im Sommer 2019 erreicht die Frauen-WM in Frankreich Rekordquoten.' },
     ],
@@ -374,7 +374,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'liga', title: 'Spiele ohne Publikum', text: 'Am 13. März 2020 stoppt die DFL wegen der Pandemie den Spielbetrieb. Am 16. Mai geht es als erste große Liga weiter – ohne Zuschauer.', inGame: 'Ab März 2020 keine Zuschauereinnahmen; die Stadien bleiben bis Frühjahr 2022 leer oder nur teilweise gefüllt.' },
       { topic: 'regeln', title: 'Fünf Wechsel', text: 'Zum Neustart im Mai 2020 erlaubt das IFAB vorübergehend fünf Auswechslungen in drei Unterbrechungen.', inGame: 'Im Spiel gelten fünf Wechsel und neun Ersatzspieler schon ab Januar 2020.' },
       { topic: 'geld', title: 'Hellere Stadien', text: 'Seit Juli 2019 verlangt die Lizenz in der 1. Liga eine Flutlicht-Beleuchtungsstärke von 1.600 Lux.', inGame: 'Lizenzauflage: 1.600 Lux Flutlicht in der 1. Liga.' },
-      { topic: 'medien', title: 'DAZN zeigt Bundesliga', text: 'Per Sublizenz von Eurosport laufen Freitags- und Montagsspiele nun beim Streamingdienst DAZN.' },
+      { topic: 'medien', title: 'Bundesliga im Stream', text: 'Per Sublizenz laufen Freitags- und Montagsspiele nun bei einem Sport-Streamingdienst.' },
       { topic: 'liga', title: 'Finalturnier in Lissabon', text: 'Die Champions League wird im August 2020 mit einem Finalturnier in Lissabon zu Ende gespielt.' },
     ],
     society: [
@@ -391,7 +391,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     football: [
       { topic: 'regeln', title: 'Fünf Wechsel bleiben', text: 'Wegen der dichten Spielpläne bleiben fünf Auswechslungen erlaubt; die Regel wird später dauerhaft.', inGame: 'Fünf Wechsel in drei Unterbrechungen, neun Spieler auf der Bank.' },
       { topic: 'liga', title: 'Weiter ohne Publikum', text: 'Fast die ganze Saison wird vor leeren Rängen gespielt; Pappfiguren und eingespielter Jubel ersetzen die Kurve.', inGame: 'Kaum Zuschauereinnahmen in dieser Saison.' },
-      { topic: 'geld', title: 'Neuer TV-Vertrag', text: 'Im Juni 2020 vergibt die DFL die Rechte ab 2021/22 für durchschnittlich 1,1 Milliarden Euro pro Saison an Sky und DAZN.' },
+      { topic: 'geld', title: 'Neuer TV-Vertrag', text: 'Im Juni 2020 vergibt die DFL die Rechte ab 2021/22 für durchschnittlich 1,1 Milliarden Euro pro Saison an einen Bezahlsender und einen Streamingdienst.' },
       { topic: 'liga', title: 'Super-League-Versuch', text: 'Im April 2021 kündigen zwölf europäische Großklubs eine eigene Liga an. Nach Fanprotesten zerfällt das Projekt binnen zwei Tagen; deutsche Vereine machen nicht mit.' },
       { topic: 'liga', title: 'EM in elf Städten', text: 'Die um ein Jahr verschobene EM 2020 findet im Sommer 2021 in elf Ländern statt, auch in München.' },
     ],
@@ -463,7 +463,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     football: [
       { topic: 'liga', title: 'Ligaphase statt Gruppen', text: 'Champions League, Europa League und Conference League spielen mit 36 Teams in einer großen Ligaphase.', inGame: 'Die Meisterliga hat eine Ligaphase: mehr Spiele, mehr Prämien.' },
       { topic: 'regeln', title: 'Nur der Kapitän spricht', text: 'Nach dem Vorbild der EM 2024 soll im deutschen Profifußball nur noch der Kapitän mit dem Schiedsrichter diskutieren.' },
-      { topic: 'geld', title: 'TV-Poker mit Schiedsgericht', text: 'Nach einem Streit mit DAZN vergibt die DFL im Dezember 2024 die Rechte ab 2025/26 neu – im Schnitt rund 1,12 Milliarden Euro pro Saison.' },
+      { topic: 'geld', title: 'TV-Poker mit Schiedsgericht', text: 'Nach einem Streit mit einem Streamingdienst vergibt die DFL im Dezember 2024 die Rechte ab 2025/26 neu – im Schnitt rund 1,12 Milliarden Euro pro Saison.' },
       { topic: 'geld', title: 'Polizeikosten bestätigt', text: 'Im Januar 2025 bestätigt das Bundesverfassungsgericht, dass Bremen die Liga an Polizeikosten für Hochrisikospiele beteiligen darf.', inGame: 'Polizeigebühren für Hochrisikospiele steigen ab 2025.' },
       { topic: 'liga', title: 'Klub-WM in den USA', text: 'Im Sommer 2025 spielen erstmals 32 Vereine bei der neuen Klub-WM in den USA.' },
     ],

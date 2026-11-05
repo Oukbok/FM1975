@@ -68,8 +68,8 @@ export function drawRulesFor(comp: DrawComp, roundIndex: number, startYear: numb
 export function drawVenue(comp: DrawComp, roundIndex: number, startYear: number): { venue: string; stage: DrawStage; show: string } {
   if (comp === 'cup') {
     if (startYear >= 2017) return { venue: 'Fußballmuseum Dortmund', stage: 'museum', show: 'Sonntagabend, Sportsendung live' };
-    if (startYear >= 1990) return { venue: 'Fernsehstudio', stage: 'studio90', show: 'Samstagabend, Sportstudio' };
-    return { venue: 'Fernsehstudio', stage: 'studio70', show: 'Samstagabend, Sportstudio' };
+    if (startYear >= 1990) return { venue: 'Fernsehstudio', stage: 'studio90', show: 'Samstagabend, Sportmagazin' };
+    return { venue: 'Fernsehstudio', stage: 'studio70', show: 'Samstagabend, Sportmagazin' };
   }
   if (startYear >= 1998 && roundIndex === 0) return { venue: 'Monaco', stage: 'uefaGala', show: 'Gala-Auslosung zum Supercup' };
   if (startYear >= 1995) return { venue: 'Nyon', stage: 'uefa90', show: 'Verbandssitz des Europa-Verbands' };

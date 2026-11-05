@@ -678,7 +678,7 @@ Die **Zentrale** ist deine Startseite. Oben bleibt das Hauptmenü; den Kalender 
 - **In der Mitte** liegt das **Newscenter**: links deine Nachrichten (gruppiert nach Heute, Gestern, Diese Woche, Älter; ungelesene fett), rechts die gewählte Nachricht mit Datum, Text, Entscheidungsknöpfen und Sprungzielen. Betrifft sie einen Spieler, siehst du unten rechts sein Gesicht – ein Klick öffnet das Profil. Oben filterst du mit großen Knöpfen: **Alle**, **Ungelesen**, **Entscheidungen** (alles, was noch eine Antwort von dir braucht), **Spiele** (Liga und Pokal), **Transfers** (mit Verträgen) und **Verein** (Vorstand, Presse, Training, Medizin, Allgemeines); jede einzelne Kategorie wählst du über die Liste **Kategorie**. In der Liste steht die Kategorie als ruhige Textspalte, Nachrichten mit offener Entscheidung tragen das Etikett **Entscheidung**.
 - **Offene Entscheidung:** Solange eine Nachricht eine Entscheidung verlangt, wird oben rechts aus „Weiter“ der rote Brief **Nachrichten**. Ein Klick darauf öffnet die Zentrale und wählt die offene Entscheidung direkt aus. Hast du ein Fenster wie Auslosung, Bewertungsrunde, Saison-Briefing oder Die Besten der Saison gesehen, gilt die passende Nachricht danach schon als gelesen. Solche Fenster kommen immer einzeln nacheinander (zuerst Spielbericht, Bewertung, Briefing und Budget, dann Auslosung, Trainingslager-Bilanz, Transferbilanz, Erstes Training, Goldener Ball, Die Besten der Saison, zuletzt die Vorschau „Nächstes Spiel“); solange eines offen ist, steht die Zeit.
 - **Rechts oben** die **Übersicht** aller Wettbewerbe der Saison (Deutschland, DDR, international, Auslandsligen der Vorsaison). Ein Klick öffnet Statistiken › Liga, Pokal oder International mit genau diesem Wettbewerb. Dein Verein ist hervorgehoben.
-- **Rechts unten** erfährst du, was die Fans über deinen Verein lesen – im Medium der Zeit: bis Mai 1980 das **Stadionheft**, ab Juni 1980 der **Videotext** von ARD und ZDF, ab 1999 der **SMS-Dienst** aufs Handy, ab Juli 2008 die **Fan-App**. Die Meldungen und Gerüchte stammen aus der Sportzeitung (Zentrale › Presse); ein Klick öffnet den Artikel.`,
+- **Rechts unten** erfährst du, was die Fans über deinen Verein lesen – im Medium der Zeit: bis Mai 1980 das **Stadionheft**, ab Juni 1980 der **Videotext** der öffentlich-rechtlichen Sender, ab 1999 der **SMS-Dienst** aufs Handy, ab Juli 2008 die **Fan-App**. Die Meldungen und Gerüchte stammen aus der Sportzeitung (Zentrale › Presse); ein Klick öffnet den Artikel.`,
   },
   {
     id: 'presse',
@@ -1659,7 +1659,7 @@ Intern rechnet das Spiel durchgehend in nominalen DM; die Anzeige stellt ab 2002
 
 ## Das Finanzniveau ist recherchiert
 1975/76 setzt ein Erstligist im Mittel rund **4,5 Mio. DM** um: etwa 70 % Eintritt (Ø 23.000 Zuschauer × 8 DM), dazu Catering,
-Trikot- und Bandenwerbung, ein kleiner TV-Anteil (ARD/ZDF zahlten 4,8 Mio. DM für die ganze Liga), Programmhefte und Mitgliedsbeiträge.
+Trikot- und Bandenwerbung, ein kleiner TV-Anteil (das öffentlich-rechtliche Fernsehen zahlte 4,8 Mio. DM für die ganze Liga), Programmhefte und Mitgliedsbeiträge.
 Kleine Vereine kommen auf knapp 2–3 Mio., große Zuschauermagneten auf 7–9 Mio. DM. Ein Stammspieler verdient rund 75.000 DM im Jahr,
 ein Star 200.000–250.000 DM. Ablösen folgen der echten Rekordkurve: 1975 ist ein Spitzenspieler für 0,5–1,5 Mio. DM eine Investition
 von einem Viertel des Jahresumsatzes. Bis heute wächst ein mittlerer Erstligist auf rund 200 Mio. € (TV-Explosion ab 1988/1992/2000,
@@ -1801,7 +1801,7 @@ Die Prognose rechnet mit denselben Formeln wie die Buchungen: Fernsehgeld, Spons
 Vorstand, Fans und Sponsoren reagieren auf deine Aufteilung (Vertrauen und Stimmung ändern sich beim Bestätigen um wenige Punkte). Am Saisonende schreibt der Berater eine Bilanz: Einnahmen gegen Plan, Ausgaben je Posten, Kontostand gegen Mindestreserve. Hast du selbst bestätigt, bewertet der Vorstand das Ergebnis (+1/+2 bei gehaltener Reserve, bis −6 bei deutlicher Unterschreitung).
 
 ## Epochen
-Der Berater ordnet jedes Jahr ein: 1975 lebt ein Verein vom Eintritt (TV-Rechte der ganzen Liga 4,8 Mio. DM), ab 1988 bringt das Privatfernsehen planbares Geld, Bosman (1995) verschiebt Ablösen in Gehälter, die Kirch-Pleite 2002 verlangt mehr Reserve, ab den 2010ern tragen TV und Vermarktung die Etats.`,
+Der Berater ordnet jedes Jahr ein: 1975 lebt ein Verein vom Eintritt (TV-Rechte der ganzen Liga 4,8 Mio. DM), ab 1988 bringt das Privatfernsehen planbares Geld, Bosman (1995) verschiebt Ablösen in Gehälter, die Pleite der Rechte-Mediengruppe 2002 verlangt mehr Reserve, ab den 2010ern tragen TV und Vermarktung die Etats.`,
   },
   {
     id: 'finance-forecast',
@@ -1872,8 +1872,8 @@ Große Vereine mit hoher Auslastung profitieren stärker vom **Eigenbetrieb** (v
 | 2020 | 12 % | 40 % | 38 % |
 
 ## TV-Gelder (zentrale Vermarktung)
-- Zu Saisonbeginn wird der TV-Topf der Liga verteilt und **monatlich** ausgezahlt. 1975 umfasst er 4,2 Mio. DM für die 1. Liga (ARD/ZDF zahlten 4,8 Mio. für die Bundesliga), heute über eine Milliarde Euro.
-- Die Größe des Topfs folgt den echten Rechteverträgen (1. Liga ≈ 80 %): 1984/85 rund 8 Mio. DM, 1988/89 (UFA, Privatfernsehen) 32, 1992/93 (SAT.1 „ran“) 116, 1997/98 204, 2000/01 (Kirch) rund 555 Mio. DM; 2006/07 ≈ 330 Mio. €, 2017/18 mit Auslandsrechten über 1,1 Mrd. €, 2024/25 ≈ 1,17 Mrd. €. Die Kirch-Pleite 2002/03 drückt den Topf vorübergehend.
+- Zu Saisonbeginn wird der TV-Topf der Liga verteilt und **monatlich** ausgezahlt. 1975 umfasst er 4,2 Mio. DM für die 1. Liga (das öffentlich-rechtliche Fernsehen zahlte 4,8 Mio. für die Bundesliga), heute über eine Milliarde Euro.
+- Die Größe des Topfs folgt den echten Rechteverträgen (1. Liga ≈ 80 %): 1984/85 rund 8 Mio. DM, 1988/89 (Privatfernsehen) 32, 1992/93 (Samstagsshow im Privatfernsehen) 116, 1997/98 204, 2000/01 (Mediengruppe) rund 555 Mio. DM; 2006/07 ≈ 330 Mio. €, 2017/18 mit Auslandsrechten über 1,1 Mrd. €, 2024/25 ≈ 1,17 Mrd. €. Die Pleite der Mediengruppe 2002/03 drückt den Topf vorübergehend.
 - Die Verteilung richtet sich nach **Liga** (2. Liga ein Fünftel bis ein Viertel, darunter wenig) und dem **Tabellenplatz der Vorsaison**. Bis 1990 fast gleichmäßig (15 % leistungsabhängig), ab 2000 zu 35 %, ab 2017/18 (vier Säulen) zu 50 % – der Meister bekommt dann gut das Doppelte des Letzten.
 
 ## Marke: regional, national, international
@@ -2454,7 +2454,7 @@ KI-Vereine kaufen nur Spieler, die auch wollen. Deshalb sammeln sich die Stars b
 Den Verhandlungstisch öffnest du über den Knopf **Vertrag** im Spielerprofil, das Rechtsklick-Menü („Vertrag verlängern“), Vertragsnachrichten im Newscenter, Kader › Verträge (auslaufende Verträge) und – beim Spielergespräch eines Transfers – über „Am Verhandlungstisch“. Solange er offen ist, steht die Zeit.
 - **Links** der Spieler: Stärke, Potenzial, Persönlichkeit als Einschätzung (nie als Zahl), Karrierephase, bisheriger Vertrag und was ihm wichtig ist.
 - **Mitte** alle Vertragspunkte: seine **Forderung**, **dein Angebot** (Regler bzw. Umschalter) und wie **wichtig** ihm der Punkt ist (ein bis drei Punkte). Unten erklärt ein Streifen den Punkt unter dem Zeiger.
-- **Rechts** Stimmung und Geduld, der Gesprächsverlauf mit Spieler, Berater und Sportdirektor, und die **Auswirkung**: Gehaltsbudget danach (harte Grenze), Kosten der ersten Saison und über die Laufzeit (nominal), Handgeld + Provision gegen das Transferbudget.
+- **Rechts** Stimmung und Geduld, der Gesprächsverlauf mit Spieler, Berater und Sportdirektor, und die **Auswirkung**: Gehaltsbudget danach (Grenze 110 % des bestätigten Gehaltsbudgets), Kosten der ersten Saison und über die Laufzeit (nominal), Handgeld + Provision gegen das Transferbudget.
 
 ## Vertragspunkte je Epoche
 | Punkt | ab | Wirkung |

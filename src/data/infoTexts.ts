@@ -882,7 +882,7 @@ export const INFO_TEXTS = {
   },
   budgetPosten: {
     title: 'Budgets',
-    text: 'Gehälter sind eine harte Grenze für neue Verträge, das Transferbudget gilt für Ablösen und Handgelder, Infrastruktur und Jugend für bar bezahlte Bauvorhaben. Die Reserve ist, was am Saisonende übrig bleibt – der Vorstand verlangt ein Minimum.',
+    text: 'Gehälter sind die Grenze für neue Verträge (der Vorstand toleriert bis 110 %), das Transferbudget gilt für Ablösen und Handgelder, Infrastruktur und Jugend für bar bezahlte Bauvorhaben. Die Reserve ist, was am Saisonende übrig bleibt – der Vorstand verlangt ein Minimum.',
     wiki: 'finance-budget',
   },
   budgetReaktionen: {
@@ -898,7 +898,7 @@ export const INFO_TEXTS = {
   },
   v2_gehalt: {
     title: 'Grundgehalt',
-    text: 'Festes Gehalt, auch wenn er nicht spielt. Es zählt gegen die harte Grenze deines Gehaltsbudgets – Prämien und Einmalzahlungen nicht.',
+    text: 'Festes Gehalt, auch wenn er nicht spielt. Es zählt gegen die Grenze deines Gehaltsbudgets (110 %) – Prämien und Einmalzahlungen nicht.',
     wiki: 'squad-contracts2',
   },
   v2_laufzeit: {

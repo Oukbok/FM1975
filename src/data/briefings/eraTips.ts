@@ -143,7 +143,7 @@ export const ERA_TIPS: EraTipSet[] = [
         text: 'Ab 2002 wird in Euro bezahlt, ein Euro sind knapp zwei Mark.',
         inGame: 'Alle Beträge stehen ab jetzt in Euro – die Werte bleiben gleich, nur die Zahlen werden kleiner.', from: 2001 },
       { topic: 'geld', title: 'Vorsicht bei langen Gehältern', where: 'Kader › Verträge',
-        text: 'Mit der Pleite der Kirch-Gruppe brechen 2002 die Fernseheinnahmen ein, viele Vereine geraten in Not.',
+        text: 'Mit der Pleite einer großen Mediengruppe brechen 2002 die Fernseheinnahmen ein, viele Vereine geraten in Not.',
         inGame: 'Binde dich nicht mit hohen Gehältern über Jahre – Einnahmen können plötzlich sinken.', from: 2002 },
     ],
   },

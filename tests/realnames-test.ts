@@ -24,6 +24,7 @@ const FILES = [
   'src/data/merchCatalog.ts', 'src/data/contractClauses.ts', 'src/data/matchCalendarRules.ts', 'src/data/youthCompetitions.ts',
   'src/data/youthLowerLeagues.ts', 'src/data/euroFormats.ts', 'src/data/winterBreaks.ts', 'src/data/marketing.ts',
   'src/data/staff.ts', 'src/data/prematch/cityTextsDe.ts', 'src/data/prematch/cityTextsAbroad.ts',
+  'src/engine/sponsorship.ts',
 ];
 const walk = (d: string): string[] => readdirSync(d).flatMap((f) => {
   const p = join(d, f);
@@ -97,13 +98,16 @@ const CLUBS: RegExp[] = [
   /\bMarítimo\b/, /\bSalgueiros\b/, /\bFarense\b/, /\bFeirense\b/, /\bTirsense\b/, /\bBoavista\b/, /\bBelenenses\b/, /\bGil Vicente\b/,
   /\bRiver Plate\b/, /\bAl-(?:Hilal|Nassr|Ittihad|Ahly)\b/,
 ];
-// Marken in Stadionnamen und Sponsoren mit Bezug zum Fußball. Fernsehsender/Mediengruppen (ARD, RTL, Sat.1, Premiere,
-// Sky, DAZN, Kirch) bleiben als historische Rechtehalter erlaubt – sie sind keine Vereins- oder Trikotmarken.
+// Marken in Stadionnamen und Sponsoren mit Bezug zum Fußball – und (Wunsch Pascal) Fernsehsender, Sendungen,
+// Streamingdienste und Mediengruppen: im Text nur umschrieben („ein Privatsender“, „der Bezahlsender“).
 const BRANDS: RegExp[] = [
   /\bAllianz\b/, /\bSignal Iduna\b/, /\bAOL\b/, /\bVeltins\b/, /\bBayArena\b/, /\bImtech\b/, /\bMercedes-Benz-Arena\b/,
   /\bVolkswagen\b/, /\bJägermeister\b/, /\bQatar Airways\b/, /\bEmirates\b/, /\bEtihad\b/, /\bTelekom\b/, /\bAdidas\b/i,
   /\bPuma\b/, /\bNike\b/, /\bHermes\b/, /\bAspire\b/, /\bCommerzbank\b/, /\bAudi\b/, /\bOpel\b/, /\bSAP\b/, /\bGazprom\b/,
   /\bEvonik\b/, /\bTipico\b/, /\bInternational Champions Cup\b/,
+  /\bARD\b/, /\bZDF\b/, /\bRTL\b/, /\bSat\.1\b/i, /\bPremiere\b/, /\bSky\b/, /\bDAZN\b/, /\bKirch(?:-|s?\b|Media)/, /\bISPR\b/, /\bUFA\b/i,
+  /\bDSF\b/, /\bDF1\b/, /\bSport1\b/, /\bEurosport\b/, /\bNetflix\b/, /\bAmazon\b/, /\bMagentaSport\b/, /\bSportschau\b/,
+  /\bSportstudio\b/, /„ran“/, /\bUnity ?Media\b/, /\bBig Brother\b/, /\bBBC\b/, /\bITV\b/, /\bCanal\+/, /\bMediaset\b/,
 ];
 // Reale Fußballer, Trainer, Schiedsrichter und Funktionäre (Nachnamen bzw. Vor- + Nachname).
 const PEOPLE: RegExp[] = [
@@ -130,9 +134,9 @@ const RULES = [...CLUBS.map((r) => ['Verein', uni(r)] as const), ...BRANDS.map((
 // Selbstprüfung: Beispiele werden erkannt, Spielnamen und Bundesland bleiben frei.
 const hitOf = (s: string) => RULES.find(([, r]) => r.test(s));
 const must = ['der FC Bayern', 'Gladbach gegen Bayern', 'Eintracht Braunschweig', 'Dynamo Dresden', 'Real Madrid', 'Allianz Arena',
-  'Franz Beckenbauer', 'Pelé und Uli Hoeneß', 'Özil', 'Der Kaiser übernimmt', 'beim HSV', '1. FC Köln', 'Karlsruher SC', 'SV Werder', 'Happels Pressing', 'Hansa Rostock', 'Manchester United', 'Ajax Amsterdam'];
+  'Franz Beckenbauer', 'Pelé und Uli Hoeneß', 'Özil', 'Der Kaiser übernimmt', 'beim HSV', '1. FC Köln', 'Karlsruher SC', 'SV Werder', 'Happels Pressing', 'Hansa Rostock', 'Manchester United', 'Ajax Amsterdam', 'ARD und ZDF', 'bei Sky', 'Kirch-Pleite'];
 const free = ['München Rot', 'Mönchengladbach', 'Hamburg Blau', 'Gelsenkirchen', 'Dresden', 'Regionalliga Bayern', 'in Bayern',
-  'Bergisch Gladbach', 'Madrid Weiß', 'Mailand Rot-Schwarz', 'Liverpool Rot', 'Porto', 'Daumen hoch', 'Kaiserslautern', 'Bosman-Urteil'];
+  'Bergisch Gladbach', 'Madrid Weiß', 'Mailand Rot-Schwarz', 'Liverpool Rot', 'Porto', 'Daumen hoch', 'Kaiserslautern', 'Bosman-Urteil', 'Bezahlsender', 'Kirchheim', 'Premieren-Abend'];
 const missed = must.filter((s) => !hitOf(s)), wrong = free.filter((s) => hitOf(s));
 ok(!missed.length, `Sperrliste erkennt Beispiele${missed.length ? ' – verfehlt: ' + missed.join(', ') : ''}`);
 ok(!wrong.length, `Spielnamen/Orte bleiben frei${wrong.length ? ' – fälschlich: ' + wrong.join(', ') : ''}`);
