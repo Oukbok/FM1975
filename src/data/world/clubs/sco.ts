@@ -1,0 +1,31 @@
+// Vereine Schottland 1975–2025 (verfremdet). Quellen/echte Namen: docs/recherche/weltvereine_sco.md
+import type { RealClub } from '../types';
+
+export const CLUBS_SCO: RealClub[] = [
+  { id: 'sco-aberdeen', name: "Aberdeen", short: 'ABE', city: "Aberdeen", colors: { primary: '#C8102E', secondary: '#FFFFFF' } },
+  { id: 'sco-airdrie', name: "Airdrie", short: 'AIR', city: "Airdrie", colors: { primary: '#FFFFFF', secondary: '#E30613' } },
+  { id: 'sco-ayr', name: "Ayr", short: 'AYR', city: "Ayr", colors: { primary: '#FFFFFF', secondary: '#000000' } },
+  { id: 'sco-clydebank', name: "Clydebank", short: 'CLY', city: "Clydebank", colors: { primary: '#FFFFFF', secondary: '#E30613' } },
+  { id: 'sco-dingwall', name: "Dingwall", short: 'DIN', city: "Dingwall", colors: { primary: '#00205B', secondary: '#FFFFFF' } },
+  { id: 'sco-dumbarton', name: "Dumbarton", short: 'DUM', city: "Dumbarton", colors: { primary: '#FDD100', secondary: '#000000' } },
+  { id: 'sco-dumfries', name: "Dumfries", short: 'DMF', city: "Dumfries", colors: { primary: '#0055A5', secondary: '#FFFFFF' } },
+  { id: 'sco-dundee', name: "Dundee", short: 'DUN', city: "Dundee", colors: { primary: '#FF6600', secondary: '#000000' } },
+  { id: 'sco-dundee-blau', name: "Dundee Blau", short: 'DNB', city: "Dundee", colors: { primary: '#0B1F45', secondary: '#FFFFFF' } },
+  { id: 'sco-dunfermline', name: "Dunfermline", short: 'DFL', city: "Dunfermline", colors: { primary: '#000000', secondary: '#FFFFFF' } },
+  { id: 'sco-edinburgh-gruen', name: "Edinburgh Grün", short: 'EDG', city: "Edinburgh", colors: { primary: '#005E2E', secondary: '#FFFFFF' } },
+  { id: 'sco-edinburgh-weinrot', name: "Edinburgh Weinrot", short: 'EDW', city: "Edinburgh", colors: { primary: '#7C2033', secondary: '#FFFFFF' } },
+  { id: 'sco-falkirk', name: "Falkirk", short: 'FAL', city: "Falkirk", colors: { primary: '#002F6C', secondary: '#FFFFFF' } },
+  { id: 'sco-glasgow-blau', name: "Glasgow Blau", short: 'GLB', city: "Glasgow", colors: { primary: '#1B458F', secondary: '#FFFFFF' } },
+  { id: 'sco-glasgow-gruen', name: "Glasgow Grün", short: 'GLG', city: "Glasgow", colors: { primary: '#018749', secondary: '#FFFFFF' } },
+  { id: 'sco-glasgow-rot-gelb', name: "Glasgow Rot-Gelb", short: 'GRG', city: "Glasgow", colors: { primary: '#E30613', secondary: '#FDE100' } },
+  { id: 'sco-greenock', name: "Greenock", short: 'GRK', city: "Greenock", colors: { primary: '#0055A5', secondary: '#FFFFFF' } },
+  { id: 'sco-gretna', name: "Gretna", short: 'GRE', city: "Gretna", colors: { primary: '#000000', secondary: '#FFFFFF' } },
+  { id: 'sco-hamilton', name: "Hamilton", short: 'HAM', city: "Hamilton", colors: { primary: '#E30613', secondary: '#FFFFFF' } },
+  { id: 'sco-inverness', name: "Inverness", short: 'INV', city: "Inverness", colors: { primary: '#0033A0', secondary: '#E30613' } },
+  { id: 'sco-kilmarnock', name: "Kilmarnock", short: 'KIL', city: "Kilmarnock", colors: { primary: '#0050A0', secondary: '#FFFFFF' } },
+  { id: 'sco-kirkcaldy', name: "Kirkcaldy", short: 'KIR', city: "Kirkcaldy", colors: { primary: '#0055A5', secondary: '#FFFFFF' } },
+  { id: 'sco-livingston', name: "Livingston", short: 'LIV', city: "Livingston", colors: { primary: '#FDB913', secondary: '#000000' } },
+  { id: 'sco-motherwell', name: "Motherwell", short: 'MOT', city: "Motherwell", colors: { primary: '#F5A623', secondary: '#7B2D26' } },
+  { id: 'sco-paisley', name: "Paisley", short: 'PAI', city: "Paisley", colors: { primary: '#000000', secondary: '#FFFFFF' } },
+  { id: 'sco-perth', name: "Perth", short: 'PER', city: "Perth", colors: { primary: '#0050A0', secondary: '#FFFFFF' } },
+];
