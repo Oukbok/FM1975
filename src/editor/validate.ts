@@ -132,6 +132,32 @@ export function checkDataset(d: Dataset): Issue[] {
     }
   }
 
+  // Weltdaten: IDs eindeutig, jede Saison nur bekannte Vereine, gerade Ligagrößen.
+  for (const [cc, w] of Object.entries(d.worldData ?? {})) {
+    const A = `Weltdaten ${cc}`;
+    const ids = new Set<string>();
+    for (const c of w.clubs ?? []) {
+      if (!c.id || !SLUG.test(c.id)) err(A, `Vereins-ID „${c.id ?? ''}“ – nur Kleinbuchstaben, Ziffern, _ und -.`);
+      if (ids.has(c.id)) err(A, `ID „${c.id}“ doppelt.`);
+      ids.add(c.id);
+      if (!c.name?.trim()) err(A, `Verein „${c.id}“ hat keinen Namen.`);
+    }
+    for (const [y, r] of Object.entries(w.seasons ?? {})) {
+      const lists: [string, string[] | undefined][] = [['1. Liga', r.t1], ['2. Liga', r.t2], ['2. Liga (2. Staffel)', r.t2b]];
+      const seen = new Set<string>();
+      for (const [nm, l] of lists) {
+        if (!l) continue;
+        if (l.length % 2) warn(A, `${y}: ${nm} mit ungerader Zahl (${l.length}) – der Letzte fällt im Spiel weg.`);
+        for (const id of l) {
+          if (!ids.has(id)) err(A, `${y}: ${nm} – unbekannte ID „${id}“.`);
+          if (seen.has(id)) err(A, `${y}: „${id}“ steht in mehreren Ligen.`);
+          seen.add(id);
+        }
+      }
+      for (const id of [r.cup, r.cupFinalist, ...Object.values(r.euro ?? {}).flat()]) if (id && !ids.has(id)) err(A, `${y}: Pokal/Europapokal – unbekannte ID „${id}“.`);
+    }
+  }
+
   // Leere Listen ersetzt das Spiel beim Anwenden durch den Standard.
   const empties: [string, unknown[]][] = [
     ['DDR-Oberliga', d.clubs.ddrOberliga], ['DDR-Liga', d.clubs.ddrLiga], ['Europa: Teilungen', d.europe.splits],

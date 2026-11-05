@@ -117,6 +117,7 @@ function hashCode(s: string): number {
  */
 export function composeHome(cc: string, year: number): ComposedHome | null {
   const row = worldSeason(cc, year);
+  if (cc === 'ger' && year === 1975 && row && sameAsSeeds1975(row)) return null;
   if (!row) {
     if (cc !== 'ger' || year === 1975) return null;
     // Deutschland ohne Daten: Vereine von 1975, Zweitligisten nach Struktur des Jahres.
@@ -203,4 +204,12 @@ export function secondSimClubs(comp: ComposedHome): Record<string, SimClub> {
     }
   }
   return out;
+}
+
+/** Deutschland 1975/76 in den Daten = Startvereine des Spiels? Dann bleibt der alte Aufbau (Seeds). */
+export function sameAsSeeds1975(row: SeasonRow): boolean {
+  const same = (a: string[] | undefined, b: string[]) => !!a && a.length === b.length && b.every((id) => a.includes(id));
+  if (!same(row.t1, CLUB_SEEDS.map((s) => s.id))) return false;
+  if (!row.t2?.length && !row.t2b?.length) return true;
+  return same(row.t2, SECOND_LIGA_NORD_SEEDS.map((s) => s.id)) && same(row.t2b, SECOND_LIGA_SUED_SEEDS.map((s) => s.id));
 }

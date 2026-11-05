@@ -3,6 +3,8 @@
 // (vorher inline in App.tsx). Reihenfolge ist verbindlich; jede Migration ist
 // idempotent. Genutzt von App.tsx (Laden) und tests/season-test.ts.
 // =============================================================================
+import { setHomeOrigin } from '../data/origins';
+import { countryOrigin } from '../data/world/countries';
 import { applyDataset } from '../data/dataset/apply';
 import { BUILTIN_ID } from '../data/dataset/builtin';
 import { cachedDataset } from '../data/dataset/storage';
@@ -75,6 +77,8 @@ export function prepareLoadedGame(g: Game): void {
       bodyText: `Dieser Spielstand wurde mit dem Datensatz „${g.datasetName ?? dsId}“ begonnen. Er ist hier nicht installiert, deshalb gelten die Standardwerte für Geschichte, Namen und neue Vereine. Importiere den Datensatz im Hauptmenü unter „Datensätze & Editor“ und lade den Spielstand erneut.`,
     }));
   }
+  // Heimatland (Weltdaten): Herkunft der Einheimischen für neue Spieler/Jugend.
+  setHomeOrigin(g.homeCountry && g.homeCountry !== 'ger' ? countryOrigin(g.homeCountry) : null);
   // Positionsbewertung auf das Spieljahr einstellen; ältere Spielstände auf Entwicklung 2.0 heben.
   setEraYear(Number(g.calendar.currentDate.slice(0, 4)));
   // Positionen 2.0: alte Kürzel VS/AV/FL → IV, RV/LV, RA/LA (vor allem, was Positionen bewertet).
