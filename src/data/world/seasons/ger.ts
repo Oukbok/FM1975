@@ -273,7 +273,7 @@ export const SEASONS_GER: Record<number, SeasonRow> = {
     cup: 'gel',
     cupFinalist: 'dui',
     euro: { cl: ['muc', 'gel', 'bre'], el: ['n_lev', 'n_dor', 's_vfb'] },
-    note: "2. Bundesliga: 1860 München -2, Bielefeld -3 Punkte.",
+    note: "2. Bundesliga: München Blau -2, Bielefeld -3 Punkte.",
   },
   2011: {
     t1: ['n_dor', 'muc', 'gel', 'mgl', 'n_lev', 's_vfb', 'han', 'h_wob', 'bre', 's_nue', 'ger-hoffenheim', 'h_fre', 's_mai', 's_aug', 'ham', 'ber', 'kln', 'kai'],

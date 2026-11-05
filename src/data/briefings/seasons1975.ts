@@ -42,7 +42,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'geld',
         title: 'Werbung auf der Brust',
-        text: 'Seit Eintracht Braunschweig im März 1973 mit dem Jägermeister-Hirsch auflief, tragen immer mehr Vereine Werbung auf dem Trikot. Für viele Klubs ist das eine ganz neue Einnahmequelle.',
+        text: 'Seit Braunschweig im März 1973 mit dem Hirschkopf eines Kräuterlikörs auflief, tragen immer mehr Vereine Werbung auf dem Trikot. Für viele Klubs ist das eine ganz neue Einnahmequelle.',
         inGame: 'Trikotsponsoring ab Spielstart verfügbar',
       },
       {
@@ -53,7 +53,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'taktik',
         title: 'Weltmeisterland mit Libero',
-        text: 'Deutschland ist seit 1974 Weltmeister, der FC Bayern gewann 1974 und 1975 den Landesmeister-Pokal, Gladbach ist Meister 1975. Gespielt wird mit Libero hinter der Abwehr und strenger Manndeckung.',
+        text: 'Deutschland ist seit 1974 Weltmeister, München Rot gewann 1974 und 1975 den Landesmeister-Pokal, Mönchengladbach ist Meister 1975. Gespielt wird mit Libero hinter der Abwehr und strenger Manndeckung.',
       },
     ],
     society: [
@@ -87,12 +87,12 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
   // ---------------------------------------------------------------------------
   {
     season: '1976/77',
-    headline: 'Panenka, Gold und Budenzauber',
+    headline: 'Gelupfter Elfmeter, Gold und Budenzauber',
     football: [
       {
         topic: 'liga',
         title: 'EM-Finale vom Punkt verloren',
-        text: 'Im Juni 1976 unterliegt Deutschland im EM-Finale von Belgrad der ČSSR im Elfmeterschießen. Antonín Panenka lupft den entscheidenden Strafstoß lässig in die Mitte.',
+        text: 'Im Juni 1976 unterliegt Deutschland im EM-Finale von Belgrad der ČSSR im Elfmeterschießen. Der tschechoslowakische Schütze lupft den entscheidenden Strafstoß lässig in die Mitte.',
       },
       {
         topic: 'liga',
@@ -142,12 +142,12 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'liga',
         title: 'WM 1978 in Argentinien',
-        text: 'Im Juni 1978 verteidigt Deutschland in Argentinien seinen Titel – ohne Franz Beckenbauer, der im Frühjahr 1977 zu Cosmos New York gewechselt ist.',
+        text: 'Im Juni 1978 verteidigt Deutschland in Argentinien seinen Titel – ohne seinen Kapitän und Libero, der im Frühjahr 1977 zu einem New Yorker Klub gewechselt ist.',
       },
       {
         topic: 'geld',
         title: 'Amerika lockt mit Dollars',
-        text: 'In der nordamerikanischen Profiliga NASL spielen Weltstars wie Pelé und Beckenbauer vor großem Publikum. Für alternde Stars wird der Wechsel über den Atlantik eine lukrative Option.',
+        text: 'In der nordamerikanischen Profiliga NASL spielen Weltstars aus Brasilien und Deutschland vor großem Publikum. Für alternde Stars wird der Wechsel über den Atlantik eine lukrative Option.',
       },
       {
         topic: 'liga',
@@ -196,13 +196,13 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       },
       {
         topic: 'liga',
-        title: 'Derwall folgt auf Schön',
-        text: 'Nach 14 Jahren hört Bundestrainer Helmut Schön auf. Sein Assistent Jupp Derwall übernimmt die Nationalmannschaft.',
+        title: 'Neuer Bundestrainer',
+        text: 'Nach 14 Jahren hört der Bundestrainer auf. Sein langjähriger Assistent übernimmt die Nationalmannschaft.',
       },
       {
         topic: 'liga',
         title: 'Flucht eines Oberliga-Spielers',
-        text: 'Im März 1979 kehrt der Nationalspieler Lutz Eigendorf vom BFC Dynamo nach einem Freundschaftsspiel in Gießen nicht in die DDR zurück. Für DDR-Klubs werden Westreisen danach noch strenger überwacht.',
+        text: 'Im März 1979 kehrt ein Nationalspieler des Ost-Berliner Serienmeisters nach einem Freundschaftsspiel in Gießen nicht in die DDR zurück. Für DDR-Klubs werden Westreisen danach noch strenger überwacht.',
       },
     ],
     society: [
@@ -246,7 +246,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'geld',
         title: 'Der Manager-Beruf entsteht',
-        text: 'Im Mai 1979 wird Uli Hoeneß mit 27 Jahren Manager des FC Bayern. Immer mehr Vereine setzen auf hauptamtliche Manager statt ehrenamtlicher Präsidenten.',
+        text: 'Im Mai 1979 wird ein 27-jähriger Ex-Nationalspieler Manager von München Rot. Immer mehr Vereine setzen auf hauptamtliche Manager statt ehrenamtlicher Präsidenten.',
       },
     ],
     society: [
@@ -280,7 +280,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'liga',
         title: 'Europameister 1980',
-        text: 'Im Juni 1980 gewinnt Deutschland in Rom das EM-Finale 2:1 gegen Belgien, Horst Hrubesch trifft doppelt.',
+        text: 'Im Juni 1980 gewinnt Deutschland in Rom das EM-Finale 2:1 gegen Belgien, der Mittelstürmer aus Hamburg trifft doppelt.',
       },
       {
         topic: 'liga',
@@ -464,17 +464,17 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
   // ---------------------------------------------------------------------------
   {
     season: '1984/85',
-    headline: 'Der Kaiser übernimmt',
+    headline: 'Der Libero wird Teamchef',
     football: [
       {
         topic: 'liga',
-        title: 'Teamchef Beckenbauer',
-        text: 'Nach dem Vorrunden-Aus bei der EM 1984 tritt Jupp Derwall zurück. Franz Beckenbauer übernimmt als „Teamchef“, weil ihm die Trainerlizenz fehlt.',
+        title: 'Ein Teamchef ohne Lizenz',
+        text: 'Nach dem Vorrunden-Aus bei der EM 1984 tritt der Bundestrainer zurück. Der Weltmeister-Kapitän von 1974 übernimmt als „Teamchef“, weil ihm die Trainerlizenz fehlt.',
       },
       {
         topic: 'medien',
         title: 'Live im ganzen Land',
-        text: 'Am 11. Dezember 1984 überträgt die ARD erstmals ein Bundesligaspiel bundesweit live: das Nachholspiel Gladbach gegen Bayern.',
+        text: 'Am 11. Dezember 1984 überträgt die ARD erstmals ein Bundesligaspiel bundesweit live: das Nachholspiel Mönchengladbach gegen München Rot.',
       },
       {
         topic: 'geld',
@@ -520,7 +520,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'liga',
         title: 'WM 1986 in Mexiko',
-        text: 'Im Juni 1986 spielt die Nationalmannschaft unter Teamchef Beckenbauer bei der WM in Mexiko – in Hitze und Höhe.',
+        text: 'Im Juni 1986 spielt die Nationalmannschaft unter ihrem Teamchef bei der WM in Mexiko – in Hitze und Höhe.',
       },
     ],
     society: [
@@ -554,7 +554,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'liga',
         title: 'Finale in Mexiko verloren',
-        text: 'Im WM-Finale am 29. Juni 1986 verliert Deutschland 2:3 gegen Diego Maradonas Argentinien – nach einem 0:2-Rückstand war der Ausgleich schon gelungen.',
+        text: 'Im WM-Finale am 29. Juni 1986 verliert Deutschland 2:3 gegen Argentinien und seinen überragenden Spielmacher – nach einem 0:2-Rückstand war der Ausgleich schon gelungen.',
       },
       {
         topic: 'liga',
@@ -565,7 +565,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'medien',
         title: 'Ein Buch namens „Anpfiff“',
-        text: 'Im März 1987 erscheint das Buch von Nationaltorwart Toni Schumacher mit Vorwürfen über Doping und Kabinenleben. Er verliert daraufhin seinen Platz im Verein und in der Nationalmannschaft.',
+        text: 'Im März 1987 erscheint das Buch des Nationaltorwarts mit Vorwürfen über Doping und Kabinenleben. Er verliert daraufhin seinen Platz im Verein und in der Nationalmannschaft.',
       },
     ],
     society: [
@@ -694,12 +694,12 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'geld',
         title: 'Von Ost nach West',
-        text: 'Nach dem Mauerfall wechselt im Dezember 1989 Andreas Thom als erster Oberliga-Spieler offiziell in die Bundesliga. Viele DDR-Talente folgen.',
+        text: 'Nach dem Mauerfall wechselt im Dezember 1989 ein Ost-Berliner Stürmer als erster Oberliga-Spieler offiziell in die Bundesliga. Viele DDR-Talente folgen.',
       },
       {
         topic: 'liga',
         title: 'WM 1990 in Italien',
-        text: 'Im Juni 1990 spielt Deutschland bei der WM in Italien. Teamchef Beckenbauer kündigt an, danach aufzuhören.',
+        text: 'Im Juni 1990 spielt Deutschland bei der WM in Italien. Der Teamchef kündigt an, danach aufzuhören.',
       },
     ],
     society: [
@@ -728,7 +728,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'liga',
         title: 'Weltmeister 1990',
-        text: 'Am 8. Juli 1990 gewinnt Deutschland in Rom das WM-Finale 1:0 gegen Argentinien, Andreas Brehme verwandelt den Elfmeter. Berti Vogts übernimmt von Beckenbauer.',
+        text: 'Am 8. Juli 1990 gewinnt Deutschland in Rom das WM-Finale 1:0 gegen Argentinien, der Linksverteidiger verwandelt den Elfmeter. Der bisherige Assistent übernimmt vom Teamchef.',
       },
       {
         topic: 'regeln',
@@ -789,7 +789,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'liga',
         title: 'Zwei Ostklubs in der Bundesliga',
-        text: 'Hansa Rostock und Dynamo Dresden kommen hinzu, die Bundesliga spielt einmalig mit 20 Vereinen und 38 Spieltagen.',
+        text: 'Rostock und Dresden kommen hinzu, die Bundesliga spielt einmalig mit 20 Vereinen und 38 Spieltagen.',
         inGame: '1. Liga mit 20 Vereinen, danach Rückführung auf 18',
       },
       {
@@ -811,7 +811,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'taktik',
         title: 'Ab in die Wärme',
-        text: 'Im Januar 1992 fliegt Schalke als erster Bundesligist ins Winterlager an die türkische Riviera, Leverkusen nach Florida. Bisher ging es auf die Kanaren – oder auf gefrorene Plätze daheim.',
+        text: 'Im Januar 1992 fliegt Gelsenkirchen als erster Bundesligist ins Winterlager an die türkische Riviera, Leverkusen nach Florida. Bisher ging es auf die Kanaren – oder auf gefrorene Plätze daheim.',
         inGame: 'Neue Ziele unter Training › Trainingslager',
       },
     ],
@@ -1041,7 +1041,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'alltag',
         title: 'Windows 95 und Online',
-        text: 'Im August 1995 erscheint Windows 95, die Telekom startet T-Online. Ein Modem pfeift sich ins Internet.',
+        text: 'Im August 1995 erscheint Windows 95, der frühere Staatskonzern startet seinen Onlinedienst. Ein Modem pfeift sich ins Internet.',
       },
       {
         topic: 'politik',
@@ -1063,7 +1063,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'liga',
         title: 'Europameister 1996',
-        text: 'Am 30. Juni 1996 gewinnt Deutschland in Wembley das EM-Finale gegen Tschechien 2:1 – Oliver Bierhoff erzielt das erste Golden Goal eines großen Finales.',
+        text: 'Am 30. Juni 1996 gewinnt Deutschland in Wembley das EM-Finale gegen Tschechien 2:1 – ein eingewechselter Stürmer erzielt das erste Golden Goal eines großen Finales.',
       },
       {
         topic: 'geld',
@@ -1152,7 +1152,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'liga',
         title: 'WM-Aus gegen Kroatien',
-        text: 'Im Juli 1998 scheidet Deutschland im WM-Viertelfinale 0:3 gegen Kroatien aus. Berti Vogts tritt im September zurück, Erich Ribbeck folgt.',
+        text: 'Im Juli 1998 scheidet Deutschland im WM-Viertelfinale 0:3 gegen Kroatien aus. Der Bundestrainer tritt im September zurück, ein Routinier aus dem Ruhestand folgt.',
       },
       {
         topic: 'geld',
@@ -1168,7 +1168,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'taktik',
         title: 'Viererkette statt Libero',
-        text: 'Raumdeckung und Viererkette verdrängen Libero und Manndeckung. Im Dezember 1998 erklärt Ralf Rangnick im Fernsehen die neue Abwehr.',
+        text: 'Raumdeckung und Viererkette verdrängen Libero und Manndeckung. Im Dezember 1998 erklärt ein junger Zweitliga-Trainer im Fernsehen die neue Abwehr.',
       },
       {
         topic: 'taktik',

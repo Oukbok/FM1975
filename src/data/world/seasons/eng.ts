@@ -77,7 +77,7 @@ export const SEASONS_ENG: Record<number, SeasonRow> = {
     t2: ['eng-norwich', 'eng-london-suedost', 'eng-london-merton', 'eng-portsmouth', 'eng-london-sued', 'eng-hull', 'eng-sheffield-rot-weiss', 'eng-oldham', 'eng-london-bermondsey', 'eng-stoke', 'eng-brighton', 'eng-barnsley', 'eng-bradford', 'eng-leeds', 'eng-grimsby', 'eng-huddersfield', 'eng-shrewsbury', 'eng-sunderland', 'eng-blackburn', 'eng-carlisle', 'eng-middlesbrough', 'eng-london-suedwest'],
     cup: 'eng-liverpool-rot',
     cupFinalist: 'eng-liverpool-blau',
-    note: "Englische Vereine nach Heysel 1985/86–1989/90 von den Europapokalen ausgeschlossen (Liverpool bis 1990/91).",
+    note: "Englische Vereine nach Heysel 1985/86–1989/90 von den Europapokalen ausgeschlossen (Liverpool Rot bis 1990/91).",
   },
   1986: {
     t1: ['eng-liverpool-blau', 'eng-liverpool-rot', 'eng-london-nord', 'eng-london-rot', 'eng-norwich', 'eng-london-merton', 'eng-luton', 'eng-nottingham-rot', 'eng-watford', 'eng-coventry', 'eng-manchester-rot', 'eng-southampton', 'eng-sheffield-blau-weiss', 'eng-london-west', 'eng-london-ost', 'eng-london-blau-weiss', 'eng-newcastle', 'eng-oxford', 'eng-london-suedost', 'eng-leicester', 'eng-manchester-blau', 'eng-birmingham-weinrot'],

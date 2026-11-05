@@ -328,7 +328,7 @@ export const TIMELINE: TimelineEvent[] = [
     season: '2001/02', year: 2001, type: 'competition',
     title: 'Hallen-Masters abgeschafft',
     description:
-      'Nach der Endrunde im Januar 2001 in Dortmund (Sieger: SpVgg Unterhaching) stellt der DFB den '
+      'Nach der Endrunde im Januar 2001 in Dortmund (Sieger: Unterhaching) stellt der DFB den '
       + 'Hallenpokal ein: kürzere Winterpause, Verletzungsangst, Absagen der Topklubs und sinkendes '
       + 'TV-Interesse. Regionale Hallenturniere laufen noch wenige Jahre aus, danach ist der '
       + '„Budenzauber“ mit Profis Geschichte.',
@@ -338,7 +338,7 @@ export const TIMELINE: TimelineEvent[] = [
     season: '1991/92', year: 1992, type: 'reform',
     title: 'Winterlager in der Ferne: Türkei und Florida',
     description:
-      'Im Januar 1992 fährt Schalke 04 als erster Bundesligist an die türkische Riviera, Leverkusen '
+      'Im Januar 1992 fährt Gelsenkirchen als erster Bundesligist an die türkische Riviera, Leverkusen '
       + 'fliegt nach Orlando. Bis dahin ging es im Winter auf die Kanaren oder nach Spanien – oder '
       + 'auf gefrorene Plätze in der Heimat. Neue Ziele unter „Training › Trainingslager“.',
   },
@@ -347,7 +347,7 @@ export const TIMELINE: TimelineEvent[] = [
     season: '2010/11', year: 2011, type: 'reform',
     title: 'Trainingslager am Golf: Katar',
     description:
-      'Der FC Bayern bezieht im Januar 2011 sein Winterquartier in Doha (Katar) – perfekte Plätze, '
+      'München Rot bezieht im Januar 2011 sein Winterquartier in Doha (Katar) – perfekte Plätze, '
       + 'Sponsorenkontakte, aber zunehmend Kritik von Fans und Menschenrechtsorganisationen.',
   },
   {

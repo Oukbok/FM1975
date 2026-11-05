@@ -48,12 +48,12 @@ const upTo = (tier: number, max: number) => tier <= max;
 export const SPONSOR_SLOTS: SponsorSlotDef[] = [
   {
     id: 'brust', name: 'Trikot-Brustsponsor', short: 'Brust', bucket: 'sponsorship', reach: 'national', years: [2, 5], bonuses: true,
-    desc: 'Die wichtigste Werbefläche: das Logo auf der Brust. Seit Jägermeister bei Eintracht Braunschweig (1973) Pflicht jedes Profiklubs.',
+    desc: 'Die wichtigste Werbefläche: das Logo auf der Brust. Seit Braunschweig 1973 mit einem Kräuterlikör-Hersteller auflief, Pflicht jedes Profiklubs.',
     unlock: 1975, count: () => 1,
     // 1975 ≈ 0,25 Mio. DM (Remington/Frankfurt 275 Tsd.), 1990 ≈ 1,6, 2000 ≈ 6,5 Mio. DM, 2024 ≈ 9 Mio. € (Median; Spitze 50–60 Mio. €).
     value: [[1975, 0.25], [1980, 0.4], [1985, 0.85], [1990, 1.6], [1995, 3.2], [2000, 6.5], [2005, 4.5], [2010, 5.5], [2015, 7], [2020, 8.5], [2024, 9]],
     industries: ['spirituosen', 'brauerei', 'versicherung', 'bank', 'auto', 'elektronik', 'handel', 'bau', 'chemie', 'telekom', 'energie', 'airline', 'tech', 'online', 'wetten', 'lebensmittel', 'logistik', 'pharma', 'staatsfonds'],
-    source: '[S1] Trikotwerbung seit 1973, [S2] Branchen je Jahrzehnt, [B1] Telekom/FC Bayern',
+    source: '[S1] Trikotwerbung seit 1973, [S2] Branchen je Jahrzehnt, [B1] Trikotpartner des Rekordmeisters',
   },
   {
     id: 'ausruester', name: 'Ausrüster', short: 'Ausrüster', bucket: 'sponsorship', reach: 'global', years: [3, 8], bonuses: true,
@@ -86,7 +86,7 @@ export const SPONSOR_SLOTS: SponsorSlotDef[] = [
     unlock: 1990, count: (y, t) => (t1(t) ? (y < 1998 ? 1 : y < 2008 ? 2 : 3) : upTo(t, 2) && y >= 1998 ? 1 : 0),
     value: [[1990, 0.35], [1995, 0.8], [2000, 2], [2005, 1.5], [2010, 2], [2015, 2.5], [2024, 3]],
     industries: ['auto', 'versicherung', 'bank', 'telekom', 'energie', 'airline', 'tech', 'handel', 'brauerei', 'logistik', 'staatsfonds'],
-    source: '[B2] Pyramide FC Bayern (Platin-/Premium-Partner), Annahme für den Median',
+    source: '[B2] Partnerpyramide des Rekordmeisters (Platin-/Premium-Partner), Annahme für den Median',
   },
   {
     id: 'copartner', name: 'Co- und Exklusivpartner', short: 'Co-Partner', bucket: 'sponsorship', reach: 'national', years: [1, 3], bonuses: false,
@@ -130,11 +130,11 @@ export const SPONSOR_SLOTS: SponsorSlotDef[] = [
   },
   {
     id: 'aermel', name: 'Ärmelsponsor', short: 'Ärmel', bucket: 'sponsorship', reach: 'global', years: [2, 4], bonuses: true,
-    desc: 'Seit 2017/18 dürfen die Klubs den Trikotärmel selbst vermarkten (vorher Liga-Partner Hermes).',
+    desc: 'Seit 2017/18 dürfen die Klubs den Trikotärmel selbst vermarkten (vorher ein zentraler Liga-Partner).',
     unlock: 2017, count: (y, t) => (upTo(t, 2) ? 1 : 0),
     value: [[2017, 1.2], [2020, 1.6], [2024, 2]],
     industries: ['airline', 'staatsfonds', 'tech', 'online', 'logistik', 'auto', 'versicherung', 'bank', 'energie', 'wetten', 'krypto'],
-    source: '[S1][S2] Ärmelvermarktung ab 2017/18; Qatar Airways/FC Bayern 2018–2023 [S4]',
+    source: '[S1][S2] Ärmelvermarktung ab 2017/18; Airline-Ärmel beim Rekordmeister 2018–2023 [S4]',
   },
   {
     id: 'krypto', name: 'Krypto- & NFT-Partner', short: 'Krypto', bucket: 'sponsorship', reach: 'global', years: [1, 2], bonuses: false,

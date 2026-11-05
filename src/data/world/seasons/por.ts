@@ -18,7 +18,7 @@ export const SEASONS_POR: Record<number, SeasonRow> = {
     t2b: ['por-feira', 'por-portalegre-rot', 'por-portalegre', 'por-covilha', 'por-santarem', 'por-peniche', 'por-sao-joao-da-madeira', 'por-marinha-grande', 'por-viseu', 'por-tomar', 'por-leiria', 'por-coimbra-rot', 'por-caldas-da-rainha', 'por-torres-vedras', 'por-torres-novas', 'por-albergaria', 'por-funchal-gruen-rot', 'por-barreiro-gruen', 'por-sines', 'por-evora-schwarz-weiss', 'por-barreiro-rot-weiss', 'por-almada', 'por-faro', 'por-odivelas', 'por-evora-gruen-weiss', 'por-sesimbra', 'por-olhao', 'por-sintra', 'por-alcochete', 'por-lagos', 'por-montemor-o-novo', 'por-lissabon-marvila'],
     cup: 'por-porto', cupFinalist: 'por-braga',
     euro: { ec: ['por-lissabon-rot'], cwc: ['por-porto-schwarz-weiss'], uefa: ['por-porto', 'por-lissabon-blau'] },
-    note: 'Drei Staffeln Nord/Mitte/Süd; Meisterrunde Marítimo; Aufstiegsrunde Espinho',
+    note: 'Drei Staffeln Nord/Mitte/Süd; Meisterrunde Funchal Grün-Rot; Aufstiegsrunde Espinho',
   },
   1977: {
     t1: ['por-porto', 'por-lissabon-rot', 'por-lissabon-gruen', 'por-braga', 'por-lissabon-blau', 'por-guimaraes', 'por-porto-schwarz-weiss', 'por-coimbra', 'por-setubal', 'por-estoril', 'por-povoa', 'por-portimao', 'por-funchal-gruen-rot', 'por-espinho', 'por-saramagos', 'por-feira'],
@@ -44,7 +44,7 @@ export const SEASONS_POR: Record<number, SeasonRow> = {
     t2b: ['por-leiria', 'por-nazare', 'por-oliveira-do-bairro', 'por-agueda', 'por-aveiro', 'por-alcobaca', 'por-covilha', 'por-santarem', 'por-oliveira-de-azemeis', 'por-cartaxo', 'por-portalegre', 'por-castelo-branco', 'por-viseu-rot', 'por-torres-vedras', 'por-caldas-da-rainha', 'por-portalegre-rot', 'por-estoril', 'por-evora-schwarz-weiss', 'por-funchal-schwarz-weiss', 'por-montijo', 'por-sines', 'por-angra', 'por-amadora', 'por-sacavem', 'por-evora-gruen-weiss', 'por-barreiro-gruen', 'por-faro', 'por-cova-da-piedade', 'por-beja', 'por-odivelas', 'por-lissabon-marvila', 'por-silves'],
     cup: 'por-lissabon-rot', cupFinalist: 'por-porto',
     euro: { ec: ['por-lissabon-gruen'], cwc: ['por-lissabon-rot'], uefa: ['por-porto', 'por-porto-schwarz-weiss'] },
-    note: 'Meisterrunde Leiria; Aufstiegsrunde Académico Viseu',
+    note: 'Meisterrunde Leiria; Aufstiegsrunde Viseu',
   },
   1981: {
     t1: ['por-lissabon-gruen', 'por-lissabon-rot', 'por-porto', 'por-guimaraes', 'por-vila-do-conde', 'por-portimao', 'por-braga', 'por-setubal', 'por-porto-schwarz-weiss', 'por-espinho', 'por-amora', 'por-estoril', 'por-penafiel', 'por-viseu', 'por-lissabon-blau', 'por-leiria'],
@@ -52,7 +52,7 @@ export const SEASONS_POR: Record<number, SeasonRow> = {
     t2b: ['por-alcobaca', 'por-coimbra', 'por-agueda', 'por-aveiro', 'por-oliveira-do-bairro', 'por-peniche', 'por-rio-maior', 'por-oliveira-de-azemeis', 'por-castelo-branco', 'por-coimbra-rot', 'por-covilha', 'por-nazare', 'por-guarda', 'por-portalegre', 'por-santarem', 'por-cartaxo', 'por-funchal-gruen-rot', 'por-faro', 'por-evora-gruen-weiss', 'por-sacavem', 'por-sines', 'por-evora-schwarz-weiss', 'por-barreiro-rot-weiss', 'por-funchal-blau-gelb', 'por-barreiro-gruen', 'por-funchal-schwarz-weiss', 'por-elvas', 'por-cova-da-piedade', 'por-amadora', 'por-angra', 'por-lagos', 'por-montijo'],
     cup: 'por-lissabon-gruen', cupFinalist: 'por-braga',
     euro: { ec: ['por-lissabon-rot'], cwc: ['por-porto'], uefa: ['por-lissabon-gruen', 'por-porto-schwarz-weiss'] },
-    note: 'Meisterrunde Marítimo; Aufstiegsrunde Salgueiros und Penafiel',
+    note: 'Meisterrunde Funchal Grün-Rot; Aufstiegsrunde Porto Rot und Penafiel',
   },
   1982: {
     t1: ['por-lissabon-rot', 'por-porto', 'por-lissabon-gruen', 'por-guimaraes', 'por-porto-schwarz-weiss', 'por-portimao', 'por-vila-do-conde', 'por-braga', 'por-setubal', 'por-porto-rot', 'por-estoril', 'por-povoa', 'por-funchal-gruen-rot', 'por-espinho', 'por-amora', 'por-alcobaca'],
@@ -60,7 +60,7 @@ export const SEASONS_POR: Record<number, SeasonRow> = {
     t2b: ['por-agueda', 'por-coimbra', 'por-leiria', 'por-coimbra-rot', 'por-aveiro', 'por-torres-vedras', 'por-rio-maior', 'por-covilha', 'por-anadia', 'por-castelo-branco', 'por-peniche', 'por-viseu', 'por-portalegre-rot', 'por-oliveira-do-bairro', 'por-estarreja', 'por-nazare', 'por-faro', 'por-evora-gruen-weiss', 'por-olhao', 'por-lissabon-blau', 'por-funchal-schwarz-weiss', 'por-funchal-blau-gelb', 'por-sacavem', 'por-elvas', 'por-cova-da-piedade', 'por-barreiro-rot-weiss', 'por-sesimbra', 'por-sines', 'por-odivelas', 'por-evora-schwarz-weiss', 'por-lissabon-alcantara', 'por-barreiro-gruen'],
     cup: 'por-lissabon-rot', cupFinalist: 'por-porto',
     euro: { ec: ['por-lissabon-gruen'], cwc: ['por-braga'], uefa: ['por-lissabon-rot', 'por-porto'] },
-    note: 'Meisterrunde Farense; Aufstiegsrunde Espinho',
+    note: 'Meisterrunde Faro; Aufstiegsrunde Espinho',
   },
   1983: {
     t1: ['por-lissabon-rot', 'por-porto', 'por-lissabon-gruen', 'por-braga', 'por-setubal', 'por-porto-schwarz-weiss', 'por-guimaraes', 'por-vila-do-conde', 'por-povoa', 'por-portimao', 'por-porto-rot', 'por-faro', 'por-estoril', 'por-penafiel', 'por-agueda', 'por-espinho'],
@@ -98,7 +98,7 @@ export const SEASONS_POR: Record<number, SeasonRow> = {
     t2b: ['por-feira', 'por-coimbra', 'por-agueda', 'por-cantanhede', 'por-lamas', 'por-covilha', 'por-peniche', 'por-caldas-da-rainha', 'por-oliveira-do-bairro', 'por-leiria', 'por-portalegre', 'por-lousa', 'por-mangualde', 'por-mealhada', 'por-luso', 'por-marinha-grande', 'por-portalegre-rot', 'por-estarreja', 'por-funchal-blau-gelb', 'por-loule', 'por-elvas', 'por-olhao', 'por-torres-vedras', 'por-estoril', 'por-lissabon-alcantara', 'por-alverca', 'por-lissabon-olivais', 'por-evora-schwarz-weiss', 'por-barreiro-rot-weiss', 'por-evora-gruen-weiss', 'por-silves', 'por-lissabon-marvila', 'por-santiago-do-cacem', 'por-lagos', 'por-montijo', 'por-sacavem'],
     cup: 'por-lissabon-blau', cupFinalist: 'por-lissabon-rot',
     euro: { ec: ['por-porto'], cwc: ['por-guimaraes'], uefa: ['por-lissabon-rot', 'por-lissabon-gruen', 'por-lissabon-blau'] },
-    note: 'Aufstiegsrunde: União da Madeira, Tirsense, Feirense steigen auf',
+    note: 'Aufstiegsrunde: Funchal Blau-Gelb, Santo Tirso, Feira steigen auf',
   },
   1989: {
     t1: ['por-porto', 'por-lissabon-rot', 'por-lissabon-gruen', 'por-guimaraes', 'por-chaves', 'por-setubal', 'por-lissabon-blau', 'por-porto-schwarz-weiss', 'por-santo-tirso', 'por-funchal-gruen-rot', 'por-aveiro', 'por-amadora', 'por-braga', 'por-funchal-schwarz-weiss', 'por-penafiel', 'por-funchal-blau-gelb', 'por-portimao', 'por-feira'],
@@ -106,7 +106,7 @@ export const SEASONS_POR: Record<number, SeasonRow> = {
     t2b: ['por-porto-rot', 'por-espinho', 'por-leiria', 'por-coimbra', 'por-viseu', 'por-agueda', 'por-castelo-branco', 'por-mira', 'por-cantanhede', 'por-covilha', 'por-lamas', 'por-mangualde', 'por-caldas-da-rainha', 'por-guarda', 'por-oliveira-de-azemeis', 'por-lousa', 'por-oliveira-do-bairro', 'por-peniche', 'por-faro', 'por-barreiro-rot-weiss', 'por-loule', 'por-elvas', 'por-torres-vedras', 'por-estoril', 'por-vila-real-de-santo-antonio', 'por-evora-schwarz-weiss', 'por-alverca', 'por-olhao', 'por-silves', 'por-evora-gruen-weiss', 'por-seixal', 'por-lissabon-alcantara', 'por-lissabon-olivais', 'por-portalegre', 'por-sintra', 'por-samora-correia'],
     cup: 'por-amadora', cupFinalist: 'por-faro',
     euro: { ec: ['por-lissabon-rot'], cwc: ['por-lissabon-blau'], uefa: ['por-porto', 'por-lissabon-gruen', 'por-porto-schwarz-weiss'] },
-    note: 'Verkleinerung auf 18 Vereine; Letzte Saison der dreigeteilten 2. Liga; Salgueiros, Gil Vicente, Farense steigen auf; ab 1990/91 Segunda Divisão de Honra',
+    note: 'Verkleinerung auf 18 Vereine; Letzte Saison der dreigeteilten 2. Liga; Porto Rot, Barcelos, Faro steigen auf; ab 1990/91 Segunda Divisão de Honra',
   },
   1990: {
     t1: ['por-lissabon-rot', 'por-porto', 'por-lissabon-gruen', 'por-porto-schwarz-weiss', 'por-aveiro', 'por-porto-rot', 'por-faro', 'por-chaves', 'por-braga', 'por-guimaraes', 'por-funchal-gruen-rot', 'por-famalicao', 'por-santo-tirso', 'por-barcelos', 'por-penafiel', 'por-funchal-blau-gelb', 'por-setubal', 'por-amadora', 'por-lissabon-blau', 'por-funchal-schwarz-weiss'],
@@ -284,7 +284,7 @@ export const SEASONS_POR: Record<number, SeasonRow> = {
     t1: ['por-lissabon-rot', 'por-porto', 'por-lissabon-gruen', 'por-braga', 'por-guimaraes', 'por-moreira', 'por-vila-do-conde', 'por-porto-schwarz-weiss', 'por-oeiras', 'por-ponta-delgada', 'por-portimao', 'por-funchal-gruen-rot', 'por-setubal', 'por-aves', 'por-tondela', 'por-chaves', 'por-funchal-schwarz-weiss', 'por-feira'],
     cup: 'por-lissabon-gruen', cupFinalist: 'por-porto',
     euro: { cl: ['por-lissabon-rot', 'por-porto'], el: ['por-lissabon-rot', 'por-lissabon-gruen', 'por-braga', 'por-vila-do-conde'] },
-    note: 'Oeiras (B-SAD) übernimmt den Erstliga-Platz von Lissabon Blau; 2. Liga (Segunda Divisão / Liga de Honra) in dieser Saison nicht erfasst – Quelle fehlte',
+    note: 'Oeiras (ausgegliederte Profiabteilung) übernimmt den Erstliga-Platz von Lissabon Blau; 2. Liga (Segunda Divisão / Liga de Honra) in dieser Saison nicht erfasst – Quelle fehlte',
   },
   2019: {
     t1: ['por-porto', 'por-lissabon-rot', 'por-braga', 'por-lissabon-gruen', 'por-vila-do-conde', 'por-famalicao', 'por-guimaraes', 'por-moreira', 'por-barcelos', 'por-ponta-delgada', 'por-funchal-gruen-rot', 'por-porto-schwarz-weiss', 'por-pacos-de-ferreira', 'por-tondela', 'por-oeiras', 'por-setubal', 'por-portimao', 'por-aves'],

@@ -43,7 +43,7 @@ export const ERA_TIPS: EraTipSet[] = [
     from: 1975, to: 1979, label: 'Die Zeit von Libero und Manndeckung', motif: 'tv',
     tips: [
       { topic: 'taktik', title: 'Libero hinter der Abwehr', where: 'Spieltag › Taktik',
-        text: 'Fast jede Mannschaft spielt mit einem freien Mann hinter den Manndeckern, Beckenbauer hat die Rolle berühmt gemacht.',
+        text: 'Fast jede Mannschaft spielt mit einem freien Mann hinter den Manndeckern, der Münchner Kapitän der frühen 70er hat die Rolle berühmt gemacht.',
         inGame: 'Besetze den Libero mit deinem spielstärksten Verteidiger – er hält die Abwehr zusammen und eröffnet das Spiel.' },
       { topic: 'geld', title: 'Der Eintritt zahlt die Gehälter', where: 'Verein › Fans',
         text: 'Fernsehgeld ist ein Taschengeld, der Großteil des Umsatzes kommt von den Zuschauern im Stadion.',
@@ -63,7 +63,7 @@ export const ERA_TIPS: EraTipSet[] = [
     from: 1980, to: 1986, label: 'Kraft, Kondition und leere Ränge', motif: 'tv',
     tips: [
       { topic: 'taktik', title: 'Kondition entscheidet', where: 'Training › Trainingsplan',
-        text: 'Gewonnen wird über Laufbereitschaft und Zweikampfstärke; das Pressing von Ernst Happels HSV macht Schule.',
+        text: 'Gewonnen wird über Laufbereitschaft und Zweikampfstärke; das Pressing von Hamburg Blau unter seinem österreichischen Trainer macht Schule.',
         inGame: 'Leg in der Vorbereitung Wert auf Ausdauer – ein Trainingslager im Sommer zahlt sich bis in den Herbst aus.' },
       { topic: 'medien', title: 'Die Zuschauer bleiben weg', where: 'Verein › Fans',
         text: 'Mitte der Achtziger sinkt der Schnitt der Bundesliga auf unter 20 000 – Gewalt in den Kurven schreckt Familien ab.',
@@ -86,7 +86,7 @@ export const ERA_TIPS: EraTipSet[] = [
         text: 'Die Hallentour mit Endrunde füllt die Winterpause, die Profis spielen mit.',
         inGame: 'Hallenturniere bringen Antrittsgeld und Ansehen – aber auch Verletzungsrisiko für deine Stammkräfte.' },
       { topic: 'taktik', title: 'Raumdeckung aus Italien', where: 'Spieltag › Taktik',
-        text: 'Sacchis AC Mailand zeigt Viererkette und Pressing; in Deutschland bleibt der Libero vorerst Standard.',
+        text: 'Mailand Rot-Schwarz zeigt Viererkette und Pressing; in Deutschland bleibt der Libero vorerst Standard.',
         inGame: 'Wer früh moderne Formationen probiert, braucht schnelle, taktisch kluge Verteidiger.' },
       { topic: 'taktik', title: 'Sportmedizin holt auf', where: 'Verein › Vereinsgelände',
         text: 'Reha-Zentren und moderne Diagnostik verkürzen die Ausfallzeiten.',

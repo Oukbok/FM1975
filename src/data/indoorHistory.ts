@@ -79,21 +79,21 @@ export function venuesFor(winterYear: number): IndoorVenue[] {
 /** Reale Endrunden [S2] (Sieger, Finale, Ort). 1987 inoffiziell. */
 export interface RealMasters { year: number; winner: string; score: string; runnerUp: string; city: string; note?: string }
 export const REAL_MASTERS: RealMasters[] = [
-  { year: 1987, winner: 'Hamburger SV', score: '3:1', runnerUp: 'VfB Stuttgart', city: 'Stuttgart', note: 'inoffiziell' },
-  { year: 1988, winner: 'Bayer 05 Uerdingen', score: '5:3', runnerUp: 'Eintracht Frankfurt', city: 'Frankfurt' },
-  { year: 1989, winner: 'Werder Bremen', score: '6:3', runnerUp: 'VfB Stuttgart', city: 'Dortmund' },
-  { year: 1990, winner: 'Borussia Dortmund', score: '5:3', runnerUp: 'Bayer 05 Uerdingen', city: 'Dortmund' },
-  { year: 1991, winner: 'Borussia Dortmund', score: '4:4 i. E.', runnerUp: 'Werder Bremen', city: 'Dortmund' },
-  { year: 1992, winner: 'Borussia Dortmund', score: '2:1', runnerUp: 'VfL Bochum', city: 'München' },
-  { year: 1993, winner: '1. FC Köln', score: '2:1', runnerUp: 'VfB Stuttgart', city: 'München' },
-  { year: 1994, winner: 'Bayer 04 Leverkusen', score: '5:1', runnerUp: '1. FC Köln', city: 'Dortmund' },
-  { year: 1995, winner: 'Karlsruher SC', score: '6:3', runnerUp: 'Bayer 04 Leverkusen', city: 'München' },
-  { year: 1996, winner: 'TSV 1860 München', score: '6:3', runnerUp: 'Hamburger SV', city: 'Dortmund' },
-  { year: 1997, winner: '1. FC Kaiserslautern', score: '3:1', runnerUp: 'FC Bayern München', city: 'München' },
-  { year: 1998, winner: 'Hansa Rostock', score: '4:3', runnerUp: 'FC Schalke 04', city: 'München' },
-  { year: 1999, winner: 'Borussia Dortmund', score: '2:1', runnerUp: 'VfL Wolfsburg', city: 'Dortmund' },
-  { year: 2000, winner: 'SpVgg Greuther Fürth', score: '2:0 (gew.)', runnerUp: 'Borussia Mönchengladbach', city: 'München', note: 'Titel nach Dopingfall am grünen Tisch' },
-  { year: 2001, winner: 'SpVgg Unterhaching', score: '6:5 i. E.', runnerUp: 'Werder Bremen', city: 'Dortmund' },
+  { year: 1987, winner: 'Hamburg Blau', score: '3:1', runnerUp: 'Stuttgart Rot', city: 'Stuttgart', note: 'inoffiziell' },
+  { year: 1988, winner: 'Krefeld', score: '5:3', runnerUp: 'Frankfurt Rot', city: 'Frankfurt' },
+  { year: 1989, winner: 'Bremen', score: '6:3', runnerUp: 'Stuttgart Rot', city: 'Dortmund' },
+  { year: 1990, winner: 'Dortmund', score: '5:3', runnerUp: 'Krefeld', city: 'Dortmund' },
+  { year: 1991, winner: 'Dortmund', score: '4:4 i. E.', runnerUp: 'Bremen', city: 'Dortmund' },
+  { year: 1992, winner: 'Dortmund', score: '2:1', runnerUp: 'Bochum', city: 'München' },
+  { year: 1993, winner: 'Köln Rot', score: '2:1', runnerUp: 'Stuttgart Rot', city: 'München' },
+  { year: 1994, winner: 'Leverkusen', score: '5:1', runnerUp: 'Köln Rot', city: 'Dortmund' },
+  { year: 1995, winner: 'Karlsruhe', score: '6:3', runnerUp: 'Leverkusen', city: 'München' },
+  { year: 1996, winner: 'München Blau', score: '6:3', runnerUp: 'Hamburg Blau', city: 'Dortmund' },
+  { year: 1997, winner: 'Kaiserslautern', score: '3:1', runnerUp: 'München Rot', city: 'München' },
+  { year: 1998, winner: 'Rostock', score: '4:3', runnerUp: 'Gelsenkirchen', city: 'München' },
+  { year: 1999, winner: 'Dortmund', score: '2:1', runnerUp: 'Wolfsburg', city: 'Dortmund' },
+  { year: 2000, winner: 'Fürth', score: '2:0 (gew.)', runnerUp: 'Mönchengladbach', city: 'München', note: 'Titel nach Dopingfall am grünen Tisch' },
+  { year: 2001, winner: 'Unterhaching', score: '6:5 i. E.', runnerUp: 'Bremen', city: 'Dortmund' },
 ];
 
 /** Endrunden-Ort im Spiel = realer Ort des Jahres [S2]; Halle nach Stadt. */

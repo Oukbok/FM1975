@@ -117,7 +117,7 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
     id: 'sportschule', name: 'Sportschule Kaiserau', geo: [51.59, 7.66], place: 'Kamen (Westfalen)', country: 'Deutschland', region: 'inland',
     seasons: both, access: from(1975), climate: 'flachland', altitude: 70, transport: 'bus', travelH: 2, tz: 0, travel: 1200,
     opp: 'amateur', testIncome: 2500, marketing: 0, buzz: 0.25,
-    note: 'Sportschule des Westfälischen Verbands, SportHotel und Schule eng verzahnt; Gäste „von Beckenbauer bis Ronaldo“ [C10]. Nah an den Revierklubs.',
+    note: 'Sportschule des Westfälischen Verbands, SportHotel und Schule eng verzahnt; Gäste von Weltmeistern bis zu brasilianischen Weltstars [C10]. Nah an den Revierklubs.',
   },
   {
     id: 'hennef', name: 'Sportschule Hennef', geo: [50.78, 7.28], place: 'Hennef (Sieg)', country: 'Deutschland', region: 'inland',
@@ -192,7 +192,7 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
     id: 'tegernsee', name: 'Tegernsee', geo: [47.69, 11.77], place: 'Rottach-Egern / Kreuth', country: 'Deutschland', region: 'alpen',
     seasons: S, access: from(1975), climate: 'alpen', altitude: 750, transport: 'bus', travelH: 6, tz: 0, travel: 1800,
     opp: 'regional', testIncome: 4000, marketing: 0.02, buzz: 0.45,
-    note: 'Klassiker seit den 70ern – Rottach-Egern beim FC Bayern bis ins neue Jahrtausend [C1], 2023 wieder Bayern und Gladbach [C15]. Viele Zaungäste.',
+    note: 'Klassiker seit den 70ern – Rottach-Egern bei München Rot bis ins neue Jahrtausend [C1], 2023 wieder München Rot und Mönchengladbach [C15]. Viele Zaungäste.',
   },
   {
     id: 'tirol', name: 'Tirol', geo: [47.33, 11.19], place: 'Seefeld / Kitzbühel', country: 'Österreich', region: 'alpen',
@@ -274,7 +274,7 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
     seasons: W, access: from(1990), // Annahme; acht Plätze [C20], HSV/Leverkusen [C21]
     climate: 'mittelmeer', altitude: 30, transport: 'flug', travelH: 3, tz: 0, travel: 7500,
     opp: 'international', testIncome: 4500, marketing: 0.04, buzz: 0.3,
-    note: 'Eine Anlage mit acht Fußballplätzen, im Winter 2020 über 60 Mannschaften aus 20 Ländern [C20]; HSV und Leverkusen waren da [C21]. Testgegner gibt es reichlich.',
+    note: 'Eine Anlage mit acht Fußballplätzen, im Winter 2020 über 60 Mannschaften aus 20 Ländern [C20]; Hamburg Blau und Leverkusen waren da [C21]. Testgegner gibt es reichlich.',
   },
   {
     id: 'algarve', name: 'Algarve', geo: [37.08, -8.03], place: 'Almancil / Albufeira', country: 'Portugal', region: 'sueden',
@@ -295,7 +295,7 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
     seasons: W, access: [{ from: 1992, minRep: 70 }, { from: 1996, minRep: 0 }],
     climate: 'mittelmeer', altitude: 30, transport: 'flug', travelH: 3.5, tz: 1, travel: 6500,
     opp: 'international', testIncome: 5000, marketing: 0.03, buzz: 0.45,
-    note: 'Schalke 04 eröffnete 1992 die Türkei-Touren [C3]; ab Ende der 90er Massenziel, 2015 ein Drittel der Liga in Belek. Viele Testgegner aus ganz Europa – aber auch viele Berater.',
+    note: 'Gelsenkirchen eröffnete 1992 die Türkei-Touren [C3]; ab Ende der 90er Massenziel, 2015 ein Drittel der Liga in Belek. Viele Testgegner aus ganz Europa – aber auch viele Berater.',
   },
   {
     id: 'zypern', name: 'Zypern', geo: [34.68, 33.04], place: 'Limassol / Paphos', country: 'Zypern', region: 'sueden',
@@ -310,7 +310,7 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
     seasons: W, access: [{ from: 1992, minRep: 72 }, { from: 2010, minRep: 60 }], closed: [2021, 2022],
     climate: 'florida', altitude: 30, transport: 'flug', travelH: 10, tz: -6, travel: 24000,
     opp: 'international', testIncome: 7000, marketing: 0.25, buzz: 0.35,
-    note: 'Leverkusen fuhr im Januar 1992 als erster Bundesligist nach Orlando [C2]; 2020 u. a. Frankfurt und Hertha [C7]. Lange Anreise, sechs Stunden Zeitverschiebung.',
+    note: 'Leverkusen fuhr im Januar 1992 als erster Bundesligist nach Orlando [C2]; 2020 u. a. Frankfurt Rot und Berlin Blau [C7]. Lange Anreise, sechs Stunden Zeitverschiebung.',
   },
   {
     id: 'dubai', name: 'Vereinigte Arabische Emirate', geo: [25.2, 55.27], place: 'Dubai / Abu Dhabi', country: 'VAE', region: 'fern',
@@ -318,10 +318,10 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
     climate: 'golf', altitude: 10, transport: 'flug', travelH: 6, tz: 3, travel: 18000,
     opp: 'international', testIncome: 6000, marketing: 0.3, buzz: 0.4,
     criticism: [{ from: 2015, fan: 0.6, text: 'Fans fragen, warum es zum Training an den Golf gehen muss.' }],
-    note: 'In den 80ern nur gelegentlich für die ganz Großen [C1]; im Januar 2009 trainierten die Bayern unter Klinsmann in Dubai [C5]. Perfekte Plätze, viel Luxus.',
+    note: 'In den 80ern nur gelegentlich für die ganz Großen [C1]; im Januar 2009 trainierte München Rot unter seinem neuen Trainer in Dubai [C5]. Perfekte Plätze, viel Luxus.',
   },
   {
-    id: 'katar', name: 'Katar', geo: [25.29, 51.53], place: 'Doha (Aspire Academy)', country: 'Katar', region: 'fern',
+    id: 'katar', name: 'Katar', geo: [25.29, 51.53], place: 'Doha (Sportakademie)', country: 'Katar', region: 'fern',
     seasons: W, access: [{ from: 2011, minRep: 82 }], closed: [2021, 2022],
     climate: 'golf', altitude: 10, transport: 'flug', travelH: 6, tz: 2, travel: 20000,
     opp: 'international', testIncome: 9000, marketing: 0.45, buzz: 0.4,
@@ -329,21 +329,21 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
       { from: 2014, fan: 1.5, text: 'Menschenrechtsorganisationen kritisieren das Lager in Katar.' },
       { from: 2020, fan: 4, text: 'Mitglieder und Kurve protestieren massiv gegen Katar (vgl. Mitgliederversammlung 2021).' },
     ],
-    note: 'Seit 2011 Winterquartier des FC Bayern – als einziger Bundesligist [C3][C4]. Beste Bedingungen, gute Kontakte zu Sponsoren – und wachsende Kritik.',
+    note: 'Seit 2011 Winterquartier von München Rot – als einziger Bundesligist [C3][C4]. Beste Bedingungen, gute Kontakte zu Sponsoren – und wachsende Kritik.',
   },
   {
     id: 'suedafrika', name: 'Südafrika', geo: [-33.92, 18.42], place: 'Kapstadt / Johannesburg', country: 'Südafrika', region: 'fern',
     seasons: W, access: [{ from: 2015, minRep: 62 }], closed: [2021, 2022], // erstmals belegt Januar 2015 [C22], Werder 2019 [C23]
     climate: 'kap', altitude: 30, transport: 'flug', travelH: 11.5, tz: 1, travel: 26000,
     opp: 'regional', testIncome: 4000, marketing: 0.12, buzz: 0.25,
-    note: 'Hochsommer statt Winter: Wolfsburg trainierte im Januar 2015 in Kapstadt, Hoffenheim bei Pretoria [C22], Werder 2019 zehn Tage in Johannesburg [C23]. Langer Flug, aber kaum Zeitverschiebung – und auf dem Highveld (1.600 m) ein Höhenreiz.',
+    note: 'Hochsommer statt Winter: Wolfsburg trainierte im Januar 2015 in Kapstadt, Hoffenheim bei Pretoria [C22], Bremen 2019 zehn Tage in Johannesburg [C23]. Langer Flug, aber kaum Zeitverschiebung – und auf dem Highveld (1.600 m) ein Höhenreiz.',
   },
   {
     id: 'asien', name: 'Asien-Reise', geo: [31.23, 121.47], place: 'China / Japan / Singapur', country: 'Asien', region: 'fern',
     seasons: S, access: [{ from: 2015, minRep: 82 }, { from: 2017, minRep: 76 }], closed: [2020, 2021, 2022],
     climate: 'asien', altitude: 50, transport: 'flug', travelH: 12, tz: 7, travel: 40000,
     opp: 'top', testIncome: 60000, marketing: 1, buzz: 1,
-    criticism: [{ from: 2017, fan: 0.8, text: 'Hoeneß nannte vier Spiele in zwölf Tagen „grenzwertig“; Fans ärgern sich über Ticketpreise [C6].' }],
+    criticism: [{ from: 2017, fan: 0.8, text: 'Der Präsident eines Spitzenklubs nannte vier Spiele in zwölf Tagen „grenzwertig“; Fans ärgern sich über Ticketpreise [C6].' }],
     note: 'Marketingreise statt Trainingslager: Bayern 2017 in China, zwölf Tage, rund 10 Mio. € Erlös [C6]. Viel Geld und Bekanntheit, kaum Training, schwerer Jetlag.',
   },
   {
@@ -352,7 +352,7 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
     climate: 'usa', altitude: 50, transport: 'flug', travelH: 10, tz: -6, travel: 35000,
     opp: 'top', testIncome: 45000, marketing: 0.85, buzz: 0.9,
     criticism: [{ from: 2018, fan: 0.5, text: 'Fans vermissen die Vorbereitung vor der eigenen Haustür.' }],
-    note: 'International Champions Cup gegen Topklubs aus Europa [C6]. Lukrativ, aber anstrengend.',
+    note: 'Sommerturniere gegen Topklubs aus Europa [C6]. Lukrativ, aber anstrengend.',
   },
 ];
 

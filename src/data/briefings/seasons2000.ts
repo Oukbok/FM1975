@@ -25,7 +25,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'taktik', title: 'Lehren aus der EM 2000', text: 'Nach dem Vorrunden-Aus bei der EM in Belgien und den Niederlanden ziehen Liga und DFB Konsequenzen: Ab 2001/02 braucht jeder Erstligist ein Nachwuchsleistungszentrum, ab 2002/03 auch jeder Zweitligist.', inGame: 'Plane jetzt: Ab 2001/02 kostet ein fehlendes Leistungszentrum in der 1. Liga jedes Jahr eine Geldstrafe (Jugend › Akademie).' },
       { topic: 'liga', title: 'WM 2006 kommt nach Deutschland', text: 'Am 6. Juli 2000 vergibt die FIFA die Weltmeisterschaft 2006 an Deutschland. Die Planungen für neue Arenen beginnen.' },
       { topic: 'geld', title: 'Kirch zahlt Milliarden', text: 'Die Kirch-Gruppe hat die Bundesliga-Rechte bis 2004 für rund drei Milliarden DM gekauft. Sat.1 zeigt die Zusammenfassungen bei „ran“, Premiere die Live-Spiele.' },
-      { topic: 'geld', title: 'Stadionnamen zu verkaufen', text: 'Namensrechte werden zur neuen Einnahmequelle: Im Sommer 2001 wird das Hamburger Volksparkstadion zur „AOL Arena“.', inGame: 'Ab sofort kannst du die Namensrechte an deinem Stadion verkaufen.' },
+      { topic: 'geld', title: 'Stadionnamen zu verkaufen', text: 'Namensrechte werden zur neuen Einnahmequelle: Im Sommer 2001 trägt das Hamburger Stadion erstmals den Namen eines Internetdienstes.', inGame: 'Ab sofort kannst du die Namensrechte an deinem Stadion verkaufen.' },
       { topic: 'liga', title: 'Regionalliga nur noch zweigleisig', text: 'Die dritte Liga schrumpft von vier auf zwei Regionalliga-Staffeln (Nord und Süd).' },
       { topic: 'liga', title: 'Letztes Hallen-Masters', text: 'Im Januar 2001 steigt in Dortmund die letzte Endrunde des DFB-Hallenpokals.', inGame: 'Letzter Winter mit Hallentour und Masters-Endrunde (Statistiken › Halle).' },
     ],
@@ -97,14 +97,14 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
   // ---------------------------------------------------------------------------
   {
     season: '2004/05',
-    headline: 'Klinsmanns Umbruch, Hoyzers Betrug',
+    headline: 'Neuer Bundestrainer, verkaufte Spiele',
     football: [
-      { topic: 'taktik', title: 'Neuer Bundestrainer', text: 'Jürgen Klinsmann übernimmt im Sommer 2004 die Nationalmannschaft und bringt Fitnesstrainer aus den USA, Psychologen und neue Trainingsmethoden mit.' },
-      { topic: 'liga', title: 'Der Wettskandal', text: 'Im Januar 2005 wird bekannt, dass Schiedsrichter Robert Hoyzer Spiele für eine Wettmafia manipuliert hat. Betroffen sind DFB-Pokal und 2. Liga.' },
-      { topic: 'geld', title: 'Arenen statt Schüsseln', text: 'Für die WM entstehen reine Fußballarenen mit Logen; im Mai 2005 öffnet in München die Allianz Arena.', inGame: 'Stadionausbau heißt jetzt „Ausbau zur Arena“: teurer pro Platz, dafür mehr Logen.' },
+      { topic: 'taktik', title: 'Neuer Bundestrainer', text: 'Ein Weltmeister von 1990 übernimmt im Sommer 2004 die Nationalmannschaft und bringt Fitnesstrainer aus den USA, Psychologen und neue Trainingsmethoden mit.' },
+      { topic: 'liga', title: 'Der Wettskandal', text: 'Im Januar 2005 wird bekannt, dass ein Schiedsrichter Spiele für eine Wettmafia manipuliert hat. Betroffen sind DFB-Pokal und 2. Liga.' },
+      { topic: 'geld', title: 'Arenen statt Schüsseln', text: 'Für die WM entstehen reine Fußballarenen mit Logen; im Mai 2005 öffnet in München die neue Arena im Norden der Stadt.', inGame: 'Stadionausbau heißt jetzt „Ausbau zur Arena“: teurer pro Platz, dafür mehr Logen.' },
       { topic: 'liga', title: 'Confed-Cup als Generalprobe', text: 'Im Juni 2005 testet Deutschland mit dem Konföderationen-Pokal Stadien, Verkehr und Sicherheit für die WM.' },
       { topic: 'liga', title: 'UEFA-Pokal mit Gruppen', text: 'Der UEFA-Pokal bekommt eine Gruppenphase mit Fünfergruppen.' },
-      { topic: 'medien', title: 'Vereine erzählen Geschichte', text: 'Vereinsmuseen entstehen, 2004 etwa beim HSV im Volksparkstadion.', inGame: 'Ein Vereinsmuseum ist baubar (Verein › Gelände).' },
+      { topic: 'medien', title: 'Vereine erzählen Geschichte', text: 'Vereinsmuseen entstehen, 2004 etwa bei Hamburg Blau im eigenen Stadion.', inGame: 'Ein Vereinsmuseum ist baubar (Verein › Gelände).' },
     ],
     society: [
       { topic: 'politik', title: 'Hartz IV startet', text: 'Seit dem 1. Januar 2005 gibt es das Arbeitslosengeld II. Die Reform bleibt heftig umstritten.' },
@@ -137,7 +137,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     headline: 'Nach dem Sommermärchen',
     football: [
       { topic: 'liga', title: 'Der WM-Effekt', text: 'Nach der Heim-WM strömen mehr Familien und neue Fans in die modernisierten Stadien.', inGame: 'Die Zuschauernachfrage steigt ligaweit spürbar.' },
-      { topic: 'taktik', title: 'Löw übernimmt', text: 'Joachim Löw, bisher Assistent, wird im Juli 2006 Bundestrainer und setzt auf schnelles Kurzpassspiel.' },
+      { topic: 'taktik', title: 'Der Assistent übernimmt', text: 'Der bisherige Assistent wird im Juli 2006 Bundestrainer und setzt auf schnelles Kurzpassspiel.' },
       { topic: 'medien', title: 'Bundesliga bei arena', text: 'Live-Spiele laufen nun beim Pay-TV-Sender arena; viele Fans brauchen neue Receiver oder Kabelverträge. Die ARD-„Sportschau“ bleibt.' },
       { topic: 'medien', title: 'Fanmeile vor dem Stadion', text: 'Großbildleinwände und Fan-Zonen nach WM-Vorbild tauchen auch an Bundesliga-Spieltagen auf.', inGame: 'Fan-Zone mit Großbildleinwand baubar (Verein › Gelände).' },
       { topic: 'geld', title: 'Stadion als Ausflugsziel', text: 'Führungen durch Kabine und Spielertunnel werden beliebt und bringen zusätzliche Einnahmen.', inGame: 'Arena-Touren sind baubar.' },
@@ -197,7 +197,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     ],
     society: [
       { topic: 'politik', title: 'Bundestagswahl 2009', text: 'Im September 2009 bilden Union und FDP eine neue Regierung.' },
-      { topic: 'alltag', title: 'Aschewolke über Europa', text: 'Im April 2010 legt ein isländischer Vulkan den Flugverkehr lahm; der FC Barcelona fährt mit dem Bus zum Halbfinale nach Mailand.' },
+      { topic: 'alltag', title: 'Aschewolke über Europa', text: 'Im April 2010 legt ein isländischer Vulkan den Flugverkehr lahm; Barcelona fährt mit dem Bus zum Halbfinale nach Mailand.' },
       { topic: 'politik', title: 'Euro-Krise', text: 'Im Mai 2010 erhält Griechenland das erste Hilfspaket. Der Euro gerät unter Druck.' },
       { topic: 'alltag', title: 'Tablets und Apps', text: 'Smartphones und das erste iPad machen Apps zum Alltag, auch für Liveticker und Tabellen.' },
     ],
@@ -209,8 +209,8 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     football: [
       { topic: 'geld', title: 'Finanzielles Fairplay', text: 'Die UEFA beschließt 2010 das Finanzielle Fairplay: Wer europäisch spielen will, darf auf Dauer nicht mehr ausgeben, als er einnimmt.', inGame: 'Ab 2011/12 prüft das Spiel nach jeder Saison die Bilanz der letzten Jahre.' },
       { topic: 'liga', title: 'WM-Vergaben an Russland und Katar', text: 'Im Dezember 2010 vergibt die FIFA die WM 2018 an Russland und die WM 2022 an Katar. Die Kritik reißt nicht ab.' },
-      { topic: 'taktik', title: 'Winterlager in Katar', text: 'Im Januar 2011 schlägt der FC Bayern sein Winterquartier erstmals in Doha auf: perfekte Plätze, gute Sponsorenkontakte.', inGame: 'Katar wird als Winterziel für Spitzenvereine buchbar (Training › Trainingslager).' },
-      { topic: 'taktik', title: 'Ballbesitz als Maßstab', text: 'Spaniens Weltmeister und der FC Barcelona machen Kurzpassspiel und sofortiges Pressing zum Vorbild für ganz Europa.' },
+      { topic: 'taktik', title: 'Winterlager in Katar', text: 'Im Januar 2011 schlägt München Rot sein Winterquartier erstmals in Doha auf: perfekte Plätze, gute Sponsorenkontakte.', inGame: 'Katar wird als Winterziel für Spitzenvereine buchbar (Training › Trainingslager).' },
+      { topic: 'taktik', title: 'Ballbesitz als Maßstab', text: 'Spaniens Weltmeister und Barcelona machen Kurzpassspiel und sofortiges Pressing zum Vorbild für ganz Europa.' },
       { topic: 'liga', title: 'Frauen-WM in Deutschland', text: 'Im Sommer 2011 richtet Deutschland die Frauen-WM aus; die Stadien sind gut gefüllt, die Quoten hoch.' },
       { topic: 'geld', title: 'Trikots weltweit online', text: 'Vereine verkaufen Fanartikel über eigene Onlineshops in alle Welt.', inGame: 'Ein internationaler Onlineshop ist baubar.' },
     ],
@@ -264,7 +264,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     football: [
       { topic: 'geld', title: 'Mehr TV-Geld', text: 'Der neue Medienvertrag bringt der Liga ab 2013/14 im Schnitt rund 628 Mio. Euro pro Saison.' },
       { topic: 'taktik', title: 'Datenanalyse und Videoscouting', text: 'Tracking-Kameras erfassen jeden Laufweg; Analysten und Videoscouting werden Standard.', inGame: 'Datenanalyse-Zentrum baubar; Spielberichte zeigen nun Großchancen.' },
-      { topic: 'regeln', title: 'Das Phantomtor', text: 'Im Oktober 2013 zählt in Sinsheim ein Kopfball von Stefan Kießling, der durch ein Loch im Außennetz ging. Die Debatte um Torlinientechnik wird lauter.' },
+      { topic: 'regeln', title: 'Das Phantomtor', text: 'Im Oktober 2013 zählt in Sinsheim ein Kopfball eines Leverkuseners, der durch ein Loch im Außennetz ging. Die Debatte um Torlinientechnik wird lauter.' },
       { topic: 'liga', title: 'WM in Brasilien', text: 'Im Sommer 2014 nutzt die FIFA bei der WM erstmals Torlinientechnik und Freistoß-Spray.' },
     ],
     society: [
@@ -301,14 +301,14 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'regeln', title: 'Torlinientechnik im Einsatz', text: 'Ab 2015/16 erkennen Kameras in der Bundesliga, ob der Ball die Linie überschritten hat; das Signal kommt in unter einer Sekunde.', inGame: 'In der 1. Liga gibt es keine Phantomtore mehr.' },
       { topic: 'taktik', title: 'Sommertour nach Asien', text: 'Spitzenvereine verlegen Teile der Vorbereitung nach China und Japan – Millionen-Erlöse, aber Jetlag.', inGame: 'Asienreisen im Sommer sind für die größten Vereine buchbar.' },
       { topic: 'medien', title: 'Social Media bestimmt die Stimmung', text: 'Vereine, Spieler und Fans kommunizieren über Facebook, Twitter und Instagram. Krisen und Hypes entstehen in Stunden.', inGame: 'Neue Fan-Epoche „Soziale Medien“: Die Stimmung schwankt so stark wie nie.' },
-      { topic: 'liga', title: 'Affären bei FIFA und DFB', text: 'Im Herbst 2015 werden FIFA-Präsident Blatter gesperrt und Zahlungen rund um die WM 2006 untersucht; DFB-Präsident Niersbach tritt zurück.' },
+      { topic: 'liga', title: 'Affären bei FIFA und DFB', text: 'Im Herbst 2015 wird der FIFA-Präsident gesperrt und Zahlungen rund um die WM 2006 untersucht; der DFB-Präsident tritt zurück.' },
       { topic: 'geld', title: 'Die TV-Milliarde', text: 'Im Juni 2016 vergibt die DFL die Rechte ab 2017/18 für gut eine Milliarde Euro pro Saison.' },
       { topic: 'liga', title: 'EM mit 24 Teams', text: 'Im Sommer 2016 spielt die EM in Frankreich erstmals mit 24 Mannschaften.' },
     ],
     society: [
       { topic: 'politik', title: 'Fluchtbewegung 2015', text: 'Im Spätsommer 2015 kommen sehr viele Geflüchtete nach Deutschland. In vielen Stadien hängen „Refugees Welcome“-Banner, Vereine organisieren Hilfe.' },
       { topic: 'politik', title: 'Terror in Paris', text: 'Am 13. November 2015 explodieren Bomben am Stade de France während des Spiels gegen Frankreich. Das Länderspiel in Hannover vier Tage später wird abgesagt.' },
-      { topic: 'alltag', title: 'Der Abgasskandal', text: 'Im September 2015 wird bekannt, dass Volkswagen Abgaswerte manipuliert hat – auch ein großer Fußballsponsor gerät unter Druck.' },
+      { topic: 'alltag', title: 'Der Abgasskandal', text: 'Im September 2015 wird bekannt, dass ein großer Autokonzern Abgaswerte manipuliert hat – auch ein großer Fußballsponsor gerät unter Druck.' },
       { topic: 'politik', title: 'Brexit-Votum', text: 'Im Juni 2016 stimmt Großbritannien für den Austritt aus der EU.' },
     ],
   },
@@ -319,7 +319,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     football: [
       { topic: 'regeln', title: 'Video-Assistent im Test', text: 'In der Bundesliga läuft der Videobeweis 2016/17 „offline“ mit: Die Technik wird geprobt, greift aber noch nicht ein.', inGame: 'Im Spiel greift der Video-Assistent bereits ab Januar 2017 ein.' },
       { topic: 'taktik', title: 'Expected Goals', text: 'Der Wert „xG“ wandert aus Analystenblogs in die Vereinsanalyse: Wie gut waren die Chancen wirklich?', inGame: 'Spielberichte zeigen jetzt xG.' },
-      { topic: 'geld', title: 'Ablösen explodieren', text: 'Im August 2016 wechselt Paul Pogba für rund 105 Mio. Euro zu Manchester United – Weltrekord.' },
+      { topic: 'geld', title: 'Ablösen explodieren', text: 'Im August 2016 wechselt ein französischer Mittelfeldstar für rund 105 Mio. Euro zu Manchester Rot – Weltrekord.' },
       { topic: 'geld', title: 'China lockt', text: 'Klubs der chinesischen Super League locken im Winter mit Rekordgehältern und hohen Ablösen.' },
     ],
     society: [
@@ -445,7 +445,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     football: [
       { topic: 'liga', title: 'EM im eigenen Land', text: 'Vom 14. Juni bis 14. Juli 2024 richtet Deutschland die EM in zehn Stadien aus.' },
       { topic: 'medien', title: 'Tennisball-Proteste', text: 'Im Dezember 2023 stimmt die Liga einem Investorenmodell zu. Fans werfen Tennisbälle und Schokotaler, im Februar 2024 wird der Prozess gestoppt.' },
-      { topic: 'geld', title: 'Rekordtransfer nach München', text: 'Im August 2023 wechselt Harry Kane für rund 100 Mio. Euro zum FC Bayern – Rekord in der Bundesliga.' },
+      { topic: 'geld', title: 'Rekordtransfer nach München', text: 'Im August 2023 wechselt Englands Kapitän für rund 100 Mio. Euro zu München Rot – Rekord in der Bundesliga.' },
       { topic: 'geld', title: 'Kaderkosten-Quote', text: 'Die UEFA begrenzt die Ausgaben für Gehälter, Ablösen und Berater schrittweise: 90 Prozent der Einnahmen 2023, 80 Prozent 2024, 70 Prozent ab 2025.' },
       { topic: 'liga', title: 'Frauen-WM in Australien und Neuseeland', text: 'Im Sommer 2023 spielen erstmals 32 Teams um den Titel der Frauen-WM.' },
     ],

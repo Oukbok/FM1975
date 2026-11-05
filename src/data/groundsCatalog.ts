@@ -124,7 +124,7 @@ export const GROUNDS_MODULES: GroundsModuleDef[] = [
   {
     key: 'transit', name: 'ÖPNV-Anbindung', category: 'anreise', noise: 0.5, wear: 0.15, lifespan: 40, negotiated: true,
     desc: 'Busse und Bahnen bringen die Zuschauer ohne Stau. Ab Stufe 2 verhandelst du mit der Stadt – sie zahlt mit, entscheidet aber selbst.',
-    source: 'Kombiticket: SC Freiburg 1993/94 (Signal-Archiv)',
+    source: 'Kombiticket: Freiburg 1993/94 (Zeitungsarchiv)',
     levels: [
       L({ name: 'Sonderbusse (Shuttle)', unlock: 1975, cost: 0, perMatch: -1200, transitCap: 5000, aiRep: 66 }),
       L({ name: 'Sonderzüge & Straßenbahn-Takt', unlock: 1975, cost: 50000, perMatch: -800, transitCap: 11000, att: 0.01, aiRep: 72 }),
@@ -165,7 +165,7 @@ export const GROUNDS_MODULES: GroundsModuleDef[] = [
   {
     key: 'museum', name: 'Vereinsmuseum', category: 'handel', noise: 0.2, wear: 0.2, lifespan: 25,
     desc: 'Pokale, Trikots, Geschichte: Das Museum zieht Besucher an, stärkt die Tradition und die regionale Marke.',
-    source: 'HSV-Museum 2004 (hsv.de)',
+    source: 'Vereinsmuseum in Hamburg 2004 (Vereinsseite)',
     levels: [
       L({ name: 'Vereinsmuseum', unlock: 2004, cost: 450000, upkeep: 1800, area: 1, days: 240, permit: true, monthly: 2400, mood: 1, brand: { regional: 0.6 }, aiRep: 72 }),
       L({ name: 'Erlebnismuseum', unlock: 2012, cost: 1100000, upkeep: 3800, area: 1, days: 300, permit: true, monthly: 5500, mood: 1.5, brand: { regional: 1, national: 0.3 }, aiRep: 82 }),

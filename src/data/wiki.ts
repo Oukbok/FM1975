@@ -832,7 +832,7 @@ Unter **Training › Trainingsplan** legst du die Trainingswoche fest: **7 Tage*
 Jeder Baustein hat ein Symbol, eine Intensität (Striche oben rechts), eine Belastung und gewichtete Attribute: Ausdauer, Kondition, Sprint, Koordination, Kraft, Technik, Dribbling, Passspiel, Flanken, Torschuss, Kopfball, Zweikampf, Taktik, Spielform, Torwart, Standards und Regeneration. Mit der Zeit kommen neue hinzu:
 | Baustein | ab | Hintergrund |
 |---|---|---|
-| Pressing & Umschalten | 1988 | Sacchis AC Mailand macht das Pressing populär |
+| Pressing & Umschalten | 1988 | Mailand Rot-Schwarz macht das Pressing populär |
 | Videoanalyse | 1993 | systematische Spielanalyse (Prozone/Amisco Mitte der 90er) – wirkt nur mit Analyst richtig |
 | Mentaltraining | 2003 | Sportpsychologie wird Teil des Profialltags |
 | Athletik & Stabilisation | 2004 | funktionelles Athletiktraining, senkt das Verletzungsrisiko |
@@ -1573,7 +1573,7 @@ Es gibt **keine Ergebnisvorgabe** und keinen Eingriff ins Spiel selbst: Ein Gro�
 Für deinen Verein gilt die Kurve **nie** – egal welche Stufe. Wechselst du den Verein, gilt sie wieder für den Verein, den du verlassen hast.
 
 ### Fiktive Namen
-Die Vereine tragen Städtenamen. Wo der echte Verein fehlt, trägt der Verein derselben Stadt die Kurve (z. B. **Manchester** für United und City, **London Nord** für Arsenal/Tottenham, **Leipzig** ab 2009 für den neuen Leipziger Spitzenverein).`,
+Die Vereine tragen Städtenamen. Wo der echte Verein fehlt, trägt der Verein derselben Stadt die Kurve (z. B. **Manchester** für die beiden großen Stadtklubs, **London Nord** für die Klubs aus dem Londoner Norden, **Leipzig** ab 2009 für den neuen Leipziger Spitzenverein).`,
   },
   {
     id: 'staff-people',
@@ -1882,7 +1882,7 @@ Große Vereine mit hoher Auslastung profitieren stärker vom **Eigenbetrieb** (v
 - Die Marke bestimmt die **Reichweite** im Sponsoring (siehe **Sponsoring & Werbung**), multipliziert **Fanartikel** und die **Vermarktung** (Lizenzen). International bekannte Vereine verkaufen außerdem **Fanartikel weltweit** (Lizenzen, Versand): eine echte Weltmarke 2024 bis rund 130 Mio. € im Jahr.
 
 ## Europapokal
-- 1975 verdient ein Verein im Europapokal vor allem an den **Heimspielen** (volle Ränge); die Prämien sind klein. Prämien und **Startgelder** wachsen mit der Wirtschaft. Ab 1992 (Meisterliga mit Gruppenphase) steigen die Prämien im Landesmeister-Wettbewerb bis 2000 auf das Fünffache, in den anderen Wettbewerben auf das Doppelte. Mit der Gruppenphase der Champions League kommen hohe **Startgelder** dazu: Ein Teilnehmer bekommt 1999/2000 rund 8 Mio. €, heute rund 45 Mio. € schon fürs Dabeisein, international bekannte Vereine über Marktpool und Koeffizient bis knapp das Doppelte (FC Bayern 2024/25 insgesamt 106 Mio. € bis zum Viertelfinale); im UEFA-Pokal ab der Gruppenphase 2004 und der Europa League 2009 deutlich weniger. Europäischer Erfolg ist damit der stärkste Hebel für eine Dynastie – garantiert aber nichts.
+- 1975 verdient ein Verein im Europapokal vor allem an den **Heimspielen** (volle Ränge); die Prämien sind klein. Prämien und **Startgelder** wachsen mit der Wirtschaft. Ab 1992 (Meisterliga mit Gruppenphase) steigen die Prämien im Landesmeister-Wettbewerb bis 2000 auf das Fünffache, in den anderen Wettbewerben auf das Doppelte. Mit der Gruppenphase der Champions League kommen hohe **Startgelder** dazu: Ein Teilnehmer bekommt 1999/2000 rund 8 Mio. €, heute rund 45 Mio. € schon fürs Dabeisein, international bekannte Vereine über Marktpool und Koeffizient bis knapp das Doppelte (München Rot 2024/25 insgesamt 106 Mio. € bis zum Viertelfinale); im UEFA-Pokal ab der Gruppenphase 2004 und der Europa League 2009 deutlich weniger. Europäischer Erfolg ist damit der stärkste Hebel für eine Dynastie – garantiert aber nichts.
 
 ## Preisschilder und Kontostand
 - **Gehälter, Marktwerte und das Transferbudget** sind Preisschilder in 1975-Werten und werden mit dem Spieljahr hochgerechnet angezeigt und gebucht. Der **Kontostand** ist nominal.
@@ -1908,7 +1908,7 @@ Jede Fläche ist ein eigener Vertrag mit Partner, Branche, Herkunftsland, Jahres
 
 | Fläche | ab | Hinweis |
 |---|---|---|
-| Trikot-Brust | 1975 | seit Jägermeister bei Braunschweig (1973) |
+| Trikot-Brust | 1975 | seit Braunschweig 1973 (Spirituosen-Hersteller) |
 | Ausrüster | 1975 | erst ab den 1990ern viel Geld |
 | Banden | 1975 | Wert = Zuschauer × TV-Präsenz, ab 2010 LED (+20 %) |
 | Regionalpartner | 1975 | 2–4 kleine Partner, in den unteren Ligen das Rückgrat |
@@ -1928,7 +1928,7 @@ Vier Reiter: **Hauptsponsor** (Einnahmen dieser Saison je Art, Brustvertrag mit 
 
 ## Was ein Vertrag wert ist
 - Grundlage ist der Marktwert der Fläche für einen durchschnittlichen Erstligisten in diesem Jahr (1975 Brust ≈ 0,25 Mio. DM, 2024 ≈ 9 Mio. €).
-- Darauf wirkt die **Reichweite**: regionale Marke (Regionalpartner), nationale Marke (Brust, Banden, Premium) oder weltweite Strahlkraft (Ausrüster, Ärmel, Digital). Je weiter die Globalisierung, desto stärker zählt Größe (1975 Reichweite^1,25, ab 2020 ^2,5): Ein Weltverein bekommt heute ein Vielfaches des Durchschnitts – der FC Bayern nahm 2024/25 240 Mio. € mit Sponsoring ein.
+- Darauf wirkt die **Reichweite**: regionale Marke (Regionalpartner), nationale Marke (Brust, Banden, Premium) oder weltweite Strahlkraft (Ausrüster, Ärmel, Digital). Je weiter die Globalisierung, desto stärker zählt Größe (1975 Reichweite^1,25, ab 2020 ^2,5): Ein Weltverein bekommt heute ein Vielfaches des Durchschnitts – München Rot nahm 2024/25 240 Mio. € mit Sponsoring ein.
 - Unterklassige Vereine wachsen nur anteilig mit (wie bei Trikot und Banden früher).
 - Werte stehen in 1975-Basis und steigen mit der Inflation – nicht mit dem schnelleren Werbemarkt. Lange Verträge werden deshalb mit der Zeit günstig für den Sponsor; die Verlängerung bringt dann den Sprung.
 
@@ -1953,7 +1953,7 @@ Jedes Angebot kannst du annehmen, ablehnen oder verhandeln: höherer Jahreswert,
 Sie füllen freie Flächen zu Saisonbeginn mit dem besten von zwei Angeboten, ziehen Verlängerungsoptionen und unterliegen denselben Abstiegs-, Prämien- und Verbotsregeln.
 
 ## Betrieb & Vermarktung (Ausgaben)
-Vermarktung kostet: Wareneinsatz der Fanartikel (35 %), Betreuung der Sponsoren (5 % 1975 → 12 % ab 2010) und eine wachsende Geschäftsstelle mit Beratern und Reisen (0 → 5 % des Umsatzes). Große Marken haben davon mehr – ihre Personalquote liegt deshalb niedriger (FC Bayern 2024/25: Personal 47 % des Umsatzes ohne Transfers).`,
+Vermarktung kostet: Wareneinsatz der Fanartikel (35 %), Betreuung der Sponsoren (5 % 1975 → 12 % ab 2010) und eine wachsende Geschäftsstelle mit Beratern und Reisen (0 → 5 % des Umsatzes). Große Marken haben davon mehr – ihre Personalquote liegt deshalb niedriger (München Rot 2024/25: Personal 47 % des Umsatzes ohne Transfers).`,
   },
   {
     id: 'tickets-sales',
@@ -2059,7 +2059,7 @@ Unter **Verein → Kartenverkauf** siehst du den erwarteten Verkauf als **Spanne
 KI-Vereine haben keine Blöcke, aber Kontingente je Kategorie: Sie bauen ihren Platzmix jede Saison ein Stück in Richtung Epoche um (Sitzplatz-Boom ab den 1990ern, Business-Seats und Logen nach Nachfrage) und erhöhen Preise, wenn sie ausverkauft sind, oder senken sie bei leeren Rängen.
 
 ## Größenordnung
-Ein Erstligist nimmt 1975 je Heimspiel rund 150.000 DM Eintritt (≈ 70 % des Umsatzes inkl. Catering und Programm), ein Spitzenverein 2024 mit voller Arena rund 6–8 Mio. € (FC Bayern 2023: ≈ 121 Mio. € Spieltagserlöse, ≈ 5,2 Mio. € je Heimspiel).
+Ein Erstligist nimmt 1975 je Heimspiel rund 150.000 DM Eintritt (≈ 70 % des Umsatzes inkl. Catering und Programm), ein Spitzenverein 2024 mit voller Arena rund 6–8 Mio. € (München Rot 2023: ≈ 121 Mio. € Spieltagserlöse, ≈ 5,2 Mio. € je Heimspiel).
 
 Quellen: Vereinsangaben großer Bundesligisten (Arena 2026: 106 Logen, 2.200 Business-Plätze, 227 Plätze für Menschen mit Behinderung; ein WM-Stadion von 1974 mit 17.000 von 54.000 Sitzplätzen; Hospitality: Loge ab 640 € je Platz und Spiel, Business ab ≈ 360 €), Stehplatz-Dauerkarten 2024/25 (Schnitt 213 €), UEFA-Gästekontingent 5 %. Annahmen: VIP-Bereiche 1980, Logen 1985, Gästeblock 1984, Premium 1988.`,
   },
@@ -3018,16 +3018,16 @@ Größere Bauten brauchen eine **Baugenehmigung** (1975 etwa 6 Wochen, ab 2005 v
 | Teil | Stufen | Wirkung |
 |---|---|---|
 | Parkplätze | Schotter → Asphalt → Parkhaus (ab 1985) → Leitsystem (ab 2000) | Parkgebühr je Pkw, mehr Anreisekapazität; das Parkhaus braucht weniger Fläche |
-| ÖPNV | Shuttlebusse → Sonderzüge (Verhandlung) → **Kombiticket** (ab 1993, Vorbild SC Freiburg 1993/94) → eigener Stadion-Bahnhof (ab 2000) | mehr Kapazität, Auslastung +1 bis +5 %; Kosten je Spiel bzw. je Zuschauer |
+| ÖPNV | Shuttlebusse → Sonderzüge (Verhandlung) → **Kombiticket** (ab 1993, Vorbild Freiburg 1993/94) → eigener Stadion-Bahnhof (ab 2000) | mehr Kapazität, Auslastung +1 bis +5 %; Kosten je Spiel bzw. je Zuschauer |
 
 Ab Stufe 2 verhandelst du mit der **Stadt**: Sie zahlt mit, entscheidet aber nach sechs bis zehn Wochen selbst (besser mit hohem Ansehen, schlechter nach Ausschreitungen). Liegt die Nachfrage über der Kapazität (Autos, Bus & Bahn, Wildparken), gibt es **Anreise-Chaos**: Fans verpassen Buden und Shop (entgangener Umsatz), die Stimmung sinkt, dauerhaft zu kleine Kapazität kostet Auslastung.
 
 ## Gastronomie & Handel
-Buden und Fanshop baust du wie bisher aus (Betriebsform des Caterings unter Marketing). Dazu: **Vereinsheim** (Pacht jeden Monat, etwas Stimmung), **Megastore** (ab 1990 als City-Filiale, ab 1995 am Stadion; braucht Fanshop Stufe 3), **Versand & Onlineshop** (Katalog ab 1985, Onlineshop ab 1998, international ab 2010 – je bekannter der Verein, desto mehr), **Vereinsmuseum** (ab 2004, Vorbild HSV-Museum) und **Stadionführungen** (ab 1998). Handelserlöse laufen mit der **Marke** und litten 1997–1999 unter der Fanartikel-Flaute (-30 %).
+Buden und Fanshop baust du wie bisher aus (Betriebsform des Caterings unter Marketing). Dazu: **Vereinsheim** (Pacht jeden Monat, etwas Stimmung), **Megastore** (ab 1990 als City-Filiale, ab 1995 am Stadion; braucht Fanshop Stufe 3), **Versand & Onlineshop** (Katalog ab 1985, Onlineshop ab 1998, international ab 2010 – je bekannter der Verein, desto mehr), **Vereinsmuseum** (ab 2004, Vorbild Museum von Hamburg Blau) und **Stadionführungen** (ab 1998). Handelserlöse laufen mit der **Marke** und litten 1997–1999 unter der Fanartikel-Flaute (-30 %).
 
 ## Fanbereich & Sicherheit
 Jedes Heimspiel kann **Ausschreitungen** bringen: Grundrisiko 4 % (bis 1979), **12 % in der Hooligan-Zeit 1980–1992**, 6 % ab 1993, 9 % in der Pyro-Zeit 2005–2014, danach 8 %; **Derbys ×2,2**, schlechte Stimmung ×1,3. Folge: **DFB-Geldstrafe**, in den 80ern bleiben Familien weg, die Stimmung leidet. Dagegen helfen **Ordnungsdienst** (bis −65 %, kostet je Zuschauer), **Fanprojekt** (ab 1981 – erstes deutsches Fanprojekt in Bremen; wirkt nach etwa einem Jahr voll; ab 1993 tragen Stadt, Land und DFB nach dem NKSS den Großteil), **Familienblock** (ab 1990: mehr Zuschauer, weniger Krawall, aber Rabatte; zur Ultra-Zeit murrt die Kurve), **Fanräume & Choreo-Lager** (ab 1998, Stimmung) und die **Fan-Zone** (ab 2006, Erlös vor dem Spiel, laut).
-Ab **2015** stellen manche Länder **Polizeikosten** für Hochrisikospiele (Derbys) in Rechnung (Bremen, erster Bescheid ~425.000 € für Werder–HSV), ab **2025** häufiger (Urteil des Bundesverfassungsgerichts). Ein guter Ordnungsdienst senkt die Rechnung.
+Ab **2015** stellen manche Länder **Polizeikosten** für Hochrisikospiele (Derbys) in Rechnung (Bremen, erster Bescheid ~425.000 € für Bremen – Hamburg Blau), ab **2025** häufiger (Urteil des Bundesverfassungsgerichts). Ein guter Ordnungsdienst senkt die Rechnung.
 
 ## Hospitality & Medien
 **Hospitality** (VIP-Zelt ab 1985, Business-Club ab 1995, Premium ab 2005) liefert Räume, Küche und Service für die Business-Seats und Logen im Stadion: +6/15/25 % Nachfrage und halb so viel mehr Preisbereitschaft. Eigene Plätze hat das Modul nicht mehr – ohne Business-Seats oder Logen im Stadion bringt es nichts. **Presse & TV** (Pressezentrum ab 1988, TV-Compound ab 1992, Medienzentrum ab 2008) und **Flutlicht** (300 lx bis LED 1.600 lx) stärken die nationale Marke bzw. erlauben Abendspiele.
@@ -3487,7 +3487,7 @@ Parallel zur 1. Liga läuft der **Landespokal** als reiner **K.-o.-Wettbewerb**.
 ## Spielmodus je Begegnung
 - **Ein Spiel entscheidet** (Single-Leg). Der **zuerst gezogene Verein hat Heimrecht** – ab 1982/83 spielt ein **Amateurverein gegen Profis immer zu Hause** (siehe *Pokalauslosung*).
 - Steht es nach **90 Minuten** unentschieden, folgt die **Verlängerung** (2 × 15 Minuten).
-- **Bis 1990/91: Wiederholungsspiel.** Steht es auch nach 120 Minuten unentschieden, wird das Spiel **mit getauschtem Heimrecht wiederholt** (eine Woche später, über die Feiertage schon nach drei Tagen). Erst wenn auch die Wiederholung nach Verlängerung unentschieden endet, entscheidet das Elfmeterschießen. Das **Endspiel** wurde zuletzt **1977** wiederholt (Köln – Hertha 1:1 n. V., 1:0) – im Spiel bis 1976/77, danach Elfmeterschießen im Finale.
+- **Bis 1990/91: Wiederholungsspiel.** Steht es auch nach 120 Minuten unentschieden, wird das Spiel **mit getauschtem Heimrecht wiederholt** (eine Woche später, über die Feiertage schon nach drei Tagen). Erst wenn auch die Wiederholung nach Verlängerung unentschieden endet, entscheidet das Elfmeterschießen. Das **Endspiel** wurde zuletzt **1977** wiederholt (Köln Rot – Berlin Blau 1:1 n. V., 1:0) – im Spiel bis 1976/77, danach Elfmeterschießen im Finale.
 - **Ab 1991/92:** nach der Verlängerung direkt **Elfmeterschießen** (Best-of-5, danach „Sudden Death").
 - In der Anzeige stehen **n.V.** bzw. **i.E.** hinter dem Ergebnis; Wiederholungen mit dem Ergebnis des ersten Spiels („Wdh., zuvor 1:1 n. V.“). Im Kalender steht der Wiederholungstermin nur, wenn dein Verein ein Wiederholungsspiel hat.
 - Quelle: DFB-Pokal-Regeln („replayed with the home field right reversed“, Abschaffung der Wiederholungen 1991).

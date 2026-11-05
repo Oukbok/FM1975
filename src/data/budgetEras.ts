@@ -17,8 +17,8 @@ export const BUDGET_ERAS: BudgetEra[] = [
   ] },
   // Quelle: docs/recherche/transferrekorde.md (1976 erster Wechsel für 1 Mio. DM, Roger Van Gool nach Köln).
   { from: 1978, to: 1983, lines: [
-    'Der Markt wird teurer: Seit 1976 Roger Van Gool für eine Million DM nach Köln ging, sind Millionen-Ablösen kein Tabu mehr. Unsere Einnahmen wachsen aber weiter vor allem über die Ränge.',
-    'Seit dem ersten Millionen-Transfer 1976 (Van Gool nach Köln) ziehen die Ablösen an. Die Kasse füllt sich weiter in erster Linie am Spieltag – das Fernsehen bleibt ein Nebengeschäft.',
+    'Der Markt wird teurer: Seit 1976 ein belgischer Stürmer für eine Million DM nach Köln ging, sind Millionen-Ablösen kein Tabu mehr. Unsere Einnahmen wachsen aber weiter vor allem über die Ränge.',
+    'Seit dem ersten Millionen-Transfer 1976 (ein Belgier nach Köln) ziehen die Ablösen an. Die Kasse füllt sich weiter in erster Linie am Spieltag – das Fernsehen bleibt ein Nebengeschäft.',
   ] },
   // Quellen: engine/economy.ts ATTENDANCE_DEMAND (Zuschauertal Mitte der 1980er, Schnitt rund 19.000);
   // engine/tvMoney.ts (TV-Topf 1984/85 rund 10 Mio. DM für die Bundesliga, basicthinking.de).
