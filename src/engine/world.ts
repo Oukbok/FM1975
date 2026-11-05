@@ -157,7 +157,7 @@ function newClub(
   return id;
 }
 
-function makeCountry(seed: CountrySeed): WorldCountry {
+export function makeCountry(seed: CountrySeed): WorldCountry {
   return {
     name: seed.name, origin: seed.origin, base: seed.base, tier1: seed.tier1, tier2: seed.tier2,
     tiers: [[], []], spareCities: [...seed.cities], lastTable: [], coef: [], titles: {}, active: true,
@@ -165,7 +165,7 @@ function makeCountry(seed: CountrySeed): WorldCountry {
 }
 
 /** Füllt die Ligen eines Landes mit erfundenen Vereinen auf die Sollgröße auf. */
-function fillCountry(
+export function fillCountry(
   w: WorldState, euroClubs: Record<string, EuroClub>, c: WorldCountry, year: number, r: () => number,
 ): void {
   const used = new Set(Object.values(euroClubs).map((e) => e.shortName));
@@ -190,7 +190,7 @@ function fillCountry(
 // -----------------------------------------------------------------------------
 // Aufbau 1975
 // -----------------------------------------------------------------------------
-export function initWorld(euroClubs: Record<string, EuroClub>, year = 1975): WorldState {
+export function initWorld(euroClubs: Record<string, EuroClub>, year = 1975, opts?: WorldInitOpts): WorldState {
   const w: WorldState = {
     version: 1, countries: {}, meta: {}, germanCoef: [], participants: null, history: [], nextId: 1,
   };
@@ -214,8 +214,21 @@ export function initWorld(euroClubs: Record<string, EuroClub>, year = 1975): Wor
     fillCountry(w, euroClubs, c, year, r);
     c.lastTable = [...c.tiers[0]].sort((a, b) => euroClubs[b].strength - euroClubs[a].strength);
   }
+  // Start in einem späteren Jahr / mit Weltdaten / anderem Heimatland (engine/worldData.ts).
+  if (opts?.overlay) opts.overlay(w, euroClubs, year, r);
   return w;
 }
+
+/** Erweiterung des Aufbaus (Startjahr, Weltdaten, Heimatland) – siehe engine/worldData.ts. */
+export interface WorldInitOpts {
+  overlay?: (w: WorldState, euroClubs: Record<string, EuroClub>, year: number, r: () => number) => void;
+}
+
+/** Schlüssel des Heimatlandes in der Koeffizienten-Rechnung (früher fest „Deutschland“). */
+const HOME_KEY = '__home__';
+
+/** Länder, deren Ligen das Spiel selbst Spiel für Spiel rechnet (voll simulierte Länder). */
+export interface FixedCountryResult { t1: string[]; t2: string[]; next: string[][] }
 
 // -----------------------------------------------------------------------------
 // Eine Liga durchrechnen
@@ -262,7 +275,7 @@ function playCup(ids: string[], euroClubs: Record<string, EuroClub>, r: () => nu
 // -----------------------------------------------------------------------------
 // Staatenteilungen
 // -----------------------------------------------------------------------------
-function applySplits(w: WorldState, euroClubs: Record<string, EuroClub>, year: number, r: () => number): string[] {
+export function applySplits(w: WorldState, euroClubs: Record<string, EuroClub>, year: number, r: () => number): string[] {
   const notes: string[] = [];
   for (const sp of COUNTRY_SPLITS) {
     if (sp.year !== year) continue;
@@ -359,6 +372,7 @@ export function advanceWorldSeason(
   w: WorldState, euroClubs: Record<string, EuroClub>, season: string, endYear: number,
   winPts: number, cups: Record<EuroCompId, CupState | null> | undefined,
   isGerman: (id: string) => boolean,
+  fixed?: Record<string, FixedCountryResult>,
 ): WorldSeasonResult {
   const r = rng(hash(`world:${season}`));
   const notes: string[] = [];
@@ -372,7 +386,7 @@ export function advanceWorldSeason(
     e.p += pts[id]; e.n++;
   };
   for (const id of Object.keys(pts)) {
-    if (isGerman(id)) add('Deutschland', id);
+    if (isGerman(id)) add(HOME_KEY, id);
     else if (euroClubs[id]) add(euroClubs[id].country, id);
   }
   for (const c of Object.values(w.countries)) {
@@ -380,7 +394,7 @@ export function advanceWorldSeason(
     const e = byCountry[c.name];
     pushCoef(c.coef, e ? e.p / e.n : 0);
   }
-  const de = byCountry['Deutschland'];
+  const de = byCountry[HOME_KEY];
   pushCoef(w.germanCoef, de ? de.p / de.n : 0);
   // Europapokal-Erfolg vergrößert Vereine leicht (Geld, Ruf).
   for (const [id, p] of Object.entries(pts)) {
@@ -391,8 +405,9 @@ export function advanceWorldSeason(
   // 2) Ligen spielen
   for (const c of Object.values(w.countries)) {
     if (!c.active) continue;
-    const t1 = playLeague(c.tiers[0], euroClubs, winPts, r);
-    const t2 = playLeague(c.tiers[1], euroClubs, winPts, r);
+    const fx = fixed?.[c.name];
+    const t1 = fx ? fx.t1.filter((id) => w.meta[id]) : playLeague(c.tiers[0], euroClubs, winPts, r);
+    const t2 = fx ? fx.t2.filter((id) => w.meta[id]) : playLeague(c.tiers[1], euroClubs, winPts, r);
     const champ = t1[0];
     const cupWinner = playCup([...c.tiers[0], ...c.tiers[1]], euroClubs, r);
     c.lastTable = t1;
@@ -414,8 +429,9 @@ export function advanceWorldSeason(
     });
 
     // Auf-/Abstieg (3 bei großen Ligen, 2 bei kleinen)
-    const n = c.tier1 >= 16 ? 3 : 2;
-    const down = t1.slice(-n), up = t2.slice(0, n);
+    if (fx) { c.tiers = [fx.next[0].filter((id) => w.meta[id]), fx.next[1].filter((id) => w.meta[id])]; continue; }
+    const n = !t2.length ? 0 : c.tier1 >= 16 ? 3 : 2;
+    const down = n ? t1.slice(-n) : [], up = t2.slice(0, n);
     c.tiers[0] = [...t1.slice(0, t1.length - n), ...up];
     c.tiers[1] = [...t2.slice(n), ...down];
   }

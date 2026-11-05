@@ -201,6 +201,8 @@ export function seedHistoricRecords(g: Game): void {
 /** Aufruf beim Laden (App.tsx) und beim neuen Spiel (newGame.ts). */
 export function migrateLeaguePool(g: Game): void {
   if (!g.simClubs || !g.leagues) return;
+  // Anderes Heimatland (Weltdaten): kein deutscher Unterbau, keine deutsche Historie.
+  if (g.homeCountry && g.homeCountry !== 'ger') return;
   ensurePool(g);
   seedHistoricRecords(g);
 }

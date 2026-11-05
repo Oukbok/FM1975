@@ -1960,6 +1960,12 @@ export interface NewGameOptions {
   historyMode?: 'off' | 'medium' | 'strong';
   /** Ausnahmetalente der Fußballgeschichte (game/legendsGame.ts), Standard an. */
   legends?: boolean;
+  /** Startjahr (Saison-Start, 1975–2025), Standard 1975 (game/newGame.ts, Weltdaten). */
+  startYear?: number;
+  /** Heimatland (Code aus data/world/countries.ts), Standard 'ger'. */
+  country?: string;
+  /** Weitere Länder, deren Ligen Spiel für Spiel simuliert werden (game/fullCountries.ts). */
+  fullCountries?: string[];
 }
 
 // -----------------------------------------------------------------------------

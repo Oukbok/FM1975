@@ -274,7 +274,7 @@ const FICT_COLORS = ['#2E7D32', '#1565C0', '#C62828', '#6A1B9A', '#EF6C00', '#00
 
 let _phCounter = 0;
 /** Erzeugt einen klar fiktiven Platzhalterverein für Ebene/Staffel. */
-function makePlaceholder(seedKey: string, tier: number, group: LeagueGroup): SimClub {
+export function makePlaceholder(seedKey: string, tier: number, group: LeagueGroup): SimClub {
   const idx = _phCounter++;
   const rng = mulberry32(hashStr(`${seedKey}:${tier}:${group}:${idx}`));
   const city = FICT_CITIES[Math.floor(rng() * FICT_CITIES.length)];
@@ -313,6 +313,8 @@ export interface TransitionContext {
   appliedReforms: string[];
   /** Verein des Spielers – darf NIE aus der Simulation fallen (Schutz bei Reformen). */
   protectedId?: string;
+  /** Sollgrößen statt der deutschen Struktur (anderes Heimatland, Weltdaten). */
+  targets?: DivisionTarget[];
 }
 
 export interface TransitionResult {
@@ -621,8 +623,8 @@ function migrate1991(ctx: TransitionContext, reform: LeagueReform): TransitionRe
 // nächsttiefere Ebene ab (top-down); auf der untersten Ebene fallen Überzählige
 // aus der Simulation. Dadurch steigen in der Normalisierungs-Saison mehr Vereine
 // ab als sonst. Passt eine Ebene bereits, ist der Schritt ein No-op.
-function normalizeToSteady(res: TransitionResult, newSeason: string): TransitionResult {
-  const targets = structureForSeason(newSeason);
+function normalizeToSteady(res: TransitionResult, newSeason: string, given?: DivisionTarget[]): TransitionResult {
+  const targets = given ?? structureForSeason(newSeason);
   const tiers = Array.from(new Set(res.divisions.map((d) => d.meta.tier))).sort((a, b) => a - b);
   const dropped = [...res.dropped];
   for (const tier of tiers) {
@@ -662,7 +664,7 @@ export function computeSeasonTransition(ctx: TransitionContext): TransitionResul
   } else {
     // Regulärer Saisonwechsel; führt zugleich übergroße Ebenen (z. B. die 1991/92
     // einmalig vergrößerte 1./2. Liga) schrittweise auf die Sollgrößen zurück.
-    res = normalizeToSteady(normalTransition(ctx), ctx.newSeason);
+    res = normalizeToSteady(normalTransition(ctx), ctx.newSeason, ctx.targets);
   }
   return ensureProtected(res, ctx.protectedId);
 }

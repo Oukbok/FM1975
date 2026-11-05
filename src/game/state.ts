@@ -147,7 +147,16 @@ export interface Game {
   career?: import('./careerState').CareerState;
   /** Ausnahmetalente der Fußballgeschichte: an/aus und bereits erschienene (game/legendsGame.ts). Fehlt = keine. */
   legends2?: import('./legendsGame').LegendsState;
+  /** Startjahr der Karriere (Weltdaten); fehlt = 1975. */
+  startYear?: number;
+  /** Heimatland (data/world/countries.ts); fehlt = 'ger'. */
+  homeCountry?: string;
+  /** Spiel für Spiel simulierte weitere Länder (game/fullCountries.ts); fehlt = keine. */
+  fullCountries?: string[];
 }
+
+/** Heimatland des Spielstands (fehlt = Deutschland). */
+export const homeCountryOf = (g: { homeCountry?: string }): string => g.homeCountry ?? 'ger';
 
 // Moral-Stufen in aufsteigender Reihenfolge (für Aktivitäts-Effekte, Block p11).
 export const MORALE_ORDER: import('../types').PlayerMorale[] = ['very_low', 'low', 'okay', 'good', 'excellent'];

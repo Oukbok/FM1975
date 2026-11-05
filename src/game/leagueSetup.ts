@@ -61,16 +61,19 @@ export function buildDdrDivisions(
   pointSystem: PointSystem,
   season: string,
   seasonStart: string,
+  seeds?: { ober: SimClub[]; liga: SimClub[] },
 ): LeagueDivision[] {
-  for (const s of DDR_OBERLIGA_SEEDS) simClubs[s.id] = { ...s };
-  for (const s of DDR_LIGA_SEEDS) simClubs[s.id] = { ...s };
+  const oberSeeds = seeds?.ober ?? DDR_OBERLIGA_SEEDS;
+  const ligaSeeds = seeds?.liga ?? DDR_LIGA_SEEDS;
+  for (const s of oberSeeds) simClubs[s.id] = { ...s };
+  for (const s of ligaSeeds) simClubs[s.id] = { ...s };
   const ober = buildDivision(
     { id: DDR_OBERLIGA_ID, name: 'DDR-Oberliga', tier: 101, group: 'nordost' },
-    DDR_OBERLIGA_SEEDS.map((s) => s.id), pointSystem, season, seasonStart,
+    oberSeeds.map((s) => s.id), pointSystem, season, seasonStart,
   );
   const liga = buildDivision(
     { id: DDR_LIGA_ID, name: 'DDR-Liga', tier: 102, group: 'nordost' },
-    DDR_LIGA_SEEDS.map((s) => s.id), pointSystem, season, seasonStart,
+    ligaSeeds.map((s) => s.id), pointSystem, season, seasonStart,
   );
   return [ober, liga];
 }

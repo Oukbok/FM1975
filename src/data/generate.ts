@@ -18,6 +18,7 @@ import { makeInfrastructure, applyFacilityEffects } from '../engine/infrastructu
 import { generateShirtOffers, generateBandenOffers } from '../engine/finances';
 import { academyStartingCohort, getYouthSalt } from '../engine/youth';
 import { economyScale } from '../engine/economy';
+import { COUNTRY_BY_KEY } from './world/countries';
 import type { ClubCommerce, SponsorOffer } from '../types';
 import type { EuroClub } from './europe';
 
@@ -207,7 +208,7 @@ function makePlayer(clubId: string, index: number, pos: Position, strength: numb
   });
   p.form = ri(45, 75);
   p.transferListed = rng() < 0.08;
-  p.contract.expiryDate = `${1976 + ri(0, 5)}-06-30`;
+  p.contract.expiryDate = `${genYear + 1 + ri(0, 5)}-06-30`;
   maybeRisingStar(p, strength, starRng); // kommende Stars (engine/clubStars.ts)
   return p;
 }
@@ -365,17 +366,28 @@ function buildClubFromSeed(
   return club;
 }
 
-export function generateWorld(managedClubId: string): GeneratedWorld {
+/**
+ * Spielerliga zum Start. Ohne `opts` wie immer: Vereine von 1975 (CLUB_SEEDS) am 1.7.1975.
+ * Startjahr/Land (game/worldCompose.ts): eigene Seeds und Datum; Startguthaben auf das
+ * Wirtschaftsniveau des Jahres (nominal), Herkunft der Spieler über `origin` (Heimatland).
+ */
+export function generateWorld(managedClubId: string, opts?: { seeds?: ClubSeed[]; date?: string }): GeneratedWorld {
   _seed = 1980; // reset für Determinismus
   seedStarRng(getYouthSalt());
   const clubs: Record<string, Club> = {};
   const players: Record<string, Player> = {};
   const youthPlayers: Record<string, Player> = {};
-
-  for (const seed of CLUB_SEEDS) {
-    clubs[seed.id] = buildClubFromSeed(seed, managedClubId, CURRENT_DATE, players, youthPlayers);
+  const date = opts?.date ?? CURRENT_DATE;
+  setGenDate(date);
+  try {
+    for (const seed of opts?.seeds ?? CLUB_SEEDS) {
+      clubs[seed.id] = buildClubFromSeed(seed, managedClubId, date, players, youthPlayers);
+    }
+  } finally {
+    setGenDate(CURRENT_DATE);
   }
-
+  const year = Number(date.slice(0, 4));
+  if (year > 1975) for (const c of Object.values(clubs)) c.finances.balance = Math.round(c.finances.balance * economyScale(year));
   return { clubs, players, youthPlayers };
 }
 
@@ -521,8 +533,14 @@ export interface CupAmateurs {
  * Deterministisch (fester Seed), damit jeder Spielstart dasselbe Feld erhält.
  * Die Vereine bekommen KEINEN Jugendstamm (kein Akademie-Kohortenaufbau).
  */
-export function generateCupAmateurs(count: number): CupAmateurs {
+export function generateCupAmateurs(count: number, opts?: { towns?: string[]; date?: string; foreignStyle?: boolean }): CupAmateurs {
   _seed = 4711; // fester Seed für reproduzierbares Pokal-Feld
+  const date = opts?.date ?? CURRENT_DATE;
+  setGenDate(date);
+  try { return buildAmateurs(count, opts?.towns?.length ? opts.towns : AMATEUR_TOWNS, !!opts?.foreignStyle); } finally { setGenDate(CURRENT_DATE); }
+}
+
+function buildAmateurs(count: number, towns: string[], foreignStyle: boolean): CupAmateurs {
   const clubs: Record<string, Club> = {};
   const players: Record<string, Player> = {};
 
@@ -535,13 +553,14 @@ export function generateCupAmateurs(count: number): CupAmateurs {
 
     // Eindeutigen Vereinsnamen bauen
     let prefix = pick(AMATEUR_PREFIXES);
-    let town = pick(AMATEUR_TOWNS);
-    let name = `${prefix} ${town}`;
+    let town = pick(towns);
+    const label = () => (foreignStyle ? `${town} Amateure` : `${prefix} ${town}`);
+    let name = label();
     let guard = 0;
     while (usedNames.has(name) && guard++ < 40) {
       prefix = pick(AMATEUR_PREFIXES);
-      town = pick(AMATEUR_TOWNS);
-      name = `${prefix} ${town}`;
+      town = pick(towns);
+      name = label();
     }
     usedNames.add(name);
     const shortName = town.slice(0, 3).toUpperCase();
@@ -556,7 +575,7 @@ export function generateCupAmateurs(count: number): CupAmateurs {
 
     const capacity = ri(3000, 13000);
     const stadium: Stadium = {
-      name: `Stadion am ${town}er Weg`,
+      name: foreignStyle ? `Sportplatz ${town}` : `Stadion am ${town}er Weg`,
       capacity,
       averageAttendanceRate: 0.35 + rng() * 0.35,
       ticketPrice: ri(3, 6),
@@ -622,7 +641,7 @@ export function buildEuroClubFull(
   const playerIds: string[] = [];
   let shirt = 1;
   SQUAD_TEMPLATE.forEach((pos, idx) => {
-    const p = makePlayer(euro.id, idx, pos, strengthBase, shirt++, ORIGINS[COUNTRY_ORIGIN[euro.country] ?? 'eng'], 88);
+    const p = makePlayer(euro.id, idx, pos, strengthBase, shirt++, ORIGINS[COUNTRY_ORIGIN[euro.country] ?? COUNTRY_BY_KEY[euro.country]?.origin ?? 'eng'], 88);
     players[p.id] = p;
     playerIds.push(p.id);
   });
