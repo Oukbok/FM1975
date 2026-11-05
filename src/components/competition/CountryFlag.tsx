@@ -15,7 +15,7 @@ export function CountryFlag({ country, height = 16 }: { country: string; height?
       body = <>{f.c.map((c, i) => <rect key={i} x={(w / f.c.length) * i} y={0} width={w / f.c.length + 0.2} height={h} fill={c} />)}</>;
       break;
     case 'nordic':
-      body = <><rect width={w} height={h} fill={f.bg} /><rect x={9} y={0} width={4} height={h} fill={f.cross} /><rect x={0} y={8} width={w} height={4} fill={f.cross} /></>;
+      body = <><rect width={w} height={h} fill={f.bg} /><rect x={9} y={0} width={4} height={h} fill={f.cross} /><rect x={0} y={8} width={w} height={4} fill={f.cross} />{f.inner && <><rect x={10} y={0} width={2} height={h} fill={f.inner} /><rect x={0} y={9} width={w} height={2} fill={f.inner} /></>}</>;
       break;
     case 'cross':
       body = <><rect width={w} height={h} fill={f.bg} /><rect x={13} y={0} width={4} height={h} fill={f.cross} /><rect x={0} y={8} width={w} height={4} fill={f.cross} /></>;

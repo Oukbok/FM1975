@@ -50,6 +50,19 @@ export const COUNTRY_INFO: Record<string, CountryInfo> = {
   Kroatien: { name: 'Kroatien', code: 'CRO', flag: { kind: 'h', c: [R, W, B] } },
   Tschechien: { name: 'Tschechien', code: 'CZE', flag: { kind: 'h', c: [W, R] } },
   Slowakei: { name: 'Slowakei', code: 'SVK', flag: { kind: 'h', c: [W, B, R] } },
+  // Weitere Europapokal-Länder (Weltdaten), vereinfacht
+  Norwegen: { name: 'Norwegen', code: 'NOR', flag: { kind: 'nordic', bg: R, cross: W, inner: '#24407e' } },
+  Finnland: { name: 'Finnland', code: 'FIN', flag: { kind: 'nordic', bg: W, cross: '#24407e' } },
+  Island: { name: 'Island', code: 'ISL', flag: { kind: 'nordic', bg: '#2c4f9e', cross: W, inner: R } },
+  Irland: { name: 'Irland', code: 'IRL', flag: { kind: 'v', c: [G, W, '#e08a3c'] } },
+  Nordirland: { name: 'Nordirland', code: 'NIR', flag: { kind: 'cross', bg: W, cross: R } },
+  Wales: { name: 'Wales', code: 'WAL', flag: { kind: 'h', c: [W, G] } },
+  Luxemburg: { name: 'Luxemburg', code: 'LUX', flag: { kind: 'h', c: [R, W, '#5aa6dc'] } },
+  Bulgarien: { name: 'Bulgarien', code: 'BUL', flag: { kind: 'h', c: [W, G, R] } },
+  Albanien: { name: 'Albanien', code: 'ALB', flag: { kind: 'plain', bg: R, dot: K } },
+  Zypern: { name: 'Zypern', code: 'CYP', flag: { kind: 'plain', bg: W, dot: '#d48a3a' } },
+  Malta: { name: 'Malta', code: 'MLT', flag: { kind: 'v', c: [W, R] } },
+  Israel: { name: 'Israel', code: 'ISR', flag: { kind: 'h', c: [W, B, W, W, W, B, W] } },
 };
 
 /** Anzeigedaten eines Landes (unbekannte Länder: neutrale Flagge, Kürzel aus dem Namen). */

@@ -792,6 +792,8 @@ Im Assistenten „Neues Spiel“ wählst du unter **Spielwelt** das **Startjahr*
 ### Heimatland
 Unter **Verein** wählst du zuerst das **Land**: Deutschland immer, dazu jedes Land, für das im Startjahr Weltdaten vorliegen. In einem anderen Land spielen die Einheimischen dieses Landes, es gilt dessen Punkteregel, es gibt keine deutschen Ligareformen, keine Hallenturniere und keine deutschen Jugendwettbewerbe; Deutschland läuft dann im Hintergrund mit.
 
+Weltdaten gibt es für alle Länder, die im Europapokal spielten (40 Länder einschließlich der Staaten, die es heute nicht mehr gibt, und ihrer Nachfolger). Bei den großen Ländern stammen die 1. Ligen meist aus Ergebnisdaten; bei vielen kleineren Ländern und bei älteren 2. Ligen sind Meister, Europapokalplätze und Absteiger gesichert, die Reihenfolge im Mittelfeld ist dagegen eine Annäherung. Im Editor kannst du jede Saison korrigieren.
+
 ### Simulationstiefe
 - **Deine Liga:** volle Kader, jedes Spiel mit der Match-Engine.
 - **Spiel für Spiel:** im Assistenten je Land wählbar – Spielplan, Tabelle Spieltag für Spieltag, Auf- und Abstieg; zu sehen unter Statistiken › Liga (Länderwahl, Gruppe „Spiel für Spiel“). Die Endtabelle bestimmt Meister und Europapokal-Starter des Landes.
