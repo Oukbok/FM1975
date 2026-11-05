@@ -109,7 +109,7 @@ export function usePopupQueue(g: Game, settings: AppSettings, rerender: () => vo
     onRatingCeremony: (c) => setRatingCeremony(c),
     onSeasonEnd,
     onCupDraw: (d) => {
-      const mode = settings.drawShow ?? 'eigener';
+      const mode = settings.drawShow ?? 'immer';
       if (mode === 'aus' || (mode === 'eigener' && !d.involvesMe)) return false;
       setDrawQueue((q) => [...q, { comp: d.comp, roundIndex: d.roundIndex, n: ++drawSeq.current }]);
       return true;

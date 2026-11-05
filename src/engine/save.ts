@@ -259,6 +259,8 @@ export interface AppSettings {
   briefingIntro?: boolean;
   /** Pokalauslosung als Show: immer, nur mit eigenem Verein (Standard) oder nur Nachricht. */
   drawShow?: 'immer' | 'eigener' | 'aus';
+  /** Markierung: Standard der Auslosungs-Show auf „immer“ umgestellt (Wunsch Pascal). */
+  drawShowV?: number;
   /** Tempo der Ziehungs-Show. */
   drawSpeed?: 'langsam' | 'normal' | 'schnell';
   /** Bewertungsrunde als Show (screens/rating/) oder kompakte Liste. */
@@ -304,7 +306,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   eventFrequency: 'normal',
   briefingAuto: true,
   briefingIntro: true,
-  drawShow: 'eigener',
+  drawShow: 'immer',
   drawSpeed: 'normal',
   ratingShow: 'an',
   ratingSpeed: 'normal',
@@ -313,7 +315,10 @@ export const DEFAULT_SETTINGS: AppSettings = {
 
 export function loadSettings(): AppSettings {
   if (!storageAvailable()) return { ...DEFAULT_SETTINGS };
-  return { ...DEFAULT_SETTINGS, ...(safeParse<Partial<AppSettings>>(localStorage.getItem(SETTINGS_KEY)) ?? {}) };
+  const s: AppSettings = { ...DEFAULT_SETTINGS, ...(safeParse<Partial<AppSettings>>(localStorage.getItem(SETTINGS_KEY)) ?? {}) };
+  // Auslosungen großer Pokale immer zeigen (Wunsch Pascal): alter Standard „eigener“ einmalig auf „immer“.
+  if ((s.drawShowV ?? 0) < 2) { if (s.drawShow === 'eigener') s.drawShow = 'immer'; s.drawShowV = 2; }
+  return s;
 }
 
 export function saveSettings(s: AppSettings): void {

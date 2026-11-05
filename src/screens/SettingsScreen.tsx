@@ -103,7 +103,7 @@ export function SettingsScreen({ settings, onBack, onSave }: {
         </p>
         <div className="seg-group">
           {([['immer', 'Immer'], ['eigener', 'Mit eigenem Verein'], ['aus', 'Nur Nachricht']] as const).map(([v, l]) => (
-            <button key={v} type="button" className={`seg-btn ${(s.drawShow ?? 'eigener') === v ? 'active' : ''}`}
+            <button key={v} type="button" className={`seg-btn ${(s.drawShow ?? 'immer') === v ? 'active' : ''}`}
               onClick={() => setS({ ...s, drawShow: v })}>{l}</button>
           ))}
         </div>

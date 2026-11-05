@@ -121,7 +121,10 @@ export function DrawShow({ g, rec, replay, settings, onSettings, onClose }: {
               </button>
             )}
             <button className="ms-btn" onClick={p.skipAll} title="Esc">
-              <Icon name="skip" size={22} /> Überspringen
+              <Icon name="skip" size={22} /> Zum Ergebnis
+            </button>
+            <button className="ms-btn" onClick={onClose} title="Auslosung schließen – das Ergebnis steht unter Statistiken">
+              Auslosung überspringen
             </button>
           </div>
         )}
