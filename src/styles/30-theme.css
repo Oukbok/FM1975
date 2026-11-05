@@ -1,0 +1,53 @@
+/* =============================================================================
+   LOOK „RUHIG FLUTLICHT“ (Wunsch Pascal: einziger Style)
+   -----------------------------------------------------------------------------
+   Überschreibt die Grundtokens aus 00-base.css :root – zuletzt geladen, setzt NUR
+   Tokens. Weiße Knöpfe, Hintergrundfoto hell und klar, Boxen als dunkles Glas
+   (--glass/--glass-filter), Bernstein nur am Hauptknopf (--primary).
+   Neue Farben immer als Token in 00-base.css anlegen; Werte, die vom Grund
+   abweichen, hier setzen.
+   ============================================================================= */
+
+/* ---- Grund (ehemals gemeinsamer Block „Ruhig – neu“) ----------------------- */
+:root {
+  --icon-accent: #c3cad4;
+  --accent: #e6eaef; --accent-dim: #b4bcc7; --accent-ink: #10141a;
+  --accent-rgb: 230, 234, 239; --accent-glow: rgba(230, 234, 239, 0.14); --accent-soft: rgba(230, 234, 239, 0.08);
+  --primary: #f2a541; --primary-2: #c27a1e; --primary-hover: #f6c27f; --primary-ink: #241405;
+  --primary-glow: rgba(242, 165, 65, 0.22);
+  /* Knöpfe: heller, mit Weiß */
+  --btn-bg: rgba(255, 255, 255, 0.09);
+  --btn-bg-hover: rgba(255, 255, 255, 0.17);
+  --btn-bg-press: rgba(255, 255, 255, 0.24);
+  --btn-border: rgba(255, 255, 255, 0.24);
+  --btn-border-hover: rgba(255, 255, 255, 0.5);
+  --btn-text: #dfe4ea;
+  --btn-text-hover: #ffffff;
+  --btn-on-bg: #eef1f5; --btn-on-border: #ffffff; --btn-on-text: #10141a; --btn-on-mark: transparent;
+  --btn-on-shadow: 0 0 0 transparent;
+  --btn-off-opacity: 0.72; --btn-off-text: #c9d0d8;
+  --seg-bg: rgba(0, 0, 0, 0.3);
+  --sel-bg: rgba(255, 255, 255, 0.16); --sel-border: rgba(255, 255, 255, 0.62); --sel-text: #ffffff;
+  --focus-ring: rgba(255, 255, 255, 0.85);
+  --text-3: #a2acb8;   /* Nebeninfo heller als in „ruhig“ (≥ 4,5:1 auf Glas) */
+  --pop-border: rgba(255, 255, 255, 0.2); --pop-hover: rgba(255, 255, 255, 0.1);
+  --today-bg: #ffffff; --today-text: #10141a;
+  /* Foto klarer: Schleier nur oben (hinter der Kopfleiste) und unten (Footer) */
+  --photo-veil: linear-gradient(180deg, rgba(8, 12, 18, 0.34) 0%, rgba(8, 12, 18, 0.06) 22%, rgba(8, 12, 18, 0.06) 78%, rgba(8, 12, 18, 0.3) 100%);
+  --photo-veil-zentrale: var(--photo-veil);
+  --photo-filter: saturate(0.85) contrast(1.03);
+  --photo-filter-zentrale: saturate(0.7) contrast(1.04);
+  --glass: 0.86; --glass-filter: blur(10px) saturate(0.55);
+}
+
+/* ---- Flutlicht: Foto hell und klar, dunkles Glas, weißer Knopf mit Lichtschein */
+:root {
+  --bg-rgb: 5, 7, 10; --panel-rgb: 12, 15, 20;
+  --text: #ffffff; --text-2: #d0d6dd;
+  --btn-on-shadow: 0 0 16px rgba(255, 255, 255, 0.35);
+  --btn-border-hover: #ffffff;
+  --photo-veil: linear-gradient(180deg, rgba(8, 12, 18, 0.3) 0%, transparent 20%, transparent 90%, rgba(8, 12, 18, 0.25) 100%);
+  --photo-filter: saturate(1) contrast(1.06) brightness(1.08);
+  --photo-filter-zentrale: saturate(0.85) contrast(1.05) brightness(1.04);
+  --glass: 0.88; --glass-filter: blur(18px) saturate(0.6) brightness(0.8);
+}

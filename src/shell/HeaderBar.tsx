@@ -8,7 +8,6 @@ import type { Game } from '../game/state';
 import { fmtDMfull } from '../ui/format';
 import { MENU_STRUCTURE, Screen } from './navigation';
 import type { AppSettings } from '../engine/save';
-import ThemePicker from '../ui/ThemePicker';
 
 export interface HeaderMenu {
   settings: () => void; wiki: () => void; editor: () => void;
@@ -69,7 +68,6 @@ export function HeaderBar({ g, settings, onSettings, screen, setScreen, saveMsg,
           <span className={`hd-balance-val ${myClub.finances.balance < 0 ? 'neg' : 'pos'}`}>{fmtDMfull(myClub.finances.balance)}</span>
         </div>
         <span className="hd-sep" aria-hidden="true" />
-        <ThemePicker settings={settings} onSettings={onSettings} width={64} />
         <div className="hdr-menu" ref={menuRef}>
           <button className="hd-gear" aria-haspopup="true" aria-expanded={menuOpen} onClick={() => setMenuOpen((o) => !o)} title="Menü & Einstellungen">
             <Icon name="settings" />

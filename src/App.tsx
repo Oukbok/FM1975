@@ -12,7 +12,6 @@ import { DisplayFrame, applyDisplayMode } from './ui/DisplayFrame';
 import { setDisplayYear, setWagePeriod } from './ui/format';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { lazyNamed } from './ui/lazyNamed';
-import { applyTheme } from './ui/themes';
 
 // Code-Splitting (scripts/build.mjs): Das Hauptmenü startet ohne die Spiel-Shell, ohne
 // Laden-Nachrüstungen und ohne den Spielaufbau. Diese Stücke werden geladen, sobald sie
@@ -95,7 +94,6 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  applyTheme(settings.theme); // Optik-Theme sofort (Attribute am <html>)
   setWagePeriod(settings.wagePeriod); // Gehaltsanzeige pro Jahr/Woche (vor dem Rendern der Seiten)
   const content = (!inGame || !gameRef.current) ? (
     <MainMenu

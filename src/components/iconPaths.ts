@@ -630,7 +630,7 @@ export type IconName = keyof typeof RAW;
 export const ICON_MARKUP: Record<string, string> = Object.fromEntries(
   Object.entries(RAW).map(([k, v]) => [
     k,
-    // Farben über Tokens (Themes, styles/30-themes.css); Rückfall = feste Werte des Sets.
+    // Farben über Tokens (styles/00-base.css + 30-theme.css); Rückfall = feste Werte des Sets.
     v.replace(/%BASE%/g, `var(--icon-base, ${BASE})`).replace(/%ACCENT%/g, `var(--icon-accent, ${ACCENT})`)
       .replace(/"#14171d"/g, '"var(--icon-knock, #14171d)"').replace(/"#0c0f15"/g, '"var(--icon-knock, #0c0f15)"'),
   ]),

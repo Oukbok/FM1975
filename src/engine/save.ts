@@ -283,7 +283,7 @@ export interface AppSettings {
   matchReport?: 'immer' | 'pokal' | 'nie';
   /** Zuletzt gewählte Spielart (Hauptknopf der Vorschau). */
   lastMatchMode?: 'sim' | 'text';
-  /** Optik-Theme (ui/themes.ts, styles/30-themes.css); fehlt = „Abendhimmel“. */
+  /** Früher: gewählter Style. Wird ignoriert (einziger Look „Ruhig Flutlicht“, styles/30-theme.css). */
   theme?: string;
 }
 
