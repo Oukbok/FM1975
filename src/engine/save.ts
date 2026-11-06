@@ -261,6 +261,8 @@ export interface AppSettings {
   drawShow?: 'immer' | 'eigener' | 'aus';
   /** Markierung: Standard der Auslosungs-Show auf „immer“ umgestellt (Wunsch Pascal). */
   drawShowV?: number;
+  /** Version des Spieltempos (1 = 800 ms je Tag, Wunsch Pascal). */
+  speedV?: number;
   /** Lautstärke des Klickgeräuschs 0–100 (Ton an/aus = soundEnabled). */
   clickVolume?: number;
   /** Markierung: Klickgeräusch einmalig eingeschaltet (vorher war Ton ein Platzhalter, Standard aus). */
@@ -294,7 +296,7 @@ export interface AppSettings {
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
-  speedMs: 900,
+  speedMs: 800,
   autosave: true,
   soundEnabled: true,
   soundV: 1,
@@ -326,6 +328,8 @@ export function loadSettings(): AppSettings {
   if ((s.drawShowV ?? 0) < 2) { if (s.drawShow === 'eigener') s.drawShow = 'immer'; s.drawShowV = 2; }
   // Klickgeräusch (Wunsch Pascal): der alte Platzhalter „Ton“ stand auf aus – einmalig einschalten.
   if ((s.soundV ?? 0) < 1) { s.soundEnabled = true; s.soundV = 1; }
+  // Spieltempo (Wunsch Pascal): jeder Tag dauert 0,8 Sekunden – einmalig auf 800 ms setzen.
+  if ((s.speedV ?? 0) < 1) { s.speedMs = 800; s.speedV = 1; }
   return s;
 }
 

@@ -74,7 +74,7 @@ export function PodiumCard({ g, e, place, shown, season, mine }: { g: Game; e: G
       <div className="gb-pod-place">{place}</div>
       {shown ? (
         <div className="gb-pod-in" style={{ '--k': 0 } as CSSProperties}>
-          <GalaFace g={g} e={e} size={place === 1 ? 112 : 88} />
+          <GalaFace g={g} e={e} size={place === 1 ? 112 : place === 2 ? 88 : 80} />
           <div className="gb-pod-name"><PlayerLink id={e.p}>{e.n}</PlayerLink></div>
           <div className="gb-pod-meta"><NatTag nat={e.nat} /><PosBadge pos={e.pos} /><span>{e.a} Jahre</span></div>
           <div className="gb-pod-club"><TeamName g={g} id={e.c} season={season} size={22} /></div>

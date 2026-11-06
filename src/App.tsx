@@ -65,6 +65,8 @@ export default function App() {
     const s = loadGame<Game>(slot);
     if (!s) return;
     (await loadMigrations()).prepareLoadedGame(s.game);
+    // Spieltempo aus den Einstellungen (nicht das im Spielstand gespeicherte).
+    s.game.calendar.speedMs = loadSettings().speedMs;
     gameRef.current = s.game;
     setCurrentSlot(slot);
     setInGame(true);
