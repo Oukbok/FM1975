@@ -5,8 +5,24 @@ Bilder kommen nach `bilder/<bereich>/`. Jede Stelle hat eine gezeichnete Ersatzd
 das Spiel läuft also auch ohne Bild. Ein Bild wird erst angezeigt, wenn es im jeweiligen Register
 (z. B. `src/data/trophyImages.ts`) eingetragen ist.
 
+## Stand und nächste Bilder (Stand 6. November 2026, Look „Akte 1975“)
+**Vorhanden:** Papiertextur, Aktenmappe (Newscenter), Zeitungs-Doppelseite (Presse), Einzelblatt, Pressefoto Torjubel 1975,
+170 Spielergesichter Epoche 1970 (9 Gruppen, ohne Altersstufen und ohne Trikotmasken), Rasen für den Kartenverkauf, Startbildschirm-Tribüne.
+
+**Als Nächstes (in dieser Reihenfolge):**
+1. **Kalender** `akte/kalender.webp` – Wandkalender mit Ringbindung, leeres 7×6-Raster, 1740×1200, transparent (Zentrale › Kalender, Abschnitt 0).
+2. **Pressefotos 1975** – die 12 fehlenden Motive aus Abschnitt 0 (jede Nachricht zeigt dann ein passendes Foto; heute nur Torjubel nach Siegen).
+3. **Gesichter Mitarbeiter** `faces/staff/1970/01..10.webp` – Trainer, Vorstand, Berater (Presse, Budget-Berater, Trainerteam).
+4. **Gesichter 1980** – `mitteleuropa` 20 Personen, dazu `suedeuropa`/`osteuropa`/`balkan` je 10 (ab etwa 1985 brauchen die Spieler die Frisuren der 80er).
+5. **Trophäen** `trophies/<form>.webp` (Abschnitt 4) – Vitrine unter Verein › Erfolge.
+6. **Korn** `akte/korn.png` – feines Druckkorn über Kopfleiste und Balken (Feinschliff).
+
+**Entfällt mit dem Look „Akte“:** Hintergrundfotos für die Seiten (Abschnitt 1, `bg/stadion-*`, `bg/buero-*` …) und `press/zeitung-<epoche>` (ersetzt durch `akte/zeitung.webp`). Nur noch die dunklen Bühnen (Auslosung, Gala, Halle, Textmodus, „Nächstes Spiel“) nutzen Fotos.
+
 ## Gemeinsamer Bildstil (für alle Motive)
-- **Stil:** fotorealistisch, Abendlicht, leicht entsättigt, kühle Schiefer-/Nachtblautöne; Bernstein (#F2A541) nur als Lichtakzent (Flutlicht, Abendsonne). Kein Sepia- oder Braunschleier.
+- **Look „Akte“ (Papier, Mappen, Kalender, Zeitung):** gerade Draufsicht, helles Papier ohne Vergilbung, weiche kurze Schatten, transparenter Rand für den Schatten, **keine Schrift, keine Zahlen** (das Spiel schreibt die Inhalte hinein).
+- **Pressefotos:** Zeitungsfoto der Epoche (1975 Schwarzweiß mit Filmkorn), erfundene Spieler, einfarbige Trikots ohne Wappen/Nummern/Schrift.
+- **Fotos für dunkle Bühnen:** fotorealistisch, Abendlicht, leicht entsättigt, kühle Schiefer-/Nachtblautöne. Kein Sepia- oder Braunschleier.
 - **Keine** echten Vereinswappen, Logos, Markennamen, Schriftzüge oder erkennbaren echten Personen. Keine Wasserzeichen.
 - **Epochen:** Wo „je Epoche“ steht, gibt es vier Fassungen: 1975–84 (Betonränge, Flutlichtmasten, Holzbanden), 1985–99 (Sitzschalen, erste Dächer, Werbebanden), 2000–14 (moderne Arenen, LED-Banden), ab 2015 (Hightech-Arenen, LED-Dach).
 - **Format:** WebP (Fotos) bzw. PNG mit Alpha (freigestellte Objekte). Größenangaben in Pixeln.
@@ -15,7 +31,7 @@ Priorität: **A** = sichtbar auf vielen Seiten bzw. großer Wow-Effekt, **B** = 
 
 ---
 
-## 0. Look „Akte 1975“ – Papier, Mappe, Pressefotos (A, Wunsch Pascal)
+## 0. Look „Akte 1975“ – Papier, Mappe, Zeitung, Kalender, Pressefotos (A, Wunsch Pascal)
 Stil: helles Papier, gerade Draufsicht, keine Schrift/Logos. Einbindung über Tokens in `src/styles/31-akte.css`
 (`--akte-paper/-folder/-sheet/-grain`), Pressefotos über das Register `src/data/pressPhotos.ts`.
 
@@ -25,12 +41,14 @@ Stil: helles Papier, gerade Draufsicht, keine Schrift/Logos. Einbindung über To
 | `akte/mappe.webp` | Aktenmappe mit zwei Blättern (links Liste, rechts Inhalt), transparent | 1327×1185 | **vorhanden** – Newscenter (Raster in % der Bildmaße, bei neuer Fassung Maße in `31-akte.css` anpassen) |
 | `akte/zeitung.webp` | Aufgeschlagene Zeitungs-Doppelseite, transparent, Falz bei 49,6 % | 1838×856 | **vorhanden** – Zentrale › Presse (Raster in % in `28-presse.css`) |
 | `akte/blatt.webp` | Einzelblatt mit Büttenrand, transparent, Rand ≥ 60 px | 1200×1600 | **vorhanden** – Neun-Teile-Rahmen für weitere Blätter |
+| `akte/kalender.webp` | Wandkalender 70er: Metall-Ringbindung oben über die volle Breite, festes mattes Blatt, oben ein leeres Kopffeld (Monat/Jahr), darunter eine leere Wochentagszeile und ein leeres Raster 7 Spalten × 6 Zeilen in feinen grauen Linien; keine Zahlen/Buchstaben; transparenter Rand ≈ 40 px | 1740×1200 | **offen** – Zentrale › Kalender (Proportionen wie die heutige Kalenderbox) |
 | `akte/korn.png` | feines Druck-Korn, nahtlos | 512×512 | offen – über Kopfleiste/Balken |
 | `presse/<epoche>/<motiv>.webp` | Pressefoto (Epoche 1975 = Schwarzweiß der 70er), erfundene Spieler, keine Wappen | 1200×600 | `1975/torjubel` **vorhanden**; offen: zweikampf, torschuss, torwart, kopfball, abpfiff, fans, stadion, training, vorstand, auslosung, vertrag, verletzung; später je Epoche 1985/2000/2015 |
 
 Neues Pressefoto: Datei ablegen und Motiv in `PRESS_PHOTOS` (data/pressPhotos.ts) unter der Epoche eintragen.
 
-## 1. Hintergründe & Rahmen (A)
+## 1. Hintergründe & Rahmen (entfällt im Look „Akte“ bis auf die Bühnen)
+Die Seiten liegen jetzt auf Papier; diese Fotos werden nur noch für die dunklen Bühnen gebraucht (`bg/gala-buehne`). Die übrigen Zeilen bleiben als Archiv stehen.
 | Datei | Motiv | Größe | Einsatz |
 |---|---|---|---|
 | `bg/stadion-abend-{1975,1985,2000,2015}.webp` | Leeres Stadion von der Tribüne in der Dämmerung, Flutlicht an, Spielfeld unscharf | 2560×1440 | Hintergrund aller Seiten (`.app-shell::before`), je Epoche |
@@ -42,6 +60,8 @@ Neues Pressefoto: Datei ablegen und Motiv in `PRESS_PHOTOS` (data/pressPhotos.ts
 | `bg/gala-buehne.webp` | Festliche Bühne mit Scheinwerfern und Lichtpunkt-Raster, dunkelblau | 2560×1440 | Auslosung, Goldener Ball, Saisonehrung |
 
 ## 2. Spielergesichter (A – größter Einzelhebel)
+**Stand:** 170 Bilder in Epoche `1970` (mitteleuropa 85, suedeuropa 34, osteuropa 17, balkan 14, nordeuropa 6, tuerkei 5, westafrika 5, lateinamerika 3, nordafrika 1), alle ohne Altersstufe und ohne Maske; es fehlen `ostasien`, `staff` und alle Epochen ab `1980`. Seit dem Look „Akte“ werden die Köpfe senkrecht mittig gezeigt – Bildvorgaben bleiben gleich.
+
 Technik steht (Register `src/data/faceImages.ts`, Zuordnung `src/components/faces/faceLookup.ts`, Anzeige `src/components/PlayerAvatar.tsx`).
 Jedes Bild, das du ablegst, erscheint sofort an **allen** Stellen mit Gesicht: Spielerprofil, Presse,
 Newscenter, Textmodus (Wechsel-Bildschirm), Bewertungsrunde, Erstes Training, Spielergespräch,
@@ -140,7 +160,7 @@ Je mehr Personen eine Gruppe hat, desto seltener sehen zwei Spieler gleich aus (
 |---|---|---|---|
 | `newgame/schritt-<n>.webp` | Stimmungsbild je Assistenten-Schritt (Vertrag unterschreiben, Landkarte, Stadioneingang, Willkommensschild) | 1920×1080 | Neues-Spiel-Assistent |
 | `intro/saison-<jahr>.webp` | Zeitgeist-Collage je Jahrzehnt (Fernseher, Zeitung, Fankultur) | 1920×1080 | Saison-Auftakt-Animation |
-| `press/zeitung-<epoche>.webp` | Papierstruktur Zeitung je Epoche | 1600×1200 | Presse-Zeitung |
+| `press/zeitung-<epoche>.webp` | **entfällt** – ersetzt durch `akte/zeitung.webp` (später ggf. Fassungen je Epoche im selben Format 1838×856) | – | Presse |
 
 ---
 
@@ -156,7 +176,7 @@ Werden beim Zusammenführen der Stränge ergänzt (Erstes Training, Trainingslag
 | Karriere | `career/manager-buero.webp` (optional) | Manager-Büro der Epoche (Schreibtisch, Vereinswimpel, Telefon), entsättigt, kühl abgedunkelt; derzeit nicht eingebunden – die Seite kommt ohne Bild aus | 1200×340 | denkbarer Kopf von Zentrale › Karriere |
 | Fanartikel | `merch/{schal,wimpel,magazin,poster,ball,musik,trikot,bekleidung,accessoires,video}.webp` | Freisteller auf dunklem Schiefer, 70er/80er-Look, ohne Logos | 384×384 | Sortiment (Ersatz: Icon) |
 | Fanartikel | `merch/lager.webp` | Lagerraum hinter dem Fanshop, Regale, Kartons, kühl | 480×480 | Box „Lager“ |
-| Kartenverkauf | `tickets/rasen.jpg` | Rasen von oben mit Mähstreifen, kühl, entsättigt | 1200×750 | Draufsicht der Tribünen (Platzhalter vorhanden) |
+| Kartenverkauf | `tickets/rasen.jpg` | Rasen von oben mit Mähstreifen, kühl, entsättigt | 1200×750 | **vorhanden** – Draufsicht der Tribünen |
 | Erfolge | `trophies/<form>.webp` | 12 Formen, siehe Abschnitt 4 | 1000×1100 | Vitrine (freischalten in `src/data/trophyImages.ts`) |
 | Saisonbudget | `budget/berater-<jahrzehnt>.webp` | Porträt des Finanzberaters/Schatzmeisters je Jahrzehnt (Anzug, Akten) | 160×184 (Quelle 640×736) | Budget-Fenster und Finanzen › Budget (Ersatz: gezeichnetes Gesicht) |
 | Training | `training/einheit-<baustein-id>.webp` (21 Bausteine, IDs aus `engine/weeklyTraining.ts`) | Piktogramm/Silhouette der Übung (Läufer, Hantel, Kopfball …), einfarbig hell auf transparent, ohne Text | 96×96 (Quelle 384×384), Alpha | Kacheln im Ringbuch und in den Bausteinreitern (Ersatz: Icon; Slot noch nicht verdrahtet) |
