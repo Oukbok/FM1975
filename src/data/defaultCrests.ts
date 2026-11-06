@@ -1,7 +1,7 @@
 // =============================================================================
 // defaultCrests — mitgelieferte Standard-Vereinswappen (gestickte Emaille-Patches)
 // =============================================================================
-// Diese Wappen liegen als statische PNGs unter public/assets/crests/<id>.png und
+// Diese Wappen liegen als statische PNGs unter bilder/crests/<id>.png und
 // dienen als Grundausstattung fuer Vereine, fuer die (noch) kein eigenes Wappen
 // hochgeladen wurde. Sie stehen in der Aufloesungs-Reihenfolge UNTER dem
 // spielweiten Override-Store und Club.customCrest — ein vom Nutzer hochgeladenes

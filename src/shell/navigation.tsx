@@ -1,6 +1,6 @@
 import Icon, { type IconName } from '../components/Icon';
 
-export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | 'training' | 'transfers' | 'finances' | 'youth' | 'facilities' | 'cup' | 'chronicle' | 'news' | 'wiki' | 'staff' | 'marketing' | 'calendar'
+export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | 'training' | 'transfers' | 'finances' | 'youth' | 'facilities' | 'cup' | 'chronicle' | 'wiki' | 'staff' | 'marketing' | 'calendar'
   // Kategorie-Dashboards (Übersichtsseiten je Hauptkategorie)
   | 'cat-spieltag' | 'cat-kader' | 'cat-transfers' | 'cat-finanzen' | 'cat-verein' | 'cat-statistiken'
   // Neue Einzelseiten
@@ -42,7 +42,6 @@ export interface MainCat { key: string; label: string; icon: IconName; dash: Scr
 export const MENU_STRUCTURE: MainCat[] = [
   { key: 'zentrale', label: 'Zentrale', icon: 'zentrale', dash: 'dashboard', subs: [
     { screen: 'dashboard', label: 'Zentrale', icon: 'zentrale' },
-    { screen: 'news', label: 'Nachrichten', icon: 'news' },
     { screen: 'presse', label: 'Presse', icon: 'presse' },
     { screen: 'calendar', label: 'Kalender', icon: 'kalender' },
     { screen: 'briefing', label: 'Briefing', icon: 'briefing' },

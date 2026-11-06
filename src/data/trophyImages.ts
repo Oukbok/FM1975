@@ -1,7 +1,7 @@
 // =============================================================================
 // Foto-Slots für Trophäen (Verein › Erfolge, Vereinsprofil › Erfolge)
 // -----------------------------------------------------------------------------
-// Liegt ein fotorealistisches Bild unter `public/assets/trophies/<form>.webp`,
+// Liegt ein fotorealistisches Bild unter `bilder/trophies/<form>.webp`,
 // hier die Form eintragen – dann zeigt die Vitrine das Foto statt der Zeichnung
 // (views/verein/trophies/TrophyArt.tsx bleibt Rückfall, auch bei Ladefehlern).
 // Nur eingetragene Formen werden geladen (keine 404-Anfragen).

@@ -43,7 +43,7 @@ export interface MerchItemDef {
   w: [number, number][];
   /** Modellwechsel: Restbestand wird zum Vorjahresmodell (Ladenhüter) */
   model?: boolean;
-  /** Bildname in public/assets/merch/ (Fallback: Icon) */
+  /** Bildname in bilder/merch/ (Fallback: Icon) */
   img: string;
   /** Preisaufschlag über den Verbraucherpreisen (Stützpunkte, linear dazwischen) */
   trend?: [number, number][];

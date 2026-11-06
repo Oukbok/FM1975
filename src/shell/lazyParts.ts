@@ -82,7 +82,6 @@ export const WikiView = lz(() => import('../views/wiki/WikiView'), 'WikiView');
 export const CalendarView = lz(() => import('../views/zentrale/CalendarView'), 'CalendarView');
 export const CareerView = lz(() => import('../views/zentrale/CareerView'), 'CareerView');
 export const BriefingView = lz(() => import('../views/zentrale/BriefingView'), 'BriefingView');
-export const NewsView = lz(() => import('../views/zentrale/NewsView'), 'NewsView');
 export const PresseView = lz(() => import('../views/zentrale/PresseView'), 'PresseView');
 export const SpieltagDashboard = lz(() => import('../views/categoryDashboards'), 'SpieltagDashboard');
 export const KaderDashboard = lz(() => import('../views/categoryDashboards'), 'KaderDashboard');

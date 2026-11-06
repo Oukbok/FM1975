@@ -66,7 +66,6 @@ export function Newscenter({ g, onGoto, onWatch, onChange, openPlayer }: {
         <span className="dz-nh-act">
           <button className="b3" onClick={allRead} disabled={unread === 0} title="Alle Nachrichten als gelesen markieren">Alle gelesen</button>
           <button className="b3" onClick={markUnread} disabled={!sel?.read} title="Gewählte Nachricht wieder als ungelesen markieren">Als ungelesen</button>
-          <button className="b3" onClick={() => onGoto('news')} title="Zentrale › Nachrichten">Posteingang</button>
         </span>
       </div>
       <InboxFilterBar msgs={msgs} value={filter} onChange={setFilter} />

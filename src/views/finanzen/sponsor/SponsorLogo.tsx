@@ -8,7 +8,7 @@
 // Varianten: 'tile' (Kachel 1:1), 'banner' (Bande 6:1), 'chest' (Druck auf dem
 // Trikot, ohne Fläche, Farbe gegen die Trikotfarbe), 'mark' (nur Zeichen).
 // Bild-Slot: ist für die Firma ein Logo in data/sponsorLogos.ts eingetragen
-// (`public/assets/sponsor/logos/<slug>.webp`, 600×300 transparent), zeigt jede Variante
+// (`bilder/sponsor/logos/<slug>.webp`, 600×300 transparent), zeigt jede Variante
 // das Bild im selben viewBox (feste Box, kein Springen); bei Ladefehler wieder die Zeichnung.
 // =============================================================================
 import { useState } from 'react';

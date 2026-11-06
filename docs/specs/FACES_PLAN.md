@@ -135,7 +135,7 @@ Bekannte Stolpersteine:
 
 ## 8. Spaetere Integration (eigener Turn)
 
-- Ordnerstruktur: `public/assets/faces/<decade>/<group>/<index>.webp` (z. B. `1970/mitteleuropa/0042.webp`).
+- Ordnerstruktur: `bilder/faces/<decade>/<group>/<index>.webp` (z. B. `1970/mitteleuropa/0042.webp`).
 - Auswahl in `src/components/PlayerAvatar.tsx`: Eintrittsjahrzehnt + `player.face` + Seed → Index,
   Spiegelung per Seed, SVG-Fallback wenn Bild fehlt.
 - Groesse: ~256 px reichen fuer Kaderliste und Profil; WebP haelt 3.700 Bilder klein.

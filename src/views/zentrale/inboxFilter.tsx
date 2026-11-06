@@ -1,5 +1,5 @@
 // =============================================================================
-// Posteingang-Filter (Zentrale › Newscenter und Zentrale › Nachrichten)
+// Posteingang-Filter (Zentrale › Newscenter)
 // =============================================================================
 // Wunsch Pascal: keine kleinen orangenen Kategorie-Symbole, keine fummeligen
 // Mini-Knöpfe. Oben wenige große Segmente für das, was man wirklich sucht

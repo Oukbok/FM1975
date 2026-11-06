@@ -1,7 +1,7 @@
 # Bilderliste – generierte Bilder für den AAA-Look
 
 Lebende Liste (Wunsch Pascal): Jeder neue oder umgebaute Bereich trägt hier seine Bildwünsche ein.
-Bilder kommen nach `public/assets/<bereich>/`. Jede Stelle hat eine gezeichnete Ersatzdarstellung,
+Bilder kommen nach `bilder/<bereich>/`. Jede Stelle hat eine gezeichnete Ersatzdarstellung,
 das Spiel läuft also auch ohne Bild. Ein Bild wird erst angezeigt, wenn es im jeweiligen Register
 (z. B. `src/data/trophyImages.ts`) eingetragen ist.
 
@@ -34,7 +34,7 @@ Ehrungen/Gala, Transferverhandlung, Fanartikel – Trainer/Berater/Manager über
 Fehlt ein Bild, zeichnet das Spiel das Gesicht wie bisher (Hautton passend zur Herkunft).
 
 ### Ordner und Dateinamen
-`public/assets/faces/<gruppe>/<epoche>/<nr>-<alter>.webp`
+`bilder/faces/<gruppe>/<epoche>/<nr>-<alter>.webp`
 
 | Teil | Werte | Bedeutung |
 |---|---|---|
@@ -77,7 +77,7 @@ Je mehr Personen eine Gruppe hat, desto seltener sehen zwei Spieler gleich aus (
 
 ### So schaltest du Bilder frei (Schritt für Schritt)
 1. Bilder nach den Vorgaben oben erzeugen und als `.webp` speichern (z. B. mit squoosh.app: „WebP“, Qualität 80, Alpha an).
-2. In den passenden Ordner legen, z. B. `public/assets/faces/mitteleuropa/1970/01-25.webp` (Ordner bei Bedarf anlegen).
+2. In den passenden Ordner legen, z. B. `bilder/faces/mitteleuropa/1970/01-25.webp` (Ordner bei Bedarf anlegen).
 3. Optional die Trikotmaske daneben legen: `01-25-maske.webp` (Trikot weiß, alles andere transparent).
 4. Im Projektordner ausführen: `node scripts/faces-register.mjs` – das Skript prüft alle Dateinamen, zeigt eine Übersicht Gruppe × Epoche und schreibt das Register `src/data/faceImages.ts` neu. Hinweise (falscher Name, PNG statt WebP, zu groß, Maske ohne Bild) stehen darunter. Nur prüfen: `node scripts/faces-register.mjs --check`.
 5. `npm run build` (bzw. `npm run dev`) und ein Spiel laden – die Gesichter erscheinen überall. Kontrolle mit Screenshots: `node tests/faces-shots.mjs test-output/faces` (Profil, Presse, Budget-Berater, Textmodus; meldet fehlende Dateien und Größensprünge).

@@ -47,7 +47,6 @@ function page({ screen, g, rerender, setScreen, onWatch, onReplayDraw, onOpenEdi
     case 'briefing': return <P.BriefingView g={g} onGoto={setScreen} onOpen={onPause} />;
     case 'cup': return <P.CupView g={g} onWatch={onWatch} onReplayDraw={(ri) => onReplayDraw('cup', ri)} />;
     case 'ruhmeshalle': return <P.ErfolgeView g={g} />;
-    case 'news': return <P.NewsView g={g} onRead={ch} />;
     case 'wiki': return <P.WikiView key={wikiArticle?.n ?? 0} g={g} openArticle={wikiArticle?.id} onGoto={setScreen} />;
     case 'tactics': return <P.TacticsView g={g as never} onChange={ch} />;
     case 'stadium': return <P.StadiumView g={g} onChange={ch} onGoto={setScreen} />;

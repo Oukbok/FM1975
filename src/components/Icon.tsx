@@ -6,7 +6,7 @@
 //           <Icon name="trophy" size={20} />  → feste Pixelgröße
 //           <Icon name="save" className="…" /> → zusätzliche CSS-Klasse
 // Die eigentlichen SVG-Formen leben zentral in ./iconPaths.ts (Single Source),
-// damit sie identisch auch als public/assets/icons/*.svg vorliegen.
+// damit sie identisch auch als bilder/icons/*.svg vorliegen.
 // =============================================================================
 import { ICON_MARKUP, IconName } from './iconPaths';
 

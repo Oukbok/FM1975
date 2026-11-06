@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Gesichtsbilder aus Pascals Batches einlesen (PNG, Name <epoche>_<nr>_<gruppe>.png)
-und ins Spielformat bringen: public/assets/faces/<gruppe>/<epoche>/<nr>.webp
+und ins Spielformat bringen: bilder/faces/<gruppe>/<epoche>/<nr>.webp
 (512x600, Seitenverhältnis bleibt, transparent aufgefüllt, unten bündig, WebP q80).
 Ohne Altersstufe = ein Gesicht für alle Altersstufen.
 
@@ -11,7 +11,7 @@ import re, sys, zipfile, io
 from pathlib import Path
 from PIL import Image
 
-OUT = Path('public/assets/faces')
+OUT = Path('bilder/faces')
 GROUPS = {'mitteleuropa', 'nordeuropa', 'suedeuropa', 'osteuropa', 'balkan', 'tuerkei', 'westafrika', 'lateinamerika', 'ostasien', 'nordafrika', 'staff'}
 EPOCHS = {1970, 1980, 1990, 2000, 2010, 2020}
 NAME = re.compile(r'^(\d{4})_(\d{1,4})_([a-z_]+)\.png$', re.I)

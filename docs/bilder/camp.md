@@ -4,7 +4,7 @@ Großes Ortsbild im Planer (Schritt 3, rechts; Vorbild EA FM „Trainingslager�
 gezeichnete Landschaft je Typ (`src/views/kader/camp/CampScenery.tsx`); Länderkarte und Anlagen-Skizze sind immer
 gezeichnet und liegen „aufgeklebt“ über dem Bild (`CampPinned.tsx`).
 
-- Datei: `public/assets/camp/<id>.webp`, freischalten in `src/data/campImages.ts` (`CAMP_PHOTOS`).
+- Datei: `bilder/camp/<id>.webp`, freischalten in `src/data/campImages.ts` (`CAMP_PHOTOS`).
 - Format: WebP, 1280 × 800 px (16:10), Querformat; wird mittig beschnitten (oben/unten ca. 5 % Rand lassen).
 - Stil: Landschaft/Ort, keine Personen, keine Logos/Werbung; entsättigt, kühl, Tageslicht (kein Sepia, kein warmer Schleier).
 - Rechts oben liegt die Länderkarte, unten links die Anlagen-Skizze – Hauptmotiv in die Bildmitte/oben links setzen.

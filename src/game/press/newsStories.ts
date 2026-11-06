@@ -277,7 +277,7 @@ export function messageStories(c: PressCtx): { stories: PressStory[]; briefs: Pr
     const base = {
       date: m.date, headline: m.subject, body: [m.shortText, ...(m.bodyText && m.bodyText !== m.shortText ? m.bodyText.split(/\n+/) : [])].filter(Boolean),
       clubs: [] as string[], own: m.category !== 'milestone' && m.from !== 'Europapokal-Chronik',
-      targets: [{ kind: 'screen' as const, screen: 'news' as const, label: 'Nachrichten' }],
+      targets: [{ kind: 'screen' as const, screen: 'dashboard' as const, label: 'Newscenter' }],
     };
     if (chronik) stories.push(story(c, { ...base, kind: 'chronik', rubric: 'Chronik', weight: 22, own: false }));
     else if (youth) stories.push(story(c, { ...base, kind: 'jugend', rubric: 'Nachwuchs', weight: 18, image: { kind: 'club', id: c.my }, clubs: [c.my] }));

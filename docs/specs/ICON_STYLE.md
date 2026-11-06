@@ -35,7 +35,7 @@ den ruhigen Duotone-Look.
 
 Alle Icons liegen doppelt vor: als Formdaten in `src/components/iconPaths.ts`
 (Single Source of Truth) und – daraus generiert – als Einzeldateien in
-`public/assets/icons/`.
+`bilder/icons/`.
 
 | Icon-Name (`IconName`) | Datei                       | Bedeutung / Verwendung            |
 |------------------------|-----------------------------|-----------------------------------|
@@ -55,7 +55,7 @@ Alle Icons liegen doppelt vor: als Formdaten in `src/components/iconPaths.ts`
 | `matchball`            | `matchball.svg`             | Spiel / Spieltag / Anpfiff        |
 
 Die Referenzvorlage liegt unter
-`public/assets/icons/_set-c-reference.png` (nicht löschen).
+`bilder/icons/_set-c-reference.png` (nicht löschen).
 
 ---
 
@@ -95,7 +95,7 @@ import Icon from './components/Icon';
    ```
 
    Das Skript liest `iconPaths.ts`, ersetzt die Farb-Platzhalter durch die
-   literalen Hex-Werte und schreibt `public/assets/icons/<kebab-name>.svg`.
+   literalen Hex-Werte und schreibt `bilder/icons/<kebab-name>.svg`.
    (Der Dateiname wird automatisch aus dem camelCase-Key abgeleitet, z. B.
    `loadGame` → `load-game.svg`.)
 

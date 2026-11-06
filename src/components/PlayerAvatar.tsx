@@ -1,6 +1,6 @@
 // =============================================================================
 // PlayerAvatar — Gesicht einer Person (Spieler, Trainer, Mitarbeiter, Manager)
-// Foto aus public/assets/faces (Register data/faceImages.ts, Zuordnung in
+// Foto aus bilder/faces (Register data/faceImages.ts, Zuordnung in
 // components/faces/faceLookup.ts; freigestellter Kopf ohne Kasten) – nur ohne Foto
 // das deterministische SVG-Gesicht:
 // 20 Gesichter · 10 Hauttöne (nach Herkunft) · 20 Frisuren · Vereinstrikot + Wappen

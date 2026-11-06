@@ -15,7 +15,7 @@ export function eraIntro(year: number): string {
   return 'Trainingszentrum, Pulsgurte, Drohnenkamera – und der Livestream läuft. Die Spieler stehen vor dir, jeder Satz landet in Minuten in den sozialen Medien. Was versprichst du für die Saison?';
 }
 
-/** Bild-Slot `public/assets/promises/erstes-training.webp`; ohne Datei eine gezeichnete Szene. */
+/** Bild-Slot `bilder/promises/erstes-training.webp`; ohne Datei eine gezeichnete Szene. */
 export function TrainingScene({ year }: { year: number }) {
   const [failed, setFailed] = useState(false);
   return (

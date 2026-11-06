@@ -250,7 +250,7 @@ export function clearClubOverride(club: Club): void {
 /**
  * Effektives Wappen-Bild eines Vereins: spielweiter Override zuerst, danach das
  * (save-gebundene) Club.customCrest, danach das mitgelieferte Standard-Wappen
- * (public/assets/crests). `undefined` → generiertes SVG-Wappen.
+ * (bilder/crests). `undefined` → generiertes SVG-Wappen.
  * Vom Nutzer hochgeladene Wappen haben also immer Vorrang vor den Defaults.
  */
 export function resolveCrestImage(club: Club): string | undefined {

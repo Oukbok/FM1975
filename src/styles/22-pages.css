@@ -159,11 +159,6 @@
 .dmsg-top b { color: var(--text-2); font-weight: 700; }
 .dmsg-subj { font-size: 15.5px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .dmsg.unread .dmsg-subj { color: var(--text); font-weight: 800; }
-.dread { max-width: 1100px; }
-.dread-meta { display: flex; gap: 18px; align-items: center; color: var(--text-3); font-size: 14px; margin-bottom: 14px; }
-.dread-meta b { color: var(--text); }
-.dread-lead { font-size: 19px; font-weight: 700; color: var(--text); margin-bottom: 14px; line-height: 1.5; }
-.dread-body { font-size: 17px; line-height: 1.7; color: var(--text-2); white-space: pre-wrap; }
 .cal-grid-fill .cal-cell { min-height: 100px; }
 .dbox .cal-days { display: flex; align-items: center; gap: 10px; margin: 6px 0; font-size: 15px; }
 .dbox .cal-days input { flex: 1; }

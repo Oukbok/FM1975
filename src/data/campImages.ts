@@ -1,7 +1,7 @@
 // =============================================================================
 // Foto-Slots für Trainingslager-Ziele (Planer › Trainingsprogramm, großes Ortsbild)
 // -----------------------------------------------------------------------------
-// Liegt ein Foto unter `public/assets/camp/<ziel-id>.webp`, hier die Ziel-ID eintragen –
+// Liegt ein Foto unter `bilder/camp/<ziel-id>.webp`, hier die Ziel-ID eintragen –
 // dann zeigt der Planer das Foto statt der gezeichneten Landschaft
 // (views/kader/camp/CampScenery.tsx bleibt Rückfall, auch bei Ladefehlern).
 // Nur eingetragene Ziele werden geladen (keine 404-Anfragen). Motive je Ziel:

@@ -5,14 +5,14 @@
 //   node scripts/faces-register.mjs --check    (nur prüfen, nichts schreiben)
 //   FACES_DIR=… node scripts/faces-register.mjs (anderer Bildordner, z. B. für Tests)
 //
-// Erwartet: public/assets/faces/<gruppe>/<epoche>/<nr>[-<alter>].webp
+// Erwartet: bilder/faces/<gruppe>/<epoche>/<nr>[-<alter>].webp
 //   + optional <nr>[-<alter>]-maske.webp (Trikotfläche, nur Alpha zählt)
 // Anleitung: docs/bilder/BILDER.md, Abschnitt 2.
 // =============================================================================
 import { readdirSync, statSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 
-const ROOT = process.env.FACES_DIR ?? 'public/assets/faces';
+const ROOT = process.env.FACES_DIR ?? 'bilder/faces';
 const OUT = process.env.FACES_OUT ?? 'src/data/faceImages.ts';
 const CHECK = process.argv.includes('--check');
 

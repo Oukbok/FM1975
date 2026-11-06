@@ -3,13 +3,18 @@
    links schmale Widget-Spalte (scrollt intern) · Mitte Newscenter · rechts
    Übersicht + Vereinsnachrichten im Medium der Epoche. Seite selbst scrollt nie.
    ============================================================================= */
+/* Ränder wie die übrigen Seiten (.dpage, z. B. Kader/Presse): oben/unten 64px, seitlich
+   2,5 % und zwischen den Spalten ebenfalls 2,5 % – Newscenter hat links und rechts
+   denselben Abstand, dazwischen bleibt Platz für das Hintergrundbild. */
 .dz {
   flex: 1 1 auto; min-height: 0;
-  display: grid; grid-template-columns: 450px minmax(0, 1fr) 430px; gap: 20px;
-  padding: 14px 0 4px; font-family: var(--font-ui);
+  display: grid; grid-template-columns: 450px minmax(0, 1fr) 430px; column-gap: 2.5%;
+  padding: 64px 2.5%; font-family: var(--font-ui);
 }
-.dz-col { min-height: 0; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
-.dz-left { overflow-y: auto; overflow-x: hidden; padding-right: 6px; scrollbar-gutter: stable; }
+.dz-col { min-height: 0; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
+/* Bildlaufleiste der linken Spalte liegt in der Lücke (negativer Rand), damit die
+   Kanten der Widgets bündig mit der Spalte abschließen und beide Lücken gleich sind. */
+.dz-left { overflow-y: auto; overflow-x: hidden; padding-right: 6px; margin-right: -14px; scrollbar-gutter: stable; }
 .dz-left::-webkit-scrollbar, .dz-nlist::-webkit-scrollbar, .dz-wb::-webkit-scrollbar, .dz-rtext::-webkit-scrollbar,
 .dz-fn-list::-webkit-scrollbar, .dz-app-list::-webkit-scrollbar, .dz-vt-list::-webkit-scrollbar, .dz-lcd-list::-webkit-scrollbar, .dz-heft-list::-webkit-scrollbar { width: 8px; }
 .dz-left::-webkit-scrollbar-thumb, .dz-nlist::-webkit-scrollbar-thumb, .dz-wb::-webkit-scrollbar-thumb, .dz-rtext::-webkit-scrollbar-thumb,

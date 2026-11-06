@@ -16,7 +16,7 @@ export function money(v: number): string {
 }
 
 /**
- * Bild-Slot: `public/assets/merch/<name>.webp`; fehlt die Datei, bleibt eine ruhige
+ * Bild-Slot: `bilder/merch/<name>.webp`; fehlt die Datei, bleibt eine ruhige
  * Fläche mit Icon stehen (Bildwünsche im Bericht / Wiki).
  */
 export function MerchImage({ name, alt, icon = 'merch', className = '' }: { name: string; alt: string; icon?: IconName; className?: string }) {

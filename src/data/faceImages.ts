@@ -1,7 +1,7 @@
 // =============================================================================
 // Register der Gesichtsbilder (Spieler + Mitarbeiter) – WIRD ERZEUGT.
 // -----------------------------------------------------------------------------
-// Nicht von Hand pflegen: Bilder nach `public/assets/faces/…` legen und
+// Nicht von Hand pflegen: Bilder nach `bilder/faces/…` legen und
 //   node scripts/faces-register.mjs
 // ausführen – das Skript prüft die Dateinamen und schreibt diese Datei neu.
 // Nur eingetragene Bilder werden geladen (keine 404-Anfragen); fehlt ein Bild

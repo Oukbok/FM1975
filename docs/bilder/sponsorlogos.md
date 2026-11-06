@@ -28,7 +28,7 @@ Ausrüster), auf den Banden, in der Sponsoren-Pyramide, auf der Karteikarte und 
 ## Freischalten (Schritt für Schritt)
 
 1. Logo nach den Vorgaben erstellen, als WebP speichern.
-2. Datei unter `public/assets/sponsor/logos/<datei>` ablegen – Dateiname aus der Spalte „Datei“
+2. Datei unter `bilder/sponsor/logos/<datei>` ablegen – Dateiname aus der Spalte „Datei“
    (Slug des Namens: klein, Umlaute ausgeschrieben, Akzente weg, Leerzeichen/Sonderzeichen → `-`).
 3. In `src/data/sponsorLogos.ts` den Slug ohne `.webp` in `SPONSOR_LOGOS` eintragen,
    z. B. `'kesselberg-braeu': true,`.

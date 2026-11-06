@@ -186,8 +186,6 @@ button.sel3.sel3.sel3-l { height: var(--btn-h-l); min-height: var(--btn-h-l); fo
 .inbox-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .inbox-filter .seg3 { flex-wrap: wrap; }
 .dz-news > .inbox-filter { padding: 10px 0 2px; }
-.news-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 12px; }
-.news-tools > .b3 { margin-left: auto; }
 /* „Entscheidung nötig“: ruhiges Textetikett statt orangenem Punkt */
 .dz-act {
   display: inline-flex; align-items: center; height: 22px; margin-left: 10px; padding: 0 8px;

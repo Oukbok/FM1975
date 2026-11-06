@@ -1,6 +1,6 @@
 // =============================================================================
 // TRAININGSLAGER-PLANER – gezeichnetes Ortsbild (Rückfall für das Foto-Slot
-// `public/assets/camp/<ziel>.webp`, freigeschaltet in data/campImages.ts).
+// `bilder/camp/<ziel>.webp`, freigeschaltet in data/campImages.ts).
 // Je Landschaftstyp eine Szene (Sportschule, Küste, Mittelgebirge, Alpen, Mittelmeer,
 // Insel, Wüste, Subtropen, Großstadt, Kap); im Winter liegt in Mitteleuropa Schnee.
 // Farben nur über die Tokens `--ls-*` in 00-base.css (CSS-Klassen in 28-camp2.css).

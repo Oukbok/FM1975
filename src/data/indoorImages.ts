@@ -1,7 +1,7 @@
 // =============================================================================
 // Foto-Slots der Hallen-Show (screens/indoor/IndoorHall.tsx)
 // -----------------------------------------------------------------------------
-// Liegt ein Foto unter `public/assets/indoor/halle-<epoche>.webp`, hier die Epoche
+// Liegt ein Foto unter `bilder/indoor/halle-<epoche>.webp`, hier die Epoche
 // eintragen – dann liegt das Foto über der gezeichneten Halle (die bleibt Rückfall,
 // auch bei Ladefehlern). Nur eingetragene Epochen werden geladen (keine 404-Anfragen).
 // Format: WebP 1920 × 1080 px, Halleninneres mit Tribünen und Rundumbande, ohne
