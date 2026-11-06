@@ -28,7 +28,6 @@
   --akte-paper: url('assets/akte/papier.webp');
   --akte-folder: url('assets/akte/mappe.webp');
   --akte-sheet: url('assets/akte/blatt.webp');
-  --akte-clip: url('assets/akte/klammer.png');
   --akte-grain: none;
 
   /* ---- Akzent = Vereinsfarbe ---------------------------------------------- */
@@ -245,13 +244,6 @@ body { background: var(--paper-page); }
 .dz-nlist { grid-column: 2; padding: 6px 10px 8px; overflow-y: auto; }
 .dz-read { grid-column: 4; position: relative; padding: 18px 26px 14px; border-left: none; }
 .dz-nfoot { display: none; }
-/* Büroklammer oben rechts über der Blattkante */
-.dz-read::after {
-  content: ''; position: absolute; top: -26px; right: 40px; width: 28px; height: 60px;
-  background: var(--akte-clip) center / contain no-repeat;
-  filter: drop-shadow(1px 2px 1px rgba(20, 28, 40, 0.25));
-  pointer-events: none;
-}
 /* Liste: ohne Spalte „Eingang“ (zu schmal auf dem Blatt), Gruppen bleiben als Trennlinie */
 .dz-ntable .dz-ncol-grp { display: none; }
 .dz-ntable .dz-ncol-date { width: 120px; }
