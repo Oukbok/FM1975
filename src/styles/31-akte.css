@@ -29,6 +29,7 @@
   --akte-folder: url('assets/akte/mappe.webp');
   --akte-sheet: url('assets/akte/blatt.webp');
   --akte-grain: none;
+  --np-paper: url('assets/akte/zeitung.webp');   /* Presse: Doppelseite */
 
   /* ---- Akzent = Vereinsfarbe ---------------------------------------------- */
   --accent: var(--club-accent, #c8202a);
@@ -321,3 +322,30 @@ body { background: var(--paper-page); }
   .dz-news > .inbox-filter .seg3 > * { padding: 0 5px; }
   .dz-news > .inbox-filter .inbox-cat { width: 96px; flex-basis: 96px; }
 }
+
+/* ---- Presse: Zeitung auf dem Doppelseiten-Bild ------------------------------- */
+.np-box { background: var(--panel); }
+.np-box > .dbox-body { background: transparent; }
+.np-sheet { --border: rgba(20, 28, 40, 0.3); --border-soft: rgba(20, 28, 40, 0.16); }
+
+/* ---- An/Aus-Schalter: an = grün, aus = grau (Wunsch Pascal) ------------------- */
+.toggle { background: rgba(var(--ink-rgb), 0.14); border-color: rgba(var(--ink-rgb), 0.22); }
+.toggle::after { background: rgba(var(--ink-rgb), 0.45); }
+.toggle.on { background: var(--green); border-color: var(--green); }
+.toggle.on::after { background: #ffffff; }
+
+/* ---- Fensterköpfe in Dunkelblau: Text, Kennzahlen und Schließen-Knopf hell ------ */
+.mx-head {
+  --text: #ffffff; --text-2: rgba(255, 255, 255, 0.82); --text-3: rgba(255, 255, 255, 0.66); --text-4: rgba(255, 255, 255, 0.45);
+  --text-hi: #ffffff; --border: rgba(255, 255, 255, 0.28); --border-soft: rgba(255, 255, 255, 0.16);
+  --ink-rgb: 255, 255, 255; --q-1: #ffffff; --q-2: #e3e7ee; --q-3: #c3cad4; --q-4: #9aa3ae;
+  color: var(--text);
+}
+.mx-head .modal-close, .modal .mx-head .modal-close {
+  background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.3); color: #ffffff;
+}
+.mx-head .modal-close:hover { background: rgba(255, 255, 255, 0.18); }
+
+/* ---- Hauptmenü: Hover = Schrift weiß mit leichtem Schein, Hintergrund bleibt (Wunsch Pascal) ---- */
+.hd-nav-item:hover, .hd-nav-item:focus-visible { background: transparent; border-color: transparent; color: #ffffff; text-shadow: 0 0 8px rgba(255, 255, 255, 0.55), 0 0 2px rgba(255, 255, 255, 0.4); }
+.hd-nav-item.active:hover { color: var(--accent-ink); }

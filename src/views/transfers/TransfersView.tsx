@@ -18,6 +18,7 @@ import { PlayerSearchModal } from './search/PlayerSearchModal';
 import { TransferWindowModal } from './window/TransferWindowModal';
 import { activeCount, runSearch, type SearchCriteria } from '../../game/playerSearch';
 import PosBadge from '../../components/PosBadge';
+import FaceThumb from '../../components/FaceThumb';
 
 // =============================================================================
 // TRANSFERS — Transfermarkt, Beobachtung (Scouting-Vorschläge), Verhandlungen
@@ -77,7 +78,7 @@ function MarketTable({ g, list, onOpen, action }: { g: Game; list: Player[]; onO
           const c = g.clubs[p.clubId];
           return (
             <tr key={p.id} data-pid={p.id} className="clickable" onClick={() => onOpen(p.id)}>
-              <td className="nowrap rl-name">{p.fullName}</td>
+              <td className="nowrap rl-name"><span className="tm-name"><FaceThumb p={p} club={c} size={26} /><span>{p.fullName}</span></span></td>
               <td className="nowrap"><ClubLink id={p.clubId}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>{c && <ClubCrest club={c} size={24} />}{c?.shortName}</span></ClubLink></td>
               <td className="ctr"><PosBadge p={p} /></td>
               <td className="num">{p.age}</td>

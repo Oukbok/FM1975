@@ -23,6 +23,7 @@ Stil: helles Papier, gerade Draufsicht, keine Schrift/Logos. Einbindung über To
 |---|---|---|---|
 | `akte/papier.webp` | Papiertextur, nahtlos kachelbar | 1254×1254 | **vorhanden** – Seitenhintergrund, Untermenü |
 | `akte/mappe.webp` | Aktenmappe mit zwei Blättern (links Liste, rechts Inhalt), transparent | 1327×1185 | **vorhanden** – Newscenter (Raster in % der Bildmaße, bei neuer Fassung Maße in `31-akte.css` anpassen) |
+| `akte/zeitung.webp` | Aufgeschlagene Zeitungs-Doppelseite, transparent, Falz bei 49,6 % | 1838×856 | **vorhanden** – Zentrale › Presse (Raster in % in `28-presse.css`) |
 | `akte/blatt.webp` | Einzelblatt mit Büttenrand, transparent, Rand ≥ 60 px | 1200×1600 | **vorhanden** – Neun-Teile-Rahmen für weitere Blätter |
 | `akte/korn.png` | feines Druck-Korn, nahtlos | 512×512 | offen – über Kopfleiste/Balken |
 | `presse/<epoche>/<motiv>.webp` | Pressefoto (Epoche 1975 = Schwarzweiß der 70er), erfundene Spieler, keine Wappen | 1200×600 | `1975/torjubel` **vorhanden**; offen: zweikampf, torschuss, torwart, kopfball, abpfiff, fans, stadion, training, vorstand, auslosung, vertrag, verletzung; später je Epoche 1985/2000/2015 |

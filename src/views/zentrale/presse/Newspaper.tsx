@@ -75,30 +75,39 @@ function Lead({ api, s }: { api: PressApi; s: PressStory }) {
 export function Newspaper({ api, ed }: { api: PressApi; ed: PressEdition }) {
   const g = api.g, my = g.managedClubId;
   const year = Number(ed.date.slice(0, 4));
-  // Die Seite passt immer in die Box (Wunsch Pascal: kein Scrollen nötig). Reicht der Platz nicht,
-  // fallen zuerst Kurzmeldungen, dann die hinteren Spaltenartikel und Torjäger weg (`cut` Stufen).
+  // Die Doppelseite passt immer ins Bild (Wunsch Pascal: kein Scrollen). Läuft ein Bereich über,
+  // wird nur dort gekürzt: Spalten → hintere Artikel, „Kurz notiert“ → Meldungen, Seitenleiste → Torjäger.
   const ref = useRef<HTMLDivElement>(null);
-  const [cut, setCut] = useState(0);
+  const [cut, setCut] = useState({ left: 0, right: 0, brief: 0, side: 0 });
   useLayoutEffect(() => {
-    const box = ref.current?.closest('.dbox-body') as HTMLElement | null;
-    if (!box) return;
-    const over = () => box.scrollHeight > box.clientHeight + 1;
-    if (over() && cut < 40) setCut((c) => c + 1);
+    const sheet = ref.current;
+    if (!sheet) return;
+    const over = (sel: string) => [...sheet.querySelectorAll<HTMLElement>(sel)].some((el) => el.scrollHeight > el.clientHeight + 1);
+    const next = { ...cut };
+    if (over('.np-left, .np-cols > .np-col') && next.left < 4) next.left++;
+    if (over('.np-right > .np-col') && next.right < 5) next.right++;
+    if (over('.np-briefs') && next.brief < 20) next.brief++;
+    if (over('.np-side') && next.side < 10) next.side++;
+    if (next.left !== cut.left || next.right !== cut.right || next.brief !== cut.brief || next.side !== cut.side) setCut(next);
   });
   useLayoutEffect(() => {
-    const onResize = () => setCut(0);
+    const onResize = () => setCut({ left: 0, right: 0, brief: 0, side: 0 });
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
   const allBriefs = [...ed.stories.slice(9), ...ed.briefs];
-  const briefCut = Math.min(cut, allBriefs.length);
-  const mainCut = Math.min(Math.max(0, cut - allBriefs.length), 6);
-  const sideCut = Math.max(0, cut - allBriefs.length - 6);
-  const cols: PressStory[][] = [[], [], []];
-  const main = ed.stories.slice(0, 9 - mainCut);
-  main.forEach((s, i) => cols[i % 3].push(s));
-  const briefs = allBriefs.slice(0, allBriefs.length - briefCut);
-  const scorers = ed.scorers.slice(0, Math.max(0, ed.scorers.length - sideCut));
+  // Doppelseite (Bild bilder/akte/zeitung.webp): links Aufmacher + zwei Spalten,
+  // rechts eine Spalte + Ergebnisse/Tabelle/Torjäger, unten „Kurz notiert“ über beide Seiten.
+  // Links je zwei Artikel, rechts der Rest (die rechte Spalte hat die ganze Höhe).
+  const st = ed.stories.slice(0, 9);
+  const leftList = [st[0], st[1], st[3], st[4]].filter(Boolean).slice(0, Math.max(0, 4 - cut.left));
+  const rightList = [st[2], ...st.slice(5)].filter(Boolean).slice(0, Math.max(0, 5 - cut.right));
+  const cols: PressStory[][] = [leftList.filter((_, i) => i % 2 === 0), leftList.filter((_, i) => i % 2 === 1), rightList];
+  const colBox = (list: PressStory[], i: number) => (
+    <div key={i} className="np-col">{list.map((s) => <Teaser key={s.id} api={api} s={s} />)}</div>
+  );
+  const briefs = allBriefs.slice(0, Math.max(0, allBriefs.length - cut.brief));
+  const scorers = ed.scorers.slice(0, Math.max(0, ed.scorers.length - cut.side));
   const n = ed.table.length;
   const top = ed.table.slice(0, 5), bottom = n > 8 ? ed.table.slice(-3) : [];
   const zone = (pos: number) => pos === 1 ? 'np-z-top' : pos > n - 3 ? 'np-z-down' : '';
@@ -113,30 +122,13 @@ export function Newspaper({ api, ed }: { api: PressApi; ed: PressEdition }) {
         <div className="np-mast-r">{longDate(ed.date)}<br />{ed.regular ? (new Date(ed.date + 'T00:00:00Z').getUTCDay() === 1 ? 'Montagsausgabe' : 'Donnerstagsausgabe') : 'Aktuelle Ausgabe'}</div>
       </header>
 
-      <div className="np-grid">
-        <div className="np-front">
-          {ed.lead ? <Lead api={api} s={ed.lead} /> : <div className="np-empty">Die Redaktion meldet: ruhige Tage – keine großen Nachrichten seit {fmtDateFull(ed.from)}.</div>}
-          <div className="np-cols">
-            {cols.map((list, i) => (
-              <div key={i} className="np-col">
-                {list.map((s) => <Teaser key={s.id} api={api} s={s} />)}
-              </div>
-            ))}
-          </div>
-          {briefs.length > 0 && (
-            <section className="np-briefs">
-              <div className="np-sec">Kurz notiert</div>
-              <div className="np-brief-cols">
-                {briefs.map((s) => (
-                  <div key={s.id} className={`np-brief ${s.own ? 'own' : ''}`} {...open(api, s.id)}>
-                    <b>{s.headline}</b> <span>{s.body[0]}</span>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-        </div>
+      <div className="np-left">
+        {ed.lead ? <Lead api={api} s={ed.lead} /> : <div className="np-empty">Die Redaktion meldet: ruhige Tage – keine großen Nachrichten seit {fmtDateFull(ed.from)}.</div>}
+        <div className="np-cols">{colBox(cols[0], 0)}{colBox(cols[1], 1)}</div>
+      </div>
 
+      <div className="np-right">
+        {colBox(cols[2], 2)}
         <aside className="np-side">
           {ed.matchday && (
             <section>
@@ -183,6 +175,19 @@ export function Newspaper({ api, ed }: { api: PressApi; ed: PressEdition }) {
           )}
         </aside>
       </div>
+
+      {briefs.length > 0 && (
+        <section className="np-briefs">
+          <div className="np-sec">Kurz notiert</div>
+          <div className="np-brief-cols">
+            {briefs.map((s) => (
+              <div key={s.id} className={`np-brief ${s.own ? 'own' : ''}`} {...open(api, s.id)}>
+                <b>{s.headline}</b> <span>{s.body[0]}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

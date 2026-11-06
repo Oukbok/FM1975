@@ -24,6 +24,9 @@
   opacity: 0; transition: opacity .15s ease;
 }
 .pa-photo.loaded > img { opacity: 1; }
+/* Wunsch Pascal: Köpfe senkrecht mittig – die Bilder haben oben ≈ 15 % leeren Rand (Kopf+Hals
+   y 90–600 von 600), deshalb Bild und Trikotmaske um die Hälfte nach oben. */
+.pa-photo > img, .pa-kit { transform: translateY(var(--face-shift, -7.5%)); }
 .pa-kit {
   position: absolute; inset: 0; pointer-events: none; opacity: 0;
   mix-blend-mode: hard-light;
