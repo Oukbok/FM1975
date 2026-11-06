@@ -20,6 +20,11 @@
 .dz-left::-webkit-scrollbar-thumb, .dz-nlist::-webkit-scrollbar-thumb, .dz-wb::-webkit-scrollbar-thumb, .dz-rtext::-webkit-scrollbar-thumb,
 .dz-fn-list::-webkit-scrollbar-thumb, .dz-app-list::-webkit-scrollbar-thumb, .dz-vt-list::-webkit-scrollbar-thumb, .dz-lcd-list::-webkit-scrollbar-thumb, .dz-heft-list::-webkit-scrollbar-thumb { background: rgba(var(--ink-rgb), 0.12); border-radius: 4px; }
 
+/* Leiste der linken Spalte liegt über dem Hintergrundbild: nur beim Darüberfahren zeigen,
+   sonst wirkt sie wie ein durchsichtiger Streifen/eine alte Box in der Lücke. */
+.dz-left::-webkit-scrollbar-thumb { background: transparent; }
+.dz-left:hover::-webkit-scrollbar-thumb { background: rgba(var(--ink-rgb), 0.22); }
+
 /* ---- Widget-Rahmen (links + Übersicht) ------------------------------------ */
 .dz-w, .dz-news {
   background: linear-gradient(180deg, rgba(var(--panel-rgb), calc(0.92 * var(--glass))), rgba(var(--bg-rgb), calc(0.94 * var(--glass))));
