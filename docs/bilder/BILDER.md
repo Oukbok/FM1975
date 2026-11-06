@@ -6,16 +6,15 @@ das Spiel läuft also auch ohne Bild. Ein Bild wird erst angezeigt, wenn es im j
 (z. B. `src/data/trophyImages.ts`) eingetragen ist.
 
 ## Stand und nächste Bilder (Stand 6. November 2026, Look „Akte 1975“)
-**Vorhanden:** Papiertextur, Aktenmappe (Newscenter), Zeitungs-Doppelseite (Presse), Einzelblatt, Pressefoto Torjubel 1975,
+**Vorhanden:** Papiertextur, Aktenmappe (Newscenter), Zeitungs-Doppelseite (Presse), Ringbuch-Kalender, Einzelblatt, Pressefoto Torjubel 1975,
 170 Spielergesichter Epoche 1970 (9 Gruppen, ohne Altersstufen und ohne Trikotmasken), Rasen für den Kartenverkauf, Startbildschirm-Tribüne.
 
 **Als Nächstes (in dieser Reihenfolge):**
-1. **Kalender** `akte/kalender.webp` – Wandkalender mit Ringbindung, leeres 7×6-Raster, 1740×1200, transparent (Zentrale › Kalender, Abschnitt 0).
-2. **Pressefotos 1975** – die 12 fehlenden Motive aus Abschnitt 0 (jede Nachricht zeigt dann ein passendes Foto; heute nur Torjubel nach Siegen).
-3. **Gesichter Mitarbeiter** `faces/staff/1970/01..10.webp` – Trainer, Vorstand, Berater (Presse, Budget-Berater, Trainerteam).
-4. **Gesichter 1980** – `mitteleuropa` 20 Personen, dazu `suedeuropa`/`osteuropa`/`balkan` je 10 (ab etwa 1985 brauchen die Spieler die Frisuren der 80er).
-5. **Trophäen** `trophies/<form>.webp` (Abschnitt 4) – Vitrine unter Verein › Erfolge.
-6. **Korn** `akte/korn.png` – feines Druckkorn über Kopfleiste und Balken (Feinschliff).
+1. **Pressefotos 1975** – die 12 fehlenden Motive aus Abschnitt 0 (jede Nachricht zeigt dann ein passendes Foto; heute nur Torjubel nach Siegen).
+2. **Gesichter Mitarbeiter** `faces/staff/1970/01..10.webp` – Trainer, Vorstand, Berater (Presse, Budget-Berater, Trainerteam).
+3. **Gesichter 1980** – `mitteleuropa` 20 Personen, dazu `suedeuropa`/`osteuropa`/`balkan` je 10 (ab etwa 1985 brauchen die Spieler die Frisuren der 80er).
+4. **Trophäen** `trophies/<form>.webp` (Abschnitt 4) – Vitrine unter Verein › Erfolge.
+5. **Korn** `akte/korn.png` – feines Druckkorn über Kopfleiste und Balken (Feinschliff).
 
 **Entfällt mit dem Look „Akte“:** Hintergrundfotos für die Seiten (Abschnitt 1, `bg/stadion-*`, `bg/buero-*` …) und `press/zeitung-<epoche>` (ersetzt durch `akte/zeitung.webp`). Nur noch die dunklen Bühnen (Auslosung, Gala, Halle, Textmodus, „Nächstes Spiel“) nutzen Fotos.
 
@@ -41,7 +40,7 @@ Stil: helles Papier, gerade Draufsicht, keine Schrift/Logos. Einbindung über To
 | `akte/mappe.webp` | Aktenmappe mit zwei Blättern (links Liste, rechts Inhalt), transparent | 1327×1185 | **vorhanden** – Newscenter (Raster in % der Bildmaße, bei neuer Fassung Maße in `31-akte.css` anpassen) |
 | `akte/zeitung.webp` | Aufgeschlagene Zeitungs-Doppelseite, transparent, Falz bei 49,6 % | 1838×856 | **vorhanden** – Zentrale › Presse (Raster in % in `28-presse.css`) |
 | `akte/blatt.webp` | Einzelblatt mit Büttenrand, transparent, Rand ≥ 60 px | 1200×1600 | **vorhanden** – Neun-Teile-Rahmen für weitere Blätter |
-| `akte/kalender.webp` | Wandkalender 70er: Metall-Ringbindung oben über die volle Breite, festes mattes Blatt, oben ein leeres Kopffeld (Monat/Jahr), darunter eine leere Wochentagszeile und ein leeres Raster 7 Spalten × 6 Zeilen in feinen grauen Linien; keine Zahlen/Buchstaben; transparenter Rand ≈ 40 px | 1740×1200 | **offen** – Zentrale › Kalender (Proportionen wie die heutige Kalenderbox) |
+| `akte/kalender.webp` | Ringbuch-Kalender (Kraftdeckel, Ringe links, Blattstapel), transparent | 1511×1041 | **vorhanden** – Zentrale › Kalender (Raster in % in `31-akte.css`) |
 | `akte/korn.png` | feines Druck-Korn, nahtlos | 512×512 | offen – über Kopfleiste/Balken |
 | `presse/<epoche>/<motiv>.webp` | Pressefoto (Epoche 1975 = Schwarzweiß der 70er), erfundene Spieler, keine Wappen | 1200×600 | `1975/torjubel` **vorhanden**; offen: zweikampf, torschuss, torwart, kopfball, abpfiff, fans, stadion, training, vorstand, auslosung, vertrag, verletzung; später je Epoche 1985/2000/2015 |
 

@@ -30,6 +30,7 @@
   --akte-sheet: url('assets/akte/blatt.webp');
   --akte-grain: none;
   --np-paper: url('assets/akte/zeitung.webp');   /* Presse: Doppelseite */
+  --cal-paper: url('assets/akte/kalender.webp');  /* Kalender: Ringbuch */
 
   /* ---- Akzent = Vereinsfarbe ---------------------------------------------- */
   --accent: var(--club-accent, #c8202a);
@@ -349,3 +350,45 @@ body { background: var(--paper-page); }
 /* ---- Hauptmenü: Hover = Schrift weiß mit leichtem Schein, Hintergrund bleibt (Wunsch Pascal) ---- */
 .hd-nav-item:hover, .hd-nav-item:focus-visible { background: transparent; border-color: transparent; color: #ffffff; text-shadow: 0 0 8px rgba(255, 255, 255, 0.55), 0 0 2px rgba(255, 255, 255, 0.4); }
 .hd-nav-item.active:hover { color: var(--accent-ink); }
+
+/* ---- Kalender als Ringbuch (bilder/akte/kalender.webp, 1511×1041, Wunsch Pascal) ------------
+   Durchsichtiger Bildrand liegt außerhalb der Box (Hintergrund 104,3 % × 107,4 %, Mitte), Werte bezogen auf
+   das Ringbuch (x 28–1477, y 34–1003 px): Ringe bis ≈ 7 %, Blatt rechts bis 95,7 %, unten bis 94 %.
+   Zeilen: Rand | Hinweis | Wochentage | Raster | Legende | Rand. */
+.cal-box > .dxh { margin-bottom: 0; }
+.cal-box > .dbox-body {
+  margin: 0 -15px -12px;
+  display: grid;
+  grid-template-columns: 7.4% minmax(0, 1fr) 5.4%;
+  grid-template-rows: 4% auto auto minmax(0, 1fr) auto 8%;
+  background: var(--cal-paper) center / 104.3% 107.4% no-repeat;
+  overflow: hidden;
+}
+.cal-box > .dbox-body > * { grid-column: 2; min-width: 0; }
+.cal-box .calm-note { grid-row: 2; margin: 0 0 6px; color: var(--text-3); }
+.cal-box .cal-head-row { grid-row: 3; margin: 0; gap: 0; border-bottom: 2px solid var(--accent); }
+.cal-box .cal-wd { font-family: var(--font-display); font-size: 17px; font-weight: 700; letter-spacing: 1px; color: var(--text); padding: 4px 0 6px; }
+.cal-box .cal-grid-fill {
+  grid-row: 4; min-height: 0; margin: 0; gap: 0;
+  grid-auto-rows: minmax(0, 1fr);
+  border-left: 1px solid rgba(var(--ink-rgb), 0.16);
+}
+.cal-box .calm-scroll { grid-row: 3 / 6; margin: 0; }
+.cal-box .cal-legend { grid-row: 5; margin-top: 8px; font-size: 14px; }
+/* Zellen: feine Linien statt Kästchen */
+.cal-box .cal-grid-fill .cal-cell,
+.cal-box .cal-grid-fill .cal-cell.cal-empty {
+  min-height: 0; overflow: hidden; border: 0; border-radius: 0; background: transparent;
+  box-shadow: inset -1px -1px 0 rgba(var(--ink-rgb), 0.16);
+  padding: 7px 10px 8px;
+}
+.cal-box .cal-grid-fill .cal-dom { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--text); }
+.cal-box .cal-grid-fill .cal-past { background: transparent; }
+.cal-box .cal-grid-fill .cal-past .cal-dom { color: var(--text-4); }
+.cal-box .cal-grid-fill .cal-today { background: rgba(var(--ink-rgb), 0.08); box-shadow: inset -1px -1px 0 rgba(var(--ink-rgb), 0.16); }
+.cal-box .cal-grid-fill .cal-today .cal-dom { background: var(--navy); color: #ffffff; }
+.cal-box .cal-today-tag { font-family: var(--font-display); font-weight: 700; color: var(--text); }
+.cal-box .cal-grid-fill .cal-jumpable:hover, .cal-box .cal-grid-fill .cal-selectable:hover { background: rgba(var(--accent-rgb), 0.08); }
+.cal-box .cal-grid-fill .cal-preview { background: rgba(var(--accent-rgb), 0.14); }
+.cal-box .cal-ev-txt { font-size: 15px; }
+.cal-box { background: transparent; border-color: transparent; box-shadow: none; }
