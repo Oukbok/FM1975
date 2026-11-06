@@ -109,13 +109,12 @@ body { background: var(--paper-page); }
   border-bottom: 3px solid var(--accent);
   backdrop-filter: none; -webkit-backdrop-filter: none;
   color: var(--navy-ink);
-  overflow: hidden;
   /* Symbole auf Dunkelblau hell */
   --icon-base: #ffffff; --icon-knock: var(--navy); --icon-accent: var(--accent);
 }
-.hd-logo { position: relative; padding-right: 46px; }
+.hd-logo { position: relative; padding-right: 46px; align-self: stretch; overflow: hidden; }
 .hd-logo::after {
-  content: ''; position: absolute; top: -40px; bottom: -40px; right: 0; width: 12px;
+  content: ''; position: absolute; top: -10px; bottom: -10px; right: 2px; width: 12px;
   background: var(--accent); transform: skewX(-20deg);
 }
 .hd-logo-year { color: var(--navy-ink); font-weight: 700; }
@@ -291,6 +290,7 @@ body { background: var(--paper-page); }
    die dunklen Werte von „Ruhig Flutlicht“ weiter; nur der Hauptknopf trägt die Vereinsfarbe. */
 .menu-bg, .menu-panel, .ng-root, .dr-root, .gb-root, .ix-root, .rt-root, .rb2-overlay, .ms-root, .pm-root, .si-stage {
   color-scheme: dark;
+  color: var(--text);
   --bg: #0c0f15; --bg-2: #13161c; --panel: #1a1d23; --panel-2: #22252b; --panel-hover: #292c32; --elevated: #2a2d33;
   --text: #ffffff; --text-2: #d0d6dd; --text-3: #a2acb8; --text-4: #59626e; --text-hi: #ffffff;
   --border: #303339; --border-soft: #24272d; --border-strong: #45484e;
