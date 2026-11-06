@@ -1,6 +1,6 @@
 // =============================================================================
 // ZENTRALE – linke Spalte: gestapelte Kurz-Widgets (Tabelle, Spiele, Budget,
-// Managerstatus, Sperren/Verletzungen, Teamstatus, Taktik). Jedes Widget führt
+// Managerstatus, Sperren/Verletzungen, Taktik; Teamstatus steht rechts, dash/RightWidgets.tsx). Jedes Widget führt
 // per Klick auf die passende Seite; Vereine/Spieler öffnen ihr Profil.
 // =============================================================================
 import type { ReactNode } from 'react';
@@ -174,7 +174,7 @@ function StatusRow({ kind, v }: { kind: Exclude<StatusKind, 'kraft'>; v: number 
     </div>
   );
 }
-function TeamWidget({ g, onGoto }: { g: Game; onGoto: Go }) {
+export function TeamWidget({ g, onGoto }: { g: Game; onGoto: Go }) {
   const t = teamStatus(g);
   return (
     <Widget title="Teamstatus" to="squad" onGoto={onGoto} right={`${t.size} Spieler`}>
@@ -215,7 +215,6 @@ export function LeftColumn({ g, onGoto, openPlayer }: { g: Game; onGoto: Go; ope
       <BudgetWidget g={g} onGoto={onGoto} />
       <ManagerWidget g={g} onGoto={onGoto} />
       <AbsenceWidget g={g} onGoto={onGoto} openPlayer={openPlayer} />
-      <TeamWidget g={g} onGoto={onGoto} />
       <TacticWidget g={g} onGoto={onGoto} />
     </div>
   );

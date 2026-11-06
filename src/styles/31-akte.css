@@ -239,7 +239,8 @@ body { background: var(--paper-page); }
 .dz-news > .inbox-filter .seg3 > * { padding: 0 6px; font-size: 13px; }
 .dz-news > .inbox-filter .b3-n { margin-left: 3px; }
 .dz-news > .inbox-filter { overflow: hidden; }
-.dz-news > .inbox-filter .inbox-cat { min-width: 0; width: 128px; flex: 0 0 128px; }
+.dz-news > .inbox-filter .inbox-cat { min-width: 0; width: 112px; flex: 0 0 112px; }
+.dz-news > .inbox-filter .inbox-cat .sel3-btn, .dz-news > .inbox-filter .inbox-cat button { min-width: 0; width: 100%; padding: 0 8px; font-size: 13px; }
 .dz-nlist, .dz-read { grid-row: 4; min-height: 0; background: transparent; border: none; border-radius: 0; box-shadow: none; }
 .dz-nlist { grid-column: 2; padding: 6px 10px 8px; overflow-y: auto; }
 .dz-read { grid-column: 4; position: relative; padding: 18px 26px 14px; border-left: none; }
@@ -326,5 +327,5 @@ body { background: var(--paper-page); }
 @media (max-width: 1500px) {
   .dz-news > .inbox-filter { padding: 0 10px; gap: 6px; }
   .dz-news > .inbox-filter .seg3 > * { padding: 0 5px; }
-  .dz-news > .inbox-filter .inbox-cat { width: 112px; flex-basis: 112px; }
+  .dz-news > .inbox-filter .inbox-cat { width: 96px; flex-basis: 96px; }
 }

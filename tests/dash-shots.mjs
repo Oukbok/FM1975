@@ -68,18 +68,16 @@ for (const [w, h] of [[1920, 1080], [1366, 768]]) {
     const withFace = page.locator('.dz-msg[data-player="1"]');
     if (await withFace.count()) { await withFace.first().click(); await shot('nachricht_spieler'); }
   });
-  // Übersicht: alle Abschnitte aufklappen.
-  await step('uebersicht', async () => {
-    const heads = page.locator('.dz-ov-head');
-    for (let i = 0; i < await heads.count(); i++) { const el = heads.nth(i); if ((await el.getAttribute('aria-expanded')) === 'false') await el.click(); }
-    await shot('uebersicht');
-    // Klick in der Übersicht → Statistiken mit Auswahl.
-    const cupLink = page.locator('.dz-ov-item:has-text("Pokal")');
-    if (await cupLink.count()) {
-      await cupLink.first().click(); await page.waitForTimeout(500);
-      await page.screenshot({ path: `${outDir}/${prefix}uebersicht_ziel_${w}.png` });
-      await page.locator('.hd-nav-item:has-text("Zentrale")').first().click(); await page.waitForTimeout(300);
-    }
+  // Rechte Spalte: Nächstes Spiel, Teamstatus, Unsere Besten, Zeitgeist (bündig mit dem Newscenter?).
+  await step('rechts', async () => {
+    const r = await page.evaluate(() => {
+      const col = document.querySelector('.dz-right')?.getBoundingClientRect();
+      const news = document.querySelector('.dz-news')?.getBoundingClientRect();
+      const last = [...document.querySelectorAll('.dz-right > .dz-w')].pop()?.getBoundingClientRect();
+      return col && news && last ? { top: Math.round(col.top - news.top), bottom: Math.round(last.bottom - news.bottom) } : null;
+    });
+    if (!r) errors.push(`${w} rechts: Spalte fehlt`);
+    else if (Math.abs(r.top) > 2 || Math.abs(r.bottom) > 2) errors.push(`${w} rechts: nicht bündig mit dem Newscenter (oben ${r.top}px, unten ${r.bottom}px)`);
   });
   // Zeitlauf kurz an: Kalender-Überblendung erscheint über der Zentrale.
   await step('zeitlauf', async () => {
