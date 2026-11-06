@@ -72,4 +72,5 @@ import './28-contract.css';
 import './28-lazy.css';
 import './29-look.css'; // ruhige Gesamtoptik
 import './29-buttons.css'; // Knopf-System + Auswahlliste (Tokens --btn-*/--sel-*)
-import './30-theme.css'; // zuletzt: Look „Ruhig Flutlicht“ (nur Tokens)
+import './30-theme.css'; // Grundlage: Look „Ruhig Flutlicht“ (nur Tokens)
+import './31-akte.css'; // zuletzt: Look „Akte 1975“ (Papier, Dunkelblau, Vereinsfarbe als Akzent)

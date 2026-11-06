@@ -1,0 +1,330 @@
+/* =============================================================================
+   LOOK „AKTE 1975“ (Wunsch Pascal, Mockup Zentrale als Zeitungs-/Aktenmappe)
+   -----------------------------------------------------------------------------
+   Zuletzt geladen. Löst „Ruhig Flutlicht“ (30-theme.css, bleibt als Grundlage
+   darunter) ab: helles Papier statt Foto, Dunkelblau (--navy) für Kopfleiste und
+   Boxköpfe, EIN Akzent = Vereinsfarbe des eigenen Vereins (--club-accent, gesetzt
+   von ui/clubAccent.ts; zu nah am Dunkelblau → Zweitfarbe; Standard Rot).
+   Bilder (bilder/akte/…) kommen über Tokens; fehlt eins, bleibt die CSS-Fassung.
+   ============================================================================= */
+
+:root {
+  color-scheme: light;
+  /* ---- Akte-Grundfarben ---------------------------------------------------- */
+  --navy: #1b2a44;           /* gleicher Wert wie AKTE_NAVY in ui/clubAccent.ts */
+  --navy-2: #12203a;
+  --navy-line: rgba(255, 255, 255, 0.14);
+  --navy-ink: #ffffff;
+  --navy-ink-2: rgba(255, 255, 255, 0.72);
+  --paper-page: #e8e6e1;     /* unter der Papiertextur */
+  --paper-sheet: #fbfaf7;    /* Blatt (Liste, Lesebereich) */
+  --paper-card: #f6f5f1;     /* Boxen */
+  --folder: #d8d3c6;         /* Aktenmappe (Ersatz bis bilder/akte/mappe.png) */
+  --folder-2: #cbc5b5;
+  --folder-edge: #b9b2a1;
+  --sheet-shadow: 0 1px 2px rgba(20, 28, 40, 0.12), 0 6px 16px rgba(20, 28, 40, 0.10);
+  /* Bild-Slots: Pascal reicht Mappe/Blatt/Klammer/Korn nach (docs/bilder/BILDER.md, Abschnitt Akte).
+     Liegt eine Datei vor, hier url('assets/akte/<datei>') eintragen. */
+  --akte-paper: url('assets/akte/papier.webp');
+  --akte-folder: url('assets/akte/mappe.webp');
+  --akte-sheet: url('assets/akte/blatt.webp');
+  --akte-clip: url('assets/akte/klammer.png');
+  --akte-grain: none;
+
+  /* ---- Akzent = Vereinsfarbe ---------------------------------------------- */
+  --accent: var(--club-accent, #c8202a);
+  --accent-dim: var(--club-accent-hover, #a81a23);
+  --accent-ink: var(--club-accent-ink, #ffffff);
+  --accent-rgb: var(--club-accent-rgb, 200, 32, 42);
+  --accent-glow: rgba(var(--accent-rgb), 0.22);
+  --accent-soft: rgba(var(--accent-rgb), 0.10);
+  --primary: var(--accent);
+  --primary-2: var(--accent-dim);
+  --primary-hover: var(--accent-dim);
+  --primary-ink: var(--accent-ink);
+  --primary-glow: var(--accent-glow);
+  --primary-run: #d9d6cd;
+  --primary-run-ink: var(--navy);
+  --icon-base: #1f2733;
+  --icon-accent: var(--accent);
+  --icon-knock: #f6f5f1;
+
+  /* ---- Flächen & Text ------------------------------------------------------ */
+  --bg: #ebe9e4; --bg-2: #e2dfd9;
+  --panel: var(--paper-card); --panel-2: #eeece7; --panel-hover: #e7e4de; --elevated: #ffffff;
+  --text: #151b26; --text-2: #374151; --text-3: #5d6570; --text-4: #8b9199; --text-hi: #0b1018;
+  --border: #c9c4b9; --border-soft: #dcd8cf; --border-strong: #a7a194;
+  --ink-rgb: 20, 28, 40;
+  --shade-rgb: 20, 28, 40;
+  --bg-rgb: 235, 233, 228;
+  --panel-rgb: 246, 245, 241;
+  --q-1: #111827; --q-2: #374151; --q-3: #6b7280; --q-4: #a0a6ae;
+  --bar-track: rgba(20, 28, 40, 0.10); --bar-fill: #7b8490; --bar-fill-hi: var(--navy);
+  --green: #23824f; --yellow: #a7790f; --orange: #b85f24; --red: #c0392b; --gold: #a9852f;
+  --red-rgb: 192, 57, 43; --green-rgb: 35, 130, 79; --yellow-rgb: 167, 121, 15;
+  --pos-gk: #13857d; --pos-def: #2f7d3f; --pos-mid: #2f5fb0; --pos-att: #b53a37; --pos-mix: 88%;
+  --pos-key: #2563c9; --pos-key-2: #7aa0db;
+  --fam-1: #2f8f5b; --fam-2: #62ab80; --fam-3: #b5d3c0;
+  --cal-liga: #5d6570; --cal-cup: #a9852f; --cal-euro: #2f5fb0; --cal-winter: #3d8f83; --cal-info: #9aa0a8;
+  --rl-me-bg: rgba(var(--accent-rgb), 0.10);
+  --rl-hover: rgba(20, 28, 40, 0.045);
+  --today-bg: var(--navy); --today-text: #ffffff;
+
+  /* ---- Knöpfe: Papier-Knopf, gewählt = Vereinsfarbe ------------------------- */
+  --btn-bg: #fbfaf7; --btn-bg-hover: #ffffff; --btn-bg-press: #ebe8e2;
+  --btn-border: #bfb9ad; --btn-border-hover: var(--navy);
+  --btn-text: #1f2733; --btn-text-hover: #0b1018;
+  --btn-on-bg: var(--accent); --btn-on-border: var(--accent); --btn-on-text: var(--accent-ink);
+  --btn-on-mark: transparent; --btn-on-shadow: 0 0 0 transparent;
+  --btn-off-opacity: 0.55; --btn-off-text: var(--text-3);
+  --seg-bg: rgba(20, 28, 40, 0.06);
+  --sel-bg: rgba(var(--accent-rgb), 0.13); --sel-border: var(--accent); --sel-text: var(--text);
+  --focus-ring: rgba(27, 42, 68, 0.7);
+  --pop-bg: #fbfaf7; --pop-border: #c9c4b9; --pop-hover: rgba(20, 28, 40, 0.06);
+
+  /* ---- Papier statt Foto, kein Glas ----------------------------------------- */
+  --glass: 1; --glass-filter: none; --card-filter: none;
+  --photo-veil: linear-gradient(transparent, transparent); --photo-veil-zentrale: var(--photo-veil);
+  --photo-filter: none; --photo-filter-zentrale: none;
+  --radius: 6px; --radius-sm: 4px;
+  --shadow: 0 2px 8px rgba(20, 28, 40, 0.12);
+  --shadow-lg: 0 14px 40px rgba(20, 28, 40, 0.24);
+
+  /* ---- Schriften (Wunsch Pascal: nicht mehr Oswald/Barlow) ------------------ */
+  --font-display: 'Antonio', 'Arial Narrow', system-ui, sans-serif;
+  --font-logo: 'Antonio', 'Arial Narrow', system-ui, sans-serif;
+  --font-ui: 'Archivo', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ---- Seitenhintergrund: Papiertextur ---------------------------------------- */
+.app-shell::before,
+.shell-zentrale::before {
+  background: var(--akte-paper) left top / 627px 627px repeat, var(--paper-page);
+  filter: none; opacity: 1;
+}
+body { background: var(--paper-page); }
+
+/* ---- Kopfleiste: Dunkelblau, Schrägstreifen in Vereinsfarbe hinter dem Logo --- */
+.hd-bar, .hd-bar--zentrale {
+  background: var(--akte-grain), linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%);
+  border-bottom: 3px solid var(--accent);
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  color: var(--navy-ink);
+  overflow: hidden;
+  /* Symbole auf Dunkelblau hell */
+  --icon-base: #ffffff; --icon-knock: var(--navy); --icon-accent: var(--accent);
+}
+.hd-logo { position: relative; padding-right: 46px; }
+.hd-logo::after {
+  content: ''; position: absolute; top: -40px; bottom: -40px; right: 0; width: 12px;
+  background: var(--accent); transform: skewX(-20deg);
+}
+.hd-logo-year { color: var(--navy-ink); font-weight: 700; }
+.hd-logo-div { background: var(--navy-ink-2); opacity: 0.6; }
+.hd-logo-title span:first-child, .hd-logo-title span:last-child { color: var(--navy-ink); }
+.hd-nav-item { color: var(--navy-ink-2); font-size: 18px; font-weight: 700; padding: 0 9px; letter-spacing: 0.6px; isolation: isolate; }
+.hd-nav-item:hover { color: var(--navy-ink); }
+.hd-nav-item.active { color: var(--accent-ink); }
+.hd-nav-item.active::before {
+  content: ''; position: absolute; z-index: -1; left: 4px; right: 4px; top: 26%; bottom: 26%;
+  background: var(--accent); border-radius: 4px;
+}
+.hd-nav-item.active::after { background: var(--accent); left: 4px; right: 4px; }
+.hd-club-name { color: var(--navy-ink); }
+.hd-sep { background: var(--navy-line); }
+.hd-balance { background: rgba(255, 255, 255, 0.06); border-color: var(--navy-line); }
+.hd-balance-ico, .hd-balance-lbl { color: var(--navy-ink-2); }
+.hd-balance-val, .hd-balance-val.pos { color: var(--navy-ink); }
+.hd-balance-val.neg { color: #ff9a90; }
+.hd-gear { color: var(--navy-ink); border-color: var(--navy-line); background: rgba(255, 255, 255, 0.06); }
+.hd-gear:hover { background: rgba(255, 255, 255, 0.14); }
+.hd-gear svg { color: var(--navy-ink); }
+.hd-bar .save-toast { color: var(--navy-ink); }
+.hd-continue { border-radius: 6px; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18) inset; }
+
+/* ---- Untermenü: Papierleiste ------------------------------------------------ */
+.top-nav {
+  background: var(--akte-paper) left top / 627px 627px repeat, var(--paper-card);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+}
+.tn-sub-item { color: var(--text-3); font-size: 15px; }
+.tn-sub-item:hover { color: var(--text); }
+.tn-sub-item.active { color: var(--text-hi); }
+.tn-sub-item.active > span::after { background: var(--accent); }
+.tn-date, .top-nav .tn-date { color: var(--text); }
+
+/* ---- Footer ------------------------------------------------------------------ */
+.dashx-foot {
+  background: var(--navy); border-top: none; border-radius: 0;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+.dashx-foot-l, .dashx-foot-c, .dashx-foot-r, .dashx-foot-link { color: var(--navy-ink-2); }
+.dashx-foot-c { color: var(--navy-ink); }
+
+/* ---- Boxen: Papierkarte mit dunkelblauem Kopfbalken ------------------------- */
+.card, .dbox, .dz-w {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 2px rgba(20, 28, 40, 0.08);
+}
+.dbox { overflow: hidden; }
+.dbox > .dxh {
+  margin: -7px -15px 10px; padding: 9px 15px 8px;
+  background: var(--navy); border-bottom: none;
+}
+.dbox > .dxh .dxh-title { color: var(--navy-ink); font-size: 22px; letter-spacing: 1px; }
+.dbox > .dxh .dxh-right { color: var(--navy-ink-2); }
+.dbox > .dxh .itip, .dbox > .dxh .info-tip { color: var(--navy-ink-2); }
+
+/* Überschriften in Antonio, Großbuchstaben */
+.dxh-title, .page-head-title, .card-title, .mx-head h2, .modal h2, .modal-title, h1, h2 { font-weight: 700; }
+
+/* ---- Zentrale: Widgets links / Übersicht rechts ------------------------------ */
+.dz-w { padding: 0 14px 10px; overflow: hidden; }
+.dz-wh {
+  margin: 0 -14px 8px; padding: 8px 14px;
+  background: var(--navy); border-bottom: none;
+}
+.dz-wt { color: var(--navy-ink); font-size: 19px; font-weight: 700; letter-spacing: 1px; }
+.dz-wr { color: var(--navy-ink-2); }
+.dz-wgo, .dz-w:hover .dz-wgo { color: var(--navy-ink); }
+.dz-wh .itip, .dz-wh .info-tip { color: var(--navy-ink-2); }
+.dz-w:hover, .dz-w:focus-visible { border-color: var(--navy); }
+/* rechte Spalte wie im Mockup mit Kopf in Vereinsfarbe */
+.dz-right .dz-wh, .dz-right .dz-fn-head { background: var(--accent); }
+.dz-right .dz-wt, .dz-right .dz-fn-title { color: var(--accent-ink); }
+.dz-right .dz-wr, .dz-right .dz-fn-sub { color: var(--accent-ink); opacity: 0.8; }
+.dz-ov:hover { border-color: var(--border); }
+.dz-ov-item.mine { color: var(--text-hi); box-shadow: inset 3px 0 0 var(--accent); background: var(--rl-me-bg); }
+.dz-kv-sum > b, .dz-big, .dz-main { font-family: var(--font-display); font-weight: 700; }
+
+/* Vereinsnachrichten */
+.dz-fn { background: var(--paper-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.dz-fn-head { padding: 9px 14px 8px; border-bottom: none; align-items: center; }
+.dz-fn-title { font-size: 19px; font-weight: 700; }
+.dz-fn-item { border-bottom-color: var(--border-soft); }
+
+/* ---- Newscenter als Aktenmappe ----------------------------------------------- */
+/* Bild bilder/akte/mappe.webp (1327×1185, Wunsch Pascal): Mappe mit zwei Blättern – links
+   die Nachrichtenliste, rechts der Lesebereich. Raster in Prozent der Bildmaße, damit Liste
+   und Text genau auf den Blättern liegen. Der durchsichtige Bildrand (≈ 4 %) liegt außerhalb
+   der Box (Hintergrund 108 % groß, mittig), damit die Mappe bündig mit den Nachbarboxen steht.
+   Werte bezogen auf die Mappe (x 52–1280, y 48–1140 px im Bild): Blatt links x 2,0–42,5 %,
+   rechts x 43,0–96,8 %; Kopfband y 2,9–13,9 %; Blätter y 14,2–96,7 %. */
+.dz-news {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.04% 40.46% 0.5% 53.8% minmax(0, 1fr);
+  grid-template-rows: 2.93% 10.99% 0.27% minmax(0, 1fr) 3.3%;
+  padding: 0;
+  border: none; border-radius: 0; box-shadow: none;
+  background: var(--akte-folder) center / 108.1% 108.5% no-repeat;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  --sheet-bg: #f5ecdd;   /* Farbe der Blätter im Bild (für die feste Tabellenkopfzeile) */
+}
+.dz-nbody { display: contents; }
+.dz-nh {
+  grid-column: 2; grid-row: 2; align-self: center;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px;
+  padding: 0 14px; border-bottom: none;
+}
+.dz-nh-title { font-family: var(--font-display); font-size: 40px; line-height: 1; font-weight: 700; color: var(--text-hi); letter-spacing: 0.5px; }
+.dz-nh-count { margin-left: 0; color: var(--text-2); font-size: 17px; }
+.dz-nh-act { margin-left: 0; flex-basis: 100%; }
+.dz-nh-act .b3 { height: 30px; font-size: 13.5px; padding: 0 10px; }
+.dz-news > .inbox-filter { grid-column: 4; grid-row: 2; align-self: center; padding: 0 16px; flex-wrap: nowrap; gap: 8px; min-width: 0; }
+.dz-news > .inbox-filter .seg3 { flex-wrap: nowrap; }
+.dz-news > .inbox-filter .seg3 > * { padding: 0 6px; font-size: 13px; }
+.dz-news > .inbox-filter .b3-n { margin-left: 3px; }
+.dz-news > .inbox-filter { overflow: hidden; }
+.dz-news > .inbox-filter .inbox-cat { min-width: 0; width: 128px; flex: 0 0 128px; }
+.dz-nlist, .dz-read { grid-row: 4; min-height: 0; background: transparent; border: none; border-radius: 0; box-shadow: none; }
+.dz-nlist { grid-column: 2; padding: 6px 10px 8px; overflow-y: auto; }
+.dz-read { grid-column: 4; position: relative; padding: 18px 26px 14px; border-left: none; }
+.dz-nfoot { display: none; }
+/* Büroklammer oben rechts über der Blattkante */
+.dz-read::after {
+  content: ''; position: absolute; top: -26px; right: 40px; width: 28px; height: 60px;
+  background: var(--akte-clip) center / contain no-repeat;
+  filter: drop-shadow(1px 2px 1px rgba(20, 28, 40, 0.25));
+  pointer-events: none;
+}
+/* Liste: ohne Spalte „Eingang“ (zu schmal auf dem Blatt), Gruppen bleiben als Trennlinie */
+.dz-ntable .dz-ncol-grp { display: none; }
+.dz-ntable .dz-ncol-date { width: 120px; }
+.dz-ntable .dz-ncol-cat { width: 96px; }
+.dz-ntable thead th { background: var(--sheet-bg); color: var(--text-3); }
+.dz-ntable td { color: var(--text-2); border-bottom: 1px solid rgba(20, 28, 40, 0.09); }
+.dz-ntable tr.grp-start td { border-top: 1px solid rgba(20, 28, 40, 0.28); }
+.dz-msg.unread td { color: var(--text); }
+.dz-ntable tbody tr.me td { background: rgba(var(--accent-rgb), 0.16); }
+.dz-ntable tbody tr.me .dz-nsubj > span { color: var(--text-hi); }
+.dz-ntable tbody tr.me td.dz-nsubj { box-shadow: inset 4px 0 0 var(--accent); }
+.dz-rdate { font-size: 28px; font-weight: 700; color: var(--text-hi); }
+.dz-rsubj { font-family: var(--font-display); font-size: 30px; font-weight: 700; line-height: 1.05; text-transform: uppercase; color: var(--text-hi); margin: 8px 0 6px; }
+.dz-rmeta { border-bottom-color: rgba(20, 28, 40, 0.18); }
+.dz-rlead { color: var(--text); }
+.dz-rbody { color: var(--text-2); }
+.dz-rfoot { border-top-color: rgba(20, 28, 40, 0.18); }
+/* Pressefoto im Lesebereich (data/pressPhotos.ts; nur wenn ein Bild vorliegt) */
+.dz-rphoto { display: block; width: 100%; aspect-ratio: 2 / 1; object-fit: cover; margin: 4px 0 12px; filter: grayscale(1) contrast(1.05); border: 1px solid var(--border-soft); }
+
+/* ---- Knöpfe: wichtige Knöpfe in Vereinsfarbe ---------------------------------- */
+.b3-primary, .btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.b3-primary:hover, .btn-primary:hover { background: var(--accent-dim); border-color: var(--accent-dim); color: var(--accent-ink); }
+
+/* ---- Fenster ----------------------------------------------------------------- */
+.modal { background: var(--panel); border: 1px solid var(--border); box-shadow: var(--shadow-lg); }
+.mx-head { background: var(--navy); color: var(--navy-ink); }
+.mx-head h2, .mx-head .mx-sub { color: var(--navy-ink); }
+.mx-head .mx-sub { opacity: 0.75; }
+.mx-head .modal-close { color: var(--navy-ink); }
+
+/* Kopfleiste auf kleineren Bildschirmen: alle 9 Menüpunkte sichtbar */
+@media (max-width: 1750px) {
+  .hd-nav-item { font-size: 16.5px; padding: 0 7px; }
+  .hd-logo { padding-right: 34px; }
+}
+@media (max-width: 1450px) {
+  .hd-nav-item { font-size: 15.5px; padding: 0 7px; letter-spacing: 0.4px; }
+  .hd-logo { padding-right: 26px; }
+}
+
+/* ---- Bühnen & Startbildschirm bleiben dunkel ----------------------------------
+   Gezeichnete Bühnen (Auslosung, Gala, Halle, Bewertung, Textmodus, Vorschau,
+   Saisonauftakt) und Hauptmenü/Assistent sind auf dunklen Grund gebaut: dort gelten
+   die dunklen Werte von „Ruhig Flutlicht“ weiter; nur der Hauptknopf trägt die Vereinsfarbe. */
+.menu-bg, .menu-panel, .ng-root, .dr-root, .gb-root, .ix-root, .rt-root, .rb2-overlay, .ms-root, .pm-root, .si-stage {
+  color-scheme: dark;
+  --bg: #0c0f15; --bg-2: #13161c; --panel: #1a1d23; --panel-2: #22252b; --panel-hover: #292c32; --elevated: #2a2d33;
+  --text: #ffffff; --text-2: #d0d6dd; --text-3: #a2acb8; --text-4: #59626e; --text-hi: #ffffff;
+  --border: #303339; --border-soft: #24272d; --border-strong: #45484e;
+  --ink-rgb: 255, 255, 255; --shade-rgb: 0, 0, 0; --bg-rgb: 5, 7, 10; --panel-rgb: 12, 15, 20;
+  --accent: #e6eaef; --accent-dim: #b4bcc7; --accent-ink: #10141a; --accent-rgb: 230, 234, 239;
+  --accent-glow: rgba(230, 234, 239, 0.14); --accent-soft: rgba(230, 234, 239, 0.08);
+  --primary: var(--club-accent, #c8202a); --primary-hover: var(--club-accent-hover, #a81a23); --primary-ink: var(--club-accent-ink, #ffffff);
+  --icon-base: #f2eeea; --icon-accent: #c3cad4; --icon-knock: #14171d;
+  --q-1: #f3f5f8; --q-2: #c3cad4; --q-3: #8d97a4; --q-4: #626b77;
+  --bar-track: rgba(255, 255, 255, 0.06); --bar-fill: #8a94a1; --bar-fill-hi: #c9d0d9;
+  --green: #5bbf8b; --yellow: #d7b45e; --orange: #d98a5b; --red: #e0646f; --gold: #d9b26a;
+  --red-rgb: 224, 100, 111; --green-rgb: 91, 191, 139; --yellow-rgb: 215, 180, 94;
+  --pos-gk: #3fb3aa; --pos-def: #5aae6c; --pos-mid: #5d8fd8; --pos-att: #d7625f; --pos-mix: 72%;
+  --pos-key: #5a9ef0; --pos-key-2: #9fc4f2; --fam-1: #4aa877; --fam-2: #2e7352; --fam-3: #263f37;
+  --rl-me-bg: rgba(255, 255, 255, 0.04); --rl-hover: rgba(255, 255, 255, 0.03);
+  --btn-bg: rgba(255, 255, 255, 0.09); --btn-bg-hover: rgba(255, 255, 255, 0.17); --btn-bg-press: rgba(255, 255, 255, 0.24);
+  --btn-border: rgba(255, 255, 255, 0.24); --btn-border-hover: #ffffff; --btn-text: #dfe4ea; --btn-text-hover: #ffffff;
+  --btn-on-bg: #eef1f5; --btn-on-border: #ffffff; --btn-on-text: #10141a; --btn-off-text: #c9d0d8;
+  --seg-bg: rgba(0, 0, 0, 0.3);
+  --sel-bg: rgba(255, 255, 255, 0.16); --sel-border: rgba(255, 255, 255, 0.62); --sel-text: #ffffff;
+  --focus-ring: rgba(255, 255, 255, 0.85);
+  --pop-bg: #1e2228; --pop-border: rgba(255, 255, 255, 0.2); --pop-hover: rgba(255, 255, 255, 0.1);
+  --today-bg: #ffffff; --today-text: #10141a;
+  --shadow: 0 6px 24px rgba(0, 0, 0, 0.45); --shadow-lg: 0 18px 55px rgba(0, 0, 0, 0.6);
+}
+@media (max-width: 1500px) {
+  .dz-news > .inbox-filter { padding: 0 10px; gap: 6px; }
+  .dz-news > .inbox-filter .seg3 > * { padding: 0 5px; }
+  .dz-news > .inbox-filter .inbox-cat { width: 112px; flex-basis: 112px; }
+}

@@ -17,6 +17,7 @@ import { EventChoices } from '../EventChoices';
 import { msgGroup, msgPlayer, ownGames, type MsgGroup } from './data';
 import PosBadge from '../../../components/PosBadge';
 import { InboxFilterBar, matchesFilter, needsDecision, type InboxFilter } from '../inboxFilter';
+import { pressPhotoFor } from '../../../data/pressPhotos';
 
 /** Passende Seite je Kategorie (Knopf im Lesebereich). */
 const CAT_TARGET: Partial<Record<MessageCategory, [Screen, string]>> = {
@@ -108,8 +109,10 @@ function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
 }) {
   if (!m) return <div className="dz-read dz-read-empty">Wähle links eine Nachricht aus.</div>;
   const p = msgPlayer(g, m);
-  const matchId = !p && m.relatedId && ownGames(g).some((x) => x.matchId === m.relatedId) ? m.relatedId : null;
+  const game = !p && m.relatedId ? ownGames(g).find((x) => x.matchId === m.relatedId) : undefined;
+  const matchId = game ? m.relatedId! : null;
   const target = CAT_TARGET[m.category];
+  const photo = pressPhotoFor(m, { won: !!game && game.gf != null && game.ga != null && game.gf > game.ga });
   return (
     <article className="dz-read" key={m.id}>
       <div className="dz-rdate"><span>{wd(m.date)}</span> {dmy(m.date)}</div>
@@ -117,6 +120,7 @@ function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
       <div className="dz-rmeta">Von {m.from} · {CATEGORY_META[m.category]?.label}{m.actionRequired && !m.eventRef?.resolved && !m.resultText ? ' · Entscheidung nötig' : ''}</div>
       <div className="dz-rtext">
         {m.shortText && m.shortText !== m.bodyText && <p className="dz-rlead">{m.shortText}</p>}
+        {photo && <img className="dz-rphoto" src={photo} alt="" loading="lazy" draggable={false} />}
         <p className="dz-rbody">{m.bodyText}</p>
         <EventChoices g={g} msg={m} onDone={onChange} />
       </div>
