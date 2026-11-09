@@ -6,11 +6,11 @@ das Spiel läuft also auch ohne Bild. Ein Bild wird erst angezeigt, wenn es im j
 (z. B. `src/data/trophyImages.ts`) eingetragen ist.
 
 ## Stand und nächste Bilder (Stand 6. November 2026, Look „Akte 1975“)
-**Vorhanden:** Papiertextur, Aktenmappe (Newscenter), Zeitungs-Doppelseite (Presse), Ringbuch-Kalender, Einzelblatt, Pressefoto Torjubel 1975,
+**Vorhanden:** Papiertextur, Aktenmappe (Newscenter), Zeitungs-Doppelseite (Presse), Ringbuch-Kalender, Einzelblatt, Pressefotos Torjubel und Verletzung 1975,
 170 Spielergesichter Epoche 1970 (9 Gruppen, ohne Altersstufen und ohne Trikotmasken), Rasen für den Kartenverkauf, Startbildschirm-Tribüne.
 
 **Als Nächstes (in dieser Reihenfolge):**
-1. **Pressefotos 1975** – die 12 fehlenden Motive aus Abschnitt 0 (jede Nachricht zeigt dann ein passendes Foto; heute nur Torjubel nach Siegen).
+1. **Pressefotos 1975** – die 11 fehlenden Motive aus Abschnitt 0 (jede Nachricht zeigt dann ein passendes Foto; heute nur Torjubel nach Siegen).
 2. **Gesichter Mitarbeiter** `faces/staff/1970/01..10.webp` – Trainer, Vorstand, Berater (Presse, Budget-Berater, Trainerteam).
 3. **Gesichter 1980** – `mitteleuropa` 20 Personen, dazu `suedeuropa`/`osteuropa`/`balkan` je 10 (ab etwa 1985 brauchen die Spieler die Frisuren der 80er).
 4. **Trophäen** `trophies/<form>.webp` (Abschnitt 4) – Vitrine unter Verein › Erfolge.
@@ -42,7 +42,7 @@ Stil: helles Papier, gerade Draufsicht, keine Schrift/Logos. Einbindung über To
 | `akte/blatt.webp` | Einzelblatt mit Büttenrand, transparent, Rand ≥ 60 px | 1200×1600 | **vorhanden** – Neun-Teile-Rahmen für weitere Blätter |
 | `akte/kalender.webp` | Ringbuch-Kalender (Kraftdeckel, Ringe links, Blattstapel), transparent | 1511×1041 | **vorhanden** – Zentrale › Kalender (Raster in % in `31-akte.css`) |
 | `akte/korn.png` | feines Druck-Korn, nahtlos | 512×512 | offen – über Kopfleiste/Balken |
-| `presse/<epoche>/<motiv>.webp` | Pressefoto (Epoche 1975 = Schwarzweiß der 70er), erfundene Spieler, keine Wappen | 1200×600 | `1975/torjubel` **vorhanden**; offen: zweikampf, torschuss, torwart, kopfball, abpfiff, fans, stadion, training, vorstand, auslosung, vertrag, verletzung; später je Epoche 1985/2000/2015 |
+| `presse/<epoche>/<motiv>.webp` | Pressefoto (Epoche 1975 = Schwarzweiß der 70er), erfundene Spieler, keine Wappen | 1200×600 | `1975/torjubel`, `1975/verletzung` **vorhanden**; offen: zweikampf, torschuss, torwart, kopfball, abpfiff, fans, stadion, training, vorstand, auslosung, vertrag; später je Epoche 1985/2000/2015 |
 
 Neues Pressefoto: Datei ablegen und Motiv in `PRESS_PHOTOS` (data/pressPhotos.ts) unter der Epoche eintragen.
 

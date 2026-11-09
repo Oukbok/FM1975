@@ -108,3 +108,11 @@
   .tro-fv { font-size: 15px; }
   .tro-cat { padding: 8px 14px 9px; }
 }
+
+/* Seite Verein › Erfolge (unter dem dritten Menü): Kategorie-Leiste über der Liste in der linken
+   Spalte, Vitrine rechts über die volle Höhe – beide Boxen beginnen auf Höhe der übrigen Seiten. */
+.tro-cab-page .tro-cats { grid-column: 1; grid-row: 1; padding: 0 4px; overflow: hidden; }
+.tro-cab-page .tro-cat { padding-left: 10px; padding-right: 10px; }
+.tro-cab-page .tro-cats-sum { display: none; }
+.tro-cab-page .tro-listbox { grid-column: 1; grid-row: 2; }
+.tro-cab-page .tro-stage { grid-column: 2; grid-row: 1 / -1; }

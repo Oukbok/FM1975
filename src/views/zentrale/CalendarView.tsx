@@ -10,7 +10,7 @@ import { fmtDM, fmtDay } from '../../ui/format';
 import { useState } from 'react';
 import Icon from '../../components/Icon';
 import { ownCampDays, ownIndoorDays } from '../../game/winterShared';
-import { MONTH_LABELS, WD_LABELS } from './calendar/calendarShared';
+import { CAL_GROUPS, calGroupOf, MONTH_LABELS, WD_LABELS, type CalGroup } from './calendar/calendarShared';
 import { MonthGrid } from './calendar/MonthGrid';
 import { MonthList } from './calendar/MonthList';
 
@@ -46,6 +46,10 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
   // Gemeinsame Quelle mit dem Kalender-Overlay (shell/CalendarOverlay.tsx): alle Termine je Tag,
   // wichtigster zuerst, mit Sprungziel `screen`.
   const dayEvents = buildDayEventsMap(g);
+  // Filter (Wunsch Pascal): 1. Mannschaft / Jugend / Sonstiges, standardmäßig alles an; gilt für Raster und Liste.
+  const [groups, setGroups] = useState<Set<CalGroup>>(() => new Set(CAL_GROUPS.map((x) => x.key)));
+  const toggleGroup = (k: CalGroup) => setGroups((cur) => { const n = new Set(cur); if (n.has(k)) n.delete(k); else n.add(k); return n; });
+  const shownEvents = new Map([...dayEvents].map(([d, list]) => [d, list.filter((e) => groups.has(calGroupOf(e)))] as const).filter(([, list]) => list.length > 0));
 
   // Blockierte Tage (Pflichtspiele + Pokal + bereits geplante Aktivitäten).
   const blocked = new Map<string, string>(); // iso → Grund
@@ -190,6 +194,10 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
     <DashPage>
       <DashBox className="cal-box" title={`${MONTH_LABELS[viewM]} ${viewY}`} span={2} rows={2} info="spielplan"
         right={<span className="dbtnrow">
+          {CAL_GROUPS.map((x) => (
+            <button key={x.key} className={`b3 cal-filter ${groups.has(x.key) ? 'on' : ''}`} aria-pressed={groups.has(x.key)} onClick={() => toggleGroup(x.key)}>{x.label}</button>
+          ))}
+          <span className="calm-sep" aria-hidden="true" />
           <button className={`b3 ${mode === 'raster' ? 'on' : ''}`} onClick={() => setMode('raster')}>Raster</button>
           <button className={`b3 ${mode === 'liste' ? 'on' : ''}`} onClick={() => setMode('liste')}>Liste</button>
           <span className="calm-sep" aria-hidden="true" />
@@ -204,9 +212,9 @@ export function CalendarView({ g, onChange, onGoto }: { g: Game; onChange: () =>
               : 'Klicke auf einen Tag mit Termin, um direkt dorthin zu springen.'}
         </div>
         {mode === 'liste' && !planMode ? (
-          <div className="calm-scroll"><MonthList g={g} days={monthDays} dayEvents={dayEvents} onGoto={onGoto} /></div>
+          <div className="calm-scroll"><MonthList g={g} days={monthDays} dayEvents={shownEvents} onGoto={onGoto} /></div>
         ) : (
-          <MonthGrid cells={cells} today={today} dayEvents={dayEvents} planMode={planMode} onDay={clickDay}
+          <MonthGrid cells={cells} today={today} dayEvents={shownEvents} planMode={planMode} onDay={clickDay}
             stateOf={(iso) => ({
               blockedReason: blocked.get(iso), free: dayIsFree(iso), selectable: planMode && dayIsFree(iso),
               preview: previewDays.has(iso) ? (previewValid ? 'ok' : 'bad') : undefined,
