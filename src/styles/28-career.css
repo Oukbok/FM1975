@@ -9,7 +9,10 @@
 .car-chart svg { display: block; }
 .car-grid { stroke: var(--border-soft); stroke-width: 1; }
 .car-tick { fill: var(--text-3); font-size: 12px; font-family: var(--font-ui); }
-.car-line { fill: none; stroke: var(--q-2); stroke-width: 2; stroke-linejoin: round; }
+.car-line { fill: none; stroke: var(--q-2); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.car-area-top { stop-color: var(--q-2); stop-opacity: 0.18; }
+.car-area-bottom { stop-color: var(--q-2); stop-opacity: 0; }
+.car-guide { stroke: var(--text-3); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.6; }
 .car-dot { fill: var(--q-2); stroke: var(--panel); stroke-width: 1.5; }
 .car-dot.live { fill: var(--panel); stroke: var(--q-2); stroke-width: 2; }
 .car-dot.on { fill: var(--accent); stroke: var(--accent); }

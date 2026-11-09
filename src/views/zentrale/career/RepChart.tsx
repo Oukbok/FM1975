@@ -1,5 +1,7 @@
-// Ansehen je Saison: ruhige Linie (neutral), letzter Punkt = laufende Saison, Hover mit Wert.
+// Ansehen je Saison: weiche Kurve (ui/smoothPath) mit leichter Fläche darunter; Punkt nur am
+// Ende (laufende Saison) und unter der Maus, dazu eine senkrechte Hilfslinie und der Wert.
 import { useEffect, useRef, useState } from 'react';
+import { smoothArea, smoothPath, type Pt } from '../../../ui/smoothPath';
 
 function useSize<T extends HTMLElement>() {
   const ref = useRef<T>(null);
@@ -27,7 +29,9 @@ export function RepChart({ points, liveLast }: { points: { season: string; rep: 
   const y = (v: number) => pad.t + ih - ((v - lo) / Math.max(1, hi - lo)) * ih;
   const ticks = [lo, Math.round((lo + hi) / 2), hi];
   const every = Math.max(1, Math.ceil(n / Math.max(1, Math.floor(iw / 64))));
-  const path = points.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(p.rep).toFixed(1)}`).join(' ');
+  const pts: Pt[] = points.map((p, i) => [x(i), y(p.rep)]);
+  const path = smoothPath(pts);
+  const area = smoothArea(pts, pad.t + ih);
   const hp = hover != null ? points[hover] : null;
   return (
     <div className="car-chart" ref={ref} onMouseLeave={() => setHover(null)}
@@ -45,13 +49,21 @@ export function RepChart({ points, liveLast }: { points: { season: string; rep: 
             <text x={pad.l - 8} y={y(t) + 4} textAnchor="end" className="car-tick">{t}</text>
           </g>
         ))}
+        <defs>
+          <linearGradient id="carArea" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" className="car-area-top" />
+            <stop offset="100%" className="car-area-bottom" />
+          </linearGradient>
+        </defs>
+        {n > 1 && <path d={area} fill="url(#carArea)" />}
+        {hover != null && <line x1={x(hover)} x2={x(hover)} y1={pad.t} y2={pad.t + ih} className="car-guide" />}
         {n > 1 && <path d={path} className="car-line" />}
-        {points.map((p, i) => (
-          <circle key={p.season} cx={x(i)} cy={y(p.rep)} r={hover === i ? 5 : 3.5}
+        {points.map((p, i) => (i === n - 1 || hover === i) && (
+          <circle key={p.season} cx={x(i)} cy={y(p.rep)} r={hover === i ? 5 : 4}
             className={`car-dot ${liveLast && i === n - 1 ? 'live' : ''} ${hover === i ? 'on' : ''}`} />
         ))}
         {points.map((p, i) => (i % every === 0 || i === n - 1) && (
-          <text key={`l${p.season}`} x={x(i)} y={h - 6} textAnchor="middle" className="car-tick">{p.season.slice(2)}</text>
+          <text key={`l${p.season}`} x={x(i)} y={h - 6} textAnchor={n > 1 && i === n - 1 ? 'end' : n > 1 && i === 0 ? 'start' : 'middle'} className="car-tick">{p.season.slice(2)}</text>
         ))}
       </svg>
       {hp && (

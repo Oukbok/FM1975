@@ -12,9 +12,9 @@ export type PressMotif =
   | 'zweikampf' | 'torschuss' | 'torjubel' | 'torwart' | 'kopfball' | 'abpfiff'
   | 'fans' | 'stadion' | 'training' | 'vorstand' | 'auslosung' | 'vertrag' | 'verletzung';
 
-/** Vorhandene Fotos je Epoche. Beispiel: `1975: ['zweikampf', 'torschuss', 'torjubel']`. */
+/** Vorhandene Fotos je Epoche. Beispiel: `1975: ['zweikampf', 'torschuss', 'torwart', 'torjubel']`. */
 export const PRESS_PHOTOS: Record<number, PressMotif[]> = {
-  1975: ['zweikampf', 'torschuss', 'torjubel', 'verletzung', 'fans', 'abpfiff', 'kopfball', 'stadion', 'training', 'auslosung', 'vertrag', 'vorstand'],
+  1975: ['zweikampf', 'torschuss', 'torwart', 'torjubel', 'verletzung', 'fans', 'abpfiff', 'kopfball', 'stadion', 'training', 'auslosung', 'vertrag', 'vorstand'],
 };
 
 const MOTIFS_BY_CATEGORY: Partial<Record<InboxMessage['category'], PressMotif[]>> = {
