@@ -14,7 +14,7 @@ export type PressMotif =
 
 /** Vorhandene Fotos je Epoche. Beispiel: `1975: ['zweikampf', 'torjubel']`. */
 export const PRESS_PHOTOS: Record<number, PressMotif[]> = {
-  1975: ['torjubel', 'verletzung', 'fans', 'abpfiff', 'kopfball', 'stadion', 'training', 'auslosung', 'vertrag', 'vorstand'],
+  1975: ['zweikampf', 'torjubel', 'verletzung', 'fans', 'abpfiff', 'kopfball', 'stadion', 'training', 'auslosung', 'vertrag', 'vorstand'],
 };
 
 const MOTIFS_BY_CATEGORY: Partial<Record<InboxMessage['category'], PressMotif[]>> = {
