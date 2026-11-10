@@ -3,6 +3,8 @@
 // Positionen) und Hinweise. Reine Logik ohne React, arbeitet direkt auf dem
 // Taktik-Objekt des eigenen Vereins (wie bisher LineupView).
 // =============================================================================
+import { countsAsForeign, matchForeignCap } from '../../engine/registration';
+import { getEraYear } from '../../engine/positions';
 import type { Player, Position, Tactics } from '../../types';
 import { POSITION_GROUPS } from '../../types';
 import { getFormation, type Formation } from '../../data/formations';
@@ -145,6 +147,13 @@ export function lineupHints(t: Tactics, players: Record<string, Player>, benchSi
   if (f.slots.filter((s) => POSITION_GROUPS[s.position] === 'MID').length < 2) out.push({ level: 'info', text: 'Weniger als zwei Mittelfeldspieler – die Ballkontrolle leidet.' });
   // Bank
   const bench = (t.substitutes ?? []).map((id) => players[id]).filter(Boolean);
+  // Ausländerregel der Saison (engine/registration.ts): gilt für Startelf + Bank.
+  const year = getEraYear();
+  const cap = matchForeignCap(year);
+  if (cap != null) {
+    const fx = [...xi.map((x) => x.p), ...bench].filter((p): p is Player => !!p && countsAsForeign(p, year));
+    if (fx.length > cap) out.push({ level: 'warn', text: `${fx.length} Ausländer im Spielberichtsbogen, erlaubt sind ${cap} – die überzähligen (${fx.slice(cap).map((p) => p.lastName).join(', ')}) ersetzt der Co-Trainer beim Anpfiff.` });
+  }
   if (bench.length >= benchSize && !bench.some((p) => p.naturalPosition === 'TW')) out.push({ level: 'info', text: 'Kein Ersatztorwart auf der Bank.' });
   if (bench.length < benchSize) out.push({ level: 'info', text: `${benchSize - bench.length} Bankplätze frei – das Spiel füllt sie vor dem Anpfiff mit den Besten auf.` });
   return out;

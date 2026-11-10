@@ -2488,6 +2488,34 @@ Grundlage ist das **Marktgehalt** (Stärke, Liga-Niveau), dazu Karrierephase, Ge
 KI-Vereine kaufen nur Spieler, die auch wollen. Deshalb sammeln sich die Stars bei den großen Vereinen: Die angesehensten Vereine holen im Sommer gezielt die Leistungsträger kleinerer Vereine, die Kleinen kassieren Ablöse und kaufen günstiger nach. Spieler ohne Vertrag suchen sich ihren Wunschverein unter den Vereinen, die sie brauchen; ehrgeizige Leistungsträger kleiner Vereine verlängern seltener. Von außen (Ausland, untere Ligen) bekommt ein Verein nur Spieler, die zu seinem Ansehen passen.`,
   },
   {
+    id: 'squad-registration',
+    category: 'squad',
+    title: 'Spielermeldung, Ausländer- und Eigengewächs-Regeln',
+    keywords: ['spielermeldung', 'meldeliste', 'ausländer', 'ausländerregel', '3+2', 'bosman', 'fußball-deutscher', 'nicht-europäer', 'local player', 'homegrown', 'eigengewächs', 'b-liste', 'nachmeldung', 'kaderauflagen'],
+    body: `## Wo
+**Kader › Spielermeldung** zeigt die Regeln der Saison, die Kaderauflagen der Liga, alle Ausländer im Kader mit Status und – wenn du im Europapokal spielst – die Meldeliste.
+
+## Ausländer im Spiel (alle Vereine, auch die KI)
+Die Grenze gilt für den **Spielberichtsbogen** (Startelf und Bank), damit auch Einwechslungen sie einhalten. Überzählige Ausländer ersetzt der Co-Trainer beim Anpfiff; die Aufstellung warnt vorher.
+| Ab | Regel |
+|---|---|
+| bis 1991/92 | höchstens zwei Ausländer |
+| 1992/93 | drei Ausländer; wer seit fünf Jahren im Land spielt (davon drei in der Jugend), zählt als „Fußball-Deutscher“ nicht mit |
+| 1996/97 | nach dem Bosman-Urteil sind Europäer frei; höchstens drei Nicht-Europäer |
+| 2004/05 | zusätzlich höchstens fünf Nicht-Europäer unter Vertrag (2005/06: vier) – Verhandlungen über einen weiteren sind gesperrt |
+| 2006/07 | keine Ausländergrenze mehr; dafür zwölf einheimische Lizenzspieler und lokal ausgebildete Spieler: 4 (2 im eigenen Verein), 2007/08 6 (3), ab 2008/09 8 (4) |
+
+Die Kaderauflagen prüft die Liga nach jedem Transferfenster (1.9. und 1.2.). Ein Verstoß kostet eine Geldstrafe.
+
+## Europapokal
+- Bis 1990/91 gilt die Ausländerregel des eigenen Verbands, 1991/92–1995/96 die **3+2-Regel** (drei Ausländer plus zwei assimilierte Spieler), danach keine Grenze.
+- Ab 1999/2000 meldest du eine **Liste mit höchstens 25 Spielern**. Ab 2006/07 sind Plätze für lokal ausgebildete Spieler reserviert (4/6/8, die Hälfte aus dem eigenen Verein) – fehlen sie, schrumpft die Liste entsprechend. U21-Eigengewächse stehen zusätzlich auf der **B-Liste**.
+- Die **Vorauswahl** stellt eine gültige Liste zusammen (Pflichtplätze, drei Torhüter, dann die Stärksten). Ändern kannst du bis zum ersten Europapokalspiel, danach nur im Januar (bis zu drei Nachmeldungen).
+- Nur gemeldete Spieler spielen im Europapokal.
+
+Quellen und Vereinfachungen: \`data/registrationRules.ts\`.`,
+  },
+  {
     id: 'squad-contracts2',
     category: 'squad',
     title: 'Vertragsverhandlung: der Verhandlungstisch',

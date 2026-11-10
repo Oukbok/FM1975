@@ -135,7 +135,7 @@ export function calculateTeamStrength(club: Club, players: Record<string, Player
   const assigned = club.tactics?.assignedPositions ?? {};
   const xi = lineupOverride
     ? lineupOverride.map((p) => ({ p, pos: assigned[p.id] ?? p.naturalPosition }))
-    : resolveLineup(club, players, !!club.isPlayerControlled, era.benchSize).xi;
+    : resolveLineup(club, players, !!club.isPlayerControlled, era.benchSize, { year: getEraYear() }).xi;
   if (xi.length === 0) return { overall: 40, attack: 40, defense: 40, midfield: 40, goalkeeping: 40 };
   const ms = xi.map(({ p, pos }) => makeMPlayer(p, 'home', pos, true, 0));
   for (const m of ms) m.energy = 100;

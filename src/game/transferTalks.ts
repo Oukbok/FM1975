@@ -16,6 +16,7 @@
 //      nächsten Fenster. Ab Bosman können Spieler mit auslaufendem Vertrag
 //      (≤ 6 Monate) ohne Vereinsgespräch einen Vorvertrag unterschreiben.
 // =============================================================================
+import { registrationBlocker } from './registrationGame';
 import { wageLimitFactor } from './budgetPlan';
 import { CalendarEngine } from '../engine/calendar';
 import { hasTransferBan, marketWage } from '../engine/clubEconomy';
@@ -118,6 +119,8 @@ export function talkBlocker(g: Game, p: Player): string | null {
   if (p.loan) return 'Er ist nur ausgeliehen.';
   if (hasTransferBan(g.clubs[g.managedClubId], g.season)) return 'Transfersperre (Lizenzauflage).';
   if (activeTalks(g).length >= 4 && !talkFor(g, p.id)) return 'Höchstens vier Verhandlungen gleichzeitig.';
+  const reg = registrationBlocker(g, p);
+  if (reg) return reg;
   return null;
 }
 

@@ -85,6 +85,7 @@ import { goldenBallDaily } from './goldenBallGame';
 import { recordProfileWeek } from './profileWeeks';
 import { recordMonthlyOv } from './ovHistory';
 import { standNamesMonthly } from './standNames';
+import { bindRegistration, registrationDaily } from './registrationGame';
 import { bindHonours } from './clubHonours';
 import { bindStaffFactor } from './staffGame';
 
@@ -606,6 +607,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   buyBackDaily(g, today, (p, from, to, fee) => { transferPlayer(g, p, from, to, fee, today); repairSquadLists(g); });
   transferTalkDaily(g, today);
   scoutingDaily(g, today); // Einzel-Scouting (Transfers › Scouting)
+  bindRegistration(g); registrationDaily(g, today); // Spielermeldung & Ausländerregeln (game/registrationGame.ts)
   if (g.worldPool && new Date(`${today}T00:00:00Z`).getUTCDay() === 1) ensureWorldPool(g); // montags: Weltspieler mit den Vereinen abgleichen (neue/aufgestiegene Vereine)
   // Winter-Systeme: Hallenturniere/Masters (game/indoorGame.ts) und Trainingslager (game/trainingCampGame.ts).
   const indoorShow = germanHome ? indoorDaily(g, today, ui.onIndoorShow ? (t) => ui.onIndoorShow!(t.id) : undefined) : null;

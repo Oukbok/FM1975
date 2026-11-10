@@ -142,12 +142,13 @@ export class MatchSim {
     this.attendance = this.seatSale.attendance;
     const humanSides = new Set(opts.humanSides ?? []);
     const humanClubs = new Set(opts.humanClubIds ?? []);
-    this.home = this.makeTeam('home', homeClub, humanSides.has('home'), humanClubs.has(homeClub.id));
-    this.away = this.makeTeam('away', awayClub, humanSides.has('away'), humanClubs.has(awayClub.id));
+    const reg = { year: opts.year, euro: opts.competition === 'Europapokal' };
+    this.home = this.makeTeam('home', homeClub, humanSides.has('home'), humanClubs.has(homeClub.id), reg);
+    this.away = this.makeTeam('away', awayClub, humanSides.has('away'), humanClubs.has(awayClub.id), reg);
   }
 
-  private makeTeam(side: Side, club: Club, human: boolean, savedLineup: boolean): TeamState {
-    const lu = resolveLineup(club, this.players, savedLineup, this.era.benchSize);
+  private makeTeam(side: Side, club: Club, human: boolean, savedLineup: boolean, reg: { year: number; euro: boolean }): TeamState {
+    const lu = resolveLineup(club, this.players, savedLineup, this.era.benchSize, reg);
     const ps: MPlayer[] = lu.xi.map(({ p, pos }) => makeMPlayer(p, side, pos, true, 0));
     const map: Record<string, string> = {};
     for (const x of lu.xi) if (x.slot) map[x.slot] = x.p.id;

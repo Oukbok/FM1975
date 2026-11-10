@@ -341,6 +341,16 @@ export const INFO_TEXTS = {
     text: 'Ab 1998 darf der Profibereich in eine Kapitalgesellschaft ausgegliedert werden. Danach kannst du Anteile an einen Investor oder an Sponsoren verkaufen: sofort Geld, dafür Dividende und Mitsprache. Wegen 50+1 bleibt die Mehrheit beim Verein. Anteile lassen sich mit Aufschlag zurückkaufen; liegen alle wieder beim Verein, ist die Rückführung in den e. V. möglich.',
     wiki: 'club-business',
   },
+  spielermeldung: {
+    title: 'Spielermeldung & Ausländerregeln',
+    text: 'Jede Epoche hat eigene Regeln: anfangs zwei Ausländer pro Spiel, ab 1992 drei, nach dem Bosman-Urteil sind Europäer frei, ab 2006 zählen einheimische und lokal ausgebildete Spieler. Die Grenze gilt für Startelf und Bank – auch für die KI.',
+    wiki: 'squad-registration',
+  },
+  meldeliste: {
+    title: 'Europapokal-Meldeliste',
+    text: 'Ab 1999 meldest du höchstens 25 Spieler, ab 2006 mit Pflichtplätzen für lokal ausgebildete Spieler – fehlen sie, schrumpft die Liste. Ändern kannst du sie bis zum ersten Europapokalspiel, danach nur in der Winterpause (bis zu drei Nachmeldungen).',
+    wiki: 'squad-registration',
+  },
   ausgangslage: {
     title: 'Ausgangslage',
     text: 'So stand dein Verein am ersten Tag der Saison da. Die Werte werden beim Saisonwechsel festgehalten und ändern sich danach nicht mehr – so kannst du jede Saison mit ihrem Start vergleichen.',

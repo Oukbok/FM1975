@@ -2,6 +2,7 @@
 // Mannschaft im Spiel: Aufstellung auflösen, Spielerstärke auf der Position,
 // Tagesform und die Mannschaftsteile (Angriff, Kontrolle, Abwehr, Torwart).
 // =============================================================================
+import { countsAsForeign, euroListOf, matchForeignCap } from '../registration';
 import type { Club, Player, Position, Tactics } from '../../types';
 import { POSITION_GROUPS } from '../../types';
 import { getFormation, type FormationSlot } from '../../data/formations';
@@ -97,11 +98,23 @@ export interface ResolvedLineup {
  *   (verletzt/gesperrt) werden slotgenau mit dem passendsten Ersatz besetzt.
  * - KI-Verein: stellt in der eigenen Formation jedes Mal neu auf (Eignung × Frische).
  */
-export function resolveLineup(club: Club, players: Record<string, Player>, human: boolean, benchSize: number): ResolvedLineup {
+export function resolveLineup(club: Club, players: Record<string, Player>, human: boolean, benchSize: number, ctx?: { year: number; euro?: boolean }): ResolvedLineup {
   const t: Tactics | undefined = club.tactics;
   // Eigene Slot-Lagen (frei verschobene Positionen) gelten für den gespeicherten Plan.
   const formation = withLayout(getFormation(t?.formation), human ? t?.slotLayout : undefined);
-  const pool = club.playerIds.map((id) => players[id]).filter(isAvailable);
+  // Spielberechtigung (engine/registration.ts): Europapokal nur Gemeldete, Ausländergrenze je Saison
+  // für den ganzen Spielberichtsbogen (Startelf + Bank).
+  const list = ctx?.euro ? euroListOf(club.id) : null;
+  const cap = ctx ? matchForeignCap(ctx.year, ctx.euro) : null;
+  let foreign = 0;
+  const avail = club.playerIds.map((id) => players[id]).filter(isAvailable);
+  const listed = list ? avail.filter((p) => list.has(p.id)) : avail;
+  // Sicherheitsnetz: reicht die Meldeliste nicht für eine Elf, spielt der Kader (sonst Spielabbruch).
+  const pool = listed.length >= 11 ? listed : avail;
+  const isF = cap == null ? null : new Set(pool.filter((p) => countsAsForeign(p, ctx!.year, ctx!.euro)).map((p) => p.id));
+  const fits = (p: Player) => !isF || !isF.has(p.id) || foreign < cap!;
+  const take = (p: Player) => { if (isF?.has(p.id)) foreign++; };
+  const inPool = new Set(pool.map((p) => p.id));
   const used = new Set<string>();
   const slotPlayer: Record<string, Player> = {};
 
@@ -111,15 +124,16 @@ export function resolveLineup(club: Club, players: Record<string, Player>, human
     for (const slot of formation.slots) {
       const pid = map[slot.id];
       const p = pid ? players[pid] : undefined;
-      if (isAvailable(p) && club.playerIds.includes(p.id) && !used.has(p.id)) { slotPlayer[slot.id] = p; used.add(p.id); }
+      if (isAvailable(p) && inPool.has(p.id) && !used.has(p.id) && fits(p)) { slotPlayer[slot.id] = p; used.add(p.id); take(p); }
     }
     // Startelf ohne lineupMap (Altstand): der Reihe nach in die Slots
     if (!t.lineupMap) {
-      const xi = t.startingXI.map((id) => players[id]).filter((p): p is Player => isAvailable(p) && !used.has(p.id));
+      const xi = t.startingXI.map((id) => players[id]).filter((p): p is Player => isAvailable(p) && inPool.has(p.id) && !used.has(p.id));
       for (const slot of formation.slots) {
         if (slotPlayer[slot.id]) continue;
-        const p = xi.shift();
-        if (p) { slotPlayer[slot.id] = p; used.add(p.id); }
+        let p = xi.shift();
+        while (p && !fits(p)) p = xi.shift();
+        if (p) { slotPlayer[slot.id] = p; used.add(p.id); take(p); }
       }
     }
   }
@@ -133,13 +147,13 @@ export function resolveLineup(club: Club, players: Record<string, Player>, human
     for (const s of open) {
       let bi = -1; let bv = -1;
       for (let i = 0; i < cands.length; i++) {
-        if (taken[i]) continue;
+        if (taken[i] || !fits(cands[i])) continue;
         const v = cachedSuitability(cands[i], s.position) * cond[i];
         if (v > bv) { bv = v; bi = i; }
       }
       if (bi < 0) break;
       taken[bi] = true;
-      slotPlayer[s.id] = cands[bi]; used.add(cands[bi].id);
+      slotPlayer[s.id] = cands[bi]; used.add(cands[bi].id); take(cands[bi]);
     }
   }
 
@@ -150,8 +164,8 @@ export function resolveLineup(club: Club, players: Record<string, Player>, human
   // Bank: gespeicherte Ersatzspieler, dann Beste nach Overall; ein Torwart, wenn möglich
   const bench: Player[] = [];
   const pushBench = (p: Player | undefined) => {
-    if (bench.length >= benchSize || !isAvailable(p) || used.has(p.id) || !club.playerIds.includes(p.id)) return;
-    bench.push(p); used.add(p.id);
+    if (bench.length >= benchSize || !isAvailable(p) || used.has(p.id) || !inPool.has(p.id) || !fits(p)) return;
+    bench.push(p); used.add(p.id); take(p);
   };
   if (human) for (const id of t?.substitutes ?? []) pushBench(players[id]);
   const rest = pool.filter((p) => !used.has(p.id)).sort((a, b) => b.overall - a.overall);

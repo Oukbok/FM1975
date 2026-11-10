@@ -37,7 +37,8 @@ import { buildProClub } from '../data/generate';
 import { seasonExpectation } from '../engine/environment';
 import { buildDdrDivisions, buildSecondLigaSimClubs, historicPointSystem } from './leagueSetup';
 import { COUNTRY_BY_CC, countryOrigin, countryPointSystem, seasonLabelOf } from '../data/world/countries';
-import { setHomeOrigin } from '../data/origins';
+import { ORIGINS, setHomeOrigin } from '../data/origins';
+import { setRegHome } from '../engine/registration';
 import { composeHome, ddrSeedsFor, secondSimClubs } from './worldCompose';
 import { amateurTownsFor, clampStartYear, fillLowerTiers, padSecondTier, reformsAppliedAt, seedPreStartHistory, seedStartPool, startEuroQualifiers } from './startYear';
 import { needsOverlay, worldOverlay } from '../engine/worldData';
@@ -68,6 +69,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   const startISO = `${year}-07-01`;
   const fxStart = `${year}-08-15`;
   setHomeOrigin(isGer ? null : countryOrigin(home));
+  setRegHome(isGer ? 'GER' : (ORIGINS[countryOrigin(home)]?.nationality ?? 'GER'));
   setHomeCurrency(home); // Anzeige in der Heimatwährung (data/currencies.ts)
   setHomeLabel(COUNTRY_BY_CC[home].name);
   setEraYear(year);

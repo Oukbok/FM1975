@@ -62,6 +62,7 @@ function page({ screen, g, rerender, setScreen, onWatch, onReplayDraw, onOpenEdi
     // Einzelseiten
     case 'presse': return <P.PresseView g={g} onWatch={onWatch} onGoto={setScreen} />;
     case 'vertraege': return <P.VertraegeView g={g} onChange={ch} />;
+    case 'meldung': return <P.RegistrationView g={g} onChange={ch} />;
     case 'beobachtung': return <P.BeobachtungView g={g} onChange={ch} />;
     case 'spielerpool': return <P.SpielerpoolView g={g} onChange={ch} />;
     case 'scouting': return <P.ScoutingView g={g} onChange={ch} />;
