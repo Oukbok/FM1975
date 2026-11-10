@@ -83,6 +83,7 @@ import { RatingResult as _RatingResult } from '../engine/development';
 import { awardsDaily } from './seasonAwardsGame';
 import { goldenBallDaily } from './goldenBallGame';
 import { recordProfileWeek } from './profileWeeks';
+import { recordMonthlyOv } from './ovHistory';
 import { bindHonours } from './clubHonours';
 import { bindStaffFactor } from './staffGame';
 
@@ -613,6 +614,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   merchDaily(g, today); // Fanartikel: Wochenabschluss, Nachverkauf, Assistent (game/merchGame.ts)
   { const room = dressingRoomDaily(g, today); if (room) dressingRoomIncidents(g, today, room); } // Kabine (game/dressingRoomGame.ts)
   if (utcDom === 1) {
+    recordMonthlyOv(g, today); // Stärke-Verlauf aller Spieler (game/ovHistory.ts)
     monthlyTrainingReport(g, today);
     monthlySquadHarmony(g, today);
     monthlyEnvironmentUpdate(g, today);

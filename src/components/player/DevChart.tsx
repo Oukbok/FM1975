@@ -4,7 +4,7 @@
 //     `history.weeks`, wahlweise mit Kaderschnitt), „Stärke“, eine Kategorie (Schnitt ihrer
 //     Attribute) oder ein einzelnes Attribut.
 //   • Zeitraum: letzte 52 Wochen oder die gesamte Aufzeichnung.
-// Quellen: Wochenpunkte (eigener Kader, 52), Monatspunkte mit allen Attributen (eigener Kader,
+// Quellen: Stärke je Monat aller Spieler (`history.ovm`, game/ovHistory.ts), Wochenpunkte (eigener Kader, 52), Monatspunkte mit allen Attributen (eigener Kader,
 // zehn Jahre, game/profileWeeks.ts), Stärke je Bewertungsrunde (`development.abilityHistory`)
 // und Attribut-Momentaufnahmen je Bewertung (`history.attributeSnapshots`) – dazu der heutige
 // Wert. Die x-Achse läuft nach Datum, damit unterschiedlich dichte Quellen zusammenpassen.
@@ -12,6 +12,7 @@ import { useMemo, useState, type PointerEvent } from 'react';
 import type { Player, WeekPoint } from '../../types';
 import type { Game } from '../../game/state';
 import { profileWeeksOf } from '../../game/profileWeeks';
+import { ovPoints } from '../../game/ovHistory';
 import { ATTR_DE, GROUPS, utcDate, type AttrKey } from './shared';
 import { smoothPath, type Pt } from '../../ui/smoothPath';
 import Select, { type SelectOption } from '../../ui/Select';
@@ -63,6 +64,7 @@ function attrSeries(p: Player, g: Game | undefined, keys: AttrKey[], today: stri
 function ovSeries(p: Player, today: string): Pnt[] {
   const by = new Map<string, number>();
   for (const h of p.development.abilityHistory) by.set(h.date.slice(0, 10), Math.round(h.ability));
+  for (const x of ovPoints(p.history?.ovm)) by.set(x.d, x.ov);
   for (const m of p.history?.months ?? []) by.set(m.d.slice(0, 10), m.ov);
   for (const w of p.history?.weeks ?? []) by.set(w.d.slice(0, 10), w.ov);
   by.set(today.slice(0, 10), Math.round(p.overall));
