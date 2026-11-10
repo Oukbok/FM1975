@@ -7,6 +7,7 @@
 // damit der Lade-Screen eine Vorschau anzeigen kann.
 // =============================================================================
 
+import { idbAvailable, idbDelete, idbGet, idbMetas, idbPut } from './saveStore';
 import { compressToUTF16, decompressFromUTF16 } from 'lz-string';
 
 /** Format-Version des Speicherstands (für spätere Migrationen). */
@@ -145,12 +146,69 @@ function writeIndex(slots: string[]): void {
   localStorage.setItem(INDEX_KEY, JSON.stringify(Array.from(new Set(slots))));
 }
 
+// -----------------------------------------------------------------------------
+// Speicherort: IndexedDB (engine/saveStore.ts), Rückfall localStorage.
+// Die Metadaten liegen zusätzlich im Speicher (`metaCache`), damit Liste und
+// freie Slots ohne Warten verfügbar sind. `initSaveStore` beim Start: öffnet die
+// Datenbank, zieht alte localStorage-Stände um (danach dort gelöscht), lädt die Liste.
+// -----------------------------------------------------------------------------
+let useIdb = false;
+let metaCache: Map<string, SaveMeta> | null = null;
+let initP: Promise<void> | null = null;
+
+export function initSaveStore(): Promise<void> {
+  if (initP) return initP;
+  initP = (async () => {
+    metaCache = new Map();
+    if (idbAvailable()) {
+      try {
+        for (const m of await idbMetas<SaveMeta>()) if (m?.slot) metaCache.set(m.slot, m);
+        useIdb = true;
+      } catch { useIdb = false; }
+    }
+    if (!storageAvailable()) return;
+    const idx = readIndex();
+    if (!useIdb) {
+      for (const slot of idx) { const s = readSlot(slot); if (s?.meta) metaCache.set(slot, s.meta); }
+      return;
+    }
+    // Umzug alter localStorage-Stände (auch von Tests eingespielte) nach IndexedDB.
+    const left: string[] = [];
+    for (const slot of idx) {
+      const raw = localStorage.getItem(KEY_PREFIX + slot);
+      if (!raw) continue;
+      const json = raw.startsWith(LZ_MARKER) ? decompressFromUTF16(raw.slice(LZ_MARKER.length)) : raw;
+      const s = safeParse<SaveSlot<unknown>>(json);
+      if (!s?.meta) { left.push(slot); continue; }
+      const meta = { ...s.meta, slot };
+      try {
+        await idbPut(slot, meta, json);
+        metaCache.set(slot, meta);
+        localStorage.removeItem(KEY_PREFIX + slot);
+      } catch { left.push(slot); metaCache.set(slot, meta); }
+    }
+    writeIndex(left);
+  })();
+  return initP;
+}
+
+function cache(): Map<string, SaveMeta> {
+  if (!metaCache) {
+    // Vor initSaveStore (Tests, frühe Aufrufe): Liste aus localStorage.
+    metaCache = new Map();
+    if (storageAvailable()) for (const slot of readIndex()) { const s = readSlot(slot); if (s?.meta) metaCache.set(slot, s.meta); }
+  }
+  return metaCache;
+}
+
+/** Wo die Spielstände liegen (für die Einstellungen/Anzeige). */
+export function saveBackend(): 'indexeddb' | 'localstorage' { return useIdb ? 'indexeddb' : 'localstorage'; }
+
 /**
  * Speichert einen Spielstand unter dem angegebenen Slot.
  * @returns true bei Erfolg.
  */
-export function saveGame<T>(slot: string, meta: Omit<SaveMeta, 'slot' | 'savedAt' | 'version'>, game: T): boolean {
-  if (!storageAvailable()) return false;
+export async function saveGame<T>(slot: string, meta: Omit<SaveMeta, 'slot' | 'savedAt' | 'version'>, game: T): Promise<boolean> {
   const fullMeta: SaveMeta = {
     ...meta,
     slot,
@@ -159,9 +217,15 @@ export function saveGame<T>(slot: string, meta: Omit<SaveMeta, 'slot' | 'savedAt
   };
   const payload: SaveSlot<T> = { meta: fullMeta, game };
   try {
-    writeSlot(slot, payload);
-    const idx = readIndex();
-    if (!idx.includes(slot)) writeIndex([...idx, slot]);
+    if (useIdb) {
+      await idbPut(slot, fullMeta, JSON.stringify(payload));
+    } else {
+      if (!storageAvailable()) return false;
+      writeSlot(slot, payload);
+      const idx = readIndex();
+      if (!idx.includes(slot)) writeIndex([...idx, slot]);
+    }
+    cache().set(slot, fullMeta);
     return true;
   } catch {
     return false; // z.B. Quota überschritten
@@ -169,25 +233,28 @@ export function saveGame<T>(slot: string, meta: Omit<SaveMeta, 'slot' | 'savedAt
 }
 
 /** Lädt einen kompletten Speicherstand (Meta + Spielzustand). */
-export function loadGame<T>(slot: string): SaveSlot<T> | null {
+export async function loadGame<T>(slot: string): Promise<SaveSlot<T> | null> {
+  if (useIdb) {
+    try {
+      const json = await idbGet(slot);
+      if (json) return safeParse<SaveSlot<T>>(json);
+    } catch { /* Rückfall unten */ }
+  }
   if (!storageAvailable()) return null;
   return readSlot<T>(slot);
 }
 
 /** Listet alle vorhandenen Speicherstände (Metadaten), neueste zuerst. */
 export function listSaves(): SaveMeta[] {
-  if (!storageAvailable()) return [];
-  const metas: SaveMeta[] = [];
-  for (const slot of readIndex()) {
-    const s = readSlot(slot);
-    if (s?.meta) metas.push(s.meta);
-  }
+  const metas = [...cache().values()];
   metas.sort((a, b) => (a.savedAt < b.savedAt ? 1 : -1));
   return metas;
 }
 
 /** Löscht einen Speicherstand. */
 export function deleteSave(slot: string): void {
+  cache().delete(slot);
+  if (useIdb) idbDelete(slot).catch(() => {});
   if (!storageAvailable()) return;
   localStorage.removeItem(KEY_PREFIX + slot);
   writeIndex(readIndex().filter((s) => s !== slot));
@@ -200,7 +267,7 @@ export function hasSaves(): boolean {
 
 /** Erzeugt einen freien nummerierten Slot-Schlüssel (slot-1, slot-2, ...). */
 export function nextFreeSlot(): string {
-  const used = new Set(readIndex());
+  const used = new Set(cache().keys());
   for (let i = 1; i <= 99; i++) {
     const key = `slot-${i}`;
     if (!used.has(key)) return key;
@@ -378,8 +445,12 @@ export async function importBuiltinSave(b: BuiltinSave): Promise<string> {
   if (!payload?.game) throw new Error('Vorlage ist beschädigt');
   const slot = `vorlage-${b.file.replace(/\.[a-z]+$/i, '')}`;
   payload.meta = { ...payload.meta, slot, name: b.name, clubName: b.clubName, season: b.season, gameDate: b.gameDate, savedAt: new Date().toISOString(), version: payload.meta?.version ?? SAVE_VERSION };
-  writeSlot(slot, payload);
-  const idx = readIndex();
-  if (!idx.includes(slot)) writeIndex([...idx, slot]);
+  if (useIdb) await idbPut(slot, payload.meta, JSON.stringify(payload));
+  else {
+    writeSlot(slot, payload);
+    const idx = readIndex();
+    if (!idx.includes(slot)) writeIndex([...idx, slot]);
+  }
+  cache().set(slot, payload.meta);
   return slot;
 }

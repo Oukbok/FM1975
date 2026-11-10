@@ -12,6 +12,7 @@
     "test:dataset": "node scripts/run-ts.mjs tests/dataset-test.ts",
     "test:contracts": "node scripts/run-ts.mjs tests/contracts-test.ts",
     "test:contracts2": "node scripts/run-ts.mjs tests/contracts2-test.ts",
+    "test:saves": "node scripts/build.mjs && node tests/save-idb.mjs",
     "test:editor": "node scripts/build.mjs && node tests/editor-ui.mjs",
     "test:business": "node scripts/run-ts.mjs tests/club-business-test.ts",
     "test:transfers": "node scripts/run-ts.mjs tests/transfer-test.ts",

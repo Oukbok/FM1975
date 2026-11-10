@@ -1,7 +1,7 @@
 # FM1975 – Arbeitsanleitung für Claude
 
 Browser-Fußballmanager „1975 – A Football Manager“: Start 1975, Verein über Jahrzehnte mit sich ändernden Regeln führen.
-React 18 + TypeScript, gebaut mit esbuild. Kein Backend – alles läuft im Browser (Spielstände in localStorage, eigene Wappen/Trikots in IndexedDB).
+React 18 + TypeScript, gebaut mit esbuild. Kein Backend – alles läuft im Browser (Spielstände in IndexedDB `fm1975-saves` über `engine/saveStore.ts` – Umzug alter localStorage-Stände beim Start in `initSaveStore`, Tests spielen Stände weiter per localStorage ein; Rückfall localStorage; `saveGame`/`loadGame` sind async; Test `npm run test:saves`; Einstellungen in localStorage, eigene Wappen/Trikots in IndexedDB).
 
 ## Befehle
 - `npm run check` – Typprüfung, muss **0 Fehler** ergeben.

@@ -76,14 +76,16 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   // --- Speichern ---
   const doSave = useCallback((slot?: string, name?: string) => {
     const useSlot = slot ?? currentSlot ?? nextFreeSlot();
-    const ok = saveGame(useSlot, {
+    if (!slot && !currentSlot) setCurrentSlot(useSlot); // Autosave: Slot sofort festhalten (Speichern läuft asynchron)
+    saveGame(useSlot, {
       name: (name && name.trim()) ? name.trim() : `${myClub.name} · ${g.season}`,
       managerName: g.manager.name, clubName: myClub.name, clubId: g.managedClubId,
       season: g.season, gameDate: g.calendar.currentDate,
-    }, g);
-    if (ok) setCurrentSlot(useSlot);
-    setSaveMsg(ok ? 'Spiel gespeichert' : 'Speichern fehlgeschlagen');
-    setTimeout(() => setSaveMsg(''), 2500);
+    }, g).then((ok) => {
+      if (ok) setCurrentSlot(useSlot);
+      setSaveMsg(ok ? 'Spiel gespeichert' : 'Speichern fehlgeschlagen');
+      setTimeout(() => setSaveMsg(''), 2500);
+    });
   }, [currentSlot, g, myClub, setCurrentSlot]);
 
   // --- Einen Tag verarbeiten (game/day.ts); Rückrufe merken Fenster vor ---

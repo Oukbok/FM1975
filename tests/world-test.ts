@@ -97,8 +97,8 @@ for (const y of [1985, 1991, 2000, 2025]) {
   startNextSeason(g);
   ok(g.season === '1986/87' && divSizes(g).join() === sizes.join(), `England: Saisonwechsel, Ligagrößen gleich (${divSizes(g).join('/')})`);
   ok(g.pointSystem === '3-point' && g.appliedReforms.length > 0, 'England: keine deutschen Reformen, Punkteregel bleibt');
-  ok(saveGame('w', { name: 'w', managerName: 'w', clubName: 'w', clubId: g.managedClubId, season: g.season, gameDate: g.calendar.currentDate }, g), 'England: Speichern');
-  const l = loadGame<Game>('w')!.game;
+  ok(await saveGame('w', { name: 'w', managerName: 'w', clubName: 'w', clubId: g.managedClubId, season: g.season, gameDate: g.calendar.currentDate }, g), 'England: Speichern');
+  const l = (await loadGame<Game>('w'))!.game;
   prepareLoadedGame(l);
   ok(l.homeCountry === 'eng' && getHomeOrigin() === 'eng', 'England: Laden stellt Heimatland wieder her');
   for (let i = 0; i < 40; i++) tick(l);

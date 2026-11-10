@@ -3,7 +3,7 @@ import { BUILTIN_ID } from './data/dataset/builtin';
 import { cachedDataset, hydrateDatasets } from './data/dataset/storage';
 import { hydrateClubOverrides } from './data/clubOverrides';
 import { yearOf } from './engine/economy';
-import { AppSettings, loadGame, loadSettings, saveSettings } from './engine/save';
+import { AppSettings, initSaveStore, loadGame, loadSettings, saveSettings } from './engine/save';
 import { Game } from './game/state';
 import { MainMenu, preloadNewGameScreen } from './screens/MainMenu';
 import { preloadEarlyParts } from './shell/lazyParts';
@@ -36,6 +36,15 @@ export default function App() {
   const [, setTick] = useState(0);
   const rerender = useCallback(() => setTick((t) => t + 1), []);
   const [settings, setSettings] = useState<AppSettings>(() => loadSettings());
+  // Spielstände aus IndexedDB (engine/saveStore.ts) laden, alte localStorage-Stände umziehen;
+  // höchstens 4 s warten, dann mit dem weiter, was da ist.
+  const [storeReady, setStoreReady] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    const t = setTimeout(() => { if (alive) setStoreReady(true); }, 4000);
+    initSaveStore().catch(() => {}).finally(() => { if (alive) { clearTimeout(t); setStoreReady(true); } });
+    return () => { alive = false; clearTimeout(t); };
+  }, []);
   const [currentSlot, setCurrentSlot] = useState<string | null>(null);
 
   // Spielweiten Vereins-Override-Store (IndexedDB) einmalig beim Start laden und
@@ -64,7 +73,7 @@ export default function App() {
 
   // --- Spiel laden ---
   const doLoad = useCallback(async (slot: string) => {
-    const s = loadGame<Game>(slot);
+    const s = await loadGame<Game>(slot);
     if (!s) return;
     (await loadMigrations()).prepareLoadedGame(s.game);
     // Spieltempo aus den Einstellungen (nicht das im Spielstand gespeicherte).
@@ -102,7 +111,7 @@ export default function App() {
   }, []);
 
   setWagePeriod(settings.wagePeriod); // Gehaltsanzeige pro Jahr/Woche (vor dem Rendern der Seiten)
-  const content = (!inGame || !gameRef.current) ? (
+  const content = !storeReady ? <div className="menu-bg" /> : (!inGame || !gameRef.current) ? (
     <MainMenu
       settings={settings}
       onNewGame={startGame}
