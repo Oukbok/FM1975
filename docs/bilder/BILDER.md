@@ -199,3 +199,9 @@ Werden beim Zusammenführen der Stränge ergänzt (Erstes Training, Trainingslag
 | `world/flagge-<cc>.webp` (z. B. `flagge-eng`, `flagge-ita`, alle Codes aus `data/world/countries.ts`) | Vereinfachte Landesflagge als leicht gewelltes Stoffstück, gedämpfte Farben, ohne Wappen | 120×80 | Assistent Spielwelt/Verein, Ligensystem (Ersatz: gezeichnete Flagge `CountryFlag`, `data/countryFlags.ts`; neue Länder wie Wales/Irland/Bulgarien haben dort noch keine Flagge → neutrales Feld) |
 | `world/epoche-<jahr>.webp` (1975, 1985, 1995, 2005, 2015, 2025) | Stadionszene der Epoche (Stehplätze und Zäune 1975, Sitzplätze 1995, LED-Banden 2025), kühl abgedunkelt | 1920×1080 | Hintergrund Assistent beim gewählten Startjahr (Ersatz: Tribünenfoto) |
 | Wappen der Weltdaten-Vereine | keine Bilder nötig – Wappen entstehen aus Farben/Kürzel; eigene Wappen per Editor (`crests` je Vereins-ID) | – | überall |
+
+### Saison-Briefing (Zentrale › Briefing, Archiv im Zeitungslayout)
+| Datei | Motiv | Größe | Einsatzort |
+|---|---|---|---|
+| `briefing/<jahr>-<titel>.webp` (180 Stück, Liste mit Motiven: `docs/bilder/briefing.md`) | Pressefoto zum Ereignis der Saison (Aufmacher groß, zwei Nebenthemen), Farbe/Körnung passend zum Jahrzehnt, ohne echte Logos/Personen | 1280×720 | Archiv: Aufmacher + Nebenthemen (Ersatz: Themen-Symbol auf Dunkelblau); freischalten in `src/data/briefingImages.ts` |
+| `briefing/neu/<art>.webp` (10 Arten) | Symbolbild je Art von „Neu im Spiel“ (Regeln, Liga, Technik …) | 1280×720 | Archiv: Karten „Neu im Spiel“ |

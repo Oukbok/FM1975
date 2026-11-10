@@ -122,11 +122,11 @@ export const SPONSOR_SLOTS: SponsorSlotDef[] = [
   },
   {
     id: 'wetten', name: 'Wettpartner', short: 'Wetten', bucket: 'advertising', reach: 'national', years: [1, 3], bonuses: false,
-    desc: 'Sportwetten-Anbieter. 2006 wurde Werbung privater Anbieter untersagt (bwin musste von den Trikots), ab 2012 mit Lizenz wieder erlaubt, seit 2021 voll legal.',
+    desc: 'Sportwetten-Anbieter. 2006 wurde Werbung privater Anbieter untersagt (ein Wettanbieter musste von den Trikots eines Topklubs), ab 2012 mit Lizenz wieder erlaubt, seit 2021 voll legal.',
     unlock: 2005, count: (y, t) => (upTo(t, 3) && wettenAllowed(y) ? 1 : 0),
     value: [[2005, 0.8], [2012, 1.2], [2021, 2], [2024, 2]],
     industries: ['wetten'],
-    source: '[S3] bwin-Verbot 2006, Glücksspielstaatsvertrag 2008/2012/2021',
+    source: '[S3] Werbeverbot für private Wettanbieter 2006, Glücksspielstaatsvertrag 2008/2012/2021',
   },
   {
     id: 'aermel', name: 'Ärmelsponsor', short: 'Ärmel', bucket: 'sponsorship', reach: 'global', years: [2, 4], bonuses: true,

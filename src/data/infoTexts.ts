@@ -341,6 +341,11 @@ export const INFO_TEXTS = {
     text: 'Ab 1998 darf der Profibereich in eine Kapitalgesellschaft ausgegliedert werden. Danach kannst du Anteile an einen Investor oder an Sponsoren verkaufen: sofort Geld, dafür Dividende und Mitsprache. Wegen 50+1 bleibt die Mehrheit beim Verein. Anteile lassen sich mit Aufschlag zurückkaufen; liegen alle wieder beim Verein, ist die Rückführung in den e. V. möglich.',
     wiki: 'club-business',
   },
+  ausgangslage: {
+    title: 'Ausgangslage',
+    text: 'So stand dein Verein am ersten Tag der Saison da. Die Werte werden beim Saisonwechsel festgehalten und ändern sich danach nicht mehr – so kannst du jede Saison mit ihrem Start vergleichen.',
+    wiki: 'chronicle-briefing',
+  },
   aufsichtsrat: {
     title: 'Aufsichtsrat',
     text: 'Investor (ab 10 %) und jeder Sponsor mit Anteilen haben einen Sitz im Aufsichtsrat. Jeder Sitz verstärkt die monatliche Bewegung des Vorstandsvertrauens um 20 %: Läuft es gut, steigt es schneller, läuft es schlecht, fällt es schneller.',
