@@ -66,3 +66,6 @@
 /* Summenzeile bleibt beim Scrollen der Box sichtbar */
 .mc-table tr.mc-sum td { position: sticky; bottom: 0; background: var(--panel); z-index: 1; }
 .mc-table tr.mc-sum.mc-sel td { background: color-mix(in srgb, var(--accent) 10%, var(--panel)); }
+.mc-table td.mc-disc { padding-top: 0; padding-bottom: 0; }
+.mc-table td.mc-disc .mc-step { justify-content: flex-end; }
+.mc-table td.mc-disc .mc-step-val { min-width: 44px; text-align: center; }

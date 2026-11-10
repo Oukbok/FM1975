@@ -41,7 +41,7 @@ export function MerchGeneral(p: Props) {
 }
 
 // -----------------------------------------------------------------------------
-function StockBox({ g, club, shop, year, tab, setTab, sel, setSel }: Props & { sel: MerchItemId; setSel: (id: MerchItemId) => void }) {
+function StockBox({ g, club, shop, year, tab, setTab, sel, setSel, onChange }: Props & { sel: MerchItemId; setSel: (id: MerchItemId) => void }) {
   const today = g.calendar.currentDate;
   const items = shownItems(shop, year);
   return (
@@ -66,7 +66,10 @@ function StockBox({ g, club, shop, year, tab, setTab, sel, setSel }: Props & { s
                 <td className="num">{n0(st?.stock ?? 0)}</td>
                 <td className="num">{n0(sold)}</td>
                 <td className="num"><Signed v={profit} fmt={money} /></td>
-                <td className="num">{st?.disc ? `${Math.round(st.disc * 100)} %` : '–'}</td>
+                <td className="num mc-disc" onClick={(e) => e.stopPropagation()}>
+                  {st && !gone ? <Stepper label={`Rabatt ${d.name}`} value={st.disc} step={0.05} min={0} max={0.5} onChange={(v) => { setMerchDiscount(g, d.id, v); onChange(); }}
+                    fmt={(v) => (v ? `${Math.round(v * 100)} %` : 'kein')} /> : '–'}
+                </td>
                 <td className="num" style={{ color: !gone && wk < 2 ? 'var(--neg)' : undefined }}>{gone ? '–' : wk >= 20 ? '> 20 Wo.' : `${wk.toFixed(1).replace('.', ',')} Wo.`}</td>
               </tr>
             );
@@ -140,10 +143,7 @@ function ItemBox({ g, club, shop, year, sel, onChange }: Props & { sel: MerchIte
           <Stepper label="Verkaufspreis" value={st.pf} step={0.05} min={0.5} max={2} onChange={(v) => { setMerchPrice(g, sel, v); onChange(); }}
             fmt={(v) => <>{unitPrice(d, d.price * v, year)} <span className="muted">({Math.round(v * 100)} %)</span></>} />
         </div>
-        <div className="mc-ctl"><span className="dkv-k">Rabatt</span>
-          <Stepper label="Rabatt" value={st.disc} step={0.05} min={0} max={0.5} onChange={(v) => { setMerchDiscount(g, sel, v); onChange(); }}
-            fmt={(v) => v ? `${Math.round(v * 100)} % → ${unitPrice(d, sale, year)}` : 'kein'} />
-        </div>
+        <KV k="Rabatt" v={st.disc ? `${Math.round(st.disc * 100)} % → ${unitPrice(d, sale, year)} (einstellbar im Sortiment)` : 'kein (einstellbar im Sortiment)'} />
         {st.stale > 0 && <div className="mc-ctl"><span className="dkv-k">Ladenhüter ({n0(st.stale)})</span>
           <Stepper label="Rabatt Ladenhüter" value={st.sdisc ?? 0} step={0.05} min={0} max={0.7} onChange={(v) => { setMerchStaleDiscount(g, sel, v); onChange(); }}
             fmt={(v) => `${Math.round(v * 100)} % → ${unitPrice(d, stalePriceBase(d, st), year)}`} />
