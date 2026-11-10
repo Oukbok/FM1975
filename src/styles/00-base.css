@@ -84,6 +84,11 @@
   --gilt-1: #d6bf86;
   --gilt-2: #a68c55;
   --gilt-3: #5f5135;
+  /* Vereinsauszeichnungen (components/honours/HonourBadge.tsx) */
+  --hon-bronze-1: #e2a372; --hon-bronze-2: #a8633a; --hon-bronze-3: #6e3b1d;
+  --hon-silber-1: #f1f4f8; --hon-silber-2: #aab4c0; --hon-silber-3: #66707c;
+  --hon-gold-1: #ffe9a6; --hon-gold-2: #d4a23a; --hon-gold-3: #8a6214;
+  --hon-off-1: #d9dbdf; --hon-off-2: #b8bcc3;
   --plinth-1: #2b313a;
   --plinth-2: #12151a;
   /* Positionen: Schlüsselattribute (blau) und Vertrautheit (Grünstufen) */

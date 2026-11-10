@@ -37,6 +37,7 @@
 // =============================================================================
 import type { Club } from '../types';
 import type { IconName } from '../components/Icon';
+import { honourFx } from './honourEffects';
 
 export type YouthBlockKey = 'coaches' | 'pitches' | 'boarding' | 'school' | 'science' | 'scouting' | 'reserve';
 
@@ -228,8 +229,9 @@ export function academyLevelOf(club: Club): number {
 /** Lernraten-Faktor der Jugendentwicklung (alt: 0,85–1,5 je Stufe). */
 export function academyGrowthOf(club: Club): number {
   const inv = club.youthInvest;
-  if (!inv) return [0, 0.85, 1.0, 1.15, 1.3, 1.5][clamp(Math.round(club.infrastructure?.youthAcademy ?? 1), 1, 5)];
-  return 0.8 + inv.quality / 100 * 0.85;
+  const fx = 1 + honourFx(club.id, 'youthDev'); // Jugendhoheit
+  if (!inv) return [0, 0.85, 1.0, 1.15, 1.3, 1.5][clamp(Math.round(club.infrastructure?.youthAcademy ?? 1), 1, 5)] * fx;
+  return (0.8 + inv.quality / 100 * 0.85) * fx;
 }
 
 /** Zusatz zur altersgerechten Obergrenze der Talente (gute Ausbildung → reifer mit 18/19). */
@@ -282,8 +284,9 @@ export function reserveMinutesFor(club: Club, age: number, proMinutes: number, p
 /** Anziehungskraft eines Vereins für ein Talent (ohne Heimat-/Zufallsanteil). */
 export function attraction(club: Club): number {
   const inv = club.youthInvest;
-  if (!inv) return (club.reputation ?? 50) * 0.5;
-  return 0.38 * inv.reputation + 0.27 * (club.reputation ?? 50) + 0.2 * inv.perspective + 0.15 * inv.quality;
+  const fx = 1 + honourFx(club.id, 'youthAppeal'); // Talentschmiede/Sprungbrett (game/clubHonours.ts)
+  if (!inv) return (club.reputation ?? 50) * 0.5 * fx;
+  return (0.38 * inv.reputation + 0.27 * (club.reputation ?? 50) + 0.2 * inv.perspective + 0.15 * inv.quality) * fx;
 }
 
 /** Wie gut kennt das Scouting-Netz ein Talent? (Wahrscheinlichkeit 0–1) */

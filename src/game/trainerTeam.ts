@@ -18,6 +18,7 @@ import { acceptsOffer, CoachSkill, demandFactor, learnSeason, skillsFromQuality,
 import { ensureStaff } from './staffGame';
 import { ensureStaffWorld } from './staffWorld';
 import { closeHeadCoach, syncHeadCoach } from './headCoaches';
+import { honourFx } from '../engine/honourEffects';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -47,13 +48,13 @@ export function compensationOf(g: Game, m: StaffMember): number {
 /** Will die Person überhaupt wechseln? (Abwerben nur von gleich großen oder kleineren Vereinen) */
 export function willMove(g: Game, m: StaffMember): boolean {
   if (!m.clubId) return true;
-  const mine = g.clubs[g.managedClubId]?.reputation ?? 60;
+  const mine = (g.clubs[g.managedClubId]?.reputation ?? 60) + honourFx(g.managedClubId, 'coachAppeal') * 50; // Ruhige Hand
   const theirs = g.clubs[m.clubId]?.reputation ?? 60;
   return mine >= theirs - 4;
 }
 
 export function demandOf(g: Game, m: StaffMember): number {
-  return demandFactor(m, g.clubs[g.managedClubId]?.reputation ?? 60);
+  return demandFactor(m, g.clubs[g.managedClubId]?.reputation ?? 60) * (1 - honourFx(g.managedClubId, 'coachAppeal') / 2); // Ruhige Hand: Trainer kommen günstiger
 }
 
 function toMarket(g: Game, m: StaffMember): void {

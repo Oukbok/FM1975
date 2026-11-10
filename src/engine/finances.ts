@@ -37,6 +37,7 @@ import { merchGlobalAnnual, operationsMonthly, sponsorMonthly } from './sponsors
 import { bookGroundsMatchday } from './grounds';
 // Fanartikel des eigenen Vereins aus dem Lager (engine/merch.ts, game/merchGame.ts).
 import { MATCHDAY_SHARE, sellFromStock } from './merch';
+import { honourFx } from './honourEffects';
 
 /**
  * Finanzen 2.0: Skalierung je Erlösart aus dem Buchungsdatum. Stadion-Erlöse wachsen
@@ -61,7 +62,7 @@ function scalesFor(club: Club, date: string) {
 
 /** Fanartikel-Potenzial (nominal, Richtpreis) eines Heimspiels mit X Besuchern – wie die Pauschale. */
 export function merchPotential(club: Club, attendance: number, date: string): number {
-  return Math.round(attendance * merchPerHead(club) * scalesFor(club, date).merch);
+  return Math.round(attendance * merchPerHead(club) * scalesFor(club, date).merch * (1 + honourFx(club.id, 'merch'))); // Spektakel / Volle Hütte
 }
 
 /** Preis-Skala je Besucher (Eintritt, Catering, Programm, Logen) eines Vereins im Jahr X. */
@@ -534,7 +535,7 @@ export function computeMonthly(
   // Mitgliedsbeitraege.
   // Mitglieder (eigener Verein, Vereinsumfeld) × Jahresbeitrag 40 DM (1975-Basis); sonst Schätzung über den Ruf.
   const membershipYear = Math.round((club.members ? club.members * 40 : 30000 + club.reputation * 1000) * localScale);
-  const membership = Math.round(membershipYear / 12);
+  const membership = Math.round(membershipYear * (1 + honourFx(club.id, 'members')) / 12); // Volle Hütte
   // Catering-Pacht nur bei Verpachtung.
   const cLevel = Math.max(1, Math.min(5, Math.round(club.infrastructure?.catering ?? 1)));
   const cateringLease = (club.commerce?.cateringMode ?? 'verpachtung') === 'verpachtung'

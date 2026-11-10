@@ -258,6 +258,7 @@ export function generateYouthPlayer(
 
   const youth: Player = {
     id: `${clubId}_y_${uniqueSeed}`,
+    youthJoined: currentDate,
     firstName, lastName, fullName: `${firstName} ${lastName}`,
     shirtNumber: 30 + ri(0, 69),
     nationality: origin.nationality, origin: origin.id, face: origin.face,
@@ -592,6 +593,8 @@ export function promoteYouth(
   players: Record<string, Player>,
   youthPlayers: Record<string, Player>,
   maxSquad = 26,
+  /** Datum des Hochziehens (für „Eigengewächs“, game/clubHonours.ts). */
+  date?: string,
 ): PromoteResult {
   const idx = club.youthPlayerIds.indexOf(playerId);
   if (idx < 0) return { ok: false, reason: 'Talent nicht in der Jugend gefunden' };
@@ -607,6 +610,7 @@ export function promoteYouth(
 
   // Als Profi übernehmen: Stärke nach Profi-Maßstab, Potenzial bleibt eine Einschätzung.
   p.isYouth = false;
+  if (date) p.youthPromoted = date;
   // Das fein ausgewürfelte Höchstpotenzial bleibt erhalten (keine Sterne-Rundung).
   p.development.basePotential = Math.max(p.overall, p.development.potentialAbility ?? starsToPotential(p.potentialStars));
   ensureDevFields(p);

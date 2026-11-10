@@ -34,7 +34,7 @@ export function YouthModal({ g, player, club, onClose, onChange, foreign = false
   const squadFull = club.playerIds.length >= 26;
 
   const doPromote = () => {
-    const res = promoteYouth(club, p.id, g.players, g.youthPlayers, 26);
+    const res = promoteYouth(club, p.id, g.players, g.youthPlayers, 26, g.calendar.currentDate);
     if (res.ok) {
       pushMessage(g.messages, makeMessage({
         date: g.calendar.currentDate, category: 'training', from: 'Leiter Jugendakademie',

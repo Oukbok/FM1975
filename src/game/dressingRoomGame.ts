@@ -31,6 +31,8 @@ import { Club, Player } from '../types';
 import { yearsAtClub } from './playerWishesGame';
 import { listingJolts, matchJolts, moraleJolt, pruneJolts } from './moraleJolt';
 import { Game } from './state';
+import { noteHonourMood } from './clubHonours';
+import { honourFx } from '../engine/honourEffects';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const days = (a: string, b: string) => (Date.parse(b + 'T00:00:00Z') - Date.parse(a + 'T00:00:00Z')) / 86400000;
@@ -255,11 +257,14 @@ export function dressingRoomDaily(g: Game, today: string): DRAnalysis | null {
     const o = a.byId[p.id];
     if (!o) continue;
     const s = p.moraleScore ?? moraleScoreOf(p.morale);
-    if (!jolted.has(p.id)) p.moraleScore = Math.round((s + (o.target - s) * MORALE_GLIDE) * 10) / 10;
+    // Eingeschworene Truppe (game/clubHonours.ts): Moral sinkt langsamer.
+    const glide = o.target < s ? MORALE_GLIDE * (1 - honourFx(club.id, 'moraleHold')) : MORALE_GLIDE;
+    if (!jolted.has(p.id)) p.moraleScore = Math.round((s + (o.target - s) * glide) * 10) / 10;
     p.morale = moraleStepOf(p.moraleScore!);
   }
   dr.mood = Math.round((dr.mood + (a.moodTarget - dr.mood) * 0.06) * 10) / 10;
   dr.cohesion = a.cohesion;
+  noteHonourMood(g, club.id, dr.mood);
   rallyIfStuck(g, dr, a, today);
   if (today.slice(8) === '01') {
     (dr.history ??= []).push({ date: today, mood: Math.round(dr.mood), cohesion: a.cohesion, outsiders: a.outsiders.length });
@@ -324,6 +329,7 @@ export function aiDressingRoomsWeekly(g: Game): void {
     if (club.id === g.managedClubId || !club.playerIds.length) continue;
     const dr = roomOf(club);
     dr.mood = Math.round((dr.mood + (aiMoodTarget(forms.get(club.id) ?? []) - dr.mood) * 0.4) * 10) / 10;
+    noteHonourMood(g, club.id, dr.mood);
     const squad = squadOf(g, club).sort((a, b) => b.overall - a.overall);
     squad.forEach((p, i) => {
       const want = aiMoraleStep(dr.mood, p, i + 1);

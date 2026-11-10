@@ -18,6 +18,7 @@ import ClubTab from './club/ClubTab';
 import HistoryTab from './club/HistoryTab';
 import OverviewTab from './club/OverviewTab';
 import SquadTab from './club/SquadTab';
+import { HonourStrip } from '../views/verein/honours/HonoursView';
 import { TrophyCabinet } from '../views/verein/trophies/TrophyCabinet';
 
 export type ClubTabKey = 'overview' | 'squad' | 'club' | 'history' | 'trophies';
@@ -63,6 +64,7 @@ export default function ClubModal({ g, clubId, nonce, onChange, onClose, onBack,
           <div className="cmx-id">
             <div className="mx-sub">{[d.city, d.founded ? `gegründet ${d.founded}` : null, d.divisionLabel].filter(Boolean).join(' · ')}</div>
             <h2>{d.name}{d.isPlayerClub && <span className="cmx-mine">dein Verein</span>}</h2>
+            <HonourStrip g={g} clubId={clubId} />
           </div>
           <div className="mx-kpis">
             <Kpi value={d.tablePosition != null ? `${d.tablePosition}.` : '–'} label="Platz" />

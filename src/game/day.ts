@@ -81,6 +81,7 @@ import { RatingResult as _RatingResult } from '../engine/development';
 import { awardsDaily } from './seasonAwardsGame';
 import { goldenBallDaily } from './goldenBallGame';
 import { recordProfileWeek } from './profileWeeks';
+import { bindHonours } from './clubHonours';
 
 export interface DayUi {
   /** Eigenes Spiel wurde gespielt → Spielbericht/Textmodus öffnen. */
@@ -122,6 +123,7 @@ export interface DayUi {
 export const HEADLESS_UI: DayUi = { onOwnMatch() {}, onRatingCeremony() {}, onSeasonEnd() {} };
 
 export function processDay(g: Game, ui: DayUi): boolean {
+  bindHonours(g); // Wirkungen der Vereinsauszeichnungen (nur bei neuem Spielstand neu)
   const myClub = g.clubs[g.managedClubId];
 
   const cal = g.calendar;

@@ -20,6 +20,7 @@ import { recordFeeEUR } from '../data/transferRecords';
 import { DM_PER_EUR, economyScale } from './economy';
 import { personaOf } from './persona';
 import { ClubAppeal, WageDemand, WishPromise } from './playerWishes';
+import { honourFx } from './honourEffects';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -128,6 +129,8 @@ export function sellerPosition(p: Player, seller: Club, buyer: Club, ctx: Seller
   if (ctx.rival) { f *= 1.15; notes.push('Rivale'); }
   if (ctx.competitor) { f *= 1.08; notes.push('direkter Konkurrent'); }
   if (buyer.reputation > seller.reputation + 5) f *= 1.06;
+  const geschick = honourFx(buyer.id, 'feeCut'); // Transfer-Geschick des Käufers
+  if (geschick > 0) { f *= 1 - geschick; notes.push('Transfer-Geschick'); }
 
   const hardness = hash01(seller.id + '|härte');
   f *= 0.92 + hardness * 0.25;

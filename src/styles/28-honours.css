@@ -1,0 +1,65 @@
+/* Vereinsauszeichnungen (Wunsch Pascal) – Medaillen, Raster Verein › Erfolge › Auszeichnungen,
+   Leiste im Vereinsprofil, Hover-Fenster. Komponenten components/honours/HonourBadge.tsx,
+   views/verein/honours/HonoursView.tsx. */
+.hm { display: block; flex: none; }
+.hm-ring { stroke-width: 0; }
+.hm-bronze .hm-ring { fill: var(--hon-bronze-2); }
+.hm-silber .hm-ring { fill: var(--hon-silber-2); }
+.hm-gold .hm-ring { fill: var(--hon-gold-2); }
+.hm-off .hm-ring { fill: var(--hon-off-1); }
+/* Glanz: helle Oberkante, dunkle Unterkante des Rings */
+.hm-shine { fill: none; stroke-width: 3.5; }
+.hm-bronze .hm-shine { stroke: var(--hon-bronze-1); }
+.hm-silber .hm-shine { stroke: var(--hon-silber-1); }
+.hm-gold .hm-shine { stroke: var(--hon-gold-1); }
+.hm-off .hm-shine { stroke: var(--hon-off-2); stroke-width: 1.5; }
+.hm-disc { fill: var(--navy, #1b2a44); stroke-width: 2; }
+.hm-bronze .hm-disc { stroke: var(--hon-bronze-3); }
+.hm-silber .hm-disc { stroke: var(--hon-silber-3); }
+.hm-gold .hm-disc { stroke: var(--hon-gold-3); }
+.hm-off .hm-disc { fill: var(--hon-off-1); stroke: var(--hon-off-2); stroke-dasharray: 3 3; }
+.hm-icon { fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.hm-bronze .hm-icon { stroke: var(--hon-bronze-1); }
+.hm-silber .hm-icon { stroke: var(--hon-silber-1); }
+.hm-gold .hm-icon { stroke: var(--hon-gold-1); }
+.hm-off .hm-icon { stroke: var(--hon-off-2); }
+.hm-icon circle { fill: currentColor; }
+.hm-bronze .hm-icon circle { fill: var(--hon-bronze-1); }
+.hm-silber .hm-icon circle { fill: var(--hon-silber-1); }
+.hm-gold .hm-icon circle { fill: var(--hon-gold-1); }
+.hm-off .hm-icon circle { fill: var(--hon-off-2); }
+
+.hb { display: inline-flex; flex-direction: column; align-items: center; gap: 4px; cursor: help; outline: none; border-radius: 10px; }
+.hb:focus-visible { box-shadow: var(--focus-ring, 0 0 0 2px var(--text-3)); }
+.hb.on .hm { filter: drop-shadow(0 3px 6px rgba(var(--shade-rgb), 0.28)); }
+.hb.off .hm { opacity: 0.8; }
+.hb-card { padding: 10px 6px 8px; width: 100%; transition: background .12s; }
+.hb-card:hover { background: rgba(var(--ink-rgb), 0.05); }
+.hb-name { font-family: var(--font-display); font-size: 15px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; color: var(--text); text-align: center; line-height: 1.15; }
+.hb.off .hb-name { color: var(--text-3); }
+.hb-sub { font-size: 12.5px; color: var(--text-3); white-space: nowrap; }
+.hb.on .hb-sub { color: var(--text-2); font-weight: 600; }
+
+.sub3-page > .dpage.hon-page { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+.hon-box .dbox-body { display: flex; align-items: center; }
+.hon-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; width: 100%; }
+
+/* Vereinsprofil: Leiste unter dem Namen */
+.hon-strip { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+.hon-strip .hb { gap: 0; }
+
+/* Hover-Fenster */
+.hm-pop { max-width: 380px; padding: 0 !important; }
+.hm-tip { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; font-size: 13px; line-height: 1.4; }
+.hm-tip-h b { display: block; font-family: var(--font-display); font-size: 17px; text-transform: uppercase; letter-spacing: .02em; }
+.hm-tip-h span { color: var(--text-3); }
+.hm-tip-tier { display: grid; grid-template-columns: 14px 1fr; gap: 8px; padding: 6px 8px; border-radius: 6px; border: 1px solid transparent; }
+.hm-tip-tier.on { border-color: var(--border); background: rgba(var(--ink-rgb), 0.05); }
+.hm-tip-tier b { display: block; font-size: 12.5px; text-transform: uppercase; letter-spacing: .05em; }
+.hm-tip-tier span { display: block; color: var(--text-2); }
+.hm-tip-tier em { display: block; font-style: normal; color: var(--text-3); font-size: 12.5px; }
+.hm-tip-dot { width: 12px; height: 12px; margin-top: 3px; border-radius: 50%; }
+.hm-tip-tier.t0 .hm-tip-dot { background: var(--hon-bronze-2); }
+.hm-tip-tier.t1 .hm-tip-dot { background: var(--hon-silber-2); }
+.hm-tip-tier.t2 .hm-tip-dot { background: var(--hon-gold-2); }
+.hm-tip-foot { padding-top: 6px; border-top: 1px solid var(--border-soft); color: var(--text-3); font-size: 12.5px; }

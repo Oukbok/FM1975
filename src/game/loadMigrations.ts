@@ -63,6 +63,7 @@ import { migrateHistoryMode } from './historicSteer';
 import { migrateTransferLog } from './transferLog';
 import { migrateCareer } from './careerGame';
 import { assignShirtNumbers } from './squads';
+import { bindHonours } from './clubHonours';
 
 /** Bereitet einen gerade gelesenen Spielstand zum Weiterspielen vor (verändert `g`). */
 export function prepareLoadedGame(g: Game): void {
@@ -355,4 +356,5 @@ export function prepareLoadedGame(g: Game): void {
   try { migrateCareer(g); } catch (err) { console.error('Karriere-Bereinigung fehlgeschlagen:', err); }
   try { migrateBudget(g); } catch (err) { console.error('Saisonbudget-Nachrüstung fehlgeschlagen:', err); }
   try { migrateContracts2(g); } catch (err) { console.error('Vertrag-2.0-Nachrüstung fehlgeschlagen:', err); }
+  bindHonours(g, true); // Vereinsauszeichnungen: Wirkungstabelle des geladenen Spielstands
 }

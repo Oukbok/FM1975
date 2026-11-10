@@ -58,7 +58,7 @@ export function monthlyClubBusiness(g: Game, today: string): void {
             date: today, category: 'board', from: 'Vermarktung',
             subject: 'Namensrechte ausgelaufen',
             shortText: `Das Stadion heißt wieder ${club.stadium.name}.`,
-            bodyText: `Der Vertrag mit ${nr.sponsor} ist ausgelaufen. Das Stadion trägt wieder seinen alten Namen. Neue Angebote findest du unter Verein → Vorstand.`,
+            bodyText: `Der Vertrag mit ${nr.sponsor} ist ausgelaufen. Das Stadion trägt wieder seinen alten Namen. Neue Angebote findest du unter Finanzen › Sponsoring › Namensrechte.`,
           }));
         }
       } else {

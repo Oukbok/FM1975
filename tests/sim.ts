@@ -22,6 +22,7 @@ import { histModeFromEnv, histSummary, histTrack } from './simHistory';
 import { budgetCheck, budgetInit, budgetSummary } from './simBudget';
 import { promBefore, promInit, promModeFromEnv, promSeasonEnd, promSeasonStart, promSummary } from './simPromises';
 import { legSummary, legTrack } from './simLegends';
+import { honoursSummary, honoursTrack } from './simHonours';
 import { campAfter, campBefore, campInit, campModeFromEnv, campSeasonReport, campSeasonStart, campSummary } from './simCamp';
 
 const seasons = Number(process.argv[2] ?? 3);
@@ -479,6 +480,7 @@ for (let s = 0; s < seasons; s++) {
   if (process.env.LEGENDS) legTrack(g);
   const promSt = promSeasonEnd(g), promSeason = g.season;
   startNextSeason(g);
+  if (process.env.HONOURS) honoursTrack(g);
   campSeasonStart(g);
   promSeasonStart(g, promSt, promSeason);
   if (process.env.STAFF) staffReport(g);
@@ -529,6 +531,7 @@ promSummary();
 budgetSummary();
 if (process.env.TOP) { topSummary(); careerSummary(); }
 if (process.env.LEGENDS) legSummary(g);
+if (process.env.HONOURS) honoursSummary();
 console.log(`fertig in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 // Diagnose: Wer ist ≥ 85?
 {

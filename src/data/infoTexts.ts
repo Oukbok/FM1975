@@ -254,6 +254,12 @@ export const INFO_TEXTS = {
     wiki: 'position-weights',
   },
 
+  auszeichnungen: {
+    title: 'Vereinsauszeichnungen',
+    text: 'Besondere Leistungen über eine Saison oder mehrere Jahre bringen dauerhafte Boni in Bronze, Silber oder Gold. Jede Stufe gilt 5 Jahre und verlängert sich, wenn du die Hürde erneut schaffst. Fahre über eine Medaille, um Voraussetzung und Wirkung zu sehen.',
+    wiki: 'club-honours',
+  },
+
   // ---------------------------------------------------------------- Finanzen
   kontostand: {
     title: 'Kontostand',

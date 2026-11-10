@@ -36,7 +36,7 @@ export default function OverviewTab({ g, d, openPlayer }: ClubTabProps) {
           <KV k="Saisonziel" v={own?.boardExpectation || '–'} strong />
           <Meter label="Vorstandsvertrauen" value={own?.boardConfidence ?? 0} color={vColor(own?.boardConfidence ?? 0)} />
           <KV k="Titel seit Spielbeginn" v={titlesOf(g, d.clubId).length} />
-          <div className="dnote mt8">So sehen Presse und Konkurrenz deinen Verein. Details im Bereich Verein → Vorstand.</div>
+          <div className="dnote mt8">So sehen Presse und Konkurrenz deinen Verein. Rechtsform und Investor unter Verein › Verein, Lizenz & Schulden unter Finanzen.</div>
         </DashBox>
       ) : (
         <DashBox title={`Duell mit ${own?.shortName ?? 'dir'}`} icon="dashBall" right={h2h.length ? `${h2h.length} Spiele` : undefined}>

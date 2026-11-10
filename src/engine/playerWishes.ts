@@ -13,11 +13,12 @@
 // 3) Wunsch-Versprechen (`promiseWeights`) nach Persönlichkeit und Lage.
 // Alle Beträge sind Preisschilder in 1975-Basis (Gehalt pro Woche).
 // =============================================================================
-import { Club, Player } from '../types';
+import { Club, Player, POSITION_GROUPS } from '../types';
 import { marketWage } from './clubEconomy';
 import { clubWageLevel } from './economy';
 import { CareerPhase, careerPhase, familyWeight, personaOf, PlayerPersona } from './persona';
 import { hash01 } from './transferMarket';
+import { honourFx } from './honourEffects';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -114,6 +115,12 @@ export function clubAppeal(p: Player, ctx: WishCtx): ClubAppeal {
     add('rival', 'Wechsel zum Rivalen', -(tied ? pe.loyalitaet / 4 + pe.heimat / 8 : pe.loyalitaet / 10));
     if (pe.loyalitaet >= 70 && (ctx.rivalOfHome || ctx.yearsAtClub >= 5)) dealBreaker = 'Zum Erzrivalen wechselt er nie – das würden ihm die Fans nicht verzeihen.';
   }
+  // Vereinsauszeichnungen des Käufers (game/clubHonours.ts): Anteil vom neutralen Reiz 50.
+  const grp = POSITION_GROUPS[p.naturalPosition];
+  const foreignP = !!p.nationality && p.nationality !== 'GER' && p.nationality !== 'Deutschland';
+  const hon = honourFx(ctx.buyer.id, 'appeal') + (grp === 'GK' || grp === 'DEF' ? honourFx(ctx.buyer.id, 'defAppeal') : 0)
+    + (foreignP ? honourFx(ctx.buyer.id, 'foreignAppeal') : 0);
+  if (hon > 0 && ctx.current?.id !== ctx.buyer.id) add('honour', 'Ruf des Vereins (Auszeichnungen)', hon * 50);
   const score = Math.round(clamp(50 + f.reduce((s, x) => s + x.value, 0), 0, 100));
   f.sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
   return { score, factors: f, dealBreaker };
@@ -169,6 +176,8 @@ export function wageDemand(p: Player, buyer: Club, year: number, appeal: ClubApp
   const bosman = freeAgent && year >= 1996;
   if (bosman) norm *= 1.1; // Bosman: Die gesparte Ablöse fließt teils ins Gehalt
   if (moving && phase !== 'ausklang') norm = Math.max(norm, p.contract.weeklyWage * 1.06);
+  // Spitzenklub (alle) und Sprungbrett (bis 23): Spieler nehmen bei dir weniger Gehalt.
+  norm *= 1 - honourFx(buyer.id, 'wage') - (p.age <= 23 ? honourFx(buyer.id, 'youngWage') : 0);
   // Verzicht nur, wenn der Verein ihn reizt – Geldgierige verzichten kaum.
   const cut = clamp((appeal.score - 50) / 120, -0.35, 0.3) * (1.15 - pe.geld / 100);
   const min = Math.round(norm * (1 - cut) / 10) * 10;
@@ -179,7 +188,7 @@ export function wageDemand(p: Player, buyer: Club, year: number, appeal: ClubApp
   // Handgeld: vor Bosman klein, danach ersetzt es bei ablösefreien Wechseln einen Teil der Ablöse.
   const weeks = bosman ? 8 + pe.geld / 6 : year >= 1996 ? pe.geld / 12 : pe.geld / 25;
   const signingFee = Math.round(min * weeks / 100) * 100;
-  const agentFee = agent ? Math.round(agentShare(year) * min * 52 * ((years[0] + years[1]) / 2) / 100) * 100 : 0;
+  const agentFee = agent ? Math.round(agentShare(year) * min * 52 * ((years[0] + years[1]) / 2) * (1 - honourFx(buyer.id, 'agentCut')) / 100) * 100 : 0;
   return { market: Math.round(market), min, ask, cut, signingFee, agentFee, agent, years };
 }
 

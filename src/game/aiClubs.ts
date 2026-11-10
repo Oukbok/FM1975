@@ -229,7 +229,7 @@ function bestProspect(g: Game, club: Club, group: PosGroup): Player | null {
 }
 
 function promote(ctx: RoundCtx, club: Club, p: Player, need: GroupNeed): boolean {
-  const res = promoteYouth(club, p.id, ctx.g.players, ctx.g.youthPlayers, 27);
+  const res = promoteYouth(club, p.id, ctx.g.players, ctx.g.youthPlayers, 27, ctx.today);
   if (!res.ok) return false;
   p.contract.weeklyWage = Math.max(p.contract.weeklyWage, Math.round(marketWage(p) * 0.6 * clubWageLevel(club, ctx.year)));
   void need;
@@ -246,7 +246,7 @@ function philosophyYouth(g: Game, club: Club, a: SquadAssessment, today: string,
     .sort((x, y) => y.potentialStars - x.potentialStars || y.overall - x.overall);
   for (const p of cands.slice(0, n)) {
     if (club.playerIds.length >= MAX_SQUAD) break;
-    if (promoteYouth(club, p.id, g.players, g.youthPlayers, MAX_SQUAD).ok) m.arrivals[club.id] = (m.arrivals[club.id] ?? 0) + 1;
+    if (promoteYouth(club, p.id, g.players, g.youthPlayers, MAX_SQUAD, g.calendar.currentDate).ok) m.arrivals[club.id] = (m.arrivals[club.id] ?? 0) + 1;
   }
   void today;
 }

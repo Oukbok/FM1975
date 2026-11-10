@@ -15,6 +15,7 @@ import { HISTORY } from '../data/history';
 import { marketWage } from './clubEconomy';
 import { clubWageLevel } from './economy';
 import { personaOf } from './persona';
+import { honourFx } from './honourEffects';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -84,6 +85,7 @@ export function contractDemand(p: Player, club: Club, squad: Player[], today: st
   f *= 1 + (pe.geld - 50) / 300 - (pe.loyalitaet - 50) / 600; // Geldgier, Vereinstreue
   const left = monthsLeft(today, p.contract.expiryDate);
   if (bosmanActive(today) && left <= 12) f *= 1.1; // Verhandlungsmacht vor dem Vertragsende
+  f *= 1 - honourFx(club.id, 'renewWage'); // Vereinstreue (game/clubHonours.ts)
 
   const floor = p.age >= 31 ? p.contract.weeklyWage * 0.85 : p.contract.weeklyWage * 1.03;
   // Marktgehalt auf dem Gehaltsniveau der eigenen Liga (unterklassig deutlich weniger).

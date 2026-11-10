@@ -307,7 +307,7 @@ export interface CareerStation {
   assists: number;
   averageRating: number;
 }
-export interface TransferRecord { date: string; fromClub: string; toClub: string; fee: number; }
+export interface TransferRecord { date: string; fromClub: string; toClub: string; fee: number; /** Leihe/Rückkehr (fehlt = fester Wechsel bzw. alter Eintrag). */ kind?: 'loan' | 'back' }
 export interface InjuryRecord { date: string; type: InjuryType; severity: InjurySeverity; description: string; days: number; fromTraining: boolean; }
 export interface AttributeSnapshot { date: string; label: string; attributes: Partial<Record<AttributeKey, number>>; }
 /** Wochen-Messpunkt fürs Spielerprofil (game/profileWeeks.ts): Datum, Stärke, Form, Frische, Fitness, Moral (0–100). */
@@ -617,6 +617,10 @@ export interface Player {
   // --- Jugendsystem (nur bei Jugendspielern gesetzt) ---
   /** Markierung: Spieler gehört der Jugendakademie an (noch kein A-Kader). */
   isYouth?: boolean;
+  /** Eintritt in die Jugend des Vereins (ISO) – für „Eigengewächs“ (game/clubHonours.ts). */
+  youthJoined?: string;
+  /** Hochgezogen in den Profikader (ISO). */
+  youthPromoted?: string;
   /**
    * Scouting-Einschätzung des Potenzials als Sterne-RANGE (Minimum).
    * Solange der Spieler jung/unerfahren ist, liefert das Scouting nur einen

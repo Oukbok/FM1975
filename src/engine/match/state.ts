@@ -7,6 +7,7 @@ import type { MPlayer, Mentality, ShoutId, Side, TeamStats } from './types';
 import { tacticPlan, type TacticPlan } from './tacticPlan';
 import { refreshSkills } from './skills';
 import { computeUnits, referenceWeights, tacticMods, type TacticMods, type TeamRefs, type Units } from './team';
+import { honourFx } from '../honourEffects';
 
 export interface TeamState {
   side: Side;
@@ -73,6 +74,10 @@ export function initRefs(t: TeamState): void {
 export function refresh(t: TeamState, minute: number): void {
   const active = t.shout && minute < t.shoutUntil ? t.shout : null;
   t.mods = tacticMods(tacticsOf(t), t.mentality, active, active ? t.shoutPower : 0, t.talk);
+  if (t.side === 'home') { // Festung (game/clubHonours.ts): etwas mehr Heimstärke
+    const hs = honourFx(t.club?.id, 'homeStrength');
+    if (hs) { t.mods = { ...t.mods, att: t.mods.att * (1 + hs), ctrl: t.mods.ctrl * (1 + hs), def: t.mods.def * (1 + hs) }; }
+  }
   t.plan = tacticPlan(tacticsOf(t), t.year, t.mods);
   t.units = computeUnits(onPitch(t), t.refs);
   t.dirty = false;

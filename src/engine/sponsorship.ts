@@ -22,6 +22,7 @@ import { brandFromReputation, brandIndex, ensureBrand, internationalWeight } fro
 import { economyScale, revenueScale, tierScale } from './economy';
 import { hashStr, mulberry32 } from './leagues';
 import { campYear, destinationStatus } from './trainingCamp';
+import { honourFx } from './honourEffects';
 
 export const SPONSOR_V = 1;
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -101,7 +102,8 @@ export function slotMarketValue(c: Club, slot: SponsorSlotId, year: number, tier
   const a = anchorValue(def, year);
   if (a == null) return 0;
   const banden = slot === 'banden' ? bandenFactor(c, year) : 1;
-  return a * sponsorPull(c, year, def.reach) * tierShare(year, tier, def.reach) * banden;
+  // Europäische Größe / Fair Play (game/clubHonours.ts): höherer Marktwert der Flächen.
+  return a * sponsorPull(c, year, def.reach) * tierShare(year, tier, def.reach) * banden * (1 + honourFx(c.id, 'sponsor'));
 }
 
 // -----------------------------------------------------------------------------

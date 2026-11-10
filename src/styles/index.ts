@@ -69,6 +69,7 @@ import './28-pyramid.css';
 import './28-faces.css';
 import './28-career.css';
 import './28-linechart.css';
+import './28-honours.css';
 import './28-contract.css';
 import './28-lazy.css';
 import './29-look.css'; // ruhige Gesamtoptik

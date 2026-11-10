@@ -40,7 +40,7 @@ let transferSink: TransferSink | null = null;
 export function setTransferSink(fn: TransferSink | null): void { transferSink = fn; }
 
 export function recordTransfer(p: Player, fromClub: string, toClub: string, fee: number, date: string, kind?: TransferKind): void {
-  (hist(p).transfers ??= []).push({ date, fromClub, toClub, fee });
+  (hist(p).transfers ??= []).push(kind ? { date, fromClub, toClub, fee, kind } : { date, fromClub, toClub, fee });
   transferSink?.(p, fromClub, toClub, fee, date, kind);
 }
 

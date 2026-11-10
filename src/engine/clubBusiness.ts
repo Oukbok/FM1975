@@ -10,6 +10,7 @@ import { economyScale, revenueScale } from './economy';
 import { CAPACITY_PER_LEVEL, MAX_LEVEL, upgradeCost } from './infrastructure';
 import { book } from './finances';
 import { commercialMultiplier } from './clubEconomy';
+import { honourFx } from './honourEffects';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -40,8 +41,8 @@ export function annuity(principal: number, annualRate: number, months: number): 
   return Math.round((principal * r) / (1 - Math.pow(1 + r, -months)));
 }
 
-export function makeLoan(principal: number, years: number, year: number, date: string, purpose: string, inDebt: boolean): ClubLoan {
-  const annualRate = loanInterest(year, inDebt);
+export function makeLoan(principal: number, years: number, year: number, date: string, purpose: string, inDebt: boolean, rateCut = 0): ClubLoan {
+  const annualRate = Math.max(0.01, loanInterest(year, inDebt) - rateCut);
   const months = years * 12;
   return {
     id: `loan_${date}_${Math.round(principal)}`, purpose, principal: Math.round(principal), remaining: Math.round(principal),
@@ -122,7 +123,7 @@ export function startStadiumProject(
   if (financing === 'loan') {
     // Banken geben nur Kredit, wenn die Raten tragbar sind (≈ max. 12 % des Umsatzes je Jahr).
     const rev = Math.max(1, (club.finances.seasonHistory ?? []).slice(-1)[0]?.revenue ?? 0);
-    const loan = makeLoan(plan.cost, years, year, date, `Stadionausbau Stufe ${plan.targetLevel}`, club.finances.balance < 0);
+    const loan = makeLoan(plan.cost, years, year, date, `Stadionausbau Stufe ${plan.targetLevel}`, club.finances.balance < 0, honourFx(club.id, 'interest'));
     const yearly = (monthlyLoanCost(club) + loan.monthlyRate) * 12;
     if (rev > 1 && yearly > 0.12 * rev) return { ok: false, text: 'Die Bank lehnt ab: Die Kreditraten wären zu hoch für den Umsatz des Vereins.' };
     (club.loans ??= []).push(loan);

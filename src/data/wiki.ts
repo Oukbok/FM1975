@@ -2592,6 +2592,26 @@ Nur, was der Spielstand kennt: Endstand und Bilanz der Liga mit Vorsprung, Final
 Im **Vereinsprofil** jedes Vereins zeigt der Reiter **Erfolge** dieselbe Vitrine für diesen Verein.`,
   },
   {
+    id: 'club-honours',
+    category: 'chronicle',
+    title: 'Vereinsauszeichnungen',
+    keywords: ['auszeichnung', 'bonus', 'bronze', 'silber', 'gold', 'talentschmiede', 'festung', 'spitzenklub', 'eigengewächs', 'achievement', 'medaille'],
+    body: `## Dauerhafte Boni für besondere Leistungen
+Unter **Verein → Erfolge → Auszeichnungen** stehen 16 Vereinsauszeichnungen in vier Gruppen: Nachwuchs und Kader, Sportlicher Erfolg, Spielweise und Mannschaft, Wirtschaft und Umfeld. Jede gibt es in **Bronze** (kleiner Bonus), **Silber** (mittlerer) und **Gold** (großer). Aktive Medaillen leuchten in ihrer Farbe, nicht aktive sind grau. Fährst du über eine Medaille, siehst du für alle drei Stufen die Voraussetzung und die Wirkung, dazu den letzten Stand deines Vereins.
+
+## Laufzeit
+- Am Saisonende prüft das Spiel jede Hürde – für deinen Verein und alle anderen Vereine deiner Liga.
+- Eine Stufe gilt **5 Jahre**. Schaffst du dieselbe oder eine höhere Hürde erneut, beginnen die 5 Jahre neu.
+- Eine höhere Stufe ersetzt die niedrigere sofort. Schaffst du nur eine niedrigere, behältst du die höhere bis zum Ablauf.
+- Die Hürden sind bewusst hoch: Bronze haben nur wenige Vereine gleichzeitig, Gold ist eine Ausnahme.
+
+## Eigengewächse
+Als Eigengewächs zählt, wer aus deiner Jugend kommt, mindestens ein Jahr in der Jugend war und danach höchstens verliehen wurde. Wer verkauft und zurückgeholt wird, zählt nicht mehr. Die Talentschmiede verlangt 1.500 Spielminuten bei 34 Spieltagen, bei anderen Ligagrößen anteilig.
+
+## Wirkungen
+Die Boni wirken direkt im Spiel: Anziehungskraft der Akademie, Gehaltsforderungen und Reiz für Wechselkandidaten, Entwicklung der Jugend, Sponsorwert, Zuschauer (auch nur in Pokalspielen), Heimstärke, Fanartikel und Mitglieder, Moral, Vertragsverlängerungen, Kreditzins, geforderte Ablösen und der Reiz für Trainer. Am Saisonende fasst eine Nachricht der Vereinschronik zusammen, was neu ist, was sich verlängert hat und was bald ausläuft. Die aktiven Auszeichnungen jedes Vereins siehst du auch im Kopf seines Vereinsprofils.`,
+  },
+  {
     id: 'development-talent',
     category: 'development',
     title: 'Talente & Spielerkurven',
@@ -2669,7 +2689,7 @@ Dein eigenes Stadion baust du Block für Block um (siehe *Stadion: Blöcke, Rän
 Ab 1985 bringt jeder Ausbauschritt Logen mit (8 bis 1992, 16 bis 2003, danach 28). Logen sind eine eigene Platzkategorie mit Preis und begrenzter Nachfrage (siehe *Platzkategorien, Ticketpreise und Nachfrage*).
 
 ## Namensrechte (ab 2000)
-Unter **Verein → Vorstand** liegen drei Angebote fiktiver Firmen (3, 5 oder 8 Jahre). Der Jahreswert richtet sich nach Kapazität und Ansehen und wächst mit Vermarktungs-Skala und Marke; er wird monatlich gebucht. Traditionsvereine zahlen mit Fan-Stimmung (je nach Tradition und Leitbild 2–15 Punkte). Läuft der Vertrag aus, heißt das Stadion wieder wie früher; im letzten Vertragsjahr bietet der Partner eine Verlängerung (+10 %).
+Unter **Finanzen → Sponsoring → Namensrechte** liegen drei Angebote fiktiver Firmen (3, 5 oder 8 Jahre). Der Jahreswert richtet sich nach Kapazität und Ansehen und wächst mit Vermarktungs-Skala und Marke; er wird monatlich gebucht. Traditionsvereine zahlen mit Fan-Stimmung (je nach Tradition und Leitbild 2–15 Punkte). Läuft der Vertrag aus, heißt das Stadion wieder wie früher; im letzten Vertragsjahr bietet der Partner eine Verlängerung (+10 %).
 
 ## Ausgliederung und Investor (ab 1998)
 - **Ausgliederung** des Profibereichs bringt einmalig Kapital (12 % des Jahresumsatzes) und +8 Vorstandsvertrauen. Die Saisonziele fallen danach eine Stufe ehrgeiziger aus. Je nach Leitbild murren die Fans (bis −8, Traditionsvereine −3 zusätzlich).

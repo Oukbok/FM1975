@@ -22,6 +22,7 @@ import { BlockId, StadiumBlock } from '../types';
 import { ensureEnvironment } from './environmentGame';
 import { checkBudget, noteBudgetSpend } from './budgetPlan';
 import { Game } from './state';
+import { honourFx } from '../engine/honourEffects';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -71,7 +72,7 @@ export function groupPlanFor(g: Game, targets: StadiumBlock[]) {
     mood: Math.round(live.reduce((s2, x) => s2 + x.p.mood, 0) * 10) / 10,
   };
   const cost = nominalCost(plan.costBase, year);
-  const rate = loanInterest(year, club.finances.balance < 0);
+  const rate = Math.max(0.01, loanInterest(year, club.finances.balance < 0) - honourFx(club.id, 'interest')); // Solide Kasse
   return { plan, cost, rate, monthly: (years: number) => annuity(cost, rate, years * 12), targets: live.map((x) => x.t) };
 }
 
@@ -94,7 +95,7 @@ export function startBlockBuild(g: Game, target: StadiumBlock | StadiumBlock[], 
     book(club.finances, today, -cost, 'facilities', `Umbau ${name} (bar)`, true);
   } else {
     const rev = Math.max(1, (club.finances.seasonHistory ?? []).slice(-1)[0]?.revenue ?? 0);
-    const loan = makeLoan(cost, years, year, today, `Umbau ${name}`, club.finances.balance < 0);
+    const loan = makeLoan(cost, years, year, today, `Umbau ${name}`, club.finances.balance < 0, honourFx(club.id, 'interest'));
     if (rev > 1 && (monthlyLoanCost(club) + loan.monthlyRate) * 12 > 0.12 * rev) {
       return { ok: false, text: 'Die Bank lehnt ab: Die Kreditraten wären zu hoch für den Umsatz des Vereins.' };
     }

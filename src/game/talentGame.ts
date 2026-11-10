@@ -43,6 +43,6 @@ export function promoteEarlyTalents(g: Game, today: string): void {
       }));
       continue;
     }
-    for (const p of ready.slice(0, 2)) promoteYouth(club, p.id, g.players, g.youthPlayers, MAX_SQUAD + 2);
+    for (const p of ready.slice(0, 2)) promoteYouth(club, p.id, g.players, g.youthPlayers, MAX_SQUAD + 2, today);
   }
 }
