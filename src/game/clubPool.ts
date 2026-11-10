@@ -17,6 +17,7 @@
 // =============================================================================
 import { DDR_LIGA_SEEDS, DDR_OBERLIGA_SEEDS } from '../data/ddr';
 import { DDR_POOL_TIER, POOL_TIER, ddrPoolSeeds, westPoolSeeds } from '../data/history/historicClubs';
+import { homeCountryOf } from './state';
 import { HISTORIC_SEASONS, historicDivisions, historicFinal, HIST_RELEGATED } from '../data/history/seasons';
 import type { CurrentDivision, TransitionResult } from '../data/reforms';
 import { seasonStartYear } from '../data/timeline';
@@ -108,6 +109,46 @@ export function settlePool(g: Game, ids: string[]): void {
     s.tier = s.ddr && ddrOpen ? DDR_POOL_TIER : POOL_TIER;
     if (s.tier === POOL_TIER && s.ddr) s.group = 'nordost';
     s.strength = Math.max(40, s.strength - 2);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Nachschub für den Pool (Wunsch Pascal): Reformen (3. Liga, Regionalligen) holen
+// viele Pool-Vereine in die Pyramide – ohne Nachschub war der Pool irgendwann leer und
+// niemand konnte mehr nachrücken. Fehlen Vereine, rücken Amateurvereine aus Städten
+// nach, die noch keinen Verein im Spiel haben (Name = Stadt, nur Spielnamen).
+// -----------------------------------------------------------------------------
+const POOL_MIN = 24;
+const POOL_TOWNS: [string, Exclude<LeagueGroup, null>][] = [
+  ['Cuxhaven', 'nord'], ['Celle', 'nord'], ['Lüneburg', 'nord'], ['Stade', 'nord'], ['Emden', 'nord'], ['Wilhelmshaven', 'nord'],
+  ['Husum', 'nord'], ['Rendsburg', 'nord'], ['Neumünster', 'nord'], ['Delmenhorst', 'nord'], ['Nienburg', 'nord'], ['Verden', 'nord'],
+  ['Siegen', 'west'], ['Hagen', 'west'], ['Iserlohn', 'west'], ['Lünen', 'west'], ['Marl', 'west'], ['Moers', 'west'],
+  ['Düren', 'west'], ['Hamm', 'west'], ['Gütersloh', 'west'], ['Lippstadt', 'west'], ['Bergheim', 'west'], ['Arnsberg', 'west'],
+  ['Ulm', 'sued'], ['Aalen', 'sued'], ['Pforzheim', 'sued'], ['Kempten', 'sued'], ['Rosenheim', 'sued'], ['Passau', 'sued'],
+  ['Landshut', 'sued'], ['Bamberg', 'sued'], ['Ansbach', 'sued'], ['Konstanz', 'sued'], ['Ravensburg', 'sued'], ['Memmingen', 'sued'],
+  ['Wismar', 'nordost'], ['Stendal', 'nordost'], ['Torgau', 'nordost'], ['Plauen', 'nordost'], ['Gera', 'nordost'], ['Suhl', 'nordost'],
+  ['Görlitz', 'nordost'], ['Eberswalde', 'nordost'], ['Neubrandenburg', 'nordost'], ['Greifswald', 'nordost'], ['Halberstadt', 'nordost'], ['Wittenberg', 'nordost'],
+];
+const POOL_COLORS: [string, string][] = [['#1F4E9E', '#FFFFFF'], ['#B71C1C', '#FFFFFF'], ['#1B5E20', '#FFFFFF'], ['#F2C200', '#1A1A1A'], ['#4A148C', '#FFFFFF'], ['#0D47A1', '#F2C200'], ['#263238', '#FFFFFF'], ['#C62828', '#1A1A1A']];
+
+export function refillPool(g: Game, season: string): void {
+  if (homeCountryOf(g) !== 'ger') return;
+  const pool = poolOf(g, false);
+  if (pool.length >= POOL_MIN) return;
+  const cities = new Set([...Object.values(g.clubs).map((c) => c.city), ...Object.values(g.simClubs).map((c) => c.city)]);
+  const west = g.leagues.otherDivisions.filter((d) => d.tier < 100);
+  const lowest = west.length ? Math.max(...west.map((d) => d.tier)) : 2;
+  const lowIds = west.filter((d) => d.tier === lowest).flatMap((d) => d.clubIds);
+  const base = (lowIds.length ? lowIds.reduce((a, id) => a + (g.simClubs[id]?.strength ?? 55), 0) / lowIds.length : 55) - 6;
+  const rnd = mulberry32(hashStr(`pool-refill:${season}`));
+  let need = POOL_MIN - pool.length;
+  for (const [town, group] of POOL_TOWNS) {
+    if (need <= 0) break;
+    const id = `pool-${town.toLowerCase().replace(/[^a-zäöüß]/g, '')}`;
+    if (cities.has(town) || g.simClubs[id] || g.clubs[id]) continue;
+    const [primary, secondary] = POOL_COLORS[Math.floor(rnd() * POOL_COLORS.length)];
+    g.simClubs[id] = { id, name: town, shortName: town.slice(0, 3).toUpperCase(), city: town, strength: Math.round(Math.max(40, base + (rnd() - 0.5) * 8)), colors: { primary, secondary }, tier: POOL_TIER, group };
+    need--;
   }
 }
 
@@ -204,6 +245,7 @@ export function migrateLeaguePool(g: Game): void {
   // Anderes Heimatland (Weltdaten): kein deutscher Unterbau, keine deutsche Historie.
   if (g.homeCountry && g.homeCountry !== 'ger') return;
   ensurePool(g);
+  refillPool(g, g.season);
   seedHistoricRecords(g);
 }
 

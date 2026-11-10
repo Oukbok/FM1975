@@ -10,6 +10,7 @@ import ClubCrest from '../ClubCrest';
 import { ClubLink } from '../club/ClubLink';
 import { CountryFlag } from './CountryFlag';
 import { countryInfo } from '../../data/countryFlags';
+import Select from '../../ui/Select';
 import { type PyrDivision, type PyrSystem, type PyramidData, type PyramidSide, pyrZone } from '../../game/leaguePyramid';
 import type { Club } from '../../types';
 
@@ -58,22 +59,16 @@ export function LeaguePyramid({ data, mineId, className = '' }: { data: PyramidD
   return (
     <div className={`lp ${className}`}>
       <div className="lp-bar">
-        <div className="lp-seg" role="tablist">
-          {sides.map((s) => (
-            <button key={s.k} role="tab" aria-selected={side === s.k} className={side === s.k ? 'on' : ''} onClick={() => pick(s.k)}>
-              {s.country && <CountryFlag country={s.country} height={14} />}{s.label}
-            </button>
-          ))}
-        </div>
-        {side === 'abroad' && (
-          <div className="lp-countries">
-            {data.abroad.map((a) => (
-              <button key={a.key} className={a.key === sys?.key ? 'on' : ''} title={countryInfo(a.key).name} onClick={() => pick('abroad', a.key)}>
-                <CountryFlag country={a.key} height={13} /><span>{countryInfo(a.key).code}</span>
-              </button>
-            ))}
-          </div>
-        )}
+        {/* Länderwahl als Auswahlliste (Wunsch Pascal) statt Deutschland/DDR/Ausland */}
+        <Select className="lp-country-sel" width={260} popWidth={300} listHeight={460} value={side === 'abroad' ? `a:${sys?.key ?? ''}` : side}
+          onChange={(v) => (v.startsWith('a:') ? pick('abroad', v.slice(2)) : pick(v as PyramidSide))}
+          options={[
+            ...sides.filter((x) => x.k !== 'abroad').map((x) => ({ value: x.k, text: x.label, label: <span className="lp-opt"><CountryFlag country={x.country} height={13} />{x.label}</span> })),
+            ...[...data.abroad].sort((a, b) => countryInfo(a.key).name.localeCompare(countryInfo(b.key).name, 'de')).map((a, i) => ({
+              value: `a:${a.key}`, text: countryInfo(a.key).name, group: i === 0 ? 'Ausland' : undefined,
+              label: <span className="lp-opt"><CountryFlag country={a.key} height={13} />{countryInfo(a.key).name}</span>,
+            })),
+          ]} />
         <span className="lp-season">Saison {data.season}</span>
       </div>
 

@@ -41,6 +41,8 @@ export interface WorldCountry {
   /** Meistertitel je Verein (für Chronik/Übersicht). */
   titles: Record<string, number>;
   active: boolean;
+  /** Unterbau (Wunsch Pascal): Amateurvereine, die mit den Letzten der 2. Liga tauschen. Optional (alte Spielstände). */
+  pool?: string[];
 }
 
 export interface WorldClubMeta {
@@ -189,6 +191,28 @@ export function fillCountry(
       const s = targetStrength(level, size, t) + gauss(r) * 1.5;
       c.tiers[t].push(newClub(w, euroClubs, c, city, s, size, r, used));
     }
+  }
+}
+
+/** Unterbau aller aktiven Länder sicherstellen (Spielstart, Laden alter Spielstände). */
+export function ensureCountryPools(w: WorldState | undefined, euroClubs: Record<string, EuroClub> | undefined, year: number): void {
+  if (!w || !euroClubs) return;
+  const r = rng(hash(`world-pool|${year}`));
+  for (const c of Object.values(w.countries)) if (c.active && (c.tiers[1]?.length ?? 0) >= 8) ensureCountryPool(w, euroClubs, c, year, r);
+}
+
+/** Unterbau eines Landes anlegen bzw. auf 10 Vereine auffüllen (erfundene Vereine aus freien Städten). */
+export function ensureCountryPool(w: WorldState, euroClubs: Record<string, EuroClub>, c: WorldCountry, year: number, r: () => number): void {
+  const pool = (c.pool ??= []).filter((id) => euroClubs[id]);
+  c.pool = pool;
+  if (pool.length >= 10) return;
+  const used = new Set(Object.values(euroClubs).map((e) => e.shortName));
+  const level = countryLevel(c, year);
+  const cities = [...c.tiers[0], ...c.tiers[1]].map((id) => euroClubs[id]?.city).filter(Boolean) as string[];
+  while (c.pool.length < 10) {
+    const city = c.spareCities.shift() ?? cities[Math.floor(r() * Math.max(1, cities.length))] ?? c.name;
+    const size = clamp(0.12 + gauss(r) * 0.05, 0.02, 0.3);
+    c.pool.push(newClub(w, euroClubs, c, city, targetStrength(level, size, 1) - 4 + gauss(r) * 1.5, size, r, used));
   }
 }
 
@@ -440,6 +464,17 @@ export function advanceWorldSeason(
     const down = n ? t1.slice(-n) : [], up = t2.slice(0, n);
     c.tiers[0] = [...t1.slice(0, t1.length - n), ...up];
     c.tiers[1] = [...t2.slice(n), ...down];
+    // 2. Liga ↔ Unterbau: die zwei Letzten gegen die zwei stärksten Amateurvereine (mit Zufall).
+    if (t2.length >= 8) {
+      ensureCountryPool(w, euroClubs, c, endYear, r);
+      const pool = (c.pool ?? []).filter((id) => euroClubs[id]);
+      const rank = pool.map((id) => ({ id, v: euroClubs[id].strength + gauss(r) * 3 })).sort((a, b) => b.v - a.v);
+      const k = Math.min(2, rank.length);
+      const out = t2.slice(-k).filter((id) => !up.includes(id));
+      const inn = rank.slice(0, out.length).map((x) => x.id);
+      c.tiers[1] = [...c.tiers[1].filter((id) => !out.includes(id)), ...inn];
+      c.pool = [...pool.filter((id) => !inn.includes(id)), ...out];
+    }
   }
 
   // 3) Staatenteilungen (vor der Stärkeentwicklung, damit neue Ligen mitlaufen)
@@ -462,6 +497,19 @@ export function advanceWorldSeason(
         club.strength = Math.round(clamp(club.strength + (target - club.strength) * 0.4 + gauss(r) * 1.5, 40, 92));
       }
     });
+  }
+
+  // 4b) Unterbau: Amateurniveau unterhalb der 2. Liga
+  for (const c of Object.values(w.countries)) {
+    if (!c.active || !c.pool?.length) continue;
+    const level = countryLevel(c, endYear);
+    for (const id of c.pool) {
+      const club = euroClubs[id], m = w.meta[id];
+      if (!club || !m) continue;
+      m.size = clamp(m.size + gauss(r) * 0.01, 0.02, 0.3);
+      const target = targetStrength(level, m.size, 1) - 4;
+      club.strength = Math.round(clamp(club.strength + (target - club.strength) * 0.4 + gauss(r) * 1.5, 35, 80));
+    }
   }
 
   // 5) Starter der neuen Saison

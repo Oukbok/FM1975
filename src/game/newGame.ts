@@ -57,6 +57,7 @@ import { initLegends } from './legendsGame';
 import { migrateContracts2 } from './contractClausesGame';
 import { bindHonours } from './clubHonours';
 import { ensureWorldPool } from './worldPool';
+import { ensureCountryPools } from '../engine/world';
 
 export function createNewGame(opts: NewGameOptions): Game {
   // Startjahr/Heimatland (Wunsch Pascal, Weltdaten): Standard 1. Juli 1975 in Deutschland.
@@ -271,6 +272,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   initLegends(g0, opts.legends !== false); // Ausnahmetalente der Fußballgeschichte (still, game/legendsGame.ts)
   migrateContracts2(g0); // Vertragsbausteine-Zustand von Beginn an (wie beim Laden, game/contractClausesGame.ts)
   harmonizeSeason(g0); // Rahmenterminkalender: Wochenendspiele an Pokal-/Europapokalwochen (game/fixtureWatch.ts)
+  ensureCountryPools(g0.world, g0.euroClubs, Number(g0.season.slice(0, 4))); // Unterbau der Auslandsligen (engine/world.ts)
   ensureWorldPool(g0); // Weltspieler aller Vereine ohne vollen Kader (Spielerpool)
   bindHonours(g0, true); // Vereinsauszeichnungen: leere Wirkungstabelle für das neue Spiel
   return g0;

@@ -21,7 +21,7 @@ import { closeSeason, recordTransfer } from '../engine/history';
 import { buildProClub } from '../data/generate';
 import { recordSeasonEnd } from './clubRecords';
 import { archiveSeasonEnd } from './leagueArchive';
-import { absorbPlaceholders, ddrExchange, mergeDdrPool, poolDrift, poolExchange, settlePool } from './clubPool';
+import { absorbPlaceholders, ddrExchange, mergeDdrPool, poolDrift, poolExchange, refillPool, settlePool } from './clubPool';
 import { CurrentDivision, TransitionResult, computeSeasonTransition, structureForSeason } from '../data/reforms';
 import { TIMELINE_TYPE_META, TimelineEvent, dueTimelineEvents, seasonStartYear } from '../data/timeline';
 import { generateSeasonCalendar, seasonLabel } from '../engine/calendar';
@@ -390,6 +390,7 @@ export function startNextSeason(g: Game): void {
   }
   g.leagues = { playerDivision: membership[playerDivId].meta, otherDivisions, season: newSeason };
   poolDrift(g, newSeason);
+  refillPool(g, newSeason); // Pool nie leer laufen lassen (game/clubPool.ts)
   historicSimClubs(g, nextStartYear);
 
   const calendar = generateSeasonCalendar(fixtures, seasonStart, seasonEnd);

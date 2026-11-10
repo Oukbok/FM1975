@@ -124,7 +124,7 @@ function reformList(season: string): PyramidData['reforms'] {
   return LEAGUE_REFORMS.map((r) => ({ season: r.effectiveSeason, title: r.title.replace('2. 1. Liga', '2. Liga'), past: seasonStartYear(r.effectiveSeason) <= y }));
 }
 
-function abroadSystems(countries: { name: string; tiers: string[][]; active: boolean }[], clubs: Record<string, { id: string; name: string; shortName: string; city: string; colors: { primary: string; secondary: string }; strength: number }>, ordered: boolean): PyrSystem[] {
+function abroadSystems(countries: { name: string; tiers: string[][]; active: boolean; pool?: string[] }[], clubs: Record<string, { id: string; name: string; shortName: string; city: string; colors: { primary: string; secondary: string }; strength: number }>, ordered: boolean): PyrSystem[] {
   return countries.filter((c) => c.active).map((c) => {
     const lv = c.tiers.map((ids, t) => {
       const list = ids.map((id) => clubs[id]).filter(Boolean).map((e) => ({ id: e.id, name: e.name, shortName: e.shortName, city: e.city, colors: e.colors, strength: e.strength, dotOnly: true }));
@@ -134,6 +134,13 @@ function abroadSystems(countries: { name: string; tiers: string[][]; active: boo
     const n = (lv[0]?.[0]?.clubs.length ?? 0) >= 16 ? 3 : 2;
     if (lv[0]) { lv[0][0].champion = 1; lv[0][0].down = n; lv[0][0].downTo = 'Abstieg in die 2. Liga'; }
     if (lv[1]) { lv[1][0].up = n; }
+    const pool = (c.pool ?? []).map((id) => clubs[id]).filter(Boolean).map((e) => ({ id: e.id, name: e.name, shortName: e.shortName, city: e.city, colors: e.colors, strength: e.strength, dotOnly: true }));
+    if (pool.length && lv[1]) {
+      lv[1][0].down = 2; lv[1][0].downTo = 'Tausch mit dem Unterbau';
+      const pd = div(`w:${c.name}:pool`, 'Unterbau', lv.length + 1, null, pool.sort(byStrength), 'pool');
+      pd.pool = true;
+      lv.push([pd]);
+    }
     return { side: 'abroad' as const, key: c.name, title: c.name, levels: lv, available: true };
   });
 }

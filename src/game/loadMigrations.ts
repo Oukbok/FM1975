@@ -66,6 +66,7 @@ import { assignShirtNumbers } from './squads';
 import { bindHonours } from './clubHonours';
 import { bindStaffFactor } from './staffGame';
 import { ensureWorldPool } from './worldPool';
+import { ensureCountryPools } from '../engine/world';
 
 /** Bereitet einen gerade gelesenen Spielstand zum Weiterspielen vor (verändert `g`). */
 export function prepareLoadedGame(g: Game): void {
@@ -361,6 +362,7 @@ export function prepareLoadedGame(g: Game): void {
   bindHonours(g, true); // Vereinsauszeichnungen: Wirkungstabelle des geladenen Spielstands
   bindStaffFactor(g); // Stab → Spielstärke
   fixStaleContracts(g); // Spieler im Kader mit abgelaufenem Vertrag (Hochziehen nach dem 1. Juli, alte Spielstände)
+  ensureCountryPools(g.world, g.euroClubs, Number(g.season.slice(0, 4))); // Unterbau der Auslandsligen (engine/world.ts)
   if (!g.worldPool) ensureWorldPool(g); // Weltspieler (Spielerpool) für alte Spielstände anlegen
 }
 

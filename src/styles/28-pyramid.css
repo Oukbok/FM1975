@@ -77,3 +77,4 @@
 .lp-box-page .dbox-body { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
 /* Seite: Saison steht schon im Box-Kopf */
 .lp-box-page .lp-season { display: none; }
+.lp-opt { display: inline-flex; align-items: center; gap: 8px; }
