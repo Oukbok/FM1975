@@ -216,10 +216,11 @@ function aiFill(g: Game, c: Club, season: string, today: string): void {
   for (const def of SPONSOR_SLOTS) {
     let free = freeSlots(c, def.id, year, tier);
     let round = 0;
-    while (free-- > 0) {
-      const best = makeOffers({ club: c, year, season, tier, deals: k.deals ?? [], until: seasonEnd(season) }, def.id, 2, `ai${round++}`)[0];
-      if (!best) break;
-      if (sign(g, c, best, today)) break;
+    // Mehrere Versuche: ein Angebot kann an Exklusivität/Branchenverbot scheitern – dann das nächste nehmen.
+    for (let tries = free * 3; free > 0 && tries > 0; tries--) {
+      const offers = makeOffers({ club: c, year, season, tier, deals: k.deals ?? [], until: seasonEnd(season) }, def.id, 3, `ai${round++}`);
+      if (!offers.length) break;
+      if (offers.some((o) => !sign(g, c, o, today))) free--;
     }
   }
 }
@@ -246,7 +247,9 @@ export function monthlySponsoring(g: Game, today: string): void {
   if (month === 1) renewalOffers(g, mine, today);
   // Neue Interessenten für freie Flächen (etwa jeder vierte Monat).
   const rng = mulberry32(hashStr(`spons|${mine.id}|${today}`));
-  if (month !== 6 && rng() < 0.3) {
+  // Freie Flächen ohne jedes Angebot (z. B. nach einer Simulation oder alten Spielständen): sofort Interessenten.
+  const noOffers = !k.dealOffers.some((o) => !o.renewal);
+  if (month !== 6 && (rng() < 0.3 || noOffers)) {
     const fresh = generateOffers(g, mine, g.season, today, `m${today}`)
       .map((o) => ({ ...o, until: minDate(addDays(today, 75), seasonEnd(g.season)) }));
     if (fresh.length) {
