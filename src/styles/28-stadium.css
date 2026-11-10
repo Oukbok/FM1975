@@ -80,3 +80,83 @@
 .sv-kpis .sv-kpi-name { min-width: 0; padding-right: 18px; }
 .sv-kpis .sv-kpi-name b { font-size: 17px; text-transform: uppercase; letter-spacing: 0.03em; white-space: nowrap; }
 .sv-kpis .sv-kpi-name span { text-transform: none; letter-spacing: 0; }
+
+/* ---- Bau-Popover 2 (Wunsch Pascal: übersichtlicher, moderner) – views/verein/stadium/BlockConfigurator.tsx ----
+   Kopf + Umfang oben, Einstellungen in der Mitte (scrollt), Wirkung/Kosten/Finanzierung fest unten. */
+.sv-pop:has(> .bc) { padding: 0; overflow: hidden; display: flex; }
+.bc { display: flex; flex-direction: column; width: 100%; min-height: 0; }
+.bc-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 14px 16px 10px; }
+.bc-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.bc-title b { font-family: var(--font-display); font-size: 21px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; color: var(--text); }
+.bc-title span { font-size: 12.5px; color: var(--text-3); }
+.bc-x { width: 32px; height: 32px; flex: none; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-2); font-size: 18px; line-height: 1; cursor: pointer; }
+.bc-x:hover { color: var(--text); border-color: var(--text-3); }
+.bc-scope { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin: 0 16px 10px; padding: 3px; border-radius: 9px; background: rgba(var(--ink-rgb), 0.06); }
+.bc-scope button { display: flex; align-items: center; justify-content: center; gap: 6px; height: 32px; border: 0; border-radius: 7px; background: transparent; color: var(--text-2); font: 600 13px var(--font-ui); cursor: pointer; white-space: nowrap; }
+.bc-scope button.on { background: var(--panel); color: var(--text); box-shadow: 0 1px 3px rgba(var(--shade-rgb), 0.18); }
+.bc-scope em { font-style: normal; font-size: 11.5px; padding: 1px 5px; border-radius: 4px; background: rgba(var(--club-accent-rgb, 200, 32, 42), 0.12); color: var(--club-accent, var(--accent)); }
+.bc-scroll { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 0 16px 12px; display: flex; flex-direction: column; gap: 14px; }
+.bc-sec { display: flex; flex-direction: column; gap: 8px; }
+.bc-sec-h { display: flex; align-items: center; justify-content: space-between; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-3); }
+.bc-sec-acts { display: inline-flex; gap: 4px; }
+.bc-mini { height: 26px; padding: 0 9px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text-2); font: 600 12px var(--font-ui); letter-spacing: 0; text-transform: none; cursor: pointer; }
+.bc-mini:hover:not(:disabled) { color: var(--text); border-color: var(--text-3); }
+.bc-mini:disabled { opacity: .35; cursor: not-allowed; }
+.bc-tier { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-soft); background: rgba(var(--ink-rgb), 0.025); }
+.bc-tier-top { display: flex; align-items: baseline; justify-content: space-between; }
+.bc-tier-name { font-weight: 700; font-size: 14px; color: var(--text); }
+.bc-tier-cap { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--text); }
+.bc-tier-cap small { font-family: var(--font-ui); font-size: 11.5px; font-weight: 500; color: var(--text-3); }
+.bc-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.bc-chips button { height: 28px; padding: 0 11px; border-radius: 14px; border: 1px solid var(--border); background: transparent; color: var(--text-2); font: 600 12.5px var(--font-ui); cursor: pointer; }
+.bc-chips button:hover { color: var(--text); border-color: var(--text-3); }
+.bc-chips button.on { background: var(--navy, var(--text)); border-color: var(--navy, var(--text)); color: #fff; }
+.bc-range { display: grid; grid-template-columns: auto 1fr 28px; align-items: center; gap: 10px; font-size: 12.5px; color: var(--text-3); }
+.bc-range input[type=range] { width: 100%; accent-color: var(--club-accent, var(--accent)); }
+.bc-range b { font-family: var(--font-display); font-size: 16px; color: var(--text); text-align: right; }
+.bc-roofs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.bc-roofs button { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px 7px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text-2); font: 600 12.5px var(--font-ui); cursor: pointer; }
+.bc-roofs button:hover { border-color: var(--text-3); color: var(--text); }
+.bc-roofs button.on { border-color: var(--navy, var(--text)); background: rgba(var(--ink-rgb), 0.05); color: var(--text); box-shadow: inset 0 0 0 1px var(--navy, var(--text)); }
+.bc-roofs svg { width: 56px; height: 32px; }
+.bc-roof-stand { fill: rgba(var(--ink-rgb), 0.18); }
+.bc-roof-top { fill: var(--text-2); }
+.bc-roof-post { stroke: var(--text-2); stroke-width: 1.6; fill: none; }
+.bc-roofs button.on .bc-roof-top { fill: var(--club-accent, var(--accent)); }
+.bc-opt { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-soft); }
+.bc-opt > span:first-child { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.bc-opt b { font-size: 13.5px; color: var(--text); }
+.bc-opt small { font-size: 12px; color: var(--text-3); }
+.bc-opt.off b { color: var(--text-3); }
+.bc-opt .toggle { flex: none; cursor: pointer; padding: 0; }
+.bc-opt .toggle:disabled { opacity: .4; cursor: not-allowed; }
+.bc-step { display: inline-flex; align-items: center; gap: 8px; }
+.bc-step button { width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--border); background: transparent; color: var(--text); font-size: 16px; line-height: 1; cursor: pointer; }
+.bc-step button:disabled { opacity: .35; cursor: not-allowed; }
+.bc-step b { min-width: 16px; text-align: center; font-family: var(--font-display); font-size: 16px; }
+.bc-note { font-size: 12.5px; color: var(--text-2); line-height: 1.4; }
+.bc-note.neg { color: var(--neg); }
+.bc-note.acc { color: var(--club-accent, var(--accent)); font-weight: 600; }
+.bc-foot { flex: none; display: flex; flex-direction: column; gap: 10px; padding: 12px 16px 14px; border-top: 1px solid var(--border); background: rgba(var(--ink-rgb), 0.03); }
+.bc-idle { font-size: 12.5px; color: var(--text-3); line-height: 1.45; }
+.bc-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.bc-kpis > div { display: flex; flex-direction: column; gap: 1px; padding: 7px 9px; border-radius: 8px; background: var(--panel); border: 1px solid var(--border-soft); min-width: 0; }
+.bc-kpis span, .bc-cost span { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); }
+.bc-kpis b { font-family: var(--font-display); font-size: 19px; font-weight: 600; color: var(--text); }
+.bc-kpis small { font-size: 11.5px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bc-kpis b.pos, .bc-cost b.pos { color: var(--pos); }
+.bc-kpis b.neg, .bc-cost b.neg { color: var(--neg); }
+.bc-cost { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 6px; }
+.bc-cost > div { display: flex; flex-direction: column; gap: 1px; }
+.bc-cost b { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--text); }
+.bc-fin { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.bc-fin button { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 7px 9px; border-radius: 8px; border: 1px solid var(--border); background: transparent; cursor: pointer; text-align: left; }
+.bc-fin button b { font-size: 13px; color: var(--text); }
+.bc-fin button small { font-size: 11.5px; color: var(--text-3); }
+.bc-fin button.on { border-color: var(--navy, var(--text)); box-shadow: inset 0 0 0 1px var(--navy, var(--text)); background: var(--panel); }
+.bc-fin button:disabled { opacity: .45; cursor: not-allowed; }
+.bc-go { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.bc-reset { background: none; border: 0; padding: 0; color: var(--text-3); font: 600 12.5px var(--font-ui); cursor: pointer; }
+.bc-reset:hover { color: var(--text); }
+.bc-build { flex: 1; max-width: 230px; }
+.bc-fine { font-size: 11.5px; color: var(--text-3); line-height: 1.4; }

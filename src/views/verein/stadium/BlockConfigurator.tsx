@@ -62,88 +62,141 @@ export function BlockConfigurator({ g, draft, setDraft, whole, setWhole, onClose
   const before = plan.changed ? perMatch(club, blocks, year) : null;
   const after = plan.changed ? perMatch(club, planned, year) : null;
 
+  const [fin, setFin] = useState<'cash' | 10 | 20>('cash');
+  const capNow = blockCapacity(cur);
+  const revDiff = before && after ? after.rev - before.rev : 0;
+  const canCash = club.finances.balance >= cost;
+  const f = fin === 'cash' && !canCash ? 10 : fin; // Konto reicht nicht → Kredit vorwählen
+  const finKey = f === 'cash' ? 'cash' : `l${f}`;
+  const go = () => build(finKey, f === 'cash' ? 'cash' : 'loan', f === 'cash' ? 0 : f);
+
   return (
-    <div className="sv-pop-body">
-      <div className="sv-pop-head">
-        <div><b>{BLOCK_NAME[draft.id]}</b><div className="sv-sub">{blockCapacity(cur).toLocaleString('de-DE')} Plätze · {cur.tiers.length} {cur.tiers.length === 1 ? 'Rang' : 'Ränge'} · {ROOF_NAME[cur.roof]}</div></div>
-        <button className="modal-close sv-x" onClick={onClose} aria-label="Schließen">×</button>
-      </div>
+    <div className="bc">
+      <header className="bc-head">
+        <div className="bc-title">
+          <b>{BLOCK_NAME[draft.id]}</b>
+          <span>{capNow.toLocaleString('de-DE')} Plätze · {cur.tiers.length} {cur.tiers.length === 1 ? 'Rang' : 'Ränge'} · {ROOF_NAME[cur.roof]}</span>
+        </div>
+        <button className="bc-x" onClick={onClose} aria-label="Schließen">×</button>
+      </header>
       {sideN > 1 && (
-        <label className="sv-check">
-          <input type="checkbox" checked={whole} onChange={(e) => { setConfirm(null); setWhole(e.target.checked); }} />
-          {side === 'curve' ? 'Alle 4 Kurven gleich umbauen' : `Ganze ${SIDE_NAME[side]} (${sideN} Blöcke) – 5 % günstiger`}
-        </label>
+        <div className="bc-scope" role="radiogroup" aria-label="Umfang">
+          <button className={!whole ? 'on' : ''} onClick={() => { setConfirm(null); setWhole(false); }}>Nur dieser Block</button>
+          <button className={whole ? 'on' : ''} onClick={() => { setConfirm(null); setWhole(true); }}>
+            {side === 'curve' ? 'Alle 4 Kurven' : `Ganze ${SIDE_NAME[side]} (${sideN})`}{side !== 'curve' && <em>−5 %</em>}
+          </button>
+        </div>
       )}
 
-      <div className="sv-sec">Ränge<InfoTip k="platzarten" /></div>
-      {draft.tiers.map((t, i) => (
-        <div key={i} className="sv-tier">
-          <div className="sv-tier-h"><span>{TIER_NAME[i]}</span><span className="num">{tierCapacity(draft.id, t).toLocaleString('de-DE')} Plätze</span></div>
-          <div className="sv-seg">
-            {SEATS.filter((s) => seatAvailable(s, year) || cur.tiers[i]?.seat === s).filter((s) => s !== 'business' || straight || t.seat === s).map((s) => (
-              <button key={s} className={t.seat === s ? 'on' : ''} onClick={() => setTier(i, { seat: s })}>{SEAT_LABEL[s]}</button>
-            ))}
+      <div className="bc-scroll">
+        <section className="bc-sec">
+          <div className="bc-sec-h">
+            <span>Ränge<InfoTip k="platzarten" /></span>
+            <span className="bc-sec-acts">
+              <button className="bc-mini" disabled={draft.tiers.length <= 1} title="Obersten Rang abreißen" onClick={() => upd({ tiers: draft.tiers.slice(0, -1) })}>− Rang</button>
+              <button className="bc-mini" disabled={draft.tiers.length >= 3} title="Rang aufstocken" onClick={() => upd({ tiers: [...draft.tiers, { seat: year >= 1998 ? 'schale' : draft.tiers[draft.tiers.length - 1].seat, rows: 14 }] })}>+ Rang</button>
+            </span>
           </div>
-          <div className="sv-rows">
-            <span>Reihen</span>
-            <input type="range" min={3} max={36} step={1} value={t.rows} onChange={(e) => setTier(i, { rows: Number(e.target.value) })} />
-            <b className="num">{t.rows}</b>
-          </div>
-        </div>
-      ))}
-      <div className="sv-btns">
-        <button className="dchip" disabled={draft.tiers.length >= 3} onClick={() => upd({ tiers: [...draft.tiers, { seat: year >= 1998 ? 'schale' : draft.tiers[draft.tiers.length - 1].seat, rows: 14 }] })}>Rang aufstocken</button>
-        <button className="dchip" disabled={draft.tiers.length <= 1} onClick={() => upd({ tiers: draft.tiers.slice(0, -1) })}>Obersten Rang abreißen</button>
-      </div>
+          {[...draft.tiers].map((t, i) => ({ t, i })).reverse().map(({ t, i }) => (
+            <div key={i} className="bc-tier">
+              <div className="bc-tier-top">
+                <span className="bc-tier-name">{TIER_NAME[i]}</span>
+                <span className="bc-tier-cap">{tierCapacity(draft.id, t).toLocaleString('de-DE')}<small> Plätze</small></span>
+              </div>
+              <div className="bc-chips">
+                {SEATS.filter((s) => seatAvailable(s, year) || cur.tiers[i]?.seat === s).filter((s) => s !== 'business' || straight || t.seat === s).map((s) => (
+                  <button key={s} className={t.seat === s ? 'on' : ''} onClick={() => setTier(i, { seat: s })}>{SEAT_LABEL[s]}</button>
+                ))}
+              </div>
+              <div className="bc-range">
+                <span>Reihen</span>
+                <input type="range" min={3} max={36} step={1} value={t.rows} onChange={(e) => setTier(i, { rows: Number(e.target.value) })} />
+                <b>{t.rows}</b>
+              </div>
+            </div>
+          ))}
+        </section>
 
-      <div className="sv-sec">Dach &amp; Ausstattung<InfoTip k="ueberdacht" /></div>
-      <div className="sv-seg">
-        {ROOFS.map((r) => <button key={r} className={draft.roof === r ? 'on' : ''} onClick={() => upd({ roof: r })}>{ROOF_NAME[r]}</button>)}
-      </div>
-      <div className="sv-btns">
-        {vipAllowed(draft.id) && <button className={`dchip ${draft.vip ? 'on' : ''}`} disabled={!vipAvailable(year) && !draft.vip} onClick={() => upd({ vip: !draft.vip })}>VIP-Bereich{!vipAvailable(year) ? ' ab 1980' : ''}</button>}
-        {(scoreboardAllowed(draft.id) || draft.scoreboard) && <button className={`dchip ${draft.scoreboard ? 'on' : ''}`} onClick={() => upd({ scoreboard: !draft.scoreboard })}>{videoWall(year) ? 'Videowand' : 'Anzeigetafel'}</button>}
-        <span className="sv-rows sv-inline">
-          <span>Logen</span>
-          <button className="sv-step" disabled={draft.lounges <= 0} onClick={() => upd({ lounges: draft.lounges - 1 })}>−</button>
-          <b className="num">{draft.lounges}</b>
-          <button className="sv-step" disabled={!loungesAvailable(year) || draft.lounges >= maxL} onClick={() => upd({ lounges: draft.lounges + 1 })}>+</button>
-          <span className="sv-sub">max. {maxL}{!loungesAvailable(year) ? ' · ab 1985' : ''}</span>
-        </span>
-      </div>
-
-      {plan.changed && before && after && <>
-        <div className="sv-sec">Vorher → nachher</div>
-        <div className="sv-cmp">
-          <span>Kapazität</span><span className="num">{blocksCapacity(blocks).toLocaleString('de-DE')} → {blocksCapacity(planned).toLocaleString('de-DE')}</span><span className={`num ${plan.addCapacity > 0 ? 'pos' : plan.addCapacity < 0 ? 'neg' : ''}`}>{sign(plan.addCapacity)}</span>
-          <span>Zuschauer erwartet</span><span className="num">{before.visitors.toLocaleString('de-DE')} → {after.visitors.toLocaleString('de-DE')}</span><span className={`num ${after.visitors > before.visitors ? 'pos' : after.visitors < before.visitors ? 'neg' : ''}`}>{sign(after.visitors - before.visitors)}</span>
-          <span>Eintritt je Spiel</span><span className="num">{fmtDM(before.rev)} → {fmtDM(after.rev)}</span><span className={`num ${Math.abs(after.rev - before.rev) < 500 ? '' : after.rev > before.rev ? 'pos' : 'neg'}`}>{Math.abs(after.rev - before.rev) < 500 ? '±0' : `${after.rev > before.rev ? '+' : '−'}${fmtDM(Math.abs(after.rev - before.rev))}`}</span>
-        </div>
-        <div className="sv-cmp sv-cmp2">
-          <span>Kosten</span><b className="num">{fmtDM(cost)}</b>
-          <span>Bauzeit</span><span>{plan.months} Monate · {all.length > 1 ? 'je Block die Hälfte' : 'halber Block'} gesperrt</span>
-          <span>Fanstimmung</span><span className={plan.mood < 0 ? 'neg' : plan.mood > 0 ? 'pos' : ''}>{plan.mood ? `${plan.mood > 0 ? '+' : ''}${plan.mood.toLocaleString('de-DE')}` : 'neutral'}</span>
-        </div>
-        {plan.notes.map((n) => <div key={n} className="sv-note">{n}</div>)}
-        <div className="sv-note">Die Nachfrage ist geschätzt: Ob neue Kategorien wirklich voll werden, zeigt erst die Saison.</div>
-        {plan.errors.map((e) => <div key={e} className="sv-note neg">{e}</div>)}
-        {busy && <div className="sv-note">Im Stadion wird gerade gebaut – den nächsten Umbau kannst du danach beauftragen.</div>}
-        {plan.ok && !busy && <>
-          <div className="sv-btns">
-            <button className={`btn btn-primary btn-sm ${confirm === 'cash' ? 'on' : ''}`} disabled={club.finances.balance < cost} onClick={() => build('cash', 'cash', 0)}>
-              {confirm === 'cash' ? 'Ja, bar bezahlen' : 'Bar bezahlen'}
-            </button>
-            {[10, 20].map((y) => (
-              <button key={y} className={`dchip ${confirm === `l${y}` ? 'on' : ''}`} onClick={() => build(`l${y}`, 'loan', y)}>
-                {confirm === `l${y}` ? `Ja, Kredit ${y} J.` : `Kredit ${y} J. · ${fmtDM(monthly(y))}/Mon.`}
+        <section className="bc-sec">
+          <div className="bc-sec-h"><span>Dach<InfoTip k="ueberdacht" /></span></div>
+          <div className="bc-roofs">
+            {ROOFS.map((r) => (
+              <button key={r} className={draft.roof === r ? 'on' : ''} onClick={() => upd({ roof: r })}>
+                <svg viewBox="0 0 48 28" aria-hidden="true">
+                  <path d="M6 26 L6 18 L42 12 L42 26 Z" className="bc-roof-stand" />
+                  {r !== 'none' && <path d={r === 'full' ? 'M3 9 L45 3 L45 6 L3 12 Z' : 'M24 6 L45 3 L45 6 L24 9 Z'} className="bc-roof-top" />}
+                  {r !== 'none' && <path d={r === 'full' ? 'M5 11 L5 18 M43 6 L43 12' : 'M43 6 L43 12 M26 9 L26 15'} className="bc-roof-post" />}
+                </svg>
+                <span>{ROOF_NAME[r]}</span>
               </button>
             ))}
           </div>
-          <div className="sv-sub">Zins derzeit {(rate * 100).toFixed(1).replace('.', ',')} % p. a. Die Bank prüft, ob die Raten zum Umsatz passen.</div>
+        </section>
+
+        <section className="bc-sec">
+          <div className="bc-sec-h"><span>Ausstattung</span></div>
+          {vipAllowed(draft.id) && (
+            <label className={`bc-opt ${!vipAvailable(year) && !draft.vip ? 'off' : ''}`}>
+              <span><b>VIP-Bereich</b><small>{vipAvailable(year) ? 'Business-Plätze mit Bewirtung' : 'ab 1980'}</small></span>
+              <button className={`toggle ${draft.vip ? 'on' : ''}`} disabled={!vipAvailable(year) && !draft.vip} onClick={() => upd({ vip: !draft.vip })} aria-label="VIP-Bereich" />
+            </label>
+          )}
+          {(scoreboardAllowed(draft.id) || draft.scoreboard) && (
+            <label className="bc-opt">
+              <span><b>{videoWall(year) ? 'Videowand' : 'Anzeigetafel'}</b><small>Ergebnis und Spielzeit für alle Ränge</small></span>
+              <button className={`toggle ${draft.scoreboard ? 'on' : ''}`} onClick={() => upd({ scoreboard: !draft.scoreboard })} aria-label="Anzeigetafel" />
+            </label>
+          )}
+          <div className={`bc-opt ${!loungesAvailable(year) ? 'off' : ''}`}>
+            <span><b>Logen</b><small>{loungesAvailable(year) ? `höchstens ${maxL} in diesem Block` : 'ab 1985'}</small></span>
+            <span className="bc-step">
+              <button disabled={draft.lounges <= 0} onClick={() => upd({ lounges: draft.lounges - 1 })} aria-label="Weniger Logen">−</button>
+              <b>{draft.lounges}</b>
+              <button disabled={!loungesAvailable(year) || draft.lounges >= maxL} onClick={() => upd({ lounges: draft.lounges + 1 })} aria-label="Mehr Logen">+</button>
+            </span>
+          </div>
+        </section>
+
+        {plan.changed && <>
+          {plan.notes.map((n) => <div key={n} className="bc-note">{n}</div>)}
+          {plan.errors.map((e) => <div key={e} className="bc-note neg">{e}</div>)}
+          {busy && <div className="bc-note">Im Stadion wird gerade gebaut – den nächsten Umbau kannst du danach beauftragen.</div>}
         </>}
-        <button className="sv-link" onClick={() => { setWhole(false); upd({ ...JSON.parse(JSON.stringify(cur)) }); }}>Planung verwerfen</button>
-      </>}
-      {msg && <div className="sv-note acc">{msg}</div>}
+      </div>
+
+      <footer className="bc-foot">
+        {!plan.changed || !before || !after ? (
+          <div className="bc-idle">Passe Ränge, Dach oder Ausstattung an – hier siehst du dann Wirkung, Kosten und Bauzeit.</div>
+        ) : <>
+          <div className="bc-kpis">
+            <div><span>Kapazität</span><b className={plan.addCapacity > 0 ? 'pos' : plan.addCapacity < 0 ? 'neg' : ''}>{sign(plan.addCapacity)}</b><small>{blocksCapacity(planned).toLocaleString('de-DE')} gesamt</small></div>
+            <div><span>Zuschauer</span><b className={after.visitors > before.visitors ? 'pos' : after.visitors < before.visitors ? 'neg' : ''}>{sign(after.visitors - before.visitors)}</b><small>{after.visitors.toLocaleString('de-DE')} erwartet</small></div>
+            <div><span>Eintritt / Spiel</span><b className={Math.abs(revDiff) < 500 ? '' : revDiff > 0 ? 'pos' : 'neg'}>{Math.abs(revDiff) < 500 ? '±0' : `${revDiff > 0 ? '+' : '−'}${fmtDM(Math.abs(revDiff))}`}</b><small>{fmtDM(after.rev)}</small></div>
+          </div>
+          <div className="bc-cost">
+            <div><span>Kosten</span><b>{fmtDM(cost)}</b></div>
+            <div><span>Bauzeit</span><b>{plan.months} Mon.</b></div>
+            <div><span>Fans</span><b className={plan.mood < 0 ? 'neg' : plan.mood > 0 ? 'pos' : ''}>{plan.mood ? `${plan.mood > 0 ? '+' : ''}${plan.mood}` : '±0'}</b></div>
+          </div>
+          {plan.ok && !busy && <>
+            <div className="bc-fin" role="radiogroup" aria-label="Finanzierung">
+              <button className={f === 'cash' ? 'on' : ''} disabled={!canCash} onClick={() => { setConfirm(null); setFin('cash'); }}><b>Bar</b><small>{canCash ? 'aus dem Kontostand' : 'Konto reicht nicht'}</small></button>
+              {([10, 20] as const).map((y) => (
+                <button key={y} className={f === y ? 'on' : ''} onClick={() => { setConfirm(null); setFin(y); }}><b>Kredit {y} J.</b><small>{fmtDM(monthly(y))}/Mon.</small></button>
+              ))}
+            </div>
+            <div className="bc-go">
+              <button className="bc-reset" onClick={() => { setWhole(false); setConfirm(null); upd({ ...JSON.parse(JSON.stringify(cur)) }); }}>Verwerfen</button>
+              <button className={`b3 b3-primary bc-build ${confirm === finKey ? 'on' : ''}`} onClick={go}>
+                {confirm === finKey ? 'Ja, Bau beauftragen' : 'Bau beauftragen'}
+              </button>
+            </div>
+            <div className="bc-fine">Zins derzeit {(rate * 100).toFixed(1).replace('.', ',')} % p. a. · {all.length > 1 ? 'je Block die Hälfte' : 'halber Block'} während des Baus gesperrt · Nachfrage geschätzt</div>
+          </>}
+          {(!plan.ok || busy) && <div className="bc-go"><button className="bc-reset" onClick={() => { setWhole(false); upd({ ...JSON.parse(JSON.stringify(cur)) }); }}>Verwerfen</button></div>}
+        </>}
+        {msg && <div className="bc-note acc">{msg}</div>}
+      </footer>
     </div>
   );
 }

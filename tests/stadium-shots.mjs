@@ -45,13 +45,13 @@ const n = await page.locator('.gr-svg g.gr-obj:not(.sv-venue)').count();
 await block(n - 1).click({ force: true });
 await page.waitForTimeout(300);
 await page.screenshot({ path: `${outDir}/${tag}_2_block.png` });
-const add = page.locator('.sv-pop button:has-text("Rang aufstocken")');
+const add = page.locator('.sv-pop button[title="Rang aufstocken"]');
 if (await add.isVisible() && await add.isEnabled()) await add.click();
-const roof = page.locator('.sv-pop .sv-seg button:has-text("volles Dach")');
+const roof = page.locator('.sv-pop .bc-roofs button:has-text("volles Dach")');
 if (await roof.count()) await roof.first().click();
 await page.waitForTimeout(300);
 await page.screenshot({ path: `${outDir}/${tag}_3_planung.png` });
-await page.locator('.sv-pop .sv-x').first().click();
+await page.locator('.sv-pop .bc-x, .sv-pop .sv-x').first().click();
 // Kartenverkauf (eigene Seite, Verein › Kartenverkauf) und zurück
 await page.locator('.sv-bar button:has-text("Kartenverkauf")').click();
 await page.waitForTimeout(400);
