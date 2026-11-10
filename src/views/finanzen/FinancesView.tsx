@@ -7,6 +7,7 @@ import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtCompactDM, fmtDateShort, fmtFullDM, fmtPrice, fmtWage, wageUnit } from '../../ui/format';
 import { type ReactNode } from 'react';
 import type { InfoKey } from '../../data/infoTexts';
+import { smoothArea, smoothPath, type Pt } from '../../ui/smoothPath';
 
 /** i-Hilfen an einzelnen Umsatzarten (nur, wo nicht selbsterklärend). */
 const INCOME_INFO: Partial<Record<string, InfoKey>> = { tvMoney: 'tvGeld', commercial: 'vermarktung', membership: 'mitglieder', catering: 'catering' };
@@ -58,8 +59,9 @@ export function BalanceChart({ points, current, currentDate }: {
   const iw = W - PL - PR, ih = H - PT - PB;
   const x = (i: number) => PL + (i / (data.length - 1)) * iw;
   const y = (v: number) => PT + (1 - (v - min) / (max - min)) * ih;
-  const line = data.map((d, i) => `${i === 0 ? 'M' : 'L'} ${x(i).toFixed(1)} ${y(d.balance).toFixed(1)}`).join(' ');
-  const area = `${line} L ${x(data.length - 1).toFixed(1)} ${(PT + ih).toFixed(1)} L ${PL} ${(PT + ih).toFixed(1)} Z`;
+  const pts: Pt[] = data.map((d, i) => [x(i), y(d.balance)]);
+  const line = smoothPath(pts);
+  const area = smoothArea(pts, PT + ih);
   const zeroY = y(0);
   const mmLabel = (iso: string) => {
     const d = new Date(iso + 'T00:00:00Z');

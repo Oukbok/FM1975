@@ -10,6 +10,7 @@ import { ClubLink } from './ClubLink';
 import { coachRecordOf, recordText } from '../../game/coachRecord';
 import { currentStint, ensureCareer, stintRecord } from '../../game/careerState';
 import { headCoachRows } from '../../game/headCoaches';
+import { smoothPath, type Pt } from '../../ui/smoothPath';
 
 export interface ClubTabProps {
   g: Game;
@@ -158,7 +159,7 @@ export function PlacementChart({ seasons }: { seasons: SeasonPlacement[] }) {
   const x = (i: number) => padL + (n === 1 ? (W - padL - padR) / 2 : (i * (W - padL - padR)) / (n - 1));
   const y = (s: SeasonPlacement) => padT + ((off[s.tier] + s.pos - 0.5) / total) * (H - padT - padB);
   const labelEvery = Math.max(1, Math.ceil(n / 8));
-  const path = seasons.map((s, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(s).toFixed(1)}`).join(' ');
+  const path = smoothPath(seasons.map((s, i): Pt => [x(i), y(s)]));
   return (
     <svg className="cmx-chart" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Platzierungen der vergangenen Saisons">
       {tiers.map((t, i) => {

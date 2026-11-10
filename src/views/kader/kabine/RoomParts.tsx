@@ -19,6 +19,7 @@ import Icon from '../../../components/Icon';
 import { InfoTip } from '../../../ui/InfoTip';
 import { PlayerTalkModal } from '../talk/PlayerTalkModal';
 import PosBadge from '../../../components/PosBadge';
+import { smoothPath, type Pt } from '../../../ui/smoothPath';
 
 const sign = (v: number) => (v > 0 ? `+${v}` : `${v}`);
 
@@ -47,7 +48,7 @@ export function MoodSpark({ points }: { points: number[] }) {
   return (
     <svg className="kb-spark" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
       <line x1={0} x2={w} y1={h - 4 - 0.5 * (h - 8)} y2={h - 4 - 0.5 * (h - 8)} className="kb-spark-mid" />
-      <polyline points={xs.map((x, i) => `${x},${ys[i]}`).join(' ')} className="kb-spark-line" />
+      <path d={smoothPath(xs.map((x, i): Pt => [x, ys[i]]))} className="kb-spark-line" />
     </svg>
   );
 }

@@ -7,6 +7,7 @@ import type { Player, WeekPoint } from '../../types';
 import type { Game } from '../../game/state';
 import { profileWeeksOf } from '../../game/profileWeeks';
 import { utcDate } from './shared';
+import { smoothPath, type Pt } from '../../ui/smoothPath';
 
 type Key = 'ov' | 'f' | 'fr' | 'fi' | 'm';
 const SERIES: { k: Key; label: string; color: string }[] = [
@@ -44,13 +45,15 @@ export default function DevChart({ p, g }: { p: Player; g?: Game }) {
   const x = (i: number) => L + (i * (W - L - R)) / (pts.length - 1);
   const y = (v: number) => T + (1 - v / 100) * (H - T - B);
   const path = (get: (pt: WeekPoint) => number | undefined) => {
-    let d = '', open = false;
+    // Lücken (fehlende Werte) trennen die Linie; jedes Stück als weiche Kurve.
+    let d = '', seg: Pt[] = [];
+    const flush = () => { if (seg.length) d += smoothPath(seg); seg = []; };
     pts.forEach((pt, i) => {
       const v = get(pt);
-      if (v == null) { open = false; return; }
-      d += `${open ? 'L' : 'M'}${x(i).toFixed(1)},${y(v).toFixed(1)}`;
-      open = true;
+      if (v == null) { flush(); return; }
+      seg.push([x(i), y(v)]);
     });
+    flush();
     return d;
   };
   const onMove = (e: PointerEvent<SVGSVGElement>) => {

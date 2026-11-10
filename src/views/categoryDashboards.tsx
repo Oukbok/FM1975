@@ -22,6 +22,7 @@ import {
   FormDots, GROUP_DE, MatchRow, PlayerRow, avg, groupOf, monthsUntil, ownLeagueMatches, squadOf, tableRow,
 } from './shared';
 import { ScoutStars, scoutMid } from './shared';
+import { smoothArea, smoothPath, type Pt } from '../ui/smoothPath';
 
 // =============================================================================
 // KATEGORIE-ÜBERSICHTEN (Reihe-1-Klick im Hauptmenü)
@@ -321,11 +322,12 @@ export function Sparkline({ values, height = 120 }: { values: number[]; height?:
   const min = Math.min(...values, 0), max = Math.max(...values, 1);
   const x = (i: number) => pad + (i * (W - 2 * pad)) / (values.length - 1);
   const y = (v: number) => H - pad - ((v - min) / Math.max(1, max - min)) * (H - 2 * pad);
-  const path = values.map((v, i) => `${i ? 'L' : 'M'}${x(i)},${y(v)}`).join(' ');
+  const pts: Pt[] = values.map((v, i) => [x(i), y(v)]);
+  const path = smoothPath(pts);
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="dspark" preserveAspectRatio="none">
       {min < 0 && <line x1={0} x2={W} y1={y(0)} y2={y(0)} stroke="var(--red)" strokeDasharray="4 4" strokeWidth="1" />}
-      <path d={`${path} L${x(values.length - 1)},${H} L${x(0)},${H} Z`} fill="rgba(241, 160, 55,0.12)" />
+      <path d={smoothArea(pts, H)} style={{ fill: "rgba(var(--ink-rgb), 0.07)" }} />
       <path d={path} fill="none" stroke="var(--text-2)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
     </svg>
   );
