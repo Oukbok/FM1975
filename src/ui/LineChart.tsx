@@ -38,7 +38,7 @@ function useSize<T extends HTMLElement>() {
   return [ref, size] as const;
 }
 
-export function LineChart({ points, fmt, fmtAxis, yTitle, minHeight = 120, compact, className, ariaLabel }: {
+export function LineChart({ points, fmt, fmtAxis, yTitle, minHeight = 120, compact, className, ariaLabel, zeroBase }: {
   points: LinePoint[];
   /** Wert im Hover. */
   fmt: (v: number) => string;
@@ -51,6 +51,8 @@ export function LineChart({ points, fmt, fmtAxis, yTitle, minHeight = 120, compa
   compact?: boolean;
   className?: string;
   ariaLabel?: string;
+  /** Finanzgraphen (Wunsch Pascal): Y-Achse beginnt bei 0, nur bei negativen Werten darunter. */
+  zeroBase?: boolean;
 }) {
   const [ref, { w, h }] = useSize<HTMLDivElement>();
   const [hover, setHover] = useState<number | null>(null);
@@ -60,8 +62,9 @@ export function LineChart({ points, fmt, fmtAxis, yTitle, minHeight = 120, compa
   let lo = Math.min(...vals), hi = Math.max(...vals);
   if (lo > 0 && lo < hi * 0.35) lo = 0; // nahe null: Achse bei null beginnen
   if (lo === hi) { lo -= Math.abs(lo) * 0.1 || 1; hi += Math.abs(hi) * 0.1 || 1; }
+  if (zeroBase && lo > 0) lo = 0;
   const pad0 = (hi - lo) * 0.08;
-  const ticks = niceTicks(lo - pad0, hi + pad0, compact ? 2 : 4);
+  const ticks = niceTicks(zeroBase && lo >= 0 ? 0 : lo - pad0, hi + pad0, compact ? 2 : 4);
   const yLo = Math.min(lo, ticks[0]), yHi = Math.max(hi, ticks[ticks.length - 1]);
   const fs = compact ? 10 : 11.5;
   const labW = Math.max(...ticks.map((t) => axisFmt(t).length)) * fs * 0.6 + 10;

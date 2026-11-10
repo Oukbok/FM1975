@@ -358,5 +358,16 @@ export function prepareLoadedGame(g: Game): void {
   try { migrateBudget(g); } catch (err) { console.error('Saisonbudget-Nachrüstung fehlgeschlagen:', err); }
   try { migrateContracts2(g); } catch (err) { console.error('Vertrag-2.0-Nachrüstung fehlgeschlagen:', err); }
   bindHonours(g, true); // Vereinsauszeichnungen: Wirkungstabelle des geladenen Spielstands
+  fixStaleContracts(g); // Spieler im Kader mit abgelaufenem Vertrag (Hochziehen nach dem 1. Juli, alte Spielstände)
   if (!g.worldPool) ensureWorldPool(g); // Weltspieler (Spielerpool) für alte Spielstände anlegen
+}
+
+/** Abgelaufene Verträge von Kaderspielern (sollte es nicht geben): bis zum Ende der nächsten Saison verlängern. */
+export function fixStaleContracts(g: Game): void {
+  const today = g.calendar.currentDate;
+  const endYear = Number(today.slice(0, 4)) + (Number(today.slice(5, 7)) >= 7 ? 1 : 0);
+  for (const c of Object.values(g.clubs)) for (const id of c.playerIds) {
+    const p = g.players[id];
+    if (p && p.contract.expiryDate < today) p.contract.expiryDate = `${endYear + 1}-06-30`;
+  }
 }

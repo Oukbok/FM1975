@@ -35,7 +35,7 @@ export function balancePoints(club: Club, today: string, months = 24): LinePoint
 export function BalanceLine({ g, months, compact }: { g: Game; months?: number; compact?: boolean }) {
   const pts = balancePoints(g.clubs[g.managedClubId], g.calendar.currentDate, months);
   if (pts.length < 2) return <div className="dnote">Der Verlauf erscheint nach dem ersten Monatsabschluss.</div>;
-  return <LineChart points={pts} fmt={fmtFullDM} fmtAxis={fmtCompactDM} compact={compact} ariaLabel="Kontostand je Monat" />;
+  return <LineChart points={pts} fmt={fmtFullDM} fmtAxis={fmtCompactDM} compact={compact} zeroBase ariaLabel="Kontostand je Monat" />;
 }
 
 export function LicenseBox({ g }: { g: Game }) {

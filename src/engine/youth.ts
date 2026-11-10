@@ -610,7 +610,14 @@ export function promoteYouth(
 
   // Als Profi übernehmen: Stärke nach Profi-Maßstab, Potenzial bleibt eine Einschätzung.
   p.isYouth = false;
-  if (date) p.youthPromoted = date;
+  if (date) {
+    p.youthPromoted = date;
+    // Jugendvertrag schon abgelaufen (Hochziehen nach dem 1. Juli): Profivertrag bis Ende der übernächsten Saison.
+    if (p.contract.expiryDate <= date) {
+      const endYear = Number(date.slice(0, 4)) + (Number(date.slice(5, 7)) >= 7 ? 1 : 0);
+      p.contract.expiryDate = `${endYear + 2}-06-30`;
+    }
+  }
   // Das fein ausgewürfelte Höchstpotenzial bleibt erhalten (keine Sterne-Rundung).
   p.development.basePotential = Math.max(p.overall, p.development.potentialAbility ?? starsToPotential(p.potentialStars));
   ensureDevFields(p);
