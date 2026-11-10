@@ -53,8 +53,12 @@ export function TicketsView({ g, onChange, onGoto }: { g: Game; onChange: () => 
   const next = games.find((h) => !h.played) ?? null;
   const sel = games.find((h) => h.key === selKey) ?? next ?? games[games.length - 1] ?? null;
   const selFc = sel && !sel.played ? fcs.get(sel.key) ?? null : null;
-  const caps = selFc?.caps ?? leagueCaps(club, year);
+  // Kontingente des gewählten Spiels. Europapokal (UEFA: nur Sitzplätze): die Stehbereiche werden bestuhlt –
+  // standCaps verteilt die zusätzlichen Sitze auf die Stehtribünen, die Draufsicht zeigt also dasselbe Stadion.
+  const full = leagueCaps(club, year);
+  const caps = selFc?.caps ?? full;
   const stands = standCaps(club, caps)!;
+  const seatsOnly = !!selFc && (full.steh ?? 0) > 0 && (selFc.caps.steh ?? 0) === 0;
   const people = Object.fromEntries(STANDS.map((s) => [s.id, CAT_KEYS.reduce((a, k) => a + (k === 'loge' ? (stands[s.id][k] ?? 0) * LOGE_GUESTS : stands[s.id][k] ?? 0), 0)])) as Record<StandId, number>;
 
   // Übersicht
@@ -85,7 +89,7 @@ export function TicketsView({ g, onChange, onGoto }: { g: Game; onChange: () => 
       </DashBox>
 
       <DashBox title="Eintrittspreise festlegen" icon="ticket" info="tribuenenpreise" span={2} flush
-        right={sel && selFc ? <span className="tk-right">Prognose: {g.clubs[sel.awayId]?.name ?? ''}, {sel.date.slice(8, 10)}.{sel.date.slice(5, 7)}.</span> : undefined}>
+        right={sel && selFc ? <span className="tk-right">Prognose: {g.clubs[sel.awayId]?.name ?? ''}, {sel.date.slice(8, 10)}.{sel.date.slice(5, 7)}.{seatsOnly ? ' · Europapokal: nur Sitzplätze' : ''}</span> : undefined}>
         <PriceTable g={g} club={club} year={year} caps={caps} stands={stands} fc={selFc} sel={stand} onSel={setStand} onChange={changed} />
       </DashBox>
 

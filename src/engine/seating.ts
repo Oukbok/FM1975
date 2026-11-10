@@ -369,7 +369,15 @@ export function standCaps(club: Club, caps: SeatNums): Record<StandId, SeatNums>
   for (const k of CAT_KEYS) {
     if (k === 'gast') continue;
     const tot = STANDS.reduce((a, d) => a + raw[d.id][k], 0);
-    const f = tot > 0 ? (caps[k] ?? 0) / tot : 0;
+    const want = caps[k] ?? 0;
+    // Mehr Sitzplätze als gebaut (Europapokal: Stehbereiche werden bestuhlt) → Überschuss auf die Stehtribünen.
+    const stehTot = STANDS.reduce((a, d) => a + raw[d.id].steh, 0);
+    if (k === 'sitz' && want > tot && stehTot > 0 && (caps.steh ?? 0) < stehTot) {
+      const extra = want - tot;
+      for (const d of STANDS) out[d.id][k] = Math.round(raw[d.id][k] + (extra * raw[d.id].steh) / stehTot);
+      continue;
+    }
+    const f = tot > 0 ? want / tot : 0;
     for (const d of STANDS) out[d.id][k] = Math.round(raw[d.id][k] * f);
   }
   return out;
