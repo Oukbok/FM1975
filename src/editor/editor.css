@@ -200,3 +200,10 @@ textarea.ed-in { resize: vertical; line-height: 1.4; }
 .ed-table th.ed-sortable:hover { color: var(--text); }
 .ed-table th.ed-sortable.on { color: var(--accent); }
 .ed-sort-mark { display: inline-block; width: 12px; margin-left: 4px; font-size: 9px; }
+
+/* Grafikpakete */
+.ed-check { display: inline-flex; align-items: center; gap: 6px; color: var(--text-2); font-size: 13px; }
+.ed-gfx td { vertical-align: middle; }
+.ed-gfx-img { width: 44px; height: 44px; object-fit: contain; display: block; }
+.ed-gfx-file { font-size: 12px; color: var(--text-2); word-break: break-all; }
+.ed-gfx tr.ed-gfx-open td { background: rgba(var(--accent-rgb), 0.06); }

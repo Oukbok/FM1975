@@ -32,18 +32,20 @@ let crestDate: string | null = null;
 export function activeDatasetId(): string { return activeId; }
 
 /** Wappen/Trikots des aktiven Datensatzes für einen Verein (falls vorhanden). */
-export function datasetCrest(clubId: string): string | undefined { return activeCosmetics.crests?.[clubId]; }
+/** Weltvereine laufen im Spiel als `w_<id>`; Wappen/Trikots hängen im Datensatz an der Welt-ID ohne Präfix. */
+const dsId = (clubId: string) => (clubId.startsWith('w_') ? clubId.slice(2) : clubId);
+export function datasetCrest(clubId: string): string | undefined { return activeCosmetics.crests?.[clubId] ?? activeCosmetics.crests?.[dsId(clubId)]; }
 /** Datum, nach dem sich spätere Wappen richten (ISO, UTC). */
 export function setCrestDate(iso: string | null): void { crestDate = iso; }
 /** Späteres Wappen des Datensatzes, das am Datum gilt (ab 1. Juli des Jahres `from`), sonst undefined. */
 export function datasetCrestAt(clubId: string, iso: string | null = crestDate): string | undefined {
-  const eras = activeCosmetics.crestEras?.[clubId];
+  const eras = activeCosmetics.crestEras?.[clubId] ?? activeCosmetics.crestEras?.[dsId(clubId)];
   if (!eras?.length || !iso) return undefined;
   let best: { from: number; crest: string } | undefined;
   for (const e of eras) if (e.crest && iso >= `${e.from}-07-01` && (!best || e.from > best.from)) best = e;
   return best?.crest;
 }
-export function datasetKits(clubId: string) { return activeCosmetics.kits?.[clubId]; }
+export function datasetKits(clubId: string) { return activeCosmetics.kits?.[clubId] ?? activeCosmetics.kits?.[dsId(clubId)]; }
 
 function replaceArray<T>(target: T[], src: T[] | undefined, fallback: T[]): void {
   const next = JSON.parse(JSON.stringify(src && src.length ? src : fallback)) as T[];

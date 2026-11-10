@@ -18,7 +18,7 @@
 // erst danach auf die Save-Felder bzw. das generierte Standard-Design zurück.
 // Rein kosmetisch — kein Einfluss auf die Simulation.
 // =============================================================================
-import { datasetCrestAt } from './dataset/apply';
+import { datasetCrest, datasetCrestAt } from './dataset/apply';
 import { Club, Kit } from '../types';
 import { defaultCrestFor } from './defaultCrests';
 
@@ -256,5 +256,5 @@ export function clearClubOverride(club: Club): void {
  * Spätere Wappen aus dem Datensatz (`crestEras`, ab Saisonbeginn des Jahres) gehen vor customCrest.
  */
 export function resolveCrestImage(club: Club): string | undefined {
-  return getClubOverrideForClub(club)?.crest ?? datasetCrestAt(club.id) ?? club.customCrest ?? defaultCrestFor(club.id);
+  return getClubOverrideForClub(club)?.crest ?? datasetCrestAt(club.id) ?? club.customCrest ?? datasetCrest(club.id) ?? defaultCrestFor(club.id);
 }

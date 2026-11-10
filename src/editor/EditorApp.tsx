@@ -13,16 +13,18 @@ import { CheckSection } from './sections/Check';
 import { LegendsSection } from './sections/Legends';
 import { WorldSection } from './sections/World';
 import { PoolSection } from './sections/Pool';
+import { GraphicsSection } from './sections/Graphics';
 
 // =============================================================================
 // DATENSATZ-EDITOR (eigenständige Seite unter /editor/)
 // Arbeitskopie im Browser, Prüfen, Export als Datei, Übernahme ins Spiel.
 // =============================================================================
-type Sec = 'general' | 'clubs' | 'world' | 'pool' | 'europe' | 'timeline' | 'leagues' | 'facilities' | 'staff' | 'marketing' | 'names' | 'legends' | 'economy' | 'history' | 'check';
+type Sec = 'general' | 'graphics' | 'clubs' | 'world' | 'pool' | 'europe' | 'timeline' | 'leagues' | 'facilities' | 'staff' | 'marketing' | 'names' | 'legends' | 'economy' | 'history' | 'check';
 
 // Menü nach Kategorien, ohne Symbole (Wunsch Pascal).
 const SECTIONS: { key: Sec; label: string; group: string; title: string }[] = [
   { key: 'general', label: 'Allgemein', group: 'Datensatz', title: 'Allgemein' },
+  { key: 'graphics', label: 'Grafikpakete', group: 'Datensatz', title: 'Grafikpakete: Wappen importieren & Vereins-IDs exportieren' },
   { key: 'check', label: 'Prüfen & Übernehmen', group: 'Datensatz', title: 'Prüfen & Übernehmen' },
   { key: 'clubs', label: 'Vereine', group: 'Vereine & Wettbewerbe', title: 'Vereine nach Land und Liga: Daten, Wappen & Trikots' },
   { key: 'world', label: 'Ligen je Saison', group: 'Vereine & Wettbewerbe', title: 'Weltdaten: Länder, Ligazusammensetzung je Saison' },
@@ -123,7 +125,7 @@ export default function EditorApp() {
   const nErr = issues?.filter((i) => i.level === 'error').length ?? 0;
   const p = { ds, onChange };
   const body: Record<Sec, ReactNode> = {
-    general: <GeneralSection {...p} />, clubs: <ClubsSection {...p} />, world: <WorldSection {...p} />, pool: <PoolSection {...p} />, europe: <EuropeSection {...p} />,
+    general: <GeneralSection {...p} />, clubs: <ClubsSection {...p} />, world: <WorldSection {...p} />, pool: <PoolSection {...p} />, graphics: <GraphicsSection {...p} />, europe: <EuropeSection {...p} />,
     timeline: <TimelineSection {...p} />, leagues: <LeaguesSection {...p} />, facilities: <FacilitiesSection {...p} />,
     staff: <StaffSection {...p} />, marketing: <MarketingSection {...p} />, names: <NamesSection {...p} />, legends: <LegendsSection {...p} />,
     economy: <EconomySection {...p} />, history: <HistorySection {...p} />,
