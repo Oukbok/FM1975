@@ -1,4 +1,5 @@
 import { BLOCKED_NAMES, EXTRA_NAMES } from './namePools';
+import { MORE_NAMES } from './namePoolsMore';
 import { FIRST_BY_ERA, type FirstNameEra } from './nameEras';
 // =============================================================================
 // Herkünfte: Namenslisten, Nationalität und Gesichtsgruppe (für spätere Porträts).
@@ -266,7 +267,7 @@ export function makeName(o: Origin, rng: () => number, birthYear?: number): { fi
 }
 
 // Erweiterte Namenspools einmalig einmischen (ohne Dubletten).
-for (const [id, extra] of Object.entries(EXTRA_NAMES)) {
+for (const [id, extra] of [...Object.entries(EXTRA_NAMES), ...Object.entries(MORE_NAMES)]) {
   const o = ORIGINS[id];
   if (!o) continue;
   if (extra.first) o.first = [...new Set([...o.first, ...extra.first])];
