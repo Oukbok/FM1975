@@ -171,9 +171,16 @@ body { background: var(--paper-page); }
 }
 .dbox { overflow: hidden; }
 .dbox > .dxh {
-  margin: -7px -15px 10px; padding: 9px 15px 8px;
+  margin: -7px -15px 10px; padding: 0 15px;
   background: var(--navy); border-bottom: none;
+  /* Feste Kopfhöhe (Wunsch Pascal): Köpfe mit Knöpfen sind nicht höher als andere –
+     Knöpfe und Auswahllisten im Kopf füllen die Höhe bis auf einen schmalen Rand. */
+  height: 44px; min-height: 44px; box-sizing: border-box; flex: none;
 }
+.dbox > .dxh :is(button, .b3, .dchip, .sel3, .sel3-btn, .dselect, input, select) {
+  max-height: 34px; min-height: 0;
+}
+.dbox > .dxh :is(button, .b3, .dchip):not(.itip):not(.info-tip) { height: 32px; padding-top: 0; padding-bottom: 0; display: inline-flex; align-items: center; justify-content: center; }
 .dbox > .dxh .dxh-title { color: var(--navy-ink); font-size: 22px; letter-spacing: 1px; }
 .dbox > .dxh .dxh-right { color: var(--navy-ink-2); }
 .dbox > .dxh .itip, .dbox > .dxh .info-tip { color: var(--navy-ink-2); }
