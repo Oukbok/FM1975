@@ -1,3 +1,4 @@
+import { useNavTarget } from '../nav';
 import { useState } from 'react';
 import { Dataset, OriginData } from '../../data/dataset/schema';
 import { Col, Explain, FieldForm, SortTh, TableEditor, useSort } from '../TableEditor';
@@ -40,7 +41,8 @@ const FACES = ['mitteleuropa', 'nordeuropa', 'suedeuropa', 'osteuropa', 'balkan'
   .map((f) => ({ value: f, label: f }));
 
 export function NamesSection({ ds, onChange }: P) {
-  const [tab, setTab] = useState<'origins' | 'eras' | 'mix' | 'ethnie' | 'blocked'>('origins');
+  const target = useNavTarget();
+  const [tab, setTab] = useState<'origins' | 'eras' | 'mix' | 'ethnie' | 'blocked'>(target?.tab === 'mix' || target?.tab === 'blocked' ? target.tab : 'origins');
   const n = ds.names;
   return (
     <div className="ed-section">

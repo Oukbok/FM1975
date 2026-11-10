@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { memo, useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import Icon from '../components/Icon';
 import { Dataset, DatasetSummary } from '../data/dataset/schema';
 import { BUILTIN_ID, builtinDataset } from '../data/dataset/builtin';
@@ -14,32 +14,30 @@ import { LegendsSection } from './sections/Legends';
 import { WorldSection } from './sections/World';
 import { PoolSection } from './sections/Pool';
 import { GraphicsSection } from './sections/Graphics';
+import { ChangesSection } from './sections/Changes';
+import { SearchBox } from './SearchBox';
+import { EditHistory } from './history';
+import { locate, NavContext, Sec, SECTIONS, secOfArea, Target } from './nav';
+import { CLUB_IDS_LIST } from './TableEditor';
+
+/** Vorschlagsliste aller Vereins-IDs (Felder mit `ref: 'club'`, Ligalisten). */
+const ClubIdList = memo(function ClubIdList({ sig, ids }: { sig: string; ids: [string, string][] }) {
+  void sig;
+  return <datalist id={CLUB_IDS_LIST}>{ids.map(([id, nm]) => <option key={id} value={id}>{nm}</option>)}</datalist>;
+}, (a, b) => a.sig === b.sig);
+
+function clubIds(ds: Dataset): [string, string][] {
+  const m = new Map<string, string>();
+  const c = ds.clubs;
+  for (const x of [...c.tier1, ...c.secondNord, ...c.secondSued, ...c.ddrOberliga, ...c.ddrLiga]) m.set(x.id, x.name);
+  for (const w of Object.values(ds.worldData ?? {})) for (const x of w.clubs) if (!m.has(x.id)) m.set(x.id, x.name);
+  return [...m];
+}
 
 // =============================================================================
 // DATENSATZ-EDITOR (eigenständige Seite unter /editor/)
 // Arbeitskopie im Browser, Prüfen, Export als Datei, Übernahme ins Spiel.
 // =============================================================================
-type Sec = 'general' | 'graphics' | 'clubs' | 'world' | 'pool' | 'europe' | 'timeline' | 'leagues' | 'facilities' | 'staff' | 'marketing' | 'names' | 'legends' | 'economy' | 'history' | 'check';
-
-// Menü nach Kategorien, ohne Symbole (Wunsch Pascal).
-const SECTIONS: { key: Sec; label: string; group: string; title: string }[] = [
-  { key: 'general', label: 'Allgemein', group: 'Datensatz', title: 'Allgemein' },
-  { key: 'graphics', label: 'Grafikpakete', group: 'Datensatz', title: 'Grafikpakete: Wappen importieren & Vereins-IDs exportieren' },
-  { key: 'check', label: 'Prüfen & Übernehmen', group: 'Datensatz', title: 'Prüfen & Übernehmen' },
-  { key: 'clubs', label: 'Vereine', group: 'Vereine & Wettbewerbe', title: 'Vereine nach Land und Liga: Daten, Wappen & Trikots' },
-  { key: 'world', label: 'Ligen je Saison', group: 'Vereine & Wettbewerbe', title: 'Weltdaten: Länder, Ligazusammensetzung je Saison' },
-  { key: 'pool', label: 'Amateur-Pool', group: 'Vereine & Wettbewerbe', title: 'Amateur-Pool: Nachrücker für Auf- und Abstieg' },
-  { key: 'leagues', label: 'Ligasystem & Reformen', group: 'Vereine & Wettbewerbe', title: 'Ligasystem & Reformen' },
-  { key: 'europe', label: 'Europa & Europapokal', group: 'Vereine & Wettbewerbe', title: 'Europa & Europapokal' },
-  { key: 'names', label: 'Namen & Herkünfte', group: 'Spieler & Personal', title: 'Namen, Herkünfte & Ethnie' },
-  { key: 'legends', label: 'Ausnahmetalente', group: 'Spieler & Personal', title: 'Ausnahmetalente der Fußballgeschichte' },
-  { key: 'staff', label: 'Mitarbeiter', group: 'Spieler & Personal', title: 'Mitarbeiter-Rollen' },
-  { key: 'economy', label: 'Wirtschaft', group: 'Verein & Wirtschaft', title: 'Wirtschaft' },
-  { key: 'facilities', label: 'Einrichtungen', group: 'Verein & Wirtschaft', title: 'Einrichtungen' },
-  { key: 'marketing', label: 'Marketing', group: 'Verein & Wirtschaft', title: 'Marketing-Kanäle' },
-  { key: 'timeline', label: 'Chronik & Regeln', group: 'Geschichte', title: 'Chronik & Regeländerungen' },
-  { key: 'history', label: 'Zeitabschnitte', group: 'Geschichte', title: 'Besondere Zeitabschnitte' },
-];
 const GROUPS = [...new Set(SECTIONS.map((x) => x.group))];
 
 function freshFromBuiltin(): Dataset {
@@ -60,26 +58,76 @@ export default function EditorApp() {
   const [issues, setIssues] = useState<Issue[] | null>(null);
   const [stored, setStored] = useState<DatasetSummary[]>([]);
   const [confirm, setConfirm] = useState<{ text: string; run: () => void } | null>(null);
+  const [ver, setVerN] = useState(0);
+  const [nav, setNav] = useState<{ target: Target | null; nonce: number }>({ target: null, nonce: 0 });
   const fileRef = useRef<HTMLInputElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const timer = useRef<number | undefined>(undefined);
+  const dsRef = useRef<Dataset | null>(null);
+  const hist = useRef<EditHistory | null>(null);
+  const [, setHv] = useState(0);
+  dsRef.current = ds;
 
   useEffect(() => {
-    loadWork().then((w) => setDs(w ?? freshFromBuiltin()));
+    loadWork().then((w) => { const d = w ?? freshFromBuiltin(); dsRef.current = d; hist.current = new EditHistory(() => JSON.stringify(dsRef.current)); setDs(d); });
     listDatasets().then(setStored).catch(() => setStored([]));
   }, []);
 
-  const onChange = () => {
-    setVer((v) => v + 1);
-    setIssues(null);
+  const persist = (d: Dataset) => {
     setSaved('pending');
     window.clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => { if (ds) saveWork(ds).then((ok) => setSaved(ok ? 'ok' : 'fail')); }, 600);
+    timer.current = window.setTimeout(() => saveWork(d).then((ok) => setSaved(ok ? 'ok' : 'fail')), 600);
+  };
+  const onChange = () => {
+    setVer((v) => v + 1); setVerN((v) => v + 1);
+    setIssues(null);
+    if (ds) persist(ds);
+    hist.current?.touch(() => setHv((v) => v + 1));
+    setHv((v) => v + 1);
   };
 
   const replace = (d: Dataset, text: string) => {
-    setDs(d); setGen((g) => g + 1); setIssues(null); setSec('general'); setMsg({ kind: 'info', text });
+    dsRef.current = d;
+    setDs(d); setGen((g) => g + 1); setIssues(null); setSec('general'); setNav((n) => ({ target: null, nonce: n.nonce + 1 })); setMsg({ kind: 'info', text });
+    hist.current?.reset();
     saveWork(d).then((ok) => setSaved(ok ? 'ok' : 'fail'));
   };
+
+  // Rückgängig/Wiederholen: Schnappschuss laden, Bereich neu aufbauen (Auswahl bleibt beim Bereich).
+  const step = useCallback((dir: 'undo' | 'redo') => {
+    const h = hist.current;
+    if (!h) return;
+    (document.activeElement as HTMLElement | null)?.blur?.();
+    const json = dir === 'undo' ? h.undo() : h.redo();
+    if (json == null) { setMsg({ kind: 'info', text: dir === 'undo' ? 'Nichts rückgängig zu machen.' : 'Nichts zu wiederholen.' }); return; }
+    const d = JSON.parse(json) as Dataset;
+    dsRef.current = d;
+    setDs(d); setGen((g) => g + 1); setIssues(null); setVerN((v) => v + 1); setHv((v) => v + 1);
+    setMsg({ kind: 'info', text: dir === 'undo' ? 'Letzte Änderung rückgängig gemacht.' : 'Änderung wiederhergestellt.' });
+    persist(d);
+  }, []);
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => {
+      if (!(e.ctrlKey || e.metaKey)) return;
+      const k = e.key.toLowerCase();
+      if (k === 'z' && !e.shiftKey) { e.preventDefault(); step('undo'); }
+      else if ((k === 'z' && e.shiftKey) || k === 'y') { e.preventDefault(); step('redo'); }
+    };
+    window.addEventListener('keydown', key);
+    return () => window.removeEventListener('keydown', key);
+  }, [step]);
+
+  const goto = useCallback((s: Sec, t?: Target) => { setSec(s); setNav((n) => ({ target: t ?? null, nonce: n.nonce + 1 })); }, []);
+  const pick = (s: Sec) => { setSec(s); setNav((n) => ({ target: null, nonce: n.nonce })); };
+  // Nach einem Sprung den Eintrag suchen (Bereiche bauen Listen teils verzögert auf).
+  useEffect(() => {
+    const t = nav.target;
+    if (!t) return;
+    let tries = 0;
+    const run = () => { if (!locate(contentRef.current, t) && ++tries < 6) h = window.setTimeout(run, 120); };
+    let h = window.setTimeout(run, 60);
+    return () => window.clearTimeout(h);
+  }, [nav]);
   const ask = (text: string, run: () => void) => setConfirm({ text, run });
 
   const openFile = async (f?: File) => {
@@ -124,19 +172,28 @@ export default function EditorApp() {
   const cur = SECTIONS.find((s) => s.key === sec)!;
   const nErr = issues?.filter((i) => i.level === 'error').length ?? 0;
   const p = { ds, onChange };
+  const ids = clubIds(ds);
+  const navApi = { target: nav.target, goto };
   const body: Record<Sec, ReactNode> = {
     general: <GeneralSection {...p} />, clubs: <ClubsSection {...p} />, world: <WorldSection {...p} />, pool: <PoolSection {...p} />, graphics: <GraphicsSection {...p} />, europe: <EuropeSection {...p} />,
-    timeline: <TimelineSection {...p} />, leagues: <LeaguesSection {...p} />, facilities: <FacilitiesSection {...p} />,
+    changes: <ChangesSection {...p} />, timeline: <TimelineSection {...p} />, leagues: <LeaguesSection {...p} />, facilities: <FacilitiesSection {...p} />,
     staff: <StaffSection {...p} />, marketing: <MarketingSection {...p} />, names: <NamesSection {...p} />, legends: <LegendsSection {...p} />,
     economy: <EconomySection {...p} />, history: <HistorySection {...p} />,
-    check: <CheckSection ds={ds} issues={issues} onCheck={runCheck} onExport={doExport} onStore={doStore} />,
+    check: <CheckSection ds={ds} issues={issues} onCheck={runCheck} onExport={doExport} onStore={doStore}
+      onJump={(i) => { const cc = i.area.startsWith('Weltdaten ') ? i.area.slice(10) : undefined; goto(secOfArea(i.area), { id: i.find, text: i.find, cc, year: i.year, tab: i.year != null ? 'seasons' : undefined }); }} />,
   };
 
   return (
     <div className="ed-app">
+      <ClubIdList sig={`${ids.length}:${ids.map((x) => x[0]).join(',').length}:${gen}`} ids={ids} />
       <header className="ed-top">
         <div className="ed-brand"><span className="ed-logo">1975</span><span>Datensatz-Editor</span></div>
         <div className="ed-ds-name" title={ds.meta.description}>{ds.meta.name} <span className="ed-hint">{ds.meta.id}</span></div>
+        <div className="ed-quick">
+          <SearchBox ds={ds} ver={ver} onGo={goto} />
+          <button className="ed-btn" data-act="undo" disabled={!hist.current?.canUndo()} title="Rückgängig (Strg+Z)" onClick={() => step('undo')}>Rückgängig</button>
+          <button className="ed-btn" data-act="redo" disabled={!hist.current?.canRedo()} title="Wiederholen (Strg+Umschalt+Z / Strg+Y)" onClick={() => step('redo')}>Wiederholen</button>
+        </div>
         <div className="ed-tools">
           <button className="ed-btn" onClick={() => ask('Neuen Datensatz auf Basis des Standards anlegen? Die Arbeitskopie wird ersetzt.', () => replace(freshFromBuiltin(), 'Neuer Datensatz auf Basis des Standards angelegt.'))}><Icon name="newGame" /> Neu</button>
           <button className="ed-btn" onClick={() => fileRef.current?.click()}><Icon name="loadGame" /> Datei öffnen</button>
@@ -163,7 +220,7 @@ export default function EditorApp() {
             <div key={grp} className="ed-nav-group">
               <div className="ed-nav-cat">{grp}</div>
               {SECTIONS.filter((s) => s.group === grp).map((s) => (
-                <button key={s.key} className={`ed-nav-item ${sec === s.key ? 'on' : ''}`} onClick={() => setSec(s.key)} data-sec={s.key}>
+                <button key={s.key} className={`ed-nav-item ${sec === s.key ? 'on' : ''}`} onClick={() => pick(s.key)} data-sec={s.key}>
                   <span>{s.label}</span>
                   {s.key === 'check' && issues && <span className={`ed-badge ${nErr ? 'bad' : 'good'}`}>{nErr || 'OK'}</span>}
                 </button>
@@ -180,7 +237,9 @@ export default function EditorApp() {
             <h1>{cur.title}</h1>
             {msg && <div className={`ed-msg ${msg.kind}`} onClick={() => setMsg(null)}>{msg.text}</div>}
           </div>
-          <div className="ed-content" key={`${sec}-${gen}`}>{body[sec]}</div>
+          <NavContext.Provider value={navApi}>
+            <div className="ed-content" ref={contentRef} key={`${sec}-${gen}-${nav.nonce}`}>{body[sec]}</div>
+          </NavContext.Provider>
         </main>
       </div>
     </div>

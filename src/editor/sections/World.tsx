@@ -1,3 +1,5 @@
+import { useNavTarget } from '../nav';
+import { CLUB_IDS_LIST } from '../TableEditor';
 import { useMemo, useState } from 'react';
 import ClubCrest from '../../components/ClubCrest';
 import { CountryFlag } from '../../components/competition/CountryFlag';
@@ -56,6 +58,14 @@ function IdList({ label, ids, known, onSet }: { label: string; ids?: string[]; k
       <div className="ed-sec">{label} <span className="ed-badge">{ids?.length ?? 0}</span></div>
       <textarea key={text} className="ed-in ed-wd-ids" defaultValue={text} placeholder="Vereins-IDs, eine je Zeile (Reihenfolge = Abschlusstabelle)"
         onBlur={(e) => { const next = parse(e.target.value); if (next.join('\n') !== text) onSet(next.length ? next : undefined); }} />
+      <input className="ed-in ed-wd-add" list={CLUB_IDS_LIST} placeholder="ID anhängen (Vorschläge beim Tippen), Enter"
+        onKeyDown={(e) => {
+          if (e.key !== 'Enter') return;
+          const v = (e.target as HTMLInputElement).value.trim();
+          if (!v) return;
+          (e.target as HTMLInputElement).value = '';
+          onSet([...(ids ?? []), ...parse(v)]);
+        }} />
       <ol className="ed-wd-names">{(ids ?? []).map((id) => <li key={id} className={known.has(id) ? '' : 'bad'}>{known.get(id)?.name ?? `unbekannt: ${id}`}</li>)}</ol>
       {unknown.length > 0 && <div className="ed-err">{unknown.length} unbekannte ID(s) – Verein unter „Vereine“ anlegen.</div>}
     </div>
@@ -126,9 +136,10 @@ function SeasonEditor({ entry, partner, year, onChange }: { entry: Entry; partne
 }
 
 export function WorldSection({ ds, onChange }: { ds: Dataset; onChange: () => void }) {
-  const [cc, setCc] = useState('ger');
-  const [tab, setTab] = useState<'clubs' | 'seasons'>('clubs');
-  const [year, setYear] = useState(1975);
+  const target = useNavTarget();
+  const [cc, setCc] = useState(target?.cc ?? 'ger');
+  const [tab, setTab] = useState<'clubs' | 'seasons'>(target?.tab === 'seasons' ? 'seasons' : 'clubs');
+  const [year, setYear] = useState(target?.year ?? 1975);
   const [sel, setSel] = useState<number | null>(0);
   const wd = ds.worldData ?? {};
   const entry = wd[cc];

@@ -2,11 +2,13 @@ import { useState, type ReactNode } from 'react';
 import ClubCrest from '../../components/ClubCrest';
 import JerseySVG from '../../components/JerseySVG';
 import { Dataset } from '../../data/dataset/schema';
+import { builtinDataset } from '../../data/dataset/builtin';
 import { Club, Kit, KitPattern } from '../../types';
 import { CrestEras } from './CrestEras';
 import { Col, Explain, TableEditor } from '../TableEditor';
 import { WORLD_COUNTRIES, seasonLabelOf } from '../../data/world/countries';
 import type { RealClub } from '../../data/world/types';
+import { Target, useNavTarget } from '../nav';
 
 // =============================================================================
 // VEREINE (Wunsch Pascal): Land → Liga → Vereine, damit jeder Verein der Welt
@@ -80,21 +82,32 @@ function newId(prefix: string, ds: Dataset): string {
   return `${prefix}${i}`;
 }
 
-/** Startvereine → Weltdaten (gleiche IDs): Name, Kürzel, Stadt, Farben gleich halten. */
-function mirrorStart(ds: Dataset): void {
-  const pairs: [string, AnyClub[]][] = [['ger', [...ds.clubs.tier1, ...ds.clubs.secondNord, ...ds.clubs.secondSued] as unknown as AnyClub[]], ['gdr', [...ds.clubs.ddrOberliga, ...ds.clubs.ddrLiga] as unknown as AnyClub[]]];
-  for (const [cc, list] of pairs) {
+/** Startvereine → Weltdaten (gleiche IDs). Nur Felder, die vom Standard abweichen, werden
+ *  gespiegelt; ein auf den Standard zurückgesetztes Feld holt auch in den Weltdaten den
+ *  Standard zurück. So bleiben zeitbezogene Namen der Weltdaten (Karl-Marx-Stadt, Umzüge)
+ *  unberührt, solange niemand den Verein ändert. */
+let stdCache: Dataset | null = null;
+export function mirrorStart(ds: Dataset): void {
+  const std = (stdCache ??= builtinDataset());
+  const startOfDs = (d: Dataset): [string, AnyClub[]][] => [['ger', [...d.clubs.tier1, ...d.clubs.secondNord, ...d.clubs.secondSued] as unknown as AnyClub[]], ['gdr', [...d.clubs.ddrOberliga, ...d.clubs.ddrLiga] as unknown as AnyClub[]]];
+  const stdStart = new Map(startOfDs(std).flatMap(([, l]) => l).map((c) => [c.id, c]));
+  for (const [cc, list] of startOfDs(ds)) {
     const w = ds.worldData?.[cc];
     if (!w) continue;
     const by = new Map(w.clubs.map((c) => [c.id, c]));
+    const stdW = new Map((std.worldData?.[cc]?.clubs ?? []).map((c) => [c.id, c]));
     for (const c of list) {
       const r = by.get(c.id);
       if (!r) continue;
-      const col = colorsOf(c);
-      if (r.name !== c.name) r.name = c.name;
-      if (c.shortName && r.short !== c.shortName) r.short = c.shortName;
-      if (r.city !== c.city) r.city = c.city;
-      if (r.colors.primary !== col.primary || r.colors.secondary !== col.secondary) r.colors = { ...col };
+      const s0 = stdStart.get(c.id), w0 = stdW.get(c.id);
+      const col = colorsOf(c), col0 = s0 ? colorsOf(s0) : null;
+      const pick = <V,>(mine: V, std0: V | undefined, world0: V | undefined, cur: V): V => (s0 && mine === std0 ? (world0 ?? cur) : mine);
+      r.name = pick(c.name, s0?.name, w0?.name, r.name);
+      if (c.shortName) r.short = pick(c.shortName, s0?.shortName, w0?.short, r.short);
+      r.city = pick(c.city, s0?.city, w0?.city, r.city);
+      const same = col0 && col.primary === col0.primary && col.secondary === col0.secondary;
+      const nextCol = same && w0 ? w0.colors : col;
+      if (r.colors.primary !== nextCol.primary || r.colors.secondary !== nextCol.secondary) r.colors = { ...nextCol };
     }
   }
 }
@@ -103,9 +116,25 @@ function seasonYears(e?: WEntry): number[] {
   return Object.keys(e?.seasons ?? {}).map(Number).filter(Number.isFinite).sort((a, b) => a - b);
 }
 
+/** Sprungziel → Land + Liga (Startvereine bzw. „Alle Vereine des Landes“). */
+function startOf(ds: Dataset, t: Target | null): { cc: string; league: League } {
+  const def = { cc: 'ger', league: 'start:tier1' as League };
+  if (!t) return def;
+  const st = START.find((x) => x.key === t.tab);
+  if (st) return { cc: st.cc, league: `start:${st.key}` };
+  if (t.tab === 'all' && t.cc) return { cc: t.cc, league: 'all' };
+  if (t.id) {
+    for (const x of START) if ((ds.clubs[x.key] as { id: string }[]).some((c) => c.id === t.id)) return { cc: x.cc, league: `start:${x.key}` };
+    for (const [cc, w] of Object.entries(ds.worldData ?? {})) if (w.clubs.some((c) => c.id === t.id)) return { cc, league: 'all' };
+  }
+  return def;
+}
+
 export function ClubsSection({ ds, onChange }: { ds: Dataset; onChange: () => void }) {
-  const [cc, setCc] = useState('ger');
-  const [league, setLeague] = useState<League>('start:tier1');
+  const target = useNavTarget();
+  const [init] = useState(() => startOf(ds, target));
+  const [cc, setCc] = useState(init.cc);
+  const [league, setLeague] = useState<League>(init.league);
   const [year, setYear] = useState(1975);
   const [sel, setSel] = useState<number | null>(0);
   const wd = ds.worldData ?? {};

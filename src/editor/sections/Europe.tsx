@@ -1,3 +1,4 @@
+import { useNavTarget } from '../nav';
 import { useState } from 'react';
 import { Dataset } from '../../data/dataset/schema';
 import { EuroClub } from '../../data/europe';
@@ -39,7 +40,8 @@ const TABS: { key: Tab; label: string }[] = [
 ];
 
 export function EuropeSection({ ds, onChange }: { ds: Dataset; onChange: () => void }) {
-  const [tab, setTab] = useState<Tab>('countries');
+  const target = useNavTarget();
+  const [tab, setTab] = useState<Tab>(TABS.some((t) => t.key === target?.tab) ? target!.tab as Tab : 'countries');
   const e = ds.europe;
   return (
     <div className="ed-section">

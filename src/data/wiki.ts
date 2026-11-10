@@ -103,7 +103,7 @@ Betroffen: \`engine/calendar.ts\`, \`engine/league.ts\` und jede neue datumsbezo
     id: 'core-datasets',
     category: 'core',
     title: 'Datensätze & Datensatz-Editor (Modding)',
-    keywords: ['datensatz', 'editor', 'modding', 'mod', 'wappen', 'trikot', 'vereine', 'import', 'export', 'json', 'grafikpaket', 'logo', 'zip', 'vereins-id', 'amateur-pool'],
+    keywords: ['datensatz', 'editor', 'modding', 'mod', 'wappen', 'trikot', 'vereine', 'import', 'export', 'json', 'grafikpaket', 'logo', 'zip', 'vereins-id', 'amateur-pool', 'csv', 'rückgängig', 'suche', 'änderungen'],
     body: `## Was ist ein Datensatz?
 Ein Datensatz ist eine einzelne JSON-Datei (\`<id>.fm1975.json\`), die festlegt, womit ein **neues Spiel** startet: Vereine aller Ligen, Wappen und Trikots, Europa (Länder, Starter der ersten Saison), Chronik-Ereignisse, Ligareformen, Einrichtungen, Mitarbeiter-Rollen, Marketing-Kanäle, Namen und Herkünfte, Wirtschaftskurven und besondere Zeitabschnitte. Der eingebaute Datensatz **Standard (1975)** entspricht den Werten im Code.
 
@@ -116,7 +116,12 @@ Der Datensatz-Editor ist eine eigene Seite unter **/editor/** (Hauptmenü → Da
 - **Vereine:** erst **Land**, dann **Liga** (Startligen 1975/76 bzw. 1./2. Liga einer Saison der Weltdaten, Vereine ohne Liga, alle Vereine) – so ist jeder Verein der Welt erreichbar. Je Verein eigenes Wappen (PNG/JPG/SVG, auf 256 px verkleinert) und Heim-/Auswärtstrikot (Farben + Muster). Mit **Weiteres Wappen hinzufügen** legst du spätere Wappen an: Jedes ersetzt das vorige ab Saisonbeginn (1. Juli) des eingetragenen Jahres.
 - **Grafikpakete:** **Vereins-IDs als CSV** exportieren, Bilder danach benennen (\`eng-liverpool-rot.png\`, spätere Wappen \`eng-liverpool-rot@1999.png\`) und das Paket als ZIP, Ordner oder einzelne Bilder importieren. Andere Dateinamen ordnet der Editor nach Vereinsnamen zu, eine \`zuordnung.csv\` (\`datei;id\`) im Paket hat Vorrang. Vor dem Übernehmen zeigt eine Tabelle jede Datei mit Vorschau, Ziel und Status (neu/ersetzt). **Vorlage-Paket** liefert Anleitung und Liste, **Wappen dieses Datensatzes als Grafikpaket** exportiert alle Wappen zum Weitergeben.
 - **Amateur-Pool:** Städte, aus denen Amateurvereine nachrücken, wenn der Pool unter der untersten Liga zu klein wird.
-- **Prüfen** zeigt Fehler (z. B. doppelte IDs, ungerade Ligagrößen, fehlende Starter) und Hinweise.
+- **Prüfen** zeigt Fehler (z. B. doppelte IDs, ungerade Ligagrößen, fehlende Starter) und Hinweise. Ein Klick auf einen Eintrag springt in den Bereich und hebt die betroffene Zeile hervor.
+- **Rückgängig / Wiederholen** (Strg+Z, Strg+Umschalt+Z oder Strg+Y) über die letzten 40 Schritte; schnelles Tippen zählt als ein Schritt.
+- **Suche** im Kopf (Strg+F) durchsucht alle Namen, IDs und Texte des Datensatzes; Enter oder Klick springt zum Eintrag – auch zu Vereinen im Ausland (Land und Liga werden passend gewählt).
+- **Änderungen** listet alles, was vom Standard abweicht (geändert, neu, entfernt), je Bereich gefiltert, mit **Zeigen** und **Zurücksetzen** einzeln oder für einen ganzen Bereich.
+- **Tabellen:** Häkchen markieren Zeilen (Umschalt-Klick = Bereich, Häkchen im Kopf = alle sichtbaren). Für markierte Zeilen setzt du eine Spalte auf einen Wert (Zahlen auch relativ: \`+5\`, \`-3\`, \`*1,1\`), duplizierst oder löschst sie. **Kopie** dupliziert eine Zeile mit freier ID (\`…-2\`). **CSV-Export/-Import** je Tabelle (Semikolon, Kopfzeile = Feldnamen): Zeilen mit bekannter ID werden geändert, neue angehängt, ungültige Werte gemeldet.
+- **Vereins-IDs** in den Ligalisten je Saison lassen sich per Vorschlagsliste anhängen; unbekannte IDs sind rot markiert.
 - **Exportieren** lädt die Datei herunter (zum Teilen), **Ins Spiel übernehmen** speichert sie direkt im Browser.
 
 ## Im Spiel
