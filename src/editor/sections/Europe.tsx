@@ -3,7 +3,7 @@ import { Dataset } from '../../data/dataset/schema';
 import { EuroClub } from '../../data/europe';
 import { CountrySeed } from '../../data/worldSeed';
 import { JsonBlock } from '../JsonBlock';
-import { Col, Explain, TableEditor } from '../TableEditor';
+import { Col, Explain, SortTh, TableEditor, useSort } from '../TableEditor';
 
 // =============================================================================
 // EUROPA: Länder der Hintergrund-Simulation, Trends, Teilungen, Sperren,
@@ -77,14 +77,16 @@ function TrendsEditor({ ds, onChange }: { ds: Dataset; onChange: () => void }) {
   const fmt = (arr: [number, number][]) => arr.map(([y, d]) => `${y}:${d}`).join(', ');
   const parse = (s: string): [number, number][] => s.split(',').map((x) => x.trim()).filter(Boolean)
     .map((x) => x.split(':').map(Number) as [number, number]).filter(([y, d]) => Number.isFinite(y) && Number.isFinite(d));
+  const st = useSort();
+  const list = st.sorted(ds.europe.countries, (c, k) => k === 'name' ? c.name : (t[c.name] ?? []).length);
   return (
     <>
       <Explain>Wie sich das Niveau eines Landes über die Jahrzehnte verschiebt: <code>Jahr:Änderung</code> gegenüber 1975, z. B. <code>1995:1, 2005:3</code>. Ab dem Jahr gilt die Änderung bis zum nächsten Eintrag.</Explain>
       <div className="ed-table-scroll">
         <table className="ed-table">
-          <thead><tr><th style={{ width: 180 }}>Land</th><th>Verlauf</th></tr></thead>
+          <thead><tr><SortTh k="name" label="Land" sort={st.sort} onSort={st.toggle} style={{ width: 180 }} /><SortTh k="n" label="Verlauf" sort={st.sort} onSort={st.toggle} title="Nach Zahl der Einträge sortieren" /></tr></thead>
           <tbody>
-            {ds.europe.countries.map((c) => (
+            {list.map((c) => (
               <tr key={c.name}>
                 <td>{c.name}</td>
                 <td><input className="ed-in" defaultValue={fmt(t[c.name] ?? [])}

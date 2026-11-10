@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Dataset, OriginData } from '../../data/dataset/schema';
-import { Col, Explain, FieldForm, TableEditor } from '../TableEditor';
+import { Col, Explain, FieldForm, SortTh, TableEditor, useSort } from '../TableEditor';
 import { NameErasEditor } from './NameEras';
 
 // =============================================================================
@@ -74,20 +74,22 @@ function MixEditor({ ds, onChange }: P) {
   const mix = ds.names.mix;
   const fmt = (r: Record<string, number>) => Object.entries(r).map(([k, v]) => `${k}:${v}`).join(', ');
   const parse = (s: string) => Object.fromEntries(s.split(',').map((x) => x.trim().split(':')).filter((p) => p.length === 2 && p[0] && Number.isFinite(Number(p[1]))).map(([k, v]) => [k.trim(), Number(v)]));
+  const st = useSort();
+  const order = st.sorted(mix.map((_, i) => i), (i, k) => k === 'year' ? mix[i][0] : Object.keys(mix[i][1]).length);
   return (
     <>
       <Explain>Anteile der Herkünfte bei neu erzeugten Spielern, je Stützjahr (<code>herkunft:gewicht</code>). Zwischen den Jahren wird übergeblendet. Die Gewichte müssen nicht 100 ergeben.</Explain>
       <div className="ed-table-scroll">
         <table className="ed-table">
-          <thead><tr><th style={{ width: 90 }}>Jahr</th><th>Gewichte</th><th style={{ width: 40 }} /></tr></thead>
+          <thead><tr><SortTh k="year" label="Jahr" sort={st.sort} onSort={st.toggle} style={{ width: 90 }} /><SortTh k="n" label="Gewichte" sort={st.sort} onSort={st.toggle} title="Nach Zahl der Herkünfte sortieren" /><th style={{ width: 40 }} /></tr></thead>
           <tbody>
-            {mix.map((row, i) => (
+            {order.map((i) => mix[i]).map((row) => { const i = mix.indexOf(row); return (
               <tr key={`${i}-${row[0]}`}>
                 <td><input className="ed-in num" type="number" defaultValue={row[0]} onBlur={(e) => { row[0] = Number(e.target.value); mix.sort((a, b) => a[0] - b[0]); onChange(); }} /></td>
                 <td><textarea className="ed-in ed-list" defaultValue={fmt(row[1])} onBlur={(e) => { row[1] = parse(e.target.value); onChange(); }} /></td>
                 <td><button className="ed-mini danger" title="Löschen" onClick={() => { mix.splice(i, 1); onChange(); }}>×</button></td>
               </tr>
-            ))}
+            ); })}
           </tbody>
         </table>
       </div>
@@ -115,14 +117,21 @@ function FaceMixEditor({ ds, onChange }: P) {
     rows.sort((a, b) => a[0] - b[0]);
     return rows.length ? rows : undefined;
   };
+  const st = useSort();
+  const origins = st.sorted(ds.names.origins, (o, k) => k === 'id' ? o.id : k === 'nat' ? o.nationality : k === 'face' ? o.face : o.faceMix?.length ?? 0);
   return (
     <>
       <Explain>Die <b>Ethnie</b> ist verdeckt: Sie erscheint nie im Spiel und bestimmt nur, welches Gesicht ein Spieler bekommt – unabhängig von seiner Nationalität. So kann ein Engländer schwarz sein. Je Herkunft eine Zeile pro Stützjahr (Jahr, in dem die Spieler etwa 20 sind): <code>2025: mitteleuropa 60, westafrika 34</code>. Dazwischen wird übergeblendet. Leer = immer die Vorgabe der Herkunft. Gruppen: {groups.join(', ')}. Bei den Ausnahmetalenten wird die Ethnie je Spieler unter <b>Legenden</b> festgelegt.</Explain>
       <div className="ed-table-scroll">
         <table className="ed-table">
-          <thead><tr><th style={{ width: 110 }}>Herkunft</th><th style={{ width: 70 }}>Nation</th><th style={{ width: 120 }}>Vorgabe</th><th>Anteile je Stützjahr</th></tr></thead>
+          <thead><tr>
+            <SortTh k="id" label="Herkunft" sort={st.sort} onSort={st.toggle} style={{ width: 110 }} />
+            <SortTh k="nat" label="Nation" sort={st.sort} onSort={st.toggle} style={{ width: 70 }} />
+            <SortTh k="face" label="Vorgabe" sort={st.sort} onSort={st.toggle} style={{ width: 120 }} />
+            <SortTh k="mix" label="Anteile je Stützjahr" sort={st.sort} onSort={st.toggle} title="Nach Zahl der Stützjahre sortieren" />
+          </tr></thead>
           <tbody>
-            {ds.names.origins.map((o) => (
+            {origins.map((o) => (
               <tr key={o.id}>
                 <td>{o.id}</td><td>{o.nationality}</td><td>{o.face}</td>
                 <td><textarea className="ed-in ed-list" rows={Math.max(1, o.faceMix?.length ?? 1)} defaultValue={fmt(o.faceMix)}

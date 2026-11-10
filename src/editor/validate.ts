@@ -17,6 +17,19 @@ export function checkDataset(d: Dataset): Issue[] {
   if (d.meta?.id && !SLUG.test(d.meta.id)) err('Allgemein', 'Die Datensatz-ID darf nur Kleinbuchstaben, Ziffern, _ und - enthalten.');
   if (d.meta?.id === 'builtin') err('Allgemein', 'Die ID „builtin“ ist reserviert – vergib eine eigene ID.');
 
+  // Amateur-Pool: Städte eindeutig, gültige Region, nicht leer.
+  if (d.poolTowns) {
+    const seen = new Set<string>();
+    for (const t of d.poolTowns) {
+      const town = (t.town ?? '').trim();
+      if (!town) { err('Amateur-Pool', 'Eine Zeile hat keine Stadt.'); continue; }
+      if (seen.has(town.toLowerCase())) warn('Amateur-Pool', `Stadt doppelt: ${town}`);
+      seen.add(town.toLowerCase());
+      if (!['nord', 'west', 'sued', 'nordost'].includes(t.group)) err('Amateur-Pool', `${town}: unbekannte Region „${t.group}“.`);
+    }
+    if (d.poolTowns.length < 12) warn('Amateur-Pool', 'Weniger als 12 Städte – nach großen Reformen kann der Pool leerlaufen.');
+  }
+
   // Vereine: eindeutige IDs über alle deutschen Ligen, Slug-Form, gerade Ligagrößen.
   const lists: [string, { id: string; name: string }[]][] = [
     ['1. Liga', d.clubs.tier1], ['2. Liga Nord', d.clubs.secondNord], ['2. Liga Süd', d.clubs.secondSued],

@@ -9,6 +9,7 @@
 // Versionierung: `version` steigt bei inkompatiblen Änderungen. Fehlende Felder
 // fallen beim Anwenden auf den eingebauten Datensatz zurück (abwärtskompatibel).
 // =============================================================================
+import type { PoolTown } from '../poolTowns';
 import type { ClubSeed, SecondLigaSeed } from '../generate';
 import type { SimClub } from '../../engine/leagues';
 import type { EuroClub } from '../europe';
@@ -120,6 +121,8 @@ export interface Dataset {
    * `clubs`; geänderte Namen/Farben gelten auch für die Startvereine.
    */
   worldData?: Record<string, { clubs: RealClub[]; seasons: Record<string, SeasonRow> }>;
+  /** Amateur-Pool (data/poolTowns.ts): Städte, aus denen Nachrücker entstehen. Fehlt = eingebaute Liste. */
+  poolTowns?: PoolTown[];
   economy: {
     /** Erlös-Basis der 1. Liga in EUR je Stützjahr. */
     anchors: { year: number; value: number }[];

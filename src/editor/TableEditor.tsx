@@ -1,9 +1,12 @@
 // =============================================================================
 // Generische Tabelle für Datensatz-Listen: Zellen je Spaltenbeschreibung,
 // Zeilen hinzufügen/löschen/verschieben, Suchfilter, Auswahl einer Zeile.
+// Sortieren (Wunsch Pascal): Klick auf einen Spaltenkopf sortiert aufsteigend,
+// noch einmal absteigend, ein dritter Klick zeigt wieder die gespeicherte
+// Reihenfolge. Sortieren ändert nur die Anzeige, nicht die Daten.
 // Die Zeilen werden IN PLACE geändert; `onChange` meldet jede Änderung.
 // =============================================================================
-import { useMemo, useState, type ReactNode } from 'react';
+import { useState, type CSSProperties, type ReactNode } from 'react';
 import Icon from '../components/Icon';
 
 export type ColType = 'text' | 'number' | 'color' | 'select' | 'bool' | 'list' | 'longtext';
@@ -19,6 +22,40 @@ export interface Col {
   /** Leeres Feld als `undefined` speichern (optionale Felder). */
   optional?: boolean;
   step?: number;
+}
+
+export type SortState = { key: string; dir: 1 | -1 } | null;
+
+/** Vergleich für die Sortierung: Zahlen numerisch, Listen nach Länge, sonst Text (deutsch). */
+export function compareValues(a: unknown, b: unknown): number {
+  const norm = (v: unknown) => Array.isArray(v) ? v.length : typeof v === 'boolean' ? Number(v) : v;
+  const x = norm(a), y = norm(b);
+  if (x == null || x === '') return y == null || y === '' ? 0 : 1;
+  if (y == null || y === '') return -1;
+  if (typeof x === 'number' && typeof y === 'number') return x - y;
+  return String(x).localeCompare(String(y), 'de', { numeric: true, sensitivity: 'base' });
+}
+
+/** Sortier-Zustand für eigene Tabellen: `sorted(indices, get)` + `head(key, label)`. */
+export function useSort() {
+  const [sort, setSort] = useState<SortState>(null);
+  const toggle = (key: string) => setSort((s) => !s || s.key !== key ? { key, dir: 1 } : s.dir === 1 ? { key, dir: -1 } : null);
+  const sorted = <X,>(items: X[], get: (x: X, key: string) => unknown): X[] => {
+    if (!sort) return items;
+    return [...items].sort((a, b) => compareValues(get(a, sort.key), get(b, sort.key)) * sort.dir);
+  };
+  return { sort, toggle, sorted };
+}
+
+/** Sortierbarer Spaltenkopf. */
+export function SortTh({ k, label, sort, onSort, style, title }: { k: string; label: ReactNode; sort: SortState; onSort: (k: string) => void; style?: CSSProperties; title?: string }) {
+  const on = sort?.key === k;
+  return (
+    <th style={style} title={title ?? 'Sortieren'} className={`ed-sortable ${on ? 'on' : ''}`} onClick={() => onSort(k)}
+      aria-sort={on ? (sort!.dir === 1 ? 'ascending' : 'descending') : 'none'}>
+      {label}<span className="ed-sort-mark">{on ? (sort!.dir === 1 ? '▲' : '▼') : ''}</span>
+    </th>
+  );
 }
 
 export function getPath(o: unknown, path: string): unknown {
@@ -75,7 +112,7 @@ export function Cell({ row, col, onChange }: { row: Record<string, unknown>; col
 }
 
 export function TableEditor<T extends object>({
-  rows, cols, onChange, makeRow, selected, onSelect, searchKeys = ['id', 'name'], title,
+  rows, cols, onChange, makeRow, selected, onSelect, searchKeys = ['id', 'name'], title, onAdd, onDelete, canMove = true,
 }: {
   rows: T[];
   cols: Col[];
@@ -85,13 +122,22 @@ export function TableEditor<T extends object>({
   onSelect?: (i: number) => void;
   searchKeys?: string[];
   title?: string;
+  /** Eigene Logik fürs Hinzufügen (z. B. gefilterte Listen); sonst `makeRow` + push. */
+  onAdd?: () => void;
+  /** Eigene Logik fürs Löschen einer Zeile; sonst splice. */
+  onDelete?: (row: T, i: number) => void;
+  /** Verschieben erlauben (gefilterte Ansichten: aus). */
+  canMove?: boolean;
 }) {
   const [q, setQ] = useState('');
-  const idx = useMemo(() => rows.map((_, i) => i).filter((i) => {
+  const { sort, toggle, sorted } = useSort();
+  const filtered = rows.map((_, i) => i).filter((i) => {
     if (!q) return true;
     const s = q.toLowerCase();
     return searchKeys.some((k) => String(getPath(rows[i], k) ?? '').toLowerCase().includes(s));
-  }), [rows, q, searchKeys, rows.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  });
+  const idx = sorted(filtered, (i, key) => getPath(rows[i], key));
+  const movable = canMove && !sort;
 
   const move = (i: number, d: number) => {
     const j = i + d;
@@ -99,8 +145,11 @@ export function TableEditor<T extends object>({
     [rows[i], rows[j]] = [rows[j], rows[i]];
     onChange();
   };
-  const del = (i: number) => { rows.splice(i, 1); onChange(); };
-  const add = () => { if (makeRow) { rows.push(makeRow()); onChange(); onSelect?.(rows.length - 1); } };
+  const del = (i: number) => { if (onDelete) onDelete(rows[i], i); else rows.splice(i, 1); onChange(); };
+  const add = () => {
+    if (onAdd) { onAdd(); onChange(); return; }
+    if (makeRow) { rows.push(makeRow()); onChange(); onSelect?.(rows.length - 1); }
+  };
 
   return (
     <div className="ed-table-wrap">
@@ -108,24 +157,25 @@ export function TableEditor<T extends object>({
         {title && <b>{title}</b>}
         <span className="ed-count">{rows.length} Einträge</span>
         <input className="ed-in ed-search" placeholder="Suchen …" value={q} onChange={(e) => setQ(e.target.value)} />
-        {makeRow && <button className="ed-btn on" onClick={add}><Icon name="newGame" /> Hinzufügen</button>}
+        {sort && <button className="ed-btn" onClick={() => toggle(sort.key)} title="Sortierung aufheben">{sort.dir === 1 ? 'aufsteigend' : 'absteigend'} sortiert</button>}
+        {(makeRow || onAdd) && <button className="ed-btn on" onClick={add}><Icon name="newGame" /> Hinzufügen</button>}
       </div>
       <div className="ed-table-scroll">
         <table className="ed-table">
           <thead>
             <tr>
-              <th style={{ width: 70 }} />
-              {cols.map((c) => <th key={c.key} style={{ minWidth: c.width ?? 110 }} title={c.hint}>{c.label}</th>)}
+              {movable && <th style={{ width: 70 }} title="Reihenfolge (nur ohne Sortierung)" />}
+              {cols.map((c) => <SortTh key={c.key} k={c.key} label={c.label} sort={sort} onSort={toggle} style={{ minWidth: c.width ?? 110 }} title={c.hint ? `${c.hint} · Klick sortiert` : 'Klick sortiert'} />)}
               <th style={{ width: 40 }} />
             </tr>
           </thead>
           <tbody>
             {idx.map((i) => (
               <tr key={i} className={selected === i ? 'sel' : ''} onClick={() => onSelect?.(i)}>
-                <td className="ed-ctrl">
+                {movable && <td className="ed-ctrl">
                   <button className="ed-mini" title="Nach oben" onClick={(e) => { e.stopPropagation(); move(i, -1); }}>▲</button>
                   <button className="ed-mini" title="Nach unten" onClick={(e) => { e.stopPropagation(); move(i, 1); }}>▼</button>
-                </td>
+                </td>}
                 {cols.map((c) => <td key={c.key}><Cell row={rows[i] as Record<string, unknown>} col={c} onChange={onChange} /></td>)}
                 <td><button className="ed-mini danger" title="Löschen" onClick={(e) => { e.stopPropagation(); del(i); }}>×</button></td>
               </tr>

@@ -17,6 +17,7 @@ import { HISTORY } from '../history';
 import { TRANSFER_RECORD_ANCHORS } from '../transferRecords';
 import { LEGENDS } from '../legends';
 import { builtinWorldData } from '../world/index';
+import { POOL_TOWNS } from '../poolTowns';
 import { DATASET_FORMAT, DATASET_VERSION, Dataset } from './schema';
 
 export const BUILTIN_ID = 'builtin';
@@ -64,5 +65,6 @@ export function snapshotCurrent(id: string, name: string): Dataset {
     history: HISTORY,
     legendsV2: LEGENDS,
     worldData: builtinWorldData(),
+    poolTowns: POOL_TOWNS,
   } as Dataset);
 }

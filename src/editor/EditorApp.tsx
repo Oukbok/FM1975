@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import Icon, { type IconName } from '../components/Icon';
+import Icon from '../components/Icon';
 import { Dataset, DatasetSummary } from '../data/dataset/schema';
 import { BUILTIN_ID, builtinDataset } from '../data/dataset/builtin';
 import { downloadDataset, listDatasets, loadDataset, readDatasetFile, storeDataset } from '../data/dataset/storage';
@@ -12,29 +12,33 @@ import { EconomySection, GeneralSection, HistorySection, NamesSection } from './
 import { CheckSection } from './sections/Check';
 import { LegendsSection } from './sections/Legends';
 import { WorldSection } from './sections/World';
+import { PoolSection } from './sections/Pool';
 
 // =============================================================================
 // DATENSATZ-EDITOR (eigenständige Seite unter /editor/)
 // Arbeitskopie im Browser, Prüfen, Export als Datei, Übernahme ins Spiel.
 // =============================================================================
-type Sec = 'general' | 'clubs' | 'world' | 'europe' | 'timeline' | 'leagues' | 'facilities' | 'staff' | 'marketing' | 'names' | 'legends' | 'economy' | 'history' | 'check';
+type Sec = 'general' | 'clubs' | 'world' | 'pool' | 'europe' | 'timeline' | 'leagues' | 'facilities' | 'staff' | 'marketing' | 'names' | 'legends' | 'economy' | 'history' | 'check';
 
-const SECTIONS: { key: Sec; label: string; icon: IconName; title: string }[] = [
-  { key: 'general', label: 'Allgemein', icon: 'settings', title: 'Allgemein' },
-  { key: 'clubs', label: 'Vereine', icon: 'dashVerein', title: 'Vereine, Wappen & Trikots' },
-  { key: 'world', label: 'Weltdaten', icon: 'international', title: 'Weltdaten: Länder, Vereine, Saisons' },
-  { key: 'europe', label: 'Europa', icon: 'international', title: 'Europa & Europapokal' },
-  { key: 'timeline', label: 'Chronik', icon: 'chronicle', title: 'Chronik & Regeländerungen' },
-  { key: 'leagues', label: 'Ligen', icon: 'dashTabelle', title: 'Ligasystem & Reformen' },
-  { key: 'facilities', label: 'Einrichtungen', icon: 'facilities', title: 'Einrichtungen' },
-  { key: 'staff', label: 'Mitarbeiter', icon: 'staff', title: 'Mitarbeiter-Rollen' },
-  { key: 'marketing', label: 'Marketing', icon: 'marketing', title: 'Marketing-Kanäle' },
-  { key: 'names', label: 'Namen', icon: 'squad', title: 'Namen & Herkünfte' },
-  { key: 'legends', label: 'Legenden', icon: 'trophy', title: 'Ausnahmetalente der Fußballgeschichte' },
-  { key: 'economy', label: 'Wirtschaft', icon: 'finances', title: 'Wirtschaft' },
-  { key: 'history', label: 'Geschichte', icon: 'kalender', title: 'Besondere Zeitabschnitte' },
-  { key: 'check', label: 'Prüfen', icon: 'whistle', title: 'Prüfen & Übernehmen' },
+// Menü nach Kategorien, ohne Symbole (Wunsch Pascal).
+const SECTIONS: { key: Sec; label: string; group: string; title: string }[] = [
+  { key: 'general', label: 'Allgemein', group: 'Datensatz', title: 'Allgemein' },
+  { key: 'check', label: 'Prüfen & Übernehmen', group: 'Datensatz', title: 'Prüfen & Übernehmen' },
+  { key: 'clubs', label: 'Vereine', group: 'Vereine & Wettbewerbe', title: 'Vereine nach Land und Liga: Daten, Wappen & Trikots' },
+  { key: 'world', label: 'Ligen je Saison', group: 'Vereine & Wettbewerbe', title: 'Weltdaten: Länder, Ligazusammensetzung je Saison' },
+  { key: 'pool', label: 'Amateur-Pool', group: 'Vereine & Wettbewerbe', title: 'Amateur-Pool: Nachrücker für Auf- und Abstieg' },
+  { key: 'leagues', label: 'Ligasystem & Reformen', group: 'Vereine & Wettbewerbe', title: 'Ligasystem & Reformen' },
+  { key: 'europe', label: 'Europa & Europapokal', group: 'Vereine & Wettbewerbe', title: 'Europa & Europapokal' },
+  { key: 'names', label: 'Namen & Herkünfte', group: 'Spieler & Personal', title: 'Namen, Herkünfte & Ethnie' },
+  { key: 'legends', label: 'Ausnahmetalente', group: 'Spieler & Personal', title: 'Ausnahmetalente der Fußballgeschichte' },
+  { key: 'staff', label: 'Mitarbeiter', group: 'Spieler & Personal', title: 'Mitarbeiter-Rollen' },
+  { key: 'economy', label: 'Wirtschaft', group: 'Verein & Wirtschaft', title: 'Wirtschaft' },
+  { key: 'facilities', label: 'Einrichtungen', group: 'Verein & Wirtschaft', title: 'Einrichtungen' },
+  { key: 'marketing', label: 'Marketing', group: 'Verein & Wirtschaft', title: 'Marketing-Kanäle' },
+  { key: 'timeline', label: 'Chronik & Regeln', group: 'Geschichte', title: 'Chronik & Regeländerungen' },
+  { key: 'history', label: 'Zeitabschnitte', group: 'Geschichte', title: 'Besondere Zeitabschnitte' },
 ];
+const GROUPS = [...new Set(SECTIONS.map((x) => x.group))];
 
 function freshFromBuiltin(): Dataset {
   const d = builtinDataset();
@@ -119,7 +123,7 @@ export default function EditorApp() {
   const nErr = issues?.filter((i) => i.level === 'error').length ?? 0;
   const p = { ds, onChange };
   const body: Record<Sec, ReactNode> = {
-    general: <GeneralSection {...p} />, clubs: <ClubsSection {...p} />, world: <WorldSection {...p} />, europe: <EuropeSection {...p} />,
+    general: <GeneralSection {...p} />, clubs: <ClubsSection {...p} />, world: <WorldSection {...p} />, pool: <PoolSection {...p} />, europe: <EuropeSection {...p} />,
     timeline: <TimelineSection {...p} />, leagues: <LeaguesSection {...p} />, facilities: <FacilitiesSection {...p} />,
     staff: <StaffSection {...p} />, marketing: <MarketingSection {...p} />, names: <NamesSection {...p} />, legends: <LegendsSection {...p} />,
     economy: <EconomySection {...p} />, history: <HistorySection {...p} />,
@@ -153,11 +157,16 @@ export default function EditorApp() {
       )}
       <div className="ed-body">
         <nav className="ed-nav">
-          {SECTIONS.map((s) => (
-            <button key={s.key} className={`ed-nav-item ${sec === s.key ? 'on' : ''}`} onClick={() => setSec(s.key)} data-sec={s.key}>
-              <Icon name={s.icon} size={18} /><span>{s.label}</span>
-              {s.key === 'check' && issues && <span className={`ed-badge ${nErr ? 'bad' : 'good'}`}>{nErr || 'OK'}</span>}
-            </button>
+          {GROUPS.map((grp) => (
+            <div key={grp} className="ed-nav-group">
+              <div className="ed-nav-cat">{grp}</div>
+              {SECTIONS.filter((s) => s.group === grp).map((s) => (
+                <button key={s.key} className={`ed-nav-item ${sec === s.key ? 'on' : ''}`} onClick={() => setSec(s.key)} data-sec={s.key}>
+                  <span>{s.label}</span>
+                  {s.key === 'check' && issues && <span className={`ed-badge ${nErr ? 'bad' : 'good'}`}>{nErr || 'OK'}</span>}
+                </button>
+              ))}
+            </div>
           ))}
           <div className="ed-nav-foot">
             <span className={`ed-dot ${saved}`} />

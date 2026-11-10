@@ -20,6 +20,7 @@ import { HISTORY } from '../history';
 import { TRANSFER_RECORD_ANCHORS } from '../transferRecords';
 import { LEGENDS } from '../legends';
 import { setWorldOverride } from '../world/index';
+import { POOL_TOWNS } from '../poolTowns';
 import { Dataset } from './schema';
 import { BUILTIN_ID, builtinDataset } from './builtin';
 
@@ -155,6 +156,9 @@ export function applyDataset(ds: Dataset | null): void {
     const dd = [...DDR_OBERLIGA_SEEDS, ...DDR_LIGA_SEEDS].find((c) => c.id === rc.id);
     if (dd) Object.assign(dd, { name: rc.name, shortName: rc.short, city: rc.city, colors: { ...rc.colors } });
   }
+
+  const towns = Array.isArray(d.poolTowns) ? d.poolTowns.filter((t) => t && typeof t.town === 'string' && t.town.trim() && ['nord', 'west', 'sued', 'nordost'].includes(t.group)) : undefined;
+  replaceArray(POOL_TOWNS, towns, base.poolTowns ?? []);
 
   const h = d.history ?? base.history;
   HISTORY.cupWinnersCupLastSeason = h.cupWinnersCupLastSeason ?? base.history.cupWinnersCupLastSeason;
