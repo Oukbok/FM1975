@@ -63,6 +63,8 @@ function page({ screen, g, rerender, setScreen, onWatch, onReplayDraw, onOpenEdi
     case 'presse': return <P.PresseView g={g} onWatch={onWatch} onGoto={setScreen} />;
     case 'vertraege': return <P.VertraegeView g={g} onChange={ch} />;
     case 'beobachtung': return <P.BeobachtungView g={g} onChange={ch} />;
+    case 'spielerpool': return <P.SpielerpoolView g={g} onChange={ch} />;
+    case 'scouting': return <P.ScoutingView g={g} onChange={ch} />;
     case 'verhandlungen': return <P.VerhandlungenView g={g} onChange={ch} />;
     case 'sponsoring': return <P.SponsoringView g={g} onGoto={setScreen} onChange={ch} />;
     case 'fanartikel': return <P.MerchView g={g} onChange={ch} />;

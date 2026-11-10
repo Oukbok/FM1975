@@ -49,6 +49,8 @@ import { monthlySquadHarmony, rollAiOffers } from './aiOffers';
 import { checkPromises } from './promises';
 import { seasonPromisesDaily, seasonPromisesFitness } from './seasonPromisesGame';
 import { transferTalkDaily } from './transferTalks';
+import { scoutingDaily } from './scoutingGame';
+import { ensureWorldPool } from './worldPool';
 import { buyBackDaily, contractClausesDaily } from './playerWishesGame';
 import { contractBonusesDaily, contractSeasonEndDaily } from './contractClausesGame';
 import { assignShirtNumbers, repairSquadLists } from './squads';
@@ -598,6 +600,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
   { const mc = g.clubs[g.managedClubId]; if (mc) assignShirtNumbers(mc, g.players); }
   buyBackDaily(g, today, (p, from, to, fee) => { transferPlayer(g, p, from, to, fee, today); repairSquadLists(g); });
   transferTalkDaily(g, today);
+  scoutingDaily(g, today); // Einzel-Scouting (Transfers › Scouting)
+  if (g.worldPool && new Date(`${today}T00:00:00Z`).getUTCDay() === 1) ensureWorldPool(g); // montags: Weltspieler mit den Vereinen abgleichen (neue/aufgestiegene Vereine)
   // Winter-Systeme: Hallenturniere/Masters (game/indoorGame.ts) und Trainingslager (game/trainingCampGame.ts).
   const indoorShow = germanHome ? indoorDaily(g, today, ui.onIndoorShow ? (t) => ui.onIndoorShow!(t.id) : undefined) : null;
   const campsEnded = campDaily(g, today);

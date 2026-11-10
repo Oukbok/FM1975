@@ -41,6 +41,30 @@ import { staffEffectsOf } from './staffGame';
 import { Game } from './state';
 import { noteLoan } from './transferLog';
 import { applyTransferExtras, extrasLine } from './contractClausesGame';
+import { dropWorldPlayer, removeWorldEntry, worldClubs } from './worldPool';
+
+/** Verkäufer: Verein mit vollem Kader oder (Weltspieler) ein schlanker Ersatz aus der Hintergrund-Welt. */
+const sellerCache = new Map<string, Club>();
+export function sellerOf(g: Game, id: string): Club | undefined {
+  if (g.clubs[id]) return g.clubs[id];
+  const hit = sellerCache.get(id);
+  if (hit) return hit;
+  const w = worldClubs(g).get(id);
+  if (!w) return undefined;
+  const c = {
+    id: w.id, name: w.name, shortName: w.shortName, city: w.city, colors: w.colors, reputation: w.strength, playerIds: [], youthPlayerIds: [],
+    finances: { balance: 1e9, transferBudget: 1e9, wageBudget: 1e9, income: {}, expenses: {}, transactions: [] },
+    isPlayerControlled: false,
+  } as unknown as Club;
+  sellerCache.set(id, c);
+  return c;
+}
+/** Kader eines Weltvereins als Rangliste (nur ID und Stärke). */
+function worldSquad(g: Game, clubId: string): Player[] {
+  return (g.worldPool?.p ?? []).filter((w) => w[1] === clubId && !w[12]).map((w) => ({ id: w[0], overall: w[8] }) as unknown as Player);
+}
+const EAST_BLOC = new Set(['Sowjetunion', 'Polen', 'Ungarn', 'Tschechoslowakei', 'Rumaenien', 'Bulgarien', 'Albanien']);
+const isWorldPlayer = (p: Player | undefined) => !!(p as (Player & { world?: boolean }) | undefined)?.world;
 
 export interface TransferTalk {
   id: string;
@@ -88,8 +112,9 @@ export function talkFor(g: Game, playerId: string): TransferTalk | undefined {
 export function talkBlocker(g: Game, p: Player): string | null {
   if (p.clubId === g.managedClubId) return 'Er spielt bereits bei dir.';
   if (p.isYouth) return 'Jugendspieler holst du über das Jugend-Scouting.';
-  if (!g.clubs[p.clubId] || isForeignId(p.clubId)) return 'Für Spieler ausländischer Vereine fehlen noch die Kontakte.';
+  if (!isWorldPlayer(p) && (!g.clubs[p.clubId] || isForeignId(p.clubId))) return 'Für Spieler ausländischer Vereine fehlen noch die Kontakte.';
   if (p.clubId.startsWith('ddr') && yearOf(g.calendar.currentDate) < 1990) return 'Spieler aus der DDR-Oberliga dürfen nicht in den Westen wechseln.';
+  if (isWorldPlayer(p) && yearOf(g.calendar.currentDate) < 1989 && EAST_BLOC.has(worldClubs(g).get(p.clubId)?.country ?? '')) return 'Spieler aus dem Ostblock dürfen vor 1989 nicht in den Westen wechseln.';
   if (p.loan) return 'Er ist nur ausgeliehen.';
   if (hasTransferBan(g.clubs[g.managedClubId], g.season)) return 'Transfersperre (Lizenzauflage).';
   if (activeTalks(g).length >= 4 && !talkFor(g, p.id)) return 'Höchstens vier Verhandlungen gleichzeitig.';
@@ -126,12 +151,13 @@ export function startTalk(g: Game, playerId: string): TransferTalk | string {
   if (block) return block;
   const today = g.calendar.currentDate;
   const own = g.clubs[g.managedClubId];
-  const seller = g.clubs[p.clubId];
+  const seller = sellerOf(g, p.clubId);
+  if (!seller) return 'Verein nicht gefunden.';
   const months = monthsLeft(today, p.contract.expiryDate);
   const bosman = bosmanActive(today);
   const pos = sellerPosition(p, seller, own, {
-    year: yearOf(today), monthsLeft: months, bosman, rival: rivals(g, seller.id), scope: 'germany',
-    squad: seller.playerIds.map((id) => g.players[id]).filter(Boolean), competitor: competitor(g, own.id, seller.id),
+    year: yearOf(today), monthsLeft: months, bosman, rival: rivals(g, seller.id), scope: isWorldPlayer(p) && isForeignId(seller.id) ? 'world' : 'germany',
+    squad: isWorldPlayer(p) ? worldSquad(g, seller.id) : seller.playerIds.map((id) => g.players[id]).filter(Boolean), competitor: competitor(g, own.id, seller.id),
   });
   const freeAgent = bosman && months <= 6;
   const t: TransferTalk = {
@@ -178,6 +204,7 @@ function refuse(t: TransferTalk, date: string, text: string): string {
 export function swapValueFor(g: Game, swap: Player, seller: Club): { value: number; reason: string } {
   if (swap.clubId !== g.managedClubId) return { value: 0, reason: 'Nur eigene Spieler.' };
   if (swap.loan) return { value: 0, reason: 'Leihspieler kannst du nicht tauschen.' };
+  if (!g.clubs[seller.id]) return { value: 0, reason: `${seller.shortName} nimmt keinen Tauschspieler.` };
   const a = assessSquad(seller.playerIds.map((id) => g.players[id]).filter(Boolean), seller.tactics?.formation);
   const need = a.groups[GROUP_OF[swap.naturalPosition]];
   const fits = swap.overall >= a.level - 8;
@@ -194,7 +221,7 @@ export function clubOffer(g: Game, talkId: string, pkg: ClubPackage): string {
   const year = yearOf(today);
   const own = g.clubs[g.managedClubId];
   const p = g.players[t.playerId];
-  const seller = g.clubs[t.sellerId];
+  const seller = sellerOf(g, t.sellerId);
   if (!p || !seller || p.clubId !== seller.id) { t.phase = 'failed'; return 'Der Spieler ist nicht mehr verfügbar.'; }
   if (pkg.loan && year < CLAUSE_FROM.loanOption) return refuse(t, today, `Leihen mit Kaufoption gibt es erst ab ${CLAUSE_FROM.loanOption}.`);
   if (pkg.buyBack && year < CLAUSE_FROM.buyBack) return refuse(t, today, `Rückkaufoptionen sind erst ab ${CLAUSE_FROM.buyBack} üblich.`);
@@ -289,7 +316,7 @@ export function playerOffer(g: Game, talkId: string, offer: PlayerOffer): string
   say(t, today, 'spieler', `${ans.text}${ans.hint ? ' ' + ans.hint : ''}`);
   if (t.pPatience <= 0) {
     t.phase = 'failed';
-    say(t, today, 'spieler', `${p.lastName} hat genug und bleibt bei ${g.clubs[t.sellerId]?.name}.`);
+    say(t, today, 'spieler', `${p.lastName} hat genug und bleibt bei ${sellerOf(g, t.sellerId)?.name}.`);
     return `${p.lastName} bricht die Gespräche ab.`;
   }
   return `${ans.text}${ans.hint ? ' ' + ans.hint : ''}`;
@@ -304,7 +331,7 @@ export function cancelTalk(g: Game, talkId: string): void {
 function completeTalk(g: Game, t: TransferTalk): string {
   const today = g.calendar.currentDate;
   const own = g.clubs[g.managedClubId];
-  const seller = g.clubs[t.sellerId];
+  const seller = sellerOf(g, t.sellerId);
   const p = g.players[t.playerId];
   if (!p || !seller || !t.terms || p.clubId !== seller.id) { t.phase = 'failed'; return 'Der Wechsel ist geplatzt.'; }
   const pkg = t.pkg;
@@ -349,6 +376,7 @@ function completeTalk(g: Game, t: TransferTalk): string {
   }
   if (terms.promises.includes('umzug')) book(own.finances, today, -Math.round(Math.max(1000, marketWage(p) * 4) * scale), 'other', `Umzug & Familie ${p.fullName}`, true);
   givePromises(g, p, terms.promises, today);
+  if (isWorldPlayer(p)) removeWorldEntry(g, p.id);
   repairSquadLists(g);
   t.phase = 'done';
   const text = pkg?.loan ? `${p.fullName} kommt für eine Saison auf Leihbasis von ${seller.name} (Leihgebühr ${fmtPrice(fee)}, Kaufoption ${fmtPrice(pkg.optionFee ?? 0)}).`
@@ -379,6 +407,8 @@ export function transferTalkDaily(g: Game, today: string): void {
     }
     // Abgeschlossene Gespräche nach 60 Tagen entfernen.
     g.transferTalks = talks.filter((t) => !(t.phase === 'done' || t.phase === 'failed') || CalendarEngine.addDays(t.lastAction, 60) >= today);
+    // Weltspieler ohne laufendes Gespräch wieder in den Weltpool zurück (nur sein Eintrag bleibt).
+    for (const t of talks) if (t.phase === 'failed' && !activeTalks(g).some((x) => x.playerId === t.playerId)) dropWorldPlayer(g, t.playerId);
   }
   const due = g.transferInstallments;
   if (due?.length) {

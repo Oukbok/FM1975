@@ -20,7 +20,7 @@ import { termsOfContract } from './contractClausesGame';
 import { agentLabel, NegResult, renewalState, sanitizeTerms, submitRenewal } from './contractTalk';
 import { trustOf } from './promises';
 import { Game } from './state';
-import { playerOffer, scoutKnowledge, stanceFor, TransferTalk } from './transferTalks';
+import { playerOffer, scoutKnowledge, sellerOf, stanceFor, TransferTalk } from './transferTalks';
 
 export type LogWho = 'du' | 'spieler' | 'berater' | 'info' | 'verein';
 
@@ -82,7 +82,7 @@ export function transferViewOf(g: Game, talkId: string): NegView | null {
   const p = t ? g.players[t.playerId] : undefined;
   if (!t || !p) return null;
   const year = yearOf(g.calendar.currentDate);
-  const seller = g.clubs[t.sellerId];
+  const seller = sellerOf(g, t.sellerId);
   const status: NegView['status'] = t.phase === 'player' ? 'open' : t.phase === 'club' ? 'blocked' : t.phase === 'failed' ? 'failed' : 'agreed';
   const ctx = transferCtx(g, t, p);
   const d = buildDemand(p, ctx);

@@ -1,0 +1,23 @@
+/* Transfers › Spielerpool / Scouting (views/transfers/pool/) */
+.pool-table th.clickable { cursor: pointer; }
+.pool-table th.sorted { color: var(--text); }
+.pool-table tr.sel td { background: var(--sel-bg); }
+.pool-range b { white-space: nowrap; }
+.pool-club { display: inline-flex; align-items: center; gap: 8px; }
+.pool-know { display: inline-flex; gap: 2px; vertical-align: middle; }
+.pool-know i { width: 5px; height: 12px; border-radius: 1px; background: rgba(var(--ink-rgb), 0.14); }
+.pool-know i.on { background: var(--text-2); }
+.pool-job { display: inline-block; width: 7px; height: 7px; margin-left: 6px; border-radius: 50%; background: var(--club-accent, var(--accent)); vertical-align: middle; }
+.pool-filter { display: grid; grid-template-columns: 1fr; gap: 7px; }
+.pool-filter > label { display: grid; grid-template-columns: 96px 1fr; align-items: center; gap: 8px; font-size: 14px; color: var(--text-2); }
+.pool-in { height: 32px; width: 100%; max-width: 220px; }
+.pool-pair { display: inline-flex; align-items: center; gap: 8px; }
+.pool-card { display: flex; flex-direction: column; gap: 2px; }
+.pool-card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+.pool-card-head .grow { display: flex; flex-direction: column; min-width: 0; }
+.pool-card-face { width: 56px; height: 66px; flex: none; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; }
+.pool-card-name { font-size: 17px; }
+.pool-msg { min-height: 2.6em; }
+.pool-jobrow { gap: 10px; }
+.pool-jobmeter { width: 340px; flex: none; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; }
+.pool-jobmeter .muted { white-space: nowrap; font-size: 14px; }

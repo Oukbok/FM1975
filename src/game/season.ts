@@ -49,6 +49,7 @@ const isGermanHome = (g: Game) => homeCountryOf(g) === 'ger';
 import { sponsorSeasonStart } from './sponsorGame';
 import { contractSeasonStart } from './contractClausesGame';
 import { honoursSeasonEnd } from './clubHonours';
+import { worldPoolSeason } from './worldPool';
 
 // -----------------------------------------------------------------------------
 // Spieltag simulieren + Form/Fitness-Effekte + Nachrichten
@@ -520,6 +521,8 @@ export function startNextSeason(g: Game): void {
   // Neue Saison, evtl. neue Epoche: Positionsstärken aller Spieler neu bewerten.
   setEraYear(Number(calendar.currentDate.slice(0, 4)));
   for (const p of Object.values(g.players)) if (!p.isYouth) refreshOverall(p);
+  // Weltspieler: Entwicklung, Karriereende, Nachrücker, Wechsel (game/worldPool.ts).
+  worldPoolSeason(g);
   // Saison-Briefing („Was ist neu?“) festhalten und zum Anzeigen vormerken.
   settleSeasonPromises(g, promSnap, promDate);
   recordSeasonBriefing(g);

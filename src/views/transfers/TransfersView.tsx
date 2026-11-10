@@ -3,7 +3,7 @@ import { ClubLink } from '../../components/club/ClubLink';
 import PlayerModal from '../../components/PlayerModal';
 import { CalendarEngine } from '../../engine/calendar';
 import { getAvailablePlayers } from '../../engine/transfers';
-import { activeTalks, startTalk, talkBlocker, TransferTalk } from '../../game/transferTalks';
+import { activeTalks, sellerOf, startTalk, talkBlocker, TransferTalk } from '../../game/transferTalks';
 import { TransferTalkModal } from './TransferTalkModal';
 import { Game } from '../../game/state';
 import { Player } from '../../types';
@@ -232,7 +232,7 @@ export function VerhandlungenView({ g, onChange = () => {} }: { g: Game; onChang
           return (
             <div key={t.id} className="dlist-row clickable" onClick={() => talk.openTalk(t)}>
               <PosBadge p={pl} compact />
-              <span className="grow"><b>{pl?.fullName ?? 'Spieler'}</b><span className="muted"> · <ClubLink id={t.sellerId}>{g.clubs[t.sellerId]?.shortName}</ClubLink> · {PHASE[t.phase]}</span></span>
+              <span className="grow"><b>{pl?.fullName ?? 'Spieler'}</b><span className="muted"> · <ClubLink id={t.sellerId}>{sellerOf(g, t.sellerId)?.shortName}</ClubLink> · {PHASE[t.phase]}</span></span>
               <span className="val" style={{ color: t.phase === 'failed' ? 'var(--red)' : t.phase === 'done' || t.phase === 'agreed' ? 'var(--green)' : 'var(--accent)' }}>{t.phase === 'club' && t.round ? fmtPrice(t.currentAsk) : t.pkg ? fmtPrice(t.pkg.fee) : ''}</span>
             </div>
           );

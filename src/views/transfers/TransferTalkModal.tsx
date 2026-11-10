@@ -5,11 +5,12 @@ import PlayerAvatar from '../../components/PlayerAvatar';
 import ClubCrest from '../../components/ClubCrest';
 import { CLAUSE_FROM, PROMISES, PromiseType } from '../../engine/transferMarket';
 import { scoutRangeText } from '../../engine/scouting';
+import { estimateFor } from '../../game/playerPool';
 import { careerPhase, PHASE_LABEL, personaOf, personaTitle } from '../../engine/persona';
 import { trustOf } from '../../game/promises';
 import { wishesFor } from '../../game/playerWishesGame';
 import { Game } from '../../game/state';
-import { TransferTalk, cancelTalk, clubOffer, inTransferWindow, playerOffer, scoutKnowledge, stanceFor, swapValueFor } from '../../game/transferTalks';
+import { TransferTalk, cancelTalk, clubOffer, inTransferWindow, playerOffer, scoutKnowledge, sellerOf, stanceFor, swapValueFor } from '../../game/transferTalks';
 import { ImportanceDots, InterestLight, ReasonList, WishList, importanceText } from '../../components/player/WishesParts';
 import { DashBox, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtPrice, fmtWage, vColor, wageUnit } from '../../ui/format';
@@ -72,7 +73,7 @@ function ClubTalkBox({ g, t, onChange, notice }: { g: Game; t: TransferTalk; onC
   const [option, setOption] = useState(r5k(t.currentAsk * 1.1));
   const m = mood(t.patience);
   const own = g.clubs[g.managedClubId];
-  const seller = g.clubs[t.sellerId];
+  const seller = sellerOf(g, t.sellerId);
   const swaps = own.playerIds.map((id) => g.players[id]).filter((x) => x && !x.loan && !x.isYouth).sort((a, b) => b.overall - a.overall);
   const sw = swap ? g.players[swap] : undefined;
   const swInfo = sw && seller ? swapValueFor(g, sw, seller) : null;
@@ -214,7 +215,8 @@ function WishBox({ g, t }: { g: Game; t: TransferTalk }) {
 export function TransferTalkModal({ g, talk, onClose, onChange }: { g: Game; talk: TransferTalk; onClose: () => void; onChange: () => void }) {
   const [, setTick] = useState(0);
   const p = g.players[talk.playerId];
-  const seller = g.clubs[talk.sellerId];
+  const seller = sellerOf(g, talk.sellerId);
+  const est = estimateFor(g, talk.playerId);
   const own = g.clubs[g.managedClubId];
   // Abgelehnte Vorschläge (keine neue Runde) sichtbar machen – vorher verschwand die Meldung,
   // und der Verlauf zeigte weiter das letzte gültige Angebot.
@@ -232,10 +234,10 @@ export function TransferTalkModal({ g, talk, onClose, onChange }: { g: Game; tal
             <h2>{p?.fullName ?? 'Spieler'}</h2>
           </div>
           {p && <div className="mx-kpis">
-            <Kpi value={p.overall} label="Stärke" color={vColor(p.overall)} />
-            <Kpi value={scoutRangeText(p)} label="Potenzial" color="var(--yellow)" />
+            <Kpi value={est && !est.exact ? `${est.ovLo}–${est.ovHi}` : p.overall} label="Stärke" color={vColor(est?.ov ?? p.overall)} />
+            <Kpi value={est ? (est.stLo === est.stHi ? `${est.st} ★` : `${est.stLo}–${est.stHi} ★`).replace(/\./g, ',') : scoutRangeText(p)} label="Potenzial" color="var(--yellow)" />
             <Kpi value={p.age} label="Alter" />
-            <Kpi value={fmtPrice(p.contract.transferValue)} label="Marktwert" />
+            <Kpi value={est && est.k < 0.8 ? `ca. ${fmtPrice(est.value)}` : fmtPrice(p.contract.transferValue)} label="Marktwert" />
           </div>}
           <button className="modal-close" onClick={onClose}>×</button>
         </div>

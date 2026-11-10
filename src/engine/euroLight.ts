@@ -104,6 +104,15 @@ function rosterOf(g: LightGame, cup: CupState, id: string, year: number): Pl[] {
   const c = g.clubs[id];
   if (c && c.playerIds.length >= 11) return realRoster(g, c);
   const eu = g.euroClubs?.[id];
+  // Weltspieler (game/worldPool.ts): dieselben Namen wie im Spielerpool.
+  const wp = (g as LightGame & { worldPool?: { p: [string, string, string, string, string, string, number, Position, number, number, number, number, number][] } }).worldPool;
+  if (wp) {
+    const list = wp.p.filter((w) => w[1] === id && !w[12]).sort((a, b) => b[8] - a[8]).slice(0, 18);
+    if (list.length >= 14) {
+      const people = (cup.xpeople ??= {});
+      return list.map((w) => { if (!people[w[0]]) people[w[0]] = [`${w[2]} ${w[3]}`, id, w[7]]; return { id: w[0], pos: w[7], q: w[8] }; });
+    }
+  }
   return phantomRoster(cup, id, eu?.country ?? 'England', eu?.strength ?? teamStrength(g, id), year);
 }
 

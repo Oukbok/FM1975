@@ -85,7 +85,7 @@ export function repairSquadLists(game: Game): number {
   }
   for (const p of Object.values(game.players)) {
     const c = game.clubs[p.clubId];
-    if (c && !c.playerIds.includes(p.id) && !p.isYouth) { c.playerIds.push(p.id); fixed++; }
+    if (c && !c.playerIds.includes(p.id) && !p.isYouth && !(p as Player & { world?: boolean }).world) { c.playerIds.push(p.id); fixed++; }
   }
   for (const club of Object.values(game.clubs)) assignShirtNumbers(club, game.players);
   return fixed;

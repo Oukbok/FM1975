@@ -769,6 +769,21 @@ export const INFO_TEXTS = {
     text: 'Richtwert: 2 Torhüter, je 6 Abwehr- und Mittelfeldspieler, 4 Stürmer. Rot heißt, dort bist du zu dünn besetzt – Verletzungen und Sperren treffen dich dann hart.',
     wiki: 'squad-table',
   },
+  spielerpool: {
+    title: 'Spielerpool',
+    text: 'Alle Spieler der Welt, auch Amateure, Auslandsligen und Jugendliche. Wen dein Stab nicht genau kennt, siehst du nur als geschätzte Spanne – sortiert und gefiltert wird nach der Schätzung. Ein Scout macht die Werte genauer.',
+    wiki: 'transfer-pool',
+  },
+  bekanntheit: {
+    title: 'Bekanntheit',
+    text: 'Wie gut dein Stab den Spieler kennt. Spieler deiner Liga, Gegner aus häufigen Duellen und Stars kennst du gut, Amateure, Jugendliche und kleine Auslandsligen kaum. Fernsehen, Internet und Datenbanken machen die Welt über die Jahrzehnte bekannter.',
+    wiki: 'transfer-pool',
+  },
+  scouting: {
+    title: 'Scouting',
+    text: 'Ein Scout beobachtet einen Spieler über Tage bis Wochen und kostet Reisegeld. Danach sind Stärke, Potenzial und Wert fast genau bekannt. Jeder Scouting-Mitarbeiter übernimmt einen weiteren Auftrag; Berichte veralten nach einigen Jahren.',
+    wiki: 'transfer-pool',
+  },
   beobachtung: {
     title: 'Beobachtung',
     text: 'Spieler auf deiner Liste werden von den Scouts verfolgt. Je länger, desto genauer werden Potenzial-Spanne und Persönlichkeit.',

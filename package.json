@@ -15,6 +15,7 @@
     "test:editor": "node scripts/build.mjs && node tests/editor-ui.mjs",
     "test:business": "node scripts/run-ts.mjs tests/club-business-test.ts",
     "test:transfers": "node scripts/run-ts.mjs tests/transfer-test.ts",
+    "test:worldpool": "node scripts/run-ts.mjs tests/worldpool-test.ts",
     "test:youth": "node scripts/run-ts.mjs tests/youth-test.ts",
     "test:stadium": "node scripts/run-ts.mjs tests/stadium-test.ts",
     "test:ai": "node scripts/run-ts.mjs tests/ai-test.ts",

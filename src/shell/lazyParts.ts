@@ -53,6 +53,8 @@ export const TrainerTeamView = lz(() => import('../views/training/TrainerTeamVie
 export const TrainingDashboard = lz(() => import('../views/training/TrainingDashboard'), 'TrainingDashboard');
 export const TransfersView = lz(() => import('../views/transfers/TransfersView'), 'TransfersView');
 export const BeobachtungView = lz(() => import('../views/transfers/TransfersView'), 'BeobachtungView');
+export const SpielerpoolView = lz(() => import('../views/transfers/pool/SpielerpoolView'), 'SpielerpoolView');
+export const ScoutingView = lz(() => import('../views/transfers/pool/ScoutingView'), 'ScoutingView');
 export const VerhandlungenView = lz(() => import('../views/transfers/TransfersView'), 'VerhandlungenView');
 export const FinancesView = lz(() => import('../views/finanzen/FinancesView'), 'FinancesView');
 export const BudgetView = lz(() => import('../views/finanzen/BudgetView'), 'BudgetView');
