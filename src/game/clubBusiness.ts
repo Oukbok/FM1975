@@ -16,6 +16,7 @@ import { formatMoney, yearOf } from '../engine/economy';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { calculateTable } from '../engine/league';
 import { ClubPhilosophy } from '../engine/environment';
+import { corporateSeason, externalShare } from './corporateGame';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -177,7 +178,7 @@ export function investorQuote(g: Game, share: number): { ok: boolean; price: num
   const year = yearOf(g.calendar.currentDate);
   const price = investorPrice(lastRevenue(club, year), commercialMultiplier(club, year), share);
   if (!club.corporate) return { ok: false, price, reason: 'Zuerst den Profibereich ausgliedern.' };
-  if (club.corporate.investorShare + share > MAX_INVESTOR_SHARE) return { ok: false, price, reason: `50+1: Höchstens ${MAX_INVESTOR_SHARE} % für Investoren.` };
+  if (externalShare(club) + share > MAX_INVESTOR_SHARE) return { ok: false, price, reason: `50+1: Höchstens ${MAX_INVESTOR_SHARE} % für Investor und Partner zusammen (frei: ${Math.max(0, MAX_INVESTOR_SHARE - externalShare(club))} %).` };
   return { ok: true, price };
 }
 
@@ -214,7 +215,7 @@ export function sellInvestorShare(g: Game, share: number): string {
 export function expectationShift(club: Club): number {
   const c = club.corporate;
   if (!c) return 0;
-  return 1 + (c.investorShare >= 25 ? 1 : 0);
+  return 1 + (externalShare(club) >= 25 ? 1 : 0);
 }
 
 // -----------------------------------------------------------------------------
@@ -247,6 +248,9 @@ export function seasonClubBusiness(g: Game, newSeason: string, date: string): vo
       }));
     }
   }
+
+  // Sponsoren als Anteilseigner: Ausschüttung, Verlängerung (game/corporateGame.ts).
+  if (mine?.corporate) corporateSeason(g, date, (mine.finances.seasonHistory ?? []).slice(-1)[0]?.result ?? 0);
 
   // Überschuldung (alle Ligavereine).
   const aiNews: string[] = [];

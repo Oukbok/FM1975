@@ -213,9 +213,10 @@ export function corporateCapital(revenue: number): number {
   return Math.round((revenue * 0.12) / 10000) * 10000;
 }
 
-/** Kaufpreis für weitere `share` Prozent beim Investor (nominal). */
+/** Kaufpreis für weitere `share` Prozent beim Investor (nominal): 4 % des Umsatzes je Prozentpunkt × Marke.
+ *  Anker: strategische Partner eines Topklubs zahlten für 8–9 % rund das 0,3- bis 0,45-fache des Jahresumsatzes. */
 export function investorPrice(revenue: number, brandFactor: number, share: number): number {
-  return Math.round((revenue * 0.06 * share * clamp(brandFactor, 0.6, 1.8)) / 10000) * 10000;
+  return Math.round((revenue * 0.04 * share * clamp(brandFactor, 0.6, 1.8)) / 10000) * 10000;
 }
 
 export function investorName(club: Club): string {

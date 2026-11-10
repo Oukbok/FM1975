@@ -23,7 +23,7 @@
 /* Finanzen: Kassenstand (Übersicht) und Kontostand (Bilanz) füllen ihre Box */
 .dfin-chart { position: relative; flex: 1 1 auto; min-height: 150px; margin: 6px 0 8px; display: flex; }
 .dbox:has(> .dbox-body > .dfin-chart) > .dbox-body { display: flex; flex-direction: column; overflow: hidden; }
-.fin-balance > .dbox-body { overflow: hidden; }
+.fin-balance-box > .dbox-body { overflow: hidden; }
 .fin-bal-grid { display: grid; grid-template-columns: minmax(260px, 1fr) 2fr; gap: 22px; height: 100%; min-height: 0; }
 .fin-bal-side { min-height: 0; overflow: auto; }
 .fin-bal-chart { position: relative; display: flex; min-height: 0; }

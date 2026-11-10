@@ -1,6 +1,7 @@
 // =============================================================================
 // Vereinsumfeld im Spielablauf (monatlich + Saisonwechsel). Siehe engine/environment.ts.
 // =============================================================================
+import { boardSeatSwing } from './corporateGame';
 import { legendStandMood } from './standNames';
 import { Game } from './state';
 import { Club, Match } from '../types';
@@ -66,6 +67,7 @@ export function monthlyEnvironmentUpdate(g: Game, today: string): void {
     tablePos: pos, tableSize: size, expectedPos: expectedPosition(club.boardExpectation, size),
     identity: env.identity, balanceTrend, groundsMood: groundsMoodBonus(club.grounds, year, today) + legendStandMood(club), // + Legenden-Tribünen (game/standNames.ts)
   });
+  boardSeatSwing(club, res.boardDelta); // Aufsichtsrat mit Sponsoren/Investor: stärkere Ausschläge
   club.members = env.members;
   club.stadium.averageAttendanceRate = Math.max(0.3, Math.min(0.98, club.stadium.averageAttendanceRate + attendanceNudge(env.fanMood, year)));
 

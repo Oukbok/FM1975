@@ -889,7 +889,23 @@ export interface ClubCorporate {
   capitalRaised: number;
   /** Bisher ausgeschüttete Dividenden (nominal, Summe). */
   dividendsPaid?: number;
+  /** Sponsoren als Anteilseigner mit Sitz im Aufsichtsrat (game/corporateGame.ts). */
+  partners?: CorporatePartner[];
 }
+
+/** Strategischer Partner: Sponsor hält Anteile an der Profi-Gesellschaft. */
+export interface CorporatePartner {
+  name: string;
+  /** Werbefläche des Sponsorvertrags beim Einstieg (z. B. 'brust'). */
+  slot: string;
+  share: number;
+  since: number;
+  /** Gezahlter Kaufpreis (nominal, Summe). */
+  paid: number;
+}
+
+/** Frühere Ausgliederung, die wieder in den e. V. zurückgeführt wurde. */
+export interface CorporateEpisode { since: number; until: number; capitalRaised: number; dividendsPaid: number }
 
 // -----------------------------------------------------------------------------
 // 9. VEREINS-FINANZEN
@@ -1264,6 +1280,8 @@ export interface Club {
   clubLegends?: ClubLegend[];
   /** Kapitalgesellschaft / Investor (ab 1998). */
   corporate?: ClubCorporate;
+  /** Abgeschlossene Ausgliederungen (Rückführung in den e. V.). */
+  corporateHistory?: CorporateEpisode[];
   /** Punktabzug (Lizenzauflage wegen Überschuldung) für eine Saison. */
   pointDeduction?: { season: string; points: number; reason: string };
   /** KI-Trainer (nur KI-Vereine; der eigene Verein hat keinen – das bist du). */

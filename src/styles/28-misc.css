@@ -102,3 +102,7 @@
 .chw-rel-lbl { color: var(--text-3); }
 .chw-link { background: none; border: none; padding: 0; color: var(--text-2); font: inherit; cursor: pointer; text-decoration: underline; text-decoration-color: var(--border); text-underline-offset: 3px; }
 .chw-link:hover { color: var(--text); text-decoration-color: var(--accent); }
+
+/* Rechtsform & Anteile (views/finanzen/businessBoxes.tsx) */
+.corp-holder { padding: 2px 0 8px; border-bottom: 1px solid var(--border-soft); margin-bottom: 6px; }
+.corp-holder .dbtnrow { margin-top: 4px; }

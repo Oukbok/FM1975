@@ -2737,10 +2737,15 @@ Ein Klick auf eine Tribüne (Finanzen → Sponsoring → Namensrechte) öffnet i
 - **Tribüne nach einer Legende benennen** (z. B. „Hans-Müller-Tribüne“, hinter dem Tor „…-Kurve“, Ecken „…-Ecke“): kein Geld, aber Ansehen – die Fan-Stimmung steigt sofort und dauerhaft (+1,5 Punkte Ziel-Stimmung je Tribüne, höchstens vier zählen). Mehr Stimmung heißt mehr Zuschauer und Mitglieder. Jede Legende gibt nur einer Tribüne ihren Namen; den Namen wieder zu entfernen, verärgert die Fans.
 - **Tribünennamen verkaufen** (ab 2005): je Tribüne zwei Angebote (3 oder 5 Jahre), der Wert richtet sich nach dem Anteil der Tribüne an allen Plätzen. Ersetzt ein Firmenname eine Legende, sind die Fans empört.
 
-## Ausgliederung und Investor (ab 1998)
+## Ausgliederung, Investor und Anteilseigner (ab 1998)
 - **Ausgliederung** des Profibereichs bringt einmalig Kapital (12 % des Jahresumsatzes) und +8 Vorstandsvertrauen. Die Saisonziele fallen danach eine Stufe ehrgeiziger aus. Je nach Leitbild murren die Fans (bis −8, Traditionsvereine −3 zusätzlich).
-- **Investor:** Danach kannst du Anteile verkaufen (10, 15 oder 24 %), höchstens 49 % wegen der **50+1-Regel**. Preis ≈ 6 % des Umsatzes je Prozentpunkt × Marke. Ab 25 % steigen die Ziele noch eine Stufe.
+- **Investor:** Danach kannst du Anteile verkaufen (10, 15 oder 24 %), höchstens 49 % wegen der **50+1-Regel**. Preis ≈ 4 % des Umsatzes je Prozentpunkt × Marke (Vorbild: strategische Partner eines Topklubs zahlten für 8–9 % etwa ein Drittel bis knapp die Hälfte eines Jahresumsatzes). Ab 25 % steigen die Ziele noch eine Stufe.
 - **Renditedruck:** Nach jeder Saison erhält der Investor seinen Anteil am Gewinn. Ohne Gewinn sinkt das Vorstandsvertrauen um 5.
+- **Sponsoren als Anteilseigner:** Sponsoren der großen Flächen (Brust, Ausrüster, Premium, Co-Partner) kaufen 5, 8 oder 10 % – etwa 10 % teurer als beim Investor, nach Vorbild der strategischen Partner großer Vereine. **Bonus:** Ihr Vertrag steigt um 8 %, läuft zwei Jahre länger und verlängert sich zum Saisonwechsel automatisch um zwei Jahre, wenn er ausläuft. **Malus:** Sie erhalten ihren Anteil am Gewinn, der Vertrag ist nicht kündbar, und sie reden im Aufsichtsrat mit.
+- **Aufsichtsrat:** Jeder Sponsor mit Anteilen und der Investor ab 10 % haben einen Sitz. Jeder Sitz verstärkt die monatliche Bewegung des Vorstandsvertrauens um 20 % – Rückendeckung, wenn es läuft, schnellere Kritik, wenn nicht.
+- **50+1** gilt für alle zusammen: Investor und Sponsoren halten höchstens 49 %.
+- **Rückkauf:** Jeden Anteilseigner kannst du zum aktuellen Wert plus 20 % Aufschlag auskaufen; Fans sehen das gern, der Sitz im Aufsichtsrat entfällt.
+- **Rückführung in den e. V.:** Liegen alle Anteile wieder beim Verein, kann die Mitgliederversammlung die Rückführung beschließen: Die Gesellschaft bringt ihren Geschäftsbetrieb in den Verein ein und wird aufgelöst (rechtlich möglich, aber teuer: Steuern, Beratung und Notar ≈ 3 % des Jahresumsatzes). Fan-Stimmung und Identität steigen, das Vorstandsvertrauen sinkt leicht (−3), die Saisonziele werden wieder bodenständiger. Eine spätere neue Ausgliederung ist möglich.
 - **Fanprotest:** Jeder Verkauf kostet Stimmung (stärker ab 2005 und bei bodenständigen Vereinen). Liegt die Stimmung danach unter 45, gibt es Proteste und etwas weniger Zuschauer.
 
 ## Vorstandsvertrauen

@@ -5,6 +5,7 @@
 // Oberfläche (Unterschreiben, Verhandeln, Option ziehen, Auflösen), Migration.
 // Rechnung: engine/sponsorship.ts · Daten: data/sponsorCatalog.ts.
 // =============================================================================
+import { partnerLock } from './corporateGame';
 import { SLOT_BY_ID, SPONSOR_SLOTS, industryBan, industryImage } from '../data/sponsorCatalog';
 import { campDestination } from '../data/campDestinations';
 import { commercialMultiplier } from '../engine/clubEconomy';
@@ -455,6 +456,8 @@ export function terminateDeal(g: Game, dealId: string): string | null {
   const k = com(c);
   const d = k.deals?.find((x) => x.id === dealId);
   if (!d) return 'Vertrag nicht gefunden.';
+  const locked = partnerLock(c, d.partner);
+  if (locked) return locked;
   const cost = terminationCost(g, d);
   if (c.finances.balance < cost) return 'Kontostand reicht für die Ablöse nicht.';
   const today = g.calendar.currentDate;

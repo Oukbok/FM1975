@@ -93,7 +93,7 @@ export function FinancesView({ g }: { g: Game }) {
 
   return (
     <DashPage>
-      <DashBox title="Kontostand" info="kontostand" span={2} right={seasonPicker} className="fin-balance">
+      <DashBox title="Kontostand" info="kontostand" span={2} right={seasonPicker} className="fin-balance-box">
         <div className="fin-bal-grid">
           {rec ? (
             <div className="fin-bal-side">

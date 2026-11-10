@@ -7,6 +7,8 @@ import {
   seasonClubBusiness, sellInvestorShare, startStadiumBuild,
 } from '../src/game/clubBusiness';
 import { calculateTable } from '../src/engine/league';
+import { boardSeatSwing, boardSeats, buyBackShares, corporateSeason, externalShare, partnerOffers, reintegrate, reintegrationQuote, sellPartnerShare } from '../src/game/corporateGame';
+import { terminateDeal } from '../src/game/sponsorGame';
 import { lastRevenue } from '../src/engine/clubEconomy';
 import { Club } from '../src/types';
 
@@ -62,6 +64,41 @@ sellInvestorShare(g, 24);
 sellInvestorShare(g, 24);
 ok(me.corporate!.investorShare === 48, `Investor hält ${me.corporate!.investorShare} %`);
 ok(!investorQuote(g, 10).ok, '50+1: weitere 10 % nicht erlaubt');
+
+// --- Rückkauf, Sponsoren als Anteilseigner, Rückführung in den e. V. (#43) ---
+me.finances.balance = 500_000_000;
+ok(buyBackShares(g, me.corporate!.investorName!).includes('zurückgekauft') && me.corporate!.investorShare === 0, 'Rückkauf der Investor-Anteile');
+sellInvestorShare(g, 24);
+me.commerce ??= {} as any;
+me.commerce!.deals ??= [];
+let deal = me.commerce!.deals!.find((d) => d.slot === 'brust');
+if (!deal) {
+  deal = { id: 'test-brust', slot: 'brust', partner: 'Testwerk AG', industry: 'auto', country: 'GER', annualValue: 400000, yearsTotal: 3, yearsLeft: 2, since: '2001/02', bonuses: {}, clauses: [] } as any;
+  me.commerce!.deals!.push(deal!);
+}
+const v0 = deal!.annualValue, y0 = deal!.yearsLeft;
+const pOffers = partnerOffers(g);
+ok(pOffers.some((o) => o.deal.id === deal!.id && o.share === 10 && o.ok), `Partner-Angebote: ${pOffers.length}`);
+ok(sellPartnerShare(g, deal!.id, 10).includes('verkauft'), 'Hauptsponsor kauft 10 %');
+ok(externalShare(me) === 34 && boardSeats(me) === 2, `Fremdanteil ${externalShare(me)} %, ${boardSeats(me)} Sitze`);
+ok(deal!.annualValue === Math.round(v0 * 1.08) && deal!.yearsLeft === y0 + 2, 'Bonus: Vertrag +8 %, +2 Jahre');
+ok(!investorQuote(g, 24).ok && investorQuote(g, 15).ok, '50+1 gilt für Investor und Partner zusammen');
+ok(!!terminateDeal(g, deal!.id), 'Vertrag eines Anteilseigners nicht kündbar');
+me.boardConfidence = 50;
+boardSeatSwing(me, 5);
+ok(me.boardConfidence === 52, `Aufsichtsrat verstärkt Erfolg: ${me.boardConfidence}`);
+boardSeatSwing(me, -5);
+ok(me.boardConfidence === 50, `… und Misserfolg: ${me.boardConfidence}`);
+deal!.yearsLeft = 1;
+const balPre = me.finances.balance;
+corporateSeason(g, '2002-07-01', 10_000_000);
+ok(deal!.yearsLeft === 3 && me.finances.balance === balPre - 1_000_000, 'Saisonwechsel: Verlängerung + 10 % Ausschüttung an den Partner');
+ok(!reintegrationQuote(g).ok, 'Rückführung erst ohne fremde Anteile');
+buyBackShares(g, me.corporate!.investorName!);
+buyBackShares(g, deal!.partner);
+ok(externalShare(me) === 0 && !terminateDeal(g, 'gibt-es-nicht')?.includes('Anteilseigner'), 'alle Anteile zurück');
+ok(reintegrationQuote(g).ok && reintegrate(g).includes('beschlossen') && !me.corporate && me.corporateHistory?.length === 1, 'Rückführung in den e. V.');
+ok(!outsource(g).includes('bereits'), 'erneute Ausgliederung möglich');
 
 // --- Überschuldung (KI-Verein) ---
 const ai = Object.values(g.clubs).find((c) => c.id !== me.id && !c.id.startsWith('am')) as Club;
