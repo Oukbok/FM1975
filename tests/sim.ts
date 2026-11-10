@@ -7,6 +7,7 @@
 import { awardsOf } from '../src/game/seasonAwardsGame';
 import { AWARD_CATS } from '../src/engine/seasonAwards';
 import { createNewGame } from '../src/game/newGame';
+import { seasonStartYear } from '../src/data/timeline';
 import { headCoachNow, headCoachRows } from '../src/game/headCoaches';
 import { candidatesFor, hireStaff } from '../src/game/staffGame';
 import { careerSummary, originOfPlayer, trackCareers } from './simCareers';
@@ -490,6 +491,18 @@ for (let s = 0; s < seasons; s++) {
   campSeasonStart(g);
   promSeasonStart(g, promSt, promSeason);
   if (process.env.STAFF) staffReport(g);
+  // DUMPS=10:datei,20:datei: nach so vielen Saisons bis zum 10.12. weiterspielen und eine Vorlage ablegen (scripts/make-test-save.mjs).
+  const dumpAt = (process.env.DUMPS ?? '').split(',').filter(Boolean).map((x) => x.split(':')).find(([n]) => Number(n) === s + 1);
+  if (dumpAt) {
+    const until = `${seasonStartYear(g.season)}-12-10`;
+    let gd = 0;
+    while (g.calendar.currentDate < until && !CalendarEngine.isSeasonOver(g.calendar) && gd++ < 400) {
+      const t = g.clubs[g.managedClubId]?.tactics;
+      if (t && t.startingXI?.length) { t.startingXI = []; t.lineupMap = undefined; }
+      processDay(g, HEADLESS_UI);
+    }
+    await writeTemplate(g, dumpAt[1]);
+  }
 }
 if (process.env.AI && aiTotals.seasons) {
   const s = aiTotals.seasons, a = Math.max(1, aiTotals.arrivals);
@@ -497,6 +510,16 @@ if (process.env.AI && aiTotals.seasons) {
   console.log(`KI-Bilanz über ${s} Saisons: Zugänge/Saison ${(aiTotals.arrivals / s).toFixed(1)}, Wechsel in der Liga ${(aiTotals.transfers / s).toFixed(1)}, unterklassig ${(aiTotals.lower / s).toFixed(1)}, Ausland ${(aiTotals.imports / s).toFixed(1)}, Jugend ${(aiTotals.youth / s).toFixed(1)}, generiert ${(aiTotals.generated / s).toFixed(1)} (${(aiTotals.generated / a * 100).toFixed(0)} % der Zugänge), Trainerwechsel ${(aiTotals.coach / s).toFixed(1)} (Entlassungen ${(aiTotals.sacked / s).toFixed(1)})`);
 }
 if (process.env.SAVESIZE) { const j = JSON.stringify(g); console.log(`Spielstand ${(j.length / 1024 / 1024).toFixed(2)} MB (unkomprimiert)`); for (const [k, v] of Object.entries(g)) { const n = JSON.stringify(v ?? null).length; if (n > 50000) console.log('  ', k, (n / 1024).toFixed(0), 'KB'); } const pl = Object.values(g.players); const hist = pl.reduce((a, p) => a + JSON.stringify(p.history ?? {}).length, 0); console.log('   davon Spieler-Historie', (hist / 1024).toFixed(0), 'KB bei', pl.length, 'Spielern'); }
+async function writeTemplate(game: Game, file: string): Promise<void> {
+  const { compressToUTF16 } = await import('lz-string');
+  const { writeFileSync } = await import('node:fs');
+  const copy = JSON.parse(JSON.stringify(game));
+  delete copy.simAutoManage; // Vorlage: eigener Verein wieder als Spieler
+  const my = copy.clubs[copy.managedClubId];
+  const meta = { slot: 'sim', name: 'Simulation', managerName: 'Sim', clubName: my.name, clubId: my.id, season: copy.season, gameDate: copy.calendar.currentDate, savedAt: new Date().toISOString(), version: (await import('../src/engine/save')).SAVE_VERSION };
+  writeFileSync(file, 'LZ1:' + compressToUTF16(JSON.stringify({ meta, game: copy })));
+  console.log('Vorlage geschrieben:', file, copy.season, copy.calendar.currentDate);
+}
 if (process.env.UNTIL) {
   // Für Screenshots: nach den Saisons bis zu einem Datum weiterspielen (z. B. mitten in die Hallenrunde).
   let guard = 0;
