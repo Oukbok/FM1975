@@ -10,7 +10,9 @@ const TITLE_ORDER: TitleKind[] = ['meister', 'ddr', 'pokal', 'ec', 'cwc', 'uefa'
 const COMP_DE = { L: 'Liga', P: 'Pokal', E: 'Europa' } as const;
 
 export default function HistoryTab({ g, d, openPlayer }: ClubTabProps) {
-  const past = seasonsOf(g, d.clubId);
+  // Auslandsvereine: Abschlussplätze aus der Hintergrund-Welt (letzte Saisons).
+  const own = seasonsOf(g, d.clubId);
+  const past = own.length ? own : d.foreign?.seasons ?? [];
   const seasons: SeasonPlacement[] = [...past];
   if (d.tablePosition != null && d.tier != null && (d.played ?? 0) > 0 && !past.some((s) => s.season === g.season)) {
     seasons.push({ season: g.season, tier: d.tier, pos: d.tablePosition, size: d.tableSize ?? 18, league: d.divisionLabel ?? '', live: true });

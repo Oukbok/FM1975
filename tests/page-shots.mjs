@@ -43,6 +43,11 @@ for (const [main, sub] of PAGES) {
     await target.click({ timeout: 3000 }).catch(() => errors.push(`Klick nicht möglich: ${c}`));
     await page.waitForTimeout(350);
   }
+  // CLICKSEL=".css-selector|…": nacheinander das erste passende Element klicken.
+  for (const c of (process.env.CLICKSEL ? process.env.CLICKSEL.split('|') : [])) {
+    await page.locator(c).first().click({ timeout: 3000 }).catch(() => errors.push(`Klick nicht möglich: ${c}`));
+    await page.waitForTimeout(500);
+  }
   const name = `${main}-${sub || main}`.toLowerCase().replace(/[^a-z0-9äöü-]+/g, '_');
   await page.screenshot({ path: `${outDir}/${name}.png` });
   const boxes = await page.evaluate(() => [...document.querySelectorAll('.dbox')].map((b) => { const r = b.getBoundingClientRect(); return `${Math.round(r.left)},${Math.round(r.top)} ${Math.round(r.width)}×${Math.round(r.height)} ${(b.querySelector('.dbox-title, .dbox-head')?.textContent ?? '').trim().slice(0, 30)}`; }));

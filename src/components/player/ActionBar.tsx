@@ -6,6 +6,7 @@ import { useState } from 'react';
 import type { Player } from '../../types';
 import { useClubProfile } from '../club/ClubLink';
 import { startTalk } from '../../game/transferTalks';
+import { materializeWorldPlayer } from '../../game/worldPool';
 import { PlayerTalkModal } from '../../views/kader/talk/PlayerTalkModal';
 import { TransferTalkModal } from '../../views/transfers/TransferTalkModal';
 import Icon from '../Icon';
@@ -39,6 +40,7 @@ export default function ActionBar({ p, onTab, onChange }: { p: Player; onTab: (t
     {
       key: 'deal', icon: 'negotiations', tip: foreign ? 'Transferverhandlung starten' : 'Transferverhandlung – nur für Spieler anderer Vereine',
       run: foreign ? () => {
+        if (!g.players[p.id]) materializeWorldPlayer(g, p.id);
         const r = startTalk(g, p.id);
         if (typeof r === 'string') { setNote(r); return; }
         setNote(null); setDeal(r.id); changed();

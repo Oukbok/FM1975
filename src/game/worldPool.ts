@@ -269,6 +269,14 @@ export function materializeWorldPlayer(g: Game, id: string): Player | null {
   if (g.players[id]) return g.players[id];
   const w = worldEntry(g, id);
   if (!w) return null;
+  const p = buildWorldPlayer(g, w);
+  g.players[id] = p;
+  return p;
+}
+
+/** Vollwertiges Spielerobjekt aus einem Weltspieler-Tupel, ohne es zu speichern. */
+function buildWorldPlayer(g: Game, w: WP): Player {
+  const id = w[W.id];
   const date = g.calendar.currentDate;
   const year = Number(date.slice(0, 4));
   const o = Object.values(ORIGINS).find((x) => x.nationality === w[W.nat]) ?? ORIGINS.eng;
@@ -285,8 +293,36 @@ export function materializeWorldPlayer(g: Game, id: string): Player | null {
   p.contract.expiryDate = `${year + 2}-06-30`;
   p.contract.satisfaction = 70;
   (p as Player & { world?: boolean }).world = true;
-  g.players[id] = p;
   return p;
+}
+
+// Ansicht für das Vereinsprofil (Wunsch Pascal: jeder Verein mit Kader): Weltspieler als
+// Spielerobjekte, nur gelesen – gespeichert wird erst bei einer Verhandlung (materialize).
+const previewCache = new WeakMap<Game, { key: string; map: Map<string, Player> }>();
+export function worldSquadPreview(g: Game, clubId: string, youth = false): Player[] {
+  const pool = g.worldPool;
+  if (!pool) return [];
+  const key = `${pool.year}|${pool.p.length}|${g.calendar.currentDate.slice(0, 7)}`;
+  let c = previewCache.get(g);
+  if (!c || c.key !== key) { c = { key, map: new Map() }; previewCache.set(g, c); }
+  const out: Player[] = [];
+  for (const w of pool.p) {
+    if (w[W.club] !== clubId || (!!w[W.youth]) !== youth) continue;
+    const id = w[W.id];
+    let p = g.players[id] ?? c.map.get(id);
+    if (!p) { p = buildWorldPlayer(g, w); c.map.set(id, p); }
+    out.push(p);
+  }
+  return out.sort((a, b) => b.overall - a.overall);
+}
+
+const clubCache = new WeakMap<Game, { key: string; map: Map<string, WorldClubInfo> }>();
+/** worldClubs mit Zwischenspeicher je Tag (für Profil-Prüfungen bei jedem Klick). */
+export function worldClubInfo(g: Game, id: string): WorldClubInfo | undefined {
+  const key = `${g.calendar.currentDate}|${Object.keys(g.euroClubs ?? {}).length}|${Object.keys(g.simClubs).length}`;
+  let c = clubCache.get(g);
+  if (!c || c.key !== key) { c = { key, map: worldClubs(g) }; clubCache.set(g, c); }
+  return c.map.get(id);
 }
 
 /** Vollwertigen Weltspieler wieder entfernen (Verhandlung beendet, kein Wechsel). */

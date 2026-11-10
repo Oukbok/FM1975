@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { buildClubProfile } from '../game/clubProfile';
 import { Game } from '../game/state';
 import { startTalk } from '../game/transferTalks';
+import { materializeWorldPlayer } from '../game/worldPool';
 import { Kpi } from '../ui/DashPage';
 import { vColor } from '../ui/format';
 import { TransferTalkModal } from '../views/transfers/TransferTalkModal';
@@ -46,9 +47,11 @@ export default function ClubModal({ g, clubId, nonce, onChange, onClose, onBack,
   }, [onClose, selPlayer, talkId]);
 
   const d = buildClubProfile(g, clubId);
-  const player = selPlayer ? g.players[selPlayer] ?? g.youthPlayers[selPlayer] ?? null : null;
+  // Weltspieler (Kader aus dem Weltpool) sind nur Ansichten – erst die Verhandlung legt sie an.
+  const player = selPlayer ? g.players[selPlayer] ?? g.youthPlayers[selPlayer] ?? d.squad.find((p) => p.id === selPlayer) ?? null : null;
   const talk = talkId ? (g.transferTalks ?? []).find((t) => t.id === talkId) : undefined;
   const onTalk = (pid: string) => {
+    if (!g.players[pid]) materializeWorldPlayer(g, pid);
     const r = startTalk(g, pid);
     if (typeof r === 'string') { setTalkErr(r); return; }
     setTalkErr(null); setTalkId(r.id); onChange();

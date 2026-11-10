@@ -15,10 +15,31 @@ const fmtNum = (n: number) => n.toLocaleString('de-DE');
 export default function ClubTab({ g, d, openPlayer }: ClubTabProps) {
   const c = d.fullClub;
   if (!c) {
+    const year = Number(g.calendar.currentDate.slice(0, 4));
+    const sq = d.squad;
+    const value = sq.reduce((a, p) => a + p.contract.transferValue, 0);
+    const age = sq.length ? sq.reduce((a, p) => a + p.age, 0) / sq.length : 0;
+    const homeNat = sq.length ? [...sq.reduce((m, p) => m.set(p.nationality, (m.get(p.nationality) ?? 0) + 1), new Map<string, number>())].sort((a, b) => b[1] - a[1])[0][0] : '';
+    const legion = sq.filter((p) => p.nationality !== homeNat).length;
+    const talents = [...sq].filter((p) => p.age <= 21).sort((a, b) => scoutMid(b) - scoutMid(a)).slice(0, 6);
     return (
       <>
-        <DashBox title="Verein" icon="dashVerein" span={2} rows={2}>
-          <Empty icon="dashVerein">{d.name} spielt in einer rein simulierten Liga. Über Stadion, Finanzen und Nachwuchs liegen den Scouts keine Angaben vor – sie werden sichtbar, sobald der Verein in deine Liga kommt.</Empty>
+        <DashBox title="Kader & Markt" icon="dashVerein">
+          {sq.length ? <>
+            <KV k="Spieler im Kader" v={sq.length} />
+            <KV k="Kaderwert (geschätzt)" v={fmtPrice(value)} strong />
+            <KV k="Ø Alter" v={age.toFixed(1).replace('.', ',')} />
+            <KV k="Ausländer im Kader" v={legion} />
+            <KV k="Ø Stärke" v={d.strength} color={vColor(d.strength)} />
+            <div className="dnote mt8">{d.foreign ? `Auslandsverein (${d.foreign.country}): ` : ''}Stadion und Finanzen werden nicht im Detail geführt; Kader, Ergebnisse und Tabellen laufen in der Simulation mit ({year}).</div>
+          </> : <Empty icon="dashVerein">Für {d.name} liegt noch kein Kader vor.</Empty>}
+        </DashBox>
+        <DashBox title="Talente (bis 21)" icon="youth">
+          {talents.length ? talents.map((p) => (
+            <div key={p.id} className="pp-line clickable" data-pid={p.id} onClick={() => openPlayer(p.id)}>
+              <span className="pp-line-lbl">{p.fullName} <PosBadge p={p} compact /></span><span>{p.age} J. · <ScoutStars p={p} /></span>
+            </div>
+          )) : <Empty icon="youth">Keine jungen Spieler im Kader.</Empty>}
         </DashBox>
         <DashBox title="Trikots" icon="dashVerein" rows={2}>
           <Kits club={d.crestClub} />

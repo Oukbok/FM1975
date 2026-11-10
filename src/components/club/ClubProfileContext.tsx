@@ -2,14 +2,13 @@
 // Vereinsprofil überall aufrufbar: GameShell legt den Provider um das laufende
 // Spiel; jeder Vereinsname bzw. jedes Wappen wird über <ClubLink id=…> klickbar.
 // Das Profil (ClubModal) liegt als oberstes Popup über allen anderen; Auslandsvereine
-// (`eu_*`/`w_*`) bekommen ein schlichtes Profil (club/ForeignClubModal.tsx).
+// und Vereine ohne vollen Kader nutzen dasselbe Profil (Kader aus dem Weltpool, Wunsch Pascal).
 // =============================================================================
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { hasClubProfile } from '../../game/clubProfile';
 import { Game } from '../../game/state';
 import ClubModal from '../ClubModal';
 import { nextProfileZ } from '../../ui/stackZ';
-import ForeignClubModal, { hasForeignProfile } from './ForeignClubModal';
 import { ClubProfileApi, ClubProfileCtx } from './ClubLink';
 
 export { ClubLink, useClubProfile } from './ClubLink';
@@ -25,7 +24,7 @@ export function ClubProfileProvider({ g, onChange, children }: { g: Game; onChan
     setNonce((n) => n + 1);
     setZ(nextProfileZ());
   }, []);
-  const api = useMemo<ClubProfileApi>(() => ({ open, canOpen: (id) => hasClubProfile(g, id) || hasForeignProfile(g, id), game: g, onChange }), [open, g, onChange]);
+  const api = useMemo<ClubProfileApi>(() => ({ open, canOpen: (id) => hasClubProfile(g, id), game: g, onChange }), [open, g, onChange]);
   const current = stack[stack.length - 1];
 
   // Jedes Wappen (ClubCrest setzt `data-club`) und jedes Element mit `data-club` öffnet per
@@ -52,9 +51,6 @@ export function ClubProfileProvider({ g, onChange, children }: { g: Game; onChan
         <ClubModal key={current} g={g} clubId={current} nonce={nonce} onChange={onChange}
           onBack={stack.length > 1 ? () => setStack((s) => s.slice(0, -1)) : undefined}
           onClose={() => setStack([])} zIndex={z} />
-      )}
-      {current && !hasClubProfile(g, current) && hasForeignProfile(g, current) && (
-        <ForeignClubModal key={current} g={g} clubId={current} zIndex={z} onClose={() => setStack([])} />
       )}
     </ClubProfileCtx.Provider>
   );

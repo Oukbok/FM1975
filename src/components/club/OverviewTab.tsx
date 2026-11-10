@@ -29,6 +29,12 @@ export default function OverviewTab({ g, d, openPlayer }: ClubTabProps) {
         {d.form && d.form.length > 0 && <KV k="Form" v={<FormDots form={d.form} />} />}
         {d.reputation != null && <Meter label="Ansehen" value={d.reputation} color={vColor(d.reputation)} />}
         {d.fullClub && <KV k="Stadion" v={d.fullClub.stadium.name} />}
+        {d.foreign && <>
+          <KV k="Land" v={d.foreign.country} />
+          {d.tablePosition == null && <KV k="Platz Vorsaison" v={d.foreign.lastPos ? `${d.foreign.lastPos}.` : '–'} />}
+          <KV k="Meister · Pokal (seit Spielbeginn)" v={`${d.foreign.titles} · ${d.foreign.cups}`} />
+          <KV k="Europapokal" v={d.foreign.euro.length ? d.foreign.euro.join(', ') : '–'} />
+        </>}
       </DashBox>
 
       {d.isPlayerClub ? (
@@ -68,7 +74,7 @@ export default function OverviewTab({ g, d, openPlayer }: ClubTabProps) {
         ) : (
           <>
             <Meter label="Geschätzte Stärke" value={d.strength} color={vColor(d.strength)} />
-            <div className="dnote mt8">Rein simulierter Verein: Die Scouts kennen nur die ungefähre Gesamtstärke, keine Einzelspieler.</div>
+            <div className="dnote mt8">Für diesen Verein liegt noch kein Kader vor – er entsteht mit dem nächsten Abgleich der Weltspieler.</div>
           </>
         )}
       </DashBox>

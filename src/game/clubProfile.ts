@@ -7,6 +7,8 @@ import { estimateRange } from '../engine/transferMarket';
 import { Club, LeagueTable, Match, Player, POSITION_GROUPS } from '../types';
 import { clubStrengthFor } from './season';
 import { Game } from './state';
+import { countryName, worldClubInfo, worldSquadPreview } from './worldPool';
+import type { SeasonPlacement } from './clubRecords';
 
 // =============================================================================
 // TABELLE
@@ -21,15 +23,53 @@ export function clubView(g: Game, id: string, year?: number): { id: string; name
   const s = g.simClubs[id];
   // Zeit-korrekter Name (z. B. „Karl-Marx-Stadt" vor 1990, sonst „Chemnitz").
   if (s) return { id: s.id, name: year != null ? simDisplayName(s, year) : s.name, shortName: s.shortName, city: s.city, colors: s.colors };
+  // Auslandsvereine der Hintergrund-Welt (Europapokal, Weltdaten).
+  const e = g.euroClubs?.[id];
+  if (e) return { id, name: e.name, shortName: e.shortName, city: e.city, colors: e.colors };
   // Historische Vereine, die der Spielstand nicht (mehr) kennt (data/history/historicClubs.ts).
   const h = historicClubInfo(id);
   if (h) return { id, name: historicClubName(id, year) ?? h.name, shortName: h.shortName, city: h.city, colors: h.colors };
   return { id, name: id, shortName: id.slice(0, 3).toUpperCase(), city: '', colors: { primary: '#444', secondary: '#fff' } };
 }
 
-/** Hat der Verein ein Profil (voller oder simulierter deutscher Verein)? */
+/** Hat der Verein ein Profil? Jeder Verein der Spielwelt (Wunsch Pascal): voll, simuliert, Ausland. */
 export function hasClubProfile(g: Game, id: string | null | undefined): boolean {
-  return !!id && (!!g.clubs[id] || !!g.simClubs[id]);
+  return !!id && (!!g.clubs[id] || !!g.simClubs[id] || !!g.euroClubs?.[id] || !!worldClubInfo(g, id));
+}
+
+const COMP_DE: Record<string, string> = { ec: 'Landesmeister', cwc: 'Pokalsieger', uefa: 'UEFA-Pokal', cl: 'Champions League', el: 'Europa League', ecl: 'Conference League' };
+
+/** Angaben zu Auslandsvereinen (Hintergrund-Welt): Land, Titel, Abschlussplätze, Europapokal. */
+export interface ForeignInfo {
+  country: string;
+  titles: number;
+  cups: number;
+  champion: boolean;
+  lastPos?: number;
+  euro: string[];
+  seasons: SeasonPlacement[];
+}
+
+function foreignInfo(g: Game, id: string): ForeignInfo | undefined {
+  const info = worldClubInfo(g, id);
+  const key = info?.country ?? g.euroClubs?.[id]?.country;
+  if (!key || key === 'Deutschland') return undefined;
+  const w = g.world?.countries?.[key];
+  const name = countryName(key);
+  const seasons: SeasonPlacement[] = [];
+  for (const h of g.world?.history ?? []) {
+    const t = h.tables?.[key];
+    const pos = t ? t.indexOf(id) + 1 : 0;
+    if (pos > 0) seasons.push({ season: h.season, tier: 1, pos, size: t!.length, league: `1. Liga ${name}` });
+  }
+  const cups = (g.world?.history ?? []).filter((h) => h.cupWinners?.[key] === id).length;
+  const last = w?.lastTable?.indexOf(id) ?? -1;
+  return {
+    country: name, titles: w?.titles?.[id] ?? 0, cups, champion: w?.lastChampion === id,
+    lastPos: last >= 0 ? last + 1 : undefined,
+    euro: Object.entries(g.world?.participants ?? {}).filter(([, ids]) => (ids as string[]).includes(id)).map(([k]) => COMP_DE[k] ?? k),
+    seasons,
+  };
 }
 
 // Zonen-Markierung je Ebene: 1. Liga = Meister/Europa/Abstieg; 2. Liga =
@@ -104,6 +144,10 @@ export interface ClubProfileData {
   vsOwnLast?: ClubMatchLine;
   /** Stärke je Mannschaftsteil: dieser Verein vs. dein Verein (leer bei Sim-Vereinen). */
   units: { key: UnitKey; label: string; theirs: number; ours: number; n: number }[];
+  /** Auslandsverein: Land, Titel, Platzierungen (Hintergrund-Welt). */
+  foreign?: ForeignInfo;
+  /** Kader aus dem Weltpool (schlanke Spieler, erst bei Verhandlung gespeichert). */
+  worldSquad?: boolean;
   /** Außensicht der Finanzen (nur volle Vereine). */
   finance?: {
     /** Umsatzklasse in der eigenen Liga (1 = umsatzstärkstes Viertel … 4). */
@@ -127,7 +171,7 @@ function findRow(g: Game, clubId: string) {
   if (own) return { row: own, label: divisionLabel(pd.tier, pd.group), tier: pd.tier, size: g.table.rows.length };
   for (const d of g.leagues.otherDivisions) {
     const r = rowIn(d.table);
-    if (r) return { row: r, label: d.id.startsWith('ddr-') ? d.name : divisionLabel(d.tier, d.group), tier: d.tier, size: d.table.rows.length };
+    if (r) return { row: r, label: d.id.startsWith('ddr-') || d.tier >= 200 ? d.name : divisionLabel(d.tier, d.group), tier: d.tier >= 200 ? (d.tier % 100) || 1 : d.tier, size: d.table.rows.length };
   }
   return null;
 }
@@ -190,7 +234,10 @@ export function buildClubProfile(g: Game, clubId: string): ClubProfileData {
   const sim = g.simClubs[clubId];
   const found = findRow(g, clubId);
   const row = found?.row;
-  const squad = squadOfClub(g, full);
+  const worldSq = full ? [] : worldSquadPreview(g, clubId);
+  const squad = full ? squadOfClub(g, full) : worldSq;
+  const info = full ? undefined : worldClubInfo(g, clubId);
+  const foreign = full ? undefined : foreignInfo(g, clubId);
   const mine = squadOfClub(g, g.clubs[g.managedClubId]);
 
   const lines = matchLines(g, clubId, year);
@@ -198,7 +245,7 @@ export function buildClubProfile(g: Game, clubId: string): ClubProfileData {
   const upcoming = lines.filter((m) => m.upcoming).sort((a, b) => a.date.localeCompare(b.date));
   const vsOwn = (m: ClubMatchLine) => m.oppId === g.managedClubId;
 
-  const units = full ? (['GK', 'DEF', 'MID', 'ATT'] as UnitKey[]).map((key) => ({
+  const units = squad.length ? (['GK', 'DEF', 'MID', 'ATT'] as UnitKey[]).map((key) => ({
     key, label: UNIT_DE[key], theirs: unitStrength(squad, key), ours: unitStrength(mine, key),
     n: squad.filter((p) => POSITION_GROUPS[p.naturalPosition] === key).length,
   })) : [];
@@ -229,12 +276,12 @@ export function buildClubProfile(g: Game, clubId: string): ClubProfileData {
     shortName: view.shortName,
     colors: view.colors,
     crestClub: (full ?? view) as Club,
-    city: full?.city ?? sim?.city ?? '',
+    city: full?.city ?? sim?.city ?? info?.city ?? g.euroClubs?.[clubId]?.city ?? '',
     founded: full?.founded,
     reputation: full?.reputation,
-    strength: clubStrengthFor(g, clubId),
-    divisionLabel: found?.label,
-    tier: found?.tier ?? sim?.tier,
+    strength: full || sim ? clubStrengthFor(g, clubId) : Math.round(info?.strength ?? g.euroClubs?.[clubId]?.strength ?? 50),
+    divisionLabel: found?.label ?? (foreign && info?.level ? `${info.level}. Liga ${foreign.country}` : foreign ? foreign.country : undefined),
+    tier: found?.tier ?? sim?.tier ?? info?.level,
     tablePosition: row?.position,
     tableSize: found?.size,
     points: row?.points,
@@ -250,5 +297,7 @@ export function buildClubProfile(g: Game, clubId: string): ClubProfileData {
     vsOwnLast: finished.find(vsOwn),
     units,
     finance,
+    foreign,
+    worldSquad: worldSq.length > 0,
   };
 }
