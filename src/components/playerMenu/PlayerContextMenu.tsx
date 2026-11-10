@@ -13,7 +13,10 @@ import { createPortal } from 'react-dom';
 import PlayerModal, { type Tab } from '../PlayerModal';
 import { useClubProfile } from '../club/ClubLink';
 import { openContractScreen } from '../../screens/contract/contractOpen';
-import { startTalk } from '../../game/transferTalks';
+import { startTalk, talkBlocker } from '../../game/transferTalks';
+import { estimateFor } from '../../game/playerPool';
+import { activeJob, startScouting } from '../../game/scoutingGame';
+import { materializeWorldPlayer, worldClubs, worldEntry, WP_FIELD } from '../../game/worldPool';
 import { TransferTalkModal } from '../../views/transfers/TransferTalkModal';
 import type { Game } from '../../game/state';
 import type { Player } from '../../types';
@@ -43,7 +46,7 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
   const openAt = useCallback((target: EventTarget | null, x: number, y: number): boolean => {
     const el = (target as Element | null)?.closest?.('[data-pid]');
     const pid = el?.getAttribute('data-pid');
-    if (!pid || !playerOf(g, pid)) return false;
+    if (!pid || (!playerOf(g, pid) && !(pid.startsWith('wp') && worldEntry(g, pid)))) return false;
     setNote(null);
     setMenu({ pid, x, y });
     return true;
@@ -77,6 +80,10 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
   }, [openAt]);
 
   const p = menu ? playerOf(g, menu.pid) : undefined;
+  // Weltspieler (game/worldPool.ts): kein volles Profil, nur Scouting/Verhandlung/Verein.
+  const wp = menu && !p && menu.pid.startsWith('wp') ? worldEntry(g, menu.pid) : undefined;
+  const est = menu && (p || wp) ? estimateFor(g, menu.pid) : null;
+  const ovText = est && !est.exact ? `${est.ovLo}–${est.ovHi}` : String(est?.ov ?? p?.overall ?? '');
   const mine = !!p && p.clubId === g.managedClubId;
   const club = p ? g.clubs[p.clubId] : undefined;
   const close = () => setMenu(null);
@@ -109,6 +116,35 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
       });
     }
     if (club && clubApi?.canOpen(club.id)) items.push({ label: `Verein: ${club.name}`, icon: 'shield', sep: mine, run: () => { clubApi.open(club.id); close(); } });
+    if (!mine) scoutItem(p.id, p.fullName, g.clubs[p.clubId]?.name ?? '', !!p.clubId && !g.clubs[p.clubId], !!p.isYouth || p.age <= 18);
+  } else if (wp && menu) {
+    const wc = worldClubs(g).get(wp[WP_FIELD.club]);
+    const name = `${wp[WP_FIELD.first]} ${wp[WP_FIELD.last]}`;
+    scoutItem(wp[WP_FIELD.id], name, wc?.name ?? '', wc?.country !== 'Deutschland', !!wp[WP_FIELD.youth]);
+    items.push({
+      label: 'Transferverhandlung', icon: 'negotiations', sep: true,
+      run: () => {
+        const mp = materializeWorldPlayer(g, wp[WP_FIELD.id]);
+        if (!mp) { setNote('Spieler nicht gefunden.'); return; }
+        const block = talkBlocker(g, mp);
+        const r = block ?? startTalk(g, mp.id);
+        if (typeof r === 'string') { setNote(r); return; }
+        setTalkId(r.id); onChange(); close();
+      },
+    });
+    if (wc && clubApi?.canOpen(wc.id)) items.push({ label: `Verein: ${wc.name}`, icon: 'shield', run: () => { clubApi.open(wc.id); close(); } });
+  }
+  function scoutItem(id: string, name: string, clubName: string, abroad: boolean, youth: boolean) {
+    const job = activeJob(g, id);
+    items.push({
+      label: job ? 'Scout ist unterwegs' : 'Scout schicken', icon: 'watchlist', sep: true,
+      run: () => {
+        if (job) { setNote('Ein Scout beobachtet ihn bereits (Transfers › Scouting).'); return; }
+        const err = startScouting(g, { id, name, clubName, abroad, youth });
+        if (err) { setNote(err); return; }
+        onChange(); close();
+      },
+    });
   }
 
   // Menü im Bild halten.
@@ -128,14 +164,14 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
   return (
     <PlayerProfileCtx.Provider value={profileApi}>
       {children}
-      {menu && p && createPortal(
+      {menu && (p || wp) && createPortal(
         <div className="pcm-layer" onMouseDown={close} onContextMenu={(e) => { e.preventDefault(); close(); }}>
           <div className="pcm" role="menu" style={{ left, top, width: W }} onMouseDown={(e) => e.stopPropagation()}
             onKeyDown={(e) => { if (e.key === 'Escape') close(); }}>
             <div className="pcm-head">
-              <PosBadge p={p} single />
-              <span className="pcm-name">{p.fullName}</span>
-              <span className="pcm-sub">{p.age} J. · {p.overall}</span>
+              {p ? <PosBadge p={p} single /> : <PosBadge pos={wp![WP_FIELD.pos]} />}
+              <span className="pcm-name">{p ? p.fullName : `${wp![WP_FIELD.first]} ${wp![WP_FIELD.last]}`}</span>
+              <span className="pcm-sub">{p ? p.age : Number(g.season.slice(0, 4)) - wp![WP_FIELD.born]} J. · {ovText}</span>
             </div>
             {items.map((it, i) => (
               <button key={it.label} type="button" role="menuitem" autoFocus={i === 0}

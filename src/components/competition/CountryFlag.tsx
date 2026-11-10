@@ -1,7 +1,7 @@
 // =============================================================================
 // <CountryFlag>: vereinfachte, gedämpfte Landesflagge (SVG, 3:2) aus data/countryFlags.ts
 // =============================================================================
-import { countryInfo } from '../../data/countryFlags';
+import { countryInfo, countryOfNat } from '../../data/countryFlags';
 
 export function CountryFlag({ country, height = 16 }: { country: string; height?: number }) {
   const f = countryInfo(country).flag;
@@ -27,7 +27,7 @@ export function CountryFlag({ country, height = 16 }: { country: string; height?
       body = <><rect width={w} height={h} fill={f.bg} /><circle cx={12} cy={10} r={5.2} fill={f.fg} /><circle cx={13.6} cy={10} r={4.2} fill={f.bg} /><circle cx={19} cy={10} r={1.6} fill={f.fg} /></>;
       break;
     default:
-      body = <><rect width={w} height={h} fill={f.bg} />{f.dot && <circle cx={7} cy={6} r={2.4} fill={f.dot} />}</>;
+      body = <><rect width={w} height={h} fill={f.bg} />{f.dot && (f.center ? <circle cx={15} cy={10} r={5} fill={f.dot} /> : <circle cx={7} cy={6} r={2.4} fill={f.dot} />)}</>;
   }
   return (
     <svg className="cflag" width={height * 1.5} height={height} viewBox={`0 0 ${w} ${h}`} role="img" aria-label={countryInfo(country).name}>
@@ -35,4 +35,11 @@ export function CountryFlag({ country, height = 16 }: { country: string; height?
       <rect x={0.5} y={0.5} width={w - 1} height={h - 1} fill="none" stroke="rgba(255,255,255,0.18)" />
     </svg>
   );
+}
+
+/** Flagge zur Nationalität eines Spielers (Kürzel wie „ENG“); unbekannt = Kürzel als Text. */
+export function NatFlag({ nat, height = 14 }: { nat: string; height?: number }) {
+  const key = countryOfNat(nat || 'GER');
+  if (!key) return <span className="cflag-code">{nat}</span>;
+  return <span className="cflag-nat" title={countryInfo(key).name}><CountryFlag country={key} height={height} /></span>;
 }

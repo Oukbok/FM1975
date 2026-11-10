@@ -13,6 +13,7 @@ import { setDisplayYear, setWagePeriod } from './ui/format';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { lazyNamed } from './ui/lazyNamed';
 import { installClickSound } from './ui/clickSound';
+import { installStableTables } from './ui/stableTables';
 
 // Code-Splitting (scripts/build.mjs): Das Hauptmenü startet ohne die Spiel-Shell, ohne
 // Laden-Nachrüstungen und ohne den Spielaufbau. Diese Stücke werden geladen, sobald sie
@@ -27,6 +28,7 @@ const loadNewGame = () => import('./game/newGame');
 // ROOT: Startmenü ⇄ Spiel
 // =============================================================================
 installClickSound();
+installStableTables();
 
 export default function App() {
   const gameRef = useRef<Game | null>(null);

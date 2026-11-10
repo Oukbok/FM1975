@@ -19,6 +19,7 @@ import { TransferWindowModal } from './window/TransferWindowModal';
 import { activeCount, runSearch, type SearchCriteria } from '../../game/playerSearch';
 import PosBadge from '../../components/PosBadge';
 import FaceThumb from '../../components/FaceThumb';
+import { NatFlag } from '../../components/competition/CountryFlag';
 
 // =============================================================================
 // TRANSFERS — Transfermarkt, Beobachtung (Scouting-Vorschläge), Verhandlungen
@@ -70,7 +71,7 @@ function MarketTable({ g, list, onOpen, action }: { g: Game; list: Player[]; onO
   return (
     <table className="dtable rl-players">
       <thead><tr>
-        <th>Name</th><th>Verein</th><th className="ctr">Pos</th><th className="num">Alter</th><th className="num">Stärke</th>
+        <th>Name</th><th>Verein</th><th className="ctr w-s">Land</th><th className="ctr">Pos</th><th className="num">Alter</th><th className="num">Stärke</th>
         <th>Potenzial<InfoTip k="potenzial" /></th><th className="num">Vertrag</th><th className="num">{wageHead()}</th><th className="num">Wert<InfoTip k="marktwert" /></th>{action && <th />}
       </tr></thead>
       <tbody>
@@ -80,14 +81,15 @@ function MarketTable({ g, list, onOpen, action }: { g: Game; list: Player[]; onO
             <tr key={p.id} data-pid={p.id} className="clickable" onClick={() => onOpen(p.id)}>
               <td className="nowrap rl-name"><span className="tm-name"><FaceThumb p={p} club={c} size={26} /><span>{p.fullName}</span></span></td>
               <td className="nowrap"><ClubLink id={p.clubId}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>{c && <ClubCrest club={c} size={24} />}{c?.shortName}</span></ClubLink></td>
+              <td className="ctr"><NatFlag nat={p.nationality} /></td>
               <td className="ctr"><PosBadge p={p} /></td>
               <td className="num">{p.age}</td>
               <td className="num"><b style={{ color: vColor(p.overall) }}>{p.overall}</b></td>
               <td className="nowrap"><ScoutStars p={p} /></td>
-              <td className="num muted">{monthsUntil(today, p.contract.expiryDate)} M.</td>
-              <td className="num">{fmtWage(p.contract.weeklyWage, { unit: false })}</td>
-              <td className="num">{fmtPrice(p.contract.transferValue)}</td>
-              {action && <td className="num" onClick={(e) => e.stopPropagation()}>{action(p)}</td>}
+              <td className="num muted nowrap">{monthsUntil(today, p.contract.expiryDate)} M.</td>
+              <td className="num nowrap">{fmtWage(p.contract.weeklyWage, { unit: false })}</td>
+              <td className="num nowrap">{fmtPrice(p.contract.transferValue)}</td>
+              {action && <td className="num nowrap" onClick={(e) => e.stopPropagation()}>{action(p)}</td>}
             </tr>
           );
         })}

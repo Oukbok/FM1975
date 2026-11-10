@@ -14,7 +14,7 @@ export type FlagSpec =
   | { kind: 'cross'; bg: string; cross: string }   // mittiges Kreuz (England, Schweiz)
   | { kind: 'saltire'; bg: string; cross: string } // Andreaskreuz (Schottland)
   | { kind: 'crescent'; bg: string; fg: string }   // Halbmond (Türkei)
-  | { kind: 'plain'; bg: string; dot?: string };   // einfarbig, optional Zeichen (Sowjetunion, DDR)
+  | { kind: 'plain'; bg: string; dot?: string; center?: boolean };   // einfarbig, optional Zeichen (Sowjetunion, DDR; mittig: Japan)
 
 export interface CountryInfo { name: string; code: string; flag: FlagSpec }
 
@@ -62,12 +62,37 @@ export const COUNTRY_INFO: Record<string, CountryInfo> = {
   Albanien: { name: 'Albanien', code: 'ALB', flag: { kind: 'plain', bg: R, dot: K } },
   Zypern: { name: 'Zypern', code: 'CYP', flag: { kind: 'plain', bg: W, dot: '#d48a3a' } },
   Malta: { name: 'Malta', code: 'MLT', flag: { kind: 'v', c: [W, R] } },
+  // Nationalitäten außerhalb Europas (Spielerlisten, Wunsch Pascal)
+  Brasilien: { name: 'Brasilien', code: 'BRA', flag: { kind: 'plain', bg: G, dot: Y, center: true } },
+  Argentinien: { name: 'Argentinien', code: 'ARG', flag: { kind: 'h', c: ['#7fb4e0', W, '#7fb4e0'] } },
+  Uruguay: { name: 'Uruguay', code: 'URU', flag: { kind: 'h', c: [W, '#5a86c8', W, '#5a86c8', W] } },
+  USA: { name: 'USA', code: 'USA', flag: { kind: 'h', c: [R, W, R, W, R, W, R] } },
+  Japan: { name: 'Japan', code: 'JPN', flag: { kind: 'plain', bg: W, dot: R, center: true } },
+  Suedkorea: { name: 'Südkorea', code: 'KOR', flag: { kind: 'plain', bg: W, dot: B, center: true } },
+  Ghana: { name: 'Ghana', code: 'GHA', flag: { kind: 'h', c: [R, Y, G] } },
+  Nigeria: { name: 'Nigeria', code: 'NGA', flag: { kind: 'v', c: [G, W, G] } },
+  Kamerun: { name: 'Kamerun', code: 'CMR', flag: { kind: 'v', c: [G, R, Y] } },
+  Marokko: { name: 'Marokko', code: 'MAR', flag: { kind: 'plain', bg: R, dot: G, center: true } },
+  Aegypten: { name: 'Ägypten', code: 'EGY', flag: { kind: 'h', c: [R, W, K] } },
+  Liberia: { name: 'Liberia', code: 'LBR', flag: { kind: 'h', c: [R, W, R, W, R] } },
+  Elfenbeinkueste: { name: 'Elfenbeinküste', code: 'CIV', flag: { kind: 'v', c: ['#e08a3c', W, G] } },
   Israel: { name: 'Israel', code: 'ISR', flag: { kind: 'h', c: [W, B, W, W, W, B, W] } },
 };
 
 /** Anzeigedaten eines Landes (unbekannte Länder: neutrale Flagge, Kürzel aus dem Namen). */
 export function countryInfo(name: string): CountryInfo {
   return COUNTRY_INFO[name] ?? { name, code: name.slice(0, 3).toUpperCase(), flag: { kind: 'plain', bg: '#5a636f' } };
+}
+
+/** Land (Schlüssel) zu einem Nationalitätskürzel (GER, ENG, BRA …); null = unbekannt. */
+let byCode: Record<string, string> | null = null;
+export function countryOfNat(code: string): string | null {
+  if (!byCode) {
+    byCode = {};
+    for (const [k, v] of Object.entries(COUNTRY_INFO)) if (!byCode[v.code]) byCode[v.code] = k;
+    byCode.GDR = 'DDR';
+  }
+  return byCode[code] ?? null;
 }
 
 /** Nationalitäten zur Auswahl im Managerprofil (Anzeigenamen, Deutschland zuerst). */

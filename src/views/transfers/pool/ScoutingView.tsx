@@ -3,6 +3,7 @@
 // =============================================================================
 import { useMemo, useState } from 'react';
 import PosBadge from '../../../components/PosBadge';
+import { NatFlag } from '../../../components/competition/CountryFlag';
 import { estimate, knowCtx, knowledge, poolRows, type Estimate, type PoolRow } from '../../../game/playerPool';
 import { cancelScouting, jobProgress, jobTerms, scoutSlots, scoutingOf } from '../../../game/scoutingGame';
 import type { Game } from '../../../game/state';
@@ -53,19 +54,20 @@ export function ScoutingView({ g, onChange = () => {} }: { g: Game; onChange?: (
       <DashBox title="Berichte" span={2} flush right={`${reports.length}`}>
         {reports.length ? (
           <table className="dtable rl-players">
-            <thead><tr><th>Name</th><th>Verein</th><th className="ctr">Pos</th><th className="num">Alter</th><th className="num">Stärke</th><th>Potenzial</th><th className="num">Wert</th><th className="ctr">Bekannt</th><th className="num">Bericht</th></tr></thead>
+            <thead><tr><th>Name</th><th>Verein</th><th className="ctr w-s">Land</th><th className="ctr">Pos</th><th className="num w-s">Alter</th><th className="num">Stärke</th><th className="w-m">Potenzial</th><th className="num w-l">Wert</th><th className="ctr">Bekannt</th><th className="num w-l">Bericht</th></tr></thead>
             <tbody>
               {reports.slice(0, 100).map(({ id, rep, r }) => {
                 const e = est(r);
                 return (
-                  <tr key={id} data-pid={r.kind === 'pro' ? id : undefined}>
+                  <tr key={id} data-pid={id}>
                     <td className="nowrap rl-name"><span className="tm-name"><Face r={r} /><span>{r.name}</span></span></td>
                     <td className="nowrap"><ClubCell g={g} id={r.clubId} world={clubs} /></td>
+                    <td className="ctr"><NatFlag nat={r.nat} /></td>
                     <td className="ctr"><PosBadge pos={r.pos} /></td>
                     <td className="num">{r.age}</td>
-                    <td className="num"><OvEst e={e} /></td>
+                    <td className="num nowrap"><OvEst e={e} /></td>
                     <td className="nowrap"><StarEst e={e} /></td>
-                    <td className="num"><ValueEst e={e} /></td>
+                    <td className="num nowrap"><ValueEst e={e} /></td>
                     <td className="ctr"><KnowBar k={e.k} /></td>
                     <td className="num muted">{CalendarEngine.formatDate(rep.date)}</td>
                   </tr>

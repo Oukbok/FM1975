@@ -9,6 +9,7 @@ import { useMemo, useState } from 'react';
 import PlayerAvatar from '../../../components/PlayerAvatar';
 import PlayerModal from '../../../components/PlayerModal';
 import PosBadge from '../../../components/PosBadge';
+import { NatFlag } from '../../../components/competition/CountryFlag';
 import { estimate, knowCtx, knowledge, knowWord, poolRows, type Estimate, type PoolRow } from '../../../game/playerPool';
 import { activeJob, jobProgress, jobTerms, scoutReport, scoutSlots, startScouting } from '../../../game/scoutingGame';
 import type { Game } from '../../../game/state';
@@ -114,21 +115,22 @@ export function SpielerpoolView({ g, onChange = () => {} }: { g: Game; onChange?
           {shown.length ? (
             <table className="dtable rl-players pool-table">
               <thead><tr>
-                <th className="num">#</th><th>Name</th><th>Verein</th><th className="ctr">Pos</th>{head('age', 'Alter')}
-                {head('ov', 'Stärke')}{head('st', 'Potenzial', '')}{head('value', 'Wert')}{head('k', 'Bekannt', 'ctr')}
+                <th className="num w-xs">#</th><th>Name</th><th>Verein</th><th className="ctr w-s">Land</th><th className="ctr">Pos</th>{head('age', 'Alter')}
+                {head('ov', 'Stärke')}{head('st', 'Potenzial', '')}{head('value', 'Wert', 'num')}{head('k', 'Bekannt', 'ctr')}
               </tr></thead>
               <tbody>
                 {shown.map(({ r, e }, i) => (
-                  <tr key={r.id} data-pid={r.player && r.kind === 'pro' ? r.id : undefined} className={`clickable ${sel === r.id ? 'sel' : ''}`}
+                  <tr key={r.id} data-pid={r.id} className={`clickable ${sel === r.id ? 'sel' : ''}`}
                     onClick={() => setSel(r.id)} onDoubleClick={() => r.player && setProfile(r.id)}>
                     <td className="num muted">{pg * PAGE + i + 1}</td>
                     <td className="nowrap rl-name"><span className="tm-name"><Face r={r} /><span>{r.name}</span></span></td>
                     <td className="nowrap"><ClubCell g={g} id={r.clubId} world={clubs} /></td>
+                    <td className="ctr"><NatFlag nat={r.nat} /></td>
                     <td className="ctr"><PosBadge pos={r.pos} /></td>
                     <td className="num">{r.age}</td>
-                    <td className="num"><OvEst e={e} /></td>
+                    <td className="num nowrap"><OvEst e={e} /></td>
                     <td className="nowrap"><StarEst e={e} /></td>
-                    <td className="num"><ValueEst e={e} /></td>
+                    <td className="num nowrap"><ValueEst e={e} /></td>
                     <td className="ctr"><KnowBar k={e.k} />{activeJob(g, r.id) && <span className="pool-job" title="Scout unterwegs" />}</td>
                   </tr>
                 ))}

@@ -175,3 +175,17 @@
 .sq-legend { display: inline-flex; align-items: center; gap: 12px; color: var(--text-3); font-size: 13px; }
 .sq-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
 .sq-legend .xi { background: var(--row-xi-edge); } .sq-legend .bench { background: var(--row-bench-edge); }
+
+/* Feste Spalten (Wunsch Pascal): ui/stableTables.ts misst jede Tabelle beim ersten Zeigen und schreibt die
+   Breiten fest (data-fixed) – Filter, Reiter, Sortierung und Blättern verschieben danach keine Spalten mehr.
+   Breitere Inhalte enden mit „…“. Klassen .w-xs/-s/-m/-l/-xl geben eine Mindestbreite vor. */
+.dtable th.w-xs { width: 44px; }
+.dtable th.w-s { width: 64px; }
+.dtable th.w-m { width: 120px; }
+.dtable th.w-l { width: 150px; }
+.dtable th.w-xl { width: 190px; }
+.dtable[data-fixed] { table-layout: fixed; }
+.dtable[data-fixed] th, .dtable[data-fixed] td { overflow: hidden; text-overflow: ellipsis; }
+.dtable .tm-name, .dtable .pool-club { max-width: 100%; min-width: 0; }
+.cflag-nat { display: inline-flex; vertical-align: middle; }
+.cflag-code { font-size: 12px; color: var(--text-3); }

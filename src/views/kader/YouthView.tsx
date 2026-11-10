@@ -141,7 +141,7 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
 
       <DashBox title="Größte Talente">
         {top.length ? top.map((x) => (
-          <div key={x.id} className="dlist-row clickable" onClick={() => setSel(x.id)}>
+          <div key={x.id} data-pid={x.id} className="dlist-row clickable" onClick={() => setSel(x.id)}>
             <PosBadge p={x} compact />
             <span className="grow">{x.fullName} <span className="muted">· {x.age} J.</span></span>
             <ScoutRange p={x} />

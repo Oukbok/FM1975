@@ -20,7 +20,7 @@ export function YouthScoutBox({ g, onChange }: { g: Game; onChange: () => void }
   return (<>
     <DashBox title="Talente anderer Vereine" icon="youth" right={`${list.length} gesichtet`}>
       {list.map((y) => (
-        <div key={y.id} className="dlist-row clickable" onClick={() => setSel(y.id)}>
+        <div key={y.id} data-pid={y.id} className="dlist-row clickable" onClick={() => setSel(y.id)}>
           <span className="grow">
             <b>{y.fullName}</b> <span className="muted">· {y.naturalPosition} · {y.age} J. · {g.clubs[y.clubId]?.shortName}</span>
           </span>
