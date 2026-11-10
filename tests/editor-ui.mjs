@@ -77,7 +77,7 @@ await page.locator('.ed-side').screenshot({ path: `${outDir}/clubs-crests.png` }
 await page.click('.ed-nav-item[data-sec="legends"]');
 await page.waitForTimeout(150);
 const lrows = await page.locator('.ed-table tbody tr').count();
-if (lrows !== 100) fail(`Legenden: ${lrows} statt 100 Einträge`);
+if (lrows !== 132) fail(`Legenden: ${lrows} statt 132 Einträge`);
 await page.locator('.ed-table tbody tr').nth(5).click();
 const legSide = page.locator('.ed-legend');
 await legSide.locator('.ed-field:has-text("Konstanz") input').fill('42');
