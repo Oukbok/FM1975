@@ -84,7 +84,7 @@
    rechts sechs Statistik-Boxen (2 × 3), darunter die Info-Box über beide Spalten. */
 .dpage.cmp-page {
   grid-template-columns: 46% 23.5% 23.5%; column-gap: 1.5%;
-  grid-template-rows: repeat(3, minmax(0, 1fr)) minmax(0, 1.3fr); row-gap: 14px; padding: 28px 0;
+  grid-template-rows: repeat(3, minmax(0, 1fr)) minmax(0, 1.3fr); row-gap: 14px; padding: 64px 0; /* oben/unten wie alle Seiten (Wunsch Pascal) */
 }
 .cmp-page > .cmp-main { grid-column: 1 / 2 !important; grid-row: 1 / -1 !important; }
 .cmp-page > .cmp-statbox { grid-column: auto / span 1 !important; grid-row: auto / span 1 !important; }
