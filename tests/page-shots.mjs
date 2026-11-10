@@ -36,17 +36,17 @@ for (const [main, sub] of PAGES) {
   await page.waitForTimeout(250);
   if (sub && sub !== main) await page.locator(`.tn-sub-item:has-text("${sub}")`).first().click();
   await page.waitForTimeout(500);
+  // CLICKSEL=".css-selector|…": nacheinander das erste passende Element klicken.
+  for (const c of (process.env.CLICKSEL ? process.env.CLICKSEL.split('|') : [])) {
+    await page.locator(c).first().click({ timeout: 3000 }).catch(() => errors.push(`Klick nicht möglich: ${c}`));
+    await page.waitForTimeout(500);
+  }
   // CLICK="a|b|c": nacheinander je den ersten Knopf/Text klicken (z. B. Aktion + Bestätigung).
   for (const c of (process.env.CLICK ? process.env.CLICK.split('|') : [])) {
     const btn = page.locator('button:visible', { hasText: c }).first();
     const target = (await btn.count()) ? btn : page.getByText(c).first();
     await target.click({ timeout: 3000 }).catch(() => errors.push(`Klick nicht möglich: ${c}`));
     await page.waitForTimeout(350);
-  }
-  // CLICKSEL=".css-selector|…": nacheinander das erste passende Element klicken.
-  for (const c of (process.env.CLICKSEL ? process.env.CLICKSEL.split('|') : [])) {
-    await page.locator(c).first().click({ timeout: 3000 }).catch(() => errors.push(`Klick nicht möglich: ${c}`));
-    await page.waitForTimeout(500);
   }
   const name = `${main}-${sub || main}`.toLowerCase().replace(/[^a-z0-9äöü-]+/g, '_');
   await page.screenshot({ path: `${outDir}/${name}.png` });

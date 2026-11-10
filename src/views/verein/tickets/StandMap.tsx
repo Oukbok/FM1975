@@ -1,7 +1,7 @@
 // =============================================================================
 // Stadion-Draufsicht des Kartenverkaufs: acht Tribünen um das Spielfeld
 // (Haupttribüne unten, Gegentribüne oben, Hinter dem Tor 1/2 links/rechts, vier
-// Ecken). Tiefe je Tribüne nach Plätzen; Hover zeigt Kapazität und Bauzustand,
+// Ecken). Gleichmäßiges Oval, Füllstärke nach Plätzen; Hover zeigt Kapazität und Bauzustand,
 // Klick wählt die Tribüne (hebt die Zeile in der Preistabelle hervor).
 // Eigene, schlichte Zeichnung – unabhängig von der Stadion-Szene (stadium/geo.tsx).
 // =============================================================================
@@ -14,38 +14,44 @@ const fmtD = (iso: string) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slic
 // Spielfeld (Querformat) im viewBox 0 0 320 214
 const P = { x0: 100, x1: 220, y0: 70, y1: 144 };
 const GAP = 4;
+/** Tiefe aller Tribünen und Fuge zwischen den Teilen (viewBox-Einheiten). */
+const DEPTH = 34;
+const SEAM = 1.6;
 
 export function StandMap({ club, people, sel, onSel }: { club: Club; people: Record<StandId, number>; sel: StandId | null; onSel: (s: StandId | null) => void }) {
   const [hover, setHover] = useState<{ id: StandId; x: number; y: number } | null>(null);
   const max = Math.max(1, ...Object.values(people));
-  const depth = (id: StandId) => (people[id] > 0 ? 9 + 34 * Math.sqrt(people[id] / max) : 6);
   const bp = club.stadium.blockProject;
   const building = new Set([bp?.blockId, ...(bp?.more ?? []).map((b) => b.id)].filter(Boolean));
   const buildOf = (id: StandId) => STANDS.find((s) => s.id === id)!.blocks.some((b) => building.has(b));
   const { x0, x1, y0, y1 } = P;
+  // Wunsch Pascal: sauberes, symmetrisches Oval – alle Tribünen gleich tief, Ecken als Viertelringe
+  // um die Spielfeldecken, die genau an Innen- und Außenkante der Geraden anschließen; zwischen allen
+  // Teilen dieselbe schmale Fuge. Die Kapazität zeigt die Füllstärke (und der Hover), nicht die Form.
   const shapes: Record<StandId, string> = (() => {
-    const d = depth;
+    const D = DEPTH, R = GAP + D, s = SEAM;
     const rect = (x: number, y: number, w: number, h: number) => `M${x} ${y}h${w}v${h}h${-w}Z`;
-    // Ecke = Ringstück um die Spielfeldecke: innen bündig mit den Geraden (Abstand GAP), außen nach Plätzen,
-    // je Seite 5° Luft zu den Nachbartribünen – so laufen Geraden und Ecken als ein Oval um das Feld.
-    const wedge = (cx: number, cy: number, ro: number, a0: number, a1: number) => {
-      const ri = GAP, k = Math.PI / 180, b0 = (a0 + 5) * k, b1 = (a1 - 5) * k;
-      const pt = (r: number, a: number) => `${(cx + r * Math.cos(a)).toFixed(2)} ${(cy + r * Math.sin(a)).toFixed(2)}`;
-      return `M${pt(ri, b0)}L${pt(ro, b0)}A${ro} ${ro} 0 0 1 ${pt(ro, b1)}L${pt(ri, b1)}A${ri} ${ri} 0 0 0 ${pt(ri, b0)}Z`;
+    const f = (v: number) => v.toFixed(2);
+    // sx/sy = Richtung nach außen (−1 links/oben, +1 rechts/unten)
+    const corner = (cx: number, cy: number, sx: number, sy: number) => {
+      const qo = Math.sqrt(R * R - s * s), qi = Math.sqrt(GAP * GAP - s * s);
+      const sw = sx * sy < 0 ? 1 : 0;
+      return `M${f(cx + sx * s)} ${f(cy + sy * qo)}A${R} ${R} 0 0 ${sw} ${f(cx + sx * qo)} ${f(cy + sy * s)}`
+        + `L${f(cx + sx * qi)} ${f(cy + sy * s)}A${GAP} ${GAP} 0 0 ${1 - sw} ${f(cx + sx * s)} ${f(cy + sy * qi)}Z`;
     };
-    // Außenradius = mittlere Tiefe der Nachbartribünen, damit der Bogen an deren Außenkante anschließt (leere Ecke: schmal).
-    const cornerR = (id: StandId, a: StandId, b: StandId) => GAP + (people[id] > 0 ? (d(a) + d(b)) / 2 : d(id));
     return {
-      haupt: rect(x0, y1 + GAP, x1 - x0, d('haupt')),
-      gegen: rect(x0, y0 - GAP - d('gegen'), x1 - x0, d('gegen')),
-      tor1: rect(x0 - GAP - d('tor1'), y0, d('tor1'), y1 - y0),
-      tor2: rect(x1 + GAP, y0, d('tor2'), y1 - y0),
-      ecke1: wedge(x0, y1, cornerR('ecke1', 'tor1', 'haupt'), 90, 180),
-      ecke2: wedge(x0, y0, cornerR('ecke2', 'tor1', 'gegen'), 180, 270),
-      ecke3: wedge(x1, y0, cornerR('ecke3', 'gegen', 'tor2'), 270, 360),
-      ecke4: wedge(x1, y1, cornerR('ecke4', 'tor2', 'haupt'), 0, 90),
+      haupt: rect(x0, y1 + GAP, x1 - x0, D),
+      gegen: rect(x0, y0 - GAP - D, x1 - x0, D),
+      tor1: rect(x0 - GAP - D, y0, D, y1 - y0),
+      tor2: rect(x1 + GAP, y0, D, y1 - y0),
+      ecke1: corner(x0, y1, -1, 1),
+      ecke2: corner(x0, y0, -1, -1),
+      ecke3: corner(x1, y0, 1, -1),
+      ecke4: corner(x1, y1, 1, 1),
     };
   })();
+  /** Füllstärke nach Plätzen (leer = blass). */
+  const fillOp = (id: StandId) => (people[id] > 0 ? 0.55 + 0.45 * Math.sqrt(people[id] / max) : 0.25);
   // Mauslage im Kartenrahmen (die Oberfläche ist per CSS skaliert: Bildschirm- in Layout-Pixel umrechnen)
   const local = (e: { clientX: number; clientY: number; currentTarget: Element }) => {
     const box = e.currentTarget.closest('.tk-map') as HTMLElement;
@@ -79,6 +85,7 @@ export function StandMap({ club, people, sel, onSel }: { club: Club; people: Rec
             <path key={s.id} d={shapes[s.id]}
               className={`tk-stand ${sel === s.id ? 'on' : ''} ${hover?.id === s.id ? 'hov' : ''} ${empty ? 'empty' : ''}`}
               fill={buildOf(s.id) ? 'url(#tk-hatch)' : undefined}
+              style={{ fillOpacity: buildOf(s.id) ? 1 : fillOp(s.id) }}
               onMouseMove={(e) => setHover({ id: s.id, ...local(e) })}
               onClick={() => onSel(sel === s.id ? null : s.id)} />
           );

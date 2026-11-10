@@ -15,7 +15,7 @@ import { BLOCK_NAME, blockCapacity } from '../../../engine/stadiumBlocks';
 import type { BlockId, StadiumBlock, StadiumTier } from '../../../types';
 import { shade } from '../grounds/isoKit';
 import { D, GAP, V3, W, depth, face, hash, hull, mapper, proj, pts, roofGeo, seg, tierGeometry } from './geo';
-import { SceneColors, StadiumBlockShape, blockShadowPoints } from './StadiumBlockShape';
+import { SceneColors, StadiumBlockShape, blockOutline, blockShadowPoints } from './StadiumBlockShape';
 import { RING, VENUE_SPOTS, Venue, VenueShape, venueDepth, venueLabelAt } from './StadiumSurround';
 
 export { tierGeometry } from './geo';
@@ -146,6 +146,8 @@ function Tree({ x, y, winter, k }: { x: number; y: number; winter: boolean; k: n
 
 export interface StadiumSceneProps {
   blocks: StadiumBlock[];
+  /** Zusätzliche Vorplatz-Breite aus gekauftem Gelände (Weltmaß, 0 = Grundfläche). */
+  plazaExtra?: number;
   colors: SceneColors;
   year: number;
   month: number;
@@ -207,7 +209,7 @@ export function StadiumScene(p: StadiumSceneProps) {
   const masts: [number, number][] = [[-mo, -mo], [W + mo, -mo], [W + mo, D + mo], [-mo, D + mo]];
   const { x0, y0, w: fw, h: fh } = fixedFrame();
   const [cx, cy] = proj([W / 2, D / 2, 0]);
-  const R = RING + 5.2; // Vorplatz; dahinter Rasen bis über den Bildrand
+  const R = RING + 5.2 + Math.max(0, p.plazaExtra ?? 0); // Vorplatz (wächst mit gekauftem Gelände); dahinter Rasen bis über den Bildrand
   const LR = RING + 70;
   const lawn: V3[] = [[-LR, -LR, 0], [W + LR, -LR, 0], [W + LR, D + LR, 0], [-LR, D + LR, 0]];
   const plaza: V3[] = [[-R, -R, 0], [W + R, -R, 0], [W + R, D + R, 0], [-R, D + R, 0]];
@@ -230,10 +232,10 @@ export function StadiumScene(p: StadiumSceneProps) {
     const on = inSel || hover === id;
     const dim = !blocksActive ? 0.55 : selected && !on ? 0.82 : 1;
     items.push({ d: depth(at(len / 2, geo[geo.length - 1].v1 / 2, 0)), n: (
-      <g key={id} className={`gr-obj ${inSel ? 'sel' : ''} ${ghost.has(id) ? 'sv-ghost' : ''}`} opacity={dim} pointerEvents={blocksActive ? undefined : 'none'}
+      <g key={id} data-block={id} className={`gr-obj ${inSel ? 'sel' : ''} ${ghost.has(id) ? 'sv-ghost' : ''}`} opacity={dim} pointerEvents={blocksActive ? undefined : 'none'}
         onClick={(e) => { e.stopPropagation(); onSelect(id, evPt(e)); }} onMouseEnter={() => onHover(id)} onMouseLeave={() => onHover(null)}>
         <StadiumBlockShape b={b} colors={colors} era={era} year={year} />
-        {ghost.has(id) && <polygon points={pl(hull(blockShadowPoints(b).concat(blockTopPoints(b))))} fill="none" stroke="#F2A541" strokeWidth={2} strokeDasharray="7 5" pointerEvents="none" />}
+        {ghost.has(id) && <g className="sv-ghost-line" pointerEvents="none">{blockOutline(b).map((d, k) => <polyline key={k} points={d} fill="none" stroke="#F2A541" strokeWidth={1.6} strokeDasharray="6 4" strokeLinejoin="round" />)}</g>}
         {building === id && (() => {
           const [x, yb] = proj(at(len * 0.8, 3, 0)), [, yt] = proj(at(len * 0.8, 3, 15));
           return <g stroke="#e0a23a" strokeWidth={3} fill="none" strokeLinecap="round"><line x1={x} y1={yb} x2={x} y2={yt} /><line x1={x - 50} y1={yt + 8} x2={x + 95} y2={yt - 6} /><line x1={x + 80} y1={yt - 5} x2={x + 80} y2={yt + 50} strokeWidth={1} stroke="#cfd5db" /></g>;
@@ -309,21 +311,6 @@ export function StadiumScene(p: StadiumSceneProps) {
       {(hover ?? selected) && by[(hover ?? selected)!] && label((hover ?? selected)!)}
     </svg>
   );
-}
-
-/** Oberkante eines Blocks (für die Umriss-Vorschau). */
-function blockTopPoints(b: StadiumBlock): [number, number][] {
-  const F = mapper(b);
-  const geo = tierGeometry(b), last = geo[geo.length - 1];
-  const rg = roofGeo(b);
-  const out: [number, number][] = [];
-  const n = F.curve ? 8 : 1;
-  for (let k = 0; k <= n; k++) {
-    const u = (F.len * k) / n;
-    out.push(proj(F.at(u, last.v1, last.zt + 0.35)), proj(F.at(u, 0, 0.4)));
-    if (rg) out.push(proj(F.at(u, rg.vS, rg.zF)), proj(F.at(u, rg.vB, rg.zB)));
-  }
-  return out;
 }
 
 function VenueTag({ v, strong }: { v: Venue; strong: boolean }) {

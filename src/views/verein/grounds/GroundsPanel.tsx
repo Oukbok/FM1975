@@ -6,15 +6,14 @@ import { useState } from 'react';
 import { Game } from '../../../game/state';
 import { Club, FacilityKey } from '../../../types';
 import { ClubGrounds, GroundsModuleKey } from '../../../types/grounds';
-import { GROUNDS_CATEGORIES, GROUNDS_MODULES, LAND_PARCEL, LOCATIONS, licenseMin } from '../../../data/groundsCatalog';
+import { GROUNDS_CATEGORIES, GROUNDS_MODULES, LOCATIONS, licenseMin } from '../../../data/groundsCatalog';
 import {
-  accessInfo, areaUsed, checkNext, groundsAttendanceParts, groundsMoodParts, incidentRisk, landPrice, levelDef, levelOf, riskReduction, typicalAttendance,
+  accessInfo, areaUsed, checkNext, groundsAttendanceParts, groundsMoodParts, incidentRisk, levelDef, levelOf, riskReduction, typicalAttendance,
 } from '../../../engine/grounds';
 import { FACILITIES, FACILITY_BY_KEY, facilityAvailable } from '../../../engine/infrastructure';
-import { buyGroundsLand } from '../../../game/groundsGame';
 import { KV, Meter } from '../../../ui/DashPage';
 import { vColor } from '../../../ui/format';
-import { money } from './GroundsDetail';
+import { LandBuy, money } from './GroundsDetail';
 import Icon from '../../../components/Icon';
 import type { GroundKey } from './GroundsScene';
 import { InfoTip } from '../../../ui/InfoTip';
@@ -41,7 +40,6 @@ function Overview({ g, club, gr, year, onChange, onSelect }: Props) {
   const [note, setNote] = useState<string | null>(null);
   const loc = LOCATIONS[gr.location];
   const used = areaUsed(club, gr);
-  const lp = landPrice(gr, year);
   const typ = typicalAttendance(club);
   const accTyp = accessInfo(club, gr, year, typ);
   const accFull = accessInfo(club, gr, year, club.stadium.capacity);
@@ -58,9 +56,7 @@ function Overview({ g, club, gr, year, onChange, onSelect }: Props) {
       <div className="gp-sec">Lage: {loc.name}</div>
       <div className="dnote">{loc.desc}</div>
       <Meter label="Fläche belegt" info="flaeche" value={used} max={gr.area} color={used >= gr.area ? 'var(--orange)' : undefined} text={`${used} / ${gr.area}`} />
-      {lp != null
-        ? <button className="btn btn-sm" disabled={club.finances.balance < lp} onClick={() => { const r = buyGroundsLand(g); setNote(r.text); if (r.ok) onChange(); }}>Grundstück kaufen (+{LAND_PARCEL} Parzellen) · {money(lp, year)}</button>
-        : <div className="dnote">Rund um das Stadion ist kein Grundstück mehr zu haben – Platz schaffst du nur durch Abriss.</div>}
+      <LandBuy g={g} club={club} gr={gr} year={year} onDone={(t, ok) => { setNote(t); if (ok) onChange(); }} />
       {note && <div className="dnote" style={{ color: 'var(--accent)', fontWeight: 700 }}>{note}</div>}
 
       <div className="gp-sec">Anreise<InfoTip k="anreise" /></div>

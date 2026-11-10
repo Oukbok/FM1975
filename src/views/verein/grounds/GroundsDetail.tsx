@@ -9,12 +9,12 @@ import { Game } from '../../../game/state';
 import { Club, FacilityKey } from '../../../types';
 import { ClubGrounds, GroundsModuleKey } from '../../../types/grounds';
 import { GROUNDS_BY_KEY, GROUNDS_CATEGORIES, GroundsLevelDef, INFRA_AREA, permitMonths } from '../../../data/groundsCatalog';
-import { areaUsed, checkNext, condMult, isOutdated, levelOf, mdScale, merchSlump, renovateCost } from '../../../engine/grounds';
+import { areaUsed, checkNext, condMult, isOutdated, landOffer, levelOf, mdScale, merchSlump, renovateCost } from '../../../engine/grounds';
 import { currencyAt, economyScale as economyScaleOf, formatMoney, revenueScale } from '../../../engine/economy';
 import { commercialMultiplier } from '../../../engine/clubEconomy';
 import { CATERING_UPKEEP } from '../../../engine/finances';
 import { FACILITY_BY_KEY, FAC_UPKEEP_BASE, LEVEL_MULT, MAX_LEVEL, canUpgrade, upgradeFacility } from '../../../engine/infrastructure';
-import { demolishGrounds, renovateGrounds, startGroundsBuild } from '../../../game/groundsGame';
+import { buyGroundsLand, demolishGrounds, renovateGrounds, startGroundsBuild } from '../../../game/groundsGame';
 import { makeMessage, pushMessage } from '../../../engine/messages';
 import { KV, Meter } from '../../../ui/DashPage';
 import { vColor } from '../../../ui/format';
@@ -57,6 +57,18 @@ export function effectLines(key: GroundsModuleKey, d: GroundsLevelDef, club: Clu
 }
 
 interface Props { g: Game; club: Club; gr: ClubGrounds; year: number; onChange: () => void; onClose: () => void }
+
+/** Kein Platz mehr: Grundstück bzw. Nachbargelände direkt hier kaufen (Wunsch Pascal). */
+export function LandBuy({ g, club, gr, year, onDone }: { g: Game; club: Club; gr: ClubGrounds; year: number; onDone: (text: string, ok: boolean) => void }) {
+  const o = landOffer(gr, year);
+  if (!o) return <div className="dnote">Rund um das Stadion ist kein Gelände mehr zu haben – Platz schaffst du nur durch Abriss.</div>;
+  return (
+    <button className="btn btn-sm mt8" data-act="land-buy" disabled={club.finances.balance < o.price}
+      onClick={() => { const r = buyGroundsLand(g); onDone(r.text, r.ok); }}>
+      {o.expansion ? 'Nachbargelände kaufen' : 'Grundstück kaufen'} (+{o.parcels} Parzellen) · {money(o.price, year)}
+    </button>
+  );
+}
 
 function Pips({ n, of }: { n: number; of: number }) {
   return <div className="gr-pips">{Array.from({ length: of }).map((_, i) => <i key={i} className={i < n ? 'on' : ''} />)}<span>Stufe {n} / {of}</span></div>;
@@ -108,6 +120,7 @@ export function ModuleDetail({ g, club, gr, year, onChange, onClose, k }: Props 
             {negotiate ? 'Mit der Stadt verhandeln' : lv ? 'Ausbauen' : 'Bauen'}
           </button>
           {!chk.ok && <div className="dnote" style={{ color: 'var(--red)' }}>{chk.reason}</div>}
+          {!chk.ok && chk.areaNeed > 0 && areaUsed(club, gr) + chk.areaNeed > gr.area && <LandBuy g={g} club={club} gr={gr} year={year} onDone={(t, ok) => act({ ok, text: t })} />}
         </div>
       )}
       {!next && <div className="dnote mt8" style={{ color: 'var(--green)' }}>Höchste Ausbaustufe erreicht.</div>}
@@ -183,6 +196,7 @@ export function FacilityDetail({ g, club, gr, year, onChange, onClose, k, onGoto
           {areaNeed > 0 && <KV k="Fläche" v={`+${areaNeed} Parzelle(n)`} />}
           <button className="btn btn-primary mt8" disabled={!check.ok || areaBlocked} onClick={doUpgrade}>{plot ? 'Bauen' : 'Ausbauen'}</button>
           {(!check.ok || areaBlocked) && <div className="dnote" style={{ color: 'var(--red)' }}>{areaBlocked ? 'Keine Fläche frei – Grundstück kaufen oder etwas abreißen' : check.reason}</div>}
+          {areaBlocked && <LandBuy g={g} club={club} gr={gr} year={year} onDone={(t, ok) => { setNote(t); if (ok) onChange(); }} />}
         </div>
       )}
       {k === 'stadium' && <button className="btn btn-primary mt8" onClick={() => onGoto?.('stadium')}>Zum Stadion</button>}

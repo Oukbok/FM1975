@@ -94,11 +94,27 @@ export function areaUsed(club: Club, gr: ClubGrounds): number {
   return infraAreaUsed(club) + modulesAreaUsed(gr);
 }
 
-/** Preis des nächsten Grundstückspakets (nominal) oder null, wenn nichts mehr zu haben ist. */
-export function landPrice(gr: ClubGrounds, year: number): number | null {
+/** Nach den normalen Grundstücken: so oft lässt sich das Stadiongelände noch um ein Nachbargelände erweitern. */
+export const LAND_EXPANSIONS = 3;
+/** Parzellen eines Nachbargeländes (Erweiterung) – doppelt so groß wie ein normales Grundstück. */
+export const EXPANSION_PARCELS = 4;
+
+/**
+ * Nächstes Grundstücksangebot (Wunsch Pascal: größeres Stadiongelände kaufen können):
+ * erst die normalen Pakete der Lage, danach bis zu drei Nachbargelände (doppelte Fläche,
+ * jeweils deutlich teurer – Gewerbeflächen, Kleingärten, Umsiedlung).
+ */
+export function landOffer(gr: ClubGrounds, year: number): { price: number; parcels: number; expansion: boolean } | null {
   const loc = LOCATIONS[gr.location];
-  if (gr.landBought >= loc.maxLand) return null;
-  return Math.round((loc.landPrice * Math.pow(1.3, gr.landBought) * mdScale(year)) / 10000) * 10000;
+  const n = gr.landBought;
+  if (n >= loc.maxLand + LAND_EXPANSIONS) return null;
+  const expansion = n >= loc.maxLand;
+  const base = loc.landPrice * Math.pow(1.3, n) * (expansion ? 2.5 * Math.pow(1.4, n - loc.maxLand) : 1);
+  return { price: Math.round((base * (expansion ? EXPANSION_PARCELS / LAND_PARCEL : 1) * mdScale(year)) / 10000) * 10000, parcels: expansion ? EXPANSION_PARCELS : LAND_PARCEL, expansion };
+}
+/** Preis des nächsten Grundstücks (nominal) oder null, wenn nichts mehr zu haben ist. */
+export function landPrice(gr: ClubGrounds, year: number): number | null {
+  return landOffer(gr, year)?.price ?? null;
 }
 export { LAND_PARCEL };
 

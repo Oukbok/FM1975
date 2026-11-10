@@ -190,9 +190,11 @@ export function StadiumBlockShape({ b, colors, era, year }: { b: StadiumBlock; c
       for (let u = secLen / 2; u < len - 0.3; u += secLen) out.push(seg(`${id}col${u.toFixed(1)}`, at(u, vc, zs), at(u, vc, zAt(vc) - th), '#4b5159', 2));
     }
     const vg = era === 2 ? vS + (vB - vS) * 0.28 : vS;
-    if (near) out.push(<polygon key={`${id}rfo`} points={poly(hband(vS, zF, vB, zB, ue0, ue1))} fill="none" stroke="#e9eef2" strokeWidth={1.2} opacity={0.5} />);
+    if (near) out.push(<polygon key={`${id}rfo`} points={poly(hband(vS, zF, vB, zB, ue0, ue1))} fill="none" stroke="#e9eef2" strokeWidth={1.2} opacity={0.5} pointerEvents="none" />);
     const step = era === 0 ? 0.7 : 1.5;
-    out.push(<g key={`${id}roof`} opacity={near ? 0.16 : 1}>
+    // Nahes Dach ist fast durchsichtig – Klicks gehen durch (sonst trifft man beim Zielen auf die
+    // Gegenseite die vordere Tribüne, Wunsch Pascal).
+    out.push(<g key={`${id}roof`} opacity={near ? 0.16 : 1} pointerEvents={near ? 'none' : undefined}>
       {face(`${id}rft`, hband(vg, zAt(vg), vB, zB, ue0, ue1), UP, roofCol)}
       {era === 2 && <polygon points={poly(hband(vS, zF, vg, zAt(vg), ue0, ue1))} fill="#cfe9f4" opacity={0.55} />}
       {Array.from({ length: Math.max(1, Math.floor((ue1 - ue0) / step)) }, (_, k) => {
@@ -269,4 +271,28 @@ export function blockShadowPoints(b: StadiumBlock): [number, number][] {
     if (rg) ps.push(F.at(u, rg.vS, rg.zF), F.at(u, rg.vB, rg.zB));
   }
   return ps.map(([x, y, z]) => proj([x + z * 0.3, y - z * 0.35, 0]));
+}
+
+/**
+ * Umriss eines Blocks als Drahtmodell in seiner echten Form (Wunsch Pascal: die
+ * gestrichelte Vorschau beim Umbau folgt der Tribüne statt einer Hülle): beide
+ * Stirnseiten (Querschnitt Ränge + Dach) und die Längskanten vorne unten, hinten oben,
+ * hinten unten und an der Dachkante. Kurven folgen dem Bogen.
+ */
+export function blockOutline(b: StadiumBlock): string[] {
+  const F = mapper(b);
+  const geo = tierGeometry(b), last = geo[geo.length - 1];
+  const vMax = last.v1, zPar = last.zt + 0.35;
+  const rg = roofGeo(b);
+  const n = F.curve ? Math.max(6, Math.ceil(F.len / 0.6)) : 1;
+  const us = Array.from({ length: n + 1 }, (_, k) => (F.len * k) / n);
+  const ln = (v: number, z: number) => poly(us.map((u) => F.at(u, v, z)));
+  const prof: [number, number][] = [[0, 0], [0, geo[0].zb], ...geo.map((g) => [g.v1, g.zt] as [number, number]), [vMax, zPar], [vMax, 0]];
+  const cap = (u: number) => poly([...prof.map(([v, z]) => F.at(u, v, z)), F.at(u, 0, 0)]);
+  const out = [cap(0), cap(F.len), ln(0, 0), ln(0, geo[0].zb), ln(vMax, zPar), ln(vMax, 0)];
+  if (rg) {
+    const roofCap = (u: number) => poly([F.at(u, rg.vS, rg.zF), F.at(u, rg.vB, rg.zB), F.at(u, rg.vB, zPar)]);
+    out.push(ln(rg.vS, rg.zF), ln(rg.vB, rg.zB), roofCap(0), roofCap(F.len));
+  }
+  return out;
 }

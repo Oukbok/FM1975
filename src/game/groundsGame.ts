@@ -13,7 +13,7 @@ import {
   FINE_BASE, GROUNDS_BY_KEY, GROUNDS_MODULES, LAND_PARCEL, LICENSE_FINE, LOCATIONS, POLICE_FEE_BASE, licenseMin, permitMonths, policeFeeShare,
 } from '../data/groundsCatalog';
 import {
-  accessInfo, addGroundsStats, areaUsed, typicalAttendance, buildCost, checkNext, condMult, groundsAttendanceBonus, incidentRisk, landPrice, levelDef, levelOf,
+  accessInfo, addGroundsStats, areaUsed, typicalAttendance, buildCost, checkNext, condMult, groundsAttendanceBonus, incidentRisk, landOffer, landPrice, levelDef, levelOf,
   makeGrounds, monthlyItems, pushLog, renovateCost, typicalLevel, wearMonthly,
 } from '../engine/grounds';
 import { economyScale, formatMoney, yearOf } from '../engine/economy';
@@ -368,15 +368,16 @@ export function buyGroundsLand(g: Game): { ok: boolean; text: string } {
   const today = g.calendar.currentDate;
   const year = yearOf(today);
   const gr = ensureClubGrounds(club, today);
-  const price = landPrice(gr, year);
-  if (price == null) return { ok: false, text: 'Rund um das Stadion ist kein Grundstück mehr zu haben.' };
+  const offer = landOffer(gr, year);
+  if (!offer) return { ok: false, text: 'Rund um das Stadion ist kein Grundstück mehr zu haben.' };
+  const price = offer.price, parcels = offer.parcels;
   if (club.finances.balance < price) return { ok: false, text: 'Kontostand zu niedrig.' };
   const blockLand = checkBudget(g, 'infra', price);
   if (blockLand) return { ok: false, text: blockLand };
   noteBudgetSpend(g, 'infra', price);
-  book(club.finances, today, -price, 'facilities', `Grundstückskauf (+${LAND_PARCEL} Parzellen)`, true);
-  gr.area += LAND_PARCEL; gr.landBought++;
-  return { ok: true, text: `Grundstück gekauft: +${LAND_PARCEL} Parzellen für ${formatMoney(price, year)}.` };
+  book(club.finances, today, -price, 'facilities', `${offer.expansion ? 'Stadiongelände erweitert' : 'Grundstückskauf'} (+${parcels} Parzellen)`, true);
+  gr.area += parcels; gr.landBought++;
+  return { ok: true, text: `${offer.expansion ? 'Nachbargelände gekauft – das Stadiongelände wächst' : 'Grundstück gekauft'}: +${parcels} Parzellen für ${formatMoney(price, year)}.` };
 }
 
 export function renovateGrounds(g: Game, key: GroundsModuleKey): { ok: boolean; text: string } {

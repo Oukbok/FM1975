@@ -558,7 +558,7 @@ export const INFO_TEXTS = {
   },
   flaeche: {
     title: 'Fläche',
-    text: 'Bauplätze rund ums Stadion. Jedes Gebäude belegt Parzellen; ist alles voll, kannst du Grundstücke dazukaufen – wenn die Lage es zulässt.',
+    text: 'Bauplätze rund ums Stadion. Jedes Gebäude belegt Parzellen; ist alles voll, kaufst du Grundstücke und danach bis zu drei größere Nachbargelände dazu.',
     wiki: 'facilities-grounds',
   },
   einrichtungen: {

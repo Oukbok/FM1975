@@ -24,6 +24,7 @@ import { BlockConfigurator, perMatch } from './stadium/BlockConfigurator';
 import { StadiumScene } from './stadium/StadiumScene';
 import { VENUE_GROUPS, Venue, VenueGroup, venuesOf } from './stadium/StadiumSurround';
 import { InfoTip } from '../../ui/InfoTip';
+import { LOCATIONS } from '../../data/groundsCatalog';
 
 type Mode = 'alles' | 'tribuenen' | VenueGroup;
 interface Anchor { x: number; y: number }
@@ -104,7 +105,7 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
     // Szenen-Seite: kein Rahmen, kein Kalender – Stadion und Umfeld füllen die Fläche (shell-scene in GameShell).
     <div className="scene-page">
         <div className="gr-wrap st-wrap sv-wrap" ref={wrap} onClick={() => close()}>
-          <StadiumScene blocks={shown} colors={{ primary, secondary }} year={year} month={month}
+          <StadiumScene blocks={shown} colors={{ primary, secondary }} year={year} month={month} plazaExtra={Math.min(6, Math.max(0, gr.area - LOCATIONS[gr.location].area) * 0.25)}
             selected={sel} hover={hover} building={bp?.blockId ?? null} group={planned.map((t) => t.id)} ghost={changed.map((t) => t.id)}
             blocksActive={blocksActive} venues={venues} venueActive={venueActive} selectedVenue={venue}
             onSelect={selectBlock} onHover={setHover} onVenue={selectVenue} />
