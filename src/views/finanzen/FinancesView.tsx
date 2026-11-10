@@ -5,7 +5,8 @@ import { Game } from '../../game/state';
 import { ClubFinances } from '../../types';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtCompactDM, fmtDateShort, fmtFullDM, fmtPrice, fmtWage, wageUnit } from '../../ui/format';
-import { type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
+import Select from '../../ui/Select';
 import type { InfoKey } from '../../data/infoTexts';
 import { BalanceLine, LoansBox } from './businessBoxes';
 import { InfoTip } from '../../ui/InfoTip';
@@ -56,7 +57,22 @@ export function FinBar({ label, icon, value, max, color }: {
 
 export function FinancesView({ g }: { g: Game }) {
   const club = g.clubs[g.managedClubId];
-  const fin = club.finances;
+  const live = club.finances;
+  // Saisonwahl (Wunsch Pascal): laufende Saison + gespeicherte Saisonbilanzen, Auswahlliste mit Pfeilen.
+  const hist = [...(live.seasonHistory ?? [])].reverse();
+  const seasons = [g.season, ...hist.map((h) => h.season).filter((x) => x !== g.season)];
+  const [selSeason, setSelSeason] = useState(g.season);
+  const cur = seasons.includes(selSeason) ? selSeason : g.season;
+  const rec = cur === g.season ? null : hist.find((h) => h.season === cur) ?? null;
+  const fin: ClubFinances = rec ? { ...live, income: rec.income, expenses: rec.expenses } : live;
+  const si = seasons.indexOf(cur);
+  const seasonPicker = (
+    <span className="dbtnrow fin-season">
+      <button className="b3 b3-s b3-icon" disabled={si >= seasons.length - 1} onClick={() => setSelSeason(seasons[si + 1])} aria-label="Vorherige Saison" title="Vorherige Saison"><Icon name="navPrev" size={16} /></button>
+      <Select size="s" width={120} value={cur} onChange={setSelSeason} options={seasons.map((x) => ({ value: x, label: x }))} />
+      <button className="b3 b3-s b3-icon" disabled={si <= 0} onClick={() => setSelSeason(seasons[si - 1])} aria-label="Nächste Saison" title="Nächste Saison"><Icon name="navNext" size={16} /></button>
+    </span>
+  );
   const income = totalIncome(fin);
   const expense = totalExpense(fin);
   const net = income - expense;
@@ -77,8 +93,19 @@ export function FinancesView({ g }: { g: Game }) {
 
   return (
     <DashPage>
-      <DashBox title="Kontostand" info="kontostand" span={2} right={`Saison ${g.season}`} className="fin-balance">
+      <DashBox title="Kontostand" info="kontostand" span={2} right={seasonPicker} className="fin-balance">
         <div className="fin-bal-grid">
+          {rec ? (
+            <div className="fin-bal-side">
+              <Kpi value={fmtFullDM(rec.balanceEnd)} label={`Kontostand Saisonende ${rec.season}`} color={rec.balanceEnd < 0 ? 'var(--red)' : undefined} />
+              <KV k="Ergebnis der Saison" v={sign(rec.result)} color={rec.result >= 0 ? 'var(--green)' : 'var(--red)'} strong />
+              <KV k="Umsatz (ohne Transfers)" v={fmtCompactDM(rec.revenue)} />
+              <KV k="Einnahmen gesamt" v={`+${fmtCompactDM(income)}`} color="var(--green)" />
+              <KV k="Ausgaben gesamt" v={`−${fmtCompactDM(expense)}`} color="var(--red)" />
+              <KV k="Gehaltsquote" info="gehaltsquote" v={`${Math.round(rec.wageRatio * 100)} %`} color={rec.wageRatio > 0.7 ? 'var(--orange)' : undefined} />
+              <div className="dnote mt8">Abgeschlossene Saison. Der Verlauf rechts zeigt den Kontostand der letzten Jahre.</div>
+            </div>
+          ) : (
           <div className="fin-bal-side">
             <Kpi value={fmtFullDM(fin.balance)} label="Kontostand" info="kontostand" color={fin.balance < 0 ? 'var(--red)' : undefined} />
             <KV k="Saldo Saison" v={sign(net)} color={net >= 0 ? 'var(--green)' : 'var(--red)'} />
@@ -92,26 +119,38 @@ export function FinancesView({ g }: { g: Game }) {
             <KV k="Erwartete Ausgaben" v={`−${fmtCompactDM(forecast.projectedExpense)}`} color="var(--red)" />
             {warnings.map((w, i) => <div key={i} className="dnote mt8" style={{ color: 'var(--orange)' }}>{w}</div>)}
           </div>
+          )}
           <div className="fin-bal-chart"><BalanceLine g={g} months={36} /></div>
         </div>
       </DashBox>
 
       <LoansBox g={g} />
 
-      <DashBox className="dbox-wide-lbl" title="Einnahmen (Saison)" info="einnahmen" icon="dashFinanzen" right={fmtCompactDM(income)}>
+      <DashBox className="dbox-wide-lbl" title="Einnahmen (Saison)" info="einnahmen" icon="dashFinanzen" right={`${rec ? `${rec.season} · ` : ''}${fmtCompactDM(income)}`}>
         {INCOME_ROWS.map((r) => (
           <Meter key={String(r.key)} label={<span className="dfin-lbl">{r.icon} {r.label}</span>} info={INCOME_INFO[r.key]} value={fin.income[r.key]} max={maxIncome}
             text={fin.income[r.key] > 0 ? fmtCompactDM(fin.income[r.key]) : '–'} color="var(--green)" />
         ))}
       </DashBox>
 
-      <DashBox className="dbox-wide-lbl" title="Ausgaben (Saison)" info="ausgaben" icon="dashFinanzen" right={fmtCompactDM(expense)}>
+      <DashBox className="dbox-wide-lbl" title="Ausgaben (Saison)" info="ausgaben" icon="dashFinanzen" right={`${rec ? `${rec.season} · ` : ''}${fmtCompactDM(expense)}`}>
         {EXPENSE_ROWS.map((r) => (
           <Meter key={String(r.key)} label={<span className="dfin-lbl">{r.icon} {r.label}</span>} info={EXPENSE_INFO[r.key]} value={fin.expenses[r.key] ?? 0} max={maxExpense}
             text={(fin.expenses[r.key] ?? 0) > 0 ? fmtCompactDM(fin.expenses[r.key] ?? 0) : '–'} color="var(--orange)" />
         ))}
       </DashBox>
 
+      {rec ? (
+        <DashBox title="Saisonbilanzen" icon="contracts" right={`${hist.length}`}>
+          {hist.map((h) => (
+            <div key={h.season} className={`dlist-row clickable ${h.season === cur ? 'on' : ''}`} onClick={() => setSelSeason(h.season)}>
+              <span className="meta" style={{ minWidth: 70 }}>{h.season}</span>
+              <span className="grow">Umsatz {fmtCompactDM(h.revenue)}</span>
+              <span className="val" style={{ color: h.result >= 0 ? 'var(--green)' : 'var(--red)' }}>{sign(h.result)}</span>
+            </div>
+          ))}
+        </DashBox>
+      ) : (
       <DashBox title="Letzte Buchungen" icon="contracts" right={`${fin.transactions.length}`}>
         {fin.transactions.length === 0 ? <Empty icon="contracts">Noch keine Buchungen in dieser Saison.</Empty> : fin.transactions.slice(0, 40).map((t) => (
           <div key={t.id} className="dlist-row">
@@ -121,6 +160,7 @@ export function FinancesView({ g }: { g: Game }) {
           </div>
         ))}
       </DashBox>
+      )}
     </DashPage>
   );
 }
