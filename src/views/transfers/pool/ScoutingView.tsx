@@ -27,7 +27,7 @@ export function ScoutingView({ g, onChange = () => {} }: { g: Game; onChange?: (
 
   return (
     <DashPage>
-      <DashBox title="Scouts unterwegs" info="scouting" span={2} right={`${s.jobs.length} / ${slots}`}>
+      <DashBox title="Scouts unterwegs" info="scouting" span={2} right={`${s.jobs.length} / ${slots}${s.queue?.length ? ` · ${s.queue.length} vorgemerkt` : ''}`}>
         {s.jobs.length ? s.jobs.map((j) => {
           const r = byId.get(j.id);
           return (
@@ -39,7 +39,18 @@ export function ScoutingView({ g, onChange = () => {} }: { g: Game; onChange?: (
               <button className="dchip" onClick={() => cancel(j.id)} title="Reisekosten werden nicht erstattet">Abbrechen</button>
             </div>
           );
-        }) : <Empty icon="watchlist">Kein Scout unterwegs. Im Spielerpool wählst du einen Spieler und schickst über den Steckbrief einen Scout los.</Empty>}
+        }) : <Empty icon="watchlist">Kein Scout unterwegs. Im Spielerpool wählst du einen Spieler und schickst über den Steckbrief einen Scout los – mit Strg/Umschalt auch mehrere auf einmal (Rechtsklick).</Empty>}
+        {(s.queue ?? []).map((q, i) => {
+          const r = byId.get(q.id);
+          return (
+            <div key={q.id} className="dlist-row pool-jobrow wait">
+              {r && <Face r={r} size={24} />}
+              <span className="grow"><b>{q.name}</b><span className="muted"> · {q.clubName}{q.abroad ? ' · Ausland' : ''}{q.youth ? ' · Jugend' : ''}</span></span>
+              <span className="pool-jobmeter"><span className="muted">vorgemerkt · Platz {i + 1}</span></span>
+              <button className="dchip" onClick={() => cancel(q.id)}>Entfernen</button>
+            </div>
+          );
+        })}
       </DashBox>
 
       <DashBox title="Abteilung" rows={2}>

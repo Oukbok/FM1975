@@ -2319,12 +2319,13 @@ Die Chronik markiert diese Ereignisse als **fiktive Zukunft**, z. B. halbautomat
     id: 'transfer-pool',
     category: 'squad',
     title: 'Spielerpool, Bekanntheit & Scouting',
-    keywords: ['spielerpool', 'weltspieler', 'scouting', 'scout', 'bekanntheit', 'schätzung', 'ausland', 'amateure', 'jugend', 'bericht'],
+    keywords: ['spielerpool', 'weltspieler', 'scouting', 'scout', 'bekanntheit', 'schätzung', 'ausland', 'amateure', 'jugend', 'bericht', 'mehrfachauswahl', 'strg', 'umschalt', 'warteschlange', 'vormerken'],
     body: `## Spielerpool
 Unter **Transfers › Spielerpool** stehen alle Spieler der Welt: die Kader der Liga mit vollen Kadern, deren Jugend und die **Weltspieler** – jeder Auslandsverein und jeder deutsche Verein ab der 2. Liga hat einen eigenen Kader mit rund 22 Spielern und drei Jugendlichen. Weltspieler werden älter, entwickeln sich, beenden ihre Karriere, Talente rücken nach, und herausragende Spieler wechseln zu stärkeren Vereinen.
 - Voreinstellung **Weltbeste** nach geschätzter Stärke; weitere Reiter: Talente bis 21, Jugend bis 18, Deutschland, Ausland, Gescoutet.
 - Je Seite 100 Spieler. Filter rechts: Name, Position, Alter, Land, Liga, Stärke, Potenzial, Bekanntheit.
 - Klick zeigt den **Steckbrief** mit Scouting und Verhandlung, Doppelklick das Profil (nur Spieler der Liga mit vollen Kadern).
+- **Mehrfachauswahl** (auch im Transfermarkt und in der Beobachtung): **Strg**-Klick nimmt einzelne Spieler dazu oder heraus, **Umschalt**-Klick wählt alle Spieler zwischen dem letzten Klick und diesem. Ein Rechtsklick auf die Auswahl öffnet das Gruppenmenü: alle scouten, laufende Aufträge abbrechen, Auswahl aufheben.
 
 ## Bekanntheit
 Wie gut dein Stab einen Spieler kennt, entscheidet, wie genau du seine Werte siehst. Unbekannte Spieler zeigen nur eine **Spanne** (z. B. Stärke 64–82), die zudem danebenliegen kann. Sortiert und gefiltert wird nach der Schätzung.
@@ -2335,7 +2336,7 @@ Wie gut dein Stab einen Spieler kennt, entscheidet, wie genau du seine Werte sie
 - Gute **Scouting-Mitarbeiter** heben das Grundwissen über alle Spieler.
 
 ## Scouting
-Im Steckbrief schickst du einen Scout los. Er braucht im Inland etwa 10 Tage, im Ausland drei bis vier Wochen (mit internationalem Scout weniger), bei Jugendlichen länger, und kostet Reisegeld. Danach ist der Spieler fast genau bekannt. Jeder Scouting-Mitarbeiter übernimmt einen weiteren Auftrag gleichzeitig. Berichte veralten mit den Jahren – Spieler verändern sich.
+Im Steckbrief schickst du einen Scout los. Er braucht im Inland etwa 10 Tage, im Ausland drei bis vier Wochen (mit internationalem Scout weniger), bei Jugendlichen länger, und kostet Reisegeld. Danach ist der Spieler fast genau bekannt. Jeder Scouting-Mitarbeiter übernimmt einen weiteren Auftrag gleichzeitig. Sind alle Scouts unterwegs, wird der Spieler **vorgemerkt** (bis zu 40): Der nächste freie Scout fährt los, das Reisegeld wird erst dann gebucht. Die Warteschlange siehst du unter Transfers › Scouting. Berichte veralten mit den Jahren – Spieler verändern sich.
 
 ## Weltspieler kaufen
 Auch über Weltspieler kannst du verhandeln: Ablöse mit dem Verein, dann Gehalt mit dem Spieler. Auslandsvereine nehmen keinen Tauschspieler. Spieler aus dem Ostblock dürfen vor 1989 nicht in den Westen wechseln. Ohne Scoutingbericht kaufst du die Katze im Sack.`,

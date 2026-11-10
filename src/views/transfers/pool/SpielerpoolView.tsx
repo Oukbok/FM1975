@@ -11,7 +11,7 @@ import PlayerModal from '../../../components/PlayerModal';
 import PosBadge from '../../../components/PosBadge';
 import { NatFlag } from '../../../components/competition/CountryFlag';
 import { estimate, knowCtx, knowledge, knowWord, poolRows, type Estimate, type PoolRow } from '../../../game/playerPool';
-import { activeJob, jobProgress, jobTerms, scoutReport, scoutSlots, startScouting } from '../../../game/scoutingGame';
+import { activeJob, jobProgress, jobTerms, queueScouting, queuedJob, scoutReport, scoutSlots } from '../../../game/scoutingGame';
 import type { Game } from '../../../game/state';
 import { activeTalks, startTalk, talkBlocker, type TransferTalk } from '../../../game/transferTalks';
 import { countryName, materializeWorldPlayer } from '../../../game/worldPool';
@@ -22,6 +22,7 @@ import Select from '../../../ui/Select';
 import Seg from '../../../ui/Seg';
 import { SubTabsPage, useSubTab } from '../../../ui/SubTabs';
 import { TransferTalkModal } from '../TransferTalkModal';
+import { useMultiSelect } from '../../../ui/useMultiSelect';
 import { ClubCell, Face, KnowBar, OvEst, StarEst, ValueEst, leagueLabel } from './poolParts';
 
 type Preset = 'best' | 'talents' | 'youth' | 'home' | 'abroad' | 'scouted';
@@ -77,6 +78,7 @@ export function SpielerpoolView({ g, onChange = () => {} }: { g: Game; onChange?
   const pages = Math.max(1, Math.ceil(list.length / PAGE));
   const pg = Math.min(page, pages - 1);
   const shown = list.slice(pg * PAGE, pg * PAGE + PAGE);
+  const ms = useMultiSelect(shown.map((x) => x.r.id));
   const cur = sel ? items.find((x) => x.r.id === sel) : undefined;
   const set = (patch: Partial<Filter>) => { setF({ ...f, ...patch }); setPage(0); };
   const head = (k: SortKey, label: string, cls = 'num') => (
@@ -94,8 +96,8 @@ export function SpielerpoolView({ g, onChange = () => {} }: { g: Game; onChange?
   };
   const scout = (r: PoolRow) => {
     const c = clubs.get(r.clubId);
-    const err = startScouting(g, { id: r.id, name: r.name, clubName: g.clubs[r.clubId]?.name ?? c?.name ?? '', abroad: r.country !== 'Deutschland', youth: r.youth });
-    setMsg(err ?? `Ein Scout ist zu ${r.name} unterwegs.`);
+    const res = queueScouting(g, { id: r.id, name: r.name, clubName: g.clubs[r.clubId]?.name ?? c?.name ?? '', abroad: r.country !== 'Deutschland', youth: r.youth });
+    setMsg(res === 'started' ? `Ein Scout ist zu ${r.name} unterwegs.` : res === 'queued' ? `${r.name} ist vorgemerkt – der nächste freie Scout fährt los.` : res);
     onChange();
   };
   const talk: TransferTalk | undefined = talkId ? (g.transferTalks ?? []).find((t) => t.id === talkId) : undefined;
@@ -107,21 +109,22 @@ export function SpielerpoolView({ g, onChange = () => {} }: { g: Game; onChange?
       <DashPage>
         <DashBox title={`Spielerpool · ${PRESET_LABEL[preset]}`} info="spielerpool" span={2} rows={2} flush
           right={<span className="dbtnrow">
+            {ms.multi && <span className="muted">{ms.sel.size} ausgewählt</span>}
             <span className="muted">{list.length.toLocaleString('de-DE')} Spieler</span>
             <button className="dchip" disabled={pg === 0} onClick={() => setPage(pg - 1)} aria-label="Vorige Seite">‹</button>
             <span className="muted">Seite {pg + 1} / {pages}</span>
             <button className="dchip" disabled={pg >= pages - 1} onClick={() => setPage(pg + 1)} aria-label="Nächste Seite">›</button>
           </span>}>
           {shown.length ? (
-            <table className="dtable rl-players pool-table">
+            <table className="dtable rl-players pool-table" {...ms.attr}>
               <thead><tr>
                 <th className="num w-xs">#</th><th>Name</th><th>Verein</th><th className="ctr w-s">Land</th><th className="ctr">Pos</th>{head('age', 'Alter')}
                 {head('ov', 'Stärke')}{head('st', 'Potenzial', '')}{head('value', 'Wert', 'num')}{head('k', 'Bekannt', 'ctr')}
               </tr></thead>
               <tbody>
                 {shown.map(({ r, e }, i) => (
-                  <tr key={r.id} data-pid={r.id} className={`clickable ${sel === r.id ? 'sel' : ''}`}
-                    onClick={() => setSel(r.id)} onDoubleClick={() => r.player && setProfile(r.id)}>
+                  <tr key={r.id} data-pid={r.id} className={`clickable ${ms.has(r.id) ? 'msel' : sel === r.id ? 'sel' : ''}`}
+                    onMouseDown={ms.onMouseDown} onClick={(ev) => { if (!ms.click(ev, r.id)) setSel(r.id); }} onDoubleClick={() => r.player && setProfile(r.id)}>
                     <td className="num muted">{pg * PAGE + i + 1}</td>
                     <td className="nowrap rl-name"><span className="tm-name"><Face r={r} /><span>{r.name}</span></span></td>
                     <td className="nowrap"><ClubCell g={g} id={r.clubId} world={clubs} /></td>
@@ -131,7 +134,7 @@ export function SpielerpoolView({ g, onChange = () => {} }: { g: Game; onChange?
                     <td className="num nowrap"><OvEst e={e} /></td>
                     <td className="nowrap"><StarEst e={e} /></td>
                     <td className="num nowrap"><ValueEst e={e} /></td>
-                    <td className="ctr"><KnowBar k={e.k} />{activeJob(g, r.id) && <span className="pool-job" title="Scout unterwegs" />}</td>
+                    <td className="ctr"><KnowBar k={e.k} />{activeJob(g, r.id) ? <span className="pool-job" title="Scout unterwegs" /> : queuedJob(g, r.id) >= 0 && <span className="pool-job wait" title="Scouting vorgemerkt" />}</td>
                   </tr>
                 ))}
               </tbody>
@@ -182,7 +185,8 @@ function Steckbrief({ g, it, onScout, onTalk, onProfile }: { g: Game; it: Item; 
   const running = activeTalks(g).some((t) => t.playerId === r.id);
   const block = r.kind === 'youth' ? 'Jugendspieler holst du über das Jugend-Scouting (Beobachtung).' : r.player && !running ? talkBlocker(g, r.player) : null;
   const who = r.player ?? ({ id: r.id, face: r.face, dateOfBirth: `${r.born}-07-01`, age: r.age, fullName: r.name, nationality: r.nat } as unknown as Player);
-  const used = g.scouting?.jobs.length ?? 0;
+  const full = (g.scouting?.jobs.length ?? 0) >= scoutSlots(g);
+  const waiting = queuedJob(g, r.id) >= 0;
   return (
     <div className="pool-card">
       <div className="pool-card-head">
@@ -198,10 +202,10 @@ function Steckbrief({ g, it, onScout, onTalk, onProfile }: { g: Game; it: Item; 
       <KV k="Stärke" v={<OvEst e={e} />} />
       <KV k="Potenzial" v={<StarEst e={e} />} />
       <KV k="Marktwert" v={<ValueEst e={e} />} />
-      <KV k="Scouting" v={job ? `unterwegs · ${Math.round(jobProgress(g, job) * 100)} %` : rep ? 'Bericht liegt vor' : '–'} />
+      <KV k="Scouting" v={job ? `unterwegs · ${Math.round(jobProgress(g, job) * 100)} %` : queuedJob(g, r.id) >= 0 ? `vorgemerkt · Platz ${queuedJob(g, r.id) + 1}` : rep ? 'Bericht liegt vor' : '–'} />
       <div className="dbtnrow mt8">
-        <button className="dchip on" disabled={!!job || used >= scoutSlots(g)} title={`${terms.days} Tage · Reisekosten ${fmtPrice(terms.cost)}`} onClick={() => onScout(r)}>
-          {job ? 'Scout unterwegs' : `Scouten · ${terms.days} T. · ${fmtPrice(terms.cost)}`}
+        <button className="dchip on" disabled={!!job || waiting} title={`${terms.days} Tage · Reisekosten ${fmtPrice(terms.cost)}${full ? ' · alle Scouts unterwegs: wird vorgemerkt' : ''}`} onClick={() => onScout(r)}>
+          {job ? 'Scout unterwegs' : waiting ? 'Vorgemerkt' : `${full ? 'Vormerken' : 'Scouten'} · ${terms.days} T. · ${fmtPrice(terms.cost)}`}
         </button>
         <button className="dchip" disabled={!!block} title={block ?? undefined} onClick={() => onTalk(r)}>{running ? 'Fortsetzen' : 'Verhandeln'}</button>
         {r.player && <button className="dchip" onClick={() => onProfile(r.id)}>Profil</button>}

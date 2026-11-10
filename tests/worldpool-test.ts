@@ -4,7 +4,7 @@ import { processDay, HEADLESS_UI } from '../src/game/day';
 import { clubOffer, playerOffer, startTalk, stanceFor, talkBlocker } from '../src/game/transferTalks';
 import { materializeWorldPlayer, worldClubs, worldEntry } from '../src/game/worldPool';
 import { estimate, knowCtx, knowledge, poolRows } from '../src/game/playerPool';
-import { scoutReport, startScouting } from '../src/game/scoutingGame';
+import { queueScouting, queuedJob, scoutReport, scoutSlots, scoutingOf, startScouting } from '../src/game/scoutingGame';
 import type { Game } from '../src/game/state';
 
 let seed = 7;
@@ -42,6 +42,15 @@ for (let i = 0; i < 40; i++) processDay(g, HEADLESS_UI);
 const rep = scoutReport(g, target.id);
 if (!rep || rep < 0.7) fail(`kein Bericht nach 40 Tagen: ${rep}`);
 console.log(`Bericht ${target.name}: Bekanntheit ${rep.toFixed(2)}`);
+
+// Warteschlange: mehr Aufträge als Scouts → Rest wartet, startet nacheinander
+const many = rows.filter((r) => r.kind === 'world' && r.country === 'Deutschland' && !r.youth).slice(0, scoutSlots(g) + 3);
+const res = many.map((r) => queueScouting(g, { id: r.id, name: r.name, clubName: clubs.get(r.clubId)?.name ?? '', abroad: false, youth: false }));
+if (res.filter((x) => x === 'queued').length !== 3) fail(`Warteschlange: ${res.join(',')}`);
+for (let i = 0; i < 80 && (scoutingOf(g).queue?.length || scoutingOf(g).jobs.length); i++) processDay(g, HEADLESS_UI);
+if (scoutingOf(g).queue?.length || many.some((r) => queuedJob(g, r.id) >= 0)) fail('Warteschlange nicht abgearbeitet');
+if (many.some((r) => !scoutReport(g, r.id))) fail('Bericht aus der Warteschlange fehlt');
+console.log(`Warteschlange: ${many.length} Aufträge bei ${scoutSlots(g)} Scout(s) abgearbeitet`);
 
 // Verhandlung über einen Weltspieler bis zum Wechsel
 const w = pool.p.filter((x) => clubs.get(x[1])?.country === 'England' && !x[12] && x[8] >= 70).sort((a, b) => b[8] - a[8])[3];

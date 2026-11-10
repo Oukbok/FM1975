@@ -1,3 +1,4 @@
+import { useMultiSelect } from '../../ui/useMultiSelect';
 import ClubCrest from '../../components/ClubCrest';
 import { ClubLink } from '../../components/club/ClubLink';
 import PlayerModal from '../../components/PlayerModal';
@@ -68,8 +69,9 @@ function TalkButton({ g, p, onTalk }: { g: Game; p: Player; onTalk: (id: string)
 
 function MarketTable({ g, list, onOpen, action }: { g: Game; list: Player[]; onOpen: (id: string) => void; action?: (p: Player) => React.ReactNode }) {
   const today = g.calendar.currentDate;
+  const ms = useMultiSelect(list.map((p) => p.id));
   return (
-    <table className="dtable rl-players">
+    <table className="dtable rl-players" {...ms.attr}>
       <thead><tr>
         <th>Name</th><th>Verein</th><th className="ctr w-s">Land</th><th className="ctr">Pos</th><th className="num">Alter</th><th className="num">Stärke</th>
         <th>Potenzial<InfoTip k="potenzial" /></th><th className="num">Vertrag</th><th className="num">{wageHead()}</th><th className="num">Wert<InfoTip k="marktwert" /></th>{action && <th />}
@@ -78,7 +80,8 @@ function MarketTable({ g, list, onOpen, action }: { g: Game; list: Player[]; onO
         {list.map((p) => {
           const c = g.clubs[p.clubId];
           return (
-            <tr key={p.id} data-pid={p.id} className="clickable" onClick={() => onOpen(p.id)}>
+            <tr key={p.id} data-pid={p.id} className={`clickable ${ms.has(p.id) ? 'msel' : ''}`}
+              onMouseDown={ms.onMouseDown} onClick={(e) => { if (!ms.click(e, p.id)) onOpen(p.id); }}>
               <td className="nowrap rl-name"><span className="tm-name"><FaceThumb p={p} club={c} size={26} /><span>{p.fullName}</span></span></td>
               <td className="nowrap"><ClubLink id={p.clubId}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>{c && <ClubCrest club={c} size={24} />}{c?.shortName}</span></ClubLink></td>
               <td className="ctr"><NatFlag nat={p.nationality} /></td>

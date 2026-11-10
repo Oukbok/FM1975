@@ -8,6 +8,7 @@
 .pool-know i { width: 5px; height: 12px; border-radius: 1px; background: rgba(var(--ink-rgb), 0.14); }
 .pool-know i.on { background: var(--text-2); }
 .pool-job { display: inline-block; width: 7px; height: 7px; margin-left: 6px; border-radius: 50%; background: var(--club-accent, var(--accent)); vertical-align: middle; }
+.pool-job.wait { background: transparent; box-shadow: inset 0 0 0 1.5px var(--club-accent, var(--accent)); }
 .pool-filter { display: grid; grid-template-columns: 1fr; gap: 7px; }
 .pool-filter > label { display: grid; grid-template-columns: 96px 1fr; align-items: center; gap: 8px; font-size: 14px; color: var(--text-2); }
 .pool-in { height: 32px; width: 100%; max-width: 220px; }
@@ -21,3 +22,6 @@
 .pool-jobrow { gap: 10px; }
 .pool-jobmeter { width: 340px; flex: none; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; }
 .pool-jobmeter .muted { white-space: nowrap; font-size: 14px; }
+/* Mehrfachauswahl (Strg/Umschalt, ui/useMultiSelect.ts) */
+.dtable tr.msel td { background: var(--sel-bg); }
+.dtable tr.msel td:first-child { box-shadow: inset 4px 0 0 var(--club-accent, var(--accent)); }

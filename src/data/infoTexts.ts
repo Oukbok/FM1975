@@ -786,7 +786,7 @@ export const INFO_TEXTS = {
   },
   scouting: {
     title: 'Scouting',
-    text: 'Ein Scout beobachtet einen Spieler über Tage bis Wochen und kostet Reisegeld. Danach sind Stärke, Potenzial und Wert fast genau bekannt. Jeder Scouting-Mitarbeiter übernimmt einen weiteren Auftrag; Berichte veralten nach einigen Jahren.',
+    text: 'Ein Scout beobachtet einen Spieler über Tage bis Wochen und kostet Reisegeld. Danach sind Stärke, Potenzial und Wert fast genau bekannt. Jeder Scouting-Mitarbeiter übernimmt einen weiteren Auftrag; sind alle unterwegs, wird vorgemerkt. Mit Strg/Umschalt wählst du mehrere Spieler und scoutest sie per Rechtsklick gemeinsam. Berichte veralten nach einigen Jahren.',
     wiki: 'transfer-pool',
   },
   beobachtung: {

@@ -10,6 +10,9 @@
 // Plätze: 1 + je Scouting-Mitarbeiter (Scout, Chefscout, internationaler Scout,
 // Nachwuchskoordinator), höchstens 8. Auslandsreisen: vor 1993 ohne internationalen
 // Scout teuer und lang; Video-/Datenanalysten verkürzen die Dauer.
+// Warteschlange (Wunsch Pascal: mehrere Spieler auf einmal scouten): Aufträge
+// ohne freien Scout warten in `queue` (höchstens MAX_QUEUE) und starten täglich,
+// sobald ein Platz frei ist – Reisekosten erst beim Start.
 // =============================================================================
 import { CalendarEngine } from '../engine/calendar';
 import { economyScale, yearOf } from '../engine/economy';
@@ -32,7 +35,8 @@ export interface ScoutJob {
   cost: number;
 }
 export interface ScoutReport { k: number; date: string }
-export interface ScoutingState { v: 1; jobs: ScoutJob[]; reports: Record<string, ScoutReport> }
+export type ScoutArgs = { id: string; name: string; clubName: string; abroad: boolean; youth: boolean };
+export interface ScoutingState { v: 1; jobs: ScoutJob[]; reports: Record<string, ScoutReport>; /** wartende Aufträge */ queue?: ScoutArgs[] }
 
 function cpi(year: number): number {
   const t = MERCH_CPI;
@@ -44,6 +48,7 @@ function cpi(year: number): number {
 
 const SCOUT_ROLES = ['scout_1975', 'chefscout', 'intl_scout', 'nachwuchskoord'];
 const MAX_REPORTS = 600;
+export const MAX_QUEUE = 40;
 
 export function scoutingOf(g: Game): ScoutingState {
   return (g.scouting ??= { v: 1, jobs: [], reports: {} });
@@ -85,13 +90,17 @@ export function activeJob(g: Game, id: string): ScoutJob | undefined {
   return g.scouting?.jobs.find((j) => j.id === id);
 }
 
+export function queuedJob(g: Game, id: string): number {
+  return (g.scouting?.queue ?? []).findIndex((q) => q.id === id);
+}
+
 export function jobProgress(g: Game, j: ScoutJob): number {
   const done = (Date.parse(g.calendar.currentDate) - Date.parse(j.start)) / 864e5;
   return Math.max(0, Math.min(1, done / j.days));
 }
 
 /** Auftrag erteilen. Rückgabe: Fehlertext oder null. */
-export function startScouting(g: Game, job: { id: string; name: string; clubName: string; abroad: boolean; youth: boolean }): string | null {
+export function startScouting(g: Game, job: ScoutArgs): string | null {
   const s = scoutingOf(g);
   if (activeJob(g, job.id)) return 'Ein Scout ist bereits unterwegs.';
   if (s.jobs.length >= scoutSlots(g)) return `Alle ${scoutSlots(g)} Scouts sind unterwegs. Mehr Scouting-Mitarbeiter = mehr Aufträge gleichzeitig.`;
@@ -105,18 +114,48 @@ export function startScouting(g: Game, job: { id: string; name: string; clubName
   return null;
 }
 
+/** Auftrag erteilen oder – ohne freien Scout – vormerken. Rückgabe: 'started' | 'queued' | Fehlertext. */
+export function queueScouting(g: Game, job: ScoutArgs): 'started' | 'queued' | string {
+  const s = scoutingOf(g);
+  if (activeJob(g, job.id)) return 'Ein Scout ist bereits unterwegs.';
+  if (queuedJob(g, job.id) >= 0) return 'Der Spieler ist schon vorgemerkt.';
+  if (s.jobs.length < scoutSlots(g)) {
+    const err = startScouting(g, job);
+    return err ?? 'started';
+  }
+  const q = (s.queue ??= []);
+  if (q.length >= MAX_QUEUE) return `Die Warteschlange ist voll (${MAX_QUEUE} Spieler).`;
+  q.push(job);
+  return 'queued';
+}
+
 export function cancelScouting(g: Game, id: string): void {
   const s = g.scouting;
-  if (s) s.jobs = s.jobs.filter((j) => j.id !== id);
+  if (!s) return;
+  s.jobs = s.jobs.filter((j) => j.id !== id);
+  if (s.queue) s.queue = s.queue.filter((q) => q.id !== id);
+}
+
+/** Vorgemerkte Aufträge starten, solange Scouts frei sind und Geld da ist. */
+function startQueued(g: Game): void {
+  const s = g.scouting;
+  if (!s?.queue?.length) return;
+  while (s.queue.length && s.jobs.length < scoutSlots(g)) {
+    const next = s.queue[0];
+    if (activeJob(g, next.id)) { s.queue.shift(); continue; }
+    if (startScouting(g, next)) break; // kein Geld: warten
+    s.queue.shift();
+  }
 }
 
 /** Täglich: fertige Aufträge abschließen. */
 export function scoutingDaily(g: Game, today: string): void {
   const s = g.scouting;
-  if (!s?.jobs.length) return;
+  if (!s) return;
+  if (!s.jobs.length) { startQueued(g); return; }
   const fx = staffEffectsOf(g).scouting ?? 0;
   const done = s.jobs.filter((j) => CalendarEngine.addDays(j.start, j.days) <= today);
-  if (!done.length) return;
+  if (!done.length) { startQueued(g); return; }
   s.jobs = s.jobs.filter((j) => !done.includes(j));
   for (const j of done) {
     const k = Math.min(j.youth ? 0.9 : 0.95, 0.75 + fx * 1.4);
@@ -128,6 +167,7 @@ export function scoutingDaily(g: Game, today: string): void {
       bodyText: `Dein Scout ist von ${j.clubName} zurück und hat ${j.name} mehrfach gesehen. Stärke, Potenzial und Marktwert sind jetzt deutlich genauer eingeschätzt – du findest ihn unter Transfers › Spielerpool (Filter „Gescoutet“) und unter Transfers › Scouting.`,
     }));
   }
+  startQueued(g);
   const ids = Object.keys(s.reports);
   if (ids.length > MAX_REPORTS) {
     ids.sort((a, b) => s.reports[a].date.localeCompare(s.reports[b].date));

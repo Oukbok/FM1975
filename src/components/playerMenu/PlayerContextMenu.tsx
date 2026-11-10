@@ -15,7 +15,8 @@ import { useClubProfile } from '../club/ClubLink';
 import { openContractScreen } from '../../screens/contract/contractOpen';
 import { startTalk, talkBlocker } from '../../game/transferTalks';
 import { estimateFor } from '../../game/playerPool';
-import { activeJob, startScouting } from '../../game/scoutingGame';
+import { activeJob, cancelScouting, queueScouting, queuedJob, scoutSlots, scoutingOf } from '../../game/scoutingGame';
+import { PIDSEL_CLEAR } from '../../ui/useMultiSelect';
 import { materializeWorldPlayer, worldClubs, worldEntry, WP_FIELD } from '../../game/worldPool';
 import { TransferTalkModal } from '../../views/transfers/TransferTalkModal';
 import type { Game } from '../../game/state';
@@ -24,7 +25,7 @@ import Icon from '../Icon';
 import type { IconName } from '../iconPaths';
 import PosBadge from '../PosBadge';
 
-interface MenuState { pid: string; x: number; y: number }
+interface MenuState { pid: string; x: number; y: number; /** Mehrfachauswahl (ui/useMultiSelect.ts) */ group?: string[] }
 interface Item { label: string; icon: IconName; run: () => void; sep?: boolean; danger?: boolean }
 
 const LONG_PRESS_MS = 550;
@@ -32,6 +33,21 @@ const LONG_PRESS_MS = 550;
 function playerOf(g: Game, id: string): Player | undefined {
   return g.players[id] ?? g.youthPlayers?.[id];
 }
+
+/** Angaben für einen Scouting-Auftrag (voller Spieler oder Weltspieler). */
+function scoutArgs(g: Game, id: string): { id: string; name: string; clubName: string; abroad: boolean; youth: boolean } | null {
+  const p = playerOf(g, id);
+  if (p) {
+    if (p.clubId === g.managedClubId) return null;
+    return { id, name: p.fullName, clubName: g.clubs[p.clubId]?.name ?? '', abroad: !!p.clubId && !g.clubs[p.clubId], youth: !!p.isYouth || p.age <= 18 };
+  }
+  const wp = id.startsWith('wp') ? worldEntry(g, id) : undefined;
+  if (!wp) return null;
+  const wc = worldClubs(g).get(wp[WP_FIELD.club]);
+  return { id, name: `${wp[WP_FIELD.first]} ${wp[WP_FIELD.last]}`, clubName: wc?.name ?? '', abroad: wc?.country !== 'Deutschland', youth: !!wp[WP_FIELD.youth] };
+}
+
+const known = (g: Game, id: string) => !!playerOf(g, id) || (id.startsWith('wp') && !!worldEntry(g, id));
 
 export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
   g: Game; onChange: () => void; onGoto?: (screen: string) => void; children: ReactNode;
@@ -46,9 +62,11 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
   const openAt = useCallback((target: EventTarget | null, x: number, y: number): boolean => {
     const el = (target as Element | null)?.closest?.('[data-pid]');
     const pid = el?.getAttribute('data-pid');
-    if (!pid || (!playerOf(g, pid) && !(pid.startsWith('wp') && worldEntry(g, pid)))) return false;
+    if (!pid || !known(g, pid)) return false;
     setNote(null);
-    setMenu({ pid, x, y });
+    // Rechtsklick auf eine Zeile der Mehrfachauswahl → Gruppenmenü
+    const ids = el?.closest('[data-pidsel]')?.getAttribute('data-pidsel')?.split(',').filter((id) => known(g, id));
+    setMenu(ids && ids.length > 1 && ids.includes(pid) ? { pid, x, y, group: ids } : { pid, x, y });
     return true;
   }, [g]);
 
@@ -89,7 +107,38 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
   const close = () => setMenu(null);
 
   const items: Item[] = [];
-  if (p && menu) {
+  const group = menu?.group;
+  if (group) {
+    const clearSel = () => { window.dispatchEvent(new Event(PIDSEL_CLEAR)); close(); };
+    const open = group.filter((id) => !activeJob(g, id) && queuedJob(g, id) < 0 && scoutArgs(g, id));
+    const running = group.filter((id) => activeJob(g, id) || queuedJob(g, id) >= 0);
+    const free = Math.max(0, scoutSlots(g) - scoutingOf(g).jobs.length);
+    items.push({
+      label: open.length ? `${open.length} Spieler scouten${free < open.length ? ` (${free} sofort, Rest wartet)` : ''}` : 'Alle werden schon gescoutet',
+      icon: 'watchlist',
+      run: () => {
+        if (!open.length) { setNote('Für alle ausgewählten Spieler ist schon ein Scout unterwegs oder vorgemerkt.'); return; }
+        let started = 0, queued = 0, err: string | null = null;
+        for (const id of open) {
+          const a = scoutArgs(g, id);
+          const r = a ? queueScouting(g, a) : 'Spieler nicht gefunden.';
+          if (r === 'started') started++; else if (r === 'queued') queued++; else { err = r; break; }
+        }
+        onChange();
+        if (err || queued) {
+          const parts = [started && `${started} Scout${started === 1 ? '' : 's'} unterwegs`, queued && `${queued} vorgemerkt (starten, sobald ein Scout frei ist)`].filter(Boolean).join(', ');
+          setNote(`${parts || 'Nichts gestartet'}${err ? `. ${err}` : '.'}`);
+          return;
+        }
+        clearSel();
+      },
+    });
+    if (running.length) items.push({
+      label: `${running.length} Auftr${running.length === 1 ? 'ag' : 'äge'} abbrechen`, icon: 'close',
+      run: () => { for (const id of running) cancelScouting(g, id); onChange(); clearSel(); },
+    });
+    items.push({ label: 'Auswahl aufheben', icon: 'close', sep: true, run: clearSel });
+  } else if (p && menu) {
     const show = (tab: Tab) => () => { setProfile({ pid: p.id, tab, z: nextProfileZ() }); close(); };
     items.push({ label: 'Spielerprofil', icon: 'squad', run: show('overview') });
     items.push({ label: 'Entwicklung', icon: 'training', run: show('development') });
@@ -136,13 +185,16 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
   }
   function scoutItem(id: string, name: string, clubName: string, abroad: boolean, youth: boolean) {
     const job = activeJob(g, id);
+    const waiting = queuedJob(g, id) >= 0;
     items.push({
-      label: job ? 'Scout ist unterwegs' : 'Scout schicken', icon: 'watchlist', sep: true,
+      label: job ? 'Scout ist unterwegs' : waiting ? 'Scouting vorgemerkt' : 'Scout schicken', icon: 'watchlist', sep: true,
       run: () => {
-        if (job) { setNote('Ein Scout beobachtet ihn bereits (Transfers › Scouting).'); return; }
-        const err = startScouting(g, { id, name, clubName, abroad, youth });
-        if (err) { setNote(err); return; }
-        onChange(); close();
+        if (job || waiting) { setNote(job ? 'Ein Scout beobachtet ihn bereits (Transfers › Scouting).' : 'Er ist vorgemerkt – ein Scout fährt los, sobald einer frei ist.'); return; }
+        const r = queueScouting(g, { id, name, clubName, abroad, youth });
+        onChange();
+        if (r === 'queued') { setNote('Alle Scouts sind unterwegs – vorgemerkt, der nächste freie Scout fährt los.'); return; }
+        if (r !== 'started') { setNote(r); return; }
+        close();
       },
     });
   }
@@ -164,15 +216,20 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
   return (
     <PlayerProfileCtx.Provider value={profileApi}>
       {children}
-      {menu && (p || wp) && createPortal(
+      {menu && (p || wp || group) && createPortal(
         <div className="pcm-layer" onMouseDown={close} onContextMenu={(e) => { e.preventDefault(); close(); }}>
           <div className="pcm" role="menu" style={{ left, top, width: W }} onMouseDown={(e) => e.stopPropagation()}
             onKeyDown={(e) => { if (e.key === 'Escape') close(); }}>
-            <div className="pcm-head">
+            {group ? (
+              <div className="pcm-head">
+                <span className="pcm-name">{group.length} Spieler ausgewählt</span>
+                <span className="pcm-sub">Strg/Umschalt</span>
+              </div>
+            ) : <div className="pcm-head">
               {p ? <PosBadge p={p} single /> : <PosBadge pos={wp![WP_FIELD.pos]} />}
               <span className="pcm-name">{p ? p.fullName : `${wp![WP_FIELD.first]} ${wp![WP_FIELD.last]}`}</span>
               <span className="pcm-sub">{p ? p.age : Number(g.season.slice(0, 4)) - wp![WP_FIELD.born]} J. · {ovText}</span>
-            </div>
+            </div>}
             {items.map((it, i) => (
               <button key={it.label} type="button" role="menuitem" autoFocus={i === 0}
                 className={`pcm-item ${it.sep ? 'sep' : ''}`} onClick={it.run}>
