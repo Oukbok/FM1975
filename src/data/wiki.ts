@@ -386,7 +386,7 @@ Der Kader-Bildschirm zeigt die Mannschaft als **übersichtliche Tabelle** (kein 
 Ein **Rechtsklick** auf einen Spieler – in Listen, Tabellen oder auf sein Gesicht – öffnet ein Menü mit den passenden Aktionen: Spielerprofil, Entwicklung, Vertrag, Wünsche, Medizin, bei eigenen Spielern **Transferliste** und **Zur Aufstellung**, bei fremden Spielern **Transferverhandlung**, dazu der Verein. Auf Touch-Geräten öffnet ein **langer Druck** dasselbe Menü.
 
 ## Spalten
-- **#** Rückennummer
+- **#** Rückennummer – per Klick auf die Nummer vergibst du eine neue (1–99); trägt sie schon ein Mitspieler, tauschen beide.
 - **Name**
 - **Pos** natürliche Position
 - **Alter**

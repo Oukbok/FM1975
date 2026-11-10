@@ -53,6 +53,15 @@ function neededPosition(game: Game, club: Club): Position {
  * Rückennummern: Spieler ohne Nummer (0) oder mit doppelter Nummer bekommen die kleinste freie
  * Nummer ihres Kaders (1–99). Wer zuerst im Kader steht, behält seine Nummer. Idempotent.
  */
+/** Rückennummer vergeben (Wunsch Pascal); trägt sie schon ein anderer, tauschen beide. */
+export function setShirtNumber(club: Club, players: Record<string, Player>, pid: string, n: number): void {
+  const p = players[pid];
+  if (!p || n < 1 || n > 99 || !club.playerIds.includes(pid)) return;
+  const other = club.playerIds.map((id) => players[id]).find((x) => x && x.id !== pid && x.shirtNumber === n);
+  if (other) other.shirtNumber = p.shirtNumber;
+  p.shirtNumber = n;
+}
+
 export function assignShirtNumbers(club: Club, players: Record<string, Player>): number {
   const used = new Set<number>();
   const need: Player[] = [];

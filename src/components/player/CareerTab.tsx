@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 import type { CareerStation, Club, Player, TransferRecord } from '../../types';
 import type { Game } from '../../game/state';
 import { useClubProfile } from '../club/ClubLink';
+import { TeamName } from '../../views/statistiken/competition/parts';
 import { formatMoneyShort } from '../../engine/economy';
 import { compStatsOf, type CompTuple } from '../../engine/compStats';
 import { AWARD_CATS, AWARD_CAT_LABEL } from '../../engine/seasonAwards';
@@ -109,6 +110,22 @@ function titlesWith(g: Game | undefined, p: Player): { season: string; title: st
 
 const dash = (n: number | undefined) => (n ? n : '–');
 
+/** Verein über den gespeicherten Namen finden (voller Kader, Sim-Verein, Ausland). */
+function clubIdByName(g: Game | undefined, name: string): string | null {
+  if (!g || !name) return null;
+  for (const c of Object.values(g.clubs)) if (c.name === name) return c.id;
+  for (const c of Object.values(g.simClubs ?? {})) if (c.name === name) return c.id;
+  for (const c of Object.values(g.euroClubs ?? {})) if (c.name === name) return c.id;
+  return null;
+}
+
+/** Wunsch Pascal: Vereine in den Stationen mit Wappen und als Link zum Vereinsprofil. */
+function ClubCell({ g, name, season }: { g: Game | undefined; name: string; season?: string }) {
+  const id = clubIdByName(g, name);
+  if (!g || !id) return <>{name}</>;
+  return <TeamName g={g} id={id} season={season ?? g.season} size={22} />;
+}
+
 export default function CareerTab({ p, club, season }: { p: Player; club?: Club; season?: string }) {
   const g = useClubProfile()?.game;
   const clubName = club?.name ?? g?.clubs[p.clubId]?.name ?? '—';
@@ -127,7 +144,7 @@ export default function CareerTab({ p, club, season }: { p: Player; club?: Club;
             {spells.map((s, i) => (
               <tr key={i} className={s.current ? 'pp3-cur' : undefined}>
                 <td>{s.from ? `${utcDate(s.from)} – ${s.current ? 'offen' : s.to ? utcDate(s.to) : '–'}` : s.current ? 'seit Spielbeginn' : `bis ${s.to ? utcDate(s.to) : '–'}`}</td>
-                <td>{s.club}</td>
+                <td><ClubCell g={g} name={s.club} /></td>
                 <td className="num">{feeText(s)}</td>
                 <td className="num">{s.apps}</td>
                 <td className="num">{s.goals}</td>
@@ -177,13 +194,13 @@ export default function CareerTab({ p, club, season }: { p: Player; club?: Club;
           <thead><tr><th>Saison</th><th>Verein</th><th className="num">Sp.</th><th className="num">Tore</th><th className="num">Vorl.</th><th className="num">Ø Note</th></tr></thead>
           <tbody>
             <tr className="pp3-cur">
-              <td>{season ?? 'aktuell'}</td><td>{clubName} <span className="dim">(läuft)</span></td>
+              <td>{season ?? 'aktuell'}</td><td><span className="pp3-clubcell"><ClubCell g={g} name={clubName} /> <span className="dim">(läuft)</span></span></td>
               <td className="num">{p.seasonStats.appearances}</td><td className="num">{p.seasonStats.goals}</td><td className="num">{p.seasonStats.assists}</td>
               <td className="num">{p.seasonStats.averageRating > 0 ? p.seasonStats.averageRating.toFixed(2) : '–'}</td>
             </tr>
             {stations.slice(0, 20).map((st, i) => (
               <tr key={i}>
-                <td>{st.season}</td><td>{st.clubName}</td><td className="num">{st.appearances}</td><td className="num">{st.goals}</td>
+                <td>{st.season}</td><td><ClubCell g={g} name={st.clubName} season={st.season} /></td><td className="num">{st.appearances}</td><td className="num">{st.goals}</td>
                 <td className="num">{st.assists}</td><td className="num">{st.averageRating > 0 ? st.averageRating.toFixed(2) : '–'}</td>
               </tr>
             ))}

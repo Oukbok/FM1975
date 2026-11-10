@@ -192,3 +192,5 @@
 .dtable .tm-name, .dtable .pool-club { max-width: 100%; min-width: 0; }
 .cflag-nat { display: inline-flex; vertical-align: middle; }
 .cflag-code { font-size: 12px; color: var(--text-3); }
+.dtable td.sq-shirt { overflow: visible; padding-top: 0; padding-bottom: 0; }
+.dtable td.sq-shirt .sel3 { min-width: 0; }

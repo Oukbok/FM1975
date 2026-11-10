@@ -15,6 +15,8 @@ import { demandFor, offerContract } from '../../game/contracts';
 import Icon from '../../components/Icon';
 import { PlayerTalkModal } from './talk/PlayerTalkModal';
 import PosBadge from '../../components/PosBadge';
+import Select from '../../ui/Select';
+import { setShirtNumber } from '../../game/squads';
 
 // =============================================================================
 // KADER — sortierbare Kadertabelle, Kaderstruktur, Verfügbarkeit
@@ -26,6 +28,7 @@ const GROUP_ORDER = ['GK', 'DEF', 'MID', 'ATT'];
 export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
   const [sel, setSel] = useState<string | null>(null);
   const [talk, setTalk] = useState<string | null>(null);
+  const [, setTick] = useState(0);
   const [sortBy, setSortBy] = useState<SquadSort>('pos');
   const [grp, setGrp] = useSubTab<string>('kader.uebersicht', 'all');
   const club = g.clubs[g.managedClubId];
@@ -83,7 +86,14 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
             {squad.map((pl) => {
               return (
                 <tr key={pl.id} data-pid={pl.id} className={`clickable ${roleCls(pl.id)}`} onClick={() => setSel(pl.id)}>
-                  <td className="rl-rank">{pl.shirtNumber}</td>
+                  <td className="rl-rank sq-shirt" onClick={(e) => e.stopPropagation()}>
+                    <Select size="s" width={58} popWidth={230} listHeight={420} value={pl.shirtNumber} title="Rückennummer vergeben"
+                      onChange={(v) => { setShirtNumber(club, g.players, pl.id, Number(v)); onChange?.(); setTick((t) => t + 1); }}
+                      options={Array.from({ length: 99 }, (_, i) => {
+                        const n = i + 1; const who = all.find((x) => x.shirtNumber === n && x.id !== pl.id);
+                        return { value: n, text: String(n), label: who ? `${n} · ${who.lastName} (Tausch)` : String(n) };
+                      })} />
+                  </td>
                   <td className="nowrap rl-name">{pl.fullName}</td>
                   <td className="ctr"><PosBadge p={pl} /></td>
                   <td className="num">{pl.age}</td>
