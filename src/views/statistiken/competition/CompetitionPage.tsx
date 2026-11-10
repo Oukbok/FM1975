@@ -15,6 +15,7 @@ import {
 } from '../../../game/competitionCountry';
 import { useSubTab } from '../../../ui/SubTabs';
 import { Caption, CountrySelect, RosterList, WinnersList } from './CountryParts';
+import { TeamFlagCtx } from './parts';
 import type { Game } from '../../../game/state';
 import { DashBox, DashPage, Empty } from '../../../ui/DashPage';
 import { CupRounds } from './CupRounds';
@@ -139,7 +140,9 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
       onReplayDraw={onReplayDraw && src === 'live' ? (ri) => onReplayDraw(effKey as 'cup' | EuroCompId, ri) : undefined} />;
 
   const withMd = isLeague && !!snap?.table?.length;
+  const euro = ['ec', 'cwc', 'uefa'].includes(effKey);
   return (
+    <TeamFlagCtx.Provider value={euro}>
     <DashPage className={`cmp-page${withMd ? ' cmp-mdpage' : ''}`}>
       <DashBox title={snap ? snap.label : 'Wettbewerb'} icon={snap?.kind === 'cup' ? 'trophy' : 'dashTabelle'} span={2} rows={2} right={header} className="cmp-main" info={start === 'euro' ? undefined : 'ligaLand'}>
         {main}
@@ -151,5 +154,6 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
         ? <EuropeBox g={g} germans={(g.euroCups?.[snap.key as EuroCompId]?.participantIds ?? []).filter((id) => !g.euroClubs?.[id])} teamName={(id) => compClubName(g, id, season)} />
         : <InfoBox g={g} snap={snap} />}
     </DashPage>
+    </TeamFlagCtx.Provider>
   );
 }

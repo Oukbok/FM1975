@@ -4,7 +4,7 @@
 // mit Kennzeichnung Weiterkommen/Zwischenrunde/Wechsel, Hin-/Rückspiel im Baum und in
 // der Rundenliste, Spiele der Gruppen je Spieltag.
 // =============================================================================
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Icon from '../../../components/Icon';
 import RoundsBracket, { tieScore } from '../../../components/competition/RoundsBracket';
 import { GroupTables } from '../../../components/competition/GroupTables';
@@ -33,7 +33,20 @@ export function CupRounds({ g, snap, onWatch, onReplayDraw }: {
   const [view, setView] = useState<View>(startView);
   const [ri, setRi] = useState(fallback);
   const [gi, setGi] = useState(() => Math.max(0, groupRounds.findIndex((r) => r.index === fallback)));
-  useEffect(() => { setRi(fallback); setView(startView()); setGi(Math.max(0, groupRounds.findIndex((r) => r.index === fallback))); }, [snap.key, snap.season]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Saison blättern (Wunsch Pascal): Ansicht und gewählte Runde (nach Name) bleiben, wenn es sie gibt; neuer Wettbewerb → Startansicht.
+  const prev = useRef({ key: snap.key, roundName: rounds[ri]?.name, groupName: groupRounds[gi]?.name, view });
+  useEffect(() => {
+    const p = prev.current;
+    if (p.key === snap.key) {
+      const r = p.roundName ? rounds.findIndex((x) => x.name === p.roundName) : -1;
+      const gIdx = p.groupName ? groupRounds.findIndex((x) => x.name === p.groupName) : -1;
+      const okView = p.view === 'groups' ? groupRounds.length > 0 : p.view === 'tree' ? koRounds.length > 1 : true;
+      setRi(r >= 0 && rounds[r].drawn ? r : fallback);
+      setGi(gIdx >= 0 ? gIdx : Math.max(0, groupRounds.findIndex((x) => x.index === fallback)));
+      setView(okView ? p.view : startView());
+    } else { setRi(fallback); setView(startView()); setGi(Math.max(0, groupRounds.findIndex((r) => r.index === fallback))); }
+  }, [snap.key, snap.season]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { prev.current = { key: snap.key, roundName: rounds[Math.min(ri, rounds.length - 1)]?.name, groupName: groupRounds[Math.min(gi, Math.max(0, groupRounds.length - 1))]?.name, view }; });
   const round = rounds[Math.min(ri, rounds.length - 1)];
   const watch = (t: { matchId?: string }) => { if (t.matchId && onWatch) onWatch(t.matchId); };
   const year = seasonStartYear(snap.season);

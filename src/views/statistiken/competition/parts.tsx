@@ -1,7 +1,8 @@
 // =============================================================================
 // Gemeinsame Bausteine der Wettbewerbs-Seiten (Vereinszeile, Zonen, Chips)
 // =============================================================================
-import type { ReactNode } from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
+import { CountryFlag } from '../../../components/competition/CountryFlag';
 import ClubCrest from '../../../components/ClubCrest';
 import { ClubLink } from '../../../components/club/ClubLink';
 import { clubView } from '../../../game/clubProfile';
@@ -11,15 +12,21 @@ import { seasonStartYear } from '../../../data/timeline';
 import Seg from '../../../ui/Seg';
 import { isLocalClub, localClubColor } from '../../../game/youthComps/localClubs';
 
+/** Internationale Wettbewerbe (Wunsch Pascal): hinter dem Wappen die Landesflagge. */
+export const TeamFlagCtx = createContext(false);
+
 /** Verein mit Wappen (deutsch) bzw. Farbpunkt (Ausland), klickbar wenn Profil vorhanden. */
 export function TeamName({ g, id, season, short = false, size = 20 }: { g: Game; id: string; season: string; short?: boolean; size?: number }) {
   const country = foreignCountry(g, id);
   const name = compClubName(g, id, season, short);
+  const withFlag = useContext(TeamFlagCtx);
+  const flag = withFlag ? <CountryFlag country={country ?? (id.startsWith('ddr') ? 'DDR' : 'Deutschland')} height={Math.max(10, Math.round(size * 0.55))} /> : null;
   if (country || id.startsWith('x_')) {
     const col = g.euroClubs?.[id]?.colors.primary ?? (isLocalClub(id) ? localClubColor(id) : 'var(--text-4)');
     return (
       <span className="cmp-team" title={country ? `${name} (${country})` : isLocalClub(id) ? `${name} (Ortsverein)` : name}>
         <span className="cmp-dot-box" style={{ width: size, height: size }}><span className="cmp-dot" style={{ background: col }} /></span>
+        {flag}
         <span className="cmp-team-name">{name}</span>
       </span>
     );
@@ -28,6 +35,7 @@ export function TeamName({ g, id, season, short = false, size = 20 }: { g: Game;
   return (
     <ClubLink id={id} className="cmp-team">
       <ClubCrest club={v as never} size={size} />
+      {flag}
       <span className="cmp-team-name" title={name}>{name}</span>
     </ClubLink>
   );
