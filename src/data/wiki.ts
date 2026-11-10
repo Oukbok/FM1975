@@ -112,7 +112,7 @@ Der Datensatz-Editor ist eine eigene Seite unter **/editor/** (Hauptmenü → Da
 - **Neu** legt eine Kopie des Standards an, **Datei öffnen** lädt eine JSON-Datei, **Aus dem Spiel öffnen** einen bereits übernommenen Datensatz.
 - Die **Arbeitskopie** sichert sich automatisch im Browser – auch nach dem Schließen geht nichts verloren.
 - Jeder Bereich hat einen kurzen Erklärtext. Jahre steuern, **wann** etwas kommt oder verschwindet (z. B. „Ab Jahr“/„Bis Jahr“ bei Einrichtungen, Mitarbeitern und Marketing, Saison bei Chronik und Reformen).
-- **Vereine:** je Verein eigenes Wappen (PNG/JPG/SVG, auf 256 px verkleinert) und Heim-/Auswärtstrikot (Farben + Muster).
+- **Vereine:** je Verein eigenes Wappen (PNG/JPG/SVG, auf 256 px verkleinert) und Heim-/Auswärtstrikot (Farben + Muster). Mit **Weiteres Wappen hinzufügen** legst du spätere Wappen an: Jedes ersetzt das vorige ab Saisonbeginn (1. Juli) des eingetragenen Jahres.
 - **Prüfen** zeigt Fehler (z. B. doppelte IDs, ungerade Ligagrößen, fehlende Starter) und Hinweise.
 - **Exportieren** lädt die Datei herunter (zum Teilen), **Ins Spiel übernehmen** speichert sie direkt im Browser.
 

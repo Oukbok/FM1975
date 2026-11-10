@@ -21,7 +21,8 @@ Verbindliche Typen: `src/data/dataset/schema.ts`. Anwenden: `src/data/dataset/ap
 | `clubs.tier1` | `ClubSeed[]` | 1. Liga 1975/76: `id, name, shortName, city, founded, primary, secondary, reputation (1–99), stadium, capacity`. Gerade Anzahl, mind. 6. |
 | `clubs.secondNord`, `clubs.secondSued` | `SecondLigaSeed[]` | `id, name, shortName, city, primary, secondary, strength`. Gerade Anzahl. |
 | `clubs.ddrOberliga`, `clubs.ddrLiga` | `SimClub[]` | `id, name, shortName, city, strength, colors{primary,secondary}, tier (101/102), group, historicalName?, renamedYear?`. |
-| `crests` | `Record<vereinsId, dataUrl>` | Wappen als PNG/SVG-Data-URL (Editor verkleinert auf 256 px). |
+| `crests` | `Record<vereinsId, dataUrl>` | Wappen als PNG/SVG-Data-URL (Editor verkleinert auf 256 px), gilt ab Spielbeginn. |
+| `crestEras` | `Record<vereinsId, { from: number; crest: dataUrl }[]>` | Optional: spätere Wappen; jedes ersetzt das vorige ab Saisonbeginn (1. Juli) des Jahres `from`. |
 | `kits` | `Record<vereinsId, {home, away}>` | `Kit = { primary, secondary, pattern }`, `pattern` ∈ `solid, stripes, hoops, sash, mittelstreifen, halves`. Gilt nur, wenn **beide** gesetzt sind. |
 | `europe.countries` | `CountrySeed[]` | `name, origin, base, tier1, tier2, cities[]` – Hintergrund-Ligen je Land. |
 | `europe.trends` | `Record<land, [jahr, delta][]>` | Niveau-Verschiebung gegenüber `base`. |

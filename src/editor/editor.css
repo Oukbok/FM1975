@@ -180,3 +180,13 @@ textarea.ed-in { resize: vertical; line-height: 1.4; }
 .ed-wd-names { margin: 0; padding-left: 22px; max-height: 260px; overflow: auto; font-size: 12px; color: var(--text-2); }
 .ed-wd-names li.bad { color: var(--red); }
 .ed-wd-euro { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+/* Vereine › Wappen über die Jahre (sections/CrestEras.tsx) */
+.ed-crests { display: flex; flex-direction: column; gap: 6px; max-height: 330px; overflow: auto; }
+.ed-crest-row { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 6px 10px; align-items: center; padding: 6px 8px; border: 1px solid var(--border-soft); border-radius: 6px; }
+.ed-crest-when { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ed-crest-when label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-2); }
+.ed-crest-year { width: 76px; }
+.ed-crest-year.bad { border-color: var(--red); }
+.ed-crest-acts { grid-column: 2; display: flex; gap: 6px; }
+.ed-crest-when label { white-space: nowrap; }

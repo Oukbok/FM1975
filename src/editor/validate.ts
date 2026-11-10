@@ -33,6 +33,15 @@ export function checkDataset(d: Dataset): Issue[] {
       if (!c.name?.trim()) err('Vereine', `${name}: Verein „${c.id}“ hat keinen Namen.`);
     }
   }
+  for (const [id, eras] of Object.entries(d.crestEras ?? {})) {
+    const nm = all.has(id) ? id : `${id} (unbekannte ID)`;
+    const years = eras.map((e) => e.from);
+    for (const e of eras) {
+      if (!Number.isInteger(e.from) || e.from < 1975 || e.from > 2100) warn('Vereine', `Wappen ${nm}: Jahr ${e.from} liegt außerhalb 1975–2100.`);
+      if (!e.crest?.startsWith('data:image/')) err('Vereine', `Wappen ${nm} ab ${e.from}: kein Bild.`);
+    }
+    if (new Set(years).size !== years.length) warn('Vereine', `Wappen ${nm}: zwei Wappen mit demselben Jahr – nur eines gilt.`);
+  }
   for (const c of d.clubs.tier1) {
     if (c.reputation < 1 || c.reputation > 99) warn('Vereine', `${c.name}: Ansehen sollte zwischen 1 und 99 liegen.`);
     if (c.capacity < 1000) warn('Vereine', `${c.name}: Stadion mit unter 1.000 Plätzen.`);

@@ -1,5 +1,5 @@
 import Icon, { type IconName } from '../components/Icon';
-import { applyDataset } from '../data/dataset/apply';
+import { applyDataset, setCrestDate } from '../data/dataset/apply';
 import { BUILTIN_ID } from '../data/dataset/builtin';
 import { cachedDataset } from '../data/dataset/storage';
 import { AppSettings } from '../engine/save';
@@ -62,6 +62,7 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
     };
   });
   const set = (p: Partial<NewGameDraft>) => setD((x) => ({ ...x, ...p }));
+  setCrestDate(`${d.startYear}-07-01`); // Vorschau zeigt das Wappen, das zum Startjahr gilt
 
   const chooseDataset = (id: string) => {
     applyDataset(cachedDataset(id));

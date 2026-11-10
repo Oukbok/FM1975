@@ -24,12 +24,24 @@ import { Dataset } from './schema';
 import { BUILTIN_ID, builtinDataset } from './builtin';
 
 let activeId = BUILTIN_ID;
-let activeCosmetics: Pick<Dataset, 'crests' | 'kits'> = {};
+let activeCosmetics: Pick<Dataset, 'crests' | 'crestEras' | 'kits'> = {};
+/** Spieldatum für Wappenwechsel (GameShell bzw. Assistent setzen es; null = Grundwappen). */
+let crestDate: string | null = null;
 
 export function activeDatasetId(): string { return activeId; }
 
 /** Wappen/Trikots des aktiven Datensatzes für einen Verein (falls vorhanden). */
 export function datasetCrest(clubId: string): string | undefined { return activeCosmetics.crests?.[clubId]; }
+/** Datum, nach dem sich spätere Wappen richten (ISO, UTC). */
+export function setCrestDate(iso: string | null): void { crestDate = iso; }
+/** Späteres Wappen des Datensatzes, das am Datum gilt (ab 1. Juli des Jahres `from`), sonst undefined. */
+export function datasetCrestAt(clubId: string, iso: string | null = crestDate): string | undefined {
+  const eras = activeCosmetics.crestEras?.[clubId];
+  if (!eras?.length || !iso) return undefined;
+  let best: { from: number; crest: string } | undefined;
+  for (const e of eras) if (e.crest && iso >= `${e.from}-07-01` && (!best || e.from > best.from)) best = e;
+  return best?.crest;
+}
 export function datasetKits(clubId: string) { return activeCosmetics.kits?.[clubId]; }
 
 function replaceArray<T>(target: T[], src: T[] | undefined, fallback: T[]): void {
@@ -46,7 +58,7 @@ export function applyDataset(ds: Dataset | null): void {
   const base = builtinDataset(); // sichert zuerst den unveränderten Code-Stand
   const d = ds ?? base;
   activeId = d.meta?.id ?? BUILTIN_ID;
-  activeCosmetics = { crests: d.crests ?? {}, kits: d.kits ?? {} };
+  activeCosmetics = { crests: d.crests ?? {}, crestEras: d.crestEras ?? {}, kits: d.kits ?? {} };
 
   replaceArray(CLUB_SEEDS, d.clubs?.tier1, base.clubs.tier1);
   replaceArray(SECOND_LIGA_NORD_SEEDS, d.clubs?.secondNord, base.clubs.secondNord);

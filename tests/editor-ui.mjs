@@ -57,6 +57,22 @@ const title = await page.locator('.ed-side-title').innerText();
 if (title !== 'Testhausen 75') fail(`Umbenennen nicht in der Vorschau: ${title}`);
 await page.screenshot({ path: `${outDir}/clubs-edited.png` });
 
+// Mehrere Wappen: zwei spätere Wappen anlegen, Jahr ändern, Reihenfolge nach Jahr.
+const svg = (c) => Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="${c}"/></svg>`);
+for (const c of ['#2a7', '#a27']) {
+  const [fc] = await Promise.all([page.waitForEvent('filechooser'), page.click('button:has-text("Weiteres Wappen hinzufügen")')]);
+  await fc.setFiles({ name: 'w.svg', mimeType: 'image/svg+xml', buffer: svg(c) });
+  await page.waitForTimeout(250);
+}
+let yrs = await page.locator('.ed-crest-year').evaluateAll((els) => els.map((e) => +e.value));
+if (yrs.join() !== '1985,1995') fail(`Wappen-Jahre nach dem Hinzufügen: ${yrs.join()}`);
+await page.locator('.ed-crest-year').nth(1).fill('1980');
+await page.locator('.ed-crest-year').nth(1).press('Enter');
+await page.waitForTimeout(200);
+yrs = await page.locator('.ed-crest-year').evaluateAll((els) => els.map((e) => +e.value));
+if (yrs.join() !== '1980,1985') fail(`Wappen-Jahre nach dem Ändern nicht sortiert: ${yrs.join()}`);
+await page.locator('.ed-side').screenshot({ path: `${outDir}/clubs-crests.png` });
+
 // Legenden: Eintrag wählen, verdeckten Wert und Verein ändern, neuen Eintrag anlegen; Prüfung meldet Fehler bei falschem Datum.
 await page.click('.ed-nav-item[data-sec="legends"]');
 await page.waitForTimeout(150);

@@ -1,9 +1,9 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import ClubCrest from '../../components/ClubCrest';
 import JerseySVG from '../../components/JerseySVG';
 import { Dataset } from '../../data/dataset/schema';
 import { Club, Kit, KitPattern } from '../../types';
-import { imageToDataUrl } from '../store';
+import { CrestEras } from './CrestEras';
 import { Col, Explain, TableEditor } from '../TableEditor';
 
 // =============================================================================
@@ -94,8 +94,6 @@ export function ClubsSection({ ds, onChange }: { ds: Dataset; onChange: () => vo
 }
 
 function ClubCosmetics({ ds, club, onChange }: { ds: Dataset; club: AnyClub; onChange: () => void }) {
-  const file = useRef<HTMLInputElement>(null);
-  const [err, setErr] = useState<string | null>(null);
   const colors = colorsOf(club);
   const crest = ds.crests?.[club.id];
   const kits = ds.kits?.[club.id];
@@ -113,17 +111,6 @@ function ClubCosmetics({ ds, club, onChange }: { ds: Dataset; club: AnyClub; onC
   };
   const resetKits = () => { if (ds.kits) delete ds.kits[club.id]; onChange(); };
 
-  const upload = async (f?: File) => {
-    if (!f) return;
-    try {
-      const url = await imageToDataUrl(f);
-      ds.crests ??= {};
-      ds.crests[club.id] = url;
-      setErr(null);
-      onChange();
-    } catch (e) { setErr((e as Error).message); }
-  };
-
   return (
     <aside className="ed-side">
       <div className="ed-side-head">
@@ -133,14 +120,7 @@ function ClubCosmetics({ ds, club, onChange }: { ds: Dataset; club: AnyClub; onC
           <div className="ed-hint">{club.city} · ID {club.id}</div>
         </div>
       </div>
-      <div className="ed-sec">Wappen</div>
-      <div className="ed-row">
-        <button className="ed-btn" onClick={() => file.current?.click()}>Bild hochladen</button>
-        {crest && <button className="ed-btn" onClick={() => { delete ds.crests![club.id]; onChange(); }}>Entfernen</button>}
-        <input ref={file} type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" style={{ display: 'none' }} onChange={(e) => { upload(e.target.files?.[0]); e.target.value = ''; }} />
-      </div>
-      <div className="ed-hint">PNG, JPG oder SVG. Bilder werden auf 256 px verkleinert. Ohne eigenes Wappen erzeugt das Spiel eines aus Farben und Kürzel.</div>
-      {err && <div className="ed-err">{err}</div>}
+      <CrestEras ds={ds} club={preview} onChange={onChange} />
       <div className="ed-sec">Trikots</div>
       <div className="ed-kits">
         {(['home', 'away'] as const).map((side) => {

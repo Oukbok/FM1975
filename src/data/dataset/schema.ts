@@ -58,6 +58,8 @@ export interface OriginData {
   firstByEra?: [number, string[]][];
 }
 
+export interface CrestEra { from: number; crest: string }
+
 export interface Dataset {
   format: typeof DATASET_FORMAT;
   version: number;
@@ -72,6 +74,9 @@ export interface Dataset {
   };
   /** Wappen je Vereins-ID (Data-URL, PNG/SVG). */
   crests?: Record<string, string>;
+  /** Spätere Wappen je Vereins-ID (Wunsch Pascal): gilt ab Saisonbeginn (1. Juli) des Jahres `from`
+   *  und ersetzt das vorige; vor dem ersten Eintrag gilt `crests` bzw. das generierte Wappen. */
+  crestEras?: Record<string, CrestEra[]>;
   /** Trikots je Vereins-ID. */
   kits?: Record<string, { home?: Kit; away?: Kit }>;
   europe: {
