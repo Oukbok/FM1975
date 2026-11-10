@@ -109,3 +109,12 @@
 /* Bestenlisten: Miniatur-Kopf vor dem Namen (components/FaceThumb.tsx) */
 .cmp-pn { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cmp-pname > .fthumb { margin: -3px 0; }
+
+/* Bestenlisten-Boxen (Wunsch Pascal): genau N ganze Zeilen im sichtbaren Bereich – keine angeschnittene
+   nächste Zeile. Liga 4, Jugendwettbewerbe (unter der Reiterleiste) 5. Weitere Zeilen per Bildlauf, rastet je Zeile ein. */
+.cmp-statbox { --stat-rows: 4; }
+.sub3-page .cmp-statbox { --stat-rows: 5; }
+.cmp-statbox .dbox-body { scroll-snap-type: y mandatory; }
+.cmp-statbox .cmp-statlist { display: grid; height: 100%; grid-auto-rows: calc(100% / var(--stat-rows)); }
+.cmp-statbox .cmp-statlist .cmp-stat { min-height: 0; padding-top: 0; padding-bottom: 0; scroll-snap-align: start; overflow: hidden; }
+.cmp-statbox .cmp-statlist .cmp-stat:last-child { border-bottom: 1px solid var(--border-soft); }

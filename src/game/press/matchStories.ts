@@ -328,7 +328,7 @@ export function previewStories(c: PressCtx): PressStory[] {
     const s = { club: my.name, goal: my.boardExpectation };
     out.push(story(c, {
       kind: 'kommentar', rubric: 'Saisonvorschau', date: c.date, weight: 30, headline: c.say('hl_ziel', s), body: [c.say('zl_body', s), c.say('zl_body', s)],
-      image: { kind: 'club', id: c.my }, clubs: [c.my], targets: [{ kind: 'screen', screen: 'vorstand', label: 'Vorstand' }],
+      image: { kind: 'club', id: c.my }, clubs: [c.my], targets: [{ kind: 'screen', screen: 'cat-verein', label: 'Verein' }],
     }));
   }
   return out;

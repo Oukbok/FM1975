@@ -7,7 +7,8 @@ import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtCompactDM, fmtDateShort, fmtFullDM, fmtPrice, fmtWage, wageUnit } from '../../ui/format';
 import { type ReactNode } from 'react';
 import type { InfoKey } from '../../data/infoTexts';
-import { smoothArea, smoothPath, type Pt } from '../../ui/smoothPath';
+import { BalanceLine, LoansBox } from './businessBoxes';
+import { InfoTip } from '../../ui/InfoTip';
 
 /** i-Hilfen an einzelnen Umsatzarten (nur, wo nicht selbsterklärend). */
 const INCOME_INFO: Partial<Record<string, InfoKey>> = { tvMoney: 'tvGeld', commercial: 'vermarktung', membership: 'mitglieder', catering: 'catering' };
@@ -38,62 +39,6 @@ export const EXPENSE_ROWS: { key: keyof ClubFinances['expenses']; label: string;
   { key: 'other', label: 'Sonstige Fixkosten', icon: <Icon name="contracts" /> },
   { key: 'transferExpense', label: 'Transferausgaben', icon: <Icon name="transfers" /> },
 ];
-
-/** Selbstgebauter SVG-Linien-Graph für den Kontostand-Verlauf (Dark-Theme). */
-export function BalanceChart({ points, current, currentDate }: {
-  points: { date: string; balance: number }[]; current: number; currentDate: string;
-}) {
-  const data = [...points, { date: currentDate, balance: Math.round(current) }];
-  const W = 640, H = 200, PL = 8, PR = 8, PT = 16, PB = 24;
-  if (data.length < 2) {
-    // Spielstart: noch keine Historie -> einen Startpunkt einen Monat vor dem aktuellen
-    // Datum auf dem Startkontostand synthetisieren, damit sofort ein Verlauf sichtbar ist
-    // (zunaechst flache Linie, die sich mit jedem Monatsabschluss fuellt).
-    const d0 = new Date(currentDate + 'T00:00:00Z');
-    d0.setUTCMonth(d0.getUTCMonth() - 1);
-    data.unshift({ date: d0.toISOString().slice(0, 10), balance: Math.round(current) });
-  }
-  const vals = data.map((d) => d.balance);
-  let min = Math.min(...vals, 0), max = Math.max(...vals, 0);
-  if (min === max) { min -= 1; max += 1; }
-  const iw = W - PL - PR, ih = H - PT - PB;
-  const x = (i: number) => PL + (i / (data.length - 1)) * iw;
-  const y = (v: number) => PT + (1 - (v - min) / (max - min)) * ih;
-  const pts: Pt[] = data.map((d, i) => [x(i), y(d.balance)]);
-  const line = smoothPath(pts);
-  const area = smoothArea(pts, PT + ih);
-  const zeroY = y(0);
-  const mmLabel = (iso: string) => {
-    const d = new Date(iso + 'T00:00:00Z');
-    return `${['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'][d.getUTCMonth()]}`;
-  };
-  return (
-    <svg viewBox={`0 0 ${W} ${H}`} width="100%" preserveAspectRatio="xMidYMid meet" style={{ display: 'block' }}>
-      <defs>
-        <linearGradient id="balArea" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--text-2)" stopOpacity="0.14" />
-          <stop offset="100%" stopColor="var(--text-2)" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      {min < 0 && max > 0 && (
-        <line x1={PL} y1={zeroY} x2={W - PR} y2={zeroY} stroke="var(--red)" strokeDasharray="3 3" strokeOpacity="0.6" />
-      )}
-      <path d={area} fill="url(#balArea)" />
-      <path d={line} fill="none" stroke="var(--text-2)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-      {data.map((d, i) => (
-        <g key={i}>
-          <circle cx={x(i)} cy={y(d.balance)} r={i === data.length - 1 ? 4 : 2}
-            fill={d.balance < 0 ? 'var(--red)' : i === data.length - 1 ? 'var(--accent)' : 'var(--text-2)'} />
-          {(i === 0 || i === data.length - 1 || i % 2 === 0) && (
-            <text x={x(i)} y={H - 6} fill="var(--text-3)" fontSize="10" textAnchor="middle">{mmLabel(d.date)}</text>
-          )}
-        </g>
-      ))}
-      <text x={PL} y={11} fill="var(--text-3)" fontSize="10">{fmtCompactDM(max)}</text>
-      <text x={PL} y={PT + ih + 0} fill="var(--text-3)" fontSize="10">{fmtCompactDM(min)}</text>
-    </svg>
-  );
-}
 
 /** Horizontaler Balken für einen Einnahme-/Ausgabeposten. */
 export function FinBar({ label, icon, value, max, color }: {
@@ -132,28 +77,26 @@ export function FinancesView({ g }: { g: Game }) {
 
   return (
     <DashPage>
-      <DashBox title="Kontostand" info="kontostand" icon="finances" span={2} right={`Saison ${g.season}`}>
-        <div className="dgrid2" style={{ gridTemplateColumns: '1fr 2fr', alignItems: 'center' }}>
-          <div>
+      <DashBox title="Kontostand" info="kontostand" span={2} right={`Saison ${g.season}`} className="fin-balance">
+        <div className="fin-bal-grid">
+          <div className="fin-bal-side">
             <Kpi value={fmtFullDM(fin.balance)} label="Kontostand" info="kontostand" color={fin.balance < 0 ? 'var(--red)' : undefined} />
             <KV k="Saldo Saison" v={sign(net)} color={net >= 0 ? 'var(--green)' : 'var(--red)'} />
             <KV k="Monatssaldo (fix)" info="saldoMonat" v={sign(monthly.net)} color={monthly.net >= 0 ? 'var(--green)' : 'var(--red)'} />
             <KV k="Transferbudget" info="transferbudget" v={fmtPrice(fin.transferBudget)} />
-            <KV k={`Gehälter / Budget pro ${wageUnit()}`} info="gehaltsbudget" v={`${fmtWage(weekly, { unit: false })} / ${fmtWage(wageBudget, { unit: false })}`} color={weekly > wageBudget ? 'var(--red)' : undefined} />
+            <KV k="Gehaltsbudget frei" info="gehaltsbudget" v={fmtWage(wageBudget - weekly)} color={weekly > wageBudget ? 'var(--red)' : undefined} />
+            <div className="dsec">Prognose Saisonende<InfoTip k="prognose" /></div>
+            <KV k="Endkontostand" v={fmtCompactDM(forecast.projectedEndBalance)} color={forecast.projectedEndBalance < 0 ? 'var(--red)' : undefined} strong />
+            <KV k="Restmonate · Heimspiele" v={`${forecast.monthsRemaining.toLocaleString('de-DE')} · ${forecast.homeMatchesRemaining}`} />
+            <KV k="Erwartete Einnahmen" v={`+${fmtCompactDM(forecast.projectedIncome)}`} color="var(--green)" />
+            <KV k="Erwartete Ausgaben" v={`−${fmtCompactDM(forecast.projectedExpense)}`} color="var(--red)" />
+            {warnings.map((w, i) => <div key={i} className="dnote mt8" style={{ color: 'var(--orange)' }}>{w}</div>)}
           </div>
-          <BalanceChart points={fin.balanceHistory ?? []} current={fin.balance} currentDate={g.calendar.currentDate} />
+          <div className="fin-bal-chart"><BalanceLine g={g} months={36} /></div>
         </div>
       </DashBox>
 
-      <DashBox title="Prognose Saisonende" info="prognose" icon="stats" right={warnings.length ? `${warnings.length} Warnung(en)` : undefined}>
-        <div className="dkpis">
-          <Kpi value={fmtCompactDM(forecast.projectedEndBalance)} label="Endkontostand" color={forecast.projectedEndBalance < 0 ? 'var(--red)' : undefined} />
-        </div>
-        <KV k="Restmonate · Heimspiele" v={`${forecast.monthsRemaining.toLocaleString('de-DE')} · ${forecast.homeMatchesRemaining}`} />
-        <KV k="Erwartete Einnahmen" v={`+${fmtCompactDM(forecast.projectedIncome)}`} color="var(--green)" />
-        <KV k="Erwartete Ausgaben" v={`−${fmtCompactDM(forecast.projectedExpense)}`} color="var(--red)" />
-        {warnings.map((w, i) => <div key={i} className="dnote mt8" style={{ color: 'var(--orange)', fontSize: 15 }}>{w}</div>)}
-      </DashBox>
+      <LoansBox g={g} />
 
       <DashBox className="dbox-wide-lbl" title="Einnahmen (Saison)" info="einnahmen" icon="dashFinanzen" right={fmtCompactDM(income)}>
         {INCOME_ROWS.map((r) => (

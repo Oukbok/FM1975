@@ -22,7 +22,7 @@ import { pressPhotoFor } from '../../../data/pressPhotos';
 /** Passende Seite je Kategorie (Knopf im Lesebereich). */
 const CAT_TARGET: Partial<Record<MessageCategory, [Screen, string]>> = {
   transfer: ['verhandlungen', 'Verhandlungen'], injury: ['squad', 'Kader'], match: ['fixtures', 'Spielplan'],
-  board: ['vorstand', 'Vorstand'], contract: ['vertraege', 'Verträge'], training: ['training', 'Trainingsplan'],
+  board: ['cat-verein', 'Verein'], contract: ['vertraege', 'Verträge'], training: ['training', 'Trainingsplan'],
   media: ['presse', 'Presse'], cup: ['cup', 'Pokal'],
 };
 

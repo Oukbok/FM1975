@@ -55,7 +55,7 @@ function page({ screen, g, rerender, setScreen, onWatch, onReplayDraw, onOpenEdi
     case 'cat-kader': return <P.KaderDashboard g={g} onGoto={setScreen} />;
     case 'cat-transfers': return <P.TransfersDashboard g={g} onGoto={setScreen} />;
     case 'cat-finanzen': return <P.FinanzenDashboard g={g} onGoto={setScreen} />;
-    case 'cat-verein': return <P.VereinDashboard g={g} onGoto={setScreen} />;
+    case 'cat-verein': return <P.VereinDashboard g={g} onGoto={setScreen} onChange={ch} />;
     case 'cat-statistiken': return <P.StatistikenDashboard g={g} onGoto={setScreen} />;
     case 'cat-training': return <P.TrainingDashboard g={g} onGoto={setScreen} />;
     case 'cat-jugend': return <P.JugendDashboard g={g} onGoto={setScreen} />;
@@ -68,7 +68,7 @@ function page({ screen, g, rerender, setScreen, onWatch, onReplayDraw, onOpenEdi
     case 'fanartikel': return <P.MerchView g={g} onChange={ch} />;
     case 'fans': return <P.FansView g={g} />;
     case 'kartenverkauf': return <P.TicketsView g={g} onChange={ch} onGoto={setScreen} />;
-    case 'vorstand': return <P.BoardView g={g} onChange={ch} />;
+    case 'vorstand': return <P.VereinDashboard g={g} onGoto={setScreen} onChange={ch} />; // Vorstand entfällt (Wunsch Pascal): alte Verweise → Verein
     case 'international': return <P.InternationalView g={g} onWatch={onWatch} onReplayDraw={onReplayDraw} />;
     case 'halle': return <P.IndoorView g={g} onChange={ch} />;
     case 'auszeichnungen': return <P.AwardsView g={g} />;

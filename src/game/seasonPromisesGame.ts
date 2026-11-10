@@ -132,7 +132,7 @@ export function unavailableWhy(g: Game, id: SeasonPromiseId, base = makeBase(g))
     case 'jugend': return base.young.length < 2 ? 'Kaum Spieler bis 21 im Kader – hol erst Talente hoch.' : undefined;
     case 'erfahrung': return base.vets.length ? undefined : 'Kein erfahrener Leistungsträger über 30 im Kader.';
     case 'boerse':
-      if (!club.corporate) return 'Erst nach der Ausgliederung des Profibereichs (ab 1998, Verein › Vorstand).';
+      if (!club.corporate) return 'Erst nach der Ausgliederung des Profibereichs (ab 1998, Verein › Verein).';
       return club.corporate.investorShare >= 49 ? 'Die 50+1-Grenze ist erreicht.' : undefined;
     default: return undefined;
   }

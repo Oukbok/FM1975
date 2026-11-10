@@ -125,7 +125,7 @@ export const ERA_TIPS: EraTipSet[] = [
       { topic: 'geld', title: 'Der Markt wird europäisch', where: 'Transfers › Transfermarkt',
         text: 'EU-Spieler zählen nicht mehr als Ausländer, die Kader werden internationaler.',
         inGame: 'Schau dich im Ausland um – die Auswahl wird größer, die Gehälter steigen schneller.' },
-      { topic: 'geld', title: 'Kapital für den Verein', where: 'Verein › Vorstand',
+      { topic: 'geld', title: 'Kapital für den Verein', where: 'Verein › Verein',
         text: 'Ab 1998 dürfen Vereine ihre Profiabteilung in eine Kapitalgesellschaft ausgliedern.',
         inGame: 'Ein Investor bringt frisches Geld, kostet aber Mitsprache – überleg dir den Schritt gut.', from: 1998 },
     ],

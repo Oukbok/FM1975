@@ -15,7 +15,7 @@
 .kb-f-val.up { color: var(--pos); }
 .kb-f-val.down { color: var(--neg); }
 
-.kb-spark { width: 100%; height: 40px; margin-top: 8px; display: block; }
+.kb-spark { width: 100%; height: 84px; margin-top: 8px; display: flex; position: relative; }
 .kb-spark-line { fill: none; stroke: var(--bar-fill-hi); stroke-width: 1.6; vector-effect: non-scaling-stroke; }
 .kb-spark-mid { stroke: var(--border); stroke-dasharray: 3 4; vector-effect: non-scaling-stroke; }
 

@@ -9,7 +9,8 @@ import { economyScale, yearOf } from '../engine/economy';
 import { nextPlayerEuroTie } from '../engine/euro';
 import { euroStatus, inEuroCup } from '../game/euroFixture';
 import { euroCompName } from '../data/euroFormats';
-import { computeMonthly, expectedAttendanceRate, totalExpense, totalIncome } from '../engine/finances';
+import { computeMonthly, expectedAttendanceRate, forecastSeasonEnd, totalExpense, totalIncome, weeklyWageBill } from '../engine/finances';
+import { BalanceLine, CorporateBox, LicenseBox } from './finanzen/businessBoxes';
 import { priceOf, seatPriceScale } from '../engine/seating';
 import { FACILITIES, facilityAvailable, MAX_LEVEL } from '../engine/infrastructure';
 import { getAvailablePlayers } from '../engine/transfers';
@@ -263,8 +264,9 @@ export function FinanzenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) 
   const inc = totalIncome(fin), exp = totalExpense(fin);
   const incRows = Object.entries(fin.income).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
   const expRows = Object.entries(fin.expenses).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
-  const tx = [...fin.transactions].reverse().slice(0, 9);
-  const hist = (fin.balanceHistory ?? []).slice(-24);
+  const homeRemaining = g.fixtures.filter((x) => x.homeClubId === myClub.id && x.status === 'scheduled').length;
+  const forecast = forecastSeasonEnd(myClub, g.players, g.table, g.calendar.currentDate, g.calendar.seasonEndDate, homeRemaining);
+  const wageFree = fin.wageBudget - weeklyWageBill(myClub, g.players);
   const c = myClub.commerce;
   return (
     <DashPage>
@@ -273,7 +275,10 @@ export function FinanzenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) 
           <Kpi value={fmtDM(fin.balance)} label="Kontostand" color={fin.balance >= 0 ? undefined : 'var(--red)'} />
           <Kpi value={fmtDM(m.net)} label="Saldo pro Monat" color={m.net >= 0 ? 'var(--green)' : 'var(--red)'} />
         </div>
-        <Sparkline values={hist.map((h) => h.balance)} />
+        <div className="dfin-chart"><BalanceLine g={g} months={18} /></div>
+        <KV k="Prognose Saisonende" info="prognose" v={fmtDM(forecast.projectedEndBalance)} color={forecast.projectedEndBalance < 0 ? 'var(--red)' : undefined} />
+        <KV k="Transferbudget" info="transferbudget" v={fmtPrice(fin.transferBudget)} />
+        <KV k="Gehaltsbudget frei" info="gehaltsbudget" v={fmtWage(wageFree)} color={wageFree < 0 ? 'var(--red)' : undefined} />
       </DashBox>
 
       <DashBox title="Einnahmen (Saison)" info="einnahmen" icon="dashFinanzen" onClick={() => onGoto('finances')} right={fmtDM(inc)}>
@@ -302,15 +307,7 @@ export function FinanzenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) 
         <BoxLink>Sponsoring öffnen</BoxLink>
       </DashBox>
 
-      <DashBox title="Letzte Buchungen" icon="contracts" onClick={() => onGoto('finances')}>
-        {tx.length ? tx.map((t) => (
-          <div key={t.id} className="dlist-row">
-            <span className="meta" style={{ minWidth: 64 }}>{fmtDateShort(t.date).dmy}</span>
-            <span className="grow">{t.description}</span>
-            <span className="val" style={{ color: t.amount >= 0 ? 'var(--green)' : 'var(--red)' }}>{t.amount >= 0 ? '+' : '−'}{fmtDM(Math.abs(t.amount))}</span>
-          </div>
-        )) : <Empty icon="contracts">Noch keine Buchungen.</Empty>}
-      </DashBox>
+      <LicenseBox g={g} />
     </DashPage>
   );
 }
@@ -334,7 +331,7 @@ export function Sparkline({ values, height = 120 }: { values: number[]; height?:
 }
 
 // --- VEREIN -----------------------------------------------------------------
-export function VereinDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) => void }) {
+export function VereinDashboard({ g, onGoto, onChange }: { g: Game; onGoto: (s: Screen) => void; onChange: () => void }) {
   const myClub = g.clubs[g.managedClubId];
   const infra = myClub.infrastructure as unknown as Record<string, number>;
   const year = yearOf(g.calendar.currentDate);
@@ -343,19 +340,9 @@ export function VereinDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) =>
   const facs = FACILITIES.filter((f) => facilityAvailable(f, year));
   const homeGames = g.fixtures.filter((m) => m.homeClubId === myClub.id && m.result).slice(-6);
   const avgAtt = homeGames.length ? Math.round(avg(homeGames.map((m) => m.result!.attendance))) : 0;
-  const row = tableRow(g);
-  const conf = myClub.boardConfidence ?? 50;
   return (
     <DashPage>
-      <DashBox title="Vorstand" info="vorstandVertrauen" icon="dashVerein" onClick={() => onGoto('vorstand')}>
-        <div className="dkpis">
-          <Kpi value={row ? `${row.position}.` : '–'} label="Tabellenplatz" />
-          <Kpi value={`${Math.round(conf)}`} label="Vertrauen" color={condColor(conf)} />
-        </div>
-        <KV k="Saisonziel" v={myClub.boardExpectation} />
-        <Meter label="Vertrauen des Vorstands" value={conf} color={condBar(conf)} />
-        <div className="dnote mt8">Unter 40 kürzt der Vorstand die Transfermittel, unter 20 halbiert er sie.</div>
-      </DashBox>
+      <CorporateBox g={g} onChange={onChange} />
 
       <DashBox title="Vereinsprofil" info="ansehen" icon="stadium">
         <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 8 }}>

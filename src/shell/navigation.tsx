@@ -87,7 +87,6 @@ export const MENU_STRUCTURE: MainCat[] = [
   ] },
   { key: 'verein', label: 'Verein', icon: 'stadium', dash: 'cat-verein', subs: [
     { screen: 'cat-verein', label: 'Verein', icon: 'stadium' },
-    { screen: 'vorstand', label: 'Vorstand', icon: 'dashVerein' },
     { screen: 'staff', label: 'Mitarbeiter', icon: 'staff' },
     { screen: 'facilities', label: 'Vereinsgelände', icon: 'facilities' },
     { screen: 'stadium', label: 'Stadion', icon: 'stadium' },

@@ -19,7 +19,7 @@ import Icon from '../../../components/Icon';
 import { InfoTip } from '../../../ui/InfoTip';
 import { PlayerTalkModal } from '../talk/PlayerTalkModal';
 import PosBadge from '../../../components/PosBadge';
-import { smoothPath, type Pt } from '../../../ui/smoothPath';
+import { LineChart } from '../../../ui/LineChart';
 
 const sign = (v: number) => (v > 0 ? `+${v}` : `${v}`);
 
@@ -39,18 +39,12 @@ export function FactorList({ items, max = 9, empty }: { items: DRFactor[]; max?:
   );
 }
 
-/** Ruhige Verlaufslinie der Teamstimmung (Monatswerte). */
-export function MoodSpark({ points }: { points: number[] }) {
+/** Verlaufslinie der Teamstimmung (Monatswerte) mit Achse 0–100 und Wert unter der Maus. */
+export function MoodSpark({ points }: { points: { date: string; mood: number }[] }) {
   if (points.length < 2) return null;
-  const w = 260, h = 46;
-  const xs = points.map((_, i) => (i / (points.length - 1)) * w);
-  const ys = points.map((v) => h - 4 - (Math.max(0, Math.min(100, v)) / 100) * (h - 8));
-  return (
-    <svg className="kb-spark" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
-      <line x1={0} x2={w} y1={h - 4 - 0.5 * (h - 8)} y2={h - 4 - 0.5 * (h - 8)} className="kb-spark-mid" />
-      <path d={smoothPath(xs.map((x, i): Pt => [x, ys[i]]))} className="kb-spark-line" />
-    </svg>
-  );
+  const MON = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+  const pts = points.map((p) => ({ label: MON[+p.date.slice(5, 7) - 1], tip: `${MON[+p.date.slice(5, 7) - 1]} ${p.date.slice(0, 4)}`, value: Math.round(p.mood) }));
+  return <div className="kb-spark"><LineChart points={pts} fmt={(v) => `Stimmung ${v}`} fmtAxis={(v) => String(v)} compact minHeight={84} ariaLabel="Teamstimmung je Monat" /></div>;
 }
 
 /** Spieler im Fokus: Moral mit Gründen, Einfluss, Außenseiter-Gründe, Gespräch. */

@@ -144,7 +144,7 @@ export function seasonTasks(g: Game, sit?: BriefingSituation, changes: GameChang
   if (sit) {
     const need = goalRank(sit.goal, sit.of);
     if (need != null && sit.rank > need + 2) {
-      add({ id: 'goal-hard', level: 'wichtig', icon: 'dashVerein', where: 'Verein › Vorstand',
+      add({ id: 'goal-hard', level: 'wichtig', icon: 'dashVerein', where: 'Verein › Verein',
         title: `Ziel „${sit.goal}“ ist ehrgeizig`,
         text: `Dein Kader ist nur der ${sit.rank}.-stärkste von ${sit.of}. Verstärke dich gezielt oder halte das Vertrauen des Vorstands (${sit.confidence}/100) im Blick.` });
     } else if (sit.goal === 'Klassenerhalt' && sit.rank >= sit.of - 2) {
@@ -152,7 +152,7 @@ export function seasonTasks(g: Game, sit?: BriefingSituation, changes: GameChang
         title: 'Abstiegskampf von Anfang an',
         text: 'Dein Kader gehört zu den schwächsten der Liga. Eine stabile Defensive und Heimstärke sind jetzt alles.' });
     } else if (need != null && sit.rank < need - 2 && sit.goal !== 'Meisterschaft') {
-      add({ id: 'goal-easy', level: 'tipp', icon: 'trophy', where: 'Verein › Vorstand',
+      add({ id: 'goal-easy', level: 'tipp', icon: 'trophy', where: 'Verein › Verein',
         title: 'Mehr als das Ziel ist drin',
         text: `Dein Kader ist der ${sit.rank}.-stärkste – „${sit.goal}“ ist gut erreichbar. Wer übertrifft, gewinnt Vertrauen.` });
     }
@@ -161,7 +161,7 @@ export function seasonTasks(g: Game, sit?: BriefingSituation, changes: GameChang
   // --- Vorstand ------------------------------------------------------------
   const conf = sit?.confidence ?? Math.round(club.boardConfidence ?? 60);
   if (conf < 35) {
-    add({ id: 'board', level: conf < 20 ? 'dringend' : 'wichtig', icon: 'dashVerein', where: 'Verein › Vorstand',
+    add({ id: 'board', level: conf < 20 ? 'dringend' : 'wichtig', icon: 'dashVerein', where: 'Verein › Verein',
       title: 'Der Vorstand wird ungeduldig',
       text: `Vertrauen nur ${conf}/100. Ein guter Saisonstart ist Pflicht – sonst kürzt er die Mittel und stellt deinen Trainer infrage.` });
   }

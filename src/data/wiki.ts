@@ -1923,7 +1923,7 @@ Jede Fläche ist ein eigener Vertrag mit Partner, Branche, Herkunftsland, Jahres
 | Ärmel | 2017/18 | vorher vermarktete die Liga den Ärmel |
 | Krypto/NFT | 2021–22 | Einbruch nach der FTX-Pleite im November 2022 |
 
-Namensrechte am Stadion (ab 2000) verkaufst du im Reiter **Namensrechte** (auch unter Verein › Vorstand).
+Namensrechte am Stadion (ab 2000) verkaufst du im Reiter **Namensrechte**. Rechtsform & Investor stehen unter Verein › Verein, Lizenz & Schulden unter Finanzen › Finanzen, Kredite unter Finanzen › Bilanz.
 
 ## Die Seite Sponsoring
 Vier Reiter: **Hauptsponsor** (Einnahmen dieser Saison je Art, Brustvertrag mit Prämien und Klauseln, dein Heimtrikot mit Brust-, Ausrüster- und Ärmel-Logo), **Namensrechte** (Stadion von oben mit allen Tribünen, Stadionname und Angebote), **Sponsoren-Pyramide** (Premium-, Neben- und lokale Sponsoren als Logo-Kacheln; gestrichelt = frei, mit Zahl der Angebote; blass = kommt erst in einer späteren Epoche) und **Bandenwerbung** (Spielfeldrand der Epoche: bemalte Holzbanden, Kunststoff, Prismenwender, ab 2010 LED). **Linksklick** auf ein Logo, eine Bande oder Tribüne öffnet die Karteikarte mit allen Daten und Aktionen, **Rechtsklick** (Touch: lange drücken) ein Menü: Annehmen, Verhandeln, Ablehnen, Option ziehen, Auflösen, Namensrechte verkaufen. Alle Firmen und ihre Logos sind erfunden – Ähnlichkeiten mit echten Marken sind nicht gewollt. Die Logos werden aus Name, Branche und Jahrzehnt gezeichnet (später teils als Bild). Ältere Spielstände mit früheren Firmennamen werden beim Laden auf die heutigen Namen umgestellt.

@@ -76,7 +76,7 @@ export const SEASON_PROMISES: SeasonPromiseDef[] = [
   { id: 'jugend', cat: 'team', label: 'Ich setze verstärkt auf die Jugend.', check: `Mindestens ${Math.round(L.youthShare * 100)} % der Startelf-Einsätze in der Liga für Spieler bis 21 Jahre.` },
   { id: 'erfahrung', cat: 'team', label: 'Es gibt keine alten Spieler, nur gute und schlechte.', check: `Deine erfahrenen Leistungsträger (ab 31) stehen in mindestens ${Math.round(L.vetShare * 100)} % der Ligaspiele in der Startelf.` },
   { id: 'stadion', cat: 'infra', label: 'Wir bauen das Stadion aus.', check: 'Mehr Plätze am Saisonende oder ein neu begonnener Stadionumbau.', public: true },
-  { id: 'boerse', cat: 'infra', label: 'Wir gehen an die Börse.', check: 'Verkauf von Anteilen an einen Investor in dieser Saison (Verein › Vorstand).', public: true },
+  { id: 'boerse', cat: 'infra', label: 'Wir gehen an die Börse.', check: 'Verkauf von Anteilen an einen Investor in dieser Saison (Verein › Verein).', public: true },
   { id: 'treue', cat: 'infra', label: 'Ich bleibe dem Verein treu, egal was passiert.', check: 'Du bist am Saisonende noch Trainer dieses Vereins.' },
   { id: 'scouting', cat: 'infra', label: 'Wir verbessern unser Scouting.', check: 'Stärkere Scoutabteilung oder Datenzentrum am Saisonende als heute.' },
   { id: 'trainingsanlagen', cat: 'infra', label: 'Wir verbessern unsere Trainingsanlagen.', check: 'Trainingszentrum oder Leistungszentrum am Saisonende ausgebaut.', public: true },

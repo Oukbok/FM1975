@@ -130,7 +130,7 @@ function ManagerWidget({ g, onGoto }: { g: Game; onGoto: Go }) {
   const club = g.clubs[g.managedClubId];
   const env = g.environment;
   return (
-    <Widget title="Managerstatus" to="vorstand" onGoto={onGoto}>
+    <Widget title="Managerstatus" to="karriere" onGoto={onGoto}>
       <div className="dz-kv"><span>Saisonziel<InfoTip k="saisonziel" /></span><b>{club.boardExpectation}</b></div>
       <Bar label="Vorstand" v={club.boardConfidence ?? 60} info="vorstandVertrauen" />
       {env && <Bar label="Fans" v={env.fanMood} info="fanStimmung" />}

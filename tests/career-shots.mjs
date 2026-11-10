@@ -1,5 +1,5 @@
 // Screenshots der Managerkarriere: Zentrale › Karriere (Reiter Bilanz/Saisons/Trainer & Spieler),
-// Druck-Nachricht des Vorstands im Newscenter, Verein › Vorstand, eigenes Vereinsprofil (Manager & Trainer).
+// Druck-Nachricht des Vorstands im Newscenter, Verein › Verein, eigenes Vereinsprofil (Manager & Trainer).
 //   npm run build && node scripts/run-ts.mjs tests/career-prep.ts public/saves/test-3-jahre.txt <stand.txt>
 //   SAVE=<stand.txt> node tests/career-shots.mjs [ordner] [präfix]      (1920×1080 und 1366×768)
 import { createServer } from 'node:http';
@@ -59,7 +59,7 @@ for (const [w, h] of (process.env.VIEW ? [process.env.VIEW.split("x").map(Number
     if (await m.count()) { await m.click(); await page.waitForTimeout(300); await shot('nachricht_druck'); }
     const blocked = await page.locator('text=Altes Jobangebot').count();
     if (blocked) { await page.locator('text=Altes Jobangebot').first().click(); await page.waitForTimeout(300); await shot('nachricht_altangebot'); }
-    await nav('Verein', 'Vorstand'); await shot('vorstand');
+    await nav('Verein', 'Verein'); await shot('verein');
     await nav('Statistiken', 'Liga');
     await page.locator('.dtable tbody tr.me .club-link, .dtable tbody tr.mine .club-link').first().click({ timeout: 4000 }).catch(() => {});
     await page.waitForTimeout(600);

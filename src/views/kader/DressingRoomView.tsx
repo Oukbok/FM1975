@@ -58,7 +58,7 @@ export function DressingRoomView({ g, onChange }: { g: Game; onChange: () => voi
         {why === 'stimmung'
           ? <><div className="dnote">Zielwert {a.moodTarget} – die Stimmung folgt ihm langsam.</div><FactorList items={a.moodWhy} max={6} /></>
           : <FactorList items={a.cohesionWhy} max={7} />}
-        <MoodSpark points={[...(dr.history ?? []).slice(-18).map((h) => h.mood), mood]} />
+        <MoodSpark points={[...(dr.history ?? []).slice(-18), { date: g.calendar.currentDate, mood }]} />
       </DashBox>
 
       <DashBox title="Kabinen-Pyramide" icon="squad" rows={2} info="kabine_pyramide" right={<span className="kb-legend">Symbol Moral · K Kapitän · R Rat · Ziffer Gruppe</span>}>

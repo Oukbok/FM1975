@@ -70,7 +70,6 @@ export const FacilitiesView = lz(() => import('../views/verein/FacilitiesView'),
 export const FansView = lz(() => import('../views/verein/FansView'), 'FansView');
 export const StadiumView = lz(() => import('../views/verein/StadiumView'), 'StadiumView');
 export const TicketsView = lz(() => import('../views/verein/TicketsView'), 'TicketsView');
-export const BoardView = lz(() => import('../views/verein/BoardView'), 'BoardView');
 export const StaffView = lz(() => import('../views/verein/StaffView'), 'StaffView');
 export const ErfolgeView = lz(() => import('../views/verein/ErfolgeView'), 'ErfolgeView');
 export const CupView = lz(() => import('../views/statistiken/CupView'), 'CupView');
