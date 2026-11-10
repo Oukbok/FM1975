@@ -56,6 +56,8 @@ export interface OriginData {
    * Herkunfts-ID; eine leere Liste schaltet sie ab (dann nur `first`).
    */
   firstByEra?: [number, string[]][];
+  /** Optional: verdeckte Ethnie, Anteile der Gesichtsgruppen je Stützjahr. Fehlt = eingebaute Vorgabe bzw. immer `face`. */
+  faceMix?: [number, Record<string, number>][];
 }
 
 export interface CrestEra { from: number; crest: string }

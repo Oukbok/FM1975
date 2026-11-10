@@ -40,12 +40,12 @@ const FACES = ['mitteleuropa', 'nordeuropa', 'suedeuropa', 'osteuropa', 'balkan'
   .map((f) => ({ value: f, label: f }));
 
 export function NamesSection({ ds, onChange }: P) {
-  const [tab, setTab] = useState<'origins' | 'eras' | 'mix' | 'blocked'>('origins');
+  const [tab, setTab] = useState<'origins' | 'eras' | 'mix' | 'ethnie' | 'blocked'>('origins');
   const n = ds.names;
   return (
     <div className="ed-section">
       <div className="ed-tabs">
-        {([['origins', 'Herkünfte'], ['eras', 'Vornamen je Jahrgang'], ['mix', 'Mischung je Jahr'], ['blocked', 'Gesperrte Namen']] as const).map(([k, l]) =>
+        {([['origins', 'Herkünfte'], ['eras', 'Vornamen je Jahrgang'], ['mix', 'Mischung je Jahr'], ['ethnie', 'Ethnie'], ['blocked', 'Gesperrte Namen']] as const).map(([k, l]) =>
           <button key={k} className={`ed-tab ${tab === k ? 'on' : ''}`} onClick={() => setTab(k)}>{l}</button>)}
       </div>
       {tab === 'origins' && <>
@@ -53,13 +53,14 @@ export function NamesSection({ ds, onChange }: P) {
         <TableEditor rows={n.origins} onChange={onChange} searchKeys={['id', 'nationality']}
           cols={[
             { key: 'id', label: 'ID', width: 90 }, { key: 'nationality', label: 'Nation', width: 70, hint: 'Kürzel, z. B. GER' },
-            { key: 'face', label: 'Gesicht', type: 'select', options: FACES, width: 130 },
+            { key: 'face', label: 'Ethnie (Vorgabe)', type: 'select', options: FACES, width: 130 },
             { key: 'first', label: 'Vornamen', type: 'list', width: 380 }, { key: 'last', label: 'Nachnamen', type: 'list', width: 380 },
           ]}
           makeRow={(): OriginData => ({ id: `herkunft${n.origins.length + 1}`, nationality: 'GER', face: 'mitteleuropa', first: [], last: [] })} />
       </>}
       {tab === 'eras' && <NameErasEditor ds={ds} onChange={onChange} />}
       {tab === 'mix' && <MixEditor ds={ds} onChange={onChange} />}
+      {tab === 'ethnie' && <FaceMixEditor ds={ds} onChange={onChange} />}
       {tab === 'blocked' && <>
         <Explain>Namenskombinationen, die nie erzeugt werden (z. B. um Ähnlichkeiten mit echten Personen zu vermeiden). Ein Name pro Zeile: „Vorname Nachname“.</Explain>
         <textarea key={n.blocked.length} className="ed-in ed-code" rows={18} defaultValue={n.blocked.join('\n')}
@@ -91,6 +92,46 @@ function MixEditor({ ds, onChange }: P) {
         </table>
       </div>
       <div className="ed-row"><button className="ed-btn on" onClick={() => { const last = mix[mix.length - 1]; mix.push([(last?.[0] ?? 2020) + 10, { ...(last?.[1] ?? { ger: 100 }) }]); onChange(); }}>Stützjahr hinzufügen</button></div>
+    </>
+  );
+}
+
+/** Verdeckte Ethnie je Herkunft: Zeilen „Jahr: gruppe gewicht, …“ (Wunsch Pascal). */
+function FaceMixEditor({ ds, onChange }: P) {
+  const groups = FACES.map((f) => f.value);
+  const fmt = (m?: [number, Record<string, number>][]) => (m ?? []).map(([y, r]) => `${y}: ${Object.entries(r).map(([k, v]) => `${k} ${v}`).join(', ')}`).join('\n');
+  const parse = (txt: string): [number, Record<string, number>][] | undefined => {
+    const rows: [number, Record<string, number>][] = [];
+    for (const line of txt.split('\n')) {
+      const m = line.match(/^\s*(\d{4})\s*:(.*)$/);
+      if (!m) continue;
+      const r: Record<string, number> = {};
+      for (const part of m[2].split(',')) {
+        const [k, v] = part.trim().split(/\s+/);
+        if (k && groups.includes(k) && Number.isFinite(Number(v)) && Number(v) > 0) r[k] = Number(v);
+      }
+      if (Object.keys(r).length) rows.push([Number(m[1]), r]);
+    }
+    rows.sort((a, b) => a[0] - b[0]);
+    return rows.length ? rows : undefined;
+  };
+  return (
+    <>
+      <Explain>Die <b>Ethnie</b> ist verdeckt: Sie erscheint nie im Spiel und bestimmt nur, welches Gesicht ein Spieler bekommt – unabhängig von seiner Nationalität. So kann ein Engländer schwarz sein. Je Herkunft eine Zeile pro Stützjahr (Jahr, in dem die Spieler etwa 20 sind): <code>2025: mitteleuropa 60, westafrika 34</code>. Dazwischen wird übergeblendet. Leer = immer die Vorgabe der Herkunft. Gruppen: {groups.join(', ')}. Bei den Ausnahmetalenten wird die Ethnie je Spieler unter <b>Legenden</b> festgelegt.</Explain>
+      <div className="ed-table-scroll">
+        <table className="ed-table">
+          <thead><tr><th style={{ width: 110 }}>Herkunft</th><th style={{ width: 70 }}>Nation</th><th style={{ width: 120 }}>Vorgabe</th><th>Anteile je Stützjahr</th></tr></thead>
+          <tbody>
+            {ds.names.origins.map((o) => (
+              <tr key={o.id}>
+                <td>{o.id}</td><td>{o.nationality}</td><td>{o.face}</td>
+                <td><textarea className="ed-in ed-list" rows={Math.max(1, o.faceMix?.length ?? 1)} defaultValue={fmt(o.faceMix)}
+                  placeholder={`${o.face} 100`} onBlur={(e) => { const v = parse(e.target.value); o.faceMix = v ?? []; onChange(); }} /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 }

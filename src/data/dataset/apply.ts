@@ -115,6 +115,10 @@ export function applyDataset(ds: Dataset | null): void {
       const b = base.names.origins.find((x) => x.id === o.id)?.firstByEra;
       if (b) copy.firstByEra = JSON.parse(JSON.stringify(b));
     }
+    if (copy.faceMix === undefined) {
+      const b = base.names.origins.find((x) => x.id === o.id)?.faceMix;
+      if (b) copy.faceMix = JSON.parse(JSON.stringify(b));
+    }
     ORIGINS[o.id] = copy;
   }
   replaceArray(MIX, d.names?.mix, base.names.mix);

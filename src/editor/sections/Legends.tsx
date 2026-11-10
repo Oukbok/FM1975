@@ -34,6 +34,7 @@ export function LegendsSection({ ds, onChange }: P) {
     { key: 'country', label: 'Land', type: 'select', options: COUNTRY_OPTS, width: 180 },
     { key: 'pos', label: 'Pos.', type: 'select', options: POS_OPTS, width: 70 },
     { key: 'potential', label: 'Potenzial', type: 'number', width: 80 },
+    { key: 'face', label: 'Ethnie', type: 'select', options: opt(FACES), optional: true, width: 130 },
   ];
   const make = (): LegendDef => ({
     id: `talent${rows.length + 1}`, firstName: 'Vorname', lastName: 'Nachname', birth: '2010-01-01', country: 'GER', pos: 'ZM',
@@ -67,7 +68,7 @@ function LegendForm({ ds, l, onChange }: { ds: Dataset; l: LegendDef; onChange: 
         { key: 'foot', label: 'Starker Fuß', type: 'select', options: [{ value: 'right', label: 'rechts' }, { value: 'left', label: 'links' }, { value: 'both', label: 'beidfüßig' }] },
         { key: 'type', label: 'Spielertyp', type: 'select', options: LEGEND_TYPES.map((t) => ({ value: t.id, label: t.label })) },
         num('height', 'Größe (cm)'),
-        { key: 'face', label: 'Gesichtstyp', type: 'select', options: opt(FACES), optional: true, hint: 'leer = nach Land' },
+        { key: 'face', label: 'Ethnie (verdeckt)', type: 'select', options: opt(FACES), optional: true, hint: 'bestimmt nur das Gesicht, nie sichtbar; leer = typisch fürs Land' },
         { key: 'club', label: 'Jugendverein', type: 'select', options: clubs, optional: true, hint: clubs.length ? 'leer = zufällig im Land' : 'Land ohne Vereine im Datensatz: wechselt aus dem Ausland' },
       ]} />
       <div className="ed-sec">Karrierekurve</div>

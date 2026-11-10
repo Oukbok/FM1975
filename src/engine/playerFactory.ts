@@ -7,7 +7,7 @@ import { Player, Position, PlayerAttributes, AttributeKey, createEmptyStats, pot
 import { wageForOverall } from './economy';
 import { weightsFor, positionSuitability, footForSide } from './positions';
 import { ensurePositionSkill } from './positionSkill';
-import { pickOrigin, makeName, Origin } from '../data/origins';
+import { pickOrigin, makeName, faceFor, Origin } from '../data/origins';
 import { exceptionalPotential, getTalentSupply } from './talent';
 
 export interface NewPlayerSpec {
@@ -116,7 +116,7 @@ export function createPlayer(spec: NewPlayerSpec): Player {
     firstName, lastName, fullName: `${firstName} ${lastName}`,
     shirtNumber: spec.shirt ?? 0,
     nationality: origin.nationality,
-    origin: origin.id, face: origin.face,
+    origin: origin.id, face: faceFor(origin, year - age, spec.id),
     dateOfBirth: birthDate(age, year, rng), age,
     height: pos === 'TW' ? 182 + Math.floor(rng() * 14) : 168 + Math.floor(rng() * 24),
     weight: 64 + Math.floor(rng() * 24),

@@ -22,7 +22,7 @@ import { baseMarketValue as proMarketValue } from './clubEconomy';
 const baseMarketValue = (p: Player) => Math.round(proMarketValue(p) * 0.5 / 5000) * 5000;
 import { ensureDevFields, refreshOverall } from './development';
 import { updateScoutEstimate } from './scouting';
-import { pickOrigin, makeName } from '../data/origins';
+import { pickOrigin, makeName, faceFor } from '../data/origins';
 import { makePersonality } from './playerFactory';
 import {
   Player, Club, PlayerAttributes, Position, AttributeKey,
@@ -261,7 +261,7 @@ export function generateYouthPlayer(
     youthJoined: currentDate,
     firstName, lastName, fullName: `${firstName} ${lastName}`,
     shirtNumber: 30 + ri(0, 69),
-    nationality: origin.nationality, origin: origin.id, face: origin.face,
+    nationality: origin.nationality, origin: origin.id, face: faceFor(origin, currentYear - useAge, `${clubId}_y_${uniqueSeed}`),
     dateOfBirth: birthDate(rand, useAge, currentYear), age: useAge,
     height: ri(168, 192), weight: ri(60, 82),
     preferredFoot: footForSide(pos, rand() < 0.7 ? 'right' : (rand() < 0.7 ? 'left' : 'both'), `${clubId}_y_${uniqueSeed}`),

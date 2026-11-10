@@ -26,17 +26,17 @@ export const LEGENDS_B: LegendDef[] = [
   L('gerrardson', 'Stewart', 'Garradine', '1980-05-30', 'ENG', 'ZM', ['DM', 'OM'], 'R', 'antreiber', 91, 183, [0.4, 0.2], [85, 92, 40, 75, 90, 88, 60], [97, 50, 95, 20, 55, 80]),
   L('rooneham', 'Warren', 'Rooneham', '1985-10-24', 'ENG', 'HS', ['MS', 'OM'], 'R', 'antreiber', 91, 176, [0.9, -0.4], [82, 85, 35, 90, 75, 88, 65], [75, 70, 70, 35, 60, 75]),
   L('kaneford', 'Harvey', 'Kaynesford', '1993-07-28', 'ENG', 'MS', [], 'R', 'torjaeger', 93, 188, [-0.6, 0.4], [92, 85, 35, 60, 95, 92, 85], [80, 45, 70, 50, 45, 85]),
-  L('bellingworth', 'Jed', 'Bellingworth', '2003-06-29', 'ENG', 'OM', ['ZM'], 'R', 'antreiber', 93, 186, [0.95, 0.1], [88, 92, 35, 92, 92, 96, 92], [55, 55, 50, 85, 80, 70]),
+  L('bellingworth', 'Jed', 'Bellingworth', '2003-06-29', 'ENG', 'OM', ['ZM'], 'R', 'antreiber', 93, 186, [0.95, 0.1], [88, 92, 35, 92, 92, 96, 92], [55, 55, 50, 85, 80, 70], 'westafrika'),
   // --- Portugal ---
   L('figueiro', 'Lucas', 'Figueiró', '1972-11-04', 'POR', 'RA', ['LA', 'OM'], 'R', 'dribbler', 93, 180, [0.3, 0.4], [88, 88, 25, 75, 88, 88, 85], [25, 80, 45, 80, 70, 65]),
   L('ronalvo', 'Cristóvão', 'Ronalves', '1985-02-05', 'POR', 'LA', ['MS', 'RA'], 'R', 'sprinter', 98, 187, [0.6, 1.0], [96, 92, 5, 90, 99, 99, 88], [45, 80, 55, 80, 99, 70]),
   // --- Brasilien ---
   L('zicao', 'Arturzinho', 'Zicardo', '1953-03-03', 'BRA', 'OM', ['HS'], 'R', 'regisseur', 94, 172, [0.2, 0.2], [88, 85, 45, 80, 88, 85, 70], [90, 50, 90, 40, 55, 80]),
   L('sofocles', 'Doutor', 'Sófocles', '1954-02-19', 'BRA', 'OM', ['ZM'], 'R', 'regisseur', 91, 192, [-0.3, -0.4], [80, 85, 40, 65, 40, 70, 60], [80, 30, 90, 40, 75, 60]),
-  L('romarinho', 'Romarinho', 'Sousela', '1966-01-29', 'BRA', 'MS', [], 'R', 'torjaeger', 94, 168, [0.3, 0.8], [75, 92, 30, 75, 35, 85, 60], [30, 75, 85, 55, 85, 55]),
+  L('romarinho', 'Romarinho', 'Sousela', '1966-01-29', 'BRA', 'MS', [], 'R', 'torjaeger', 94, 168, [0.3, 0.8], [75, 92, 30, 75, 35, 85, 60], [30, 75, 85, 55, 85, 55], 'westafrika'),
   L('ronaldao', 'Reinaldão', 'Nazarbes', '1976-09-18', 'BRA', 'MS', [], 'R', 'sprinter', 98, 183, [0.9, -0.6], [85, 90, 80, 95, 55, 90, 80], [40, 80, 50, 75, 85, 60]),
   L('rivalto', 'Rivaldinho', 'Pereirinha', '1972-04-19', 'BRA', 'OM', ['LA', 'HS'], 'L', 'kuenstler', 93, 186, [-0.2, 0.5], [82, 88, 30, 70, 82, 85, 70], [40, 75, 60, 70, 45, 70]),
-  L('ronaldelo', 'Rodolfinho', 'Gaudério', '1980-03-21', 'BRA', 'OM', ['LA', 'HS'], 'R', 'kuenstler', 96, 181, [0.6, -0.8], [75, 85, 25, 85, 40, 75, 75], [40, 70, 55, 75, 90, 60]),
+  L('ronaldelo', 'Rodolfinho', 'Gaudério', '1980-03-21', 'BRA', 'OM', ['LA', 'HS'], 'R', 'kuenstler', 96, 181, [0.6, -0.8], [75, 85, 25, 85, 40, 75, 75], [40, 70, 55, 75, 90, 60], 'westafrika'),
   L('kaquinho', 'Ricardinho', 'Kaquinho', '1982-04-22', 'BRA', 'OM', ['ZM', 'HS'], 'R', 'antreiber', 93, 186, [0.6, -0.6], [88, 85, 55, 85, 92, 85, 80], [70, 50, 55, 65, 60, 85]),
   L('neimarcos', 'Neimarcos', 'Santinho', '1992-02-05', 'BRA', 'LA', ['MS', 'OM'], 'R', 'dribbler', 94, 175, [0.7, -0.5], [76, 80, 65, 90, 50, 88, 75], [35, 92, 60, 75, 97, 65]),
   // --- Argentinien ---

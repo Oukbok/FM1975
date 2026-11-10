@@ -22,7 +22,16 @@ export interface Origin {
    * Fehlt das Feld oder ist es leer, gilt `first` für alle Jahrgänge.
    */
   firstByEra?: FirstNameEra[];
+  /**
+   * Verdeckte Ethnie (Wunsch Pascal): Anteile der Gesichtsgruppen je Stützjahr
+   * (Jahr, in dem die Spieler etwa 20 sind), dazwischen übergeblendet. So ist ein
+   * Engländer meist `mitteleuropa`, aber mit wachsendem Anteil `westafrika`.
+   * Fehlt das Feld, gilt immer `face`. Nie im Spiel sichtbar – nur fürs Gesicht.
+   */
+  faceMix?: FaceMix;
 }
+
+export type FaceMix = [number, Partial<Record<FaceGroup, number>>][];
 
 export const ORIGINS: Record<string, Origin> = {
   ger: { id: 'ger', nationality: 'GER', face: 'mitteleuropa',
@@ -268,4 +277,69 @@ for (const [id, extra] of Object.entries(EXTRA_NAMES)) {
 for (const [id, eras] of Object.entries(FIRST_BY_ERA)) {
   const o = ORIGINS[id];
   if (o && !o.firstByEra) o.firstByEra = eras.map(([y, n]) => [y, [...new Set(n)]] as FirstNameEra);
+}
+
+// -----------------------------------------------------------------------------
+// Verdeckte Ethnie je Herkunft (Vorgabe; im Editor unter Namen › Ethnie änderbar).
+// Grobe Anteile im Profifußball des jeweiligen Landes, keine Statistik.
+// -----------------------------------------------------------------------------
+const FACE_MIX: Record<string, FaceMix> = {
+  eng: [[1975, { mitteleuropa: 97, westafrika: 3 }], [1990, { mitteleuropa: 86, westafrika: 13, suedeuropa: 1 }], [2010, { mitteleuropa: 70, westafrika: 26, nordafrika: 2, suedeuropa: 2 }], [2025, { mitteleuropa: 60, westafrika: 34, nordafrika: 3, suedeuropa: 3 }]],
+  sco: [[1975, { mitteleuropa: 100 }], [2025, { mitteleuropa: 92, westafrika: 8 }]],
+  fra: [[1975, { mitteleuropa: 86, suedeuropa: 6, westafrika: 4, nordafrika: 4 }], [1995, { mitteleuropa: 66, westafrika: 20, nordafrika: 9, suedeuropa: 5 }], [2025, { mitteleuropa: 44, westafrika: 38, nordafrika: 15, suedeuropa: 3 }]],
+  ned: [[1975, { mitteleuropa: 95, westafrika: 4, ostasien: 1 }], [1990, { mitteleuropa: 80, westafrika: 16, nordafrika: 2, ostasien: 2 }], [2025, { mitteleuropa: 60, westafrika: 28, nordafrika: 10, ostasien: 2 }]],
+  bel: [[1975, { mitteleuropa: 97, suedeuropa: 2, nordafrika: 1 }], [1995, { mitteleuropa: 82, westafrika: 10, nordafrika: 6, suedeuropa: 2 }], [2025, { mitteleuropa: 56, westafrika: 30, nordafrika: 12, suedeuropa: 2 }]],
+  sui: [[1975, { mitteleuropa: 94, suedeuropa: 6 }], [2000, { mitteleuropa: 76, balkan: 12, suedeuropa: 6, westafrika: 4, tuerkei: 2 }], [2025, { mitteleuropa: 64, balkan: 16, westafrika: 12, tuerkei: 4, suedeuropa: 4 }]],
+  aut: [[1975, { mitteleuropa: 98, balkan: 2 }], [2025, { mitteleuropa: 72, balkan: 13, tuerkei: 7, westafrika: 8 }]],
+  swe: [[1975, { nordeuropa: 98, balkan: 2 }], [2000, { nordeuropa: 86, balkan: 8, westafrika: 4, nordafrika: 2 }], [2025, { nordeuropa: 68, balkan: 10, westafrika: 14, nordafrika: 6, tuerkei: 2 }]],
+  den: [[1975, { nordeuropa: 100 }], [2025, { nordeuropa: 82, westafrika: 9, tuerkei: 4, balkan: 3, nordafrika: 2 }]],
+  nor: [[1975, { nordeuropa: 100 }], [2025, { nordeuropa: 80, westafrika: 12, nordafrika: 4, balkan: 4 }]],
+  por: [[1975, { suedeuropa: 88, westafrika: 12 }], [2025, { suedeuropa: 76, westafrika: 22, lateinamerika: 2 }]],
+  esp: [[1975, { suedeuropa: 99, lateinamerika: 1 }], [2025, { suedeuropa: 84, westafrika: 9, nordafrika: 5, lateinamerika: 2 }]],
+  ita: [[1975, { suedeuropa: 100 }], [2025, { suedeuropa: 88, westafrika: 9, nordafrika: 2, lateinamerika: 1 }]],
+  bra: [[1975, { lateinamerika: 62, westafrika: 36, suedeuropa: 2 }], [2025, { lateinamerika: 60, westafrika: 38, suedeuropa: 2 }]],
+  arg: [[1975, { lateinamerika: 70, suedeuropa: 30 }], [2025, { lateinamerika: 76, suedeuropa: 24 }]],
+  usa: [[1975, { mitteleuropa: 80, lateinamerika: 10, westafrika: 10 }], [2025, { mitteleuropa: 48, westafrika: 26, lateinamerika: 24, ostasien: 2 }]],
+  rus: [[1975, { osteuropa: 100 }], [2025, { osteuropa: 94, westafrika: 2, tuerkei: 4 }]],
+  ger_modern: [[2000, { mitteleuropa: 100 }], [2025, { mitteleuropa: 94, osteuropa: 3, suedeuropa: 3 }]],
+};
+for (const [id, mix] of Object.entries(FACE_MIX)) {
+  const o = ORIGINS[id];
+  if (o && !o.faceMix) o.faceMix = mix.map(([y, m]) => [y, { ...m }]);
+}
+
+function hashStr(str: string): number {
+  let h = 0x9e3779b9;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x85ebca6b); h ^= h >>> 13; }
+  return (h >>> 0) / 4294967296;
+}
+
+/** Anteile der Gesichtsgruppen einer Herkunft in einem Jahr (Spieler etwa 20). */
+export function faceMixFor(o: Origin, year: number): Record<string, number> {
+  const m = o.faceMix;
+  if (!m?.length) return { [o.face]: 1 };
+  if (year <= m[0][0]) return m[0][1] as Record<string, number>;
+  for (let i = 1; i < m.length; i++) {
+    const [y1, a] = m[i]; const [y0, b] = m[i - 1];
+    if (year <= y1) {
+      const t = (year - y0) / Math.max(1, y1 - y0);
+      const out: Record<string, number> = {};
+      for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) out[k] = ((b as Record<string, number>)[k] ?? 0) * (1 - t) + ((a as Record<string, number>)[k] ?? 0) * t;
+      return out;
+    }
+  }
+  return m[m.length - 1][1] as Record<string, number>;
+}
+
+/**
+ * Verdeckte Ethnie (Gesichtsgruppe) eines neuen Spielers: fest aus seiner ID
+ * gezogen (verbraucht keine Zufallszahl → Spielablauf bleibt gleich).
+ */
+export function faceFor(o: Origin, birthYear: number, id: string): string {
+  const mix = Object.entries(faceMixFor(o, birthYear + 20)).filter(([, w]) => w > 0);
+  const total = mix.reduce((s, [, w]) => s + w, 0);
+  if (!total) return o.face;
+  let r = hashStr(id) * total;
+  for (const [k, w] of mix) { r -= w; if (r <= 0) return k; }
+  return mix[mix.length - 1][0];
 }

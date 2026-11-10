@@ -56,7 +56,7 @@ export function snapshotCurrent(id: string, name: string): Dataset {
     staff: STAFF_ROLES,
     marketing: MARKETING_AREAS,
     names: {
-      origins: Object.values(ORIGINS).map((o) => ({ id: o.id, nationality: o.nationality, face: o.face, first: o.first, last: o.last, firstByEra: o.firstByEra })),
+      origins: Object.values(ORIGINS).map((o) => ({ id: o.id, nationality: o.nationality, face: o.face, first: o.first, last: o.last, firstByEra: o.firstByEra, faceMix: o.faceMix })),
       mix: MIX,
       blocked: [...BLOCKED_NAMES],
     },
