@@ -784,6 +784,21 @@ export const INFO_TEXTS = {
     text: 'Wie gut dein Stab den Spieler kennt. Spieler deiner Liga, Gegner aus häufigen Duellen und Stars kennst du gut, Amateure, Jugendliche und kleine Auslandsligen kaum. Fernsehen, Internet und Datenbanken machen die Welt über die Jahrzehnte bekannter.',
     wiki: 'transfer-pool',
   },
+  verhandlungen: {
+    title: 'Laufende Verhandlungen',
+    text: 'Alle offenen Gespräche mit Vereinen und Spielern. Ohne neues Angebot schläft ein Gespräch nach 30 Tagen ein (Spalte „Läuft aus“, rot = in der nächsten Woche). Klick öffnet die Verhandlung.',
+    wiki: 'transfers-market',
+  },
+  festverpflichtet: {
+    title: 'Fest verpflichtet',
+    text: 'Spieler, mit denen alles unterschrieben ist, die aber erst später kommen: Einigungen außerhalb des Transferfensters wechseln, sobald es öffnet; Vorverträge gelten ab dem Tag nach Vertragsende. Darunter eigene Spieler mit Vorvertrag bei einem anderen Verein.',
+    wiki: 'transfers-market',
+  },
+  leihspieler: {
+    title: 'Leihspieler',
+    text: 'Eigene Spieler, die du verliehen hast, und Spieler, die du ausgeliehen hast – mit Einsätzen, Minuten, Toren, Vorlagen und Durchschnittsnote der laufenden Saison. Die Leihe endet zum angegebenen Datum; mit Kaufoption kannst du den Spieler dann fest übernehmen.',
+    wiki: 'transfers-market',
+  },
   scouting: {
     title: 'Scouting',
     text: 'Ein Scout beobachtet einen Spieler über Tage bis Wochen und kostet Reisegeld. Danach sind Stärke, Potenzial und Wert fast genau bekannt. Jeder Scouting-Mitarbeiter übernimmt einen weiteren Auftrag; sind alle unterwegs, wird vorgemerkt. Mit Strg/Umschalt wählst du mehrere Spieler und scoutest sie per Rechtsklick gemeinsam. Berichte veralten nach einigen Jahren.',

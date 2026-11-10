@@ -21,6 +21,7 @@ import { activeCount, runSearch, type SearchCriteria } from '../../game/playerSe
 import PosBadge from '../../components/PosBadge';
 import FaceThumb from '../../components/FaceThumb';
 import { NatFlag } from '../../components/competition/CountryFlag';
+import { CommittedBox, LoansBox, RunningTalksBox } from './NegotiationsOverview';
 
 // =============================================================================
 // TRANSFERS — Transfermarkt, Beobachtung (Scouting-Vorschläge), Verhandlungen
@@ -212,7 +213,27 @@ export function BeobachtungView({ g, onChange = () => {} }: { g: Game; onChange?
 }
 
 // --- AKTIVE VERHANDLUNGEN ---------------------------------------------------
+type NegTab = 'uebersicht' | 'bilanz';
 export function VerhandlungenView({ g, onChange = () => {} }: { g: Game; onChange?: () => void }) {
+  const [tab, setTab] = useSubTab<NegTab>('transfers.verhandlungen', 'uebersicht');
+  const talk = useTalk(g, onChange);
+  const running = activeTalks(g).filter((t) => t.phase !== 'agreed').length;
+  return (
+    <SubTabsPage active={tab} onSelect={setTab}
+      tabs={[{ id: 'uebersicht', label: 'Übersicht', count: running || undefined }, { id: 'bilanz', label: 'Meldungen & Bilanz' }]}>
+      {tab === 'uebersicht' ? (
+        <DashPage>
+          <RunningTalksBox g={g} onOpen={talk.openTalk} />
+          <CommittedBox g={g} onOpen={talk.openTalk} />
+          <LoansBox g={g} />
+          {talk.modal}
+        </DashPage>
+      ) : <NegotiationsLedger g={g} onChange={onChange} />}
+    </SubTabsPage>
+  );
+}
+
+function NegotiationsLedger({ g, onChange }: { g: Game; onChange: () => void }) {
   const club = g.clubs[g.managedClubId];
   const { open, modal } = usePlayerModal(g);
   const talk = useTalk(g, onChange);
@@ -231,7 +252,7 @@ export function VerhandlungenView({ g, onChange = () => {} }: { g: Game; onChang
 
   return (
     <DashPage>
-      <DashBox title="Verhandlungen & Meldungen" icon="negotiations" span={2} right={`${activeTalks(g).length} laufend`}>
+      <DashBox title="Verhandlungen & Meldungen" span={2} right={`${activeTalks(g).length} laufend`}>
         {talks.map((t) => {
           const pl = g.players[t.playerId];
           return (

@@ -2345,8 +2345,11 @@ Auch über Weltspieler kannst du verhandeln: Ablöse mit dem Verein, dann Gehalt
     id: 'transfers-market',
     category: 'squad',
     title: 'Transfers: Ablösen, Verhandlungen & Versprechen',
-    keywords: ['transfer', 'ablöse', 'rekord', 'verhandlung', 'forderung', 'berater', 'handgeld', 'versprechen', 'stammplatz', 'ausstiegsklausel', 'raten', 'weiterverkauf', 'ausland'],
-    body: `## Die Rekordkurve
+    keywords: ['transfer', 'ablöse', 'rekord', 'verhandlung', 'forderung', 'berater', 'handgeld', 'versprechen', 'stammplatz', 'ausstiegsklausel', 'raten', 'weiterverkauf', 'ausland', 'leihe', 'leihspieler', 'vorvertrag', 'fest verpflichtet'],
+    body: `## Verhandlungen im Überblick
+Unter **Transfers › Verhandlungen › Übersicht** stehen alle **laufenden Verhandlungen** als Tabelle (Spieler, Verein, Gesprächsphase, aktueller Stand, Beginn und das Datum, an dem das Gespräch ohne neues Angebot einschläft). Daneben **Fest verpflichtet**: Spieler, die schon unterschrieben haben, aber erst später kommen (Einigung außerhalb des Transferfensters → Wechsel beim Öffnen; Vorvertrag → Tag nach Vertragsende), dazu eigene Spieler, die per Vorvertrag gehen, und der Stand des Transferfensters. Unten die **Leihspieler** in beide Richtungen mit Einsätzen, Minuten, Toren, Vorlagen und Note der Saison. Der Reiter **Meldungen & Bilanz** zeigt Meldungen, Wechselkandidaten, Transferbilanz und die Wechsel des Vereins.
+
+## Die Rekordkurve
 Ablösen folgen einer **Kurve der Spitzenablösen** je Jahr, recherchiert aus echten Rekordtransfers von 1975 bis heute (geglättet; ab 2027 fiktiv fortgeschrieben). Es gibt zwei Linien: **deutsche Vereine** (1976 etwa 1 Mio. DM, 2023 rund 95 Mio. €) und **international** (1975 etwa 3,6 Mio. €, 2017 Ausreißer 222 Mio. €).
 
 - **Marktwert:** Ein Spieler mit Stärke 90 ist etwa die deutsche Spitzenablöse wert; schwächere entsprechend weniger, Stärkere höchstens das 1,3-Fache.
