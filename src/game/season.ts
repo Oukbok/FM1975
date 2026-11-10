@@ -43,7 +43,7 @@ import { CalendarEngine } from '../engine/calendar';
 import { Game, bestOffer, hashSeed, homeCountryOf, migrateCommerce, offerToContract } from './state';
 import { countryPointSystem } from '../data/world/countries';
 import { homeExcluded } from './startYear';
-import { buildFullCountries, fullCountryResults, isFullDivision } from './fullCountries';
+import { buildFullCountries, fullCountryResults, isFullDivision, refreshFullAll } from './fullCountries';
 
 const isGermanHome = (g: Game) => homeCountryOf(g) === 'ger';
 import { sponsorSeasonStart } from './sponsorGame';
@@ -431,6 +431,7 @@ export function startNextSeason(g: Game): void {
     g.euroCups as any, (id) => !!g.clubs[id] || (!!g.simClubs?.[id] && g.simClubs[id].tier < 200),
     fullResults,
   );
+  refreshFullAll(g); // „alle Länder“ inkl. neu entstandener, Auswahl aus dem Spiel (game/fullCountries.ts)
   buildFullCountries(g, fixturesStart);
   historicWorldAfter(g, g.world, euroClubs, nextStartYear);
   for (const note of worldRes.notes) {

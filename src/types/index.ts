@@ -1987,6 +1987,8 @@ export interface NewGameOptions {
   country?: string;
   /** Weitere Länder, deren Ligen Spiel für Spiel simuliert werden (game/fullCountries.ts). */
   fullCountries?: string[];
+  /** Alle Länder Spiel für Spiel (auch später entstehende). */
+  fullAll?: boolean;
 }
 
 // -----------------------------------------------------------------------------

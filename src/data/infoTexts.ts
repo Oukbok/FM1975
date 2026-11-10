@@ -28,7 +28,7 @@ export const INFO_TEXTS = {
   },
   simtiefe: {
     title: 'Simulationstiefe',
-    text: 'Deine Liga läuft mit vollen Kadern. „Spiel für Spiel“ rechnet ein Land mit Spielplan, Tabelle und Auf-/Abstieg; „Hintergrund“ einmal je Saison. Beides kostet kaum Rechenzeit.',
+    text: 'Deine Liga läuft mit vollen Kadern. „Spiel für Spiel“ rechnet ein Land mit Spielplan, Tabelle und Auf-/Abstieg; „Hintergrund“ nur die Abschlusstabelle einmal je Saison. Voreinstellung: alle Länder Spiel für Spiel – kostet kaum Rechenzeit. Im Spiel umschaltbar unter Statistiken › Ligensystem, gilt ab der nächsten Saison.',
     wiki: 'world-start',
   },
   // ---------------------------------------------------------------- Spieler-Zustand

@@ -12,7 +12,7 @@ import { processDay, DayUi } from '../src/game/day';
 import { findOwnMatchDue, quickSimOwnMatch } from '../src/game/ownMatch';
 import { leagueClubs, startNextSeason } from '../src/game/season';
 import { CalendarEngine } from '../src/engine/calendar';
-import { loadGame, saveGame } from '../src/engine/save';
+import { loadGameSync as loadGame, saveGameSync as saveGame } from '../src/engine/save';
 import { prepareLoadedGame } from '../src/game/loadMigrations';
 import { Game } from '../src/game/state';
 import type { Match } from '../src/types';

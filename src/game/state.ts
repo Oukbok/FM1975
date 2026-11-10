@@ -154,6 +154,8 @@ export interface Game {
   homeCountry?: string;
   /** Spiel für Spiel simulierte weitere Länder (game/fullCountries.ts); fehlt = keine. */
   fullCountries?: string[];
+  /** Alle Länder Spiel für Spiel, auch künftig entstehende (game/fullCountries.ts `refreshFullAll`). */
+  fullAll?: boolean;
   /** Weltspieler der Vereine ohne vollen Kader (game/worldPool.ts); fehlt = wird beim Laden angelegt. */
   worldPool?: import('./worldPool').WorldPool;
   /** Einzel-Scouting und Berichte (game/scoutingGame.ts). */

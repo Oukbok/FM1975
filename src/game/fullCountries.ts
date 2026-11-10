@@ -8,7 +8,8 @@
 // Ebenen: tier = 200 + 10 × Index + Liga (1/2) – weit weg vom Heimat-Auf-/Abstieg (< 100)
 // und der DDR (101/102). Optionales Feld `game.fullCountries`.
 // =============================================================================
-import { COUNTRY_BY_CC } from '../data/world/countries';
+import { COUNTRY_BY_CC, WORLD_COUNTRIES } from '../data/world/countries';
+import { homeCountryOf } from './state';
 import type { EuroClub } from '../data/europe';
 import { buildDivision, LeagueDivision, SimClub } from '../engine/leagues';
 import type { FixedCountryResult } from '../engine/world';
@@ -19,6 +20,28 @@ export const isFullDivision = (d: { tier: number }) => d.tier >= FULL_TIER_BASE;
 
 function simOf(e: EuroClub, tier: number): SimClub {
   return { id: e.id, name: e.name, shortName: e.shortName, city: e.city, strength: e.strength, colors: { ...e.colors }, tier, group: null };
+}
+
+/** Länder, die Spiel für Spiel laufen können (aktiv in der Hintergrund-Welt, nicht das Heimatland). */
+export function fullCandidates(g: Game): string[] {
+  const home = homeCountryOf(g);
+  return WORLD_COUNTRIES.filter((c) => c.cc !== home && !(home === 'ger' && c.cc === 'gdr') && g.world?.countries[c.key]?.active).map((c) => c.cc);
+}
+
+/** Land Spiel für Spiel an/aus – wirkt ab dem nächsten Saisonwechsel (Wunsch Pascal: auch im laufenden Spiel). */
+export function setFullCountry(g: Game, cc: string, on: boolean): void {
+  const list = new Set(g.fullCountries ?? []);
+  if (on) list.add(cc); else { list.delete(cc); g.fullAll = false; }
+  g.fullCountries = [...list];
+}
+export function setFullAll(g: Game, on: boolean): void {
+  g.fullAll = on;
+  g.fullCountries = on ? fullCandidates(g) : [];
+}
+/** Saisonwechsel: „alle Länder“ schließt neu entstandene Länder ein (z. B. Kroatien 1992). */
+export function refreshFullAll(g: Game): void {
+  if (g.fullAll) g.fullCountries = fullCandidates(g);
+  else if (g.fullCountries) g.fullCountries = g.fullCountries.filter((cc) => fullCandidates(g).includes(cc));
 }
 
 /** Divisionen aller gewählten Länder neu aufbauen (Spielbeginn und nach dem Saisonwechsel). */

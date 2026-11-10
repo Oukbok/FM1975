@@ -301,3 +301,4 @@ select.ng-input { cursor: pointer; }
 .ng-year-stops button { flex: 1; }
 .ng-era { margin: 0 0 12px; padding-left: 18px; color: var(--text-2); font-size: 14.5px; line-height: 1.55; min-height: 116px; }
 .ng-cleagues small { color: var(--text-3); }
+.ng-allfull { margin-left: 14px; vertical-align: middle; }

@@ -39,8 +39,8 @@ function leaguesText(cc: string, key: string, y: number): { text: string; clubs:
   return s ? { text: `1. Liga ${s.tier1} · 2. Liga ${s.tier2}`, clubs: s.tier1 + s.tier2, data: false } : { text: 'nach der Teilung', clubs: 0, data: false };
 }
 
-export function StepWorld({ d, chooseDataset, chooseYear, toggleFull }: {
-  d: NewGameDraft; chooseDataset: (id: string) => void; chooseYear: (y: number) => void; toggleFull: (cc: string) => void;
+export function StepWorld({ d, chooseDataset, chooseYear, toggleFull, setAllFull }: {
+  d: NewGameDraft; chooseDataset: (id: string) => void; chooseYear: (y: number) => void; toggleFull: (cc: string, all?: string[]) => void; setAllFull: (on: boolean) => void;
 }) {
   const datasets = cachedSummaries();
   const y = d.startYear;
@@ -84,7 +84,12 @@ export function StepWorld({ d, chooseDataset, chooseYear, toggleFull }: {
       <section className="ng-card">
         <div className="ng-h-row">
           <h3 className="ng-h">Länder {seasonLabelOf(y)} <InfoTip k="simtiefe" /></h3>
-          <span className="ng-h-side">{rows.length} Länder · {withData} mit echten Vereinen · {total.toLocaleString('de-DE')} Vereine</span>
+          <span className="ng-h-side">{rows.length} Länder · {withData} mit echten Vereinen · {total.toLocaleString('de-DE')} Vereine
+            <span className="ng-seg small ng-allfull">
+              <button type="button" className={d.fullAll ? 'on' : ''} onClick={() => setAllFull(true)}>Alle Spiel für Spiel</button>
+              <button type="button" className={!d.fullAll && !d.fullCountries.length ? 'on' : ''} onClick={() => setAllFull(false)}>Alle Hintergrund</button>
+            </span>
+          </span>
         </div>
         <div className="ng-ctable">
           <div className="ng-crow head"><span>Land</span><span>Ligen</span><span className="num">Vereine</span><span>Simulation</span></div>
@@ -92,7 +97,8 @@ export function StepWorld({ d, chooseDataset, chooseYear, toggleFull }: {
             {rows.map(({ c, text, clubs, data }) => {
               const mine = c.cc === home;
               const fixed = mine || (home === 'ger' && c.cc === 'gdr');
-              const full = fixed || d.fullCountries.includes(c.cc);
+              const full = fixed || d.fullAll || d.fullCountries.includes(c.cc);
+              const all = rows.map((r) => r.c.cc).filter((x) => x !== home && !(home === 'ger' && x === 'gdr'));
               return (
                 <div key={c.cc} className={`ng-crow ${mine ? 'main' : ''}`} data-cc={c.cc}>
                   <span className="ng-ccountry"><CountryFlag country={c.key} height={16} /><b>{c.name}</b><em>{c.cc.toUpperCase()}</em></span>
@@ -103,8 +109,8 @@ export function StepWorld({ d, chooseDataset, chooseYear, toggleFull }: {
                       ? <><i className={`ng-badge ${mine ? 'on' : ''}`}>{mine ? 'Deine Liga' : 'bis 1991'}</i>{mine ? 'Volle Kader, Spiel für Spiel' : 'Spiel für Spiel'}</>
                       : (
                         <span className="ng-seg small">
-                          <button type="button" className={full ? 'on' : ''} onClick={() => !full && toggleFull(c.cc)}>Spiel für Spiel</button>
-                          <button type="button" className={full ? '' : 'on'} onClick={() => full && toggleFull(c.cc)}>Hintergrund</button>
+                          <button type="button" className={full ? 'on' : ''} onClick={() => !full && toggleFull(c.cc, all)}>Spiel für Spiel</button>
+                          <button type="button" className={full ? '' : 'on'} onClick={() => full && toggleFull(c.cc, all)}>Hintergrund</button>
                         </span>
                       )}
                   </span>
@@ -113,7 +119,7 @@ export function StepWorld({ d, chooseDataset, chooseYear, toggleFull }: {
             })}
           </div>
         </div>
-        <p className="ng-note">Deine Liga läuft mit vollen Kadern. „Spiel für Spiel“ rechnet ein Land wie die 2. Liga mit Spielplan, Tabelle und Auf-/Abstieg – sichtbar unter Statistiken; „Hintergrund“ rechnet es einmal je Saison. Europapokal, Transfers und Talente kommen aus allen Ländern. Länder mit echten Vereinen kannst du im nächsten Schritt als Heimatland wählen.</p>
+        <p className="ng-note">Deine Liga läuft mit vollen Kadern. „Spiel für Spiel“ rechnet ein Land wie die 2. Liga mit Spielplan, Tabelle und Auf-/Abstieg – sichtbar unter Statistiken; „Hintergrund“ rechnet es nur einmal je Saison (nur Abschlusstabelle). Alle Länder Spiel für Spiel kosten kaum Rechenzeit (gemessen über 60 Jahre), nur etwas mehr Speicher – das ist die Voreinstellung; im Spiel änderst du es unter Statistiken › Ligensystem. Europapokal, Transfers und Talente kommen aus allen Ländern. Länder mit echten Vereinen kannst du im nächsten Schritt als Heimatland wählen.</p>
       </section>
     </div>
   );

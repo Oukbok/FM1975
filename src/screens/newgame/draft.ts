@@ -45,6 +45,8 @@ export interface NewGameDraft {
   country: string;
   /** Weitere Länder Spiel für Spiel (sonst Hintergrund). */
   fullCountries: string[];
+  /** Alle Länder Spiel für Spiel (Standard, Wunsch Pascal) – dann gilt fullCountries nicht. */
+  fullAll: boolean;
   firstName: string;
   lastName: string;
   birthDay: number;
@@ -129,7 +131,7 @@ export function gameOptions(d: NewGameDraft): NewGameOptions {
     injuriesEnabled: d.injuries, speedMs: d.speedMs, datasetId: d.datasetId, historyMode: d.history, legends: d.legends,
     ...(d.startYear !== 1975 ? { startYear: d.startYear } : {}),
     ...(d.country !== 'ger' ? { country: d.country } : {}),
-    ...(d.fullCountries.length ? { fullCountries: [...d.fullCountries] } : {}),
+    ...(d.fullAll ? { fullAll: true } : d.fullCountries.length ? { fullCountries: [...d.fullCountries] } : {}),
   };
 }
 

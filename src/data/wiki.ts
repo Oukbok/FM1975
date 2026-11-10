@@ -750,7 +750,7 @@ Beim Start erscheint ein Menü mit:
 ## Neues Spiel in sechs Schritten
 1. **Manager:** Vor- und Nachname, Geburtsdatum (Alter am 1. Juli 1975), Nationalität (optional eine zweite), ein Gesicht aus dem Gesichtsgenerator („Anderes Gesicht“), Spielstil, Werdegang und Schwierigkeit. **Lieblingsverein** und **„Niemals trainieren würde ich“** sind Profilangaben; der „Niemals“-Verein taucht im Karrieremodus nicht unter den Angeboten auf.
 2. **Spielmodus:** **Teammanager** – du wählst deinen Verein frei. **Karriere** – als unbekannter Trainer bekommst du drei Angebote schwächerer Vereine (je eins aus der 1. Liga und den beiden 2.-Liga-Staffeln) und nimmst eins an. Dazu die Option **Entwicklung der anderen Vereine** (Aus/Mittel/Stark), Verletzungen, Saison-Briefing, Auftakt-Animation und Spieltempo.
-3. **Spielwelt:** Datensatz und alle Länder, deren Ligen mitlaufen. Deine Liga wird Minute für Minute gerechnet, die übrigen deutschen Ligen und die DDR Spiel für Spiel, das Ausland als Saison im Hintergrund – Rechenzeit kostet fast nur deine eigene Liga.
+3. **Spielwelt:** Datensatz und alle Länder, deren Ligen mitlaufen. Deine Liga wird Minute für Minute gerechnet, die übrigen deutschen Ligen, die DDR und – als Voreinstellung – alle Auslandsligen Spiel für Spiel; einzelne Länder kannst du auf „Hintergrund“ stellen (nur Abschlusstabelle). Rechenzeit kostet fast nur deine eigene Liga.
 4. **Verein:** Land → Liga → Verein, sortierbar nach Stärke, Name oder Region; rechts die große Vorschau mit Wappen, Trikots, Stadion, Ansehen, Finanzkraft, geschätzter Kaderstärke, Ziel des Vorstands und Rivalen. Kaderstärke und Ziel sind **Einschätzungen** – die echten Kader entstehen beim Start.
 5. **Ligensystem:** die Pyramide der Saison 1975/76 (Deutschland, DDR, Ausland) – siehe Artikel „Übersicht Ligensystem“.
 6. **Willkommen:** Die Spielwelt wird schon erzeugt; du siehst Kader, Stärke der ersten Elf, den besten Spieler, Mediendruck, Vertrauen des Vorstands und Stimmung der Fans. „Karriere starten“ übernimmt genau diese Welt, danach folgt das Saison-Briefing.
@@ -799,7 +799,7 @@ Weltdaten gibt es für alle Länder, die im Europapokal spielten (40 Länder ein
 
 ### Simulationstiefe
 - **Deine Liga:** volle Kader, jedes Spiel mit der Match-Engine.
-- **Spiel für Spiel:** im Assistenten je Land wählbar – Spielplan, Tabelle Spieltag für Spieltag, Auf- und Abstieg; zu sehen unter Statistiken › Liga (Länderwahl, Gruppe „Spiel für Spiel“). Die Endtabelle bestimmt Meister und Europapokal-Starter des Landes.
+- **Spiel für Spiel:** Voreinstellung für alle Länder („Alle Spiel für Spiel“ schließt auch später entstehende Länder ein, z. B. Kroatien ab 1992), im Assistenten je Land abwählbar und im Spiel unter **Statistiken › Ligensystem** umschaltbar (gilt ab dem nächsten Saisonwechsel). Gemessen über 60 Jahre kostet das kaum Rechenzeit, nur etwas mehr Speicher (Spielstände liegen in IndexedDB, ohne das alte 5-MB-Limit) – Spielplan, Tabelle Spieltag für Spieltag, Auf- und Abstieg; zu sehen unter Statistiken › Liga (Länderwahl, Gruppe „Spiel für Spiel“). Die Endtabelle bestimmt Meister und Europapokal-Starter des Landes.
 - **Hintergrund:** einmal je Saison durchgerechnet (Meister, Pokalsieger, Koeffizient); unter Statistiken › Liga mit Abschlusstabelle bzw. Teilnehmern der laufenden Saison.
 
 ### Editor

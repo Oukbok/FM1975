@@ -74,7 +74,7 @@ function page({ screen, g, rerender, setScreen, onWatch, onReplayDraw, onOpenEdi
     case 'international': return <P.InternationalView g={g} onWatch={onWatch} onReplayDraw={onReplayDraw} />;
     case 'halle': return <P.IndoorView g={g} onChange={ch} />;
     case 'auszeichnungen': return <P.AwardsView g={g} />;
-    case 'ligensystem': return <P.LeagueSystemView g={g} />;
+    case 'ligensystem': return <P.LeagueSystemView g={g} onChange={ch} />;
     case 'trainingslager': return <P.TrainingCampView g={g} onChange={ch} />;
     case 'kabine': return <P.DressingRoomView g={g} onChange={ch} />;
     case 'trainerteam': return <P.TrainerTeamView g={g} onChange={ch} />;

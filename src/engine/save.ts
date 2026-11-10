@@ -244,6 +244,18 @@ export async function loadGame<T>(slot: string): Promise<SaveSlot<T> | null> {
   return readSlot<T>(slot);
 }
 
+/** Synchron über localStorage (nur für Tests/Werkzeuge ohne IndexedDB). */
+export function saveGameSync<T>(slot: string, meta: Omit<SaveMeta, 'slot' | 'savedAt' | 'version'>, game: T): boolean {
+  try {
+    const fullMeta: SaveMeta = { ...meta, slot, savedAt: new Date().toISOString(), version: SAVE_VERSION };
+    writeSlot(slot, { meta: fullMeta, game });
+    const idx = readIndex();
+    if (!idx.includes(slot)) writeIndex([...idx, slot]);
+    return true;
+  } catch { return false; }
+}
+export function loadGameSync<T>(slot: string): SaveSlot<T> | null { return readSlot<T>(slot); }
+
 /** Listet alle vorhandenen Speicherstände (Metadaten), neueste zuerst. */
 export function listSaves(): SaveMeta[] {
   const metas = [...cache().values()];
