@@ -31,6 +31,7 @@
   --akte-grain: none;
   --np-paper: url('assets/akte/zeitung.webp');   /* Presse: Doppelseite */
   --cal-paper: url('assets/akte/kalender.webp');  /* Kalender: Ringbuch */
+  --cal-box-bg: #ffffff;                          /* Kalender: Fläche hinter dem Ringbuch (Wunsch Pascal: weiß) */
 
   /* ---- Akzent = Vereinsfarbe ---------------------------------------------- */
   --accent: var(--club-accent, #c8202a);
@@ -368,9 +369,10 @@ body { background: var(--paper-page); }
   display: grid;
   grid-template-columns: 7.4% minmax(0, 1fr) 5.4%;
   grid-template-rows: 4% auto auto minmax(0, 1fr) auto 8%;
-  background: var(--cal-paper) center / 104.3% 107.4% no-repeat;
+  background: var(--cal-paper) center / 104.3% 107.4% no-repeat, var(--cal-box-bg);
   overflow: hidden;
 }
+.cal-box { background: var(--cal-box-bg); }
 .cal-box > .dbox-body > * { grid-column: 2; min-width: 0; }
 .cal-box .calm-note { grid-row: 2; margin: 0 0 6px; color: var(--text-3); }
 .cal-box .cal-head-row { grid-row: 3; margin: 0; gap: 0; border-bottom: 2px solid var(--accent); }
