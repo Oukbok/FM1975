@@ -1,6 +1,6 @@
 // =============================================================================
 // Ausnahmetalente der Fußballgeschichte (npm run test:legends, Logik-Teil):
-// 100 Einträge, verfremdete Namen ≠ Vorbilder (docs/recherche/legenden.md),
+// 132 Einträge, verfremdete Namen ≠ Vorbilder (docs/recherche/legenden.md),
 // Spawn-Jahr/-Alter/Verein, Gewichtung nach Ausbildungsqualität, fester Verein,
 // Determinismus je Spielstand, Option aus, keine Nachrichten, verdeckte Werte
 // übernommen, Datensatz leer = keine, Alt-Migration lässt neue Felder stehen.
@@ -24,15 +24,15 @@ const ok = (m: string) => console.log('  ok ', m);
 const opts = (legends?: boolean) => ({ managedClubId: 'fra', manager: { name: 'T', nationality: 'GER', birthYear: 1940, style: 'balanced', background: 'newcomer' }, difficulty: 'normal', realisticSquads: true, injuriesEnabled: true, speedMs: 0, ...(legends === undefined ? {} : { legends }) } as any);
 
 // --- 1) Liste & Namen ---------------------------------------------------------
-if (BUILTIN_LEGENDS.length !== 100) fail(`Liste hat ${BUILTIN_LEGENDS.length} statt 100 Einträgen`);
+if (BUILTIN_LEGENDS.length !== 132) fail(`Liste hat ${BUILTIN_LEGENDS.length} statt 132 Einträgen`);
 const ids = new Set(BUILTIN_LEGENDS.map((l) => l.id)), names = new Set(BUILTIN_LEGENDS.map((l) => `${l.firstName} ${l.lastName}`));
-if (ids.size !== 100 || names.size !== 100) fail('IDs/Namen nicht eindeutig');
+if (ids.size !== BUILTIN_LEGENDS.length || names.size !== BUILTIN_LEGENDS.length) fail('IDs/Namen nicht eindeutig');
 const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ß/g, 'ss').replace(/[^a-z ]/g, '').trim();
 const lev = (a: string, b: string) => { const d = Array.from({ length: a.length + 1 }, (_, i) => [i]); for (let j = 1; j <= b.length; j++) d[0][j] = j; for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[a.length][b.length]; };
 const doc = readFileSync('docs/recherche/legenden.md', 'utf8');
 const real = new Map<string, string>();
 for (const m of doc.matchAll(/^\| ([a-z_-]+) \| ([^|]+) \| [^|]+ \| \d{4}/gm)) real.set(m[1], m[2].trim());
-if (real.size !== 100) fail(`Recherche-Tabelle hat ${real.size} Vorbilder`);
+if (real.size !== BUILTIN_LEGENDS.length) fail(`Recherche-Tabelle hat ${real.size} Vorbilder`);
 const realLast = new Set<string>();
 for (const l of BUILTIN_LEGENDS) {
   const r = real.get(l.id);
@@ -48,7 +48,7 @@ for (const l of BUILTIN_LEGENDS) {
 const code = ['src/data/legends', 'src/game'].flatMap((d) => readdirSync(d).filter((f) => /^legend|\.ts$/.test(f) && (d.endsWith('legends') || f.startsWith('legend'))).map((f) => readFileSync(`${d}/${f}`, 'utf8'))).join('\n');
 const codeN = norm(code.replace(/\n/g, ' '));
 const leaked = [...realLast].filter((n) => n.length >= 5 && new RegExp(`\\b${n}\\b`).test(codeN));
-if (leaked.length) fail(`Vorbild-Namen im Code: ${leaked.join(', ')}`); else ok('100 Einträge, Namen eindeutig und verfremdet, keine Vorbilder im Code');
+if (leaked.length) fail(`Vorbild-Namen im Code: ${leaked.join(', ')}`); else ok('132 Einträge, Namen eindeutig und verfremdet, keine Vorbilder im Code');
 const pots = BUILTIN_LEGENDS.map((l) => l.potential);
 if (pots.filter((p) => p >= 97).length > 12 || Math.min(...pots) < 85) fail('Potenziale nicht gestaffelt'); else ok(`Potenziale gestaffelt ${Math.min(...pots)}–${Math.max(...pots)}`);
 const ds = builtinDataset();
@@ -94,7 +94,7 @@ for (let y = 1976; y <= 2036; y++) {
 }
 const missing = LEGENDS.filter((l) => !done[l.id]);
 if (missing.length) fail(`nicht erschienen: ${missing.map((l) => l.id).join(', ')}`);
-if (!wrong) ok(`alle 100 bis 2036 erschienen, im richtigen Jahr (Jugend mit 15, Ausland mit 18–27, DDR 1990)`);
+if (!wrong) ok(`alle ${BUILTIN_LEGENDS.length} bis 2036 erschienen, im richtigen Jahr (Jugend mit 15, Ausland mit 18–27, DDR 1990)`);
 if (g.messages.length !== msgs0) fail(`Nachrichten durch Legenden: ${g.messages.length - msgs0}`); else ok('keine Nachrichten');
 const legendNames = LEGENDS.map((l) => l.lastName);
 if (g.messages.some((m) => legendNames.some((n) => `${m.subject} ${m.bodyText}`.includes(n)))) fail('Nachricht nennt eine Legende');
@@ -148,7 +148,7 @@ if (LEGENDS.length) fail('leere Datensatz-Liste schaltet nicht ab');
 const ge = createNewGame(opts());
 if (Object.keys(ge.legends2!.done).length) fail('leere Liste erzeugt trotzdem Legenden');
 applyDataset(null);
-if (LEGENDS.length !== 100) fail('Standard-Liste nach Zurücksetzen nicht da'); else ok('Datensatz: leere Liste = keine, Standard = 100');
+if (LEGENDS.length !== BUILTIN_LEGENDS.length) fail('Standard-Liste nach Zurücksetzen nicht da'); else ok('Datensatz: leere Liste = keine, Standard = alle');
 const before = legendIds(g).size;
 migrateLegacyLegends(g);
 const sample = g.players[[...legendIds(g)].find((id) => g.players[id])!];

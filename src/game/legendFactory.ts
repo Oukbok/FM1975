@@ -51,6 +51,7 @@ const COUNTRY_ORIGIN: Record<string, string> = {
   BEL: 'bel', DEN: 'den', SWE: 'swe', NOR: 'nor', POL: 'pol', UKR: 'rus', RUS: 'rus', CZE: 'cze', BUL: 'yug', CRO: 'cro',
   YUG: 'yug', SRB: 'srb', AUT: 'aut', SUI: 'sui', HUN: 'hun', TUR: 'tur', GRE: 'gre', BRA: 'bra', ARG: 'arg', URU: 'arg',
   LBR: 'gha', GHA: 'gha', NGA: 'nga', CMR: 'cmr', CIV: 'gha', EGY: 'mar', MAR: 'mar', JPN: 'jpn', KOR: 'kor', USA: 'usa',
+  NIR: 'eng', IRL: 'eng', ROU: 'yug', CHI: 'arg', PER: 'arg', COL: 'arg', MEX: 'arg',
 };
 export function originFor(def: LegendDef): Origin {
   return ORIGINS[COUNTRY_ORIGIN[def.country] ?? ''] ?? ORIGINS.ger;

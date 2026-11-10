@@ -99,7 +99,7 @@ function fromName(g: Game, def: LegendDef, rng: () => number): string {
     const ddr = Object.values(g.simClubs ?? {}).filter((c) => (c as { ddr?: boolean }).ddr || c.id.startsWith('ddr-'));
     if (ddr.length) return ddr[Math.floor(rng() * ddr.length)].name;
   }
-  const names: Record<string, string> = { NED: 'Niederlande', FRA: 'Frankreich', ITA: 'Italien', ESP: 'Spanien', ENG: 'England', SCO: 'Schottland', POR: 'Portugal', BEL: 'Belgien', DEN: 'Daenemark', SWE: 'Schweden', POL: 'Polen', CZE: 'Tschechoslowakei', BUL: 'Bulgarien', CRO: 'Jugoslawien', UKR: 'Sowjetunion' };
+  const names: Record<string, string> = { NED: 'Niederlande', FRA: 'Frankreich', ITA: 'Italien', ESP: 'Spanien', ENG: 'England', SCO: 'Schottland', POR: 'Portugal', BEL: 'Belgien', DEN: 'Daenemark', SWE: 'Schweden', POL: 'Polen', CZE: 'Tschechoslowakei', BUL: 'Bulgarien', CRO: 'Jugoslawien', UKR: 'Sowjetunion', RUS: 'Sowjetunion', YUG: 'Jugoslawien', ROU: 'Rumaenien', HUN: 'Ungarn', NIR: 'England', IRL: 'England', AUT: 'Oesterreich', SUI: 'Schweiz', TUR: 'Tuerkei', GRE: 'Griechenland' };
   const land = names[def.country];
   const eu = land ? Object.values(g.euroClubs ?? {}).filter((c) => c.country === land) : [];
   return eu.length ? eu[Math.floor(rng() * eu.length)].name : 'Ausland';

@@ -2,11 +2,12 @@
 // ein eigener Datensatz ersetzt die Liste in place (data/dataset/apply.ts).
 import { LEGENDS_A } from './list1';
 import { LEGENDS_B } from './list2';
+import { LEGENDS_C } from './list3';
 import type { LegendDef } from './types';
 
 export * from './types';
 
-export const BUILTIN_LEGENDS: LegendDef[] = [...LEGENDS_A, ...LEGENDS_B];
+export const BUILTIN_LEGENDS: LegendDef[] = [...LEGENDS_A, ...LEGENDS_B, ...LEGENDS_C];
 
 /** Die im laufenden Spiel gültige Liste (wird beim Anwenden eines Datensatzes ersetzt). */
 export const LEGENDS: LegendDef[] = JSON.parse(JSON.stringify(BUILTIN_LEGENDS));

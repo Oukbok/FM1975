@@ -111,6 +111,8 @@ export const COUNTRY_FACE: Record<string, string> = {
   BEL: 'mitteleuropa', ITA: 'suedeuropa', ESP: 'suedeuropa', POR: 'suedeuropa', BRA: 'lateinamerika', ARG: 'lateinamerika',
   URU: 'lateinamerika', DEN: 'nordeuropa', SWE: 'nordeuropa', NOR: 'nordeuropa', POL: 'osteuropa', UKR: 'osteuropa',
   CZE: 'osteuropa', BUL: 'balkan', CRO: 'balkan', LBR: 'westafrika', CMR: 'westafrika', CIV: 'westafrika', EGY: 'nordafrika',
+  NIR: 'mitteleuropa', IRL: 'mitteleuropa', ROU: 'balkan', YUG: 'balkan', HUN: 'osteuropa', RUS: 'osteuropa', GHA: 'westafrika',
+  CHI: 'lateinamerika', PER: 'lateinamerika', COL: 'lateinamerika', MEX: 'lateinamerika', JPN: 'ostasien', KOR: 'ostasien',
 };
 
 /** Länder für die Auswahl im Editor (Kürzel → Anzeigename). */
@@ -120,7 +122,8 @@ export const LEGEND_COUNTRIES: Record<string, string> = {
   UKR: 'Ukraine', CZE: 'Tschechien', BUL: 'Bulgarien', CRO: 'Kroatien', BRA: 'Brasilien', ARG: 'Argentinien', URU: 'Uruguay',
   LBR: 'Liberia', CMR: 'Kamerun', CIV: 'Elfenbeinküste', EGY: 'Ägypten', AUT: 'Österreich', SUI: 'Schweiz', HUN: 'Ungarn',
   YUG: 'Jugoslawien', TUR: 'Türkei', GRE: 'Griechenland', RUS: 'Russland', USA: 'USA', JPN: 'Japan', KOR: 'Südkorea',
-  GHA: 'Ghana', NGA: 'Nigeria', MAR: 'Marokko',
+  GHA: 'Ghana', NGA: 'Nigeria', MAR: 'Marokko', NIR: 'Nordirland', IRL: 'Irland', ROU: 'Rumänien', CHI: 'Chile', PER: 'Peru',
+  COL: 'Kolumbien', MEX: 'Mexiko',
 };
 
 /** Länder mit simulierten deutschen Vereinen (Spawn bei einem Verein des Landes). */
