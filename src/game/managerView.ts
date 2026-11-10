@@ -114,7 +114,7 @@ function seasonCups(g: Game, season: string, id: string, live: boolean): { cup?:
   return { cup };
 }
 
-const SKIP_TITLES = new Set(['jugendC', 'jugendD', 'jugendE', 'jugendF']);
+const SKIP_TITLES = new Set(['jugendC', 'jugendD', 'jugendE', 'jugendF', 'jugendEReg', 'jugendFReg']);
 const SHORT_TITLE = (e: TrophyEntry) => e.kind === 'meister' ? 'Meister' : e.kind === 'pokal' ? 'Landespokal' : e.kind === 'aufstieg' ? 'Aufstieg'
   : e.kind === 'staffel' ? 'Staffelsieger' : e.kind === 'ec' || e.kind === 'cwc' || e.kind === 'uefa' ? euroShort(e.kind, e.season)
   : e.cat === 'jugend' ? 'Jugendtitel' : e.title;

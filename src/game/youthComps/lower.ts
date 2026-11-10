@@ -9,7 +9,7 @@
 // die Gegner liegen nach Ausbildungsqualität/Ruf darüber oder darunter.
 // Auf-/Abstieg nur für den eigenen Verein (zwei Spielklassen je Altersklasse).
 // =============================================================================
-import { LV_NAME, LOW_CLS, LOW_KEYS, lowFormat, lowLeagueName, lowTitle, type LowFormat, type YcLowKey } from '../../data/youthLowerLeagues';
+import { E_F_CHAMPIONSHIP, E_F_FINAL_TEAMS, LV_NAME, LOW_CLS, LOW_KEYS, efFinalName, efFinalTitle, lowFormat, lowLeagueName, lowTitle, type LowFormat, type YcLowKey } from '../../data/youthLowerLeagues';
 import { isoAdd, sectionLabel, weekdayOnOrAfter } from '../../data/youthCompetitions';
 import type { YcCls } from '../../data/youthCompetitions';
 import { youthAgeClass } from '../../types';
@@ -132,6 +132,36 @@ function festComp(g: Game, key: YcLowKey, cls: YcCls, f: LowFormat, y0: number, 
   };
 }
 
+/**
+ * E-/F-Jugend (Wunsch Pascal): Endrunde der Kreismeister im Landesverband an einem Wochenende nach der
+ * Staffel – Viertel- und Halbfinale samstags, Endspiel sonntags. Teilnehmer: Meister der eigenen Staffel
+ * (nur aus der oberen Klasse) und die Meister der anderen Kreise. Diese stellen echte Vereine des
+ * Landesverbands (Jugendteams) und erzeugte Ortsvereine, die nur in den unteren Klassen spielen.
+ */
+function regionalFinal(g: Game, st: YouthCompsState, comp: YcComp, f: LowFormat, y0: number, staffelEnd: string, staffel: string[], ddr: boolean): void {
+  const mid = g.managedClubId, cls = comp.cls;
+  const region = regionOf(g, mid), lv = lvOf(g, mid);
+  const need = E_F_FINAL_TEAMS - (comp.lvl === 0 ? 1 : 0);
+  const taken = new Set(staffel);
+  const real = germanPool(g, ddr).filter((id) => !taken.has(id) && lvOf(g, id) === lv).sort((a, b) => rel(g, b, cls) - rel(g, a, cls)).slice(0, Math.min(3, need));
+  const others: string[] = [...real];
+  const names = new Set([...staffel, ...real].map((id) => (isLocalClub(id) ? localClubName(id) : g.clubs[id]?.name ?? g.simClubs[id]?.name)));
+  for (let i = 0; others.length < need && i < 200; i++) {
+    const id = localClubId(region, false, 200 + i); // eigener Nummernkreis: Kreismeister anderer Kreise
+    const nm = localClubName(id);
+    if (taken.has(id) || names.has(nm)) continue;
+    names.add(nm); others.push(id);
+  }
+  setStrengths(g, st, cls, others, f.n, g.season);
+  const sat = weekdayOnOrAfter(isoAdd(staffelEnd, 1), 6), sun = isoAdd(sat, 1);
+  comp.rg = { name: efFinalName(cls, lv), title: efFinalTitle(cls, lv) };
+  comp.ko = [
+    { name: 'Viertelfinale', legs: 1, dates: [sat], ties: [], drawn: false, entrants: others },
+    { name: 'Halbfinale', legs: 1, dates: [sat], ties: [], drawn: false },
+    { name: 'Endspiel', legs: 1, dates: [sun], ties: [], drawn: false },
+  ];
+}
+
 /** Baut die Wettbewerbe der C- bis G-Jugend für die Saison (nur eigener Verein). */
 export function buildLowerComps(g: Game, st: YouthCompsState, y0: number, prevComps?: YcComp[]): YcComp[] {
   const mid = g.managedClubId;
@@ -165,12 +195,17 @@ export function buildLowerComps(g: Game, st: YouthCompsState, y0: number, prevCo
     const from = key === 'u15' ? `${y0}-08-29` : `${y0}-09-05`;
     const to = isoAdd(g.calendar.seasonEndDate, -3) < `${y0 + 1}-06-13` ? isoAdd(g.calendar.seasonEndDate, -3) : `${y0 + 1}-06-13`;
     const r = rng32(hash32(`yl|${g.season}|${key}`));
-    const fx = fixturesFor(clubs, saturdays(y0, 2 * (clubs.length - (clubs.length % 2 ? 0 : 1)), from, to, ddr), r);
-    out.push({
+    // E-/F-Jugend: Staffel endet gut eine Woche früher, danach das Endrunden-Wochenende.
+    const ef = E_F_CHAMPIONSHIP && (key === 'u11' || key === 'u9');
+    const stfTo = ef ? isoAdd(to, -9) : to;
+    const fx = fixturesFor(clubs, saturdays(y0, 2 * (clubs.length - (clubs.length % 2 ? 0 : 1)), from, stfTo, ddr), r);
+    const comp: YcComp = {
       key, fmt: 'stf', cls, label: name, section: sectionLabel(key, y0), pts, ko: [],
       leagues: [{ id: `low-${key}`, name, stage: 0, clubs, fx, slots: 1, down: f.down || undefined }],
       lvl: level, title: lowTitle(key, f), play: f.play, n: f.n,
-    });
+    };
+    if (ef) regionalFinal(g, st, comp, f, y0, stfTo, clubs, ddr);
+    out.push(comp);
   }
   return out;
 }

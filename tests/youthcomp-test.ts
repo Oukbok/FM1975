@@ -187,11 +187,13 @@ ycOpts.prune = true;
   (L as any).simAutoManage = true;
   // Erwartung: Art (stf/fest) und Spieler auf dem Feld je Klasse u15/u13/u11/u9/u7
   const expect: [number, string[], number[]][] = [
-    [1976, ['stf', 'stf', 'stf', 'fest', 'fest'], [11, 11, 7, 0, 0]],
+    // Wunsch Pascal: E/F immer mit Meisterschaft (Staffel + Endrunde der Kreismeister), G Spielfeste.
+    [1976, ['stf', 'stf', 'stf', 'stf', 'fest'], [11, 11, 7, 7, 0]],
     [1995, ['stf', 'stf', 'stf', 'stf', 'fest'], [11, 11, 7, 7, 0]],
     [2010, ['stf', 'stf', 'stf', 'stf', 'fest'], [11, 11, 7, 7, 0]],
-    [2025, ['stf', 'stf', 'fest', 'fest', 'fest'], [11, 9, 0, 0, 0]],
+    [2025, ['stf', 'stf', 'stf', 'stf', 'fest'], [11, 9, 7, 7, 0]],
   ];
+  const opts0 = (G: typeof L) => youthCompOptions(G, G.season);
   for (const [y0, kinds, ns] of expect) {
     const ms = runSeason(L, y0);
     const st = youthCompsOf(L)!;
@@ -225,6 +227,16 @@ ycOpts.prune = true;
       const ownPlayers = Object.keys(st2.stats[k] ?? {}).filter((pid) => L.youthPlayers[pid]?.clubId === 'mgl');
       check(ownPlayers.length >= (c.n ?? 11) || !(L as any).youthTeamsReady, `${tag} ${k}: eigene Spieler mit Einsätzen (${ownPlayers.length})`);
       if (c.cls === 'E' || c.cls === 'F') check(Object.values(st2.stats[k] ?? {}).every((t) => t[3] === 0 && t[5] === 0), `${tag} ${k}: keine Karten im Kinderfußball`);
+      if (c.cls === 'E' || c.cls === 'F') {
+        // Endrunde der Kreismeister (Wunsch Pascal): 8 Teams, Sieger, Namen, eigene Auswahl auf der Seite.
+        const ko = c.ko;
+        const ids = ko[0]?.ties.flatMap((t) => [t.h, t.a]) ?? [];
+        check(ko.length === 3 && ko[0].ties.length === 4 && !!ko[2].ties[0]?.w, `${tag} ${k}: Endrunde mit 8 Teams entschieden`);
+        check(new Set(ids.map((id) => compClubName(L, id, L.season))).size === ids.length, `${tag} ${k}: Endrunde ohne doppelte Namen`);
+        check((c.lvl === 0) === ids.includes(l.clubs.length ? leagueTable(l, c.pts)[0].clubId : ''), `${tag} ${k}: Staffelmeister der oberen Klasse in der Endrunde`);
+        check(opts0(L).some((o) => o.key === `${k}:ko`), `${tag} ${k}: Endrunde auswählbar`);
+        lines.push(`${k} Endrunde: ${compClubName(L, ko[2].ties[0]!.w!, L.season)}`);
+      }
       const pos = leagueTable(l, c.pts).find((r) => r.clubId === 'mgl')?.pos;
       lines.push(`${k}: ${c.label}, ${c.play}, ${l.clubs.length} Teams (${l.clubs.filter(isLocalClub).length} Ortsvereine), Platz ${pos}`);
     });

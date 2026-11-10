@@ -17,7 +17,7 @@ import { bumpMorale, type Game } from '../state';
 import { archiveSeason } from './archive';
 import { buildNwlMainRound, setupSeason } from './setup';
 import { CARD_RATE, GOAL_BASE, buildLowerComps } from './lower';
-import { setLocalCity } from './localClubs';
+import { isLocalClub, localClubName, setLocalCity } from './localClubs';
 import { youthAgeClass } from '../../types';
 import { cityOf, hash32, lineupOf, pruneStats, recordSide, rng32, shootout, simGoals, tierOfClub } from './sim';
 import { leagueDone, leagueTable } from './table';
@@ -132,6 +132,12 @@ function playDay(g: Game, st: YouthCompsState, d: string, quiet: boolean, only?:
     if (!comp.ko.length && comp.leagues.length && comp.leagues.every(leagueDone)) {
       finish(g, st, comp, leagueTable(comp.leagues[0], comp.pts)[0]?.clubId ?? null, null, d, quiet);
     } else if (comp.ko.length) {
+      // E-/F-Jugend: Staffeltitel, sobald die Staffel fertig ist – die Endrunde folgt danach.
+      if (comp.fmt === 'stf' && !comp.stfDone && comp.leagues.length && comp.leagues.every(leagueDone)) {
+        comp.stfDone = 1;
+        const sw = leagueTable(comp.leagues[0], comp.pts)[0]?.clubId;
+        if (sw) finishLower(g, st, comp, sw, d, quiet);
+      }
       const fin = comp.ko[comp.ko.length - 1];
       const t = fin.ties[0];
       if (fin.drawn && t?.w) finish(g, st, comp, t.w, t.w === t.h ? t.a : t.h, d, quiet);
@@ -205,6 +211,12 @@ function pairings(g: Game, comp: YcComp, ri: number, r: () => number): [string, 
       if (bad < bestBad) { best = p; bestBad = bad; }
     }
     return best;
+  }
+  // E-/F-Jugend: Meister der eigenen Staffel (obere Klasse) + Kreismeister der anderen Kreise.
+  if (comp.fmt === 'stf' && ri === 0) {
+    const q = comp.lvl === 0 ? qualifiers(comp) : [];
+    if (!q) return null;
+    return pairUp([...q.flat(), ...(rd.entrants ?? [])]);
   }
   if (rd.entrants && comp.fmt === 'cup21' && ri === 0) return pairUp(shuffled(rd.entrants, r).slice(0, Math.max(0, rd.entrants.length - 16) * 2));
   if (rd.entrants) return pairUp(rd.entrants);
@@ -287,7 +299,7 @@ function finish(g: Game, st: YouthCompsState, comp: YcComp, winner: string | nul
   comp.done = true;
   comp.winner = winner;
   if (!winner) return;
-  if (comp.fmt === 'stf') { finishLower(g, st, comp, winner, d, quiet); return; }
+  if (comp.fmt === 'stf') { if (comp.rg) finishRegional(g, st, comp, winner, runnerUp, d, quiet); else finishLower(g, st, comp, winner, d, quiet); return; }
   const kind = TITLE_KIND[comp.key];
   if (kind) addTitleRecord(g, winner, kind, st.season);
   const bump: Partial<Record<YcKey, number>> = { u19: 2, u17: 1.5, pokal: 1, ddr: 1.5, uyl: 3 };
@@ -353,6 +365,25 @@ function finishLower(g: Game, st: YouthCompsState, comp: YcComp, winner: string,
   pushMessage(g.messages, makeMessage({
     date: d, category: 'training', from: 'Leiter Jugendakademie', subject, shortText: text,
     bodyText: `${text} Tabelle und Bestenlisten findest du unter Jugend › Jugendwettbewerbe.`,
+  }));
+}
+
+/** E-/F-Jugend: Endrunde der Kreismeister entschieden. */
+function finishRegional(g: Game, st: YouthCompsState, comp: YcComp, winner: string, runnerUp: string | null, d: string, quiet: boolean): void {
+  const mid = g.managedClubId;
+  const kind: TitleKind = comp.cls === 'E' ? 'jugendEReg' : 'jugendFReg';
+  if (!isLocalClub(winner)) addTitleRecord(g, winner, kind, st.season);
+  if (winner === mid) { rep(g, mid, 0.3); titleBoost(g, st, comp, 5, 0.12); }
+  const inFinal = winner === mid || runnerUp === mid;
+  const inRound = comp.ko[0]?.ties.some((t) => t.h === mid || t.a === mid);
+  if (quiet || !inRound) return;
+  const nm = (id: string) => (isLocalClub(id) ? localClubName(id) : g.clubs[id]?.name ?? g.simClubs[id]?.name ?? id);
+  const text = winner === mid ? `Deine ${comp.cls}-Jugend gewinnt die ${comp.rg!.name}!`
+    : inFinal ? `Deine ${comp.cls}-Jugend verliert das Endspiel der ${comp.rg!.name} gegen ${nm(winner)}.`
+    : `Deine ${comp.cls}-Jugend scheidet in der ${comp.rg!.name} aus. Meister wird ${nm(winner)}.`;
+  pushMessage(g.messages, makeMessage({
+    date: d, category: 'training', from: 'Leiter Jugendakademie', subject: winner === mid ? `${comp.rg!.title} ${st.season}` : comp.rg!.name,
+    shortText: text, bodyText: `${text} Die Endrunde findest du unter Jugend › Jugendwettbewerbe.`,
   }));
 }
 

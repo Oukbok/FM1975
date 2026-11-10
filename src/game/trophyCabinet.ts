@@ -117,7 +117,7 @@ const CAT_RANK: Record<TrophyCat, number> = { liga: 0, pokal: 1, kontinental: 2,
 /** Innerhalb einer Saison: große Titel vor Staffelsiegen (v. a. Jugend). */
 const KIND_RANK: Partial<Record<TrophyEntry['kind'], number>> = {
   meister: 0, ddr: 0, staffel: 1, ec: 0, cwc: 1, uefa: 2,
-  uyl: 0, jugendA: 1, jugendB: 2, jugendPokal: 3, jugendDdr: 4, jugendC: 5, jugendD: 6, jugendE: 7, jugendF: 8,
+  uyl: 0, jugendA: 1, jugendB: 2, jugendPokal: 3, jugendDdr: 4, jugendC: 5, jugendD: 6, jugendEReg: 7, jugendFReg: 7, jugendE: 8, jugendF: 9,
   halle: 0, aufstieg: 1,
 };
 const catRank = (e: TrophyEntry) => CAT_RANK[e.cat] * 10 + (KIND_RANK[e.kind] ?? 0);

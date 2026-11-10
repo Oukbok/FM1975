@@ -61,6 +61,17 @@ export const REGION_NAME: Record<YcRegion, string> = { nord: 'Nord', nordost: 'N
 export const C_RL_FROM: Record<YcRegion, number> = { nord: 2004, west: 2008, nordost: 2008, suedwest: 2008, sued: 2010 };
 /** Kinderfußball-Reform: Spielfeste statt Tabellen für G/F/E. */
 export const KIFU_REFORM = 2024;
+/**
+ * Wunsch Pascal: E- und F-Jugend spielen in jeder Saison eine Meisterschaft – Kreisstaffel mit Tabelle,
+ * danach eine Endrunde der Kreismeister im Landesverband (game/youthComps/lower.ts `regionalFinal`).
+ * Historisch gab es für die F-Jugend erst ab 1984 Staffeln, ab 2024 nur noch Spielfeste (siehe unten).
+ */
+export const E_F_CHAMPIONSHIP = true;
+/** Kreismeister in der Endrunde (eigene Staffel + erzeugte Kreismeister anderer Kreise). */
+export const E_F_FINAL_TEAMS = 8;
+/** Name der Endrunde und Titel. */
+export const efFinalName = (cls: string, lv: Lv) => `${cls}-Jugend-Meisterschaft ${LV_NAME[lv]}`;
+export const efFinalTitle = (cls: string, lv: Lv) => `${cls}-Jugend-Meister ${LV_NAME[lv]}`;
 /** Erste Kreisstaffeln der F-Jugend mit Tabelle (Chronik FV Queichheim: 1984). */
 export const F_LEAGUE_FROM = 1984;
 
@@ -106,10 +117,13 @@ export function lowFormat(key: YcLowKey, y0: number, region: YcRegion, lv: Lv, l
       return level === 0 ? L('Bezirksliga', 'bezirk', 12, n, play) : L('Kreisliga', 'kreis', 12, n, play);
     }
     case 'u11':
+      // Wunsch Pascal: E- und F-Jugend spielen in allen Epochen eine Meisterschaft (Staffel + Endrunde der Kreismeister).
+      if (E_F_CHAMPIONSHIP) return level === 0 ? L('Kreisliga', 'kreis', 10, 7, y0 >= KIFU_REFORM ? '7 gegen 7 (Kleinfeld, Meisterschaft im Spiel – abweichend von der Reform 2024)' : '7 gegen 7 (Kleinfeld)') : L('Kreisklasse', 'kreis', 10, 7, '7 gegen 7 (Kleinfeld)');
       if (y0 >= KIFU_REFORM) return F('5 gegen 5 oder 7 gegen 7 auf Mini- bzw. Kleinfeldtore',
         `Seit der DFB-Kinderfußball-Reform ${KIFU_REFORM}/${String((KIFU_REFORM + 1) % 100).padStart(2, '0')} spielt die E-Jugend in Spielfesten: kleine Teams, viele Ballkontakte, Wechsel nach jedem Tor. Ergebnisse und Tabellen werden nicht festgehalten – wer gewinnt, rückt auf ein stärkeres Feld.`);
       return level === 0 ? L('Kreisliga', 'kreis', 10, 7, '7 gegen 7 (Kleinfeld)') : L('Kreisklasse', 'kreis', 10, 7, '7 gegen 7 (Kleinfeld)');
     case 'u9':
+      if (E_F_CHAMPIONSHIP) return level === 0 ? L('Kreisliga', 'kreis', 8, 7, y0 >= 2010 ? '7 gegen 7, Fair-Play-Liga ohne Schiedsrichter' : '7 gegen 7 (Kleinfeld)') : L('Kreisklasse', 'kreis', 8, 7, '7 gegen 7 (Kleinfeld)');
       if (y0 >= KIFU_REFORM) return F('3 gegen 3 auf vier Minitore (Funino), auch 5 gegen 5',
         `Seit der DFB-Kinderfußball-Reform ${KIFU_REFORM}/${String((KIFU_REFORM + 1) % 100).padStart(2, '0')} gibt es in der F-Jugend keine Tabelle mehr: Spielfeste mit 3 gegen 3 auf vier Minitore, ohne Schiedsrichter, alle Kinder spielen gleich viel.`);
       if (y0 < F_LEAGUE_FROM) return F('Freundschaftsspiele und Turniere auf dem Kleinfeld',

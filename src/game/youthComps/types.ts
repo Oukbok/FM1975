@@ -68,6 +68,11 @@ export interface YcComp {
   n?: number;
   /** Spielfeste ohne Tabelle: Termine + Gastgeber, Erklärung. */
   fest?: { d: string[]; h: string[]; note: string };
+  // --- E-/F-Jugend: Endrunde der Kreismeister (Wunsch Pascal) ---
+  /** Name der Endrunde und Titel des Siegers. */
+  rg?: { name: string; title: string };
+  /** Staffel abgeschlossen (Staffeltitel vergeben), Endrunde läuft noch. */
+  stfDone?: 1;
 }
 
 export interface YcArchComp {
@@ -78,6 +83,8 @@ export interface YcArchComp {
   stats: ArchStatList;
   /** C–G: Spielklasse, Spielform, Anzahl Spielfeste (ohne Tabelle). */
   lvl?: 0 | 1; play?: string; fest?: number;
+  /** E-/F-Jugend: Name der Endrunde der Kreismeister. */
+  rgName?: string;
 }
 
 export interface YcArchSeason {

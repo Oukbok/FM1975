@@ -6,7 +6,7 @@ import { fmtDM, fmtDateShort } from '../../ui/format';
 import { ClubTabProps, PlacementChart } from './shared';
 import PosBadge from '../PosBadge';
 
-const TITLE_ORDER: TitleKind[] = ['meister', 'ddr', 'pokal', 'ec', 'cwc', 'uefa', 'halle', 'uyl', 'jugendA', 'jugendB', 'jugendPokal', 'jugendDdr', 'jugendC', 'jugendD', 'jugendE', 'jugendF'];
+const TITLE_ORDER: TitleKind[] = ['meister', 'ddr', 'pokal', 'ec', 'cwc', 'uefa', 'halle', 'uyl', 'jugendA', 'jugendB', 'jugendPokal', 'jugendDdr', 'jugendC', 'jugendD', 'jugendEReg', 'jugendFReg', 'jugendE', 'jugendF'];
 const COMP_DE = { L: 'Liga', P: 'Pokal', E: 'Europa' } as const;
 
 export default function HistoryTab({ g, d, openPlayer }: ClubTabProps) {

@@ -23,6 +23,7 @@ import { budgetCheck, budgetInit, budgetSummary } from './simBudget';
 import { promBefore, promInit, promModeFromEnv, promSeasonEnd, promSeasonStart, promSummary } from './simPromises';
 import { legSummary, legTrack } from './simLegends';
 import { honoursSummary, honoursTrack } from './simHonours';
+import { speedNote, speedSeason, speedSummary } from './simSpeed';
 import { campAfter, campBefore, campInit, campModeFromEnv, campSeasonReport, campSeasonStart, campSummary } from './simCamp';
 
 const seasons = Number(process.argv[2] ?? 3);
@@ -36,6 +37,8 @@ const g: Game = createNewGame({
   manager: { name: 'Sim', nationality: 'GER', birthYear: 1940, style: 'balanced', background: 'newcomer' } as any,
   difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300,
   legends: process.env.LEG !== '0', // LEG=0: ohne Ausnahmetalente (Vergleich)
+  // FULL=eng,ita: weitere Länder Spiel für Spiel (Rechenzeit-Vergleich, SPEED=1)
+  ...(process.env.FULL ? { fullCountries: process.env.FULL.split(',') } : {}),
 });
 
 (g as any).simAutoManage = true; // eigener Verein wird wie ein KI-Verein gepflegt
@@ -465,7 +468,8 @@ for (let s = 0; s < seasons; s++) {
     campBefore(g);
     promBefore(g);
     budgetCheck(g);
-    processDay(g, HEADLESS_UI);
+    if (process.env.SPEED) { const t0 = performance.now(); processDay(g, HEADLESS_UI); speedNote(performance.now() - t0); }
+    else processDay(g, HEADLESS_UI);
     campAfter(g);
     if (process.env.KABINE) kabineTrack(g);
     if (process.env.BAL && /-(11|03)-15$/.test(g.calendar.currentDate)) bal.injSnap.push(leaguePlayers(g).filter((p) => p.injury).length);
@@ -479,7 +483,9 @@ for (let s = 0; s < seasons; s++) {
   if (process.env.AWARDS) awardsReport(g);
   if (process.env.LEGENDS) legTrack(g);
   const promSt = promSeasonEnd(g), promSeason = g.season;
+  const tS = performance.now();
   startNextSeason(g);
+  if (process.env.SPEED) speedSeason(g, promSeason, performance.now() - tS);
   if (process.env.HONOURS) honoursTrack(g);
   campSeasonStart(g);
   promSeasonStart(g, promSt, promSeason);
@@ -532,6 +538,7 @@ budgetSummary();
 if (process.env.TOP) { topSummary(); careerSummary(); }
 if (process.env.LEGENDS) legSummary(g);
 if (process.env.HONOURS) honoursSummary();
+if (process.env.SPEED) speedSummary();
 console.log(`fertig in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 // Diagnose: Wer ist ≥ 85?
 {

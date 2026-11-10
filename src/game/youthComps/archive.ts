@@ -49,7 +49,7 @@ export function archiveComp(g: Game, st: YouthCompsState, comp: YcComp, people: 
   for (const l of Object.values(lists)) for (const [pid] of l) if (!isVirtual(pid)) people[pid] ??= personOf(g, st, pid);
   return {
     key: comp.key, label: comp.label, section: comp.section, winner: comp.winner ?? null, stats: lists,
-    ...(comp.lvl != null ? { lvl: comp.lvl } : {}), ...(comp.play ? { play: comp.play } : {}), ...(comp.fest ? { fest: comp.fest.d.length } : {}),
+    ...(comp.lvl != null ? { lvl: comp.lvl } : {}), ...(comp.play ? { play: comp.play } : {}), ...(comp.fest ? { fest: comp.fest.d.length } : {}), ...(comp.rg ? { rgName: comp.rg.name } : {}),
     leagues: comp.leagues.map((l) => ({
       id: l.id, name: l.name, stage: l.stage, group: l.group, slots: l.slots, down: l.down,
       rows: leagueTable(l, comp.pts).map((r) => [r.clubId, r.w, r.d, r.l, r.gf, r.ga, r.pts] as ArchRow),
