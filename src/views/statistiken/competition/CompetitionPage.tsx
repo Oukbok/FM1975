@@ -26,6 +26,8 @@ import { compClubName } from '../../../game/competitionView';
 import { inEuroCup } from '../../../game/euroFixture';
 import Icon from '../../../components/Icon';
 import Select from '../../../ui/Select';
+import { liveFixtures, resultsFor, winPoints, type TableMode } from '../../../game/leagueResults';
+import { MatchdayBox, fromTuple, type MdGame } from './MatchdayBox';
 
 export type CompStart = 'league' | 'cup' | 'euro';
 
@@ -92,14 +94,10 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
   const step = (d: number) => { const n = seasons[sIdx + d]; if (n) setSeason(n.season); };
   const sections = [...new Set(opts.map((o) => o.section))];
 
+  // Reihenfolge im Kopf (Wunsch Pascal): Land | Wettbewerb | Saison; darunter der Spieltag (in der Tabelle).
   const header = (
     <span className="cmp-select">
       <CountrySelect countries={countries} value={country.cc} onChange={changeCountry} />
-      <button className="b3 b3-icon" disabled={sIdx <= 0} onClick={() => step(-1)} title="Vorherige Saison" aria-label="Vorherige Saison"><Icon name="navPrev" size={18} /></button>
-      <Select className="dselect cmp-season" width={150} popWidth={260} value={season} onChange={(v) => setSeason(v)} title="Saison">
-        {seasons.map((s) => <option key={s.season} value={s.season}>{s.season}{seasonSuffix(s)}</option>)}
-      </Select>
-      <button className="b3 b3-icon" disabled={sIdx >= seasons.length - 1} onClick={() => step(1)} title="Nächste Saison" aria-label="Nächste Saison"><Icon name="navNext" size={18} /></button>
       <Select className="dselect cmp-comp" width={190} popWidth={260} value={effKey} onChange={(v) => setKey(v)} title="Wettbewerb">
         {sections.map((sec) => (
           <optgroup key={sec} label={sec}>
@@ -107,24 +105,49 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
           </optgroup>
         ))}
       </Select>
+      <button className="b3 b3-icon" disabled={sIdx <= 0} onClick={() => step(-1)} title="Vorherige Saison" aria-label="Vorherige Saison"><Icon name="navPrev" size={18} /></button>
+      <Select className="dselect cmp-season" width={150} popWidth={260} value={season} onChange={(v) => setSeason(v)} title="Saison">
+        {seasons.map((s) => <option key={s.season} value={s.season}>{s.season}{seasonSuffix(s)}</option>)}
+      </Select>
+      <button className="b3 b3-icon" disabled={sIdx >= seasons.length - 1} onClick={() => step(1)} title="Nächste Saison" aria-label="Nächste Saison"><Icon name="navNext" size={18} /></button>
     </span>
   );
+
+  // Spieltage (Ligen der Heimat mit Einzelergebnissen): gemeinsamer Stand für Tabelle und „Begegnungen“.
+  const isLeague = !!snap && snap.kind === 'league' && !snap.winners && !snap.roster && !snap.placingsOnly;
+  const res = isLeague && country.mode === 'home' ? resultsFor(g, season, effKey) : null;
+  const fx = isLeague && country.mode === 'home' && season === g.season ? liveFixtures(g, effKey) : null;
+  const mdGames: MdGame[] = fx ? fx.map((m) => {
+    const r = res?.find((x) => x[0] === m.matchday && x[2] === m.homeClubId && x[3] === m.awayClubId);
+    return r ? fromTuple(r) : { md: m.matchday, date: m.date, home: m.homeClubId, away: m.awayClubId, hg: null, ag: null, hh: -1, ha: -1 };
+  }) : (res ?? []).map(fromTuple);
+  const maxMd = mdGames.reduce((a, x) => Math.max(a, x.md), 0);
+  const playedMd = (res ?? []).reduce((a, x) => Math.max(a, x[0]), 0);
+  const mdKey = `${country.cc}|${season}|${effKey}`;
+  const [mdSel, setMdSel] = useState<{ key: string; md: number } | null>(null);
+  const [mode, setMode] = useState<TableMode>('all');
+  const md = mdSel?.key === mdKey ? Math.min(Math.max(1, mdSel.md), maxMd || 1) : Math.max(1, playedMd || (fx ? 1 : maxMd));
+  const onMd = (n: number) => setMdSel({ key: mdKey, md: n });
+  const nav = { mode, setMode, md, maxMd, playedMd, onMd, res, ptsWin: winPoints(g, season) };
 
   const main = !snap ? <Empty icon="stats">Für diese Auswahl liegen keine Daten vor.</Empty>
     : snap.winners ? <><Caption snap={snap} /><WinnersList g={g} snap={snap} /></>
     : snap.kind === 'league' && snap.roster ? <><Caption snap={snap} /><RosterList g={g} snap={snap} /></>
     : snap.kind === 'league' && !snap.table?.length && snap.emptyText ? <><Caption snap={snap} /><Empty icon="stats">{snap.emptyText}</Empty></>
-    : snap.kind === 'league' ? <><Caption snap={snap} /><LeagueTable key={`${country.cc}-${season}-${effKey}`} g={g} snap={snap} /></>
+    : snap.kind === 'league' ? <><Caption snap={snap} /><LeagueTable key={`${country.cc}-${season}-${effKey}`} g={g} snap={snap} nav={nav} /></>
     : <CupRounds g={g} snap={snap} onWatch={onWatch}
       onReplayDraw={onReplayDraw && src === 'live' ? (ri) => onReplayDraw(effKey as 'cup' | EuroCompId, ri) : undefined} />;
 
+  const withMd = isLeague && !!snap?.table?.length;
   return (
-    <DashPage className="cmp-page">
+    <DashPage className={`cmp-page${withMd ? ' cmp-mdpage' : ''}`}>
       <DashBox title={snap ? snap.label : 'Wettbewerb'} icon={snap?.kind === 'cup' ? 'trophy' : 'dashTabelle'} span={2} rows={2} right={header} className="cmp-main" info={start === 'euro' ? undefined : 'ligaLand'}>
         {main}
       </DashBox>
+      {withMd && <MatchdayBox g={g} season={season} games={mdGames} md={md} maxMd={maxMd} onMd={onMd}
+        none={mdGames.length ? undefined : 'Für diese Saison liegen keine Einzelergebnisse vor.'} />}
       <StatsBox key={`st-${country.cc}-${season}-${effKey}`} g={g} snap={snap} />
-      {snap && src === 'live' && ['ec', 'cwc', 'uefa'].includes(snap.key) && !snap.rounds?.some((r) => r.ties.some((t) => t.mine) || r.groups?.some((gr) => gr.rows.some((x) => x.id === g.managedClubId)))
+      {withMd ? null : snap && src === 'live' && ['ec', 'cwc', 'uefa'].includes(snap.key) && !snap.rounds?.some((r) => r.ties.some((t) => t.mine) || r.groups?.some((gr) => gr.rows.some((x) => x.id === g.managedClubId)))
         ? <EuropeBox g={g} germans={(g.euroCups?.[snap.key as EuroCompId]?.participantIds ?? []).filter((id) => !g.euroClubs?.[id])} teamName={(id) => compClubName(g, id, season)} />
         : <InfoBox g={g} snap={snap} />}
     </DashPage>

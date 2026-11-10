@@ -56,7 +56,7 @@
 .dtable td:last-child, .dtable th:last-child { padding-right: var(--rl-px); }
 .dtable tbody tr:last-child td { border-bottom: none; }
 .dtable tbody tr:hover { background: var(--rl-hover); }
-.dtable td.rl-rank, .dtable th.rl-rank { width: 44px; text-align: left; }
+.dtable td.rl-rank, .dtable th.rl-rank { width: 54px; text-align: left; text-overflow: clip; }
 .dtable td.rl-rank, .dtable tbody tr.me td.rl-rank { color: var(--text-3); font-weight: 700; }
 .dtable td.rl-main { font-size: calc(var(--rl-fs) + 2px); }
 .dtable td.rl-name { font-weight: 600; }
@@ -85,6 +85,9 @@
 .rl-tie .cmp-res { min-width: 0; text-align: center; }
 .rl-tie .cmp-res .rl-meta { text-align: center; white-space: normal; }
 .rl-tie .cmp-res b { font-family: var(--font-display); font-weight: 600; font-size: calc(var(--rl-fs) + 2px); }
+/* Feste Zeilenhöhe (Wunsch Pascal): Platz für Ergebnis + Hin-/Rückspiel + n. V./i. E., damit Runden beim Umschalten gleich aussehen. */
+.rl-row.rl-tie { height: 80px; box-sizing: border-box; padding-top: 0; padding-bottom: 0; }
+.rl-sm .rl-row.rl-tie, .rl-row.rl-tie.rl-sm { height: auto; }
 .rl-meta { font-size: calc(var(--rl-fs) - 3px); white-space: nowrap; text-align: right; }
 .cmp-md.rl { gap: 0; }
 .cmp-md.rl .cmp-md-head { padding: 6px var(--rl-px) 6px; }

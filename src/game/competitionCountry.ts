@@ -254,5 +254,5 @@ export function countrySnapshot(g: Game, c: StatsCountry, season: string, source
 
 /** Saison-Suffix in der Auswahl. */
 export function seasonSuffix(s: CSeasonOption): string {
-  return s.source === 'live' ? ' (laufend)' : s.source === 'roster' ? ' (läuft)' : s.source === 'history' || s.source === 'data' ? ' (vor Spielbeginn)' : '';
+  return s.source === 'live' ? '' : s.source === 'roster' ? ' (läuft)' : s.source === 'history' || s.source === 'data' ? ' (vor Spielbeginn)' : '';
 }

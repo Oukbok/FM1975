@@ -118,3 +118,32 @@
 .cmp-statbox .cmp-statlist { display: grid; height: 100%; grid-auto-rows: calc(100% / var(--stat-rows)); }
 .cmp-statbox .cmp-statlist .cmp-stat { min-height: 0; padding-top: 0; padding-bottom: 0; scroll-snap-align: start; overflow: hidden; }
 .cmp-statbox .cmp-statlist .cmp-stat:last-child { border-bottom: 1px solid var(--border-soft); }
+
+/* Liga mit Spieltagen (Wunsch Pascal): Mitte oben „Begegnungen“ über zwei Reihen, darunter Rote Karten,
+   unterste Reihe Torschützen + Scorer (früher „Deine Lage“), rechts Vorlagen/Gelbe/Weiße Weste. */
+.cmp-page.cmp-mdpage > .cmp-mdbox { grid-column: 2 / 3 !important; grid-row: 1 / 3 !important; }
+.cmp-page.cmp-mdpage > .cmp-st-red { grid-column: 2 !important; grid-row: 3 !important; }
+.cmp-page.cmp-mdpage > .cmp-st-goals { grid-column: 2 !important; grid-row: 4 !important; }
+.cmp-page.cmp-mdpage > .cmp-st-scorer { grid-column: 3 !important; grid-row: 4 !important; }
+.cmp-page.cmp-mdpage > .cmp-st-assists { grid-column: 3 !important; grid-row: 1 !important; }
+.cmp-page.cmp-mdpage > .cmp-st-yellow { grid-column: 3 !important; grid-row: 2 !important; }
+.cmp-page.cmp-mdpage > .cmp-st-clean { grid-column: 3 !important; grid-row: 3 !important; }
+.cmp-page.cmp-mdpage > .cmp-statbox:not([class*="cmp-st-"]) { grid-column: auto !important; }
+.cmp-toolbar { display: flex; align-items: center; gap: 12px; }
+.cmp-mdnav { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; }
+.cmp-mdlabel { min-width: 104px; text-align: center; font-family: var(--font-display); font-size: 15px; color: var(--text); }
+.cmp-mdnone { margin-left: auto; font-size: 13px; color: var(--text-3); }
+.cmp-mdbox .dbox-body { overflow-y: auto; padding-top: 4px; }
+.md-day + .md-day { margin-top: 10px; }
+.md-date { font-size: 12px; letter-spacing: 0.6px; text-transform: uppercase; color: var(--text-3); padding: 4px 0; }
+.md-row { display: grid; grid-template-columns: minmax(0, 1fr) 58px minmax(0, 1fr); align-items: center; gap: 8px; min-height: 44px; border-bottom: 1px solid var(--border-soft); }
+.md-row.me .cmp-team-name { color: var(--club-accent, var(--accent)); font-weight: 700; }
+.md-home { display: flex; justify-content: flex-end; min-width: 0; }
+.md-home .cmp-team { flex-direction: row-reverse; text-align: right; }
+.md-away { display: flex; min-width: 0; }
+.md-home .cmp-team, .md-away .cmp-team { min-width: 0; max-width: 100%; }
+.md-row .cmp-team-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.md-score { display: flex; flex-direction: column; align-items: stretch; text-align: center; }
+.md-score b { background: var(--navy); color: var(--navy-ink); font-family: var(--font-display); font-size: 17px; line-height: 26px; border-radius: 3px 3px 0 0; }
+.md-score small { background: rgba(var(--ink-rgb), 0.38); color: var(--navy-ink); font-size: 12px; line-height: 17px; border-radius: 0 0 3px 3px; }
+.md-score b:only-child { border-radius: 3px; }

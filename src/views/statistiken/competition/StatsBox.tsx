@@ -52,7 +52,7 @@ export function StatsBox({ g, snap, playerCard }: {
         {CATS.map((cat) => {
           const list = stats[cat] ?? [];
           return (
-            <DashBox key={cat} title={<span title={CAT_TITLE[cat]}>{BOX_TITLE[cat]}</span>} right={cat === 'goals' ? snap?.season : undefined} className="cmp-statbox">
+            <DashBox key={cat} title={<span title={CAT_TITLE[cat]}>{BOX_TITLE[cat]}</span>} right={cat === 'goals' ? snap?.season : undefined} className={`cmp-statbox cmp-st-${cat}`}>
               {list.length ? (
                 <div className="cmp-statlist">
                   {list.map((r, i) => {

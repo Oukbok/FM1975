@@ -1,13 +1,16 @@
 // =============================================================================
-// Ligatabelle: Gesamt / Heim / Auswärts / Form (laufende Saison), sonst Abschlusstabelle
+// Ligatabelle: Gesamt / Heim / Auswärts / Form und Stand nach jedem Spieltag – für jede Saison
+// mit Einzelergebnissen (game/leagueResults.ts), sonst nur die Abschlusstabelle.
 // =============================================================================
 import { useState } from 'react';
+import Icon from '../../../components/Icon';
 import type { CompSnapshot, TableRowLite } from '../../../game/competitionView';
+import { tableFrom, type ResTuple, type TableMode } from '../../../game/leagueResults';
 import type { Game } from '../../../game/state';
 import { FormDots } from '../../shared';
 import { Chips, TeamName, zoneOf } from './parts';
 
-type Mode = 'all' | 'home' | 'away' | 'form';
+type Mode = TableMode;
 
 /** Formtabelle: Punkte aus den letzten fünf Spielen. */
 function formTable(rows: TableRowLite[], ptsWin: number): TableRowLite[] {
@@ -15,13 +18,23 @@ function formTable(rows: TableRowLite[], ptsWin: number): TableRowLite[] {
   return [...rows].sort((a, b) => val(b) - val(a) || a.pos - b.pos).map((r, i) => ({ ...r, pos: i + 1, pts: val(r) }));
 }
 
-export function LeagueTable({ g, snap }: { g: Game; snap: CompSnapshot }) {
-  const [mode, setMode] = useState<Mode>('all');
+export interface TableNav { mode: Mode; setMode: (m: Mode) => void; md: number; maxMd: number; playedMd: number; onMd: (n: number) => void; res: ResTuple[] | null; ptsWin: number }
+
+export function LeagueTable({ g, snap, nav: navIn }: { g: Game; snap: CompSnapshot; nav?: TableNav }) {
+  const [ownMode, setOwnMode] = useState<Mode>('all');
+  const nav: TableNav = navIn ?? { mode: ownMode, setMode: setOwnMode, md: 0, maxMd: 0, playedMd: 0, onMd: () => {}, res: null, ptsWin: g.pointSystem === '3-point' ? 3 : 2 };
   const rowsAll = snap.table ?? [];
   const live = snap.source === 'live';
-  const ptsWin = g.pointSystem === '3-point' && live ? 3 : 2;
-  const m: Mode = live ? mode : 'all';
-  const rows = m === 'home' ? snap.split?.home ?? rowsAll : m === 'away' ? snap.split?.away ?? rowsAll : m === 'form' ? formTable(rowsAll, ptsWin) : rowsAll;
+  const { res, md, maxMd, ptsWin } = nav;
+  const can = !!res && res.length > 0;
+  const m: Mode = can || live ? nav.mode : 'all';
+  const finalView = !can || (md >= nav.playedMd && m === 'all');
+  let rows: TableRowLite[];
+  if (finalView) rows = m === 'home' ? snap.split?.home ?? rowsAll : m === 'away' ? snap.split?.away ?? rowsAll : m === 'form' ? formTable(rowsAll, ptsWin) : rowsAll;
+  else rows = tableFrom(res!, rowsAll.map((r) => r.clubId), md, m, ptsWin).map((r, i) => ({ ...r, pos: i + 1 }));
+  const showForm = live || can;
+  // Form-Spalte: Stand bis zum gewählten Spieltag
+  const formOf = (id: string) => (can ? tableFrom(res!, [id], md, 'all', ptsWin).find((r) => r.clubId === id)?.form ?? [] : rowsAll.find((r) => r.clubId === id)?.form ?? []);
   const mid = g.managedClubId;
   const historic = snap.source === 'history';
 
@@ -38,19 +51,25 @@ export function LeagueTable({ g, snap }: { g: Game; snap: CompSnapshot }) {
 
   return (
     <div className="cmp-league">
-      {live && (
-        <div className="cmp-toolbar">
-          <Chips<Mode> value={mode} onChange={setMode} options={[
-            { v: 'all', label: 'Gesamt' }, { v: 'home', label: 'Heim' }, { v: 'away', label: 'Auswärts' },
-            { v: 'form', label: 'Form', title: 'Punkte aus den letzten fünf Spielen' },
-          ]} />
-        </div>
-      )}
+      <div className="cmp-toolbar">
+        <Chips<Mode> value={m} onChange={nav.setMode} options={[
+          { v: 'all', label: 'Gesamt' }, { v: 'home', label: 'Heim', disabled: !can && !live }, { v: 'away', label: 'Auswärts', disabled: !can && !live },
+          { v: 'form', label: 'Form', title: 'Punkte aus den letzten fünf Spielen', disabled: !can && !live },
+        ]} />
+        {maxMd > 0 && (
+          <span className="cmp-mdnav">
+            <button className="b3 b3-s b3-icon" disabled={md <= 1} onClick={() => nav.onMd(md - 1)} aria-label="Vorheriger Spieltag" title="Vorheriger Spieltag"><Icon name="navPrev" size={16} /></button>
+            <span className="cmp-mdlabel">{md}. Spieltag</span>
+            <button className="b3 b3-s b3-icon" disabled={md >= maxMd} onClick={() => nav.onMd(md + 1)} aria-label="Nächster Spieltag" title="Nächster Spieltag"><Icon name="navNext" size={16} /></button>
+          </span>
+        )}
+        {navIn && !can && !live && <span className="cmp-mdnone">Für diese Saison liegen keine Einzelergebnisse vor.</span>}
+      </div>
       <div className="cmp-scroll">
         <table className="dtable cmp-table">
           <thead><tr>
             <th className="rl-rank">#</th><th>Verein</th><th className="num">Sp</th><th className="num">S</th><th className="num">U</th><th className="num">N</th>
-            <th className="num">Tore</th><th className="num">Diff</th><th className="num">{m === 'form' ? 'Pkt (5)' : 'Pkt'}</th>{live && <th>Form</th>}
+            <th className="num">Tore</th><th className="num">Diff</th><th className="num">{m === 'form' ? 'Pkt (5)' : 'Pkt'}</th>{showForm && <th>Form</th>}
           </tr></thead>
           <tbody>
             {rows.map((r) => {
@@ -63,7 +82,7 @@ export function LeagueTable({ g, snap }: { g: Game; snap: CompSnapshot }) {
                   <td className="num muted">{r.gf}:{r.ga}</td>
                   <td className="num">{diff > 0 ? '+' : ''}{diff}</td>
                   <td className="num rl-main">{r.pts}{r.ded ? <sup className="cmp-ded" title={`${r.ded} Punkte Abzug`}>−{r.ded}</sup> : null}</td>
-                  {live && <td><FormDots form={r.form ?? []} /></td>}
+                  {showForm && <td><FormDots form={(finalView && !can ? r.form ?? [] : formOf(r.clubId)).slice(-5)} /></td>}
                 </tr>
               );
             })}

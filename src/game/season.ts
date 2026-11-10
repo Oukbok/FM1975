@@ -50,6 +50,7 @@ import { sponsorSeasonStart } from './sponsorGame';
 import { contractSeasonStart } from './contractClausesGame';
 import { honoursSeasonEnd } from './clubHonours';
 import { worldPoolSeason } from './worldPool';
+import { storeSeasonResults } from './leagueResults';
 
 // -----------------------------------------------------------------------------
 // Spieltag simulieren + Form/Fitness-Effekte + Nachrichten
@@ -263,6 +264,8 @@ export function startNextSeason(g: Game): void {
   recordSeasonEnd(g, oldSeason, [...current, ...(isReunify ? [] : ddrDivs.map((d) => ({ id: d.id, tier: d.tier, group: d.group, name: d.name, orderedIds: finalOrder(g, d.id) })))]);
   // Liga-Archiv: Tabellen, Pokalrunden, Bestenlisten (game/leagueArchive.ts).
   archiveSeasonEnd(g, oldSeason);
+  // Ergebnisse je Spieltag aller Ligen (Statistiken › Liga: Spieltage, Heim/Auswärts/Form) – game/leagueResults.ts.
+  storeSeasonResults(g, oldSeason);
   // Vereinsauszeichnungen (Bronze/Silber/Gold) für alle Vereine mit vollem Kader.
   honoursSeasonEnd(g, oldSeason);
   // Managerkarriere: Ansehen, Trainer- und Managerbilanz (kein Vereinswechsel mehr; careerSw ist immer null)
