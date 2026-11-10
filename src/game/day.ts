@@ -20,7 +20,7 @@ import { coachingReport, memberMonthlySalary } from '../engine/staffPeople';
 import { CalendarEngine } from '../engine/calendar';
 import { drawRound, roundWinners, simulateCupTie } from '../engine/cup';
 import { RatingResult, RatingType, runRatingCeremony, weeklyDevelopment, ratingTendencies, updateAges } from '../engine/development';
-import { economyScale, euroMoneyFactor, yearOf } from '../engine/economy';
+import { economyScale, euroMoneyFactor, setCurrencyDate, yearOf } from '../engine/economy';
 import { bookDebtInterest } from '../engine/clubEconomy';
 import { drawEuroRound, simulateEuroTie } from '../engine/euro';
 import { book, bookCupHomeMatch, bookCupPrize, bookMonthly } from '../engine/finances';
@@ -163,6 +163,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
     applyEuphoria(g);
   }
   setDisplayYear(yearOf(today));
+  setCurrencyDate(today); // Währungsumstellung taggenau (engine/economy.ts currencyAt)
   setEraYear(yearOf(today));
   // Terminwart: Platzbegehung für morgen, Wochenend-Verlegungen (game/fixtureWatch.ts).
   fixtureWatchDaily(g, today);

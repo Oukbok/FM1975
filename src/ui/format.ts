@@ -1,4 +1,4 @@
-import { economyScale, formatMoney, formatMoneyShort } from '../engine/economy';
+import { currencyAt, economyScale, formatMoney, formatMoneyShort } from '../engine/economy';
 
 // -----------------------------------------------------------------------------
 // Währung ära-gerecht: bis 2001 DM, ab 2002 EUR (1 EUR = 1,95583 DM). Damit die
@@ -19,6 +19,14 @@ export const fmtDMfull = (n: number) => formatMoney(n, _displayYear);
  * werden für die Anzeige auf das aktuelle Spieljahr hochgerechnet.
  */
 export const fmtPrice = (base: number) => formatMoneyShort(base * economyScale(_displayYear), _displayYear);
+/** Betrag zusätzlich in der Währung eines anderen Landes – null, wenn dort dieselbe Währung gilt wie daheim. */
+export const fmtPriceIn = (base: number, cc: string | undefined): string | null => {
+  if (!cc) return null;
+  const home = currencyAt(_displayYear);
+  const other = currencyAt(_displayYear, undefined, cc);
+  if (other.code === home.code) return null;
+  return formatMoneyShort(base * economyScale(_displayYear), _displayYear, cc);
+};
 export const fmtPriceFull = (base: number) => formatMoney(Math.round(base * economyScale(_displayYear)), _displayYear);
 /** Preisschild, kleine Beträge (unter 10.000 nominal) voll ausgeschrieben – z. B. Prämien je Einsatz. */
 export const fmtPriceAuto = (base: number) => (Math.abs(base * economyScale(_displayYear)) < 10000 ? fmtPriceFull(base) : fmtPrice(base));
@@ -38,7 +46,8 @@ export const wageUnit = () => (_wagePeriod === 'woche' ? 'Woche' : 'Jahr');
 /** Kurzform für Spaltenköpfe („Gehalt/Jahr“). */
 export const wageHead = (label = 'Gehalt') => `${label}/${_wagePeriod === 'woche' ? 'Wo.' : 'Jahr'}`;
 const periodFactor = () => (_wagePeriod === 'woche' ? 1 : 52);
-const currencyDiv = () => (_displayYear > 2001 ? 1.95583 : 1);
+const currencyDiv = () => 1 / currencyAt(_displayYear).perDM;
+const unitNow = () => currencyAt(_displayYear).unit;
 /** Wochengehalt (1975-Basis) → angezeigter Betrag in der Währung der Epoche je Zeitraum (ungerundet). */
 export const wageToDisplay = (weeklyBase: number) => (weeklyBase * economyScale(_displayYear) * periodFactor()) / currencyDiv();
 /** Angezeigter/eingegebener Betrag je Zeitraum → Wochengehalt in 1975-Basis. */
@@ -46,13 +55,13 @@ export const wageFromDisplay = (amount: number) => (amount * currencyDiv()) / (e
 /** Gehalt auf die Einserstelle, z. B. „312.457 DM / Jahr“ (`unit: false` ohne Zeitraum). */
 export function fmtWage(weeklyBase: number, opts: { unit?: boolean } = {}): string {
   const v = Math.round(wageToDisplay(weeklyBase));
-  const s = `${v.toLocaleString('de-DE')} ${_displayYear > 2001 ? '€' : 'DM'}`;
+  const s = `${v.toLocaleString('de-DE')} ${unitNow()}`;
   return opts.unit === false ? s : `${s} / ${wageUnit()}`;
 }
 /** Mitarbeitergehalt (nominal pro Monat, engine/staffPeople.ts) im gewählten Zeitraum, auf die Einserstelle. */
 export function fmtStaffWage(monthlyNominal: number, opts: { unit?: boolean } = {}): string {
   const v = Math.round((monthlyNominal * (_wagePeriod === 'woche' ? 12 / 52 : 12)) / currencyDiv());
-  const s = `${v.toLocaleString('de-DE')} ${_displayYear > 2001 ? '€' : 'DM'}`;
+  const s = `${v.toLocaleString('de-DE')} ${unitNow()}`;
   return opts.unit === false ? s : `${s} / ${wageUnit()}`;
 }
 /** Schrittweite für Gehalts-Schieberegler in Anzeige-Einheiten (≈ 1 % des Höchstwerts, glatte Zahl). */
@@ -118,10 +127,12 @@ export const fmtFullDM = (n: number) => formatMoney(n, _displayYear);
 
 /** Kompakte Darstellung ära-gerecht: Tsd. für kleine, Mio. für große Beträge. */
 export const fmtCompactDM = (n: number) => {
-  const eur = _displayYear > 2001;
-  const v = eur ? n / 1.95583 : n;
-  const unit = eur ? '€' : 'DM';
+  const c = currencyAt(_displayYear);
+  const v = n * c.perDM;
+  const unit = c.unit;
   const a = Math.abs(v);
+  if (a >= 1e12) return `${(v / 1e12).toLocaleString('de-DE', { maximumFractionDigits: 2 })} Bio. ${unit}`;
+  if (a >= 1e9) return `${(v / 1e9).toLocaleString('de-DE', { maximumFractionDigits: 2 })} Mrd. ${unit}`;
   if (a >= 1_000_000) return `${(v / 1_000_000).toLocaleString('de-DE', { maximumFractionDigits: 2 })} Mio. ${unit}`;
   return `${Math.round(v / 1000).toLocaleString('de-DE')} Tsd. ${unit}`;
 };

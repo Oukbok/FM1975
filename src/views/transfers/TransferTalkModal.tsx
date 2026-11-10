@@ -13,11 +13,26 @@ import { Game } from '../../game/state';
 import { TransferTalk, cancelTalk, clubOffer, inTransferWindow, playerOffer, scoutKnowledge, sellerOf, stanceFor, swapValueFor } from '../../game/transferTalks';
 import { ImportanceDots, InterestLight, ReasonList, WishList, importanceText } from '../../components/player/WishesParts';
 import { DashBox, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
-import { fmtPrice, fmtWage, vColor, wageUnit } from '../../ui/format';
+import { fmtPrice, fmtPriceIn, fmtWage, vColor, wageUnit } from '../../ui/format';
 import { WageSlider } from '../../ui/WageSlider';
 import { InfoTip } from '../../ui/InfoTip';
 import type { InfoKey } from '../../data/infoTexts';
 import Select from '../../ui/Select';
+import { worldClubs } from '../../game/worldPool';
+import { COUNTRY_BY_KEY } from '../../data/world/countries';
+
+/** Land des Verkäufers (nur Auslandsvereine), für die Ablöse in seiner Währung. */
+function sellerCc(g: Game, sellerId: string): string | undefined {
+  if (g.clubs[sellerId] && !sellerId.startsWith('w_')) return undefined;
+  const key = worldClubs(g).get(sellerId)?.country;
+  if (!key) return undefined;
+  return key === 'Deutschland' ? 'ger' : COUNTRY_BY_KEY[key]?.cc;
+}
+/** „(≈ 1,2 Mio. £)“ hinter einer Ablöse, wenn der Verkäufer in anderer Währung rechnet. */
+function Foreign({ base, cc }: { base: number; cc?: string }) {
+  const s = fmtPriceIn(base, cc);
+  return s ? <small style={{ color: 'var(--text-3)', fontWeight: 400 }}> · {s}</small> : null;
+}
 
 // =============================================================================
 // TRANSFERVERHANDLUNG — Vereinsgespräch, Spielergespräch, Wünsche, Verlauf
@@ -47,8 +62,9 @@ function ClubDeal({ g, t }: { g: Game; t: TransferTalk }) {
   if (!pk) return <KV k="Verein" v="keine Einigung" color="var(--red)" />;
   const extras = [pk.installments && `${pk.rates ?? 2} Raten`, pk.sellOn && `${Math.round(pk.sellOn * 100)} % Weiterverkauf`, pk.bonus && `Prämie ${fmtPrice(pk.bonus)}`,
     pk.swapPlayerId && `Tausch: ${g.players[pk.swapPlayerId]?.lastName ?? '—'}`, pk.buyBack && `Rückkauf ${fmtPrice(pk.buyBack)}`].filter(Boolean).join(' · ');
+  const cc = sellerCc(g, t.sellerId);
   return <>
-    <KV k={pk.loan ? 'Leihgebühr' : 'Ablöse (vereinbart)'} v={fmtPrice(pk.fee)} strong />
+    <KV k={pk.loan ? 'Leihgebühr' : 'Ablöse (vereinbart)'} v={<>{fmtPrice(pk.fee)}<Foreign base={pk.fee} cc={cc} /></>} strong />
     {pk.loan && <KV k="Kaufoption" v={fmtPrice(pk.optionFee ?? 0)} />}
     {extras && <div className="dnote">{extras}</div>}
   </>;
@@ -64,6 +80,7 @@ function ClubTalkBox({ g, t, onChange, notice }: { g: Game; t: TransferTalk; onC
   const lo = r5k(Math.min(t.estimate[0], t.currentAsk) * 0.5);
   const hi = r5k(Math.max(t.estimate[1], t.currentAsk) * 1.35);
   const [fee, setFee] = useState(r5k(Math.min(t.currentAsk, (t.estimate[0] + t.estimate[1]) / 2) * 0.85));
+  const [cc] = useState(() => sellerCc(g, t.sellerId));
   const [rates, setRates] = useState<1 | 2 | 3>(1);
   const [sellOn, setSellOn] = useState(0);
   const [bonus, setBonus] = useState(0);
@@ -89,7 +106,7 @@ function ClubTalkBox({ g, t, onChange, notice }: { g: Game; t: TransferTalk; onC
         {year >= CLAUSE_FROM.loanOption && <Chips label="Art" value={loan ? 1 : 0} set={(v) => setLoan(v === 1)} opts={[[0, 'Kauf'], [1, 'Leihe mit Kaufoption', 'Eine Saison Leihe, danach entscheidest du über die Kaufoption.']]} />}
         <label className="talk-row"><span>{loan ? 'Leihgebühr' : 'Ablöse'}</span>
           <input type="range" min={loan ? 5000 : lo} max={hi} step={5000} value={fee} onChange={(e) => setFee(Number(e.target.value))} />
-          <b className="accent-text">{fmtPrice(fee)}</b></label>
+          <b className="accent-text">{fmtPrice(fee)}<Foreign base={fee} cc={cc} /></b></label>
         {fee * (loan || rates === 1 ? 1 : 1 / rates) > own.finances.transferBudget && <div className="dnote" style={{ color: 'var(--orange)' }}>Über deinem Transferbudget ({fmtPrice(own.finances.transferBudget)}) – der Vorstand gibt das nicht frei.</div>}
         {loan && <label className="talk-row"><span>Kaufoption<InfoTip k="leihe" /></span>
           <input type="range" min={lo} max={hi * 1.3} step={5000} value={option} onChange={(e) => setOption(Number(e.target.value))} />

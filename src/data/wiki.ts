@@ -1655,12 +1655,14 @@ Der Trainerstab meldet, wer auffällig zulegt, wer trotz Luft nach oben stagnier
     body: `## Bereich "Finanzen"
 Der Bereich **Finanzen** (unteres Menü, ) zeigt Kontostand, Budgets, die aufgeschlüsselte Einnahmen-/Ausgaben-Bilanz der Saison, einen Verlaufsgraphen, eine Prognose bis Saisonende sowie die letzten Buchungen.
 
-## Währungs-Ära (DM/EUR) — automatisch
-Alle Beträge werden **ära-gerecht** angezeigt:
-- **bis einschließlich 2001:** Deutsche Mark (**DM**)
-- **ab 2002:** Euro (**€**), fest umgerechnet mit **1 € = 1,95583 DM**
+## Währung des Heimatlands — automatisch
+Alle Beträge erscheinen in der **Währung deines Heimatlands, wie sie an diesem Tag galt**:
+- Deutschland: D-Mark bis 31.12.2001, ab 1.1.2002 Euro (1 € = 1,95583 DM). DDR: Mark bis 30.6.1990, dann D-Mark.
+- England, Schottland, Wales, Nordirland: Pfund Sterling. Italien: Lire bis 2001, dann Euro. Polen: Zloty, am 1.1.1995 neuer Zloty (10.000 : 1).
+- Jede Umstellung greift am echten Stichtag, auch mitten in der Saison: Türkei 1.1.2005 (neue Lira), Rumänien 1.7.2005, Slowakei 2009, Kroatien 2023, Bulgarien 2026 u. a.
+- Wechselkurse gelten je Jahr (Jahresmittel gegenüber der D-Mark), Hochinflation wie in der Türkei oder Jugoslawien ist eingerechnet.
 
-Intern rechnet das Spiel durchgehend in nominalen DM; die Anzeige stellt ab 2002 automatisch auf Euro um.
+Intern rechnet das Spiel durchgehend in nominalen DM; nur die Anzeige wird umgerechnet. Bei Verhandlungen mit Auslandsvereinen steht die Ablöse zusätzlich in der Währung des Verkäufers. Im Saison-Briefing meldet der Berater jede Umstellung mit dem Umstellungskurs.
 
 ## Das Finanzniveau ist recherchiert
 1975/76 setzt ein Erstligist im Mittel rund **4,5 Mio. DM** um: etwa 70 % Eintritt (Ø 23.000 Zuschauer × 8 DM), dazu Catering,
@@ -1673,7 +1675,7 @@ Vermarktung ab den 2000ern), die Spitze auf ein Vielfaches davon.
 ## Steigende Finanzbasis über die Jahrzehnte
 Die gesamte Finanzbasis des Fußballs **wächst über die Jahre real mit** — Sponsoring, TV-, Ticket- und Fanartikel-Erlöse
 sowie die Fixkosten skalieren gemeinsam mit einem **Wirtschafts-Index** (economyScale). Bezugsjahr ist **1975 ≈ 1×**,
-bis **2030 ≈ 130×**. Die Erlösarten wachsen unterschiedlich schnell (siehe *Finanzen im Wandel der Epochen*). Details siehe *Chronik: Steigende Finanzbasis & Währung*.
+bis **2030 ≈ 130×**. Die Erlösarten wachsen unterschiedlich schnell (siehe *Finanzen im Wandel der Epochen*). Details siehe *Chronik: Steigende Finanzbasis & Währungen*.
 
 ## Kontostand & Budgets
 - **Kontostand:** wird real fortgeschrieben (rot bei Minus, türkis bei Plus).
@@ -3895,7 +3897,7 @@ Tabelle sofort neu berechnet** (\`calculateTable\`). Ab diesem Zeitpunkt werden 
   {
     id: 'chronicle-economy',
     category: 'chronicle',
-    title: 'Steigende Finanzbasis & Währung (DM/EUR)',
+    title: 'Steigende Finanzbasis & Währungen',
     keywords: ['wirtschaft', 'finanzbasis', 'economyscale', 'dm', 'euro', 'währung', '1995583', 'inflation', 'sponsoring'],
     body: `## Warum steigt das Geld über die Jahre?
 Der Profifußball ist 1975 finanziell winzig gegenüber heute. Damit die Finanzen glaubhaft mitwachsen, führt das Spiel
@@ -3917,12 +3919,8 @@ mitwächst, ohne die Vereine unrealistisch reich werden zu lassen:
 Das Niveau 1975 ist recherchiert (Erstligist ≈ 4,5 Mio. DM Umsatz). Mit dem Index ergibt sich für einen mittleren Erstligisten etwa
 1985 ≈ 11 Mio. DM, 1995 ≈ 30–35 Mio. DM, 2005 ≈ 45 Mio. €, 2015 ≈ 90 Mio. € und 2024 ≈ 220 Mio. €.
 
-## Währungs-Ära DM → EUR
-Interne Beträge bleiben **nominal in DM**; die Anzeige rechnet ära-gerecht um:
-- **bis 2001:** Deutsche Mark (**DM**)
-- **ab 2002:** Euro (**€**), fest mit **1 € = 1,95583 DM**
-
-So zeigt ein und derselbe interne Betrag vor 2002 „… DM" und ab 2002 den korrekt umgerechneten Euro-Wert.`,
+## Währungen der Länder
+Interne Beträge bleiben **nominal in DM**; die Anzeige rechnet in die Währung des Heimatlands am jeweiligen Tag um (Stichtage der Euro-Einführungen, Währungsreformen und Streichungen von Nullen, Kurse als Jahresmittel). In Deutschland heißt das: bis 2001 D-Mark, ab 2002 Euro zu 1,95583 DM. Daten und Quellen: docs/recherche/waehrungen.md.`,
   },
 ];
 

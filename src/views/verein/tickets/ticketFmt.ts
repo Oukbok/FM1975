@@ -1,15 +1,15 @@
 // Anzeige-Helfer des Kartenverkaufs (Preise in DM/€, Schrittweite der Preisknöpfe).
-import { DM_PER_EUR, currencyForYear, formatMoney } from '../../../engine/economy';
+import { currencyAt, formatMoney } from '../../../engine/economy';
 
 export const n0 = (v: number) => Math.round(v).toLocaleString('de-DE');
 export const span = (w: [number, number] | null | undefined) => (w ? (w[0] === w[1] ? n0(w[0]) : `${n0(w[0])}–${n0(w[1])}`) : '–');
 
 /** Ticketpreis in Anzeige-Währung (kleine Beträge mit Nachkommastellen). */
 export function fmtTicket(nominalDM: number, year: number): string {
-  const eur = currencyForYear(year) === 'EUR';
-  const v = eur ? nominalDM / DM_PER_EUR : nominalDM;
+  const c = currencyAt(year);
+  const v = nominalDM * c.perDM;
   if (v >= 1000) return formatMoney(nominalDM, year);
-  return `${v.toLocaleString('de-DE', { minimumFractionDigits: v < 100 ? 2 : 0, maximumFractionDigits: v < 100 ? 2 : 0 })} ${eur ? '€' : 'DM'}`;
+  return `${v.toLocaleString('de-DE', { minimumFractionDigits: v < 100 ? 2 : 0, maximumFractionDigits: v < 100 ? 2 : 0 })} ${c.unit}`;
 }
 
 /** Schrittweite der Preisknöpfe nach Anzeigebetrag. */
@@ -17,9 +17,9 @@ export const stepOf = (disp: number) => (disp < 30 ? 0.5 : disp < 100 ? 1 : disp
 
 /** Umrechnung Basispreis (1975) ↔ Anzeigebetrag. */
 export function priceScale(sc: number, year: number) {
-  const eur = currencyForYear(year) === 'EUR';
-  const toDisp = (base: number) => (base * sc) / (eur ? DM_PER_EUR : 1);
-  const fromDisp = (d: number) => (d * (eur ? DM_PER_EUR : 1)) / sc;
+  const per = currencyAt(year).perDM;
+  const toDisp = (base: number) => base * sc * per;
+  const fromDisp = (d: number) => d / per / sc;
   return {
     toDisp, fromDisp,
     /** Basispreis einen Schritt hoch/runter (auf das Schrittraster der Anzeige). */

@@ -17,7 +17,8 @@ import { GROUNDS_BY_KEY, GROUNDS_MODULES, licenseMin } from '../data/groundsCata
 import { indoorPhase } from '../data/indoorHistory';
 import { LEAGUE_REFORMS } from '../data/reforms';
 import { TIMELINE, TimelineType, seasonStartYear } from '../data/timeline';
-import { currencyForYear, DM_PER_EUR } from '../engine/economy';
+import { currencyAt, homeCurrencyCc } from '../engine/economy';
+import { CURRENCIES } from '../data/currencies';
 import { LED_YEAR, SPONSOR_SLOTS } from '../data/sponsorCatalog';
 import { FACILITIES } from '../engine/infrastructure';
 import { YOUTH_BLOCKS, nlzDutyYear } from '../engine/youthAcademy';
@@ -211,19 +212,26 @@ function sponsorChanges(y: number, tier: number, first: boolean): GameChange[] {
 }
 
 function currencyChanges(y: number, first: boolean): GameChange[] {
-  if (first) {
-    return [{ kind: 'geld', icon: 'finances', source: 'Währung', title: `Gerechnet wird in ${currencyForYear(y) === 'DM' ? 'D-Mark' : 'Euro'}`, text: 'Alle Preise, Gehälter und Ablösen erscheinen in der Währung ihrer Zeit.' }];
+  // Heimatwährung (data/currencies.ts): Umstellungen in dieser Saison (1.7.y – 30.6.y+1) taggenau.
+  const cc = homeCurrencyCc();
+  const eras = CURRENCIES[cc] ?? CURRENCIES.ger;
+  const cur = currencyAt(y, `${y}-07-01`);
+  const fmtD = (iso: string) => `${Number(iso.slice(8, 10))}.${Number(iso.slice(5, 7))}.${iso.slice(0, 4)}`;
+  const out: GameChange[] = [];
+  if (first) out.push({ kind: 'geld', icon: 'finances', source: 'Währung', title: `Gerechnet wird in ${cur.name}`, text: 'Alle Preise, Gehälter und Ablösen erscheinen in der Währung deines Landes und ihrer Zeit – mit den Wechselkursen des jeweiligen Jahres.' });
+  for (const e of eras) {
+    if (e.from > `${y}-07-01` && e.from <= `${y + 1}-06-30`) {
+      out.push({
+        kind: 'geld', icon: 'finances', source: 'Währung', major: true, title: e.code === 'EUR' ? 'Der Euro kommt' : `Neue Währung: ${e.name}`,
+        text: `Zum ${fmtD(e.from)} stellt ${cc === 'ger' ? 'das Spiel' : 'dein Land'} auf ${e.name} um${e.note ? ` (${e.note})` : ''}. Kontostand und Preise werden umgerechnet.`,
+      });
+    }
   }
-  if (currencyForYear(y + 1) !== currencyForYear(y)) {
-    return [{
-      kind: 'geld', icon: 'finances', source: 'Währung', major: true, title: 'Der Euro kommt',
-      text: `Zum 1. Januar ${y + 1} stellt das Spiel auf Euro um (1 EUR = ${String(DM_PER_EUR).replace('.', ',')} DM). Kontostand und Preise werden umgerechnet.`,
-    }];
+  if (!first && !out.length) {
+    const prev = currencyAt(y - 1, `${y - 1}-07-01`);
+    if (prev.code !== cur.code) out.push({ kind: 'geld', icon: 'finances', source: 'Währung', major: true, title: `Erste ganze Saison in ${cur.name}`, text: `Alle Beträge – Gehälter, Ablösen, Eintritt – laufen jetzt in ${cur.name}.` });
   }
-  if (currencyForYear(y) !== currencyForYear(y - 1)) {
-    return [{ kind: 'geld', icon: 'finances', source: 'Währung', major: true, title: 'Erste ganze Saison in Euro', text: 'Alle Beträge – Gehälter, Ablösen, Eintritt – laufen jetzt in Euro.' }];
-  }
-  return [];
+  return out;
 }
 
 /**

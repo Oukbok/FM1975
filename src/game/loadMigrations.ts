@@ -20,7 +20,7 @@ import { seasonStartYear, timelineEventsUpTo } from '../data/timeline';
 import { CalendarEngine } from '../engine/calendar';
 import { createCup } from '../engine/cup';
 import { isForeignId } from '../engine/world';
-import { yearOf } from '../engine/economy';
+import { setCurrencyDate, setHomeCurrency, yearOf } from '../engine/economy';
 import { computeGermanEuroQualifiers } from '../engine/euro';
 import { applyFacilityEffects, makeInfrastructure } from '../engine/infrastructure';
 import { advanceDivision } from '../engine/leagues';
@@ -84,6 +84,7 @@ export function prepareLoadedGame(g: Game): void {
   }
   // Heimatland (Weltdaten): Herkunft der Einheimischen für neue Spieler/Jugend.
   setHomeOrigin(g.homeCountry && g.homeCountry !== 'ger' ? countryOrigin(g.homeCountry) : null);
+  setHomeCurrency(g.homeCountry); // Anzeige in der Heimatwährung (data/currencies.ts)
   setHomeLabel(COUNTRY_BY_CC[g.homeCountry ?? 'ger']?.name ?? 'Deutschland');
   // Positionsbewertung auf das Spieljahr einstellen; ältere Spielstände auf Entwicklung 2.0 heben.
   setEraYear(Number(g.calendar.currentDate.slice(0, 4)));
@@ -315,6 +316,7 @@ export function prepareLoadedGame(g: Game): void {
   }
   // Anzeige-Währung auf das aktuelle Spieljahr setzen (DM ≤2001, EUR ≥2002).
   setDisplayYear(yearOf(g.calendar.currentDate));
+  setCurrencyDate(g.calendar.currentDate);
   ensureYouthTeams(g, g.calendar.currentDate);
   // Manager-KI (SAVE_VERSION 10): Trainer der KI-Vereine nachrüsten.
   try { migrateAiClubs(g); } catch (err) { console.error('Trainer-Nachrüstung fehlgeschlagen:', err); }

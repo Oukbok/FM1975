@@ -6,6 +6,7 @@ import { WORLD_COUNTRIES, countryExists, countryPointSystem, seasonLabelOf } fro
 import { worldSeason } from '../../data/world/index';
 import { MAX_START_YEAR, MIN_START_YEAR } from '../../game/startYear';
 import type { NewGameDraft } from './draft';
+import { CURRENCIES } from '../../data/currencies';
 
 // Schritt 3: Spielwelt — Startjahr (Standard 1975), Datensatz und die Länder mit ihrer
 // Simulationstiefe: deine Liga mit vollen Kadern, gewählte Länder Spiel für Spiel, übrige
@@ -13,6 +14,16 @@ import type { NewGameDraft } from './draft';
 const ERA_STOPS = [1975, 1985, 1995, 2005, 2015, 2025];
 
 /** Was im Startjahr anders ist (kurz, für den Hinweis unter dem Jahr). */
+/** Währung zum Start plus nächste Umstellung („D-Mark (ab 2002 Euro)“). */
+function currencyFact(cc: string, y: number): string {
+  const eras = CURRENCIES[cc] ?? CURRENCIES.ger;
+  const start = `${y}-07-01`;
+  let i = 0;
+  eras.forEach((e, k) => { if (e.from <= start) i = k; });
+  const nxt = eras[i + 1];
+  return nxt ? `${eras[i].name} (ab ${nxt.from.slice(0, 4)} ${nxt.name})` : eras[i].name;
+}
+
 function eraNotes(y: number, home: string): string[] {
   const out: string[] = [];
   if (home === 'ger') {
@@ -77,7 +88,7 @@ export function StepWorld({ d, chooseDataset, chooseYear, toggleFull, setAllFull
         </div>
         <div className="ng-facts ng-push">
           <div className="ng-kv"><span>Startdatum</span><b>1. Juli {y}</b></div>
-          <div className="ng-kv"><span>Währung</span><b>{y >= 2002 ? 'Euro' : 'DM (ab 2002 Euro)'}</b></div>
+          <div className="ng-kv"><span>Währung</span><b>{currencyFact(home, y)}</b></div>
         </div>
       </section>
 

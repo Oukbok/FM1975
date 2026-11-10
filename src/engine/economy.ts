@@ -1,3 +1,4 @@
+import { CURRENCIES, type CurrencyEra } from '../data/currencies';
 // =============================================================================
 // 1975 – A Football Manager — Wirtschafts-/Epochen-Engine (Makro-Finanzkurve)
 // =============================================================================
@@ -115,10 +116,53 @@ export function economyScale(year: number): number {
   return revenueBaseline(year) / revenueBaseline(ECONOMY_BASE_YEAR);
 }
 
-/** Währung einer Ära: DM bis 2001, EUR ab 2002. */
+/** Währung einer Ära in Deutschland: DM bis 2001, EUR ab 2002 (für Rechnungen; Anzeige über currencyAt). */
 export function currencyForYear(year: number): 'DM' | 'EUR' {
   return year <= LAST_DM_YEAR ? 'DM' : 'EUR';
 }
+
+// -----------------------------------------------------------------------------
+// Anzeige in der Heimatwährung (Wunsch Pascal, data/currencies.ts): Beträge bleiben
+// intern DM-nominal; angezeigt wird Betrag × Einheiten je DM der Währung, die am
+// aktuellen Spieltag im Heimatland gilt (Umstellungen taggenau). Gesetzt von
+// newGame/loadMigrations (`setHomeCurrency`) und GameShell (`setCurrencyDate`).
+// -----------------------------------------------------------------------------
+let _homeCc = 'ger';
+let _curDate: string | null = null;
+export function setHomeCurrency(cc: string | undefined): void { _homeCc = cc && CURRENCIES[cc] ? cc : 'ger'; }
+export function homeCurrencyCc(): string { return _homeCc; }
+export function setCurrencyDate(iso: string | null): void { _curDate = iso; }
+
+export interface DisplayCurrency { code: string; unit: string; name: string; perDM: number; era: CurrencyEra }
+
+function eraAt(cc: string, iso: string): CurrencyEra {
+  const eras = CURRENCIES[cc] ?? CURRENCIES.ger;
+  let e = eras[0];
+  for (const x of eras) if (x.from <= iso) e = x;
+  return e;
+}
+/** DM je Einheit im Jahr (Jahresdurchschnitt, geometrisch interpoliert). */
+function dmPerUnit(era: CurrencyEra, year: number): number {
+  const r = era.rates;
+  if (year <= r[0][0]) return r[0][1];
+  for (let i = 1; i < r.length; i++) {
+    if (year <= r[i][0]) {
+      const [y0, a] = r[i - 1], [y1, b] = r[i];
+      return a * Math.pow(b / a, (year - y0) / (y1 - y0));
+    }
+  }
+  return r[r.length - 1][1];
+}
+/** Währung eines Landes an einem Tag (Standard: Heimatland, Spieltag bzw. Jahresmitte). */
+export function currencyAt(year: number, iso?: string, cc: string = _homeCc): DisplayCurrency {
+  const date = iso ?? (_curDate && Number(_curDate.slice(0, 4)) === year ? _curDate : `${year}-07-01`);
+  const era = eraAt(cc, date);
+  return { code: era.code, unit: era.unit, name: era.name, perDM: 1 / dmPerUnit(era, year), era };
+}
+/** DM-Nominalbetrag → Anzeigewährung. */
+export const toDisplayMoney = (amountDM: number, year: number, cc?: string) => amountDM * currencyAt(year, undefined, cc).perDM;
+/** Anzeigewährung → DM-Nominalbetrag (Eingaben, z. B. Ticketpreise). */
+export const fromDisplayMoney = (v: number, year: number, cc?: string) => v / currencyAt(year, undefined, cc).perDM;
 
 /** Extrahiert das Jahr aus einem ISO-Datum ("1975-07-01" → 1975). */
 export function yearOf(dateISO: string): number {
@@ -135,12 +179,13 @@ function fmtNum(n: number, decimals = 0): string {
  *   • Jahr ≥ 2002 → in EUR umgerechnet (÷ 1,95583), „… €"
  * `compact` gibt kompakte Tsd./Mio./Mrd.-Schreibweise aus.
  */
-export function formatMoney(amountDM: number, year: number, compact = false): string {
-  const eur = currencyForYear(year) === 'EUR';
-  const value = eur ? amountDM / DM_PER_EUR : amountDM;
-  const unit = eur ? '€' : 'DM';
+export function formatMoney(amountDM: number, year: number, compact = false, cc?: string): string {
+  const c = currencyAt(year, undefined, cc);
+  const value = amountDM * c.perDM;
+  const unit = c.unit;
   const abs = Math.abs(value);
   if (compact) {
+    if (abs >= 1e12) return `${fmtNum(value / 1e12, 2)} Bio. ${unit}`;
     if (abs >= 1e9) return `${fmtNum(value / 1e9, 2)} Mrd. ${unit}`;
     if (abs >= 1e6) return `${fmtNum(value / 1e6, 2)} Mio. ${unit}`;
     if (abs >= 1e4) return `${fmtNum(value / 1e3, 0)} Tsd. ${unit}`;
@@ -150,12 +195,15 @@ export function formatMoney(amountDM: number, year: number, compact = false): st
 }
 
 /** Kurzform „… Tsd./Mio. …" ára-gerecht (ersetzt das alte fmtDM). */
-export function formatMoneyShort(amountDM: number, year: number): string {
-  const eur = currencyForYear(year) === 'EUR';
-  const value = eur ? amountDM / DM_PER_EUR : amountDM;
-  const unit = eur ? '€' : 'DM';
+export function formatMoneyShort(amountDM: number, year: number, cc?: string): string {
+  const c = currencyAt(year, undefined, cc);
+  const value = amountDM * c.perDM;
+  const unit = c.unit;
   const abs = Math.abs(value);
+  if (abs >= 1e12) return `${fmtNum(value / 1e12, 2)} Bio. ${unit}`;
+  if (abs >= 1e9) return `${fmtNum(value / 1e9, 2)} Mrd. ${unit}`;
   if (abs >= 1e6) return `${fmtNum(value / 1e6, 2)} Mio. ${unit}`;
+  if (abs < 1e3 && abs > 0) return `${fmtNum(value, abs < 10 ? 2 : 0)} ${unit}`;
   return `${fmtNum(Math.round(value / 1e3))} Tsd. ${unit}`;
 }
 

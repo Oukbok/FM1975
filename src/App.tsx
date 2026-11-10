@@ -2,7 +2,7 @@ import { applyDataset } from './data/dataset/apply';
 import { BUILTIN_ID } from './data/dataset/builtin';
 import { cachedDataset, hydrateDatasets } from './data/dataset/storage';
 import { hydrateClubOverrides } from './data/clubOverrides';
-import { yearOf } from './engine/economy';
+import { setCurrencyDate, yearOf } from './engine/economy';
 import { AppSettings, initSaveStore, loadGame, loadSettings, saveSettings } from './engine/save';
 import { Game } from './game/state';
 import { MainMenu, preloadNewGameScreen } from './screens/MainMenu';
@@ -65,6 +65,7 @@ export default function App() {
     g0.datasetName = ds?.meta.name ?? 'Standard (1975)';
     const calendar = g0.calendar;
     setDisplayYear(yearOf(calendar.currentDate));
+    setCurrencyDate(calendar.currentDate);
     gameRef.current = g0;
     setCurrentSlot(null);
     setInGame(true);

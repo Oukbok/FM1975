@@ -10,7 +10,7 @@ import { Club, FacilityKey } from '../../../types';
 import { ClubGrounds, GroundsModuleKey } from '../../../types/grounds';
 import { GROUNDS_BY_KEY, GROUNDS_CATEGORIES, GroundsLevelDef, INFRA_AREA, permitMonths } from '../../../data/groundsCatalog';
 import { areaUsed, checkNext, condMult, isOutdated, levelOf, mdScale, merchSlump, renovateCost } from '../../../engine/grounds';
-import { DM_PER_EUR, currencyForYear, economyScale as economyScaleOf, formatMoney, revenueScale } from '../../../engine/economy';
+import { currencyAt, economyScale as economyScaleOf, formatMoney, revenueScale } from '../../../engine/economy';
 import { commercialMultiplier } from '../../../engine/clubEconomy';
 import { CATERING_UPKEEP } from '../../../engine/finances';
 import { FACILITY_BY_KEY, FAC_UPKEEP_BASE, LEVEL_MULT, MAX_LEVEL, canUpgrade, upgradeFacility } from '../../../engine/infrastructure';
@@ -27,8 +27,8 @@ const num = (v: number) => Math.round(v).toLocaleString('de-DE');
 /** Geld kompakt; Kleinbeträge (Parkgebühr) mit Cent. */
 export function money(v: number, year: number): string {
   if (Math.abs(v) >= 100) return formatMoney(v, year, true);
-  const eur = currencyForYear(year) === 'EUR';
-  return `${(eur ? v / DM_PER_EUR : v).toFixed(2).replace('.', ',')} ${eur ? '€' : 'DM'}`;
+  const c = currencyAt(year);
+  return `${(v * c.perDM).toFixed(2).replace('.', ',')} ${c.unit}`;
 }
 
 /** Wirkungen einer Stufe als kurze Zeilen (Geld nominal im aktuellen Jahr). */

@@ -5,11 +5,11 @@ import { itemPriceScale } from '../../../engine/merch';
 import type { MerchItemDef } from '../../../data/merchCatalog';
 import { fmtSmallMoney } from '../../shared';
 import { _displayYear, fmtDM, fmtDMfull } from '../../../ui/format';
-import { DM_PER_EUR, currencyForYear } from '../../../engine/economy';
+import { currencyAt } from '../../../engine/economy';
 
 /** Betrag: unter 100.000 voll ausgeschrieben, darüber kurz (Tsd./Mio., ohne „1.000 Tsd.“). */
 export function money(v: number): string {
-  const div = currencyForYear(_displayYear) === 'EUR' ? DM_PER_EUR : 1;
+  const div = 1 / currencyAt(_displayYear).perDM;
   const a = Math.abs(v) / div;
   if (a < 100000) return fmtDMfull(Math.round(v));
   return fmtDM(a >= 999500 && a < 1e6 ? Math.sign(v) * 1e6 * div : v);

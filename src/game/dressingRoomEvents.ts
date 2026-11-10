@@ -13,7 +13,7 @@
 // =============================================================================
 import { DRAnalysis } from '../engine/dressingRoom';
 import { CalendarEngine } from '../engine/calendar';
-import { economyScale, yearOf } from '../engine/economy';
+import { economyScale, formatMoney, yearOf } from '../engine/economy';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { personaOf } from '../engine/persona';
 import { MessageChoice, MessageEventRef, Player } from '../types';
@@ -95,7 +95,7 @@ function spawnForderung(g: Game, today: string, a: DRAnalysis): Spawn | null {
   const L = g.players[a.leaders[0]];
   if (!L) return null;
   const d = demandFor(yearOf(today));
-  const price = d.cost ? ` (etwa ${Math.round(d.cost * economyScale(yearOf(today))).toLocaleString('de-DE')} ${yearOf(today) >= 2002 ? '€' : 'DM'})` : '';
+  const price = d.cost ? ` (etwa ${formatMoney(Math.round(d.cost * economyScale(yearOf(today))), yearOf(today))})` : '';
   return {
     type: 'kabine_forderung', from: L.fullName, playerId: L.id,
     subject: `${L.lastName} spricht für die Mannschaft`,

@@ -7,7 +7,7 @@ import { Game } from '../game/state';
 import { Match, Player, POSITION_GROUPS } from '../types';
 import { fmtDateShort, vColor } from '../ui/format';
 import { scoutRange, scoutRangeText } from '../engine/scouting';
-import { DM_PER_EUR, currencyForYear } from '../engine/economy';
+import { currencyAt } from '../engine/economy';
 import PosBadge from '../components/PosBadge';
 
 export const squadOf = (g: Game, clubId = g.managedClubId): Player[] =>
@@ -89,6 +89,6 @@ export function ScoutStars({ p }: { p: Player }) {
 
 /** Kleinbeträge mit zwei Nachkommastellen (z. B. Netto pro Besucher), DM bzw. EUR ab 2002. */
 export function fmtSmallMoney(dm: number, year: number): string {
-  const eur = currencyForYear(year) === 'EUR';
-  return `${(eur ? dm / DM_PER_EUR : dm).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${eur ? '€' : 'DM'}`;
+  const c = currencyAt(year);
+  return `${(dm * c.perDM).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${c.unit}`;
 }

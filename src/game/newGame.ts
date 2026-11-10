@@ -14,7 +14,7 @@ import { LEAGUE_REFORMS } from '../data/reforms';
 import { seasonStartYear, timelineEventsUpTo } from '../data/timeline';
 import { generateSeasonCalendar } from '../engine/calendar';
 import { createCup } from '../engine/cup';
-import { yearOf } from '../engine/economy';
+import { setHomeCurrency, yearOf } from '../engine/economy';
 import { computeGermanEuroQualifiers } from '../engine/euro';
 import { applyFacilityEffects, makeInfrastructure } from '../engine/infrastructure';
 import { calculateTable, generateFixtures } from '../engine/league';
@@ -68,6 +68,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   const startISO = `${year}-07-01`;
   const fxStart = `${year}-08-15`;
   setHomeOrigin(isGer ? null : countryOrigin(home));
+  setHomeCurrency(home); // Anzeige in der Heimatwährung (data/currencies.ts)
   setHomeLabel(COUNTRY_BY_CC[home].name);
   setEraYear(year);
   // Punktesystem historisch fest ableiten (Deutschland: 3 Punkte ab 1995/96 über den Meilenstein;
