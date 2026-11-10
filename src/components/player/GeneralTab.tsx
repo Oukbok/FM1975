@@ -1,6 +1,7 @@
 // Reiter „Allgemein“ (Vorbild EA Fussball Manager): Spielerdaten, Kacheln Alter/Gewicht/Größe/
 // Fitness/Frische und Erfahrung/Moral/Form/Zufriedenheit/Status, darunter Disziplin und
 // Führung in Worten sowie die verdeckten Werte nur als Einschätzung (game/hiddenTraits.ts).
+import { NatFlag } from '../competition/CountryFlag';
 import type { ReactNode } from 'react';
 import type { Player } from '../../types';
 import { useClubProfile } from '../club/ClubLink';
@@ -56,7 +57,7 @@ export default function GeneralTab({ p }: { p: Player }) {
       <Section title="Spielerdaten">
         <div className="pp-list">
           <Row label="Name">{p.fullName}</Row>
-          <Row label="Nationalität"><i className="pp2-nat">{p.nationality}</i>{nationName(p.nationality)}</Row>
+          <Row label="Nationalität"><NatFlag nat={p.nationality} height={16} />{nationName(p.nationality)}</Row>
           <Row label="Sprache">{languageOf(p)}</Row>
           <Row label="Heimat">{home || '—'}{homeClub && <span className="dim"> · Jugend bei {homeClub}</span>}</Row>
           <Row label="Position">{POS_DE[p.naturalPosition] ?? p.naturalPosition}{p.secondaryPositions.length > 0 && <span className="dim"> · auch {p.secondaryPositions.join(', ')}</span>}</Row>

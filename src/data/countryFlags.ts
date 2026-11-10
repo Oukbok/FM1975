@@ -77,6 +77,18 @@ export const COUNTRY_INFO: Record<string, CountryInfo> = {
   Liberia: { name: 'Liberia', code: 'LBR', flag: { kind: 'h', c: [R, W, R, W, R] } },
   Elfenbeinkueste: { name: 'Elfenbeinküste', code: 'CIV', flag: { kind: 'v', c: ['#e08a3c', W, G] } },
   Israel: { name: 'Israel', code: 'ISR', flag: { kind: 'h', c: [W, B, W, W, W, B, W] } },
+  // Weitere Nationalitäten der Spieler (Spielerprofil zeigt die Flagge statt des Kürzels).
+  Slowenien: { name: 'Slowenien', code: 'SVN', flag: { kind: 'h', c: [W, B, R] } },
+  'Bosnien-Herzegowina': { name: 'Bosnien-Herzegowina', code: 'BIH', flag: { kind: 'plain', bg: B, dot: Y, center: true } },
+  Nordmazedonien: { name: 'Nordmazedonien', code: 'MKD', flag: { kind: 'plain', bg: R, dot: Y, center: true } },
+  Kolumbien: { name: 'Kolumbien', code: 'COL', flag: { kind: 'h', c: [Y, Y, B, R] } },
+  Senegal: { name: 'Senegal', code: 'SEN', flag: { kind: 'v', c: [G, Y, R] } },
+  Algerien: { name: 'Algerien', code: 'ALG', flag: { kind: 'v', c: [G, W] } },
+  Tunesien: { name: 'Tunesien', code: 'TUN', flag: { kind: 'crescent', bg: R, fg: W } },
+  Australien: { name: 'Australien', code: 'AUS', flag: { kind: 'plain', bg: '#1f3a7a', dot: W } },
+  China: { name: 'China', code: 'CHN', flag: { kind: 'plain', bg: R, dot: Y } },
+  Mexiko: { name: 'Mexiko', code: 'MEX', flag: { kind: 'v', c: [G, W, R] } },
+  Kanada: { name: 'Kanada', code: 'CAN', flag: { kind: 'v', c: [R, W, W, R] } },
 };
 
 /** Anzeigedaten eines Landes (unbekannte Länder: neutrale Flagge, Kürzel aus dem Namen). */
