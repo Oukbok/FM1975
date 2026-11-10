@@ -84,6 +84,7 @@ import { awardsDaily } from './seasonAwardsGame';
 import { goldenBallDaily } from './goldenBallGame';
 import { recordProfileWeek } from './profileWeeks';
 import { bindHonours } from './clubHonours';
+import { bindStaffFactor } from './staffGame';
 
 export interface DayUi {
   /** Eigenes Spiel wurde gespielt → Spielbericht/Textmodus öffnen. */
@@ -126,6 +127,7 @@ export const HEADLESS_UI: DayUi = { onOwnMatch() {}, onRatingCeremony() {}, onSe
 
 export function processDay(g: Game, ui: DayUi): boolean {
   bindHonours(g); // Wirkungen der Vereinsauszeichnungen (nur bei neuem Spielstand neu)
+  bindStaffFactor(g); // Stab → Spielstärke des eigenen Vereins (game/staffGame.ts)
   const myClub = g.clubs[g.managedClubId];
 
   const cal = g.calendar;

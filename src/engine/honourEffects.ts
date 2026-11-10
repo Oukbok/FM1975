@@ -27,3 +27,14 @@ export function honourFx(clubId: string | undefined, key: HonourEffectKey): numb
   if (!clubId) return 0;
   return table[clubId]?.[key] ?? 0;
 }
+
+// -----------------------------------------------------------------------------
+// Stab des eigenen Vereins (Wunsch Pascal): unbesetzte Stellen kosten etwas Spielstärke.
+// Gesetzt von game/staffGame.ts `bindStaffFactor` (täglich), gelesen in match/state.ts.
+// -----------------------------------------------------------------------------
+let staffFactor: Record<string, number> = {};
+export function setStaffFactor(t: Record<string, number>): void { staffFactor = t; }
+/** Faktor auf die Teamstärke (1 = neutral, < 1 = Stab fehlt). */
+export function staffStrength(clubId: string | undefined): number {
+  return clubId ? staffFactor[clubId] ?? 1 : 1;
+}

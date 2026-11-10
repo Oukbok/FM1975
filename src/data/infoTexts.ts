@@ -769,6 +769,11 @@ export const INFO_TEXTS = {
     text: 'Richtwert: 2 Torhüter, je 6 Abwehr- und Mittelfeldspieler, 4 Stürmer. Rot heißt, dort bist du zu dünn besetzt – Verletzungen und Sperren treffen dich dann hart.',
     wiki: 'squad-table',
   },
+  stabSpielstaerke: {
+    title: 'Stab und Spielstärke',
+    text: 'Co-Trainer, Ärzte, Physios, Athletik- und Torwarttrainer, Analysten und die sportliche Leitung bringen einzeln wenig, zusammen aber spürbar Leistung auf den Platz. Ohne Stab verliert deine Mannschaft bis zu 4 % Spielstärke (1975 etwa die Hälfte), ein voller, guter Stab bringt ein kleines Plus. Gezählt werden nur Stellen, die es in der Epoche schon gibt.',
+    wiki: 'staff-effects',
+  },
   spielerpool: {
     title: 'Spielerpool',
     text: 'Alle Spieler der Welt, auch Amateure, Auslandsligen und Jugendliche. Wen dein Stab nicht genau kennt, siehst du nur als geschätzte Spanne – sortiert und gefiltert wird nach der Schätzung. Ein Scout macht die Werte genauer.',

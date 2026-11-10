@@ -215,9 +215,20 @@ export function staffBaseSalary(role: StaffRole): number {
   return STAFF_COST_BASE[role.costClass];
 }
 
+/**
+ * Gehaltsentwicklung je Bereich (Wunsch Pascal: Marketingmanager mit 8 Mio. € war überzogen).
+ * Nur Trainer und sportliche Leitung wachsen fast mit dem Fußballgeld (`economyScale`),
+ * Fachpersonal deutlich langsamer, Verwaltung/Medien etwa wie gute Angestelltengehälter.
+ * Faktor = economyScale ^ Exponent (1975 = 1). 2025 (Skala ≈ 107): Trainer ≈ ×53, Medizin/Analyse ≈ ×16, Verwaltung ≈ ×10.
+ */
+const SALARY_EXP: Record<StaffGroup, number> = { trainer: 0.85, medical: 0.6, scouting: 0.6, media: 0.5, admin: 0.5 };
+export function staffSalaryScale(role: StaffRole, scale: number): number {
+  return Math.pow(Math.max(1, scale), SALARY_EXP[role.group] ?? 0.6);
+}
+
 /** Monatsgehalt einer Rolle im gegebenen Wirtschafts-Jahr (skaliert). */
 export function staffMonthlySalary(role: StaffRole, scale: number): number {
-  return Math.round(staffBaseSalary(role) * scale);
+  return Math.round(staffBaseSalary(role) * staffSalaryScale(role, scale));
 }
 
 /** Summe der Monatsgehälter aller angestellten Rollen (skaliert, DM/Monat). */

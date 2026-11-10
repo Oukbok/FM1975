@@ -53,12 +53,12 @@
 .dkv-v { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
 
 /* Balken */
-.dmeter { display: grid; grid-template-columns: 170px 1fr 70px; align-items: center; gap: 12px; padding: 6px 0; font-size: 16px; }
+.dmeter { display: grid; grid-template-columns: 170px minmax(0, 1fr) minmax(70px, max-content); align-items: center; gap: 12px; padding: 6px 0; font-size: 16px; }
 .dmeter-lbl { color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .dmeter-track { height: 9px; border-radius: 5px; background: rgba(var(--ink-rgb), 0.07); overflow: hidden; }
 .dmeter-fill { display: block; height: 100%; border-radius: 5px; }
 .dmeter-val { text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.dbox-wide-lbl .dmeter { grid-template-columns: 240px 1fr 100px; }
+.dbox-wide-lbl .dmeter { grid-template-columns: 240px minmax(0, 1fr) minmax(100px, max-content); }
 .dselect { background: var(--bg-2); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 5px 10px; font-size: 15px; }
 .dselect:focus { outline: none; border-color: var(--accent); }
 .dzones { display: flex; flex-wrap: wrap; gap: 14px; font-size: 15px; color: var(--text-2); }

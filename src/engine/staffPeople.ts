@@ -15,7 +15,7 @@
 //   • Gute Leute werden abgeworben; Treue und ein großer Verein halten sie.
 // =============================================================================
 
-import { STAFF_BY_ID, STAFF_CAPS, STAFF_COST_BASE, StaffEffects, StaffRole } from '../data/staff';
+import { STAFF_BY_ID, STAFF_CAPS, STAFF_COST_BASE, StaffEffects, StaffRole, staffSalaryScale } from '../data/staff';
 import { makeName, pickOrigin } from '../data/origins';
 import { Player } from '../types';
 import type { CoachSkill, ExProInfo } from './staffSkills';
@@ -147,7 +147,7 @@ export function migrateStaff(roleIds: string[], year: number, r: () => number): 
 export function memberMonthlySalary(m: StaffMember, scale: number): number {
   const role = STAFF_BY_ID[m.roleId];
   if (!role) return 0;
-  return Math.round(STAFF_COST_BASE[role.costClass] * m.salaryFactor * scale);
+  return Math.round(STAFF_COST_BASE[role.costClass] * m.salaryFactor * staffSalaryScale(role, scale));
 }
 
 /** Methodenstand: nach 8 Jahren ohne Fortbildung verliert die Arbeit an Wirkung. */

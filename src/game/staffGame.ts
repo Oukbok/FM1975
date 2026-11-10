@@ -5,6 +5,7 @@
 import { Game } from './state';
 import { Club, Player } from '../types';
 import { STAFF_BY_ID, StaffEffects, computeStaffEffects } from '../data/staff';
+import { setStaffFactor } from '../engine/honourEffects';
 import { clubTrainingFactor, ClubDevContext, truePotential } from '../engine/development';
 import { economyScale, yearOf } from '../engine/economy';
 import { book } from '../engine/finances';
@@ -250,4 +251,43 @@ export function applyFocusLoad(g: Game, club: Club, today: string, injuryReducti
       }));
     }
   }
+}
+
+// -----------------------------------------------------------------------------
+// Stab und Spielstärke (Wunsch Pascal): Jede Stelle wirkt nur wenig, zusammen aber
+// spürbar. Abdeckung = gewichtete, nach Qualität bewertete Besetzung der in der
+// Epoche üblichen Stellen (nur freigeschaltete). Ganz ohne Stab: bis −4 % Spielstärke
+// (1975 halb so viel – damals gab es kaum Fachpersonal), voller guter Stab: +0,4 %.
+// KI-Vereine gelten als normal besetzt (Faktor 1).
+// -----------------------------------------------------------------------------
+const STAFF_W: Record<string, number> = {
+  cotrainer: 1, torwarttrainer: 0.6, mannschaftsarzt: 1, masseur: 0.5, physio_haupt: 0.8, konditionstrainer: 0.7,
+  athletiktrainer: 0.7, reha_trainer: 0.4, leistungsdiag: 0.4, ernaehrung: 0.3, sportpsychologe: 0.4, head_performance: 0.5,
+  sportwissenschaftler: 0.3, belastungsmanager: 0.4, return_to_play: 0.3, fussballpsychologe: 0.3, gegnerbeobachter: 0.6,
+  videoanalyst: 0.6, spielanalyst: 0.6, datenanalyst: 0.4, head_data: 0.3, sportl_leiter: 0.5, sportdirektor: 0.5,
+  zeugwart: 0.2, platzwart: 0.3, kaufm_leiter: 0.2, verwaltung: 0.2,
+};
+
+/** Abdeckung 0…1,1 und Faktor auf die Spielstärke des eigenen Vereins. */
+export function staffStrengthOf(g: Game): { coverage: number; factor: number } {
+  const year = yearOf(g.calendar.currentDate);
+  const members = g.staff ?? [];
+  let avail = 0, have = 0;
+  for (const [id, w] of Object.entries(STAFF_W)) {
+    const role = STAFF_BY_ID[id];
+    if (!role || role.unlockYear > year || (role.obsoleteYear != null && role.obsoleteYear <= year)) continue;
+    avail += w;
+    const best = members.filter((m) => m.roleId === id).reduce((a, m) => Math.max(a, Math.min(1.1, effectiveQuality(m, year) / 14)), 0);
+    have += w * best;
+  }
+  const coverage = avail ? have / avail : 1;
+  const eraW = 0.5 + 0.5 * Math.min(1, Math.max(0, (year - 1975) / 35));
+  const factor = 1 - 0.04 * eraW * Math.max(0, 1 - coverage) + (coverage > 1 ? 0.004 : 0);
+  return { coverage, factor };
+}
+
+/** Täglich/beim Laden: Faktor des eigenen Vereins für die Match-Engine setzen. */
+export function bindStaffFactor(g: Game): void {
+  if ((g as Game & { simAutoManage?: boolean }).simAutoManage) { setStaffFactor({}); return; }
+  setStaffFactor({ [g.managedClubId]: staffStrengthOf(g).factor });
 }

@@ -64,6 +64,7 @@ import { migrateTransferLog } from './transferLog';
 import { migrateCareer } from './careerGame';
 import { assignShirtNumbers } from './squads';
 import { bindHonours } from './clubHonours';
+import { bindStaffFactor } from './staffGame';
 import { ensureWorldPool } from './worldPool';
 
 /** Bereitet einen gerade gelesenen Spielstand zum Weiterspielen vor (verändert `g`). */
@@ -358,6 +359,7 @@ export function prepareLoadedGame(g: Game): void {
   try { migrateBudget(g); } catch (err) { console.error('Saisonbudget-Nachrüstung fehlgeschlagen:', err); }
   try { migrateContracts2(g); } catch (err) { console.error('Vertrag-2.0-Nachrüstung fehlgeschlagen:', err); }
   bindHonours(g, true); // Vereinsauszeichnungen: Wirkungstabelle des geladenen Spielstands
+  bindStaffFactor(g); // Stab → Spielstärke
   fixStaleContracts(g); // Spieler im Kader mit abgelaufenem Vertrag (Hochziehen nach dem 1. Juli, alte Spielstände)
   if (!g.worldPool) ensureWorldPool(g); // Weltspieler (Spielerpool) für alte Spielstände anlegen
 }

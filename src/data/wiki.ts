@@ -3128,7 +3128,13 @@ Monatsgehälter wird **monatlich** (am 1. des Monats) als Ausgabe in den Finanze
     category: 'staff',
     title: 'Mitarbeiter — Effekte & Obergrenzen',
     keywords: ['effekt', 'gedeckelt', 'cap', 'verletzung', 'reha', 'regeneration', 'scouting', 'reichweite', 'sieg-bonus'],
-    body: `## Effekte sind real & GEDECKELT
+    body: `## Stab und Spielstärke
+Jede Stelle bringt für sich nur wenig, zusammen aber spürbar Leistung auf den Platz: Co-Trainer, Torwart-, Athletik- und Konditionstrainer, Ärzte und Physios, Analysten, sportliche Leitung und die guten Geister wie Zeug- und Platzwart. Gezählt werden nur Stellen, die es in der Epoche schon gibt, bewertet nach Qualität und Methodenstand. Ganz ohne Stab verliert deine Mannschaft bis zu **4 % Spielstärke** (1975 etwa die Hälfte, damals gab es kaum Fachpersonal), ein voller, guter Stab bringt **+0,4 %**. Die Zeile „Spielstärke“ unter Verein › Mitarbeiter zeigt den aktuellen Wert.
+
+## Gehälter
+Trainer und sportliche Leitung verdienen über die Jahrzehnte fast so viel mehr wie der Fußball insgesamt; Fachpersonal (Medizin, Analyse) deutlich weniger, Verwaltung und Medien etwa wie gute Angestellte.
+
+## Effekte sind real & GEDECKELT
 Mehrere Rollen derselben Wirkung **addieren** sich, aber nur bis zu einer festen Obergrenze. Es gibt bewusst
 **KEINEN direkten Sieg-Bonus** — Personal verbessert die Rahmenbedingungen, nicht das Ergebnis per Knopfdruck.
 

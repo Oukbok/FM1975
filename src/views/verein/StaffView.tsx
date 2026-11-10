@@ -5,7 +5,7 @@ import {
   SPECIALTY_LABEL, StaffMember, coachingReport, memberMonthlySalary, methodFactor, trainingCourseCost,
 } from '../../engine/staffPeople';
 import { Game } from '../../game/state';
-import { candidatesFor, ensureStaff, fireStaff, hireStaff, sendToCourse, staffEffectsOf } from '../../game/staffGame';
+import { candidatesFor, ensureStaff, fireStaff, hireStaff, sendToCourse, staffEffectsOf, staffStrengthOf } from '../../game/staffGame';
 import { DashBox, DashPage, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtDM, fmtStaffWage, wageUnit } from '../../ui/format';
 import { useState } from 'react';
@@ -100,6 +100,10 @@ export function StaffView({ g, onChange }: { g: Game; onChange: () => void }) {
           <Kpi value={`${coach.extra >= 0 ? '+' : ''}${Math.round(coach.extra * 100)} %`} label="Trainingswirkung" info="trainingsplan" color={coach.extra >= 0 ? 'var(--green)' : 'var(--orange)'} />
         </div>
         <Meter label="Betreuung" value={coach.capacity} max={1} text={`${Math.round(coach.capacity * 100)} %`} />
+        {(() => { const ss = staffStrengthOf(g); const pct = (ss.factor - 1) * 100; return (
+          <Meter label="Spielstärke" info="stabSpielstaerke" value={Math.min(1, ss.coverage)} max={1}
+            text={`${pct >= 0 ? '+' : '−'}${Math.abs(pct).toLocaleString('de-DE', { maximumFractionDigits: 1, minimumFractionDigits: 1 })} %`}
+            color={pct < -1.5 ? 'var(--orange)' : undefined} />); })()}
         <Meter label="Verletzungsrisiko" value={fx.injuryReduction} max={STAFF_CAPS.injuryReduction} text={`−${Math.round(fx.injuryReduction * 100)} %`} />
         <Meter label="Ausfallzeit" value={fx.rehabReduction} max={STAFF_CAPS.rehabReduction} text={`−${Math.round(fx.rehabReduction * 100)} %`} />
         <Meter label="Regeneration" value={fx.recovery} max={STAFF_CAPS.recovery} text={`+${fx.recovery.toFixed(1)}/Tag`} />
