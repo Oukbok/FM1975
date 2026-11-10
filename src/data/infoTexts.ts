@@ -341,6 +341,11 @@ export const INFO_TEXTS = {
     text: 'Ab 1998 darf der Profibereich in eine Kapitalgesellschaft ausgegliedert werden. Danach kannst du Anteile an einen Investor oder an Sponsoren verkaufen: sofort Geld, dafür Dividende und Mitsprache. Wegen 50+1 bleibt die Mehrheit beim Verein. Anteile lassen sich mit Aufschlag zurückkaufen; liegen alle wieder beim Verein, ist die Rückführung in den e. V. möglich.',
     wiki: 'club-business',
   },
+  zweitemannschaft: {
+    title: 'Zweite Mannschaft',
+    text: 'Die Amateure bzw. die U23 spielen sonntags in ihrer eigenen Liga. Der Trainer stellt nach deinem Schwerpunkt auf; wer dort spielt, bekommt Spielpraxis (bis 23) und gewöhnt sich an trainierte Positionen. Anlegen und ausbauen in der Akademie.',
+    wiki: 'youth-invest',
+  },
   spielermeldung: {
     title: 'Spielermeldung & Ausländerregeln',
     text: 'Jede Epoche hat eigene Regeln: anfangs zwei Ausländer pro Spiel, ab 1992 drei, nach dem Bosman-Urteil sind Europäer frei, ab 2006 zählen einheimische und lokal ausgebildete Spieler. Die Grenze gilt für Startelf und Bank – auch für die KI.',

@@ -13,6 +13,7 @@
 //   (Anschluss in game/aiClubs.ts: aiYouthInvest).
 // • Zweite Mannschaft: Reserve-Minuten für junge Profis (engine/development.ts).
 // =============================================================================
+import { ownReserveMinutes } from './reserveTeam';
 import { ClubDevContext } from '../engine/development';
 import { clubTier, economyScale, tierScale, yearOf } from '../engine/economy';
 import { book } from '../engine/finances';
@@ -394,12 +395,14 @@ export function aiYouthInvest(g: Game, club: Club, today: string, revenue: numbe
 // Zweite Mannschaft → Entwicklungs-Kontext
 // -----------------------------------------------------------------------------
 /** Ergänzt den Entwicklungs-Kontext um Reserve-Minuten (U23 ohne Profi-Einsatz). */
-export function withReserve(ctxFor: (c: Club) => ClubDevContext, today: string): (c: Club) => ClubDevContext {
+export function withReserve(ctxFor: (c: Club) => ClubDevContext, today: string, g?: Game): (c: Club) => ClubDevContext {
   // Sommerpause (Juni/Juli): auch die zweite Mannschaft spielt nicht.
   const off = ['06', '07'].includes(today.slice(5, 7));
   return (club) => {
     const ctx = ctxFor(club);
     if (off || !club.youthInvest || !(club.youthInvest.levels.reserve > 0)) return ctx;
+    // Eigener Verein: nur, wer in der zweiten Mannschaft aufgestellt wurde (game/reserveTeam.ts).
+    if (g && club.id === g.managedClubId) return { ...ctx, reserve: (p: Player, proMinutes: number) => ownReserveMinutes(g, p, proMinutes) };
     return { ...ctx, reserve: (p: Player, proMinutes: number) => reserveMinutesFor(club, p.age, proMinutes, p.id) };
   };
 }

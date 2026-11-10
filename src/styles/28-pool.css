@@ -48,3 +48,12 @@
 .reg-flist { display: flex; flex-direction: column; }
 .reg-frow { display: flex; align-items: center; gap: 10px; padding: 9px 2px; border-bottom: 1px solid var(--border-soft); font-size: 15px; }
 .reg-fname { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Jugend › 2. Mannschaft (views/jugend/ReserveTeamView.tsx) */
+.res-check { display: flex; align-items: center; gap: 8px; font-size: 15px; }
+.res-train { display: grid; grid-template-columns: minmax(0, 1fr) 80px 90px 34px; gap: 8px; align-items: center; margin-top: 8px; }
+.res-fit { font-size: 13px; color: var(--text-3); }
+.res-list { display: flex; flex-direction: column; }
+.res-row { display: flex; align-items: center; gap: 10px; padding: 7px 2px; border-bottom: 1px solid var(--border-soft); font-size: 15px; }
+.res-name { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.res-age, .res-date { color: var(--text-3); font-size: 13px; }

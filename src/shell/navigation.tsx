@@ -4,7 +4,7 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   // Kategorie-Dashboards (Übersichtsseiten je Hauptkategorie)
   | 'cat-spieltag' | 'cat-kader' | 'cat-transfers' | 'cat-finanzen' | 'cat-verein' | 'cat-statistiken'
   // Neue Einzelseiten
-  | 'tactics' | 'stadium' | 'presse' | 'vertraege' | 'meldung' | 'beobachtung' | 'spielerpool' | 'scouting' | 'verhandlungen' | 'sponsoring' | 'fans' | 'international' | 'vorstand' | 'ruhmeshalle' | 'akademie'
+  | 'tactics' | 'stadium' | 'presse' | 'vertraege' | 'meldung' | 'reserve' | 'beobachtung' | 'spielerpool' | 'scouting' | 'verhandlungen' | 'sponsoring' | 'fans' | 'international' | 'vorstand' | 'ruhmeshalle' | 'akademie'
   // Winter: Hallenfußball + Trainingslager
   | 'halle' | 'trainingslager'
   // Saison-Briefing (Archiv)
@@ -70,6 +70,7 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'cat-jugend', label: 'Jugend', icon: 'youth' },
     { screen: 'akademie', label: 'Akademie', icon: 'facilities' },
     { screen: 'youth', label: 'Mannschaften', icon: 'youth' },
+    { screen: 'reserve', label: '2. Mannschaft', icon: 'squad' },
     { screen: 'jugendwettbewerbe', label: 'Jugendwettbewerbe', icon: 'trophy' },
   ] },
   { key: 'transfers', label: 'Transfers', icon: 'transfers', dash: 'cat-transfers', subs: [
