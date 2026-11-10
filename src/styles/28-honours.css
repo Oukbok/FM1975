@@ -41,8 +41,31 @@
 .hb.on .hb-sub { color: var(--text-2); font-weight: 600; }
 
 .sub3-page > .dpage.hon-page { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
-.hon-box .dbox-body { display: flex; align-items: center; }
-.hon-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; width: 100%; }
+.hm-dim { filter: grayscale(0.85); opacity: 0.38; }
+
+/* Tabelle je Gruppe: Auszeichnung | Bronze | Silber | Gold */
+.hon-box .dbox-body { overflow-y: auto; }
+.hon-table { display: flex; flex-direction: column; }
+.hon-row { display: grid; grid-template-columns: minmax(0, 0.9fr) repeat(3, minmax(0, 1fr)); gap: 10px; padding: 9px 2px; border-bottom: 1px solid var(--border-soft); align-items: start; }
+.hon-row:last-child { border-bottom: none; }
+.hon-name { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.hon-name b { font-family: var(--font-display); font-size: 16px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; color: var(--text); line-height: 1.15; }
+.hon-row:not(.on) .hon-name b { color: var(--text-2); }
+.hon-name span { font-size: 12.5px; color: var(--text-3); line-height: 1.3; }
+.hon-name em { font-style: normal; font-size: 12px; color: var(--text-2); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.hon-tier { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 7px; align-items: start; padding: 3px 4px; border-radius: 6px; }
+.hon-tier.cur { background: rgba(var(--ink-rgb), 0.05); box-shadow: inset 0 0 0 1px var(--border-soft); }
+.hon-tier-medal { display: inline-flex; cursor: help; border-radius: 50%; outline: none; }
+.hon-tier-medal:focus-visible { box-shadow: var(--focus-ring, 0 0 0 2px var(--text-3)); }
+.hon-tier-txt { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.hon-tier-txt b { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); }
+.hon-tier.on .hon-tier-txt b { color: var(--text); }
+.hon-tier.t0.on .hon-tier-txt b { color: var(--hon-bronze-3); }
+.hon-tier.t1.on .hon-tier-txt b { color: var(--hon-silber-3); }
+.hon-tier.t2.on .hon-tier-txt b { color: var(--hon-gold-3); }
+.hon-need { font-size: 12px; color: var(--text-2); line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.hon-fx { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.hon-tier:not(.on) .hon-fx { color: var(--text-3); font-weight: 500; }
 
 /* Vereinsprofil: Leiste unter dem Namen */
 .hon-strip { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }

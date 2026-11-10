@@ -30,10 +30,10 @@ const ICONS: Record<HonourId, ReactNode> = {
 };
 
 /** Medaille (SVG). `tier` = null → nicht aktiv (grau). */
-export function HonourMedal({ id, tier, size = 64 }: { id: HonourId; tier: 0 | 1 | 2 | null; size?: number }) {
+export function HonourMedal({ id, tier, size = 64, dim }: { id: HonourId; tier: 0 | 1 | 2 | null; size?: number; /** Stufe nicht erreicht: blass in Stufenfarbe */ dim?: boolean }) {
   const cls = tier == null ? 'off' : ['bronze', 'silber', 'gold'][tier];
   return (
-    <svg className={`hm hm-${cls}`} width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
+    <svg className={`hm hm-${cls}${dim ? ' hm-dim' : ''}`} width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
       <circle cx="32" cy="32" r="30" className="hm-ring" />
       <circle cx="32" cy="32" r="30" className="hm-shine" />
       <circle cx="32" cy="32" r="23.5" className="hm-disc" />
