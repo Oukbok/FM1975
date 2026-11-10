@@ -2724,6 +2724,12 @@ Ab 1985 bringt jeder Ausbauschritt Logen mit (8 bis 1992, 16 bis 2003, danach 28
 ## Namensrechte (ab 2000)
 Unter **Finanzen → Sponsoring → Namensrechte** liegen drei Angebote fiktiver Firmen (3, 5 oder 8 Jahre). Der Jahreswert richtet sich nach Kapazität und Ansehen und wächst mit Vermarktungs-Skala und Marke; er wird monatlich gebucht. Traditionsvereine zahlen mit Fan-Stimmung (je nach Tradition und Leitbild 2–15 Punkte). Läuft der Vertrag aus, heißt das Stadion wieder wie früher; im letzten Vertragsjahr bietet der Partner eine Verlängerung (+10 %).
 
+## Tribünennamen & Vereinslegenden
+Ein Klick auf eine Tribüne (Finanzen → Sponsoring → Namensrechte) öffnet ihre Karteikarte mit allem, was dazugehört:
+- **Vereinslegenden ernennen:** Wer mindestens 120 Pflichtspiele für deinen Verein bestritten hat (im Kader, früher oder schon in Rente), kann zur Legende ernannt werden – höchstens 11. Die Fans freuen sich über jede Ernennung.
+- **Tribüne nach einer Legende benennen** (z. B. „Hans-Müller-Tribüne“, hinter dem Tor „…-Kurve“, Ecken „…-Ecke“): kein Geld, aber Ansehen – die Fan-Stimmung steigt sofort und dauerhaft (+1,5 Punkte Ziel-Stimmung je Tribüne, höchstens vier zählen). Mehr Stimmung heißt mehr Zuschauer und Mitglieder. Jede Legende gibt nur einer Tribüne ihren Namen; den Namen wieder zu entfernen, verärgert die Fans.
+- **Tribünennamen verkaufen** (ab 2005): je Tribüne zwei Angebote (3 oder 5 Jahre), der Wert richtet sich nach dem Anteil der Tribüne an allen Plätzen. Ersetzt ein Firmenname eine Legende, sind die Fans empört.
+
 ## Ausgliederung und Investor (ab 1998)
 - **Ausgliederung** des Profibereichs bringt einmalig Kapital (12 % des Jahresumsatzes) und +8 Vorstandsvertrauen. Die Saisonziele fallen danach eine Stufe ehrgeiziger aus. Je nach Leitbild murren die Fans (bis −8, Traditionsvereine −3 zusätzlich).
 - **Investor:** Danach kannst du Anteile verkaufen (10, 15 oder 24 %), höchstens 49 % wegen der **50+1-Regel**. Preis ≈ 6 % des Umsatzes je Prozentpunkt × Marke. Ab 25 % steigen die Ziele noch eine Stufe.

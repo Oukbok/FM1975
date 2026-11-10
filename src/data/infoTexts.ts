@@ -343,7 +343,7 @@ export const INFO_TEXTS = {
   },
   namensrechte: {
     title: 'Namensrechte',
-    text: 'Ab etwa 2000 kannst du den Stadionnamen an einen Sponsor verkaufen. Das bringt über die Laufzeit jedes Jahr einen festen Betrag.',
+    text: 'Ab etwa 2000 kannst du den Stadionnamen an einen Sponsor verkaufen. Das bringt über die Laufzeit jedes Jahr einen festen Betrag. Einzelne Tribünen benennst du nach Vereinslegenden (Ansehen bei den Fans) oder ab 2005 nach Sponsoren – Klick auf die Tribüne.',
     wiki: 'club-business',
   },
 

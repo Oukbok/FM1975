@@ -16,6 +16,8 @@ import type { Screen } from '../../../shell/navigation';
 import type { StandId } from '../../../types';
 import type { SponsorDeal, SponsorDealOffer } from '../../../types/sponsor';
 import { KV } from '../../../ui/DashPage';
+import Select from '../../../ui/Select';
+import { MAX_LEGENDS, STAND_SPONSOR_YEAR, acceptStandOffer, appointLegend, legendCandidates, nameStandAfterLegend, resetStandName, standAnnualNominal, standLabel, standOffers } from '../../../game/standNames';
 import { fmtDM } from '../../../ui/format';
 import { SponsorLogo } from './SponsorLogo';
 import { ClauseList, bonusText, yearly } from './parts';
@@ -208,19 +210,64 @@ export function SponsorCard({ g, t, onClose, onOpen, onTalk, onAct, onNaming, on
     );
   }
 
-  // Tribüne
-  const st = STAND[(t as { id: StandId }).id];
+  // Tribüne: Name (Vereinslegende oder Sponsor), Angebote, Legenden ernennen (game/standNames.ts)
+  return <StandCard g={g} id={(t as { id: StandId }).id} onClose={onClose} onAct={done} onGoto={onGoto} />;
+}
+
+function StandCard({ g, id, onClose, onAct, onGoto }: { g: Game; id: StandId; onClose: () => void; onAct: (e: string | null, close?: boolean) => void; onGoto: (s: Screen) => void }) {
+  const ctx = spContext(g);
+  const { club, year } = ctx;
+  const [pick, setPick] = useState('');
+  const [, setTick] = useState(0);
+  const st = STAND[id];
   const caps = rawStandCaps(club)?.[st.id];
   const persons = caps ? Object.entries(caps).reduce((a, [k, v]) => a + (k === 'loge' ? v * LOGE_GUESTS : v), 0) : 0;
-  const parts: [string, number][] = caps ? [['Stehplätze', caps.steh], ['Sitzplätze', caps.sitz], ['Überdachte Sitze', caps.dach], ['Premium', caps.premium], ['Business', caps.business], ['Logen', caps.loge]] : [];
+  const cur = club.standNames?.[id];
+  const offers = standOffers(g, id);
+  const legends = club.clubLegends ?? [];
+  const usedLegend = new Set(Object.values(club.standNames ?? {}).filter((n) => n?.kind === 'legend').map((n) => (n as { legendId: string }).legendId));
+  const cands = legendCandidates(g);
+  const act = (e: string | null) => { onAct(e, false); setTick((x) => x + 1); };
   return (
-    <Frame kicker={`Tribüne · ${st.sub}`} title={st.name} sub={persons ? `${persons.toLocaleString('de-DE')} Plätze` : 'noch nicht ausgebaut'} onClose={onClose}
+    <Frame kicker={`Tribüne · ${st.sub}${persons ? ` · ${persons.toLocaleString('de-DE')} Plätze` : ''}`} title={standLabel(club, id)}
+      sub={cur ? (cur.kind === 'legend' ? `benannt nach Vereinslegende · seit ${fmtD(cur.since)}` : `Namensrechte ${cur.sponsor} · bis 30.06.${cur.untilYear}`) : st.name}
+      onClose={onClose}
       actions={<>
+        {cur && <button className="btn" onClick={() => { resetStandName(g, id); act(null); }}>Wieder „{st.name}“</button>}
         <button className="btn" onClick={() => { onGoto('kartenverkauf'); onClose(); }}>Zum Kartenverkauf</button>
-        <button className="btn" onClick={() => { onGoto('stadium'); onClose(); }}>Zum Stadion</button>
       </>}>
-      {parts.filter(([, v]) => v > 0).map(([k, v]) => <KV key={k} k={k} v={v.toLocaleString('de-DE')} />)}
-      <div className="dnote mt8">Tribünennamen werden nicht einzeln vermarktet – der Name gehört zum Stadion. Werbung an der Tribüne läuft über die Banden und die Partner der Pyramide.</div>
+      {cur?.kind === 'sponsor' && <KV k="Jahreswert" v={fmtDM(standAnnualNominal(cur, club, year))} strong />}
+      <div className="dsec">Nach einer Vereinslegende benennen</div>
+      {legends.length ? (
+        <div className="sp3-mini-row">
+          <Select size="s" width={300} value={pick} placeholder="Legende wählen …" onChange={setPick}
+            options={legends.map((l) => ({ value: l.id, label: `${l.name} · ${l.apps} Spiele`, disabled: usedLegend.has(l.id) }))} />
+          <button className="dchip on" disabled={!pick} onClick={() => act(nameStandAfterLegend(g, id, pick))}>Benennen</button>
+        </div>
+      ) : <div className="dnote">Noch keine Vereinslegende ernannt – Kandidaten stehen unten.</div>}
+      <div className="dnote">Bringt kein Geld, aber die Fans sind stolz darauf: Die Stimmung steigt sofort und bleibt dauerhaft etwas höher – das zieht Zuschauer und Mitglieder an.</div>
+      <div className="dsec">Angebote für den Tribünennamen</div>
+      {offers.length ? offers.map((o, i) => (
+        <div key={o.sponsor + i} className="sp3-mini">
+          <SponsorLogo name={o.sponsor} industry={namingIndustry(o.sponsor)} year={year} variant="mark" className="sp3-mini-logo" />
+          <span className="sp3-mini-name"><b>{o.sponsor}</b><span>„{o.name}“ · bis {o.untilYear}</span></span>
+          <b className="sp3-mini-val">{fmtDM(standAnnualNominal(o, club, year))}</b>
+          <button className="dchip" onClick={() => act(acceptStandOffer(g, id, i))}>Annehmen</button>
+        </div>
+      )) : <div className="dnote">{year < STAND_SPONSOR_YEAR ? `Tribünennamen verkauft in dieser Epoche noch niemand – Firmen melden sich ab ${STAND_SPONSOR_YEAR}.` : cur?.kind === 'sponsor' ? 'Der Vertrag läuft noch. Ein Jahr vor dem Ende melden sich Interessenten.' : persons ? 'Im Moment keine Interessenten.' : 'Die Tribüne ist noch nicht ausgebaut.'}</div>}
+      {cur?.kind === 'legend' && offers.length > 0 && <div className="sp-warn">Ein Firmenname statt einer Legende empört die Fans.</div>}
+      <div className="dsec">Vereinslegenden {legends.length}/{MAX_LEGENDS}</div>
+      {legends.map((l) => <div key={l.id} className="sp3-mini sp3-mini-lg"><span className="sp3-mini-name"><b>{l.name}</b><span>{l.apps} Spiele · {l.goals} Tore · ernannt {fmtD(l.since)}</span></span></div>)}
+      {cands.length > 0 && legends.length < MAX_LEGENDS && <>
+        <div className="dnote mt8">Kandidaten (mindestens 120 Pflichtspiele für den Verein):</div>
+        {cands.slice(0, 8).map((c) => (
+          <div key={c.id} className="sp3-mini sp3-mini-lg">
+            <span className="sp3-mini-name"><b>{c.name}</b><span>{c.apps} Spiele · {c.goals} Tore{c.active ? ' · im Kader' : ''}</span></span>
+            <button className="dchip" onClick={() => act(appointLegend(g, c.id))}>Zur Legende ernennen</button>
+          </div>
+        ))}
+      </>}
+      {!cands.length && !legends.length && <div className="dnote">Noch hat niemand 120 Pflichtspiele für den Verein bestritten.</div>}
     </Frame>
   );
 }

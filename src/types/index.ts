@@ -750,6 +750,11 @@ export interface SeatMatchLog {
 export type TicketPriceCat = 'normal' | 'top' | 'rabatt';
 /** Acht Tribünen des Kartenverkaufs (Gruppierung der 14 Blöcke, engine/tickets.ts). */
 export type StandId = 'haupt' | 'ecke1' | 'tor1' | 'ecke2' | 'gegen' | 'ecke3' | 'tor2' | 'ecke4';
+/** Name einer Tribüne (game/standNames.ts). Sponsorwert in 1975-Basis wie NamingRights.annualValue. */
+export type StandName =
+  | { kind: 'legend'; legendId: string; name: string; since: string }
+  | { kind: 'sponsor'; sponsor: string; name: string; annualValue: number; fromYear: number; untilYear: number };
+export interface ClubLegend { id: string; name: string; since: string; apps: number; goals: number }
 
 /** Einstellungen des Kartenverkaufs (eigener Verein, optional). */
 export interface TicketSettings {
@@ -1253,6 +1258,10 @@ export interface Club {
   stadiumProject?: StadiumProject;
   /** Verkaufte Stadion-Namensrechte. */
   namingRights?: NamingRights;
+  /** Tribünennamen: nach Vereinslegenden oder Sponsoren (game/standNames.ts, nur eigener Verein). */
+  standNames?: Partial<Record<StandId, StandName>>;
+  /** Ernannte Vereinslegenden (game/standNames.ts). */
+  clubLegends?: ClubLegend[];
   /** Kapitalgesellschaft / Investor (ab 1998). */
   corporate?: ClubCorporate;
   /** Punktabzug (Lizenzauflage wegen Überschuldung) für eine Saison. */

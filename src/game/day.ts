@@ -84,6 +84,7 @@ import { awardsDaily } from './seasonAwardsGame';
 import { goldenBallDaily } from './goldenBallGame';
 import { recordProfileWeek } from './profileWeeks';
 import { recordMonthlyOv } from './ovHistory';
+import { standNamesMonthly } from './standNames';
 import { bindHonours } from './clubHonours';
 import { bindStaffFactor } from './staffGame';
 
@@ -624,6 +625,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
     monthlyYouthInvest(g, today);
     // Kreditraten, Stadion-Bauprojekte, Namensrechte (game/clubBusiness.ts).
     monthlyClubBusiness(g, today);
+    standNamesMonthly(g, today); // Tribünennamen: Sponsorgeld, Ablauf (game/standNames.ts)
     // Sponsoring 2.0: Verlängerungen, neue Interessenten, Pflichtreisen, Image (game/sponsorGame.ts).
     monthlySponsoring(g, today);
     // Positionsvertrautheit: Abbau ungenutzter Positionen, KI-Positionstraining (game/positionsGame.ts).

@@ -245,3 +245,5 @@ button.sp3-inc-row:hover { background: var(--panel-hover); }
 .sp3-menu .pcm-item:disabled { opacity: 0.45; cursor: default; }
 .sp3-tile-cap span.v { color: var(--text-2); }
 .sp3-tile.ending .sp3-tile-cap span.v { color: var(--orange); }
+.sp3-mini-row { display: flex; gap: 8px; align-items: center; margin: 4px 0 6px; }
+.sp3-mini.sp3-mini-lg { grid-template-columns: minmax(0, 1fr) auto; }

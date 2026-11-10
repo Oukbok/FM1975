@@ -4,6 +4,7 @@
 // vorhandenen Aktionen: Annehmen, Verhandeln, Ablehnen, Option ziehen, Auflösen,
 // Namensrechte verkaufen, Sprung zu Trainingslager/Kartenverkauf/Stadion.
 // =============================================================================
+import { standLabel } from '../../../game/standNames';
 import { useRef, useState, type KeyboardEvent, type MouseEvent, type PointerEvent } from 'react';
 import { createPortal } from 'react-dom';
 import Icon from '../../../components/Icon';
@@ -94,8 +95,8 @@ export function useSponsorUi(g: Game, onChange: () => void, onGoto: (s: Screen) 
         { label: 'Zum Stadion', icon: 'stadium', sep: true, run: run(() => onGoto('stadium')) }];
     }
     if (t.kind === 'stand') {
-      return [details, { label: 'Zum Kartenverkauf', icon: 'ticket', sep: true, run: run(() => onGoto('kartenverkauf')) },
-        { label: 'Zum Stadion', icon: 'stadium', run: run(() => onGoto('stadium')) }];
+      return [details, { label: 'Benennen: Legende oder Sponsor', icon: 'trophy', run: run(() => setCard(t)) },
+        { label: 'Zum Kartenverkauf', icon: 'ticket', sep: true, run: run(() => onGoto('kartenverkauf')) }];
     }
     return [details];
   };
@@ -127,7 +128,7 @@ export function useSponsorUi(g: Game, onChange: () => void, onGoto: (s: Screen) 
     if (t.kind === 'free') return { name: SLOT_BY_ID[t.slot].name, sub: 'frei' };
     if (t.kind === 'locked') return { name: SLOT_BY_ID[t.slot].name, sub: 'noch gesperrt' };
     if (t.kind === 'namingOffer') return { name: currentNamingOffers(g)[t.idx]?.sponsor ?? '', sub: 'Namensrechte' };
-    if (t.kind === 'stand') return { name: STAND[t.id as StandId]?.name ?? '', sub: 'Tribüne' };
+    if (t.kind === 'stand') return { name: standLabel(club, t.id as StandId), sub: 'Tribüne' };
     return { name: club.stadium.name, sub: 'Stadion' };
   };
 

@@ -9,6 +9,7 @@ import { LOGE_GUESTS, STANDS } from '../../../data/seatingCatalog';
 import { NAMING_RIGHTS_YEAR, namingAnnualNominal } from '../../../engine/clubBusiness';
 import { rawStandCaps } from '../../../engine/seating';
 import { currentNamingOffers } from '../../../game/clubBusiness';
+import { standAnnualNominal, standLabel } from '../../../game/standNames';
 import type { StandId } from '../../../types';
 import { DashBox, DashPage } from '../../../ui/DashPage';
 import { fmtDM } from '../../../ui/format';
@@ -47,6 +48,7 @@ export function NamingTab({ ctx, ui }: { ctx: SpCtx; ui: SponsorUi }) {
   })) as Record<StandId, number>;
   const totalPeople = caps ? Object.values(people).reduce((a, b) => a + b, 0) : club.stadium.capacity;
   const value = nr ? namingAnnualNominal(nr, club, year) : 0;
+  const standTotal = STANDS.reduce((a, s) => { const n = club.standNames?.[s.id]; return a + (n?.kind === 'sponsor' ? standAnnualNominal(n, club, year) : 0); }, 0);
   const boards = deals.filter((d) => BOARD_SLOTS.includes(d.slot));
   const ringColors = boards.length ? boards.map((d) => logoSpec(d.partner, d.industry, Number(d.since.slice(0, 4))).bg) : [];
   const nt = { kind: 'naming' as const };
@@ -83,13 +85,13 @@ export function NamingTab({ ctx, ui }: { ctx: SpCtx; ui: SponsorUi }) {
               const t = { kind: 'stand' as const, id: s.id };
               return (
                 <tr key={s.id} className={`sp3-trow ${ui.isOpen(t) ? 'on' : ''}`} {...ui.bind(t, s.name)}>
-                  <td>{s.name} <span className="sp-meta">{s.sub}</span></td>
+                  <td>{standLabel(club, s.id)} <span className="sp-meta">{club.standNames?.[s.id] ? s.name : s.sub}</span></td>
                   <td className="r">{caps ? (people[s.id] ? n0(people[s.id]) : '–') : '–'}</td>
-                  <td className="r sp3-dim">–</td>
+                  <td className="r sp3-dim">{(() => { const n = club.standNames?.[s.id]; return n?.kind === 'sponsor' ? fmtDM(standAnnualNominal(n, club, year)) : n?.kind === 'legend' ? 'Legende' : '–'; })()}</td>
                 </tr>
               );
             })}
-            <tr className="sp3-trow total"><td>Gesamt</td><td className="r">{n0(totalPeople)}</td><td className="r">{value ? fmtDM(value) : '–'}</td></tr>
+            <tr className="sp3-trow total"><td>Gesamt</td><td className="r">{n0(totalPeople)}</td><td className="r">{value + standTotal ? fmtDM(value + standTotal) : '–'}</td></tr>
           </tbody>
         </table>
         <div className="dsec">Angebote für den Stadionnamen</div>
@@ -125,7 +127,7 @@ export function NamingTab({ ctx, ui }: { ctx: SpCtx; ui: SponsorUi }) {
                 <g key={s.id} className={`sp3-stand ${ui.isOpen(t) ? 'on' : ''} ${empty ? 'empty' : ''}`} {...ui.bind(t, s.name)}>
                   <polygon points={sh.pts} fill="url(#sp3-hatch)" />
                   <rect x={sh.cx - tw / 2} y={sh.cy - th / 2} width={tw} height={th} rx="5" className="sp3-stand-plate" />
-                  <text x={sh.cx} y={sh.cy - 2} textAnchor="middle" className="sp3-stand-name">{s.name}</text>
+                  <text x={sh.cx} y={sh.cy - 2} textAnchor="middle" className="sp3-stand-name">{(() => { let l = standLabel(club, s.id); const max = sh.corner ? 11 : 14; if (l.length > max && l.includes('-')) l = l.split('-').slice(-2).join('-'); return l.length > max ? l.slice(0, max - 1) + '…' : l; })()}</text>
                   <text x={sh.cx} y={sh.cy + 11} textAnchor="middle" className="sp3-stand-sub">
                     {caps ? (people[s.id] ? `${n0(people[s.id])} Plätze` : 'nicht ausgebaut') : s.sub}
                   </text>
