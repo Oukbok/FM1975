@@ -10,14 +10,18 @@
 //     (`ids` merkt sich, wer zuletzt gemessen wurde) – der Spielstand wächst nicht.
 // Fehlende Felder (alte Spielstände) entstehen beim ersten Messpunkt; der Lauf ist
 // idempotent: ein zweiter Aufruf am selben Tag schreibt nichts doppelt.
+// Dazu am ersten Sonntag eines Monats ein Monatspunkt mit allen Attributen
+// (`history.months`, höchstens MAX_MONTHS = zehn Jahre) für die Langzeitansicht
+// und die Fähigkeitsauswahl im Diagramm; die Reihenfolge steht einmal in `ak`.
 // =============================================================================
-import type { Player, WeekPoint } from '../types';
+import type { MonthPoint, Player, WeekPoint } from '../types';
 import { fitness100, form100, freshness100, playerMorale100 } from '../components/status/statusScale';
 import type { Game } from './state';
 
 export const MAX_WEEKS = 52;
+export const MAX_MONTHS = 120;
 
-export interface ProfileWeeksState { v: 1; team: WeekPoint[]; ids: string[] }
+export interface ProfileWeeksState { v: 1; team: WeekPoint[]; ids: string[]; /** Attribut-Reihenfolge der Monatspunkte. */ ak?: string[] }
 type G = Game & { profileWeeks?: ProfileWeeksState };
 
 export const profileWeeksOf = (g: Game | undefined): ProfileWeeksState | undefined => (g as G | undefined)?.profileWeeks;
@@ -47,11 +51,21 @@ export function recordProfileWeek(g: Game, today: string): void {
     if (now.has(id)) continue;
     const h = g.players[id]?.history;
     if (h?.weeks) delete h.weeks;
+    if (h?.months) delete h.months;
   }
+  const month = today.slice(0, 7);
   const sum = { ov: 0, f: 0, fr: 0, fi: 0, m: 0 };
   for (const p of squad) {
     const pt = pointOf(p, today);
     push(((p.history ??= {}).weeks ??= []), pt);
+    const ms = (p.history.months ??= []);
+    if (ms[ms.length - 1]?.d.slice(0, 7) !== month) {
+      const ak = (st.ak ??= Object.keys(p.attributes));
+      const attrs = p.attributes as unknown as Record<string, number>;
+      const mp: MonthPoint = { d: today, ov: Math.round(p.overall), a: ak.map((k) => Math.round(attrs[k] ?? 0)) };
+      ms.push(mp);
+      if (ms.length > MAX_MONTHS) ms.splice(0, ms.length - MAX_MONTHS);
+    }
     sum.ov += pt.ov; sum.f += pt.f; sum.fr += pt.fr; sum.fi += pt.fi; sum.m += pt.m;
   }
   const n = squad.length;

@@ -253,6 +253,7 @@
 .pp3-tip-row i, .pp3-chk i { display: inline-block; width: 10px; height: 3px; border-radius: 2px; }
 .pp3-tip-row b { color: var(--text); font-weight: 600; text-align: right; }
 .pp3-tip-row em { font-style: normal; color: var(--text-4); font-size: 11.5px; }
+.pp3-chart-head { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 6px; }
 .pp3-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; padding-top: 8px; margin-top: 4px; border-top: 1px solid var(--border-soft); }
 .pp3-chk { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--text-2); cursor: pointer; }
 .pp3-chk input { accent-color: var(--accent); margin: 0; }

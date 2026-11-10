@@ -883,7 +883,7 @@ export const INFO_TEXTS = {
   },
   spielerentwicklung: {
     title: 'Spielerentwicklung',
-    text: 'Jeden Sonntag hält das Spiel für deinen Kader Stärke, Form, Frische, Fitness und Moral fest (bis zu 52 Wochen). „Kaderschnitt“ zeigt gestrichelt den Mittelwert deines Kaders in derselben Woche. Bei anderen Spielern siehst du die Stärke je Bewertungsrunde.',
+    text: 'Jeden Sonntag hält das Spiel für deinen Kader Stärke, Form, Frische, Fitness und Moral fest (bis zu 52 Wochen), einmal im Monat zusätzlich alle Fähigkeiten (bis zu zehn Jahre). Oben wählst du die Anzeige (Stärke & Zustand, Stärke, eine Kategorie als Schnitt oder eine einzelne Fähigkeit) und den Zeitraum (letzte 52 Wochen oder gesamte Zeit). „Kaderschnitt“ zeigt gestrichelt den Mittelwert deines Kaders in derselben Woche. Bei anderen Spielern stammen die Werte aus den Bewertungsrunden.',
     wiki: 'player-profile',
   },
   stationen: {

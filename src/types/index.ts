@@ -312,6 +312,8 @@ export interface InjuryRecord { date: string; type: InjuryType; severity: Injury
 export interface AttributeSnapshot { date: string; label: string; attributes: Partial<Record<AttributeKey, number>>; }
 /** Wochen-Messpunkt fürs Spielerprofil (game/profileWeeks.ts): Datum, Stärke, Form, Frische, Fitness, Moral (0–100). */
 export interface WeekPoint { d: string; ov: number; f: number; fr: number; fi: number; m: number }
+/** Monats-Messpunkt (eigener Kader): Datum, Stärke, Attribute in der Reihenfolge von `profileWeeks.ak`. */
+export interface MonthPoint { d: string; ov: number; a: number[] }
 export interface PlayerHistory {
   matches?: MatchLogEntry[];
   stations?: CareerStation[];
@@ -320,6 +322,8 @@ export interface PlayerHistory {
   attributeSnapshots?: AttributeSnapshot[];
   /** Wochenverlauf (nur eigener Kader, höchstens 52 Punkte, game/profileWeeks.ts). */
   weeks?: WeekPoint[];
+  /** Monatsverlauf der Attribute (nur eigener Kader, höchstens 120 Punkte, game/profileWeeks.ts). */
+  months?: MonthPoint[];
 }
 
 export function createEmptyStats(): PlayerStats {
