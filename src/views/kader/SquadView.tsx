@@ -77,7 +77,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
         </span>}>
         <table className="dtable rl-players">
           <thead><tr>
-            <th className="rl-rank">#</th><th>Name</th><Th k="pos" cls="ctr">Pos</Th><Th k="age" cls="num">Alter</Th>
+            <th className="rl-rank sq-shirt-h">#</th><th>Name</th><Th k="pos" cls="ctr">Pos</Th><Th k="age" cls="num">Alter</Th>
             <Th k="ovr" cls="num">Stärke</Th><Th k="pot">Potenzial<InfoTip k="potenzial" /></Th><Th k="form" cls="ctr">Form</Th>
             <Th k="fri" cls="ctr">Frische<InfoTip k="frische" /></Th><Th k="fit" cls="ctr">Fitness<InfoTip k="fitness" /></Th><Th k="mor" cls="ctr">Moral</Th>
             <Th k="apps" cls="num">Sp.</Th><Th k="goals" cls="num">Tore</Th><th>Status</th><th className="ctr" aria-label="Gespräch" />
@@ -87,7 +87,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
               return (
                 <tr key={pl.id} data-pid={pl.id} className={`clickable ${roleCls(pl.id)}`} onClick={() => setSel(pl.id)}>
                   <td className="rl-rank sq-shirt" onClick={(e) => e.stopPropagation()}>
-                    <Select size="s" width={58} popWidth={230} listHeight={420} value={pl.shirtNumber} title="Rückennummer vergeben"
+                    <Select size="s" width={68} popWidth={230} listHeight={420} value={pl.shirtNumber} title="Rückennummer vergeben"
                       onChange={(v) => { setShirtNumber(club, g.players, pl.id, Number(v)); onChange?.(); setTick((t) => t + 1); }}
                       options={Array.from({ length: 99 }, (_, i) => {
                         const n = i + 1; const who = all.find((x) => x.shirtNumber === n && x.id !== pl.id);
