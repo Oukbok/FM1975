@@ -26,17 +26,24 @@ export function StandMap({ club, people, sel, onSel }: { club: Club; people: Rec
   const shapes: Record<StandId, string> = (() => {
     const d = depth;
     const rect = (x: number, y: number, w: number, h: number) => `M${x} ${y}h${w}v${h}h${-w}Z`;
-    const quarter = (cx: number, cy: number, r: number, sx: number, sy: number) =>
-      `M${cx} ${cy}L${cx + sx * r} ${cy}A${r} ${r} 0 0 ${sx * sy > 0 ? 1 : 0} ${cx} ${cy + sy * r}Z`;
+    // Ecke = Ringstück um die Spielfeldecke: innen bündig mit den Geraden (Abstand GAP), außen nach Plätzen,
+    // je Seite 5° Luft zu den Nachbartribünen – so laufen Geraden und Ecken als ein Oval um das Feld.
+    const wedge = (cx: number, cy: number, ro: number, a0: number, a1: number) => {
+      const ri = GAP, k = Math.PI / 180, b0 = (a0 + 5) * k, b1 = (a1 - 5) * k;
+      const pt = (r: number, a: number) => `${(cx + r * Math.cos(a)).toFixed(2)} ${(cy + r * Math.sin(a)).toFixed(2)}`;
+      return `M${pt(ri, b0)}L${pt(ro, b0)}A${ro} ${ro} 0 0 1 ${pt(ro, b1)}L${pt(ri, b1)}A${ri} ${ri} 0 0 0 ${pt(ri, b0)}Z`;
+    };
+    // Außenradius = mittlere Tiefe der Nachbartribünen, damit der Bogen an deren Außenkante anschließt (leere Ecke: schmal).
+    const cornerR = (id: StandId, a: StandId, b: StandId) => GAP + (people[id] > 0 ? (d(a) + d(b)) / 2 : d(id));
     return {
       haupt: rect(x0, y1 + GAP, x1 - x0, d('haupt')),
       gegen: rect(x0, y0 - GAP - d('gegen'), x1 - x0, d('gegen')),
       tor1: rect(x0 - GAP - d('tor1'), y0, d('tor1'), y1 - y0),
       tor2: rect(x1 + GAP, y0, d('tor2'), y1 - y0),
-      ecke1: quarter(x0 - GAP, y1 + GAP, d('ecke1') + 4, -1, 1),
-      ecke2: quarter(x0 - GAP, y0 - GAP, d('ecke2') + 4, -1, -1),
-      ecke3: quarter(x1 + GAP, y0 - GAP, d('ecke3') + 4, 1, -1),
-      ecke4: quarter(x1 + GAP, y1 + GAP, d('ecke4') + 4, 1, 1),
+      ecke1: wedge(x0, y1, cornerR('ecke1', 'tor1', 'haupt'), 90, 180),
+      ecke2: wedge(x0, y0, cornerR('ecke2', 'tor1', 'gegen'), 180, 270),
+      ecke3: wedge(x1, y0, cornerR('ecke3', 'gegen', 'tor2'), 270, 360),
+      ecke4: wedge(x1, y1, cornerR('ecke4', 'tor2', 'haupt'), 0, 90),
     };
   })();
   // Mauslage im Kartenrahmen (die Oberfläche ist per CSS skaliert: Bildschirm- in Layout-Pixel umrechnen)
