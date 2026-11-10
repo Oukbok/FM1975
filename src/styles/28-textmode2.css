@@ -297,3 +297,8 @@
 .tm-talk-stats { flex: 1; min-height: 0; overflow-y: auto; border-radius: 6px; background: var(--panel); border: 1px solid var(--border); padding-top: 10px; }
 .tm-talk-stats > .tm-sec { padding: 0 22px; }
 .tm-cs-ment { display: inline-flex; align-items: center; gap: 10px; color: var(--text-3); }
+/* Ziehen & Ablegen im Textmodus (useDnd) */
+.tm-lt-row.dnd, .tm-cs-row:not(.head) { cursor: grab; touch-action: none; user-select: none; }
+.tm-lt-row.over, .tm-cs-row.over { background: var(--accent-soft); box-shadow: inset 0 0 0 2px var(--accent); }
+.tm-lt-row.dragging, .tm-cs-row.dragging, .tm-sys-slot.dragging { opacity: 0.45; }
+.tm-dnd-ghost { position: fixed; z-index: 10000; transform: translate(-50%, -50%); pointer-events: none; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 10px; border-radius: 6px; background: var(--panel); border: 1px solid var(--accent); box-shadow: 0 8px 24px rgba(var(--shade-rgb), 0.45); color: var(--text); font: 600 15px var(--font-ui); }

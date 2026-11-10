@@ -16,6 +16,8 @@ import { PlayerTable } from './PlayerTable';
 import { SystemPitch } from './SystemPitch';
 import { HalftimeTalk, PlayerTalks, TacticPane } from './TalkTabs';
 import Select from '../../../ui/Select';
+import PlayerAvatar from '../../../components/PlayerAvatar';
+import { DndGhost, useDnd } from '../useDnd';
 
 export type ChangesTab = 'aufstellung' | 'ansprache' | 'gespraeche';
 
@@ -49,6 +51,13 @@ export function ChangesScreen({ sim, side, reason, halftime, initialTab, initial
     if (sel === key) { setSel(null); return; }
     doSwap(sel, key);
   };
+  // Ziehen & Ablegen über Liste, Spielfeld und Bank hinweg.
+  const fieldKeys = new Set(d.slots.map((x) => d.map[x.id] ?? `slot:${x.id}`));
+  const { drag, down } = useDnd((a, b) => {
+    if (b === 'bench') { if (fieldKeys.has(a)) setMsg('Auf die Bank nur per Wechsel: zieh den Spieler direkt auf den Bankspieler, der für ihn kommt.'); return; }
+    doSwap(a, b);
+  });
+  const ghost = drag ? sim.players[drag.key] : undefined;
   const { ins } = draftDiff(sim, side, d);
   const left = sim.subsLeft(t) - ins.length;
   const minute = sim.phase === 'halftime' ? 'Halbzeit' : `${sim.minute}${sim.stoppage ? `+${sim.stoppage}` : ''}. Spielminute`;
@@ -89,7 +98,7 @@ export function ChangesScreen({ sim, side, reason, halftime, initialTab, initial
                   {([-2, -1, 0, 1, 2] as Mentality[]).map((m) => <option key={m} value={m}>{MENTALITY_LABEL[m]}</option>)}
                 </Select></label>
               </div>
-              <PlayerTable sim={sim} side={side} d={d} sel={sel} onPick={pick} onPlayer={onPlayer} />
+              <PlayerTable sim={sim} side={side} d={d} sel={sel} drag={drag} down={down} onPick={pick} onPlayer={onPlayer} />
               <div className="tm-cs-lfoot">
                 <span className="tm-cs-left-n">Verbleibende Wechsel: <b>{Math.max(0, left)}</b></span>
                 <button type="button" className={`ms-btn ${pane === 'taktik' ? 'on' : ''}`} onClick={() => setPane(pane === 'taktik' ? 'system' : 'taktik')}>
@@ -104,13 +113,13 @@ export function ChangesScreen({ sim, side, reason, halftime, initialTab, initial
               </div>
               {(msg || gkWarn || sel) && (
                 <div className={`tm-cs-msg ${msg || gkWarn ? 'warn' : ''}`}>
-                  {msg ?? (gkWarn ? 'Im Tor steht kein Torwart.' : 'Jetzt den Spieler wählen, mit dem getauscht wird – oder auf dem Feld ziehen.')}
+                  {msg ?? (gkWarn ? 'Im Tor steht kein Torwart.' : 'Jetzt den Spieler wählen, mit dem getauscht wird – oder einfach ziehen.')}
                 </div>
               )}
             </div>
             <div className="tm-cs-right">
               {pane === 'system'
-                ? <SystemPitch sim={sim} side={side} d={d} sel={sel} onPick={pick} onSwap={doSwap} onNote={setMsg}
+                ? <SystemPitch sim={sim} side={side} d={d} sel={sel} drag={drag} down={down} onPick={pick}
                     onFormation={(id) => upd((x) => { changeFormation(sim, side, x, id); })} />
                 : <TacticPane sim={sim} side={side} d={d} onMentality={(m) => upd((x) => { x.mentality = m; })}
                     onTactic={(p) => upd((x) => { x.tactics = { ...x.tactics, ...p }; })} />}
@@ -121,6 +130,7 @@ export function ChangesScreen({ sim, side, reason, halftime, initialTab, initial
         {tab === 'gespraeche' && <PlayerTalks sim={sim} side={side} d={d} onChange={(id, k) => upd((x) => { if (k) x.talks[id] = k; else delete x.talks[id]; })} />}
       </div>
 
+      <DndGhost drag={drag}>{ghost && <><PlayerAvatar player={ghost} club={t.club} size={54} /><span>{ghost.lastName}</span></>}</DndGhost>
       <div className="tm-cs-foot">
         <span className="tm-dim">{ins.length ? `${ins.length} Wechsel geplant. ` : ''}Änderungen gelten erst mit „Bestätigen“.</span>
         <button type="button" className="ms-btn ghost" onClick={onCancel}>Abbrechen</button>

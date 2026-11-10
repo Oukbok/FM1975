@@ -1,7 +1,8 @@
 // =============================================================================
 // Wechsel-Bildschirm, Reiter „Aufstellung“ links: Spielerliste Startelf + Bank
 // (Nr, Pos, B.Pos, Name, Note, Stärke, Fitness, Kraft, Form, Moral, Potenzial).
-// Klick wählt einen Spieler, zweiter Klick tauscht (Wechsel oder Positionstausch).
+// Klick wählt einen Spieler, zweiter Klick tauscht (Wechsel oder Positionstausch);
+// Zeilen lassen sich auch ziehen – auf eine andere Zeile, einen Slot oder Bankspieler.
 // =============================================================================
 import { FitnessIcon, FormIcon, FreshnessIcon, MoraleIcon, fitness100, form100, playerMorale100 } from '../../../components/status';
 import Icon from '../../../components/Icon';
@@ -14,9 +15,12 @@ import { vColor } from '../../../ui/format';
 import { fmtGrade, gradeCls, gradeEarly } from '../board/LineupBoard';
 import { draftPlayers, draftStrength, playerSlot, type Draft } from './draft';
 import { posGroupClass } from '../../../ui/positionBadges';
+import type { PointerEvent as RPE } from 'react';
+import type { DndState } from '../useDnd';
 
-export function PlayerTable({ sim, side, d, sel, onPick, onPlayer }: {
-  sim: MatchSim; side: Side; d: Draft; sel: string | null; onPick: (id: string) => void; onPlayer: (id: string) => void;
+export function PlayerTable({ sim, side, d, sel, drag, down, onPick, onPlayer }: {
+  sim: MatchSim; side: Side; d: Draft; sel: string | null; drag: DndState; down: (e: RPE, key: string) => void;
+  onPick: (id: string) => void; onPlayer: (id: string) => void;
 }) {
   const { field, benchList } = draftPlayers(sim, side, d);
   const nowOn = new Set(onPitch(sim.team(side)).map((m) => m.id));
@@ -28,8 +32,8 @@ export function PlayerTable({ sim, side, d, sel, onPick, onPlayer }: {
     const st = onField ? draftStrength(sim, side, d, m.id) : Math.round(m.p.overall);
     const playing = nowOn.has(m.id) || m.minuteIn > 0;
     return (
-      <div key={m.id} className={`tm-cs-row ${onField ? 'field' : 'bench'} ${sel === m.id ? 'sel' : ''} ${tag ?? ''}`}
-        role="button" tabIndex={0} onClick={() => onPick(m.id)} onKeyDown={(e) => { if (e.key === 'Enter') onPick(m.id); }}>
+      <div key={m.id} className={`tm-cs-row ${onField ? 'field' : 'bench'} ${sel === m.id ? 'sel' : ''} ${tag ?? ''} ${drag?.over === m.id ? 'over' : ''} ${drag?.key === m.id ? 'dragging' : ''}`}
+        data-dnd={m.id} onPointerDown={(e) => down(e, m.id)} role="button" tabIndex={0} onClick={() => onPick(m.id)} onKeyDown={(e) => { if (e.key === 'Enter') onPick(m.id); }}>
         <span className="tm-nr">{m.p.shirtNumber || ''}</span>
         <span className={`tm-pos ${onField ? posGroupClass(pos) : ''}`}>{onField ? pos : 'Bank'}</span>
         <span className={`tm-dim ${posGroupClass(m.p.naturalPosition)}`}>{m.p.naturalPosition}</span>

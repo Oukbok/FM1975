@@ -137,7 +137,7 @@ if (!sawHalf && (await confirmStop()) !== 'halbzeit') {
       await page.mouse.move(b3.x + 60, b3.y + 40, { steps: 4 });
       await page.keyboard.press('Escape');
       await page.waitForTimeout(100);
-      if (await page.locator('.tm-sys-ghost').count()) fail('Escape bricht das Ziehen im Wechsel-Bildschirm nicht ab');
+      if (await page.locator('.tm-dnd-ghost').count()) fail('Escape bricht das Ziehen im Wechsel-Bildschirm nicht ab');
       await page.mouse.up();
       if (!(await page.locator('.tm-cs').count())) fail('Escape hat den Wechsel-Bildschirm geschlossen');
     }
