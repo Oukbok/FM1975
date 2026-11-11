@@ -6,7 +6,7 @@
 // Anzeigetafel/Videowand. Gerade Blöcke und gebogene Kurven teilen denselben
 // Bauplan: entlang u wird bei Kurven in Segmente zerlegt.
 // =============================================================================
-import type { ReactNode } from 'react';
+import { memo, type ReactNode } from 'react';
 import type { SeatType, StadiumBlock } from '../../../types';
 import { shade } from '../grounds/isoKit';
 import { SC, SCREEN_DEPTH, V3, VIEW, depth, dot, face, isNear, mapper, neg, proj, pts, roofGeo, seg, tierGeometry } from './geo';
@@ -27,7 +27,35 @@ const UP: V3 = [0, 0, 1];
 const scale = (a: V3, f: number): V3 => [a[0] * f, a[1] * f, a[2] * f];
 const poly = (vs: V3[]) => vs.map((v) => proj(v).map((n) => n.toFixed(1)).join(',')).join(' ');
 
-export function StadiumBlockShape({ b, colors, era, year }: { b: StadiumBlock; colors: SceneColors; era: number; year: number }) {
+/** Stirnseite verdeckt? Ein Nachbarblock schließt bündig an und ist mindestens so hoch und tief –
+ *  dann liegt die Wand im Inneren und würde sonst über den Nachbarn gemalt (Wunsch Pascal). */
+function endHidden(b: StadiumBlock, u: number, others: StadiumBlock[] | undefined, vMax: number, zPar: number): boolean {
+  if (!others) return false;
+  const F = mapper(b);
+  const p0 = F.at(u, 0, 0), p1 = F.at(u, vMax, 0);
+  const near = (a: V3, c: V3) => Math.hypot(a[0] - c[0], a[1] - c[1]) < 0.6;
+  for (const o of others) {
+    if (o.id === b.id) continue;
+    const G = mapper(o);
+    for (const uo of [0, G.len]) {
+      if (!near(G.at(uo, 0, 0), p0)) continue;
+      const g = tierGeometry(o), last = g[g.length - 1];
+      const ov = last.v1, oz = last.zt + 0.35;
+      // Gleich tief (oder tiefer) und gleich hoch (oder höher): verdeckt.
+      if (ov >= vMax - 0.3 && oz >= zPar - 0.3) return true;
+      // Flacher, aber Fußpunkt hinten gleich: Wand nur, wenn sie sichtbar herausragt.
+      if (near(G.at(uo, ov, 0), p1) && oz >= zPar - 0.3) return true;
+    }
+  }
+  return false;
+}
+
+type ShapeProps = { b: StadiumBlock; colors: SceneColors; era: number; year: number; others?: StadiumBlock[] };
+/** Neu gezeichnet nur bei echter Änderung (Überfahren anderer Blöcke zeichnet nichts neu). */
+export const StadiumBlockShape = memo(StadiumBlockShapeRaw, (a: ShapeProps, c: ShapeProps) =>
+  a.b === c.b && a.era === c.era && a.year === c.year && a.colors.primary === c.colors.primary && a.colors.secondary === c.colors.secondary
+  && (a.others === c.others || (a.others?.length === c.others?.length && !!a.others?.every((x, i) => x === c.others![i]))));
+function StadiumBlockShapeRaw({ b, colors, era, year, others }: ShapeProps) {
   const F = mapper(b);
   const { len, at } = F;
   const id = b.id;
@@ -172,8 +200,8 @@ export function StadiumBlockShape({ b, colors, era, year }: { b: StadiumBlock; c
     pt = g.zt;
   });
   prof.push([vMax, zPar], [vMax, 0]);
-  out.push(face(`${id}ew0`, prof.map(([v, z]) => at(0, v, z)), neg(F.ud(0)), shade(conc, 0.96)));
-  out.push(face(`${id}ew1`, prof.map(([v, z]) => at(len, v, z)), F.ud(len), shade(conc, 0.96)));
+  if (!endHidden(b, 0, others, vMax, zPar)) out.push(face(`${id}ew0`, prof.map(([v, z]) => at(0, v, z)), neg(F.ud(0)), shade(conc, 0.96)));
+  if (!endHidden(b, len, others, vMax, zPar)) out.push(face(`${id}ew1`, prof.map(([v, z]) => at(len, v, z)), F.ud(len), shade(conc, 0.96)));
 
   // Dach
   const rg = roofGeo(b);

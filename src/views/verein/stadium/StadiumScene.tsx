@@ -232,9 +232,12 @@ export function StadiumScene(p: StadiumSceneProps) {
     const on = inSel || hover === id;
     const dim = !blocksActive ? 0.55 : selected && !on ? 0.82 : 1;
     items.push({ d: depth(at(len / 2, geo[geo.length - 1].v1 / 2, 0)), n: (
-      <g key={id} data-block={id} className={`gr-obj ${inSel ? 'sel' : ''} ${ghost.has(id) ? 'sv-ghost' : ''}`} opacity={dim} pointerEvents={blocksActive ? undefined : 'none'}
+      <g key={id} data-block={id} className={`gr-obj blk ${inSel ? 'sel' : ''} ${ghost.has(id) ? 'sv-ghost' : ''}`} opacity={dim} pointerEvents={blocksActive ? undefined : 'none'}
         onClick={(e) => { e.stopPropagation(); onSelect(id, evPt(e)); }} onMouseEnter={() => onHover(id)} onMouseLeave={() => onHover(null)}>
-        <StadiumBlockShape b={b} colors={colors} era={era} year={year} />
+        <StadiumBlockShape b={b} colors={colors} era={era} year={year} others={blocks} />
+        {/* Hervorhebung als Umriss statt CSS-Filter: ein Filter auf der Gruppe ließ andere Blöcke beim
+            Überfahren flackern (Wunsch Pascal). */}
+        {on && blocksActive && <g className={inSel ? 'blk-sel' : 'blk-hov'} pointerEvents="none">{blockOutline(b).map((d, k) => <polyline key={k} points={d} />)}</g>}
         {ghost.has(id) && <g className="sv-ghost-line" pointerEvents="none">{blockOutline(b).map((d, k) => <polyline key={k} points={d} fill="none" stroke="#F2A541" strokeWidth={1.6} strokeDasharray="6 4" strokeLinejoin="round" />)}</g>}
         {building === id && (() => {
           const [x, yb] = proj(at(len * 0.8, 3, 0)), [, yt] = proj(at(len * 0.8, 3, 15));

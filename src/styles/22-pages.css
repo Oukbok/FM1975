@@ -273,6 +273,10 @@
 .gr-obj:hover { filter: brightness(1.12) drop-shadow(0 0 6px rgba(var(--scene-glow-rgb), 0.7)); }
 /* Auswahl hell statt in Vereinsfarbe: rote Sitze sollen nicht wie eine Auswahl aussehen (Wunsch Pascal). */
 .gr-obj.sel { filter: brightness(1.15) drop-shadow(0 0 2px rgba(var(--scene-glow-rgb), 1)) drop-shadow(0 0 10px rgba(var(--scene-glow-rgb), 0.9)); }
+.gr-obj.blk, .gr-obj.blk:hover, .gr-obj.blk.sel { filter: none; transition: none; }
+.blk-hov polyline, .blk-sel polyline { fill: none; stroke-linejoin: round; stroke-linecap: round; }
+.blk-hov polyline { stroke: rgba(var(--scene-glow-rgb), 0.85); stroke-width: 2; }
+.blk-sel polyline { stroke: rgba(var(--scene-glow-rgb), 1); stroke-width: 3; }
 .gr-hint { position: absolute; left: 18px; bottom: 14px; padding: 8px 14px; border-radius: 8px; background: rgba(var(--bg-rgb), 0.82); color: var(--text-2); font-size: 14px; font-weight: 700; }
 .gr-panel { position: absolute; top: 14px; right: 14px; width: 380px; max-height: calc(100% - 28px); overflow: auto; padding: 16px 18px; border-radius: 12px;
   background: rgba(var(--bg-rgb), 0.94); border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(var(--shade-rgb), 0.45); display: flex; flex-direction: column; gap: 8px; }
