@@ -1,3 +1,5 @@
+import type { NationalState } from '../game/national/nationalGame';
+import { TOURNAMENTS } from '../data/nationalTeams';
 import { type IconName } from '../components/Icon';
 import { ownCampDays, ownIndoorDays } from '../game/winterShared';
 import { ACTIVITY_DEFS, addDaysUTC } from '../data/activities';
@@ -180,6 +182,15 @@ export function buildDayEventsMap(g: Game): Map<string, StripEvent[]> {
   consider({ date: `${y0}-${GB_DAY}`, icon: 'trophy', line: gbEra(y0).short, accent: undefined, isMatch: false, prio: 32, screen: 'auszeichnungen', kind: 'Ehrung' });
   const lastLeague = g.fixtures.reduce((a, m) => (m.date > a ? m.date : a), '');
   if (lastLeague) consider({ date: CalendarEngine.addDays(lastLeague, 1), icon: 'trophy', line: 'Die Besten der Saison', accent: undefined, isMatch: false, prio: 26, screen: 'auszeichnungen', kind: 'Ehrung' });
+
+  // Quelle N — Nationalmannschaften: Länderspieltermine und WM/EM (game/national/nationalGame.ts).
+  const nat = (g as Game & { national?: NationalState }).national;
+  if (nat?.season === g.season) for (const w of nat.windows) for (const d of w.dates) consider({ date: d, icon: 'international', line: `Länderspiele (${w.label})`, accent: undefined, isMatch: false, prio: 24, screen: 'nationalteams', kind: 'Länderspiel' });
+  for (const t of TOURNAMENTS) {
+    if (t.start.slice(0, 4) !== String(y0 + 1) && t.start.slice(0, 4) !== String(y0)) continue;
+    consider({ date: t.start, icon: 'international', line: `${t.kind === 'WM' ? 'Weltmeisterschaft' : 'Europameisterschaft'}: Anpfiff`, accent: undefined, isMatch: false, prio: 24, screen: 'nationalteams', kind: 'Länderspiel' });
+    consider({ date: t.end, icon: 'international', line: `${t.kind}-Finale`, accent: undefined, isMatch: false, prio: 24, screen: 'nationalteams', kind: 'Länderspiel' });
+  }
 
   // Quelle F — Jugendwettbewerbe: Spiele und Spielfeste der eigenen Jugendmannschaften (game/youthComps/).
   const yc = youthCompsOf(g);

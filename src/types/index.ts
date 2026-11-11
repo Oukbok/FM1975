@@ -508,6 +508,18 @@ export type PlayerMorale =
   | 'good'
   | 'excellent';
 
+/** Länderspielbilanz eines Spielers (Nationalmannschaften, Wunsch Pascal #36). */
+export interface PlayerIntl {
+  caps: number;
+  goals: number;
+  /** Jahr des letzten Einsatzes. */
+  last?: string;
+  /** Turniere: „WM 1990“, Ergebnis der Nation, Einsätze, Tore. */
+  tourn?: { t: string; res: string; apps: number; goals: number }[];
+  /** Marktwert-Schub nach einem Turnier (klingt über 2,5 Jahre ab). */
+  boost?: { v: number; year: number };
+}
+
 /** Verfügbarkeitsstatus eines Spielers. */
 export type PlayerAvailability =
   | 'available'   // einsatzbereit
@@ -539,6 +551,9 @@ export interface Player {
   weight: number;
   /** Bevorzugter Fuß. */
   preferredFoot: PreferredFoot;
+
+  /** Länderspiele (optional, game/national/nationalGame.ts). */
+  intl?: PlayerIntl;
 
   /** Natürliche Hauptposition. */
   naturalPosition: Position;

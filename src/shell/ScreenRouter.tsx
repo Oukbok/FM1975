@@ -62,6 +62,7 @@ function page({ screen, g, rerender, setScreen, onWatch, onReplayDraw, onOpenEdi
     // Einzelseiten
     case 'presse': return <P.PresseView g={g} onWatch={onWatch} onGoto={setScreen} />;
     case 'vertraege': return <P.VertraegeView g={g} onChange={ch} />;
+    case 'nationalteams': return <P.NationalView g={g} />;
     case 'meldung': return <P.RegistrationView g={g} onChange={ch} />;
     case 'reserve': return <P.ReserveTeamView g={g} onChange={ch} onGoto={setScreen} />;
     case 'beobachtung': return <P.BeobachtungView g={g} onChange={ch} />;

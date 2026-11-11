@@ -1,0 +1,23 @@
+/* Statistiken › Nationalteams (views/statistiken/NationalView.tsx) */
+.nt-list { display: flex; flex-direction: column; overflow-y: auto; min-height: 0; flex: 1; }
+.nt-prow, .nt-arow { display: flex; align-items: center; gap: 10px; padding: 7px 2px; border-bottom: 1px solid var(--border-soft); font-size: 15px; }
+.nt-prow.me, .nt-grow.me { box-shadow: inset 4px 0 0 var(--club-accent, var(--accent)); }
+.nt-prow.me .nt-pname, .nt-grow.me .nt-gname { color: var(--club-accent, var(--accent)); font-weight: 600; }
+.nt-pname { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nt-club { color: var(--text-3); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 45%; }
+.nt-next { display: flex; gap: 10px; font-size: 14px; padding: 4px 0; }
+.nt-next span { color: var(--text-3); min-width: 84px; }
+.nt-mrow { display: grid; grid-template-columns: 48px minmax(0, 1fr) 76px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 6px 2px; border-bottom: 1px solid var(--border-soft); font-size: 14px; }
+.nt-team { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
+.nt-team.r { justify-content: flex-end; }
+.nt-score { text-align: center; font-family: var(--font-display); font-weight: 600; font-size: 16px; }
+.nt-score.off { color: var(--text-4); }
+.nt-date, .nt-lab { color: var(--text-3); font-size: 12px; white-space: nowrap; }
+.nt-tourn { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px; min-height: 0; flex: 1; overflow: hidden; }
+.nt-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 4px 14px; align-content: start; overflow-y: auto; min-height: 0; }
+.nt-ko { overflow-y: auto; min-height: 0; }
+.nt-grow { display: grid; grid-template-columns: 22px 22px minmax(0, 1fr) 22px 44px 26px; gap: 6px; align-items: center; padding: 3px 2px; font-size: 13px; border-bottom: 1px solid var(--border-soft); }
+.nt-gname { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nt-champ { margin-top: 12px; display: flex; align-items: center; gap: 8px; font-size: 16px; }
+.nt-tabs { display: flex; gap: 6px; }
+.nt-tourn.ko-only { grid-template-columns: minmax(0, 1fr); }

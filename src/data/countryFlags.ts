@@ -89,6 +89,17 @@ export const COUNTRY_INFO: Record<string, CountryInfo> = {
   China: { name: 'China', code: 'CHN', flag: { kind: 'plain', bg: R, dot: Y } },
   Mexiko: { name: 'Mexiko', code: 'MEX', flag: { kind: 'v', c: [G, W, R] } },
   Kanada: { name: 'Kanada', code: 'CAN', flag: { kind: 'v', c: [R, W, W, R] } },
+  // Nationalmannschaften (Turniere, Wunsch Pascal #36)
+  Chile: { name: 'Chile', code: 'CHI', flag: { kind: 'h', c: [W, R] } },
+  Peru: { name: 'Peru', code: 'PER', flag: { kind: 'v', c: [R, W, R] } },
+  Paraguay: { name: 'Paraguay', code: 'PAR', flag: { kind: 'h', c: [R, W, B] } },
+  Ecuador: { name: 'Ecuador', code: 'ECU', flag: { kind: 'h', c: [Y, Y, B, R] } },
+  Südafrika: { name: 'Südafrika', code: 'RSA', flag: { kind: 'h', c: [R, G, B] } },
+  Katar: { name: 'Katar', code: 'QAT', flag: { kind: 'v', c: [W, '#7a1f35', '#7a1f35'] } },
+  'Saudi-Arabien': { name: 'Saudi-Arabien', code: 'KSA', flag: { kind: 'plain', bg: G, dot: W, center: true } },
+  Iran: { name: 'Iran', code: 'IRN', flag: { kind: 'h', c: [G, W, R] } },
+  'Costa Rica': { name: 'Costa Rica', code: 'CRC', flag: { kind: 'h', c: [B, W, R, W, B] } },
+  Neuseeland: { name: 'Neuseeland', code: 'NZL', flag: { kind: 'plain', bg: '#1f3a7a', dot: R } },
 };
 
 /** Anzeigedaten eines Landes (unbekannte Länder: neutrale Flagge, Kürzel aus dem Namen). */

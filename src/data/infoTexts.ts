@@ -341,6 +341,11 @@ export const INFO_TEXTS = {
     text: 'Ab 1998 darf der Profibereich in eine Kapitalgesellschaft ausgegliedert werden. Danach kannst du Anteile an einen Investor oder an Sponsoren verkaufen: sofort Geld, dafür Dividende und Mitsprache. Wegen 50+1 bleibt die Mehrheit beim Verein. Anteile lassen sich mit Aufschlag zurückkaufen; liegen alle wieder beim Verein, ist die Rückführung in den e. V. möglich.',
     wiki: 'club-business',
   },
+  nationalteams: {
+    title: 'Nationalmannschaften',
+    text: 'Alle Nationen spielen in den Länderspielfenstern und bei WM/EM. Aufgebote entstehen aus den Spielern der Spielwelt; abgestellte Spieler fehlen dir in dieser Zeit und kommen weniger frisch zurück. Länderspiele und ein starkes Turnier steigern den Marktwert.',
+    wiki: 'national-teams',
+  },
   zweitemannschaft: {
     title: 'Zweite Mannschaft',
     text: 'Die Amateure bzw. die U23 spielen sonntags in ihrer eigenen Liga. Der Trainer stellt nach deinem Schwerpunkt auf; wer dort spielt, bekommt Spielpraxis (bis 23) und gewöhnt sich an trainierte Positionen. Anlegen und ausbauen in der Akademie.',

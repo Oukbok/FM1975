@@ -10,6 +10,6 @@ export const CAL_GROUPS: { key: CalGroup; label: string }[] = [
 /** Gruppe eines Termins: eigene Spiele, Halle, Trainingslager, Bewertung, Verträge = 1. Mannschaft. */
 export function calGroupOf(ev: { kind?: string; isMatch: boolean }): CalGroup {
   if (ev.kind === 'Jugend') return 'youth';
-  if (ev.isMatch || ev.kind === 'Halle' || ev.kind === 'Training' || ev.kind === 'Bewertung' || ev.kind === 'Verträge') return 'team';
+  if (ev.isMatch || ev.kind === 'Halle' || ev.kind === 'Training' || ev.kind === 'Bewertung' || ev.kind === 'Verträge' || ev.kind === 'Länderspiel') return 'team';
   return 'other';
 }

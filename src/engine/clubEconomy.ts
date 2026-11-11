@@ -91,8 +91,21 @@ export function marketWage(p: Player): number {
 
 /** Marktwert am deutschen Markt (Rekordkurve, engine/transferMarket.ts). */
 export function marketValueFor(p: Player, year: number): number {
-  return cappedMarketValue(baseMarketValue(p), year, 'germany');
+  return cappedMarketValue(Math.round(baseMarketValue(p) * intlValueFactor(p, year)), year, 'germany');
 }
+
+/** Marktwert-Faktor: Nationalspieler-Aufschlag + abklingender Turnier-Schub. */
+/** (game/national/nationalGame.ts) */
+export function intlValueFactor(p: Player, year: number): number {
+  const I = p.intl;
+  if (!I) return 1;
+  const active = I.last && year - parseInt(I.last, 10) <= 2;
+  const caps = active ? Math.min(0.15, I.caps * 0.005) : 0;
+  const boost = I.boost ? I.boost.v * Math.max(0, 1 - (year - I.boost.year) / 2.5) : 0;
+  return 1 + caps + boost;
+}
+
+
 
 /** Marktwerte aller Spieler zum Saisonstart neu bewerten. */
 export function refreshMarketValues(players: Record<string, Player>, year = 1975): void {

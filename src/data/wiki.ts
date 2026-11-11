@@ -2488,6 +2488,32 @@ Grundlage ist das **Marktgehalt** (Stärke, Liga-Niveau), dazu Karrierephase, Ge
 KI-Vereine kaufen nur Spieler, die auch wollen. Deshalb sammeln sich die Stars bei den großen Vereinen: Die angesehensten Vereine holen im Sommer gezielt die Leistungsträger kleinerer Vereine, die Kleinen kassieren Ablöse und kaufen günstiger nach. Spieler ohne Vertrag suchen sich ihren Wunschverein unter den Vereinen, die sie brauchen; ehrgeizige Leistungsträger kleiner Vereine verlängern seltener. Von außen (Ausland, untere Ligen) bekommt ein Verein nur Spieler, die zu seinem Ansehen passen.`,
   },
   {
+    id: 'national-teams',
+    category: 'squad',
+    title: 'Nationalmannschaften, Länderspiele, WM und EM',
+    keywords: ['nationalmannschaft', 'länderspiel', 'länderspielpause', 'abstellung', 'wm', 'em', 'weltmeisterschaft', 'europameisterschaft', 'turnier', 'bundestrainer', 'marktwert', 'nationalspieler', 'qualifikation', 'nations league'],
+    body: `## Wo
+**Statistiken › Nationalteams** zeigt die Nationalmannschaft deines Landes (Stärke, Rangliste, Termine), das aktuelle Aufgebot, deine Nationalspieler, das laufende bzw. letzte Turnier mit Gruppen und K.-o.-Runden sowie Länderspiele, Rangliste und Turniersieger. Im Spielerprofil stehen Länderspiele und Tore.
+
+## Wer spielt mit?
+Alle Nationen der Spielwelt spielen – auch die, deren Spieler du nie siehst. Aufgebote stellt der jeweilige Nationaltrainer aus den Spielern der Spielwelt zusammen: drei Torhüter, dann die Besten nach Stärke, mit einer leichten persönlichen Note; ab Mitte 30 wird es schwer. Verletzte fahren nicht mit. Zerfallene Staaten gehen an ihre Nachfolger (Sowjetunion → Russland, Jugoslawien → Serbien, Tschechoslowakei → Tschechien), DDR-Spieler spielen nach der Einheit für Deutschland.
+Die **Stärke** einer Nation ist die Startelf aus ihrem Aufgebot. Spielt der Großteil ihrer Spieler außerhalb der Spielwelt (Südamerika, Afrika, Asien), zählt die Grundstärke des Landes mehr.
+
+## Länderspielpausen
+- **Bis 1995** einzelne Mittwochs-Länderspiele im September, Oktober, November, März und April.
+- **Ab 1996** Doppel-Fenster (Samstag + Mittwoch) im September, Oktober, November und März – die Liga pausiert dann. Ab 2018 heißt der Herbst in geraden Jahren **Nations League**, sonst geht es um die Qualifikation für das nächste Turnier.
+Das Spiel legt die Termine in Wochen ohne dein eigenes Pflichtspiel. Abgestellte Spieler fehlen dir vom Vortag (Doppel-Fenster: ab Montag) bis zum letzten Spiel, kommen weniger frisch zurück und können sich verletzen (selten).
+
+## WM und EM
+Gastgeber, Termine und Teilnehmerzahl wie historisch: EM 1976 mit 4 Teams, 1980–1992 mit 8, 1996–2012 mit 16, ab 2016 mit 24; WM 1978 mit 16, 1982–1994 mit 24, 1998–2022 mit 32, ab 2026 mit 48 (die zweiten Finalrunden-Gruppen 1978/1982 sind als K.-o.-Runden vereinfacht). Die Teilnehmer ergeben sich aus der Stärke mit etwas Qualifikations-Glück, bei der WM mit Plätzen je Kontinent. Kader: 22 Spieler bis 2000, 23 bis 2020, 26 ab 2021. Die WM 2022 in Katar läuft im Winter – die Liga pausiert dafür.
+**25 Tage vor dem Anpfiff** stehen die Aufgebote fest; eine Woche vorher reisen die Spieler ins Quartier und bleiben weg, bis ihre Mannschaft ausscheidet. Danach kommen sie weniger frisch zur Vorbereitung.
+
+## Folgen für deinen Verein
+- **Marktwert:** Nationalspieler sind mehr wert (bis +15 % mit vielen Einsätzen, solange sie berufen werden). Ein starkes Turnier gibt einen zusätzlichen Schub – Titel +30 %, Finale +20 %, Halbfinale +12 %, Viertelfinale +6 %, dazu Tore –, der über zweieinhalb Jahre abklingt. Gilt für Verkauf, Kauf und alle Vereine.
+- **Form und Moral:** Siege im Nationaltrikot heben die Form ein wenig, Welt- und Europameister kommen mit Schwung und Stolz zurück.
+- **Fehlzeiten:** Wer viele Nationalspieler hat, verliert sie in den Fenstern – plane Ersatz ein, vor allem in Epochen ohne Länderspielpause.`,
+  },
+  {
     id: 'squad-registration',
     category: 'squad',
     title: 'Spielermeldung, Ausländer- und Eigengewächs-Regeln',

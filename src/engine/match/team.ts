@@ -2,7 +2,7 @@
 // Mannschaft im Spiel: Aufstellung auflösen, Spielerstärke auf der Position,
 // Tagesform und die Mannschaftsteile (Angriff, Kontrolle, Abwehr, Torwart).
 // =============================================================================
-import { countsAsForeign, euroListOf, matchForeignCap } from '../registration';
+import { countsAsForeign, euroListOf, isNational, matchForeignCap } from '../registration';
 import type { Club, Player, Position, Tactics } from '../../types';
 import { POSITION_GROUPS } from '../../types';
 import { getFormation, type FormationSlot } from '../../data/formations';
@@ -105,12 +105,15 @@ export function resolveLineup(club: Club, players: Record<string, Player>, human
   // Spielberechtigung (engine/registration.ts): Europapokal nur Gemeldete, Ausländergrenze je Saison
   // für den ganzen Spielberichtsbogen (Startelf + Bank).
   const list = ctx?.euro ? euroListOf(club.id) : null;
-  const cap = ctx ? matchForeignCap(ctx.year, ctx.euro) : null;
+  let cap = ctx ? matchForeignCap(ctx.year, ctx.euro) : null;
   let foreign = 0;
   const avail = club.playerIds.map((id) => players[id]).filter(isAvailable);
   const listed = list ? avail.filter((p) => list.has(p.id)) : avail;
   // Sicherheitsnetz: reicht die Meldeliste nicht für eine Elf, spielt der Kader (sonst Spielabbruch).
   const pool = listed.length >= 11 ? listed : avail;
+  // Die Grenze gilt nur für Vereine des Heimatlandes: Stellen „Ausländer“ die Mehrheit (DDR-Vereine,
+  // Vereine anderer Länder Spiel für Spiel), ist es ein Verein eines anderen Landes – keine Grenze.
+  if (cap != null && pool.filter((p) => !isNational(p, ctx!.year)).length * 2 > pool.length) cap = null;
   const isF = cap == null ? null : new Set(pool.filter((p) => countsAsForeign(p, ctx!.year, ctx!.euro)).map((p) => p.id));
   const fits = (p: Player) => !isF || !isF.has(p.id) || foreign < cap!;
   const take = (p: Player) => { if (isF?.has(p.id)) foreign++; };
