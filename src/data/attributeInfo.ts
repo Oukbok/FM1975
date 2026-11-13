@@ -50,7 +50,7 @@ export const ATTR_INFO: Record<AttrInfoKey, AttrInfo> = {
   marking: { text: 'Gegenspieler eng decken.', uses: ['Zweikämpfe (20 % des Zweikampfwerts)'] },
   positioning: { text: 'Richtig stehen, ohne Ball.', uses: [] },
   interceptions: { text: 'Pässe ablaufen und abfangen.', uses: ['Balleroberungen (zusammen mit Tackling)'] },
-  experience: { text: 'Erfahrung aus vielen Spielen.', uses: [] },
+  experience: { text: 'Erfahrung aus vielen Spielen – wächst mit jedem Pflichtspiel, bei jungen Spielern und im Europapokal schneller.', uses: ['Konstanz: weniger Schwankung der Tagesform', 'wichtige Spiele (Derby, Pokal, Europapokal, enge Schlussphase): bis etwa ±1,5 % Leistung', 'dämpft das Kartenrisiko in hitzigen Spielen', 'seltener Patzer im Spielaufbau'] },
   vision: { text: 'Kreativität und Spielübersicht.', uses: ['Passspiel der Mannschaft (20 % des Passwerts)', 'Vorlagen bei Kurz- und Steilpässen'] },
   composure: { text: 'Ruhe unter Druck.', uses: ['Torschüsse aus dem Spiel (25 %)', 'Elfmeter (30 %)', 'seltener Patzer im Spielaufbau', 'dämpft das Kartenrisiko', 'Reihenfolge im Elfmeterschießen'] },
   concentration: { text: 'Aufmerksamkeit über 90 Minuten.', uses: [] },
@@ -75,4 +75,4 @@ export const ATTR_INFO: Record<AttrInfoKey, AttrInfo> = {
  * Attribute ohne eigene Wirkung im Spiel (weder direkt gerechnet noch in einer
  * Positionsgewichtung): nur Anzeige/Bericht. Wird in der i-Hilfe so genannt.
  */
-export const ATTR_NO_EFFECT: AttrInfoKey[] = ['experience'];
+export const ATTR_NO_EFFECT: AttrInfoKey[] = [];

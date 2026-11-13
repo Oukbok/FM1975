@@ -44,7 +44,7 @@ export default function PositionPitch({ p, sel, train, best, suit, onSelect }: {
           <button key={s.pos} type="button"
             className={`pp2-spot psk-${tier}${label ? '' : ' faint'}${s.pos === sel ? ' on' : ''}`}
             style={{ left: `${s.x}%`, top: `${s.y}%` }}
-            title={`${POSITION_NAMES_DE[s.pos]} – Vertrautheit ${TIER_DE[tier].toLowerCase()} (${Math.round(v)}), Eignung ${suit(s.pos)}`}
+            aria-label={`${POSITION_NAMES_DE[s.pos]} – Vertrautheit ${TIER_DE[tier].toLowerCase()} (${Math.round(v)}), Eignung ${suit(s.pos)}`}
             onClick={() => onSelect(s.pos)}>
             <i className="pp2-dot">{s.pos === train && <b className="pp2-dot-train" />}</i>
             {label && <span className="pp2-spot-lbl">{s.pos}<em>|</em>{suit(s.pos)}</span>}

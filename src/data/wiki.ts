@@ -1347,6 +1347,7 @@ Ein Angriff besteht aus mehreren Schritten, und jeder Schritt wird zwischen **zw
 - **Abschluss:** Abschluss, Schusskraft, Ruhe, Technik (Distanzschuss: Fernschüsse; Kopfball: Kopfball) gegen den Torwart in genau dieser Situation – Reflexe und Stellungsspiel, **Eins gegen eins** bei Großchancen, Strafraumbeherrschung bei Kopfbällen. Verteidiger können Schüsse blocken.
 - **Standards:** Der Eckenschütze (Wert **Ecken**) bzw. Freistoßschütze bestimmt die Qualität der Hereingabe; bei Ecken rücken die Innenverteidiger mit auf. Direkte Freistöße und Elfmeter: Schütze gegen Torwart.
 - **Fouls & Karten:** Ein geschlagener Verteidiger foult umso eher, je aggressiver und schlechter im Tackling er ist und je härter die Taktik; Karten hängen an Aggressivität und Disziplin (Ruhe, Konzentration) – **Erfahrung** hilft in hitzigen Phasen.
+- **Erfahrung:** wächst mit jedem Pflichtspiel (je Einsatzminuten; Pokal etwas, Europapokal deutlich mehr; Spieler bis 22 schneller, ab 32 langsamer, je erfahrener, desto langsamer – ein junger Stammspieler gewinnt etwa 5 Punkte je Saison). Erfahrene Spieler schwanken weniger in der Tagesform (**Konstanz**) und spielen in wichtigen Spielen (Derby, Pokal, Europapokal, enge Schlussphase) etwas stärker – bis etwa 1,5 %, unerfahrene entsprechend schwächer.
 
 Ein Duell 60 gegen 85 gewinnt der Bessere in gut drei von vier Fällen – deutlich, aber mit Zufall. Die Mannschaftsstärke (Angriff gegen Abwehr), der **Heimvorteil** und deine **Ausrichtung** verschieben alle Duelle ein wenig.
 

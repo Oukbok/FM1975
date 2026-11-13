@@ -11,6 +11,7 @@ import type { MatchSim } from './sim';
 import type { TeamState } from './state';
 import { rating } from './team';
 import { addPositionMinutes } from '../positionSkill';
+import { addExperience } from '../experience';
 import type { LineupEntry, MatchEventExt, MatchOutcome, MatchReport, MatchResultExt, MPlayer, SimEvent, TeamStats } from './types';
 
 const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
@@ -271,6 +272,8 @@ function commit(sim: MatchSim, grades: Map<string, number>, opts: FinishOptions)
       }
       // Positionsvertrautheit wächst mit Einsatzminuten auf der gespielten Position.
       if (date) addPositionMinutes(player, m.pos, mins, date);
+      // Erfahrung wächst mit Pflichtspielen (engine/experience.ts).
+      addExperience(player, mins, competition);
       // Bestenlisten je Wettbewerb (Weiße Weste: nur Torhüter).
       // Liga zusätzlich mit Note/Zu-null für die Auszeichnungen der Saison (engine/seasonAwards.ts).
       addCompStats(player, compCodeOf(competition), m, clean && m.group === 'GK', competition === 'Liga' ? { grade: g, clean } : undefined);

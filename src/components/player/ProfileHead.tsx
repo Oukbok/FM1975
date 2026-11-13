@@ -55,6 +55,7 @@ export default function ProfileHead({ p, club, tag, best, sel, onSelect }: {
           <div className="pp2-keyrow">
             <div className="pp2-kv"><span>Stärke<InfoTip k="staerke" /></span><b className="pp2-big">{p.overall}</b></div>
             <div className="pp2-kv"><span>Potenzial<InfoTip k="potenzial" /></span><b>{scoutRangeText(p)}</b></div>
+            <div className="pp2-kv"><span>Alter</span><b>{p.age} Jahre</b></div>
             <div className="pp2-kv"><span>Nation</span><b><NatFlag nat={p.nationality} height={16} />{nationName(p.nationality)}</b></div>
           </div>
           <table className="pp2-postable">
@@ -63,7 +64,7 @@ export default function ProfileHead({ p, club, tag, best, sel, onSelect }: {
                 <th>Position</th>
                 {best.map((b) => (
                   <td key={b.pos}><button type="button" className={`pp2-poscell${b.pos === sel ? ' on' : ''}`} onClick={() => onSelect(b.pos)}
-                    title={POSITION_NAMES_DE[b.pos]}>{b.pos}</button></td>
+                    aria-label={POSITION_NAMES_DE[b.pos]}>{b.pos}</button></td>
                 ))}
               </tr>
               <tr>

@@ -43,7 +43,8 @@ export const energyF = (m: MPlayer): number => 0.82 + 0.18 * m.energy / 100;
 export function dayForm(m: MPlayer, rng: () => number): number {
   const cons = m.p.development?.consistency ?? 60;
   const exp = m.p.attributes.experience ?? 50;
-  const sigma = Math.max(0.01, 0.015 + (100 - cons) / 100 * 0.055 - exp / 100 * 0.01);
+  // Erfahrung macht konstanter (Wunsch Pascal): bis −0,022 Streuung bei 100.
+  const sigma = Math.max(0.01, 0.021 + (100 - cons) / 100 * 0.055 - exp / 100 * 0.022);
   // Summe von drei Gleichverteilungen ≈ Normalverteilung (Mittel 0, Streuung 1)
   const g = (rng() + rng() + rng() - 1.5) * 2;
   const mean = (cons - 62) * 0.00025;
@@ -57,7 +58,9 @@ export function dayForm(m: MPlayer, rng: () => number): number {
 export function nerveF(m: MPlayer, pressure: number): number {
   if (pressure <= 0) return 1;
   const nerve = (m.p.development?.bigMatchTemperament ?? 55) * 0.6 + m.p.attributes.composure * 0.4;
-  return 1 + (nerve - 55) / 100 * 0.14 * pressure;
+  // Erfahrung in wichtigen Spielen: gering, bis etwa ±1,5 % bei vollem Druck (Wunsch Pascal).
+  const exp = m.p.attributes.experience ?? 50;
+  return 1 + (nerve - 55) / 100 * 0.14 * pressure + (exp - 50) / 100 * 0.03 * pressure;
 }
 
 const A = (m: MPlayer) => m.p.attributes;
