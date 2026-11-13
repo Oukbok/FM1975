@@ -122,7 +122,7 @@ await page.locator('.dxt-row').nth(1).click();
 await page.waitForTimeout(300);
 console.log('Zentrale → Profil:', (await page.locator('.cmx-modal').count()) ? 'ok' : 'FEHLT');
 await closeProfile();
-await page.locator('.hd-nav-item:has-text("Spieltag")').click();
+await page.locator('.hd-nav-item:has-text("Aufstellung")').click();
 await page.waitForTimeout(200);
 await page.locator('.tn-sub-item:has-text("Spielplan")').first().click();
 await page.waitForTimeout(300);

@@ -78,7 +78,7 @@ export function SettingsScreen({ settings, onBack, onSave }: {
       <div className="card mt16">
         <h3 style={{ margin: '0 0 4px' }}>Spielbericht nach dem Simulieren</h3>
         <p className="dim mini" style={{ margin: '0 0 14px' }}>
-          Ob nach „Simulieren“ der Spielbericht als Fenster erscheint. Das Ergebnis steht immer im Newscenter, der Bericht bleibt unter Spieltag › Spielplan abrufbar.
+          Ob nach „Simulieren“ der Spielbericht als Fenster erscheint. Das Ergebnis steht immer im Newscenter, der Bericht bleibt unter Aufstellung › Spielplan abrufbar.
         </p>
         <div className="seg-group">
           {([['immer', 'Immer'], ['pokal', 'Nur Pokal & Europapokal'], ['nie', 'Nie']] as const).map(([v, l]) => (

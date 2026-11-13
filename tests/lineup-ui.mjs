@@ -45,7 +45,7 @@ async function loadSave(page, file) {
   if (await bf.isVisible().catch(() => false)) await bf.click();
 }
 async function goto(page, sub) {
-  await page.locator('.hd-nav-item:has-text("Spieltag")').click();
+  await page.locator('.hd-nav-item:has-text("Aufstellung")').click();
   await page.waitForTimeout(200);
   await page.locator(`.tn-sub-item:has-text("${sub}")`).click();
   await page.waitForTimeout(400);

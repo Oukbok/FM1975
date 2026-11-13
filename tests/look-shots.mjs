@@ -46,7 +46,7 @@ await nav('Kader'); await shot('03_kader_dashboard');
 await nav('Kader', 'Übersicht'); await shot('04_kader');
 await nav('Statistiken', 'Liga'); await shot('05_tabelle');
 await nav('Finanzen', 'Bilanz'); await shot('06_finanzen');
-await nav('Spieltag', 'Aufstellung'); await shot('07_aufstellung');
+await nav('Aufstellung', 'Aufstellung'); await shot('07_aufstellung');
 
 // Vereinsprofil (Gegner aus der Tabelle)
 await nav('Statistiken', 'Liga');

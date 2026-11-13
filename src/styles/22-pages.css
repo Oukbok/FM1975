@@ -309,3 +309,15 @@
 
 /* Spielplan: Nachholspiel / verlegt (game/fixtureWatch.ts) */
 .fx-tag { display: inline-block; margin-left: 8px; padding: 1px 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; font-weight: 600; color: var(--text-3); vertical-align: 1px; }
+
+/* Aufstellung › Gegner: Mannschaftsteile im Vergleich (views/spieltag/GegnerView.tsx) */
+.opp-units-head, .opp-unit { display: grid; grid-template-columns: minmax(0, 1fr) 64px 64px 48px; align-items: center; gap: 8px; }
+.opp-units-head { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-3); padding-bottom: 4px; }
+.opp-units-head span:not(:first-child) { text-align: right; }
+.opp-unit { padding: 7px 0; border-bottom: 1px solid var(--border-soft); font-size: 15px; }
+.opp-unit b { text-align: right; font-family: var(--font-display); font-size: 20px; font-weight: 600; }
+.opp-unit-k { color: var(--text-2); }
+.opp-unit-d { text-align: right; font-family: var(--font-display); color: var(--text-3); }
+.opp-unit-d.pos { color: var(--pos); }
+.opp-unit-d.neg { color: var(--neg); }
+.dvs-nocrest { display: block; width: 72px; height: 72px; }

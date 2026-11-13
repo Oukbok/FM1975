@@ -35,7 +35,7 @@ const nav = async (main, sub) => {
 };
 
 await startNewGame(page);
-await nav('Spieltag', 'Taktik'); await shot('01_taktik');
+await nav('Aufstellung', 'Taktik'); await shot('01_taktik');
 
 for (const [row, tag] of [[0, 'tw'], [9, 'b'], [16, 'c']]) {
   await nav('Kader', 'Übersicht');

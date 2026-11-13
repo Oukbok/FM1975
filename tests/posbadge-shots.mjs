@@ -54,7 +54,7 @@ for (const [w, h] of views) {
   });
   await step('vertraege', async () => { await nav('Kader', 'Verträge'); await shot('04_vertraege'); });
   await step('kabine', async () => { await nav('Kader', 'Kabine'); await shot('05_kabine'); });
-  await step('aufstellung', async () => { await nav('Spieltag', 'Aufstellung'); await shot('06_aufstellung'); });
+  await step('aufstellung', async () => { await nav('Aufstellung', 'Aufstellung'); await shot('06_aufstellung'); });
   await step('transfermarkt', async () => { await nav('Transfers', 'Transfermarkt'); await shot('07_transfermarkt'); });
   await step('suche', async () => {
     await page.locator('.dchip:has-text("Spieler suchen")').first().click(); await page.waitForTimeout(400);

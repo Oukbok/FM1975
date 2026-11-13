@@ -42,12 +42,12 @@ for (const [w, h] of [[1920, 1080], [1366, 768]]) {
     if (sub) { await page.locator(`.tn-sub-item:has-text("${sub}")`).first().click(); await page.waitForTimeout(400); }
   };
   const shot = async (n) => { await page.waitForTimeout(300); await page.screenshot({ path: `${outDir}/${n}_${w}.png` }); };
-  for (const [m, s, n] of [['Spieltag', 'Spielplan', 'spielplan'], ['Zentrale', 'Kalender', 'kalender'], ['Zentrale', 'Presse', 'presse'], ['Zentrale', 'Nachrichten', 'nachrichten']]) {
+  for (const [m, s, n] of [['Aufstellung', 'Spielplan', 'spielplan'], ['Zentrale', 'Kalender', 'kalender'], ['Zentrale', 'Presse', 'presse'], ['Zentrale', 'Nachrichten', 'nachrichten']]) {
     try { await nav(m, s); await shot(n); } catch (e) { errors.push(`${n}: ${e.message.split('\n')[0]}`); }
   }
   // i-Hilfe am Spielplan
   try {
-    await nav('Spieltag', 'Spielplan');
+    await nav('Aufstellung', 'Spielplan');
     const tip = page.locator('.info-tip, .itip, [data-info]').first();
     if (await tip.count()) { await tip.hover(); await shot('spielplan_info'); }
   } catch (e) { errors.push('info: ' + e.message.split('\n')[0]); }

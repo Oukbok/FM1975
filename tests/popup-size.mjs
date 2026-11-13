@@ -80,7 +80,7 @@ for (const view of VIEWS) {
         if (await o.count()) { await o.click({ button: 'right' }); await click('.sp3-menu .pcm-item:has-text("Verhandeln")'); return; }
       }
     }],
-    ['spielbericht', '.mr-modal', async () => { await nav('Spieltag', 'Spielplan'); await click('.app-main .dchip:has-text("Bericht")'); }],
+    ['spielbericht', '.mr-modal', async () => { await nav('Aufstellung', 'Spielplan'); await click('.app-main .dchip:has-text("Bericht")'); }],
     ['presse-artikel', '.np-article', async () => { await nav('Zentrale', 'Presse'); await click('.np-lead, .np-teaser'); }],
 
     ['einstellungen', '.modal', async () => { await closeAll(page); await click('.hd-gear'); await click('.menu-dd-item:has-text("Einstellungen")'); }],

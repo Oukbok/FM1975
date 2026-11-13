@@ -19,7 +19,7 @@ export interface EraTip {
   text: string;
   /** Was das im Spiel für dich heißt (du-Form, konkret). */
   inGame: string;
-  /** Seite im Spiel, z. B. „Spieltag › Taktik“. */
+  /** Seite im Spiel, z. B. „Aufstellung › Taktik“. */
   where?: string;
   /** Engere Gültigkeit innerhalb der Epoche (Saison-Startjahre, einschließlich). */
   from?: number;
@@ -42,7 +42,7 @@ export const ERA_TIPS: EraTipSet[] = [
   {
     from: 1975, to: 1979, label: 'Die Zeit von Libero und Manndeckung', motif: 'tv',
     tips: [
-      { topic: 'taktik', title: 'Libero hinter der Abwehr', where: 'Spieltag › Taktik',
+      { topic: 'taktik', title: 'Libero hinter der Abwehr', where: 'Aufstellung › Taktik',
         text: 'Fast jede Mannschaft spielt mit einem freien Mann hinter den Manndeckern, der Münchner Kapitän der frühen 70er hat die Rolle berühmt gemacht.',
         inGame: 'Besetze den Libero mit deinem spielstärksten Verteidiger – er hält die Abwehr zusammen und eröffnet das Spiel.' },
       { topic: 'geld', title: 'Der Eintritt zahlt die Gehälter', where: 'Verein › Fans',
@@ -51,7 +51,7 @@ export const ERA_TIPS: EraTipSet[] = [
       { topic: 'geld', title: 'Brustwerbung ist Neuland', where: 'Finanzen › Sponsoring',
         text: 'Trikotwerbung ist erst seit 1973 erlaubt; viele Vereine haben noch keinen oder einen kleinen Sponsor.',
         inGame: 'Ein Trikotsponsor ist neben dem Eintritt die größte Einzelquelle – unterschreib früh in der Saison.' },
-      { topic: 'regeln', title: 'Unentschieden sind viel wert', where: 'Spieltag › Taktik',
+      { topic: 'regeln', title: 'Unentschieden sind viel wert', where: 'Aufstellung › Taktik',
         text: 'Ein Sieg bringt nur zwei Punkte, ein Remis einen – Auswärtspunkte gelten als Erfolg.',
         inGame: 'Auswärts kostet eine vorsichtige Ausrichtung wenig; ein Punkt ist hier halb so viel wie ein Sieg.' },
       { topic: 'geld', title: 'Kein Spieler geht umsonst', where: 'Kader › Verträge',
@@ -85,7 +85,7 @@ export const ERA_TIPS: EraTipSet[] = [
       { topic: 'liga', title: 'Hallenmasters im Winter', where: 'Statistiken › Halle',
         text: 'Die Hallentour mit Endrunde füllt die Winterpause, die Profis spielen mit.',
         inGame: 'Hallenturniere bringen Antrittsgeld und Ansehen – aber auch Verletzungsrisiko für deine Stammkräfte.' },
-      { topic: 'taktik', title: 'Raumdeckung aus Italien', where: 'Spieltag › Taktik',
+      { topic: 'taktik', title: 'Raumdeckung aus Italien', where: 'Aufstellung › Taktik',
         text: 'Mailand Rot-Schwarz zeigt Viererkette und Pressing; in Deutschland bleibt der Libero vorerst Standard.',
         inGame: 'Wer früh moderne Formationen probiert, braucht schnelle, taktisch kluge Verteidiger.' },
       { topic: 'taktik', title: 'Sportmedizin holt auf', where: 'Verein › Vereinsgelände',
@@ -116,10 +116,10 @@ export const ERA_TIPS: EraTipSet[] = [
       { topic: 'geld', title: 'Auslaufende Verträge = ablösefrei', where: 'Kader › Verträge',
         text: 'Seit dem Bosman-Urteil darf ein Spieler nach Vertragsende ohne Ablöse wechseln.',
         inGame: 'Verlängere wichtige Spieler mindestens ein Jahr vor Ablauf – oder verkaufe sie, solange sie noch Geld bringen.' },
-      { topic: 'regeln', title: 'Siege zählen dreifach', where: 'Spieltag › Taktik',
+      { topic: 'regeln', title: 'Siege zählen dreifach', where: 'Aufstellung › Taktik',
         text: 'Ein Sieg bringt jetzt drei Punkte, ein Remis weiter nur einen.',
         inGame: 'Mut wird belohnt: In engen Spielen lohnt es sich, auf Sieg zu spielen statt den Punkt zu verwalten.' },
-      { topic: 'regeln', title: 'Drei Wechsel, breiterer Kader', where: 'Spieltag › Aufstellung',
+      { topic: 'regeln', title: 'Drei Wechsel, breiterer Kader', where: 'Aufstellung › Aufstellung',
         text: 'Pro Spiel dürfen drei Spieler eingewechselt werden.',
         inGame: 'Ein starker Joker auf der Bank entscheidet Spiele – plane zwei, drei gute Ergänzungsspieler ein.' },
       { topic: 'geld', title: 'Der Markt wird europäisch', where: 'Transfers › Transfermarkt',
@@ -133,7 +133,7 @@ export const ERA_TIPS: EraTipSet[] = [
   {
     from: 2000, to: 2004, label: 'Euro, Fernsehkrise und Leistungszentren', motif: 'digital',
     tips: [
-      { topic: 'taktik', title: 'Viererkette statt Libero', where: 'Spieltag › Taktik',
+      { topic: 'taktik', title: 'Viererkette statt Libero', where: 'Aufstellung › Taktik',
         text: 'Nach der schwachen EM 2000 stellt der deutsche Fußball um: Raumdeckung und Viererkette werden Standard.',
         inGame: 'Moderne Formationen setzen sich durch – Außenverteidiger mit Tempo werden gefragt.' },
       { topic: 'liga', title: 'Ohne Leistungszentrum keine Lizenz', where: 'Jugend › Akademie',
@@ -167,7 +167,7 @@ export const ERA_TIPS: EraTipSet[] = [
       { topic: 'geld', title: 'Finanzielles Fairplay', where: 'Finanzen › Bilanz',
         text: 'Die UEFA prüft, ob Vereine nicht mehr ausgeben, als sie einnehmen.',
         inGame: 'Im Europapokal zählt eine ausgeglichene Bilanz – Verluste können Auflagen nach sich ziehen.' },
-      { topic: 'taktik', title: 'Gegenpressing', where: 'Spieltag › Taktik',
+      { topic: 'taktik', title: 'Gegenpressing', where: 'Aufstellung › Taktik',
         text: 'Ballverlust heißt sofort angreifen: Dortmund und später viele andere spielen mit extremer Laufintensität.',
         inGame: 'Hohes Pressing braucht frische Spieler – rotiere und achte auf die Belastung.' },
       { topic: 'medien', title: 'Scouting mit Daten', where: 'Transfers › Beobachtung',
@@ -181,7 +181,7 @@ export const ERA_TIPS: EraTipSet[] = [
   {
     from: 2020, to: 2029, label: 'Fünf Wechsel und volle Terminkalender', motif: 'grid',
     tips: [
-      { topic: 'regeln', title: 'Fünf Auswechslungen', where: 'Spieltag › Aufstellung',
+      { topic: 'regeln', title: 'Fünf Auswechslungen', where: 'Aufstellung › Aufstellung',
         text: 'Seit 2020 darf jede Mannschaft fünfmal wechseln.',
         inGame: 'Die Bank wird zur zweiten Elf – Kadertiefe ist so wichtig wie nie.' },
       { topic: 'medien', title: 'Spiele ohne Publikum', where: 'Finanzen › Bilanz',

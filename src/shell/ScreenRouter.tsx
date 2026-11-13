@@ -55,7 +55,7 @@ function page({ screen, g, rerender, setScreen, onWatch, onReplayDraw, onOpenEdi
     case 'tactics': return <P.TacticsView g={g as never} onChange={ch} />;
     case 'stadium': return <P.StadiumView g={g} onChange={ch} onGoto={setScreen} />;
     // Kategorie-Dashboards
-    case 'cat-spieltag': return <P.SpieltagDashboard g={g} onGoto={setScreen} onWatch={onWatch} />;
+    case 'cat-spieltag': return <P.GegnerView g={g} onGoto={setScreen} onWatch={onWatch} />;
     case 'cat-kader': return <P.KaderDashboard g={g} onGoto={setScreen} />;
     case 'cat-transfers': return <P.TransfersDashboard g={g} onGoto={setScreen} />;
     case 'cat-finanzen': return <P.FinanzenDashboard g={g} onGoto={setScreen} />;

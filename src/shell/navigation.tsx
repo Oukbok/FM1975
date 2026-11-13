@@ -48,10 +48,11 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'calendar', label: 'Kalender', icon: 'kalender' },
     { screen: 'briefing', label: 'Briefing', icon: 'briefing' },
   ] },
-  { key: 'spieltag', label: 'Spieltag', icon: 'lineup', dash: 'cat-spieltag', subs: [
-    { screen: 'cat-spieltag', label: 'Spieltag', icon: 'lineup' },
+  // Aufstellung (Wunsch Pascal, früher „Spieltag“): der Gegner als eigener Unterpunkt nach Taktik.
+  { key: 'aufstellung', label: 'Aufstellung', icon: 'lineup', dash: 'lineup', subs: [
     { screen: 'lineup', label: 'Aufstellung', icon: 'lineup' },
     { screen: 'tactics', label: 'Taktik', icon: 'tactics' },
+    { screen: 'cat-spieltag', label: 'Gegner', icon: 'watchlist' },
     { screen: 'fixtures', label: 'Spielplan', icon: 'schedule' },
   ] },
   { key: 'kader', label: 'Kader', icon: 'squad', dash: 'cat-kader', subs: [

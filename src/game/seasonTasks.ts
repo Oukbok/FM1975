@@ -148,7 +148,7 @@ export function seasonTasks(g: Game, sit?: BriefingSituation, changes: GameChang
         title: `Ziel „${sit.goal}“ ist ehrgeizig`,
         text: `Dein Kader ist nur der ${sit.rank}.-stärkste von ${sit.of}. Verstärke dich gezielt oder halte das Vertrauen des Vorstands (${sit.confidence}/100) im Blick.` });
     } else if (sit.goal === 'Klassenerhalt' && sit.rank >= sit.of - 2) {
-      add({ id: 'goal-relegation', level: 'wichtig', icon: 'dashVerein', where: 'Spieltag › Taktik',
+      add({ id: 'goal-relegation', level: 'wichtig', icon: 'dashVerein', where: 'Aufstellung › Taktik',
         title: 'Abstiegskampf von Anfang an',
         text: 'Dein Kader gehört zu den schwächsten der Liga. Eine stabile Defensive und Heimstärke sind jetzt alles.' });
     } else if (need != null && sit.rank < need - 2 && sit.goal !== 'Meisterschaft') {

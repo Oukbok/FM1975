@@ -45,7 +45,7 @@ const nav = async (main, sub) => {
 };
 const PAGES = [
   ['Zentrale', null, 'zentrale'], ['Zentrale', 'Nachrichten', 'nachrichten'],
-  ['Spieltag', null, 'spieltag'], ['Spieltag', 'Aufstellung', 'aufstellung'], ['Spieltag', 'Spielplan', 'spielplan'],
+  ['Aufstellung', 'Gegner', 'gegner'], ['Aufstellung', 'Aufstellung', 'aufstellung'], ['Aufstellung', 'Spielplan', 'spielplan'],
   ['Kader', null, 'kader'], ['Kader', 'Übersicht', 'kader_uebersicht'], ['Kader', 'Verträge', 'vertraege'], ['Kader', 'Kabine', 'kabine'],
   ['Training', 'Trainerteam', 'trainerteam'],
   ['Jugend', null, 'jugend'], ['Jugend', 'Mannschaften', 'jugend_mannschaften'], ['Jugend', 'Jugendwettbewerbe', 'jugendwettbewerbe'],

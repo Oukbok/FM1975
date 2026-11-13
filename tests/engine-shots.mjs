@@ -38,7 +38,7 @@ const closeModals = async () => {
   }
 };
 await closeModals();
-await page.locator('.hd-nav-item:has-text("Spieltag")').click();
+await page.locator('.hd-nav-item:has-text("Aufstellung")').click();
 await page.waitForTimeout(200);
 await page.locator('.tn-sub-item:has-text("Taktik")').click();
 await page.waitForTimeout(2500);

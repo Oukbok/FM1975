@@ -1023,7 +1023,7 @@ Für dich heißt das: Ein 85er ist ein echter Unterschiedsspieler – teuer, beg
     title: 'Aufstellung & Formationen',
     keywords: ['taktik', 'aufstellung', 'formation', 'libero', '4-4-2', '4-3-3'],
     body: `## Aufstellung & Formationen
-Unter **Spieltag › Aufstellung** stellst du deine Mannschaft – aufgebaut wie in modernen Fußballmanagern:
+Unter **Aufstellung › Aufstellung** stellst du deine Mannschaft – aufgebaut wie in modernen Fußballmanagern:
 
 - **Links – Kaderliste:** drei Abschnitte *Startelf*, *Ersatzbank* und *Reserve* mit Position, Rückennummer, Eignung, Frische, Form, Moral, Durchschnittsnote und Stärke. Ein Klick auf eine Spaltenüberschrift sortiert innerhalb der Abschnitte.
 - **Mitte – Spielfeld:** maßstabsgetreu nach FIFA-Regeln (105 × 68 m) mit Spielerkarten auf den Positionen: Position, Eignung, Name und Frischebalken; der farbige Rand zeigt, wie gut der Spieler auf diese Position passt. Darunter die **Ersatzbank** mit so vielen Plätzen, wie die Epoche erlaubt (bis 1994 fünf, ab 1995 sieben, ab 2020 neun).
@@ -1233,7 +1233,7 @@ Beim Laden werden die früheren Kürzel umgerechnet: VS → IV, AV → RV/LV, FL
     title: 'Taktik-Anweisungen & ihre Wirkung',
     keywords: ['taktik', 'tempo', 'pressing', 'abseitsfalle', 'aufbau', 'anweisung'],
     body: `## Taktik-Anweisungen
-Unter **Spieltag › Taktik** stellst du Mentalität und Teamanweisungen ein – gegliedert in *Mit Ball* und *Gegen den Ball*. Die Taktik entscheidet, **auf welchem Weg** deine Elf angreift (Kombination durch die Mitte, Flanke, Steilpass, Dribbling, langer Ball, Konter) und verschiebt die **Einzelduelle** (siehe *So rechnet die Match-Engine*).
+Unter **Aufstellung › Taktik** stellst du Mentalität und Teamanweisungen ein – gegliedert in *Mit Ball* und *Gegen den Ball*. Die Taktik entscheidet, **auf welchem Weg** deine Elf angreift (Kombination durch die Mitte, Flanke, Steilpass, Dribbling, langer Ball, Konter) und verschiebt die **Einzelduelle** (siehe *So rechnet die Match-Engine*).
 
 ### Wirkung im Spiel – gemessen
 Der Kasten **Wirkung im Spiel** rechnet nicht mit Schätzwerten: Die Match-Engine spielt deine Mannschaft mit deiner Taktik und mit einer neutralen Taktik je 40-mal daheim und auswärts gegen den nächsten Gegner (ohne Gegner gegen dein eigenes Spiegelbild). Links steht der neutrale Wert, rechts deiner, der Balken zeigt den Unterschied je Spiel (orange = Nachteil). Weil echte Spiele simuliert werden, schwanken kleine Unterschiede etwas.
@@ -1291,7 +1291,7 @@ Erreicht der Vorlauf einen Tag mit einem Spiel deines Vereins (Liga, Pokal, Euro
 - **Wetter:** Die Vorhersage ist genau das Wetter, mit dem die Match-Engine das Spiel austrägt. Regen und Schnee bringen mehr Fehler im Aufbau und gefährlichere Fernschüsse und halten Zuschauer von offenen Plätzen fern, Hitze kostet schneller Kraft.
 
 Unten rechts wählst du die Spielart:
-- **Simulieren:** Das Spiel wird sofort berechnet, danach öffnet sich der Spielbericht. Unter Einstellungen › Spielbericht nach dem Simulieren wählst du **Immer**, **Nur Pokal & Europapokal** oder **Nie** – das Ergebnis steht dann nur im Newscenter, der Bericht bleibt unter Spieltag › Spielplan abrufbar.
+- **Simulieren:** Das Spiel wird sofort berechnet, danach öffnet sich der Spielbericht. Unter Einstellungen › Spielbericht nach dem Simulieren wählst du **Immer**, **Nur Pokal & Europapokal** oder **Nie** – das Ergebnis steht dann nur im Newscenter, der Bericht bleibt unter Aufstellung › Spielplan abrufbar.
 - **Im Textmodus spielen:** Eine eigene Oberfläche ohne Menü. Du verfolgst das Spiel live und greifst ein.
 
 Hervorgehoben ist die zuletzt gewählte Art. Schließt du die Vorschau (Esc), öffnet der Knopf **Nächstes Spiel** oben rechts sie wieder. Mit **Diesen Bildschirm nicht wieder anzeigen** (auch unter Einstellungen umschaltbar) erscheinen stattdessen direkt oben rechts die zwei Knöpfe *Schnell simulieren* und *Textmodus*.
@@ -2522,6 +2522,24 @@ Ab 18 kann ein Kind **den Verein übernehmen** (Privat › Familie). Dann **wech
 Dein **Gehalt** richtet sich nach Größe des Vereins und deinem Ruf (Fußballgehälter wachsen mit der Zeit stark). **Kosten** für Leben, Wohnen, Auto, Hobby und Kinder folgen den Verbraucherpreisen; Häuser wurden 2010–2022 zusätzlich teurer. Geld liegt auf dem **Konto**, dem **Sparbuch** (Zins der Zeit) oder im **Aktienfonds** (Boom und Crash wie an den großen Börsen, z. B. 1987, 2000–2002, 2008). Vom Mietwohnung bis zum Landsitz und vom Kleinwagen bis zum Sportwagen; ein schöneres Zuhause hebt Laune und Beziehung. Mit **Verein unterstützen** gibst du Privatgeld als Zuschuss an den Verein – der Vorstand rechnet es dir an.`,
   },
   {
+    id: 'opponent',
+    category: 'core',
+    title: 'Der nächste Gegner (Aufstellung › Gegner)',
+    keywords: ['gegner', 'gegneranalyse', 'nächstes spiel', 'direkter vergleich', 'mannschaftsteile', 'ausfälle', 'torjäger', 'taktik des gegners', 'spieltag', 'vorbereitung'],
+    body: `## Wo
+Der Hauptmenüpunkt heißt **Aufstellung** (früher Spieltag) mit Aufstellung, Taktik, **Gegner** und Spielplan. Die Seite Gegner zeigt immer das nächste eigene Pflichtspiel – Liga, Landespokal, Europapokal oder Supercup, je nachdem, was zuerst kommt.
+
+## Boxen
+- **Nächstes Spiel:** Paarung, Datum, Spielort und der **direkte Vergleich** aus allen gespeicherten Pflichtspielen (Siege-Remis-Niederlagen, Tore, die letzten vier Duelle).
+- **Gegner-Analyse:** Tabellenplatz, Ø Stärke gegen deine, Tore, Form, die gefährlichsten Spieler.
+- **So spielt der Gegner:** Trainer, System, Ausrichtung, Tempo, Pressing, Abwehrlinie, Spielaufbau.
+- **Mannschaftsteile im Vergleich:** Ø der Besten je Teil (Torwart 1, Abwehr 4, Mittelfeld 4, Angriff 2) für beide Vereine mit Differenz, dazu das Durchschnittsalter.
+- **Form & letzte Spiele:** die letzten Ligaspiele des Gegners und seine Heim- bzw. Auswärtsbilanz – je nachdem, wo ihr spielt.
+- **Ausfälle & Torjäger:** verletzte, gesperrte und abgestellte Spieler des Gegners und seine besten Torschützen.
+
+Gegen Vereine ohne vollen Kader (Amateure im Pokal, Auslandsvereine) gibt es nur die geschätzte Stärke.`,
+  },
+  {
     id: 'supercup',
     category: 'cup',
     title: 'Supercup, Ligapokal und Europäischer Supercup',
@@ -3470,7 +3488,7 @@ Verteilte Spieltage (Freitag bis Montag) gibt es nur an normalen Wochenenden –
 - Am **Vortag** wird der Platz begangen. Schnee, gefrorener Boden, dichter Nebel oder Dauerregen können ein Ligaspiel absagen. Das Wetter ist dasselbe, das die Vorschau „Nächstes Spiel“ zeigt.
 - Wie oft das passiert, hängt von der **Rasenheizung** ab: In den 70ern hatten nur wenige Stadien eine – im Winter fallen dann jede Saison mehrere Spiele aus (im Schnitt rund acht in der 1. Liga). In den 80ern und 90ern wird es seltener, heute ist eine Absage die Ausnahme (Rasenheizung ist Lizenzauflage). Nebel bleibt ein Risiko, wird mit besseren Flutlichtanlagen aber seltener.
 - Das **Nachholspiel** liegt unter der Woche (Mittwoch bzw. ab 1986 Dienstag/Mittwoch), mit zwei Ruhetagen zu allen anderen Spielen beider Vereine, **nicht in der Winterpause** und **spätestens vor den letzten zwei Spieltagen**. Findet sich kein Termin mehr, wird gespielt (Schneeräumung, Ausweichstadion). Ein Spiel wird höchstens zweimal abgesagt.
-- Kalender, Spielplan (Spieltag › Spielplan), Vorschau „Nächstes Spiel“ und Presse zeigen „Nachholspiel“; die Tabelle zählt ein Nachholspiel erst, wenn es gespielt ist.
+- Kalender, Spielplan (Aufstellung › Spielplan), Vorschau „Nächstes Spiel“ und Presse zeigen „Nachholspiel“; die Tabelle zählt ein Nachholspiel erst, wenn es gespielt ist.
 
 ## Alte Spielstände
 Laufende Saisons behalten ihre Termine. Der Spielausschuss repariert nur künftige Kollisionen (Spiele an Folgetagen) durch Verlegung innerhalb des Wochenendes; die neuen Regeln gelten vollständig ab dem nächsten Saisonwechsel. Liegt in einem alten Spielstand ein künftiges **Hallenturnier** in deiner Pflichtspielzeit (etwa vor einer Pokalrunde im Dezember), verlegt der Veranstalter es in deine Winterpause; gibt es keinen freien Tag, entfällt deine Teilnahme ohne Ärger. Beides kündigt eine kurze Nachricht an.`,

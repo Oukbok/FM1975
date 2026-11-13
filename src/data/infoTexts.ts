@@ -381,6 +381,16 @@ export const INFO_TEXTS = {
     text: 'Gehalt minus Lebenshaltung, Wohnen, Auto, Hobby und Kinder. Sparbuch mit dem Zins der Zeit, Aktienfonds mit Boom und Crash wie an den echten Börsen. Beträge in der Währung der Zeit.',
     wiki: 'private-life',
   },
+  direktervergleich: {
+    title: 'Direkter Vergleich',
+    text: 'Alle gespeicherten Pflichtspiele deines Vereins gegen diesen Gegner – Liga, Pokal und Europapokal, aus deiner Sicht (Siege-Remis-Niederlagen und Tore).',
+    wiki: 'opponent',
+  },
+  mannschaftsteile: {
+    title: 'Mannschaftsteile im Vergleich',
+    text: 'Durchschnittliche Stärke der Besten je Mannschaftsteil: Torwart 1, Abwehr 4, Mittelfeld 4, Angriff 2 – unabhängig von der Aufstellung. Grün = du bist dort stärker, Rot = der Gegner.',
+    wiki: 'opponent',
+  },
   supercup: {
     title: 'Supercup & Ligapokal',
     text: 'Vor dem Ligastart spielen Meister und Pokalsieger der Vorsaison um den Supercup – je nach Land und Zeit in einem Spiel, mit Hin- und Rückspiel oder als kleines Turnier (Ligapokal 1997–2007 mit sechs Mannschaften). Wer das Double holte, trifft auf den Pokalfinalisten bzw. den Vizemeister. Es gibt Antrittsgeld und eine Siegprämie, der Titel zählt im Trophäenschrank.',

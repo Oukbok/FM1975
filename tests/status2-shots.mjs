@@ -59,7 +59,7 @@ await page.locator('.pp-tabs .tab:has-text("Bericht")').click(); await page.wait
 await page.locator('.pp-tabs .tab:has-text("Entwicklung")').click(); await page.waitForTimeout(200); await shot('10_entwicklung');
 await page.locator('.pp-modal .pp2-close').click();
 await page.waitForTimeout(250);
-await nav('Spieltag', 'Aufstellung'); await shot('11_aufstellung');
+await nav('Aufstellung', 'Aufstellung'); await shot('11_aufstellung');
 const lf = page.locator('.st-form');
 if (await lf.count()) { await lf.first().hover(); await page.waitForTimeout(150); await shot('12_aufstellung_hover'); }
 
