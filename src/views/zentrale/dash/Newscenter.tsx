@@ -4,7 +4,8 @@
 // (EventChoices), Sprungzielen und Gesicht des betroffenen Spielers.
 // Daten: g.messages (engine/messages.ts) – dieselben wie Zentrale › Nachrichten.
 // =============================================================================
-import { useEffect, useState } from 'react';
+import { PlayerMorale } from '../../../components/status';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { openContractScreen } from '../../../screens/contract/contractOpen';
 import { JUMP_DECISION_EVENT, oldestPendingDecision } from '../../../engine/messages';
 import PlayerAvatar from '../../../components/PlayerAvatar';
@@ -58,6 +59,31 @@ export function Newscenter({ g, onGoto, onWatch, onChange, openPlayer }: {
   const allRead = () => { msgs.forEach((m) => (m.read = true)); onChange(); };
   const markUnread = () => { if (sel && sel.read) { sel.read = false; onChange(); } };
 
+  // Wunsch Pascal: keine angeschnittene Zeile unten – Höhe der Liste = Kopf + ganze Zeilen,
+  // beim Scrollen rasten die Zeilen ein (scroll-snap, CSS .dz-nlist-in).
+  const listRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const [fitH, setFitH] = useState(0);
+  useLayoutEffect(() => {
+    const outer = listRef.current, inner = innerRef.current;
+    if (!outer || !inner) return;
+    const fit = () => {
+      const cs = getComputedStyle(outer);
+      const avail = outer.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+      const head = inner.querySelector('thead')?.getBoundingClientRect().height ?? 0;
+      const row = inner.querySelector('tbody tr')?.getBoundingClientRect().height ?? 0;
+      const scale = outer.getBoundingClientRect().height / (outer.offsetHeight || 1); // UI-Skalierung herausrechnen
+      if (!row || !avail) return;
+      const h = (head + Math.max(1, Math.floor((avail * scale - head) / row)) * row) / scale;
+      setFitH((o) => (Math.abs(o - h) > 0.5 ? h : o));
+      inner.style.scrollPaddingTop = `${head / scale}px`;
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(outer);
+    return () => ro.disconnect();
+  }, [list.length > 0]);
+
   let lastGroup: MsgGroup | null = null;
   return (
     <section className="dz-news">
@@ -72,7 +98,8 @@ export function Newscenter({ g, onGoto, onWatch, onChange, openPlayer }: {
       <InboxFilterBar msgs={msgs} value={filter} onChange={setFilter} />
 
       <div className="dz-nbody">
-        <div className="dz-nlist">
+        <div className="dz-nlist" ref={listRef}>
+          <div className="dz-nlist-in" ref={innerRef} style={fitH ? { height: fitH } : undefined}>
           <table className="dtable rl-sm dz-ntable">
             <thead><tr><th className="dz-ncol-grp">Eingang</th><th>Thema</th><th className="dz-ncol-date">Datum</th><th className="dz-ncol-cat">Kategorie</th></tr></thead>
             <tbody>
@@ -93,6 +120,7 @@ export function Newscenter({ g, onGoto, onWatch, onChange, openPlayer }: {
               })}
             </tbody>
           </table>
+          </div>
         </div>
         <Reader g={g} m={sel} onGoto={onGoto} onWatch={onWatch} onChange={onChange} openPlayer={openPlayer} />
       </div>
@@ -136,13 +164,22 @@ function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
         </div>
         {faces.length > 0 && (
           <div className={`dz-rfaces n${faces.length}`}>
-            {faces.map((f) => (
-              <button key={f.id} className="dz-rface" onClick={() => openPlayer(f.id)} title={`${f.fullName} – Spielerprofil öffnen`}>
-                <PlayerAvatar key={f.id} player={f} club={g.clubs[f.clubId]} size={faces.length > 2 ? 84 : 104} priority />
-                <span className="dz-rface-name">{f.fullName}</span>
-                <span className="dz-rface-sub"><PosBadge p={f} single /> <span>{f.age} J.</span> <b style={{ color: vColor(f.overall) }}>{f.overall}</b></span>
-              </button>
-            ))}
+            {faces.map((f) => {
+              const fx = m.moraleFx?.find((x) => x.pid === f.id);
+              return (
+                <button key={f.id} className="dz-rface" onClick={() => openPlayer(f.id)} title={`${f.fullName} – Spielerprofil öffnen`}>
+                  <PlayerAvatar key={f.id} player={f} club={g.clubs[f.clubId]} size={faces.length > 2 ? 84 : 100} priority />
+                  <span className="dz-rface-name">{f.fullName}</span>
+                  <span className="dz-rface-sub"><PosBadge p={f} single /><span>{f.age} J. · Stärke {f.overall}</span></span>
+                  {f.clubId === g.managedClubId && !f.isYouth && (
+                    <span className="dz-rface-mor">Moral <PlayerMorale p={f} size={16} showValue />
+                      {fx && <span className={`dz-rface-fx ${fx.d > 0 ? 'pos' : fx.d < 0 ? 'neg' : ''}`}>{fx.d > 0 ? '+' : ''}{fx.d}</span>}
+                    </span>
+                  )}
+                  {fx && <span className="dz-rface-w">{fx.w}</span>}
+                </button>
+              );
+            })}
           </div>
         )}
       </div>

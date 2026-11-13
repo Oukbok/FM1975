@@ -1857,6 +1857,8 @@ export interface InboxMessage {
   eventRef?: MessageEventRef;
   /** Ergebnis nach der Entscheidung (wird unter dem Text angezeigt). */
   resultText?: string;
+  /** Moral-Reaktion der beteiligten Spieler auf die Entscheidung (game/messagePlayers.ts). */
+  moraleFx?: { pid: string; d: number; w: string }[];
 }
 
 export interface MessageChoice { id: string; label: string; hint?: string }

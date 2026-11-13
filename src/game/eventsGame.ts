@@ -1,6 +1,7 @@
 // =============================================================================
 // Zufallsereignisse im Spielablauf: monatlich würfeln, Entscheidungen auflösen.
 // =============================================================================
+import { moraleBefore, recordMoraleReactions } from './messagePlayers';
 import { Game } from './state';
 import { InboxMessage, MessageEventRef } from '../types';
 import { CalendarEngine } from '../engine/calendar';
@@ -52,12 +53,14 @@ export function chooseEventOption(g: Game, msg: InboxMessage, choiceId: string, 
   const ctx = ctxFor(g, g.calendar.currentDate);
   if (!ctx) return '';
   const handler = CHOICE_HANDLERS[msg.eventRef.type];
+  const before = moraleBefore(g, msg);
   const eff = handler ? handler(g, msg.eventRef, choiceId) : resolveEvent(ctx, msg.eventRef, choiceId);
   if (eff.money) book(ctx.club.finances, g.calendar.currentDate, eff.money.amount, 'other', eff.money.text, true);
   const label = msg.choices?.find((c) => c.id === choiceId)?.label ?? choiceId;
   msg.eventRef.resolved = choiceId;
   msg.actionRequired = false;
   msg.resultText = `${auto ? 'Ohne Rückmeldung entschieden' : 'Entscheidung'}: ${label}. ${eff.text}`.trim();
+  recordMoraleReactions(g, msg, before);
   return msg.resultText;
 }
 

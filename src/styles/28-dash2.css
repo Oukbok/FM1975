@@ -15,9 +15,9 @@
 /* Bildlaufleiste der linken Spalte liegt in der Lücke (negativer Rand), damit die
    Kanten der Widgets bündig mit der Spalte abschließen und beide Lücken gleich sind. */
 .dz-left { overflow-y: auto; overflow-x: hidden; padding-right: 6px; margin-right: -14px; scrollbar-gutter: stable; }
-.dz-left::-webkit-scrollbar, .dz-nlist::-webkit-scrollbar, .dz-wb::-webkit-scrollbar, .dz-rtext::-webkit-scrollbar,
+.dz-left::-webkit-scrollbar, .dz-nlist::-webkit-scrollbar, .dz-nlist-in::-webkit-scrollbar, .dz-wb::-webkit-scrollbar, .dz-rtext::-webkit-scrollbar,
 .dz-fn-list::-webkit-scrollbar, .dz-app-list::-webkit-scrollbar, .dz-vt-list::-webkit-scrollbar, .dz-lcd-list::-webkit-scrollbar, .dz-heft-list::-webkit-scrollbar { width: 8px; }
-.dz-left::-webkit-scrollbar-thumb, .dz-nlist::-webkit-scrollbar-thumb, .dz-wb::-webkit-scrollbar-thumb, .dz-rtext::-webkit-scrollbar-thumb,
+.dz-left::-webkit-scrollbar-thumb, .dz-nlist::-webkit-scrollbar-thumb, .dz-nlist-in::-webkit-scrollbar-thumb, .dz-wb::-webkit-scrollbar-thumb, .dz-rtext::-webkit-scrollbar-thumb,
 .dz-fn-list::-webkit-scrollbar-thumb, .dz-app-list::-webkit-scrollbar-thumb, .dz-vt-list::-webkit-scrollbar-thumb, .dz-lcd-list::-webkit-scrollbar-thumb, .dz-heft-list::-webkit-scrollbar-thumb { background: rgba(var(--ink-rgb), 0.12); border-radius: 4px; }
 
 /* Leiste der linken Spalte liegt über dem Hintergrundbild: nur beim Darüberfahren zeigen,
@@ -103,7 +103,10 @@
 .dz-nh-count { font-family: var(--font-display); font-size: 19px; color: var(--text-2); margin-left: 10px; }
 .dz-nh-act { margin-left: auto; display: flex; gap: 8px; }
 .dz-nbody { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 24px; padding-top: 8px; }
-.dz-nlist { min-height: 0; overflow-y: auto; }
+.dz-nlist { min-height: 0; overflow: hidden; }
+/* Liste zeigt nur ganze Zeilen (Höhe aus Newscenter.tsx), Zeilen rasten beim Scrollen ein */
+.dz-nlist-in { height: 100%; overflow-y: auto; scroll-snap-type: y mandatory; }
+.dz-nlist-in tbody tr { scroll-snap-align: start; }
 .dz-ntable { width: 100%; table-layout: fixed; border-collapse: collapse; }
 .dz-ntable thead th { position: sticky; top: 0; z-index: 1; background: var(--panel); text-align: left; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
 .dz-ntable td { height: 40px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-2); font-size: 16px; }
@@ -135,16 +138,20 @@
 .dz-rfoot { display: flex; align-items: flex-end; gap: 14px; padding-top: 10px; border-top: 1px solid var(--border-soft); min-height: 52px; }
 .dz-rlinks { display: flex; flex-wrap: wrap; gap: 8px; }
 .dz-rfaces { margin-left: auto; display: flex; align-items: flex-end; gap: 22px; }
-.dz-rfaces.n3 .dz-rface-name, .dz-rfaces.n4 .dz-rface-name { font-size: 14px; max-width: 150px; }
 .dz-rface {
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
   background: none; border: none; cursor: pointer; color: var(--text); padding: 0; font: inherit;
 }
 .dz-rface svg { display: block; }
-.dz-rface-name { font-weight: 700; font-size: 16px; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.dz-rface-sub { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-3); }
-.dz-rface-sub .pos-badge { width: 30px; height: 20px; font-size: 11px; border-radius: 4px; }
-.dz-rface-sub b { font-family: var(--font-display); font-size: 18px; font-weight: 600; }
+.dz-rface-name { font-weight: 600; font-size: 15px; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dz-rfaces.n3 .dz-rface-name, .dz-rfaces.n4 .dz-rface-name { font-size: 14px; max-width: 150px; }
+/* Eine Schrift, eine Größe für alle Angaben unter dem Namen (Wunsch Pascal: ruhiger) */
+.dz-rface-sub, .dz-rface-mor, .dz-rface-w { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; line-height: 18px; color: var(--text-2); font-family: var(--font-ui); }
+.dz-rface-sub .pos-badge, .dz-rface-sub .posb { height: 18px; font-size: 11px; }
+.dz-rface-fx { font-weight: 700; color: var(--text-2); }
+.dz-rface-fx.pos { color: var(--pos); }
+.dz-rface-fx.neg { color: var(--neg); }
+.dz-rface-w { max-width: 200px; white-space: normal; text-align: center; color: var(--text-3); }
 .dz-rface:hover .dz-rface-name { color: var(--accent); }
 
 .dz-nfoot { display: flex; align-items: center; gap: 18px; padding-top: 10px; margin-top: 8px; border-top: 1px solid var(--border-soft); font-size: 15px; }

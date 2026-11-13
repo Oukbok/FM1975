@@ -1,6 +1,7 @@
 // =============================================================================
 // ZENTRALE – reine Anzeige-Daten der Widgets (keine Spiellogik, nichts gespeichert).
 // =============================================================================
+import { messagePlayers } from '../../../game/messagePlayers';
 import { COUNTRY_BY_CC } from '../../../data/world/countries';
 import { homeCountryOf } from '../../../game/state';
 import { seasonLabel } from '../../../engine/calendar';
@@ -178,38 +179,5 @@ export function msgPlayer(g: Game, m: InboxMessage): Player | null {
   return msgPlayers(g, m)[0] ?? null;
 }
 
-const pById = (g: Game, id: unknown): Player | null => (typeof id === 'string' ? g.players[id] ?? g.youthPlayers[id] ?? null : null);
-const esc = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-/**
- * Alle beteiligten Spieler einer Nachricht (Wunsch Pascal: jedes Gesicht im Leser):
- * relatedId, eventRef.playerId, Spieler-IDs in eventRef.data und alle eigenen Spieler
- * (Profis + Jugend), deren Name im Text steht – voller Name oder eindeutiger Nachname.
- * Reihenfolge: verknüpfte zuerst, dann nach erster Nennung im Text; höchstens 4.
- */
-export function msgPlayers(g: Game, m: InboxMessage): Player[] {
-  const out: Player[] = [];
-  // Gleichnamige Spieler (z. B. Profi und Jugendspieler) nur einmal – der zuerst gefundene zählt.
-  const add = (p: Player | null) => { if (p && !out.some((x) => x.id === p.id || x.fullName === p.fullName)) out.push(p); };
-  add(pById(g, m.relatedId));
-  add(pById(g, m.eventRef?.playerId));
-  for (const v of Object.values(m.eventRef?.data ?? {})) add(pById(g, v));
-  const club = g.clubs[g.managedClubId];
-  if (club) {
-    const text = `${m.subject}\n${m.shortText}\n${m.bodyText}`;
-    const squad = [...club.playerIds, ...club.youthPlayerIds].map((id) => pById(g, id)).filter((p): p is Player => !!p);
-    const lastCount = new Map<string, number>();
-    for (const p of squad) lastCount.set(p.lastName, (lastCount.get(p.lastName) ?? 0) + 1);
-    const hits: [number, Player][] = [];
-    for (const p of squad) {
-      let at = p.fullName ? text.indexOf(p.fullName) : -1;
-      if (at < 0 && p.lastName.length >= 4 && lastCount.get(p.lastName) === 1) {
-        const mm = new RegExp(`(^|[^\\p{L}])${esc(p.lastName)}(?![\\p{L}])`, 'u').exec(text);
-        if (mm) at = mm.index;
-      }
-      if (at >= 0) hits.push([at, p]);
-    }
-    hits.sort((a, b) => a[0] - b[0]).forEach(([, p]) => add(p));
-  }
-  return out.slice(0, 4);
-}
+/** Alle beteiligten Spieler (Gesichter im Leser) – Logik in game/messagePlayers.ts. */
+export const msgPlayers = (g: Game, m: InboxMessage): Player[] => messagePlayers(g, m);
