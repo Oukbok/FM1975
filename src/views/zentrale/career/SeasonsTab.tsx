@@ -1,4 +1,4 @@
-// Zentrale › Karriere, Reiter „Saisons“: alle Saisons unter dir + höchste Siege/Niederlagen.
+// Privat › Karriere, Reiter „Saisons“: alle Saisons unter dir + höchste Siege/Niederlagen.
 import type { CareerData } from '../../../game/managerView';
 import type { Game } from '../../../game/state';
 import { DashBox, DashPage, Empty } from '../../../ui/DashPage';

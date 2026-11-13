@@ -154,19 +154,23 @@ select.ng-input { cursor: pointer; }
 
 /* --- Schritt 2: Spielmodus --- */
 .ng-mode { display: flex; flex-direction: column; gap: 18px; }
-.ng-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.ng-modes { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+/* Junger Manager: Hintergrundgeschichte (Wunsch Pascal #47) */
+.ng-stories { padding-top: 14px; padding-bottom: 14px; }
+.ng-story-list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.ng-story small { font-size: 13.5px; }
 .ng-modecard {
-  display: grid; grid-template-columns: 64px 1fr auto; gap: 18px; align-items: center; text-align: left;
-  padding: 22px 26px; border-radius: 8px; border: 1px solid var(--border); background: rgba(var(--panel-rgb), 0.9);
+  display: grid; grid-template-columns: 56px 1fr auto; gap: 16px; align-items: center; text-align: left;
+  padding: 18px 20px; border-radius: 8px; border: 1px solid var(--border); background: rgba(var(--panel-rgb), 0.9);
   color: var(--text); font-family: inherit; cursor: pointer; transition: border-color 0.2s, background 0.2s;
 }
 .ng-modecard:hover { border-color: var(--text-4); }
 .ng-modecard.on { border-color: var(--accent); background: rgba(var(--panel-rgb), 0.94); }
-.ng-modecard-ico { width: 64px; height: 64px; border-radius: 8px; display: grid; place-items: center; background: rgba(var(--ink-rgb), 0.04); border: 1px solid var(--border-soft); }
+.ng-modecard-ico { width: 56px; height: 56px; border-radius: 8px; display: grid; place-items: center; background: rgba(var(--ink-rgb), 0.04); border: 1px solid var(--border-soft); }
 .ng-modecard-ico svg { width: 34px !important; height: 34px !important; color: var(--text-2); }
 .ng-modecard-txt { display: flex; flex-direction: column; gap: 6px; }
-.ng-modecard-txt b { font: 500 26px var(--font-display); letter-spacing: 1.5px; text-transform: uppercase; }
-.ng-modecard-txt small { font-size: 16px; color: var(--text-3); line-height: 1.4; }
+.ng-modecard-txt b { font: 500 23px var(--font-display); letter-spacing: 1.5px; text-transform: uppercase; }
+.ng-modecard-txt small { font-size: 15px; color: var(--text-3); line-height: 1.4; }
 
 /* --- Schritt 3: Länder --- */
 .ng-ctable { flex: 1; min-height: 0; display: flex; flex-direction: column; border-top: 1px solid var(--border-soft); }

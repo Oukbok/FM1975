@@ -11,6 +11,7 @@
 //   • kleine Nebenwirkungen bei Erfolg (Form/Frische/Vertragszufriedenheit),
 //   • die Antwort des Spielers in Worten (data/talkReplies.ts).
 // =============================================================================
+import { privateTalkBonus } from './private/privateState';
 import { TalkCtx, TalkKind, TALK_INFO, talkOdds, moraleScoreOf } from '../engine/dressingRoom';
 import { yearOf } from '../engine/economy';
 import { personaOf, PersonaTrait, TRAITS } from '../engine/persona';
@@ -59,7 +60,7 @@ export function talkContext(g: Game, p: Player): TalkCtx {
   const next = nextOwnMatch(g);
   const exp = p.contract?.expiryDate;
   const months = exp ? Math.max(0, Math.round(days(today, exp.slice(0, 10)) / 30.4)) : 24;
-  return { trust: trustOf(g), matchSoon: !!next && days(today, next) <= 7, contractMonths: months };
+  return { trust: trustOf(g), matchSoon: !!next && days(today, next) <= 7, contractMonths: months, manager: privateTalkBonus(g) };
 }
 
 /** Letzte Note (bis 21 Tage alt). */

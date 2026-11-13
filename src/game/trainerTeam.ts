@@ -7,6 +7,7 @@
 // weniger Trainingsverletzungen durch Fitness-/Medizinwissen; Entwicklung und
 // Verletzungs-/Reha-Effekte laufen weiter über Mitarbeiter 2.0 (staffPeople.ts).
 // =============================================================================
+import { privateTrainingFactor } from './private/privateState';
 import { Game } from './state';
 import { TrainingBlock, TrainingBlockCategory } from '../types';
 import { STAFF_BY_ID } from '../data/staff';
@@ -216,13 +217,15 @@ export function blockFactorFn(g: Game): (b: TrainingBlock) => number {
   const staff = ensureStaff(g);
   const year = yearOf(g.calendar.currentDate);
   const cache = new Map<CoachSkill, number>();
+  // Privatleben: Trainingslehre und Energie des Managers (game/private/privateState.ts).
+  const priv = privateTrainingFactor(g);
   return (b) => {
     const sk = skillForBlock(b);
-    if (!sk) return 1;
+    if (!sk) return priv;
     if (!cache.has(sk)) cache.set(sk, teamSkill(staff, sk, year));
     const v = cache.get(sk)!;
-    if (sk === 'analyse' && v < 6) return 0.55;
-    return clamp(0.85 + v / 20 * 0.35, 0.85, 1.2);
+    if (sk === 'analyse' && v < 6) return 0.55 * priv;
+    return clamp(0.85 + v / 20 * 0.35, 0.85, 1.2) * priv;
   };
 }
 

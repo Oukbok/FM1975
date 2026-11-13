@@ -160,6 +160,10 @@ export interface Game {
   worldPool?: import('./worldPool').WorldPool;
   /** Einzel-Scouting und Berichte (game/scoutingGame.ts). */
   scouting?: import('./scoutingGame').ScoutingState;
+  /** Privatleben: Familie, Freizeit, Vermögen, Generationen (game/private/). */
+  private?: import('./private/privateState').PrivateState;
+  /** Privatleben beim Start abgeschaltet. */
+  privateOff?: boolean;
 }
 
 /** Heimatland des Spielstands (fehlt = Deutschland). */

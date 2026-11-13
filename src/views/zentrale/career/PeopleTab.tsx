@@ -1,4 +1,4 @@
-// Zentrale › Karriere, Reiter „Trainer & Spieler“: deine Cheftrainer, Transferbilanz,
+// Privat › Karriere, Reiter „Trainer & Spieler“: deine Cheftrainer, Transferbilanz,
 // Spieler mit den meisten Einsätzen/Toren unter dir, Eigengewächse.
 import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
 import PosBadge from '../../../components/PosBadge';

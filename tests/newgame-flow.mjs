@@ -1,8 +1,8 @@
 // Gemeinsamer Ablauf „Neues Spiel“ für die Oberflächentests (Assistent in sechs Schritten:
 // Manager · Spielmodus · Spielwelt · Verein · Ligensystem · Willkommen).
-//   startNewGame(page, { name, clubIndex, league, speed, shots, keepBriefing, career })
+//   startNewGame(page, { name, clubIndex, league, speed, shots, keepBriefing, career, young })
 export async function startNewGame(page, opts = {}) {
-  const { name = 'Test', clubIndex = 0, league, speed = '300', shots, career = false } = opts;
+  const { name = 'Test', clubIndex = 0, league, speed = '300', shots, career = false, young = false } = opts;
   const next = () => page.click('.ng-foot button:has-text("Weiter")');
   const shot = async (n) => { if (!shots) return; await page.waitForTimeout(450); await shots(n); };
   await page.click('text=Neues Spiel');
@@ -15,6 +15,7 @@ export async function startNewGame(page, opts = {}) {
   // 2) Spielmodus: Tempo (+ optional Karriere)
   await page.waitForSelector('.ng-modes');
   if (career) await page.click('.ng-modecard:has-text("Karriere")');
+  if (young) { await page.click('.ng-modecard:has-text("Junger Manager")'); await page.click('.ng-story >> nth=1'); }
   await page.locator('.ng-speed input[type=range]').fill(speed);
   await shot('2_spielmodus');
   await next();

@@ -20,7 +20,7 @@ export const DIFF_DE: [Difficulty, string, string][] = [
   ['hard', 'Schwer', 'Für erfahrene Manager'],
 ];
 
-export type StartMode = 'manager' | 'career';
+export type StartMode = 'manager' | 'career' | 'young';
 
 /** Gemeinsamer Zustand aller Schritte. */
 export interface NewGameDraft {
@@ -59,14 +59,18 @@ export interface NewGameDraft {
   avoidClubId: string;
   style: ManagerStyle;
   background: ManagerBackground;
+  /** Junger Manager: Hintergrundgeschichte (data/privateLife.ts). */
+  story: string;
+  /** Privatleben (Familie, Freizeit, Vermögen), Standard an. */
+  privateLife: boolean;
 }
 
 export const START_ISO = '1975-07-01';
 export const MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
 /** Jahrgänge: 20 bis 65 Jahre beim Spielstart. */
 export const BIRTH_YEARS = Array.from({ length: 46 }, (_, i) => 1955 - i);
-/** Jahrgänge für ein Startjahr (20 bis 65 Jahre alt). */
-export const birthYearsFor = (start: number) => Array.from({ length: 46 }, (_, i) => start - 20 - i);
+/** Jahrgänge für ein Startjahr (18 bis 65 Jahre alt). */
+export const birthYearsFor = (start: number) => Array.from({ length: 48 }, (_, i) => start - 18 - i);
 
 export const daysInMonth = (y: number, m: number) => new Date(Date.UTC(y, m, 0)).getUTCDate();
 export function birthIso(d: NewGameDraft): string {
@@ -122,6 +126,7 @@ export function managerProfile(d: NewGameDraft): ManagerProfile {
     ...(d.favoriteClubId ? { favoriteClubId: d.favoriteClubId } : {}),
     ...(d.avoidClubId ? { avoidClubId: d.avoidClubId } : {}),
     startMode: d.mode,
+    ...(d.mode === 'young' ? { story: d.story } : {}),
   };
 }
 
@@ -129,6 +134,7 @@ export function gameOptions(d: NewGameDraft): NewGameOptions {
   return {
     managedClubId: d.clubId, manager: managerProfile(d), difficulty: d.difficulty, realisticSquads: true,
     injuriesEnabled: d.injuries, speedMs: d.speedMs, datasetId: d.datasetId, historyMode: d.history, legends: d.legends,
+    ...(d.privateLife ? {} : { privateLife: false }),
     ...(d.startYear !== 1975 ? { startYear: d.startYear } : {}),
     ...(d.country !== 'ger' ? { country: d.country } : {}),
     ...(d.fullAll ? { fullAll: true } : d.fullCountries.length ? { fullCountries: [...d.fullCountries] } : {}),

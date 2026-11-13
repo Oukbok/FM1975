@@ -1,4 +1,4 @@
-// Screenshots der Managerkarriere: Zentrale › Karriere (Reiter Bilanz/Saisons/Trainer & Spieler),
+// Screenshots der Managerkarriere: Privat › Karriere (Reiter Bilanz/Saisons/Trainer & Spieler),
 // Druck-Nachricht des Vorstands im Newscenter, Verein › Verein, eigenes Vereinsprofil (Manager & Trainer).
 //   npm run build && node scripts/run-ts.mjs tests/career-prep.ts public/saves/test-3-jahre.txt <stand.txt>
 //   SAVE=<stand.txt> node tests/career-shots.mjs [ordner] [präfix]      (1920×1080 und 1366×768)
@@ -47,7 +47,7 @@ for (const [w, h] of (process.env.VIEW ? [process.env.VIEW.split("x").map(Number
     if (sub) { await page.locator(`.tn-sub-item:has-text("${sub}")`).first().click(); await page.waitForTimeout(350); }
   };
   try {
-    await nav('Zentrale', 'Karriere'); await shot('karriere_bilanz');
+    await nav('Privat', 'Karriere'); await shot('karriere_bilanz');
     await page.locator('.sub3-tabs .tab:has-text("Saisons")').click(); await shot('karriere_saisons');
     await page.locator('.sub3-tabs .tab:has-text("Trainer")').click(); await shot('karriere_personen');
     await page.locator('.sub3-tabs .tab:has-text("Bilanz")').click();

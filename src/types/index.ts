@@ -1989,7 +1989,11 @@ export interface ManagerProfile {
   favoriteClubId?: string;
   avoidClubId?: string;
   /** Spielmodus beim Start: Verein frei gewählt oder Karriere über Angebote. */
-  startMode?: 'manager' | 'career';
+  startMode?: 'manager' | 'career' | 'young';
+  /** Junger Manager: Hintergrundgeschichte (data/privateLife.ts STORIES). */
+  story?: string;
+  /** Geschlecht (Privatleben, Generationswechsel); fehlt = 'm'. */
+  sex?: 'm' | 'w';
 }
 
 /** Trainer-Hintergrund (beeinflusst Startbedingungen leicht / rein narrativ). */
@@ -2023,6 +2027,8 @@ export interface NewGameOptions {
   fullCountries?: string[];
   /** Alle Länder Spiel für Spiel (auch später entstehende). */
   fullAll?: boolean;
+  /** Privatleben (game/private/), Standard an. */
+  privateLife?: boolean;
 }
 
 // -----------------------------------------------------------------------------

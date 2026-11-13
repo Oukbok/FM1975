@@ -1,4 +1,4 @@
-// Bausteine der Seite Zentrale › Karriere (Spielzeile, Bilanz-Formate).
+// Bausteine der Seite Privat › Karriere (Spielzeile, Bilanz-Formate).
 import ClubCrest from '../../../components/ClubCrest';
 import { ClubLink } from '../../../components/club/ClubLink';
 import type { Comp, MgrGame, WDL } from '../../../game/managerLog';

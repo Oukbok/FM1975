@@ -1,6 +1,6 @@
 // =============================================================================
 // MANAGERBILANZ — alles, was du als Manager deines Vereins über die Jahrzehnte
-// erreicht hast (Seite Zentrale › Karriere, views/zentrale/career/)
+// erreicht hast (Seite Privat › Karriere, views/zentrale/career/)
 // -----------------------------------------------------------------------------
 // Gespeichert in `game.career.mgr` (optional, kompakt, nur Abgeschlossenes):
 //   • Bilanz je Saison und Wettbewerb (Liga/Landespokal/Europapokal),

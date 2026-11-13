@@ -1,5 +1,5 @@
 // =============================================================================
-// MANAGERBILANZ — Anzeigedaten für Zentrale › Karriere (nur lesen)
+// MANAGERBILANZ — Anzeigedaten für Privat › Karriere (nur lesen)
 // Gespeicherte Saisons (managerLog.ts) + laufende Saison live, Endplätze aus der
 // Vereins-Historie (clubRecords), Pokalrunden aus dem Liga-Archiv, Titel aus
 // trophyCabinet.ts, Ansehen/Saisonziele aus den Karriere-Stationen.

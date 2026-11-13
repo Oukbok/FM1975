@@ -468,6 +468,8 @@ export interface TalkCtx {
   matchSoon?: boolean;
   /** Monate bis Vertragsende. */
   contractMonths?: number;
+  /** Privatleben: Menschenführung/Energie/Laune des Managers (−0,05 … +0,1). */
+  manager?: number;
 }
 
 export function talkOdds(kind: TalkKind, p: Player, out: DRPlayerOut | undefined, score: number, ctx: TalkCtx = {}): TalkOdds {
@@ -531,6 +533,7 @@ export function talkOdds(kind: TalkKind, p: Player, out: DRPlayerOut | undefined
       gain = 5; loss = 2;
       break;
   }
+  if (kind !== 'einsatz') chance += ctx.manager ?? 0;
   chance = clamp(chance, 0.05, 1);
   const hint = !needed ? 'kaum nötig' : chance >= 0.65 ? 'kommt vermutlich an' : chance >= 0.4 ? 'offen' : 'riskant';
   return { chance, gain, loss, hint, needed };

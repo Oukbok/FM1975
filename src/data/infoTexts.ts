@@ -346,6 +346,41 @@ export const INFO_TEXTS = {
     text: 'Alle Nationen spielen in den Länderspielfenstern und bei WM/EM. Aufgebote entstehen aus den Spielern der Spielwelt; abgestellte Spieler fehlen dir in dieser Zeit und kommen weniger frisch zurück. Länderspiele und ein starkes Turnier steigern den Marktwert.',
     wiki: 'national-teams',
   },
+  privatleben: {
+    title: 'Privatleben',
+    text: 'Dein Leben neben dem Verein: Energie, Laune, Gesundheit und Kontakte, Familie und Vermögen. Es wirkt auf den Verein – erschöpft trainierst und redest du schlechter, Kontakte bringen Sponsorengeld und Vertrauen des Vorstands, Kinder können Spieler oder dein Nachfolger werden.',
+    wiki: 'private-life',
+  },
+  privatwirkung: {
+    title: 'Wirkung auf den Verein',
+    text: 'Trainingslehre (bis +4 %) und Energie (unter 30: −3 %) verändern die Lernwirkung aller Trainingsbausteine. Menschenführung, Energie und Laune verschieben die Erfolgsaussicht in Spielergesprächen. Jeden Monat können Kontakte Geld, Vertrauen oder Ansehen bringen.',
+    wiki: 'private-life',
+  },
+  privatfamilie: {
+    title: 'Partner und Familie',
+    text: 'Die Beziehung wächst mit gemeinsamer Zeit und sinkt, wenn du nur im Büro bist. Unter 22 droht eine Krise. Mit Kinderwunsch und guter Beziehung kommt Nachwuchs. Eine Scheidung kostet die Hälfte des Vermögens.',
+    wiki: 'private-life',
+  },
+  privatnachfolge: {
+    title: 'Nachfolge',
+    text: 'Ab 18 kann ein Kind den Verein übernehmen. Du spielst dann mit ihm oder ihr weiter: eigenes Privatleben, neue Familie, die nächste Generation. Eignung hängt von Führungsstärke, Studium und Bindung ab und bestimmt das Startansehen.',
+    wiki: 'private-life',
+  },
+  privatwoche: {
+    title: 'Wochenplan',
+    text: 'Verteile Prioritäten (0–5) auf Erholung, Partner, Familie, Hobby, Kontakte und Weiterbildung. Die Freizeit-Einheiten der Woche werden danach aufgeteilt und jeden Montag ausgewertet. Englische Wochen lassen wenig Zeit, die Pausen viel.',
+    wiki: 'private-life',
+  },
+  privatbildung: {
+    title: 'Weiterbildung',
+    text: 'Einheiten für Weiterbildung bringen Fortschritt im gewählten Fach (Stufe 0–20). Jede Stufe dauert länger als die vorige. Trainingslehre wirkt aufs Training, Menschenführung auf Gespräche, Medien auf dein Ansehen, Wirtschaft auf Geldanlage und Sponsorenkontakte.',
+    wiki: 'private-life',
+  },
+  privatvermoegen: {
+    title: 'Privatvermögen',
+    text: 'Gehalt minus Lebenshaltung, Wohnen, Auto, Hobby und Kinder. Sparbuch mit dem Zins der Zeit, Aktienfonds mit Boom und Crash wie an den echten Börsen. Beträge in der Währung der Zeit.',
+    wiki: 'private-life',
+  },
   supercup: {
     title: 'Supercup & Ligapokal',
     text: 'Vor dem Ligastart spielen Meister und Pokalsieger der Vorsaison um den Supercup – je nach Land und Zeit in einem Spiel, mit Hin- und Rückspiel oder als kleines Turnier (Ligapokal 1997–2007 mit sechs Mannschaften). Wer das Double holte, trifft auf den Pokalfinalisten bzw. den Vizemeister. Es gibt Antrittsgeld und eine Siegprämie, der Titel zählt im Trophäenschrank.',

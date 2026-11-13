@@ -44,6 +44,10 @@ function page({ screen, g, rerender, setScreen, onWatch, onReplayDraw, onOpenEdi
     case 'marketing': return <P.MarketingView g={g} onChange={ch} />;
     case 'calendar': return <P.CalendarView g={g} onChange={ch} onGoto={setScreen} />;
     case 'karriere': return <P.CareerView g={g} onChange={ch} />;
+    case 'privat': return <P.PrivatView g={g} onChange={ch} onGoto={setScreen} />;
+    case 'familie': return <P.FamilieView g={g} onChange={ch} />;
+    case 'freizeit': return <P.FreizeitView g={g} onChange={ch} />;
+    case 'vermoegen': return <P.VermoegenView g={g} onChange={ch} />;
     case 'briefing': return <P.BriefingView g={g} onGoto={setScreen} onOpen={onPause} />;
     case 'cup': return <P.CupView g={g} onWatch={onWatch} onReplayDraw={(ri) => onReplayDraw('cup', ri)} />;
     case 'ruhmeshalle': return <P.ErfolgeView g={g} />;

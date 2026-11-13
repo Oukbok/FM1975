@@ -142,7 +142,7 @@ body { background: var(--paper-page); }
 .hd-logo-year { color: var(--navy-ink); font-weight: 700; }
 .hd-logo-div { background: var(--navy-ink-2); opacity: 0.6; }
 .hd-logo-title span:first-child, .hd-logo-title span:last-child { color: var(--navy-ink); }
-.hd-nav-item { color: var(--navy-ink-2); font-size: 18px; font-weight: 700; padding: 0 9px; letter-spacing: 0.6px; isolation: isolate; }
+.hd-nav-item { color: var(--navy-ink-2); font-size: 17px; font-weight: 700; padding: 0 7px; letter-spacing: 0.5px; isolation: isolate; } /* 10 Hauptpunkte inkl. Privat */
 .hd-nav-item:hover { color: var(--navy-ink); }
 .hd-nav-item.active { color: var(--accent-ink); }
 .hd-nav-item.active::before {
@@ -303,13 +303,13 @@ body { background: var(--paper-page); }
 .mx-head .mx-sub { opacity: 0.75; }
 .mx-head .modal-close { color: var(--navy-ink); }
 
-/* Kopfleiste auf kleineren Bildschirmen: alle 9 Menüpunkte sichtbar */
+/* Kopfleiste auf kleineren Bildschirmen: alle 10 Menüpunkte sichtbar */
 @media (max-width: 1750px) {
-  .hd-nav-item { font-size: 16.5px; padding: 0 7px; }
+  .hd-nav-item { font-size: 15.5px; padding: 0 6px; letter-spacing: 0.4px; }
   .hd-logo { padding-right: 34px; }
 }
 @media (max-width: 1450px) {
-  .hd-nav-item { font-size: 15.5px; padding: 0 7px; letter-spacing: 0.4px; }
+  .hd-nav-item { font-size: 14px; padding: 0 5px; letter-spacing: 0.3px; }
   .hd-logo { padding-right: 26px; }
 }
 

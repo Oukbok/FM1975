@@ -1534,8 +1534,8 @@ Auch bei dir fragen KI-Vereine an, ob sie einen deiner jungen Ergänzungsspieler
     body: `## Deine Managerkarriere
 Du führst **einen Verein über die Jahrzehnte** – als Manager mit der Gesamtverantwortung. Den Cheftrainer und das übrige Trainerteam stellst du selbst ein (Training › Trainerteam); sie sind Angestellte des Vereins. Jobangebote anderer Vereine, Vereinswechsel und eine Entlassung gibt es nicht – auch nicht im Karriere-Modus (dort wählst du zu Beginn nur einen von drei kleineren Vereinen).
 
-### Zentrale › Karriere
-Drei Reiter, alles aus dem echten Spielverlauf (\`game/managerLog.ts\`, \`game/managerView.ts\`):
+### Privat › Karriere
+Drei Reiter (früher unter Zentrale; Privat siehe Wiki „Privatleben, Junger Manager und Generationen“), alles aus dem echten Spielverlauf (\`game/managerLog.ts\`, \`game/managerView.ts\`):
 - **Bilanz:** alle Pflichtspiele seit deinem Amtsantritt (Liga, Landespokal, Europapokal; die laufende Saison zählt mit), Punkte je Spiel nach 3-Punkte-Wertung, Bilanz je Wettbewerb, dein **Ansehen je Saison** als Verlauf, Titel und Rekorde (beste Platzierung, beste Ligasaison, meiste Tore, beste Abwehr, längste Sieges- und Ungeschlagen-Serie) sowie **Meilensteine** (1., 50., 100., 250., 500. … Pflichtspiel).
 - **Saisons:** jede Saison mit Liga, Platz, Saisonziel (erreicht/verfehlt), Ligabilanz, erreichter Pokal- und Europapokalrunde, Titeln und Ansehen; dazu deine höchsten Siege und Niederlagen.
 - **Trainer & Spieler:** **Deine Trainer** – alle Cheftrainer unter dir mit Amtszeit, Ligabilanz, Punkten je Spiel und wie ihre Zeit endete (entlassen, Vertragsende, abgeworben, Ruhestand); die **Transferbilanz** deiner Amtszeit (Einnahmen, Ausgaben, teuerste Zu- und Abgänge – Beträge über das Preisniveau 1975 vergleichbar); die Spieler mit den meisten Einsätzen und Toren unter dir und deine **Eigengewächse**.
@@ -2486,6 +2486,40 @@ Grundlage ist das **Marktgehalt** (Stärke, Liga-Niveau), dazu Karrierephase, Ge
 
 ## Die KI hält sich an dieselben Regeln
 KI-Vereine kaufen nur Spieler, die auch wollen. Deshalb sammeln sich die Stars bei den großen Vereinen: Die angesehensten Vereine holen im Sommer gezielt die Leistungsträger kleinerer Vereine, die Kleinen kassieren Ablöse und kaufen günstiger nach. Spieler ohne Vertrag suchen sich ihren Wunschverein unter den Vereinen, die sie brauchen; ehrgeizige Leistungsträger kleiner Vereine verlängern seltener. Von außen (Ausland, untere Ligen) bekommt ein Verein nur Spieler, die zu seinem Ansehen passen.`,
+  },
+  {
+    id: 'private-life',
+    category: 'core',
+    title: 'Privatleben, Junger Manager und Generationen',
+    keywords: ['privat', 'privatleben', 'familie', 'partner', 'hochzeit', 'kinder', 'sohn', 'tochter', 'nachfolger', 'generation', 'erbe', 'junger manager', 'hintergrundgeschichte', 'freizeit', 'hobby', 'golf', 'energie', 'urlaub', 'weiterbildung', 'vermögen', 'haus', 'villa', 'auto', 'aktien', 'sparbuch', 'spende'],
+    body: `## Wo
+Der Menüpunkt **Privat** bündelt dein Leben neben dem Verein: **Privat** (Übersicht), **Karriere** (Managerbilanz, früher unter Zentrale), **Familie**, **Freizeit** und **Vermögen**. Das Privatleben lässt sich beim Spielstart abschalten (Spielmodus › Einstellungen).
+
+## Junger Manager
+Dritter Spielmodus beim Start: Du beginnst mit 20 – und wählst eine von vier Geschichten, warum: **Das Erbe** (der Vater führte den Verein, die Mutter lebt noch; Kontakte, etwas Geld, Medien), **Das Knie** (Sportinvalide mit Taktikblick; Trainingslehre, Menschenführung), **Das Wunderkind** (jüngster Absolvent der Trainerschule; viel Trainingslehre, wenig Ansehen) oder **Der Notnagel** (Jugendtrainer, der einspringt; Menschenführung). Die Geschichte kommt als Brief in den Posteingang und steht im Lebenslauf. Junge Manager starten mit wenig Ansehen – und haben ein ganzes Leben vor sich.
+
+## Freizeit: der Wochenplan
+Jede Woche hast du **6 Freizeit-Einheiten**, eine weniger je weiterem Pflichtspiel, **4 mehr in Sommer- und Winterpause**. Du verteilst Prioritäten (0–5) auf Erholung, Partner, Familie, Hobby, Kontakte und Weiterbildung; montags wird ausgewertet.
+- **Energie** sinkt mit jedem Spiel (Niederlagen etwas mehr) und steigt mit Erholung, Hobby und Urlaub. **Unter 30** wirkt das Training 3 % schwächer und Spielergespräche gelingen seltener.
+- **Laune** folgt Ergebnissen, Hobby und den Menschen um dich. **Gesundheit** sinkt ab 50 langsam; Bewegung (Laufen, Rennrad, Fitness) hält dagegen.
+- **Hobbys** kosten unterschiedlich viel und bringen Erholung – Golf, Segeln und Tennis zusätzlich **Kontakte**. Fitnessstudio ab 1982, Rennrad ab 1985.
+- **Urlaub** (nur in den Pausen): Kurzurlaub eine Woche, Familienurlaub zwei Wochen mit Bonus für Beziehung und Kinder.
+- **Weiterbildung** (Stufe 0–20, jede Stufe dauert länger): **Trainingslehre** bis +4 % Lernwirkung im Training, **Menschenführung** bis +8 Prozentpunkte Erfolgsaussicht in Spielergesprächen, **Medien** für Ansehen, **Wirtschaft** für Geldanlage und Sponsorenkontakte.
+
+## Kontakte
+Jeden Monat können Kontakte etwas bringen (Chance ≈ Kontakte ÷ 5 %): einen **Zuschuss eines Unternehmers** für den Verein, einen **Abend mit dem Vorstand** (Vertrauen +4) oder **gute Presse** (Ansehen).
+
+## Partner und Familie
+Ohne Partner lernst du eher jemanden kennen, wenn du Zeit für Partner und Hobby einplanst (Nachricht mit Wahl). Die **Beziehung** wächst mit gemeinsamer Zeit und sinkt, wenn nur der Verein zählt; unter 22 kommt es zur Krise (Urlaub, Reden oder Trennung). Ab 65 kannst du einen **Antrag** machen. Mit **Kinderwunsch** und guter Beziehung kommt Nachwuchs (bei gleichgeschlechtlichen Paaren oder später im Leben über Adoption). Eine **Scheidung** kostet die Hälfte des Vermögens.
+
+## Kinder
+Jedes Kind hat verdeckte Anlagen: **Fußballlust** (wächst mit gemeinsamer Zeit und Siegen), **Talent** (ab 6 als Einschätzung der Jugendtrainer), **Führungsstärke** und **Bindung** zu dir. Mit 6 entscheidest du über den Nachmittag (Verein, Musikschule, selbst wählen); **Söhne können ab 7 in deine eigene Jugend** – sie werden echte Jugendspieler mit deinem Nachnamen und entwickeln sich wie alle anderen (Frauenfußball läuft außerhalb des Spiels). Mit 16 fällt die Entscheidung: Profikarriere, Sportmanagement-Studium oder eigener Weg.
+
+## Nachfolge und Generationen
+Ab 18 kann ein Kind **den Verein übernehmen** (Privat › Familie). Dann **wechselst du die Person**: Du spielst mit deinem Sohn oder deiner Tochter weiter – eigenes Alter, eigenes Privatleben, eigene Familie. Die Hälfte des Vermögens geht mit, das Haus bleibt bei den Eltern; spielt das Kind noch, endet seine Spielerkarriere. Das Startansehen hängt von Führungsstärke und Studium ab. Ab 68 fragt der Vorstand nach dem Ruhestand, spätestens mit 78 übergibst du – ohne Kind an einen Nachfolger von außen, mit dem eine neue Familie beginnt. Der **Stammbaum** zeigt alle Generationen und wer wann Manager war.
+
+## Vermögen
+Dein **Gehalt** richtet sich nach Größe des Vereins und deinem Ruf (Fußballgehälter wachsen mit der Zeit stark). **Kosten** für Leben, Wohnen, Auto, Hobby und Kinder folgen den Verbraucherpreisen; Häuser wurden 2010–2022 zusätzlich teurer. Geld liegt auf dem **Konto**, dem **Sparbuch** (Zins der Zeit) oder im **Aktienfonds** (Boom und Crash wie an den großen Börsen, z. B. 1987, 2000–2002, 2008). Vom Mietwohnung bis zum Landsitz und vom Kleinwagen bis zum Sportwagen; ein schöneres Zuhause hebt Laune und Beziehung. Mit **Verein unterstützen** gibst du Privatgeld als Zuschuss an den Verein – der Vorstand rechnet es dir an.`,
   },
   {
     id: 'supercup',

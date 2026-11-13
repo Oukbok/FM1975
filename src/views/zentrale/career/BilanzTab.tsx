@@ -1,5 +1,5 @@
 // =============================================================================
-// Zentrale › Karriere, Reiter „Bilanz“ im Akten-/Scrapbook-Look (Wunsch Pascal,
+// Privat › Karriere, Reiter „Bilanz“ im Akten-/Scrapbook-Look (Wunsch Pascal,
 // Vorschlag 2): aufgeschlagene Ringmappe `bilder/akte/bilanz.webp` (2400×1174),
 // darauf Zettel aus `bilder/akte/bilanz/` – alle Lagen in % der Mappe (CSS
 // `28-career-binder.css`, `.bnd-*`). Links Managerbilanz + Blatt „Je Wettbewerb“,

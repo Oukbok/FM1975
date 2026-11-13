@@ -23,8 +23,10 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   | 'budget'
   // Übersicht Ligensystem (Statistiken › Ligensystem)
   | 'ligensystem'
-  // Managerkarriere (Zentrale › Karriere)
-  | 'karriere';
+  // Managerkarriere (Privat › Karriere)
+  | 'karriere'
+  // Privatleben (Privat): Übersicht, Familie, Freizeit, Vermögen
+  | 'privat' | 'familie' | 'freizeit' | 'vermoegen';
 
 // =============================================================================
 // MENÜ-STRUKTUR (zweistufige Top-Navigation)
@@ -45,7 +47,14 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'presse', label: 'Presse', icon: 'presse' },
     { screen: 'calendar', label: 'Kalender', icon: 'kalender' },
     { screen: 'briefing', label: 'Briefing', icon: 'briefing' },
+  ] },
+  // Privatleben (Wunsch Pascal #47): dein Leben neben dem Verein, Karriere, Familie über Generationen.
+  { key: 'privat', label: 'Privat', icon: 'home', dash: 'privat', subs: [
+    { screen: 'privat', label: 'Privat', icon: 'home' },
     { screen: 'karriere', label: 'Karriere', icon: 'whistle' },
+    { screen: 'familie', label: 'Familie', icon: 'fans' },
+    { screen: 'freizeit', label: 'Freizeit', icon: 'music' },
+    { screen: 'vermoegen', label: 'Vermögen', icon: 'finances' },
   ] },
   { key: 'spieltag', label: 'Spieltag', icon: 'lineup', dash: 'cat-spieltag', subs: [
     { screen: 'cat-spieltag', label: 'Spieltag', icon: 'lineup' },

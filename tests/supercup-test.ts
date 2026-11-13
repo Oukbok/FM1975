@@ -7,6 +7,7 @@ import { processDay, type DayUi } from '../src/game/day';
 import { findMatch, findOwnMatchDue, quickSimOwnMatch } from '../src/game/ownMatch';
 import { setupSuperCups, superCupState, superCupResultOf, type ScSeeds } from '../src/game/superCupGame';
 import { titlesOf } from '../src/game/clubRecords';
+import { startNextSeason } from '../src/game/season';
 import { trophiesOf } from '../src/game/trophyCabinet';
 
 let fails = 0;
@@ -74,7 +75,12 @@ for (const [year, name, n] of [[2012, 'Supercup', 1], [1999, 'Ligapokal', 3], [1
 if (process.argv[2] === 'voll') {
   // Echter Saisonwechsel 2009/10 → 2010/11: Teilnehmer aus Tabelle und Pokal.
   const g = make(2009);
-  runUntil(g, '2010-08-31');
+  // Saisonwechsel direkt (ohne die Saison auszuspielen): Tabelle/Pokal liefern Teilnehmer.
+  g.calendar.currentDate = '2010-06-30';
+  startNextSeason(g);
+  const first = g.fixtures.reduce((a, m) => (m.date < a ? m.date : a), '9999');
+  ok(superCupState(g).events.some((e) => e.matches.every((m) => m.date < first)), `Saisonwechsel: Termine vor dem Ligastart ${first}`);
+  runUntil(g, first);
   const st = superCupState(g);
   const ev = st.events.find((e) => e.key === 'home');
   ok(ev && ev.season === '2010/11' && ev.winner, `Saisonwechsel: ${ev?.name} ${ev?.season}, ${ev?.teams.map((id) => g.clubs[id]?.name).join(' – ')}, Sieger ${ev?.winner}`);

@@ -1,4 +1,5 @@
 import { recordSeasonBriefing } from './seasonBriefing';
+import { startPrivateLife } from './private/privateStart';
 import { recordBudgetPlan } from './budgetPlan';
 import { migratePositionSkills } from './positionsGame';
 import { ensureStadiumBlocks } from './stadiumGame';
@@ -279,5 +280,8 @@ export function createNewGame(opts: NewGameOptions): Game {
   ensureCountryPools(g0.world, g0.euroClubs, Number(g0.season.slice(0, 4))); // Unterbau der Auslandsligen (engine/world.ts)
   ensureWorldPool(g0); // Weltspieler aller Vereine ohne vollen Kader (Spielerpool)
   bindHonours(g0, true); // Vereinsauszeichnungen: leere Wirkungstabelle für das neue Spiel
+  // Privatleben: Familie, Freizeit, Vermögen; Junger Manager mit Hintergrundgeschichte (game/private/).
+  if (opts.privateLife === false) g0.privateOff = true;
+  else startPrivateLife(g0);
   return g0;
 }

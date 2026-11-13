@@ -58,7 +58,7 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
       league: 'tier1', clubId: topClub(), startYear: 1975, country: 'ger', fullCountries: [], fullAll: true,
       firstName: '', lastName: '', birthDay: 1, birthMonth: 1, birthYear: 1940,
       nationality: 'Deutschland', nationality2: '', avatarSeed: Math.random().toString(36).slice(2, 8),
-      favoriteClubId: '', avoidClubId: '', style: 'balanced', background: 'ex_pro',
+      favoriteClubId: '', avoidClubId: '', style: 'balanced', background: 'ex_pro', story: 'erbe', privateLife: true,
     };
   });
   const set = (p: Partial<NewGameDraft>) => setD((x) => ({ ...x, ...p }));
@@ -90,7 +90,9 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
   const chooseMode = (m: NewGameDraft['mode']) => {
     if (m === d.mode) return;
     if (m === 'career' && offers[0]) set({ mode: m, clubId: offers[0].club.id, league: offers[0].league });
-    else set({ mode: m });
+    // Junger Manager: 20 Jahre alt, Werdegang Newcomer, Privatleben an (Hintergrundgeschichte in StepMode).
+    else if (m === 'young') set({ mode: m, birthYear: d.startYear - 20, birthMonth: Math.min(d.birthMonth, 6), background: 'rookie', privateLife: true });
+    else set({ mode: m, ...(d.mode === 'young' ? { birthYear: d.startYear - 40 } : {}) });
   };
 
   // --- Spielwelt für „Willkommen“ vorab erzeugen (≈ 0,5 s) ---
@@ -107,7 +109,7 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
   }, [step, optsKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const ready = built?.key === optsKey ? built.game : null;
 
-  const canNext = step === 0 ? nameOk(d) : step === 3 ? !!d.clubId && (d.mode === 'manager' || offers.some((o) => o.club.id === d.clubId)) : true;
+  const canNext = step === 0 ? nameOk(d) : step === 3 ? !!d.clubId && (d.mode !== 'career' || offers.some((o) => o.club.id === d.clubId)) : true;
   const last = step === STEPS.length - 1;
   const start = () => {
     if (!ready) return;
