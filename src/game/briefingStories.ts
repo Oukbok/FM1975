@@ -26,18 +26,24 @@ export function storiesOf(b: SeasonBriefing): Story[] {
 }
 
 /** „Neu im Spiel“: Änderungen der Saison; reicht das nicht, Unterschiede zu heute und Epochen-Tipps. */
+/** Kartentext: ganzer Text (nicht nur der erste Satz), höchstens ~170 Zeichen. */
+const clip = (t: string, max = 170) => (t.length > max ? t.slice(0, max - 1).replace(/\s+\S*$/, '') + ' …' : t);
+
 export function cardsOf(b: SeasonBriefing): Card[] {
   const words = (t: string) => new Set(t.toLowerCase().replace(/[^a-zäöüß0-9]+/g, ' ').split(' ').filter((w) => w.length > 3));
   const told = storiesOf(b).map((s) => words(s.title));
   const fresh = (title: string) => { const w = words(title); return !told.some((t) => [...w].some((x) => t.has(x))); };
-  const out: Card[] = b.inGame.filter((c) => fresh(c.title)).slice(0, 3).map((c) => ({ icon: c.icon, title: c.title, label: CHANGE_KIND_META[c.kind].label, text: shorten(c.text, 110), photo: briefingKindPhoto(c.kind) }));
+  const out: Card[] = b.inGame.filter((c) => fresh(c.title)).slice(0, 3).map((c) => ({ icon: c.icon, title: c.title, label: CHANGE_KIND_META[c.kind].label, text: clip(c.text), photo: briefingKindPhoto(c.kind) }));
   for (const d of [...b.started, ...b.ended]) {
     if (out.length >= 3) break;
-    out.push({ icon: topicMeta(d.topic).icon, title: d.title, label: b.started.includes(d) ? 'Neu anders als heute' : 'Ab jetzt wie heute', text: shorten(b.started.includes(d) ? d.then : d.today, 110), photo: null });
+    // Unterschiede zu heute: Titel beschreibt den alten Zustand („Keine Gelbsperren“) – beim Ende als „Vorbei: …“.
+    const start = b.started.includes(d);
+    out.push({ icon: topicMeta(d.topic).icon, title: start ? d.title : `Vorbei: ${d.title}`, label: start ? 'Anders als heute' : 'Ab jetzt wie heute',
+      text: clip(start ? d.then : `Ab dieser Saison wie heute: ${d.today}`), photo: null });
   }
   for (const t of eraTipsFor(b.startYear)) {
     if (out.length >= 3) break;
-    out.push({ icon: topicMeta(t.topic).icon, title: t.title, label: 'Typisch für die Zeit', text: shorten(t.inGame, 110), photo: null });
+    out.push({ icon: topicMeta(t.topic).icon, title: t.title, label: 'Typisch für die Zeit', text: clip(t.inGame), photo: null });
   }
   return out;
 }

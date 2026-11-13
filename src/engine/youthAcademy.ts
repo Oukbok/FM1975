@@ -85,7 +85,7 @@ export const YOUTH_BLOCKS: YouthBlockDef[] = [
     { name: 'Ehrenamtliche Übungsleiter', desc: 'Väter und Vereinsmitglieder gegen Aufwandsentschädigung.', from: 1975, build: 0, months: 0, upkeep: 1000 },
     { name: 'Lizenztrainer, nebenberuflich', desc: 'B-/A-Lizenz, Training nach Feierabend.', from: 1975, build: 0, months: 1, upkeep: 3000 },
     { name: 'Hauptamtliche Jugendtrainer', desc: 'Vollzeitkräfte mit A-Lizenz – 1975 noch die Ausnahme.', from: 1975, build: 0, months: 3, upkeep: 8000 },
-    { name: 'Fußballlehrer im Nachwuchs', desc: 'Fußballlehrer leiten die älteren Jahrgänge.', from: 1985, build: 0, months: 4, upkeep: 10000 },
+    { name: 'Fußballlehrer als Jugendtrainer', desc: 'Trainer mit der höchsten Lizenz (Fußballlehrer) übernehmen die A- und B-Jugend.', from: 1985, build: 0, months: 4, upkeep: 10000 },
     { name: 'Ausbilder-Team (NLZ-Standard)', desc: 'Fußballlehrer, Torwart-, Athletik- und Individualtrainer mit gemeinsamer Spielidee.', from: 2001, build: 0, months: 6, upkeep: 12000 },
   ] },
   { key: 'pitches', name: 'Plätze & Halle', icon: 'facilities', what: 'Trainingszeit und -qualität, mehr Talente je Jahrgang.', levels: [

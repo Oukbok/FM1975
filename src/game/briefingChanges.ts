@@ -13,7 +13,7 @@
 // Saisonstart; die Vorschau am 2. Januar (game/ruleNotice.ts) bleibt.
 // =============================================================================
 import { CAMP_DESTINATIONS, CAMP_REGION_LABEL, CAMP_REGION_ORDER, CampDestination, CampRegion } from '../data/campDestinations';
-import { GROUNDS_BY_KEY, GROUNDS_MODULES, licenseMin } from '../data/groundsCatalog';
+import { GROUNDS_BY_KEY, GROUNDS_MODULES, licenseMin, type GroundsLevelDef } from '../data/groundsCatalog';
 import { indoorPhase } from '../data/indoorHistory';
 import { LEAGUE_REFORMS } from '../data/reforms';
 import { TIMELINE, TimelineType, seasonStartYear } from '../data/timeline';
@@ -139,12 +139,43 @@ function indoorChanges(y: number, first: boolean): GameChange[] {
   return [{ kind: 'halle', icon: 'trophy', source: 'Hallenfußball', where: 'Statistiken › Halle', ...t }];
 }
 
+/** Was eine neue Stufe eines Nachwuchs-Bausteins bringt (Klartext für „Neu im Spiel“). */
+const YOUTH_GAIN: Record<string, string> = {
+  coaches: 'Bringt besser ausgebildete Talente – wirkt über Jahre.',
+  pitches: 'Bringt mehr Trainingszeit und mehr Talente je Jahrgang.',
+  boarding: 'Bringt Talente von außerhalb in deine Akademie.',
+  school: 'Bringt mehr Trainingszeit, und Eltern vertrauen dem Verein eher.',
+  science: 'Bringt kleine Vorteile in der Entwicklung deiner Talente.',
+  scouting: 'Du entdeckst mehr Talente, wenn um sie geworben wird.',
+  reserve: 'Bringt Spielpraxis für Eigengewächse bis 23.',
+};
+const sentence = (t: string) => (/[.!?…]$/.test(t.trim()) ? t.trim() : `${t.trim()}.`);
+
+/** Wirkungen einer Stufe des Stadionumfelds in Worten. */
+function groundsGain(lv: GroundsLevelDef): string {
+  const p: string[] = [];
+  if (lv.lux) p.push(`${lv.lux.toLocaleString('de-DE')} Lux für Abend- und TV-Spiele`);
+  if (lv.spaces) p.push(`${lv.spaces.toLocaleString('de-DE')} Parkplätze`);
+  if (lv.transitCap) p.push(`schnellere Anreise für ${lv.transitCap.toLocaleString('de-DE')} Fans`);
+  if (lv.att) p.push('mehr Zuschauer');
+  if (lv.vipMult) p.push('mehr und zahlungskräftigere Gäste in Business-Seats und Logen');
+  if ((lv.perHead ?? 0) > 0 || (lv.perMatch ?? 0) > 0) p.push('mehr Umsatz am Spieltag');
+  if ((lv.monthly ?? 0) > 0) p.push('Einnahmen auch ohne Spiel');
+  if ((lv.mood ?? 0) > 0) p.push('bessere Stimmung bei den Fans');
+  if (lv.risk) p.push('weniger Ausschreitungen und Strafen');
+  if ((lv.mood ?? 0) < 0) p.push('aber etwas Unmut in der Kurve');
+  if (lv.brand) p.push('eine stärkere Marke');
+  return p.length ? `Bringt ${p.slice(0, 3).join(', ')}.` : '';
+}
+
 function youthChanges(y: number, tier: number): GameChange[] {
   const out: GameChange[] = [];
   for (const b of YOUTH_BLOCKS) {
     for (const lv of b.levels) {
       if (lv.from !== y || y <= 1975) continue;
-      out.push({ kind: 'jugend', icon: 'youth', source: 'Nachwuchs', where: 'Jugend › Akademie', title: `${b.name}: ${lv.name}`, text: lv.desc });
+      const title = /^[a-zäöü]/.test(lv.name) ? `${b.name} ${lv.name}` : lv.name;
+      out.push({ kind: 'jugend', icon: 'youth', source: 'Nachwuchs', where: 'Jugend › Akademie', title,
+        text: `Neu in der Akademie: ${sentence(lv.desc)} ${YOUTH_GAIN[b.key] ?? ''}`.trim() });
     }
   }
   const duty = nlzDutyYear(tier);
@@ -165,7 +196,10 @@ function groundsChanges(y: number, tier: number): GameChange[] {
       for (const lv of m.levels) {
         if (lv.unlock !== y) continue;
         const short = lv.name.toLowerCase().includes(m.name.split(/[ &]/)[0].toLowerCase());
-        out.push({ kind: 'umfeld', icon: 'facilities', source: 'Stadionumfeld', where: 'Verein › Vereinsgelände', title: short ? lv.name : `${m.name}: ${lv.name}`, text: `Neu im Stadionumfeld (${m.name}) – ab jetzt baubar.` });
+        const firstLv = lv === m.levels[0];
+        const gain = groundsGain(lv);
+        out.push({ kind: 'umfeld', icon: 'facilities', source: 'Stadionumfeld', where: 'Verein › Vereinsgelände', title: short ? lv.name : `${m.name}: ${lv.name}`,
+          text: firstLv ? `Neu auf dem Vereinsgelände baubar: ${m.desc}` : `Neue Ausbaustufe für ${m.name} auf dem Vereinsgelände. ${gain || m.desc}` });
       }
     }
   }
@@ -177,7 +211,7 @@ function groundsChanges(y: number, tier: number): GameChange[] {
     out.push({
       kind: 'umfeld', icon: 'facilities', source: 'Lizenzauflage', where: 'Verein › Vereinsgelände',
       title: `Lizenz: ${mod.name} „${mod.levels[now - 1]?.name ?? `Stufe ${now}`}“`,
-      text: 'Die Lizenz verlangt diese Mindeststufe. Fehlt sie, droht eine Geldstrafe je Saison.',
+      text: 'Für die Lizenz musst du mindestens diese Stufe haben (Verein › Vereinsgelände). Sonst droht jede Saison eine Geldstrafe.',
     });
   }
   return out;
@@ -199,12 +233,12 @@ function sponsorChanges(y: number, tier: number, first: boolean): GameChange[] {
   const add = (title: string, text: string, major = false) => out.push({ kind: 'geld', icon: 'sponsoring', source: 'Sponsoring', where, title, text, major });
   if (first) { add('Werbeflächen 1975: Brust, Ausrüster, Banden, Regionalpartner', 'Trikotwerbung ist seit 1973 erlaubt. Angebote liegen unter Finanzen › Sponsoring – annehmen oder nachverhandeln.'); return out; }
   for (const sl of SPONSOR_SLOTS) {
-    if (sl.unlock === y && sl.count(y, tier) > 0) add(`Neue Werbefläche: ${sl.name}`, sl.desc);
-    if (sl.until != null && sl.until + 1 === y) add(`Vorbei: ${sl.name}`, 'Die Fläche wird nicht mehr vermarktet.');
+    if (sl.unlock === y && sl.count(y, tier) > 0) add(`Neue Werbefläche: ${sl.name}`, `Ab jetzt verkaufst du eine weitere Werbefläche (Finanzen › Sponsoring): ${sentence(sl.desc)}`);
+    if (sl.until != null && sl.until + 1 === y) add(`Vorbei: ${sl.name}`, 'Diese Werbefläche gibt es nicht mehr – laufende Verträge enden, neue Angebote kommen nicht.');
   }
   if (y === LED_YEAR) add('LED-Banden', 'Wechselnde Motive auf LED-Banden: Die Bandenwerbung ist rund 20 % mehr wert.');
   if (y === 2000) add('Keine Spirituosen mehr auf dem Trikot', 'Werbung für Hochprozentiges verschwindet von der Spielkleidung (Banden bleiben).');
-  if (y === 2006) add('Werbeverbot für private Wettanbieter', 'Wettpartner müssen von Trikot und Bande – laufende Verträge enden (wie bwin 2006).', true);
+  if (y === 2006) add('Werbeverbot für private Wettanbieter', 'Wettpartner müssen von Trikot und Bande – laufende Verträge enden vorzeitig.', true);
   if (y === 2007) add('Tabakwerbung verboten', 'Die EU-Tabakwerberichtlinie beendet Tabak-Sponsoring auch auf den Banden.');
   if (y === 2011) add('Sponsoren vom Golf', 'Staatsfonds und Fluggesellschaften aus Katar und den Emiraten suchen Partner – oft mit Pflicht-Trainingslager im Winter.');
   if (y === 2012) add('Wettanbieter wieder erlaubt', 'Mit dem Glücksspieländerungsstaatsvertrag dürfen lizenzierte Wettanbieter wieder werben.');
