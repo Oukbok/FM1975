@@ -14,6 +14,7 @@ import { vColor } from '../../ui/format';
 import { InfoTip } from '../../ui/InfoTip';
 import { PLAYER_TYPE } from './shared';
 import { nationName } from './profileData';
+import { worldClubInfo } from '../../game/worldPool';
 
 /** Fuß: starker Fuß zuerst, z. B. „Rechts · links schwach“ (Fußstärken gibt es nicht als Zahl). */
 export function footText(p: Player): { strong: string; weak: string } {
@@ -36,9 +37,10 @@ export default function ProfileHead({ p, club, tag, best, sel, onSelect }: {
   return (
     <div className="pp2-id">
       <div className="pp2-title">
-        <h2 className="pp2-name"><span className="pp2-no">{p.shirtNumber}.</span>{p.fullName}</h2>
+        <h2 className="pp2-name">{p.shirtNumber ? <span className="pp2-no">{p.shirtNumber}.</span> : null}{p.fullName}</h2>
         <div className="pp2-club">
-          {club ? <ClubLink id={club.id}>{club.name}</ClubLink> : 'Vereinslos'}
+          {club ? <ClubLink id={club.id}>{club.name}</ClubLink>
+            : p.clubId && g && worldClubInfo(g, p.clubId) ? <ClubLink id={p.clubId}>{worldClubInfo(g, p.clubId)!.name}</ClubLink> : 'Vereinslos'}
           {(p.isYouth || tag) && <span className="pp-tag">{tag ?? 'Jugend'}</span>}
           {p.transferListed && <span className="pp-tag">Transferliste</span>}
           {p.loan && <span className="pp-tag">Leihe</span>}

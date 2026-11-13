@@ -299,6 +299,14 @@ function buildWorldPlayer(g: Game, w: WP): Player {
 // Ansicht für das Vereinsprofil (Wunsch Pascal: jeder Verein mit Kader): Weltspieler als
 // Spielerobjekte, nur gelesen – gespeichert wird erst bei einer Verhandlung (materialize).
 const previewCache = new WeakMap<Game, { key: string; map: Map<string, Player> }>();
+/** Vorschau-Spieler (Profil ohne vollen Datensatz) für einen Weltspieler; volle Spieler direkt. */
+export function worldPreviewPlayer(g: Game, id: string): Player | undefined {
+  if (g.players[id]) return g.players[id];
+  const w = g.worldPool?.p.find((x) => x[W.id] === id);
+  if (!w) return undefined;
+  return worldSquadPreview(g, w[W.club], !!w[W.youth]).find((p) => p.id === id);
+}
+
 export function worldSquadPreview(g: Game, clubId: string, youth = false): Player[] {
   const pool = g.worldPool;
   if (!pool) return [];

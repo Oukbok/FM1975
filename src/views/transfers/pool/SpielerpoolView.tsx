@@ -14,7 +14,7 @@ import { estimate, knowCtx, knowledge, knowWord, poolRows, type Estimate, type P
 import { activeJob, jobProgress, jobTerms, queueScouting, queuedJob, scoutReport, scoutSlots } from '../../../game/scoutingGame';
 import type { Game } from '../../../game/state';
 import { activeTalks, startTalk, talkBlocker, type TransferTalk } from '../../../game/transferTalks';
-import { countryName, materializeWorldPlayer } from '../../../game/worldPool';
+import { countryName, materializeWorldPlayer, worldPreviewPlayer } from '../../../game/worldPool';
 import { POSITION_GROUPS, type Player } from '../../../types';
 import { DashBox, DashPage, Empty, KV } from '../../../ui/DashPage';
 import { fmtPrice } from '../../../ui/format';
@@ -101,7 +101,7 @@ export function SpielerpoolView({ g, onChange = () => {} }: { g: Game; onChange?
     onChange();
   };
   const talk: TransferTalk | undefined = talkId ? (g.transferTalks ?? []).find((t) => t.id === talkId) : undefined;
-  const prof = profile ? g.players[profile] ?? g.youthPlayers?.[profile] : undefined;
+  const prof = profile ? g.players[profile] ?? g.youthPlayers?.[profile] ?? worldPreviewPlayer(g, profile) : undefined;
 
   return (
     <SubTabsPage active={preset} onSelect={(p) => { setPreset(p); setSort(null); setPage(0); }}
@@ -124,7 +124,7 @@ export function SpielerpoolView({ g, onChange = () => {} }: { g: Game; onChange?
               <tbody>
                 {shown.map(({ r, e }, i) => (
                   <tr key={r.id} data-pid={r.id} className={`clickable ${ms.has(r.id) ? 'msel' : sel === r.id ? 'sel' : ''}`}
-                    onMouseDown={ms.onMouseDown} onClick={(ev) => { if (!ms.click(ev, r.id)) setSel(r.id); }} onDoubleClick={() => r.player && setProfile(r.id)}>
+                    onMouseDown={ms.onMouseDown} onClick={(ev) => { if (!ms.click(ev, r.id)) setSel(r.id); }} onDoubleClick={() => setProfile(r.id)}>
                     <td className="num muted">{pg * PAGE + i + 1}</td>
                     <td className="nowrap rl-name"><span className="tm-name"><Face r={r} /><span>{r.name}</span></span></td>
                     <td className="nowrap"><ClubCell g={g} id={r.clubId} world={clubs} /></td>
@@ -208,7 +208,7 @@ function Steckbrief({ g, it, onScout, onTalk, onProfile }: { g: Game; it: Item; 
           {job ? 'Scout unterwegs' : waiting ? 'Vorgemerkt' : `${full ? 'Vormerken' : 'Scouten'} · ${terms.days} T. · ${fmtPrice(terms.cost)}`}
         </button>
         <button className="dchip" disabled={!!block} title={block ?? undefined} onClick={() => onTalk(r)}>{running ? 'Fortsetzen' : 'Verhandeln'}</button>
-        {r.player && <button className="dchip" onClick={() => onProfile(r.id)}>Profil</button>}
+        <button className="dchip" onClick={() => onProfile(r.id)}>Profil</button>
       </div>
       {block && <div className="dnote mt8">{block}</div>}
     </div>

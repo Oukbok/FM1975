@@ -17,7 +17,7 @@ import { startTalk, talkBlocker } from '../../game/transferTalks';
 import { estimateFor } from '../../game/playerPool';
 import { activeJob, cancelScouting, queueScouting, queuedJob, scoutSlots, scoutingOf } from '../../game/scoutingGame';
 import { PIDSEL_CLEAR } from '../../ui/useMultiSelect';
-import { materializeWorldPlayer, worldClubs, worldEntry, WP_FIELD } from '../../game/worldPool';
+import { materializeWorldPlayer, worldClubs, worldEntry, worldPreviewPlayer, WP_FIELD } from '../../game/worldPool';
 import { TransferTalkModal } from '../../views/transfers/TransferTalkModal';
 import type { Game } from '../../game/state';
 import type { Player } from '../../types';
@@ -169,6 +169,7 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
   } else if (wp && menu) {
     const wc = worldClubs(g).get(wp[WP_FIELD.club]);
     const name = `${wp[WP_FIELD.first]} ${wp[WP_FIELD.last]}`;
+    items.push({ label: 'Spielerprofil', icon: 'squad', run: () => { setProfile({ pid: wp[WP_FIELD.id], tab: 'overview', z: nextProfileZ() }); close(); } });
     scoutItem(wp[WP_FIELD.id], name, wc?.name ?? '', wc?.country !== 'Deutschland', !!wp[WP_FIELD.youth]);
     items.push({
       label: 'Transferverhandlung', icon: 'negotiations', sep: true,
@@ -204,10 +205,10 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
   const left = menu ? Math.min(menu.x, window.innerWidth - W - 8) : 0;
   const top = menu ? Math.min(menu.y, window.innerHeight - H - 8) : 0;
 
-  const pp = profile ? playerOf(g, profile.pid) : undefined;
+  const pp = profile ? playerOf(g, profile.pid) ?? worldPreviewPlayer(g, profile.pid) : undefined;
   // Profil-API für <PlayerLink> (jeder Spielername öffnet das Profil)
   const profileApi = useMemo<PlayerProfileApi>(() => ({
-    open: (pid, tab = 'general') => { if (playerOf(g, pid)) { setMenu(null); setProfile({ pid, tab, z: nextProfileZ() }); } },
+    open: (pid, tab = 'general') => { if (playerOf(g, pid) || worldPreviewPlayer(g, pid)) { setMenu(null); setProfile({ pid, tab, z: nextProfileZ() }); } },
     canOpen: (pid) => !!pid && !!playerOf(g, pid),
   }), [g]);
   const talk = talkId ? (g.transferTalks ?? []).find((t) => t.id === talkId) : undefined;
