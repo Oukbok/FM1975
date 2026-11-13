@@ -1,7 +1,7 @@
 /* =============================================================================
    ZENTRALE › BRIEFING (Archiv im Zeitungslayout, Mockup Pascal) – views/zentrale/BriefingView.tsx
    ============================================================================= */
-.dpage.bf2 { grid-template-columns: 16.5% 33.5% 37.5%; /* zusammen wie 3 × 30 % der übrigen Seiten */ grid-template-rows: minmax(0, 1.62fr) minmax(0, 1fr); }
+.dpage.bf2 { grid-template-columns: 17% 34.5% 38.5%; /* zusammen 90 % wie 3 × 30 % der übrigen Seiten (gleiche Außenkanten) */ grid-template-rows: minmax(0, 1.62fr) minmax(0, 1fr); }
 .bf2 .dbox-body { overflow: hidden; }
 
 /* Archiv */
