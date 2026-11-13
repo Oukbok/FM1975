@@ -48,14 +48,6 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'calendar', label: 'Kalender', icon: 'kalender' },
     { screen: 'briefing', label: 'Briefing', icon: 'briefing' },
   ] },
-  // Privatleben (Wunsch Pascal #47): dein Leben neben dem Verein, Karriere, Familie über Generationen.
-  { key: 'privat', label: 'Privat', icon: 'home', dash: 'privat', subs: [
-    { screen: 'privat', label: 'Privat', icon: 'home' },
-    { screen: 'karriere', label: 'Karriere', icon: 'whistle' },
-    { screen: 'familie', label: 'Familie', icon: 'fans' },
-    { screen: 'freizeit', label: 'Freizeit', icon: 'music' },
-    { screen: 'vermoegen', label: 'Vermögen', icon: 'finances' },
-  ] },
   { key: 'spieltag', label: 'Spieltag', icon: 'lineup', dash: 'cat-spieltag', subs: [
     { screen: 'cat-spieltag', label: 'Spieltag', icon: 'lineup' },
     { screen: 'lineup', label: 'Aufstellung', icon: 'lineup' },
@@ -117,6 +109,14 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'nationalteams', label: 'Nationalteams', icon: 'international' },
     { screen: 'halle', label: 'Halle', icon: 'trophy' },
     { screen: 'auszeichnungen', label: 'Auszeichnungen', icon: 'trophy' },
+  ] },
+  // Privatleben (Wunsch Pascal #47): dein Leben neben dem Verein, Karriere, Familie über Generationen.
+  { key: 'privat', label: 'Privat', icon: 'home', dash: 'privat', subs: [
+    { screen: 'privat', label: 'Privat', icon: 'home' },
+    { screen: 'karriere', label: 'Karriere', icon: 'whistle' },
+    { screen: 'familie', label: 'Familie', icon: 'fans' },
+    { screen: 'freizeit', label: 'Freizeit', icon: 'music' },
+    { screen: 'vermoegen', label: 'Vermögen', icon: 'finances' },
   ] },
 ];
 
