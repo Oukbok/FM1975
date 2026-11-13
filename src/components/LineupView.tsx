@@ -296,8 +296,12 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
           hover={hover} dragId={drag?.active ? dragPid : null} full={drag?.full ?? null} onDown={(e, p) => onPlayerDown(e, p, 'list')} />
       </DashBox>
 
-      <DashBox title="Aufstellung" info="formation" icon="lineup" rows={2} right={
-        <span className="lu-tools">
+      <DashBox title="Aufstellung" info="formation" icon="lineup" rows={2} className="lu-box" right={getFormation(t.formation).label}>
+        <PitchBoard formation={formation} map={map} players={g.players} captainId={t.captainId} bench={benchPlayers} benchSize={benchSize}
+          hover={hover} preview={drag?.preview ?? null} dragSlot={drag?.src.kind === 'slot' ? drag.src.slotId : null} snap={snap}
+          reserveCount={reserveRows.length} full={drag?.full ?? null} note={note} lifted={!!ghost} dragPid={dragPid}
+          onSlotDown={onSlotDown} onPlayerDown={(e, p) => onPlayerDown(e, p, 'bench')}
+          side={<>{/* Bedienelemente neben dem Feld (Wunsch Pascal: Boxkopf bleibt ruhig) */}
           <Select className="lu-formation" value={t.formation} onChange={(v) => changeFormation(v)} title="Formation">
             <optgroup label={`Typisch für ${decadeOf(year) === 1970 ? "" : "die "}${decadeLabel(decadeOf(year))}`}>{typical.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}</optgroup>
             <optgroup label="Weitere Systeme">{others.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}</optgroup>
@@ -309,12 +313,7 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
           {t.slotLayout && Object.keys(t.slotLayout).length > 0 && <button className="dchip" onClick={resetLayout} title="Eigene Positionen verwerfen, zurück zur Formation">Standard</button>}
           <button className="dchip" onClick={() => setSaved(true)} title="Aufstellungen speichern und laden">Speichern / Laden</button>
           <button className="dchip" onClick={doAuto}>Auto</button>
-        </span>
-      }>
-        <PitchBoard formation={formation} map={map} players={g.players} captainId={t.captainId} bench={benchPlayers} benchSize={benchSize}
-          hover={hover} preview={drag?.preview ?? null} dragSlot={drag?.src.kind === 'slot' ? drag.src.slotId : null} snap={snap}
-          reserveCount={reserveRows.length} full={drag?.full ?? null} note={note} lifted={!!ghost} dragPid={dragPid}
-          onSlotDown={onSlotDown} onPlayerDown={(e, p) => onPlayerDown(e, p, 'bench')} />
+          </>} />
       </DashBox>
 
       <DashBox title="Taktik" icon="tactics" right={getFormation(t.formation).label}>

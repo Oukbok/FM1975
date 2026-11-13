@@ -1,10 +1,10 @@
 // =============================================================================
-// Aufstellung: Spielfeld mit Spielerkarten (Mitte) und Ersatzbank darunter.
+// Aufstellung: Spielfeld mit Spielerkarten (Mitte) und Ersatzbank darunter (ab 6 Plätzen zwei Reihen).
 // Ziehen läuft über Zeiger-Ereignisse (LineupView); hier nur die Darstellung
 // mit Ablagezielen (data-lu-drop) und der Vorschau beim Verschieben.
 // =============================================================================
 import FaceThumb from '../FaceThumb';
-import type { PointerEvent as RPE } from 'react';
+import type { PointerEvent as RPE, ReactNode } from 'react';
 import type { Player, Position } from '../../types';
 import type { Formation } from '../../data/formations';
 import { PITCH_GRID, type GridPoint } from '../../data/pitchGrid';
@@ -33,12 +33,17 @@ function Card({ p, pos, captain, small }: { p: Player; pos: Position; captain: b
   );
 }
 
-export default function PitchBoard({ formation, map, players, captainId, bench, benchSize, hover, preview, dragSlot, snap, reserveCount, full, note, lifted, dragPid, onSlotDown, onPlayerDown }: {
+/** Ersatzbank: ab 6 Plätzen zwei Reihen (Wunsch Pascal), damit die Karten lesbar bleiben. */
+export const benchCols = (n: number) => (n > 5 ? Math.ceil(n / 2) : Math.max(1, n));
+
+export default function PitchBoard({ formation, map, players, captainId, bench, benchSize, hover, preview, dragSlot, snap, reserveCount, full, note, lifted, dragPid, onSlotDown, onPlayerDown, side }: {
   formation: Formation; map: Record<string, string>; players: Record<string, Player>; captainId: string | null;
   bench: Player[]; benchSize: number; hover: string | null; preview: SlotPreview | null; dragSlot: string | null; snap: boolean;
   /** Spieler in der Reserve; full = Ziel beim Ziehen ist voll; note = Hinweis nach abgewiesener Ablage; lifted = gezogene Karte hängt am Zeiger. */
   reserveCount: number; full: 'bench' | 'xi' | null; note: string | null; lifted: boolean; dragPid: string | null;
   onSlotDown: (e: RPE, slotId: string) => void; onPlayerDown: (e: RPE, p: Player) => void;
+  /** Spalte rechts neben dem Feld (Formation, Einrasten, Speichern …) */
+  side?: ReactNode;
 }) {
   const showGrid = !!dragSlot && snap;
   return (
@@ -68,6 +73,7 @@ export default function PitchBoard({ formation, map, players, captainId, bench, 
             })}
           </div>
         </div>
+        {side && <div className="lu-side">{side}</div>}
       </div>
       <div className="lu-bench-wrap">
         <div className={`lu-bench lu-dropzone ${hover?.startsWith('bench:') ? (full === 'bench' ? 'full' : 'over') : ''}`} data-lu-drop="bench:end">
@@ -76,7 +82,7 @@ export default function PitchBoard({ formation, map, players, captainId, bench, 
             {(full === 'bench' && hover?.startsWith('bench:')) ? <span className="lu-zone-note neg">Bank voll – auf einen Bankspieler ziehen</span>
               : note ? <span className="lu-zone-note neg" role="status">{note}</span> : null}
           </div>
-          <div className="lu-bench-row" style={{ gridTemplateColumns: `repeat(${benchSize}, minmax(0, 1fr))` }}>
+          <div className="lu-bench-row" style={{ gridTemplateColumns: `repeat(${benchCols(benchSize)}, minmax(0, 1fr))` }}>
             {Array.from({ length: benchSize }, (_, i) => {
               const p = bench[i];
               return (

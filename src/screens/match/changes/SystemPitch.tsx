@@ -10,6 +10,7 @@ import FaceThumb from '../../../components/FaceThumb';
 import { positionSuitability, suitabilityColor } from '../../../engine/positions';
 import type { Position } from '../../../types';
 import PitchSVG from '../../../components/lineup/PitchSVG';
+import { benchCols } from '../../../components/lineup/PitchBoard';
 import { FORMATIONS } from '../../../data/formations';
 import type { MatchSim } from '../../../engine/match/sim';
 import { onPitch } from '../../../engine/match/state';
@@ -46,7 +47,7 @@ export function SystemPitch({ sim, side, d, sel, drag, down, onPick, onFormation
       </div>
     );
   };
-  const benchSize = Math.max(benchList.length, 1);
+  const benchSize = benchCols(Math.max(benchList.length, 1));
 
   return (
     <div className="tm-sys">
