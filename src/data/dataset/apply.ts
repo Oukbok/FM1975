@@ -19,6 +19,7 @@ import { ANCHORS, REVENUE_MIX, resetEconomyCache } from '../../engine/economy';
 import { HISTORY } from '../history';
 import { TRANSFER_RECORD_ANCHORS } from '../transferRecords';
 import { LEGENDS } from '../legends';
+import { applyFormationEras } from '../formations';
 import { setWorldOverride } from '../world/index';
 import { POOL_TOWNS } from '../poolTowns';
 import { Dataset } from './schema';
@@ -142,6 +143,9 @@ export function applyDataset(ds: Dataset | null): void {
     && typeof l.firstName === 'string' && typeof l.lastName === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(l.birth ?? '')
     && typeof l.pos === 'string' && Number.isFinite(l.potential) && l.hidden && typeof l.hidden === 'object');
   LEGENDS.splice(0, LEGENDS.length, ...JSON.parse(JSON.stringify(legends)));
+
+  // Aufstellungen je Epoche (Editor „Aufstellungen“): fehlt = eingebaut.
+  applyFormationEras(d.formationEras && typeof d.formationEras === 'object' ? d.formationEras : base.formationEras);
 
   // Weltdaten: nur ein eigener Datensatz überschreibt (eingebaut = Länderdateien im Code).
   // Deutschland: geänderte Namen/Kürzel/Städte/Farben gelten auch für die Startvereine.

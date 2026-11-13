@@ -6,7 +6,7 @@
 import type { Player, Position } from '../types';
 import { ALL_POSITIONS } from '../types';
 import type { Game } from './state';
-import { getFormation } from '../data/formations';
+import { getFormation, liberoOut } from '../data/formations';
 import { rawSuitability } from '../engine/positions';
 import {
   decayPositions, ensurePositionSkill, setTrainingPosition, skillOf, skillTier, TIER_DE, TIER_MIN,
@@ -56,6 +56,7 @@ export function aiPositionPlans(g: Game, today: string): number {
     for (const s of getFormation(club.tactics?.formation).slots) need.set(s.position, (need.get(s.position) ?? 0) + 1);
     let best: { p: Player; pos: Position; score: number } | null = null;
     for (const [pos, slots] of need) {
+      if (pos === 'LIB' && liberoOut(Number(today.slice(0, 4)))) continue; // kein Trainer bildet mehr Liberos aus
       const cover = squad.filter((p) => skillOf(p, pos) >= TIER_MIN.good).length;
       if (cover >= slots * 2) continue;
       for (const p of squad) {

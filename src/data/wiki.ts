@@ -1030,19 +1030,32 @@ Unter **Aufstellung › Aufstellung** stellst du deine Mannschaft – aufgebaut 
 - **Rechts:** Mentalität und Teamanweisungen im Überblick, Ø Stärke, Ø Eignung und **vertraute Positionen** (wie viele Spieler auf Stamm- oder Nebenposition stehen), darunter Kapitän, Standardschützen und **Hinweise** (Spieler außerhalb seiner Position, Verletzte/Gesperrte, müde Spieler, unausgewogene Formation, fehlender Ersatztorwart).
 
 ### Formationen
-Die Formation wählst du oben im Spielfeld:
+Die Formation wählst du oben im Spielfeld. Ganz oben stehen die **typischen Systeme der Zeit** (je Jahrzehnt), darunter **weitere Systeme**; ab 2000 folgen die Libero-Systeme unter **Aus der Mode**. Welche Systeme wann typisch sind, legt der Datensatz fest (Editor › Aufstellungen, je Aufstellung oder je Epoche – beide Ansichten hängen zusammen). Die KI-Trainer wählen bevorzugt typische Systeme ihrer Zeit.
 
-| Formation | Typ | Charakter |
-|-----------|-----|-----------|
-| 4-4-2 | klassisch | ausgewogen, kompakte Viererkette, zwei Spitzen |
-| 4-3-3 | offensiv | drei Angreifer, breite Flügel |
-| 3-5-2 | Mittelfeld | starkes Zentrum, laufstarke Außen |
-| 4-2-3-1 | modern | Doppelsechs, ein Zielspieler |
-| 5-3-2 | defensiv | Fünferkette, sicher gegen starke Gegner |
-| 3-4-3 | offensiv | mutig, viel Risiko |
-| Libero 1-4-3-2 | 70er/80er | freier Libero hinter der Viererkette |
-| Libero 1-3-4-2 | 70er/80er | Libero + Dreierkette, starkes Mittelfeld |
-| Libero 1-4-4-1 | 70er/80er | Libero, defensiv, ein Stürmer |
+| Formation | typisch | Charakter |
+|-----------|---------|-----------|
+| Libero 1-4-3-2 | 1975–89 | freier Libero hinter der Viererkette |
+| Libero 1-4-4-1 (Catenaccio) | 1975–79 | Libero, defensiv, ein Stürmer |
+| Libero 1-3-3-3 | 1975–79 | Libero, drei Manndecker, drei echte Stürmer |
+| 4-2-4 | 1975–79 | altes Angriffssystem, vier vorne |
+| Libero 1-3-4-2 | 80er/90er | Libero + Dreierkette, starkes Mittelfeld |
+| Libero 1-2-5-2 | 80er/90er | das System von 1990: zwei Manndecker, fünf im Mittelfeld |
+| 4-4-2 | 1975–2019 | ausgewogen, kompakte Viererkette, zwei Spitzen |
+| 4-4-2 Raute | 90er/2000er | Sechser, zwei Halbe, Zehner |
+| 4-4-1-1 | 90er/2000er | hängende Spitze hinter dem Stürmer |
+| 4-3-1-2 | 90er/2000er | Spielmacher hinter zwei Stürmern |
+| 3-5-2 | 90er–2010er | starkes Zentrum, laufstarke Außen |
+| 5-3-2 | 90er, 2010er | Fünferkette, sicher gegen starke Gegner |
+| 4-5-1 | 2000er | viel Kontrolle, eine Spitze |
+| 4-3-2-1 (Tannenbaum) | 2000er | zwei Zehner hinter einer Spitze |
+| 4-2-3-1 | ab 2000 | Doppelsechs, Spielmacher, ein Zielspieler |
+| 4-3-3 | 70er, ab 2010 | drei Angreifer, breite Flügel |
+| 4-1-4-1 | ab 2010 | ein Sechser, gut im Pressing |
+| 3-4-3 | ab 2010 | mutig, viel Risiko |
+| 3-4-2-1 | ab 2010 | Dreierkette, Schienenspieler, zwei Zehner |
+| 5-4-1 | ab 2010 | der Bus vor dem Tor |
+
+**Der Libero stirbt aus:** Ab der Saison 2000/01 spielt kein Verein mehr mit freiem Mann – kein Trainer (auch keine KI) wählt ein Libero-System, die Jugend bildet keine Liberos mehr aus, und die KI lässt niemanden mehr auf Libero umschulen. Bestehende Liberos spielen weiter, meist in der Innenverteidigung; lernen kann man die Position noch, nur nutzt sie keiner mehr.
 
 Beim Wechsel der Formation bleibt deine Startelf zusammen und wird bestmöglich auf die neuen Positionen verteilt; eigene Positionsänderungen werden dabei verworfen.
 

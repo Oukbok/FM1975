@@ -10,7 +10,7 @@
 import { useRef, useState, type PointerEvent as RPE } from 'react';
 import { createPortal } from 'react-dom';
 import type { Club, Player, Tactics } from '../types';
-import { FORMATIONS, getFormation } from '../data/formations';
+import { decadeLabel, decadeOf, FORMATIONS, getFormation, liberoOut, typicalFormations } from '../data/formations';
 import { positionSuitability } from '../engine/positions';
 import { autoFillLineup } from '../engine/lineupAI';
 import { promiseLineupPrefs } from '../game/seasonPromisesGame';
@@ -283,7 +283,11 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
   const ghost = drag?.active && dragPid && drag.target !== 'move' ? g.players[dragPid] : null;
   const ghostPos = drag?.src.kind === 'slot' ? formation.slots.find((s) => s.id === (drag.src as { slotId: string }).slotId)?.position : undefined;
   const prof = profile ? g.players[profile] : null;
-  const libero = FORMATIONS.filter((f) => f.libero), chain = FORMATIONS.filter((f) => !f.libero);
+  // Wunsch Pascal: zuerst die typischen Systeme der Zeit (Jahrzehnt, Datensatz `formationEras`).
+  const year = Number(g.calendar.currentDate.slice(0, 4));
+  const typical = typicalFormations(year);
+  const others = FORMATIONS.filter((f) => !typical.includes(f) && !(f.libero && liberoOut(year)));
+  const oldLib = liberoOut(year) ? FORMATIONS.filter((f) => f.libero) : [];
 
   return (
     <DashPage className={`lu-page ${drag ? 'lu-dragging' : ''} ${drag?.active ? 'lu-drag-live' : ''}`}>
@@ -295,8 +299,9 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
       <DashBox title="Aufstellung" info="formation" icon="lineup" rows={2} right={
         <span className="lu-tools">
           <Select className="lu-formation" value={t.formation} onChange={(v) => changeFormation(v)} title="Formation">
-            <optgroup label="Libero-Systeme">{libero.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}</optgroup>
-            <optgroup label="Ketten-Systeme">{chain.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}</optgroup>
+            <optgroup label={`Typisch für ${decadeOf(year) === 1970 ? "" : "die "}${decadeLabel(decadeOf(year))}`}>{typical.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}</optgroup>
+            <optgroup label="Weitere Systeme">{others.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}</optgroup>
+            {oldLib.length > 0 && <optgroup label="Aus der Mode (Libero)">{oldLib.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}</optgroup>}
           </Select>
           <label className="lu-check" title="Gezogene Spieler rasten auf feste Positionsfelder ein">
             <input type="checkbox" checked={snap} onChange={(e) => set({ snapToGrid: e.target.checked })} /> Fest einrasten<InfoTip k="festEinrasten" />

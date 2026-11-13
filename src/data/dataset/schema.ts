@@ -115,6 +115,12 @@ export interface Dataset {
    */
   legendsV2?: LegendDef[];
   /**
+   * Aufstellungen je Epoche (Wunsch Pascal): Formations-ID → Jahrzehnte, in denen das System
+   * typisch ist (1970 = 1975–79 … 2030 = ab 2030). Fehlt das Feld bzw. eine ID, gilt die
+   * eingebaute Zuordnung aus data/formations.ts.
+   */
+  formationEras?: Record<string, number[]>;
+  /**
    * Weltdaten (docs/specs/WELTDATEN_SPEC.md): je Land (Code, z. B. 'ger', 'eng') alle Vereine
    * und je Saison (Startjahr als Schlüssel) die Ligen, Pokalsieger, Europapokal-Teilnehmer.
    * Fehlt das Feld oder ein Land, gelten die eingebauten Daten. Deutschland: gleiche IDs wie

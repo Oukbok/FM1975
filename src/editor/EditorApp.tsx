@@ -11,6 +11,7 @@ import { FacilitiesSection, LeaguesSection, MarketingSection, StaffSection, Time
 import { EconomySection, GeneralSection, HistorySection, NamesSection } from './sections/People';
 import { CheckSection } from './sections/Check';
 import { LegendsSection } from './sections/Legends';
+import { FormationsSection } from './sections/Formations';
 import { WorldSection } from './sections/World';
 import { PoolSection } from './sections/Pool';
 import { GraphicsSection } from './sections/Graphics';
@@ -177,7 +178,7 @@ export default function EditorApp() {
   const body: Record<Sec, ReactNode> = {
     general: <GeneralSection {...p} />, clubs: <ClubsSection {...p} />, world: <WorldSection {...p} />, pool: <PoolSection {...p} />, graphics: <GraphicsSection {...p} />, europe: <EuropeSection {...p} />,
     changes: <ChangesSection {...p} />, timeline: <TimelineSection {...p} />, leagues: <LeaguesSection {...p} />, facilities: <FacilitiesSection {...p} />,
-    staff: <StaffSection {...p} />, marketing: <MarketingSection {...p} />, names: <NamesSection {...p} />, legends: <LegendsSection {...p} />,
+    staff: <StaffSection {...p} />, marketing: <MarketingSection {...p} />, names: <NamesSection {...p} />, legends: <LegendsSection {...p} />, formations: <FormationsSection {...p} />,
     economy: <EconomySection {...p} />, history: <HistorySection {...p} />,
     check: <CheckSection ds={ds} issues={issues} onCheck={runCheck} onExport={doExport} onStore={doStore}
       onJump={(i) => { const cc = i.area.startsWith('Weltdaten ') ? i.area.slice(10) : undefined; goto(secOfArea(i.area), { id: i.find, text: i.find, cc, year: i.year, tab: i.year != null ? 'seasons' : undefined }); }} />,

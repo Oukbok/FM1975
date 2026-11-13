@@ -261,3 +261,12 @@ button.ed-issue:hover .ed-issue-go { color: var(--accent); }
 .ed-quick { display: flex; gap: 8px; align-items: center; flex: 1 1 560px; min-width: 0; }
 .ed-quick .ed-search-g { flex: 1; max-width: 460px; min-width: 260px; width: auto; }
 .ed-mini-w { width: auto; padding: 0 6px; font-size: 11px; }
+
+/* Aufstellungen je Epoche (sections/Formations.tsx) */
+.ed-form-eras td.ed-c, .ed-form-eras th:not(:first-child) { text-align: center; width: 84px; }
+.ed-form-eras td:first-child { max-width: 520px; }
+.ed-dim { color: var(--text-3); font-size: 12px; font-weight: 400; }
+.ed-era-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 12px; margin-top: 12px; overflow-y: auto; }
+.ed-era-col { display: flex; flex-direction: column; gap: 2px; }
+.ed-era-row { padding: 3px 0; }
+.ed-era-row.on { color: var(--text); }

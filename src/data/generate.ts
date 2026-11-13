@@ -1,3 +1,4 @@
+import { liberoOut, setFormationYear } from './formations';
 import { datasetCrest, datasetKits } from './dataset/apply';
 // =============================================================================
 // FOOTBALL MANAGER 1980 — Daten-Generator
@@ -308,7 +309,10 @@ function buildClubFromSeed(
   const playerIds: string[] = [];
   const strengthBase = 35 + Math.round(seed.reputation * 0.5);
   let shirt = 1;
-  SQUAD_TEMPLATE.forEach((pos, idx) => {
+  const noLib = liberoOut(Number(currentDate.slice(0, 4)));
+  setFormationYear(Number(currentDate.slice(0, 4)));
+  SQUAD_TEMPLATE.forEach((pos0, idx) => {
+    const pos = pos0 === 'LIB' && noLib ? 'IV' : pos0; // ab 2000 keine Liberos mehr (data/formations.ts)
     const p = makePlayer(seed.id, idx, pos, strengthBase, shirt++);
     players[p.id] = p;
     playerIds.push(p.id);

@@ -3,6 +3,7 @@
 // =============================================================================
 import { Dataset, validateDataset } from '../data/dataset/schema';
 import { LEGEND_TYPES } from '../data/legends/types';
+import { FORMATION_DECADES, FORMATIONS } from '../data/formations';
 import { ALL_POSITIONS } from '../types';
 
 /** `find` = ID/Text zum Hinspringen, `year` = Saison (Weltdaten). */
@@ -122,6 +123,14 @@ export function checkDataset(d: Dataset): Issue[] {
     }
   }
 
+  // Aufstellungen je Epoche: nur bekannte Formationen und Jahrzehnte.
+  for (const [id, ds2] of Object.entries(d.formationEras ?? {})) {
+    if (!FORMATIONS.some((f) => f.id === id)) warn('Aufstellungen', `Unbekannte Aufstellung „${id}“ – wird ignoriert.`, id);
+    if (!Array.isArray(ds2) || ds2.some((x) => !FORMATION_DECADES.includes(x))) err('Aufstellungen', `${id}: Jahrzehnte müssen aus ${FORMATION_DECADES.join(', ')} sein.`, id);
+  }
+  for (const dec of FORMATION_DECADES) {
+    if (d.formationEras && !Object.values(d.formationEras).some((v) => Array.isArray(v) && v.includes(dec))) warn('Aufstellungen', `${dec === 1970 ? '1975–79' : dec + 'er'}: keine typische Aufstellung – die KI wählt dann nur nach Kader.`);
+  }
   // Legenden (Ausnahmetalente): Pflichtfelder, Wertebereiche, Verein passend zum Land.
   const lids = new Set<string>(), lnames = new Set<string>();
   const west = new Set([...d.clubs.tier1, ...d.clubs.secondNord, ...d.clubs.secondSued].map((c) => c.id));

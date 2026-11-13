@@ -8,7 +8,7 @@
 // game/coachCarousel.ts. Alle Geldwerte sind Preisschilder in 1975-Basis.
 // =============================================================================
 import { Club, ClubCoach, CoachPhilosophy, CoachStyle, LeagueTableRow, Player, Position, Tactics, TacticStyle } from '../types';
-import { FORMATIONS, getFormation } from '../data/formations';
+import { decadeOf, FORMATIONS, getFormation, liberoOut } from '../data/formations';
 import { makeName, ORIGINS, pickOrigin } from '../data/origins';
 import { assignToFormation, buildAutoTactics } from './lineupAI';
 import { positionSuitability } from './positions';
@@ -56,7 +56,7 @@ export function formationsFor(style: CoachStyle, year: number): string[] {
   }
   if (year < 2000) {
     return { offensiv: ['4-3-3', '3-4-3'], ausgewogen: ['4-4-2', '3-5-2'],
-      defensiv: ['5-3-2', 'libero-1-4-4-1'], konter: ['3-5-2', '4-4-2'] }[style];
+      defensiv: ['5-3-2', 'libero-1-2-5-2'], konter: ['3-5-2', '4-4-2'] }[style];
   }
   return { offensiv: ['4-3-3', '4-2-3-1', '3-4-3'], ausgewogen: ['4-2-3-1', '4-4-2'],
     defensiv: ['5-3-2', '4-4-2'], konter: ['4-2-3-1', '4-4-2', '5-3-2'] }[style];
@@ -107,7 +107,10 @@ export function chooseFormation(pool: Player[], coach: ClubCoach, year: number):
   const prefs = new Set(formationsFor(coach.style, year));
   const byId = new Map(pool.map((p) => [p.id, p]));
   let best = getFormation(undefined).id, bestScore = -Infinity;
+  const decade = decadeOf(year);
   for (const f of FORMATIONS) {
+    // Libero ausgestorben: ab LIBERO_END wählt kein Trainer mehr ein Libero-System (Wunsch Pascal).
+    if (f.libero && liberoOut(year)) continue;
     const asg = assignToFormation(f, pool);
     let score = 0;
     for (const slot of f.slots) {
@@ -115,7 +118,10 @@ export function chooseFormation(pool: Player[], coach: ClubCoach, year: number):
       const p = pid ? byId.get(pid) : undefined;
       if (p) score += positionSuitability(p, slot.position);
     }
-    if (f.libero) score += year < 1985 ? 12 : year < 1992 ? 4 : year < 1998 ? -10 : -40;
+    if (f.libero) score += year < 1985 ? 12 : year < 1992 ? 4 : -10;
+    // Zeitgeist: typische Systeme der Epoche (Datensatz-Zuordnung `formationEras`).
+    if (f.eras.includes(decade)) score += 10;
+    else score -= 6;
     if (f.id === coach.preferredFormation) score += 16;
     else if (prefs.has(f.id)) score += 8;
     if (score > bestScore) { bestScore = score; best = f.id; }

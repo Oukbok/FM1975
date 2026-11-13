@@ -12,7 +12,7 @@
 // =============================================================================
 
 import type { Club, Player, Position, Tactics } from '../types';
-import { FORMATIONS, getFormation, Formation, DEFAULT_FORMATION_ID } from '../data/formations';
+import { FORMATIONS, getFormation, Formation, DEFAULT_FORMATION_ID, currentFormationYear, decadeOf, liberoOut } from '../data/formations';
 import { positionSuitability } from './positions';
 import { withLayout } from '../data/pitchGrid';
 
@@ -110,7 +110,9 @@ export function assignToFormation(
 export function pickBestFormation(pool: Player[]): Formation {
   let best = getFormation(DEFAULT_FORMATION_ID);
   let bestScore = -Infinity;
+  const year = currentFormationYear();
   for (const f of FORMATIONS) {
+    if (f.libero && liberoOut(year)) continue; // Libero ausgestorben (data/formations.ts)
     const asg = assignToFormation(f, pool);
     let score = 0;
     for (const slot of f.slots) {
@@ -120,7 +122,8 @@ export function pickBestFormation(pool: Player[]): Formation {
         score += positionSuitability(p, slot.position);
       }
     }
-    if (f.libero) score += 12; // Ära-Bonus (mehrere Slots → moderat)
+    if (f.libero) score += year < 1990 ? 12 : 0; // Ära-Bonus (mehrere Slots → moderat)
+    if (f.eras.includes(decadeOf(year))) score += 6; // typisch für die Zeit
     if (score > bestScore) { bestScore = score; best = f; }
   }
   return best;

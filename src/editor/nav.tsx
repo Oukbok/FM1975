@@ -5,7 +5,7 @@
 // =============================================================================
 import { createContext, useContext } from 'react';
 
-export type Sec = 'general' | 'graphics' | 'changes' | 'clubs' | 'world' | 'pool' | 'europe' | 'timeline' | 'leagues' | 'facilities' | 'staff' | 'marketing' | 'names' | 'legends' | 'economy' | 'history' | 'check';
+export type Sec = 'general' | 'graphics' | 'changes' | 'clubs' | 'world' | 'pool' | 'europe' | 'timeline' | 'leagues' | 'facilities' | 'staff' | 'marketing' | 'names' | 'legends' | 'formations' | 'economy' | 'history' | 'check';
 
 // Menü nach Kategorien, ohne Symbole (Wunsch Pascal).
 export const SECTIONS: { key: Sec; label: string; group: string; title: string }[] = [
@@ -20,6 +20,7 @@ export const SECTIONS: { key: Sec; label: string; group: string; title: string }
   { key: 'europe', label: 'Europa & Europapokal', group: 'Vereine & Wettbewerbe', title: 'Europa & Europapokal' },
   { key: 'names', label: 'Namen & Herkünfte', group: 'Spieler & Personal', title: 'Namen, Herkünfte & Ethnie' },
   { key: 'legends', label: 'Ausnahmetalente', group: 'Spieler & Personal', title: 'Ausnahmetalente der Fußballgeschichte' },
+  { key: 'formations', label: 'Aufstellungen', group: 'Spieler & Personal', title: 'Aufstellungen je Epoche' },
   { key: 'staff', label: 'Mitarbeiter', group: 'Spieler & Personal', title: 'Mitarbeiter-Rollen' },
   { key: 'economy', label: 'Wirtschaft', group: 'Verein & Wirtschaft', title: 'Wirtschaft' },
   { key: 'facilities', label: 'Einrichtungen', group: 'Verein & Wirtschaft', title: 'Einrichtungen' },
@@ -53,7 +54,7 @@ export function secOfArea(area: string): Sec {
   const m: Record<string, Sec> = {
     Allgemein: 'general', 'Amateur-Pool': 'pool', Vereine: 'clubs', 'DDR-Oberliga': 'clubs', 'DDR-Liga': 'clubs', Chronik: 'timeline',
     Ligareformen: 'leagues', Einrichtungen: 'facilities', Mitarbeiter: 'staff', Marketing: 'marketing', Wirtschaft: 'economy',
-    Namen: 'names', Legenden: 'legends',
+    Namen: 'names', Legenden: 'legends', Aufstellungen: 'formations',
   };
   return m[area] ?? 'general';
 }
