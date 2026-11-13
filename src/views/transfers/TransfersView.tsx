@@ -1,4 +1,3 @@
-import { useMultiSelect } from '../../ui/useMultiSelect';
 import ClubCrest from '../../components/ClubCrest';
 import { ClubLink } from '../../components/club/ClubLink';
 import PlayerModal from '../../components/PlayerModal';
@@ -22,6 +21,7 @@ import PosBadge from '../../components/PosBadge';
 import FaceThumb from '../../components/FaceThumb';
 import { NatFlag } from '../../components/competition/CountryFlag';
 import { CommittedBox, LoansBox, RunningTalksBox } from './NegotiationsOverview';
+import { MarketTable } from './MarketTable';
 
 // =============================================================================
 // TRANSFERS — Transfermarkt, Beobachtung (Scouting-Vorschläge), Verhandlungen
@@ -68,40 +68,6 @@ function TalkButton({ g, p, onTalk }: { g: Game; p: Player; onTalk: (id: string)
   return <button className={`dchip ${block ? '' : 'on'}`} title={block ?? undefined} disabled={!!block} onClick={() => onTalk(p.id)}>{running ? 'Fortsetzen' : 'Verhandeln'}</button>;
 }
 
-function MarketTable({ g, list, onOpen, action }: { g: Game; list: Player[]; onOpen: (id: string) => void; action?: (p: Player) => React.ReactNode }) {
-  const today = g.calendar.currentDate;
-  const ms = useMultiSelect(list.map((p) => p.id));
-  return (
-    <table className="dtable rl-players" {...ms.attr}>
-      <thead><tr>
-        <th>Name</th><th>Verein</th><th className="ctr w-s">Land</th><th className="ctr">Pos</th><th className="num">Alter</th><th className="num">Stärke</th>
-        <th>Potenzial<InfoTip k="potenzial" /></th><th className="num">Vertrag</th><th className="num">{wageHead()}</th><th className="num">Wert<InfoTip k="marktwert" /></th>{action && <th />}
-      </tr></thead>
-      <tbody>
-        {list.map((p) => {
-          const c = g.clubs[p.clubId];
-          return (
-            <tr key={p.id} data-pid={p.id} className={`clickable ${ms.has(p.id) ? 'msel' : ''}`}
-              onMouseDown={ms.onMouseDown} onClick={(e) => { if (!ms.click(e, p.id)) onOpen(p.id); }}>
-              <td className="nowrap rl-name"><span className="tm-name"><FaceThumb p={p} club={c} size={26} /><span>{p.fullName}</span></span></td>
-              <td className="nowrap"><ClubLink id={p.clubId}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>{c && <ClubCrest club={c} size={24} />}{c?.shortName}</span></ClubLink></td>
-              <td className="ctr"><NatFlag nat={p.nationality} /></td>
-              <td className="ctr"><PosBadge p={p} /></td>
-              <td className="num">{p.age}</td>
-              <td className="num"><b style={{ color: vColor(p.overall) }}>{p.overall}</b></td>
-              <td className="nowrap"><ScoutStars p={p} /></td>
-              <td className="num muted nowrap">{monthsUntil(today, p.contract.expiryDate)} M.</td>
-              <td className="num nowrap">{fmtWage(p.contract.weeklyWage, { unit: false })}</td>
-              <td className="num nowrap">{fmtPrice(p.contract.transferValue)}</td>
-              {action && <td className="num nowrap" onClick={(e) => e.stopPropagation()}>{action(p)}</td>}
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
-  );
-}
-
 function NeedsBox({ g }: { g: Game }) {
   return (
     <DashBox title="Kaderbedarf" info="kaderbedarf" icon="dashKader">
@@ -136,29 +102,23 @@ export function TransfersView({ g, onDone }: { g: Game; onDone: () => void }) {
   return (
     <SubTabsPage tabs={tabs} active={grp} onSelect={setGrp}>
     <DashPage>
-      <DashBox title={(search ? 'Suchergebnis' : 'Transfermarkt') + (grp === 'all' ? '' : ` · ${GROUP_DE[grp]}`)} span={2} rows={2} flush
+      <DashBox title={(search ? 'Suchergebnis' : 'Transfermarkt') + (grp === 'all' ? '' : ` · ${GROUP_DE[grp]}`)} span={3} rows={2} flush className="mk-box-wide"
         right={<span className="dbtnrow">
           <button className={`dchip ${search ? 'on' : ''}`} onClick={() => setSearchOpen(true)}>Spieler suchen{search ? ` · ${activeCount(search)}` : ''}</button>
           {search && <button className="dchip" onClick={() => setSearch(null)} title="Wieder alle abgabebereiten Spieler zeigen">Suche aufheben</button>}
           <button className="dchip" onClick={() => setBilanz(true)}>Transferbilanz</button>
         </span>}>
-        {list.length ? <MarketTable g={g} list={list} onOpen={open}
+        {list.length ? <MarketTable g={g} list={list} onOpen={open} filtered={!!search || grp !== 'all'}
+          extra={<>
+            <span className="mk-kv">Transferbudget <b>{fmtPrice(fin.transferBudget)}</b><InfoTip k="transferbudget" /></span>
+            <span className="mk-kv">Gehaltsspielraum <b>{fmtWage(Math.max(0, fin.wageBudget - wages), { unit: false })}</b> / {wageUnit()}<InfoTip k="gehaltsbudget" /></span>
+            <span className="mk-kv">Bedarf{needs(g).map((n) => <span key={n.k} className={`mk-need ${n.short ? 'short' : ''}`} title={`${GROUP_DE[n.k]}: ${n.n} von ${IDEAL[n.k]} · Ø ${n.avg || '–'}`}>{GROUP_DE[n.k]} {n.n}/{IDEAL[n.k]}</span>)}<InfoTip k="kaderbedarf" /></span>
+          </>}
           action={(p) => <TalkButton g={g} p={p} onTalk={talk.open} />} />
           : <Empty icon="transfers">{search ? 'Keine Spieler zu deiner Suche – lockere die Vorgaben.' : 'Derzeit keine Spieler auf dem Markt.'}</Empty>}
+        {talk.err && <div className="dnote mk-err">{talk.err}</div>}
       </DashBox>
 
-      <DashBox title="Budget" info="transferbudget" icon="finances">
-        <div className="dkpis">
-          <Kpi value={fmtPrice(fin.transferBudget)} label="Transferbudget" />
-          <Kpi value={fmtWage(Math.max(0, fin.wageBudget - wages), { unit: false })} label={`Gehaltsspielraum / ${wageUnit()}`} info="gehaltsbudget" />
-        </div>
-        <KV k="Kontostand" v={fmtDM(fin.balance)} />
-        <KV k={`Gehälter / Gehaltsbudget (${wageUnit()})`} v={`${fmtWage(wages, { unit: false })} / ${fmtWage(fin.wageBudget, { unit: false })}`} />
-        {talk.err && <div className="dnote mt8" style={{ color: 'var(--red)', fontWeight: 700 }}>{talk.err}</div>}
-        <div className="dnote mt8">Verhandle erst mit dem Verein über die Ablöse, dann mit dem Spieler über Gehalt und Versprechen. Die Forderung des Vereins kennst du nur ungefähr. Alle Spieler der Liga findest du in der Beobachtungsliste.</div>
-      </DashBox>
-
-      <NeedsBox g={g} />
       {modal}
       {talk.modal}
       {searchOpen && <PlayerSearchModal g={g} initial={search} onClose={() => setSearchOpen(false)} onSearch={(c) => { setSearch(c); setGrp('all'); setSearchOpen(false); }} />}
@@ -191,7 +151,7 @@ export function BeobachtungView({ g, onChange = () => {} }: { g: Game; onChange?
       tabs={(['need', 'contract', 'young'] as ScoutMode[]).map((m) => ({ id: m, label: label[m], count: lists[m].length }))}>
     <DashPage>
       <DashBox title={`Scouting-Vorschläge · ${label[mode]}`} info="beobachtung" span={2} rows={2} flush>
-        {list.length ? <MarketTable g={g} list={list} onOpen={open} action={(p) => <TalkButton g={g} p={p} onTalk={talk.open} />} /> : <Empty icon="watchlist">Keine passenden Spieler gefunden.</Empty>}
+        {list.length ? <MarketTable g={g} list={list} onOpen={open} compact filtered action={(p) => <TalkButton g={g} p={p} onTalk={talk.open} />} /> : <Empty icon="watchlist">Keine passenden Spieler gefunden.</Empty>}
       </DashBox>
 
       <DashBox title="Auffällig" icon="trophy">

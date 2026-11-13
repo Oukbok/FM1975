@@ -141,3 +141,17 @@ export const fmtCompactDM = (n: number) => {
 export function fmtDay(iso: string): string {
   return `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
 }
+
+/** Zwei Beträge als Spanne mit gemeinsamer Einheit: „780–880 Tsd. DM“ (gleich → ein Betrag). */
+function joinRange(a: string, b: string): string {
+  if (a === b) return a;
+  const ma = /^([\d.,−-]+)\s(.+)$/.exec(a), mb = /^([\d.,−-]+)\s(.+)$/.exec(b);
+  return ma && mb && ma[2] === mb[2] ? `${ma[1]}–${mb[1]} ${ma[2]}` : `${a} – ${b}`;
+}
+/** Preisschild-Spanne (1975-Basis), z. B. geschätzter Transferwert. */
+export const fmtPriceRange = (lo: number, hi: number) => joinRange(fmtPrice(lo), fmtPrice(hi));
+/** Gehalts-Spanne (Wochengehalt 1975-Basis) kompakt im gewählten Zeitraum, z. B. „150–190 Tsd. DM“. */
+export function fmtWageRange(loWeekly: number, hiWeekly: number): string {
+  const nom = (w: number) => formatMoneyShort(w * economyScale(_displayYear) * periodFactor(), _displayYear);
+  return joinRange(nom(loWeekly), nom(hiWeekly));
+}

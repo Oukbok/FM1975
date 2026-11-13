@@ -1,0 +1,66 @@
+/* Transfermarkt: Spielertabelle nach EA-Vorbild (views/transfers/MarketTable.tsx, Wunsch Pascal) */
+.mk { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.mk-bar { flex: none; display: flex; align-items: center; gap: 26px; padding: 10px 18px; border-bottom: 1px solid var(--border); font-size: 15px; color: var(--text-2); white-space: nowrap; }
+.mk-count b { font-family: var(--font-display); font-size: 24px; font-weight: 600; color: var(--text); margin-right: 6px; vertical-align: -2px; }
+.mk-only-wrap { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; }
+.mk-only-wrap .toggle { position: relative; flex: none; cursor: pointer; }
+.mk-extra { margin-left: auto; display: flex; align-items: center; gap: 22px; min-width: 0; }
+.mk-kv { display: inline-flex; align-items: center; gap: 6px; }
+.mk-kv b { color: var(--text); font-weight: 700; }
+.mk-need { padding: 1px 7px; border: 1px solid var(--border); border-radius: 4px; font-size: 13px; color: var(--text-2); }
+.mk-need.short { color: var(--neg); border-color: currentColor; }
+.mk-scroll { flex: 1 1 auto; min-height: 0; overflow: auto; }
+.mk-err { padding: 6px 18px; color: var(--red); font-weight: 700; }
+.mk-box-wide > .dbox-body.flush { display: flex; flex-direction: column; overflow: hidden; }
+
+.mk-table td { vertical-align: middle; }
+.mk-table th.mk-sort { cursor: pointer; user-select: none; }
+.mk-table th.mk-sort.on { color: var(--text); }
+.mk-sort-dir { margin-left: 4px; font-size: 9px; }
+.mk-c-check { width: 34px; }
+.mk-box { display: inline-block; width: 18px; height: 18px; border: 1.5px solid rgba(var(--ink-rgb), 0.4); border-radius: 3px; vertical-align: middle; position: relative; }
+.mk-box.on { background: var(--club-accent, var(--accent)); border-color: var(--club-accent, var(--accent)); }
+.mk-box.on::after { content: ''; position: absolute; left: 5px; top: 1px; width: 5px; height: 10px; border: solid var(--club-accent-ink, var(--bg)); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.mk-c-info { width: 64px; }
+.mk-tag { display: inline-block; margin-right: 4px; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-weight: 700; color: var(--pos); border: 1px solid currentColor; background: rgba(var(--ink-rgb), 0.03); }
+.mk-pname { font-weight: 600; }
+.mk-nat, .mk-club { display: inline-flex; align-items: center; gap: 8px; }
+.mk-nat > span:last-child { font-size: 14px; color: var(--text-2); }
+.mk-club > span { max-width: 190px; overflow: hidden; text-overflow: ellipsis; }
+.mk-pos { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px; line-height: 1.1; }
+.mk-role { font-size: 12px; color: var(--text-3); }
+.mk-money { font-variant-numeric: tabular-nums; font-size: 15px; }
+
+/* Sterne: Vektor, je Stern in Vierteln gefüllt */
+.mk-stars { display: inline-flex; align-items: center; outline: none; cursor: default; }
+.mk-stars:focus-visible { box-shadow: var(--focus-ring); border-radius: 3px; }
+.mk-stars svg { display: block; overflow: visible; }
+.mk-star-bg { fill: var(--star-empty); }
+.mk-star-est { fill: var(--star-est); }
+.mk-star-sure { fill: var(--star-sure); }
+.mk-star-line { fill: none; stroke: var(--star-line); stroke-width: 1.1; stroke-linejoin: round; }
+.mk-tip-note { margin-top: 4px; max-width: 300px; white-space: normal; color: var(--text-2); font-size: 13px; line-height: 1.35; }
+
+/* Empfehlung: Kreis mit Note + Text */
+.mk-rec { display: inline-flex; align-items: center; gap: 8px; max-width: 240px; }
+.mk-rec-c { flex: none; width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--text-4); display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--text); }
+.mk-rec-t { overflow: hidden; text-overflow: ellipsis; font-size: 14px; color: var(--text-2); }
+.mk-rec.t5 .mk-rec-c { border-color: var(--st-5); }
+.mk-rec.t4 .mk-rec-c { border-color: var(--st-4); }
+.mk-rec.t3 .mk-rec-c { border-color: var(--st-3); }
+.mk-rec.t2 .mk-rec-c { border-color: var(--st-2); }
+.mk-rec.t1 .mk-rec-c { border-color: var(--st-1); }
+.mk-rec.t0 .mk-rec-c { color: var(--text-3); }
+
+/* Kenntnisse: senkrechter Balken, füllt sich von unten, rot → grün */
+.mk-know { position: relative; display: inline-block; width: 10px; height: 28px; border-radius: 3px; background: rgba(var(--ink-rgb), 0.08); border: 1px solid rgba(var(--ink-rgb), 0.18); overflow: hidden; vertical-align: middle; outline: none; }
+.mk-know:focus-visible { box-shadow: var(--focus-ring); }
+.mk-know-fill { position: absolute; left: 0; right: 0; bottom: 0; }
+.mk-know-fill.lv1 { background: var(--st-1); }
+.mk-know-fill.lv2 { background: var(--st-2); }
+.mk-know-fill.lv3 { background: var(--st-3); }
+.mk-know-fill.lv4 { background: var(--st-4); }
+.mk-know-fill.lv5 { background: var(--st-5); }
+
+.mk.compact .mk-extra { display: none; }
+.mk.compact .mk-rec { max-width: none; }

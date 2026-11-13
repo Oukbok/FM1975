@@ -2346,8 +2346,11 @@ Die Chronik markiert diese Ereignisse als **fiktive Zukunft**, z. B. halbautomat
     id: 'transfer-pool',
     category: 'squad',
     title: 'Spielerpool, Bekanntheit & Scouting',
-    keywords: ['spielerpool', 'weltspieler', 'scouting', 'scout', 'bekanntheit', 'schätzung', 'ausland', 'amateure', 'jugend', 'bericht', 'mehrfachauswahl', 'strg', 'umschalt', 'warteschlange', 'vormerken'],
-    body: `## Spielerpool
+    keywords: ['spielerpool', 'transfermarkt', 'sterne', 'empfehlung', 'kenntnisse', 'weltspieler', 'scouting', 'scout', 'bekanntheit', 'schätzung', 'ausland', 'amateure', 'jugend', 'bericht', 'mehrfachauswahl', 'strg', 'umschalt', 'warteschlange', 'vormerken'],
+    body: `## Transfermarkt-Tabelle
+Im **Transfermarkt** und in der **Beobachtung** zeigt jede Zeile, was dein Stab über den Spieler weiß: **Fähigkeit** und **Potenzial** als Sterne – **gelb** ist sicher, **weiß** zeigt, wie weit die Einschätzung noch reichen kann (Viertelsterne; fahr über die Sterne für die genaue Spanne). **Transferwert** und **Gehalt** stehen als Spanne, die mit wachsenden **Kenntnissen** enger wird. Kenntnisse siehst du als Balken, der sich von unten füllt und von Rot nach Grün wechselt. Die **Empfehlung** vergleicht den geschätzten Spieler mit deinen Spielern im selben Mannschaftsteil (1 = Leistungsträger … 4 = keine Verstärkung; ohne genug Kenntnisse: Scouting erforderlich). **Info** zeigt Besonderheiten (Frei = Vertrag endet in höchstens 6 Monaten, Vtr = in höchstens 12, Liste = Transferliste, Nat = Nationalspieler). „Nur gescoutete Spieler“ blendet alle aus, die du nicht gut kennst; Spaltenköpfe sortieren.
+
+## Spielerpool
 Unter **Transfers › Spielerpool** stehen alle Spieler der Welt: die Kader der Liga mit vollen Kadern, deren Jugend und die **Weltspieler** – jeder Auslandsverein und jeder deutsche Verein ab der 2. Liga hat einen eigenen Kader mit rund 22 Spielern und drei Jugendlichen. Weltspieler werden älter, entwickeln sich, beenden ihre Karriere, Talente rücken nach, und herausragende Spieler wechseln zu stärkeren Vereinen.
 - Voreinstellung **Weltbeste** nach geschätzter Stärke; weitere Reiter: Talente bis 21, Jugend bis 18, Deutschland, Ausland, Gescoutet.
 - Je Seite 100 Spieler. Filter rechts: Name, Position, Alter, Land, Liga, Stärke, Potenzial, Bekanntheit.

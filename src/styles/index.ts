@@ -35,6 +35,7 @@ import './28-indoor.css';
 import './28-transfer2.css';
 import './28-subtabs.css'; // drittes Menü (ui/SubTabs.tsx)
 import './28-pool.css'; // Transfers › Spielerpool/Scouting
+import './28-market.css'; // Transfers › Transfermarkt (Spielertabelle)
 import './28-national.css'; // Statistiken › Nationalteams
 import './28-privat.css'; // Privat (Familie, Freizeit, Vermögen)
 import './28-briefing2.css'; // Zentrale › Briefing (Archiv im Zeitungslayout)

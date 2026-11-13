@@ -391,6 +391,16 @@ export const INFO_TEXTS = {
     text: 'Durchschnittliche Stärke der Besten je Mannschaftsteil: Torwart 1, Abwehr 4, Mittelfeld 4, Angriff 2 – unabhängig von der Aufstellung. Grün = du bist dort stärker, Rot = der Gegner.',
     wiki: 'opponent',
   },
+  faehigkeitSterne: {
+    title: 'Fähigkeit & Potenzial in Sternen',
+    text: 'Gelbe Sterne sind sicher, weiße zeigen, wie weit die Einschätzung deiner Scouts noch reichen kann. Je mehr du über einen Spieler weißt (Kenntnisse), desto kleiner wird der weiße Teil. Fahr über die Sterne, um die genaue Spanne zu sehen.',
+    wiki: 'transfer-pool',
+  },
+  empfehlung: {
+    title: 'Empfehlung',
+    text: 'Einschätzung deines Stabs, was der Spieler deinem Kader bringt – verglichen mit deinen Spielern im selben Mannschaftsteil: 1 = Leistungsträger, 2 = Stammspieler bzw. Perspektive, 3 = Ergänzung, 4 = keine Verstärkung. Ohne genug Kenntnisse braucht es erst Scouting.',
+    wiki: 'transfer-pool',
+  },
   teambonus: {
     title: 'Teambonus (Führungsspieler)',
     text: 'Sehr seltene Spieler mit überragender Führungsstärke und Erfahrung reißen die Mannschaft mit: Bronze +0,5 %, Silber +1 %, Gold +2 % auf Angriff, Spielkontrolle und Abwehr, solange sie spielen – zusammen höchstens +3 %. Verliehen wird das nur in der Auf- und Abwertungsrunde; maßgeblich ist die höchste jemals erreichte Stärke: Wer 10 % davon verloren hat, kann den Bonus wieder verlieren, ab 15 % sehr wahrscheinlich.',
