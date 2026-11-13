@@ -6,7 +6,7 @@
 // `migrateWinter` (Aufruf in App.tsx beim Laden) bzw. beim ersten Tag.
 // =============================================================================
 import type { BoardArchive } from './indoorMasters';
-import { mayPlayOn } from './euroFixture';
+import { mayPlayOn, ownFixtureOn } from './euroFixture';
 import type { IndoorPhase } from '../data/indoorHistory';
 import type { IndoorResult, IndoorSquad, TourStat } from '../engine/indoor';
 import { CalendarEngine } from '../engine/calendar';
@@ -262,6 +262,8 @@ export function competitiveDays(g: Game): Set<string> {
   // Europapokal 2.0: nur Termine, an denen der eigene Verein (noch) spielen kann (game/euroFixture.ts).
   for (const e of g.calendar.events) if ((e.type === 'cup_matchday' || e.type === 'euro_matchday') && mayPlayOn(g, e)) s.add(e.date);
   for (const m of g.fixtures) if (m.involvesPlayerClub) s.add(m.date);
+  // Supercup / Ligapokal mit eigener Beteiligung (game/superCupGame.ts).
+  for (const e of g.calendar.events) if (e.type === 'super_cup' && ownFixtureOn(g, e)) s.add(e.date);
   return s;
 }
 

@@ -4,7 +4,7 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   // Kategorie-Dashboards (Übersichtsseiten je Hauptkategorie)
   | 'cat-spieltag' | 'cat-kader' | 'cat-transfers' | 'cat-finanzen' | 'cat-verein' | 'cat-statistiken'
   // Neue Einzelseiten
-  | 'tactics' | 'stadium' | 'presse' | 'vertraege' | 'meldung' | 'reserve' | 'beobachtung' | 'spielerpool' | 'scouting' | 'verhandlungen' | 'sponsoring' | 'fans' | 'international' | 'nationalteams' | 'vorstand' | 'ruhmeshalle' | 'akademie'
+  | 'tactics' | 'stadium' | 'presse' | 'vertraege' | 'meldung' | 'reserve' | 'beobachtung' | 'spielerpool' | 'scouting' | 'verhandlungen' | 'sponsoring' | 'fans' | 'international' | 'nationalteams' | 'supercup' | 'vorstand' | 'ruhmeshalle' | 'akademie'
   // Winter: Hallenfußball + Trainingslager
   | 'halle' | 'trainingslager'
   // Saison-Briefing (Archiv)
@@ -103,6 +103,7 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'table', label: 'Liga', icon: 'stats' },
     { screen: 'ligensystem', label: 'Ligensystem', icon: 'stats' },
     { screen: 'cup', label: 'Pokal', icon: 'trophy' },
+    { screen: 'supercup', label: 'Supercup', icon: 'trophy' },
     { screen: 'international', label: 'International', icon: 'international' },
     { screen: 'nationalteams', label: 'Nationalteams', icon: 'international' },
     { screen: 'halle', label: 'Halle', icon: 'trophy' },

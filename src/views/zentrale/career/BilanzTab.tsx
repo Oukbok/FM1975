@@ -3,7 +3,7 @@
 // Vorschlag 2): aufgeschlagene Ringmappe `bilder/akte/bilanz.webp` (2400×1174),
 // darauf Zettel aus `bilder/akte/bilanz/` – alle Lagen in % der Mappe (CSS
 // `28-career-binder.css`, `.bnd-*`). Links Managerbilanz + Blatt „Je Wettbewerb“,
-// rechts Ansehen je Saison auf Karopapier, Titel (Abriss, Platz für alle 16 möglichen Titelarten), Rekorde als Notizen auf dem Blatt, Zeitungsausschnitt,
+// rechts Ansehen je Saison auf Karopapier, Titel (Abriss, Platz für alle 19 möglichen Titelarten inkl. Supercups), Rekorde als Notizen auf dem Blatt, Zeitungsausschnitt,
 // Meilensteine (oranger Zettel), Lieblings-/Angstgegner (gelber Zettel), Polaroid
 // mit Wappen (keine Büroklammern, Wunsch Pascal). Reiter der Mappe springen zu Saisons / Trainer & Spieler.
 // =============================================================================

@@ -86,7 +86,7 @@ button.bnd-tab:hover { filter: brightness(1.08); text-decoration: underline; tex
 /* Titel: Platz für alle 16 möglichen Titelarten (Meisterschaften, Pokale, Europapokale je Epoche, Halle, Staffelsieg, Aufstieg, Supercup, Ligapokal, Jugend). */
 .bnd-rec { left: 52.5%; top: 48%; width: 23%; height: 48.5%; background-image: var(--bnd-abriss); transform: rotate(0.8deg); padding: 3.6cqh 1.6% 1.4cqh; display: flex; flex-direction: column; }
 .bnd-titles { flex: 1; min-height: 0; display: flex; flex-direction: column; }
-.bnd-rec .bnd-titles .bnd-kv { height: 2.25cqh; padding: 0 0 0.2cqh; align-items: flex-end; font-size: 1.62cqh; line-height: 1; }
+.bnd-rec .bnd-titles .bnd-kv { height: 2cqh; padding: 0 0 0.15cqh; align-items: flex-end; font-size: 1.5cqh; line-height: 1; }
 
 /* Kleiner Zettel: nächster Meilenstein */
 .bnd-mini { left: 39%; top: 29%; width: 7.6%; aspect-ratio: 380 / 377; background-image: var(--bnd-klein); transform: rotate(-4deg); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1%; }

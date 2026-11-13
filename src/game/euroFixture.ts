@@ -6,12 +6,23 @@ import { euroCompName } from '../data/euroFormats';
 import type { CalendarEvent, Match } from '../types';
 import { isV2 } from './euroSetup';
 import type { Game } from './state';
+import { ROUND_DE, superCupState } from './superCupGame';
 
 export interface OwnFixture { opp: string; home: boolean; match: Match | null; comp: string }
 
 /** `null` = kein eigenes Spiel an diesem Termin; `undefined` = alter Modus (Aufrufer entscheidet). */
 export function ownFixtureOn(g: Game, ev: CalendarEvent, me = g.managedClubId): OwnFixture | null | undefined {
   const slot = ev.leg ?? 0;
+  if (ev.type === 'super_cup') {
+    for (const sc of superCupState(g).events) {
+      const m = sc.matches.find((x) => x.id === ev.matchId);
+      if (!m) continue;
+      const mm = sc.matches.find((x) => x.date === m.date && (x.home === me || x.away === me));
+      if (!mm) return null;
+      return { opp: mm.home === me ? mm.away : mm.home, home: mm.home === me, match: mm.match ?? null, comp: `${sc.name} · ${ROUND_DE[mm.stage]}` };
+    }
+    return null;
+  }
   if (ev.type === 'cup_matchday') {
     const cup = g.cup;
     if (!isV2(cup) || ev.cupRoundIndex == null) return undefined;

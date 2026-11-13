@@ -19,6 +19,7 @@ import { isV2, cupStartYear } from './euroSetup';
 import { legKoRule } from './euroFlow';
 import { cupKoRule } from './cupReplay';
 import { forecastWeather } from './matchWeather';
+import { findSuperCupMatch, ownSuperCupDue, ROUND_DE } from './superCupGame';
 
 export interface OwnMatchInfo {
   kind: 'liga' | 'pokal' | 'euro';
@@ -69,6 +70,19 @@ export function findOwnMatchDue(g: Game): OwnMatchInfo | null {
         kind: 'liga', homeId: m.homeClubId, awayId: m.awayClubId, date: m.date, competition: 'Liga', knockout: false,
         label: `Liga · ${m.matchday}. Spieltag${m.moved?.makeup ? ' (Nachholspiel)' : ''}`, matchId: m.id, side: m.homeClubId === mid ? 'home' : 'away',
       };
+    }
+    if (ev.type === 'super_cup') {
+      const d = ownSuperCupDue(g, ev.matchId);
+      if (d) {
+        const { ev: sc, m, ko } = d;
+        return {
+          kind: 'pokal', homeId: m.home, awayId: m.away, date: m.date, competition: 'Pokal', knockout: !!ko,
+          label: `${sc.name} · ${ROUND_DE[m.stage]}`, matchId: m.id, side: m.home === mid ? 'home' : 'away', ko,
+          firstLeg: m.stage === 'L2' ? (() => { const l1 = sc.matches.find((x) => x.stage === 'L1')!; return { home: l1.home, away: l1.away, hg: l1.hg ?? 0, ag: l1.ag ?? 0, awayGoals: true }; })() : undefined,
+          stageNote: m.stage === 'L1' ? 'Hinspiel' : sc.era?.shared ? 'Bei Remis wird der Titel geteilt' : sc.era?.directPens ? 'Bei Remis direkt Elfmeterschießen' : undefined,
+        };
+      }
+      continue;
     }
     if (ev.type === 'cup_matchday' && ev.cupRoundIndex != null && isV2(g.cup)) {
       const cup = g.cup;
@@ -198,5 +212,5 @@ export function findMatch(g: Game, id: string): { match: Match; label: string } 
       }
     }
   }
-  return null;
+  return findSuperCupMatch(g, id);
 }

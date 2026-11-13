@@ -73,6 +73,13 @@ export function buildDayEventsMap(g: Game): Map<string, StripEvent[]> {
         }
         break;
       }
+      case 'super_cup': {
+        // Supercup / Ligapokal: nur mit eigener Beteiligung (game/superCupGame.ts).
+        const fx = ownFixtureOn(g, ev);
+        if (!fx || !fx.opp) break;
+        consider({ date: ev.date, icon: 'trophy', line: `${full(fx.opp)} (${fx.home ? 'H' : 'A'})`, accent: 'gold', isMatch: true, prio: 96, clubId: fx.opp, home: fx.home, comp: fx.comp, result: resultOf(fx.match), screen: 'supercup', kind: 'Pokal' });
+        break;
+      }
       case 'cup_matchday': {
         // Wiederholungstermin (Landespokal bis 1990/91): nur mit eigenem Wiederholungsspiel.
         const fx = ownFixtureOn(g, ev);

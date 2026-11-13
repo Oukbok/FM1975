@@ -1534,6 +1534,7 @@ export type EventType =
   | 'press_conference'
   | 'cup_matchday'      // Landespokal-Runde
   | 'euro_matchday'     // Europapokal-Runde (ec/cwc/uefa)
+  | 'super_cup'         // Supercup / Ligapokal / Europäischer Supercup (game/superCupGame.ts)
   | 'cup_draw'          // Auslosung einer Pokal-/Europapokalrunde (game/cupDraw.ts)
   | 'custom';
 

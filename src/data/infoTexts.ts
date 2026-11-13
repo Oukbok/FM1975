@@ -346,6 +346,11 @@ export const INFO_TEXTS = {
     text: 'Alle Nationen spielen in den Länderspielfenstern und bei WM/EM. Aufgebote entstehen aus den Spielern der Spielwelt; abgestellte Spieler fehlen dir in dieser Zeit und kommen weniger frisch zurück. Länderspiele und ein starkes Turnier steigern den Marktwert.',
     wiki: 'national-teams',
   },
+  supercup: {
+    title: 'Supercup & Ligapokal',
+    text: 'Vor dem Ligastart spielen Meister und Pokalsieger der Vorsaison um den Supercup – je nach Land und Zeit in einem Spiel, mit Hin- und Rückspiel oder als kleines Turnier (Ligapokal 1997–2007 mit sechs Mannschaften). Wer das Double holte, trifft auf den Pokalfinalisten bzw. den Vizemeister. Es gibt Antrittsgeld und eine Siegprämie, der Titel zählt im Trophäenschrank.',
+    wiki: 'supercup',
+  },
   zweitemannschaft: {
     title: 'Zweite Mannschaft',
     text: 'Die Amateure bzw. die U23 spielen sonntags in ihrer eigenen Liga. Der Trainer stellt nach deinem Schwerpunkt auf; wer dort spielt, bekommt Spielpraxis (bis 23) und gewöhnt sich an trainierte Positionen. Anlegen und ausbauen in der Akademie.',

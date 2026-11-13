@@ -17,6 +17,7 @@
     "test:business": "node scripts/run-ts.mjs tests/club-business-test.ts",
     "test:registration": "node scripts/run-ts.mjs tests/registration-test.ts",
     "test:national": "node scripts/run-ts.mjs tests/national-test.ts",
+    "test:supercup": "node scripts/run-ts.mjs tests/supercup-test.ts",
     "test:matchdnd": "node tests/match-dnd.mjs",
     "test:reserve": "node scripts/run-ts.mjs tests/reserve-test.ts",
     "test:transfers": "node scripts/run-ts.mjs tests/transfer-test.ts",

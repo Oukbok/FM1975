@@ -3,6 +3,7 @@
 // Jugend, Entwicklung …). Ohne Oberfläche – die Shell reagiert über `ui`.
 // Rückgabe: true = Vorlauf darf weiterlaufen, false = anhalten (Aktion nötig).
 // =============================================================================
+import { superCupMatchday } from './superCupGame';
 import { fixtureWatchDaily } from './fixtureWatch';
 import { weekdayIdx } from '../engine/trainingPlan';
 import { setEraYear } from '../engine/positions';
@@ -266,6 +267,12 @@ export function processDay(g: Game, ui: DayUi): boolean {
         // Kein eigener Halt: am nächsten Tag (30.6.) ist die Saison vorbei und der Zeitlauf hält ohnehin.
         break;
       case 'cup_draw': break; // Ziehung unten (cupDrawsDaily)
+      case 'super_cup': {
+        // Supercup / Ligapokal / Europäischer Supercup (game/superCupGame.ts).
+        const own = superCupMatchday(g, ev.matchId, today);
+        if (own) { ui.onOwnMatch(own); stopForAction = true; }
+        break;
+      }
       case 'cup_matchday': {
         const cup = g.cup;
         const ri = ev.cupRoundIndex;

@@ -3,6 +3,7 @@ import type { CareerData } from '../../../game/managerView';
 import type { Game } from '../../../game/state';
 import { DashBox, DashPage, Empty } from '../../../ui/DashPage';
 import { GameRow, wdlText } from './parts';
+import { superCupResultOf } from '../../../game/superCupGame';
 
 const LEAGUE = (t?: number, name?: string) => name || (t === 1 ? '1. Liga' : t === 2 ? '2. Liga' : t ? `${t}. Ebene` : '–');
 
@@ -14,7 +15,7 @@ export function SeasonsTab({ g, d }: { g: Game; d: CareerData }) {
           <thead>
             <tr>
               <th>Saison</th><th>Liga</th><th className="rl-num">Platz</th><th>Saisonziel</th><th className="rl-num">Liga S-U-N</th>
-              <th>Pokal</th><th>Europapokal</th><th className="rl-num">Ansehen</th>
+              <th>Pokal</th><th>Supercup</th><th>Europapokal</th><th className="rl-num">Ansehen</th>
             </tr>
           </thead>
           <tbody>
@@ -26,6 +27,7 @@ export function SeasonsTab({ g, d }: { g: Game; d: CareerData }) {
                 <td className={`car-cut ${s.ok == null ? '' : s.ok ? 'car-goal-ok' : 'car-goal-miss'}`} title={s.ok == null ? undefined : s.ok ? 'erreicht' : 'verfehlt'}>{s.goal ?? '–'}</td>
                 <td className="rl-num">{wdlText(s.L)}</td>
                 <td className="car-cut">{s.cup ?? '–'}</td>
+                <td className="car-cut">{superCupResultOf(g, s.season, g.managedClubId) ?? '–'}</td>
                 <td className="car-cut" title={s.euro}>{s.euro ?? "–"}</td>
                 <td className="rl-num">{s.rep != null ? Math.round(s.rep) : '–'}</td>
               </tr>

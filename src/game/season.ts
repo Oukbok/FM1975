@@ -28,6 +28,7 @@ import { generateSeasonCalendar, seasonLabel } from '../engine/calendar';
 import { createCup } from '../engine/cup';
 import { economyScale, yearOf } from '../engine/economy';
 import { computeGermanEuroQualifiers } from '../engine/euro';
+import { setupSuperCups, superCupSeeds } from './superCupGame';
 import { bookHomeMatch } from '../engine/finances';
 import { SideResult, applyMatchEffects } from '../engine/form';
 import { calculateTable, generateFixtures } from '../engine/league';
@@ -224,6 +225,8 @@ export function startNextSeason(g: Game): void {
   // Europapokal-Starter der neuen Saison AUS der abgelaufenen Saison ableiten
   // (Endtabelle + Landespokalsieger) – VOR dem Überschreiben von g.table/g.cup.
   const euroQuals = computeGermanEuroQualifiers(g, false);
+  // Supercup/Ligapokal: Teilnehmer ebenfalls jetzt festhalten (game/superCupGame.ts).
+  const scSeeds = superCupSeeds(g);
   // Punkteregel des Heimatlandes (Deutschland: Chronik-Meilenstein 1995/96).
   if (!isGermanHome(g)) g.pointSystem = countryPointSystem(homeCountryOf(g), nextStartYear);
   if (homeExcluded(homeCountryOf(g), nextStartYear)) { euroQuals.ec = []; euroQuals.cwc = []; euroQuals.uefa = []; }
@@ -453,6 +456,8 @@ export function startNextSeason(g: Game): void {
   }
   // Rahmenterminkalender: Fr/So/Mo-Spiele an Pokal-/Europapokalwochen anpassen (game/fixtureWatch.ts).
   harmonizeSeason(g);
+  // Supercups & Ligapokal vor dem Ligastart, übrige Länder ins Archiv (game/superCupGame.ts).
+  setupSuperCups(g, scSeeds);
 
   // --- 8b) Ligareform: Meilenstein-Nachricht + Reform als angewandt vormerken ---
   // Wurde diese Saison eine Struktur-Reform ausgeführt, meldet die Fußball-Chronik

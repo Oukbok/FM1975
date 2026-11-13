@@ -56,8 +56,9 @@
 .car-seasons th:nth-child(4) { width: 19%; }
 .car-seasons th:nth-child(5) { width: 112px; }
 .car-seasons td { white-space: nowrap; }
-.car-seasons th:nth-child(8) { width: 104px; padding-right: 14px; }
-.car-seasons td:nth-child(8) { padding-right: 14px; }
+.car-seasons th:nth-child(7) { width: 11%; }
+.car-seasons th:nth-child(9) { width: 104px; padding-right: 14px; }
+.car-seasons td:nth-child(9) { padding-right: 14px; }
 .car-seasons tr.car-live td { background: var(--car-live-bg); }
 .car-seasons td.car-goal-ok { color: var(--pos); font-weight: 600; }
 .car-seasons td.car-goal-miss { color: var(--neg); font-weight: 600; }

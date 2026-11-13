@@ -2488,6 +2488,32 @@ Grundlage ist das **Marktgehalt** (Stärke, Liga-Niveau), dazu Karrierephase, Ge
 KI-Vereine kaufen nur Spieler, die auch wollen. Deshalb sammeln sich die Stars bei den großen Vereinen: Die angesehensten Vereine holen im Sommer gezielt die Leistungsträger kleinerer Vereine, die Kleinen kassieren Ablöse und kaufen günstiger nach. Spieler ohne Vertrag suchen sich ihren Wunschverein unter den Vereinen, die sie brauchen; ehrgeizige Leistungsträger kleiner Vereine verlängern seltener. Von außen (Ausland, untere Ligen) bekommt ein Verein nur Spieler, die zu seinem Ansehen passen.`,
   },
   {
+    id: 'supercup',
+    category: 'cup',
+    title: 'Supercup, Ligapokal und Europäischer Supercup',
+    keywords: ['supercup', 'ligapokal', 'europäischer supercup', 'saisonauftakt', 'meister gegen pokalsieger', 'double', 'kleine pokale', 'titel'],
+    body: `## Wo
+**Statistiken › Supercup** zeigt den Supercup bzw. Ligapokal deines Landes in der laufenden Saison, die Regeln der Epoche, den Europäischen Supercup, die Siegerliste seit deinem Start und die letzten Sieger der übrigen Länder. Eigene Spiele stehen im Kalender und laufen wie ein Pokalspiel (Vorschau, Textmodus, Schnellsimulation).
+
+## Wer spielt?
+Meister gegen Pokalsieger der Vorsaison. Holte der Meister das Double, rückt je nach Land und Zeit der **Pokalfinalist** oder der **Vizemeister** nach.
+
+## Deutschland
+- **1987–1996 Supercup:** ein Spiel im Juli, Gegner beim Double der Pokalfinalist.
+- **1997–2007 Ligapokal:** sechs Mannschaften im Juli – Meister und Pokalsieger direkt im Halbfinale, die nächsten Plätze der Liga im Viertelfinale.
+- **ab 2010 Supercup:** ein Spiel eine Woche vor dem Ligastart beim Pokalsieger, bei Remis direkt Elfmeterschießen; beim Double spielt der Vizemeister.
+- Die DDR spielte 1989 einen einzigen Supercup.
+
+## Andere Länder
+Jedes Land der Spielwelt spielt seinen Supercup in den historischen Epochen (z. B. England schon 1975 mit geteiltem Titel bei Remis bis 1992, Italien ab 1988, Spanien ab 1982 mit Hin- und Rückspiel, ab 2019 mit vier Mannschaften im Januar, Frankreich ab 1995). Spielst du dort, gelten die Regeln dieses Landes.
+
+## Europäischer Supercup
+Der Sieger des Landesmeister-Wettbewerbs (Meisterliga) gegen den Sieger des Pokalsieger-Wettbewerbs (bis 1999) bzw. des Europa-Pokals (ab 2000), vereinfacht in einem Spiel Ende August.
+
+## Lohn
+Antrittsgeld und Siegprämie (Ligapokal und Europäischer Supercup höher), Heimspieleinnahmen für den Ausrichter, ein Titel im Trophäenschrank und in der Karriere – und ein Spiel unter Wettkampfbedingungen kurz vor dem Ligastart. Siege und Niederlagen wirken wie gewohnt auf Form und Moral.`,
+  },
+  {
     id: 'national-teams',
     category: 'squad',
     title: 'Nationalmannschaften, Länderspiele, WM und EM',
