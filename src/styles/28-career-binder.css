@@ -4,7 +4,7 @@
    (2400×1174); alle Lagen in % der Mappe, Zettel aus bilder/akte/bilanz/.
    ============================================================================= */
 .sub3-page > .dpage.bnd-page { display: flex; align-items: center; justify-content: center; padding: 6px 1.5% 18px; }
-.bnd { position: relative; height: 100%; max-width: 100%; aspect-ratio: 2400 / 1174; background: var(--bnd-folder) center / 100% 100% no-repeat; color: var(--bnd-ink); font-family: var(--font-ui); }
+.bnd { position: relative; height: 100%; max-width: 100%; aspect-ratio: 2400 / 1174; container-type: size; background: var(--bnd-folder) center / 100% 100% no-repeat; color: var(--bnd-ink); font-family: var(--font-ui); }
 .bnd > * { position: absolute; }
 .bnd-note { background: center / 100% 100% no-repeat; filter: drop-shadow(0 3px 5px rgba(var(--shade-rgb), 0.28)); }
 
@@ -26,7 +26,14 @@ button.bnd-tab:hover { filter: brightness(1.08); text-decoration: underline; tex
 .bnd-tab-3 { left: 95.1%; top: 60.7%; width: 3.3%; height: 28.4%; transform: none; color: var(--bnd-tab-ink-2); text-shadow: none; }
 
 /* Links oben: Managerbilanz */
-.bnd-sheet { left: 11%; top: 4.6%; width: 26%; height: 48%; display: flex; flex-direction: column; }
+.bnd-sheet { --ln: 3.373cqh; left: 11%; top: 6.303%; width: 26%; display: flex; flex-direction: column; }
+/* Block-Linien (bilanz.webp): erste Linie bei 6,30 %, Abstand 3,373 % der Mappenhöhe – jede Zeile genau eine Linie. */
+.bnd-sheet .bnd-h { height: calc(var(--ln) * 2); margin: 0; align-items: flex-end; padding-bottom: 0.45cqh; font-size: 3.5cqh; line-height: 1; }
+.bnd-sheet .bnd-kpis { height: calc(var(--ln) * 2); margin: 0; padding: 0.5cqh 0 0.45cqh; }
+.bnd-sheet .bnd-kpis > div { justify-content: center; padding: 0 4px; }
+.bnd-sheet .bnd-kpis b { font-size: 3cqh; line-height: 1; }
+.bnd-sheet .bnd-kpis span { font-size: 1.25cqh; }
+.bnd-sheet .bnd-kv { height: var(--ln); padding: 0 0 0.45cqh; border-bottom: 0; align-items: flex-end; font-size: 1.85cqh; line-height: 1; }
 .bnd-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
 .bnd-kpis > div { display: flex; flex-direction: column; align-items: center; padding: 6px 4px; border: 1px solid var(--bnd-rule); border-radius: 4px; background: var(--bnd-kpi); }
 .bnd-kpis b { font-family: var(--font-display); font-size: 30px; font-weight: 700; line-height: 1.1; color: var(--bnd-ink); }
@@ -34,7 +41,7 @@ button.bnd-tab:hover { filter: brightness(1.08); text-decoration: underline; tex
 .bnd-kv { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 3px 0; border-bottom: 1px solid var(--bnd-rule); font-size: 15px; }
 .bnd-kv > span { color: var(--bnd-ink-2); display: flex; align-items: center; gap: 4px; min-width: 0; }
 .bnd-kv > b { font-weight: 700; color: var(--bnd-ink); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.bnd-rep { align-items: center; }
+.bnd-rep > i { align-self: flex-end; margin-bottom: 0.35cqh; }
 .bnd-rep > i { flex: 1; height: 6px; border-radius: 3px; background: var(--bnd-rule); overflow: hidden; }
 .bnd-rep > i > em { display: block; height: 100%; background: var(--bnd-ink); }
 
@@ -45,7 +52,15 @@ button.bnd-tab:hover { filter: brightness(1.08); text-decoration: underline; tex
 .bnd-polaroid figcaption { position: absolute; left: 6%; right: 6%; bottom: 6%; text-align: center; font-size: 13px; font-weight: 700; color: var(--bnd-ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Links unten: Blatt „Je Wettbewerb“ */
-.bnd-comp { left: 10.5%; top: 54.5%; width: 33%; aspect-ratio: 1200 / 770; background-image: var(--bnd-blatt); transform: rotate(-0.6deg); padding: 3% 3% 2%; }
+.bnd-comp { left: 10.5%; top: 54.5%; width: 33%; aspect-ratio: 1200 / 770; background-image: var(--bnd-blatt); transform: rotate(-0.6deg); padding: 0 3.4cqw; container-type: size; }
+/* Zettel-Linien (zettel-blatt.webp): erste Linie bei 11,56 %, Abstand 6,65 % der Zettelhöhe. */
+.bnd-comp .bnd-h3 { height: 11.56cqh; margin: 0; display: flex; align-items: flex-end; padding-bottom: 0.9cqh; font-size: 5.6cqh; line-height: 1; }
+.bnd-comp .bnd-table { font-size: 4.3cqh; border-spacing: 0; }
+.bnd-comp .bnd-table tr { height: 6.65cqh; }
+.bnd-comp .bnd-table th, .bnd-comp .bnd-table td { padding: 0 1.2cqw 0.9cqh; vertical-align: bottom; border: 0; line-height: 1; }
+.bnd-comp .bnd-table th { font-size: 3.2cqh; }
+.bnd-comp .bnd-table tr.tot td { border-top: 0; }
+.bnd-comp .bnd-scribble { height: 13.3cqh; margin: 0; display: flex; align-items: flex-end; padding-bottom: 0.9cqh; font-size: 4.3cqh; line-height: 1; transform: none; }
 .bnd-table { width: 100%; border-collapse: collapse; font-size: 17px; }
 .bnd-table th { font-size: 13px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--bnd-ink-3); text-align: right; padding: 2px 6px; }
 .bnd-table td { padding: 6px 6px; text-align: right; border-bottom: 1px solid var(--bnd-rule); }
