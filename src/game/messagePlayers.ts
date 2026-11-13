@@ -4,7 +4,8 @@
 // -----------------------------------------------------------------------------
 // Beteiligt: relatedId, eventRef.playerId, Spieler-IDs in eventRef.data und alle
 // eigenen Spieler (Profis + Jugend), deren Name im Text steht (voller Name oder
-// eindeutiger Nachname); Gleichnamige nur einmal, höchstens 4.
+// eindeutiger Nachname – nicht, wenn der Nachname dort zu einem anderen Vornamen gehört,
+// z. B. der Manager oder ein Familienmitglied); Gleichnamige nur einmal, höchstens 4.
 // Reaktion: Nach der Entscheidung wird die Moral-Änderung je beteiligtem Spieler
 // mit seinem Gemüt gewichtet (Persönlichkeit: Ehrgeiz + Rampenlicht = Ego,
 // Familie/Loyalität = Bindung ans Team, ältere Spieler gelassener) und mit
@@ -18,6 +19,16 @@ import { moraleJolt } from './moraleJolt';
 
 const pById = (g: Game, id: unknown): Player | null => (typeof id === 'string' ? g.players[id] ?? g.youthPlayers[id] ?? null : null);
 const esc = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * Steht der Nachname im Text bei einem anderen Vornamen („Christian Lorenz“ übernimmt –
+ * der Manager, ein Verwandter, ein Trainer), ist nicht der Spieler gemeint.
+ */
+function otherBearer(text: string, p: Player): boolean {
+  const re = new RegExp(`(\\p{Lu}[\\p{Ll}-]+)\\s+${esc(p.lastName)}(?![\\p{L}])`, 'gu');
+  for (let mm = re.exec(text); mm; mm = re.exec(text)) if (mm[1] !== p.firstName) return true;
+  return false;
+}
 
 export function messagePlayers(g: Game, m: InboxMessage): Player[] {
   const out: Player[] = [];
@@ -35,7 +46,7 @@ export function messagePlayers(g: Game, m: InboxMessage): Player[] {
     const hits: [number, Player][] = [];
     for (const p of squad) {
       let at = p.fullName ? text.indexOf(p.fullName) : -1;
-      if (at < 0 && p.lastName.length >= 4 && lastCount.get(p.lastName) === 1) {
+      if (at < 0 && p.lastName.length >= 4 && lastCount.get(p.lastName) === 1 && !otherBearer(text, p)) {
         const mm = new RegExp(`(^|[^\\p{L}])${esc(p.lastName)}(?![\\p{L}])`, 'u').exec(text);
         if (mm) at = mm.index;
       }
