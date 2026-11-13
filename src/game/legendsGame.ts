@@ -81,6 +81,14 @@ export function joinAge(def: LegendDef, s: string): number {
 /** Weg eines Eintrags an einem 1. Juli. */
 export function routeOf(def: LegendDef, date: string, s: string, start: boolean): Route {
   const age = ageOn(def.birth, date);
+  // Fest eingestelltes Erscheinungsjahr (Editor): ab dann – jung in die Jugend, sonst als Profi.
+  if (def.spawnYear) {
+    const year = Number(date.slice(0, 4));
+    if (year < def.spawnYear) return { kind: 'wait' };
+    if (age > 36) return { kind: 'skip' };
+    if (age < 15) return { kind: 'wait' };
+    return age < 18 ? { kind: 'youth' } : { kind: 'pro', from: isDomestic(def) ? '' : def.country === 'DDR' ? 'DDR' : 'Ausland' };
+  }
   if (age > 34) return { kind: 'skip' };
   if (isDomestic(def)) {
     if (start && age >= 18) return { kind: 'pro', from: '' };
@@ -137,7 +145,10 @@ function spawnOne(g: Game, def: LegendDef, date: string, start: boolean): void {
   const clubs = fullClubs(g);
   if (!clubs.length) return;
   const fixed = def.club ? g.clubs[def.club] : undefined;
-  const fixedOk = !!fixed && clubs.includes(fixed);
+  const meets = !!fixed && clubs.includes(fixed) && clubMeets(g, fixed, def) && (fixed.id !== g.managedClubId || !!def.ownOk || route.kind === 'youth');
+  // Bedingung nicht erfüllt + „warten“: bis 23 jedes Jahr neu prüfen, dann zufällig.
+  if (def.club && !meets && def.clubIf?.fallback === 'wait' && ageOn(def.birth, date) < 23) return;
+  const fixedOk = meets;
   if (route.kind === 'youth') {
     // Vorgegebener Verein spielt (noch) nicht in der Spielerliga: bis 17 warten, dann gewichtet.
     if (def.club && !fixedOk && ageOn(def.birth, date) < 17) return;
@@ -150,7 +161,7 @@ function spawnOne(g: Game, def: LegendDef, date: string, start: boolean): void {
   }
   // Profi: Startkader bzw. stiller Wechsel nach Deutschland – nie zum eigenen Verein.
   const pool = clubs.filter((c) => c.id !== g.managedClubId);
-  const club = fixedOk && fixed!.id !== g.managedClubId ? fixed! : pickWeighted(pool.length ? pool : clubs, spread(g, proWeight), rng)!;
+  const club = fixedOk ? fixed! : pickWeighted(pool.length ? pool : clubs, spread(g, proWeight), rng)!;
   const p = makeLegendPro(def, { clubId: club.id, date, salt: s }, start ? rng() : rng() * 0.6);
   g.players[p.id] = p;
   club.playerIds.push(p.id);
@@ -160,6 +171,25 @@ function spawnOne(g: Game, def: LegendDef, date: string, start: boolean): void {
   const fee = Math.max(0, Math.min(club.finances.transferBudget, Math.round(p.contract.transferValue * 0.8 / 5000) * 5000));
   if (fee > 0) { club.finances.transferBudget -= fee; bookTransfer(club, fee, true, p.fullName, date, false); }
   recordTransfer(p, route.from === 'DDR' || route.from === 'Ausland' ? fromName(g, def, rng) : route.from, club.name, Math.round(fee * economyScale(year)), date);
+}
+
+/** Liga-Ebene eines Vereins (1 = oberste Liga des Heimatlandes); unbekannt = 9. */
+function tierOf(g: Game, clubId: string): number {
+  const L = g.leagues;
+  if (g.table.rows.some((r) => r.clubId === clubId)) return L?.playerDivision.tier ?? 1;
+  if (L) for (const d of L.otherDivisions) if (d.table?.rows.some((r) => r.clubId === clubId)) return d.tier;
+  return 9;
+}
+
+/** Bedingungen des Editors für den vorgegebenen Verein (Ansehen, oberste Liga). */
+export function clubMeets(g: Game, c: Club, def: LegendDef): boolean {
+  const k = def.clubIf;
+  if (!k) return true;
+  const rep = c.reputation ?? 50;
+  if (k.minRep != null && rep < k.minRep) return false;
+  if (k.maxRep != null && rep > k.maxRep) return false;
+  if (k.tier1 && tierOf(g, c.id) !== 1) return false;
+  return true;
 }
 
 function spawnDue(g: Game, date: string, start: boolean): void {

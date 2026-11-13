@@ -19,7 +19,8 @@ const POS_OPTS = opt(ALL_POSITIONS as string[]);
 export function clubsForCountry(ds: Dataset, country: string): { value: string; label: string }[] {
   const c = ds.clubs;
   const west = [...c.tier1, ...c.secondNord, ...c.secondSued];
-  const list = country === 'GER' ? west : country === 'DDR' ? [...c.ddrOberliga, ...c.ddrLiga, ...west] : [];
+  // Alle Talente erscheinen in der Spielerliga – deshalb für jedes Land die Vereine wählbar.
+  const list = country === 'DDR' ? [...c.ddrOberliga, ...c.ddrLiga, ...west] : west;
   return list.map((x) => ({ value: x.id, label: x.name }));
 }
 
@@ -44,7 +45,7 @@ export function LegendsSection({ ds, onChange }: P) {
   });
   return (
     <div className="ed-section">
-      <Explain>Ausnahmetalente der Fußballgeschichte erscheinen in jedem neuen Spielstand (Option beim Spielstart, Standard an) – still, ohne Nachricht oder Markierung. Ab 15 tauchen sie als Jugendspieler auf, ältere stehen 1975 schon im Kader; Talente aus Ländern ohne volle Kader wachsen im Ausland auf und wechseln mit 18–27 zu einem Verein der Spielerliga. <b>Verein leer</b> = zufällig, Vereine mit besserer Jugendarbeit sind wahrscheinlicher. Die <b>verdeckten Werte</b> (0–100) erscheinen im Spiel nie als Zahl, nur als Einschätzung. Bitte nur erfundene Namen eintragen.</Explain>
+      <Explain>Ausnahmetalente der Fußballgeschichte und eigene Starspieler (beliebig viele über „Hinzufügen“) erscheinen in jedem neuen Spielstand (Option beim Spielstart, Standard an) – still, ohne Nachricht oder Markierung. Unter <b>Erscheinen</b> legst du Jahr, Verein und Bedingungen fest (z. B. nur bei Ansehen ≥ 80, sonst zufällig). Ab 15 tauchen sie als Jugendspieler auf, ältere stehen 1975 schon im Kader; Talente aus Ländern ohne volle Kader wachsen im Ausland auf und wechseln mit 18–27 zu einem Verein der Spielerliga. <b>Verein leer</b> = zufällig, Vereine mit besserer Jugendarbeit sind wahrscheinlicher. Die <b>verdeckten Werte</b> (0–100) erscheinen im Spiel nie als Zahl, nur als Einschätzung. Bitte nur erfundene Namen eintragen.</Explain>
       <div className="ed-split">
         <TableEditor rows={rows} cols={cols} onChange={onChange} makeRow={make} selected={sel} onSelect={setSel} searchKeys={['id', 'firstName', 'lastName', 'country']} />
         {cur && <LegendForm key={sel} ds={ds} l={cur} onChange={onChange} />}
@@ -69,7 +70,16 @@ function LegendForm({ ds, l, onChange }: { ds: Dataset; l: LegendDef; onChange: 
         { key: 'type', label: 'Spielertyp', type: 'select', options: LEGEND_TYPES.map((t) => ({ value: t.id, label: t.label })) },
         num('height', 'Größe (cm)'),
         { key: 'face', label: 'Ethnie (verdeckt)', type: 'select', options: opt(FACES), optional: true, hint: 'bestimmt nur das Gesicht, nie sichtbar; leer = typisch fürs Land' },
-        { key: 'club', label: 'Jugendverein', type: 'select', options: clubs, optional: true, hint: clubs.length ? 'leer = zufällig im Land' : 'Land ohne Vereine im Datensatz: wechselt aus dem Ausland' },
+      ]} />
+      <div className="ed-sec">Erscheinen</div>
+      <FieldForm obj={obj} onChange={onChange} cols={[
+        { key: 'spawnYear', label: 'Erscheinungsjahr', type: 'number', optional: true, hint: 'leer = nach Alter (Deutschland ab 15 in der Jugend, Ausland mit 18–27 als Profi); sonst am 1. Juli dieses Jahres – unter 18 in die Jugend, sonst als Profi' },
+        { key: 'club', label: 'Verein', type: 'select', options: clubs, optional: true, hint: 'leer = zufällig (Jugend nach Ausbildungsqualität, Profis nach Ruf)' },
+        { key: 'clubIf.minRep', label: 'nur wenn Ansehen ≥', type: 'number', optional: true, hint: 'Ansehen des Vereins 0–100 im Erscheinungsjahr' },
+        { key: 'clubIf.maxRep', label: 'nur wenn Ansehen ≤', type: 'number', optional: true },
+        { key: 'clubIf.tier1', label: 'nur in der obersten Liga', type: 'bool' },
+        { key: 'clubIf.fallback', label: 'Sonst', type: 'select', optional: true, options: [{ value: 'random', label: 'zufälliger Verein' }, { value: 'wait', label: 'ein Jahr warten (bis 23)' }], hint: 'wenn der Verein die Bedingungen nicht erfüllt' },
+        { key: 'ownOk', label: 'auch beim Verein des Spielers', type: 'bool', hint: 'sonst nie als Profi zu deinem Verein' },
       ]} />
       <div className="ed-sec">Karrierekurve</div>
       <FieldForm obj={obj} onChange={onChange} cols={[

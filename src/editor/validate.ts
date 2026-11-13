@@ -141,6 +141,18 @@ export function checkDataset(d: Dataset): Issue[] {
       const y = Number(l.birth.slice(0, 4));
       if (y < 1940 || y > 2085) warn(A, `${nm}: Geburtsjahr ${y} – vor 1941 Geborene erscheinen nicht (1975 älter als 34).`, l.id);
     }
+    if (l.spawnYear != null) {
+      const by = Number((l.birth ?? '0').slice(0, 4));
+      if (!(l.spawnYear >= 1975 && l.spawnYear <= 2100)) err(A, `${nm}: Erscheinungsjahr ${l.spawnYear} muss zwischen 1975 und 2100 liegen.`, l.id);
+      else if (l.spawnYear - by < 15) warn(A, `${nm}: Im Erscheinungsjahr ${l.spawnYear} erst ${l.spawnYear - by} – erscheint dann mit 15.`, l.id);
+      else if (l.spawnYear - by > 36) err(A, `${nm}: Im Erscheinungsjahr ${l.spawnYear} schon ${l.spawnYear - by} – erscheint nicht mehr.`, l.id);
+    }
+    const ci = l.clubIf;
+    if (ci) {
+      for (const k of ['minRep', 'maxRep'] as const) if (ci[k] != null && !(ci[k]! >= 0 && ci[k]! <= 100)) err(A, `${nm}: Ansehen-Bedingung muss zwischen 0 und 100 liegen.`, l.id);
+      if (ci.minRep != null && ci.maxRep != null && ci.minRep > ci.maxRep) err(A, `${nm}: Ansehen „ab“ größer als „bis“.`, l.id);
+      if (!l.club && (ci.minRep != null || ci.maxRep != null || ci.tier1)) warn(A, `${nm}: Bedingungen ohne Verein wirken nicht.`, l.id);
+    }
     if (!ALL_POSITIONS.includes(l.pos)) err(A, `${nm}: unbekannte Position „${l.pos}“.`, l.id);
     for (const p of l.pos2 ?? []) if (!ALL_POSITIONS.includes(p)) err(A, `${nm}: unbekannte Nebenposition „${p}“.`, l.id);
     if (!LEGEND_TYPES.some((t) => t.id === l.type)) err(A, `${nm}: unbekannter Spielertyp „${l.type}“.`, l.id);
@@ -150,8 +162,8 @@ export function checkDataset(d: Dataset): Issue[] {
     for (const [k, v] of Object.entries(l.hidden ?? {})) if (!(typeof v === 'number' && v >= 0 && v <= 100)) err(A, `${nm}: verdeckter Wert „${k}“ muss zwischen 0 und 100 liegen.`, l.id);
     if (!l.hidden) err(A, `${nm}: verdeckte Werte fehlen.`, l.id);
     if (l.club) {
-      const ok = l.country === 'GER' ? west.has(l.club) : l.country === 'DDR' ? west.has(l.club) || east.has(l.club) : false;
-      if (!ok) err(A, `${nm}: Jugendverein „${l.club}“ gehört nicht zu den Vereinen seines Landes im Datensatz.`, l.id);
+      const ok = l.country === 'DDR' ? west.has(l.club) || east.has(l.club) : west.has(l.club);
+      if (!ok) err(A, `${nm}: Verein „${l.club}“ gibt es im Datensatz nicht (erlaubt: Vereine der Liga 1 und 2).`, l.id);
     }
   }
 

@@ -79,6 +79,19 @@ export interface LegendDef {
   height?: number;
   /** Jugendverein (Vereins-ID des Datensatzes). Leer = zufällig im Land, gewichtet nach Jugendarbeit. */
   club?: string;
+  /**
+   * Erscheinungsjahr (Wunsch Pascal, Editor): taucht am 1. Juli dieses Jahres auf – unter 18
+   * als Jugendspieler, sonst als Profi. Leer = nach Alter und Land wie gewohnt.
+   */
+  spawnYear?: number;
+  /**
+   * Bedingungen für den vorgegebenen Verein (`club`): nur, wenn er sie im Erscheinungsjahr
+   * erfüllt; sonst `fallback` 'random' = zufälliger Verein (Standard), 'wait' = ein Jahr warten
+   * (höchstens bis 23, dann zufällig).
+   */
+  clubIf?: { minRep?: number; maxRep?: number; tier1?: boolean; fallback?: 'random' | 'wait' };
+  /** Darf auch beim Verein des Spielers erscheinen (Standard: nein). */
+  ownOk?: boolean;
   /** Frühreife −1 (Spätentwickler) … +1 (früh fertig). */
   maturity: number;
   /** Langlebigkeit −1 (früher Abbau) … +1 (spielt lange auf hohem Niveau). */

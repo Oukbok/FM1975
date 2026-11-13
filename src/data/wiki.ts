@@ -900,7 +900,7 @@ Die Vorschau im Planer zeigt für jeden Tag das erwartete **Fitness-Delta** (gr�
 - Dazu verdeckt: **Frühreife** (früh fertig oder Spätentwickler) und **Langlebigkeit** (verschiebt den Abbau um bis zu anderthalb Jahre).
 
 ### Ausnahmetalente der Geschichte
-Im Datensatz können bekannte Ausnahmetalente der Fußballgeschichte stecken. Sie entstehen wie alle anderen Spieler irgendwo in der Spielwelt und werden nicht besonders angekündigt – ob aus ihnen Weltklasse wird, entscheiden Umfeld, Einsatzzeit und Verletzungen. Beim Spielstart kannst du sie abschalten (Option „Ausnahmetalente der Geschichte“).
+Im Datensatz können bekannte Ausnahmetalente der Fußballgeschichte stecken. Sie entstehen wie alle anderen Spieler irgendwo in der Spielwelt und werden nicht besonders angekündigt – ob aus ihnen Weltklasse wird, entscheiden Umfeld, Einsatzzeit und Verletzungen. Beim Spielstart kannst du sie abschalten (Option „Ausnahmetalente der Geschichte“). Im Datensatz-Editor (Ausnahmetalente) legst du beliebig viele eigene Starspieler an – mit Erscheinungsjahr, Verein und Bedingungen (etwa „nur wenn das Ansehen des Vereins mindestens 80 ist“, sonst zufällig oder ein Jahr warten).
 - **Eigene Spieler:** Das **Trainerteam** urteilt. Je länger der Spieler im Verein ist, desto treffsicherer (nach rund zweieinhalb Jahren „gesichert“).
 - **Fremde Spieler:** Die **Scouts** urteilen – je besser dein Scouting (und je länger ihr verhandelt), desto genauer. Ohne Kenntnis heißt es „noch kein Urteil“.
 - Jede Einschätzung kann **danebenliegen**: Jeder Spieler hat einen festen Schätzfehler, der mit wachsender Kenntnis schrumpft.
