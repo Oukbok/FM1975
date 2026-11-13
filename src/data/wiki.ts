@@ -994,7 +994,7 @@ Jede Runde hält die Zeit an und öffnet das Fenster **„Auf- und Abwertungsrun
 
 ### Woher kommt die Auf- oder Abwertung?
 Für deinen Kader schreibt das Spiel jede Woche mit, **welche Ursache wie viele Entwicklungspunkte** gebracht oder gekostet hat – exakt aus der Rechnung, die Summe der Beiträge ergibt die Punkte. Die Begründung nennt die gewichtigsten Ursachen, zuerst die in Richtung des Ergebnisses:
-- **Alter:** Entwicklungsjahre bis Anfang 20, ab etwa 29 natürlicher Abbau; ein robuster Körper verschiebt ihn nach hinten.
+- **Alter:** Entwicklungsjahre bis Anfang 20, ab etwa 29 natürlicher Abbau; ein robuster Körper verschiebt ihn nach hinten. Ab 33 wird der Abbau deutlich steiler (mit 36 etwa viermal so schnell wie mit 30) – Altstars verlieren dann jede Saison spürbar an Klasse.
 - **Spielpraxis:** Einsatzminuten seit der letzten Runde (auch in der zweiten Mannschaft); wer verletzt fehlt, sammelt keine.
 - **Training:** Anlagen, Trainerteam (Stärke und Größe im Verhältnis zum Kader), Spezialtrainer, Trainingsschwerpunkt, Trainingsplan, Förderspieler.
 - **Charakter und Moral**, die **Epoche** (Sportwissenschaft), der **Reifegrad** (Früh-/Spätentwickler) und der **Abstand zum Potenzial** (die letzten Punkte sind die schwersten; ab 82 die Weltklasse-Bremse).
@@ -2536,6 +2536,25 @@ Ab 18 kann ein Kind **den Verein übernehmen** (Privat › Familie). Dann **wech
 
 ## Vermögen
 Dein **Gehalt** richtet sich nach Größe des Vereins und deinem Ruf (Fußballgehälter wachsen mit der Zeit stark). **Kosten** für Leben, Wohnen, Auto, Hobby und Kinder folgen den Verbraucherpreisen; Häuser wurden 2010–2022 zusätzlich teurer. Geld liegt auf dem **Konto**, dem **Sparbuch** (Zins der Zeit) oder im **Aktienfonds** (Boom und Crash wie an den großen Börsen, z. B. 1987, 2000–2002, 2008). Vom Mietwohnung bis zum Landsitz und vom Kleinwagen bis zum Sportwagen; ein schöneres Zuhause hebt Laune und Beziehung. Mit **Verein unterstützen** gibst du Privatgeld als Zuschuss an den Verein – der Vorstand rechnet es dir an.`,
+  },
+  {
+    id: 'team-boost',
+    category: 'core',
+    title: 'Führungsspieler mit Teambonus',
+    keywords: ['teambonus', 'führungsspieler', 'anführer', 'leader', 'bronze', 'silber', 'gold', 'führungsstärke', 'erfahrung', 'mitreißen'],
+    body: `## Was ist das?
+Ganz wenige Spieler mit **überragender Führungsstärke und viel Erfahrung** reißen die ganze Mannschaft mit. Sie tragen einen **Teambonus** in drei Stufen:
+- **Bronze:** +0,5 %
+- **Silber:** +1 %
+- **Gold:** +2 %
+
+Der Bonus wirkt auf Angriff, Spielkontrolle und Abwehr deiner Mannschaft, **solange der Spieler auf dem Platz steht** (wird er ausgewechselt oder fliegt vom Platz, ist er weg). Mehrere Führungsspieler addieren sich, zusammen höchstens **+3 %**. Du siehst ihn im Spielerprofil unter dem Charakter.
+
+## Wie bekommt man ihn?
+Nur in der **Auf- und Abwertungsrunde**: Infrage kommt, wer mindestens 25 ist, Stärke 66 hat und bei Führungsstärke und Erfahrung ganz oben steht. Meist geht es mit Bronze oder Silber los; Gold gibt es fast nur über spätere Aufwertungen. Im ganzen Spiel gibt es selten mehr als eine Handvoll bis etwa zwanzig solcher Spieler – Erfahrung wächst mit jedem Pflichtspiel, deshalb sind es eher die älteren Stammspieler.
+
+## Wie verliert man ihn?
+Im Alter: Hat ein Führungsspieler **10 % seiner einstigen Bestform** verloren, steigt die Chance langsam, dass er den Bonus in einer Bewertungsrunde verliert; ab **15 %** steigt sie drastisch. Weil der Abbau ab etwa 33 deutlich steiler wird, endet der Teambonus meist mit dem Karriereherbst.`,
   },
   {
     id: 'opponent',

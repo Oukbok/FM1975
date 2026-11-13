@@ -141,10 +141,10 @@ export function privLog(st: PrivateState, d: string, t: string): void {
   if (st.log.length > 120) st.log.splice(0, st.log.length - 120);
 }
 
-let seq = 0;
+/** Neue Personen-ID – nur aus dem Spielstand (deterministisch auch nach dem Laden). */
 export function newPersonId(st: PrivateState, tag: string): string {
-  let id = '';
-  do { id = `pp_${tag}_${Object.keys(st.persons).length}_${seq++}`; } while (st.persons[id]);
+  let n = Object.keys(st.persons).length, id = '';
+  do { id = `pp_${tag}_${n++}`; } while (st.persons[id]);
   return id;
 }
 

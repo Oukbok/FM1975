@@ -5,6 +5,7 @@
 //   unten       Überblick – Tabelle aller Spieler mit Grund 1 / Grund 2
 // Rahmen + Steuerung in RatingShow.tsx, Stil in 28-ratings.css (.rb2-*).
 // =============================================================================
+import { BOOST_DE } from '../../engine/teamBoost';
 import { useEffect, useRef, useState } from 'react';
 import PlayerAvatar from '../../components/PlayerAvatar';
 import { scoutRangeText } from '../../engine/scouting';
@@ -93,10 +94,10 @@ export function StageCard({ row, club, phase, reduced, countMs }: {
             {counting ? <CountUp from={row.r.oldOverall} to={row.r.newOverall} run={!reduced && phase === 'count'} ms={countMs} /> : <span className="rt-q">?</span>}
           </span>
           {holding && <span className={`rb2-delta ${cls(d)}`}>{sgn(d)}</span>}
-          {holding && <span className={`rb2-verdict ${cls(d)}`}>{verdict}{row.r.tag && d !== 0 ? ` · ${row.r.tag}` : ''}</span>}
+          {holding && <span className={`rb2-verdict ${cls(d)}`}>{verdict}{row.r.tag && d !== 0 ? ` · ${row.r.tag}` : ''}{row.r.boost ? ` · ${row.r.boost.kind === 'verloren' ? 'Teambonus weg' : `Teambonus ${BOOST_DE[row.r.boost.to!]}`}` : ''}</span>}
         </div>
         {phase === 'call' && <div className="rt-wait"><span /><span /><span /></div>}
-        {holding && d !== 0 && (
+        {holding && (d !== 0 || !!row.r.boost) && (
           <ul className="rt-reasons rb2-reasons">
             {row.reasons.slice(0, 5).map((x, i) => (
               <li key={x.k + i} className={x.v > 0 ? 'plus' : x.v < 0 ? 'minus' : 'note'} style={{ animationDelay: `${0.1 + i * 0.1}s` }}>

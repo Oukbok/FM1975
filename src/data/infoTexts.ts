@@ -391,6 +391,11 @@ export const INFO_TEXTS = {
     text: 'Durchschnittliche Stärke der Besten je Mannschaftsteil: Torwart 1, Abwehr 4, Mittelfeld 4, Angriff 2 – unabhängig von der Aufstellung. Grün = du bist dort stärker, Rot = der Gegner.',
     wiki: 'opponent',
   },
+  teambonus: {
+    title: 'Teambonus (Führungsspieler)',
+    text: 'Sehr seltene Spieler mit überragender Führungsstärke und Erfahrung reißen die Mannschaft mit: Bronze +0,5 %, Silber +1 %, Gold +2 % auf Angriff, Spielkontrolle und Abwehr, solange sie spielen – zusammen höchstens +3 %. Verliehen wird das nur in der Auf- und Abwertungsrunde; wer im Alter deutlich nachlässt, verliert es wieder.',
+    wiki: 'team-boost',
+  },
   supercup: {
     title: 'Supercup & Ligapokal',
     text: 'Vor dem Ligastart spielen Meister und Pokalsieger der Vorsaison um den Supercup – je nach Land und Zeit in einem Spiel, mit Hin- und Rückspiel oder als kleines Turnier (Ligapokal 1997–2007 mit sechs Mannschaften). Wer das Double holte, trifft auf den Pokalfinalisten bzw. den Vizemeister. Es gibt Antrittsgeld und eine Siegprämie, der Titel zählt im Trophäenschrank.',

@@ -12,6 +12,8 @@
 //    sind eine Scout-Einschätzung mit Spanne (siehe engine/scouting.ts).
 // Alle Vereine nutzen dieselbe Formel – nur Training/Spielzeit unterscheiden sich.
 // =============================================================================
+import { boostText, teamBoostRound, type BoostChange } from './teamBoost';
+import { hashStr, mulberry32 } from './leagues';
 import { applyProGem } from './gems';
 import { Player, Club, AttributeKey, potentialToStars, clampStars } from '../types';
 import { weightsFor, positionSuitability } from './positions';
@@ -38,6 +40,8 @@ export interface RatingResult {
   reasons?: RatingReason[];
   /** Kein vollständiges Protokoll (alter Spielstand, Neuzugang): allgemeine Begründung. */
   generic?: boolean;
+  /** Teambonus neu/aufgewertet/verloren (engine/teamBoost.ts). */
+  boost?: BoostChange;
 }
 
 export type RatingType = 'small' | 'medium' | 'large';
@@ -91,10 +95,13 @@ export function baseWeeklyRate(age: number, declineShift: number): number {
   if (age <= 20) return 0.11;
   if (age <= 24) return 0.065;
   if (age <= 28) return a <= 27 ? 0.025 : 0.01;
+  // Abbau im Alter deutlich steiler (Wunsch Pascal: Teambonus geht mit dem Formverlust).
   if (a <= 30) return -0.03;
   if (a <= 32) return -0.055;
-  if (a <= 34) return -0.08;
-  return -0.11;
+  if (a <= 33) return -0.09;
+  if (a <= 34) return -0.12;
+  if (a <= 35) return -0.16;
+  return -0.21;
 }
 
 // -----------------------------------------------------------------------------
@@ -446,6 +453,8 @@ export function runRatingCeremony(
     const r = applyRatingToPlayer(p, type, dateISO);
     const change = r.change;
     const tag: RatingResult['tag'] = gemBurst ? 'Juwel' : r.tag;
+    // Teambonus der Führungsspieler: nur hier verliehen/aufgewertet/verloren (Wunsch Pascal).
+    const boost = teamBoostRound(p, mulberry32(hashStr(`tb|${p.id}|${dateISO}`)), type !== 'small');
     if (type !== 'small') updateScoutEstimate(p, managedIds.has(p.id) ? scoutQuality : 0.2, managedIds.has(p.id));
     if (managedIds.has(p.id)) {
       const d = p.development;
@@ -453,7 +462,7 @@ export function runRatingCeremony(
       results.push({
         playerId: p.id, playerName: p.fullName, clubId: managedClubId, clubShort: managed?.shortName ?? '—',
         position: p.naturalPosition, age: p.age, oldOverall: old, newOverall: p.overall, change, isUserClub: true, tag,
-        reasons: why.reasons, generic: why.generic || undefined,
+        reasons: boost ? [{ k: 'teambonus', v: 0, text: boostText(boost) }, ...why.reasons] : why.reasons, generic: why.generic || undefined, boost: boost ?? undefined,
       });
       const log = d.ratingLog ?? (d.ratingLog = []);
       log.push({ date: dateISO, label, old, new: p.overall, change: p.overall - old, reasons: why.reasons, generic: why.generic || undefined, tag });

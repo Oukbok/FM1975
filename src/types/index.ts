@@ -417,6 +417,8 @@ export interface PlayerDevelopment {
   currentAbility: number;
   /** Potenzielle Gesamtstärke (Potential Ability, 1–100). */
   potentialAbility: number;
+  /** Höchste Stärke der Karriere (Teambonus: Formverlust, engine/teamBoost.ts). */
+  peakOverall?: number;
   /**
    * Entwicklungstempo-Faktor (0.5 langsam ... 2.0 schnell).
    * Beeinflusst wie schnell Attribute durch Training/Spiele wachsen.
@@ -631,6 +633,8 @@ export interface Player {
   sellOn?: { clubId: string; pct: number };
   /** Persönlichkeit (verdeckt, engine/persona.ts). Optional → wird beim Lesen erzeugt. */
   persona?: import('../engine/persona').PlayerPersona;
+  /** Teambonus als Führungsspieler (engine/teamBoost.ts), nur über die Bewertungsrunde. */
+  teamBoost?: import('../engine/teamBoost').TeamBoost;
   /** Leihe mit Kaufoption: Stammverein, Ende, Kaufoption (1975-Basis). */
   loan?: { fromClubId: string; until: string; optionFee: number; wage: number; /** Leihe ohne Kaufoption (KI-Leihen, game/aiLoans.ts). */ noOption?: boolean };
   /** Herkunft (Namens-/Gesichtsgruppe), siehe data/origins.ts. */

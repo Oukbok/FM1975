@@ -1,6 +1,7 @@
 // =============================================================================
 // Laufzeit-Zustand einer Mannschaft in der Simulation.
 // =============================================================================
+import { teamBoostOf } from '../teamBoost';
 import type { Club, Tactics } from '../../types';
 import type { FormationSlot } from '../../data/formations';
 import type { MPlayer, Mentality, ShoutId, Side, TeamStats } from './types';
@@ -80,6 +81,9 @@ export function refresh(t: TeamState, minute: number): void {
     const hs = honourFx(t.club?.id, 'homeStrength');
     if (hs) { t.mods = { ...t.mods, att: t.mods.att * (1 + hs), ctrl: t.mods.ctrl * (1 + hs), def: t.mods.def * (1 + hs) }; }
   }
+  // Teambonus der Führungsspieler auf dem Platz (engine/teamBoost.ts, höchstens +3 %).
+  const tb = teamBoostOf(onPitch(t).map((m) => m.p));
+  if (tb) t.mods = { ...t.mods, att: t.mods.att * (1 + tb), ctrl: t.mods.ctrl * (1 + tb), def: t.mods.def * (1 + tb) };
   t.plan = tacticPlan(tacticsOf(t), t.year, t.mods);
   t.units = computeUnits(onPitch(t), t.refs);
   t.dirty = false;
