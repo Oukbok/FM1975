@@ -46,7 +46,7 @@ button.bnd-tab:hover { filter: brightness(1.08); text-decoration: underline; tex
 .bnd-rep > i > em { display: block; height: 100%; background: var(--bnd-ink); }
 
 /* Polaroid mit Wappen */
-.bnd-polaroid { left: 38.6%; top: 4%; width: 8.4%; aspect-ratio: 440 / 481; margin: 0; background: var(--bnd-polaroid) center / 100% 100% no-repeat; transform: rotate(4deg);
+.bnd-polaroid { left: 37.8%; top: 3.5%; width: 9.8%; aspect-ratio: 440 / 481; margin: 0; background: var(--bnd-polaroid) center / 100% 100% no-repeat; transform: rotate(4deg);
   filter: drop-shadow(0 4px 6px rgba(var(--shade-rgb), 0.3)); }
 .bnd-pol-img { position: absolute; left: 8%; right: 8%; top: 6.5%; height: 67%; display: flex; align-items: center; justify-content: center; }
 .bnd-polaroid figcaption { position: absolute; left: 6%; right: 6%; bottom: 6%; text-align: center; font-size: 13px; font-weight: 700; color: var(--bnd-ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -60,7 +60,8 @@ button.bnd-tab:hover { filter: brightness(1.08); text-decoration: underline; tex
 .bnd-comp .bnd-table th, .bnd-comp .bnd-table td { padding: 0 1.2cqw 0.9cqh; vertical-align: bottom; border: 0; line-height: 1; }
 .bnd-comp .bnd-table th { font-size: 3.2cqh; }
 .bnd-comp .bnd-table tr.tot td { border-top: 0; }
-.bnd-comp .bnd-scribble { height: 13.3cqh; margin: 0; display: flex; align-items: flex-end; padding-bottom: 0.9cqh; font-size: 4.3cqh; line-height: 1; transform: none; }
+.bnd-comp .bnd-scribbles { padding-top: 6.65cqh; }
+.bnd-comp .bnd-scribble { height: 6.65cqh; margin: 0; display: flex; align-items: flex-end; padding-bottom: 0.9cqh; font-size: 3.9cqh; line-height: 1; transform: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bnd-table { width: 100%; border-collapse: collapse; font-size: 17px; }
 .bnd-table th { font-size: 13px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--bnd-ink-3); text-align: right; padding: 2px 6px; }
 .bnd-table td { padding: 6px 6px; text-align: right; border-bottom: 1px solid var(--bnd-rule); }
@@ -82,15 +83,13 @@ button.bnd-tab:hover { filter: brightness(1.08); text-decoration: underline; tex
 .bnd-chart .car-dot { fill: var(--bnd-chart); }
 
 /* Rechts unten: Titel & Rekorde (Abriss) */
-.bnd-rec { left: 52.5%; top: 51.5%; width: 23%; aspect-ratio: 900 / 560; background-image: var(--bnd-abriss); transform: rotate(0.8deg); padding: 3.4% 2.4% 2%; display: flex; flex-direction: column; }
-.bnd-scroll { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; }
-.bnd-scroll::-webkit-scrollbar { display: none; }
-.bnd-rec .bnd-kv { font-size: 14px; padding: 2px 0; }
-.bnd-recl > span { flex-direction: column; align-items: flex-start; gap: 0; }
-.bnd-recl small { font-size: 12px; color: var(--bnd-ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+/* Titel: Platz für alle 16 möglichen Titelarten (Meisterschaften, Pokale, Europapokale je Epoche, Halle, Staffelsieg, Aufstieg, Supercup, Ligapokal, Jugend). */
+.bnd-rec { left: 52.5%; top: 48%; width: 23%; height: 48.5%; background-image: var(--bnd-abriss); transform: rotate(0.8deg); padding: 3.6cqh 1.6% 1.4cqh; display: flex; flex-direction: column; }
+.bnd-titles { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.bnd-rec .bnd-titles .bnd-kv { height: 2.25cqh; padding: 0 0 0.2cqh; align-items: flex-end; font-size: 1.62cqh; line-height: 1; }
 
 /* Kleiner Zettel: nächster Meilenstein */
-.bnd-mini { left: 53.5%; top: 81.5%; width: 7.6%; aspect-ratio: 380 / 377; background-image: var(--bnd-klein); transform: rotate(-4deg); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1%; }
+.bnd-mini { left: 39%; top: 29%; width: 7.6%; aspect-ratio: 380 / 377; background-image: var(--bnd-klein); transform: rotate(-4deg); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1%; }
 .bnd-mini b { font-family: var(--font-display); font-size: 30px; line-height: 1; color: var(--bnd-ink); }
 .bnd-mini span { font-size: 12px; line-height: 1.25; color: var(--bnd-ink-2); }
 

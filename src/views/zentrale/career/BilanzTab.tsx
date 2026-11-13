@@ -3,7 +3,7 @@
 // Vorschlag 2): aufgeschlagene Ringmappe `bilder/akte/bilanz.webp` (2400×1174),
 // darauf Zettel aus `bilder/akte/bilanz/` – alle Lagen in % der Mappe (CSS
 // `28-career-binder.css`, `.bnd-*`). Links Managerbilanz + Blatt „Je Wettbewerb“,
-// rechts Ansehen je Saison auf Karopapier, Titel & Rekorde (Abriss), Zeitungsausschnitt,
+// rechts Ansehen je Saison auf Karopapier, Titel (Abriss, Platz für alle 16 möglichen Titelarten), Rekorde als Notizen auf dem Blatt, Zeitungsausschnitt,
 // Meilensteine (oranger Zettel), Lieblings-/Angstgegner (gelber Zettel), Polaroid
 // mit Wappen (keine Büroklammern, Wunsch Pascal). Reiter der Mappe springen zu Saisons / Trainer & Spieler.
 // =============================================================================
@@ -85,7 +85,7 @@ export function BilanzTab({ g, d, rep, onTab }: { g: Game; d: CareerData; rep: n
 
         {/* Polaroid mit Wappen */}
         <figure className="bnd-polaroid">
-          <div className="bnd-pol-img"><ClubCrest club={club} size={92} /></div>
+          <div className="bnd-pol-img"><ClubCrest club={club} size={124} /></div>
           <figcaption>{club.shortName} · seit {since.slice(0, 4)}</figcaption>
         </figure>
 
@@ -106,7 +106,11 @@ export function BilanzTab({ g, d, rep, onTab }: { g: Game; d: CareerData; rep: n
               <tr className="tot"><td>Gesamt</td><td>{games(all)}</td><td>{wdlText(all)}</td><td>{all[3]}:{all[4]}</td><td><b>{ppgText(all)}</b></td></tr>
             </tbody>
           </table>
-          {best && <div className="bnd-scribble">{best.k}: {best.v}{best.sub ? ` (${best.sub})` : ''}</div>}
+          {/* Rekorde als Kugelschreiber-Notizen auf den freien Linien (eine Linie Abstand). */}
+          <div className="bnd-scribbles">
+            {d.records.length ? d.records.slice(0, 6).map((r) => <div key={r.k} className="bnd-scribble">{r.k}: {r.v}{r.sub ? ` (${r.sub.split(' · ')[0]})` : ''}</div>)
+              : <div className="bnd-scribble">Rekorde zählen ab der ersten abgeschlossenen Saison.</div>}
+          </div>
         </section>
 
         {/* Rechts oben: Ansehen je Saison auf Karopapier */}
@@ -118,15 +122,11 @@ export function BilanzTab({ g, d, rep, onTab }: { g: Game; d: CareerData; rep: n
 
         {/* Rechts unten links: Titel & Rekorde */}
         <section className="bnd-note bnd-rec">
-          <h3 className="bnd-h3">Titel &amp; Rekorde</h3>
-          <div className="bnd-scroll">
+          <h3 className="bnd-h3">Titel</h3>
+          <div className="bnd-titles">
             {tally.length ? tally.map((t) => <div key={t.title} className="bnd-kv"><span>{t.title}</span><b>{t.n}×</b></div>)
               : <div className="bnd-empty">Noch kein Titel in deiner Amtszeit.</div>}
             {youth ? <div className="bnd-kv"><span>Jugendtitel</span><b>{youth}×</b></div> : null}
-            <div className="bnd-sec">Rekorde deiner Amtszeit</div>
-            {d.records.length ? d.records.map((r) => (
-              <div key={r.k} className="bnd-kv bnd-recl"><span>{r.k}{r.sub && <small>{r.sub}</small>}</span><b>{r.v}</b></div>
-            )) : <div className="bnd-empty">Rekorde zählen ab der ersten abgeschlossenen Saison.</div>}
           </div>
         </section>
 
