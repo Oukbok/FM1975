@@ -134,8 +134,10 @@
 .dz-rtext .dsec { margin-top: 14px; }
 .dz-rfoot { display: flex; align-items: flex-end; gap: 14px; padding-top: 10px; border-top: 1px solid var(--border-soft); min-height: 52px; }
 .dz-rlinks { display: flex; flex-wrap: wrap; gap: 8px; }
+.dz-rfaces { margin-left: auto; display: flex; align-items: flex-end; gap: 22px; }
+.dz-rfaces.n3 .dz-rface-name, .dz-rfaces.n4 .dz-rface-name { font-size: 14px; max-width: 150px; }
 .dz-rface {
-  margin-left: auto; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
   background: none; border: none; cursor: pointer; color: var(--text); padding: 0; font: inherit;
 }
 .dz-rface svg { display: block; }

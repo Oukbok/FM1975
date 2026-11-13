@@ -14,7 +14,7 @@ import type { Screen } from '../../../shell/navigation';
 import type { InboxMessage, MessageCategory } from '../../../types';
 import { WD_FULL, vColor } from '../../../ui/format';
 import { EventChoices } from '../EventChoices';
-import { msgGroup, msgPlayer, ownGames, type MsgGroup } from './data';
+import { msgGroup, msgPlayer, msgPlayers, ownGames, type MsgGroup } from './data';
 import PosBadge from '../../../components/PosBadge';
 import { InboxFilterBar, matchesFilter, needsDecision, type InboxFilter } from '../inboxFilter';
 import { pressPhotoFor } from '../../../data/pressPhotos';
@@ -108,7 +108,8 @@ function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
   g: Game; m: InboxMessage | null; onGoto: (s: Screen) => void; onWatch: (id: string) => void; onChange: () => void; openPlayer: (id: string) => void;
 }) {
   if (!m) return <div className="dz-read dz-read-empty">Wähle links eine Nachricht aus.</div>;
-  const p = msgPlayer(g, m);
+  const faces = msgPlayers(g, m);
+  const p = faces[0] ?? null;
   const game = !p && m.relatedId ? ownGames(g).find((x) => x.matchId === m.relatedId) : undefined;
   const matchId = game ? m.relatedId! : null;
   const target = CAT_TARGET[m.category];
@@ -127,18 +128,22 @@ function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
       <div className="dz-rfoot">
         <div className="dz-rlinks">
           {matchId && <button className="b3" onClick={() => onWatch(matchId)}>Spielbericht</button>}
-          {p && <button className="b3" onClick={() => openPlayer(p.id)}>Spielerprofil</button>}
+          {p && faces.length === 1 && <button className="b3" onClick={() => openPlayer(p.id)}>Spielerprofil</button>}
           {p && m.category === 'contract' && p.clubId === g.managedClubId && !p.isYouth && g.players[p.id] && (
             <button className="b3" onClick={() => openContractScreen({ kind: 'renew', pid: p.id })}>Verhandlungstisch</button>
           )}
           {target && <button className="b3" onClick={() => onGoto(target[0])}>{target[1]}</button>}
         </div>
-        {p && (
-          <button className="dz-rface" onClick={() => openPlayer(p.id)} title={`${p.fullName} – Spielerprofil öffnen`}>
-            <PlayerAvatar key={p.id} player={p} club={g.clubs[p.clubId]} size={104} priority />
-            <span className="dz-rface-name">{p.fullName}</span>
-            <span className="dz-rface-sub"><PosBadge p={p} single /> <span>{p.age} J.</span> <b style={{ color: vColor(p.overall) }}>{p.overall}</b></span>
-          </button>
+        {faces.length > 0 && (
+          <div className={`dz-rfaces n${faces.length}`}>
+            {faces.map((f) => (
+              <button key={f.id} className="dz-rface" onClick={() => openPlayer(f.id)} title={`${f.fullName} – Spielerprofil öffnen`}>
+                <PlayerAvatar key={f.id} player={f} club={g.clubs[f.clubId]} size={faces.length > 2 ? 84 : 104} priority />
+                <span className="dz-rface-name">{f.fullName}</span>
+                <span className="dz-rface-sub"><PosBadge p={f} single /> <span>{f.age} J.</span> <b style={{ color: vColor(f.overall) }}>{f.overall}</b></span>
+              </button>
+            ))}
+          </div>
         )}
       </div>
     </article>
