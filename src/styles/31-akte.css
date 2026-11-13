@@ -48,8 +48,6 @@
   --bnd-kpi: rgba(255, 255, 255, 0.5); /* Kennzahl-Kästchen auf dem gelben Block */
   --bnd-tab-ink: #ffffff;      /* Schrift auf den Mappenreitern */
   --bnd-tab-ink-2: #4c4237;    /* Schrift auf dem Pappreiter */
-  --bnd-clip: #9aa1a8;         /* Büroklammer */
-  --bnd-clip-hi: #e4e8ec;
   --bnd-chart: #2b3a55;        /* Kurve auf Karopapier */
   --bnd-scribble: #2f4f8f;     /* Kugelschreiber-Notiz */
   --cal-box-bg: #ffffff;                          /* Kalender: Fläche hinter dem Ringbuch (Wunsch Pascal: weiß) */

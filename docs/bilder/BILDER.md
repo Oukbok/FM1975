@@ -215,5 +215,5 @@ Werden beim Zusammenführen der Stränge ergänzt (Erstes Training, Trainingslag
 | `akte/bilanz/zettel-zeitung.webp` | leerer Zeitungsausschnitt | 800×533 | Zeitungsdienst |
 | `akte/bilanz/zettel-orange.webp`, `zettel-gelb.webp`, `zettel-klein.webp` | Haftnotizen | 700 / 380 px | Meilensteine, Gegner, nächster Meilenstein |
 | `akte/bilanz/klebestreifen.webp`, `polaroid.webp` | Klebestreifen, Sofortbild (Fotofeld grau) | 380 / 440 px | Befestigung, Wappen |
-Büroklammern sind gezeichnet (SVG in `BilanzTab.tsx`). Lagen in % der Mappe in `src/styles/28-career-binder.css`.
+Keine Büroklammern (Wunsch Pascal). Lagen in % der Mappe in `src/styles/28-career-binder.css`.
 

@@ -5,7 +5,7 @@
 // `28-career-binder.css`, `.bnd-*`). Links Managerbilanz + Blatt „Je Wettbewerb“,
 // rechts Ansehen je Saison auf Karopapier, Titel & Rekorde (Abriss), Zeitungsausschnitt,
 // Meilensteine (oranger Zettel), Lieblings-/Angstgegner (gelber Zettel), Polaroid
-// mit Wappen. Reiter der Mappe springen zu Saisons / Trainer & Spieler.
+// mit Wappen (keine Büroklammern, Wunsch Pascal). Reiter der Mappe springen zu Saisons / Trainer & Spieler.
 // =============================================================================
 import type { ReactNode } from 'react';
 import { currentStint, repLabel } from '../../../game/careerState';
@@ -22,15 +22,6 @@ import { COMP_DE, crestOf, dmy, ppgText, wdlText } from './parts';
 import { RepChart } from './RepChart';
 
 type Tab = 'bilanz' | 'saisons' | 'personen';
-
-/** Büroklammer (gezeichnet), sitzt über der Oberkante eines Zettels. */
-function Clip({ className }: { className: string }) {
-  return (
-    <svg className={`bnd-clip ${className}`} viewBox="0 0 24 64" aria-hidden="true">
-      <path d="M7 50 V12 a5 5 0 0 1 10 0 V54 a7 7 0 0 1 -14 0 V18" />
-    </svg>
-  );
-}
 
 function Opp({ g, o }: { g: Game; o: OppLine }) {
   const c = crestOf(g, o.id);
@@ -120,7 +111,6 @@ export function BilanzTab({ g, d, rep, onTab }: { g: Game; d: CareerData; rep: n
 
         {/* Rechts oben: Ansehen je Saison auf Karopapier */}
         <section className="bnd-chart">
-          <Clip className="bnd-clip-a" /><Clip className="bnd-clip-b" />
           <h3 className="bnd-h3">Historische Entwicklung <small>Ansehen je Saison</small></h3>
           {d.repSeries.length ? <RepChart points={d.repSeries} liveLast={!!d.seasons[0]?.live} />
             : <div className="bnd-empty">Nach deiner ersten Saison siehst du hier, wie sich dein Ansehen entwickelt.</div>}
@@ -158,7 +148,6 @@ export function BilanzTab({ g, d, rep, onTab }: { g: Game; d: CareerData; rep: n
 
         {/* Meilensteine (oranger Zettel) */}
         <section className="bnd-note bnd-miles">
-          <Clip className="bnd-clip-c" />
           <h3 className="bnd-h3">Meilensteine</h3>
           {miles.length ? miles.map(([n, x]) => (
             <div key={n} className="bnd-mile">
