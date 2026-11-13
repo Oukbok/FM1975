@@ -1061,7 +1061,9 @@ Ziehst du eine Karte auf eine freie Stelle des Rasens, verschiebst du die **Posi
 - **Fest einrasten (an):** Die Karte springt auf das nächste freie Feld eines festen Rasters (Libero, Innenverteidiger links/zentral/rechts, Außenverteidiger, offensive Außenverteidiger, Sechser, zentrales und offensives Mittelfeld, Flügel, hängende Spitzen, Mittelstürmer). Das Ziel wird beim Ziehen hervorgehoben.
 - **Fest einrasten (aus):** Die Karte bleibt genau dort, wo du sie loslässt. Die Position heißt wie das nächstgelegene Rasterfeld – beim Ziehen siehst du den Namen live.
 
-Die so entstandene Position zählt im Spiel genauso wie eine Formationsposition (Eignung, Mannschaftsteile, Torschützenwahl). Der Torwart bleibt fest im Tor, kein Feldspieler kann ins Tor gezogen werden. **Zurücksetzen** stellt die Positionen der Formation wieder her. Die Einstellung *Fest einrasten* wird mit deiner Taktik gespeichert.
+Die so entstandene Position zählt im Spiel genauso wie eine Formationsposition (Eignung, Mannschaftsteile, Torschützenwahl). Der Torwart bleibt fest im Tor, kein Feldspieler kann ins Tor gezogen werden. **Zurücksetzen** stellt die Positionen der Formation wieder her. Die Einstellung *Fest einrasten* wird mit deiner Taktik gespeichert und ist anfangs aus.
+
+**Speichern / Laden:** Im Kopf der Aufstellung speicherst du bis zu 12 Aufstellungen unter einem Namen (Formation, Startelf je Platz, Bank, eigene Positionen, Kapitän, Standardschützen) und lädst sie mit einem Klick wieder – etwa eine für Heimspiele und eine für Auswärtsspiele. Spieler, die inzwischen nicht mehr im Kader sind, fallen beim Laden weg; ihre Plätze bleiben frei.
 
 ### Auto
 **Auto** besetzt alle Positionen nach bestmöglicher Eignung (nur einsatzfähige Spieler) und füllt die Bank samt Ersatztorwart – Formation, eigene Positionen und Anweisungen bleiben erhalten.

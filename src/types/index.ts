@@ -1137,7 +1137,7 @@ export interface Tactics {
   crossStyle?: 'high' | 'low' | 'mixed';
   /** Eigene Lage einzelner Formations-Slots (Slot-ID → Koordinaten in % + abgeleitete Position). */
   slotLayout?: Record<string, { x: number; y: number; position: Position }>;
-  /** Aufstellung: gezogene Spieler rasten auf feste Positionsfelder ein (Standard an). */
+  /** Aufstellung: gezogene Spieler rasten auf feste Positionsfelder ein (Standard aus, Wunsch Pascal). */
   snapToGrid?: boolean;
 }
 

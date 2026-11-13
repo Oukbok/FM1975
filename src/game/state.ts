@@ -162,6 +162,8 @@ export interface Game {
   scouting?: import('./scoutingGame').ScoutingState;
   /** Privatleben: Familie, Freizeit, Vermögen, Generationen (game/private/). */
   private?: import('./private/privateState').PrivateState;
+  /** Gespeicherte Aufstellungen (components/lineup/SavedLineups.tsx). */
+  savedLineups?: import('../components/lineup/SavedLineups').SavedLineup[];
   /** Privatleben beim Start abgeschaltet. */
   privateOff?: boolean;
 }

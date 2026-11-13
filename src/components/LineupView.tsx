@@ -27,6 +27,7 @@ import {
 import { InfoTip } from '../ui/InfoTip';
 import { posGroupClass } from '../ui/positionBadges';
 import Select from '../ui/Select';
+import SavedLineupsModal from './lineup/SavedLineups';
 
 // Loses Game-Interface (Vollstruktur liegt in game/state.ts).
 interface G {
@@ -78,7 +79,8 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
 
   if (!t.lineupMap) Object.assign(t, autoFillLineup(club, g.players, t, benchSize, promiseLineupPrefs(g as unknown as Game)));
   const map = t.lineupMap!;
-  const snap = t.snapToGrid !== false;
+  const snap = t.snapToGrid === true; // Standard aus (Wunsch Pascal)
+  const [saved, setSaved] = useState(false);
   const formation = effectiveFormation(t);
   const squad = (club.playerIds as string[]).map((id) => g.players[id]).filter(Boolean) as Player[];
   const xiIds = new Set(Object.values(map));
@@ -300,6 +302,7 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
             <input type="checkbox" checked={snap} onChange={(e) => set({ snapToGrid: e.target.checked })} /> Fest einrasten<InfoTip k="festEinrasten" />
           </label>
           {t.slotLayout && Object.keys(t.slotLayout).length > 0 && <button className="dchip" onClick={resetLayout} title="Eigene Positionen verwerfen, zurück zur Formation">Standard</button>}
+          <button className="dchip" onClick={() => setSaved(true)} title="Aufstellungen speichern und laden">Speichern / Laden</button>
           <button className="dchip" onClick={doAuto}>Auto</button>
         </span>
       }>
@@ -317,6 +320,7 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
         <RolesAndHints t={t} xi={xiPlayers} hints={hints} set={set} />
       </DashBox>
 
+      {saved && <SavedLineupsModal g={g as unknown as Game} t={t} benchSize={benchSize} onClose={() => setSaved(false)} onChanged={refresh} />}
       {ghost && createPortal(
         <div className={`lu-ghost ${drag!.full ? 'no' : ''}`} style={{ left: drag!.cx, top: drag!.cy, transform: `translate(14px, 14px) scale(${drag!.scale})`, transformOrigin: '0 0' }}>
           <span className={`lu-card-pos ${posGroupClass(ghostPos ?? ghost.naturalPosition)}`}>{ghostPos ?? ghost.naturalPosition}</span>

@@ -23,7 +23,7 @@
   padding: 6px 10px; font: 600 15px var(--font-ui);
 }
 .lu-formation { max-width: 150px; }
-.lu-check { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; color: var(--text-2); cursor: pointer; }
+.lu-check { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; color: var(--navy-ink); cursor: pointer; } /* weiß im Boxkopf (Wunsch Pascal) */
 .lu-check input { accent-color: var(--accent); width: 16px; height: 16px; }
 
 /* --- Kaderliste --- */
@@ -283,3 +283,18 @@
 .lu-row-free .lu-pos { opacity: .7; }
 .lu-row-free.over td { background: var(--sel-bg); }
 .lu-row-free .lu-ghost { visibility: hidden; } /* gleiche Zeilenhöhe wie besetzte Plätze */
+
+/* Aufstellungen speichern & laden (components/lineup/SavedLineups.tsx) – feste Fenstergröße */
+.lu-saved { width: 620px; height: 600px; display: flex; flex-direction: column; padding: 20px 22px; }
+.lu-saved-head { display: flex; align-items: center; justify-content: space-between; }
+.lu-saved-head h2 { margin: 0; font-size: 24px; }
+.lu-saved-new { display: flex; gap: 10px; margin-top: 14px; }
+.lu-saved-in { flex: 1; height: 40px; padding: 0 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel-2); color: var(--text); font: inherit; font-size: 15px; }
+.lu-saved-msg { min-height: 22px; margin: 8px 0 4px; font-size: 13px; color: var(--text-2); }
+.lu-saved-list { flex: 1; min-height: 0; overflow-y: auto; border-top: 1px solid var(--border-soft); }
+.lu-saved-row { display: flex; align-items: center; gap: 12px; padding: 10px 2px; border-bottom: 1px solid var(--border-soft); }
+.lu-saved-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.lu-saved-main b { font-size: 16px; }
+.lu-saved-sub { font-size: 13px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lu-saved-acts { display: flex; gap: 6px; flex: none; }
+.lu-saved-foot { padding-top: 10px; font-size: 13px; color: var(--text-3); }
