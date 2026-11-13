@@ -7,6 +7,9 @@ import { Player, Position, PlayerAttributes, AttributeKey, createEmptyStats, pot
 import { wageForOverall } from './economy';
 import { weightsFor, positionSuitability, footForSide } from './positions';
 import { ensurePositionSkill } from './positionSkill';
+import { initialExperience } from './experience';
+import { bornWorkRate, groupOf } from './attributeAging';
+import { estimatedPeak } from './teamBoost';
 import { pickOrigin, makeName, faceFor, Origin } from '../data/origins';
 import { exceptionalPotential, getTalentSupply } from './talent';
 
@@ -62,8 +65,20 @@ export function makePositionAttributes(pos: Position, strength: number, age: num
     }
     (a as any)[k] = clamp(v);
   }
-  // Erfahrung wächst mit dem Alter, nicht mit der Position.
-  a.experience = clamp(20 + (age - 16) * 4 + noise(8), 5, 95);
+  // Erfahrung = Laufbahn: Alter UND Niveau (engine/experience.ts initialExperience).
+  a.experience = clamp(initialExperience(age, strength, noise(6)), 5, 95);
+  // Einsatzwille angeboren, bei starken Spielern fast immer hoch (engine/attributeAging.ts).
+  a.workRate = bornWorkRate(a.workRate, Math.max(0, Math.min(1, (strength - 45) / 45)), noise(8));
+  // Alterskurven: Ältere haben Tempo verloren und Spielintelligenz gewonnen, Junge umgekehrt
+  // (die Feinjustierung unten hält die Zielstärke).
+  for (const k of Object.keys(a) as AttributeKey[]) {
+    if (k === 'experience' || k === 'fitness' || GK_ONLY.includes(k)) continue;
+    const g = groupOf(k);
+    const d = g === 'tempo' ? (age >= 29 ? -(age - 28) * 2.2 : age <= 20 ? 1 : 0)
+      : g === 'kraft' ? (age >= 31 ? -(age - 30) * 1.6 : age <= 20 ? -3 : 0)
+      : g === 'kopf' ? Math.max(-5, Math.min(6, (age - 24) * 0.8)) : 0;
+    if (d) (a as any)[k] = clamp(a[k] + d);
+  }
   // Feinjustierung auf die Zielstärke.
   const probe = { attributes: a, naturalPosition: pos, secondaryPositions: [], overall: strength } as unknown as Player;
   const delta = strength - positionSuitability(probe, pos);
@@ -138,6 +153,7 @@ export function createPlayer(spec: NewPlayerSpec): Player {
       injuryProneness: 5 + Math.floor(rng() * 45), consistency: 35 + Math.floor(rng() * 55),
       bigMatchTemperament: 35 + Math.floor(rng() * 55), lastRatingChange: 0,
       abilityHistory: [{ date, ability: overall }],
+      ...(age >= 31 ? { peakOverall: estimatedPeak(age, overall) } : {}),
       seasonStarChange: 0,
       basePotential, unfold: 0, ...pers, devPoints: 0, recentMinutes: 0, lastMinutesSeen: 0, scoutBias,
     },

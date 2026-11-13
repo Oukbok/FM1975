@@ -13,10 +13,11 @@ export type TextSpeed = 'langsam' | 'normal' | 'schnell' | 'rasant';
 export const SPEEDS: TextSpeed[] = ['langsam', 'normal', 'schnell', 'rasant'];
 
 const TIMING: Record<TextSpeed, { base: number; perChar: number; suspense: number; quiet: number }> = {
-  langsam: { base: 1700, perChar: 46, suspense: 2700, quiet: 650 },
-  normal: { base: 1050, perChar: 29, suspense: 2100, quiet: 380 },
-  schnell: { base: 520, perChar: 14, suspense: 1350, quiet: 170 },
-  rasant: { base: 200, perChar: 5, suspense: 750, quiet: 60 },
+  // Wunsch Pascal: Text muss gut lesbar sein – alle Stufen deutlich ruhiger als zuvor.
+  langsam: { base: 2400, perChar: 62, suspense: 3400, quiet: 900 },
+  normal: { base: 1600, perChar: 42, suspense: 2700, quiet: 550 },
+  schnell: { base: 900, perChar: 24, suspense: 1800, quiet: 280 },
+  rasant: { base: 320, perChar: 8, suspense: 950, quiet: 90 },
 };
 
 export interface TickerCfg {

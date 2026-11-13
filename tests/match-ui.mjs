@@ -129,7 +129,7 @@ if (!sawHalf && (await confirmStop()) !== 'halbzeit') {
     if (bench && b3) {
       await page.mouse.move(b3.x + b3.width / 2, b3.y + b3.height / 2); await page.mouse.down();
       await page.mouse.move(b3.x + 40, b3.y + 30, { steps: 4 });
-      await page.mouse.move(bench.x + bench.width / 2, bench.y + bench.height - 6, { steps: 8 });
+      await page.mouse.move(bench.x + bench.width - 20, bench.y + 8, { steps: 8 });
       await page.mouse.up();
       await page.waitForTimeout(150);
       if (!(await page.locator('.tm-cs-msg:has-text("nur per Wechsel")').count())) fail('Hinweis „Auf die Bank nur per Wechsel“ fehlt');
@@ -146,6 +146,23 @@ if (!sawHalf && (await confirmStop()) !== 'halbzeit') {
   await page.locator('.tm-cs-row.bench').nth(0).click();
   await page.waitForTimeout(200);
   if (!(await page.locator('.tm-tag.rein').count())) fail('Geplanter Wechsel nicht markiert');
+  // Freies Verschieben auf dem Feld (Wunsch Pascal): Feldspieler an eine freie Stelle ziehen.
+  {
+    const field = await page.locator('.tm-sys-board .lu-field').boundingBox();
+    const sl = page.locator('.tm-sys-slot').nth(6);
+    const before = await sl.locator('.lu-card-pos').innerText().catch(() => '');
+    const bx = await sl.boundingBox();
+    if (field && bx) {
+      await page.mouse.move(bx.x + bx.width / 2, bx.y + bx.height / 2); await page.mouse.down();
+      await page.mouse.move(bx.x + 40, bx.y + 30, { steps: 4 });
+      await page.mouse.move(field.x + field.width * 0.12, field.y + field.height * 0.2, { steps: 10 });
+      await page.screenshot({ path: `${outDir}/10b_verschieben.png` });
+      await page.mouse.up(); await page.waitForTimeout(150);
+      const after = await page.locator('.tm-sys-slot').nth(6).locator('.lu-card-pos').innerText().catch(() => '');
+      console.log(`Verschieben: ${before} → ${after}`);
+      if (before === after) fail('Verschieben auf dem Feld hat die Position nicht geändert');
+    }
+  }
   await page.screenshot({ path: `${outDir}/11_wechsel_geplant.png` });
   await pickOption(page, page.locator('.tm-sys-head .sel3'), { index: 1 });
   await page.waitForTimeout(200);

@@ -1,7 +1,8 @@
 // =============================================================================
 // Ziehen & Ablegen im Textmodus (Wunsch Pascal): Zeilen der Spielerliste, der
 // Live-Aufstellung und Slots/Bank des Spielfelds tragen `data-dnd={schlüssel}`.
-// Ein Zug über 6 px = Ziehen; Ablage auf einem anderen `data-dnd` ruft onDrop.
+// Ein Zug über 6 px = Ziehen; Ablage auf einem anderen `data-dnd` ruft onDrop (mit Zeigerlage,
+// z. B. für das freie Verschieben auf dem Spielfeld `data-dnd="pitch"`).
 // Ohne Bewegung bleibt es ein normaler Klick (der folgende click wird nur nach
 // echtem Ziehen geschluckt). Escape bricht ab. Geist per Portal am Zeiger.
 // =============================================================================
@@ -13,7 +14,7 @@ export type DndState = { key: string; x: number; y: number; over: string | null 
 export const dndTargetAt = (x: number, y: number) =>
   (document.elementFromPoint(x, y)?.closest('[data-dnd]') as HTMLElement | null)?.dataset.dnd ?? null;
 
-export function useDnd(onDrop: (from: string, to: string) => void) {
+export function useDnd(onDrop: (from: string, to: string, cx: number, cy: number) => void) {
   const [drag, setDrag] = useState<DndState>(null);
   const start = useRef<{ key: string; x: number; y: number } | null>(null);
   const moved = useRef(false);
@@ -44,7 +45,7 @@ export function useDnd(onDrop: (from: string, to: string) => void) {
       setDrag(null);
       eatClick();
       const to = dndTargetAt(e.clientX, e.clientY);
-      if (to && to !== s.key) dropRef.current(s.key, to);
+      if (to && to !== s.key) dropRef.current(s.key, to, e.clientX, e.clientY);
     };
     const cancel = () => { start.current = null; moved.current = false; setDrag(null); };
     const key = (e: KeyboardEvent) => { if (e.key === 'Escape' && start.current) { e.preventDefault(); e.stopPropagation(); cancel(); aborted.current = true; } };

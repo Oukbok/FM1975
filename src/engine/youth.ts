@@ -33,6 +33,7 @@ import {
 import { academyQualityBonus } from './infrastructure';
 import { academyGrowthOf, academyLevelOf, ageCapBonus, cpuPromotionPolicy, intakeCountOf } from './youthAcademy';
 import { ageFactor, potentialFactor } from './weeklyTraining';
+import { bornWorkRate } from './attributeAging';
 import { youthMaturityCap, youthTalentPotential, maturityGrowth, tempoFactor, diligenceFactor } from './talent';
 import { maybeRisingStar } from './clubStars';
 
@@ -254,6 +255,8 @@ export function generateYouthPlayer(
   const rawPot = opts.pool === 'breite' ? starsToPotential(breitePotential(rand)) : assignYouthPotential(rand, academyLevel);
   const potentialAbility = Math.round(Math.max(overall + 4, Math.min(99, rawPot + ((opts.potBias ?? 0) + youthPotentialShift) * 8)));
   const truePot = clampStars(potentialToStars(potentialAbility));
+  // Einsatzwille angeboren – große Talente haben ihn meist schon früh (Wunsch Pascal).
+  attributes.workRate = bornWorkRate(attributes.workRate, Math.max(0, Math.min(1, (potentialAbility - 55) / 40)), ri(-8, 8));
 
   const [scoutMin, scoutMax] = initialScoutRange(rand, truePot, academyLevel, useAge);
 

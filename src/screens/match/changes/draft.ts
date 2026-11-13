@@ -3,6 +3,7 @@
 // Spiel-Taktik, Ansprache und Einzelgespräche. Erst „Bestätigen“ wendet ihn
 // über die Engine-Eingriffe an (Wechsel → Umstellung → Taktik → Gespräche).
 // =============================================================================
+import { PITCH_GRID, clampField, nearestGrid } from '../../../data/pitchGrid';
 import { FORMATIONS, getFormation, type FormationSlot } from '../../../data/formations';
 import { cachedSuitability, matchBase } from '../../../engine/match/team';
 import { playerTalk, reshape } from '../../../engine/match/sideline';
@@ -168,3 +169,23 @@ export function draftPlayers(sim: MatchSim, side: Side, d: Draft): { field: MPla
   const benchList = [...bench(t), ...onPitch(t)].filter((m) => !inDraft.has(m.id));
   return { field, benchList };
 }
+
+/**
+ * Spieler auf dem Feld frei verschieben (Wunsch Pascal, wie Aufstellung › Aufstellung):
+ * Slot bekommt die neue Lage (x/y in % des Felds) und die Position des nächsten Rasterpunkts.
+ * Torwart bleibt im Tor, Feldspieler kommen nicht ins Tor. Liefert Fehlertext oder null.
+ */
+export function moveSlot(d: Draft, key: string, x: number, y: number): string | null {
+  const sid = key.startsWith('slot:') ? key.slice(5) : playerSlot(d, key);
+  if (!sid) return 'Bankspieler auf den Spieler ziehen, der für ihn rausgeht.';
+  const s = d.slots.find((z) => z.id === sid);
+  if (!s) return null;
+  if (s.position === 'TW') return 'Der Torwart bleibt im Tor.';
+  const c = clampField(x, y);
+  const g = nearestGrid(c.x, c.y, GK_POINTS);
+  d.slots = d.slots.map((z) => (z.id === sid ? { ...z, x: Math.round(c.x * 10) / 10, y: Math.round(c.y * 10) / 10, position: g.position } : z));
+  return null;
+}
+const GK_POINTS = new Set(PITCH_GRID.filter((g) => g.position === 'TW').map((g) => g.id));
+/** Position, die ein Spieler an dieser Stelle hätte (Anzeige beim Ziehen). */
+export const positionAt = (x: number, y: number) => { const c = clampField(x, y); return nearestGrid(c.x, c.y, GK_POINTS).label; };

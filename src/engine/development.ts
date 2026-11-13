@@ -12,7 +12,8 @@
 //    sind eine Scout-Einschätzung mit Spanne (siehe engine/scouting.ts).
 // Alle Vereine nutzen dieselbe Formel – nur Training/Spielzeit unterscheiden sich.
 // =============================================================================
-import { boostText, teamBoostRound, type BoostChange } from './teamBoost';
+import { boostText, notePeak, teamBoostRound, type BoostChange } from './teamBoost';
+import { declineMul, growthMul, matureShift, naturalDrift } from './attributeAging';
 import { hashStr, mulberry32 } from './leagues';
 import { applyProGem } from './gems';
 import { Player, Club, AttributeKey, potentialToStars, clampStars } from '../types';
@@ -146,7 +147,8 @@ function practiceFactor(p: Player): number {
 
 function characterFactor(p: Player): number {
   const d = p.development;
-  const v = ((d.professionalism ?? 50) * 0.6 + (d.ambition ?? 50) * 0.4) / 100; // 0..1
+  // Einsatzwille (Attribut) zählt mit: früh hoch möglich, treibt die Entwicklung (Wunsch Pascal).
+  const v = ((d.professionalism ?? 50) * 0.45 + (d.ambition ?? 50) * 0.3 + (p.attributes.workRate ?? 50) * 0.25) / 100; // 0..1
   return 0.7 + v * 0.6;
 }
 
@@ -315,7 +317,6 @@ export function applyOverallChange(p: Player, change: number): void {
   if (change === 0) return;
   const w = weightsFor(p.naturalPosition) as Partial<Record<AttributeKey, number>>;
   const keys = Object.keys(w) as AttributeKey[];
-  const physical: AttributeKey[] = ['speed', 'acceleration', 'stamina', 'agility', 'jumping', 'strength', 'balance'];
   const target = p.overall + change;
   // Schrittweise Punkte vergeben, bis die Positionsstärke das Ziel erreicht.
   let guard = 0;
@@ -327,21 +328,23 @@ export function applyOverallChange(p: Player, change: number): void {
       // Training-Akkumulator (eigener Verein) gibt Schwerpunkt vor, sonst nach Gewicht.
       const acc = p.development.attributeProgress ?? {};
       // Ausgereizte Werte (99) wachsen nicht weiter – sonst bliebe der Spieler stecken.
-      const weighted = keys.filter((key) => (p.attributes[key] ?? 0) < 99)
-        .map((key) => ({ key, s: (w[key] ?? 1) * (1 + (acc[key] ?? 0)) * (0.6 + Math.random()) }));
+      // Alterskurve je Wert (engine/attributeAging.ts): jung v. a. Tempo/Kraft, später Kopf.
+      const weighted = keys.filter((key) => (p.attributes[key] ?? 0) < 99 && growthMul(key, p.age) > 0)
+        .map((key) => ({ key, s: (w[key] ?? 1) * growthMul(key, p.age) * (1 + (acc[key] ?? 0)) * (0.6 + Math.random()) }));
       if (!weighted.length) break;
       weighted.sort((a, b) => b.s - a.s);
       k = weighted[0].key;
     } else {
-      const pool = (p.age >= 31 ? physical : keys).filter((key) => (p.attributes[key] ?? 0) > 5);
-      k = pool[Math.floor(Math.random() * pool.length)] ?? keys[0];
+      // Abbau nach Alterskurve: ab Ende 20 vor allem Tempo und Kraft, Kopf und Erfahrung kaum/nie.
+      const pool = keys.filter((key) => (p.attributes[key] ?? 0) > 5).map((key) => ({ key, s: (w[key] ?? 1) * declineMul(key, p.age) })).filter((x) => x.s > 0);
+      const sum = pool.reduce((a, x) => a + x.s, 0);
+      let r = Math.random() * sum;
+      k = pool.length ? pool[pool.length - 1].key : keys[0];
+      for (const x of pool) { r -= x.s; if (r <= 0) { k = x.key; break; } }
+      if (!pool.length) break;
     }
     (p.attributes as any)[k] = clamp((p.attributes[k] ?? 50) + (change > 0 ? 1 : -1), 1, 99);
     // Mental-Werte altern kaum, Erfahrung steigt mit Spielen weiter.
-  }
-  // Auch fachfremde Physis baut im Alter ab.
-  if (change < 0 && p.age >= 30) {
-    for (const k of physical) if (Math.random() < 0.25) (p.attributes as any)[k] = clamp(p.attributes[k] - 1, 1, 99);
   }
   refreshOverall(p);
 }
@@ -350,6 +353,7 @@ export function applyOverallChange(p: Player, change: number): void {
 export function refreshOverall(p: Player): void {
   p.overall = positionSuitability(p, p.naturalPosition);
   p.development.currentAbility = p.overall;
+  notePeak(p);
   const ratings: Partial<Record<string, number>> = { [p.naturalPosition]: p.overall };
   for (const pos of p.secondaryPositions ?? []) ratings[pos] = positionSuitability(p, pos);
   p.positionRatings = ratings as Player['positionRatings'];
@@ -404,6 +408,15 @@ function applyRatingToPlayer(p: Player, type: RatingType, dateISO: string): { ch
   // Nicht ausgezahlte Reste begrenzen (keine endlose Ansammlung).
   d.devPoints = clamp(d.devPoints, -4, 4);
 
+  // Für die Position unwichtige Werte folgen dem Alter (ändert die Stärke nicht).
+  {
+    const w = weightsFor(p.naturalPosition) as Partial<Record<AttributeKey, number>>;
+    const weighted = new Set(Object.keys(w).filter((k) => (w[k as AttributeKey] ?? 0) > 0));
+    for (const sp of p.secondaryPositions ?? []) for (const [k, v] of Object.entries(weightsFor(sp))) if ((v ?? 0) > 0) weighted.add(k);
+    const drive = clamp(((d.professionalism ?? 50) + (p.attributes.workRate ?? 50)) / 200, 0, 1);
+    naturalDrift(p, weighted, share, drive);
+    matureShift(p, Object.keys(w) as AttributeKey[], w, share, () => positionSuitability(p, p.naturalPosition));
+  }
   if (change !== 0) {
     applyOverallChange(p, change);
     d.lastRatingChange = change;

@@ -6,8 +6,9 @@
 // und Abwehr ihrer Mannschaft, solange sie auf dem Platz stehen (zusammen höchstens
 // +3 %; engine/match/state.ts wie Stab und Heimstärke).
 // Verliehen wird die Qualität NUR in der Auf- und Abwertungsrunde (development.ts
-// runRatingCeremony → `teamBoostRound`). Wer im Alter 10 % seiner Bestform verloren hat,
-// verliert sie langsam wieder (Chance steigt), ab 15 % drastisch.
+// runRatingCeremony → `teamBoostRound`). Maßstab ist die HÖCHSTE jemals erreichte Stärke
+// (nicht die Form): Wer im Alter 10 % davon verloren hat, verliert den Bonus langsam wieder
+// (Chance steigt), ab 15 % drastisch. Auch die Vergabe richtet sich nach der Höchststärke.
 // Ziel: im ganzen Spiel mit vollen Kadern durchschnittlich etwa 5–20 Träger.
 // =============================================================================
 import type { Player } from '../types';
@@ -21,10 +22,32 @@ const ORDER: TeamBoost[] = ['bronze', 'silver', 'gold'];
 /** Führungswert aus Führungsstärke und Erfahrung (0–100). */
 export const leaderScore = (p: Player) => (p.attributes.leadership ?? 50) * 0.55 + (p.attributes.experience ?? 50) * 0.45;
 
-/** Stufe, für die ein Spieler infrage kommt (oder null). */
+/** Höchste jemals erreichte Stärke (gemerkter Höchstwert, Stärke-Verlauf, aktuelle Stärke). */
+export function peakOf(p: Player): number {
+  let m = Math.max(p.overall, p.development.peakOverall ?? 0);
+  for (const h of p.development.abilityHistory ?? []) if (h.ability > m) m = h.ability;
+  return m;
+}
+
+/** Höchststärke merken (aufgerufen bei jeder Neuberechnung der Stärke). */
+export function notePeak(p: Player): void {
+  const d = p.development;
+  if (d) d.peakOverall = peakOf(p);
+}
+
+/**
+ * Geschätzte Höchststärke für Spieler, die schon im Karriereherbst erzeugt werden
+ * (Startkader 1975, Nachrücker): typischer Abbau je Alter, ohne Zufall.
+ */
+export function estimatedPeak(age: number, overall: number): number {
+  const loss = age <= 30 ? 0 : age === 31 ? 0.03 : age === 32 ? 0.06 : age === 33 ? 0.1 : age === 34 ? 0.14 : age === 35 ? 0.18 : 0.23;
+  return Math.min(99, Math.round(overall / (1 - loss)));
+}
+
+/** Stufe, für die ein Spieler infrage kommt (oder null) – Stärke = Höchststärke der Karriere. */
 export function boostTier(p: Player): TeamBoost | null {
   const a = p.attributes;
-  if ((a.leadership ?? 0) < 76 || (a.experience ?? 0) < 66 || p.overall < 66 || p.age < 25) return null;
+  if ((a.leadership ?? 0) < 76 || (a.experience ?? 0) < 66 || peakOf(p) < 66 || p.age < 25) return null;
   const s = leaderScore(p);
   return s >= 85 ? 'gold' : s >= 81 ? 'silver' : s >= 77 ? 'bronze' : null;
 }
@@ -36,9 +59,9 @@ export function teamBoostOf(players: Player[]): number {
   return Math.min(TEAM_BOOST_CAP, s);
 }
 
-/** Verlust von Bestform (0..1) gegenüber dem Höchstwert der Karriere. */
+/** Verlust (0..1) der aktuellen Stärke gegenüber der höchsten jemals erreichten Stärke. */
 export const peakDrop = (p: Player) => {
-  const peak = Math.max(p.development.peakOverall ?? p.overall, p.overall);
+  const peak = peakOf(p);
   return peak > 0 ? Math.max(0, 1 - p.overall / peak) : 0;
 };
 
@@ -53,12 +76,11 @@ export function loseChance(p: Player): number {
 export interface BoostChange { kind: 'neu' | 'auf' | 'verloren'; from?: TeamBoost; to?: TeamBoost }
 
 /**
- * Eine Bewertungsrunde: Bestform merken, Qualität verleihen/aufwerten/verlieren.
+ * Eine Bewertungsrunde: Höchststärke merken, Qualität verleihen/aufwerten/verlieren.
  * `rng` deterministisch je Spieler und Runde. Kleine Runden verleihen seltener.
  */
 export function teamBoostRound(p: Player, rng: () => number, big: boolean): BoostChange | null {
-  const d = p.development;
-  d.peakOverall = Math.max(d.peakOverall ?? p.overall, p.overall);
+  notePeak(p);
   const cur = p.teamBoost;
   if (cur) {
     if (rng() < loseChance(p)) { delete p.teamBoost; return { kind: 'verloren', from: cur }; }
@@ -69,9 +91,9 @@ export function teamBoostRound(p: Player, rng: () => number, big: boolean): Boos
     }
     return null;
   }
-  if (peakDrop(p) >= 0.08) return null; // auf dem absteigenden Ast wird niemand mehr Anführer
+  if (peakDrop(p) >= 0.10) return null; // ab 10 % unter der Höchststärke keine neue Vergabe mehr
   const tier = boostTier(p);
-  if (!tier || rng() >= (big ? 0.18 : 0.06)) return null;
+  if (!tier || rng() >= (big ? 0.14 : 0.05)) return null;
   p.teamBoost = tier === 'gold' ? 'silver' : 'bronze'; // man fängt klein an, Gold nur über Aufwertung
   if (tier === 'gold' && rng() < 0.3) p.teamBoost = 'gold';
   return { kind: 'neu', to: p.teamBoost };
@@ -82,5 +104,5 @@ export function boostText(b: BoostChange): string {
   const pct = (t: TeamBoost) => `+${String(BOOST_PCT[t] * 100).replace('.', ',')} %`;
   if (b.kind === 'neu') return `Neuer Führungsspieler: Teambonus ${BOOST_DE[b.to!]} (${pct(b.to!)})`;
   if (b.kind === 'auf') return `Führungsspieler steigt auf: Teambonus ${BOOST_DE[b.to!]} (${pct(b.to!)})`;
-  return `Verliert seinen Teambonus (${BOOST_DE[b.from!]}) – die einstige Klasse ist dahin`;
+  return `Verliert seinen Teambonus (${BOOST_DE[b.from!]}) – zu weit unter seiner einstigen Höchststärke`;
 }

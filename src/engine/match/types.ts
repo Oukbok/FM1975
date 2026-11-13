@@ -79,6 +79,8 @@ export interface MPlayer {
   warmSince?: number | null;
   /** Halbzeit (period), in der zuletzt ein Einzelgespräch geführt wurde (0 = keins). */
   talked?: number;
+  /** Ergebnis des letzten Spielergesprächs (Anzeige im Wechsel-Bildschirm): Art, Wirkung, Leistung in %. */
+  talkRes?: { kind: PlayerTalk; res: 'gut' | 'neutral' | 'schlecht'; pct: number; period: number };
 }
 
 /** Kurzes Einzelgespräch mit einem Spieler im Spiel (Wechsel-Bildschirm). */

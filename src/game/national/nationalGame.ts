@@ -16,6 +16,7 @@
 // • Nachrichten nur für den eigenen Verein (Abstellungen, Nominierung, Turnier).
 // Seite: views/statistiken/NationalView.tsx (Statistiken › Nationalteams).
 // =============================================================================
+import { intlExperience } from '../../engine/experience';
 import type { Player } from '../../types';
 import type { Game } from '../state';
 import { NATION_BY_CODE, confOf, intlMatchLabel, intlWindowPlan, squadSizeOf, tournamentsOfYear, type TournamentKind } from '../../data/nationalTeams';
@@ -192,6 +193,7 @@ function bookMatches(g: Game, matches: NtMatch[], squads: Record<string, string[
         if (!xi.has(p.id) && !bench.includes(p.id)) continue;
         const I = (p.intl ??= { caps: 0, goals: 0 });
         I.caps++; I.last = today.slice(0, 4);
+        intlExperience(p, 1, xi.has(p.id));
         I.goals += (m.scorers ?? []).filter(([id]) => id === p.id).length;
         p.frische = Math.max(40, p.frische - (xi.has(p.id) ? 14 : 6));
         p.form = Math.max(0, Math.min(100, p.form + (gf > ga ? 2 : gf < ga ? -2 : 0)));
@@ -280,6 +282,7 @@ function tournamentDaily(g: Game, st: NationalState, today: string): void {
       const apps = xi.has(id) ? ms.length : Math.round(ms.length / 3);
       const I = (p.intl ??= { caps: 0, goals: 0 });
       I.caps += apps; I.goals += goals; I.last = String(year);
+      intlExperience(p, apps, xi.has(id), true);
       (I.tourn ??= []).push({ t: `${t.kind} ${t.year}`, res, apps, goals });
       if (I.tourn.length > 8) I.tourn.shift();
       const b = (xi.has(id) ? boostOf(res) : boostOf(res) / 3) + Math.min(0.15, goals * 0.025);

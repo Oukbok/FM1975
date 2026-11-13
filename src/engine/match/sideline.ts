@@ -138,6 +138,7 @@ export function playerTalk(sim: MatchSim, side: Side, id: string, kind: PlayerTa
   refreshSkills();
   t.dirty = true;
   const res = f >= 1.008 ? 'gut' : f < 0.998 ? 'schlecht' : 'neutral';
+  m.talkRes = { kind, res, pct: Math.round((f - 1) * 1000) / 10, period: sim.period };
   sim.emit('ptalk', { side, player: id, value: kind, detail: res });
   return res;
 }

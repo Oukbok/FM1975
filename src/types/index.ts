@@ -417,7 +417,7 @@ export interface PlayerDevelopment {
   currentAbility: number;
   /** Potenzielle Gesamtstärke (Potential Ability, 1–100). */
   potentialAbility: number;
-  /** Höchste Stärke der Karriere (Teambonus: Formverlust, engine/teamBoost.ts). */
+  /** Höchste jemals erreichte Stärke der Karriere (Teambonus, engine/teamBoost.ts). */
   peakOverall?: number;
   /**
    * Entwicklungstempo-Faktor (0.5 langsam ... 2.0 schnell).

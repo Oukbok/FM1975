@@ -6,7 +6,7 @@
 import { grade } from '../../../engine/match/finish';
 import type { MatchSim } from '../../../engine/match/sim';
 import { onPitch, tacticsOf } from '../../../engine/match/state';
-import { MENTALITY_LABEL, type Mentality, type PlayerTalk, type Side, type TeamTalk } from '../../../engine/match/types';
+import { MENTALITY_LABEL, type MPlayer, type Mentality, type PlayerTalk, type Side, type TeamTalk } from '../../../engine/match/types';
 import { MoraleIcon, playerMorale100 } from '../../../components/status';
 import { StatsPanel } from '../MatchPanels';
 import { fmtGrade, gradeCls, gradeEarly } from '../board/LineupBoard';
@@ -43,6 +43,25 @@ export function HalftimeTalk({ sim, side, d, onChange }: { sim: MatchSim; side: 
 }
 
 const PT: [PlayerTalk, string][] = [['loben', 'Loben'], ['fordern', 'Mehr fordern'], ['beruhigen', 'Beruhigen']];
+const DONE: Record<PlayerTalk, string> = { loben: 'Gelobt', fordern: 'Mehr gefordert', beruhigen: 'Beruhigt' };
+const REACT: Record<PlayerTalk, Record<'gut' | 'neutral' | 'schlecht', string>> = {
+  loben: { gut: 'blüht auf, spielt befreiter', neutral: 'nimmt es zur Kenntnis', schlecht: 'wird etwas zu bequem' },
+  fordern: { gut: 'reißt sich zusammen, legt zu', neutral: 'nickt, ändert wenig', schlecht: 'fühlt sich ungerecht behandelt' },
+  beruhigen: { gut: 'wirkt sofort ruhiger und konzentrierter', neutral: 'kaum Wirkung', schlecht: 'wirkt eher verunsichert' },
+};
+
+/** Wirkung des Gesprächs (Wunsch Pascal): Reaktion + Leistung in Prozent für den Rest des Spiels. */
+function TalkResult({ m }: { m: MPlayer }) {
+  const r = m.talkRes;
+  if (!r) return <span className="tm-dim">schon gesprochen</span>;
+  const cls = r.res === 'gut' ? 'pos' : r.res === 'schlecht' ? 'neg' : '';
+  const pct = `${r.pct > 0 ? '+' : r.pct < 0 ? '−' : '±'}${String(Math.abs(r.pct)).replace('.', ',')} %`;
+  return (
+    <span className={`tm-pt-res ${cls}`}>
+      <b>{DONE[r.kind]}:</b> {REACT[r.kind][r.res]} <span className="tm-pt-pct">Leistung {pct}</span>
+    </span>
+  );
+}
 
 export function PlayerTalks({ sim, side, d, onChange }: { sim: MatchSim; side: Side; d: Draft; onChange: (id: string, k: PlayerTalk | null) => void }) {
   const early = gradeEarly(sim);
@@ -60,7 +79,7 @@ export function PlayerTalks({ sim, side, d, onChange }: { sim: MatchSim; side: S
               <span className={early ? 'tm-dim' : `ms-grade ${gradeCls(g)}`}>{early ? '–' : fmtGrade(g)}</span>
               <MoraleIcon value={playerMorale100(m.p)} size={20} />
               <div className="tm-pt-btns">
-                {done ? <span className="tm-dim">schon gesprochen</span> : PT.map(([k, label]) => (
+                {done ? <TalkResult m={m} /> : PT.map(([k, label]) => (
                   <button key={k} type="button" className={`tm-chip ${d.talks[m.id] === k ? 'on' : ''}`}
                     onClick={() => onChange(m.id, d.talks[m.id] === k ? null : k)}>{label}</button>
                 ))}

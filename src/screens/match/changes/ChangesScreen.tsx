@@ -11,7 +11,7 @@ import type { MatchSim } from '../../../engine/match/sim';
 import type { Side } from '../../../engine/match/types';
 import { MENTALITY_LABEL, type Mentality } from '../../../engine/match/types';
 import { InfoTip } from '../../../ui/InfoTip';
-import { applyDraft, changeFormation, draftDiff, draftTeamStrength, initialDraft, swap, type Draft } from './draft';
+import { applyDraft, changeFormation, draftDiff, draftTeamStrength, initialDraft, moveSlot, positionAt, swap, type Draft } from './draft';
 import { PlayerTable } from './PlayerTable';
 import { SystemPitch } from './SystemPitch';
 import { HalftimeTalk, PlayerTalks, TacticPane } from './TalkTabs';
@@ -53,7 +53,21 @@ export function ChangesScreen({ sim, side, reason, halftime, initialTab, initial
   };
   // Ziehen & Ablegen über Liste, Spielfeld und Bank hinweg.
   const fieldKeys = new Set(d.slots.map((x) => d.map[x.id] ?? `slot:${x.id}`));
-  const { drag, down } = useDnd((a, b) => {
+  /** Zeigerlage → % des Spielfelds im Spielsystem. */
+  const fieldPct = (cx: number, cy: number) => {
+    const r = document.querySelector('.tm-sys-board .lu-field')?.getBoundingClientRect();
+    return r && r.width ? { x: ((cx - r.left) / r.width) * 100, y: ((cy - r.top) / r.height) * 100 } : null;
+  };
+  const { drag, down } = useDnd((a, b, cx, cy) => {
+    if (b === 'pitch') {
+      const at = fieldPct(cx, cy);
+      if (!at) return;
+      const n = { ...d, slots: d.slots };
+      const err = moveSlot(n, a, at.x, at.y);
+      setMsg(err); if (!err) setD(n);
+      setSel(null);
+      return;
+    }
     if (b === 'bench') { if (fieldKeys.has(a)) setMsg('Auf die Bank nur per Wechsel: zieh den Spieler direkt auf den Bankspieler, der für ihn kommt.'); return; }
     doSwap(a, b);
   });
@@ -83,8 +97,8 @@ export function ChangesScreen({ sim, side, reason, halftime, initialTab, initial
         <button role="tab" aria-selected={tab === 'aufstellung'} className={tab === 'aufstellung' ? 'on' : ''} onClick={() => setTab('aufstellung')}>Aufstellung</button>
         {halftime && <button role="tab" aria-selected={tab === 'ansprache'} className={tab === 'ansprache' ? 'on' : ''} onClick={() => setTab('ansprache')}>Halbzeitansprache</button>}
         <button role="tab" aria-selected={tab === 'gespraeche'} className={tab === 'gespraeche' ? 'on' : ''} onClick={() => setTab('gespraeche')}>Spielergespräche</button>
+        {reason && <div className="tm-cs-reason" title={reason}>Angehalten: {reason}</div>}
         <div className="tm-cs-minute"><Icon name="hourglass" size={30} /> {minute}</div>
-        {reason && <div className="tm-cs-reason">Angehalten: {reason}</div>}
       </div>
 
       <div className="tm-cs-body">
@@ -130,7 +144,8 @@ export function ChangesScreen({ sim, side, reason, halftime, initialTab, initial
         {tab === 'gespraeche' && <PlayerTalks sim={sim} side={side} d={d} onChange={(id, k) => upd((x) => { if (k) x.talks[id] = k; else delete x.talks[id]; })} />}
       </div>
 
-      <DndGhost drag={drag}>{ghost && <><PlayerAvatar player={ghost} club={t.club} size={54} /><span>{ghost.lastName}</span></>}</DndGhost>
+      <DndGhost drag={drag}>{ghost && <><PlayerAvatar player={ghost} club={t.club} size={54} /><span>{ghost.lastName}</span>
+        {drag?.over === 'pitch' && (() => { const at = fieldPct(drag.x, drag.y); return at ? <span className="lu-live-pos">{positionAt(at.x, at.y)}</span> : null; })()}</>}</DndGhost>
       <div className="tm-cs-foot">
         <span className="tm-dim">{ins.length ? `${ins.length} Wechsel geplant. ` : ''}Änderungen gelten erst mit „Bestätigen“.</span>
         <button type="button" className="ms-btn ghost" onClick={onCancel}>Abbrechen</button>

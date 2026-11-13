@@ -9,6 +9,7 @@
 // optional am Spielstand und wird über einen lokalen, schmalen Zugriff gelesen –
 // fehlt es (Altstände), beginnt die Historie einfach mit der nächsten Saison.
 // =============================================================================
+import { titleExperience } from '../engine/experience';
 import type { CurrentDivision } from '../data/reforms';
 import { divisionLabel } from '../engine/leagues';
 import { Game } from './state';
@@ -133,6 +134,8 @@ export function recordSeasonEnd(g: Game, season: string, divisions: CurrentDivis
   const addTitle = (id: string | null | undefined, kind: TitleKind) => {
     if (!id || (!g.clubs[id] && !g.simClubs[id])) return;
     (book.titles[id] ??= []).push([kind, season]);
+    const c = g.clubs[id];
+    if (c) titleExperience(c.playerIds.map((pid) => g.players[pid]).filter(Boolean), kind);
   };
 
   for (const d of divisions) {
