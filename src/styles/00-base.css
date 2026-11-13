@@ -117,6 +117,7 @@
   /* Hover der Haupt-/Weiter-Knöpfe (Wunsch Pascal: grün statt grau) */
   --go-hover: #4fb383; --go-hover-2: #2f8a5e; --go-hover-ink: #06180f; --go-hover-hi: #a8e3c4;
   --neg: var(--red);
+  --car-live-bg: rgba(70, 120, 200, 0.16); /* laufende Saison (Karriere › Saisons) */
   --warn: var(--yellow);
 
   /* --- Zustands-Skala (Frische/Form/Moral als Symbole, components/status/):

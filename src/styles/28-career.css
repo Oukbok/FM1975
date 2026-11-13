@@ -50,18 +50,17 @@
 
 /* Saisons-Tabelle */
 .car-seasons { table-layout: fixed; width: 100%; }
-.car-seasons th:nth-child(1) { width: 92px; }
+.car-seasons th:nth-child(1) { width: 112px; }
 .car-seasons th:nth-child(2) { width: 10%; }
 .car-seasons th:nth-child(3) { width: 82px; }
 .car-seasons th:nth-child(4) { width: 19%; }
 .car-seasons th:nth-child(5) { width: 112px; }
 .car-seasons td { white-space: nowrap; }
-.car-seasons th:nth-child(9) { width: 84px; padding-right: 14px; }
-.car-seasons td:nth-child(9) { padding-right: 14px; }
-.car-seasons tr.car-live td { color: var(--text-2); }
-.car-goal { margin-left: 8px; padding: 0 5px; border-radius: 4px; font-size: 12px; border: 1px solid var(--border); color: var(--text-3); }
-.car-goal.ok { color: var(--pos); border-color: color-mix(in srgb, var(--pos) 45%, transparent); }
-.car-goal.miss { color: var(--neg); border-color: color-mix(in srgb, var(--neg) 45%, transparent); }
+.car-seasons th:nth-child(8) { width: 104px; padding-right: 14px; }
+.car-seasons td:nth-child(8) { padding-right: 14px; }
+.car-seasons tr.car-live td { background: var(--car-live-bg); }
+.car-seasons td.car-goal-ok { color: var(--pos); font-weight: 600; }
+.car-seasons td.car-goal-miss { color: var(--neg); font-weight: 600; }
 
 /* Trainer */
 .car-coaches td { white-space: nowrap; }

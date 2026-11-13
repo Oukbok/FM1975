@@ -14,23 +14,19 @@ export function SeasonsTab({ g, d }: { g: Game; d: CareerData }) {
           <thead>
             <tr>
               <th>Saison</th><th>Liga</th><th className="rl-num">Platz</th><th>Saisonziel</th><th className="rl-num">Liga S-U-N</th>
-              <th>Pokal</th><th>Europapokal</th><th>Titel</th><th className="rl-num">Ansehen</th>
+              <th>Pokal</th><th>Europapokal</th><th className="rl-num">Ansehen</th>
             </tr>
           </thead>
           <tbody>
             {d.seasons.map((s) => (
               <tr key={s.season} className={s.live ? 'car-live' : ''}>
-                <td className="rl-main">{s.season}</td>
+                <td className="rl-main">{s.live ? 'laufend' : s.season}</td>
                 <td className="car-cut">{LEAGUE(s.tier, s.league)}</td>
-                <td className="rl-num rl-main">{s.pos ? `${s.pos}.` : '–'}{s.live && <span className="car-dim"> läuft</span>}</td>
-                <td className="car-cut">
-                  {s.goal ?? '–'}
-                  {s.ok != null && <span className={`car-goal ${s.ok ? 'ok' : 'miss'}`}>{s.ok ? 'erreicht' : 'verfehlt'}</span>}
-                </td>
+                <td className="rl-num rl-main">{s.pos ? `${s.pos}.` : '–'}</td>
+                <td className={`car-cut ${s.ok == null ? '' : s.ok ? 'car-goal-ok' : 'car-goal-miss'}`} title={s.ok == null ? undefined : s.ok ? 'erreicht' : 'verfehlt'}>{s.goal ?? '–'}</td>
                 <td className="rl-num">{wdlText(s.L)}</td>
                 <td className="car-cut">{s.cup ?? '–'}</td>
                 <td className="car-cut" title={s.euro}>{s.euro ?? "–"}</td>
-                <td className="car-cut car-strong" title={s.titles.join(", ")}>{s.titles.join(", ")}</td>
                 <td className="rl-num">{s.rep != null ? Math.round(s.rep) : '–'}</td>
               </tr>
             ))}
