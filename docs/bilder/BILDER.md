@@ -205,3 +205,15 @@ Werden beim Zusammenführen der Stränge ergänzt (Erstes Training, Trainingslag
 |---|---|---|---|
 | `briefing/<jahr>-<titel>.webp` (180 Stück, Liste mit Motiven: `docs/bilder/briefing.md`) | Pressefoto zum Ereignis der Saison (Aufmacher groß, zwei Nebenthemen), Farbe/Körnung passend zum Jahrzehnt, ohne echte Logos/Personen | 1280×720 | Archiv: Aufmacher + Nebenthemen (Ersatz: Themen-Symbol auf Dunkelblau); freischalten in `src/data/briefingImages.ts` |
 | `briefing/neu/<art>.webp` (10 Arten) | Symbolbild je Art von „Neu im Spiel“ (Regeln, Liga, Technik …) | 1280×720 | Archiv: Karten „Neu im Spiel“ |
+
+## Karriere › Bilanz als Ringmappe (Wunsch Pascal, Vorschlag 2 „Akten- & Scrapbook-Design“) – vorhanden
+| Datei | Motiv | Größe | Einsatz |
+|---|---|---|---|
+| `akte/bilanz.webp` | aufgeschlagene Ringmappe: gelber Block links (Reiter orange/grün), Karopapier rechts, Pappreiter | 2400×1174 | Hintergrund der Bilanz |
+| `akte/bilanz/zettel-blatt.webp` | linierter Abriss-Zettel | 1200×770 | Je Wettbewerb |
+| `akte/bilanz/zettel-abriss.webp` | glatter Abriss-Zettel | 900×560 | Titel & Rekorde |
+| `akte/bilanz/zettel-zeitung.webp` | leerer Zeitungsausschnitt | 800×533 | Zeitungsdienst |
+| `akte/bilanz/zettel-orange.webp`, `zettel-gelb.webp`, `zettel-klein.webp` | Haftnotizen | 700 / 380 px | Meilensteine, Gegner, nächster Meilenstein |
+| `akte/bilanz/klebestreifen.webp`, `polaroid.webp` | Klebestreifen, Sofortbild (Fotofeld grau) | 380 / 440 px | Befestigung, Wappen |
+Büroklammern sind gezeichnet (SVG in `BilanzTab.tsx`). Lagen in % der Mappe in `src/styles/28-career-binder.css`.
+

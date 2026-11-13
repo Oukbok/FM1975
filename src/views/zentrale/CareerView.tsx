@@ -31,7 +31,7 @@ export function CareerView({ g }: { g: Game; onChange?: () => void }) {
   ];
   return (
     <SubTabsPage tabs={tabs} active={tab} onSelect={setTab}>
-      {tab === 'bilanz' && <BilanzTab g={g} d={d} rep={c.rep} />}
+      {tab === 'bilanz' && <BilanzTab g={g} d={d} rep={c.rep} onTab={setTab} />}
       {tab === 'saisons' && <SeasonsTab g={g} d={d} />}
       {tab === 'personen' && <PeopleTab g={g} d={d} />}
     </SubTabsPage>

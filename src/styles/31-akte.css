@@ -31,6 +31,27 @@
   --akte-grain: none;
   --np-paper: url('assets/akte/zeitung.webp');   /* Presse: Doppelseite */
   --cal-paper: url('assets/akte/kalender.webp');  /* Kalender: Ringbuch */
+  /* Karriere › Bilanz als Ringmappe (views/zentrale/career/BilanzTab.tsx, 28-career-binder.css) */
+  --bnd-folder: url('assets/akte/bilanz.webp');
+  --bnd-blatt: url('assets/akte/bilanz/zettel-blatt.webp');
+  --bnd-abriss: url('assets/akte/bilanz/zettel-abriss.webp');
+  --bnd-zeitung: url('assets/akte/bilanz/zettel-zeitung.webp');
+  --bnd-orange: url('assets/akte/bilanz/zettel-orange.webp');
+  --bnd-gelb: url('assets/akte/bilanz/zettel-gelb.webp');
+  --bnd-klein: url('assets/akte/bilanz/zettel-klein.webp');
+  --bnd-tape: url('assets/akte/bilanz/klebestreifen.webp');
+  --bnd-polaroid: url('assets/akte/bilanz/polaroid.webp');
+  --bnd-ink: #1f2a3d;          /* Schrift auf dem Papier (Tinte, dunkles Blaugrau) */
+  --bnd-ink-2: #4c5568;        /* Beschriftungen */
+  --bnd-ink-3: #7a8191;        /* Nebeninfo */
+  --bnd-rule: rgba(31, 42, 61, 0.18);  /* Trennlinien auf Papier */
+  --bnd-kpi: rgba(255, 255, 255, 0.5); /* Kennzahl-Kästchen auf dem gelben Block */
+  --bnd-tab-ink: #ffffff;      /* Schrift auf den Mappenreitern */
+  --bnd-tab-ink-2: #4c4237;    /* Schrift auf dem Pappreiter */
+  --bnd-clip: #9aa1a8;         /* Büroklammer */
+  --bnd-clip-hi: #e4e8ec;
+  --bnd-chart: #2b3a55;        /* Kurve auf Karopapier */
+  --bnd-scribble: #2f4f8f;     /* Kugelschreiber-Notiz */
   --cal-box-bg: #ffffff;                          /* Kalender: Fläche hinter dem Ringbuch (Wunsch Pascal: weiß) */
 
   /* ---- Akzent = Vereinsfarbe ---------------------------------------------- */

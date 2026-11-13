@@ -71,6 +71,7 @@ import './28-budget.css';
 import './28-pyramid.css';
 import './28-faces.css';
 import './28-career.css';
+import './28-career-binder.css'; // Karriere › Bilanz als Ringmappe
 import './28-linechart.css';
 import './28-honours.css';
 import './28-contract.css';

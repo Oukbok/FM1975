@@ -1,0 +1,106 @@
+/* =============================================================================
+   ZENTRALE › KARRIERE › BILANZ als Ringmappe (Wunsch Pascal, Vorschlag 2 „Akten- &
+   Scrapbook-Design“) – views/zentrale/career/BilanzTab.tsx. Mappe bilder/akte/bilanz.webp
+   (2400×1174); alle Lagen in % der Mappe, Zettel aus bilder/akte/bilanz/.
+   ============================================================================= */
+.sub3-page > .dpage.bnd-page { display: flex; align-items: center; justify-content: center; padding: 6px 1.5% 18px; }
+.bnd { position: relative; height: 100%; max-width: 100%; aspect-ratio: 2400 / 1174; background: var(--bnd-folder) center / 100% 100% no-repeat; color: var(--bnd-ink); font-family: var(--font-ui); }
+.bnd > * { position: absolute; }
+.bnd-note { background: center / 100% 100% no-repeat; filter: drop-shadow(0 3px 5px rgba(var(--shade-rgb), 0.28)); }
+
+/* Überschriften auf Papier */
+.bnd-h { margin: 0 0 10px; font-family: var(--font-display); font-size: 30px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--bnd-ink); display: flex; align-items: center; gap: 6px; }
+.bnd-h3 { margin: 0 0 6px; font-family: var(--font-display); font-size: 21px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--bnd-ink); }
+.bnd-h3 small { font-family: var(--font-ui); font-size: 14px; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--bnd-ink-2); }
+.bnd-h3b { margin-top: 8px; }
+.bnd-empty { font-size: 14px; color: var(--bnd-ink-2); line-height: 1.4; }
+.bnd-sec { margin: 8px 0 2px; font-family: var(--font-display); font-size: 14px; letter-spacing: 0.8px; text-transform: uppercase; color: var(--bnd-ink-3); }
+
+/* Mappenreiter */
+.bnd-tab { display: flex; align-items: center; justify-content: center; padding: 0; border: 0; background: transparent; writing-mode: vertical-rl; transform: rotate(180deg);
+  font-family: var(--font-display); font-size: 19px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--bnd-tab-ink); text-shadow: 0 1px 1px rgba(var(--shade-rgb), 0.35); }
+button.bnd-tab { cursor: pointer; }
+button.bnd-tab:hover { filter: brightness(1.08); text-decoration: underline; text-underline-offset: 4px; }
+.bnd-tab-1 { left: 1.5%; top: 12.5%; width: 3.1%; height: 21%; }
+.bnd-tab-2 { left: 1.5%; top: 39.6%; width: 3.1%; height: 20.7%; }
+.bnd-tab-3 { left: 95.1%; top: 60.7%; width: 3.3%; height: 28.4%; transform: none; color: var(--bnd-tab-ink-2); text-shadow: none; }
+
+/* Links oben: Managerbilanz */
+.bnd-sheet { left: 11%; top: 4.6%; width: 26%; height: 48%; display: flex; flex-direction: column; }
+.bnd-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
+.bnd-kpis > div { display: flex; flex-direction: column; align-items: center; padding: 6px 4px; border: 1px solid var(--bnd-rule); border-radius: 4px; background: var(--bnd-kpi); }
+.bnd-kpis b { font-family: var(--font-display); font-size: 30px; font-weight: 700; line-height: 1.1; color: var(--bnd-ink); }
+.bnd-kpis span { font-size: 12px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--bnd-ink-2); }
+.bnd-kv { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 3px 0; border-bottom: 1px solid var(--bnd-rule); font-size: 15px; }
+.bnd-kv > span { color: var(--bnd-ink-2); display: flex; align-items: center; gap: 4px; min-width: 0; }
+.bnd-kv > b { font-weight: 700; color: var(--bnd-ink); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bnd-rep { align-items: center; }
+.bnd-rep > i { flex: 1; height: 6px; border-radius: 3px; background: var(--bnd-rule); overflow: hidden; }
+.bnd-rep > i > em { display: block; height: 100%; background: var(--bnd-ink); }
+
+/* Polaroid mit Wappen */
+.bnd-polaroid { left: 38.6%; top: 4%; width: 8.4%; aspect-ratio: 440 / 481; margin: 0; background: var(--bnd-polaroid) center / 100% 100% no-repeat; transform: rotate(4deg);
+  filter: drop-shadow(0 4px 6px rgba(var(--shade-rgb), 0.3)); }
+.bnd-pol-img { position: absolute; left: 8%; right: 8%; top: 6.5%; height: 67%; display: flex; align-items: center; justify-content: center; }
+.bnd-polaroid figcaption { position: absolute; left: 6%; right: 6%; bottom: 6%; text-align: center; font-size: 13px; font-weight: 700; color: var(--bnd-ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Links unten: Blatt „Je Wettbewerb“ */
+.bnd-comp { left: 10.5%; top: 54.5%; width: 33%; aspect-ratio: 1200 / 770; background-image: var(--bnd-blatt); transform: rotate(-0.6deg); padding: 3% 3% 2%; }
+.bnd-table { width: 100%; border-collapse: collapse; font-size: 17px; }
+.bnd-table th { font-size: 13px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--bnd-ink-3); text-align: right; padding: 2px 6px; }
+.bnd-table td { padding: 6px 6px; text-align: right; border-bottom: 1px solid var(--bnd-rule); }
+.bnd-table th:first-child, .bnd-table td:first-child { text-align: left; }
+.bnd-table tr.tot td { border-bottom: 0; border-top: 2px solid var(--bnd-ink-2); font-weight: 700; }
+.bnd-scribble { margin-top: 14px; font-size: 17px; font-style: italic; color: var(--bnd-scribble); transform: rotate(-1deg); }
+.bnd-tape { position: absolute; width: 22%; aspect-ratio: 380 / 72; background: var(--bnd-tape) center / 100% 100% no-repeat; pointer-events: none; }
+.bnd-tape-a { left: 39%; top: -3%; transform: rotate(-3deg); }
+.bnd-tape-b { left: 26%; top: -4%; width: 48%; transform: rotate(4deg); }
+
+/* Rechts oben: Ansehen auf Karopapier */
+.bnd-chart { left: 54%; top: 5%; width: 39%; height: 43%; display: flex; flex-direction: column; }
+.bnd-chart .car-chart { flex: 1; min-height: 0; }
+.bnd-chart .car-grid { stroke: var(--bnd-rule); }
+.bnd-chart .car-tick { fill: var(--bnd-ink-2); font-size: 13px; }
+.bnd-chart .car-line { stroke: var(--bnd-chart); stroke-width: 3; }
+.bnd-chart .car-area-top { stop-color: var(--bnd-chart); stop-opacity: 0.22; }
+.bnd-chart .car-area-bottom { stop-color: var(--bnd-chart); stop-opacity: 0.04; }
+.bnd-chart .car-dot { fill: var(--bnd-chart); }
+.bnd-clip { position: absolute; width: 22px; height: 58px; fill: none; stroke: var(--bnd-clip); stroke-width: 2.6; stroke-linecap: round; filter: drop-shadow(1px 1px 0 var(--bnd-clip-hi)) drop-shadow(0 2px 2px rgba(var(--shade-rgb), 0.35)); pointer-events: none; }
+.bnd-clip-a { right: 18%; top: -13%; transform: rotate(8deg); }
+.bnd-clip-b { right: 9%; top: -12%; transform: rotate(-6deg); }
+.bnd-clip-c { right: 14%; top: -14%; transform: rotate(10deg); }
+
+/* Rechts unten: Titel & Rekorde (Abriss) */
+.bnd-rec { left: 52.5%; top: 51.5%; width: 23%; aspect-ratio: 900 / 560; background-image: var(--bnd-abriss); transform: rotate(0.8deg); padding: 3.4% 2.4% 2%; display: flex; flex-direction: column; }
+.bnd-scroll { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; }
+.bnd-scroll::-webkit-scrollbar { display: none; }
+.bnd-rec .bnd-kv { font-size: 14px; padding: 2px 0; }
+.bnd-recl > span { flex-direction: column; align-items: flex-start; gap: 0; }
+.bnd-recl small { font-size: 12px; color: var(--bnd-ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+
+/* Kleiner Zettel: nächster Meilenstein */
+.bnd-mini { left: 53.5%; top: 81.5%; width: 7.6%; aspect-ratio: 380 / 377; background-image: var(--bnd-klein); transform: rotate(-4deg); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1%; }
+.bnd-mini b { font-family: var(--font-display); font-size: 30px; line-height: 1; color: var(--bnd-ink); }
+.bnd-mini span { font-size: 12px; line-height: 1.25; color: var(--bnd-ink-2); }
+
+/* Zeitungsausschnitt */
+.bnd-paper { left: 75.6%; top: 48%; width: 18%; aspect-ratio: 800 / 533; background-image: var(--bnd-zeitung); transform: rotate(-2deg); padding: 2.2% 1.8% 1.4%; display: flex; flex-direction: column; gap: 3px; overflow: hidden; }
+.bnd-paper-mast { font-family: var(--np-serif, Georgia, serif); font-size: 22px; font-weight: 700; border-bottom: 1px solid var(--bnd-ink-2); color: var(--bnd-ink); }
+.bnd-paper-h { font-family: var(--np-serif, Georgia, serif); font-size: 19px; font-weight: 700; line-height: 1.15; color: var(--bnd-ink); }
+.bnd-paper-t { font-family: var(--np-serif, Georgia, serif); font-size: 14px; line-height: 1.3; color: var(--bnd-ink-2); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.bnd-paper-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 8px; margin-top: 2px; }
+.bnd-paper-cols i { display: block; height: 3px; border-radius: 1px; background: var(--bnd-rule); }
+
+/* Meilensteine (oranger Zettel) */
+.bnd-miles { left: 75.4%; top: 72%; width: 11.6%; aspect-ratio: 700 / 714; background-image: var(--bnd-orange); transform: rotate(1.5deg); padding: 1.6% 1.1% 1%; overflow: hidden; }
+.bnd-miles .bnd-h3 { font-size: 17px; margin-bottom: 3px; }
+.bnd-mile { display: flex; gap: 6px; align-items: baseline; padding: 2px 0; border-bottom: 1px solid var(--bnd-rule); font-size: 13px; line-height: 1.2; color: var(--bnd-ink); }
+.bnd-mile b { font-family: var(--font-display); font-size: 16px; min-width: 42px; }
+.bnd-mile small { color: var(--bnd-ink-2); }
+
+/* Lieblings- und Angstgegner (gelber Zettel) */
+.bnd-opps { left: 85.8%; top: 69%; width: 11.4%; aspect-ratio: 700 / 709; background-image: var(--bnd-gelb); transform: rotate(-1.5deg); padding: 1.6% 1% 1%; overflow: hidden; }
+.bnd-opps .bnd-h3 { font-size: 16px; margin-bottom: 2px; }
+.bnd-opp { display: flex; align-items: center; gap: 5px; padding: 3px 0; font-size: 13px; }
+.bnd-opp-n { font-weight: 700; color: var(--bnd-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 92px; display: inline-block; vertical-align: bottom; }
+.bnd-opp-r { margin-left: auto; color: var(--bnd-ink-2); white-space: nowrap; }
