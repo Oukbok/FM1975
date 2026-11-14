@@ -53,20 +53,27 @@ if (many.some((r) => !scoutReport(g, r.id))) fail('Bericht aus der Warteschlange
 console.log(`Warteschlange: ${many.length} Aufträge bei ${scoutSlots(g)} Scout(s) abgearbeitet`);
 
 // Verhandlung über einen Weltspieler bis zum Wechsel
-const w = pool.p.filter((x) => clubs.get(x[1])?.country === 'England' && !x[12] && x[8] >= 70).sort((a, b) => b[8] - a[8])[3];
-const p = materializeWorldPlayer(g, w[0]);
-if (!p) fail('materialize');
-const block = talkBlocker(g, p);
-if (block) fail(`Blocker: ${block}`);
-const t = startTalk(g, p.id);
-if (typeof t === 'string') fail(t);
+// Kandidat ohne grundsätzliches Nein (Ausschlussgrund aus playerWishes), damit der Ablauf geprüft wird
+const cands = pool.p.filter((x) => clubs.get(x[1])?.country === 'England' && !x[12] && x[8] >= 70).sort((a, b) => b[8] - a[8]).slice(3);
+let p: ReturnType<typeof materializeWorldPlayer> = null;
+let t: Exclude<ReturnType<typeof startTalk>, string> | null = null;
+for (const w of cands) {
+  const q = materializeWorldPlayer(g, w[0]);
+  if (!q || talkBlocker(g, q)) continue;
+  const tt = startTalk(g, q.id);
+  if (typeof tt === 'string') continue;
+  if (stanceFor(g, tt).dealBreaker) continue;
+  p = q; t = tt; break;
+}
+if (!p || !t) fail('kein verhandelbarer Weltspieler');
 g.clubs[g.managedClubId].finances.transferBudget = 1e9;
 g.clubs[g.managedClubId].finances.wageBudget = 1e9;
 let ans = '';
 for (let i = 0; i < 6 && t.phase === 'club'; i++) ans = clubOffer(g, t.id, { fee: Math.round(t.currentAsk * 1.05), installments: false, sellOn: 0, bonus: 0 });
 if (t.phase !== 'player') fail(`Vereinsgespräch: ${t.phase} ${ans}`);
 const st = stanceFor(g, t);
-for (let i = 0; i < 4 && t.phase === 'player'; i++) ans = playerOffer(g, t.id, { wage: Math.round(st.minWage * 1.3), years: st.years[1] ?? st.years[0], signingFee: 0, releaseClause: false, promises: [] });
+// Mit Berater gehört die Provision dazu (sonst „Sein Berater besteht auf seiner Provision“)
+for (let i = 0; i < 4 && t.phase === 'player'; i++) ans = playerOffer(g, t.id, { wage: Math.round(st.minWage * 1.3), years: st.years[1] ?? st.years[0], signingFee: 0, agentFee: st.agentFee, releaseClause: false, promises: [] });
 if (t.phase !== 'agreed' && t.phase !== 'done') fail(`Spielergespräch: ${t.phase} ${ans}`);
 for (let i = 0; i < 260 && t.phase !== 'done'; i++) processDay(g, HEADLESS_UI);
 if (t.phase !== 'done') fail(`Wechsel nicht vollzogen: ${t.phase}`);

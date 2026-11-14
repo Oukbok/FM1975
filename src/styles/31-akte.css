@@ -81,7 +81,7 @@
   --panel-rgb: 246, 245, 241;
   --q-1: #111827; --q-2: #374151; --q-3: #6b7280; --q-4: #a0a6ae;
   --bar-track: rgba(20, 28, 40, 0.10); --bar-fill: #7b8490; --bar-fill-hi: var(--navy);
-  --star-sure: #e9ac12; --star-line: rgba(20, 28, 40, 0.5); --star-empty: rgba(20, 28, 40, 0.16);
+  --star-sure: #e9ac12; --star-line: rgba(20, 28, 40, 0.62); --star-empty: transparent; --star-empty-line: rgba(20, 28, 40, 0.2);
   --green: #23824f; --yellow: #a7790f; --orange: #b85f24; --red: #c0392b; --gold: #a9852f;
   --red-rgb: 192, 57, 43; --green-rgb: 35, 130, 79; --yellow-rgb: 167, 121, 15;
   --pos-gk: #13857d; --pos-def: #2f7d3f; --pos-mid: #2f5fb0; --pos-att: #b53a37; --pos-mix: 88%;

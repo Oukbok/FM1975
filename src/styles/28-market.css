@@ -27,8 +27,6 @@
 .mk-nat, .mk-club { display: inline-flex; align-items: center; gap: 8px; }
 .mk-nat > span:last-child { font-size: 14px; color: var(--text-2); }
 .mk-club > span { max-width: 190px; overflow: hidden; text-overflow: ellipsis; }
-.mk-pos { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px; line-height: 1.1; }
-.mk-role { font-size: 12px; color: var(--text-3); }
 .mk-money { font-variant-numeric: tabular-nums; font-size: 15px; }
 
 /* Sterne: Vektor, je Stern in Vierteln gefüllt */
@@ -38,7 +36,8 @@
 .mk-star-bg { fill: var(--star-empty); }
 .mk-star-est { fill: var(--star-est); }
 .mk-star-sure { fill: var(--star-sure); }
-.mk-star-line { fill: none; stroke: var(--star-line); stroke-width: 1.1; stroke-linejoin: round; }
+.mk-star-line { fill: none; stroke: var(--star-line); stroke-width: 1.2; stroke-linejoin: round; }
+.mk-star-line.empty { stroke: var(--star-empty-line); }
 .mk-tip-note { margin-top: 4px; max-width: 300px; white-space: normal; color: var(--text-2); font-size: 13px; line-height: 1.35; }
 
 /* Empfehlung: Kreis mit Note + Text */
@@ -64,3 +63,24 @@
 
 .mk.compact .mk-extra { display: none; }
 .mk.compact .mk-rec { max-width: none; }
+
+/* Stärke als Zahl: Schrift wie das Alter, fett (Wunsch Pascal) */
+.mk-table td.mk-num { font-family: var(--font-ui); font-size: inherit; }
+.mk-ov { font-weight: 700; }
+
+/* Filter: Knopf in der Reiterleiste + kleines Fenster fester Größe */
+.sub3-tabs .mk-filter-btn { margin-left: 4px; border-left: 1px solid var(--border-soft); }
+.mk-filter {
+  position: fixed; z-index: 3000; transform-origin: top left; box-sizing: border-box;
+  display: flex; flex-direction: column; overflow: hidden;
+  background: var(--pop-bg, var(--panel)); color: var(--text); border: 1px solid var(--border); border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(var(--shade-rgb), 0.35);
+}
+.mk-filter-head { flex: none; display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border-soft); }
+.mk-filter-head b { font-family: var(--font-display); font-size: 18px; letter-spacing: 1px; text-transform: uppercase; }
+.mk-filter-body { flex: 1; min-height: 0; overflow: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 12px; }
+.mk-filter-body > label { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 15px; color: var(--text-2); }
+.mk-filter-pair { display: inline-flex; align-items: center; gap: 8px; }
+.mk-filter-in { width: 200px; }
+.mk-filter-check .toggle { position: relative; flex: none; cursor: pointer; }
+.mk-extra .pool-msg { min-height: 0; color: var(--text); font-weight: 600; white-space: normal; max-width: 640px; }

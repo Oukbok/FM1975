@@ -18,8 +18,10 @@ export interface SubTab<T extends string> {
   title?: string;
 }
 
-export function SubTabs<T extends string>({ tabs, active, onSelect, className = '' }: {
+export function SubTabs<T extends string>({ tabs, active, onSelect, className = '', extra }: {
   tabs: SubTab<T>[]; active: T; onSelect: (t: T) => void; className?: string;
+  /** zusätzliche Bedienelemente rechts hinter den Reitern (z. B. „Filter“) */
+  extra?: ReactNode;
 }) {
   return (
     <nav className={`tabs sub3-tabs ${className}`} role="tablist">
@@ -30,17 +32,18 @@ export function SubTabs<T extends string>({ tabs, active, onSelect, className = 
           {t.count != null && <span className="sub3-n">{t.count}</span>}
         </button>
       ))}
+      {extra}
     </nav>
   );
 }
 
 /** Seite mit drittem Menü: Leiste oben, darunter der Inhalt (meist eine DashPage). */
-export function SubTabsPage<T extends string>({ tabs, active, onSelect, className = '', tabsClassName = '', children }: {
-  tabs: SubTab<T>[]; active: T; onSelect: (t: T) => void; className?: string; tabsClassName?: string; children: ReactNode;
+export function SubTabsPage<T extends string>({ tabs, active, onSelect, className = '', tabsClassName = '', extra, children }: {
+  tabs: SubTab<T>[]; active: T; onSelect: (t: T) => void; className?: string; tabsClassName?: string; extra?: ReactNode; children: ReactNode;
 }) {
   return (
     <div className={`sub3-page ${className}`}>
-      <SubTabs tabs={tabs} active={active} onSelect={onSelect} className={tabsClassName} />
+      <SubTabs tabs={tabs} active={active} onSelect={onSelect} className={tabsClassName} extra={extra} />
       {children}
     </div>
   );

@@ -53,7 +53,8 @@ export function StarRating({ lo, hi, size = 22, label, note }: {
             );
           })}
         </g>
-        {[0, 1, 2, 3, 4].map((i) => <path key={i} className="mk-star-line" d={STAR} transform={`translate(${i * (24 + gap)} 0)`} />)}
+        {/* Umriss: kräftig bei sicheren/möglichen Sternen, blass bei leeren – so hebt sich Weiß vom Papier ab */}
+        {[0, 1, 2, 3, 4].map((i) => <path key={i} className={`mk-star-line ${b > i ? 'hit' : 'empty'}`} d={STAR} transform={`translate(${i * (24 + gap)} 0)`} />)}
       </svg>
       {tip.layer}
     </span>

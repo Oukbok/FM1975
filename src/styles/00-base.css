@@ -130,7 +130,8 @@
   /* Sterne mit Spanne (components/StarRating.tsx): sicher gelb, geschätzt weiß, leer */
   --star-sure: #f2c230;
   --star-est: #ffffff;
-  --star-empty: rgba(var(--ink-rgb), 0.07);
+  --star-empty: transparent;
+  --star-empty-line: rgba(var(--ink-rgb), 0.22);
   --star-line: rgba(var(--ink-rgb), 0.42);
   /* Chancen-Meter im Textmodus (Signal: Aufbau → gefährlich → Abschluss) */
   --danger-1: #d7be5a;

@@ -22,6 +22,14 @@ import FaceThumb from '../../components/FaceThumb';
 import { NatFlag } from '../../components/competition/CountryFlag';
 import { CommittedBox, LoansBox, RunningTalksBox } from './NegotiationsOverview';
 import { MarketTable } from './MarketTable';
+import { EMPTY_FILTER, FilterButton, filterCount, passes, type MarketFilter } from './MarketFilter';
+import { marketInfoRows, rowsFor } from '../../game/marketView';
+import { homeCountryOf } from '../../game/state';
+
+/** Nationalität der Einheimischen (für „Herkunft“ im Filter). */
+const homeNat = (g: Game): string => homeCountryOf(g).toUpperCase();
+/** Obergrenzen für „Transferwert bis“ (1975-Basis). */
+const VALUE_STEPS = [50_000, 100_000, 200_000, 400_000, 700_000, 1_000_000, 1_500_000, 2_500_000, 4_000_000];
 
 // =============================================================================
 // TRANSFERS — Transfermarkt, Beobachtung (Scouting-Vorschläge), Verhandlungen
@@ -90,7 +98,11 @@ export function TransfersView({ g, onDone }: { g: Game; onDone: () => void }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [bilanz, setBilanz] = useState(false);
   const all = search ? runSearch(g, search) : getAvailablePlayers(g.players, g.managedClubId);
-  const list = all.filter((p) => grp === 'all' || groupOf(p) === grp).slice(0, search ? 200 : 60);
+  const [mf, setMf] = useState<MarketFilter>(EMPTY_FILTER);
+  // Filter-Popup (Wunsch Pascal): nach dem Wissen des Stabs, vor dem Kürzen auf 60 Zeilen
+  const grpRows = rowsFor(g, all.filter((p) => grp === 'all' || groupOf(p) === grp));
+  const info = marketInfoRows(g, grpRows);
+  const list = grpRows.filter((r) => passes(mf, r, info.get(r.id), homeNat(g))).slice(0, search ? 200 : 60);
   const fin = club.finances;
   const wages = squadOf(g).reduce((s, p) => s + p.contract.weeklyWage, 0);
 
@@ -100,7 +112,8 @@ export function TransfersView({ g, onDone }: { g: Game; onDone: () => void }) {
     ...GROUPS.map((k) => ({ id: k, label: GROUP_DE[k], count: all.filter((p) => groupOf(p) === k).length }))];
 
   return (
-    <SubTabsPage tabs={tabs} active={grp} onSelect={setGrp}>
+    <SubTabsPage tabs={tabs} active={grp} onSelect={setGrp}
+      extra={<FilterButton f={mf} onChange={setMf} valueSteps={VALUE_STEPS} />}>
     <DashPage>
       <DashBox title={(search ? 'Suchergebnis' : 'Transfermarkt') + (grp === 'all' ? '' : ` · ${GROUP_DE[grp]}`)} span={3} rows={2} flush className="mk-box-wide"
         right={<span className="dbtnrow">
@@ -108,14 +121,14 @@ export function TransfersView({ g, onDone }: { g: Game; onDone: () => void }) {
           {search && <button className="dchip" onClick={() => setSearch(null)} title="Wieder alle abgabebereiten Spieler zeigen">Suche aufheben</button>}
           <button className="dchip" onClick={() => setBilanz(true)}>Transferbilanz</button>
         </span>}>
-        {list.length ? <MarketTable g={g} list={list} onOpen={open} filtered={!!search || grp !== 'all'}
+        {list.length ? <MarketTable g={g} rows={list} info={info} onOpen={open} filtered={!!search || grp !== 'all' || filterCount(mf) > 0}
           extra={<>
             <span className="mk-kv">Transferbudget <b>{fmtPrice(fin.transferBudget)}</b><InfoTip k="transferbudget" /></span>
             <span className="mk-kv">Gehaltsspielraum <b>{fmtWage(Math.max(0, fin.wageBudget - wages), { unit: false })}</b> / {wageUnit()}<InfoTip k="gehaltsbudget" /></span>
             <span className="mk-kv">Bedarf{needs(g).map((n) => <span key={n.k} className={`mk-need ${n.short ? 'short' : ''}`} title={`${GROUP_DE[n.k]}: ${n.n} von ${IDEAL[n.k]} · Ø ${n.avg || '–'}`}>{GROUP_DE[n.k]} {n.n}/{IDEAL[n.k]}</span>)}<InfoTip k="kaderbedarf" /></span>
           </>}
-          action={(p) => <TalkButton g={g} p={p} onTalk={talk.open} />} />
-          : <Empty icon="transfers">{search ? 'Keine Spieler zu deiner Suche – lockere die Vorgaben.' : 'Derzeit keine Spieler auf dem Markt.'}</Empty>}
+          action={(r) => r.player ? <TalkButton g={g} p={r.player} onTalk={talk.open} /> : null} />
+          : <Empty icon="transfers">{filterCount(mf) ? 'Keine Spieler zu deinen Filtern.' : search ? 'Keine Spieler zu deiner Suche – lockere die Vorgaben.' : 'Derzeit keine Spieler auf dem Markt.'}</Empty>}
         {talk.err && <div className="dnote mk-err">{talk.err}</div>}
       </DashBox>
 
@@ -151,7 +164,7 @@ export function BeobachtungView({ g, onChange = () => {} }: { g: Game; onChange?
       tabs={(['need', 'contract', 'young'] as ScoutMode[]).map((m) => ({ id: m, label: label[m], count: lists[m].length }))}>
     <DashPage>
       <DashBox title={`Scouting-Vorschläge · ${label[mode]}`} info="beobachtung" span={2} rows={2} flush>
-        {list.length ? <MarketTable g={g} list={list} onOpen={open} compact filtered action={(p) => <TalkButton g={g} p={p} onTalk={talk.open} />} /> : <Empty icon="watchlist">Keine passenden Spieler gefunden.</Empty>}
+        {list.length ? <MarketTable g={g} rows={rowsFor(g, list)} onOpen={open} compact filtered action={(r) => r.player ? <TalkButton g={g} p={r.player} onTalk={talk.open} /> : null} /> : <Empty icon="watchlist">Keine passenden Spieler gefunden.</Empty>}
       </DashBox>
 
       <DashBox title="Auffällig" icon="trophy">
