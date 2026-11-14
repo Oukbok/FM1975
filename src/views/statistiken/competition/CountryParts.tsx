@@ -10,7 +10,7 @@ import type { Game } from '../../../game/state';
 import Select from '../../../ui/Select';
 import { TeamName } from './parts';
 
-const GROUP: Record<StatsCountry['mode'], string> = { home: 'Heimatland', div: 'Spiel für Spiel', world: 'Hintergrund' };
+const GROUP: Record<StatsCountry['mode'], string> = { home: 'Heimatland', div: 'DDR', world: 'Weitere Länder' };
 
 export function CountrySelect({ countries, value, onChange }: { countries: StatsCountry[]; value: string; onChange: (cc: string) => void }) {
   const groups = (['home', 'div', 'world'] as const).filter((m) => countries.some((c) => c.mode === m));

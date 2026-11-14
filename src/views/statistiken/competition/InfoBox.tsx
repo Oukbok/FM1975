@@ -11,7 +11,11 @@ import { groupBonusEur } from '../../../data/euroFormats';
 import { seasonStartYear } from '../../../data/timeline';
 import { DM_PER_EUR } from '../../../engine/economy';
 
-export function InfoBox({ g, snap }: { g: Game; snap: CompSnapshot | null }) {
+export function InfoBox({ g, snap, cell }: {
+  g: Game; snap: CompSnapshot | null;
+  /** Als eine Zelle im Raster der Bestenlisten (Auslandsliga mit Spieltagen): ohne Hinweistext. */
+  cell?: boolean;
+}) {
   const mid = g.managedClubId;
   if (!snap) return <DashBox title="Saison" icon="chronicle"><div className="dnote">–</div></DashBox>;
   const T = (id: string) => <TeamName g={g} id={id} season={snap.season} size={16} />;
@@ -19,9 +23,17 @@ export function InfoBox({ g, snap }: { g: Game; snap: CompSnapshot | null }) {
   // Länderwahl: Stand aus Weltdaten/Hintergrund – Stichpunkte statt Tabellen-Auswertung.
   if (snap.facts) {
     return (
-      <DashBox title="Saisonbilanz" icon="chronicle" right={snap.label}>
+      <DashBox title={snap.source === 'live' && snap.zones ? 'Stand der Saison' : 'Saisonbilanz'} icon="chronicle" right={snap.label} className={cell ? 'cmp-statbox cmp-infobox' : ''}>
         {snap.facts.map((f, i) => <KV key={i} k={f.k} v={f.id ? T(f.id) : f.text ?? '–'} strong={i === 0 && !!f.id} />)}
-        {snap.note && <div className="dnote mt8">{snap.note}</div>}
+        {snap.zones && snap.kind === 'league' && <>
+          <div className="dsec">Legende</div>
+          <div className="dzones">
+            {snap.zones.includes('zone-cl') && <span><span className="pos-badge zone-cl" /> {snap.tier === 2 ? 'Aufstieg' : 'Meister'}</span>}
+            {snap.zones.includes('zone-eu') && <span><span className="pos-badge zone-eu" /> Europapokal</span>}
+            {snap.zones.includes('zone-rel') && <span><span className="pos-badge zone-rel" /> Abstieg</span>}
+          </div>
+        </>}
+        {snap.note && !cell && <div className="dnote mt8">{snap.note}</div>}
       </DashBox>
     );
   }

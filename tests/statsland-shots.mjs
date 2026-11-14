@@ -1,7 +1,6 @@
 // Screenshots Länderwahl (Statistiken › Liga/Pokal) und Masters-Wertung (Statistiken › Halle).
 //   npm run build && SAVE=… node tests/statsland-shots.mjs [ordner] [präfix]
 //   VIEW=1366x768 für kleine Bildschirme; HALLE=1 nur die Hallen-Seite; LIGA=1 nur die Ligen.
-//   Spielstand mit Land „Spiel für Spiel“: node scripts/run-ts.mjs tests/world-probe.ts … bzw. eigener DUMP;
 //   Hallen-Winter: DUMP=… UNTIL=1990-12-19 node scripts/sim.mjs 15
 import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
@@ -29,7 +28,7 @@ page.on('pageerror', (e) => errors.push('JS-Fehler: ' + e.message));
 await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
 await page.goto(`http://127.0.0.1:${server.address().port}/`);
 const tag = `${prefix}_${vw}`;
-let baseSizes = null;
+const baseSizes = {};
 const shot = async (n) => {
   await page.waitForTimeout(300);
   // Kopfleiste der Hauptbox darf nicht überlaufen.
@@ -41,8 +40,13 @@ const shot = async (n) => {
   });
   if (over > 1) errors.push(`${n}: Kopfleiste läuft ${Math.round(over)} px über`);
   // Feste Box-Größen: Länder-/Saisonwechsel darf keine Box wachsen lassen.
-  const sizes = await page.evaluate(() => [...document.querySelectorAll('.app-main .dbox')].map((b) => { const r = b.getBoundingClientRect(); return `${Math.round(r.width)}×${Math.round(r.height)}`; }).join(' '));
-  if (n.startsWith('liga') || n.startsWith('pokal')) { baseSizes ??= sizes; if (sizes !== baseSizes) errors.push(`${n}: Boxgrößen ${sizes} statt ${baseSizes}`); }
+  // Verglichen wird je Raster (mit/ohne Box „Begegnungen“) die sortierte Liste – die Reihenfolge im DOM
+  // hängt von der Art der Bestenlisten ab (Spieler- oder Vereinswerte), nicht von der Größe.
+  const { layout, sizes } = await page.evaluate(() => ({
+    layout: document.querySelector('.cmp-page.cmp-mdpage') ? 'md' : 'std',
+    sizes: [...document.querySelectorAll('.app-main .dbox')].map((b) => { const r = b.getBoundingClientRect(); return `${Math.round(r.width)}×${Math.round(r.height)}`; }).sort().join(' '),
+  }));
+  if (n.startsWith('liga') || n.startsWith('pokal')) { baseSizes[layout] ??= sizes; if (sizes !== baseSizes[layout]) errors.push(`${n}: Boxgrößen ${sizes} statt ${baseSizes[layout]}`); }
   await page.screenshot({ path: `${outDir}/${tag}_${n}.png` });
   console.log('Bild', `${outDir}/${tag}_${n}.png`);
 };
@@ -72,8 +76,8 @@ async function go(label) {
   await page.waitForTimeout(500);
 }
 const countrySel = () => page.locator('.cmp-select .sel3').nth(0);
-const seasonSel = () => page.locator('.cmp-select .sel3').nth(1);
-const compSel = () => page.locator('.cmp-select .sel3').nth(2);
+const compSel = () => page.locator('.cmp-select .sel3').nth(1);
+const seasonSel = () => page.locator('.cmp-select .sel3').nth(2);
 
 if (!process.env.HALLE) {
   await go('Liga');
@@ -85,10 +89,15 @@ if (!process.env.HALLE) {
     await pickOption(page, countrySel(), cc);
     await shot(`liga_${cc}`);
     if (cc === 'esp') {
-      // Laufende Saison (Teilnehmer), ältere Saison vor Spielbeginn, Pokal
+      // Auslandsliga Spieltag für Spieltag: Heimtabelle, 2. Liga, Vorsaison, Saison vor Spielbeginn, Pokal
       const ss = await optionsOf(page, seasonSel());
-      const live = ss.find((s) => s.label.includes('(läuft)'));
-      if (live) { await pickOption(page, seasonSel(), live.value); await shot('liga_esp_teilnehmer'); }
+      await page.locator('.cmp-toolbar button:has-text("Heim")').click(); await shot('liga_esp_heim');
+      await page.locator('.cmp-toolbar button:has-text("Gesamt")').click();
+      if (!await page.locator('.cmp-mdbox .md-row').count()) errors.push('esp: Box „Begegnungen“ ohne Spiele');
+      const comps = (await optionsOf(page, compSel())).map((o) => o.value);
+      if (comps.includes('r2')) { await pickOption(page, compSel(), 'r2'); await shot('liga_esp_2liga'); await pickOption(page, compSel(), 'r1'); }
+      const prev = ss.filter((x) => !x.label.includes('vor Spielbeginn')).at(-2);
+      if (prev) { await pickOption(page, seasonSel(), prev.value); await shot('liga_esp_vorsaison'); }
       await pickOption(page, seasonSel(), ss[0].value);
       await shot('liga_esp_vorher');
       await pickOption(page, compSel(), 'xcup');

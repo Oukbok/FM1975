@@ -3,7 +3,7 @@
 //  - Start in 1975/1985/1991/2000/2025 (Deutschland mit Weltdaten), Struktur/DDR/Punkte/Europapokal
 //  - Rückfall ohne Daten (Deutschland ohne Weltdaten, Land ohne Daten nicht wählbar)
 //  - ein anderes Land (England) eine ganze Saison + Saisonwechsel, Speichern/Laden
-//  - Länder Spiel für Spiel (Divisionen, Endtabelle → Hintergrund-Europa)
+//  - Auslandsligen Spieltag für Spieltag (Spielplan, Tabelle, Begegnungen, Saisonende → Welt, ältere Spielstände)
 //  - Editor-Änderung an Deutschland (Datensatz worldData) wirkt im neuen Spiel
 // =============================================================================
 import { createNewGame } from '../src/game/newGame';
@@ -19,6 +19,8 @@ import { builtinWorldData, registerCountryData, worldSeason } from '../src/data/
 import { composeHome, playableCountries } from '../src/game/worldCompose';
 import { getHomeOrigin } from '../src/data/origins';
 import type { Game } from '../src/game/state';
+import { leanDates, leanGames, leanMatchdays, leanPairs, leanTable, leanWinPts, worldLiveDiv } from '../src/game/worldLeagues';
+import { countryMatchdays, countrySeasons, countrySnapshot, pickSeason, statsCountries } from '../src/game/competitionCountry';
 
 const store = new Map<string, string>();
 (globalThis as any).localStorage = {
@@ -105,18 +107,61 @@ for (const y of [1985, 1991, 2000, 2025]) {
   ok(l.calendar.currentDate >= '1986-07-25', `England: geladener Stand läuft weiter (${l.calendar.currentDate})`);
 }
 
-// --- 5) Länder Spiel für Spiel ------------------------------------------------
+// --- 5) Auslandsligen Spieltag für Spieltag (game/worldLeagues.ts) -----------------
 {
-  const g = start(2000, 'ger', undefined, { fullCountries: ['eng', 'ita'] });
-  const xs = g.leagues.otherDivisions.filter((d) => d.id.startsWith('x-'));
-  ok(xs.length === 4 && xs.every((d) => d.clubIds.length % 2 === 0), `Spiel für Spiel: ${xs.map((d) => `${d.name} ${d.clubIds.length}`).join(', ')}`);
+  const g = start(2000, 'ger');
+  ok(!g.leagues.otherDivisions.some((d) => d.tier >= 200), 'Auslandsligen: keine eigenen Divisionen mehr (schlanke Spieltag-Simulation)');
+  // Spielplan: jeder gegen jeden, Hin- und Rückrunde mit getauschtem Heimrecht
+  for (const n of [9, 10, 18, 22, 24]) {
+    const total = leanMatchdays(n), seen = new Set<string>(), per = new Map<number, number>();
+    let okDay = true;
+    for (let md = 1; md <= total; md++) {
+      const day = new Set<number>();
+      for (const [h, a] of leanPairs(n, md)) { seen.add(`${h}>${a}`); if (day.has(h) || day.has(a)) okDay = false; day.add(h); day.add(a); per.set(h, (per.get(h) ?? 0) + 1); }
+    }
+    ok(okDay && seen.size === n * (n - 1) && [...per.values()].every((v) => v === n - 1), `Spielplan ${n} Vereine: ${total} Spieltage, jede Paarung einmal daheim und einmal auswärts`);
+  }
+  const dates = leanDates('2000/01', 46);
+  ok(dates.every((d, i) => i === 0 || d > dates[i - 1]) && dates[0] >= '2000-08-13' && dates[45] <= '2001-06-03', `Termine 46 Spieltage: ${dates[0]} … ${dates[45]}, streng aufsteigend`);
+  while (g.calendar.currentDate < '2000-11-20') tick(g);
+  const eng = worldLiveDiv(g, 'England', 0)!, eng2 = worldLiveDiv(g, 'England', 1)!;
+  ok(!!eng && !!eng2 && eng.md > 8 && eng.md < eng.n, `England läuft: Spieltag ${eng?.md} von ${eng?.n}, 2. Liga ${eng2?.md} von ${eng2?.n}`);
+  const t = leanTable(eng, 'England', g.season);
+  ok(t.every((r) => r.p === eng.md) && t.reduce((a, r) => a + r.gf, 0) === t.reduce((a, r) => a + r.ga, 0) && t.every((r, i) => i === 0 || r.pts <= t[i - 1].pts), 'England: Tabelle stimmig (Spiele, Tore, Reihenfolge)');
+  ok(leanWinPts('England', '2000/01') === 3 && leanWinPts('England', '1975/76') === 2 && t[0].pts === t[0].w * 3 + t[0].d, 'England: Punkteregel des Landes (3 Punkte ab 1981)');
+  const games = leanGames(eng, g.season, eng.md);
+  ok(games.length === eng.ids.length * (eng.ids.length - 1) && games.filter((x) => x.hg != null).length === eng.md * Math.floor(eng.ids.length / 2) && games.filter((x) => x.hg == null).every((x) => x.date > g.calendar.currentDate),
+    'England: Begegnungen – gespielte mit Ergebnis, kommende mit Termin in der Zukunft');
+  const en = statsCountries(g).find((c) => c.cc === 'eng')!;
+  const seasons = countrySeasons(g, en), cur = seasons.find((x) => x.season === g.season)!;
+  const snap = countrySnapshot(g, en, g.season, cur.source, 'r1')!;
+  ok(pickSeason(seasons, g.season) === g.season && snap.table!.length === eng.ids.length && !snap.placingsOnly && snap.table![0].clubId === t[0].clubId && snap.zones!.includes('zone-eu') && snap.zones!.at(-1) === 'zone-rel',
+    'Statistiken › Liga: laufende englische Tabelle mit Punkten und Zonen');
+  const md = countryMatchdays(g, en, g.season, 'r1')!;
+  ok(md.res.length === eng.md * Math.floor(eng.ids.length / 2) && md.ptsWin === 3, 'Statistiken › Liga: Ergebnisse je Spieltag für Heim/Auswärts/Form');
+  const before = JSON.stringify(g.world!.live);
+  ok(await saveGame('wl', { name: 'wl', managerName: 'w', clubName: 'w', clubId: g.managedClubId, season: g.season, gameDate: g.calendar.currentDate }, g), 'Auslandsligen: Speichern');
+  const l = (await loadGame<Game>('wl'))!.game;
+  prepareLoadedGame(l);
+  ok(JSON.stringify(l.world!.live) === before, 'Auslandsligen: Laden lässt den Stand unverändert');
+  // Älterer Spielstand mit „Spiel für Spiel“-Divisionen: werden abgelöst, die Saison bis heute nachgespielt
+  l.fullCountries = ['eng']; l.fullAll = true;
+  l.leagues.otherDivisions.push({ ...l.leagues.otherDivisions[0], id: 'x-eng-1', tier: 201, name: 'England 1. Liga' });
+  l.world!.live = undefined;
+  prepareLoadedGame(l);
+  ok(!l.fullCountries && !l.fullAll && !l.leagues.otherDivisions.some((d) => d.tier >= 200) && worldLiveDiv(l, 'England', 0)!.md === eng.md, 'Älterer Spielstand: „Spiel für Spiel“-Divisionen abgelöst, Auslandsligen bis heute nachgespielt');
   playSeason(g);
-  const eng1 = g.leagues.otherDivisions.find((d) => d.id === 'x-eng-1')!;
-  ok(eng1.table.rows.every((r) => r.played === (eng1.clubIds.length - 1) * 2), 'Spiel für Spiel: englische 1. Liga komplett gespielt');
-  const champ = [...eng1.table.rows].sort((a, b) => a.position - b.position)[0].clubId;
+  const fin = leanTable(worldLiveDiv(g, 'England', 0)!, 'England', g.season);
+  ok(worldLiveDiv(g, 'England', 0)!.md === eng.n && fin.every((r) => r.p === eng.n), 'England: Saison komplett gespielt');
+  const old = g.season;
   startNextSeason(g);
-  ok(g.world!.history.at(-1)?.champions['England'] === champ, 'Spiel für Spiel: Meister geht in die Hintergrund-Welt (Europapokal)');
-  ok(g.leagues.otherDivisions.filter((d) => d.id.startsWith('x-')).length === 4, 'Spiel für Spiel: Divisionen nach dem Saisonwechsel neu aufgebaut');
+  const rec = g.world!.history.at(-1)!;
+  ok(rec.season === old && rec.champions['England'] === fin[0].clubId, 'Saisonende: Meister der Spieltag-Simulation geht in die Welt (Europapokal)');
+  ok(!!rec.divs?.['England']?.[0] && rec.divs['England'][0]!.r.length === eng.n * Math.floor(eng.ids.length / 2) * 2, 'Saisonende: Liga mit allen Ergebnissen in der Welt-Historie');
+  const en2 = statsCountries(g).find((c) => c.cc === 'eng')!;
+  const past = countrySnapshot(g, en2, old, 'world', 'w1')!;
+  ok(past.table![0].clubId === fin[0].clubId && past.table![0].pts === fin[0].pts && countryMatchdays(g, en2, old, 'w1')!.res.length === eng.ids.length * (eng.ids.length - 1), 'Vorsaison: volle Abschlusstabelle und alle Begegnungen abrufbar');
+  ok(worldLiveDiv(g, 'England', 0)!.md === 0 && g.world!.live!.season === g.season, 'Neue Saison: Auslandsligen starten bei Spieltag 0');
 }
 
 // --- 6) Editor-Änderung an Deutschland wirkt -----------------------------------

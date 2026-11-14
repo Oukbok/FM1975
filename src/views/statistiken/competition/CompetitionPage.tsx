@@ -5,13 +5,13 @@
 // Statistik (Bestenlisten), rechts unten Saisonbilanz/Dein Weg. Oben im Kopf der
 // linken Box: Saison (Historie ab 1963/64, Archiv, laufend) und Wettbewerb (alle
 // Ligen, Landespokal, Europapokale). Davor die Länderwahl (Wunsch Pascal): Heimatland,
-// DDR, Länder Spiel für Spiel und Hintergrund-Länder (game/competitionCountry.ts).
+// DDR und alle Auslandsligen (game/competitionCountry.ts).
 // =============================================================================
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { EuroCompId } from '../../../data/europe';
 import { competitionOptions, type CompOption } from '../../../game/competitionView';
 import {
-  countryOfKey, countryOptions, countrySeasons, countrySnapshot, pickSeason, seasonSuffix, statsCountries, type StatsCountry,
+  countryMatchdays, countryOfKey, countryOptions, countrySeasons, countrySnapshot, pickSeason, seasonSuffix, statsCountries, type StatsCountry,
 } from '../../../game/competitionCountry';
 import { useSubTab } from '../../../ui/SubTabs';
 import { Caption, CountrySelect, RosterList, WinnersList } from './CountryParts';
@@ -116,9 +116,12 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
 
   // Spieltage (Ligen der Heimat mit Einzelergebnissen): gemeinsamer Stand für Tabelle und „Begegnungen“.
   const isLeague = !!snap && snap.kind === 'league' && !snap.winners && !snap.roster && !snap.placingsOnly;
-  const res = isLeague && country.mode === 'home' ? resultsFor(g, season, effKey) : null;
-  const fx = isLeague && country.mode === 'home' && season === g.season ? liveFixtures(g, effKey) : null;
-  const mdGames: MdGame[] = fx ? fx.map((m) => {
+  // Auslandsligen (schlanke Spieltag-Simulation): Spiele und Ergebnisse aus game/worldLeagues.ts.
+  const today = g.calendar.currentDate;
+  const lean = useMemo(() => (isLeague ? countryMatchdays(g, country, season, effKey) : null), [g, country, season, effKey, isLeague, today]); // eslint-disable-line react-hooks/exhaustive-deps
+  const res = lean ? lean.res : isLeague && country.mode !== 'world' ? resultsFor(g, season, effKey) : null;
+  const fx = isLeague && country.mode !== 'world' && season === g.season ? liveFixtures(g, effKey) : null;
+  const mdGames: MdGame[] = lean ? lean.games : fx ? fx.map((m) => {
     const r = res?.find((x) => x[0] === m.matchday && x[2] === m.homeClubId && x[3] === m.awayClubId);
     return r ? fromTuple(r) : { md: m.matchday, date: m.date, home: m.homeClubId, away: m.awayClubId, hg: null, ag: null, hh: -1, ha: -1 };
   }) : (res ?? []).map(fromTuple);
@@ -127,9 +130,9 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
   const mdKey = `${country.cc}|${season}|${effKey}`;
   const [mdSel, setMdSel] = useState<{ key: string; md: number } | null>(null);
   const [mode, setMode] = useState<TableMode>('all');
-  const md = mdSel?.key === mdKey ? Math.min(Math.max(1, mdSel.md), maxMd || 1) : Math.max(1, playedMd || (fx ? 1 : maxMd));
+  const md = mdSel?.key === mdKey ? Math.min(Math.max(1, mdSel.md), maxMd || 1) : Math.max(1, playedMd || (fx || lean ? 1 : maxMd));
   const onMd = (n: number) => setMdSel({ key: mdKey, md: n });
-  const nav = { mode, setMode, md, maxMd, playedMd, onMd, res, ptsWin: winPoints(g, season) };
+  const nav = { mode, setMode, md, maxMd, playedMd, onMd, res, ptsWin: lean?.ptsWin ?? winPoints(g, season) };
 
   const main = !snap ? <Empty icon="stats">Für diese Auswahl liegen keine Daten vor.</Empty>
     : snap.winners ? <><Caption snap={snap} /><WinnersList g={g} snap={snap} /></>
@@ -139,7 +142,7 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
     : <CupRounds g={g} snap={snap} onWatch={onWatch}
       onReplayDraw={onReplayDraw && src === 'live' ? (ri) => onReplayDraw(effKey as 'cup' | EuroCompId, ri) : undefined} />;
 
-  const withMd = isLeague && !!snap?.table?.length;
+  const withMd = isLeague && !!snap?.table?.length && (mdGames.length > 0 || country.mode !== 'world');
   const euro = ['ec', 'cwc', 'uefa'].includes(effKey);
   return (
     <TeamFlagCtx.Provider value={euro}>
@@ -149,8 +152,8 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
       </DashBox>
       {withMd && <MatchdayBox g={g} season={season} games={mdGames} md={md} maxMd={maxMd} onMd={onMd}
         none={mdGames.length ? undefined : 'Für diese Saison liegen keine Einzelergebnisse vor.'} />}
-      <StatsBox key={`st-${country.cc}-${season}-${effKey}`} g={g} snap={snap} />
-      {withMd ? null : snap && src === 'live' && ['ec', 'cwc', 'uefa'].includes(snap.key) && !snap.rounds?.some((r) => r.ties.some((t) => t.mine) || r.groups?.some((gr) => gr.rows.some((x) => x.id === g.managedClubId)))
+      <StatsBox key={`st-${country.cc}-${season}-${effKey}`} g={g} snap={snap} noScorer={withMd && !!lean} />
+      {withMd ? (lean ? <InfoBox g={g} snap={snap} cell /> : null) : snap && src === 'live' && ['ec', 'cwc', 'uefa'].includes(snap.key) && !snap.rounds?.some((r) => r.ties.some((t) => t.mine) || r.groups?.some((gr) => gr.rows.some((x) => x.id === g.managedClubId)))
         ? <EuropeBox g={g} germans={(g.euroCups?.[snap.key as EuroCompId]?.participantIds ?? []).filter((id) => !g.euroClubs?.[id])} teamName={(id) => compClubName(g, id, season)} />
         : <InfoBox g={g} snap={snap} />}
     </DashPage>

@@ -61,7 +61,19 @@ export interface WorldSeasonRecord {
   cupWinners: Record<string, string>;
   /** Abschluss-Reihenfolge der 1. Liga je Land (nur die letzten WORLD_TABLES_KEEP Saisons; optional). */
   tables?: Record<string, string[]>;
+  /** Auslandsligen der Saison je Land [1. Liga, 2. Liga] mit allen Ergebnissen (game/worldLeagues.ts; nur die letzten WORLD_TABLES_KEEP Saisons). */
+  divs?: Record<string, (LeanDiv | null)[]>;
 }
+
+/**
+ * Schlanke Liga einer Saison: Vereine in Spielplan-Reihenfolge und alle Ergebnisse als Zeichenkette
+ * (je Spiel zwei Zeichen Heim-/Gasttore, Basis 36, Spieltag für Spieltag in der Reihenfolge der
+ * Paarungen). Spielplan und Termine ergeben sich daraus (kein gespeicherter Spielplan).
+ */
+export interface LeanDiv { ids: string[]; r: string }
+/** Laufende Saison einer Auslandsliga: dazu gespielte Spieltage `md` von `n`. */
+export interface WorldLiveDiv extends LeanDiv { md: number; n: number }
+export interface WorldLive { season: string; divs: Record<string, WorldLiveDiv> }
 
 /** So viele Saisons behält die Welt-Historie die Abschluss-Reihenfolge (Spielstand-Größe). */
 export const WORLD_TABLES_KEEP = 10;
@@ -75,6 +87,8 @@ export interface WorldState {
   /** Europapokal-Starter der aktuellen Saison (ausländische IDs je Wettbewerb). */
   participants: Record<EuroCompId, string[]> | null;
   history: WorldSeasonRecord[];
+  /** Laufende Saison aller Auslandsligen, Spieltag für Spieltag (game/worldLeagues.ts). */
+  live?: WorldLive;
   nextId: number;
 }
 
@@ -266,12 +280,25 @@ export interface WorldInitOpts {
 const HOME_KEY = '__home__';
 
 /** Länder, deren Ligen das Spiel selbst Spiel für Spiel rechnet (voll simulierte Länder). */
-export interface FixedCountryResult { t1: string[]; t2: string[]; next: string[][] }
+/** `next` = fertige Ligen der Folgesaison (Länder „Spiel für Spiel“); fehlt es, regelt die Welt Auf- und Abstieg selbst. */
+export interface FixedCountryResult { t1: string[]; t2: string[]; next?: string[][] }
 
 // -----------------------------------------------------------------------------
 // Eine Liga durchrechnen
 // -----------------------------------------------------------------------------
 interface Row { id: string; pts: number; gd: number; gf: number }
+
+/**
+ * Ergebnis eines Ligaspiels der Welt: Poisson-Tore aus dem Stärkeunterschied mit Heimvorteil.
+ * Dasselbe Modell für die Saison in einem Zug (`playLeague`) und die Spieltag-Simulation
+ * der Auslandsligen (game/worldLeagues.ts) – so bleibt die Dominanz der Großen je Land gleich.
+ */
+export function worldMatchGoals(homeStr: number, awayStr: number, r: () => number): [number, number] {
+  const diff = (homeStr - awayStr) / 10;
+  const lh = clamp(1.45 * Math.exp(diff * 0.55), 0.25, 4);
+  const la = clamp(1.1 * Math.exp(-diff * 0.55), 0.2, 3.5);
+  return [poisson(lh, r), poisson(la, r)];
+}
 
 function playLeague(ids: string[], euroClubs: Record<string, EuroClub>, winPts: number, r: () => number): string[] {
   const rows: Record<string, Row> = {};
@@ -279,10 +306,7 @@ function playLeague(ids: string[], euroClubs: Record<string, EuroClub>, winPts: 
   for (const h of ids) {
     for (const a of ids) {
       if (h === a) continue;
-      const diff = (euroClubs[h].strength - euroClubs[a].strength) / 10;
-      const lh = clamp(1.45 * Math.exp(diff * 0.55), 0.25, 4);
-      const la = clamp(1.1 * Math.exp(-diff * 0.55), 0.2, 3.5);
-      const gh = poisson(lh, r), ga = poisson(la, r);
+      const [gh, ga] = worldMatchGoals(euroClubs[h].strength, euroClubs[a].strength, r);
       const rh = rows[h], ra = rows[a];
       rh.gf += gh; ra.gf += ga; rh.gd += gh - ga; ra.gd += ga - gh;
       if (gh > ga) rh.pts += winPts; else if (ga > gh) ra.pts += winPts; else { rh.pts++; ra.pts++; }
@@ -444,8 +468,11 @@ export function advanceWorldSeason(
   for (const c of Object.values(w.countries)) {
     if (!c.active) continue;
     const fx = fixed?.[c.name];
-    const t1 = fx ? fx.t1.filter((id) => w.meta[id]) : playLeague(c.tiers[0], euroClubs, winPts, r);
-    const t2 = fx ? fx.t2.filter((id) => w.meta[id]) : playLeague(c.tiers[1], euroClubs, winPts, r);
+    // Vorgegebene Endtabelle (Spiel für Spiel bzw. schlanke Spieltag-Simulation); fehlende Vereine hinten anfügen,
+    // eine nicht vorgegebene 2. Liga rechnet die Welt selbst.
+    const given = (ids: string[], tier: string[]) => { const got = ids.filter((id) => w.meta[id]); return fx?.next ? got : [...got, ...tier.filter((id) => !got.includes(id))]; };
+    const t1 = fx ? given(fx.t1, c.tiers[0]) : playLeague(c.tiers[0], euroClubs, winPts, r);
+    const t2 = fx && (fx.t2.length || fx.next) ? given(fx.t2, c.tiers[1]) : playLeague(c.tiers[1], euroClubs, winPts, r);
     const champ = t1[0];
     const cupWinner = playCup([...c.tiers[0], ...c.tiers[1]], euroClubs, r);
     c.lastTable = t1;
@@ -468,7 +495,7 @@ export function advanceWorldSeason(
     });
 
     // Auf-/Abstieg (3 bei großen Ligen, 2 bei kleinen)
-    if (fx) { c.tiers = [fx.next[0].filter((id) => w.meta[id]), fx.next[1].filter((id) => w.meta[id])]; continue; }
+    if (fx?.next) { c.tiers = [fx.next[0].filter((id) => w.meta[id]), fx.next[1].filter((id) => w.meta[id])]; continue; }
     const n = !t2.length ? 0 : c.tier1 >= 16 ? 3 : 2;
     const down = n ? t1.slice(-n) : [], up = t2.slice(0, n);
     c.tiers[0] = [...t1.slice(0, t1.length - n), ...up];
@@ -526,7 +553,7 @@ export function advanceWorldSeason(
   w.participants = participants;
   w.history.push(rec);
   if (w.history.length > 60) w.history.shift();
-  for (let i = 0; i < w.history.length - WORLD_TABLES_KEEP; i++) delete w.history[i].tables;
+  for (let i = 0; i < w.history.length - WORLD_TABLES_KEEP; i++) { delete w.history[i].tables; delete w.history[i].divs; }
   return { notes, participants };
 }
 

@@ -67,6 +67,8 @@ import { assignShirtNumbers } from './squads';
 import { bindHonours } from './clubHonours';
 import { bindStaffFactor } from './staffGame';
 import { ensureWorldPool } from './worldPool';
+import { worldLiveDaily } from './worldLeagues';
+import { retireFullCountries } from './fullCountries';
 import { ensureCountryPools } from '../engine/world';
 
 /** Bereitet einen gerade gelesenen Spielstand zum Weiterspielen vor (verändert `g`). */
@@ -368,6 +370,10 @@ export function prepareLoadedGame(g: Game): void {
   fixStaleContracts(g); // Spieler im Kader mit abgelaufenem Vertrag (Hochziehen nach dem 1. Juli, alte Spielstände)
   ensureCountryPools(g.world, g.euroClubs, Number(g.season.slice(0, 4))); // Unterbau der Auslandsligen (engine/world.ts)
   if (!g.worldPool || g.worldPool.v !== 2) ensureWorldPool(g); // Weltspieler anlegen bzw. auf den EA-FC-Maßstab stauchen (migrateWorldScale)
+  // Auslandsligen (game/worldLeagues.ts): frühere „Spiel für Spiel“-Divisionen ablösen und die laufende
+  // Saison aller Länder bis heute nachspielen (ältere Spielstände).
+  if (retireFullCountries(g) && g.world) g.world.live = undefined;
+  if (g.world && g.world.live?.season !== g.season) worldLiveDaily(g, g.calendar.currentDate);
 }
 
 /** Abgelaufene Verträge von Kaderspielern (sollte es nicht geben): bis zum Ende der nächsten Saison verlängern. */

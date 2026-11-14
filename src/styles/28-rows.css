@@ -56,7 +56,7 @@
 .dtable td:last-child, .dtable th:last-child { padding-right: var(--rl-px); }
 .dtable tbody tr:last-child td { border-bottom: none; }
 .dtable tbody tr:hover { background: var(--rl-hover); }
-.dtable td.rl-rank, .dtable th.rl-rank { width: 54px; text-align: left; text-overflow: clip; }
+.dtable td.rl-rank, .dtable th.rl-rank { width: 60px; text-align: left; text-overflow: clip; }
 .dtable td.rl-rank, .dtable tbody tr.me td.rl-rank { color: var(--text-3); font-weight: 700; }
 .dtable td.rl-main { font-size: calc(var(--rl-fs) + 2px); }
 .dtable td.rl-name { font-weight: 600; }
@@ -189,6 +189,8 @@
 .dtable th.w-xl { width: 190px; }
 .dtable[data-fixed] { table-layout: fixed; }
 .dtable[data-fixed] th, .dtable[data-fixed] td { overflow: hidden; text-overflow: ellipsis; }
+/* Platz-Spalte nie mit „…“ kürzen (zweistellige Plätze mit Zonen-Kante). */
+.dtable[data-fixed] td.rl-rank, .dtable[data-fixed] th.rl-rank { overflow: visible; text-overflow: clip; white-space: nowrap; }
 .dtable .tm-name, .dtable .pool-club { max-width: 100%; min-width: 0; }
 .cflag-nat { display: inline-flex; vertical-align: middle; }
 .cflag-code { font-size: 12px; color: var(--text-3); }

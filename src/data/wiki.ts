@@ -342,8 +342,8 @@ Unter **Statistiken › Liga, Pokal und International** siehst du jeden Wettbewe
 ## Länder wählen
 Ganz links im Kopf wählst du das **Land** (Auswahl merkt sich bis zum Neuladen); Saison-Pfeile und Wettbewerbe richten sich danach:
 - **Heimatland:** wie oben – laufende Saison, Archiv, Historie; bei späterem Startjahr zusätzlich die Saisons davor aus den Weltdaten (nur Reihenfolge der Abschlusstabelle).
-- **DDR** (bis 1990/91) und **Länder „Spiel für Spiel“:** volle Tabelle Spieltag für Spieltag, frühere Saisons aus dem Archiv.
-- **Länder im Hintergrund:** dort wird eine Saison erst am Saisonende in einem Zug gerechnet. Für die laufende Saison siehst du deshalb die **Teilnehmer** (alphabetisch), für abgeschlossene Saisons die **Abschlusstabelle** (nur Platzierungen; gespeichert für die letzten 10 Saisons, davor Meister und Pokalsieger).
+- **DDR** (bis 1990/91): volle Tabelle Spieltag für Spieltag mit Begegnungen, frühere Saisons aus dem Archiv.
+- **Alle anderen Länder:** 1. und 2. Liga laufen **Spieltag für Spieltag** mit. Du siehst die laufende **Tabelle** mit Punkten, Toren und Form, umschaltbar auf Heim / Auswärts / Form, den **Stand nach jedem Spieltag** und rechts die **Begegnungen** (gespielte mit Ergebnis, kommende mit Termin). Die Farbkante am Platz zeigt Meister, Europapokal-Plätze (nach der Fünfjahreswertung des Landes) und Abstieg bzw. in der 2. Liga den Aufstieg. Für die **letzten zehn Saisons** sind Tabellen und alle Begegnungen gespeichert, davor Meister und Pokalsieger. Einzelstatistiken (Torschützen, Karten) gibt es für Auslandsligen nicht – dort stehen Vereinswerte.
 - **Pokale anderer Länder** werden nicht Spiel für Spiel simuliert: Statistiken › Pokal zeigt dann ehrlich nur die **Sieger** je Saison (vor Spielbeginn mit Finalgegner aus den Weltdaten) und die Rangliste der Pokalsiege.
 
 ## Bestenlisten
@@ -755,7 +755,7 @@ Beim Start erscheint ein Menü mit:
 ## Neues Spiel in sechs Schritten
 1. **Manager:** Vor- und Nachname, Geburtsdatum (Alter am 1. Juli 1975), Nationalität (optional eine zweite), ein Gesicht aus dem Gesichtsgenerator („Anderes Gesicht“), Spielstil, Werdegang und Schwierigkeit. **Lieblingsverein** und **„Niemals trainieren würde ich“** sind Profilangaben; der „Niemals“-Verein taucht im Karrieremodus nicht unter den Angeboten auf.
 2. **Spielmodus:** **Teammanager** – du wählst deinen Verein frei. **Karriere** – als unbekannter Trainer bekommst du drei Angebote schwächerer Vereine (je eins aus der 1. Liga und den beiden 2.-Liga-Staffeln) und nimmst eins an. Dazu die Option **Entwicklung der anderen Vereine** (Aus/Mittel/Stark), Verletzungen, Saison-Briefing, Auftakt-Animation und Spieltempo.
-3. **Spielwelt:** Datensatz und alle Länder, deren Ligen mitlaufen. Deine Liga wird Minute für Minute gerechnet, die übrigen deutschen Ligen, die DDR und – als Voreinstellung – alle Auslandsligen Spiel für Spiel; einzelne Länder kannst du auf „Hintergrund“ stellen (nur Abschlusstabelle). Rechenzeit kostet fast nur deine eigene Liga.
+3. **Spielwelt:** Datensatz und alle Länder, deren Ligen mitlaufen. Deine Liga wird Minute für Minute gerechnet, die übrigen deutschen Ligen, die DDR und alle Auslandsligen Spieltag für Spieltag. Rechenzeit kostet fast nur deine eigene Liga.
 4. **Verein:** Land → Liga → Verein, sortierbar nach Stärke, Name oder Region; rechts die große Vorschau mit Wappen, Trikots, Stadion, Ansehen, Finanzkraft, geschätzter Kaderstärke, Ziel des Vorstands und Rivalen. Kaderstärke und Ziel sind **Einschätzungen** – die echten Kader entstehen beim Start.
 5. **Ligensystem:** die Pyramide der Saison 1975/76 (Deutschland, DDR, Ausland) – siehe Artikel „Übersicht Ligensystem“.
 6. **Willkommen:** Die Spielwelt wird schon erzeugt; du siehst Kader, Stärke der ersten Elf, den besten Spieler, Mediendruck, Vertrauen des Vorstands und Stimmung der Fans. „Karriere starten“ übernimmt genau diese Welt, danach folgt das Saison-Briefing.
@@ -804,8 +804,8 @@ Weltdaten gibt es für alle Länder, die im Europapokal spielten (40 Länder ein
 
 ### Simulationstiefe
 - **Deine Liga:** volle Kader, jedes Spiel mit der Match-Engine.
-- **Spiel für Spiel:** Voreinstellung für alle Länder („Alle Spiel für Spiel“ schließt auch später entstehende Länder ein, z. B. Kroatien ab 1992), im Assistenten je Land abwählbar und im Spiel unter **Statistiken › Ligensystem** umschaltbar (gilt ab dem nächsten Saisonwechsel). Gemessen über 60 Jahre kostet das kaum Rechenzeit, nur etwas mehr Speicher (Spielstände liegen in IndexedDB, ohne das alte 5-MB-Limit) – Spielplan, Tabelle Spieltag für Spieltag, Auf- und Abstieg; zu sehen unter Statistiken › Liga (Länderwahl, Gruppe „Spiel für Spiel“). Die Endtabelle bestimmt Meister und Europapokal-Starter des Landes.
-- **Hintergrund:** einmal je Saison durchgerechnet (Meister, Pokalsieger, Koeffizient); unter Statistiken › Liga mit Abschlusstabelle bzw. Teilnehmern der laufenden Saison.
+- **Übrige Ligen deines Landes und die DDR:** Spielplan und Tabelle Spieltag für Spieltag, Ergebnis aus der Vereinsstärke.
+- **Alle anderen Länder:** 1. und 2. Liga ebenfalls **Spieltag für Spieltag** – Hin- und Rückrunde, Ergebnis aus Vereinsstärke und Heimvorteil, Punkteregel des Landes, Auf- und Abstieg; zu sehen unter **Statistiken › Liga** (Länderwahl) und als Überblick unter **Statistiken › Ligensystem** („Ligen der Welt“). Die Endtabelle bestimmt Meister und Europapokal-Starter des Landes. Eine Wahl je Land („Spiel für Spiel“ oder „Hintergrund“) gibt es nicht mehr: jede Liga wird gleich gespielt, das kostet kaum Rechenzeit und wenig Speicher. Ältere Spielstände werden beim Laden umgestellt; die laufende Auslandssaison wird dabei einmal neu ausgespielt.
 
 ### Editor
 Im Datensatz-Editor (Bereich **Weltdaten**) sind alle Länder – auch Deutschland – bearbeitbar: Vereine (Name, Kürzel, Stadt, Farben) und je Saison 1./2. Liga in Tabellenreihenfolge, Pokalsieger und Europapokal-Teilnehmer. Geänderte deutsche Namen gelten auch für die Startvereine von 1975.`,
@@ -3960,10 +3960,13 @@ Ein laufender Europapokal aus einer älteren Version spielt bis Saisonende im al
     title: 'Europa im Hintergrund — Auslandsligen & Koeffizienten',
     keywords: ['europa', 'ausland', 'ligen', 'koeffizient', 'fünfjahreswertung', 'meister', 'pokalsieger', 'teilung', 'sperre', 'welt'],
     body: `## Alle großen Ligen Europas laufen mit
-Rund **20 Länder** mit je **1. und 2. Liga** (über 700 Vereine) werden im Hintergrund simuliert. Jeder Auslandsverein ist nur ein schlanker Eintrag (Name, Stadt, Land, Stärke, Farben) – erst wenn dein Verein gegen ihn spielt, entsteht ein voller Kader. Eine komplette Europa-Saison kostet nur Millisekunden, damit das Spiel auch nach Jahrzehnten flüssig bleibt.
+Alle Länder Europas mit je **1. und 2. Liga** laufen mit. Jeder Auslandsverein ist nur ein schlanker Eintrag (Name, Stadt, Land, Stärke, Farben) – erst wenn dein Verein gegen ihn spielt, entsteht ein voller Kader. Eine komplette Europa-Saison kostet nur Millisekunden, damit das Spiel auch nach Jahrzehnten flüssig bleibt.
 
-## Saison im Zeitraffer
-- Am **Saisonende** werden alle Auslandsligen auf einmal ausgespielt (Hin- und Rückrunde, Ergebnisse nach Stärke mit Heimvorteil und Zufall).
+## Spieltag für Spieltag
+- Jede Auslandsliga spielt **Hin- und Rückrunde, jeder gegen jeden**, an festen Spieltagen von Mitte August bis Ende Mai (sonntags; lange Ligen zusätzlich mittwochs).
+- Jedes Spiel wird einzeln entschieden: Tore nach **Vereinsstärke mit Heimvorteil** und Zufall. Die Tabelle zählt nach der **Punkteregel des Landes** (2 oder 3 Punkte je Sieg), dann Tordifferenz und Tore.
+- Vereinfacht gegenüber deiner Liga: keine Kader, keine Spielereignisse – deshalb keine Torschützen oder Karten, aber volle Tabellen (gesamt, heim, auswärts, Form), Stand nach jedem Spieltag und alle Begegnungen unter **Statistiken › Liga**.
+- Die Endtabelle entscheidet über **Meister, Europapokal-Starter, Auf- und Abstieg**.
 - **Auf- und Abstieg:** 3 Vereine je Richtung (2 in kleinen Ligen).
 - **Landespokal** jedes Landes: K.-o.-Turnier, Außenseiter gewinnen manchmal.
 

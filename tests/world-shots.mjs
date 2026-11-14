@@ -38,7 +38,6 @@ await next();
 await page.waitForSelector('.ng-ctable');
 await shot('1_spielwelt_1975');
 await page.click('.ng-year-stops button:has-text("1985")');
-await page.click('.ng-crow[data-cc="ita"] .ng-seg button:has-text("Spiel für Spiel")').catch(() => {});
 await shot('2_spielwelt_1985');
 await next();
 // Verein: England wählen

@@ -16,7 +16,7 @@ import { StepLeagues } from './newgame/StepLeagues';
 import { StepWelcome } from './newgame/StepWelcome';
 import { leaguePreview, sortClubs } from './newgame/clubPreview';
 import { playableCountries } from '../game/worldCompose';
-import { COUNTRY_BY_CC, countryExists, seasonLabelOf } from '../data/world/countries';
+import { seasonLabelOf } from '../data/world/countries';
 
 // -----------------------------------------------------------------------------
 // NEUES SPIEL — Assistent in sechs Schritten (Vorbild: große Managerspiele):
@@ -55,7 +55,7 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
       datasetId: BUILTIN_ID, difficulty: 'normal', injuries: true, history: 'off', speedMs: defaults.speedMs,
       briefingAuto: defaults.briefingAuto !== false, briefingIntro: defaults.briefingIntro !== false, legends: true,
       mode: 'manager', offerSeed: Math.floor(Math.random() * 2 ** 31),
-      league: 'tier1', clubId: topClub(), startYear: 1975, country: 'ger', fullCountries: [], fullAll: true,
+      league: 'tier1', clubId: topClub(), startYear: 1975, country: 'ger',
       firstName: '', lastName: '', birthDay: 1, birthMonth: 1, birthYear: 1940,
       nationality: 'Deutschland', nationality2: '', avatarSeed: Math.random().toString(36).slice(2, 8),
       favoriteClubId: '', avoidClubId: '', style: 'balanced', background: 'ex_pro', story: 'erbe', privateLife: true,
@@ -72,19 +72,13 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
   /** Startjahr wählen: Land bleibt, wenn es im Jahr spielbar ist; Verein = Spitzenverein. */
   const chooseYear = (y: number) => {
     const cc = playableCountries(y).includes(d.country) ? d.country : 'ger';
-    const full = d.fullCountries.filter((c) => COUNTRY_BY_CC[c] && countryExists(COUNTRY_BY_CC[c], y));
-    set({ startYear: y, birthYear: d.birthYear + (y - d.startYear), country: cc, fullCountries: full, league: 'tier1', clubId: topClub(cc, y) });
+    set({ startYear: y, birthYear: d.birthYear + (y - d.startYear), country: cc, league: 'tier1', clubId: topClub(cc, y) });
   };
   const chooseCountry = (cc: string) => {
     if (cc === d.country) return;
-    set({ country: cc, league: 'tier1', clubId: topClub(cc, d.startYear), fullCountries: d.fullCountries.filter((c) => c !== cc) });
+    set({ country: cc, league: 'tier1', clubId: topClub(cc, d.startYear) });
   };
   /** Land umschalten; `all` = Liste aller wählbaren Länder (für den Wechsel aus „alle“). */
-  const toggleFull = (cc: string, all?: string[]) => {
-    if (d.fullAll) { set({ fullAll: false, fullCountries: (all ?? []).filter((c) => c !== cc) }); return; }
-    set({ fullCountries: d.fullCountries.includes(cc) ? d.fullCountries.filter((c) => c !== cc) : [...d.fullCountries, cc] });
-  };
-  const setAllFull = (on: boolean) => set({ fullAll: on, fullCountries: [] });
   const offers = useMemo(() => careerOffers(d.offerSeed, d.avoidClubId, d.country, d.startYear), [d.offerSeed, d.avoidClubId, d.datasetId, d.country, d.startYear]);
   const STEPS = stepsFor(d.startYear);
   const chooseMode = (m: NewGameDraft['mode']) => {
@@ -149,7 +143,7 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
           </div>
           {step === 0 && <StepManager d={d} set={set} />}
           {step === 1 && <StepMode d={d} set={set} chooseMode={chooseMode} />}
-          {step === 2 && <StepWorld d={d} chooseDataset={chooseDataset} chooseYear={chooseYear} toggleFull={toggleFull} setAllFull={setAllFull} />}
+          {step === 2 && <StepWorld d={d} chooseDataset={chooseDataset} chooseYear={chooseYear} />}
           {step === 3 && <StepClub d={d} set={set} offers={offers} chooseCountry={chooseCountry} />}
           {step === 4 && <StepLeagues d={d} game={ready} />}
           {step === 5 && <StepWelcome d={d} game={ready} />}

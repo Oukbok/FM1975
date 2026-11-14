@@ -81,5 +81,8 @@
 /* Statistiken › Ligensystem: Simulation der Länder */
 .lsv-head { padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; border-bottom: 1px solid var(--border-soft); }
 .lsv-list { overflow-y: auto; min-height: 0; flex: 1; }
-.lsv-row { padding: 6px 14px; gap: 10px; }
-.lsv-row .seg3 button { font-size: 12px; padding: 0 8px; height: 28px; }
+.lsv-row { padding: 0 14px; gap: 10px; width: 100%; height: 40px; flex: 0 0 auto; background: none; border: 0; border-bottom: 1px solid var(--border-soft); color: var(--text); font: inherit; font-size: 15px; text-align: left; cursor: pointer; }
+.lsv-row:hover { background: var(--rl-hover); }
+.lsv-row .lsv-name { flex: 0 0 132px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lsv-row .lsv-lead { color: var(--text-2); }
+.lsv-row .lsv-md { flex: 0 0 auto; min-width: 48px; text-align: right; color: var(--text-3); font-variant-numeric: tabular-nums; }

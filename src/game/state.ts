@@ -152,9 +152,9 @@ export interface Game {
   startYear?: number;
   /** Heimatland (data/world/countries.ts); fehlt = 'ger'. */
   homeCountry?: string;
-  /** Spiel für Spiel simulierte weitere Länder (game/fullCountries.ts); fehlt = keine. */
+  /** Abgelöst (nur ältere Spielstände): frühere „Spiel für Spiel“-Länder; `retireFullCountries` entfernt sie beim Laden. */
   fullCountries?: string[];
-  /** Alle Länder Spiel für Spiel, auch künftig entstehende (game/fullCountries.ts `refreshFullAll`). */
+  /** Abgelöst (nur ältere Spielstände), siehe `fullCountries`. */
   fullAll?: boolean;
   /** Weltspieler der Vereine ohne vollen Kader (game/worldPool.ts); fehlt = wird beim Laden angelegt. */
   worldPool?: import('./worldPool').WorldPool;

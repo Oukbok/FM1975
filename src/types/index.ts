@@ -2037,9 +2037,9 @@ export interface NewGameOptions {
   startYear?: number;
   /** Heimatland (Code aus data/world/countries.ts), Standard 'ger'. */
   country?: string;
-  /** Weitere Länder, deren Ligen Spiel für Spiel simuliert werden (game/fullCountries.ts). */
+  /** Abgelöst, wird ignoriert: alle Auslandsligen laufen Spieltag für Spieltag (game/worldLeagues.ts). */
   fullCountries?: string[];
-  /** Alle Länder Spiel für Spiel (auch später entstehende). */
+  /** Abgelöst, wird ignoriert (siehe `fullCountries`). */
   fullAll?: boolean;
   /** Privatleben (game/private/), Standard an. */
   privateLife?: boolean;

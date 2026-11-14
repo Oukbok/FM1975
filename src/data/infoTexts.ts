@@ -27,8 +27,8 @@ export const INFO_TEXTS = {
     wiki: 'world-start',
   },
   simtiefe: {
-    title: 'Simulationstiefe',
-    text: 'Deine Liga läuft mit vollen Kadern. „Spiel für Spiel“ rechnet ein Land mit Spielplan, Tabelle und Auf-/Abstieg; „Hintergrund“ nur die Abschlusstabelle einmal je Saison. Voreinstellung: alle Länder Spiel für Spiel – kostet kaum Rechenzeit. Im Spiel umschaltbar unter Statistiken › Ligensystem, gilt ab der nächsten Saison.',
+    title: 'Ligen der Welt',
+    text: 'Deine Liga läuft mit vollen Kadern, Minute für Minute. Alle anderen Länder spielen ihre 1. und 2. Liga Spieltag für Spieltag: Hin- und Rückrunde, Ergebnis je Spiel aus Vereinsstärke und Heimvorteil, Tabelle nach der Punkteregel des Landes, Auf- und Abstieg, Europapokal-Plätze nach der Fünfjahreswertung. Tabellen, Spieltage und Begegnungen findest du unter Statistiken › Liga. Eine Wahl der Simulationstiefe je Land gibt es nicht mehr – jede Liga wird gleich gründlich gespielt.',
     wiki: 'world-start',
   },
   // ---------------------------------------------------------------- Spieler-Zustand
@@ -198,7 +198,7 @@ export const INFO_TEXTS = {
   },
   ligaLand: {
     title: 'Land wählen',
-    text: 'Schalte durch die Ligen anderer Länder: Heimatland, DDR und Länder „Spiel für Spiel“ mit voller Tabelle, Länder im Hintergrund mit der Abschluss-Reihenfolge (die Saison wird dort erst am Saisonende in einem Zug gerechnet). Saisons vor Spielbeginn kommen aus den Weltdaten.',
+    text: 'Schalte durch die Ligen anderer Länder. Alle Auslandsligen (1. und 2. Liga) werden Spieltag für Spieltag gespielt: laufende Tabelle, Heim/Auswärts/Form, Stand nach jedem Spieltag und alle Begegnungen – auch für die letzten zehn Saisons. Das Ergebnis entsteht aus Vereinsstärke und Heimvorteil; Kader und Einzelstatistiken gibt es nur im Heimatland, in der DDR und in Ländern „Spiel für Spiel“. Saisons vor Spielbeginn kommen aus den Weltdaten.',
     wiki: 'world-start',
   },
   hallenMasters: {

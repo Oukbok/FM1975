@@ -43,10 +43,6 @@ export interface NewGameDraft {
   startYear: number;
   /** Heimatland (data/world/countries.ts), Standard 'ger'. */
   country: string;
-  /** Weitere Länder Spiel für Spiel (sonst Hintergrund). */
-  fullCountries: string[];
-  /** Alle Länder Spiel für Spiel (Standard, Wunsch Pascal) – dann gilt fullCountries nicht. */
-  fullAll: boolean;
   firstName: string;
   lastName: string;
   birthDay: number;
@@ -137,7 +133,6 @@ export function gameOptions(d: NewGameDraft): NewGameOptions {
     ...(d.privateLife ? {} : { privateLife: false }),
     ...(d.startYear !== 1975 ? { startYear: d.startYear } : {}),
     ...(d.country !== 'ger' ? { country: d.country } : {}),
-    ...(d.fullAll ? { fullAll: true } : d.fullCountries.length ? { fullCountries: [...d.fullCountries] } : {}),
   };
 }
 

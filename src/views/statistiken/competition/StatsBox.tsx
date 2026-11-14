@@ -24,8 +24,10 @@ const CATS: StatCat[] = ['goals', 'assists', 'scorer', 'yellow', 'red', 'clean']
 const BOX_TITLE: Record<StatCat, string> = { goals: 'Torschützen', assists: 'Vorlagen', scorer: 'Scorer', yellow: 'Gelbe Karten', red: 'Rote Karten', clean: 'Weiße Weste' };
 const CLUB_CATS: ClubStatCat[] = ['gf', 'ga', 'w', 'cs', 'ti'];
 
-export function StatsBox({ g, snap, playerCard }: {
+export function StatsBox({ g, snap, playerCard, noScorer }: {
   g: Game; snap: CompSnapshot | null;
+  /** Ohne die Box „Torschützenkönig“ (Auslandsligen ohne Einzelstatistik: dort steht die Saisonbilanz). */
+  noScorer?: boolean;
   /** Optional (Jugend): eigene kleine Karte statt Spielerprofil; null = normales Profil (falls vorhanden). */
   playerCard?: (pid: string, close: () => void) => ReactNode | null;
 }) {
@@ -98,7 +100,7 @@ export function StatsBox({ g, snap, playerCard }: {
           </DashBox>
         );
       })}
-      <DashBox title={snap?.kind === 'cup' && snap.source === 'history' ? 'Endspiele' : 'Torschützenkönig'} right={snap?.season} className="cmp-statbox">
+      {!noScorer && <DashBox title={snap?.kind === 'cup' && snap.source === 'history' ? 'Endspiele' : 'Torschützenkönig'} right={snap?.season} className="cmp-statbox">
         {snap?.topScorer ? (
           <div className="cmp-topscorer">
             <span className="cmp-ts-clubs">{snap.topScorer.clubs.map((id) => <TeamName key={id} g={g} id={id} season={snap.season} size={16} />)}</span>
@@ -115,7 +117,7 @@ export function StatsBox({ g, snap, playerCard }: {
             ))}
           </div>
         ) : <div className="dnote">Keine Einzelstatistik für diesen Wettbewerb.</div>}
-      </DashBox>
+      </DashBox>}
     </>
   );
 }

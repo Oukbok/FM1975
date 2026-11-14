@@ -40,8 +40,6 @@ const g: Game = createNewGame({
   manager: { name: 'Sim', nationality: 'GER', birthYear: 1940, style: 'balanced', background: 'newcomer' } as any,
   difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300,
   legends: process.env.LEG !== '0', // LEG=0: ohne Ausnahmetalente (Vergleich)
-  // FULL=eng,ita: weitere Länder Spiel für Spiel (Rechenzeit-Vergleich, SPEED=1)
-  ...(process.env.FULL ? { fullCountries: process.env.FULL.split(',') } : {}),
 });
 
 (g as any).simAutoManage = true; // eigener Verein wird wie ein KI-Verein gepflegt

@@ -49,7 +49,7 @@ export function EuropeSection({ ds, onChange }: { ds: Dataset; onChange: () => v
         {TABS.map((t) => <button key={t.key} className={`ed-tab ${tab === t.key ? 'on' : ''}`} onClick={() => setTab(t.key)}>{t.label}</button>)}
       </div>
       {tab === 'countries' && <>
-        <Explain>Jedes Land wird mit 1. und 2. Liga im Hintergrund simuliert. Das <b>Niveau</b> bestimmt die Stärke der Vereine, die Städte werden nacheinander zu erfundenen Vereinen („Stadt“ bzw. „Stadt Farbe“). Ligagrößen müssen gerade sein. Die Rangliste (Fünfjahreswertung) entscheidet über die Europapokal-Plätze.</Explain>
+        <Explain>Jedes Land spielt 1. und 2. Liga Spieltag für Spieltag (Ergebnis aus der Vereinsstärke). Das <b>Niveau</b> bestimmt die Stärke der Vereine, die Städte werden nacheinander zu erfundenen Vereinen („Stadt“ bzw. „Stadt Farbe“). Ligagrößen müssen gerade sein. Die Rangliste (Fünfjahreswertung) entscheidet über die Europapokal-Plätze.</Explain>
         <TableEditor rows={e.countries} cols={COUNTRY_COLS} onChange={onChange} searchKeys={['name']}
           makeRow={(): CountrySeed => ({ name: 'Neues Land', origin: 'eng', base: 58, tier1: 16, tier2: 16, cities: [] })} />
       </>}
@@ -65,7 +65,7 @@ export function EuropeSection({ ds, onChange }: { ds: Dataset; onChange: () => v
           makeRow={() => ({ country: 'England', from: 1985, to: 1989 })} />
       </>}
       {tab === 'clubs' && <>
-        <Explain>Die ausländischen Starter der allerersten Saison. Ab der zweiten Saison qualifizieren sich die Vereine sportlich über die Hintergrund-Ligen; diese Vereine werden dort als Spitzenclubs ihres Landes übernommen. Felder: Landesmeister 15, Pokalsieger 15, Europa-Pokal 29 ausländische Vereine (plus deutsche Starter = 16/16/32).</Explain>
+        <Explain>Die ausländischen Starter der allerersten Saison. Ab der zweiten Saison qualifizieren sich die Vereine sportlich über ihre Ligen; diese Vereine werden dort als Spitzenclubs ihres Landes übernommen. Felder: Landesmeister 15, Pokalsieger 15, Europa-Pokal 29 ausländische Vereine (plus deutsche Starter = 16/16/32).</Explain>
         <TableEditor rows={e.clubs} cols={EURO_COLS} onChange={onChange} searchKeys={['id', 'name', 'country']}
           makeRow={(): EuroClub => ({ id: `eu_neu${e.clubs.length + 1}`, name: 'Neue Stadt', shortName: 'NEU', city: 'Neue Stadt', country: e.countries[0]?.name ?? 'England', strength: 70, colors: { primary: '#C8102E', secondary: '#FFFFFF' }, comp: 'uefa' })} />
       </>}

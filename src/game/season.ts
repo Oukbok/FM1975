@@ -44,7 +44,8 @@ import { CalendarEngine } from '../engine/calendar';
 import { Game, bestOffer, hashSeed, homeCountryOf, migrateCommerce, offerToContract } from './state';
 import { countryPointSystem } from '../data/world/countries';
 import { homeExcluded } from './startYear';
-import { buildFullCountries, fullCountryResults, isFullDivision, refreshFullAll } from './fullCountries';
+import { retireFullCountries } from './fullCountries';
+import { worldLiveResults } from './worldLeagues';
 
 const isGermanHome = (g: Game) => homeCountryOf(g) === 'ger';
 import { sponsorSeasonStart } from './sponsorGame';
@@ -244,7 +245,9 @@ export function startNextSeason(g: Game): void {
   }
 
   const oldPlayerTier = g.leagues.playerDivision.tier;
-  const fullResults = fullCountryResults(g);
+  // Auslandsligen: Spieltag-Simulation zu Ende spielen (game/worldLeagues.ts); die Endtabellen gehen an engine/world.ts.
+  retireFullCountries(g); // ältere Spielstände ohne Lade-Migration (Sicherheitsnetz)
+  const leanResults = worldLiveResults(g);
 
   // --- 2) Endstände ALLER aktuellen Divisionen einlesen (Spielerliga + Sim) ---
   const pd = g.leagues.playerDivision;
@@ -260,7 +263,6 @@ export function startNextSeason(g: Game): void {
   const ddrDivs = g.leagues.otherDivisions.filter((d) => d.id.startsWith('ddr-'));
   for (const div of g.leagues.otherDivisions) {
     if (div.id.startsWith('ddr-') && !isReunify) continue;
-    if (isFullDivision(div)) continue; // Länder Spiel für Spiel: eigener Auf-/Abstieg (game/fullCountries.ts)
     current.push({ id: div.id, tier: div.tier, group: div.group, name: div.name, orderedIds: finalOrder(g, div.id) });
   }
   // Vereinsprofil-Historie (Endplätze, Titel, direkter Vergleich) vor dem Überschreiben sichern.
@@ -432,10 +434,13 @@ export function startNextSeason(g: Game): void {
   const worldRes = advanceWorldSeason(
     g.world, euroClubs, oldSeason, nextStartYear, g.pointSystem === '3-point' ? 3 : 2,
     g.euroCups as any, (id) => !!g.clubs[id] || (!!g.simClubs?.[id] && g.simClubs[id].tier < 200),
-    fullResults,
+    leanResults.fixed,
   );
-  refreshFullAll(g); // „alle Länder“ inkl. neu entstandener, Auswahl aus dem Spiel (game/fullCountries.ts)
-  buildFullCountries(g, fixturesStart);
+  { // Auslandsligen mit allen Ergebnissen in die Welt-Historie; die neue Saison legt `worldLiveDaily` an
+    const rec = g.world.history[g.world.history.length - 1];
+    if (rec && rec.season === oldSeason && Object.keys(leanResults.divs).length) rec.divs = leanResults.divs;
+    g.world.live = undefined;
+  }
   historicWorldAfter(g, g.world, euroClubs, nextStartYear);
   for (const note of worldRes.notes) {
     pushMessage(g.messages, makeMessage({

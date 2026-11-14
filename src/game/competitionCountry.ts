@@ -3,29 +3,34 @@
 // -----------------------------------------------------------------------------
 // Legt eine Länderebene über game/competitionView.ts:
 //  - Heimatland: wie bisher (Historie, Archiv, laufend) + Weltdaten-Saisons vor dem Startjahr.
-//  - DDR (Heimat Deutschland) und Länder „Spiel für Spiel“: Ligen aus Archiv/laufender Saison
-//    (bekannte Schlüssel, z. B. `ddr-oberliga`, `x-eng-1`) + Weltdaten vor dem Startjahr.
-//  - Hintergrund-Länder (engine/world.ts): Abschluss-Reihenfolge aus der Welt-Historie
-//    (`WorldSeasonRecord.tables`, letzte 10 Saisons), Meister/Pokalsieger älterer Saisons,
-//    die laufende Saison nur als Teilnehmerliste (wird am Saisonende in einem Zug gerechnet).
-// Eigene Schlüssel: d1/d2/d2b/xcup (Weltdaten), w1 (Hintergrund), r1/r2 (Teilnehmer).
+//  - DDR (Heimat Deutschland): Ligen aus Archiv/laufender Saison
+//    (bekannte Schlüssel, z. B. `ddr-oberliga`) + Weltdaten vor dem Startjahr.
+//  - Übrige Länder (engine/world.ts + game/worldLeagues.ts): laufende Saison als echte Tabelle,
+//    Spieltag für Spieltag (r1/r2); abgeschlossene Saisons mit vollen Tabellen aus der
+//    Welt-Historie samt Ergebnissen (`WorldSeasonRecord.divs`, letzte 10 Saisons; ältere
+//    Spielstände nur Reihenfolge aus `tables`), davor Meister/Pokalsieger.
+// Eigene Schlüssel: d1/d2/d2b/xcup (Weltdaten), w1/w2 (abgeschlossen), r1/r2 (laufend).
 // =============================================================================
 import { COUNTRY_BY_CC, COUNTRY_BY_KEY, seasonLabelOf } from '../data/world/countries';
 import { worldSeason, worldYears } from '../data/world/index';
 import { seasonStartYear } from '../data/timeline';
-import { leagueArchive } from './leagueArchive';
+import { archivedSeason, leagueArchive } from './leagueArchive';
 import {
   buildSnapshot, compClubName, competitionOptions, seasonOptions,
   type CompOption, type CompSnapshot, type Source,
 } from './competitionView';
 import { homeCountryOf, type Game } from './state';
+import { accessSlots } from '../data/euroFormats';
+import { countryRanking, germanRank, type LeanDiv } from '../engine/world';
+import type { ResTuple } from './leagueResults';
+import { leanGames, leanMatchdays, leanResTuples, leanTable, leanWinPts, worldLiveDiv, type LeanGame } from './worldLeagues';
 
 export type CountryMode = 'home' | 'div' | 'world';
 export interface StatsCountry { cc: string; name: string; flag: string; mode: CountryMode; worldKey?: string; hint: string }
 export type CSource = Source | 'data' | 'world' | 'roster';
 export interface CSeasonOption { season: string; source: CSource }
 
-const OWN_KEYS = new Set(['d1', 'd2', 'd2b', 'xcup', 'w1', 'r1', 'r2']);
+const OWN_KEYS = new Set(['d1', 'd2', 'd2b', 'xcup', 'w1', 'w2', 'r1', 'r2']);
 const startYearOf = (g: Game) => g.startYear ?? 1975;
 const nameOf = (cc: string, key?: string) => COUNTRY_BY_CC[cc]?.name ?? key ?? cc;
 
@@ -36,12 +41,11 @@ export function statsCountries(g: Game): StatsCountry[] {
   const home = homeCountryOf(g);
   const out: StatsCountry[] = [{ cc: home, name: nameOf(home), flag: COUNTRY_BY_CC[home]?.key ?? 'Deutschland', mode: 'home', hint: 'Heimatland' }];
   if (home === 'ger') out.push({ cc: 'gdr', name: 'DDR', flag: 'DDR', mode: 'div', hint: 'bis 1990/91' });
-  for (const cc of g.fullCountries ?? []) if (!out.some((c) => c.cc === cc)) out.push({ cc, name: nameOf(cc), flag: COUNTRY_BY_CC[cc]?.key ?? cc, mode: 'div', hint: 'Spiel für Spiel' });
   const rest: StatsCountry[] = [];
   for (const c of Object.values(g.world?.countries ?? {})) {
     const cc = COUNTRY_BY_KEY[c.name]?.cc ?? c.name;
     if (out.some((x) => x.cc === cc)) continue;
-    rest.push({ cc, name: nameOf(cc, c.name), flag: c.name, mode: 'world', worldKey: c.name, hint: c.active ? 'Hintergrund' : 'aufgelöst' });
+    rest.push({ cc, name: nameOf(cc, c.name), flag: c.name, mode: 'world', worldKey: c.name, hint: c.active ? '' : 'aufgelöst' });
   }
   rest.sort((a, b) => a.name.localeCompare(b.name, 'de'));
   return [...out, ...rest];
@@ -50,7 +54,7 @@ export function statsCountries(g: Game): StatsCountry[] {
 /** Land einer Auswahl der Basis-Optionen (für Vorauswahl aus der Zentrale). */
 export function countryOfKey(g: Game, season: string, key: string): { cc: string; key: string } {
   const home = homeCountryOf(g);
-  if (key.startsWith('w:')) return { cc: COUNTRY_BY_KEY[key.slice(2)]?.cc ?? key.slice(2), key: 'w1' };
+  if (key.startsWith('w:')) return { cc: COUNTRY_BY_KEY[key.slice(2)]?.cc ?? key.slice(2), key: season === g.season ? 'r1' : 'w1' };
   const m = /^x-([a-z]+)-\d$/.exec(key);
   if (m) return { cc: m[1], key };
   const opt = competitionOptions(g, season).find((o) => o.key === key);
@@ -93,7 +97,7 @@ export function countrySeasons(g: Game, c: StatsCountry): CSeasonOption[] {
 /** Startsaison beim Wechsel ins Land: gewählte Saison, falls vorhanden – sonst laufend bzw. letzte abgeschlossene. */
 export function pickSeason(list: CSeasonOption[], want: string): string {
   const hit = list.find((s) => s.season === want);
-  if (hit && hit.source !== 'roster') return hit.season;
+  if (hit) return hit.season; // auch die laufende Saison der Auslandsligen hat eine echte Tabelle
   const done = [...list].reverse().find((s) => s.source !== 'roster');
   return done?.season ?? list[list.length - 1]?.season ?? want;
 }
@@ -127,7 +131,12 @@ export function countryOptions(g: Game, c: StatsCountry, season: string, source:
     ...(g.world?.countries[c.worldKey!]?.tiers[1]?.length ? [{ key: 'r2', label: l2, kind: 'league' as const, section: c.name }] : []),
     cup,
   ];
-  return [{ key: 'w1', label: l1, kind: 'league', section: c.name }, cup];
+  const rec = g.world?.history.find((r) => r.season === season);
+  return [
+    { key: 'w1', label: l1, kind: 'league', section: c.name },
+    ...(rec?.divs?.[c.worldKey!]?.[1] || archivedSeason(g, season)?.divisions.some((d) => d.id === `x-${c.cc}-2`) ? [{ key: 'w2', label: l2, kind: 'league' as const, section: c.name }] : []),
+    cup,
+  ];
 }
 
 // -----------------------------------------------------------------------------
@@ -166,6 +175,69 @@ function cupCounts(list: { winner: string | null }[]) {
   const m = new Map<string, number>();
   for (const w of list) if (w.winner) m.set(w.winner, (m.get(w.winner) ?? 0) + 1);
   return [...m.entries()].map(([clubId, value]) => ({ clubId, value })).sort((a, b) => b.value - a.value).slice(0, 10);
+}
+
+/** Stand aller Auslandsligen (1. Liga) für die Übersicht unter Statistiken › Ligensystem. */
+export function worldLeagueOverview(g: Game): { cc: string; key: string; name: string; md: number; total: number; leader?: string }[] {
+  const out: { cc: string; key: string; name: string; md: number; total: number; leader?: string }[] = [];
+  for (const c of statsCountries(g)) {
+    if (c.mode !== 'world' || !c.worldKey) continue;
+    const d = worldLiveDiv(g, c.worldKey, 0);
+    if (!d) continue;
+    out.push({ cc: c.cc, key: c.worldKey, name: c.name, md: d.md, total: d.n, leader: d.md ? leanTable(d, c.worldKey, g.season)[0]?.clubId : undefined });
+  }
+  return out;
+}
+
+/** Schlanke Auslandsliga zu Saison und Schlüssel: laufend (r1/r2) oder aus der Welt-Historie (w1/w2). */
+function leanDivFor(g: Game, wk: string, season: string, key: string): { div: LeanDiv; live: boolean; md: number; total: number } | null {
+  if (key === 'r1' || key === 'r2') {
+    if (season !== g.season) return null;
+    const d = worldLiveDiv(g, wk, key === 'r1' ? 0 : 1);
+    return d ? { div: d, live: true, md: d.md, total: d.n } : null;
+  }
+  if (key !== 'w1' && key !== 'w2') return null;
+  const d = g.world?.history.find((r) => r.season === season)?.divs?.[wk]?.[key === 'w1' ? 0 : 1];
+  if (!d) return null;
+  const total = leanMatchdays(d.ids.length);
+  return { div: d, live: false, md: total, total };
+}
+
+/** Tabellenzonen einer Auslandsliga: Meister, Europapokal-Plätze nach Rang des Landes, Auf-/Abstieg wie in engine/world.ts. */
+function leanZones(g: Game, wk: string, season: string, tier2: boolean, n: number): string[] {
+  const w = g.world, c = w?.countries[wk];
+  const zones = new Array<string>(n).fill('');
+  if (!w || !c) return zones;
+  const moves = !c.tiers[1]?.length ? 0 : c.tier1 >= 16 ? 3 : 2; // Auf-/Absteiger zwischen 1. und 2. Liga
+  if (tier2) {
+    for (let i = 0; i < moves && i < n; i++) zones[i] = 'zone-cl';
+    if (n >= 8) for (let i = n - 2; i < n; i++) zones[i] = 'zone-rel';
+    return zones;
+  }
+  const y = seasonStartYear(season) + 1; // Europapokal der Folgesaison
+  const rank = countryRanking(w, y).findIndex((x) => x.name === wk);
+  let euro = 0;
+  if (rank >= 0) {
+    const de = germanRank(w, y);
+    const a = accessSlots(y, rank + 1 >= de ? rank + 2 : rank + 1);
+    euro = a.ec + a.uefa - (y >= 1999 ? 1 : 0);
+  }
+  for (let i = 0; i < Math.min(euro, n); i++) zones[i] = i === 0 ? 'zone-cl' : 'zone-eu';
+  if (n) zones[0] = 'zone-cl';
+  for (let i = Math.max(1, n - moves); i < n; i++) zones[i] = 'zone-rel';
+  return zones;
+}
+
+/**
+ * Spieltage einer Auslandsliga für Tabelle (Stand nach Spieltag, Heim/Auswärts, Form) und die Box
+ * „Begegnungen“: alle Spiele mit Termin, gespielte mit Ergebnis. null = keine Einzelergebnisse.
+ */
+export function countryMatchdays(g: Game, c: StatsCountry, season: string, key: string): { games: LeanGame[]; res: ResTuple[]; ptsWin: number } | null {
+  if (c.mode !== 'world' || !c.worldKey) return null;
+  const lean = leanDivFor(g, c.worldKey, season, key);
+  if (!lean) return null;
+  const games = leanGames(lean.div, season, lean.md);
+  return { games, res: leanResTuples(games), ptsWin: leanWinPts(c.worldKey, season) };
 }
 
 export function countrySnapshot(g: Game, c: StatsCountry, season: string, source: CSource, key: string): CompSnapshot | null {
@@ -217,6 +289,32 @@ export function countrySnapshot(g: Game, c: StatsCountry, season: string, source
   }
 
   const wc = g.world?.countries[wk];
+  // Schlanke Spieltag-Simulation (game/worldLeagues.ts): laufende Saison und die letzten Saisons mit allen Ergebnissen.
+  const lean = leanDivFor(g, wk, season, key);
+  if (lean) {
+    let rows = leanTable(lean.div, wk, season);
+    if (!lean.md) rows = [...rows].sort((a, b) => compClubName(g, a.clubId, season).localeCompare(compClubName(g, b.clubId, season), 'de')).map((r, i) => ({ ...r, pos: i + 1 }));
+    const top = (f: (r: (typeof rows)[number]) => number, low = false) => [...rows].sort((a, b) => (low ? f(a) - f(b) : f(b) - f(a)) || a.pos - b.pos).slice(0, 10).map((r) => ({ clubId: r.clubId, value: f(r) }));
+    const tier2 = key === 'r2' || key === 'w2';
+    const prev = [...(g.world?.history ?? [])].reverse().find((r) => r.season < season && r.champions[wk]);
+    const rec = g.world?.history.find((r) => r.season === season);
+    const games = rows.reduce((a, r) => a + r.p, 0) / 2, goals = rows.reduce((a, r) => a + r.gf, 0);
+    return {
+      ...base, source: lean.live ? 'live' : 'archive', tier: tier2 ? 2 : 1,
+      table: rows.map((r) => ({ clubId: r.clubId, pos: r.pos, p: r.p, w: r.w, d: r.d, l: r.l, gf: r.gf, ga: r.ga, pts: r.pts, form: r.form })),
+      zones: lean.md ? leanZones(g, wk, season, tier2, rows.length) : [],
+      caption: !lean.live ? `Abschlusstabelle ${season}` : lean.md >= lean.total ? `${c.name} · Saison ${season} · alle ${lean.total} Spieltage gespielt` : lean.md ? `${c.name} · laufende Saison · Spieltag ${lean.md} von ${lean.total}` : `${c.name} · Saison ${season} · noch kein Spieltag gespielt`,
+      clubStats: lean.md ? { gf: top((r) => r.gf), ga: top((r) => r.ga, true), w: top((r) => r.w), cs: top((r) => r.cs), ti: titleList(g, wk) } : { ti: titleList(g, wk) },
+      facts: [
+        ...(lean.live ? [{ k: 'Spieltag', text: `${lean.md} von ${lean.total}` }] : []),
+        ...(lean.md && rows[0] ? [{ k: lean.live ? 'Tabellenführer' : tier2 ? 'Erster' : 'Meister', id: rows[0].clubId }] : []),
+        ...(!lean.live && !tier2 && rec?.cupWinners[wk] ? [{ k: 'Pokalsieger', id: rec.cupWinners[wk] }] : []),
+        ...(lean.live && prev && !tier2 ? [{ k: `Meister ${prev.season}`, id: prev.champions[wk] }] : []),
+        ...(games ? [{ k: 'Tore gesamt · Ø pro Spiel', text: `${goals} · ${(goals / games).toFixed(2).replace('.', ',')}` }] : []),
+      ],
+      note: `${c.name} wird Spieltag für Spieltag simuliert: Ergebnis aus Vereinsstärke und Heimvorteil, ohne Kader. Einzelstatistiken der Spieler gibt es für Auslandsligen nicht.`,
+    };
+  }
   if (key === 'r1' || key === 'r2') {
     const ids = [...(wc?.tiers[key === 'r1' ? 0 : 1] ?? [])].sort((a, b) => compClubName(g, a, season).localeCompare(compClubName(g, b, season), 'de'));
     const prev = [...(g.world?.history ?? [])].reverse().find((r) => r.champions[wk]);
@@ -239,6 +337,26 @@ export function countrySnapshot(g: Game, c: StatsCountry, season: string, source
   const isLast = idx === hist.length - 1;
   const ids = rec?.tables?.[wk] ?? (isLast ? wc?.lastTable ?? [] : []);
   const champ = rec?.champions[wk];
+  // Frühere „Spiel für Spiel“-Länder (game/fullCountries.ts): volle Abschlusstabelle aus dem Liga-Archiv.
+  const archId = `x-${c.cc}-${key === 'w2' ? 2 : 1}`;
+  if (archivedSeason(g, season)?.divisions.some((d) => d.id === archId)) {
+    const s = buildSnapshot(g, season, archId);
+    if (s?.table?.length) {
+      const games = s.table.reduce((a, r) => a + r.p, 0) / 2, goals = s.table.reduce((a, r) => a + r.gf, 0);
+      return {
+        ...s, key, label: opt.label, tier: key === 'w2' ? 2 : 1, caption: `Abschlusstabelle ${season}`,
+        clubStats: { ...s.clubStats, ti: titleList(g, wk) },
+        zones: leanZones(g, wk, season, key === 'w2', s.table.length),
+        facts: [
+          { k: key === 'w2' ? 'Erster' : 'Meister', id: s.table[0].clubId },
+          ...(key === 'w1' && rec?.cupWinners[wk] ? [{ k: 'Pokalsieger', id: rec.cupWinners[wk] }] : []),
+          ...(games ? [{ k: 'Tore gesamt · Ø pro Spiel', text: `${goals} · ${(goals / games).toFixed(2).replace('.', ',')}` }] : []),
+        ],
+        note: 'Aus dieser Saison ist die Abschlusstabelle gespeichert; Begegnungen und Spieltage gibt es für neuere Saisons.',
+      };
+    }
+  }
+  if (key === 'w2') return null;
   return {
     ...base, tier: 1, placingsOnly: true, table: placings(ids),
     caption: `Abschlusstabelle ${season} · Hintergrund-Simulation`,
@@ -248,11 +366,11 @@ export function countrySnapshot(g: Game, c: StatsCountry, season: string, source
       ...(champ ? [{ k: 'Meister', id: champ }] : []),
       ...(rec?.cupWinners[wk] ? [{ k: 'Pokalsieger', id: rec.cupWinners[wk] }] : []),
     ],
-    note: 'Europa im Hintergrund: von Auslandsligen ist nur die Abschluss-Reihenfolge bekannt (keine Punkte, Tore oder Einzelstatistiken).',
+    note: 'Aus dieser Saison ist nur die Abschluss-Reihenfolge gespeichert (älterer Spielstand). Neue Saisons haben volle Tabellen mit Punkten und Toren.',
   };
 }
 
 /** Saison-Suffix in der Auswahl. */
 export function seasonSuffix(s: CSeasonOption): string {
-  return s.source === 'live' ? '' : s.source === 'roster' ? ' (läuft)' : s.source === 'history' || s.source === 'data' ? ' (vor Spielbeginn)' : '';
+  return s.source === 'live' || s.source === 'roster' ? '' : s.source === 'history' || s.source === 'data' ? ' (vor Spielbeginn)' : '';
 }
