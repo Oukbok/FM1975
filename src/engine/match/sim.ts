@@ -160,7 +160,7 @@ export class MatchSim {
     const xiIds = new Set(lu.xi.map((x) => x.p.id));
     const pick = (id: string | null | undefined) => (id && xiIds.has(id) ? id : null);
     const team: TeamState = {
-      side, club, human, players: ps, formation: lu.formation,
+      side, club, human, own: savedLineup, players: ps, formation: lu.formation,
       refs: { attack: 1, control: 1, defense: 1 }, units: null as never, mods: null as never, plan: null as never, year: this.era.year,
       goals: 0, stats: emptyStats(), mentality: 0, subsUsed: 0,
       shout: null, shoutUntil: 0, shoutPower: 0, shoutReadyAt: 0, shoutHistory: [], talk: 1,
@@ -402,7 +402,7 @@ export class MatchSim {
       if (!m.onPitch) continue;
       const st = m.p.attributes.stamina ?? 60;
       const base = m.group === 'GK' ? 0.08 : 0.42 * (1.45 - st / 100);
-      m.energy = Math.max(15, m.energy - 5 * base * t.mods.drain * heat * et);
+      m.energy = Math.max(15, m.energy - 5 * base * t.mods.drain * (m.rd ?? 1) * heat * et);
     }
   }
 

@@ -289,6 +289,9 @@
 .tm-slider em:last-child { text-align: right; }
 .tm-slider input { accent-color: var(--accent); }
 .tm-slider .tm-chips { grid-column: 2 / -1; }
+.tm-chips.tm-steps { flex-wrap: nowrap; }
+.tm-chips.tm-steps .tm-chip { flex: 1 1 0; min-width: 0; padding: 8px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tm-chip:disabled { opacity: .4; cursor: not-allowed; }
 
 @media (prefers-reduced-motion: reduce) {
   .tm-cell, .tm-chev, .tm-tl-fill, .tm-tl-ball, .tm-clock-fg, .tm-ref-bar i { transition: none; }

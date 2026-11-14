@@ -1,5 +1,5 @@
 // Screenshots Positionsvertrautheit: Spielerprofil › Attribute (Feld mit allen Positionen,
-// Positionswahl, Vertrautheitsbalken, Positionstraining) und Spieltag › Taktik (Einsatz-Regler).
+// Positionswahl, Vertrautheitsbalken, Positionstraining) und Aufstellung › Taktik (Einsatz-Stufen).
 //   npm run build && node tests/positions-shots.mjs [ausgabeordner]
 import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';

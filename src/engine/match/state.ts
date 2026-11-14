@@ -9,11 +9,16 @@ import { tacticPlan, type TacticPlan } from './tacticPlan';
 import { refreshSkills } from './skills';
 import { computeUnits, referenceWeights, tacticMods, type TacticMods, type TeamRefs, type Units } from './team';
 import { honourFx, staffStrength } from '../honourEffects';
+import { effectiveTactics } from '../tacticEra';
+import { autoRole, roleFitFactor, roleFor, roleRef, roleWeights, NEUTRAL_RU } from '../tacticRoles';
+import { COHESION_NEUTRAL, cohesionErrors, cohesionFactor, cohesionOf, validCohesion } from '../cohesion';
 
 export interface TeamState {
   side: Side;
   club: Club;
   human: boolean;
+  /** Verein des Spielers (gespeicherte Aufstellung und Rollen); KI-Vereine wählen Rollen je Spiel selbst. */
+  own?: boolean;
   players: MPlayer[]; // alle (Startelf + Bank), Reihenfolge stabil
   formation: string;
   refs: TeamRefs;
@@ -71,10 +76,48 @@ export function initRefs(t: TeamState): void {
   t.refs = referenceWeights(onPitch(t));
 }
 
+/**
+ * Rollen der Spieler auf dem Platz (engine/tacticRoles.ts): eigener Verein nach `Tactics.roles` (je Slot),
+ * KI-Vereine die passendste Rolle. Neu gesetzt nur, wenn sich Position oder Vorgabe geändert hat.
+ */
+function assignRoles(t: TeamState, tac: Tactics | undefined): number {
+  const bySlot: Record<string, string> = {};
+  if (t.own && t.layout) for (const k in t.layout.map) bySlot[t.layout.map[k]] = k;
+  let changed = false, sweep = 0;
+  for (const m of onPitch(t)) {
+    const want = t.own ? tac?.roles?.[bySlot[m.id] ?? ''] ?? '' : '*';
+    const key = `${m.pos}|${want}`;
+    if (m.roleKey !== key) {
+      const ref = roleRef(m.p, m.base);
+      const role = t.own ? roleFor(want || undefined, m.pos, t.year) : autoRole(m.p, m.pos, t.year, ref);
+      m.roleKey = key;
+      m.role = role.id;
+      m.rf = roleWeights(role);
+      m.ru = role.ru ?? NEUTRAL_RU;
+      m.rd = role.rd ?? 1;
+      m.rfit = roleFitFactor(m.p, role, ref);
+      changed = true;
+    }
+    if (m.group === 'GK' && m.role === 'tw_mit') sweep = 0.12;
+  }
+  if (changed) refreshSkills();
+  return sweep;
+}
+
 /** Mannschaftsteile + Taktik neu berechnen. */
 export function refresh(t: TeamState, minute: number): void {
   const active = t.shout && minute < t.shoutUntil ? t.shout : null;
-  t.mods = tacticMods(tacticsOf(t), t.mentality, active, active ? t.shoutPower : 0, t.talk);
+  // Taktik mit den Grenzen der Epoche und der Formation (engine/tacticEra.ts)
+  const tac = effectiveTactics(tacticsOf(t), t.year);
+  const sweep = assignRoles(t, tac);
+  t.mods = tacticMods(tac, t.mentality, active, active ? t.shoutPower : 0, t.talk);
+  // Eingespieltheit (engine/cohesion.ts): 80 = neutral; wenig eingespielt = schwächer und fehleranfälliger.
+  const co = t.club?.cohesion;
+  const coh = tac && validCohesion(co) ? cohesionOf(co, tac, t.year, t.formation).total : COHESION_NEUTRAL;
+  if (coh !== COHESION_NEUTRAL) {
+    const cf = cohesionFactor(coh);
+    t.mods = { ...t.mods, att: t.mods.att * cf, ctrl: t.mods.ctrl * cf, def: t.mods.def * cf, errors: t.mods.errors * cohesionErrors(coh) };
+  }
   const sf = staffStrength(t.club?.id); // Stab (game/staffGame.ts bindStaffFactor)
   if (sf !== 1) t.mods = { ...t.mods, att: t.mods.att * sf, ctrl: t.mods.ctrl * sf, def: t.mods.def * sf };
   if (t.side === 'home') { // Festung (game/clubHonours.ts): etwas mehr Heimstärke
@@ -84,7 +127,7 @@ export function refresh(t: TeamState, minute: number): void {
   // Teambonus der Führungsspieler auf dem Platz (engine/teamBoost.ts, höchstens +3 %).
   const tb = teamBoostOf(onPitch(t).map((m) => m.p));
   if (tb) t.mods = { ...t.mods, att: t.mods.att * (1 + tb), ctrl: t.mods.ctrl * (1 + tb), def: t.mods.def * (1 + tb) };
-  t.plan = tacticPlan(tacticsOf(t), t.year, t.mods);
+  t.plan = tacticPlan(tac, t.year, t.mods, coh, sweep);
   t.units = computeUnits(onPitch(t), t.refs);
   t.dirty = false;
 }

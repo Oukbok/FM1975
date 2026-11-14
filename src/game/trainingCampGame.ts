@@ -27,6 +27,7 @@ import { CAMP_DRILLS, CampProgram, applyCampDrills, programError, programLabel }
 import { buildCampResult, campGroup, playerDelta, snap, spiritOf } from './campResult';
 import { setOwnIndoorDecision } from './indoorGame';
 import { leagueClubs } from './season';
+import { campCohesion } from './cohesionGame';
 import { Game, bumpMorale } from './state';
 import {
   CampBooking, CampSeason, campState, competitiveDays, daysBetween, ownIndoorDays, summerWindow, winterWindow,
@@ -284,6 +285,7 @@ function finishCamp(g: Game, b: CampBooking, today: string): void {
   const days = daysBetween(b.start, b.end).length;
   const o = campOutlook({ d, l, focus, season: b.season, days, tests: b.tests, year, rep: club.reputation, start: b.start, program: b.program });
   const youthFocus = b.program ? b.program.pts.jugend >= 6 : focus === 'jugend';
+  campCohesion(g, club, b.program?.pts.taktik ?? 0, today); // Taktik-Punkte üben die Mannschaft ein (game/cohesionGame.ts)
   const drillUps = new Map<string, number>();
   const rng = mulberry32(hashStr(`camp|${b.id}|${today}`));
   // Wetter dieses Mal: Glück oder Pech gegenüber dem Mittel (Spanne wie in der Vorschau).

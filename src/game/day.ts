@@ -54,6 +54,7 @@ import { transferTalkDaily } from './transferTalks';
 import { scoutingDaily } from './scoutingGame';
 import { ensureWorldPool } from './worldPool';
 import { worldLiveDaily } from './worldLeagues';
+import { cohesionDaily } from './cohesionGame';
 import { buyBackDaily, contractClausesDaily } from './playerWishesGame';
 import { contractBonusesDaily, contractSeasonEndDaily } from './contractClausesGame';
 import { assignShirtNumbers, repairSquadLists } from './squads';
@@ -622,6 +623,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   nationalDaily(g, today); // Nationalmannschaften, Länderspiele, WM/EM (game/national/nationalGame.ts)
   privateDaily(g, today); // Privatleben: Wochenplan, Monatsabschluss, Familie, Generationen (game/private/privateGame.ts)
   worldLiveDaily(g, today); // Auslandsligen: fällige Spieltage spielen (game/worldLeagues.ts)
+  cohesionDaily(g, today);  // Eingespieltheit: taktisches Training des eigenen Vereins, KI montags (game/cohesionGame.ts)
   if (g.worldPool && new Date(`${today}T00:00:00Z`).getUTCDay() === 1) ensureWorldPool(g); // montags: Weltspieler mit den Vereinen abgleichen (neue/aufgestiegene Vereine)
   // Winter-Systeme: Hallenturniere/Masters (game/indoorGame.ts) und Trainingslager (game/trainingCampGame.ts).
   const indoorShow = germanHome ? indoorDaily(g, today, ui.onIndoorShow ? (t) => ui.onIndoorShow!(t.id) : undefined) : null;

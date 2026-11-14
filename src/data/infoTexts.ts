@@ -208,6 +208,26 @@ export const INFO_TEXTS = {
   },
 
   // ---------------------------------------------------------------- Taktik
+  taktiktafel: {
+    title: 'Taktiktafel',
+    text: 'Das Feld zeigt, was deine Anweisungen bedeuten: „Gegen den Ball“ mit Abwehrlinie, Pressingzone, Abseitsfalle und Deckung, „Mit Ball“ mit Breite, Aufbau, Flanken und Tempo. Klick auf einen Spieler, um seine Rolle zu wählen.',
+    wiki: 'tactic-options',
+  },
+  anweisungen: {
+    title: 'Anweisungen',
+    text: 'Jede Anweisung hat feste Stufen. Fahr mit der Maus über eine Stufe: unten steht, was sie bringt und kostet. Ein Schloss heißt: Die Zeit oder deine Formation lässt das noch nicht zu. Der kleine Strich zeigt, was die Mannschaft eingeübt hat.',
+    wiki: 'tactic-options',
+  },
+  eingespieltheit: {
+    title: 'Eingespieltheit',
+    text: 'Wie gut die Mannschaft beherrscht, was du verlangst: Formation, Anweisungen und Stammelf. Jede Umstellung kostet zunächst – Spiele und Taktik-Einheiten im Training üben sie ein. Ab 80 hilft sie, darunter spielt die Elf schwächer und macht mehr Fehler.',
+    wiki: 'tactic-cohesion',
+  },
+  spielerrollen: {
+    title: 'Rollen',
+    text: 'Eine Rolle legt fest, wie ein Spieler seine Position spielt: wer die Pässe schlägt, wer mit nach vorn geht, wer absichert. Die Kästchen zeigen, wie gut die Rolle zu seinen Stärken passt.',
+    wiki: 'tactic-roles',
+  },
   mentalitaet: {
     title: 'Mentalität',
     text: 'Grundhaltung deiner Elf. Offensiv bringt mehr Angriffe, öffnet aber Räume; defensiv steht sicherer, schafft weniger Chancen; Konter lauert auf Ballgewinne und schnelle Wege nach vorn.',
@@ -235,7 +255,7 @@ export const INFO_TEXTS = {
   },
   wirkung: {
     title: 'Wirkung im Spiel',
-    text: 'Gemessen, nicht geschätzt: Die Match-Engine spielt deine Elf mit deiner und mit neutraler Taktik je 40-mal daheim und auswärts. Links neutral, rechts deine Einstellung; orange = Nachteil. Kein Wert ist „gratis“.',
+    text: 'Gemessen, nicht geschätzt: Die Match-Engine spielt deine Elf mit deiner und mit neutraler Taktik je 40-mal daheim und auswärts. Oben Punkte, Tore und Gegentore mit dem Unterschied zur neutralen Taktik, darunter die Ursachen; orange = Nachteil. Die Eingespieltheit ist hier nicht eingerechnet.',
     wiki: 'tactic-options',
   },
   formation: {

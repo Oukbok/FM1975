@@ -59,32 +59,37 @@ export const advantage = (sim: MatchSim, T: TeamState, O: TeamState) =>
 // Rollen: wer ist an welcher Aktion beteiligt?
 // -----------------------------------------------------------------------------
 
-export function attRole(m: MPlayer): number {
+export function attRole(m: MPlayer): number { return attRole0(m) * (m.rf ? m.rf[0] : 1); }
+function attRole0(m: MPlayer): number {
   if (m.group === 'ATT') return isCentreForward(m.pos) ? 3.2 : isWidePosition(m.pos) ? 2.1 : 2.6;
   if (m.group === 'MID') return m.pos === 'OM' ? 1.8 : isWidePosition(m.pos) ? 1.2 : m.pos === 'DM' ? 0.45 : 0.8;
   if (m.group === 'DEF') return isWidePosition(m.pos) ? 0.3 : 0.18;
   return 0;
 }
-export function defRole(m: MPlayer): number {
+export function defRole(m: MPlayer): number { return defRole0(m) * (m.rf ? m.rf[1] : 1); }
+function defRole0(m: MPlayer): number {
   if (m.group === 'DEF') return isWidePosition(m.pos) ? 2.0 : 2.6;
   if (m.group === 'MID') return m.pos === 'DM' ? 1.8 : m.pos === 'OM' ? 0.5 : 1.0;
   if (m.group === 'ATT') return 0.2;
   return 0;
 }
-function passRole(m: MPlayer): number {
+function passRole(m: MPlayer): number { return passRole0(m) * (m.rf ? m.rf[2] : 1); }
+function passRole0(m: MPlayer): number {
   if (m.group === 'MID') return m.pos === 'OM' ? 2.2 : m.pos === 'DM' ? 1.6 : 2;
   if (m.group === 'DEF') return m.pos === 'LIB' ? 1.4 : 0.9;
   if (m.group === 'ATT') return 0.8;
   return 0.1;
 }
-function wideRole(m: MPlayer): number {
+function wideRole(m: MPlayer): number { return wideRole0(m) * (m.rf ? m.rf[3] : 1); }
+function wideRole0(m: MPlayer): number {
   const w = isWidePosition(m.pos);
   if (m.group === 'ATT') return w ? 3 : 0.4;
   if (m.group === 'MID') return w ? 2.5 : m.pos === 'OM' ? 1 : 0.5;
   if (m.group === 'DEF') return w ? 1.8 : 0.05;
   return 0;
 }
-function wideDefRole(m: MPlayer): number {
+function wideDefRole(m: MPlayer): number { return wideDefRole0(m) * (m.rf ? m.rf[4] : 1); }
+function wideDefRole0(m: MPlayer): number {
   const w = isWidePosition(m.pos);
   if (m.group === 'DEF') return w ? 3 : 1;
   if (m.group === 'MID') return w ? 1.6 : m.pos === 'DM' ? 0.8 : 0.3;
@@ -92,13 +97,15 @@ function wideDefRole(m: MPlayer): number {
   return 0;
 }
 /** Zielspieler in der Luft (bei Standards rücken die Innenverteidiger mit auf). */
-export function airRole(m: MPlayer, setPiece: boolean): number {
+export function airRole(m: MPlayer, setPiece: boolean): number { return airRole0(m, setPiece) * (m.rf ? m.rf[5] : 1); }
+function airRole0(m: MPlayer, setPiece: boolean): number {
   if (m.group === 'ATT') return isCentreForward(m.pos) ? 4 : 1.6;
   if (m.group === 'MID') return m.pos === 'OM' ? 1 : 0.6;
   if (m.group === 'DEF') return setPiece ? (isWidePosition(m.pos) ? 0.5 : 2.2) : 0.25;
   return 0;
 }
-export function airDefRole(m: MPlayer): number {
+export function airDefRole(m: MPlayer): number { return airDefRole0(m) * (m.rf ? m.rf[6] : 1); }
+function airDefRole0(m: MPlayer): number {
   if (m.group === 'DEF') return isWidePosition(m.pos) ? 1.2 : 3;
   if (m.group === 'MID') return m.pos === 'DM' ? 1.4 : 0.5;
   if (m.group === 'ATT') return isCentreForward(m.pos) ? 0.6 : 0.2;
@@ -248,7 +255,7 @@ function flanke(sim: MatchSim, T: TeamState, O: TeamState, fT: MPlayer[], fO: MP
     }
     const tgt = pickC(sim, T, 8, (m) => airRole(m, false) * sq(aerialSkill(m)), crosser) ?? crosser;
     const dd = pickC(sim, O, 9, (m) => airDefRole(m) * sq(aerialSkill(m)))!;
-    const p = duelP(aerialSkill(tgt) + (cq - 60) * 0.6, aerialSkill(dd), B.air + adv * 0.5 - 0.15 * O.plan.lineHigh);
+    const p = duelP(aerialSkill(tgt) + (cq - 60) * 0.6, aerialSkill(dd), B.air + adv * 0.5 - 0.15 * O.plan.lineHigh + (O.plan.zone > 0 ? 0.07 : 0));
     const won = rng() < p;
     aerial(T, O, won ? tgt : dd, won ? dd : tgt, won);
     if (won) {
@@ -302,7 +309,7 @@ function steil(sim: MatchSim, T: TeamState, O: TeamState, fT: MPlayer[], fO: MPl
     return;
   }
   const chaser = pickC(sim, O, 15, (m) => (m.group === 'DEF' ? 3 : m.pos === 'DM' ? 1 : 0.2) * sq(recoverSkill(m)))!;
-  const p = duelP(paceSkill(runner), recoverSkill(chaser), B.race + adv * 0.5 + T.plan.workBias + 0.7 * O.plan.lineHigh + 0.3 * O.plan.trap);
+  const p = duelP(paceSkill(runner), recoverSkill(chaser), B.race + adv * 0.5 + T.plan.workBias + 0.7 * O.plan.lineHigh + 0.3 * O.plan.trap - 0.14 * O.plan.zone - O.plan.sweep);
   const won = rng() < p;
   countDuel(won ? runner : chaser, won ? chaser : runner, won ? T.stats : O.stats, won ? O.stats : T.stats);
   if (won) {
@@ -391,7 +398,7 @@ export function counter(sim: MatchSim, A: TeamState, D: TeamState, winner?: MPla
     return;
   }
   const chaser = pickC(sim, D, 27, (m) => (m.group === 'DEF' ? 3 : m.pos === 'DM' ? 1.2 : 0.2) * sq(recoverSkill(m)))!;
-  const p = duelP(paceSkill(runner), recoverSkill(chaser), B.counterRace + adv * 0.5 + A.plan.workBias + 0.7 * D.plan.lineHigh);
+  const p = duelP(paceSkill(runner), recoverSkill(chaser), B.counterRace + adv * 0.5 + A.plan.workBias + 0.7 * D.plan.lineHigh - 0.1 * D.plan.zone - D.plan.sweep);
   const won = rng() < p;
   countDuel(won ? runner : chaser, won ? chaser : runner, won ? A.stats : D.stats, won ? D.stats : A.stats);
   pulse(sim, A.side, 0.4);

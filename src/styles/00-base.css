@@ -68,6 +68,8 @@
   --green: #5bbf8b;
   --yellow: #d7b45e;
   --orange: #d98a5b;
+  /* Taktiktafel (28-tactics.css): Tafelgrün, Kreide, Schatten */
+  --board-a: #1d3a2d; --board-b: #1a3529; --chalk-rgb: 235, 242, 238; --board-shade-rgb: 6, 16, 11;
   --red: #e0646f;
   --gold: #d9b26a;
   /* Trophäen (views/verein/trophies/): Silber kühl, Vergoldung gedämpft, Sockel Schiefer */

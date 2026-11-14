@@ -25,6 +25,8 @@ import {
   assignToBench, assignToSlot, effectiveFormation, familiarityOf, lineupHints, moveSlot, placementFor, slotOf, syncLineup, toReserve,
 } from './lineup/lineupOps';
 import { InfoTip } from '../ui/InfoTip';
+import { cohesionOf, validCohesion } from '../engine/cohesion';
+import { seasonYearOf } from '../engine/match/era';
 import { posGroupClass } from '../ui/positionBadges';
 import Select from '../ui/Select';
 import SavedLineupsModal from './lineup/SavedLineups';
@@ -325,7 +327,8 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
         </DashBox>
 
         <DashBox title="Taktik" icon="tactics" right={getFormation(t.formation).label}>
-          <TacticHead t={t} formation={formation} set={set} xiAvg={xiAvg} suitAvg={suitAvg} familiar={familiar} xiCount={xiRows.length} />
+          <TacticHead t={t} formation={formation} set={set} xiAvg={xiAvg} suitAvg={suitAvg} familiar={familiar} xiCount={xiRows.length}
+            year={seasonYearOf(g.calendar.currentDate)} cohesion={validCohesion(club.cohesion) ? cohesionOf(club.cohesion, t, seasonYearOf(g.calendar.currentDate)).total : undefined} />
         </DashBox>
 
         <DashBox title="Kapitän & Standards" info="standards" icon="matchball" right={hints.some((h) => h.level === 'warn') ? <span className="lu-warn-n">{hints.filter((h) => h.level === 'warn').length} Hinweise</span> : undefined}>

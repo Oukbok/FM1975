@@ -58,6 +58,7 @@ import { initLegends } from './legendsGame';
 import { migrateContracts2 } from './contractClausesGame';
 import { bindHonours } from './clubHonours';
 import { ensureWorldPool } from './worldPool';
+import { migrateCohesion } from './cohesionGame';
 import { ensureCountryPools } from '../engine/world';
 
 export function createNewGame(opts: NewGameOptions): Game {
@@ -274,6 +275,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   harmonizeSeason(g0); // Rahmenterminkalender: Wochenendspiele an Pokal-/Europapokalwochen (game/fixtureWatch.ts)
   ensureCountryPools(g0.world, g0.euroClubs, Number(g0.season.slice(0, 4))); // Unterbau der Auslandsligen (engine/world.ts)
   ensureWorldPool(g0); // Weltspieler aller Vereine ohne vollen Kader (Spielerpool)
+  migrateCohesion(g0); // Eingespieltheit: jeder Verein startet eingespielt auf seine Taktik (game/cohesionGame.ts)
   bindHonours(g0, true); // Vereinsauszeichnungen: leere Wirkungstabelle für das neue Spiel
   // Privatleben: Familie, Freizeit, Vermögen; Junger Manager mit Hintergrundgeschichte (game/private/).
   if (opts.privateLife === false) g0.privateOff = true;

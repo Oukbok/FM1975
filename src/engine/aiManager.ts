@@ -13,6 +13,7 @@ import { makeName, ORIGINS, pickOrigin } from '../data/origins';
 import { assignToFormation, buildAutoTactics } from './lineupAI';
 import { positionSuitability } from './positions';
 import { hash01 } from './transferMarket';
+import { COUNTERPRESS_FROM, ZONE_DEFAULT_FROM, ZONE_FROM } from './tacticEra';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -149,7 +150,15 @@ export function coachTactics(club: Club, players: Record<string, Player>, coach:
   base.crossStyle = fit.aerial > 66 ? 'high' : fit.aerial < 56 ? 'low' : 'mixed';
   base.widthFocus = t((base.widthFocus ?? 50) + (fit.crossing - 60) * 0.8 + (fit.aerial - 60) * 0.4);
   if (fit.aerial > 68 && coach.style !== 'offensiv') base.buildup = hash01(coach.id + 'b2') < 0.6 ? 'long' : base.buildup;
-  return buildAutoTactics(club, players, base, chooseFormation(pool, coach, year));
+  const formation = chooseFormation(pool, coach, year);
+  // Taktik im Wandel (engine/tacticEra.ts): Raumdeckung setzt sich von den Vorreitern der 80er bis Mitte der 90er durch
+  // (nie mit Libero), Gegenpressing ab 2008 vor allem bei offensiven Trainern. Rollen wählt die KI je Spiel (tacticRoles.ts).
+  const libero = !!getFormation(formation).libero;
+  const zoneP = year < ZONE_FROM ? 0 : year >= ZONE_DEFAULT_FROM ? 1 : (year - ZONE_FROM) / (ZONE_DEFAULT_FROM - ZONE_FROM) * 0.6 + (coach.style === 'offensiv' ? 0.2 : 0);
+  base.marking = !libero && hash01(coach.id + 'z') < zoneP ? 'zone' : 'man';
+  base.counterPress = year >= COUNTERPRESS_FROM && hash01(coach.id + 'g') < (coach.style === 'offensiv' ? 0.6 : coach.style === 'ausgewogen' ? 0.25 : 0.05);
+  base.roles = undefined;
+  return buildAutoTactics(club, players, base, formation);
 }
 
 /** Stärken des Kaders für die Spielweise: Luft (beste zwei Stürmer), Flanken (beste zwei Außen). */

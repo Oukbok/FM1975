@@ -8,6 +8,7 @@ import { suitabilityColor } from '../../engine/positions';
 import { KV, Meter } from '../../ui/DashPage';
 import type { Hint } from './lineupOps';
 import Select from '../../ui/Select';
+import { instrLabel, type InstrKey } from '../tactics/instructions';
 
 export const STYLE_DE: Record<string, string> = { defensive: 'Defensiv', balanced: 'Ausgewogen', attacking: 'Offensiv', counter: 'Konter' };
 export const STYLE_DESC: Record<string, string> = {
@@ -17,12 +18,14 @@ export const STYLE_DESC: Record<string, string> = {
   counter: 'Ball erobern und schnell über wenige Stationen umschalten.',
 };
 export const STYLES = ['defensive', 'balanced', 'attacking', 'counter'] as const;
-export const level = (v: number | undefined, lo: string, mid: string, hi: string) => ((v ?? 50) < 35 ? lo : (v ?? 50) > 65 ? hi : mid);
 
-export function TacticHead({ t, formation, set, xiAvg, suitAvg, familiar, xiCount }: {
+export function TacticHead({ t, set, xiAvg, suitAvg, familiar, xiCount, year, cohesion }: {
   t: Tactics; formation: Formation; set: (p: Partial<Tactics>) => void;
   xiAvg: number; suitAvg: number; familiar: number; xiCount: number;
+  /** Saison-Startjahr (Stufen/Grenzen der Anweisungen) und Eingespieltheit 0–100 (engine/cohesion.ts). */
+  year: number; cohesion?: number;
 }) {
+  const L = (k: InstrKey) => instrLabel(k, t, year);
   return (
     <>
       <div className="lu-mlabel">Mentalität</div>
@@ -33,21 +36,22 @@ export function TacticHead({ t, formation, set, xiAvg, suitAvg, familiar, xiCoun
       </div>
       <div className="dnote lu-desc">{STYLE_DESC[t.style]}</div>
       <div className="lu-instr">
-        <KV k="Tempo" v={level(t.tempo, 'bedächtig', 'normal', 'hoch')} />
-        <KV k="Pressing" v={level(t.pressing, 'abwartend', 'normal', 'hoch')} />
-        <KV k="Abwehrlinie" v={level(t.defensiveLine, 'tief', 'normal', 'hoch')} />
-        <KV k="Breite" v={level(t.widthFocus, 'Mitte', 'normal', 'Flügel')} />
-        <KV k="Aufbau" v={t.buildup === 'long' ? 'lang' : 'kurz'} />
-        <KV k="Zweikampf" v={level(t.tackleHardness, 'fair', 'normal', 'hart')} />
-        <KV k="Abseitsfalle" v={t.offsideTrap ? 'an' : 'aus'} />
-        <KV k="Libero" v={formation.slots.some((s) => s.position === 'LIB') ? 'ja' : 'nein'} />
+        <KV k="Aufbau" v={L('buildup')} />
+        <KV k="Tempo" v={L('tempo')} />
+        <KV k="Breite" v={L('width')} />
+        <KV k="Deckung" v={L('marking')} />
+        <KV k="Pressing" v={L('pressing')} />
+        <KV k="Abwehrlinie" v={L('line')} />
+        <KV k="Zweikampf" v={L('hard')} />
+        <KV k="Abseitsfalle" v={L('trap')} />
       </div>
       <div className="lu-meters">
         <Meter label="Ø Stärke" value={xiAvg} max={99} color="var(--text-2)" />
         <Meter label="Ø Eignung" info="eignung" value={suitAvg} max={99} color={suitabilityColor(suitAvg)} />
         <Meter label="Vertraute Positionen" info="vertrautheit" value={familiar} max={Math.max(1, xiCount)} color="var(--text-2)" text={`${familiar}/${xiCount}`} />
+        {cohesion != null && <Meter label="Eingespielt" info="eingespieltheit" value={cohesion} max={100} color={cohesion >= 80 ? 'var(--pos)' : cohesion >= 60 ? 'var(--yellow)' : 'var(--neg)'} />}
       </div>
-      <div className="dnote">Anweisungen: Aufstellung › Taktik. Vertraut = Stamm- oder Nebenposition.</div>
+      <div className="dnote">Anweisungen und Rollen: Aufstellung › Taktik.</div>
     </>
   );
 }

@@ -57,6 +57,7 @@ import { migrateContracts2 } from './contractClausesGame';
 import { migratePositionSkills } from './positionsGame';
 import { migratePositions2 } from './positions2Migration';
 import { migrateDressingRoom } from './dressingRoomGame';
+import { migrateCohesion } from './cohesionGame';
 import { migrateTrainingPlan } from './trainingWeek';
 import { migrateStaffPeople } from './staffWorld';
 import { migrateYouthComps } from './youthComps/daily';
@@ -355,6 +356,7 @@ export function prepareLoadedGame(g: Game): void {
   try { migratePositionSkills(g); } catch (err) { console.error('Positions-Nachrüstung fehlgeschlagen:', err); }
   // Kabine: Moral 0–100 und Kabinenzustand des eigenen Vereins nachrüsten.
   try { migrateDressingRoom(g); } catch (err) { console.error('Kabinen-Nachrüstung fehlgeschlagen:', err); }
+  try { migrateCohesion(g); } catch (err) { console.error('Eingespieltheit-Nachrüstung fehlgeschlagen:', err); }
   try { migrateTrainingPlan(g); migrateStaffPeople(g); } catch (err) { console.error('Trainerteam-Nachrüstung fehlgeschlagen:', err); }
   // Jugendwettbewerbe: laufende Saison sofort, vergangene Spieltage werden nachsimuliert.
   try { for (const c of Object.values(g.clubs)) assignShirtNumbers(c, g.players); } catch (err) { console.error('Rückennummern-Nachrüstung fehlgeschlagen:', err); }

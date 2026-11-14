@@ -1247,34 +1247,127 @@ Beim Laden werden die früheren Kürzel umgerechnet: VS → IV, AV → RV/LV, FL
     id: 'tactic-options',
     category: 'tactics',
     title: 'Taktik-Anweisungen & ihre Wirkung',
-    keywords: ['taktik', 'tempo', 'pressing', 'abseitsfalle', 'aufbau', 'anweisung'],
-    body: `## Taktik-Anweisungen
-Unter **Aufstellung › Taktik** stellst du Mentalität und Teamanweisungen ein – gegliedert in *Mit Ball* und *Gegen den Ball*. Die Taktik entscheidet, **auf welchem Weg** deine Elf angreift (Kombination durch die Mitte, Flanke, Steilpass, Dribbling, langer Ball, Konter) und verschiebt die **Einzelduelle** (siehe *So rechnet die Match-Engine*).
+    keywords: ['taktik', 'tempo', 'pressing', 'abseitsfalle', 'aufbau', 'anweisung', 'taktiktafel', 'deckung', 'manndeckung', 'raumdeckung', 'gegenpressing', 'vorlage', 'stufen'],
+    body: `## Die Taktik-Seite
+Unter **Aufstellung › Taktik** steht alles auf einen Blick:
+- **Links die Taktiktafel.** Das Feld zeigt, was deine Anweisungen bedeuten. Ansicht *Gegen den Ball*: Abwehrlinie, Pressingzone, Abseitsfalle und die Deckung (Gegenspieler-Kreise bei Manndeckung, Bänder bei Raumdeckung). Ansicht *Mit Ball*: Breite, Aufbau (kurze Pässe oder langer Ball), Flanken (Bogen = hoch, Strich = flach) und Tempo. Änderst du eine Anweisung, springt die Tafel in die passende Ansicht und die Spieler rücken an ihren neuen Platz. Ein Klick auf einen Spieler wählt seine **Rolle** (siehe *Rollen der Spieler*).
+- **In der Mitte die Anweisungen** in drei Abschnitten: Grundausrichtung, mit Ball, gegen den Ball. Jede Anweisung ist eine Zeile mit festen **Stufen** – keine Regler mehr. Fährst du mit der Maus über eine Stufe, steht unten, was sie bringt und kostet. Der kleine Strich unter einer Stufe zeigt, was die Mannschaft **eingeübt** hat.
+- **Rechts** die *Eingespieltheit* (siehe eigener Artikel), die gemessene *Wirkung im Spiel* und der *nächste Gegner* im direkten Vergleich mit deinen Einstellungen.
+
+Die Taktik entscheidet, **auf welchem Weg** deine Elf angreift (Kombination durch die Mitte, Flanke, Steilpass, Dribbling, langer Ball, Konter) und verschiebt die **Einzelduelle** (siehe *So rechnet die Match-Engine*).
+
+### Vorlagen und eigene Taktiken
+Oben in der Box *Anweisungen* lädst du eine **Vorlage** (Abwehrriegel, Konterfußball, Flügelspiel, Lang und hoch, Kontrollierte Offensive – später Raum und Falle, Pressingmaschine, Ballbesitz, Gegenpressing) oder eine eigene Taktik. **Speichern** legt die aktuellen Anweisungen und Rollen unter einem Namen ab (höchstens 12, gleicher Name überschreibt). Die Aufstellung gehört nicht dazu – sie hat ihr eigenes Speichern auf der Aufstellungsseite.
 
 ### Wirkung im Spiel – gemessen
-Der Kasten **Wirkung im Spiel** rechnet nicht mit Schätzwerten: Die Match-Engine spielt deine Mannschaft mit deiner Taktik und mit einer neutralen Taktik je 40-mal daheim und auswärts gegen den nächsten Gegner (ohne Gegner gegen dein eigenes Spiegelbild). Links steht der neutrale Wert, rechts deiner, der Balken zeigt den Unterschied je Spiel (orange = Nachteil). Weil echte Spiele simuliert werden, schwanken kleine Unterschiede etwas.
-
-### Mit Ball
-- **Breite (0–100):** Flügel = deutlich mehr Flanken und Kopfballchancen (gemessen: aus etwa 14 Flanken werden 25 je Spiel), Mitte = Kombinationen, Steilpässe und mehr Distanzschüsse.
-- **Flanken hoch / gemischt / flach:** Hoch führt zu Kopfballduellen (lohnt mit großen, kopfballstarken Stürmern), flach zu Abschlüssen aus dem Rückraum (für schnelle, abschlussstarke Angreifer). Die Flankenqualität des Flankengebers entscheidet mit, ob der Ball ankommt.
-- **Tempo (0–100):** mehr Steilpässe, Dribblings und Konter, weniger Geduld und Distanzschüsse; schlechtere Passquote und mehr Kraftverbrauch.
-- **Aufbauspiel kurz/lang:** Kurz = höhere Passquote; lang = viele lange Bälle auf den Zielspieler (Kopfballduell), dazu Steilpässe – lohnt mit einem starken Mittelstürmer und gegen hohe Abwehrlinien.
-
-### Gegen den Ball
-- **Pressinghöhe:** Gegnerische Pässe werden öfter abgefangen, du kommst häufiger zum Konter – kostet aber viel Kraft und bringt Fouls und Karten.
-- **Abwehrlinie:** Hoch = Raum hinter deiner Abwehr (gegnerische Steilpässe und Konter gewinnen leichter das Laufduell), aber mehr Abseits des Gegners; tief = sicher gegen Tempo, dafür mehr Distanzschüsse des Gegners.
-- **Abseitsfalle:** deutlich mehr gegnerische Abseitsstellungen; wird sie überlaufen, ist der Stürmer meist frei durch.
-- **Zweikampfhärte:** gewinnt mehr Zweikämpfe in der Abwehr, kostet aber Fouls, Freistöße, Elfmeter und Karten.
-- **Einsatz:** mehr gewonnene Zweikämpfe und Laufduelle in beide Richtungen, aber mehr Kraftverbrauch, Frischeverlust und Verletzungen.
+Der Kasten **Wirkung im Spiel** rechnet nicht mit Schätzwerten: Die Match-Engine spielt deine Mannschaft mit deiner Taktik und mit einer neutralen Taktik je 40-mal daheim und auswärts gegen den nächsten Gegner (ohne Gegner gegen dein eigenes Spiegelbild). Oben stehen Punkte, Tore und Gegentore je Spiel mit dem Unterschied zur neutralen Taktik, darunter die Ursachen in drei Gruppen (Angriff, Kontrolle, Preis); der Balken zeigt den Unterschied, orange = Nachteil. Weil echte Spiele simuliert werden, schwanken kleine Unterschiede. Die Eingespieltheit ist hier bewusst **nicht** eingerechnet – gemessen wird die Taktik selbst.
 
 ### Grundausrichtung
-Offensiv: mehr Dribblings und Steilpässe, mehr Schüsse, anfälliger für Konter. Defensiv: weniger Risiko, mehr lange Bälle. Konter: weniger Ballbesitz, aber viel mehr Gegenstöße nach Ballgewinn.
+- **Mentalität:** Offensiv = mehr Dribblings und Steilpässe, mehr Schüsse, anfälliger für Konter. Defensiv = weniger Risiko, mehr lange Bälle. Konter = weniger Ballbesitz, aber viel mehr Gegenstöße nach Ballgewinn.
+- **Einsatz (5 Stufen):** mehr gewonnene Zweikämpfe und Laufduelle in beide Richtungen, aber mehr Kraftverbrauch, Frischeverlust, Karten und Verletzungen.
 
-Die **KI-Trainer** spielen nach ihrem Stil und ihrem Kader: kopfballstarke Stürmer → hohe Flanken und mehr Breite (manchmal langer Aufbau), kleine wendige Stürmer → flache Hereingaben, gute Flankengeber → mehr über die Flügel.
+### Mit Ball
+- **Aufbau kurz/lang:** Kurz = höhere Passquote; lang = viele lange Bälle auf den Zielspieler (Kopfballduell), dazu Steilpässe – lohnt mit einem starken Mittelstürmer und gegen hohe Abwehrlinien.
+- **Tempo (5 Stufen):** mehr Steilpässe, Dribblings und Konter, weniger Geduld und Distanzschüsse; schlechtere Passquote und mehr Kraftverbrauch.
+- **Breite (5 Stufen):** Flügel = deutlich mehr Flanken und Kopfballchancen, Mitte = Kombinationen, Steilpässe und mehr Distanzschüsse.
+- **Flanken flach / gemischt / hoch:** Hoch führt zu Kopfballduellen (lohnt mit großen, kopfballstarken Stürmern), flach zu Abschlüssen aus dem Rückraum (für schnelle, abschlussstarke Angreifer). Die Flankenqualität des Flankengebers entscheidet mit, ob der Ball ankommt.
 
-Im Textmodus kannst du zusätzlich während des Spiels die **Ausrichtung** ändern und **Zurufe** geben (siehe *Textmodus*).
+### Gegen den Ball
+- **Deckung:** *Manndeckung* – jeder hat seinen Gegenspieler, stark im direkten Zweikampf. *Raumdeckung* – die Mannschaft verschiebt im Verbund: Sie fängt mehr Pässe ab, sichert den Raum hinter der Linie und macht die Abseitsfalle wirksamer, ist im Zweikampf und bei Flanken aber weniger eng am Mann. Raumdeckung greift nur mit **eingespielter** Mannschaft – frisch umgestellt ist sie klar schlechter als Manndeckung.
+- **Pressing (5 Stufen):** Gegnerische Pässe werden öfter abgefangen, du kommst häufiger zum Konter – kostet aber viel Kraft und bringt Fouls und Karten.
+- **Abwehrlinie (5 Stufen):** Hoch = Raum hinter deiner Abwehr (gegnerische Steilpässe und Konter gewinnen leichter das Laufduell), aber mehr Abseits des Gegners; tief = sicher gegen Tempo, dafür mehr Distanzschüsse des Gegners.
+- **Zweikampf (5 Stufen):** gewinnt mehr Zweikämpfe in der Abwehr, kostet aber Fouls, Freistöße, Elfmeter und Karten.
+- **Abseitsfalle:** deutlich mehr gegnerische Abseitsstellungen; wird sie überlaufen, ist der Stürmer meist frei durch.
+- **Ballverlust:** *Ordnen* oder *Gegenpressing* – sofortiges Nachsetzen stoppt gegnerische Konter früh, kostet aber Kraft.
 
-*Messung für Entwickler:* \`MODE=tactics node scripts/matchbench.mjs\` (Tabelle Einstellung → Wirkung).`,
+### Taktik im Wandel der Jahrzehnte
+Nicht alles gibt es von Anfang an, und manches schließt sich aus. Gesperrte Stufen tragen ein Schloss; unten steht der Grund.
+| Was | Wann |
+| --- | --- |
+| Raumdeckung | ab 1981, nie mit Libero; wirkt in den ersten Jahren schwächer, voll ab Mitte der 90er |
+| Angriffspressing (höchste Pressing-Stufe) | ab 1988 |
+| Spielender Verteidiger (Rolle) | ab 1990 |
+| Mitspielender Torwart (Rolle) | ab 1992, mit der Rückpassregel |
+| Einrückender Flügel, Inverser Flügel (Rollen) | ab 1998 bzw. 2004 |
+| Gegenpressing | ab 2008 |
+| Abwehrlinie „hoch“ | nicht mit Libero (höchstens „normal“) |
+| Abwehrlinie „sehr hoch“ | nur mit Raumdeckung |
+| Abseitsfalle | mit Libero etwas schwächer – der freie Mann steht hinter der Linie |
+
+Dazu kommen die Regeln der Zeit, die schon immer im Spiel waren: bis 1990 ist gleiche Höhe Abseits (Steilpässe laufen öfter ins Abseits), ab 1992 gilt die Rückpassregel, ab 2005 wird passives Abseits nicht mehr gepfiffen. Den Stand der laufenden Saison zeigt der Kasten **Taktik der Zeit** unten in der Box *Anweisungen*.
+
+Die **KI-Trainer** gehen denselben Weg: Manndeckung mit Libero in den 70ern, die ersten Vorreiter der Raumdeckung in den 80ern, ab Mitte der 90er überall Raumdeckung, Gegenpressing ab 2008 vor allem bei offensiven Trainern. Sie spielen außerdem nach ihrem Kader (viele gute Flankengeber → mehr über die Flügel).
+
+Im Textmodus kannst du während des Spiels die **Ausrichtung** und die wichtigsten Anweisungen in denselben Stufen ändern und **Zurufe** geben (siehe *Textmodus*). Ungewohnte Anweisungen kosten auch dort sofort Eingespieltheit.
+
+*Messung für Entwickler:* \`MODE=tactics node scripts/matchbench.mjs\` (Tabelle Einstellung → Wirkung), \`npm run test:tactics\`.`,
+  },
+  {
+    id: 'tactic-roles',
+    category: 'tactics',
+    title: 'Rollen der Spieler',
+    keywords: ['rolle', 'rollen', 'manndecker', 'vorstopper', 'spielmacher', 'libero', 'ausputzer', 'abräumer', 'wandspieler', 'außenverteidiger', 'taktiktafel', 'mitspielender torwart', 'inverser flügel'],
+    body: `## Wie ein Spieler seine Position spielt
+Eine **Position** sagt, wo ein Spieler steht – die **Rolle**, was er dort tut. Auf der Taktiktafel (**Aufstellung › Taktik**) klickst du einen Spieler an und wählst seine Rolle. Jede Position hat eine **Grundrolle** ohne besondere Wirkung und ein bis drei Spezialrollen. Die Rolle hängt am Platz der Formation: Wechselst du den Spieler, übernimmt der Neue die Rolle des Platzes.
+
+### Was eine Rolle bewirkt
+- **Wer woran beteiligt ist.** Über einen *Spielmacher* laufen deutlich mehr Pässe – seine Passstärke prägt dann fast jeden Angriff. Ein *Offensiver Außenverteidiger* flankt etwa doppelt so oft wie ein defensiver. Ein *Wandspieler* geht in jedes Luftduell, ein *Strafraumstürmer* kommt öfter zum Abschluss.
+- **Gewicht in der Mannschaft.** Jede Rolle verschiebt, wie stark der Spieler zu Angriff, Kontrolle und Abwehr zählt. Viele offensive Rollen bringen Tore und kosten hinten Stabilität – und umgekehrt.
+- **Kraft.** Laufintensive Rollen (Antreiber, Offensiver Außenverteidiger) verbrauchen mehr Kraft.
+
+### Passt die Rolle zum Spieler?
+Die fünf Kästchen in der Rollenwahl zeigen die **Eignung**: Sie vergleicht die Schlüsselattribute der Rolle mit der Stärke des Spielers auf der Position. Ein Spezialist in seiner Rolle spielt bis zu 2,5 % besser, eine Fehlbesetzung bis zu 4 % schlechter. Die Grundrolle ist immer neutral.
+
+### Die Rollen
+| Position | Rollen |
+| --- | --- |
+| Torwart | Linientorwart · Mitspielender Torwart (ab 1992: läuft Steilpässe ab, hilft im Aufbau) |
+| Libero | Ausputzer · Freier Mann (schaltet sich nach vorn ein) |
+| Innenverteidiger | Innenverteidiger · Manndecker · Vorstopper · Spielender Verteidiger (ab 1990) |
+| Außenverteidiger | Außenverteidiger · Defensiver · Offensiver Außenverteidiger |
+| Defensives Mittelfeld | Sechser · Abräumer · Taktgeber |
+| Zentrales Mittelfeld | Achter · Spielmacher · Antreiber · Wasserträger |
+| Mittelfeld außen | Außenläufer · Flankengeber · Einrückender Flügel (ab 1998) |
+| Offensives Mittelfeld | Zehner · Spielmacher · Schattenstürmer |
+| Flügelstürmer | Flügelstürmer · Dribbler · Inverser Flügel (ab 2004) |
+| Hängende Spitze | Hängende Spitze · Zweite Spitze |
+| Mittelstürmer | Mittelstürmer · Strafraumstürmer · Wandspieler · Konterstürmer |
+
+Manndecker und Vorstopper gelten nach 2000 als **aus der Mode** – wählbar bleiben sie.
+
+### KI-Vereine
+Die KI gibt jedem Spieler vor dem Spiel die Rolle, die am besten zu ihm passt; ohne klaren Vorteil bleibt es bei der Grundrolle. Eigene Taktiken speichern die Rollen mit (nur für dieselbe Formation).`,
+  },
+  {
+    id: 'tactic-cohesion',
+    category: 'tactics',
+    title: 'Eingespieltheit',
+    keywords: ['eingespielt', 'eingespieltheit', 'umstellen', 'umstellung', 'taktikwechsel', 'formation', 'stammelf', 'rotation', 'einüben', 'taktiktraining'],
+    body: `## Eine Mannschaft spielt sich ein
+Jede Mannschaft hat eine Taktik „im Kopf“: die Anweisungen, die sie eingeübt hat, die Formationen, die sie kennt, und eine Stammelf. Die **Eingespieltheit** (0–100, Box rechts oben auf **Aufstellung › Taktik**) misst, wie weit das, was du gerade verlangst, davon entfernt ist.
+
+| Anteil | Gewicht | Was zählt |
+| --- | --- | --- |
+| Formation | 40 % | Vertrautheit mit dem System. Verwandte Formationen helfen: Wer ein 4-4-2 beherrscht, findet sich im 4-4-2 mit Raute schneller zurecht als in einem Libero-System. |
+| Anweisungen | 42 % | Abstand zwischen Verlangtem und Eingeübtem. Schwer wiegen Deckung, Mentalität, Pressing und Abwehrlinie, leichter Tempo und Breite, kaum Flanken und Härte. Der Einsatz muss nicht eingeübt werden. |
+| Stammelf | 18 % | Wie viele aus der Startelf schon im Spiel davor begannen. Viel Rotation kostet Abstimmung. |
+
+### Wirkung im Spiel
+- **80 ist neutral.** Darüber spielt die Mannschaft besser (100 ≈ +1,6 % auf Angriff, Kontrolle und Abwehr), darunter schlechter (50 ≈ −2,4 %) und sie macht **mehr Fehler im Aufbau**.
+- **Raumdeckung** braucht Abstimmung: Uneingespielt fängt sie kaum Pässe ab und ist schwächer als Manndeckung.
+- Auch Umstellungen **während des Spiels** kosten sofort Eingespieltheit, wenn sie ungewohnt sind.
+
+### Einüben
+- **Jedes Pflichtspiel** rückt das Eingeübte ein gutes Stück an deine Vorgabe und festigt die Formation.
+- **Taktische Trainingseinheiten** beschleunigen das: *Taktik & Positionsspiel* voll, *Spielform*, *Pressing & Umschalten* und *Videoanalyse* anteilig. Gute Trainer üben schneller ein. Mit einem Spiel und zwei Taktik-Einheiten je Woche sitzt eine größere Umstellung nach etwa acht Wochen, ohne Taktik-Training dauert es um die Hälfte länger.
+- **Trainingslager** mit Punkten auf *Taktik* geben bei der Rückkehr einen kräftigen Schub – ideal für eine Umstellung in der Sommerpause.
+- Formationen, die du nicht mehr spielst, verblassen langsam.
+
+### Was das für dich heißt
+- Eine kleine Änderung (eine Stufe Tempo) kostet fast nichts. Ein kompletter Stilwechsel mit neuer Formation wirft die Mannschaft für Wochen zurück.
+- Wer von Spiel zu Spiel umstellt, bleibt zwischen zwei Taktiken hängen und beherrscht keine.
+- Der Strich unter den Stufen zeigt das Eingeübte; **Eingeübtes wiederherstellen** stellt alle Anweisungen darauf zurück.
+- KI-Vereine spielen sich genauso ein. Nach einem Trainerwechsel mit neuem Stil brauchen auch sie Zeit.`,
   },
   {
     id: 'set-pieces',

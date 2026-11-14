@@ -9,6 +9,7 @@ import { getFormation, type FormationSlot } from '../../data/formations';
 import { withLayout } from '../../data/pitchGrid';
 import { getEraYear, getSkillRev, positionSuitability, sideOf } from '../positions';
 import type { MPlayer, Mentality, ShoutId, Side } from './types';
+import { NEUTRAL_RF, NEUTRAL_RU } from '../tacticRoles';
 
 /** Anzahl zwischengespeicherter Fähigkeiten je Spieler (engine/match/skills.ts). */
 export const SKILL_SLOTS = 13;
@@ -55,6 +56,7 @@ export function makeMPlayer(p: Player, side: Side, pos: Position, started: boole
     fitF: 1, fitBase: -1, day: 1, sk: new Array<number>(SKILL_SLOTS).fill(0), skg: new Array<number>(SKILL_SLOTS).fill(0),
     crosses: 0, crossesOk: 0, dribbles: 0, dribblesOk: 0, aerials: 0, aerialsWon: 0,
     warmSince: null, talked: 0,
+    role: undefined, roleKey: '', rf: NEUTRAL_RF, ru: NEUTRAL_RU, rd: 1, rfit: 1,
   };
 }
 
@@ -232,9 +234,9 @@ export function computeUnits(onPitch: MPlayer[], refs: TeamRefs): Units {
   let keeper = 0;
   const aerA: number[] = [], aerD: number[] = [], cross: number[] = [], duel: number[] = [], pass: number[] = [];
   for (const m of onPitch) {
-    const r = rating(m);
-    const w = ROLE[m.pos];
-    a += w[0] * r; c += w[1] * r; d += w[2] * r;
+    const r = rating(m) * (m.rfit ?? 1);
+    const w = ROLE[m.pos], u = m.ru ?? NEUTRAL_RU;
+    a += w[0] * u[0] * r; c += w[1] * u[1] * r; d += w[2] * u[2] * r;
     const at = m.p.attributes;
     const phys = m.cond * (0.8 + 0.2 * m.energy / 100);
     if (m.group === 'GK') keeper = r;
@@ -331,6 +333,8 @@ export function tacticMods(t: Tactics | undefined, mentality: Mentality, shout: 
   m.injury *= 1 + eff * 0.3;
   m.cross *= 1 + width * 0.35 + (t?.buildup === 'long' ? 0.15 : 0);
   m.trap = t?.offsideTrap ? 1 : 0;
+  // Gegenpressing (ab 2008, engine/tacticEra.ts): Konter des Gegners werden früh gestoppt – das kostet Kraft.
+  if (t?.counterPress) { m.exposed *= 0.82; m.drain *= 1.07; m.ctrl *= 1.01; }
   // Ausrichtung im Spiel
   m.att *= 1 + mentality * 0.045;
   m.def *= 1 - mentality * 0.04;

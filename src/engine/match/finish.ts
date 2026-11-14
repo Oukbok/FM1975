@@ -12,6 +12,7 @@ import type { TeamState } from './state';
 import { rating } from './team';
 import { addPositionMinutes } from '../positionSkill';
 import { addExperience } from '../experience';
+import { noteMatch, validCohesion } from '../cohesion';
 import type { LineupEntry, MatchEventExt, MatchOutcome, MatchReport, MatchResultExt, MPlayer, SimEvent, TeamStats } from './types';
 
 const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
@@ -245,6 +246,11 @@ function commit(sim: MatchSim, grades: Map<string, number>, opts: FinishOptions)
       const p = sim.players[id];
       if (p && p.suspensionMatches > 0) p.suspensionMatches--;
     }
+  }
+  // Eingespieltheit (engine/cohesion.ts): jedes Pflichtspiel übt Taktik, Formation und Stammelf ein.
+  for (const t of [H, A]) {
+    const co = t.club.cohesion;
+    if (validCohesion(co) && t.club.tactics) noteMatch(co, { ...t.club.tactics, formation: t.formation }, sim.year, t.players.filter((m) => m.started).map((m) => m.id));
   }
   for (const t of [H, A]) {
     const o = t === H ? A : H;

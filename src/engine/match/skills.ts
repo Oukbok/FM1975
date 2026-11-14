@@ -29,7 +29,7 @@ export function phys(m: MPlayer): number {
     m.fitF = 0.55 + 0.45 * Math.min(1.02, Math.max(0.55, m.base / Math.max(1, nat * 0.82 + Math.min(m.p.overall, nat) * 0.18)));
     m.fitBase = m.base;
   }
-  return m.cond * (m.fitF ?? 1) * (m.day ?? 1);
+  return m.cond * (m.fitF ?? 1) * (m.day ?? 1) * (m.rfit ?? 1);
 }
 /** Kraft im Spiel: müde Spieler verlieren bis zu 18 % in jedem Duell. */
 export const energyF = (m: MPlayer): number => 0.82 + 0.18 * m.energy / 100;

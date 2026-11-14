@@ -44,11 +44,11 @@ await page.locator('.tn-sub-item:has-text("Taktik")').click();
 await page.waitForTimeout(2500);
 await page.screenshot({ path: `${outDir}/01_taktik.png` });
 // Breite auf Flügel, hohe Flanken → Messung aktualisiert sich
-await page.locator('.tx-slider:has-text("Breite") input').fill('95');
+await page.locator('.txi-row[data-instr=width] .txi-step').nth(4).click();
 await page.click('.lu-seg button:has-text("Hoch")');
 await page.waitForTimeout(3000);
 await page.screenshot({ path: `${outDir}/02_taktik_fluegel_hoch.png` });
-await page.locator('.tx-slider:has-text("Breite") input').fill('50');
+await page.locator('.txi-row[data-instr=width] .txi-step').nth(2).click();
 await page.click('.lu-seg button:has-text("Gemischt")');
 await page.waitForTimeout(500);
 

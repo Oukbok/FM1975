@@ -105,6 +105,22 @@ for (const view of VIEWS) {
       ['Dach voll', () => page.locator('.sv-pop .bc-chips button:has-text("voll")').first().click({ timeout: 1500 })],
       ['Stehplätze keine', () => page.locator('.sv-pop .bc-chips button:has-text("keine")').first().click({ timeout: 1500 })],
     ] }],
+    ['taktik-rolle', '.txr', async () => {
+      await nav('Aufstellung', 'Taktik');
+      await page.locator('.txb-mag').nth(3).click({ timeout: 3000 });
+    }, { steps: [
+      ['Rolle 2', () => page.locator('.txr-row').nth(1).click({ timeout: 1500 })],
+      ['Rolle 3 zeigen', () => page.locator('.txr-row').nth(2).hover({ timeout: 1500 })],
+      ['Grundrolle', () => page.locator('.txr-row').nth(0).click({ timeout: 1500 })],
+    ] }],
+    ['taktik-speichern', '.txp-pop', async () => {
+      await nav('Aufstellung', 'Taktik');
+      await page.locator('.txp > button.b3').click({ timeout: 3000 });
+    }, { steps: [
+      ['Name', () => page.locator('.txp-new input').fill('Test', { timeout: 1500 })],
+      ['Speichern', () => page.locator('.txp-new button').click({ timeout: 1500 })],
+      ['Löschen', () => page.locator('.txp-del').first().click({ timeout: 1500 })],
+    ] }],
     ['stadion-umfeld', '.sv-pop', async () => {
       await nav('Verein', 'Stadion');
       await page.locator('.gr-svg g.sv-venue').first().click({ force: true, timeout: 3000 });

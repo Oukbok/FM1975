@@ -7,6 +7,7 @@
 // =============================================================================
 import type { Tactics } from '../../types';
 import type { TacticMods } from './team';
+import { markingOf, tacticLimits, zoneKnowhow } from '../tacticEra';
 
 export type Route = 'kurz' | 'flanke' | 'steil' | 'dribbling' | 'weit';
 export const ROUTES: Route[] = ['kurz', 'flanke', 'steil', 'dribbling', 'weit'];
@@ -25,6 +26,10 @@ export interface TacticPlan {
   workBias: number;     // eigene Laufduelle/Dribblings im Angriff (Einsatz)
   lineHigh: number;     // -1 tief … +1 hoch: Raum hinter der Abwehr / Abseits
   trap: number;         // Abseitsfalle 0/1
+  /** Raumdeckung 0…~1,1 (Güte aus Eingespieltheit und Epoche), Manndeckung 0. */
+  zone: number;
+  /** Mitspielender Torwart: läuft Steilpässe ab (Logit-Vorteil im Laufduell). */
+  sweep: number;
   /** Eigene Konter nach Ballgewinn (Faktor). */
   counter: number;
   /** Fouls in Duellen (Faktor). */
@@ -41,7 +46,12 @@ function eraRoutes(year: number): Record<Route, number> {
   return { kurz: 0.31, flanke: 0.33, steil: 0.13, dribbling: 0.13, weit: 0.1 };
 }
 
-export function tacticPlan(t: Tactics | undefined, year: number, mods?: TacticMods): TacticPlan {
+/**
+ * `cohesion` = Eingespieltheit 0–100 (80 neutral), `sweep` = mitspielender Torwart.
+ * Raumdeckung (ab 1981): kompakter Block fängt mehr Pässe ab und deckt den Raum hinter der Linie besser,
+ * ist im direkten Zweikampf und bei Flanken aber weniger eng am Mann – und braucht eine eingespielte Mannschaft.
+ */
+export function tacticPlan(t: Tactics | undefined, year: number, mods?: TacticMods, cohesion = 80, sweep = 0): TacticPlan {
   const r = eraRoutes(year);
   const width = norm(t?.widthFocus), tempo = norm(t?.tempo), press = norm(t?.pressing), line = norm(t?.defensiveLine);
   const hard = norm(t?.tackleHardness), eff = norm(t?.effort);
@@ -68,6 +78,9 @@ export function tacticPlan(t: Tactics | undefined, year: number, mods?: TacticMo
   for (const k of ROUTES) sum += r[k];
   for (const k of ROUTES) r[k] /= sum;
 
+  const zone = t && markingOf(t, year) === 'zone' ? Math.max(0, Math.min(1.1, 0.4 + (cohesion - 60) / 50)) * zoneKnowhow(year) : 0;
+  const zoneOn = t && markingOf(t, year) === 'zone' ? 1 : 0;
+  const trapF = t ? tacticLimits(t, year).trapFactor : 1;
   const eraHigh = year < 1990 ? 0.72 : year < 2005 ? 0.62 : 0.52;
   const cs = t?.crossStyle ?? 'mixed';
   const highCross = cs === 'high' ? Math.min(0.92, eraHigh + 0.25) : cs === 'low' ? Math.max(0.15, eraHigh - 0.35) : eraHigh;
@@ -77,12 +90,13 @@ export function tacticPlan(t: Tactics | undefined, year: number, mods?: TacticMo
     highCross,
     longShot: eraLong * (1 - 0.15 * tempo) * (t?.style === 'defensive' ? 1.1 : 1),
     passBias: (long ? -0.15 : 0.1) - 0.25 * tempo,
-    pressBias: 0.3 * press + 0.1 * line,
-    tackleBias: 0.32 * hard + 0.22 * eff,
+    pressBias: 0.3 * press + 0.1 * line + 0.09 * zone - 0.02 * zoneOn,
+    tackleBias: 0.32 * hard + 0.22 * eff - 0.07 * zoneOn,
     workBias: 0.15 * eff,
     lineHigh: line,
-    trap: t?.offsideTrap ? 1 : 0,
+    trap: t?.offsideTrap ? trapF * (zoneOn ? 0.85 + 0.3 * zone : 1) : 0,
+    zone, sweep,
     counter: (t?.style === 'counter' ? 1.55 : t?.style === 'attacking' ? 0.95 : 1) * (1 + 0.25 * tempo) * (1 + 0.3 * press),
-    foul: (1 + 0.3 * hard + 0.15 * press) * (1 + 0.1 * eff),
+    foul: (1 + 0.3 * hard + 0.15 * press) * (1 + 0.1 * eff) * (zoneOn ? 0.94 : 1),
   };
 }

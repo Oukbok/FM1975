@@ -1151,6 +1151,12 @@ export interface Tactics {
   slotLayout?: Record<string, { x: number; y: number; position: Position }>;
   /** Aufstellung: gezogene Spieler rasten auf feste Positionsfelder ein (Standard aus, Wunsch Pascal). */
   snapToGrid?: boolean;
+  /** Deckungsart (engine/tacticEra.ts): Manndeckung oder Raumdeckung (ab 1981); fehlt = Standard der Zeit. */
+  marking?: 'man' | 'zone';
+  /** Gegenpressing nach Ballverlust (ab 2008). */
+  counterPress?: boolean;
+  /** Rollen je Formations-Slot (Slot-ID → Rollen-ID, engine/tacticRoles.ts); fehlt = Grundrolle. */
+  roles?: Record<string, string>;
 }
 
 /** Muster-Typ für ein parametrisches Trikot (deckungsgleich mit JerseySVG). */
@@ -1230,6 +1236,8 @@ export interface ClubCommerce {
 
 /** Ein 1. Liga-Verein. */
 export interface Club {
+  /** Eingespieltheit (engine/cohesion.ts): eingeübte Anweisungen, Formationen, Stammelf; fehlt = neutral. */
+  cohesion?: import('../engine/cohesion').Cohesion;
   id: string;
   name: string;
   /** Kurzname / Abkürzung (z.B. "FCB"). */

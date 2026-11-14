@@ -1,135 +1,91 @@
 // =============================================================================
-// TAKTIK — Mentalität, Teamanweisungen (mit Ball / gegen den Ball), Formation,
-// Wirkung in der Match-Engine und nächster Gegner (Seitenraster).
+// TAKTIK (Aufstellung › Taktik) – Wunsch Pascal: übersichtlich und geordnet
+// -----------------------------------------------------------------------------
+// Links die Taktiktafel: das Spielfeld zeigt, was die Anweisungen bedeuten (zwei
+// Ansichten: mit Ball / gegen den Ball), ein Klick auf einen Spieler wählt seine
+// Rolle. In der Mitte alle Anweisungen in drei Abschnitten, jede Zeile gleich
+// gebaut (fünf Stufen bzw. Wahl), dazu Vorlagen und eigene gespeicherte Taktiken.
+// Rechts: Eingespieltheit, gemessene Wirkung im Spiel, nächster Gegner im Vergleich.
 // Liest/schreibt direkt g.clubs[managedClubId].tactics (wie LineupView).
+// Teile in components/tactics/, CSS 28-tactics.css.
 // =============================================================================
-import { useState } from 'react';
-import type { Player, Tactics } from '../types';
+import { useMemo, useState } from 'react';
+import type { Tactics } from '../types';
+import type { Game } from '../game/state';
 import { getFormation } from '../data/formations';
-import { getEraYear, positionSuitability, suitabilityColor } from '../engine/positions';
-import { TacticEffect } from './tactics/TacticEffect';
-import { DashBox, DashPage, Empty, KV } from '../ui/DashPage';
-import ClubCrest from './ClubCrest';
-import { ClubLink } from './club/ClubLink';
-import PitchSVG from './lineup/PitchSVG';
+import { practicedTactics, validCohesion } from '../engine/cohesion';
+import { seasonYearOf } from '../engine/match/era';
+import { CalendarEngine } from '../engine/calendar';
+import { nextOpponent } from '../game/opponentView';
+import { DashBox, DashPage } from '../ui/DashPage';
+import Seg from '../ui/Seg';
 import { effectiveFormation } from './lineup/lineupOps';
-import { level, STYLE_DE, STYLE_DESC, STYLES } from './lineup/LineupSide';
-import { InfoTip } from '../ui/InfoTip';
+import { InstructionPanel } from './tactics/InstructionPanel';
+import { INSTRUCTIONS, type InstrKey } from './tactics/instructions';
+import { CohesionBox, OpponentBox } from './tactics/SideBoxes';
+import { TacticBoard, type BoardPhase } from './tactics/TacticBoard';
+import { TacticEffect } from './tactics/TacticEffect';
+import { TacticPresets } from './tactics/TacticPresets';
 
-// Loses Game-Interface (Vollstruktur liegt in game/state.ts).
-interface G {
-  clubs: Record<string, any>;
-  players: Record<string, Player>;
-  managedClubId: string;
-  fixtures: { status: string; involvesPlayerClub: boolean; homeClubId: string; awayClubId: string; date: string }[];
-}
-
-export default function TacticsView({ g, onChange }: { g: G; onChange: () => void }) {
+export default function TacticsView({ g, onChange }: { g: Game; onChange: () => void }) {
   const myClub = g.clubs[g.managedClubId];
   const t: Tactics = myClub.tactics;
   const [, force] = useState(0);
+  const [phase, setPhase] = useState<BoardPhase>('gegen');
+  const year = seasonYearOf(g.calendar.currentDate);
   const set = (patch: Partial<Tactics>) => { Object.assign(t, patch); force((n) => n + 1); onChange(); };
+  const setRole = (slotId: string, roleId: string | null) => {
+    const roles = { ...(t.roles ?? {}) };
+    if (roleId) roles[slotId] = roleId; else delete roles[slotId];
+    set({ roles });
+  };
   const formation = effectiveFormation(t);
-  const lineupMap = t.lineupMap ?? {};
+  const nx = nextOpponent(g);
+  const opp = nx ? g.clubs[nx.opp] ?? null : null;
 
-  const next = g.fixtures
-    .filter((m) => m.status === 'scheduled' && m.involvesPlayerClub)
-    .sort((a, b) => a.date.localeCompare(b.date))[0];
-  const oppId = next ? (next.homeClubId === g.managedClubId ? next.awayClubId : next.homeClubId) : null;
-  const opp = oppId ? g.clubs[oppId] : null;
-  const oppT: Tactics | null = opp?.tactics ?? null;
+  // Eingeübte Wahl je Anweisung (Markierung in der Mitte)
+  const co = myClub.cohesion;
+  const drilledKey = validCohesion(co) ? JSON.stringify(co.p) : '';
+  const drilled = useMemo(() => {
+    if (!validCohesion(co)) return undefined;
+    const pt = { ...t, ...practicedTactics(co) };
+    const out: Partial<Record<InstrKey, number>> = {};
+    for (const d of INSTRUCTIONS) if (d.key !== 'effort') out[d.key] = d.get(pt, year);
+    return out;
+  }, [drilledKey, year]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <DashPage>
-      <DashBox title="Mentalität" info="mentalitaet" icon="tactics" right={STYLE_DE[t.style] ?? t.style}>
-        <div className="lu-seg" role="group">
-          {STYLES.map((s) => <button key={s} className={t.style === s ? 'on' : ''} onClick={() => set({ style: s })}>{STYLE_DE[s]}</button>)}
-        </div>
-        <div className="dnote lu-desc">{STYLE_DESC[t.style]}</div>
-        <KV k="Formation" v={getFormation(t.formation).label} />
-        <KV k="Aufbau · Breite" v={`${t.buildup === 'long' ? 'lang' : 'kurz'} · ${level(t.widthFocus, 'Mitte', 'normal', 'Flügel')}`} />
-        <KV k="Pressing · Linie" v={`${level(t.pressing, 'abwartend', 'normal', 'hoch')} · ${level(t.defensiveLine, 'tief', 'normal', 'hoch')}`} />
-        <Slider label="Einsatz" lo="kräfteschonend" hi="volle Kraft" value={t.effort ?? 50} onChange={(v) => set({ effort: v })} />
-        <div className="dnote">Mehr Einsatz gewinnt Zweikämpfe und macht Druck, kostet aber Kraft und Frische und erhöht Verletzungs- und Kartenrisiko. Im Textmodus kannst du die Ausrichtung im Spiel verschieben und Zurufe geben.</div>
+    <DashPage className="tx-page">
+      <DashBox title="Taktiktafel" info="taktiktafel" rows={2} flush className="tx-board-box"
+        right={<span className="tx-headr">
+          <span className="tx-form">{getFormation(t.formation).label}</span>
+          <Seg<BoardPhase> size="s" value={phase} onChange={setPhase} aria-label="Ansicht der Taktiktafel"
+            options={[{ v: 'ball', label: 'Mit Ball' }, { v: 'gegen', label: 'Gegen den Ball' }]} />
+        </span>}>
+        <TacticBoard t={t} year={year} formation={formation} players={g.players} phase={phase} setRole={setRole} />
       </DashBox>
 
-      <DashBox title="Mit Ball" info="mitBall" icon="matchball">
-        <Slider label="Tempo" lo="bedächtig" hi="hohes Tempo" value={t.tempo} onChange={(v) => set({ tempo: v })} />
-        <Slider label="Breite" lo="über die Mitte" hi="über die Flügel" value={t.widthFocus ?? 50} onChange={(v) => set({ widthFocus: v })} />
-        <div className="lu-mlabel">Aufbauspiel</div>
-        <div className="lu-seg tx-toggle">
-          <button className={(t.buildup ?? 'short') === 'short' ? 'on' : ''} onClick={() => set({ buildup: 'short' })}>Kurz (Ballbesitz)</button>
-          <button className={t.buildup === 'long' ? 'on' : ''} onClick={() => set({ buildup: 'long' })}>Lang (direkt)</button>
-        </div>
-        <div className="lu-mlabel">Flanken<InfoTip k="flankenart" /></div>
-        <div className="lu-seg tx-toggle tx-toggle3">
-          {([['high', 'Hoch'], ['mixed', 'Gemischt'], ['low', 'Flach']] as const).map(([v, l]) => (
-            <button key={v} className={(t.crossStyle ?? 'mixed') === v ? 'on' : ''} onClick={() => set({ crossStyle: v })}>{l}</button>
-          ))}
-        </div>
+      <DashBox title="Anweisungen" info="anweisungen" rows={2} flush className="tx-instr-box" right={<TacticPresets g={g} t={t} year={year} set={set} />}>
+        <InstructionPanel t={t} year={year} set={(p) => {
+          set(p);
+          // Die Tafel zeigt die Ansicht, zu der die geänderte Anweisung gehört.
+          const k = Object.keys(p)[0];
+          if (['buildup', 'tempo', 'widthFocus', 'crossStyle'].includes(k)) setPhase('ball');
+          else if (['marking', 'pressing', 'defensiveLine', 'offsideTrap'].includes(k)) setPhase('gegen');
+        }} drilled={drilled} />
       </DashBox>
 
-      <DashBox title="Gegen den Ball" info="gegenBall" icon="shield">
-        <Slider label="Pressinghöhe" lo="abwartend" hi="hohes Pressing" value={t.pressing} onChange={(v) => set({ pressing: v })} />
-        <Slider label="Abwehrlinie" lo="tief" hi="hoch" value={t.defensiveLine} onChange={(v) => set({ defensiveLine: v })} />
-        <Slider label="Zweikampfhärte" lo="fair" hi="kompromisslos" value={t.tackleHardness ?? 50} onChange={(v) => set({ tackleHardness: v })} />
-        <div className="dnote">Härte gewinnt mehr Zweikämpfe, bringt aber Fouls und Karten.</div>
-        <div className="lu-mlabel">Abseitsfalle<InfoTip k="abseitsfalle" /></div>
-        <div className="lu-seg tx-toggle">
-          <button className={t.offsideTrap ? 'on' : ''} onClick={() => set({ offsideTrap: true })}>An</button>
-          <button className={!t.offsideTrap ? 'on' : ''} onClick={() => set({ offsideTrap: false })}>Aus</button>
-        </div>
-      </DashBox>
-
-      <DashBox title="Formation" info="formation" icon="lineup" right={getFormation(t.formation).label}>
-        <div className="tx-mini">
-          <div className="lu-pitch">
-            <div className="lu-field">
-              <PitchSVG />
-              {formation.slots.map((slot) => {
-                const p = lineupMap[slot.id] ? g.players[lineupMap[slot.id]] : undefined;
-                const suit = p ? positionSuitability(p, slot.position) : 0;
-                return (
-                  <div key={slot.id} className="tx-dot" title={p ? `${p.fullName} – Eignung ${suit}` : 'frei'}
-                    style={{ left: `${slot.x}%`, top: `${slot.y}%`, borderColor: p ? suitabilityColor(suit) : undefined }}>
-                    {slot.position}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </DashBox>
-
-      <DashBox title="Wirkung im Spiel" info="wirkung" icon="stats" right="gemessen">
-        <TacticEffect club={myClub} players={g.players} opp={opp} year={getEraYear()} />
-      </DashBox>
-
-      <DashBox title="Nächster Gegner" icon="watchlist" right={opp?.shortName}>
-        {opp && oppT ? (
-          <>
-            <div style={{ display: 'flex', gap: 14, alignItems: 'center', marginBottom: 10 }}>
-              <ClubLink id={opp.id}><ClubCrest club={opp} size={60} /></ClubLink>
-              <div style={{ fontSize: 20, fontWeight: 800 }}><ClubLink id={opp.id}>{opp.name}</ClubLink></div>
-            </div>
-            <KV k="Formation" v={getFormation(oppT.formation).label} />
-            <KV k="Mentalität" v={STYLE_DE[oppT.style] ?? oppT.style} />
-            <KV k="Tempo · Pressing · Linie" v={`${level(oppT.tempo, 'bedächtig', 'normal', 'hoch')} · ${level(oppT.pressing, 'abwartend', 'normal', 'hoch')} · ${level(oppT.defensiveLine, 'tief', 'normal', 'hoch')}`} />
-            <KV k="Aufbau" v={oppT.buildup === 'long' ? 'lang (direkt)' : 'kurz (Ballbesitz)'} />
-            <KV k="Abseitsfalle" v={oppT.offsideTrap ? 'an' : 'aus'} />
-          </>
-        ) : <Empty icon="watchlist">Kein Gegner angesetzt.</Empty>}
-      </DashBox>
+      <div className="tx-side">
+        <DashBox title="Eingespieltheit" info="eingespieltheit" className="tx-coh-box">
+          <CohesionBox g={g} set={set} />
+        </DashBox>
+        <DashBox title="Wirkung im Spiel" info="wirkung" right="gemessen" className="tx-eff-box">
+          <TacticEffect club={myClub} players={g.players} opp={opp} year={year} />
+        </DashBox>
+        <DashBox title="Nächster Gegner" className="tx-opp-box" right={nx ? (nx.home ? 'Heimspiel' : 'Auswärts') : undefined}>
+          <OpponentBox me={myClub} opp={opp} year={year} when={nx ? `${CalendarEngine.formatDate(nx.date)} · ${nx.comp}` : undefined} />
+        </DashBox>
+      </div>
     </DashPage>
-  );
-}
-
-function Slider({ label, value, onChange, lo, hi }: { label: string; value: number; onChange: (v: number) => void; lo: string; hi: string }) {
-  return (
-    <div className="tx-slider">
-      <div className="tx-slider-head"><b>{label}</b><span>{level(value, lo, 'normal', hi)} · {value}</span></div>
-      <input type="range" min={0} max={100} value={value} aria-label={label} onChange={(e) => onChange(Number(e.target.value))} />
-      <div className="tx-slider-ends"><span>{lo}</span><span>{hi}</span></div>
-    </div>
   );
 }

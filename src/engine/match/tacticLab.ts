@@ -42,7 +42,7 @@ const ZERO = (): LabStats => ({
 export function neutralTactics(t: Tactics): Tactics {
   return {
     ...t, style: 'balanced', pressing: 50, tempo: 50, defensiveLine: 50, tackleHardness: 50, effort: 50,
-    widthFocus: 50, buildup: 'short', offsideTrap: false, crossStyle: 'mixed',
+    widthFocus: 50, buildup: 'short', offsideTrap: false, crossStyle: 'mixed', marking: 'man', counterPress: false, roles: undefined,
   };
 }
 
@@ -72,7 +72,9 @@ function collect(sim: MatchSim, me: TeamState, opp: TeamState, acc: LabStats): v
 
 /** Spielt n Heim- und n Auswärtsspiele des Vereins (mit `tactics`) gegen `opp` und liefert Mittelwerte je Spiel. */
 export function labRun(club: Club, opp: Club, players: Record<string, Player>, tactics: Tactics, year: number, n: number, seed = 1): LabStats {
-  const me: Club = { ...club, tactics };
+  // Ohne Eingespieltheit: gemessen wird die Taktik selbst, nicht der Stand des Einübens.
+  const me: Club = { ...club, tactics, cohesion: undefined };
+  opp = { ...opp, cohesion: undefined };
   const acc = ZERO();
   for (let i = 0; i < n; i++) {
     for (const home of [true, false]) {

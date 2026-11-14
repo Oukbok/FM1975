@@ -181,6 +181,9 @@ export function buildAutoTactics(
     offsideTrap: existing?.offsideTrap ?? rng() < 0.35,
     widthFocus: existing?.widthFocus ?? clamp(vary(50, 22)),
     buildup: existing?.buildup ?? (rng() < 0.5 ? 'short' : 'long'),
+    // Deckung/Gegenpressing des Trainers durchreichen (engine/tacticEra.ts). Die Flankenart der KI bleibt „gemischt“:
+    // sie wurde hier nie übernommen, und die Torarten je Epoche (Kopfballtore) sind darauf abgestimmt.
+    marking: existing?.marking, counterPress: existing?.counterPress,
     startingXI: asg.startingXI,
     substitutes: asg.substitutes,
     captainId: captain?.id ?? null,

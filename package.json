@@ -52,6 +52,7 @@
     "test:youthcomp": "node scripts/run-ts.mjs tests/youthcomp-test.ts",
     "test:euro2": "node scripts/run-ts.mjs tests/euro2-test.ts",
     "test:engine": "node scripts/run-ts.mjs tests/engine-test.ts",
+    "test:tactics": "node scripts/run-ts.mjs tests/tactics-test.ts",
     "test:sideline": "node scripts/run-ts.mjs tests/sideline-test.ts",
     "test:press": "node scripts/run-ts.mjs tests/press-test.ts",
     "test:ratings": "node scripts/run-ts.mjs tests/ratings-test.ts",

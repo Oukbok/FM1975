@@ -1,5 +1,5 @@
 /* =========================================================================
-   AUFSTELLUNG (Spieltag › Aufstellung) – Präfix .lu-  ·  TAKTIK – Präfix .tx-
+   AUFSTELLUNG (Spieltag › Aufstellung) – Präfix .lu-  ·  Taktik-Seite: 28-tactics.css
    Farben nur über Tokens; Rasen/Linien als lokale Variablen des Spielfelds.
    ========================================================================= */
 .lu-page { user-select: none; }
@@ -192,20 +192,7 @@
 .lu-hints li.warn::before { background: var(--orange); }
 .lu-hints li.ok::before { background: var(--green); }
 
-/* --- Taktik-Seite --- */
-.tx-slider { margin: 4px 0 12px; }
-.tx-slider-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 16px; margin-bottom: 2px; }
-.tx-slider-head b { font-weight: 700; }
-.tx-slider-head span { color: var(--text-2); font-size: 15px; }
-.tx-slider input[type=range] { width: 100%; accent-color: var(--accent); }
-.tx-slider-ends { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-3); }
-.tx-toggle { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 12px; }
-.tx-mini { height: 100%; display: flex; justify-content: center; }
-.tx-dot {
-  position: absolute; transform: translate(-50%, -50%); width: 34px; height: 34px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; background: rgba(var(--bg-rgb), .88);
-  border: 2px solid var(--text-3); font-size: 11px; font-weight: 800; color: var(--text); letter-spacing: .3px;
-}
+/* --- Wirkungs-Balken (Trainingslager: views/kader/camp/EffectBars.tsx; die Taktik-Seite liegt in 28-tactics.css) --- */
 .tx-eff { display: grid; grid-template-columns: 170px 1fr 64px; align-items: center; gap: 12px; padding: 4px 0; font-size: 15px; }
 .tx-eff-l { color: var(--text-2); white-space: nowrap; }
 .tx-eff-t { position: relative; height: 8px; border-radius: 4px; background: rgba(var(--ink-rgb), .06); }

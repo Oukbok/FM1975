@@ -11,6 +11,8 @@ import { MoraleIcon, playerMorale100 } from '../../../components/status';
 import { StatsPanel } from '../MatchPanels';
 import { fmtGrade, gradeCls, gradeEarly } from '../board/LineupBoard';
 import type { Draft, TacticPatch } from './draft';
+import type { Tactics } from '../../../types';
+import { INSTR_BY_KEY, instructionState, type InstrKey } from '../../../components/tactics/instructions';
 import { posGroupClass } from '../../../ui/positionBadges';
 
 const TALKS: [TeamTalk, string, string][] = [
@@ -92,23 +94,17 @@ export function PlayerTalks({ sim, side, d, onChange }: { sim: MatchSim; side: S
   );
 }
 
-const SLIDERS: [keyof TacticPatch, string, string, string][] = [
-  ['tempo', 'Tempo', 'bedächtig', 'hohes Tempo'],
-  ['widthFocus', 'Breite', 'über die Mitte', 'über die Flügel'],
-  ['pressing', 'Pressing', 'abwartend', 'hoch'],
-  ['defensiveLine', 'Abwehrlinie', 'tief', 'hoch'],
-  ['effort', 'Einsatz', 'kräfteschonend', 'volle Kraft'],
-];
+/** Anweisungen im Spiel: dieselben fünf Stufen wie auf der Taktik-Seite (components/tactics/instructions.ts). */
+const STEPPED: [keyof TacticPatch, InstrKey][] = [['tempo', 'tempo'], ['widthFocus', 'width'], ['pressing', 'pressing'], ['defensiveLine', 'line'], ['effort', 'effort']];
 
 /** Spiel-Taktik: Ausrichtung + Anweisungen nur für dieses Spiel (die gespeicherte Taktik bleibt unverändert). */
 export function TacticPane({ sim, side, d, onMentality, onTactic }: {
   sim: MatchSim; side: Side; d: Draft; onMentality: (m: Mentality) => void; onTactic: (p: TacticPatch) => void;
 }) {
   const base = tacticsOf(sim.team(side));
-  const val = (k: keyof TacticPatch): number => {
-    const v = d.tactics[k] ?? base?.[k];
-    return typeof v === 'number' ? v : 50;
-  };
+  const cur = { ...(base as Tactics), ...d.tactics };
+  const year = sim.era.year;
+  const st = instructionState(cur, year);
   const buildup = d.tactics.buildup ?? base?.buildup ?? 'short';
   return (
     <div className="tm-tac">
@@ -119,14 +115,20 @@ export function TacticPane({ sim, side, d, onMentality, onTactic }: {
         ))}
       </div>
       <div className="tm-sec">Anweisungen für dieses Spiel</div>
-      {SLIDERS.map(([k, label, lo, hi]) => (
-        <label key={k} className="tm-slider">
-          <span>{label}</span>
-          <em>{lo}</em>
-          <input type="range" min={0} max={100} step={5} value={val(k)} onChange={(e) => onTactic({ [k]: Number(e.target.value) })} />
-          <em>{hi}</em>
-        </label>
-      ))}
+      {STEPPED.map(([k, ik]) => {
+        const def = INSTR_BY_KEY[ik];
+        return (
+          <div key={k} className="tm-slider" data-instr={ik}>
+            <span>{def.label}</span>
+            <div className="tm-chips tm-steps">
+              {def.opts.map((o, i) => {
+                const lock = st[ik].locks[i];
+                return <button key={i} type="button" className={`tm-chip ${st[ik].i === i ? 'on' : ''}`} disabled={!!lock} title={lock ?? o.text} onClick={() => onTactic(def.set(i) as TacticPatch)}>{o.label}</button>;
+              })}
+            </div>
+          </div>
+        );
+      })}
       <div className="tm-slider">
         <span>Aufbauspiel</span>
         <div className="tm-chips">

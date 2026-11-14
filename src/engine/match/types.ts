@@ -79,6 +79,17 @@ export interface MPlayer {
   warmSince?: number | null;
   /** Halbzeit (period), in der zuletzt ein Einzelgespräch geführt wurde (0 = keins). */
   talked?: number;
+  // --- Rolle (engine/tacticRoles.ts; gesetzt in state.ts assignRoles) ---
+  /** Rollen-ID und Position, für die sie gesetzt wurde. */
+  role?: string;
+  roleKey?: string;
+  /** Beteiligungs-Gewichte (Angriff, Abwehr, Pass, Flügel, Flügelabwehr, Luft, Luftabwehr). */
+  rf?: readonly number[];
+  /** Faktoren auf den Anteil an Angriff/Kontrolle/Abwehr der Mannschaft. */
+  ru?: readonly number[];
+  /** Kraftverbrauch der Rolle und Leistungsfaktor aus der Passung. */
+  rd?: number;
+  rfit?: number;
   /** Ergebnis des letzten Spielergesprächs (Anzeige im Wechsel-Bildschirm): Art, Wirkung, Leistung in %. */
   talkRes?: { kind: PlayerTalk; res: 'gut' | 'neutral' | 'schlecht'; pct: number; period: number };
 }
