@@ -84,7 +84,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 12px 14px;
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-ui); font-variant-numeric: tabular-nums;
   font-size: 12.5px;
   color: var(--accent);
   overflow-x: auto;
@@ -96,7 +96,7 @@
   border: 1px solid var(--border);
   border-radius: 5px;
   padding: 1px 6px;
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-ui); font-variant-numeric: tabular-nums;
   font-size: 12px;
   color: var(--accent);
 }

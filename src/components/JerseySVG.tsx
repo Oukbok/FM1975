@@ -170,7 +170,7 @@ export function JerseySVG({
           stroke="#0a0e14"
           strokeWidth="2"
           style={{ paintOrder: 'stroke' }}
-          fontFamily="Inter, system-ui, sans-serif"
+          fontFamily="Antonio, Arial Narrow, sans-serif"
         >
           {number}
         </text>

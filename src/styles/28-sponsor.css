@@ -189,7 +189,7 @@ button.sp3-inc-row:hover { background: var(--panel-hover); }
 }
 .sp3-board.holz .sp3-board-logo { filter: saturate(0.85) contrast(0.95); }
 .sp3-board.holz.free { background: #d9dde3; }
-.sp3-board.holz .sp3-board-free { color: #2a2f37; font-family: Georgia, serif; }
+.sp3-board.holz .sp3-board-free { color: #2a2f37; font-family: var(--font-display); }
 /* Druck: glänzende Fläche, Alu-Rahmen */
 .sp3-board.druck::after, .sp3-board.prisma::after {
   content: ''; position: absolute; inset: 0; pointer-events: none;

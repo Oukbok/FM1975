@@ -9,6 +9,7 @@ import { fmtDateShort, vColor } from '../ui/format';
 import { scoutRange, scoutRangeText } from '../engine/scouting';
 import { currencyAt } from '../engine/economy';
 import PosBadge from '../components/PosBadge';
+import { StarRating } from '../components/StarRating';
 
 export const squadOf = (g: Game, clubId = g.managedClubId): Player[] =>
   (g.clubs[clubId]?.playerIds ?? []).map((id) => g.players[id]).filter(Boolean);
@@ -85,6 +86,12 @@ export const scoutMid = (p: Player) => { const [a, b] = scoutRange(p); return (a
 /** Scout-Einschätzung des Potenzials als Text-Spanne, z. B. „3,5–4,5 ★“. */
 export function ScoutStars({ p }: { p: Player }) {
   return <span className="dscout" title="Scouting-Einschätzung des Potenzials">{scoutRangeText(p)}</span>;
+}
+
+/** Scout-Einschätzung des Potenzials als Sterne wie im Transfermarkt (gelb = sicher, weiß = möglich) – für Spielertabellen. */
+export function ScoutStarBar({ p, size = 20 }: { p: Player; size?: number }) {
+  const [lo, hi] = scoutRange(p);
+  return <StarRating lo={lo} hi={hi} size={size} label="Potenzial" note="Einschätzung deiner Scouts." />;
 }
 
 /** Kleinbeträge mit zwei Nachkommastellen (z. B. Netto pro Besucher), DM bzw. EUR ab 2002. */

@@ -35,7 +35,7 @@ export default function ClubCrest({ club, size = 40 }: { club: Club; size?: numb
       <path d="M20 2 L36 7 V21 C36 30 29 36 20 39 C11 36 4 30 4 21 V7 Z" fill={primary} stroke={secondary} strokeWidth="1.5" />
       <path d="M20 2 L36 7 V21 C36 30 29 36 20 39 Z" fill="rgba(0,0,0,0.12)" />
       <text x="20" y="24" textAnchor="middle" fontSize={label.length > 2 ? 10 : 13} fontWeight="900"
-            fontFamily="Inter, sans-serif" fill={contrast(primary)}>{label}</text>
+            fontFamily="Antonio, Arial Narrow, sans-serif" fill={contrast(primary)}>{label}</text>
     </svg>
   );
 }

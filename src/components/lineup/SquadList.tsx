@@ -9,7 +9,7 @@ import { positionSuitability, suitabilityColor } from '../../engine/positions';
 import { PlayerForm, PlayerFreshness, PlayerMorale, MORALE_100, playerMorale100 } from '../status';
 import { InfoTip } from '../../ui/InfoTip';
 import type { InfoKey } from '../../data/infoTexts';
-import { posGroupClass } from '../../ui/positionBadges';
+import { PosTag } from '../PosBadge';
 
 export interface ListRow { p: Player; pos: Position | null; slotId?: string; benchIndex?: number }
 
@@ -72,7 +72,7 @@ export default function SquadList({ xi, free = [], slotOrder = [], bench, reserv
     return (
       <tr key={p.id} className={`lu-row ${hover === drop && drop !== 'reserve' && !full ? 'over' : ''} ${dragId === p.id ? 'dragging' : ''} ${isOut(p) ? 'out' : ''}`}
         data-lu-drop={drop} data-pid={p.id} onPointerDown={(e) => onDown(e, p)}>
-        <td className="lu-c-pos"><span className={`${r.pos ? 'lu-pos' : 'lu-pos dim'} ${posGroupClass(r.pos ?? p.naturalPosition)}`}>{r.pos ?? p.naturalPosition}</span></td>
+        <td className="lu-c-pos"><PosTag pos={r.pos ?? p.naturalPosition} className={r.pos ? undefined : 'lu-pos-dim'} /></td>
         <td className="lu-c-num lu-c-nr">{p.shirtNumber ?? ''}</td>
         <td className="lu-c-name">
           <FaceThumb p={p} size={24} className="lu-face" />
@@ -95,7 +95,7 @@ export default function SquadList({ xi, free = [], slotOrder = [], bench, reserv
     const drop = `slot:${f.slotId}`;
     return (
       <tr key={`free-${f.slotId}`} className={`lu-row lu-row-free ${hover === drop && !full ? 'over' : ''}`} data-lu-drop={drop}>
-        <td className="lu-c-pos"><span className={`lu-pos ${posGroupClass(f.pos)}`}>{f.pos}</span></td>
+        <td className="lu-c-pos"><PosTag pos={f.pos} /></td>
         <td className="lu-c-num lu-c-nr" />
         <td className="lu-c-name"><FaceThumb size={24} className="lu-face" /><span className="lu-name lu-free">frei</span></td>
         <td className="lu-c-num"><span className="lu-suit lu-ghost">00</span></td>

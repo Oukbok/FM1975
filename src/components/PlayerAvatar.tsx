@@ -473,7 +473,7 @@ function DrawnAvatar({ player, club, size = 'medium', className }: Props) {
         <g transform="translate(63,98)">
           <rect x="-7" y="-7" width="14" height="15" rx="3" fill={secondary} stroke={primary} strokeWidth="0.8" />
           <text x="0" y="3.5" textAnchor="middle" fontSize="6" fontWeight="900"
-                fontFamily="Inter, sans-serif" fill={contrastColor(secondary)}>{crestLetter}</text>
+                fontFamily="Antonio, Arial Narrow, sans-serif" fill={contrastColor(secondary)}>{crestLetter}</text>
         </g>
 
         {/* Hals */}

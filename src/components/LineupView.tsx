@@ -296,33 +296,42 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
           hover={hover} dragId={drag?.active ? dragPid : null} full={drag?.full ?? null} onDown={(e, p) => onPlayerDown(e, p, 'list')} />
       </DashBox>
 
-      <DashBox title="Aufstellung" info="formation" icon="lineup" rows={2} className="lu-box" right={getFormation(t.formation).label}>
+      <DashBox title="Aufstellung" icon="lineup" rows={2} className="lu-box" right={getFormation(t.formation).label}>
         <PitchBoard formation={formation} map={map} players={g.players} captainId={t.captainId} bench={benchPlayers} benchSize={benchSize}
           hover={hover} preview={drag?.preview ?? null} dragSlot={drag?.src.kind === 'slot' ? drag.src.slotId : null} snap={snap}
           reserveCount={reserveRows.length} full={drag?.full ?? null} note={note} lifted={!!ghost} dragPid={dragPid}
           onSlotDown={onSlotDown} onPlayerDown={(e, p) => onPlayerDown(e, p, 'bench')}
-          side={<>{/* Bedienelemente neben dem Feld (Wunsch Pascal: Boxkopf bleibt ruhig) */}
+          wide />
+      </DashBox>
+
+      {/* Rechte Spalte (Wunsch Pascal): oben die oft genutzten Optionen – System wählen, speichern/laden, Auto –, darunter Taktik und Standards */}
+      <div className="lu-right">
+        <DashBox title="System & Aufstellung" info="formation" className="lu-opt-box">
+          <div className="lu-opts">
           <Select className="lu-formation" value={t.formation} onChange={(v) => changeFormation(v)} title="Formation">
             <optgroup label={`Typisch für ${decadeOf(year) === 1970 ? "" : "die "}${decadeLabel(decadeOf(year))}`}>{typical.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}</optgroup>
             <optgroup label="Weitere Systeme">{others.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}</optgroup>
             {oldLib.length > 0 && <optgroup label="Aus der Mode (Libero)">{oldLib.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}</optgroup>}
           </Select>
+          <div className="lu-opt-row">
+            <button className="dchip" onClick={() => setSaved(true)} title="Aufstellungen speichern und laden">Speichern / Laden</button>
+            <button className="dchip" onClick={doAuto} title="Der Co-Trainer stellt die beste Elf auf">Auto</button>
+            <button className="dchip" onClick={resetLayout} disabled={!(t.slotLayout && Object.keys(t.slotLayout).length > 0)} title="Eigene Positionen verwerfen, zurück zur Formation">Standard</button>
+          </div>
           <label className="lu-check" title="Gezogene Spieler rasten auf feste Positionsfelder ein">
             <input type="checkbox" checked={snap} onChange={(e) => set({ snapToGrid: e.target.checked })} /> Fest einrasten<InfoTip k="festEinrasten" />
           </label>
-          {t.slotLayout && Object.keys(t.slotLayout).length > 0 && <button className="dchip" onClick={resetLayout} title="Eigene Positionen verwerfen, zurück zur Formation">Standard</button>}
-          <button className="dchip" onClick={() => setSaved(true)} title="Aufstellungen speichern und laden">Speichern / Laden</button>
-          <button className="dchip" onClick={doAuto}>Auto</button>
-          </>} />
-      </DashBox>
+          </div>
+        </DashBox>
 
-      <DashBox title="Taktik" icon="tactics" right={getFormation(t.formation).label}>
-        <TacticHead t={t} formation={formation} set={set} xiAvg={xiAvg} suitAvg={suitAvg} familiar={familiar} xiCount={xiRows.length} />
-      </DashBox>
+        <DashBox title="Taktik" icon="tactics" right={getFormation(t.formation).label}>
+          <TacticHead t={t} formation={formation} set={set} xiAvg={xiAvg} suitAvg={suitAvg} familiar={familiar} xiCount={xiRows.length} />
+        </DashBox>
 
-      <DashBox title="Kapitän & Standards" info="standards" icon="matchball" right={hints.some((h) => h.level === 'warn') ? <span className="lu-warn-n">{hints.filter((h) => h.level === 'warn').length} Hinweise</span> : undefined}>
-        <RolesAndHints t={t} xi={xiPlayers} hints={hints} set={set} />
-      </DashBox>
+        <DashBox title="Kapitän & Standards" info="standards" icon="matchball" right={hints.some((h) => h.level === 'warn') ? <span className="lu-warn-n">{hints.filter((h) => h.level === 'warn').length} Hinweise</span> : undefined}>
+          <RolesAndHints t={t} xi={xiPlayers} hints={hints} set={set} />
+        </DashBox>
+      </div>
 
       {saved && <SavedLineupsModal g={g as unknown as Game} t={t} benchSize={benchSize} onClose={() => setSaved(false)} onChanged={refresh} />}
       {ghost && createPortal(

@@ -4,15 +4,20 @@
 // Die SVG füllt ihr Elternelement (Seitenverhältnis 68/105 muss es selbst halten);
 // Tore liegen hinter der Torlinie (overflow: visible).
 // =============================================================================
-const W = 68, L = 105;
-const PA_W = 40.32, PA_D = 16.5;     // Strafraum
-const GA_W = 18.32, GA_D = 5.5;      // Torraum
+const W0 = 68, L = 105;
+const PA_W0 = 40.32, PA_D = 16.5;     // Strafraum
+const GA_W0 = 18.32, GA_D = 5.5;      // Torraum
 const SPOT = 11, R = 9.15;           // Elfmeterpunkt, Kreisradius
 const GOAL_W = 7.32, GOAL_D = 1.6;   // Tor (angedeutet)
 const STRIPES = 12;
 
-export default function PitchSVG({ className = '' }: { className?: string }) {
+export default function PitchSVG({ className = '', stretch = 1 }: {
+  className?: string;
+  /** Breiter als maßstabsgetreu (Aufstellung, Wunsch Pascal): Breite × stretch, Kreise bleiben rund. */
+  stretch?: number;
+}) {
   const half = Math.sqrt(R * R - (PA_D - SPOT) ** 2); // Teilkreis endet an der Strafraumlinie
+  const W = W0 * stretch, PA_W = PA_W0 * stretch, GA_W = GA_W0 * stretch;
   const cx = W / 2;
   const line = { fill: 'none', stroke: 'var(--lu-line)', strokeWidth: 1.4, vectorEffect: 'non-scaling-stroke' as const };
   const box = (y: number, w: number, d: number, top: boolean) => (

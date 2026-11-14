@@ -3,16 +3,10 @@
    Inspiriert von F1 Manager 2022 & Football Manager
    ============================================================================= */
 
-/* Inter bleibt fuer das Logo (1975 / A Football Manager). Barlow ist die neue
-   durchgaengige UI-/Text-/Tabellenschrift (nuechterne, sport-affine Grotesk). */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&display=swap');
-/* Manrope: schlanke, moderne Grotesk ausschliesslich fuer die Inhalte der
-   Zentrale-/Dashboard-Boxen (Barlow bleibt global, Inter bleibt das Logo). */
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
-/* Oswald: Logo und Knöpfe des Startbildschirms (Fallback: Barlow). */
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap');
-/* Look „Akte 1975“ (31-akte.css): Antonio für Titel/Menüs, Archivo für Text */
+/* Schriften (Wunsch Pascal: wenige Schriftarten im ganzen Spiel): genau zwei –
+   Antonio (--font-display: Titel, Menüs, Knöpfe, große Kennzahlen) und Archivo
+   (--font-ui: Text, Tabellen, Zahlen in Listen). Dazu nur die Zeitungsschrift
+   Roboto Serif für die Presse-Seite (--np-serif). Keine weiteren Familien laden. */
 @import url('https://fonts.googleapis.com/css2?family=Antonio:wght@500;600;700&family=Archivo:wght@400;500;600;700;800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Serif:ital,opsz,wdth,wght@0,8..144,50..150,400..900;1,8..144,50..150,400..900&display=swap');
 
@@ -47,7 +41,7 @@
   --primary-run: #e7d8b4;        /* Weiter-Knopf während der Zeitlauf läuft */
   --primary-run-ink: #3a3020;
   /* Überschriften-/Knopfschrift wie der Startbildschirm */
-  --font-display: 'Oswald', 'Barlow', system-ui, sans-serif;
+  --font-display: 'Antonio', 'Arial Narrow', system-ui, sans-serif;
 
   /* --- Text (Hierarchie: 1 Werte/Namen · 2 Beschriftungen · 3 Nebeninfo · 4 gedimmt) --- */
   --text: #eef1f5;
@@ -108,7 +102,7 @@
      Grundton je Gruppe; Schrift = Grundton gemischt mit --text, Rand/Fläche = Grundton
      transparent (color-mix) – damit auf dunklem wie hellem Grund lesbar.
      Helle Themes können die vier Werte (und --pos-mix) eigens setzen. */
-  --pos-gk: #3fb3aa;         /* Torwart: türkis */
+  --pos-gk: #a583d9;         /* Torwart: lila (Wunsch Pascal) */
   --pos-def: #5aae6c;        /* Abwehr: grün */
   --pos-mid: #5d8fd8;        /* Mittelfeld: blau */
   --pos-att: #d7625f;        /* Angriff: rot */
@@ -330,8 +324,8 @@
      --font-ui = die schlanke Grotesk der Dashboard-/Zentrale-Boxen (Manrope),
      ab jetzt ueberall: body + alle Seiten + Boxen. Schrift global aendern =
      nur diese eine Zeile. --font-logo nur fuer das "1975"-Logo (Inter). */
-  --font-ui: 'Barlow', 'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-logo: 'Oswald', 'Barlow', system-ui, sans-serif;
+  --font-ui: 'Archivo', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-logo: 'Antonio', 'Arial Narrow', system-ui, sans-serif;
   --font-size-base: 18px;                   /* globale Basis-Textgroesse (body) */
   --page-head-icon-size: 27px;              /* wie .dxh-ico svg */
   --page-head-title-size: 24px;             /* wie .dxh-title */

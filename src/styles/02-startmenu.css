@@ -251,7 +251,7 @@
   overflow: hidden;
   background: #120d12;
   color: var(--st-ink);
-  font-family: 'Barlow', system-ui, sans-serif;
+  font-family: var(--font-ui);
 }
 .display-inner .st-start { min-height: 100%; }
 /* Bild deckt den Rahmen ab, behält aber 16:9 – so sitzen die Epochen-Abdunklungen
@@ -306,7 +306,7 @@
   text-shadow: 0 4px 24px rgba(var(--shade-rgb), 0.55);
 }
 .st-logo .y {
-  font-family: 'Oswald', 'Barlow', sans-serif;
+  font-family: var(--font-display);
   font-weight: 700;
   font-size: 132px;
   line-height: 0.88;
@@ -314,7 +314,7 @@
   color: var(--st-ink);
 }
 .st-logo .n {
-  font-family: 'Oswald', 'Barlow', sans-serif;
+  font-family: var(--font-display);
   font-weight: 700;
   font-size: 21px;
   letter-spacing: 7px;
@@ -338,7 +338,7 @@
   border: 0;
   border-radius: 4px;
   cursor: pointer;
-  font-family: 'Oswald', 'Barlow', sans-serif;
+  font-family: var(--font-display);
   font-weight: 600;
   font-size: 19px;
   letter-spacing: 1px;
@@ -354,7 +354,7 @@
 .st-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .st-btn.primary { background: var(--st-accent); color: var(--st-on); box-shadow: none; }
 .st-btn.primary:hover:not(:disabled) { filter: brightness(1.08); background: var(--st-accent); }
-.st-btn .cnt { font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 700; opacity: 0.75; }
+.st-btn .cnt { font-family: var(--font-ui); font-size: 13px; font-weight: 700; opacity: 0.75; }
 .st-era {
   position: absolute;
   right: 40px;
@@ -378,7 +378,7 @@
   cursor: pointer;
   background: transparent;
   color: var(--st-ink);
-  font-family: 'Oswald', 'Barlow', sans-serif;
+  font-family: var(--font-display);
   font-weight: 600;
   font-size: 16px;
 }

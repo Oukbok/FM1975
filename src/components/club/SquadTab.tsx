@@ -4,7 +4,7 @@ import { activeTalks, talkBlocker } from '../../game/transferTalks';
 import { Player } from '../../types';
 import { DashBox, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtPrice, vColor } from '../../ui/format';
-import { GROUP_DE, ScoutStars, avg, groupOf, monthsUntil, scoutMid } from '../../views/shared';
+import { GROUP_DE, ScoutStarBar, ScoutStars, avg, groupOf, monthsUntil, scoutMid } from '../../views/shared';
 import { ClubTabProps } from './shared';
 import PosBadge from '../PosBadge';
 
@@ -65,7 +65,7 @@ export default function SquadTab({ g, d, openPlayer, onTalk, talkErr }: ClubTabP
                   <td className="ctr"><PosBadge p={p} /></td>
                   <td className="num">{p.age}</td>
                   <td className="num"><b style={{ color: vColor(p.overall) }}>{p.overall}</b></td>
-                  <td className="nowrap"><ScoutStars p={p} /></td>
+                  <td className="nowrap"><ScoutStarBar p={p} /></td>
                   <td className="num">{fmtPrice(p.contract.transferValue)}</td>
                   <td className="num muted">{monthsUntil(today, p.contract.expiryDate)} M.</td>
                   {!d.isPlayerClub && (

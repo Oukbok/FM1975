@@ -4,7 +4,7 @@
 // mit Ablagezielen (data-lu-drop) und der Vorschau beim Verschieben.
 // =============================================================================
 import FaceThumb from '../FaceThumb';
-import type { PointerEvent as RPE, ReactNode } from 'react';
+import { useLayoutEffect, useRef, useState, type PointerEvent as RPE, type ReactNode } from 'react';
 import type { Player, Position } from '../../types';
 import type { Formation } from '../../data/formations';
 import { PITCH_GRID, type GridPoint } from '../../data/pitchGrid';
@@ -36,7 +36,7 @@ function Card({ p, pos, captain, small }: { p: Player; pos: Position; captain: b
 /** Ersatzbank: ab 6 Plätzen zwei Reihen (Wunsch Pascal), damit die Karten lesbar bleiben. */
 export const benchCols = (n: number) => (n > 5 ? Math.ceil(n / 2) : Math.max(1, n));
 
-export default function PitchBoard({ formation, map, players, captainId, bench, benchSize, hover, preview, dragSlot, snap, reserveCount, full, note, lifted, dragPid, onSlotDown, onPlayerDown, side }: {
+export default function PitchBoard({ formation, map, players, captainId, bench, benchSize, hover, preview, dragSlot, snap, reserveCount, full, note, lifted, dragPid, onSlotDown, onPlayerDown, side, wide }: {
   formation: Formation; map: Record<string, string>; players: Record<string, Player>; captainId: string | null;
   bench: Player[]; benchSize: number; hover: string | null; preview: SlotPreview | null; dragSlot: string | null; snap: boolean;
   /** Spieler in der Reserve; full = Ziel beim Ziehen ist voll; note = Hinweis nach abgewiesener Ablage; lifted = gezogene Karte hängt am Zeiger. */
@@ -44,14 +44,28 @@ export default function PitchBoard({ formation, map, players, captainId, bench, 
   onSlotDown: (e: RPE, slotId: string) => void; onPlayerDown: (e: RPE, p: Player) => void;
   /** Spalte rechts neben dem Feld (Formation, Einrasten, Speichern …) */
   side?: ReactNode;
+  /** Feld füllt die ganze Box (breiter als maßstabsgetreu, Wunsch Pascal) */
+  wide?: boolean;
 }) {
   const showGrid = !!dragSlot && snap;
+  // Breites Feld: Seitenverhältnis der Box messen, das Spielfeld wird entsprechend breiter gezeichnet.
+  const pitchRef = useRef<HTMLDivElement>(null);
+  const [stretch, setStretch] = useState(1);
+  useLayoutEffect(() => {
+    const el = pitchRef.current;
+    if (!wide || !el) return;
+    const measure = () => { const w = el.clientWidth, h = el.clientHeight; if (w > 50 && h > 50) setStretch(Math.max(1, Math.min(1.6, (w / h) / (72 / 109)))); };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [wide]);
   return (
     <div className="lu-board">
       <div className="lu-pitch-area">
-        <div className="lu-pitch">
+        <div className={`lu-pitch ${wide ? 'wide' : ''}`} ref={pitchRef}>
           <div className="lu-field" data-lu-drop="pitch">
-            <PitchSVG />
+            <PitchSVG stretch={wide ? stretch : 1} />
             {showGrid && PITCH_GRID.map((g) => (
               <span key={g.id} className={`lu-gp ${preview?.grid?.id === g.id ? 'on' : ''}`} style={{ left: `${g.x}%`, top: `${g.y}%` }} />
             ))}

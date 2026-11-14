@@ -17,7 +17,7 @@ import { trainingTargets } from '../../../components/player/profileData';
 import { ATTR_DE } from '../../../components/player/shared';
 import { DashBox, DashPage } from '../../../ui/DashPage';
 import { InfoTip } from '../../../ui/InfoTip';
-import { ScoutStars, squadOf } from '../../shared';
+import { ScoutStarBar, ScoutStars, squadOf } from '../../shared';
 import Icon from '../../../components/Icon';
 import { byPosition } from './model';
 import PosBadge from '../../../components/PosBadge';
@@ -79,7 +79,7 @@ export function PlayersTab({ g, refresh }: { g: Game; refresh: () => void }) {
                     <td className="rl-name"><button className="tr3-namebtn" onClick={() => setSel(p.id)}>{p.fullName}</button></td>
                     <td className="r muted">{p.age}</td>
                     <td className="r">{Math.round(p.overall)}</td>
-                    <td><ScoutStars p={p} /></td>
+                    <td><ScoutStarBar p={p} /></td>
                     <td>
                       <button className={`tr3-star ${isF ? 'on' : ''}`} disabled={!isF && foerder.length >= MAX_FOERDER}
                         onClick={() => toggleFoerder(p.id)} title={isF ? 'Förderung beenden' : 'Als Förderspieler wählen'}>

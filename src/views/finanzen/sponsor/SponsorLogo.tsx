@@ -82,8 +82,8 @@ const GLYPH: Record<SponsorIndustry, string> = {
 
 const FONT: Record<LogoEra, string> = {
   classic: 'Georgia, "Times New Roman", serif',
-  bold: 'Oswald, "Arial Narrow", sans-serif',
-  flat: 'Barlow, "Helvetica Neue", Arial, sans-serif',
+  bold: 'Antonio, "Arial Narrow", sans-serif',
+  flat: 'Archivo, "Helvetica Neue", Arial, sans-serif',
 };
 /** Breite je Zeichen relativ zur Schriftgröße (Schätzung für das Einpassen). */
 const WIDTH: Record<LogoEra, number> = { classic: 0.68, bold: 0.5, flat: 0.56 };

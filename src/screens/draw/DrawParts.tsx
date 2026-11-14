@@ -30,7 +30,7 @@ export function BallSvg({ pot, size = 46, no }: { pot: number; size?: number; no
       </defs>
       <circle cx="20" cy="20" r="18.5" fill={`url(#${gid})`} />
       {pot === 1 && <path d="M2.5 20 a17.5 17.5 0 0 0 35 0" fill="none" stroke="var(--accent)" strokeWidth="3" opacity="0.9" />}
-      {no != null && <text x="20" y="25" textAnchor="middle" fontSize="13" fontWeight="800" fill="#1a1d23" fontFamily="Oswald, Barlow, sans-serif">{no}</text>}
+      {no != null && <text x="20" y="25" textAnchor="middle" fontSize="13" fontWeight="800" fill="#1a1d23" fontFamily="Antonio, Arial Narrow, sans-serif">{no}</text>}
     </svg>
   );
 }

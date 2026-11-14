@@ -126,7 +126,7 @@
 .ms-now-txt.dim { color: var(--text-3); }
 .ms-susp {
   font-size: 64px; font-weight: 900; letter-spacing: 10px; color: var(--text-2);
-  font-family: 'Courier New', monospace; animation: ms-pulse 0.5s ease-in-out infinite; filter: blur(0.6px);
+  font-family: var(--font-ui); font-variant-numeric: tabular-nums; animation: ms-pulse 0.5s ease-in-out infinite; filter: blur(0.6px);
 }
 .ms-reveal { font-size: 78px; font-weight: 900; letter-spacing: 6px; animation: ms-pop 0.45s cubic-bezier(.2, 1.6, .4, 1); }
 .ms-reveal.good { color: var(--accent); text-shadow: 0 0 28px var(--accent-glow); }
