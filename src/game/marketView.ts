@@ -102,6 +102,8 @@ export function marketInfoRows(g: Game, rows: PoolRow[]): Map<string, MarketInfo
       if (m <= 6) tags.push('Ablösefrei bald');
       else if (m <= 12) tags.push('Vertrag endet');
       if (p.transferListed) tags.push('Transferliste');
+      // Auf dem Markt ohne Transferliste: unzufrieden (< 60) und daher abwerbbar (engine/transfers.ts getAvailablePlayers)
+      else if (p.contract.satisfaction < 60 && p.clubId !== g.managedClubId) tags.push('Wechselwillig');
       if ((p.intl?.caps ?? 0) >= 5) tags.push('Nationalspieler');
       if (p.loan) tags.push('Leihe');
     }
@@ -126,4 +128,4 @@ export function rowsFor(g: Game, list: Player[]): PoolRow[] {
 }
 
 /** Kurzform der Etiketten für die Info-Spalte. */
-export const TAG_SHORT: Record<string, string> = { 'Ablösefrei bald': 'Frei', 'Vertrag endet': 'Vtr', Transferliste: 'Liste', Nationalspieler: 'Nat', Leihe: 'Leihe', Jugend: 'Jgd' };
+export const TAG_SHORT: Record<string, string> = { 'Ablösefrei bald': 'Frei', 'Vertrag endet': 'Vtr', Transferliste: 'Liste', Wechselwillig: 'Will weg', Nationalspieler: 'Nat', Leihe: 'Leihe', Jugend: 'Jgd' };

@@ -21,8 +21,8 @@
 .mk-box { display: inline-block; width: 18px; height: 18px; border: 1.5px solid rgba(var(--ink-rgb), 0.4); border-radius: 3px; vertical-align: middle; position: relative; }
 .mk-box.on { background: var(--club-accent, var(--accent)); border-color: var(--club-accent, var(--accent)); }
 .mk-box.on::after { content: ''; position: absolute; left: 5px; top: 1px; width: 5px; height: 10px; border: solid var(--club-accent-ink, var(--bg)); border-width: 0 2px 2px 0; transform: rotate(45deg); }
-.mk-c-info { width: 64px; }
-.mk-tag { display: inline-block; margin-right: 4px; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-weight: 700; color: var(--pos); border: 1px solid currentColor; background: rgba(var(--ink-rgb), 0.03); }
+.mk-c-info { width: 76px; }
+.mk-tag { display: inline-block; margin-right: 4px; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-weight: 700; white-space: nowrap; color: var(--pos); border: 1px solid currentColor; background: rgba(var(--ink-rgb), 0.03); }
 .mk-pname { font-weight: 600; }
 .mk-nat, .mk-club { display: inline-flex; align-items: center; gap: 8px; }
 .mk-nat > span:last-child { font-size: 14px; color: var(--text-2); }
@@ -80,6 +80,7 @@
 .mk-filter-head b { font-family: var(--font-display); font-size: 18px; letter-spacing: 1px; text-transform: uppercase; }
 .mk-filter-body { flex: 1; min-height: 0; overflow: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 12px; }
 .mk-filter-body > label { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 15px; color: var(--text-2); }
+.mk-filter-foot { flex: none; display: flex; justify-content: flex-end; padding: 10px 16px; border-top: 1px solid var(--border-soft); }
 .mk-filter-pair { display: inline-flex; align-items: center; gap: 8px; }
 .mk-filter-in { width: 200px; }
 .mk-filter-check .toggle { position: relative; flex: none; cursor: pointer; }

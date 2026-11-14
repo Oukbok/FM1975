@@ -45,8 +45,13 @@ if (await fb.count()) {
   await page.screenshot({ path: `${outDir}/transfermarkt_filter.png` });
   const before = await page.locator('.mk-count b').innerText();
   await page.locator('.mk-filter .seg3 button:has-text("Ausländer"), .mk-filter button:has-text("Ausländer")').first().click().catch(() => {});
+  await page.waitForTimeout(200);
+  if (await page.locator('.mk-count b').innerText() !== before) errors.push('Filter greift vor „Anwenden“');
+  await page.locator('.mk-filter-foot button:has-text("Anwenden")').click();
   await page.waitForTimeout(300);
+  if (await page.locator('.mk-filter').count()) errors.push('Filter-Popup schließt nicht nach „Anwenden“');
   console.log(`Filter Ausländer: ${before} → ${await page.locator('.mk-count b').innerText()}`);
+  await fb.click(); await page.waitForTimeout(200);
   await page.keyboard.press('Escape'); await page.waitForTimeout(200);
   if (await page.locator('.mk-filter').count()) errors.push('Filter-Popup schließt nicht mit Escape');
   await page.screenshot({ path: `${outDir}/transfermarkt_gefiltert.png` });

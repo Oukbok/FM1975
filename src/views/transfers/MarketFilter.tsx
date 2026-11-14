@@ -3,6 +3,7 @@
 // in der Reiterleiste, kleines Fenster fester Größe darunter. Gefiltert wird nach
 // dem, was dein Stab weiß (Schätzung aus game/marketView.ts), nicht nach den
 // verdeckten Wahrheiten. `pool` blendet Name/Land/Liga zusätzlich ein.
+// Einstellungen gelten erst mit „Anwenden“ am unteren Rand.
 // =============================================================================
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -22,14 +23,15 @@ export interface MarketFilter {
   stMin: number;
   valueMax: number;
   contract: '' | 'soon';
-  listed: boolean;
+  /** Abgabe: offiziell auf der Transferliste oder unzufrieden/wechselwillig */
+  offer: '' | 'listed' | 'unhappy';
   origin: '' | 'home' | 'foreign';
   know: 0 | 1 | 2;
   country: string;
   level: number;
   grp: string;
 }
-export const EMPTY_FILTER: MarketFilter = { name: '', ageMin: 15, ageMax: 40, ovMin: 0, stMin: 0, valueMax: 0, contract: '', listed: false, origin: '', know: 0, country: '', level: 0, grp: '' };
+export const EMPTY_FILTER: MarketFilter = { name: '', ageMin: 15, ageMax: 40, ovMin: 0, stMin: 0, valueMax: 0, contract: '', offer: '', origin: '', know: 0, country: '', level: 0, grp: '' };
 
 /** Zahl gesetzter Filter (für die Beschriftung des Knopfs). */
 export function filterCount(f: MarketFilter): number {
@@ -52,7 +54,8 @@ export function passes(f: MarketFilter, r: PoolRow, m: MarketInfo | undefined, h
     if (f.know === 2 && m.k < 0.45) return false;
   }
   if (f.contract === 'soon' && !(m?.tags.includes('Ablösefrei bald') || m?.tags.includes('Vertrag endet'))) return false;
-  if (f.listed && !m?.tags.includes('Transferliste')) return false;
+  if (f.offer === 'listed' && !m?.tags.includes('Transferliste')) return false;
+  if (f.offer === 'unhappy' && !m?.tags.includes('Wechselwillig')) return false;
   if (f.origin === 'home' && r.nat !== homeNat) return false;
   if (f.origin === 'foreign' && r.nat === homeNat) return false;
   if (f.country === 'foreign' ? r.country === 'Deutschland' : f.country && r.country !== f.country) return false;
@@ -71,6 +74,9 @@ export function FilterButton({ f, onChange, pool = false, countries = [], valueS
   valueSteps?: number[];
 }) {
   const [open, setOpen] = useState(false);
+  // Entwurf: Änderungen im Popup greifen erst mit „Anwenden“ (Wunsch Pascal); Schließen verwirft sie.
+  const [d, setD] = useState<MarketFilter>(f);
+  useEffect(() => { if (open) setD(f); }, [open]);
   const btn = useRef<HTMLButtonElement>(null);
   const box = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState<{ left: number; top: number; s: number } | null>(null);
@@ -93,7 +99,9 @@ export function FilterButton({ f, onChange, pool = false, countries = [], valueS
     return () => { document.removeEventListener('mousedown', down); document.removeEventListener('keydown', key); };
   }, [open]);
   const n = filterCount(f);
-  const set = (patch: Partial<MarketFilter>) => onChange({ ...f, ...patch });
+  const nd = filterCount(d);
+  const set = (patch: Partial<MarketFilter>) => setD((x) => ({ ...x, ...patch }));
+  const apply = () => { onChange(d); setOpen(false); };
   return (
     <>
       <button ref={btn} type="button" className={`tab mk-filter-btn ${open || n ? 'active' : ''}`} aria-expanded={open} onClick={() => setOpen((v) => !v)}>
@@ -103,38 +111,41 @@ export function FilterButton({ f, onChange, pool = false, countries = [], valueS
         <div ref={box} className="mk-filter" role="dialog" aria-label="Filter"
           style={{ left: pos?.left ?? -9999, top: pos?.top ?? -9999, width: W, height: H, transform: pos && pos.s !== 1 ? `scale(${pos.s})` : undefined, visibility: pos ? 'visible' : 'hidden' }}>
           <div className="mk-filter-head"><b>Filter</b>
-            <button type="button" className="dchip" disabled={!n} onClick={() => onChange(EMPTY_FILTER)}>Zurücksetzen</button>
+            <button type="button" className="dchip" disabled={!nd} onClick={() => setD(EMPTY_FILTER)}>Zurücksetzen</button>
           </div>
           <div className="mk-filter-body">
-            {pool && <label>Name<input className="ed-in mk-filter-in" value={f.name} placeholder="Suchen" onChange={(e) => set({ name: e.target.value })} /></label>}
-            {pool && <label>Position<Seg size="s" value={f.grp} onChange={(v) => set({ grp: v })}
+            {pool && <label>Name<input className="ed-in mk-filter-in" value={d.name} placeholder="Suchen" onChange={(e) => set({ name: e.target.value })} onKeyDown={(e) => { if (e.key === 'Enter') apply(); }} /></label>}
+            {pool && <label>Position<Seg size="s" value={d.grp} onChange={(v) => set({ grp: v })}
               options={[{ v: '', label: 'Alle' }, { v: 'GK', label: 'TW' }, { v: 'DEF', label: 'ABW' }, { v: 'MID', label: 'MF' }, { v: 'ATT', label: 'ANG' }]} /></label>}
             <label>Alter<span className="mk-filter-pair">
-              <Select size="s" width={78} value={f.ageMin} onChange={(v) => set({ ageMin: Number(v) })} options={AGES} />
+              <Select size="s" width={78} value={d.ageMin} onChange={(v) => set({ ageMin: Number(v) })} options={AGES} />
               <span>bis</span>
-              <Select size="s" width={78} value={f.ageMax} onChange={(v) => set({ ageMax: Number(v) })} options={AGES} />
+              <Select size="s" width={78} value={d.ageMax} onChange={(v) => set({ ageMax: Number(v) })} options={AGES} />
             </span></label>
-            <label>Stärke ab<Select size="s" width={110} value={f.ovMin} onChange={(v) => set({ ovMin: Number(v) })}
+            <label>Stärke ab<Select size="s" width={110} value={d.ovMin} onChange={(v) => set({ ovMin: Number(v) })}
               options={[0, 50, 55, 60, 65, 70, 75, 80, 85, 90].map((x) => ({ value: x, label: x ? String(x) : 'egal' }))} /></label>
-            <label>Potenzial ab<Select size="s" width={110} value={f.stMin} onChange={(v) => set({ stMin: Number(v) })}
+            <label>Potenzial ab<Select size="s" width={110} value={d.stMin} onChange={(v) => set({ stMin: Number(v) })}
               options={[0, 2, 2.5, 3, 3.5, 4, 4.5].map((x) => ({ value: x, label: x ? `${String(x).replace('.', ',')} Sterne` : 'egal' }))} /></label>
-            {valueSteps.length > 0 && <label>Transferwert bis<Select size="s" width={170} value={f.valueMax} onChange={(v) => set({ valueMax: Number(v) })}
+            {valueSteps.length > 0 && <label>Transferwert bis<Select size="s" width={170} value={d.valueMax} onChange={(v) => set({ valueMax: Number(v) })}
               options={[{ value: 0, label: 'egal' }, ...valueSteps.map((x) => ({ value: x, label: fmtPrice(x) }))]} /></label>}
             {pool
               ? <>
-                <label>Land<Select size="s" width={200} value={f.country} onChange={(v) => set({ country: v })}
+                <label>Land<Select size="s" width={200} value={d.country} onChange={(v) => set({ country: v })}
                   options={[{ value: '', label: 'Alle Länder' }, { value: 'Deutschland', label: 'Deutschland' }, { value: 'foreign', label: 'Ausland' }, ...countries.map((c) => ({ value: c, label: countryName(c) }))]} /></label>
-                <label>Liga<Seg size="s" value={f.level} onChange={(v) => set({ level: v })}
+                <label>Liga<Seg size="s" value={d.level} onChange={(v) => set({ level: v })}
                   options={[{ v: 0, label: 'Alle' }, { v: 1, label: '1.' }, { v: 2, label: '2.' }, { v: 3, label: 'tiefer' }]} /></label>
               </>
-              : <label>Herkunft<Seg size="s" value={f.origin} onChange={(v) => set({ origin: v })}
+              : <label>Herkunft<Seg size="s" value={d.origin} onChange={(v) => set({ origin: v })}
                 options={[{ v: '', label: 'Alle' }, { v: 'home', label: 'Einheimisch' }, { v: 'foreign', label: 'Ausländer' }]} /></label>}
-            <label>Kenntnisse<Seg size="s" value={f.know} onChange={(v) => set({ know: v })}
+            <label>Kenntnisse<Seg size="s" value={d.know} onChange={(v) => set({ know: v })}
               options={[{ v: 0, label: 'Alle' }, { v: 1, label: 'ab vage' }, { v: 2, label: 'ab bekannt' }]} /></label>
-            {!pool && <label>Vertrag<Seg size="s" value={f.contract} onChange={(v) => set({ contract: v })}
+            {!pool && <label>Vertrag<Seg size="s" value={d.contract} onChange={(v) => set({ contract: v })}
               options={[{ v: '', label: 'Alle' }, { v: 'soon', label: 'endet in 12 Monaten' }]} /></label>}
-            {!pool && <label className="mk-filter-check"><span>Nur Transferliste</span>
-              <button type="button" className={`toggle ${f.listed ? 'on' : ''}`} aria-pressed={f.listed} aria-label="Nur Transferliste" onClick={() => set({ listed: !f.listed })} /></label>}
+            {!pool && <label>Abgabe<Seg size="s" value={d.offer} onChange={(v) => set({ offer: v })}
+              options={[{ v: '', label: 'Alle' }, { v: 'listed', label: 'Transferliste' }, { v: 'unhappy', label: 'Wechselwillig' }]} /></label>}
+          </div>
+          <div className="mk-filter-foot">
+            <button type="button" className="btn btn-primary" onClick={apply}>Anwenden</button>
           </div>
         </div>,
         document.body,
