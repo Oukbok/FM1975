@@ -59,7 +59,7 @@ Die Seiten liegen jetzt auf Papier; diese Fotos werden nur noch für die dunklen
 | `bg/gala-buehne.webp` | Festliche Bühne mit Scheinwerfern und Lichtpunkt-Raster, dunkelblau | 2560×1440 | Auslosung, Goldener Ball, Saisonehrung |
 
 ## 2. Spielergesichter (A – größter Einzelhebel)
-**Stand:** 615 Bilder – Epoche `1970` 310, Epoche `1980` 305 (alle Gruppen außer `staff`, `ostasien` und `nordafrika` noch dünn), alle ohne Altersstufe und ohne Maske; es fehlen `staff` und alle Epochen ab `1990`. Seit dem Look „Akte“ werden die Köpfe senkrecht mittig gezeigt – Bildvorgaben bleiben gleich.
+**Stand:** 615 Bilder – Epoche `1970` 310, Epoche `1980` 305 (dünn besetzt: `ostasien`, `nordafrika`, `lateinamerika`), alle ohne Altersstufe und ohne Maske; es fehlen `staff` und alle Epochen ab `1990`. Seit dem Look „Akte“ werden die Köpfe senkrecht mittig gezeigt – Bildvorgaben bleiben gleich.
 
 Technik steht (Register `src/data/faceImages.ts`, Zuordnung `src/components/faces/faceLookup.ts`, Anzeige `src/components/PlayerAvatar.tsx`).
 Jedes Bild, das du ablegst, erscheint sofort an **allen** Stellen mit Gesicht: Spielerprofil, Presse,

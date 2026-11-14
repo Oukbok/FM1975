@@ -6,7 +6,11 @@
 .sub3-page > .dpage.bnd-page { display: flex; align-items: center; justify-content: center; padding: 6px 1.5% 18px; }
 .bnd { position: relative; height: 100%; max-width: 100%; aspect-ratio: 2400 / 1174; container-type: size; background: var(--bnd-folder) center / 100% 100% no-repeat; color: var(--bnd-ink); font-family: var(--font-ui); }
 .bnd > * { position: absolute; }
-.bnd-note { background: center / 100% 100% no-repeat; filter: drop-shadow(0 3px 5px rgba(var(--shade-rgb), 0.28)); }
+/* Zettelbild + Schatten auf eigener Ebene (::before): Text liegt nie unter einem `filter` –
+   gedrehte, gefilterte Ebenen malten Text bei hoher Pixeldichte teils nicht (Bericht Pascal). */
+.bnd-note, .bnd-polaroid { isolation: isolate; }
+.bnd-note::before, .bnd-polaroid::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: var(--img) center / 100% 100% no-repeat; filter: drop-shadow(0 3px 5px rgba(var(--shade-rgb), 0.28)); }
 
 /* Überschriften auf Papier */
 .bnd-h { margin: 0 0 10px; font-family: var(--font-display); font-size: 30px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--bnd-ink); display: flex; align-items: center; gap: 6px; }
@@ -46,13 +50,12 @@ button.bnd-tab:hover { filter: brightness(1.08); text-decoration: underline; tex
 .bnd-rep > i > em { display: block; height: 100%; background: var(--bnd-ink); }
 
 /* Polaroid mit Wappen */
-.bnd-polaroid { left: 37.8%; top: 3.5%; width: 9.8%; aspect-ratio: 440 / 481; margin: 0; background: var(--bnd-polaroid) center / 100% 100% no-repeat; transform: rotate(4deg);
-  filter: drop-shadow(0 4px 6px rgba(var(--shade-rgb), 0.3)); }
+.bnd-polaroid { left: 37.8%; top: 3.5%; width: 9.8%; aspect-ratio: 440 / 481; margin: 0; --img: var(--bnd-polaroid); transform: rotate(4deg); }
 .bnd-pol-img { position: absolute; left: 8%; right: 8%; top: 6.5%; height: 67%; display: flex; align-items: center; justify-content: center; }
 .bnd-polaroid figcaption { position: absolute; left: 6%; right: 6%; bottom: 6%; text-align: center; font-size: 13px; font-weight: 700; color: var(--bnd-ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Links unten: Blatt „Je Wettbewerb“ */
-.bnd-comp { left: 10.5%; top: 54.5%; width: 33%; aspect-ratio: 1200 / 770; background-image: var(--bnd-blatt); transform: rotate(-0.6deg); padding: 0 3.4cqw; container-type: size; }
+.bnd-comp { left: 10.5%; top: 54.5%; width: 33%; aspect-ratio: 1200 / 770; --img: var(--bnd-blatt); transform: rotate(-0.6deg); padding: 0 3.4cqw; container-type: size; }
 /* Zettel-Linien (zettel-blatt.webp): erste Linie bei 11,56 %, Abstand 6,65 % der Zettelhöhe. */
 .bnd-comp .bnd-h3 { height: 11.56cqh; margin: 0; display: flex; align-items: flex-end; padding-bottom: 0.9cqh; font-size: 5.6cqh; line-height: 1; }
 .bnd-comp .bnd-table { font-size: 4.3cqh; border-spacing: 0; }
@@ -84,17 +87,17 @@ button.bnd-tab:hover { filter: brightness(1.08); text-decoration: underline; tex
 
 /* Rechts unten: Titel & Rekorde (Abriss) */
 /* Titel: Platz für alle 16 möglichen Titelarten (Meisterschaften, Pokale, Europapokale je Epoche, Halle, Staffelsieg, Aufstieg, Supercup, Ligapokal, Jugend). */
-.bnd-rec { left: 52.5%; top: 48%; width: 23%; height: 48.5%; background-image: var(--bnd-abriss); transform: rotate(0.8deg); padding: 3.6cqh 1.6% 1.4cqh; display: flex; flex-direction: column; }
+.bnd-rec { left: 52.5%; top: 48%; width: 23%; height: 48.5%; --img: var(--bnd-abriss); transform: rotate(0.8deg); padding: 3.6cqh 1.6% 1.4cqh; display: flex; flex-direction: column; }
 .bnd-titles { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 .bnd-rec .bnd-titles .bnd-kv { height: 2cqh; padding: 0 0 0.15cqh; align-items: flex-end; font-size: 1.5cqh; line-height: 1; }
 
 /* Kleiner Zettel: nächster Meilenstein */
-.bnd-mini { left: 39%; top: 29%; width: 7.6%; aspect-ratio: 380 / 377; background-image: var(--bnd-klein); transform: rotate(-4deg); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1%; }
+.bnd-mini { left: 39%; top: 29%; width: 7.6%; aspect-ratio: 380 / 377; --img: var(--bnd-klein); transform: rotate(-4deg); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1%; }
 .bnd-mini b { font-family: var(--font-display); font-size: 30px; line-height: 1; color: var(--bnd-ink); }
 .bnd-mini span { font-size: 12px; line-height: 1.25; color: var(--bnd-ink-2); }
 
 /* Zeitungsausschnitt */
-.bnd-paper { left: 75.6%; top: 48%; width: 18%; aspect-ratio: 800 / 533; background-image: var(--bnd-zeitung); transform: rotate(-2deg); padding: 2.2% 1.8% 1.4%; display: flex; flex-direction: column; gap: 3px; overflow: hidden; }
+.bnd-paper { left: 75.6%; top: 48%; width: 18%; aspect-ratio: 800 / 533; --img: var(--bnd-zeitung); transform: rotate(-2deg); padding: 2.2% 1.8% 1.4%; display: flex; flex-direction: column; gap: 3px; overflow: clip; overflow-clip-margin: 10px; }
 .bnd-paper-mast { font-family: var(--np-serif, Georgia, serif); font-size: 22px; font-weight: 700; border-bottom: 1px solid var(--bnd-ink-2); color: var(--bnd-ink); }
 .bnd-paper-h { font-family: var(--np-serif, Georgia, serif); font-size: 19px; font-weight: 700; line-height: 1.15; color: var(--bnd-ink); }
 .bnd-paper-t { font-family: var(--np-serif, Georgia, serif); font-size: 14px; line-height: 1.3; color: var(--bnd-ink-2); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
@@ -102,14 +105,14 @@ button.bnd-tab:hover { filter: brightness(1.08); text-decoration: underline; tex
 .bnd-paper-cols i { display: block; height: 3px; border-radius: 1px; background: var(--bnd-rule); }
 
 /* Meilensteine (oranger Zettel) */
-.bnd-miles { left: 75.4%; top: 72%; width: 11.6%; aspect-ratio: 700 / 714; background-image: var(--bnd-orange); transform: rotate(1.5deg); padding: 1.6% 1.1% 1%; overflow: hidden; }
+.bnd-miles { left: 75.4%; top: 72%; width: 11.6%; aspect-ratio: 700 / 714; --img: var(--bnd-orange); transform: rotate(1.5deg); padding: 1.6% 1.1% 1%; overflow: clip; overflow-clip-margin: 10px; }
 .bnd-miles .bnd-h3 { font-size: 17px; margin-bottom: 3px; }
 .bnd-mile { display: flex; gap: 6px; align-items: baseline; padding: 2px 0; border-bottom: 1px solid var(--bnd-rule); font-size: 13px; line-height: 1.2; color: var(--bnd-ink); }
 .bnd-mile b { font-family: var(--font-display); font-size: 16px; min-width: 42px; }
 .bnd-mile small { color: var(--bnd-ink-2); }
 
 /* Lieblings- und Angstgegner (gelber Zettel) */
-.bnd-opps { left: 85.8%; top: 69%; width: 11.4%; aspect-ratio: 700 / 709; background-image: var(--bnd-gelb); transform: rotate(-1.5deg); padding: 1.6% 1% 1%; overflow: hidden; }
+.bnd-opps { left: 85.8%; top: 69%; width: 11.4%; aspect-ratio: 700 / 709; --img: var(--bnd-gelb); transform: rotate(-1.5deg); padding: 1.6% 1% 1%; overflow: clip; overflow-clip-margin: 10px; }
 .bnd-opps .bnd-h3 { font-size: 16px; margin-bottom: 2px; }
 .bnd-opp { display: flex; align-items: center; gap: 5px; padding: 3px 0; font-size: 13px; }
 .bnd-opp-n { font-weight: 700; color: var(--bnd-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 92px; display: inline-block; vertical-align: bottom; }
