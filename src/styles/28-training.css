@@ -14,21 +14,9 @@
 .td-blk.trk-fit { background: color-mix(in srgb, var(--trk) 7%, var(--panel-2)); }
 .td-empty { width: 30px; height: 30px; border: 1px dashed var(--border); border-radius: 4px; }
 
-/* ---- Trainerteam ---- */
-.tt-msg { margin: 6px 0; font-size: 13px; color: var(--text); padding: 6px 8px; border-left: 3px solid var(--accent); background: var(--bg-2); }
-.tt-row { display: flex; gap: 8px; align-items: flex-start; padding: 7px 4px; border-bottom: 1px solid var(--border-soft); cursor: pointer; }
-.tt-row:hover { background: var(--panel-hover); }
-.tt-row.sel { box-shadow: inset 3px 0 0 var(--accent); }
-.tt-row.vacant { cursor: default; opacity: .85; }
-.tt-row-main { flex: 1; min-width: 0; }
-.tt-row-sub { display: flex; align-items: center; gap: 6px; font-size: 12px; margin-top: 2px; }
-.tt-row-btns { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
-.tt-role { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-3); }
-.tt-warn { color: var(--neg); }
-.tt-qbar { display: inline-block; width: 60px; height: 6px; border-radius: 3px; background: var(--bar-track); vertical-align: middle; overflow: hidden; }
-.tt-qbar > span { display: block; height: 100%; }
-.tt-filter { display: inline-flex; gap: 6px; align-items: center; }
+/* ---- Auswahlliste im Trainingsplan (Trainerteam/Mitarbeiter: 28-staff.css) ---- */
 .tt-select { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 3px 6px; font: inherit; font-size: 13px; }
+/* Tabelle der Top-Transfers (views/transfers/window/TopTransfersPage.tsx) – Klasse stammt vom früheren Trainerteam-Arbeitsmarkt */
 .tt-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .tt-table th { text-align: left; font-weight: 500; color: var(--text-3); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; padding: 4px 6px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--panel); }
 .tt-table td { padding: 5px 6px; border-bottom: 1px solid var(--border-soft); white-space: nowrap; }
@@ -36,9 +24,6 @@
 .tt-table tbody tr:hover { background: var(--panel-hover); }
 .tt-table tr.sel { box-shadow: inset 3px 0 0 var(--accent); }
 .tt-table .r { text-align: right; }
-.tt-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.tt-key { color: var(--accent); }
-.tt-neg { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
 
 /* ---- Kopfleiste: neun Hauptkategorien (Training, Jugend) passen bei 1920 px ---- */
 .hd-nav { gap: 0; }
@@ -47,5 +32,3 @@
 
 /* Symbole: .game-icon misst 1em – Größe hier fest setzen. */
 .td-day .game-icon { width: 22px; height: 22px; }
-.modal.tt-modal { max-width: 1180px; height: 84%; } /* feste Größe: Antwortzeile lässt das Fenster nicht wachsen */
-.tt-modal .mx-body { padding: 20px 28px 26px; overflow: auto; }

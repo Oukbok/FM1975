@@ -1352,6 +1352,8 @@ export interface ClubCoach {
   pressure: number;
   /** Ligabilanz der abgeschlossenen Saisons im Amt (game/coachRecord.ts); fehlt bei alten Spielständen. */
   rec?: CoachRecord;
+  /** War schon Person auf dem Arbeitsmarkt (Co-Trainer, dein früherer Cheftrainer): Fähigkeiten bleiben erhalten (engine/staffGen.ts). */
+  sm?: import('../engine/staffGen').StaffSnapshot;
 }
 
 /** Ligabilanz eines Trainers: Siege/Remis/Niederlagen, Titel. */

@@ -8,7 +8,7 @@ import { migratePositions2 } from '../src/game/positions2Migration';
 import { ensureCareer } from '../src/game/careerState';
 import { askAboutCoach } from '../src/game/boardPressure';
 import { headCoachNow, openCoachEntry } from '../src/game/headCoaches';
-import { candidatesFor, hireStaff } from '../src/game/staffGame';
+import { quickHire } from '../src/game/trainerTeam';
 import { dismiss } from '../src/game/trainerTeam';
 import { Game } from '../src/game/state';
 import { makeMessage, pushMessage } from '../src/engine/messages';
@@ -21,10 +21,10 @@ migratePositions2(g);
 ensureCareer(g);
 const today = g.calendar.currentDate;
 if (!headCoachNow(g)) {
-  hireStaff(g, candidatesFor(g, 'cheftrainer')[0]);
+  quickHire(g, 'cheftrainer');
   const e = openCoachEntry(g)!; e.from = `${Number(g.season.slice(0, 4)) - 2}-07-01`; e.recFrom = g.season;
   dismiss(g, headCoachNow(g)!.id);
-  hireStaff(g, candidatesFor(g, 'cheftrainer')[1]);
+  quickHire(g, 'cheftrainer', 1);
   openCoachEntry(g)!.from = `${g.season.slice(0, 4)}-07-15`;
 }
 if (!process.env.NOPRESS) askAboutCoach(g, today, false);

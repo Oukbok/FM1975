@@ -6,7 +6,8 @@
 // charakter, umfeld, moral, potenzial, epoche, reife, reifegrad, weltklasse,
 // abbau_bremse, abbau_spitze, spezial:<fach>, fokus:<schwerpunkt>, plan,
 // foerder, individuell, lager, lager_disziplin, halle, mentor, fleiss, juwel,
-// durchbruch, spaetzuender, knick; dazu start (Übertrag) und Hinweise note_*.
+// durchbruch, spaetzuender, knick, trainerdecke, trainerniveau, trainer_schub,
+// trainer_unter, abbau_trainer (engine/coaching.ts); dazu start (Übertrag) und Hinweise note_*.
 // =============================================================================
 import type { Player } from '../types';
 import type { DevLog, RatingReason } from './devLog';
@@ -30,7 +31,7 @@ export function reasonText(k: string, v: number, p: Pick<Player, 'age'>, log?: D
     case 'langlebig': return up ? 'robuster Körper: der Abbau setzt später ein' : 'der Körper baut früher ab als bei anderen';
     case 'training': return up ? 'gute Trainingsbedingungen' : 'schwache Trainingsbedingungen';
     case 'anlagen': return up ? 'gute Trainingsanlagen' : 'einfache Trainingsanlagen';
-    case 'trainer': return up ? 'starkes Trainerteam' : 'Trainerteam zu klein oder zu schwach für den Kader';
+    case 'trainer': return up ? 'starkes Trainerteam' : 'Trainerteam lückenhaft oder zu schwach: Cheftrainer oder Co-Trainer fehlen';
     case 'praxis': {
       const min = log ? num(log.min) : '';
       const res = log && log.res >= 45 ? `, dazu ${num(log.res)} min in der zweiten Mannschaft` : '';
@@ -43,6 +44,13 @@ export function reasonText(k: string, v: number, p: Pick<Player, 'age'>, log?: D
     case 'umfeld': return up ? 'ruhiges, erfolgreiches Umfeld' : 'Unruhe im Verein';
     case 'moral': return up ? 'gute Moral' : 'schlechte Moral';
     case 'potenzial': return 'nahe an seinem Leistungsvermögen: die letzten Punkte sind die schwersten';
+    case 'besetzung': return up ? 'Trainerteam vollständig besetzt' : 'Cheftrainer oder Co-Trainer fehlen: das Training leidet';
+    case 'talentfoerderer': return 'ein Talentförderer im Trainerteam kümmert sich um die Jungen';
+    case 'trainerdecke': return 'das Trainerteam ist zu schwach für sein Potenzial: die letzten Schritte bleiben aus';
+    case 'trainerniveau': return up ? 'lernt viel von einem Trainerteam, das klar über seinem Niveau arbeitet' : 'das Trainerteam kann ihm kaum noch etwas beibringen';
+    case 'trainer_schub': return 'Schub durch die Arbeit mit dem Trainerteam';
+    case 'trainer_unter': return 'unterfordert: kein Trainer auf seinem Niveau';
+    case 'abbau_trainer': return up ? 'das Trainerteam hält ihn länger auf der Höhe' : 'schwaches Trainerteam: der Abbau geht schneller';
     case 'epoche': return up ? 'moderne Sportwissenschaft' : `Trainingslehre ${year ?? ''}: Sportwissenschaft noch in den Anfängen`.replace('  ', ' ');
     case 'reife':
       if (p.age <= 22) return up ? 'Frühentwickler: wächst in jungen Jahren schnell' : 'Spätentwickler: der Schub kommt erst später';
@@ -79,7 +87,7 @@ export interface PayoutInfo {
   /** Rest nach der Auszahlung. */
   rest: number;
   /** Begrenzung, die gegriffen hat. */
-  capped?: 'max' | 'pot' | null;
+  capped?: 'max' | 'pot' | 'coach' | null;
   cap: number;
   /** Die Unschärfe der Bewertung hat den Ausschlag gegeben. */
   close?: boolean;
@@ -94,6 +102,7 @@ export interface PayoutInfo {
 export function explainRating(p: Player, log: DevLog | undefined, info: PayoutInfo, year: number): { reasons: RatingReason[]; generic: boolean } {
   const notes: RatingReason[] = [];
   if (info.capped === 'pot') notes.push({ k: 'note_pot', v: 0, text: 'an der Grenze seines Potenzials angekommen' });
+  if (info.capped === 'coach') notes.push({ k: 'note_coach', v: 0, text: 'mehr ist mit diesem Trainerteam nicht drin – ihm fehlt ein Trainer auf seinem Niveau' });
   if (info.capped === 'max') notes.push({ k: 'note_max', v: 0, text: `mehr als ${info.cap} Punkte auf einmal gibt es in dieser Runde nicht` });
   if (info.close) notes.push({ k: 'note_close', v: 0, text: 'knappe Entscheidung des Trainerteams' });
   if (info.rest >= 0.8 && info.change >= 0) notes.push({ k: 'note_rest', v: 0, text: 'weitere Fortschritte zeichnen sich ab' });

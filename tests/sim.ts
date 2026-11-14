@@ -9,7 +9,10 @@ import { AWARD_CATS } from '../src/engine/seasonAwards';
 import { createNewGame } from '../src/game/newGame';
 import { seasonStartYear } from '../src/data/timeline';
 import { headCoachNow, headCoachRows } from '../src/game/headCoaches';
-import { candidatesFor, hireStaff } from '../src/game/staffGame';
+import { quickHire } from '../src/game/trainerTeam';
+import { bindCoaching } from '../src/game/coachingGame';
+import { coachCutFor, coachLevelFor } from '../src/engine/development';
+import { teachFactor } from '../src/engine/coaching';
 import { careerSummary, originOfPlayer, trackCareers } from './simCareers';
 import { poolRows } from '../src/game/playerPool';
 import { worldClubs } from '../src/game/worldPool';
@@ -444,6 +447,15 @@ function staffReport(game: Game) {
   const l = w.log[w.log.length - 1];
   const roles: Record<string, number> = {};
   for (const m of free) roles[m.roleId] = (roles[m.roleId] ?? 0) + 1;
+  {
+    // Niveau der Trainerteams und was es für die Spieler bedeutet (engine/coaching.ts).
+    const map = bindCoaching(game);
+    const lv = [...map.values()].map((c) => c.level).sort((a, b) => a - b);
+    const pl = Object.values(game.players).filter((p) => !p.isYouth && map.has(p.clubId));
+    const cut = pl.map((p) => coachCutFor(p));
+    const teach = pl.filter((p) => p.age <= 27).map((p) => teachFactor(coachLevelFor(p) ?? 0, p.overall));
+    console.log(`   COACH Niveau ${lv[0].toFixed(0)}–${lv[lv.length - 1].toFixed(0)} (Ø ${avg(lv).toFixed(1)}) | Decke greift bei ${cut.filter((c) => c >= 1).length}/${pl.length} Spielern (Ø ${avg(cut.filter((c) => c >= 1)).toFixed(1)}, max ${Math.max(0, ...cut).toFixed(1)}) | Lerntempo ≤27 Ø ${avg(teach).toFixed(3)} (${Math.min(...teach).toFixed(2)}–${Math.max(...teach).toFixed(2)})`);
+  }
   console.log(`   STAFF ${ps.length} Personen (${free.length} frei), Ex-Profis ${Math.round(ex.length / Math.max(1, ps.length) * 100)} %, Qualität Ø ${avg(q).toFixed(1)} max ${q[q.length - 1]}, neu ${l?.exPros ?? 0} Ex-Profis/${l?.outsiders ?? 0} Quereinsteiger, Aufstiege ${l?.promoted ?? 0}, Abgänge ${l?.retired ?? 0}, KI-Einstellungen ${l?.hires ?? 0} | frei je Rolle: ${Object.entries(roles).map(([k, v]) => k + ' ' + v).join(', ')}`);
 }
 
@@ -477,7 +489,7 @@ if (process.env.AI) aiReport(g);
 for (let s = 0; s < seasons; s++) {
   let guard = 0;
   // HUMAN=1: Trainerbank wie ein Mensch besetzen (Managerkarriere, game/headCoaches.ts).
-  if (process.env.HUMAN && !headCoachNow(g)) hireStaff(g, candidatesFor(g, 'cheftrainer')[0]);
+  if (process.env.HUMAN && !headCoachNow(g)) quickHire(g, 'cheftrainer');
   while (!CalendarEngine.isSeasonOver(g.calendar)) {
     // Simulation: eigener Verein stellt wie die KI auf (keine eingefrorene Startelf).
     const t = g.clubs[g.managedClubId]?.tactics;

@@ -1,25 +1,27 @@
 // =============================================================================
-// Mitarbeiter 2.0 im Spielablauf: Personen verwalten, Wirkung auf Training,
-// Monatsbericht des Trainerstabs, Wechsel zum Saisonende.
+// Mitarbeiter im Spielablauf: Wirkung auf Training und Entwicklung,
+// Monatsbericht des Trainerstabs, Wechsel zum Saisonende, Stab → Spielstärke.
+// Einstellen/Versetzen/Entlassen: game/trainerTeam.ts. Niveau des Trainerteams
+// gegenüber den Spielern: game/coachingGame.ts (Rechnung engine/coaching.ts).
 // =============================================================================
 import { Game } from './state';
 import { Club, Player } from '../types';
 import { STAFF_BY_ID, StaffEffects, computeStaffEffects } from '../data/staff';
 import { setStaffFactor } from '../engine/honourEffects';
 import { clubTrainingFactor, ClubDevContext, truePotential } from '../engine/development';
-import { economyScale, yearOf } from '../engine/economy';
-import { book } from '../engine/finances';
+import { yearOf } from '../engine/economy';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { recordInjury } from '../engine/history';
 import {
-  coachingReport, effectiveQuality, FOCUS_LABEL, focusEffect, makeCandidates, memberMonthlySalary, methodFactor,
+  effectiveQuality, FOCUS_LABEL, focusEffect, methodFactor,
   migrateStaff, phaseOf, specialistBoost, StaffMember, topSpecialty, staffEffectsFromMembers, staffSeasonTurnover, TrainingFocus,
-  trainingCourseCost,
 } from '../engine/staffPeople';
-import { skillsFromQuality } from '../engine/staffSkills';
-import { aiStaffExtras, staffWorldSeason } from './staffWorld';
+import { skillsFromQuality } from '../engine/staffGen';
+import { staffLevel } from '../engine/staffSkills';
+import { aiStaffExtras, staffMovedTo, staffWorldSeason } from './staffWorld';
 import { ownStaffSeason } from './trainerTeam';
-import { closeHeadCoach, syncHeadCoach } from './headCoaches';
+import { bindCoaching, ownCoaching } from './coachingGame';
+import { closeHeadCoach } from './headCoaches';
 import { planDevFactor } from './trainingWeek';
 
 export const MAX_FOERDER = 3;
@@ -28,7 +30,7 @@ export const MAX_FOERDER = 3;
 export function ensureStaff(g: Game): StaffMember[] {
   if (!g.staff) g.staff = migrateStaff(g.hiredStaff ?? [], yearOf(g.calendar.currentDate), Math.random);
   for (const m of g.staff) {
-    if (!m.skills) skillsFromQuality(m, Math.random);
+    if (!m.skills || m.skills.organisation == null) skillsFromQuality(m, Math.random);
     if (!m.contractEnd) m.contractEnd = `${yearOf(g.calendar.currentDate) + (Number(g.calendar.currentDate.slice(5, 7)) >= 7 ? 2 : 1)}-06-30`;
   }
   g.hiredStaff = g.staff.map((m) => m.roleId);
@@ -52,86 +54,40 @@ export function devContextFor(g: Game, date: string): (club: Club) => ClubDevCon
   const foerder = new Set(g.foerderSpieler ?? []);
   const aiExtra = aiStaffExtras(g);
   const plan = planDevFactor(g);
+  // Niveau der Trainerteams aller Vereine für diese Woche hinterlegen (Decke/Lerntempo je Spieler).
+  bindCoaching(g);
+  const sim = !!(g as Game & { simAutoManage?: boolean }).simAutoManage;
   return (club) => {
-    if (club.id !== g.managedClubId) {
+    if (club.id !== g.managedClubId || sim) {
       // KI-Vereine: Vereinsgröße und (halb) das eigene Trainerteam vom Arbeitsmarkt (game/staffWorld.ts).
       const byRep = Math.max(-0.03, Math.min(0.1, ((club.reputation ?? 60) - 60) / 350));
       const team = aiExtra.get(club.id);
       const extra = team == null ? byRep : (byRep + team) / 2;
       return { training: clubTrainingFactor(club, extra), environment: 1 };
     }
-    const rep = coachingReport(staff, club.playerIds.length, year);
-    const capOk = rep.capacity >= 0.8;
-    const training = clubTrainingFactor(club, rep.extra);
+    // Eigener Verein: Güte der Trainer, Abzüge ohne Cheftrainer bzw. mit zu wenigen Co-Trainern (engine/coaching.ts).
+    const team = ownCoaching(g);
+    const staffed = team.capacity >= 0.8;
     const facilities = clubTrainingFactor(club, 0);
+    const withQuality = clubTrainingFactor(club, team.quality);
+    const training = clubTrainingFactor(club, team.extra);
     // Ursachen je Spieler (Produkt = playerFactor) – für die Begründung der Bewertung (engine/devLog.ts).
     const parts = (p: Player): [string, number][] => [
       [`spezial:${topSpecialty(staff, p, year) ?? 'allround'}`, specialistBoost(staff, p, year)],
+      ['talentfoerderer', p.age <= 21 ? team.youthBoost : 1],
       [`fokus:${focus}`, focusEffect(focus, p).dev],
       ['plan', plan],
-      ['foerder', foerder.size ? (foerder.has(p.id) ? (capOk ? 1.25 : 1.15) : 0.97) : 1],
+      ['foerder', foerder.size ? (foerder.has(p.id) ? (staffed ? 1.25 : 1.15) : 0.97) : 1],
     ];
     return {
       training,
       environment: 1,
-      // Anlagen/Vereinsgröße ↔ Trainerteam (Rest des Trainingsfaktors).
-      trainingParts: [['anlagen', facilities], ['trainer', training / facilities]],
+      // Anlagen/Vereinsgröße ↔ Güte des Trainerteams ↔ fehlende Besetzung (Rest des Trainingsfaktors).
+      trainingParts: [['anlagen', facilities], ['trainer', withQuality / facilities], ['besetzung', training / withQuality]],
       playerFactor: (p: Player) => parts(p).reduce((f, [, x]) => f * x, 1),
       playerParts: parts,
     };
   };
-}
-
-// -----------------------------------------------------------------------------
-// Personalentscheidungen (aus der Mitarbeiter-Seite)
-// -----------------------------------------------------------------------------
-export function candidatesFor(g: Game, roleId: string): StaffMember[] {
-  const year = yearOf(g.calendar.currentDate);
-  const club = g.clubs[g.managedClubId];
-  // Deterministisch je Rolle und Monat: Neuladen der Seite würfelt nicht neu.
-  let seed = 0;
-  const key = `${roleId}:${g.calendar.currentDate.slice(0, 7)}:${g.managedClubId}`;
-  for (let i = 0; i < key.length; i++) seed = (seed * 31 + key.charCodeAt(i)) >>> 0;
-  const r = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
-  return makeCandidates(roleId, year, club?.reputation ?? 60, r);
-}
-
-export function hireStaff(g: Game, cand: StaffMember): string {
-  const staff = ensureStaff(g);
-  const old = staff.find((m) => m.roleId === cand.roleId);
-  if (old) { closeHeadCoach(g, old.id, 'entlassen'); staff.splice(staff.indexOf(old), 1); }
-  staff.push({ ...cand, hired: g.calendar.currentDate });
-  g.hiredStaff = staff.map((m) => m.roleId);
-  syncHeadCoach(g);
-  const role = STAFF_BY_ID[cand.roleId];
-  return `${cand.name} ist neuer ${role?.name ?? 'Mitarbeiter'}${old ? ` (ersetzt ${old.name})` : ''}.`;
-}
-
-export function fireStaff(g: Game, memberId: string): string {
-  const staff = ensureStaff(g);
-  const m = staff.find((x) => x.id === memberId);
-  if (!m) return '';
-  const scale = economyScale(yearOf(g.calendar.currentDate));
-  // Abfindung: zwei Monatsgehälter.
-  const club = g.clubs[g.managedClubId];
-  const sev = memberMonthlySalary(m, scale) * 2;
-  if (club) book(club.finances, g.calendar.currentDate, -sev, 'staff_wages', `Abfindung ${m.name}`, true);
-  closeHeadCoach(g, m.id, 'entlassen');
-  staff.splice(staff.indexOf(m), 1);
-  g.hiredStaff = staff.map((x) => x.roleId);
-  return `${m.name} wurde entlassen (Abfindung bezahlt).`;
-}
-
-export function sendToCourse(g: Game, memberId: string): string {
-  const m = ensureStaff(g).find((x) => x.id === memberId);
-  const club = g.clubs[g.managedClubId];
-  if (!m || !club) return '';
-  const year = yearOf(g.calendar.currentDate);
-  const cost = trainingCourseCost(m, economyScale(year));
-  book(club.finances, g.calendar.currentDate, -cost, 'staff_wages', `Fortbildung ${m.name}`, true);
-  m.methodYear = year;
-  m.loyalty = Math.min(100, m.loyalty + 8);
-  return `${m.name} bildet sich fort – Methodenstand ${year}.`;
 }
 
 export function setFoerder(g: Game, ids: string[]): void {
@@ -164,7 +120,7 @@ export function monthlyTrainingReport(g: Game, today: string): void {
   const up = [...noisy].sort((a, b) => b.s - a.s).slice(0, 3).filter((x) => x.s > 0.15);
   const flat = noisy.filter((x) => x.p.age <= 26 && x.s <= 0.05 && truePotential(x.p) - x.p.overall > 3).slice(0, 3);
   const lowMinutes = players.filter((p) => p.age <= 23 && (p.development.recentMinutes ?? 0) < 120).slice(0, 3);
-  const rep = coachingReport(staff, players.length, year);
+  const team = ownCoaching(g);
   const focus = currentFocus(g, today);
   const outdated = staff.filter((m) => methodFactor(m, year) < 0.9);
   const foerder = (g.foerderSpieler ?? []).map((id) => g.players[id]).filter(Boolean) as Player[];
@@ -178,7 +134,14 @@ export function monthlyTrainingReport(g: Game, today: string): void {
     const x = deltas.find((d) => d.p.id === p.id);
     return `• ${p.fullName}: ${x && x.d > 0.4 ? 'zieht richtig an' : x && x.d > 0.1 ? 'auf gutem Weg' : 'braucht noch Zeit'}`;
   }));
-  if (rep.capacity < 0.8) lines.push('', `Der Kader ist für das Trainerteam zu groß (Betreuung ${Math.round(rep.capacity * 100)} %). Ein weiterer Trainer würde helfen.`);
+  if (!team.head) lines.push('', 'Uns fehlt ein Cheftrainer. Ohne ihn leidet das Training deutlich – die Spieler entwickeln sich langsamer und kommen weniger weit.');
+  if (team.missing > 0) lines.push('', `Für einen Verein unserer Größe ${team.missing === 1 ? 'fehlt ein Co-Trainer' : `fehlen ${team.missing} Co-Trainer`} (${team.assistants.length} von ${team.need} besetzt). Das kostet Trainingsqualität.`);
+  {
+    // Wem kann das Trainerteam nichts mehr beibringen? (Niveau klar unter dem Spieler)
+    const lvl = Math.round(team.level);
+    const above = players.filter((p) => p.age <= 28 && p.naturalPosition !== 'TW' && p.overall >= lvl + 4).sort((a, b) => b.overall - a.overall).slice(0, 3);
+    if (above.length) lines.push('', `Über dem Niveau des Trainerteams (${lvl}): ${above.map((p) => p.fullName).join(', ')} – ihnen können wir nur noch wenig beibringen.`);
+  }
   if (outdated.length) lines.push('', `Veraltete Methoden: ${outdated.map((m) => m.name).join(', ')} – eine Fortbildung lohnt sich.`);
   if (!head) lines.push('', 'Ohne Co- oder Cheftrainer sind diese Eindrücke nur grob.');
 
@@ -197,9 +160,15 @@ export function staffSeasonChange(g: Game, date: string): void {
   const staff = ensureStaff(g);
   const club = g.clubs[g.managedClubId];
   const rivals = Object.values(g.clubs).filter((c) => c.id !== g.managedClubId && !c.id.startsWith('am') && !c.id.startsWith('eu_') && !c.id.startsWith('w_') && (c.reputation ?? 0) >= (club?.reputation ?? 60));
-  const pick = () => (rivals.length ? rivals[Math.floor(Math.random() * rivals.length)].name : 'einem Verein aus dem Ausland');
+  const picked: (Club | null)[] = [];
+  const pick = () => { const c = rivals.length ? rivals[Math.floor(Math.random() * rivals.length)] : null; picked.push(c); return c ? c.name : 'einem Verein aus dem Ausland'; };
   const res = staffSeasonTurnover(staff, club?.reputation ?? 60, yearOf(date), Math.random, pick);
-  for (const l of res.left) closeHeadCoach(g, l.m.id, l.reason.startsWith('geht in den Ruhestand') ? 'ruhestand' : 'abgeworben', date);
+  for (const l of res.left) {
+    const retired = l.reason.startsWith('geht in den Ruhestand');
+    closeHeadCoach(g, l.m.id, retired ? 'ruhestand' : 'abgeworben', date);
+    // Abgeworbene arbeiten beim neuen Verein weiter (und lassen sich von dort zurückholen).
+    if (!retired) { const to = picked.shift(); if (to) staffMovedTo(g, l.m, to.id, date); }
+  }
   g.hiredStaff = staff.map((m) => m.roleId);
   // Trainerteam: Lernen/Vertragsenden des eigenen Stabs, dann der ganze Arbeitsmarkt.
   ownStaffSeason(g, date);
@@ -207,9 +176,9 @@ export function staffSeasonChange(g: Game, date: string): void {
   if (res.left.length) {
     pushMessage(g.messages, makeMessage({
       date, category: 'board', from: 'Geschäftsstelle',
-      subject: `Personal: ${res.left.length} Abgang${res.left.length > 1 ? 'änge' : ''}`,
+      subject: `Personal: ${res.left.length} ${res.left.length > 1 ? 'Abgänge' : 'Abgang'}`,
       shortText: res.left.map((l) => l.m.name).join(', '),
-      bodyText: res.left.map((l) => `• ${l.m.name} (${STAFF_BY_ID[l.m.roleId]?.name ?? ''}, Qualität ${l.m.quality}) ${l.reason}.`).join('\n')
+      bodyText: res.left.map((l) => `• ${l.m.name} (${STAFF_BY_ID[l.m.roleId]?.name ?? ''}, Eignung ${staffLevel(l.m.quality)}) ${l.reason}.`).join('\n')
         + '\n\nDie Stellen besetzt du unter Training › Trainerteam bzw. Verein › Mitarbeiter neu.',
     }));
   }

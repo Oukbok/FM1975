@@ -33,7 +33,7 @@ export function RatingIntro({ g, label, date, count, onStart, onSkip }: {
   const kind = kindOf(label);
   const items = [
     { t: 'Wer wird bewertet', x: `Alle ${count} Profis deines Kaders, alphabetisch nach Nachnamen. Jugendspieler entwickeln sich getrennt in ihren Mannschaften.` },
-    { t: 'Was zählt', x: 'Alter, Spielpraxis (auch in der zweiten Mannschaft), Training mit Anlagen, Trainerteam, Spezialtrainern, Schwerpunkt und Trainingsplan, Förderspieler, Charakter und Moral – und wie weit der Spieler noch von seinem Potenzial entfernt ist.' },
+    { t: 'Was zählt', x: 'Alter, Spielpraxis (auch in der zweiten Mannschaft), Training mit Anlagen, Schwerpunkt und Trainingsplan, Förderspieler, Charakter und Moral – und das Trainerteam: Liegt sein Niveau klar über dem Spieler, lernt er schneller; liegt es unter seinem Potenzial, bleiben die letzten Punkte liegen.' },
     { t: kind === 'large' ? 'Große Saison-Bewertung' : kind === 'small' ? 'Herbst-Bewertung' : 'Winter-Bewertung', x: payoutRule(kind) },
     { t: 'Begründung', x: 'Zu jedem Spieler nennt das Trainerteam die wichtigsten Ursachen seit der letzten Runde – aus der tatsächlichen Rechnung, nach Gewicht sortiert.' },
   ];

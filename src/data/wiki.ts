@@ -997,10 +997,11 @@ Für deinen Kader schreibt das Spiel jede Woche mit, **welche Ursache wie viele 
 - **Alter:** Entwicklungsjahre bis Anfang 20, ab etwa 29 natürlicher Abbau; ein robuster Körper verschiebt ihn nach hinten. Ab 33 wird der Abbau deutlich steiler (mit 36 etwa viermal so schnell wie mit 30) – Altstars verlieren dann jede Saison spürbar an Klasse.
 - **Welche Werte sich wann ändern:** Jeder Wert hat seine eigene Alterskurve. **Tempo** (Schnelligkeit, Antritt, Beweglichkeit, Balance, Reflexe) wächst jung am stärksten, gipfelt Mitte 20 und baut ab etwa 29 als Erstes ab. **Kraft und Ausdauer** wachsen bis etwa 27 und lassen ab etwa 31 nach. **Technik** wächst gleichmäßig bis um die 30 und hält lange. **Spielintelligenz** (Stellungsspiel, Übersicht, Entscheidungen, Ruhe, Konzentration, Teamwork) wächst bis in die 30er – ab Mitte 20 gibt der Körper etwas ab, der Kopf legt dafür zu, ohne dass sich die Stärke ändert. **Erfahrung** sinkt nie. **Einsatzwille, Aggressivität, Kreativität** sind weitgehend angeboren und können schon in jungen Jahren sehr hoch sein; Stars und große Talente haben fast immer viel Einsatzwillen – er treibt die Entwicklung mit an (zusammen mit Professionalität und Ehrgeiz). **Führungsstärke** wächst mit den Jahren.
 - **Spielpraxis:** Einsatzminuten seit der letzten Runde (auch in der zweiten Mannschaft); wer verletzt fehlt, sammelt keine.
-- **Training:** Anlagen, Trainerteam (Stärke und Größe im Verhältnis zum Kader), Spezialtrainer, Trainingsschwerpunkt, Trainingsplan, Förderspieler.
+- **Training:** Anlagen, Trainerteam (Güte der Trainer; Abzug, wenn Cheftrainer oder Co-Trainer fehlen), Spezialtrainer, Trainingsschwerpunkt, Trainingsplan, Förderspieler.
+- **Niveau des Trainerteams** (siehe „Trainerteam und Spielerentwicklung“): Arbeitet es klar über dem Niveau des Spielers, lernt er schneller; liegt es unter seinem Potenzial, bleiben die letzten Punkte liegen („Trainerteam zu schwach für sein Potenzial“); dazu gelegentlich ein Schub oder – wenn ihm niemand mehr etwas beibringen kann – ein Abzug.
 - **Charakter und Moral**, die **Epoche** (Sportwissenschaft), der **Reifegrad** (Früh-/Spätentwickler) und der **Abstand zum Potenzial** (die letzten Punkte sind die schwersten; ab 82 die Weltklasse-Bremse).
 - **Einmaliges:** Trainingslager, Hallenturniere, Extraschichten, ein geplatztes Juwel, Durchbruch, Spätzünder, Leistungsknick.
-- **Hinweise:** knappe Entscheidung, Grenze des Potenzials, Höchstwert der Runde, weitere Fortschritte oder fortgesetzter Abbau.
+- **Hinweise:** knappe Entscheidung, Grenze des Potenzials oder Decke des Trainerteams, Höchstwert der Runde, weitere Fortschritte oder fortgesetzter Abbau.
 
 Die Begründungen der letzten Runden stehen auch im **Spielerprofil › Statistiken** („Bewertungen und Gründe“). Für Spieler aus älteren Spielständen oder Neuzugänge, deren Punkte noch aus der Zeit vor der Aufzeichnung stammen, steht eine allgemeine Begründung.
 
@@ -1698,50 +1699,126 @@ Die Vereine tragen Städtenamen. Wo der echte Verein fehlt, trägt der Verein de
   {
     id: 'staff-people',
     category: 'staff',
-    title: 'Mitarbeiter als Personen — Qualität, Methoden, Abwerbung',
-    keywords: ['mitarbeiter', 'trainer', 'cotrainer', 'qualität', 'methoden', 'fortbildung', 'abwerbung', 'kapazität', 'spezialist', 'torwarttrainer', 'bewerber'],
-    body: `## Jede Stelle ist ein Mensch
-Für jede Rolle gibt es **drei Bewerber**: eine günstige Nachwuchskraft, eine erfahrene Kraft und eine teure Spitzenkraft. Jede Person hat:
-- **Qualität** (1–20): bestimmt, wie stark ihre Rolle wirkt (Verletzungen, Reha, Regeneration, Scouting, Reichweite, Training).
-- **Spezialgebiet** (z. B. Technik, Taktik, Athletik, Torwart, Mentales): wirkt zusätzlich auf passende Spieler.
-- **Methodenstand**: das Jahr, in dem das Wissen aktuell war. Nach acht Jahren ohne **Fortbildung** (drei Monatsgehälter) verliert die Arbeit spürbar an Wirkung.
-- **Alter und Vereinstreue**: Ältere gehen in den Ruhestand, gute Leute werden von größeren Vereinen **abgeworben**. Treue, ein gutes Gehalt und ein großer Verein halten sie.
+    title: 'Mitarbeiter als Personen — Fähigkeiten, Eignung, Laufbahn',
+    keywords: ['mitarbeiter', 'trainer', 'cotrainer', 'fähigkeiten', 'eignung', 'stelle', 'stärke', 'potenzial', 'methoden', 'fortbildung', 'versetzen', 'beförderung', 'eigenschaft', 'talentförderer', 'vereinstreu', 'abwerbung', 'ex-profi', 'ruhestand'],
+    body: `## Mitarbeiter sind Personen wie Spieler
+Jeder Mitarbeiter hat **13 Fähigkeiten** mit einer **Stärke von 1 bis 99** – dieselbe Skala wie bei Spielern:
 
-## Wirkung des Trainerteams – spürbar, aber gebremst
-- Das Trainerteam (Chef-, Co-, Konditions-, Athletik-, Torwarttrainer …) verändert das **Entwicklungstempo** um etwa −2 % bis +20 %. Die Wirkung sättigt: Der dritte Spitzentrainer bringt weniger als der erste.
-- **Das Potenzial steigt nicht.** Gute Trainer holen nur zuverlässiger heraus, was in den Spielern steckt – deshalb hast du mit einem Top-Co-Trainer nicht automatisch für immer die besten Spieler.
-- **Kapazität:** Ein Trainer betreut etwa neun Spieler sinnvoll. Ein aufgeblähter Kader verwässert die Arbeit.
-- **Spezialisten:** Ein Torwarttrainer hilft nur den Torhütern, ein Techniktrainer vor allem Offensivspielern, ein Taktiktrainer der Abwehr.
-- Die Qualität deines Co-Trainers bestimmt auch, wie treffsicher seine Einschätzungen im **Trainingsbericht** und vor Bewertungsrunden sind.`,
+| Training | Menschen | Fachwissen | Verein |
+|---|---|---|---|
+| Taktik | Führung | Analyse | Wirtschaft |
+| Technik | Mentales | Medizin & Reha | Öffentlichkeit |
+| Fitness | Nachwuchs | Spielerkenntnis | Organisation |
+| Torwart | | | |
+
+## Eignung: jede Person für jede Stelle
+Eine Person ist nicht auf einen Beruf festgelegt. Jede **Stelle** gewichtet andere Fähigkeiten – beim Cheftrainer zählen Taktik und Führung, beim Co-Trainer Taktik und Technik, beim Scout die Spielerkenntnis, beim Mannschaftsarzt die Medizin, beim Kaufmännischen Leiter die Wirtschaft. Der gewichtete Wert ist die **Eignung** (1–99). Dieselbe Person kann als Co-Trainer 82 und als Cheftrainer 74 sein. Das Profil zeigt ihre besten Stellen und markiert, welche Fähigkeiten für die betrachtete Stelle zählen.
+
+Richtwerte: ab 88 herausragend, ab 80 sehr gut, ab 72 gut, ab 62 ordentlich, ab 50 ausreichend, darunter ungeeignet.
+
+## Laufbahn
+- **Lernen im Beruf:** Jede Fähigkeit hat einen erreichbaren Höchststand. Wer angestellt ist, nähert sich ihm an – die Fähigkeiten der eigenen Stelle schneller, bei sportlichem Erfolg schneller, in jungen Jahren deutlich schneller als mit Mitte 50. Wer lange ohne Stelle ist, rostet ein; ab 60 lässt jeder nach.
+- **Aussicht:** „viel Luft nach oben“, „kann noch zulegen“ oder „ausgereift“ sagt, wie weit jemand in einer Stelle noch kommen kann. Bei eigenen Leuten zeigt ein Strich im Balken, wie weit die Fähigkeit reicht.
+- **Fortbildung** (drei Monatsgehälter, einmal im Jahr): bringt den Methodenstand auf heute und die Fähigkeiten der Stelle ein Stück voran.
+- **Methodenstand:** Nach acht Jahren ohne Fortbildung verliert die Arbeit spürbar an Wirkung.
+- **Versetzen:** Eigene Leute kannst du auf eine andere, freie Stelle setzen – etwa den Jugendtrainer zum Co-Trainer befördern oder den Co-Trainer zum Cheftrainer. Das Gehalt sinkt dabei nie; verlangt die neue Stelle mehr, steigt es.
+- **Saisonende:** Du bekommst eine Übersicht, wessen Eignung sich verändert hat. Mit spätestens 69 ist Schluss.
+
+## Eigenschaften
+Etwa jede dritte Person hat eine besondere Eigenschaft:
+- **Talentförderer:** als Chef-, Co- oder Jugendtrainer entwickeln sich Spieler bis 21 um 6 % schneller.
+- **Kennt die Routiniers:** als Chef-, Co- oder Fitnesstrainer bauen Spieler ab 30 um 8 % langsamer ab.
+- **Lernfreudig:** lernt anderthalbmal so schnell und bleibt bei den Methoden auf dem Laufenden.
+- **Vereinstreu:** lässt sich nicht abwerben und verlängert zu fairen Bedingungen.
+
+## Woher die Leute kommen
+- **Ehemalige Spieler:** Wer seine Karriere beendet, bleibt mit einer gewissen Wahrscheinlichkeit im Fußball. Erfolgreiche Spieler (Titel, viele Einsätze, hohe Spitzenstärke, Kapitän) tun das öfter und haben im Schnitt mehr Potenzial – eine Garantie ist es nicht. Ihre Stärken stammen aus der Spielerzeit: Spielintelligenz → Taktik, Technik → Technik, Athletik → Fitness, Torhüter → Torwarttraining, Führungsstärke → Führung, Übersicht → Spielerkenntnis. Am Anfang sind sie unerfahren und günstig.
+- **Einer von uns:** Hört ein Spieler auf, der lange für deinen Verein gespielt hat, meldet er sich bei dir. Er wartet ein Jahr auf dein Angebot, bevor die Konkurrenz zugreifen darf, und kommt dir beim Gehalt entgegen.
+- **Quereinsteiger** aus vielen Berufen: Sportlehrer, Amateurtrainer, Mediziner, Masseure, Talentspäher, Kaufleute, Verwaltungsfachleute, Handwerker, später Journalisten, Sportwissenschaftler, Physiotherapeuten, Marketingfachleute, Juristen, Analysten, Psychologen, Informatiker und Datenwissenschaftler.
+- **Nachwuchskräfte:** Jedes Jahr kommt ein Jahrgang junger Leute auf den Markt – noch schwach, mit Luft nach oben.`,
   },
   {
     id: 'staff-trainerteam',
     category: 'staff',
-    title: 'Trainerteam und Arbeitsmarkt',
-    keywords: ['trainerteam', 'co-trainer', 'torwarttrainer', 'fitnesstrainer', 'athletiktrainer', 'analyst', 'videoanalyst', 'jugendtrainer', 'arbeitsmarkt', 'ex-profi', 'quereinsteiger', 'abfindung', 'ablöse', 'verhandlung', 'fachgebiet'],
-    body: `## Trainerteam
-Unter **Training › Trainerteam** stellst du Cheftrainer-Assistenz, Co-Trainer, Torwarttrainer (ab 1980), Fitnesstrainer (ab 1983), Reha-Trainer und Videoanalyst (ab 1993), Athletiktrainer, Spielanalyst und Sportpsychologe (ab 2003) sowie Jugendtrainer ein. Übrige Mitarbeiter (Medizin, Scouting, Medien, Verwaltung) bleiben unter **Verein › Mitarbeiter**.
+    title: 'Trainerteam und Stellenplan',
+    keywords: ['trainerteam', 'cheftrainer', 'co-trainer', 'torwarttrainer', 'fitnesstrainer', 'athletiktrainer', 'analyst', 'videoanalyst', 'jugendtrainer', 'stellenplan', 'abfindung', 'verlängern', 'entlassen'],
+    body: `## Stellenplan
+Unter **Training › Trainerteam** besetzt du Cheftrainer, Co-Trainer (bis zu zwei, ab 1990 bis zu drei), Torwarttrainer (ab 1980), Fitnesstrainer (ab 1983), Reha-Trainer und Videoanalyst (ab 1993), Athletiktrainer, Spielanalyst und Sportpsychologe (ab 2003) sowie bis zu zwei Jugendtrainer. Alle übrigen Stellen – sportliche Leitung, Medizin, Scouting, Medien, Verwaltung – stehen unter **Verein › Mitarbeiter**. Beide Seiten sind gleich aufgebaut: links der Stellenplan, rechts oben der Arbeitsmarkt, rechts unten das Profil der gewählten Person.
 
-### Fachgebiete
-Jede Person hat acht Fachgebiete (1–20): **Taktik, Technik, Fitness, Torwart, Mentales, Nachwuchs, Analyse, Medizin & Reha**. Ihre **Qualität in der Rolle** ergibt sich daraus (ein Torwarttrainer zählt nur mit seinem Torwartwissen, ein Co-Trainer vor allem mit Taktik und Technik). Im Beruf lernen Trainer dazu – bei erfolgreichen Vereinen schneller –, im Alter bauen sie ab; wer lange ohne Stelle ist, rostet ein.
+Jede Zeile des Stellenplans zeigt die Eignung der Person für ihre Stelle, Alter, Herkunft, Gehalt und Vertragsende. Offene Stellen haben den Knopf **Suchen** – er stellt den Arbeitsmarkt auf diese Stelle ein. Rot markiert sind Stellen, die dein Verein **braucht**: der Cheftrainer und so viele Co-Trainer, wie ein Verein deiner Größe in der Zeit hat (ein kleiner Verein 1975 einen, ein Spitzenverein zwei, heute bis zu drei).
 
-### Anstellen, Verlängern, Entlassen
-- **Verhandlung:** Jede Person nennt eine Gehaltsforderung. Ein großer Verein und eine lange Laufzeit geben bis zu etwa 14 % Spielraum; nach drei Absagen ist Schluss.
-- **Abwerben:** Angestellte anderer Vereine kosten **sechs Monatsgehälter Ablöse** und wechseln nur zu einem mindestens etwa gleich großen Verein.
-- **Entlassen:** Abfindung = halbe Restlaufzeit (mindestens zwei, höchstens 18 Monatsgehälter). Die Person kehrt auf den Arbeitsmarkt zurück.
-- **Vertragsende** (30.6.): Treue Leute verlängern zu ihrer aktuellen Forderung, andere gehen. Mit „+2 Jahre“ verlängerst du vorher selbst – aber erst im letzten Vertragsjahr (höchstens 12 Monate Restlaufzeit) und nie weiter als 4 Jahre über die laufende Saison hinaus.
+Ein neues Spiel beginnt mit Cheftrainer, den gebrauchten Co-Trainern, Masseur und Mannschaftsarzt.
 
-### Wirkung
-- Lernfaktor je Trainingsbaustein (siehe „Trainingsplan“), weniger Trainingsverletzungen durch Fitness/Medizin.
-- Entwicklungstempo, Betreuung, Spezialisten, Reha und Regeneration wie unter „Mitarbeiter als Personen“ beschrieben.
+## Verlängern, Versetzen, Entlassen
+- **+2 Jahre:** erst im letzten Vertragsjahr (höchstens 12 Monate Restlaufzeit), nie weiter als 4 Jahre über die laufende Saison hinaus, zur aktuellen Forderung.
+- **Vertragsende** (30.6.): Treue Leute verlängern von selbst zu ihrer Forderung, andere gehen.
+- **Versetzen:** im Profil unter „Eignung je Stelle“, wenn die Stelle frei ist.
+- **Entlassen:** Abfindung = halbe Restlaufzeit (mindestens zwei, höchstens 18 Monatsgehälter). Die Person kehrt auf den Arbeitsmarkt zurück, ein Cheftrainer in den Trainerpool der Liga.
 
-## Der Arbeitsmarkt über die Jahrzehnte
-Alle Vereine der Liga haben ein Trainerteam; der Markt wird jede Saison neu gemischt:
-- **Ehemalige Profis:** Beendet ein Spieler seine Karriere, geht er mit einer gewissen Wahrscheinlichkeit ins Trainergeschäft. **Erfolgreiche Spieler** (Titel, viele Einsätze, hohe Spitzenstärke, Kapitän) tun das öfter und haben im Schnitt mehr Trainer-Potenzial – eine Garantie ist es nicht. Ihre Stärken stammen aus der Spielerzeit: Spielintelligenz → Taktik, Technik → Technik, Athletik → Fitness, Torhüter → Torwarttraining, Persönlichkeit → Nachwuchsarbeit.
-- **Quereinsteiger:** Sportlehrer, Amateurtrainer, Sportwissenschaftler, Physiotherapeuten, ab den 90ern Analysten, ab 2000 Psychologen.
-- **KI-Vereine** besetzen ihre Stellen nach ihrem Ruf, werben Bessere ab und verlängern Verträge. Ihr Trainerteam beeinflusst die Entwicklung ihrer Spieler.
-- **Aufstieg:** Gute Co-Trainer und sehr erfolgreiche Ex-Kapitäne werden Kandidaten für Cheftrainerposten der KI-Vereine (Trainerkarussell).
-- **Ruhestand** spätestens mit 69, Berufswechsel nach langer Zeit ohne Stelle.`,
+## Weitere Wirkungen des Trainerteams
+- **Lernfaktor je Trainingsbaustein** (siehe „Trainingsplan“): Jeden Baustein leitet, wer im Team die passende Fähigkeit am besten beherrscht.
+- **Weniger Trainingsverletzungen** durch Fitness- und Medizinwissen.
+- **Spezialisten:** Ein Torwarttrainer hilft den Torhütern, ein technisch starker Trainer vor allem Offensivspielern, ein Taktiker der Abwehr.
+- Wie das Trainerteam die **Entwicklung** jedes einzelnen Spielers bestimmt, steht unter „Trainerteam und Spielerentwicklung“.`,
+  },
+  {
+    id: 'staff-coaching',
+    category: 'staff',
+    title: 'Trainerteam und Spielerentwicklung',
+    keywords: ['niveau', 'trainerniveau', 'cheftrainer', 'co-trainer', 'potenzial', 'decke', 'lerntempo', 'entwicklung', 'aufwertung', 'abwertung', 'schub', 'unterfordert', 'gebremst', 'torwarttrainer'],
+    body: `## Das Niveau des Trainerteams
+Dein Trainerteam hat ein **Niveau** auf der Skala der Spielerstärke (1–99): **65 % Cheftrainer, 35 % Co-Trainer** (der beste Co-Trainer zählt doppelt; es zählen so viele, wie dein Verein braucht). Für **Torhüter** gilt das Niveau des Torwarttrainers; ohne ihn bleibt nur das allgemeine Training, ab 1980 mit deutlichem Abschlag.
+
+Dieses Niveau steht jedem Spieler gegenüber – bei dir genauso wie bei allen anderen Vereinen der Liga (dort aus dem Ansehen des Cheftrainers und seinem Co-Trainer).
+
+## Die Decke: Wie weit kommt ein Spieler?
+Sein **volles Potenzial** erreicht ein Spieler nur, wenn das Niveau im Bereich seines Potenzials liegt: höchstens **5 Punkte darunter** (mehr als 90 braucht niemand). Je Punkt, der fehlt, bleiben **0,4 Punkte** liegen, höchstens 8.
+
+Beispiel: Ein Talent mit Potenzial 88 braucht ein Trainerteam von 83. Bei Niveau 73 bleiben 4 Punkte liegen – er kommt bei dir nur bis etwa 84. Das Potenzial selbst geht nicht verloren: Holst du bessere Trainer oder wechselt er zu einem Verein mit stärkerem Trainerteam, geht es weiter – solange er jung genug ist.
+
+## Das Lerntempo
+Arbeitet das Trainerteam **klar über dem Niveau eines Spielers**, sammelt er schneller Entwicklungspunkte: je Punkt Vorsprung 1,2 %, bis **+30 %**. Neutral sind 4 Punkte Vorsprung. Liegt der Spieler über seinen Trainern, lernt er langsamer (bis −15 %). Ein schwacher Spieler bei einem deutlich stärkeren Trainerteam hat damit deutlich bessere Aussichten auf eine Aufwertung.
+
+## Auf- und Abwertungen
+In der Winter- und der Saison-Bewertung wirkt das Trainerteam zusätzlich:
+- **Schub:** Ist es einem Spieler bis 27 um mindestens 8 Punkte voraus, bekommt er mit bis zu 30 % Wahrscheinlichkeit einen Extrapunkt.
+- **Unterfordert:** Liegt ein Spieler ab 22 um mindestens 8 Punkte über seinen Trainern, verliert er mit bis zu 25 % Wahrscheinlichkeit etwas.
+- **Abbau im Alter:** Starke Trainer bremsen ihn (bis 12 %), schwache beschleunigen ihn (bis 8 %).
+Die Begründung jeder Bewertung nennt diese Ursachen, wenn sie eine Rolle gespielt haben.
+
+## Besetzung: Ohne Trainer geht es abwärts
+- **Kein Cheftrainer:** Die Trainingsqualität sinkt um 10 Punkte, und das Niveau bricht ein – dein Co-Trainer muss den Laden allein schmeißen (sein Wert minus 8). Ganz ohne Trainer liegt das Niveau bei 35.
+- **Zu wenige Co-Trainer** für die Größe deines Vereins: je fehlendem 5 Punkte Trainingsqualität und 1,5 Punkte Niveau.
+- **Güte der Trainer:** Ein ordentliches Team bringt etwa +10 bis +15 % Entwicklung, ein Spitzenteam bis +20 % – Spitzentrainer sind also nur etwas besser im Tempo, vor allem aber heben sie das Niveau und damit die Decke.
+
+## Wo du es siehst
+**Training › Trainerteam**, Ansicht **Wirkung**: Niveau mit Rang in der Liga, Trainingsqualität, und drei Listen – wen dein Trainerteam **bremst** (mit dem Niveau, das er bräuchte), wer **besonders viel lernt** und wer **unterfordert** ist. Gerechnet wird dort mit deiner Einschätzung des Potenzials (Sterne), nicht mit dem verdeckten Wert. Im Verhandlungsfenster siehst du vor der Unterschrift, wie ein neuer Trainer Niveau und Entwicklung verändert.`,
+  },
+  {
+    id: 'staff-market',
+    category: 'staff',
+    title: 'Arbeitsmarkt und Verhandlung',
+    keywords: ['arbeitsmarkt', 'bewerber', 'filter', 'eignung', 'verhandlung', 'forderung', 'ablöse', 'abwerben', 'cheftrainer', 'trainerpool', 'ex-profi', 'quereinsteiger', 'vereinslos'],
+    body: `## Ein Pool für alle Stellen
+Der Arbeitsmarkt ist **ein großer Pool** für alle Stellen des Vereins: Vereinslose und die Angestellten der anderen Vereine. Wähle oben eine **Stelle** – die Liste ordnet sich nach der Eignung dafür. Bei „Alle Stellen“ steht jede Person mit ihrer besten Stelle.
+
+**Filter:** eine Fähigkeit ab einem Mindestwert (60, 70, 80), Höchstalter (bis 35, bis 45), „nur vereinslos“ und „Ex-Profis“. Die Spalte **Aussicht** sagt, ob jemand noch zulegen kann.
+
+Für jede Stelle, die es in der Zeit gibt, stehen immer einige brauchbare Bewerber bereit; jedes Jahr kommen ein Jahrgang Nachwuchskräfte und die Spieler dazu, die ihre Karriere beendet haben. Ältere gehen in den Ruhestand, wer lange keine Stelle findet, wechselt den Beruf.
+
+## Cheftrainer
+Als Cheftrainer stehen die **freien Trainer der Liga** auf dem Markt (der Trainerpool, aus dem auch die anderen Vereine schöpfen) – mit Spielidee und Ansehen. Ohne „nur vereinslos“ siehst du auch die Trainer der anderen Vereine. Große Namen kommen nicht zu einem deutlich kleineren Verein. Wirbst du einen Trainer ab, holt sich sein Verein einen Nachfolger.
+
+## Verhandlung
+Im Verhandlungsfenster wählst du die **Stelle** (jede Stelle ist möglich, die Liste nennt die Eignung), dein **Angebot** und die **Laufzeit**.
+- Die **Forderung** richtet sich nach der Eignung für die Stelle und deren Gehaltsklasse. Wer in seinem eigentlichen Beruf mehr verdient, als die angebotene Stelle hergibt, verlangt mindestens 80 % davon – ein gestandener Cheftrainer wird kein günstiger Co-Trainer.
+- Ein großer Verein und eine lange Laufzeit geben bis zu etwa 14 % Spielraum; nach drei Absagen ist Schluss.
+- **Abwerben** kostet sechs Monatsgehälter Ablöse (bei einem Cheftrainer ein Jahresgehalt) und geht nur bei gleich großen oder kleineren Vereinen.
+- Hat die Stelle mehrere Plätze (Co-Trainer, Scouts, Jugendtrainer), füllen sie sich der Reihe nach. Erst wenn alle besetzt sind, **ersetzt** der Neue den Schwächsten – der bekommt seine Abfindung.
+- Links siehst du, **was sich ändert**: wen der Neue ersetzt und – bei Trainern – Niveau und Entwicklung vorher und nachher.
+
+## Die anderen Vereine
+Alle Vereine der Liga haben ein Trainerteam. Sie stellen nach ihrem Ruf ein, werben Bessere ab und verlängern Verträge; gute Co-Trainer und erfolgreiche frühere Kapitäne werden Kandidaten für Cheftrainerposten.`,
   },
   {
     id: 'training-philosophy',
@@ -3399,31 +3476,21 @@ Die anderen Vereine ziehen vereinfacht mit: Zum Saisonstart bauen sie je nach Ru
     id: 'staff-overview',
     category: 'staff',
     title: 'Mitarbeiter — Überblick',
-    keywords: ['mitarbeiter', 'personal', 'staff', 'anstellen', 'entlassen', 'gehalt', 'rollen', 'epoche', 'zukunft'],
+    keywords: ['mitarbeiter', 'personal', 'staff', 'anstellen', 'entlassen', 'gehalt', 'stellen', 'epoche', 'kostenklasse'],
     body: `## Mitarbeiterstab
-Im Bereich **Mitarbeiter** (in der unteren Navigation) stellst du Personal abseits des Spielerkaders an:
-Trainerteam, Medizin/Reha, Scouting/Analyse, Medien/Marketing und Verwaltung. Jede Rolle ist einer **Epoche**
-zugeordnet und wird erst ab ihrem **Freischaltjahr** anstellbar — passend zur Professionalisierung des Fußballs.
+Mitarbeiter sind Personen wie Spieler: mit Fähigkeiten, einer Eignung für jede Stelle und einer Laufbahn (siehe „Mitarbeiter als Personen“). Das **Trainerteam** besetzt du unter **Training › Trainerteam**, alle übrigen Stellen – sportliche Leitung, Medizin & Reha, Scouting & Analyse, Medien & Marketing, Verwaltung – unter **Verein › Mitarbeiter**. Beide Seiten greifen auf denselben Arbeitsmarkt zu.
 
 ## Epochen
-Die Rollen schalten sich in sechs Wellen frei: **1975** (Grundstab), **1983** (beginnende Professionalisierung),
-**1993** (Kommerzialisierung), **2003** (moderne Strukturen), **2013** (Datenzeitalter), **2021** (KI & Nachhaltigkeit).
-Die Chronik meldet die wichtigsten Personal-Wellen als Meilenstein.
-
-## Zukunft anzeigen
-Mit der Checkbox **„Zukunft anzeigen"** blendest du Rollen späterer Epochen ein — sie erscheinen **ausgegraut**
-und tragen ein „ab JAHR"-Kennzeichen. So planst du langfristig, ohne sie schon anstellen zu können.
+Jede Stelle gibt es erst ab ihrem **Freischaltjahr** – passend zur Professionalisierung des Fußballs. Die Stellen kommen in sechs Wellen: **1975** (Grundstab), **1983** (beginnende Professionalisierung), **1993** (Kommerzialisierung), **2003** (moderne Strukturen), **2013** (Datenzeitalter), **2021** (KI & Nachhaltigkeit). Der Stellenplan nennt unter jedem Bereich, was als Nächstes kommt.
 
 ## Kosten
-Jede Rolle hat eine **Kostenklasse K1–K5** mit einem Grundgehalt (Basisjahr 1975):
+Jede Stelle hat eine **Kostenklasse K1–K5** mit einem Grundgehalt (Basisjahr 1975):
 
 | Klasse | K1 | K2 | K3 | K4 | K5 |
 |---|---|---|---|---|---|
 | Gehalt/Monat (Basis) | 400 | 800 | 1.700 | 3.500 | 8.000 |
 
-Die Gehälter **skalieren mit der Wirtschafts-Basis** (economyScale) über die Jahrzehnte mit. Die Summe aller
-Monatsgehälter wird **monatlich** (am 1. des Monats) als Ausgabe in den Finanzen unter **„Betreuerstab"
-(staff_wages)** gebucht — nur für deinen Verein.`,
+Was eine Person tatsächlich verdient, hängt von ihrer Eignung für die Stelle ab (gute Leute verlangen ein Mehrfaches). Trainer und sportliche Leitung verdienen über die Jahrzehnte fast so viel mehr wie der Fußball insgesamt, Fachpersonal deutlich weniger, Verwaltung und Medien etwa wie gute Angestellte. Die Summe aller Monatsgehälter wird **monatlich** (am 1.) unter **„Betreuerstab“** gebucht.`,
   },
   {
     id: 'staff-effects',
@@ -3431,7 +3498,7 @@ Monatsgehälter wird **monatlich** (am 1. des Monats) als Ausgabe in den Finanze
     title: 'Mitarbeiter — Effekte & Obergrenzen',
     keywords: ['effekt', 'gedeckelt', 'cap', 'verletzung', 'reha', 'regeneration', 'scouting', 'reichweite', 'sieg-bonus'],
     body: `## Stab und Spielstärke
-Jede Stelle bringt für sich nur wenig, zusammen aber spürbar Leistung auf den Platz: Co-Trainer, Torwart-, Athletik- und Konditionstrainer, Ärzte und Physios, Analysten, sportliche Leitung und die guten Geister wie Zeug- und Platzwart. Gezählt werden nur Stellen, die es in der Epoche schon gibt, bewertet nach Qualität und Methodenstand. Ganz ohne Stab verliert deine Mannschaft bis zu **4 % Spielstärke** (1975 etwa die Hälfte, damals gab es kaum Fachpersonal), ein voller, guter Stab bringt **+0,4 %**. Die Zeile „Spielstärke“ unter Verein › Mitarbeiter zeigt den aktuellen Wert.
+Jede Stelle bringt für sich nur wenig, zusammen aber spürbar Leistung auf den Platz: Co-Trainer, Torwart-, Athletik- und Konditionstrainer, Ärzte und Physios, Analysten, sportliche Leitung und die guten Geister wie Zeug- und Platzwart. Gezählt werden nur Stellen, die es in der Epoche schon gibt, bewertet nach der Eignung der Person für ihre Stelle und ihrem Methodenstand. Ganz ohne Stab verliert deine Mannschaft bis zu **4 % Spielstärke** (1975 etwa die Hälfte, damals gab es kaum Fachpersonal), ein voller, guter Stab bringt **+0,4 %**. Die Zeile „Spielstärke“ unter Verein › Mitarbeiter zeigt den aktuellen Wert.
 
 ## Gehälter
 Trainer und sportliche Leitung verdienen über die Jahrzehnte fast so viel mehr wie der Fußball insgesamt; Fachpersonal (Medizin, Analyse) deutlich weniger, Verwaltung und Medien etwa wie gute Angestellte.
@@ -3448,7 +3515,7 @@ Mehrere Rollen derselben Wirkung **addieren** sich, aber nur bis zu einer festen
 | Scouting-Genauigkeit | +15 % | **real** (präzisere Talentbewertung) |
 | Reichweite / Fanbindung | +20 % | Nebenerträge / atmosphärisch |
 
-Die Effekt-Kachel oben im Bereich zeigt jederzeit den aktuellen aggregierten Wert und die jeweilige Obergrenze.
+Die Ansicht „Wirkung“ unter Verein › Mitarbeiter zeigt jederzeit den aktuellen Wert und die jeweilige Obergrenze. Je besser jemand für seine Stelle geeignet ist, desto mehr trägt er bei.
 
 ## So wirken die Effekte konkret
 - **Reha-Verkürzung & Regeneration**: fließen täglich in \`App.processDay\` ein — zusammen mit der Medizinischen

@@ -9,10 +9,17 @@ import { startNextSeason } from '../src/game/season';
 import { CalendarEngine } from '../src/engine/calendar';
 import { Game } from '../src/game/state';
 import { StaffMember } from '../src/engine/staffPeople';
-import { acceptsOffer, careerSuccess, demandFactor, roleQuality, staffFromPlayer, AI_TRACKED_ROLES } from '../src/engine/staffSkills';
-import { ensureStaffWorld, marketForRole, migrateStaffPeople, staffOfClub } from '../src/game/staffWorld';
-import { dismiss, offerContract, severanceOf, blockFactorFn } from '../src/game/trainerTeam';
+import {
+  acceptsOffer, bestRoles, COACH_SKILLS, roleFit, roleQuality, ROLE_SKILLS, rolesAvailable, roleSlots, staffLevel, staffValueOf, AI_TRACKED_ROLES,
+} from '../src/engine/staffSkills';
+import { careerSuccess, coachAsStaff, staffFromPlayer } from '../src/engine/staffGen';
+import { assistantsNeeded, coachingTeam, coachPotCut, declineFactor, dragChance, levelNeeded, pushChance, teachFactor } from '../src/engine/coaching';
+import { coachCutFor, coachLevelFor, distanceFactor, setClubCoaching, truePotential } from '../src/engine/development';
+import { ensureStaffWorld, findPerson, headCoachMarket, marketForRole, migrateStaffPeople, staffMarket, staffOfClub } from '../src/game/staffWorld';
+import { canReassign, demandOf, dismiss, offerContract, quickHire, reassign, sendToCourse, severanceOf, slotInfo, startingStaff, blockFactorFn } from '../src/game/trainerTeam';
 import { ensureStaff } from '../src/game/staffGame';
+import { bindCoaching, coachingOutlook, ownCoaching } from '../src/game/coachingGame';
+import { STAFF_ROLES } from '../src/data/staff';
 import { weekInfos, migrateTrainingPlan } from '../src/game/trainingWeek';
 import { addDaysISO, applyTemplate, effectiveDay, weekEffect, mondayOf, PLAN_TEMPLATES } from '../src/engine/trainingPlan';
 import { BLOCKS_BY_ID } from '../src/engine/weeklyTraining';
@@ -33,7 +40,7 @@ function fresh(): Game {
   });
 }
 function finite(m: StaffMember): boolean {
-  return Number.isFinite(m.quality) && Object.values(m.skills ?? {}).every((v) => Number.isFinite(v) && v >= 1 && v <= 20);
+  return Number.isFinite(m.quality) && COACH_SKILLS.every((k) => { const v = m.skills?.[k]; return v != null && Number.isFinite(v) && v >= 1 && v <= 20; });
 }
 
 // ---------------------------------------------------------------------------
@@ -47,6 +54,28 @@ if (coFilled < ai.length) fail(`nicht alle KI-Vereine mit Co-Trainer (${coFilled
 const free0 = w.people.filter((m) => !m.clubId);
 if (free0.length < 12) fail(`zu wenige Bewerber zu Spielbeginn (${free0.length})`);
 if (free0.some((m) => !staffAvailable(STAFF_BY_ID[m.roleId], 1975))) fail('Bewerber für eine Rolle, die es 1975 noch nicht gibt');
+// Jede Stelle des Katalogs hat Gewichte (Summe 1); für jede Stelle der Zeit gibt es brauchbare Bewerber.
+for (const r of STAFF_ROLES) {
+  const w = ROLE_SKILLS[r.id];
+  if (!w) fail(`Stelle ohne Fähigkeiten-Gewichte: ${r.id}`);
+  const sum = Object.values(w).reduce((a, b) => a + (b ?? 0), 0);
+  if (Math.abs(sum - 1) > 1e-6) fail(`Gewichte der Stelle ${r.id} ergeben ${sum}`);
+}
+for (const role of rolesAvailable(1975)) {
+  const ok = staffMarket(g, { role, onlyFree: true }).filter((x) => x.fit >= 7).length;
+  if (ok < (role === 'cheftrainer' ? 2 : 3)) fail(`1975 nur ${ok} brauchbare Bewerber als ${role}`);
+}
+if (free0.length < 60) fail(`Pool zu klein (${free0.length})`);
+// Stärke-Skala: 1–20 ↔ 1–99, umkehrbar, oben wie Spieler
+if (staffLevel(20) !== 99 || staffLevel(14) !== 84 || staffLevel(8) !== 69 || Math.abs(staffValueOf(staffLevel(11)) - 11) > 0.3) fail('Stärke-Skala verschoben');
+// Eigener Stab zu Spielbeginn: Cheftrainer + gebrauchte Co-Trainer, keine Abzüge
+{
+  const t = ownCoaching(g);
+  if (!t.head || t.missing > 0 || t.penalty !== 0) fail(`Start ohne vollständiges Trainerteam: Chef ${!!t.head}, fehlend ${t.missing}`);
+  const ai1 = [...bindCoaching(g).entries()].filter(([id]) => id !== g.managedClubId).map(([, c]) => c.level);
+  console.log(`Trainerniveau zu Beginn: eigener Verein ${t.level.toFixed(0)} (Chef ${t.headLevel.toFixed(0)}, Co ${t.assistLevel.toFixed(0)}), KI ${Math.min(...ai1).toFixed(0)}–${Math.max(...ai1).toFixed(0)} (Ø ${avg(ai1).toFixed(1)})`);
+  if (Math.abs(t.level - avg(ai1)) > 14) fail('eigenes Trainerniveau weit weg vom Ligaschnitt');
+}
 for (const m of ensureStaff(g)) if (!m.skills || !finite(m)) fail(`eigener Mitarbeiter ohne gültige Fachgebiete: ${m.name}`);
 // Ruf → Qualität: große Vereine haben im Schnitt bessere Co-Trainer
 const sorted = [...ai].sort((a, b) => (b.reputation ?? 0) - (a.reputation ?? 0));
@@ -59,15 +88,15 @@ if (topQ <= lowQ) fail('große Vereine haben kein besseres Trainerteam');
 // 2) Verhandlung, Anstellung, Entlassung
 // ---------------------------------------------------------------------------
 {
-  const cand = marketForRole(g, 'jugendtrainer').find((m) => !m.clubId) ?? fail('kein Jugendtrainer frei');
+  const cand = marketForRole(g, 'jugendtrainer').find((m) => !m.clubId && !m.coach) ?? fail('kein Jugendtrainer frei');
   const rep = g.clubs[g.managedClubId].reputation ?? 60;
-  const d = demandFactor(cand, rep);
-  if (acceptsOffer(cand, d * 0.7, 2, rep)) fail('70 % der Forderung angenommen');
-  if (!acceptsOffer(cand, d, 2, rep)) fail('volle Forderung abgelehnt');
-  const low = offerContract(g, cand.id, d * 0.7, 2);
+  const d = demandOf(g, cand, 'jugendtrainer');
+  if (acceptsOffer(cand, d * 0.7, 2, rep, d)) fail('70 % der Forderung angenommen');
+  if (!acceptsOffer(cand, d, 2, rep, d)) fail('volle Forderung abgelehnt');
+  const low = offerContract(g, cand.id, d * 0.7, 2, { roleId: 'jugendtrainer' });
   if (low.ok) fail('zu niedriges Angebot führte zur Anstellung');
   const bal0 = g.clubs[g.managedClubId].finances.balance;
-  const res = offerContract(g, cand.id, d, 3);
+  const res = offerContract(g, cand.id, d, 3, { roleId: 'jugendtrainer' });
   if (!res.ok) fail(`Anstellung fehlgeschlagen: ${res.text}`);
   const hired = ensureStaff(g).find((m) => m.name === cand.name && m.roleId === 'jugendtrainer') ?? fail('nicht im Stab');
   if (g.staffWorld!.people.some((m) => m.id === cand.id)) fail('Person doppelt (Markt und Stab)');
@@ -83,6 +112,107 @@ if (topQ <= lowQ) fail('große Vereine haben kein besseres Trainerteam');
   const theirs = staffOfClub(g, big.id).find((m) => m.roleId === 'cotrainer')!;
   if ((g.clubs[g.managedClubId].reputation ?? 60) < (big.reputation ?? 60) - 4 && offerContract(g, theirs.id, 5, 3).ok) fail('Abwerben vom Großverein trotz geringem Ruf');
   console.log(`Verhandlung: Forderung ${d.toFixed(2)}, Abfindung ${sev}, Abwerben vom Großverein blockiert`);
+}
+
+// ---------------------------------------------------------------------------
+// 2b) Ein Pool für alle Stellen: Eignung, Filter, mehrere Plätze, Versetzen, Fortbildung, Cheftrainer
+// ---------------------------------------------------------------------------
+{
+  // Sortierung nach Eignung; Filter nach Fähigkeit
+  const sc = staffMarket(g, { role: 'scout_1975', onlyFree: true });
+  if (sc.length < 20) fail('Markt für Scouts zeigt nicht den ganzen Pool');
+  for (let i = 1; i < sc.length; i++) if (sc[i].fit > sc[i - 1].fit + 1e-9) fail('Markt nicht nach Eignung sortiert');
+  if (sc[0].fit !== roleFit(sc[0].m.skills, 'scout_1975')) fail('Eignung der Marktzeile stimmt nicht');
+  const med = staffMarket(g, { role: 'all', onlyFree: true, min: { medizin: staffValueOf(70) } });
+  if (!med.length || med.some((x) => staffLevel(x.m.skills!.medizin!) < 70)) fail('Filter nach Fähigkeit greift nicht');
+  if (staffMarket(g, { role: 'all', onlyFree: true, maxAge: 35 }).some((x) => x.m.age > 35)) fail('Altersfilter greift nicht');
+  // Dieselbe Person für verschiedene Stellen: unterschiedliche Eignung und Forderung
+  const p = sc[0].m;
+  const best = bestRoles(p.skills!, 1975, 3);
+  if (best[0].fit < best[2].fit) fail('bestRoles nicht sortiert');
+  // Co-Trainer: mehrere Plätze füllen sich der Reihe nach, erst dann wird ersetzt
+  const slots = roleSlots('cotrainer', 1975);
+  const before = slotInfo(g, 'cotrainer').holders.length;
+  for (let i = before; i < slots; i++) { const r = quickHire(g, 'cotrainer', i); if (!r.ok) fail(`Co-Trainer ${i + 1} nicht eingestellt: ${r.text}`); }
+  if (slotInfo(g, 'cotrainer').holders.length !== slots || slotInfo(g, 'cotrainer').free !== 0) fail('Co-Trainer-Plätze nicht gefüllt');
+  const n0 = ensureStaff(g).length;
+  const r2 = quickHire(g, 'cotrainer');
+  if (!r2.ok || ensureStaff(g).length !== n0) fail('voller Posten: Neuer muss den Schwächsten ersetzen');
+  // Einen Scout als Scout einstellen, dann zum Jugendtrainer versetzen (Stelle frei) – Gehalt sinkt nicht
+  const hire = offerContract(g, p.id, demandOf(g, p, 'scout_1975'), 2, { roleId: 'scout_1975' });
+  if (!hire.ok) fail(`Scout nicht eingestellt: ${hire.text}`);
+  const mine = ensureStaff(g).find((m) => m.name === p.name && m.roleId === 'scout_1975') ?? fail('Scout nicht im Stab');
+  if (mine.quality !== roleQuality(mine.skills, 'scout_1975')) fail('Qualität folgt nicht der besetzten Stelle');
+  if (canReassign(g, mine, 'cheftrainer').ok) fail('Versetzen auf besetzte Stelle erlaubt');
+  if (!canReassign(g, mine, 'jugendtrainer').ok) fail('Versetzen auf freie Stelle nicht erlaubt');
+  const f0 = mine.salaryFactor;
+  reassign(g, mine.id, 'jugendtrainer');
+  if (mine.roleId !== 'jugendtrainer' || mine.quality !== roleQuality(mine.skills, 'jugendtrainer')) fail('Versetzen hat Stelle/Qualität nicht geändert');
+  if (mine.salaryFactor < f0 - 1e-9) fail('Gehalt nach dem Versetzen gesunken');
+  // Fortbildung: einmal je Jahr, Fähigkeiten der Stelle steigen nicht über das Potenzial
+  const lv0 = roleFit(mine.skills, mine.roleId);
+  sendToCourse(g, mine.id);
+  if (roleFit(mine.skills, mine.roleId) < lv0 || COACH_SKILLS.some((k) => (mine.skills![k] ?? 0) > (mine.pot![k] ?? 0) + 1e-9)) fail('Fortbildung falsch');
+  const bal = g.clubs[g.managedClubId].finances.balance;
+  sendToCourse(g, mine.id);
+  if (g.clubs[g.managedClubId].finances.balance !== bal) fail('zweite Fortbildung im selben Jahr gebucht');
+  // Cheftrainer vom Markt: freie aus dem Trainerpool, Trainer anderer Vereine nur ohne „nur vereinslos“
+  const freeHeads = headCoachMarket(g, true), allHeads = headCoachMarket(g, false);
+  if (allHeads.length <= freeHeads.length) fail('Trainer der KI-Vereine fehlen auf dem Markt');
+  const hc = allHeads.find((m) => m.clubId)!;
+  const again = coachAsStaff(g.clubs[hc.clubId!].coach!, 1975);
+  if (JSON.stringify(again.skills) !== JSON.stringify(hc.skills)) fail('Cheftrainer wechselt bei jedem Blick die Fähigkeiten');
+  if (Math.abs(staffLevel(roleFit(hc.skills, 'cheftrainer')) - (g.clubs[hc.clubId!].coach!.reputation + 4)) > 2) fail('Stärke des Cheftrainers passt nicht zu seinem Ansehen');
+  // Abwerben eines Cheftrainers von einem kleineren Verein: Nachfolger beim alten Verein, Person bei dir
+  const small = [...ai].sort((a, b) => (a.reputation ?? 0) - (b.reputation ?? 0))[0];
+  const target = allHeads.find((m) => m.clubId === small.id)!;
+  const oldName = small.coach!.name;
+  const got = offerContract(g, target.id, demandOf(g, target, 'cheftrainer') * 1.05, 3, { roleId: 'cheftrainer' });
+  if (!got.ok) fail(`Abwerben des Cheftrainers gescheitert: ${got.text}`);
+  if (!small.coach || small.coach.name === oldName) fail('alter Verein ohne Nachfolger');
+  if (ensureStaff(g).filter((m) => m.roleId === 'cheftrainer').length !== 1 || ensureStaff(g).find((m) => m.roleId === 'cheftrainer')!.name !== oldName) fail('Cheftrainer nicht (allein) im Stab');
+  if (findPerson(g, target.id)) fail('abgeworbener Cheftrainer steht noch auf dem Markt');
+  console.log(`Pool: ${sc.length} Personen für jede Stelle, Co-Trainer ${slots} Plätze, Versetzen/Fortbildung ok, Cheftrainer ${oldName} abgeworben → Nachfolger ${small.coach.name}`);
+}
+
+// ---------------------------------------------------------------------------
+// 2c) Trainerteam ↔ Entwicklung: Decke, Lerntempo, Besetzung
+// ---------------------------------------------------------------------------
+{
+  // Reine Rechnung
+  if (coachPotCut(90, 85) !== 0 || coachPotCut(90, 75) !== 4 || coachPotCut(99, 60) !== 8 || coachPotCut(99, 90) !== 0) fail('Decke des Potenzials falsch');
+  if (levelNeeded(80) !== 75 || levelNeeded(99) !== 90) fail('gebrauchtes Niveau falsch');
+  if (!(teachFactor(90, 60) > 1.25 && teachFactor(70, 66) === 1 && teachFactor(60, 80) === 0.85)) fail('Lerntempo falsch');
+  if (!(declineFactor(90, 70) < 1 && declineFactor(60, 80) > 1)) fail('Abbau-Faktor falsch');
+  if (pushChance(90, 60, 20) <= 0.2 || pushChance(90, 60, 30) !== 0 || pushChance(70, 68, 20) !== 0 || dragChance(60, 80, 25) <= 0.1 || dragChance(60, 80, 20) !== 0) fail('Schub/Abzug falsch');
+  if (assistantsNeeded(88, 1975) !== 2 || assistantsNeeded(60, 1975) !== 1 || assistantsNeeded(88, 2010) !== 3 || assistantsNeeded(50, 2010) !== 1) fail('Bedarf an Co-Trainern falsch');
+  // Besetzung: ohne Cheftrainer und mit zu wenigen Co-Trainern sinkt die Trainingsqualität deutlich
+  const t0 = fresh();
+  const full = ownCoaching(t0);
+  const staff = ensureStaff(t0);
+  const head = staff.find((m) => m.roleId === 'cheftrainer')!;
+  const noHead = coachingTeam(staff.filter((m) => m !== head), 24, 1975, t0.clubs.mgl.reputation ?? 60);
+  const none = coachingTeam(staff.filter((m) => m.roleId !== 'cheftrainer' && m.roleId !== 'cotrainer'), 24, 1975, t0.clubs.mgl.reputation ?? 60);
+  if (!(noHead.extra < full.extra - 0.12 && noHead.level < full.level - 8 && none.extra < noHead.extra - 0.05 && none.level <= 35)) fail(`fehlende Trainer wirken zu schwach: voll ${full.extra}/${full.level.toFixed(0)}, ohne Chef ${noHead.extra}/${noHead.level.toFixed(0)}, ohne alle ${none.extra}/${none.level.toFixed(0)}`);
+  // Spitzentrainer: etwas besser als ein gewöhnliches Team
+  const top = staff.map((m) => (m.roleId === 'cheftrainer' || m.roleId === 'cotrainer' ? { ...m, skills: Object.fromEntries(COACH_SKILLS.map((k) => [k, 19])), quality: 19 } : m));
+  const topT = coachingTeam(top, 24, 1975, 88);
+  if (!(topT.extra > full.extra && topT.extra - full.extra < 0.12 && topT.level >= 95)) fail('Spitzentrainer wirken nicht „leicht besser“');
+  // In der Engine: gleiche Spieler, schwaches gegen starkes Trainerteam
+  const p = Object.values(t0.players).find((x) => !x.isYouth && x.clubId === 'mgl' && x.age <= 22 && truePotential(x) - x.overall >= 8 && x.naturalPosition !== 'TW') ?? fail('kein junger Spieler mit Luft nach oben');
+  const pot = truePotential(p);
+  setClubCoaching(new Map([['mgl', { level: pot - 5, gk: pot - 5 }]]));
+  const dStrong = distanceFactor(p);
+  if (coachCutFor(p) !== 0 || coachLevelFor(p) !== pot - 5) fail('Trainer im Bereich des Potenzials: trotzdem Decke');
+  setClubCoaching(new Map([['mgl', { level: pot - 25, gk: pot - 25 }]]));
+  const dWeak = distanceFactor(p);
+  if (!(coachCutFor(p) === 8 && dWeak < dStrong)) fail('schwaches Trainerteam bremst nicht');
+  setClubCoaching(null);
+  if (coachCutFor(p) !== 0) fail('ohne hinterlegtes Trainerteam darf nichts gebremst werden');
+  bindCoaching(t0);
+  const out = coachingOutlook(t0);
+  console.log(`Entwicklung: voll ${full.extra >= 0 ? '+' : ''}${full.extra} (Niveau ${full.level.toFixed(0)}), ohne Cheftrainer ${noHead.extra} (${noHead.level.toFixed(0)}), ohne Trainer ${none.extra} (${none.level.toFixed(0)}), Spitzentrainer +${topT.extra} (${topT.level.toFixed(0)}); Ausblick: ${out.limited.length} gebremst, ${out.learners.length} lernen viel, Rang ${out.rank}/${out.of}`);
+  void startingStaff;
 }
 
 // ---------------------------------------------------------------------------
@@ -149,7 +279,23 @@ if (topQ <= lowQ) fail('große Vereine haben kein besseres Trainerteam');
   for (const m of old.staff ?? []) { delete m.skills; delete m.pot; delete m.contractEnd; }
   migrateStaffPeople(old);
   migrateStaffPeople(old);
-  if (!old.staffWorld || (old.staff ?? []).some((m) => !m.skills || !m.contractEnd)) fail('Migration alter Spielstände unvollständig');
+  if (!old.staffWorld || (old.staff ?? []).some((m) => !finite(m) || !m.contractEnd)) fail('Migration alter Spielstände unvollständig');
+  // Spielstand mit acht Fachgebieten und Bewerbern je Rolle (v1): Fähigkeiten ergänzen, Qualität der Stelle bleibt, einmalige Nachricht
+  const v1 = fresh();
+  const NEW = ['fuehrung', 'scouting', 'wirtschaft', 'medien', 'organisation'] as const;
+  const strip = (m: StaffMember) => { for (const k of NEW) { delete m.skills![k]; delete m.pot![k]; } delete m.traits; delete m.bg; };
+  v1.staff = v1.staff!.filter((m) => m.roleId !== 'cheftrainer');
+  v1.staff.forEach(strip);
+  v1.staffWorld!.people.forEach(strip);
+  (v1.staffWorld as any).v = 1;
+  const q0 = new Map(v1.staffWorld!.people.filter((m) => m.clubId).map((m) => [m.id, m.quality]));
+  const msgs = v1.messages.length;
+  migrateStaffPeople(v1);
+  migrateStaffPeople(v1);
+  if (v1.staffWorld!.v !== 2 || !v1.staffWorld!.people.every(finite) || !v1.staff.every(finite)) fail('Umstellung auf 13 Fähigkeiten unvollständig');
+  for (const m of v1.staffWorld!.people) if (q0.has(m.id) && Math.abs(m.quality - q0.get(m.id)!) > 1) fail(`Qualität bei der Umstellung verschoben: ${m.roleId} ${q0.get(m.id)} → ${m.quality}`);
+  if (v1.messages.length !== msgs + 1) fail('Umstellung: genau eine erklärende Nachricht erwartet');
+  if (ownCoaching(v1).head || ownCoaching(v1).penalty >= 0) fail('alter Spielstand ohne Cheftrainer: Abzug fehlt');
 }
 
 // ---------------------------------------------------------------------------
@@ -177,8 +323,13 @@ for (let s = 0; s < SEASONS; s++) {
   const emp = people.filter((m) => m.clubId);
   for (const role of AI_TRACKED_ROLES) {
     if (!staffAvailable(STAFF_BY_ID[role], year)) continue;
-    const f = free.filter((m) => m.roleId === role).length;
-    if (f < 3) fail(`${sim.season}: nur ${f} Bewerber als ${role}`);
+    const f = free.filter((m) => roleFit(m.skills, role) >= 7).length;
+    if (f < 3) fail(`${sim.season}: nur ${f} brauchbare Bewerber als ${role}`);
+  }
+  for (const role of rolesAvailable(year)) {
+    if (role === 'cheftrainer') continue;
+    const f = free.filter((m) => roleFit(m.skills, role) >= 7).length;
+    if (f < 2) fail(`${sim.season}: nur ${f} brauchbare Bewerber als ${role}`);
   }
   const qs = people.map((m) => m.quality).sort((a, b) => a - b);
   const last = ww.log[ww.log.length - 1];
@@ -192,7 +343,7 @@ for (let s = 0; s < SEASONS; s++) {
   });
   const r = rows[rows.length - 1];
   console.log(`${sim.season}: ${people.length} Personen (${r.free} frei, ${r.emp} angestellt), Ex-Profis ${Math.round(r.ex * 100)} %, Qualität Ø ${r.q.toFixed(1)} / 90 % ${r.q90} / max ${r.qmax}, Rollen ${r.roles}, neu: ${r.exIn} Ex-Profis + ${r.out} Quereinsteiger, Aufstieg zum Cheftrainer ${r.promoted}, Cheftrainer-Pool ${r.pool}`);
-  if (people.length > 650) fail('Arbeitsmarkt explodiert');
+  if (people.length > 700 || free.length > 330) fail('Arbeitsmarkt explodiert');
 }
 console.log(`Simulation: ${SEASONS} Saisons in ${((Date.now() - t0) / 1000).toFixed(0)} s`);
 

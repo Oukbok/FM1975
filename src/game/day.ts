@@ -18,7 +18,7 @@ import { autoResolveEvents, monthlyEvents } from './eventsGame';
 import { setInjuryRiskHook } from '../engine/injuryRisk';
 import { focusEffect } from '../engine/staffPeople';
 import { applyFocusLoad, currentFocus, devContextFor, ensureStaff, monthlyTrainingReport, staffEffectsOf } from './staffGame';
-import { coachingReport, memberMonthlySalary } from '../engine/staffPeople';
+import { memberMonthlySalary } from '../engine/staffPeople';
 import { CalendarEngine } from '../engine/calendar';
 import { drawRound, roundWinners, simulateCupTie } from '../engine/cup';
 import { RatingResult, RatingType, runRatingCeremony, weeklyDevelopment, ratingTendencies, updateAges } from '../engine/development';
@@ -94,6 +94,7 @@ import { reserveDaily } from './reserveTeam';
 import { nationalDaily } from './national/nationalGame';
 import { bindHonours } from './clubHonours';
 import { bindStaffFactor } from './staffGame';
+import { bindCoaching, ownCoaching } from './coachingGame';
 
 export interface DayUi {
   /** Eigenes Spiel wurde gespielt → Spielbericht/Textmodus öffnen. */
@@ -137,6 +138,7 @@ export const HEADLESS_UI: DayUi = { onOwnMatch() {}, onRatingCeremony() {}, onSe
 export function processDay(g: Game, ui: DayUi): boolean {
   bindHonours(g); // Wirkungen der Vereinsauszeichnungen (nur bei neuem Spielstand neu)
   bindStaffFactor(g); // Stab → Spielstärke des eigenen Vereins (game/staffGame.ts)
+  bindCoaching(g); // Niveau der Trainerteams → Entwicklung (game/coachingGame.ts)
   const myClub = g.clubs[g.managedClubId];
 
   const cal = g.calendar;
@@ -419,7 +421,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
     const inAWeek = CalendarEngine.addDays(today, 7);
     const upcoming = g.calendar.events.find((e) => e.type === 'rating_update' && e.date === inAWeek && !e.processed);
     if (upcoming) {
-      const staffQ = Math.min(1, coachingReport(ensureStaff(g), myClub.playerIds.length, yearOf(today)).strength / 25);
+      const staffQ = Math.min(1, ownCoaching(g).strength / 25);
       const tips = ratingTendencies(myClub.playerIds.map((id) => g.players[id]).filter(Boolean), staffQ);
       if (tips.length) {
         pushMessage(g.messages, makeMessage({

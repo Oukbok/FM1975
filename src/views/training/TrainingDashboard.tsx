@@ -1,21 +1,23 @@
 import Icon from '../../components/Icon';
 import { campDestination } from '../../data/campDestinations';
 import { economyScale, yearOf } from '../../engine/economy';
-import { coachingReport, FOCUS_LABEL, memberMonthlySalary, phaseOf, PHASE_LABEL } from '../../engine/staffPeople';
+import { FOCUS_LABEL, memberMonthlySalary, phaseOf, PHASE_LABEL } from '../../engine/staffPeople';
 import { DAY_SHORT, EFFECT_GROUPS, SLOT_KEYS, mondayOf } from '../../engine/trainingPlan';
 import { BLOCKS_BY_ID } from '../../engine/weeklyTraining';
 import { Game } from '../../game/state';
 import { ensureStaff } from '../../game/staffGame';
-import { ensureStaffWorld, marketForRole } from '../../game/staffWorld';
-import { roleLabel } from '../../game/trainerTeam';
+import { ensureStaffWorld, staffMarket } from '../../game/staffWorld';
+import { coachingOutlook } from '../../game/coachingGame';
+import { demandOf, roleLabel } from '../../game/trainerTeam';
 import { currentWeekEffect, effectiveWeek } from '../../game/trainingWeek';
 import { campState } from '../../game/winterShared';
-import { teamRolesAvailable } from '../../engine/staffSkills';
+import { staffLevel, teamRolesAvailable } from '../../engine/staffSkills';
+import { clubTrainingFactor } from '../../engine/development';
 import { Screen } from '../../shell/navigation';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
-import { condBar, fmtDM, fmtDateShort } from '../../ui/format';
+import { condBar, fmtDateShort, fmtStaffWage } from '../../ui/format';
 import { squadOf } from '../shared';
-import { QBar, topSkills } from './teamParts';
+import { fitLevel, Level, LevelBar, topSkillsText } from '../staff/staffUi';
 import { blockKind } from './plan/model';
 
 // =============================================================================
@@ -35,8 +37,11 @@ export function TrainingDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) 
   ensureStaffWorld(g);
   const avail = teamRolesAvailable(year);
   const team = staff.filter((m) => avail.includes(m.roleId));
-  const rep = coachingReport(staff, squad.length, year);
-  const best = marketForRole(g, 'all').filter((m) => !m.clubId && avail.includes(m.roleId)).slice(0, 6);
+  const outlook = coachingOutlook(g);
+  const coach = outlook.team;
+  const myClub = g.clubs[g.managedClubId];
+  const devPct = myClub ? Math.round((clubTrainingFactor(myClub, coach.extra) / clubTrainingFactor(myClub, 0) - 1) * 100) : 0;
+  const best = staffMarket(g, { role: 'all', onlyFree: true, roles: avail }).slice(0, 6);
   const camps = campState(g).bookings.filter((b) => !b.done).sort((a, b) => a.start.localeCompare(b.start));
   const phase = phaseOf(g.calendar.currentDate);
   return (
@@ -66,22 +71,25 @@ export function TrainingDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) 
         {tired.map((p) => <Meter key={p.id} label={p.fullName} value={p.frische ?? 100} color={condBar(p.frische ?? 100)} />)}
       </DashBox>
 
-      <DashBox title="Trainerteam" icon="whistle" onClick={() => onGoto('trainerteam')} right={`${team.length}/${avail.length} besetzt`}>
+      <DashBox title="Trainerteam" icon="whistle" info="trainerniveau" onClick={() => onGoto('trainerteam')} right={`${team.length} ${team.length === 1 ? 'Person' : 'Personen'}`}>
         <div className="dkpis">
-          <Kpi value={`${rep.extra >= 0 ? '+' : ''}${Math.round(rep.extra * 100)} %`} label="Entwicklung" />
-          <Kpi value={`${Math.round(rep.capacity * 100)} %`} label="Betreuung" />
+          <Kpi value={Math.round(coach.level)} label="Niveau" sub={`${outlook.rank}. von ${outlook.of}`} />
+          <Kpi value={`${devPct >= 0 ? '+' : '−'}${Math.abs(devPct)} %`} label="Entwicklung" color={devPct < 0 ? 'var(--neg)' : undefined} />
         </div>
+        {!coach.head && <div className="dnote" style={{ color: 'var(--neg)' }}>Kein Cheftrainer – die Entwicklung leidet deutlich.</div>}
+        {coach.missing > 0 && <div className="dnote" style={{ color: 'var(--neg)' }}>{coach.missing === 1 ? 'Ein Co-Trainer fehlt' : `${coach.missing} Co-Trainer fehlen`} für die Größe deines Vereins.</div>}
+        {outlook.limited.length > 0 && <div className="dnote">{outlook.limited.length} {outlook.limited.length === 1 ? 'Spieler wird' : 'Spieler werden'} vom Niveau der Trainer gebremst.</div>}
         {team.length ? team.slice(0, 5).map((m) => (
-          <div key={m.id} className="dlist-row"><span className="grow"><b>{roleLabel(m.roleId)}</b> <span className="muted">· {m.name}</span></span><QBar q={m.quality} /><span className="val">{m.quality}</span></div>
+          <div key={m.id} className="dlist-row"><span className="grow"><b>{roleLabel(m.roleId)}</b> <span className="muted">· {m.name}</span></span><LevelBar v={fitLevel(m, m.roleId)} /><Level v={fitLevel(m, m.roleId)} /></div>
         )) : <Empty icon="whistle">Noch niemand angestellt.</Empty>}
       </DashBox>
 
       <DashBox title="Arbeitsmarkt" icon="staff" onClick={() => onGoto('trainerteam')} right="beste Bewerber">
-        {best.map((m) => (
+        {best.map(({ m, fit, role }) => (
           <div key={m.id} className="dlist-row">
-            <span className="grow"><b>{m.name}</b> <span className="muted">· {roleLabel(m.roleId)}, {m.age} J.{m.exPro ? ', Ex-Profi' : ''}</span>
-              <span className="dnote" style={{ display: 'block' }}>{topSkills(m, 2)} · {fmtDM(memberMonthlySalary(m, scale))}/Monat</span></span>
-            <span className="val">{m.quality}</span>
+            <span className="grow"><b>{m.name}</b> <span className="muted">· {roleLabel(role)}, {m.age} J.{m.exPro ? ', Ex-Profi' : ''}</span>
+              <span className="dnote" style={{ display: 'block' }}>{topSkillsText(m, 2)} · {fmtStaffWage(memberMonthlySalary({ ...m, roleId: role, salaryFactor: demandOf(g, m, role) }, scale))}</span></span>
+            <Level v={staffLevel(fit)} />
           </div>
         ))}
       </DashBox>

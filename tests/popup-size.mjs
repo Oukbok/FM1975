@@ -39,6 +39,8 @@ for (const view of VIEWS) {
     if (sub) { await page.locator(`.tn-sub-item:has-text("${sub}")`).first().click(); await page.waitForTimeout(400); }
   };
   const click = (sel, o) => page.locator(sel).first().click({ timeout: 3000, ...o });
+  /** Klick nur, wenn es das Ziel (noch) gibt und es bedienbar ist. */
+  const soft = async (sel) => { const l = page.locator(sel).first(); if (await l.count() && await l.isEnabled().catch(() => false)) await l.click({ timeout: 1500 }); };
 
   /** [kürzel, Rahmen, Öffnen, Optionen] */
   const CASES = [
@@ -59,9 +61,11 @@ for (const view of VIEWS) {
       await click('.pcm-item:has-text("Vertrag verlängern")');
       await page.waitForSelector('.ct-root', { timeout: 4000 });
     }, { steps: [
-      ['Angebot machen', () => page.locator('.ct-root .ct-send').first().click({ timeout: 1500 })],
-      ['Forderung übernehmen', () => page.locator('.ct-root button:has-text("Forderung übernehmen")').first().click({ timeout: 1500 })],
-      ['Zusage', () => page.locator('.ct-root .ct-chip').first().click({ timeout: 1500 })],
+      // Je nach Spieler ist nach dem ersten Angebot schon Schluss (angenommen): fehlende Knöpfe sind dann kein Fehler.
+      ['Zusage', () => soft('.ct-root .ct-chip')],
+      ['Angebot machen', () => soft('.ct-root .ct-send')],
+      ['Forderung übernehmen', () => soft('.ct-root button:has-text("Forderung übernehmen")')],
+      ['Angebot machen 2', () => soft('.ct-root .ct-send')],
     ] }],
     ['spielersuche', '.ps-panel', async () => { await nav('Transfers', 'Transfermarkt'); await click('.dchip:has-text("Spieler suchen")'); }],
     ['transferbilanz', '.tw-panel', async () => { await nav('Transfers', 'Transfermarkt'); await click('.dchip:has-text("Transferbilanz")'); }],
@@ -86,7 +90,11 @@ for (const view of VIEWS) {
     ['einstellungen', '.modal', async () => { await closeAll(page); await click('.hd-gear'); await click('.menu-dd-item:has-text("Einstellungen")'); }],
     ['speichern', '.modal', async () => { await closeAll(page); await click('.hd-gear'); await click('.menu-dd-item:has-text("Speichern")'); }],
     ['vereinseditor', '.ce-modal', async () => { await closeAll(page); await click('.hd-gear'); await click('.menu-dd-item:has-text("Editor")'); }],
-    ['trainerteam', '.tt-modal', async () => { await nav('Training', 'Trainerteam'); await click('.app-main .dchip:has-text("Kandidaten")'); await page.waitForTimeout(300); await click('.app-main .dchip:has-text("Verhandeln")'); }, { steps: [['Angebot machen', () => page.locator('.tt-modal .btn-primary').first().click({ timeout: 1500 })], ['nochmal', () => page.locator('.tt-modal .btn-primary').first().click({ timeout: 1500 })]] }],
+    ['trainerteam', '.sf-hire', async () => { await nav('Training', 'Trainerteam'); await page.locator('.sf-table tbody tr button:has-text("Verhandeln")').first().click({ timeout: 3000 }); }, { steps: [
+      ['Angebot zu niedrig', async () => { await page.locator('.sf-hire input[type=range]').fill('60'); await page.locator('.sf-hire-btns .b3-primary').click({ timeout: 1500 }); }],
+      ['Laufzeit 4', () => page.locator('.sf-hire .seg3 button:has-text("4 Jahre")').click({ timeout: 1500 })],
+      ['nochmal', () => page.locator('.sf-hire-btns .b3-primary').click({ timeout: 1500 })],
+    ] }],
     ['stadion-block', '.sv-pop', async () => {
       await nav('Verein', 'Stadion');
       const b = page.locator('.gr-svg g.gr-obj:not(.sv-venue)');
@@ -148,7 +156,7 @@ for (const view of VIEWS) {
 
   // Seiten-Boxen: Chips/Reiter in DashBoxen dürfen die Box nicht wachsen lassen.
   const PAGES = [['Kader', 'Übersicht'], ['Kader', 'Kabine'], ['Finanzen', 'Budget'], ['Finanzen', 'Sponsoring'], ['Statistiken', 'Liga'], ['Statistiken', 'Pokal'],
-    ['Transfers', 'Transfermarkt'], ['Training', 'Trainingsplan'], ['Jugend', 'Jugendwettbewerbe'], ['Verein', 'Kartenverkauf'], ['Finanzen', 'Fanartikel'], ['Verein', 'Erfolge']];
+    ['Transfers', 'Transfermarkt'], ['Training', 'Trainingsplan'], ['Jugend', 'Jugendwettbewerbe'], ['Verein', 'Kartenverkauf'], ['Finanzen', 'Fanartikel'], ['Verein', 'Erfolge'], ['Training', 'Trainerteam'], ['Verein', 'Mitarbeiter'], ['Aufstellung', 'Taktik']];
   if (!ONLY || ONLY.includes('seiten')) for (const [m, s] of PAGES) {
     const issues = [];
     try {

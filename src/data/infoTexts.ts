@@ -678,7 +678,22 @@ export const INFO_TEXTS = {
   },
   mitarbeiter: {
     title: 'Mitarbeiter',
-    text: 'Trainer, Ärzte, Scouts und Verwaltung. Ihre Qualität wirkt auf Training, Erholung, Verletzungen, Scouting und Vermarktung; neue Berufe kommen mit den Jahrzehnten hinzu.',
+    text: 'Mitarbeiter sind Personen wie Spieler: Jeder hat 13 Fähigkeiten (Stärke 1–99), lernt im Beruf dazu und lässt im Alter nach. Wie gut jemand auf eine Stelle passt, sagt seine Eignung – jede Person kommt für jede Stelle infrage. Neue Berufe kommen mit den Jahrzehnten hinzu.',
+    wiki: 'staff-people',
+  },
+  trainerniveau: {
+    title: 'Niveau des Trainerteams',
+    text: 'Stärke deines Trainerteams auf der Skala der Spieler: 65 % Cheftrainer, 35 % Co-Trainer. Sein volles Potenzial erreicht ein Spieler nur, wenn das Niveau im Bereich seines Potenzials liegt (höchstens 5 Punkte darunter). Liegt es klar über seiner heutigen Stärke, lernt er schneller. Ohne Cheftrainer oder mit zu wenigen Co-Trainern leidet das Training deutlich.',
+    wiki: 'staff-coaching',
+  },
+  arbeitsmarktStab: {
+    title: 'Arbeitsmarkt',
+    text: 'Ein Pool für alle Stellen: Wähle eine Stelle, und die Liste ordnet sich nach der Eignung dafür. Filtern kannst du nach einer Fähigkeit ab einem Mindestwert, nach Alter und Herkunft. Ohne „nur vereinslos“ siehst du auch Angestellte anderer Vereine – abwerben geht gegen Ablöse, aber nur von gleich großen oder kleineren Vereinen.',
+    wiki: 'staff-market',
+  },
+  staffEignung: {
+    title: 'Eignung je Stelle',
+    text: 'Jede Stelle gewichtet andere Fähigkeiten: Beim Cheftrainer zählen Taktik und Führung, beim Scout die Spielerkenntnis, beim Arzt die Medizin. Die Eignung ist der gewichtete Wert (1–99). Dieselbe Person kann als Co-Trainer 82 und als Cheftrainer 74 sein – eigene Leute lassen sich versetzen, wenn die Stelle frei ist.',
     wiki: 'staff-people',
   },
 

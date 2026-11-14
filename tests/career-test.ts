@@ -15,7 +15,7 @@ import { migrateCareer } from '../src/game/careerGame';
 import { ensureCareer } from '../src/game/careerState';
 import { boardPressureDaily, ownStanding, PRESSURE_TYPE } from '../src/game/boardPressure';
 import { headCoachNow, headCoachRows, openCoachEntry } from '../src/game/headCoaches';
-import { candidatesFor, hireStaff } from '../src/game/staffGame';
+import { quickHire } from '../src/game/trainerTeam';
 import { ensureMgr } from '../src/game/managerLog';
 import { careerData, games } from '../src/game/managerView';
 import { aiLoanRound, aiLoansSeasonEnd, optionWanted } from '../src/game/aiLoans';
@@ -47,7 +47,7 @@ const c = ensureCareer(g);
 if (c.rep < 20 || c.rep > 95) fail(`Ansehen unplausibel ${c.rep}`);
 c.rep = 90;
 g.clubs.boc.boardConfidence = 5; // früher: Ultimatum + Entlassung
-hireStaff(g, candidatesFor(g, 'cheftrainer')[0]);
+quickHire(g, 'cheftrainer');
 const firstCoach = headCoachNow(g);
 if (!firstCoach || openCoachEntry(g)?.id !== firstCoach.id) fail('Cheftrainer nicht in der Historie');
 run(g, '1976-07-01');
@@ -114,7 +114,7 @@ console.log('Migration: Angebote/Entlassungs-Wahl verfallen, zugesagter Wechsel 
 // 3) Vorstandsdruck gegen den Trainer
 // -----------------------------------------------------------------------------
 const gp = fresh('mgl', 'career');
-hireStaff(gp, candidatesFor(gp, 'cheftrainer')[0]);
+quickHire(gp, 'cheftrainer');
 const coach = headCoachNow(gp)!;
 openCoachEntry(gp)!.from = '1975-07-01';
 run(gp, '1975-10-31');

@@ -1,36 +1,47 @@
 // =============================================================================
-// ARBEITSMARKT FÜR TRAINER UND BETREUER — über die Jahrzehnte simuliert
+// ARBEITSMARKT FÜR MITARBEITER — ein Pool für alle Stellen, über die Jahrzehnte
 // -----------------------------------------------------------------------------
-// Alle Personen außerhalb deines Vereins stehen in `game.staffWorld.people`:
-// vereinslos (Bewerber) oder bei einem KI-Verein angestellt (`clubId`).
-//   • Karriereende: Spieler gehen mit einer Wahrscheinlichkeit ins Trainer-
-//     geschäft (game/squads.ts → staffFromRetired). Erfolgreiche Spieler (Titel,
-//     Einsätze, Spitzenstärke, Kapitän) häufiger und mit höherem Potenzial;
-//     Stärken aus Spielerattributen/Persönlichkeit (engine/staffSkills.ts).
-//     Sehr erfolgreiche Führungsspieler landen teils direkt im Cheftrainer-Pool.
-//   • Quereinsteiger füllen jede Rolle auf (Sportlehrer, Sportwissenschaftler,
-//     später Analysten und Psychologen).
+// Wunsch Pascal: Mitarbeiter sind Personen wie Spieler. Alle Personen außerhalb
+// deines Vereins stehen in `game.staffWorld.people`: vereinslos (Bewerber) oder
+// bei einem KI-Verein angestellt (`clubId`). Jede Person kommt für JEDE Stelle
+// infrage – wie gut, sagt ihre Eignung (engine/staffSkills.ts). `roleId` einer
+// vereinslosen Person ist nur die Stelle, in der sie am meisten taugt.
+//   • Karriereende: Spieler bleiben mit einer Wahrscheinlichkeit im Fußball
+//     (game/squads.ts → staffFromRetired) – als Trainer, Scout, später auch in
+//     der sportlichen Leitung. Erfolgreiche Spieler häufiger und mit höherem
+//     Potenzial; frühere Spieler DEINES Vereins melden sich bei dir und warten
+//     ein Jahr auf ein Angebot, bevor die Konkurrenz zugreift.
+//   • Quereinsteiger aus vielen Berufen und jedes Jahr ein Jahrgang junger
+//     Nachwuchskräfte (engine/staffGen.ts); für jede Stelle, die es in der Zeit
+//     gibt, stehen immer einige geeignete Bewerber bereit.
 //   • Saisonwechsel: Altern, Ruhestand, Lernen im Beruf (Erfolg beschleunigt),
 //     Vertragsenden, KI-Vereine stellen nach ihrem Ruf ein und werben ab,
 //     gute Co-Trainer steigen zum Cheftrainer auf (game.coachPool).
+//   • Cheftrainer: freie Trainer des Trainerpools und Trainer kleinerer Vereine
+//     stehen als Personen auf dem Markt (`coachAsStaff`).
 // Der eigene Verein hat seine Leute in `game.staff` (game/staffGame.ts).
 // =============================================================================
 import { Game, hashSeed } from './state';
 import { Club, ClubCoach, Player } from '../types';
 import { isLeagueClub } from '../engine/clubEconomy';
 import { makeCoach } from '../engine/aiManager';
+import { makeMessage, pushMessage } from '../engine/messages';
 import { STAFF_BY_ID, staffAvailable } from '../data/staff';
 import { StaffMember } from '../engine/staffPeople';
 import { personaOf } from '../engine/persona';
 import {
-  AI_TRACKED_ROLES, ExProInfo, careerSuccess, coachingChance, demandFactor, learnSeason, makeOutsider,
-  skillsFromQuality, specialtyOfSkills, staffFromPlayer, syncQuality, TEAM_ROLE_IDS, teamRolesAvailable,
+  AI_TRACKED_ROLES, bestRole, demandFactor, ExProInfo, learnSeason, roleFit, ROLE_SKILLS, rolesAvailable, roleName, specialtyOfSkills,
+  syncQuality, TEAM_ROLE_IDS,
 } from '../engine/staffSkills';
+import {
+  careerSuccess, coachAsStaff, coachingChance, coachRepOf, makeOutsider, skillsFromQuality, snapshotOf, staffFromPlayer,
+} from '../engine/staffGen';
 import { recordBook } from './clubRecords';
 
 export interface StaffWorldLog { season: string; exPros: number; outsiders: number; promoted: number; retired: number; hires: number }
 export interface StaffWorld {
-  v: 1;
+  /** 2 = ein Pool für alle Stellen, 13 Fähigkeiten. */
+  v: 1 | 2;
   people: StaffMember[];
   /** Kurzer Verlauf je Saison (Zugänge/Abgänge des Marktes). */
   log: StaffWorldLog[];
@@ -40,10 +51,16 @@ export interface StaffWorld {
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const yearOf = (d: string) => Number(d.slice(0, 4));
-/** Mindestens so viele Bewerber je Rolle sollen frei sein. */
-const MIN_FREE = 6;
+/** Ab dieser Eignung (1–20) gilt ein Bewerber als brauchbar für eine Stelle. */
+const FIT_OK = 7;
+/** So viele brauchbare Bewerber je Stelle sollen frei sein. */
+const MIN_PER_ROLE = 4;
+/** Jahrgang junger Nachwuchskräfte je Saison. */
+const NEWCOMERS = 18;
+/** Zusätzliche Bewerber zu Spielbeginn (bunt gemischt nach Berufen). */
+const INITIAL_EXTRA = 120;
 /** Obergrenze des freien Pools (Spielstandgröße). */
-const MAX_FREE = 140;
+const MAX_FREE = 320;
 
 function emptyLog(season: string): StaffWorldLog { return { season, exPros: 0, outsiders: 0, promoted: 0, retired: 0, hires: 0 }; }
 
@@ -67,11 +84,20 @@ function seededRng(key: string): () => number {
 }
 
 export function ensureStaffWorld(g: Game, rngIn?: () => number): StaffWorld {
-  if (g.staffWorld && g.staffWorld.v === 1) return g.staffWorld;
+  if (g.staffWorld?.v === 2) return g.staffWorld;
   const rng = rngIn ?? seededRng(`staff:${g.managedClubId}:${g.calendar.currentDate}`);
   const date = g.calendar.currentDate;
   const year = yearOf(date);
-  const w: StaffWorld = { v: 1, people: [], log: [], cur: emptyLog(g.season) };
+  if (g.staffWorld) {
+    // Älterer Spielstand (acht Fachgebiete, Bewerber je Rolle): Fähigkeiten ergänzen, Pool auf alle Stellen erweitern.
+    const w = g.staffWorld;
+    for (const m of w.people) skillsFromQuality(m, rng);
+    w.v = 2;
+    refillFree(g, w, year, rng, INITIAL_EXTRA / 2);
+    announceStaff2(g);
+    return w;
+  }
+  const w: StaffWorld = { v: 2, people: [], log: [], cur: emptyLog(g.season) };
   g.staffWorld = w;
   // Startbesetzung der KI-Vereine: passend zum Ruf, gemischt aus Ex-Profis (Name aus dem Pool) und Quereinsteigern.
   for (const c of aiClubs(g)) {
@@ -79,34 +105,54 @@ export function ensureStaffWorld(g: Game, rngIn?: () => number): StaffWorld {
       if (!staffAvailable(STAFF_BY_ID[role], year)) continue;
       const m = makeOutsider(year, rng, role);
       tuneTo(m, clubStaffTarget(c) + (rng() - 0.5) * 5);
-      if (rng() < 0.45 && role !== 'videoanalyst') m.exPro = syntheticExPro(m, rng);
+      if (rng() < 0.45 && role !== 'videoanalyst') markExPro(m, rng);
       hireInto(m, c.id, date, 1 + Math.floor(rng() * 3));
       w.people.push(m);
     }
   }
-  refillFree(g, w, year, rng);
-  // Auch unter den Bewerbern 1975 sind ehemalige Spieler (Karriere vor Spielbeginn).
-  for (const m of w.people) if (!m.clubId && m.roleId !== 'cheftrainer' && rng() < 0.4) m.exPro = syntheticExPro(m, rng);
+  refillFree(g, w, year, rng, INITIAL_EXTRA);
   return w;
 }
 
-/** Fachgebiete so verschieben, dass die Rollenqualität etwa `q` beträgt. */
-function tuneTo(m: StaffMember, q: number): void {
+/** Älterer Spielstand: einmal erklären, was neu ist – und was dem eigenen Trainerteam fehlt. */
+function announceStaff2(g: Game): void {
+  if ((g as Game & { simAutoManage?: boolean }).simAutoManage || !g.clubs[g.managedClubId]) return;
+  const staff = g.staff ?? [];
+  const head = staff.some((m) => m.roleId === 'cheftrainer');
+  const co = staff.filter((m) => m.roleId === 'cotrainer').length;
+  pushMessage(g.messages, makeMessage({
+    date: g.calendar.currentDate, category: 'training', from: 'Geschäftsstelle',
+    subject: 'Neu: Mitarbeiter sind Personen wie Spieler',
+    shortText: head ? 'Jede Person taugt für jede Stelle – wie gut, zeigt ihre Eignung.' : 'Dein Verein braucht einen Cheftrainer – ohne ihn leidet die Entwicklung der Spieler.',
+    bodyText: 'Jeder Mitarbeiter hat jetzt 13 Fähigkeiten und eine Eignung für jede Stelle im Verein (Stärke 1–99, wie bei Spielern). Der Arbeitsmarkt ist ein gemeinsamer Pool für alle Stellen – auch Ärzte, Scouts und die Verwaltung holst du von dort. Mitarbeiter lernen im Beruf dazu, lassen im Alter nach, und eigene Leute kannst du auf eine andere Stelle versetzen.\n\n'
+      + 'Wichtig für die Entwicklung deiner Spieler:\n'
+      + '• Das Niveau deines Trainerteams (65 % Cheftrainer, 35 % Co-Trainer) steht jedem Spieler gegenüber. Sein volles Potenzial erreicht er nur, wenn das Niveau im Bereich seines Potenzials liegt. Liegt es klar über seiner heutigen Stärke, lernt er schneller.\n'
+      + '• Ohne Cheftrainer und mit zu wenigen Co-Trainern für die Größe des Vereins leidet das Training deutlich.\n\n'
+      + (head ? '' : 'Derzeit hast du KEINEN Cheftrainer. ') + `Co-Trainer: ${co}. `
+      + 'Wen dein Trainerteam bremst und wer besonders profitiert, zeigt Training › Trainerteam in der Ansicht „Wirkung“.',
+  }));
+}
+
+/** Fähigkeiten so verschieben, dass die Eignung für die eigene Stelle etwa `q` beträgt. */
+export function tuneTo(m: StaffMember, q: number): void {
   if (!m.skills || !m.pot) return;
-  const d = clamp(q, 2, 19) - m.quality;
+  const d = clamp(q, 2, 19) - roleFit(m.skills, m.roleId, m.quality);
+  const mine = ROLE_SKILLS[m.roleId] ?? {};
   for (const k of Object.keys(m.skills) as (keyof typeof m.skills)[]) {
-    m.skills[k] = clamp(Math.round(((m.skills[k] ?? 1) + d) * 10) / 10, 1, 20);
-    m.pot[k] = clamp(Math.max(m.pot[k] ?? 1, (m.skills[k] ?? 1) + 1), 1, 20);
+    // Nur was die Stelle ausmacht, verschiebt sich voll – sonst wäre jeder Gute ein Alleskönner.
+    m.skills[k] = clamp(Math.round(((m.skills[k] ?? 1) + d * (mine[k] ? 1 : 0.2)) * 10) / 10, 1, 20);
+    m.pot[k] = clamp(Math.max(m.pot[k] ?? 1, (m.skills[k] ?? 1) + (mine[k] ? 1 : 0.5)), 1, 20);
   }
   syncQuality(m);
   m.salaryFactor = demandFactor(m);
 }
 
-/** Startbesetzung 1975: Ex-Profi ohne Spielstand-Spieler (Karriere vor 1975). */
-function syntheticExPro(m: StaffMember, rng: () => number): ExProInfo {
+/** Startbesetzung: Ex-Profi ohne Spielstand-Spieler (Karriere vor Spielbeginn). */
+function markExPro(m: StaffMember, rng: () => number): void {
   // Erfolg passend zur heutigen Güte (gute Trainer waren eher gute Spieler), mit Streuung.
   const s = Math.round(clamp((m.quality - 6) / 14 + (rng() - 0.5) * 0.3, 0, 0.9) * 100) / 100;
-  return { pos: m.roleId === 'torwarttrainer' ? 'TW' : ['IV', 'ZM', 'MS', 'RV', 'OM'][Math.floor(rng() * 5)], peak: Math.round(62 + s * 25), apps: Math.round(80 + s * 300), titles: s > 0.5 ? 1 : 0, s, clubs: [] };
+  m.exPro = { pos: m.roleId === 'torwarttrainer' || m.bg === 'torwartspezialist' ? 'TW' : ['IV', 'ZM', 'MS', 'RV', 'OM', 'LV', 'DM', 'RA'][Math.floor(rng() * 8)], peak: Math.round(62 + s * 25), apps: Math.round(80 + s * 300), titles: s > 0.5 ? 1 : 0, s, clubs: [] };
+  m.bg = undefined;
 }
 
 function hireInto(m: StaffMember, clubId: string, date: string, years: number): void {
@@ -121,6 +167,18 @@ function freeUp(m: StaffMember, year: number): void {
   m.clubId = undefined;
   m.contractEnd = undefined;
   m.freeSince = year;
+}
+
+/** Ein Mitarbeiter deines Vereins wurde abgeworben: Er arbeitet beim neuen Verein weiter (Cheftrainer gehen in den Trainerpool der Liga). */
+export function staffMovedTo(g: Game, m: StaffMember, clubId: string, date: string, rng: () => number = Math.random): void {
+  const w = ensureStaffWorld(g);
+  const year = yearOf(date);
+  if (m.roleId === 'cheftrainer') { (g.coachPool ??= []).push(toClubCoach(m, year, date, rng)); return; }
+  const cur = w.people.find((x) => x.clubId === clubId && x.roleId === m.roleId);
+  if (cur) freeUp(cur, year);
+  const moved: StaffMember = { ...m, coach: undefined };
+  hireInto(moved, clubId, date, 2);
+  w.people.push(moved);
 }
 
 // -----------------------------------------------------------------------------
@@ -145,14 +203,28 @@ export function exProInfoOf(g: Game, p: Player): ExProInfo {
   const captain = g.clubs[p.clubId]?.tactics?.captainId === p.id;
   const s = careerSuccess(peak, apps, titles, captain, p.attributes.leadership ?? 50);
   const clubs: string[] = [];
-  for (const st of p.history?.stations ?? []) if (st.clubName && clubs[clubs.length - 1] !== st.clubName) clubs.push(st.clubName);
-  return { pos: p.naturalPosition, peak, apps, titles, captain: captain || undefined, s, clubs: clubs.slice(-3) };
+  const by = new Map<string, number>();
+  for (const st of p.history?.stations ?? []) {
+    if (st.clubName && clubs[clubs.length - 1] !== st.clubName) clubs.push(st.clubName);
+    by.set(st.clubId, (by.get(st.clubId) ?? 0) + st.appearances);
+  }
+  const cids = [...by.entries()].filter(([, n]) => n >= 30).sort((a, b) => b[1] - a[1]).map(([id]) => id);
+  return { pos: p.naturalPosition, peak, apps, titles, captain: captain || undefined, s, clubs: clubs.slice(-3), cids: cids.length ? cids.slice(0, 4) : undefined };
+}
+
+/** Verein, mit dem ein früherer Spieler verbunden ist: letzter Verein oder der mit den meisten Einsätzen (ab 60). */
+function homeClubOf(p: Player, info: ExProInfo): string | undefined {
+  if (info.cids?.includes(p.clubId)) return p.clubId;
+  const by = new Map<string, number>();
+  for (const st of p.history?.stations ?? []) by.set(st.clubId, (by.get(st.clubId) ?? 0) + st.appearances);
+  const top = [...by.entries()].sort((a, b) => b[1] - a[1])[0];
+  return top && top[1] >= 60 ? top[0] : undefined;
 }
 
 /**
  * Spieler beendet die Karriere: mit einer Wahrscheinlichkeit (Erfolg, Führung)
- * wird er Trainer/Betreuer auf dem Arbeitsmarkt; sehr erfolgreiche Führungsspieler
- * gehen teils direkt in den Cheftrainer-Pool der KI.
+ * bleibt er im Fußball und steht auf dem Arbeitsmarkt; sehr erfolgreiche
+ * Führungsspieler gehen teils direkt in den Cheftrainer-Pool der KI.
  * @returns die neue Person (oder null)
  */
 export function staffFromRetired(g: Game, p: Player, date: string, rng: () => number = Math.random): StaffMember | null {
@@ -164,29 +236,42 @@ export function staffFromRetired(g: Game, p: Player, date: string, rng: () => nu
   const pe = personaOf(p);
   const m = staffFromPlayer(p, info, year, { loyal: pe.loyalitaet, family: pe.familie, ambition: pe.ehrgeiz }, rng);
   m.freeSince = year;
-  // Selbstauswahl: Wer kaum Begabung fürs Trainerfach hat, lässt es meist bleiben.
+  // Selbstauswahl: Wer kaum Begabung dafür hat, lässt es meist bleiben.
   if (m.quality < 3 || (m.quality < 5 && rng() < 0.8)) return null;
+  m.home = homeClubOf(p, info);
   const w = g.staffWorld;
   w.cur.exPros++;
-  // Große Namen mit Führungsqualität: direkt als Cheftrainer-Kandidat.
-  if (info.s >= 0.45 && lead >= 60 && rng() < 0.22 + info.s * 0.25) {
+  const mine = m.home === g.managedClubId && !(g as Game & { simAutoManage?: boolean }).simAutoManage;
+  // Große Namen mit Führungsqualität: direkt als Cheftrainer-Kandidat (nicht, wenn er zu deinem Verein gehört – er fragt erst dich).
+  if (!mine && info.s >= 0.45 && lead >= 60 && rng() < 0.22 + info.s * 0.25) {
     (g.coachPool ??= []).push(toClubCoach(m, year, date, rng));
     w.cur.promoted++;
     return m;
   }
   w.people.push(m);
+  if (mine) {
+    pushMessage(g.messages, makeMessage({
+      date, category: 'general', from: m.name,
+      subject: `${m.name} möchte dem Verein erhalten bleiben`,
+      shortText: `Dein früherer Spieler sucht eine Aufgabe – am ehesten als ${roleName(m.roleId)}.`,
+      bodyText: `${m.name} hat seine Laufbahn beendet und möchte im Fußball bleiben – am liebsten bei uns. Nach ${info.apps} Spielen als Profi sieht er sich am ehesten als ${roleName(m.roleId)}.\n\n`
+        + `Noch fehlt ihm die Erfahrung im neuen Beruf, aber er kann hineinwachsen. Bis zum nächsten Sommer wartet er auf ein Angebot von uns, und er käme uns beim Gehalt entgegen. Du findest ihn auf dem Arbeitsmarkt unter Training › Trainerteam bzw. Verein › Mitarbeiter.`,
+    }));
+  }
   return m;
 }
 
-/** Person aus dem Trainerteam wird Cheftrainer-Kandidat der KI (game.coachPool). */
-function toClubCoach(m: StaffMember, year: number, date: string, rng: () => number): ClubCoach {
-  const q = m.skills ? ((m.skills.taktik ?? 8) * 0.5 + (m.skills.mental ?? 8) * 0.3 + (m.skills.technik ?? 8) * 0.2) : m.quality;
-  const rep = clamp(Math.round(18 + q * 2.6 + (m.exPro?.s ?? 0) * 22 + rng() * 8), 15, 95);
+/** Person aus dem Trainerteam wird Cheftrainer-Kandidat der KI (game.coachPool); ihre Fähigkeiten bleiben erhalten. */
+export function toClubCoach(m: StaffMember, year: number, date: string, rng: () => number): ClubCoach {
+  // Ansehen aus den Fähigkeiten; wer noch nie Cheftrainer war, muss sich erst einen Namen machen (−8).
+  const rep = m.coach && Math.abs(coachRepOf(m) - m.coach.rep) < 3 ? m.coach.rep : clamp(coachRepOf(m) - (m.coach ? 0 : 8) + Math.round(rng() * 4 - 2), 15, 95);
   const c = makeCoach(year, rep, date, rng);
   c.name = m.name;
   c.age = m.age;
   if (m.nat) c.nationality = m.nat;
   c.reputation = rep;
+  if (m.coach) { c.id = m.coach.id; c.style = m.coach.style; c.philosophy = m.coach.philosophy; if (m.coach.formation) c.preferredFormation = m.coach.formation; }
+  c.sm = snapshotOf(m);
   return c;
 }
 
@@ -208,10 +293,10 @@ export function staffWorldSeason(g: Game, date: string, rng: () => number = Math
   const log = w.cur;
   const keep: StaffMember[] = [];
   const pool = (g.coachPool ??= []);
+  const avail = rolesAvailable(year);
   for (const m of w.people) {
     if (!m.skills) skillsFromQuality(m, rng);
     m.age++;
-    // Ruhestand
     const idle = m.clubId ? 0 : year - (m.freeSince ?? year);
     // Ruhestand – oder Berufswechsel nach langer Zeit ohne Stelle.
     if (m.age >= 69 || (m.age >= 63 && rng() < 0.3) || (idle >= 3 && m.age >= 58 && rng() < 0.5) || (idle >= 6 && rng() < 0.35)) {
@@ -222,9 +307,17 @@ export function staffWorldSeason(g: Game, date: string, rng: () => number = Math
     if (m.clubId && !employed) freeUp(m, year);
     learnSeason(m, employed, employed ? clubSuccess(g, m.clubId!) : 0, rng);
     if (employed) m.methodYear = rng() < 0.35 ? year : m.methodYear;
+    // Vereinslose: die Stelle, in der sie heute am meisten taugen (nur bei klarem Abstand wechseln).
+    if (!employed) {
+      const b = bestRole(m.skills!, year, avail);
+      if (!avail.includes(m.roleId) || roleFit(m.skills, b, 1) >= roleFit(m.skills, m.roleId, 1) + 1) { m.roleId = b; syncQuality(m); }
+      m.salaryFactor = demandFactor(m);
+    }
     m.specialty = specialtyOfSkills(m.skills!, m.roleId);
-    // Aufstieg: guter Co-Trainer wird Cheftrainer-Kandidat.
-    if (m.roleId === 'cotrainer' && m.quality >= 14 && m.age >= 36 && m.age <= 56 && rng() < (m.clubId ? 0.08 : 0.2) + (m.quality - 14) * 0.03) {
+    // Aufstieg: guter Co-Trainer wird Cheftrainer-Kandidat (nicht im ersten Jahr, wenn er auf dein Angebot wartet).
+    const waits = m.home === g.managedClubId && m.freeSince === year - 1;
+    const headFit = roleFit(m.skills, 'cheftrainer', 1);
+    if (m.roleId === 'cotrainer' && !waits && headFit >= 13 && m.age >= 36 && m.age <= 56 && rng() < (m.clubId ? 0.08 : 0.2) + (headFit - 13) * 0.03) {
       pool.push(toClubCoach(m, year, date, rng));
       log.promoted++;
       continue;
@@ -238,7 +331,7 @@ export function staffWorldSeason(g: Game, date: string, rng: () => number = Math
   }
   w.people = keep;
   aiHiring(g, w, date, rng);
-  refillFree(g, w, year, rng);
+  refillFree(g, w, year, rng, NEWCOMERS);
   if (pool.length > 60) { pool.sort((a, b) => b.reputation - a.reputation); pool.length = 60; }
   w.log.push(log);
   if (w.log.length > 60) w.log.splice(0, w.log.length - 60);
@@ -246,7 +339,7 @@ export function staffWorldSeason(g: Game, date: string, rng: () => number = Math
   return log;
 }
 
-/** KI-Vereine besetzen freie Stellen und werben bessere Leute ab. */
+/** KI-Vereine besetzen freie Stellen und werben bessere Leute ab – nach Eignung, nicht nach bisherigem Beruf. */
 function aiHiring(g: Game, w: StaffWorld, date: string, rng: () => number): void {
   const year = yearOf(date);
   const byClub = new Map<string, Map<string, StaffMember>>();
@@ -266,11 +359,20 @@ function aiHiring(g: Game, w: StaffWorld, date: string, rng: () => number): void
       if (!staffAvailable(STAFF_BY_ID[role], year)) continue;
       const cur = mine.get(role);
       if (cur && cur.quality >= target - 3) continue;
-      const free = w.people.filter((m) => !m.clubId && m.roleId === role && m.age < 64);
-      const score = (m: StaffMember) => m.quality - Math.max(0, m.quality - target - 2) * 0.8 + rng() * 2.5 + (m.exPro ? m.exPro.s * 2 : 0);
-      const best = free.sort((a, b) => score(b) - score(a))[0];
-      if (!best || (cur && best.quality <= cur.quality + 1)) continue;
+      let best: StaffMember | null = null, bs = -99, bf = 0;
+      for (const m of w.people) {
+        // Frühere Spieler deines Vereins warten im ersten Jahr auf dein Angebot.
+        if (m.clubId || m.age >= 64 || (m.home === g.managedClubId && m.freeSince === year)) continue;
+        const fit = roleFit(m.skills, role, 1);
+        if (fit < 4) continue;
+        const sc = fit - Math.max(0, fit - target - 2) * 0.8 + rng() * 2.5 + (m.exPro ? m.exPro.s * 2 : 0);
+        if (sc > bs) { bs = sc; best = m; bf = fit; }
+      }
+      if (!best || (cur && bf <= cur.quality + 1)) continue;
       if (cur) freeUp(cur, year);
+      best.roleId = role;
+      syncQuality(best);
+      best.specialty = specialtyOfSkills(best.skills!, role);
       hireInto(best, c.id, date, 1 + Math.floor(rng() * 3));
       best.salaryFactor = demandFactor(best, c.reputation ?? 60);
       mine.set(role, best);
@@ -279,32 +381,44 @@ function aiHiring(g: Game, w: StaffWorld, date: string, rng: () => number): void
   }
 }
 
-/** Quereinsteiger, bis jede verfügbare Rolle genug Bewerber hat; Pool begrenzen. */
-function refillFree(g: Game, w: StaffWorld, year: number, rng: () => number): void {
-  for (const role of teamRolesAvailable(year)) {
-    let n = w.people.filter((m) => !m.clubId && m.roleId === role).length;
-    const want = role === 'cheftrainer' || role === 'fussballpsychologe' ? 3 : MIN_FREE;
-    while (n < want) {
-      w.people.push({ ...makeOutsider(year, rng, role), freeSince: year });
-      w.cur.outsiders++;
+/**
+ * Pool auffüllen: `extra` neue Leute (ein Jahrgang Nachwuchskräfte, zu Spielbeginn bunt gemischt),
+ * dann für jede Stelle der Zeit genug brauchbare Bewerber; zuletzt den Pool begrenzen.
+ */
+function refillFree(g: Game, w: StaffWorld, year: number, rng: () => number, extra: number): void {
+  // Unter den Neuen sind ehemalige Spieler aus Ligen außerhalb der Spielerliga (Trainer, Torwartspezialisten, Späher).
+  const add = (m: StaffMember) => {
+    if (!m.exPro && (m.bg === 'amateurtrainer' || m.bg === 'torwartspezialist' || m.bg === 'talentspaeher') && rng() < 0.6) { markExPro(m, rng); w.cur.exPros++; } else w.cur.outsiders++;
+    w.people.push({ ...m, freeSince: year });
+  };
+  const initial = extra > NEWCOMERS;
+  for (let i = 0; i < extra; i++) add(makeOutsider(year, rng, undefined, !initial || i % 3 === 0));
+  const roles = rolesAvailable(year);
+  for (const role of roles) {
+    const want = role === 'cheftrainer' ? 2 : MIN_PER_ROLE;
+    let n = 0;
+    for (const m of w.people) if (!m.clubId && m.age < 62 && roleFit(m.skills, role, 1) >= FIT_OK) n++;
+    for (let guard = 0; n < want && guard < 10; guard++) {
+      const m = makeOutsider(year, rng, role);
+      if (roleFit(m.skills, role, 1) < FIT_OK) tuneTo(m, FIT_OK + rng() * 3);
+      add(m);
       n++;
     }
   }
   const free = w.people.filter((m) => !m.clubId);
-  if (free.length > MAX_FREE) {
-    // Die am wenigsten gefragten gehen zuerst (alt, schwach, lange ohne Stelle) – aber nie unter die Mindestzahl je Rolle.
-    const per = new Map<string, number>();
-    for (const m of free) per.set(m.roleId, (per.get(m.roleId) ?? 0) + 1);
-    const drop = new Set<StaffMember>();
-    const sorted = free.sort((a, b) => (a.quality - a.age * 0.1 - (year - (a.freeSince ?? year))) - (b.quality - b.age * 0.1 - (year - (b.freeSince ?? year))));
-    for (const m of sorted) {
-      if (free.length - drop.size <= MAX_FREE) break;
-      if ((per.get(m.roleId) ?? 0) <= MIN_FREE) continue;
-      per.set(m.roleId, (per.get(m.roleId) ?? 0) - 1);
-      drop.add(m);
-    }
-    w.people = w.people.filter((m) => !drop.has(m));
+  if (free.length <= MAX_FREE) return;
+  // Die am wenigsten gefragten gehen zuerst (alt, schwach, lange ohne Stelle) – nie die besten vier einer Stelle.
+  const keep = new Set<StaffMember>();
+  for (const role of roles) {
+    [...free].sort((a, b) => roleFit(b.skills, role, 1) - roleFit(a.skills, role, 1)).slice(0, MIN_PER_ROLE).forEach((m) => keep.add(m));
   }
+  const worth = (m: StaffMember) => m.quality - Math.max(0, m.age - 50) * 0.2 - (year - (m.freeSince ?? year)) * 0.8 + (m.home === g.managedClubId ? 5 : 0);
+  const drop = new Set<StaffMember>();
+  for (const m of [...free].sort((a, b) => worth(a) - worth(b))) {
+    if (free.length - drop.size <= MAX_FREE) break;
+    if (!keep.has(m)) drop.add(m);
+  }
+  if (drop.size) w.people = w.people.filter((m) => !drop.has(m));
 }
 
 // -----------------------------------------------------------------------------
@@ -329,17 +443,70 @@ export function aiStaffExtras(g: Game): Map<string, number> {
   return out;
 }
 
-/** Arbeitsmarkt für eine Rolle (für deinen Verein): Vereinslose zuerst, dann Angestellte anderer Vereine. */
-export function marketForRole(g: Game, roleId: string | 'all'): StaffMember[] {
-  const ok = (m: StaffMember) => (roleId === 'all' ? TEAM_ROLE_IDS.has(m.roleId) : m.roleId === roleId);
-  return (g.staffWorld?.people ?? []).filter(ok).sort((a, b) => Number(!!a.clubId) - Number(!!b.clubId) || b.quality - a.quality);
+/** Person vom Arbeitsmarkt – auch ein Cheftrainer aus dem Trainerpool oder von einem KI-Verein (`cp:<id>`). */
+export function findPerson(g: Game, id: string): StaffMember | null {
+  const m = g.staffWorld?.people.find((x) => x.id === id);
+  if (m) return m;
+  return headCoachMarket(g, false).find((x) => x.id === id) ?? null;
 }
 
-/** Alte Spielstände: Fachgebiete/Verträge des eigenen Stabs + Arbeitsmarkt anlegen. */
+/** Cheftrainer auf dem Markt: freie aus dem Trainerpool, auf Wunsch auch die Trainer der KI-Vereine. */
+export function headCoachMarket(g: Game, onlyFree: boolean): StaffMember[] {
+  const year = yearOf(g.calendar.currentDate);
+  const out = (g.coachPool ?? []).map((c) => coachAsStaff(c, year));
+  if (!onlyFree) for (const c of aiClubs(g)) if (c.coach) out.push({ ...coachAsStaff(c.coach, year), clubId: c.id });
+  return out;
+}
+
+export interface MarketFilter {
+  /** Stelle, nach deren Eignung sortiert wird ('all' = beste Stelle der Person). */
+  role: string;
+  onlyFree?: boolean;
+  /** Mindestwerte je Fähigkeit (1–20). */
+  min?: Partial<Record<string, number>>;
+  maxAge?: number;
+  exPro?: boolean;
+  /** Nur Stellen dieser Liste (bei role = 'all'): beste Stelle der Person muss dazugehören. */
+  roles?: string[];
+}
+export interface MarketRow { m: StaffMember; /** Eignung 1–20 (fein) für die gesuchte bzw. beste Stelle. */ fit: number; role: string }
+
+/** Arbeitsmarkt (für deinen Verein): beste Eignung zuerst; Vereinslose vor Angestellten bei Gleichstand. */
+export function staffMarket(g: Game, f: MarketFilter): MarketRow[] {
+  const year = yearOf(g.calendar.currentDate);
+  const people: StaffMember[] = (g.staffWorld?.people ?? []).filter((m) => !f.onlyFree || !m.clubId);
+  if (f.role === 'cheftrainer' || f.role === 'all') people.push(...headCoachMarket(g, !!f.onlyFree));
+  const avail = new Set(rolesAvailable(year));
+  const rows: MarketRow[] = [];
+  for (const m of people) {
+    if (f.maxAge && m.age > f.maxAge) continue;
+    if (f.exPro && !m.exPro) continue;
+    if (f.min && Object.entries(f.min).some(([k, v]) => v != null && ((m.skills as Record<string, number> | undefined)?.[k] ?? 0) < v)) continue;
+    let role = f.role, fit: number;
+    if (role === 'all') {
+      role = avail.has(m.roleId) ? m.roleId : bestRole(m.skills ?? {}, year);
+      if (f.roles && !f.roles.includes(role)) {
+        // Beste Stelle unter den gefragten.
+        role = f.roles.filter((r) => avail.has(r)).sort((a, b) => roleFit(m.skills, b, 1) - roleFit(m.skills, a, 1))[0];
+        if (!role || roleFit(m.skills, role, 1) < FIT_OK - 2) continue;
+      }
+    }
+    fit = roleFit(m.skills, role, 1);
+    rows.push({ m, fit, role });
+  }
+  return rows.sort((a, b) => b.fit - a.fit || Number(!!a.m.clubId) - Number(!!b.m.clubId) || a.m.age - b.m.age);
+}
+
+/** Arbeitsmarkt für eine Stelle als Personenliste (ältere Aufrufer). */
+export function marketForRole(g: Game, roleId: string | 'all'): StaffMember[] {
+  return staffMarket(g, { role: roleId, roles: roleId === 'all' ? [...TEAM_ROLE_IDS] : undefined }).map((r) => r.m);
+}
+
+/** Alte Spielstände: Fähigkeiten/Verträge des eigenen Stabs + Arbeitsmarkt anlegen bzw. erweitern. */
 export function migrateStaffPeople(g: Game, rngIn?: () => number): void {
   const rng = rngIn ?? seededRng(`staffmig:${g.managedClubId}:${g.calendar.currentDate}`);
   for (const m of g.staff ?? []) {
-    if (!m.skills) skillsFromQuality(m, rng);
+    skillsFromQuality(m, rng);
     if (!m.contractEnd) m.contractEnd = contractEndIn(g.calendar.currentDate, 1 + (Number(g.calendar.currentDate.slice(5, 7)) >= 7 ? 1 : 0));
   }
   ensureStaffWorld(g, rngIn);

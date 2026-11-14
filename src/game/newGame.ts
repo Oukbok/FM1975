@@ -27,7 +27,7 @@ import { createDefaultWeeklyPlan } from '../engine/weeklyTraining';
 import { ensureStaffWorld } from './staffWorld';
 import { academyStartingCohort, generateYouthPlayer, setYouthSalt } from '../engine/youth';
 import { initWorld } from '../engine/world';
-import { makeCandidates } from '../engine/staffPeople';
+import { startingStaff } from './trainerTeam';
 import { allocateTv, commercialAnnualFor, isLeagueClub, refreshMarketValues } from '../engine/clubEconomy';
 import { addCupCalendarEvents, buildEuroCupsForSeason, cupDateSet, euroDrawMessage, leagueDateSet } from './competitions';
 import { euroFrameDates } from './euroSetup';
@@ -244,10 +244,8 @@ export function createNewGame(opts: NewGameOptions): Game {
   const leagueClubs = Object.values(g0.clubs).filter(isLeagueClub);
   const byRep = [...leagueClubs].sort((a, b) => b.reputation - a.reputation).map((c) => c.id);
   refreshMarketValues(g0.players, year);
-  // Grundausstattung des Stabs: Co-Trainer, Masseur, Mannschaftsarzt (je eine erfahrene Kraft).
-  g0.staff = ['cotrainer', 'masseur', 'mannschaftsarzt'].map((roleId) => ({
-    ...makeCandidates(roleId, year, g0.clubs[g0.managedClubId]?.reputation ?? 60, Math.random)[1], hired: calendar.currentDate,
-  }));
+  // Grundausstattung des Stabs: Cheftrainer, Co-Trainer nach Vereinsgröße, Masseur, Mannschaftsarzt (game/trainerTeam.ts).
+  g0.staff = startingStaff(g0);
   g0.hiredStaff = g0.staff.map((m) => m.roleId);
   const startTier = g0.leagues.playerDivision.tier;
   for (const c of leagueClubs) { c.finances.commercialAnnual = commercialAnnualFor(c, startTier, year); c.finances.leagueTier = startTier; }

@@ -47,12 +47,12 @@ export type StaffGroup =
   | 'media'      // Medien, Marketing, Fanbindung
   | 'admin';     // Verwaltung, Recht, Organisation
 
-export const STAFF_GROUP_META: Record<StaffGroup, { label: string; icon: string }> = {
-  trainer:  { label: 'Trainerteam & sportliche Leitung', icon: '🧑‍🏫' },
-  medical:  { label: 'Medizin, Reha & Athletik',          icon: '⚕️' },
-  scouting: { label: 'Scouting, Analyse & Daten',         icon: '🔍' },
-  media:    { label: 'Medien, Marketing & Fanbindung',    icon: '📣' },
-  admin:    { label: 'Verwaltung, Recht & Organisation',  icon: '🗂️' },
+export const STAFF_GROUP_LABEL: Record<StaffGroup, string> = {
+  trainer: 'Trainerteam & sportliche Leitung',
+  medical: 'Medizin, Reha & Athletik',
+  scouting: 'Scouting, Analyse & Daten',
+  media: 'Medien, Marketing & Fanbindung',
+  admin: 'Verwaltung, Recht & Organisation',
 };
 
 /** Eine anstellbare Personal-Rolle. */

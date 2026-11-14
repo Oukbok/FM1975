@@ -56,6 +56,7 @@ import './28-status2.css';
 import './28-misc.css';
 import './28-engine.css';
 import './28-tactics.css'; // Taktik-Seite: Tafel, Anweisungen, Eingespieltheit
+import './28-staff.css'; // Mitarbeiter: Stellenplan, Arbeitsmarkt, Profil, Verhandlung
 import './28-presse.css';
 import './28-rows.css';
 import './28-ratings.css';

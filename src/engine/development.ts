@@ -10,7 +10,10 @@
 //    Gesamtstärke ergibt sich daraus. Dazu Durchbrüche, Spätzünder, Knicke.
 // 3) Das wahre Potenzial (Grundpotenzial + Entfaltung) ist verdeckt; die Sterne
 //    sind eine Scout-Einschätzung mit Spanne (siehe engine/scouting.ts).
-// Alle Vereine nutzen dieselbe Formel – nur Training/Spielzeit unterscheiden sich.
+// 4) Das Trainerteam steht jedem Spieler gegenüber (engine/coaching.ts): Niveau unter dem
+//    Potenzial → die letzten Punkte bleiben liegen; Niveau klar über dem Spieler → er lernt
+//    schneller; in den Bewertungsrunden gelegentlich Schub bzw. Abzug.
+// Alle Vereine nutzen dieselbe Formel – nur Training/Spielzeit/Trainerteam unterscheiden sich.
 // =============================================================================
 import { boostText, notePeak, teamBoostRound, type BoostChange } from './teamBoost';
 import { declineMul, growthMul, matureShift, naturalDrift } from './attributeAging';
@@ -22,6 +25,7 @@ import { updateScoutEstimate } from './scouting';
 import { ageCeiling, declineShiftOf, maturityGrowth, POT_CAP, tempoFactor, youngTop } from './talent';
 import { addDevPoints, decompose, DevLog, logPart, newDevLog, RatingReason } from './devLog';
 import { explainRating, PayoutInfo } from './ratingReasons';
+import { coachPotCut, declineFactor, dragChance, pushChance, teachFactor } from './coaching';
 
 /** Ergebnis der Leistungsbewertung je Spieler (auch bei change === 0). */
 export interface RatingResult {
@@ -162,19 +166,46 @@ function moraleFactor(p: Player): number {
  * unter ihrem Potenzial – die Konkurrenz um die Spitze ist größer. Fehlt
  * Weltklasse, wachsen Spieler mit Potenzial ab 82 bis zu 2 Punkte darüber hinaus.
  */
-function reachablePotential(p: Player): number {
+function reachableFull(p: Player): number {
   const pot = truePotential(p);
   const s = eliteShift + eraOffset;
   if (s < 0) return pot >= 85 ? Math.max(84, pot + s * 0.5) : pot;
   return pot >= 82 ? pot + Math.min(2, s * 0.4) : pot;
 }
 
-export function distanceFactor(p: Player): number {
-  const gap = reachablePotential(p) - (p.development.currentAbility ?? p.overall);
+/**
+ * Trainerteam je Verein (gesetzt von game/coachingGame.ts `bindCoaching`): Niveau für
+ * Feldspieler/Torhüter und Faktor auf den Abbau der Älteren. Ohne Eintrag (Tests,
+ * Vereine außerhalb der Ligen) wirkt kein Trainerteam.
+ */
+export interface ClubCoaching { level: number; gk: number; old?: number }
+let coachingByClub: Map<string, ClubCoaching> | null = null;
+export function setClubCoaching(m: Map<string, ClubCoaching> | null): void { coachingByClub = m; }
+export const clubCoachingOf = (clubId: string): ClubCoaching | undefined => coachingByClub?.get(clubId);
+/** Niveau des Trainerteams, das diesem Spieler gegenübersteht (null = keins hinterlegt). */
+export function coachLevelFor(p: Player): number | null {
+  const c = coachingByClub?.get(p.clubId);
+  return c ? (p.naturalPosition === 'TW' ? c.gk : c.level) : null;
+}
+/** Punkte Potenzial, die der Spieler unter seinem Trainerteam nicht erreicht (0 = keine Grenze). */
+export function coachCutFor(p: Player): number {
+  const lvl = coachLevelFor(p);
+  return lvl == null ? 0 : coachPotCut(truePotential(p), lvl);
+}
+
+/** Erreichbares Potenzial unter dem heutigen Trainerteam. */
+function reachablePotential(p: Player): number {
+  return reachableFull(p) - coachCutFor(p);
+}
+
+function distanceOf(gap: number): number {
   if (gap <= 0) return 0;
   // Weiche Bremse: die letzten Punkte sind am schwersten (nur mit sehr guten Bedingungen erreichbar).
   const f = Math.min(1, gap / 10);
   return gap < 2 ? f * 0.35 : f;
+}
+export function distanceFactor(p: Player): number {
+  return distanceOf(reachablePotential(p) - (p.development.currentAbility ?? p.overall));
 }
 
 /**
@@ -218,6 +249,20 @@ export function eliteBrake(p: Player, training = 1): number {
     * Math.pow(0.5, Math.max(0, p.overall - (youngTop(p.age) - 2)));
   if (over <= 0) return wall;
   return Math.max(0.2, 1 - over * 0.15) * wall;
+}
+
+/**
+ * Abstand zum Potenzial, getrennt nach Ursache: `potenzial` = Abstand zum eigenen
+ * Leistungsvermögen, `trainerdecke` = was das Trainerteam davon abschneidet,
+ * `trainerniveau` = Lerntempo aus dem Abstand Trainerteam − Spieler.
+ */
+function potentialFactors(p: Player): [string, number][] {
+  const cur = p.development.currentAbility ?? p.overall;
+  const full = distanceOf(reachableFull(p) - cur);
+  const lvl = coachLevelFor(p);
+  if (lvl == null) return [['potenzial', full]];
+  const cut = distanceOf(reachablePotential(p) - cur);
+  return [['potenzial', full], ['trainerdecke', full > 0 ? cut / full : 1], ['trainerniveau', teachFactor(lvl, p.overall)]];
 }
 
 // -----------------------------------------------------------------------------
@@ -273,7 +318,7 @@ export function weeklyDevelopment(
       factors = [
         ['praxis', practiceFactor(p)], ['charakter', characterFactor(p)], ['tempo', tempoFactor(p)], // verdecktes Entwicklungstempo
         ['umfeld', environment], ['moral', moraleFactor(p)],
-        ['potenzial', distanceFactor(p)], ['epoche', era.growth],
+        ...potentialFactors(p), ['epoche', era.growth],
         ['reife', maturityGrowth(p)], // Frühreife: schneller bis 20, Spätentwickler holen mit 23–27 auf
         ['reifegrad', p.age <= 24 && p.overall >= ageCeiling(p, truePotential(p)) ? 0.3 : 1], // altersgerechter Reifegrad
         ['weltklasse', eliteBrake(p, training)], // die letzten Punkte zur Weltklasse sind die schwersten
@@ -291,8 +336,11 @@ export function weeklyDevelopment(
       // früher), verlieren alternde Stars (≥ 83) schneller ihren Platz; fehlt Weltklasse,
       // halten sie sich länger (0,5- … 1,6-faches Tempo).
       const top = p.overall >= 83 ? clamp(1 - (eliteShift + eraOffset) * 0.12, 0.5, 1.6) : 1;
-      factors = [['abbau_bremse', brake], ['abbau_spitze', top]];
-      pts = base * brake * top;
+      // Trainerteam: starke Trainer bremsen den Abbau, schwache beschleunigen ihn (engine/coaching.ts).
+      const lvl = coachLevelFor(p);
+      const coach = lvl == null ? 1 : declineFactor(lvl, p.overall) * (p.age >= 30 ? coachingByClub?.get(p.clubId)?.old ?? 1 : 1);
+      factors = [['abbau_bremse', brake], ['abbau_spitze', top], ['abbau_trainer', coach]];
+      pts = base * brake * top * coach;
     }
     d.devPoints = (d.devPoints ?? 0) + pts;
     if (logging && d.devLog) {
@@ -395,6 +443,16 @@ function applyRatingToPlayer(p: Player, type: RatingType, dateISO: string): { ch
     }
   }
 
+  // Trainerteam (engine/coaching.ts): klar stärker als der junge Spieler → gelegentlich ein Schub;
+  // kann es ihm nichts mehr beibringen → gelegentlich ein Abzug. Nicht in der kleinen Runde.
+  if (type !== 'small') {
+    const lvl = coachLevelFor(p);
+    if (lvl != null) {
+      if (reachablePotential(p) - p.overall >= 1.5 && Math.random() < pushChance(lvl, p.overall, p.age)) addDevPoints(p, 'trainer_schub', 1);
+      else if (Math.random() < dragChance(lvl, p.overall, p.age)) addDevPoints(p, 'trainer_unter', -0.7);
+    }
+  }
+
   const pts = d.devPoints ?? 0;
   const share = PAYOUT_SHARE[type];
   // Kleine Unschärfe (±0,6), damit Runden nicht völlig vorhersagbar sind.
@@ -406,8 +464,14 @@ function applyRatingToPlayer(p: Player, type: RatingType, dateISO: string): { ch
   change = clamp(change, -cap, cap);
   // Nie über das wahre Potenzial (+1 Toleranz) wachsen.
   if (change > 0) {
-    const lim = Math.max(0, reachablePotential(p) + 1 - p.overall);
-    if (lim < change) { change = lim; capped = 'pot'; }
+    const raw = reachablePotential(p) + 1 - p.overall;
+    // Unter der Decke des Trainerteams zählen nur ganze Punkte (sonst rundet die Verteilung auf).
+    const lim = Math.max(0, coachCutFor(p) > 0 ? Math.floor(raw) : raw);
+    if (lim < change) {
+      // Grenze des Potenzials – oder nur die Decke des Trainerteams?
+      capped = reachableFull(p) + 1 - p.overall >= change ? 'coach' : 'pot';
+      change = lim;
+    }
   }
   const close = !capped && change !== clamp(plain, -cap, cap);
   d.devPoints = pts - change;

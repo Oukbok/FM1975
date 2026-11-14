@@ -67,6 +67,7 @@ import { migrateCareer } from './careerGame';
 import { assignShirtNumbers } from './squads';
 import { bindHonours } from './clubHonours';
 import { bindStaffFactor } from './staffGame';
+import { bindCoaching } from './coachingGame';
 import { ensureWorldPool } from './worldPool';
 import { worldLiveDaily } from './worldLeagues';
 import { retireFullCountries } from './fullCountries';
@@ -369,6 +370,7 @@ export function prepareLoadedGame(g: Game): void {
   try { migrateContracts2(g); } catch (err) { console.error('Vertrag-2.0-Nachrüstung fehlgeschlagen:', err); }
   bindHonours(g, true); // Vereinsauszeichnungen: Wirkungstabelle des geladenen Spielstands
   bindStaffFactor(g); // Stab → Spielstärke
+  bindCoaching(g); // Trainerteams → Entwicklung
   fixStaleContracts(g); // Spieler im Kader mit abgelaufenem Vertrag (Hochziehen nach dem 1. Juli, alte Spielstände)
   ensureCountryPools(g.world, g.euroClubs, Number(g.season.slice(0, 4))); // Unterbau der Auslandsligen (engine/world.ts)
   if (!g.worldPool || g.worldPool.v !== 2) ensureWorldPool(g); // Weltspieler anlegen bzw. auf den EA-FC-Maßstab stauchen (migrateWorldScale)

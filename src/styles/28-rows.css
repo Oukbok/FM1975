@@ -137,7 +137,7 @@
 .lu-name { font-weight: 500; color: var(--text); }
 .lu-strong { font-family: var(--font-display); font-weight: 600; font-size: 17px; }
 
-/* ---- Trainerteam › Arbeitsmarkt (.tt-table, viele Spalten): etwas größer, gleicher Charakter ---- */
+/* ---- Top-Transfers (.tt-table, viele Spalten): etwas größer, gleicher Charakter ---- */
 .tt-table { font-size: 15px; }
 .tt-table td { padding: 7px 6px; }
 .tt-table tbody tr:hover { background: var(--rl-hover); }

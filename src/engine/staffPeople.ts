@@ -4,21 +4,21 @@
 // Jede angestellte Rolle ist eine Person mit Qualität (1–20), Spezialgebiet,
 // Methodenstand (Jahr, in dem ihr Wissen aktuell war), Alter und Vereinstreue.
 //
-// Wirkung auf die Entwicklung (bewusst gebremst, kein „Top-Co-Trainer = alle explodieren“):
-//   • Trainerteam erhöht das Entwicklungstempo um höchstens ~+20 % (Sättigung).
-//     Das Potenzial selbst ändert sich nicht – gute Trainer holen nur zuverlässiger
-//     heraus, was in den Spielern steckt.
-//   • Kapazität: ein Trainer betreut ~9 Spieler sinnvoll; ein riesiger Kader verwässert.
+// Wirkung:
+//   • Entwicklung der Spieler: Niveau, Besetzung und Güte des Trainerteams –
+//     engine/coaching.ts (Decke des Potenzials, Lerntempo, Abzüge ohne Cheftrainer
+//     oder mit zu wenigen Co-Trainern).
 //   • Methodenstand veraltet: ab 8 Jahren ohne Fortbildung sinkt die Wirkung.
 //   • Spezialisten wirken nur auf passende Spieler (Torwart-, Technik-, Taktik-, Athletiktrainer).
 //   • Förderspieler (max. 3) bekommen mehr Aufmerksamkeit – der Rest etwas weniger.
 //   • Gute Leute werden abgeworben; Treue und ein großer Verein halten sie.
+// Fähigkeiten, Stellen, Eignung: engine/staffSkills.ts. Personen erzeugen: engine/staffGen.ts.
 // =============================================================================
 
 import { STAFF_BY_ID, STAFF_CAPS, STAFF_COST_BASE, StaffEffects, StaffRole, staffSalaryScale } from '../data/staff';
 import { makeName, pickOrigin } from '../data/origins';
-import { Player } from '../types';
-import type { CoachSkill, ExProInfo } from './staffSkills';
+import type { CoachPhilosophy, CoachStyle, Player } from '../types';
+import type { CoachSkill, ExProInfo, StaffTrait } from './staffSkills';
 
 export type CoachSpecialty = 'allround' | 'athletik' | 'technik' | 'taktik' | 'torwart' | 'mental' | 'jugend';
 
@@ -57,6 +57,16 @@ export interface StaffMember {
   clubId?: string;
   /** Nur Arbeitsmarkt: seit wann vereinslos (Jahr). */
   freeSince?: number;
+  /** Eigenschaft (höchstens eine; engine/staffSkills.ts `TRAIT_LABEL`). */
+  traits?: StaffTrait[];
+  /** Beruf des Quereinsteigers (Schlüssel aus engine/staffGen.ts `KINDS`). */
+  bg?: string;
+  /** Verein, mit dem die Person verbunden ist (ehemaliger Spieler mit vielen Einsätzen dort). */
+  home?: string;
+  /** Kommt aus dem Trainerpool der KI (game/coachCarousel.ts): Spielidee und Ansehen als Cheftrainer. */
+  coach?: { id: string; style: CoachStyle; philosophy: CoachPhilosophy; rep: number; formation?: string };
+  /** Jahr der letzten Fortbildung (eine je Jahr). */
+  course?: number;
 }
 
 /** Trainingsphilosophie je Saisonphase (wenig Klickarbeit, spürbare Wirkung). */
@@ -90,8 +100,6 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 // -----------------------------------------------------------------------------
 // Kandidaten & Personen
 // -----------------------------------------------------------------------------
-const TRAINER_ROLES = new Set(['cheftrainer', 'cotrainer', 'konditionstrainer', 'athletiktrainer', 'torwarttrainer', 'jugendtrainer']);
-
 function specialtyFor(roleId: string, r: () => number): CoachSpecialty {
   if (roleId === 'torwarttrainer') return 'torwart';
   if (roleId === 'konditionstrainer' || roleId === 'athletiktrainer') return 'athletik';
@@ -152,7 +160,8 @@ export function memberMonthlySalary(m: StaffMember, scale: number): number {
 
 /** Methodenstand: nach 8 Jahren ohne Fortbildung verliert die Arbeit an Wirkung. */
 export function methodFactor(m: StaffMember, year: number): number {
-  return clamp(1 - Math.max(0, year - m.methodYear - 8) * 0.025, 0.65, 1);
+  // Lernfreudige halten sich selbst auf dem Laufenden (Abzug höchstens 5 %).
+  return clamp(1 - Math.max(0, year - m.methodYear - 8) * 0.025, m.traits?.includes('lernfreudig') ? 0.95 : 0.65, 1);
 }
 
 export function effectiveQuality(m: StaffMember, year: number): number {
@@ -182,34 +191,6 @@ export function staffEffectsFromMembers(members: StaffMember[], year: number): S
     scouting: Math.min(STAFF_CAPS.scouting, scouting),
     reach: Math.min(STAFF_CAPS.reach, reach),
   };
-}
-
-const COACH_WEIGHT: Record<string, number> = {
-  cheftrainer: 1, cotrainer: 0.7, konditionstrainer: 0.45, athletiktrainer: 0.45, torwarttrainer: 0.25,
-  sportpsychologe: 0.2, fussballpsychologe: 0.2, sportwissenschaftler: 0.25, head_performance: 0.3,
-};
-
-export interface CoachingReport {
-  /** Zusatz zum Trainingsfaktor (−0,02 … +0,20). */
-  extra: number;
-  /** Betreuungsquote (1 = ausreichend Trainer für den Kader). */
-  capacity: number;
-  /** Summe der effektiven Trainerqualität (für Anzeigen). */
-  strength: number;
-}
-
-export function coachingReport(members: StaffMember[], squadSize: number, year: number): CoachingReport {
-  let s = 0, coaches = 0;
-  for (const m of members) {
-    const w = COACH_WEIGHT[m.roleId];
-    if (!w) continue;
-    s += w * effectiveQuality(m, year);
-    if (TRAINER_ROLES.has(m.roleId) && m.roleId !== 'jugendtrainer') coaches++;
-  }
-  // Der Manager selbst zählt als ein Trainer.
-  const capacity = clamp(((coaches + 1) * 9) / Math.max(1, squadSize), 0.35, 1);
-  const extra = (1 - Math.exp(-s / 20)) * 0.22 * Math.sqrt(capacity) - 0.02;
-  return { extra: Math.round(extra * 1000) / 1000, capacity, strength: Math.round(s * 10) / 10 };
 }
 
 const OFFENSIVE = new Set(['OM', 'RA', 'LA', 'RM', 'LM', 'MS', 'HS', 'ZM', 'FL']);
@@ -268,13 +249,11 @@ export function staffSeasonTurnover(
       left.push({ m, reason: 'geht in den Ruhestand' });
       continue;
     }
-    if (m.quality >= 14) {
+    if (m.quality >= 14 && !m.traits?.includes('treu')) {
       const chance = 0.06 + (m.quality - 14) * 0.035 - m.loyalty / 500 + (clubRep < 70 ? 0.05 : 0) - (m.salaryFactor > 2.2 ? 0.04 : 0);
       if (r() < chance) left.push({ m, reason: `wird von ${rivalName()} abgeworben` });
     }
-    // Qualität entwickelt sich leicht (junge Trainer lernen, alte stagnieren).
-    if (m.age < 45 && r() < 0.35) m.quality = Math.min(20, m.quality + 1);
-    else if (m.age > 58 && r() < 0.2) m.quality = Math.max(1, m.quality - 1);
+    // Die Fähigkeiten entwickeln sich über das Lernen im Beruf (engine/staffSkills.ts learnSeason).
   }
   for (const l of left) members.splice(members.indexOf(l.m), 1);
   return { left };
