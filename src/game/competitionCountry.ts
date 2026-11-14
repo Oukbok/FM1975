@@ -40,12 +40,14 @@ const nameOf = (cc: string, key?: string) => COUNTRY_BY_CC[cc]?.name ?? key ?? c
 export function statsCountries(g: Game): StatsCountry[] {
   const home = homeCountryOf(g);
   const out: StatsCountry[] = [{ cc: home, name: nameOf(home), flag: COUNTRY_BY_CC[home]?.key ?? 'Deutschland', mode: 'home', hint: 'Heimatland' }];
-  if (home === 'ger') out.push({ cc: 'gdr', name: 'DDR', flag: 'DDR', mode: 'div', hint: 'bis 1990/91' });
+  // Alle übrigen Länder in EINER alphabetischen Liste (Wunsch Pascal: die DDR nicht gesondert oben);
+  // Ligen, die es nicht mehr gibt, tragen den Hinweis „Archiv“.
   const rest: StatsCountry[] = [];
+  if (home === 'ger') rest.push({ cc: 'gdr', name: 'DDR', flag: 'DDR', mode: 'div', hint: g.leagues?.otherDivisions.some((d) => d.id.startsWith('ddr-')) ? '' : 'Archiv' });
   for (const c of Object.values(g.world?.countries ?? {})) {
     const cc = COUNTRY_BY_KEY[c.name]?.cc ?? c.name;
-    if (out.some((x) => x.cc === cc)) continue;
-    rest.push({ cc, name: nameOf(cc, c.name), flag: c.name, mode: 'world', worldKey: c.name, hint: c.active ? '' : 'aufgelöst' });
+    if (cc === home || rest.some((x) => x.cc === cc)) continue;
+    rest.push({ cc, name: nameOf(cc, c.name), flag: c.name, mode: 'world', worldKey: c.name, hint: c.active ? '' : 'Archiv' });
   }
   rest.sort((a, b) => a.name.localeCompare(b.name, 'de'));
   return [...out, ...rest];

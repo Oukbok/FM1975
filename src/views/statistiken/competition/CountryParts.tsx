@@ -10,17 +10,19 @@ import type { Game } from '../../../game/state';
 import Select from '../../../ui/Select';
 import { TeamName } from './parts';
 
-const GROUP: Record<StatsCountry['mode'], string> = { home: 'Heimatland', div: 'DDR', world: 'Weitere Länder' };
-
+/** Länderwahl: Heimatland, darunter alle übrigen Länder alphabetisch (DDR eingereiht); nicht mehr bestehende Ligen mit „(Archiv)“. */
 export function CountrySelect({ countries, value, onChange }: { countries: StatsCountry[]; value: string; onChange: (cc: string) => void }) {
-  const groups = (['home', 'div', 'world'] as const).filter((m) => countries.some((c) => c.mode === m));
+  const groups: [string, StatsCountry[]][] = [
+    ['Heimatland', countries.filter((c) => c.mode === 'home')],
+    ['Weitere Länder', countries.filter((c) => c.mode !== 'home')],
+  ];
   return (
     <Select className="dselect cmp-country" width={168} popWidth={250} listHeight={420} value={value} onChange={onChange} title="Land" aria-label="Land">
-      {groups.map((m) => (
-        <optgroup key={m} label={GROUP[m]}>
-          {countries.filter((c) => c.mode === m).map((c) => (
+      {groups.filter(([, list]) => list.length).map(([label, list]) => (
+        <optgroup key={label} label={label}>
+          {list.map((c) => (
             <option key={c.cc} value={c.cc}>
-              <span className="cmp-cflag"><CountryFlag country={c.flag} height={13} /></span>{c.name}{c.hint === 'aufgelöst' ? ' (aufgelöst)' : ''}
+              <span className="cmp-cflag"><CountryFlag country={c.flag} height={13} /></span>{c.name}{c.hint === 'Archiv' ? ' (Archiv)' : ''}
             </option>
           ))}
         </optgroup>
