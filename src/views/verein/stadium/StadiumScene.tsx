@@ -12,11 +12,13 @@
 // =============================================================================
 import type { ReactNode } from 'react';
 import { BLOCK_NAME, blockCapacity } from '../../../engine/stadiumBlocks';
+import { blockLook, stadiumLook } from '../../../engine/stadiumStandard';
 import type { BlockId, StadiumBlock, StadiumTier } from '../../../types';
 import { shade } from '../grounds/isoKit';
 import { D, GAP, V3, W, depth, face, hash, hull, mapper, proj, pts, roofGeo, seg, tierGeometry } from './geo';
 import { SceneColors, StadiumBlockShape, blockOutline, blockShadowPoints } from './StadiumBlockShape';
 import { RING, VENUE_SPOTS, Venue, VenueShape, venueDepth, venueLabelAt } from './StadiumSurround';
+import { Tree, scenery } from './StadiumScenery';
 
 export { tierGeometry } from './geo';
 export type { SceneColors } from './StadiumBlockShape';
@@ -33,6 +35,9 @@ function Pitch({ grass, era }: { grass: string; era: number }) {
   out.push(<polygon key="pf" points={pts([[0, 0, 0.015], [W, 0, 0.015], [W, D, 0.015], [0, D, 0.015]])} fill={grass} />);
   const n = 14;
   for (let i = 0; i < n; i += 2) out.push(<polygon key={`ms${i}`} points={pts([[(W / n) * i, 0, 0.016], [(W / n) * (i + 1), 0, 0.016], [(W / n) * (i + 1), D, 0.016], [(W / n) * i, D, 0.016]])} fill={shade(grass, 1.09)} />);
+  // Quer gemähte Bahnen (Karomuster moderner Rasenpflege) und ein heller Lichtfleck
+  if (era >= 1) for (let j = 0; j < 8; j += 2) out.push(<polygon key={`mq${j}`} points={pts([[0, (D / 8) * j, 0.017], [W, (D / 8) * j, 0.017], [W, (D / 8) * (j + 1), 0.017], [0, (D / 8) * (j + 1), 0.017]])} fill="#ffffff" opacity={0.045} />);
+  { const [gx, gy] = P0(W * 0.36, D * 0.58); out.push(<ellipse key="gl" cx={gx} cy={gy} rx={170} ry={80} fill="url(#stSun)" pointerEvents="none" />); }
   const L: ReactNode[] = [];
   const m = 0.35, cy = D / 2;
   const line = (k: string, ps: [number, number][], closed = false) => L.push(closed ? <polygon key={k} points={pl(ps)} /> : <polyline key={k} points={pl(ps)} />);
@@ -73,6 +78,10 @@ function Goal({ x, dir }: { x: number; dir: number }) {
       <polygon points={pts([[bx, y0, 0], [bx, y1, 0], [x, y1, h], [x, y0, h]])} fill="#ffffff" opacity={0.28} />
       <polygon points={pts([[bx, y0, 0], [x, y0, 0], [x, y0, h]])} fill="#ffffff" opacity={0.2} />
       <polygon points={pts([[bx, y1, 0], [x, y1, 0], [x, y1, h]])} fill="#ffffff" opacity={0.2} />
+      <g stroke="#ffffff" strokeWidth={0.45} opacity={0.5}>
+        {Array.from({ length: 7 }, (_, i) => { const yy = y0 + ((y1 - y0) * (i + 0.5)) / 7; return <polyline key={`n${i}`} points={pts([[bx, yy, 0], [x, yy, h]])} fill="none" />; })}
+        {[0.35, 0.7].map((f) => <polyline key={`m${f}`} points={pts([[bx + (x - bx) * f, y0, h * f], [bx + (x - bx) * f, y1, h * f]])} fill="none" />)}
+      </g>
       <polyline points={pts([[x, y0, 0], [x, y0, h], [x, y1, h], [x, y1, 0]])} fill="none" stroke="#ffffff" strokeWidth={2} strokeLinejoin="round" />
     </g>
   );
@@ -130,22 +139,14 @@ function Mast({ x, y, era }: { x: number; y: number; era: number }) {
   );
 }
 
-function Tree({ x, y, winter, k }: { x: number; y: number; winter: boolean; k: number }) {
-  const [px, py] = proj([x, y, 0]);
-  const s = 0.8 + hash(k * 3.1) * 0.5;
-  const c = winter ? '#8c9a8f' : ['#3f7a3a', '#4b8a40', '#36703a'][k % 3];
-  return (
-    <g pointerEvents="none">
-      <ellipse cx={px + 9 * s} cy={py + 1} rx={13 * s} ry={4.5 * s} fill="#000" opacity={0.18} />
-      <rect x={px - 1.6} y={py - 10 * s} width={3.2} height={10 * s} fill="#5b4330" />
-      <circle cx={px} cy={py - 18 * s} r={11 * s} fill={c} />
-      <circle cx={px - 3.5 * s} cy={py - 21 * s} r={6 * s} fill={shade(c, 1.18)} opacity={0.85} />
-    </g>
-  );
-}
-
 export interface StadiumSceneProps {
   blocks: StadiumBlock[];
+  /** Baujahr des Stadions (Bauweise der Blöcke ohne eigenes `look`). */
+  built?: number;
+  /** Zuschauer: Auslastung 0…1 (0 = leeres Stadion). */
+  crowd?: number;
+  /** Neubau: Kräne an mehreren Seiten. */
+  buildingAll?: boolean;
   /** Zusätzliche Vorplatz-Breite aus gekauftem Gelände (Weltmaß, 0 = Grundfläche). */
   plazaExtra?: number;
   colors: SceneColors;
@@ -199,7 +200,8 @@ export function StadiumScene(p: StadiumSceneProps) {
   const grass = winter && year < 1995 ? '#8fa88a' : era === 0 ? '#4f9545' : '#4a9a43';
   const by = Object.fromEntries(blocks.map((b) => [b.id, b])) as Record<BlockId, StadiumBlock>;
   const anyFullRoof = blocks.filter((b) => b.roof === 'full').length >= blocks.length * 0.6;
-  const showMasts = !(anyFullRoof && era >= 1);
+  // Flutlicht im Dach ab der Bauweise „Arena“ (bei überwiegend vollem Dach) – sonst vier Masten
+  const showMasts = !(anyFullRoof && stadiumLook({ built: p.built, blocks }) >= 2);
   let ext = 9;
   for (const b of blocks) {
     const geo = tierGeometry(b); const l = geo[geo.length - 1];
@@ -213,6 +215,7 @@ export function StadiumScene(p: StadiumSceneProps) {
   const LR = RING + 70;
   const lawn: V3[] = [[-LR, -LR, 0], [W + LR, -LR, 0], [W + LR, D + LR, 0], [-LR, D + LR, 0]];
   const plaza: V3[] = [[-R, -R, 0], [W + R, -R, 0], [W + R, D + R, 0], [-R, D + R, 0]];
+  const sc = scenery({ R, ext, winter, era, primary: colors.primary, secondary: colors.secondary, crowd: p.crowd ?? 0 });
   const trees: { x: number; y: number; k: number }[] = [];
   const T = RING + 6.5;
   let k = 0;
@@ -234,7 +237,7 @@ export function StadiumScene(p: StadiumSceneProps) {
     items.push({ d: depth(at(len / 2, geo[geo.length - 1].v1 / 2, 0)), n: (
       <g key={id} data-block={id} className={`gr-obj blk ${inSel ? 'sel' : ''} ${ghost.has(id) ? 'sv-ghost' : ''}`} opacity={dim} pointerEvents={blocksActive ? undefined : 'none'}
         onClick={(e) => { e.stopPropagation(); onSelect(id, evPt(e)); }} onMouseEnter={() => onHover(id)} onMouseLeave={() => onHover(null)}>
-        <StadiumBlockShape b={b} colors={colors} era={era} year={year} others={blocks} />
+        <StadiumBlockShape b={b} colors={colors} look={blockLook(b, { built: p.built })} year={year} others={blocks} crowd={p.crowd ?? 0} />
         {/* Hervorhebung als Umriss statt CSS-Filter: ein Filter auf der Gruppe ließ andere Blöcke beim
             Überfahren flackern (Wunsch Pascal). */}
         {on && blocksActive && <g className={inSel ? 'blk-sel' : 'blk-hov'} pointerEvents="none">{blockOutline(b).map((d, k) => <polyline key={k} points={d} />)}</g>}
@@ -255,6 +258,11 @@ export function StadiumScene(p: StadiumSceneProps) {
         <VenueShape v={v} era={era} primary={colors.primary} />
       </g>
     ) });
+  }
+  items.push(...sc.items);
+  if (p.buildingAll) for (const [bx2, by2] of [[W * 0.15, -ext - 2], [W + ext + 2, D * 0.3], [-ext - 2, D * 0.75]] as [number, number][]) {
+    const [x, yb] = proj([bx2, by2, 0]), [, yt] = proj([bx2, by2, 16]);
+    items.push({ d: depth([bx2, by2, 0]), n: <g key={`cr${bx2}`} stroke="#e0a23a" strokeWidth={3} fill="none" strokeLinecap="round" pointerEvents="none"><line x1={x} y1={yb} x2={x} y2={yt} /><line x1={x - 50} y1={yt + 8} x2={x + 95} y2={yt - 6} /><line x1={x + 80} y1={yt - 5} x2={x + 80} y2={yt + 50} strokeWidth={1} stroke="#cfd5db" /></g> });
   }
   if (showMasts) masts.forEach(([x, y], i) => items.push({ d: depth([x, y, 0]), n: <Mast key={`m${i}`} x={x} y={y} era={era} /> }));
   items.sort((a, b) => a.d - b.d);
@@ -284,12 +292,15 @@ export function StadiumScene(p: StadiumSceneProps) {
           <stop offset="0.7" stopColor={winter ? '#b2bdb8' : '#4e7742'} stopOpacity={0.45} />
           <stop offset="1" stopColor={winter ? '#b2bdb8' : '#4e7742'} stopOpacity={0} />
         </radialGradient>
+        <radialGradient id="stSun"><stop offset="0" stopColor="#fffbe0" stopOpacity={0.16} /><stop offset="1" stopColor="#fffbe0" stopOpacity={0} /></radialGradient>
+        <radialGradient id="stVig" cx="50%" cy="49%" r="26%"><stop offset="0.55" stopColor="#0d141c" stopOpacity={0} /><stop offset="1" stopColor="#0d141c" stopOpacity={0.3} /></radialGradient>
+        <linearGradient id="stWarm" x1="0.3" y1="0.3" x2="0.62" y2="0.62"><stop offset="0" stopColor="#ffe9b8" stopOpacity={winter ? 0.04 : 0.12} /><stop offset="1" stopColor="#ffe9b8" stopOpacity={0} /></linearGradient>
         <radialGradient id="flGlow"><stop offset="0" stopColor="#fff6cf" stopOpacity={0.45} /><stop offset="1" stopColor="#fff6cf" stopOpacity={0} /></radialGradient>
         <filter id="stBlur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4" /></filter>
       </defs>
-      <polygon className="sv-ground" points={pts(lawn)} fill={winter ? '#aeb8b2' : era === 0 ? '#566b4f' : '#55704f'} />
+      <polygon className="sv-ground" points={pts(lawn)} fill={winter ? '#b4beb8' : era === 0 ? '#5d7a52' : '#5f8255'} />
       <ellipse className="sv-ground" cx={cx} cy={cy} rx={fw * 0.62} ry={fh * 0.62} fill="url(#stGround)" />
-      <polygon className="sv-ground" points={pts(plaza)} fill={winter ? '#c9cbc8' : era === 0 ? '#9f9c95' : '#aaa9a5'} stroke={shade(winter ? '#c9cbc8' : '#aaa9a5', 0.85)} strokeWidth={1.5} />
+      <polygon className="sv-ground" points={pts(plaza)} fill={winter ? '#cfd1ce' : era === 0 ? '#a9a59c' : '#b3b2ad'} stroke={shade(winter ? '#c9cbc8' : '#aaa9a5', 0.8)} strokeWidth={2} strokeLinejoin="round" />
       {Array.from({ length: 11 }, (_, i) => {
         const f = (i + 1) / 12;
         return <g key={`pv${i}`} stroke="#000" strokeOpacity={0.05} strokeWidth={1} pointerEvents="none">
@@ -297,6 +308,7 @@ export function StadiumScene(p: StadiumSceneProps) {
           <polyline points={pl([proj([-R, -R + (D + 2 * R) * f, 0]), proj([W + R, -R + (D + 2 * R) * f, 0])])} />
         </g>;
       })}
+      <g className="sv-ground-art" pointerEvents="none">{sc.under}</g>
       {treeNodes.filter((t) => t.d < dMid).sort((a, b) => a.d - b.d).map((t) => t.n)}
       <Pitch grass={grass} era={era} />
       <g filter="url(#stBlur)" opacity={0.3}>
@@ -310,6 +322,9 @@ export function StadiumScene(p: StadiumSceneProps) {
       ))}
       {items.map((it) => it.n)}
       {treeNodes.filter((t) => t.d >= dMid).sort((a, b) => a.d - b.d).map((t) => t.n)}
+      {/* Licht und Randabdunkelung über die ganze Fläche (das Bild ist breiter als der feste Ausschnitt) */}
+      <rect x={x0 - fw * 1.5} y={y0 - fh} width={fw * 4} height={fh * 3} fill="url(#stWarm)" pointerEvents="none" />
+      <rect x={x0 - fw * 1.5} y={y0 - fh} width={fw * 4} height={fh * 3} fill="url(#stVig)" pointerEvents="none" />
       {(p.venues ?? []).filter((v) => p.selectedVenue === v.key || (p.venueActive ? p.venueActive(v) : true)).map((v) => <VenueTag key={`vt${v.key}`} v={v} strong={p.selectedVenue === v.key} />)}
       {(hover ?? selected) && by[(hover ?? selected)!] && label((hover ?? selected)!)}
     </svg>

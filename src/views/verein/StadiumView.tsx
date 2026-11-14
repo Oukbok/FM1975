@@ -21,6 +21,8 @@ import type { GroundsModuleKey } from '../../types/grounds';
 import { fmtDM } from '../../ui/format';
 import { FacilityDetail, ModuleDetail } from './grounds/GroundsDetail';
 import { BlockConfigurator, perMatch } from './stadium/BlockConfigurator';
+import { RebuildPanel } from './stadium/RebuildPanel';
+import { stadiumComfort } from '../../engine/stadiumStandard';
 import { StadiumScene } from './stadium/StadiumScene';
 import { VENUE_GROUPS, Venue, VenueGroup, venuesOf } from './stadium/StadiumSurround';
 import { InfoTip } from '../../ui/InfoTip';
@@ -47,11 +49,16 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
   const [hover, setHover] = useState<BlockId | null>(null);
   const [draft, setDraft] = useState<StadiumBlock | null>(null);
   const [whole, setWhole] = useState(false);
+  // Bausubstanz/Neubau (Popover rechts) und Vorschau des geplanten Neubaus in der Szene
+  const [rebuild, setRebuild] = useState(false);
+  const [rbPreview, setRbPreview] = useState<StadiumBlock[] | null>(null);
+  const [crowd, setCrowd] = useState(() => { try { return localStorage.getItem('fm_stadium_crowd') !== '0'; } catch { return true; } });
+  const toggleCrowd = () => setCrowd((v) => { try { localStorage.setItem('fm_stadium_crowd', v ? '0' : '1'); } catch { /* ohne Speicher */ } return !v; });
   const blocks = st.blocks?.length ? st.blocks : migrateBlocks(club, year); // altes Projekt läuft: nur Vorschau
   const editable = !!st.blocks?.length;
   const planned = draft ? sideTargets(blocks, draft, whole) : [];
   const changed = planned.filter((t) => JSON.stringify(t) !== JSON.stringify(blocks.find((b) => b.id === t.id)));
-  const shown = blocks.map((b) => planned.find((t) => t.id === b.id) ?? b);
+  const shown = rbPreview ?? blocks.map((b) => planned.find((t) => t.id === b.id) ?? b);
   const gr = ensureClubGrounds(club, today);
   const venues = venuesOf(club, year);
 
@@ -59,15 +66,15 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
     const r = wrap.current?.getBoundingClientRect();
     setAnchor(r && e ? { x: e.clientX - r.left, y: e.clientY - r.top } : null);
   };
-  const close = () => { setSel(null); setVenue(null); setDraft(null); setWhole(false); };
+  const close = () => { setSel(null); setVenue(null); setDraft(null); setWhole(false); setRebuild(false); setRbPreview(null); };
   const selectBlock = (id: BlockId | null, e?: { clientX: number; clientY: number }) => {
-    setVenue(null); setWhole(false); setSel(id); place(e);
+    setVenue(null); setWhole(false); setRebuild(false); setRbPreview(null); setSel(id); place(e);
     const b = id ? blocks.find((x) => x.id === id) : null;
     setDraft(b && editable ? JSON.parse(JSON.stringify(b)) : null);
   };
   const selectVenue = (v: Venue, e: { clientX: number; clientY: number }) => {
     if (v.kind === 'tickets') { close(); onGoto?.('kartenverkauf'); return; }
-    setSel(null); setDraft(null); setVenue(v.key); place(e);
+    setSel(null); setDraft(null); setRebuild(false); setRbPreview(null); setVenue(v.key); place(e);
   };
   const blocksActive = mode === 'alles' || mode === 'tribuenen' || mode === 'vip';
   const venueActive = (v: Venue) => mode === 'alles' || v.group === mode || (v.group === 'tickets' && mode !== 'tribuenen');
@@ -83,15 +90,16 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
   const primary = lum(club.colors?.primary ?? '') < 0.18 ? (club.colors?.secondary ?? '#c0392b') : (club.colors?.primary ?? '#c0392b');
   const secondary = club.colors?.secondary ?? '#ffffff';
   const preview = changed.length && draft ? perMatch(club, shown, year) : null;
+  const comfort = stadiumComfort(club, year);
 
   // Popover-Lage: Tribünen-Popover an den Rand gegenüber dem Block (die Vorschau bleibt sichtbar),
   // Umfeld-Popover direkt neben dem Gebäude; eine Führungslinie zeigt aufs Objekt.
   const W = wrap.current?.clientWidth ?? 1600, H = wrap.current?.clientHeight ?? 800;
-  const popLeft = anchor ? (sel ? (anchor.x < W / 2 ? W - POP_W - 16 : 16)
+  const popLeft = rebuild ? W - POP_W - 16 : anchor ? (sel ? (anchor.x < W / 2 ? W - POP_W - 16 : 16)
     : (anchor.x + 28 + POP_W < W - 12 ? anchor.x + 28 : Math.max(12, anchor.x - 28 - POP_W))) : W - POP_W - 16;
-  const popTop = sel ? 64 : Math.max(64, Math.min((anchor?.y ?? 64) - 140, H - 520));
+  const popTop = sel || rebuild ? 64 : Math.max(64, Math.min((anchor?.y ?? 64) - 140, H - 520));
   // Feste Größe (Wunsch Pascal): Planen/Umschalten im Popover darf es nicht wachsen lassen – Inhalt scrollt intern.
-  const popH = sel ? H - popTop - 70 : Math.min(H - popTop - 70, 620);
+  const popH = sel || rebuild ? H - popTop - 70 : Math.min(H - popTop - 70, 620);
   const popStyle = { left: popLeft, top: popTop, width: POP_W, height: popH, maxHeight: H - popTop - 70 };
   const lead = anchor && (sel || venue) ? (() => {
     const edgeX = popLeft > anchor.x ? popLeft : popLeft + POP_W;
@@ -105,8 +113,8 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
     // Szenen-Seite: kein Rahmen, kein Kalender – Stadion und Umfeld füllen die Fläche (shell-scene in GameShell).
     <div className="scene-page">
         <div className="gr-wrap st-wrap sv-wrap" ref={wrap} onClick={() => close()}>
-          <StadiumScene blocks={shown} colors={{ primary, secondary }} year={year} month={month} plazaExtra={Math.min(6, Math.max(0, gr.area - LOCATIONS[gr.location].area) * 0.25)}
-            selected={sel} hover={hover} building={bp?.blockId ?? null} group={planned.map((t) => t.id)} ghost={changed.map((t) => t.id)}
+          <StadiumScene blocks={shown} built={st.built} crowd={crowd ? Math.max(0.35, Math.min(0.97, st.averageAttendanceRate ?? 0.6)) : 0} colors={{ primary, secondary }} year={year} month={month} plazaExtra={Math.min(6, Math.max(0, gr.area - LOCATIONS[gr.location].area) * 0.25)}
+            selected={sel} hover={hover} building={bp?.blockId ?? null} buildingAll={!!bp?.rebuild} group={planned.map((t) => t.id)} ghost={rbPreview ? rbPreview.map((t) => t.id) : changed.map((t) => t.id)}
             blocksActive={blocksActive} venues={venues} venueActive={venueActive} selectedVenue={venue}
             onSelect={selectBlock} onHover={setHover} onVenue={selectVenue} />
 
@@ -117,6 +125,8 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
             <div><b className="num">{Math.round(roofShare(blocks) * 100)} %</b><span>überdacht<InfoTip k="ueberdacht" /></span></div>
             <div><b className="num">{(avgAtt || exp.attendance).toLocaleString('de-DE')}</b><span>{avgAtt ? 'Ø Zuschauer zuletzt' : 'Zuschauer erwartet'}</span></div>
             <div><b className="num">{fmtDM(expRev)}</b><span>Eintritt je Spiel</span></div>
+            {comfort && <div className="sv-kpi-comfort" onClick={() => { close(); setRebuild(true); }} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter') { close(); setRebuild(true); } }}>
+              <b className={`num ${comfort.comfort < comfort.expect - 1 ? 'neg' : ''}`}>{Math.round(comfort.comfort)}<small> / {Math.round(comfort.expect)}</small></b><span>Komfort / Anspruch<InfoTip k="stadionKomfort" /></span></div>}
             {preview && <div className="sv-kpi-plan"><b className="num">{fmtDM(preview.rev)}</b><span>nach Umbau</span></div>}
             {(bp || old) && <div className="sv-kpi-build"><b>{bp ? projectName(bp) : `Ausbau Stufe ${old!.targetLevel}`}</b><span>im Bau bis {fmtD(bp ? bp.finishDate : old!.finishDate)}{bp ? ` · ${bp.capacityLoss.toLocaleString('de-DE')} Plätze gesperrt` : ''}</span></div>}
           </div>
@@ -127,8 +137,9 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
               <circle cx={lead.x1} cy={lead.y1} r={4} />
             </svg>
           )}
-          {(sel || vdef) && (
+          {(sel || vdef || rebuild) && (
             <div className="sv-pop" style={popStyle} onClick={(e) => e.stopPropagation()}>
+              {rebuild && <RebuildPanel g={g} onClose={close} onDone={() => { setRbPreview(null); onChange(); }} onPreview={setRbPreview} />}
               {sel && draft && editable && <BlockConfigurator key={sel} g={g} draft={draft} setDraft={setDraft} whole={whole} setWhole={setWhole} onClose={close} onDone={onChange} />}
               {sel && !editable && <div className="sv-pop-body">
                 <div className="sv-pop-head"><b>{BLOCK_NAME[sel]}</b><button className="modal-close sv-x" onClick={close}>×</button></div>
@@ -146,7 +157,9 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
               ))}
             </div>
             <button className="btn btn-sm" onClick={() => onGoto?.('kartenverkauf')}>Kartenverkauf</button>
-            <span className="sv-hint">{sel || vdef ? 'Außerhalb klicken schließt die Planung.' : mode === 'tribuenen' ? 'Block anklicken: Ränge, Platzarten, Dach, Logen planen.' : 'Block oder Gebäude anklicken zum Ausbauen – das Kassenhäuschen öffnet den Kartenverkauf.'}</span>
+            {editable && <button className={`btn btn-sm sv-rebuild ${rebuild ? 'on' : ''}`} onClick={() => { const o = !rebuild; close(); setRebuild(o); }}>Neubau</button>}
+            <button className={`btn btn-sm sv-crowd ${crowd ? 'on' : ''}`} aria-pressed={crowd} onClick={toggleCrowd} title="Zuschauer im Stadion zeigen">Zuschauer</button>
+            <span className="sv-hint">{sel || vdef || rebuild ? 'Außerhalb klicken schließt die Planung.' : mode === 'tribuenen' ? 'Block anklicken: Ränge, Platzarten, Dach, Logen planen.' : 'Block oder Gebäude anklicken zum Ausbauen – das Kassenhäuschen öffnet den Kartenverkauf.'}</span>
           </div>
         </div>
     </div>

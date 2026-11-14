@@ -92,9 +92,18 @@ for (const view of VIEWS) {
       const b = page.locator('.gr-svg g.gr-obj:not(.sv-venue)');
       await b.nth((await b.count()) - 1).click({ force: true, timeout: 3000 });
     }, { steps: [
-      ['Rang aufstocken', () => page.locator('.sv-pop button:has-text("Rang aufstocken")').first().click({ timeout: 1500 })],
-      ['volles Dach', () => page.locator('.sv-pop .sv-seg button:has-text("volles Dach")').first().click({ timeout: 1500 })],
-      ['Seite ganz', () => page.locator('.sv-pop .sv-seg button').nth(1).click({ timeout: 1500 })],
+      ['Rang aufstocken', () => page.locator('.sv-pop button[title="Rang aufstocken"]').first().click({ timeout: 1500 })],
+      ['volles Dach', () => page.locator('.sv-pop .bc-roofs button:has-text("volles Dach")').first().click({ timeout: 1500 })],
+      ['Seite ganz', () => page.locator('.sv-pop .bc-scope button').nth(1).click({ timeout: 1500 })],
+      ['Bauweise', () => page.locator('.sv-pop .bc-look button').last().click({ timeout: 1500 })],
+    ] }],
+    ['stadion-neubau', '.sv-pop', async () => {
+      await nav('Verein', 'Stadion');
+      await page.locator('.sv-bar .sv-rebuild').click({ timeout: 3000 });
+    }, { steps: [
+      ['Neubau planen', () => page.locator('.sv-pop button:has-text("Neubau planen")').first().click({ timeout: 1500 })],
+      ['Dach voll', () => page.locator('.sv-pop .bc-chips button:has-text("voll")').first().click({ timeout: 1500 })],
+      ['Stehplätze keine', () => page.locator('.sv-pop .bc-chips button:has-text("keine")').first().click({ timeout: 1500 })],
     ] }],
     ['stadion-umfeld', '.sv-pop', async () => {
       await nav('Verein', 'Stadion');

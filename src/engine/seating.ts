@@ -28,6 +28,7 @@ import { attendanceDemand, clubTier, fairTicketPrice, matchdayPriceScale, tierSc
 import { ROOF_COVER, blockLength, tierCapacity } from './stadiumBlocks';
 import { hospitalityMultiplier } from './grounds';
 import { honourFx } from './honourEffects';
+import { comfortDemandFactor } from './stadiumStandard';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -232,7 +233,8 @@ export function demandFor(club: Club, ctx: DemandCtx, stehCover = 0.3): Required
   const opp = clamp(1 + (awayRep - 70) / 120, 0.88, 1.2);
   // Vereinsauszeichnungen (game/clubHonours.ts): Festung (Tickets), Spektakel (Zuschauer), Pokalschreck (nur Pokal).
   const hon = (1 + honourFx(club.id, 'tickets')) * (1 + honourFx(club.id, 'demand')) * (ctx.cup ? 1 + honourFx(club.id, 'cupDemand') : 1);
-  const G = seating.market * (st.averageAttendanceRate ?? 0.5) * attendanceDemand(year) * opp * (ctx.derby ? 1.15 : 1) * hon;
+  // Komfort gegen Anspruch der Fans (engine/stadiumStandard.ts; KI-Vereine ohne Baujahr = 1).
+  const G = seating.market * (st.averageAttendanceRate ?? 0.5) * attendanceDemand(year) * opp * (ctx.derby ? 1.15 : 1) * hon * comfortDemandFactor(club, year);
   const awayShare = 0.06 * clamp(0.35 + Math.pow(Math.max(0, awayRep - 40) / 50, 2) * 1.3, 0.3, 1.8) * (ctx.derby ? 1.8 : 1) * (ctx.euro ? 0.6 : 1);
   const AD = G * awayShare, Gh = G - AD;
   const s = lerpTable(STEH_SHARE, year);

@@ -64,6 +64,22 @@ await page.waitForTimeout(200);
 await page.locator('.gr-svg g[data-venue=catering]').click({ force: true });
 await page.waitForTimeout(300);
 await page.screenshot({ path: `${outDir}/${tag}_5_buden.png` });
+// Bausubstanz & Neubau: Popover öffnen, Neubau planen (Vorschau in der Szene), Zuschauer aus
+await page.locator('.sv-modes button:has-text("Alles")').click();
+const nb = page.locator('.sv-bar .sv-rebuild');
+if (await nb.count()) {
+  await nb.click(); await page.waitForTimeout(300);
+  await page.screenshot({ path: `${outDir}/${tag}_6_bausubstanz.png` });
+  const h0 = await page.locator('.sv-pop').boundingBox();
+  await page.locator('.sv-pop button:has-text("Neubau planen")').click(); await page.waitForTimeout(400);
+  await page.screenshot({ path: `${outDir}/${tag}_7_neubau.png` });
+  const h1 = await page.locator('.sv-pop').boundingBox();
+  if (Math.abs(h0.height - h1.height) > 1 || Math.abs(h0.width - h1.width) > 1) errors.push(`Popover ändert die Größe beim Planen: ${h0.width}×${h0.height} → ${h1.width}×${h1.height}`);
+  await page.locator('.sv-pop .bc-x').click();
+}
+await page.locator('.sv-bar .sv-crowd').click(); await page.waitForTimeout(300);
+await page.screenshot({ path: `${outDir}/${tag}_8_leer.png` });
+await page.locator('.sv-bar .sv-crowd').click();
 console.log(errors.length ? 'FEHLER:\n' + errors.join('\n') : 'ok, keine JS-Fehler');
 await browser.close(); server.close();
 process.exit(errors.length ? 1 : 0);

@@ -2853,9 +2853,9 @@ Früher gab es fiktive „Legenden“ mit festen Jahrgängen. Dieses System ist 
     id: 'stadium-blocks',
     category: 'environment',
     title: 'Stadion: Blöcke, Ränge und Dächer',
-    keywords: ['stadion', 'block', 'tribüne', 'haupttribüne', 'gegengerade', 'kurve', 'ecke', 'nordtribüne', 'südtribüne', 'schüssel', 'rang', 'oberrang', 'sitzplätze', 'stehplätze', 'dach', 'vip', 'logen', 'lounge', 'anzeigetafel', 'videowand', 'umbau', 'all-seater'],
+    keywords: ['stadion', 'neubau', 'baujahr', 'komfort', 'anspruch', 'bauweise', 'look', 'block', 'tribüne', 'haupttribüne', 'gegengerade', 'kurve', 'ecke', 'nordtribüne', 'südtribüne', 'schüssel', 'rang', 'oberrang', 'sitzplätze', 'stehplätze', 'dach', 'vip', 'logen', 'lounge', 'anzeigetafel', 'videowand', 'umbau', 'all-seater'],
     body: `## 14 Blöcke
-Unter **Verein → Stadion** siehst du dein leeres Stadion von schräg oben, über der Haupttribüne. Es besteht aus **14 Blöcken**:
+Unter **Verein → Stadion** siehst du dein Stadion als Modell von schräg oben, über der Haupttribüne – mit Zuschauern nach der letzten Auslastung (Knopf **Zuschauer** in der Leiste blendet sie aus), dem Park und den Gebäuden ringsum. Es besteht aus **14 Blöcken**:
 - **Haupttribüne** (West) und **Gegengerade** (Ost) mit je drei Blöcken: Nord, Mitte, Süd.
 - **Nord- und Südtribüne** hinter den Toren mit je zwei Blöcken: West und Ost.
 - **Vier Kurven** in den Ecken (Nordwest, Nordost, Südwest, Südost), gebogen um die Eckfahne. Sie schließen das Stadion zur Schüssel.
@@ -2873,6 +2873,17 @@ Gezeichnet werden Stufen, Sitzreihen in Vereinsfarben, Wellenbrecher, Mundlöche
 
 ## Bauen
 Jeder Umbau ist ein Bauprojekt: 2–18 Monate Bauzeit, in der die Hälfte des Blocks gesperrt ist. Die Kosten sind ein Preisschild in 1975-Basis × Wirtschaftsskala. Du zahlst bar oder per Kredit über 10, 15 oder 20 Jahre; die Bank lehnt ab, wenn alle Raten zusammen mehr als 12 % des Jahresumsatzes kosten. Es läuft immer nur ein Umbau, der aber eine ganze Seite umfassen kann: Mit **„Ganze Haupttribüne“** (bzw. Gegengerade, Nord-, Südtribüne oder **„Alle 4 Kurven“**) gelten Ränge und Dach für alle Blöcke der Seite. Gemeinsam gebaut ist es 5 % günstiger; die Bauzeit ist die des längsten Blocks plus ein Monat je weiterem Block (höchstens 24 Monate). Mehr als 90.000 Plätze genehmigt die Stadt nicht.
+
+## Bauweise je Block
+Jeder Block ist in der Bauweise seiner Zeit gezeichnet: **Betonschüssel** (bis 1987: Sichtbeton, Stahlrohrdach auf Stützen), **Stahl & Farbe** (ab 1988: Kragdach an Pylonen, Sitze in Vereinsfarben), **Arena** (ab 2003: Glasfassade, helles Dach mit Lichtband) und **Moderne Arena** (ab 2022: Lamellenfassade, Membrandach mit Solarfeldern, LED-Band). Beim Umbau eines Blocks wählst du unter **Bauweise**, ob er wie der Bestand oder im aktuellen Look gebaut wird. Das ist reine Optik – ein neuer Look passt nur nicht mehr zu den Nachbarn. Der Wechsel kostet 25 DM je Platz (1975-Basis) und einen Monat Bauzeit.
+
+## Baujahr, Komfort und Anspruch der Fans
+Dein Stadion hat ein **Baujahr**. Es legt die **Komfort-Obergrenze** fest – den Stand der Technik seiner Zeit: 1930 = 28, 1975 = 56, 2000 = 71, 2030 = 90, danach jedes Jahr 0,4 mehr. Der **Komfort** ist Obergrenze × Ausstattung (60 % sind die Substanz, 40 % verdienst du dir): Sitzqualität (35 %), Überdachung (25 %), Verpflegung und Anreise (15 %), Anzeigetafeln (10 %) und Zustand (15 %).
+
+Die **Fans erwarten jedes Jahr mehr**: drei Viertel dessen, was vor 14 Jahren Stand der Technik war (unterklassig je Liga 5 Punkte weniger). Je Punkt Abstand kommen 0,6 % mehr oder weniger Zuschauer – höchstens **−15 %** bei einem veralteten und **+8 %** bei einem modernen Stadion. Liegt der Komfort 6 Punkte oder mehr unter dem Anspruch, meldet sich der Fanbeauftragte. Bei Spielbeginn und in älteren Spielständen ist das Baujahr so gesetzt, dass dein Stadion den Ansprüchen gerade genügt. Alles dazu steht im Popover **Bausubstanz** (Knopf „Neubau“ unten in der Leiste).
+
+## Neubau
+Ist die Bausubstanz ausgereizt, hilft nur ein **Neubau**: Du legst Plätze (8.000–90.000), Stehplätze, Dach, VIP-Bereich und Logen fest. Er ersetzt alle 14 Blöcke in der aktuellen Bauweise, setzt das Baujahr auf das Jahr der Eröffnung und erlaubt mehr Logen (Baujahr ab 1998 anderthalbmal, ab 2015 doppelt so viele je Block). Neu bauen kostet 20 % mehr als Aufstocken, dazu der Abriss (15 DM je alten Platz). Bauzeit 18–36 Monate; so lange spielst du im alten Stadion mit 60 % der Plätze. Bezahlt wird bar oder per Kredit über 10, 20 oder 30 Jahre – für einen Neubau trägt die Bank Raten bis 20 % des Jahresumsatzes. Die Eröffnung hebt die Fan-Stimmung um 6 Punkte, verlorene Stehplätze ziehen wie beim Umbau ab (höchstens 8). Frühestens zehn Jahre nach dem letzten Neubau.
 
 ## Fans
 Werden Stehplätze zu Sitzplätzen, murren die Fans: bis zu 12 Punkte Stimmung, bei Traditionsvereinen (Tradition ab 70) und in der Ultra-Zeit (2005–2014) anderthalbmal so viel. Neue Stehplätze ab 2005 freuen die Kurve ein wenig.

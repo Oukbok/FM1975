@@ -160,3 +160,25 @@
 .bc-reset:hover { color: var(--text); }
 .bc-build { flex: 1; max-width: 230px; }
 .bc-fine { font-size: 11.5px; color: var(--text-3); line-height: 1.4; }
+
+/* ---- Bausubstanz & Neubau (views/verein/stadium/RebuildPanel.tsx) ---- */
+.rb-scale { position: relative; height: 12px; border-radius: 6px; background: rgba(var(--ink-rgb), 0.08); overflow: visible; }
+.rb-scale i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; }
+.rb-scale-cap { background: rgba(var(--ink-rgb), 0.16); }
+.rb-scale-now { background: var(--pos); }
+.rb-scale-now.low { background: var(--neg); }
+.rb-scale-exp { position: absolute; top: -4px; bottom: -4px; width: 2px; margin-left: -1px; background: var(--text); border-radius: 1px; }
+.rb-part { display: grid; grid-template-columns: 150px 1fr 44px; align-items: center; gap: 10px; font-size: 12.5px; color: var(--text-2); }
+.rb-part i { height: 6px; border-radius: 3px; background: rgba(var(--ink-rgb), 0.1); overflow: hidden; }
+.rb-part em { display: block; height: 100%; background: var(--text-3); }
+.rb-part b { text-align: right; font-weight: 600; color: var(--text); }
+.bc-fin.rb-fin { grid-template-columns: repeat(4, 1fr); }
+.bc-opt .bc-chips { flex-wrap: nowrap; }
+.bc-look small { display: block; font-size: 11.5px; color: var(--text-3); margin-top: 2px; }
+.sv-kpis .sv-kpi-comfort { cursor: pointer; }
+.sv-kpis .sv-kpi-comfort:hover { background: var(--panel); }
+.sv-kpis .sv-kpi-comfort b small { font-size: 13px; font-weight: 500; color: var(--text-3); }
+.sv-kpis .sv-kpi-comfort b.neg { color: var(--neg); }
+.sv-bar .btn.on { background: var(--btn-on-bg); border-color: var(--btn-on-border); color: var(--btn-on-text); }
+.bc-kpis b.rb-cost { font-size: 16px; white-space: nowrap; }
+.bc-kpis > div > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

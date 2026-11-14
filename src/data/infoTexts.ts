@@ -685,6 +685,21 @@ export const INFO_TEXTS = {
     text: 'Das Stadion besteht aus 14 Blöcken, die du einzeln umbauen kannst – Stehplätze, Sitzplätze, Überdachung, später Logen. Während eines Umbaus fehlen die Plätze.',
     wiki: 'stadium-blocks',
   },
+  stadionKomfort: {
+    title: 'Komfort und Anspruch',
+    text: 'Der Komfort ergibt sich aus Sitzqualität, Dach, Verpflegung und Anreise, Anzeigetafel und Zustand – begrenzt durch das Baujahr des Stadions. Die Fans erwarten jedes Jahr etwas mehr. Liegt der Komfort darunter, kommen bis zu 15 % weniger Zuschauer, liegt er darüber, bis zu 8 % mehr.',
+    wiki: 'stadium-blocks',
+  },
+  stadionNeubau: {
+    title: 'Stadion-Neubau',
+    text: 'Ein Neubau ersetzt alle 14 Blöcke und setzt das Baujahr neu. Damit steigt die Komfort-Obergrenze auf den Stand der Technik, und es passen mehr Logen hinein. Während der Bauzeit spielst du im alten Stadion mit 60 % der Plätze.',
+    wiki: 'stadium-blocks',
+  },
+  stadionBauweise: {
+    title: 'Bauweise',
+    text: 'Jeder Block sieht so aus, wie man zu seiner Zeit gebaut hat. Beim Umbau wählst du: wie der Bestand oder in der aktuellen Bauweise. Das ist nur Optik – ein Block im neuen Look passt aber nicht mehr zu den Nachbarn. Ein Wechsel der Bauweise kostet 25 DM je Platz (1975-Basis).',
+    wiki: 'stadium-blocks',
+  },
   platzarten: {
     title: 'Platzarten',
     text: 'Stehplätze sind billig und voller Stimmung, Sitzplätze bringen mehr je Besucher, Premium, Business und Logen viel Geld von wenigen. Jede Art hat ihre eigene Nachfrage.',

@@ -23,6 +23,9 @@ import { ensureEnvironment } from './environmentGame';
 import { checkBudget, noteBudgetSpend } from './budgetPlan';
 import { Game } from './state';
 import { honourFx } from '../engine/honourEffects';
+import {
+  RebuildSpec, blockLook, initialBuilt, loungeLimit, neutralBuilt, planRebuild, stadiumComfort, stadiumLook,
+} from '../engine/stadiumStandard';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -30,6 +33,7 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 export function ensureStadiumBlocks(g: Game): void {
   const club = g.clubs[g.managedClubId];
   if (club) convertLegacyBlocks(club);
+  if (club?.stadium.blocks?.length) ensureStadiumAge(g);
   if (!club || club.stadium.blocks?.length || club.stadiumProject) return;
   const year = yearOf(g.calendar.currentDate);
   const blocks = migrateBlocks(club, year);
@@ -37,6 +41,21 @@ export function ensureStadiumBlocks(g: Game): void {
   club.stadium.capacity = blocksCapacity(blocks);
   club.stadium.priceBase = priceMix(blocks);
   club.stadium.vipBoxes = blocks.reduce((s, b) => s + b.lounges, 0);
+  ensureStadiumAge(g);
+}
+
+/**
+ * Baujahr des Stadions anlegen (idempotent): im ersten Jahrzehnt eines Spiels aus der Ausbaustufe,
+ * in älteren Spielständen so, dass der Komfort den Ansprüchen der Fans gerade genügt – die
+ * Einführung ändert die Zuschauerzahlen nicht.
+ */
+export function ensureStadiumAge(g: Game): void {
+  const club = g.clubs[g.managedClubId];
+  if (!club || club.stadium.built != null || !club.stadium.blocks?.length) return;
+  const year = yearOf(g.calendar.currentDate);
+  const start = (g as unknown as { startYear?: number }).startYear ?? 1975;
+  const n = neutralBuilt(club, year);
+  club.stadium.built = year - start <= 8 ? Math.max(initialBuilt(club, year), n) : n;
 }
 
 export function blockOf(g: Game, id: BlockId): StadiumBlock | undefined {
@@ -57,7 +76,11 @@ export function groupPlanFor(g: Game, targets: StadiumBlock[]) {
   const club = g.clubs[g.managedClubId];
   const year = yearOf(g.calendar.currentDate);
   const env = ensureEnvironment(g);
-  const parts = targets.map((t) => ({ t, p: planBlock(blockOf(g, t.id)!, t, year, club.stadium.capacity, env.tradition) }));
+  const st = club.stadium;
+  const parts = targets.map((t) => {
+    const cur = blockOf(g, t.id)!;
+    return { t, p: planBlock(cur, t, year, st.capacity, env.tradition, { built: st.built, lookChanged: blockLook(t, st) !== blockLook(cur, st), maxLounges: loungeLimit(t.id, st.built) }) };
+  });
   const live = parts.filter((x) => x.p.changed);
   const multi = live.length > 1;
   const errors = new Set<string>(), notes = new Set<string>();
@@ -122,13 +145,65 @@ export function startBlockBuild(g: Game, target: StadiumBlock | StadiumBlock[], 
 export function sideTargets(blocks: StadiumBlock[], draft: StadiumBlock, whole: boolean): StadiumBlock[] {
   if (!whole) return [draft];
   return blocks.filter((b) => BLOCK_SIDE[b.id] === BLOCK_SIDE[draft.id]).map((b) => (b.id === draft.id ? draft
-    : { ...JSON.parse(JSON.stringify(b)), tiers: JSON.parse(JSON.stringify(draft.tiers)), roof: draft.roof }));
+    : { ...JSON.parse(JSON.stringify(b)), tiers: JSON.parse(JSON.stringify(draft.tiers)), roof: draft.roof, look: draft.look }));
 }
 
 /** Name eines laufenden Umbaus. */
 export function projectName(p: { blockId: BlockId; more?: StadiumBlock[] }): string {
   const n = 1 + (p.more?.length ?? 0);
+  if ((p as { rebuild?: boolean }).rebuild) return 'Stadion-Neubau';
   return n > 1 ? `${BLOCK_NAME[p.blockId]} + ${n - 1}` : BLOCK_NAME[p.blockId];
+}
+
+// -----------------------------------------------------------------------------
+// Neubau des ganzen Stadions (engine/stadiumStandard.ts)
+// -----------------------------------------------------------------------------
+export function rebuildPlanFor(g: Game, spec: RebuildSpec) {
+  const club = g.clubs[g.managedClubId];
+  const year = yearOf(g.calendar.currentDate);
+  const plan = planRebuild(club, spec, year);
+  const cost = nominalCost(plan.costBase, year);
+  const rate = Math.max(0.01, loanInterest(year, club.finances.balance < 0) - honourFx(club.id, 'interest'));
+  return { plan, cost, rate, monthly: (years: number) => annuity(cost, rate, years * 12) };
+}
+
+/** Neubau beauftragen: gespielt wird während der Bauzeit im alten Stadion mit 60 % der Plätze. */
+export function startRebuild(g: Game, spec: RebuildSpec, financing: 'cash' | 'loan', years: number): { ok: boolean; text: string } {
+  const club = g.clubs[g.managedClubId];
+  const today = g.calendar.currentDate;
+  const year = yearOf(today);
+  const st = club.stadium;
+  if (st.blockProject || club.stadiumProject) return { ok: false, text: 'Es läuft bereits ein Umbau im Stadion.' };
+  if (!st.blocks?.length) return { ok: false, text: 'Das Stadion ist noch nicht in Blöcke eingeteilt.' };
+  const { plan, cost } = rebuildPlanFor(g, spec);
+  if (plan.errors.length) return { ok: false, text: plan.errors[0] };
+  if (financing === 'cash') {
+    if (club.finances.balance < cost) return { ok: false, text: 'Der Kontostand reicht für eine Barzahlung nicht.' };
+    const block = checkBudget(g, 'infra', cost);
+    if (block) return { ok: false, text: block };
+    noteBudgetSpend(g, 'infra', cost);
+    book(club.finances, today, -cost, 'facilities', 'Stadion-Neubau (bar)', true);
+  } else {
+    const rev = Math.max(1, (club.finances.seasonHistory ?? []).slice(-1)[0]?.revenue ?? 0);
+    const loan = makeLoan(cost, years, year, today, 'Stadion-Neubau', club.finances.balance < 0, honourFx(club.id, 'interest'));
+    // Ein Neubau ist das größte Vorhaben des Vereins: die Bank trägt bis zu 20 % des Umsatzes an Raten.
+    if (rev > 1 && (monthlyLoanCost(club) + loan.monthlyRate) * 12 > 0.2 * rev) {
+      return { ok: false, text: 'Die Bank lehnt ab: Die Kreditraten wären zu hoch für den Umsatz des Vereins.' };
+    }
+    (club.loans ??= []).push(loan);
+  }
+  const loss = Math.max(0, st.capacity - plan.capWhile);
+  st.capacity = Math.max(1000, st.capacity - loss);
+  const [first, ...rest] = plan.blocks;
+  st.blockProject = { blockId: first.id, target: first, more: rest, startDate: today, finishDate: addMonths(today, plan.months), cost, financing, capacityLoss: loss, rebuild: true };
+  const fin = st.blockProject.finishDate;
+  const text = `Baubeginn Stadion-Neubau: fertig zum ${fin.slice(8, 10)}.${fin.slice(5, 7)}.${fin.slice(0, 4)}.`;
+  pushMessage(g.messages, makeMessage({
+    date: today, category: 'board', from: 'Bauleitung', subject: 'Der Stadion-Neubau beginnt',
+    shortText: text,
+    bodyText: `${text}\n\nKosten: ${formatMoney(cost, year)} (${financing === 'loan' ? `Kredit über ${years} Jahre` : 'bar bezahlt'}).\nDas neue Stadion fasst ${plan.capacity.toLocaleString('de-DE')} Zuschauer. Gebaut wird in Abschnitten um das Spielfeld: bis zur Eröffnung sind ${loss.toLocaleString('de-DE')} Plätze gesperrt.`,
+  }));
+  return { ok: true, text };
 }
 
 /** Täglich (billig, nur eigener Verein): Umbau fertigstellen bzw. Blöcke anlegen. */
@@ -144,7 +219,9 @@ export function stadiumDaily(g: Game, today: string): void {
       const cur = club.stadium.blocks!.find((b) => b.id === t.id)!;
       return s2 + planBlock(cur, t, yearOf(p.startDate), club.stadium.capacity + p.capacityLoss, env.tradition).mood;
     }, 0);
-    const plan = { mood: Math.round(mood * 10) / 10 };
+    // Neubau: die Eröffnung begeistert (+6), verlorene Stehplätze wiegen höchstens −8.
+    const plan = { mood: Math.round((p.rebuild ? 6 + Math.max(-8, mood) : mood) * 10) / 10 };
+    if (p.rebuild) club.stadium.built = yearOf(today);
     club.stadium.blocks = club.stadium.blocks.map((b) => targets.find((t) => t.id === b.id) ?? b);
     club.stadium.capacity = blocksCapacity(club.stadium.blocks);
     club.stadium.vipBoxes = club.stadium.blocks.reduce((s, b) => s + b.lounges, 0);
@@ -157,6 +234,23 @@ export function stadiumDaily(g: Game, today: string): void {
       shortText: `Das Stadion fasst jetzt ${club.stadium.capacity.toLocaleString('de-DE')} Zuschauer.`,
       bodyText: `Der Umbau (${targets.map((t) => BLOCK_NAME[t.id]).join(', ')}) ist abgeschlossen. Kapazität: ${club.stadium.capacity.toLocaleString('de-DE')} Plätze, Logen: ${club.stadium.vipBoxes}.${plan.mood ? `\n\nDie Fans reagieren ${plan.mood > 0 ? 'erfreut' : 'verstimmt'} (${plan.mood > 0 ? '+' : ''}${plan.mood} Stimmung).` : ''}`,
     }));
+  }
+  ensureStadiumAge(g);
+  // Jährlich zum 1. Juli: Die Ansprüche der Fans sind gestiegen – liegt der Komfort deutlich darunter, melden sie sich.
+  if (today.slice(5) === '07-01') {
+    const y = yearOf(today);
+    const c = stadiumComfort(club, y);
+    if (c && c.expect - c.comfort >= 6 && (club.stadium.agedNote ?? 0) < y - 2) {
+      club.stadium.agedNote = y;
+      const full = c.cap * 0.97 <= c.comfort;
+      pushMessage(g.messages, makeMessage({
+        date: today, category: 'board', from: 'Fanbeauftragter', subject: 'Die Fans erwarten mehr vom Stadion',
+        shortText: `Komfort ${Math.round(c.comfort)}, erwartet werden ${Math.round(c.expect)} – es kommen rund ${Math.round((1 - c.factor) * 100)} % weniger Zuschauer.`,
+        bodyText: `Die Ansprüche der Zuschauer steigen von Jahr zu Jahr. Unser Stadion (Baujahr ${c.built}) kommt auf einen Komfort von ${Math.round(c.comfort)}, erwartet werden inzwischen ${Math.round(c.expect)}. Das kostet uns rund ${Math.round((1 - c.factor) * 100)} % der Zuschauer.\n\n${full
+          ? `Die Bausubstanz ist ausgereizt (Obergrenze ${Math.round(c.cap)}). Mehr geht nur mit einem Neubau: Verein › Stadion › Neubau.`
+          : `Noch ist Luft bis zur Obergrenze der Bausubstanz (${Math.round(c.cap)}): bessere Sitze, mehr Dach, Anzeigetafel, Verpflegung und Anreise heben den Komfort. Darüber hinaus hilft nur ein Neubau.`}`,
+      }));
+    }
   }
   // Altes Ausbauprojekt (vor den Blöcken) ist inzwischen fertig → Blöcke anlegen.
   if (!club.stadium.blocks?.length && !club.stadiumProject) ensureStadiumBlocks(g);

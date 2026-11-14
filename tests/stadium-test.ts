@@ -2,7 +2,8 @@
 // Epochen-Sperren, Umbau bar/Kredit, Fertigstellung, Stimmung, Europapokal-Sitzplätze.
 //   node scripts/run-ts.mjs tests/stadium-test.ts
 import { createNewGame } from '../src/game/newGame';
-import { blockPlanFor, ensureStadiumBlocks, groupPlanFor, sideTargets, stadiumDaily, startBlockBuild } from '../src/game/stadiumGame';
+import { blockPlanFor, ensureStadiumBlocks, groupPlanFor, rebuildPlanFor, sideTargets, stadiumDaily, startBlockBuild, startRebuild } from '../src/game/stadiumGame';
+import { fanExpectation, lookOf, loungeLimit, planRebuild, stadiumComfort, standardCap } from '../src/engine/stadiumStandard';
 import { ensureEnvironment } from '../src/game/environmentGame';
 import {
   blockCapacity, blocksCapacity, convertLegacyBlocks, euroCapacity, migrateBlocks, planBlock, priceMix, roofAttendanceFactor, seatedCapacity, ticketFactor, vipAreaBoxes,
@@ -136,6 +137,7 @@ ok(vipIncome(me, 1, 1996) === vipBefore, `VIP-Plätze bleiben (${vipBefore} → 
 const seated = euroCapacity(me.stadium.blocks!, me.stadium.capacity);
 ok(seated > seatedCapacity(me.stadium.blocks!) && seated < me.stadium.capacity, `Europapokal-Kapazität ${seated} (Sitze ${seatedCapacity(me.stadium.blocks!)} + halbe Stehränge)`);
 me.stadium.averageAttendanceRate = 1;
+me.stadium.built = 1990; // Komfort passend zum Jahr 1999 (sonst drückt das alte Baujahr die Nachfrage)
 let maxEuro = 0, maxLiga = 0;
 for (let s = 1; s <= 20; s++) {
   maxEuro = Math.max(maxEuro, new MatchSim(me, other, g.players, { year: 1999, date: '1999-09-15', seed: s, competition: 'Europapokal' }).attendance);
@@ -143,6 +145,44 @@ for (let s = 1; s <= 20; s++) {
 }
 const hosp = me.stadium.blocks!.reduce((a, b) => a + (b.vip ? vipAreaSeats(b) : 0) + b.lounges * 11, 0); // VIP-Bereiche/Logen kommen dazu
 ok(maxEuro <= seated + hosp && maxLiga > seated, `Europapokal max. ${maxEuro} ≤ ${seated} Plätze + ${hosp} VIP, Liga bis ${maxLiga}`);
+
+// --- Baujahr, Komfort, Anspruch, Bauweise, Neubau (engine/stadiumStandard.ts) ---
+{
+  const g2 = createNewGame({
+    managedClubId: 'mgl', manager: { name: 'Test', nationality: 'GER', birthYear: 1950, style: 'balanced', background: 'newcomer' } as any,
+    difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300,
+  });
+  delete (g2 as any).budget;
+  const c = g2.clubs[g2.managedClubId];
+  const k0 = stadiumComfort(c, 1975)!;
+  ok(c.stadium.built != null && Math.abs(k0.factor - 1) < 0.04, `Baujahr ${c.stadium.built} gesetzt, Start fast neutral (Faktor ${k0.factor.toFixed(3)})`);
+  ok(fanExpectation(2000) > fanExpectation(1980) && fanExpectation(2060) > fanExpectation(2030) && standardCap(2060) > standardCap(2030), 'Anspruch und Obergrenze steigen, auch nach 2030');
+  ok(stadiumComfort(c, 2005)!.factor < k0.factor && stadiumComfort(c, 2040)!.factor >= 0.85, 'altes Stadion verliert mit den Jahren Zuschauer (höchstens 15 %)');
+  ok(lookOf(1975) === 0 && lookOf(1995) === 1 && lookOf(2010) === 2 && lookOf(2030) === 3, 'vier Bauweisen nach Jahr');
+  // Block im neuen Look: kostet, gilt als Änderung, Komfort-Obergrenze bleibt
+  g2.calendar.currentDate = '1995-07-10';
+  const cur = c.stadium.blocks!.find((b) => b.id === 'opp_m')!;
+  const lookPlan = groupPlanFor(g2, [{ ...clone(cur), look: 1995 }]);
+  ok(lookPlan.plan.changed && lookPlan.plan.ok && lookPlan.plan.costBase > 0, `neue Bauweise allein: ${lookPlan.plan.costBase} DM, ${lookPlan.plan.months} Monate`);
+  ok(!groupPlanFor(g2, [{ ...clone(cur), look: 1970 }]).plan.costBase, 'gleiche Bauweise (anderes Jahr) kostet nichts');
+  // Neubau
+  c.finances.balance = 9e8;
+  const spec = { capacity: 52000, standing: 1 as const, roof: 'full' as const, lounges: 12, vip: true };
+  const rp = rebuildPlanFor(g2, spec);
+  ok(!rp.plan.errors.length && Math.abs(rp.plan.capacity - 52000) / 52000 < 0.06 && rp.plan.months >= 18 && rp.plan.months <= 36, `Neubau geplant: ${rp.plan.capacity} Plätze, ${rp.plan.months} Monate, ${rp.cost}`);
+  const capBefore = c.stadium.capacity, capOld = standardCap(c.stadium.built!);
+  const r = startRebuild(g2, spec, 'cash', 0);
+  ok(r.ok && c.stadium.capacity < capBefore && c.stadium.blockProject?.rebuild, `Neubau läuft, solange ${c.stadium.capacity} statt ${capBefore} Plätze`);
+  ok(!startRebuild(g2, spec, 'cash', 0).ok, 'kein zweites Bauprojekt gleichzeitig');
+  const fin = c.stadium.blockProject!.finishDate;
+  g2.calendar.currentDate = fin;
+  stadiumDaily(g2, fin);
+  const k1 = stadiumComfort(c, Number(fin.slice(0, 4)))!;
+  ok(!c.stadium.blockProject && c.stadium.built === Number(fin.slice(0, 4)) && k1.cap > capOld && k1.factor > 1, `eröffnet ${fin}: Baujahr ${c.stadium.built}, Obergrenze ${capOld} → ${k1.cap}, Faktor ${k1.factor.toFixed(3)}`);
+  ok(c.stadium.blocks!.length === 14 && c.stadium.blocks!.every((b) => lookOf(b.look ?? 0) === lookOf(1995)) && c.stadium.capacity === blocksCapacity(c.stadium.blocks!), 'alle 14 Blöcke neu in der aktuellen Bauweise');
+  ok(c.stadium.vipBoxes === 12 && loungeLimit('main_m', 2016) > loungeLimit('main_m', 2000) && loungeLimit('main_m', 2000) > loungeLimit('main_m', 1964), `Logen ${c.stadium.vipBoxes}, moderne Substanz fasst mehr`);
+  ok(planRebuild(c, spec, Number(fin.slice(0, 4)) + 3).errors.length > 0, 'Neubau frühestens nach zehn Jahren');
+}
 
 console.log(fails ? `\n${fails} Fehler` : '\nAlle Stadion-Tests bestanden.');
 process.exit(fails ? 1 : 0);

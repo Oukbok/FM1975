@@ -28,8 +28,9 @@ export const dot = (a: V3, b: V3) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 export const VIEW: V3 = [SA * CE, CA * CE, SE];
 /** Tiefe (größer = näher an der Kamera, später zeichnen). */
 export const depth = (v: V3) => dot(v, VIEW);
-const LN = Math.hypot(-0.3, 0.35, 1);
-export const LIGHT: V3 = [-0.3 / LN, 0.35 / LN, 1 / LN];
+// Sonne von links vorne oben: der Kamera zugewandte Wände sind hell, rechte Flanken im Schatten.
+const LN = Math.hypot(-0.5, 0.55, 0.95);
+export const LIGHT: V3 = [-0.5 / LN, 0.55 / LN, 0.95 / LN];
 /** Schattenwurf je Höheneinheit auf den Boden. */
 export const SHADOW: [number, number] = [0.3, -0.35];
 
@@ -54,7 +55,7 @@ export function face(key: string, vs: V3[], nOut: V3, color: string, o?: { back?
     if (!o?.back) return null;
     col = o.back; n = neg(n);
   }
-  const l = 0.7 + 0.4 * Math.max(0, dot(n, LIGHT) / len);
+  const l = 0.62 + 0.52 * Math.max(0, dot(n, LIGHT) / len);
   return <polygon key={key} points={pts(vs)} fill={shade(col, l)} opacity={o?.opacity} stroke={o?.stroke} strokeWidth={o?.stroke ? o.sw ?? 0.8 : 0} strokeLinejoin="round" />;
 }
 export function seg(key: string, a: V3, b: V3, stroke: string, w: number, extra?: { dash?: string; opacity?: number; cap?: 'round' | 'butt' }): ReactNode {

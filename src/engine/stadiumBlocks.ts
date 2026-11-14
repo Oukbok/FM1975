@@ -225,17 +225,20 @@ export function migrateBlocks(club: Club, year: number): StadiumBlock[] {
     { id: 'south', tiers: L >= 5 ? [t(modern ? 'schale' : 'steh'), t(modern ? 'schale' : 'steh', 14)] : [t(modern ? 'schale' : 'steh')], roof: roofOther, vip: false, lounges: 0 },
   ];
   const blocks = splitLegacyBlocks(legacy);
-  const target = club.stadium.capacity;
+  growToCapacity(blocks, club.stadium.capacity, (b) => b.tiers[b.tiers.length - 1].seat);
+  return blocks;
+}
+
+/** Reihen anpassen; reichen 36 Reihen nicht, kommt seitenweise ein weiterer Rang dazu (Platzart aus `seatFor`). */
+export function growToCapacity(blocks: StadiumBlock[], target: number, seatFor: (b: StadiumBlock) => SeatType): void {
   fitRows(blocks, target);
-  // Große Stadien: reichen 36 Reihen nicht, kommt seitenweise ein weiterer Rang dazu.
   const sides: BlockSide[] = ['main', 'opposite', 'north', 'south', 'curve'];
   for (let k = 0; k < 10 && blocksCapacity(blocks) < target * 0.97; k++) {
     const side = sides.map((sd) => ({ sd, n: blocks.find((b) => BLOCK_SIDE[b.id] === sd)!.tiers.length })).sort((a, b) => a.n - b.n)[0];
     if (side.n >= 3) break;
-    for (const b of blocks) if (BLOCK_SIDE[b.id] === side.sd) b.tiers.push(t(b.tiers[b.tiers.length - 1].seat, 14));
+    for (const b of blocks) if (BLOCK_SIDE[b.id] === side.sd) b.tiers.push({ seat: seatFor(b), rows: 14 });
     fitRows(blocks, target);
   }
-  return blocks;
 }
 
 // -----------------------------------------------------------------------------
@@ -254,7 +257,9 @@ export interface BlockPlan {
   changed: boolean;
 }
 
-export function planBlock(cur: StadiumBlock, target: StadiumBlock, year: number, totalCapacity: number, tradition: number): BlockPlan {
+export function planBlock(cur: StadiumBlock, target: StadiumBlock, year: number, totalCapacity: number, tradition: number,
+  /** Baujahr des Stadions und Bauweisen-Vergleich (engine/stadiumStandard.ts); fehlt = alte Regeln. */
+  age?: { built?: number; lookChanged?: boolean; maxLounges?: number }): BlockPlan {
   const errors: string[] = [], notes: string[] = [];
   let cost = 0, demolish = 0, converted = 0, addedStanding = 0;
   if (!target.tiers.length) errors.push('Ein Block braucht mindestens einen Rang.');
@@ -291,7 +296,8 @@ export function planBlock(cur: StadiumBlock, target: StadiumBlock, year: number,
     if (!loungesAvailable(year)) errors.push('Logen gibt es erst ab 1985.');
     cost += (target.lounges - cur.lounges) * LOUNGE_COST;
   }
-  if (target.lounges > MAX_LOUNGES[target.id]) errors.push(`Höchstens ${MAX_LOUNGES[target.id]} Logen in diesem Block.`);
+  const maxL = age?.maxLounges ?? MAX_LOUNGES[target.id];
+  if (target.lounges > maxL && target.lounges > cur.lounges) errors.push(`Höchstens ${maxL} Logen in diesem Block.`);
   if (target.vip && !cur.vip && !vipAllowed(target.id)) errors.push('In den Kurven gibt es keinen VIP-Bereich.');
   if (target.scoreboard && !cur.scoreboard && !scoreboardAllowed(target.id)) errors.push('Anzeigetafeln stehen hinter dem Tor oder in den Kurven.');
   if (target.lounges > 0 && target.tiers.length < 2 && target.roof !== 'full') errors.push('Logen brauchen einen zweiten Rang oder ein volles Dach.');
@@ -308,8 +314,10 @@ export function planBlock(cur: StadiumBlock, target: StadiumBlock, year: number,
   if (converted) notes.push(`${converted.toLocaleString('de-DE')} Stehplätze werden zu Sitzplätzen.`);
   if (allSeaterEuro(year) && target.tiers.some((t) => t.seat === 'steh')) notes.push('Im Europapokal werden Stehränge bestuhlt und fassen nur die Hälfte.');
 
+  // Andere Bauweise: Fassade, Dachrand und Sitze werden erneuert.
+  if (age?.lookChanged) { cost += newCap * 25; notes.push('Der Block wird in einer anderen Bauweise erneuert – er passt dann nicht mehr zu den Nachbarn im alten Look.'); }
   const added = Math.max(0, newCap - oldCap);
-  const months = clamp(Math.round(3 + added / 2500 + (target.roof !== cur.roof ? 3 : 0) + (target.tiers.length > cur.tiers.length ? 2 : 0)), 2, 18);
+  const months = clamp(Math.round(3 + added / 2500 + (target.roof !== cur.roof ? 3 : 0) + (target.tiers.length > cur.tiers.length ? 2 : 0) + (age?.lookChanged ? 1 : 0)), 2, 18);
   const changed = JSON.stringify(cur) !== JSON.stringify(target);
   if (!changed) errors.push('Es ist nichts geändert.');
   return { ok: !errors.length, errors, costBase: Math.round(cost / 1000) * 1000, addCapacity: newCap - oldCap, months, mood: Math.round(mood * 10) / 10, notes, changed };

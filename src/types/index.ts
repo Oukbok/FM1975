@@ -745,6 +745,10 @@ export interface Stadium {
   priceBase?: number;
   /** Platzkategorien: Preise, Zuschauerpotenzial, Kontingente (engine/seating.ts). Fehlt in alten Spielständen. */
   seating?: StadiumSeating;
+  /** Baujahr der Bausubstanz (eigener Verein): bestimmt die Komfort-Obergrenze, neu gesetzt nur durch einen Neubau. */
+  built?: number;
+  /** Jahr des letzten Hinweises „Stadion veraltet“. */
+  agedNote?: number;
 }
 
 /** Platzkategorie im Stadion (data/seatingCatalog.ts). */
@@ -839,6 +843,8 @@ export interface StadiumBlock {
   lounges: number;
   /** Anzeigetafel (hinter dem Tor und in den Kurven). */
   scoreboard?: boolean;
+  /** Bauweise: Jahr, in dessen Look der Block gebaut ist (fehlt = Baujahr des Stadions; engine/stadiumStandard.ts). */
+  look?: number;
 }
 
 /** Laufender Umbau eines Blocks. */
@@ -854,6 +860,8 @@ export interface BlockProject {
   financing: 'cash' | 'loan';
   /** Während des Baus gesperrte Plätze. */
   capacityLoss: number;
+  /** Kompletter Neubau: alle 14 Blöcke neu, bei Fertigstellung neues Baujahr (`Stadium.built`). */
+  rebuild?: boolean;
 }
 
 /** Kredit eines Vereins (Beträge nominal). */

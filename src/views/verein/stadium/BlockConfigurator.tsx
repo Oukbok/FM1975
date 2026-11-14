@@ -9,10 +9,11 @@ import { useState } from 'react';
 import { yearOf } from '../../../engine/economy';
 import { expectedSale, saleRevenue } from '../../../engine/seating';
 import {
-  BLOCK_NAME, BLOCK_SIDE, MAX_LOUNGES, ROOF_NAME, SIDE_NAME, TIER_NAME, blockCapacity, blocksCapacity, loungesAvailable,
+  BLOCK_NAME, BLOCK_SIDE, ROOF_NAME, SIDE_NAME, TIER_NAME, blockCapacity, blocksCapacity, loungesAvailable,
   scoreboardAllowed, seatAvailable, sideBlocks, tierCapacity, videoWall, vipAllowed, vipAvailable,
 } from '../../../engine/stadiumBlocks';
 import { groupPlanFor, sideTargets, startBlockBuild } from '../../../game/stadiumGame';
+import { LOOKS, blockLook, lookOf, lookYear, loungeLimit, stadiumLook } from '../../../engine/stadiumStandard';
 import type { Game } from '../../../game/state';
 import type { Club, RoofType, SeatType, StadiumBlock } from '../../../types';
 import { fmtDM } from '../../../ui/format';
@@ -57,7 +58,12 @@ export function BlockConfigurator({ g, draft, setDraft, whole, setWhole, onClose
     setConfirm(null);
     if (r.ok) onDone();
   };
-  const maxL = MAX_LOUNGES[draft.id];
+  const maxL = loungeLimit(draft.id, club.stadium.built);
+  // Bauweise: wie der Bestand, wie bisher oder im aktuellen Look (engine/stadiumStandard.ts)
+  const st = club.stadium;
+  const lkCur = blockLook(cur, st), lkAll = stadiumLook(st), lkNow = lookOf(year), lkDraft = blockLook(draft, st);
+  const lookChoices = [...new Set([lkAll, lkCur, lkNow])];
+  const setLook = (i: number) => upd({ look: i === lkCur ? cur.look : i === lkNow ? year : lookYear(i, st) });
   const straight = side === 'main' || side === 'opposite';
   const before = plan.changed ? perMatch(club, blocks, year) : null;
   const after = plan.changed ? perMatch(club, planned, year) : null;
@@ -154,6 +160,18 @@ export function BlockConfigurator({ g, draft, setDraft, whole, setWhole, onClose
               <b>{draft.lounges}</b>
               <button disabled={!loungesAvailable(year) || draft.lounges >= maxL} onClick={() => upd({ lounges: draft.lounges + 1 })} aria-label="Mehr Logen">+</button>
             </span>
+          </div>
+        </section>
+
+        <section className="bc-sec">
+          <div className="bc-sec-h"><span>Bauweise<InfoTip k="stadionBauweise" /></span></div>
+          <div className="bc-chips bc-look">
+            {lookChoices.map((i) => (
+              <button key={i} className={lkDraft === i ? 'on' : ''} onClick={() => setLook(i)}>
+                {LOOKS[i].name}{i === lkAll ? ' · Bestand' : i === lkNow ? ' · aktuell' : ''}
+              </button>
+            ))}
+            <small>{LOOKS[lkDraft].text}{lkDraft !== lkAll ? ' – passt nicht zum übrigen Stadion.' : '.'}</small>
           </div>
         </section>
 
