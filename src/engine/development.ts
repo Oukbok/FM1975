@@ -19,7 +19,7 @@ import { applyProGem } from './gems';
 import { Player, Club, AttributeKey, potentialToStars, clampStars } from '../types';
 import { weightsFor, positionSuitability } from './positions';
 import { updateScoutEstimate } from './scouting';
-import { ageCeiling, declineShiftOf, maturityGrowth, tempoFactor } from './talent';
+import { ageCeiling, declineShiftOf, maturityGrowth, POT_CAP, tempoFactor, youngTop } from './talent';
 import { addDevPoints, decompose, DevLog, logPart, newDevLog, RatingReason } from './devLog';
 import { explainRating, PayoutInfo } from './ratingReasons';
 
@@ -210,8 +210,14 @@ export function eliteBrake(p: Player, training = 1): number {
   const total = eliteShift + eraOffset;
   const shift = p.overall >= 88 ? Math.min(0, total) : total;
   const over = p.overall - (ELITE_FROM + shift + clamp((training - 0.9) * 8, 0, 3) + talentRoom);
-  if (over <= 0) return 1;
-  return Math.max(0.2, 1 - over * 0.15);
+  // Wand der Weltspitze (Wunsch Pascal, Maßstab EA FC: Nr. 1 der Welt 91–93, Nr. 10 ~89):
+  // ab 88 – bei sehr großem Potenzial ab Potenzial − 3 – kostet jeder Punkt fast die Hälfte
+  // des Tempos. 90+ bleibt wenigen vorbehalten, 93+ den Ausnahmetalenten der Geschichte.
+  const wall = Math.pow(0.55, Math.max(0, p.overall - Math.max(88, truePotential(p) - 3)))
+    // Junge Spieler: kurz vor der Höchststärke ihres Alters (engine/talent.ts youngTop) wird es zäh.
+    * Math.pow(0.5, Math.max(0, p.overall - (youngTop(p.age) - 2)));
+  if (over <= 0) return wall;
+  return Math.max(0.2, 1 - over * 0.15) * wall;
 }
 
 // -----------------------------------------------------------------------------
@@ -380,7 +386,7 @@ function applyRatingToPlayer(p: Player, type: RatingType, dateISO: string): { ch
       addDevPoints(p, 'durchbruch', 3 + Math.random() * 2);
       tag = 'Durchbruch';
     } else if (p.age >= 24 && p.age <= 27 && (d.ambition ?? 50) >= 80 && Math.random() < 0.03) {
-      d.basePotential = clamp((d.basePotential ?? p.overall) + 3, 30, 97);
+      d.basePotential = Math.max(d.basePotential ?? p.overall, clamp((d.basePotential ?? p.overall) + 3, 30, POT_CAP));
       addDevPoints(p, 'spaetzuender', 3);
       tag = 'Spätzünder';
     } else if ((p.injury && p.injury.severity === 'critical') || (p.trainingLoad > 900 && Math.random() < 0.3)) {

@@ -124,6 +124,15 @@ function targetStrength(level: number, size: number, tier: number): number {
   return level - 5 + size * 16 - (tier === 1 ? 6 : 0);
 }
 
+/**
+ * Obergrenze der Vereinsstärke (Wunsch Pascal, Maßstab EA FC): Die Stärke steht für den
+ * Schnitt der 14 Stammkräfte. Die besten Vereine der Welt liegen dort bei ~84–85
+ * (Startelf ~86–87) – oberhalb von 80 zählt nur die Hälfte, Deckel 86.
+ */
+export function softClubStrength(v: number): number {
+  return Math.min(86, v > 80 ? 80 + (v - 80) * 0.5 : v);
+}
+
 // -----------------------------------------------------------------------------
 // Farben/Namen für erfundene Vereine
 // -----------------------------------------------------------------------------
@@ -158,7 +167,7 @@ function newClub(
   const id = `w_${w.nextId++}`;
   euroClubs[id] = {
     id, name, shortName: makeShort(name, usedShort), city, country: country.name,
-    strength: Math.round(strength), colors: { primary: pair[1], secondary: pair[2] }, comp: 'uefa',
+    strength: Math.round(softClubStrength(strength)), colors: { primary: pair[1], secondary: pair[2] }, comp: 'uefa',
   };
   w.meta[id] = { country: country.name, size, home: size, cycle: 0 };
   return id;
@@ -493,8 +502,8 @@ export function advanceWorldSeason(
         m.home = clamp(m.home + gauss(r) * 0.02, 0.1, 0.95);
         m.size = clamp(m.size + (m.home - m.size) * 0.06 + gauss(r) * 0.01, 0, 1);
         m.cycle = m.cycle * 0.85 + gauss(r) * 2.6;
-        const target = targetStrength(level, m.size, t) + m.cycle;
-        club.strength = Math.round(clamp(club.strength + (target - club.strength) * 0.4 + gauss(r) * 1.5, 40, 92));
+        const target = softClubStrength(targetStrength(level, m.size, t) + m.cycle);
+        club.strength = Math.round(clamp(club.strength + (target - club.strength) * 0.4 + gauss(r) * 1.5, 40, 86));
       }
     });
   }

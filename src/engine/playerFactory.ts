@@ -11,7 +11,7 @@ import { initialExperience } from './experience';
 import { bornWorkRate, groupOf } from './attributeAging';
 import { estimatedPeak } from './teamBoost';
 import { pickOrigin, makeName, faceFor, Origin } from '../data/origins';
-import { exceptionalPotential, getTalentSupply } from './talent';
+import { exceptionalPotential, getTalentSupply, POT_CAP } from './talent';
 
 export interface NewPlayerSpec {
   id: string;
@@ -107,7 +107,7 @@ export function rollBasePotential(age: number, strength: number, rng: () => numb
   if (pot > ELITE_SOFT) pot = ELITE_SOFT + (pot - ELITE_SOFT) * ELITE_KEEP * getTalentSupply();
   // Seltenes Ausnahmetalent: derselbe Ausreißer-Schwanz wie in den Akademien (engine/talent.ts).
   if (age <= 20 && rng() < 0.012 * getTalentSupply()) pot = Math.max(pot, exceptionalPotential(rng));
-  return clamp(pot, strength, 99);
+  return clamp(pot, strength, Math.max(strength, POT_CAP));
 }
 
 function birthDate(age: number, year: number, rng: () => number): string {

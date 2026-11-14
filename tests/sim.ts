@@ -11,6 +11,8 @@ import { seasonStartYear } from '../src/data/timeline';
 import { headCoachNow, headCoachRows } from '../src/game/headCoaches';
 import { candidatesFor, hireStaff } from '../src/game/staffGame';
 import { careerSummary, originOfPlayer, trackCareers } from './simCareers';
+import { poolRows } from '../src/game/playerPool';
+import { worldClubs } from '../src/game/worldPool';
 import { processDay, HEADLESS_UI } from '../src/game/day';
 import { startNextSeason, leagueClubs } from '../src/game/season';
 import { CalendarEngine } from '../src/engine/calendar';
@@ -405,9 +407,25 @@ function topReport(game: Game, ps: Player[]) {
   const lbh = game.leagueBalance?.history?.[game.leagueBalance.history.length - 1] as { elite?: number } | undefined;
   topStat.rows.push(row);
   const pot = ps.filter((p) => p.age <= 23).map((p) => p.development.basePotential ?? p.overall);
+  // Welt (volle Spieler + Weltspieler, Maßstab EA-FC-Top-10): Spitze, Breite, Jugend
+  {
+    const all = poolRows(game).rows.filter((r) => r.kind !== 'youth').map((r) => ({ ov: r.ov, age: r.age })).sort((a, b) => b.ov - a.ov);
+    const cnt = (t: number) => all.filter((x) => x.ov >= t).length;
+    const best = (a: number) => all.filter((x) => x.age <= a).slice(0, 3).map((x) => x.ov).join('/');
+    const wc = [...worldClubs(game).values()].map((c) => c.strength).sort((a, b) => b - a);
+    const w = { y: y0, top: all.slice(0, 10).map((x) => x.ov), n90: cnt(90), n85: cnt(85), u19: all.filter((x) => x.age <= 19)[0]?.ov ?? 0, u21: all.filter((x) => x.age <= 21)[0]?.ov ?? 0, club: wc[0] ?? 0 };
+    worldRows.push(w);
+    console.log(`   WELT Top10 ${w.top.join(' ')} | ≥90 ${w.n90} ≥88 ${cnt(88)} ≥85 ${w.n85} ≥80 ${cnt(80)} | beste ≤19 ${best(19)} ≤21 ${best(21)} | Vereinsstärke max ${wc.slice(0, 3).join('/')}`);
+  }
   console.log(`   TOP ≥90 ${row.n90} ≥85 ${row.n85} [${by(85)}] | ≥80 ${row.n80} [${by(80)}] | max ${ovr[0]} | Top11 Spitze-Keller ${gap.toFixed(1)} (oben ${avg(t11.slice(0, 3)).toFixed(1)} unten ${avg(t11.slice(-3)).toFixed(1)}, ≥85 bei Top-3 ${starsTop3}) | U21 ≥80 ${row.u80} ≥85 ${row.u85} [${u21.filter((p) => p.overall >= 80).map((p) => `${p.age}J ${p.overall}`).join(', ')}] | U23 Basis-Pot ≥85: ${pot.filter((x) => x >= 85).length} | Bremse ${lbh?.elite ?? '-'}`);
 }
+const worldRows: { y: number; top: number[]; n90: number; n85: number; u19: number; u21: number; club: number }[] = [];
 function topSummary() {
+  for (const [a, b] of [[1975, 1985], [1985, 1995], [1995, 2005], [2005, 2015], [2015, 2030], [2030, 2100]]) {
+    const r = worldRows.filter((x) => x.y >= a && x.y < b);
+    if (!r.length) continue;
+    console.log(`WELT ${a}–${b - 1}: Nr.1 ${avg(r.map((x) => x.top[0])).toFixed(1)} Nr.10 ${avg(r.map((x) => x.top[9] ?? 0)).toFixed(1)} ≥90 ${avg(r.map((x) => x.n90)).toFixed(1)} ≥85 ${avg(r.map((x) => x.n85)).toFixed(1)} | bester ≤19 ${avg(r.map((x) => x.u19)).toFixed(1)} (max ${Math.max(...r.map((x) => x.u19))}) ≤21 ${avg(r.map((x) => x.u21)).toFixed(1)} | Verein max ${avg(r.map((x) => x.club)).toFixed(1)}`);
+  }
   const name = (id: string) => g.clubs[id]?.shortName ?? g.simClubs?.[id]?.shortName ?? id;
   for (const [a, b] of [[1975, 1985], [1985, 1995], [1995, 2005], [2005, 2015], [2015, 2030]]) {
     const r = topStat.rows.filter((x) => x.y >= a && x.y < b);

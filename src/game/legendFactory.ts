@@ -19,6 +19,7 @@ import { updateScoutEstimate } from '../engine/scouting';
 import { wageForOverall } from '../engine/economy';
 import { marketValueFor } from '../engine/clubEconomy';
 import { originClubOf } from '../engine/persona';
+import { legendPotential, youngTop } from '../engine/talent';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -70,14 +71,14 @@ export function legendPlayerId(def: LegendDef, clubId: string, salt: string, you
  */
 const RIPENESS: Record<number, number> = { 16: 0.68, 17: 0.74, 18: 0.79, 19: 0.84, 20: 0.88, 21: 0.92, 22: 0.95, 23: 0.97, 24: 0.99 };
 export function legendStrengthAt(def: LegendDef, age: number, noise: number): number {
-  const pot = def.potential;
+  const pot = legendPotential(def.potential);
   let s: number;
   if (age <= 24) s = pot * Math.min(1, (RIPENESS[Math.max(16, age)] ?? 0.68) + 0.08 * def.maturity);
   else {
     const peakEnd = 29 + 1.5 * def.longevity;
     s = age <= peakEnd ? pot - 1 : pot - 1 - (age - peakEnd) * 1.8;
   }
-  return Math.round(clamp(s - noise * 2.5, 40, pot));
+  return Math.round(clamp(Math.min(s, youngTop(age)) - noise * 2.5, 40, pot));
 }
 
 /** Spielertyp: Schwerpunkt-Attribute anheben (danach wird auf die Zielstärke ausgeglichen). */
@@ -101,8 +102,8 @@ function applyHidden(p: Player, def: LegendDef): void {
   d.ambition = clamp(h.ambition, 1, 99);
   d.adaptability = clamp(h.adaptability, 1, 99);
   d.clock = { m: clamp(def.maturity, -1, 1), l: clamp(def.longevity, -1, 1) };
-  d.basePotential = def.potential;
-  d.potentialAbility = def.potential;
+  d.basePotential = legendPotential(def.potential);
+  d.potentialAbility = d.basePotential;
   d.unfold = 0;
   delete d.gem;
   const pe = def.persona;
@@ -155,12 +156,12 @@ export function makeLegendYouth(def: LegendDef, m: LegendMake): Player {
   applyHidden(p, def);
   applyType(p, def, rng, 6);
   // Ausgangsstärke: knapp unter der altersgerechten Obergrenze der Jugend (engine/youth.ts).
-  const target = Math.round(def.potential * (0.63 + 0.035 * (age - 15) + 0.07 * def.maturity) * (0.86 + rng() * 0.05));
+  const target = Math.round(legendPotential(def.potential) * (0.63 + 0.035 * (age - 15) + 0.07 * def.maturity) * (0.86 + rng() * 0.05));
   refreshOverall(p);
   applyOverallChange(p, target - p.overall);
   refreshOverall(p);
   p.development.abilityHistory = [{ date: m.date, ability: p.overall }];
-  const stars = clampStars(potentialToStars(def.potential));
+  const stars = clampStars(potentialToStars(legendPotential(def.potential)));
   p.potentialStars = stars;
   const w = age <= 15 ? 1.0 : age <= 17 ? 0.75 : 0.5;
   p.scoutedPotentialMin = clampStars(stars - w * (0.5 + rng()));
@@ -187,7 +188,7 @@ export function makeLegendPro(def: LegendDef, m: LegendMake, noise: number): Pla
   p.attributes.experience = clamp(Math.max(p.attributes.experience, 20 + (age - 17) * 5), 1, 95);
   ensureDevFields(p);
   p.development.abilityHistory = [{ date: m.date, ability: p.overall }];
-  p.potentialStars = clampStars(potentialToStars(Math.max(p.overall, def.potential)));
+  p.potentialStars = clampStars(potentialToStars(Math.max(p.overall, legendPotential(def.potential))));
   p.contract.weeklyWage = Math.round(wageForOverall(p.overall) * (0.95 + rng() * 0.2));
   p.contract.expiryDate = `${year + 2 + Math.floor(rng() * 3)}-06-30`;
   p.contract.transferValue = marketValueFor(p, year);

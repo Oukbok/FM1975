@@ -19,7 +19,8 @@
 //   (`materializeWorldPlayer`), sein Eintrag bleibt bis zum Wechsel bestehen.
 // =============================================================================
 import { COUNTRY_ORIGIN } from '../engine/euroLight';
-import { isForeignId } from '../engine/world';
+import { isForeignId, softClubStrength } from '../engine/world';
+import { POT_CAP, youngTop } from '../engine/talent';
 import { createPlayer } from '../engine/playerFactory';
 import { marketValueFor } from '../engine/clubEconomy';
 import { faceFor, makeName, ORIGINS, pickOrigin, type Origin } from '../data/origins';
@@ -31,7 +32,8 @@ import type { Game } from './state';
 export type WP = [string, string, string, string, string, string, number, Position, number, number, number, number, number];
 
 export interface WorldPool {
-  v: 1;
+  /** 2 = Weltspitze nach EA-FC-Maßstab (`migrateWorldScale`). */
+  v: 2;
   /** Saison (Startjahr) des letzten Abgleichs. */
   year: number;
   next: number;
@@ -53,6 +55,10 @@ const FOREIGN: [string, number][] = [
 ];
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+/** Weltspitze wie in EA FC (Wunsch Pascal): oberhalb von 86 zählt nur 60 %, Deckel = POT_CAP. */
+const softTop = (v: number) => Math.min(POT_CAP, v > 86 ? 86 + (v - 86) * 0.6 : v);
+/** Wand der Weltspitze in der Entwicklung (wie `eliteBrake` in engine/development.ts). */
+const wallOf = (ov: number) => Math.pow(0.55, Math.max(0, ov - 88));
 
 function rng(seed: number): () => number {
   let a = seed >>> 0;
@@ -136,8 +142,8 @@ function makeWP(g: Game, pool: WorldPool, club: WorldClubInfo, pos: Position, ov
   const born = year - age;
   const { firstName, lastName } = makeName(o, r, born);
   const id = `wp${(pool.next++).toString(36)}`;
-  const s = Math.round(clamp(ov, 25, 95));
-  const pot = Math.round(clamp(s + headroom(age, r), s, 97));
+  const s = Math.round(clamp(softTop(ov), 25, Math.min(POT_CAP, youngTop(age) - 2)));
+  const pot = Math.round(clamp(s + headroom(age, r), s, POT_CAP));
   const foot = r() < 0.72 ? 0 : r() < 0.85 ? 1 : 2;
   const height = pos === 'TW' ? 182 + Math.floor(r() * 14) : 168 + Math.floor(r() * 24);
   return [id, club.id, firstName, lastName, o.nationality, faceFor(o, born, id), born, pos, s, pot, foot, height, youth ? 1 : 0];
@@ -160,11 +166,29 @@ function squadFor(g: Game, pool: WorldPool, club: WorldClubInfo, year: number): 
 
 const startYearOf = (g: Game) => Number((g.season ?? '1975').slice(0, 4)) || Number(g.calendar.currentDate.slice(0, 4));
 
+/**
+ * Einmalig für ältere Spielstände (Wunsch Pascal: zu viele Weltklassespieler): Weltspieler
+ * und Vereinsstärken der Hintergrund-Welt auf den neuen Maßstab stauchen. Volle Spieler
+ * bleiben unverändert.
+ */
+function migrateWorldScale(g: Game, pool: { v: number; p: WP[] }): void {
+  // Stärker als `softTop`: alte Pools waren über Jahrzehnte nach oben gelaufen (Weltspitze 95–97).
+  const year = Number(g.calendar.currentDate.slice(0, 4));
+  const squeeze = (v: number) => Math.min(POT_CAP, v > 85 ? 85 + (v - 85) * 0.55 : v);
+  for (const w of pool.p) {
+    w[W.ov] = Math.round(Math.min(squeeze(w[W.ov]), youngTop(year - w[W.born]) - 1));
+    w[W.pot] = Math.max(w[W.ov], Math.round(squeeze(w[W.pot])));
+  }
+  for (const e of Object.values(g.euroClubs ?? {})) e.strength = Math.round(softClubStrength(e.strength));
+  pool.v = 2;
+}
+
 /** Pool anlegen bzw. mit den aktuellen Vereinen abgleichen (fehlende Kader erzeugen, veraltete entfernen). */
 export function ensureWorldPool(g: Game): WorldPool {
   const year = startYearOf(g);
   let pool = g.worldPool;
-  if (!pool || pool.v !== 1) pool = g.worldPool = { v: 1, year, next: 1, p: [] };
+  if (pool && (pool.v as number) === 1) migrateWorldScale(g, pool);
+  if (!pool || pool.v !== 2) pool = g.worldPool = { v: 2, year, next: 1, p: [] };
   const clubs = worldClubs(g);
   const have = new Set<string>();
   pool.p = pool.p.filter((w) => { if (!clubs.has(w[W.club])) return false; have.add(w[W.club]); return true; });
@@ -191,7 +215,9 @@ export function worldPoolSeason(g: Game): void {
       else if (age <= 28) d = gap * 0.5 + (r() - 0.5) * 2;
       else if (age <= 31) d = -r() * 1.5;
       else d = -1 - r() * 3;
-      w[W.ov] = Math.round(clamp(w[W.ov] + d, 25, 97));
+      if (d > 0) d *= wallOf(w[W.ov]);
+      // Junge Weltspieler höchstens so stark wie die größten Talente ihres Alters (youngTop).
+      w[W.ov] = Math.round(clamp(w[W.ov] + d, 25, Math.max(Math.min(POT_CAP, youngTop(age + 1) - 1), d > 0 ? 0 : w[W.ov])));
       if (w[W.ov] > w[W.pot]) w[W.pot] = w[W.ov];
       if (w[W.youth] && age >= 19) w[W.youth] = 0;
     }
@@ -234,7 +260,7 @@ export function worldPoolSeason(g: Game): void {
     if (!core.length) continue;
     const avg = core.reduce((a, b) => a + b, 0) / core.length;
     const shift = Math.round(clamp((club.strength - avg) * 0.6, -3, 3));
-    if (shift) for (const w of l) { w[W.ov] = Math.round(clamp(w[W.ov] + shift, 25, 97)); if (w[W.pot] < w[W.ov]) w[W.pot] = w[W.ov]; }
+    if (shift) for (const w of l) { w[W.ov] = Math.round(clamp(w[W.ov] + shift, 25, Math.max(POT_CAP, shift > 0 ? 0 : w[W.ov]))); if (w[W.pot] < w[W.ov]) w[W.pot] = w[W.ov]; }
     // Kadergröße halten: zu viele → schwächste Ergänzungsspieler gehen (Karriereende/unterklassig), zu wenige → auffüllen
     const prosList = l.filter((w) => !w[W.youth]).sort((a, b) => b[W.ov] - a[W.ov]);
     if (prosList.length > 24) {

@@ -107,13 +107,36 @@ export function setTalentSupply(f: number): void { talentSupply = clamp(f, 0.5, 
 export function getTalentSupply(): number { return talentSupply; }
 
 /**
- * Seltener Ausreißer-Schwanz des Potenzials: ab 85 fällt die Häufigkeit je
- * Punkt um rund 30 % (Exponential mit Mittel 2,8). Von 100 solchen Talenten
- * haben ~17 ein Potenzial ≥ 90, ~6 ≥ 93, ~1 ≥ 96.
+ * Seltener Ausreißer-Schwanz des Potenzials: ab 84 fällt die Häufigkeit je
+ * Punkt um rund 35 % (Exponential mit Mittel 2,3), Deckel 93. Maßstab EA FC
+ * (Wunsch Pascal): die Weltspitze liegt bei 90–93, die Nr. 10 der Welt bei ~89.
+ * Von 100 solchen Talenten haben ~7 ein Potenzial ≥ 90, ~2 ≥ 92; mehr erreichen
+ * nur die Ausnahmetalente der Fußballgeschichte (`legendPotential`).
  */
+export const POT_CAP = 93;
 export function exceptionalPotential(rand: () => number): number {
-  const tail = -Math.log(Math.max(1e-6, 1 - rand())) * 2.8;
-  return Math.round(clamp(85 + tail, 85, 99));
+  const tail = -Math.log(Math.max(1e-6, 1 - rand())) * 2.3;
+  return Math.round(clamp(84 + tail, 84, POT_CAP));
+}
+
+/**
+ * Höchststärke junger Spieler (Wunsch Pascal, Maßstab EA FC): Selbst die größten
+ * Talente lagen mit 17 bei ~81, mit 19 bei ~85–87, mit 21 bei ~90. Darüber wächst
+ * ein junger Spieler nur noch zäh (`eliteBrake`), Weltspieler und Ausnahmetalente
+ * der Geschichte werden höchstens so stark erzeugt.
+ */
+const YOUNG_TOP: Record<number, number> = { 16: 78, 17: 81, 18: 84, 19: 86, 20: 88, 21: 90, 22: 91 };
+export function youngTop(age: number): number {
+  return age >= 23 ? 99 : YOUNG_TOP[Math.max(16, age)];
+}
+
+/**
+ * Potenzial eines Ausnahmetalents der Fußballgeschichte (data/legends, Skala 80–99)
+ * auf die Spielskala: oberhalb von 88 zählt nur 60 % – aus 99 wird 95, aus 95 wird 92,
+ * aus 90 wird 89 (EA-FC-Höchstwerte der Besten ihrer Zeit lagen bei 93–94).
+ */
+export function legendPotential(pot: number): number {
+  return pot <= 88 ? pot : Math.round(88 + (pot - 88) * 0.6);
 }
 
 /**
