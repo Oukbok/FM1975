@@ -2421,7 +2421,7 @@ Was ihm wichtig ist, erfährst du im ersten Gespräch – mit gutem Scouting sch
 **Glaubwürdigkeit** (Start 70): Gehaltene Versprechen +5, gebrochene −15 – der Spieler verliert stark an Zufriedenheit und Moral. Wenig loyale oder sehr ehrgeizige Spieler wollen danach weg und lehnen ein halbes Jahr lang Vertragsgespräche ab. Die **Kabine** bekommt es mit: alle Mitspieler −2 Zufriedenheit, wer selbst offene Versprechen hat −4.
 
 ## Abschluss
-Im Transferfenster (Juli/August, Januar) wird sofort gewechselt, sonst zum nächsten Fenster. Ab Bosman kannst du Spieler, deren Vertrag in höchstens sechs Monaten endet, ohne Ablöse per **Vorvertrag** holen. Höchstens vier Verhandlungen laufen gleichzeitig; ohne neue Angebote schläft ein Gespräch nach 30 Tagen ein.
+Im Transferfenster (Juli/August, Januar) wird sofort gewechselt, sonst zum nächsten Fenster. Ab Bosman kannst du Spieler, deren Vertrag in höchstens sechs Monaten endet, ohne Ablöse per **Vorvertrag** holen. Du kannst beliebig viele Verhandlungen gleichzeitig führen; ohne neue Angebote schläft ein Gespräch nach 30 Tagen ein. Auch Spieler ausländischer Vereine (etwa aus den Europapokal-Kadern) sind verhandelbar – vor 1989 aber nicht aus dem Ostblock.
 
 ## Wenn andere bieten
 Für deine Spieler bieten vor allem KI-Vereine, die auf seiner Position **Bedarf** haben und sich die Ablöse leisten können (Kaderplanung); für Stars melden sich auch einfach die Großen. Sie bieten nach ihrer verdeckten Höchstgrenze. Forderst du 25 % mehr, zahlen sie, wenn es in ihren Rahmen passt – sonst bessern sie oft bis zur Grenze nach oder springen ab.`,

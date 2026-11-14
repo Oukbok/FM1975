@@ -7,7 +7,7 @@
 //   node scripts/run-ts.mjs tests/transfer-test.ts
 import { createNewGame } from '../src/game/newGame';
 import { capBase, softCap } from '../src/engine/transferMarket';
-import { clubOffer, playerOffer, startTalk, stanceFor, TransferTalk } from '../src/game/transferTalks';
+import { cancelTalk, clubOffer, playerOffer, startTalk, stanceFor, TransferTalk } from '../src/game/transferTalks';
 import { checkPromises } from '../src/game/promises';
 import { makePersona, personaOf } from '../src/engine/persona';
 import { agentShare, hasAgent } from '../src/engine/playerWishes';
@@ -193,11 +193,18 @@ if (lp.loan || lp.clubId !== o7.id) fail('Kaufoption nicht gezogen');
   setDisplayYear(1985);
   const o8 = g8.clubs[g8.managedClubId];
   o8.finances.wageBudget = 10_000_000;
-  const tp = Object.values(g8.players).filter((p) => p.clubId !== o8.id && g8.clubs[p.clubId] && !p.isYouth && p.age <= 28
-    && g8.clubs[p.clubId].reputation < o8.reputation - 5).sort((a, b) => b.overall - a.overall)[3];
-  tp.contract.expiryDate = '1988-06-30';
-  const t8 = startTalk(g8, tp.id) as TransferTalk;
-  if (typeof t8 === 'string') fail(t8);
+  // Kandidat ohne Ausschlussgrund (z. B. kein Wechsel zum Erzrivalen) – sonst scheitert das Gehaltsangebot zu Recht.
+  const cands = Object.values(g8.players).filter((p) => p.clubId !== o8.id && g8.clubs[p.clubId] && !p.isYouth && p.age <= 28
+    && g8.clubs[p.clubId].reputation < o8.reputation - 5).sort((a, b) => b.overall - a.overall).slice(3);
+  let tp = cands[0], t8 = null as unknown as TransferTalk;
+  for (const c of cands) {
+    c.contract.expiryDate = '1988-06-30';
+    const t = startTalk(g8, c.id);
+    if (typeof t === 'string') continue;
+    if (!stanceFor(g8, t).dealBreaker) { tp = c; t8 = t; break; }
+    cancelTalk(g8, t.id);
+  }
+  if (!t8) fail('Kein Kandidat ohne Ausschlussgrund');
   const newestDu = () => [...t8.log].reverse().find((l) => l.who === 'du')?.text ?? '';
   // a) gültiges Angebot: Verlauf zeigt genau den eingestellten Betrag
   o8.finances.transferBudget = 50_000_000;
@@ -231,7 +238,7 @@ if (lp.loan || lp.clubId !== o7.id) fail('Kaufoption nicht gezogen');
   // Wechsel erst im Fenster: Datum im Juli → sofortiger Abschluss
   playerOffer(g8, t8.id, { wage: wageFromDisplay(yearly), years: st8.years[0], signingFee: st8.signingFee, releaseClause: false, promises: st8.priorities.slice(0, 2).map((x) => x[0]), agentFee: st8.agentFee });
   if (!newestDu().includes(shown)) fail(`Verlauf zeigt nicht das eingestellte Gehalt ${shown}: ${newestDu()}`);
-  if (t8.phase !== 'done') fail('Gehaltsangebot im Angezeigt-Test nicht angenommen (Phase ' + t8.phase + ')');
+  if (t8.phase !== 'done') fail('Gehaltsangebot im Angezeigt-Test nicht angenommen (Phase ' + t8.phase + ') ' + t8.log.slice(-3).map((l) => l.text).join(' / ') + ' DB=' + (st8.dealBreaker ?? ''));
   if (fmtWage(tp.contract.weeklyWage) !== shown) fail(`Vertrag ${fmtWage(tp.contract.weeklyWage)} ≠ vereinbart ${shown}`);
   console.log(`Gehalt eingestellt ${shown} → Vertrag ${fmtWage(tp.contract.weeklyWage)} (Phase ${t8.phase})`);
   // d) Vertragsverlängerung pro Woche

@@ -19,7 +19,7 @@
 import { registrationBlocker } from './registrationGame';
 import { wageLimitFactor } from './budgetPlan';
 import { CalendarEngine } from '../engine/calendar';
-import { hasTransferBan, marketWage } from '../engine/clubEconomy';
+import { hasTransferBan, marketValueFor, marketWage } from '../engine/clubEconomy';
 import { bosmanActive, monthsLeft, seasonEndYear } from '../engine/contractTalks';
 import { book } from '../engine/finances';
 import { economyScale, yearOf } from '../engine/economy';
@@ -113,12 +113,13 @@ export function talkFor(g: Game, playerId: string): TransferTalk | undefined {
 export function talkBlocker(g: Game, p: Player): string | null {
   if (p.clubId === g.managedClubId) return 'Er spielt bereits bei dir.';
   if (p.isYouth) return 'Jugendspieler holst du über das Jugend-Scouting.';
-  if (!isWorldPlayer(p) && (!g.clubs[p.clubId] || isForeignId(p.clubId))) return 'Für Spieler ausländischer Vereine fehlen noch die Kontakte.';
+  // Spieler ausländischer Vereine sind verhandelbar (Wunsch Pascal) – Verkäufer über die Weltvereine (sellerOf).
+  if (!g.clubs[p.clubId] && !sellerOf(g, p.clubId)) return 'Sein Verein ist nicht erreichbar.';
   if (p.clubId.startsWith('ddr') && yearOf(g.calendar.currentDate) < 1990) return 'Spieler aus der DDR-Oberliga dürfen nicht in den Westen wechseln.';
-  if (isWorldPlayer(p) && yearOf(g.calendar.currentDate) < 1989 && EAST_BLOC.has(worldClubs(g).get(p.clubId)?.country ?? '')) return 'Spieler aus dem Ostblock dürfen vor 1989 nicht in den Westen wechseln.';
+  if ((isWorldPlayer(p) || isForeignId(p.clubId)) && yearOf(g.calendar.currentDate) < 1989 && EAST_BLOC.has(worldClubs(g).get(p.clubId)?.country ?? '')) return 'Spieler aus dem Ostblock dürfen vor 1989 nicht in den Westen wechseln.';
   if (p.loan) return 'Er ist nur ausgeliehen.';
   if (hasTransferBan(g.clubs[g.managedClubId], g.season)) return 'Transfersperre (Lizenzauflage).';
-  if (activeTalks(g).length >= 4 && !talkFor(g, p.id)) return 'Höchstens vier Verhandlungen gleichzeitig.';
+  // Kein Limit gleichzeitiger Verhandlungen mehr (Wunsch Pascal).
   const reg = registrationBlocker(g, p);
   if (reg) return reg;
   return null;
@@ -156,11 +157,14 @@ export function startTalk(g: Game, playerId: string): TransferTalk | string {
   const own = g.clubs[g.managedClubId];
   const seller = sellerOf(g, p.clubId);
   if (!seller) return 'Verein nicht gefunden.';
+  const abroad = isForeignId(seller.id);
+  // Alte Europapokal-Kader (`w_*`/`eu_*`) werden nicht laufend bewertet – Marktwert vor dem Gespräch auffrischen.
+  if (abroad && !isWorldPlayer(p)) p.contract.transferValue = marketValueFor(p, yearOf(today));
   const months = monthsLeft(today, p.contract.expiryDate);
   const bosman = bosmanActive(today);
   const pos = sellerPosition(p, seller, own, {
-    year: yearOf(today), monthsLeft: months, bosman, rival: rivals(g, seller.id), scope: isWorldPlayer(p) && isForeignId(seller.id) ? 'world' : 'germany',
-    squad: isWorldPlayer(p) ? worldSquad(g, seller.id) : seller.playerIds.map((id) => g.players[id]).filter(Boolean), competitor: competitor(g, own.id, seller.id),
+    year: yearOf(today), monthsLeft: months, bosman, rival: rivals(g, seller.id), scope: abroad ? 'world' : 'germany',
+    squad: isWorldPlayer(p) || (abroad && !g.clubs[seller.id]) ? worldSquad(g, seller.id) : seller.playerIds.map((id) => g.players[id]).filter(Boolean), competitor: competitor(g, own.id, seller.id),
   });
   const freeAgent = bosman && months <= 6;
   const t: TransferTalk = {

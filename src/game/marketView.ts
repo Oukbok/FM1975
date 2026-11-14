@@ -11,6 +11,9 @@ import { positionGroup } from '../engine/positions';
 import type { Game } from './state';
 import { estimate, knowCtx, knowledge, poolRows, type Estimate, type PoolRow } from './playerPool';
 import { wageForOverall } from '../engine/economy';
+import { marketValueFor } from '../engine/clubEconomy';
+import { isForeignId } from '../engine/world';
+import { worldClubs } from './worldPool';
 import { scoutReport } from './scoutingGame';
 
 export interface StarRange { lo: number; hi: number }
@@ -112,9 +115,12 @@ export function marketInfoRows(g: Game, rows: PoolRow[]): Map<string, MarketInfo
 export function rowsFor(g: Game, list: Player[]): PoolRow[] {
   const byId = new Map<string, PoolRow>();
   for (const r of poolRows(g).rows) byId.set(r.id, r);
+  const world = worldClubs(g);
+  const year = Number(g.calendar.currentDate.slice(0, 4));
+  // Nicht im Pool (z. B. alte Europapokal-Kader `w_*`): Land/Liga aus den Weltvereinen, Marktwert frisch berechnet.
   return list.map((p) => byId.get(p.id) ?? ({
-    id: p.id, kind: 'pro', name: p.fullName, clubId: p.clubId, country: 'Deutschland', level: 1, nat: p.nationality, face: p.face, age: p.age,
-    born: Number(p.dateOfBirth.slice(0, 4)), pos: p.naturalPosition, ov: p.overall, pot: p.development?.potentialAbility ?? p.overall, value: p.contract.transferValue,
+    id: p.id, kind: 'pro', name: p.fullName, clubId: p.clubId, country: world.get(p.clubId)?.country ?? 'Deutschland', level: world.get(p.clubId)?.level ?? 1, nat: p.nationality, face: p.face, age: p.age,
+    born: Number(p.dateOfBirth.slice(0, 4)), pos: p.naturalPosition, ov: p.overall, pot: p.development?.potentialAbility ?? p.overall, value: isForeignId(p.clubId) ? marketValueFor(p, year) : p.contract.transferValue,
     youth: false, foot: p.preferredFoot, height: p.height, contractEnd: p.contract.expiryDate, player: p,
   } as unknown as PoolRow));
 }
