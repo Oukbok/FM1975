@@ -137,14 +137,13 @@ export function MarketingSection({ ds, onChange }: P) {
           { key: 'id', label: 'ID', width: 110 }, { key: 'name', label: 'Name', width: 170 },
           { key: 'unlockYear', label: 'Ab Jahr', type: 'number', width: 80 },
           { key: 'obsoleteYear', label: 'Bis Jahr', type: 'number', optional: true, width: 80 },
-          { key: 'icon', label: 'Symbol', width: 100, hint: 'Icon-Name des Spiels' },
           { key: 'desc', label: 'Beschreibung', type: 'longtext', width: 260 },
           { key: 'maxUnits', label: 'Max.', type: 'number', width: 70 },
           { key: 'costPerUnit', label: 'Preis/Einheit', type: 'number', width: 100 },
           { key: 'maxBenefit', label: 'Max. Nutzen', type: 'number', width: 90 },
           { key: 'k', label: 'k', type: 'number', step: 0.01, width: 70 },
         ]}
-        makeRow={(): MarketingArea => ({ id: `kanal_${ds.marketing.length + 1}`, name: 'Neuer Kanal', unlockYear: 2030, icon: 'marketing', desc: '', maxUnits: 5, costPerUnit: 3000, maxBenefit: 15, k: 1 })} />
+        makeRow={(): MarketingArea => ({ id: `kanal_${ds.marketing.length + 1}`, name: 'Neuer Kanal', unlockYear: 2030, desc: '', maxUnits: 5, costPerUnit: 3000, maxBenefit: 15, k: 1 })} />
     </div>
   );
 }

@@ -25,7 +25,8 @@ export interface MarketingArea {
   unlockYear: number;
   /** Optional: ab diesem Jahr nicht mehr verfügbar (Datensatz). */
   obsoleteYear?: number;
-  icon: string;
+  /** Veraltet: frühere Datensätze trugen hier ein Symbol; es wird nicht angezeigt. */
+  icon?: string;
   desc: string;
   /** Reglerstufen 0..maxUnits (ganzzahlig). */
   maxUnits: number;
@@ -41,41 +42,41 @@ export const MARKETING_EPOCHS = [1975, 1984, 1993, 2000, 2010, 2020];
 
 export const MARKETING_AREAS: MarketingArea[] = [
   // ===== 1975 — einfache Anfänge =====
-  { id: 'stadionwerbung', name: 'Stadionaktionen', unlockYear: 1975, icon: '🏟️',
+  { id: 'stadionwerbung', name: 'Stadionaktionen', unlockYear: 1975,
     desc: 'Eigene Werbung im Stadion: Stadionzeitung, Anzeigetafel, Aktionstage – bindet die Zuschauer (die Banden vermarktet das Sponsoring).',
     maxUnits: 5, costPerUnit: 1200, maxBenefit: 20, k: 0.9 },
-  { id: 'lokalpresse', name: 'Lokale Presse & Plakate', unlockYear: 1975, icon: '📰',
+  { id: 'lokalpresse', name: 'Lokale Presse & Plakate', unlockYear: 1975,
     desc: 'Anzeigen in der Lokalzeitung und Plakate in der Stadt.',
     maxUnits: 5, costPerUnit: 750, maxBenefit: 14, k: 1.0 },
 
   // ===== 1984 — Privatfernsehen =====
-  { id: 'fernsehwerbung', name: 'Fernsehwerbung', unlockYear: 1984, icon: '📺',
+  { id: 'fernsehwerbung', name: 'Fernsehwerbung', unlockYear: 1984,
     desc: 'Werbespots im aufkommenden Privatfernsehen erreichen ein breites Publikum.',
     maxUnits: 6, costPerUnit: 2700, maxBenefit: 34, k: 0.7 },
 
   // ===== 1993 — überregional & Merchandising =====
-  { id: 'ueberregional', name: 'Überregionale Kampagnen', unlockYear: 1993, icon: '🗞️',
+  { id: 'ueberregional', name: 'Überregionale Kampagnen', unlockYear: 1993,
     desc: 'Bundesweite Anzeigen- und Plakatkampagnen steigern die Bekanntheit.',
     maxUnits: 6, costPerUnit: 3600, maxBenefit: 30, k: 0.8 },
-  { id: 'merchandising_kampagne', name: 'Merchandising-Kampagne', unlockYear: 1993, icon: '🧣',
+  { id: 'merchandising_kampagne', name: 'Merchandising-Kampagne', unlockYear: 1993,
     desc: 'Gezielte Vermarktung von Fanartikeln – kurbelt den Fanshop an.',
     maxUnits: 6, costPerUnit: 2400, maxBenefit: 26, k: 0.85 },
 
   // ===== 2000 — Internet =====
-  { id: 'online', name: 'Internet-/Online-Werbung', unlockYear: 2000, icon: '💻',
+  { id: 'online', name: 'Internet-/Online-Werbung', unlockYear: 2000,
     desc: 'Vereinswebsite, Banner und Newsletter erreichen Fans online.',
     maxUnits: 7, costPerUnit: 3000, maxBenefit: 34, k: 0.7 },
 
   // ===== 2010 — Social Media =====
-  { id: 'socialmedia', name: 'Social-Media-Werbung', unlockYear: 2010, icon: '📱',
+  { id: 'socialmedia', name: 'Social-Media-Werbung', unlockYear: 2010,
     desc: 'Kampagnen auf sozialen Netzwerken binden eine junge, große Fangemeinde.',
     maxUnits: 8, costPerUnit: 3600, maxBenefit: 44, k: 0.6 },
 
   // ===== 2020 — digital & international =====
-  { id: 'influencer', name: 'Influencer & Content', unlockYear: 2020, icon: '🎬',
+  { id: 'influencer', name: 'Influencer & Content', unlockYear: 2020,
     desc: 'Kooperationen mit Creators und eigener Content-Kanal.',
     maxUnits: 8, costPerUnit: 4500, maxBenefit: 40, k: 0.6 },
-  { id: 'international', name: 'Internationale Digitalkampagnen', unlockYear: 2020, icon: '🌍',
+  { id: 'international', name: 'Internationale Digitalkampagnen', unlockYear: 2020,
     desc: 'Globale, datengetriebene Kampagnen erschließen Auslandsmärkte.',
     maxUnits: 8, costPerUnit: 6000, maxBenefit: 50, k: 0.55 },
 ];

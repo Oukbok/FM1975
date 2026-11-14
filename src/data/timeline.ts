@@ -52,14 +52,14 @@ export interface TimelineEvent {
   fictional?: boolean;
 }
 
-/** Deutsche Labels & Icons je Meilenstein-Typ. */
-export const TIMELINE_TYPE_META: Record<TimelineType, { label: string; icon: string; color: string }> = {
-  rule:        { label: 'Spielregel',   icon: '📏', color: 'var(--accent)' },
-  competition: { label: 'Wettbewerb',   icon: '🏆', color: 'var(--yellow)' },
-  law:         { label: 'Reglement',    icon: '⚖️', color: 'var(--orange)' },
-  tech:        { label: 'Technik',      icon: '🎥', color: 'var(--green)' },
-  finance:     { label: 'Wirtschaft',   icon: '💶', color: 'var(--yellow)' },
-  reform:      { label: 'Reform',       icon: '🏗️', color: 'var(--accent)' },
+/** Deutsche Labels je Meilenstein-Typ. */
+export const TIMELINE_TYPE_META: Record<TimelineType, { label: string; color: string }> = {
+  rule:        { label: 'Spielregel', color: 'var(--accent)' },
+  competition: { label: 'Wettbewerb', color: 'var(--yellow)' },
+  law:         { label: 'Reglement', color: 'var(--orange)' },
+  tech:        { label: 'Technik', color: 'var(--green)' },
+  finance:     { label: 'Wirtschaft', color: 'var(--yellow)' },
+  reform:      { label: 'Reform', color: 'var(--accent)' },
 };
 
 /**

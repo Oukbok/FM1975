@@ -784,7 +784,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
       }
       pushMessage(g.messages, makeMessage({
         date: today, category: 'board', from: 'Trainerstab',
-        subject: `${def.icon} ${act.label} abgeschlossen`,
+        subject: `${act.label} abgeschlossen`,
         shortText: `${def.name} beendet – die Mannschaft profitiert.`,
         bodyText: `Die geplante Aktivität „${act.label}" (${def.name}) ist abgeschlossen.\n\n`
           + (def.fitness ? `Fitness: +${def.fitness}\n` : '')

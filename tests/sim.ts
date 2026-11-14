@@ -558,7 +558,13 @@ if (process.env.DUMP) {
   const { compressToUTF16 } = await import('lz-string');
   const { writeFileSync } = await import('node:fs');
   const my = g.clubs[g.managedClubId];
-  if (process.env.TESTSAVE) delete (g as any).simAutoManage; // Vorlage: eigener Verein wieder als Spieler, sonst unverändert
+  if (process.env.TESTSAVE) {
+    // Vorlage: eigener Verein wieder als Spieler, sonst unverändert – nur Angebote für ohnehin freie Werbeflächen,
+    // wie sie ein Mensch zum Saisonstart bekommen hätte (so ist auch die Sponsor-Verhandlung erreichbar).
+    delete (g as any).simAutoManage;
+    const { offerFreeSlots } = await import('../src/game/sponsorGame');
+    offerFreeSlots(g);
+  }
   else if (process.env.HUMAN) {
     // Für Screenshots: eigenen Verein wieder als Spieler führen, einige Werbeflächen frei mit Angeboten.
     delete (g as any).simAutoManage;

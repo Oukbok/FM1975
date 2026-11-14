@@ -37,7 +37,7 @@ export function DevelopmentReveal({ g, reveals, onClose }: {
 
   return (
     <div className="reveal-overlay" role="dialog" aria-modal="true">
-      <button className="reveal-close" onClick={onClose} title="Schließen">✕</button>
+      <button className="reveal-close" onClick={onClose} title="Schließen">×</button>
       <div className="reveal-progress">Spieler {idx + 1} / {reveals.length}</div>
 
       <div className={`reveal-card dir-${dir} phase-${phase}`}>
@@ -131,7 +131,7 @@ export function RatingCeremony({ results, type, anlass, onClose }: {
             <div className="section-title" style={{ marginBottom: 2 }}>{title}</div>
             <div className="dim mini">{anlass} · dein Verein</div>
           </div>
-          {done && <button className="reveal-close" onClick={onClose} title="Schließen">✕</button>}
+          {done && <button className="reveal-close" onClick={onClose} title="Schließen">×</button>}
         </div>
 
         <div className="rc-progress">

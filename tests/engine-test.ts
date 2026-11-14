@@ -9,6 +9,17 @@ import { labRun, mirrorOf, neutralTactics } from '../src/engine/match/tacticLab'
 import { makeMPlayer } from '../src/engine/match/team';
 import { finishMatch } from '../src/engine/match/finish';
 
+// Feste Uhr und fester Zufall: die Kader entstehen sonst bei jedem Lauf anders (IDs an Date.now(), Erzeugung an
+// Math.random) – der Torschnitt schwankte damit von Lauf zu Lauf um ±0,2 und riss gelegentlich die Grenze.
+const RealDate = Date;
+const FIXED_NOW = RealDate.UTC(2026, 0, 1);
+(globalThis as any).Date = class extends RealDate {
+  constructor(...a: any[]) { if (a.length) super(...(a as [any])); else super(FIXED_NOW); }
+  static now() { return FIXED_NOW; }
+};
+let rseed = 1975;
+Math.random = () => { rseed = (rseed * 16807) % 2147483647; return rseed / 2147483647; };
+
 let fails = 0;
 const check = (ok: boolean, msg: string) => { if (!ok) fails++; console.log(`${ok ? 'ok  ' : 'FEHL'} ${msg}`); };
 
@@ -92,7 +103,10 @@ const spread = (cons: number) => {
   return { m, sd: Math.sqrt(xs.reduce((s, x) => s + (x - m) ** 2, 0) / xs.length) };
 };
 const unst = spread(20), st = spread(95);
-check(Math.abs(unst.m - 1) < 0.01 && Math.abs(st.m - 1) < 0.01, `Konstanz verschiebt den Schnitt nicht (${unst.m.toFixed(3)} / ${st.m.toFixed(3)})`);
+// Gewollt (dayForm): Unbeständige haben etwas häufiger schwache Tage – je 10 Punkte Konstanz ±0,25 % um den Wert 62, nie mehr als rund 1 %.
+const want = (cons: number) => 1 + (cons - 62) * 0.00025;
+check(Math.abs(unst.m - want(20)) < 0.004 && Math.abs(st.m - want(95)) < 0.004 && st.m > unst.m && Math.abs(unst.m - 1) < 0.015 && Math.abs(st.m - 1) < 0.015,
+  `Konstanz verschiebt den Schnitt nur leicht (20 → ${unst.m.toFixed(3)}, 95 → ${st.m.toFixed(3)})`);
 check(unst.sd > st.sd * 2, `Konstanz 20 streut stärker als 95 (${unst.sd.toFixed(3)} gegen ${st.sd.toFixed(3)})`);
 const oldB = pl.development.bigMatchTemperament;
 pl.development.bigMatchTemperament = 95; const strong = nerveF(mp, 1);

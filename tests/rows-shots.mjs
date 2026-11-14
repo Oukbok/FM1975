@@ -44,13 +44,14 @@ const nav = async (main, sub) => {
   if (sub) { await page.locator(`.tn-sub-item:has-text("${sub}")`).first().click(); await page.waitForTimeout(350); }
 };
 const PAGES = [
-  ['Zentrale', null, 'zentrale'], ['Zentrale', 'Nachrichten', 'nachrichten'],
+  ['Zentrale', null, 'zentrale'], ['Zentrale', 'Presse', 'presse'],
   ['Aufstellung', 'Gegner', 'gegner'], ['Aufstellung', 'Aufstellung', 'aufstellung'], ['Aufstellung', 'Spielplan', 'spielplan'],
   ['Kader', null, 'kader'], ['Kader', 'Übersicht', 'kader_uebersicht'], ['Kader', 'Verträge', 'vertraege'], ['Kader', 'Kabine', 'kabine'],
   ['Training', 'Trainerteam', 'trainerteam'],
   ['Jugend', null, 'jugend'], ['Jugend', 'Mannschaften', 'jugend_mannschaften'], ['Jugend', 'Jugendwettbewerbe', 'jugendwettbewerbe'],
   ['Transfers', null, 'transfers'], ['Transfers', 'Transfermarkt', 'transfermarkt'], ['Transfers', 'Beobachtung', 'beobachtung'],
-  ['Verein', 'Ruhmeshalle', 'ruhmeshalle'], ['Verein', 'Mitarbeiter', 'mitarbeiter'],
+  ['Transfers', 'Spielerpool', 'spielerpool'],
+  ['Verein', 'Erfolge', 'erfolge'], ['Verein', 'Mitarbeiter', 'mitarbeiter'],
   ['Statistiken', null, 'statistiken'], ['Statistiken', 'Liga', 'liga'], ['Statistiken', 'Pokal', 'pokal'],
   ['Statistiken', 'International', 'international'], ['Statistiken', 'Halle', 'halle'],
 ];

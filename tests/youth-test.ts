@@ -97,7 +97,8 @@ console.log(`Rekruten-Potenzial: 10% ${q(0.1)} · Median ${q(0.5)} · 90% ${q(0.
   inv.levels.boarding = 1;
   if (quoteUpgrade(my, 'boarding', 1975).ok) fail('Internat 1975 schon möglich');
   if (!quoteUpgrade(my, 'boarding', 1990).ok) fail('Internat 1990 nicht möglich');
-  // Ausbau mit Bauzeit und verzögerter Wirkung.
+  // Ausbau mit Bauzeit und verzögerter Wirkung. Das Saisonbudget (eigene Prüfung in test:budget) soll hier nicht bremsen.
+  delete (h as any).budget;
   const bal0 = my.finances.balance;
   inv.levels.pitches = 1; inv.builds = [];
   const msg = startUpgrade(h, my, 'pitches', '1975-07-01');

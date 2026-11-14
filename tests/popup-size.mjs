@@ -70,7 +70,7 @@ for (const view of VIEWS) {
     ['spielersuche', '.ps-panel', async () => { await nav('Transfers', 'Transfermarkt'); await click('.dchip:has-text("Spieler suchen")'); }],
     ['transferbilanz', '.tw-panel', async () => { await nav('Transfers', 'Transfermarkt'); await click('.dchip:has-text("Transferbilanz")'); }],
     ['budget', '.bud-modal', async () => { await nav('Finanzen', 'Budget'); await click('.dchip:has-text("Budget anpassen")'); }],
-    ['briefing', '.si-window', async () => { await nav('Zentrale', 'Briefing'); await click('button:has-text("Briefing öffnen")'); }],
+    ['briefing', '.si-window', async () => { await nav('Zentrale', 'Briefing'); await click('.bf2-link:has-text("Ganzes Briefing")'); }],
     ['chronik', '.chm-modal', async () => { await closeAll(page); await click('.dashx-foot-link'); }],
     ['gala', '.gb-root', async () => { await nav('Statistiken', 'Auszeichnungen'); await page.locator('.app-main button.rl-row[title*="Gala"]').first().click(); }, { max: 0 }],
     ['auslosung', '.dr-root', async () => { await nav('Statistiken', 'Pokal'); await click('.app-main .cmp-chips button:has-text("Runden")').catch(() => {}); await page.waitForTimeout(300); await click('.app-main .dchip:has-text("Auslosung")'); await page.waitForTimeout(600); }],

@@ -18,7 +18,6 @@ import { CALENDAR_ERAS } from './matchCalendarRules';
 export interface WikiCategory {
   id: string;
   title: string;
-  icon: string;
 }
 
 /** Ein einzelner Wiki-Artikel (Body im leichten Markdown/Text-Format). */
@@ -33,28 +32,28 @@ export interface WikiArticle {
 }
 
 export const WIKI_CATEGORIES: WikiCategory[] = [
-  { id: 'core', title: 'Grundlagen', icon: '📘' },
-  { id: 'leagues', title: 'Ligastruktur & Auf-/Abstieg', icon: '🪜' },
-  { id: 'squad', title: 'Kader & Spieler', icon: '👥' },
-  { id: 'condition', title: 'Form & Fitness', icon: '📈' },
-  { id: 'messages', title: 'Nachrichten', icon: '📬' },
-  { id: 'save', title: 'Speichern & Laden', icon: '💾' },
+  { id: 'core', title: 'Grundlagen' },
+  { id: 'leagues', title: 'Ligastruktur & Auf-/Abstieg' },
+  { id: 'squad', title: 'Kader & Spieler' },
+  { id: 'condition', title: 'Form & Fitness' },
+  { id: 'messages', title: 'Nachrichten' },
+  { id: 'save', title: 'Speichern & Laden' },
   // --- Platzhalter-Kategorien für spätere Blöcke ---
-  { id: 'training', title: 'Training', icon: '🎯' },
-  { id: 'development', title: 'Entwicklung & Potenzial', icon: '⭐' },
-  { id: 'tactics', title: 'Aufstellung & Taktik', icon: '🧩' },
-  { id: 'match', title: 'Match-Engine', icon: '⚽' },
-  { id: 'ai', title: 'KI-Vereine & Trainer', icon: '' },
-  { id: 'finance', title: 'Finanzen', icon: '💰' },
-  { id: 'youth', title: 'Jugendsystem', icon: '🧒' },
-  { id: 'facilities', title: 'Vereinsgelände', icon: '🏟️' },
-  { id: 'staff', title: 'Mitarbeiter', icon: '🧑‍💼' },
-  { id: 'marketing', title: 'Marketing', icon: '📣' },
-  { id: 'environment', title: 'Vereinsumfeld', icon: '' },
-  { id: 'calendar', title: 'Kalender & Aktivitäten', icon: '🗓️' },
-  { id: 'cup', title: 'Landespokal', icon: '🏆' },
-  { id: 'euro', title: 'Europapokal', icon: '🌍' },
-  { id: 'chronicle', title: 'Chronik & Epochen', icon: '📜' },
+  { id: 'training', title: 'Training' },
+  { id: 'development', title: 'Entwicklung & Potenzial' },
+  { id: 'tactics', title: 'Aufstellung & Taktik' },
+  { id: 'match', title: 'Match-Engine' },
+  { id: 'ai', title: 'KI-Vereine & Trainer' },
+  { id: 'finance', title: 'Finanzen' },
+  { id: 'youth', title: 'Jugendsystem' },
+  { id: 'facilities', title: 'Vereinsgelände' },
+  { id: 'staff', title: 'Mitarbeiter' },
+  { id: 'marketing', title: 'Marketing' },
+  { id: 'environment', title: 'Vereinsumfeld' },
+  { id: 'calendar', title: 'Kalender & Aktivitäten' },
+  { id: 'cup', title: 'Landespokal' },
+  { id: 'euro', title: 'Europapokal' },
+  { id: 'chronicle', title: 'Chronik & Epochen' },
 ];
 
 export const WIKI_ARTICLES: WikiArticle[] = [

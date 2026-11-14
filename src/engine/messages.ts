@@ -58,18 +58,18 @@ export function unreadCount(list: InboxMessage[]): number {
   return list.reduce((n, m) => (m.read ? n : n + 1), 0);
 }
 
-/** Deutsche Labels & Icons je Kategorie (für UI). */
-export const CATEGORY_META: Record<MessageCategory, { label: string; icon: string }> = {
-  transfer: { label: 'Transfer', icon: '💰' },
-  injury: { label: 'Medizin', icon: '🩹' },
-  match: { label: 'Spiel', icon: '⚽' },
-  board: { label: 'Vorstand', icon: '🏛️' },
-  contract: { label: 'Vertrag', icon: '📝' },
-  training: { label: 'Training', icon: '🎯' },
-  media: { label: 'Presse', icon: '📰' },
-  cup: { label: 'Pokal', icon: '🏆' },
-  milestone: { label: 'Meilenstein', icon: '📜' },
-  general: { label: 'Allgemein', icon: '📬' },
+/** Deutsche Labels je Kategorie (für UI). */
+export const CATEGORY_META: Record<MessageCategory, { label: string }> = {
+  transfer: { label: 'Transfer' },
+  injury: { label: 'Medizin' },
+  match: { label: 'Spiel' },
+  board: { label: 'Vorstand' },
+  contract: { label: 'Vertrag' },
+  training: { label: 'Training' },
+  media: { label: 'Presse' },
+  cup: { label: 'Pokal' },
+  milestone: { label: 'Meilenstein' },
+  general: { label: 'Allgemein' },
 };
 
 /**

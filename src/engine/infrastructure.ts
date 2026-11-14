@@ -30,8 +30,7 @@ export const CAPACITY_PER_LEVEL = 6000;
 export interface FacilityDef {
   key: FacilityKey;
   name: string;
-  icon: string;
-  /** Optionales <Icon>-Symbol (statt Emoji); z.B. Catering. */
+  /** Optionales <Icon>-Symbol; z. B. Catering. */
   iconName?: IconName;
   desc: string;
   /** Basiskosten (DM) — werden mit der Zielstufe skaliert. */
@@ -129,52 +128,52 @@ function clampLevel(level: number): number {
 
 export const FACILITIES: FacilityDef[] = [
   {
-    key: 'stadium', name: 'Stadion', icon: '🏟️', baseCost: 450000,
+    key: 'stadium', name: 'Stadion', baseCost: 450000,
     desc: 'Mehr Sitz- und Stehplätze erhöhen die Zuschauerkapazität und damit die Stadioneinnahmen pro Heimspiel.',
     effectAt: (l) => `Kapazität +${((l - 1) * CAPACITY_PER_LEVEL).toLocaleString('de-DE')} Plätze ggü. Grundausbau`,
   },
   {
-    key: 'trainingCenter', name: 'Trainingszentrum', icon: '🎯', baseCost: 100000,
+    key: 'trainingCenter', name: 'Trainingszentrum', baseCost: 100000,
     desc: 'Bessere Plätze, Geräte und Trainer beschleunigen die Attribut-Entwicklung des gesamten Kaders.',
     effectAt: (l) => `Anlagenqualität ${trainingQualityForLevel(l)} → schnelleres Wachstum`,
   },
   {
-    key: 'youthAcademy', name: 'Jugendakademie', icon: '🧒', baseCost: 80000,
+    key: 'youthAcademy', name: 'Jugendakademie', baseCost: 80000,
     desc: 'Eine stärkere Akademie bringt mehr und talentiertere Nachwuchsspieler und beschleunigt deren Entwicklung.',
     effectAt: (l) => `${academyIntakeCount(l)} Talent(e)/Jahr · Qualität +${academyQualityBonus(l)} · Lernrate ×${academyGrowthFactor(l).toFixed(2)}`,
   },
   {
-    key: 'medical', name: 'Medizinische Abteilung', icon: '⚕️', baseCost: 60000,
+    key: 'medical', name: 'Medizinische Abteilung', baseCost: 60000,
     desc: 'Ärzte und Reha-Geräte lassen Spieler schneller regenerieren und verkürzen Ausfallzeiten nach Verletzungen.',
     effectAt: (l) => `Regeneration +${medicalRecoveryBonus(l)}/Tag · Reha ${medicalRehabBonus(l) > 0 ? `−${medicalRehabBonus(l)} Tag(e)/Tag` : 'normal'}`,
   },
   {
-    key: 'merchandising', name: 'Fanshop / Merchandising', icon: '🧣', baseCost: 55000,
+    key: 'merchandising', name: 'Fanshop / Merchandising', baseCost: 55000,
     desc: 'Ein größerer Fanshop steigert den Fanartikel-Erlös je Stadionbesucher.',
     effectAt: (l) => `Fanartikel-Erlös ×${merchandisingFactor(l).toFixed(2)} pro Besucher`,
   },
   {
-    key: 'catering', name: 'Catering / Wuerstchenbuden', icon: '🌭', iconName: 'catering', baseCost: 60000,
+    key: 'catering', name: 'Catering / Wuerstchenbuden', iconName: 'catering', baseCost: 60000,
     desc: 'Mehr und bessere Imbiss- und Getränkestände erhöhen den Pro-Kopf-Erlös an jedem Heimspieltag. Die Betriebsform (Eigenbetrieb, Umsatzbeteiligung, Verpachtung) bestimmt Erlös und Fixkosten.',
     effectAt: (l) => `Netto/Besucher & Kapazität steigen mit Stufe ${l}`,
   },
   {
-    key: 'rehaCenter', name: 'Reha-Zentrum', icon: '🏥', baseCost: 75000, unlockYear: 1990,
+    key: 'rehaCenter', name: 'Reha-Zentrum', baseCost: 75000, unlockYear: 1990,
     desc: 'Ein eigenes Reha-Zentrum verkürzt Ausfallzeiten weiter und beschleunigt die tägliche Regeneration zusätzlich zur medizinischen Abteilung.',
     effectAt: (l) => `Reha ${rehaRehabBonus(l) > 0 ? `−${rehaRehabBonus(l)} Tag(e)/Tag` : 'normal'} · Regeneration +${rehaRecoveryBonus(l)}/Tag`,
   },
   {
-    key: 'nlz', name: 'Nachwuchsleistungszentrum', icon: '🏫', baseCost: 115000, unlockYear: 1998,
+    key: 'nlz', name: 'Nachwuchsleistungszentrum', baseCost: 115000, unlockYear: 1998,
     desc: 'Ein NLZ nach modernem Vorbild fördert die Talententwicklung systematisch und steigert das Wachstum der Jugendspieler.',
     effectAt: (l) => `Jugend-Wachstum +${Math.round(nlzGrowthBonus(l) * 100)} %`,
   },
   {
-    key: 'performanceCenter', name: 'Leistungszentrum', icon: '💪', baseCost: 100000, unlockYear: 2003,
+    key: 'performanceCenter', name: 'Leistungszentrum', baseCost: 100000, unlockYear: 2003,
     desc: 'Sportwissenschaft, Athletik und moderne Trainingssteuerung erhöhen die Anlagenqualität über das klassische Trainingszentrum hinaus.',
     effectAt: (l) => `Anlagenqualität +${performanceQualityBonus(l)} zusätzlich`,
   },
   {
-    key: 'dataCenter', name: 'Datenanalyse-Zentrum', icon: '📊', baseCost: 90000, unlockYear: 2013,
+    key: 'dataCenter', name: 'Datenanalyse-Zentrum', baseCost: 90000, unlockYear: 2013,
     desc: 'Datenanalyse und Videoscouting erhöhen die Genauigkeit der Talentbewertung im eigenen Nachwuchs.',
     effectAt: (l) => `Scouting-Genauigkeit +${Math.round(dataScoutingBonus(l) * 100)} %`,
   },

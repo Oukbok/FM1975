@@ -89,7 +89,10 @@ const slotPos = (page, id) => slot(page, id).locator('.lu-card-pos').innerText()
   await drag(page, await center(slot(page, 's3')), await center(slot(page, 's6')));
   check(await slotPid(page, 's3') === b && await slotPid(page, 's6') === a, 'Tausch zweier Spieler auf dem Feld');
 
-  // Einrasten: s11 in die Mitte vor den Strafraum (→ OM), Zwischenbild mit hervorgehobenem Rasterpunkt
+  // Einrasten: s11 in die Mitte vor den Strafraum (→ OM), Zwischenbild mit hervorgehobenem Rasterpunkt.
+  // „Fest einrasten“ ist standardmäßig aus (frei verschieben) – für diese Prüfung einschalten.
+  check(!(await page.locator('.lu-check input').isChecked()), '„Fest einrasten“ ist standardmäßig aus');
+  await page.locator('.lu-check input').check();
   const target = await fieldPoint(page, 52, 36);
   await drag(page, await center(slot(page, 's11')), target, { hold: async () => {
     check(await page.locator('.lu-gp.on').count() === 1, 'Einrast-Ziel wird beim Ziehen hervorgehoben');
