@@ -17,6 +17,8 @@
 // Am Saisonende übernimmt engine/world.ts die Endtabellen (`FixedCountryResult`) –
 // Meister, Auf-/Abstieg, Europapokal-Starter – und die Welt-Historie behält die
 // Ligen der letzten Saisons mit allen Ergebnissen (`WorldSeasonRecord.divs`).
+// Dazu je Land der Pokal mit echten Runden (game/worldCups.ts) und Torschützenlisten aus dem
+// Spielerpool (game/worldScorers.ts).
 // Das Heimatland und die DDR (bei Heimat Deutschland) laufen über echte Divisionen;
 // die frühere Wahl „Spiel für Spiel / Hintergrund“ je Land ist damit entfallen
 // (game/fullCountries.ts räumt ältere Spielstände auf).
@@ -24,9 +26,11 @@
 import { COUNTRY_BY_KEY } from '../data/world/countries';
 import { seasonStartYear } from '../data/timeline';
 import { hashStr, mulberry32 } from '../engine/leagues';
-import { worldMatchGoals, type FixedCountryResult, type LeanDiv, type WorldLive, type WorldLiveDiv } from '../engine/world';
+import { worldMatchGoals, type FixedCountryResult, type LeanCup, type LeanDiv, type WorldLive, type WorldLiveDiv } from '../engine/world';
 import type { ResTuple } from './leagueResults';
 import { homeCountryOf, type Game } from './state';
+import { finishWorldCups, newLeanCup, worldCupsDaily } from './worldCups';
+import { leanCupScorers, leanScorers, packScorers } from './worldScorers';
 
 /** Paarungen eines Spieltags (Index-Paare [Heim, Gast]) nach dem Kreisverfahren; bei ungerader Zahl setzt einer aus. */
 export function leanPairs(n: number, md: number): [number, number][] {
@@ -82,8 +86,25 @@ function leanCountry(g: Game, key: string): boolean {
 export function ensureWorldLive(g: Game): WorldLive | null {
   const w = g.world;
   if (!w || !g.euroClubs) return null;
-  if (w.live?.season === g.season) return w.live;
-  const live: WorldLive = { season: g.season, divs: {} };
+  // Landespokale (game/worldCups.ts): auch für laufende Saisons älterer Spielstände nachrüsten.
+  const cups = () => {
+    const out: NonNullable<WorldLive['cups']> = {};
+    for (const c of Object.values(w.countries)) {
+      if (!c.active || !leanCountry(g, c.name)) continue;
+      const cup = newLeanCup(g, c.tiers);
+      if (cup) out[c.name] = cup;
+    }
+    return out;
+  };
+  if (w.live?.season === g.season) {
+    if (!w.live.cups) {
+      // Mitten in der Saison nachgerüstet: fällige Runden sofort nachholen (Ergebnisse hängen nur an Land/Saison/Runde).
+      w.live.cups = cups();
+      worldCupsDaily(g, g.season, w.live.cups, g.calendar.currentDate);
+    }
+    return w.live;
+  }
+  const live: WorldLive = { season: g.season, divs: {}, cups: cups() };
   for (const c of Object.values(w.countries)) {
     if (!c.active || !leanCountry(g, c.name)) continue;
     c.tiers.forEach((ids0, t) => {
@@ -119,6 +140,7 @@ export function worldLiveDaily(g: Game, today: string): void {
     const dates = leanDates(live.season, d.n);
     while (d.md < d.n && dates[d.md] <= today) playMatchday(g, key, d);
   }
+  if (live.cups) worldCupsDaily(g, live.season, live.cups, today);
 }
 
 /** Punkte je Sieg im Land in der Saison (data/world/countries.ts `points3From`). */
@@ -171,10 +193,18 @@ export function worldLiveDiv(g: Game, key: string, tier: number): WorldLiveDiv |
 }
 
 /** Saisonende: alle Ligen zu Ende spielen; Endtabellen für engine/world.ts und die Ligen für die Historie. */
-export function worldLiveResults(g: Game): { fixed: Record<string, FixedCountryResult>; divs: Record<string, (LeanDiv | null)[]> } {
+export interface WorldLiveEnd {
+  fixed: Record<string, FixedCountryResult>;
+  divs: Record<string, (LeanDiv | null)[]>;
+  /** Landespokale mit allen Runden und die Torschützenlisten (`Land|Ebene`, Pokal `Land|cup`) für die Historie. */
+  cups: Record<string, LeanCup>;
+  scorers: Record<string, [string, string, string, number][]>;
+}
+export function worldLiveResults(g: Game): WorldLiveEnd {
   const fixed: Record<string, FixedCountryResult> = {}, divs: Record<string, (LeanDiv | null)[]> = {};
+  const scorers: WorldLiveEnd['scorers'] = {};
   const live = ensureWorldLive(g);
-  if (!live) return { fixed, divs };
+  if (!live) return { fixed, divs, cups: {}, scorers };
   for (const [k, d] of Object.entries(live.divs)) {
     while (d.md < d.n) playMatchday(g, k, d);
     const [key, t] = k.split('|');
@@ -183,8 +213,20 @@ export function worldLiveResults(g: Game): { fixed: Record<string, FixedCountryR
     if (t === '0') fx.t1 = order; else fx.t2 = order;
     const list = (divs[key] ??= [null, null]);
     list[Number(t)] = { ids: d.ids, r: d.r };
+    const top = leanScorers(g, d, live.season, 10);
+    if (top.length) scorers[k] = packScorers(top);
   }
   // Länder ohne 1. Liga in der schlanken Rechnung (zu wenige Vereine) rechnet die Welt wie bisher.
   for (const key of Object.keys(fixed)) if (!fixed[key].t1.length) { delete fixed[key]; delete divs[key]; }
-  return { fixed, divs };
+  // Landespokale zu Ende spielen: der Sieger geht an die Welt.
+  const cupEnd = finishWorldCups(g, live.season, live.cups ?? {});
+  const cups: WorldLiveEnd['cups'] = {};
+  for (const [key, id] of Object.entries(cupEnd.winners)) {
+    if (!fixed[key]) continue;
+    fixed[key].cup = id;
+    cups[key] = cupEnd.cups[key];
+    const top = leanCupScorers(g, key, live.season, cups[key], 10);
+    if (top.length) scorers[`${key}|cup`] = packScorers(top);
+  }
+  return { fixed, divs, cups, scorers };
 }

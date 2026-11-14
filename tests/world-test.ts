@@ -20,6 +20,8 @@ import { composeHome, playableCountries } from '../src/game/worldCompose';
 import { getHomeOrigin } from '../src/data/origins';
 import type { Game } from '../src/game/state';
 import { leanDates, leanGames, leanMatchdays, leanPairs, leanTable, leanWinPts, worldLiveDiv } from '../src/game/worldLeagues';
+import { leanCupDates, leanCupRounds, leanCupRoundsN, leanCupWinner } from '../src/game/worldCups';
+import { leanCupScorers, leanScorers } from '../src/game/worldScorers';
 import { countryMatchdays, countrySeasons, countrySnapshot, pickSeason, statsCountries } from '../src/game/competitionCountry';
 
 const store = new Map<string, string>();
@@ -139,6 +141,54 @@ for (const y of [1985, 1991, 2000, 2025]) {
     'Statistiken › Liga: laufende englische Tabelle mit Punkten und Zonen');
   const md = countryMatchdays(g, en, g.season, 'r1')!;
   ok(md.res.length === eng.md * Math.floor(eng.ids.length / 2) && md.ptsWin === 3, 'Statistiken › Liga: Ergebnisse je Spieltag für Heim/Auswärts/Form');
+  // Torschützen aus dem Spielerpool: Summe passt zu den Toren, die Liste wächst nur (frühere Tore bleiben beim selben Schützen)
+  {
+    const all = leanScorers(g, eng, g.season, 9999);
+    const goals = t.reduce((a, r) => a + r.gf, 0);
+    ok(all.length > 30 && all.reduce((a, r) => a + r.value, 0) === goals && all.every((r, i) => i === 0 || r.value <= all[i - 1].value), `Torschützen England: ${all.length} Schützen, Summe = ${goals} Tore, bester ${all[0]?.name} (${all[0]?.value})`);
+    const pos = new Map(all.map((r) => [r.pid, r.pos]));
+    const top10 = all.slice(0, 10);
+    ok(top10.filter((r) => ['MS', 'HS', 'RA', 'LA', 'OM'].includes(pos.get(r.pid)!)).length >= 7 && !all.some((r) => r.pos === 'TW'), 'Torschützen: vor allem Angreifer, kein Torwart');
+    const early = { ...eng, r: eng.r.slice(0, Math.floor(eng.ids.length / 2) * 2 * 5) };
+    const e5 = new Map(leanScorers(g, early, g.season, 9999).map((r) => [r.pid, r.value]));
+    ok([...e5].every(([pid, v]) => (all.find((r) => r.pid === pid)?.value ?? 0) >= v), 'Torschützen: Stand nach 5 Spieltagen ist im heutigen Stand enthalten');
+    ok(snap.scorers!.length === 15 && snap.scorers![0].pid === all[0].pid, 'Statistiken › Liga: Torschützenliste der Auslandsliga');
+  }
+  // Landespokal mit echten Runden
+  {
+    const cup = g.world!.live!.cups!['England'];
+    const rounds = leanCupRounds('England', g.season, cup);
+    const n = leanCupRoundsN(cup.ids.length);
+    const dates = leanCupDates(g.season, n);
+    ok(!!cup && cup.ids.length >= 30 && dates.every((d, i) => i === 0 || d > dates[i - 1]) && new Date(dates[n - 1] + 'T00:00:00Z').getUTCDay() === 6, `Pokal England: ${cup.ids.length} Teilnehmer, ${n} Runden, Endspiel am Samstag ${dates[n - 1]}`);
+    const done = rounds.filter((r) => r.played);
+    ok(cup.rd === done.length && done.length >= 1 && done.every((r) => r.date <= g.calendar.currentDate) && rounds.filter((r) => !r.played).every((r) => r.date > g.calendar.currentDate), `Pokal: ${done.length} Runde(n) gespielt, nächste ausgelost und in der Zukunft`);
+    const r0 = rounds[0];
+    const inR0 = new Set([...r0.ties.flatMap((x) => [x.home, x.away]), ...r0.byes]);
+    ok(inR0.size === cup.ids.length && r0.ties.every((x) => x.winner === x.home || x.winner === x.away) && r0.ties.every((x) => x.hg !== x.ag || x.dec === 2), '1. Runde: jeder Verein genau einmal (Spiel oder Freilos), jedes Spiel hat einen Sieger');
+    const r1 = rounds[1];
+    const next = new Set([...r0.ties.map((x) => x.winner!), ...r0.byes]);
+    ok(!!r1 && [...r1.ties.flatMap((x) => [x.home, x.away]), ...r1.byes].every((id) => next.has(id)) && (r1.ties.length & (r1.ties.length - 1)) === 0 && r1.byes.length === 0, '2. Runde: nur Sieger und Freilose, Feld ist eine Zweierpotenz');
+    ok(JSON.stringify(leanCupRounds('England', g.season, cup)) === JSON.stringify(rounds), 'Pokal: Auslosung ist fest (zweimal gelesen = gleich)');
+    const cs = countrySnapshot(g, en, g.season, cur.source, 'xcup')!;
+    ok(cs.kind === 'cup' && cs.rounds!.length === n && cs.rounds![0].ties.length === r0.ties.length && !cs.winners && cs.rounds!.at(-1)!.name === 'Finale' && !cs.rounds!.at(-1)!.drawn, 'Statistiken › Pokal: englischer Pokal mit Runden (Finale noch offen)');
+    {
+      // Elfmeterschießen: über alle Länder muss der Sieger mehr Treffer haben (2–5), Verlängerung = ein Tor Unterschied.
+      let pens = 0, aet = 0, bad = 0;
+      for (const [key, c] of Object.entries(g.world!.live!.cups!)) for (const r of leanCupRounds(key, g.season, c)) for (const x of r.ties) {
+        if (!r.played) continue;
+        if (x.dec === 2) { pens++; const [a, b] = x.pen!; if (x.hg !== x.ag || a === b || Math.max(a, b) > 5 || Math.min(a, b) < 2 || (a > b ? x.home : x.away) !== x.winner) bad++; }
+        else if (x.dec === 1) { aet++; if (Math.abs(x.hg! - x.ag!) !== 1) bad++; }
+        else if (x.hg === x.ag) bad++;
+      }
+      ok(pens > 5 && aet > 5 && bad === 0, `Pokale aller Länder: ${aet}× Verlängerung, ${pens}× Elfmeterschießen, Ergebnisse stimmig`);
+    }
+    {
+      const sc = leanCupScorers(g, 'England', g.season, cup, 9999);
+      const goals = rounds.flatMap((r) => r.ties).reduce((a, x) => a + (x.hg ?? 0) + (x.ag ?? 0), 0);
+      ok(sc.length > 5 && sc.reduce((a, r) => a + r.value, 0) <= goals && cs.scorers!.length > 0 && cs.scorers![0].pid === sc[0].pid && (cs.clubStats?.gf?.length ?? 0) > 0, `Pokal: Torschützen (${sc[0].name}, ${sc[0].value}) und Vereinswerte aus den Runden`);
+    }
+  }
   const before = JSON.stringify(g.world!.live);
   ok(await saveGame('wl', { name: 'wl', managerName: 'w', clubName: 'w', clubId: g.managedClubId, season: g.season, gameDate: g.calendar.currentDate }, g), 'Auslandsligen: Speichern');
   const l = (await loadGame<Game>('wl'))!.game;
@@ -162,6 +212,16 @@ for (const y of [1985, 1991, 2000, 2025]) {
   const past = countrySnapshot(g, en2, old, 'world', 'w1')!;
   ok(past.table![0].clubId === fin[0].clubId && past.table![0].pts === fin[0].pts && countryMatchdays(g, en2, old, 'w1')!.res.length === eng.ids.length * (eng.ids.length - 1), 'Vorsaison: volle Abschlusstabelle und alle Begegnungen abrufbar');
   ok(worldLiveDiv(g, 'England', 0)!.md === 0 && g.world!.live!.season === g.season, 'Neue Saison: Auslandsligen starten bei Spieltag 0');
+  {
+    const oc = rec.cups?.['England'];
+    const w = oc ? leanCupWinner('England', old, oc) : null;
+    ok(!!oc && !!w && rec.cupWinners['England'] === w, `Saisonende: Pokalsieger ${w} aus dem ausgespielten Pokal geht in die Welt`);
+    const pc = countrySnapshot(g, en2, old, 'world', 'xcup')!;
+    ok(pc.winner === w && pc.rounds!.every((r) => r.drawn && r.ties.every((x) => x.winner)) && pc.rounds!.at(-1)!.ties.length === 1, 'Vorsaison: Pokal mit allen Runden abrufbar');
+    ok((rec.scorers?.['England|0']?.length ?? 0) === 10 && past.scorers!.length === 10 && past.scorers![0].value >= past.scorers![9].value, `Vorsaison: Torschützenliste gespeichert (${rec.scorers?.['England|0']?.[0]?.[0]}, ${rec.scorers?.['England|0']?.[0]?.[3]} Tore)`);
+    ok((rec.scorers?.['England|cup']?.length ?? 0) > 0 && pc.scorers!.length === rec.scorers!['England|cup'].length && pc.finals![0].winner === w, 'Vorsaison: Pokal-Torschützen und Siegerliste gespeichert');
+    ok(g.world!.live!.cups!['England'].rd === 0, 'Neue Saison: neuer Pokal');
+  }
 }
 
 // --- 6) Editor-Änderung an Deutschland wirkt -----------------------------------

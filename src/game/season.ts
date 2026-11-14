@@ -439,6 +439,8 @@ export function startNextSeason(g: Game): void {
   { // Auslandsligen mit allen Ergebnissen in die Welt-Historie; die neue Saison legt `worldLiveDaily` an
     const rec = g.world.history[g.world.history.length - 1];
     if (rec && rec.season === oldSeason && Object.keys(leanResults.divs).length) rec.divs = leanResults.divs;
+    if (rec && rec.season === oldSeason && Object.keys(leanResults.cups).length) rec.cups = leanResults.cups;
+    if (rec && rec.season === oldSeason && Object.keys(leanResults.scorers).length) rec.scorers = leanResults.scorers;
     g.world.live = undefined;
   }
   historicWorldAfter(g, g.world, euroClubs, nextStartYear);

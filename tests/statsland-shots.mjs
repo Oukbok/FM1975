@@ -96,8 +96,21 @@ if (!process.env.HALLE) {
       if (!await page.locator('.cmp-mdbox .md-row').count()) errors.push('esp: Box „Begegnungen“ ohne Spiele');
       const comps = (await optionsOf(page, compSel())).map((o) => o.value);
       if (comps.includes('r2')) { await pickOption(page, compSel(), 'r2'); await shot('liga_esp_2liga'); await pickOption(page, compSel(), 'r1'); }
+      // Torschützenliste der Auslandsliga (aus dem Spielerpool) und Landespokal mit Runden
+      if (!await page.locator('.cmp-st-goals .cmp-stat').count()) errors.push('esp: Box „Torschützen“ fehlt oder ist leer');
+      await pickOption(page, compSel(), 'xcup');
+      await shot('pokal_esp_laufend');
+      if (!await page.locator('.cmp-st-goals .cmp-stat').count()) errors.push('esp: Pokal ohne Torschützen');
+      await page.locator('.cmp-main button:has-text("Runden")').click(); await shot('pokal_esp_runden');
+      await page.locator('.cmp-main button:has-text("Turnierbaum")').click();
+      if (!await page.locator('.cmp-main .rb-tie').count()) errors.push('esp: Pokal ohne Runden');
+      await pickOption(page, compSel(), 'r1');
       const prev = ss.filter((x) => !x.label.includes('vor Spielbeginn')).at(-2);
-      if (prev) { await pickOption(page, seasonSel(), prev.value); await shot('liga_esp_vorsaison'); }
+      if (prev) {
+        await pickOption(page, seasonSel(), prev.value); await shot('liga_esp_vorsaison');
+        await pickOption(page, compSel(), 'xcup'); await shot('pokal_esp_vorsaison');
+        await pickOption(page, compSel(), (await optionsOf(page, compSel())).map((o) => o.value).find((v) => v === 'w1' || v === 'r1') ?? 'w1');
+      }
       await pickOption(page, seasonSel(), ss[0].value);
       await shot('liga_esp_vorher');
       await pickOption(page, compSel(), 'xcup');

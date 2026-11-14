@@ -198,7 +198,7 @@ export const INFO_TEXTS = {
   },
   ligaLand: {
     title: 'Land wählen',
-    text: 'Schalte durch die Ligen anderer Länder. Alle Auslandsligen (1. und 2. Liga) werden Spieltag für Spieltag gespielt: laufende Tabelle, Heim/Auswärts/Form, Stand nach jedem Spieltag und alle Begegnungen – auch für die letzten zehn Saisons. Das Ergebnis entsteht aus Vereinsstärke und Heimvorteil; Kader und Einzelstatistiken gibt es nur im Heimatland, in der DDR und in Ländern „Spiel für Spiel“. Saisons vor Spielbeginn kommen aus den Weltdaten.',
+    text: 'Schalte durch die Ligen anderer Länder. Alle Auslandsligen (1. und 2. Liga) werden Spieltag für Spieltag gespielt: laufende Tabelle, Heim/Auswärts/Form, Stand nach jedem Spieltag und alle Begegnungen – auch für die letzten zehn Saisons. Das Ergebnis entsteht aus Vereinsstärke und Heimvorteil. Die Torschützen kommen aus dem Spielerpool, der Landespokal wird Runde für Runde ausgespielt. Vorlagen und Karten gibt es nur im Heimatland und in der DDR. Saisons vor Spielbeginn kommen aus den Weltdaten.',
     wiki: 'world-start',
   },
   hallenMasters: {

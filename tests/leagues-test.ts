@@ -158,7 +158,11 @@ if (past) {
     check((w?.table?.length ?? 0) >= 8 && !!w?.caption?.includes('Abschlusstabelle'), `${bg.name}: Abschlusstabelle ${done.season}`);
   }
   const cup = countrySnapshot(g, bg, g.season, 'roster', 'xcup');
-  check(!!cup?.winners && !!cup.note?.includes('nicht Spiel für Spiel'), `${bg.name}: Pokal ehrlich „nicht simuliert“`);
+  check(!!cup?.rounds?.length && !cup.winners && !!cup.note?.includes('Runde für Runde'), `${bg.name}: Pokal der laufenden Saison mit Runden`);
+  if (done) {
+    const old = countrySnapshot(g, bg, done.season, 'world', 'xcup');
+    check(!!old && (!!old.rounds?.length || !!old.winners), `${bg.name}: Pokal ${done.season} mit Runden bzw. Siegerliste`);
+  }
   console.log(`Länderwahl: ${cs.length} Länder, DDR ${ds.length} Saisons, ${bg.name} ${bs.length} Saisons`);
 }
 

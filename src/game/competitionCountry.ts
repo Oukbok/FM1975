@@ -17,13 +17,15 @@ import { seasonStartYear } from '../data/timeline';
 import { archivedSeason, leagueArchive } from './leagueArchive';
 import {
   buildSnapshot, compClubName, competitionOptions, seasonOptions,
-  type CompOption, type CompSnapshot, type Source,
+  type CompOption, type CompSnapshot, type RoundLite, type Source,
 } from './competitionView';
 import { homeCountryOf, type Game } from './state';
 import { accessSlots } from '../data/euroFormats';
-import { countryRanking, germanRank, type LeanDiv } from '../engine/world';
+import { countryRanking, germanRank, type LeanCup, type LeanDiv } from '../engine/world';
 import type { ResTuple } from './leagueResults';
-import { leanGames, leanMatchdays, leanResTuples, leanTable, leanWinPts, worldLiveDiv, type LeanGame } from './worldLeagues';
+import { ensureWorldLive, leanGames, leanMatchdays, leanResTuples, leanTable, leanWinPts, worldLiveDiv, type LeanGame } from './worldLeagues';
+import { leanCupDates, leanCupRounds, leanCupRoundsN, leanCupWinner, roundName } from './worldCups';
+import { leanCupScorers, leanScorers, unpackScorers } from './worldScorers';
 
 export type CountryMode = 'home' | 'div' | 'world';
 export interface StatsCountry { cc: string; name: string; flag: string; mode: CountryMode; worldKey?: string; hint: string }
@@ -257,11 +259,56 @@ export function countrySnapshot(g: Game, c: StatsCountry, season: string, source
   if (key === 'xcup') {
     const list = cupWinners(g, c);
     const hit = list.find((w) => w.season === season);
+    // Landespokal mit echten Runden (game/worldCups.ts): laufende Saison und die letzten Saisons.
+    const lc: { cup: LeanCup; live: boolean } | null = c.mode !== 'world' ? null
+      : season === g.season ? ((x) => (x ? { cup: x, live: true } : null))(ensureWorldLive(g)?.cups?.[wk])
+        : ((x) => (x ? { cup: x, live: false } : null))(g.world?.history.find((r) => r.season === season)?.cups?.[wk]);
+    if (lc) {
+      const played = leanCupRounds(wk, season, lc.cup);
+      const total = leanCupRoundsN(lc.cup.ids.length);
+      const dates = leanCupDates(season, total);
+      const rounds: RoundLite[] = played.map((r) => ({
+        index: r.index, name: r.name, date: r.date, drawn: true,
+        ties: r.ties.map((t, i) => ({ id: `${wk}-${r.index}-${i}`, home: t.home, away: t.away, hg: t.hg, ag: t.ag, dec: t.dec, pen: t.pen, winner: t.winner, date: r.date })),
+      }));
+      for (let i = played.length; i < total; i++) rounds.push({ index: i, name: roundName(2 ** (total - 1 - i), i), date: dates[i], drawn: false, drawDate: dates[i - 1], ties: [] });
+      const winner = leanCupWinner(wk, season, lc.cup);
+      const final = played[played.length - 1]?.ties.length === 1 ? played[played.length - 1].ties[0] : null;
+      const byes = played[0]?.byes.length ?? 0;
+      const next = played.find((r) => !r.played);
+      // Vereinswerte aus den gespielten Runden; „Beste Abwehr“ nur unter Vereinen, die (fast) so weit kamen wie die Besten.
+      const cs = new Map<string, { n: number; gf: number; ga: number; w: number }>();
+      for (const r of played) for (const t of r.ties) {
+        if (t.hg == null || t.ag == null) continue;
+        for (const [id, gf, ga] of [[t.home, t.hg, t.ag], [t.away, t.ag, t.hg]] as [string, number, number][]) {
+          const e = cs.get(id) ?? { n: 0, gf: 0, ga: 0, w: 0 };
+          e.n++; e.gf += gf; e.ga += ga; if (t.winner === id) e.w++;
+          cs.set(id, e);
+        }
+      }
+      const all = [...cs].map(([clubId, e]) => ({ clubId, ...e }));
+      const most = Math.max(0, ...all.map((e) => e.n));
+      const topOf = (f: (e: (typeof all)[number]) => number, low = false, min = 1) => all.filter((e) => e.n >= min)
+        .sort((a, b) => (low ? f(a) - f(b) : f(b) - f(a)) || b.n - a.n || a.clubId.localeCompare(b.clubId)).slice(0, 10).map((e) => ({ clubId: e.clubId, value: f(e) }));
+      const scorers = lc.live ? leanCupScorers(g, wk, season, lc.cup)
+        : unpackScorers(g.world?.history.find((r) => r.season === season)?.scorers?.[`${wk}|cup`]);
+      return {
+        ...base, source: lc.live ? 'live' : 'archive', rounds, winner, scorers, finals: list,
+        clubStats: { cw: cupCounts(list), ...(all.length ? { gf: topOf((e) => e.gf), ga: topOf((e) => e.ga, true, Math.max(1, most - 1)), w: topOf((e) => e.w) } : {}) },
+        facts: [
+          { k: 'Teilnehmer', text: `${lc.cup.ids.length} Vereine der 1. und 2. Liga` },
+          ...(winner ? [{ k: 'Pokalsieger', id: winner }] : next ? [{ k: 'Nächste Runde', text: `${next.name} am ${next.date.slice(8)}.${next.date.slice(5, 7)}.` }] : []),
+          ...(winner && final ? [{ k: 'Finalgegner', id: final.winner === final.home ? final.away : final.home }] : []),
+          ...(byes ? [{ k: 'Freilose 1. Runde', text: String(byes) }] : []),
+        ],
+        note: `Der ${cupLabel(c.cc)} von ${c.name} wird Runde für Runde gespielt: jede Runde neu gelost, ein Spiel, bei Gleichstand Verlängerung und Elfmeterschießen. Ergebnis aus Vereinsstärke und Heimvorteil, ohne Kader.`,
+      };
+    }
     const simulated = c.mode === 'world' || (c.mode === 'div' && c.cc !== 'gdr');
     const note = source === 'data'
       ? 'Vor Spielbeginn: Pokalsieger und Finalgegner aus den Weltdaten (Vereine verfremdet).'
       : simulated
-        ? `Der ${cupLabel(c.cc)} von ${c.name} wird nicht Spiel für Spiel simuliert – im Hintergrund wird am Saisonende nur der Sieger ermittelt.`
+        ? `Aus dieser Saison ist vom ${cupLabel(c.cc)} in ${c.name} nur der Sieger gespeichert. Neue Saisons haben alle Runden.`
         : `Der ${cupLabel(c.cc)} wird im Spiel nicht simuliert – bekannt sind nur die Sieger vor Spielbeginn.`;
     return {
       ...base, winner: hit?.winner ?? null, winners: list, note,
@@ -314,7 +361,8 @@ export function countrySnapshot(g: Game, c: StatsCountry, season: string, source
         ...(lean.live && prev && !tier2 ? [{ k: `Meister ${prev.season}`, id: prev.champions[wk] }] : []),
         ...(games ? [{ k: 'Tore gesamt · Ø pro Spiel', text: `${goals} · ${(goals / games).toFixed(2).replace('.', ',')}` }] : []),
       ],
-      note: `${c.name} wird Spieltag für Spieltag simuliert: Ergebnis aus Vereinsstärke und Heimvorteil, ohne Kader. Einzelstatistiken der Spieler gibt es für Auslandsligen nicht.`,
+      scorers: lean.md ? (lean.live ? leanScorers(g, lean.div, season, 15) : unpackScorers(rec?.scorers?.[`${wk}|${tier2 ? 1 : 0}`])) : [],
+      note: `${c.name} wird Spieltag für Spieltag simuliert: Ergebnis aus Vereinsstärke und Heimvorteil. Die Torschützen stammen aus den Kadern des Spielerpools; weitere Einzelstatistiken gibt es für Auslandsligen nicht.`,
     };
   }
   if (key === 'r1' || key === 'r2') {

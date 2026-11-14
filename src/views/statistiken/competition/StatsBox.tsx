@@ -40,6 +40,7 @@ export function StatsBox({ g, snap, playerCard, noScorer }: {
   const clubStats = snap?.clubStats;
   // Nicht simulierter Pokal (Länderwahl): Pokalsiege statt Zu-null-Spielen.
   const clubCats = clubStats?.cw ? CLUB_CATS.map((c) => (c === 'cs' ? 'cw' : c)) : CLUB_CATS;
+  const scorerSlot: ClubStatCat = clubStats?.cw ? 'ti' : 'cs';
   const empty = snap?.source === 'live' ? 'Noch keine Einträge.' : 'Keine Einträge.';
   // Über ein Portal: die Box (Glas-Effekt) würde ein festes Popup sonst auf ihre Größe beschneiden.
   const modal = card ? createPortal(card, document.body) : p ? createPortal(
@@ -84,6 +85,26 @@ export function StatsBox({ g, snap, playerCard, noScorer }: {
     <>
       {clubCats.map((cc) => {
         const list = clubStats?.[cc] ?? [];
+        // Auslandsliga: Torschützen aus dem Spielerpool statt „Spiele ohne Gegentor“ (Pokal: statt Meistertitel).
+        if (cc === scorerSlot && snap?.scorers) {
+          const sc = snap.scorers;
+          return (
+            <DashBox key="scorers" title="Torschützen" right={snap.season} className="cmp-statbox cmp-st-goals">
+              {sc.length ? (
+                <div className="cmp-statlist">
+                  {sc.map((r, i) => (
+                    <div key={r.pid} className="cmp-stat">
+                      <span className="cmp-rank">{i > 0 && sc[i - 1].value === r.value ? '' : `${i + 1}.`}</span>
+                      <span className="cmp-pname"><span className="cmp-pn">{r.name}</span></span>
+                      <span className="cmp-pclub">{r.clubId && <TeamName g={g} id={r.clubId} season={snap.season} size={16} />}</span>
+                      <span className="cmp-val" title={r.apps ? `${r.apps} Spiele seines Vereins` : undefined}>{r.value}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : <div className="dnote">{empty}</div>}
+            </DashBox>
+          );
+        }
         return (
           <DashBox key={cc} title={<span title={CLUB_TITLE[cc]}>{CLUB_TITLE[cc]}</span>} className="cmp-statbox">
             {list.length ? (
@@ -100,8 +121,20 @@ export function StatsBox({ g, snap, playerCard, noScorer }: {
           </DashBox>
         );
       })}
-      {!noScorer && <DashBox title={snap?.kind === 'cup' && snap.source === 'history' ? 'Endspiele' : 'Torschützenkönig'} right={snap?.season} className="cmp-statbox">
-        {snap?.topScorer ? (
+      {!noScorer && <DashBox title={snap?.finals ? 'Pokalsieger' : snap?.kind === 'cup' && snap.source === 'history' ? 'Endspiele' : 'Torschützenkönig'} right={snap?.finals ? undefined : snap?.season} className="cmp-statbox">
+        {snap?.finals ? (
+          snap.finals.some((f) => f.winner) ? (
+            <div className="cmp-statlist">
+              {snap.finals.filter((f) => f.winner).map((f) => (
+                <div key={f.season} className={`cmp-stat club cmp-yr ${f.season === snap.season ? 'me' : ''}`}>
+                  <span className="cmp-rank">{f.season.slice(2)}</span>
+                  <span className="cmp-pname"><TeamName g={g} id={f.winner!} season={f.season} size={18} /></span>
+                  <span className="cmp-val" />
+                </div>
+              ))}
+            </div>
+          ) : <div className="dnote">Noch kein Pokalsieger seit Spielbeginn.</div>
+        ) : snap?.topScorer ? (
           <div className="cmp-topscorer">
             <span className="cmp-ts-clubs">{snap.topScorer.clubs.map((id) => <TeamName key={id} g={g} id={id} season={snap.season} size={16} />)}</span>
             <b>{snap.topScorer.goals} Tore</b>

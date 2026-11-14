@@ -90,6 +90,10 @@ export interface CompSnapshot {
   facts?: { k: string; id?: string; text?: string }[];
   /** Text statt leerer Tabelle. */
   emptyText?: string;
+  /** Auslandsliga/-pokal: Torschützenliste aus dem Spielerpool (game/worldScorers.ts) – ohne weitere Einzelstatistik. */
+  scorers?: StatRow[];
+  /** Auslandspokal mit Runden: Pokalsieger der Saisons (neueste zuerst) für die Box „Pokalsieger“. */
+  finals?: { season: string; winner: string | null; finalist?: string }[];
 }
 
 const CUP_LABEL = (k: CupKey, season: string) => (k === 'cup' ? 'Landespokal' : euroCompName(k, seasonStartYear(season)) ?? EURO_COMP_NAMES[k]);

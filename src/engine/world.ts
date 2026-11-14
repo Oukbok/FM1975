@@ -63,6 +63,10 @@ export interface WorldSeasonRecord {
   tables?: Record<string, string[]>;
   /** Auslandsligen der Saison je Land [1. Liga, 2. Liga] mit allen Ergebnissen (game/worldLeagues.ts; nur die letzten WORLD_TABLES_KEEP Saisons). */
   divs?: Record<string, (LeanDiv | null)[]>;
+  /** Landespokale der Saison je Land mit allen Runden (game/worldCups.ts; nur die letzten WORLD_TABLES_KEEP Saisons). */
+  cups?: Record<string, LeanCup>;
+  /** Torschützenlisten der Auslandsligen, Schlüssel `Land|Ebene`: [Name, Verein, Position, Tore] (nur die letzten WORLD_TABLES_KEEP Saisons). */
+  scorers?: Record<string, [string, string, string, number][]>;
 }
 
 /**
@@ -73,7 +77,15 @@ export interface WorldSeasonRecord {
 export interface LeanDiv { ids: string[]; r: string }
 /** Laufende Saison einer Auslandsliga: dazu gespielte Spieltage `md` von `n`. */
 export interface WorldLiveDiv extends LeanDiv { md: number; n: number }
-export interface WorldLive { season: string; divs: Record<string, WorldLiveDiv> }
+/**
+ * Schlanker Landespokal: Teilnehmer (sortiert) und alle Ergebnisse als Zeichenkette – je Spiel drei Zeichen
+ * (Heimtore, Gasttore nach Verlängerung, Entscheidung 0 regulär / 1 n. V. / 2, 3 Elfmeterschießen Heim/Gast).
+ * Jede Runde wird neu gelost; die Auslosung ergibt sich fest aus Land, Saison und Runde (kein gespeicherter Baum).
+ */
+export interface LeanCup { ids: string[]; r: string }
+/** Laufender Landespokal: gespielte Runden `rd` von `n`. */
+export interface WorldLiveCup extends LeanCup { rd: number; n: number }
+export interface WorldLive { season: string; divs: Record<string, WorldLiveDiv>; cups?: Record<string, WorldLiveCup> }
 
 /** So viele Saisons behält die Welt-Historie die Abschluss-Reihenfolge (Spielstand-Größe). */
 export const WORLD_TABLES_KEEP = 10;
@@ -281,7 +293,7 @@ const HOME_KEY = '__home__';
 
 /** Länder, deren Ligen das Spiel selbst Spiel für Spiel rechnet (voll simulierte Länder). */
 /** `next` = fertige Ligen der Folgesaison (Länder „Spiel für Spiel“); fehlt es, regelt die Welt Auf- und Abstieg selbst. */
-export interface FixedCountryResult { t1: string[]; t2: string[]; next?: string[][] }
+export interface FixedCountryResult { t1: string[]; t2: string[]; next?: string[][]; /** Pokalsieger aus dem ausgespielten Landespokal (game/worldCups.ts). */ cup?: string }
 
 // -----------------------------------------------------------------------------
 // Eine Liga durchrechnen
@@ -474,7 +486,7 @@ export function advanceWorldSeason(
     const t1 = fx ? given(fx.t1, c.tiers[0]) : playLeague(c.tiers[0], euroClubs, winPts, r);
     const t2 = fx && (fx.t2.length || fx.next) ? given(fx.t2, c.tiers[1]) : playLeague(c.tiers[1], euroClubs, winPts, r);
     const champ = t1[0];
-    const cupWinner = playCup([...c.tiers[0], ...c.tiers[1]], euroClubs, r);
+    const cupWinner = fx?.cup && w.meta[fx.cup] ? fx.cup : playCup([...c.tiers[0], ...c.tiers[1]], euroClubs, r);
     c.lastTable = t1;
     c.lastChampion = champ;
     c.lastCupWinner = cupWinner;
@@ -553,7 +565,7 @@ export function advanceWorldSeason(
   w.participants = participants;
   w.history.push(rec);
   if (w.history.length > 60) w.history.shift();
-  for (let i = 0; i < w.history.length - WORLD_TABLES_KEEP; i++) { delete w.history[i].tables; delete w.history[i].divs; }
+  for (let i = 0; i < w.history.length - WORLD_TABLES_KEEP; i++) { delete w.history[i].tables; delete w.history[i].divs; delete w.history[i].cups; delete w.history[i].scorers; }
   return { notes, participants };
 }
 
