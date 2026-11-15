@@ -108,12 +108,17 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   }, [running, processDay, rerender, g.calendar.speedMs]);
 
   const drawOpenRef = useRef(false);
+  const runningRef = useRef(running);
+  runningRef.current = running;
+  const jumpToDecision = () => { setScreen('dashboard'); setTimeout(() => window.dispatchEvent(new Event(JUMP_DECISION_EVENT)), 0); };
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.code === 'Space' && !q.liveMatchId && !q.textMatch && !g.briefing?.pending && !g.budget?.pending && !drawOpenRef.current && !document.querySelector('.vt-root')) {
         const tag = (e.target as HTMLElement)?.tagName;
         if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
         e.preventDefault();
+        // Offene Entscheidung: Leertaste springt wie der rote Brief zur Nachricht (Wunsch Pascal).
+        if (!runningRef.current && !automatedRun() && pendingDecisions(g.messages ?? []).length > 0) { jumpToDecision(); return; }
         setRunning((r) => (r ? false : automatedRun() || pendingDecisions(g.messages ?? []).length === 0));
       }
     };
@@ -163,7 +168,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
           save: () => setSaveLoadMode('save'), load: () => setSaveLoadMode('load'), exit: onExit,
         }}
         onOpenPrematch={() => q.setPrematchClosed(null)} onQuickSim={quickSim} onStartText={startText}
-        onReadMail={() => { setScreen('dashboard'); setTimeout(() => window.dispatchEvent(new Event(JUMP_DECISION_EVENT)), 0); }}
+        onReadMail={jumpToDecision}
         onContinue={() => {
           if (seasonOver) { startNextSeason(g); setRunning(false); rerender(); }
           else setRunning((r) => !r);

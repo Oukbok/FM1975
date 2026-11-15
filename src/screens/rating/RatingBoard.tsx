@@ -73,14 +73,26 @@ export function Steps({ x, n, size = 12 }: { x: RatingReason; n: number | undefi
   );
 }
 
-function Reason({ x, n }: { x: RatingReason | undefined; n?: number }) {
-  if (!x) return <span className="rb2-none">–</span>;
+function Reason({ x, n, rest = 0 }: { x: RatingReason | undefined; n?: number; rest?: number }) {
+  const more = rest ? (
+    <span className="rb2-reason-more" title={`Übrige Gründe zusammen: ${rest > 0 ? '+' : '−'}${Math.abs(rest)} Stärkepunkt${Math.abs(rest) === 1 ? '' : 'e'}`}>
+      <Steps x={{ v: rest, text: '' } as RatingReason} n={rest} size={11} /><span>übrige</span>
+    </span>
+  ) : null;
+  if (!x) return more ?? <span className="rb2-none">–</span>;
   return (
     <span className="rb2-reason" title={x.text}>
       <Steps x={x} n={n} size={12} />
       <span className="rb2-reason-t">{short(x.text)}</span>
+      {more}
     </span>
   );
+}
+
+/** Die zwei Gründe mit der größten Wirkung in Stärkepunkten (auch Gegengründe), bei Gleichstand nach Beitrag. */
+function shownReasons(row: ShowRow, st: Map<RatingReason, number>): RatingReason[] {
+  const list = [...st.keys()].sort((a, b) => Math.abs(st.get(b) ?? 0) - Math.abs(st.get(a) ?? 0) || Math.abs(b.v) - Math.abs(a.v));
+  return list.length ? list.slice(0, 2) : topReasons(row, 2);
 }
 
 /** Oben links: aktueller Spieler mit zählender Stärke und Begründung. */
@@ -205,7 +217,10 @@ export function Overview({ rows, shown, current, picked, onPick }: {
             {rows.map((row, i) => {
               const done = i < shown;
               const sel = picked != null ? picked === i : current === i;
-              const [r1, r2] = done ? topReasons(row, 2) : [];
+              const st = done ? reasonSteps(row) : undefined;
+              const [r1, r2] = done ? shownReasons(row, st!) : [];
+              // Was die zwei gezeigten Gründe nicht erklären (z. B. Gegengründe), als „übrige“ – die Pfeile ergeben so immer die Änderung.
+              const rest = done ? row.delta - (r1 ? st!.get(r1) ?? 0 : 0) - (r2 ? st!.get(r2) ?? 0 : 0) : 0;
               return (
                 <tr key={row.r.playerId} className={`rt-lrow ${done ? 'done ' + cls(row.delta) : 'open'} ${sel ? 'cur' : ''}`}
                   onClick={done ? () => onPick(i) : undefined}>
@@ -218,8 +233,8 @@ export function Overview({ rows, shown, current, picked, onPick }: {
                   <td className="num">{row.r.oldOverall}</td>
                   <td className={`num rl-main rb2-c-new ${done ? cls(row.delta) : ''}`}>{done ? row.r.newOverall : '·'}</td>
                   {/* Gründe nur bei veränderter Stärke (Wunsch Pascal) */}
-                  <td className="rb2-c-why">{done && row.delta !== 0 ? <Reason x={r1} n={r1 ? reasonSteps(row).get(r1) : 0} /> : null}</td>
-                  <td className="rb2-c-why">{done && row.delta !== 0 ? <Reason x={r2} n={r2 ? reasonSteps(row).get(r2) : 0} /> : null}</td>
+                  <td className="rb2-c-why">{done && row.delta !== 0 ? <Reason x={r1} n={r1 ? st!.get(r1) : 0} /> : null}</td>
+                  <td className="rb2-c-why">{done && row.delta !== 0 ? <Reason x={r2} n={r2 ? st!.get(r2) : 0} rest={rest} /> : null}</td>
                 </tr>
               );
             })}

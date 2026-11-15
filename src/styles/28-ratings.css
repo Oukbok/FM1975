@@ -134,6 +134,8 @@
 .rb2-c-why { overflow: hidden; }
 .rb2-reason { display: inline-flex; align-items: center; gap: 8px; max-width: 100%; font-size: 15px; color: var(--text); }
 .rb2-reason-t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rb2-reason-t { min-width: 0; }
+.rb2-reason-more { flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px; margin-left: 6px; padding-left: 8px; border-left: 1px solid var(--border-soft); font-size: 13px; color: var(--text-3); }
 .rb2-none { color: var(--text-4); }
 .rb2-open { display: inline-block; width: 12px; border-top: 2px dotted var(--text-4); vertical-align: middle; }
 .rb2-trend { flex: 0 0 auto; vertical-align: middle; }
