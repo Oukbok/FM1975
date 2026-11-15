@@ -2,14 +2,14 @@
 // HALLE – Box „Masters-Siegerliste | Hallenkönige“ (Statistiken › Halle).
 // Auswahl im Box-Kopf: Masters-Sieger in deinem Spiel oder die ewige Bestenliste
 // der Hallenspieler (Hallenruf = Tore + 3 je Turniersieg + 5 je Masters-Sieg,
-// game/indoorRecords.ts). Spaltenköpfe sortieren nach Ruf, Toren oder Turniersiegen.
+// game/indoorRecords.ts; Schwelle Hallenspezialist je Epoche über `hallSpecialistAt`). Spaltenköpfe sortieren nach Ruf, Toren oder Turniersiegen.
 // =============================================================================
 import { useState } from 'react';
 import { ClubLink } from '../../../components/club/ClubLink';
 import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
 import { MASTERS_FIRST_WINTER, MASTERS_LAST_WINTER } from '../../../data/indoorHistory';
 import { indoorShort } from '../../../game/indoorGame';
-import { HALL_SPECIALIST, hallKings, type HallKingSort } from '../../../game/indoorRecords';
+import { hallKings, hallSpecialistAt, hallSpecialistNote, type HallKingSort } from '../../../game/indoorRecords';
 import type { Game } from '../../../game/state';
 import type { IndoorState } from '../../../game/winterShared';
 import { DashBox } from '../../../ui/DashPage';
@@ -55,6 +55,7 @@ function MastersList({ g, st }: { g: Game; st: IndoorState }) {
 function Kings({ g, by, setBy }: { g: Game; by: HallKingSort; setBy: (b: HallKingSort) => void }) {
   const list = hallKings(g, by, 40);
   const mid = g.managedClubId;
+  const at = hallSpecialistAt(g);
   const th = (k: HallKingSort, label: string, title: string) => (
     <th className={`num hk-sort ${by === k ? 'on' : ''}`} title={title} onClick={() => setBy(k)}>{label}</th>
   );
@@ -68,7 +69,7 @@ function Kings({ g, by, setBy }: { g: Game; by: HallKingSort; setBy: (b: HallKin
           <th className="num" title="Turniere">T</th>
           {th('w', 'Siege', 'Turniersiege (inkl. Masters)')}
           <th className="num" title="Masters-Siege">M</th>
-          {th('ruf', 'Ruf', `Hallenruf: Tore + 3 je Turniersieg + 5 je Masters-Sieg; ab ${HALL_SPECIALIST} Hallenspezialist`)}
+          {th('ruf', 'Ruf', `Hallenruf: Tore + 3 je Turniersieg + 5 je Masters-Sieg; Hallenspezialist ${hallSpecialistNote(g)}`)}
         </tr></thead>
         <tbody>
           {list.map((k, i) => {
@@ -82,13 +83,13 @@ function Kings({ g, by, setBy }: { g: Game; by: HallKingSort; setBy: (b: HallKin
                 <td className="num muted">{k.r.t}</td>
                 <td className={`num ${by === 'w' ? 'rl-main' : ''}`}>{k.r.w}</td>
                 <td className="num muted">{k.r.m || '–'}</td>
-                <td className={`num ${by === 'ruf' ? 'rl-main' : ''}`}>{k.ruf}{k.ruf >= HALL_SPECIALIST && <span className="hk-star" title="Hallenspezialist"> *</span>}</td>
+                <td className={`num ${by === 'ruf' ? 'rl-main' : ''}`}>{k.ruf}{k.ruf >= at && <span className="hk-star" title="Hallenspezialist"> *</span>}</td>
               </tr>
             );
           })}
         </tbody>
       </table>
-      <div className="dnote hk-foot">* Hallenspezialist (Ruf ab {HALL_SPECIALIST}). Grau: nicht mehr aktiv. Verein = zuletzt in der Halle.</div>
+      <div className="dnote hk-foot">* Hallenspezialist (derzeit ab Ruf {at}, je Epoche verschieden). Grau: nicht mehr aktiv. Verein = zuletzt in der Halle.</div>
     </div>
   );
 }

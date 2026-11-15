@@ -22,7 +22,7 @@ import { hashStr, mulberry32 } from '../src/engine/leagues';
 import { chooseEventOption } from '../src/game/eventsGame';
 import { titlesOf } from '../src/game/clubRecords';
 import { mastersBoard, mastersRanking, setMastersScoring, packBoard, unpackBoard } from '../src/game/indoorMasters';
-import { HALL_SPECIALIST, hallDrillBonus, hallKings, hallRuf, noteHallDrill } from '../src/game/indoorRecords';
+import { HALL_SPEC_TARGET, hallDrillBonus, hallKings, hallRuf, hallSpecialistAt, hallSpecialistBounds, noteHallDrill } from '../src/game/indoorRecords';
 import { BLOCKS_BY_ID, blockAvailable } from '../src/engine/weeklyTraining';
 import { blockFactorFn } from '../src/game/trainerTeam';
 import { sanitizePlan } from '../src/engine/trainingPlan';
@@ -401,14 +401,25 @@ function runWinter(g: Game, season: string, beforeEachDay?: (d: string) => void)
     runWinter(g, `${y}/${String((y + 1) % 100).padStart(2, '0')}`);
     if (y === 1990 || y === 1993 || y === 1997) {
       const all = Object.values(indoorState(g).rec ?? {});
-      const spec = all.filter((r) => hallRuf(r) >= HALL_SPECIALIST).length;
+      const at = hallSpecialistAt(g), [lo, hi] = hallSpecialistBounds(y + 1);
+      const spec = all.filter((r) => hallRuf(r) >= at).length;
+      const active = Object.entries(indoorState(g).rec ?? {}).filter(([id, r]) => g.players[id] && hallRuf(r) >= at).length;
       const rufs = all.map(hallRuf).sort((a, b) => b - a);
-      console.log(`Hallenruf nach ${y - 1987} Wintern: ${all.length} Spieler, Spezialisten ${spec} (${Math.round((spec / all.length) * 100)} %), Top ${rufs.slice(0, 5).join('/')}, Median ${rufs[Math.floor(rufs.length / 2)]}`);
+      console.log(`Hallenruf nach ${y - 1987} Wintern: ${all.length} Spieler, Schwelle ${at} (Grenzen ${lo}–${hi}), Spezialisten ${spec} (${Math.round((spec / all.length) * 100)} %, aktiv ${active}), Top ${rufs.slice(0, 5).join('/')}, Median ${rufs[Math.floor(rufs.length / 2)]}`);
+      expect(at >= lo && at <= hi, 'Schwelle außerhalb der Grenzen der Epoche');
+      expect(at === lo || at === hi || active >= HALL_SPEC_TARGET, 'Schwelle schneidet zu viele Spieler ab');
       if (y === 1990) expect(spec <= all.length * 0.06, 'nach drei Wintern zu viele Spezialisten');
       if (y === 1997) expect(spec >= 5, 'nach zehn Wintern kaum Spezialisten');
     }
   }
 
+  // Schwelle je Epoche: früh niedrig, Masters-Zeit am höchsten, danach wieder tiefer; nach 2004 eingefroren.
+  for (let y = 1976; y <= 2010; y++) {
+    const [lo, hi] = hallSpecialistBounds(y);
+    expect(lo > 0 && lo <= hi, `Grenzen der Spezialisten-Schwelle ${y} falsch`);
+  }
+  expect(hallSpecialistBounds(1976)[1] < hallSpecialistBounds(1995)[0] && hallSpecialistBounds(2004)[0] < hallSpecialistBounds(1995)[0], 'Schwelle nicht epochenabhängig');
+  expect(hallSpecialistBounds(2010).join() === hallSpecialistBounds(2004).join(), 'Schwelle nach 2004 nicht eingefroren');
   // Hallentraining: Freischaltung, Saison, Bonus, Ersatz nach 2004.
   const hb = BLOCKS_BY_ID.halle;
   expect(!!hb && !blockAvailable(hb, 1975) && blockAvailable(hb, 1976) && blockAvailable(hb, 2004) && !blockAvailable(hb, 2005), 'Hallentraining-Epoche falsch');

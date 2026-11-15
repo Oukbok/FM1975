@@ -11,7 +11,7 @@ import { formatMoneyShort } from '../../engine/economy';
 import { compStatsOf, type CompTuple } from '../../engine/compStats';
 import { AWARD_CATS, AWARD_CAT_LABEL } from '../../engine/seasonAwards';
 import { awardsState } from '../../game/seasonAwardsGame';
-import { HALL_SPECIALIST, hallRecOf, hallRuf } from '../../game/indoorRecords';
+import { hallRecOf, hallRuf, hallSpecialistAt } from '../../game/indoorRecords';
 import { goldenBallState } from '../../game/goldenBallGame';
 import { trophiesOf } from '../../game/trophyCabinet';
 import { InfoTip } from '../../ui/InfoTip';
@@ -96,10 +96,10 @@ function honoursOf(g: Game | undefined, p: Player) {
   // Halle (Wunsch Pascal): Hallenruf aus Toren und Turniersiegen (game/indoorRecords.ts).
   const hr = g ? hallRecOf(g, p.id) : undefined;
   if (hr && (hr.g > 0 || hr.w > 0)) {
-    const ruf = hallRuf(hr);
-    const what = `${ruf >= HALL_SPECIALIST ? 'Hallenspezialist' : 'Hallenturniere'} · ${hr.g} Tore in ${hr.t} Turnieren`
+    const ruf = hallRuf(hr), spec = ruf >= hallSpecialistAt(g as Game); // Schwelle je Epoche
+    const what = `${spec ? 'Hallenspezialist' : 'Hallenturniere'} · ${hr.g} Tore in ${hr.t} Turnieren`
       + (hr.w ? ` · ${hr.w} Turniersieg${hr.w === 1 ? '' : 'e'}` : '') + (hr.m ? `, davon ${hr.m} Masters` : '');
-    list.push({ when: `${hr.y - 1}/${String(hr.y % 100).padStart(2, '0')}`, what, where: `Hallenruf ${ruf}`, top: ruf >= HALL_SPECIALIST });
+    list.push({ when: `${hr.y - 1}/${String(hr.y % 100).padStart(2, '0')}`, what, where: `Hallenruf ${ruf}`, top: spec });
   }
   return { list: list.sort((a, b) => b.when.localeCompare(a.when)), sds, gb };
 }

@@ -203,7 +203,7 @@ export const INFO_TEXTS = {
   },
   hallenkoenige: {
     title: 'Hallenkönige',
-    text: 'Ewige Bestenliste der Hallenspieler. Der Hallenruf wächst mit jedem Hallentor (+1), jedem Turniersieg (+3) und jedem Masters-Sieg (+5 zusätzlich). Ab 35 gilt ein Spieler als Hallenspezialist – das Etikett steht in der Hallenkader-Auswahl und im Spielerprofil.',
+    text: 'Ewige Bestenliste der Hallenspieler. Der Hallenruf wächst mit jedem Hallentor (+1), jedem Turniersieg (+3) und jedem Masters-Sieg (+5 zusätzlich). Hallenspezialist sind die rund 15 besten aktiven Hallenspieler – die Schwelle hängt von der Epoche ab (früh niedriger, in der Masters-Zeit höher) und steht unter der Liste. Das Etikett steht in der Hallenkader-Auswahl und im Spielerprofil.',
     wiki: 'indoor-football',
   },
   ligaLand: {

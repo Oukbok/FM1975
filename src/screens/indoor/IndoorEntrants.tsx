@@ -11,7 +11,7 @@ import PosBadge from '../../components/PosBadge';
 import Icon from '../../components/Icon';
 import { INDOOR_SQUAD_LABEL, indoorSkill } from '../../engine/indoor';
 import type { IndoorLive } from '../../engine/indoorLive';
-import { HALL_SPECIALIST, hallRufOf } from '../../game/indoorRecords';
+import { hallRufOf, hallSpecialistAt } from '../../game/indoorRecords';
 import type { Game } from '../../game/state';
 import type { IndoorTournament } from '../../game/winterShared';
 import type { Player } from '../../types';
@@ -19,11 +19,12 @@ import { vColor } from '../../ui/format';
 import { AnyCrest } from '../../views/transfers/window/parts';
 import { indoorName } from './indoorScript';
 
-/** Kleines Etikett „Hallenspezialist“ (ab HALL_SPECIALIST Hallenruf). */
+/** Kleines Etikett „Hallenspezialist“ (Hallenruf ab der Schwelle der Epoche, `hallSpecialistAt`). */
 export function HallTag({ g, pid }: { g: Game; pid: string }) {
   const ruf = hallRufOf(g, pid);
-  if (ruf < HALL_SPECIALIST) return null;
-  return <span className="ix-hs" title={`Hallenruf ${ruf}: viele Hallentore und Turniersiege über die Jahre`}>Hallenspezialist</span>;
+  const at = hallSpecialistAt(g);
+  if (ruf < at) return null;
+  return <span className="ix-hs" title={`Hallenruf ${ruf} (Spezialist derzeit ab ${at}): viele Hallentore und Turniersiege über die Jahre`}>Hallenspezialist</span>;
 }
 
 function squadLabel(g: Game, t: IndoorTournament, id: string): string {

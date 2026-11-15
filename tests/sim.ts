@@ -31,6 +31,7 @@ import { legSummary, legTrack } from './simLegends';
 import { honoursSummary, honoursTrack } from './simHonours';
 import { speedNote, speedSeason, speedSummary } from './simSpeed';
 import { gbSummary, gbTrack, seasonAwardsTrack } from './simAwards';
+import { hallSummary, hallTrack } from './simHall';
 import { campAfter, campBefore, campInit, campModeFromEnv, campSeasonReport, campSeasonStart, campSummary } from './simCamp';
 
 const seasons = Number(process.argv[2] ?? 3);
@@ -397,6 +398,7 @@ for (let s = 0; s < seasons; s++) {
   campSeasonReport(g);
   if (process.env.AWARDS) { awardsReport(g); gbTrack(g, seasonStartYear(g.season)); }
   if (process.env.LEGENDS) legTrack(g);
+  if (process.env.HALL) hallTrack(g);
   const promSt = promSeasonEnd(g), promSeason = g.season;
   const tS = performance.now();
   startNextSeason(g);
@@ -484,6 +486,7 @@ budgetSummary();
 if (process.env.TOP) { topSummary(g); careerSummary(); }
 if (process.env.LEGENDS) legSummary(g);
 if (process.env.HONOURS) honoursSummary();
+if (process.env.HALL) hallSummary();
 if (process.env.AWARDS) gbSummary();
 if (process.env.SPEED) speedSummary();
 console.log(`fertig in ${((Date.now() - t0) / 1000).toFixed(1)} s`);

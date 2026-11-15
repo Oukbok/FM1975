@@ -2,9 +2,14 @@
 // HALLE – Hallenruf der Spieler und Hallentraining (Wunsch Pascal)
 // -----------------------------------------------------------------------------
 // Hallenruf: Wer in Hallenturnieren trifft und Turniere gewinnt, sammelt über die
-// Winter einen Ruf (Tore + 3 je Turniersieg + 5 je Masters-Sieg). Ab HALL_SPECIALIST
-// gilt er als „Hallenspezialist“ (Etikett in Hallenkader-Auswahl, Spielerprofil,
-// Bestenliste „Hallenkönige“ unter Statistiken › Halle). Torschützen: aus dem
+// Winter einen Ruf (Tore + 3 je Turniersieg + 5 je Masters-Sieg). Ab der Schwelle
+// `hallSpecialistAt` gilt er als „Hallenspezialist“ (Etikett in Hallenkader-Auswahl,
+// Spielerprofil, Bestenliste „Hallenkönige“ unter Statistiken › Halle). Die Schwelle
+// hängt von der Epoche ab (Wunsch Pascal): Ruf des HALL_SPEC_TARGET-besten aktiven
+// Hallenspielers, begrenzt durch eine Kurve je Winter (`hallSpecialistBounds`) –
+// so gibt es je Saison etwa gleich viele Spezialisten, früh (wenige Turniere, kein
+// Masters) mit niedrigerer, in der Masters-Zeit mit höherer Schwelle; nach 2004
+// bleibt die Kurve auf dem letzten Hallenwinter stehen. Torschützen: aus dem
 // Hallen-Textmodus (`IndoorMatch.sc`, engine/indoorMatch.ts), sonst je Tor fest
 // aus Turnier/Spiel/Tor verteilt nach Torgefahr in der Halle (wie indoorSide).
 // Gespeichert im optionalen `game.indoor.rec` (alte Spielstände: fehlt = leer).
@@ -14,7 +19,7 @@
 // letzten 14 Tage vor einem Turnier gibt deinem Verein +0,5 Hallenstärke (höchstens
 // +2 ≈ +5 % Torerwartung). Tage im optionalen `game.indoor.drill`. KI unverändert.
 // =============================================================================
-import { INDOOR_FIRST_WINTER, INDOOR_LAST_WINTER } from '../data/indoorHistory';
+import { INDOOR_FIRST_WINTER, INDOOR_LAST_WINTER, winterYearOf } from '../data/indoorHistory';
 import { CalendarEngine } from '../engine/calendar';
 import { indoorSkill, type IndoorResult } from '../engine/indoor';
 import { hashStr, mulberry32 } from '../engine/leagues';
@@ -22,8 +27,6 @@ import type { Player } from '../types';
 import type { Game } from './state';
 import { indoorState, type IndoorRec, type IndoorTournament } from './winterShared';
 
-/** Ab diesem Hallenruf heißt ein Spieler „Hallenspezialist“. */
-export const HALL_SPECIALIST = 35;
 /** Hallenruf: Tore + 3 je Turniersieg + 5 je Masters-Sieg. */
 export const hallRuf = (r: IndoorRec): number => r.g + 3 * r.w + 5 * r.m;
 
@@ -37,8 +40,55 @@ export function hallRufOf(g: Game, pid: string): number {
   const r = hallRecOf(g, pid);
   return r ? hallRuf(r) : 0;
 }
+// -----------------------------------------------------------------------------
+// Schwelle „Hallenspezialist“ je Epoche
+// -----------------------------------------------------------------------------
+/** So viele aktive Spieler sollen je Saison ungefähr Hallenspezialist sein. */
+export const HALL_SPEC_TARGET = 15;
+/** Grenzen der Schwelle je Hallenwinter [Jahr, Untergrenze, Obergrenze] (Sim-Messung tests/simHall.ts). */
+// Gemessen (2 × 34 Saisons): Ruf des 15. aktiven Spielers 1976 ≈ 5, 1980 ≈ 15, 1987 ≈ 22,
+// Masters-Zeit 1990–1997 ≈ 35–57, 2001–2004 ≈ 25–37. Die Grenzen fangen Ausreißer ab
+// (erster Winter, Kaderumbrüche) und halten die Schwelle nach 2004 fest.
+const SPEC_CURVE: [number, number, number][] = [
+  [1976, 6, 12], [1980, 10, 22], [1987, 16, 30], [1990, 24, 50], [1995, 30, 65], [2001, 30, 65], [2004, 24, 50],
+];
+
+/** Unter- und Obergrenze der Spezialisten-Schwelle im Winter `year` (linear zwischen den Stützstellen). */
+export function hallSpecialistBounds(year: number): [number, number] {
+  const y = Math.max(INDOOR_FIRST_WINTER, Math.min(INDOOR_LAST_WINTER, year));
+  let i = 0;
+  while (i < SPEC_CURVE.length - 2 && SPEC_CURVE[i + 1][0] <= y) i++;
+  const [y0, lo0, hi0] = SPEC_CURVE[i], [y1, lo1, hi1] = SPEC_CURVE[i + 1];
+  const f = y1 > y0 ? Math.min(1, Math.max(0, (y - y0) / (y1 - y0))) : 0;
+  return [Math.round(lo0 + (lo1 - lo0) * f), Math.round(hi0 + (hi1 - hi0) * f)];
+}
+
+const specCache = new WeakMap<object, { key: string; at: number }>();
+/**
+ * Hallenruf, ab dem ein Spieler in der laufenden Saison „Hallenspezialist“ heißt:
+ * Ruf des HALL_SPEC_TARGET-besten aktiven Spielers (noch in `game.players`),
+ * begrenzt durch `hallSpecialistBounds` des aktuellen Winters.
+ */
+export function hallSpecialistAt(g: Game): number {
+  const rec = indoorState(g).rec ?? {};
+  const ids = Object.keys(rec);
+  let sum = 0;
+  for (const id of ids) sum += rec[id].t + rec[id].g;
+  const key = `${g.season}|${ids.length}|${sum}`;
+  const hit = specCache.get(rec);
+  if (hit && hit.key === key) return hit.at;
+  const rufs = ids.filter((id) => g.players[id]).map((id) => hallRuf(rec[id])).sort((a, b) => b - a);
+  const [lo, hi] = hallSpecialistBounds(winterYearOf(g.season));
+  const at = Math.max(lo, Math.min(hi, rufs[HALL_SPEC_TARGET - 1] ?? 0));
+  specCache.set(rec, { key, at });
+  return at;
+}
 export function isHallSpecialist(g: Game, pid: string): boolean {
-  return hallRufOf(g, pid) >= HALL_SPECIALIST;
+  return hallRufOf(g, pid) >= hallSpecialistAt(g);
+}
+/** Kurzer Erklärsatz zur Schwelle (Spaltenkopf, Fußnote, i-Hilfe). */
+export function hallSpecialistNote(g: Game): string {
+  return `derzeit ab Ruf ${hallSpecialistAt(g)} – die Schwelle richtet sich nach den etwa ${HALL_SPEC_TARGET} besten aktiven Hallenspielern der Epoche`;
 }
 
 /** Torgefahr in der Halle (gleiches Gewicht wie im Textmodus, screens/indoor/indoorScript.ts). */
