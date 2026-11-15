@@ -70,12 +70,12 @@ const specCache = new WeakMap<object, { key: string; at: number }>();
  * begrenzt durch `hallSpecialistBounds` des aktuellen Winters.
  */
 /**
- * Taugt der Spieler selbst für die Halle? Hallenwert mindestens so hoch wie die Stärke
- * draußen (Torhüter immer). Sonst wäre z. B. ein technisch schwacher Innenverteidiger
+ * Taugt der Spieler selbst für die Halle? Hallenwert höchstens 2 unter der Stärke
+ * draußen (Torhüter immer; mit −2 bleiben es wie gewollt etwa 15 je Winter). Sonst wäre z. B. ein technisch schwacher Innenverteidiger
  * nur über die Turniersiege seiner Mannschaft „Spezialist“ (Fehlermeldung Pascal).
  */
 export function hallApt(p: Player): boolean {
-  return p.naturalPosition === 'TW' || indoorSkill(p) >= p.overall - 0.5;
+  return p.naturalPosition === 'TW' || indoorSkill(p) >= p.overall - 2;
 }
 
 export function hallSpecialistAt(g: Game): number {
@@ -92,14 +92,14 @@ export function hallSpecialistAt(g: Game): number {
   specCache.set(rec, { key, at });
   return at;
 }
-/** Hallenspezialist = Hallenruf ab der Schwelle der Epoche UND Hallenwert nicht unter der Stärke draußen (im Ruhestand nur der Ruf). */
+/** Hallenspezialist = Hallenruf ab der Schwelle der Epoche UND Hallenwert höchstens 2 unter der Stärke draußen (im Ruhestand nur der Ruf). */
 export function isHallSpecialist(g: Game, pid: string): boolean {
   const p = g.players[pid] ?? g.youthPlayers?.[pid];
   return hallRufOf(g, pid) >= hallSpecialistAt(g) && (!p || hallApt(p));
 }
 /** Kurzer Erklärsatz zur Schwelle (Spaltenkopf, Fußnote, i-Hilfe). */
 export function hallSpecialistNote(g: Game): string {
-  return `derzeit ab Ruf ${hallSpecialistAt(g)} und Hallenwert nicht unter der Stärke draußen – die Schwelle richtet sich nach den etwa ${HALL_SPEC_TARGET} besten aktiven Hallenspielern der Epoche`;
+  return `derzeit ab Ruf ${hallSpecialistAt(g)} und Hallenwert höchstens 2 unter der Stärke draußen – die Schwelle richtet sich nach den etwa ${HALL_SPEC_TARGET} besten aktiven Hallenspielern der Epoche`;
 }
 
 /** Torgefahr in der Halle (gleiches Gewicht wie im Textmodus, screens/indoor/indoorScript.ts). */

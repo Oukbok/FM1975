@@ -22,7 +22,7 @@ import { hashStr, mulberry32 } from '../src/engine/leagues';
 import { chooseEventOption } from '../src/game/eventsGame';
 import { titlesOf } from '../src/game/clubRecords';
 import { mastersBoard, mastersRanking, setMastersScoring, packBoard, unpackBoard } from '../src/game/indoorMasters';
-import { HALL_SPEC_TARGET, hallDrillBonus, hallKings, hallRuf, hallSpecialistAt, hallSpecialistBounds, noteHallDrill } from '../src/game/indoorRecords';
+import { HALL_SPEC_TARGET, hallDrillBonus, hallKings, hallRuf, hallSpecialistAt, hallSpecialistBounds, isHallSpecialist, noteHallDrill } from '../src/game/indoorRecords';
 import { BLOCKS_BY_ID, blockAvailable } from '../src/engine/weeklyTraining';
 import { blockFactorFn } from '../src/game/trainerTeam';
 import { sanitizePlan } from '../src/engine/trainingPlan';
@@ -402,8 +402,9 @@ function runWinter(g: Game, season: string, beforeEachDay?: (d: string) => void)
     if (y === 1990 || y === 1993 || y === 1997) {
       const all = Object.values(indoorState(g).rec ?? {});
       const at = hallSpecialistAt(g), [lo, hi] = hallSpecialistBounds(y + 1);
-      const spec = all.filter((r) => hallRuf(r) >= at).length;
-      const active = Object.entries(indoorState(g).rec ?? {}).filter(([id, r]) => g.players[id] && hallRuf(r) >= at).length;
+      const ents = Object.entries(indoorState(g).rec ?? {});
+      const spec = ents.filter(([id]) => isHallSpecialist(g, id)).length;
+      const active = ents.filter(([id]) => g.players[id] && isHallSpecialist(g, id)).length;
       const rufs = all.map(hallRuf).sort((a, b) => b - a);
       console.log(`Hallenruf nach ${y - 1987} Wintern: ${all.length} Spieler, Schwelle ${at} (Grenzen ${lo}–${hi}), Spezialisten ${spec} (${Math.round((spec / all.length) * 100)} %, aktiv ${active}), Top ${rufs.slice(0, 5).join('/')}, Median ${rufs[Math.floor(rufs.length / 2)]}`);
       expect(at >= lo && at <= hi, 'Schwelle außerhalb der Grenzen der Epoche');

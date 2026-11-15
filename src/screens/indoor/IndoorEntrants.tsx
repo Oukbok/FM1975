@@ -24,7 +24,7 @@ export function HallTag({ g, pid }: { g: Game; pid: string }) {
   const ruf = hallRufOf(g, pid);
   const at = hallSpecialistAt(g);
   if (!isHallSpecialist(g, pid)) return null;
-  return <span className="ix-hs" title={`Hallenruf ${ruf} (Spezialist derzeit ab ${at}) und Hallenwert mindestens so hoch wie draußen: Hallenspezialist – viele Hallentore und Turniersiege über die Jahre`}>Spezialist</span>;
+  return <span className="ix-hs" title={`Hallenruf ${ruf} (Spezialist derzeit ab ${at}) und Hallenwert höchstens 2 unter der Stärke draußen: Hallenspezialist – viele Hallentore und Turniersiege über die Jahre`}>Spezialist</span>;
 }
 
 function squadLabel(g: Game, t: IndoorTournament, id: string): string {
