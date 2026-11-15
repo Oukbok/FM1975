@@ -1,59 +1,133 @@
-// Oberflächentest Textmodus + Spielbericht: spielt bis zum ersten eigenen Spiel,
-// verfolgt es im Textmodus (inkl. Spannungsmoment, Halbzeit, Wechsel, Taktik),
-// simuliert das nächste Spiel schnell und öffnet den Bericht.
-//   node tests/match-ui.mjs [ausgabeordner]
-import { createServer } from 'node:http';
-import { readFile, mkdir } from 'node:fs/promises';
-import { extname, join } from 'node:path';
+// Oberflächentest Textmodus + Spielbericht: spielt bis zum ersten eigenen Spiel
+// (Fensterkette wie ein Spieler: Briefing, Budget, Auslosung, Hallen-Show … bis zur
+// Vorschau „Nächstes Spiel“), verfolgt es im Textmodus (Spannungsmoment, Halbzeit,
+// Wechsel-Bildschirm, Aufwärmen, Co-Trainer), simuliert das nächste Spiel schnell
+// und öffnet den Spielbericht. Ziel < 5 Minuten; jede Warteschleife ist begrenzt
+// und bricht mit Meldung + Screenshot `99_abbruch.png` ab.
+//   npm run build && node tests/match-ui.mjs [ausgabeordner]
+//   LIMIT=Sekunden (Gesamtzeit, Standard 300)
+import { mkdir } from 'node:fs/promises';
 import { chromium } from 'playwright';
-import { startNewGame } from './newgame-flow.mjs';
-import { pickOption, optionsOf, valueOf } from './select3.mjs';
+import { serveDist, openWindows } from './popup-probe.mjs';
+import { startNewGame, skipIntro } from './newgame-flow.mjs';
+import { pickOption } from './select3.mjs';
 
 const outDir = process.argv[2] || 'test-output/match';
 await mkdir(outDir, { recursive: true });
-const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml' };
-const server = createServer(async (req, res) => {
-  let path = decodeURIComponent(new URL(req.url, 'http://x').pathname);
-  if (path.endsWith('/')) path += 'index.html';
-  try { res.writeHead(200, { 'Content-Type': TYPES[extname(path)] || 'application/octet-stream' }).end(await readFile(join('dist', path))); }
-  catch { res.writeHead(404).end(); }
-}).listen(0);
-const url = `http://127.0.0.1:${server.address().port}/`;
+const { server, url } = serveDist();
+const T0 = Date.now();
+const LIMIT = Number(process.env.LIMIT || 300) * 1000;
+const secs = () => Math.round((Date.now() - T0) / 1000);
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+// Kurze Wartezeiten: ein verdeckter oder fehlender Knopf soll schnell auffallen, nicht 30 s je Klick.
+page.setDefaultTimeout(8000);
 const errors = [];
 page.on('pageerror', (e) => errors.push('JS-Fehler: ' + e.message));
 await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
-await page.goto(url);
-await startNewGame(page);
-await page.waitForTimeout(800);
+const fail = (m) => { console.log('FEHLER: ' + m); errors.push(m); };
 
-const closeModals = async () => {
-  for (const sel of ['button:has-text("Überspringen")', 'button:has-text("Fortsetzen")', 'button:has-text("Schließen")', 'button:has-text("OK")', '.modal-close']) {
-    const b = page.locator(sel).first();
-    if (await b.isVisible().catch(() => false)) await b.click().catch(() => {});
+/** Abbruch mit klarer Meldung, Screenshot und offenen Fenstern. */
+async function abort(msg) {
+  const wins = await openWindows(page).catch(() => []);
+  console.log(`ABBRUCH nach ${secs()} s: ${msg}${wins.length ? ` (offen: ${wins.join(', ')})` : ''}`);
+  await page.screenshot({ path: `${outDir}/99_abbruch.png` }).catch(() => {});
+  for (const e of errors) console.log(e);
+  await browser.close().catch(() => {});
+  server.close();
+  process.exit(1);
+}
+// Wächter für die Gesamtzeit
+const watchdog = setTimeout(() => { abort(`Zeitlimit ${LIMIT / 1000} s überschritten`); }, LIMIT);
+// Schritt schlägt fehl (Selektor fehlt, Klick verdeckt): Meldung + Screenshot statt Stacktrace allein.
+process.on('uncaughtException', (e) => { abort(`Schritt fehlgeschlagen: ${e.message.split('\n')[0]}`); });
+process.on('unhandledRejection', (e) => { abort(`Schritt fehlgeschlagen: ${String(e?.message ?? e).split('\n')[0]}`); });
+
+await page.goto(url());
+await startNewGame(page);
+
+const visible = (sel) => page.locator(sel).first().isVisible().catch(() => false);
+const tryClick = async (sel, timeout = 2000) => page.locator(sel).first().click({ timeout }).then(() => true).catch(() => false);
+
+/**
+ * Fensterkette bis zur Vorschau „Nächstes Spiel“ (`.pm-root`) abarbeiten – wie tests/season-walk.mjs:
+ * jedes Fenster mit dem kleinsten nötigen Klick schließen, sonst „Weiter“ in der Kopfleiste und warten,
+ * bis die Zeit wieder steht. Rückgabe: Protokoll der gesehenen Fenster; Abbruch nach `maxSec`.
+ */
+async function untilPrematch(label, maxSec = 150) {
+  const t = Date.now();
+  const seen = [];
+  const saw = (k) => { if (seen[seen.length - 1] !== k) seen.push(k); };
+  let idle = 0;
+  while (Date.now() - t < maxSec * 1000) {
+    if (await visible('.pm-root')) { console.log(`${label}: Vorschau nach ${Math.round((Date.now() - t) / 1000)} s (${seen.join(' → ') || 'ohne Fenster'})`); return seen; }
+    if (await visible('.si-stage')) { saw('Briefing-Auftakt'); await skipIntro(page); continue; }
+    if (await visible('.bf-modal')) { saw('Briefing'); await tryClick('.bf-modal .bf-continue'); await page.waitForTimeout(300); continue; }
+    if (await visible('.bud-modal')) { saw('Budget'); await tryClick('.bud-modal .bud-confirm'); await page.waitForTimeout(300); continue; }
+    if (await visible('.ft-modal')) { saw('Erstes Training'); await tryClick('.ft-modal button:has-text("Ohne Versprechen")'); await page.waitForTimeout(300); continue; }
+    if (await visible('.dr-root')) {
+      // Auslosung (Gala): Esc springt ans Ende, „Weiter“ schließt.
+      saw('Auslosung');
+      await page.keyboard.press('Escape'); await page.waitForTimeout(400);
+      if (await visible('.dr-root')) { if (!(await tryClick('.dr-root .dg-go:has-text("Weiter")'))) await page.keyboard.press('Escape'); }
+      await page.waitForTimeout(300); continue;
+    }
+    if (await visible('.rb2-overlay')) {
+      saw('Bewertungsrunde');
+      const ok = page.locator('.rb2-overlay .rb2-ok').first();
+      if ((await ok.innerText().catch(() => '')).trim() === 'OK') await ok.click().catch(() => {});
+      else if (!(await tryClick('.rb2-overlay button:has-text("Bis zum Ende")'))) await ok.click().catch(() => {});
+      await page.waitForTimeout(400); continue;
+    }
+    if (await visible('.gb-root')) {
+      saw('Goldener Ball');
+      if (!(await tryClick('.gb-root footer button:has-text("Überspringen")', 1000))) await tryClick('.gb-root .btn-primary');
+      await page.waitForTimeout(400); continue;
+    }
+    if (await visible('.ix-root')) {
+      saw('Hallenturnier');
+      if (!(await tryClick('.ix-root .ix-btn:has-text("Schließen")', 1000))) await tryClick('.ix-root .ix-btn:has-text("Alles simulieren"):not([disabled])', 1000);
+      await page.waitForTimeout(600); continue;
+    }
+    if (await visible('.aw-modal')) { saw('Die Besten der Saison'); await tryClick('.aw-modal .aw-foot .btn-primary'); await page.waitForTimeout(300); continue; }
+    if (await visible('.tw-panel')) { saw('Transferbilanz'); await tryClick('.tw-foot button:has-text("Schließen")'); await page.waitForTimeout(300); continue; }
+    if (await visible('.cr-root')) { saw('Trainingslager-Bilanz'); await page.locator('.cr-root').click({ position: { x: 20, y: 20 } }).catch(() => {}); await page.waitForTimeout(400); continue; }
+    if (await visible('.mr-modal')) { saw('Spielbericht'); await tryClick('.mr-modal .modal-close'); await page.waitForTimeout(300); continue; }
+    if (await visible('.reveal-overlay')) {
+      saw('Bewertung (Liste)');
+      await tryClick('.reveal-overlay button:has-text("Überspringen"), .reveal-overlay button:has-text("Alle")', 1000);
+      if (!(await tryClick('.reveal-overlay .reveal-close, .reveal-overlay button:has-text("Weiter"), .reveal-overlay button:has-text("Schließen")', 1000))) await tryClick('.reveal-overlay button >> nth=-1', 1000);
+      await page.waitForTimeout(300); continue;
+    }
+    if (await visible('.modal-overlay')) { saw('Fenster ' + (await openWindows(page)).join(', ')); await page.keyboard.press('Escape'); await page.waitForTimeout(300); continue; }
+
+    // Kein Fenster offen: Kopfleiste
+    if (await visible('.hd-continue.pm-next')) { saw('Vorschau wieder öffnen'); await tryClick('.hd-continue.pm-next'); await page.waitForTimeout(400); continue; }
+    if (await visible('.hd-continue.mail')) {
+      // offene Entscheidung sperrt „Weiter“: roter Brief wählt sie an, erste Antwort wählen
+      saw('Entscheidung');
+      await tryClick('.hd-continue.mail'); await page.waitForTimeout(400);
+      if (!(await tryClick('.dz-read .ev-choice', 1500))) { idle++; if (idle > 5) await abort(`${label}: offene Entscheidung nicht auffindbar`); }
+      continue;
+    }
+    const before = await page.locator('.tn-date, .tn-right, .topnav-date').first().textContent().catch(() => '');
+    if (!(await tryClick('.hd-continue:not(.running)'))) { idle++; if (idle > 5) await abort(`${label}: Knopf „Weiter“ nicht klickbar`); continue; }
+    // Zeitlauf: warten, bis er anhält (Fenster/Vorschau/Pause), höchstens 30 s
+    for (let k = 0; k < 120 && (await page.locator('.hd-continue.running').count()); k++) await page.waitForTimeout(250);
+    const after = await page.locator('.tn-date, .tn-right, .topnav-date').first().textContent().catch(() => '');
+    if (after === before && !(await openWindows(page)).length) { idle++; if (idle > 5) await abort(`${label}: „Weiter“ ohne Fortschritt (${after})`); }
+    else idle = 0;
   }
-};
-async function untilMatchDue() {
-  for (let i = 0; i < 120; i++) {
-    // Vorschau „Nächstes Spiel“ geschlossen → Kopfknopf öffnet sie wieder.
-    { const pn = page.locator('.hd-continue.pm-next'); if (await pn.isVisible().catch(() => false)) { await pn.click().catch(() => {}); await page.waitForTimeout(600); } }
-    if (await page.locator('button:has-text("Textmodus")').isVisible().catch(() => false)) return true;
-    await closeModals();
-    const w = page.getByRole('button', { name: /weiter/i }).first();
-    if (await w.isVisible().catch(() => false)) await w.click().catch(() => {});
-    await page.waitForTimeout(700);
-  }
-  return false;
+  await abort(`${label}: keine Vorschau „Nächstes Spiel“ nach ${maxSec} s (${seen.join(' → ')})`);
 }
 
-if (!(await untilMatchDue())) { console.log('Kein eigenes Spiel erreicht'); process.exit(1); }
-await page.screenshot({ path: `${outDir}/01_kopf_knoepfe.png` });
-await page.click('button:has-text("Textmodus")');
-await page.waitForTimeout(2500);
+await untilPrematch('Erstes eigenes Spiel');
+await page.screenshot({ path: `${outDir}/01_vorschau.png` });
+await page.click('.pm-go-btn:has-text("Textmodus")');
+await page.waitForSelector('.tm-root', { timeout: 15000 }).catch(() => abort('Textmodus öffnet nicht'));
+await page.waitForTimeout(1500);
 await page.screenshot({ path: `${outDir}/02_textmodus_start.png` });
-const fail = (m) => { console.log('FEHLER: ' + m); errors.push(m); };
 
 // Einstellungen: Tempo „Rasant“, Optionen-Kasten
 await page.click('.tm-act-grid >> text=Einstellungen');
@@ -73,7 +147,8 @@ const confirmStop = async () => {
 
 // Spannungsmoment im Block abfangen (Chancen-Meter gleichzeitig sichtbar)
 let caught = false, meter = false;
-for (let i = 0; i < 1500 && !caught; i++) {
+const tSusp = Date.now();
+for (let i = 0; i < 1500 && !caught && Date.now() - tSusp < 60_000; i++) {
   if (!meter && await page.locator('.tm-meter.lvl-3, .tm-meter.lvl-2').isVisible().catch(() => false)) {
     await page.locator('.tm-stage').screenshot({ path: `${outDir}/04_meter.png` }).catch(() => {}); meter = true;
   }
@@ -84,9 +159,12 @@ for (let i = 0; i < 1500 && !caught; i++) {
     caught = true;
   }
   if ((await confirmStop()) === 'halbzeit') break;
+  // Bei „Rasant“ ist die erste Halbzeit in ~40 s vorbei – spätestens zur 30. Minute anhalten,
+  // damit Wechsel-Bildschirm und Halbzeit-Stopp unten noch geprüft werden.
+  if (i % 5 === 0 && parseInt(await page.locator('.tm-clock-txt b').innerText({ timeout: 300 }).catch(() => '0'), 10) >= 30) break;
   await page.waitForTimeout(80);
 }
-if (!caught) console.log('Hinweis: kein Spannungsmoment vor der Pause erwischt.');
+if (!caught) console.log('Hinweis: kein Spannungsmoment bis zur 30. Minute erwischt.');
 
 // Pause, Aufwärmen, Reiter (vorher einen offenen Stopp bestätigen)
 let sawHalf = false;
@@ -221,17 +299,21 @@ for (let i = 0; i < 60; i++) {
   await page.locator('.tm-rbtn >> nth=1').click({ timeout: 1000 }).catch(() => {});
   await page.waitForTimeout(500);
 }
+if (!(await visible('.ms-continue'))) await abort('Abpfiff nicht erreicht (kein „Weiter“ im Abschlussfenster)');
 await page.screenshot({ path: `${outDir}/20_ende.png` });
 await page.click('.ms-continue');
 await page.waitForTimeout(800);
 await page.screenshot({ path: `${outDir}/21_zurueck.png` });
 
 // Nächstes Spiel schnell simulieren → Spielbericht
-if (await untilMatchDue()) {
-  await page.click('button:has-text("Simulieren")');
-  await page.waitForTimeout(1200);
-  await page.screenshot({ path: `${outDir}/12_bericht.png` });
-}
-console.log(errors.length ? errors.join('\n') : 'Keine JS-Fehler.');
+await untilPrematch('Nächstes eigenes Spiel');
+await page.click('.pm-go-btn:has-text("Simulieren")');
+if (!(await page.waitForSelector('.mr-modal', { timeout: 10000 }).then(() => true).catch(() => false))) fail('Nach „Simulieren“ kein Spielbericht');
+await page.waitForTimeout(600);
+await page.screenshot({ path: `${outDir}/22_bericht.png` });
+clearTimeout(watchdog);
+console.log(`Laufzeit ${secs()} s`);
+console.log(errors.length ? errors.join('\n') : 'Keine Fehler.');
 await browser.close();
 server.close();
+process.exit(errors.length ? 1 : 0);
