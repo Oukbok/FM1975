@@ -152,7 +152,11 @@ for (const y of [1985, 1991, 2000, 2025]) {
     const early = { ...eng, r: eng.r.slice(0, Math.floor(eng.ids.length / 2) * 2 * 5) };
     const e5 = new Map(leanScorers(g, early, g.season, 9999).map((r) => [r.pid, r.value]));
     ok([...e5].every(([pid, v]) => (all.find((r) => r.pid === pid)?.value ?? 0) >= v), 'Torschützen: Stand nach 5 Spieltagen ist im heutigen Stand enthalten');
-    ok(snap.scorers!.length === 15 && snap.scorers![0].pid === all[0].pid, 'Statistiken › Liga: Torschützenliste der Auslandsliga');
+    ok(snap.stats!.goals.length === 10 && snap.stats!.goals[0].pid === all[0].pid, 'Statistiken › Liga: Torschützenliste der Auslandsliga');
+    const st = snap.stats!;
+    ok(st.assists.length === 10 && st.scorer.length === 10 && st.yellow.length === 10 && st.clean.length > 3 && st.clean.every((r) => r.pos === 'TW')
+      && st.scorer[0].value >= st.goals[0].value && st.goals.every((r) => !!r.face && !!r.born) && !snap.scorers,
+      `Statistiken › Liga: alle sechs Wertungen wie bei der Heimatliga (Vorlagen ${st.assists[0].value}, Gelb ${st.yellow[0].value}, Rot ${st.red.length}, Zu null ${st.clean[0].value})`);
   }
   // Landespokal mit echten Runden
   {
@@ -186,7 +190,7 @@ for (const y of [1985, 1991, 2000, 2025]) {
     {
       const sc = leanCupScorers(g, 'England', g.season, cup, 9999);
       const goals = rounds.flatMap((r) => r.ties).reduce((a, x) => a + (x.hg ?? 0) + (x.ag ?? 0), 0);
-      ok(sc.length > 5 && sc.reduce((a, r) => a + r.value, 0) <= goals && cs.scorers!.length > 0 && cs.scorers![0].pid === sc[0].pid && (cs.clubStats?.gf?.length ?? 0) > 0, `Pokal: Torschützen (${sc[0].name}, ${sc[0].value}) und Vereinswerte aus den Runden`);
+      ok(sc.length > 5 && sc.reduce((a, r) => a + r.value, 0) <= goals && cs.stats!.goals.length > 0 && cs.stats!.goals[0].pid === sc[0].pid && (cs.clubStats?.gf?.length ?? 0) > 0, `Pokal: Torschützen (${sc[0].name}, ${sc[0].value}) und Vereinswerte aus den Runden`);
     }
   }
   const before = JSON.stringify(g.world!.live);
@@ -218,8 +222,8 @@ for (const y of [1985, 1991, 2000, 2025]) {
     ok(!!oc && !!w && rec.cupWinners['England'] === w, `Saisonende: Pokalsieger ${w} aus dem ausgespielten Pokal geht in die Welt`);
     const pc = countrySnapshot(g, en2, old, 'world', 'xcup')!;
     ok(pc.winner === w && pc.rounds!.every((r) => r.drawn && r.ties.every((x) => x.winner)) && pc.rounds!.at(-1)!.ties.length === 1, 'Vorsaison: Pokal mit allen Runden abrufbar');
-    ok((rec.scorers?.['England|0']?.length ?? 0) === 10 && past.scorers!.length === 10 && past.scorers![0].value >= past.scorers![9].value, `Vorsaison: Torschützenliste gespeichert (${rec.scorers?.['England|0']?.[0]?.[0]}, ${rec.scorers?.['England|0']?.[0]?.[3]} Tore)`);
-    ok((rec.scorers?.['England|cup']?.length ?? 0) > 0 && pc.scorers!.length === rec.scorers!['England|cup'].length && pc.finals![0].winner === w, 'Vorsaison: Pokal-Torschützen und Siegerliste gespeichert');
+    ok((rec.scorers?.['England|0']?.length ?? 0) === 10 && past.stats!.goals.length === 10 && past.stats!.goals[0].value >= past.stats!.goals[9].value && (rec.pstats?.['England|0']?.assists?.length ?? 0) === 10 && past.stats!.yellow.length === 10, `Vorsaison: Torschützenliste gespeichert (${rec.scorers?.['England|0']?.[0]?.[0]}, ${rec.scorers?.['England|0']?.[0]?.[3]} Tore)`);
+    ok((rec.scorers?.['England|cup']?.length ?? 0) > 0 && pc.stats!.goals.length === rec.scorers!['England|cup'].length && pc.finals![0].winner === w, 'Vorsaison: Pokal-Torschützen und Siegerliste gespeichert');
     ok(g.world!.live!.cups!['England'].rd === 0, 'Neue Saison: neuer Pokal');
   }
 }

@@ -64,7 +64,7 @@ export function StatsBox({ g, snap, playerCard, noScorer }: {
                     return (
                       <div key={r.pid} className={`cmp-stat ${clickable ? 'clickable' : ''} ${r.clubId === g.managedClubId ? 'me' : ''}`} onClick={() => clickable && setSel(r.pid)} title={clickable ? 'Spielerprofil öffnen' : undefined}>
                         <span className="cmp-rank">{rank}</span>
-                        <span className="cmp-pname"><FaceThumb p={g.players[r.pid] ?? g.youthPlayers[r.pid]} club={r.clubId ? g.clubs[r.clubId] : undefined} /><span className="cmp-pn">{r.name}</span></span>
+                        <span className="cmp-pname"><FaceThumb p={g.players[r.pid] ?? g.youthPlayers[r.pid] ?? (r.face && r.born ? { id: r.pid, face: r.face, dateOfBirth: `${r.born}-07-01`, age: Number(g.calendar.currentDate.slice(0, 4)) - r.born, fullName: r.name } : undefined)} club={r.clubId ? g.clubs[r.clubId] : undefined} /><span className="cmp-pn">{r.name}</span></span>
                         <span className="cmp-pclub">{r.clubId && <TeamName g={g} id={r.clubId} season={snap!.season} size={16} />}</span>
                         <span className="cmp-val" title={`${r.apps} Spiele`}>{r.value}</span>
                       </div>

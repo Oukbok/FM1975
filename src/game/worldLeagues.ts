@@ -30,7 +30,7 @@ import { worldMatchGoals, type FixedCountryResult, type LeanCup, type LeanDiv, t
 import type { ResTuple } from './leagueResults';
 import { homeCountryOf, type Game } from './state';
 import { finishWorldCups, newLeanCup, worldCupsDaily } from './worldCups';
-import { leanCupScorers, leanScorers, packScorers } from './worldScorers';
+import { leanCupStats, leanStats, packScorers, packStats, type PackedStats } from './worldScorers';
 
 /** Paarungen eines Spieltags (Index-Paare [Heim, Gast]) nach dem Kreisverfahren; bei ungerader Zahl setzt einer aus. */
 export function leanPairs(n: number, md: number): [number, number][] {
@@ -199,12 +199,14 @@ export interface WorldLiveEnd {
   /** Landespokale mit allen Runden und die Torschützenlisten (`Land|Ebene`, Pokal `Land|cup`) für die Historie. */
   cups: Record<string, LeanCup>;
   scorers: Record<string, [string, string, string, number][]>;
+  pstats: Record<string, PackedStats>;
 }
 export function worldLiveResults(g: Game): WorldLiveEnd {
   const fixed: Record<string, FixedCountryResult> = {}, divs: Record<string, (LeanDiv | null)[]> = {};
   const scorers: WorldLiveEnd['scorers'] = {};
+  const pstats: WorldLiveEnd['pstats'] = {};
   const live = ensureWorldLive(g);
-  if (!live) return { fixed, divs, cups: {}, scorers };
+  if (!live) return { fixed, divs, cups: {}, scorers, pstats };
   for (const [k, d] of Object.entries(live.divs)) {
     while (d.md < d.n) playMatchday(g, k, d);
     const [key, t] = k.split('|');
@@ -213,8 +215,8 @@ export function worldLiveResults(g: Game): WorldLiveEnd {
     if (t === '0') fx.t1 = order; else fx.t2 = order;
     const list = (divs[key] ??= [null, null]);
     list[Number(t)] = { ids: d.ids, r: d.r };
-    const top = leanScorers(g, d, live.season, 10);
-    if (top.length) scorers[k] = packScorers(top);
+    const st = leanStats(g, d, live.season, 10);
+    if (st.goals.length) { scorers[k] = packScorers(st.goals); pstats[k] = packStats(st); }
   }
   // Länder ohne 1. Liga in der schlanken Rechnung (zu wenige Vereine) rechnet die Welt wie bisher.
   for (const key of Object.keys(fixed)) if (!fixed[key].t1.length) { delete fixed[key]; delete divs[key]; }
@@ -225,8 +227,8 @@ export function worldLiveResults(g: Game): WorldLiveEnd {
     if (!fixed[key]) continue;
     fixed[key].cup = id;
     cups[key] = cupEnd.cups[key];
-    const top = leanCupScorers(g, key, live.season, cups[key], 10);
-    if (top.length) scorers[`${key}|cup`] = packScorers(top);
+    const st = leanCupStats(g, key, live.season, cups[key], 10);
+    if (st.goals.length) { scorers[`${key}|cup`] = packScorers(st.goals); pstats[`${key}|cup`] = packStats(st); }
   }
-  return { fixed, divs, cups, scorers };
+  return { fixed, divs, cups, scorers, pstats };
 }

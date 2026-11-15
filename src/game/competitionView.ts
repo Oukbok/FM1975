@@ -59,7 +59,11 @@ export interface RoundLite {
   /** Laufende Saison: Spiele der Gruppen/Ligaphase. */
   matches?: { id: string; md: number; date: string; group: string; home: string; away: string; hg: number | null; ag: number | null; matchId?: string; mine: boolean }[];
 }
-export interface StatRow { pid: string; name: string; clubId: string; pos: string; value: number; apps: number }
+export interface StatRow {
+  pid: string; name: string; clubId: string; pos: string; value: number; apps: number;
+  /** Weltspieler ohne vollen Spieler-Eintrag: Gesichtsgruppe + Geburtsjahr für das Foto. */
+  face?: string; born?: number;
+}
 export type ClubStatCat = 'gf' | 'ga' | 'w' | 'cs' | 'ti' | 'cw';
 export interface ClubStatRow { clubId: string; value: number }
 

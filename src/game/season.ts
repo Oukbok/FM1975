@@ -440,7 +440,7 @@ export function startNextSeason(g: Game): void {
     const rec = g.world.history[g.world.history.length - 1];
     if (rec && rec.season === oldSeason && Object.keys(leanResults.divs).length) rec.divs = leanResults.divs;
     if (rec && rec.season === oldSeason && Object.keys(leanResults.cups).length) rec.cups = leanResults.cups;
-    if (rec && rec.season === oldSeason && Object.keys(leanResults.scorers).length) rec.scorers = leanResults.scorers;
+    if (rec && rec.season === oldSeason && Object.keys(leanResults.scorers).length) { rec.scorers = leanResults.scorers; rec.pstats = leanResults.pstats; }
     g.world.live = undefined;
   }
   historicWorldAfter(g, g.world, euroClubs, nextStartYear);

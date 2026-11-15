@@ -67,6 +67,8 @@ export interface WorldSeasonRecord {
   cups?: Record<string, LeanCup>;
   /** Torschützenlisten der Auslandsligen, Schlüssel `Land|Ebene`: [Name, Verein, Position, Tore] (nur die letzten WORLD_TABLES_KEEP Saisons). */
   scorers?: Record<string, [string, string, string, number][]>;
+  /** Alle Einzelwertungen (beste zehn) je `Land|Ebene` bzw. `Land|cup`: Wertung → [Name, Verein, Position, Wert, Gesicht, Geburtsjahr]. */
+  pstats?: Record<string, Partial<Record<string, [string, string, string, number, string, number][]>>>;
 }
 
 /**
@@ -565,7 +567,7 @@ export function advanceWorldSeason(
   w.participants = participants;
   w.history.push(rec);
   if (w.history.length > 60) w.history.shift();
-  for (let i = 0; i < w.history.length - WORLD_TABLES_KEEP; i++) { delete w.history[i].tables; delete w.history[i].divs; delete w.history[i].cups; delete w.history[i].scorers; }
+  for (let i = 0; i < w.history.length - WORLD_TABLES_KEEP; i++) { delete w.history[i].tables; delete w.history[i].divs; delete w.history[i].cups; delete w.history[i].scorers; delete w.history[i].pstats; }
   return { notes, participants };
 }
 

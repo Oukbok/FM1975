@@ -98,6 +98,10 @@ if (!process.env.HALLE) {
       if (comps.includes('r2')) { await pickOption(page, compSel(), 'r2'); await shot('liga_esp_2liga'); await pickOption(page, compSel(), 'r1'); }
       // Torschützenliste der Auslandsliga (aus dem Spielerpool) und Landespokal mit Runden
       if (!await page.locator('.cmp-st-goals .cmp-stat').count()) errors.push('esp: Box „Torschützen“ fehlt oder ist leer');
+      // Wie bei der Heimatliga: sechs Wertungen mit Gesicht, keine Vereinswerte-Boxen, keine Zeile über der Tabelle
+      for (const c of ['assists', 'scorer', 'yellow', 'clean']) if (!await page.locator(`.cmp-st-${c} .cmp-stat`).count()) errors.push(`esp: Box ${c} fehlt oder ist leer`);
+      if (await page.locator('.cmp-statbox').count() !== 6) errors.push(`esp: ${await page.locator('.cmp-statbox').count()} Statistik-Boxen statt 6`);
+      if (await page.locator('.cmp-caption').count()) errors.push('esp: Zeile über der Tabelle der laufenden Saison');
       await pickOption(page, compSel(), 'xcup');
       await shot('pokal_esp_laufend');
       if (!await page.locator('.cmp-st-goals .cmp-stat').count()) errors.push('esp: Pokal ohne Torschützen');

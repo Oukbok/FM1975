@@ -153,7 +153,7 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
       {withMd && <MatchdayBox g={g} season={season} games={mdGames} md={md} maxMd={maxMd} onMd={onMd}
         none={mdGames.length ? undefined : 'Für diese Saison liegen keine Einzelergebnisse vor.'} />}
       <StatsBox key={`st-${country.cc}-${season}-${effKey}`} g={g} snap={snap} noScorer={withMd && !!lean} />
-      {withMd ? (lean ? <InfoBox g={g} snap={snap} cell /> : null) : snap && src === 'live' && ['ec', 'cwc', 'uefa'].includes(snap.key) && !snap.rounds?.some((r) => r.ties.some((t) => t.mine) || r.groups?.some((gr) => gr.rows.some((x) => x.id === g.managedClubId)))
+      {withMd ? (lean && !snap?.stats ? <InfoBox g={g} snap={snap} cell /> : null) : snap && src === 'live' && ['ec', 'cwc', 'uefa'].includes(snap.key) && !snap.rounds?.some((r) => r.ties.some((t) => t.mine) || r.groups?.some((gr) => gr.rows.some((x) => x.id === g.managedClubId)))
         ? <EuropeBox g={g} germans={(g.euroCups?.[snap.key as EuroCompId]?.participantIds ?? []).filter((id) => !g.euroClubs?.[id])} teamName={(id) => compClubName(g, id, season)} />
         : <InfoBox g={g} snap={snap} />}
     </DashPage>

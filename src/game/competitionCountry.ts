@@ -25,7 +25,7 @@ import { countryRanking, germanRank, type LeanCup, type LeanDiv } from '../engin
 import type { ResTuple } from './leagueResults';
 import { ensureWorldLive, leanGames, leanMatchdays, leanResTuples, leanTable, leanWinPts, worldLiveDiv, type LeanGame } from './worldLeagues';
 import { leanCupDates, leanCupRounds, leanCupRoundsN, leanCupWinner, roundName } from './worldCups';
-import { leanCupScorers, leanScorers, unpackScorers } from './worldScorers';
+import { emptyLeanStats, leanCupStats, leanStats, unpackScorers, unpackStats, type LeanStats, type PackedStats } from './worldScorers';
 
 export type CountryMode = 'home' | 'div' | 'world';
 export interface StatsCountry { cc: string; name: string; flag: string; mode: CountryMode; worldKey?: string; hint: string }
@@ -244,12 +244,24 @@ export function countryMatchdays(g: Game, c: StatsCountry, season: string, key: 
   return { games, res: leanResTuples(games), ptsWin: leanWinPts(c.worldKey, season) };
 }
 
+/**
+ * Einzelstatistik einer abgeschlossenen Auslandssaison: gespeicherte Wertungen (`pstats`), sonst – ältere
+ * Spielstände, die nur die Torschützen kennen – aus den heutigen Kadern nachgerechnet (Tore bleiben die gespeicherten).
+ */
+function archivedStats(rec: { scorers?: Record<string, [string, string, string, number][]>; pstats?: Record<string, PackedStats> } | undefined, key: string, recompute: () => LeanStats): LeanStats {
+  const saved = unpackStats(rec?.pstats?.[key]);
+  if (saved) return saved;
+  const st = recompute();
+  const goals = unpackScorers(rec?.scorers?.[key]);
+  return goals.length ? { ...st, goals } : st;
+}
+
 export function countrySnapshot(g: Game, c: StatsCountry, season: string, source: CSource, key: string): CompSnapshot | null {
   const opt = countryOptions(g, c, season, source).find((o) => o.key === key);
   if (!opt) return null;
   if (!OWN_KEYS.has(key)) {
     const s = buildSnapshot(g, season, key);
-    if (s && c.mode === 'div' && s.kind === 'league') s.caption = s.source === 'live' ? `${c.name} · laufende Saison, Spiel für Spiel` : `Abschlusstabelle ${season}`;
+    if (s && c.mode === 'div' && s.kind === 'league') s.caption = s.source === 'live' ? undefined : `Abschlusstabelle ${season}`;
     return s;
   }
   const y = seasonStartYear(season);
@@ -290,10 +302,10 @@ export function countrySnapshot(g: Game, c: StatsCountry, season: string, source
       const most = Math.max(0, ...all.map((e) => e.n));
       const topOf = (f: (e: (typeof all)[number]) => number, low = false, min = 1) => all.filter((e) => e.n >= min)
         .sort((a, b) => (low ? f(a) - f(b) : f(b) - f(a)) || b.n - a.n || a.clubId.localeCompare(b.clubId)).slice(0, 10).map((e) => ({ clubId: e.clubId, value: f(e) }));
-      const scorers = lc.live ? leanCupScorers(g, wk, season, lc.cup)
-        : unpackScorers(g.world?.history.find((r) => r.season === season)?.scorers?.[`${wk}|cup`]);
+      const stats = lc.live ? leanCupStats(g, wk, season, lc.cup)
+        : archivedStats(g.world?.history.find((r) => r.season === season), `${wk}|cup`, () => leanCupStats(g, wk, season, lc.cup));
       return {
-        ...base, source: lc.live ? 'live' : 'archive', rounds, winner, scorers, finals: list,
+        ...base, source: lc.live ? 'live' : 'archive', rounds, winner, stats, finals: list,
         clubStats: { cw: cupCounts(list), ...(all.length ? { gf: topOf((e) => e.gf), ga: topOf((e) => e.ga, true, Math.max(1, most - 1)), w: topOf((e) => e.w) } : {}) },
         facts: [
           { k: 'Teilnehmer', text: `${lc.cup.ids.length} Vereine der 1. und 2. Liga` },
@@ -352,7 +364,8 @@ export function countrySnapshot(g: Game, c: StatsCountry, season: string, source
       ...base, source: lean.live ? 'live' : 'archive', tier: tier2 ? 2 : 1,
       table: rows.map((r) => ({ clubId: r.clubId, pos: r.pos, p: r.p, w: r.w, d: r.d, l: r.l, gf: r.gf, ga: r.ga, pts: r.pts, form: r.form })),
       zones: lean.md ? leanZones(g, wk, season, tier2, rows.length) : [],
-      caption: !lean.live ? `Abschlusstabelle ${season}` : lean.md >= lean.total ? `${c.name} · Saison ${season} · alle ${lean.total} Spieltage gespielt` : lean.md ? `${c.name} · laufende Saison · Spieltag ${lean.md} von ${lean.total}` : `${c.name} · Saison ${season} · noch kein Spieltag gespielt`,
+      // Laufende Saison ohne Zeile über der Tabelle (Wunsch Pascal) – Land und Spieltag stehen schon in Kopf und Spieltag-Wahl.
+      caption: !lean.live ? `Abschlusstabelle ${season}` : undefined,
       clubStats: lean.md ? { gf: top((r) => r.gf), ga: top((r) => r.ga, true), w: top((r) => r.w), cs: top((r) => r.cs), ti: titleList(g, wk) } : { ti: titleList(g, wk) },
       facts: [
         ...(lean.live ? [{ k: 'Spieltag', text: `${lean.md} von ${lean.total}` }] : []),
@@ -361,8 +374,9 @@ export function countrySnapshot(g: Game, c: StatsCountry, season: string, source
         ...(lean.live && prev && !tier2 ? [{ k: `Meister ${prev.season}`, id: prev.champions[wk] }] : []),
         ...(games ? [{ k: 'Tore gesamt · Ø pro Spiel', text: `${goals} · ${(goals / games).toFixed(2).replace('.', ',')}` }] : []),
       ],
-      scorers: lean.md ? (lean.live ? leanScorers(g, lean.div, season, 15) : unpackScorers(rec?.scorers?.[`${wk}|${tier2 ? 1 : 0}`])) : [],
-      note: `${c.name} wird Spieltag für Spieltag simuliert: Ergebnis aus Vereinsstärke und Heimvorteil. Die Torschützen stammen aus den Kadern des Spielerpools; weitere Einzelstatistiken gibt es für Auslandsligen nicht.`,
+      // Einzelstatistik wie bei der Heimatliga (Wunsch Pascal): fest aus den Kadern des Spielerpools verteilt.
+      stats: !lean.md ? emptyLeanStats() : lean.live ? leanStats(g, lean.div, season) : archivedStats(rec, `${wk}|${tier2 ? 1 : 0}`, () => leanStats(g, lean.div, season)),
+      note: `${c.name} wird Spieltag für Spieltag simuliert: Ergebnis aus Vereinsstärke und Heimvorteil. Torschützen, Vorlagen, Karten und Zu-null-Spiele werden daraus auf die Kader des Spielerpools verteilt.`,
     };
   }
   if (key === 'r1' || key === 'r2') {
