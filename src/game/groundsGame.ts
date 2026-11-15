@@ -21,6 +21,7 @@ import { ensureBrand, isLeagueClub, lastRevenue } from '../engine/clubEconomy';
 import { book } from '../engine/finances';
 import { sameRegion } from '../engine/environment';
 import { makeMessage, pushMessage } from '../engine/messages';
+import { PLOT_BY_ID, PLOT_KINDS, canSite, cleanSites, isOwned, migratePlots, plotPrice, plotsOf } from '../engine/groundsPlots';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const addDays = (d: string, n: number) => new Date(Date.parse(d + 'T00:00:00Z') + Math.round(n) * 86400000).toISOString().slice(0, 10);
@@ -46,6 +47,7 @@ export function ensureClubGrounds(club: Club, today: string): ClubGrounds {
     club.grounds.lastSeason = seasonOf(today);
     club.grounds.lastScan = today;
   }
+  migratePlots(club, club.grounds); // alte Zukäufe → Grundstücke der Karte (engine/groundsPlots.ts), idempotent
   return club.grounds;
 }
 
@@ -259,7 +261,11 @@ export function aiBuild(club: Club, gr: ClubGrounds, today: string, year: number
 // -----------------------------------------------------------------------------
 // Aktionen des Managers
 // -----------------------------------------------------------------------------
-export function startGroundsBuild(g: Game, key: GroundsModuleKey): { ok: boolean; text: string } {
+/**
+ * Bauvorhaben starten. Mit `plotId` (eigenes, freies Grundstück, auf das die Stufe passt)
+ * steht das Gebäude danach auf diesem Grundstück (`gr.sites`).
+ */
+export function startGroundsBuild(g: Game, key: GroundsModuleKey, plotId?: string): { ok: boolean; text: string } {
   const club = g.clubs[g.managedClubId];
   const today = g.calendar.currentDate;
   const year = yearOf(today);
@@ -269,6 +275,7 @@ export function startGroundsBuild(g: Game, key: GroundsModuleKey): { ok: boolean
   const chk = checkNext(club, gr, key, year);
   if (!chk.ok) return { ok: false, text: chk.reason ?? 'Nicht möglich.' };
   if (gr.projects.length >= 2) return { ok: false, text: 'Es laufen bereits zwei Bauvorhaben.' };
+  if (plotId && !canSite(club, gr, plotId, key, year)) return { ok: false, text: 'Das passt nicht auf dieses Grundstück.' };
   const block = checkBudget(g, 'infra', chk.cost ?? 0); // Saisonbudget (game/budgetPlan.ts)
   if (block) return { ok: false, text: block };
   noteBudgetSpend(g, 'infra', chk.cost ?? 0);
@@ -281,6 +288,7 @@ export function startGroundsBuild(g: Game, key: GroundsModuleKey): { ok: boolean
     p.protest = Math.random() < risk ? (Math.random() < 0.35 ? 'abgelehnt' : 'auflage') : 'none';
   }
   gr.projects.push(p);
+  if (plotId) (gr.sites ??= {})[plotId] = key;
   const text = p.phase === 'permit'
     ? `Bauantrag für „${chk.def!.name}“ gestellt. Die Genehmigung dauert etwa ${Math.round(permitMonths(year))} Monate, danach ${Math.round(chk.def!.days / 30)} Monate Bauzeit.`
     : `Baubeginn: „${chk.def!.name}“, fertig in etwa ${Math.max(1, Math.round(chk.def!.days / 30))} Monat(en).`;
@@ -307,6 +315,7 @@ function advanceProjects(g: Game, club: Club, gr: ClubGrounds, today: string): v
         const refund = Math.round(p.cost * 0.9);
         if (refund) book(club.finances, today, refund, 'other', `Rückerstattung abgelehntes Bauvorhaben ${def.name}`, true);
         gr.projects = gr.projects.filter((x) => x !== p);
+        cleanSites(gr);
         msg(g, today, 'Bauamt', `Bauantrag abgelehnt: ${def.name}`, `Nach den Anwohnerprotesten lehnt die Stadt den Bauantrag ab. 90 % der Kosten (${formatMoney(refund, year)}) fließen zurück, die Planungskosten sind verloren. Du kannst es später erneut versuchen.`);
         continue;
       }
@@ -380,6 +389,27 @@ export function buyGroundsLand(g: Game): { ok: boolean; text: string } {
   return { ok: true, text: `${offer.expansion ? 'Nachbargelände gekauft – das Stadiongelände wächst' : 'Grundstück gekauft'}: +${parcels} Parzellen für ${formatMoney(price, year)}.` };
 }
 
+/** Ein Nachbargrundstück der Karte kaufen (engine/groundsPlots.ts): Fläche wächst um seine Größe, es wird Bauland. */
+export function buyGroundsPlot(g: Game, plotId: string): { ok: boolean; text: string } {
+  const club = g.clubs[g.managedClubId];
+  const today = g.calendar.currentDate;
+  const year = yearOf(today);
+  const gr = ensureClubGrounds(club, today);
+  const plot = plotsOf(club, gr).find((p) => p.id === plotId);
+  if (!plot || !PLOT_BY_ID[plotId] || !plot.buyable) return { ok: false, text: 'Dieses Grundstück steht nicht zum Verkauf.' };
+  if (isOwned(gr, plotId)) return { ok: false, text: 'Das Grundstück gehört dem Verein bereits.' };
+  const price = plotPrice(gr, plot, year);
+  if (club.finances.balance < price) return { ok: false, text: 'Kontostand zu niedrig.' };
+  const block = checkBudget(g, 'infra', price);
+  if (block) return { ok: false, text: block };
+  noteBudgetSpend(g, 'infra', price);
+  const kind = PLOT_KINDS[plot.kind];
+  book(club.finances, today, -price, 'facilities', `Grundstückskauf: ${kind.name} (+${plot.size} Parzellen)`, true);
+  gr.area += plot.size; gr.landBought++;
+  (gr.plots ??= []).push(plotId);
+  return { ok: true, text: `${kind.name} gekauft: +${plot.size} Parzellen für ${formatMoney(price, year)}. ${kind.clear} Das Grundstück ist jetzt Bauland.` };
+}
+
 export function renovateGrounds(g: Game, key: GroundsModuleKey): { ok: boolean; text: string } {
   const club = g.clubs[g.managedClubId];
   const today = g.calendar.currentDate;
@@ -405,6 +435,6 @@ export function demolishGrounds(g: Game, key: GroundsModuleKey): { ok: boolean; 
   if (!st || st.level < 1 || gr.projects.some((p) => p.module === key)) return { ok: false, text: 'Nichts abzureißen.' };
   const name = levelDef(key, st.level)!.name;
   st.level -= 1;
-  if (st.level <= 0) delete gr.modules[key];
+  if (st.level <= 0) { delete gr.modules[key]; cleanSites(gr); }
   return { ok: true, text: `„${name}“ abgerissen. Fläche frei: ${gr.area - areaUsed(club, gr)} Parzellen.` };
 }

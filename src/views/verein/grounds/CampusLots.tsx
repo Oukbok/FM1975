@@ -5,12 +5,13 @@
 //   • Nachwuchs: zwei Plätze, Kleinfeld, Jugendhaus, Internat, Leistungszentrum
 //   • Verwaltung & Medizin: Geschäftsstelle, Medizin, Reha, Leistungsdiagnostik, Daten
 // Jedes Quartier hat feste Modul-Plätze: Gebautes steht, die nächste Ausbaustufe
-// ist als gestrichelte Fläche mit „Stufe n“ vorgemerkt. Zugekaufte Grundstücke
-// liegen als eingezäunte Wiesen dahinter. Reine Zeichnung (isoKit).
+// ist als gestrichelte Fläche mit „Stufe n“ vorgemerkt. Diese Quartiere gehören
+// dem Verein von Anfang an; die Nachbargrundstücke ringsum zeichnet PlotLayer.tsx
+// (Karte: engine/groundsPlots.ts). Reine Zeichnung (isoKit).
 // =============================================================================
 import type { ReactNode } from 'react';
 import type { FacilityKey } from '../../../types';
-import { Box, Car, Fence, Flat, Floodlight, GableRoof, P, Pitch, Tree, WindowsFront, WindowsSide, pts, shade } from './isoKit';
+import { Box, Car, Flat, Floodlight, GableRoof, P, Pitch, Tree, WindowsFront, WindowsSide, pts, shade } from './isoKit';
 
 export type CampusKey = FacilityKey | 'clubhouse';
 export interface CampusCtx {
@@ -23,7 +24,6 @@ export interface CampusCtx {
   pal: { wall: string; roof: string; win: string; concrete: string; era: number };
   primary: string;
   reputation: number;
-  landBought: number;
   G: (k: CampusKey, depth: number, node: ReactNode, label: [number, number, number]) => void;
   plain: (key: string, depth: number, node: ReactNode) => void;
 }
@@ -37,8 +37,9 @@ export const LOTS = {
 /** Ost-West-Straßen (y, Breite) und die Campusstraße (x). */
 export const AVENUES: [number, number][] = [[20, 1.8], [32.5, 1.6], [44.9, 1.6], [56.7, 1.6]];
 export const CAMPUS_ROAD_X = 44.8;
-/** Südrand des Geländes je nach Zukauf. */
-export const campusSouth = (land: number) => 59 + Math.max(1, Math.ceil(land / 5)) * 8.4;
+/** Südrand des Geländes: hinter der südlichen Grundstücksreihe verläuft die Südstraße. */
+export const SOUTH_ROAD_Y = 66.7;
+export const CAMPUS_SOUTH = 68.4;
 
 function hash(n: number): number { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
 
@@ -50,13 +51,15 @@ export function drawCampus(c: CampusCtx): { base: ReactNode[]; signs: ReactNode[
   const walk = winter ? '#eef2f4' : '#c4beae';
   const pad = winter ? '#e6ebe8' : shade(c.grass, 1.1);
   const hedge = winter ? '#aebdb4' : '#3d6d38';
-  const south = campusSouth(c.landBought);
+  const south = CAMPUS_SOUTH;
 
   // ---------------------------------------------------------------- Straßen, Gehwege, Alleebäume
   AVENUES.forEach(([y, w], i) => {
     base.push(<Flat key={`av${i}`} x={-5} y={y} w={CAMPUS_ROAD_X + 6.6} d={w} fill={i === 0 ? road : walk} />);
     if (i === 0) base.push(<polyline key={`avl${i}`} points={pts(P(-5, y + w / 2, 0.01), P(CAMPUS_ROAD_X + 1.6, y + w / 2, 0.01))} stroke="#e4dfcf" strokeWidth={1} strokeDasharray="6 7" fill="none" />);
   });
+  base.push(<Flat key="sr" x={-5} y={SOUTH_ROAD_Y} w={62} d={1.6} fill={road} />);
+  base.push(<polyline key="srl" points={pts(P(-5, SOUTH_ROAD_Y + 0.8, 0.01), P(57, SOUTH_ROAD_Y + 0.8, 0.01))} stroke="#e4dfcf" strokeWidth={1} strokeDasharray="6 7" fill="none" />);
   base.push(<Flat key="cr" x={CAMPUS_ROAD_X} y={20} w={1.6} d={south - 20} fill={road} />);
   base.push(<polyline key="crl" points={pts(P(CAMPUS_ROAD_X + 0.8, 21.8, 0.01), P(CAMPUS_ROAD_X + 0.8, south, 0.01))} stroke="#e4dfcf" strokeWidth={1} strokeDasharray="6 7" fill="none" />);
   let tk = 0;
@@ -248,16 +251,5 @@ export function drawCampus(c: CampusCtx): { base: ReactNode[]; signs: ReactNode[
     plain('spkc', kx + 4 + ky + 6.4, <g>{Array.from({ length: n }).map((_, i) => <Car key={i} x={kx + 0.5 + (i % 2) * 1.9} y={ky + 0.5 + Math.floor(i / 2) * 2} color={cols[Math.floor(hash(i + year) * cols.length)]} era={year} />)}</g>);
   }
 
-  // ---------------------------------------------------------------- Zugekaufte Grundstücke
-  for (let i = 0; i < c.landBought; i++) {
-    const x = 4 + (i % 5) * 8.1, y = 59 + Math.floor(i / 5) * 8.4, w = 7.5, d = 6.8;
-    const m = winter ? '#e4e9e6' : '#8db36a';
-    base.push(<g key={`land${i}`}><Flat x={x} y={y} w={w} d={d} fill={m} /><Flat x={x + 0.5} y={y + 0.5} w={w - 1} d={d * 0.45} fill={shade(m, 1.06)} opacity={0.6} /></g>);
-    const [tx, ty] = P(x + w / 2, y + d / 2, 0);
-    plain(`landf${i}`, x + w + y + d, <g pointerEvents="none">
-      <Fence x={x} y={y} w={w} d={d} />
-      <text x={tx} y={ty + 4} textAnchor="middle" fill={winter ? '#6f7d76' : '#2f4a2c'} fontSize={12} fontWeight={700} opacity={0.85}>Zugekauft · frei</text>
-    </g>);
-  }
   return { base, signs };
 }

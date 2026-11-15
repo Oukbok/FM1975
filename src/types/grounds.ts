@@ -86,8 +86,12 @@ export interface ClubGrounds {
   location: GroundsLocation;
   /** Gesamtfläche in Parzellen (je ~1.000 m²). */
   area: number;
-  /** Zugekaufte Parzellen-Pakete. */
+  /** Zahl der Zukäufe (zählt jedes gekaufte Grundstück mit; KI-Vereine kaufen weiter abstrakt). */
   landBought: number;
+  /** Gekaufte Nachbargrundstücke (IDs aus engine/groundsPlots.ts). Fehlt = alter Spielstand bzw. noch nichts gekauft. */
+  plots?: string[];
+  /** Auf einem eigenen Grundstück gebautes Umfeld-Modul (Grundstücks-ID → Modul). */
+  sites?: Record<string, GroundsModuleKey>;
   modules: Partial<Record<GroundsModuleKey, GroundsModuleState>>;
   projects: GroundsProject[];
   talk?: TransitTalk;

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { yearOf } from '../../engine/economy';
+import { formatMoney, yearOf } from '../../engine/economy';
 import { FACILITIES, FACILITY_BY_KEY, facilityAvailable } from '../../engine/infrastructure';
 import { GROUNDS_BY_KEY, GROUNDS_MODULES } from '../../data/groundsCatalog';
 import { areaUsed, levelOf } from '../../engine/grounds';
@@ -12,6 +12,9 @@ import { fmtDM } from '../../ui/format';
 import { GroundKey, GroundsScene } from './grounds/GroundsScene';
 import { GroundsPanel } from './grounds/GroundsPanel';
 import { FacilityDetail, ModuleDetail } from './grounds/GroundsDetail';
+import { PlotDetail } from './grounds/PlotDetail';
+import { isPlotKey, plotKey } from './grounds/PlotLayer';
+import { PLOT_KINDS, isOwned, plotPrice, plotsOf, siteOf } from '../../engine/groundsPlots';
 
 // =============================================================================
 // VEREINSGELÄNDE — links die gezeichnete Anlage (wächst mit Ausbau und Epoche),
@@ -38,9 +41,18 @@ export function FacilitiesView({ g, onChange, onGoto }: { g: Game; onChange: () 
     const lv = levelOf(gr, m.key);
     labels[m.key] = lv ? m.levels[lv - 1].name : `${m.name} (Bauplatz)`;
   }
+  // Nachbargrundstücke (engine/groundsPlots.ts): Schild beim Überfahren.
+  for (const p of plotsOf(club, gr)) {
+    if (!p.buyable) continue;
+    labels[plotKey(p.id)] = isOwned(gr, p.id)
+      ? `Bauland · ${p.size} Parzellen${siteOf(gr, p.id) ? '' : ' · frei'}`
+      : `${PLOT_KINDS[p.kind].name} · ${p.size} Parzellen · ${formatMoney(plotPrice(gr, p, year), year, true)}`;
+  }
   const used = areaUsed(club, gr);
-  const title = sel == null ? 'Umfeld' : sel === 'clubhouse' ? 'Geschäftsstelle' : isModule(sel) ? GROUNDS_BY_KEY[sel].name : FACILITY_BY_KEY[sel].name;
-  const common = { g, club, gr, year, onChange, onClose: () => setSel(null) };
+  const plotSel = isPlotKey(sel) ? sel.slice(5) : null;
+  const facSel = sel && sel !== 'clubhouse' && !plotSel && !isModule(sel) ? (sel as FacilityKey) : null;
+  const title = sel == null ? 'Umfeld' : sel === 'clubhouse' ? 'Geschäftsstelle' : plotSel ? 'Grundstück' : isModule(sel) ? GROUNDS_BY_KEY[sel].name : FACILITY_BY_KEY[sel as FacilityKey].name;
+  const common = { g, club, gr, year, onChange, onClose: () => setSel(null), onPlot: setSel };
 
   return (
     <DashPage>
@@ -49,7 +61,7 @@ export function FacilitiesView({ g, onChange, onGoto }: { g: Game; onChange: () 
         <div className="gr-wrap" onClick={(e) => { if ((e.target as Element).tagName === 'svg') setSel(null); }}>
           <GroundsScene club={club} year={year} month={month} unlocked={unlocked} selected={sel} hover={hover}
             onSelect={setSel} onHover={setHover} labels={labels as Record<GroundKey, string>} />
-          {!sel && <div className="gr-hint">Klicke auf ein Gebäude, einen Platz oder eine Fläche.</div>}
+          {!sel && <div className="gr-hint">Klicke auf ein Gebäude, einen Platz oder ein Grundstück.</div>}
         </div>
       </DashBox>
       <DashBox title={title} icon={sel && isModule(sel) ? undefined : 'facilities'} span={1} rows={2}>
@@ -62,8 +74,9 @@ export function FacilitiesView({ g, onChange, onGoto }: { g: Game; onChange: () 
             <KV k="Gegründet" v={club.founded} />
           </div>
         )}
-        {sel && sel !== 'clubhouse' && isModule(sel) && <ModuleDetail key={sel} {...common} k={sel} />}
-        {sel && sel !== 'clubhouse' && !isModule(sel) && <FacilityDetail key={sel} {...common} k={sel} onGoto={onGoto} />}
+        {plotSel && <PlotDetail key={sel} g={g} club={club} gr={gr} year={year} id={plotSel} onChange={onChange} onClose={() => setSel(null)} onSelect={setSel} />}
+        {sel && sel !== 'clubhouse' && !plotSel && isModule(sel) && <ModuleDetail key={sel} {...common} k={sel} />}
+        {facSel && <FacilityDetail key={facSel} {...common} k={facSel} onGoto={onGoto} />}
       </DashBox>
     </DashPage>
   );

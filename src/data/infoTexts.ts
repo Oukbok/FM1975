@@ -673,7 +673,17 @@ export const INFO_TEXTS = {
   },
   flaeche: {
     title: 'Fläche',
-    text: 'Bauplätze rund ums Stadion. Jedes Gebäude belegt Parzellen; ist alles voll, kaufst du Grundstücke und danach bis zu drei größere Nachbargelände dazu.',
+    text: 'Jedes Gebäude belegt Parzellen (je etwa 1.000 m²). Ist alles voll, kaufst du ein Nachbargrundstück im Gelände dazu: Seine Größe kommt zu deiner Fläche. Brachland ist billig, bebautes Land deutlich teurer.',
+    wiki: 'facilities-grounds',
+  },
+  grundstuecke: {
+    title: 'Nachbargrundstücke',
+    text: 'Rund um dein Gelände liegen Grundstücke, die du kaufen kannst – du siehst sie von Anfang an in der Zeichnung. Brachland kostet am wenigsten, Kleingärten das 1,4-Fache, Wohnhäuser das 2,4-Fache und Gewerbe das 3-Fache. Jeder Kauf macht die übrigen etwas teurer.',
+    wiki: 'facilities-grounds',
+  },
+  bauland: {
+    title: 'Bauen auf eigenem Grundstück',
+    text: 'Auf ein gekauftes Grundstück passt genau ein Gebäude des Umfelds, dessen Fläche höchstens so groß ist wie das Grundstück. Es steht dann hier statt an seinem festen Platz. Die Grenze bleibt deine Gesamtfläche.',
     wiki: 'facilities-grounds',
   },
   einrichtungen: {

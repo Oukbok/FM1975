@@ -3,7 +3,8 @@
 // -----------------------------------------------------------------------------
 // Oben das Stadionviertel (Stadion, Buden, Fanshop, Umfeld aus SurroundLayer),
 // südlich der Stadionstraße der Campus in Quartieren mit festen Modul-Plätzen
-// (CampusLots.tsx). Die Szene ist größer als der Ausschnitt: linke Maustaste
+// (CampusLots.tsx), ringsum die Nachbargrundstücke (PlotLayer.tsx: kaufbar,
+// gekauft = Bauland, bebaut). Die Szene ist größer als der Ausschnitt: linke Maustaste
 // verschiebt, Mausrad zoomt (ui/usePanZoom.ts). Jahreszeit: Schnee im Winter,
 // Herbstfarben im Herbst. Laufendes Stadion-Bauprojekt: Kran.
 // =============================================================================
@@ -14,11 +15,13 @@ import { tierGeometry } from '../stadium/StadiumScene';
 import { Box, Crane, Flat, P, Pitch, Track, Tree, WindowsFront, pts, shade } from './isoKit';
 import type { ClubGrounds, GroundsModuleKey } from '../../../types/grounds';
 import { SURROUND_ZONES, drawSurroundings } from './SurroundLayer';
-import { campusSouth, drawCampus } from './CampusLots';
+import { CAMPUS_SOUTH, drawCampus } from './CampusLots';
+import { PlotKey, drawPlots } from './PlotLayer';
+import { PLOTS } from '../../../engine/groundsPlots';
 import { PanZoomControls } from '../../../ui/PanZoomControls';
 import { usePanZoom } from '../../../ui/usePanZoom';
 
-export type GroundKey = FacilityKey | 'clubhouse' | GroundsModuleKey;
+export type GroundKey = FacilityKey | 'clubhouse' | GroundsModuleKey | PlotKey;
 
 export interface SceneProps {
   club: Club;
@@ -67,7 +70,7 @@ export function GroundsScene(props: SceneProps) {
     objs.push({
       key: k, depth,
       node: (
-        <g key={k} className={`gr-obj ${selected === k ? 'sel' : ''}`} onClick={() => onSelect(k)} onMouseEnter={() => onHover(k)} onMouseLeave={() => onHover(null)}>
+        <g key={k} data-key={k} className={`gr-obj ${selected === k ? 'sel' : ''}`} onClick={() => onSelect(k)} onMouseEnter={() => onHover(k)} onMouseLeave={() => onHover(null)}>
           {node}
           {on && (
             <g className="gr-label" pointerEvents="none">
@@ -157,39 +160,45 @@ export function GroundsScene(props: SceneProps) {
 
   // ---------------------------------------------------------------- Campus (Quartiere mit Modul-Plätzen)
   const gr: ClubGrounds = club.grounds ?? { location: 'stadtteil', area: 0, landBought: 0, modules: {}, projects: [], attApplied: 0, log: [] };
-  const campus = drawCampus({ lvl, unlocked, year, winter, autumn, grass, pal, primary, reputation: club.reputation ?? 60, landBought: gr.landBought, G: (k, d, n, l) => G(k, d, n, l), plain });
-  const south = campusSouth(gr.landBought);
+  const campus = drawCampus({ lvl, unlocked, year, winter, autumn, grass, pal, primary, reputation: club.reputation ?? 60, G: (k, d, n, l) => G(k, d, n, l), plain });
+  const south = CAMPUS_SOUTH;
+
+  // ---------------------------------------------------------------- Nachbargrundstücke (kaufbar, Bauland, bebaut)
+  const plotSigns = drawPlots({ club, gr, year, winter, autumn, grass, pal, primary, active: (k) => selected === k || hover === k, G: (k, d, n, l) => G(k, d, n, l), plain });
+  // Module, die auf einem eigenen Grundstück stehen, nicht zusätzlich an ihrem alten festen Platz zeichnen.
+  const sited = new Set<GroundsModuleKey>(Object.values(gr.sites ?? {}));
 
   // ---------------------------------------------------------------- Stadionumfeld
-  drawSurroundings({ gr, year, winter, pal, primary, reputation: club.reputation ?? 60, mastPos, mastH, south, G: (k, d, n, l) => G(k, d, n, l), plain });
+  drawSurroundings({ gr, year, winter, pal, primary, reputation: club.reputation ?? 60, mastPos, mastH, south, G: (k, d, n, l) => { if (!sited.has(k)) G(k, d, n, l); }, plain });
 
   // ---------------------------------------------------------------- Bäume
   const trees: [number, number, number][] = [];
-  for (let i = 0; i < 44; i++) {
+  for (let i = 0; i < 48; i++) {
     const t = hash(i * 3.1);
     const edge = i % 4;
-    const [x, y] = edge === 0 ? [-6 + t * 56, -9.6] : edge === 1 ? [-10.4, -6 + t * (south + 4)] : edge === 2 ? [-3 + t * 52, south + 1.2 + hash(i) * 1.5] : [53.2 + hash(i + 3) * 2.5, 21 + t * (south - 21)];
+    const [x, y] = edge === 0 ? [-6 + t * 56, -9.6] : edge === 1 ? [-10.4, -6 + t * (south + 4)] : edge === 2 ? [-3 + t * 58, south + 1.4 + hash(i) * 1.6] : [56.7 + hash(i + 3) * 1, 21 + t * (south - 23)];
     trees.push([x, y, 0.8 + hash(i + 9) * 0.5]);
   }
-  for (let i = 0; i < 9; i++) trees.push([47.6 + hash(i * 2.3) * 4.4, 33 + i * ((south - 34) / 9) + hash(i) * 1.2, 0.75 + hash(i + 5) * 0.4]);
-  for (let i = 0; i < 6; i++) trees.push([-3.4 + hash(i * 5.1) * 5.6, 37 + i * ((south - 38) / 6), 0.75 + hash(i + 2) * 0.4]);
-  const free = ([x, y]: [number, number, number]) => !SURROUND_ZONES.some(([zx, zy, zw, zd]) => x > zx - 0.8 && x < zx + zw + 0.8 && y > zy - 0.8 && y < zy + zd + 0.8);
+  // Nicht auf dem Umfeld und nicht auf den Grundstücken der Karte.
+  const zones: [number, number, number, number][] = [...SURROUND_ZONES, ...PLOTS.map((p): [number, number, number, number] => [p.x, p.y, p.w, p.d])];
+  const free = ([x, y]: [number, number, number]) => !zones.some(([zx, zy, zw, zd]) => x > zx - 0.8 && x < zx + zw + 0.8 && y > zy - 0.8 && y < zy + zd + 0.8);
   trees.filter(free).forEach(([x, y, s], i) => plain(`tree${i}`, x + y + 0.5, <Tree x={x} y={y} s={s} snow={winter} color={autumn && i % 3 === 0 ? '#c9822c' : i % 2 ? '#3f7a3a' : '#4b8a40'} />));
 
   objs.sort((a, b) => a.depth - b.depth);
 
   // Verschieben & Zoomen (ui/usePanZoom.ts): Start = Stadion und Trainingszentrum, der Rest liegt weiter südlich
-  const c0 = P(-12, -12), c1 = P(58, -12), c2 = P(58, south + 6), c3 = P(-12, south + 6);
+  const c0 = P(-12, -12), c1 = P(59, -12), c2 = P(59, south + 6), c3 = P(-12, south + 6);
   const bx0 = Math.min(c0[0], c3[0]), bx1 = Math.max(c1[0], c2[0]), by0 = c0[1], by1 = c2[1];
   const pz = usePanZoom({ base: { x: -150, y: -70, w: 1500, h: 980 }, bounds: { x: bx0 + 300, y: by0 + 200, w: bx1 - bx0 - 600, h: by1 - by0 - 400 }, minZoom: 0.6, maxZoom: 2.8 });
 
   return (<>
     <svg ref={pz.svgRef} className={`gr-svg pz-svg${pz.dragging ? ' dragging' : ''}`} viewBox={pz.viewBox} preserveAspectRatio="xMidYMid meet" {...pz.bind}>
       <Flat x={-140} y={-140} w={330} d={south + 290} fill={winter ? '#cdd6d2' : shade(grass, 0.82)} />
-      <Flat x={-12} y={-12} w={70} d={south + 18} fill={grass} stroke={winter ? '#b3beb8' : shade(grass, 0.7)} />
+      <Flat x={-12} y={-12} w={71} d={south + 18} fill={grass} stroke={winter ? '#b3beb8' : shade(grass, 0.7)} />
       {campus.base}
       {objs.map((o) => <g key={o.key + o.depth}>{o.node}</g>)}
       {campus.signs}
+      {plotSigns}
     </svg>
     <PanZoomControls pz={pz} />
   </>);

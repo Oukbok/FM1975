@@ -113,7 +113,7 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
     // Szenen-Seite: kein Rahmen, kein Kalender – Stadion und Umfeld füllen die Fläche (shell-scene in GameShell).
     <div className="scene-page">
         <div className="gr-wrap st-wrap sv-wrap" ref={wrap} onClick={() => close()}>
-          <StadiumScene blocks={shown} built={st.built} crowd={crowd ? Math.max(0.35, Math.min(0.97, st.averageAttendanceRate ?? 0.6)) : 0} colors={{ primary, secondary }} year={year} month={month} land={gr.landBought} onView={() => setAnchor(null)}
+          <StadiumScene blocks={shown} built={st.built} crowd={crowd ? Math.max(0.35, Math.min(0.97, st.averageAttendanceRate ?? 0.6)) : 0} colors={{ primary, secondary }} year={year} month={month} land={gr.plots ? gr.plots.length : gr.landBought} onView={() => setAnchor(null)}
             selected={sel} hover={hover} building={bp?.blockId ?? null} buildingAll={!!bp?.rebuild} group={planned.map((t) => t.id)} ghost={rbPreview ? rbPreview.map((t) => t.id) : changed.map((t) => t.id)}
             blocksActive={blocksActive} venues={venues} venueActive={venueActive} selectedVenue={venue}
             onSelect={selectBlock} onHover={setHover} onVenue={selectVenue} />

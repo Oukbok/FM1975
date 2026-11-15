@@ -33,3 +33,14 @@
 .gd-proj { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; color: var(--text); }
 .gd-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
 .gd-src { margin-top: 8px; font-size: 12px; color: var(--text-3); }
+/* Nachbargrundstücke: kompakte Liste mit Preis und Knopf (views/verein/grounds/PlotDetail.tsx) */
+.gpl { display: flex; flex-direction: column; gap: 2px; }
+.gpl-row { display: flex; align-items: center; gap: 8px; padding: 3px 0; border-bottom: 1px solid var(--border-soft); }
+.gpl-row:last-child { border-bottom: none; }
+.gpl-name { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 4px 6px; border: none; border-radius: var(--radius-sm); background: transparent;
+  color: var(--text); font: inherit; font-size: 15px; font-weight: 600; text-align: left; cursor: pointer; }
+.gpl-name:hover:not(:disabled) { background: var(--panel-hover); }
+.gpl-name:disabled { cursor: default; }
+.gpl-name small { color: var(--text-3); font-size: 13px; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gpl-price { flex: none; min-width: 84px; text-align: right; font-size: 14px; font-weight: 700; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.gpl-row .btn-sm { flex: none; align-self: center; }

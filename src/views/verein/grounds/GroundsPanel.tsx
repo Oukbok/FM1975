@@ -6,14 +6,17 @@ import { useState } from 'react';
 import { Game } from '../../../game/state';
 import { Club, FacilityKey } from '../../../types';
 import { ClubGrounds, GroundsModuleKey } from '../../../types/grounds';
-import { GROUNDS_CATEGORIES, GROUNDS_MODULES, LOCATIONS, licenseMin } from '../../../data/groundsCatalog';
+import { GROUNDS_BY_KEY, GROUNDS_CATEGORIES, GROUNDS_MODULES, LOCATIONS, licenseMin } from '../../../data/groundsCatalog';
 import {
   accessInfo, areaUsed, checkNext, groundsAttendanceParts, groundsMoodParts, incidentRisk, levelDef, levelOf, riskReduction, typicalAttendance,
 } from '../../../engine/grounds';
 import { FACILITIES, FACILITY_BY_KEY, facilityAvailable } from '../../../engine/infrastructure';
 import { KV, Meter } from '../../../ui/DashPage';
 import { vColor } from '../../../ui/format';
-import { LandBuy, money } from './GroundsDetail';
+import { money } from './GroundsDetail';
+import { PlotList } from './PlotDetail';
+import { isOwned, plotsOf, siteOf } from '../../../engine/groundsPlots';
+import { plotKey } from './PlotLayer';
 import Icon from '../../../components/Icon';
 import type { GroundKey } from './GroundsScene';
 import { InfoTip } from '../../../ui/InfoTip';
@@ -50,14 +53,27 @@ function Overview({ g, club, gr, year, onChange, onSelect }: Props) {
   const moodParts = groundsMoodParts(gr, year, g.calendar.currentDate);
   const tier = g.leagues?.playerDivision?.tier ?? 1;
   const s = gr.stats;
+  const own = plotsOf(club, gr).filter((p) => isOwned(gr, p.id));
   const lic = (['floodlight', 'press'] as const).map((k) => ({ k, need: licenseMin(k, tier, year), have: levelOf(gr, k) }));
   return (
     <>
       <div className="gp-sec">Lage: {loc.name}</div>
       <div className="dnote">{loc.desc}</div>
       <Meter label="Fläche belegt" info="flaeche" value={used} max={gr.area} color={used >= gr.area ? 'var(--orange)' : undefined} text={`${used} / ${gr.area}`} />
-      <LandBuy g={g} club={club} gr={gr} year={year} onDone={(t, ok) => { setNote(t); if (ok) onChange(); }} />
       {note && <div className="dnote" style={{ color: 'var(--accent)', fontWeight: 700 }}>{note}</div>}
+
+      {own.length > 0 && <div className="gp-sec">Eigene Grundstücke</div>}
+      {own.map((p) => {
+        const site = siteOf(gr, p.id);
+        return (
+          <button key={p.id} className="gp-row" onClick={() => onSelect(plotKey(p.id))}>
+            <span className="grow">{site ? GROUNDS_BY_KEY[site].name : 'Bauland'}<small>{p.size} Parzellen · {p.where}</small></span>
+            <span className="gp-st" style={{ color: site ? undefined : 'var(--green)' }}>{site ? 'bebaut' : 'frei'}</span>
+          </button>
+        );
+      })}
+      <div className="gp-sec">Nachbargrundstücke<InfoTip k="grundstuecke" /></div>
+      <PlotList g={g} club={club} gr={gr} year={year} onSelect={onSelect} onDone={(t, ok) => { setNote(t); if (ok) onChange(); }} />
 
       <div className="gp-sec">Anreise<InfoTip k="anreise" /></div>
       <Meter label="Normales Spiel" value={Math.min(1.5, accTyp.ratio)} max={1.5} color={accTyp.ratio >= 1 ? 'var(--green)' : 'var(--orange)'} text={`${Math.round(Math.min(accTyp.ratio, 9) * 100)} %`} />
