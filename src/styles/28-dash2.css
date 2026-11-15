@@ -135,6 +135,14 @@
 .dz-rlead { font-size: 18px; font-weight: 600; color: var(--text); margin: 0 0 10px; line-height: 1.5; }
 .dz-rbody { font-size: 17px; color: var(--text-2); margin: 0; line-height: 1.65; white-space: pre-wrap; }
 .dz-rtext .dsec { margin-top: 14px; }
+.dz-rdecide { flex: 0 0 auto; max-height: 46%; overflow-y: auto; padding: 8px 8px 10px 0; border-top: 1px solid var(--border-soft); }
+.dz-rdecide .ev-choices, .dz-rdecide .ev-result { margin-top: 0; }
+.dz-rdecide .dsec { margin-top: 0; }
+/* Entscheidung im Newscenter: Knöpfe nebeneinander (umbrechend), jeder gleich breit */
+.ev-choices.ev-row .ev-list { flex-direction: row; flex-wrap: wrap; }
+.ev-choices.ev-row .ev-choice { flex: 1 1 0; min-width: 150px; width: auto; min-height: 48px; padding: 7px 12px; }
+.ev-choices.ev-row .ev-choice-l { font-size: 15px; }
+.ev-choices.ev-row .ev-choice-h { font-size: 13.5px; }
 .dz-rfoot { display: flex; align-items: flex-end; gap: 14px; padding-top: 10px; border-top: 1px solid var(--border-soft); min-height: 52px; }
 .dz-rlinks { display: flex; flex-wrap: wrap; gap: 8px; }
 .dz-rfaces { margin-left: auto; display: flex; align-items: flex-end; gap: 22px; }

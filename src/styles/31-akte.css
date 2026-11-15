@@ -290,7 +290,7 @@ body { background: var(--paper-page); }
 .dz-rmeta { border-bottom-color: rgba(20, 28, 40, 0.18); }
 .dz-rlead { color: var(--text); }
 .dz-rbody { color: var(--text-2); }
-.dz-rfoot { border-top-color: rgba(20, 28, 40, 0.18); }
+.dz-rfoot, .dz-rdecide { border-top-color: rgba(20, 28, 40, 0.18); }
 /* Pressefoto im Lesebereich (data/pressPhotos.ts; nur wenn ein Bild vorliegt) */
 .dz-rphoto { display: block; width: 100%; aspect-ratio: 2 / 1; object-fit: cover; margin: 4px 0 12px; filter: grayscale(1) contrast(1.05); border: 1px solid var(--border-soft); }
 

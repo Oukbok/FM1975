@@ -305,7 +305,7 @@ function buyDomestic(ctx: RoundCtx, buyer: Club, a: SquadAssessment, need: Group
     transferPlayer(g, p, seller, buyer, fee, today);
     p.contract.weeklyWage = Math.round(join.wishes.demand.min);
     ctx.busy.add(p.id);
-    reportDeal(ctx, `${buyer.name} verpflichtet ${name} von ${seller.name} (${fmtPrice(fee)})`, fee, name, buyer, seller.name, need);
+    reportDeal(ctx, `${buyer.name} verpflichtet ${name} von ${seller.name} (${fmtPrice(fee)})`, fee, name, buyer, seller.name, need, p.id);
     return true;
   }
   return false;
@@ -354,11 +354,11 @@ function buyExternal(ctx: RoundCtx, club: Club, need: GroupNeed, want: { min: nu
   bookTransfer(club, fee, true, p.fullName, today, club.isPlayerControlled);
   recordTransfer(p, from, club.name, Math.round(fee * economyScale(year)), today);
   reportDeal(ctx, lower ? `${club.name} holt ${p.fullName} von ${from} (${fmtPrice(fee)})`
-    : `${club.name} holt ${p.fullName} (${origin.nationality}) aus dem Ausland (${fmtPrice(fee)})`, fee, p.fullName, club, from, need);
+    : `${club.name} holt ${p.fullName} (${origin.nationality}) aus dem Ausland (${fmtPrice(fee)})`, fee, p.fullName, club, from, need, p.id);
   return true;
 }
 
-export function reportDeal(ctx: RoundCtx, line: string, fee: number, name: string, buyer: Club, from: string, need: GroupNeed | PosGroup): void {
+export function reportDeal(ctx: RoundCtx, line: string, fee: number, name: string, buyer: Club, from: string, need: GroupNeed | PosGroup, pid?: string): void {
   const group = typeof need === 'string' ? need : need.group;
   const m = market(ctx.g);
   m.news.push(line);
@@ -366,7 +366,7 @@ export function reportDeal(ctx: RoundCtx, line: string, fee: number, name: strin
   // Spitzentransfers sofort melden.
   if (fee >= 0.45 * capBase(ctx.year, 'germany')) {
     pushMessage(ctx.g.messages, makeMessage({
-      date: ctx.today, category: 'transfer', from: 'Sportpresse',
+      date: ctx.today, category: 'transfer', from: 'Sportpresse', relatedId: pid,
       subject: `Spitzentransfer: ${name} wechselt zu ${buyer.name}`,
       shortText: `${fmtPrice(fee)} Ablöse – ${buyer.shortName} verstärkt die ${GROUP_LABEL[group]}.`,
       bodyText: `${buyer.name} hat ${name} von ${from} verpflichtet. Die Ablöse beträgt ${fmtPrice(fee)}.\n\n`

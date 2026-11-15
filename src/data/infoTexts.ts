@@ -981,7 +981,7 @@ export const INFO_TEXTS = {
   },
   verhandlungen: {
     title: 'Laufende Verhandlungen',
-    text: 'Alle offenen Gespräche mit Vereinen und Spielern. Ohne neues Angebot schläft ein Gespräch nach 30 Tagen ein (Spalte „Läuft aus“, rot = in der nächsten Woche). Klick öffnet die Verhandlung.',
+    text: 'Oben offene Angebote anderer Vereine für deine Spieler (annehmen, mehr fordern, ablehnen – bis zur Frist). Darunter deine Gespräche mit Vereinen und Spielern: Ohne neues Angebot schläft eines nach 30 Tagen ein (Spalte „Läuft aus“, rot = in der nächsten Woche). Klick öffnet die Verhandlung.',
     wiki: 'transfers-market',
   },
   festverpflichtet: {

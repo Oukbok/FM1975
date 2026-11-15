@@ -84,6 +84,6 @@ function tryBuy(ctx: RoundCtx, buyer: Club, p: Player, budget: number, credit: n
   }
   p.contract.weeklyWage = Math.round(join.wishes.demand.min);
   ctx.busy.add(p.id);
-  reportDeal(ctx, `${buyer.name} holt Leistungsträger ${name} von ${seller.name} (${fmtPrice(fee)})`, fee, name, buyer, seller.name, GROUP_OF[p.naturalPosition]);
+  reportDeal(ctx, `${buyer.name} holt Leistungsträger ${name} von ${seller.name} (${fmtPrice(fee)})`, fee, name, buyer, seller.name, GROUP_OF[p.naturalPosition], p.id);
   return true;
 }

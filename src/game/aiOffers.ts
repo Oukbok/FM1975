@@ -163,10 +163,14 @@ CHOICE_HANDLERS[OFFER_TYPE] = (g, ref, choice) => {
     return { text: `${p.fullName} wechselt für ${fmtPrice(amount)} zu ${buyerName}.` };
   };
   if (choice === 'annehmen') return sell(fee);
-  if (choice === 'nachverhandeln') {
-    const higher = Math.round(fee * 1.25 / 5000) * 5000;
+  // Gegenangebot: „Mehr fordern“ in der Nachricht = +25 %; Transfers › Verhandlungen bietet
+  // zusätzlich +10 % und +50 % (`mehr10`/`mehr25`/`mehr50`, game/incomingOffers.ts).
+  // Je dreister die Forderung, desto seltener bessert der Käufer bis an seine Grenze nach.
+  const counter = choice === 'nachverhandeln' ? 25 : Number(/^mehr(\d+)$/.exec(choice)?.[1] ?? 0);
+  if (counter > 0) {
+    const higher = Math.round(fee * (1 + counter / 100) / 5000) * 5000;
     if (higher <= max) return sell(higher);
-    if (max >= fee * 1.05 && Math.random() < 0.7) {
+    if (max >= fee * 1.05 && Math.random() < (counter <= 10 ? 0.85 : counter <= 25 ? 0.7 : 0.4)) {
       const last = Math.round(max / 5000) * 5000;
       const r = sell(last);
       return { text: `${buyerName} geht nicht ganz so weit, bessert aber auf ${fmtPrice(last)} nach – du schlägst ein. ${r.text}` };

@@ -12,20 +12,17 @@ import PlayerAvatar from '../../../components/PlayerAvatar';
 import { CATEGORY_META, unreadCount } from '../../../engine/messages';
 import type { Game } from '../../../game/state';
 import type { Screen } from '../../../shell/navigation';
-import type { InboxMessage, MessageCategory } from '../../../types';
+import type { InboxMessage } from '../../../types';
 import { WD_FULL, vColor } from '../../../ui/format';
-import { EventChoices } from '../EventChoices';
+import { EventChoices, hasEventChoices } from '../EventChoices';
+import { msgLinks, type MsgLink } from './msgLinks';
+import { presetSubTab } from '../../../ui/SubTabs';
+import { useClubProfile } from '../../../components/club/ClubLink';
 import { msgGroup, msgPlayer, msgPlayers, ownGames, type MsgGroup } from './data';
 import PosBadge from '../../../components/PosBadge';
 import { InboxFilterBar, matchesFilter, needsDecision, type InboxFilter } from '../inboxFilter';
 import { pressPhotoFor } from '../../../data/pressPhotos';
 
-/** Passende Seite je Kategorie (Knopf im Lesebereich). */
-const CAT_TARGET: Partial<Record<MessageCategory, [Screen, string]>> = {
-  transfer: ['verhandlungen', 'Verhandlungen'], injury: ['squad', 'Kader'], match: ['fixtures', 'Spielplan'],
-  board: ['cat-verein', 'Verein'], contract: ['vertraege', 'Verträge'], training: ['training', 'Trainingsplan'],
-  media: ['presse', 'Presse'], cup: ['cup', 'Pokal'],
-};
 
 const dmy = (iso: string) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
 const wd = (iso: string) => WD_FULL[new Date(iso.slice(0, 10) + 'T00:00:00Z').getUTCDay()];
@@ -135,13 +132,23 @@ export function Newscenter({ g, onGoto, onWatch, onChange, openPlayer }: {
 function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
   g: Game; m: InboxMessage | null; onGoto: (s: Screen) => void; onWatch: (id: string) => void; onChange: () => void; openPlayer: (id: string) => void;
 }) {
+  const clubApi = useClubProfile();
   if (!m) return <div className="dz-read dz-read-empty">Wähle links eine Nachricht aus.</div>;
   const faces = msgPlayers(g, m);
   const p = faces[0] ?? null;
   const game = !p && m.relatedId ? ownGames(g).find((x) => x.matchId === m.relatedId) : undefined;
   const matchId = game ? m.relatedId! : null;
-  const target = CAT_TARGET[m.category];
-  const photo = pressPhotoFor(m, { won: !!game && game.gf != null && game.ga != null && game.gf > game.ga });
+  // Sprungknöpfe nach Inhalt der Nachricht (dash/msgLinks.ts) – nie auf eine leere Seite.
+  const links = msgLinks(g, m, faces).filter((l) => !l.club || clubApi?.canOpen(l.club));
+  const go = (l: MsgLink) => {
+    if (l.club) { clubApi?.open(l.club); return; }
+    if (l.player) { openPlayer(l.player); return; }
+    if (l.tab) presetSubTab(l.tab[0], l.tab[1]);
+    if (l.screen) onGoto(l.screen);
+  };
+  // Offene Entscheidung: kein Pressefoto – Text und Wahl sollen ohne Scrollen passen.
+  const deciding = !!m.choices?.length && !!m.eventRef && !m.eventRef.resolved && !m.resultText;
+  const photo = deciding ? null : pressPhotoFor(m, { won: !!game && game.gf != null && game.ga != null && game.gf > game.ga });
   return (
     <article className="dz-read" key={m.id}>
       <div className="dz-rdate"><span>{wd(m.date)}</span> {dmy(m.date)}</div>
@@ -151,8 +158,9 @@ function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
         {m.shortText && m.shortText !== m.bodyText && <p className="dz-rlead">{m.shortText}</p>}
         {photo && <img className="dz-rphoto" src={photo} alt="" loading="lazy" draggable={false} />}
         <p className="dz-rbody">{m.bodyText}</p>
-        <EventChoices g={g} msg={m} onDone={onChange} />
       </div>
+      {/* Entscheidung außerhalb des Textscrollers: immer sichtbar, egal wie lang Text/Foto sind. */}
+      {hasEventChoices(m) && <div className="dz-rdecide"><EventChoices g={g} msg={m} onDone={onChange} row /></div>}
       <div className="dz-rfoot">
         <div className="dz-rlinks">
           {matchId && <button className="b3" onClick={() => onWatch(matchId)}>Spielbericht</button>}
@@ -160,7 +168,7 @@ function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
           {p && m.category === 'contract' && p.clubId === g.managedClubId && !p.isYouth && g.players[p.id] && (
             <button className="b3" onClick={() => openContractScreen({ kind: 'renew', pid: p.id })}>Neuen Vertrag verhandeln</button>
           )}
-          {target && <button className="b3" onClick={() => onGoto(target[0])}>{target[1]}</button>}
+          {links.map((l) => <button key={l.label} className="b3" title={l.title} onClick={() => go(l)}>{l.label}</button>)}
         </div>
         {faces.length > 0 && (
           <div className={`dz-rfaces n${faces.length}`}>

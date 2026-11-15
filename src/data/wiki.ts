@@ -1625,7 +1625,10 @@ Höchstens fünf Zugänge im Sommer, zwei im Winter, sieben pro Saison. Im Schni
 Fehlen nach dem Sommerfenster immer noch Spieler (unter 20), rücken neue Spieler nach. Das ist nur noch selten nötig.
 
 ### Dein Verein
-Dein Kader wird nie automatisch verändert. Angebote für deine Spieler kommen bevorzugt von Vereinen, die auf der Position Bedarf haben.`,
+Dein Kader wird nie automatisch verändert. Angebote für deine Spieler kommen bevorzugt von Vereinen, die auf der Position Bedarf haben.
+
+### Angebote für deine Spieler
+Ein Kaufangebot oder eine Leihanfrage kommt als Nachricht mit Entscheidung (Frist fünf Tage, danach wird abgelehnt). Du antwortest direkt in der Nachricht oder unter **Transfers › Verhandlungen** im Abschnitt „Angebote für deine Spieler“ – dorthin führt auch der Knopf „Angebot verhandeln“. Dort kannst du annehmen, ablehnen oder **mehr fordern**: +10 %, +25 % oder +50 %. Liegt die Forderung im Rahmen des Käufers, ist der Wechsel perfekt; sonst bessert er manchmal bis an seine Grenze nach – je dreister die Forderung, desto eher springt er ab. Will der Spieler wechseln, enttäuscht ihn ein Nein.`,
   },
   {
     id: 'ai-contracts-loans',

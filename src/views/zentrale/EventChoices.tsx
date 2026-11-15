@@ -3,13 +3,21 @@ import { InboxMessage } from '../../types';
 import { Game } from '../../game/state';
 import { chooseEventOption } from '../../game/eventsGame';
 
-/** Entscheidungsknöpfe eines Zufallsereignisses (bzw. das Ergebnis danach). */
-export function EventChoices({ g, msg, onDone }: { g: Game; msg: InboxMessage; onDone?: () => void }) {
+/** Hat die Nachricht eine offene Entscheidung oder ein Ergebnis, das EventChoices zeigt? */
+export function hasEventChoices(msg: InboxMessage): boolean {
+  return !!msg.resultText || (!!msg.choices?.length && !!msg.eventRef && !msg.eventRef.resolved);
+}
+
+/**
+ * Entscheidungsknöpfe eines Zufallsereignisses (bzw. das Ergebnis danach).
+ * `row`: Knöpfe nebeneinander (fester Entscheidungsbereich im Newscenter).
+ */
+export function EventChoices({ g, msg, onDone, row = false }: { g: Game; msg: InboxMessage; onDone?: () => void; row?: boolean }) {
   const [, tick] = useState(0);
   if (msg.resultText) return <div className="ev-result">{msg.resultText}</div>;
   if (!msg.choices?.length || !msg.eventRef || msg.eventRef.resolved) return null;
   return (
-    <div className="ev-choices">
+    <div className={`ev-choices ${row ? 'ev-row' : ''}`}>
       <div className="dsec">Deine Entscheidung (bis {msg.eventRef.deadline.split('-').reverse().join('.')})</div>
       <div className="ev-list">
         {msg.choices.map((c) => (

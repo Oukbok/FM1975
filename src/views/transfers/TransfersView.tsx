@@ -25,6 +25,7 @@ import { MarketTable } from './MarketTable';
 import { EMPTY_FILTER, FilterButton, filterCount, passes, type MarketFilter } from './MarketFilter';
 import { marketInfoRows, rowsFor } from '../../game/marketView';
 import { homeCountryOf } from '../../game/state';
+import { incomingOffers } from '../../game/incomingOffers';
 
 /** Nationalität der Einheimischen (für „Herkunft“ im Filter). */
 const homeNat = (g: Game): string => homeCountryOf(g).toUpperCase();
@@ -188,13 +189,13 @@ type NegTab = 'uebersicht' | 'bilanz';
 export function VerhandlungenView({ g, onChange = () => {} }: { g: Game; onChange?: () => void }) {
   const [tab, setTab] = useSubTab<NegTab>('transfers.verhandlungen', 'uebersicht');
   const talk = useTalk(g, onChange);
-  const running = activeTalks(g).filter((t) => t.phase !== 'agreed').length;
+  const running = activeTalks(g).filter((t) => t.phase !== 'agreed').length + incomingOffers(g).length;
   return (
     <SubTabsPage active={tab} onSelect={setTab}
       tabs={[{ id: 'uebersicht', label: 'Übersicht', count: running || undefined }, { id: 'bilanz', label: 'Meldungen & Bilanz' }]}>
       {tab === 'uebersicht' ? (
         <DashPage>
-          <RunningTalksBox g={g} onOpen={talk.openTalk} />
+          <RunningTalksBox g={g} onOpen={talk.openTalk} onChange={onChange} />
           <CommittedBox g={g} onOpen={talk.openTalk} />
           <LoansBox g={g} />
           {talk.modal}

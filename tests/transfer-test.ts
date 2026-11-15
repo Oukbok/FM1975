@@ -13,6 +13,8 @@ import { makePersona, personaOf } from '../src/engine/persona';
 import { agentShare, hasAgent } from '../src/engine/playerWishes';
 import { migratePersonas, wishesFor, contractClausesDaily } from '../src/game/playerWishesGame';
 import { chooseEventOption } from '../src/game/eventsGame';
+import { rollAiOffers } from '../src/game/aiOffers';
+import { answerIncoming, incomingOffers } from '../src/game/incomingOffers';
 import { swapValueFor } from '../src/game/transferTalks';
 import { Game } from '../src/game/state';
 import { fmtPrice, fmtWage, setDisplayYear, setWagePeriod, wageFromDisplay, wageToDisplay } from '../src/ui/format';
@@ -257,5 +259,22 @@ if (lp.loan || lp.clubId !== o7.id) fail('Kaufoption nicht gezogen');
     if (fmtWage(wageFromDisplay(v)) !== `${v.toLocaleString('de-DE')} € / Jahr`) fail(`EUR-Rundweg ${v}: ${fmtWage(wageFromDisplay(v))}`);
   }
   setDisplayYear(1975);
+}
+// 9) KI-Angebot für einen eigenen Spieler: erscheint unter „Angebote für deine Spieler“
+//    (game/incomingOffers.ts), Gegenangebot +10 % aus Transfers › Verhandlungen löst es auf.
+{
+  const g9 = fresh();
+  g9.calendar.currentDate = '1975-07-08';
+  for (let i = 0; i < 60 && !incomingOffers(g9).length; i++) rollAiOffers(g9, '1975-07-08');
+  const offs = incomingOffers(g9);
+  if (!offs.length) fail('kein KI-Angebot nach 60 Versuchen');
+  const o = offs[0];
+  if (o.kind !== 'sale' || !o.player || o.fee <= 0 || o.deadline !== '1975-07-13') fail('Angebot unvollständig: ' + JSON.stringify({ k: o.kind, f: o.fee, d: o.deadline }));
+  if (!o.msg.choices?.length) fail('Angebot ohne Wahlknöpfe in der Nachricht');
+  const txt = answerIncoming(g9, o.msg, 'mehr10');
+  if (!o.msg.eventRef?.resolved || !o.msg.resultText) fail('Gegenangebot nicht aufgelöst');
+  if (!txt.includes('Mehr fordern (+10 %)')) fail('Ergebnis benennt das Gegenangebot nicht: ' + txt);
+  if (incomingOffers(g9).length) fail('aufgelöstes Angebot steht noch in der Liste');
+  console.log('KI-Angebot:', o.msg.subject, '→', txt);
 }
 console.log('Transfer-Test bestanden.');

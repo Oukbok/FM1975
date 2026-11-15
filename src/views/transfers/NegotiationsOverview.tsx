@@ -1,7 +1,9 @@
 // =============================================================================
 // TRANSFERS › VERHANDLUNGEN › ÜBERSICHT (Wunsch Pascal)
 // -----------------------------------------------------------------------------
-// Laufende Verhandlungen (Tabelle, Klick öffnet das Gespräch), fest verpflichtete
+// Laufende Verhandlungen (oben offene Angebote anderer Vereine für deine Spieler mit
+// Frist und Antwortknöpfen – IncomingOffers.tsx –, darunter deine Gespräche als
+// Tabelle, Klick öffnet das Gespräch), fest verpflichtete
 // Spieler, die später kommen oder gehen (Einigung fürs nächste Fenster, Vorverträge),
 // Leihspieler in beide Richtungen mit ihrer Saisonleistung und der Stand des
 // Transferfensters. Nur Anzeige – Daten aus transferTalks, Player.loan,
@@ -16,6 +18,8 @@ import type { Game } from '../../game/state';
 import type { Player } from '../../types';
 import { DashBox, Empty, KV } from '../../ui/DashPage';
 import { fmtPrice } from '../../ui/format';
+import { incomingOffers } from '../../game/incomingOffers';
+import { IncomingOffersList, useOfferAnswers } from './IncomingOffers';
 
 const PHASE: Record<string, string> = { club: 'mit dem Verein', player: 'mit dem Spieler', agreed: 'Einigung' };
 
@@ -41,11 +45,19 @@ function ClubName({ g, id }: { g: Game; id?: string }) {
 
 const note = (p: Player) => (p.seasonStats.ratedMatches ? p.seasonStats.averageRating.toFixed(2).replace('.', ',') : '–');
 
-export function RunningTalksBox({ g, onOpen }: { g: Game; onOpen: (t: TransferTalk) => void }) {
+export function RunningTalksBox({ g, onOpen, onChange }: { g: Game; onOpen: (t: TransferTalk) => void; onChange: () => void }) {
   const talks = activeTalks(g).filter((t) => t.phase !== 'agreed').sort((a, b) => b.lastAction.localeCompare(a.lastAction));
+  const offers = incomingOffers(g);
+  const [done, setDone] = useOfferAnswers();
   const today = g.calendar.currentDate;
   return (
-    <DashBox title="Laufende Verhandlungen" info="verhandlungen" span={2} flush right={`${talks.length}`}>
+    <DashBox title="Laufende Verhandlungen" info="verhandlungen" span={2} flush
+      right={offers.length ? `${offers.length} ${offers.length === 1 ? 'Angebot' : 'Angebote'} · ${talks.length} eigene` : `${talks.length}`}>
+      {(offers.length > 0 || done.length > 0) && <>
+        <div className="dsec ioff-sec">Angebote für deine Spieler</div>
+        <IncomingOffersList g={g} offers={offers} done={done} setDone={setDone} onChange={onChange} />
+        <div className="dsec ioff-sec">Deine Verhandlungen</div>
+      </>}
       {talks.length ? (
         <table className="dtable rl-players">
           <thead><tr>
@@ -74,7 +86,8 @@ export function RunningTalksBox({ g, onOpen }: { g: Game; onOpen: (t: TransferTa
             })}
           </tbody>
         </table>
-      ) : <Empty icon="negotiations">Keine laufenden Gespräche. Verhandeln kannst du im Transfermarkt, im Spielerpool und in der Beobachtung – oder per Rechtsklick auf einen Spieler.</Empty>}
+      ) : offers.length || done.length ? <div className="dnote ioff-none">Keine eigenen Gespräche. Verhandeln kannst du im Transfermarkt, im Spielerpool und in der Beobachtung.</div>
+        : <Empty icon="negotiations">Keine laufenden Gespräche. Verhandeln kannst du im Transfermarkt, im Spielerpool und in der Beobachtung – oder per Rechtsklick auf einen Spieler. Angebote anderer Vereine für deine Spieler erscheinen ebenfalls hier.</Empty>}
     </DashBox>
   );
 }

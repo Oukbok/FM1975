@@ -51,6 +51,11 @@ export function SubTabsPage<T extends string>({ tabs, active, onSelect, classNam
 
 const remembered = new Map<string, string>();
 
+/** Reiter einer Seite vorwählen, bevor sie geöffnet wird (z. B. Sprung aus dem Newscenter). */
+export function presetSubTab(key: string, tab: string): void {
+  remembered.set(key, tab);
+}
+
 /** Reiter-Zustand, der beim Seitenwechsel erhalten bleibt (bis zum Neuladen). */
 export function useSubTab<T extends string>(key: string, initial: T): [T, (t: T) => void] {
   const [tab, setTab] = useState<T>(() => (remembered.get(key) as T | undefined) ?? initial);

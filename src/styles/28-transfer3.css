@@ -206,3 +206,28 @@
 /* Transfermarkt: Miniatur-Gesicht vor dem Namen (Wunsch Pascal) */
 .tm-name { display: inline-flex; align-items: center; gap: 10px; }
 .tm-name > .fthumb { margin: -4px 0; }
+
+/* ---- Transfers › Verhandlungen: Angebote für deine Spieler (IncomingOffers.tsx) ---- */
+.ioff-sec { padding: 0 14px; margin: 12px 0 4px; }
+.ioff-sec:first-child { margin-top: 10px; }
+.ioff-none { padding: 4px 14px 10px; }
+.ioff { display: flex; flex-direction: column; }
+.ioff-row {
+  display: grid; grid-template-columns: minmax(200px, 1fr) minmax(200px, 1.1fr) auto; align-items: center; gap: 14px;
+  padding: 8px 14px; border-bottom: 1px solid var(--border-soft); box-shadow: inset 4px 0 0 var(--accent);
+}
+.ioff-who { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.ioff-name { display: flex; flex-direction: column; min-width: 0; }
+.ioff-name b { font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
+.ioff-sub { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-3); white-space: nowrap; overflow: hidden; }
+.ioff-deal { display: flex; flex-direction: column; min-width: 0; font-size: 14px; color: var(--text-2); }
+.ioff-club { font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ioff-what b { color: var(--text); }
+.ioff-wish { color: var(--neg); }
+.ioff-due { font-size: 13px; color: var(--text-3); }
+.ioff-due.soon { color: var(--neg); font-weight: 600; }
+.ioff-act { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
+.ioff-counter { display: inline-flex; align-items: center; gap: 4px; padding: 0 6px; border-left: 1px solid var(--border-soft); border-right: 1px solid var(--border-soft); }
+.ioff-counter-l { font-size: 12px; color: var(--text-3); margin-right: 2px; white-space: nowrap; }
+.ioff-counter .b3 { padding: 0 8px; min-width: 0; }
+.ioff-done { margin: 8px 14px 0; padding: 8px 12px; border-left: 3px solid var(--sel-border); background: var(--btn-bg); color: var(--text); font-size: 14.5px; }
