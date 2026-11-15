@@ -2,6 +2,7 @@
 // Spielergespräch — linke Buchseite: Kopf, Gesicht, Steckbrief, Leistung,
 // Status, Moral (mit Animation der Veränderung) und Szene.
 // =============================================================================
+import SuspensionCard from '../../../components/status/SuspensionCard';
 import { useEffect, useRef, useState } from 'react';
 import PlayerAvatar from '../../../components/PlayerAvatar';
 import { FitnessIcon, FormIcon, FreshnessIcon, MoraleIcon, fitness100, form100, freshness100, statusLevel, statusWord } from '../../../components/status';
@@ -83,7 +84,7 @@ export function TalkLeft({ p, club, phase, anim }: { p: Player; club?: Club; pha
           <div className={`ptk-status ${injured ? 'bad' : banned ? 'warn' : 'ok'}`}>
             <Glyph name={injured ? 'injury' : banned ? 'card' : 'check'} size={injured || banned ? 30 : 38} />
           </div>
-          <div className="ptk-state-word">{injured ? `verletzt (${p.injury?.daysRemaining ?? '?'} T.)` : banned ? `gesperrt (${p.suspensionMatches})` : 'fit'}</div>
+          <div className="ptk-state-word">{injured ? `verletzt (${p.injury?.daysRemaining ?? '?'} T.)` : banned ? <SuspensionCard p={p} size={24} count /> : 'fit'}</div>
         </div>
         <div className="ptk-state">
           <div className="ptk-h4">Moral<InfoTip k="moral" /></div>

@@ -593,6 +593,8 @@ export interface Player {
   injury: Injury | null;
   /** Restliche Spielsperren (Anzahl Spiele). */
   suspensionMatches: number;
+  /** Grund der laufenden Sperre für das Kartensymbol: Platzverweis oder Gelbsperre/Gelb-Rot (fehlt = Rot). */
+  suspensionCause?: 'red' | 'yellow';
   /** Gesammelte Gelbe Karten in der Saison (für Sperren-Logik). */
   yellowCardCount: number;
 

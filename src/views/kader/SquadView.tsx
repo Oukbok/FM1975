@@ -1,3 +1,4 @@
+import SuspensionCard from '../../components/status/SuspensionCard';
 import { autoFillLineup } from '../../engine/lineupAI';
 import { promiseLineupPrefs } from '../../game/seasonPromisesGame';
 import { eraRules } from '../../engine/match/era';
@@ -107,7 +108,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
                   <td className="num">{pl.seasonStats.appearances}</td>
                   <td className="num">{pl.seasonStats.goals}</td>
                   <td className={`nowrap ${pl.availability === 'injured' ? 'red' : pl.suspensionMatches > 0 ? 'orange-text' : 'muted'}`}>
-                    {pl.availability === 'injured' ? `verletzt (${pl.injury?.daysRemaining} T.)` : pl.suspensionMatches > 0 ? `gesperrt (${pl.suspensionMatches})` : 'fit'}
+                    {pl.availability === 'injured' ? `verletzt (${pl.injury?.daysRemaining} T.)` : pl.suspensionMatches > 0 ? <SuspensionCard p={pl} count /> : 'fit'}
                   </td>
                   <td className="ctr">{!pl.isYouth && <button className="ptk-open" title="Gespräch führen" aria-label={`Gespräch mit ${pl.lastName} führen`}
                     onClick={(e) => { e.stopPropagation(); setTalk(pl.id); }}><Icon name="talk" size={18} /></button>}</td>

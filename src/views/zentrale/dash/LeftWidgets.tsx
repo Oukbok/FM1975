@@ -3,6 +3,7 @@
 // Managerstatus, Sperren/Verletzungen, Taktik; Teamstatus steht rechts, dash/RightWidgets.tsx). Jedes Widget führt
 // per Klick auf die passende Seite; Vereine/Spieler öffnen ihr Profil.
 // =============================================================================
+import SuspensionCard from '../../../components/status/SuspensionCard';
 import type { ReactNode } from 'react';
 import { ClubLink } from '../../../components/club/ClubLink';
 import { FitnessIcon, FormIcon, FreshnessIcon, MoraleIcon, statusLevel, statusWord, type StatusKind } from '../../../components/status';
@@ -151,7 +152,7 @@ function AbsenceWidget({ g, onGoto, openPlayer }: { g: Game; onGoto: Go; openPla
           {list.slice(0, 6).map((a) => (
             <div key={a.p.id + a.kind} className="dz-tr clickable" onClick={(e) => { e.stopPropagation(); openPlayer(a.p.id); }}>
               <span className="dz-cn"><PosBadge p={a.p} single /> {a.p.lastName || a.p.fullName}</span>
-              <span className={`dz-tag ${a.kind}`}>{a.kind === 'injury' ? 'Verletzt' : 'Gesperrt'}</span>
+              {a.kind === 'injury' ? <span className={`dz-tag ${a.kind}`}>Verletzt</span> : <span className="dz-tagcard"><SuspensionCard p={a.p} size={20} /></span>}
               <span className="dz-r">{a.text}</span>
             </div>
           ))}

@@ -67,6 +67,8 @@
   /* --- Statusfarben (gedämpft; nur echte Signale: Verletzung, Vertragsende, Trend, Saldo) --- */
   --green: #5bbf8b;
   --yellow: #d7b45e;
+  --card-yellow: #f2c81e;   /* Gelbe Karte (Symbol der Sperre) */
+  --card-red: #d8262f;      /* Rote Karte */
   --orange: #d98a5b;
   /* Taktiktafel (28-tactics.css): Tafelgrün, Kreide, Schatten */
   --board-a: #1d3a2d; --board-b: #1a3529; --chalk-rgb: 235, 242, 238; --board-shade-rgb: 6, 16, 11;

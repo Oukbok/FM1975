@@ -2,6 +2,7 @@
 // Aufstellung: Kaderliste links (Startelf / Ersatzbank / Reserve) mit Spalten
 // und Sortierung je Abschnitt. Zeilen sind Ziehquelle und Ablageziel.
 // =============================================================================
+import SuspensionCard from '../status/SuspensionCard';
 import FaceThumb from '../FaceThumb';
 import { useState, type PointerEvent as RPE, type ReactNode } from 'react';
 import type { Player, Position } from '../../types';
@@ -79,7 +80,7 @@ export default function SquadList({ xi, free = [], slotOrder = [], bench, reserv
           <span className="lu-name">{p.fullName}</span>
           {captainId === p.id && <span className="lu-cap" title="Kapitän">K</span>}
           {p.injury || p.availability === 'injured' ? <span className="lu-flag red">verletzt</span>
-            : p.suspensionMatches > 0 ? <span className="lu-flag red">gesperrt</span> : null}
+            : p.suspensionMatches > 0 ? <SuspensionCard p={p} size={20} /> : null}
         </td>
         <td className="lu-c-num"><span className="lu-suit" style={{ borderColor: suitabilityColor(suit) }}>{suit}</span></td>
         <td className="lu-c-st"><PlayerFreshness p={p} /></td>

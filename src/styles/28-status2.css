@@ -25,3 +25,11 @@
 .attr-tip b { color: var(--text); font-weight: 600; }
 .attr-tip-none { margin-top: 6px; color: var(--text-3); font-style: italic; }
 .attr-tip-note { margin-top: 7px; color: var(--text-3); font-size: 11.5px; }
+
+/* Sperre als Kartensymbol (components/status/SuspensionCard.tsx) */
+.susp { display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; margin-left: 6px; line-height: 1; }
+.susp svg { display: block; flex: none; }
+.susp-y { fill: var(--card-yellow); stroke: rgba(var(--shade-rgb), 0.35); stroke-width: 0.6; }
+.susp-r { fill: var(--card-red); stroke: rgba(var(--shade-rgb), 0.35); stroke-width: 0.6; }
+.susp b { font-family: var(--font-ui); font-size: 14px; font-weight: 700; color: var(--text-2); }
+td .susp:first-child, .ptk-state-word .susp, .dz-tagcard .susp { margin-left: 0; }
