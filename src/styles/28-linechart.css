@@ -27,3 +27,10 @@
 .fin-bal-grid { display: grid; grid-template-columns: minmax(260px, 1fr) 2fr; gap: 22px; height: 100%; min-height: 0; }
 .fin-bal-side { min-height: 0; overflow: auto; }
 .fin-bal-chart { position: relative; display: flex; min-height: 0; }
+
+/* Zeitraum-Wahl ui/RangeSeg.tsx (1 J. / 3 J. / 5 J. / 10 J. / Max) im Box-Kopf – schmal */
+.rseg { display: inline-flex; flex: none; align-items: center; }
+.rseg .seg3-s > button { padding: 0 7px; font-size: 13px; }
+/* Im dunklen Box-Kopf: helle Mulde wie die übrigen Kopf-Knöpfe, Höhe innerhalb des 44-px-Kopfs */
+.dbox > .dxh .rseg .seg3 { background: var(--btn-bg); min-height: 32px; height: 32px; padding: 2px; }
+.dbox > .dxh .rseg .seg3 > button { height: 26px; min-height: 0; max-height: 26px; }

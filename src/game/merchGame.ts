@@ -127,7 +127,7 @@ function seasonRoll(g: Game, club: Club, shop: MerchShop, today: string): void {
   const it: Partial<Record<MerchItemId, number>> = {};
   for (const [id, st] of Object.entries(shop.items)) if (st?.season.rev) it[id as MerchItemId] = st.season.rev;
   shop.archive.push({ season: shop.season, ...t, pot: Math.round(shop.pot), top, it });
-  if (shop.archive.length > 40) shop.archive.splice(0, shop.archive.length - 40);
+  if (shop.archive.length > 100) shop.archive.splice(0, shop.archive.length - 100); // „Max“ im Diagramm
   const startYear = Number(seasonOf(today).slice(0, 4));
   for (const [id, st] of Object.entries(shop.items)) {
     if (!st) continue;

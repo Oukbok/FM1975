@@ -13,6 +13,37 @@ export interface LinePoint {
   /** Kopfzeile im Hover (z. B. „31. Januar 1979“). */
   tip: string;
   value: number;
+  /** Zeitpunkt (ms, UTC) – mit `timeAxis` liegt der Punkt nach Datum statt nach Index. */
+  t?: number;
+}
+
+const MON = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+const DAY = 86_400_000;
+
+/** Beschriftung der Zeitachse: bis gut ein Jahr Monate, darüber Jahre (Schritt passend zur Breite). */
+function timeTicks(t0: number, t1: number, room: number): { t: number; label: string }[] {
+  const out: { t: number; label: string }[] = [];
+  const d0 = new Date(t0);
+  if (t1 - t0 <= 400 * DAY) {
+    let y = d0.getUTCFullYear(), m = d0.getUTCMonth() + (d0.getUTCDate() > 1 ? 1 : 0);
+    const all: { t: number; m: number; y: number }[] = [];
+    for (;;) {
+      if (m > 11) { m -= 12; y++; }
+      const t = Date.UTC(y, m, 1);
+      if (t > t1) break;
+      all.push({ t, m, y }); m++;
+    }
+    const step = [1, 2, 3, 6].find((k) => Math.ceil(all.length / k) <= room) ?? 12;
+    all.forEach((a, i) => {
+      if (i % step) return;
+      out.push({ t: a.t, label: a.m === 0 || out.length === 0 ? `${MON[a.m]} ${String(a.y).slice(2)}` : MON[a.m] });
+    });
+    return out;
+  }
+  const y0 = d0.getUTCFullYear() + 1, y1 = new Date(t1).getUTCFullYear();
+  const step = [1, 2, 5, 10, 20, 50].find((k) => Math.floor((y1 - y0) / k) + 1 <= room) ?? 100;
+  for (let y = Math.ceil(y0 / step) * step; y <= y1; y += step) out.push({ t: Date.UTC(y, 0, 1), label: String(y) });
+  return out;
 }
 
 /** Runde Teilstriche (1/2/2,5/5 × 10^n) zwischen lo und hi. */
@@ -38,7 +69,7 @@ function useSize<T extends HTMLElement>() {
   return [ref, size] as const;
 }
 
-export function LineChart({ points, fmt, fmtAxis, yTitle, minHeight = 120, compact, className, ariaLabel, zeroBase }: {
+export function LineChart({ points, fmt, fmtAxis, yTitle, minHeight = 120, compact, className, ariaLabel, zeroBase, timeAxis, axisFactor = 1 }: {
   points: LinePoint[];
   /** Wert im Hover. */
   fmt: (v: number) => string;
@@ -53,6 +84,10 @@ export function LineChart({ points, fmt, fmtAxis, yTitle, minHeight = 120, compa
   ariaLabel?: string;
   /** Finanzgraphen (Wunsch Pascal): Y-Achse beginnt bei 0, nur bei negativen Werten darunter. */
   zeroBase?: boolean;
+  /** Anzeige-Einheiten je Wert (Geld: `moneyAxisFactor()`), damit die Teilstriche rund sind. */
+  axisFactor?: number;
+  /** X-Achse nach Datum (`LinePoint.t`): Monate bei kurzen, Jahre bei langen Zeiträumen. */
+  timeAxis?: boolean;
 }) {
   const [ref, { w, h }] = useSize<HTMLDivElement>();
   const [hover, setHover] = useState<number | null>(null);
@@ -64,13 +99,17 @@ export function LineChart({ points, fmt, fmtAxis, yTitle, minHeight = 120, compa
   if (lo === hi) { lo -= Math.abs(lo) * 0.1 || 1; hi += Math.abs(hi) * 0.1 || 1; }
   if (zeroBase && lo > 0) lo = 0;
   const pad0 = (hi - lo) * 0.08;
-  const ticks = niceTicks(zeroBase && lo >= 0 ? 0 : lo - pad0, hi + pad0, compact ? 2 : 4);
+  // Teilstriche rund in Anzeige-Einheiten (z. B. Euro bei nominalen DM-Werten), dann zurückgerechnet.
+  const ticks = niceTicks((zeroBase && lo >= 0 ? 0 : lo - pad0) * axisFactor, (hi + pad0) * axisFactor, compact ? 2 : 4).map((t) => t / axisFactor);
   const yLo = Math.min(lo, ticks[0]), yHi = Math.max(hi, ticks[ticks.length - 1]);
   const fs = compact ? 10 : 11.5;
   const labW = Math.max(...ticks.map((t) => axisFmt(t).length)) * fs * 0.6 + 10;
   const pad = { l: Math.ceil(labW), r: 12, t: yTitle ? 18 : 8, b: compact ? 16 : 22 };
   const iw = Math.max(10, w - pad.l - pad.r), ih = Math.max(10, h - pad.t - pad.b);
-  const x = (i: number) => pad.l + (n <= 1 ? iw / 2 : (i / (n - 1)) * iw);
+  const timed = !!timeAxis && n > 1 && points.every((p) => p.t != null);
+  const t0 = timed ? points[0].t! : 0, t1 = timed ? Math.max(points[n - 1].t!, t0 + DAY) : 1;
+  const xt = (t: number) => pad.l + ((t - t0) / (t1 - t0)) * iw;
+  const x = (i: number) => timed ? xt(points[i].t!) : pad.l + (n <= 1 ? iw / 2 : (i / (n - 1)) * iw);
   const y = (v: number) => pad.t + ih - ((v - yLo) / Math.max(1e-9, yHi - yLo)) * ih;
   const pts: Pt[] = points.map((p, i) => [x(i), y(p.value)]);
   const every = Math.max(1, Math.ceil(n / Math.max(1, Math.floor(iw / (compact ? 48 : 58)))));
@@ -108,7 +147,10 @@ export function LineChart({ points, fmt, fmtAxis, yTitle, minHeight = 120, compa
           {points.map((p, i) => (i === n - 1 || hover === i) && (
             <circle key={i} cx={x(i)} cy={y(p.value)} r={hover === i ? 5 : 3.5} className={`lc-dot ${hover === i ? 'on' : ''} ${p.value < 0 ? 'neg' : ''}`} />
           ))}
-          {points.map((p, i) => (i % every === 0 || i === n - 1) && (n - 1 - i >= every / 2 || i === n - 1) && (
+          {timed && timeTicks(t0, t1, Math.max(1, Math.floor(iw / (compact ? 48 : 58)))).map((k) => (
+            <text key={`t${k.t}`} x={Math.min(w - pad.r - 14, Math.max(pad.l + 14, xt(k.t)))} y={h - 5} className="lc-tick" style={{ fontSize: fs }} textAnchor="middle">{k.label}</text>
+          ))}
+          {!timed && points.map((p, i) => (i % every === 0 || i === n - 1) && (n - 1 - i >= every / 2 || i === n - 1) && (
             <text key={`x${i}`} x={x(i)} y={h - 5} className="lc-tick" style={{ fontSize: fs }}
               textAnchor={n > 1 && i === n - 1 ? 'end' : n > 1 && i === 0 ? 'start' : 'middle'}>{p.label}</text>
           ))}

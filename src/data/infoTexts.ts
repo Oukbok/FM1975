@@ -293,8 +293,8 @@ export const INFO_TEXTS = {
   // ---------------------------------------------------------------- Finanzen
   kontostand: {
     title: 'Kontostand',
-    text: 'Geld auf dem Vereinskonto, nominal in DM (bis 2001) bzw. Euro. Ein negativer Kontostand ist möglich, kostet aber Zinsen und gefährdet die Lizenz.',
-    wiki: 'finance-overview',
+    text: 'Geld auf dem Vereinskonto, nominal in DM (bis 2001) bzw. Euro. Ein negativer Kontostand ist möglich, kostet aber Zinsen und gefährdet die Lizenz. Den Zeitraum des Verlaufs wählst du oben rechts (1 J. bis Max).',
+    wiki: 'finance-forecast',
   },
   saldoMonat: {
     title: 'Saldo pro Monat',

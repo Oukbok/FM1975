@@ -10,7 +10,7 @@ import { nextPlayerEuroTie } from '../engine/euro';
 import { euroStatus, inEuroCup } from '../game/euroFixture';
 import { euroCompName } from '../data/euroFormats';
 import { computeMonthly, expectedAttendanceRate, forecastSeasonEnd, totalExpense, totalIncome, weeklyWageBill } from '../engine/finances';
-import { BalanceLine, CorporateBox, LicenseBox } from './finanzen/businessBoxes';
+import { BalanceLine, CorporateBox, LicenseBox, useBalanceRange } from './finanzen/businessBoxes';
 import { priceOf, seatPriceScale } from '../engine/seating';
 import { FACILITIES, facilityAvailable, MAX_LEVEL } from '../engine/infrastructure';
 import { getAvailablePlayers } from '../engine/transfers';
@@ -268,14 +268,15 @@ export function FinanzenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) 
   const forecast = forecastSeasonEnd(myClub, g.players, g.table, g.calendar.currentDate, g.calendar.seasonEndDate, homeRemaining);
   const wageFree = fin.wageBudget - weeklyWageBill(myClub, g.players);
   const c = myClub.commerce;
+  const bal = useBalanceRange(g);
   return (
     <DashPage>
-      <DashBox title="Kassenstand" info="kontostand" icon="finances" onClick={() => onGoto('finances')}>
+      <DashBox title="Kassenstand" info="kontostand" icon="finances" onClick={() => onGoto('finances')} right={bal.seg}>
         <div className="dkpis">
           <Kpi value={fmtDM(fin.balance)} label="Kontostand" color={fin.balance >= 0 ? undefined : 'var(--red)'} />
           <Kpi value={fmtDM(m.net)} label="Saldo pro Monat" color={m.net >= 0 ? 'var(--green)' : 'var(--red)'} />
         </div>
-        <div className="dfin-chart"><BalanceLine g={g} months={18} /></div>
+        <div className="dfin-chart"><BalanceLine g={g} range={bal.range} /></div>
         <KV k="Prognose Saisonende" info="prognose" v={fmtDM(forecast.projectedEndBalance)} color={forecast.projectedEndBalance < 0 ? 'var(--red)' : undefined} />
         <KV k="Transferbudget" info="transferbudget" v={fmtPrice(fin.transferBudget)} />
         <KV k="Gehaltsbudget frei" info="gehaltsbudget" v={fmtWage(wageFree)} color={wageFree < 0 ? 'var(--red)' : undefined} />

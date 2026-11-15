@@ -2,6 +2,24 @@
 // Ende (laufende Saison) und unter der Maus, dazu eine senkrechte Hilfslinie und der Wert.
 import { useEffect, useRef, useState } from 'react';
 import { smoothArea, smoothPath, type Pt } from '../../../ui/smoothPath';
+import RangeSeg, { effectiveRange, seasonSpan, seasonsInRange, useChartRange } from '../../../ui/RangeSeg';
+
+/** Kopf „Historische Entwicklung“ mit Zeitraum-Wahl (Werte je Saison: ab 3 J.) und Diagramm. */
+export function RepHistory({ points, liveLast, current }: { points: { season: string; rep: number }[]; liveLast: boolean; current: string }) {
+  const [range, setRange] = useChartRange('ansehen', 'max');
+  const span = seasonSpan(points, (p) => p.season, current);
+  const shown = seasonsInRange(points, (p) => p.season, current, effectiveRange(range, span, '3'));
+  return (
+    <>
+      <h3 className="bnd-h3 bnd-h3-range">
+        <span>Historische Entwicklung <small>Ansehen je Saison</small></span>
+        {points.length > 1 && <RangeSeg value={range} onChange={setRange} span={span} minRange="3" minTitle="Ansehen gibt es je Saison – ab 3 Jahren" />}
+      </h3>
+      {points.length ? <RepChart points={shown.length ? shown : points} liveLast={liveLast} />
+        : <div className="bnd-empty">Nach deiner ersten Saison siehst du hier, wie sich dein Ansehen entwickelt.</div>}
+    </>
+  );
+}
 
 function useSize<T extends HTMLElement>() {
   const ref = useRef<T>(null);

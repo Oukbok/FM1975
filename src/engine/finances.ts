@@ -24,6 +24,7 @@
 // =============================================================================
 
 import { expectedSale, logSeatSale, saleForResult, saleRevenue, type SeatSale } from './seating';
+import { pushMonth, seedMonthLog } from './monthLog';
 import type { SeatNums } from '../types';
 import {
   Club, Player, MatchResult, ClubFinances, LeagueTable, CateringMode,
@@ -446,6 +447,9 @@ export function bookMonthly(
 
   if (trackDetail) {
     if (!fin.balanceHistory) fin.balanceHistory = [];
+    // Langer Verlauf für „Max“ (engine/monthLog.ts); alte Stände beginnen mit den gekürzten 24 Monaten.
+    fin.balanceLog ??= seedMonthLog(fin.balanceHistory.map((h) => ({ date: h.date, value: h.balance }))) ?? { s: date.slice(0, 7), v: [] };
+    pushMonth(fin.balanceLog, date.slice(0, 7), Math.round(fin.balance));
     fin.balanceHistory.push({ date, balance: Math.round(fin.balance) });
     if (fin.balanceHistory.length > 24) fin.balanceHistory.shift();
   }

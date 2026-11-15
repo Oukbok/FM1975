@@ -122,6 +122,8 @@ export function zoneClass(pos: number, rowCount: number): string {
 // =============================================================================
 // FINANZEN
 // =============================================================================
+/** Umrechnung nominaler DM-Werte in die angezeigte Währung (für runde Achsen-Teilstriche, ui/LineChart `axisFactor`). */
+export const moneyAxisFactor = () => currencyAt(_displayYear).perDM;
 /** Voller Betrag ära-gerecht (DM bis 2001, danach EUR), z. B. "1.240.000 DM". */
 export const fmtFullDM = (n: number) => formatMoney(n, _displayYear);
 

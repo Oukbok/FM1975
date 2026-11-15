@@ -14,7 +14,7 @@ import { DashBox, DashPage, Empty, Kpi } from '../../ui/DashPage';
 import { condColor, fmtDay } from '../../ui/format';
 import { MoraleIcon } from '../../components/status';
 import { RoomPyramid } from './kabine/RoomPyramid';
-import { FactorList, MoodSpark, PlayerFocus, TeamActions } from './kabine/RoomParts';
+import { FactorList, MoodSpark, PlayerFocus, TeamActions, moodSeries } from './kabine/RoomParts';
 import { PromisesTab } from './promises/PromisesTab';
 import PosBadge from '../../components/PosBadge';
 
@@ -58,7 +58,7 @@ export function DressingRoomView({ g, onChange }: { g: Game; onChange: () => voi
         {why === 'stimmung'
           ? <><div className="dnote">Zielwert {a.moodTarget} – die Stimmung folgt ihm langsam.</div><FactorList items={a.moodWhy} max={6} /></>
           : <FactorList items={a.cohesionWhy} max={7} />}
-        <MoodSpark points={[...(dr.history ?? []).slice(-18), { date: g.calendar.currentDate, mood }]} />
+        <MoodSpark points={moodSeries(dr, g.calendar.currentDate, mood)} today={g.calendar.currentDate} />
       </DashBox>
 
       <DashBox title="Kabinen-Pyramide" icon="squad" rows={2} info="kabine_pyramide" right={<span className="kb-legend">Symbol Moral · K Kapitän · R Rat · Ziffer Gruppe</span>}>

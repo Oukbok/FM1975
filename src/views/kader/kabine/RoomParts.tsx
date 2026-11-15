@@ -20,6 +20,9 @@ import { InfoTip } from '../../../ui/InfoTip';
 import { PlayerTalkModal } from '../talk/PlayerTalkModal';
 import PosBadge from '../../../components/PosBadge';
 import { LineChart } from '../../../ui/LineChart';
+import RangeSeg, { effectiveRange, inRange, spanYears, useChartRange } from '../../../ui/RangeSeg';
+import { monthLogPoints } from '../../../engine/monthLog';
+import type { DressingRoomState } from '../../../engine/dressingRoom';
 
 const sign = (v: number) => (v > 0 ? `+${v}` : `${v}`);
 
@@ -39,12 +42,35 @@ export function FactorList({ items, max = 9, empty }: { items: DRFactor[]; max?:
   );
 }
 
-/** Verlaufslinie der Teamstimmung (Monatswerte) mit Achse 0–100 und Wert unter der Maus. */
-export function MoodSpark({ points }: { points: { date: string; mood: number }[] }) {
+/** Teamstimmung über die gesamte Zeit: Monatsverlauf (`moodLog`, alte Stände `history`) + heute. */
+export function moodSeries(dr: DressingRoomState, today: string, mood: number): { date: string; mood: number }[] {
+  const by = new Map<string, number>();
+  for (const h of dr.history ?? []) by.set(h.date.slice(0, 10), h.mood);
+  for (const p of monthLogPoints(dr.moodLog)) by.set(p.date, p.value);
+  const out = [...by].filter(([d]) => d < today.slice(0, 10)).sort((a, b) => a[0].localeCompare(b[0])).map(([date, m]) => ({ date, mood: m }));
+  out.push({ date: today.slice(0, 10), mood });
+  return out;
+}
+
+/** Verlaufslinie der Teamstimmung (Monatswerte) mit Zeitraum-Wahl und Wert unter der Maus. */
+export function MoodSpark({ points, today }: { points: { date: string; mood: number }[]; today: string }) {
+  const [range, setRange] = useChartRange('stimmung', '1');
   if (points.length < 2) return null;
   const MON = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
-  const pts = points.map((p) => ({ label: MON[+p.date.slice(5, 7) - 1], tip: `${MON[+p.date.slice(5, 7) - 1]} ${p.date.slice(0, 4)}`, value: Math.round(p.mood) }));
-  return <div className="kb-spark"><LineChart points={pts} fmt={(v) => `Stimmung ${v}`} fmtAxis={(v) => String(v)} compact minHeight={84} ariaLabel="Teamstimmung je Monat" /></div>;
+  const span = spanYears(points[0].date, today);
+  const eff = effectiveRange(range, span);
+  const shown = inRange(points, (p) => p.date, today, eff);
+  const use = shown.length < 2 ? points.slice(-2) : shown;
+  const pts = use.map((p) => ({
+    label: MON[+p.date.slice(5, 7) - 1], tip: `${MON[+p.date.slice(5, 7) - 1]} ${p.date.slice(0, 4)}`,
+    value: Math.round(p.mood), t: Date.parse(p.date.slice(0, 10) + 'T00:00:00Z'),
+  }));
+  return (
+    <div className="kb-spark-wrap">
+      <div className="kb-spark-head"><span className="dsec">Verlauf</span><RangeSeg value={range} onChange={setRange} span={span} /></div>
+      <div className="kb-spark"><LineChart points={pts} fmt={(v) => `Stimmung ${v}`} fmtAxis={(v) => String(v)} compact minHeight={84} timeAxis ariaLabel="Teamstimmung je Monat" /></div>
+    </div>
+  );
 }
 
 /** Spieler im Fokus: Moral mit Gründen, Einfluss, Außenseiter-Gründe, Gespräch. */

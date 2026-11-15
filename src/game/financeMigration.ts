@@ -52,6 +52,7 @@ function migrateClub(c: Club, players: Record<string, Player>, managed: boolean)
       scaleRecord(h.income as any, F); scaleRecord(h.expenses as any, F);
     }
     for (const b of fin.balanceHistory ?? []) b.balance = r(b.balance, F);
+    if (fin.balanceLog) fin.balanceLog.v = fin.balanceLog.v.map((v) => r(v, F));
     for (const t of fin.transactions ?? []) t.amount = r(t.amount, F);
     // Gehälter: Die Lohnsumme sinkt wie der Umsatz (Gehaltsquote bleibt), verteilt wird sie
     // nach der neuen, steileren Marktgehalts-Kurve – mit dem bisherigen Über-/Unterbezahlt-Verhältnis.

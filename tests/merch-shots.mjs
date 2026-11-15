@@ -61,7 +61,7 @@ for (const [w, h] of [[1920, 1080], [1366, 768]]) {
   await shot('statistik');
   const prow = page.locator('.mc-face + table tbody tr');
   if (await prow.count() > 1) { await prow.nth(1).click(); await shot('statistik_spieler'); }
-  await page.locator('.seg-btn:has-text("Saisons")').click();
+  await page.locator('.rseg button:has-text("Max")').click();
   await shot('statistik_saisons');
   await page.close();
 }

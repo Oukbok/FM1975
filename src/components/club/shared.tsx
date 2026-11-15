@@ -154,7 +154,7 @@ export function PlacementChart({ seasons }: { seasons: SeasonPlacement[] }) {
   let acc = 0;
   for (const t of tiers) { off[t] = acc; acc += bandH[t]; }
   const total = acc;
-  const W = 820, H = 240, padL = 64, padR = 14, padT = 12, padB = 26;
+  const W = 820, H = 240, padL = 64, padR = 14, padT = 20, padB = 26; // oben Platz für die Platz-Beschriftung über Punkten der 1. Liga
   const n = seasons.length;
   const x = (i: number) => padL + (n === 1 ? (W - padL - padR) / 2 : (i * (W - padL - padR)) / (n - 1));
   const y = (s: SeasonPlacement) => padT + ((off[s.tier] + s.pos - 0.5) / total) * (H - padT - padB);
@@ -181,7 +181,7 @@ export function PlacementChart({ seasons }: { seasons: SeasonPlacement[] }) {
           {(n <= 12 || s.pos === 1 || i === n - 1) && (
             <text x={x(i)} y={y(s) - 9} textAnchor="middle" className="cmx-val">{s.pos}.</text>
           )}
-          {i % labelEvery === 0 || i === n - 1 ? (
+          {(i % labelEvery === 0 && n - 1 - i >= labelEvery / 2) || i === n - 1 ? (
             <text x={x(i)} y={H - 8} textAnchor="middle" className="cmx-axis">{s.season.slice(2)}</text>
           ) : null}
         </g>

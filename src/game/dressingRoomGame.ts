@@ -22,6 +22,7 @@ import {
   aiMoodTarget, aiMoraleStep, analyzeRoom, boostNow, languageBarrier, moraleScoreOf, moraleStepOf, MORALE_STEPS, stepRange, talkOdds, teamEventDefs,
 } from '../engine/dressingRoom';
 import { CalendarEngine } from '../engine/calendar';
+import { pushMonth, seedMonthLog } from '../engine/monthLog';
 import { economyScale, yearOf } from '../engine/economy';
 import { expectedPosition } from '../engine/environment';
 import { book } from '../engine/finances';
@@ -267,6 +268,8 @@ export function dressingRoomDaily(g: Game, today: string): DRAnalysis | null {
   noteHonourMood(g, club.id, dr.mood);
   rallyIfStuck(g, dr, a, today);
   if (today.slice(8) === '01') {
+    dr.moodLog ??= seedMonthLog((dr.history ?? []).map((h) => ({ date: h.date, value: h.mood }))) ?? { s: today.slice(0, 7), v: [] };
+    pushMonth(dr.moodLog, today.slice(0, 7), Math.round(dr.mood));
     (dr.history ??= []).push({ date: today, mood: Math.round(dr.mood), cohesion: a.cohesion, outsiders: a.outsiders.length });
     if (dr.history.length > 30) dr.history.splice(0, dr.history.length - 30);
   }

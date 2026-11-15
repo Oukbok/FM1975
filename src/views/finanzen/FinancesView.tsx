@@ -8,7 +8,7 @@ import { fmtCompactDM, fmtDateShort, fmtFullDM, fmtPrice, fmtWage, wageUnit } fr
 import { useState, type ReactNode } from 'react';
 import Select from '../../ui/Select';
 import type { InfoKey } from '../../data/infoTexts';
-import { BalanceLine, LoansBox } from './businessBoxes';
+import { BalanceLine, LoansBox, useBalanceRange } from './businessBoxes';
 import { InfoTip } from '../../ui/InfoTip';
 
 /** i-Hilfen an einzelnen Umsatzarten (nur, wo nicht selbsterklärend). */
@@ -62,6 +62,7 @@ export function FinancesView({ g }: { g: Game }) {
   const hist = [...(live.seasonHistory ?? [])].reverse();
   const seasons = [g.season, ...hist.map((h) => h.season).filter((x) => x !== g.season)];
   const [selSeason, setSelSeason] = useState(g.season);
+  const bal = useBalanceRange(g);
   const cur = seasons.includes(selSeason) ? selSeason : g.season;
   const rec = cur === g.season ? null : hist.find((h) => h.season === cur) ?? null;
   const fin: ClubFinances = rec ? { ...live, income: rec.income, expenses: rec.expenses } : live;
@@ -93,7 +94,7 @@ export function FinancesView({ g }: { g: Game }) {
 
   return (
     <DashPage>
-      <DashBox title="Kontostand" info="kontostand" span={2} right={seasonPicker} className="fin-balance-box">
+      <DashBox title="Kontostand" info="kontostand" span={2} right={<span className="dbtnrow">{bal.seg}{seasonPicker}</span>} className="fin-balance-box">
         <div className="fin-bal-grid">
           {rec ? (
             <div className="fin-bal-side">
@@ -120,7 +121,7 @@ export function FinancesView({ g }: { g: Game }) {
             {warnings.map((w, i) => <div key={i} className="dnote mt8" style={{ color: 'var(--orange)' }}>{w}</div>)}
           </div>
           )}
-          <div className="fin-bal-chart"><BalanceLine g={g} months={36} /></div>
+          <div className="fin-bal-chart"><BalanceLine g={g} range={bal.range} /></div>
         </div>
       </DashBox>
 

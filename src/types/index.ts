@@ -1028,6 +1028,8 @@ export interface ClubFinances {
    * Wird zu jedem Monatsabschluss ergänzt. Nur für den Manager-Verein geführt.
    */
   balanceHistory?: { date: string; balance: number }[];
+  /** Kontostand je Monatsabschluss über alle Jahre (kompakt, engine/monthLog.ts; Diagramm „Max“). Nur Manager-Verein. */
+  balanceLog?: import('../engine/monthLog').MonthLog;
   /** ISO-Monat (YYYY-MM) des letzten gebuchten Monatsabschlusses. */
   lastMonthlyBooking?: string;
   /** Zentrale TV-Vermarktung: Jahresbetrag der laufenden Saison (nominal, engine/clubEconomy.ts). */

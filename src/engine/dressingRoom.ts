@@ -67,6 +67,8 @@ export interface DressingRoomState {
   seen?: string[];
   /** Monatsverlauf für die Anzeige. */
   history?: { date: string; mood: number; cohesion: number; outsiders: number }[];
+  /** Teamstimmung je Monat über alle Jahre (kompakt, engine/monthLog.ts; Diagramm „Max“). */
+  moodLog?: import('./monthLog').MonthLog;
   /** Letzte Maßnahmen/Vorfälle (Anzeige). */
   log?: { date: string; text: string }[];
   /** Sofortige Moral-Sprünge je Spieler (Anzeige „+6 Siegtor gegen …“, game/moraleJolt.ts). */

@@ -3,7 +3,7 @@
 //   • Anzeige: „Stärke & Zustand“ (Stärke/Form/Frische/Fitness/Moral aus dem Wochenverlauf
 //     `history.weeks`, wahlweise mit Kaderschnitt), „Stärke“, eine Kategorie (Schnitt ihrer
 //     Attribute) oder ein einzelnes Attribut.
-//   • Zeitraum: letzte 52 Wochen oder die gesamte Aufzeichnung.
+//   • Zeitraum (ui/RangeSeg, gemerkt): 1 J. / 3 J. / 5 J. / 10 J. / Max – „Stärke & Zustand“ nur bei 1 J.
 // Quellen: Stärke je Monat aller Spieler (`history.ovm`, game/ovHistory.ts), Wochenpunkte (eigener Kader, 52), Monatspunkte mit allen Attributen (eigener Kader,
 // zehn Jahre, game/profileWeeks.ts), Stärke je Bewertungsrunde (`development.abilityHistory`)
 // und Attribut-Momentaufnahmen je Bewertung (`history.attributeSnapshots`) – dazu der heutige
@@ -16,6 +16,7 @@ import { ovPoints } from '../../game/ovHistory';
 import { ATTR_DE, GROUPS, utcDate, type AttrKey } from './shared';
 import { smoothPath, type Pt } from '../../ui/smoothPath';
 import Select, { type SelectOption } from '../../ui/Select';
+import RangeSeg, { effectiveRange, inRange, spanYears, useChartRange } from '../../ui/RangeSeg';
 
 type Key = 'ov' | 'f' | 'fr' | 'fi' | 'm';
 const SERIES: { k: Key; label: string; color: string }[] = [
@@ -41,7 +42,6 @@ const OPTIONS: SelectOption[] = [
     .map((k, j) => ({ value: `attr:${k}`, label: ATTR_DE[k], group: j === 0 ? gr.title : undefined }))),
   { value: 'attr:fitness', label: ATTR_DE.fitness, group: 'Zustand' },
 ];
-const RANGES: SelectOption[] = [{ value: 'year', label: 'Letzte 52 Wochen' }, { value: 'all', label: 'Gesamte Zeit' }];
 
 const ts = (d: string) => Date.parse(d.slice(0, 10) + 'T00:00:00Z');
 
@@ -79,29 +79,30 @@ export default function DevChart({ p, g }: { p: Player; g?: Game }) {
     return new Map((profileWeeksOf(g)?.team ?? []).map((t) => [t.d, t]));
   }, [g, weekly]);
   const [view, setView] = useState('zustand');
-  const [range, setRange] = useState<'year' | 'all'>('year');
+  const [rangePick, setRange] = useChartRange('spieler', '1');
   const [on, setOn] = useState(DEFAULT_ON);
   const [avg, setAvg] = useState(false);
   const [hover, setHover] = useState<number | null>(null);
   const today = g?.calendar.currentDate ?? weeks[weeks.length - 1]?.d ?? new Date().toISOString().slice(0, 10);
 
   // Zustand braucht den Wochenverlauf; ohne ihn (fremde Spieler) oder über die gesamte Zeit: Stärke.
-  const cond = view === 'zustand' && weekly && range === 'year';
+  // Zeitraum: Spanne aus der längsten Quelle (Stärke bzw. Attribut), gesperrt, was nichts Neues zeigt.
+  const attrKeys = view.startsWith('attr:') ? [view.slice(5) as AttrKey] : view.startsWith('grp:') ? GROUPS[+view.slice(4)].keys : null;
+  const full = attrKeys ? attrSeries(p, g, attrKeys, today) : ovSeries(p, today);
+  const span = spanYears(full[0]?.d, today);
+  const range = effectiveRange(rangePick, span);
+  const cond = view === 'zustand' && weekly && range === '1';
   const attrView = view.startsWith('attr:') || view.startsWith('grp:');
   const label = view.startsWith('attr:') ? ATTR_DE[view.slice(5) as AttrKey]
     : view.startsWith('grp:') ? `${GROUPS[+view.slice(4)].title} (Schnitt)` : 'Stärke';
 
   let pts: Pnt[];
   if (cond) pts = weeks.map((w) => ({ d: w.d, t: ts(w.d), v: { ov: w.ov, f: w.f, fr: w.fr, fi: w.fi, m: w.m } }));
-  else if (attrView) {
-    const keys = view.startsWith('attr:') ? [view.slice(5) as AttrKey] : GROUPS[+view.slice(4)].keys;
-    pts = attrSeries(p, g, keys, today);
-  } else pts = ovSeries(p, today);
-  if (range === 'year') {
-    const from = ts(today) - 365 * DAY;
-    const inside = pts.filter((x) => x.t >= from);
+  else pts = full;
+  if (range !== 'max') {
+    const inside = inRange(pts, (x) => x.d, today, range);
     // Letzter Punkt vor dem Zeitraum hält die Linie am linken Rand fest.
-    const before = pts.filter((x) => x.t < from).pop();
+    const before = pts.filter((x) => !inside.includes(x)).pop();
     pts = before && !cond ? [before, ...inside] : inside;
   }
 
@@ -112,7 +113,7 @@ export default function DevChart({ p, g }: { p: Player; g?: Game }) {
   const head = (
     <div className="pp3-chart-head">
       <Select size="s" width={220} value={view} onChange={(v) => { setView(v); setHover(null); }} options={OPTIONS} listHeight={360} title="Anzeige" />
-      <Select size="s" width={170} value={range} onChange={(v) => { setRange(v as 'year' | 'all'); setHover(null); }} options={RANGES} title="Zeitraum" />
+      <RangeSeg value={rangePick} onChange={(v) => { setRange(v); setHover(null); }} span={span} />
     </div>
   );
 
@@ -221,7 +222,7 @@ export default function DevChart({ p, g }: { p: Player; g?: Game }) {
             <span className="pp3-chk"><i style={{ background: 'var(--text)' }} /><span>{label}</span><b>{last.v[series[0].k]}</b></span>
             <span className="pp3-note">
               {view === 'zustand' && !weekly ? 'Form, Frische, Fitness und Moral hält das Spiel nur wöchentlich für deinen Kader fest. '
-                : view === 'zustand' ? 'Über die gesamte Zeit zeigt das Diagramm nur die Stärke. ' : ''}
+                : view === 'zustand' ? 'Form, Frische, Fitness und Moral gibt es für die letzten 52 Wochen (1 J.) – länger zeigt das Diagramm die Stärke. ' : ''}
               {pts.length} Messpunkte{attrView ? ' · eigener Kader monatlich, sonst je Bewertungsrunde' : ''}
             </span>
           </>

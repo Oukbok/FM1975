@@ -5,6 +5,7 @@ import { DashBox, Empty, KV } from '../../ui/DashPage';
 import { fmtDM, fmtDateShort } from '../../ui/format';
 import { ClubTabProps, PlacementChart } from './shared';
 import PosBadge from '../PosBadge';
+import RangeSeg, { effectiveRange, seasonSpan, seasonsInRange, useChartRange } from '../../ui/RangeSeg';
 
 const TITLE_ORDER: TitleKind[] = ['meister', 'ddr', 'pokal', 'ec', 'cwc', 'uefa', 'halle', 'uyl', 'jugendA', 'jugendB', 'jugendPokal', 'jugendDdr', 'jugendC', 'jugendD', 'jugendEReg', 'jugendFReg', 'jugendE', 'jugendF'];
 const COMP_DE = { L: 'Liga', P: 'Pokal', E: 'Europa' } as const;
@@ -17,6 +18,10 @@ export default function HistoryTab({ g, d, openPlayer }: ClubTabProps) {
   if (d.tablePosition != null && d.tier != null && (d.played ?? 0) > 0 && !past.some((s) => s.season === g.season)) {
     seasons.push({ season: g.season, tier: d.tier, pos: d.tablePosition, size: d.tableSize ?? 18, league: d.divisionLabel ?? '', live: true });
   }
+  // Zeitraum-Wahl (Wunsch Pascal): Endplätze je Saison, deshalb ab 3 Jahren.
+  const [range, setRange] = useChartRange('platzierung', 'max');
+  const span = seasonSpan(seasons, (s) => s.season, g.season);
+  const shownSeasons = seasonsInRange(seasons, (s) => s.season, g.season, effectiveRange(range, span, '3'));
   const titles = titlesOf(g, d.clubId);
   const byKind = TITLE_ORDER.map((k) => ({ k, seasons: titles.filter((t) => t.kind === k).map((t) => t.season) })).filter((x) => x.seasons.length);
   let ups = 0, downs = 0;
@@ -57,10 +62,10 @@ export default function HistoryTab({ g, d, openPlayer }: ClubTabProps) {
 
   return (
     <>
-      <DashBox title="Platzierungen" icon="stats" span={2} right={past.length ? `${past.length} Saisons` : undefined}>
+      <DashBox title="Platzierungen" icon="stats" span={2} right={seasons.length > 1 ? <span className="dbtnrow"><span className="dnote">{past.length} Saisons</span><RangeSeg value={range} onChange={setRange} span={span} minRange="3" minTitle="Endplätze gibt es je Saison – ab 3 Jahren" /></span> : past.length ? `${past.length} Saisons` : undefined}>
         {seasons.length ? <>
           <div className="cmx-chart-wrap">
-            <PlacementChart seasons={seasons} />
+            <PlacementChart seasons={shownSeasons.length ? shownSeasons : seasons} />
             {past.length === 0 && <div className="dnote">Die Historie beginnt mit deinem Spielstart; nach jeder Saison kommt der Endplatz hinzu. Ein offener Punkt zeigt den aktuellen Tabellenplatz der laufenden Saison.</div>}
           </div>
         </> : <Empty icon="stats">Noch keine abgeschlossene Saison. Nach jedem Saisonende erscheint hier der Endplatz – über alle Ligaebenen hinweg.</Empty>}

@@ -19,7 +19,7 @@ import { ClubLink } from '../../../components/club/ClubLink';
 import { InfoTip } from '../../../ui/InfoTip';
 import type { InfoKey } from '../../../data/infoTexts';
 import { COMP_DE, crestOf, dmy, ppgText, wdlText } from './parts';
-import { RepChart } from './RepChart';
+import { RepHistory } from './RepChart';
 
 type Tab = 'bilanz' | 'saisons' | 'personen';
 
@@ -115,9 +115,7 @@ export function BilanzTab({ g, d, rep, onTab }: { g: Game; d: CareerData; rep: n
 
         {/* Rechts oben: Ansehen je Saison auf Karopapier */}
         <section className="bnd-chart">
-          <h3 className="bnd-h3">Historische Entwicklung <small>Ansehen je Saison</small></h3>
-          {d.repSeries.length ? <RepChart points={d.repSeries} liveLast={!!d.seasons[0]?.live} />
-            : <div className="bnd-empty">Nach deiner ersten Saison siehst du hier, wie sich dein Ansehen entwickelt.</div>}
+          <RepHistory points={d.repSeries} liveLast={!!d.seasons[0]?.live} current={g.season} />
         </section>
 
         {/* Rechts unten links: Titel & Rekorde */}

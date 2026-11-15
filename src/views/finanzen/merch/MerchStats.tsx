@@ -1,6 +1,7 @@
 // Fanartikel › Statistiken: Verkäufe je Artikel, Umsatzentwicklung, Trikots (bzw. Poster) je Spieler.
 import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
 import { useState } from 'react';
+import RangeSeg, { effectiveRange, seasonSpan, seasonsInRange, useChartRange, type ChartRange } from '../../../ui/RangeSeg';
 import type { Club, Player } from '../../../types';
 import type { MerchItemId, MerchShop } from '../../../types/merch';
 import { Game } from '../../../game/state';
@@ -19,17 +20,17 @@ type Focus = { kind: 'all' } | { kind: 'item'; id: MerchItemId } | { kind: 'play
 
 export function MerchStats(p: Props) {
   const [focus, setFocus] = useState<Focus>({ kind: 'all' });
-  const [range, setRange] = useState<'wochen' | 'saisons'>('wochen');
+  // Zeitraum-Wahl (Wunsch Pascal): 1 J. = Wochen der laufenden Saison, länger = je Saison.
+  const [range, setRange] = useChartRange('fanartikel', '1');
+  const span = seasonSpan(p.shop.archive, (a) => a.season, p.shop.season);
+  const eff = effectiveRange(range, span);
   return (
     <>
       <ItemTable {...p} focus={focus} setFocus={setFocus} />
       <PlayerBox {...p} focus={focus} setFocus={setFocus} />
       <DashBox title="Umsatzentwicklung" info="merchUmsatz" icon="stats" span={2}
-        right={<span className="seg-group mc-tabs">
-          <button className={`seg-btn ${range === 'wochen' ? 'active' : ''}`} onClick={() => setRange('wochen')}>Wochen</button>
-          <button className={`seg-btn ${range === 'saisons' ? 'active' : ''}`} onClick={() => setRange('saisons')}>Saisons</button>
-        </span>}>
-        <MerchChart s={series(p.g, p.shop, focus, range)} />
+        right={<RangeSeg value={range} onChange={setRange} span={Math.max(1.5, span)} />}>
+        <MerchChart s={series(p.g, p.shop, focus, eff)} />
       </DashBox>
     </>
   );
@@ -117,11 +118,11 @@ function PlayerBox({ g, club, shop, year, focus, setFocus }: Props & { focus: Fo
 }
 
 // -----------------------------------------------------------------------------
-function series(g: Game, shop: MerchShop, f: Focus, range: 'wochen' | 'saisons'): ChartSeries {
+function series(g: Game, shop: MerchShop, f: Focus, range: ChartRange): ChartSeries {
   const name = f.kind === 'item' ? MERCH_BY_ID[f.id].name : f.kind === 'player' ? (g.players[f.id]?.fullName ?? '?') : 'Fanartikel gesamt';
   const units = f.kind === 'player';
   const fmt = units ? (v: number) => `${n0(v)} St.` : (v: number) => money(v);
-  if (range === 'wochen') {
+  if (range === '1') {
     const values = shop.weeks.map((w, i) => f.kind === 'all' ? w.rev : f.kind === 'item' ? (w.it[f.id] ?? 0) : (shop.jerseyW[f.id]?.[i] ?? 0));
     return {
       title: `${units ? 'Verkäufe' : 'Umsatz'} je Woche: ${name}`, unit: units ? 'Stück' : 'Umsatz', values, fmt,
@@ -129,7 +130,7 @@ function series(g: Game, shop: MerchShop, f: Focus, range: 'wochen' | 'saisons')
     };
   }
   const cur = seasonTotals(shop);
-  const arch = shop.archive.slice(-14);
+  const arch = seasonsInRange(shop.archive, (a) => a.season, shop.season, range);
   const val = (a: (typeof arch)[number]) => f.kind === 'all' ? a.rev : f.kind === 'item' ? (a.it?.[f.id] ?? 0) : (a.top?.find((t) => t.id === f.id)?.n ?? 0);
   const now = f.kind === 'all' ? cur.rev : f.kind === 'item' ? (shop.items[f.id]?.season.rev ?? 0) : (shop.jersey[f.id] ?? 0);
   return {

@@ -12,32 +12,52 @@ import { boardSeats, buyBackShares, buybackQuote, externalShare, holders, partne
 import Select from '../../ui/Select';
 import type { Game } from '../../game/state';
 import { DashBox, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
-import { fmtDM, fmtDateShort, fmtCompactDM, fmtFullDM } from '../../ui/format';
+import { fmtDM, fmtDateShort, fmtCompactDM, fmtFullDM, moneyAxisFactor } from '../../ui/format';
 import { InfoTip } from '../../ui/InfoTip';
 import { LineChart, type LinePoint } from '../../ui/LineChart';
+import RangeSeg, { effectiveRange, inRange, spanYears, useChartRange, type ChartRange } from '../../ui/RangeSeg';
+import { monthLogPoints } from '../../engine/monthLog';
+import { seasonStartYear } from '../../data/timeline';
 import type { Club } from '../../types';
 
-const MON = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
-
-/** Kontostand-Verlauf (Monatsabschlüsse + heute) als Punkte für LineChart. */
-export function balancePoints(club: Club, today: string, months = 24): LinePoint[] {
-  const hist = (club.finances.balanceHistory ?? []).slice(-months);
-  const all = [...hist, { date: today, balance: Math.round(club.finances.balance) }];
-  return all.map((h, i) => {
-    const m = +h.date.slice(5, 7) - 1, yy = h.date.slice(2, 4);
-    return {
-      label: m === 0 || i === 0 ? `${MON[m]} ${yy}` : MON[m],
-      tip: i === all.length - 1 ? `Heute, ${fmtDateShort(h.date).dmy}` : `Monatsabschluss ${fmtDateShort(h.date).dmy}`,
-      value: h.balance,
-    };
-  });
+/** Kontostand über die gesamte Zeit: Saisonenden (alte Spielstände vor dem Monatsverlauf),
+ *  Monatsabschlüsse (`balanceLog` + gekürzte `balanceHistory`) und heute. */
+export function balanceSeries(club: Club, today: string): { date: string; value: number; tip: string }[] {
+  const fin = club.finances;
+  const monthly = new Map<string, number>();
+  for (const p of monthLogPoints(fin.balanceLog)) monthly.set(p.date, p.value);
+  for (const h of fin.balanceHistory ?? []) monthly.set(h.date.slice(0, 10), h.balance);
+  const months = [...monthly].sort((a, b) => a[0].localeCompare(b[0]));
+  const first = months[0]?.[0] ?? today.slice(0, 10);
+  const out: { date: string; value: number; tip: string }[] = [];
+  for (const h of fin.seasonHistory ?? []) {
+    const date = `${seasonStartYear(h.season) + 1}-06-30`;
+    if (date < first) out.push({ date, value: h.balanceEnd, tip: `Saisonende ${h.season}` });
+  }
+  out.sort((a, b) => a.date.localeCompare(b.date));
+  for (const [date, value] of months) if (date < today.slice(0, 10)) out.push({ date, value, tip: `Monatsabschluss ${fmtDateShort(date).dmy}` });
+  out.push({ date: today.slice(0, 10), value: Math.round(fin.balance), tip: `Heute, ${fmtDateShort(today).dmy}` });
+  return out;
 }
 
-/** Kontostand-Diagramm mit beschrifteter Y-Achse und genauem Wert unter der Maus. */
-export function BalanceLine({ g, months, compact }: { g: Game; months?: number; compact?: boolean }) {
-  const pts = balancePoints(g.clubs[g.managedClubId], g.calendar.currentDate, months);
+/** Zeitraum-Wahl des Kontostand-Verlaufs (gemeinsam für Übersicht und Bilanz). */
+export function useBalanceRange(g: Game) {
+  const [range, setRange] = useChartRange('kontostand', '3');
+  const all = balanceSeries(g.clubs[g.managedClubId], g.calendar.currentDate);
+  const span = spanYears(all[0]?.date, g.calendar.currentDate);
+  const seg = <RangeSeg value={range} onChange={setRange} span={span} />;
+  return { range: effectiveRange(range, span), seg };
+}
+
+/** Kontostand-Diagramm mit beschrifteter Y-Achse, Zeitachse und genauem Wert unter der Maus. */
+export function BalanceLine({ g, range, compact }: { g: Game; range: ChartRange; compact?: boolean }) {
+  const today = g.calendar.currentDate;
+  const all = balanceSeries(g.clubs[g.managedClubId], today);
+  const shown = inRange(all, (p) => p.date, today, range);
+  // Bleibt im Zeitraum zu wenig übrig, zeigt das Diagramm die letzten beiden Punkte.
+  const pts: LinePoint[] = (shown.length < 2 ? all.slice(-2) : shown).map((p) => ({ label: p.date.slice(2, 7), tip: p.tip, value: p.value, t: Date.parse(p.date + 'T00:00:00Z') }));
   if (pts.length < 2) return <div className="dnote">Der Verlauf erscheint nach dem ersten Monatsabschluss.</div>;
-  return <LineChart points={pts} fmt={fmtFullDM} fmtAxis={fmtCompactDM} compact={compact} zeroBase ariaLabel="Kontostand je Monat" />;
+  return <LineChart points={pts} fmt={fmtFullDM} fmtAxis={fmtCompactDM} compact={compact} zeroBase timeAxis axisFactor={moneyAxisFactor()} ariaLabel="Kontostand im Zeitverlauf" />;
 }
 
 export function LicenseBox({ g }: { g: Game }) {

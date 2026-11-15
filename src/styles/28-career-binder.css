@@ -17,6 +17,7 @@
 .bnd-h3 { margin: 0 0 6px; font-family: var(--font-display); font-size: 21px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--bnd-ink); }
 .bnd-h3 small { font-family: var(--font-ui); font-size: 14px; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--bnd-ink-2); }
 .bnd-h3b { margin-top: 8px; }
+.bnd-h3-range { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .bnd-empty { font-size: 14px; color: var(--bnd-ink-2); line-height: 1.4; }
 .bnd-sec { margin: 8px 0 2px; font-family: var(--font-display); font-size: 14px; letter-spacing: 0.8px; text-transform: uppercase; color: var(--bnd-ink-3); }
 
