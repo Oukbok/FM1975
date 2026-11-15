@@ -7,6 +7,7 @@ import type { Game } from '../../game/state';
 import type { Player } from '../../types';
 import { ageAtStart, fullName, managerFace, type NewGameDraft } from './draft';
 import PosBadge from '../../components/PosBadge';
+import { NatFlag } from '../../components/competition/CountryFlag';
 
 // Schritt 6: Willkommen bei deinem Verein — echte Werte aus der eben erzeugten Spielwelt
 const elf = (g: Game, ids: string[]) => ids.map((id) => g.players[id]).filter(Boolean).sort((a, b) => b.overall - a.overall);
@@ -71,7 +72,7 @@ export function StepWelcome({ d, game }: { d: NewGameDraft; game: Game | null })
             <PlayerAvatar player={best} club={club} size={120} />
             <div>
               <b>{best.fullName}</b>
-              <small><PosBadge p={best} single /> {best.age} Jahre · {best.nationality}</small>
+              <small><PosBadge p={best} single /> {best.age} Jahre · <NatFlag nat={best.nationality} height={12} /></small>
               <div className="ng-best-ovr">{best.overall}<span>Stärke</span></div>
             </div>
           </div>

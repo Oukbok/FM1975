@@ -12,6 +12,7 @@ import { SUPER_CUPS, SUPER_PRIZE, superEra, type SuperEra } from '../../data/sup
 import { COUNTRY_BY_KEY } from '../../data/world/countries';
 import { DashBox, DashPage, Empty, KV } from '../../ui/DashPage';
 import { ClubLink } from '../../components/club/ClubLink';
+import { CountryFlag } from '../../components/competition/CountryFlag';
 import { fmtPrice } from '../../ui/format';
 
 const fmtD = (d: string) => `${d.slice(8, 10)}.${d.slice(5, 7)}.${d.slice(0, 4)}`;
@@ -121,7 +122,7 @@ export function SuperCupView({ g }: { g: Game }) {
           <div className="nt-list">
             {others.map((a) => (
               <div key={a.country} className="nt-arow">
-                <span className="nt-date">{cname(a.country)}</span>
+                <span className="nt-date kv-flag"><CountryFlag country={a.country} height={12} />{cname(a.country)}</span>
                 <span className="nt-pname">{compClubName(g, a.winner, a.season)}{a.shared ? ' (geteilt)' : ''}</span>
                 <span className="nt-club">{a.score} gegen {compClubName(g, a.runnerUp, a.season)}</span>
               </div>

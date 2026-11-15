@@ -5,6 +5,7 @@
 // =============================================================================
 import ClubCrest from '../../components/ClubCrest';
 import { ClubLink } from '../../components/club/ClubLink';
+import { LandFlag } from '../../components/competition/CountryFlag';
 import type { DrawRecord } from '../../types/draw';
 import type { ShowClub } from './drawScript';
 
@@ -73,7 +74,7 @@ export function GroupSummary({ rec, clubs, myId, onClose }: { rec: DrawRecord; c
         <div className="dr-opp">
           {[...opp.home.map((id) => [id, 'Heim'] as const), ...opp.away.map((id) => [id, 'Auswärts'] as const)].map(([id, w]) => {
             const c = clubs(id);
-            return <div key={id} className="dr-opp-row"><ClubCrest club={c.crest} size={30} /><span>{c.name}</span><span>{w} · {c.country}</span></div>;
+            return <div key={id} className="dr-opp-row"><ClubCrest club={c.crest} size={30} /><span>{c.name}</span><span>{w} · <LandFlag country={c.country} height={16} /></span></div>;
           })}
         </div>
       ) : show && (

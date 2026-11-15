@@ -6,6 +6,7 @@
 // =============================================================================
 import { ClubLink } from '../../../components/club/ClubLink';
 import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
+import { NatFlag } from '../../../components/competition/CountryFlag';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AWARD_CATS, AWARD_CAT_LABEL } from '../../../engine/seasonAwards';
@@ -147,7 +148,7 @@ export function AwardsView({ g }: { g: Game }) {
                 <button type="button" key={y.year} className={`rl-row ${w.c === (y.mine ?? mine) ? 'me' : ''}`} onClick={() => setGala(y.year)} title="Gala noch einmal ansehen">
                   <span className="rl-rank">{y.year}</span>
                   <span className="rl-name grow"><PlayerLink id={w.p}>{w.n}</PlayerLink><span className="muted"> · <ClubLink id={w.c}>{w.cn}</ClubLink></span></span>
-                  <span className="rl-num">{w.nat}</span>
+                  <span className="rl-num"><NatFlag nat={w.nat} height={13} /></span>
                 </button>
               );
             })}

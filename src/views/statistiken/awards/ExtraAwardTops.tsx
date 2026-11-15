@@ -45,7 +45,7 @@ export function GoldenShoeTop({ g, y }: { g: Game; y: GSSeason }) {
             <AwardFace g={g} e={w} size={88} />
             <div className="aw-who">
               <AwardName e={w} />
-              <div className="aw-meta"><PosBadge pos={w.pos} /><CountryFlag country={landOf(w.k)} height={14} /></div>
+              <div className="aw-meta"><PosBadge pos={w.pos} /><CountryFlag country={w.k} height={14} /></div>
               <ClubLink id={w.c} className="aw-club"><Crest g={g} id={w.c} season={y.s} size={20} /><span className="aw-club-name">{w.cn}</span></ClubLink>
             </div>
           </div>
@@ -65,7 +65,7 @@ export function GoldenShoeTop({ g, y }: { g: Game; y: GSSeason }) {
                   <td className="rl-rank">{i + 1}</td>
                   <td className="nowrap"><span className="gs-who"><FaceThumb p={awardPerson(g, e.p)} size={24} /><AwardName e={e} cls="gs-name" /></span></td>
                   <td className="nowrap gs-club"><ClubLink id={e.c}>{e.cn}</ClubLink></td>
-                  <td className="nowrap gs-land"><CountryFlag country={landOf(e.k)} height={12} /><span>{landOf(e.k)}</span></td>
+                  <td className="nowrap gs-land"><CountryFlag country={e.k} height={12} /><span>{landOf(e.k)}</span></td>
                   <td className="num">{e.ap}</td>
                   <td className="num">{e.gl}</td>
                   <td className="num">{dec(e.f)}</td>

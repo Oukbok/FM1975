@@ -72,7 +72,6 @@
 .tw-totw-name { font-family: var(--font-display); font-size: 25px; font-weight: 600; letter-spacing: 0.5px; line-height: 1.15; margin-bottom: 4px; }
 .tw-kv { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 15.5px; color: var(--text-2); padding: 3px 0; border-bottom: 1px solid var(--border-soft); }
 .tw-kv b { color: var(--text); font-weight: 600; text-align: right; }
-.tw-nat { display: inline-block; padding: 1px 7px; border: 1px solid var(--border); border-radius: 4px; font-size: 13px; letter-spacing: 0.5px; }
 .tw-posrow { display: inline-flex; gap: 6px; }
 .tw-posv { display: inline-block; min-width: 34px; text-align: center; font-family: var(--font-display); font-size: 17px; }
 .tw-totw-text { margin: 10px 0 0; font-size: 16px; line-height: 1.4; color: var(--text); font-weight: 600; }

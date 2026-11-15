@@ -11,6 +11,7 @@ import type { Game } from '../../game/state';
 import type { Club, Player } from '../../types';
 import { TeamName } from '../../views/statistiken/competition/parts';
 import PosBadge from '../../components/PosBadge';
+import { NatFlag } from '../../components/competition/CountryFlag';
 import FaceThumb from '../../components/FaceThumb';
 import { awardPerson } from '../../views/statistiken/awards/AwardParts';
 
@@ -46,9 +47,9 @@ export function GoldenBallTrophy({ size = 180 }: { size?: number }) {
   );
 }
 
-/** Staatsangehörigkeit als kleines eckiges Etikett (Kürzel). */
-export function NatTag({ nat }: { nat: string }) {
-  return <span className="gb-nat" title={`Nationalität: ${nat}`}>{nat}</span>;
+/** Staatsangehörigkeit als Landesflagge (Ländername als Tooltip; Wunsch Pascal statt Kürzel-Kasten). */
+export function NatTag({ nat, height = 16 }: { nat: string; height?: number }) {
+  return <NatFlag nat={nat} height={height} />;
 }
 
 /** Gesicht: voller Spieler, Weltspieler (Gesichtsgruppe/Geburtsjahr aus dem Pool) oder gezeichneter Platzhalter aus ID/Name. */
@@ -99,7 +100,7 @@ export function GalaRest({ g, top, mine, season }: { g: Game; top: GBEntry[]; mi
       {top.slice(3).map((e, i) => (
         <div key={e.p} className={`rl-row gb-rest-row ${e.c === mine ? 'me' : ''}`} style={{ '--k': i } as CSSProperties}>
           <span className="rl-rank">{i + 4}</span>
-          <span className="gb-rest-name"><FaceThumb p={awardPerson(g, e.p)} size={26} /><NatTag nat={e.nat} /><span className="rl-name"><PlayerLink id={e.p}>{e.n}</PlayerLink></span></span>
+          <span className="gb-rest-name"><FaceThumb p={awardPerson(g, e.p)} size={26} /><NatTag nat={e.nat} height={14} /><span className="rl-name"><PlayerLink id={e.p}>{e.n}</PlayerLink></span></span>
           <span className="gb-rest-club"><TeamName g={g} id={e.c} season={season} size={18} short /></span>
           <span className="rl-num">{e.pos}</span>
           <span className="rl-num">{e.ap} Sp.</span>

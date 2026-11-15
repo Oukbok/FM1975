@@ -46,3 +46,9 @@ export function NatFlag({ nat, height = 14 }: { nat: string; height?: number }) 
   if (!key) return <span className="cflag-code">{nat}</span>;
   return <span className="cflag-nat" title={countryInfo(key).name}><CountryFlag country={key} height={height} /></span>;
 }
+
+/** Flagge zu einem Land (Schlüssel aus data/countryFlags.ts) mit dem Ländernamen als Tooltip –
+ *  für Stellen, an denen die Flagge den ausgeschriebenen Namen ersetzt (Auslosung, Listen). */
+export function LandFlag({ country, height = 14 }: { country: string; height?: number }) {
+  return <span className="cflag-nat" title={countryInfo(country).name}><CountryFlag country={country} height={height} /></span>;
+}

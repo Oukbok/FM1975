@@ -3,6 +3,7 @@ import { h2hOf, titlesOf } from '../../game/clubRecords';
 import { clubStrengthFor } from '../../game/season';
 import { CalendarEngine } from '../../engine/calendar';
 import { DashBox, Empty, KV, Meter } from '../../ui/DashPage';
+import { CountryFlag } from '../competition/CountryFlag';
 import { fmtDateShort, vColor } from '../../ui/format';
 import { FormDots, PlayerRow, ScoutStars } from '../../views/shared';
 import { ClubTabProps, CoachBox, MatchLine, UnitCompare, verdict } from './shared';
@@ -30,7 +31,7 @@ export default function OverviewTab({ g, d, openPlayer }: ClubTabProps) {
         {d.reputation != null && <Meter label="Ansehen" value={d.reputation} color={vColor(d.reputation)} />}
         {d.fullClub && <KV k="Stadion" v={d.fullClub.stadium.name} />}
         {d.foreign && <>
-          <KV k="Land" v={d.foreign.country} />
+          <KV k="Land" v={<span className="kv-flag"><CountryFlag country={d.foreign.countryKey} height={14} />{d.foreign.country}</span>} />
           {d.tablePosition == null && <KV k="Platz Vorsaison" v={d.foreign.lastPos ? `${d.foreign.lastPos}.` : '–'} />}
           <KV k="Meister · Pokal (seit Spielbeginn)" v={`${d.foreign.titles} · ${d.foreign.cups}`} />
           <KV k="Europapokal" v={d.foreign.euro.length ? d.foreign.euro.join(', ') : '–'} />

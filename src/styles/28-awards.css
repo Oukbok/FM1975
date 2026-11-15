@@ -149,7 +149,6 @@ button.aw-name { font-family: var(--font-display); font-size: 24px; font-weight:
 .gb-pod.mine .gb-pod-name { color: var(--accent); }
 .gb-pod-meta { display: flex; align-items: center; gap: 8px; color: var(--text-3); font-size: 14px; }
 .gb-pod-club { font-size: 16px; color: var(--text-2); }
-.gb-nat { display: inline-block; padding: 1px 5px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.6px; color: var(--text-2); background: var(--bg-2); }
 .gb-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft); padding: 7px 0; margin-top: 4px; }
 .gb-kpi { display: flex; flex-direction: column; align-items: center; gap: 1px; }
 .gb-kpi b { font-family: var(--font-display); font-size: 22px; font-weight: 500; line-height: 1.1; }
@@ -199,7 +198,6 @@ button.aw-name { font-family: var(--font-display); font-size: 24px; font-weight:
 .gbt-sub { display: flex; align-items: center; gap: 18px; color: var(--text-2); font-size: 15px; }
 .gbt-rule { color: var(--text-3); }
 .gbt-sub .b3 { margin-left: auto; }
-.gbt-nat { font-weight: 700; color: var(--text-2); }
 .gbt-first::before { background: var(--text-2); }
 .gbt-rest .aw-rest { margin-top: 0; }
 /* Meistgeehrt: einzeilig wie das Archiv des Goldenen Balls */

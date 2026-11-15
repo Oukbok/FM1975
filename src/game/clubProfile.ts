@@ -42,6 +42,8 @@ const COMP_DE: Record<string, string> = { ec: 'Landesmeister', cwc: 'Pokalsieger
 /** Angaben zu Auslandsvereinen (Hintergrund-Welt): Land, Titel, Abschlussplätze, Europapokal. */
 export interface ForeignInfo {
   country: string;
+  /** Länderschlüssel (data/countryFlags.ts) für die Flagge. */
+  countryKey: string;
   titles: number;
   cups: number;
   champion: boolean;
@@ -65,7 +67,7 @@ function foreignInfo(g: Game, id: string): ForeignInfo | undefined {
   const cups = (g.world?.history ?? []).filter((h) => h.cupWinners?.[key] === id).length;
   const last = w?.lastTable?.indexOf(id) ?? -1;
   return {
-    country: name, titles: w?.titles?.[id] ?? 0, cups, champion: w?.lastChampion === id,
+    country: name, countryKey: key, titles: w?.titles?.[id] ?? 0, cups, champion: w?.lastChampion === id,
     lastPos: last >= 0 ? last + 1 : undefined,
     euro: Object.entries(g.world?.participants ?? {}).filter(([, ids]) => (ids as string[]).includes(id)).map(([k]) => COMP_DE[k] ?? k),
     seasons,

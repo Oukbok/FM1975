@@ -7,6 +7,7 @@
 import type { CSSProperties } from 'react';
 import { ClubLink } from '../../../components/club/ClubLink';
 import PosBadge from '../../../components/PosBadge';
+import { NatFlag } from '../../../components/competition/CountryFlag';
 import type { GBYear } from '../../../game/goldenBallGame';
 import type { Game } from '../../../game/state';
 import FaceThumb from '../../../components/FaceThumb';
@@ -29,7 +30,7 @@ export function GoldenBallTop({ g, y, onGala }: { g: Game; y: GBYear; onGala: ()
               <AwardFace g={g} e={e} size={88} />
               <div className="aw-who">
                 <AwardName e={e} />
-                <div className="aw-meta"><span className="gbt-nat">{e.nat}</span><PosBadge pos={e.pos} /><span>{e.a} Jahre</span></div>
+                <div className="aw-meta"><NatFlag nat={e.nat} height={15} /><PosBadge pos={e.pos} /><span>{e.a} Jahre</span></div>
                 <ClubLink id={e.c} className="aw-club"><span className="aw-club-name">{e.cn}</span></ClubLink>
               </div>
             </div>

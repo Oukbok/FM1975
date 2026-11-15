@@ -19,6 +19,7 @@ import Icon from '../../../components/Icon';
 import { InfoTip } from '../../../ui/InfoTip';
 import { PlayerTalkModal } from '../talk/PlayerTalkModal';
 import PosBadge from '../../../components/PosBadge';
+import { NatFlag } from '../../../components/competition/CountryFlag';
 import { LineChart } from '../../../ui/LineChart';
 import RangeSeg, { effectiveRange, inRange, spanYears, useChartRange } from '../../../ui/RangeSeg';
 import { monthLogPoints } from '../../../engine/monthLog';
@@ -99,7 +100,7 @@ export function PlayerFocus({ g, a, pid, onChange }: { g: Game; a: DRAnalysis; p
         {cap && <span className="kb-pill">Kapitän</span>}
         {inCouncil && <span className="kb-pill">Mannschaftsrat</span>}
       </div>
-      <div className="dnote">{p.age} Jahre · {p.nationality} · {o.language}{o.barrier > 0.05 ? ` (Barriere ${Math.round(o.barrier * 100)} %)` : ''} · {a.groups.find((x) => x.id === o.group)?.label} · {personaTitle(pe)}</div>
+      <div className="dnote">{p.age} Jahre · <NatFlag nat={p.nationality} height={12} /> · {o.language}{o.barrier > 0.05 ? ` (Barriere ${Math.round(o.barrier * 100)} %)` : ''} · {a.groups.find((x) => x.id === o.group)?.label} · {personaTitle(pe)}</div>
       <div className="kb-cols">
         <div>
           <div className="kb-big">

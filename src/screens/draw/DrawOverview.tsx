@@ -3,9 +3,10 @@
 // Turnierbaum (bisherige Runden mit Ergebnissen, kommende Runden leer).
 // Bausteine: components/competition/CupBracket.tsx, game/cupBracket.ts.
 // =============================================================================
-import { useMemo } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import ClubCrest from '../../components/ClubCrest';
 import { ClubLink } from '../../components/club/ClubLink';
+import { LandFlag } from '../../components/competition/CountryFlag';
 import { CupBracket, type BracketClub } from '../../components/competition/CupBracket';
 import { bracketFromCup, bracketStart } from '../../game/cupBracket';
 import type { Game } from '../../game/state';
@@ -31,7 +32,11 @@ export function PairsOverview({ rec, clubs, myId }: { rec: DrawRecord; clubs: (i
   const rows = Math.ceil(n / cols);
   const size = rows <= 4 ? 'big' : rows <= 8 ? 'mid' : 'small';
   const euro = rec.comp !== 'cup';
-  const sub = (c: ShowClub) => [euro ? c.country : c.amateur ? 'Amateurverein' : 'Profiverein', `Stärke ${c.strength}`].join(' · ');
+  // Europapokal: Landesflagge statt Ländername (Name als Tooltip; Wunsch Pascal).
+  const flagH = size === 'big' ? 18 : 15;
+  const sub = (c: ShowClub): ReactNode => euro
+    ? <><LandFlag country={c.country} height={flagH} /> · Stärke {c.strength}</>
+    : `${c.amateur ? 'Amateurverein' : 'Profiverein'} · Stärke ${c.strength}`;
   return (
     <div className="dr-wide-body">
       <div className="dr-ov-head">
@@ -56,7 +61,7 @@ export function PairsOverview({ rec, clubs, myId }: { rec: DrawRecord; clubs: (i
   );
 }
 
-function OvClub({ c, sub, side, crest }: { c: ShowClub; sub: string; side: 'home' | 'away'; crest: number }) {
+function OvClub({ c, sub, side, crest }: { c: ShowClub; sub: ReactNode; side: 'home' | 'away'; crest: number }) {
   return (
     <div className={`dr-ov-club ${side} ${c.mine ? 'me' : ''}`}>
       <ClubLink id={c.id}><ClubCrest club={c.crest} size={crest} /></ClubLink>

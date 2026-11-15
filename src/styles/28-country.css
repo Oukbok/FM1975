@@ -7,6 +7,10 @@
 .cflag-live .cflag[data-country]:hover { filter: brightness(1.12); }
 .cflag-live :is(button, a, [role="button"], .clickable, .club-link, .player-link) .cflag[data-country] { cursor: inherit; }
 .cflag-live :is(button, a, [role="button"], .clickable) .cflag[data-country]:hover { filter: none; }
+/* Flagge + Text in einer Zeile (KV-Werte, Länderlisten). */
+.kv-flag { display: inline-flex; align-items: center; gap: 7px; }
+/* Flagge statt Ländername unter dem Vereinsnamen der Auslosung („Flagge · Stärke 79“). */
+.dr-ov-sub .cflag-nat, .dr-opp-row .cflag-nat { vertical-align: -2px; margin-right: 2px; }
 
 .cnx-head .cnx-flag { display: inline-flex; flex: none; }
 .cnx-head .cnx-flag .cflag { border-radius: 3px; }

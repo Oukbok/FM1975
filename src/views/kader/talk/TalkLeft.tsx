@@ -14,6 +14,7 @@ import { InfoTip } from '../../../ui/InfoTip';
 import { vColor } from '../../../ui/format';
 import { Glyph, ScenePhase, TalkScene } from './TalkScene';
 import PosBadge from '../../../components/PosBadge';
+import { NatFlag } from '../../../components/competition/CountryFlag';
 
 export interface MoraleAnim { from: number; to: number; key: number }
 
@@ -56,7 +57,7 @@ export function TalkLeft({ p, club, phase, anim }: { p: Player; club?: Club; pha
         <div className="ptk-face"><PlayerAvatar key={p.id} player={p} club={club} size={146} priority /></div>
         <div className="ptk-facts">
           <div className="ptk-facts-top">
-            <span className="ptk-nat">{p.nationality}</span>
+            <span className="ptk-nat"><NatFlag nat={p.nationality} height={16} /></span>
             <span className="ptk-pot">{scoutRangeText(p)}<InfoTip k="potenzial" /></span>
           </div>
           <Row k="Position" v={<PosBadge p={p} />} />

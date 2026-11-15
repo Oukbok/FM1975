@@ -7,6 +7,7 @@ import { getFormation } from '../../data/formations';
 import { fmtDateShort } from '../../ui/format';
 import { DashBox, Empty, KV, Meter } from '../../ui/DashPage';
 import { ClubLink } from './ClubLink';
+import { NatFlag } from '../competition/CountryFlag';
 import { coachRecordOf, recordText } from '../../game/coachRecord';
 import { currentStint, ensureCareer, stintRecord } from '../../game/careerState';
 import { headCoachRows } from '../../game/headCoaches';
@@ -86,7 +87,7 @@ export function CoachBox({ g, d }: { g: Game; d: ClubProfileData }) {
     <DashBox title="Trainer" icon="tactics" info="trainerBilanz" right={c ? `seit ${c.since.slice(0, 4)}` : undefined}>
       {c ? <>
         <div className="cmx-coach-name">{c.name}</div>
-        <KV k="Alter · Nationalität" v={`${c.age} · ${c.nationality}`} />
+        <KV k="Alter · Nationalität" v={<span className="kv-flag">{c.age} · <NatFlag nat={c.nationality} height={14} /></span>} />
         <KV k="Stil · Philosophie" v={`${COACH_STYLE_DE[c.style] ?? c.style} · ${PHIL_DE[c.philosophy] ?? c.philosophy}`} />
         {c.preferredFormation && <KV k="Lieblingssystem" v={getFormation(c.preferredFormation).label} />}
         <KV k="Amtszeit" v={tenure(c.since, today)} />
