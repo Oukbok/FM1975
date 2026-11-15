@@ -546,7 +546,7 @@ export const INFO_TEXTS = {
   },
   werbewirkung: {
     title: 'Wirkung der Werbung',
-    text: '„Jetzt“ ist die Wirkung, die schon angekommen ist, „Ziel“ die Wirkung deiner Regler nach rund einem halben Jahr. Zuschauer, Mitglieder und Fanartikel steigen in Prozent; die Marke in Punkten – sie hebt Sponsoring, Vermarktung und Fanartikel. Der Ertrag ist eine Schätzung aus deinen Erlösen.',
+    text: '„Jetzt“ ist die Wirkung, die schon angekommen ist, „Ziel“ die Wirkung deiner Regler nach rund einem halben Jahr. Zuschauer, Mitglieder und Fanartikel steigen in Prozent; die Marke in Punkten – sie hebt Sponsoring, Vermarktung und Fanartikel. Der Ertrag ist eine Schätzung aus deinen Erlösen. Die Zugkraft (Tabellenplatz gegen das Saisonziel, Form, Titel) verstärkt oder dämpft jede Kampagne – damit verschiebt sich auch der einträglichste Einsatz.',
     wiki: 'marketing-overview',
   },
   catering: {

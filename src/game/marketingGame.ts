@@ -16,14 +16,21 @@
 //     Vermarktung und Fanartikel (commercialMultiplier). Markenwirkung verfällt
 //     viel langsamer als die übrige – sie bleibt nach dem Ende der Werbung gut ein
 //     Jahr lang spürbar.
+// ZUGKRAFT (Wunsch Pascal: Werbung verstärkt, was der Erfolg ohnehin bewegt, und der beste
+// Einsatz soll sich laufend verschieben): Die Zielwirkung wird mit der Zugkraft des Vereins
+// multipliziert (0,7–1,4) – Tabellenplatz gegen das Saisonziel, Form der letzten fünf Spiele,
+// Titel der Vorsaison. Läuft es, zündet jede Kampagne stärker und mehr Werbung lohnt sich;
+// in der Krise verpufft ein Teil, und der einträglichste Einsatz liegt tiefer.
 // KI-Vereine werben nicht (ihre Erlöse sind pauschal kalibriert).
 // =============================================================================
-import { GOAL_CAP, MARKETING_GOALS, marketingMonthlyBase, marketingPriceFactor, marketingTargets, type MarketingGoal } from '../data/marketing';
+import { GOAL_CAP, MARKETING_AREAS, MARKETING_GOALS, marketingAvailable, marketingMonthlyBase, marketingPriceFactor, marketingTargets, type MarketingGoal } from '../data/marketing';
 import { brandFromReputation, brandIndex, ensureBrand } from '../engine/clubEconomy';
 import type { ClubBrand } from '../types';
 import { economyScale, yearOf } from '../engine/economy';
 import { book } from '../engine/finances';
 import { setMarketingFx } from '../engine/honourEffects';
+import { titlesOf } from './clubRecords';
+import { goalOf } from './dressingRoomGame';
 import type { Game } from './state';
 
 export type MarketingFx = Record<MarketingGoal, number>;
@@ -33,6 +40,32 @@ const UP = 0.3, DOWN = 0.18;
 /** Markenwirkung baut sich langsamer auf und hält viel länger. */
 const BRAND_UP = 0.2, BRAND_DOWN = 0.05;
 const BRAND_KEY: Partial<Record<MarketingGoal, keyof ClubBrand>> = { reg: 'regional', nat: 'national', intl: 'international' };
+
+export interface MarketingPull { factor: number; word: string; why: string }
+/** Zugkraft des eigenen Vereins: wie stark Werbung gerade zündet (1 = normal). */
+export function marketingPull(g: Game): MarketingPull {
+  const club = g.clubs[g.managedClubId];
+  const why: string[] = [];
+  let f = 1;
+  const goal = club ? goalOf(g, club) : undefined;
+  if (goal && goal.played >= 3) {
+    const d = Math.max(-0.25, Math.min(0.25, ((goal.expected - goal.pos) / Math.max(4, goal.size)) * 0.9));
+    f += d;
+    if (d > 0.04) why.push(`Platz ${goal.pos} – besser als erwartet`); else if (d < -0.04) why.push(`Platz ${goal.pos} – hinter den Erwartungen`);
+    const form = g.table.rows.find((r) => r.clubId === club.id)?.form ?? [];
+    if (form.length >= 3) {
+      const pts = form.reduce((a, x) => a + (x === 'W' ? 3 : x === 'D' ? 1 : 0), 0) / (form.length * 3);
+      f += (pts - 0.45) * 0.3;
+      if (pts >= 0.7) why.push('starke Form'); else if (pts <= 0.25) why.push('schwache Form');
+    }
+  }
+  const prev = `${Number(g.season.slice(0, 4)) - 1}/`;
+  const won = club ? titlesOf(g, club.id).filter((t) => t.season.startsWith(prev) && ['meister', 'ddr', 'pokal', 'ec', 'cwc', 'uefa'].includes(t.kind)) : [];
+  if (won.length) { f += won.some((t) => t.kind !== 'pokal') ? 0.12 : 0.07; why.push('Titel der Vorsaison'); }
+  const factor = Math.round(Math.max(0.7, Math.min(1.4, f)) * 100) / 100;
+  const word = factor >= 1.2 ? 'sehr hoch' : factor >= 1.07 ? 'hoch' : factor > 0.93 ? 'normal' : factor > 0.82 ? 'gedämpft' : 'schwach';
+  return { factor, word, why: why.join(', ') || 'Saison läuft wie erwartet' };
+}
 
 export function marketingFxOf(g: Game): MarketingFx {
   return { ...ZERO(), ...(g.marketingFx ?? {}) };
@@ -58,7 +91,7 @@ export function marketingMonthly(g: Game, today: string): void {
   const mkt = g.marketing ?? {};
   const cost = marketingCostMonth(g, mkt);
   if (cost > 0) book(club.finances, today, -cost, 'other', 'Marketing & Werbung (Monat)', true);
-  const target = marketingTargets(mkt, year);
+  const target = marketingTargets(mkt, year, marketingPull(g).factor);
   const fx = marketingFxOf(g);
   const b = ensureBrand(club);
   const applied = { ...(g.marketingBrand ?? {}) } as Partial<Record<MarketingGoal, number>>;
@@ -98,6 +131,9 @@ export interface MarketingView {
   gainYear: number;
   /** Anteil der Zielwirkung, der heute schon erreicht ist (0..1). */
   progress: number;
+  pull: MarketingPull;
+  /** Geschätzter Saldo je Jahr, wenn alle bespielten Kanäle eine Stufe tiefer/höher stünden (null = geht nicht). */
+  netDown: number | null; netUp: number | null;
 }
 
 /** Jahreswert einer Einnahmeart: letzte abgeschlossene Saison, sonst die laufende hochgerechnet. */
@@ -112,9 +148,21 @@ function annual(g: Game, pick: (i: Game['clubs'][string]['finances']['income']) 
 }
 
 export function marketingView(g: Game, budgets: Record<string, number> = g.marketing ?? {}): MarketingView {
+  const v = viewOf(g, budgets);
+  // Wo liegt der einträglichste Einsatz? Vergleich mit „überall eine Stufe weniger/mehr“.
+  const year = yearOf(g.calendar.currentDate);
+  const live = MARKETING_AREAS.filter((a) => marketingAvailable(a, year));
+  const shift = (d: number) => Object.fromEntries(live.map((a) => [a.id, Math.max(0, Math.min(a.maxUnits, (budgets[a.id] ?? 0) + d))]).filter(([, u]) => (u as number) > 0)) as Record<string, number>;
+  const net = (b: Record<string, number>) => { const x = viewOf(g, b); return x.gainYear - x.costYear; };
+  const canDown = live.some((a) => (budgets[a.id] ?? 0) > 0), canUp = live.some((a) => (budgets[a.id] ?? 0) < a.maxUnits);
+  return { ...v, netDown: canDown ? net(shift(-1)) : null, netUp: canUp ? net(shift(1)) : null };
+}
+
+function viewOf(g: Game, budgets: Record<string, number>): Omit<MarketingView, 'netDown' | 'netUp'> {
   const club = g.clubs[g.managedClubId];
   const year = yearOf(g.calendar.currentDate);
-  const target = marketingTargets(budgets, year), fx = marketingFxOf(g);
+  const pull = marketingPull(g);
+  const target = marketingTargets(budgets, year, pull.factor), fx = marketingFxOf(g);
   const tickets = annual(g, (i) => i.ticketSales + i.catering + i.matchday);
   const members = annual(g, (i) => i.membership);
   const merch = annual(g, (i) => i.merchandise);
@@ -141,6 +189,6 @@ export function marketingView(g: Game, budgets: Record<string, number> = g.marke
   return {
     rows, costMonth, costYear: costMonth * 12, brandYear: Math.round(brandYear),
     gainYear: Math.round(perYear.att + perYear.members + perYear.merch + brandYear),
-    progress: sumT > 0 ? sumN / sumT : 1,
+    progress: sumT > 0 ? sumN / sumT : 1, pull,
   };
 }

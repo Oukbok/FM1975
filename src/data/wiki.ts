@@ -3603,14 +3603,24 @@ Das Höchstmaß eines Ziels erreichst du, wenn **alle Kanäle der Epoche**, die 
 
 ## Kosten linear, Wirkung flacht ab
 - Die **Kosten** steigen mit jeder Stufe um denselben Betrag. Große Vereine zahlen für dieselbe Stufe mehr (größere Kampagnen), kleine weniger.
-- Die **Wirkung** flacht ab: Stufe 1 bringt schon rund ein Drittel, die halbe Leiste rund zwei Drittel. **Wenige Stufen in vielen Kanälen** sind deshalb fast immer besser als ein Kanal am Anschlag; die obersten Stufen lohnen sich nur für große Vereine.
+- Die **Wirkung** flacht ab: Stufe 1 bringt schon rund ein Drittel, die halbe Leiste rund zwei Drittel. **Wenige Stufen in vielen Kanälen** sind deshalb fast immer besser als ein Kanal am Anschlag.
 
 ## Anlauf, Verfall und bleibender Wert
 - Eine Kampagne braucht Zeit: Die Wirkung läuft der Reglerstellung Monat für Monat hinterher und ist nach rund **einem halben Jahr** fast voll da. Streichst du die Werbung, klingt sie ebenso langsam ab.
 - **Markenwerbung hält länger:** Sie baut sich etwas langsamer auf, klingt nach dem Ende der Werbung aber erst über gut ein Jahr ab. Mehr als 100 Punkte hat keine Marke – wer regional schon alles erreicht hat, braucht dort keine Werbung mehr.
 
-## Lohnt sich das?
-Die Box **Wirkung der Werbung** zeigt je Ziel die Wirkung **jetzt** und das **Ziel** deiner Regler, dazu eine Schätzung in Geld: Kosten im Jahr gegen den geschätzten Mehrertrag (aus deinen Erlösen der letzten Saison). Faustregel: Die unteren Stufen rechnen sich für fast jeden Verein, in der Mitte wird es knapp, am Anschlag zahlt nur noch drauf, wer nicht sehr groß ist. Die Kosten werden monatlich am 1. gebucht (Ausgaben „Sonstiges“), die Erträge kommen über Eintritt, Mitgliedsbeiträge, Fanartikel und Sponsoring herein – nicht als eigene Buchung.
+## Zugkraft: Erfolg verstärkt die Werbung
+Werbung schiebt an, was dein sportliches Abschneiden ohnehin bewegt – Zuschauer, Mitglieder, Fanartikel, Marke. Wie stark sie zündet, hängt von der **Zugkraft** deines Vereins ab (×0,7 bis ×1,4):
+- **Tabellenplatz gegen das Saisonziel:** besser als erwartet = mehr Zugkraft, hinter den Erwartungen = weniger.
+- **Form** der letzten fünf Spiele.
+- **Titel der Vorsaison** (Meisterschaft, Pokal, Europapokal).
+Die Zugkraft steht in der Box „Wirkung der Werbung“. Läuft es sportlich, wirkt jede Kampagne stärker; in der Krise verpufft ein Teil.
+
+## Lohnt sich das? Der einträglichste Einsatz
+Die Box **Wirkung der Werbung** zeigt je Ziel die Wirkung **jetzt** und das **Ziel** deiner Regler in Prozent bzw. Markenpunkten, dazu eine Schätzung in Geld: Kosten im Jahr gegen den geschätzten Mehrertrag (aus deinen Erlösen der letzten Saison). So kannst du abschätzen, wie viele Zuschauer mehr kommen oder wie viel mehr Fanartikel du verkaufst.
+- Werbung **trägt sich in aller Regel** – aber nicht jede Stufe bringt gleich viel. Es gibt einen **einträglichsten Einsatz**, bei dem am meisten übrig bleibt: darunter verschenkst du Ertrag, darüber frisst jede weitere Stufe mehr, als sie bringt.
+- Dieser Punkt **wandert**: mit der Zugkraft (läuft es, lohnt mehr Werbung), mit der Größe deines Vereins und deinen Erlösen, mit neuen Kanälen. Der Hinweis unter der Tabelle sagt dir, ob eine Stufe mehr oder weniger geschätzt mehr einbrächte.
+Die Kosten werden monatlich am 1. gebucht (Ausgaben „Sonstiges“), die Erträge kommen über Eintritt, Mitgliedsbeiträge, Fanartikel und Sponsoring herein – nicht als eigene Buchung.
 
 ## Weitere Erlösquellen im Marketing-Bereich
 Unter den Werbereglern zeigt der Bereich drei zusätzliche Karten des Finanzsystems:

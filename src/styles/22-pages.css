@@ -218,6 +218,14 @@
 .dmkt-ctrl input[type=range] { width: 100%; accent-color: var(--accent); }
 .dmkt-goals { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 3px; }
 .dmkt-goals i { font-style: normal; font-size: 12.5px; font-weight: 600; color: var(--text-2); padding: 1px 7px; border: 1px solid var(--border); border-radius: 4px; }
+/* Zugkraft: wie stark Werbung gerade zündet */
+.dmkt-pull { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 10px; margin-top: 10px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; }
+.dmkt-pull span { font-size: 14.5px; color: var(--text-2); }
+.dmkt-pull b { font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--text); }
+.dmkt-pull b.up { color: var(--pos); }
+.dmkt-pull b.down { color: var(--neg); }
+.dmkt-pull i { grid-column: 1 / -1; font-style: normal; font-size: 13px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dmkt-advice { min-height: 54px; }
 /* Wirkung der Werbung: je Ziel jetzt / Ziel / Ertrag, darunter Balken (hell = Ziel, kräftig = erreicht) */
 .dmkt-fx { display: grid; gap: 0; margin-top: 8px; }
 .dmkt-fx-h, .dmkt-fx-row { display: grid; grid-template-columns: minmax(0, 1.5fr) 70px 70px minmax(0, 1fr); gap: 8px; align-items: baseline; }

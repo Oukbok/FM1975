@@ -101,7 +101,7 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
       <DashBox title="Wirkung der Werbung" info="werbewirkung" icon="finances">
         <div className="dkpis">
           <Kpi value={fmtDM(mv.costYear)} label="Kosten / Jahr" color={mv.costYear ? 'var(--red)' : undefined} />
-          <Kpi value={mv.costYear ? `${net >= 0 ? '+' : '−'}${fmtDM(Math.abs(net))}` : '–'} label="Ertrag geschätzt / Jahr" color={!mv.costYear ? undefined : net >= 0 ? 'var(--green)' : 'var(--red)'} />
+          <Kpi value={mv.costYear ? `${net >= 0 ? '+' : '−'}${fmtDM(Math.abs(net))}` : '–'} label="Überschuss geschätzt / Jahr" color={!mv.costYear ? undefined : net >= 0 ? 'var(--green)' : 'var(--red)'} />
         </div>
         <div className="dmkt-fx">
           <div className="dmkt-fx-h"><span>Werbeziel</span><span>jetzt</span><span>Ziel</span><span>bringt / Jahr</span></div>
@@ -116,11 +116,16 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
           ))}
           <div className="dmkt-fx-row sum"><span>Marke gesamt → Sponsoring, Vermarktung, Fanartikel</span><span /><span /><span>{mv.brandYear ? `+${fmtDM(mv.brandYear)}` : '–'}</span></div>
         </div>
-        <div className="dnote mt8">
-          {mv.costYear === 0 ? 'Keine Werbung geschaltet. Schon die ersten Stufen lokaler Kanäle bringen spürbar Zuschauer und Mitglieder.'
-            : mv.progress < 0.85 ? `Die Kampagnen laufen an: ${Math.round(mv.progress * 100)} % der Zielwirkung sind erreicht.`
-              : net >= 0 ? 'Die Werbung trägt sich. Die Marke wirkt auf Sponsoring, Vermarktung und Fanartikel und bleibt dir auch nach der Kampagne noch lange erhalten.'
-                : 'So viel Werbung rechnet sich bei deiner Vereinsgröße nicht – die obersten Stufen bringen kaum noch etwas. Weniger Kanäle oder niedrigere Stufen sparen Geld bei fast gleicher Wirkung.'}
+        <div className="dmkt-pull" title={mv.pull.why}>
+          <span>Zugkraft des Vereins</span><b className={mv.pull.factor >= 1.07 ? 'up' : mv.pull.factor <= 0.93 ? 'down' : ''}>{mv.pull.word} · ×{mv.pull.factor.toFixed(2).replace('.', ',')}</b>
+          <i>{mv.pull.why}</i>
+        </div>
+        <div className="dnote mt8 dmkt-advice">
+          {mv.costYear === 0 ? 'Keine Werbung geschaltet. Schon die ersten Stufen bringen spürbar Zuschauer, Mitglieder und Fanartikel-Umsatz.'
+            : mv.netUp != null && mv.netUp > net && mv.netUp >= (mv.netDown ?? -Infinity) ? `Da geht noch mehr: Überall eine Stufe höher brächte geschätzt ${fmtDM(mv.netUp - net)} mehr im Jahr.`
+              : mv.netDown != null && mv.netDown > net ? `Du liegst über dem einträglichsten Einsatz: Überall eine Stufe tiefer blieben geschätzt ${fmtDM(mv.netDown - net)} mehr im Jahr übrig.`
+                : 'Du triffst gerade den einträglichsten Einsatz. Er verschiebt sich mit der Zugkraft – läuft es sportlich, lohnt mehr Werbung; in der Krise weniger.'}
+          {mv.costYear > 0 && mv.progress < 0.85 ? ` Die Kampagnen laufen noch an (${Math.round(mv.progress * 100)} % der Zielwirkung).` : ''}
         </div>
         <KV k="Mitgliedsbeiträge / Monat" info="mitglieder" v={`+${fmtDM(membershipMonth)}`} color="var(--green)" />
         <div className="dsec">Werbeflächen im Stadion</div>

@@ -84,7 +84,7 @@ export const MARKETING_AREAS: MarketingArea[] = [
 ];
 
 /** Preisniveau der Werbung gegenüber den Kanal-Stammdaten (auch eigener Datensätze). */
-export const MARKETING_COST_FACTOR = 0.15;
+export const MARKETING_COST_FACTOR = 0.1;
 /**
  * Preisfaktor auf die Kanal-Stammdaten (Basisjahr), mit dem Kosten gebucht und angezeigt werden:
  *  • Epoche: Solange es nur wenige Kanäle gibt, tragen sie die ganze Wirkung – und kosten entsprechend mehr
@@ -106,7 +106,7 @@ export function marketingPriceFactor(year: number, reputation: number): number {
 export type MarketingGoal = 'att' | 'members' | 'merch' | 'reg' | 'nat' | 'intl';
 export const MARKETING_GOALS: MarketingGoal[] = ['att', 'members', 'merch', 'reg', 'nat', 'intl'];
 export const GOAL_LABEL: Record<MarketingGoal, string> = {
-  att: 'Zuschauer', members: 'Mitglieder', merch: 'Fanartikel', reg: 'Marke regional', nat: 'Marke national', intl: 'Marke international',
+  att: 'Zuschauer', members: 'Mitglieder', merch: 'Fanartikel (Trikots & Co.)', reg: 'Marke regional', nat: 'Marke national', intl: 'Marke international',
 };
 /**
  * Höchste Wirkung je Ziel, wenn alle Kanäle der Epoche voll laufen: Zuschauernachfrage, Mitgliedsbeiträge
@@ -138,9 +138,10 @@ export function areaSaturation(area: MarketingArea, units: number): number {
 
 /**
  * Zielwirkung je Werbeziel bei diesen Reglern im Jahr `year`: Obergrenze × Anteil der bespielten
- * Kanäle an allen Kanälen der Epoche, die auf das Ziel einzahlen.
+ * Kanäle an allen Kanälen der Epoche, die auf das Ziel einzahlen, × Zugkraft des Vereins (`pull`,
+ * game/marketingGame.ts `marketingPull`: wer gerade sportlich überzeugt, bei dem zündet Werbung stärker).
  */
-export function marketingTargets(budgets: Record<string, number>, year: number): Record<MarketingGoal, number> {
+export function marketingTargets(budgets: Record<string, number>, year: number, pull = 1): Record<MarketingGoal, number> {
   const out = { att: 0, members: 0, merch: 0, reg: 0, nat: 0, intl: 0 } as Record<MarketingGoal, number>;
   const areas = MARKETING_AREAS.filter((a) => marketingAvailable(a, year));
   for (const goal of MARKETING_GOALS) {
@@ -151,7 +152,7 @@ export function marketingTargets(budgets: Record<string, number>, year: number):
       total += w;
       got += w * areaSaturation(a, budgets[a.id] ?? 0);
     }
-    out[goal] = total > 0 ? GOAL_CAP[goal] * (got / total) : 0;
+    out[goal] = total > 0 ? GOAL_CAP[goal] * pull * (got / total) : 0;
   }
   return out;
 }

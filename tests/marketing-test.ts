@@ -8,7 +8,7 @@ import { yearOf } from '../src/engine/economy';
 import { computeMonthly } from '../src/engine/finances';
 import { honourFx } from '../src/engine/honourEffects';
 import { prepareLoadedGame } from '../src/game/loadMigrations';
-import { bindMarketing, marketingFxOf, marketingMonthly, marketingView } from '../src/game/marketingGame';
+import { bindMarketing, marketingFxOf, marketingMonthly, marketingPull, marketingView } from '../src/game/marketingGame';
 import type { Game } from '../src/game/state';
 
 let fails = 0;
@@ -54,8 +54,9 @@ function run(path: string, label: string): void {
     g.managedClubId = c.id;
     const row = ([['1', () => 1], ['halb', (m: number) => Math.ceil(m / 2)], ['voll', (m: number) => m]] as [string, (m: number) => number][]).map(([n, f]) => { const v = marketingView(g, levels(year, f)); return `${n}: ${mio(v.costYear)} → ${mio(v.gainYear)} (×${(v.gainYear / Math.max(1, v.costYear)).toFixed(2)})`; });
     console.log(`  ${c.name.padEnd(20)} Ruf ${Math.round(c.reputation)}  ${row.join('   ')}`);
-    const one = marketingView(g, levels(year, () => 1));
-    ok(one.gainYear > one.costYear, `${label}: ${c.name} – Stufe 1 überall rechnet sich`);
+    const vs = [() => 1, (m: number) => Math.ceil(m / 2), (m: number) => m].map((f) => marketingView(g, levels(year, f)));
+    const nets = vs.map((v) => v.gainYear - v.costYear);
+    ok(vs.every((v) => v.gainYear > v.costYear * 0.9) && (vs[0].pull.factor > 1.05 || nets[1] > nets[2]), `${label}: ${c.name} – Werbung trägt sich auf jeder Stufe (Zugkraft ×${vs[0].pull.factor}), am meisten bleibt in der Mitte`);
   }
   g.managedClubId = me;
   const lo = marketingView(g, levels(year, () => 1)), hi = marketingView(g, levels(year, (m) => m));
@@ -65,7 +66,7 @@ function run(path: string, label: string): void {
   const bal0 = club.finances.balance;
   const d = g.calendar.currentDate.slice(0, 8) + '01';
   marketingMonthly(g, d);
-  const one = marketingFxOf(g).att, target = marketingTargets(g.marketing, year);
+  const one = marketingFxOf(g).att, target = marketingTargets(g.marketing, year, marketingPull(g).factor);
   ok(club.finances.balance < bal0 && Math.abs(bal0 - club.finances.balance - marketingView(g).costMonth) < 2, `${label}: Monatskosten gebucht (${mio(bal0 - club.finances.balance)})`);
   for (let i = 0; i < 7; i++) marketingMonthly(g, d);
   const fx = marketingFxOf(g);
@@ -86,6 +87,21 @@ function run(path: string, label: string): void {
   for (let i = 0; i < 120; i++) marketingMonthly(g, d);
   ok(Math.abs(club.brand!.national - brand0.national) < 0.01 && Math.abs(club.brand!.international - brand0.international) < 0.01 && !(g.marketingBrand?.nat),
     `${label}: nach langer Pause ist die Marke wieder dort, wo sie ohne Werbung stünde (${club.brand!.national.toFixed(1)})`);
+  // Zugkraft: Erfolg verstärkt die Werbung und verschiebt den einträglichsten Einsatz
+  const row = g.table.rows.find((r) => r.clubId === club.id);
+  if (row && g.table.rows.length > 6 && row.played >= 3) {
+    const keep = { rows: g.table.rows.map((r) => ({ ...r, form: [...r.form] })) };
+    const place = (pos: number, form: ('W' | 'D' | 'L')[]) => { const rest = g.table.rows.filter((r) => r.clubId !== club.id); rest.splice(pos - 1, 0, row); g.table.rows = rest; row.form = form; };
+    place(1, ['W', 'W', 'W', 'W', 'W']);
+    const hot = marketingPull(g), vHot = marketingView(g, levels(year, (m) => Math.ceil(m / 2)));
+    place(g.table.rows.length, ['L', 'L', 'L', 'L', 'L']);
+    const cold = marketingPull(g), vCold = marketingView(g, levels(year, (m) => Math.ceil(m / 2)));
+    g.table.rows = keep.rows;
+    ok(hot.factor > 1.1 && cold.factor < 0.9 && hot.factor <= 1.4 && cold.factor >= 0.7 && vHot.gainYear > vCold.gainYear * 1.2,
+      `${label}: Zugkraft Tabellenführer ×${hot.factor} (${hot.word}), Schlusslicht ×${cold.factor} (${cold.word}) – Ertrag ${mio(vHot.gainYear)} gegen ${mio(vCold.gainYear)}`);
+    const upHot = (vHot.netUp ?? -1e18) - (vHot.gainYear - vHot.costYear), upCold = (vCold.netUp ?? -1e18) - (vCold.gainYear - vCold.costYear);
+    ok(upHot > upCold, `${label}: mit Zugkraft lohnt die nächste Stufe eher (${mio(upHot)} gegen ${mio(upCold)})`);
+  }
   ok(marketingMonthlyBase({}) === 0, `${label}: keine Regler, keine Kosten`);
 }
 run('public/saves/test-3-jahre.txt', 'Vorlage 1978');
