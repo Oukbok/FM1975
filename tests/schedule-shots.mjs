@@ -26,7 +26,7 @@ for (const [w, h] of [[1920, 1080], [1366, 768]]) {
   await page.evaluate((r) => { localStorage.setItem('fm1980_save_sim', r); localStorage.setItem('fm1980_saves_index', JSON.stringify(['sim'])); }, raw);
   await page.reload();
   await page.click('text=Spiel laden');
-  await page.click('button:has-text("Laden") >> nth=0');
+  await page.click('.card:has(button:has-text("Löschen")) button:has-text("Laden") >> nth=0');
   await page.waitForTimeout(1500);
   // Offene Fenster aus der Simulation schließen (Gala, Briefing, Bewertungsrunde …).
   for (let i = 0; i < 3; i++) { await page.keyboard.press('Escape'); await page.waitForTimeout(300); }

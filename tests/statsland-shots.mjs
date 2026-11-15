@@ -56,7 +56,7 @@ if (process.env.SAVE) {
   await page.evaluate((r) => { localStorage.setItem('fm1980_save_sim', r); localStorage.setItem('fm1980_saves_index', JSON.stringify(['sim'])); }, raw);
   await page.reload();
   await page.click('text=Spiel laden');
-  await page.click('button:has-text("Laden") >> nth=0');
+  await page.click('.card:has(button:has-text("Löschen")) button:has-text("Laden") >> nth=0');
   await page.waitForTimeout(1800);
   for (let i = 0; i < 3 && await page.locator('.bf-continue').count(); i++) { await page.locator('.bf-continue').click(); await page.waitForTimeout(200); }
   // Offene Fenster (Gala, Auszeichnungen, Budget …) schließen.
@@ -104,10 +104,13 @@ if (!process.env.HALLE) {
     if (cc === 'esp') {
       // Auslandsliga Spieltag für Spieltag: Heimtabelle, 2. Liga, Vorsaison, Saison vor Spielbeginn, Pokal
       const ss = await optionsOf(page, seasonSel());
+      // Die Saison bleibt beim Länderwechsel stehen (z. B. 1990/91 nach der DDR) – laufende Saison wählen.
+      if (await seasonSel().getAttribute('data-value') !== ss.at(-1).value) { await pickOption(page, seasonSel(), ss.at(-1).value); await shot('liga_esp_laufend'); }
       await page.locator('.cmp-toolbar button:has-text("Heim")').click(); await shot('liga_esp_heim');
       await page.locator('.cmp-toolbar button:has-text("Gesamt")').click();
       if (!await page.locator('.cmp-mdbox .md-row').count()) errors.push('esp: Box „Begegnungen“ ohne Spiele');
       const comps = (await optionsOf(page, compSel())).map((o) => o.value);
+      console.log('Wettbewerbe esp:', comps.join(' '), '· Saisons:', ss.map((x) => x.value).join(' '));
       if (comps.includes('r2')) { await pickOption(page, compSel(), 'r2'); await shot('liga_esp_2liga'); await pickOption(page, compSel(), 'r1'); }
       // Torschützenliste der Auslandsliga (aus dem Spielerpool) und Landespokal mit Runden
       if (!await page.locator('.cmp-st-goals .cmp-stat').count()) errors.push('esp: Box „Torschützen“ fehlt oder ist leer');
@@ -133,6 +136,31 @@ if (!process.env.HALLE) {
       await pickOption(page, compSel(), 'xcup');
       await shot('pokal_esp');
     }
+  }
+  // Vorauswahl von außen bei offener Seite: Länderprofil › Ligen › „Statistiken › Liga öffnen“
+  // muss das Land auch dann übernehmen, wenn Statistiken › Liga schon angezeigt wird.
+  await go('Liga');
+  await pickOption(page, countrySel(), countries[0]);
+  for (const [land, cc] of [['England', 'eng'], ['Spanien', 'esp']]) {
+    if (!countries.includes(cc)) continue;
+    await page.evaluate((k) => {
+      const f = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      f.setAttribute('class', 'cflag'); f.setAttribute('data-country', k); f.setAttribute('width', '30'); f.setAttribute('height', '20');
+      f.style.cssText = 'position:fixed;left:0;top:0;z-index:5'; f.id = 'probe-flag';
+      document.body.appendChild(f);
+    }, land);
+    await page.locator('#probe-flag').click({ force: true });
+    await page.evaluate(() => document.getElementById('probe-flag')?.remove());
+    if (!await page.waitForSelector('.cnx-modal', { timeout: 5000 }).then(() => true).catch(() => false)) { errors.push(`${land}: Länderprofil öffnet nicht`); continue; }
+    await page.locator('.cnx-modal .tab:has-text("Ligen")').first().click();
+    const goBtn = page.locator('.cnx-modal .cnx-goto');
+    if (!await goBtn.count()) { errors.push(`${land}: Knopf „Statistiken › Liga öffnen“ fehlt`); await page.keyboard.press('Escape'); continue; }
+    await goBtn.click();
+    await page.waitForTimeout(500);
+    if (await page.locator('.cnx-modal').count()) { await page.keyboard.press('Escape'); await page.waitForTimeout(200); }
+    const now = await countrySel().getAttribute('data-value');
+    if (now !== cc) errors.push(`Vorauswahl bei offener Seite: Land ${now} statt ${cc}`);
+    await shot(`liga_vorauswahl_${cc}`);
   }
   await go('Pokal');
   await shot('pokal_heim');

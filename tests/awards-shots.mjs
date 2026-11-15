@@ -37,7 +37,7 @@ for (const [vw, vh] of [[1920, 1080], [1366, 768]]) {
     await page.evaluate((r) => { localStorage.setItem('fm1980_save_sim', r); localStorage.setItem('fm1980_saves_index', JSON.stringify(['sim'])); }, raw);
     await page.reload();
     await page.click('text=Spiel laden');
-    await page.click('button:has-text("Laden") >> nth=0');
+    await page.click('.card:has(button:has-text("Löschen")) button:has-text("Laden") >> nth=0');
     const pre = `${outDir}/${name}_${vw}`;
     const over = async (sel, what) => {
       const o = await page.evaluate((s) => { const b = document.querySelector(s); return b ? Math.max(b.scrollWidth - b.clientWidth, 0) : -1; }, sel);
@@ -70,6 +70,7 @@ for (const [vw, vh] of [[1920, 1080], [1366, 768]]) {
         await page.screenshot({ path: `${pre}_seite_liga.png` });
         await over('.aw-page', 'Seite');
         // Weitere Auszeichnungen über dieselbe Wahl: Goldener Schuh, Trainer des Jahres, Elf der Saison (eigene Liga + Ausland).
+        // label: Text des Eintrags oder RegExp (erster Treffer zählt).
         const pick = async (label, file, sel) => {
           await page.locator('.aw-pick-league').click();
           await page.waitForTimeout(250);
@@ -85,7 +86,8 @@ for (const [vw, vh] of [[1920, 1080], [1366, 768]]) {
         };
         await pick('Goldener Schuh', 'schuh', '.gs-table');
         await pick('Trainer des Jahres', 'trainer', '.tdj-grid');
-        await pick('Elf der Saison · 1. Liga', 'elf', '.tos-pitch');
+        // Elf der eigenen Liga steht zuerst in der Gruppe – je nach Spielstand 1. oder 2. Liga.
+        await pick(/Elf der Saison · .*(Liga|liga)/, 'elf', '.tos-pitch');
         await pick('Elf der Saison · England', 'elf_ausland', '.tos-pitch');
         const chips = await page.locator('.tos-chip').count();
         if (chips && chips !== 11) errors.push(`${name} ${vw}: Elf der Saison zeigt ${chips} statt 11 Spieler`);

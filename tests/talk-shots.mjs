@@ -29,7 +29,7 @@ async function open(w, h) {
   await page.evaluate((r) => { localStorage.setItem('fm1980_save_sim', r); localStorage.setItem('fm1980_saves_index', JSON.stringify(['sim'])); }, raw);
   await page.reload();
   await page.click('text=Spiel laden');
-  await page.click('button:has-text("Laden") >> nth=0');
+  await page.click('.card:has(button:has-text("Löschen")) button:has-text("Laden") >> nth=0');
   await page.waitForTimeout(1500);
   for (let i = 0; i < 3 && await page.locator('.bf-continue').count(); i++) { await page.locator('.bf-continue').click(); await page.waitForTimeout(200); }
   for (let k = 0; k < 5 && await page.locator('.modal-overlay').count(); k++) {

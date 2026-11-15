@@ -5,6 +5,7 @@
 //   Spielstand: Vorlage „Test 3 Jahre“, anderer mit SAVE=…; nur eine Größe mit VIEW=1366x768
 //   Nur einzelne Fenster: ONLY=profil,verein,…
 import { mkdir } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
 import { chromium } from 'playwright';
 import { serveDist, loadSave, probeWindow, closeAll, rectOf } from './popup-probe.mjs';
 
@@ -23,6 +24,14 @@ const report = (r) => {
   if (st === 'WÄCHST') for (const i of r.issues.slice(0, 6)) console.log('    ' + i);
 };
 const errors = [];
+// Spielstand mit offenem Sponsorangebot (einmal je Lauf, nur bei Bedarf erzeugt).
+let sponsorFile = null;
+async function sponsorSave() {
+  if (sponsorFile) return sponsorFile;
+  const out = `${outDir}/sponsor-angebot.txt`;
+  execFileSync(process.execPath, ['scripts/run-ts.mjs', 'tests/sponsor-offer-prep.ts', SAVE, out], { stdio: 'inherit' });
+  return (sponsorFile = out);
+}
 
 for (const view of VIEWS) {
   const [W, H] = view.split('x').map(Number);
@@ -42,9 +51,10 @@ for (const view of VIEWS) {
   /** Klick nur, wenn es das Ziel (noch) gibt und es bedienbar ist. */
   const soft = async (sel) => { const l = page.locator(sel).first(); if (await l.count() && await l.isEnabled().catch(() => false)) await l.click({ timeout: 1500 }); };
 
+  let switched = false; // Fall hat einen anderen Spielstand geladen → danach SAVE neu laden
   /** [kürzel, Rahmen, Öffnen, Optionen] */
   const CASES = [
-    ['profil', '.pp2', async () => { await nav('Kader', 'Übersicht'); await page.locator('.app-main tbody tr[data-pid]').nth(3).click(); }],
+    ['profil', '.pp2', async () => { await nav('Kader', 'Übersicht'); await page.locator('.app-main tbody tr[data-pid]').nth(3).click(); await page.waitForSelector('.pp2', { timeout: 5000 }); }],
     ['profil-fremd', '.pp2', async () => { await nav('Transfers', 'Transfermarkt'); await page.locator('.app-main tr[data-pid], .app-main .rl-row[data-pid]').nth(2).click(); }],
     ['kontextmenue', '.pcm', async () => { await nav('Kader', 'Übersicht'); await page.locator('.app-main tbody tr[data-pid]').nth(3).click({ button: 'right' }); }, { max: 0 }],
     ['verein', '.cmx-modal', async () => { await nav('Statistiken', 'Liga'); await page.locator('.app-main .club-link').nth(2).click(); }],
@@ -89,13 +99,33 @@ for (const view of VIEWS) {
     ['auslosung', '.dr-root', async () => { await nav('Statistiken', 'Pokal'); await click('.app-main .cmp-chips button:has-text("Runden")').catch(() => {}); await page.waitForTimeout(300); await click('.app-main .dchip:has-text("Auslosung")'); await page.waitForTimeout(600); }],
     ['trainingslager', '.cp-modal', async () => { await nav('Training', 'Trainingslager'); await click('.cp-plan-btn'); }],
     ['sponsor-karte', '.sp3-card', async () => { await nav('Finanzen', 'Sponsoring'); await page.locator('.app-main [data-sp^="deal:"], .app-main [data-sp^="offer:"], .app-main [data-sp^="st:"]').first().click(); }],
+    // Braucht ein offenes Sponsorangebot: fehlt es im Spielstand, wird ein vorbereiteter Stand geladen
+    // (tests/sponsor-offer-prep.ts – spielt ohne UI bis zum ersten Angebot, z. B. Verlängerung am 1.1.).
     ['sponsor-verhandlung', '.modal', async () => {
-      await nav('Finanzen', 'Sponsoring');
-      for (const t of ['Hauptsponsor', 'Pyramide', 'Banden', 'Namensrechte']) {
-        await page.locator(`.sp3-tabs .tab:has-text("${t}")`).first().click().catch(() => {});
-        const o = page.locator('.app-main [data-sp^="offer:"]').first();
-        if (await o.count()) { await o.click({ button: 'right' }); await click('.sp3-menu .pcm-item:has-text("Verhandeln")'); return; }
-      }
+      const findOffer = async () => {
+        await nav('Finanzen', 'Sponsoring');
+        for (const t of ['Hauptsponsor', 'Pyramide', 'Banden', 'Namensrechte']) {
+          await page.locator(`.sp3-tabs .tab:has-text("${t}")`).first().click().catch(() => {});
+          await page.waitForTimeout(200);
+          const o = page.locator('.app-main [data-sp^="offer:"]').first();
+          if (await o.count()) { await o.click({ button: 'right' }); await click('.sp3-menu .pcm-item:has-text("Verhandeln")'); return true; }
+          // Verlängerungsangebot hängt am laufenden Vertrag: Kontextmenü › ansehen › Verhandeln
+          for (const d of await page.locator('.app-main [data-sp^="deal:"]').all()) {
+            if (!(await d.isVisible().catch(() => false))) continue;
+            if (!(await d.click({ button: 'right', timeout: 1500 }).then(() => true).catch(() => false))) continue;
+            const item = page.locator('.sp3-menu .pcm-item:has-text("Verlängerungsangebot ansehen")');
+            if (await item.count()) { await item.click(); await click('.modal button:has-text("Verhandeln")'); return true; }
+            await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+          }
+        }
+        return false;
+      };
+      if (await findOffer()) return;
+      await closeAll(page);
+      await loadSave(page, url(), await sponsorSave());
+      await closeAll(page);
+      switched = true;
+      if (!(await findOffer())) throw new Error('kein Sponsorangebot gefunden');
     }],
     ['spielbericht', '.mr-modal', async () => { await nav('Aufstellung', 'Spielplan'); await click('.app-main .dchip:has-text("Bericht")'); }],
     ['presse-artikel', '.np-article', async () => { await nav('Zentrale', 'Presse'); await click('.np-lead, .np-teaser'); }],
@@ -155,7 +185,11 @@ for (const view of VIEWS) {
     ] }],
     ['stadion-umfeld', '.sv-pop', async () => {
       await nav('Verein', 'Stadion');
-      await page.locator('.gr-svg g.sv-venue').first().click({ force: true, timeout: 3000 });
+      // Kassenhäuschen springt zum Kartenverkauf, ausgegraute Gebäude (andere Ansicht) sind nicht klickbar.
+      // Klick direkt auf das Gebäude (an seiner Mitte kann ein anderes Szenen-Element liegen).
+      const v = page.locator('.gr-svg g.sv-venue:not([data-venue="tickets"]):not([pointer-events="none"])').first();
+      const b = await v.boundingBox();
+      await v.dispatchEvent('click', b ? { clientX: b.x + b.width / 2, clientY: b.y + b.height / 2 } : {});
     }],
     ['vorschau', '.pm-root', async () => {
       await closeAll(page);
@@ -210,10 +244,11 @@ for (const view of VIEWS) {
     try {
       res = await probeWindow(page, name, frame, open, opts ?? {});
       if (res.base) await page.screenshot({ path: `${outDir}/${view}_${name}.png` });
-    } catch (e) { res = { name, base: null, issues: ['nicht geöffnet: ' + e.message.split('\n')[0]] }; }
+    } catch (e) { if (process.env.DEBUG) console.log(e.message); res = { name, base: null, issues: ['nicht geöffnet: ' + e.message.split('\n')[0]] }; }
     results.push({ view, ...res });
     report({ view, ...res });
     await closeAll(page);
+    if (switched) { switched = false; await loadSave(page, url(), SAVE); await closeAll(page); }
   }
 
   await page.close();

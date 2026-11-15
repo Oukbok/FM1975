@@ -1,4 +1,4 @@
-// Screenshots der Winter-Seiten (Statistiken › Halle, Kader › Trainingslager, Kalender)
+// Screenshots der Winter-Seiten (Statistiken › Halle, Training › Trainingslager, Kalender)
 // und Prüfung auf waagerechten Überlauf / Seiten-Scroll.
 //   npm run build && node tests/winter-shots.mjs [ausgabeordner]
 //   Mitten in der Hallenrunde 1990/91:
@@ -32,7 +32,7 @@ if (process.env.SAVE) {
   await page.evaluate((r) => { localStorage.setItem('fm1980_save_sim', r); localStorage.setItem('fm1980_saves_index', JSON.stringify(['sim'])); }, raw);
   await page.reload();
   await page.click('text=Spiel laden');
-  await page.click('button:has-text("Laden") >> nth=0');
+  await page.click('.card:has(button:has-text("Löschen")) button:has-text("Laden") >> nth=0');
   await page.waitForTimeout(1500);
 } else {
   await startNewGame(page);
@@ -78,18 +78,18 @@ if (await played.count()) { await played.click(); await page.waitForTimeout(300)
 const youth = page.locator('.app-main .dlist-row .dchip:has-text("Jugend")').first();
 if (await youth.count()) { await youth.click(); await page.waitForTimeout(300); await page.screenshot({ path: `${outDir}/${prefix}_3_halle_zusage.png` }); }
 
-await go('Kader', 'Trainingslager', '4_trainingslager');
-// Winter-Reiter, Ziel wählen und buchen (falls möglich).
-await page.locator('.app-main .dchip:has-text("Winter")').first().click();
-await page.waitForTimeout(300);
-await page.screenshot({ path: `${outDir}/${prefix}_5_trainingslager_winter.png` });
-const bookBtn = page.locator('.app-main button:has-text("Buchen")').first();
-if (await bookBtn.count() && await bookBtn.isEnabled()) {
-  await bookBtn.click();
-  await page.waitForTimeout(400);
-  await page.screenshot({ path: `${outDir}/${prefix}_6_trainingslager_gebucht.png` });
-  console.log('Buchung:', await page.locator('.app-main .dnote[style*="accent"]').first().textContent().catch(() => '-'));
-}
+await go('Training', 'Trainingslager', '4_trainingslager');
+// Winterlager planen (Knopf je Fenster auf der Seite öffnet den Planer), Planer zeigen und schließen.
+const winterBtn = page.locator('.app-main .cp-card-plan[data-season="winter"]').first();
+if (await winterBtn.count() && await winterBtn.isEnabled()) {
+  await winterBtn.click();
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: `${outDir}/${prefix}_5_trainingslager_winter.png` });
+  console.log('Winterlager-Planer:', await page.locator('.mx-sub:has-text("Trainingslager planen")').first().textContent().catch(() => 'nicht gefunden'));
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(300);
+  await closeModals();
+} else console.log('Winterlager: kein freies Fenster (Knopf fehlt oder gesperrt)');
 await go('Zentrale', 'Kalender', '7_kalender');
 await page.locator('.hd-nav-item').first().click();
 await page.waitForTimeout(300);

@@ -39,7 +39,7 @@ for (const [w, h] of [[1920, 1080], [1366, 768]]) {
   await page.evaluate((r) => { localStorage.setItem('fm1980_save_sim', r); localStorage.setItem('fm1980_saves_index', JSON.stringify(['sim'])); }, raw);
   await page.reload();
   await page.click('text=Spiel laden');
-  await page.click('button:has-text("Laden") >> nth=0');
+  await page.click('.card:has(button:has-text("Löschen")) button:has-text("Laden") >> nth=0');
   await page.waitForTimeout(1500);
   for (let i = 0; i < 3 && await page.locator('.bf-continue').count(); i++) { await page.locator('.bf-continue').click(); await page.waitForTimeout(200); }
   for (const sel of ['.bud-modal .btn-primary', '.modal .btn-primary:has-text("Übernehmen")']) {

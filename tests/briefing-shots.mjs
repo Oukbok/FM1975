@@ -7,7 +7,7 @@ import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { chromium } from 'playwright';
-import { skipIntro, startNewGame } from './newgame-flow.mjs';
+import { closeBudget, skipIntro, startNewGame } from './newgame-flow.mjs';
 
 const outDir = process.argv[2] || 'test-output/briefing';
 await mkdir(outDir, { recursive: true });
@@ -56,20 +56,20 @@ if (process.env.SAVE) {
   await page.evaluate((r) => { localStorage.setItem('fm1980_save_sim', r); localStorage.setItem('fm1980_saves_index', JSON.stringify(['sim'])); }, raw);
   await page.reload();
   await page.click('text=Spiel laden');
-  await page.click('button:has-text("Laden") >> nth=0');
+  await page.click('.card:has(button:has-text("Löschen")) button:has-text("Laden") >> nth=0');
   await page.waitForTimeout(1500);
   if (await page.locator('.bf-modal').count()) errors.push('Popup beim Laden geöffnet');
   await archive('spaet');
-  await page.locator('.dxh-right button:has-text("Briefing öffnen")').click();
+  await page.locator('.bf2-link:has-text("Ganzes Briefing")').click();
   await modalTabs('spaet_popup');
   await page.locator('.bf-continue').click();
   // Saison mit Regelwechsel (Drei-Punkte-Regel) aus dem Archiv.
-  const s95 = page.locator('.bf-arch-item:has-text("1995/96")');
+  const s95 = page.locator('.bf2-arch-item:has-text("1995/96")');
   if (await s95.count()) {
     await s95.click();
     await page.waitForTimeout(200);
     await shot('spaet_archiv_1995');
-    await page.locator('.dxh-right button:has-text("Briefing öffnen")').click();
+    await page.locator('.bf2-link:has-text("Ganzes Briefing")').click();
     await modalTabs('s1995_popup');
   }
 } else {
@@ -78,6 +78,7 @@ if (process.env.SAVE) {
   await modalTabs('start_popup');
   await page.locator('.bf-continue').click();
   await page.waitForTimeout(300);
+  await closeBudget(page); // Saisonbudget folgt auf das Briefing
   await archive('start');
 }
 console.log(errors.length ? errors.join('\n') : 'Briefing-Screenshots ohne Fehler');

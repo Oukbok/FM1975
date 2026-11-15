@@ -29,7 +29,7 @@ export async function loadSave(page, url, file) {
   await page.evaluate((r) => { localStorage.setItem('fm1980_save_sim', r); localStorage.setItem('fm1980_saves_index', JSON.stringify(['sim'])); }, raw);
   await page.reload();
   await page.click('text=Spiel laden');
-  await page.click('button:has-text("Laden") >> nth=0');
+  await page.click('.card:has(button:has-text("Löschen")) button:has-text("Laden") >> nth=0');
   await page.waitForTimeout(1200);
 }
 
@@ -65,6 +65,25 @@ export async function openWindows(page) {
   }, ['.modal', '.ptk-book', '.ps-panel', '.tw-panel', '.si-root', '.rb2-overlay', '.gb-root', '.cr-root', '.dr-root', '.pm-root', '.tm-root, .ms-root', '.reveal-overlay']);
 }
 
+/**
+ * Rahmen messen, sobald er steht: nachgeladene Teile (Platzhalter `LazyFallback`, Schriften,
+ * Portal-Skalierung) können das Fenster in den ersten Momenten noch verändern – sonst wäre die
+ * Grundgröße zufällig und ein späteres „Wachsen“ nur ein Zeitproblem beim Öffnen.
+ * Wartet, bis das Rechteck dreimal in Folge gleich ist (höchstens ~4 s).
+ */
+export async function settledRect(page, sel) {
+  await page.waitForFunction(() => !document.querySelector('.lazy-overlay, .lazy-page'), null, { timeout: 5000 }).catch(() => {});
+  await page.evaluate(() => document.fonts?.ready).catch(() => {});
+  let last = await rectOf(page, sel), same = 0;
+  for (let k = 0; k < 25 && same < 2; k++) {
+    await page.waitForTimeout(160);
+    const r = await rectOf(page, sel);
+    if (r && last && !diff(r, last)) same++; else same = 0;
+    last = r;
+  }
+  return last;
+}
+
 const diff = (a, b) => !a || !b || Math.abs(a.w - b.w) > 1 || Math.abs(a.h - b.h) > 1 || Math.abs(a.x - b.x) > 1 || Math.abs(a.y - b.y) > 1;
 const fmt = (r) => (r ? `${r.w}×${r.h} @${r.x},${r.y}` : 'weg');
 
@@ -88,7 +107,7 @@ export async function probeWindow(page, name, frameSel, open, opts = {}) {
   const max = opts.max ?? 40;
   if (open) await open();
   await page.waitForTimeout(opts.settle ?? 500);
-  const base = await rectOf(page, frameSel);
+  const base = await settledRect(page, frameSel);
   if (!base) return { name, base: null, issues: ['nicht geöffnet'] };
   const check = async (what) => {
     await page.waitForTimeout(140);

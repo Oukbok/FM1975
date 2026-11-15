@@ -30,7 +30,7 @@ const raw = await readFile(process.env.SAVE || 'public/saves/test-3-jahre.txt', 
 await page.evaluate((r) => { localStorage.setItem('fm1980_save_sim', r); localStorage.setItem('fm1980_saves_index', JSON.stringify(['sim'])); }, raw);
 await page.reload();
 await page.click('text=Spiel laden');
-await page.click('button:has-text("Laden") >> nth=0');
+await page.click('.card:has(button:has-text("Löschen")) button:has-text("Laden") >> nth=0');
 await page.waitForTimeout(1500);
 
 /** Überläufe im Fenster melden (Bereiche, die abgeschnitten werden oder scrollen müssten). */
@@ -69,12 +69,13 @@ async function shoot(name) {
 const seen = new Set();
 let matches = 0;
 const t0 = Date.now();
+let lastProgress = t0, stuckShot = false;
 while (matches < MAX && Date.now() - t0 < 8 * 60_000) {
   if (await page.locator('.pm-root').isVisible().catch(() => false)) {
     const comp = (await page.locator('.pm-comp').innerText()).trim();
     const home = await page.locator('.pm-bar-side.home.mine').count();
-    const kind = (/^Pokal/.test(comp) ? 'pokal' : /^Liga/.test(comp) ? 'liga' : 'europa') + (home ? '_heim' : '_auswaerts');
-    matches++;
+    const kind = (/^Pokal(?! der )/.test(comp) ? 'pokal' : /^Liga/.test(comp) ? 'liga' : 'europa') + (home ? '_heim' : '_auswaerts');
+    matches++; lastProgress = Date.now(); stuckShot = false;
     console.log(`Spiel ${matches}: ${comp} · ${(await page.locator(".pm-bar").innerText()).replace(/\s+/g, " ")} → ${kind}`);
     if (!seen.has(kind)) { seen.add(kind); await shoot(kind); }
     if (matches === 1) {
@@ -93,6 +94,17 @@ while (matches < MAX && Date.now() - t0 < 8 * 60_000) {
     const b = page.locator(sel).first();
     if (await b.isVisible().catch(() => false)) await b.click().catch(() => {});
   }
+  // Weitere Shows der Fensterkette (Gala, Hallen-Show, Bewertungsrunde): Esc.
+  for (const sh of ['.gb-root', '.rb2-overlay']) if (await page.locator(sh).count()) { await page.keyboard.press('Escape'); await page.waitForTimeout(300); }
+  // Hallen-Show: „Alles simulieren“, dann „Schließen“ (Siegerehrung).
+  for (let k = 0; k < 20 && await page.locator('.ix-root').count(); k++) {
+    const close = page.locator('.ix-root .ix-btn:has-text("Schließen")').first();
+    const all = page.locator('.ix-root .ix-btn:has-text("Alles simulieren"):not([disabled])').first();
+    if (await close.isVisible().catch(() => false)) await close.click().catch(() => {});
+    else if (await all.isVisible().catch(() => false)) await all.click().catch(() => {});
+    await page.waitForTimeout(700);
+  }
+  if (Date.now() - lastProgress > 60_000 && !stuckShot) { stuckShot = true; await page.screenshot({ path: `${outDir}/${prefix}_debug_haengt.png` }); console.log('  hängt – Bild', `${outDir}/${prefix}_debug_haengt.png`); }
   if (!(await page.locator('.pm-root').count())) {
     const w = page.locator('button.hd-continue').filter({ hasText: /^\s*Weiter\s*$/i }).first();
     if (await w.isVisible().catch(() => false)) await w.click().catch(() => {});

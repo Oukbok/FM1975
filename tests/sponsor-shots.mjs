@@ -40,7 +40,7 @@ for (const [W, H] of views) {
     await page.evaluate((r) => { localStorage.setItem('fm1980_save_sim', r); localStorage.setItem('fm1980_saves_index', JSON.stringify(['sim'])); }, raw);
     await page.reload();
     await page.click('text=Spiel laden');
-    await page.click('button:has-text("Laden") >> nth=0');
+    await page.click('.card:has(button:has-text("Löschen")) button:has-text("Laden") >> nth=0');
     await page.waitForTimeout(1500);
     for (const sel of ['.bf-continue', '.aw-close', '.modal-close']) if (await page.locator(sel).count()) await page.locator(sel).first().click().catch(() => {});
   } else {

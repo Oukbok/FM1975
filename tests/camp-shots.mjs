@@ -31,7 +31,7 @@ if (process.env.SAVE) {
   await page.evaluate((r) => { localStorage.setItem('fm1980_save_sim', r); localStorage.setItem('fm1980_saves_index', JSON.stringify(['sim'])); }, raw);
   await page.reload();
   await page.click('text=Spiel laden');
-  await page.click('button:has-text("Laden") >> nth=0');
+  await page.click('.card:has(button:has-text("Löschen")) button:has-text("Laden") >> nth=0');
   await page.waitForTimeout(1500);
   await closeBriefing(page);
 } else {
@@ -178,6 +178,20 @@ if (!process.env.NORUN) {
   let last = '', stuck = 0;
   while (!seen && Date.now() - t0 < 8 * 60_000) {
     if (await page.locator('.cr-root').count()) { seen = true; break; }
+    // Shows der Fensterkette: Auslosung (Esc springt ans Ende, „Weiter“ schließt), Gala/Hallen-Show/Bewertung per Esc.
+    if (await page.locator('.dr-root').count()) {
+      await page.keyboard.press('Escape'); await page.waitForTimeout(400);
+      await page.locator('.dr-root .dg-go:has-text("Weiter")').first().click({ timeout: 2000 }).catch(() => {});
+    }
+    for (const s of ['.gb-root', '.rb2-overlay']) if (await page.locator(s).count()) { await page.keyboard.press('Escape'); await page.waitForTimeout(300); }
+    // Hallen-Show: „Alles simulieren“, dann „Schließen“ (Siegerehrung).
+    for (let k = 0; k < 20 && await page.locator('.ix-root').count(); k++) {
+      const close = page.locator('.ix-root .ix-btn:has-text("Schließen")').first();
+      const all = page.locator('.ix-root .ix-btn:has-text("Alles simulieren"):not([disabled])').first();
+      if (await close.isVisible().catch(() => false)) await close.click().catch(() => {});
+      else if (await all.isVisible().catch(() => false)) await all.click().catch(() => {});
+      await page.waitForTimeout(700);
+    }
     for (const sel of ['button:has-text("Simulieren")', 'button:has-text("Zum Spielbericht")', 'button:has-text("Überspringen")', 'button:has-text("Schließen")', '.modal-overlay .modal-close']) {
       const b = page.locator(sel).first();
       if (await b.isVisible().catch(() => false)) await b.click().catch(() => {});

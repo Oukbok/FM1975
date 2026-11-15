@@ -32,9 +32,16 @@ import { MatchdayBox, fromTuple, type MdGame } from './MatchdayBox';
 
 export type CompStart = 'league' | 'cup' | 'euro';
 
-/** Vorauswahl beim nächsten Öffnen (z. B. aus der Übersicht der Zentrale); wird einmal verbraucht. */
-let pendingPreset: { season: string; key: string } | null = null;
-export function presetCompetition(season: string, key: string): void { pendingPreset = { season, key }; }
+/** Vorauswahl für Statistiken › Liga (Länderprofil, „Ligen der Welt“); wird einmal verbraucht –
+ *  beim nächsten Öffnen der Seite oder sofort, wenn die Seite schon offen ist. */
+type Preset = { season: string; key: string };
+let pendingPreset: Preset | null = null;
+const presetListeners = new Set<(p: Preset) => void>();
+export function presetCompetition(season: string, key: string): void {
+  pendingPreset = { season, key };
+  const ls = [...presetListeners]; const l = ls[ls.length - 1];
+  if (l) { pendingPreset = null; l({ season, key }); }
+}
 
 function defaultKey(g: Game, opts: CompOption[], start: CompStart): string {
   if (start === 'league') return opts.find((o) => o.key === g.leagues.playerDivision.id)?.key ?? opts.find((o) => o.kind === 'league')?.key ?? opts[0]?.key ?? '';
@@ -68,6 +75,16 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
   const [key, setKeyState] = useState(() => preset?.key ?? keyFor(g, country, countryOptions(g, country, season, src), start));
   const [kind, setKind] = useState<'league' | 'cup' | undefined>(undefined);
   const setKey = (k: string) => { setKeyState(k); setKind(opts.find((o) => o.key === k)?.kind); };
+  // Seite schon offen: Vorauswahl von außen sofort übernehmen (sonst nur beim ersten Aufbau gelesen).
+  useEffect(() => {
+    if (start !== 'league') return undefined;
+    const apply = (p: Preset) => {
+      const c = countryOfKey(g, p.season, p.key);
+      setCcState(c.cc); setSeason(p.season); setKeyState(c.key); setKind(undefined);
+    };
+    presetListeners.add(apply);
+    return () => { presetListeners.delete(apply); };
+  }, [g, start]);
   const last = useRef(`${start}|${g.season}`);
   useEffect(() => {
     if (last.current === `${start}|${g.season}`) return; // Startwerte (inkl. Vorauswahl) stehen schon

@@ -26,7 +26,7 @@ await page.goto(`http://127.0.0.1:${server.address().port}/`);
 await page.evaluate((r) => { localStorage.setItem('fm1980_save_sim', r); localStorage.setItem('fm1980_saves_index', JSON.stringify(['sim'])); }, raw);
 await page.reload();
 await page.click('text=Spiel laden');
-await page.click('button:has-text("Laden") >> nth=0');
+await page.click('.card:has(button:has-text("Löschen")) button:has-text("Laden") >> nth=0');
 await page.waitForTimeout(1500);
 for (let i = 0; i < 3; i++) { await page.keyboard.press('Escape'); await page.waitForTimeout(300); }
 for (let i = 0; i < 6; i++) {

@@ -42,7 +42,7 @@ for (let i = 0; i < runs; i++) {
   if (wait) await page.waitForTimeout(wait);
   await page.click('text=Spiel laden');
   const t1 = Date.now();
-  await page.click('button:has-text("Laden") >> nth=0');
+  await page.click('.card:has(button:has-text("Löschen")) button:has-text("Laden") >> nth=0');
   await page.waitForSelector('.hd-bar', { state: 'visible', timeout: 30000 });
   game.push(Date.now() - t1);
   jsBytes.push(startBytes);

@@ -23,7 +23,7 @@ if (st.ls) fail('localStorage-Stand nicht umgezogen'); else console.log('OK   Um
 const metas = () => page.evaluate(() => new Promise((res) => { const r = indexedDB.open('fm1975-saves'); r.onsuccess = () => { const q = r.result.transaction('meta').objectStore('meta').getAll(); q.onsuccess = () => res(q.result.map((m) => m.slot + '|' + m.gameDate)); }; }));
 const m1 = await metas();
 if (!m1.includes(m1.find((x) => x.startsWith('sim|')))) fail(`Meta fehlt: ${m1}`);
-await page.click('text=Spiel laden'); await page.click('button:has-text("Laden") >> nth=0'); await page.waitForTimeout(1500);
+await page.click('text=Spiel laden'); await page.click('.card:has(button:has-text("Löschen")) button:has-text("Laden") >> nth=0'); await page.waitForTimeout(1500);
 for (let i = 0; i < 3 && await page.locator('.bf-continue').count(); i++) { await page.locator('.bf-continue').click(); await page.waitForTimeout(200); }
 for (let i = 0; i < 3; i++) { await page.keyboard.press('Escape'); await page.waitForTimeout(150); }
 const date0 = (m1.find((x) => x.startsWith('sim|')) ?? '').split('|')[1];
