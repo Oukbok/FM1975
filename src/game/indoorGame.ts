@@ -383,12 +383,27 @@ function substituteIndoor(g: Game, cur: IndoorWinter, t: IndoorTournament, rng: 
   return sub?.id;
 }
 
+/** Hallenauswahl: so viele Feldspieler bzw. Torhüter dürfen (müssen) mit. */
+export const INDOOR_PICK = { keepers: 1, fieldMin: 5, fieldMax: 7 } as const;
+
+/** Eigener Hallenkader: gewählte Spieler (gültig: 1 Torwart + 5–7 Feldspieler, alle einsatzfähig), sonst nach Kaderwahl. */
+export function ownIndoorSquad(g: Game, t: IndoorTournament): Player[] {
+  const cands = candidatesOf(g, g.managedClubId);
+  if (t.ownIds?.length) {
+    const sel = t.ownIds.map((id) => cands.find((p) => p.id === id)).filter((p): p is Player => !!p);
+    const tw = sel.filter((p) => p.naturalPosition === 'TW'), fp = sel.filter((p) => p.naturalPosition !== 'TW');
+    if (tw.length === INDOOR_PICK.keepers && fp.length >= INDOOR_PICK.fieldMin && fp.length <= INDOOR_PICK.fieldMax) return [...tw, ...fp];
+  }
+  const pick = t.squads[g.managedClubId] ?? (t.own && t.own !== 'decline' ? t.own : 'mix');
+  return pickIndoorSquad(cands, pick);
+}
+
 /** Teilnehmer mit Hallenstärke und (bei vollen Vereinen) Hallenkader – ohne Zufall, ohne Änderung. */
 export function tournamentEntrants(g: Game, t: IndoorTournament): { entrants: IndoorEntrant[]; squads: Map<string, Player[]> } {
   const squads = new Map<string, Player[]>();
   const entrants: IndoorEntrant[] = t.clubIds.map((id) => {
     if (g.clubs[id] && !id.startsWith('eu_')) {
-      const sq = pickIndoorSquad(candidatesOf(g, id), t.squads[id] ?? 'mix');
+      const sq = id === g.managedClubId ? ownIndoorSquad(g, t) : pickIndoorSquad(candidatesOf(g, id), t.squads[id] ?? 'mix');
       squads.set(id, sq);
       return { id, strength: sq.length >= 6 ? indoorStrength(sq) : 45 };
     }

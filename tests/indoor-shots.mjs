@@ -68,6 +68,13 @@ async function run(width, height) {
     if (o.length) errors.push(`[${tag}] ${name}: ${o.join('; ')}`);
   };
   await shot('1_start');
+  // Hallenkader wählen: einen gewählten Feldspieler abwählen, einen anderen dazunehmen.
+  const strBefore = await page.locator('.ix-pick-str').innerText();
+  await page.locator('.ix-pick-t tbody tr.on:not(:has(.radio))').last().click();
+  await page.locator('.ix-pick-t tbody tr:not(.on):not(.locked):not(.ix-pick-gap):not(:has(.radio))').first().click();
+  const picked = await page.locator('.ix-pick-t tbody tr.on').count();
+  console.log(`[${tag}] Hallenkader: ${strBefore} → ${await page.locator('.ix-pick-str').innerText()}, gewählt ${picked}`);
+  if (picked < 7 || picked > 8) errors.push(`[${tag}] Hallenkader: ${picked} gewählt`);
   await page.click('.ix-root button:has-text("Turnier beginnen")');
   // Bis zum eigenen Spiel (fremde Spiele laufen durch).
   for (let k = 0; k < 20 && !(await page.locator('.ix-root button:has-text("Kurzer Textmodus")').count()); k++) {

@@ -3935,7 +3935,7 @@ Einladungen kommen Anfang November als Nachricht und stehen unter **Statistiken 
 ## Das Turnier spielen (Hallen-Show)
 Am Turniertag deines Vereins hält die Zeit an und das Turnier öffnet sich als eigenes Fenster in der Halle
 (Einstellung **Hallenturniere**: als Show spielen oder im Hintergrund wie bisher).
-- **Startseite:** Format, Spielzeiten, Teilnehmer nach Hallenstärke, Gruppen, Spielplan und dein Hallenkader (Torwart + sieben Feldspieler, die besten fünf bilden den ersten Block).
+- **Startseite:** Format, Spielzeiten, Teilnehmer nach Hallenstärke, Gruppen, Spielplan und dein Hallenkader. Den stellst du hier selbst zusammen: ein Torwart und fünf bis sieben Feldspieler, Klick auf eine Zeile nimmt den Spieler dazu oder heraus (Vorlagen Stammkräfte/Gemischt/Nachwuchs). Die Tabelle zeigt, was in der Halle mehr zählt als draußen: den **Hallenwert** (knapp die Hälfte Stärke, gut die Hälfte Technik, Ballannahme, Ballkontrolle, Dribbling, Wendigkeit, Antritt und Schuss) und diese Einzelwerte, dazu die Frische. Die Hallenstärke deiner Auswahl steht darüber und gilt sofort; die besten fünf Feldspieler bilden den ersten Block.
 - **Spiel für Spiel:** Fremde Spiele laufen als Ergebnisse durch, die Gruppentabellen rechnen live mit. Vor jedem eigenen Spiel triffst du eine kleine Entscheidung:
   - **Ausrichtung** – defensiv (weniger Tore auf beiden Seiten), ausgewogen oder offensiv (mehr Tore auf beiden Seiten; gut, wenn du aufholen musst).
   - **Einsatz** – fliegend wechseln oder die **Stammfünf durchspielen** lassen (etwas stärker, aber die fünf werden müder: Frische −2 je Spiel, höheres Verletzungsrisiko).

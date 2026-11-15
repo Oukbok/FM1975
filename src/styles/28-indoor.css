@@ -118,7 +118,31 @@
 .ix-facts > div { display: flex; flex-direction: column; gap: 4px; padding: 12px 16px; border-radius: 6px; background: rgba(var(--shade-rgb), 0.28); border: 1px solid rgba(var(--ink-rgb), 0.06); }
 .ix-facts b, .ix-cer-facts b { font-family: var(--font-display); font-weight: 500; font-size: 28px; color: var(--text); }
 .ix-facts .ix-dim { font-size: 16px; }
-.ix-intro-cols { min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; }
+.ix-intro-cols { min-height: 0; display: grid; grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.5fr); gap: 22px; }
+/* Hallenkader wählen (IndoorSquadPick.tsx) */
+.ix-pick { min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 8px; }
+.ix-pick-bar { display: flex; align-items: center; gap: 18px; font-size: 16px; color: var(--text-2); }
+.ix-pick-bar b { font-family: var(--font-display); font-weight: 600; font-size: 21px; color: var(--text); }
+.ix-pick-pre { margin-left: auto; }
+.ix-pick-pre .seg-btn { font-size: 15px; padding: 6px 12px; }
+.ix-pick-t { width: 100%; border-collapse: collapse; font-size: 16px; }
+.ix-pick-t th { position: sticky; top: 0; z-index: 1; background: var(--panel); font-size: 12.5px; font-weight: 700; color: var(--text-3); text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--border-soft); }
+.ix-pick-t th:nth-child(1) { width: 30px; } .ix-pick-t th:nth-child(2) { width: 56px; } .ix-pick-t th:nth-child(3) { width: 100%; }
+.ix-pick-t th:nth-child(n+4) { width: 42px; }
+.ix-pick-t th:nth-child(6) { width: 50px; }
+.ix-pick-t td { padding: 5px 4px; border-bottom: 1px solid var(--border-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ix-pick-t .num { text-align: right; font-variant-numeric: tabular-nums; padding-left: 10px; }
+.ix-pick-t .dim { color: var(--text-3); }
+.ix-pick-t tbody tr { cursor: pointer; }
+.ix-pick-t tbody tr:hover { background: rgba(var(--ink-rgb), 0.04); }
+.ix-pick-t tbody tr.on { background: rgba(var(--ink-rgb), 0.07); box-shadow: inset 4px 0 0 var(--accent); }
+.ix-pick-t tbody tr.locked { opacity: 0.7; cursor: default; }
+.ix-pick-t tr.ix-pick-gap td { height: 8px; padding: 0; border-bottom: none; }
+.ix-pick-hall { font-family: var(--font-display); font-weight: 600; font-size: 19px; }
+.ix-pick-name { font-weight: 600; }
+.ix-pick-box { display: inline-block; width: 16px; height: 16px; border-radius: 3px; border: 2px solid var(--text-3); vertical-align: middle; }
+.ix-pick-box.radio { border-radius: 50%; }
+tr.on .ix-pick-box { background: var(--accent); border-color: var(--accent); }
 .ix-sec { min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr); }
 
 /* --- Knöpfe --- */

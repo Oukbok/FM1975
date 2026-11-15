@@ -3,6 +3,7 @@
 // „Nächstes Spiel“ mit kleiner taktischer Entscheidung, Siegerehrung.
 // CSS 28-indoor.css (.ix-*).
 // =============================================================================
+import { IndoorSquadPick } from './IndoorSquadPick';
 import Icon from '../../components/Icon';
 import { INDOOR_MINUTES } from '../../data/indoorHistory';
 import type { IndoorResult } from '../../engine/indoor';
@@ -16,11 +17,12 @@ import { fmtDM } from '../../ui/format';
 import { TrophyArt } from '../../views/verein/trophies/TrophyArt';
 import { AnyCrest } from '../../views/transfers/window/parts';
 import { IndoorHall } from './IndoorHall';
-import { EntrantsPanel, IxClub, SquadPanel, scoreText } from './IndoorPanels';
+import { EntrantsPanel, IxClub, scoreText } from './IndoorPanels';
 import { STAGE_LABEL, indoorName } from './indoorScript';
 
-export function IntroStage({ g, t, live, squad, onStart, onAll }: {
-  g: Game; t: IndoorTournament; live: IndoorLive; squad: Player[]; onStart: () => void; onAll: () => void;
+export function IntroStage({ g, t, live, squad, cands, onSquad, onStart, onAll }: {
+  g: Game; t: IndoorTournament; live: IndoorLive; squad: Player[]; cands: Player[]; onSquad: (ids: string[]) => void;
+  onStart: () => void; onAll: () => void;
 }) {
   const n = Object.keys(live.strength).length;
   const own = live.slots.filter((s) => s.a === g.managedClubId || s.b === g.managedClubId).length;
@@ -38,8 +40,8 @@ export function IntroStage({ g, t, live, squad, onStart, onAll }: {
           <div className="ix-scroll"><EntrantsPanel g={g} live={live} /></div>
         </section>
         <section className="ix-sec">
-          <h3 className="ix-h">Dein Hallenkader<span className="ix-h-note">{t.squads[g.managedClubId] === 'stars' ? 'Stammkräfte' : t.squads[g.managedClubId] === 'youth' ? 'Nachwuchs' : 'Gemischt'}</span></h3>
-          <div className="ix-scroll"><SquadPanel squad={squad} /></div>
+          <h3 className="ix-h">Dein Hallenkader<span className="ix-h-note">Klick wählt aus – in der Halle zählen Ballgefühl und Wendigkeit mehr als draußen</span></h3>
+          <IndoorSquadPick cands={cands} sel={squad} onChange={onSquad} />
         </section>
       </div>
       <div className="ix-actions">

@@ -18,7 +18,7 @@ import {
 } from '../../engine/indoorLive';
 import { DEFAULT_INDOOR_PLAN, playIndoorMatch, type IndoorPlan, type IndoorPlay } from '../../engine/indoorMatch';
 import { hashStr, mulberry32 } from '../../engine/leagues';
-import { finishIndoorShow, indoorWinPts, tournamentEntrants, type IndoorOutcome } from '../../game/indoorGame';
+import { candidatesOf, finishIndoorShow, indoorWinPts, tournamentEntrants, type IndoorOutcome } from '../../game/indoorGame';
 import type { Game } from '../../game/state';
 import type { IndoorTournament } from '../../game/winterShared';
 import { fmtDateFull } from '../../ui/format';
@@ -39,8 +39,17 @@ export function IndoorShow({ g, t, settings, onSettings, onClose }: {
   const mid = g.managedClubId;
   const year = parseInt(t.date.slice(0, 4), 10);
   const seed = `${g.season}|${t.id}|${mid}|live`;
-  const { entrants, squads } = useMemo(() => tournamentEntrants(g, t), [g, t]);
-  const live = useRef(createIndoorLive(entrants, indoorWinPts(g), seed)).current;
+  const first = useMemo(() => tournamentEntrants(g, t), [g, t]);
+  const [squads, setSquads] = useState(first.squads);
+  const live = useRef(createIndoorLive(first.entrants, indoorWinPts(g), seed)).current;
+  // Hallenkader vor Turnierbeginn wählen (Wunsch Pascal): Auswahl am Turnier merken, Hallenstärke neu.
+  const pickSquad = (ids: string[]) => {
+    t.ownIds = ids;
+    const next = tournamentEntrants(g, t);
+    const me = next.entrants.find((e) => e.id === mid);
+    if (me) live.strength[mid] = me.strength;
+    setSquads(next.squads);
+  };
   const [, setVer] = useState(0);
   const bump = () => setVer((v) => v + 1);
   const [phase, setPhase] = useState<Phase>('intro');
@@ -146,7 +155,7 @@ export function IndoorShow({ g, t, settings, onSettings, onClose }: {
           <GroupTablesPanel g={g} live={live} />
         </aside>
         <main className="ix-panel ix-center">
-          {phase === 'intro' && <IntroStage g={g} t={t} live={live} squad={squads.get(mid) ?? []} onStart={() => setPhase('board')} onAll={simAll} />}
+          {phase === 'intro' && <IntroStage g={g} t={t} live={live} squad={squads.get(mid) ?? []} cands={candidatesOf(g, mid)} onSquad={pickSquad} onStart={() => setPhase('board')} onAll={simAll} />}
           {phase === 'board' && slot && (
             <NextStage g={g} live={live} slot={slot} plan={plan} onPlan={setPlan} year={year} last={last}
               onText={startText} onResult={quickResult} onOthers={() => setRunning(isOwnLeft() ? 'own' : roundOf(slot.stage))} />

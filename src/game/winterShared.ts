@@ -37,6 +37,8 @@ export interface IndoorTournament {
   squads: Record<string, IndoorSquad>;
   /** Eigener Verein eingeladen: Entscheidung (null = offen). */
   own?: IndoorDecision | null;
+  /** Eigene Hallenauswahl, vor Turnierbeginn in der Show gewählt (Wunsch Pascal) – sonst nach Kaderwahl. */
+  ownIds?: string[];
   result?: IndoorResult;
   strengths?: Record<string, number>;
   done: boolean;
