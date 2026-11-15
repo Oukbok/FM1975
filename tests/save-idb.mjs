@@ -15,8 +15,10 @@ await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
 const url = `http://127.0.0.1:${server.address().port}/`;
 await page.goto(url);
 await page.evaluate((r) => { localStorage.setItem('fm1980_save_sim', r); localStorage.setItem('fm1980_saves_index', JSON.stringify(['sim'])); }, raw);
-await page.reload(); await page.waitForTimeout(1500);
-const st = await page.evaluate(() => ({ ls: !!localStorage.getItem('fm1980_save_sim'), idx: localStorage.getItem('fm1980_saves_index') }));
+await page.reload();
+// Der Umzug läuft beim Start asynchron (großer Stand: Entpacken + IndexedDB) – bis zu 15 s warten.
+let st = { ls: true, idx: null };
+for (let i = 0; i < 30 && st.ls; i++) { await page.waitForTimeout(500); st = await page.evaluate(() => ({ ls: !!localStorage.getItem('fm1980_save_sim'), idx: localStorage.getItem('fm1980_saves_index') })); }
 if (st.ls) fail('localStorage-Stand nicht umgezogen'); else console.log('OK   Umzug localStorage → IndexedDB');
 const metas = () => page.evaluate(() => new Promise((res) => { const r = indexedDB.open('fm1975-saves'); r.onsuccess = () => { const q = r.result.transaction('meta').objectStore('meta').getAll(); q.onsuccess = () => res(q.result.map((m) => m.slot + '|' + m.gameDate)); }; }));
 const m1 = await metas();
