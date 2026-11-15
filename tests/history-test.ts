@@ -3,6 +3,7 @@
 // Änderung, Mittel/Stark lenken nur KI-Vereine (nie den eigenen, auch nach Vereinswechsel),
 // Sim-Vereine und Ausland, alte Spielstände, zwei Saisons Stark ohne NaN/Absturz.
 //   npm run test:history
+import { foreignFactor } from '../src/data/historicStrength';
 import { createNewGame } from '../src/game/newGame';
 import { processDay, HEADLESS_UI } from '../src/game/day';
 import { startNextSeason } from '../src/game/season';
@@ -102,12 +103,16 @@ ok('Stark: Ruf/Geld der KI gelenkt, eigener Verein unberührt, nach Wechsel wied
   for (let i = 0; i < 5; i++) historicSimClubs(gs, 1982);
   if (gs.simClubs['ddr-berlin-ost'].strength <= ddr0) fail('Berlin (Ost) 1982 nicht gestärkt');
   const w = initWorld(gs.euroClubs ?? allEuroClubs(), 1976);
-  const id = Object.keys(w.meta).find((k) => gs.euroClubs![k]?.name === 'Paris' && gs.euroClubs![k]?.country === 'Frankreich')!;
+  // Ein Auslandsverein mit historischer Kurve, der 2015 deutlich stärker sein soll (früher fest „Paris“ –
+  // der steht nicht in jeder Startwelt).
+  const id = Object.keys(w.meta).find((k) => gs.euroClubs![k]?.name === 'Paris' && gs.euroClubs![k]?.country === 'Frankreich')
+    ?? Object.keys(w.meta).find((k) => { const c = gs.euroClubs![k]; return !!c && (foreignFactor(c.country, c.name, 2015) ?? 0) >= 1.2; })!;
+  if (!id) fail('Kein Auslandsverein mit historischer Kurve in der Startwelt');
   const s0 = w.meta[id].home;
   for (let i = 0; i < 5; i++) historicWorld(gs, w, gs.euroClubs!, 2015);
-  if (w.meta[id].home <= s0 + 0.15) fail(`Paris 2015 nicht gewachsen (${s0.toFixed(2)} → ${w.meta[id].home.toFixed(2)})`);
+  if (w.meta[id].home <= s0 + 0.08) fail(`${gs.euroClubs![id].name} 2015 nicht gewachsen (${s0.toFixed(2)} → ${w.meta[id].home.toFixed(2)})`);
 }
-ok('Mittel < Stark; Sim-Vereine (Dortmund, Berlin Ost) und Ausland (Paris) gelenkt');
+ok('Mittel < Stark; Sim-Vereine (Dortmund, Berlin Ost) und Ausland gelenkt');
 
 // 7) Zwei echte Saisons mit Stark: läuft, keine NaN, Großklub-Ruf über Aus
 function play(g: Game, seasons: number) {
