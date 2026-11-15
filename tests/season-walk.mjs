@@ -94,7 +94,7 @@ for (let step = 0; step < 4000; step++) {
       const rnd = await page.locator('.dr-root').getAttribute('aria-label').catch(() => '');
       await note('Auslosung', rnd); await shotOnce('Auslosung');
       await page.keyboard.press('Escape'); tap('Auslosung'); await page.waitForTimeout(500);
-      if (await has('.dr-root')) { await page.locator('.dr-root .ms-btn:has-text("Schließen")').first().click().catch(() => page.keyboard.press('Escape')); tap('Auslosung'); }
+      if (await has('.dr-root')) { await page.locator('.dr-root .dg-go:has-text("Weiter")').first().click().catch(() => page.keyboard.press('Escape')); tap('Auslosung'); }
       await page.waitForTimeout(400); continue;
     }
     if (await has('.rb2-overlay')) {

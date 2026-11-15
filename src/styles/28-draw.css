@@ -93,9 +93,10 @@
 .dg-m { --dg-cell: 54px; --dg-fs: 26px; --dg-row: minmax(0, 76px); --dg-pfs: 29px; }
 .dg-s { --dg-cell: 62px; --dg-fs: 30px; --dg-row: minmax(0, 88px); --dg-pfs: 33px; }
 /* Startbildschirm: Lostopf füllt die Karte, Vereine größer; Regeln unten kompakt. */
-.dg-body.draw.intro:not(.dg-xl) { grid-template-rows: minmax(0, 1fr) auto; }
+.dg-body.draw.intro { grid-template-rows: minmax(0, 1fr) auto; }
 .dg-body.intro .dg-pool { display: flex; flex-direction: column; justify-content: center; padding: 16px 30px; }
-.dg-pool.big.dg-l { --dg-cell: 60px; --dg-fs: 30px; }
+.dg-pool.big.dg-xl { --dg-cell: 44px; --dg-fs: 22px; }
+.dg-pool.big.dg-l { --dg-cell: 56px; --dg-fs: 25px; }
 .dg-pool.big.dg-m { --dg-cell: 76px; --dg-fs: 36px; }
 .dg-pool.big.dg-s { --dg-cell: 92px; --dg-fs: 42px; }
 .dg-pool.big .dg-pot-grid { row-gap: 6px; }

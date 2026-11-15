@@ -4,7 +4,7 @@
 // Gebaut und fotografiert von tests/draw-big-shots.mjs.
 import { createRoot } from 'react-dom/client';
 import '../../src/styles/index';
-import { loadGame, loadSettings } from '../../src/engine/save';
+import { loadGameSync, loadSettings } from '../../src/engine/save';
 import type { Game } from '../../src/game/state';
 import type { DrawRecord } from '../../src/types/draw';
 import { DrawShow } from '../../src/screens/draw/DrawShow';
@@ -12,7 +12,7 @@ import { DisplayFrame } from '../../src/ui/DisplayFrame';
 
 const q = new URLSearchParams(location.search);
 const n = Number(q.get('n') ?? 64), potsN = Number(q.get('pots') ?? 2);
-const slot = loadGame<Game>('sim');
+const slot = loadGameSync<Game>('sim');
 if (!slot) throw new Error('Kein Spielstand „sim“ im localStorage');
 const g = slot.game;
 const ids = [...Object.keys(g.clubs), ...Object.keys(g.euroClubs ?? {})].filter((id) => id !== g.managedClubId).slice(0, n - 1).concat(g.managedClubId);

@@ -63,7 +63,7 @@ export function PoolGrid({ rec, clubs, shown, back, activePot, big }: {
   const base = !single && maxPot <= 10 ? maxPot : size === 's' ? 4 : size === 'm' && single ? 4 : size === 'l' && single ? 6 : 8;
   // Startbildschirm, kleine Ziehung: Töpfe zweizeilig, damit die großen Namen ausgeschrieben bleiben.
   const cols = big && (size === 's' || size === 'm') && base > 5 ? Math.ceil(base / 2) : base;
-  const crest = Math.round((size === 'xl' ? 26 : size === 'l' ? 34 : size === 'm' ? 42 : 48) * (big && size !== 'xl' ? 1.45 : 1));
+  const crest = Math.round((size === 'xl' ? 26 : size === 'l' ? 34 : size === 'm' ? 42 : 48) * (big ? (size === 'xl' ? 1.2 : 1.45) : 1));
   return (
     <div className={`dg-pool dg-${size} ${cols >= 8 ? 'dense' : ''} ${big ? 'big' : ''}`}>
       {rec.pots.map((p, pi) => {
