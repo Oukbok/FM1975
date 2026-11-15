@@ -105,6 +105,8 @@ export function youthMaturityCap(p: Player): number {
 let talentSupply = 1;
 export function setTalentSupply(f: number): void { talentSupply = clamp(f, 0.5, 1.5); }
 export function getTalentSupply(): number { return talentSupply; }
+/** Ausgangszustand (game/resetModuleState.ts). */
+export function resetTalentSupply(): void { talentSupply = 1; }
 
 /**
  * Seltener Ausreißer-Schwanz des Potenzials: ab 84 fällt die Häufigkeit je

@@ -22,6 +22,8 @@ export function starRng(): number {
   starSeed = (starSeed * 1664525 + 1013904223) >>> 0;
   return starSeed / 0xffffffff;
 }
+/** Ausgangszustand (game/resetModuleState.ts). */
+export function resetStarRng(): void { starSeed = 1; }
 export function seedStarRng(salt: string): void {
   let h = 2166136261;
   for (const ch of `sterne${salt}`) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); }

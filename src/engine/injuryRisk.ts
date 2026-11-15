@@ -8,6 +8,8 @@ import type { Player } from '../types';
 let factorFor: (p: Player) => number = () => 1;
 
 export function setInjuryRiskHook(fn: (p: Player) => number): void { factorFor = fn; }
+/** Ausgangszustand (game/resetModuleState.ts): kein Einfluss – der alte Haken hing am vorigen Spielstand. */
+export function resetInjuryRiskHook(): void { factorFor = () => 1; }
 
 export function injuryRiskFactor(p: Player): number {
   const f = factorFor(p);

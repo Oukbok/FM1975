@@ -5,14 +5,18 @@
 import { recordTransfer } from './history';
 import { Player, Club, TransferOffer } from '../types';
 import { bookTransfer } from './finances';
+import { seqId } from './idSeq';
 import { economyScale, formatMoney, yearOf } from './economy';
 
 /** Ablöse (1975-Basis) als nominaler Betrag zum Transferdatum – für die Transferhistorie. */
 const nominalFee = (base: number) => Math.round(base * economyScale(yearOf(transferDate)));
 
-/** Aktuelles Spieldatum für Transfer-Buchungen (von App.tsx gesetzt). */
-let transferDate = new Date().toISOString().slice(0, 10);
+/** Aktuelles Spieldatum für Transfer-Buchungen (processDay/newGame/Laden; nie die Uhrzeit). */
+const TRANSFER_DATE0 = '1975-07-01';
+let transferDate = TRANSFER_DATE0;
 export function setTransferDate(date: string): void { transferDate = date; }
+/** Ausgangszustand (game/resetModuleState.ts). */
+export function resetTransferDate(): void { transferDate = TRANSFER_DATE0; }
 
 /** Alle transfergelisteten Spieler der Liga (außer eigener Verein). */
 export function getAvailablePlayers(
@@ -46,7 +50,7 @@ export function makeOffer(
   const season = Number(transferDate.slice(5, 7)) >= 7 ? `${y}/${String((y + 1) % 100).padStart(2, '0')}` : `${y - 1}/${String(y % 100).padStart(2, '0')}`;
   if (buyingClub.finances.ffp?.banSeason === season) {
     const offer: TransferOffer = {
-      id: `off_${Date.now()}`, playerId: player.id, sellingClubId: player.clubId, buyingClubId: buyingClub.id,
+      id: seqId('off_'), playerId: player.id, sellingClubId: player.clubId, buyingClubId: buyingClub.id,
       fee: amount, proposedWage: wage, contractLength: 3, status: 'rejected', date: transferDate, initiatedByPlayer: true, expiryDate: transferDate,
     };
     return { accepted: false, message: `Transfersperre: ${buyingClub.finances.ffp.note ?? 'Lizenzauflage'}.`, offer };
@@ -60,12 +64,12 @@ export function makeOffer(
   else message = `Transfer abgeschlossen: ${player.fullName} wechselt für ${formatMoney(nominalFee(amount), yearOf(transferDate), true)}!`;
 
   const offer: TransferOffer = {
-    id: `off_${Date.now()}`, playerId: player.id,
+    id: seqId('off_'), playerId: player.id,
     sellingClubId: player.clubId, buyingClubId: buyingClub.id,
     fee: amount, proposedWage: wage, contractLength: 3,
     status: accepted ? 'completed' : 'rejected',
-    date: new Date().toISOString().slice(0, 10), initiatedByPlayer: true,
-    expiryDate: new Date().toISOString().slice(0, 10),
+    date: transferDate, initiatedByPlayer: true,
+    expiryDate: transferDate,
   };
 
   if (accepted) {

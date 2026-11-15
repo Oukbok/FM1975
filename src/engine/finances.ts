@@ -38,6 +38,7 @@ import { bookGroundsMatchday } from './grounds';
 // Fanartikel des eigenen Vereins aus dem Lager (engine/merch.ts, game/merchGame.ts).
 import { MATCHDAY_SHARE, sellFromStock } from './merch';
 import { honourFx } from './honourEffects';
+import { seqId } from './idSeq';
 
 /**
  * Finanzen 2.0: Skalierung je Erlösart aus dem Buchungsdatum. Stadion-Erlöse wachsen
@@ -77,10 +78,9 @@ export function clubCommercialScale(club: Club, year: number): number {
 
 export { clubTier };
 
-let txCounter = 0;
+/** Buchungs-ID: laufende Nummer des Spielstands (engine/idSeq.ts), nicht die Uhrzeit. */
 function txId(): string {
-  txCounter += 1;
-  return `tx-${Date.now().toString(36)}-${txCounter}`;
+  return seqId('tx-');
 }
 
 /** Zuordnung Kategorie → Einnahmen-Bucket. */

@@ -70,6 +70,8 @@ function h01(s: string): number {
 }
 
 let cache: { key: string; rows: PoolRow[]; clubs: Map<string, WorldClubInfo> } | null = null;
+/** Zwischenspeicher leeren (game/resetModuleState.ts; der Schlüssel kennt den Spielstand nicht). */
+export function clearPoolCache(): void { cache = null; }
 
 /** Alle Spieler der Welt (Zwischenspeicher je Spieltag und Bestand). */
 export function poolRows(g: Game): { rows: PoolRow[]; clubs: Map<string, WorldClubInfo> } {

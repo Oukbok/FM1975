@@ -31,6 +31,7 @@ import {
   LeagueGroup, SimClub, DivisionMeta, mulberry32, hashStr, groupLabel,
 } from '../engine/leagues';
 import { seasonStartYear } from './timeline';
+import { nextSeq } from '../engine/idSeq';
 
 // -----------------------------------------------------------------------------
 // Datenmodell
@@ -272,10 +273,9 @@ const FICT_CITIES = [
 const FICT_PREFIX = ['FC', 'SV', 'TSV', 'VfL', 'SpVgg', 'SC', '1. FC', 'FV'];
 const FICT_COLORS = ['#2E7D32', '#1565C0', '#C62828', '#6A1B9A', '#EF6C00', '#00838F', '#455A64', '#AD1457'];
 
-let _phCounter = 0;
-/** Erzeugt einen klar fiktiven Platzhalterverein für Ebene/Staffel. */
+/** Erzeugt einen klar fiktiven Platzhalterverein für Ebene/Staffel (Nummer aus dem Spielstand, engine/idSeq.ts). */
 export function makePlaceholder(seedKey: string, tier: number, group: LeagueGroup): SimClub {
-  const idx = _phCounter++;
+  const idx = `s${nextSeq().toString(36)}`;
   const rng = mulberry32(hashStr(`${seedKey}:${tier}:${group}:${idx}`));
   const city = FICT_CITIES[Math.floor(rng() * FICT_CITIES.length)];
   const prefix = FICT_PREFIX[Math.floor(rng() * FICT_PREFIX.length)];

@@ -199,6 +199,8 @@ export function setEraYear(year: number): void {
   if (year !== eraYear) { eraYear = year; weightCache.clear(); }
 }
 export function getEraYear(): number { return eraYear; }
+/** Ausgangszustand (game/resetModuleState.ts): Spieljahr 1975, Zwischenspeicher verwerfen. */
+export function resetPositionsState(): void { eraYear = 1975; weightCache.clear(); skillRev++; }
 
 /** Gewichte einer Position im aktuellen Spieljahr. */
 export function weightsFor(pos: Position): PositionWeights {

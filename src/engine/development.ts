@@ -233,6 +233,8 @@ export function eraEliteOffset(year: number): number {
   return -1.8;
 }
 export function setEliteShift(points: number): void { eliteShift = clamp(points, -5, 4); }
+/** Ausgangszustand für ein neues/geladenes Spiel (game/resetModuleState.ts): kein Trainerteam, keine Bremsen-Verschiebung. */
+export function resetDevelopmentState(): void { coachingByClub = null; eliteShift = 0; eraOffset = 0; }
 export function eliteBrake(p: Player, training = 1): number {
   // Spitzentraining (große Vereine, gute Anlagen) schiebt die Bremse bis zu 3 Punkte nach hinten:
   // Weltklasse reift eher bei den Spitzenvereinen – der Abstand zu den Kellerkindern bleibt spürbar.

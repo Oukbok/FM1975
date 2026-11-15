@@ -8,6 +8,7 @@ import {
   Club, Player, TrainingFocus, AttributeKey, Injury, TrainingReport,
 } from '../types';
 import { recoverFreshness } from './form';
+import { seqId } from './idSeq';
 
 // Zuordnung Trainingsfokus -> betroffene Attribute
 const FOCUS_ATTRS: Record<TrainingFocus, AttributeKey[]> = {
@@ -114,11 +115,10 @@ function makeTrainingInjury(date: string): Injury {
     { type: 'fatigue' as const, severity: 'minor' as const, desc: 'Überlastung', days: 5 },
   ];
   const o = options[Math.floor(Math.random() * options.length)];
-  const start = new Date(date + 'T00:00:00');
-  const ret = new Date(start);
-  ret.setDate(ret.getDate() + o.days);
+  const ret = new Date(date + 'T00:00:00Z');
+  ret.setUTCDate(ret.getUTCDate() + o.days);
   return {
-    id: `inj_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+    id: seqId('inj_'),
     type: o.type, severity: o.severity, description: o.desc,
     startDate: date, expectedReturnDate: ret.toISOString().slice(0, 10),
     daysRemaining: o.days, totalDays: o.days, fromTraining: true,

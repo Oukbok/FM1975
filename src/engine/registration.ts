@@ -16,6 +16,8 @@ let euroLists: Record<string, Set<string>> = {};
 /** Heimat-Nationalität (Deutschland: GER; DDR-Spieler zählen nach 1990 als Deutsche). */
 export function setRegHome(nat: string): void { homeNat = nat || 'GER'; }
 export function regHome(): string { return homeNat; }
+/** Ausgangszustand (game/resetModuleState.ts). */
+export function resetRegistrationState(): void { homeNat = 'GER'; euroLists = {}; }
 /** Europapokal-Meldelisten je Verein (nur Vereine mit Liste werden gefiltert). */
 export function setEuroLists(lists: Record<string, string[]>): void {
   euroLists = Object.fromEntries(Object.entries(lists).map(([k, v]) => [k, new Set(v)]));

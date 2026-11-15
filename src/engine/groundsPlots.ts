@@ -73,6 +73,8 @@ const KIND_MIX: Record<GroundsLocation, [number, number, number]> = {
 export interface ClubPlot extends PlotDef { kind: PlotKind; buyable: boolean }
 
 const cache = new Map<string, ClubPlot[]>();
+/** Zwischenspeicher leeren (game/resetModuleState.ts). */
+export function clearPlotCache(): void { cache.clear(); }
 
 /**
  * Karte eines Vereins: Art jedes Grundstücks und ob es zu kaufen ist. Fest aus

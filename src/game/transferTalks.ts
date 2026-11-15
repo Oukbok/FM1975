@@ -49,6 +49,8 @@ import { competitiveDays } from './winterShared';
 
 /** Verkäufer: Verein mit vollem Kader oder (Weltspieler) ein schlanker Ersatz aus der Hintergrund-Welt. */
 const sellerCache = new Map<string, Club>();
+/** Ersatz-Vereine des vorigen Spielstands verwerfen (game/resetModuleState.ts). */
+export function clearSellerCache(): void { sellerCache.clear(); }
 export function sellerOf(g: Game, id: string): Club | undefined {
   if (g.clubs[id]) return g.clubs[id];
   const hit = sellerCache.get(id);

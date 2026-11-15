@@ -110,8 +110,10 @@ export function calculateTable(
     };
   }
 
+  let lastDate = '';
   for (const match of matches) {
     if (match.status !== 'finished' || !match.result) continue;
+    if (match.date > lastDate) lastDate = match.date;
     const r = match.result;
     const home = rowMap[match.homeClubId];
     const away = rowMap[match.awayClubId];
@@ -156,7 +158,7 @@ export function calculateTable(
   rows.forEach((row, i) => { row.position = i + 1; });
 
   return {
-    season, pointSystem, rows, lastUpdated: new Date().toISOString(),
+    season, pointSystem, rows, lastUpdated: lastDate, // Datum des letzten gewerteten Spiels (nicht die Uhrzeit: Spielstand reproduzierbar)
   };
 }
 

@@ -90,11 +90,9 @@ function saveAndLoad(g: Game): Game {
   return s.game;
 }
 
-// Struktureller Vergleich mit Pfad der ersten Abweichung.
-// Ausnahme: Buchungs-/Nachrichten-IDs und Tabellenstempel enthalten die Uhrzeit und sind nie gleich.
-const VOLATILE = /(\.(transactions|messages)\.\d+\.id|\.lastUpdated)$/;
+// Struktureller Vergleich mit Pfad der ersten Abweichung (IDs/Tabellenstempel hängen nicht mehr an der Uhr, engine/idSeq.ts).
 function firstDiff(a: unknown, b: unknown, path = '', all?: string[]): string | null {
-  if (a === b || VOLATILE.test(path)) return null;
+  if (a === b) return null;
   if (typeof a !== typeof b || a === null || b === null || typeof a !== 'object') {
     if (typeof a === 'number' && typeof b === 'number' && Number.isNaN(a) && Number.isNaN(b)) return null;
     const msg = `${path}: ${JSON.stringify(a)?.slice(0, 60)} ≠ ${JSON.stringify(b)?.slice(0, 60)}`;
@@ -248,7 +246,7 @@ ok(errs === 0 && g.fixtures.some((m) => m.status === 'finished'), `Neue Saison l
 checkLoad(g, 'neue Saison');
 
 // Deterministisch: zwei frische Prozesse mit gleichem Startwert → 120 Tage identischer Spielstand
-// (eigene Prozesse, weil Module Zustand wie Epoche/Zähler halten, den ein neues Spiel nicht zurücksetzt).
+// (eigene Prozesse; dass ein zweites neues Spiel im selben Prozess gleich läuft, prüft test:newgame-repro).
 {
   const runDet = () => execFileSync(process.execPath, ['scripts/run-ts.mjs', 'tests/season-test.ts', '--det'], { encoding: 'utf8' }).trim().split('\n').pop()!;
   const h1 = runDet(), h2 = runDet();

@@ -16,7 +16,10 @@ import { LEAGUE_REFORMS } from '../data/reforms';
 import { seasonStartYear, timelineEventsUpTo } from '../data/timeline';
 import { generateSeasonCalendar } from '../engine/calendar';
 import { createCup } from '../engine/cup';
-import { setHomeCurrency, yearOf } from '../engine/economy';
+import { setCurrencyDate, setHomeCurrency, yearOf } from '../engine/economy';
+import { setTransferDate } from '../engine/transfers';
+import { bindIdCounter } from '../engine/idSeq';
+import { resetModuleState } from './resetModuleState';
 import { computeGermanEuroQualifiers } from '../engine/euro';
 import { applyFacilityEffects, makeInfrastructure } from '../engine/infrastructure';
 import { calculateTable, generateFixtures } from '../engine/league';
@@ -63,6 +66,11 @@ import { migrateCohesion } from './cohesionGame';
 import { ensureCountryPools } from '../engine/world';
 
 export function createNewGame(opts: NewGameOptions): Game {
+  // Modul-Zustand des vorigen Spiels verwerfen: ein zweites neues Spiel startet wie nach dem Neuladen.
+  resetModuleState();
+  // IDs aus dem Spielstand (engine/idSeq.ts): Zähler gleich binden, er kommt unten in den Spielstand.
+  const ids = { n: 0 };
+  bindIdCounter(ids);
   // Startjahr/Heimatland (Wunsch Pascal, Weltdaten): Standard 1. Juli 1975 in Deutschland.
   const year = clampStartYear(opts.startYear);
   const home = opts.country && COUNTRY_BY_CC[opts.country] && opts.country !== 'gdr' ? opts.country : 'ger';
@@ -70,6 +78,9 @@ export function createNewGame(opts: NewGameOptions): Game {
   const season = seasonLabelOf(year);
   const startISO = `${year}-07-01`;
   const fxStart = `${year}-08-15`;
+  setTransferDate(startISO);
+  setDisplayYear(year);
+  setCurrencyDate(startISO);
   setHomeOrigin(isGer ? null : countryOrigin(home));
   setRegHome(isGer ? 'GER' : (ORIGINS[countryOrigin(home)]?.nationality ?? 'GER'));
   setHomeCurrency(home); // Anzeige in der Heimatwährung (data/currencies.ts)
@@ -223,6 +234,7 @@ export function createNewGame(opts: NewGameOptions): Game {
     appliedReforms: legacy ? [] : reformsAppliedAt(year, home),
     financeLevel: FINANCE_LEVEL,
     youthSalt,
+    ids,
     ...(legacy ? {} : { startYear: year }),
     ...(isGer ? {} : { homeCountry: home }),
   };

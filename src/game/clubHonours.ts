@@ -199,6 +199,8 @@ function top11(squad: Player[]): number {
   return s.length ? round2(s.reduce((a, b) => a + b, 0) / s.length) : 0;
 }
 let gameStart = '1975-07-01';
+/** Ausgangszustand (game/resetModuleState.ts). */
+export function resetClubHonoursState(): void { bound = null; gameStart = '1975-07-01'; }
 function yearsAt(p: Player, club: Club, today: string): number {
   const arrivals = (p.history?.transfers ?? []).filter((t) => t.toClub === club.name && t.kind !== 'back');
   if (arrivals.length) return daysBetween(arrivals[arrivals.length - 1].date, today) / 365.25;

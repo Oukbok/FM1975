@@ -187,6 +187,8 @@ const GEN_CAP = 84;
 let genYear = 1975;
 let genDate = CURRENT_DATE;
 function setGenDate(date: string): void { genDate = date; genYear = Number(date.slice(0, 4)); }
+/** Ausgangszustand des Generators (game/resetModuleState.ts): Startwert und Erzeugungsdatum. */
+export function resetGenerateState(): void { _seed = 1980; setGenDate(CURRENT_DATE); }
 
 /** @param cap Obergrenze der Erzeugungsstärke (deutsche Vereine 84, Europapokal-Gegner 88). */
 /**

@@ -5,9 +5,10 @@
 
 import { CalendarEvent, GameCalendar, Match } from '../types';
 import { findWinterBreak } from './winterBreak';
+import { seqId } from './idSeq';
 
-let _eid = 0;
-function eid(): string { return `ev_${_eid++}`; }
+/** Termin-ID: laufende Nummer des Spielstands (engine/idSeq.ts). */
+function eid(): string { return seqId('ev_'); }
 
 // -----------------------------------------------------------------------------
 // Saisonkalender erzeugen

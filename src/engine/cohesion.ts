@@ -82,6 +82,8 @@ export function instructionGap(co: Cohesion, t: Tactics, year: number): { total:
 
 // --- Formationen ---------------------------------------------------------------
 const simCache = new Map<string, number>();
+/** Zwischenspeicher leeren (game/resetModuleState.ts). */
+export function clearCohesionCache(): void { simCache.clear(); }
 /** Ähnlichkeit zweier Formationen: Anteil gleicher Positionen (0–1). */
 export function formationSimilarity(a: string, b: string): number {
   if (a === b) return 1;

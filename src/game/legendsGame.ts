@@ -125,6 +125,8 @@ function dropWeakest(g: Game, club: Club, p: Player): void {
 }
 
 let idCache: { g: Game; n: number; set: Set<string> } | null = null;
+/** Zwischenspeicher leeren (game/resetModuleState.ts). */
+export function clearLegendCache(): void { idCache = null; }
 /** Spieler-IDs aller erschienenen Legenden. */
 export function legendIds(g: Game): Set<string> {
   const d = g.legends2?.done ?? {};

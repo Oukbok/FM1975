@@ -98,6 +98,8 @@ export function activeNations(year: number): string[] {
 
 /** Stärke aller Nationen (zwischengespeichert je Tag). */
 let rankCache: { key: string; v: Map<string, number> } | null = null;
+/** Zwischenspeicher leeren (game/resetModuleState.ts; die Schlüssel kennen den Spielstand nicht). */
+export function clearNationalCache(): void { cache = null; rankCache = null; }
 export function allStrengths(g: Game, date = g.calendar.currentDate): Map<string, number> {
   const key = `${date}|${Object.keys(g.players).length}`;
   if (rankCache?.key === key) return rankCache.v;

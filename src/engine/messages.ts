@@ -6,14 +6,11 @@
 // mit Gelesen/Ungelesen-Status. Wird in App.tsx bei Spiel-Events befüllt.
 // =============================================================================
 import { InboxMessage, MessageCategory } from '../types';
+import { seqId } from './idSeq';
 
-/** Fortlaufender Zähler für kollisionsfreie IDs innerhalb einer Session. */
-let msgCounter = 0;
-
-/** Erzeugt eine eindeutige, serialisierbare Nachrichten-ID. */
+/** Erzeugt eine eindeutige, serialisierbare Nachrichten-ID (laufende Nummer des Spielstands, engine/idSeq.ts). */
 export function newMessageId(): string {
-  msgCounter += 1;
-  return `msg-${Date.now().toString(36)}-${msgCounter}`;
+  return seqId('msg-');
 }
 
 /** Parameter zum Erstellen einer Nachricht. */

@@ -46,6 +46,8 @@ const R_OF: Record<string, YcRegion> = { n: 'nord', o: 'nordost', w: 'west', x: 
 let localCity = '';
 /** Stadt des eigenen Vereins für Stadtteilvereine (Anzeige). */
 export function setLocalCity(city: string): void { if (city !== localCity) { localCity = city; cache.clear(); } }
+/** Ausgangszustand (game/resetModuleState.ts). */
+export function resetLocalClubs(): void { localCity = ''; cache.clear(); }
 
 /** `kreis` = Kreis-/Bezirksebene (auch Stadtteilvereine), sonst Landes-/Regionalebene. */
 export function localClubId(region: YcRegion, kreis: boolean, i: number): string {

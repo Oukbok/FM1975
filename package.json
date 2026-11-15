@@ -65,6 +65,7 @@
     "test:faces": "node scripts/run-ts.mjs tests/faces-test.ts",
     "test:season": "node scripts/run-ts.mjs tests/season-test.ts",
     "test:world": "node scripts/run-ts.mjs tests/world-test.ts",
+    "test:newgame-repro": "node scripts/run-ts.mjs tests/newgame-repro.ts",
     "test:popups": "node scripts/build.mjs && node tests/popup-size.mjs",
     "test:walk": "node scripts/build.mjs && node tests/season-walk.mjs",
     "test:honours": "node scripts/run-ts.mjs tests/honours-test.ts",

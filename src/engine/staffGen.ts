@@ -17,6 +17,7 @@
 // Spielablauf (Pool, KI-Einstellungen, Lernen, Ruhestand): game/staffWorld.ts.
 // =============================================================================
 import { makeName, pickOrigin } from '../data/origins';
+import { nextSeq } from './idSeq';
 import { STAFF_BY_ID, staffAvailable } from '../data/staff';
 import type { AttributeKey, ClubCoach, Player } from '../types';
 import { hashStr, mulberry32 } from './leagues';
@@ -85,8 +86,8 @@ export function exProCeiling(s: number, p: Player, rng: () => number): number {
 // -----------------------------------------------------------------------------
 // Personen erzeugen
 // -----------------------------------------------------------------------------
-let seq = 0;
-const newId = (year: number, r: () => number) => `sp_${year}_${(seq++ % 1000).toString(36)}${Math.floor(r() * 1e8).toString(36)}`;
+// Laufende Nummer aus dem Spielstand (engine/idSeq.ts), nicht je Sitzung.
+const newId = (year: number, r: () => number) => `sp_${year}_${(nextSeq() % 1000).toString(36)}${Math.floor(r() * 1e8).toString(36)}`;
 
 /** Höchstens eine Eigenschaft je Person (etwa jede dritte hat eine). */
 function rollTrait(pot: Record<CoachSkill, number>, r: () => number, loyal = 50): StaffTrait[] | undefined {

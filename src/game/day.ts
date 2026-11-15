@@ -94,6 +94,7 @@ import { bindRegistration, registrationDaily } from './registrationGame';
 import { reserveDaily } from './reserveTeam';
 import { nationalDaily } from './national/nationalGame';
 import { bindHonours } from './clubHonours';
+import { bindGameIds } from './resetModuleState';
 import { bindStaffFactor } from './staffGame';
 import { bindCoaching, ownCoaching } from './coachingGame';
 
@@ -137,6 +138,7 @@ export interface DayUi {
 export const HEADLESS_UI: DayUi = { onOwnMatch() {}, onRatingCeremony() {}, onSeasonEnd() {} };
 
 export function processDay(g: Game, ui: DayUi): boolean {
+  bindGameIds(g); // IDs aus diesem Spielstand (engine/idSeq.ts)
   bindHonours(g); // Wirkungen der Vereinsauszeichnungen (nur bei neuem Spielstand neu)
   bindMarketing(g); // Werbewirkung des eigenen Vereins (game/marketingGame.ts)
   bindStaffFactor(g); // Stab → Spielstärke des eigenen Vereins (game/staffGame.ts)

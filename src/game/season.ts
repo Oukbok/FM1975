@@ -54,6 +54,7 @@ import { contractSeasonStart } from './contractClausesGame';
 import { honoursSeasonEnd } from './clubHonours';
 import { worldPoolSeason } from './worldPool';
 import { storeSeasonResults } from './leagueResults';
+import { bindGameIds } from './resetModuleState';
 
 // -----------------------------------------------------------------------------
 // Spieltag simulieren + Form/Fitness-Effekte + Nachrichten
@@ -210,6 +211,7 @@ export function finalOrder(g: Game, divId: string): string[] {
 }
 
 export function startNextSeason(g: Game): void {
+  bindGameIds(g); // IDs aus diesem Spielstand (engine/idSeq.ts)
   // Trainerbilanz und -karussell der KI-Vereine, solange die Endtabelle vorliegt.
   aiSeasonEnd(g);
   // Die Besten der Saison: Rückfall, falls das Saisonende-Ereignis nicht lief (ältere Stände).

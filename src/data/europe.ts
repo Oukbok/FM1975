@@ -121,7 +121,9 @@ export const UEFA_CLUBS: EuroClub[] = [
 /** Alle auslaendischen Europapokal-Vereine als ein Datensatz (Map id -> EuroClub). */
 export function allEuroClubs(): Record<string, EuroClub> {
   const out: Record<string, EuroClub> = {};
-  for (const c of [...EC_CLUBS, ...CWC_CLUBS, ...UEFA_CLUBS]) out[c.id] = c;
+  // Kopien: der Spielstand verändert Stärken/Länder (Welt, Weltspieler-Maßstab, historische Steuerung) –
+  // die Stammdaten müssen für das nächste neue Spiel unberührt bleiben.
+  for (const c of [...EC_CLUBS, ...CWC_CLUBS, ...UEFA_CLUBS]) out[c.id] = { ...c, colors: { ...c.colors } };
   return out;
 }
 

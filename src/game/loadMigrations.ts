@@ -12,6 +12,10 @@ import { applyDataset } from '../data/dataset/apply';
 import { BUILTIN_ID } from '../data/dataset/builtin';
 import { cachedDataset } from '../data/dataset/storage';
 import { setEraYear } from '../engine/positions';
+import { setFormationYear } from '../data/formations';
+import { setTransferDate } from '../engine/transfers';
+import { applyLeagueBalance } from './leagueBalance';
+import { bindGameIds, resetModuleState } from './resetModuleState';
 import { ensureDevFields, refreshOverall } from '../engine/development';
 import { updateScoutEstimate } from '../engine/scouting';
 import { snapshotAttributes } from '../engine/history';
@@ -76,6 +80,9 @@ import { ensureCountryPools } from '../engine/world';
 
 /** Bereitet einen gerade gelesenen Spielstand zum Weiterspielen vor (verändert `g`). */
 export function prepareLoadedGame(g: Game): void {
+  // Modul-Zustand des vorigen Spiels verwerfen; die Nachrüstungen/bind-Funktionen unten setzen die Werte dieses Spielstands.
+  resetModuleState();
+  bindGameIds(g); // IDs aus dem Spielstand (ältere Stände: Zähler ab 0, neues Format ohne Uhrzeit)
   // Datensatz des Spielstands anwenden (fehlt er, gilt der eingebaute).
   const dsId = g.datasetId ?? BUILTIN_ID;
   const ds = cachedDataset(dsId);
@@ -95,6 +102,9 @@ export function prepareLoadedGame(g: Game): void {
   setHomeLabel(COUNTRY_BY_CC[g.homeCountry ?? 'ger']?.name ?? 'Deutschland');
   // Positionsbewertung auf das Spieljahr einstellen; ältere Spielstände auf Entwicklung 2.0 heben.
   setEraYear(Number(g.calendar.currentDate.slice(0, 4)));
+  setFormationYear(Number(g.calendar.currentDate.slice(0, 4)));
+  setTransferDate(g.calendar.currentDate);
+  applyLeagueBalance(g); // Talent-Salz, Jugendpotenzial, Weltklasse-Bremse des Spielstands (sonst erst im ersten processDay)
   // Positionen 2.0: alte Kürzel VS/AV/FL → IV, RV/LV, RA/LA (vor allem, was Positionen bewertet).
   try { migratePositions2(g); } catch (err) { console.error('Positionen-2.0-Umrechnung fehlgeschlagen:', err); }
   for (const p of Object.values(g.players)) {

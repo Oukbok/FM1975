@@ -42,6 +42,8 @@ export function setMarketingFx(clubId: string, fx: HonourEffects): void { mktClu
 // -----------------------------------------------------------------------------
 let staffFactor: Record<string, number> = {};
 export function setStaffFactor(t: Record<string, number>): void { staffFactor = t; }
+/** Ausgangszustand (game/resetModuleState.ts): keine Auszeichnungen, keine Werbung, kein Stab-Abzug. */
+export function resetHonourEffects(): void { table = {}; mktClub = ''; mkt = {}; staffFactor = {}; }
 /** Faktor auf die Teamstärke (1 = neutral, < 1 = Stab fehlt). */
 export function staffStrength(clubId: string | undefined): number {
   return clubId ? staffFactor[clubId] ?? 1 : 1;

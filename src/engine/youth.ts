@@ -178,6 +178,8 @@ export function setYouthPotentialShift(stars: number): void { youthPotentialShif
 let youthSalt = '';
 export function setYouthSalt(salt: string): void { youthSalt = salt; }
 export function getYouthSalt(): string { return youthSalt; }
+/** Ausgangszustand (game/resetModuleState.ts). */
+export function resetYouthState(): void { youthPotentialShift = 0; youthSalt = ''; }
 
 /** Zusatzoptionen: Breitensport-Auffüller oder Rekrutierungsereignis (game/youthRecruit.ts). */
 export interface YouthGenOpts {

@@ -14,6 +14,8 @@
 // Mechaniken. Alle Datumsberechnungen laufen in UTC.
 // =============================================================================
 
+import { seqId } from '../engine/idSeq';
+
 export type ActivityType = 'camp' | 'friendly' | 'teambuilding';
 
 /** Statische Definition eines Aktivitätstyps. */
@@ -69,10 +71,9 @@ export interface PlannedActivity {
   applied: boolean;
 }
 
-let _aid = 0;
+/** Aktivitäts-ID: laufende Nummer des Spielstands (engine/idSeq.ts). */
 export function activityId(): string {
-  _aid++;
-  return `act_${Date.now().toString(36)}_${_aid}`;
+  return seqId('act_');
 }
 
 // -----------------------------------------------------------------------------
