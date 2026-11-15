@@ -31,6 +31,11 @@ export const INFO_TEXTS = {
     text: 'Deine Liga läuft mit vollen Kadern, Minute für Minute. Alle anderen Länder spielen ihre 1. und 2. Liga Spieltag für Spieltag: Hin- und Rückrunde, Ergebnis je Spiel aus Vereinsstärke und Heimvorteil, Tabelle nach der Punkteregel des Landes, Auf- und Abstieg, Europapokal-Plätze nach der Fünfjahreswertung. Tabellen, Spieltage und Begegnungen findest du unter Statistiken › Liga. Eine Wahl der Simulationstiefe je Land gibt es nicht mehr – jede Liga wird gleich gründlich gespielt.',
     wiki: 'world-start',
   },
+  ligaruf: {
+    title: 'Ligaruf & Entwicklung der Ligen',
+    text: 'Jedes Land im Hintergrund hat einen Ligaruf von 0 bis 100. 4 Punkte Ruf sind 1 Punkt Stärke für alle Vereine des Landes – das wirkt auf Europapokal-Erfolge, Fünfjahreswertung und Startplätze. Historisch: Am Saisonende wird mindestens ein Viertel der Abweichung zum echten Ruf der Zeit abgebaut. Frei: Nur die Europapokal-Ergebnisse zählen. Dein Heimatland bleibt außen vor.',
+    wiki: 'league-reputation',
+  },
   // ---------------------------------------------------------------- Spieler-Zustand
   frische: {
     title: 'Frische',

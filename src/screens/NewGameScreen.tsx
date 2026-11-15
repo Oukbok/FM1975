@@ -52,7 +52,7 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
   const [d, setD] = useState<NewGameDraft>(() => {
     applyDataset(cachedDataset(BUILTIN_ID)); // Vorschau immer auf dem gewählten Datensatz
     return {
-      datasetId: BUILTIN_ID, difficulty: 'normal', injuries: true, history: 'off', speedMs: defaults.speedMs,
+      datasetId: BUILTIN_ID, difficulty: 'normal', injuries: true, history: 'off', leagueRep: 'historic', speedMs: defaults.speedMs,
       briefingAuto: defaults.briefingAuto !== false, briefingIntro: defaults.briefingIntro !== false, legends: true,
       mode: 'manager', offerSeed: Math.floor(Math.random() * 2 ** 31),
       league: 'tier1', clubId: topClub(), startYear: 1975, country: 'ger',
@@ -143,7 +143,7 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
           </div>
           {step === 0 && <StepManager d={d} set={set} />}
           {step === 1 && <StepMode d={d} set={set} chooseMode={chooseMode} />}
-          {step === 2 && <StepWorld d={d} chooseDataset={chooseDataset} chooseYear={chooseYear} />}
+          {step === 2 && <StepWorld d={d} set={set} chooseDataset={chooseDataset} chooseYear={chooseYear} />}
           {step === 3 && <StepClub d={d} set={set} offers={offers} chooseCountry={chooseCountry} />}
           {step === 4 && <StepLeagues d={d} game={ready} />}
           {step === 5 && <StepWelcome d={d} game={ready} />}

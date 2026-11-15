@@ -3,6 +3,7 @@
 // =============================================================================
 import { Difficulty, ManagerBackground, ManagerProfile, ManagerStyle, NewGameOptions } from '../../types';
 import type { HistoryMode } from '../../game/historicSteer';
+import type { LeagueRepMode } from '../../game/leagueRepGame';
 import { LEAGUES, LeagueKey, ClubPreview, leaguePreview, leaguesFor } from './clubPreview';
 
 export const STYLE_DE: Record<ManagerStyle, string> = { defensive: 'Defensiv', balanced: 'Ausgeglichen', attacking: 'Offensiv' };
@@ -29,6 +30,8 @@ export interface NewGameDraft {
   injuries: boolean;
   /** Entwicklung der anderen Vereine (game/historicSteer.ts). */
   history: HistoryMode;
+  /** Entwicklung der Ligen (game/leagueRepGame.ts), Standard historisch. */
+  leagueRep: LeagueRepMode;
   speedMs: number;
   briefingAuto: boolean;
   briefingIntro: boolean;
@@ -129,7 +132,7 @@ export function managerProfile(d: NewGameDraft): ManagerProfile {
 export function gameOptions(d: NewGameDraft): NewGameOptions {
   return {
     managedClubId: d.clubId, manager: managerProfile(d), difficulty: d.difficulty, realisticSquads: true,
-    injuriesEnabled: d.injuries, speedMs: d.speedMs, datasetId: d.datasetId, historyMode: d.history, legends: d.legends,
+    injuriesEnabled: d.injuries, speedMs: d.speedMs, datasetId: d.datasetId, historyMode: d.history, leagueRepMode: d.leagueRep, legends: d.legends,
     ...(d.privateLife ? {} : { privateLife: false }),
     ...(d.startYear !== 1975 ? { startYear: d.startYear } : {}),
     ...(d.country !== 'ger' ? { country: d.country } : {}),

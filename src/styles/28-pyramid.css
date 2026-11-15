@@ -85,4 +85,9 @@
 .lsv-row:hover { background: var(--rl-hover); }
 .lsv-row .lsv-name { flex: 0 0 132px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .lsv-row .lsv-lead { color: var(--text-2); }
+.lsv-row .lsv-rep { flex: 0 0 64px; display: flex; align-items: baseline; justify-content: flex-end; gap: 5px; font-variant-numeric: tabular-nums; }
+.lsv-row .lsv-rep b { font-weight: 700; color: var(--text); }
+.lsv-row .lsv-rep small { min-width: 24px; font-size: 12.5px; color: var(--text-3); }
+.lsv-row .lsv-rep small.up { color: var(--pos); }
+.lsv-row .lsv-rep small.down { color: var(--neg); }
 .lsv-row .lsv-md { flex: 0 0 auto; min-width: 48px; text-align: right; color: var(--text-3); font-variant-numeric: tabular-nums; }

@@ -756,7 +756,7 @@ Beim Start erscheint ein Menü mit:
 ## Neues Spiel in sechs Schritten
 1. **Manager:** Vor- und Nachname, Geburtsdatum (Alter am 1. Juli 1975), Nationalität (optional eine zweite), ein Gesicht aus dem Gesichtsgenerator („Anderes Gesicht“), Spielstil, Werdegang und Schwierigkeit. **Lieblingsverein** und **„Niemals trainieren würde ich“** sind Profilangaben; der „Niemals“-Verein taucht im Karrieremodus nicht unter den Angeboten auf.
 2. **Spielmodus:** **Teammanager** – du wählst deinen Verein frei. **Karriere** – als unbekannter Trainer bekommst du drei Angebote schwächerer Vereine (je eins aus der 1. Liga und den beiden 2.-Liga-Staffeln) und nimmst eins an. Dazu die Option **Entwicklung der anderen Vereine** (Aus/Mittel/Stark), Verletzungen, Saison-Briefing, Auftakt-Animation und Spieltempo.
-3. **Spielwelt:** Datensatz und alle Länder, deren Ligen mitlaufen. Deine Liga wird Minute für Minute gerechnet, die übrigen deutschen Ligen, die DDR und alle Auslandsligen Spieltag für Spieltag. Rechenzeit kostet fast nur deine eigene Liga.
+3. **Spielwelt:** Startjahr, Datensatz, alle Länder, deren Ligen mitlaufen, und die Option **Entwicklung der Ligen** (Historisch/Frei, siehe Artikel „Ligaruf & Entwicklung der Ligen“). Deine Liga wird Minute für Minute gerechnet, die übrigen deutschen Ligen, die DDR und alle Auslandsligen Spieltag für Spieltag. Rechenzeit kostet fast nur deine eigene Liga.
 4. **Verein:** Land → Liga → Verein, sortierbar nach Stärke, Name oder Region; rechts die große Vorschau mit Wappen, Trikots, Stadion, Ansehen, Finanzkraft, geschätzter Kaderstärke, Ziel des Vorstands und Rivalen. Kaderstärke und Ziel sind **Einschätzungen** – die echten Kader entstehen beim Start.
 5. **Ligensystem:** die Pyramide der Saison 1975/76 (Deutschland, DDR, Ausland) – siehe Artikel „Übersicht Ligensystem“.
 6. **Willkommen:** Die Spielwelt wird schon erzeugt; du siehst Kader, Stärke der ersten Elf, den besten Spieler, Mediendruck, Vertrauen des Vorstands und Stimmung der Fans. „Karriere starten“ übernimmt genau diese Welt, danach folgt das Saison-Briefing.
@@ -1669,6 +1669,30 @@ Höchstens zwei solche Nachrichten je Saison, mindestens 45 Tage auseinander; ei
 
 ### Alte Spielstände
 Offene Jobangebote, Ultimaten und zugesagte Vereinswechsel aus früheren Versionen werden beim Laden als „hinfällig“ abgelegt und halten „Weiter“ nicht mehr an.`,
+  },
+  {
+    id: 'league-reputation',
+    category: 'leagues',
+    title: 'Ligaruf & Entwicklung der Ligen (frei oder historisch)',
+    keywords: ['ligaruf', 'ruf', 'liga', 'länder', 'fünfjahreswertung', 'koeffizient', 'uefa', 'top 5', 'historisch', 'frei', 'europapokal', 'startplätze', 'landesniveau', 'portugal', 'italien', 'spanien', 'england'],
+    body: `## Ligaruf & Entwicklung der Ligen
+Jedes Land im Europa-Hintergrund hat einen **Ligaruf** von 0 bis 100 – 100 ist die beste Liga Europas, um 80 liegen die übrigen großen Ligen, um 60 solide Mittelklasse, um 40 kleine Ligen. Der Ruf bestimmt das **Landesniveau**: **4 Punkte Ruf = 1 Punkt Stärke** für die Vereine des Landes (20 Punkte also 5 Stärkepunkte). Die Vereine wachsen über zwei, drei Jahre an das neue Niveau heran. Damit wirkt der Ruf auf alles Weitere: Europapokal-Ergebnisse, **Fünfjahreswertung** und die Zahl der **Startplätze** im Europapokal.
+
+### Beim Spielstart wählen
+Im Schritt **Spielwelt** wählst du unter **Entwicklung der Ligen**:
+- **Historisch** (Standard): Die Ligen folgen grob der echten Geschichte – Westdeutschland, England und die Niederlande in den 70ern, Italien in den 90ern, Spanien und England in den 2000ern und 2010ern. Erfolge zählen trotzdem, aber nur auf Zeit: Liegt ein Land am Saisonende **über** seinem historischen Ruf, wird **mindestens ein Viertel** des Vorsprungs abgezogen – auch wenn seine Vereine gerade alles gewinnen. Beispiel: Gewinnt ein portugiesischer Verein fünfmal in Folge die Landesmeister-Runde und steht Portugal dadurch 20 Punkte über dem historischen Wert, verliert es am Saisonende mindestens 5 Punkte. Liegt ein Land **darunter**, holt es genauso auf.
+- **Frei:** Kein Eingriff von außen. Der Ruf entsteht nur aus den Ergebnissen: Die Länder werden nach der Fünfjahreswertung gereiht, der Erste verdient den höchsten Ruf, den es in diesem Jahr gab, der Zweite den zweithöchsten usw.; der Ruf geht jede Saison ein Stück dorthin. Wer im Europapokal stark ist, wird stärker, bekommt mehr Startplätze und kann sich oben festsetzen – 2026 können ganz andere Länder zu den Top 5 gehören als in Wirklichkeit.
+
+Die Wahl steht nach dem Start fest. Spielstände aus älteren Versionen laufen ohne Ligaruf weiter: Dort verschiebt sich das Landesniveau wie bisher fest nach den Jahrzehnten.
+
+### Dein Heimatland
+Das Land, in dem du spielst, wird nie verändert: Seine Vereine haben volle Kader, ihre Stärke kommt aus den Spielern. Es zählt aber in der Fünfjahreswertung mit und kann so andere Länder verdrängen. Spielst du in einem anderen Land, läuft Deutschland im Hintergrund mit eigenem Ligaruf.
+
+### Wo du ihn siehst
+Unter **Statistiken › Ligensystem** zeigt „Ligen der Welt“ den Ligaruf jedes Landes mit der Veränderung zur Vorsaison; der Hinweis daneben nennt den historischen Wert der Zeit.
+
+### Grundlage
+Die historische Kurve ist aus der UEFA-Fünfjahreswertung je Jahrzehnt abgeleitet (z. B. 1975–79 Westdeutschland vor England und Belgien, 1991–95 Italien klar vorn, 1996–2000 Spanien vor Italien, 2004–08 England knapp vor Spanien, 2020–24 England vor Italien und Spanien) – grob übersetzt, keine Messwerte.`,
   },
   {
     id: 'ai-history-mode',

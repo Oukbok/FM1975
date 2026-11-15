@@ -25,6 +25,7 @@ import { recordFeeEUR } from '../src/data/transferRecords';
 import { economyScale as econScale } from '../src/engine/economy';
 import { roomAnalysis } from '../src/game/dressingRoomGame';
 import { histModeFromEnv, histSummary, histTrack } from './simHistory';
+import { leagueRepInit, leagueRepModeFromEnv, leagueRepSummary, leagueRepTrack } from './simLeagueRep';
 import { budgetCheck, budgetInit, budgetSummary } from './simBudget';
 import { promBefore, promInit, promModeFromEnv, promSeasonEnd, promSeasonStart, promSummary } from './simPromises';
 import { legSummary, legTrack } from './simLegends';
@@ -51,6 +52,9 @@ if (process.env.HUMAN) { (g as any).simCareer = true; if (process.env.HUMAN === 
 // HIST=aus|mittel|stark: Entwicklung der anderen Vereine (game/historicSteer.ts), Bericht tests/simHistory.ts.
 const histMode = histModeFromEnv(process.env.HIST);
 if (histMode) g.historyMode = histMode;
+// LEAGUEREP=frei|historisch: Entwicklung der Ligen (game/leagueRepGame.ts), Bericht tests/simLeagueRep.ts.
+const repMode = leagueRepModeFromEnv(process.env.LEAGUEREP);
+leagueRepInit(g, repMode);
 // CAMP=drills|plain: eigener Verein bucht jedes Trainingslager (tests/simCamp.ts).
 campInit(g, campModeFromEnv(process.env.CAMP));
 // PROMISES=aware|plain: Versprechen zum ersten Training mit Co-Trainer-Aufstellung (tests/simPromises.ts).
@@ -516,6 +520,7 @@ for (let s = 0; s < seasons; s++) {
   startNextSeason(g);
   if (process.env.SPEED) speedSeason(g, promSeason, performance.now() - tS);
   if (process.env.HONOURS) honoursTrack(g);
+  if (repMode) leagueRepTrack(g);
   campSeasonStart(g);
   promSeasonStart(g, promSt, promSeason);
   if (process.env.STAFF) staffReport(g);
@@ -589,6 +594,7 @@ if (process.env.BAL) {
 }
 if (process.env.YOUTH) youthSummary(g);
 if (histMode) histSummary(g, histMode);
+if (repMode) leagueRepSummary(repMode);
 campSummary();
 promSummary();
 budgetSummary();

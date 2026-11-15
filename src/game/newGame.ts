@@ -31,6 +31,7 @@ import { createDefaultWeeklyPlan } from '../engine/weeklyTraining';
 import { ensureStaffWorld } from './staffWorld';
 import { academyStartingCohort, generateYouthPlayer, setYouthSalt } from '../engine/youth';
 import { initWorld } from '../engine/world';
+import { startLeagueRep } from './leagueRepGame';
 import { startingStaff } from './trainerTeam';
 import { allocateTv, commercialAnnualFor, isLeagueClub, refreshMarketValues } from '../engine/clubEconomy';
 import { addCupCalendarEvents, buildEuroCupsForSeason, cupDateSet, euroDrawMessage, leagueDateSet } from './competitions';
@@ -218,6 +219,7 @@ export function createNewGame(opts: NewGameOptions): Game {
     pointSystem, managedClubId: opts.managedClubId, season,
     manager: opts.manager, difficulty: opts.difficulty, injuriesEnabled: opts.injuriesEnabled,
     historyMode: isGer ? opts.historyMode ?? 'off' : 'off',
+    ...(opts.leagueRepMode ? { leagueRepMode: opts.leagueRepMode } : {}),
     messages: [...euroDrawMsgs, welcome],
     trainingPlan: createDefaultWeeklyPlan(),
     cup,
@@ -241,6 +243,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   // Vereins-Pool (Amateurligen) + Historie 1963–1975 (game/clubPool.ts).
   if (comp) seedStartPool(g0, home, year); // übrige Vereine des Landes (Weltdaten)
   migrateLeaguePool(g0);
+  startLeagueRep(g0, year); // Ligaruf je Land (Option „Entwicklung der Ligen“, game/leagueRepGame.ts)
   // Ebenen unterhalb der 2. Liga, die es im Startjahr schon gibt (Regionalligen, 3. Liga).
   if (isGer && !legacy) { padSecondTier(g0, year, ligaStart); fillLowerTiers(g0, year, ligaStart); }
   if (!legacy) seedPreStartHistory(g0, home, year);

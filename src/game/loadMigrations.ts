@@ -67,6 +67,7 @@ import { migrateTrainingPlan } from './trainingWeek';
 import { migrateStaffPeople } from './staffWorld';
 import { migrateYouthComps } from './youthComps/daily';
 import { migrateHistoryMode } from './historicSteer';
+import { migrateLeagueRep } from './leagueRepGame';
 import { migrateTransferLog } from './transferLog';
 import { migrateCareer } from './careerGame';
 import { assignShirtNumbers } from './squads';
@@ -375,6 +376,7 @@ export function prepareLoadedGame(g: Game): void {
   try { migrateYouthContracts(g); } catch (err) { console.error('Jugendverträge-Nachrüstung fehlgeschlagen:', err); }
   try { migrateYouthComps(g); } catch (err) { console.error('Jugendwettbewerbe-Nachrüstung fehlgeschlagen:', err); }
   migrateHistoryMode(g);
+  migrateLeagueRep(g);
   try { migrateTransferLog(g); } catch (err) { console.error('Transferprotokoll-Nachrüstung fehlgeschlagen:', err); }
   try { migrateCareer(g); } catch (err) { console.error('Karriere-Bereinigung fehlgeschlagen:', err); }
   try { migrateBudget(g); } catch (err) { console.error('Saisonbudget-Nachrüstung fehlgeschlagen:', err); }

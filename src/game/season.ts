@@ -17,6 +17,7 @@ import { staffSeasonChange } from './staffGame';
 import { youthPoachingAtSeasonChange } from './youthMarket';
 import { environmentSeasonChange, setSeasonGoal } from './environmentGame';
 import { advanceWorldSeason, initWorld, isForeignId } from '../engine/world';
+import { leagueRepHook } from './leagueRepGame';
 import { closeSeason, recordTransfer } from '../engine/history';
 import { buildProClub } from '../data/generate';
 import { recordSeasonEnd } from './clubRecords';
@@ -439,7 +440,7 @@ export function startNextSeason(g: Game): void {
   const worldRes = advanceWorldSeason(
     g.world, euroClubs, oldSeason, nextStartYear, g.pointSystem === '3-point' ? 3 : 2,
     g.euroCups as any, (id) => !!g.clubs[id] || (!!g.simClubs?.[id] && g.simClubs[id].tier < 200),
-    leanResults.fixed,
+    leanResults.fixed, leagueRepHook(g),
   );
   { // Auslandsligen mit allen Ergebnissen in die Welt-Historie; die neue Saison legt `worldLiveDaily` an
     const rec = g.world.history[g.world.history.length - 1];

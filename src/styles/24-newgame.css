@@ -173,6 +173,9 @@ select.ng-input { cursor: pointer; }
 .ng-modecard-txt small { font-size: 15px; color: var(--text-3); line-height: 1.4; }
 
 /* --- Schritt 3: Länder --- */
+.ng-repmode { display: flex; flex-direction: column; gap: 8px; padding-top: 10px; border-top: 1px solid var(--border-soft); }
+/* Feste Höhe: Wechsel Historisch/Frei verschiebt nichts (Wunsch Pascal: Fenster wachsen nie). */
+.ng-repnote { height: calc(15.5px * 1.45 * 4); overflow: hidden; }
 .ng-ctable { flex: 1; min-height: 0; display: flex; flex-direction: column; border-top: 1px solid var(--border-soft); }
 .ng-crows { flex: 1; min-height: 0; overflow-y: auto; }
 .ng-crow { display: grid; grid-template-columns: 260px 1fr 80px 380px; gap: 14px; align-items: center; padding: 7px 10px; border-bottom: 1px solid var(--border-soft); font-size: 16px; }

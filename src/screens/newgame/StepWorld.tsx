@@ -6,6 +6,7 @@ import { WORLD_COUNTRIES, countryExists, countryPointSystem, seasonLabelOf } fro
 import { worldSeason } from '../../data/world/index';
 import { MAX_START_YEAR, MIN_START_YEAR } from '../../game/startYear';
 import type { NewGameDraft } from './draft';
+import { LEAGUE_REP_MODES } from '../../game/leagueRepGame';
 import { CURRENCIES } from '../../data/currencies';
 
 // Schritt 3: Spielwelt — Startjahr (Standard 1975), Datensatz und die Länder: deine Liga mit
@@ -49,9 +50,10 @@ function leaguesText(cc: string, key: string, y: number): { text: string; clubs:
   return s ? { text: `1. Liga ${s.tier1} · 2. Liga ${s.tier2}`, clubs: s.tier1 + s.tier2, data: false } : { text: 'nach der Teilung', clubs: 0, data: false };
 }
 
-export function StepWorld({ d, chooseDataset, chooseYear }: {
-  d: NewGameDraft; chooseDataset: (id: string) => void; chooseYear: (y: number) => void;
+export function StepWorld({ d, set, chooseDataset, chooseYear }: {
+  d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void; chooseDataset: (id: string) => void; chooseYear: (y: number) => void;
 }) {
+  const rm = LEAGUE_REP_MODES.find((m) => m.id === d.leagueRep) ?? LEAGUE_REP_MODES[0];
   const datasets = cachedSummaries();
   const y = d.startYear;
   const home = d.country;
@@ -116,6 +118,17 @@ export function StepWorld({ d, chooseDataset, chooseYear }: {
               );
             })}
           </div>
+        </div>
+        <div className="ng-repmode">
+          <div className="ng-h-row">
+            <h3 className="ng-h">Entwicklung der Ligen <InfoTip k="ligaruf" /></h3>
+            <div className="ng-seg small">
+              {LEAGUE_REP_MODES.map((m) => (
+                <button key={m.id} type="button" data-rep={m.id} className={d.leagueRep === m.id ? 'on' : ''} onClick={() => set({ leagueRep: m.id })}>{m.label}</button>
+              ))}
+            </div>
+          </div>
+          <p className="ng-note ng-repnote">Jede Liga hat einen Ruf (0–100), der die Stärke ihrer Vereine bestimmt. {rm.desc} Dein Heimatland bleibt außen vor.</p>
         </div>
         <p className="ng-note">Deine Liga läuft mit vollen Kadern. Alle anderen Länder spielen ihre 1. und 2. Liga Spieltag für Spieltag – mit Tabelle, Begegnungen, Auf- und Abstieg, sichtbar unter Statistiken › Liga. Das Ergebnis entsteht dort aus Vereinsstärke und Heimvorteil; das kostet kaum Rechenzeit. Europapokal, Transfers und Talente kommen aus allen Ländern. Länder mit echten Vereinen kannst du im nächsten Schritt als Heimatland wählen.</p>
       </section>

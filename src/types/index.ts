@@ -2045,6 +2045,8 @@ export interface NewGameOptions {
   datasetId?: string;
   /** Entwicklung der anderen Vereine (game/historicSteer.ts), Standard 'off'. */
   historyMode?: 'off' | 'medium' | 'strong';
+  /** Entwicklung der Ligen (game/leagueRepGame.ts): Ligaruf historisch gelenkt oder frei; fehlt = bisheriges Landesniveau. */
+  leagueRepMode?: 'free' | 'historic';
   /** Ausnahmetalente der Fußballgeschichte (game/legendsGame.ts), Standard an. */
   legends?: boolean;
   /** Startjahr (Saison-Start, 1975–2025), Standard 1975 (game/newGame.ts, Weltdaten). */

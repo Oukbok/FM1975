@@ -43,6 +43,14 @@ export interface WorldCountry {
   active: boolean;
   /** Unterbau (Wunsch Pascal): Amateurvereine, die mit den Letzten der 2. Liga tauschen. Optional (alte Spielstände). */
   pool?: string[];
+  /** Ligaruf 0–100 (engine/leagueRep.ts, Option „Entwicklung der Ligen“). Fehlt = Landesniveau aus COUNTRY_TRENDS (alte Spielstände). */
+  rep?: number;
+  /** Landesniveau = repBase + REP_LEVEL_K × rep (beim Anlegen so gewählt, dass das Niveau unverändert bleibt). */
+  repBase?: number;
+  /** Ligaruf beim Anlegen (Grundgröße des Landes, Option „Frei“). */
+  repStart?: number;
+  /** Ligaruf der letzten Saisonwechsel (neueste zuletzt, höchstens 10). */
+  repHist?: number[];
 }
 
 export interface WorldClubMeta {
@@ -141,10 +149,20 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 // -----------------------------------------------------------------------------
 // Landesniveau im Jahr X
 // -----------------------------------------------------------------------------
-export function countryLevel(c: WorldCountry, year: number): number {
+/** Stärkepunkte des Landesniveaus je Ruf-Punkt (20 Ruf ≈ 5 Punkte Vereinsstärke). */
+export const REP_LEVEL_K = 0.25;
+
+/** Landesniveau ohne Ligaruf: Grundniveau plus historische Verschiebung (COUNTRY_TRENDS). */
+export function legacyCountryLevel(c: WorldCountry, year: number): number {
   let delta = 0;
   for (const [y, d] of COUNTRY_TRENDS[c.name] ?? []) if (year >= y) delta = d;
   return c.base + delta;
+}
+
+/** Landesniveau im Jahr: mit Ligaruf aus dem Ruf (engine/leagueRep.ts), sonst wie bisher. */
+export function countryLevel(c: WorldCountry, year: number): number {
+  if (c.rep != null && c.repBase != null) return c.repBase + REP_LEVEL_K * c.rep;
+  return legacyCountryLevel(c, year);
 }
 
 /** Zielstärke eines Vereins aus Landesniveau und Größe. */
@@ -449,6 +467,8 @@ export function advanceWorldSeason(
   winPts: number, cups: Record<EuroCompId, CupState | null> | undefined,
   isGerman: (id: string) => boolean,
   fixed?: Record<string, FixedCountryResult>,
+  /** Ligaruf fortschreiben (engine/leagueRep.ts) – nach Koeffizienten und Teilungen, vor der Stärkeentwicklung. */
+  beforeStrength?: (endYear: number) => void,
 ): WorldSeasonResult {
   const r = rng(hash(`world:${season}`));
   const notes: string[] = [];
@@ -529,6 +549,7 @@ export function advanceWorldSeason(
 
   // 3) Staatenteilungen (vor der Stärkeentwicklung, damit neue Ligen mitlaufen)
   notes.push(...applySplits(w, euroClubs, endYear, r));
+  beforeStrength?.(endYear);
 
   // 4) Stärke für die neue Saison: Zug zur Zielstärke + Zufall
   for (const c of Object.values(w.countries)) {

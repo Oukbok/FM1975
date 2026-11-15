@@ -20,6 +20,7 @@ import {
   type CompOption, type CompSnapshot, type RoundLite, type Source,
 } from './competitionView';
 import { homeCountryOf, type Game } from './state';
+import { leagueRepInfo } from './leagueRepGame';
 import { accessSlots } from '../data/euroFormats';
 import { countryRanking, germanRank, type LeanCup, type LeanDiv } from '../engine/world';
 import type { ResTuple } from './leagueResults';
@@ -182,14 +183,19 @@ function cupCounts(list: { winner: string | null }[]) {
 }
 
 /** Stand aller Auslandsligen (1. Liga) für die Übersicht unter Statistiken › Ligensystem. */
-export function worldLeagueOverview(g: Game): { cc: string; key: string; name: string; md: number; total: number; leader?: string }[] {
-  const out: { cc: string; key: string; name: string; md: number; total: number; leader?: string }[] = [];
+export interface WorldLeagueRow { cc: string; key: string; name: string; md: number; total: number; leader?: string; rep?: { rep: number; hist: number; delta: number | null } }
+export function worldLeagueOverview(g: Game): WorldLeagueRow[] {
+  const out: WorldLeagueRow[] = [];
+  const year = seasonStartYear(g.season);
   for (const c of statsCountries(g)) {
     if (c.mode !== 'world' || !c.worldKey) continue;
     const d = worldLiveDiv(g, c.worldKey, 0);
     if (!d) continue;
-    out.push({ cc: c.cc, key: c.worldKey, name: c.name, md: d.md, total: d.n, leader: d.md ? leanTable(d, c.worldKey, g.season)[0]?.clubId : undefined });
+    const rep = leagueRepInfo(g, c.worldKey, year) ?? undefined;
+    out.push({ cc: c.cc, key: c.worldKey, name: c.name, md: d.md, total: d.n, leader: d.md ? leanTable(d, c.worldKey, g.season)[0]?.clubId : undefined, rep });
   }
+  // Mit Ligaruf (Option „Entwicklung der Ligen“): stärkste Ligen zuerst.
+  if (out.some((r) => r.rep)) out.sort((a, b) => (b.rep?.rep ?? -1) - (a.rep?.rep ?? -1));
   return out;
 }
 
