@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { ClubLink } from '../../components/club/ClubLink';
 import {
-  INDOOR_LAST_WINTER, MASTERS_FIRST_WINTER, MASTERS_LAST_WINTER, MASTERS_TEAMS, indoorPhase, mastersMoney,
+  INDOOR_LAST_WINTER, MASTERS_TEAMS, indoorPhase, mastersMoney,
   mastersTv, mastersVenue, winterYearOf,
 } from '../../data/indoorHistory';
 import { INDOOR_SQUAD_LABEL, IndoorMatch, winnerOf } from '../../engine/indoor';
 import { MastersBox } from './indoor/MastersBox';
+import { HallOfKingsBox } from './indoor/HallOfKingsBox';
+import { mastersScoring } from '../../game/indoorMasters';
 import { allTournaments, indoorName, indoorShort, setOwnIndoorDecision } from '../../game/indoorGame';
 import { Game } from '../../game/state';
 import { IndoorDecision, IndoorTournament, indoorState } from '../../game/winterShared';
@@ -13,7 +15,8 @@ import { DashBox, DashPage, Empty, KV, Meter } from '../../ui/DashPage';
 import { fmtDM, fmtDay } from '../../ui/format';
 
 // =============================================================================
-// HALLE — Hallenturniere der Winterpause, Masters-Wertung (indoor/MastersBox.tsx), Hallen-Masters (1976–2004)
+// HALLE — Hallenturniere der Winterpause, Masters-Wertung (indoor/MastersBox.tsx), Hallen-Masters (1976–2004),
+// Masters-Siegerliste | Hallenkönige (indoor/HallOfKingsBox.tsx)
 // Spielablauf: game/indoorGame.ts · Historie: data/indoorHistory.ts
 // =============================================================================
 const PHASE_TEXT: Record<string, string> = {
@@ -50,7 +53,9 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
   const title = (id: string) => st.titles[id] ?? 0;
   const ownPhaseStatus = phase === 'none'
     ? (wy > INDOOR_LAST_WINTER ? `Seit ${INDOOR_LAST_WINTER + 1} keine Hallenturniere mehr` : 'Noch keine Hallensaison')
-    : PHASE_TEXT[phase];
+    : phase === 'masters' && mastersScoring() === 'place'
+      ? 'DFB-Hallenpokal: Qualifikationsturniere, Wertung nach Platzierungspunkten (Einstellung), die Besten spielen das Masters.'
+      : PHASE_TEXT[phase];
 
   return (
     <DashPage>
@@ -135,17 +140,7 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
         )}
       </DashBox>
 
-      <DashBox title="Masters-Siegerliste" info="hallenMasters" icon="chronicle">
-        {st.history.some((h) => h.mastersWinner) && <div className="dsec">In deinem Spiel</div>}
-        {[...st.history].reverse().filter((h) => h.mastersWinner).map((h) => (
-          <div key={h.year} className="dlist-row">
-            <span className="meta" style={{ minWidth: 40 }}>{h.year}</span>
-            <span className="grow"><b><ClubLink id={h.mastersWinner!}>{indoorShort(g, h.mastersWinner!)}</ClubLink></b> <span className="muted">{h.mastersScore} {h.mastersRunnerUp ? indoorShort(g, h.mastersRunnerUp) : ''}</span></span>
-            <span className="meta">{h.city}</span>
-          </div>
-        ))}
-        {!st.history.some((h) => h.mastersWinner) && <div className="dnote">Noch keine Endrunde in deinem Spiel – das Hallen-Masters gibt es von {MASTERS_FIRST_WINTER} bis {MASTERS_LAST_WINTER}.</div>}
-      </DashBox>
+      <HallOfKingsBox g={g} st={st} />
     </DashPage>
   );
 }

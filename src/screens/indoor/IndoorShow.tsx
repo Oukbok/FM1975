@@ -155,7 +155,7 @@ export function IndoorShow({ g, t, settings, onSettings, onClose }: {
           <GroupTablesPanel g={g} live={live} />
         </aside>
         <main className="ix-panel ix-center">
-          {phase === 'intro' && <IntroStage g={g} t={t} live={live} squad={squads.get(mid) ?? []} cands={candidatesOf(g, mid)} onSquad={pickSquad} onStart={() => setPhase('board')} onAll={simAll} />}
+          {phase === 'intro' && <IntroStage g={g} t={t} live={live} squad={squads.get(mid) ?? []} squads={squads} cands={candidatesOf(g, mid)} onSquad={pickSquad} onStart={() => setPhase('board')} onAll={simAll} />}
           {phase === 'board' && slot && (
             <NextStage g={g} live={live} slot={slot} plan={plan} onPlan={setPlan} year={year} last={last}
               onText={startText} onResult={quickResult} onOthers={() => setRunning(isOwnLeft() ? 'own' : roundOf(slot.stage))} />

@@ -526,6 +526,11 @@ export const RAW: Record<string, string> = {
     '<path d="M5.5 8.5a7.5 7.5 0 0 1 13 0" fill="none" stroke="%ACCENT%" stroke-width="1.8" stroke-linecap="round"/><path d="M16.2 8.8l2.4-.3.3-2.4" fill="none" stroke="%ACCENT%" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
 
   // Dribbling — weisse Hütchen + Ball, Akzent-Laufweg
+  trIndoor:
+    '<path d="M3 20.5V10.5L12 4l9 6.5v10" fill="none" stroke="%BASE%" stroke-width="1.7" stroke-linejoin="round"/>' +
+    '<path d="M3 20.5h18M6.5 20.5v-3h11v3" fill="none" stroke="%BASE%" stroke-width="1.5" stroke-linecap="round"/>' +
+    '<circle cx="12" cy="13.2" r="2.6" fill="%ACCENT%"/>',
+
   trDribbling:
     '<path d="M7.2 20.5h4.4l-2.2-6Z M13.6 9.5H18l-2.2-6Z" fill="%BASE%"/>' +
     '<circle cx="19" cy="18.6" r="2.5" fill="%BASE%"/>' +

@@ -3,6 +3,7 @@
 // game/day.ts (`processDay`); hier: Zeitlauf-Takt, Fensterkette (usePopupQueue +
 // PopupLayer), Kopfleiste (HeaderBar), Routing der Seiten (ScreenRouter).
 // =============================================================================
+import { setMastersScoring } from '../game/indoorMasters';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ClubProfileProvider } from '../components/club/ClubProfileContext';
 import { PlayerMenuProvider } from '../components/playerMenu/PlayerContextMenu';
@@ -49,6 +50,8 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   useEffect(() => setWikiOpener((id) => { setWikiArticle((w) => ({ id, n: (w?.n ?? 0) + 1 })); setScreen('wiki'); }), []);
   // Häufigkeit der Zufallsereignisse (Einstellung) – hier statt in App.tsx, damit das Hauptmenü ohne Spiel-Code startet.
   useEffect(() => { setEventFrequency(settings.eventFrequency); }, [settings.eventFrequency]);
+  // Masters-Qualifikation (Einstellung): sofort setzen, damit Statistiken › Halle und das Masters-Feld dieselbe Wertung nutzen.
+  setMastersScoring(settings.indoorScoring);
   // Nachgeladene Seiten/Fenster im Leerlauf vorladen (shell/lazyParts.ts).
   useEffect(() => { preloadEarlyParts(); return preloadShellParts(); }, []);
   const [running, setRunning] = useState(false);

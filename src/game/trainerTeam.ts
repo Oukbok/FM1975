@@ -13,6 +13,7 @@
 // weniger Trainingsverletzungen durch Fitness-/Medizinwissen; Entwicklung der
 // Spieler über das Niveau des Trainerteams (engine/coaching.ts).
 // =============================================================================
+import { hallDrillSeason } from './indoorRecords';
 import { privateTrainingFactor } from './private/privateState';
 import { Game } from './state';
 import { TrainingBlock, TrainingBlockCategory } from '../types';
@@ -433,14 +434,17 @@ export function blockFactorFn(g: Game): (b: TrainingBlock) => number {
   const cache = new Map<CoachSkill, number>();
   // Privatleben: Trainingslehre und Energie des Managers (game/private/privateState.ts).
   const priv = privateTrainingFactor(g);
-  return (b) => {
+  // Hallentraining: volle Wirkung nur in der Hallenzeit (Nov–Jan, game/indoorRecords.ts), sonst halb.
+  const hallOff = !hallDrillSeason(g.calendar.currentDate);
+  return (b) => b.id === 'halle' && hallOff ? 0.5 * inner(b) : inner(b);
+  function inner(b: TrainingBlock): number {
     const sk = skillForBlock(b);
     if (!sk) return priv;
     if (!cache.has(sk)) cache.set(sk, teamSkill(staff, sk, year));
     const v = cache.get(sk)!;
     if (sk === 'analyse' && v < 6) return 0.55 * priv;
     return clamp(0.85 + v / 20 * 0.35, 0.85, 1.2) * priv;
-  };
+  }
 }
 
 /** Senkung des Trainings-Verletzungsrisikos durch Fitness-/Medizinwissen (0 … 0,3). */

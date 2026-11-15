@@ -128,6 +128,15 @@ export function SettingsScreen({ settings, onBack, onSave }: {
               onClick={() => setS({ ...s, indoorShow: v })}>{l}</button>
           ))}
         </div>
+        <p className="dim mini" style={{ margin: '14px 0 14px' }}>
+          Qualifikation für das Hallen-Masters (1988–2001): wie in der Wirklichkeit nach dem Schnitt (Ø Punkte je Spiel über alle besuchten Turniere) oder nach Platzierungspunkten je Turnier (Sieger 10, Zweiter 7, Dritter 5, Vierter 4, dahinter 3/2/1 – wer oft und weit vorne landet, fährt hin; Gleichstand nach Schnitt).
+        </p>
+        <div className="seg-group">
+          {([['schnitt', 'Schnitt (historisch)'], ['platz', 'Platzierungspunkte']] as const).map(([v, l]) => (
+            <button key={v} type="button" className={`seg-btn ${(s.indoorScoring ?? 'schnitt') === v ? 'active' : ''}`}
+              onClick={() => setS({ ...s, indoorScoring: v })}>{l}</button>
+          ))}
+        </div>
       </div>
 
       {/* --- Ehrungen --- */}

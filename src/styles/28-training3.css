@@ -260,3 +260,6 @@
 .tr3-tpl.on { border-color: var(--accent); background: var(--accent-soft); }
 .tr3-tpl:disabled { opacity: .45; cursor: default; }
 .tr3-long > .dbox:nth-child(2) .dbox-body { display: flex; flex-direction: column; min-height: 0; }
+/* Hallentraining-Hinweis in der Trainingsinfo (TeamTab) */
+.tr3-hallnote { margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border-soft); font-size: 13px; line-height: 1.4; color: var(--text-2); }
+.tr3-hallnote b { color: var(--text); }

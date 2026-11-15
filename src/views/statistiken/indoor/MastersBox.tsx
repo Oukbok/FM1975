@@ -41,6 +41,7 @@ export function MastersBox({ g, st, cur, wy }: { g: Game; st: IndoorState; cur: 
     : unpackBoard(entry!.board!, sel);
   const mid = g.managedClubId;
   const masters = board.mode === 'masters';
+  const place = masters && board.scoring === 'place';
   const label = (y: number) => `${y - 1}/${String(y % 100).padStart(2, '0')}`;
 
   const right = years.length ? (
@@ -52,7 +53,7 @@ export function MastersBox({ g, st, cur, wy }: { g: Game; st: IndoorState; cur: 
 
   return (
     <DashBox title={masters ? 'Masters-Wertung' : 'Hallen-Wertung'} info="hallenWertung" flush right={right} className="mst-box">
-      <div className="mst-hint dnote">{board.hint}</div>
+      <div className="mst-hint dnote">{masters && <b className="mst-mode">{place ? 'Wertung: Platzierungspunkte' : 'Wertung: Schnitt (historisch)'} · </b>}{board.hint}</div>
       {board.rows.length ? (
         <div className="mst-scroll">
           <table className="dtable rl-sm mst-table">
@@ -60,7 +61,8 @@ export function MastersBox({ g, st, cur, wy }: { g: Game; st: IndoorState; cur: 
               <th className="rl-rank">#</th><th>Verein</th>
               {!masters && <th className="num" title="Turniersiege">Siege</th>}
               <th className="num" title="Turniere">T</th><th className="num" title="Spiele">Sp</th><th className="num" title="Punkte">Pkt</th>
-              <th className="num" title="Tore">Tore</th>{masters && <th className="num" title="Punkte je Spiel – entscheidet über die Qualifikation">Ø</th>}
+              <th className="num" title="Tore">Tore</th>{masters && <th className="num" title={place ? 'Punkte je Spiel – entscheidet bei Gleichstand' : 'Punkte je Spiel – entscheidet über die Qualifikation'}>Ø</th>}
+              {place && <th className="num" title="Platzierungspunkte (Sieger 10, Zweiter 7, Dritter 5, Vierter 4, dahinter 3/2/1) – entscheiden über die Qualifikation">PP</th>}
               {masters && <th className="mst-st">Status</th>}
             </tr></thead>
             <tbody>
@@ -77,7 +79,8 @@ export function MastersBox({ g, st, cur, wy }: { g: Game; st: IndoorState; cur: 
                     <td className="num">{r.t}</td><td className="num">{r.sp}</td>
                     <td className={`num ${masters ? '' : 'muted'}`}>{r.pts}</td>
                     <td className="num muted">{r.gf}:{r.ga}</td>
-                    {masters && <td className="num rl-main">{r.sp ? (r.pts / r.sp).toFixed(2) : '–'}</td>}
+                    {masters && <td className={`num ${place ? '' : 'rl-main'}`}>{r.sp ? (r.pts / r.sp).toFixed(2) : '–'}</td>}
+                    {place && <td className="num rl-main">{r.sp ? r.pp ?? 0 : '–'}</td>}
                     {masters && <td className="mst-st" title={tip}>{txt}</td>}
                   </tr>
                 );

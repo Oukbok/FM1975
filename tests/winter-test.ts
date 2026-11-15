@@ -21,6 +21,11 @@ import { indoorSide, narrate } from '../src/screens/indoor/indoorScript';
 import { hashStr, mulberry32 } from '../src/engine/leagues';
 import { chooseEventOption } from '../src/game/eventsGame';
 import { titlesOf } from '../src/game/clubRecords';
+import { mastersBoard, mastersRanking, setMastersScoring, packBoard, unpackBoard } from '../src/game/indoorMasters';
+import { HALL_SPECIALIST, hallDrillBonus, hallKings, hallRuf, noteHallDrill } from '../src/game/indoorRecords';
+import { BLOCKS_BY_ID, blockAvailable } from '../src/engine/weeklyTraining';
+import { blockFactorFn } from '../src/game/trainerTeam';
+import { sanitizePlan } from '../src/engine/trainingPlan';
 
 let seed = 1991;
 Math.random = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
@@ -333,7 +338,12 @@ function runWinter(g: Game, season: string, beforeEachDay?: (d: string) => void)
       : null));
     const res = liveResult(live);
     expect(res.ranking.length === t.clubIds.length && new Set(res.ranking).size === res.ranking.length, 'Live-Endstand unvollständig');
+    const want = new Map<string, number>();
+    for (const m of res.matches) for (const side of [0, 1] as const) for (const id of m.sc?.[side] ?? []) want.set(id, (want.get(id) ?? 0) + 1);
+    expect(want.size > 0 || !res.matches.some((m) => (m.a === mid && m.ga > 0) || (m.b === mid && m.gb > 0)), 'Textmodus ohne Torschützen');
+    const before = new Map([...want.keys()].map((id) => [id, indoorState(g).rec?.[id]?.g ?? 0]));
     const out = finishIndoorShow(g, t.id, res, 1);
+    for (const [id, n] of want) expect((indoorState(g).rec?.[id]?.g ?? 0) - before.get(id)! >= n, 'Torschützen der Show nicht verbucht');
     expect(!!out && t.done && t.result === res && !indoorState(g).current!.live, 'Show nicht verbucht');
     expect(out!.place === res.ranking.indexOf(mid) && out!.frische[1] <= out!.frische[0], 'Siegerehrung falsch');
   }
@@ -343,5 +353,79 @@ function runWinter(g: Game, season: string, beforeEachDay?: (d: string) => void)
   expect((cur.tour ?? []).some((s) => s.id === g.managedClubId), 'Show-Ergebnisse fehlen in der Tour');
   expect(indoorState(g).history.some((h) => h.year === 1991), 'Historie 1991 fehlt (Shows)');
   console.log(`Hallen-Show 1990/91: ${shows} Turniere live gespielt, 1 offen gebliebenes im Hintergrund nachgeholt, Masters ${cur.masters!.clubIds.includes(g.managedClubId) ? 'mit' : 'ohne'} dir`);
+}
+// 7) Masters mit Platzierungspunkten (Option), Hallenruf, Hallentraining
+{
+  const fields: Record<string, string[]> = {};
+  for (const mode of ['schnitt', 'platz'] as const) {
+    setMastersScoring(mode);
+    const g = fresh();
+    migrateWinter(g);
+    runWinter(g, '1990/91');
+    const cur = indoorState(g).current!;
+    fields[mode] = [...cur.masters!.clubIds];
+    const r = mastersRanking(cur);
+    for (let i = 1; i < r.length; i++) {
+      if (mode === 'platz') expect(r[i - 1].pp >= r[i].pp, 'Platzierungspunkte nicht absteigend');
+      else expect(r[i - 1].pts / r[i - 1].games >= r[i].pts / r[i].games - 1e-9, 'Schnitt nicht absteigend');
+    }
+    const b = mastersBoard(g, cur, 1991, (id) => id);
+    expect(b.scoring === (mode === 'platz' ? 'place' : 'avg'), 'Wertung fehlt an der Tabelle');
+    const back = unpackBoard(packBoard(b)!, 1991);
+    expect(back.scoring === b.scoring && (mode === 'schnitt' || back.rows.some((x) => (x.pp ?? 0) > 0)), 'Archiv verliert die Wertung');
+    const hist = indoorState(g).history.find((h) => h.year === 1991)!;
+    expect(mode === 'platz' ? hist.board?.sc === 'place' : !hist.board?.sc, 'Archiv-Markierung falsch');
+    // Hallenruf: alle Tore der Vereine mit vollem Kader sind verbucht.
+    const rec = indoorState(g).rec ?? {};
+    let goals = 0;
+    for (const t of [...cur.tournaments, cur.masters!]) for (const m of t.result!.matches) {
+      if (g.clubs[m.a] && !m.a.startsWith('eu_')) goals += m.ga;
+      if (g.clubs[m.b] && !m.b.startsWith('eu_')) goals += m.gb;
+      expect(!m.sc, 'Torschützen nicht aus dem Ergebnis entfernt');
+    }
+    const credited = Object.values(rec).reduce((n, x) => n + x.g, 0);
+    expect(credited === goals, `Hallentore ${credited} statt ${goals} verbucht`);
+    const champ = cur.masters!.result!.ranking[0];
+    expect(!g.clubs[champ] || Object.values(rec).some((x) => x.m > 0 && x.c === champ), 'Masters-Sieg fehlt im Hallenruf');
+    const top = hallKings(g, 'ruf', 3);
+    console.log(`Masters ${mode}: Feld ${fields[mode].map((id) => g.clubs[id]?.shortName ?? id).join(', ')} | Hallenruf: ${Object.keys(rec).length} Spieler, ${credited} Tore, beste ${top.map((k) => `${k.r.n} ${k.ruf}`).join(' / ')}`);
+  }
+  setMastersScoring(undefined);
+  expect(fields.schnitt.join() !== fields.platz.join() || fields.schnitt.length === 8, 'Masters-Feld fehlt');
+  console.log(`Masters-Feld unterscheidet sich in ${fields.platz.filter((id) => !fields.schnitt.includes(id)).length} Vereinen`);
+
+  // Hallenruf über viele Winter (gleicher Kader, 1988/89–1997/98): wie viele werden Spezialisten?
+  const g = fresh();
+  migrateWinter(g);
+  for (let y = 1988; y <= 1997; y++) {
+    runWinter(g, `${y}/${String((y + 1) % 100).padStart(2, '0')}`);
+    if (y === 1990 || y === 1993 || y === 1997) {
+      const all = Object.values(indoorState(g).rec ?? {});
+      const spec = all.filter((r) => hallRuf(r) >= HALL_SPECIALIST).length;
+      const rufs = all.map(hallRuf).sort((a, b) => b - a);
+      console.log(`Hallenruf nach ${y - 1987} Wintern: ${all.length} Spieler, Spezialisten ${spec} (${Math.round((spec / all.length) * 100)} %), Top ${rufs.slice(0, 5).join('/')}, Median ${rufs[Math.floor(rufs.length / 2)]}`);
+      if (y === 1990) expect(spec <= all.length * 0.06, 'nach drei Wintern zu viele Spezialisten');
+      if (y === 1997) expect(spec >= 5, 'nach zehn Wintern kaum Spezialisten');
+    }
+  }
+
+  // Hallentraining: Freischaltung, Saison, Bonus, Ersatz nach 2004.
+  const hb = BLOCKS_BY_ID.halle;
+  expect(!!hb && !blockAvailable(hb, 1975) && blockAvailable(hb, 1976) && blockAvailable(hb, 2004) && !blockAvailable(hb, 2005), 'Hallentraining-Epoche falsch');
+  const g2 = fresh();
+  g2.calendar.currentDate = '1990-12-03';
+  const fOn = blockFactorFn(g2)(hb), tOn = blockFactorFn(g2)(BLOCKS_BY_ID.technik);
+  g2.calendar.currentDate = '1990-09-03';
+  const fOff = blockFactorFn(g2)(hb);
+  expect(Math.abs(fOff - fOn / 2) < 1e-9 && Math.abs(fOn - tOn) < 1e-9, 'Hallentraining außerhalb der Hallenzeit nicht halbiert');
+  noteHallDrill(g2, '1990-09-10', 2);
+  expect(hallDrillBonus(g2, '1990-09-12') === 0, 'Hallenform außerhalb der Hallenzeit');
+  noteHallDrill(g2, '1990-12-03', 2); noteHallDrill(g2, '1990-12-05', 1);
+  expect(hallDrillBonus(g2, '1990-12-08') === 1.5 && hallDrillBonus(g2, '1990-12-30') === 0, 'Hallenform falsch berechnet');
+  noteHallDrill(g2, '1990-12-06', 3);
+  expect(hallDrillBonus(g2, '1990-12-08') === 2, 'Hallenform-Obergrenze');
+  const plan = { days: Array.from({ length: 7 }, () => ({ slot1: 'halle', slot2: null, extra: null })) };
+  expect(sanitizePlan(plan as any, 2005).days.every((d) => d.slot1 === 'technik'), 'Hallentraining nach 2004 nicht ersetzt');
+  console.log(`Hallentraining: Faktor Hallenzeit ${fOn.toFixed(2)}, sonst ${fOff.toFixed(2)}, Bonus max +2`);
 }
 console.log('Winter-Test OK');

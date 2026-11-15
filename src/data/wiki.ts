@@ -819,7 +819,7 @@ Im Datensatz-Editor (Bereich **Weltdaten**) sind alle Länder – auch Deutschla
     id: 'training-planner',
     category: 'training',
     title: 'Trainingsplan: Bausteine ziehen',
-    keywords: ['training', 'trainingsplan', 'wochenplan', 'baustein', 'block', 'einheit', 'ziehen', 'vorlage', 'spieltag', 'regeneration', 'anreise', 'videoanalyse', 'pressing', 'athletik'],
+    keywords: ['training', 'trainingsplan', 'wochenplan', 'baustein', 'block', 'einheit', 'ziehen', 'vorlage', 'spieltag', 'regeneration', 'anreise', 'videoanalyse', 'pressing', 'athletik', 'hallentraining'],
     body: `## Trainingsplan
 Unter **Training › Trainingsplan** legst du die Trainingswoche fest: **7 Tage** mit je **drei Feldern** – **Vormittag**, **Nachmittag** und **Abend / Zusatz** (die Zusatzeinheit belastet ×1,3, bringt aber auch etwas mehr Lernreiz). Die Seite hat vier Reiter:
 - **Mannschaftstraining:** die Woche als **Ringbuch** mit einer Kachel je Einheit; Spieltage erscheinen als eigene Spalte mit dem Gegner. Rechts die Bausteine in Reitern (**Fitness, Technik, Taktik, Sonstiges** – nach dem Fachgebiet im Trainerteam, das sie anleitet; die Kachelfarbe zeigt die Gruppe, eine kräftigere Kachel eine höhere Intensität) und die **Trainingsinfo** (Ø Fitness/Frische/Form/Moral, Fitness je Tag, Verletzungsrisiko, Entwicklung, Schwerpunkte). Unter dem Ringbuch: freie Felder und die **Intensität** der Woche.
@@ -847,6 +847,7 @@ Jeder Baustein hat ein Symbol, eine Intensität (Striche oben rechts), eine Bela
 | Videoanalyse | 1993 | systematische Spielanalyse (Prozone/Amisco Mitte der 90er) – wirkt nur mit Analyst richtig |
 | Mentaltraining | 2003 | Sportpsychologie wird Teil des Profialltags |
 | Athletik & Stabilisation | 2004 | funktionelles Athletiktraining, senkt das Verletzungsrisiko |
+| Hallentraining | 1976–2004 | Hallenfußball im Winter: leicht Technik/Ballgefühl/Wendigkeit, Nov.–Jan. volle Wirkung und Hallenform fürs nächste Turnier (Artikel „Hallenfußball & Hallen-Masters“) |
 
 ### Wochenwirkung
 - **Schwerpunkte:** Balken je Bereich (Ausdauer, Schnelligkeit, Kraft, Technik, Passspiel, Abschluss, Defensive, Spielverständnis, Standards, Torwart). Sie lenken, **welche** Attribute bei den nächsten Bewertungen wachsen.
@@ -3910,7 +3911,7 @@ Jugendintegration). Sie zahlen über ihre Finanzen und bekommen rund ein Drittel
     id: 'indoor-football',
     category: 'calendar',
     title: 'Hallenfußball & Hallen-Masters',
-    keywords: ['halle', 'hallenturnier', 'masters', 'hallenpokal', 'budenzauber', 'bande', 'westfalenhalle', 'olympiahalle', 'winterpause'],
+    keywords: ['halle', 'hallenturnier', 'masters', 'hallenpokal', 'budenzauber', 'bande', 'westfalenhalle', 'olympiahalle', 'winterpause', 'platzierungspunkte', 'hallenruf', 'hallenspezialist', 'hallenkönige', 'hallentraining'],
     body: `## Geschichte im Spiel
 - **1976–1987:** Einladungsturniere mit Bundesligisten (Dortmund, Berlin, Stuttgart, München, Frankfurt) – ohne Endrunde.
 - **1988–2001: DFB-Hallenpokal.** Qualifikationsturniere (1988: 18, bis 1997: 16, ab 1998: 4), Wertung nach **Durchschnittspunkten je Spiel**
@@ -3927,6 +3928,14 @@ Zwei-Minuten-Strafen. Die Hallenstärke zählt Technik, Ballkontrolle, Antritt u
 ## Masters-Wertung
 Unter **Statistiken › Halle** zeigt die Box **Masters-Wertung** alle Teams mit ihren Punkten aus den Qualifikationsturnieren: Turniere, Spiele, Punkte, Tore und der **Schnitt (Ø Punkte je Spiel)**, nach dem wie in der Wirklichkeit sortiert wird (dann Tordifferenz je Spiel, dann Tore). Eine Linie trennt die **8 Masters-Plätze**; startberechtigt sind nur Vereine der beiden oberen Ligen (Gäste aus dem Ausland und Amateure stehen grau darunter). Steht das Feld, siehst du **dabei**, **Nachrücker**, **verzichtet** (Spitzenvereine sagen manchmal ab) und **verhindert** (Pflichtspiel an den Masters-Tagen); nach dem Masters die Endplatzierung. Vor dem ersten Turnier stehen alle gemeldeten Teams bei 0. In Wintern ohne Masters (vor 1988, 2002–2004) zählt die **Hallen-Wertung** nach Turniersiegen, dann Punkten. Über die kleine Auswahl rechts oben siehst du die Endwertung früherer Winter.
 
+**Option Platzierungspunkte** (Einstellungen › Hallenturniere › Qualifikation): Statt des historischen Schnitts bekommt jeder Verein je Qualifikationsturnier Punkte für seine Endplatzierung – **Sieger 10, Zweiter 7, Dritter 5, Vierter 4**, Fünfter 3, Sechster 2, dahinter 1. Die Punkte werden addiert; bei Gleichstand entscheidet der Schnitt. Damit lohnt es sich, viele Turniere zu spielen und weit zu kommen; ein einziges starkes Turnier reicht meist nicht mehr. Die Wahl gilt für die Tabelle **und** für die Auswahl des Masters-Feldes; über der Tabelle steht, welche Wertung gerade gilt (Spalte **PP** = Platzierungspunkte). Archivierte Winter behalten die Wertung, mit der sie gespielt wurden. Standard bleibt der Schnitt wie in der Wirklichkeit.
+
+## Hallenruf & Hallenkönige
+Jeder Spieler, der mit einem Bundesliga- oder Zweitligakader in der Halle steht, sammelt über die Winter einen **Hallenruf**: **+1 je Hallentor, +3 je Turniersieg, +5 zusätzlich je Masters-Sieg**. Die Torschützen deiner Spiele im Textmodus zählen wie gespielt; alle übrigen Tore werden nach Torgefahr in der Halle (Hallenwert, Schuss, Dribbling) auf die Feldspieler verteilt – auch bei den Turnieren, die im Hintergrund laufen. Ab **Ruf 35** gilt ein Spieler als **Hallenspezialist**: kleines Etikett in der Hallenkader-Auswahl, im Hallenkader der Gegner und im Spielerprofil (Karriere › Auszeichnungen, dort auch Tore, Turniere und Siege). Unter **Statistiken › Halle** schaltest du die Box **Masters-Siegerliste** auf **Hallenkönige** um: die ewige Bestenliste mit Toren, Turnieren, Siegen, Masters-Siegen und Ruf (Klick auf Tore/Siege/Ruf sortiert). Spieler im Ruhestand bleiben grau in der Liste. Ältere Spielstände beginnen mit einer leeren Liste.
+
+## Hallentraining
+Von 1976 bis 2004 gibt es im Trainingsplan (Reiter **Technik**) den Baustein **Hallentraining** (mittel, Belastung 3): Fünf gegen fünf mit Bande fördert leicht **Technik, Ballannahme, Ballkontrolle, Dribbling, Wendigkeit und Antritt** – die Werte, die in der Halle zählen, aber schwächer als die Technikschulung. Volle Wirkung nur **November bis Januar**; außerhalb davon wirkt er nur halb. Dazu **Hallenform**: Jede Einheit in den 14 Tagen vor einem Hallenturnier gibt deinem Verein **+0,5 Hallenstärke, höchstens +2** (≈ 5 % mehr Torerwartung, etwa so viel wie die Stammfünf durchspielen zu lassen). Die Startseite der Hallen-Show zeigt den Bonus neben der Hallenstärke. Nach 2004 ersetzt der Trainerstab den Baustein durch die Technikschulung. KI-Vereine trainieren nicht gezielt für die Halle.
+
 ## Deine Entscheidung
 Einladungen kommen Anfang November als Nachricht und stehen unter **Statistiken › Halle**: **Stammkräfte**, **gemischt**, **Nachwuchs** oder **Absage**.
 - **Vorteile:** Antrittsgeld und Prämien (Masters nominal: 1988 Sieger 40.000 DM, ab 1989 120.000 DM; Startgeld 1994 50.000, 1996 200.000, ab 1997 350.000 DM),
@@ -3937,7 +3946,7 @@ Einladungen kommen Anfang November als Nachricht und stehen unter **Statistiken 
 ## Das Turnier spielen (Hallen-Show)
 Am Turniertag deines Vereins hält die Zeit an und das Turnier öffnet sich als eigenes Fenster in der Halle
 (Einstellung **Hallenturniere**: als Show spielen oder im Hintergrund wie bisher).
-- **Startseite:** Format, Spielzeiten, Teilnehmer nach Hallenstärke, Gruppen, Spielplan und dein Hallenkader. Den stellst du hier selbst zusammen: ein Torwart und fünf bis sieben Feldspieler, Klick auf eine Zeile nimmt den Spieler dazu oder heraus (Vorlagen Stammkräfte/Gemischt/Nachwuchs). Die Tabelle zeigt, was in der Halle mehr zählt als draußen: den **Hallenwert** (knapp die Hälfte Stärke, gut die Hälfte Technik, Ballannahme, Ballkontrolle, Dribbling, Wendigkeit, Antritt und Schuss) und diese Einzelwerte, dazu die Frische. Die Hallenstärke deiner Auswahl steht darüber und gilt sofort; die besten fünf Feldspieler bilden den ersten Block.
+- **Startseite:** Format, Spielzeiten, Teilnehmer nach Hallenstärke (Klick auf einen Teilnehmer zeigt seinen **Hallenkader** – Torwart, erster Block, Wechselspieler mit Hallenwert – und als Etikett die **Kaderwahl** des Trainers: Stammkräfte, Gemischt oder Nachwuchs/Reservisten; Pfeil zurück zur Liste), Gruppen, Spielplan und dein Hallenkader. Den stellst du hier selbst zusammen: ein Torwart und fünf bis sieben Feldspieler, Klick auf eine Zeile nimmt den Spieler dazu oder heraus (Vorlagen Stammkräfte/Gemischt/Nachwuchs). Die Tabelle zeigt, was in der Halle mehr zählt als draußen: den **Hallenwert** (knapp die Hälfte Stärke, gut die Hälfte Technik, Ballannahme, Ballkontrolle, Dribbling, Wendigkeit, Antritt und Schuss) und diese Einzelwerte, dazu die Frische. Die Hallenstärke deiner Auswahl steht darüber und gilt sofort; die besten fünf Feldspieler bilden den ersten Block.
 - **Spiel für Spiel:** Fremde Spiele laufen als Ergebnisse durch, die Gruppentabellen rechnen live mit. Vor jedem eigenen Spiel triffst du eine kleine Entscheidung:
   - **Ausrichtung** – defensiv (weniger Tore auf beiden Seiten), ausgewogen oder offensiv (mehr Tore auf beiden Seiten; gut, wenn du aufholen musst).
   - **Einsatz** – fliegend wechseln oder die **Stammfünf durchspielen** lassen (etwas stärker, aber die fünf werden müder: Frische −2 je Spiel, höheres Verletzungsrisiko).

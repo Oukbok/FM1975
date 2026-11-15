@@ -17,11 +17,13 @@ import { fmtDM } from '../../ui/format';
 import { TrophyArt } from '../../views/verein/trophies/TrophyArt';
 import { AnyCrest } from '../../views/transfers/window/parts';
 import { IndoorHall } from './IndoorHall';
-import { EntrantsPanel, IxClub, scoreText } from './IndoorPanels';
+import { IxClub, scoreText } from './IndoorPanels';
+import { EntrantsSection } from './IndoorEntrants';
+import { hallDrillBonus } from '../../game/indoorRecords';
 import { STAGE_LABEL, indoorName } from './indoorScript';
 
-export function IntroStage({ g, t, live, squad, cands, onSquad, onStart, onAll }: {
-  g: Game; t: IndoorTournament; live: IndoorLive; squad: Player[]; cands: Player[]; onSquad: (ids: string[]) => void;
+export function IntroStage({ g, t, live, squad, squads, cands, onSquad, onStart, onAll }: {
+  g: Game; t: IndoorTournament; live: IndoorLive; squad: Player[]; squads: Map<string, Player[]>; cands: Player[]; onSquad: (ids: string[]) => void;
   onStart: () => void; onAll: () => void;
 }) {
   const n = Object.keys(live.strength).length;
@@ -35,13 +37,10 @@ export function IntroStage({ g, t, live, squad, cands, onSquad, onStart, onAll }
         <div><span className="ix-k">Dein Programm</span><b>{own} Gruppenspiele</b><span className="ix-dim">Remis im K.-o. → Neunmeter</span></div>
       </div>
       <div className="ix-intro-cols">
-        <section className="ix-sec">
-          <h3 className="ix-h">Teilnehmer<span className="ix-h-note">Hallenstärke</span></h3>
-          <div className="ix-scroll"><EntrantsPanel g={g} live={live} /></div>
-        </section>
+        <EntrantsSection g={g} t={t} live={live} squads={squads} />
         <section className="ix-sec">
           <h3 className="ix-h">Dein Hallenkader<span className="ix-h-note">Klick wählt aus – in der Halle zählen Ballgefühl und Wendigkeit mehr als draußen</span></h3>
-          <IndoorSquadPick cands={cands} sel={squad} onChange={onSquad} />
+          <IndoorSquadPick g={g} cands={cands} sel={squad} onChange={onSquad} drill={hallDrillBonus(g, t.date)} />
         </section>
       </div>
       <div className="ix-actions">

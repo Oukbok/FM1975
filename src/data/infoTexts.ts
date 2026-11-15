@@ -128,7 +128,7 @@ export const INFO_TEXTS = {
   },
   wochenwirkung: {
     title: 'Trainingsinfo',
-    text: 'Zustand deines Kaders (Durchschnitt) und was die angezeigte Woche bringt: Fitness je Trainingstag, Verletzungsrisiko, Entwicklungstempo und die Schwerpunkte je Bereich. Die Balken lenken, welche Attribute bei den nächsten Bewertungen wachsen.',
+    text: 'Zustand deines Kaders (Durchschnitt) und was die angezeigte Woche bringt: Fitness je Trainingstag, Verletzungsrisiko, Entwicklungstempo und die Schwerpunkte je Bereich. Die Balken lenken, welche Attribute bei den nächsten Bewertungen wachsen. Hallentraining (1976–2004) wirkt von November bis Januar voll und gibt Hallenform fürs nächste Turnier (+0,5 Hallenstärke je Einheit der letzten 14 Tage, höchstens +2), sonst nur halb.',
     wiki: 'training-planner',
   },
   trainingIntensitaet: {
@@ -193,7 +193,12 @@ export const INFO_TEXTS = {
   },
   hallenWertung: {
     title: 'Masters-Wertung',
-    text: 'Gewertet werden alle Spiele der Qualifikationsturniere: entscheidend ist der Schnitt (Ø Punkte je Spiel), bei Gleichstand die Tordifferenz je Spiel, dann die Tore – ein starkes Turnier kann reichen. Die besten 8 Vereine der beiden oberen Ligen fahren zum Masters; wer verzichtet oder noch ein Pflichtspiel hat, macht Platz für Nachrücker. Ohne Masters (vor 1988, nach 2001) zählen Turniersiege, dann Punkte.',
+    text: 'Historisch zählt der Schnitt aller Spiele der Qualifikationsturniere (Ø Punkte je Spiel, dann Tordifferenz je Spiel, dann Tore) – ein starkes Turnier kann reichen. In den Einstellungen kannst du stattdessen Platzierungspunkte je Turnier wählen (Sieger 10, Zweiter 7, Dritter 5, Vierter 4, dahinter 3/2/1; Gleichstand nach Schnitt). Die besten 8 Vereine der beiden oberen Ligen fahren zum Masters; wer verzichtet oder noch ein Pflichtspiel hat, macht Platz für Nachrücker. Ohne Masters (vor 1988, nach 2001) zählen Turniersiege, dann Punkte.',
+    wiki: 'indoor-football',
+  },
+  hallenkoenige: {
+    title: 'Hallenkönige',
+    text: 'Ewige Bestenliste der Hallenspieler. Der Hallenruf wächst mit jedem Hallentor (+1), jedem Turniersieg (+3) und jedem Masters-Sieg (+5 zusätzlich). Ab 35 gilt ein Spieler als Hallenspezialist – das Etikett steht in der Hallenkader-Auswahl und im Spielerprofil.',
     wiki: 'indoor-football',
   },
   ligaLand: {

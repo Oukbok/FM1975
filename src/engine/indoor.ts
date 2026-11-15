@@ -22,6 +22,8 @@ export interface IndoorMatch {
   stage: IndoorStage;
   /** Besonderheit (Zeitstrafe, Bandentor …) für die Anzeige. */
   note?: string;
+  /** Torschützen (Spieler-IDs) je Seite – nur aus dem Hallen-Textmodus (engine/indoorMatch.ts); fehlt = wird verteilt (game/indoorRecords.ts). */
+  sc?: [string[], string[]];
 }
 export interface IndoorRow { id: string; p: number; w: number; d: number; l: number; gf: number; ga: number; pts: number }
 export interface IndoorResult {

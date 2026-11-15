@@ -1,6 +1,6 @@
 // =============================================================================
 // Hallen-Show: Seitenteile – Gruppentabellen (live), Spielplan mit Ergebnissen,
-// Teilnehmer und Hallenkader (Startseite). Listenstil „Paarungen“ (28-rows.css),
+// Hallenkader (Teilnehmer der Startseite: IndoorEntrants.tsx). Listenstil „Paarungen“ (28-rows.css),
 // eigener Verein Bernstein. CSS 28-indoor.css (.ix-*).
 // =============================================================================
 import { PlayerLink } from '../../components/playerMenu/PlayerLink';
@@ -83,25 +83,6 @@ export function SchedulePanel({ g, live, current, fresh }: { g: Game; live: Indo
           </div>
         );
       })}
-    </div>
-  );
-}
-
-/** Teilnehmer nach Hallenstärke (Startseite). */
-export function EntrantsPanel({ g, live }: { g: Game; live: IndoorLive }) {
-  const mid = g.managedClubId;
-  const ids = Object.keys(live.strength).sort((a, b) => live.strength[b] - live.strength[a]);
-  const grp = (id: string) => (live.groups[0].includes(id) ? 'A' : 'B');
-  return (
-    <div className="rl rl-sm ix-entrants">
-      {ids.map((id, i) => (
-        <div key={id} className={`rl-row ix-erow ${id === mid ? 'me' : ''}`}>
-          <span className="rl-rank">{i + 1}</span>
-          <IxClub g={g} id={id} size={26} />
-          <span className="ix-dim">Gruppe {grp(id)}</span>
-          <span className="rl-num rl-main" style={{ color: vColor(live.strength[id]) }}>{Math.round(live.strength[id])}</span>
-        </div>
-      ))}
     </div>
   );
 }

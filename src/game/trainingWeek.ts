@@ -2,6 +2,7 @@
 // TRAININGSWOCHE IM SPIELABLAUF — Vorlage + echte Spiele, täglicher Einstieg
 // (game/day.ts), Wirkung des Trainerteams, Verletzungen aus der Belastung.
 // =============================================================================
+import { noteHallDrill } from './indoorRecords';
 import { Game } from './state';
 import { Club, DaySlots } from '../types';
 import { yearOf } from '../engine/economy';
@@ -63,8 +64,11 @@ export function migrateTrainingPlan(g: Game): void {
  */
 export function ownTrainingDay(g: Game, club: Club, today: string): void {
   const fx = ownFixtures(g, addDaysISO(today, -1), addDaysISO(today, 1));
+  // Bausteine außerhalb ihrer Epoche (z. B. Hallentraining nach 2004) ersetzen.
+  g.trainingPlan = sanitizePlan(g.trainingPlan, yearOf(today));
   const day = effectiveDay(g.trainingPlan.days[weekdayIdx(today)], locksFor(today, fx));
   applyDailyTraining(club, g.players, day, false, blockFactorFn(g));
+  noteHallDrill(g, today, [day.slot1, day.slot2, day.extra].filter((id) => id === 'halle').length);
   if (!g.injuriesEnabled) return;
   const load = dayLoad(day);
   if (load <= 6) return;

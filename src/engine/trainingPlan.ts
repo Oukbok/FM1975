@@ -98,9 +98,9 @@ export const PLAN_TEMPLATES: PlanTemplate[] = [
 ];
 
 /** Ersatz für Bausteine, die es im Jahr noch nicht gibt. */
-const FALLBACK: Record<string, string> = { videoanalyse: 'taktik', pressing: 'spielform', athletik: 'krafttraining', mental: 'taktik' };
+const FALLBACK: Record<string, string> = { halle: 'technik', videoanalyse: 'taktik', pressing: 'spielform', athletik: 'krafttraining', mental: 'taktik' };
 
-function availableId(id: string | null, year: number): string | null {
+export function availableId(id: string | null, year: number): string | null {
   if (!id) return null;
   const b = BLOCKS_BY_ID[id];
   if (!b) return null;

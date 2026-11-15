@@ -4,7 +4,8 @@
 // Historie/Quellen: data/indoorHistory.ts · Simulation: engine/indoor.ts ·
 // Spielstand: game/winterShared.ts · Anschluss: game/day.ts (indoorDaily).
 // =============================================================================
-import { mastersBoard, packBoard } from './indoorMasters';
+import { mastersBoard, mastersRanking, mastersWeekend, packBoard } from './indoorMasters';
+import { creditIndoorTournament, hallDrillBonus, pruneIndoorRecs } from './indoorRecords';
 import { INDOOR_GAP_DAYS } from '../data/matchCalendarRules';
 import { addDevPoints } from '../engine/devLog';
 import {
@@ -13,7 +14,7 @@ import {
 } from '../data/indoorHistory';
 import {
   INDOOR_SQUAD_LABEL, IndoorEntrant, IndoorResult, IndoorSquad, TourStat, addResultToTour, indoorSkill, indoorStrength, pickIndoorSquad,
-  runIndoorTournament, tourRanking, winnerOf,
+  runIndoorTournament, winnerOf,
 } from '../engine/indoor';
 import { CalendarEngine } from '../engine/calendar';
 import { economyScale, yearOf } from '../engine/economy';
@@ -117,24 +118,6 @@ function maxPerClub(phaseKind: IndoorKind, winterYear: number): number {
   if (phaseKind === 'invite') return 2;
   if (phaseKind === 'regional') return 1;
   return winterYear >= 1998 ? 2 : 4;
-}
-
-/**
- * Endrunde (zwei Tage, Sa/So): historisch Mitte Januar (1988 Frankfurt, 2001 Dortmund
- * am 13./14.1., taz 15.01.2001) – Wochenende um den 13. Januar, ins Winterfenster
- * geklemmt und an Pflichtspielen vorbei.
- */
-function mastersWeekend(win: { from: string; to: string }, winterYear: number, busy: Set<string>): string[] {
-  const lastStart = CalendarEngine.addDays(win.to, -1);
-  const clamp = (d: string) => (d < win.from ? win.from : d > lastStart ? lastStart : d);
-  const fwd = (6 - new Date(`${winterYear}-01-13T00:00:00Z`).getUTCDay() + 7) % 7;
-  const sat = CalendarEngine.addDays(`${winterYear}-01-13`, fwd > 3 ? fwd - 7 : fwd);
-  for (const shift of [0, -7, 7, -14, 14]) {
-    const d = clamp(CalendarEngine.addDays(sat, shift));
-    const pair = [d, CalendarEngine.addDays(d, 1)];
-    if (!pair.some((x) => busy.has(x))) return pair;
-  }
-  return [lastStart, win.to];
 }
 
 // -----------------------------------------------------------------------------
@@ -319,7 +302,7 @@ function buildMastersField(g: Game, cur: IndoorWinter, today: string): void {
   const rng = mulberry32(hashStr(`masters|${g.season}`));
   const pool = new Map(buildPool(g).map((p) => [p.id, p]));
   const bc = new BreakCache(g);
-  const ranking = tourRanking(cur.tour ?? []).filter((s) => pool.get(s.id)?.kind === 'league');
+  const ranking = mastersRanking(cur).filter((s) => pool.get(s.id)?.kind === 'league');
   // Auffüllen, falls die Tour zu klein war (z. B. Spielstand mitten im Winter geladen).
   const extra = [...pool.values()].filter((p) => p.kind === 'league' && !ranking.some((r) => r.id === p.id)).sort((a, b) => b.strength - a.strength);
   const order = [...ranking.map((r) => r.id), ...extra.map((p) => p.id)];
@@ -405,7 +388,8 @@ export function tournamentEntrants(g: Game, t: IndoorTournament): { entrants: In
     if (g.clubs[id] && !id.startsWith('eu_')) {
       const sq = id === g.managedClubId ? ownIndoorSquad(g, t) : pickIndoorSquad(candidatesOf(g, id), t.squads[id] ?? 'mix');
       squads.set(id, sq);
-      return { id, strength: sq.length >= 6 ? indoorStrength(sq) : 45 };
+      // Hallentraining der letzten 14 Tage: kleiner Formbonus nur für deinen Verein (game/indoorRecords.ts).
+      return { id, strength: (sq.length >= 6 ? indoorStrength(sq) : 45) + (id === g.managedClubId ? hallDrillBonus(g, t.date) : 0) };
     }
     const base = g.simClubs[id]?.strength ?? g.euroClubs?.[id]?.strength ?? 55;
     return { id, strength: base + 3 };
@@ -452,6 +436,7 @@ function applyTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, res: I
     addResultToTour(map, res, winPts);
     cur.tour = [...map.values()];
   }
+  creditIndoorTournament(g, t, res, squads, cur.winterYear); // Hallenruf der Spieler
   // Wirkungen und Geld je vollem Verein.
   const year = yearOf(today);
   const scale = economyScale(year);
@@ -588,6 +573,7 @@ function finishWinter(g: Game, today: string): void {
     entry.city = m.city;
   }
   if (!st.history.some((h) => h.year === entry.year)) st.history.push(entry);
+  pruneIndoorRecs(g, cur.winterYear);
   st.snub = Math.max(0, st.snub - 1);
   void today;
 }

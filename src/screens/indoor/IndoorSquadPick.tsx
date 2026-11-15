@@ -6,11 +6,14 @@
 // Bausteine Technik, Ballannahme, Ballkontrolle, Dribbling, Wendigkeit, Antritt,
 // Schuss, dazu die Frische. Vorlagen Stammkräfte/Gemischt/Nachwuchs wie bei der Zusage.
 // Gespeichert als `IndoorTournament.ownIds` (game/indoorGame.ts `ownIndoorSquad`).
+// Etikett „Hallenspezialist“ (Hallenruf, game/indoorRecords.ts), Hallenform aus dem Hallentraining.
 // =============================================================================
 import { PlayerLink } from '../../components/playerMenu/PlayerLink';
 import PosBadge from '../../components/PosBadge';
 import { INDOOR_SQUAD_LABEL, indoorSkill, indoorStrength, pickIndoorSquad, type IndoorSquad } from '../../engine/indoor';
 import { INDOOR_PICK } from '../../game/indoorGame';
+import type { Game } from '../../game/state';
+import { HallTag } from './IndoorEntrants';
 import type { Player, PlayerAttributes } from '../../types';
 import { vColor } from '../../ui/format';
 
@@ -19,7 +22,7 @@ const COLS: [keyof PlayerAttributes, string, string][] = [
   ['dribbling', 'Dri', 'Dribbling'], ['agility', 'Wen', 'Wendigkeit'], ['acceleration', 'Ant', 'Antritt'], ['shooting', 'Sch', 'Schuss'],
 ];
 
-export function IndoorSquadPick({ cands, sel, onChange }: { cands: Player[]; sel: Player[]; onChange: (ids: string[]) => void }) {
+export function IndoorSquadPick({ g, cands, sel, onChange, drill = 0 }: { g: Game; cands: Player[]; sel: Player[]; onChange: (ids: string[]) => void; drill?: number }) {
   const ids = new Set(sel.map((p) => p.id));
   const tw = sel.filter((p) => p.naturalPosition === 'TW'), fp = sel.filter((p) => p.naturalPosition !== 'TW');
   const keepers = cands.filter((p) => p.naturalPosition === 'TW').sort((a, b) => b.overall - a.overall);
@@ -30,7 +33,7 @@ export function IndoorSquadPick({ cands, sel, onChange }: { cands: Player[]; sel
     if (fp.length < INDOOR_PICK.fieldMax) onChange([...sel.map((x) => x.id), p.id]);
   };
   const preset = (k: IndoorSquad) => onChange(pickIndoorSquad(cands, k).map((p) => p.id));
-  const strength = Math.round(indoorStrength(sel));
+  const strength = Math.round(indoorStrength(sel) + drill);
   const row = (p: Player) => {
     const on = ids.has(p.id);
     const isTw = p.naturalPosition === 'TW';
@@ -41,7 +44,7 @@ export function IndoorSquadPick({ cands, sel, onChange }: { cands: Player[]; sel
         title={on ? (isTw ? 'Torwart im Hallenkader' : fp.length <= INDOOR_PICK.fieldMin ? `Mindestens ${INDOOR_PICK.fieldMin} Feldspieler` : 'Aus dem Hallenkader nehmen') : locked ? `Höchstens ${INDOOR_PICK.fieldMax} Feldspieler` : 'In den Hallenkader nehmen'}>
         <td><span className={`ix-pick-box ${isTw ? 'radio' : ''}`} aria-hidden="true" /></td>
         <td><PosBadge p={p} compact /></td>
-        <td className="ix-pick-name"><PlayerLink id={p.id}>{p.fullName}</PlayerLink></td>
+        <td className="ix-pick-name"><PlayerLink id={p.id}>{p.fullName}</PlayerLink><HallTag g={g} pid={p.id} /></td>
         <td className="num">{p.age}</td>
         <td className="num dim">{p.overall}</td>
         <td className="num ix-pick-hall" style={{ color: vColor(sk) }}>{Math.round(sk)}</td>
@@ -54,7 +57,8 @@ export function IndoorSquadPick({ cands, sel, onChange }: { cands: Player[]; sel
     <div className="ix-pick">
       <div className="ix-pick-bar">
         <span className="ix-pick-count"><b>{tw.length}</b> Torwart · <b>{fp.length}</b> Feldspieler <span className="ix-dim">(1 + {INDOOR_PICK.fieldMin}–{INDOOR_PICK.fieldMax})</span></span>
-        <span className="ix-pick-str">Hallenstärke <b style={{ color: vColor(strength) }}>{strength}</b></span>
+        <span className="ix-pick-str">Hallenstärke <b style={{ color: vColor(strength) }}>{strength}</b>
+          {drill > 0 && <span className="ix-dim ix-pick-drill" title="Hallentraining der letzten 14 Tage (Trainingsplan): je Einheit +0,5, höchstens +2"> inkl. +{drill.toLocaleString('de-DE')} Hallentraining</span>}</span>
         <span className="seg-group ix-pick-pre">
           {(['stars', 'mix', 'youth'] as IndoorSquad[]).map((k) => <button key={k} type="button" className="seg-btn" onClick={() => preset(k)}>{INDOOR_SQUAD_LABEL[k]}</button>)}
         </span>

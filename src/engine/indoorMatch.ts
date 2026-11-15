@@ -33,7 +33,7 @@ export const BLOCK_FACTOR = Math.exp(2 / 40);
 export interface IndoorSide extends IndoorEntrant {
   keeper?: string;
   /** Feldspieler mit Torgefahr-Gewicht (leer = Verein ohne vollen Kader). */
-  field: { name: string; w: number }[];
+  field: { name: string; w: number; id?: string }[];
 }
 
 export type IndoorEventKind =
@@ -63,13 +63,16 @@ export interface IndoorPlay {
   halves: 1 | 2;
 }
 
-function pickName(field: IndoorSide['field'], rng: Rng, not?: string): string | undefined {
+function pickEntry(field: IndoorSide['field'], rng: Rng, not?: string): IndoorSide['field'][number] | undefined {
   const pool = field.filter((f) => f.name !== not);
   if (!pool.length) return undefined;
   const tot = pool.reduce((s, f) => s + f.w, 0);
   let r = rng() * tot;
-  for (const f of pool) { r -= f.w; if (r <= 0) return f.name; }
-  return pool[pool.length - 1].name;
+  for (const f of pool) { r -= f.w; if (r <= 0) return f; }
+  return pool[pool.length - 1];
+}
+function pickName(field: IndoorSide['field'], rng: Rng, not?: string): string | undefined {
+  return pickEntry(field, rng, not)?.name;
 }
 
 /**
@@ -95,6 +98,8 @@ export function playIndoorMatch(a: IndoorSide, b: IndoorSide, stage: IndoorStage
   // Szenen ohne Tor: etwa jede dritte Minute in den kurzen, jede vierte bis fünfte in den langen Spielen (≈ 8–15 Zeilen).
   const chanceP = ko ? 0.22 : 0.36;
   let keeperOut = false;
+  // Torschützen je Seite (Spieler-IDs) für den Hallenruf (game/indoorRecords.ts).
+  const scorers: [string[], string[]] = [[], []];
   for (let m = 0; m < minutes; m++) {
     if (halves === 2 && m === minutes / 2) {
       ev.push({ t: m * 60, kind: 'half', side: 0, score: [...sc] as [number, number] });
@@ -127,7 +132,9 @@ export function playIndoorMatch(a: IndoorSide, b: IndoorSide, stage: IndoorStage
     }
     for (const gl of goals.sort((x, y) => x.t - y.t)) {
       const atk = sides[gl.side];
-      const who = pickName(atk.field, rng);
+      const shooter = pickEntry(atk.field, rng);
+      const who = shooter?.name;
+      if (shooter?.id) scorers[gl.side].push(shooter.id);
       const assist = rng() < 0.55 ? pickName(atk.field, rng, who) : undefined;
       ev.push({ t: gl.t, kind: 'goal', side: gl.side, who, assist, score: [0, 0], empty: keeperOut && gl.side !== own });
       sc[gl.side]++; // laufender Stand (für die Schlussminute)
@@ -142,6 +149,7 @@ export function playIndoorMatch(a: IndoorSide, b: IndoorSide, stage: IndoorStage
   }
   ev.push({ t: minutes * 60, kind: 'end', side: 0, score: [sc[0], sc[1]] });
   const match: IndoorMatch = { a: a.id, b: b.id, ga: sc[0], gb: sc[1], stage };
+  if (scorers[0].length || scorers[1].length) match.sc = scorers;
   if (r.penaltyAgainst) match.note = 'Zeitstrafe gegen ' + (r.penaltyAgainst === 'a' ? a.id : b.id);
   if (ko && sc[0] === sc[1]) {
     // Neunmeterschießen: je drei Schützen, danach Entscheidung (wie simIndoorMatch).

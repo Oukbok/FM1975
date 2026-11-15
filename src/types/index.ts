@@ -1717,6 +1717,8 @@ export interface TrainingBlock {
   icon: string;
   /** Erst ab diesem Jahr im Trainingsplan verfügbar (fehlt = schon 1975). */
   unlockYear?: number;
+  /** Nur bis einschließlich dieses Jahres verfügbar (fehlt = immer; z. B. Hallentraining bis 2004). */
+  untilYear?: number;
   category: TrainingBlockCategory;
   intensity: BlockIntensity;
   /** Belastungswert (Fitness-Kosten-Basis pro Einheit, 0..10). */

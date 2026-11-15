@@ -56,3 +56,15 @@
 .mst-table tr.mst-guests td { border-top: 2px solid var(--border-soft); }
 .mst-table tr.mst-dim td { color: var(--text-4); }
 .mst-empty { padding: 8px 15px; }
+/* Hallenkönige / Masters-Siegerliste (indoor/HallOfKingsBox.tsx) */
+.hk-box .dbox-body { display: flex; flex-direction: column; overflow: hidden; }
+.hk-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0 0 6px; }
+.hk-scroll > .dsec, .hk-scroll > .dlist-row, .hk-scroll > .dnote { margin-left: 15px; margin-right: 15px; }
+.hk-table th, .hk-table td { padding-left: 6px; padding-right: 6px; }
+.hk-table .hk-name { max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
+.hk-table .hk-club { max-width: 96px; overflow: hidden; text-overflow: ellipsis; }
+.hk-table th.hk-sort { cursor: pointer; }
+.hk-table th.hk-sort.on { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
+.hk-star { color: var(--text-3); }
+.hk-empty { padding: 8px 15px; }
+.hk-foot { margin-top: 6px; font-size: 12.5px; }

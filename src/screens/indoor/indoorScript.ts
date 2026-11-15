@@ -26,7 +26,7 @@ export function indoorSide(id: string, strength: number, squad: Player[] | undef
   const field = squad.filter((p) => p !== tw).map((p) => {
     const sk = indoorSkill(p);
     const atk = (p.attributes.shooting + p.attributes.dribbling) / 2;
-    return { name: tickerName(p, squad), w: Math.max(1, (sk - 35) * (atk / 60)) };
+    return { name: tickerName(p, squad), w: Math.max(1, (sk - 35) * (atk / 60)), id: p.id };
   });
   return { id, strength, keeper: tw ? tickerName(tw, squad) : undefined, field };
 }

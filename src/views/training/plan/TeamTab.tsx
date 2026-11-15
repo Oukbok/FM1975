@@ -18,6 +18,7 @@ import { Game } from '../../../game/state';
 import { effectiveWeek } from '../../../game/trainingWeek';
 import { blockFactorFn } from '../../../game/trainerTeam';
 import { templateName } from '../../../game/trainingSeason';
+import { DRILL_MAX, DRILL_STEP, hallDrillBonus, hallDrillSeason } from '../../../game/indoorRecords';
 import { DashBox, DashPage, Kpi } from '../../../ui/DashPage';
 import { fmtDateShort } from '../../../ui/format';
 import { InfoTip } from '../../../ui/InfoTip';
@@ -51,7 +52,7 @@ export function TeamTab({ g, refresh, onTab }: { g: Game; refresh: () => void; o
   const fx = weekEffect(days, infos, blockFactorFn(g));
   const tabBlocks = TRAINING_BLOCKS.filter((b) => blockKind(b) === kind);
   const avail = tabBlocks.filter((b) => blockAvailable(b, year));
-  const later = tabBlocks.filter((b) => !blockAvailable(b, year));
+  const later = tabBlocks.filter((b) => !blockAvailable(b, year) && year < (b.unlockYear ?? 0));
   const tabSkill = KIND_TABS.find((t) => t.id === kind)?.skill ?? null;
   const free = infos.reduce((n, inf, di) => n + SLOT_KEYS.filter((k) => !inf.locks[k] && !plan.days[di][k]).length, 0);
   const int = intensityOf(fx.fitnessPerDay);
@@ -62,6 +63,8 @@ export function TeamTab({ g, refresh, onTab }: { g: Game; refresh: () => void; o
   const groupMax = Math.max(6, ...Object.values(fx.groups));
   const nextMon = addDaysISO(mondayOf(today), 7);
   const pendingTpl = weekOff === 1 ? plan.schedule?.[nextMon] : undefined;
+  const hallUnits = days.reduce((n, d) => n + SLOT_KEYS.filter((k) => d[k] === 'halle').length, 0);
+  const hallOn = hallDrillSeason(monday) || hallDrillSeason(addDaysISO(monday, 6));
   const clearWeek = () => { for (const d of plan.days) for (const k of SLOT_KEYS) d[k] = null; refresh(); };
 
   return (
@@ -183,6 +186,13 @@ export function TeamTab({ g, refresh, onTab }: { g: Game; refresh: () => void; o
             );
           })}
         </div>
+        {hallUnits > 0 && (
+          <div className="tr3-hallnote">
+            <b>Hallentraining:</b> {hallUnits} Einheit{hallUnits === 1 ? '' : 'en'} – {hallOn
+              ? `volle Wirkung (Nov.–Jan.) und Hallenform fürs nächste Turnier: je Einheit der letzten 14 Tage +${DRILL_STEP.toLocaleString('de-DE')} Hallenstärke, höchstens +${DRILL_MAX} (jetzt +${hallDrillBonus(g, addDaysISO(today, 1)).toLocaleString('de-DE')}).`
+              : 'außerhalb der Hallenzeit (Nov.–Jan.) nur halber Lerneffekt, keine Hallenform.'}
+          </div>
+        )}
       </DashBox>
       {dnd.ghost}
     </DashPage>

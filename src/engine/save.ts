@@ -354,6 +354,8 @@ export interface AppSettings {
   indoorShow?: 'an' | 'aus';
   /** Tempo des Hallen-Textmodus. */
   indoorSpeed?: 'langsam' | 'normal' | 'schnell';
+  /** Masters-Qualifikation: Ø Punkte je Spiel (historisch, Standard) oder Platzierungspunkte je Turnier (game/indoorMasters.ts). */
+  indoorScoring?: 'schnitt' | 'platz';
   /** Ehrungen (Die Besten der Saison, Gala Goldener Ball) als Fenster zeigen oder nur Nachricht. */
   awardsShow?: 'an' | 'aus';
   /** Tempo der Bewertungs-Show. */

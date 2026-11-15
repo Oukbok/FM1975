@@ -232,6 +232,21 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
     attributes: {},
     description: 'Auslaufen, Massage, Physio. Kein Lerneffekt, aber starke Erholung.',
   },
+  {
+    id: 'halle',
+    name: 'Hallentraining',
+    // Hallenfußball mit Profis 1976–2004 (data/indoorHistory.ts); volle Wirkung nur Nov–Jan,
+    // sonst halber Lerneffekt (game/trainerTeam.ts blockFactorFn), Hallenform-Bonus: game/indoorRecords.ts.
+    unlockYear: 1976,
+    untilYear: 2004,
+    icon: 'trIndoor',
+    category: 'technique',
+    intensity: 'medium',
+    load: 3,
+    attributes: { technique: 0.4, firstTouch: 0.4, ballControl: 0.4, dribbling: 0.3, agility: 0.3, acceleration: 0.2 },
+    description: 'Fünf gegen fünf mit Bande auf engem Raum: etwas Technik, Ballannahme, Wendigkeit und Antritt. '
+      + 'Nov.–Jan. volle Wirkung und Hallenform fürs nächste Turnier (je Einheit der letzten 14 Tage +0,5 Hallenstärke, höchstens +2); sonst halber Lerneffekt.',
+  },
   // --- Spätere Epochen ---------------------------------------------------------
   {
     id: 'pressing',
@@ -273,7 +288,7 @@ export const TRAINING_BLOCKS: TrainingBlock[] = [
 
 /** Ab wann ein Block im Trainingsplan zur Verfügung steht. */
 export function blockAvailable(b: TrainingBlock, year: number): boolean {
-  return year >= (b.unlockYear ?? 0);
+  return year >= (b.unlockYear ?? 0) && year <= (b.untilYear ?? 9999);
 }
 
 /** Schneller Zugriff auf einen Block per ID. */

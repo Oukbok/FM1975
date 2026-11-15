@@ -5,6 +5,7 @@ import { NatFlag } from '../competition/CountryFlag';
 import type { ReactNode } from 'react';
 import type { Player } from '../../types';
 import { useClubProfile } from '../club/ClubLink';
+import { HALL_SPECIALIST, hallRecOf, hallRuf } from '../../game/indoorRecords';
 import { languageOf } from '../../engine/dressingRoom';
 import { careerPhase, PHASE_LABEL, personaOf } from '../../engine/persona';
 import { homeRegionOf } from '../../game/playerWishesGame';
@@ -45,6 +46,9 @@ function availability(p: Player): { big: string; sub: string; bad: boolean } {
 
 export default function GeneralTab({ p }: { p: Player }) {
   const g = useClubProfile()?.game;
+  // Hallenruf (game/indoorRecords.ts): nur wer in der Halle getroffen oder gewonnen hat.
+  const hr = g ? hallRecOf(g, p.id) : undefined;
+  const hall = hr && (hr.g > 0 || hr.w > 0) ? { r: hr, ruf: hallRuf(hr) } : null;
   const pe = personaOf(p);
   const home = g ? homeRegionOf(g, p) : '';
   const homeClub = pe.homeClubId && g ? (g.clubs[pe.homeClubId]?.name ?? g.simClubs?.[pe.homeClubId]?.name) : undefined;
@@ -59,6 +63,7 @@ export default function GeneralTab({ p }: { p: Player }) {
           <Row label="Name">{p.fullName}</Row>
           <Row label="Nationalität"><NatFlag nat={p.nationality} height={16} />{nationName(p.nationality)}</Row>
           {p.intl?.caps ? <Row label="Länderspiele">{p.intl.caps} · {p.intl.goals} Tore{p.intl.tourn?.length ? <span className="dim"> · {p.intl.tourn.map((x) => `${x.t} (${x.res})`).join(', ')}</span> : null}</Row> : null}
+          {hall ? <Row label="Halle">{hall.ruf >= HALL_SPECIALIST ? <b>Hallenspezialist · </b> : null}{hall.r.g} Tore in {hall.r.t} Turnieren{hall.r.w ? ` · ${hall.r.w} Turniersieg${hall.r.w === 1 ? '' : 'e'}` : ''}<span className="dim"> · Hallenruf {hall.ruf}</span></Row> : null}
           <Row label="Sprache">{languageOf(p)}</Row>
           <Row label="Heimat">{home || '—'}{homeClub && <span className="dim"> · Jugend bei {homeClub}</span>}</Row>
           <Row label="Position">{POS_DE[p.naturalPosition] ?? p.naturalPosition}{p.secondaryPositions.length > 0 && <span className="dim"> · auch {p.secondaryPositions.join(', ')}</span>}</Row>

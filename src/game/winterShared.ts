@@ -85,6 +85,20 @@ export interface IndoorState {
   titles: Record<string, number>;
   /** Turniersiege je Verein (alle Hallenturniere). */
   wins: Record<string, number>;
+  /** Hallenruf je Spieler (optional, ab dieser Fassung; game/indoorRecords.ts). */
+  rec?: Record<string, IndoorRec>;
+  /** Tage mit Hallentraining des eigenen Vereins (je Einheit ein Eintrag, die letzten 12; game/indoorRecords.ts). */
+  drill?: string[];
+}
+
+/** Hallen-Bilanz eines Spielers über alle Winter (Name/Verein gemerkt, auch nach dem Karriereende). */
+export interface IndoorRec {
+  /** Name, zuletzt gespielter Verein. */
+  n: string; c: string;
+  /** Hallentore, Hallenspiele, Turniere, Turniersiege (inkl. Masters), Masters-Siege. */
+  g: number; s: number; t: number; w: number; m: number;
+  /** Letzter Winter mit Turnier (Jahr des Januars). */
+  y: number;
 }
 
 // -----------------------------------------------------------------------------
