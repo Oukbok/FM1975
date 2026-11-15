@@ -239,6 +239,8 @@
      halbtransparente Flächen, --deep-rgb = Abdunkelung über Fotos/Fenstern (immer dunkel). */
   --ink-rgb: 255, 255, 255;
   --shade-rgb: 0, 0, 0;
+  /* Spielfeld außerhalb der Aufstellung (Elf der Saison, 28-awards.css) */
+  --pitch-grass-a: #1d3a2d; --pitch-grass-b: #1a3529; --pitch-line: rgba(235, 242, 238, 0.62);
   --bg-rgb: 12, 15, 21;
   --panel-rgb: 28, 32, 40;
   --deep-rgb: 6, 8, 12;

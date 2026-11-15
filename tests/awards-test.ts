@@ -9,6 +9,7 @@ import { CalendarEngine } from '../src/engine/calendar';
 import { AWARD_CATS, type AwardCandidate, awardScore, computeAwards, minApps } from '../src/engine/seasonAwards';
 import { MAX_AWARD_SEASONS, awardCandidates, awardSeasonEnd, awardsState, migrateSeasonAwards, pendingAwards } from '../src/game/seasonAwardsGame';
 import type { Game } from '../src/game/state';
+import { checkExtraArchive, checkExtraFormulas } from './extra-awards-checks';
 
 let seed = 1979;
 Math.random = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
@@ -25,6 +26,7 @@ expect(awardScore({ ...gk, gaPerGame: 0.8 }, ctx).score > awardScore(gk, ctx).sc
 expect(awardScore({ ...gk, clean: 14 }, ctx).score > awardScore(gk, ctx).score, 'Zu-null-Spiele bringen dem Torwart nichts');
 const few = computeAwards([{ ...base, apps: minApps(ctx) - 1, avg: 1.0, goals: 30 }, base], ctx);
 expect(few.cats.ATT.length === 1 && few.cats.ATT[0].pid === 'a' && few.cats.ATT[0].apps === 30, 'Mindesteinsätze nicht beachtet');
+checkExtraFormulas();
 console.log(`Formel: Mindesteinsätze ${minApps(ctx)} von ${ctx.matchdays}, Beispiel Sturm ${awardScore(base, ctx).score} Punkte`);
 
 // 2) Mehrere Saisons simulieren
@@ -35,6 +37,7 @@ const g: Game = createNewGame({
   difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300,
 });
 (g as any).simAutoManage = true;
+const played: string[] = [];
 let topScorerWins = 0, topScorerPodium = 0, gkGood = 0, gkCount = 0;
 for (let s = 0; s < seasons; s++) {
   let guard = 0;
@@ -73,6 +76,7 @@ for (let s = 0; s < seasons; s++) {
   console.log(`   Spieler der Saison: ${best?.n ?? '—'} · Newcomer: ${aw!.rookie ? `${aw!.rookie.n} (${aw!.rookie.a})` : '—'} · Torjäger ${att[0]?.name} ${att[0]?.goals} · ${w.why}`);
   // Zweiter Aufruf vergibt nicht doppelt.
   expect(awardSeasonEnd(g, g.calendar.currentDate) === null, 'Doppelte Vergabe');
+  played.push(g.season);
   startNextSeason(g);
   expect(!awardsState(g)?.pending, 'pending nach dem Saisonwechsel nicht gelöscht');
 }
@@ -121,4 +125,5 @@ for (const s of world.filter((x) => x.season === world[world.length - 1].season)
 }
 console.log(`Auslandsligen: ${world.length} Wertungen, ${(JSON.stringify(world).length / 1024).toFixed(0)} KB`);
 console.log(`Spielstand: ${(JSON.stringify(awardsState(g)!.seasons[0]).length / 1024).toFixed(1)} KB je Saison`);
+checkExtraArchive(g, played);
 console.log('OK – Auszeichnungen der Saison');

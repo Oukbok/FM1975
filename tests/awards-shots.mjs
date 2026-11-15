@@ -69,6 +69,29 @@ for (const [vw, vh] of [[1920, 1080], [1366, 768]]) {
         await page.waitForTimeout(600);
         await page.screenshot({ path: `${pre}_seite_liga.png` });
         await over('.aw-page', 'Seite');
+        // Weitere Auszeichnungen über dieselbe Wahl: Goldener Schuh, Trainer des Jahres, Elf der Saison (eigene Liga + Ausland).
+        const pick = async (label, file, sel) => {
+          await page.locator('.aw-pick-league').click();
+          await page.waitForTimeout(250);
+          const opt = page.locator('.sel3-pop [role="option"], .sel3-menu [role="option"]').filter({ hasText: label }).first();
+          if (!(await opt.count())) { errors.push(`${name} ${vw}: Eintrag „${label}“ fehlt in der Auswahl`); await page.keyboard.press('Escape'); return; }
+          await opt.click();
+          await page.waitForTimeout(900);
+          await page.screenshot({ path: `${pre}_seite_${file}.png` });
+          if (!(await page.locator(sel).count())) errors.push(`${name} ${vw}: ${label} zeigt nichts (${sel})`);
+          await over('.aw-page', label);
+          const box = await page.evaluate((s2) => { const b = document.querySelector(s2)?.closest('.dbox-body'); return b ? [b.scrollHeight - b.clientHeight, b.scrollWidth - b.clientWidth] : [0, 0]; }, sel);
+          if (box[0] > 2 || box[1] > 2) errors.push(`${name} ${vw}: ${label} läuft in der Box über (${box.join('/')} px)`);
+        };
+        await pick('Goldener Schuh', 'schuh', '.gs-table');
+        await pick('Trainer des Jahres', 'trainer', '.tdj-grid');
+        await pick('Elf der Saison · 1. Liga', 'elf', '.tos-pitch');
+        await pick('Elf der Saison · England', 'elf_ausland', '.tos-pitch');
+        const chips = await page.locator('.tos-chip').count();
+        if (chips && chips !== 11) errors.push(`${name} ${vw}: Elf der Saison zeigt ${chips} statt 11 Spieler`);
+        // Chips dürfen nicht aus dem Spielfeld ragen
+        const outside = await page.evaluate(() => { const f = document.querySelector('.tos-pitch')?.getBoundingClientRect(); if (!f) return 0; return [...document.querySelectorAll('.tos-chip')].filter((c) => { const r = c.getBoundingClientRect(); return r.left < f.left - 1 || r.right > f.right + 1 || r.top < f.top - 1 || r.bottom > f.bottom + 1; }).length; });
+        if (outside) errors.push(`${name} ${vw}: ${outside} Namen ragen aus dem Spielfeld`);
       } else errors.push(`${name}: Seite Auszeichnungen nicht erreicht`);
     } else {
       await page.waitForSelector('.aw-modal', { timeout: 15000 });

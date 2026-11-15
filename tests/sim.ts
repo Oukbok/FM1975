@@ -31,6 +31,7 @@ import { promBefore, promInit, promModeFromEnv, promSeasonEnd, promSeasonStart, 
 import { legSummary, legTrack } from './simLegends';
 import { honoursSummary, honoursTrack } from './simHonours';
 import { speedNote, speedSeason, speedSummary } from './simSpeed';
+import { gbSummary, gbTrack, seasonAwardsTrack } from './simAwards';
 import { campAfter, campBefore, campInit, campModeFromEnv, campSeasonReport, campSeasonStart, campSummary } from './simCamp';
 
 const seasons = Number(process.argv[2] ?? 3);
@@ -513,7 +514,7 @@ for (let s = 0; s < seasons; s++) {
   if (process.env.KABINE) kabineReport(g);
   if (histMode) histTrack(g);
   campSeasonReport(g);
-  if (process.env.AWARDS) awardsReport(g);
+  if (process.env.AWARDS) { awardsReport(g); gbTrack(g, seasonStartYear(g.season)); }
   if (process.env.LEGENDS) legTrack(g);
   const promSt = promSeasonEnd(g), promSeason = g.season;
   const tS = performance.now();
@@ -521,6 +522,7 @@ for (let s = 0; s < seasons; s++) {
   if (process.env.SPEED) speedSeason(g, promSeason, performance.now() - tS);
   if (process.env.HONOURS) honoursTrack(g);
   if (repMode) leagueRepTrack(g);
+  if (process.env.AWARDS) seasonAwardsTrack(g, promSeason);
   campSeasonStart(g);
   promSeasonStart(g, promSt, promSeason);
   if (process.env.STAFF) staffReport(g);
@@ -601,6 +603,7 @@ budgetSummary();
 if (process.env.TOP) { topSummary(); careerSummary(); }
 if (process.env.LEGENDS) legSummary(g);
 if (process.env.HONOURS) honoursSummary();
+if (process.env.AWARDS) gbSummary();
 if (process.env.SPEED) speedSummary();
 console.log(`fertig in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 // Diagnose: Wer ist ≥ 85?

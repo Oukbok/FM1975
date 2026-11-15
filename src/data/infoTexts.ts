@@ -1066,6 +1066,21 @@ export const INFO_TEXTS = {
     text: 'Am 20. Dezember wählt die Jury den Fußballer des Jahres – bewertet wird das Kalenderjahr: Noten, Tore und Vorlagen, Titel und Klasse. Bis 1994 sind nur Europäer wählbar, ab 1995 alle Spieler europäischer Vereine, ab 2007 Spieler weltweit. Klick auf ein Jahr zeigt die Gala noch einmal.',
     wiki: 'season-awards',
   },
+  goldener_schuh: {
+    title: 'Goldener Schuh',
+    text: 'Bester Torjäger Europas über alle 1. Ligen, vergeben am Saisonende. Gezählt werden nur Ligatore. Ab der Saison 1996/97 zählen Tore in starken Ligen mehr: Rang 1–5 der Fünfjahreswertung Faktor 2, Rang 6–21 Faktor 1,5, sonst 1. Davor zählt die reine Torzahl.',
+    wiki: 'season-awards',
+  },
+  trainer_des_jahres: {
+    title: 'Trainer des Jahres',
+    text: 'Die Sportredaktion wählt am Saisonende den Trainer deiner Liga, der am meisten aus seiner Mannschaft geholt hat: Endplatz gegen den erwarteten Platz (Kaderstärke und Saisonziel), dazu Meisterschaft, Pokal und Europapokal. Wer erst während der Saison übernommen hat, zählt anteilig.',
+    wiki: 'season-awards',
+  },
+  elf_der_saison: {
+    title: 'Elf der Saison',
+    text: 'Die beste Mannschaft einer Liga in der typischen Formation der Zeit – bis 1995 mit Libero, danach 4-4-2, ab 2008 4-2-3-1. Es zählen dieselben Punkte wie bei den Besten der Saison; jeder Platz geht zuerst an einen Spieler genau dieser Position. In den Auslandsligen sind die Noten geschätzt.',
+    wiki: 'season-awards',
+  },
   positionstraining: {
     title: 'Positionstraining',
     text: 'Dein Trainerteam schult den Spieler zusätzlich auf einer zweiten Position – etwa +15 Vertrautheit je Saison, höchstens bis 85. Viel schneller lernt er durch Einsätze dort (eine Saison Stammplatz ≈ +40, verwandte Rollen etwas mehr); ab 80 geht es deutlich langsamer.',

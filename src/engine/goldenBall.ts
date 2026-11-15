@@ -15,10 +15,14 @@
 // Wertung (Punkte, höher = besser) – Leistung des Kalenderjahres:
 //   Leistung   3,0 × (4,0 − Notenschnitt)
 //   Klasse     0,08 × (Stärke − 70)                    (Weltklasse 90 → 1,6)
-//   Tore       je Position: Sturm 4,0 / Mittelfeld 3,0 / Abwehr 2,0 × (Tore + 0,5 × Vorlagen) je Spiel
+//   Tore       je Position: Sturm 4,0 / Mittelfeld 3,0 / Abwehr 2,0 × (Tore + 0,5 × Vorlagen) je Spiel,
+//              über 0,7 je Spiel nur halb (Rekordquoten einzelner Ligen entscheiden die Wahl nicht allein)
 //   Defensive  Torwart/Abwehr: 2,0 × Zu-null-Quote
 //   Titel      Landesmeister-/Champions-Cup 2,0 · Pokalsieger-Cup 1,0 · UEFA-Cup 0,8 ·
-//              Meister 1,0 · Pokal 0,5
+//              Meister 1,0 · Pokal 0,5 – nationale Titel × Bühne (Ligastärke gegen die stärkste
+//              Liga: 1 − 0,08 je Stärkepunkt Abstand über 2 Punkte hinaus, mindestens 0,35)
+//   Bühne      3,5 × (Bühne − 1): Spieler schwächerer Ligen verlieren bis 2,3 Punkte – die Jury
+//              schaut auf die großen Ligen (Kalibrierung über die Epochen: tests/simAwards.ts)
 //   Einsätze   unter 20 Spielen im Jahr anteilig weniger (Faktor Einsätze/20).
 // =============================================================================
 import type { PositionGroup } from '../types';
@@ -63,17 +67,25 @@ export interface GBCandidate {
   titles: GBTitle[];
   /** true = Werte aus Vereinsstärke geschätzt (Auslandsverein ohne Einzelstatistik). */
   est?: boolean;
+  /** Bühne 0,35..1: Stärke der Liga gegen die stärkste Liga – gewichtet Meisterschaft/Pokal (fehlt = 1). */
+  lg?: number;
 }
 
 export interface GBScored extends GBCandidate { score: number }
+
+/** Torbeteiligung je Spiel: über 0,7 zählt nur noch die Hälfte (Rekordquoten entscheiden die Wahl nicht allein). */
+const soften = (v: number) => (v <= 0.7 ? v : 0.7 + 0.5 * (v - 0.7));
+/** Gewicht der Bühne: Abzug für Spieler schwächerer Ligen (Bühne 1 = keine Abzüge). */
+const STAGE = 3.5;
 
 export function gbScore(c: GBCandidate): number {
   const per = (v: number) => v / Math.max(1, c.apps);
   let s = 3.0 * (4.0 - c.avg) + 0.08 * (c.ovr - 70);
   const gw = c.group === 'ATT' ? 4.0 : c.group === 'MID' ? 3.0 : c.group === 'DEF' ? 2.0 : 0;
-  s += gw * per(c.goals + 0.5 * c.assists);
+  s += gw * soften(per(c.goals + 0.5 * c.assists));
   if (c.group === 'GK' || c.group === 'DEF') s += 2.0 * per(c.clean);
-  for (const t of c.titles) s += TITLE_PTS[t];
+  for (const t of c.titles) s += TITLE_PTS[t] * (t === 'meister' || t === 'pokal' ? c.lg ?? 1 : 1);
+  s += STAGE * ((c.lg ?? 1) - 1);
   s *= Math.min(1, c.apps / 20);
   return Math.round(s * 100) / 100;
 }

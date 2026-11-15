@@ -297,8 +297,8 @@ Die 1981er-Reform (eingleisige 2. Liga) liegt vor der Wiedervereinigung, die Reg
   {
     id: 'season-awards',
     category: 'leagues',
-    title: 'Auszeichnungen: Die Besten der Saison & Goldener Ball',
-    keywords: ['goldener ball', 'fußballer des jahres', 'weltfußballer', 'gala', 'auszeichnung', 'ehrung', 'spieler der saison', 'newcomer', 'torwart', 'abwehr', 'mittelfeld', 'sturm', 'beste', 'elf', 'notenschnitt', 'zu null'],
+    title: 'Auszeichnungen: Die Besten der Saison, Goldener Ball, Goldener Schuh, Trainer & Elf der Saison',
+    keywords: ['goldener ball', 'goldener schuh', 'torjäger', 'trainer des jahres', 'elf der saison', 'fußballer des jahres', 'weltfußballer', 'gala', 'auszeichnung', 'ehrung', 'spieler der saison', 'newcomer', 'torwart', 'abwehr', 'mittelfeld', 'sturm', 'beste', 'elf', 'notenschnitt', 'zu null'],
     body: `## Worum geht es?
 Am Tag nach dem letzten Ligaspieltag ehrt die Sportredaktion die **besten Spieler auf ihren Positionen** – in vier Kategorien: **Torwart, Abwehr, Mittelfeld und Sturm**, jeweils mit Platz 1 bis 3. Dazu kommen der **Spieler der Saison** und der **Newcomer der Saison** (höchstens 21 Jahre). Ein festliches Fenster zeigt die Geehrten; alle Jahrgänge findest du unter **Statistiken › Auszeichnungen**.
 
@@ -329,7 +329,24 @@ Am **20. Dezember** hält der Zeitlauf an: Bei einer **Gala** (bis 2009 und ab 2
 - **Wertung:** 3 × (4,0 − Notenschnitt), Klasse (Stärke über 70), Tore und Vorlagen je Spiel (Sturm am stärksten gewichtet), Spiele zu null für Torwart und Abwehr, dazu **Titel**: Landesmeister-Cup 2 Punkte, Pokalsieger-Cup 1, UEFA-Pokal 0,8, Meisterschaft 1, Pokal 0,5. Unter 20 Spielen gibt es anteilig weniger.
 - **Auslandsstars:** Alle Spieler der 1. Ligen im Ausland sind dabei. Tore, Vorlagen und Spiele zu null stammen aus ihrer Liga (bisherige Spiele, aufs Kalenderjahr hochgerechnet), die Note wird nach dem Maßstab der voll simulierten Spieler geschätzt (mit Formschwankung). Wer in einer schwächeren Liga spielt, wird abgewertet – Tore gegen schwache Abwehrreihen zählen weniger. Europapokal-Tore kommen dazu.
 - **Folgen:** Preisträger aus deinem Kader bekommen einen Moral-Schub (Sieger am meisten), ein Sieger hebt zudem das Ansehen deines Vereins leicht.
-- Die Zeremonie lässt sich in den Einstellungen („Ehrungen“) abschalten; alle Sieger stehen unter **Statistiken › Auszeichnungen** – ein Klick auf ein Jahr zeigt die Gala erneut.`,
+- **Bühne:** Meisterschaft und Pokal zählen nach der Stärke der Liga – ein Titel in einer der stärksten Ligen bringt die vollen Punkte, in einer schwachen Liga deutlich weniger. Die Stärke eines Auslandsspielers wird dabei am Schnitt deiner Liga gemessen, nicht an seiner eigenen Liga: Wer in einer schwachen Liga herausragt, ist deshalb noch kein Weltstar.
+- Die Zeremonie lässt sich in den Einstellungen („Ehrungen“) abschalten; alle Sieger stehen unter **Statistiken › Auszeichnungen** – ein Klick auf ein Jahr zeigt die Gala erneut.
+
+## Goldener Schuh – bester Torjäger Europas
+Am Saisonende (wenn alle 1. Ligen fertig sind) bekommt der beste Torjäger aller 1. Ligen den **Goldenen Schuh**. Gezählt werden nur **Ligatore**.
+- **Bis 1995/96** zählt die reine Torzahl.
+- **Ab 1996/97** werden die Tore nach der Stärke der Liga gewichtet – wie beim historischen Vorbild: Länder auf Rang 1–5 der Fünfjahreswertung **Faktor 2**, Rang 6–21 **Faktor 1,5**, alle übrigen **Faktor 1**. 30 Tore in einer Spitzenliga (60 Punkte) schlagen also 38 Tore in einer kleinen Liga.
+- Bei Punktgleichheit gewinnt, wer weniger Spiele brauchte. Die Top 10 mit Toren, Faktor und Punkten stehen unter **Statistiken › Auszeichnungen** (Wahl oben: „Goldener Schuh“).
+
+## Trainer des Jahres
+Ebenfalls am Saisonende wählt die Sportredaktion den **Trainer des Jahres** deiner Liga – Kandidaten sind die Cheftrainer aller Vereine, bei deinem Verein dein Cheftrainer aus dem Trainerteam (ohne Cheftrainer du selbst). Gewertet wird:
+- **Ergebnis gegen Erwartung:** Endplatz gegen den erwarteten Platz (Mittel aus dem Stärke-Rang des Kaders und dem Saisonziel) – der wichtigste Baustein.
+- **Titel:** Meisterschaft (mehr, wenn sie nicht erwartet war – der klare Favorit gewinnt nicht automatisch jedes Jahr), Pokalsieg, Europapokal (Sieg oder weit gekommen).
+- **Abstieg** kostet Punkte; wer erst während der Saison übernommen hat, zählt anteilig.
+Die besten drei stehen mit Begründung auf der Seite, dazu kommt eine Nachricht der Sportredaktion.
+
+## Elf der Saison
+Zum Saisonende stellt die Redaktion für deine Liga und jede 1. Liga im Ausland die **beste Elf** auf – in der typischen Formation der Zeit: bis 1984 Libero 1-4-3-2, bis 1995 Libero 1-3-4-2, bis 2007 4-4-2, danach 4-2-3-1. Es zählen dieselben Punkte wie bei den Besten der Saison (Note, Einsätze, Torbeteiligung bzw. Spiele zu null); jeder Platz geht zuerst an einen Spieler genau dieser Position, erst dann an verwandte Positionen. In den Auslandsligen sind die Noten geschätzt; sie bleiben für die letzten fünf Saisons gespeichert. Auf der Seite siehst du die Elf auf einem kleinen Spielfeld mit Note.`,
   },
 
   {

@@ -48,6 +48,7 @@ import { homeExcluded } from './startYear';
 import { retireFullCountries } from './fullCountries';
 import { worldLiveResults } from './worldLeagues';
 import { worldSeasonAwards } from './worldAwardsGame';
+import { homeExtraAwards, worldExtraAwards } from './extraAwardsGame';
 
 const isGermanHome = (g: Game) => homeCountryOf(g) === 'ger';
 import { sponsorSeasonStart } from './sponsorGame';
@@ -213,6 +214,8 @@ export function finalOrder(g: Game, divId: string): string[] {
 
 export function startNextSeason(g: Game): void {
   bindGameIds(g); // IDs aus diesem Spielstand (engine/idSeq.ts)
+  // Trainer des Jahres + Elf der Saison (eigene Liga): Endtabelle/Pokale stehen, KI-Trainer noch im Amt.
+  homeExtraAwards(g, g.calendar.currentDate);
   // Trainerbilanz und -karussell der KI-Vereine, solange die Endtabelle vorliegt.
   aiSeasonEnd(g);
   // Die Besten der Saison: Rückfall, falls das Saisonende-Ereignis nicht lief (ältere Stände).
@@ -254,6 +257,8 @@ export function startNextSeason(g: Game): void {
   const leanResults = worldLiveResults(g);
   // Die Besten der Saison in den 1. Ligen im Ausland (Note nach dem Maßstab der eigenen Liga).
   worldSeasonAwards(g, oldSeason, leanResults.divs);
+  // Goldener Schuh (alle 1. Ligen) + Elf der Saison im Ausland (game/extraAwardsGame.ts).
+  worldExtraAwards(g, oldSeason, leanResults.divs, g.calendar.currentDate);
 
   // --- 2) Endstände ALLER aktuellen Divisionen einlesen (Spielerliga + Sim) ---
   const pd = g.leagues.playerDivision;

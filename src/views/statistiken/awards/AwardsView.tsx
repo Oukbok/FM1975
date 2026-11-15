@@ -21,19 +21,33 @@ import Icon from '../../../components/Icon';
 import { seasonLabel } from '../../../engine/calendar';
 import { awardsBySeason } from '../../../game/worldAwardsGame';
 import { GoldenBallTop } from './GoldenBallTop';
+import { extraAwardsState } from '../../../game/extraAwardsGame';
+import { teamsOfSeason } from '../../../game/teamOfSeasonGame';
+import { CoachAwardTop, GoldenShoeTop } from './ExtraAwardTops';
+import { TeamOfSeasonTop } from './TeamOfSeasonTop';
 
 export function AwardsView({ g }: { g: Game }) {
   const seasons = [...(awardsState(g)?.seasons ?? [])].reverse();
   const gb = [...(goldenBallState(g)?.years ?? [])].reverse();
   // Saisons für die Wahl oben: Ehrungen der Liga + Goldener Ball (verliehen im Dezember der Saison).
-  const allSeasons = [...new Set([...seasons.map((x) => x.season), ...gb.map((y) => seasonLabel(y.year))])].sort().reverse();
+  const extra = extraAwardsState(g);
+  const allSeasons = [...new Set([
+    ...seasons.map((x) => x.season), ...gb.map((y) => seasonLabel(y.year)),
+    ...(extra?.shoe ?? []).map((x) => x.s), ...(extra?.coach ?? []).map((x) => x.s), ...(extra?.xi ?? []).map((x) => x.s),
+  ])].sort().reverse();
   const [pick, setPick] = useState<string | null>(null);
   const [league, setLeague] = useState<string>('gb');
   const [sel, setSel] = useState<string | null>(null);
   const season = pick && allSeasons.includes(pick) ? pick : allSeasons[0];
   const leagues = season ? awardsBySeason(g, season) : [];
   const gbYear = season ? gb.find((y) => seasonLabel(y.year) === season) : undefined;
-  const s = league === 'gb' ? undefined : leagues.find((x) => x.div === league) ?? leagues[0];
+  // Wahl oben: gb | shoe | coach | xi:<Liga> | <Liga> (Die Besten der Saison)
+  const shoe = season ? extra?.shoe.find((x) => x.s === season) : undefined;
+  const coach = season ? extra?.coach.find((x) => x.s === season) : undefined;
+  const xis = season ? teamsOfSeason(g, season) : [];
+  const special = league === 'gb' || league === 'shoe' || league === 'coach' || league.startsWith('xi:');
+  const xi = league.startsWith('xi:') ? xis.find((x) => `xi:${x.d}` === league) ?? xis[0] : undefined;
+  const s = special ? undefined : leagues.find((x) => x.div === league) ?? leagues[0];
   const showGb = league === 'gb' && !!gbYear;
   const tallies = awardTallies(g).filter((t) => t.wins > 1 || t.best > 0).slice(0, 12);
   const [gala, setGala] = useState<number | null>(null);
@@ -44,15 +58,28 @@ export function AwardsView({ g }: { g: Game }) {
   const step = (d: number) => { const next = allSeasons[idx + d]; if (next) setPick(next); };
 
   const mine = g.managedClubId;
-  const title = showGb ? `Goldener Ball ${gbYear!.year}` : s ? `Die Besten der Saison ${s.season}` : 'Die Besten der Saison';
+  const title = league === 'gb' ? (gbYear ? `Goldener Ball ${gbYear.year}` : 'Goldener Ball')
+    : league === 'shoe' ? `Goldener Schuh ${season ?? ''}`.trim()
+      : league === 'coach' ? `Trainer des Jahres ${season ?? ''}`.trim()
+        : league.startsWith('xi:') ? `Elf der Saison ${season ?? ''}`.trim()
+          : s ? `Die Besten der Saison ${s.season}` : 'Die Besten der Saison';
+  const info = league === 'gb' ? 'goldener_ball' : league === 'shoe' ? 'goldener_schuh' : league === 'coach' ? 'trainer_des_jahres' : league.startsWith('xi:') ? 'elf_der_saison' : 'awards_wertung';
+  const pickValue = special ? (league.startsWith('xi:') && xi ? `xi:${xi.d}` : league) : s?.div ?? 'gb';
   return (
     <DashPage className="aw-page">
-      <DashBox title={title} icon="trophy" span={3} info={showGb ? 'goldener_ball' : 'awards_wertung'}
+      <DashBox title={title} icon="trophy" span={3} info={info}
         right={season ? (
           <span className="aw-pick">
-            <Select className="dselect aw-pick-league" value={league === 'gb' ? 'gb' : s?.div ?? 'gb'} onChange={(v) => setLeague(v)} aria-label="Wertung wählen">
+            <Select className="dselect aw-pick-league" value={pickValue} onChange={(v) => setLeague(v)} aria-label="Wertung wählen">
               <option value="gb">Goldener Ball</option>
-              {leagues.map((x) => <option key={x.div} value={x.div}>{x.divName}</option>)}
+              <option value="shoe">Goldener Schuh</option>
+              <option value="coach">Trainer des Jahres</option>
+              {leagues.length ? <optgroup label="Die Besten der Saison">
+                {leagues.map((x) => <option key={x.div} value={x.div}>{x.divName}</option>)}
+              </optgroup> : null}
+              {xis.length ? <optgroup label="Elf der Saison">
+                {xis.map((x) => <option key={x.d} value={`xi:${x.d}`}>{`Elf der Saison · ${x.dn}`}</option>)}
+              </optgroup> : null}
             </Select>
             <button type="button" className="b3 b3-s b3-icon" onClick={() => step(1)} disabled={idx >= allSeasons.length - 1} aria-label="Vorige Saison" title="Vorige Saison"><Icon name="navPrev" size={18} /></button>
             <Select className="dselect" value={season} onChange={(v) => setPick(v)} aria-label="Saison wählen">
@@ -65,6 +92,12 @@ export function AwardsView({ g }: { g: Game }) {
           <Empty icon="trophy">Am 20. Dezember wird der Goldene Ball verliehen, am Tag nach dem letzten Ligaspieltag werden die besten Spieler auf ihren Positionen geehrt – Torwart, Abwehr, Mittelfeld und Sturm. Die erste Ehrung steht am Ende der Saison {g.season} an.</Empty>
         ) : showGb ? (
           <GoldenBallTop g={g} y={gbYear!} onPlayer={open} onGala={() => setGala(gbYear!.year)} />
+        ) : league === 'shoe' && shoe ? (
+          <GoldenShoeTop g={g} y={shoe} onPlayer={open} />
+        ) : league === 'coach' && coach ? (
+          <CoachAwardTop g={g} y={coach} />
+        ) : xi ? (
+          <TeamOfSeasonTop g={g} t={xi} onPlayer={open} />
         ) : s ? (
           <div className="aw-page-top">
             <div className="aw-grid compact">
@@ -73,7 +106,11 @@ export function AwardsView({ g }: { g: Game }) {
             <AwardHonours g={g} s={s} onPlayer={open} />
           </div>
         ) : (
-          <Empty icon="trophy">{league === 'gb' ? `In der Saison ${season} wurde (noch) kein Goldener Ball verliehen.` : `Für die Saison ${season} gibt es (noch) keine Ehrung der Besten.`}</Empty>
+          <Empty icon="trophy">{league === 'gb' ? `In der Saison ${season} wurde (noch) kein Goldener Ball verliehen.`
+            : league === 'shoe' ? `Der Goldene Schuh ${season} wird am Saisonende vergeben, wenn alle 1. Ligen fertig sind.`
+              : league === 'coach' ? `Der Trainer des Jahres ${season} wird am Saisonende gewählt.`
+                : league.startsWith('xi:') ? `Die Elf der Saison ${season} steht am Saisonende fest.`
+                  : `Für die Saison ${season} gibt es (noch) keine Ehrung der Besten.`}</Empty>
         )}
       </DashBox>
 

@@ -56,6 +56,7 @@ import { migrateBriefing } from './seasonBriefing';
 import { migrateBudget } from './budgetPlan';
 import { migrateSeasonAwards } from './seasonAwardsGame';
 import { migrateGoldenBall } from './goldenBallGame';
+import { migrateExtraAwards } from './extraAwardsGame';
 import { migrateLegacyLegends } from './playerMigration';
 import { migratePersonas } from './playerWishesGame';
 import { migrateContracts2 } from './contractClausesGame';
@@ -360,6 +361,7 @@ export function prepareLoadedGame(g: Game): void {
   // Saison-Briefing: Archiv ab der aktuellen Saison, beim Laden kein automatisches Popup.
   try { migrateBriefing(g); } catch (err) { console.error('Briefing-Nachrüstung fehlgeschlagen:', err); }
   try { migrateGoldenBall(g); } catch (err) { console.error('Goldener-Ball-Nachrüstung fehlgeschlagen:', err); }
+  try { migrateExtraAwards(g); } catch (err) { console.error('Auszeichnungen-Nachrüstung fehlgeschlagen:', err); }
   try { migrateSeasonAwards(g); } catch (err) { console.error('Auszeichnungen-Nachrüstung fehlgeschlagen:', err); }
   // Legenden-System entfernt: frühere Legenden werden ganz normale Spieler.
   try { migrateLegacyLegends(g); } catch (err) { console.error('Legenden-Bereinigung fehlgeschlagen:', err); }

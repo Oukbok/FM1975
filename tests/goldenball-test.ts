@@ -22,6 +22,8 @@ const br = rankGoldenBall([mk({ pid: 'bra', nat: 'BRA', goals: 40, avg: 1.8 }), 
 expect(br.length === 1 && br[0].pid === 'ger', '1985: Brasilianer wählbar');
 expect(rankGoldenBall([mk({ pid: 'bra', nat: 'BRA', goals: 40, avg: 1.8 }), mk({ pid: 'ger' })], 1996)[0].pid === 'bra', '1996: Brasilianer nicht wählbar');
 expect(rankGoldenBall([mk({ titles: ['ec'] , pid: 'a' }), mk({ pid: 'b' })], 1990)[0].pid === 'a', 'Titel zählen nicht');
+// Bühne: Meistertitel einer schwachen Liga zählt weniger als in einer starken Liga
+expect(rankGoldenBall([mk({ titles: ['meister'], pid: 'weak', lg: 0.4 }), mk({ titles: ['meister'], pid: 'top', lg: 1 })], 1990)[0].pid === 'top', 'Bühne der Liga zählt nicht');
 
 // 2) Simulation über mehrere Kalenderjahre
 const years = Number(process.argv[2] ?? 3);

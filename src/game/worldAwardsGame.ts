@@ -25,8 +25,11 @@ import { leanLines, type LeanLine } from './worldScorers';
 
 export const WORLD_AWARD_SEASONS = 5;
 
+/** Notenmaßstab der Heimatliga: Koeffizienten + Stärkeschnitt `homeMean` + Tore je Mannschaft und Spiel `homeGpg`. */
+export type HomeGradeModel = GradeModel & { homeMean?: number; homeGpg?: number };
+
 /** Notenmaßstab aus der eigenen (voll simulierten) Liga der laufenden Saison (+ Stärkeschnitt `homeMean`). */
-export function homeGradeModel(g: Game): GradeModel & { homeMean?: number } {
+export function homeGradeModel(g: Game): HomeGradeModel {
   const { cands, matchdays, teams } = awardCandidates(g);
   const regular = cands.filter((c) => c.apps >= Math.max(3, matchdays * 0.3));
   const ovr = (c: AwardCandidate) => g.players[c.pid]?.overall ?? 60;
@@ -36,11 +39,12 @@ export function homeGradeModel(g: Game): GradeModel & { homeMean?: number } {
     rankShare: teams > 1 ? (c.rank - 1) / (teams - 1) : 0.5,
     contrib: contribOf(c.cat as PositionGroup, c.apps, c.goals, c.assists, c.clean),
   }));
-  return Object.assign(fitGrades(samples), { homeMean: mean });
+  const gf = g.table.rows.reduce((t, r) => t + r.goalsFor, 0), pl = g.table.rows.reduce((t, r) => t + r.played, 0);
+  return Object.assign(fitGrades(samples), { homeMean: mean, ...(pl ? { homeGpg: gf / pl } : {}) });
 }
 
 /** Kandidaten einer Auslandsliga (Saisonzeilen + geschätzte Note). */
-export function leanCandidates(g: Game, key: string, d: LeanDiv, season: string, model: GradeModel, lines?: LeanLine[], refMean?: number): AwardCandidate[] {
+export function leanCandidates(g: Game, key: string, d: LeanDiv, season: string, model: HomeGradeModel, lines?: LeanLine[], refMean?: number): AwardCandidate[] {
   const ls = lines ?? leanLines(g, d, season);
   const table = leanTable(d, key, season);
   const row = new Map(table.map((r) => [r.clubId, r]));
@@ -49,23 +53,37 @@ export function leanCandidates(g: Game, key: string, d: LeanDiv, season: string,
   const mean = regulars.length ? regulars.reduce((t, l) => t + l.w[W.ov], 0) / regulars.length : 65;
   const y = seasonStartYear(season) + 1;
   // Vergleich über Ligen hinweg (Goldener Ball): schwächere Liga → Note und Torquote nach dem Maßstab
-  // der Heimatliga abwerten (Tore gegen schwache Abwehrreihen zählen weniger).
+  // der Heimatliga abwerten (Tore gegen schwache Abwehrreihen zählen weniger). Die Stärke zählt dann
+  // gegen den Schnitt der Heimatliga, nicht gegen die eigene Liga – sonst wirkt ein guter Spieler in
+  // einer schwachen Liga wie ein Weltstar (Kalibrierung über die Epochen, tests/simAwards.ts).
   const gap = refMean != null ? Math.max(0, refMean - mean) : 0;
   const scale = Math.max(0.45, 1 - 0.035 * gap);
+  const base = refMean ?? mean;
+  // Torniveau: Die voll simulierte Heimatliga fällt torreicher aus als die Auslandsligen (1977 z. B.
+  // 1,87 gegen 1,33–1,40 Tore je Mannschaft und Spiel). Für den Ligavergleich Tore und Vorlagen auf das
+  // Torniveau der Heimatliga bringen – sonst gewinnen fast nur Spieler der Heimatliga.
+  const tGf = table.reduce((t, r) => t + r.gf, 0), tP = table.reduce((t, r) => t + r.p, 0);
+  const norm = refMean != null && model.homeGpg && tGf > 0 ? Math.max(0.8, Math.min(1.6, model.homeGpg / (tGf / tP))) : 1;
   return ls.map((l) => {
     const pos = l.w[W.pos];
     const cat = (POSITION_GROUPS[pos] ?? 'MID') as AwardCat;
     const r = row.get(l.clubId);
     const rankShare = r && n > 1 ? (r.pos - 1) / (n - 1) : 0.5;
-    const contrib = contribOf(cat as PositionGroup, l.apps, l.goals, l.assists, l.clean);
+    const contrib = contribOf(cat as PositionGroup, l.apps, l.goals * norm, l.assists * norm, l.clean);
     return {
       pid: l.w[W.id], name: `${l.w[W.first]} ${l.w[W.last]}`.trim(), clubId: l.clubId, clubName: g.euroClubs?.[l.clubId]?.name ?? l.clubId,
       pos, cat, age: y - l.w[W.born], apps: l.apps,
-      avg: Math.min(5.5, estimateGrade(model, { group: cat as PositionGroup, ovrDev: l.w[W.ov] - mean, rankShare, contrib }, `${season}|${l.w[W.id]}`) + 0.045 * gap),
-      goals: Math.round(l.goals * scale), assists: Math.round(l.assists * scale), clean: Math.round(l.clean * scale),
+      avg: Math.min(5.5, estimateGrade(model, { group: cat as PositionGroup, ovrDev: l.w[W.ov] - base, rankShare, contrib }, `${season}|${l.w[W.id]}`) + 0.03 * gap),
+      goals: Math.round(l.goals * scale * norm), assists: Math.round(l.assists * scale * norm), clean: Math.round(l.clean * scale),
       gaPerGame: r && r.p ? r.ga / r.p : 1.4, rank: r?.pos ?? n,
     };
   });
+}
+
+/** Stärkeschnitt der Stammspieler einer Auslandsliga (Maßstab für den Ligavergleich). */
+export function leanLeagueMean(lines: LeanLine[]): number {
+  const regulars = lines.filter((l) => l.apps >= l.played * 0.5);
+  return regulars.length ? regulars.reduce((t, l) => t + l.w[W.ov], 0) / regulars.length : 65;
 }
 
 const pack = (c: AwardCandidate & { score: number }, why?: string): AwardEntry => {

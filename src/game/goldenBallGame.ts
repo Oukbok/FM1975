@@ -23,7 +23,8 @@ import { makeMessage, pushMessage } from '../engine/messages';
 import type { CupState, PositionGroup } from '../types';
 import { POSITION_GROUPS } from '../types';
 import { archivedSeason } from './leagueArchive';
-import { homeGradeModel, leanCandidates } from './worldAwardsGame';
+import { homeGradeModel, leanCandidates, leanLeagueMean } from './worldAwardsGame';
+import { leanLines } from './worldScorers';
 import { ensureWorldLive } from './worldLeagues';
 import { WP_FIELD as WP } from './worldPool';
 import { moraleJolt } from './moraleJolt';
@@ -128,12 +129,17 @@ export function goldenBallCandidates(g: Game, year: number): GBCandidate[] {
   const live = ensureWorldLive(g);
   if (live && g.worldPool?.p.length) {
     const model = homeGradeModel(g);
+    // Bühne: nationale Titel zählen nach der Stärke der Liga (Abstand zur stärksten Liga, GBCandidate.lg).
+    const divs = Object.entries(live.divs).filter(([k, d]) => k.endsWith('|0') && d.md && d.r)
+      .map(([k, d]) => { const lines = leanLines(g, d, live.season); return { key: k.slice(0, -2), d, lines, mean: leanLeagueMean(lines) }; });
+    const best = Math.max(model.homeMean ?? 0, ...divs.map((x) => x.mean));
+    const stage = (mean: number) => Math.max(0.35, Math.min(1, 1 - 0.08 * Math.max(0, best - mean - 2)));
+    for (const c of out) c.lg = stage(model.homeMean ?? best);
     let added = 0;
-    for (const [k, d] of Object.entries(live.divs)) {
-      if (!k.endsWith('|0') || !d.md || !d.r) continue;
-      const key = k.slice(0, -2);
+    for (const { key, d, lines, mean } of divs) {
       const f = (d.md + d.n / 2) / d.md;
-      for (const c of leanCandidates(g, key, d, live.season, model, undefined, model.homeMean)) {
+      const lg = stage(mean);
+      for (const c of leanCandidates(g, key, d, live.season, model, lines, model.homeMean)) {
         if (c.apps < 4) continue;
         const grp = c.cat as PositionGroup;
         const l = live0(c.pid);
@@ -142,7 +148,7 @@ export function goldenBallCandidates(g: Game, year: number): GBCandidate[] {
           pid: c.pid, name: c.name, nat: natOf(c.pid), clubId: c.clubId, clubName: c.clubName, country: ec?.country ?? key,
           pos: c.pos, group: grp, age: c.age, ovr: ovrOf(c.pid), apps: Math.round(c.apps * f) + l[0], avg: c.avg,
           goals: Math.round(c.goals * f) + l[1], assists: Math.round(c.assists * f) + l[2], clean: Math.round(c.clean * f),
-          titles: won.get(c.clubId) ?? [], est: true,
+          titles: won.get(c.clubId) ?? [], est: true, lg,
         });
         added++;
       }
