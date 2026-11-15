@@ -61,11 +61,14 @@ export function Stage({ g, sim, info, score, pens, clock, revealing, shownSeq, h
       </div>
       <div className="tm-stage-info">
         <Team s="home" />
+        {/* Meter genau mittig unter dem Spielstand (Wunsch Pascal), die Uhr steht vorn in der Gastspalte. */}
         <div className="tm-stage-mid">
           <DangerMeter line={sim.finished ? null : current} homeName={H.name} awayName={A.name} />
-          <Clock sim={sim} clock={clock} />
         </div>
-        <Team s="away" />
+        <div className="tm-stage-away">
+          <Clock sim={sim} clock={clock} />
+          <Team s="away" />
+        </div>
       </div>
       <Timeline sim={sim} shownSeq={shownSeq} />
     </div>
@@ -119,7 +122,7 @@ export function Timeline({ sim, shownSeq }: { sim: MatchSim; shownSeq: number })
   const now = sim.phase === 'done' ? len : Math.min(len, sim.minute);
   const pct = (m: number) => `${(Math.min(len, Math.max(0, m)) / len) * 100}%`;
   const marks = marksOf(sim.events, shownSeq);
-  const ticks = len === 120 ? [15, 30, 45, 60, 75, 90, 105] : [15, 30, 45, 60, 75];
+  const ticks = len === 120 ? [0, 15, 30, 45, 60, 75, 90, 105, 120] : [0, 15, 30, 45, 60, 75, 90];
   return (
     <div className="tm-tl" title="Zeitleiste: oben Heim, unten Gast">
       <div className="tm-tl-mom">
@@ -131,7 +134,7 @@ export function Timeline({ sim, shownSeq }: { sim: MatchSim; shownSeq: number })
       </div>
       <div className="tm-tl-track">
         <div className="tm-tl-fill" style={{ width: pct(now) }} />
-        {ticks.map((t) => <span key={t} className={`tm-tl-tick ${t === 45 || t === 90 ? 'half' : ''}`} style={{ left: pct(t) }}><em>{t}</em></span>)}
+        {ticks.map((t) => <span key={t} className={`tm-tl-tick ${t === 0 ? 'edge start' : t === len ? 'edge end' : t === 45 || t === 90 ? 'half' : ''}`} style={{ left: pct(t) }}><em>{t}</em></span>)}
         <span className="tm-tl-ball" style={{ left: pct(now) }}><Icon name="matchball" size={22} /></span>
       </div>
       {marks.map((m) => (

@@ -5,6 +5,7 @@
 // Gegner/Live/Statistik/Tabelle, Knöpfe. Wechsel und Umstellungen laufen über
 // den eigenen Wechsel-Bildschirm (changes/ChangesScreen.tsx).
 // =============================================================================
+import { WeatherGlyph } from '../../components/WeatherGlyph';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Icon from '../../components/Icon';
 import PlayerModal from '../../components/PlayerModal';
@@ -104,10 +105,9 @@ export function MatchScreen({ g, sim, info, settings, onSettings, onComplete, on
     <div className="ms-root tm-root">
       <div className="ms-top">
         <div className="ms-top-l">
-          <Icon name="matchball" size={30} />
           <span className="ms-comp">Textmodus</span>
           <span className="ms-dim">{fmtDateFull(info.date)}</span>
-          <span className="ms-dim"><Icon name="weather" size={22} /> {WEATHER[sim.weather] ?? sim.weather}</span>
+          <span className="ms-dim ms-wx"><WeatherGlyph w={sim.weather} size={30} /> {WEATHER[sim.weather] ?? sim.weather}</span>
           <span className="ms-dim">{sim.attendance.toLocaleString('de-DE')} Zuschauer</span>
           {sim.derby && <span className="ms-pill">Derby</span>}
           {state.paused && !changesOpen && <span className="ms-pill">Pause</span>}
