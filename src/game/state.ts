@@ -105,6 +105,8 @@ export interface Game {
   contracts2?: import('./contractClausesGame').Contracts2State;
   /** Verhandlungen mit Mitarbeitern am Verhandlungstisch (game/staffTalk.ts), je Person. */
   staffTalks?: Record<string, import('./staffTalk').StaffTalkState>;
+  /** Verhandlungen mit Sponsoren am Verhandlungstisch (game/sponsorTalk.ts), je Angebot bzw. `naming:<Firma>`. */
+  sponsorTalks?: Record<string, import('./sponsorTalk').SponsorTalkState>;
   /** Laufende Transferverhandlungen (game/transferTalks.ts). */
   transferTalks?: import('./transferTalks').TransferTalk[];
   /** Sperrzeiten der Vereinsereignisse (Typ → Datum). */

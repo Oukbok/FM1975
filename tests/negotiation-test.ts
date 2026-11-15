@@ -4,10 +4,15 @@
 // 2) Spieler beim Transfer: Paketlogik mit Gegenangebot, Interesse verschiebt die Schwelle, Sperren.
 // 3) Mitarbeiter: Forderung/Schwelle, Gegenvorschlag, Einstellung mit Vertragspunkten (Abfindung, Abwerbeschutz,
 //    Erfolgsprämie, Fortbildung, Handgeld), Verlängerung, Abbruch mit Sperre.
+// 4) Sponsor: Obergrenze über dem Erstangebot, Paketlogik (Klauseln/Prämien/Option/Laufzeit), Gegenvorschlag,
+//    Abschluss über signSponsorOffer mit den verhandelten Werten, Rückzug nach Abbruch, Namensrechte mit Sperre.
 import { createNewGame } from '../src/game/newGame';
 import { clauseMet, clubCounter, sellerPrefs } from '../src/engine/clubNegotiation';
 import { answer, buildDemand, packageValue as playerValue } from '../src/engine/contractNegotiation';
 import { buildStaffDemand, staffAnswer, staffValue, StaffTerms } from '../src/engine/staffNegotiation';
+import { buildSponsorDemand, openTerms, sponsorAnswer, sponsorCost, SponsorTerms } from '../src/engine/sponsorNegotiation';
+import { currentNamingOffers } from '../src/game/clubBusiness';
+import { cancelSponsorTalk, namingKey, openSponsorTalk, sponsorCtx, sponsorTalkView, submitSponsorDemand } from '../src/game/sponsorTalk';
 import { staffSeasonTurnover } from '../src/engine/staffPeople';
 import { ClubPackage, NEUTRAL_PREFS, packageValue } from '../src/engine/transferMarket';
 import { transferCtx, transferViewOf } from '../src/game/contractView';
@@ -224,6 +229,66 @@ const pickTarget = (g: Game, n = 2) => {
   // Abbrechen von dir aus.
   const third = staffMarket(g, { role: 'zeugwart', onlyFree: true }).filter((r) => willMove(g, r.m))[0];
   if (third) { staffTalkView(g, third.m.id, 'zeugwart'); cancelStaffTalk(g, third.m.id); ok(g.staffTalks![third.m.id].status === 'failed', 'Gespräch von dir beendet'); }
+}
+
+// ---------------------------------------------------------------- 4) Sponsor
+{
+  const g = fresh();
+  const own = g.clubs[g.managedClubId];
+  const offers = own.commerce?.dealOffers ?? [];
+  const o = offers.find((x) => x.slot === 'brust' && x.clauses.some((k) => k.kind !== 'image' && k.kind !== 'youth' && k.kind !== 'option')) ?? offers.find((x) => x.slot === 'brust')!;
+  ok(!!o, `Brust-Angebot vorhanden: ${o?.partner} ${o?.annualValue} (Klauseln ${o?.clauses.map((k) => k.kind).join(',') || 'keine'})`);
+  const v = sponsorTalkView(g, o.id)!;
+  ok(v.status === 'open' && !!v.ask && !!v.d && !!v.base && v.levers.length > 0 && Math.abs(v.askWorth - 1) < 1e-9, `Gespräch offen, Hebel: ${v.levers.map((l) => `${l.side > 0 ? '+' : '−'}${l.text}`).join(' | ')}`);
+  const b = v.base!, ctx = sponsorCtx(g, o.id), d = buildSponsorDemand(b, ctx);
+  const open = openTerms(b);
+  ok(d.limit > sponsorCost(open, b, ctx) && d.limit < sponsorCost(open, b, ctx) * 1.35, `Obergrenze ${Math.round(d.limit)} über dem Erstangebot ${Math.round(sponsorCost(open, b, ctx))} (Spielraum)`);
+  ok(sponsorAnswer(open, b, ctx, open, 1).accepted, 'Erstangebot unverändert wird angenommen');
+  // Paketlogik.
+  const more = (x: Partial<SponsorTerms>) => sponsorCost({ ...open, ...x }, b, ctx) > sponsorCost(open, b, ctx);
+  const dropIdx = b.clauses.findIndex((k) => k.kind !== 'image' && k.kind !== 'youth');
+  ok(more({ value: open.value + 5000 }) && (dropIdx < 0 || more({ drop: [dropIdx] })) && (!b.optionOk || b.option || more({ option: true }))
+    && sponsorCost({ ...open, years: open.years + 2 }, b, ctx) < sponsorCost(open, b, ctx)
+    && (!(b.bonuses.title ?? 0) || more({ bonuses: { ...open.bonuses, title: (b.bonuses.title ?? 0) * 2 } })), 'Paketlogik: Betrag, gestrichene Klausel, Option und Prämien kosten ihn; längere Laufzeit ist ihm etwas wert');
+  // Zu viel → Gegenvorschlag, den er selbst annimmt; nie schlechter als sein Erstangebot.
+  const greedy: SponsorTerms = { ...open, value: Math.round(d.limit * 1.15 / 500) * 500 };
+  const r1 = submitSponsorDemand(g, o.id, greedy);
+  const st = g.sponsorTalks![o.id];
+  ok(!r1.done && st.round === 1 && st.patience < st.start && st.ask.value >= open.value && st.ask.value <= greedy.value, `Zu viel: Gegenvorschlag ${st.ask.value} (Erstangebot ${open.value}, Forderung ${greedy.value}), Geduld ${st.patience}/${st.start}`);
+  ok(sponsorAnswer(st.ask, b, ctx, st.ask, 2).accepted, 'Sein Gegenvorschlag reicht ihm selbst');
+  ok(own.commerce!.dealOffers!.find((x) => x.id === o.id)!.annualValue === st.ask.value && own.commerce!.dealOffers!.find((x) => x.id === o.id)!.rounds === 1, 'Karteikarte zeigt den aktuellen Stand (Betrag, Runden)');
+  // Einigung: seinen Vorschlag übernehmen → Vertrag mit genau diesen Werten über signSponsorOffer.
+  const r2 = submitSponsorDemand(g, o.id, st.ask);
+  const deal = own.commerce!.deals!.find((x) => x.partner === o.partner && x.slot === 'brust');
+  ok(r2.ok && st.status === 'agreed' && !!deal && deal.annualValue === st.deal!.value && deal.yearsTotal === st.deal!.years && !own.commerce!.dealOffers!.some((x) => x.id === o.id), `Einigung: ${r2.text}`);
+  ok(typeof openSponsorTalk(g, o.id) === 'string' && sponsorTalkView(g, o.id)!.status === 'agreed', 'Abgeschlossenes Gespräch bleibt abgeschlossen');
+  // Dreiste Forderungen → Rückzug des Angebots.
+  const o2 = own.commerce!.dealOffers!.find((x) => x.slot !== 'brust' && !x.renewal)!;
+  const v2 = sponsorTalkView(g, o2.id)!;
+  let n = 0;
+  while (g.sponsorTalks![o2.id].status === 'open' && n++ < 6) submitSponsorDemand(g, o2.id, { ...v2.ask!, value: v2.ask!.value * 3 });
+  const s2 = g.sponsorTalks![o2.id];
+  ok(s2.status === 'failed' && n <= 3 && !own.commerce!.dealOffers!.some((x) => x.id === o2.id) && typeof openSponsorTalk(g, o2.id) === 'string', `Dreiste Forderungen: Abbruch nach ${n} Runden, Angebot zurückgezogen (${o2.partner})`);
+  // Abbrechen von dir aus: Angebot bleibt.
+  const o3 = own.commerce!.dealOffers!.find((x) => !x.renewal);
+  if (o3) { sponsorTalkView(g, o3.id); cancelSponsorTalk(g, o3.id); ok(g.sponsorTalks![o3.id].status === 'failed' && own.commerce!.dealOffers!.some((x) => x.id === o3.id), 'Von dir beendet: Angebot bleibt bestehen'); }
+  // Namensrechte (ab 2000): Einigung über acceptNaming, Abbruch sperrt die Firma.
+  g.calendar.currentDate = '2003-08-01'; g.season = '2003/04';
+  own.namingRights = undefined;
+  const no = currentNamingOffers(g);
+  ok(no.length >= 2, `Namensrechte: ${no.length} Angebote`);
+  const k1 = namingKey(no[0].sponsor);
+  const vn = sponsorTalkView(g, k1)!;
+  ok(vn.status === 'open' && vn.base!.range[0] === 3 && vn.unit > 0, `Namensrechte-Gespräch mit ${no[0].sponsor}`);
+  const rn = submitSponsorDemand(g, k1, { ...vn.ask!, years: 6 });
+  ok(rn.ok && own.namingRights?.sponsor === no[0].sponsor && own.namingRights!.untilYear === no[0].fromYear + 6 && own.stadium.name === no[0].arenaName, `Namensrechte verkauft: ${rn.text}`);
+  own.namingRights = undefined;
+  const no2 = currentNamingOffers(g).filter((x) => x.sponsor !== no[0].sponsor);
+  const k2 = namingKey(no2[0].sponsor);
+  const vn2 = sponsorTalkView(g, k2)!;
+  let m = 0;
+  while (g.sponsorTalks![k2].status === 'open' && m++ < 6) submitSponsorDemand(g, k2, { ...vn2.ask!, value: vn2.ask!.value * 3 });
+  ok(g.sponsorTalks![k2].status === 'failed' && !currentNamingOffers(g).some((x) => x.sponsor === no2[0].sponsor), `Namensrechte: nach dem Abbruch meldet sich ${no2[0].sponsor} vorerst nicht`);
 }
 
 console.log(fails ? `\n${fails} Prüfung(en) fehlgeschlagen` : '\nVerhandlungstisch: alle Prüfungen bestanden.');

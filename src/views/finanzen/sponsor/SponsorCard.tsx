@@ -8,6 +8,7 @@ import { COUNTRY_BY_ID, INDUSTRY_BY_ID, SLOT_BY_ID } from '../../../data/sponsor
 import { LOGE_GUESTS, STAND } from '../../../data/seatingCatalog';
 import { namingAnnualNominal, NAMING_RIGHTS_YEAR } from '../../../engine/clubBusiness';
 import { rawStandCaps } from '../../../engine/seating';
+import { SPONSOR_MAX_ROUNDS } from '../../../engine/sponsorNegotiation';
 import { slotMarketValue } from '../../../engine/sponsorship';
 import { currentNamingOffers } from '../../../game/clubBusiness';
 import { exerciseOption, rejectSponsorOffer, signSponsorOffer, terminateDeal, terminationCost } from '../../../game/sponsorGame';
@@ -53,8 +54,8 @@ const meta = (x: SponsorDeal | SponsorDealOffer) => {
   return `${ind} · ${COUNTRY_BY_ID[x.country]?.name ?? x.country}`;
 };
 
-export function SponsorCard({ g, t, onClose, onOpen, onTalk, onAct, onNaming, onGoto }: {
-  g: Game; t: SpTarget; onClose: () => void; onOpen: (t: SpTarget) => void; onTalk: (offerId: string) => void;
+export function SponsorCard({ g, t, onClose, onOpen, onTalk, onTalkNaming, onAct, onNaming, onGoto }: {
+  g: Game; t: SpTarget; onClose: () => void; onOpen: (t: SpTarget) => void; onTalk: (offerId: string) => void; onTalkNaming: (sponsor: string) => void;
   onAct: (err: string | null) => void; onNaming: (idx: number) => void; onGoto: (s: Screen) => void;
 }) {
   const ctx = spContext(g);
@@ -130,7 +131,7 @@ export function SponsorCard({ g, t, onClose, onOpen, onTalk, onAct, onNaming, on
             <KV k="Gültig bis" v={fmtD(o.until)} />
             <KV k="Sponsor" v={mood} />
             {bonusText(o.bonuses, year) && <KV k="Erfolgsprämien" v={bonusText(o.bonuses, year)} />}
-            {o.rounds > 0 && <KV k="Verhandlungsrunden" v={`${o.rounds} von 2`} />}
+            {o.rounds > 0 && <KV k="Verhandlungsrunden" v={`${o.rounds} von ${SPONSOR_MAX_ROUNDS}`} />}
           </div>
           <div>
             <div className="dsec">Klauseln</div>
@@ -180,7 +181,8 @@ export function SponsorCard({ g, t, onClose, onOpen, onTalk, onAct, onNaming, on
             ? <><span className="sp3-confirm">{renewal ? 'Verlängern?' : 'Stadion umbenennen?'}</span>
               <button className="btn btn-primary" onClick={() => { onNaming(t.kind === 'namingOffer' ? t.idx : 0); setConfirm(false); }}>Ja, unterschreiben</button>
               <button className="btn" onClick={() => setConfirm(false)}>Nein</button></>
-            : <button className="btn btn-primary" onClick={() => setConfirm(true)}>Namensrechte verkaufen</button>}>
+            : <><button className="btn btn-primary" onClick={() => setConfirm(true)}>Namensrechte verkaufen</button>
+              <button className="btn" onClick={() => { onTalkNaming(o.sponsor); onClose(); }}>Verhandeln</button></>}>
           <KV k="Jahreswert" v={fmtDM(namingAnnualNominal(o, club, year))} strong />
           <KV k="Laufzeit" v={`${o.fromYear} bis 30.06.${o.untilYear}`} />
           <KV k="Stadion heißt dann" v={o.arenaName} />
@@ -204,6 +206,7 @@ export function SponsorCard({ g, t, onClose, onOpen, onTalk, onAct, onNaming, on
             <button className="sp3-mini-name" onClick={() => onOpen({ kind: 'namingOffer', idx: i })}><b>{x.sponsor}</b><span>{x.arenaName} · bis {x.untilYear}</span></button>
             <b className="sp3-mini-val">{fmtDM(namingAnnualNominal(x, club, year))}</b>
             <button className="dchip" onClick={() => onOpen({ kind: 'namingOffer', idx: i })}>Ansehen</button>
+            <button className="dchip" onClick={() => { onTalkNaming(x.sponsor); onClose(); }}>Verhandeln</button>
           </div>
         ))}
       </Frame>

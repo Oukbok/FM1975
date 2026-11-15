@@ -12,6 +12,7 @@ import type { SponsorDeal } from '../../../types/sponsor';
 import { DashBox, DashPage, KV } from '../../../ui/DashPage';
 import { fmtDM } from '../../../ui/format';
 import { partnerMeta, yearly } from './parts';
+import { OfferRow } from './OfferTable';
 import { SponsorLogo, logoSpec } from './SponsorLogo';
 import { BOARD_SLOTS, sumDeals, tilesFor, untilSeason, yearsText, type SpCtx, type Tile } from './model';
 import type { SponsorUi } from './useSponsorUi';
@@ -114,13 +115,7 @@ export function BoardsTab({ ctx, ui }: { ctx: SpCtx; ui: SponsorUi }) {
       <DashBox title="Sponsorenangebote" icon="negotiations" info="verhandeln" right={free ? `${free} frei` : undefined}>
         {ui.note && <div className="sp-warn">{ui.note}</div>}
         <div className="sp3-offer-list">
-          {bOffers.map((o) => (
-            <div key={o.id} className={`sp3-orow ${ui.isOpen({ kind: 'offer', id: o.id }) ? 'on' : ''}`} {...ui.bind({ kind: 'offer', id: o.id }, o.partner)}>
-              <SponsorLogo name={o.partner} industry={o.industry} year={year} variant="mark" className="sp3-orow-logo" />
-              <span className="sp3-orow-name"><b>{o.partner}</b><span>{SLOT_BY_ID[o.slot].short}{o.renewal ? ' · Verlängerung' : ''} · {yearsText(o.years)}</span></span>
-              <b className="sp3-orow-val">{fmtDM(yearly(o.annualValue, year))}</b>
-            </div>
-          ))}
+          {bOffers.map((o) => <OfferRow key={o.id} ctx={ctx} ui={ui} o={o} />)}
         </div>
         {!bOffers.length && <div className="dnote">{free ? 'Für die freien Flächen liegt gerade kein Angebot vor.' : 'Alle Bandenflächen sind vergeben.'}</div>}
         {free > 0 && <div className="sp3-freenote">Noch {free} freie Bandenfläche{free === 1 ? '' : 'n'}.</div>}

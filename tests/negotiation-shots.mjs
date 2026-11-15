@@ -1,15 +1,17 @@
-// Screenshots des Verhandlungstischs (screens/negotiation/, screens/contract/) für alle drei Gespräche:
-//   Spieler (Vertragsverlängerung), Transfer (Verein → Spieler → Abschluss), Mitarbeiter (Einstellung).
+// Screenshots des Verhandlungstischs (screens/negotiation/, screens/contract/) für alle vier Gespräche:
+//   Spieler (Vertragsverlängerung), Transfer (Verein → Spieler → Abschluss), Mitarbeiter (Einstellung),
+//   Sponsor (Angebot aus Finanzen › Sponsoring; neues Spiel 1975, dort liegen Angebote vor).
 // Je Gespräch: Start, Hinweis unter dem Zeiger, nach einer abgelehnten Runde (Gegenvorschlag, Verlauf),
 // „nicht verhandelbar“, Abschluss mit Stempel (Einigung) und ein gescheitertes Gespräch.
 // Prüft feste Größen (Spalten/Karten ändern sich beim Bedienen nicht), Überläufe und JS-Fehler.
 //   npm run build && node tests/negotiation-shots.mjs [ordner]
-//   VIEW=1366x768 für kleine Bildschirme, ONLY=renew|transfer|staff, SAVE=… (Standard: Vorlage „Test 3 Jahre“).
+//   VIEW=1366x768 für kleine Bildschirme, ONLY=renew|transfer|staff|sponsor, SAVE=… (Standard: Vorlage „Test 3 Jahre“).
 import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { chromium } from 'playwright';
 import LZ from 'lz-string';
+import { startNewGame } from './newgame-flow.mjs';
 
 /** Vorstand großzügiger stellen, damit Einigungen nicht am Budget scheitern (ROOM=0 schaltet ab). */
 function withRoom(raw) {
@@ -247,6 +249,49 @@ if (!only || only === 'staff') {
   }
   if (!agreed) errors.push('Mitarbeiter: kein Gespräch bis zur Einigung gekommen');
   await page.screenshot({ path: `${outDir}/${tag}_mitarbeiter_6_seite_danach.png` });
+  await page.close();
+}
+
+// ---------------------------------------------------------------- Sponsor: Angebot aus Finanzen › Sponsoring
+if (!only || only === 'sponsor') {
+  const page = await browser.newPage({ viewport: { width: vw, height: vh } });
+  page.on('pageerror', (e) => errors.push(`JS-Fehler: ${e.message}`));
+  await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
+  await page.goto(`http://127.0.0.1:${server.address().port}/`);
+  await startNewGame(page);
+  await nav(page, 'Finanzen', 'Sponsoring');
+  const talk = async (n) => {
+    await page.locator('.sp3-otable tbody tr button:has-text("Verhandeln")').nth(n).click({ timeout: 3000 });
+    await page.waitForSelector('.vt-root[data-kind="sponsor"]', { timeout: 4000 });
+  };
+  await talk(0);
+  await shot(page, 'sponsor_1_start', { fresh: true });
+  const clause = page.locator('.vt-row[data-key^="c"]').first();
+  if (await clause.count()) { await clause.hover(); await shot(page, 'sponsor_2_hinweis'); }
+  await setRange(page.locator('.vt-row[data-key="value"] input[type=range]'), 1);
+  await page.locator('.vt-row[data-key="years"] .vt-lockbtn').click();
+  await page.locator('.vt-send').click();
+  await shot(page, 'sponsor_3_runde1');
+  if (await page.locator('.vt-table').count()) {
+    await page.locator('button:has-text("Angebot übernehmen")').click();
+    await page.locator('.vt-send').click();
+  }
+  await shot(page, 'sponsor_4_einigung');
+  if (await outcome(page) !== 'agreed') errors.push('Sponsor: Angebot übernommen, aber keine Einigung');
+  await closeTable(page);
+  await page.screenshot({ path: `${outDir}/${tag}_sponsor_5_seite_danach.png` });
+  // Zweites Angebot: dreiste Forderungen bis zum Rückzug.
+  if (await page.locator('.sp3-otable tbody tr button:has-text("Verhandeln")').count()) {
+    await talk(0);
+    for (let k = 0; k < 8 && await page.locator('.vt-table').count(); k++) {
+      await setRange(page.locator('.vt-row[data-key="value"] input[type=range]'), 1);
+      await page.locator('.vt-send').click();
+      await page.waitForTimeout(200);
+    }
+    await shot(page, 'sponsor_6_gescheitert');
+    if (await outcome(page) !== 'failed') errors.push('Sponsor: dreiste Forderungen, aber kein Abbruch');
+    await closeTable(page);
+  } else errors.push('Sponsor: kein zweites Angebot');
   await page.close();
 }
 

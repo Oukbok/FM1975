@@ -29,6 +29,8 @@ export interface PositionData {
   unit?: string;
   /** Abstand als Text (fehlt = Betrag und Prozent der Forderung). */
   gapFmt?: (gap: number) => string;
+  /** Umgekehrte Rollen (Sponsor): Du forderst mehr, das Gegenüber bietet weniger – Einigung, sobald dein Wert ≤ seinem ist. */
+  reverse?: boolean;
 }
 
 const W = 100;
@@ -40,12 +42,16 @@ export function PositionBar({ p, ended }: { p: PositionData; ended?: 'agreed' | 
   const pad = Math.max((hi - lo) * 0.12, hi * 0.03);
   lo = Math.max(0, lo - pad); hi += pad * 0.6;
   const x = (v: number) => Math.max(0, Math.min(W, ((v - lo) / Math.max(1e-9, hi - lo)) * W));
-  const met = p.ask != null && p.offer >= p.ask * 0.985;
-  const gap = Math.max(0, ask - p.offer);
+  const rev = !!p.reverse;
+  const met = p.ask != null && (rev ? p.offer <= p.ask * 1.015 : p.offer >= p.ask * 0.985);
+  const gap = Math.max(0, rev ? p.offer - ask : ask - p.offer);
   const gapPct = ask > 0 ? Math.round((gap / ask) * 100) : 0;
-  const inZone = p.zone ? (p.offer >= p.zone[1] ? 2 : p.offer >= p.zone[0] ? 1 : 0) : -1;
+  const inZone = !p.zone ? -1 : rev ? (p.offer <= p.zone[0] ? 2 : p.offer <= p.zone[1] ? 1 : 0) : (p.offer >= p.zone[1] ? 2 : p.offer >= p.zone[0] ? 1 : 0);
   const verdict = ended === 'agreed' ? 'Einigung erzielt' : ended === 'failed' ? 'Gespräch beendet'
-    : p.ask == null ? 'Noch keine Forderung' : met ? 'Du erfüllst die Forderung' : inZone === 2 ? 'Über der geschätzten Zone – gute Aussicht' : inZone === 1 ? 'In der geschätzten Zone – könnte reichen'
+    : p.ask == null ? 'Noch keine Forderung' : met ? (rev ? 'Sein Angebot deckt deine Forderung' : 'Du erfüllst die Forderung')
+      : inZone === 2 ? (rev ? 'Unter der geschätzten Grenze – gute Aussicht' : 'Über der geschätzten Zone – gute Aussicht')
+      : inZone === 1 ? (rev ? 'An der geschätzten Grenze – könnte reichen' : 'In der geschätzten Zone – könnte reichen')
+      : rev && inZone === 0 ? 'Über der geschätzten Grenze'
       : p.ask == null ? 'Noch keine Forderung' : inZone === 0 ? 'Unter der geschätzten Zone' : 'Abstand zur Forderung';
   const tone = ended === 'failed' ? 'bad' : p.ask == null ? 'far' : met || ended === 'agreed' || inZone === 2 ? 'good' : inZone === 1 ? 'mid' : 'far';
   const rounds = p.hist.length;
@@ -72,7 +78,7 @@ export function PositionBar({ p, ended }: { p: PositionData; ended?: 'agreed' | 
           aria-label={`${p.offerLabel ?? 'Dein Angebot'} ${p.fmt(p.offer)}, ${p.askLabel ?? 'Forderung'} ${p.ask == null ? 'offen' : p.fmt(p.ask)}`}>
           <i className="vt-track" />
           {p.zone && <i className="vt-zone" style={{ left: `${x(p.zone[0])}%`, width: `${Math.max(0.6, x(p.zone[1]) - x(p.zone[0]))}%` }} />}
-          {p.ask != null && !met && <i className="vt-gap" style={{ left: `${x(p.offer)}%`, width: `${Math.max(0, x(ask) - x(p.offer))}%` }} />}
+          {p.ask != null && !met && <i className="vt-gap" style={{ left: `${Math.min(x(p.offer), x(ask))}%`, width: `${Math.abs(x(ask) - x(p.offer))}%` }} />}
           {p.hist.map(([o], i) => <i key={`o${i}`} className="vt-ghost mine" style={{ left: `${x(o)}%` }} />)}
           {rounds > 0 && <i className="vt-ghost theirs" style={{ left: `${x(p.open)}%` }} />}
           {p.hist.slice(0, -1).map(([, a], i) => <i key={`a${i}`} className="vt-ghost theirs" style={{ left: `${x(a)}%` }} />)}

@@ -1,5 +1,5 @@
 // Screenshots Sponsoring (Finanzen › Sponsoring: Reiter Hauptsponsor, Namensrechte,
-// Sponsoren-Pyramide, Bandenwerbung; Karteikarte, Kontextmenü, Verhandlung) bei
+// Sponsoren-Pyramide, Bandenwerbung; Karteikarte, Kontextmenü, Vorschau auf dem Trikot, Verhandlungstisch) bei
 // 1920×1080 und 1366×768 – zu Spielbeginn 1975 oder aus einem Spielstand.
 //   npm run build && node tests/sponsor-shots.mjs [ausgabeordner] [präfix]
 //   Vorlage 1978:  SAVE=public/saves/test-3-jahre.txt node tests/sponsor-shots.mjs test-output/sponsor y1978
@@ -62,6 +62,13 @@ for (const [W, H] of views) {
     await page.waitForTimeout(400);
     await noScroll(label);
     await shot(`${id}`);
+    // Hauptsponsor: Zeiger auf einem Angebot zeigt das Logo auf dem Trikot.
+    if (id === 'haupt' && await page.locator('.sp3-otable tbody tr').count()) {
+      await page.locator('.sp3-otable tbody tr').first().hover();
+      await page.waitForTimeout(200);
+      await shot('haupt_vorschau');
+      await page.mouse.move(5, 5);
+    }
     if (W !== views[0][0]) continue;
     // Linksklick: Karteikarte des ersten Vertrags/Angebots/Felds
     const first = page.locator('.sp3-dpage [data-sp^="deal:"], .sp3-dpage [data-sp^="offer:"], .sp3-dpage [data-sp^="st:"]').first();
@@ -97,12 +104,15 @@ for (const [W, H] of views) {
       if (!(await offer.count())) continue;
       await offer.click({ button: 'right' });
       await page.locator('.sp3-menu .pcm-item:has-text("Verhandeln")').click();
+      // Verhandlungstisch (screens/negotiation/SponsorTalk.tsx)
+      await page.waitForSelector('.vt-root[data-kind="sponsor"]', { timeout: 4000 }).catch(() => errors.push('Verhandeln öffnet keinen Verhandlungstisch'));
       await page.waitForTimeout(300);
       await shot('verhandlung');
-      await page.locator('.modal button:has-text("Gegenangebot senden")').click();
-      await page.waitForTimeout(300);
+      await page.locator('.vt-root .vt-send').click();
+      await page.waitForTimeout(400);
       await shot('verhandlung_antwort');
-      await page.locator('.modal-close').first().click().catch(() => {});
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(200);
       break;
     }
   }

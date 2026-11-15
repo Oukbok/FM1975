@@ -515,7 +515,7 @@ export const INFO_TEXTS = {
   },
   verhandeln: {
     title: 'Verhandeln',
-    text: 'Du kannst mehr Geld, eine andere Laufzeit oder weniger Klauseln fordern. Je stärker deine Marke im Vergleich zum Angebot, desto eher gibt der Partner nach – überreizt du, zieht er sein Angebot zurück.',
+    text: '„Unterschreiben“ nimmt ein Angebot so an, wie es ist. „Verhandeln“ öffnet den Verhandlungstisch: mehr Geld, andere Laufzeit, höhere Prämien, Klauseln streichen. Je stärker deine Marke und je mehr Interessenten, desto eher gibt der Partner nach – überreizt du, zieht er sein Angebot zurück.',
     wiki: 'marketing-overview',
   },
   // ---------------------------------------------------------------- Fanartikel (Finanzen › Fanartikel)
@@ -1210,6 +1210,11 @@ export const INFO_TEXTS = {
   v2_fest: {
     title: 'Nicht verhandelbar',
     text: 'Mit dem Schloss erklärst du einen Punkt für nicht verhandelbar: Dein Gegenüber lässt ihn im Gegenvorschlag stehen und sucht den Wert bei den übrigen Punkten. Jede Sperre kostet etwas Geduld – und steht sie gegen eine Bedingung der anderen Seite, kommt ihr nicht zusammen.',
+    wiki: 'negotiation-table',
+  },
+  sponsorVerhandlung: {
+    title: 'Verhandlung mit Sponsoren',
+    text: 'Der Sponsor rechnet dein ganzes Paket in Kosten pro Jahr: Jahresbetrag, Laufzeit, Erfolgsprämien, gestrichene Klauseln und die Verlängerungsoption. Bis zu seiner verdeckten Obergrenze sagt er zu, darüber macht er einen Gegenvorschlag und verliert Geduld. Nach vier Runden ohne Einigung oder ohne Geduld zieht er sein Angebot zurück.',
     wiki: 'negotiation-table',
   },
   staffVerhandlung: {

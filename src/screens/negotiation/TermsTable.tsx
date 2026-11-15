@@ -36,8 +36,8 @@ export interface TermRow {
   changed?: boolean;
 }
 
-export function TermsTable({ rows, disabled, askHead = 'Forderung', defaultHint, roomy, extra }: {
-  rows: TermRow[]; disabled?: boolean; askHead?: string; defaultHint?: ReactNode;
+export function TermsTable({ rows, disabled, askHead = 'Forderung', mineHead = 'Dein Angebot', defaultHint, roomy, extra }: {
+  rows: TermRow[]; disabled?: boolean; askHead?: string; mineHead?: string; defaultHint?: ReactNode;
   /** Wenige Punkte: höhere Zeilen. */
   roomy?: boolean;
   /** Fester Streifen zwischen Liste und Hinweis (z. B. die Aufschlüsselung des Paketwerts). */
@@ -48,7 +48,7 @@ export function TermsTable({ rows, disabled, askHead = 'Forderung', defaultHint,
   return (
     <div className={`vt-table${disabled ? ' off' : ''}${roomy ? ' roomy' : ''}${extra ? ' with-extra' : ''}`}>
       <div className="vt-thead">
-        <span>Punkt</span><span>{askHead}</span><span>Dein Angebot</span><span className="c">Stand</span><span className="c">Wichtig</span><span className="c" title="Nicht verhandelbar">Fest</span>
+        <span>Punkt</span><span>{askHead}</span><span>{mineHead}</span><span className="c">Stand</span><span className="c">Wichtig</span><span className="c" title="Nicht verhandelbar">Fest</span>
       </div>
       <div className="vt-rows">
         {rows.map((r) => (

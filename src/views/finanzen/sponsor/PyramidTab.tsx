@@ -9,6 +9,7 @@ import { upcomingSlots } from '../../../engine/sponsorship';
 import { DashBox, DashPage, KV } from '../../../ui/DashPage';
 import { fmtDM } from '../../../ui/format';
 import { partnerMeta, yearly } from './parts';
+import { OfferRow } from './OfferTable';
 import { SponsorLogo } from './SponsorLogo';
 import { PYRAMID, SHIRT_SLOTS, BOARD_SLOTS, sumDeals, tilesFor, yearsText, type SpCtx, type Tile } from './model';
 import type { SponsorUi } from './useSponsorUi';
@@ -58,13 +59,7 @@ export function PyramidTab({ ctx, ui }: { ctx: SpCtx; ui: SponsorUi }) {
         <div className="dsec">Sponsorenangebote</div>
         {ui.note && <div className="sp-warn">{ui.note}</div>}
         <div className="sp3-offer-list">
-          {pOffers.length ? pOffers.map((o) => (
-            <div key={o.id} className={`sp3-orow ${ui.isOpen({ kind: 'offer', id: o.id }) ? 'on' : ''}`} {...ui.bind({ kind: 'offer', id: o.id }, o.partner)}>
-              <SponsorLogo name={o.partner} industry={o.industry} year={year} variant="mark" className="sp3-orow-logo" />
-              <span className="sp3-orow-name"><b>{o.partner}</b><span>{SLOT_BY_ID[o.slot].short}{o.renewal ? ' · Verlängerung' : ''} · {partnerMeta(o)} · {yearsText(o.years)}</span></span>
-              <b className="sp3-orow-val">{fmtDM(yearly(o.annualValue, year))}</b>
-            </div>
-          )) : <div className="dnote">Keine offenen Angebote für die Pyramide. Neue Interessenten melden sich zum Saisonwechsel, im Lauf der Saison für freie Plätze und im Januar für auslaufende Verträge.</div>}
+          {pOffers.length ? pOffers.map((o) => <OfferRow key={o.id} ctx={ctx} ui={ui} o={o} />) : <div className="dnote">Keine offenen Angebote für die Pyramide. Neue Interessenten melden sich zum Saisonwechsel, im Lauf der Saison für freie Plätze und im Januar für auslaufende Verträge.</div>}
         </div>
         {coming.length > 0 && <div className="dsec">Kommt in den nächsten Jahren</div>}
         {coming.map((s) => <KV key={s.id} k={s.name} v={`ab ${s.unlock}/${String(s.unlock + 1).slice(2)}`} />)}

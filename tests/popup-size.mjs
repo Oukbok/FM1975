@@ -99,34 +99,31 @@ for (const view of VIEWS) {
     ['auslosung', '.dr-root', async () => { await nav('Statistiken', 'Pokal'); await click('.app-main .cmp-chips button:has-text("Runden")').catch(() => {}); await page.waitForTimeout(300); await click('.app-main .dchip:has-text("Auslosung")'); await page.waitForTimeout(600); }],
     ['trainingslager', '.cp-modal', async () => { await nav('Training', 'Trainingslager'); await click('.cp-plan-btn'); }],
     ['sponsor-karte', '.sp3-card', async () => { await nav('Finanzen', 'Sponsoring'); await page.locator('.app-main [data-sp^="deal:"], .app-main [data-sp^="offer:"], .app-main [data-sp^="st:"]').first().click(); }],
-    // Braucht ein offenes Sponsorangebot: fehlt es im Spielstand, wird ein vorbereiteter Stand geladen
-    // (tests/sponsor-offer-prep.ts – spielt ohne UI bis zum ersten Angebot, z. B. Verlängerung am 1.1.).
-    ['sponsor-verhandlung', '.modal', async () => {
-      const findOffer = async () => {
-        await nav('Finanzen', 'Sponsoring');
-        for (const t of ['Hauptsponsor', 'Pyramide', 'Banden', 'Namensrechte']) {
-          await page.locator(`.sp3-tabs .tab:has-text("${t}")`).first().click().catch(() => {});
-          await page.waitForTimeout(200);
-          const o = page.locator('.app-main [data-sp^="offer:"]').first();
-          if (await o.count()) { await o.click({ button: 'right' }); await click('.sp3-menu .pcm-item:has-text("Verhandeln")'); return true; }
-          // Verlängerungsangebot hängt am laufenden Vertrag: Kontextmenü › ansehen › Verhandeln
-          for (const d of await page.locator('.app-main [data-sp^="deal:"]').all()) {
-            if (!(await d.isVisible().catch(() => false))) continue;
-            if (!(await d.click({ button: 'right', timeout: 1500 }).then(() => true).catch(() => false))) continue;
-            const item = page.locator('.sp3-menu .pcm-item:has-text("Verlängerungsangebot ansehen")');
-            if (await item.count()) { await item.click(); await click('.modal button:has-text("Verhandeln")'); return true; }
-            await page.keyboard.press('Escape'); await page.waitForTimeout(100);
-          }
-        }
-        return false;
-      };
-      if (await findOffer()) return;
-      await closeAll(page);
-      await loadSave(page, url(), await sponsorSave());
-      await closeAll(page);
-      switched = true;
-      if (!(await findOffer())) throw new Error('kein Sponsorangebot gefunden');
-    }],
+    // Sponsor am Verhandlungstisch (screens/negotiation/SponsorTalk.tsx): Knopf „Verhandeln“ an einem Angebot.
+    // Liegt keins vor (Vorlage 1978: alle Flächen vergeben), wird ein lokaler Vertrag aufgelöst – dann melden sich Interessenten.
+    ['sponsor-verhandlung', '.vt-root', async () => {
+      await nav('Finanzen', 'Sponsoring');
+      const talkBtn = '.app-main .sp3-oact button:has-text("Verhandeln")';
+      for (const t of ['Hauptsponsor', 'Pyramide', 'Banden']) {
+        await page.locator(`.sp3-tabs .tab:has-text("${t}")`).first().click().catch(() => {});
+        await page.waitForTimeout(200);
+        if (await page.locator(talkBtn).count()) break;
+      }
+      if (!(await page.locator(talkBtn).count())) {
+        await page.locator('.sp3-tabs .tab:has-text("Pyramide")').first().click();
+        await page.locator('.app-main [data-sp^="deal:"]').first().click();
+        await click('.sp3-card button:has-text("Vertrag auflösen")');
+        await click('.sp3-card button:has-text("Ja, auflösen")');
+        await page.waitForTimeout(300);
+      }
+      await page.locator(talkBtn).first().click();
+      await page.waitForSelector('.vt-root[data-kind="sponsor"]', { timeout: 4000 });
+    }, { steps: [
+      ['Laufzeit', () => soft('.vt-root .vt-row[data-key="years"] .seg3 button:nth-child(2)')],
+      ['Forderung stellen', () => soft('.vt-root .vt-send')],
+      ['Angebot übernehmen', () => soft('.vt-root button:has-text("Angebot übernehmen")')],
+      ['Forderung stellen 2', () => soft('.vt-root .vt-send')],
+    ] }],
     ['spielbericht', '.mr-modal', async () => { await nav('Aufstellung', 'Spielplan'); await click('.app-main .dchip:has-text("Bericht")'); }],
     ['presse-artikel', '.np-article', async () => { await nav('Zentrale', 'Presse'); await click('.np-lead, .np-teaser'); }],
 

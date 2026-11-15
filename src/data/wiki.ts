@@ -2199,7 +2199,7 @@ Jede Fläche ist ein eigener Vertrag mit Partner, Branche, Herkunftsland, Jahres
 Namensrechte am Stadion (ab 2000) verkaufst du im Reiter **Namensrechte**. Rechtsform & Investor stehen unter Verein › Verein, Lizenz & Schulden unter Finanzen › Finanzen, Kredite unter Finanzen › Bilanz.
 
 ## Die Seite Sponsoring
-Vier Reiter: **Hauptsponsor** (Einnahmen dieser Saison je Art, Brustvertrag mit Prämien und Klauseln, dein Heimtrikot mit Brust-, Ausrüster- und Ärmel-Logo), **Namensrechte** (Stadion von oben mit allen Tribünen, Stadionname und Angebote), **Sponsoren-Pyramide** (Premium-, Neben- und lokale Sponsoren als Logo-Kacheln; gestrichelt = frei, mit Zahl der Angebote; blass = kommt erst in einer späteren Epoche) und **Bandenwerbung** (Spielfeldrand der Epoche: bemalte Holzbanden, Kunststoff, Prismenwender, ab 2010 LED). **Linksklick** auf ein Logo, eine Bande oder Tribüne öffnet die Karteikarte mit allen Daten und Aktionen, **Rechtsklick** (Touch: lange drücken) ein Menü: Annehmen, Verhandeln, Ablehnen, Option ziehen, Auflösen, Namensrechte verkaufen. Alle Firmen und ihre Logos sind erfunden – Ähnlichkeiten mit echten Marken sind nicht gewollt. Die Logos werden aus Name, Branche und Jahrzehnt gezeichnet (später teils als Bild). Ältere Spielstände mit früheren Firmennamen werden beim Laden auf die heutigen Namen umgestellt.
+Vier Reiter: **Hauptsponsor** (Einnahmen dieser Saison, Marke & Pflichten, die Trikot-Partner Brust | Ausrüster | Ärmel neben deinem Heimtrikot und darunter alle offenen Trikot-Angebote als Vergleichstabelle – pro Jahr, Laufzeit, Gesamtsumme, Prämien, Klauseln, Image – mit den Knöpfen **Unterschreiben** und **Verhandeln**; fährst du mit dem Zeiger über ein Angebot, zeigt das Trikot sein Logo), **Namensrechte** (Stadion von oben mit allen Tribünen, Stadionname und Angebote), **Sponsoren-Pyramide** (Premium-, Neben- und lokale Sponsoren als Logo-Kacheln; gestrichelt = frei, mit Zahl der Angebote; blass = kommt erst in einer späteren Epoche) und **Bandenwerbung** (Spielfeldrand der Epoche: bemalte Holzbanden, Kunststoff, Prismenwender, ab 2010 LED). **Linksklick** auf ein Logo, eine Bande oder Tribüne öffnet die Karteikarte mit allen Daten und Aktionen, **Rechtsklick** (Touch: lange drücken) ein Menü: Annehmen, Verhandeln, Ablehnen, Option ziehen, Auflösen, Namensrechte verkaufen bzw. verhandeln. Alle Firmen und ihre Logos sind erfunden – Ähnlichkeiten mit echten Marken sind nicht gewollt. Die Logos werden aus Name, Branche und Jahrzehnt gezeichnet (später teils als Bild). Ältere Spielstände mit früheren Firmennamen werden beim Laden auf die heutigen Namen umgestellt.
 
 ## Was ein Vertrag wert ist
 - Grundlage ist der Marktwert der Fläche für einen durchschnittlichen Erstligisten in diesem Jahr (1975 Brust ≈ 0,25 Mio. DM, 2024 ≈ 9 Mio. €).
@@ -2222,7 +2222,7 @@ Vier Reiter: **Hauptsponsor** (Einnahmen dieser Saison je Art, Brustvertrag mit 
 - **Erfolgsprämien:** Meister, Pokal, Europapokal, Klassenerhalt – am Saisonende gebucht.
 
 ## Verhandlung
-Jedes Angebot kannst du annehmen, ablehnen oder verhandeln: höherer Jahreswert, andere Laufzeit, Klauseln streichen (kostet den Wert, den die Klausel für den Sponsor hat). Ein interessierter Sponsor kommt entgegen; wer zu viel fordert, riskiert den Abbruch. Höchstens zwei Runden. Im **Januar** melden sich Partner im letzten Vertragsjahr mit einem Verlängerungsangebot; neue Konditionen gelten ab der nächsten Saison. Für freie Flächen kommen im Lauf der Saison neue Interessenten.
+Jedes Angebot kannst du annehmen, ablehnen oder verhandeln. **Verhandeln** öffnet den **Verhandlungstisch** – derselbe Aufbau wie bei Spielern und Mitarbeitern (siehe „Der Verhandlungstisch“): links der Sponsor mit Logo, Branche, Land, Image, Reichweite deines Vereins und Marktwert der Fläche, in der Mitte die Verhandlungsposition und die Vertragspunkte (**Jahresbetrag, Laufzeit, Erfolgsprämien, jede Klausel einzeln, Verlängerungsoption**), rechts Stimmung, Gespräch und was der Vertrag bringt. Hier sind die Rollen vertauscht: **Du forderst, der Sponsor bietet.** Er rechnet dein Paket in Kosten pro Jahr – eine gestrichene Klausel kostet ihn ihren Wert (Pflichtreise 12 %, Exklusivität 10 %, Mindestplatzierung 8 % …), eine verlangte Verlängerungsoption 4 %, höhere Prämien nach deiner Erfolgsaussicht; eine längere Laufzeit ist ihm etwas wert. Bis zu seiner verdeckten Obergrenze (je interessierter, desto höher) unterschreibt er, darüber macht er einen Gegenvorschlag; Kernklauseln gibt er erst spät oder nie her, Image- und Jugendklauseln sind fest. Höchstens **vier Runden**; ist die Geduld aufgebraucht, **zieht er sein Angebot zurück**. Brichst du selbst ab, bleibt das Angebot zu seinen letzten Bedingungen bestehen. Auch die **Namensrechte am Stadion** verhandelst du dort (Jahresbetrag und Laufzeit 3–10 Jahre); nach einem Abbruch meldet sich die Firma einige Monate nicht. Im **Januar** melden sich Partner im letzten Vertragsjahr mit einem Verlängerungsangebot; neue Konditionen gelten ab der nächsten Saison. Für freie Flächen kommen im Lauf der Saison neue Interessenten.
 
 ## KI-Vereine
 Sie füllen freie Flächen zu Saisonbeginn mit dem besten von zwei Angeboten, ziehen Verlängerungsoptionen und unterliegen denselben Abstiegs-, Prämien- und Verbotsregeln.
@@ -2940,9 +2940,9 @@ Quellen und Vereinfachungen: \`data/registrationRules.ts\`.`,
     id: 'negotiation-table',
     category: 'squad',
     title: 'Der Verhandlungstisch',
-    keywords: ['verhandlungstisch', 'verhandlung', 'verhandlungsposition', 'kräfteverhältnis', 'hebel', 'geduld', 'gegenvorschlag', 'nicht verhandelbar', 'paket', 'ablösespiel', 'nachschlag', 'weiterverkaufsbeteiligung', 'raten', 'stempel', 'gescheitert', 'einig', 'mitarbeiter', 'transfer'],
+    keywords: ['verhandlungstisch', 'verhandlung', 'verhandlungsposition', 'kräfteverhältnis', 'hebel', 'geduld', 'gegenvorschlag', 'nicht verhandelbar', 'paket', 'ablösespiel', 'nachschlag', 'weiterverkaufsbeteiligung', 'raten', 'stempel', 'gescheitert', 'einig', 'mitarbeiter', 'transfer', 'sponsor', 'namensrechte'],
     body: `## Ein Tisch für alle Verhandlungen
-Vereine (Ablöse), Spieler (Vertrag) und Mitarbeiter (Anstellung, Verlängerung) verhandeln am selben Bildschirm. Solange er offen ist, steht die Zeit. Bei einem Transfer zeigt die Leiste oben die Schritte **Verein → Spieler → Abschluss**.
+Vereine (Ablöse), Spieler (Vertrag), Mitarbeiter (Anstellung, Verlängerung) und Sponsoren (Werbeverträge, Namensrechte am Stadion) verhandeln am selben Bildschirm. Solange er offen ist, steht die Zeit. Bei einem Transfer zeigt die Leiste oben die Schritte **Verein → Spieler → Abschluss**.
 
 ## Aufbau
 - **Links** dein Gegenüber und das **Kräfteverhältnis**: ein Zeiger zwischen dir und der anderen Seite, darunter die Hebel, die ihn verschieben (Vertrag läuft aus, andere Interessenten, Kassenlage des Verkäufers, vereinslos …). Grün hilft dir, Rot dem Gegenüber.
@@ -2968,10 +2968,13 @@ Unter den Punkten zeigt ein Balken, **was dein Paket dem Verkäufer wert ist** �
 Mit dem Schloss am Zeilenende erklärst du einen Punkt für fest. Die andere Seite lässt ihn dann stehen und holt sich den Gegenwert an anderer Stelle – jedes Schloss kostet aber etwas Geduld.
 
 ## Geduld und Runden
-Jede Absage kostet Geduld, dreiste Angebote besonders viel. Ist die Geduld aufgebraucht oder die letzte Runde vorbei (Spieler sieben, Mitarbeiter fünf Runden), bricht die andere Seite ab und will für einige Wochen nicht mehr reden.
+Jede Absage kostet Geduld, dreiste Angebote besonders viel. Ist die Geduld aufgebraucht oder die letzte Runde vorbei (Spieler sieben, Mitarbeiter fünf, Sponsoren vier Runden), bricht die andere Seite ab und will für einige Wochen nicht mehr reden – ein Sponsor zieht sein Angebot dann ganz zurück.
+
+## Sponsoren: umgekehrte Rollen
+Beim Sponsor **forderst du**, er **bietet**. Die Spalten heißen deshalb „Sponsor bietet“ und „Deine Forderung“, und auf der Verhandlungsposition liegt die Einigung dort, wo deine Forderung **unter** seiner geschätzten Obergrenze bleibt (Einschätzung deiner Marketingabteilung). Sein Gegenvorschlag ist nie schlechter als sein letztes Angebot und nie besser als deine Forderung; übernimmst du ihn, unterschreibt er. Mehr im Artikel „Sponsoring“.
 
 ## Das Ergebnis
-Am Ende schließt sich das Fenster nicht einfach: Ein Blatt mit Stempel zeigt das Ergebnis – **Einig**, **Transfer perfekt**, **Verlängert**, **Eingestellt** oder **Gescheitert** –, dazu die vereinbarten Punkte, die Bilanz der Verhandlung (Runden, erste Forderung, Abschluss) und wie es weitergeht.`,
+Am Ende schließt sich das Fenster nicht einfach: Ein Blatt mit Stempel zeigt das Ergebnis – **Einig**, **Transfer perfekt**, **Verlängert**, **Eingestellt**, **Unterschrieben**, **Verkauft** (Namensrechte) oder **Gescheitert** –, dazu die vereinbarten Punkte, die Bilanz der Verhandlung (Runden, erste Forderung, Abschluss) und wie es weitergeht.`,
   },
   {
     id: 'squad-contracts2',

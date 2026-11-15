@@ -108,7 +108,9 @@ export function currentNamingOffers(g: Game): NamingRights[] {
   const offers = namingOffers(club, year, seasonOf(g.calendar.currentDate));
   const cur = club.namingRights;
   if (cur) offers.unshift({ ...cur, annualValue: Math.round(cur.annualValue * 1.1), fromYear: cur.untilYear, untilYear: cur.untilYear + 5 });
-  return offers;
+  // Nach einer gescheiterten Verhandlung am Verhandlungstisch (game/sponsorTalk.ts) meldet sich die Firma eine Weile nicht.
+  const today = g.calendar.currentDate;
+  return offers.filter((o) => !((g.sponsorTalks?.[`naming:${o.sponsor}`]?.blockedUntil ?? '') > today));
 }
 
 const NAMING_FAN_COST: Record<ClubPhilosophy, number> = { glamour: 0.4, offensiv: 0.8, jugend: 1, kampf: 1.3, bodenstaendig: 1.3 };

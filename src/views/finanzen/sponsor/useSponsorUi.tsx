@@ -1,7 +1,7 @@
 // =============================================================================
 // Sponsoring — Bedienung aller Reiter: Linksklick öffnet die Karteikarte
 // (SponsorCard), Rechtsklick (Touch: langer Druck) ein Kontextmenü mit den
-// vorhandenen Aktionen: Annehmen, Verhandeln, Ablehnen, Option ziehen, Auflösen,
+// vorhandenen Aktionen: Annehmen, Verhandeln (Verhandlungstisch), Ablehnen, Option ziehen, Auflösen,
 // Namensrechte verkaufen, Sprung zu Trainingslager/Kartenverkauf/Stadion.
 // =============================================================================
 import { standLabel } from '../../../game/standNames';
@@ -14,10 +14,10 @@ import { STAND } from '../../../data/seatingCatalog';
 import { acceptNaming, currentNamingOffers } from '../../../game/clubBusiness';
 import { exerciseOption, rejectSponsorOffer, signSponsorOffer, terminationCost } from '../../../game/sponsorGame';
 import type { Game } from '../../../game/state';
+import { openContractScreen } from '../../../screens/contract/contractOpen';
 import type { Screen } from '../../../shell/navigation';
 import type { StandId } from '../../../types';
 import { fmtDM } from '../../../ui/format';
-import { NegotiateModal } from './NegotiateModal';
 import { SponsorCard } from './SponsorCard';
 import type { SpTarget } from './model';
 
@@ -38,6 +38,8 @@ export interface SponsorUi {
   note: string | null;
   layer: JSX.Element;
   act: (err: string | null) => void;
+  /** Verhandlungstisch für ein Angebot öffnen. */
+  talk: (offerId: string) => void;
 }
 
 export const targetKey = (t: SpTarget) =>
@@ -47,12 +49,14 @@ export const targetKey = (t: SpTarget) =>
 export function useSponsorUi(g: Game, onChange: () => void, onGoto: (s: Screen) => void): SponsorUi {
   const [card, setCard] = useState<SpTarget | null>(null);
   const [menu, setMenu] = useState<{ x: number; y: number; t: SpTarget } | null>(null);
-  const [talk, setTalk] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const press = useRef<number | null>(null);
   const club = g.clubs[g.managedClubId];
   const com = club.commerce;
   const act = (err: string | null) => { setNote(err); onChange(); };
+  // Verhandeln = Verhandlungstisch (screens/negotiation/SponsorTalk.tsx), wie bei Spielern und Mitarbeitern.
+  const setTalk = (offerId: string) => openContractScreen({ kind: 'sponsor', offerId });
+  const talkNaming = (sponsor: string) => openContractScreen({ kind: 'sponsor', naming: sponsor });
 
   const items = (t: SpTarget): MenuItem[] => {
     const close = () => setMenu(null);
@@ -87,7 +91,9 @@ export function useSponsorUi(g: Game, onChange: () => void, onGoto: (s: Screen) 
       ];
     }
     if (t.kind === 'namingOffer') {
-      return [details, { label: 'Namensrechte verkaufen …', icon: 'contracts', sep: true, run: run(() => setCard(t)) }];
+      const o = currentNamingOffers(g)[t.idx];
+      return [details, { label: 'Namensrechte verkaufen …', icon: 'contracts', sep: true, run: run(() => setCard(t)) },
+        ...(o ? [{ label: 'Verhandeln', icon: 'negotiations' as IconName, run: run(() => talkNaming(o.sponsor)) }] : [])];
     }
     if (t.kind === 'naming') {
       const n = currentNamingOffers(g).length;
@@ -156,13 +162,12 @@ export function useSponsorUi(g: Game, onChange: () => void, onGoto: (s: Screen) 
         document.body,
       )}
       {card && createPortal(
-        <SponsorCard g={g} t={card} onClose={() => setCard(null)} onOpen={setCard} onTalk={(id) => setTalk(id)} onGoto={onGoto}
+        <SponsorCard g={g} t={card} onClose={() => setCard(null)} onOpen={setCard} onTalk={(id) => setTalk(id)} onTalkNaming={talkNaming} onGoto={onGoto}
           onAct={(err) => act(err)}
           onNaming={(idx) => { const o = currentNamingOffers(g)[idx]; if (o) { setNote(acceptNaming(g, o)); onChange(); } setCard({ kind: 'naming' }); }} />,
         host(),
       )}
-      {talk && createPortal(<NegotiateModal g={g} offerId={talk} onClose={() => setTalk(null)} onChange={onChange} />, host())}
     </>
   );
-  return { bind, isOpen: (t) => !!card && targetKey(card) === targetKey(t), note, layer, act };
+  return { bind, isOpen: (t) => !!card && targetKey(card) === targetKey(t), note, layer, act, talk: setTalk };
 }
