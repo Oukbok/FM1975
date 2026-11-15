@@ -176,6 +176,8 @@ export interface Game {
   private?: import('./private/privateState').PrivateState;
   /** Gespeicherte Aufstellungen (components/lineup/SavedLineups.tsx). */
   savedLineups?: import('../components/lineup/SavedLineups').SavedLineup[];
+  /** Spielticker der letzten eigenen Spiele für den Spielbericht (game/matchTicker.ts); fehlt = bisheriges Layout. */
+  matchTickers?: import('./matchTicker').MatchTicker[];
   /** Gespeicherte Taktiken (Anweisungen ohne Aufstellung, components/tactics/savedTactics.ts; höchstens 12). */
   savedTactics?: import('../components/tactics/savedTactics').SavedTactic[];
   /** Privatleben beim Start abgeschaltet. */

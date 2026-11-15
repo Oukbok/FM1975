@@ -31,6 +31,8 @@ export interface TickerCfg {
 interface TickerState {
   queue: Line[];
   history: Line[];
+  /** Alle gezeigten Zeilen, älteste zuerst (Spielbericht, game/matchTicker.ts). */
+  all: Line[];
   current: Line | null;
   revealing: boolean;
   score: [number, number];
@@ -61,7 +63,7 @@ export function useTicker(sim: MatchSim, nar: Narrator, cfg: TickerCfg) {
   cfgRef.current = cfg;
   nar.opts.suspense = cfg.suspense;
   const ref = useRef<TickerState>({
-    queue: [], history: [], current: null, revealing: false, score: [0, 0], pens: null, clock: "0'",
+    queue: [], history: [], all: [], current: null, revealing: false, score: [0, 0], pens: null, clock: "0'",
     paused: false, halftimePending: false, halftimeDone: false, ended: false, timer: null,
     stop: null, pendingStop: null, shownSeq: 0,
   });
@@ -79,6 +81,7 @@ export function useTicker(sim: MatchSim, nar: Narrator, cfg: TickerCfg) {
     if (line.minute && line.minute !== 'i.E.') s.clock = line.minute;
     if (line.seq && line.seq > s.shownSeq) s.shownSeq = line.seq;
     s.history.unshift(line);
+    s.all.push(line);
     if (s.history.length > 260) s.history.length = 260;
   };
 

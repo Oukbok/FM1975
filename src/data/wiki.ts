@@ -1431,6 +1431,10 @@ Hervorgehoben ist die zuletzt gewählte Art. Schließt du die Vorschau (Esc), ö
 
 Beide Wege nutzen **dieselbe Match-Engine** und verbuchen alles identisch (Ergebnis, Statistik, Noten, Spielliste, Verletzungen, Karten).
 
+## Der Spielbericht
+Nach dem Simulieren sieht der Spielbericht aus wie das Ende eines Spiels im Textmodus: oben Wappen, Leiste mit **Landesflagge**, Verein und Tabellenplatz, das Ergebnis mit Halbzeitstand, Trainer, Mannschaftsstärke und Torschützen beider Teams, der **Spieler des Spiels** und die Zeitleiste 0–90 mit Druckphasen, Toren, Karten und Wechseln. Darunter steht der **vollständige Spielticker** mit Kommentar zu jeder Szene – Reiter **Alles**, **Highlights**, **Tore**, **Wechsel**, **Karten** wie im Textmodus –, rechts **Statistik**, **Aufstellungen** mit Noten und **Einzelwerte**. Auch ein im Textmodus verfolgtes Spiel lässt sich so später noch einmal nachlesen.
+Den vollen Ticker behält der Spielstand für die **letzten zehn eigenen Spiele** (Liga, Pokal, Europapokal, Supercup); ältere Spiele, Spiele anderer Vereine und Spiele aus älteren Spielständen zeigen den kompakten Bericht mit Spielverlauf, Statistik und Aufstellungen – ebenfalls mit Flaggen vor den Vereinsnamen.
+
 ## Der Textmodus
 - **Kopf:** beide Wappen, Leiste „(Platz) Heim – Gast (Platz)“ mit Ergebnis und darunter dem Halbzeitstand, Trainer und **Mannschaftsstärke** beider Teams, die Spieluhr als Kreis.
 - **Chancen-Meter:** Zwischen den Teams zeigt ein Meter mit sieben Feldern, wer gerade angreift und wie gefährlich es wird – ein Feld Gelb (Aufbau), zwei Orange (gefährlich), drei Rot (Abschluss, Großchance), jeweils in Richtung der angreifenden Mannschaft. Danach gleitet es zur Mitte zurück.

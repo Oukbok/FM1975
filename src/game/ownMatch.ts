@@ -20,6 +20,8 @@ import { legKoRule } from './euroFlow';
 import { cupKoRule } from './cupReplay';
 import { forecastWeather } from './matchWeather';
 import { findSuperCupMatch, ownSuperCupDue, ROUND_DE } from './superCupGame';
+import { recordTicker, runNarrated } from './matchTicker';
+import type { Line } from '../data/ticker/narrator';
 
 export interface OwnMatchInfo {
   kind: 'liga' | 'pokal' | 'euro';
@@ -173,7 +175,8 @@ export function createOwnMatchSim(g: Game, info: OwnMatchInfo, live = true): Mat
 }
 
 /** Spiel abschließen, verbuchen und für den Spieltag hinterlegen. */
-export function completeOwnMatch(g: Game, info: OwnMatchInfo, sim: MatchSim, watched: boolean): MatchOutcome {
+export function completeOwnMatch(g: Game, info: OwnMatchInfo, sim: MatchSim, watched: boolean, lines?: Line[]): MatchOutcome {
+  if (lines?.length) recordTicker(g, sim, info.date, info.side, info.kind, lines, watched);
   const ecup = info.euroComp ? g.euroCups?.[info.euroComp] : null;
   const sink = ecup ? (ecup.xstats ??= {}) : null;
   const outcome = withEuroSink(sink, () => finishMatch(sim, {
@@ -188,8 +191,9 @@ export function completeOwnMatch(g: Game, info: OwnMatchInfo, sim: MatchSim, wat
 export function quickSimOwnMatch(g: Game, info: OwnMatchInfo): MatchOutcome | null {
   const sim = createOwnMatchSim(g, info, false);
   if (!sim) return null;
-  sim.runToEnd();
-  return completeOwnMatch(g, info, sim, false);
+  // Gleiche Zufallsfolge wie runToEnd – zusätzlich mit Kommentar für den Spielbericht (game/matchTicker.ts).
+  const lines = runNarrated(sim, info.side);
+  return completeOwnMatch(g, info, sim, false, lines);
 }
 
 /** Match-Objekt zu einer ID (Liga, Pokal, Europapokal). */

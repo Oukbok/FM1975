@@ -65,6 +65,7 @@ import './28-profile2.css';
 import './28-transfer3.css';
 import './28-prematch.css';
 import './28-textmode2.css';
+import './28-report.css'; // Spielbericht im Textmodus-Look (views/spieltag/report/)
 import './28-awards.css';
 import './28-promises.css';
 import './28-talk.css';

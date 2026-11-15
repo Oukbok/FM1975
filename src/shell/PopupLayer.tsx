@@ -62,7 +62,7 @@ export function PopupLayer({ g, settings, onSettings, rerender, q, f, due, calLi
       {q.textMatch && (
         <LazyWin>
           <P.MatchScreen g={g} sim={q.textMatch.sim} info={q.textMatch.info} settings={settings} onSettings={onSettings}
-            onComplete={() => completeOwnMatch(g, q.textMatch!.info, q.textMatch!.sim, true)}
+            onComplete={(lines) => completeOwnMatch(g, q.textMatch!.info, q.textMatch!.sim, true, lines)}
             onFinish={finishText} />
         </LazyWin>
       )}

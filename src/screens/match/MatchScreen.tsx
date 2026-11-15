@@ -11,7 +11,7 @@ import Icon from '../../components/Icon';
 import PlayerModal from '../../components/PlayerModal';
 import type { MatchSim } from '../../engine/match/sim';
 import type { MatchOutcome } from '../../engine/match/types';
-import { Narrator } from '../../data/ticker/narrator';
+import { Narrator, type Line } from '../../data/ticker/narrator';
 import type { OwnMatchInfo } from '../../game/ownMatch';
 import type { Game } from '../../game/state';
 import type { AppSettings } from '../../engine/save';
@@ -36,8 +36,8 @@ const RTABS: [RTab, string][] = [['team', 'Team'], ['taktik', 'Taktik'], ['gegne
 export function MatchScreen({ g, sim, info, settings, onSettings, onComplete, onFinish }: {
   g: Game; sim: MatchSim; info: OwnMatchInfo; settings: AppSettings;
   onSettings: (s: AppSettings) => void;
-  /** Abpfiff: Ergebnis verbuchen (einmalig). */
-  onComplete: () => MatchOutcome;
+  /** Abpfiff: Ergebnis verbuchen (einmalig) – mit allen gezeigten Zeilen für den Spielbericht. */
+  onComplete: (lines: Line[]) => MatchOutcome;
   /** „Weiter“ nach dem Abschluss. */
   onFinish: () => void;
 }) {
@@ -61,7 +61,7 @@ export function MatchScreen({ g, sim, info, settings, onSettings, onComplete, on
     speed, suspense, halftimeTalk: optOn(settings, 'matchHalftimeTalk'), stopCheck,
   });
   const [outcome, setOutcome] = useState<MatchOutcome | null>(null);
-  useEffect(() => { if (state.ended && !outcome) setOutcome(onComplete()); }, [state.ended]);
+  useEffect(() => { if (state.ended && !outcome) setOutcome(onComplete(state.all)); }, [state.ended]);
 
   // Co-Trainer (Option „Automatische Auswechslungen“) in der Engine setzen
   const t = sim.team(side);

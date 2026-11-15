@@ -1,0 +1,45 @@
+/* =============================================================================
+   SPIELBERICHT im Look des Textmodus (views/spieltag/report/TickerReport.tsx).
+   Dunkle Bühne wie .ms-root (Tokens im Block am Ende von 31-akte.css), Teile
+   .tm-* aus 28-textmode2.css. Feste Fenstergröße; Ticker und rechte Spalte
+   scrollen intern. Design-Raum 2560 × 1440 wie der Textmodus.
+   ============================================================================= */
+.modal.mr-modal.mr2 {
+  zoom: 1; width: 96%; height: 95%;
+  display: grid; grid-template-rows: auto auto minmax(0, 1fr); gap: 14px;
+  padding: 16px 30px 22px; border-radius: 10px;
+  background: var(--bg); color: var(--text); font-family: var(--font-ui);
+}
+.mr2 svg.game-icon { width: auto; height: auto; }
+.mr2-top { gap: 20px; }
+.mr2-top .ms-top-l { font-size: 18px; gap: 20px; min-width: 0; flex-wrap: nowrap; white-space: nowrap; overflow: hidden; }
+.mr2-top .ms-comp { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.mr2-pill { border-color: var(--border-strong); color: var(--text-2); font-size: 13px; font-weight: 600; }
+.mr2 > .mr2-top > .modal-close.mr2-close { position: static; flex: 0 0 auto; width: 44px; height: 44px; font-size: 30px; line-height: 1; color: var(--text-2); }
+
+/* Flagge vor dem Vereinsnamen */
+.mr-flag { display: inline-flex; align-items: center; flex: 0 0 auto; line-height: 0; }
+.mr2 .tm-bar-team .mr-flag { margin-right: 2px; }
+
+/* Mitte der Bühne: Spieler des Spiels */
+.mr2-motm { flex-direction: column; gap: 6px; min-width: 300px; }
+.mr2-motm-h { font-family: var(--font-display); font-size: 15px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-3); }
+.mr2-motm-p { display: inline-flex; align-items: center; gap: 12px; font-size: 19px; }
+.mr2-motm-p b { font-weight: 600; color: var(--text); }
+.mr2-motm-p em { font-style: normal; color: var(--text-2); font-size: 16px; padding: 2px 8px; border: 1px solid var(--border); border-radius: 4px; }
+
+/* Unterer Teil: Ticker | Statistik/Aufstellungen */
+.mr2-body { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 20px; min-height: 0; }
+.mr2-body > .tm-ticker { min-height: 0; }
+.mr2-tkhead { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 8px; padding: 0 18px; font-size: 16px; color: var(--text-2); white-space: nowrap; border-left: 1px solid var(--border-soft); }
+.mr2-tkhead b { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--text); margin: 0 6px; }
+.mr2-side { min-height: 0; }
+.mr2-teams { flex: 0 0 auto; display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--border-soft); }
+.mr2-team { display: flex; align-items: center; gap: 10px; padding: 10px 18px; min-width: 0; font-family: var(--font-display); font-size: 19px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-2); }
+.mr2-team span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mr2-team.away { border-left: 1px solid var(--border-soft); }
+.mr2-team.mine span { color: var(--accent); }
+.mr2-side-body { flex: 1; min-height: 0; overflow-y: auto; zoom: 1.28; }
+.mr2-side-body .mr-lineups { overflow: visible; }
+.mr2 .mr-stat-bar .h { background: var(--bar-fill-hi); }
+.mr2 .mr-stat-bar .a { background: var(--text-4); }

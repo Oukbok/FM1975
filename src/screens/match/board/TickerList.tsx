@@ -9,6 +9,7 @@ import ClubCrest from '../../../components/ClubCrest';
 import Icon from '../../../components/Icon';
 import type { MatchSim } from '../../../engine/match/sim';
 import type { Side } from '../../../engine/match/types';
+import type { Club } from '../../../types';
 import { NAME_CLOSE, NAME_MID, NAME_OPEN, type Line } from '../../../data/ticker/narrator';
 
 export type TickerFilter = 'alles' | 'highlights' | 'tore' | 'wechsel' | 'karten';
@@ -45,10 +46,34 @@ function matches(b: Block, f: TickerFilter): boolean {
 /** „45+1'“ → „45'+1“. */
 const fmtMin = (m: string) => m.replace(/^(\d+)\+(\d+)'$/, "$1'+$2");
 
+/** Was die Ereignisliste über Vereine/Spieler wissen muss (live aus der Simulation oder aus dem Spielbericht). */
+export interface FeedSource {
+  club: (side: Side) => Club | null;
+  /** Seite und Position eines Spielers (Färbung, „(IV)“). */
+  who: (id: string) => { side: Side; pos: string } | undefined;
+  /** Saisontore vor dem Spiel. */
+  goalsBefore: (id: string) => number;
+  lastName: (id: string) => string;
+}
+
 export function TickerList({ sim, history, current, revealing, mySide, onPlayer }: {
   sim: MatchSim; history: Line[]; current: Line | null; revealing: boolean; mySide: Side; onPlayer: (id: string) => void;
 }) {
-  const [filter, setFilter] = useState<TickerFilter>('alles');
+  const src: FeedSource = {
+    club: (s) => sim.team(s).club,
+    who: (id) => sim.home.players.find((m) => m.id === id) ?? sim.away.players.find((m) => m.id === id),
+    goalsBefore: (id) => sim.players[id]?.seasonStats?.goals ?? 0,
+    lastName: (id) => sim.players[id]?.lastName ?? '',
+  };
+  return <TickerFeed src={src} history={history} current={current} revealing={revealing} mySide={mySide} onPlayer={onPlayer} />;
+}
+
+/** Ereignisliste mit Reitern; `history` neueste zuerst. `head` steht rechts neben den Reitern. */
+export function TickerFeed({ src, history, current, revealing, mySide, onPlayer, head, initial = 'alles' }: {
+  src: FeedSource; history: Line[]; current: Line | null; revealing: boolean; mySide: Side;
+  onPlayer?: (id: string) => void; head?: ReactNode; initial?: TickerFilter;
+}) {
+  const [filter, setFilter] = useState<TickerFilter>(initial);
   const glyphs = useGlyphs(revealing, current);
   const lines = history.slice().reverse();
   const pending = revealing && current?.suspense ? current : null;
@@ -62,12 +87,12 @@ export function TickerList({ sim, history, current, revealing, mySide, onPlayer 
     if (!id || !isGoal(b)) continue;
     const n = (count.get(id) ?? 0) + 1;
     count.set(id, n);
-    goalNo.set(b.key, (sim.players[id]?.seasonStats?.goals ?? 0) + n);
+    goalNo.set(b.key, src.goalsBefore(id) + n);
   }
   const shown = blocks.filter((b) => matches(b, filter)).reverse();
   const newest = blocks[blocks.length - 1]?.key;
 
-  const posOf = (id: string) => (sim.home.players.find((m) => m.id === id) ?? sim.away.players.find((m) => m.id === id));
+  const posOf = src.who;
   const rich = (text: string): ReactNode[] => {
     const parts: ReactNode[] = [];
     let i = 0, k = 0;
@@ -80,7 +105,9 @@ export function TickerList({ sim, history, current, revealing, mySide, onPlayer 
       const id = text.slice(a + 1, b), name = text.slice(b + 1, c);
       const m = posOf(id);
       const cls = m ? (m.side === mySide ? 'mine' : 'opp') : '';
-      parts.push(<button key={k++} type="button" className={`tm-n ${cls}`} onClick={() => onPlayer(id)}>{name}{m ? ` (${m.pos})` : ''}</button>);
+      parts.push(onPlayer
+        ? <button key={k++} type="button" className={`tm-n ${cls}`} onClick={() => onPlayer(id)}>{name}{m ? ` (${m.pos})` : ''}</button>
+        : <span key={k++} className={`tm-n ${cls}`}>{name}{m ? ` (${m.pos})` : ''}</span>);
       i = c + 1;
     }
     return parts;
@@ -92,11 +119,12 @@ export function TickerList({ sim, history, current, revealing, mySide, onPlayer 
         {FILTERS.map(([id, label]) => (
           <button key={id} role="tab" aria-selected={filter === id} className={filter === id ? 'on' : ''} onClick={() => setFilter(id)}>{label}</button>
         ))}
+        {head}
       </div>
       <div className="tm-tk-head"><span>Min.</span><span>Erg.</span><span /><span /><span>Ereignis</span></div>
       <div className="tm-tk-body">
         {shown.map((b) => {
-          const club = b.side ? sim.team(b.side).club : null;
+          const club = b.side ? src.club(b.side) : null;
           const goal = isGoal(b);
           const no = goalNo.get(b.key);
           const scorer = b.lines.find((l) => l.scorerId)?.scorerId;
@@ -113,7 +141,7 @@ export function TickerList({ sim, history, current, revealing, mySide, onPlayer 
               <span className="tm-tk-crest">{club && <ClubCrest club={club} size={32} />}</span>
               <div className="tm-tk-txt">
                 {goal && scorer && (
-                  <div className="tm-tk-goal">{b.score[0]}:{b.score[1]} {rich(`${NAME_OPEN}${scorer}${NAME_MID}${sim.players[scorer]?.lastName ?? ''}${NAME_CLOSE}`)}
+                  <div className="tm-tk-goal">{b.score[0]}:{b.score[1]} {rich(`${NAME_OPEN}${scorer}${NAME_MID}${src.lastName(scorer)}${NAME_CLOSE}`)}
                     {no ? <span className="tm-tk-no"> ({no}. Tor in dieser Saison)</span> : null}</div>
                 )}
                 {b.lines.map((l) => (

@@ -320,7 +320,7 @@ body { background: var(--paper-page); }
    Saisonauftakt) und Hauptmenü/Assistent sind auf dunklen Grund gebaut: dort gelten
    die dunklen Werte von „Ruhig Flutlicht“ weiter; nur der Hauptknopf trägt die Vereinsfarbe.
    Die Hallen-Show (.ix-root, 28-indoor.css) ist hell wie die Spielseiten (Wunsch Pascal). */
-.menu-bg, .menu-panel, .ng-root, .dr-root, .gb-root, .rt-root, .rb2-overlay, .ms-root, .pm-root, .si-stage {
+.menu-bg, .menu-panel, .ng-root, .dr-root, .gb-root, .rt-root, .rb2-overlay, .ms-root, .pm-root, .si-stage, .modal.mr2 {
   color-scheme: dark;
   color: var(--text);
   --bg: #0c0f15; --bg-2: #13161c; --panel: #1a1d23; --panel-2: #22252b; --panel-hover: #292c32; --elevated: #2a2d33;

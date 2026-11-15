@@ -5,6 +5,7 @@ import { readFile, mkdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { chromium } from 'playwright';
 import { startNewGame } from './newgame-flow.mjs';
+import { walkToPrematch } from './prematch-walk.mjs';
 
 const outDir = process.argv[2] || 'test-output/engine';
 await mkdir(outDir, { recursive: true });
@@ -45,28 +46,33 @@ await page.waitForTimeout(2500);
 await page.screenshot({ path: `${outDir}/01_taktik.png` });
 // Breite auf Flügel, hohe Flanken → Messung aktualisiert sich
 await page.locator('.txi-row[data-instr=width] .txi-step').nth(4).click();
-await page.click('.lu-seg button:has-text("Hoch")');
+await page.click('.lu-seg button:has-text("Hoch")', { timeout: 2000 }).catch(() => {});
 await page.waitForTimeout(3000);
 await page.screenshot({ path: `${outDir}/02_taktik_fluegel_hoch.png` });
 await page.locator('.txi-row[data-instr=width] .txi-step').nth(2).click();
-await page.click('.lu-seg button:has-text("Gemischt")');
+await page.click('.lu-seg button:has-text("Gemischt")', { timeout: 2000 }).catch(() => {});
 await page.waitForTimeout(500);
 
-// Bis zum eigenen Spiel, schnell simulieren, Spielbericht
-for (let i = 0; i < 150; i++) {
-  if (await page.locator('button:has-text("Simulieren")').isVisible().catch(() => false)) break;
-  await closeModals();
-  const w = page.getByRole('button', { name: /weiter/i }).first();
-  if (await w.isVisible().catch(() => false)) await w.click().catch(() => {});
-  await page.waitForTimeout(700);
-}
-await page.click('button:has-text("Simulieren")').catch(() => {});
-await page.waitForTimeout(2500);
+// Bis zum eigenen Spiel (Vorschau „Nächstes Spiel“), simulieren, Spielbericht
+await walkToPrematch(page, 'Nächstes eigenes Spiel', 200);
+await page.click('.pm-go-btn:has-text("Simulieren")').catch(() => {});
+await page.waitForSelector('.mr-modal', { timeout: 15000 }).catch(() => {});
+await page.waitForTimeout(800);
 if (await page.locator('.mr-modal').isVisible().catch(() => false)) {
   await page.screenshot({ path: `${outDir}/03_bericht.png` });
-  await page.click('.mr-lu-toggle button:has-text("Einzelwerte")').catch(() => {});
+  // Neuer Bericht (report/TickerReport.tsx): Reiter rechts; altes Layout: Umschalter
+  if (await page.locator('.mr2').isVisible().catch(() => false)) {
+    await page.click('.mr2-side .tm-tabs button:has-text("Aufstellungen")').catch(() => {});
+    await page.click('.mr2 .tm-ticker .tm-tabs button:has-text("Highlights")').catch(() => {});
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: `${outDir}/03b_bericht_aufstellung.png` });
+    await page.click('.mr2-side .tm-tabs button:has-text("Einzelwerte")').catch(() => {});
+  } else await page.click('.mr-lu-toggle button:has-text("Einzelwerte")').catch(() => {});
   await page.waitForTimeout(400);
   await page.screenshot({ path: `${outDir}/04_bericht_einzelwerte.png` });
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await page.waitForTimeout(600);
+  await page.screenshot({ path: `${outDir}/05_bericht_1366.png` });
 } else console.log('Spielbericht nicht gefunden');
 console.log(errors.length ? `JS-Fehler:\n${errors.join('\n')}` : 'keine JS-Fehler');
 await browser.close();

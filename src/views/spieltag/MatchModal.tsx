@@ -1,25 +1,24 @@
 // =============================================================================
-// SPIELBERICHT – großes Fenster: Verlauf, zeitgemäße Statistik, Aufstellungen
-// mit Noten, Druckphasen. Ausführliche Werte gibt es für Spiele des eigenen
-// Vereins; bei anderen Partien die Eckdaten.
+// SPIELBERICHT – Einstieg. Eigene Spiele mit gespeichertem Ticker
+// (game/matchTicker.ts, letzte TICKER_KEEP Spiele) zeigen den Bericht im Look
+// des Textmodus (report/TickerReport.tsx). Sonst – fremde Spiele, ältere eigene
+// Spiele, alte Spielstände – das bisherige Fenster: Verlauf, zeitgemäße
+// Statistik, Aufstellungen mit Noten, Druckphasen.
 // =============================================================================
 import { PlayerLink } from '../../components/playerMenu/PlayerLink';
 import { useState } from 'react';
 import { ClubLink } from '../../components/club/ClubLink';
-import FaceThumb from '../../components/FaceThumb';
 import ClubCrest from '../../components/ClubCrest';
 import Icon from '../../components/Icon';
 import { eraRules } from '../../engine/match/era';
-import type { LineupEntry, MatchEventExt, MatchResultExt, TeamStats } from '../../engine/match/types';
+import type { MatchEventExt, MatchResultExt } from '../../engine/match/types';
 import { findMatch } from '../../game/ownMatch';
+import { tickerFor } from '../../game/matchTicker';
 import { Game } from '../../game/state';
 import { fmtDateFull } from '../../ui/format';
 import type { MatchEventType } from '../../types';
-import { shortNamer } from '../../screens/match/names';
-
-const WEATHER: Record<string, string> = {
-  sonnig: 'Sonnig', bewoelkt: 'Bewölkt', regen: 'Regen', schnee: 'Schnee', hitze: 'Hitze', wind: 'Windig', nebel: 'Nebel',
-};
+import { ClubFlag, LineupCol, StatTable, WEATHER } from './report/reportParts';
+import { TickerReport } from './report/TickerReport';
 
 const KEY: MatchEventType[] = ['goal', 'own_goal', 'penalty_goal', 'penalty_missed', 'penalty_saved', 'yellow_card', 'yellow_red_card',
   'red_card', 'substitution', 'injury', 'chance', 'half_time', 'extra_time_start', 'shootout_start', 'shootout_goal', 'shootout_miss', 'shootout_end'];
@@ -44,6 +43,8 @@ export function MatchModal({ g, matchId, onClose }: { g: Game; matchId: string; 
   const found = findMatch(g, matchId);
   if (!found || !found.match.result) return null;
   const m = found.match;
+  const ticker = tickerFor(g, m.date, m.homeClubId, m.awayClubId);
+  if (ticker && g.clubs[m.homeClubId] && g.clubs[m.awayClubId]) return <TickerReport g={g} match={m} label={found.label} ticker={ticker} onClose={onClose} />;
   const r = m.result as MatchResultExt;
   const rep = r.report;
   const h = g.clubs[m.homeClubId], a = g.clubs[m.awayClubId];
@@ -69,7 +70,7 @@ export function MatchModal({ g, matchId, onClose }: { g: Game; matchId: string; 
             {rep?.weather && <span><Icon name="weather" size={18} /> {WEATHER[rep.weather] ?? rep.weather}</span>}
           </div>
           <div className="mr-score">
-            <div className={`mr-team ${m.homeClubId === myId ? 'mine' : ''}`}><ClubLink id={m.homeClubId} block className="mr-team-link"><ClubCrest club={h} size={92} /><b>{h?.name}</b></ClubLink></div>
+            <div className={`mr-team ${m.homeClubId === myId ? 'mine' : ''}`}><ClubLink id={m.homeClubId} block className="mr-team-link"><ClubCrest club={h} size={92} /><ClubFlag g={g} id={m.homeClubId} date={m.date} height={22} /><b>{h?.name}</b></ClubLink></div>
             <div className="mr-res">
               <div className="mr-big">{r.homeGoals}<span>:</span>{r.awayGoals}</div>
               <div className="mr-sub">
@@ -78,7 +79,7 @@ export function MatchModal({ g, matchId, onClose }: { g: Game; matchId: string; 
                 {tie?.scoreAfter && <> · {tie.scoreAfter.home}:{tie.scoreAfter.away} i.E.</>}
               </div>
             </div>
-            <div className={`mr-team ${m.awayClubId === myId ? 'mine' : ''}`}><ClubLink id={m.awayClubId} block className="mr-team-link"><ClubCrest club={a} size={92} /><b>{a?.name}</b></ClubLink></div>
+            <div className={`mr-team ${m.awayClubId === myId ? 'mine' : ''}`}><ClubLink id={m.awayClubId} block className="mr-team-link"><ClubCrest club={a} size={92} /><b>{a?.name}</b><ClubFlag g={g} id={m.awayClubId} date={m.date} height={22} /></ClubLink></div>
           </div>
           {motm && <div className="mr-motm">Spieler des Spiels: <PlayerLink id={motm.id}><b>{motm.firstName} {motm.lastName}</b></PlayerLink></div>}
         </div>
@@ -138,84 +139,4 @@ export function MatchModal({ g, matchId, onClose }: { g: Game; matchId: string; 
       </div>
     </div>
   );
-}
-
-function StatTable({ r, hs, as, av }: { r: MatchResultExt; hs?: TeamStats; as?: TeamStats; av: ReturnType<typeof eraRules>['stats'] }) {
-  const rows: [string, string, string, number, number][] = [];
-  const add = (l: string, h: number, a: number, f: (v: number) => string = (v) => String(v)) => rows.push([l, f(h), f(a), h, a]);
-  const pct = (x: number, y: number) => (y > 0 ? Math.round((x / y) * 100) : 0);
-  if (hs && as && av.xg) add('Expected Goals', hs.xg, as.xg, (v) => v.toFixed(2).replace('.', ','));
-  if (av.possession) add('Ballbesitz', r.homePossession, 100 - r.homePossession, (v) => `${v} %`);
-  add('Torschüsse', r.homeShots, r.awayShots);
-  if (av.shotsOnTarget) add('Aufs Tor', r.homeShotsOnTarget, r.awayShotsOnTarget);
-  if (hs && as && av.bigChances) add('Großchancen', hs.bigChances, as.bigChances);
-  if (hs && as && av.passes) { add('Pässe', hs.passes, as.passes); add('Passquote', pct(hs.passesOk, hs.passes), pct(as.passesOk, as.passes), (v) => `${v} %`); }
-  if (hs && as && av.duels) add('Zweikämpfe gewonnen', pct(hs.duelsWon, hs.duels), pct(as.duelsWon, as.duels), (v) => `${v} %`);
-  if (hs && as && av.duels && hs.aerials != null && as.aerials != null) add('Luftduelle gewonnen', pct(hs.aerialsWon ?? 0, hs.aerials), pct(as.aerialsWon ?? 0, as.aerials), (v) => `${v} %`);
-  if (hs && as && av.passes && hs.crosses != null && as.crosses != null) add('Flanken', hs.crosses, as.crosses);
-  if (hs && as && av.passes && hs.dribbles != null && as.dribbles != null) add('Dribblings', hs.dribbles, as.dribbles);
-  if (hs && as && av.distance) add('Laufleistung', hs.distance, as.distance, (v) => `${v.toFixed(1).replace('.', ',')} km`);
-  add('Ecken', r.homeCorners, r.awayCorners);
-  add('Fouls', r.homeFouls, r.awayFouls);
-  if (hs && as) add('Abseits', hs.offsides, as.offsides);
-  add('Gelbe Karten', r.homeYellowCards, r.awayYellowCards);
-  add('Rote Karten', r.homeRedCards, r.awayRedCards);
-  if (hs && as) add('Paraden', hs.saves, as.saves);
-  return (
-    <div className="mr-stats">
-      {rows.map(([l, h, a, hv, avv]) => {
-        const tot = hv + avv || 1;
-        return (
-          <div key={l} className="mr-stat">
-            <div className="mr-stat-v"><b>{h}</b><span>{l}</span><b>{a}</b></div>
-            <div className="mr-stat-bar"><span className="h" style={{ width: `${(hv / tot) * 100}%` }} /><span className="a" style={{ width: `${(avv / tot) * 100}%` }} /></div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function LineupCol({ g, list, detail, av }: { g: Game; list: LineupEntry[]; detail: boolean; av: ReturnType<typeof eraRules>['stats'] }) {
-  const nm = shortNamer(list.map((e) => g.players[e.id]));
-  return (
-    <div className="mr-lu">
-      {list.map((e) => {
-        const p = g.players[e.id];
-        return (
-          <div key={e.id}>
-            <div className={`mr-lu-row ${e.started ? '' : 'sub'}`}>
-              <span className="mr-pos">{e.pos}</span>
-              <span className="mr-nm">
-                <FaceThumb p={p} size={18} />
-                <span className="mr-nm-t"><PlayerLink id={e.id}>{nm(p)}</PlayerLink></span>
-                {e.goals > 0 && <span className="mr-tag goal">{e.goals > 1 ? `${e.goals}×` : ''}Tor</span>}
-                {e.assists > 0 && <span className="mr-tag">{e.assists > 1 ? `${e.assists}×` : ''}Vorl.</span>}
-                {e.card && <span className={`mr-card ${e.card === 'Gelb' ? 'y' : 'r'}`} />}
-                {!e.started && <span className="mr-in">{e.in}'</span>}
-              </span>
-              <span className={`mr-grade ${e.grade <= 2 ? 'g-top' : e.grade <= 3 ? 'g-good' : e.grade <= 4 ? 'g-mid' : 'g-bad'}`}>{e.grade.toFixed(1).replace('.', ',')}</span>
-            </div>
-            {detail && e.st && <PlayerLine st={e.st} keeper={e.pos === 'TW'} av={av} />}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-/** Einzelwerte eines Spielers (nur, was es in der Epoche schon gab). */
-function PlayerLine({ st, keeper, av }: { st: number[]; keeper: boolean; av: ReturnType<typeof eraRules>['stats'] }) {
-  const [sh, sot, pa, paOk, du, duW, cr, crOk, dr, drOk, ae, aeW, tk, kp, sv] = st;
-  const cells: [string, string][] = [];
-  if (keeper) cells.push(['Paraden', String(sv)]);
-  else cells.push(['Schüsse', av.shotsOnTarget ? `${sh}/${sot}` : String(sh)]);
-  if (av.passes) cells.push(['Pässe', `${paOk}/${pa}`]);
-  if (av.duels) cells.push(['Zweik.', `${duW}/${du}`]);
-  if (av.duels && ae) cells.push(['Luft', `${aeW}/${ae}`]);
-  if (av.passes && cr) cells.push(['Flanken', `${crOk}/${cr}`]);
-  if (av.duels && dr) cells.push(['Dribbl.', `${drOk}/${dr}`]);
-  if (tk) cells.push(['Ballerob.', String(tk)]);
-  if (kp) cells.push(['Torvorb.', String(kp)]);
-  return <div className="mr-lu-st">{cells.slice(0, 8).map(([l, v]) => <span key={l}>{l} <b>{v}</b></span>)}</div>;
 }
