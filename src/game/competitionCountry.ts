@@ -20,6 +20,8 @@ import {
   type CompOption, type CompSnapshot, type RoundLite, type Source,
 } from './competitionView';
 import { homeCountryOf, type Game } from './state';
+import { DDR_POOL_TIER, POOL_TIER } from '../data/history/historicClubs';
+import { simDisplayName } from '../engine/leagues';
 import { leagueRepInfo } from './leagueRepGame';
 import { accessSlots } from '../data/euroFormats';
 import { countryRanking, germanRank, type LeanCup, type LeanDiv } from '../engine/world';
@@ -33,7 +35,10 @@ export interface StatsCountry { cc: string; name: string; flag: string; mode: Co
 export type CSource = Source | 'data' | 'world' | 'roster';
 export interface CSeasonOption { season: string; source: CSource }
 
-const OWN_KEYS = new Set(['d1', 'd2', 'd2b', 'xcup', 'w1', 'w2', 'r1', 'r2']);
+const OWN_KEYS = new Set(['d1', 'd2', 'd2b', 'xcup', 'w1', 'w2', 'r1', 'r2', 'pool']);
+/** Gruppe der Wettbewerbswahl (Wunsch Pascal: alle Ligen des Landes, nach Ebene geordnet). */
+const levelSection = (tier: number) => `${tier >= 100 ? tier % 100 : tier}. Ebene`;
+const UNTERBAU = 'Unterbau';
 const startYearOf = (g: Game) => g.startYear ?? 1975;
 const nameOf = (cc: string, key?: string) => COUNTRY_BY_CC[cc]?.name ?? key ?? cc;
 
@@ -113,10 +118,9 @@ export function pickSeason(list: CSeasonOption[], want: string): string {
 function dataLeagueOpts(cc: string, year: number): CompOption[] {
   const row = worldSeason(cc, year);
   if (!row) return [];
-  const sec = nameOf(cc);
-  const out: CompOption[] = [{ key: 'd1', label: cc === 'gdr' ? 'DDR-Oberliga' : '1. Liga', kind: 'league', section: sec }];
-  if (row.t2?.length) out.push({ key: 'd2', label: row.t2b?.length ? (cc === 'ger' ? '2. Liga Nord' : '2. Liga (Staffel 1)') : cc === 'gdr' ? 'DDR-Liga' : '2. Liga', kind: 'league', section: sec });
-  if (row.t2b?.length) out.push({ key: 'd2b', label: cc === 'ger' ? '2. Liga Süd' : '2. Liga (Staffel 2)', kind: 'league', section: sec });
+  const out: CompOption[] = [{ key: 'd1', label: cc === 'gdr' ? 'DDR-Oberliga' : '1. Liga', kind: 'league', section: levelSection(1), tier: 1 }];
+  if (row.t2?.length) out.push({ key: 'd2', label: row.t2b?.length ? (cc === 'ger' ? '2. Liga Nord' : '2. Liga (Staffel 1)') : cc === 'gdr' ? 'DDR-Liga' : '2. Liga', kind: 'league', section: levelSection(2), tier: 2 });
+  if (row.t2b?.length) out.push({ key: 'd2b', label: cc === 'ger' ? '2. Liga Süd' : '2. Liga (Staffel 2)', kind: 'league', section: levelSection(2), tier: 2 });
   return out;
 }
 
@@ -126,22 +130,76 @@ export function countryOptions(g: Game, c: StatsCountry, season: string, source:
   const y = seasonStartYear(season);
   const cup: CompOption = { key: 'xcup', label: cupLabel(c.cc), kind: 'cup', section: 'Pokal' };
   if (source === 'data') return [...dataLeagueOpts(c.cc, y), cup];
+  const pool = season === g.season ? poolOption(g, c) : [];
   if (c.mode !== 'world') {
-    const base = competitionOptions(g, season).filter((o) => belongs(o, c));
-    return c.mode === 'home' ? base : [...base, cup];
+    // Alle Ligen, die das Spiel führt (1./2. Liga, Oberligen, Regionalligen, 3. Liga … je Epoche), nach Ebene gruppiert.
+    const base = competitionOptions(g, season).filter((o) => belongs(o, c))
+      .map((o) => (o.kind === 'league' && o.tier != null ? { ...o, section: levelSection(o.tier) } : o));
+    const leagues = base.filter((o) => o.kind === 'league'), rest = base.filter((o) => o.kind !== 'league');
+    return c.mode === 'home' ? [...leagues, ...pool, ...rest] : [...leagues, ...pool, ...rest, cup];
   }
   const l1 = c.cc === 'gdr' ? 'DDR-Oberliga' : '1. Liga', l2 = c.cc === 'gdr' ? 'DDR-Liga' : '2. Liga';
+  const s1 = levelSection(1), s2 = levelSection(2);
   if (source === 'roster') return [
-    { key: 'r1', label: l1, kind: 'league', section: c.name },
-    ...(g.world?.countries[c.worldKey!]?.tiers[1]?.length ? [{ key: 'r2', label: l2, kind: 'league' as const, section: c.name }] : []),
+    { key: 'r1', label: l1, kind: 'league', section: s1, tier: 1 },
+    ...(g.world?.countries[c.worldKey!]?.tiers[1]?.length ? [{ key: 'r2', label: l2, kind: 'league' as const, section: s2, tier: 2 }] : []),
+    ...pool,
     cup,
   ];
   const rec = g.world?.history.find((r) => r.season === season);
   return [
-    { key: 'w1', label: l1, kind: 'league', section: c.name },
-    ...(rec?.divs?.[c.worldKey!]?.[1] || archivedSeason(g, season)?.divisions.some((d) => d.id === `x-${c.cc}-2`) ? [{ key: 'w2', label: l2, kind: 'league' as const, section: c.name }] : []),
+    { key: 'w1', label: l1, kind: 'league', section: s1, tier: 1 },
+    ...(rec?.divs?.[c.worldKey!]?.[1] || archivedSeason(g, season)?.divisions.some((d) => d.id === `x-${c.cc}-2`) ? [{ key: 'w2', label: l2, kind: 'league' as const, section: s2, tier: 2 }] : []),
     cup,
   ];
+}
+
+// -----------------------------------------------------------------------------
+// Unterbau: Vereine unterhalb der simulierten Ligen (Pool, game/clubPool.ts bzw. Unterbau der Welt)
+// -----------------------------------------------------------------------------
+interface PoolInfo { ids: string[]; label: string; strength: (id: string) => number; above: string }
+function poolInfo(g: Game, c: StatsCountry): PoolInfo | null {
+  if (c.mode === 'world') {
+    const wc = g.world?.countries[c.worldKey!];
+    const ids = wc?.active ? wc.pool ?? [] : [];
+    return ids.length ? { ids, label: 'Unterbau', strength: (id) => g.euroClubs?.[id]?.strength ?? 0, above: '2. Liga' } : null;
+  }
+  const ddr = c.cc === 'gdr';
+  const divs = g.leagues.otherDivisions.filter((d) => (ddr ? d.tier > 100 && d.tier < 109 : d.tier < 100));
+  if (ddr && !divs.length) return null; // nach der Wiedervereinigung kein eigener DDR-Unterbau mehr
+  const tier = ddr ? DDR_POOL_TIER : POOL_TIER;
+  const ids = Object.values(g.simClubs).filter((s) => s.tier === tier).map((s) => s.id);
+  if (!ids.length) return null;
+  const lowest = Math.max(ddr ? 101 : g.leagues.playerDivision.tier, ...divs.map((d) => d.tier));
+  const above = [...new Set(divs.filter((d) => d.tier === lowest).map((d) => d.name.replace(/ (Nord|Süd|Nordost|West)$/, '')))].join(' / ')
+    || g.leagues.playerDivision.name;
+  return { ids, label: ddr ? 'Bezirksligen' : homeCountryOf(g) === 'ger' ? 'Amateurligen' : 'Unterbau', strength: (id) => g.simClubs[id]?.strength ?? 0, above };
+}
+
+function poolOption(g: Game, c: StatsCountry): CompOption[] {
+  const p = poolInfo(g, c);
+  return p ? [{ key: 'pool', label: p.label, kind: 'league', section: UNTERBAU }] : [];
+}
+
+/** Unterbau als Teilnehmerliste: kein Spielbetrieb, nur Vereine nach Stärke (Auf-/Abstieg am Saisonende). */
+function poolSnapshot(g: Game, c: StatsCountry, season: string, base: CompSnapshot): CompSnapshot | null {
+  const p = poolInfo(g, c);
+  if (!p) return null;
+  const year = seasonStartYear(season);
+  const ids = [...p.ids].sort((a, b) => p.strength(b) - p.strength(a) || compClubName(g, a, season).localeCompare(compClubName(g, b, season), 'de'));
+  const strongest = ids[0];
+  const sim = strongest ? g.simClubs[strongest] : undefined;
+  return {
+    ...base, source: 'live', roster: true, placingsOnly: true, table: placings(ids),
+    caption: `${p.label} ${season} · ${ids.length} Vereine, nach Stärke`,
+    facts: [
+      { k: 'Vereine', text: String(ids.length) },
+      ...(strongest ? [{ k: 'Stärkster Verein', id: strongest }] : []),
+      { k: 'Spielbetrieb', text: 'nicht einzeln simuliert' },
+      { k: 'Aufstieg', text: `am Saisonende Tausch mit den Letzten der ${p.above}` },
+    ],
+    note: `${p.label}: Unterhalb der ${p.above} werden keine Spiele einzeln simuliert. Die Vereine stehen hier nach Stärke${sim ? ` (${simDisplayName(sim, year)} vorn)` : ''}; am Saisonende tauschen die Stärksten mit den Schlechtesten der untersten Liga.`,
+  };
 }
 
 // -----------------------------------------------------------------------------
@@ -273,6 +331,7 @@ export function countrySnapshot(g: Game, c: StatsCountry, season: string, source
   const y = seasonStartYear(season);
   const base = { key, label: opt.label, season, kind: opt.kind, source: (source === 'roster' ? 'live' : 'archive') as Source } as CompSnapshot;
   const wk = c.worldKey ?? COUNTRY_BY_CC[c.cc]?.key ?? c.name;
+  if (key === 'pool') return poolSnapshot(g, c, season, base);
 
   if (key === 'xcup') {
     const list = cupWinners(g, c);

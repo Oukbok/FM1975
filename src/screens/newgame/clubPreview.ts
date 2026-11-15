@@ -11,6 +11,8 @@ import { activeDatasetId, datasetKits } from '../../data/dataset/apply';
 import { composeHome, type ComposedHome } from '../../game/worldCompose';
 import { regionOf, sameRegion, seasonExpectation } from '../../engine/environment';
 import { Club } from '../../types';
+import { structureForSeason } from '../../data/reforms';
+import { seasonLabelOf } from '../../data/world/countries';
 
 export type LeagueKey = 'tier1' | 'nord' | 'sued' | 'tier2';
 
@@ -65,6 +67,26 @@ export function leaguesFor(cc = 'ger', year = 1975): { key: LeagueKey; name: str
     LEAGUES[0],
     ...comp.second.map((s) => ({ key: (s.group ?? 'tier2') as LeagueKey, name: s.name, tier: 2, note: note2 })),
   ];
+}
+
+/**
+ * Ebenen unterhalb der wählbaren Ligen (nur Anzeige im Assistenten): Deutschland ab der 3. Ebene laut
+ * Ligastruktur des Startjahres (data/reforms.ts) – diese Ligen füllt das Spiel beim Start aus dem
+ * Amateur-Pool (game/startYear.ts `fillLowerTiers`), ihre Vereine haben keinen vollen Kader und sind
+ * deshalb nicht wählbar –, darunter die Amateurligen (Pool ohne Spielbetrieb).
+ */
+export interface BackgroundLevel { tier: number; name: string; staffeln: number; clubs: number | null }
+export function backgroundLevels(cc = 'ger', year = 1975): BackgroundLevel[] {
+  if (cc !== 'ger') return [];
+  const lower = structureForSeason(seasonLabelOf(year)).filter((t) => t.tier >= 3);
+  const out: BackgroundLevel[] = [];
+  for (const tier of [...new Set(lower.map((t) => t.tier))].sort((a, b) => a - b)) {
+    const ts = lower.filter((t) => t.tier === tier);
+    const names = [...new Set(ts.map((t) => t.name.replace(/ (Nord|Süd|Nordost|West)$/, '')))];
+    out.push({ tier, name: ts.length > 1 && names.length === 1 ? names[0].replace(/a$/, 'en') : names.join(' / '), staffeln: ts.length, clubs: ts.reduce((a, t) => a + t.teamCount, 0) });
+  }
+  out.push({ tier: (out[out.length - 1]?.tier ?? 2) + 1, name: 'Amateurligen', staffeln: 0, clubs: null });
+  return out;
 }
 
 function seedRaw(s: { id: string; name: string; shortName: string; city: string; founded?: number; primary: string; secondary: string; stadium: string; capacity: number; reputation: number }): Raw {

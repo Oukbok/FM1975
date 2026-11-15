@@ -82,9 +82,22 @@ const seasonSel = () => page.locator('.cmp-select .sel3').nth(2);
 if (!process.env.HALLE) {
   await go('Liga');
   await shot('liga_heim');
+  // Alle Ligen des Heimatlandes (nach Ebene gruppiert): tiefste Spielklasse mit Tabelle + Unterbau.
+  const homeComps = (await optionsOf(page, compSel())).map((o) => o.value);
+  console.log('Wettbewerbe Heimat:', homeComps.join(' '));
+  await compSel().click(); await shot('liga_heim_wahl'); await page.keyboard.press('Escape');
+  const deepest = homeComps.filter((v) => /^tier\d/.test(v)).sort().at(-1);
+  if (deepest && deepest !== homeComps[0]) {
+    await pickOption(page, compSel(), deepest); await shot('liga_heim_tief');
+    if (!await page.locator('.cmp-mdbox .md-row').count()) errors.push(`${deepest}: Box „Begegnungen“ ohne Spiele`);
+  }
+  if (homeComps.includes('pool')) { await pickOption(page, compSel(), 'pool'); await shot('liga_heim_unterbau'); }
+  else errors.push('Heimat: kein Unterbau (Amateurligen) wählbar');
+  await pickOption(page, compSel(), homeComps[0]);
   const countries = (await optionsOf(page, countrySel())).map((o) => o.value);
   console.log('Länder:', countries.join(' '));
-  for (const cc of ['gdr', 'eng', 'esp']) {
+  // DDR zuletzt: ihre letzte Saison (1990/91) würde sonst für die übrigen Länder mitgewählt.
+  for (const cc of ['eng', 'esp', 'gdr']) {
     if (!countries.includes(cc)) continue;
     await pickOption(page, countrySel(), cc);
     await shot(`liga_${cc}`);
@@ -108,7 +121,7 @@ if (!process.env.HALLE) {
       await page.locator('.cmp-main button:has-text("Runden")').click(); await shot('pokal_esp_runden');
       await page.locator('.cmp-main button:has-text("Turnierbaum")').click();
       if (!await page.locator('.cmp-main .rb-tie').count()) errors.push('esp: Pokal ohne Runden');
-      await pickOption(page, compSel(), 'r1');
+      await pickOption(page, compSel(), comps.includes('r1') ? 'r1' : comps[0]); // laufend bzw. abgeschlossen (w1)
       const prev = ss.filter((x) => !x.label.includes('vor Spielbeginn')).at(-2);
       if (prev) {
         await pickOption(page, seasonSel(), prev.value); await shot('liga_esp_vorsaison');

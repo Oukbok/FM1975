@@ -122,6 +122,18 @@ export function leanLines(g: Game, d: LeanDiv, season: string): LeanLine[] {
   if (d.r) statsFrom(g, d.ids, leanGames(d, season), `wsc:${season}`, 0, (l) => out.push(l));
   return out;
 }
+/**
+ * Einzelwertungen einer vereinsweise simulierten Liga des Heimatlandes (2. Liga, Regionalligen …, laufende
+ * Saison): dieselbe Verteilung auf die Kader des Spielerpools wie bei den Auslandsligen. null = keine Kader
+ * im Pool (z. B. DDR) oder noch kein Spiel.
+ */
+export function simDivStats(g: Game, ids: string[], fixtures: { homeClubId: string; awayClubId: string; status: string; result?: { homeGoals: number; awayGoals: number } | null }[], season: string, divId: string, n = 10): LeanStats | null {
+  const list: ScoredGame[] = [];
+  for (const m of fixtures) if (m.status === 'finished' && m.result) list.push({ home: m.homeClubId, away: m.awayClubId, hg: m.result.homeGoals, ag: m.result.awayGoals });
+  if (!list.length) return null;
+  const st = statsFrom(g, ids, list, `hsd:${season}:${divId}`, n);
+  return st.goals.length || st.yellow.length ? st : null;
+}
 /** Alle Einzelwertungen eines Landespokals über die gespielten Runden. */
 export function leanCupStats(g: Game, key: string, season: string, c: LeanCup, n = 10): LeanStats {
   return c.r ? statsFrom(g, c.ids, leanCupRounds(key, season, c).flatMap((r) => r.ties), `wcs:${season}`, n) : EMPTY();

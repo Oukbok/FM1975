@@ -44,6 +44,7 @@ await next();
 await page.waitForSelector('.ng-countries');
 await shot('3_verein_deutschland_1985');
 await page.click('.ng-countries [data-cc="eng"]');
+await page.click('.ng-league >> nth=0');
 await page.click('.ng-club >> nth=4');
 await shot('4_verein_england');
 await next();

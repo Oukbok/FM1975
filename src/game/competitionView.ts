@@ -21,6 +21,7 @@ import { euroCompName, euroFormat } from '../data/euroFormats';
 import { groupStandings } from '../engine/euroGroups';
 import type { GroupTable, GroupZone } from '../components/competition/GroupTables';
 import { clubView } from './clubProfile';
+import { simDivStats } from './worldScorers';
 import {
   STAT_CATS, archivedSeason, euroClubSet, leagueArchive, liveEntries, topLists, xEntries,
   type ArchCup, type ArchRow, type CupKey, type StatCat,
@@ -29,7 +30,11 @@ import type { Game } from './state';
 
 export type Source = 'history' | 'archive' | 'live';
 export interface SeasonOption { season: string; source: Source }
-export interface CompOption { key: string; label: string; kind: 'league' | 'cup'; section: string }
+export interface CompOption {
+  key: string; label: string; kind: 'league' | 'cup'; section: string;
+  /** Ligen: Ebene im Spiel (1, 2, 3 … bzw. DDR 101/102) – für die Gruppierung nach Ebene in der Länderwahl. */
+  tier?: number;
+}
 
 export interface TableRowLite {
   clubId: string; pos: number; p: number; w: number; d: number; l: number; gf: number; ga: number; pts: number;
@@ -153,13 +158,13 @@ export function competitionOptions(g: Game, season: string): CompOption[] {
   const src = sourceOf(g, season);
   const out: CompOption[] = [];
   if (src === 'history') {
-    for (const d of historicDivisions(season)) out.push({ key: d.id, label: d.name, kind: 'league', section: leagueSection(d.tier) });
+    for (const d of historicDivisions(season)) out.push({ key: d.id, label: d.name, kind: 'league', section: leagueSection(d.tier), tier: d.tier });
     for (const k of ['cup', 'ec', 'cwc', 'uefa'] as CupKey[]) if (historicFinal(season, k)) out.push({ key: k, label: CUP_LABEL(k, season), kind: 'cup', section: k === 'cup' ? 'Pokal' : 'Europa' });
     return out;
   }
   if (src === 'archive') {
     const a = archivedSeason(g, season)!;
-    for (const d of [...a.divisions].sort(tierSort)) out.push({ key: d.id, label: d.name, kind: 'league', section: leagueSection(d.tier, g) });
+    for (const d of [...a.divisions].sort(tierSort)) out.push({ key: d.id, label: d.name, kind: 'league', section: leagueSection(d.tier, g), tier: d.tier });
     for (const k of ['cup', 'ec', 'cwc', 'uefa'] as CupKey[]) if (a.cups[k]) out.push({ key: k, label: CUP_LABEL(k, season), kind: 'cup', section: k === 'cup' ? 'Pokal' : 'Europa' });
     // Auslandsligen: letzte Abschlusstabelle der Welt-Simulation gehört zur zuletzt beendeten Saison.
     if (g.world && season === seasonLabel(seasonStartYear(g.season) - 1)) {
@@ -170,7 +175,7 @@ export function competitionOptions(g: Game, season: string): CompOption[] {
   if (src === 'live') {
     const pd = g.leagues.playerDivision;
     const divs = [{ id: pd.id, name: pd.name, tier: pd.tier }, ...g.leagues.otherDivisions.map((d) => ({ id: d.id, name: d.name, tier: d.tier }))].sort(tierSort);
-    for (const d of divs) out.push({ key: d.id, label: d.name, kind: 'league', section: leagueSection(d.tier, g) });
+    for (const d of divs) out.push({ key: d.id, label: d.name, kind: 'league', section: leagueSection(d.tier, g), tier: d.tier });
     if (g.cup) out.push({ key: 'cup', label: CUP_LABEL('cup', season), kind: 'cup', section: 'Pokal' });
     for (const k of ['ec', 'cwc', 'uefa'] as const) if (g.euroCups?.[k]) out.push({ key: k, label: CUP_LABEL(k, season), kind: 'cup', section: 'Europa' });
   }
@@ -370,11 +375,15 @@ export function buildSnapshot(g: Game, season: string, key: string): CompSnapsho
     const d = g.leagues.otherDivisions.find((x) => x.id === key)!;
     const table: TableRowLite[] = d.table.rows.map((r) => ({ clubId: r.clubId, pos: r.position, p: r.played, w: r.won, d: r.drawn, l: r.lost, gf: r.goalsFor, ga: r.goalsAgainst, pts: r.points, ded: r.deduction, form: r.form }));
     const ids = table.map((r) => r.clubId);
+    // Einzelwertungen wie bei den Auslandsligen: Tore/Karten fest auf die Kader des Spielerpools verteilt.
+    const stats = simDivStats(g, ids, d.fixtures, season, d.id);
     return {
-      ...base, tier: d.tier, group: d.group, table, stats: null,
+      ...base, tier: d.tier, group: d.group, table, stats,
       split: { home: splitTable(ids, d.fixtures, 'home', pts), away: splitTable(ids, d.fixtures, 'away', pts) },
       clubStats: clubStatsFromRows(table, d.fixtures),
-      note: 'Diese Liga wird vereinsweise simuliert – statt Einzelstatistiken siehst du Vereinswerte.',
+      note: stats
+        ? 'Diese Liga wird vereinsweise simuliert. Torschützen, Vorlagen, Karten und Zu-null-Spiele werden aus den Ergebnissen auf die Kader des Spielerpools verteilt (nur laufende Saison).'
+        : 'Diese Liga wird vereinsweise simuliert – statt Einzelstatistiken siehst du Vereinswerte.',
     };
   }
   const str = (id: string) => g.euroClubs?.[id]?.strength ?? g.simClubs?.[id]?.strength ?? g.clubs[id]?.reputation ?? 50;

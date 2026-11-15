@@ -27,7 +27,10 @@ export async function startNewGame(page, opts = {}) {
   if (career) {
     await page.click(`.ng-offer >> nth=${clubIndex}`);
   } else {
-    if (league) await page.click(`.ng-league:has-text("${league}")`);
+    // Zweistufig: erst die Liga (Standard: erste Liga der Liste), dann der Verein.
+    await page.waitForSelector('.ng-league');
+    await shot('4a_liga');
+    await page.click(league ? `.ng-league:has-text("${league}")` : '.ng-league >> nth=0');
     await page.click(`.ng-club >> nth=${clubIndex}`);
   }
   await shot('4_verein');
