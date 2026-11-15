@@ -17,6 +17,37 @@ export interface ShowRow {
   reasons: RatingReason[];
 }
 
+/**
+ * Wie viele Stärkepunkte jeder Grund ausgemacht hat (Wunsch Pascal: ein Pfeil je Punkt).
+ * Die Beiträge (OVR-Bruchteile aus dem Entwicklungs-Protokoll) werden so auf ganze Punkte
+ * verteilt, dass Aufwärts- minus Abwärtspfeile genau die Veränderung ergeben (größter Rest
+ * zuerst). Ergebnis je Grund mit Vorzeichen; 0 = weniger als ein Punkt.
+ */
+export function reasonSteps(row: Pick<ShowRow, 'delta' | 'reasons'>): Map<RatingReason, number> {
+  const out = new Map<RatingReason, number>();
+  const list = row.reasons.filter((x) => x.v !== 0);
+  const dir = Math.sign(row.delta);
+  for (const x of list) out.set(x, 0);
+  if (!dir || !list.length) return out;
+  const same = list.filter((x) => Math.sign(x.v) === dir), opp = list.filter((x) => Math.sign(x.v) !== dir);
+  const sumSame = same.reduce((a, x) => a + Math.abs(x.v), 0), sumOpp = opp.reduce((a, x) => a + Math.abs(x.v), 0);
+  const net = sumSame - sumOpp;
+  // Maßstab: Punkte je Beitragseinheit, begrenzt – heben sich die Gründe fast auf, hat der Zufall der
+  // Bewertung bzw. der Übertrag entschieden; dann zählen die Gegengründe etwa mit ihrem echten Gewicht.
+  const f = net > 0.05 ? Math.min(1.6, Math.max(0.6, Math.abs(row.delta) / net)) : 1;
+  let back = 0;
+  for (const x of opp) { const b = Math.round(Math.abs(x.v) * f); out.set(x, -dir * b); back += b; }
+  const target = Math.abs(row.delta) + back;
+  if (!same.length || sumSame <= 0) return out;
+  const quota = same.map((x) => (Math.abs(x.v) / sumSame) * target);
+  const base = quota.map(Math.floor);
+  let left = target - base.reduce((a, b) => a + b, 0);
+  const order = quota.map((q, i) => [q - base[i], i] as const).sort((a, b) => b[0] - a[0]);
+  for (const [, i] of order) { if (left <= 0) break; base[i]++; left--; }
+  same.forEach((x, i) => out.set(x, dir * base[i]));
+  return out;
+}
+
 export type Tone = 'neutral' | 'mine' | 'hot' | 'rule';
 export interface Line { text: string; tone: Tone }
 

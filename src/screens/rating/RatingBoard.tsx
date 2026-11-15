@@ -11,7 +11,7 @@ import PlayerAvatar from '../../components/PlayerAvatar';
 import { scoutRangeText } from '../../engine/scouting';
 import type { RatingReason } from '../../engine/devLog';
 import type { Club } from '../../types';
-import type { ShowRow } from './ratingScript';
+import { reasonSteps, type ShowRow } from './ratingScript';
 import type { RatingPhase } from './useRatingPlayer';
 import PosBadge from '../../components/PosBadge';
 
@@ -60,11 +60,24 @@ export function topReasons(row: ShowRow, n = 2): RatingReason[] {
 
 const short = (t: string) => t.replace(/\s*\(.*\)$/, '');
 
-function Reason({ x }: { x: RatingReason | undefined }) {
+/** Pfeile je Grund: einer je Stärkepunkt (grün auf, rot ab); hohl = weniger als ein Punkt. */
+export function Steps({ x, n, size = 12 }: { x: RatingReason; n: number | undefined; size?: number }) {
+  const d = Math.sign(x.v);
+  if (!d) return <span className="rb2-steps note">·</span>;
+  const k = Math.abs(n ?? 0);
+  const tip = k ? `${k > 0 && d > 0 ? '+' : '−'}${k} Stärkepunkt${k === 1 ? '' : 'e'}` : 'weniger als ein Stärkepunkt';
+  return (
+    <span className={`rb2-steps ${k ? '' : 'faint'}`} title={tip} aria-label={tip}>
+      {Array.from({ length: Math.max(1, k) }, (_, i) => <Trend key={i} d={d} size={size} />)}
+    </span>
+  );
+}
+
+function Reason({ x, n }: { x: RatingReason | undefined; n?: number }) {
   if (!x) return <span className="rb2-none">–</span>;
   return (
     <span className="rb2-reason" title={x.text}>
-      <Trend d={Math.sign(x.v)} size={12} />
+      <Steps x={x} n={n} size={12} />
       <span className="rb2-reason-t">{short(x.text)}</span>
     </span>
   );
@@ -79,6 +92,7 @@ export function StageCard({ row, club, phase, reduced, countMs }: {
   const holding = phase === 'hold' || phase === 'done';
   const d = row.delta;
   const verdict = d > 0 ? 'Aufgewertet' : d < 0 ? 'Abgewertet' : 'Unverändert';
+  const steps = reasonSteps(row);
   return (
     <div key={row.r.playerId} className={`rt-card rb2-card ${holding ? cls(d) : ''}`}>
       <div className="rb2-face">{p ? <PlayerAvatar key={p.id} player={p} club={club} size={150} priority /> : <div className="rb2-face-empty" />}</div>
@@ -101,7 +115,7 @@ export function StageCard({ row, club, phase, reduced, countMs }: {
           <ul className="rt-reasons rb2-reasons">
             {row.reasons.slice(0, 5).map((x, i) => (
               <li key={x.k + i} className={x.v > 0 ? 'plus' : x.v < 0 ? 'minus' : 'note'} style={{ animationDelay: `${0.1 + i * 0.1}s` }}>
-                <span className="rt-sign">{x.v > 0 ? '+' : x.v < 0 ? '−' : '·'}</span>
+                <span className="rt-sign"><Steps x={x} n={steps.get(x)} size={14} /></span>
                 <span>{x.text}</span>
               </li>
             ))}
@@ -155,7 +169,7 @@ export function TopThree({ rows, shown, club, onPick }: { rows: ShowRow[]; shown
               <span className="rb2-top-txt">
                 <span className="rb2-top-name">{r.first} {r.last}</span>
                 <span className="rb2-top-sub"><PosBadge pos={r.r.position} />
-                  {topReasons(r, 2).map((x, j) => <span key={j} className="rb2-top-why"><Trend d={Math.sign(x.v)} size={11} />{short(x.text)}</span>)}
+                  {topReasons(r, 2).map((x, j) => <span key={j} className="rb2-top-why"><Steps x={x} n={reasonSteps(r).get(x)} size={11} /><span>{short(x.text)}</span></span>)}
                 </span>
               </span>
               <span className="rb2-top-val">
@@ -204,8 +218,8 @@ export function Overview({ rows, shown, current, picked, onPick }: {
                   <td className="num">{row.r.oldOverall}</td>
                   <td className={`num rl-main rb2-c-new ${done ? cls(row.delta) : ''}`}>{done ? row.r.newOverall : '·'}</td>
                   {/* Gründe nur bei veränderter Stärke (Wunsch Pascal) */}
-                  <td className="rb2-c-why">{done && row.delta !== 0 ? <Reason x={r1} /> : null}</td>
-                  <td className="rb2-c-why">{done && row.delta !== 0 ? <Reason x={r2} /> : null}</td>
+                  <td className="rb2-c-why">{done && row.delta !== 0 ? <Reason x={r1} n={r1 ? reasonSteps(row).get(r1) : 0} /> : null}</td>
+                  <td className="rb2-c-why">{done && row.delta !== 0 ? <Reason x={r2} n={r2 ? reasonSteps(row).get(r2) : 0} /> : null}</td>
                 </tr>
               );
             })}

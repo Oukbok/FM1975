@@ -56,7 +56,7 @@
 .rb2-verdict.up { color: var(--pos); }
 .rb2-verdict.down { color: var(--neg); }
 .rb2-reasons { margin-top: 8px !important; padding-top: 8px !important; gap: 3px !important; }
-.rb2-reasons li { font-size: 17px !important; grid-template-columns: 18px minmax(0, 1fr) !important; gap: 8px !important; }
+.rb2-reasons li { font-size: 17px !important; grid-template-columns: 78px minmax(0, 1fr) !important; gap: 8px !important; }
 .rb2-reasons li.note { font-size: 15px !important; }
 
 /* Abschluss */
@@ -101,7 +101,12 @@
 .rb2-top-txt { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
 .rb2-top-name { font-family: var(--font-display); font-size: 24px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rb2-top-sub { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--text-2); font-size: 14px; }
-.rb2-top-why { display: inline-flex; align-items: center; gap: 4px; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rb2-top-why { display: inline-flex; align-items: center; gap: 5px; max-width: 100%; min-width: 0; }
+.rb2-top-why > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+/* Pfeile je Grund: einer je Stärkepunkt, hohl = unter einem Punkt */
+.rb2-steps { display: inline-flex; align-items: center; gap: 1px; flex: 0 0 auto; }
+.rb2-steps.faint { opacity: 0.4; }
+.rb2-steps.note { color: var(--text-3); }
 .rb2-top-val { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
 .rb2-top-d { font-family: var(--font-display); font-size: 32px; font-weight: 600; line-height: 1; }
 .rb2-top-d.up { color: var(--pos); }
@@ -153,7 +158,7 @@
 .rt-wait span:nth-child(3) { animation-delay: 0.3s; }
 
 .rt-reasons { list-style: none; margin: 14px 0 0; padding: 14px 0 0; border-top: 1px solid var(--border-soft); display: grid; gap: 8px; }
-.rt-reasons li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; font-size: 23px; line-height: 1.3; color: var(--text); animation: ms-in 0.35s ease-out both; }
+.rt-reasons li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; font-size: 23px; line-height: 1.3; color: var(--text); animation: ms-in 0.35s ease-out both; }
 .rt-reasons li.note { color: var(--text-3); font-size: 20px; }
 .rt-sign { font-weight: 800; text-align: center; color: var(--text-3); }
 .rt-reasons li.plus .rt-sign { color: var(--pos); }
@@ -177,3 +182,4 @@
 .pp-rating-why li.plus > span { color: var(--pos); }
 .pp-rating-why li.minus > span { color: var(--neg); }
 .pp-rating-why li.note { color: var(--text-3); }
+.rb2-reasons .rt-sign { display: flex; justify-content: flex-end; align-items: center; }
