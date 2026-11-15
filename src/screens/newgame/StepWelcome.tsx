@@ -5,7 +5,7 @@ import { expectedPosition } from '../../engine/environment';
 import { ensureEnvironment } from '../../game/environmentGame';
 import type { Game } from '../../game/state';
 import type { Player } from '../../types';
-import { ageAtStart, fullName, managerFace, type NewGameDraft } from './draft';
+import { ageAtStart, clubBandVars, fullName, managerFace, type NewGameDraft } from './draft';
 import PosBadge from '../../components/PosBadge';
 import { NatFlag } from '../../components/competition/CountryFlag';
 
@@ -15,10 +15,13 @@ const xiSum = (ps: Player[]) => ps.slice(0, 11).reduce((a, p) => a + p.overall, 
 
 function Status({ title, value, text, invert }: { title: string; value: number; text: string; invert?: boolean }) {
   const v = Math.round(value);
+  // Farbe nach Bedeutung: gut grün, mittel bernstein, kritisch rot (Mediendruck umgekehrt).
+  const good = invert ? 100 - v : v;
+  const tone = good >= 60 ? 'on' : good >= 35 ? 'warm' : 'hot';
   return (
-    <div className="ng-status">
+    <div className="ng-status" data-tone={tone}>
       <div className="ng-status-head"><span>{title}</span><b>{v}<small> / 100</small></b></div>
-      <div className="ng-meter"><i style={{ width: `${v}%`, background: !invert && v < 35 ? 'var(--red)' : 'var(--bar-fill-hi)' }} /></div>
+      <div className="ng-meter"><i style={{ width: `${v}%` }} /></div>
       <p>{text}</p>
     </div>
   );
@@ -49,7 +52,7 @@ export function StepWelcome({ d, game }: { d: NewGameDraft; game: Game | null })
   const face = managerFace(d.avatarSeed, fullName(d)) as unknown as Player;
   return (
     <div className="ng-cols ng-cols-welcome">
-      <section className="ng-card ng-welcome-hero">
+      <section className="ng-card ng-welcome-hero ng-clubband" style={clubBandVars(club.colors.primary, club.colors.secondary)}>
         <div className="ng-welcome-mgr">
           <PlayerAvatar player={{ ...face, age: ageAtStart(d) }} size={64} staff year={d.startYear} />
           <span><b>{fullName(d)}</b><small>{ageAtStart(d)} Jahre · {d.nationality}</small></span>
@@ -95,7 +98,7 @@ export function StepWelcome({ d, game }: { d: NewGameDraft; game: Game | null })
         <Status title="Mediendruck" value={env.mediaPressure} text={press} invert />
         <Status title="Vertrauen des Vorstands" value={club.boardConfidence ?? 60} text={board} />
         <Status title="Stimmung der Fans" value={env.fanMood} text={fans} />
-        <p className="ng-note ng-push">Danach folgt das Saison-Briefing mit deinen ersten Aufgaben.</p>
+        <p className="ng-note ng-hint ng-push">Danach folgt das Saison-Briefing mit deinen ersten Aufgaben.</p>
       </section>
     </div>
   );

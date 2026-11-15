@@ -6,11 +6,14 @@ import { getClubKitDisplay } from '../../data/kits';
 import { ClubPreview, LeagueKey, SortKey, leaguePreview, leaguesFor, sortClubs } from './clubPreview';
 import { COUNTRY_BY_CC } from '../../data/world/countries';
 import { playableCountries } from '../../game/worldCompose';
-import type { CareerOffer, NewGameDraft } from './draft';
+import { clubBandVars, type CareerOffer, type NewGameDraft } from './draft';
 
 // Schritt 4: Verein — Teammanager: Land → Liga → Verein; Karriere: drei Angebote.
 // Rechts jeweils die große Vorschau (Wappen, Trikots, Stadion, Stärke, Ziel).
-const repDots = (rep: number) => Math.max(1, Math.min(5, Math.round((rep - 45) / 9)));
+/** Vereinsfarben als CSS-Variablen (Band an der Vorschau, Kante der gewählten Zeile). */
+const clubVars = (c: ClubPreview) => clubBandVars(c.primary, c.secondary);
+
+const repDots =(rep: number) => Math.max(1, Math.min(5, Math.round((rep - 45) / 9)));
 
 function Dots({ n, max = 5 }: { n: number; max?: number }) {
   return <span className="ng-dots">{Array.from({ length: max }, (_, i) => <i key={i} className={i < n ? 'on' : ''} />)}</span>;
@@ -21,7 +24,7 @@ function ClubDetail({ c, leagueName }: { c: ClubPreview; leagueName: string }) {
   const away = getClubKitDisplay(c.club, 'away');
   const pct = Math.round(((c.size - c.rank + 1) / c.size) * 100);
   return (
-    <section className="ng-card ng-detail">
+    <section className="ng-card ng-detail ng-clubband" style={clubVars(c)}>
       <div className="ng-detail-head">
         <ClubCrest club={c.club} size={150} />
         <div className="ng-detail-id">
@@ -45,7 +48,7 @@ function ClubDetail({ c, leagueName }: { c: ClubPreview; leagueName: string }) {
         <div><JerseySVG {...home} size={96} /><small>Heim</small></div>
         <div><JerseySVG {...away} size={96} /><small>Auswärts</small></div>
       </div>
-      <p className="ng-note ng-push">Kaderstärke und Finanzkraft sind Einschätzungen im Ligavergleich; die Kader entstehen beim Start.</p>
+      <p className="ng-note ng-hint ng-push">Kaderstärke und Finanzkraft sind Einschätzungen im Ligavergleich; die Kader entstehen beim Start.</p>
     </section>
   );
 }
@@ -93,7 +96,7 @@ function ManagerPick({ d, set, chooseCountry }: { d: NewGameDraft; set: (p: Part
         </div>
         <div className="rl ng-clubs">
           {list.map((c) => (
-            <button key={c.id} type="button" className={`rl-row ng-club ${sel?.id === c.id ? 'on' : ''}`} onClick={() => set({ clubId: c.id })}>
+            <button key={c.id} type="button" className={`rl-row ng-club ${sel?.id === c.id ? 'on' : ''}`} style={clubVars(c)} onClick={() => set({ clubId: c.id })}>
               <span className="rl-club"><ClubCrest club={c.club} size={30} /><span className="rl-name">{c.name}</span></span>
               <span className="ng-club-role">{sort === 'region' ? c.region : c.role}</span>
               <Dots n={repDots(c.reputation)} />
@@ -116,7 +119,7 @@ function CareerPick({ d, set, offers }: { d: NewGameDraft; set: (p: Partial<NewG
         <p className="ng-note">Noch kennt dich keiner. Diese drei Vereine trauen dir den Job zu – wähle eines der Angebote.</p>
         <div className="ng-offers">
           {offers.map((o) => (
-            <button key={o.club.id} type="button" className={`ng-offer ${sel?.club.id === o.club.id ? 'on' : ''}`} onClick={() => set({ clubId: o.club.id, league: o.league })}>
+            <button key={o.club.id} type="button" className={`ng-offer ${sel?.club.id === o.club.id ? 'on' : ''}`} style={clubVars(o.club)} onClick={() => set({ clubId: o.club.id, league: o.league })}>
               <ClubCrest club={o.club.club} size={64} />
               <span className="ng-offer-txt">
                 <b>{o.club.name}</b>

@@ -126,7 +126,7 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
           {STEPS.map((s, i) => (
             <button key={s.label} className={`ng-step ${i === step ? 'on' : ''} ${i < step ? 'done' : ''}`}
               disabled={i > step} onClick={() => i < step && setStep(i)}>
-              <span className="ng-step-no">{i + 1}</span>
+              <span className="ng-step-no">{i < step ? <Icon name="check" size={16} /> : i + 1}</span>
               <span className="ng-step-txt"><b>{s.label}</b><small>{s.sub}</small></span>
             </button>
           ))}

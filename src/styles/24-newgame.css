@@ -7,7 +7,7 @@
 .menu-bg.ng-host { padding: 0; align-items: stretch; height: 100%; overflow: hidden; }
 .ng-root {
   position: relative; width: 100%; height: 100%; min-height: 0; overflow: hidden;
-  display: grid; grid-template-rows: auto 1fr auto;
+  display: grid; grid-template-rows: auto minmax(0, 1fr) auto; /* Inhalt schiebt Kopf/Fuß nie aus dem Bild */
   font-family: var(--font-ui); color: var(--text); background: var(--bg);
 }
 .ng-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
@@ -15,6 +15,7 @@
 .ng-bg::after {
   content: ''; position: absolute; inset: 0;
   background: linear-gradient(180deg, rgba(var(--bg-rgb), 0.55) 0%, rgba(var(--bg-rgb), 0.82) 45%, rgba(var(--deep-rgb), 0.96) 100%),
+    radial-gradient(ellipse 70% 40% at 50% -6%, color-mix(in srgb, var(--ng-amber) 9%, transparent), transparent 70%),
     radial-gradient(ellipse at 50% 0%, rgba(70, 90, 120, 0.18), transparent 60%);
 }
 .ng-head, .ng-body, .ng-foot { position: relative; z-index: 1; }
@@ -26,7 +27,7 @@
 }
 .ng-head > .ng-btn { justify-self: end; }
 .ng-brand { display: flex; flex-direction: column; line-height: 1.05; }
-.ng-brand-y { font: 600 34px var(--font-display); letter-spacing: 3px; color: var(--accent); }
+.ng-brand-y { font: 600 34px var(--font-display); letter-spacing: 3px; color: var(--ng-amber); }
 .ng-brand-t { font: 500 15px var(--font-display); letter-spacing: 2.5px; text-transform: uppercase; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ng-brand-t small { font-size: 15px; color: var(--text-3); letter-spacing: 1px; text-transform: none; font-family: var(--font-ui); }
 .ng-steps { position: relative; display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; max-width: 1180px; width: 100%; justify-self: center; padding-bottom: 12px; }
@@ -43,14 +44,18 @@
   font: 600 15px var(--font-display); border: 1px solid var(--border); background: rgba(var(--bg-rgb), 0.8);
   transition: background 0.25s, border-color 0.25s, color 0.25s;
 }
-.ng-step.on .ng-step-no { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.ng-step.done .ng-step-no { border-color: var(--text-3); color: var(--text); }
+.ng-step.on .ng-step-no {
+  background: var(--ng-amber); border-color: var(--ng-amber); color: var(--ng-amber-ink);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ng-amber) 20%, transparent), 0 0 16px color-mix(in srgb, var(--ng-amber) 35%, transparent);
+}
+.ng-step.done .ng-step-no { border-color: var(--ng-on); color: var(--ng-on); background: color-mix(in srgb, var(--ng-on) 16%, rgba(var(--bg-rgb), 0.8)); }
+.ng-step.done:hover .ng-step-no { background: color-mix(in srgb, var(--ng-on) 30%, rgba(var(--bg-rgb), 0.8)); }
 .ng-step-txt { display: flex; flex-direction: column; min-width: 0; line-height: 1.15; }
 .ng-step-txt b { font: 500 16px var(--font-display); letter-spacing: 1.2px; text-transform: uppercase; }
 .ng-step-txt small { font-size: 12.5px; color: var(--text-4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ng-step.on .ng-step-txt small { color: var(--text-3); }
 .ng-progress { position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--border-soft); border-radius: 2px; overflow: hidden; }
-.ng-progress i { display: block; height: 100%; background: var(--accent); transition: width 0.45s cubic-bezier(.2, .7, .2, 1); }
+.ng-progress i { display: block; height: 100%; background: linear-gradient(90deg, var(--ng-on), var(--ng-amber)); transition: width 0.45s cubic-bezier(.2, .7, .2, 1); }
 
 /* --- Inhalt mit sanftem Übergang --- */
 .ng-body { min-height: 0; padding: 14px 40px 18px; overflow: hidden; }
@@ -269,7 +274,7 @@ select.ng-input { cursor: pointer; }
 .ng-wait { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
 .ng-wait b { font: 500 26px var(--font-display); letter-spacing: 2px; text-transform: uppercase; }
 .ng-wait small { color: var(--text-3); font-size: 16px; }
-.ng-spinner { width: 42px; height: 42px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--accent); animation: ng-spin 0.9s linear infinite; }
+.ng-spinner { width: 42px; height: 42px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--ng-amber); animation: ng-spin 0.9s linear infinite; }
 @keyframes ng-spin { to { transform: rotate(360deg); } }
 
 /* --- Fuß --- */
@@ -288,7 +293,7 @@ select.ng-input { cursor: pointer; }
 }
 .ng-btn.ghost:hover { border-color: var(--text-3); }
 .ng-btn.small { padding: 7px 12px; font-size: 13px; letter-spacing: 1px; }
-.ng-btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); min-width: 240px; }
+.ng-btn.primary { background: var(--ng-amber); border-color: var(--ng-amber); color: var(--ng-amber-ink); min-width: 240px; font-weight: 600; }
 .ng-btn.primary:hover:not(:disabled) { filter: brightness(1.08); }
 .ng-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
@@ -309,3 +314,163 @@ select.ng-input { cursor: pointer; }
 .ng-era { margin: 0 0 12px; padding-left: 18px; color: var(--text-2); font-size: 14.5px; line-height: 1.55; min-height: 116px; }
 .ng-cleagues small { color: var(--text-3); }
 .ng-allfull { margin-left: 14px; vertical-align: middle; }
+
+/* =============================================================================
+   FARBE IM ASSISTENTEN (Wunsch Pascal: „Bring etwas Farbe in die Erstellung“)
+   Ruhig, nie flächig grell: Farbe sitzt an Kanten, Spuren, Symbolen und gewählten
+   Elementen. Bernstein = aktueller Schritt/Weiter/Auswahl, Grün = an/erledigt,
+   Segmente nach Bedeutung (data-tone), Kennfarbe je Spielmodus (data-mode),
+   Epochenfarbe je Jahrzehnt (data-era), Vereinsfarben als 3-px-Band (--club/--club-2).
+   Alle Werte über Tokens --ng-* in 00-base.css. Präfix .ng-root, weil
+   29-buttons.css (später geladen) die gemeinsamen Knopfregeln setzt.
+   ============================================================================= */
+.ng-root [data-tone="off"] { --ng-c: var(--ng-off); }
+.ng-root [data-tone="on"] { --ng-c: var(--ng-on); }
+.ng-root [data-tone="cool"] { --ng-c: var(--ng-cool); }
+.ng-root [data-tone="warm"] { --ng-c: var(--ng-warm); }
+.ng-root [data-tone="hot"] { --ng-c: var(--ng-hot); }
+.ng-root [data-mode="manager"] { --ng-c: var(--ng-mode-manager); }
+.ng-root [data-mode="career"] { --ng-c: var(--ng-mode-career); }
+.ng-root [data-mode="young"] { --ng-c: var(--ng-mode-young); }
+.ng-root [data-era="70"] { --ng-era-a: var(--ng-era-70a); --ng-era-b: var(--ng-era-70b); }
+.ng-root [data-era="80"] { --ng-era-a: var(--ng-era-80a); --ng-era-b: var(--ng-era-80b); }
+.ng-root [data-era="90"] { --ng-era-a: var(--ng-era-90a); --ng-era-b: var(--ng-era-90b); }
+.ng-root [data-era="00"] { --ng-era-a: var(--ng-era-00a); --ng-era-b: var(--ng-era-00b); }
+.ng-root [data-era="10"] { --ng-era-a: var(--ng-era-10a); --ng-era-b: var(--ng-era-10b); }
+.ng-root [data-era="20"] { --ng-era-a: var(--ng-era-20a); --ng-era-b: var(--ng-era-20b); }
+
+/* Segment-Wahl: gewähltes Segment getönt in seiner Bedeutungsfarbe (Standard Bernstein) */
+.ng-root .ng-seg > button.on, .ng-root .ng-seg > button.on:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--ng-c, var(--ng-amber)) 24%, var(--panel));
+  color: var(--text-hi);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ng-c, var(--ng-amber)) 75%, transparent), inset 0 -2px 0 var(--ng-c, var(--ng-amber));
+}
+/* Epochen-Sprünge: jedes Jahr trägt seine Epochenfarbe als feine Unterkante */
+.ng-root .ng-year-stops > button { --ng-c: var(--ng-era-a); box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--ng-era-a) 45%, transparent); }
+
+/* Schalter: an = grün mit weißem Knopf, aus = grau */
+.ng-root .ng-switch { background: rgba(var(--ink-rgb), 0.1); border-color: rgba(var(--ink-rgb), 0.22); }
+.ng-root .ng-switch::after { background: rgba(var(--ink-rgb), 0.5); }
+.ng-root .ng-toggle.on .ng-switch {
+  background: var(--ng-on); border-color: var(--ng-on);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--ng-on) 35%, transparent);
+}
+.ng-root .ng-toggle.on .ng-switch::after { background: var(--text-hi); }
+.ng-toggle:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+/* Schieberegler: farbige Spur bis zum Griff (--pct aus draft.ts rangePct), Griff mit farbigem Ring */
+.ng-range {
+  --ng-fill-a: var(--ng-amber); --ng-fill-b: var(--ng-amber);
+  -webkit-appearance: none; appearance: none; height: 24px; padding: 0; cursor: pointer;
+  background: transparent; border: 0; border-radius: 0; box-shadow: none;
+}
+.ng-range:focus { outline: none; }
+.ng-range::-webkit-slider-runnable-track {
+  height: 6px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--ng-fill-a), var(--ng-fill-b)) 0 0 / var(--pct, 0%) 100% no-repeat, rgba(var(--ink-rgb), 0.12);
+}
+.ng-range::-moz-range-track {
+  height: 6px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--ng-fill-a), var(--ng-fill-b)) 0 0 / var(--pct, 0%) 100% no-repeat, rgba(var(--ink-rgb), 0.12);
+}
+.ng-range::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 20px; height: 20px; margin-top: -7px; border-radius: 50%;
+  background: var(--text-hi); border: 4px solid var(--ng-fill-b);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ng-fill-b) 22%, transparent);
+}
+.ng-range::-moz-range-thumb {
+  width: 12px; height: 12px; border-radius: 50%; background: var(--text-hi); border: 4px solid var(--ng-fill-b);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ng-fill-b) 22%, transparent);
+}
+.ng-range:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px var(--focus-ring); }
+.ng-speed .ng-range { --ng-fill-a: color-mix(in srgb, var(--ng-on) 55%, var(--panel)); --ng-fill-b: var(--ng-on); }
+.ng-speed-val b { color: var(--text-hi); }
+
+/* Auswahl-Karten, Optionen, Kreise */
+.ng-root .on > .ng-radio { border-color: var(--ng-c, var(--ng-amber)); box-shadow: inset 0 0 0 4px var(--bg), inset 0 0 0 10px var(--ng-c, var(--ng-amber)); }
+.ng-root .ng-opt.on {
+  border-color: var(--ng-c, var(--ng-amber)); color: var(--text);
+  background: color-mix(in srgb, var(--ng-c, var(--ng-amber)) 12%, rgba(var(--bg-rgb), 0.5));
+  box-shadow: inset 3px 0 0 var(--ng-c, var(--ng-amber));
+}
+.ng-root .ng-opt.on b { color: var(--text-hi); }
+.ng-root .ng-input:focus { border-color: var(--ng-amber); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ng-amber) 18%, transparent); }
+
+/* Spielmodus: Kennfarbe je Modus – Symbol immer farbig, gewählte Karte mit farbiger Kante und Leuchten */
+.ng-modecard-ico {
+  background: color-mix(in srgb, var(--ng-c) 10%, transparent); border-color: color-mix(in srgb, var(--ng-c) 32%, transparent);
+  --icon-accent: var(--ng-c); transition: background 0.2s, border-color 0.2s;
+}
+.ng-modecard-ico svg { color: var(--ng-c); }
+.ng-modecard:hover { border-color: color-mix(in srgb, var(--ng-c) 55%, var(--border)); }
+.ng-root .ng-modecard.on {
+  border-color: var(--ng-c); color: var(--text);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ng-c) 13%, rgba(var(--panel-rgb), 0.94)), rgba(var(--panel-rgb), 0.94) 75%);
+  box-shadow: 0 0 0 1px var(--ng-c), 0 0 26px color-mix(in srgb, var(--ng-c) 26%, transparent), 0 10px 30px rgba(var(--shade-rgb), 0.35);
+}
+.ng-modecard.on .ng-modecard-ico { background: color-mix(in srgb, var(--ng-c) 24%, transparent); border-color: var(--ng-c); }
+.ng-modecard.on .ng-modecard-txt b { color: var(--ng-c); }
+.ng-stories { border-top: 3px solid var(--ng-c); }
+
+/* Hinweise: farbiges i-Symbol vor erklärenden Texten, i-Hilfen in derselben Farbe */
+.ng-hint { position: relative; padding-left: 30px; }
+.ng-hint::before {
+  content: 'i'; position: absolute; left: 0; top: 1px; width: 19px; height: 19px; box-sizing: border-box;
+  border-radius: 50%; border: 1.5px solid var(--ng-info); background: color-mix(in srgb, var(--ng-info) 14%, transparent);
+  color: var(--ng-info); font: 700 11.5px/16px var(--font-ui); text-align: center;
+}
+.ng-root .itip { border-color: var(--ng-info); color: var(--ng-info); opacity: 0.9; }
+.ng-root .itip:hover, .ng-root .itip.open { color: var(--text-hi); border-color: var(--ng-info); background: color-mix(in srgb, var(--ng-info) 30%, transparent); }
+
+/* Schritt 3: Startjahr in der Epochenfarbe – Kante, Schimmer von oben, Name der Epoche */
+.ng-era-card {
+  position: relative;
+  border-color: color-mix(in srgb, var(--ng-era-a) 35%, var(--border));
+  background:
+    radial-gradient(ellipse 100% 38% at 50% 0%, color-mix(in srgb, var(--ng-era-a) 15%, transparent), transparent 75%),
+    rgba(var(--panel-rgb), 0.9);
+}
+.ng-era-card::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px; border-radius: 7px 7px 0 0;
+  background: linear-gradient(90deg, var(--ng-era-a), var(--ng-era-b));
+}
+.ng-era-tag {
+  font: 500 14px var(--font-display); letter-spacing: 1.5px; text-transform: uppercase; white-space: nowrap;
+  color: var(--ng-era-a); padding: 2px 9px; border-radius: 4px;
+  border: 1px solid color-mix(in srgb, var(--ng-era-a) 50%, transparent); background: color-mix(in srgb, var(--ng-era-a) 10%, transparent);
+}
+.ng-era-card .ng-year-val b { text-shadow: 0 0 26px color-mix(in srgb, var(--ng-era-a) 45%, transparent); }
+.ng-era-card .ng-range { --ng-fill-a: var(--ng-era-b); --ng-fill-b: var(--ng-era-a); }
+.ng-era li::marker { color: var(--ng-era-a); }
+/* Länderliste: Heimatland mit Bernsteinkante */
+.ng-root .ng-crow.main { background: color-mix(in srgb, var(--ng-amber) 7%, transparent); box-shadow: inset 3px 0 0 var(--ng-amber); }
+.ng-root .ng-badge.on { border-color: var(--ng-amber); color: var(--ng-amber); background: color-mix(in srgb, var(--ng-amber) 12%, transparent); }
+
+/* Schritt 4: Land/Liga/Verein – Auswahl in Bernstein, gewählter Verein mit Kante in seinen Farben */
+.ng-countries { flex: 0 1 auto; min-height: 0; overflow-y: auto; }
+.ng-root .ng-tree-row.on { box-shadow: inset 4px 0 0 var(--ng-amber); background: color-mix(in srgb, var(--ng-amber) 9%, transparent); }
+.ng-root .ng-tree-row.on .rl-name { color: var(--ng-amber); }
+.ng-root .ng-club.on {
+  background: color-mix(in srgb, var(--ng-amber) 8%, transparent);
+  box-shadow: inset 3px 0 0 var(--club, var(--ng-amber)), inset 6px 0 0 var(--club-2, var(--ng-amber));
+}
+.ng-root .ng-club.on .rl-name { color: var(--ng-amber); }
+.ng-root .ng-dots i.on { background: var(--ng-amber); }
+.ng-root .ng-meter i { background: linear-gradient(90deg, color-mix(in srgb, var(--ng-amber) 55%, var(--panel)), var(--ng-amber)); }
+.ng-root .ng-tag { border-color: color-mix(in srgb, var(--ng-amber) 55%, transparent); color: var(--ng-amber); }
+.ng-root .ng-offer.on {
+  border-color: var(--ng-amber); color: var(--text);
+  background: color-mix(in srgb, var(--ng-amber) 9%, rgba(var(--bg-rgb), 0.5));
+  box-shadow: inset 3px 0 0 var(--club, var(--ng-amber)), inset 6px 0 0 var(--club-2, var(--ng-amber)), 0 0 22px color-mix(in srgb, var(--ng-amber) 16%, transparent);
+}
+/* Vereinsfarben als 3-px-Band oben an der Vorschau (Haupt- | Zweitfarbe, keine Verläufe) */
+.ng-clubband { position: relative; }
+.ng-clubband::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px; border-radius: 7px 7px 0 0;
+  background: linear-gradient(90deg, var(--club) 0 68%, var(--club-2) 68% 100%);
+}
+
+/* Schritt 6: Kennzahlen mit feiner Bernsteinkante, Eindrücke in der Farbe ihrer Bedeutung */
+.ng-root .ng-kpi { box-shadow: inset 0 2px 0 color-mix(in srgb, var(--ng-amber) 65%, transparent); }
+.ng-root .ng-status .ng-meter i { background: var(--ng-c, var(--bar-fill-hi)); }
+.ng-status-head b { color: var(--text-hi); }

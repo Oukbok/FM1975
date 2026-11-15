@@ -1,8 +1,10 @@
 import Icon from '../../components/Icon';
-import type { NewGameDraft, StartMode } from './draft';
+import { rangePct, type NewGameDraft, type StartMode } from './draft';
 import { STORIES } from '../../data/privateLife';
 
 // Schritt 2: Spielmodus — Teammanager oder Karriere, dazu die Spieloptionen
+/** Ton der Segment-Wahl nach Bedeutung (Farben in 24-newgame.css, Tokens --ng-*). */
+
 const MODES: { k: StartMode; title: string; text: string; icon: 'dashVerein' | 'contracts' | 'home' }[] = [
   { k: 'manager', title: 'Teammanager', text: 'Du wählst selbst, welchen Verein du übernimmst – vom Meisterschaftsfavoriten bis zum Zweitligisten.', icon: 'dashVerein' },
   { k: 'career', title: 'Karriere', text: 'Als unbekannter Manager bekommst du Angebote von drei schwächeren Vereinen und suchst dir eines aus.', icon: 'contracts' },
@@ -23,7 +25,7 @@ export function StepMode({ d, set, chooseMode }: { d: NewGameDraft; set: (p: Par
     <div className="ng-mode">
       <div className="ng-modes">
         {MODES.map((m) => (
-          <button key={m.k} type="button" className={`ng-modecard ${d.mode === m.k ? 'on' : ''}`} onClick={() => chooseMode(m.k)}>
+          <button key={m.k} type="button" className={`ng-modecard ${d.mode === m.k ? 'on' : ''}`} data-mode={m.k} onClick={() => chooseMode(m.k)}>
             <span className="ng-modecard-ico"><Icon name={m.icon} size={30} /></span>
             <span className="ng-modecard-txt"><b>{m.title}</b><small>{m.text}</small></span>
             <span className="ng-radio" aria-hidden />
@@ -32,7 +34,7 @@ export function StepMode({ d, set, chooseMode }: { d: NewGameDraft; set: (p: Par
       </div>
 
       {d.mode === 'young' && (
-        <section className="ng-card ng-stories">
+        <section className="ng-card ng-stories" data-mode="young">
           <h3 className="ng-h">Deine Geschichte – warum so jung?</h3>
           <div className="ng-story-list">
             {STORIES.map((st) => (
@@ -48,7 +50,7 @@ export function StepMode({ d, set, chooseMode }: { d: NewGameDraft; set: (p: Par
         <section className="ng-card">
           <h3 className="ng-h">Spieltempo</h3>
           <div className="ng-speed">
-            <input type="range" min={300} max={1600} step={100} value={d.speedMs} onChange={(e) => set({ speedMs: +e.target.value })} />
+            <input className="ng-range" style={rangePct(d.speedMs, 300, 1600)} type="range" min={300} max={1600} step={100} value={d.speedMs} onChange={(e) => set({ speedMs: +e.target.value })} />
             <span className="ng-speed-val"><b>{d.speedMs}</b> ms je Tag · {d.speedMs <= 600 ? 'schnell' : d.speedMs >= 1200 ? 'langsam' : 'mittel'}</span>
           </div>
           <p className="ng-note">Wie schnell die Tage ablaufen. Jederzeit im Spiel änderbar.</p>
@@ -63,7 +65,7 @@ export function StepMode({ d, set, chooseMode }: { d: NewGameDraft; set: (p: Par
             <Toggle on={d.legends} onChange={(v) => set({ legends: v })} label="Ausnahmetalente der Geschichte" text="Große Talente der Fußballgeschichte wachsen irgendwo in der Spielwelt heran – unerkannt wie alle anderen." />
             <Toggle on={d.privateLife} onChange={(v) => set({ privateLife: v || d.mode === 'young' })} label="Privatleben" text="Familie, Freizeit, Vermögen – mit Folgen für den Verein. Beim Jungen Manager immer an." />
           </div>
-          <p className="ng-note ng-push">Es gibt keinen Vereinswechsel und keine Entlassung: Du führst deinen Verein als Manager durch die Jahrzehnte und stellst deine Trainer selbst ein. Sinkt das Vertrauen des Vorstands stark, kürzt er dein Transferbudget und legt dir einen Trainerwechsel nahe.</p>
+          <p className="ng-note ng-hint ng-push">Es gibt keinen Vereinswechsel und keine Entlassung: Du führst deinen Verein als Manager durch die Jahrzehnte und stellst deine Trainer selbst ein. Sinkt das Vertrauen des Vorstands stark, kürzt er dein Transferbudget und legt dir einen Trainerwechsel nahe.</p>
         </section>
       </div>
     </div>

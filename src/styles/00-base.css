@@ -114,6 +114,20 @@
   --pos: var(--green);
   /* Hover der Haupt-/Weiter-Knöpfe (Wunsch Pascal: grün statt grau) */
   --go-hover: #4fb383; --go-hover-2: #2f8a5e; --go-hover-ink: #06180f; --go-hover-hi: #a8e3c4;
+  /* Assistent „Neues Spiel“ (24-newgame.css, Wunsch Pascal: mehr Farbe, ruhig): Bernstein wie der
+     Startbildschirm = aktueller Schritt/Weiter/Auswahl, Grün = an/erledigt, Töne nach Bedeutung
+     (kühl/warm/kräftig/neutral), Kennfarbe je Spielmodus, Epochenfarben je Jahrzehnt (je zwei Töne). */
+  --ng-amber: #f2a541; --ng-amber-ink: #241405;
+  --ng-on: #4fb383; --ng-on-ink: #06180f;
+  --ng-off: #a2acb8; --ng-cool: #62a4ea; --ng-warm: #f2a541; --ng-hot: #e8704f;
+  --ng-info: #6fb0f0;
+  --ng-mode-manager: #62a4ea; --ng-mode-career: #f2a541; --ng-mode-young: #4fc29a;
+  --ng-era-70a: #e08a3c; --ng-era-70b: #a8683a;
+  --ng-era-80a: #e45aa8; --ng-era-80b: #36c6c8;
+  --ng-era-90a: #69bf5c; --ng-era-90b: #9b78dc;
+  --ng-era-00a: #4f8fe6; --ng-era-00b: #7fb2f2;
+  --ng-era-10a: #3db3b8; --ng-era-10b: #6a8fe0;
+  --ng-era-20a: #9fc6e6; --ng-era-20b: #c7d6f2;
   --neg: var(--red);
   --car-live-bg: rgba(70, 120, 200, 0.16); /* laufende Saison (Karriere › Saisons) */
   --warn: var(--yellow);

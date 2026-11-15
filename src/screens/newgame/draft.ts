@@ -4,6 +4,7 @@
 import { Difficulty, ManagerBackground, ManagerProfile, ManagerStyle, NewGameOptions } from '../../types';
 import type { HistoryMode } from '../../game/historicSteer';
 import type { LeagueRepMode } from '../../game/leagueRepGame';
+import type { CSSProperties } from 'react';
 import { LEAGUES, LeagueKey, ClubPreview, leaguePreview, leaguesFor } from './clubPreview';
 
 export const STYLE_DE: Record<ManagerStyle, string> = { defensive: 'Defensiv', balanced: 'Ausgeglichen', attacking: 'Offensiv' };
@@ -165,3 +166,34 @@ export function gameOptions(d: NewGameDraft): NewGameOptions {
 export function allPreviewClubs(): ClubPreview[] {
   return LEAGUES.flatMap((l) => leaguePreview(l.key)).sort((a, b) => a.name.localeCompare(b.name, 'de'));
 }
+
+// --- Farbe im Assistenten (Wunsch Pascal; Farben in 24-newgame.css, Tokens --ng-* in 00-base.css) ---
+/** Füllstand eines Schiebereglers als CSS-Variable `--pct` (farbige Spur bis zum Griff). */
+export const rangePct = (v: number, min: number, max: number): CSSProperties =>
+  ({ '--pct': `${Math.max(0, Math.min(100, ((v - min) / Math.max(1, max - min)) * 100))}%` }) as CSSProperties;
+
+/** Helligkeit 0–1 einer Hex-Farbe (#rgb/#rrggbb); unlesbar → 1. */
+function lum(hex: string): number {
+  const h = hex.replace('#', '');
+  const f = h.length === 3 ? h.split('').map((c) => c + c).join('') : h;
+  if (!/^[0-9a-f]{6}$/i.test(f)) return 1;
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(f.slice(i, i + 2), 16) / 255);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/** Vereinsfarben als CSS-Variablen `--club`/`--club-2` für Band und Kante: Farben, die auf dem
+ *  dunklen Grund verschwinden (fast schwarz), fallen weg – dann trägt die andere Farbe das Band. */
+export function clubBandVars(primary: string, secondary: string): CSSProperties {
+  const ok = [primary, secondary].filter((c) => lum(c) >= 0.1);
+  const a = ok[0] ?? primary;
+  const b = ok[1] ?? a;
+  return { '--club': a, '--club-2': b } as CSSProperties;
+}
+
+/** Jahrzehnt für die Epochenfarbe (`data-era`): 70, 80, 90, 00, 10, 20. */
+export const eraKey = (y: number) => String((Math.floor(y / 10) % 10) * 10).padStart(2, '0');
+
+/** Kurzname der Epoche (Startjahr-Wahl). */
+export const ERA_NAME: Record<string, string> = {
+  '70': 'Die Siebziger', '80': 'Die Achtziger', '90': 'Die Neunziger', '00': 'Die Nullerjahre', '10': 'Die Zehnerjahre', '20': 'Die Zwanziger',
+};

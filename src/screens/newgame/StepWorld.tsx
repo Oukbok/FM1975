@@ -5,7 +5,7 @@ import { COUNTRY_SEEDS } from '../../data/worldSeed';
 import { WORLD_COUNTRIES, countryExists, countryPointSystem, seasonLabelOf } from '../../data/world/countries';
 import { worldSeason } from '../../data/world/index';
 import { MAX_START_YEAR, MIN_START_YEAR } from '../../game/startYear';
-import { HISTORIC_LEVELS, type NewGameDraft } from './draft';
+import { ERA_NAME, eraKey, HISTORIC_LEVELS, rangePct, type NewGameDraft } from './draft';
 import { CURRENCIES } from '../../data/currencies';
 
 // Schritt 3: Spielwelt — Startjahr (Standard 1975), Datensatz und die Länder: deine Liga mit
@@ -64,16 +64,19 @@ export function StepWorld({ d, set, chooseDataset, chooseYear }: {
   const withData = rows.filter((r) => r.data).length;
   return (
     <div className="ng-cols ng-cols-world">
-      <section className="ng-card">
-        <h3 className="ng-h">Startjahr <InfoTip k="startjahr" /></h3>
+      <section className="ng-card ng-era-card" data-era={eraKey(y)}>
+        <div className="ng-h-row">
+          <h3 className="ng-h">Startjahr <InfoTip k="startjahr" /></h3>
+          <span className="ng-era-tag">{ERA_NAME[eraKey(y)]}</span>
+        </div>
         <div className="ng-year">
           <button type="button" className="ng-btn ghost ng-year-step" aria-label="Ein Jahr früher" disabled={y <= MIN_START_YEAR} onClick={() => chooseYear(y - 1)}>−</button>
           <div className="ng-year-val"><b>{y}</b><small>Saison {seasonLabelOf(y)}</small></div>
           <button type="button" className="ng-btn ghost ng-year-step" aria-label="Ein Jahr später" disabled={y >= MAX_START_YEAR} onClick={() => chooseYear(y + 1)}>+</button>
         </div>
-        <input className="ng-year-range" type="range" min={MIN_START_YEAR} max={MAX_START_YEAR} step={1} value={y} aria-label="Startjahr" onChange={(e) => chooseYear(+e.target.value)} />
+        <input className="ng-range ng-year-range" style={rangePct(y, MIN_START_YEAR, MAX_START_YEAR)} type="range" min={MIN_START_YEAR} max={MAX_START_YEAR} step={1} value={y} aria-label="Startjahr" onChange={(e) => chooseYear(+e.target.value)} />
         <div className="ng-seg small ng-year-stops">
-          {ERA_STOPS.map((s) => <button key={s} type="button" className={y === s ? 'on' : ''} onClick={() => chooseYear(s)}>{s}</button>)}
+          {ERA_STOPS.map((s) => <button key={s} type="button" data-era={eraKey(s)} className={y === s ? 'on' : ''} onClick={() => chooseYear(s)}>{s}</button>)}
         </div>
         <ul className="ng-era">{eraNotes(y, home).map((t) => <li key={t}>{t}</li>)}</ul>
         <h3 className="ng-h">Datensatz</h3>
@@ -123,13 +126,13 @@ export function StepWorld({ d, set, chooseDataset, chooseYear }: {
             <h3 className="ng-h">Historische Entwicklung <InfoTip k="entwicklung" /></h3>
             <div className="ng-seg small">
               {HISTORIC_LEVELS.map((m) => (
-                <button key={m.id} type="button" data-hist={m.id} className={d.historic === m.id ? 'on' : ''} onClick={() => set({ historic: m.id })}>{m.label}</button>
+                <button key={m.id} type="button" data-hist={m.id} data-tone={m.id === 'free' ? 'cool' : m.id === 'strict' ? 'hot' : 'warm'} className={d.historic === m.id ? 'on' : ''} onClick={() => set({ historic: m.id })}>{m.label}</button>
               ))}
             </div>
           </div>
           <p className="ng-note ng-repnote">{hl.desc} Nie für deinen Verein; steht ab Spielstart fest.</p>
         </div>
-        <p className="ng-note">Deine Liga läuft mit vollen Kadern. Alle anderen Länder spielen ihre 1. und 2. Liga Spieltag für Spieltag – mit Tabelle, Begegnungen, Auf- und Abstieg, sichtbar unter Statistiken › Liga. Das Ergebnis entsteht dort aus Vereinsstärke und Heimvorteil; das kostet kaum Rechenzeit. Europapokal, Transfers und Talente kommen aus allen Ländern. Länder mit echten Vereinen kannst du im nächsten Schritt als Heimatland wählen.</p>
+        <p className="ng-note ng-hint">Deine Liga läuft mit vollen Kadern. Alle anderen Länder spielen ihre 1. und 2. Liga Spieltag für Spieltag – mit Tabelle, Begegnungen, Auf- und Abstieg, sichtbar unter Statistiken › Liga. Das Ergebnis entsteht dort aus Vereinsstärke und Heimvorteil; das kostet kaum Rechenzeit. Europapokal, Transfers und Talente kommen aus allen Ländern. Länder mit echten Vereinen kannst du im nächsten Schritt als Heimatland wählen.</p>
       </section>
     </div>
   );

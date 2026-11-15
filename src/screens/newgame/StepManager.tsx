@@ -11,7 +11,10 @@ import {
 import Select from '../../ui/Select';
 
 // Schritt 1: Manager — Persönliches, Porträt, Trainerprofil, Vereine, Schwierigkeit
-const FLAG_OF: Record<string, string> = { Österreich: 'Oesterreich', Dänemark: 'Daenemark', Türkei: 'Tuerkei', Rumänien: 'Rumaenien' };
+/** Ton der Segment-Wahl nach Bedeutung (kühl/warm/kräftig, Tokens --ng-* in 00-base.css). */
+const STYLE_TONE: Record<ManagerStyle, string> = { defensive: 'cool', balanced: 'warm', attacking: 'hot' };
+const DIFF_TONE: Record<string, string> = { easy: 'on', normal: 'warm', hard: 'hot' };
+const FLAG_OF:Record<string, string> = { Österreich: 'Oesterreich', Dänemark: 'Daenemark', Türkei: 'Tuerkei', Rumänien: 'Rumaenien' };
 
 function ClubSelect({ value, onChange, exclude }: { value: string; onChange: (v: string) => void; exclude?: string }) {
   const clubs = useMemo(() => allPreviewClubs(), []);
@@ -82,7 +85,7 @@ export function StepManager({ d, set }: { d: NewGameDraft; set: (p: Partial<NewG
         <div className="ng-sublabel">Bevorzugter Spielstil</div>
         <div className="ng-seg">
           {(Object.keys(STYLE_DE) as ManagerStyle[]).map((s) => (
-            <button key={s} type="button" className={d.style === s ? 'on' : ''} onClick={() => set({ style: s })}>{STYLE_DE[s]}</button>
+            <button key={s} type="button" data-tone={STYLE_TONE[s]} className={d.style === s ? 'on' : ''} onClick={() => set({ style: s })}>{STYLE_DE[s]}</button>
           ))}
         </div>
         <div className="ng-sublabel">Werdegang</div>
@@ -95,7 +98,7 @@ export function StepManager({ d, set }: { d: NewGameDraft; set: (p: Partial<NewG
         </div>
         <div className="ng-sublabel">Schwierigkeitsgrad</div>
         <div className="ng-seg">
-          {DIFF_DE.map(([k, l]) => <button key={k} type="button" className={d.difficulty === k ? 'on' : ''} onClick={() => set({ difficulty: k })}>{l}</button>)}
+          {DIFF_DE.map(([k, l]) => <button key={k} type="button" data-tone={DIFF_TONE[k]} className={d.difficulty === k ? 'on' : ''} onClick={() => set({ difficulty: k })}>{l}</button>)}
         </div>
         <p className="ng-note">{DIFF_DE.find(([k]) => k === d.difficulty)?.[2]}. Spielstil und Werdegang beschreiben dich im Profil.</p>
       </section>
@@ -108,7 +111,7 @@ export function StepManager({ d, set }: { d: NewGameDraft; set: (p: Partial<NewG
         <label className="ng-field">Niemals trainieren würde ich
           <ClubSelect value={d.avoidClubId} onChange={(v) => set({ avoidClubId: v })} exclude={d.favoriteClubId} />
         </label>
-        <p className="ng-note">Beides steht in deinem Trainerprofil. Der „Niemals“-Verein taucht im Karrieremodus nicht unter den Angeboten auf.
+        <p className="ng-note ng-hint">Beides steht in deinem Trainerprofil. Der „Niemals“-Verein taucht im Karrieremodus nicht unter den Angeboten auf.
           Angebote anderer Vereine während der Karriere gibt es noch nicht – du führst deinen Verein durch die Jahrzehnte.</p>
       </section>
     </div>
