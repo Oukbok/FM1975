@@ -775,8 +775,8 @@ Beim Start erscheint ein Menü mit:
 
 ## Neues Spiel in sechs Schritten
 1. **Manager:** Vor- und Nachname, Geburtsdatum (Alter am 1. Juli 1975), Nationalität (optional eine zweite), ein Gesicht aus dem Gesichtsgenerator („Anderes Gesicht“), Spielstil, Werdegang und Schwierigkeit. **Lieblingsverein** und **„Niemals trainieren würde ich“** sind Profilangaben; der „Niemals“-Verein taucht im Karrieremodus nicht unter den Angeboten auf.
-2. **Spielmodus:** **Teammanager** – du wählst deinen Verein frei. **Karriere** – als unbekannter Trainer bekommst du drei Angebote schwächerer Vereine (je eins aus der 1. Liga und den beiden 2.-Liga-Staffeln) und nimmst eins an. Dazu die Option **Entwicklung der anderen Vereine** (Aus/Mittel/Stark), Verletzungen, Saison-Briefing, Auftakt-Animation und Spieltempo.
-3. **Spielwelt:** Startjahr, Datensatz, alle Länder, deren Ligen mitlaufen, und die Option **Entwicklung der Ligen** (Historisch/Frei, siehe Artikel „Ligaruf & Entwicklung der Ligen“). Deine Liga wird Minute für Minute gerechnet, die übrigen deutschen Ligen, die DDR und alle Auslandsligen Spieltag für Spieltag. Rechenzeit kostet fast nur deine eigene Liga.
+2. **Spielmodus:** **Teammanager** – du wählst deinen Verein frei. **Karriere** – als unbekannter Trainer bekommst du drei Angebote schwächerer Vereine (je eins aus der 1. Liga und den beiden 2.-Liga-Staffeln) und nimmst eins an. Dazu Verletzungen, Saison-Briefing, Auftakt-Animation und Spieltempo.
+3. **Spielwelt:** Startjahr, Datensatz, alle Länder, deren Ligen mitlaufen, und die Option **Historische Entwicklung** (Frei/Historisch/Streng historisch – eine Frage für die anderen Vereine und die Ligen, siehe Artikel „Historische Entwicklung der Vereine und Ligen“). Deine Liga wird Minute für Minute gerechnet, die übrigen deutschen Ligen, die DDR und alle Auslandsligen Spieltag für Spieltag. Rechenzeit kostet fast nur deine eigene Liga.
 4. **Verein:** Land → Liga → Verein, sortierbar nach Stärke, Name oder Region; rechts die große Vorschau mit Wappen, Trikots, Stadion, Ansehen, Finanzkraft, geschätzter Kaderstärke, Ziel des Vorstands und Rivalen. Kaderstärke und Ziel sind **Einschätzungen** – die echten Kader entstehen beim Start.
 5. **Ligensystem:** die Pyramide der Saison 1975/76 (Deutschland, DDR, Ausland) – siehe Artikel „Übersicht Ligensystem“.
 6. **Willkommen:** Die Spielwelt wird schon erzeugt; du siehst Kader, Stärke der ersten Elf, den besten Spieler, Mediendruck, Vertrauen des Vorstands und Stimmung der Fans. „Karriere starten“ übernimmt genau diese Welt, danach folgt das Saison-Briefing.
@@ -1699,8 +1699,8 @@ Offene Jobangebote, Ultimaten und zugesagte Vereinswechsel aus früheren Version
 Jedes Land im Europa-Hintergrund hat einen **Ligaruf** von 0 bis 100 – 100 ist die beste Liga Europas, um 80 liegen die übrigen großen Ligen, um 60 solide Mittelklasse, um 40 kleine Ligen. Der Ruf bestimmt das **Landesniveau**: **4 Punkte Ruf = 1 Punkt Stärke** für die Vereine des Landes (20 Punkte also 5 Stärkepunkte). Die Vereine wachsen über zwei, drei Jahre an das neue Niveau heran. Damit wirkt der Ruf auf alles Weitere: Europapokal-Ergebnisse, **Fünfjahreswertung** und die Zahl der **Startplätze** im Europapokal.
 
 ### Beim Spielstart wählen
-Im Schritt **Spielwelt** wählst du unter **Entwicklung der Ligen**:
-- **Historisch** (Standard): Die Ligen folgen grob der echten Geschichte – Westdeutschland, England und die Niederlande in den 70ern, Italien in den 90ern, Spanien und England in den 2000ern und 2010ern. Erfolge zählen trotzdem, aber nur auf Zeit: Liegt ein Land am Saisonende **über** seinem historischen Ruf, wird **mindestens ein Viertel** des Vorsprungs abgezogen – auch wenn seine Vereine gerade alles gewinnen. Beispiel: Gewinnt ein portugiesischer Verein fünfmal in Folge die Landesmeister-Runde und steht Portugal dadurch 20 Punkte über dem historischen Wert, verliert es am Saisonende mindestens 5 Punkte. Liegt ein Land **darunter**, holt es genauso auf.
+Im Schritt **Spielwelt** wählst du unter **Historische Entwicklung** – dieselbe Frage lenkt auch die anderen Vereine (Artikel „Historische Entwicklung der Vereine und Ligen“). Für die Ligen bedeutet sie:
+- **Historisch** (Standard) und **Streng historisch**: Die Ligen folgen grob der echten Geschichte – Westdeutschland, England und die Niederlande in den 70ern, Italien in den 90ern, Spanien und England in den 2000ern und 2010ern. Erfolge zählen trotzdem, aber nur auf Zeit: Liegt ein Land am Saisonende **über** seinem historischen Ruf, wird **mindestens ein Viertel** des Vorsprungs abgezogen – auch wenn seine Vereine gerade alles gewinnen. Beispiel: Gewinnt ein portugiesischer Verein fünfmal in Folge die Landesmeister-Runde und steht Portugal dadurch 20 Punkte über dem historischen Wert, verliert es am Saisonende mindestens 5 Punkte. Liegt ein Land **darunter**, holt es genauso auf.
 - **Frei:** Kein Eingriff von außen. Der Ruf entsteht nur aus den Ergebnissen: Die Länder werden nach der Fünfjahreswertung gereiht, der Erste verdient den höchsten Ruf, den es in diesem Jahr gab, der Zweite den zweithöchsten usw.; der Ruf geht jede Saison ein Stück dorthin. Wer im Europapokal stark ist, wird stärker, bekommt mehr Startplätze und kann sich oben festsetzen – 2026 können ganz andere Länder zu den Top 5 gehören als in Wirklichkeit.
 
 Die Wahl steht nach dem Start fest. Spielstände aus älteren Versionen laufen ohne Ligaruf weiter: Dort verschiebt sich das Landesniveau wie bisher fest nach den Jahrzehnten.
@@ -1717,17 +1717,27 @@ Die historische Kurve ist aus der UEFA-Fünfjahreswertung je Jahrzehnt abgeleite
   {
     id: 'ai-history-mode',
     category: 'ai',
-    title: 'Entwicklung der anderen Vereine (zufällig oder historisch)',
-    keywords: ['historisch', 'geschichte', 'zufällig', 'großklubs', 'bayern', 'münchen', 'madrid', 'manchester', 'option', 'spielstart', 'aus', 'mittel', 'stark'],
-    body: `## Entwicklung der anderen Vereine
-Beim Spielstart wählst du im Schritt **Spielwelt**, wie sich die anderen Vereine über die Jahrzehnte entwickeln. Die Wahl steht danach fest (Zusammenfassung im Schritt **Manager**); alte Spielstände laufen mit **Aus**.
+    title: 'Historische Entwicklung der Vereine und Ligen (frei oder historisch)',
+    keywords: ['historisch', 'historische entwicklung', 'streng historisch', 'frei', 'geschichte', 'zufällig', 'großklubs', 'bayern', 'münchen', 'madrid', 'manchester', 'option', 'spielstart', 'entwicklung der anderen vereine', 'entwicklung der ligen'],
+    body: `## Historische Entwicklung der Vereine und Ligen
+Beim Spielstart beantwortest du im Schritt **Spielwelt** eine Frage: **Historische Entwicklung**. Sie legt fest, wie sich die anderen Vereine und die Ligen im Hintergrund über die Jahrzehnte entwickeln, und steht danach fest.
 
 ### Die drei Stufen
-- **Aus:** frei und zufällig. Jeder Verein wächst mit Erfolg, Geld und Glück – auch Braunschweig kann eine Ära prägen, auch München Rot kann absteigen.
-- **Mittel:** leicht an der echten Geschichte orientiert. Die historischen Großklubs haben einen spürbaren Vorteil, Überraschungen bleiben aber häufig.
-- **Stark:** deutlich an der Geschichte orientiert. Die echten Großklubs landen meist oben: Mönchengladbach und Hamburg Blau in den 70ern/80ern, München Rot dauerhaft und ab etwa 2012 erdrückend, Dortmund ab Mitte der 90er und in den 2010ern, Bremen und Kaiserslautern in ihren Phasen; im Ausland Liverpool Rot in den 70ern/80ern, Manchester ab 1990, Madrid Weiß und Barcelona, Paris ab 2011.
+| Stufe | Andere Vereine | Ligen (Ligaruf) |
+|---|---|---|
+| **Frei** | frei und zufällig | nur aus den Europapokal-Ergebnissen |
+| **Historisch** (Standard) | leicht zur Geschichte gezogen | folgen grob der Geschichte |
+| **Streng historisch** | deutlich zur Geschichte gezogen | folgen grob der Geschichte |
 
-### Was gelenkt wird – und was nicht
+- **Frei:** Jeder Verein wächst mit Erfolg, Geld und Glück – auch Braunschweig kann eine Ära prägen, auch München Rot kann absteigen. Ligen steigen und fallen nur mit ihren Europapokal-Ergebnissen.
+- **Historisch:** Die historischen Großklubs haben einen spürbaren Vorteil, Überraschungen bleiben aber häufig. Die Ligen werden zur echten Geschichte gezogen (Italien in den 90ern, Spanien und England später).
+- **Streng historisch:** Die Vereine werden deutlich an der Geschichte ausgerichtet. Die echten Großklubs landen meist oben: Mönchengladbach und Hamburg Blau in den 70ern/80ern, München Rot dauerhaft und ab etwa 2012 erdrückend, Dortmund ab Mitte der 90er und in den 2010ern, Bremen und Kaiserslautern in ihren Phasen; im Ausland Liverpool Rot in den 70ern/80ern, Manchester ab 1990, Madrid Weiß und Barcelona, Paris ab 2011.
+
+Was mit den Ligen genau passiert, steht im Artikel „Ligaruf & Entwicklung der Ligen“. Die Lenkung der Vereine gibt es derzeit nur mit Heimatland Deutschland; in einem anderen Heimatland wirkt die Frage nur auf die Ligen.
+
+Alte Spielstände behalten ihre Einstellungen (ohne Angabe: Vereine frei, Landesniveau fest nach Jahrzehnten).
+
+### Was bei den Vereinen gelenkt wird – und was nicht
 Jeder Verein mit echtem Vorbild hat eine **Zielkurve** über die Jahre (Titel, Europapokal, Umsatzranking ab 1996). Daran ausgerichtet werden nur die Mittel der KI-Vereine:
 - **Ruf und Marke** – sie bestimmen Zuschauer, Sponsoren, wen der Verein auf dem Star-Markt holen kann, welche Spieler kommen wollen, welchen Trainer er bekommt und wie viel er in den Nachwuchs steckt,
 - **Geld aus dem Umfeld** – Großklubs erhalten zum Saisonstart einen Zufluss (Gönner, Konzern, Investor, Vermarktungsvorsprung), abgestürzte Vereine tragen Altlasten,

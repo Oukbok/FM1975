@@ -32,8 +32,8 @@ function stepsFor(year: number): StepDef[] {
   const se = seasonLabelOf(year);
   return [
     { label: 'Manager', sub: 'Persönliches & Profil', icon: 'squad', title: 'Dein Manager', lead: `Wer übernimmt im Sommer ${year} die Trainerbank? Name, Herkunft und dein Profil als Trainer.` },
-    { label: 'Spielmodus', sub: 'Modus & Optionen', icon: 'settings', title: 'Spielmodus wählen', lead: 'Wie beginnt deine Karriere – und nach welchen Regeln entwickelt sich die Welt um dich herum?' },
-    { label: 'Spielwelt', sub: 'Startjahr & Länder', icon: 'international', title: 'Die Spielwelt', lead: 'Startjahr, Datensatz und alle Länder, deren Ligen mitspielen.', fill: true },
+    { label: 'Spielmodus', sub: 'Modus & Optionen', icon: 'settings', title: 'Spielmodus wählen', lead: 'Wie beginnt deine Karriere – und mit welchen Einstellungen spielst du?' },
+    { label: 'Spielwelt', sub: 'Startjahr & Länder', icon: 'international', title: 'Die Spielwelt', lead: 'Startjahr, Datensatz, alle Länder, deren Ligen mitspielen – und wie historisch sich die Welt entwickelt.', fill: true },
     { label: 'Verein', sub: 'Land, Liga, Verein', icon: 'dashVerein', title: 'Verein auswählen', lead: 'Bei welchem Verein beginnst du? Du bleibst ihm treu – über alle Jahrzehnte.', fill: true },
     { label: 'Ligensystem', sub: 'Übersicht', icon: 'stats', title: 'Übersicht Ligensystem', lead: `So ist der Fußball ${se} aufgebaut. Klick auf eine Liga, um ihre Vereine zu sehen.`, fill: true },
     { label: 'Start', sub: 'Willkommen', icon: 'newGame', title: 'Dein erster Arbeitstag', lead: `Mannschaft, Vorstand und Fans warten. Alles bereit für die Saison ${se}.` },
@@ -52,7 +52,7 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
   const [d, setD] = useState<NewGameDraft>(() => {
     applyDataset(cachedDataset(BUILTIN_ID)); // Vorschau immer auf dem gewählten Datensatz
     return {
-      datasetId: BUILTIN_ID, difficulty: 'normal', injuries: true, history: 'off', leagueRep: 'historic', speedMs: defaults.speedMs,
+      datasetId: BUILTIN_ID, difficulty: 'normal', injuries: true, historic: 'historic', speedMs: defaults.speedMs,
       briefingAuto: defaults.briefingAuto !== false, briefingIntro: defaults.briefingIntro !== false, legends: true,
       mode: 'manager', offerSeed: Math.floor(Math.random() * 2 ** 31),
       league: 'tier1', clubId: topClub(), startYear: 1975, country: 'ger',

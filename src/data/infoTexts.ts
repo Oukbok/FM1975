@@ -41,9 +41,14 @@ export const INFO_TEXTS = {
     text: 'Alle Spieler dieser Nationalität in der Spielwelt – volle Kader und Weltspieler –, nach Stärke. Spieler zerfallener Staaten zählen für den Nachfolger.',
     wiki: 'country-profile',
   },
+  entwicklung: {
+    title: 'Historische Entwicklung',
+    text: 'Eine Wahl für Vereine und Ligen. Frei: nur Erfolg, Geld und Europapokal-Ergebnisse zählen. Historisch: Großklubs und starke Ligen der Zeit werden leicht zur echten Geschichte gezogen, Überraschungen bleiben häufig. Streng historisch: Die echten Großklubs landen meist oben. Dein Verein wird nie gelenkt, dein Heimatland bekommt keinen Ligaruf; die Lenkung der Vereine gibt es nur mit Heimatland Deutschland.',
+    wiki: 'ai-history-mode',
+  },
   ligaruf: {
     title: 'Ligaruf & Entwicklung der Ligen',
-    text: 'Jedes Land im Hintergrund hat einen Ligaruf von 0 bis 100. 4 Punkte Ruf sind 1 Punkt Stärke für alle Vereine des Landes – das wirkt auf Europapokal-Erfolge, Fünfjahreswertung und Startplätze. Historisch: Am Saisonende wird mindestens ein Viertel der Abweichung zum echten Ruf der Zeit abgebaut. Frei: Nur die Europapokal-Ergebnisse zählen. Dein Heimatland bleibt außen vor.',
+    text: 'Jedes Land im Hintergrund hat einen Ligaruf von 0 bis 100. 4 Punkte Ruf sind 1 Punkt Stärke für alle Vereine des Landes – das wirkt auf Europapokal-Erfolge, Fünfjahreswertung und Startplätze. Mit der Option „Historische Entwicklung“ Historisch oder Streng historisch wird am Saisonende mindestens ein Viertel der Abweichung zum echten Ruf der Zeit abgebaut, bei Frei zählen nur die Europapokal-Ergebnisse. Dein Heimatland bleibt außen vor.',
     wiki: 'league-reputation',
   },
   // ---------------------------------------------------------------- Spieler-Zustand

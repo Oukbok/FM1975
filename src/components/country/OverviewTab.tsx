@@ -44,7 +44,7 @@ export default function OverviewTab({ g, c, pyramid }: CountryTabProps) {
           <Meter label={rep.live ? `Ligaruf (${rep.mode})` : 'Richtwert'} value={rep.rep} color={vColor(rep.rep)}
             text={<>{rep.rep.toFixed(0)}{rep.delta != null && <small className={`cnx-delta ${Math.abs(rep.delta) < 0.5 ? '' : rep.delta > 0 ? 'up' : 'down'}`}> {sign(rep.delta)} zur Vorsaison</small>}</>} />
           {rep.live && <KV k="Historisch um diese Zeit" v={rep.hist.toFixed(0)} />}
-          {!rep.live && <div className="dnote">{c.kind === 'home' ? 'Dein Heimatland wird nicht gesteuert – seine Stärke kommt aus den echten Kadern.' : c.kind === 'ddr' ? 'Die DDR läuft mit deinem Spielstand; ihr Ruf ist nur ein Richtwert.' : 'Option „Entwicklung der Ligen“ ist aus – angezeigt wird der historische Richtwert.'}</div>}
+          {!rep.live && <div className="dnote">{c.kind === 'home' ? 'Dein Heimatland wird nicht gesteuert – seine Stärke kommt aus den echten Kadern.' : c.kind === 'ddr' ? 'Die DDR läuft mit deinem Spielstand; ihr Ruf ist nur ein Richtwert.' : 'Dieser Spielstand stammt aus einer Version ohne Ligaruf – angezeigt wird der historische Richtwert.'}</div>}
           <KV k="Fünfjahreswertung" v={rep.rank ? `${rep.rank}. von ${rep.of}${rep.coef != null ? ` · ${rep.coef.toFixed(1).replace('.', ',')} Punkte` : ''}` : 'keine Daten'} strong />
           <div className="dsec">Startplätze Europapokal {g.season}</div>
           {rep.slots.length ? rep.slots.map((s) => <KV key={s.label} k={s.label} v={s.n} />) : <div className="dnote">Keine Daten – das Land steht nicht in der Wertung.</div>}

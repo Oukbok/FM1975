@@ -1,7 +1,8 @@
 // =============================================================================
 // ENTWICKLUNG DER ANDEREN VEREINE — zufällig oder an der echten Geschichte orientiert
 // -----------------------------------------------------------------------------
-// Beim Spielstart wählbar (optionales Feld `game.historyMode`, alte Spielstände = Aus):
+// Beim Spielstart wählbar (optionales Feld `game.historyMode`, alte Spielstände = Aus) – im Assistenten
+// zusammen mit dem Ligaruf über die eine Frage „Historische Entwicklung“ (screens/newgame/draft.ts HISTORIC_LEVELS):
 //   off     – alle Vereine entwickeln sich frei nach Erfolg, Geld und Zufall (wie bisher)
 //   medium  – sanfte Lenkung in Richtung der historischen Zielkurve (data/historicStrength.ts)
 //   strong  – deutliche Lenkung: die echten Großklubs landen meist oben

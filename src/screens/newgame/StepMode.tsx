@@ -1,5 +1,4 @@
 import Icon from '../../components/Icon';
-import { HISTORY_MODES } from '../../game/historicSteer';
 import type { NewGameDraft, StartMode } from './draft';
 import { STORIES } from '../../data/privateLife';
 
@@ -20,7 +19,6 @@ function Toggle({ on, onChange, label, text }: { on: boolean; onChange: (v: bool
 }
 
 export function StepMode({ d, set, chooseMode }: { d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void; chooseMode: (m: StartMode) => void }) {
-  const hm = HISTORY_MODES.find((m) => m.id === d.history)!;
   return (
     <div className="ng-mode">
       <div className="ng-modes">
@@ -48,13 +46,6 @@ export function StepMode({ d, set, chooseMode }: { d: NewGameDraft; set: (p: Par
 
       <div className="ng-cols ng-cols-2">
         <section className="ng-card">
-          <h3 className="ng-h">Entwicklung der anderen Vereine</h3>
-          <div className="ng-seg">
-            {HISTORY_MODES.map((m) => (
-              <button key={m.id} type="button" className={d.history === m.id ? 'on' : ''} onClick={() => set({ history: m.id })}>{m.label}</button>
-            ))}
-          </div>
-          <p className="ng-note">{hm.desc} Gilt nur für die anderen Vereine, nie für deinen – und steht ab Spielstart fest.</p>
           <h3 className="ng-h">Spieltempo</h3>
           <div className="ng-speed">
             <input type="range" min={300} max={1600} step={100} value={d.speedMs} onChange={(e) => set({ speedMs: +e.target.value })} />

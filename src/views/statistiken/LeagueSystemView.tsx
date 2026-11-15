@@ -29,7 +29,7 @@ export function LeagueSystemView({ g, onGoto }: { g: Game; onChange?: () => void
       <DashBox title="Ligen der Welt" info={withRep ? 'ligaruf' : 'simtiefe'} rows={2} flush right={`${rows.length} Länder`}>
         <div className="lsv-head">
           <div className="dnote">{withRep
-            ? `Nach Ligaruf (0–100, Entwicklung der Ligen: ${leagueRepLabel(g.leagueRepMode)}) mit Veränderung zur Vorsaison. Klick öffnet Tabelle und Begegnungen unter Statistiken › Liga.`
+            ? `Nach Ligaruf (0–100, Ligen ${leagueRepLabel(g.leagueRepMode).toLowerCase()} – Option „Historische Entwicklung“) mit Veränderung zur Vorsaison. Klick öffnet Tabelle und Begegnungen unter Statistiken › Liga.`
             : 'Alle Auslandsligen laufen Spieltag für Spieltag. Klick öffnet Tabelle und Begegnungen unter Statistiken › Liga.'}</div>
         </div>
         {rows.length ? (

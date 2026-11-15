@@ -1,7 +1,8 @@
 // =============================================================================
 // ENTWICKLUNG DER LIGEN — Spielstand-Anbindung des Ligarufs (engine/leagueRep.ts)
 // -----------------------------------------------------------------------------
-// Beim Spielstart wählbar (optionales Feld `game.leagueRepMode`):
+// Beim Spielstart wählbar (optionales Feld `game.leagueRepMode`) – im Assistenten zusammen mit
+// historyMode über die eine Frage „Historische Entwicklung“ (screens/newgame/draft.ts HISTORIC_LEVELS):
 //   historic – Ligen folgen grob der echten Geschichte (Zielkurve data/leagueReputation.ts)
 //   free     – Ligen entwickeln sich nur aus den eigenen Europapokal-Ergebnissen
 // Fehlt das Feld (alte Spielstände), bleibt alles wie bisher: Landesniveau aus
