@@ -72,7 +72,7 @@ import { migrateHistoryMode } from './historicSteer';
 import { migrateLeagueRep } from './leagueRepGame';
 import { migrateTransferLog } from './transferLog';
 import { migrateCareer } from './careerGame';
-import { assignShirtNumbers } from './squads';
+import { migrateShirtNumbers } from './shirtMigration';
 import { bindHonours } from './clubHonours';
 import { bindStaffFactor } from './staffGame';
 import { bindCoaching } from './coachingGame';
@@ -377,7 +377,6 @@ export function prepareLoadedGame(g: Game): void {
   try { migrateCohesion(g); } catch (err) { console.error('Eingespieltheit-Nachrüstung fehlgeschlagen:', err); }
   try { migrateTrainingPlan(g); migrateStaffPeople(g); } catch (err) { console.error('Trainerteam-Nachrüstung fehlgeschlagen:', err); }
   // Jugendwettbewerbe: laufende Saison sofort, vergangene Spieltage werden nachsimuliert.
-  try { for (const c of Object.values(g.clubs)) assignShirtNumbers(c, g.players); } catch (err) { console.error('Rückennummern-Nachrüstung fehlgeschlagen:', err); }
   try { migrateYouthContracts(g); } catch (err) { console.error('Jugendverträge-Nachrüstung fehlgeschlagen:', err); }
   try { migrateYouthComps(g); } catch (err) { console.error('Jugendwettbewerbe-Nachrüstung fehlgeschlagen:', err); }
   migrateHistoryMode(g);
@@ -393,6 +392,8 @@ export function prepareLoadedGame(g: Game): void {
   fixStaleContracts(g); // Spieler im Kader mit abgelaufenem Vertrag (Hochziehen nach dem 1. Juli, alte Spielstände)
   ensureCountryPools(g.world, g.euroClubs, Number(g.season.slice(0, 4))); // Unterbau der Auslandsligen (engine/world.ts)
   if (!g.worldPool || g.worldPool.v !== 2) ensureWorldPool(g); // Weltspieler anlegen bzw. auf den EA-FC-Maßstab stauchen (migrateWorldScale)
+  // Rückennummern aller Vereine + Weltspieler (game/shirtMigration.ts, nach dem Weltpool).
+  try { migrateShirtNumbers(g); } catch (err) { console.error('Rückennummern-Nachrüstung fehlgeschlagen:', err); }
   // Auslandsligen (game/worldLeagues.ts): frühere „Spiel für Spiel“-Divisionen ablösen und die laufende
   // Saison aller Länder bis heute nachspielen (ältere Spielstände).
   if (retireFullCountries(g) && g.world) g.world.live = undefined;

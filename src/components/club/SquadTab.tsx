@@ -60,7 +60,7 @@ export default function SquadTab({ g, d, openPlayer, onTalk, talkErr }: ClubTabP
               const block = running.has(p.id) ? null : talkBlocker(g, p);
               return (
                 <tr key={p.id} data-pid={p.id} className="clickable" onClick={() => openPlayer(p.id)}>
-                  <td className="ctr muted">{p.shirtNumber}</td>
+                  <td className="ctr muted">{p.shirtNumber || ''}</td>
                   <td className="nowrap rl-name">{p.fullName}{p.transferListed && <span className="cmx-tag">Transferliste</span>}</td>
                   <td className="ctr"><PosBadge p={p} /></td>
                   <td className="num">{p.age}</td>

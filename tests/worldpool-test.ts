@@ -2,7 +2,8 @@
 import { createNewGame } from '../src/game/newGame';
 import { processDay, HEADLESS_UI } from '../src/game/day';
 import { clubOffer, playerOffer, startTalk, stanceFor, talkBlocker } from '../src/game/transferTalks';
-import { materializeWorldPlayer, worldClubs, worldEntry } from '../src/game/worldPool';
+import { materializeWorldPlayer, worldClubs, worldEntry, worldPoolSeason, WP_FIELD as WF } from '../src/game/worldPool';
+import { checkShirtNumbers } from './shirt-checks';
 import { estimate, knowCtx, knowledge, poolRows } from '../src/game/playerPool';
 import { queueScouting, queuedJob, scoutReport, scoutSlots, scoutingOf, startScouting } from '../src/game/scoutingGame';
 import type { Game } from '../src/game/state';
@@ -90,4 +91,5 @@ t2.phase = 'failed';
 processDay(g, HEADLESS_UI);
 if (g.players[p2.id]) fail('abgebrochener Weltspieler noch in g.players');
 if (!worldEntry(g, p2.id)) fail('Eintrag weg');
+checkShirtNumbers(g, fail, worldPoolSeason, WF);
 console.log('Weltpool-Test bestanden.');

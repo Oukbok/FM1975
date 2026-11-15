@@ -28,9 +28,10 @@ import { COUNTRY_BY_KEY } from '../data/world/countries';
 import type { Player, Position } from '../types';
 import type { Game } from './state';
 import { rememberWorldPlayers } from './worldAwardsStore';
+import { FIXED_SHIRTS_FROM, numberSquad } from '../engine/shirtNumbers';
 
-/** [id, Verein, Vorname, Nachname, Nation, Ethnie, Geburtsjahr, Position, Stärke, Potenzial, Fuß 0 r/1 l/2 b, Größe, Jugend 0/1] */
-export type WP = [string, string, string, string, string, string, number, Position, number, number, number, number, number];
+/** [id, Verein, Vorname, Nachname, Nation, Ethnie, Geburtsjahr, Position, Stärke, Potenzial, Fuß 0 r/1 l/2 b, Größe, Jugend 0/1, Rückennummer?] */
+export type WP = [string, string, string, string, string, string, number, Position, number, number, number, number, number, number?];
 
 export interface WorldPool {
   /** 2 = Weltspitze nach EA-FC-Maßstab (`migrateWorldScale`). */
@@ -41,7 +42,7 @@ export interface WorldPool {
   p: WP[];
 }
 
-const W = { id: 0, club: 1, first: 2, last: 3, nat: 4, face: 5, born: 6, pos: 7, ov: 8, pot: 9, foot: 10, height: 11, youth: 12 } as const;
+const W = { id: 0, club: 1, first: 2, last: 3, nat: 4, face: 5, born: 6, pos: 7, ov: 8, pot: 9, foot: 10, height: 11, youth: 12, shirt: 13 } as const;
 export { W as WP_FIELD };
 
 const SLOTS: Position[] = ['TW', 'TW', 'TW', 'IV', 'IV', 'IV', 'IV', 'RV', 'RV', 'LV', 'LV', 'DM', 'DM', 'ZM', 'ZM', 'OM', 'OM', 'RA', 'LA', 'MS', 'MS', 'MS'];
@@ -201,7 +202,32 @@ export function ensureWorldPool(g: Game): WorldPool {
   pool.p = pool.p.filter((w) => { if (!clubs.has(w[W.club])) { gone.push(w); return false; } have.add(w[W.club]); return true; });
   noteGone(g, gone);
   for (const c of clubs.values()) if (!have.has(c.id)) pool.p.push(...squadFor(g, pool, c, year));
+  numberWorldPool(pool, year);
   return pool;
+}
+
+/** Nummer entfernen (Wechsel, neue klassische Saison): `numberWorldPool` vergibt dann eine neue. */
+const clearShirt = (w: WP) => { if (w.length > W.shirt) w.length = W.shirt; };
+
+/**
+ * Rückennummern der Weltspieler (Wunsch Pascal; Regeln engine/shirtNumbers.ts), kompakt als
+ * 14. Feld des Tupels: Vereine, in denen jemand ohne Nummer ist, werden nachgezogen – ganz
+ * ohne Nummern neu vergeben, sonst behalten alle ihre Nummer und nur Neue bekommen eine freie.
+ * Nur auf `club`-Vereine beschränkt, wenn angegeben. Idempotent.
+ */
+export function numberWorldPool(pool: WorldPool, year: number, club?: string): void {
+  if (!pool.p.some((w) => w[W.shirt] == null && (!club || w[W.club] === club))) return;
+  const byClub = new Map<string, WP[]>();
+  for (const w of pool.p) {
+    if (club && w[W.club] !== club) continue;
+    const l = byClub.get(w[W.club]); if (l) l.push(w); else byClub.set(w[W.club], [w]);
+  }
+  for (const list of byClub.values()) {
+    if (!list.some((w) => w[W.shirt] == null)) continue;
+    const fresh = list.every((w) => w[W.shirt] == null);
+    const nums = numberSquad(list.map((w) => ({ id: w[W.id], pos: w[W.pos], ov: w[W.ov], youth: !!w[W.youth], cur: w[W.shirt] ?? 0 })), year, fresh);
+    for (const w of list) w[W.shirt] = nums.get(w[W.id]) ?? 0;
+  }
 }
 
 /** Saisonwechsel: Entwicklung, Karriereende, Nachrücker, Wechsel, Nachführen an die Vereinsstärke. */
@@ -247,6 +273,8 @@ export function worldPoolSeason(g: Game): void {
     }
   }
   pool.p = keep;
+  // Bis 1992/93 tragen die Stammkräfte zur neuen Saison wieder 1–11 nach Position.
+  if (year < FIXED_SHIRTS_FROM) for (const w of pool.p) clearShirt(w);
   // Herausragende Spieler wechseln zu stärkeren Vereinen (eigenes Land bevorzugt, sonst Topliga).
   const list = [...clubs.values()].sort((a, b) => b.strength - a.strength);
   for (const w of pool.p) {
@@ -261,7 +289,7 @@ export function worldPoolSeason(g: Game): void {
     const home = cands.filter((c) => c.country === club.country);
     const from = home.length && r() < 0.6 ? home : cands;
     const pick = from[Math.floor(r() * from.length)];
-    if (pick) { w[W.club] = pick.id; w[W.youth] = 0; }
+    if (pick) { w[W.club] = pick.id; w[W.youth] = 0; clearShirt(w); }
   }
   // Nachführen an die Vereinsstärke (Median-Abstand der Stammkräfte, höchstens ±3 je Saison)
   byClub.clear();
@@ -333,6 +361,7 @@ function buildWorldPlayer(g: Game, w: WP): Player {
   p.contract.transferValue = worldValue(w, year);
   p.contract.expiryDate = `${year + 2}-06-30`;
   p.contract.satisfaction = 70;
+  p.shirtNumber = w[W.shirt] ?? 0;
   (p as Player & { world?: boolean }).world = true;
   return p;
 }
@@ -395,4 +424,5 @@ export function addSoldAbroad(g: Game, p: Player, clubId: string): void {
   const pot = Math.max(p.overall, p.development?.basePotential ?? p.overall);
   pool.p.push([`wp${(pool.next++).toString(36)}`, clubId, p.firstName, p.lastName, p.nationality || 'GER', p.face ?? 'mitteleuropa', born,
     p.naturalPosition, p.overall, pot, p.preferredFoot === 'left' ? 1 : p.preferredFoot === 'both' ? 2 : 0, p.height, 0]);
+  numberWorldPool(pool, startYearOf(g), clubId);
 }

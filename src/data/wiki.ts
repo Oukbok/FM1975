@@ -414,6 +414,9 @@ Ein **Rechtsklick** auf einen Spieler – in Listen, Tabellen oder auf sein Gesi
 ## Spalten
 - **#** Rückennummer – per Klick auf die Nummer vergibst du eine neue (1–99); trägt sie schon ein Mitspieler, tauschen beide.
 - **Name**
+
+## Rückennummern der anderen Vereine
+Jeder Spieler jedes Vereins – auch im Ausland und in den unteren Ligen – trägt eine eigene Nummer, die im Kader nur einmal vorkommt. Bis **1992/93** gilt die klassische Vergabe: Die Stammelf trägt **1 bis 11 nach Position** (1 Torwart, 2 und 3 Außenverteidiger, 4 Vorstopper, 5 Libero, 6 defensives Mittelfeld, 7 rechts vorn, 8 Mittelfeld, 9 Mittelstürmer, 10 Spielmacher, 11 links vorn), der Ersatztorwart die 12, alle anderen fortlaufend. Zu jeder neuen Saison verteilen die anderen Vereine die Nummern neu. Ab **1993/94** gibt es feste Saisonnummern von 1 bis 40: Stammkräfte tragen oft noch die klassische Nummer, manche eine freie, die Stars gern die 7, 9 oder 10, Talente aus der Jugend eher 30 bis 40. Die Nummern bleiben dann über die Jahre, Neuzugänge bekommen eine freie, zur Position passende Nummer. **Deine eigenen Nummern ändert das Spiel nie** – neue Spieler bei dir bekommen nur eine freie Nummer.
 - **Pos** natürliche Position
 - **Alter**
 - **OVR** Gesamtstärke, farbcodiert (Grün > 75, Gelb 60–75, Orange/Rot < 60)

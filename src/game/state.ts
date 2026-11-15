@@ -168,6 +168,8 @@ export interface Game {
   fullAll?: boolean;
   /** Weltspieler der Vereine ohne vollen Kader (game/worldPool.ts); fehlt = wird beim Laden angelegt. */
   worldPool?: import('./worldPool').WorldPool;
+  /** 1 = Rückennummern aller KI-Kader nach Position vergeben (game/shirtMigration.ts); fehlt = alte Nummern „kleinste freie“. */
+  shirtsV?: 1;
   /** Einzel-Scouting und Berichte (game/scoutingGame.ts). */
   scouting?: import('./scoutingGame').ScoutingState;
   /** Privatleben: Familie, Freizeit, Vermögen, Generationen (game/private/). */

@@ -27,6 +27,7 @@ import type { EuroClub } from './europe';
 export { CLUB_SEEDS, SECOND_LIGA_NORD_SEEDS, SECOND_LIGA_SUED_SEEDS } from './clubSeeds';
 export type { ClubSeed, SecondLigaSeed } from './clubSeeds';
 import { CLUB_SEEDS, type ClubSeed } from './clubSeeds';
+import { numberClub, shirtSeasonOf } from '../engine/shirtNumbers';
 
 // -----------------------------------------------------------------------------
 // Seeded RNG (deterministisch, damit jeder Neustart dieselbe Welt erzeugt)
@@ -581,6 +582,7 @@ export function buildEuroClubFull(
 
   applyFacilityEffects(club);
   club.commerce = makeCommerce(club, false);
+  numberClub(club, players, shirtSeasonOf(seasonStart || CURRENT_DATE), true); // Rückennummern nach Position (engine/shirtNumbers.ts)
   setGenDate(CURRENT_DATE);
   return club;
 }

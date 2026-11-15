@@ -8,7 +8,7 @@ import { clearPendingGoldenBall } from './goldenBallGame';
 import { EuroCompId, allEuroClubs } from '../data/europe';
 import { setEraYear } from '../engine/positions';
 import { refreshOverall } from '../engine/development';
-import { manageSquads } from './squads';
+import { manageSquads, seasonShirtNumbers } from './squads';
 import { aiSeasonEnd } from './aiClubs';
 import { closeFinancialSeason, openFinancialSeason } from './seasonFinance';
 import { historicMoney, historicSeasonClose, historicSimClubs, historicWorld, historicWorldAfter } from './historicSteer';
@@ -437,6 +437,7 @@ export function startNextSeason(g: Game): void {
   // Saisonbilanz als Station festhalten, Saisonstatistik für die neue Saison leeren.
   closeSeason(g.players, g.clubs, oldSeason);
   manageSquads(g, calendar.currentDate, !!(g as any).simAutoManage);
+  seasonShirtNumbers(g, nextStartYear); // Rückennummern: bis 1992/93 Stammelf 1–11 nach Position (engine/shirtNumbers.ts)
   historicMoney(g, nextStartYear, calendar.currentDate);
   openFinancialSeason(g, newSeason, calendar.currentDate, prevPerf);
   staffSeasonChange(g, calendar.currentDate);

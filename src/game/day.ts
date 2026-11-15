@@ -44,6 +44,7 @@ import { cohesionDaily } from './cohesionGame';
 import { buyBackDaily, contractClausesDaily } from './playerWishesGame';
 import { contractBonusesDaily, contractSeasonEndDaily } from './contractClausesGame';
 import { assignShirtNumbers, repairSquadLists } from './squads';
+import { shirtSeasonOf } from '../engine/shirtNumbers';
 import { applyEuphoria, monthlyClubEvents } from './clubEventsGame';
 import { announceUpcomingRules } from './ruleNotice';
 import { monthlyYouthRecruit } from './youthRecruit';
@@ -240,7 +241,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   contractClausesDaily(g, today); // Treueprämie, Erfolgsklausel, Leihe mit Kaufoption (game/playerWishesGame.ts)
   contractBonusesDaily(g, today); // Vertrag 2.0: Einsatz-/Tor-/Zu-null-Prämien (game/contractClausesGame.ts)
   contractSeasonEndDaily(g, today); // Vertrag 2.0: Titelprämie, Klassenerhalt vormerken (29.6.)
-  { const mc = g.clubs[g.managedClubId]; if (mc) assignShirtNumbers(mc, g.players); }
+  { const mc = g.clubs[g.managedClubId]; if (mc) assignShirtNumbers(mc, g.players, shirtSeasonOf(today)); }
   buyBackDaily(g, today, (p, from, to, fee) => { transferPlayer(g, p, from, to, fee, today); repairSquadLists(g); });
   transferTalkDaily(g, today);
   scoutingDaily(g, today); // Einzel-Scouting (Transfers › Scouting)

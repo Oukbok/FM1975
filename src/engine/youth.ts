@@ -36,6 +36,7 @@ import { academyLevelOf, cpuPromotionPolicy, intakeCountOf } from './youthAcadem
 import { bornWorkRate } from './attributeAging';
 import { youthTalentPotential } from './talent';
 import { maybeRisingStar } from './clubStars';
+import { FIXED_SHIRTS_FROM, numberSquad, shirtSeasonOf } from './shirtNumbers';
 
 // -----------------------------------------------------------------------------
 // Namens-Pools (Ära-gerecht, jüngerer Jahrgang)
@@ -472,7 +473,7 @@ export function promoteYouth(
   refreshOverall(p);
   updateScoutEstimate(p, 0.6, true);
   // Freie Rückennummer im Profikader suchen.
-  p.shirtNumber = freeShirtNumber(club, players);
+  p.shirtNumber = freeShirtNumber(club, players, p, date);
 
   players[playerId] = p;
   club.playerIds.push(playerId);
@@ -480,10 +481,12 @@ export function promoteYouth(
   return { ok: true };
 }
 
-function freeShirtNumber(club: Club, players: Record<string, Player>): number {
-  const used = new Set(club.playerIds.map((id) => players[id]?.shirtNumber).filter(Boolean));
-  for (let n = 1; n <= 40; n++) if (!used.has(n)) return n;
-  return 40;
+/** Freie Rückennummer für ein hochgezogenes Talent (ab 1993/94 eher 30–40, vorher fortlaufend ab 12; engine/shirtNumbers.ts). */
+function freeShirtNumber(club: Club, players: Record<string, Player>, p: Player, date?: string): number {
+  const list = club.playerIds.map((id) => players[id]).filter(Boolean)
+    .map((x) => ({ id: x.id, pos: x.naturalPosition, ov: x.overall, cur: x.shirtNumber }));
+  list.push({ id: p.id, pos: p.naturalPosition, ov: p.overall, cur: 0, youth: true } as typeof list[number]);
+  return numberSquad(list, date ? shirtSeasonOf(date) : FIXED_SHIRTS_FROM, false).get(p.id) ?? 40;
 }
 
 /**

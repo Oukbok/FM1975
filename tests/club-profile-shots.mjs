@@ -9,6 +9,7 @@ import { extname, join } from 'node:path';
 import { chromium } from 'playwright';
 import { startNewGame } from './newgame-flow.mjs';
 import { pickOption, optionsOf, valueOf } from './select3.mjs';
+import lz from 'lz-string';
 
 const outDir = process.argv[2] || 'test-output/club';
 await mkdir(outDir, { recursive: true });
@@ -77,16 +78,18 @@ await page.locator('.hd-nav-item:has-text("Statistiken")').click();
 await page.waitForTimeout(250);
 await page.locator('.tn-sub-item:has-text("Liga")').first().click();
 await page.waitForTimeout(300);
-const rows = page.locator('.dtable tbody tr.clickable');
-const n = await rows.count();
-let idx = 0;
-for (let i = 0; i < n; i++) { if (!(await rows.nth(i).getAttribute('class')).includes('me')) { idx = i; break; } }
-await rows.nth(idx).click();
+// Tabellenzeilen sind nicht mehr klickbar – der Vereinsname ist der Link (ClubLink).
+await page.locator('.cmp-table tbody tr:not(.me) .club-link').first().click();
 await page.waitForSelector('.cmx-modal');
 await shootProfile('gegner');
 
 // Spielerprofil aus dem Kader + zurück über den Vereinsnamen
 await page.locator('.cmx-tabs .tab').nth(1).click();
+{
+  const nums = await page.locator('.cmx-modal .dtable tbody tr td:first-child').allTextContents();
+  if (nums.some((t) => !/^[1-9][0-9]?$/.test(t.trim())) || new Set(nums).size !== nums.length) errors.push(`Gegner: Rückennummern fehlen/doppelt (${nums.join(',')})`);
+  else console.log(`Gegner / Kader: ${nums.length} Rückennummern eindeutig (${nums.join(' ')})`);
+}
 await page.locator('.cmx-modal .dtable tbody tr').first().click();
 await page.waitForTimeout(300);
 await page.screenshot({ path: `${outDir}/${prefix}_gegner_5_Spielerprofil.png` });
@@ -96,12 +99,12 @@ console.log('Spielerprofil → Verein:', (await page.locator('.pp-modal').count(
 await closeProfile();
 
 // 2) Sim-Verein (andere Liga)
-const sel = page.locator('.sel3.dselect').first();
+const sel = page.locator('.cmp-select .sel3').nth(1);
 const opts = (await sel.count()) ? (await optionsOf(page, sel)).length : 0;
 if (opts > 1) {
   await pickOption(page, sel, { index: 1 });
   await page.waitForTimeout(300);
-  await page.locator('.dtable tbody tr.clickable').first().click();
+  await page.locator('.cmp-table tbody .club-link').first().click();
   await page.waitForSelector('.cmx-modal');
   await shootProfile('simverein');
   await closeProfile();
@@ -109,8 +112,28 @@ if (opts > 1) {
   await page.waitForTimeout(200);
 }
 
+// 2b) Auslandsverein (Weltspieler, Rückennummern): Mailand Rot-Schwarz bzw. der erste Auslandsverein des Spielstands
+if (process.env.SAVE) {
+  const raw = await readFile(process.env.SAVE, 'utf8');
+  const g = JSON.parse(raw.startsWith('LZ1:') ? lz.decompressFromUTF16(raw.slice(4)) : raw).game;
+  const eu = Object.values(g.euroClubs ?? {});
+  const foreign = (eu.find((e) => /Mailand Rot/.test(e.name)) ?? eu[0])?.id;
+  if (foreign) {
+    await page.evaluate((id) => { const d = document.createElement('div'); d.setAttribute('data-club', id); document.body.appendChild(d); d.click(); d.remove(); }, foreign);
+    await page.waitForSelector('.cmx-modal');
+    await page.locator('.cmx-tabs .tab').nth(1).click();
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: `${outDir}/${prefix}_ausland_2_Kader.png` });
+    const nums = await page.locator('.cmx-modal .dtable tbody tr td:first-child').allTextContents();
+    const bad = nums.filter((t) => !/^[1-9][0-9]?$/.test(t.trim()));
+    console.log(`Auslandsverein ${foreign} / Kader: ${nums.length} Spieler, ${bad.length ? `ohne/ungültige Nummer: ${bad.length}` : 'alle mit Rückennummer'}`);
+    if (bad.length || new Set(nums).size !== nums.length) errors.push(`Auslandsverein: Rückennummern fehlen/doppelt (${nums.join(',')})`);
+    await closeProfile();
+  }
+}
+
 // 3) Eigener Verein
-await page.locator('.dtable tbody tr.me').first().click();
+await page.locator('.cmp-table tbody tr.me .club-link').first().click();
 await page.waitForSelector('.cmx-modal');
 await shootProfile('eigener');
 await closeProfile();
@@ -118,10 +141,14 @@ await closeProfile();
 // 4) Aufruf aus der Zentrale (Tabelle) und dem Spielplan
 await page.locator('.hd-nav-item').first().click();
 await page.waitForTimeout(300);
-await page.locator('.dxt-row').nth(1).click();
-await page.waitForTimeout(300);
-console.log('Zentrale → Profil:', (await page.locator('.cmx-modal').count()) ? 'ok' : 'FEHLT');
-await closeProfile();
+const zLink = page.locator('.dxt-row, .dash3-left .club-link, [data-club]').nth(1);
+if (await zLink.count()) {
+  await zLink.click();
+  await page.waitForTimeout(300);
+  const ok = (await page.locator('.cmx-modal').count()) > 0;
+  console.log('Zentrale → Profil:', ok ? 'ok' : 'FEHLT');
+  if (ok) await closeProfile();
+}
 await page.locator('.hd-nav-item:has-text("Aufstellung")').click();
 await page.waitForTimeout(200);
 await page.locator('.tn-sub-item:has-text("Spielplan")').first().click();

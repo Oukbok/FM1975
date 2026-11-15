@@ -12,6 +12,7 @@ import { clubWageLevel } from '../engine/economy';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { refreshOverall } from '../engine/development';
 import { GEM_CHANCE_YOUNG_PRO, maybeMakeGem } from '../engine/gems';
+import { FIXED_SHIRTS_FROM, numberClub, shirtSeasonOf } from '../engine/shirtNumbers';
 
 const TEMPLATE: Position[] = ['TW', 'TW', 'LIB', 'IV', 'IV', 'RV', 'LV', 'DM', 'ZM', 'ZM', 'OM', 'RA', 'LA', 'MS', 'MS', 'HS', 'ZM', 'LV', 'IV', 'RM'];
 export const MIN_SQUAD = 20;
@@ -62,21 +63,25 @@ export function setShirtNumber(club: Club, players: Record<string, Player>, pid:
   p.shirtNumber = n;
 }
 
-export function assignShirtNumbers(club: Club, players: Record<string, Player>): number {
-  const used = new Set<number>();
-  const need: Player[] = [];
-  for (const id of club.playerIds) {
-    const p = players[id];
-    if (!p) continue;
-    const n = p.shirtNumber;
-    if (!n || n < 1 || n > 99 || used.has(n)) need.push(p); else used.add(n);
+export function assignShirtNumbers(club: Club, players: Record<string, Player>, year = FIXED_SHIRTS_FROM): number {
+  return numberClub(club, players, year, false);
+}
+
+/**
+ * Rückennummern eines Kaders komplett neu vergeben (Spielbeginn, klassischer Saisonwechsel
+ * bis 1992/93, einmalige Nachrüstung der KI-Vereine) – nie für den eigenen Verein im laufenden Spiel.
+ */
+export function renumberSquad(club: Club, players: Record<string, Player>, year: number): number {
+  return numberClub(club, players, year, true);
+}
+
+/** Saisonwechsel: bis 1992/93 tragen die KI-Kader wieder 1–11 nach Position (eigener Verein unverändert). */
+export function seasonShirtNumbers(game: Game, year: number): void {
+  for (const club of Object.values(game.clubs)) {
+    if (club.id === game.managedClubId) assignShirtNumbers(club, game.players, year);
+    else if (year < FIXED_SHIRTS_FROM) renumberSquad(club, game.players, year);
+    else assignShirtNumbers(club, game.players, year);
   }
-  let next = 1;
-  for (const p of need) {
-    while (used.has(next) && next < 99) next++;
-    p.shirtNumber = next; used.add(next);
-  }
-  return need.length;
 }
 
 /** Konsistenz: Kaderlisten ohne Geister-IDs/Dubletten, jeder Spieler genau einem Verein zugeordnet. */
@@ -96,7 +101,8 @@ export function repairSquadLists(game: Game): number {
     const c = game.clubs[p.clubId];
     if (c && !c.playerIds.includes(p.id) && !p.isYouth && !(p as Player & { world?: boolean }).world) { c.playerIds.push(p.id); fixed++; }
   }
-  for (const club of Object.values(game.clubs)) assignShirtNumbers(club, game.players);
+  const year = shirtSeasonOf(game.calendar.currentDate);
+  for (const club of Object.values(game.clubs)) assignShirtNumbers(club, game.players, year);
   return fixed;
 }
 
@@ -132,7 +138,7 @@ export function fillSquad(game: Game, club: Club, date: string, min = MIN_SQUAD,
     game.players[p.id] = p;
     club.playerIds.push(p.id);
   }
-  if (n) assignShirtNumbers(club, game.players);
+  if (n) assignShirtNumbers(club, game.players, shirtSeasonOf(date));
   return n;
 }
 
