@@ -39,7 +39,10 @@ const EMPTY = (): LeanStats => ({ goals: [], assists: [], scorer: [], yellow: []
  * des Stammtorwarts. `tag` trennt die Wettbewerbe: dieselbe Mannschaft hat in Liga und Pokal eigene
  * Zufallsfolgen. Die Torverteilung ist dieselbe wie in der früheren reinen Torschützenliste.
  */
-function statsFrom(g: Game, clubIds: string[], list: ScoredGame[], tag: string, n: number): LeanStats {
+/** Saisonzeile eines Weltspielers (für Auszeichnungen/Goldenen Ball): Einsätze geschätzt nach Stammplatz. */
+export interface LeanLine { w: WP; clubId: string; apps: number; goals: number; assists: number; clean: number; played: number }
+
+function statsFrom(g: Game, clubIds: string[], list: ScoredGame[], tag: string, n: number, sink?: (l: LeanLine) => void): LeanStats {
   const out = EMPTY();
   const pool = g.worldPool?.p;
   if (!pool?.length) return out;
@@ -99,6 +102,10 @@ function statsFrom(g: Game, clubIds: string[], list: ScoredGame[], tag: string, 
     const keeper = sorted.find((w) => w[W.pos] === 'TW');
     const cs = clean.get(clubId) ?? 0;
     if (keeper && cs) out.clean.push(row(keeper, cs));
+    if (sink) sorted.forEach((w, i) => {
+      const apps = Math.round(played * (i < 11 ? 0.9 : i < 16 ? 0.4 : 0.1));
+      if (apps) sink({ w, clubId, apps, goals: gl[i], assists: as[i], clean: w === keeper ? cs : 0, played });
+    });
   }
   for (const k of Object.keys(out) as StatCat[]) out[k] = out[k].sort((a, b) => b.value - a.value || a.name.localeCompare(b.name, 'de')).slice(0, n);
   return out;
@@ -108,6 +115,12 @@ const scorersFrom = (g: Game, clubIds: string[], list: ScoredGame[], tag: string
 /** Alle Einzelwertungen einer schlanken Liga bis zum heutigen Stand (beste `n` je Wertung). */
 export function leanStats(g: Game, d: LeanDiv, season: string, n = 10): LeanStats {
   return d.r ? statsFrom(g, d.ids, leanGames(d, season), `wsc:${season}`, n) : EMPTY();
+}
+/** Alle Spieler einer schlanken Liga mit ihrer Saisonzeile (gleiche Verteilung wie die Bestenlisten). */
+export function leanLines(g: Game, d: LeanDiv, season: string): LeanLine[] {
+  const out: LeanLine[] = [];
+  if (d.r) statsFrom(g, d.ids, leanGames(d, season), `wsc:${season}`, 0, (l) => out.push(l));
+  return out;
 }
 /** Alle Einzelwertungen eines Landespokals über die gespielten Runden. */
 export function leanCupStats(g: Game, key: string, season: string, c: LeanCup, n = 10): LeanStats {

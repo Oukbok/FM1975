@@ -113,5 +113,12 @@ expect(old.seasonAwards === undefined, 'Migration legt bei alten Ständen ein Fe
   expect(s2 && !awardsState(g2)!.pending, 'Rückfall in startNextSeason fehlt');
   console.log(`Rückfall ${season}: ${AWARD_CATS.map((c) => s2!.cats[c][0]?.n).join(', ')}`);
 }
+// Auslandsligen (Wunsch Pascal: Liga-Auswahl auf der Seite): je Saison eine Wertung je 1. Liga.
+const world = awardsState(g)!.world ?? [];
+expect(world.length > 10, `Auslandsligen ohne Auszeichnungen (${world.length})`);
+for (const s of world.filter((x) => x.season === world[world.length - 1].season).slice(0, 4)) {
+  console.log(`   ${s.season} ${s.divName}: ${AWARD_CATS.map((c) => `${c} ${s.cats[c][0]?.n ?? '—'} (${s.cats[c][0]?.cn ?? ''}, ${s.cats[c][0]?.g ?? ''}, ${s.cats[c][0]?.gl ?? 0} T)`).join(' | ')}`);
+}
+console.log(`Auslandsligen: ${world.length} Wertungen, ${(JSON.stringify(world).length / 1024).toFixed(0)} KB`);
 console.log(`Spielstand: ${(JSON.stringify(awardsState(g)!.seasons[0]).length / 1024).toFixed(1)} KB je Saison`);
 console.log('OK – Auszeichnungen der Saison');

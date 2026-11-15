@@ -54,6 +54,22 @@ for (const [vw, vh] of [[1920, 1080], [1366, 768]]) {
       await page.locator('.gb-foot .btn-primary').click();
       await page.waitForTimeout(300);
       if (await page.locator('.gb-root').count()) errors.push(`${name}: Gala schließt nicht`);
+      // Seite Statistiken › Auszeichnungen: Goldener Ball oben, Wahl einer Auslandsliga, Pfeile.
+      await page.locator('.hd-nav-item:has-text("Statistiken")').first().click().catch(() => {});
+      await page.waitForTimeout(400);
+      await page.locator('.tn-sub-item:has-text("Auszeichnungen")').first().click().catch(() => {});
+      await page.waitForTimeout(900);
+      if (await page.locator('.aw-page').count()) {
+        await page.screenshot({ path: `${pre}_seite_gb.png` });
+        await page.locator('.aw-pick button[aria-label="Vorige Saison"]').click();
+        await page.waitForTimeout(300);
+        await page.locator('.aw-pick-league').click();
+        await page.waitForTimeout(300);
+        await page.locator('.sel3-pop [role="option"]:has-text("Italien"), .sel3-menu [role="option"]:has-text("Italien")').first().click().catch(() => {});
+        await page.waitForTimeout(600);
+        await page.screenshot({ path: `${pre}_seite_liga.png` });
+        await over('.aw-page', 'Seite');
+      } else errors.push(`${name}: Seite Auszeichnungen nicht erreicht`);
     } else {
       await page.waitForSelector('.aw-modal', { timeout: 15000 });
       await page.waitForTimeout(1400);

@@ -303,7 +303,9 @@ Die 1981er-Reform (eingleisige 2. Liga) liegt vor der Wiedervereinigung, die Reg
 Am Tag nach dem letzten Ligaspieltag ehrt die Sportredaktion die **besten Spieler auf ihren Positionen** – in vier Kategorien: **Torwart, Abwehr, Mittelfeld und Sturm**, jeweils mit Platz 1 bis 3. Dazu kommen der **Spieler der Saison** und der **Newcomer der Saison** (höchstens 21 Jahre). Ein festliches Fenster zeigt die Geehrten; alle Jahrgänge findest du unter **Statistiken › Auszeichnungen**.
 
 ## Welche Liga?
-Geehrt wird in der Liga deines Vereins – nur dort spielen alle Mannschaften mit vollen Kadern und Einzelstatistik. Die Kategorie richtet sich nach der Stammposition des Spielers.
+Das Fenster zeigt die Liga deines Vereins. Zum Saisonende werden außerdem die **1. Ligen im Ausland** gewertet – nach denselben Regeln. Dort kennt das Spiel Tore, Vorlagen und Spiele zu null je Spieler, aber keine Noten: Die Note wird nach dem Maßstab deiner Liga aus Stärke, Tabellenplatz und Torbeteiligung geschätzt (mit der üblichen Formschwankung). Die Kategorie richtet sich nach der Stammposition des Spielers.
+
+Unter **Statistiken › Auszeichnungen** wählst du oben, was du sehen willst: standardmäßig den **Goldenen Ball** der Saison, sonst die Besten einer Liga (deine Liga oder ein Land). Die Pfeile neben der Saison blättern schnell durch die Jahre. Die Auslandsligen bleiben für die letzten fünf Saisons gespeichert.
 
 ## So wird gewertet
 Es zählen nur **Ligaspiele**. Wertbar ist, wer mindestens **die Hälfte der Spieltage** gespielt hat (Newcomer: 40 %). Jeder bekommt Wertungspunkte:
@@ -325,7 +327,7 @@ Am **20. Dezember** hält der Zeitlauf an: Bei einer **Gala** (bis 2009 und ab 2
 - **Wer ist wählbar?** Bis **1994** nur Spieler mit europäischer Staatsangehörigkeit bei europäischen Vereinen („Europas Fußballer des Jahres“), ab **1995** alle Spieler europäischer Vereine, ab **2007** Spieler aller Ligen weltweit („Weltfußballer des Jahres“) – im Spiel sind die europäischen Ligen simuliert.
 - **Kalenderjahr:** Rückrunde der abgelaufenen Saison (halb gewichtet) plus Hinrunde der laufenden Saison, alle Wettbewerbe. Mindestens 10 Spiele.
 - **Wertung:** 3 × (4,0 − Notenschnitt), Klasse (Stärke über 70), Tore und Vorlagen je Spiel (Sturm am stärksten gewichtet), Spiele zu null für Torwart und Abwehr, dazu **Titel**: Landesmeister-Cup 2 Punkte, Pokalsieger-Cup 1, UEFA-Pokal 0,8, Meisterschaft 1, Pokal 0,5. Unter 20 Spielen gibt es anteilig weniger.
-- **Auslandsstars:** Für die Spitzenvereine Europas kennt das Spiel nur die Stars aus dem Europapokal. Ihre Noten und Torquoten werden aus ihrer Stärke geschätzt – nach dem gleichen Maßstab wie bei den voll simulierten Spielern –, Europapokal-Tore und Titel zählen echt.
+- **Auslandsstars:** Alle Spieler der 1. Ligen im Ausland sind dabei. Tore, Vorlagen und Spiele zu null stammen aus ihrer Liga (bisherige Spiele, aufs Kalenderjahr hochgerechnet), die Note wird nach dem Maßstab der voll simulierten Spieler geschätzt (mit Formschwankung). Wer in einer schwächeren Liga spielt, wird abgewertet – Tore gegen schwache Abwehrreihen zählen weniger. Europapokal-Tore kommen dazu.
 - **Folgen:** Preisträger aus deinem Kader bekommen einen Moral-Schub (Sieger am meisten), ein Sieger hebt zudem das Ansehen deines Vereins leicht.
 - Die Zeremonie lässt sich in den Einstellungen („Ehrungen“) abschalten; alle Sieger stehen unter **Statistiken › Auszeichnungen** – ein Klick auf ein Jahr zeigt die Gala erneut.`,
   },

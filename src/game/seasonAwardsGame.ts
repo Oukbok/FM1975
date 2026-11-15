@@ -41,7 +41,11 @@ export interface AwardSeason {
   mine?: string;
 }
 
-export interface SeasonAwardsState { v: 1; seasons: AwardSeason[]; pending?: string }
+export interface SeasonAwardsState {
+  v: 1; seasons: AwardSeason[]; pending?: string;
+  /** Die Besten der 1. Ligen im Ausland (game/worldAwardsGame.ts), `div` = Länderschlüssel; nur die letzten Saisons. */
+  world?: AwardSeason[];
+}
 
 export const MAX_AWARD_SEASONS = 80;
 
@@ -50,7 +54,7 @@ type GameWithAwards = Game & { seasonAwards?: SeasonAwardsState };
 export function awardsState(g: Game): SeasonAwardsState | undefined {
   return (g as GameWithAwards).seasonAwards;
 }
-function ensureAwards(g: Game): SeasonAwardsState {
+export function ensureAwards(g: Game): SeasonAwardsState {
   return ((g as GameWithAwards).seasonAwards ??= { v: 1, seasons: [] });
 }
 export function awardsOf(g: Game, season: string): AwardSeason | undefined {
@@ -224,5 +228,6 @@ export function migrateSeasonAwards(g: Game): void {
   for (const s of st.seasons) for (const cat of AWARD_CATS) if (!Array.isArray(s.cats[cat])) s.cats[cat] = [];
   if (st.seasons.length > MAX_AWARD_SEASONS) st.seasons.splice(0, st.seasons.length - MAX_AWARD_SEASONS);
   if (st.pending && !st.seasons.some((s) => s.season === st.pending)) delete st.pending;
+  if (st.world && !Array.isArray(st.world)) delete st.world;
   st.v = 1;
 }

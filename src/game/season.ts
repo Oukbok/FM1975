@@ -46,6 +46,7 @@ import { countryPointSystem } from '../data/world/countries';
 import { homeExcluded } from './startYear';
 import { retireFullCountries } from './fullCountries';
 import { worldLiveResults } from './worldLeagues';
+import { worldSeasonAwards } from './worldAwardsGame';
 
 const isGermanHome = (g: Game) => homeCountryOf(g) === 'ger';
 import { sponsorSeasonStart } from './sponsorGame';
@@ -248,6 +249,8 @@ export function startNextSeason(g: Game): void {
   // Auslandsligen: Spieltag-Simulation zu Ende spielen (game/worldLeagues.ts); die Endtabellen gehen an engine/world.ts.
   retireFullCountries(g); // ältere Spielstände ohne Lade-Migration (Sicherheitsnetz)
   const leanResults = worldLiveResults(g);
+  // Die Besten der Saison in den 1. Ligen im Ausland (Note nach dem Maßstab der eigenen Liga).
+  worldSeasonAwards(g, oldSeason, leanResults.divs);
 
   // --- 2) Endstände ALLER aktuellen Divisionen einlesen (Spielerliga + Sim) ---
   const pd = g.leagues.playerDivision;

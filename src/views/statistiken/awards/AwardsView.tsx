@@ -1,7 +1,8 @@
 // =============================================================================
-// STATISTIKEN › AUSZEICHNUNGEN — Die Besten der Saison im Archiv (Saisonwahl).
-// Oben die vier Karten der gewählten Saison, unten alle Jahrgänge und die
-// meistgeehrten Spieler. Daten: game.seasonAwards (game/seasonAwardsGame.ts).
+// STATISTIKEN › AUSZEICHNUNGEN — oben wahlweise der Goldene Ball (Standard) oder
+// die Besten der Saison einer Liga (eigene Liga + 1. Ligen im Ausland,
+// game/worldAwardsGame.ts); Saison per Pfeilen oder Liste. Unten alle Jahrgänge
+// der eigenen Liga und die meistgeehrten Spieler. Daten: game.seasonAwards, game.goldenBall.
 // =============================================================================
 import { ClubLink } from '../../../components/club/ClubLink';
 import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
@@ -16,44 +17,65 @@ import type { Game } from '../../../game/state';
 import { DashBox, DashPage, Empty } from '../../../ui/DashPage';
 import { AwardCard, AwardHonours } from './AwardParts';
 import Select from '../../../ui/Select';
+import Icon from '../../../components/Icon';
+import { seasonLabel } from '../../../engine/calendar';
+import { awardsBySeason } from '../../../game/worldAwardsGame';
+import { GoldenBallTop } from './GoldenBallTop';
 
 export function AwardsView({ g }: { g: Game }) {
   const seasons = [...(awardsState(g)?.seasons ?? [])].reverse();
-  const [pick, setPick] = useState<string | null>(null);
-  const [sel, setSel] = useState<string | null>(null);
-  const s = seasons.find((x) => x.season === pick) ?? seasons[0];
-  const tallies = awardTallies(g).filter((t) => t.wins > 1 || t.best > 0).slice(0, 12);
   const gb = [...(goldenBallState(g)?.years ?? [])].reverse();
+  // Saisons für die Wahl oben: Ehrungen der Liga + Goldener Ball (verliehen im Dezember der Saison).
+  const allSeasons = [...new Set([...seasons.map((x) => x.season), ...gb.map((y) => seasonLabel(y.year))])].sort().reverse();
+  const [pick, setPick] = useState<string | null>(null);
+  const [league, setLeague] = useState<string>('gb');
+  const [sel, setSel] = useState<string | null>(null);
+  const season = pick && allSeasons.includes(pick) ? pick : allSeasons[0];
+  const leagues = season ? awardsBySeason(g, season) : [];
+  const gbYear = season ? gb.find((y) => seasonLabel(y.year) === season) : undefined;
+  const s = league === 'gb' ? undefined : leagues.find((x) => x.div === league) ?? leagues[0];
+  const showGb = league === 'gb' && !!gbYear;
+  const tallies = awardTallies(g).filter((t) => t.wins > 1 || t.best > 0).slice(0, 12);
   const [gala, setGala] = useState<number | null>(null);
   const galaYear = gala != null ? gb.find((y) => y.year === gala) : undefined;
   const p = sel ? g.players[sel] : null;
   const open = (id: string) => { if (g.players[id]) setSel(id); };
+  const idx = season ? allSeasons.indexOf(season) : -1;
+  const step = (d: number) => { const next = allSeasons[idx + d]; if (next) setPick(next); };
 
   const mine = g.managedClubId;
+  const title = showGb ? `Goldener Ball ${gbYear!.year}` : s ? `Die Besten der Saison ${s.season}` : 'Die Besten der Saison';
   return (
     <DashPage className="aw-page">
-      {!s ? (
-        <DashBox title="Die Besten der Saison" icon="trophy" span={3} info="awards_wertung">
-          <Empty icon="trophy">Am Tag nach dem letzten Ligaspieltag werden die besten Spieler auf ihren Positionen geehrt – Torwart, Abwehr, Mittelfeld und Sturm. Die erste Ehrung steht am Ende der Saison {g.season} an.</Empty>
-        </DashBox>
-      ) : (
-      <DashBox title={`Die Besten der Saison ${s.season}`} icon="trophy" span={3} info="awards_wertung"
-        right={(
+      <DashBox title={title} icon="trophy" span={3} info={showGb ? 'goldener_ball' : 'awards_wertung'}
+        right={season ? (
           <span className="aw-pick">
-            <span className="aw-pick-div">{s.divName}</span>
-            <Select className="dselect" value={s.season} onChange={(v) => setPick(v)} aria-label="Saison wählen">
-              {seasons.map((x) => <option key={x.season} value={x.season}>{x.season}</option>)}
+            <Select className="dselect aw-pick-league" value={league === 'gb' ? 'gb' : s?.div ?? 'gb'} onChange={(v) => setLeague(v)} aria-label="Wertung wählen">
+              <option value="gb">Goldener Ball</option>
+              {leagues.map((x) => <option key={x.div} value={x.div}>{x.divName}</option>)}
             </Select>
+            <button type="button" className="b3 b3-s b3-icon" onClick={() => step(1)} disabled={idx >= allSeasons.length - 1} aria-label="Vorige Saison" title="Vorige Saison"><Icon name="navPrev" size={18} /></button>
+            <Select className="dselect" value={season} onChange={(v) => setPick(v)} aria-label="Saison wählen">
+              {allSeasons.map((x) => <option key={x} value={x}>{x}</option>)}
+            </Select>
+            <button type="button" className="b3 b3-s b3-icon" onClick={() => step(-1)} disabled={idx <= 0} aria-label="Nächste Saison" title="Nächste Saison"><Icon name="navNext" size={18} /></button>
           </span>
-        )}>
-        <div className="aw-page-top">
-          <div className="aw-grid compact">
-            {AWARD_CATS.map((cat, i) => <AwardCard key={`${s.season}-${cat}`} g={g} s={s} cat={cat} k={i} compact onPlayer={open} />)}
+        ) : undefined}>
+        {!season ? (
+          <Empty icon="trophy">Am 20. Dezember wird der Goldene Ball verliehen, am Tag nach dem letzten Ligaspieltag werden die besten Spieler auf ihren Positionen geehrt – Torwart, Abwehr, Mittelfeld und Sturm. Die erste Ehrung steht am Ende der Saison {g.season} an.</Empty>
+        ) : showGb ? (
+          <GoldenBallTop g={g} y={gbYear!} onPlayer={open} onGala={() => setGala(gbYear!.year)} />
+        ) : s ? (
+          <div className="aw-page-top">
+            <div className="aw-grid compact">
+              {AWARD_CATS.map((cat, i) => <AwardCard key={`${s.season}-${s.div}-${cat}`} g={g} s={s} cat={cat} k={i} compact onPlayer={open} />)}
+            </div>
+            <AwardHonours g={g} s={s} onPlayer={open} />
           </div>
-          <AwardHonours g={g} s={s} onPlayer={open} />
-        </div>
+        ) : (
+          <Empty icon="trophy">{league === 'gb' ? `In der Saison ${season} wurde (noch) kein Goldener Ball verliehen.` : `Für die Saison ${season} gibt es (noch) keine Ehrung der Besten.`}</Empty>
+        )}
       </DashBox>
-      )}
 
       <DashBox title="Alle Jahrgänge" icon="chronicle" span={2} flush right={`${seasons.length} Saisons`}>
         {!seasons.length ? <Empty icon="chronicle">Noch keine Saison abgeschlossen.</Empty> : (
@@ -65,7 +87,7 @@ export function AwardsView({ g }: { g: Game }) {
           </tr></thead>
           <tbody>
             {seasons.map((x) => (
-              <tr key={x.season} className={x.season === s?.season ? 'sel' : ''} onClick={() => setPick(x.season)}>
+              <tr key={x.season} className={x.season === season && league !== 'gb' ? 'sel' : ''} onClick={() => { setPick(x.season); setLeague(x.div); }}>
                 <td className="nowrap">{x.season}{x.tier > 1 ? <span className="muted"> · {x.divName}</span> : null}</td>
                 {AWARD_CATS.map((c) => {
                   const w = x.cats[c][0];
@@ -100,7 +122,7 @@ export function AwardsView({ g }: { g: Game }) {
         ) : <Empty icon="trophy">Der erste Goldene Ball wird am 20. Dezember verliehen.</Empty>}
         <div className="dsec aw-dsec">Meistgeehrt (Saison)</div>
         {tallies.length ? (
-          <div className="rl rl-sm rl-players">
+          <div className="rl rl-sm rl-players aw-tally">
             {tallies.map((t, i) => (
               <div key={t.p} className="rl-row">
                 <span className="rl-rank">{i + 1}</span>

@@ -23,6 +23,9 @@ import { makeMessage, pushMessage } from '../engine/messages';
 import type { CupState, PositionGroup } from '../types';
 import { POSITION_GROUPS } from '../types';
 import { archivedSeason } from './leagueArchive';
+import { homeGradeModel, leanCandidates } from './worldAwardsGame';
+import { ensureWorldLive } from './worldLeagues';
+import { WP_FIELD as WP } from './worldPool';
 import { moraleJolt } from './moraleJolt';
 import type { Game } from './state';
 
@@ -109,11 +112,42 @@ export function goldenBallCandidates(g: Game, year: number): GBCandidate[] {
     rate[grp] = fit(f.map((c) => c.ovr), f.map((c) => (c.goals + 0.5 * c.assists) / c.apps));
   }
   const euro = g.euroClubs ?? {};
-  const live: Record<string, number[]> = {};
+  const pool = new Map((g.worldPool?.p ?? []).map((w) => [w[WP.id], w]));
+  const natOf = (pid: string) => pool.get(pid)?.[WP.nat] ?? 'ENG';
+  const ovrOf = (pid: string) => Math.round(pool.get(pid)?.[WP.ov] ?? 70);
+  const live0 = (pid: string) => liveStats[pid] ?? [0, 0, 0];
+  const liveStats: Record<string, number[]> = {};
   for (const cup of Object.values(g.euroCups ?? {}) as (CupState | null)[]) {
     for (const [pid, t] of Object.entries(cup?.xstats ?? {})) {
-      const l = (live[pid] ??= [0, 0, 0]); l[0] += t[0]; l[1] += t[1]; l[2] += t[2];
+      const l = (liveStats[pid] ??= [0, 0, 0]); l[0] += t[0]; l[1] += t[1]; l[2] += t[2];
     }
+  }
+  // Auslandsligen Spieltag für Spieltag (game/worldLeagues.ts): alle Spieler der 1. Ligen mit Saisonzeile,
+  // Note nach dem Maßstab der eigenen Liga (game/leanGrades.ts). Kalenderjahr = bisherige Hinrunde +
+  // Rückrunde der Vorsaison im gleichen Tempo hochgerechnet.
+  const live = ensureWorldLive(g);
+  if (live && g.worldPool?.p.length) {
+    const model = homeGradeModel(g);
+    let added = 0;
+    for (const [k, d] of Object.entries(live.divs)) {
+      if (!k.endsWith('|0') || !d.md || !d.r) continue;
+      const key = k.slice(0, -2);
+      const f = (d.md + d.n / 2) / d.md;
+      for (const c of leanCandidates(g, key, d, live.season, model, undefined, model.homeMean)) {
+        if (c.apps < 4) continue;
+        const grp = c.cat as PositionGroup;
+        const l = live0(c.pid);
+        const ec = euro[c.clubId];
+        out.push({
+          pid: c.pid, name: c.name, nat: natOf(c.pid), clubId: c.clubId, clubName: c.clubName, country: ec?.country ?? key,
+          pos: c.pos, group: grp, age: c.age, ovr: ovrOf(c.pid), apps: Math.round(c.apps * f) + l[0], avg: c.avg,
+          goals: Math.round(c.goals * f) + l[1], assists: Math.round(c.assists * f) + l[2], clean: Math.round(c.clean * f),
+          titles: won.get(c.clubId) ?? [], est: true,
+        });
+        added++;
+      }
+    }
+    if (added) return out;
   }
   const foreign = Object.entries(euro)
     .filter(([id, c]) => !g.clubs[id] && !g.simClubs?.[id] && c.country && c.country !== 'Deutschland' && c.country !== 'DDR')
@@ -130,13 +164,13 @@ export function goldenBallCandidates(g: Game, year: number): GBCandidate[] {
       const h = hashKey(pl.id + ':' + year);
       const noise = ((h % 1000) / 1000 - 0.5);
       const grp = POSITION_GROUPS[pl.pos] ?? 'MID';
-      const apps = 26 + (h % 9) + (live[pl.id]?.[0] ?? 0);
+      const apps = 26 + (h % 9) + (liveStats[pl.id]?.[0] ?? 0);
       const ovr = Math.round(pl.q);
       const avg = Math.min(4.2, Math.max(1.6, ga + gb * ovr + noise * 0.3));
       const [ra, rb] = rate[grp] ?? [0, 0];
       const contrib = Math.max(0, ra + rb * ovr) * (1 + noise * 0.4) * apps;
-      const goals = Math.round(contrib * 0.7) + (live[pl.id]?.[1] ?? 0);
-      const assists = Math.round(contrib * 0.35) + (live[pl.id]?.[2] ?? 0);
+      const goals = Math.round(contrib * 0.7) + (liveStats[pl.id]?.[1] ?? 0);
+      const assists = Math.round(contrib * 0.35) + (liveStats[pl.id]?.[2] ?? 0);
       out.push({
         pid: pl.id, name: dummy.xpeople![pl.id]?.[0] ?? pl.id, nat, clubId: id, clubName: c.name, country: c.country,
         pos: pl.pos, group: grp, age: 22 + (h % 10), ovr, apps, avg, goals: grp === 'GK' ? 0 : goals, assists: grp === 'GK' ? 0 : assists,
