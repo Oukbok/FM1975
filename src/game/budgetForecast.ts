@@ -14,7 +14,7 @@ import { matchdayItems, monthlyItems } from '../engine/grounds';
 import { annualCostBase } from '../engine/youthAcademy';
 import { memberMonthlySalary } from '../engine/staffPeople';
 import { staffMonthlyTotal } from '../data/staff';
-import { marketingIncomeBase, marketingMonthlyBase } from '../data/marketing';
+import { marketingCostMonth } from './marketingGame';
 import { monthlyLoanCost } from '../engine/clubBusiness';
 import { fanEra } from '../engine/environment';
 import { PRIZE_BY_ROUND } from '../engine/cup';
@@ -146,7 +146,7 @@ export function forecastSeason(g: Game, club: Club = g.clubs[g.managedClubId]): 
     for (const it of monthlyItems(club, gr, year)) { if (it.amount > 0) grMonth += it.amount; else grMonthCost -= it.amount; }
   }
   const mkt = g.marketing ?? {};
-  const mktInc = club.id === g.managedClubId ? marketingIncomeBase(mkt) : { merch: 0, sponsor: 0 };
+  const mktInc = { merch: 0, sponsor: 0 }; // Werbung wirkt seit 2.0 über Nachfrage und Marke, nicht mehr als eigene Buchung
   const md = tierScale(revenueScale('matchday', year), tier, 'matchday');
   // Sponsor-Leistungsprämien je Sieg/Remis (engine/finances.ts bookHomeMatch) + Platzierungsbonus.
   const winBonus = (6000 + club.reputation * 50) * md, drawBonus = 2000 * md;
@@ -178,7 +178,7 @@ export function forecastSeason(g: Game, club: Club = g.clubs[g.managedClubId]): 
   const personnel = personnelSoFar(fin) + (m.wages + m.staffWages + staffMonthly) * months + squadBonus;
   const revenue = sumIncome(income);
   const opsMonthly = m.stadiumMaintenance + m.facilities + m.otherFixed + m.operations
-    + (club.id === g.managedClubId ? marketingMonthlyBase(mkt) * scale : 0) + monthlyLoanCost(club) + grMonthCost
+    + (club.id === g.managedClubId ? marketingCostMonth(g, mkt) : 0) + monthlyLoanCost(club) + grMonthCost
     + (revenue * fanEra(year).securityShare) / 12;
   const inv = club.youthInvest;
   const youthRunning = inv ? annualCostBase(inv) / 12 * tierScale(scale, tier, 'matchday') * months : 0;

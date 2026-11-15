@@ -67,7 +67,7 @@ function dropLabel(target: string | null, full: Drag['full']): string {
   return '';
 }
 
-export default function LineupView({ g, onChange }: { g: G; onChange: () => void }) {
+export default function LineupView({ g, onChange, onGoto }: { g: G; onChange: () => void; onGoto?: (s: 'tactics') => void }) {
   const club: Club = g.clubs[g.managedClubId];
   const t: Tactics = club.tactics;
   const benchSize = eraRules(Number(g.calendar.currentDate.slice(0, 4))).benchSize;
@@ -327,7 +327,7 @@ export default function LineupView({ g, onChange }: { g: G; onChange: () => void
         </DashBox>
 
         <DashBox title="Taktik" icon="tactics" right={getFormation(t.formation).label}>
-          <TacticHead t={t} formation={formation} set={set} xiAvg={xiAvg} suitAvg={suitAvg} familiar={familiar} xiCount={xiRows.length}
+          <TacticHead t={t} formation={formation} onEdit={onGoto ? () => onGoto('tactics') : undefined} xiAvg={xiAvg} suitAvg={suitAvg} familiar={familiar} xiCount={xiRows.length}
             year={seasonYearOf(g.calendar.currentDate)} cohesion={validCohesion(club.cohesion) ? cohesionOf(club.cohesion, t, seasonYearOf(g.calendar.currentDate)).total : undefined} />
         </DashBox>
 

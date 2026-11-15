@@ -3,6 +3,7 @@
 // (vorher inline in App.tsx). Reihenfolge ist verbindlich; jede Migration ist
 // idempotent. Genutzt von App.tsx (Laden) und tests/season-test.ts.
 // =============================================================================
+import { bindMarketing } from './marketingGame';
 import { setHomeOrigin } from '../data/origins';
 import { bindRegistration } from './registrationGame';
 import { COUNTRY_BY_CC, countryOrigin } from '../data/world/countries';
@@ -368,6 +369,7 @@ export function prepareLoadedGame(g: Game): void {
   try { migrateCareer(g); } catch (err) { console.error('Karriere-Bereinigung fehlgeschlagen:', err); }
   try { migrateBudget(g); } catch (err) { console.error('Saisonbudget-Nachrüstung fehlgeschlagen:', err); }
   try { migrateContracts2(g); } catch (err) { console.error('Vertrag-2.0-Nachrüstung fehlgeschlagen:', err); }
+  bindMarketing(g);
   bindHonours(g, true); // Vereinsauszeichnungen: Wirkungstabelle des geladenen Spielstands
   bindStaffFactor(g); // Stab → Spielstärke
   bindCoaching(g); // Trainerteams → Entwicklung

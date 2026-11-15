@@ -1,4 +1,5 @@
-import { MARKETING_AREAS, MARKETING_BY_ID, areaBenefit, areaMonthlyCostBase, marketingAvailable, marketingIncomeBase, marketingMonthlyBase } from '../../data/marketing';
+import { GOAL_LABEL, MARKETING_AREAS, MARKETING_BY_ID, MARKETING_GOALS, areaMonthlyCostBase, areaSaturation, channelGoals, marketingAvailable, marketingPriceFactor, type MarketingGoal } from '../../data/marketing';
+import { marketingView } from '../../game/marketingGame';
 import { economyScale, yearOf } from '../../engine/economy';
 import { LED_YEAR } from '../../data/sponsorCatalog';
 import { computeMonthly } from '../../engine/finances';
@@ -30,11 +31,11 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
     onChange();
   };
 
-  const monthlyCost = Math.round(marketingMonthlyBase(budgets) * scale);
-  const inc = marketingIncomeBase(budgets);
-  const incMerch = Math.round(inc.merch * scale);
-  const incSponsor = Math.round(inc.sponsor * scale);
-  const netMonthly = incMerch + incSponsor - monthlyCost;
+  const mv = marketingView(g, budgets);
+  const price = marketingPriceFactor(curYear, club.reputation ?? 60);
+  const brandGoal = (k: MarketingGoal) => k === 'reg' || k === 'nat' || k === 'intl';
+  const fxText = (k: MarketingGoal, v: number) => (brandGoal(k) ? `+${v.toFixed(1).replace('.', ',')}` : `+${(v * 100).toFixed(1).replace('.', ',')} %`);
+  const net = mv.gainYear - mv.costYear;
 
   // --- Mitgliedsbeitraege, Catering-Betriebsform, Programmhefte (Finanzsystem) ---
   const cateringLevel = Math.max(1, Math.min(MAX_LEVEL, Math.round(club.infrastructure?.catering ?? 1)));
@@ -66,24 +67,26 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
         {areas.map((a) => {
           const avail = marketingAvailable(a, curYear);
           const units = budgets[a.id] ?? 0;
-          const cost = Math.round(areaMonthlyCostBase(a, units) * scale);
-          const benefitPct = Math.round((areaBenefit(a, units) / a.maxBenefit) * 100);
+          const cost = Math.round(areaMonthlyCostBase(a, units) * price * scale);
+          const benefitPct = Math.round(areaSaturation(a, units) * 100);
+          const goals = MARKETING_GOALS.filter((k) => channelGoals(a.id)[k]).sort((x, y) => (channelGoals(a.id)[y] ?? 0) - (channelGoals(a.id)[x] ?? 0));
           return (
             <div key={a.id} className={`dmkt ${avail ? '' : 'locked'}`}>
               <div className="dmkt-main">
                 <b>{a.name}</b>
                 <span className="dnote">{a.desc}</span>
+                <span className="dmkt-goals">{goals.map((k) => <i key={k}>{GOAL_LABEL[k]}</i>)}</span>
               </div>
               {avail ? (
                 <div className="dmkt-ctrl">
                   <input type="range" min={0} max={a.maxUnits} step={1} value={units} onChange={(e) => setUnits(a.id, Number(e.target.value))} />
-                  <span className="dnote">Stufe {units}/{a.maxUnits} · {fmtDM(cost)}/Monat · Reichweite {benefitPct} %</span>
+                  <span className="dnote">Stufe {units}/{a.maxUnits} · {fmtDM(cost)}/Monat · ausgeschöpft {benefitPct} %</span>
                 </div>
               ) : <span className="dchip">ab {a.unlockYear}</span>}
             </div>
           );
         })}
-        <div className="dnote mt8">Kosten steigen linear mit der Stufe, der Nutzen flacht ab. Marketing bringt kleine Zusatzerträge und etwas Ansehen – sportlicher Erfolg bleibt der Haupttreiber.</div>
+        <div className="dnote mt8">Kosten steigen linear mit der Stufe, die Wirkung flacht ab – die ersten Stufen bringen am meisten. Eine Kampagne braucht rund ein halbes Jahr, bis sie voll wirkt, und klingt ebenso langsam ab. Markenwerbung bleibt als Wert erhalten.</div>
       </DashBox>
 
       {future.length > 0 && <DashBox title="Kommende Werbekanäle" icon="kalender" span={2} right={`${future.length} weitere`}>
@@ -95,15 +98,31 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
         )) : null}
       </DashBox>}
 
-      <DashBox title="Werbebilanz (Monat)" icon="finances">
+      <DashBox title="Wirkung der Werbung" info="werbewirkung" icon="finances">
         <div className="dkpis">
-          <Kpi value={fmtDM(monthlyCost)} label="Kosten" color="var(--red)" />
-          <Kpi value={`${netMonthly >= 0 ? '+' : '−'}${fmtDM(Math.abs(netMonthly))}`} label="Netto" color={netMonthly >= 0 ? 'var(--green)' : 'var(--red)'} />
+          <Kpi value={fmtDM(mv.costYear)} label="Kosten / Jahr" color={mv.costYear ? 'var(--red)' : undefined} />
+          <Kpi value={mv.costYear ? `${net >= 0 ? '+' : '−'}${fmtDM(Math.abs(net))}` : '–'} label="Ertrag geschätzt / Jahr" color={!mv.costYear ? undefined : net >= 0 ? 'var(--green)' : 'var(--red)'} />
         </div>
-        <KV k="Merchandising" v={`+${fmtDM(incMerch)}`} color="var(--green)" />
-        <KV k="Sponsoring-Zuschlag" v={`+${fmtDM(incSponsor)}`} color="var(--green)" />
-        <KV k="Mitgliedsbeiträge" info="mitglieder" v={`+${fmtDM(membershipMonth)}`} color="var(--green)" />
-        <div className="dnote mt8">Mitgliedsbeiträge wachsen mit dem Ansehen ({Math.round(club.reputation)}).</div>
+        <div className="dmkt-fx">
+          <div className="dmkt-fx-h"><span>Werbeziel</span><span>jetzt</span><span>Ziel</span><span>bringt / Jahr</span></div>
+          {mv.rows.map((r) => (
+            <div key={r.goal} className={`dmkt-fx-row${r.target <= 0 && r.now <= 0 ? ' off' : ''}`}>
+              <span>{GOAL_LABEL[r.goal]}</span>
+              <span>{r.now > 0 ? fxText(r.goal, r.now) : '–'}</span>
+              <span>{r.target > 0 ? fxText(r.goal, r.target) : '–'}</span>
+              <span>{brandGoal(r.goal) ? '' : r.perYear ? `+${fmtDM(r.perYear)}` : '–'}</span>
+              <i className="dmkt-fx-bar"><b style={{ width: `${Math.min(100, (r.target / r.cap) * 100)}%` }} /><em style={{ width: `${Math.min(100, (r.now / r.cap) * 100)}%` }} /></i>
+            </div>
+          ))}
+          <div className="dmkt-fx-row sum"><span>Marke gesamt → Sponsoring, Vermarktung, Fanartikel</span><span /><span /><span>{mv.brandYear ? `+${fmtDM(mv.brandYear)}` : '–'}</span></div>
+        </div>
+        <div className="dnote mt8">
+          {mv.costYear === 0 ? 'Keine Werbung geschaltet. Schon die ersten Stufen lokaler Kanäle bringen spürbar Zuschauer und Mitglieder.'
+            : mv.progress < 0.85 ? `Die Kampagnen laufen an: ${Math.round(mv.progress * 100)} % der Zielwirkung sind erreicht.`
+              : net >= 0 ? 'Die Werbung trägt sich. Die Marke wirkt auf Sponsoring, Vermarktung und Fanartikel und bleibt dir auch nach der Kampagne noch lange erhalten.'
+                : 'So viel Werbung rechnet sich bei deiner Vereinsgröße nicht – die obersten Stufen bringen kaum noch etwas. Weniger Kanäle oder niedrigere Stufen sparen Geld bei fast gleicher Wirkung.'}
+        </div>
+        <KV k="Mitgliedsbeiträge / Monat" info="mitglieder" v={`+${fmtDM(membershipMonth)}`} color="var(--green)" />
         <div className="dsec">Werbeflächen im Stadion</div>
         <KV k="Bandenpartner" v={bandenDeal ? `${bandenDeal.partner} · ${fmtDM(monthly.advertising * 12)}/Jahr` : 'frei – siehe Sponsoring'} />
         <KV k="Banden" v={curYear >= LED_YEAR ? 'LED, wechselnde Motive' : 'statisch'} />

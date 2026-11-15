@@ -178,6 +178,11 @@
 .lu-seg button:last-child { border-right: 0; }
 .lu-seg button.on { background: var(--accent); color: var(--accent-ink); }
 .lu-desc { margin: 8px 0 6px; }
+/* Taktik-Zusammenfassung (nur Anzeige) mit Knopf „Taktik ändern“ */
+.lu-tsum { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.lu-tsum > div { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+.lu-tsum .lu-mlabel { margin: 0; }
+.lu-tsum b { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--text); }
 .lu-instr { display: grid; grid-template-columns: 1fr 1fr; column-gap: 22px; }
 .lu-instr .dkv { font-size: 15px; padding: 5px 2px; }
 .lu-meters { margin: 8px 0 4px; }

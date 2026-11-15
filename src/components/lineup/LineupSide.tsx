@@ -1,5 +1,6 @@
 // =============================================================================
-// Aufstellung, rechte Spalte: Taktik-Kopf (Mentalität, Anweisungen, Kennzahlen)
+// Aufstellung, rechte Spalte: Taktik-Zusammenfassung (Mentalität, Anweisungen, Kennzahlen –
+// nur Anzeige, Wunsch Pascal: geändert wird ausschließlich auf der Taktik-Seite, Knopf „Taktik ändern“)
 // sowie Kapitän/Standardschützen und Hinweise.
 // =============================================================================
 import type { Player, Tactics } from '../../types';
@@ -19,8 +20,10 @@ export const STYLE_DESC: Record<string, string> = {
 };
 export const STYLES = ['defensive', 'balanced', 'attacking', 'counter'] as const;
 
-export function TacticHead({ t, set, xiAvg, suitAvg, familiar, xiCount, year, cohesion }: {
-  t: Tactics; formation: Formation; set: (p: Partial<Tactics>) => void;
+export function TacticHead({ t, xiAvg, suitAvg, familiar, xiCount, year, cohesion, onEdit }: {
+  t: Tactics; formation: Formation;
+  /** Sprung zur Taktik-Seite. */
+  onEdit?: () => void;
   xiAvg: number; suitAvg: number; familiar: number; xiCount: number;
   /** Saison-Startjahr (Stufen/Grenzen der Anweisungen) und Eingespieltheit 0–100 (engine/cohesion.ts). */
   year: number; cohesion?: number;
@@ -28,14 +31,14 @@ export function TacticHead({ t, set, xiAvg, suitAvg, familiar, xiCount, year, co
   const L = (k: InstrKey) => instrLabel(k, t, year);
   return (
     <>
-      <div className="lu-mlabel">Mentalität</div>
-      <div className="lu-seg" role="group">
-        {STYLES.map((s) => (
-          <button key={s} className={t.style === s ? 'on' : ''} onClick={() => set({ style: s })}>{STYLE_DE[s]}</button>
-        ))}
+      <div className="lu-tsum">
+        <div><span className="lu-mlabel">Mentalität</span><b>{STYLE_DE[t.style]}</b></div>
+        {onEdit && <button type="button" className="b3 b3-s" data-act="edit-tactics" onClick={onEdit}>Taktik ändern</button>}
       </div>
       <div className="dnote lu-desc">{STYLE_DESC[t.style]}</div>
       <div className="lu-instr">
+        <KV k="Einsatz" v={L('effort')} />
+        <KV k="Flanken" v={L('cross')} />
         <KV k="Aufbau" v={L('buildup')} />
         <KV k="Tempo" v={L('tempo')} />
         <KV k="Breite" v={L('width')} />
@@ -51,7 +54,6 @@ export function TacticHead({ t, set, xiAvg, suitAvg, familiar, xiCount, year, co
         <Meter label="Vertraute Positionen" info="vertrautheit" value={familiar} max={Math.max(1, xiCount)} color="var(--text-2)" text={`${familiar}/${xiCount}`} />
         {cohesion != null && <Meter label="Eingespielt" info="eingespieltheit" value={cohesion} max={100} color={cohesion >= 80 ? 'var(--pos)' : cohesion >= 60 ? 'var(--yellow)' : 'var(--neg)'} />}
       </div>
-      <div className="dnote">Anweisungen und Rollen: Aufstellung › Taktik.</div>
     </>
   );
 }

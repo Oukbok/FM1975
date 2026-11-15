@@ -3584,33 +3584,33 @@ müde und überlastete Spieler trifft es häufiger.`,
   {
     id: 'marketing-overview',
     category: 'marketing',
-    title: 'Marketing — Werbekanäle & Sättigung',
-    keywords: ['marketing', 'werbung', 'regler', 'slider', 'sättigung', 'kosten', 'nutzen', 'reichweite', 'sponsoring', 'merchandising', 'epoche', 'zukunft'],
-    body: `## Marketing
-Im Bereich **Marketing** (in der unteren Navigation) stellst du je Werbekanal ein Budget per **Schieberegler** ein.
-Neue Kanäle schalten sich epochengerecht frei: **1975** (Stadionwerbung, Lokalpresse), **1984** (Fernsehwerbung),
-**1993** (überregionale Kampagnen, Merchandising), **2000** (Online), **2010** (Social Media), **2020**
-(Influencer/Content, internationale Digitalkampagnen). Die Checkbox **„Zukunft anzeigen"** blendet spätere Kanäle
-ausgegraut ein.
+    title: 'Werbung — Kanäle, Werbeziele & Wirkung',
+    keywords: ['marketing', 'werbung', 'werbeziel', 'regler', 'sättigung', 'kosten', 'nutzen', 'marke', 'zuschauer', 'mitglieder', 'fanartikel', 'sponsoring', 'kampagne', 'lohnt'],
+    body: `## Werbung
+Unter **Finanzen › Werbung** stellst du je Werbekanal die Stufe per **Schieberegler** ein. Neue Kanäle kommen mit der Zeit dazu: **1975** (Stadionaktionen, Lokale Presse & Plakate), **1984** (Fernsehwerbung), **1993** (überregionale Kampagnen, Merchandising-Kampagne), **2000** (Online), **2010** (Social Media), **2020** (Influencer & Content, internationale Digitalkampagnen).
 
-## Kosten linear, Nutzen gesättigt
-- Die **Kosten** steigen **LINEAR** mit der Reglerstufe (Kosten/Stufe je Kanal fest).
-- Der **Nutzen** folgt einer **Sättigungskurve**:
+## Werbeziele: worauf Werbung wirkt
+Jeder Kanal zahlt auf bestimmte **Werbeziele** ein – sie stehen unter dem Kanalnamen:
+| Werbeziel | Wirkung | Höchstens |
+|---|---|---|
+| Zuschauer | höhere Nachfrage nach Eintrittskarten bei jedem Heimspiel | +5 % |
+| Mitglieder | mehr Mitgliedsbeiträge | +12 % |
+| Fanartikel | mehr Nachfrage im Fanshop | +12 % |
+| Marke regional / national / international | Aufschlag auf deine **Marke**. Die Marke treibt Sponsoring, Vermarktung und Fanartikel | +8 / +10 / +12 Punkte |
+Stadionaktionen und Lokalpresse füllen Stadion und Mitgliederkartei, Fernsehen und überregionale Kampagnen bauen die nationale Marke, die Merchandising-Kampagne den Fanshop, Online- und Social-Media-Kanäle mehrere Ziele zugleich, internationale Kampagnen die Auslandsmarke.
 
-\`Nutzen(x) = Nutzen_max · (1 − e^(−k · Stufe))\`
+Das Höchstmaß eines Ziels erreichst du, wenn **alle Kanäle der Epoche**, die darauf einzahlen, voll laufen. Kommen neue Medien dazu, verlieren die alten an Gewicht – wer 2015 nur Plakate klebt, erreicht weniger als 1975.
 
-Das erste Geld bringt viel Reichweite, jede weitere Stufe immer weniger. Der Balken je Kanal zeigt den erreichten
-Anteil am Maximum in Prozent.
+## Kosten linear, Wirkung flacht ab
+- Die **Kosten** steigen mit jeder Stufe um denselben Betrag. Große Vereine zahlen für dieselbe Stufe mehr (größere Kampagnen), kleine weniger.
+- Die **Wirkung** flacht ab: Stufe 1 bringt schon rund ein Drittel, die halbe Leiste rund zwei Drittel. **Wenige Stufen in vielen Kanälen** sind deshalb fast immer besser als ein Kanal am Anschlag; die obersten Stufen lohnen sich nur für große Vereine.
 
-## Wirkung
-- Marketing erhöht primär die **Reichweite/Fanbindung** und speist daraus **kleine** monatliche Zusatzerträge:
-  **Merchandising** und **Sponsoring** (in den Finanzen unter den jeweiligen Einnahme-Kategorien gebucht).
-- Auf das **Vereinsansehen** wirkt Marketing nur **sehr schwach** (maximal +0,05 Reputationspunkte pro Monat) —
-  Ansehen entsteht vor allem aus sportlichem Erfolg.
-- Alle Kosten und Erträge werden **monatlich** (am 1.) gebucht und mit economyScale ära-gerecht skaliert; die
-  Ausgaben laufen unter der Kategorie **„Sonstiges" (other)**.
+## Anlauf, Verfall und bleibender Wert
+- Eine Kampagne braucht Zeit: Die Wirkung läuft der Reglerstellung Monat für Monat hinterher und ist nach rund **einem halben Jahr** fast voll da. Streichst du die Werbung, klingt sie ebenso langsam ab.
+- **Markenwerbung hält länger:** Sie baut sich etwas langsamer auf, klingt nach dem Ende der Werbung aber erst über gut ein Jahr ab. Mehr als 100 Punkte hat keine Marke – wer regional schon alles erreicht hat, braucht dort keine Werbung mehr.
 
-Marketing ist damit bewusst **kein Selbstläufer**: Es lohnt sich in Maßen, ersetzt aber niemals den sportlichen Erfolg.
+## Lohnt sich das?
+Die Box **Wirkung der Werbung** zeigt je Ziel die Wirkung **jetzt** und das **Ziel** deiner Regler, dazu eine Schätzung in Geld: Kosten im Jahr gegen den geschätzten Mehrertrag (aus deinen Erlösen der letzten Saison). Faustregel: Die unteren Stufen rechnen sich für fast jeden Verein, in der Mitte wird es knapp, am Anschlag zahlt nur noch drauf, wer nicht sehr groß ist. Die Kosten werden monatlich am 1. gebucht (Ausgaben „Sonstiges“), die Erträge kommen über Eintritt, Mitgliedsbeiträge, Fanartikel und Sponsoring herein – nicht als eigene Buchung.
 
 ## Weitere Erlösquellen im Marketing-Bereich
 Unter den Werbereglern zeigt der Bereich drei zusätzliche Karten des Finanzsystems:

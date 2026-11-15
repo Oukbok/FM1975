@@ -25,8 +25,16 @@ export function setHonourTable(t: Record<string, HonourEffects>): void { table =
 /** Summe einer Wirkung für einen Verein (0 ohne aktive Auszeichnung). */
 export function honourFx(clubId: string | undefined, key: HonourEffectKey): number {
   if (!clubId) return 0;
-  return table[clubId]?.[key] ?? 0;
+  return (table[clubId]?.[key] ?? 0) + (clubId === mktClub ? mkt[key] ?? 0 : 0);
 }
+
+// -----------------------------------------------------------------------------
+// Werbung des eigenen Vereins (game/marketingGame.ts `bindMarketing`): Zuschauernachfrage,
+// Mitgliedsbeiträge, Fanartikel – läuft über dieselben Stellen der Engine wie die Auszeichnungen.
+// -----------------------------------------------------------------------------
+let mktClub = '';
+let mkt: HonourEffects = {};
+export function setMarketingFx(clubId: string, fx: HonourEffects): void { mktClub = clubId; mkt = fx; }
 
 // -----------------------------------------------------------------------------
 // Stab des eigenen Vereins (Wunsch Pascal): unbesetzte Stellen kosten etwas Spielstärke.

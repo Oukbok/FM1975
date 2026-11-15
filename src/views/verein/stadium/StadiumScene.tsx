@@ -211,7 +211,10 @@ export function StadiumScene(p: StadiumSceneProps) {
     const inSel = selected === id || !!group?.includes(id);
     const on = inSel || hover === id;
     const dim = !blocksActive ? 0.55 : selected && !on ? 0.82 : 1;
-    items.push({ d: depth(at(len / 2, geo[geo.length - 1].v1 / 2, 0)), n: (
+    // Reihenfolge nach der Innenkante (am Spielfeld), nicht nach der Blockmitte: sonst rückt ein tiefer Block
+    // rechnerisch näher an die Kamera und verdeckt die kleinere Nachbarkurve, die tatsächlich davor steht.
+    void geo;
+    items.push({ d: depth(at(len / 2, 0, 0)), n: (
       <g key={id} data-block={id} className={`gr-obj blk ${inSel ? 'sel' : ''} ${ghost.has(id) ? 'sv-ghost' : ''}`} opacity={dim} pointerEvents={blocksActive ? undefined : 'none'}
         onClick={(e) => { e.stopPropagation(); onSelect(id, evPt(e)); }} onMouseEnter={() => onHover(id)} onMouseLeave={() => onHover(null)}>
         <StadiumBlockShape b={b} colors={colors} look={blockLook(b, { built: p.built })} year={year} others={blocks} crowd={p.crowd ?? 0} />

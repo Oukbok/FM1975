@@ -541,7 +541,12 @@ export const INFO_TEXTS = {
   },
   werbekanaele: {
     title: 'Werbekanäle',
-    text: 'Eigene Werbung kostet monatlich und bringt Ansehen, Mitglieder und etwas Fanartikel-Umsatz. Der Nutzen flacht mit jeder Stufe ab – sportlicher Erfolg bleibt der Hauptantrieb.',
+    text: 'Jeder Kanal zahlt auf bestimmte Werbeziele ein (unter dem Namen): Zuschauer, Mitglieder, Fanartikel oder die Marke. Die Kosten steigen mit jeder Stufe gleich, die Wirkung flacht ab – wenige Stufen in vielen Kanälen bringen mehr als ein Kanal am Anschlag.',
+    wiki: 'marketing-overview',
+  },
+  werbewirkung: {
+    title: 'Wirkung der Werbung',
+    text: '„Jetzt“ ist die Wirkung, die schon angekommen ist, „Ziel“ die Wirkung deiner Regler nach rund einem halben Jahr. Zuschauer, Mitglieder und Fanartikel steigen in Prozent; die Marke in Punkten – sie hebt Sponsoring, Vermarktung und Fanartikel. Der Ertrag ist eine Schätzung aus deinen Erlösen.',
     wiki: 'marketing-overview',
   },
   catering: {

@@ -117,6 +117,10 @@ export interface Game {
   datasetName?: string;
   /** Marketing-Budget je Bereich: Bereichs-ID → Anzahl Einheiten (0 = aus). */
   marketing: Record<string, number>;
+  /** Werbung 2.0: tatsächliche Wirkung je Werbeziel, läuft den Reglern hinterher (game/marketingGame.ts). */
+  marketingFx?: Partial<Record<'att' | 'members' | 'merch' | 'reg' | 'nat' | 'intl', number>>;
+  /** Werbung 2.0: Markenpunkte, die die Werbung derzeit in `club.brand` gelegt hat. */
+  marketingBrand?: Partial<Record<'reg' | 'nat' | 'intl', number>>;
   /** Geplante Aktivitäten (Trainingslager, Freundschaftsspiele, Teambuilding). */
   activities: PlannedActivity[];
   /** Mehrstufiges Ligasystem (Ebenen/Staffeln oberhalb der Spielerliga). */

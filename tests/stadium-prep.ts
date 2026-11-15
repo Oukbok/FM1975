@@ -21,6 +21,8 @@ if (mode === 'modern') {
   }
   st.built = 1970;
 }
+// CURVE=small: hohe Geraden, flache Kurven (Verdeckung der Kurve durch die Nachbartribüne prüfen)
+if (process.env.CURVE === 'small') for (const b of st.blocks) b.tiers = /^(main|opp|north|south)/.test(b.id) ? [{ seat: 'schale', rows: 34 }, { seat: 'schale', rows: 28 }] : [{ seat: 'steh', rows: 10 }];
 // LAND=n: zugekaufte Grundstücke (sichtbar am Stadion- und Vereinsgelände)
 if (process.env.LAND && g.clubs[g.managedClubId].grounds) { const gr = g.clubs[g.managedClubId].grounds; gr.landBought = Number(process.env.LAND); gr.area += 2 * gr.landBought; }
 st.capacity = st.blocks.reduce((s: number) => s, st.capacity);

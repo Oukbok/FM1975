@@ -10,11 +10,13 @@
 // mit x = normierte Reglerstufe (0..1). Das erste Geld bringt viel, weiteres
 // Geld immer weniger – klassische Sättigungskurve.
 //
-// WIRKUNG: Marketing erhöht primär die REICHWEITE (Fanbindung) und über kleine
-// Nebeneffekte Merchandising- und Sponsoring-Erträge. Auf das VEREINSANSEHEN
-// wirkt Marketing nur SEHR schwach – Ansehen entsteht v. a. aus sportlichem
-// Erfolg. Alle Ausgaben fließen monatlich in die Finanzen (skaliert via
-// economyScale). Neue Werbekanäle schalten sich epochengerecht frei.
+// WIRKUNG (Werbung 2.0, Wunsch Pascal: Werbung muss sich lohnen können): Jeder Kanal
+// zahlt auf bestimmte WERBEZIELE ein (`CHANNEL_GOALS`): Zuschauer, Mitglieder,
+// Fanartikel und die Marke regional / national / international. Je Ziel gibt es
+// eine Obergrenze (`GOAL_CAP`); wie viel davon erreicht wird, hängt vom Anteil der
+// bespielten Kanäle AN DEN KANÄLEN DER EPOCHE ab – neue Medien nehmen den alten
+// Reichweite weg. Ablauf, Trägheit und Markenaufbau: game/marketingGame.ts.
+// Alle Ausgaben fließen monatlich in die Finanzen (skaliert via economyScale).
 // =============================================================================
 
 /** Ein Werbe-/Marketingbereich mit Sättigungs-Nutzenkurve. */
@@ -81,6 +83,79 @@ export const MARKETING_AREAS: MarketingArea[] = [
     maxUnits: 8, costPerUnit: 6000, maxBenefit: 50, k: 0.55 },
 ];
 
+/** Preisniveau der Werbung gegenüber den Kanal-Stammdaten (auch eigener Datensätze). */
+export const MARKETING_COST_FACTOR = 0.15;
+/**
+ * Preisfaktor auf die Kanal-Stammdaten (Basisjahr), mit dem Kosten gebucht und angezeigt werden:
+ *  • Epoche: Solange es nur wenige Kanäle gibt, tragen sie die ganze Wirkung – und kosten entsprechend mehr
+ *    (sonst wäre Werbung in den 70ern fast geschenkt und 2020 unbezahlbar).
+ *  • Vereinsgröße: Ein großer Verein fährt größere Kampagnen (mehr Auflage, mehr Fläche) als ein kleiner –
+ *    so lohnen sich die unteren Stufen für jeden, der Anschlag aber nur für wenige.
+ */
+export function marketingPriceFactor(year: number, reputation: number): number {
+  const full = (list: MarketingArea[]) => list.reduce((s, a) => s + a.maxUnits * a.costPerUnit, 0);
+  const all = full(MARKETING_AREAS), avail = full(MARKETING_AREAS.filter((a) => marketingAvailable(a, year)));
+  const era = avail > 0 ? Math.pow(all / avail, 0.835) : 1;
+  const size = Math.pow(Math.max(30, Math.min(100, reputation)) / 75, 1.5);
+  return MARKETING_COST_FACTOR * era * size;
+}
+
+// -----------------------------------------------------------------------------
+// Werbeziele
+// -----------------------------------------------------------------------------
+export type MarketingGoal = 'att' | 'members' | 'merch' | 'reg' | 'nat' | 'intl';
+export const MARKETING_GOALS: MarketingGoal[] = ['att', 'members', 'merch', 'reg', 'nat', 'intl'];
+export const GOAL_LABEL: Record<MarketingGoal, string> = {
+  att: 'Zuschauer', members: 'Mitglieder', merch: 'Fanartikel', reg: 'Marke regional', nat: 'Marke national', intl: 'Marke international',
+};
+/**
+ * Höchste Wirkung je Ziel, wenn alle Kanäle der Epoche voll laufen: Zuschauernachfrage, Mitgliedsbeiträge
+ * und Fanartikel als Anteil (0,06 = +6 %), Marke in Punkten über dem, was der Ruf allein hergibt.
+ */
+export const GOAL_CAP: Record<MarketingGoal, number> = { att: 0.05, members: 0.12, merch: 0.12, reg: 8, nat: 10, intl: 12 };
+/** Worauf ein Kanal einzahlt (Gewichte). Kanäle eigener Datensätze ohne Eintrag: `DEFAULT_GOALS`. */
+export const CHANNEL_GOALS: Record<string, Partial<Record<MarketingGoal, number>>> = {
+  stadionwerbung: { att: 3, merch: 1, members: 1 },
+  lokalpresse: { att: 2, members: 2, reg: 3 },
+  fernsehwerbung: { nat: 3, reg: 1, att: 1, merch: 1 },
+  ueberregional: { nat: 3, members: 1 },
+  merchandising_kampagne: { merch: 4 },
+  online: { merch: 2, members: 2, nat: 1, intl: 1 },
+  socialmedia: { merch: 2, nat: 2, intl: 2, members: 1 },
+  influencer: { intl: 2, nat: 1, merch: 1 },
+  international: { intl: 4 },
+};
+const DEFAULT_GOALS: Partial<Record<MarketingGoal, number>> = { reg: 1, nat: 1, merch: 1 };
+export const channelGoals = (id: string) => CHANNEL_GOALS[id] ?? DEFAULT_GOALS;
+
+/** Ausschöpfung eines Kanals 0..1 (Sättigungskurve, volle Stufe = 1). */
+export function areaSaturation(area: MarketingArea, units: number): number {
+  // Flacher als die alte Reichweiten-Kurve: Stufe 1 bringt rund 35–40 %, die halbe Leiste rund zwei Drittel.
+  const u = Math.max(0, Math.min(area.maxUnits, units)), k = area.k * 0.45;
+  const full = 1 - Math.exp(-k * area.maxUnits);
+  return full > 0 ? (1 - Math.exp(-k * u)) / full : 0;
+}
+
+/**
+ * Zielwirkung je Werbeziel bei diesen Reglern im Jahr `year`: Obergrenze × Anteil der bespielten
+ * Kanäle an allen Kanälen der Epoche, die auf das Ziel einzahlen.
+ */
+export function marketingTargets(budgets: Record<string, number>, year: number): Record<MarketingGoal, number> {
+  const out = { att: 0, members: 0, merch: 0, reg: 0, nat: 0, intl: 0 } as Record<MarketingGoal, number>;
+  const areas = MARKETING_AREAS.filter((a) => marketingAvailable(a, year));
+  for (const goal of MARKETING_GOALS) {
+    let total = 0, got = 0;
+    for (const a of areas) {
+      const w = channelGoals(a.id)[goal] ?? 0;
+      if (!w) continue;
+      total += w;
+      got += w * areaSaturation(a, budgets[a.id] ?? 0);
+    }
+    out[goal] = total > 0 ? GOAL_CAP[goal] * (got / total) : 0;
+  }
+  return out;
+}
+
 export const MARKETING_BY_ID: Record<string, MarketingArea> =
   Object.fromEntries(MARKETING_AREAS.map((a) => [a.id, a]));
 
@@ -123,26 +198,4 @@ export function marketingTotalBenefit(budgets: Record<string, number>): number {
     if (a) sum += areaBenefit(a, units);
   }
   return sum;
-}
-
-/**
- * Kleine, GEDECKELTE monatliche Zusatzerträge aus Marketing (DM, Basisjahr;
- * extern mit economyScale multipliziert). Reichweite → etwas Merchandising &
- * Sponsoring. Bewusst klein gehalten, damit Marketing kein Selbstläufer wird.
- */
-export function marketingIncomeBase(budgets: Record<string, number>): { merch: number; sponsor: number } {
-  const b = marketingTotalBenefit(budgets); // grob 0..250
-  return {
-    merch: Math.round(b * 80),   // Reichweite → Fanartikel
-    sponsor: Math.round(b * 60), // Reichweite → Sponsoring
-  };
-}
-
-/**
- * SEHR schwacher Beitrag des Marketings zum Vereinsansehen (Punkte, additiv,
- * stark gedeckelt). Ansehen kommt v. a. aus sportlichem Erfolg.
- */
-export function marketingReputationNudge(budgets: Record<string, number>): number {
-  const b = marketingTotalBenefit(budgets);
-  return Math.min(0.05, b / 4000); // maximal +0,05 Reputationspunkte pro Monat
 }

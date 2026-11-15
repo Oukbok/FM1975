@@ -3,6 +3,7 @@
 // Jugend, Entwicklung …). Ohne Oberfläche – die Shell reagiert über `ui`.
 // Rückgabe: true = Vorlauf darf weiterlaufen, false = anhalten (Aktion nötig).
 // =============================================================================
+import { bindMarketing, marketingMonthly } from './marketingGame';
 import { privateDaily } from './private/privateGame';
 import { superCupMatchday } from './superCupGame';
 import { fixtureWatchDaily } from './fixtureWatch';
@@ -11,7 +12,7 @@ import { setEraYear } from '../engine/positions';
 import { snapshotAttributes } from '../engine/history';
 import { ACTIVITY_DEFS, activityIncomeBase } from '../data/activities';
 import { EURO_COMP_NAMES } from '../data/europe';
-import { marketingIncomeBase, marketingMonthlyBase, marketingReputationNudge } from '../data/marketing';
+import { marketingMonthlyBase } from '../data/marketing';
 import { staffMonthlyTotal } from '../data/staff';
 import { monthlyEnvironmentUpdate } from './environmentGame';
 import { autoResolveEvents, monthlyEvents } from './eventsGame';
@@ -137,6 +138,7 @@ export const HEADLESS_UI: DayUi = { onOwnMatch() {}, onRatingCeremony() {}, onSe
 
 export function processDay(g: Game, ui: DayUi): boolean {
   bindHonours(g); // Wirkungen der Vereinsauszeichnungen (nur bei neuem Spielstand neu)
+  bindMarketing(g); // Werbewirkung des eigenen Vereins (game/marketingGame.ts)
   bindStaffFactor(g); // Stab → Spielstärke des eigenen Vereins (game/staffGame.ts)
   bindCoaching(g); // Niveau der Trainerteams → Entwicklung (game/coachingGame.ts)
   const myClub = g.clubs[g.managedClubId];
@@ -707,22 +709,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
       if (staffCost > 0 && mine) {
         book(mine.finances, today, -staffCost, 'staff_wages', 'Gehälter Mitarbeiterstab (Monat)', true);
       }
-      // 2) Marketing-Ausgaben (linear) → 'other'; kleine Zusatzerlöse → merch/sponsor.
-      const mkt = g.marketing ?? {};
-      const mktCost = Math.round(marketingMonthlyBase(mkt) * scale);
-      if (mktCost > 0 && mine) {
-        book(mine.finances, today, -mktCost, 'other', 'Marketing & Werbung (Monat)', true);
-        const inc = marketingIncomeBase(mkt);
-        const merch = Math.round(inc.merch * scale);
-        const sponsor = Math.round(inc.sponsor * scale);
-        if (merch > 0) book(mine.finances, today, merch, 'merchandise', 'Merchandising aus Marketing (Monat)', true);
-        if (sponsor > 0) book(mine.finances, today, sponsor, 'sponsorship', 'Sponsoring aus Marketing (Monat)', true);
-        // Sehr kleiner Reputations-Impuls (max +0,05/Monat).
-        const rep = marketingReputationNudge(mkt);
-        if (rep > 0 && typeof mine.reputation === 'number') {
-          mine.reputation = Math.min(100, mine.reputation + rep);
-        }
-      }
+      // 2) Werbung: Kosten, Wirkung nachziehen, Marke aufbauen (game/marketingGame.ts).
+      marketingMonthly(g, today);
     }
     // Monatsabschluss läuft still – keine Pause.
   }
