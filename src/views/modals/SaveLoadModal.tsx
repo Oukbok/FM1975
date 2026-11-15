@@ -48,7 +48,7 @@ export function SaveLoadModal({ mode, currentSlot, onClose, onSave, onLoad }: {
           </div>
         )}
 
-        <div className="mt16" style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 340, overflowY: 'auto' }}>
+        <div className="mt16 sb-keep" style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 340, overflowY: 'auto' }}>
           {saves.length === 0 ? (
             <div className="card dim" style={{ textAlign: 'center', padding: 24 }}>Keine Speicherstände vorhanden.</div>
           ) : saves.map((s) => (

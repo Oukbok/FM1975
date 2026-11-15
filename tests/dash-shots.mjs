@@ -21,7 +21,7 @@ const server = createServer(async (req, res) => {
 }).listen(0);
 
 const raw = await readFile(process.env.SAVE || 'public/saves/test-3-jahre.txt', 'utf8');
-const browser = await chromium.launch();
+const browser = await chromium.launch({ ignoreDefaultArgs: ['--hide-scrollbars'] }); // Bildlaufleisten wie im Spiel zeigen
 const errors = [];
 
 for (const [w, h] of [[1920, 1080], [1366, 768]]) {
@@ -67,6 +67,31 @@ for (const [w, h] of [[1920, 1080], [1366, 768]]) {
     if (await rows.count() > 1) { await rows.nth(1).click(); await shot('nachricht'); }
     const withFace = page.locator('.dz-msg[data-player="1"]');
     if (await withFace.count()) { await withFace.first().click(); await shot('nachricht_spieler'); }
+  });
+  // Lesebereich (Wunsch Pascal): gleiche Inhaltsbreite für kurze und lange Nachrichten –
+  // die Bildlaufleiste liegt im Rand außerhalb des Textes.
+  await step('lesebreite', async () => {
+    const rows = page.locator('.dz-msg');
+    const n = Math.min(await rows.count(), 14);
+    const seen = new Map();
+    for (let i = 0; i < n; i++) {
+      await rows.nth(i).click(); await page.waitForTimeout(120);
+      const r = await page.evaluate(() => {
+        const t = document.querySelector('.dz-rtext');
+        if (!t) return null;
+        const cs = getComputedStyle(t);
+        const k = t.getBoundingClientRect().width / t.offsetWidth;
+        const read = document.querySelector('.dz-read').getBoundingClientRect();
+        return { w: Math.round(t.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)), scroll: t.scrollHeight > t.clientHeight + 1,
+          bar: Math.round((t.getBoundingClientRect().right - read.right) / k) };
+      });
+      if (r) seen.set(`${r.w}|${r.scroll}`, r);
+      if (r && r.scroll && !seen.has('shot-long')) { seen.set('shot-long', r); await shot('nachricht_lang'); }
+      if (r && !r.scroll && !seen.has('shot-short')) { seen.set('shot-short', r); await shot('nachricht_kurz'); }
+    }
+    const widths = new Set([...seen.entries()].filter(([k]) => !k.startsWith('shot')).map(([, r]) => r.w));
+    if (widths.size > 1) errors.push(`${w} lesebreite: Lesebereich ändert die Breite (${[...widths].join('/')}px)`);
+    if (!seen.has('shot-long')) errors.push(`${w} lesebreite: keine Nachricht mit Bildlaufleiste gefunden`);
   });
   // Rechte Spalte: Nächstes Spiel, Teamstatus, Unsere Besten, Zeitgeist (bündig mit dem Newscenter?).
   await step('rechts', async () => {

@@ -31,8 +31,6 @@
 .dbox .dxh-right { text-transform: none; }
 .dbox-body { flex: 1 1 auto; min-height: 0; overflow: auto; font-size: 17px; color: var(--text); }
 .dbox-body.flush { margin: 0 -15px -12px; }
-.dbox-body::-webkit-scrollbar { width: 8px; }
-.dbox-body::-webkit-scrollbar-thumb { background: rgba(var(--ink-rgb), 0.12); border-radius: 4px; }
 .dbox-link { margin-top: auto; padding-top: 10px; font-size: 14px; color: var(--accent); font-weight: 700; }
 .dbox-body > .dbox-link:last-child { position: sticky; bottom: 0; }
 

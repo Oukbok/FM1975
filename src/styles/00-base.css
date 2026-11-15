@@ -252,6 +252,8 @@
      (in hellen Themes dunkel), --shade-rgb = Schatten/Mulden, --bg-rgb/--panel-rgb =
      halbtransparente Flächen, --deep-rgb = Abdunkelung über Fotos/Fenstern (immer dunkel). */
   --ink-rgb: 255, 255, 255;
+  /* Bildlaufleiste: feste Breite (Platz liegt im Rand, 32-scroll.css), Deckkraft des Griffs */
+  --sb-w: 8px; --sb-alpha: 0.28; --sb-alpha-hover: 0.45;
   --shade-rgb: 0, 0, 0;
   /* Spielfeld außerhalb der Aufstellung (Elf der Saison, 28-awards.css) */
   --pitch-grass-a: #1d3a2d; --pitch-grass-b: #1a3529; --pitch-line: rgba(235, 242, 238, 0.62);
@@ -381,10 +383,15 @@ body {
   letter-spacing: 0.1px;
 }
 
-::-webkit-scrollbar { width: 9px; height: 9px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 6px; }
-::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+/* Bildlaufleisten: überall gleich schmal (--sb-w), Farbe aus --ink-rgb (hell auf Papier,
+   weiß auf dunklen Bühnen). Lage außerhalb des Inhalts: 32-scroll.css. */
+::-webkit-scrollbar { width: var(--sb-w); height: var(--sb-w); }
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(var(--ink-rgb), var(--sb-alpha)); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(var(--ink-rgb), var(--sb-alpha-hover)); }
+@supports not selector(::-webkit-scrollbar) {
+  * { scrollbar-width: thin; scrollbar-color: rgba(var(--ink-rgb), var(--sb-alpha)) transparent; }
+}
 
 h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.2px; }
 

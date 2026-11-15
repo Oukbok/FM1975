@@ -85,4 +85,5 @@ import './28-lazy.css';
 import './29-look.css'; // ruhige Gesamtoptik
 import './29-buttons.css'; // Knopf-System + Auswahlliste (Tokens --btn-*/--sel-*)
 import './30-theme.css'; // Grundlage: Look „Ruhig Flutlicht“ (nur Tokens)
-import './31-akte.css'; // zuletzt: Look „Akte 1975“ (Papier, Dunkelblau, Vereinsfarbe als Akzent)
+import './31-akte.css'; // Look „Akte 1975“ (Papier, Dunkelblau, Vereinsfarbe als Akzent)
+import './32-scroll.css'; // zuletzt: Bildlaufleisten außerhalb des Inhalts (scrollbar-gutter + Rand)

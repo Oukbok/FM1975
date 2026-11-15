@@ -1,0 +1,114 @@
+/* =============================================================================
+   BILDLAUFLEISTEN AUSSERHALB DES INHALTS (Wunsch Pascal)
+   Erscheint in einem Scroll-Bereich eine Leiste, darf der Inhalt nicht schmaler werden
+   (Text/Bilder springen sonst in der Breite). Alle internen Scroll-Bereiche reservieren
+   deshalb immer eine schmale Leiste fester Breite (`scrollbar-gutter: stable`, Breite
+   `--sb-w`, Optik in 00-base.css) – und legen diesen Streifen in den Rand außerhalb
+   des Inhalts:
+     A  „im Rand“: Bereich ohne eigenen Rahmen in einer Box mit Innenabstand – Bereich
+        um `--sb-w` nach rechts in den Innenabstand der Box verschoben (negativer Rand).
+     B  „im eigenen Innenabstand“: Bereich mit eigenem Rahmen/Hintergrund und rechtem
+        Innenabstand – der Innenabstand wird um `--sb-w` kleiner, die Leiste steht dort.
+     C  „fest reserviert“: kein Platz daneben (Tabellen bündig mit dem Boxrand,
+        gerahmte Listen ohne Innenabstand) – Leiste immer reserviert, Inhalt bleibt
+        trotzdem gleich breit.
+   Neue Scroll-Bereiche hier eintragen (oder im TSX `sb-out` = A / `sb-keep` = C).
+   Prüfung: `node tests/scrollbar-check.mjs [ordner]` (alle Seiten + Profil + Wiki).
+   ============================================================================= */
+
+/* ---- A: Leiste im Rand der Box ----------------------------------------------
+   Einzelselektoren in :is() halten die Spezifität bei einer Klasse: eigene Ränder der
+   Bereiche (z. B. `.dbox-body.flush` = bündig mit dem Boxrand) gehen weiter vor.
+   `--sb-room` (geerbt): 0 = kein Rand daneben → Leiste bleibt fest reserviert wie C. */
+:is(
+  .sb-out, .dbox-body, .ticker,
+  .dr-ggrid, .dr-ov-groups, .pm-about,
+  .pp2-skill-cols, .pp2-tabbody,
+  .tr3-tablewrap, .tr3-tpls,
+  .tm-pad, .tm-tk-body, .tm-lt-body, .tm-table, .tm-cs-list, .tm-tac,
+  .lp-rows, .lp-stage,
+  .ix-scroll, .ix-groups, .ix-cer-facts,
+  .cp-card, .cp-dest, .cp-squad-side, .cp-pl-list,
+  .fin-bal-side, .ng-crows, .ng-clubs,
+  .dz-nlist-in, .dz-rtext, .dz-ov-body,
+  .lu-list, .lu-saved-list,
+  .cnx-list, .cnx-scroll, .fan-side,
+  .ms-rows, .ms-tabbody, .mr-events, .mr-lineups,
+  .gt-grid, .tro-listbody,
+  .vt-rows, .vt-log, .rc-list,
+  .bud-adv-text, .sp3-main-info, .ptk-topics, .ptk-answer,
+  .gp-body, .chm-nav, .chm-list, .chm-side, .bf2-arch-list, .hk-scroll, .tos-list,
+  .tt-tablewrap, .pv-tree, .pv-log, .cmp-scroll,
+  .rb2-top-list, .rb2-scroll, .txp-list, .sf-slotlist, .sf-fx
+),
+.dz-zg > .dz-wb, .dg-lower .dr-intro, .vt-who > .vt-card-b, .rb2-stage .rt-intro, .ft-modal .ft-body {
+  scrollbar-gutter: stable;
+  margin-right: calc(-1 * var(--sb-room, 1) * var(--sb-w));
+}
+/* früher eigener Abstand zur Leiste (Rand −6 px + Innenabstand 6 px) – jetzt wie alle */
+.sf-slotlist, .sf-fx { padding-right: 0; }
+
+/* ---- B: Leiste im eigenen rechten Innenabstand (Bereich mit Rahmen/Fläche) --- */
+:is(
+  .tr3-palette, .sv-pop, .gr-panel, .bc-scroll, .spl-scroll, .mk-filter-body, .pp-card,
+  .cp-side, .tw-side, .live-log, .live-side, .ms-dialog, .mr-stats, .ce-body, .sp3-card-body,
+  .si-body, .tw-box-b, .ps-body
+), .pm-modal .pm-body { scrollbar-gutter: stable; }
+.mx-body { scrollbar-gutter: stable; padding-right: calc(28px - var(--sb-w)); }
+.tr3-palette { padding-right: calc(10px - var(--sb-w)); }
+:is(.sv-pop, .bc-scroll, .spl-scroll, .mk-filter-body, .mr-stats) { padding-right: calc(16px - var(--sb-w)); }
+:is(.gr-panel, .pp-card) { padding-right: calc(18px - var(--sb-w)); }
+:is(.cp-side, .tw-side, .live-log), .pm-modal .pm-body { padding-right: calc(20px - var(--sb-w)); }
+:is(.live-side, .tw-box-b) { padding-right: calc(14px - var(--sb-w)); }
+:is(.ce-body, .sp3-card-body) { padding-right: calc(22px - var(--sb-w)); }
+.ps-body { padding-right: calc(24px - var(--sb-w)); }
+:is(.ms-dialog, .si-body) { padding-right: calc(40px - var(--sb-w)); }
+
+/* ---- C: Leiste fest reserviert (kein Rand daneben) -------------------------- */
+:is(
+  .sb-keep, .calm-scroll, .pp-ratings, .nt-list, .nt-groups, .nt-ko,
+  .mk-scroll, .sf-table-wrap, .tk-prices, .tk-gscroll, .mst-scroll, .pv-choices,
+  .dz-fn-list, .tm-pt-list, .tm-talk-stats, .ms-hist, .gs-table-wrap, .tw-tablewrap,
+  .sel3-list, .modal-scroll
+) { scrollbar-gutter: stable; }
+/* Bündig mit dem Boxrand: Inhalt darin hat rechts keinen Rand mehr. */
+.dbox-body.flush { --sb-room: 0; }
+
+/* ---- Verschachtelt: Box-Inhalt mit eigenem Scroll-Bereich darin -------------
+   Der äußere Bereich scrollt dann nicht selbst. Statt eines reservierten Streifens
+   (der die innere Leiste abschneiden würde) bekommt er rechts Innenabstand in
+   Leistenbreite – dorthin rückt die Leiste des inneren Bereichs. Listen, die nicht
+   immer in der Höhe begrenzt sind (der Box-Inhalt scrollt dann selbst, z. B. `.nt-list`),
+   stehen deshalb bei C und nicht in dieser Liste. In `.dbox-body.flush` reservieren die
+   Bereiche ihre Leiste ohnehin innen (`--sb-room: 0`) – dort entfällt nur der Streifen. */
+.dbox-body:has(:is(
+  .sb-out, .dbox-body, .ticker,
+  .dr-ggrid, .dr-ov-groups, .pm-about,
+  .pp2-skill-cols, .pp2-tabbody,
+  .tr3-tablewrap, .tr3-tpls,
+  .tm-pad, .tm-tk-body, .tm-lt-body, .tm-table, .tm-cs-list, .tm-tac,
+  .lp-rows, .lp-stage,
+  .ix-scroll, .ix-groups, .ix-cer-facts,
+  .cp-card, .cp-dest, .cp-squad-side, .cp-pl-list,
+  .fin-bal-side, .ng-crows, .ng-clubs,
+  .dz-nlist-in, .dz-rtext, .dz-ov-body,
+  .lu-list, .lu-saved-list,
+  .cnx-list, .cnx-scroll, .fan-side,
+  .ms-rows, .ms-tabbody, .mr-events, .mr-lineups,
+  .gt-grid, .tro-listbody,
+  .vt-rows, .vt-log, .rc-list,
+  .bud-adv-text, .sp3-main-info, .ptk-topics, .ptk-answer,
+  .gp-body, .chm-nav, .chm-list, .chm-side, .bf2-arch-list, .hk-scroll, .tos-list,
+  .tt-tablewrap, .pv-tree, .pv-log, .cmp-scroll,
+  .rb2-top-list, .rb2-scroll, .txp-list, .sf-slotlist, .sf-fx,
+  .tr3-palette, .sv-pop, .gr-panel, .bc-scroll, .spl-scroll, .mk-filter-body, .pp-card,
+  .cp-side, .tw-side, .live-log, .live-side, .ms-dialog, .mr-stats, .ce-body, .sp3-card-body,
+  .si-body, .tw-box-b, .ps-body,
+  .sb-keep, .calm-scroll, .pp-ratings,
+  .mk-scroll, .sf-table-wrap, .tk-prices, .tk-gscroll, .mst-scroll, .pv-choices,
+  .dz-fn-list, .tm-pt-list, .tm-talk-stats, .ms-hist, .gs-table-wrap, .tw-tablewrap,
+  .sel3-list, .modal-scroll
+)) {
+  scrollbar-gutter: auto;
+  padding-right: calc(var(--sb-room, 1) * var(--sb-w));
+}

@@ -14,11 +14,7 @@
 .dz-col { min-height: 0; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
 /* Bildlaufleiste der linken Spalte liegt in der Lücke (negativer Rand), damit die
    Kanten der Widgets bündig mit der Spalte abschließen und beide Lücken gleich sind. */
-.dz-left { overflow-y: auto; overflow-x: hidden; padding-right: 6px; margin-right: -14px; scrollbar-gutter: stable; }
-.dz-left::-webkit-scrollbar, .dz-nlist::-webkit-scrollbar, .dz-nlist-in::-webkit-scrollbar, .dz-wb::-webkit-scrollbar, .dz-rtext::-webkit-scrollbar,
-.dz-fn-list::-webkit-scrollbar, .dz-app-list::-webkit-scrollbar, .dz-vt-list::-webkit-scrollbar, .dz-lcd-list::-webkit-scrollbar, .dz-heft-list::-webkit-scrollbar { width: 8px; }
-.dz-left::-webkit-scrollbar-thumb, .dz-nlist::-webkit-scrollbar-thumb, .dz-nlist-in::-webkit-scrollbar-thumb, .dz-wb::-webkit-scrollbar-thumb, .dz-rtext::-webkit-scrollbar-thumb,
-.dz-fn-list::-webkit-scrollbar-thumb, .dz-app-list::-webkit-scrollbar-thumb, .dz-vt-list::-webkit-scrollbar-thumb, .dz-lcd-list::-webkit-scrollbar-thumb, .dz-heft-list::-webkit-scrollbar-thumb { background: rgba(var(--ink-rgb), 0.12); border-radius: 4px; }
+.dz-left { overflow-y: auto; overflow-x: hidden; padding-right: 6px; margin-right: calc(-6px - var(--sb-w)); scrollbar-gutter: stable; }
 
 /* Leiste der linken Spalte liegt über dem Hintergrundbild: nur beim Darüberfahren zeigen,
    sonst wirkt sie wie ein durchsichtiger Streifen/eine alte Box in der Lücke. */
