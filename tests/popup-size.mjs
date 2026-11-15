@@ -113,6 +113,16 @@ for (const view of VIEWS) {
       ['Seite ganz', () => page.locator('.sv-pop .bc-scope button').nth(1).click({ timeout: 1500 })],
       ['Bauweise', () => page.locator('.sv-pop .bc-look button').last().click({ timeout: 1500 })],
     ] }],
+    ['stadion-ausbau', '.spl', async () => {
+      await nav('Verein', 'Stadion');
+      await page.locator('.sv-bar .sv-plan-btn').click({ timeout: 3000 });
+    }, { steps: [
+      ['Block 1', () => page.locator('.gr-svg g[data-block="main_m"]').click({ force: true, timeout: 1500 })],
+      ['Rang aufstocken', () => page.locator('.sv-pop button[title="Rang aufstocken"]').first().click({ timeout: 1500 })],
+      ['Block 2 Seite', async () => { await page.locator('.gr-svg g[data-block="north_w"]').click({ force: true, timeout: 1500 }); await page.locator('.sv-pop .bc-scope button').nth(1).click({ timeout: 1500 }); }],
+      ['Kredit', () => page.locator('.spl .bc-fin button').nth(2).click({ timeout: 1500 })],
+      ['Block entfernen', () => page.locator('.spl .spl-del').first().click({ timeout: 1500 })],
+    ] }],
     ['stadion-neubau', '.sv-pop', async () => {
       await nav('Verein', 'Stadion');
       await page.locator('.sv-bar .sv-rebuild').click({ timeout: 3000 });

@@ -99,7 +99,31 @@ export function groupPlanFor(g: Game, targets: StadiumBlock[]) {
   return { plan, cost, rate, monthly: (years: number) => annuity(cost, rate, years * 12), targets: live.map((x) => x.t) };
 }
 
-/** Umbau starten (ein Block oder mehrere Blöcke einer Seite). */
+/** Gesperrte Plätze während eines Umbaus: je Block die Hälfte des heutigen Blocks. */
+export function buildLoss(g: Game, targets: StadiumBlock[]): number {
+  return Math.round(targets.reduce((s2, t) => s2 + blockCapacity(blockOf(g, t.id) ?? t), 0) * 0.5 / 100) * 100;
+}
+
+/**
+ * Prüfung der Bezahlung ohne Buchung (auch für den Planungsmodus der Stadionseite):
+ * laufender Umbau, Kontostand, Saisonbudget Infrastruktur bzw. Bank (Raten höchstens `bankShare` des Umsatzes).
+ * Liefert den ersten Hinderungsgrund oder null.
+ */
+export function buildBlocker(g: Game, cost: number, financing: 'cash' | 'loan', years: number, bankShare = 0.12): string | null {
+  const club = g.clubs[g.managedClubId];
+  if (club.stadium.blockProject || club.stadiumProject) return 'Es läuft bereits ein Umbau im Stadion.';
+  if (financing === 'cash') {
+    if (club.finances.balance < cost) return 'Der Kontostand reicht für eine Barzahlung nicht.';
+    return checkBudget(g, 'infra', cost); // Saisonbudget (game/budgetPlan.ts)
+  }
+  const today = g.calendar.currentDate;
+  const rev = Math.max(1, (club.finances.seasonHistory ?? []).slice(-1)[0]?.revenue ?? 0);
+  const loan = makeLoan(cost, years, yearOf(today), today, 'Prüfung', club.finances.balance < 0, honourFx(club.id, 'interest'));
+  if (rev > 1 && (monthlyLoanCost(club) + loan.monthlyRate) * 12 > bankShare * rev) return 'Die Bank lehnt ab: Die Kreditraten wären zu hoch für den Umsatz des Vereins.';
+  return null;
+}
+
+/** Umbau starten (ein Block oder mehrere Blöcke, auch verschiedener Seiten – ein gemeinsames Bauprojekt). */
 export function startBlockBuild(g: Game, target: StadiumBlock | StadiumBlock[], financing: 'cash' | 'loan', years: number): { ok: boolean; text: string } {
   const club = g.clubs[g.managedClubId];
   const today = g.calendar.currentDate;
@@ -110,21 +134,15 @@ export function startBlockBuild(g: Game, target: StadiumBlock | StadiumBlock[], 
   const { plan, cost, targets } = groupPlanFor(g, all);
   if (!plan.ok) return { ok: false, text: plan.errors[0] };
   const name = targets.length > 1 ? `${BLOCK_NAME[targets[0].id]} und ${targets.length - 1} weitere${targets.length > 2 ? '' : 'r'} Block${targets.length > 2 ? 's' : ''}` : BLOCK_NAME[targets[0].id];
+  const blocker = buildBlocker(g, cost, financing, years);
+  if (blocker) return { ok: false, text: blocker };
   if (financing === 'cash') {
-    if (club.finances.balance < cost) return { ok: false, text: 'Der Kontostand reicht für eine Barzahlung nicht.' };
-    const block = checkBudget(g, 'infra', cost); // Saisonbudget (game/budgetPlan.ts)
-    if (block) return { ok: false, text: block };
     noteBudgetSpend(g, 'infra', cost);
     book(club.finances, today, -cost, 'facilities', `Umbau ${name} (bar)`, true);
   } else {
-    const rev = Math.max(1, (club.finances.seasonHistory ?? []).slice(-1)[0]?.revenue ?? 0);
-    const loan = makeLoan(cost, years, year, today, `Umbau ${name}`, club.finances.balance < 0, honourFx(club.id, 'interest'));
-    if (rev > 1 && (monthlyLoanCost(club) + loan.monthlyRate) * 12 > 0.12 * rev) {
-      return { ok: false, text: 'Die Bank lehnt ab: Die Kreditraten wären zu hoch für den Umsatz des Vereins.' };
-    }
-    (club.loans ??= []).push(loan);
+    (club.loans ??= []).push(makeLoan(cost, years, year, today, `Umbau ${name}`, club.finances.balance < 0, honourFx(club.id, 'interest')));
   }
-  const loss = Math.round(targets.reduce((s2, t) => s2 + blockCapacity(blockOf(g, t.id)!), 0) * 0.5 / 100) * 100;
+  const loss = buildLoss(g, targets);
   club.stadium.capacity = Math.max(1000, club.stadium.capacity - loss);
   const [first, ...rest] = targets.map((t) => JSON.parse(JSON.stringify(t)) as StadiumBlock);
   club.stadium.blockProject = {

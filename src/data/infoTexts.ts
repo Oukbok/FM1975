@@ -745,6 +745,11 @@ export const INFO_TEXTS = {
     text: 'Das Stadion besteht aus 14 Blöcken, die du einzeln umbauen kannst – Stehplätze, Sitzplätze, Überdachung, später Logen. Während eines Umbaus fehlen die Plätze.',
     wiki: 'stadium-blocks',
   },
+  stadionAusbau: {
+    title: 'Stadion ausbauen',
+    text: 'Im Planungsmodus stellst du für beliebig viele Blöcke ein, wie sie werden sollen – gebaut oder bezahlt wird noch nichts, die Szene zeigt das fertige Stadion. Mit „Bauen“ beginnt ein gemeinsames Bauprojekt: Bauzeit des längsten Blocks plus ein Monat je weiterem Block, zusammen 5 % günstiger.',
+    wiki: 'stadium-blocks',
+  },
   stadionKomfort: {
     title: 'Komfort und Anspruch',
     text: 'Der Komfort ergibt sich aus Sitzqualität, Dach, Verpflegung und Anreise, Anzeigetafel und Zustand – begrenzt durch das Baujahr des Stadions. Die Fans erwarten jedes Jahr etwas mehr. Liegt der Komfort darunter, kommen bis zu 15 % weniger Zuschauer, liegt er darüber, bis zu 8 % mehr.',

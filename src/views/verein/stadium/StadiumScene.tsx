@@ -131,7 +131,8 @@ export interface StadiumSceneProps {
   month: number;
   selected: BlockId | null;
   hover: BlockId | null;
-  building?: BlockId | null;
+  /** Blöcke im Bau (Kran); ein Bauprojekt kann mehrere Blöcke umfassen. */
+  building?: BlockId | BlockId[] | null;
   /** Weitere Blöcke, die zur Planung gehören (ganze Seite). */
   group?: BlockId[];
   /** Geplante (noch nicht gebaute) Blöcke: als Vorschau gezeichnet. */
@@ -201,6 +202,7 @@ export function StadiumScene(p: StadiumSceneProps) {
   const treeNodes = trees.filter((t) => hash(t.k * 1.7) > 0.25 && !inParcel(t.x, t.y)).map((t) => ({ d: depth([t.x, t.y, 0]), n: <Tree key={`t${t.k}`} x={t.x + (hash(t.k) - 0.5)} y={t.y + (hash(t.k + 9) - 0.5)} winter={winter} k={t.k} /> }));
   const blocksActive = p.blocksActive !== false;
   const ghost = new Set(p.ghost ?? []);
+  const inBuild = new Set(Array.isArray(building) ? building : building ? [building] : []);
 
   // Blöcke, Plätze und Masten nach Kameratiefe
   const items: { d: number; n: ReactNode }[] = [];
@@ -221,8 +223,8 @@ export function StadiumScene(p: StadiumSceneProps) {
         {/* Hervorhebung als Umriss statt CSS-Filter: ein Filter auf der Gruppe ließ andere Blöcke beim
             Überfahren flackern (Wunsch Pascal). */}
         {on && blocksActive && <g className={inSel ? 'blk-sel' : 'blk-hov'} pointerEvents="none">{blockOutline(b).map((d, k) => <polyline key={k} points={d} />)}</g>}
-        {ghost.has(id) && <g className="sv-ghost-line" pointerEvents="none">{blockOutline(b).map((d, k) => <polyline key={k} points={d} fill="none" stroke="#F2A541" strokeWidth={1.6} strokeDasharray="6 4" strokeLinejoin="round" />)}</g>}
-        {building === id && (() => {
+        {ghost.has(id) && <g className="sv-ghost-line" pointerEvents="none">{blockOutline(b).map((d, k) => <polyline key={k} points={d} fill="none" strokeWidth={2} strokeDasharray="6 4" strokeLinejoin="round" />)}</g>}
+        {inBuild.has(id) && (() => {
           const [x, yb] = proj(at(len * 0.8, 3, 0)), [, yt] = proj(at(len * 0.8, 3, 15));
           return <g stroke="#e0a23a" strokeWidth={3} fill="none" strokeLinecap="round"><line x1={x} y1={yb} x2={x} y2={yt} /><line x1={x - 50} y1={yt + 8} x2={x + 95} y2={yt - 6} /><line x1={x + 80} y1={yt - 5} x2={x + 80} y2={yt + 50} strokeWidth={1} stroke="#cfd5db" /></g>;
         })()}

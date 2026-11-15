@@ -12,6 +12,8 @@ import { blockCaps, vipAreaSeats } from '../src/engine/seating';
 /** Hospitality-Kapazität (Business-Plätze + Logengäste) – ersetzt die alte Logen-Pauschale. */
 const vipIncome = (c: { stadium: { blocks?: StadiumBlock[] } }, _s: number, _y: number) => { const k = blockCaps(c.stadium.blocks!).caps; return (k.business ?? 0) + (k.loge ?? 0) * 11; };
 import { MatchSim } from '../src/engine/match/sim';
+import { applyPlan, planList, putInPlan, summarize } from '../src/views/verein/stadium/planModel';
+import { buildBlocker } from '../src/game/stadiumGame';
 import { StadiumBlock } from '../src/types';
 
 let fails = 0;
@@ -182,6 +184,41 @@ ok(maxEuro <= seated + hosp && maxLiga > seated, `Europapokal max. ${maxEuro} �
   ok(c.stadium.blocks!.length === 14 && c.stadium.blocks!.every((b) => lookOf(b.look ?? 0) === lookOf(1995)) && c.stadium.capacity === blocksCapacity(c.stadium.blocks!), 'alle 14 Blöcke neu in der aktuellen Bauweise');
   ok(c.stadium.vipBoxes === 12 && loungeLimit('main_m', 2016) > loungeLimit('main_m', 2000) && loungeLimit('main_m', 2000) > loungeLimit('main_m', 1964), `Logen ${c.stadium.vipBoxes}, moderne Substanz fasst mehr`);
   ok(planRebuild(c, spec, Number(fin.slice(0, 4)) + 3).errors.length > 0, 'Neubau frühestens nach zehn Jahren');
+}
+
+// --- Planungsmodus „Stadion ausbauen“: Entwurf über mehrere Seiten, ein Bauprojekt ---
+{
+  const g3 = createNewGame({
+    managedClubId: 'mgl',
+    manager: { name: 'Test', nationality: 'GER', birthYear: 1950, style: 'balanced', background: 'newcomer' } as any,
+    difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300,
+  });
+  const c = g3.clubs[g3.managedClubId];
+  const bl = c.stadium.blocks!;
+  const before = JSON.stringify(c.stadium), bal = c.finances.balance;
+  const mm = clone(bl.find((b) => b.id === 'main_m')!); mm.tiers.push({ seat: 'bank', rows: 12 });
+  const nw = clone(bl.find((b) => b.id === 'north_w')!); nw.roof = 'partial';
+  let plan = putInPlan(bl, {}, [mm]);
+  plan = putInPlan(bl, plan, sideTargets(applyPlan(bl, plan), nw, true));
+  plan = putInPlan(bl, plan, [clone(bl.find((b) => b.id === 'curve_se')!)]); // unverändert → kein Eintrag
+  const list = planList(bl, plan);
+  ok(list.length === 3 && list.map((t) => t.id).join() === 'main_m,north_w,north_e', `Entwurf: ${list.map((t) => t.id).join(', ')}`);
+  const sum = summarize(g3, bl, plan, 20);
+  ok(JSON.stringify(c.stadium) === before && c.finances.balance === bal, 'Planen verändert weder Stadion noch Kontostand');
+  const grp = groupPlanFor(g3, list);
+  ok(sum.cost === grp.cost && sum.months === grp.plan.months && sum.capAfter === blocksCapacity(applyPlan(bl, plan)), `Summe = Engine: ${sum.cost}, ${sum.months} Mon., ${sum.capBefore} → ${sum.capAfter}`);
+  ok(sum.months === Math.min(24, Math.max(...list.map((t) => groupPlanFor(g3, [t]).plan.months)) + 2), 'Bauzeit: längster Block + 1 Monat je weiterem');
+  ok((sum.capsAfter.dach ?? 0) > (sum.capsBefore.dach ?? 0), `überdachte Sitze ${sum.capsBefore.dach} → ${sum.capsAfter.dach}`);
+  const r = startBlockBuild(g3, sum.targets, 'loan', 20);
+  ok(r.ok === !sum.blocker, `Bauen wie geprüft: ${r.text}`);
+  if (r.ok) {
+    const bp = c.stadium.blockProject!;
+    ok(bp && 1 + (bp.more?.length ?? 0) === 3 && bp.capacityLoss === sum.loss, `ein Bauprojekt für 3 Blöcke, ${bp.capacityLoss} Plätze gesperrt`);
+    ok(buildBlocker(g3, 1, 'cash', 0) === 'Es läuft bereits ein Umbau im Stadion.', 'Prüfung meldet den laufenden Umbau');
+    g3.calendar.currentDate = bp.finishDate; stadiumDaily(g3, bp.finishDate);
+    ok(!c.stadium.blockProject && c.stadium.capacity === sum.capAfter, `fertig: ${c.stadium.capacity} Plätze wie geplant`);
+    ok(planList(c.stadium.blocks!, plan).length === 0, 'nach Fertigstellung ist der Entwurf erfüllt');
+  }
 }
 
 console.log(fails ? `\n${fails} Fehler` : '\nAlle Stadion-Tests bestanden.');

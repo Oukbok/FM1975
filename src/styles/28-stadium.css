@@ -65,11 +65,9 @@
 .sv-lead line { stroke: rgba(241, 244, 248, 0.45); stroke-width: 1.2; stroke-dasharray: 4 4; }
 .sv-lead circle { fill: var(--accent); stroke: rgba(var(--bg-rgb), 0.9); stroke-width: 2; }
 
-/* Geister-Vorschau eines geplanten Blocks */
-.sv-ghost { opacity: 0.82; }
-.sv-ghost polygon[stroke-dasharray] { animation: svDash 1.4s linear infinite; }
-@keyframes svDash { to { stroke-dashoffset: -24; } }
-@media (prefers-reduced-motion: reduce) { .sv-ghost polygon[stroke-dasharray] { animation: none; } }
+/* Geplante (noch nicht gebaute) Blöcke: dezent gestrichelt umrandet, sonst wie fertig gebaut */
+.sv-ghost { opacity: 0.94; }
+.sv-ghost-line polyline { stroke: var(--accent); }
 
 /* Szenen-Seite (GameShell .shell-scene): nur Menüleiste oben, darunter Stadion + Umfeld
    randlos, ohne Hintergrundfoto, Kalenderstreifen und Footer. */
@@ -191,3 +189,55 @@
 .pz-ctl .b3-icon { font-size: 20px; line-height: 1; }
 .pz-zoom { width: 56px; text-align: center; font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--text); }
 .pz-hint { margin: 0 8px 0 4px; font-size: 13.5px; color: var(--text-3); white-space: nowrap; }
+
+/* ---- Planungsmodus „Stadion ausbauen“ (views/verein/stadium/PlanPanel.tsx, usePlanDraft.ts) ----
+   Entwurfs-Box links fest (Höhe hängt nur am Fenster), Block-Popover rechts; beide scrollen intern. */
+.sv-bar .sv-plan-btn { flex: none; width: 196px; justify-content: center; gap: 8px; }
+.sv-plan-btn em { font-style: normal; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; font: 700 12px var(--font-ui); line-height: 20px;
+  background: rgba(var(--shade-rgb), 0.25); }
+.sv-hint.acc { color: var(--text); font-weight: 600; }
+.spl { position: absolute; z-index: 5; left: 12px; top: 76px; bottom: 74px; width: 384px; display: flex; flex-direction: column; overflow: hidden;
+  border-radius: 12px; background: var(--sv-glass); border: 1px solid var(--border); box-shadow: 0 14px 40px rgba(var(--shade-rgb), 0.5); }
+.spl-scroll { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 0 16px 12px; display: flex; flex-direction: column; gap: 14px; }
+.spl-list { display: flex; flex-direction: column; gap: 3px; }
+.spl-row { display: grid; grid-template-columns: 1fr 64px 84px 26px; align-items: center; gap: 6px; padding: 3px 4px 3px 10px; border-radius: 8px; border: 1px solid var(--border-soft); }
+.spl-row.on { border-color: var(--sel-border); background: var(--sel-bg); }
+.spl-row.bad .spl-name { color: var(--neg); }
+.spl-name { min-width: 0; text-align: left; background: none; border: 0; padding: 4px 0; color: var(--text); font: 600 13px var(--font-ui); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.spl-name:hover { text-decoration: underline; }
+.spl-add, .spl-cost { text-align: right; font-size: 12.5px; color: var(--text-2); white-space: nowrap; }
+.spl-add.pos { color: var(--pos); }
+.spl-add.neg { color: var(--neg); }
+.spl-del { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 6px; border: 1px solid transparent; background: transparent; color: var(--text-3); cursor: pointer; }
+.spl-del:hover { color: var(--text); border-color: var(--border); }
+.spl-cats { width: 100%; border-collapse: collapse; font-size: 12.5px; table-layout: fixed; }
+.spl-cats th:nth-child(2), .spl-cats th:nth-child(3) { width: 64px; }
+.spl-cats th:nth-child(4) { width: 62px; }
+.spl-cats td:first-child { overflow: hidden; text-overflow: ellipsis; }
+.spl-cats th { text-align: right; font-size: 11px; font-weight: 700; color: var(--text-3); padding: 0 0 4px; }
+.spl-cats th:first-child, .spl-cats td:first-child { text-align: left; }
+.spl-cats td { text-align: right; padding: 3px 0; color: var(--text-2); border-top: 1px solid var(--border-soft); white-space: nowrap; }
+.spl-cats td:nth-child(3) { color: var(--text); font-weight: 600; }
+.spl-cats td.pos { color: var(--pos); }
+.spl-cats td.neg { color: var(--neg); }
+.spl-cats .spl-sum td { font-weight: 700; color: var(--text); }
+.spl-kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 12.5px; align-items: baseline; }
+.spl-kv > span { color: var(--text-3); }
+.spl-kv > b { text-align: right; color: var(--text); font-weight: 600; }
+.spl-kv > b small { font-weight: 500; color: var(--text-3); }
+.spl-kv > b.pos { color: var(--pos); }
+.spl-kv > b.neg { color: var(--neg); }
+.spl-checks { display: flex; flex-direction: column; gap: 4px; }
+.spl-check { display: grid; grid-template-columns: 18px 1fr; gap: 8px; align-items: start; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border-soft); }
+.spl-check > svg { margin-top: 2px; color: var(--text-3); }
+.spl-check.ok > svg { color: var(--pos); }
+.spl-check.bad > svg { color: var(--neg); }
+.spl-check span { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.spl-check b { font-size: 13px; color: var(--text); }
+.spl-check small { font-size: 12px; color: var(--text-3); line-height: 1.35; }
+.spl-check.bad small { color: var(--neg); }
+.bc-fine.neg { color: var(--neg); }
+.bc-reset:disabled { opacity: .4; cursor: not-allowed; }
+.bc-build:disabled { opacity: .5; cursor: not-allowed; }
+.bc-cost.bc-cost4 { grid-template-columns: 1.1fr 1.3fr 1fr 0.8fr; }
+.bc-done { min-width: 110px; }
