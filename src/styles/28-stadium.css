@@ -182,3 +182,12 @@
 .sv-bar .btn.on { background: var(--btn-on-bg); border-color: var(--btn-on-border); color: var(--btn-on-text); }
 .bc-kpis b.rb-cost { font-size: 16px; white-space: nowrap; }
 .bc-kpis > div > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Verschieben & Zoomen (ui/usePanZoom.ts, ui/PanZoomControls.tsx) – auch Vereinsgelände */
+.pz-svg { cursor: grab; touch-action: none; user-select: none; }
+.pz-svg.dragging { cursor: grabbing; }
+.pz-svg.dragging .gr-obj { pointer-events: none; }
+.pz-ctl { position: absolute; top: 12px; right: 12px; z-index: 4; display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 10px; background: rgba(var(--bg-rgb), 0.96); border: 1px solid var(--border); }
+.pz-ctl .b3-icon { font-size: 20px; line-height: 1; }
+.pz-zoom { width: 56px; text-align: center; font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--text); }
+.pz-hint { margin: 0 8px 0 4px; font-size: 13.5px; color: var(--text-3); white-space: nowrap; }

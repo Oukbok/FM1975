@@ -1,19 +1,22 @@
 // =============================================================================
 // VEREINSGELÄNDE — gezeichnete Anlage, die mit Ausbau und Epoche wächst
 // -----------------------------------------------------------------------------
-// Stadion (Laufbahn → reines Fußballstadion → Arena mit Dach), Trainingsplätze
-// (Rasen, später Kunstrasen, Halle), Jugendbereich, Geschäftsstelle, Medizin,
-// Fanshop, Buden, Parkplatz. Einrichtungen späterer Epochen erscheinen erst,
-// wenn sie freigeschaltet sind (zuerst als Bauplatz). Jahreszeit: Schnee im
-// Winter, Herbstfarben im Herbst. Laufendes Stadion-Bauprojekt: Kran.
+// Oben das Stadionviertel (Stadion, Buden, Fanshop, Umfeld aus SurroundLayer),
+// südlich der Stadionstraße der Campus in Quartieren mit festen Modul-Plätzen
+// (CampusLots.tsx). Die Szene ist größer als der Ausschnitt: linke Maustaste
+// verschiebt, Mausrad zoomt (ui/usePanZoom.ts). Jahreszeit: Schnee im Winter,
+// Herbstfarben im Herbst. Laufendes Stadion-Bauprojekt: Kran.
 // =============================================================================
 import type { ReactNode } from 'react';
 import { BlockSide, Club, FacilityKey } from '../../../types';
 import { BLOCK_SIDE } from '../../../engine/stadiumBlocks';
 import { tierGeometry } from '../stadium/StadiumScene';
-import { Box, Crane, Flat, Floodlight, GableRoof, P, Pitch, Track, Tree, WindowsFront, WindowsSide, pts, shade } from './isoKit';
+import { Box, Crane, Flat, P, Pitch, Track, Tree, WindowsFront, pts, shade } from './isoKit';
 import type { ClubGrounds, GroundsModuleKey } from '../../../types/grounds';
 import { SURROUND_ZONES, drawSurroundings } from './SurroundLayer';
+import { campusSouth, drawCampus } from './CampusLots';
+import { PanZoomControls } from '../../../ui/PanZoomControls';
+import { usePanZoom } from '../../../ui/usePanZoom';
 
 export type GroundKey = FacilityKey | 'clubhouse' | GroundsModuleKey;
 
@@ -52,11 +55,14 @@ export function GroundsScene(props: SceneProps) {
   // Vereinsfarbe für Sitze/Fahnen – zu dunkle Farben durch die Zweitfarbe ersetzen.
   const primary = lum(club.colors?.primary ?? '') < 0.18 ? (club.colors?.secondary ?? '#c0392b') : (club.colors?.primary ?? '#c0392b');
   const objs: Obj[] = [];
+  const labelled = new Set<string>();
   const lvl = (k: FacilityKey) => (inf[k] as number) ?? 1;
 
   // Interaktive Gruppe mit Hervorhebung.
   const G = (k: GroundKey, depth: number, node: ReactNode, label: [number, number, number]) => {
-    const on = selected === k || hover === k;
+    // Mehrteilige Einrichtungen (Plätze, Kabinen, Halle …): nur ein Schild je Einrichtung.
+    const on = (selected === k || hover === k) && !labelled.has(k);
+    labelled.add(k);
     const [lx, ly] = P(label[0], label[1], label[2]);
     objs.push({
       key: k, depth,
@@ -149,172 +155,42 @@ export function GroundsScene(props: SceneProps) {
     ), [25 + mw / 2, 18, 3.4]);
   }
 
-  // ---------------------------------------------------------------- Geschäftsstelle / Vereinsheim
-  {
-    const big = (club.reputation ?? 60) >= 75;
-    const w = big ? 7 : 5.5, d = 4, h = big ? 2.8 : 1.9;
-    G('clubhouse', 28 + w + 12 + d, (
-      <g>
-        <Box x={28} y={12} w={w} d={d} h={h} color={pal.wall}>
-          <WindowsFront x={28} w={w} yf={16} z0={0.4} rows={big ? 2 : 1} color={pal.win} />
-          <WindowsSide y={12} d={d} xf={28 + w} z0={0.4} rows={big ? 2 : 1} color={pal.win} />
-        </Box>
-        {pal.era === 0 ? <GableRoof x={28} y={12} w={w} d={d} z={h} rh={1.3} color={pal.roof} /> : <Box x={27.8} y={11.8} w={w + 0.4} d={d + 0.4} h={0.2} z={h} color={pal.roof} />}
-        <Box x={28 + w / 2 - 0.1} y={16} w={0.15} d={0.15} h={h + 2.4} color="#d5d9de" />
-        <polygon points={pts(P(28 + w / 2, 16, h + 2.4), P(28 + w / 2 + 1.6, 16, h + 2.1), P(28 + w / 2, 16, h + 1.8))} fill={primary} />
-      </g>
-    ), [28 + w / 2, 14, h + 3]);
-  }
-
-  // ---------------------------------------------------------------- Medizin
-  {
-    const m = lvl('medical');
-    const w = 2.4 + m * 0.5, h = 1.1 + m * 0.3;
-    G('medical', 35.5 + w + 15, (
-      <g>
-        <Box x={35.5} y={12} w={w} d={3} h={h} color={pal.era === 0 ? '#d9d4c9' : '#f0f2f4'}>
-          <WindowsFront x={35.5} w={w} yf={15} z0={0.3} rows={Math.min(2, Math.ceil(m / 2))} color={pal.win} step={1.3} />
-        </Box>
-        <g transform={`translate(${P(35.5 + w / 2, 13.5, h)[0]},${P(35.5 + w / 2, 13.5, h)[1]})`}>
-          <rect x={-6} y={-2} width={12} height={4} fill="#d63c3c" /><rect x={-2} y={-6} width={4} height={12} fill="#d63c3c" />
-        </g>
-      </g>
-    ), [35.5 + w / 2, 13, h + 1.5]);
-  }
-
-  // ---------------------------------------------------------------- Trainingsplätze
-  {
-    const T = lvl('trainingCenter');
-    const artificial = year >= 1995 && T >= 3;
-    const nodes: ReactNode[] = [];
-    const tg = winter ? '#c9d3cd' : T <= 1 ? '#7d9a52' : '#4f9a45';
-    nodes.push(<Pitch key="t1" x={4} y={22} w={12} d={8} grass={tg} stripes={T >= 2} />);
-    if (T <= 1 && !winter) nodes.push(<Flat key="patch" x={9} y={25} w={2.5} d={2} fill="#9b8a5a" opacity={0.7} />);
-    if (T >= 2) nodes.push(<Pitch key="t2" x={18} y={22} w={12} d={8} grass={tg} />);
-    if (T >= 3) nodes.push(<Pitch key="t3" x={32} y={22} w={12} d={8} grass={artificial ? '#2f8a6a' : tg} stripes={!artificial} />);
-    if (T >= 4) nodes.push(<g key="fl"><Floodlight x={3.4} y={21.4} h={5} /><Floodlight x={16.6} y={21.4} h={5} /><Floodlight x={30.6} y={21.4} h={5} /></g>);
-    G('trainingCenter', 22 + 30, <g>{nodes}</g>, [T >= 2 ? 24 : 10, 25, 3]);
-    if (T >= 5) {
-      G('trainingCenter', 36 + 8 + 16 + 4, (
-        <g>
-          <Box x={36} y={16.2} w={8} d={4.5} h={2.4} color={pal.era === 0 ? '#a7a08f' : '#dfe3e6'}>
-            <WindowsSide y={16.2} d={4.5} xf={44} z0={0.6} rows={1} color={pal.win} />
-          </Box>
-          <GableRoof x={36} y={16.2} w={8} d={4.5} z={2.4} rh={1.2} color={pal.roof} />
-        </g>
-      ), [40, 18, 4.5]);
-    }
-  }
-
-  // ---------------------------------------------------------------- Jugendbereich
-  {
-    const Y = lvl('youthAcademy');
-    const yg = winter ? '#c9d3cd' : '#57a14b';
-    const pitches = <g><Pitch x={4} y={34} w={9} d={6} grass={yg} />{Y >= 3 && <Pitch x={15} y={34} w={9} d={6} grass={yg} />}</g>;
-    const w = [0, 4, 5, 6, 6.5, 8][Y], d = [0, 3, 3.5, 4, 4, 4.5][Y], h = [0, 1.3, 1.6, 2.4, 2.6, 3.2][Y];
-    const wood = Y === 1 && pal.era === 0;
-    const bld = (
-      <g>
-        <Box x={27} y={34} w={w} d={d} h={h} color={wood ? '#8a6a46' : pal.wall}>
-          <WindowsFront x={27} w={w} yf={34 + d} z0={0.35} rows={h > 2 ? 2 : 1} color={pal.win} step={1.4} />
-        </Box>
-        {pal.era === 0 || Y <= 2 ? <GableRoof x={27} y={34} w={w} d={d} z={h} rh={1} color={wood ? '#4e3b2a' : pal.roof} /> : <Box x={26.8} y={33.8} w={w + 0.4} d={d + 0.4} h={0.2} z={h} color={pal.roof} />}
-        {Y >= 4 && <Box x={27} y={39.2} w={6} d={3} h={2.8} color={shade(pal.wall, 0.95)}>
-          <WindowsFront x={27} w={6} yf={42.2} z0={0.4} rows={2} color={pal.win} step={1.3} />
-        </Box>}
-      </g>
-    );
-    G('youthAcademy', 34 + 13 + 6, pitches, [9, 36, 2.5]);
-    G('youthAcademy', 27 + w + 34 + d + (Y >= 4 ? 8 : 0), bld, [27 + w / 2, 35, h + 2.2]);
-  }
-
-  // ---------------------------------------------------------------- Einrichtungen späterer Epochen
-  const plot = (k: FacilityKey, x: number, y: number, w: number, d: number, built: ReactNode, label: [number, number, number]) => {
-    if (!unlocked.has(k)) return;
-    const isBuilt = lvl(k) >= 2;
-    G(k, x + w + y + d, isBuilt ? built : (
-      <g>
-        <Flat x={x} y={y} w={w} d={d} fill={winter ? '#dfe5e2' : '#a08a62'} />
-        <polygon points={pts(P(x, y, 0.5), P(x + w, y, 0.5), P(x + w, y + d, 0.5), P(x, y + d, 0.5), P(x, y, 0.5))} fill="none" stroke="#e8edf1" strokeDasharray="4 4" />
-        <Box x={x + w / 2 - 0.6} y={y + d / 2} w={1.2} d={0.15} h={1.2} color="#e0a23a" />
-      </g>
-    ), label);
-  };
-  plot('rehaCenter', 41, 2, 5, 5, (
-    <g>
-      <Box x={41} y={2} w={5} d={5} h={1.6 + lvl('rehaCenter') * 0.3} color={pal.era === 2 ? '#eef1f3' : '#d7dbde'}>
-        <WindowsFront x={41} w={5} yf={7} z0={0.4} rows={1} color={pal.win} step={1.3} />
-      </Box>
-      <Flat x={41.6} y={2.6} w={3.8} d={2} z={1.6 + lvl('rehaCenter') * 0.3 + 0.01} fill="#4fb3d9" />
-    </g>
-  ), [43.5, 4, 4]);
-  plot('performanceCenter', 39, 8.5, 6.5, 4, (
-    <Box x={39} y={8.5} w={6.5} d={4} h={2.2 + lvl('performanceCenter') * 0.3} color="#3d4d5c">
-      <WindowsFront x={39} w={6.5} yf={12.5} z0={0.3} rows={2} color="#7fd4f0" step={1} ww={0.8} rowH={1.1} />
-      <WindowsSide y={8.5} d={4} xf={45.5} z0={0.3} rows={2} color="#7fd4f0" step={1} ww={0.8} rowH={1.1} />
-    </Box>
-  ), [42, 10, 5]);
-  plot('nlz', 37, 33, 8, 6, (
-    <g>
-      <Box x={37} y={33} w={8} d={6} h={2.4 + lvl('nlz') * 0.35} color="#e6e9ec">
-        <WindowsFront x={37} w={8} yf={39} z0={0.4} rows={2} color="#8fc2dc" step={1.1} ww={0.8} />
-        <WindowsSide y={33} d={6} xf={45} z0={0.4} rows={2} color="#8fc2dc" step={1.1} ww={0.8} />
-      </Box>
-      <Box x={36.8} y={32.8} w={8.4} d={0.6} h={0.4} z={2.4 + lvl('nlz') * 0.35} color={primary} />
-    </g>
-  ), [41, 35, 6]);
-  plot('dataCenter', 46.5, 35, 3, 3, (
-    <g>
-      <Box x={46.5} y={35} w={3} d={3} h={2.2} color="#2b3540">
-        <WindowsFront x={46.5} w={3} yf={38} z0={0.5} rows={2} color="#F2A541" step={0.8} ww={0.5} wh={0.3} rowH={0.7} />
-      </Box>
-      <ellipse cx={P(48, 36.5, 2.9)[0]} cy={P(48, 36.5, 2.9)[1]} rx={9} ry={5} fill="#dfe6ec" stroke="#9aa6b2" />
-    </g>
-  ), [48, 36, 4.5]);
+  // ---------------------------------------------------------------- Campus (Quartiere mit Modul-Plätzen)
+  const gr: ClubGrounds = club.grounds ?? { location: 'stadtteil', area: 0, landBought: 0, modules: {}, projects: [], attApplied: 0, log: [] };
+  const campus = drawCampus({ lvl, unlocked, year, winter, autumn, grass, pal, primary, reputation: club.reputation ?? 60, landBought: gr.landBought, G: (k, d, n, l) => G(k, d, n, l), plain });
+  const south = campusSouth(gr.landBought);
 
   // ---------------------------------------------------------------- Stadionumfeld
-  const gr: ClubGrounds = club.grounds ?? { location: 'stadtteil', area: 0, landBought: 0, modules: {}, projects: [], attApplied: 0, log: [] };
-  drawSurroundings({ gr, year, winter, pal, primary, reputation: club.reputation ?? 60, mastPos, mastH, G: (k, d, n, l) => G(k, d, n, l), plain });
+  drawSurroundings({ gr, year, winter, pal, primary, reputation: club.reputation ?? 60, mastPos, mastH, south, G: (k, d, n, l) => G(k, d, n, l), plain });
 
   // ---------------------------------------------------------------- Bäume
   const trees: [number, number, number][] = [];
-  for (let i = 0; i < 26; i++) {
+  for (let i = 0; i < 44; i++) {
     const t = hash(i * 3.1);
     const edge = i % 4;
-    const p = 2 + t * 44;
-    const q = -6 + t * 56;
-    const [x, y] = edge === 0 ? [q, -8.6] : edge === 1 ? [-9, q] : edge === 2 ? [p, 45.5 + hash(i) * 1.5] : [52, q];
+    const [x, y] = edge === 0 ? [-6 + t * 56, -9.6] : edge === 1 ? [-10.4, -6 + t * (south + 4)] : edge === 2 ? [-3 + t * 52, south + 1.2 + hash(i) * 1.5] : [53.2 + hash(i + 3) * 2.5, 21 + t * (south - 21)];
     trees.push([x, y, 0.8 + hash(i + 9) * 0.5]);
   }
-  for (const [x, y, s] of [[2, 18.5, 0.9], [16.8, 32, 0.8], [30.8, 32.5, 1], [26, 21.5, 0.8], [46, 21, 0.9], [14, 44, 1]] as [number, number, number][]) trees.push([x, y, s]);
-  const free = ([x, y]: [number, number, number]) => !SURROUND_ZONES.some(([zx, zy, zw, zd]) => x > zx - 0.8 && x < zx + zw + 0.8 && y > zy - 0.8 && y < zy + zd + 0.8)
-    && !(gr.landBought > 0 && y > 46 && x > 3 && x < 4 + gr.landBought * 9.5);
-  trees.filter(free).forEach(([x, y, s], i) => plain(`tree${i}`, x + y + 0.5, <Tree x={x} y={y} s={s} snow={winter} color={autumn && i % 3 === 0 ? '#c9822c' : '#3f7a3a'} />));
+  for (let i = 0; i < 9; i++) trees.push([47.6 + hash(i * 2.3) * 4.4, 33 + i * ((south - 34) / 9) + hash(i) * 1.2, 0.75 + hash(i + 5) * 0.4]);
+  for (let i = 0; i < 6; i++) trees.push([-3.4 + hash(i * 5.1) * 5.6, 37 + i * ((south - 38) / 6), 0.75 + hash(i + 2) * 0.4]);
+  const free = ([x, y]: [number, number, number]) => !SURROUND_ZONES.some(([zx, zy, zw, zd]) => x > zx - 0.8 && x < zx + zw + 0.8 && y > zy - 0.8 && y < zy + zd + 0.8);
+  trees.filter(free).forEach(([x, y, s], i) => plain(`tree${i}`, x + y + 0.5, <Tree x={x} y={y} s={s} snow={winter} color={autumn && i % 3 === 0 ? '#c9822c' : i % 2 ? '#3f7a3a' : '#4b8a40'} />));
 
   objs.sort((a, b) => a.depth - b.depth);
 
-  // Wege
-  const path = (a: [number, number], b: [number, number], wdt = 1.2) => (
-    <polygon points={pts(P(a[0], a[1] - wdt / 2), P(b[0], b[1] - wdt / 2), P(b[0], b[1] + wdt / 2), P(a[0], a[1] + wdt / 2))} fill={winter ? '#eef2f4' : '#b9b3a3'} />
-  );
-  const pathV = (a: [number, number], b: [number, number], wdt = 1.2) => (
-    <polygon points={pts(P(a[0] - wdt / 2, a[1]), P(a[0] + wdt / 2, a[1]), P(b[0] + wdt / 2, b[1]), P(b[0] - wdt / 2, b[1]))} fill={winter ? '#eef2f4' : '#b9b3a3'} />
-  );
+  // Verschieben & Zoomen (ui/usePanZoom.ts): Start = Stadion und Trainingszentrum, der Rest liegt weiter südlich
+  const c0 = P(-12, -12), c1 = P(58, -12), c2 = P(58, south + 6), c3 = P(-12, south + 6);
+  const bx0 = Math.min(c0[0], c3[0]), bx1 = Math.max(c1[0], c2[0]), by0 = c0[1], by1 = c2[1];
+  const pz = usePanZoom({ base: { x: -150, y: -70, w: 1500, h: 980 }, bounds: { x: bx0 + 300, y: by0 + 200, w: bx1 - bx0 - 600, h: by1 - by0 - 400 }, minZoom: 0.6, maxZoom: 2.8 });
 
-  return (
-    <svg className="gr-svg" viewBox="-60 -70 1420 880" preserveAspectRatio="xMidYMid meet">
-      <defs>
-        <linearGradient id="grSky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor={winter ? '#c9d6e2' : '#8fc3e8'} />
-          <stop offset="1" stopColor={winter ? '#e9eef2' : '#d9eef8'} />
-        </linearGradient>
-      </defs>
-      <Flat x={-9} y={-9} w={62} d={61} fill={grass} />
-      {path([-5, 20.8], [53, 20.8], 1.6)}
-      {path([4, 32.3], [50, 32.3], 1.2)}
-      {pathV([26.5, -5.4], [26.5, 52], 1.6)}
+  return (<>
+    <svg ref={pz.svgRef} className={`gr-svg pz-svg${pz.dragging ? ' dragging' : ''}`} viewBox={pz.viewBox} preserveAspectRatio="xMidYMid meet" {...pz.bind}>
+      <Flat x={-140} y={-140} w={330} d={south + 290} fill={winter ? '#cdd6d2' : shade(grass, 0.82)} />
+      <Flat x={-12} y={-12} w={70} d={south + 18} fill={grass} stroke={winter ? '#b3beb8' : shade(grass, 0.7)} />
+      {campus.base}
       {objs.map((o) => <g key={o.key + o.depth}>{o.node}</g>)}
-      {winter && <g pointerEvents="none" opacity={0.7}>{Array.from({ length: 70 }).map((_, i) => <circle key={i} cx={hash(i) * 1300} cy={hash(i + 99) * 760} r={1.5 + hash(i + 7) * 1.5} fill="#fff" />)}</g>}
+      {campus.signs}
     </svg>
-  );
+    <PanZoomControls pz={pz} />
+  </>);
 }

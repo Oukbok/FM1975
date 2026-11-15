@@ -8,7 +8,7 @@
 import type { ReactNode } from 'react';
 import type { ClubGrounds, GroundsModuleKey } from '../../../types/grounds';
 import { GROUNDS_BY_KEY } from '../../../data/groundsCatalog';
-import { Box, Bus, Car, Dish, Fence, Flat, Floodlight, GableRoof, P, Tent, Train, WindowsFront, WindowsSide, pts, shade } from './isoKit';
+import { Box, Bus, Car, Dish, Flat, Floodlight, GableRoof, P, Tent, Train, WindowsFront, WindowsSide, pts, shade } from './isoKit';
 
 export interface LayerCtx {
   gr: ClubGrounds;
@@ -20,6 +20,8 @@ export interface LayerCtx {
   /** Stadion-Eckpunkte für die Flutlichtmasten [x, y]. */
   mastPos: [number, number][];
   mastH: number;
+  /** Südrand des Geländes (Bahnstrecke läuft bis dorthin). */
+  south: number;
   G: (k: GroundsModuleKey, depth: number, node: ReactNode, label: [number, number, number]) => void;
   plain: (key: string, depth: number, node: ReactNode) => void;
 }
@@ -28,7 +30,7 @@ function hash(n: number): number { const x = Math.sin(n * 127.1 + 311.7) * 43758
 
 /** Für die Baumverteilung: belegte Rechtecke des Umfelds. */
 export const SURROUND_ZONES: [number, number, number, number][] = [
-  [-8, -9, 2.6, 62], [-9, -7.6, 64, 2.4], [-4, 15, 7, 21], [45.5, 12.5, 6, 18], [2, -4.5, 24, 4.2], [45.5, 1.5, 5.5, 6],
+  [-8, -12, 2.6, 110], [-12, -7.6, 70, 2.4], [-4, 15, 7, 21], [45.5, 12.5, 6, 18], [2, -4.5, 24, 4.2], [45.5, 1.5, 5.5, 6], [3, 19.5, 44, 75],
 ];
 
 export function drawSurroundings(c: LayerCtx): void {
@@ -54,13 +56,13 @@ export function drawSurroundings(c: LayerCtx): void {
 
   // ---------------------------------------------------------------- Zufahrtsstraße + Bahn (immer, als Kulisse)
   plain('road', -3, <g>
-    <Flat x={-9} y={-7.4} w={63} d={2} fill={winter ? '#c3c8cd' : '#555b63'} />
-    <polyline points={pts(P(-9, -6.4, 0.02), P(54, -6.4, 0.02))} stroke="#d9d4c3" strokeDasharray="6 7" strokeWidth={1} fill="none" />
+    <Flat x={-12} y={-7.4} w={70} d={2} fill={winter ? '#c3c8cd' : '#555b63'} />
+    <polyline points={pts(P(-12, -6.4, 0.02), P(58, -6.4, 0.02))} stroke="#d9d4c3" strokeDasharray="6 7" strokeWidth={1} fill="none" />
   </g>);
   plain('rail', -2, <g>
-    <Flat x={-7.6} y={-9} w={2.2} d={61} fill={winter ? '#cfd3d6' : '#8a7f73'} />
-    <polyline points={pts(P(-7.0, -9, 0.03), P(-7.0, 52, 0.03))} stroke="#5d6066" strokeWidth={1.2} fill="none" />
-    <polyline points={pts(P(-6.0, -9, 0.03), P(-6.0, 52, 0.03))} stroke="#5d6066" strokeWidth={1.2} fill="none" />
+    <Flat x={-7.6} y={-12} w={2.2} d={c.south + 18} fill={winter ? '#cfd3d6' : '#8a7f73'} />
+    <polyline points={pts(P(-7.0, -12, 0.03), P(-7.0, c.south + 6, 0.03))} stroke="#5d6066" strokeWidth={1.2} fill="none" />
+    <polyline points={pts(P(-6.0, -12, 0.03), P(-6.0, c.south + 6, 0.03))} stroke="#5d6066" strokeWidth={1.2} fill="none" />
   </g>);
 
   // ---------------------------------------------------------------- ÖPNV
@@ -298,10 +300,4 @@ export function drawSurroundings(c: LayerCtx): void {
       </Box>
     );
   }, [48.4, 28.6, 3]);
-
-  // ---------------------------------------------------------------- Zugekaufte Grundstücke
-  for (let i = 0; i < gr.landBought; i++) {
-    const x = 4 + i * 9.5;
-    plain(`land${i}`, x + 9 + 47.6 + 3, <g><Flat x={x} y={47.6} w={9} d={3} fill={winter ? '#e4e9e6' : '#8db36a'} /><Fence x={x} y={47.6} w={9} d={3} /></g>);
-  }
 }

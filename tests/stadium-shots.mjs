@@ -80,6 +80,23 @@ if (await nb.count()) {
 await page.locator('.sv-bar .sv-crowd').click(); await page.waitForTimeout(300);
 await page.screenshot({ path: `${outDir}/${tag}_8_leer.png` });
 await page.locator('.sv-bar .sv-crowd').click();
+// Verschieben mit der linken Maustaste, Zoomen mit dem Mausrad, Zentrieren
+{
+  const pos = async () => (await page.locator('[data-venue="catering"]').boundingBox());
+  const p0 = await pos();
+  await page.mouse.move(900, 600); await page.mouse.down(); await page.mouse.move(1150, 480, { steps: 8 }); await page.mouse.up();
+  await page.waitForTimeout(200);
+  const p1 = await pos();
+  if (!p0 || !p1 || Math.abs((p1.x - p0.x) - 250) > 12) errors.push(`Ziehen verschiebt die Szene nicht wie erwartet: ${p0?.x} → ${p1?.x}`);
+  if (await page.locator('.sv-pop').count()) errors.push('Ziehen hat ein Gebäude angeklickt');
+  await page.screenshot({ path: `${outDir}/${tag}_9_verschoben.png` });
+  await page.mouse.move(900, 600); for (let i = 0; i < 5; i++) await page.mouse.wheel(0, 300);
+  await page.waitForTimeout(250);
+  await page.screenshot({ path: `${outDir}/${tag}_10_gesamt.png` });
+  await page.locator('.pz-ctl button:has-text("Zentrieren")').click(); await page.waitForTimeout(200);
+  const p2 = await pos();
+  if (!p0 || !p2 || Math.abs(p2.x - p0.x) > 2) errors.push('Zentrieren stellt die Ausgangslage nicht her');
+}
 console.log(errors.length ? 'FEHLER:\n' + errors.join('\n') : 'ok, keine JS-Fehler');
 await browser.close(); server.close();
 process.exit(errors.length ? 1 : 0);

@@ -1,31 +1,34 @@
 // =============================================================================
-// STADION-ZEICHNUNG (leeres Stadion, erhöhte Schrägansicht). Der Bildausschnitt
-// ist fest auf das größtmögliche Stadion plus Umfeld ausgelegt (RING): beim
-// Ausbau wachsen nur die Tribünen, Kamera und Vorplatz bleiben gleich.
+// STADION-ZEICHNUNG (erhöhte Schrägansicht). Das Stadiongelände (PLOT) liegt fest
+// außerhalb der größtmöglichen Tribünen (RING): beim Ausbau wachsen nur die
+// Tribünen, alles andere bleibt, wo es ist. Die Szene ist größer als der Bild-
+// ausschnitt – mit der linken Maustaste verschieben, mit dem Mausrad zoomen
+// (ui/usePanZoom.ts). Zugekaufte Grundstücke erscheinen als eingezäunte Flächen.
 // Rund ums Stadion: Buden, Fanshop, Parkplatz … (StadiumSurround), anklickbar.
 // Vorplatz mit
 // Bäumen, Rasen mit Mähstreifen und vollständigen Linien, Tore mit Netz,
 // Werbebanden, Trainerbänke, Eckfahnen, weiche Schatten, vier Blöcke
-// (StadiumBlockShape) und Flutlichtmasten je Epoche. Die Kamera schaut von
+// (StadiumBlockShape). Die Kamera schaut von
 // erhöht hinter der Haupttribüne, deshalb bleibt das Feld frei; vordere
 // Dächer sind durchscheinend. Rechenlogik: engine/stadiumBlocks.ts.
 // =============================================================================
+import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { BLOCK_NAME, blockCapacity } from '../../../engine/stadiumBlocks';
-import { blockLook, stadiumLook } from '../../../engine/stadiumStandard';
+import { blockLook } from '../../../engine/stadiumStandard';
+import { PanZoomControls } from '../../../ui/PanZoomControls';
+import { usePanZoom } from '../../../ui/usePanZoom';
 import type { BlockId, StadiumBlock, StadiumTier } from '../../../types';
 import { shade } from '../grounds/isoKit';
 import { D, GAP, V3, W, depth, face, hash, hull, mapper, proj, pts, roofGeo, seg, tierGeometry } from './geo';
 import { SceneColors, StadiumBlockShape, blockOutline, blockShadowPoints } from './StadiumBlockShape';
-import { RING, VENUE_SPOTS, Venue, VenueShape, venueDepth, venueLabelAt } from './StadiumSurround';
+import { PLOT, RING, VENUE_SPOTS, Venue, VenueShape, parcelRects, venueDepth, venueLabelAt } from './StadiumSurround';
 import { Tree, scenery } from './StadiumScenery';
 
 export { tierGeometry } from './geo';
 export type { SceneColors } from './StadiumBlockShape';
 
 const UP: V3 = [0, 0, 1];
-const MAST_H = 17;
-const mastOffOf = (ext: number) => ext / 1.25;
 const pl = (ps: [number, number][]) => ps.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
 const P0 = (x: number, y: number, z = 0.02) => proj([x, y, z]);
 
@@ -111,34 +114,6 @@ function Boards({ era, colors }: { era: number; colors: SceneColors }) {
   return <>{out}</>;
 }
 
-function Mast({ x, y, era }: { x: number; y: number; era: number }) {
-  const [bx, by] = proj([x, y, 0]), [tx, ty] = proj([x, y, MAST_H]);
-  const spread = 7, topW = 2.2;
-  const legs: ReactNode[] = [];
-  const steps = 10;
-  for (let i = 0; i < steps; i++) {
-    const f0 = i / steps, f1 = (i + 1) / steps;
-    const w0 = spread + (topW - spread) * f0, w1 = spread + (topW - spread) * f1;
-    const y0 = by + (ty - by) * f0, y1 = by + (ty - by) * f1;
-    legs.push(<line key={`z${i}`} x1={bx - w0} y1={y0} x2={bx + w1} y2={y1} />);
-    legs.push(<line key={`h${i}`} x1={bx - w1} y1={y1} x2={bx + w1} y2={y1} />);
-  }
-  const lw = era === 0 ? 4 : 5, lh = era === 0 ? 3 : 3;
-  return (
-    <g pointerEvents="none">
-      <ellipse cx={bx + 18} cy={by + 4} rx={22} ry={4} fill="#000" opacity={0.18} />
-      <g stroke="#6c747e" strokeWidth={0.9}>{legs}</g>
-      <line x1={bx - spread} y1={by} x2={tx - topW} y2={ty} stroke="#5c646e" strokeWidth={2} />
-      <line x1={bx + spread} y1={by} x2={tx + topW} y2={ty} stroke="#5c646e" strokeWidth={2} />
-      <circle cx={tx} cy={ty - 12} r={30} fill="url(#flGlow)" />
-      <rect x={tx - lw * 4.4} y={ty - 22} width={lw * 8.8} height={lh * 6.4} rx={1.5} fill="#2a3038" stroke="#6c747e" strokeWidth={1} />
-      {Array.from({ length: lw * lh }, (_, i) => (
-        <circle key={i} cx={tx - lw * 4.4 + 4.4 + (i % lw) * 8.8} cy={ty - 22 + 3.2 + Math.floor(i / lw) * 6.4} r={2.5} fill="#fff4c6" />
-      ))}
-    </g>
-  );
-}
-
 export interface StadiumSceneProps {
   blocks: StadiumBlock[];
   /** Baujahr des Stadions (Bauweise der Blöcke ohne eigenes `look`). */
@@ -147,8 +122,10 @@ export interface StadiumSceneProps {
   crowd?: number;
   /** Neubau: Kräne an mehreren Seiten. */
   buildingAll?: boolean;
-  /** Zusätzliche Vorplatz-Breite aus gekauftem Gelände (Weltmaß, 0 = Grundfläche). */
-  plazaExtra?: number;
+  /** Zugekaufte Grundstücke (Anzahl) – als eingezäunte Flächen am Gelände sichtbar. */
+  land?: number;
+  /** Meldet Verschieben/Zoomen (die Seite schließt dann ihr Popover). */
+  onView?: () => void;
   colors: SceneColors;
   year: number;
   month: number;
@@ -183,8 +160,8 @@ function fixedFrame(): { x0: number; y0: number; w: number; h: number } {
     const geo = tierGeometry(b), l = geo[geo.length - 1], rg = roofGeo(b)!;
     for (const u of [0, len]) for (const v of [0, l.v1 + 0.3]) for (const z of [0, rg.zF + 2.8]) bx.push(proj(at(u, v, z)));
   }
-  // Umfeld-Ring: Plätze liegen knapp außerhalb der größten Tribünen.
-  const R = RING + 3.5;
+  // Stadionring: Startausschnitt zeigt das größtmögliche Stadion und die nahen Gebäude.
+  const R = RING + 9;
   for (const [x, y] of [[-R, D / 2], [W + R, D / 2], [W / 2, -R], [W / 2, D + R], ...Object.values(VENUE_SPOTS)]) { bx.push(proj([x - 3, y - 2, 0])); bx.push(proj([x + 3, y + 2, 0])); bx.push(proj([x, y, 5.5])); }
   const x0 = Math.min(...bx.map((p) => p[0])) - 10, x1 = Math.max(...bx.map((p) => p[0])) + 10;
   const y0 = Math.min(...bx.map((p) => p[1])) - 10, y1 = Math.max(...bx.map((p) => p[1])) + 6;
@@ -199,29 +176,29 @@ export function StadiumScene(p: StadiumSceneProps) {
   const winter = month === 12 || month <= 2;
   const grass = winter && year < 1995 ? '#8fa88a' : era === 0 ? '#4f9545' : '#4a9a43';
   const by = Object.fromEntries(blocks.map((b) => [b.id, b])) as Record<BlockId, StadiumBlock>;
-  const anyFullRoof = blocks.filter((b) => b.roof === 'full').length >= blocks.length * 0.6;
-  // Flutlicht im Dach ab der Bauweise „Arena“ (bei überwiegend vollem Dach) – sonst vier Masten
-  const showMasts = !(anyFullRoof && stadiumLook({ built: p.built, blocks }) >= 2);
-  let ext = 9;
-  for (const b of blocks) {
-    const geo = tierGeometry(b); const l = geo[geo.length - 1];
-    ext = Math.max(ext, GAP + l.v1 + 1);
-  }
-  const mo = mastOffOf(ext);
-  const masts: [number, number][] = [[-mo, -mo], [W + mo, -mo], [W + mo, D + mo], [-mo, D + mo]];
   const { x0, y0, w: fw, h: fh } = fixedFrame();
   const [cx, cy] = proj([W / 2, D / 2, 0]);
-  const R = RING + 5.2 + Math.max(0, p.plazaExtra ?? 0); // Vorplatz (wächst mit gekauftem Gelände); dahinter Rasen bis über den Bildrand
-  const LR = RING + 70;
+  const R = PLOT; // Stadiongelände: fester Rand, dahinter Rasen bis über den Bildrand
+  const LR = RING + 320;
+  const land = Math.max(0, p.land ?? 0);
+  const parcels = parcelRects(land);
+  // Verschieben/Zoomen: die Bildmitte bleibt im Gelände samt zugekauften Flächen
+  const corners = ([[-R - 24, -R - 16], [W + R + 16, -R - 16], [W + R + 16, D + R + 24 + (land > 6 ? 15 : 0)], [-R - 24, D + R + 24 + (land > 6 ? 15 : 0)]] as [number, number][]).map(([x, y]) => proj([x, y, 0]));
+  const bx0 = Math.min(...corners.map((c) => c[0])), bx1 = Math.max(...corners.map((c) => c[0])), by0 = Math.min(...corners.map((c) => c[1])), by1 = Math.max(...corners.map((c) => c[1]));
+  const pz = usePanZoom({ base: { x: x0, y: y0, w: fw, h: fh }, bounds: { x: bx0, y: by0, w: bx1 - bx0, h: by1 - by0 }, minZoom: 0.55, maxZoom: 2.6 });
+  const viewKey = pz.viewBox;
+  const firstView = useRef(viewKey);
+  useEffect(() => { if (firstView.current !== viewKey) { firstView.current = viewKey; p.onView?.(); } }, [viewKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const lawn: V3[] = [[-LR, -LR, 0], [W + LR, -LR, 0], [W + LR, D + LR, 0], [-LR, D + LR, 0]];
   const plaza: V3[] = [[-R, -R, 0], [W + R, -R, 0], [W + R, D + R, 0], [-R, D + R, 0]];
-  const sc = scenery({ R, ext, winter, era, primary: colors.primary, secondary: colors.secondary, crowd: p.crowd ?? 0 });
+  const sc = scenery({ winter, era, primary: colors.primary, secondary: colors.secondary, crowd: p.crowd ?? 0, land });
   const trees: { x: number; y: number; k: number }[] = [];
-  const T = RING + 6.5;
+  const T = PLOT + 1.6;
   let k = 0;
   for (let t = -T; t <= W + T; t += 3.1) { trees.push({ x: t, y: -T, k: k++ }); trees.push({ x: t, y: D + T, k: k++ }); }
   for (let t = -T + 3.1; t < D + T; t += 3.1) { trees.push({ x: -T, y: t, k: k++ }); trees.push({ x: W + T, y: t, k: k++ }); }
-  const treeNodes = trees.filter((t) => hash(t.k * 1.7) > 0.25).map((t) => ({ d: depth([t.x, t.y, 0]), n: <Tree key={`t${t.k}`} x={t.x + (hash(t.k) - 0.5)} y={t.y + (hash(t.k + 9) - 0.5)} winter={winter} k={t.k} /> }));
+  const inParcel = (x: number, y: number) => parcels.some(([a0, b0, a1, b1]) => x > a0 - 1.5 && x < a1 + 1.5 && y > b0 - 1.5 && y < b1 + 1.5);
+  const treeNodes = trees.filter((t) => hash(t.k * 1.7) > 0.25 && !inParcel(t.x, t.y)).map((t) => ({ d: depth([t.x, t.y, 0]), n: <Tree key={`t${t.k}`} x={t.x + (hash(t.k) - 0.5)} y={t.y + (hash(t.k + 9) - 0.5)} winter={winter} k={t.k} /> }));
   const blocksActive = p.blocksActive !== false;
   const ghost = new Set(p.ghost ?? []);
 
@@ -260,11 +237,10 @@ export function StadiumScene(p: StadiumSceneProps) {
     ) });
   }
   items.push(...sc.items);
-  if (p.buildingAll) for (const [bx2, by2] of [[W * 0.15, -ext - 2], [W + ext + 2, D * 0.3], [-ext - 2, D * 0.75]] as [number, number][]) {
+  if (p.buildingAll) for (const [bx2, by2] of [[W * 0.15, -RING + 1], [W + RING - 1, D * 0.3], [-RING + 1, D * 0.75]] as [number, number][]) {
     const [x, yb] = proj([bx2, by2, 0]), [, yt] = proj([bx2, by2, 16]);
     items.push({ d: depth([bx2, by2, 0]), n: <g key={`cr${bx2}`} stroke="#e0a23a" strokeWidth={3} fill="none" strokeLinecap="round" pointerEvents="none"><line x1={x} y1={yb} x2={x} y2={yt} /><line x1={x - 50} y1={yt + 8} x2={x + 95} y2={yt - 6} /><line x1={x + 80} y1={yt - 5} x2={x + 80} y2={yt + 50} strokeWidth={1} stroke="#cfd5db" /></g> });
   }
-  if (showMasts) masts.forEach(([x, y], i) => items.push({ d: depth([x, y, 0]), n: <Mast key={`m${i}`} x={x} y={y} era={era} /> }));
   items.sort((a, b) => a.d - b.d);
   const dMid = depth([W / 2, D / 2, 0]);
 
@@ -283,8 +259,8 @@ export function StadiumScene(p: StadiumSceneProps) {
     );
   };
 
-  return (
-    <svg className="gr-svg" viewBox={`${x0.toFixed(0)} ${y0.toFixed(0)} ${fw.toFixed(0)} ${fh.toFixed(0)}`} preserveAspectRatio="xMidYMid meet"
+  return (<>
+    <svg ref={pz.svgRef} className={`gr-svg pz-svg${pz.dragging ? ' dragging' : ''}`} viewBox={pz.viewBox} preserveAspectRatio="xMidYMid meet" {...pz.bind}
       onClick={(e) => { if ((e.target as Element).tagName === 'svg' || (e.target as Element).classList?.contains('sv-ground')) onSelect(null); }}>
       <defs>
         <radialGradient id="stGround" cx="50%" cy="50%" r="50%">
@@ -293,9 +269,7 @@ export function StadiumScene(p: StadiumSceneProps) {
           <stop offset="1" stopColor={winter ? '#b2bdb8' : '#4e7742'} stopOpacity={0} />
         </radialGradient>
         <radialGradient id="stSun"><stop offset="0" stopColor="#fffbe0" stopOpacity={0.16} /><stop offset="1" stopColor="#fffbe0" stopOpacity={0} /></radialGradient>
-        <radialGradient id="stVig" cx="50%" cy="49%" r="26%"><stop offset="0.55" stopColor="#0d141c" stopOpacity={0} /><stop offset="1" stopColor="#0d141c" stopOpacity={0.3} /></radialGradient>
         <linearGradient id="stWarm" x1="0.3" y1="0.3" x2="0.62" y2="0.62"><stop offset="0" stopColor="#ffe9b8" stopOpacity={winter ? 0.04 : 0.12} /><stop offset="1" stopColor="#ffe9b8" stopOpacity={0} /></linearGradient>
-        <radialGradient id="flGlow"><stop offset="0" stopColor="#fff6cf" stopOpacity={0.45} /><stop offset="1" stopColor="#fff6cf" stopOpacity={0} /></radialGradient>
         <filter id="stBlur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4" /></filter>
       </defs>
       <polygon className="sv-ground" points={pts(lawn)} fill={winter ? '#b4beb8' : era === 0 ? '#5d7a52' : '#5f8255'} />
@@ -323,12 +297,12 @@ export function StadiumScene(p: StadiumSceneProps) {
       {items.map((it) => it.n)}
       {treeNodes.filter((t) => t.d >= dMid).sort((a, b) => a.d - b.d).map((t) => t.n)}
       {/* Licht und Randabdunkelung über die ganze Fläche (das Bild ist breiter als der feste Ausschnitt) */}
-      <rect x={x0 - fw * 1.5} y={y0 - fh} width={fw * 4} height={fh * 3} fill="url(#stWarm)" pointerEvents="none" />
-      <rect x={x0 - fw * 1.5} y={y0 - fh} width={fw * 4} height={fh * 3} fill="url(#stVig)" pointerEvents="none" />
+      <rect x={x0 - fw * 2.5} y={y0 - fh * 2} width={fw * 6} height={fh * 5} fill="url(#stWarm)" pointerEvents="none" />
       {(p.venues ?? []).filter((v) => p.selectedVenue === v.key || (p.venueActive ? p.venueActive(v) : true)).map((v) => <VenueTag key={`vt${v.key}`} v={v} strong={p.selectedVenue === v.key} />)}
       {(hover ?? selected) && by[(hover ?? selected)!] && label((hover ?? selected)!)}
     </svg>
-  );
+    <PanZoomControls pz={pz} hint />
+  </>);
 }
 
 function VenueTag({ v, strong }: { v: Venue; strong: boolean }) {

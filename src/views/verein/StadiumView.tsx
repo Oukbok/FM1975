@@ -7,7 +7,8 @@
 //   • Kassenhäuschen oder „Kartenverkauf“ → Seite Verein › Kartenverkauf (Preise je
 //     Tribüne, Preiskategorie je Spiel, Prognose-Spannen; views/verein/TicketsView.tsx).
 //   • Leiste unten filtert, was anklickbar ist (Tribünen, Gastronomie, Handel …).
-// Kamera und Ausschnitt sind fest (StadiumScene): nur die Tribünen wachsen.
+// Das Gelände liegt fest außerhalb der größtmöglichen Tribünen: beim Ausbau wachsen nur
+// die Tribünen. Linke Maustaste verschiebt die Szene, das Mausrad zoomt (StadiumScene).
 // =============================================================================
 import { useRef, useState } from 'react';
 import { yearOf } from '../../engine/economy';
@@ -26,7 +27,6 @@ import { stadiumComfort } from '../../engine/stadiumStandard';
 import { StadiumScene } from './stadium/StadiumScene';
 import { VENUE_GROUPS, Venue, VenueGroup, venuesOf } from './stadium/StadiumSurround';
 import { InfoTip } from '../../ui/InfoTip';
-import { LOCATIONS } from '../../data/groundsCatalog';
 
 type Mode = 'alles' | 'tribuenen' | VenueGroup;
 interface Anchor { x: number; y: number }
@@ -113,7 +113,7 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
     // Szenen-Seite: kein Rahmen, kein Kalender – Stadion und Umfeld füllen die Fläche (shell-scene in GameShell).
     <div className="scene-page">
         <div className="gr-wrap st-wrap sv-wrap" ref={wrap} onClick={() => close()}>
-          <StadiumScene blocks={shown} built={st.built} crowd={crowd ? Math.max(0.35, Math.min(0.97, st.averageAttendanceRate ?? 0.6)) : 0} colors={{ primary, secondary }} year={year} month={month} plazaExtra={Math.min(6, Math.max(0, gr.area - LOCATIONS[gr.location].area) * 0.25)}
+          <StadiumScene blocks={shown} built={st.built} crowd={crowd ? Math.max(0.35, Math.min(0.97, st.averageAttendanceRate ?? 0.6)) : 0} colors={{ primary, secondary }} year={year} month={month} land={gr.landBought} onView={() => setAnchor(null)}
             selected={sel} hover={hover} building={bp?.blockId ?? null} buildingAll={!!bp?.rebuild} group={planned.map((t) => t.id)} ghost={rbPreview ? rbPreview.map((t) => t.id) : changed.map((t) => t.id)}
             blocksActive={blocksActive} venues={venues} venueActive={venueActive} selectedVenue={venue}
             onSelect={selectBlock} onHover={setHover} onVenue={selectVenue} />

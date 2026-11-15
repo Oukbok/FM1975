@@ -52,6 +52,23 @@ const obj = page.locator('.gr-svg .gr-obj');
 await obj.nth(Math.min(5, (await obj.count()) - 1)).click({ force: true });
 await page.waitForTimeout(200);
 await page.screenshot({ path: `${outDir}/${tag}_5_klick.png` });
+// Verschieben, Zoomen
+{
+  const box = await page.locator('.gr-wrap').boundingBox();
+  const cx = box.x + box.width / 2, cy = box.y + box.height / 2;
+  const b0 = await page.locator('.gr-svg .gr-obj').first().boundingBox();
+  await page.mouse.move(cx, cy); await page.mouse.down(); await page.mouse.move(cx + 120, cy - 260, { steps: 8 }); await page.mouse.up();
+  await page.waitForTimeout(200);
+  const b1 = await page.locator('.gr-svg .gr-obj').first().boundingBox();
+  if (!b0 || !b1 || Math.abs((b1.y - b0.y) + 260) > 14) errors.push(`Ziehen verschiebt das Gelände nicht wie erwartet: ${b0?.y} → ${b1?.y}`);
+  await page.screenshot({ path: `${outDir}/${tag}_6_verschoben.png` });
+  await page.mouse.move(cx, cy); for (let i = 0; i < 4; i++) await page.mouse.wheel(0, 300);
+  await page.waitForTimeout(250);
+  await page.screenshot({ path: `${outDir}/${tag}_7_gesamt.png` });
+  await page.mouse.move(cx, cy); for (let i = 0; i < 8; i++) await page.mouse.wheel(0, -300);
+  await page.waitForTimeout(250);
+  await page.screenshot({ path: `${outDir}/${tag}_8_nah.png` });
+}
 console.log(errors.length ? 'FEHLER:\n' + errors.join('\n') : 'ok, keine JS-Fehler');
 await browser.close(); server.close();
 process.exit(errors.length ? 1 : 0);

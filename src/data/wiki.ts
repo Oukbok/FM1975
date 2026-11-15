@@ -2276,13 +2276,17 @@ Quellen: Vereinsangaben großer Bundesligisten (Arena 2026: 106 Logen, 2.200 Bus
     title: 'Das Vereinsgelände',
     keywords: ['vereinsgelände', 'gelände', 'ausbau', 'gebäude', 'bauplatz', 'kunstrasen', 'halle'],
     body: `## Eine Anlage, die mitwächst
-Unter **Verein → Vereinsgelände** siehst du deine Anlage als Zeichnung. Jede Einrichtung ist ein Gebäude oder Platz, der mit der Ausbaustufe wächst:
+Unter **Verein → Vereinsgelände** siehst du deine Anlage als Zeichnung. Oben liegt das **Stadionviertel**, südlich der Stadionstraße der **Campus** in drei Quartieren an zwei Alleen: **Trainingszentrum**, **Nachwuchs** und **Verwaltung & Medizin**. Jedes Quartier hat feste Modul-Plätze: Was gebaut ist, steht; die nächste Ausbaustufe ist als **gestrichelte Fläche** mit „Stufe n“ vorgemerkt – du siehst also, wohin der Ausbau führt. Zugekaufte Grundstücke liegen als eingezäunte Wiesen dahinter.
+
+**Bedienung:** Mit gedrückter **linker Maustaste** verschiebst du das Gelände, mit dem **Mausrad** zoomst du (oder über − / + oben rechts); „Zentrieren“ stellt die Ausgangslage her. Ein kurzer Klick wählt wie gewohnt ein Gebäude.
+
+Jede Einrichtung ist ein Gebäude oder Platz, der mit der Ausbaustufe wächst:
 
 | Einrichtung | Was sich zeigt |
 |---|---|
 | Stadion | Folgt deinen Blöcken: Höhe je Seite aus den Rängen, Dächer, bei vier vollen Dächern eine Arena; Laufbahn, solange alle Blöcke nur einen Rang haben. Laufender Bau: Kran |
-| Trainingszentrum | 1 bis 3 Plätze, ab Stufe 3 (ab 1995) Kunstrasen, ab Stufe 4 Flutlicht, Stufe 5 Trainingshalle |
-| Jugendakademie | Jugendplätze und ein Gebäude von der Holzbaracke bis zum Campus mit Internat |
+| Trainingszentrum | Ein Platz je Stufe bis Stufe 3 (dritter Platz ab 1995 Kunstrasen), Kabinentrakt wächst mit, ab Stufe 4 Flutlicht, Stufe 5 Trainingshalle |
+| Jugendakademie | Jugendplatz, ab Stufe 3 zweiter Platz, ab Stufe 4 Internat, ab Stufe 5 Kleinfeld; Jugendhaus von der Holzbaracke bis zum Campus |
 | Medizin, Fanshop, Buden | wachsen sichtbar mit jeder Stufe |
 | Umfeld | Bahnstrecke mit Sonderzügen und Stadion-Bahnhof, Shuttlebusse, Parkplatz bis Parkhaus, VIP-Zelt bis Premium-Hospitality, Familienbereich, Museum, Fan-Zone, Pressezentrum mit Ü-Wagen, Flutlicht je Lux-Stufe, Vereinsheim, Megastore, Versandlager, Fanprojekt, Fanräume, zugekaufte Grundstücke – noch nicht Gebautes als **Bauplatz** (siehe *Stadionumfeld*) |
 | Reha-Zentrum, NLZ, Leistungszentrum, Datenanalyse | erscheinen erst, wenn ihre Zeit gekommen ist – zuerst als **Bauplatz** |
@@ -3075,7 +3079,7 @@ Unter **Verein → Stadion** siehst du dein Stadion als Modell von schräg oben,
 - **Nord- und Südtribüne** hinter den Toren mit je zwei Blöcken: West und Ost.
 - **Vier Kurven** in den Ecken (Nordwest, Nordost, Südwest, Südost), gebogen um die Eckfahne. Sie schließen das Stadion zur Schüssel.
 
-Gezeichnet werden Stufen, Sitzreihen in Vereinsfarben, Wellenbrecher, Mundlöcher, Dächer, Logen und das Flutlicht der jeweiligen Epoche. Das Dach der Haupttribüne ist durchscheinend, damit das Spielfeld sichtbar bleibt. Der Bildausschnitt ist fest auf das größtmögliche Stadion ausgelegt: Beim Ausbau wachsen nur die Tribünen. Klick auf einen Block öffnet das **Bau-Popover** am Rand, die Szene zeigt den geplanten Block als Vorschau (gestrichelter Umriss), dazu Kapazität, erwartete Zuschauer und Eintritt vorher → nachher. Rund ums Stadion stehen **Würstchenbuden, Fanshop, Megastore, Kassen, Parkplatz, ÖPNV-Haltestelle, Hospitality, Vereinsheim, Fan-Zone und Museum** – anklicken und direkt ausbauen (dieselben Regeln wie auf dem Vereinsgelände). Die Leiste unten filtert, was anklickbar ist (Tribünen, Gastronomie, Handel, Anreise, Hospitality); die **Kassen** bzw. der Knopf „Kartenverkauf“ führen zur Seite *Kartenverkauf* (Preise je Tribüne, Preiskategorie je Spiel, Prognose-Spannen).
+Gezeichnet werden Stufen, Sitzreihen in Vereinsfarben, Wellenbrecher, Mundlöcher, Dächer und Logen. Das Dach der Haupttribüne ist durchscheinend, damit das Spielfeld sichtbar bleibt. Das **Stadiongelände** liegt fest außerhalb der größtmöglichen Tribünen: Um das Stadion bleibt ein gepflasterter Ring frei, in den alle drei Ränge vollständig hineinpassen – beim Ausbau wachsen nur die Tribünen, nichts verschiebt sich. Das Gelände ist größer als der Bildausschnitt: Mit gedrückter **linker Maustaste** verschiebst du die Szene, mit dem **Mausrad** zoomst du, „Zentrieren“ stellt die Ausgangslage her. **Zugekaufte Grundstücke** (Vereinsgelände › Grundstück kaufen) erscheinen als eingezäunte Flächen neben dem Gelände. Klick auf einen Block öffnet das **Bau-Popover** am Rand, die Szene zeigt den geplanten Block als Vorschau (gestrichelter Umriss), dazu Kapazität, erwartete Zuschauer und Eintritt vorher → nachher. Rund ums Stadion stehen **Würstchenbuden, Fanshop, Megastore, Kassen, Parkplatz, ÖPNV-Haltestelle, Hospitality, Vereinsheim, Fan-Zone und Museum** – anklicken und direkt ausbauen (dieselben Regeln wie auf dem Vereinsgelände). Die Leiste unten filtert, was anklickbar ist (Tribünen, Gastronomie, Handel, Anreise, Hospitality); die **Kassen** bzw. der Knopf „Kartenverkauf“ führen zur Seite *Kartenverkauf* (Preise je Tribüne, Preiskategorie je Spiel, Prognose-Spannen).
 
 Ältere Spielstände mit vier Blöcken werden beim Laden umgewandelt: Die Kurven übernehmen den Aufbau der Hintertor-Tribünen, Kapazität, Logen und VIP-Bereich bleiben erhalten.
 

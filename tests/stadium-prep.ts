@@ -21,6 +21,8 @@ if (mode === 'modern') {
   }
   st.built = 1970;
 }
+// LAND=n: zugekaufte Grundstücke (sichtbar am Stadion- und Vereinsgelände)
+if (process.env.LAND && g.clubs[g.managedClubId].grounds) { const gr = g.clubs[g.managedClubId].grounds; gr.landBought = Number(process.env.LAND); gr.area += 2 * gr.landBought; }
 st.capacity = st.blocks.reduce((s: number) => s, st.capacity);
 g.calendar.currentDate = g.calendar.currentDate.slice(0, 4) + '-08-' + g.calendar.currentDate.slice(8);
 writeFileSync(out, 'LZ1:' + compressToUTF16(JSON.stringify(slot)));

@@ -14,6 +14,18 @@ import { D, V3, W, depth, face, hash, proj, pts } from './geo';
 
 /** Abstand vom Spielfeldrand, ab dem nie Tribüne steht (3 Ränge × 36 Reihen + Dach). */
 export const RING = 23.6;
+/** Rand des Stadiongeländes (Zaun): alles Umfeld liegt zwischen RING und PLOT – unabhängig vom Ausbau der Tribünen. */
+export const PLOT = RING + 17;
+/** Zugekaufte Grundstücke: eingezäunte Flächen links neben und vor dem Gelände [x0, y0, x1, y1]. */
+export function parcelRects(n: number): [number, number, number, number][] {
+  const out: [number, number, number, number][] = [];
+  const span = D + 2 * PLOT, step = span / 6, wx = W + 2 * PLOT, stepX = wx / 6;
+  for (let i = 0; i < n; i++) {
+    if (i < 6) out.push([-PLOT - 15, -PLOT + i * step + 0.6, -PLOT - 1.2, -PLOT + (i + 1) * step - 0.6]);
+    else { const k = (i - 6) % 6, row = Math.floor((i - 6) / 6); out.push([-PLOT + k * stepX + 0.6, D + PLOT + 1.2 + row * 15, -PLOT + (k + 1) * stepX - 0.6, D + PLOT + 15 + row * 15]); }
+  }
+  return out;
+}
 
 export type VenueGroup = 'gastro' | 'handel' | 'anreise' | 'vip' | 'tickets';
 export type VenueKey = 'catering' | 'merchandising' | 'tickets' | GroundsModuleKey;
@@ -38,9 +50,9 @@ const GM = (k: GroundsModuleKey) => ({ megastore: 3, hospitality: 3, parking: 4,
 
 /** Feste Lage der Plätze (Weltkoordinaten) – auch Bezug für den Bildausschnitt. */
 export const VENUE_SPOTS: Record<string, [number, number]> = {
-  tickets: [W / 2 + 1, D + RING + 1.2], catering: [-RING - 1.2, D / 2], merchandising: [W / 2 + 8, D + RING + 1.6],
-  megastore: [W + RING - 3.5, D + RING - 4], parking: [W / 2 - 12, D + RING + 1.2], transit: [W + RING + 1.5, D / 2 + 2],
-  hospitality: [-RING + 3, D + RING - 3.5], vereinsheim: [-RING + 3.5, -RING + 3.5], fanZone: [W / 2, -RING - 1.5], museum: [W + RING - 3.5, -RING + 3.5],
+  tickets: [W / 2 + 1, D + RING + 4.5], catering: [-RING - 7, D / 2], merchandising: [W / 2 + 12, D + RING + 6],
+  megastore: [W + RING + 5, D + RING + 8], parking: [W / 2 - 17, D + RING + 9], transit: [W + RING + 9, D / 2 + 2],
+  hospitality: [-RING - 5, D + RING + 7], vereinsheim: [-RING - 6, -RING - 6], fanZone: [W / 2, -RING - 8], museum: [W + RING + 6, -RING - 6],
 };
 
 /** Alle Plätze rund ums Stadion mit aktuellem Ausbau. */

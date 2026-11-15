@@ -1,14 +1,15 @@
 // =============================================================================
 // STADION-UMFELD (Zeichnung, Wunsch Pascal: detailreiches Modell): Park mit
 // Rasenflächen, Wegen, Bäumen und Laternen zwischen Stadion und Vorplatzrand
-// (schrumpft, wenn das Stadion wächst), Fahnen am Haupteingang, Straße mit
-// Häuserzeile dahinter, Trainingsplatz, Zuschauer auf dem Vorplatz. Reine Optik
+// (feste Lage außerhalb der größtmöglichen Tribünen – nichts verschiebt sich beim
+// Ausbau), Fahnen am Haupteingang, Straße mit Häuserzeile, zugekaufte Grundstücke,
+// Zuschauer auf dem Vorplatz. Reine Optik
 // in der Stadionkamera (geo.tsx); anklickbare Gebäude bleiben in StadiumSurround.
 // =============================================================================
 import type { ReactNode } from 'react';
 import { shade } from '../grounds/isoKit';
 import { D, V3, W, depth, face, hash, proj, pts } from './geo';
-import { RING, VENUE_SPOTS } from './StadiumSurround';
+import { PLOT, RING, VENUE_SPOTS, parcelRects } from './StadiumSurround';
 
 const pl = (ps: [number, number][]) => ps.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
 const rect = (x0: number, y0: number, x1: number, y1: number, z = 0.012): V3[] => [[x0, y0, z], [x1, y0, z], [x1, y1, z], [x0, y1, z]];
@@ -76,12 +77,12 @@ function house(k: string, x: number, y: number, w: number, d: number, h: number,
   ];
 }
 
-export interface SceneryIn { R: number; ext: number; winter: boolean; era: number; primary: string; secondary: string; crowd: number }
+export interface SceneryIn { winter: boolean; era: number; primary: string; secondary: string; crowd: number; land: number }
 /**
  * Umfeld: `under` liegt flach unter allem (Wege, Rasen, Straßen), `items` sind stehende
  * Dinge mit Kameratiefe (Bäume, Laternen, Fahnen, Häuser) für die gemeinsame Sortierung.
  */
-export function scenery({ R, ext, winter, era, primary, secondary, crowd }: SceneryIn): { under: ReactNode[]; items: { d: number; n: ReactNode }[] } {
+export function scenery({ winter, era, primary, secondary, crowd, land }: SceneryIn): { under: ReactNode[]; items: { d: number; n: ReactNode }[] } {
   const under: ReactNode[] = [];
   const items: { d: number; n: ReactNode }[] = [];
   const grass = winter ? '#c2ccc5' : era === 0 ? '#6c965a' : '#70a05f';
@@ -89,7 +90,8 @@ export function scenery({ R, ext, winter, era, primary, secondary, crowd }: Scen
   const stand = (d: number, n: ReactNode) => items.push({ d, n });
 
   // --- Straße hinter dem Stadion und rechts daneben, Häuserzeile, Trainingsplatz
-  const sy = -R - 7.2, sx = W + R + 7.2, LR = RING + 70;
+  const R = PLOT, ext = RING - 2.2; // fester Stadionring: bis hierhin können Tribünen wachsen
+  const sy = -R - 7.2, sx = W + R + 7.2, LR = RING + 320;
   const road = winter ? '#8f959b' : '#5f646b';
   under.push(<polygon key="rd1" points={pts(rect(-LR, sy - 1.7, sx + 1.7, sy + 1.7, 0.004))} fill={road} />);
   under.push(<polygon key="rd2" points={pts(rect(sx - 1.7, sy - 1.7, sx + 1.7, D + LR, 0.004))} fill={road} />);
@@ -113,20 +115,29 @@ export function scenery({ R, ext, winter, era, primary, secondary, crowd }: Scen
     const hx = sx + 5 + hash(i * 6.1) * 1.2;
     stand(depth([hx, y, 0]), <g key={`he${i}`} pointerEvents="none">{house(`he${i}`, hx, y, 3.4, 4, 1.7 + hash(i * 8.3) * 1.2, walls[(i + 2) % 4], roofs[Math.floor(hash(i * 5.7 + 3) * roofs.length)])}</g>);
   }
-  // Trainingsplatz links neben dem Vorplatz
-  {
-    const tx0 = -R - 21, tx1 = -R - 6, ty0 = D / 2 - 6, ty1 = D / 2 + 4.5, g2 = winter ? '#b7c4ba' : '#5c9a4f';
-    under.push(<polygon key="tp" points={pts(rect(tx0, ty0, tx1, ty1, 0.004))} fill={g2} stroke={shade(g2, 0.82)} strokeWidth={1} />);
-    for (let i = 0; i < 6; i += 2) under.push(<polygon key={`tps${i}`} points={pts(rect(tx0 + ((tx1 - tx0) / 6) * i, ty0, tx0 + ((tx1 - tx0) / 6) * (i + 1), ty1, 0.005))} fill={shade(g2, 1.08)} />);
-    under.push(<g key="tpl" fill="none" stroke="#f1f5ee" strokeWidth={1} opacity={0.85}>
-      <polygon points={pts(rect(tx0 + 0.5, ty0 + 0.5, tx1 - 0.5, ty1 - 0.5, 0.006))} />
-      <polyline points={pl([proj([(tx0 + tx1) / 2, ty0 + 0.5, 0.006]), proj([(tx0 + tx1) / 2, ty1 - 0.5, 0.006])])} />
+  // Zugekaufte Grundstücke: eingezäunte Wiesen am Gelände (Wunsch Pascal: Zukauf sichtbar)
+  parcelRects(land).forEach(([x0, y0, x1, y1], i) => {
+    const g2 = winter ? '#bcc8bf' : era === 0 ? '#7ba565' : '#80ad6b';
+    under.push(<polygon key={`pc${i}`} points={pts(rect(x0, y0, x1, y1, 0.004))} fill={g2} />);
+    under.push(<polygon key={`pch${i}`} points={pts(rect(x0 + 0.6, y0 + 0.6, x1 - 0.6, y0 + (y1 - y0) * 0.5, 0.005))} fill={shade(g2, 1.07)} opacity={0.6} />);
+    under.push(<polygon key={`pcf${i}`} points={pts(rect(x0, y0, x1, y1, 0.007))} fill="none" stroke={winter ? '#8d857a' : '#6d5a44'} strokeWidth={1.6} strokeDasharray="2 5" strokeLinecap="round" strokeLinejoin="round" />);
+    const sxp = x1 - 1.4, syp = y1 - 1.2;
+    stand(depth([sxp, syp, 0]), <g key={`pcs${i}`} pointerEvents="none">
+      {face(`pcp${i}`, [[sxp - 0.06, syp, 0], [sxp + 0.06, syp, 0], [sxp + 0.06, syp, 1.5], [sxp - 0.06, syp, 1.5]], [0, 1, 0], '#6d5a44')}
+      {face(`pcb${i}`, [[sxp - 1.3, syp + 0.02, 0.9], [sxp + 1.3, syp + 0.02, 0.9], [sxp + 1.3, syp + 0.02, 1.9], [sxp - 1.3, syp + 0.02, 1.9]], [0, 1, 0], '#f2efe6')}
+      {face(`pcc${i}`, [[sxp - 1.3, syp + 0.03, 1.62], [sxp + 1.3, syp + 0.03, 1.62], [sxp + 1.3, syp + 0.03, 1.9], [sxp - 1.3, syp + 0.03, 1.9]], [0, 1, 0], primary)}
     </g>);
-  }
+    for (let t = 0; t < 3; t++) {
+      const tx = x0 + 1.5 + hash(i * 13 + t * 4.1) * (x1 - x0 - 5), ty = y0 + 1.5 + hash(i * 19 + t * 6.3) * (y1 - y0 - 4);
+      stand(depth([tx, ty, 0]), <Tree key={`pt${i}_${t}`} x={tx} y={ty} winter={winter} k={500 + i * 7 + t} s0={0.75} />);
+    }
+  });
+  // Zaun um das Stadiongelände
+  under.push(<polygon key="fence" points={pts(rect(-R, -R, W + R, D + R, 0.011))} fill="none" stroke={winter ? '#8c9197' : '#4f565e'} strokeWidth={1.4} strokeLinejoin="round" opacity={0.75} />);
 
   // --- Park zwischen Stadion und Vorplatzrand: Rasenflächen, Wege zu den Toren, Bäume, Laternen
-  const a = ext + 2.6, b = RING - 2.4;
-  if (b - a > 2.4) {
+  const a = RING + 0.6, b = R - 1.4;
+  {
     const hw = 2.4; // halbe Wegbreite auf den Achsen
     const isles: [number, number, number, number][] = [
       [-a + 0.6, -b, W / 2 - hw, -a], [W / 2 + hw, -b, W + a - 0.6, -a],
@@ -141,10 +152,10 @@ export function scenery({ R, ext, winter, era, primary, secondary, crowd }: Scen
       if (x1 - x0 < 1.6 || y1 - y0 < 1.6) return;
       under.push(<polygon key={`is${i}`} points={pts(rect(x0, y0, x1, y1, 0.008))} fill={grass} stroke={shade(grass, 0.8)} strokeWidth={1.1} strokeLinejoin="round" />);
       under.push(<polygon key={`ih${i}`} points={pts(rect(x0 + 0.5, y0 + 0.5, x1 - 0.5, y0 + (y1 - y0) * 0.5, 0.009))} fill={shade(grass, 1.07)} opacity={0.6} />);
-      const n = Math.round(((x1 - x0) * (y1 - y0)) / 11);
+      const n = Math.round(((x1 - x0) * (y1 - y0)) / 16);
       for (let t = 0; t < n; t++) {
         const tx = x0 + 0.9 + hash(i * 17 + t * 3.1) * (x1 - x0 - 1.8), ty = y0 + 0.9 + hash(i * 29 + t * 5.7) * (y1 - y0 - 1.8);
-        if (spots.some(([vx, vy]) => Math.abs(vx - tx) < 5.5 && Math.abs(vy - ty) < 4.5)) continue;
+        if (spots.some(([vx, vy]) => Math.abs(vx - tx) < 7.5 && Math.abs(vy - ty) < 5.2)) continue;
         stand(depth([tx, ty, 0]), <Tree key={`it${i}_${t}`} x={tx} y={ty} winter={winter} k={i * 40 + t} s0={0.8} />);
       }
     });
@@ -154,14 +165,14 @@ export function scenery({ R, ext, winter, era, primary, secondary, crowd }: Scen
   }
   // Gepflasterte Plätze unter den Gebäuden (Rasenflächen enden davor)
   Object.entries(VENUE_SPOTS).forEach(([k, [vx, vy]]) => {
-    const w = k === 'parking' ? 13 : k === 'tickets' ? 8 : 9, d = k === 'transit' ? 9 : 6.4;
+    const w = k === 'parking' ? 15 : k === 'tickets' ? 8 : 10, d = k === 'transit' ? 9 : k === 'parking' ? 8 : 6.8;
     under.push(<polygon key={`pad${k}`} points={pts(rect(vx - w / 2, vy - d / 2, vx + w / 2, vy + d / 2, 0.0095))} fill={shade(path, 1.03)} stroke={shade(path, 0.86)} strokeWidth={1} strokeLinejoin="round" />);
   });
   // Umlauf direkt am Stadion: helles Pflaster mit Kante
   under.push(<polygon key="apron" points={pts(rect(-ext - 1.6, -ext - 1.6, W + ext + 1.6, D + ext + 1.6, 0.006))} fill={shade(path, 1.06)} stroke={shade(path, 0.86)} strokeWidth={1} strokeLinejoin="round" opacity={0.9} />);
 
   // --- Fahnen am Haupteingang (vor der Haupttribüne)
-  const fy = D + Math.min(RING - 4, ext + 4.5);
+  const fy = D + RING + 1.4;
   for (let i = 0; i < 6; i++) {
     const fx = W / 2 - 8.5 + i * 3.4;
     stand(depth([fx, fy, 0]), <Flag key={`fl${i}`} x={fx} y={fy} color={i % 2 ? shade(secondary, 0.96) : primary} k={i} />);
@@ -171,10 +182,10 @@ export function scenery({ R, ext, winter, era, primary, secondary, crowd }: Scen
   if (crowd > 0) {
     const cols = [primary, primary, '#ece7df', '#2f343b', '#c9a27e', secondary];
     const dots: ReactNode[] = [];
-    const n = Math.round(260 * crowd);
+    const n = Math.round(340 * crowd);
     for (let i = 0; i < n; i++) {
       const axis = Math.floor(hash(i * 1.9) * 4), t = Math.pow(hash(i * 3.7), 0.8), off = (hash(i * 5.3) - 0.5) * 4.2;
-      const r0 = ext + 1.2, r1 = RING + 3;
+      const r0 = 9, r1 = R - 1;
       const dist = r0 + t * (r1 - r0);
       const [wx, wy] = axis === 0 ? [W / 2 + off, D + dist] : axis === 1 ? [W / 2 + off, -dist] : axis === 2 ? [-dist, D / 2 + off] : [W + dist, D / 2 + off];
       const [px, py] = proj([wx, wy, 0]);
