@@ -1,5 +1,6 @@
 // =============================================================================
-// Gezeichnete Halle hinter der Hallen-Show (ohne Bilder): Stahlträger-Dach mit
+// Gezeichnete Halle als gerahmtes Bild der Hallen-Show („Nächstes Spiel“,
+// Siegerehrung; ohne Bilder): Stahlträger-Dach mit
 // Hallenlicht und Lichtkegeln, Gegentribüne und Seitentribünen mit Publikum,
 // Rundumbande mit Werbefeldern, Spielfläche in Perspektive – bis 1990 heller
 // Kunststoffboden mit Handball-Linien, danach Kunstrasen-Teppich (Annahme nach

@@ -1,6 +1,7 @@
 // =============================================================================
-// HALLEN-SHOW – Vollbild am Turniertag deines Vereins (Gala-Look in einer
-// gezeichneten Halle, IndoorHall.tsx). Ablauf: Startseite (Regeln, Teilnehmer,
+// HALLEN-SHOW – Vollbild am Turniertag deines Vereins im hellen Akte-Look
+// (Papier, dunkelblaue Köpfe; die gezeichnete Halle IndoorHall.tsx erscheint als
+// Bild bei „Nächstes Spiel“ und in der Siegerehrung). Ablauf: Startseite (Regeln, Teilnehmer,
 // Hallenkader) → Spiel für Spiel: eigene Spiele mit kleiner Entscheidung
 // (Ausrichtung, Einsatz, Torwart raus) als kurzer Textmodus oder Ergebnis, fremde
 // Spiele laufen als Ergebnisse durch, Tabellen live → Siegerehrung mit Prämie
@@ -22,7 +23,6 @@ import { candidatesOf, finishIndoorShow, indoorWinPts, tournamentEntrants, type 
 import type { Game } from '../../game/state';
 import type { IndoorTournament } from '../../game/winterShared';
 import { fmtDateFull } from '../../ui/format';
-import { IndoorHall } from './IndoorHall';
 import { IndoorMatchPanel, type TickSpeed } from './IndoorMatchPanel';
 import { GroupTablesPanel, SchedulePanel } from './IndoorPanels';
 import { CeremonyStage, IntroStage, NextStage, roundOf, type IndoorRound } from './IndoorStageParts';
@@ -140,7 +140,6 @@ export function IndoorShow({ g, t, settings, onSettings, onClose }: {
   const masters = t.kind === 'masters';
   return (
     <div className={`ix-root phase-${phase}`} role="dialog" aria-label={t.name}>
-      <IndoorHall year={year} />
       <header className="ix-top">
         <div className="ix-top-l">
           <span className="ix-kicker">{KIND_LABEL[t.kind]}</span>

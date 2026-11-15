@@ -16,6 +16,7 @@
   --navy-line: rgba(255, 255, 255, 0.14);
   --navy-ink: #ffffff;
   --navy-ink-2: rgba(255, 255, 255, 0.72);
+  --navy-ink-rgb: 255, 255, 255;  /* Überlagerungen auf Dunkelblau bzw. in gezeichneten Hallenbildern */
   --paper-page: #e8e6e1;     /* unter der Papiertextur */
   --paper-sheet: #fbfaf7;    /* Blatt (Liste, Lesebereich) */
   --paper-card: #f6f5f1;     /* Boxen */
@@ -315,10 +316,11 @@ body { background: var(--paper-page); }
 }
 
 /* ---- Bühnen & Startbildschirm bleiben dunkel ----------------------------------
-   Gezeichnete Bühnen (Auslosung, Gala, Halle, Bewertung, Textmodus, Vorschau,
+   Gezeichnete Bühnen (Auslosung, Gala, Bewertung, Textmodus, Vorschau,
    Saisonauftakt) und Hauptmenü/Assistent sind auf dunklen Grund gebaut: dort gelten
-   die dunklen Werte von „Ruhig Flutlicht“ weiter; nur der Hauptknopf trägt die Vereinsfarbe. */
-.menu-bg, .menu-panel, .ng-root, .dr-root, .gb-root, .ix-root, .rt-root, .rb2-overlay, .ms-root, .pm-root, .si-stage {
+   die dunklen Werte von „Ruhig Flutlicht“ weiter; nur der Hauptknopf trägt die Vereinsfarbe.
+   Die Hallen-Show (.ix-root, 28-indoor.css) ist hell wie die Spielseiten (Wunsch Pascal). */
+.menu-bg, .menu-panel, .ng-root, .dr-root, .gb-root, .rt-root, .rb2-overlay, .ms-root, .pm-root, .si-stage {
   color-scheme: dark;
   color: var(--text);
   --bg: #0c0f15; --bg-2: #13161c; --panel: #1a1d23; --panel-2: #22252b; --panel-hover: #292c32; --elevated: #2a2d33;
