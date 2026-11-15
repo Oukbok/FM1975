@@ -64,26 +64,39 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
   const set = (p: Partial<NewGameDraft>) => setD((x) => ({ ...x, ...p }));
   setCrestDate(`${d.startYear}-07-01`); // Vorschau zeigt das Wappen, das zum Startjahr gilt
 
+  /** Verein passend zu Modus/Land/Jahr: Karriere = erstes der (neu erzeugten) Angebote, sonst Spitzenverein der 1. Liga.
+   *  Wer Startjahr, Land oder Datensatz ändert, bekommt so immer eine gültige Auswahl (vorher blieb im Karrieremodus
+   *  der alte Verein stehen, der nicht mehr unter den Angeboten war → „Weiter“ gesperrt). */
+  const clubFor = (mode: NewGameDraft['mode'], cc: string, y: number, avoid: string): Pick<NewGameDraft, 'league' | 'clubId'> => {
+    if (mode !== 'career') return { league: 'tier1', clubId: topClub(cc, y) };
+    const o = careerOffers(d.offerSeed, avoid, cc, y)[0];
+    return { league: o?.league ?? 'tier1', clubId: o?.club.id ?? '' };
+  };
   const chooseDataset = (id: string) => {
     applyDataset(cachedDataset(id));
     const cc = playableCountries(d.startYear).includes(d.country) ? d.country : 'ger';
-    set({ datasetId: id, country: cc, league: 'tier1', clubId: topClub(cc, d.startYear), favoriteClubId: '', avoidClubId: '' });
+    set({ datasetId: id, country: cc, ...clubFor(d.mode, cc, d.startYear, ''), favoriteClubId: '', avoidClubId: '' });
   };
-  /** Startjahr wählen: Land bleibt, wenn es im Jahr spielbar ist; Verein = Spitzenverein. */
+  /** Startjahr wählen: Land bleibt, wenn es im Jahr spielbar ist; Verein = Spitzenverein bzw. erstes Angebot. */
   const chooseYear = (y: number) => {
     const cc = playableCountries(y).includes(d.country) ? d.country : 'ger';
-    set({ startYear: y, birthYear: d.birthYear + (y - d.startYear), country: cc, league: 'tier1', clubId: topClub(cc, y) });
+    set({ startYear: y, birthYear: d.birthYear + (y - d.startYear), country: cc, ...clubFor(d.mode, cc, y, d.avoidClubId) });
   };
   const chooseCountry = (cc: string) => {
     if (cc === d.country) return;
-    set({ country: cc, league: 'tier1', clubId: topClub(cc, d.startYear) });
+    set({ country: cc, ...clubFor(d.mode, cc, d.startYear, d.avoidClubId) });
   };
-  /** Land umschalten; `all` = Liste aller wählbaren Länder (für den Wechsel aus „alle“). */
   const offers = useMemo(() => careerOffers(d.offerSeed, d.avoidClubId, d.country, d.startYear), [d.offerSeed, d.avoidClubId, d.datasetId, d.country, d.startYear]);
+  // Sicherung (z. B. „niemals“-Verein in Schritt 1 nachträglich geändert): Auswahl im Karrieremodus
+  // immer auf ein gültiges Angebot ziehen, bzw. leeren, wenn es keines gibt.
+  useEffect(() => {
+    if (d.mode !== 'career' || offers.some((o) => o.club.id === d.clubId)) return;
+    set(offers[0] ? { clubId: offers[0].club.id, league: offers[0].league } : { clubId: '' });
+  }, [d.mode, d.clubId, offers]); // eslint-disable-line react-hooks/exhaustive-deps
   const STEPS = stepsFor(d.startYear);
   const chooseMode = (m: NewGameDraft['mode']) => {
     if (m === d.mode) return;
-    if (m === 'career' && offers[0]) set({ mode: m, clubId: offers[0].club.id, league: offers[0].league });
+    if (m === 'career') set({ mode: m, clubId: offers[0]?.club.id ?? '', league: offers[0]?.league ?? 'tier1' });
     // Junger Manager: 20 Jahre alt, Werdegang Newcomer, Privatleben an (Hintergrundgeschichte in StepMode).
     else if (m === 'young') set({ mode: m, birthYear: d.startYear - 20, birthMonth: Math.min(d.birthMonth, 6), background: 'rookie', privateLife: true });
     else set({ mode: m, ...(d.mode === 'young' ? { birthYear: d.startYear - 40 } : {}) });
@@ -112,6 +125,7 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
     onStart(gameOptions(d), ready);
   };
   const hint = step === 0 && !canNext ? 'Gib Vor- und Nachnamen ein (Nachname mindestens 2 Zeichen).'
+    : step === 3 && !canNext ? (d.mode === 'career' && !offers.length ? 'Für dieses Land und Startjahr gibt es keine Angebote – wähle ein anderes Startjahr oder Land.' : 'Wähle einen Verein.')
     : last && !ready ? 'Die Spielwelt wird aufgebaut …' : `Schritt ${step + 1} von ${STEPS.length}`;
 
   return (

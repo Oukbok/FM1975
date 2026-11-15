@@ -114,19 +114,43 @@ function rng(seed: number) {
 
 export interface CareerOffer { club: ClubPreview; league: LeagueKey; leagueName: string }
 
-/** Kandidaten: untere Hälfte beider 2.-Liga-Staffeln + die drei schwächsten Erstligisten; ein Angebot je Liga, wenn möglich. */
+/**
+ * Immer drei verschiedene Angebote, je nach Ligen des Heimatlandes im Startjahr:
+ *   1 × 1. Liga (unteres Drittel der Kaderstärke) + 2 × 2. Liga (obere Hälfte) –
+ *   bei zwei Staffeln (Deutschland bis 1980) je eins aus Nord und Süd, bei einer 2. Liga zwei daraus;
+ *   ohne wählbare 2. Liga (viele Länder) drei Erstligisten aus dem unteren Drittel.
+ * Reicht ein Topf nicht (kleine Liga, „niemals“-Verein), wird er erweitert: 1. Liga untere Hälfte,
+ * dann die ganze Liga, zuletzt irgendein noch freier Verein des Landes.
+ */
 export function careerOffers(seed: number, avoidId: string, cc = 'ger', year = 1975): CareerOffer[] {
   const r = rng(seed);
-  const pools = leaguesFor(cc, year).map((l) => {
-    const list = leaguePreview(l.key, cc, year).filter((c) => c.id !== avoidId);
-    const weak = list.filter((c) => (l.tier === 1 ? c.rank > c.size - 4 : c.rank > c.size / 2));
-    return { l, weak };
-  });
+  const lists = leaguesFor(cc, year)
+    .map((l) => ({ l, list: leaguePreview(l.key, cc, year).filter((c) => c.id !== avoidId) }))
+    .filter((x) => x.list.length > 0);
+  const first = lists.filter((x) => x.l.tier === 1);
+  const second = lists.filter((x) => x.l.tier === 2);
+  type Src = (typeof lists)[number];
+  const weakTop = (c: ClubPreview) => c.rank > (c.size * 2) / 3;
+  const upperHalf = (c: ClubPreview) => c.rank <= Math.ceil(c.size / 2);
+  const slots: { src: Src; tests: ((c: ClubPreview) => boolean)[] }[] = [];
+  if (first[0]) slots.push({ src: first[0], tests: [weakTop, (c) => c.rank > c.size / 2] });
+  for (let i = 0; second.length && i < 2; i++) slots.push({ src: second[i % second.length], tests: [upperHalf] });
+  while (first[0] && slots.length < 3) slots.push({ src: first[0], tests: [weakTop, (c) => c.rank > c.size / 2] });
+
+  const taken = new Set<string>();
   const out: CareerOffer[] = [];
-  for (const { l, weak } of pools) {
-    if (!weak.length) continue;
-    const c = weak[Math.floor(r() * weak.length)];
-    out.push({ club: c, league: l.key, leagueName: l.name });
+  const take = (src: Src, pool: ClubPreview[]) => {
+    const c = pool[Math.floor(r() * pool.length)];
+    taken.add(c.id);
+    out.push({ club: c, league: src.l.key, leagueName: src.l.name });
+  };
+  for (const { src, tests } of slots) {
+    const free = src.list.filter((c) => !taken.has(c.id));
+    const pool = tests.map((t) => free.filter(t)).find((p) => p.length) ?? free;
+    if (pool.length) { take(src, pool); continue; }
+    // Liga erschöpft: nächster freier Verein irgendeiner wählbaren Liga.
+    const other = lists.find((x) => x.list.some((c) => !taken.has(c.id)));
+    if (other) take(other, other.list.filter((c) => !taken.has(c.id)));
   }
   return out.slice(0, 3);
 }
