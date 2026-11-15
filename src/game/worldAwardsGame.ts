@@ -8,19 +8,28 @@
 // game/leanGrades.ts nach dem Maßstab der voll simulierten Heimatliga. Wertung
 // dieselbe wie zu Hause (engine/seasonAwards.ts `computeAwards`).
 // Saisonende: `worldSeasonAwards` in startNextSeason nach `worldLiveResults`
-// (alle Spieltage gespielt, Kader noch die der Saison). Archiv `seasonAwards.world`,
-// nur die letzten WORLD_AWARD_SEASONS Saisons (Speicherplatz).
+// (alle Spieltage gespielt, Kader noch die der Saison) – Die Besten der Saison und
+// Elf der Saison aus denselben Kandidaten. Archiv kompakt in `seasonAwards.wv`
+// (Format game/worldAwardsStore.ts), nur die letzten WORLD_AWARD_SEASONS Saisons;
+// Anzeige über `awardsBySeason`/`worldTeamsOf`, Umrechnung alter Stände
+// `migrateWorldAwards` (game/worldAwardsMigration.ts).
 // =============================================================================
 import { COUNTRY_BY_KEY } from '../data/world/countries';
 import { seasonStartYear } from '../data/timeline';
-import { AWARD_CATS, type AwardCandidate, type AwardCat, computeAwards } from '../engine/seasonAwards';
+import { AWARD_CATS, type AwardCandidate, type AwardCat, computeAwards, reasonText } from '../engine/seasonAwards';
+import { pickTeamOfSeason } from '../engine/teamOfSeason';
 import type { LeanDiv } from '../engine/world';
 import { POSITION_GROUPS, type PositionGroup } from '../types';
 import { type GradeModel, type GradeSample, contribOf, estimateGrade, fitGrades } from './leanGrades';
 import { type AwardEntry, type AwardSeason, awardCandidates, awardsState, ensureAwards } from './seasonAwardsGame';
 import type { Game } from './state';
+import type { TosRow, TosSeason } from './teamOfSeasonGame';
+import {
+  type WCat, type WLeague, type WRef, type WorldAwardsStore,
+  clubIdx, clubOf, idOfRef, packWin, packXi, refOfId, trimWorldStore, unpackWin, unpackXi, winLen, worldStore,
+} from './worldAwardsStore';
 import { leanMatchdays, leanTable } from './worldLeagues';
-import { WP_FIELD as W } from './worldPool';
+import { type WP, WP_FIELD as W } from './worldPool';
 import { leanLines, type LeanLine } from './worldScorers';
 
 export const WORLD_AWARD_SEASONS = 5;
@@ -86,49 +95,140 @@ export function leanLeagueMean(lines: LeanLine[]): number {
   return regulars.length ? regulars.reduce((t, l) => t + l.w[W.ov], 0) / regulars.length : 65;
 }
 
-const pack = (c: AwardCandidate & { score: number }, why?: string): AwardEntry => {
-  const e: AwardEntry = {
-    p: c.pid, n: c.name, c: c.clubId, cn: c.clubName, pos: c.pos, a: c.age,
-    ap: c.apps, g: c.avg, gl: c.goals, as: c.assists, cs: c.clean,
-    ga: Math.round(c.gaPerGame * 100) / 100, rk: c.rank, pts: Math.round(c.score * 10) / 10,
-  };
-  if (why) e.why = why;
-  return e;
-};
+const h100 = (v: number) => Math.round(v * 100);
+
+/** Archiv anlegen (Auslandsligen). */
+export function ensureWorldStore(g: Game): WorldAwardsStore {
+  return (ensureAwards(g).wv ??= { v: 1, cl: {}, gone: {}, s: {} });
+}
 
 /** Anzeigename einer Auslandsliga. */
 export const worldDivName = (key: string) => `${COUNTRY_BY_KEY[key]?.name ?? key} · 1. Liga`;
 
-/** Saisonende: Die Besten der 1. Ligen im Ausland (einmal je Saison). */
+/** Saisonende: Die Besten der Saison + Elf der Saison der 1. Ligen im Ausland (einmal je Saison). */
 export function worldSeasonAwards(g: Game, season: string, divs: Record<string, (LeanDiv | null)[]>): number {
-  const st = ensureAwards(g);
-  const list = (st.world ??= []);
-  if (list.some((s) => s.season === season)) return 0;
+  const st = ensureWorldStore(g);
+  if (st.s[season]) return 0;
   const model = homeGradeModel(g);
+  const endYear = seasonStartYear(season) + 1;
+  const cache = new Map<string, number>();
+  const out: Record<string, WLeague> = {};
   let n = 0;
   for (const [key, tiers] of Object.entries(divs)) {
     const d = tiers[0];
     if (!d?.r || d.ids.length < 4) continue;
+    const ctx = { matchdays: leanMatchdays(d.ids.length), teams: d.ids.length };
     const cands = leanCandidates(g, key, d, season, model);
-    const res = computeAwards(cands, { matchdays: leanMatchdays(d.ids.length), teams: d.ids.length });
-    if (!AWARD_CATS.some((c) => res.cats[c].length)) continue;
-    const cats = {} as Record<AwardCat, AwardEntry[]>;
-    for (const cat of AWARD_CATS) cats[cat] = res.cats[cat].map((c, i) => pack(c, i === 0 ? res.why[c.pid] : undefined));
-    const out: AwardSeason = { season, div: key, divName: worldDivName(key), tier: 1, cats };
-    if (res.best) out.best = res.best;
-    if (res.rookie) out.rookie = { ...pack(res.rookie, res.why[res.rookie.pid]), cat: res.rookie.cat };
-    list.push(out);
+    const res = computeAwards(cands, ctx);
+    const tos = pickTeamOfSeason(cands, ctx, endYear);
+    if (!AWARD_CATS.some((c) => res.cats[c].length) && tos.xi.length < 11) continue;
+    const ci = (id: string) => clubIdx(st, key, id, cache);
+    const win = (c: AwardCandidate, k: number): WRef[] => packWin(k, {
+      r: refOfId(c.pid), c: ci(c.clubId), ap: c.apps, g: h100(c.avg), gl: c.goals, as: c.assists, cs: c.clean, f: res.flags[c.pid] ?? 0, ga: h100(c.gaPerGame),
+    });
+    const cats = AWARD_CATS.map((cat, k): WCat => res.cats[cat].flatMap((c, i) => (i === 0 ? win(c, k) : [refOfId(c.pid), ci(c.clubId), h100(c.avg)])));
+    const rk = res.rookie ? AWARD_CATS.indexOf(res.rookie.cat) : -1;
+    const rookie = res.rookie ? [rk, ...win(res.rookie, rk)] : 0;
+    const l: WLeague = [res.best ? AWARD_CATS.indexOf(res.best) : -1, cats, rookie, 0];
+    if (tos.xi.length >= 11) l[3] = packXi(l, tos.xi.map((t) => [refOfId(t.c.pid), ci(t.c.clubId), h100(t.c.avg)]));
+    out[key] = l;
     n++;
   }
-  const keep = [...new Set(list.map((s) => s.season))].sort().slice(-WORLD_AWARD_SEASONS);
-  st.world = list.filter((s) => keep.includes(s.season));
+  if (n) st.s[season] = out;
+  trimWorldStore(st, WORLD_AWARD_SEASONS);
   return n;
+}
+
+// -----------------------------------------------------------------------------
+// Anzeige: Tupel → AwardSeason / TosSeason (Name, Alter, Position aus dem Weltpool)
+// -----------------------------------------------------------------------------
+const poolCache = new WeakMap<WP[], { n: number; map: Map<string, WP> }>();
+function poolMap(g: Game): Map<string, WP> {
+  const p = g.worldPool?.p ?? [];
+  const c = poolCache.get(p);
+  if (c && c.n === p.length) return c.map;
+  const map = new Map(p.map((w) => [w[W.id], w]));
+  poolCache.set(p, { n: p.length, map });
+  return map;
+}
+
+interface Who { id: string; n: string; born: number; pos: string }
+function whoOf(g: Game, st: WorldAwardsStore, r: WRef, pool: Map<string, WP>): Who {
+  const id = idOfRef(r);
+  if (!id) return { id: '', n: String(r), born: 0, pos: 'ZM' };
+  const gone = st.gone[r as number];
+  if (gone) return { id, n: gone[0], born: gone[1], pos: gone[2] };
+  const w = pool.get(id);
+  if (w) return { id, n: `${w[W.first]} ${w[W.last]}`.trim(), born: w[W.born], pos: w[W.pos] };
+  const p = g.players[id];
+  return { id, n: p?.fullName ?? '?', born: p ? Number(p.dateOfBirth?.slice(0, 4)) || 0 : 0, pos: p?.naturalPosition ?? 'ZM' };
+}
+
+const clubNameOf = (g: Game, id: string) => g.euroClubs?.[id]?.name ?? g.clubs[id]?.name ?? g.simClubs?.[id]?.name ?? id;
+
+/** Eine Liga des Archivs als AwardSeason (wie die eigene Liga). */
+export function decodeWorldLeague(g: Game, st: WorldAwardsStore, season: string, key: string, l: WLeague): AwardSeason {
+  const pool = poolMap(g);
+  const y = seasonStartYear(season) + 1;
+  const entry = (a: WRef[], i: number, cat: AwardCat, full: boolean): AwardEntry => {
+    const w = full ? unpackWin(AWARD_CATS.indexOf(cat), a, i) : undefined;
+    const who = whoOf(g, st, a[i], pool);
+    const c = clubOf(st, key, Number(a[i + 1]));
+    const e: AwardEntry = {
+      p: who.id, n: who.n, c, cn: c ? clubNameOf(g, c) : '', pos: who.pos, a: who.born ? y - who.born : 0,
+      ap: w?.ap ?? 0, g: (w ? w.g : Number(a[i + 2])) / 100, gl: w?.gl ?? 0, as: w?.as ?? 0, cs: w?.cs ?? 0,
+      ga: (w?.ga ?? 0) / 100, rk: 0, pts: 0,
+    };
+    if (w) e.why = reasonText({ cat, clean: e.cs, avg: e.g, goals: e.gl, assists: e.as, apps: e.ap }, w.f);
+    return e;
+  };
+  const cats = {} as Record<AwardCat, AwardEntry[]>;
+  AWARD_CATS.forEach((cat, k) => {
+    const a = l[1][k] ?? [];
+    const list: AwardEntry[] = [];
+    if (a.length) {
+      list.push(entry(a, 0, cat, true));
+      for (let i = winLen(k); i < a.length; i += 3) list.push(entry(a, i, cat, false));
+    }
+    cats[cat] = list;
+  });
+  const out: AwardSeason = { season, div: key, divName: worldDivName(key), tier: 1, cats };
+  if (l[0] >= 0) out.best = AWARD_CATS[l[0]];
+  if (l[2]) {
+    const cat = AWARD_CATS[Number(l[2][0])] ?? 'MID';
+    out.rookie = { ...entry(l[2], 1, cat, true), cat };
+  }
+  return out;
 }
 
 /** Auszeichnungen aller Ligen einer Saison: eigene Liga zuerst, dann das Ausland nach Name. */
 export function awardsBySeason(g: Game, season: string): AwardSeason[] {
   const st = awardsState(g);
   const own = st?.seasons.filter((s) => s.season === season) ?? [];
-  const world = (st?.world ?? []).filter((s) => s.season === season).sort((a, b) => a.divName.localeCompare(b.divName, 'de'));
+  const ws = worldStore(g);
+  const world = Object.entries(ws?.s[season] ?? {}).filter(([, l]) => l[1].some((c) => c.length))
+    .map(([key, l]) => decodeWorldLeague(g, ws!, season, key, l))
+    .sort((a, b) => a.divName.localeCompare(b.divName, 'de'));
   return [...own, ...world];
+}
+
+/** Elf der Saison der Auslandsligen einer Saison (ohne `dn`/`f`, Reihenfolge wie gespeichert). */
+export function worldTeamsOf(g: Game, season: string): TosSeason[] {
+  const ws = worldStore(g);
+  if (!ws?.s[season]) return [];
+  const pool = poolMap(g);
+  const out: TosSeason[] = [];
+  for (const [key, l] of Object.entries(ws.s[season])) {
+    if (!l[3]) continue;
+    const c: string[] = [];
+    const x: TosRow[] = [];
+    for (const [r, club, grade] of unpackXi(l)) {
+      const id = clubOf(ws, key, club);
+      let k = c.indexOf(id);
+      if (k < 0) k = c.push(id) - 1;
+      x.push([whoOf(g, ws, r, pool).n, grade, k]);
+    }
+    out.push({ s: season, d: key, c, x });
+  }
+  return out;
 }

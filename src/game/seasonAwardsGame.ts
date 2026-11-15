@@ -15,6 +15,7 @@ import { AWARD_CATS, AWARD_CAT_LABEL, type AwardCandidate, type AwardCat, type S
 import { POSITION_GROUPS } from '../types';
 import { moraleJolt } from './moraleJolt';
 import type { Game } from './state';
+import type { WorldAwardsStore } from './worldAwardsStore';
 
 /** Ein geehrter Spieler (kompakt, überdauert Wechsel und Karriereende). */
 export interface AwardEntry {
@@ -43,7 +44,9 @@ export interface AwardSeason {
 
 export interface SeasonAwardsState {
   v: 1; seasons: AwardSeason[]; pending?: string;
-  /** Die Besten der 1. Ligen im Ausland (game/worldAwardsGame.ts), `div` = Länderschlüssel; nur die letzten Saisons. */
+  /** Die Besten + Elf der Saison der 1. Ligen im Ausland, kompakt (game/worldAwardsStore.ts); nur die letzten Saisons. */
+  wv?: WorldAwardsStore;
+  /** Älteres Format (Objektlisten) – beim Laden in `wv` umgerechnet (game/worldAwardsMigration.ts). */
   world?: AwardSeason[];
 }
 
@@ -229,5 +232,7 @@ export function migrateSeasonAwards(g: Game): void {
   if (st.seasons.length > MAX_AWARD_SEASONS) st.seasons.splice(0, st.seasons.length - MAX_AWARD_SEASONS);
   if (st.pending && !st.seasons.some((s) => s.season === st.pending)) delete st.pending;
   if (st.world && !Array.isArray(st.world)) delete st.world;
+  if (st.wv && (typeof st.wv !== 'object' || !st.wv.cl || typeof st.wv.cl !== 'object' || Array.isArray(st.wv.cl) || !st.wv.s || typeof st.wv.s !== 'object')) delete st.wv;
+  else if (st.wv) st.wv.gone ??= {};
   st.v = 1;
 }

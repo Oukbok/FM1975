@@ -27,6 +27,7 @@ import { faceFor, makeName, ORIGINS, pickOrigin, type Origin } from '../data/ori
 import { COUNTRY_BY_KEY } from '../data/world/countries';
 import type { Player, Position } from '../types';
 import type { Game } from './state';
+import { rememberWorldPlayers } from './worldAwardsStore';
 
 /** [id, Verein, Vorname, Nachname, Nation, Ethnie, Geburtsjahr, Position, Stärke, Potenzial, Fuß 0 r/1 l/2 b, Größe, Jugend 0/1] */
 export type WP = [string, string, string, string, string, string, number, Position, number, number, number, number, number];
@@ -183,15 +184,22 @@ function migrateWorldScale(g: Game, pool: { v: number; p: WP[] }): void {
   pool.v = 2;
 }
 
+/** Abgänge aus dem Pool: Namen der Geehrten im Archiv der Auslandsligen festhalten (game/worldAwardsStore.ts). */
+function noteGone(g: Game, gone: WP[]): void {
+  if (gone.length) rememberWorldPlayers(g, gone.map((w) => [w[W.id], `${w[W.first]} ${w[W.last]}`.trim(), w[W.born], w[W.pos]]));
+}
+
 /** Pool anlegen bzw. mit den aktuellen Vereinen abgleichen (fehlende Kader erzeugen, veraltete entfernen). */
 export function ensureWorldPool(g: Game): WorldPool {
   const year = startYearOf(g);
   let pool = g.worldPool;
   if (pool && (pool.v as number) === 1) migrateWorldScale(g, pool);
-  if (!pool || pool.v !== 2) pool = g.worldPool = { v: 2, year, next: 1, p: [] };
+  if (!pool || pool.v !== 2) { if (pool?.p) noteGone(g, pool.p); pool = g.worldPool = { v: 2, year, next: 1, p: [] }; }
   const clubs = worldClubs(g);
   const have = new Set<string>();
-  pool.p = pool.p.filter((w) => { if (!clubs.has(w[W.club])) return false; have.add(w[W.club]); return true; });
+  const gone: WP[] = [];
+  pool.p = pool.p.filter((w) => { if (!clubs.has(w[W.club])) { gone.push(w); return false; } have.add(w[W.club]); return true; });
+  noteGone(g, gone);
   for (const c of clubs.values()) if (!have.has(c.id)) pool.p.push(...squadFor(g, pool, c, year));
   return pool;
 }
@@ -226,13 +234,15 @@ export function worldPoolSeason(g: Game): void {
   const byClub = new Map<string, WP[]>();
   for (const w of pool.p) { const l = byClub.get(w[W.club]); if (l) l.push(w); else byClub.set(w[W.club], [w]); }
   const keep: WP[] = [];
+  const left: WP[] = [];
   for (const [cid, list] of byClub) {
     const club = clubs.get(cid);
-    if (!club) continue;
+    if (!club) { left.push(...list); continue; }
     for (const w of list) {
       const age = year - w[W.born];
       const retire = age >= 36 || (age >= 33 && (w[W.ov] < club.strength - 14 || r() < 0.35)) || (age >= 30 && w[W.ov] < club.strength - 20);
       if (!retire) { keep.push(w); continue; }
+      left.push(w);
       keep.push(makeWP(g, pool, club, w[W.pos], club.strength - 18 - r() * 8, 16 + Math.floor(r() * 2), year, true, r));
     }
   }
@@ -267,12 +277,14 @@ export function worldPoolSeason(g: Game): void {
     // Kadergröße halten: zu viele → schwächste Ergänzungsspieler gehen (Karriereende/unterklassig), zu wenige → auffüllen
     const prosList = l.filter((w) => !w[W.youth]).sort((a, b) => b[W.ov] - a[W.ov]);
     if (prosList.length > 24) {
+      left.push(...prosList.slice(24));
       const gone = new Set(prosList.slice(24).map((w) => w[W.id]));
       pool.p = pool.p.filter((w) => !gone.has(w[W.id]));
     }
     const pros = Math.min(24, prosList.length);
     for (let i = pros; i < 20; i++) pool.p.push(makeWP(g, pool, club, SLOTS[Math.floor(r() * SLOTS.length)], club.strength - 4 - r() * 8, 19 + Math.floor(r() * 10), year, false, r));
   }
+  noteGone(g, left);
   ensureWorldPool(g);
 }
 
@@ -370,7 +382,7 @@ export function dropWorldPlayer(g: Game, id: string): void {
 
 /** Wechsel vollzogen: Eintrag aus dem Weltpool nehmen. */
 export function removeWorldEntry(g: Game, id: string): void {
-  if (g.worldPool) g.worldPool.p = g.worldPool.p.filter((w) => w[W.id] !== id);
+  if (g.worldPool) { noteGone(g, g.worldPool.p.filter((w) => w[W.id] === id)); g.worldPool.p = g.worldPool.p.filter((w) => w[W.id] !== id); }
   const p = g.players[id] as (Player & { world?: boolean }) | undefined;
   if (p) delete p.world;
 }

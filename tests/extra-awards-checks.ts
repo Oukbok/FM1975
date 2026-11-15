@@ -8,6 +8,7 @@ import type { AwardCandidate } from '../src/engine/seasonAwards';
 import { pickTeamOfSeason, tosFormationId } from '../src/engine/teamOfSeason';
 import { extraAwardsState, migrateExtraAwards, MAX_EXTRA_SEASONS } from '../src/game/extraAwardsGame';
 import type { Game } from '../src/game/state';
+import { worldTeamsOf } from '../src/game/worldAwardsGame';
 
 function fail(msg: string): never { console.error('FEHLER:', msg); process.exit(1); }
 const expect = (cond: unknown, msg: string) => { if (!cond) fail(msg); };
@@ -63,12 +64,13 @@ export function checkExtraArchive(g: Game, seasons: string[]): void {
     console.log(`${s}: Schuh ${w.n} (${w.cn}, ${w.k}) ${w.gl}×${w.f}=${w.pts} | Trainer ${coach!.top.map((e) => `${e.n} (${e.cn}, ${e.rk}./erw. ${e.ex}.)`).join(', ')} | Elf ${f.label} (${exact}/11 Stammpos.): ${xi!.x.map((r, i) => `${f.slots[i].position} ${r[0].split(' ').pop()}`).join(', ')}`);
     console.log(`   ${coach!.top[0].why}`);
   }
-  const xiw = st!.xiw ?? [];
-  expect(xiw.length > 10 && xiw.every((x) => x.x.length === 11 && x.x.every((r) => !r[3] && x.c[r[2]])), `Elf der Auslandsligen fehlt (${xiw.length}) oder speichert IDs`);
+  const xiw = seasons.flatMap((s) => worldTeamsOf(g, s));
+  expect(!st!.xiw, 'Altes Feld extraAwards.xiw noch vorhanden');
+  expect(xiw.length > 10 && xiw.every((x) => x.x.length === 11 && x.x.every((r) => !r[3] && r[0] && r[0] !== '?' && x.c[r[2]] && r[1] > 50)), `Elf der Auslandsligen fehlt (${xiw.length}) oder unvollständig`);
   const last = xiw.filter((x) => x.s === xiw[xiw.length - 1].s);
   console.log(`   ${last[0].s} ${last[0].d}: ${last[0].x.map((r) => `${r[0].split(' ').pop()} ${(r[1] / 100).toFixed(2)}`).join(', ')}`);
   const kb = (v: unknown) => (JSON.stringify(v ?? null).length / 1024).toFixed(1);
-  console.log(`Speicher: Schuh ${kb(st!.shoe)} KB, Trainer ${kb(st!.coach)} KB, Elf eigene Liga ${kb(st!.xi)} KB (${st!.xi.length} Saisons), Elf Ausland ${kb(xiw)} KB (${xiw.length} Ligen), je Saison gesamt ≈ ${((JSON.stringify(st).length / Math.max(1, seasons.length)) / 1024).toFixed(1)} KB`);
+  console.log(`Speicher: Schuh ${kb(st!.shoe)} KB, Trainer ${kb(st!.coach)} KB, Elf eigene Liga ${kb(st!.xi)} KB (${st!.xi.length} Saisons), Elf Ausland ${xiw.length} Ligen (in seasonAwards.wv), je Saison gesamt ≈ ${((JSON.stringify(st).length / Math.max(1, seasons.length)) / 1024).toFixed(1)} KB`);
 
   // Migration: begrenzt, idempotent, alte Stände ohne Feld bleiben leer
   const one = st!.shoe[0];

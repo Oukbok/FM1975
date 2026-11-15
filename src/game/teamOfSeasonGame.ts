@@ -3,23 +3,22 @@
 // -----------------------------------------------------------------------------
 // Eigene Liga mit echten Noten (Ligastatistik, game/seasonAwardsGame.ts
 // `awardCandidates`), 1. Ligen im Ausland mit geschätzten Noten wie bei den Besten
-// der Saison (game/worldAwardsGame.ts `leanCandidates`). Gespeichert kompakt in
-// `game.extraAwards.xi` (eigene Liga) bzw. `.xiw` (Ausland, letzte WORLD_AWARD_SEASONS
-// Saisons): Saison, Liga, Formation, Vereinsliste `c` und je Platz (Reihenfolge = Slots der
-// Formation, daraus die Position) ein Tupel [Name, Note × 100, Index in `c`, Spieler-ID (nur voller Spieler)].
+// der Saison (game/worldAwardsGame.ts `leanCandidates`). Eigene Liga gespeichert kompakt in
+// `game.extraAwards.xi`: Saison, Liga, Formation, Vereinsliste `c` und je Platz (Reihenfolge = Slots
+// der Formation, daraus die Position) ein Tupel [Name, Note × 100, Index in `c`, Spieler-ID].
+// Ausland: zusammen mit den Besten der Saison in `seasonAwards.wv` (game/worldAwardsGame.ts
+// `worldSeasonAwards`, letzte WORLD_AWARD_SEASONS Saisons), gelesen über `worldTeamsOf`.
 // =============================================================================
 import { seasonStartYear } from '../data/timeline';
-import type { LeanDiv } from '../engine/world';
 import { pickTeamOfSeason, tosFormationId } from '../engine/teamOfSeason';
 import { ensureExtraAwards, extraAwardsState } from './extraAwardsGame';
 import { awardCandidates } from './seasonAwardsGame';
 import type { Game } from './state';
-import { homeGradeModel, leanCandidates, WORLD_AWARD_SEASONS, worldDivName } from './worldAwardsGame';
-import { leanMatchdays } from './worldLeagues';
+import { worldDivName, worldTeamsOf } from './worldAwardsGame';
 
 /** Ein Platz der Elf: Name, Note × 100, Verein (Index in `TosSeason.c`), Spieler-ID (fehlt bei Weltspielern). */
 export type TosRow = [string, number, number, string?];
-/** Elf einer Saison; `dn`/`f` nur bei der eigenen Liga gespeichert (Ausland: aus Länderschlüssel und Saison). */
+/** Elf einer Saison; `dn`/`f` nur bei der eigenen Liga gespeichert (Ausland: aus Länderschlüssel und Saison, `worldTeamsOf`). */
 export interface TosSeason { s: string; d: string; dn?: string; f?: string; c: string[]; x: TosRow[] }
 
 export const MAX_XI_SEASONS = 80;
@@ -51,32 +50,12 @@ export function homeTeamOfSeason(g: Game): TosSeason | null {
   return res;
 }
 
-/** Elf der Saison aller 1. Ligen im Ausland (einmal je Saison, nur die letzten Saisons). */
-export function worldTeamsOfSeason(g: Game, season: string, divs: Record<string, (LeanDiv | null)[]>): number {
-  const st = ensureExtraAwards(g);
-  const list = (st.xiw ??= []);
-  if (list.some((x) => x.s === season)) return 0;
-  const model = homeGradeModel(g);
-  const endYear = seasonStartYear(season) + 1;
-  let n = 0;
-  for (const [key, tiers] of Object.entries(divs)) {
-    const d = tiers[0];
-    if (!d?.r || d.ids.length < 4) continue;
-    const cands = leanCandidates(g, key, d, season, model);
-    const res = pack(season, key, undefined, pickTeamOfSeason(cands, { matchdays: leanMatchdays(d.ids.length), teams: d.ids.length }, endYear), false);
-    if (res) { list.push(res); n++; }
-  }
-  const keep = [...new Set(list.map((x) => x.s))].sort().slice(-WORLD_AWARD_SEASONS);
-  st.xiw = list.filter((x) => keep.includes(x.s));
-  return n;
-}
-
 /** Alle Elf einer Saison (Anzeige, `dn`/`f` immer gesetzt): eigene Liga zuerst, dann das Ausland nach Name. */
 export function teamsOfSeason(g: Game, season: string): (TosSeason & { dn: string; f: string })[] {
   const st = extraAwardsState(g);
   const f = tosFormationId(seasonStartYear(season) + 1);
   const own = (st?.xi ?? []).filter((x) => x.s === season).map((x) => ({ ...x, dn: x.dn ?? x.d, f: x.f ?? f }));
-  const world = (st?.xiw ?? []).filter((x) => x.s === season).map((x) => ({ ...x, dn: worldDivName(x.d), f }))
+  const world = worldTeamsOf(g, season).map((x) => ({ ...x, dn: worldDivName(x.d), f }))
     .sort((a, b) => a.dn.localeCompare(b.dn, 'de'));
   return [...own, ...world];
 }

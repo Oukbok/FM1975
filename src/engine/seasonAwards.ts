@@ -66,6 +66,8 @@ export interface AwardResult {
   rookie: ScoredCandidate | null;
   /** Begründungen (Platz 1–3 je Kategorie, Newcomer) je Spieler-ID. */
   why: Record<string, string>;
+  /** Merkmale der Begründung je Spieler-ID (`reasonFlags`). */
+  flags: Record<string, number>;
 }
 
 export const MIN_SHARE = 0.5;
@@ -103,14 +105,26 @@ export function minApps(ctx: AwardContext, share = MIN_SHARE): number {
 
 const fmtAvg = (v: number) => v.toFixed(2).replace('.', ',');
 
-/** Kurze Begründung (ein Satz) – nennt das, was ihn heraushebt. */
-function reason(c: ScoredCandidate, all: ScoredCandidate[], ctx: AwardContext, leagueTopScorer: number): string {
+/** Merkmale der Begründung (Bits): 1 bester Notenschnitt bzw. (Torwart) wenigste Gegentore,
+ *  2 Torschützenkönig, 4 Meister, 8 stark trotz Abstiegskampf. Kompakt speicherbar (Auslandsligen). */
+export const WHY_BEST = 1, WHY_KING = 2, WHY_CHAMP = 4, WHY_DROP = 8;
+
+export function reasonFlags(c: AwardCandidate, all: AwardCandidate[], ctx: AwardContext, leagueTopScorer: number): number {
   const same = all.filter((x) => x.cat === c.cat);
-  const bestAvg = same.every((x) => x.avg >= c.avg);
+  let f = 0;
+  if (c.cat === 'GK' ? same.every((x) => x.gaPerGame >= c.gaPerGame) : same.every((x) => x.avg >= c.avg)) f |= WHY_BEST;
+  if (c.cat === 'ATT' && c.goals > 0 && c.goals >= leagueTopScorer) f |= WHY_KING;
+  if (c.rank === 1) f |= WHY_CHAMP;
+  else if (c.rank >= ctx.teams - 2 && ctx.teams > 6) f |= WHY_DROP;
+  return f;
+}
+
+/** Begründungssatz aus Kennzahlen + Merkmalen (`reasonFlags`). */
+export function reasonText(c: Pick<AwardCandidate, 'cat' | 'clean' | 'avg' | 'goals' | 'assists' | 'apps'>, f: number): string {
   const bits: string[] = [];
   if (c.cat === 'GK') {
     bits.push(`${c.clean} Spiele zu null, Notenschnitt ${fmtAvg(c.avg)}`);
-    if (same.every((x) => x.gaPerGame >= c.gaPerGame)) bits.push('die wenigsten Gegentore aller Stammtorhüter');
+    if (f & WHY_BEST) bits.push('die wenigsten Gegentore aller Stammtorhüter');
   } else if (c.cat === 'DEF') {
     bits.push(`Notenschnitt ${fmtAvg(c.avg)}, ${c.clean} Spiele zu null`);
     if (c.goals + c.assists >= 6) bits.push(`dazu ${[c.goals ? `${c.goals} ${c.goals === 1 ? 'Tor' : 'Tore'}` : '', c.assists ? `${c.assists} ${c.assists === 1 ? 'Vorlage' : 'Vorlagen'}` : ''].filter(Boolean).join(' und ')}`);
@@ -118,13 +132,14 @@ function reason(c: ScoredCandidate, all: ScoredCandidate[], ctx: AwardContext, l
     bits.push(`${c.goals} Tore und ${c.assists} Vorlagen, Notenschnitt ${fmtAvg(c.avg)}`);
   } else {
     bits.push(`${c.goals} Tore und ${c.assists} Vorlagen in ${c.apps} Spielen`);
-    if (c.goals > 0 && c.goals >= leagueTopScorer) bits.push('Torschützenkönig');
+    if (f & WHY_KING) bits.push('Torschützenkönig');
   }
-  if (bestAvg && c.cat !== 'GK') bits.push(`bester Notenschnitt aller ${CAT_PLURAL[c.cat]}`);
-  if (c.rank === 1) bits.push('Meister');
-  else if (c.rank >= ctx.teams - 2 && ctx.teams > 6) bits.push('stark trotz Abstiegskampf');
+  if (f & WHY_BEST && c.cat !== 'GK') bits.push(`bester Notenschnitt aller ${CAT_PLURAL[c.cat]}`);
+  if (f & WHY_CHAMP) bits.push('Meister');
+  else if (f & WHY_DROP) bits.push('stark trotz Abstiegskampf');
   return bits.join(' – ').replace(/^./, (s) => s.toUpperCase()) + '.';
 }
+
 
 /** Mittel und Streuung der Wertung einer Gruppe. */
 function spread(list: ScoredCandidate[]): { mean: number; sd: number } {
@@ -161,9 +176,11 @@ export function computeAwards(cands: AwardCandidate[], ctx: AwardContext): Award
 
   const topScorer = Math.max(0, ...cands.map((c) => c.goals));
   const why: Record<string, string> = {};
-  for (const cat of AWARD_CATS) for (const c of cats[cat]) why[c.pid] = reason(c, eligible, ctx, topScorer);
-  if (rookie && !why[rookie.pid]) why[rookie.pid] = reason(rookie, eligible, ctx, topScorer);
-  return { cats, best, rookie, why };
+  const flags: Record<string, number> = {};
+  const add = (c: ScoredCandidate) => { flags[c.pid] = reasonFlags(c, eligible, ctx, topScorer); why[c.pid] = reasonText(c, flags[c.pid]); };
+  for (const cat of AWARD_CATS) for (const c of cats[cat]) add(c);
+  if (rookie && !why[rookie.pid]) add(rookie);
+  return { cats, best, rookie, why, flags };
 }
 
 /** Prüft die Grundannahmen der Formel (für Tests): bessere Note → mehr Punkte. */

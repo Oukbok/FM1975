@@ -5,12 +5,12 @@
 //   • Trainer des Jahres (Heimatland, Liga des eigenen Vereins) + Elf der Saison
 //     der eigenen Liga: `homeExtraAwards` ganz am Anfang von startNextSeason
 //     (Endtabelle, Pokal- und Europapokalsieger stehen fest, KI-Trainer noch im Amt).
-//   • Goldener Schuh (alle 1. Ligen) + Elf der Saison der 1. Ligen im Ausland:
-//     `worldExtraAwards` in startNextSeason nach `worldLiveResults` (Auslandsligen
-//     fertig, Ligastatistik der eigenen Liga noch vorhanden).
+//   • Goldener Schuh (alle 1. Ligen): `worldExtraAwards` in startNextSeason nach
+//     `worldLiveResults` (Auslandsligen fertig, Ligastatistik der eigenen Liga noch vorhanden).
+//     Die Elf der Saison im Ausland vergibt game/worldAwardsGame.ts mit den Besten der Saison.
 // Wertungen rein in engine/goldenShoe.ts, engine/coachAward.ts, engine/teamOfSeason.ts.
-// Archiv im optionalen Feld `game.extraAwards` (kompakt; Elf der Auslandsligen nur die
-// letzten WORLD_AWARD_SEASONS Saisons). Keine Popups – nur Nachrichten der Sportredaktion.
+// Archiv im optionalen Feld `game.extraAwards` (kompakt; früheres Feld `xiw` = Elf der
+// Auslandsligen wird beim Laden nach `seasonAwards.wv` umgerechnet). Keine Popups – nur Nachrichten.
 // Alte Spielstände ohne Feld: leer (`migrateExtraAwards` säubert nur).
 // =============================================================================
 import { seasonStartYear } from '../data/timeline';
@@ -24,8 +24,7 @@ import { countryRanking, germanRank, type LeanDiv } from '../engine/world';
 import { headCoachNow } from './headCoaches';
 import { awardCandidates } from './seasonAwardsGame';
 import { type Game, homeCountryKey } from './state';
-import { homeTeamOfSeason, worldTeamsOfSeason, type TosSeason, MAX_XI_SEASONS } from './teamOfSeasonGame';
-import { WORLD_AWARD_SEASONS } from './worldAwardsGame';
+import { homeTeamOfSeason, type TosSeason, MAX_XI_SEASONS } from './teamOfSeasonGame';
 import { WP_FIELD as W } from './worldPool';
 import { leanLines } from './worldScorers';
 
@@ -35,7 +34,11 @@ export interface GSSeason { s: string; top: GSEntry[] }
 /** Trainer des Jahres: Verein, Name, Endplatz, erwarteter Platz, Punkte, Begründung, eigener Verein. */
 export interface CoachEntry { c: string; cn: string; n: string; rk: number; ex: number; pts: number; why: string; me?: 1 }
 export interface CoachSeason { s: string; dn: string; top: CoachEntry[] }
-export interface ExtraAwardsState { v: 1; shoe: GSSeason[]; coach: CoachSeason[]; xi: TosSeason[]; xiw?: TosSeason[] }
+export interface ExtraAwardsState {
+  v: 1; shoe: GSSeason[]; coach: CoachSeason[]; xi: TosSeason[];
+  /** Älteres Format der Elf der Auslandsligen – beim Laden nach `seasonAwards.wv` (game/worldAwardsMigration.ts). */
+  xiw?: TosSeason[];
+}
 
 export const MAX_EXTRA_SEASONS = 80;
 
@@ -209,10 +212,9 @@ function awardShoe(g: Game, season: string, divs: Record<string, (LeanDiv | null
   return res;
 }
 
-/** Saisonende nach worldLiveResults: Goldener Schuh + Elf der Saison der 1. Ligen im Ausland. */
+/** Saisonende nach worldLiveResults: Goldener Schuh aller 1. Ligen. */
 export function worldExtraAwards(g: Game, season: string, divs: Record<string, (LeanDiv | null)[]>, date: string): void {
   awardShoe(g, season, divs, date);
-  worldTeamsOfSeason(g, season, divs);
 }
 
 const okXi = (x: TosSeason) => !!x && typeof x.s === 'string' && Array.isArray(x.x) && Array.isArray(x.c);
@@ -227,9 +229,5 @@ export function migrateExtraAwards(g: Game): void {
   if (st.xiw && !Array.isArray(st.xiw)) delete st.xiw;
   if (st.xiw) st.xiw = st.xiw.filter(okXi);
   cap(st.shoe, MAX_EXTRA_SEASONS); cap(st.coach, MAX_EXTRA_SEASONS); cap(st.xi, MAX_XI_SEASONS);
-  if (st.xiw) {
-    const keep = [...new Set(st.xiw.map((x) => x.s))].sort().slice(-WORLD_AWARD_SEASONS);
-    st.xiw = st.xiw.filter((x) => keep.includes(x.s));
-  }
   st.v = 1;
 }

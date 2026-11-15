@@ -10,6 +10,10 @@ import { AWARD_CATS, type AwardCandidate, awardScore, computeAwards, minApps } f
 import { MAX_AWARD_SEASONS, awardCandidates, awardSeasonEnd, awardsState, migrateSeasonAwards, pendingAwards } from '../src/game/seasonAwardsGame';
 import type { Game } from '../src/game/state';
 import { checkExtraArchive, checkExtraFormulas } from './extra-awards-checks';
+import { awardsBySeason, WORLD_AWARD_SEASONS } from '../src/game/worldAwardsGame';
+import { migrateWorldAwards } from '../src/game/worldAwardsMigration';
+import { teamsOfSeason } from '../src/game/teamOfSeasonGame';
+import { extraAwardsState } from '../src/game/extraAwardsGame';
 
 let seed = 1979;
 Math.random = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
@@ -117,13 +121,43 @@ expect(old.seasonAwards === undefined, 'Migration legt bei alten Ständen ein Fe
   expect(s2 && !awardsState(g2)!.pending, 'Rückfall in startNextSeason fehlt');
   console.log(`Rückfall ${season}: ${AWARD_CATS.map((c) => s2!.cats[c][0]?.n).join(', ')}`);
 }
-// Auslandsligen (Wunsch Pascal: Liga-Auswahl auf der Seite): je Saison eine Wertung je 1. Liga.
-const world = awardsState(g)!.world ?? [];
+// Auslandsligen (Wunsch Pascal: Liga-Auswahl auf der Seite): je Saison eine Wertung je 1. Liga,
+// kompakt in seasonAwards.wv (game/worldAwardsStore.ts), Anzeige über awardsBySeason.
+const wv = awardsState(g)!.wv;
+expect(wv && !awardsState(g)!.world, 'Auslandsligen nicht im kompakten Archiv');
+const wSeasons = Object.keys(wv!.s).sort();
+expect(wSeasons.length === Math.min(seasons, WORLD_AWARD_SEASONS), `Auslandsligen: ${wSeasons.length} Saisons im Archiv`);
+const world = wSeasons.flatMap((s) => awardsBySeason(g, s).filter((x) => x.div !== g.leagues.playerDivision.id && x.tier === 1 && !x.mine));
 expect(world.length > 10, `Auslandsligen ohne Auszeichnungen (${world.length})`);
-for (const s of world.filter((x) => x.season === world[world.length - 1].season).slice(0, 4)) {
-  console.log(`   ${s.season} ${s.divName}: ${AWARD_CATS.map((c) => `${c} ${s.cats[c][0]?.n ?? '—'} (${s.cats[c][0]?.cn ?? ''}, ${s.cats[c][0]?.g ?? ''}, ${s.cats[c][0]?.gl ?? 0} T)`).join(' | ')}`);
+for (const s of world) for (const cat of AWARD_CATS) {
+  const w = s.cats[cat][0];
+  if (!w) continue;
+  expect(w.n && w.n !== '?' && w.cn && w.pos && w.a > 14 && w.a < 45 && (w.why ?? '').length > 10, `${s.season} ${s.divName} ${cat}: unvollständig ${JSON.stringify(w)}`);
+  expect(s.cats[cat].every((e) => e.n && e.cn && e.g > 0), `${s.season} ${s.divName} ${cat}: Platz 2/3 unvollständig`);
 }
-console.log(`Auslandsligen: ${world.length} Wertungen, ${(JSON.stringify(world).length / 1024).toFixed(0)} KB`);
+for (const s of world.filter((x) => x.season === wSeasons[wSeasons.length - 1]).slice(0, 4)) {
+  console.log(`   ${s.season} ${s.divName}: ${AWARD_CATS.map((c) => `${c} ${s.cats[c][0]?.n ?? '—'} (${s.cats[c][0]?.cn ?? ''}, ${s.cats[c][0]?.g ?? ''}, ${s.cats[c][0]?.gl ?? 0} T)`).join(' | ')}`);
+  console.log(`      ${s.cats.ATT[0]?.why ?? ''}`);
+}
+console.log(`Auslandsligen: ${world.length} Wertungen + Elf, ${(JSON.stringify(wv).length / 1024).toFixed(1)} KB (Spieler außerhalb des Pools: ${Object.keys(wv!.gone).length})`);
+// Umrechnung des alten Formats (Objektlisten world/xiw): gleiche Anzeige, idempotent.
+{
+  const show = (x: Game) => JSON.stringify(wSeasons.map((s) => [awardsBySeason(x, s), teamsOfSeason(x, s)]));
+  const before = show(g);
+  const g3 = { ...g, seasonAwards: { ...awardsState(g)! }, extraAwards: { ...extraAwardsState(g)! } } as Game;
+  const sa3 = awardsState(g3)!;
+  sa3.world = wSeasons.flatMap((s) => awardsBySeason(g, s).filter((x) => !x.mine));
+  extraAwardsState(g3)!.xiw = wSeasons.flatMap((s) => teamsOfSeason(g, s).filter((x) => !x.x.some((r) => r[3])).map(({ s: ss, d, c, x }) => ({ s: ss, d, c, x })));
+  delete sa3.wv;
+  const oldKb = (JSON.stringify(sa3.world).length + JSON.stringify(extraAwardsState(g3)!.xiw).length) / 1024;
+  migrateWorldAwards(g3);
+  expect(!sa3.world && !extraAwardsState(g3)!.xiw && sa3.wv, 'Altes Format nicht umgerechnet');
+  expect(show(g3) === before, 'Umrechnung des alten Formats ändert die Anzeige');
+  const snap = JSON.stringify(sa3.wv);
+  migrateWorldAwards(g3);
+  expect(JSON.stringify(sa3.wv) === snap, 'Umrechnung Auslandsligen nicht idempotent');
+  console.log(`Umrechnung altes Format: ${oldKb.toFixed(0)} KB → ${(snap.length / 1024).toFixed(1)} KB, Anzeige gleich`);
+}
 console.log(`Spielstand: ${(JSON.stringify(awardsState(g)!.seasons[0]).length / 1024).toFixed(1)} KB je Saison`);
 checkExtraArchive(g, played);
 console.log('OK – Auszeichnungen der Saison');

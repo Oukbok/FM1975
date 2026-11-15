@@ -57,6 +57,7 @@ import { migrateBudget } from './budgetPlan';
 import { migrateSeasonAwards } from './seasonAwardsGame';
 import { migrateGoldenBall } from './goldenBallGame';
 import { migrateExtraAwards } from './extraAwardsGame';
+import { migrateWorldAwards } from './worldAwardsMigration';
 import { migrateLegacyLegends } from './playerMigration';
 import { migratePersonas } from './playerWishesGame';
 import { migrateContracts2 } from './contractClausesGame';
@@ -363,6 +364,8 @@ export function prepareLoadedGame(g: Game): void {
   try { migrateGoldenBall(g); } catch (err) { console.error('Goldener-Ball-Nachrüstung fehlgeschlagen:', err); }
   try { migrateExtraAwards(g); } catch (err) { console.error('Auszeichnungen-Nachrüstung fehlgeschlagen:', err); }
   try { migrateSeasonAwards(g); } catch (err) { console.error('Auszeichnungen-Nachrüstung fehlgeschlagen:', err); }
+  // Auslandsligen: Objektlisten seasonAwards.world/extraAwards.xiw → kompaktes seasonAwards.wv (vor ensureWorldPool).
+  try { migrateWorldAwards(g); } catch (err) { console.error('Auszeichnungen-Ausland-Nachrüstung fehlgeschlagen:', err); }
   // Legenden-System entfernt: frühere Legenden werden ganz normale Spieler.
   try { migrateLegacyLegends(g); } catch (err) { console.error('Legenden-Bereinigung fehlgeschlagen:', err); }
   // Transfer 2.0: Spielerpersönlichkeit (Wünsche, Gehaltsforderung) nachrüsten.
