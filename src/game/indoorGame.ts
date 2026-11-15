@@ -13,7 +13,7 @@ import {
   topClubEnthusiasm, tournamentCount, tournamentFeeBase, venuesFor, winterYearOf,
 } from '../data/indoorHistory';
 import {
-  INDOOR_SQUAD_LABEL, IndoorEntrant, IndoorResult, IndoorSquad, TourStat, addResultToTour, indoorSkill, indoorStrength, pickIndoorSquad,
+  IndoorEntrant, IndoorResult, IndoorSquad, TourStat, addResultToTour, indoorSkill, indoorStrength, pickIndoorSquad,
   runIndoorTournament, winnerOf,
 } from '../engine/indoor';
 import { CalendarEngine } from '../engine/calendar';
@@ -222,7 +222,7 @@ export function setOwnIndoorDecision(g: Game, tid: string, decision: IndoorDecis
   }
   t.own = decision;
   syncMessage(g, tid, decision);
-  return decision === 'decline' ? `Absage für ${t.name} verschickt.` : `Zusage für ${t.name}: ${INDOOR_SQUAD_LABEL[decision]}.`;
+  return decision === 'decline' ? `Absage für ${t.name} verschickt.` : `Zusage für ${t.name}. Den Hallenkader stellst du am Turniertag zusammen.`;
 }
 
 function syncMessage(g: Game, tid: string, decision: IndoorDecision): void {
@@ -346,9 +346,9 @@ function prepareTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, toda
     t.squads[mid] = t.own;
     if (g.clubs[mid]?.city === t.city && g.environment) g.environment.fanMood = clamp(g.environment.fanMood + 0.8, 0, 100);
   }
-  // Mindestens 4 Teilnehmer (zwei Gruppen à 2) – sonst fehlt ein Halbfinalist.
+  // Mindestens 6 Teilnehmer = zwei Gruppen à 3 (Wunsch Pascal: eine Zweiergruppe ist sinnlos).
   // Erst Vereine in der Winterpause, notfalls jeder freie Verein aus dem Pool.
-  for (let i = 0; t.clubIds.length < 4 && i < 8; i++) {
+  for (let i = 0; t.clubIds.length < INDOOR_MIN_TEAMS && i < 12; i++) {
     if (!substituteIndoor(g, cur, t, rng) && !substituteIndoor(g, cur, t, rng, true)) break;
   }
 }
@@ -365,6 +365,9 @@ function substituteIndoor(g: Game, cur: IndoorWinter, t: IndoorTournament, rng: 
   if (sub) { t.clubIds.push(sub.id); t.squads[sub.id] = aiSquad(g, sub.id, cur.winterYear, rng); }
   return sub?.id;
 }
+
+/** Mindestens so viele Vereine je Turnier (zwei Gruppen à 3). */
+export const INDOOR_MIN_TEAMS = 6;
 
 /** Hallenauswahl: so viele Feldspieler bzw. Torhüter dürfen (müssen) mit. */
 export const INDOOR_PICK = { keepers: 1, fieldMin: 5, fieldMax: 7 } as const;

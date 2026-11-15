@@ -38,13 +38,11 @@ export function sendInvite(g: Game, t: IndoorTournament, today: string): void {
       + `Antrittsgeld: ${fee > 0 ? fmtDM(fee) : 'keines'}${masters ? ' – dazu Prämien nach Platzierung' : ' – der Turniersieger bekommt eine Prämie'}.\n\n`
       + `Fünf Feldspieler plus Torwart, Rundumbande, kurze Spielzeiten. Gut für Spielpraxis von Reservisten und für die Fans – `
       + `aber der Hallenboden ist hart: Prellungen und Bänderverletzungen sind keine Seltenheit, und die Winterpause wird kürzer.\n\n`
-      + `Du kannst Stammkräfte schicken, gemischt antreten oder den Nachwuchs spielen lassen. Eine Absage verärgert ${masters ? 'den DFB und die Fans' : 'den Veranstalter und die Fans'}.`,
+      + `Den Hallenkader stellst du am Turniertag zusammen. Eine Absage verärgert ${masters ? 'den DFB und die Fans' : 'den Veranstalter und die Fans'}.`,
     actionRequired: true,
   });
   msg.choices = [
-    { id: 'stars', label: 'Zusagen – Stammkräfte', hint: 'Beste Titelchance, höchstes Verletzungsrisiko für Leistungsträger' },
-    { id: 'mix', label: 'Zusagen – gemischt', hint: 'Drei Stammkräfte, Rest Reservisten' },
-    { id: 'youth', label: 'Zusagen – Nachwuchs', hint: 'Spielpraxis für Junge, Stars werden geschont' },
+    { id: 'mix', label: 'Zusagen', hint: 'Den Hallenkader wählst du am Turniertag' },
     { id: 'decline', label: 'Absagen', hint: 'Keine Belastung – aber Ärger bei Veranstalter und Fans' },
   ];
   msg.eventRef = { type: 'indoor_invite', deadline, defaultChoice: 'mix', data: { tid: t.id } };

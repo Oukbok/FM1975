@@ -90,7 +90,10 @@ export function IndoorShow({ g, t, settings, onSettings, onClose }: {
   useEffect(() => {
     if (!running) return;
     const s = nextSlot(live);
-    if (!s || isOwn(s) || (running !== 'own' && roundOf(s.stage) !== running)) { setRunning(false); if (!s) finish(); return; }
+    if (!s || isOwn(s)) { setRunning(false); if (!s) finish(); return; }
+    // Runde zu Ende: Bist du in der nächsten Runde dabei (z. B. Halbfinale 2), laufen die Spiele davor
+    // ohne weiteren Klick bis zu deinem Spiel (Wunsch Pascal), sonst Halt vor der neuen Runde.
+    if (running !== 'own' && roundOf(s.stage) !== running) { setRunning(isOwnLeft() ? 'own' : false); return; }
     const timer = setTimeout(() => { autoPlaySlot(live, s); afterSlot(s); }, speed === 'schnell' ? 220 : speed === 'langsam' ? 900 : 480);
     return () => clearTimeout(timer);
   });

@@ -46,7 +46,7 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
     if (t.own === undefined) return null;
     if (t.own === null) return <span style={{ color: 'var(--accent)' }}>Einladung offen</span>;
     if (t.own === 'decline') return <span className="muted">abgesagt</span>;
-    return <span style={{ color: 'var(--green)' }}>Zusage · {INDOOR_SQUAD_LABEL[t.own]}</span>;
+    return <span style={{ color: 'var(--green)' }}>Zusage</span>;
   };
 
   // Reale Sieger nur bis zum aktuellen Winter (keine Vorschau auf die Zukunft).
@@ -78,11 +78,7 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
               {mine && <span className="mini nowrap">{ownLabel(t)}</span>}
               {editable && (
                 <span className="dbtnrow" onClick={(e) => e.stopPropagation()}>
-                  {(['stars', 'mix', 'youth'] as const).map((d) => (
-                    <button key={d} className={`dchip ${t.own === d ? 'on' : ''}`} title={INDOOR_SQUAD_LABEL[d]} onClick={() => decide(t, d)}>
-                      {d === 'stars' ? 'Stars' : d === 'mix' ? 'Mix' : 'Jugend'}
-                    </button>
-                  ))}
+                  <button className={`dchip ${t.own && t.own !== 'decline' ? 'on' : ''}`} title="Den Hallenkader stellst du am Turniertag zusammen" onClick={() => decide(t, 'mix')}>Zusage</button>
                   <button className={`dchip ${t.own === 'decline' ? 'on' : ''}`} onClick={() => decide(t, 'decline')}>Absage</button>
                 </span>
               )}
@@ -119,7 +115,7 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
             <div className="dsec">Teilnehmer</div>
             {sel.clubIds.length ? sel.clubIds.map((id) => (
               <div key={id} className="dlist-row"><span className="grow"><ClubLink id={id}>{indoorName(g, id)}</ClubLink></span>
-                <span className="meta">{id === mid ? (sel.own && sel.own !== 'decline' ? INDOOR_SQUAD_LABEL[sel.own] : 'offen') : sel.squads[id] ? INDOOR_SQUAD_LABEL[sel.squads[id]] : ''}</span></div>
+                <span className="meta">{id === mid ? (sel.own === 'decline' ? 'abgesagt' : sel.own ? (sel.ownIds?.length ? 'eigene Auswahl' : 'zugesagt') : 'offen') : sel.squads[id] ? INDOOR_SQUAD_LABEL[sel.squads[id]] : ''}</span></div>
             )) : <div className="dnote">Das Teilnehmerfeld steht nach der letzten Qualifikation fest.</div>}
           </>
         ) : (

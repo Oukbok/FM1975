@@ -9,7 +9,7 @@ import { ClubLink } from '../../../components/club/ClubLink';
 import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
 import { MASTERS_FIRST_WINTER, MASTERS_LAST_WINTER } from '../../../data/indoorHistory';
 import { indoorShort } from '../../../game/indoorGame';
-import { hallKings, hallSpecialistAt, hallSpecialistNote, type HallKingSort } from '../../../game/indoorRecords';
+import { hallKings, hallSpecialistAt, hallSpecialistNote, isHallSpecialist, type HallKingSort } from '../../../game/indoorRecords';
 import type { Game } from '../../../game/state';
 import type { IndoorState } from '../../../game/winterShared';
 import { DashBox } from '../../../ui/DashPage';
@@ -83,7 +83,7 @@ function Kings({ g, by, setBy }: { g: Game; by: HallKingSort; setBy: (b: HallKin
                 <td className="num muted">{k.r.t}</td>
                 <td className={`num ${by === 'w' ? 'rl-main' : ''}`}>{k.r.w}</td>
                 <td className="num muted">{k.r.m || '–'}</td>
-                <td className={`num ${by === 'ruf' ? 'rl-main' : ''}`}>{k.ruf}{k.ruf >= at && <span className="hk-star" title="Hallenspezialist"> *</span>}</td>
+                <td className={`num ${by === 'ruf' ? 'rl-main' : ''}`}>{k.ruf}{isHallSpecialist(g, k.id) && <span className="hk-star" title="Hallenspezialist"> *</span>}</td>
               </tr>
             );
           })}

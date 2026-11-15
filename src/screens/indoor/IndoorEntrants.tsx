@@ -11,7 +11,7 @@ import PosBadge from '../../components/PosBadge';
 import Icon from '../../components/Icon';
 import { INDOOR_SQUAD_LABEL, indoorSkill } from '../../engine/indoor';
 import type { IndoorLive } from '../../engine/indoorLive';
-import { hallRufOf, hallSpecialistAt } from '../../game/indoorRecords';
+import { hallRufOf, hallSpecialistAt, isHallSpecialist } from '../../game/indoorRecords';
 import type { Game } from '../../game/state';
 import type { IndoorTournament } from '../../game/winterShared';
 import type { Player } from '../../types';
@@ -23,8 +23,8 @@ import { indoorName } from './indoorScript';
 export function HallTag({ g, pid }: { g: Game; pid: string }) {
   const ruf = hallRufOf(g, pid);
   const at = hallSpecialistAt(g);
-  if (ruf < at) return null;
-  return <span className="ix-hs" title={`Hallenruf ${ruf} (Spezialist derzeit ab ${at}): viele Hallentore und Turniersiege über die Jahre`}>Hallenspezialist</span>;
+  if (!isHallSpecialist(g, pid)) return null;
+  return <span className="ix-hs" title={`Hallenruf ${ruf} (Spezialist derzeit ab ${at}) und Hallenwert mindestens so hoch wie draußen: Hallenspezialist – viele Hallentore und Turniersiege über die Jahre`}>Spezialist</span>;
 }
 
 function squadLabel(g: Game, t: IndoorTournament, id: string): string {

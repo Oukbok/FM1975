@@ -150,8 +150,8 @@ function runWinter(g: Game, season: string, beforeEachDay?: (d: string) => void)
     // Erste Einladung über die Nachricht (Auswahl-Handler), zweite absagen.
     const msg = g.messages.find((m) => m.eventRef?.type === 'indoor_invite' && m.eventRef.data?.tid === mine[0].id);
     if (!msg) fail('Einladungsnachricht fehlt');
-    chooseEventOption(g, msg, 'youth');
-    if (mine[0].own !== 'youth') fail('Auswahl in der Nachricht kam nicht an');
+    chooseEventOption(g, msg, 'mix');
+    if (mine[0].own !== 'mix') fail('Auswahl in der Nachricht kam nicht an');
     setOwnIndoorDecision(g, mine[1].id, 'decline');
     void d;
   });

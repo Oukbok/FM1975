@@ -69,6 +69,15 @@ const specCache = new WeakMap<object, { key: string; at: number }>();
  * Ruf des HALL_SPEC_TARGET-besten aktiven Spielers (noch in `game.players`),
  * begrenzt durch `hallSpecialistBounds` des aktuellen Winters.
  */
+/**
+ * Taugt der Spieler selbst für die Halle? Hallenwert mindestens so hoch wie die Stärke
+ * draußen (Torhüter immer). Sonst wäre z. B. ein technisch schwacher Innenverteidiger
+ * nur über die Turniersiege seiner Mannschaft „Spezialist“ (Fehlermeldung Pascal).
+ */
+export function hallApt(p: Player): boolean {
+  return p.naturalPosition === 'TW' || indoorSkill(p) >= p.overall - 0.5;
+}
+
 export function hallSpecialistAt(g: Game): number {
   const rec = indoorState(g).rec ?? {};
   const ids = Object.keys(rec);
@@ -77,18 +86,20 @@ export function hallSpecialistAt(g: Game): number {
   const key = `${g.season}|${ids.length}|${sum}`;
   const hit = specCache.get(rec);
   if (hit && hit.key === key) return hit.at;
-  const rufs = ids.filter((id) => g.players[id]).map((id) => hallRuf(rec[id])).sort((a, b) => b - a);
+  const rufs = ids.filter((id) => g.players[id] && hallApt(g.players[id])).map((id) => hallRuf(rec[id])).sort((a, b) => b - a);
   const [lo, hi] = hallSpecialistBounds(winterYearOf(g.season));
   const at = Math.max(lo, Math.min(hi, rufs[HALL_SPEC_TARGET - 1] ?? 0));
   specCache.set(rec, { key, at });
   return at;
 }
+/** Hallenspezialist = Hallenruf ab der Schwelle der Epoche UND Hallenwert nicht unter der Stärke draußen (im Ruhestand nur der Ruf). */
 export function isHallSpecialist(g: Game, pid: string): boolean {
-  return hallRufOf(g, pid) >= hallSpecialistAt(g);
+  const p = g.players[pid] ?? g.youthPlayers?.[pid];
+  return hallRufOf(g, pid) >= hallSpecialistAt(g) && (!p || hallApt(p));
 }
 /** Kurzer Erklärsatz zur Schwelle (Spaltenkopf, Fußnote, i-Hilfe). */
 export function hallSpecialistNote(g: Game): string {
-  return `derzeit ab Ruf ${hallSpecialistAt(g)} – die Schwelle richtet sich nach den etwa ${HALL_SPEC_TARGET} besten aktiven Hallenspielern der Epoche`;
+  return `derzeit ab Ruf ${hallSpecialistAt(g)} und Hallenwert nicht unter der Stärke draußen – die Schwelle richtet sich nach den etwa ${HALL_SPEC_TARGET} besten aktiven Hallenspielern der Epoche`;
 }
 
 /** Torgefahr in der Halle (gleiches Gewicht wie im Textmodus, screens/indoor/indoorScript.ts). */

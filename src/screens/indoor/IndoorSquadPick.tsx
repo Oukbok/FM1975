@@ -73,7 +73,7 @@ export function IndoorSquadPick({ g, cands, sel, onChange, drill = 0 }: { g: Gam
           </tr></thead>
           <tbody>
             {keepers.map(row)}
-            <tr className="ix-pick-gap"><td colSpan={9 + COLS.length} /></tr>
+            <tr className="ix-pick-gap"><td colSpan={6 + COLS.length} /></tr>
             {field.map(row)}
           </tbody>
         </table>

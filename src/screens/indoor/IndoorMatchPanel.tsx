@@ -15,7 +15,10 @@ import { MeterCells } from '../match/board/DangerMeter';
 import { STAGE_LABEL, fmtClock, indoorName, type TickLine } from './indoorScript';
 
 export type TickSpeed = 'langsam' | 'normal' | 'schnell';
-const MS: Record<TickSpeed, number> = { langsam: 1900, normal: 1100, schnell: 480 };
+// Grundtakt je Zeile (Wunsch Pascal: Text muss lesbar sein) – längere Zeilen bleiben länger stehen.
+const MS: Record<TickSpeed, number> = { langsam: 3000, normal: 2000, schnell: 1000 };
+const lineMs = (l: TickLine | undefined, speed: TickSpeed): number =>
+  MS[speed] * Math.max(0.8, Math.min(1.8, (l?.text?.length ?? 60) / 60));
 
 export function useIndoorTicker(lines: TickLine[], speed: TickSpeed) {
   const [shown, setShown] = useState(1);
@@ -24,7 +27,7 @@ export function useIndoorTicker(lines: TickLine[], speed: TickSpeed) {
     if (done) return;
     const last = lines[shown - 1];
     const slow = last && (last.tone === 'goal' || last.tone === 'goal-mine') ? 1.5 : 1;
-    const t = setTimeout(() => setShown((s) => Math.min(lines.length, s + 1)), MS[speed] * slow);
+    const t = setTimeout(() => setShown((s) => Math.min(lines.length, s + 1)), lineMs(last, speed) * slow);
     return () => clearTimeout(t);
   }, [shown, speed, done, lines]);
   return { shown, done, next: () => setShown((s) => Math.min(lines.length, s + 1)), toEnd: () => setShown(lines.length) };

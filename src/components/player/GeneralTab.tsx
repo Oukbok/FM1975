@@ -5,7 +5,7 @@ import { NatFlag } from '../competition/CountryFlag';
 import type { ReactNode } from 'react';
 import type { Player } from '../../types';
 import { useClubProfile } from '../club/ClubLink';
-import { hallRecOf, hallRuf, hallSpecialistAt, hallSpecialistNote } from '../../game/indoorRecords';
+import { hallRecOf, hallRuf, hallSpecialistAt, hallSpecialistNote, isHallSpecialist } from '../../game/indoorRecords';
 import { languageOf } from '../../engine/dressingRoom';
 import { careerPhase, PHASE_LABEL, personaOf } from '../../engine/persona';
 import { homeRegionOf } from '../../game/playerWishesGame';
@@ -63,7 +63,7 @@ export default function GeneralTab({ p }: { p: Player }) {
           <Row label="Name">{p.fullName}</Row>
           <Row label="Nationalität"><NatFlag nat={p.nationality} height={16} />{nationName(p.nationality)}</Row>
           {p.intl?.caps ? <Row label="Länderspiele">{p.intl.caps} · {p.intl.goals} Tore{p.intl.tourn?.length ? <span className="dim"> · {p.intl.tourn.map((x) => `${x.t} (${x.res})`).join(', ')}</span> : null}</Row> : null}
-          {hall ? <Row label="Halle">{hall.ruf >= hall.at ? <b>Hallenspezialist · </b> : null}{hall.r.g} Tore in {hall.r.t} Turnieren{hall.r.w ? ` · ${hall.r.w} Turniersieg${hall.r.w === 1 ? '' : 'e'}` : ''}<span className="dim" title={`Hallenspezialist ${hallSpecialistNote(g!)}`}> · Hallenruf {hall.ruf}</span></Row> : null}
+          {hall ? <Row label="Halle">{isHallSpecialist(g!, p.id) ? <b>Hallenspezialist · </b> : null}{hall.r.g} Tore in {hall.r.t} Turnieren{hall.r.w ? ` · ${hall.r.w} Turniersieg${hall.r.w === 1 ? '' : 'e'}` : ''}<span className="dim" title={`Hallenspezialist ${hallSpecialistNote(g!)}`}> · Hallenruf {hall.ruf}</span></Row> : null}
           <Row label="Sprache">{languageOf(p)}</Row>
           <Row label="Heimat">{home || '—'}{homeClub && <span className="dim"> · Jugend bei {homeClub}</span>}</Row>
           <Row label="Position">{POS_DE[p.naturalPosition] ?? p.naturalPosition}{p.secondaryPositions.length > 0 && <span className="dim"> · auch {p.secondaryPositions.join(', ')}</span>}</Row>
