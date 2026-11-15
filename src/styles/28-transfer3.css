@@ -107,29 +107,74 @@
 .tw-foot { display: flex; align-items: center; gap: 18px; padding: 12px 24px; border-top: 1px solid var(--border-soft); background: var(--bg-2); }
 .tw-foot-note { color: var(--text-3); font-size: 14px; }
 .tw-foot .btn { min-width: 130px; }
-.tw-page-top { min-height: 0; overflow: auto; padding: 0 24px; grid-row: 2 / span 2; }
+.tw-page-top { min-height: 0; overflow: hidden; padding: 10px 16px; grid-row: 2 / span 2; }
 
-/* ------------------------------------------------- Top-Transfers (Zeitung) */
-.tt-sheet { padding: 10px 6px 18px; }
-.tt-mast { margin-bottom: 4px; }
-.tt-title { font-family: var(--font-display); font-size: 46px; font-weight: 700; margin: 12px 0 14px; letter-spacing: 0.3px; color: var(--text); }
-.tt-box { border: 1px solid var(--border); border-radius: 6px; background: var(--bg-2); padding: 16px 22px 10px; }
-.tt-league { font-family: var(--font-display); font-size: 28px; font-weight: 700; margin-bottom: 10px; }
-.tt-podium { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px; margin-bottom: 14px; }
-.tt-pod { display: flex; flex-direction: column; gap: 3px; }
-.tt-pod-stage { position: relative; height: 128px; border-radius: 8px; background: var(--panel-2); border: 1px solid var(--border-soft); display: flex; align-items: flex-end; overflow: hidden; }
-.tt-pod.me .tt-pod-stage { box-shadow: inset 0 -3px 0 var(--accent); }
-.tt-pod-n { position: absolute; left: 22px; bottom: -4px; font-family: var(--font-display); font-size: 120px; font-weight: 700; line-height: 1; color: var(--text-4); }
-.tt-pod-face { position: absolute; left: 50%; transform: translateX(-62%); bottom: -2px; }
+/* ------------------------------------------------- Top-Transfers (Zeitung)
+   Doppelseite auf dem Zeitungsbild über das Raster von .np-sheet (28-presse.css):
+   Spalten Rand | linke Seite | Falz | rechte Seite | Rand. Jedes Kind sitzt fest in
+   seiner Zelle – nichts wird automatisch in die Randspalten gesetzt (früher lagen
+   Überschrift und Kasten in der 4,2-%-Randspalte und überdeckten den Kopf). */
+.tt-sheet { grid-template-rows: 5% auto minmax(0, 1fr) 6.5%; }
+.tt-mast { grid-column: 2 / 5; grid-row: 2; margin-bottom: 0; }
+.tt-left { grid-column: 2; grid-row: 3; min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direction: column; padding: 14px 6px 0 0; }
+.tt-right { grid-column: 4; grid-row: 3; min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direction: column; padding: 14px 0 0 6px; }
+.tt-title { font-family: var(--np-serif); font-stretch: 70%; font-size: 48px; font-weight: 800; line-height: 1; margin: 6px 0 4px; color: var(--text-hi); }
+.tt-dek { margin: 0 0 14px; font-family: var(--np-serif); font-size: 16px; font-style: italic; color: var(--text-2); }
+.tt-empty { padding: 26px 0; color: var(--text-3); font-size: 16px; border-bottom: 1px solid var(--border); }
+
+/* Aufmacher: Platz 1–3 */
+.tt-podium { flex: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 18px; }
+.tt-pod { display: flex; flex-direction: column; gap: 2px; min-width: 0; padding-left: 18px; border-left: 1px solid rgba(var(--ink-rgb), 0.22); }
+.tt-pod:first-child { padding-left: 0; border-left: 0; }
+.tt-pod-stage { position: relative; height: 176px; border-bottom: 2px solid rgba(var(--ink-rgb), 0.45); overflow: hidden; }
+.tt-pod.me .tt-pod-stage { border-bottom-color: var(--accent); }
+.tt-pod-n { position: absolute; left: 0; bottom: -10px; font-family: var(--np-serif); font-size: 132px; font-weight: 900; line-height: 1; color: rgba(var(--ink-rgb), 0.16); }
+.tt-pod-face { position: absolute; left: 50%; transform: translateX(-50%); bottom: 0; line-height: 0; }
 .tt-pod-face.clickable { cursor: pointer; }
-.tt-pod-crest { position: absolute; right: 28px; bottom: 30px; }
-.tt-pod-name { font-family: var(--font-display); font-size: 22px; font-weight: 600; margin-top: 8px; line-height: 1.15; }
+.tt-pod-crest { position: absolute; right: 0; bottom: 8px; }
+.tt-pod-name { font-family: var(--np-serif); font-stretch: 70%; font-size: 24px; font-weight: 800; margin-top: 8px; line-height: 1.1; color: var(--text-hi); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tt-pod.me .tt-pod-name .tw-pname { color: var(--accent); }
-.tt-pod-club { color: var(--text-2); font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-.tt-pod-kv { display: flex; justify-content: space-between; font-size: 15px; color: var(--text-2); border-bottom: 1px solid var(--border-soft); padding: 3px 0; }
-.tt-pod-kv b { color: var(--text); font-weight: 600; }
-.tt-table { width: 100%; }
-.tt-table td { height: 38px; }
+.tt-pod-club { color: var(--text); font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tt-pod-from { color: var(--text-3); font-size: 14px; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tt-pod-kv { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 15px; color: var(--text-2); border-bottom: 1px solid var(--border-soft); padding: 3px 0; min-height: 30px; }
+.tt-pod-kv b { color: var(--text); font-weight: 600; white-space: nowrap; }
+
+/* Aufmacher-Text unter den Karten: füllt die Seite, kürzt bei Platzmangel */
+.tt-lead { flex: 1 1 auto; min-height: 0; overflow: hidden; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); column-count: 2; column-gap: 28px; }
+.tt-lead .np-text { font-family: var(--np-serif); font-size: 15.5px; line-height: 1.45; color: var(--text-2); margin: 0 0 6px; break-inside: avoid; }
+.tt-lead .np-text:first-child { color: var(--text); font-weight: 600; }
+
+/* Bilanz des Fensters (Kasten unten links) */
+.tt-facts { flex: none; margin-top: 10px; padding-top: 8px; border-top: 3px double rgba(var(--ink-rgb), 0.35); }
+.tt-facts-h { font-family: var(--font-display); font-size: 14px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-3); margin-bottom: 6px; }
+.tt-facts-row { display: grid; grid-template-columns: 0.8fr 1.5fr 0.8fr 0.8fr; }
+.tt-fact { display: flex; flex-direction: column; gap: 1px; padding: 0 12px; border-left: 1px solid rgba(var(--ink-rgb), 0.22); min-width: 0; }
+.tt-fact:first-child { padding-left: 0; border-left: 0; }
+.tt-fact b { font-family: var(--font-display); font-size: 26px; font-weight: 600; color: var(--text-hi); line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tt-fact span { font-size: 13.5px; color: var(--text-3); }
+.tt-facts-rec { margin-top: 8px; font-size: 14.5px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tt-facts-rec b { color: var(--text); }
+
+/* Rechte Seite: Tabelle aller Top-Transfers je Liga, scrollt intern */
+.tt-right-h { flex: none; margin-bottom: 0; }
+.tt-tablewrap { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+.tt-table { width: 100%; table-layout: fixed; --rl-fs: 16px; --rl-px: 6px; }
+.tt-table thead th { background: transparent; border-bottom: 1px solid var(--border); }
+.tt-table th:nth-child(1) { width: 38px; }
+.tt-table th:nth-child(3) { width: 64px; }
+.tt-table th:nth-child(4) { width: 58px; }
+.tt-table th:nth-child(5) { width: 68px; }
+.tt-table th:nth-child(6) { width: 136px; }
+.tt-table th:nth-child(7) { width: 27%; }
+.tt-table td { height: 52px; padding-left: 6px; padding-right: 6px; overflow: hidden; }
+.tt-table thead th { padding-left: 6px; padding-right: 6px; }
+.tt-pl > span, .tt-pl > small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tt-pl > small { font-size: 12.5px; color: var(--text-3); line-height: 1.2; }
+.tt-table .tw-club { max-width: 100%; gap: 7px; }
+.tt-sec-row th {
+  background: transparent; text-align: left; padding: 12px 6px 4px; font-family: var(--font-display); font-size: 15px; font-weight: 600;
+  letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-2); border-bottom: 2px solid rgba(var(--ink-rgb), 0.45);
+}
 
 /* --------------------------------------------------------- Spielersuche */
 .ps-panel { width: min(1640px, 95%); height: 54%; max-height: 93%; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; box-shadow: var(--shadow-lg); color: var(--text); overflow: hidden; }

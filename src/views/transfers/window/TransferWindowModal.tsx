@@ -13,7 +13,7 @@ import type { AppSettings } from '../../../engine/save';
 import type { Game } from '../../../game/state';
 import { windowClose, windowLabel, windowsForView } from '../../../game/transferLog';
 import {
-  clubsOfWindow, coachNews, DEFAULT_FILTER, filterRows, renewalNews, rowsOf, rumorNews, sortRows, topTransfers, transferOfWindow,
+  clubsOfWindow, coachNews, DEFAULT_FILTER, filterRows, leagueWindowFacts, renewalNews, rowsOf, rumorNews, sortRows, topTransferSections, transferOfWindow,
   type TLFilter, type TLSortKey,
 } from '../../../game/transferLogView';
 import { NewsBox, NewsList, WindowSide } from './WindowSide';
@@ -36,8 +36,9 @@ export function TransferWindowModal({ g, initialKey, auto, settings, onSettings,
   const [key, setKey] = useState(initialKey ?? wins[0]?.key ?? '');
   const win = wins.find((w) => w.key === key) ?? wins[0];
   const rows = useMemo(() => (win ? rowsOf(g, win) : []), [g, win]);
-  const tops = useMemo(() => topTransfers(g, rows), [g, rows]);
-  const [page, setPage] = useState<'top' | 'bilanz'>(auto && tops.length ? 'top' : 'bilanz');
+  const sections = useMemo(() => topTransferSections(g, rows), [g, rows]);
+  const facts = useMemo(() => leagueWindowFacts(g, rows), [g, rows]);
+  const [page, setPage] = useState<'top' | 'bilanz'>(auto && sections[0]?.rows.length ? 'top' : 'bilanz');
   const [tab, setTab] = useState<Tab>('transfers');
   const [filter, setFilter] = useState<TLFilter>(DEFAULT_FILTER);
   const [sort, setSort] = useState<{ k: TLSortKey; desc: boolean }>({ k: 'fee', desc: true });
@@ -98,7 +99,7 @@ export function TransferWindowModal({ g, initialKey, auto, settings, onSettings,
 
         {page === 'top' ? (
           <div className="tw-page-top">
-            <TopTransfersPage g={g} league={league} label={windowLabel(win.key)} date={CalendarEngine.addDays(windowClose(win.key), 1)} rows={tops} onOpen={setSel} />
+            <TopTransfersPage g={g} league={league} label={windowLabel(win.key)} date={CalendarEngine.addDays(windowClose(win.key), 1)} sections={sections} facts={facts} onOpen={setSel} />
           </div>
         ) : (
           <>

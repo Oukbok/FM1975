@@ -100,6 +100,40 @@ export function topTransfers(g: Game, rows: TLRow[], n = 10): TLRow[] {
     .sort((a, b) => b.e.ov - a.e.ov || b.e.fee - a.e.fee || a.e.age - b.e.age).slice(0, n);
 }
 
+/** Abschnitt der Top-Transfers-Tabelle: eine Liga/Staffel mit ihren stärksten Neuzugängen. */
+export interface TTSection { id: string; name: string; own: boolean; rows: TLRow[] }
+
+/** Top-Transfers je Liga: zuerst die eigene Liga (n), dann weitere Ligen/Staffeln der
+ *  ersten beiden Ebenen mit Neuzugängen (je 5). Leere fremde Abschnitte entfallen. */
+export function topTransferSections(g: Game, rows: TLRow[], n = 15): TTSection[] {
+  const own = g.leagues?.playerDivision;
+  const out: TTSection[] = [{ id: own?.id ?? 'own', name: own?.name ?? '1. Liga', own: true, rows: topTransfers(g, rows, n) }];
+  const others = [...(g.leagues?.otherDivisions ?? [])].filter((d) => d.tier >= 1 && d.tier <= 2)
+    .sort((a, b) => a.tier - b.tier || a.name.localeCompare(b.name, 'de'));
+  for (const d of others) {
+    const ids = new Set(d.clubIds);
+    const list = rows.filter((r) => !r.back && ids.has(r.e.t))
+      .sort((a, b) => b.e.ov - a.e.ov || b.e.fee - a.e.fee || a.e.age - b.e.age).slice(0, 5);
+    if (list.length) out.push({ id: d.id, name: d.name, own: false, rows: list });
+  }
+  return out;
+}
+
+/** Kennzahlen der eigenen Liga im Fenster (Zeitungskasten „Bilanz des Fensters“). */
+export interface TTFacts { count: number; fees: number; free: number; loans: number; record?: TLRow }
+export function leagueWindowFacts(g: Game, rows: TLRow[]): TTFacts {
+  const league = new Set(g.table.rows.map((r) => r.clubId));
+  const ins = rows.filter((r) => !r.back && league.has(r.e.t));
+  const paid = ins.filter((r) => !r.loan && r.e.fee > 0);
+  return {
+    count: ins.length,
+    fees: paid.reduce((s, r) => s + r.e.fee, 0),
+    free: ins.filter((r) => !r.loan && r.e.fee <= 0).length,
+    loans: ins.filter((r) => r.loan).length,
+    record: [...paid].sort((a, b) => b.e.fee - a.e.fee || b.e.ov - a.e.ov)[0],
+  };
+}
+
 /** Vereine, die im Fenster vorkommen (für „Verein auswählen“). */
 export function clubsOfWindow(g: Game, rows: TLRow[]): { id: string; name: string }[] {
   const ids = new Set<string>();

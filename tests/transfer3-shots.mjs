@@ -58,10 +58,16 @@ for (const [w, h] of [[1920, 1080], [1366, 768]]) {
   // 1) Weiter → Tag nach dem Fensterschluss → Top-Transfers + Bilanz
   if (process.env.SAVE) {
     // Tag nach dem Schluss: „Weiter“ bzw. „Schnell simulieren“ (Spieltag), Spielbericht schließen …
-    for (let i = 0; i < 12 && !(await page.locator('.tw-panel').count()); i++) {
+    for (let i = 0; i < 30 && !(await page.locator(".tw-panel").count()); i++) {
       const close = page.locator('.modal-overlay .modal-close, .modal-overlay button:has-text("Schließen"), .modal-overlay button:has-text("Weiter")').first();
-      if (await close.count()) await close.click();
-      else if (await page.locator('.hd-continue').count()) await page.locator('.hd-continue').first().click();
+      const sim = page.locator('.pm-go-btn:has-text("Simulieren")').first();
+      if (await page.locator('.dr-root').count()) {
+        await page.keyboard.press('Escape'); await page.waitForTimeout(500);
+        if (await page.locator('.dr-root').count()) await page.locator('.dr-root .dg-go:has-text("Weiter"), .dr-close').first().click({ timeout: 4000 }).catch(() => page.keyboard.press('Escape'));
+      } else if (await sim.count()) await sim.click();
+      else if (await close.count()) await close.click();
+      else if (await page.locator('.gb-root, .aw-root, .ft-root').count()) await page.locator('.gb-root button:has-text("Weiter"), .aw-root button:has-text("Weiter"), .ft-root button').last().click({ timeout: 4000 }).catch(() => page.keyboard.press('Escape'));
+      else if (await page.locator('.hd-continue').count()) await page.locator('.hd-continue').first().click({ timeout: 4000 }).catch(() => {});
       else { await page.screenshot({ path: `${outDir}/${tag}_weiter_${i}.png` }); await page.keyboard.press('Escape'); }
       await page.waitForTimeout(1500);
     }
