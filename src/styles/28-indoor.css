@@ -163,34 +163,20 @@
 
 /* --- Textmodus --- */
 .ix-match { min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 14px; }
-.ix-tb { display: grid; grid-template-columns: minmax(0, 1fr) 300px minmax(0, 1fr); align-items: center; gap: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-soft); }
-.ix-tb-side { display: flex; align-items: center; gap: 18px; min-width: 0; justify-content: flex-end; }
-.ix-tb-side.r { flex-direction: row-reverse; }
-.ix-tb-crest { flex: none; filter: drop-shadow(0 6px 14px rgba(var(--shade-rgb), 0.5)); }
-.ix-tb-name { font-family: var(--font-display); font-weight: 600; font-size: 30px; text-transform: uppercase; letter-spacing: 0.6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-.ix-tb-side.me .ix-tb-name { color: var(--accent); }
-.ix-tb-mid { text-align: center; }
-.ix-tb-stage { font-family: var(--font-display); font-size: 17px; letter-spacing: 1.3px; text-transform: uppercase; color: var(--text-3); }
-.ix-tb-score { font-family: var(--font-display); font-weight: 600; font-size: 104px; line-height: 1.05; animation: ix-pop 0.45s ease-out; }
-.ix-tb-score span { color: var(--text-3); padding: 0 8px; }
-.ix-tb-clock, .ix-tb-so { font-family: var(--font-display); font-size: 26px; color: var(--text); }
-.ix-tb-clock span { color: var(--text-3); font-size: 21px; }
+/* Kopf und Liste aus dem großen Textmodus (.tm-*, 28-textmode2.css), hier nur Abweichungen. */
+.ix-stage { padding: 12px 22px 8px; }
+.ix-stage .tm-bar-team { font-size: 25px; }
+.ix-score { animation: ix-pop 0.45s ease-out; }
+.ix-stage .tm-scorers { font-size: 16px; color: var(--text-2); }
+.ix-stage .tm-clock-txt b { font-size: 20px; }
+/* Meter springt sofort auf die Stufe (eine Zeile = eine Szene), nur das Zurückfallen gleitet. */
+.ix-stage .tm-cell.lit, .ix-stage .tm-meter .tm-chev.on { transition: none; }
+.ix-tl-bar { height: 52px; margin-top: 6px; }
+.ix-tl-bar .tm-tl-track { top: 20px; }
 @keyframes ix-pop { from { transform: scale(1.12); } to { transform: scale(1); } }
-.ix-ticker { min-height: 0; overflow-y: auto; padding-right: 6px; display: flex; flex-direction: column; }
-.ix-tl {
-  display: grid; grid-template-columns: 60px minmax(0, 1fr) auto; align-items: baseline; gap: 12px;
-  padding: 10px 12px; border-bottom: 1px solid var(--border-soft); font-size: 20px; line-height: 1.35; color: var(--text-2);
-  animation: ix-in 0.3s ease-out;
-}
-@keyframes ix-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-.ix-tl-min { font-family: var(--font-display); color: var(--text-3); font-size: 19px; }
-.ix-tl-score { font-family: var(--font-display); font-weight: 600; font-size: 24px; color: var(--text); }
-.ix-tl.tone-goal { color: var(--text); font-weight: 600; background: rgba(var(--ink-rgb), 0.04); }
-.ix-tl.tone-goal-mine { color: var(--text); font-weight: 700; background: rgba(var(--ink-rgb), 0.05); box-shadow: inset 4px 0 0 var(--accent); }
-.ix-tl.tone-whistle { color: var(--text-3); }
-.ix-tl.tone-hot .ix-tl-txt { color: var(--text); }
-.ix-tl.tone-so-hit .ix-tl-txt { color: var(--pos); }
-.ix-tl.tone-so-miss .ix-tl-txt { color: var(--neg); }
+.ix-ticker .tm-tk-line.ix-t-so-hit { color: var(--pos); }
+.ix-ticker .tm-tk-line.ix-t-so-miss { color: var(--neg); }
+.ix-ticker .tm-tk-line.ix-t-hot { color: var(--text); }
 .ix-ctrl { display: flex; align-items: center; gap: 14px; min-height: 72px; }
 
 /* --- Siegerehrung --- */

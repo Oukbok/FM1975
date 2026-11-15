@@ -68,7 +68,7 @@ if (mode === 'draw') {
   console.log('Ziehung', (await page.locator('.dr-comp').innerText()).trim());
   await page.waitForTimeout(800);
   await shot('01_regeln');
-  await page.click('button:has-text("Mit der Auslosung beginnen")');
+  await page.click('.dg-go');
   await page.waitForTimeout(9000);
   await shot('02_ziehung');
   const mine = page.locator('button:has-text("Bis zu meiner Ziehung")');
@@ -79,7 +79,7 @@ if (mode === 'draw') {
   await page.click('.dr-tabs button:nth-child(2)');
   await page.waitForTimeout(600);
   await shot('05_alle_gruppen');
-  await page.click('.dr-top-r button:has-text("Schließen")');
+  await page.click('.dg-go:has-text("Weiter")');
   await page.waitForTimeout(400);
 }
 

@@ -25,7 +25,7 @@ import { fmtDateFull } from '../../ui/format';
 import { IndoorHall } from './IndoorHall';
 import { IndoorMatchPanel, type TickSpeed } from './IndoorMatchPanel';
 import { GroupTablesPanel, SchedulePanel } from './IndoorPanels';
-import { CeremonyStage, IntroStage, NextStage } from './IndoorStageParts';
+import { CeremonyStage, IntroStage, NextStage, roundOf, type IndoorRound } from './IndoorStageParts';
 import { indoorSide, narrate, type TickLine } from './indoorScript';
 
 type Phase = 'intro' | 'board' | 'match' | 'done';
@@ -49,13 +49,15 @@ export function IndoorShow({ g, t, settings, onSettings, onClose }: {
   const [cur, setCur] = useState<{ slot: LiveSlot; play: IndoorPlay; lines: TickLine[] } | null>(null);
   const [last, setLast] = useState<LiveSlot | undefined>();
   const [fresh, setFresh] = useState<number | undefined>();
-  const [running, setRunning] = useState(false);
+  // Fremde Spiele laufen: 'own' = bis du wieder dran bist, sonst nur die genannte Runde (Wunsch Pascal: „Zum Halbfinale“).
+  const [running, setRunning] = useState<false | 'own' | IndoorRound>(false);
   const [final, setFinal] = useState<{ res: IndoorResult; out?: IndoorOutcome } | null>(null);
   const blockGames = useRef(0);
 
   useEffect(() => { if (speed !== (settings.indoorSpeed ?? 'normal')) onSettings({ ...settings, indoorSpeed: speed }); }, [speed]);
 
   const isOwn = (s?: LiveSlot) => !!s && (s.a === mid || s.b === mid);
+  const isOwnLeft = () => live.slots.some((s) => !s.match && (s.a === mid || s.b === mid));
   const ownPlay = (s: LiveSlot): IndoorPlay => {
     const own: 0 | 1 = s.a === mid ? 0 : 1;
     const a = indoorSide(s.a!, live.strength[s.a!], squads.get(s.a!));
@@ -79,7 +81,7 @@ export function IndoorShow({ g, t, settings, onSettings, onClose }: {
   useEffect(() => {
     if (!running) return;
     const s = nextSlot(live);
-    if (!s || isOwn(s)) { setRunning(false); if (!s) finish(); return; }
+    if (!s || isOwn(s) || (running !== 'own' && roundOf(s.stage) !== running)) { setRunning(false); if (!s) finish(); return; }
     const timer = setTimeout(() => { autoPlaySlot(live, s); afterSlot(s); }, speed === 'schnell' ? 220 : speed === 'langsam' ? 900 : 480);
     return () => clearTimeout(timer);
   });
@@ -117,7 +119,7 @@ export function IndoorShow({ g, t, settings, onSettings, onClose }: {
       if (phase === 'intro') setPhase('board');
       else if (phase === 'done') onClose();
       else if (isOwn(slot)) startText();
-      else setRunning(true);
+      else if (slot) setRunning(isOwnLeft() ? 'own' : roundOf(slot.stage));
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -135,7 +137,7 @@ export function IndoorShow({ g, t, settings, onSettings, onClose }: {
         </div>
         {phase !== 'done' && (
           <div className="ix-top-r">
-            <button className="ix-btn" onClick={simAll} disabled={running}><Icon name="skip" size={22} /> Alles simulieren</button>
+            <button className="ix-btn" onClick={simAll} disabled={!!running}><Icon name="skip" size={22} /> Alles simulieren</button>
           </div>
         )}
       </header>
@@ -147,7 +149,7 @@ export function IndoorShow({ g, t, settings, onSettings, onClose }: {
           {phase === 'intro' && <IntroStage g={g} t={t} live={live} squad={squads.get(mid) ?? []} onStart={() => setPhase('board')} onAll={simAll} />}
           {phase === 'board' && slot && (
             <NextStage g={g} live={live} slot={slot} plan={plan} onPlan={setPlan} year={year} last={last}
-              onText={startText} onResult={quickResult} onOthers={() => setRunning(true)} />
+              onText={startText} onResult={quickResult} onOthers={() => setRunning(isOwnLeft() ? 'own' : roundOf(slot.stage))} />
           )}
           {phase === 'match' && cur && (
             <IndoorMatchPanel key={cur.slot.no} g={g} play={cur.play} lines={cur.lines} speed={speed} onSpeed={setSpeed}

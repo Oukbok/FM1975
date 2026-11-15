@@ -69,7 +69,7 @@ const waitFor = async (sel, ms = 15000) => page.locator(sel).first().waitFor({ s
 console.log('Ziehung', (await page.locator('.dr-comp').innerText()).trim());
 await page.waitForTimeout(900);
 await shot('01_start');
-await page.click('button:has-text("Mit der Auslosung beginnen")');
+await page.click('.dg-go');
 if (await waitFor('.dg-ball.roll')) { await page.waitForTimeout(300); await shot('02_kugel_rollt'); }
 if (await waitFor('.dg-prow.fresh, .dg-gcard.fresh, .dg-lrow.fresh')) { await page.waitForTimeout(400); await shot('03_erste_kugel'); }
 // Mitten in der Ziehung: per Weiter-Knopf (rund, unten rechts) ein gutes Stück vorspulen.
@@ -98,7 +98,7 @@ if (await page.locator('.dr-tabs button:has-text("Turnierbaum")').isVisible().ca
   await page.waitForTimeout(500);
   await shot('09c_turnierbaum');
 }
-await page.click('.dr-top-r button:has-text("Schließen")');
+await page.click('.dg-go:has-text("Weiter")');
 await page.waitForTimeout(400);
 const closed = !(await page.locator('.dr-root').isVisible().catch(() => false));
 console.log('Show geschlossen:', closed);
@@ -120,7 +120,7 @@ if (await rep.isVisible().catch(() => false)) {
   await rep.click();
   await page.waitForTimeout(600);
   await page.locator('button:has-text("Schnell")').first().click();
-  await page.click('button:has-text("Mit der Auslosung beginnen")');
+  await page.click('.dg-go');
   await page.waitForTimeout(2500);
   await shot('11_wiederholung_reduziert');
   await page.keyboard.press('Escape');

@@ -8,8 +8,13 @@ import type { Side } from '../../../engine/match/types';
 import type { Line } from '../../../data/ticker/narrator';
 
 export function DangerMeter({ line, homeName, awayName }: { line: Line | null; homeName: string; awayName: string }) {
-  const lvl = line?.danger ?? 0;
-  const side: Side | undefined = lvl ? line?.side : undefined;
+  return <MeterCells lvl={line?.danger ?? 0} side={line?.side} homeName={homeName} awayName={awayName} />;
+}
+
+/** Reines Meter (auch für die Hallen-Show): Stufe 0–3 Richtung Heim/Gast. */
+export function MeterCells({ lvl: raw, side: rawSide, homeName, awayName }: { lvl: number; side?: Side; homeName: string; awayName: string }) {
+  const lvl = rawSide ? raw : 0;
+  const side: Side | undefined = lvl ? rawSide : undefined;
   const word = !lvl || !side ? 'Ruhige Phase' : `${side === 'home' ? homeName : awayName}: ${lvl === 3 ? 'Großchance' : lvl === 2 ? 'gefährlich' : 'im Aufbau'}`;
   // Feld -3 … 3: links = Heim, rechts = Gast
   const cells = [-3, -2, -1, 0, 1, 2, 3];

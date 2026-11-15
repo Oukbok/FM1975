@@ -40,11 +40,18 @@ export interface TickLine {
   score: [number, number];
   /** Stand im Neunmeterschießen (wenn begonnen). */
   so?: [number, number];
+  /** Chancen-Meter wie im großen Textmodus: 0 ruhig, 1 Aufbau, 2 gefährlich, 3 Großchance/Tor – zur Seite des Angreifers. */
+  danger: 0 | 1 | 2 | 3;
   ev: IndoorEvent;
 }
 
 const fmtClock = (t: number) => `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
 export { fmtClock };
+
+/** Meter-Stufe je Ereignis – eine Zeile ist eine ganze Szene, das Meter springt sofort. */
+const DANGER: Partial<Record<IndoorEvent['kind'], 0 | 1 | 2 | 3>> = {
+  goal: 3, post: 3, so_shot: 3, save: 2, chance: 2, board: 1, keeper_out: 1,
+};
 
 /** Kommentarzeilen eines eigenen Hallenspiels. */
 export function narrate(g: Game, play: IndoorPlay, own: 0 | 1, ctxInfo: { hall: string; city: string; year: number; seed: string }): TickLine[] {
@@ -107,7 +114,7 @@ export function narrate(g: Game, play: IndoorPlay, own: 0 | 1, ctxInfo: { hall: 
     }
     if (!isSo) reg = [e.score[0], e.score[1]];
     if (!text) return;
-    out.push({ key: `${i}`, t: isSo ? null : e.t, text, tone, score: [reg[0], reg[1]], so: so ? [so[0], so[1]] : undefined, ev: e });
+    out.push({ key: `${i}`, t: isSo ? null : e.t, text, tone, score: [reg[0], reg[1]], so: so ? [so[0], so[1]] : undefined, danger: DANGER[e.kind] ?? 0, ev: e });
   });
   return out;
 }

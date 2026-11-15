@@ -3,7 +3,7 @@
 // bühne (GalaStage.tsx). Mittelkarte: Pokal + Titel, Lostopf als Raster aller
 // Teilnehmer, darunter Regeln (DrawIntro.tsx) bzw. die Paarungsliste/Gruppen,
 // die sich aufbauen, während die Vereine aus dem Raster verschwinden
-// (DrawBoard.tsx, DrawGroups.tsx); Kommentarband, runder Start/Weiter-Knopf. Am Ende: dein Los, alle
+// (DrawBoard.tsx, DrawGroups.tsx); Kommentarband mit „Sofort anzeigen“ und Start/Weiter-Knopf. Am Ende: dein Los, alle
 // Paarungen und der Turnierbaum (DrawOverview.tsx). Live am Auslosungstag (Zeit
 // steht) oder als Wiederholung. Daten: round.draw (game/cupDraw.ts), Ablauf:
 // useDrawPlayer.ts.
@@ -79,7 +79,7 @@ export function DrawShow({ g, rec, replay, settings, onSettings, onClose }: {
   const compLabel = cup ? drawCompLabel(rec.comp, cup) : drawCompName(rec.comp);
   const drawing = p.phase !== 'intro' && p.phase !== 'done';
   const back = p.phase === 'hold' && ball?.rejected ? ball.id : null;
-  const goLabel = p.phase === 'done' ? 'Schließen' : p.phase === 'intro' && !p.started ? 'Auslosung starten' : 'Nächste Kugel';
+  const goLabel = p.phase === 'done' ? 'Weiter' : p.phase === 'intro' ? 'Auslosung beginnen' : 'Nächste Kugel';
 
   return (
     <div className={`dr-root dg-root dr-c-${rec.comp} dr-stage-${rec.stage} ${p.paused ? 'paused' : ''}`} role="dialog" aria-label={`Auslosung ${rec.roundName}`}>
@@ -99,7 +99,6 @@ export function DrawShow({ g, rec, replay, settings, onSettings, onClose }: {
                 <button key={v} className={`seg-btn ${tab === v ? 'active' : ''}`} onClick={() => setTab(v)}>{l}</button>
               ))}
             </div>
-            <button className="ms-btn" onClick={onClose} title="Esc">Schließen</button>
           </div>
         ) : (
           <div className="dr-top-r">
@@ -120,12 +119,6 @@ export function DrawShow({ g, rec, replay, settings, onSettings, onClose }: {
                 <Icon name="skip" size={22} /> Bis zu meiner Ziehung
               </button>
             )}
-            <button className="ms-btn" onClick={p.skipAll} title="Esc">
-              <Icon name="skip" size={22} /> Zum Ergebnis
-            </button>
-            <button className="ms-btn" onClick={onClose} title="Auslosung schließen – das Ergebnis steht unter Statistiken">
-              Auslosung überspringen
-            </button>
           </div>
         )}
       </div>
@@ -150,27 +143,35 @@ export function DrawShow({ g, rec, replay, settings, onSettings, onClose }: {
               {tab === 'bracket' && cup && <BracketOverview cup={cup} rec={rec} clubs={lookup} myId={myId} />}
             </div>
           ) : (
-            <div className={`dg-body draw dg-${boardSize(rec)}`}>
-              <PoolGrid rec={rec} clubs={lookup} shown={p.shown} back={back} activePot={ball ? ball.pot : null} />
+            <div className={`dg-body draw dg-${boardSize(rec)} ${p.phase === 'intro' ? 'intro' : ''}`}>
+              <PoolGrid rec={rec} clubs={lookup} shown={p.shown} back={back} activePot={ball ? ball.pot : null} big={p.phase === 'intro'} />
               <div className="dg-lower">
                 {p.phase === 'intro'
-                  ? <DrawIntro rec={rec} cup={cup} startYear={startYear} show={show} replay={replay} onStart={p.start} onOverview={toOverview} />
+                  ? <DrawIntro rec={rec} cup={cup} startYear={startYear} show={show} />
                   : grouped ? <GroupsPanel rec={rec} clubs={lookup} shown={p.shown} /> : <PairList rec={rec} clubs={clubs} shown={p.shown} />}
               </div>
             </div>
           )}
 
-          <div className={`dg-band tone-${line?.tone ?? 'neutral'}`} aria-live="polite">
-            {drawing && p.phase !== 'hold' && ball && (
-              <span key={`b${p.step}`} className={`dg-ball ${p.phase} ${p.reduced ? 'still' : ''}`}><BallSvg pot={ball.pot} size={46} /></span>
-            )}
-            {line ? <span key={`${p.step}-${p.phase}`} className="dg-band-txt">{line.text}</span>
-              : <span className="dg-band-txt dim">{p.paused ? 'Pause' : p.phase === 'open' && ball ? `Los ${ball.no} · ${rec.pots[ball.pot]?.label ?? ''}` : 'Die nächste Kugel …'}</span>}
+          <div className="dg-foot">
+            <div className={`dg-band tone-${line?.tone ?? 'neutral'}`} aria-live="polite">
+              {drawing && p.phase !== 'hold' && ball && (
+                <span key={`b${p.step}`} className={`dg-ball ${p.phase} ${p.reduced ? 'still' : ''}`}><BallSvg pot={ball.pot} size={46} /></span>
+              )}
+              {line ? <span key={`${p.step}-${p.phase}`} className="dg-band-txt">{line.text}</span>
+                : <span className="dg-band-txt dim">{p.paused ? 'Pause' : p.phase === 'open' && ball ? `Los ${ball.no} · ${rec.pots[ball.pot]?.label ?? ''}` : 'Die nächste Kugel …'}</span>}
+            </div>
+            {/* Rechteckige Knöpfe statt Rundknopf (Wunsch Pascal): „Sofort anzeigen“ klein daneben. */}
+            <div className="dg-actions">
+              {p.phase !== 'done' && (
+                <button className="ms-btn dg-skip" onClick={toOverview} title="Esc">Sofort anzeigen</button>
+              )}
+              <button className="dg-go" onClick={p.phase === 'done' ? onClose : p.phase === 'intro' && !p.started ? p.start : p.next}
+                title={p.phase === 'done' ? 'Esc' : undefined} disabled={p.phase === 'intro' && p.started} autoFocus={p.phase === 'intro'}>
+                {goLabel}
+              </button>
+            </div>
           </div>
-          <button className="dg-go" onClick={p.phase === 'done' ? onClose : p.phase === 'intro' && !p.started ? p.start : p.next}
-            title={goLabel} aria-label={goLabel} disabled={p.phase === 'intro' && p.started}>
-            <Icon name={p.phase === 'done' ? 'close' : p.phase === 'intro' ? 'play' : 'skip'} size={40} />
-          </button>
         </div>
       </div>
     </div>

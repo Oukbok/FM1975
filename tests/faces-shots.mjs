@@ -81,7 +81,7 @@ if (process.env.ONLY !== 'text') try { await nav('Finanzen', 'Budget'); await sh
 // Textmodus: bis zum nächsten eigenen Spiel weiterspielen, Wechsel-Bildschirm öffnen (Gesichter auf dem Feld).
 if (process.env.TEXT !== '0') try {
   const closeModals = async () => {
-    for (const sel of ['button:has-text("Überspringen")', 'button:has-text("Fortsetzen")', 'button:has-text("Schließen")', 'button:has-text("OK")', 'button:has-text("Übernehmen")', 'button:has-text("Bestätigen")', '.modal-close', '.dr-root button:has-text("Ergebnis sofort zeigen")']) {
+    for (const sel of ['button:has-text("Überspringen")', 'button:has-text("Fortsetzen")', 'button:has-text("Schließen")', 'button:has-text("OK")', 'button:has-text("Übernehmen")', 'button:has-text("Bestätigen")', '.modal-close', '.dr-root:not(.rt-root) .dg-skip', '.dr-root:not(.rt-root) .dg-go:has-text("Weiter")']) {
       const b = page.locator(sel).first();
       if (await b.isVisible().catch(() => false)) await b.click().catch(() => {});
     }

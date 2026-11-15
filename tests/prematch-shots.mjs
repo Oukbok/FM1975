@@ -89,7 +89,7 @@ while (matches < MAX && Date.now() - t0 < 8 * 60_000) {
     if (!(await page.locator('.modal-overlay').count())) errors.push(`${kind}: nach „Simulieren“ kein Spielbericht`);
     if (seen.size >= 6) break;
   }
-  for (const sel of ['button:has-text("Zum Spielbericht")', '.dr-root button:has-text("Ergebnis sofort zeigen")', '.dr-root button:has-text("Bis zum Ende springen")', '.dr-root button:has-text("Schließen")', 'button:has-text("Schließen")', '.modal-overlay .modal-close']) {
+  for (const sel of ['button:has-text("Zum Spielbericht")', '.dr-root:not(.rt-root) .dg-skip', '.dr-root:not(.rt-root) .dg-go:has-text("Weiter")', '.dr-root button:has-text("Bis zum Ende springen")', '.dr-root button:has-text("Schließen")', 'button:has-text("Schließen")', '.modal-overlay .modal-close']) {
     const b = page.locator(sel).first();
     if (await b.isVisible().catch(() => false)) await b.click().catch(() => {});
   }

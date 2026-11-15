@@ -50,18 +50,22 @@ export function drawnSet(rec: DrawRecord, shown: number): Set<string> {
 }
 
 /** Lostopf als Raster: je Topf ein Abschnitt; gezogene Vereine blenden aus, das Feld bleibt leer. */
-export function PoolGrid({ rec, clubs, shown, back, activePot }: {
+export function PoolGrid({ rec, clubs, shown, back, activePot, big }: {
   rec: DrawRecord; clubs: (id: string) => ShowClub; shown: number; back?: string | null; activePot: number | null;
+  /** Startbildschirm: Vereine größer, die Regeln darunter kompakt (Wunsch Pascal). */
+  big?: boolean;
 }) {
   const out = drawnSet(rec, shown);
   const size = boardSize(rec);
   const maxPot = Math.max(...rec.pots.map((p) => p.ids.length));
   const single = rec.pots.length === 1;
   // Ein Topf mit bis zu 40 Vereinen: breitere Felder (6 Spalten), damit lange Namen ausgeschrieben bleiben.
-  const cols = !single && maxPot <= 10 ? maxPot : size === 's' ? 4 : size === 'm' && single ? 4 : size === 'l' && single ? 6 : 8;
-  const crest = size === 'xl' ? 26 : size === 'l' ? 34 : size === 'm' ? 42 : 48;
+  const base = !single && maxPot <= 10 ? maxPot : size === 's' ? 4 : size === 'm' && single ? 4 : size === 'l' && single ? 6 : 8;
+  // Startbildschirm, kleine Ziehung: Töpfe zweizeilig, damit die großen Namen ausgeschrieben bleiben.
+  const cols = big && (size === 's' || size === 'm') && base > 5 ? Math.ceil(base / 2) : base;
+  const crest = Math.round((size === 'xl' ? 26 : size === 'l' ? 34 : size === 'm' ? 42 : 48) * (big && size !== 'xl' ? 1.45 : 1));
   return (
-    <div className={`dg-pool dg-${size} ${cols >= 8 ? 'dense' : ''}`}>
+    <div className={`dg-pool dg-${size} ${cols >= 8 ? 'dense' : ''} ${big ? 'big' : ''}`}>
       {rec.pots.map((p, pi) => {
         const left = p.ids.filter((id) => !out.has(id)).length;
         return (

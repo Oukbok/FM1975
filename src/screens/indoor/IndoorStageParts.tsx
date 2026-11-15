@@ -56,6 +56,11 @@ const STYLE_TXT: Record<IndoorStyle, [string, string]> = {
   offensiv: ['Offensiv', 'Pressing an der Bande – mehr Tore auf beiden Seiten.'],
 };
 
+/** Runden der Show: Vorrunde (beide Gruppen), Halbfinale, Spiel um Platz 3, Finale. */
+export type IndoorRound = 'V' | 'SF' | 'P3' | 'F';
+export const roundOf = (st: LiveSlot['stage']): IndoorRound => (st === 'A' || st === 'B' ? 'V' : st as IndoorRound);
+const ROUND_GO: Record<IndoorRound, string> = { V: 'Vorrunde zu Ende spielen', SF: 'Zum Halbfinale', P3: 'Zum Spiel um Platz 3', F: 'Zum Finale' };
+
 export function NextStage({ g, live, slot, plan, onPlan, year, last, onText, onResult, onOthers }: {
   g: Game; live: IndoorLive; slot: LiveSlot; plan: IndoorPlan; onPlan: (p: IndoorPlan) => void; year: number;
   last?: LiveSlot; onText: () => void; onResult: () => void; onOthers: () => void;
@@ -119,7 +124,7 @@ export function NextStage({ g, live, slot, plan, onPlan, year, last, onText, onR
           </div>
         </div>
       ) : (
-        <p className="ix-nx-note">{ownLeft ? 'Die übrigen Spiele laufen als Ergebnis durch, bis du wieder dran bist.' : 'Dein Turnier ist beendet – die restlichen Spiele laufen als Ergebnis durch.'}</p>
+        <p className="ix-nx-note">{ownLeft ? 'Die übrigen Spiele laufen als Ergebnis durch, bis du wieder dran bist.' : 'Dein Turnier ist beendet – die übrigen Spiele laufen Runde für Runde als Ergebnis durch.'}</p>
       )}
       <div className="ix-actions">
         {lastLine}
@@ -130,7 +135,7 @@ export function NextStage({ g, live, slot, plan, onPlan, year, last, onText, onR
             <button className="ix-btn primary big" onClick={onText}>Kurzer Textmodus</button>
           </>
         ) : (
-          <button className="ix-btn primary big" onClick={onOthers}>{ownLeft ? 'Weiter bis zu deinem Spiel' : 'Turnier zu Ende spielen'}</button>
+          <button className="ix-btn primary big" onClick={onOthers}>{ownLeft ? 'Weiter bis zu deinem Spiel' : ROUND_GO[roundOf(slot.stage)]}</button>
         )}
       </div>
     </div>
