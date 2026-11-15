@@ -577,7 +577,7 @@ export function ageYouthPlayers(club: Club, youthPlayers: Record<string, Player>
     p.age += 1;
     // Jugendverträge (Förderverträge) laufen mit: abgelaufene um 2 Jahre verlängern und den
     // Marktwert neu einordnen (sonst stand bei KI-Talenten z. B. „bis 30.6.2007“ im Jahr 2016).
-    if (year && p.contract.expiryDate < `${year}-06-30`) p.contract.expiryDate = `${year + 2}-06-30`;
+    if (year && p.contract.expiryDate <= `${year}-06-30`) p.contract.expiryDate = `${year + 2}-06-30`;
     if (year) p.contract.transferValue = Math.min(p.contract.transferValue, baseMarketValue(p));
   }
 }

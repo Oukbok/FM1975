@@ -85,11 +85,17 @@ export class Narrator {
   private lastStat = -20;
   private labelMem: Record<Side, number> = { home: 0, away: 0 };
 
+  /** Eigene Zufallsfolge aus dem Startwert des Spiels – gleicher Spielstand, gleicher Kommentar (nicht von der Uhrzeit abhängig). */
+  private r: () => number;
+
   constructor(private sim: MatchSim, public opts: NarratorOpts) {
-    this.sp = new Speaker({ ...LEXICON, ...CHANCES, ...SITUATIONS, ...AMBIENCE, ...DUELS }, mulberry(Date.now() & 0xffffffff));
+    const seed = ((sim.seed ?? 0) ^ 0x5bd1e995) >>> 0;
+    this.sp = new Speaker({ ...LEXICON, ...CHANCES, ...SITUATIONS, ...AMBIENCE, ...DUELS }, mulberry(seed));
+    this.r = mulberry((seed + 0x9e3779b9) >>> 0);
   }
 
-  private rnd(): number { return Math.random(); }
+  private rnd(): number { return this.r(); }
+  private pickOne<T>(xs: T[]): T { return xs[Math.floor(this.r() * xs.length)]; }
 
   private dupes: Set<string> | null = null;
 
@@ -222,7 +228,7 @@ export class Narrator {
         case 'injury': {
           const c = this.ctx(ev);
           out.push(this.line(ev, this.sp.say('injury', c), 'normal'));
-          if (ev.detail === 'wartet') { out.push(this.line(ev, pickOne([`${c.slots.p} humpelt weiter – die Bank wartet auf dein Zeichen.`, `${c.slots.p} beißt auf die Zähne. Du musst entscheiden, ob er raus soll.`]), 'you')); break; }
+          if (ev.detail === 'wartet') { out.push(this.line(ev, this.pickOne([`${c.slots.p} humpelt weiter – die Bank wartet auf dein Zeichen.`, `${c.slots.p} beißt auf die Zähne. Du musst entscheiden, ob er raus soll.`]), 'you')); break; }
           const m = this.sim.team(ev.side!).players.find((x) => x.id === ev.player);
           out.push(this.line(ev, this.sp.say(m?.onPitch ? 'injury_on' : 'injury_off', c), 'normal'));
           break;
@@ -253,7 +259,7 @@ export class Narrator {
         }
         case 'warmup': {
           const p = this.name(ev.player);
-          out.push(this.line(ev, pickOne([`${p} macht sich an der Seitenlinie warm.`, `${p} zieht die Trainingsjacke aus und läuft sich warm.`, `An der Außenlinie dehnt sich ${p} – da bahnt sich etwas an.`]), ev.side === this.opts.mySide ? 'you' : 'normal'));
+          out.push(this.line(ev, this.pickOne([`${p} macht sich an der Seitenlinie warm.`, `${p} zieht die Trainingsjacke aus und läuft sich warm.`, `An der Außenlinie dehnt sich ${p} – da bahnt sich etwas an.`]), ev.side === this.opts.mySide ? 'you' : 'normal'));
           break;
         }
         case 'ptalk': {
@@ -425,4 +431,3 @@ function mulberry(seed: number): () => number {
   };
 }
 
-function pickOne<T>(xs: T[]): T { return xs[Math.floor(Math.random() * xs.length)]; }

@@ -89,6 +89,8 @@ export class MatchSim {
   readonly home: TeamState;
   readonly away: TeamState;
   readonly rng: () => number;
+  /** Startwert der Zufallsfolge (auch für den Kommentar, damit er nicht von der Uhrzeit abhängt). */
+  readonly seed: number;
   readonly era: EraRules;
   readonly year: number;
   readonly date?: string;
@@ -118,6 +120,7 @@ export class MatchSim {
 
   constructor(homeClub: Club, awayClub: Club, readonly players: Record<string, Player>, opts: SimOptions) {
     const seed = opts.seed ?? Math.floor(Math.random() * 0xffffffff);
+    this.seed = seed >>> 0;
     this.rng = mulberry32(seed);
     this.year = opts.year;
     this.date = opts.date;
