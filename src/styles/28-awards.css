@@ -260,3 +260,65 @@ button.aw-name { font-family: var(--font-display); font-size: 24px; font-weight:
   .tos-chip-g { font-size: 11px; }
   .tos-list li { font-size: 13px; padding: 2px 0; }
 }
+
+/* =============================================================================
+   Lesbarkeit + Gesichter (Rückmeldung Pascal): Seite Statistiken › Auszeichnungen
+   und Popup – größere Nebentexte, Gesicht in den Listen, Markierung eigener Spieler
+   mit festem Abstand (der Strich liegt nie über der Platzziffer). Boxen bleiben gleich groß.
+   ============================================================================= */
+/* Plätze 2/3 bzw. 4–10, Elf-Liste: alle Zeilen mit demselben Innenabstand links → Strich und Ziffer getrennt */
+.aw-rest li, .aw-card.compact .aw-rest li { padding-left: 10px; padding-right: 4px; }
+.aw-rest li.mine, .aw-card.compact .aw-rest li.mine { padding-left: 10px; box-shadow: inset 3px 0 0 var(--accent); background: var(--rl-me-bg); }
+.aw-rk { text-align: right; }
+.aw-rest-who { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.aw-rest-who > .fthumb, .tos-list-who > .fthumb, .gs-who > .fthumb, .gb-rest-name > .fthumb { margin: -4px 0; }
+.aw-rest-who > .aw-rest-name { min-width: 0; }
+.tos-list li, .tos-list li.mine { padding-left: 10px; }
+.tos-list li.mine { background: var(--rl-me-bg); }
+.tos-list-who { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.gs-who { display: inline-flex; align-items: center; gap: 8px; }
+
+/* Seite (kompakte Karten): Nebentexte lesbar */
+.aw-page .gbt-sub { font-size: 17px; }
+.aw-page .aw-cat { font-size: 15px; }
+.aw-page .aw-tag { font-size: 13px; padding: 2px 7px; }
+.aw-page .aw-card.compact .aw-name { font-size: 24px; }
+.aw-page .aw-meta { font-size: 16px; }
+.aw-page .aw-club { font-size: 17px; }
+.aw-page .aw-card.compact .aw-kpi b { font-size: 24px; }
+.aw-page .aw-kpi span { font-size: 13px; }
+.aw-page .aw-card.compact .aw-why { font-size: 16px; line-height: 1.4; }
+.aw-page .aw-card.compact .aw-rest li { font-size: 17px; padding-top: 5px; padding-bottom: 5px; grid-template-columns: 22px minmax(0, 1fr) minmax(0, auto) 44px; }
+.aw-page .aw-rest-name { font-size: 17px; }
+.aw-page .aw-rest-club { font-size: 15px; max-width: 160px; }
+.aw-page .gs-table td { font-size: 16px; }
+.aw-page .tos-list li { font-size: 16px; padding-top: 4px; padding-bottom: 4px; grid-template-columns: 50px minmax(0, 1fr) minmax(0, 0.9fr) 44px; }
+.aw-page .tos-list-n { font-size: 16px; }
+.aw-page .tos-list-c { font-size: 15px; }
+.aw-page .tos-chip-n { font-size: 14px; }
+.aw-page .tos-chip-g { font-size: 13px; }
+/* Die Besten der Saison auf der Seite: vier Karten + Ehrenzeile müssen in die Box passen → etwas knapper */
+.aw-page .aw-grid.compact:not(.gbt-grid):not(.tdj-grid) .aw-card.compact { gap: 6px; }
+.aw-page .aw-grid.compact:not(.gbt-grid):not(.tdj-grid) .aw-name { font-size: 21px; }
+.aw-page .aw-grid.compact:not(.gbt-grid):not(.tdj-grid) .aw-meta { font-size: 15px; }
+.aw-page .aw-grid.compact:not(.gbt-grid):not(.tdj-grid) .aw-club { font-size: 15px; }
+.aw-page .aw-grid.compact:not(.gbt-grid):not(.tdj-grid) .aw-kpi b { font-size: 21px; }
+.aw-page .aw-grid.compact:not(.gbt-grid):not(.tdj-grid) .aw-kpis { padding: 5px 0; }
+.aw-page .aw-grid.compact:not(.gbt-grid):not(.tdj-grid) .aw-why { font-size: 14px; line-height: 1.3; }
+.aw-page .aw-grid.compact:not(.gbt-grid):not(.tdj-grid) .aw-rest li { font-size: 15px; padding-top: 3px; padding-bottom: 3px; }
+.aw-page .aw-grid.compact:not(.gbt-grid):not(.tdj-grid) .aw-rest-name { font-size: 15px; }
+.aw-page .aw-grid.compact:not(.gbt-grid):not(.tdj-grid) .aw-rest-club { font-size: 13px; }
+.aw-page .aw-honour { padding: 6px 12px; }
+.aw-page .aw-honour-title { font-size: 13px; }
+.aw-page .aw-honour-n { font-size: 17px; }
+.aw-page .aw-honour-club { font-size: 15px; }
+.aw-page .aw-honour-sub { font-size: 14px; }
+/* Popup „Die Besten der Saison“ */
+.aw-modal .aw-kpi span { font-size: 12px; }
+.aw-kpi span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.aw-modal .aw-why { font-size: 15px; }
+.aw-modal .aw-tag { font-size: 12px; }
+.aw-modal .aw-honour-sub { font-size: 14px; }
+/* Gala */
+.gb-est { font-size: 14px; }
+.gb-kpi span { font-size: 12px; }

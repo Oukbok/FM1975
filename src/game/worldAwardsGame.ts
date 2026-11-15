@@ -222,13 +222,16 @@ export function worldTeamsOf(g: Game, season: string): TosSeason[] {
     if (!l[3]) continue;
     const c: string[] = [];
     const x: TosRow[] = [];
+    const ids: (string | undefined)[] = [];
     for (const [r, club, grade] of unpackXi(l)) {
       const id = clubOf(ws, key, club);
       let k = c.indexOf(id);
       if (k < 0) k = c.push(id) - 1;
-      x.push([whoOf(g, ws, r, pool).n, grade, k]);
+      const who = whoOf(g, ws, r, pool);
+      x.push([who.n, grade, k]);
+      ids.push(who.id || undefined);
     }
-    out.push({ s: season, d: key, c, x });
+    out.push({ s: season, d: key, c, x, ids });
   }
   return out;
 }

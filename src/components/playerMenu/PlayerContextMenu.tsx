@@ -17,7 +17,7 @@ import { startTalk, talkBlocker } from '../../game/transferTalks';
 import { estimateFor } from '../../game/playerPool';
 import { activeJob, cancelScouting, queueScouting, queuedJob, scoutSlots, scoutingOf } from '../../game/scoutingGame';
 import { PIDSEL_CLEAR } from '../../ui/useMultiSelect';
-import { materializeWorldPlayer, worldClubs, worldEntry, worldPreviewPlayer, WP_FIELD } from '../../game/worldPool';
+import { materializeWorldPlayer, worldClubs, worldEntry, worldEntryFast, worldPreviewPlayer, WP_FIELD } from '../../game/worldPool';
 import type { Game } from '../../game/state';
 import type { Player } from '../../types';
 import Icon from '../Icon';
@@ -46,7 +46,7 @@ function scoutArgs(g: Game, id: string): { id: string; name: string; clubName: s
   return { id, name: `${wp[WP_FIELD.first]} ${wp[WP_FIELD.last]}`, clubName: wc?.name ?? '', abroad: wc?.country !== 'Deutschland', youth: !!wp[WP_FIELD.youth] };
 }
 
-const known = (g: Game, id: string) => !!playerOf(g, id) || (id.startsWith('wp') && !!worldEntry(g, id));
+const known = (g: Game, id: string) => !!playerOf(g, id) || !!worldEntryFast(g, id);
 
 export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
   g: Game; onChange: () => void; onGoto?: (screen: string) => void; children: ReactNode;
@@ -207,7 +207,8 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
   // Profil-API für <PlayerLink> (jeder Spielername öffnet das Profil)
   const profileApi = useMemo<PlayerProfileApi>(() => ({
     open: (pid, tab = 'general') => { if (playerOf(g, pid) || worldPreviewPlayer(g, pid)) { setMenu(null); setProfile({ pid, tab, z: nextProfileZ() }); } },
-    canOpen: (pid) => !!pid && !!playerOf(g, pid),
+    // Auch Weltspieler (Ehrungen, Bestenlisten): Vorschau-Profil wie im Spielerpool.
+    canOpen: (pid) => !!pid && known(g, pid),
   }), [g]);
   const squad = pp ? (g.clubs[pp.clubId]?.playerIds ?? []).map((id) => g.players[id]).filter(Boolean) as Player[] : undefined;
 

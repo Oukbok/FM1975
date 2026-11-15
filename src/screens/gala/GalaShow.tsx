@@ -8,8 +8,7 @@
 // Ausgelöst über game.goldenBall.pending (game/goldenBallGame.ts → GameShell).
 // =============================================================================
 import { useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
-import PlayerModal from '../../components/PlayerModal';
+import { usePlayerProfile } from '../../components/playerMenu/PlayerLink';
 import { seasonLabel } from '../../engine/calendar';
 import type { GBYear } from '../../game/goldenBallGame';
 import type { Game } from '../../game/state';
@@ -22,7 +21,7 @@ const reduced = () => typeof window !== 'undefined' && !!window.matchMedia?.('(p
 
 export function GalaShow({ g, y, onClose }: { g: Game; y: GBYear; onClose: () => void }) {
   const [step, setStep] = useState(() => (reduced() ? LAST : 0));
-  const [sel, setSel] = useState<string | null>(null);
+  const profile = usePlayerProfile();
   const stepRef = useRef(step);
   stepRef.current = step;
   useEffect(() => {
@@ -33,7 +32,8 @@ export function GalaShow({ g, y, onClose }: { g: Game; y: GBYear; onClose: () =>
   const advance = () => { if (stepRef.current < LAST) setStep(stepRef.current + 1); else onClose(); };
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (sel) return;
+      // Offenes Spielerprofil (über PlayerLink, liegt darüber) schließt zuerst.
+      if (document.querySelector('.pp2')) return;
       if (e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); onClose(); }
       else if (e.code === 'Space' || e.key === 'Enter') { e.preventDefault(); e.stopImmediatePropagation(); advance(); }
     };
@@ -44,7 +44,6 @@ export function GalaShow({ g, y, onClose }: { g: Game; y: GBYear; onClose: () =>
   const mine = y.mine ?? g.managedClubId;
   const [w1, w2, w3] = y.top;
   const shown = (place: number) => step >= 4 - place; // Platz 3 bei Schritt 1, Platz 1 bei Schritt 3
-  const p = sel ? g.players[sel] : null;
   const ownHit = y.top.findIndex((e) => e.c === mine);
   return (
     <div className={`gb-root step-${step}`} role="dialog" aria-label={`${y.title} ${y.year}`} onClick={advance}>
@@ -88,16 +87,9 @@ export function GalaShow({ g, y, onClose }: { g: Game; y: GBYear; onClose: () =>
             : 'Klick oder Leertaste – weiter'}
         </span>
         {step < LAST && <button className="btn btn-ghost" onClick={() => setStep(LAST)}>Überspringen</button>}
-        {step >= LAST && w1 && g.players[w1.p] && <button className="btn btn-ghost" onClick={() => setSel(w1.p)}>Profil des Siegers</button>}
+        {step >= LAST && w1 && profile?.canOpen(w1.p) && <button className="btn btn-ghost" onClick={() => profile.open(w1.p)}>Profil des Siegers</button>}
         <button className="btn btn-primary" onClick={step >= LAST ? onClose : advance}>{step >= LAST ? 'Weiter' : 'Nächster Platz'}</button>
       </footer>
-      {p && createPortal(
-        <div onClick={(e) => e.stopPropagation()}>
-          <PlayerModal player={p} club={g.clubs[p.clubId]} squad={g.clubs[p.clubId]?.playerIds.map((id) => g.players[id]).filter(Boolean)}
-            today={g.calendar.currentDate} season={g.season} onClose={() => setSel(null)} />
-        </div>,
-        document.body,
-      )}
     </div>
   );
 }

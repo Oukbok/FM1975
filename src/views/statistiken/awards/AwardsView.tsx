@@ -8,7 +8,6 @@ import { ClubLink } from '../../../components/club/ClubLink';
 import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import PlayerModal from '../../../components/PlayerModal';
 import { AWARD_CATS, AWARD_CAT_LABEL } from '../../../engine/seasonAwards';
 import { awardTallies, awardsState } from '../../../game/seasonAwardsGame';
 import { goldenBallState } from '../../../game/goldenBallGame';
@@ -37,7 +36,6 @@ export function AwardsView({ g }: { g: Game }) {
   ])].sort().reverse();
   const [pick, setPick] = useState<string | null>(null);
   const [league, setLeague] = useState<string>('gb');
-  const [sel, setSel] = useState<string | null>(null);
   const season = pick && allSeasons.includes(pick) ? pick : allSeasons[0];
   const leagues = season ? awardsBySeason(g, season) : [];
   const gbYear = season ? gb.find((y) => seasonLabel(y.year) === season) : undefined;
@@ -52,8 +50,6 @@ export function AwardsView({ g }: { g: Game }) {
   const tallies = awardTallies(g).filter((t) => t.wins > 1 || t.best > 0).slice(0, 12);
   const [gala, setGala] = useState<number | null>(null);
   const galaYear = gala != null ? gb.find((y) => y.year === gala) : undefined;
-  const p = sel ? g.players[sel] : null;
-  const open = (id: string) => { if (g.players[id]) setSel(id); };
   const idx = season ? allSeasons.indexOf(season) : -1;
   const step = (d: number) => { const next = allSeasons[idx + d]; if (next) setPick(next); };
 
@@ -91,19 +87,19 @@ export function AwardsView({ g }: { g: Game }) {
         {!season ? (
           <Empty icon="trophy">Am 20. Dezember wird der Goldene Ball verliehen, am Tag nach dem letzten Ligaspieltag werden die besten Spieler auf ihren Positionen geehrt – Torwart, Abwehr, Mittelfeld und Sturm. Die erste Ehrung steht am Ende der Saison {g.season} an.</Empty>
         ) : showGb ? (
-          <GoldenBallTop g={g} y={gbYear!} onPlayer={open} onGala={() => setGala(gbYear!.year)} />
+          <GoldenBallTop g={g} y={gbYear!} onGala={() => setGala(gbYear!.year)} />
         ) : league === 'shoe' && shoe ? (
-          <GoldenShoeTop g={g} y={shoe} onPlayer={open} />
+          <GoldenShoeTop g={g} y={shoe} />
         ) : league === 'coach' && coach ? (
           <CoachAwardTop g={g} y={coach} />
         ) : xi ? (
-          <TeamOfSeasonTop g={g} t={xi} onPlayer={open} />
+          <TeamOfSeasonTop g={g} t={xi} />
         ) : s ? (
           <div className="aw-page-top">
             <div className="aw-grid compact">
-              {AWARD_CATS.map((cat, i) => <AwardCard key={`${s.season}-${s.div}-${cat}`} g={g} s={s} cat={cat} k={i} compact onPlayer={open} />)}
+              {AWARD_CATS.map((cat, i) => <AwardCard key={`${s.season}-${s.div}-${cat}`} g={g} s={s} cat={cat} k={i} compact />)}
             </div>
-            <AwardHonours g={g} s={s} onPlayer={open} />
+            <AwardHonours g={g} s={s} face={44} />
           </div>
         ) : (
           <Empty icon="trophy">{league === 'gb' ? `In der Saison ${season} wurde (noch) kein Goldener Ball verliehen.`
@@ -172,11 +168,6 @@ export function AwardsView({ g }: { g: Game }) {
         ) : <Empty icon="trophy">Noch hat niemand mehr als eine Ehrung.</Empty>}
       </DashBox>
       {galaYear && createPortal(<GalaShow g={g} y={galaYear} onClose={() => setGala(null)} />, document.body)}
-      {p && createPortal(
-        <PlayerModal player={p} club={g.clubs[p.clubId]} squad={g.clubs[p.clubId]?.playerIds.map((id) => g.players[id]).filter(Boolean)}
-          today={g.calendar.currentDate} season={g.season} onClose={() => setSel(null)} />,
-        document.body,
-      )}
     </DashPage>
   );
 }

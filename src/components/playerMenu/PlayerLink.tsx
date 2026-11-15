@@ -1,8 +1,9 @@
 // =============================================================================
 // <PlayerLink>: macht Spielernamen klickbar (öffnet das Spielerprofil) – Gegenstück
 // zu <ClubLink>. Die Profil-API stellt PlayerMenuProvider (PlayerContextMenu.tsx,
-// in GameShell). Ohne Provider oder ohne Profil (Auslandsstar ohne Spielerdaten,
-// gelöschter Spieler) bleibt der Inhalt einfacher Text. `data-pid` → Rechtsklick-Menü.
+// in GameShell). Weltspieler (`wp…`) öffnen ein Vorschau-Profil wie im Spielerpool.
+// Ohne Provider oder ohne Profil (Spieler nicht mehr im Pool, gelöschter Spieler)
+// bleibt der Inhalt einfacher Text. `data-pid` → Rechtsklick-Menü.
 // Optik: Name unverändert, Zeiger + ruhige Unterstreichung beim Hover (CSS .player-link).
 // =============================================================================
 import { createContext, useContext, type ReactNode } from 'react';

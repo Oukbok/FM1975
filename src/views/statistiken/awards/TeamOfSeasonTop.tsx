@@ -12,7 +12,8 @@ import { getFormation } from '../../../data/formations';
 import type { TosSeason } from '../../../game/teamOfSeasonGame';
 import type { Game } from '../../../game/state';
 import { InfoTip } from '../../../ui/InfoTip';
-import { fmtGrade } from './AwardParts';
+import FaceThumb from '../../../components/FaceThumb';
+import { AwardName, awardPerson, fmtGrade } from './AwardParts';
 
 const clubName = (g: Game, id: string) => g.clubs[id]?.name ?? g.simClubs?.[id]?.name ?? g.euroClubs?.[id]?.name ?? id;
 /** Seitenverhältnis des liegenden Felds (breiter als maßstabsgetreu, Kreise bleiben über `stretch` rund). */
@@ -20,16 +21,14 @@ const ASPECT = 2.3;
 const STRETCH = (105 / 68) / ASPECT;
 const lastName = (n: string) => { const p = n.trim().split(' '); return p.length > 1 ? p.slice(1).join(' ') : n; };
 
-export function TeamOfSeasonTop({ g, t, onPlayer }: { g: Game; t: TosSeason & { dn: string; f: string }; onPlayer: (pid: string) => void }) {
+export function TeamOfSeasonTop({ g, t }: { g: Game; t: TosSeason & { dn: string; f: string } }) {
   const f = getFormation(t.f);
   const mine = g.managedClubId;
   const est = !t.x.some((r) => r[3]);
-  // Slot-Lagen der Formation in derselben Reihenfolge wie gespeichert (Elf ist immer vollständig).
-  const spots = t.x.map((r, i) => ({ r, s: f.slots[i] }));
+  // Slot-Lagen der Formation in derselben Reihenfolge wie gespeichert (Elf ist immer vollständig);
+  // Spieler-ID: eigene Liga im Tupel, Ausland (Weltspieler) aus `ids` der Anzeige.
+  const spots = t.x.map((r, i) => ({ r, s: f.slots[i], id: r[3] ?? t.ids?.[i] }));
   const club = (r: TosSeason['x'][number]) => t.c[r[2]] ?? '';
-  const name = (r: TosSeason['x'][number], cls: string, text: string) => (r[3] && g.players[r[3]]
-    ? <button type="button" className={`${cls} aw-link`} onClick={() => onPlayer(r[3]!)}>{text}</button>
-    : <span className={cls}>{text}</span>);
   return (
     <div className="aw-page-top tos-top">
       <div className="gbt-sub">
@@ -40,18 +39,18 @@ export function TeamOfSeasonTop({ g, t, onPlayer }: { g: Game; t: TosSeason & { 
       <div className="tos-body">
         <div className="tos-pitch">
           <div className="tos-rot"><PitchSVG stretch={STRETCH} /></div>
-          {spots.map(({ r, s }, i) => (
+          {spots.map(({ r, s, id }, i) => (
             <div key={i} className={`tos-chip ${club(r) === mine ? 'mine' : ''}`} style={{ left: `${6 + ((92 - (s?.y ?? 57)) / 70) * 86}%`, top: `${8 + (s?.x ?? 50) * 0.84}%`, '--k': i } as CSSProperties}>
-              {name(r, 'tos-chip-n', lastName(r[0]))}
+              <AwardName e={{ p: id, n: lastName(r[0]) }} cls="tos-chip-n" />
               <span className="tos-chip-g">{fmtGrade(r[1] / 100)}</span>
             </div>
           ))}
         </div>
         <ol className="tos-list">
-          {spots.map(({ r, s }, i) => (
+          {spots.map(({ r, s, id }, i) => (
             <li key={i} className={club(r) === mine ? 'mine' : ''}>
               <PosBadge pos={s?.position ?? 'ZM'} />
-              {name(r, 'tos-list-n', r[0])}
+              <span className="tos-list-who"><FaceThumb p={id ? awardPerson(g, id) : undefined} size={24} /><AwardName e={{ p: id, n: r[0] }} cls="tos-list-n" /></span>
               <ClubLink id={club(r)} className="tos-list-c">{clubName(g, club(r))}</ClubLink>
               <span className="tos-list-g">{fmtGrade(r[1] / 100)}</span>
             </li>

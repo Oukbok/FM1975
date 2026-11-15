@@ -15,8 +15,8 @@ import { clubView } from '../../../game/clubProfile';
 import type { CoachSeason, GSEntry, GSSeason } from '../../../game/extraAwardsGame';
 import type { Game } from '../../../game/state';
 import { InfoTip } from '../../../ui/InfoTip';
-import type { AwardEntry } from '../../../game/seasonAwardsGame';
-import { AwardFace } from './AwardParts';
+import FaceThumb from '../../../components/FaceThumb';
+import { AwardFace, AwardName, awardPerson } from './AwardParts';
 
 const dec = (v: number) => String(v).replace('.', ',');
 const landOf = (k: string) => COUNTRY_BY_KEY[k]?.name ?? k;
@@ -26,14 +26,8 @@ function Crest({ g, id, season, size }: { g: Game; id: string; season: string; s
   return v ? <ClubCrest club={v as never} size={size} /> : null;
 }
 
-function PName({ g, e, onPlayer, cls }: { g: Game; e: { p: string; n: string }; onPlayer: (pid: string) => void; cls: string }) {
-  return g.players[e.p]
-    ? <button type="button" className={`${cls} aw-link`} onClick={() => onPlayer(e.p)}>{e.n}</button>
-    : <span className={cls}>{e.n}</span>;
-}
-
 /** Goldener Schuh: Sieger groß links, Top 10 als Tabelle rechts. */
-export function GoldenShoeTop({ g, y, onPlayer }: { g: Game; y: GSSeason; onPlayer: (pid: string) => void }) {
+export function GoldenShoeTop({ g, y }: { g: Game; y: GSSeason }) {
   const w = y.top[0];
   const weighted = seasonStartYear(y.s) + 1 >= SHOE_WEIGHTED_FROM;
   const mine = g.managedClubId;
@@ -48,9 +42,9 @@ export function GoldenShoeTop({ g, y, onPlayer }: { g: Game; y: GSSeason; onPlay
         <article className={`aw-card compact gs-hero ${w.c === mine ? 'mine' : ''}`} style={{ '--k': 0 } as CSSProperties}>
           <div className="aw-cat"><span>Goldener Schuh</span><span className="aw-tag">{landOf(w.k)}</span></div>
           <div className="aw-hero">
-            <AwardFace g={g} e={{ p: w.p, n: w.n } as AwardEntry} size={64} />
+            <AwardFace g={g} e={w} size={88} />
             <div className="aw-who">
-              <PName g={g} e={w} onPlayer={onPlayer} cls="aw-name" />
+              <AwardName e={w} />
               <div className="aw-meta"><PosBadge pos={w.pos} /><CountryFlag country={landOf(w.k)} height={14} /></div>
               <ClubLink id={w.c} className="aw-club"><Crest g={g} id={w.c} season={y.s} size={20} /><span className="aw-club-name">{w.cn}</span></ClubLink>
             </div>
@@ -69,7 +63,7 @@ export function GoldenShoeTop({ g, y, onPlayer }: { g: Game; y: GSSeason; onPlay
               {y.top.map((e: GSEntry, i) => (
                 <tr key={e.p} className={e.c === mine ? 'me' : ''}>
                   <td className="rl-rank">{i + 1}</td>
-                  <td className="nowrap"><PName g={g} e={e} onPlayer={onPlayer} cls="gs-name" /></td>
+                  <td className="nowrap"><span className="gs-who"><FaceThumb p={awardPerson(g, e.p)} size={24} /><AwardName e={e} cls="gs-name" /></span></td>
                   <td className="nowrap gs-club"><ClubLink id={e.c}>{e.cn}</ClubLink></td>
                   <td className="nowrap gs-land"><CountryFlag country={landOf(e.k)} height={12} /><span>{landOf(e.k)}</span></td>
                   <td className="num">{e.ap}</td>

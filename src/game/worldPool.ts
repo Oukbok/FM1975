@@ -323,6 +323,28 @@ export function worldEntry(g: Game, id: string): WP | undefined {
 
 export const isWorldId = (id: string) => id.startsWith('wp');
 
+// Schneller Zugriff für Anzeigen (Klick auf Namen, Gesichter in Ehrungen): Zuordnung ID → Tupel,
+// neu aufgebaut, wenn sich der Pool ändert (WeakMap am Tupel-Feld – kein Modul-Zustand zum Zurücksetzen).
+const idCache = new WeakMap<WP[], { n: number; y: number; map: Map<string, WP> }>();
+export function worldEntryFast(g: Game, id: string | null | undefined): WP | undefined {
+  const pool = g.worldPool;
+  if (!pool || !id || !isWorldId(id)) return undefined;
+  let c = idCache.get(pool.p);
+  if (!c || c.n !== pool.p.length || c.y !== pool.year) {
+    c = { n: pool.p.length, y: pool.year, map: new Map(pool.p.map((w) => [w[W.id], w])) };
+    idCache.set(pool.p, c);
+  }
+  return c.map.get(id);
+}
+
+/** Angaben fürs Gesicht eines Weltspielers (Gesichtsgruppe, Geburtsjahr) wie bei vollen Spielern. */
+export function worldFacePerson(g: Game, id: string | null | undefined): Pick<Player, 'id' | 'face' | 'dateOfBirth' | 'age' | 'fullName'> | undefined {
+  const w = worldEntryFast(g, id);
+  if (!w) return undefined;
+  const year = Number(g.calendar.currentDate.slice(0, 4));
+  return { id: w[W.id], face: w[W.face], dateOfBirth: `${w[W.born]}-07-01`, age: year - w[W.born], fullName: `${w[W.first]} ${w[W.last]}`.trim() };
+}
+
 /** Marktwert eines Weltspielers (1975-Basis, wie Player.contract.transferValue). */
 export function worldValue(w: WP, year: number): number {
   const age = year - w[W.born];

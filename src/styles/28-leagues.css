@@ -92,7 +92,8 @@
 .cmp-statbox .dxh { padding-top: 10px; padding-bottom: 6px; }
 .cmp-statbox .dxh-title { font-size: 15px; }
 .cmp-statbox .dbox-body { overflow-y: auto; padding-top: 0; }
-.cmp-statbox .cmp-stat { grid-template-columns: 22px minmax(0, 1.2fr) minmax(0, 1fr) 28px; gap: 6px; padding: 3px 2px; font-size: 13.5px; }
+/* Links 9 px Innenabstand in jeder Zeile: der 4-px-Strich eigener Spieler (.me) liegt nie über der Platzziffer. */
+.cmp-statbox .cmp-stat { grid-template-columns: 24px minmax(0, 1.2fr) minmax(0, 1fr) 28px; gap: 6px; padding: 3px 2px 3px 9px; font-size: 13.5px; }
 .cmp-statbox .cmp-stat.club { grid-template-columns: 26px minmax(0, 1fr) 34px; }
 /* Zeilen mit Saison statt Rang (Pokalsieger je Saison) */
 .cmp-statbox .cmp-stat.club.cmp-yr { grid-template-columns: 46px minmax(0, 1fr) 8px; }

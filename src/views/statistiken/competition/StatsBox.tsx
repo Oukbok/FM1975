@@ -13,6 +13,7 @@ import { DashBox } from '../../../ui/DashPage';
 import { TeamName } from './parts';
 import FaceThumb from '../../../components/FaceThumb';
 import { HISTORIC_SEASONS, historicFinal } from '../../../data/history/seasons';
+import { usePlayerProfile } from '../../../components/playerMenu/PlayerLink';
 
 const CAT_TITLE: Record<StatCat, string> = {
   goals: 'Torschützen', assists: 'Vorlagengeber', scorer: 'Scorer (Tore + Vorlagen)', yellow: 'Gelbe Karten',
@@ -32,6 +33,8 @@ export function StatsBox({ g, snap, playerCard, noScorer }: {
   playerCard?: (pid: string, close: () => void) => ReactNode | null;
 }) {
   const [sel, setSel] = useState<string | null>(null);
+  // Weltspieler (Auslandsligen): Vorschau-Profil über die Profil-API wie im Spielerpool.
+  const profile = usePlayerProfile();
   const card = sel && playerCard ? playerCard(sel, () => setSel(null)) : null;
   // Profikader oder eigene Jugend: volles Spielerprofil.
   const own = sel ? g.youthPlayers[sel] : undefined;
@@ -60,9 +63,12 @@ export function StatsBox({ g, snap, playerCard, noScorer }: {
                 <div className="cmp-statlist">
                   {list.map((r, i) => {
                     const rank = i > 0 && list[i - 1].value === r.value ? '' : `${i + 1}.`;
-                    const clickable = !!playerCard || !!g.players[r.pid] || g.youthPlayers[r.pid]?.clubId === g.managedClubId;
+                    const local = !!playerCard || !!g.players[r.pid] || g.youthPlayers[r.pid]?.clubId === g.managedClubId;
+                    const world = !local && !!profile?.canOpen(r.pid);
+                    const clickable = local || world;
                     return (
-                      <div key={r.pid} className={`cmp-stat ${clickable ? 'clickable' : ''} ${r.clubId === g.managedClubId ? 'me' : ''}`} onClick={() => clickable && setSel(r.pid)} title={clickable ? 'Spielerprofil öffnen' : undefined}>
+                      <div key={r.pid} className={`cmp-stat ${clickable ? 'clickable' : ''} ${r.clubId === g.managedClubId ? 'me' : ''}`} data-pid={world ? r.pid : undefined}
+                        onClick={() => { if (local) setSel(r.pid); else if (world) profile!.open(r.pid); }} title={clickable ? 'Spielerprofil öffnen' : undefined}>
                         <span className="cmp-rank">{rank}</span>
                         <span className="cmp-pname"><FaceThumb p={g.players[r.pid] ?? g.youthPlayers[r.pid] ?? (r.face && r.born ? { id: r.pid, face: r.face, dateOfBirth: `${r.born}-07-01`, age: Number(g.calendar.currentDate.slice(0, 4)) - r.born, fullName: r.name } : undefined)} club={r.clubId ? g.clubs[r.clubId] : undefined} /><span className="cmp-pn">{r.name}</span></span>
                         <span className="cmp-pclub">{r.clubId && <TeamName g={g} id={r.clubId} season={snap!.season} size={16} />}</span>

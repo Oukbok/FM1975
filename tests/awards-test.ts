@@ -142,7 +142,8 @@ for (const s of world.filter((x) => x.season === wSeasons[wSeasons.length - 1]).
 console.log(`Auslandsligen: ${world.length} Wertungen + Elf, ${(JSON.stringify(wv).length / 1024).toFixed(1)} KB (Spieler außerhalb des Pools: ${Object.keys(wv!.gone).length})`);
 // Umrechnung des alten Formats (Objektlisten world/xiw): gleiche Anzeige, idempotent.
 {
-  const show = (x: Game) => JSON.stringify(wSeasons.map((s) => [awardsBySeason(x, s), teamsOfSeason(x, s)]));
+  // `ids` der Elf = nur Anzeige (Gesicht/Profil); das alte Format kannte nur Namen → nicht vergleichen.
+  const show = (x: Game) => JSON.stringify(wSeasons.map((s) => [awardsBySeason(x, s), teamsOfSeason(x, s).map(({ ids: _ids, ...t }) => t)]));
   const before = show(g);
   const g3 = { ...g, seasonAwards: { ...awardsState(g)! }, extraAwards: { ...extraAwardsState(g)! } } as Game;
   const sa3 = awardsState(g3)!;

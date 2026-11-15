@@ -19,7 +19,11 @@ import { worldDivName, worldTeamsOf } from './worldAwardsGame';
 /** Ein Platz der Elf: Name, Note × 100, Verein (Index in `TosSeason.c`), Spieler-ID (fehlt bei Weltspielern). */
 export type TosRow = [string, number, number, string?];
 /** Elf einer Saison; `dn`/`f` nur bei der eigenen Liga gespeichert (Ausland: aus Länderschlüssel und Saison, `worldTeamsOf`). */
-export interface TosSeason { s: string; d: string; dn?: string; f?: string; c: string[]; x: TosRow[] }
+export interface TosSeason {
+  s: string; d: string; dn?: string; f?: string; c: string[]; x: TosRow[];
+  /** Nur Anzeige (nie gespeichert): Weltspieler-IDs der Auslandself in Reihenfolge von `x` (Gesicht, Profil). */
+  ids?: (string | undefined)[];
+}
 
 export const MAX_XI_SEASONS = 80;
 

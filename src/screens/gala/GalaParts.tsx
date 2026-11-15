@@ -11,6 +11,8 @@ import type { Game } from '../../game/state';
 import type { Club, Player } from '../../types';
 import { TeamName } from '../../views/statistiken/competition/parts';
 import PosBadge from '../../components/PosBadge';
+import FaceThumb from '../../components/FaceThumb';
+import { awardPerson } from '../../views/statistiken/awards/AwardParts';
 
 const fmt = (v: number) => v.toFixed(2).replace('.', ',');
 
@@ -49,9 +51,9 @@ export function NatTag({ nat }: { nat: string }) {
   return <span className="gb-nat" title={`Nationalität: ${nat}`}>{nat}</span>;
 }
 
-/** Gesicht: vorhandener Spieler oder gezeichneter Platzhalter aus ID/Name (Auslandsstar). */
+/** Gesicht: voller Spieler, Weltspieler (Gesichtsgruppe/Geburtsjahr aus dem Pool) oder gezeichneter Platzhalter aus ID/Name. */
 export function GalaFace({ g, e, size }: { g: Game; e: GBEntry; size: number }) {
-  const p = g.players[e.p] ?? ({ id: e.p, fullName: e.n } as Player);
+  const p = awardPerson(g, e.p) ?? ({ id: e.p, fullName: e.n } as Player);
   const c = g.clubs[e.c] ?? (g.euroClubs?.[e.c] ? ({ colors: g.euroClubs[e.c].colors, shortName: g.euroClubs[e.c].shortName } as unknown as Club) : undefined);
   const photo = hasFacePhoto(p);
   return <span className="gb-face" style={{ width: size, height: size * 1.15 }}><PlayerAvatar key={p.id} player={p} club={c} size={photo ? Math.round(size * 1.15 * 512 / 600) : size} /></span>;
@@ -97,7 +99,7 @@ export function GalaRest({ g, top, mine, season }: { g: Game; top: GBEntry[]; mi
       {top.slice(3).map((e, i) => (
         <div key={e.p} className={`rl-row gb-rest-row ${e.c === mine ? 'me' : ''}`} style={{ '--k': i } as CSSProperties}>
           <span className="rl-rank">{i + 4}</span>
-          <span className="gb-rest-name"><NatTag nat={e.nat} /><span className="rl-name"><PlayerLink id={e.p}>{e.n}</PlayerLink></span></span>
+          <span className="gb-rest-name"><FaceThumb p={awardPerson(g, e.p)} size={26} /><NatTag nat={e.nat} /><span className="rl-name"><PlayerLink id={e.p}>{e.n}</PlayerLink></span></span>
           <span className="gb-rest-club"><TeamName g={g} id={e.c} season={season} size={18} short /></span>
           <span className="rl-num">{e.pos}</span>
           <span className="rl-num">{e.ap} Sp.</span>

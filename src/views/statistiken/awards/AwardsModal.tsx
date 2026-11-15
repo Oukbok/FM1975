@@ -4,9 +4,7 @@
 // zeigt es, sobald kein anderes Fenster offen ist). Vier Karten, Ehrenzeile,
 // Plätze 2/3; eigene Spieler in Bernstein. Esc/Enter schließt.
 // =============================================================================
-import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-import PlayerModal from '../../../components/PlayerModal';
+import { useEffect } from 'react';
 import { AWARD_CATS } from '../../../engine/seasonAwards';
 import { type AwardSeason, ownHonours } from '../../../game/seasonAwardsGame';
 import type { Game } from '../../../game/state';
@@ -14,16 +12,15 @@ import { InfoTip } from '../../../ui/InfoTip';
 import { AwardCard, AwardHonours } from './AwardParts';
 
 export function AwardsModal({ g, s, onClose, onArchive }: { g: Game; s: AwardSeason; onClose: () => void; onArchive?: () => void }) {
-  const [sel, setSel] = useState<string | null>(null);
   useEffect(() => {
     const onKey = (ev: KeyboardEvent) => {
-      if (sel) return;
+      // Offenes Spielerprofil (über PlayerLink, liegt darüber) schließt zuerst.
+      if (document.querySelector('.pp2')) return;
       if (ev.key === 'Escape' || ev.key === 'Enter' || ev.code === 'Space') { ev.preventDefault(); ev.stopImmediatePropagation(); onClose(); }
     };
     window.addEventListener('keydown', onKey, true);
     return () => window.removeEventListener('keydown', onKey, true);
-  }, [onClose, sel]);
-  const p = sel ? g.players[sel] : null;
+  }, [onClose]);
   const mine = ownHonours(g, s);
   return (
     <>
@@ -38,9 +35,9 @@ export function AwardsModal({ g, s, onClose, onArchive }: { g: Game; s: AwardSea
         </div>
         <div className="mx-body aw-body">
           <div className="aw-grid">
-            {AWARD_CATS.map((cat, i) => <AwardCard key={cat} g={g} s={s} cat={cat} k={i} onPlayer={(id) => g.players[id] && setSel(id)} />)}
+            {AWARD_CATS.map((cat, i) => <AwardCard key={cat} g={g} s={s} cat={cat} k={i} />)}
           </div>
-          <AwardHonours g={g} s={s} onPlayer={(id) => g.players[id] && setSel(id)} />
+          <AwardHonours g={g} s={s} />
         </div>
         <div className="mx-foot aw-foot">
           <span className="aw-foot-note">
@@ -51,11 +48,6 @@ export function AwardsModal({ g, s, onClose, onArchive }: { g: Game; s: AwardSea
         </div>
       </div>
     </div>
-      {p && createPortal(
-        <PlayerModal player={p} club={g.clubs[p.clubId]} squad={g.clubs[p.clubId]?.playerIds.map((id) => g.players[id]).filter(Boolean)}
-          today={g.calendar.currentDate} season={g.season} onClose={() => setSel(null)} />,
-        document.body,
-      )}
     </>
   );
 }
