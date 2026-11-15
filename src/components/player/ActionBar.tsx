@@ -8,7 +8,6 @@ import { useClubProfile } from '../club/ClubLink';
 import { startTalk } from '../../game/transferTalks';
 import { materializeWorldPlayer } from '../../game/worldPool';
 import { PlayerTalkModal } from '../../views/kader/talk/PlayerTalkModal';
-import { TransferTalkModal } from '../../views/transfers/TransferTalkModal';
 import Icon from '../Icon';
 import { openContractScreen } from '../../screens/contract/contractOpen';
 import type { IconName } from '../iconPaths';
@@ -19,7 +18,6 @@ export default function ActionBar({ p, onTab, onChange }: { p: Player; onTab: (t
   const api = useClubProfile();
   const g = api?.game;
   const [talk, setTalk] = useState(false);
-  const [deal, setDeal] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   if (!g) return null;
   const mine = p.clubId === g.managedClubId;
@@ -43,7 +41,7 @@ export default function ActionBar({ p, onTab, onChange }: { p: Player; onTab: (t
         if (!g.players[p.id]) materializeWorldPlayer(g, p.id);
         const r = startTalk(g, p.id);
         if (typeof r === 'string') { setNote(r); return; }
-        setNote(null); setDeal(r.id); changed();
+        setNote(null); changed(); openContractScreen({ kind: 'transfer', talkId: r.id });
       } : undefined, group: 2,
     },
     {
@@ -51,7 +49,6 @@ export default function ActionBar({ p, onTab, onChange }: { p: Player; onTab: (t
       run: api?.canOpen(p.clubId) ? () => api.open(p.clubId) : undefined, group: 2,
     },
   ];
-  const dealTalk = deal ? (g.transferTalks ?? []).find((t) => t.id === deal) : undefined;
 
   return (
     <div className="pp3-actbar">
@@ -65,7 +62,6 @@ export default function ActionBar({ p, onTab, onChange }: { p: Player; onTab: (t
       ))}
       {note && <span className="pp3-actnote">{note}</span>}
       {talk && <PlayerTalkModal g={g} pid={p.id} onClose={() => { setTalk(false); changed(); }} onChange={changed} />}
-      {dealTalk && <TransferTalkModal g={g} talk={dealTalk} onClose={() => { setDeal(null); changed(); }} onChange={changed} />}
     </div>
   );
 }

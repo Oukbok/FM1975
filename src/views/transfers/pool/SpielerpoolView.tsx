@@ -12,13 +12,13 @@ import { poolRows, type PoolRow } from '../../../game/playerPool';
 import { marketInfoRows } from '../../../game/marketView';
 import { activeJob, jobProgress, jobTerms, queueScouting, queuedJob, scoutSlots } from '../../../game/scoutingGame';
 import { homeCountryOf, type Game } from '../../../game/state';
-import { activeTalks, startTalk, talkBlocker, type TransferTalk } from '../../../game/transferTalks';
+import { activeTalks, startTalk, talkBlocker } from '../../../game/transferTalks';
 import { countryName, materializeWorldPlayer, worldPreviewPlayer } from '../../../game/worldPool';
 import type { Player } from '../../../types';
 import { DashBox, DashPage, Empty } from '../../../ui/DashPage';
 import { fmtPrice } from '../../../ui/format';
 import { SubTabsPage, useSubTab } from '../../../ui/SubTabs';
-import { TransferTalkModal } from '../TransferTalkModal';
+import { openContractScreen } from '../../../screens/contract/contractOpen';
 import { MarketTable, sortRows, type MarketSort, type MarketSortKey } from '../MarketTable';
 import { EMPTY_FILTER, FilterButton, filterCount, passes, type MarketFilter } from '../MarketFilter';
 
@@ -34,7 +34,6 @@ export function SpielerpoolView({ g, onChange = () => {} }: { g: Game; onChange?
   const [sort, setSort] = useState<MarketSort | null>(null);
   const [page, setPage] = useState(0);
   const [profile, setProfile] = useState<string | null>(null);
-  const [talkId, setTalkId] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const today = g.calendar.currentDate;
   const { rows, clubs } = poolRows(g);
@@ -66,7 +65,7 @@ export function SpielerpoolView({ g, onChange = () => {} }: { g: Game; onChange?
     if (!p) { setMsg('Spieler nicht gefunden.'); return; }
     const res = startTalk(g, p.id);
     if (typeof res === 'string') { setMsg(res); return; }
-    setMsg(null); setTalkId(res.id); onChange();
+    setMsg(null); onChange(); openContractScreen({ kind: 'transfer', talkId: res.id });
   };
   const scout = (r: PoolRow) => {
     const c = clubs.get(r.clubId);
@@ -74,7 +73,6 @@ export function SpielerpoolView({ g, onChange = () => {} }: { g: Game; onChange?
     setMsg(res === 'started' ? `Ein Scout ist zu ${r.name} unterwegs.` : res === 'queued' ? `${r.name} ist vorgemerkt – der nächste freie Scout fährt los.` : res);
     onChange();
   };
-  const talk: TransferTalk | undefined = talkId ? (g.transferTalks ?? []).find((t) => t.id === talkId) : undefined;
   const prof = profile ? g.players[profile] ?? g.youthPlayers?.[profile] ?? worldPreviewPlayer(g, profile) : undefined;
   const full = (g.scouting?.jobs.length ?? 0) >= scoutSlots(g);
 
@@ -111,7 +109,6 @@ export function SpielerpoolView({ g, onChange = () => {} }: { g: Game; onChange?
           ) : <Empty icon="transfers">Keine Spieler zu diesen Vorgaben.</Empty>}
         </DashBox>
         {prof && <PlayerModal player={prof} club={g.clubs[prof.clubId]} today={today} season={g.season} onClose={() => setProfile(null)} />}
-        {talk && <TransferTalkModal g={g} talk={talk} onClose={() => setTalkId(null)} onChange={onChange} />}
       </DashPage>
     </SubTabsPage>
   );

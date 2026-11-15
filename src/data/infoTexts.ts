@@ -1142,6 +1142,21 @@ export const INFO_TEXTS = {
     text: 'Jede Ablehnung kostet Geduld – knapp daneben wenig, ein beleidigendes Angebot viel. Bei null oder nach sieben Runden bricht er ab, ist gekränkt und will erst nach einigen Wochen wieder reden.',
     wiki: 'squad-contracts2',
   },
+  v2_position: {
+    title: 'Verhandlungsposition',
+    text: 'Die Leiste zeigt, wo beide Seiten stehen: dein Paket (rund) und die Forderung (Raute) auf derselben Skala, gemessen am Wert für dein Gegenüber. Dein Marker wandert beim Einstellen sofort mit. Die schraffierte Zone ist eine Schätzung deines Stabs, wo eine Einigung liegt – je besser dein Stab, desto genauer. Rechts siehst du, wie ihr euch von Runde zu Runde annähert.',
+    wiki: 'negotiation-table',
+  },
+  v2_fest: {
+    title: 'Nicht verhandelbar',
+    text: 'Mit dem Schloss erklärst du einen Punkt für nicht verhandelbar: Dein Gegenüber lässt ihn im Gegenvorschlag stehen und sucht den Wert bei den übrigen Punkten. Jede Sperre kostet etwas Geduld – und steht sie gegen eine Bedingung der anderen Seite, kommt ihr nicht zusammen.',
+    wiki: 'negotiation-table',
+  },
+  staffVerhandlung: {
+    title: 'Verhandlung mit Mitarbeitern',
+    text: 'Mitarbeiter bewerten das ganze Paket: Gehalt, Laufzeit, Handgeld, Erfolgsprämie, Abfindungsregel, Abwerbeschutz und Fortbildung. Wer ohne Stelle ist oder dem Verein verbunden, gibt eher nach; wer anderswo unter Vertrag steht, lässt sich bitten. Nach einem Abbruch ist die Person eine Zeit lang nicht mehr zu sprechen.',
+    wiki: 'staff-market',
+  },
   v2_kosten: {
     title: 'Kosten über die Laufzeit',
     text: 'Grundgehalt mit Staffelung, erwartete Prämien (nach Einsätzen, Toren und euren Chancen) und Einmalzahlungen – nominal in der Währung der Zeit.',

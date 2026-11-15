@@ -98,9 +98,11 @@ export interface Game {
   /** Glaubwürdigkeit deiner Versprechen (0–100, Start 70; game/promises.ts). */
   promiseTrust?: number;
   /** Fällige Raten und Erfolgsprämien aus Transfers (1975-Basis). */
-  transferInstallments?: { due: string; amount: number; from: string; to: string; name: string; kind: 'rate' | 'bonus'; playerId?: string }[];
+  transferInstallments?: { due: string; amount: number; from: string; to: string; name: string; kind: 'rate' | 'bonus' | 'euro' | 'friendly'; playerId?: string }[];
   /** Vertragsverhandlung 2.0: Liga-Ebene/Klassenerhalt-Prämien (game/contractClausesGame.ts). */
   contracts2?: import('./contractClausesGame').Contracts2State;
+  /** Verhandlungen mit Mitarbeitern am Verhandlungstisch (game/staffTalk.ts), je Person. */
+  staffTalks?: Record<string, import('./staffTalk').StaffTalkState>;
   /** Laufende Transferverhandlungen (game/transferTalks.ts). */
   transferTalks?: import('./transferTalks').TransferTalk[];
   /** Sperrzeiten der Vereinsereignisse (Typ → Datum). */

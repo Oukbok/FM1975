@@ -33,6 +33,7 @@ import { clubStaffTarget, ensureStaffWorld, findPerson, staffMarket, toClubCoach
 import { depart, install, pickSuccessor } from './coachCarousel';
 import { closeHeadCoach, syncHeadCoach } from './headCoaches';
 import { honourFx } from '../engine/honourEffects';
+import { goalOf } from './dressingRoomGame';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -47,10 +48,14 @@ export function monthsLeft(m: StaffMember, today: string): number {
   return Math.max(0, (b.getUTCFullYear() - a.getUTCFullYear()) * 12 + b.getUTCMonth() - a.getUTCMonth());
 }
 
-/** Abfindung: halbe Restlaufzeit, mindestens zwei, höchstens 18 Monatsgehälter. */
+/**
+ * Abfindung: halbe Restlaufzeit, mindestens zwei, höchstens 18 Monatsgehälter. Ausgehandelte
+ * Regeln (game/staffTalk.ts): „begrenzt“ = höchstens drei Monatsgehälter, „volle Restlaufzeit“ = alles bis Vertragsende.
+ */
 export function severanceOf(g: Game, m: StaffMember): number {
   const scale = economyScale(yearOf(g.calendar.currentDate));
-  const months = clamp(Math.round(monthsLeft(m, g.calendar.currentDate) * 0.5), 2, 18);
+  const left = monthsLeft(m, g.calendar.currentDate);
+  const months = m.deal?.sev === 'cap' ? clamp(Math.round(left * 0.5), 1, 3) : m.deal?.sev === 'full' ? clamp(left, 2, 36) : clamp(Math.round(left * 0.5), 2, 18);
   return memberMonthlySalary(m, scale) * months;
 }
 
@@ -102,7 +107,7 @@ function toMarket(g: Game, m: StaffMember): void {
     (g.coachPool ??= []).push(toClubCoach(m, year, today, Math.random));
     return;
   }
-  w.people.push({ ...m, clubId: undefined, contractEnd: undefined, freeSince: year, coach: undefined });
+  w.people.push({ ...m, clubId: undefined, contractEnd: undefined, freeSince: year, coach: undefined, deal: undefined });
 }
 
 /** Besetzung einer Stelle im eigenen Verein und freie Plätze. */
@@ -118,8 +123,12 @@ export function replacedBy(g: Game, roleId: string, replaceId?: string): StaffMe
   return holders.find((x) => x.id === replaceId) ?? [...holders].sort((a, b) => roleFit(a.skills, roleId, a.quality) - roleFit(b.skills, roleId, b.quality))[0];
 }
 
-export interface HireResult { ok: boolean; text: string }
-export interface HireOpts { roleId?: string; replaceId?: string }
+export interface HireResult { ok: boolean; text: string; member?: StaffMember }
+export interface HireOpts {
+  roleId?: string; replaceId?: string;
+  /** Am Verhandlungstisch geeinigt (game/staffTalk.ts): keine erneute Prüfung des Angebots. */
+  agreed?: boolean;
+}
 
 /** Angebot an eine Person vom Arbeitsmarkt für eine Stelle. Bei Erfolg: Anstellung. */
 export function offerContract(g: Game, personId: string, offerFactor: number, years: number, opts: HireOpts = {}): HireResult {
@@ -133,7 +142,7 @@ export function offerContract(g: Game, personId: string, offerFactor: number, ye
   if (!role || !staffAvailable(role, year)) return { ok: false, text: 'Diese Stelle gibt es noch nicht.' };
   const block = moveBlocker(g, m);
   if (block) return { ok: false, text: block };
-  if (!acceptsOffer(m, offerFactor, years, club.reputation ?? 60, demandOf(g, m, roleId))) {
+  if (!opts.agreed && !acceptsOffer(m, offerFactor, years, club.reputation ?? 60, demandOf(g, m, roleId))) {
     return { ok: false, text: `${m.name} lehnt ab – das Angebot liegt unter seinen Vorstellungen.` };
   }
   const staff = ensureStaff(g);
@@ -178,7 +187,7 @@ export function offerContract(g: Game, personId: string, offerFactor: number, ye
   staff.push(hired);
   g.hiredStaff = staff.map((x) => x.roleId);
   syncHeadCoach(g);
-  return { ok: true, text: [`${m.name} ist neuer ${roleLabel(roleId)} (bis ${hired.contractEnd!.slice(0, 4)}).`, ...lines].join(' ') };
+  return { ok: true, member: hired, text: [`${m.name} ist neuer ${roleLabel(roleId)} (bis ${hired.contractEnd!.slice(0, 4)}).`, ...lines].join(' ') };
 }
 
 /** Den besten vereinslosen Bewerber, der kommen will, zu seiner Forderung einstellen (Tests, Simulation). */
@@ -330,6 +339,25 @@ export function ownStaffSeason(g: Game, date: string, rng: () => number = Math.r
   const success = row && rows.length > 1 ? 1 - (row.position - 1) / (rows.length - 1) : 0.4;
   const gone: string[] = [];
   const grown: string[] = [];
+  // Ausgehandelte Erfolgsprämien (game/staffTalk.ts): fällig, wenn das Saisonziel des Vorstands erreicht ist.
+  const club = g.clubs[g.managedClubId];
+  const goal = club ? goalOf(g, club) : undefined;
+  if (club && row && goal && row.position <= goal.expected) {
+    const scale = economyScale(yearOf(date));
+    const paid: string[] = [];
+    for (const m of staff) {
+      const months = m.deal?.bonus ?? 0;
+      if (months <= 0) continue;
+      const sum = memberMonthlySalary(m, scale) * months;
+      book(club.finances, date, -sum, 'staff_wages', `Erfolgsprämie ${m.name}`, true);
+      paid.push(`• ${m.name} (${roleLabel(m.roleId)}): ${months} ${months === 1 ? 'Monatsgehalt' : 'Monatsgehälter'}`);
+    }
+    if (paid.length) pushMessage(g.messages, makeMessage({
+      date, category: 'board', from: 'Geschäftsstelle', subject: 'Saisonziel erreicht: Erfolgsprämien für Mitarbeiter',
+      shortText: `${paid.length} ${paid.length === 1 ? 'Prämie' : 'Prämien'} ausgezahlt.`,
+      bodyText: `Das Saisonziel („${goal.label}“) ist erreicht. Die vereinbarten Erfolgsprämien wurden ausgezahlt:\n\n${paid.join('\n')}`,
+    }));
+  }
   for (const m of [...staff]) {
     if (!m.skills) skillsFromQuality(m, rng);
     const before = staffLevel(roleFit(m.skills, m.roleId, m.quality));

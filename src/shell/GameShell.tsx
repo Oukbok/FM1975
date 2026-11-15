@@ -106,7 +106,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   const drawOpenRef = useRef(false);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.code === 'Space' && !q.liveMatchId && !q.textMatch && !g.briefing?.pending && !g.budget?.pending && !drawOpenRef.current && !document.querySelector('.ct-root')) {
+      if (e.code === 'Space' && !q.liveMatchId && !q.textMatch && !g.briefing?.pending && !g.budget?.pending && !drawOpenRef.current && !document.querySelector('.vt-root')) {
         const tag = (e.target as HTMLElement)?.tagName;
         if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
         e.preventDefault();

@@ -11,7 +11,7 @@ import { startTalk } from '../game/transferTalks';
 import { materializeWorldPlayer } from '../game/worldPool';
 import { Kpi } from '../ui/DashPage';
 import { vColor } from '../ui/format';
-import { TransferTalkModal } from '../views/transfers/TransferTalkModal';
+import { openContractScreen } from '../screens/contract/contractOpen';
 import ClubCrest from './ClubCrest';
 import Icon from './Icon';
 import PlayerModal from './PlayerModal';
@@ -30,31 +30,29 @@ export default function ClubModal({ g, clubId, nonce, onChange, onClose, onBack,
 }) {
   const [tab, setTab] = useState<ClubTabKey>('overview');
   const [selPlayer, setSelPlayer] = useState<string | null>(null);
-  const [talkId, setTalkId] = useState<string | null>(null);
   const [talkErr, setTalkErr] = useState<string | null>(null);
 
   // Wird dieser Verein erneut geöffnet (z. B. aus seinem Spielerprofil), Unterfenster schließen.
-  useEffect(() => { setSelPlayer(null); setTalkId(null); }, [nonce]);
+  useEffect(() => { setSelPlayer(null); }, [nonce]);
 
   // Escape schließt zuerst das oberste Unterfenster.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;
-      if (talkId) setTalkId(null); else if (selPlayer) setSelPlayer(null); else onClose();
+      if (selPlayer) setSelPlayer(null); else onClose();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [onClose, selPlayer, talkId]);
+  }, [onClose, selPlayer]);
 
   const d = buildClubProfile(g, clubId);
   // Weltspieler (Kader aus dem Weltpool) sind nur Ansichten – erst die Verhandlung legt sie an.
   const player = selPlayer ? g.players[selPlayer] ?? g.youthPlayers[selPlayer] ?? d.squad.find((p) => p.id === selPlayer) ?? null : null;
-  const talk = talkId ? (g.transferTalks ?? []).find((t) => t.id === talkId) : undefined;
   const onTalk = (pid: string) => {
     if (!g.players[pid]) materializeWorldPlayer(g, pid);
     const r = startTalk(g, pid);
     if (typeof r === 'string') { setTalkErr(r); return; }
-    setTalkErr(null); setTalkId(r.id); onChange();
+    setTalkErr(null); onChange(); openContractScreen({ kind: 'transfer', talkId: r.id });
   };
   const props = { g, d, openPlayer: setSelPlayer };
 
@@ -96,7 +94,6 @@ export default function ClubModal({ g, clubId, nonce, onChange, onClose, onBack,
         <PlayerModal player={player} club={g.clubs[player.clubId]} squad={d.squad}
           today={g.calendar.currentDate} season={g.season} onClose={() => setSelPlayer(null)} />
       )}
-      {talk && <TransferTalkModal g={g} talk={talk} onClose={() => setTalkId(null)} onChange={onChange} />}
       </div>
     </div>
   );

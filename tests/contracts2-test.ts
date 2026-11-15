@@ -221,7 +221,11 @@ console.log('6) Migration, Determinismus');
     submitRenewal(gx, q.id, { ...st.ask });
     return JSON.stringify({ log: st.log, ask: st.ask, w: q.contract.weeklyWage, s: st.status });
   };
-  ok(run() === run(), 'Gleiche Eingaben → gleiche Verhandlung');
+  // Kader entstehen mit Math.random – für den Vergleich beide Läufe mit derselben Folge.
+  const rnd0 = Math.random;
+  const seeded = () => { let s = 1975; Math.random = () => { s = (s * 16807) % 2147483647; return s / 2147483647; }; const r = run(); Math.random = rnd0; return r; };
+  const ra = seeded(), rb = seeded();
+  ok(ra === rb, 'Gleiche Eingaben → gleiche Verhandlung');
 }
 console.log('OK: Vertragsverhandlung 2.0');
 process.exit(0);

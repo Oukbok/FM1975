@@ -1,7 +1,7 @@
 // =============================================================================
 // Bausteine „Was ihm wichtig ist“: Interesse-Ampel, Gründe, Charakterzüge,
 // Wunsch-Versprechen. Genutzt im Spielerprofil (WishesTab) und in der
-// Transferverhandlung (views/transfers/TransferTalkModal.tsx).
+// Transferverhandlung (screens/negotiation/).
 // Alles, was der Spieler verdeckt denkt, wird je nach Kenntnis (Scouting,
 // laufende Gespräche) nur ungefähr gezeigt.
 // =============================================================================

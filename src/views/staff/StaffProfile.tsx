@@ -4,6 +4,8 @@
 // ihre Eignung für die besten Stellen – mit „Anbieten“ (Arbeitsmarkt) bzw.
 // „Versetzen“ (eigene Mitarbeiter).
 // =============================================================================
+import { openContractScreen } from '../../screens/contract/contractOpen';
+import { staffTalkBlocker } from '../../game/staffTalk';
 import { useEffect, useState } from 'react';
 import { COACH_PHILOSOPHY_LABEL, COACH_STYLE_LABEL } from '../../engine/aiManager';
 import { economyScale, yearOf } from '../../engine/economy';
@@ -13,7 +15,7 @@ import {
 } from '../../engine/staffSkills';
 import type { Game } from '../../game/state';
 import {
-  canCourse, canExtend, canReassign, compensationOf, demandOf, dismiss, extendContract, moveBlocker, reassign, replacedBy,
+  canCourse, canReassign, compensationOf, demandOf, dismiss, moveBlocker, reassign, replacedBy,
   sendToCourse, severanceOf, slotInfo,
 } from '../../game/trainerTeam';
 import { Empty } from '../../ui/DashPage';
@@ -39,13 +41,13 @@ export function StaffProfile({ g, m, own, role, scope, onOffer, onAct }: {
   const view = role === 'all' ? m.roleId : role;
   const keys = ROLE_SKILLS[view] ?? {};
   const club = m.clubId ? g.clubs[m.clubId] : null;
-  const block = own ? null : moveBlocker(g, m);
+  const block = own ? null : staffTalkBlocker(g, m, false);
   const mf = methodFactor(m, year);
   // Beste Stellen der Person; die betrachtete und die eigene Stelle sind immer dabei.
   const list = bestRoles(m.skills ?? {}, year, 7);
   for (const id of [view, m.roleId]) if (ROLE_SKILLS[id] && !list.some((r) => r.id === id)) list.push({ id, fit: roleFit(m.skills, id, 1) });
   list.sort((a, b) => b.fit - a.fit);
-  const ce = own ? canExtend(g, m) : null;
+  const extBlock = own ? staffTalkBlocker(g, m, true) : null;
   const act = (text: string, gone = false) => { setConfirm(false); onAct(text, gone); };
 
   return (
@@ -71,8 +73,8 @@ export function StaffProfile({ g, m, own, role, scope, onOffer, onAct }: {
         {m.home === g.managedClubId && !own && <div className="sf-trait"><b>Einer von uns</b><span>Früherer Spieler deines Vereins: kommt dir beim Gehalt entgegen und wartet ein Jahr auf dein Angebot.</span></div>}
         <div className="sf-prof-btns">
           {own ? <>
-            <button type="button" className="b3 b3-s" disabled={!ce?.ok} title={ce?.ok ? `Neue Forderung ${fmtStaffWage(memberMonthlySalary({ ...m, salaryFactor: Math.max(m.salaryFactor, demandOf(g, m)) }, scale))}` : ce?.reason}
-              onClick={() => act(extendContract(g, m.id, 2))}>+2 Jahre</button>
+            <button type="button" className="b3 b3-s" disabled={!!extBlock} title={extBlock ?? 'Am Verhandlungstisch über Gehalt, Laufzeit und Vertragspunkte sprechen'}
+              onClick={() => openContractScreen({ kind: 'staff', id: m.id })}>Verlängern</button>
             <button type="button" className="b3 b3-s" disabled={!canCourse(g, m)} title={canCourse(g, m) ? `Kosten ${fmtDM(trainingCourseCost(m, scale))} – Methodenstand ${year}, Fähigkeiten rücken ans Potenzial` : 'In diesem Jahr schon auf Fortbildung'}
               onClick={() => act(sendToCourse(g, m.id))}>Fortbildung</button>
             {confirm

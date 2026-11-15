@@ -57,30 +57,21 @@ await page.locator('.pp-modal .pp2-close').click();
 
 // 2) Verhandlung starten: Vereinsgespräch
 await page.locator('.dtable tbody tr >> nth=1').locator('button:has-text("Verhandeln")').click();
-await page.waitForSelector('.modal-xl');
+await page.waitForSelector('.vt-root');
 await page.waitForTimeout(250);
 await shot(`${pre}_2_verhandlung_verein`);
-// Mehrere Angebote mit steigender Ablöse, bis der Verein einschlägt.
-for (let i = 0; i < 8; i++) {
-  if (!(await page.locator('.modal-xl button:has-text("Angebot abgeben")').count())) break;
-  const r = page.locator('.modal-xl .talk-form input[type=range]').first();
-  const max = Number(await r.getAttribute('max'));
-  const min = Number(await r.getAttribute('min'));
-  await r.fill(String(Math.round((min + (max - min) * (0.55 + i * 0.07)) / 5000) * 5000));
-  await page.locator('.modal-xl button:has-text("Angebot abgeben")').click();
-  await page.waitForTimeout(150);
+// Verhandlungstisch (ausführlich: tests/negotiation-shots.mjs): ein Angebot, dann den Gegenvorschlag übernehmen.
+await page.locator('.vt-send').click();
+await page.waitForTimeout(250);
+await shot(`${pre}_3_verhandlung_runde`);
+if (await page.locator('button:has-text("Gegenvorschlag übernehmen")').count()) {
+  await page.locator('button:has-text("Gegenvorschlag übernehmen")').click();
+  await page.locator('.vt-send').click();
+  await page.waitForTimeout(300);
+  await shot(`${pre}_4_verhandlung_ergebnis`);
 }
-await shot(`${pre}_3_verhandlung_spieler`);
-// Spielergespräch: ein Versprechen anhaken und einen Vorschlag machen.
-if (await page.locator('.talk-checklist li').count()) {
-  await page.locator('.talk-checklist li').first().click();
-  await page.locator('.modal-xl button:has-text("Vorschlag machen")').click();
-  await page.waitForTimeout(200);
-  await shot(`${pre}_4_verhandlung_antwort`);
-}
-const over = await page.evaluate(() => [...document.querySelectorAll('.modal-xl .dbox-body')].some((b) => b.scrollWidth - b.clientWidth > 2));
-if (over) errors.push('Verhandlung: waagerechter Überlauf in einer Box');
-await page.locator('.modal-xl .modal-close').click();
+await page.keyboard.press('Escape');
+await page.waitForTimeout(300);
 
 // 3) Eigener Spieler: Bindung, Klauseln
 await nav('Kader', 'Übersicht');

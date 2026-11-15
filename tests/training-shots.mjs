@@ -108,11 +108,10 @@ await noScroll('Trainerteam');
 await page.locator('.sf-table tbody tr button:has-text("Verhandeln")').first().click();
 await page.waitForTimeout(300);
 await page.screenshot({ path: `${outDir}/${tag}_6_verhandlung.png` });
-await page.locator('.sf-hire input[type=range]').fill('60');
-await page.locator('.sf-hire-btns .b3-primary').click();
-await page.waitForTimeout(300);
+if (await page.locator('.vt-send').count()) { await page.locator('.vt-send').click(); await page.waitForTimeout(300); }
 await page.screenshot({ path: `${outDir}/${tag}_7_antwort.png` });
-if (await page.locator('.sf-hire .modal-close').count()) await page.locator('.sf-hire .modal-close').first().click();
+await page.keyboard.press('Escape');
+await page.waitForTimeout(300);
 await page.locator('.hd-nav-item:has-text("Jugend")').click();
 await page.waitForTimeout(400);
 await page.screenshot({ path: `${outDir}/${tag}_8_jugend.png` });

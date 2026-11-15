@@ -1,68 +1,58 @@
-// VERHANDLUNGSTISCH — links: der Spieler (Gesicht, Stärke, Persönlichkeit als
-// Einschätzung, Karrierephase, bisheriger Vertrag, was ihm wichtig ist, Wünsche).
-// Verdeckte Werte nie als Zahl – nur Worte bzw. Punkte.
+// VERHANDLUNGSTISCH — links: der Spieler (Gesicht, Stärke, Kräfteverhältnis, Persönlichkeit
+// als Einschätzung, Karrierephase, bisheriger Vertrag). Verdeckte Werte nie als Zahl –
+// nur Worte bzw. Punkte.
 import ClubCrest from '../../components/ClubCrest';
 import PlayerAvatar from '../../components/PlayerAvatar';
 import PosBadge from '../../components/PosBadge';
-import { CLAUSE_BY_KEY, ClauseKey } from '../../data/contractClauses';
-import type { NegDemand } from '../../engine/contractNegotiation';
 import { careerPhase, PHASE_LABEL, personaOf, personaTitle, TRAIT_LABEL, TRAITS, traitBand } from '../../engine/persona';
 import { scoutRangeText } from '../../engine/scouting';
-import { PROMISES, PromiseType } from '../../engine/transferMarket';
+import { estimateFor } from '../../game/playerPool';
 import type { Game } from '../../game/state';
 import type { Player } from '../../types';
 import { fmtPrice, fmtWage } from '../../ui/format';
 import { utcDate } from '../../components/player/shared';
-import { Dots } from './ContractTable';
-import { InfoTip } from '../../ui/InfoTip';
+import { NegCard } from '../negotiation/NegFrame';
+import { Balance, type LeverItem, Row } from '../negotiation/NegParts';
 
-export function ContractPlayer({ g, p, d, knowledge, promiseOptions }: {
-  g: Game; p: Player; d: NegDemand | null; knowledge: number; promiseOptions: [PromiseType, number][];
-}) {
+export function ContractPlayer({ g, p, knowledge, levers, compact }: { g: Game; p: Player; knowledge: number; levers: LeverItem[]; compact?: boolean }) {
   const club = g.clubs[p.clubId];
+  const own = p.clubId === g.managedClubId;
   const pe = personaOf(p);
-  const known = knowledge >= 0.55;
+  const est = own ? null : estimateFor(g, p.id);
   const traits = TRAITS.map((t) => [t, traitBand(pe[t], knowledge, `${p.id}|ct|${t}`)] as const)
-    .sort((a, b) => (b[1].lo + b[1].hi) - (a[1].lo + a[1].hi)).slice(0, 3);
-  const top = d ? (Object.entries(d.weights) as [ClauseKey, number][]).filter(([k]) => d.keys.includes(k)).sort((a, b) => b[1] - a[1]).slice(0, 4) : [];
+    .sort((a, b) => (b[1].lo + b[1].hi) - (a[1].lo + a[1].hi)).slice(0, compact ? 2 : 3);
   const k = p.contract;
   const extras = [k.appearanceBonus && 'Einsatzprämie', k.goalBonus && 'Torprämie', k.cleanSheetBonus && 'Zu-null-Prämie', k.titleBonus && 'Titelprämie',
     k.stayBonus && 'Klassenerhalt', k.annualRaise && 'Staffelung', k.fixedFee && 'festgeschriebene Ablöse', k.releaseClause && 'Ausstiegsklausel',
     k.option && (k.option === 'club' ? 'Vereinsoption' : 'Spieleroption'), k.relegationCut && 'Abstiegsklausel', k.loyaltyBonus && 'Treueprämie', k.successRaise && 'Erfolgsklausel'].filter(Boolean);
   return (
-    <aside className="ct-card ct-player">
-      <div className="ct-head">
-        <PlayerAvatar player={p} club={club} size={124} priority />
-        <div className="ct-head-r">
-          <div className="ct-name">{p.fullName}</div>
-          <div className="ct-sub">{club && <ClubCrest club={club} size={24} />}<span>{club?.name}</span></div>
-          <div className="ct-sub"><PosBadge p={p} single /><span>{p.age} Jahre</span></div>
+    <aside className="vt-left">
+      <NegCard title="Der Spieler" className="vt-who">
+        <div className="vt-who-head">
+          <PlayerAvatar player={p} club={club} size={124} priority />
+          <div className="vt-who-r">
+            <div className="vt-who-name">{p.fullName}</div>
+            <div className="vt-who-sub">{club && <ClubCrest club={club} size={24} />}<span>{club?.name}</span></div>
+            <div className="vt-who-sub"><PosBadge p={p} single /><span>{p.age} Jahre</span></div>
+          </div>
         </div>
-      </div>
-      <div className="ct-kpis">
-        <div><b>{p.overall}</b><span>Stärke</span></div>
-        <div><b>{scoutRangeText(p)}</b><span>Potenzial</span></div>
-        <div><b>{fmtPrice(k.transferValue)}</b><span>Marktwert</span></div>
-      </div>
-      <section className="ct-sec">
-        <h3 className="ct-h">Persönlichkeit <InfoTip k="persoenlichkeit" /></h3>
-        <div className="ct-kv"><span>Typ</span><b>{knowledge >= 0.35 ? personaTitle(pe) : 'noch unbekannt'}</b></div>
-        <div className="ct-kv"><span>Karriere</span><b>{PHASE_LABEL[careerPhase(p)].split(' – ')[0]}</b></div>
-        <div className="ct-kv ct-kv-note"><span>{PHASE_LABEL[careerPhase(p)].split(' – ')[1] ?? ''}</span></div>
-        {traits.map(([t, b]) => <div key={t} className="ct-kv"><span>{TRAIT_LABEL[t]}</span><b>{b.text}</b></div>)}
-      </section>
-      <section className="ct-sec">
-        <h3 className="ct-h">{p.clubId === g.managedClubId ? 'Bisheriger Vertrag' : `Vertrag bei ${club?.shortName ?? club?.name ?? '—'}`}</h3>
-        <div className="ct-kv"><span>Gehalt</span><b>{fmtWage(k.weeklyWage)}</b></div>
-        <div className="ct-kv"><span>Vertragsende</span><b>{utcDate(k.expiryDate)}</b></div>
-        <div className="ct-kv"><span>Zufriedenheit</span><b>{k.satisfaction >= 70 ? 'zufrieden' : k.satisfaction >= 45 ? 'geht so' : 'unzufrieden'}</b></div>
-        <div className="ct-kv ct-kv-wrap"><span>Klauseln</span><b>{extras.length ? extras.join(', ') : 'keine'}</b></div>
-      </section>
-      <section className="ct-sec">
-        <h3 className="ct-h">Was ihm wichtig ist</h3>
-        {top.map(([key, w]) => <div key={key} className="ct-kv"><span>{CLAUSE_BY_KEY[key].label}</span><Dots n={w} known={known} /></div>)}
-        {promiseOptions.slice(0, 2).map(([x, w]) => <div key={x} className="ct-kv"><span>Zusage: {PROMISES[x].label}</span><Dots n={w >= 8 ? 3 : w >= 5 ? 2 : 1} known={known} /></div>)}
-      </section>
+        <div className="vt-kpis">
+          <div><b>{est && !est.exact ? `${est.ovLo}–${est.ovHi}` : p.overall}</b><span>Stärke</span></div>
+          <div><b>{est ? (est.stLo === est.stHi ? `${est.st} ★` : `${est.stLo}–${est.stHi} ★`).replace(/\./g, ',') : scoutRangeText(p)}</b><span>Potenzial</span></div>
+          <div><b>{est && est.k < 0.8 ? `ca. ${fmtPrice(est.value)}` : fmtPrice(k.transferValue)}</b><span>Marktwert</span></div>
+        </div>
+        <h4 className="vt-h">Kräfteverhältnis</h4>
+        <Balance levers={levers} me="Du" them={p.lastName} max={compact ? 4 : 6} />
+        <h4 className="vt-h">Persönlichkeit</h4>
+        <Row k="Typ">{knowledge >= 0.35 ? personaTitle(pe) : 'noch unbekannt'}</Row>
+        <Row k="Karriere">{PHASE_LABEL[careerPhase(p)].split(' – ')[0]}</Row>
+        {traits.map(([t, b]) => <Row key={t} k={TRAIT_LABEL[t]}>{b.text}</Row>)}
+        <h4 className="vt-h">{own ? 'Bisheriger Vertrag' : `Vertrag bei ${club?.shortName ?? club?.name ?? '—'}`}</h4>
+        <Row k="Gehalt">{own || knowledge >= 0.5 ? fmtWage(k.weeklyWage) : 'unbekannt'}</Row>
+        <Row k="Vertragsende">{utcDate(k.expiryDate)}</Row>
+        {own && <Row k="Zufriedenheit">{k.satisfaction >= 70 ? 'zufrieden' : k.satisfaction >= 45 ? 'geht so' : 'unzufrieden'}</Row>}
+        {own && <div className="vt-kv wrap"><span>Klauseln</span><b>{extras.length ? extras.join(', ') : 'keine'}</b></div>}
+      </NegCard>
     </aside>
   );
 }

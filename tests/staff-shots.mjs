@@ -77,17 +77,22 @@ await shot('5_profil'); await noScroll('Trainerteam mit Profil');
 await page.locator('.sf-prof-btns button:has-text("Verhandeln")').click();
 await page.waitForTimeout(400);
 await shot('6_verhandlung');
-const box = await page.locator('.sf-hire').boundingBox();
-await page.locator('.sf-hire input[type=range]').fill('70');
-await page.locator('.sf-hire-btns button:has-text("Angebot machen")').click();
-await page.waitForTimeout(300);
-const box2 = await page.locator('.sf-hire').boundingBox();
-if (box && box2 && (Math.abs(box.width - box2.width) > 1 || Math.abs(box.height - box2.height) > 1)) errors.push(`Verhandlungsfenster ändert die Größe: ${JSON.stringify(box)} → ${JSON.stringify(box2)}`);
-await shot('7_absage');
-await page.locator('.sf-hire input[type=range]').fill('105');
-await page.locator('.sf-hire-btns button:has-text("Angebot machen")').click();
-await page.waitForTimeout(500);
-if (await page.locator('.sf-hire').count()) errors.push('Anstellung zum vollen Angebot hat nicht geklappt');
+// Verhandlungstisch (ausführlich: tests/negotiation-shots.mjs): eine Runde, dann Forderung übernehmen.
+if (!(await page.locator('.vt-root[data-kind="staff"]').count())) errors.push('Verhandlungstisch öffnet nicht');
+else {
+  await page.locator('.vt-send').click();
+  await page.waitForTimeout(300);
+  await shot('7_runde');
+  if (await page.locator('button:has-text("Forderung übernehmen")').count()) {
+    await page.locator('button:has-text("Forderung übernehmen")').click();
+    await page.locator('.vt-send').click();
+    await page.waitForTimeout(500);
+  }
+  if ((await page.locator('.vt-out').getAttribute('data-outcome').catch(() => null)) !== 'agreed') errors.push('Anstellung zur vollen Forderung hat nicht geklappt');
+  await shot('8_einigung');
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(300);
+}
 await shot('8_eingestellt');
 
 // ---- Verein › Mitarbeiter ----

@@ -1809,12 +1809,21 @@ Für jede Stelle, die es in der Zeit gibt, stehen immer einige brauchbare Bewerb
 Als Cheftrainer stehen die **freien Trainer der Liga** auf dem Markt (der Trainerpool, aus dem auch die anderen Vereine schöpfen) – mit Spielidee und Ansehen. Ohne „nur vereinslos“ siehst du auch die Trainer der anderen Vereine. Große Namen kommen nicht zu einem deutlich kleineren Verein. Wirbst du einen Trainer ab, holt sich sein Verein einen Nachfolger.
 
 ## Verhandlung
-Im Verhandlungsfenster wählst du die **Stelle** (jede Stelle ist möglich, die Liste nennt die Eignung), dein **Angebot** und die **Laufzeit**.
-- Die **Forderung** richtet sich nach der Eignung für die Stelle und deren Gehaltsklasse. Wer in seinem eigentlichen Beruf mehr verdient, als die angebotene Stelle hergibt, verlangt mindestens 80 % davon – ein gestandener Cheftrainer wird kein günstiger Co-Trainer.
-- Ein großer Verein und eine lange Laufzeit geben bis zu etwa 14 % Spielraum; nach drei Absagen ist Schluss.
+Mit Mitarbeitern verhandelst du am **Verhandlungstisch** (siehe „Der Verhandlungstisch“) – nicht mehr nur über das Gehalt, sondern über ein Paket:
+| Punkt | Bedeutung |
+| --- | --- |
+| Gehalt, Laufzeit | Die **Forderung** richtet sich nach der Eignung für die Stelle und deren Gehaltsklasse. Wer in seinem eigentlichen Beruf mehr verdient, verlangt mindestens 80 % davon. |
+| Handgeld | Einmalzahlung bei Unterschrift, wird sofort gebucht. |
+| Erfolgsprämie | Wird am Saisonende gezahlt, wenn das Saisonziel erreicht ist. |
+| Abfindung | Was bei einer Entlassung fällig wird: höchstens drei Monatsgehälter, die halbe oder die volle Restlaufzeit. |
+| Abwerbeschutz | Solange der Vertrag läuft, lässt er sich nicht von einem anderen Verein abwerben. |
+| Fortbildung | Du schickst ihn gleich nach der Unterschrift auf einen Lehrgang (du zahlst). |
+- Das **Kräfteverhältnis** links zeigt, wer am längeren Hebel sitzt: Vereinslose und dem Verein Verbundene geben eher nach, begehrte Spitzenkräfte und Angestellte anderer Vereine lassen sich bitten.
+- Höchstens **fünf Runden**. Verliert er die Geduld, ist das Gespräch gescheitert und er redet 30 Tage (nach einem dreisten Angebot 60 Tage) nicht mehr mit dir.
 - **Abwerben** kostet sechs Monatsgehälter Ablöse (bei einem Cheftrainer ein Jahresgehalt) und geht nur bei gleich großen oder kleineren Vereinen.
 - Hat die Stelle mehrere Plätze (Co-Trainer, Scouts, Jugendtrainer), füllen sie sich der Reihe nach. Erst wenn alle besetzt sind, **ersetzt** der Neue den Schwächsten – der bekommt seine Abfindung.
-- Links siehst du, **was sich ändert**: wen der Neue ersetzt und – bei Trainern – Niveau und Entwicklung vorher und nachher.
+- Rechts unter **Auswirkung** siehst du, wen der Neue ersetzt und – bei Trainern – Niveau und Entwicklung vorher und nachher.
+- Auch **Verlängerungen** eigener Mitarbeiter laufen über den Tisch (Profil › „Verlängern“).
 
 ## Die anderen Vereine
 Alle Vereine der Liga haben ein Trainerteam. Sie stellen nach ihrem Ruf ein, werben Bessere ab und verlängern Verträge; gute Co-Trainer und erfolgreiche frühere Kapitäne werden Kandidaten für Cheftrainerposten.`,
@@ -2568,10 +2577,10 @@ Im Transfermarkt und in der Beobachtungsliste startest du mit **Verhandeln** ein
 | Verhandlungshärte des Vereins | −8 bis +17 % |
 | Bester Spieler eines gleich großen Vereins | „unverkäuflich“: +50 % |
 
-Dein Angebot besteht aus **Ablöse**, **Zahlung** (sofort, zwei Raten – der Verein bewertet sie mit 93 % – oder ab 1990 drei Raten, 89 %), **Weiterverkaufsbeteiligung** (0/10/20 %), **Erfolgsprämie** (fällig bei 20 Einsätzen) und optional einem **Spieler-Tausch**: Der Verkäufer rechnet deinen Spieler mit 50–85 % seines Marktwerts an – je nachdem, ob er auf dessen Position Bedarf hat –, und der Tauschspieler muss selbst wechseln wollen. Ab **2000** gibt es die **Leihe mit Kaufoption** (nur für Ergänzungsspieler oder Talente bis 21; der Verein bewertet die Option mit 60 %; am Saisonende entscheidest du, ob du sie ziehst), ab **2005** die **Rückkaufoption** für den Verkäufer (zwei Jahre, senkt den Preis etwas). Ist dein Verein **direkter Tabellennachbar**, verlangt der Verkäufer 8 % mehr. Der Verein antwortet mit einer Gegenforderung. Lächerliche Angebote kosten viel **Geduld**; ist sie aufgebraucht, endet das Gespräch. Liegt die Ablöse (bei Raten: die erste Rate) über deinem **Transferbudget**, gibt der Vorstand das Angebot nicht frei: Es wird **nicht abgeschickt**, der Grund steht im Verlauf und unter dem Knopf.
+Dein Angebot besteht aus **Ablöse**, **Zahlung** (sofort, zwei Raten – der Verein bewertet sie mit 93 % – oder ab 1990 drei Raten, 89 %), **Weiterverkaufsbeteiligung** (0/10/20 %), **Nachschlag nach Einsätzen** (fällig bei 20 Einsätzen), **Nachschlag bei Europapokal** (fällig am Saisonende, wenn du dich qualifizierst), bis 1998 einem **Ablösespiel** (Freundschaftsspiel beim Verkäufer, Einnahmen für ihn) und optional einem **Spieler-Tausch**: Der Verkäufer rechnet deinen Spieler mit 50–85 % seines Marktwerts an – je nachdem, ob er auf dessen Position Bedarf hat –, und der Tauschspieler muss selbst wechseln wollen. Ab **2000** gibt es die **Leihe mit Kaufoption** (nur für Ergänzungsspieler oder Talente bis 21; der Verein bewertet die Option mit 60 %; am Saisonende entscheidest du, ob du sie ziehst), ab **2005** die **Rückkaufoption** für den Verkäufer (zwei Jahre, senkt den Preis etwas). Ist dein Verein **direkter Tabellennachbar**, verlangt der Verkäufer 8 % mehr. Der Verein antwortet mit einem vollständigen **Gegenvorschlag** – je nach Lage besteht er auf Sofortzahlung, einer Beteiligung am Weiterverkauf oder einem Ablösespiel; übernimmst du den Gegenvorschlag, ist man sich einig. Punkte, die du für **nicht verhandelbar** erklärst, lässt er stehen und verlangt den Gegenwert anderswo (kostet Geduld). Wie der Tisch aufgebaut ist, steht im Artikel „Der Verhandlungstisch“. Lächerliche Angebote kosten viel **Geduld**; ist sie aufgebraucht, endet das Gespräch. Liegt die Ablöse (bei Raten: die erste Rate) über deinem **Transferbudget**, gibt der Vorstand das Angebot nicht frei: Es wird **nicht abgeschickt**, der Grund steht im Verlauf und unter dem Knopf.
 
 ## Verhandeln mit dem Spieler
-Danach überzeugst du den Spieler – was er will, hängt von seiner **Persönlichkeit** ab (Artikel „Spielerwünsche“). Sein **Berater** (bzw. er selbst) nennt eine überhöhte Forderung, das echte Mindestgehalt bleibt verdeckt. Du bietest **Gehalt** (pro Jahr oder pro Woche, je nach Einstellung), **Laufzeit**, **Handgeld** (zählt anteilig wie Gehalt, Geldgierige schätzen es mehr), **Beraterprovision** (fehlt sie, rät der Berater ab), **Treueprämie** (fällig bei Vertragsende, wenn er bleibt), **Erfolgsklausel** (+10/+20 % Gehalt bei einem Europapokal-Platz), ab **1996** eine **Ausstiegsklausel** (reizt Ehrgeizige und Abenteurer; zahlt ein Verein sie, wechselt der Spieler ohne Verhandlung) und **Versprechen**:
+Danach überzeugst du den Spieler am selben Tisch – mit allen Vertragspunkten wie bei einer Verlängerung (Artikel „Vertragsverhandlung“); je mehr ihn dein Verein reizt, desto früher unterschreibt er. Was er will, hängt von seiner **Persönlichkeit** ab (Artikel „Spielerwünsche“). Sein **Berater** (bzw. er selbst) nennt eine überhöhte Forderung, das echte Mindestgehalt bleibt verdeckt. Du bietest **Gehalt** (pro Jahr oder pro Woche, je nach Einstellung), **Laufzeit**, **Handgeld** (zählt anteilig wie Gehalt, Geldgierige schätzen es mehr), **Beraterprovision** (fehlt sie, rät der Berater ab), **Treueprämie** (fällig bei Vertragsende, wenn er bleibt), **Erfolgsklausel** (+10/+20 % Gehalt bei einem Europapokal-Platz), ab **1996** eine **Ausstiegsklausel** (reizt Ehrgeizige und Abenteurer; zahlt ein Verein sie, wechselt der Spieler ohne Verhandlung) und **Versprechen**:
 
 | Versprechen | Wird geprüft (Saisonende) |
 | --- | --- |
@@ -2828,14 +2837,51 @@ Die Kaderauflagen prüft die Liga nach jedem Transferfenster (1.9. und 1.2.). Ei
 Quellen und Vereinfachungen: \`data/registrationRules.ts\`.`,
   },
   {
+    id: 'negotiation-table',
+    category: 'squad',
+    title: 'Der Verhandlungstisch',
+    keywords: ['verhandlungstisch', 'verhandlung', 'verhandlungsposition', 'kräfteverhältnis', 'hebel', 'geduld', 'gegenvorschlag', 'nicht verhandelbar', 'paket', 'ablösespiel', 'nachschlag', 'weiterverkaufsbeteiligung', 'raten', 'stempel', 'gescheitert', 'einig', 'mitarbeiter', 'transfer'],
+    body: `## Ein Tisch für alle Verhandlungen
+Vereine (Ablöse), Spieler (Vertrag) und Mitarbeiter (Anstellung, Verlängerung) verhandeln am selben Bildschirm. Solange er offen ist, steht die Zeit. Bei einem Transfer zeigt die Leiste oben die Schritte **Verein → Spieler → Abschluss**.
+
+## Aufbau
+- **Links** dein Gegenüber und das **Kräfteverhältnis**: ein Zeiger zwischen dir und der anderen Seite, darunter die Hebel, die ihn verschieben (Vertrag läuft aus, andere Interessenten, Kassenlage des Verkäufers, vereinslos …). Grün hilft dir, Rot dem Gegenüber.
+- **Mitte oben** die **Verhandlungsposition**: dein Paket (rund, Vereinsfarbe) und die Forderung (Raute) auf einer gemeinsamen Skala. Der Regler wandert sofort mit, wenn du etwas einstellst. Die schraffierte Zone ist die Einschätzung deines Stabs, ab wo eine Einigung möglich ist – je besser Sportdirektor und Scouts, desto schmaler und genauer. Kleine Marken zeigen frühere Runden, rechts laufen beide Linien Runde für Runde aufeinander zu.
+- **Mitte unten** die Punkte des Pakets: Forderung bzw. Gegenvorschlag (ein Klick übernimmt den Wert), dein Angebot, der **Stand** (einig / offen / Bedingung) und wie **wichtig** der Punkt der anderen Seite ist.
+- **Rechts** Stimmung mit Geduld und Runden, das Gespräch als Wortwechsel und die **Auswirkung** auf deine Kasse.
+
+## Paket statt Einzelzahl
+Die andere Seite bewertet immer das **ganze Paket**. Was ihr wichtig ist, zählt mehr – ein Verein in Geldnot will Geld sofort statt Raten, ein Ausbildungsverein schätzt die Weiterverkaufsbeteiligung, ein kleiner Verein ein Ablösespiel gegen den großen Käufer. Ein Gegenvorschlag ist ein vollständiges Paket: Übernimmst du ihn unverändert, gilt er als angenommen.
+
+## Bausteine beim Verein
+| Punkt | Wirkung |
+| --- | --- |
+| Ablöse, Zahlung | sofort oder in zwei bis drei Raten (klamme Verkäufer bestehen auf Sofortzahlung) |
+| Nachschlag nach Einsätzen | wird fällig, wenn der Spieler bei dir genug Spiele macht |
+| Nachschlag bei Europapokal | wird am Saisonende fällig, wenn du dich für den Europapokal qualifizierst |
+| Weiterverkaufsbeteiligung | Anteil des alten Vereins an einer späteren Ablöse |
+| Ablösespiel (bis 1998) | Freundschaftsspiel beim Verkäufer, die Einnahmen gehören ihm; deine Stammspieler verlieren etwas Frische |
+| Tauschspieler, Rückkaufoption, Leihe mit Kaufoption | wie bisher |
+Unter den Punkten zeigt ein Balken, **was dein Paket dem Verkäufer wert ist** – und wie weit es noch bis zur Forderung ist.
+
+## „Nicht verhandelbar“
+Mit dem Schloss am Zeilenende erklärst du einen Punkt für fest. Die andere Seite lässt ihn dann stehen und holt sich den Gegenwert an anderer Stelle – jedes Schloss kostet aber etwas Geduld.
+
+## Geduld und Runden
+Jede Absage kostet Geduld, dreiste Angebote besonders viel. Ist die Geduld aufgebraucht oder die letzte Runde vorbei (Spieler sieben, Mitarbeiter fünf Runden), bricht die andere Seite ab und will für einige Wochen nicht mehr reden.
+
+## Das Ergebnis
+Am Ende schließt sich das Fenster nicht einfach: Ein Blatt mit Stempel zeigt das Ergebnis – **Einig**, **Transfer perfekt**, **Verlängert**, **Eingestellt** oder **Gescheitert** –, dazu die vereinbarten Punkte, die Bilanz der Verhandlung (Runden, erste Forderung, Abschluss) und wie es weitergeht.`,
+  },
+  {
     id: 'squad-contracts2',
     category: 'squad',
     title: 'Vertragsverhandlung: der Verhandlungstisch',
     keywords: ['verhandlungstisch', 'vertragsverhandlung', 'handgeld', 'einsatzprämie', 'torprämie', 'zu-null-prämie', 'titelprämie', 'klassenerhalt', 'staffelung', 'gehaltssteigerung', 'ausstiegsklausel', 'festgeschriebene ablöse', 'option', 'vereinsoption', 'spieleroption', 'abstiegsklausel', 'berater', 'provision', 'geduld', 'gegenangebot', 'bluff'],
     body: `## Der Bildschirm
-Den Verhandlungstisch öffnest du über den Knopf **Vertrag** im Spielerprofil, das Rechtsklick-Menü („Vertrag verlängern“), Vertragsnachrichten im Newscenter, Kader › Verträge (auslaufende Verträge) und – beim Spielergespräch eines Transfers – über „Am Verhandlungstisch“. Solange er offen ist, steht die Zeit.
-- **Links** der Spieler: Stärke, Potenzial, Persönlichkeit als Einschätzung (nie als Zahl), Karrierephase, bisheriger Vertrag und was ihm wichtig ist.
-- **Mitte** alle Vertragspunkte: seine **Forderung**, **dein Angebot** (Regler bzw. Umschalter) und wie **wichtig** ihm der Punkt ist (ein bis drei Punkte). Unten erklärt ein Streifen den Punkt unter dem Zeiger.
+Den Verhandlungstisch öffnest du über den Knopf **Vertrag** im Spielerprofil, das Rechtsklick-Menü („Vertrag verlängern“), Vertragsnachrichten im Newscenter und Kader › Verträge (auslaufende Verträge). Bei einem Transfer folgt das Spielergespräch am selben Tisch direkt auf die Einigung mit dem Verein. Solange er offen ist, steht die Zeit. Aufbau, Verhandlungsposition, „nicht verhandelbar“ und das Ergebnisblatt erklärt der Artikel **Der Verhandlungstisch**.
+- **Links** der Spieler: Stärke, Potenzial, das Kräfteverhältnis, Persönlichkeit als Einschätzung (nie als Zahl), Karrierephase und bisheriger Vertrag.
+- **Mitte** oben die Verhandlungsposition, darunter alle Vertragspunkte: seine **Forderung** (ein Klick übernimmt sie), **dein Angebot** (Regler bzw. Umschalter), der **Stand** je Punkt und wie **wichtig** ihm der Punkt ist (ein bis drei Punkte). Unten erklärt ein Streifen den Punkt unter dem Zeiger.
 - **Rechts** Stimmung und Geduld, der Gesprächsverlauf mit Spieler, Berater und Sportdirektor, und die **Auswirkung**: Gehaltsbudget danach (Grenze 110 % des bestätigten Gehaltsbudgets), Kosten der ersten Saison und über die Laufzeit (nominal), Handgeld + Provision gegen das Transferbudget.
 
 ## Vertragspunkte je Epoche

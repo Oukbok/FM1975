@@ -4,7 +4,7 @@ import PlayerModal from '../../components/PlayerModal';
 import { CalendarEngine } from '../../engine/calendar';
 import { getAvailablePlayers } from '../../engine/transfers';
 import { activeTalks, sellerOf, startTalk, talkBlocker, TransferTalk } from '../../game/transferTalks';
-import { TransferTalkModal } from './TransferTalkModal';
+import { openContractScreen } from '../../screens/contract/contractOpen';
 import { Game } from '../../game/state';
 import { Player } from '../../types';
 import { YouthScoutBox } from './YouthScoutBox';
@@ -58,16 +58,14 @@ function usePlayerModal(g: Game) {
 
 /** Verhandlung öffnen (neu starten oder fortsetzen). */
 function useTalk(g: Game, onChange: () => void) {
-  const [talkId, setTalkId] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  const talk = talkId ? (g.transferTalks ?? []).find((t) => t.id === talkId) : undefined;
   const open = (playerId: string) => {
     const r = startTalk(g, playerId);
     if (typeof r === 'string') { setErr(r); return; }
-    setErr(null); setTalkId(r.id); onChange();
+    setErr(null); onChange(); openContractScreen({ kind: 'transfer', talkId: r.id });
   };
-  const modal = talk ? <TransferTalkModal g={g} talk={talk} onClose={() => setTalkId(null)} onChange={onChange} /> : null;
-  return { open, openTalk: (t: TransferTalk) => setTalkId(t.id), modal, err };
+  // Verhandelt wird am Verhandlungstisch (screens/negotiation/TransferFlow.tsx).
+  return { open, openTalk: (t: TransferTalk) => openContractScreen({ kind: 'transfer', talkId: t.id }), modal: null, err };
 }
 
 function TalkButton({ g, p, onTalk }: { g: Game; p: Player; onTalk: (id: string) => void }) {

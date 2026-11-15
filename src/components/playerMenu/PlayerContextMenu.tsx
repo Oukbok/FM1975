@@ -18,7 +18,6 @@ import { estimateFor } from '../../game/playerPool';
 import { activeJob, cancelScouting, queueScouting, queuedJob, scoutSlots, scoutingOf } from '../../game/scoutingGame';
 import { PIDSEL_CLEAR } from '../../ui/useMultiSelect';
 import { materializeWorldPlayer, worldClubs, worldEntry, worldPreviewPlayer, WP_FIELD } from '../../game/worldPool';
-import { TransferTalkModal } from '../../views/transfers/TransferTalkModal';
 import type { Game } from '../../game/state';
 import type { Player } from '../../types';
 import Icon from '../Icon';
@@ -54,7 +53,6 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
 }) {
   const [menu, setMenu] = useState<MenuState | null>(null);
   const [profile, setProfile] = useState<{ pid: string; tab: Tab; z?: number } | null>(null);
-  const [talkId, setTalkId] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const clubApi = useClubProfile();
   const press = useRef<{ t: number; x: number; y: number } | null>(null);
@@ -160,7 +158,7 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
         run: () => {
           const r = startTalk(g, p.id);
           if (typeof r === 'string') { setNote(r); return; }
-          setTalkId(r.id); onChange(); close();
+          onChange(); close(); openContractScreen({ kind: 'transfer', talkId: r.id });
         },
       });
     }
@@ -179,7 +177,7 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
         const block = talkBlocker(g, mp);
         const r = block ?? startTalk(g, mp.id);
         if (typeof r === 'string') { setNote(r); return; }
-        setTalkId(r.id); onChange(); close();
+        onChange(); close(); openContractScreen({ kind: 'transfer', talkId: r.id });
       },
     });
     if (wc && clubApi?.canOpen(wc.id)) items.push({ label: `Verein: ${wc.name}`, icon: 'shield', run: () => { clubApi.open(wc.id); close(); } });
@@ -211,7 +209,6 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
     open: (pid, tab = 'general') => { if (playerOf(g, pid) || worldPreviewPlayer(g, pid)) { setMenu(null); setProfile({ pid, tab, z: nextProfileZ() }); } },
     canOpen: (pid) => !!pid && !!playerOf(g, pid),
   }), [g]);
-  const talk = talkId ? (g.transferTalks ?? []).find((t) => t.id === talkId) : undefined;
   const squad = pp ? (g.clubs[pp.clubId]?.playerIds ?? []).map((id) => g.players[id]).filter(Boolean) as Player[] : undefined;
 
   return (
@@ -247,7 +244,6 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
           today={g.calendar.currentDate} season={g.season} initialTab={profile!.tab} zIndex={profile!.z} onClose={() => setProfile(null)} />,
         document.body,
       )}
-      {talk && <TransferTalkModal g={g} talk={talk} onClose={() => setTalkId(null)} onChange={onChange} />}
     </PlayerProfileCtx.Provider>
   );
 }

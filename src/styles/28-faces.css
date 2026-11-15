@@ -49,7 +49,7 @@
 /* Boxen mit fester Höhe: Kopf inkl. Hals füllt die Höhe, Breite folgt dem Bildformat */
 :is(.aw-face, .ft-face-img, .gb-face) > .pa-photo { height: 100%; width: auto !important; }
 .rb2-face:has(> .pa-photo) > .pa-photo,
-.ptk-face > .pa-photo, .dz-rface > .pa-photo, .ct-head > .pa-photo, .gb-face > .pa-photo { filter: drop-shadow(0 6px 12px rgba(var(--shade-rgb), 0.45)); }
+.ptk-face > .pa-photo, .dz-rface > .pa-photo, .vt-who-head > .pa-photo, .gb-face > .pa-photo { filter: drop-shadow(0 6px 12px rgba(var(--shade-rgb), 0.45)); }
 /* Einsatzorte: Kopf ragt etwas in den Zeilen-Innenabstand, Zeilenhöhe bleibt */
 .dlist-row > .dl-face { margin: -4px -2px -4px 0; }
 .mr-nm > .fthumb { margin: -4px 0; }

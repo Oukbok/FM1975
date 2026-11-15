@@ -6,7 +6,7 @@
 // der Arbeitsmarkt – ein Pool für alle Stellen, sortiert nach Eignung für die
 // gesuchte Stelle, filterbar nach Fähigkeit, Alter, Herkunft –, rechts unten
 // das Profil der gewählten Person mit ihrer Eignung für jede Stelle.
-// Verhandelt wird im Fenster `StaffHireDialog`.
+// Verhandelt wird am Verhandlungstisch (`openContractScreen({ kind: 'staff' })`).
 // =============================================================================
 import { useMemo, useState } from 'react';
 import { yearOf } from '../../engine/economy';
@@ -18,7 +18,7 @@ import { ensureStaffWorld, findPerson, staffMarket } from '../../game/staffWorld
 import { DashBox, DashPage } from '../../ui/DashPage';
 import Seg from '../../ui/Seg';
 import { StaffEffectsPanel } from './StaffEffects';
-import { StaffHireDialog } from './StaffHireDialog';
+import { openContractScreen } from '../../screens/contract/contractOpen';
 import { MarketFilters, MarketTable, type MarketState } from './StaffMarket';
 import { StaffProfile } from './StaffProfile';
 import { StaffSlots } from './StaffSlots';
@@ -31,7 +31,8 @@ export function StaffPage({ g, scope, onChange }: { g: Game; scope: StaffScope; 
   const [view, setView] = useState<'slots' | 'fx'>('slots');
   const [f, setF] = useState<MarketState>({ role: 'all', skill: '', minLvl: 0, maxAge: 0, onlyFree: true, exPro: false });
   const [sel, setSel] = useState<{ id: string; own: boolean } | null>(null);
-  const [talk, setTalk] = useState<{ id: string; role: string } | null>(null);
+  // Verhandelt wird am Verhandlungstisch (screens/negotiation/StaffTalk.tsx); danach zeichnet die Shell die Seite neu.
+  const setTalk = (t: { id: string; role: string }) => openContractScreen({ kind: 'staff', id: t.id, role: t.role });
   const [msg, setMsg] = useState<string | null>(null);
   const refresh = (text?: string) => { if (text) setMsg(text); setTick((t) => t + 1); onChange(); };
 
@@ -46,7 +47,6 @@ export function StaffPage({ g, scope, onChange }: { g: Game; scope: StaffScope; 
   const shown = rows.slice(0, MARKET_ROWS);
 
   const selected: StaffMember | null = sel ? (sel.own ? staff.find((m) => m.id === sel.id) ?? null : findPerson(g, sel.id)) : null;
-  const talkPerson = talk ? findPerson(g, talk.id) : null;
   // Stelle, auf die sich Profil und Verhandlung beziehen: die gesuchte, sonst die der gewählten Zeile.
   const rowRole = sel && !sel.own ? rows.find((r) => r.m.id === sel.id)?.role : undefined;
   const ctxRole = selected ? (sel?.own ? selected.roleId : f.role !== 'all' ? f.role : rowRole ?? selected.roleId) : f.role;
@@ -75,10 +75,6 @@ export function StaffPage({ g, scope, onChange }: { g: Game; scope: StaffScope; 
           onAct={(text, gone) => { if (gone) setSel(null); refresh(text); }} />
       </DashBox>
 
-      {talk && talkPerson && (
-        <StaffHireDialog g={g} m={talkPerson} roleId={talk.role} onClose={() => setTalk(null)}
-          onDone={(text) => { setTalk(null); setSel(null); setView('slots'); refresh(text); }} />
-      )}
     </DashPage>
   );
 }

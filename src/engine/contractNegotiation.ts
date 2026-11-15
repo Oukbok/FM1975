@@ -295,17 +295,18 @@ export interface NegAnswer {
  * Antwort auf ein Angebot. `boost` = Aufschlag wegen echter Konkurrenz-Angebote,
  * `round` = Runde (1…). Deterministisch aus Seed, Runde und Angebot.
  */
-export function answer(t: ContractTerms, d: NegDemand, ctx: NegCtx, cur: ContractTerms, round: number, boost = 0): NegAnswer {
+export function answer(t: ContractTerms, d: NegDemand, ctx: NegCtx, cur: ContractTerms, round: number, boost = 0, locks: readonly ClauseKey[] = []): NegAnswer {
   const need = d.reservation * (1 + boost);
   const val = packageValue(t, d, ctx);
   const jitter = (hash01(`${ctx.seed}|${round}|${Math.round(t.wage)}|${t.years}`) - 0.5) * 0.03;
   const ratio = val / Math.max(1, need);
   if (ratio >= 1 + jitter) return { kind: 'accept', accepted: true, ratio, patienceLoss: 0 };
   const kind: AnswerKind = ratio < 0.75 ? 'insult' : ratio < 0.88 ? 'far' : ratio < 0.97 ? 'gap' : 'close';
-  const patienceLoss = kind === 'insult' ? 40 : kind === 'far' ? 22 : kind === 'gap' ? 12 : 6;
+  // Wer Punkte für unverhandelbar erklärt, strapaziert die Geduld zusätzlich (je Punkt 2, höchstens 6).
+  const patienceLoss = (kind === 'insult' ? 40 : kind === 'far' ? 22 : kind === 'gap' ? 12 : 6) + Math.min(6, locks.length * 2);
   const c = contributions(t, d, ctx);
   const focus = (Object.entries(c) as [ClauseKey, number][]).filter(([, v]) => v < 0).sort((a, b) => a[1] - b[1])[0]?.[0];
-  return { kind, accepted: false, ratio, patienceLoss, focus, counter: counterOffer(t, cur, d, ctx, need, round) };
+  return { kind, accepted: false, ratio, patienceLoss, focus, counter: counterOffer(t, cur, d, ctx, need, round, locks) };
 }
 
 const MONEY: (keyof ContractTerms)[] = ['signing', 'appearance', 'goal', 'cleanSheet', 'title', 'stay', 'loyalty', 'agent'];
@@ -315,7 +316,8 @@ const PCT: (keyof ContractTerms)[] = ['raise', 'success'];
  * Gegenangebot: Er kommt dir bei Punkten entgegen, die ihm wenig bedeuten, beharrt
  * auf den wichtigen und gleicht den Rest über das Gehalt aus – nie unter seiner Schwelle.
  */
-export function counterOffer(o: ContractTerms, cur: ContractTerms, d: NegDemand, ctx: NegCtx, need: number, round: number): ContractTerms {
+export function counterOffer(o: ContractTerms, cur: ContractTerms, d: NegDemand, ctx: NegCtx, need: number, round: number, locks: readonly ClauseKey[] = []): ContractTerms {
+  const locked = new Set(locks);
   const c: ContractTerms = { ...cur, promises: [...cur.promises] };
   const conc = (key: ClauseKey) => clamp(0.45 - 0.12 * (d.weights[key] ?? 1) + round * 0.03, 0.05, 0.6);
   const rec = c as unknown as Record<string, number>, off = o as unknown as Record<string, number>;
@@ -338,12 +340,25 @@ export function counterOffer(o: ContractTerms, cur: ContractTerms, d: NegDemand,
   const must = d.fair.promises.filter((x) => (ctx.promiseWeights.find(([t]) => t === x)?.[1] ?? 0) >= 8);
   c.promises = Array.from(new Set([...o.promises, ...must]));
   if (d.keys.includes('agent') && ctx.agentFee > 0) c.agent = Math.max(c.agent, Math.round(ctx.agentFee * 0.9 / 100) * 100);
+  // „Nicht verhandelbar“: Diese Punkte lässt er stehen, wie du sie angeboten hast – der Wert muss woanders herkommen.
+  for (const key of locked) {
+    if (!d.keys.includes(key) || key === 'wage') continue;
+    if (key === 'promises') c.promises = [...o.promises];
+    else (c as unknown as Record<string, unknown>)[key] = (o as unknown as Record<string, unknown>)[key];
+  }
   // Gehalt ausgleichen: nie unter der Schwelle, nie unter deinem Angebot, Bluff schmilzt.
   c.wage = Math.max(o.wage, c.wage);
   const slope = wageSlope(c, d, ctx);
   const target = need * 1.02;
   const val = packageValue(c, d, ctx);
-  if (val < target) c.wage += (target - val) / slope;
+  if (locked.has('wage')) {
+    // Gehalt steht fest: erst über das Handgeld, und nur wenn auch das feststeht, doch über das Gehalt.
+    c.wage = o.wage;
+    const gap = target - packageValue(c, d, ctx);
+    if (gap > 0 && d.keys.includes('signing') && !locked.has('signing')) c.signing += gap * clamp(c.years, 1, 5) * 52 / Math.max(0.3, d.k.sign);
+    const rest = target - packageValue(c, d, ctx);
+    if (rest > 0) c.wage += rest / wageSlope(c, d, ctx);
+  } else if (val < target) c.wage += (target - val) / slope;
   else if (val > target * 1.04) c.wage = Math.max(o.wage, c.wage - (val - target * 1.03) / slope);
   c.wage = Math.ceil(c.wage / 10) * 10;
   for (const key of MONEY) (c as unknown as Record<string, number>)[key] = r100((c as unknown as Record<string, number>)[key]);

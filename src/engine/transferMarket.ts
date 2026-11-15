@@ -149,8 +149,9 @@ export function sellerPosition(p: Player, seller: Club, buyer: Club, ctx: Seller
 
 /**
  * Angebotspaket an den Verkäufer: Ablöse, Raten (2 oder ab 1990 auch 3),
- * Weiterverkaufsbeteiligung, Erfolgsprämie, Spieler-Tausch (Wert aus Sicht des
- * Verkäufers), Rückkaufoption für den Verkäufer, Leihe mit Kaufoption.
+ * Weiterverkaufsbeteiligung, Nachschläge (nach Einsätzen, bei Europapokal-Platz),
+ * Ablösespiel, Spieler-Tausch (Wert aus Sicht des Verkäufers), Rückkaufoption für
+ * den Verkäufer, Leihe mit Kaufoption.
  */
 export interface ClubPackage {
   fee: number; installments: boolean; sellOn: number; bonus: number;
@@ -162,26 +163,66 @@ export interface ClubPackage {
   buyBack?: number;
   /** Leihe für eine Saison: `fee` = Leihgebühr, `optionFee` = Kaufoption. */
   loan?: boolean; optionFee?: number;
+  /** Nachschlag, wenn sich der Käufer mit ihm für den Europapokal qualifiziert (1975-Basis). */
+  euroBonus?: number;
+  /** Ablösespiel: Freundschaftsspiel beim Verkäufer, die Einnahmen gehören ihm (bis in die 1990er üblich). */
+  friendly?: boolean;
 }
-export function packageValue(o: ClubPackage): number {
-  if (o.loan) return o.fee + (o.optionFee ?? 0) * 0.6 + (o.swapValue ?? 0);
-  const rate = o.installments ? (o.rates === 3 ? 0.89 : 0.93) : 1;
-  return o.fee * rate + o.fee * clamp(o.sellOn, 0, 0.3) * 0.5 + o.bonus * 0.45 + (o.swapValue ?? 0)
-    + (o.buyBack ? Math.min(o.fee * 0.08, o.buyBack * 0.05) : 0);
+
+/**
+ * Wie der Verkäufer die Bausteine eines Pakets bewertet (engine/clubNegotiation.ts `sellerPrefs`).
+ * Die neutralen Werte ergeben die alte Rechnung (Raten 93 %/89 %, Weiterverkauf halber Anteil, Nachschlag 45 %).
+ */
+export interface SellerPrefs {
+  /** Bedarf an sofortigem Geld 0..1: Raten zählen weniger. */
+  cash: number;
+  /** Glaube an einen teuren Weiterverkauf 0..1 (junge Spieler mit Zukunft). */
+  sellOn: number;
+  /** Glaube, dass der Einsatz-Nachschlag fällig wird 0..1. */
+  bonus: number;
+  /** Chance des Käufers auf den Europapokal 0..1. */
+  pEuro: number;
+  /** Wert eines Ablösespiels (1975-Basis; 0 = kommt nicht infrage). */
+  friendlyValue: number;
+}
+export const NEUTRAL_PREFS: SellerPrefs = { cash: 0, sellOn: 0.3, bonus: 0.3, pEuro: 0.25, friendlyValue: 0 };
+
+/** Bewertungsfaktoren je Baustein aus den Vorlieben. */
+export function prefFactors(prefs: SellerPrefs, o: Pick<ClubPackage, 'installments' | 'rates'>): { rate: number; sellOn: number; bonus: number; euro: number } {
+  return {
+    rate: o.installments ? (o.rates === 3 ? 0.89 - 0.14 * prefs.cash : 0.93 - 0.1 * prefs.cash) : 1,
+    sellOn: 0.35 + 0.5 * prefs.sellOn, bonus: 0.3 + 0.5 * prefs.bonus, euro: 0.1 + 0.6 * prefs.pEuro,
+  };
+}
+
+/** Was die einzelnen Bausteine dem Verkäufer wert sind (Summe = `packageValue`). */
+export function packageParts(o: ClubPackage, prefs: SellerPrefs = NEUTRAL_PREFS): { key: 'fee' | 'option' | 'sellOn' | 'bonus' | 'euro' | 'friendly' | 'swap' | 'buyBack'; value: number }[] {
+  if (o.loan) return [{ key: 'fee', value: o.fee }, { key: 'option', value: (o.optionFee ?? 0) * 0.6 }, { key: 'swap', value: o.swapValue ?? 0 }];
+  const k = prefFactors(prefs, o);
+  return [
+    { key: 'fee', value: o.fee * k.rate }, { key: 'sellOn', value: o.fee * clamp(o.sellOn, 0, 0.3) * k.sellOn }, { key: 'bonus', value: o.bonus * k.bonus },
+    { key: 'euro', value: (o.euroBonus ?? 0) * k.euro }, { key: 'friendly', value: o.friendly ? prefs.friendlyValue : 0 }, { key: 'swap', value: o.swapValue ?? 0 },
+    { key: 'buyBack', value: o.buyBack ? Math.min(o.fee * 0.08, o.buyBack * 0.05) : 0 },
+  ];
+}
+
+export function packageValue(o: ClubPackage, prefs: SellerPrefs = NEUTRAL_PREFS): number {
+  return packageParts(o, prefs).reduce((s, x) => s + x.value, 0);
 }
 
 export type ClubAnswer =
   | { kind: 'accept'; text: string }
-  | { kind: 'counter'; ask: number; text: string; patienceLoss: number }
+  | { kind: 'counter'; ask: number; text: string; patienceLoss: number; ratio: number }
   | { kind: 'breakoff'; text: string };
 
 /**
  * Antwort des Verkäufers. `currentAsk` = zuletzt genannte Forderung.
  * Nahe an der Forderung reicht oft schon ein Schritt; über der Schmerzgrenze
  * wird es mit jeder Runde wahrscheinlicher, dass er einschlägt.
+ * `prefs` = seine Bewertung der Bausteine (fehlt = neutral).
  */
-export function clubAnswer(pos: SellerPosition, currentAsk: number, offer: ClubPackage, round: number, patience: number, rnd: () => number): ClubAnswer {
-  const v = packageValue(offer);
+export function clubAnswer(pos: SellerPosition, currentAsk: number, offer: ClubPackage, round: number, patience: number, rnd: () => number, prefs: SellerPrefs = NEUTRAL_PREFS): ClubAnswer {
+  const v = packageValue(offer, prefs);
   if (v >= currentAsk * 0.985 || (v >= pos.walkaway && rnd() < 0.15 + 0.15 * round)) {
     return { kind: 'accept', text: pos.untouchable ? 'Schweren Herzens – bei diesem Angebot können wir nicht Nein sagen.' : 'Einverstanden, wir sind uns einig.' };
   }
@@ -194,7 +235,7 @@ export function clubAnswer(pos: SellerPosition, currentAsk: number, offer: ClubP
     : ratio < 0.85 ? 'Wir liegen noch weit auseinander. Da müsst ihr deutlich drauflegen.'
       : ratio < 0.95 ? 'Wir nähern uns an – ein Stück fehlt noch.'
         : 'Fast. Ein kleiner Schritt noch.';
-  return { kind: 'counter', ask: Math.max(ask, Math.round(v / 5000) * 5000 + 5000), text, patienceLoss: loss };
+  return { kind: 'counter', ask: Math.max(ask, Math.round(v / 5000) * 5000 + 5000), text, patienceLoss: loss, ratio };
 }
 
 /** Schätzspanne der Forderung: Breite und Abweichung hängen vom Wissen ab (0..1). */
@@ -244,6 +285,8 @@ export const CLAUSE_FROM = {
   /** Ratenzahlung in drei Raten. */
   threeRates: 1990,
 } as const;
+/** Ablösespiele (Freundschaftsspiel beim Verkäufer als Teil der Ablöse) waren bis in die 1990er üblich. */
+export const FRIENDLY_UNTIL = 1998;
 
 export interface PlayerStance {
   /** Verdecktes Mindestgehalt (Woche, 1975-Basis). */

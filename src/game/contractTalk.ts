@@ -51,6 +51,13 @@ export interface NegState {
   boost: number;
   log: NegLog[];
   status: 'open' | 'agreed' | 'failed';
+  /** Verlauf je Runde: [Wert deines Angebots, Wert seiner Forderung danach] in Wochengehalt-Gegenwert (für die Positionsanzeige). */
+  hist?: [number, number][];
+  /** Wert der Eröffnungsforderung (Maßstab der Positionsanzeige). */
+  open0?: number;
+  /** Vereinbartes Paket bzw. Grund des Abbruchs (Anzeige im Abschluss). */
+  deal?: ContractTerms;
+  endNote?: string;
 }
 
 /** Promise-Typen, die bei einer Verlängerung Sinn ergeben. */
@@ -133,7 +140,7 @@ export function openRenewal(g: Game, pid: string): NegState | string {
   if (block) return block;
   const { ctx, legacy } = renewCtx(g, p!);
   const d = buildDemand(p!, ctx);
-  const st: NegState = { v: 1, started: today, last: today, round: 0, patience: ctx.startPatience, start: ctx.startPatience, ask: d.ask, boost: 0, log: [], status: 'open' };
+  const st: NegState = { v: 1, started: today, last: today, round: 0, patience: ctx.startPatience, start: ctx.startPatience, ask: d.ask, boost: 0, log: [], status: 'open', hist: [], open0: packageValue(d.ask, d, ctx) };
   const seed = `${p!.id}|${today}`;
   pushLog(st, { d: today, who: 'spieler', text: lineOf(g, p!, legacy.mood === 'gern' ? 'open_gern' : legacy.mood === 'offen' ? 'open_offen' : 'open_zoeg', seed + 'o') });
   if (ctx.agent) pushLog(st, { d: today, who: 'berater', text: lineOf(g, p!, 'agent_open', seed + 'a', {}, true) });
@@ -188,7 +195,7 @@ function yearsText(d: NegDemand): string {
 }
 
 /** Eine Runde: Angebot abgeben. */
-export function submitRenewal(g: Game, pid: string, raw: ContractTerms): NegResult {
+export function submitRenewal(g: Game, pid: string, raw: ContractTerms, locks: ClauseKey[] = []): NegResult {
   const p = g.players[pid];
   const st = openRenewal(g, pid);
   if (typeof st === 'string') return { ok: false, done: true, text: st };
@@ -204,12 +211,15 @@ export function submitRenewal(g: Game, pid: string, raw: ContractTerms): NegResu
   const talks = talksOf(g, p);
   talks.attempts += 1;
   pushLog(st, { d: today, who: 'du', text: `Angebot: ${termsSummary(t)}.` });
-  const ans = answer(t, d, ctx, st.ask, st.round, st.boost);
+  const ans = answer(t, d, ctx, st.ask, st.round, st.boost, locks);
   const seed = `${p.id}|${today}|${st.round}`;
   const voice = ctx.agent ? 'berater' : 'spieler';
+  const worth = packageValue(t, d, ctx);
   if (ans.accepted) {
     pushLog(st, { d: today, who: voice, text: lineOf(g, p, 'accept', seed, {}, ctx.agent) });
     st.status = 'agreed';
+    st.deal = t;
+    (st.hist ??= []).push([worth, worth]);
     const text = applyRenewal(g, p, t, today);
     return { ok: true, done: true, text };
   }
@@ -218,8 +228,10 @@ export function submitRenewal(g: Game, pid: string, raw: ContractTerms): NegResu
   p.contract.satisfaction = clamp(sat - (ans.kind === 'insult' ? 6 : ans.kind === 'far' ? 3 : 1), 0, 100);
   pushLog(st, { d: today, who: voice, text: lineOf(g, p, ans.kind, seed, {}, ctx.agent) });
   if (ans.kind === 'insult') moraleJolt(g, p, -4, 'Vertragsangebot als Geringschätzung empfunden', today);
+  (st.hist ??= []).push([worth, ans.counter ? packageValue(ans.counter, d, ctx) : packageValue(st.ask, d, ctx)]);
   if (st.patience <= 0 || st.round >= MAX_ROUNDS) {
     st.status = 'failed';
+    st.endNote = st.patience <= 0 ? `${p.lastName} hat die Geduld verloren.` : `Nach ${MAX_ROUNDS} Runden ohne Einigung ist für ${p.lastName} Schluss.`;
     const days = ans.kind === 'insult' ? 60 : 21 + Math.round((100 - personaOf(p).loyalitaet) / 4);
     talks.blockedUntil = CalendarEngine.addDays(today, days);
     talks.attempts = 0;

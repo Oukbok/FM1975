@@ -49,23 +49,30 @@ for (const view of VIEWS) {
     ['kontextmenue', '.pcm', async () => { await nav('Kader', 'Übersicht'); await page.locator('.app-main tbody tr[data-pid]').nth(3).click({ button: 'right' }); }, { max: 0 }],
     ['verein', '.cmx-modal', async () => { await nav('Statistiken', 'Liga'); await page.locator('.app-main .club-link').nth(2).click(); }],
     ['gespraech', '.ptk-book', async () => { await nav('Kader', 'Übersicht'); await page.locator('.app-main tbody tr .ptk-open').nth(2).click(); }],
-    ['verhandlung', '.modal', async () => {
+    // Verhandlungstisch (screens/negotiation/): Transfer – Vereinsgespräch; Regler/Umschalter + eine Runde.
+    ['verhandlung', '.vt-root', async () => {
       await nav('Transfers', 'Transfermarkt');
       await page.locator('.app-main tr[data-pid], .app-main .rl-row[data-pid]').nth(2).click({ button: 'right' });
       await page.locator('.pcm-item:has-text("Verhandl"), .pcm-item:has-text("Transfer")').first().click();
-    }],
-    // Verhandlungstisch (screens/contract/): Rechtsklick › „Vertrag verlängern“; Regler/Umschalter + eine Runde.
-    ['verhandlungstisch', '.ct-root', async () => {
+      await page.waitForSelector('.vt-root', { timeout: 4000 });
+    }, { steps: [
+      ['Raten', () => soft('.vt-root .vt-row[data-key="rates"] .seg3 button:nth-child(2)')],
+      ['Angebot abgeben', () => soft('.vt-root .vt-send')],
+      ['Ablöse fest', () => soft('.vt-root .vt-row[data-key="fee"] .vt-lockbtn')],
+      ['Angebot abgeben 2', () => soft('.vt-root .vt-send')],
+    ] }],
+    // Vertragsverlängerung: Rechtsklick › „Vertrag verlängern“.
+    ['verhandlungstisch', '.vt-root', async () => {
       await nav('Kader', 'Übersicht');
       await page.locator('.app-main tbody tr[data-pid]').nth(4).click({ button: 'right' });
       await click('.pcm-item:has-text("Vertrag verlängern")');
-      await page.waitForSelector('.ct-root', { timeout: 4000 });
+      await page.waitForSelector('.vt-root', { timeout: 4000 });
     }, { steps: [
       // Je nach Spieler ist nach dem ersten Angebot schon Schluss (angenommen): fehlende Knöpfe sind dann kein Fehler.
-      ['Zusage', () => soft('.ct-root .ct-chip')],
-      ['Angebot machen', () => soft('.ct-root .ct-send')],
-      ['Forderung übernehmen', () => soft('.ct-root button:has-text("Forderung übernehmen")')],
-      ['Angebot machen 2', () => soft('.ct-root .ct-send')],
+      ['Zusage', () => soft('.vt-root .vt-chip')],
+      ['Angebot machen', () => soft('.vt-root .vt-send')],
+      ['Forderung übernehmen', () => soft('.vt-root button:has-text("Forderung übernehmen")')],
+      ['Angebot machen 2', () => soft('.vt-root .vt-send')],
     ] }],
     ['spielersuche', '.ps-panel', async () => { await nav('Transfers', 'Transfermarkt'); await click('.dchip:has-text("Spieler suchen")'); }],
     ['transferbilanz', '.tw-panel', async () => { await nav('Transfers', 'Transfermarkt'); await click('.dchip:has-text("Transferbilanz")'); }],
@@ -90,10 +97,11 @@ for (const view of VIEWS) {
     ['einstellungen', '.modal', async () => { await closeAll(page); await click('.hd-gear'); await click('.menu-dd-item:has-text("Einstellungen")'); }],
     ['speichern', '.modal', async () => { await closeAll(page); await click('.hd-gear'); await click('.menu-dd-item:has-text("Speichern")'); }],
     ['vereinseditor', '.ce-modal', async () => { await closeAll(page); await click('.hd-gear'); await click('.menu-dd-item:has-text("Editor")'); }],
-    ['trainerteam', '.sf-hire', async () => { await nav('Training', 'Trainerteam'); await page.locator('.sf-table tbody tr button:has-text("Verhandeln")').first().click({ timeout: 3000 }); }, { steps: [
-      ['Angebot zu niedrig', async () => { await page.locator('.sf-hire input[type=range]').fill('60'); await page.locator('.sf-hire-btns .b3-primary').click({ timeout: 1500 }); }],
-      ['Laufzeit 4', () => page.locator('.sf-hire .seg3 button:has-text("4 Jahre")').click({ timeout: 1500 })],
-      ['nochmal', () => page.locator('.sf-hire-btns .b3-primary').click({ timeout: 1500 })],
+    ['trainerteam', '.vt-root', async () => { await nav('Training', 'Trainerteam'); await page.locator('.sf-table tbody tr button:has-text("Verhandeln")').first().click({ timeout: 3000 }); await page.waitForSelector('.vt-root', { timeout: 4000 }); }, { steps: [
+      ['Laufzeit', () => soft('.vt-root .vt-row[data-key="years"] .seg3 button:nth-child(3)')],
+      ['Angebot machen', () => soft('.vt-root .vt-send')],
+      ['Forderung übernehmen', () => soft('.vt-root button:has-text("Forderung übernehmen")')],
+      ['Angebot machen 2', () => soft('.vt-root .vt-send')],
     ] }],
     ['stadion-block', '.sv-pop', async () => {
       await nav('Verein', 'Stadion');

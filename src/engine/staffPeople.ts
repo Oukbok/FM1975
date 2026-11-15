@@ -67,6 +67,8 @@ export interface StaffMember {
   coach?: { id: string; style: CoachStyle; philosophy: CoachPhilosophy; rep: number; formation?: string };
   /** Jahr der letzten Fortbildung (eine je Jahr). */
   course?: number;
+  /** Ausgehandelte Vertragspunkte (game/staffTalk.ts): Erfolgsprämie in Monatsgehältern, Abfindungsregel, Abwerbeschutz. */
+  deal?: { bonus?: number; sev?: 'cap' | 'full'; protect?: boolean };
 }
 
 /** Trainingsphilosophie je Saisonphase (wenig Klickarbeit, spürbare Wirkung). */
@@ -249,7 +251,9 @@ export function staffSeasonTurnover(
       left.push({ m, reason: 'geht in den Ruhestand' });
       continue;
     }
-    if (m.quality >= 14 && !m.traits?.includes('treu')) {
+    // Abwerbeschutz (ausgehandelt): Solange der Vertrag läuft, wechselt die Person nicht.
+    const shielded = !!m.deal?.protect && !!m.contractEnd && Number(m.contractEnd.slice(0, 4)) > year;
+    if (m.quality >= 14 && !m.traits?.includes('treu') && !shielded) {
       const chance = 0.06 + (m.quality - 14) * 0.035 - m.loyalty / 500 + (clubRep < 70 ? 0.05 : 0) - (m.salaryFactor > 2.2 ? 0.04 : 0);
       if (r() < chance) left.push({ m, reason: `wird von ${rivalName()} abgeworben` });
     }
