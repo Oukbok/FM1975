@@ -256,6 +256,19 @@ export function submitRenewal(g: Game, pid: string, raw: ContractTerms, locks: C
   return { ok: false, done: false, text: st.log[st.log.length - 1]?.text ?? '' };
 }
 
+/** Ereignisse, die ein neuer Vertrag erledigt (Gehaltsforderung des Beraters). */
+const SETTLED_BY_CONTRACT = new Set(['berater']);
+/** Offene Gehaltsforderungen dieses Spielers als erledigt markieren (Wunsch Pascal: nach dem Vertrag keine offene Entscheidung mehr). */
+function settleWageDemands(g: Game, p: Player, today: string): void {
+  for (const m of g.messages) {
+    const ref = m.eventRef;
+    if (!ref || ref.resolved || ref.playerId !== p.id || !SETTLED_BY_CONTRACT.has(ref.type)) continue;
+    ref.resolved = 'vertrag';
+    m.actionRequired = false;
+    m.resultText = `Erledigt: ${p.fullName} hat am ${today.slice(8, 10)}.${today.slice(5, 7)}.${today.slice(0, 4)} einen neuen Vertrag unterschrieben.`;
+  }
+}
+
 /** Vertrag schließen: Gehalt, Laufzeit, Bausteine, Einmalzahlungen, Zusagen, Kabine. */
 function applyRenewal(g: Game, p: Player, t: ContractTerms, today: string): string {
   const club = g.clubs[g.managedClubId];
@@ -283,6 +296,7 @@ function applyRenewal(g: Game, p: Player, t: ContractTerms, today: string): stri
     shortText: `Neues Gehalt: ${fmtWage(p.contract.weeklyWage)}.`,
     bodyText: `${p.fullName} hat seinen Vertrag verlängert. Laufzeit bis 30.06.${p.contract.expiryDate.slice(0, 4)}.\n\nVereinbart: ${sum}.${t.promises.length ? `\n\nZusagen: ${t.promises.map((x) => PROMISES[x].label).join(', ')} – sie werden am Saisonende geprüft.` : ''}`,
   }));
+  settleWageDemands(g, p, today);
   // Gesprächsstand als „einig“ behalten (Anzeige des Verlaufs), Versuche zurücksetzen.
   p.contract.talks = st ? { season: `${seasonEndYear(today) - 1}`, attempts: 0, neg: { ...st, status: 'agreed' } } : undefined;
   return `${p.fullName} unterschreibt bis 30.06.${endYear}.`;

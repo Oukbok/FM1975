@@ -158,7 +158,7 @@ function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
           {matchId && <button className="b3" onClick={() => onWatch(matchId)}>Spielbericht</button>}
           {p && faces.length === 1 && <button className="b3" onClick={() => openPlayer(p.id)}>Spielerprofil</button>}
           {p && m.category === 'contract' && p.clubId === g.managedClubId && !p.isYouth && g.players[p.id] && (
-            <button className="b3" onClick={() => openContractScreen({ kind: 'renew', pid: p.id })}>Verhandlungstisch</button>
+            <button className="b3" onClick={() => openContractScreen({ kind: 'renew', pid: p.id })}>Neuen Vertrag verhandeln</button>
           )}
           {target && <button className="b3" onClick={() => onGoto(target[0])}>{target[1]}</button>}
         </div>

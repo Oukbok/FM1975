@@ -2605,7 +2605,7 @@ Danach überzeugst du den Spieler am selben Tisch – mit allen Vertragspunkten 
 | Wunschposition | am Saisonende Startelf-Anteil ≥ 40 % und Einsatz in seinem Mannschaftsteil |
 | Kein Verkauf an Rivalen | gilt die ganze Vertragslaufzeit; gebrochen, wenn du ihn an einen Rivalen verkaufst |
 
-Was ihm wichtig ist, erfährst du im ersten Gespräch – mit gutem Scouting schon vorher (Wichtigkeit als Punkte neben jedem Versprechen). Mehr als drei Versprechen wirken unglaubwürdig.
+Was ihm wichtig ist, erfährst du im ersten Gespräch – mit gutem Scouting schon vorher (Wichtigkeit als Punkte neben jedem Versprechen). Die drei wichtigsten Versprechen zählen voll, jedes weitere bringt nur noch wenig – schaden tut ein zusätzliches Versprechen aber nie.
 
 **Glaubwürdigkeit** (Start 70): Gehaltene Versprechen +5, gebrochene −15 – der Spieler verliert stark an Zufriedenheit und Moral. Wenig loyale oder sehr ehrgeizige Spieler wollen danach weg und lehnen ein halbes Jahr lang Vertragsgespräche ab. Die **Kabine** bekommt es mit: alle Mitspieler −2 Zufriedenheit, wer selbst offene Versprechen hat −4.
 

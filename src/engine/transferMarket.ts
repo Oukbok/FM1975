@@ -336,12 +336,12 @@ export interface PlayerOffer {
 
 export interface PlayerAnswer { accepted: boolean; score: number; text: string; hint?: string }
 
-/** Wert der Versprechen (gedeckelt; zu viele wirken unglaubwürdig). */
+/** Wert der Versprechen (gedeckelt): ab dem vierten bringt jedes nur noch wenig, senkt den Wert aber nie. */
 export function promiseValue(st: PlayerStance, promises: PromiseType[], trust: number): number {
   const w = new Map(st.priorities);
   const vals = promises.map((t) => w.get(t) ?? 0).sort((a, b) => b - a);
-  const credibility = clamp(trust / 70, 0.2, 1.3) * (promises.length > 3 ? 0.6 : 1);
-  return ((vals[0] ?? 0) + (vals[1] ?? 0) * 0.7 + (vals[2] ?? 0) * 0.5 + vals.slice(3).reduce((s, v) => s + v * 0.2, 0)) * credibility;
+  const credibility = clamp(trust / 70, 0.2, 1.3);
+  return ((vals[0] ?? 0) + (vals[1] ?? 0) * 0.7 + (vals[2] ?? 0) * 0.5 + vals.slice(3).reduce((s, v) => s + v * 0.1, 0)) * credibility;
 }
 
 /** Gehalt inklusive Handgeld, Treueprämie und Erfolgsklausel – wie der Spieler es bewertet. */

@@ -68,7 +68,16 @@ export function chooseEventOption(g: Game, msg: InboxMessage, choiceId: string, 
 export function autoResolveEvents(g: Game, today: string): void {
   for (const m of g.messages) {
     const ref = m.eventRef;
-    if (!ref || ref.resolved || ref.deadline > today) continue;
+    if (!ref || ref.resolved) continue;
+    // Gehaltsforderung des Beraters: ein seit der Nachricht unterschriebener Vertrag erledigt sie
+    // (auch für Spielstände, in denen das vor dieser Prüfung geschah; neu: game/contractTalk.ts).
+    const neg = ref.type === 'berater' && ref.playerId ? g.players[ref.playerId]?.contract.talks?.neg : undefined;
+    if (neg?.status === 'agreed' && neg.last >= m.date) {
+      ref.resolved = 'vertrag'; m.actionRequired = false;
+      m.resultText = `Erledigt: ${g.players[ref.playerId!]?.fullName ?? 'Der Spieler'} hat einen neuen Vertrag unterschrieben.`;
+      continue;
+    }
+    if (ref.deadline > today) continue;
     chooseEventOption(g, m, ref.defaultChoice ?? m.choices?.[0]?.id ?? '', true);
   }
 }

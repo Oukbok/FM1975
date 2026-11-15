@@ -209,12 +209,14 @@ export function buildDemand(p: Player, ctx: NegCtx): NegDemand {
 // -----------------------------------------------------------------------------
 // Bewertung
 // -----------------------------------------------------------------------------
-/** Wert der Zusagen (in % des fairen Gehalts), gedeckelt; zu viele wirken unglaubwürdig. */
+/** Wert der Zusagen (in % des fairen Gehalts), gedeckelt: die drei wichtigsten zählen voll, jede weitere
+ *  bringt nur noch wenig (wirkt weniger glaubwürdig). Eine zusätzliche Zusage senkt den Wert nie – früher
+ *  kürzte ab der vierten ein Abschlag 0,6 alle Zusagen (Fehlermeldung Pascal: Wunschposition senkte das Paket). */
 export function promisePoints(promises: PromiseType[], ctx: Pick<NegCtx, 'promiseWeights' | 'trust'>): number {
   const w = new Map(ctx.promiseWeights);
   const vals = promises.map((t) => w.get(t) ?? 0.5).sort((a, b) => b - a);
-  const cred = clamp(ctx.trust / 70, 0.2, 1.3) * (promises.length > 3 ? 0.6 : 1);
-  return ((vals[0] ?? 0) + (vals[1] ?? 0) * 0.7 + (vals[2] ?? 0) * 0.5 + vals.slice(3).reduce((s, v) => s + v * 0.2, 0)) * cred * 0.9;
+  const cred = clamp(ctx.trust / 70, 0.2, 1.3);
+  return ((vals[0] ?? 0) + (vals[1] ?? 0) * 0.7 + (vals[2] ?? 0) * 0.5 + vals.slice(3).reduce((s, v) => s + v * 0.1, 0)) * cred * 0.9;
 }
 
 /** Freiheitsklausel (Ablöse/Ausstieg): 1 = wie gewünscht, −1 = keine. */
