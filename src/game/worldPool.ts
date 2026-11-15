@@ -244,7 +244,10 @@ export function worldPoolSeason(g: Game): void {
     const age = year - w[W.born];
     if (!club || age < 19 || age > 30 || w[W.ov] < club.strength + 9 || r() > 0.6) continue;
     const want = w[W.ov] - 4;
-    const cands = list.filter((c) => c.id !== club.id && c.strength >= want && c.strength <= want + 10);
+    // Ostblock vor 1990: kein Wechsel über die Grenze (wie die Transfersperre des eigenen Vereins).
+    const closed = year < 1990;
+    const cands = list.filter((c) => c.id !== club.id && c.strength >= want && c.strength <= want + 10
+      && !(closed && c.country !== club.country && (EAST.has(c.country) || EAST.has(club.country))));
     const home = cands.filter((c) => c.country === club.country);
     const from = home.length && r() < 0.6 ? home : cands;
     const pick = from[Math.floor(r() * from.length)];
