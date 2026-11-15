@@ -1,9 +1,12 @@
 // =============================================================================
 // <CountryFlag>: vereinfachte, gedämpfte Landesflagge (SVG, 3:2) aus data/countryFlags.ts
+// Jede Flagge trägt `data-country` und öffnet im Spiel per Klick das Länderprofil
+// (components/country/CountryProfileContext.tsx) – außer in Knöpfen/klickbaren Zeilen;
+// `noLink` schaltet das ab (z. B. Kopf des Länderprofils selbst).
 // =============================================================================
 import { countryInfo, countryOfNat } from '../../data/countryFlags';
 
-export function CountryFlag({ country, height = 16 }: { country: string; height?: number }) {
+export function CountryFlag({ country, height = 16, noLink = false }: { country: string; height?: number; noLink?: boolean }) {
   const f = countryInfo(country).flag;
   const w = 30, h = 20;
   let body: JSX.Element;
@@ -30,7 +33,7 @@ export function CountryFlag({ country, height = 16 }: { country: string; height?
       body = <><rect width={w} height={h} fill={f.bg} />{f.dot && (f.center ? <circle cx={15} cy={10} r={5} fill={f.dot} /> : <circle cx={7} cy={6} r={2.4} fill={f.dot} />)}</>;
   }
   return (
-    <svg className="cflag" width={height * 1.5} height={height} viewBox={`0 0 ${w} ${h}`} role="img" aria-label={countryInfo(country).name}>
+    <svg className="cflag" data-country={noLink ? undefined : country} width={height * 1.5} height={height} viewBox={`0 0 ${w} ${h}`} role="img" aria-label={countryInfo(country).name}>
       <g opacity={0.88}>{body}</g>
       <rect x={0.5} y={0.5} width={w - 1} height={h - 1} fill="none" stroke="rgba(255,255,255,0.18)" />
     </svg>

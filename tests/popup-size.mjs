@@ -48,6 +48,12 @@ for (const view of VIEWS) {
     ['profil-fremd', '.pp2', async () => { await nav('Transfers', 'Transfermarkt'); await page.locator('.app-main tr[data-pid], .app-main .rl-row[data-pid]').nth(2).click(); }],
     ['kontextmenue', '.pcm', async () => { await nav('Kader', 'Übersicht'); await page.locator('.app-main tbody tr[data-pid]').nth(3).click({ button: 'right' }); }, { max: 0 }],
     ['verein', '.cmx-modal', async () => { await nav('Statistiken', 'Liga'); await page.locator('.app-main .club-link').nth(2).click(); }],
+    // Länderprofil (components/country/): Flagge in der Rangliste der Nationalteams.
+    ['land', '.cnx-modal', async () => {
+      await nav('Statistiken', 'Nationalteams');
+      await click('.app-main .dchip:has-text("Rangliste")');
+      await page.locator('.app-main .nt-prow .cflag[data-country]').nth(4).click({ timeout: 3000 });
+    }],
     ['gespraech', '.ptk-book', async () => { await nav('Kader', 'Übersicht'); await page.locator('.app-main tbody tr .ptk-open').nth(2).click(); }],
     // Verhandlungstisch (screens/negotiation/): Transfer – Vereinsgespräch; Regler/Umschalter + eine Runde.
     ['verhandlung', '.vt-root', async () => {

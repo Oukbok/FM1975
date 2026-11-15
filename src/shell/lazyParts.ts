@@ -118,4 +118,5 @@ export const BudgetModal = lz(() => import('../views/finanzen/budget/BudgetModal
 export const DevelopmentReveal = lz(() => import('../views/kader/DevelopmentReveal'), 'DevelopmentReveal');
 export const RatingCeremony = lz(() => import('../views/kader/DevelopmentReveal'), 'RatingCeremony');
 export const ChronicleModal = lz(() => import('../views/statistiken/ChronicleModal'), 'ChronicleModal');
+export const CountryModal = lz(() => import('../components/country/CountryModal'), 'CountryModal');
 export const ClubEditorModal = lz(() => import('../components/ClubEditorModal'), 'default');

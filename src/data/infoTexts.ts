@@ -31,6 +31,16 @@ export const INFO_TEXTS = {
     text: 'Deine Liga läuft mit vollen Kadern, Minute für Minute. Alle anderen Länder spielen ihre 1. und 2. Liga Spieltag für Spieltag: Hin- und Rückrunde, Ergebnis je Spiel aus Vereinsstärke und Heimvorteil, Tabelle nach der Punkteregel des Landes, Auf- und Abstieg, Europapokal-Plätze nach der Fünfjahreswertung. Tabellen, Spieltage und Begegnungen findest du unter Statistiken › Liga. Eine Wahl der Simulationstiefe je Land gibt es nicht mehr – jede Liga wird gleich gründlich gespielt.',
     wiki: 'world-start',
   },
+  laenderprofil: {
+    title: 'Länderprofil',
+    text: 'Ein Klick auf eine Flagge öffnet das Profil des Landes: Ligaruf und Startplätze im Europapokal, Nationalmannschaft mit Länderspielen und Aufgebot, Tabellen und Ligensystem. Was das Spiel für ein Land oder eine Zeit nicht kennt, steht als „keine Daten“ da.',
+    wiki: 'country-profile',
+  },
+  laenderprofilSpieler: {
+    title: 'Beste Spieler des Landes',
+    text: 'Alle Spieler dieser Nationalität in der Spielwelt – volle Kader und Weltspieler –, nach Stärke. Spieler zerfallener Staaten zählen für den Nachfolger.',
+    wiki: 'country-profile',
+  },
   ligaruf: {
     title: 'Ligaruf & Entwicklung der Ligen',
     text: 'Jedes Land im Hintergrund hat einen Ligaruf von 0 bis 100. 4 Punkte Ruf sind 1 Punkt Stärke für alle Vereine des Landes – das wirkt auf Europapokal-Erfolge, Fünfjahreswertung und Startplätze. Historisch: Am Saisonende wird mindestens ein Viertel der Abweichung zum echten Ruf der Zeit abgebaut. Frei: Nur die Europapokal-Ergebnisse zählen. Dein Heimatland bleibt außen vor.',

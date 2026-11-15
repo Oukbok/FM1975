@@ -28,7 +28,7 @@ function Score({ m, today }: { m: NtMatch; today: string }) {
   return <span className="nt-score">{m.ga}:{m.gb}{m.extra === 'nV' ? ' n.V.' : m.extra === 'iE' ? ' i.E.' : ''}</span>;
 }
 
-function MatchLine({ m, today, label }: { m: NtMatch; today: string; label?: string }) {
+export function MatchLine({ m, today, label }: { m: NtMatch; today: string; label?: string }) {
   return (
     <div className="nt-mrow">
       <span className="nt-date">{m.date.slice(8, 10)}.{m.date.slice(5, 7)}.</span>
@@ -40,7 +40,7 @@ function MatchLine({ m, today, label }: { m: NtMatch; today: string; label?: str
   );
 }
 
-function TournamentBox({ t, today, home }: { t: Tournament; today: string; home: string }) {
+export function TournamentBox({ t, today, home }: { t: Tournament; today: string; home: string }) {
   const ko = t.matches.filter((m) => !m.stage.startsWith('G'));
   // Eine K.-o.-Runde erscheint erst, wenn die Runde davor komplett gespielt ist (keine Vorschau auf Weiterkommen).
   const order = ['G', ...new Set(ko.map((m) => m.stage))];

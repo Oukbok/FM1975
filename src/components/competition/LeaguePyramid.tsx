@@ -35,11 +35,15 @@ function flowText(d: PyrDivision): string[] {
   return out;
 }
 
-export function LeaguePyramid({ data, mineId, className = '' }: { data: PyramidData; mineId?: string; className?: string }) {
-  const [side, setSide] = useState<PyramidSide>('west');
-  const [country, setCountry] = useState<string>(data.abroad[0]?.key ?? '');
+/**
+ * `lock` = festes Land ohne Länderwahl (Länderprofil, components/country/): Seite und
+ * bei „abroad“ der Länder-Schlüssel.
+ */
+export function LeaguePyramid({ data, mineId, className = '', lock }: { data: PyramidData; mineId?: string; className?: string; lock?: { side: PyramidSide; country?: string } }) {
+  const [side, setSide] = useState<PyramidSide>(lock?.side ?? 'west');
+  const [country, setCountry] = useState<string>(lock?.country ?? data.abroad[0]?.key ?? '');
   const sys: PyrSystem | undefined = side === 'west' ? data.west : side === 'ddr' ? data.ddr : data.abroad.find((a) => a.key === country) ?? data.abroad[0];
-  const [selId, setSelId] = useState<string | undefined>(() => findDiv(data.west, mineId)?.id);
+  const [selId, setSelId] = useState<string | undefined>(() => findDiv(sys, mineId)?.id);
   const sel = useMemo(() => {
     const all = sys?.levels.flat() ?? [];
     return all.find((d) => d.id === selId) ?? findDiv(sys, mineId);
@@ -60,7 +64,7 @@ export function LeaguePyramid({ data, mineId, className = '' }: { data: PyramidD
     <div className={`lp ${className}`}>
       <div className="lp-bar">
         {/* Länderwahl als Auswahlliste (Wunsch Pascal) statt Deutschland/DDR/Ausland */}
-        <Select className="lp-country-sel" width={260} popWidth={300} listHeight={460} value={side === 'abroad' ? `a:${sys?.key ?? ''}` : side}
+        {lock ? <span className="lp-lock"><CountryFlag country={side === 'abroad' ? sys?.key ?? '' : side === 'ddr' ? 'DDR' : homeFlag} height={16} noLink />{cName}</span> : <Select className="lp-country-sel" width={260} popWidth={300} listHeight={460} value={side === 'abroad' ? `a:${sys?.key ?? ''}` : side}
           onChange={(v) => (v.startsWith('a:') ? pick('abroad', v.slice(2)) : pick(v as PyramidSide))}
           options={[
             ...sides.filter((x) => x.k !== 'abroad').map((x) => ({ value: x.k, text: x.label, label: <span className="lp-opt"><CountryFlag country={x.country} height={13} />{x.label}</span> })),
@@ -68,7 +72,7 @@ export function LeaguePyramid({ data, mineId, className = '' }: { data: PyramidD
               value: `a:${a.key}`, text: countryInfo(a.key).name, group: i === 0 ? 'Ausland' : undefined,
               label: <span className="lp-opt"><CountryFlag country={a.key} height={13} />{countryInfo(a.key).name}</span>,
             })),
-          ]} />
+          ]} />}
         <span className="lp-season">Saison {data.season}</span>
       </div>
 

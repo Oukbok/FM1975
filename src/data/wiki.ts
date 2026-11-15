@@ -2873,6 +2873,27 @@ Gastgeber, Termine und Teilnehmerzahl wie historisch: EM 1976 mit 4 Teams, 1980�
 - **Fehlzeiten:** Wer viele Nationalspieler hat, verliert sie in den Fenstern – plane Ersatz ein, vor allem in Epochen ohne Länderspielpause.`,
   },
   {
+    id: 'country-profile',
+    category: 'squad',
+    title: 'Länderprofil',
+    keywords: ['land', 'länder', 'länderprofil', 'flagge', 'ligaruf', 'fünfjahreswertung', 'startplätze', 'nationalkader', 'ligensystem', 'meister', 'pokalsieger', 'rekordmeister'],
+    body: `## Wo
+Ein Klick auf eine **Flagge** öffnet das Profil des Landes – in Tabellen, Spielerprofilen, Bestenlisten, Nationalteams, Ligensystem und überall sonst. Flaggen in Knöpfen oder klickbaren Zeilen behalten ihre eigene Aktion. Wie Vereins- und Spielerprofile stapeln sich die Fenster: das zuletzt geöffnete liegt oben, „Zurück“ führt zum vorher geöffneten Land.
+
+## Reiter
+- **Übersicht:** Steckbrief (Kontinent, Bestehen, Vorgänger und Nachfolger, wie das Land im Spiel läuft), **Ligaruf international** (0–100 mit Veränderung zur Vorsaison, Rang in der Fünfjahreswertung, Startplätze im Europapokal), Nationalmannschaft (Stärke, Weltrang, Titel bei WM/EM seit deinem Start, Richtwert der Stärke je Jahrzehnt), Meister und Pokalsieger, die stärksten Vereine und die besten Spieler des Landes nach Nationalität.
+- **Länderspiele:** Bilanz der Saison, nächste Termine, alle gespeicherten Länderspiele, das laufende Turnier mit Gruppe und K.-o.-Runden sowie die WM- und EM-Sieger seit deinem Start.
+- **Nationalkader:** das aktuelle Aufgebot (vor der ersten Berufung der Saison: wen der Nationaltrainer heute berufen würde) mit Gesicht, Position, Alter, Verein, Länderspielen und Stärke, Kennzahlen des Kaders und die nächsten Kandidaten.
+- **Ligen:** Tabellen der 1. und 2. Liga (laufend oder letzte gespeicherte Saison), Meister und Pokalsieger je Saison – vor deinem Start aus den Weltdaten – und die Rekordmeister. Der Knopf öffnet das Land unter **Statistiken › Liga**.
+- **Ligensystem:** die Pyramide des Landes mit allen Ebenen und Zonen.
+
+## Heimatland und DDR
+Für dein Heimatland und – mit Heimat Deutschland – die DDR zeigt das Profil dieselben Reiter aus den vollen Daten. Der Ligaruf des Heimatlandes ist nur ein Richtwert: Es wird nie gesteuert, seine Stärke kommt aus den echten Kadern.
+
+## Keine Daten
+Länder ohne Liga im Spiel (Südamerika, Afrika, Asien) haben nur die Nationalmannschaft. Staaten, die es in der Saison nicht (mehr) gibt, und ältere Saisons, die das Spiel nicht speichert, stehen als „keine Daten“ da.`,
+  },
+  {
     id: 'squad-registration',
     category: 'squad',
     title: 'Spielermeldung, Ausländer- und Eigengewächs-Regeln',

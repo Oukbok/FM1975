@@ -7,6 +7,7 @@ import { setMastersScoring } from '../game/indoorMasters';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ClubProfileProvider } from '../components/club/ClubProfileContext';
 import { PlayerMenuProvider } from '../components/playerMenu/PlayerContextMenu';
+import { CountryProfileProvider } from '../components/country/CountryProfileContext';
 import { CalendarEngine } from '../engine/calendar';
 import { JUMP_DECISION_EVENT, pendingDecisions } from '../engine/messages';
 import { AppSettings, nextFreeSlot, saveGame } from '../engine/save';
@@ -152,6 +153,8 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
     // Vereinsprofil: jeder <ClubLink> im Spiel öffnet es (components/club/ClubProfileContext.tsx).
     <ClubProfileProvider g={g} onChange={rerender}>
     <PlayerMenuProvider g={g} onChange={rerender} onGoto={(s) => setScreen(s as Screen)}>
+    {/* Länderprofil: jede Flagge öffnet es (components/country/CountryProfileContext.tsx). */}
+    <CountryProfileProvider g={g} onChange={rerender} onGoto={(s) => setScreen(s as Screen)}>
     <div className={`app-shell ${screen === 'dashboard' ? 'shell-zentrale' : ''} shell-dashlike ${isScene ? 'shell-scene' : ''} ${calLive ? 'cal-live' : ''}`}>
       <HeaderBar g={g} settings={settings} onSettings={onUpdateSettings} screen={screen} setScreen={setScreen} saveMsg={saveMsg} running={running} seasonOver={seasonOver}
         due={due} prematchOn={prematchOn} mustRead={mustRead}
@@ -195,6 +198,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
           contractReq, closeContract: () => { setContractReq(null); rerender(); },
         }} />
     </div>
+    </CountryProfileProvider>
     </PlayerMenuProvider>
     </ClubProfileProvider>
   );

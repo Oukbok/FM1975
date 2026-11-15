@@ -1,0 +1,73 @@
+/* =============================================================================
+   LÄNDERPROFIL (components/country/: CountryModal.tsx + Reiter)
+   Rahmen wie das Vereinsprofil (.cmx-*), feste Größe über .modal-xl; Inhalt scrollt intern.
+   ============================================================================= */
+/* Flaggen öffnen im Spiel das Länderprofil (CountryProfileContext setzt .cflag-live am <html>). */
+.cflag-live .cflag[data-country] { cursor: pointer; transition: filter 0.12s ease; }
+.cflag-live .cflag[data-country]:hover { filter: brightness(1.12); }
+.cflag-live :is(button, a, [role="button"], .clickable, .club-link, .player-link) .cflag[data-country] { cursor: inherit; }
+.cflag-live :is(button, a, [role="button"], .clickable) .cflag[data-country]:hover { filter: none; }
+
+.cnx-head .cnx-flag { display: inline-flex; flex: none; }
+.cnx-head .cnx-flag .cflag { border-radius: 3px; }
+.cnx-sub2 { font-size: 13px; opacity: 0.75; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.cnx-body > .dbox { min-height: 0; }
+.cnx-list { display: flex; flex-direction: column; overflow-y: auto; min-height: 0; flex: 1; }
+.cnx-scroll { height: 100%; min-height: 0; overflow-y: auto; }
+.cnx-caption { font-size: 12.5px; color: var(--text-3); padding: 8px 14px 4px; text-transform: uppercase; letter-spacing: 0.6px; }
+
+/* Vereinszeilen (Beste Vereine) */
+.cnx-crow { display: flex; align-items: center; gap: 10px; padding: 6px 2px; border-bottom: 1px solid var(--border-soft); font-size: 15px; }
+.cnx-crow .cnx-cname { flex: 1; min-width: 0; overflow: hidden; }
+.cnx-crow.me, .nt-arow.me { padding-left: 10px; }
+.cnx-crow.me { box-shadow: inset 4px 0 0 var(--club-accent, var(--accent)); }
+
+/* Spielerzeilen (Beste Spieler, Nationalkader) */
+.cnx-prow { display: flex; align-items: center; gap: 8px; padding: 5px 2px; border-bottom: 1px solid var(--border-soft); font-size: 14.5px; min-height: 36px; }
+.cnx-prow .rl-rank { width: 20px; flex: none; }
+.cnx-prow .fthumb-pad { width: 22px; flex: none; }
+.cnx-pname { flex: 1 1 0; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+.cnx-pos { width: 44px; flex: none; display: inline-flex; }
+.cnx-age { width: 44px; flex: none; color: var(--text-3); font-size: 13px; }
+.cnx-club { flex: 1 1 0; min-width: 0; overflow: hidden; color: var(--text-2); font-size: 13.5px; }
+.cnx-caps { width: 92px; flex: none; text-align: right; color: var(--text-2); font-size: 13px; }
+.cnx-ov { width: 54px; flex: none; text-align: right; font-family: var(--font-ui); font-weight: 700; }
+.cnx-prow:not(.caps) .cnx-age { display: none; }
+.cnx-prow.head { min-height: 0; padding: 0 2px 6px; font-size: 12.5px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.4px; }
+.cnx-prow.head .cnx-pname, .cnx-prow.head .cnx-club, .cnx-prow.head .cnx-ov, .cnx-prow.head .cnx-age, .cnx-prow.head .cnx-caps { font-weight: 700; color: var(--text-3); font-size: 12.5px; }
+
+/* Stärke je Jahrzehnt: kleine Säulen */
+.cnx-dec { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; height: 92px; }
+.cnx-dec-col { display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 0; font-size: 12.5px; color: var(--text-3); }
+.cnx-dec-col b { color: var(--text-2); font-weight: 600; font-size: 13px; }
+.cnx-dec-bar { flex: 1; width: 60%; min-height: 0; display: flex; align-items: flex-end; border-radius: 3px; background: rgba(var(--ink-rgb), 0.06); overflow: hidden; }
+.cnx-dec-bar i { display: block; width: 100%; border-radius: 3px 3px 0 0; background: var(--text-3); }
+.cnx-dec-col.now { color: var(--text); }
+.cnx-dec-col.now b { color: var(--text); }
+.cnx-dec-col.now .cnx-dec-bar i { background: var(--club-accent, var(--accent)); }
+
+.cnx-delta { font-size: 12px; color: var(--text-3); }
+.cnx-delta.up { color: var(--pos); }
+.cnx-delta.down { color: var(--neg); }
+
+/* Tabellen (Ligen, Meisterliste) */
+.cnx-table { width: 100%; }
+.cnx-table th.num, .cnx-table td.num { text-align: right; }
+.cnx-table td.cnx-team { max-width: 0; width: 100%; overflow: hidden; }
+.cnx-table tr.me td { font-weight: 600; }
+.cnx-holders td { font-size: 14px; }
+.cnx-holders td.cnx-team { width: 50%; }
+.cnx-holders .cnx-season { white-space: nowrap; color: var(--text-2); width: 88px; min-width: 88px; overflow: visible; text-overflow: clip; }
+.cnx-table th { overflow: visible; text-overflow: clip; white-space: nowrap; }
+.cnx-table th.num, .cnx-table td.num { padding-left: 4px; padding-right: 10px; }
+.cnx-table th.num:nth-last-child(3), .cnx-table td.num:nth-last-child(3) { width: 40px; }
+.cnx-table th.num:nth-last-child(2), .cnx-table td.num:nth-last-child(2) { width: 66px; }
+.cnx-table th.num:last-child, .cnx-table td.num:last-child { width: 50px; }
+.cnx-holders tr.before td { color: var(--text-3); }
+.cnx-goto { margin-top: 12px; }
+
+.nt-arow.me { box-shadow: inset 4px 0 0 var(--club-accent, var(--accent)); }
+
+/* Ligensystem: Pyramide füllt die ganze Box */
+.cnx-pyr .lp-lock { display: inline-flex; align-items: center; gap: 10px; font: 500 20px var(--font-display); letter-spacing: 1px; text-transform: uppercase; color: var(--text); }
