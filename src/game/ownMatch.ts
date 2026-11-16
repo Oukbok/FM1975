@@ -176,7 +176,7 @@ export function createOwnMatchSim(g: Game, info: OwnMatchInfo, live = true): Mat
 
 /** Spiel abschließen, verbuchen und für den Spieltag hinterlegen. */
 export function completeOwnMatch(g: Game, info: OwnMatchInfo, sim: MatchSim, watched: boolean, lines?: Line[]): MatchOutcome {
-  if (lines?.length) recordTicker(g, sim, info.date, info.side, info.kind, lines, watched);
+  if (lines?.length) recordTicker(g, sim, info.date, info.side, info.kind, lines, watched, info.firstLeg);
   const ecup = info.euroComp ? g.euroCups?.[info.euroComp] : null;
   const sink = ecup ? (ecup.xstats ??= {}) : null;
   const outcome = withEuroSink(sink, () => finishMatch(sim, {
@@ -217,4 +217,19 @@ export function findMatch(g: Game, id: string): { match: Match; label: string } 
     }
   }
   return findSuperCupMatch(g, id);
+}
+
+/** Hinspiel zu einem gespielten Europapokal-Rückspiel (Rückfall für ältere Ticker ohne `fl`). */
+export function firstLegFor(g: Game, date: string, home: string, away: string): OwnMatchInfo['firstLeg'] {
+  for (const comp of Object.keys(g.euroCups ?? {}) as EuroCompId[]) {
+    const cup = g.euroCups![comp];
+    if (!isV2(cup)) continue;
+    for (const round of cup.rounds) for (const tie of round.ties ?? []) {
+      const l1 = tie.legs?.length === 2 ? tie.legs[1] : null;
+      if (!l1 || l1.date !== date || l1.home !== home || l1.away !== away) continue;
+      const l0 = tie.legs![0];
+      return { home: l0.home, away: l0.away, hg: l0.homeGoals ?? 0, ag: l0.awayGoals ?? 0, awayGoals: !!legKoRule(cup, comp, tie, 1)?.awayGoals };
+    }
+  }
+  return undefined;
 }

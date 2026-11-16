@@ -35,7 +35,8 @@ export function CountryFlag({ country, height = 16, noLink = false }: { country:
   return (
     <svg className="cflag" data-country={noLink ? undefined : country} width={height * 1.5} height={height} viewBox={`0 0 ${w} ${h}`} role="img" aria-label={countryInfo(country).name}>
       <g opacity={0.88}>{body}</g>
-      <rect x={0.5} y={0.5} width={w - 1} height={h - 1} fill="none" stroke="rgba(255,255,255,0.18)" />
+      {/* Dünner Rand (Token --flag-edge: dunkel auf Papier, hell auf dunklen Bühnen) – Weiß bleibt sichtbar. */}
+      <rect className="cflag-edge" x={0.5} y={0.5} width={w - 1} height={h - 1} fill="none" vectorEffect="non-scaling-stroke" />
     </svg>
   );
 }

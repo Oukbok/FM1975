@@ -1,8 +1,8 @@
 // Gemeinsamer Ablauf „Neues Spiel“ für die Oberflächentests (Assistent in sechs Schritten:
 // Manager · Spielmodus · Spielwelt · Verein · Ligensystem · Willkommen).
-//   startNewGame(page, { name, clubIndex, league, speed, shots, keepBriefing, career, young })
+//   startNewGame(page, { name, clubIndex, league, speed, shots, keepBriefing, career, young, year })
 export async function startNewGame(page, opts = {}) {
-  const { name = 'Test', clubIndex = 0, league, speed = '300', shots, career = false, young = false } = opts;
+  const { name = 'Test', clubIndex = 0, league, speed = '300', shots, career = false, young = false, year } = opts;
   const next = () => page.click('.ng-foot button:has-text("Weiter")');
   const shot = async (n) => { if (!shots) return; await page.waitForTimeout(450); await shots(n); };
   await page.click('text=Neues Spiel');
@@ -21,6 +21,7 @@ export async function startNewGame(page, opts = {}) {
   await next();
   // 3) Spielwelt
   await page.waitForSelector('.ng-ctable');
+  if (year) await page.locator('.ng-year-range').fill(String(year)); // Startjahr (z. B. 1995 für Regionalligen)
   await shot('3_spielwelt');
   await next();
   // 4) Verein

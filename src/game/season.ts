@@ -239,7 +239,7 @@ export function startNextSeason(g: Game): void {
     if (!g.clubs[id]) {
       const sc = g.simClubs[id];
       if (sc) {
-        g.clubs[id] = buildProClub(sc, g.managedClubId, seasonStart, g.players, g.youthPlayers);
+        g.clubs[id] = buildProClub(sc, g.managedClubId, seasonStart, g.players, g.youthPlayers, membership[playerDivId].meta.tier);
         delete g.simClubs[id];
       }
     }

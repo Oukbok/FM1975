@@ -43,6 +43,8 @@ export interface MatchTicker {
   me: Side;
   /** Im Textmodus verfolgt. */
   w?: boolean;
+  /** Rückspiel: Hinspiel (Heim/Gast des Hinspiels) + ob Auswärtstore zählen – Gesamtstand im Bericht. */
+  fl?: { home: string; away: string; hg: number; ag: number; awayGoals: boolean };
 }
 
 export const tickerKey = (date: string, home: string, away: string): string => `${date}|${home}|${away}`;
@@ -83,7 +85,7 @@ export function runNarrated(sim: MatchSim, mySide: Side): Line[] {
 }
 
 /** Ticker eines eigenen Spiels merken (vor dem Verbuchen aufrufen: Saisontore/Tabellenplatz von vorher). */
-export function recordTicker(g: Game, sim: MatchSim, date: string, mySide: Side, kind: 'liga' | 'pokal' | 'euro', lines: Line[], watched: boolean): void {
+export function recordTicker(g: Game, sim: MatchSim, date: string, mySide: Side, kind: 'liga' | 'pokal' | 'euro', lines: Line[], watched: boolean, fl?: MatchTicker['fl']): void {
   const H = sim.home.club, A = sim.away.club;
   const rank = (id: string) => (kind === 'liga' && g.table.rows.some((r) => r.played > 0) ? g.table.rows.find((r) => r.clubId === id)?.position ?? null : null);
   const coach = (s: Side) => (s === mySide ? g.manager?.name : sim.team(s).club.coach?.name) ?? '–';
@@ -96,6 +98,7 @@ export function recordTicker(g: Game, sim: MatchSim, date: string, mySide: Side,
     sg, me: mySide,
   };
   if (watched) t.w = true;
+  if (fl) t.fl = fl;
   const list = (g.matchTickers ?? []).filter((x) => x.k !== t.k);
   list.push(t);
   g.matchTickers = list.slice(-TICKER_KEEP);

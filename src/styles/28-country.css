@@ -75,3 +75,6 @@
 
 /* Ligensystem: Pyramide füllt die ganze Box */
 .cnx-pyr .lp-lock { display: inline-flex; align-items: center; gap: 10px; font: 500 20px var(--font-display); letter-spacing: 1px; text-transform: uppercase; color: var(--text); }
+
+/* Dünner Rand um jede Flagge (Wunsch Pascal: Weiß wie Polen auf hellem Papier sichtbar). */
+.cflag-edge { stroke: var(--flag-edge); stroke-width: 1; }

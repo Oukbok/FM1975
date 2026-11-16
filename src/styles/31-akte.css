@@ -76,6 +76,7 @@
   --panel: var(--paper-card); --panel-2: #eeece7; --panel-hover: #e7e4de; --elevated: #ffffff;
   --text: #151b26; --text-2: #374151; --text-3: #5d6570; --text-4: #8b9199; --text-hi: #0b1018;
   --border: #c9c4b9; --border-soft: #dcd8cf; --border-strong: #a7a194;
+  --flag-edge: rgba(22, 30, 44, 0.42);
   --ink-rgb: 20, 28, 40;
   --shade-rgb: 20, 28, 40;
   --bg-rgb: 235, 233, 228;
@@ -326,6 +327,7 @@ body { background: var(--paper-page); }
   --bg: #0c0f15; --bg-2: #13161c; --panel: #1a1d23; --panel-2: #22252b; --panel-hover: #292c32; --elevated: #2a2d33;
   --text: #ffffff; --text-2: #d0d6dd; --text-3: #a2acb8; --text-4: #59626e; --text-hi: #ffffff;
   --border: #303339; --border-soft: #24272d; --border-strong: #45484e;
+  --flag-edge: rgba(255, 255, 255, 0.3);
   --ink-rgb: 255, 255, 255; --shade-rgb: 0, 0, 0; --bg-rgb: 5, 7, 10; --panel-rgb: 12, 15, 20;
   --accent: #e6eaef; --accent-dim: #b4bcc7; --accent-ink: #10141a; --accent-rgb: 230, 234, 239;
   --accent-glow: rgba(230, 234, 239, 0.14); --accent-soft: rgba(230, 234, 239, 0.08);

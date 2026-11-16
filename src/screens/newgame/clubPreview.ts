@@ -7,6 +7,9 @@
 // beim Start.
 // =============================================================================
 import { CLUB_SEEDS, SECOND_LIGA_NORD_SEEDS, SECOND_LIGA_SUED_SEEDS } from '../../data/generate';
+import { lowerTierLevel } from '../../data/lowerTiers';
+import { lowerTierPlan, type LowerDivPlan } from '../../game/lowerTierStart';
+import type { SimClub } from '../../engine/leagues';
 import { activeDatasetId, datasetKits } from '../../data/dataset/apply';
 import { composeHome, type ComposedHome } from '../../game/worldCompose';
 import { regionOf, sameRegion, seasonExpectation } from '../../engine/environment';
@@ -14,7 +17,8 @@ import { Club } from '../../types';
 import { structureForSeason } from '../../data/reforms';
 import { seasonLabelOf } from '../../data/world/countries';
 
-export type LeagueKey = 'tier1' | 'nord' | 'sued' | 'tier2';
+/** Liga im Assistenten: 1./2. Liga oder die ID einer unteren Liga (z. B. „tier3“, „tier4-nord“). */
+export type LeagueKey = 'tier1' | 'nord' | 'sued' | 'tier2' | (string & {});
 
 export const LEAGUES: { key: LeagueKey; name: string; tier: number; note: string }[] = [
   { key: 'tier1', name: '1. Liga', tier: 1, note: 'Die höchste Spielklasse. Klassischer Start mit großen Erwartungen.' },
@@ -58,35 +62,39 @@ function compOf(cc: string, year: number): ComposedHome | null {
   return compCache.get(k) ?? null;
 }
 
-/** Wählbare Ligen eines Landes im Startjahr (Weltdaten; sonst die drei Ligen von 1975). */
+const planCache = new Map<string, LowerDivPlan[]>();
+/** Besetzung der Ligen ab der 3. Ebene beim Start (game/lowerTierStart.ts) – gleiche Rechnung wie im Spiel. */
+function planOf(cc: string, year: number): LowerDivPlan[] {
+  const k = `${activeDatasetId()}|${cc}|${year}`;
+  if (!planCache.has(k)) planCache.set(k, lowerTierPlan(cc, year));
+  return planCache.get(k)!;
+}
+
+/** Wählbare Ligen eines Landes im Startjahr (Weltdaten; sonst die drei Ligen von 1975) –
+ *  in Deutschland auch die Ligen ab der 3. Ebene (3. Liga, Regionalligen, NOFV-Oberliga). */
 export function leaguesFor(cc = 'ger', year = 1975): { key: LeagueKey; name: string; tier: number; note: string }[] {
   const comp = compOf(cc, year);
   if (!comp) return LEAGUES;
   const note2 = 'Der lange Weg nach oben: kleines Budget, kleine Stadien.';
+  const note3 = 'Ganz unten im Profifußball: winzige Stadien, kaum Geld – und ein weiter Weg in die 1. Liga.';
   return [
     LEAGUES[0],
     ...comp.second.map((s) => ({ key: (s.group ?? 'tier2') as LeagueKey, name: s.name, tier: 2, note: note2 })),
+    ...planOf(cc, year).filter((d) => d.clubs.length).map((d) => ({ key: d.meta.id as LeagueKey, name: d.meta.name, tier: d.meta.tier, note: note3 })),
   ];
 }
 
 /**
- * Ebenen unterhalb der wählbaren Ligen (nur Anzeige im Assistenten): Deutschland ab der 3. Ebene laut
- * Ligastruktur des Startjahres (data/reforms.ts) – diese Ligen füllt das Spiel beim Start aus dem
- * Amateur-Pool (game/startYear.ts `fillLowerTiers`), ihre Vereine haben keinen vollen Kader und sind
- * deshalb nicht wählbar –, darunter die Amateurligen (Pool ohne Spielbetrieb).
+ * Ebenen unterhalb der wählbaren Ligen (nur Anzeige im Assistenten): die Amateurligen (Vereins-Pool
+ * ohne Spielbetrieb). Die Ligen ab der 3. Ebene laut Ligastruktur des Startjahres (data/reforms.ts)
+ * sind wählbar (leaguesFor) – der gewählte Verein und seine Liga bekommen beim Start volle Kader.
  */
 export interface BackgroundLevel { tier: number; name: string; staffeln: number; clubs: number | null }
 export function backgroundLevels(cc = 'ger', year = 1975): BackgroundLevel[] {
   if (cc !== 'ger') return [];
   const lower = structureForSeason(seasonLabelOf(year)).filter((t) => t.tier >= 3);
-  const out: BackgroundLevel[] = [];
-  for (const tier of [...new Set(lower.map((t) => t.tier))].sort((a, b) => a - b)) {
-    const ts = lower.filter((t) => t.tier === tier);
-    const names = [...new Set(ts.map((t) => t.name.replace(/ (Nord|Süd|Nordost|West)$/, '')))];
-    out.push({ tier, name: ts.length > 1 && names.length === 1 ? names[0].replace(/a$/, 'en') : names.join(' / '), staffeln: ts.length, clubs: ts.reduce((a, t) => a + t.teamCount, 0) });
-  }
-  out.push({ tier: (out[out.length - 1]?.tier ?? 2) + 1, name: 'Amateurligen', staffeln: 0, clubs: null });
-  return out;
+  const deepest = lower.reduce((a, t) => Math.max(a, t.tier), 2);
+  return [{ tier: deepest + 1, name: 'Amateurligen', staffeln: 0, clubs: null }];
 }
 
 function seedRaw(s: { id: string; name: string; shortName: string; city: string; founded?: number; primary: string; secondary: string; stadium: string; capacity: number; reputation: number }): Raw {
@@ -106,9 +114,20 @@ function secondRaw(s: { id: string; name: string; shortName: string; city: strin
   };
 }
 
+function lowerRaw(s: SimClub, tier: number): Raw {
+  const lv = lowerTierLevel(s.strength, tier);
+  return {
+    id: s.id, name: s.name, shortName: s.shortName, city: s.city, primary: s.colors.primary, secondary: s.colors.secondary,
+    stadium: `Stadion ${s.city}`, capacity: lv.capacity, reputation: lv.reputation, strength: s.strength, tier, region: regionOf(s.city),
+    club: pseudoClub(s.id, s.name, s.shortName, s.city, s.colors.primary, s.colors.secondary, lv.reputation),
+  };
+}
+
 /** Alle Vereine einer wählbaren Liga. */
 function rawLeague(key: LeagueKey, cc = 'ger', year = 1975): Raw[] {
   const comp = compOf(cc, year);
+  const low = comp ? planOf(cc, year).find((d) => d.meta.id === key) : undefined;
+  if (low) return low.clubs.map((c) => lowerRaw(c, low.meta.tier));
   if (comp) {
     if (key === 'tier1') return comp.tier1.map(seedRaw);
     const grp = key === 'tier2' ? null : key;

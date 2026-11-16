@@ -49,23 +49,33 @@ export function seedStartPool(g: Game, home: string, year: number): void {
   }
 }
 
-/** Ebenen ab Tier 3 (Struktur des Startjahres, Deutschland) aus dem Pool füllen, Rest Platzhalter. */
-export function fillLowerTiers(g: Game, year: number, ligaStart: string): void {
-  const season = seasonLabelOf(year);
+/** Besetzung der Ebenen ab Tier 3 (Struktur der Saison) aus dem Pool – nur echte Vereine, stärkste zuerst,
+ *  bevorzugt aus der Staffel-Region. Gemeinsame Grundlage für den Spielstart (`fillLowerTiers`) und die
+ *  Vorschau im Assistenten (game/lowerTierStart.ts), damit beide dieselben Vereine sehen. */
+export function pickLowerTiers(simClubs: Record<string, SimClub>, season: string): { t: ReturnType<typeof structureForSeason>[number]; ids: string[] }[] {
   const targets = structureForSeason(season).filter((t) => t.tier >= 3);
-  if (!targets.length) return;
-  const pool = Object.values(g.simClubs).filter((s) => s.tier === POOL_TIER).sort((a, b) => b.strength - a.strength || a.id.localeCompare(b.id));
+  const pool = Object.values(simClubs).filter((s) => s.tier === POOL_TIER).sort((a, b) => b.strength - a.strength || a.id.localeCompare(b.id));
   const used = new Set<string>();
-  for (const t of targets) {
-    const want = t.teamCount;
+  return targets.map((t) => {
     const pick = (pred: (s: SimClub) => boolean) => pool.filter((s) => !used.has(s.id) && pred(s));
     const ids: string[] = [];
     for (const s of [...pick((s) => s.group === t.group), ...pick(() => true)]) {
-      if (ids.length >= want) break;
+      if (ids.length >= t.teamCount) break;
       if (used.has(s.id)) continue;
       used.add(s.id); ids.push(s.id);
     }
-    while (ids.length < want) {
+    return { t, ids };
+  });
+}
+
+/** Ebenen ab Tier 3 (Struktur des Startjahres, Deutschland) aus dem Pool füllen, Rest Platzhalter.
+ *  Die Spielerliga (Start in einer unteren Liga, game/lowerTierStart.ts) ist schon voll besetzt und entfällt. */
+export function fillLowerTiers(g: Game, year: number, ligaStart: string): void {
+  const season = seasonLabelOf(year);
+  const own = g.leagues.playerDivision.id;
+  for (const { t, ids } of pickLowerTiers(g.simClubs, season)) {
+    if (t.id === own) continue;
+    while (ids.length < t.teamCount) {
       const ph = makePlaceholder(`start:${season}`, t.tier, t.group);
       g.simClubs[ph.id] = ph;
       ids.push(ph.id);

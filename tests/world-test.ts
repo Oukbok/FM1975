@@ -5,6 +5,7 @@
 //  - ein anderes Land (England) eine ganze Saison + Saisonwechsel, Speichern/Laden
 //  - Auslandsligen Spieltag für Spieltag (Spielplan, Tabelle, Begegnungen, Saisonende → Welt, ältere Spielstände)
 //  - Editor-Änderung an Deutschland (Datensatz worldData) wirkt im neuen Spiel
+//  - Start in einer unteren Liga (NOFV-Oberliga 1991, Regionalliga 1995, 3. Liga 2010): volle Kader, Saison + Wechsel
 // =============================================================================
 import { createNewGame } from '../src/game/newGame';
 import { processDay, DayUi } from '../src/game/day';
@@ -17,6 +18,7 @@ import { applyDataset } from '../src/data/dataset/apply';
 import { CLUB_SEEDS } from '../src/data/generate';
 import { builtinWorldData, registerCountryData, worldSeason } from '../src/data/world/index';
 import { composeHome, playableCountries } from '../src/game/worldCompose';
+import { lowerTierPlan } from '../src/game/lowerTierStart';
 import { getHomeOrigin } from '../src/data/origins';
 import type { Game } from '../src/game/state';
 import { leanDates, leanGames, leanMatchdays, leanPairs, leanTable, leanWinPts, worldLiveDiv } from '../src/game/worldLeagues';
@@ -71,6 +73,45 @@ for (const y of [1985, 1991, 2000, 2025]) {
   ok(g.calendar.currentDate > `${y}-07-25`, `${y}: 30 Tage gelaufen (${g.calendar.currentDate})`);
   const lastPre = g.clubRecords ? Object.values((g as any).clubRecords.seasons ?? {}).flat().length : 0;
   if (y > 1980) ok(lastPre > 0, `${y}: Historie vor dem Start in der Vereins-Historie`);
+}
+
+// --- 2b) Start in einer unteren Liga (game/lowerTierStart.ts) ---------------------
+for (const [y, divId, full] of [[1991, 'tier3-nordost', false], [1995, 'tier3-west', true], [2010, 'tier3', false]] as [number, string, boolean][]) {
+  const plan = lowerTierPlan('ger', y).find((d) => d.meta.id === divId)!;
+  ok(!!plan && plan.clubs.length >= plan.size - 2, `${y} unten: Vorschau ${plan?.meta.name} mit ${plan?.clubs.length}/${plan?.size} Vereinen`);
+  const pick = plan.clubs[Math.floor(plan.clubs.length / 2)];
+  const g = start(y, 'ger', pick.id);
+  const pd = g.leagues.playerDivision;
+  ok(pd.id === divId && pd.tier === plan.meta.tier, `${y} unten: Spielerliga ${pd.name} (Ebene ${pd.tier})`);
+  const ids = g.table.rows.map((r) => r.clubId);
+  ok(ids.length === plan.size && plan.clubs.every((c) => ids.includes(c.id)), `${y} unten: Liga = Vorschau (${ids.length} Vereine)`);
+  ok(ids.every((id) => (g.clubs[id]?.playerIds.length ?? 0) >= 18), `${y} unten: alle Vereine der Liga mit vollem Kader`);
+  const other = g.leagues.otherDivisions.flatMap((d) => d.clubIds);
+  ok(!ids.some((id) => other.includes(id)) && new Set(other).size === other.length, `${y} unten: kein Verein doppelt in zwei Ligen`);
+  ok(g.leagues.otherDivisions.some((d) => d.tier === 1) && g.leagues.otherDivisions.some((d) => d.tier === 2), `${y} unten: 1. und 2. Liga simuliert`);
+  ok(divSizes(g).every((n) => n % 2 === 0 && n >= 4), `${y} unten: alle Ligen gerade Größe (${divSizes(g).join('/')})`);
+  const own = g.clubs[g.managedClubId];
+  const avg = (id: string) => { const o = g.clubs[id].playerIds.map((p) => g.players[p].overall).sort((a, b) => b - a).slice(0, 11); return o.reduce((a, b) => a + b, 0) / 11; };
+  const t1Str = g.leagues.otherDivisions.find((d) => d.tier === 1)!.clubIds.map((id) => g.simClubs[id]?.strength ?? 0);
+  ok(own.stadium.capacity <= 15000 && own.reputation <= 55, `${y} unten: kleines Stadion (${own.stadium.capacity}) und Ruf ${own.reputation}`);
+  ok(avg(own.id) < Math.max(...t1Str) + 5, `${y} unten: Kader unter Erstliga-Niveau (Elf ${avg(own.id).toFixed(1)})`);
+  ok(g.fixtures.length === plan.size * (plan.size - 1) && g.fixtures.some((m) => m.involvesPlayerClub), `${y} unten: Spielplan ${g.fixtures.length} Spiele`);
+  ok(!!own.boardExpectation, `${y} unten: Saisonziel „${own.boardExpectation}“`);
+  if (!full) { for (let i = 0; i < 70; i++) tick(g); ok(g.table.rows.some((r) => r.played > 0), `${y} unten: Spieltage laufen (${g.calendar.currentDate})`); continue; }
+  playSeason(g);
+  ok(g.fixtures.every((m) => m.status === 'finished'), `${y} unten: alle Ligaspiele gespielt`);
+  const lastPos = g.table.rows.find((r) => r.clubId === g.managedClubId)!.position;
+  startNextSeason(g);
+  const pd2 = g.leagues.playerDivision;
+  ok(g.season === `${y + 1}/${String(y + 2).slice(2)}` && g.table.rows.length >= 18, `${y} unten: Saisonwechsel nach Platz ${lastPos} → ${pd2.name} (${g.table.rows.length} Vereine)`);
+  const thin = g.table.rows.filter((r) => (g.clubs[r.clubId]?.playerIds.length ?? 0) < 15).map((r) => `${r.clubId}:${g.clubs[r.clubId]?.playerIds.length ?? 'fehlt'}`);
+  ok(!thin.length, `${y} unten: neue Spielerliga mit vollen Kadern (mind. 15 im Sommer)${thin.length ? ` (${thin.join(', ')})` : ''}`);
+  ok(divSizes(g).every((n) => n % 2 === 0 && n >= 4), `${y} unten: Ligagrößen nach dem Wechsel gerade (${divSizes(g).join('/')})`);
+  ok(await saveGame('u', { name: 'u', managerName: 'u', clubName: 'u', clubId: g.managedClubId, season: g.season, gameDate: g.calendar.currentDate }, g), `${y} unten: Speichern`);
+  const l = (await loadGame<Game>('u'))!.game;
+  prepareLoadedGame(l);
+  for (let i = 0; i < 40; i++) tick(l);
+  ok(l.leagues.playerDivision.id === pd2.id && l.table.rows.some((r) => r.played > 0), `${y} unten: geladener Stand spielt weiter (${l.calendar.currentDate})`);
 }
 
 // --- 3) Rückfall ohne Daten ---------------------------------------------------

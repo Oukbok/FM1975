@@ -17,7 +17,8 @@ import { eraRules } from '../../../engine/match/era';
 import type { MatchEventExt, MatchResultExt, Side } from '../../../engine/match/types';
 import { unpackLines, type MatchTicker } from '../../../game/matchTicker';
 import type { Game } from '../../../game/state';
-import { ClockView, splitLabel, StageRow, TeamInfo, TimelineView, type Mark } from '../../../screens/match/board/Stage';
+import { firstLegFor } from '../../../game/ownMatch';
+import { AggNote, ClockView, splitLabel, StageRow, TeamInfo, TimelineView, type Mark } from '../../../screens/match/board/Stage';
 import { TickerFeed, type FeedSource } from '../../../screens/match/board/TickerList';
 import type { Match } from '../../../types';
 import { fmtDateFull } from '../../../ui/format';
@@ -67,6 +68,8 @@ export function TickerReport({ g, match: m, label, ticker: t, onClose }: { g: Ga
   const motm = r.manOfTheMatchId ? g.players[r.manOfTheMatchId] : null;
   const motmGrade = r.manOfTheMatchId ? [...(rep?.lineups.home ?? []), ...(rep?.lineups.away ?? [])].find((e) => e.id === r.manOfTheMatchId)?.grade : undefined;
   const [comp, sub] = splitLabel(label);
+  // Rückspiel: Hinspiel + Gesamtstand (bis 2020/21 Auswärtstore) wie im Textmodus.
+  const fl = t.fl ?? firstLegFor(g, m.date, m.homeClubId, m.awayClubId);
   const hasDetail = !!rep?.lineups.home.some((e) => e.st);
   const tabs: [RTab, string][] = [['stats', 'Statistik'], ['lineups', 'Aufstellungen'], ...(hasDetail ? [['detail', 'Einzelwerte'] as [RTab, string]] : [])];
   const Teams = () => (
@@ -95,7 +98,8 @@ export function TickerReport({ g, match: m, label, ticker: t, onClose }: { g: Ga
         </div>
 
         <div className="tm-stage mr2-stage">
-          <div className="tm-comp"><div>{comp}{sub && <span> · {sub}</span>}{aet && !tie && <b> · n.V.</b>}{tie?.scoreAfter && <b> · {tie.scoreAfter.home}:{tie.scoreAfter.away} i.E.</b>}</div></div>
+          <div className="tm-comp"><div>{comp}{sub && <span> · {sub}</span>}{aet && !tie && <b> · n.V.</b>}{tie?.scoreAfter && <b> · {tie.scoreAfter.home}:{tie.scoreAfter.away} i.E.</b>}</div>
+            {fl && <AggNote fl={fl} hs={r.homeGoals} as={r.awayGoals} homeName={H.shortName ?? H.name} awayName={A.shortName ?? A.name} done={{ pens: tie?.scoreAfter ?? null }} />}</div>
           <StageRow home={H} away={A} ranks={t.rank} mySide={t.me} score={[r.homeGoals, r.awayGoals]} ht={rep?.halftime ?? null}
             flags={[<ClubFlag key="h" g={g} id={H.id} date={m.date} height={26} />, <ClubFlag key="a" g={g} id={A.id} date={m.date} height={26} />]} />
           <div className="tm-stage-info">

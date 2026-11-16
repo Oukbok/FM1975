@@ -1,3 +1,4 @@
+import { lowerTierLevel } from './lowerTiers';
 import { liberoOut, setFormationYear } from './formations';
 import { datasetCrest, datasetKits } from './dataset/apply';
 // =============================================================================
@@ -370,21 +371,26 @@ export function buildProClub(
   currentDate: string,
   players: Record<string, Player>,
   youthPlayers: Record<string, Player>,
+  /** Ebene der Spielerliga: ab 3 (3. Liga/Regionalliga) kleinere Kader-, Stadion- und Ruf-Niveaus. */
+  tier = 2,
 ): Club {
   // Vereine aus den simulierten Ligen: Ruf, Stadion und Zuschauerzuspruch richten
   // sich nach ihrer Stärke (ein Zweitligist hat kleinere Ränge und weniger Publikum).
-  const reputation = Math.max(55, Math.min(80, Math.round(src.strength)));
+  const low = tier >= 3;
+  const lt = lowerTierLevel(src.strength, tier);
+  const reputation = low ? lt.squadRep : Math.max(55, Math.min(80, Math.round(src.strength)));
+  const capacity = low ? lt.capacity : 12000 + Math.max(0, Math.round((src.strength - 50) * 1100));
   const seed: ClubSeed = {
     id: src.id, name: src.name, shortName: src.shortName, city: src.city,
     founded: 1900 + ri(0, 20), primary: src.colors.primary, secondary: src.colors.secondary,
-    reputation, stadium: `Stadion ${src.city}`, capacity: 12000 + Math.max(0, Math.round((src.strength - 50) * 1100)),
+    reputation, stadium: `Stadion ${src.city}`, capacity,
   };
   setGenDate(currentDate);
   try {
     const club = buildClubFromSeed(seed, managedClubId, currentDate, players, youthPlayers);
     club.stadium.averageAttendanceRate = Math.max(0.3, Math.min(0.85, 0.3 + (src.strength - 58) * 0.025 + rng() * 0.08));
     club.stadium.ticketPrice = Math.max(4, Math.min(9, Math.round(src.strength / 9)));
-    club.reputation = Math.max(40, Math.min(80, Math.round(src.strength - 6)));
+    club.reputation = low ? lt.reputation : Math.max(40, Math.min(80, Math.round(src.strength - 6)));
     // Startguthaben ist nominal: auf das Wirtschaftsniveau des Jahres hochrechnen. Sonst
     // begann ein später aufsteigender oder neu vollsimulierter Verein mit 1975-Beträgen
     // (z. B. 3,6 Mio. DM bei 200 Mio. Jahresumsatz) und rutschte sofort ins Minus.

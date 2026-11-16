@@ -248,6 +248,8 @@
   --border: #303339;
   --border-soft: #24272d;
   --border-strong: #45484e;
+  /* Rand um Flaggen (CountryFlag): auf dunklem Grund hell, auf Papier dunkel (31-akte.css). */
+  --flag-edge: rgba(255, 255, 255, 0.3);
   /* RGB-Tripel für Überlagerungen: rgba(var(--ink-rgb), a) = „heller als die Fläche“
      (in hellen Themes dunkel), --shade-rgb = Schatten/Mulden, --bg-rgb/--panel-rgb =
      halbtransparente Flächen, --deep-rgb = Abdunkelung über Fotos/Fenstern (immer dunkel). */

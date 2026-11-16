@@ -46,6 +46,7 @@ import { COUNTRY_BY_CC, countryOrigin, countryPointSystem, seasonLabelOf } from 
 import { ORIGINS, setHomeOrigin } from '../data/origins';
 import { setRegHome } from '../engine/registration';
 import { composeHome, ddrSeedsFor, secondSimClubs } from './worldCompose';
+import { lowerStartDivision, materializeLowerStart } from './lowerTierStart';
 import { amateurTownsFor, clampStartYear, fillLowerTiers, padSecondTier, reformsAppliedAt, seedPreStartHistory, seedStartPool, startEuroQualifiers } from './startYear';
 import { needsOverlay, worldOverlay } from '../engine/worldData';
 import { setHomeLabel, type LeagueDivision, type LeagueGroup } from '../engine/leagues';
@@ -106,9 +107,12 @@ export function createNewGame(opts: NewGameOptions): Game {
   const simClubs = comp ? secondSimClubs(comp) : buildSecondLigaSimClubs();
   const secondId = (gr: LeagueGroup) => (gr ? `tier2-${gr}` : 'tier2');
   const startSim = simClubs[opts.managedClubId];
+  // Start in einer unteren Liga (3. Liga/Regionalliga/NOFV-Oberliga, game/lowerTierStart.ts):
+  // diese Liga wird Spielerliga mit vollen Kadern, 1. und 2. Liga laufen simuliert.
+  const lowerStart = !startSim && isGer && comp && !world.clubs[opts.managedClubId] ? lowerStartDivision(home, year, opts.managedClubId) : null;
   let playerDivMeta: DivisionMeta = { id: 'tier1', name: '1. Liga', tier: 1, group: null };
   let tier1SimIds: string[] = [];
-  if (startSim) {
+  if (startSim || lowerStart) {
     tier1SimIds = Object.keys(world.clubs);
     for (const id of tier1SimIds) {
       const c = world.clubs[id];
@@ -117,12 +121,17 @@ export function createNewGame(opts: NewGameOptions): Game {
       for (const yid of c.youthPlayerIds ?? []) delete world.youthPlayers[yid];
       delete world.clubs[id];
     }
+  }
+  if (startSim) {
     const group = startSim.group;
     for (const sc of Object.values(simClubs).filter((x) => x.tier === 2 && x.group === group)) {
       world.clubs[sc.id] = buildProClub(sc, opts.managedClubId, startISO, world.players, world.youthPlayers);
       delete simClubs[sc.id];
     }
     playerDivMeta = { id: secondId(group), name: seconds.find((x) => x.group === group)?.name ?? '2. Liga', tier: 2, group };
+  } else if (lowerStart) {
+    materializeLowerStart(lowerStart, opts.managedClubId, startISO, world.clubs, world.players, world.youthPlayers);
+    playerDivMeta = lowerStart.meta;
   }
   const clubList = Object.values(world.clubs);
   const fixtures = generateFixtures(clubList, fxStart, { tier: playerDivMeta.tier, spread: true });
@@ -133,14 +142,14 @@ export function createNewGame(opts: NewGameOptions): Game {
   const calendar = generateSeasonCalendar(fixtures, startISO, `${year + 1}-06-30`);
   calendar.speedMs = opts.speedMs;
   const club = world.clubs[opts.managedClubId];
-  if (startSim && club) {
-    // Saisonziel in der 2. Liga aus der Kaderstärke ableiten.
+  if ((startSim || lowerStart) && club) {
+    // Saisonziel in der 2. Liga bzw. unteren Liga aus der Kaderstärke ableiten.
     const str = (c: typeof club) => {
       const o = c.playerIds.map((id) => world.players[id]?.overall ?? 0).sort((a, b) => b - a).slice(0, 14);
       return o.reduce((a, b) => a + b, 0) / Math.max(1, o.length);
     };
     const ranked = [...clubList].sort((a, b) => str(b) - str(a));
-    club.boardExpectation = seasonExpectation(ranked.findIndex((c) => c.id === club.id) + 1, ranked.length, 2);
+    club.boardExpectation = seasonExpectation(ranked.findIndex((c) => c.id === club.id) + 1, ranked.length, playerDivMeta.tier);
   }
 
   // --- Landespokal aufsetzen: Amateurvereine ergänzen (→ 32er-Feld) ---
@@ -203,7 +212,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   // --- Mehrstufiges Ligasystem: 1. Liga/2. Liga (aggregiert simuliert) ---
   const ligaStart = fixtures[0]?.date ?? calendar.seasonStartDate;
   const otherDivisions: LeagueDivision[] = [];
-  if (startSim) otherDivisions.push(buildDivision({ id: 'tier1', name: '1. Liga', tier: 1, group: null }, tier1SimIds, pointSystem, season, ligaStart));
+  if (startSim || lowerStart) otherDivisions.push(buildDivision({ id: 'tier1', name: '1. Liga', tier: 1, group: null }, tier1SimIds, pointSystem, season, ligaStart));
   for (const sec of seconds) {
     if (startSim && sec.group === startSim.group) continue;
     otherDivisions.push(buildDivision(

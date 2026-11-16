@@ -75,7 +75,7 @@
 .ng-cols-2 { grid-template-columns: 1fr 1fr; }
 .ng-cols-world { grid-template-columns: 0.75fr 1.6fr; }
 .ng-cols-club { grid-template-columns: 290px minmax(0, 1fr) minmax(0, 1.05fr); }
-.ng-cols-career { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.ng-cols-career { grid-template-columns: 290px minmax(0, 1fr) minmax(0, 1.05fr); }
 .ng-cols-welcome { grid-template-columns: 1.1fr 1fr 1fr; }
 
 .ng-card {

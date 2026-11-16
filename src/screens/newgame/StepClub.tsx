@@ -9,7 +9,7 @@ import { playableCountries } from '../../game/worldCompose';
 import { clubBandVars, type CareerOffer, type NewGameDraft } from './draft';
 
 // Schritt 4: Verein — Teammanager: Land → Liga → Verein (Wunsch Pascal: klar zweistufig – erst die
-// Ligen des Landes mit Ebene und Zahl der Vereine, dann die Vereine der gewählten Liga); Karriere: drei Angebote.
+// Ligen des Landes mit Ebene und Zahl der Vereine, dann die Vereine der gewählten Liga); Karriere: Land + drei Angebote.
 // Rechts jeweils die große Vorschau (Wappen, Trikots, Stadion, Stärke, Ziel).
 /** Vereinsfarben als CSS-Variablen (Band an der Vorschau, Kante der gewählten Zeile). */
 const clubVars = (c: ClubPreview) => clubBandVars(c.primary, c.secondary);
@@ -54,6 +54,25 @@ function ClubDetail({ c, leagueName }: { c: ClubPreview; leagueName: string }) {
   );
 }
 
+/** Linke Spalte „Land“ (Teammanager und Karriere): Heimatland direkt im Schritt Verein wählen. */
+function CountryList({ d, onPick, note }: { d: NewGameDraft; onPick: (cc: string) => void; note: string }) {
+  const countries = useMemo(() => playableCountries(d.startYear), [d.datasetId, d.startYear]);
+  return (
+    <section className="ng-card ng-tree">
+      <h3 className="ng-h">Land</h3>
+      <div className="rl rl-sm ng-countries" style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+        {countries.map((cc) => (
+          <button key={cc} type="button" data-cc={cc} className={`rl-row ng-tree-row ${d.country === cc ? 'on' : ''}`} onClick={() => onPick(cc)}>
+            <span className="ng-tree-flag"><CountryFlag country={COUNTRY_BY_CC[cc].key} height={14} /></span><span className="rl-name">{COUNTRY_BY_CC[cc].name}</span>
+          </button>
+        ))}
+        {d.country === 'ger' && d.startYear <= 1990 && <div className="rl-row ng-tree-row off" title="DDR-Vereine sind nicht wählbar; sie spielen im Hintergrund mit."><span className="ng-tree-flag"><CountryFlag country="DDR" height={14} /></span><span className="rl-name">DDR</span><span className="rl-num">nicht wählbar</span></div>}
+      </div>
+      <p className="ng-note ng-push">{note}</p>
+    </section>
+  );
+}
+
 function ManagerPick({ d, set, chooseCountry }: { d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void; chooseCountry: (cc: string) => void }) {
   const [sort, setSort] = useState<SortKey>('reputation');
   // Stufe 1 = Liga wählen, Stufe 2 = Verein dieser Liga wählen.
@@ -73,18 +92,8 @@ function ManagerPick({ d, set, chooseCountry }: { d: NewGameDraft; set: (p: Part
   const favourite = (k: LeagueKey) => sortClubs(previews[k] ?? [], 'reputation')[0];
   return (
     <div className="ng-cols ng-cols-club">
-      <section className="ng-card ng-tree">
-        <h3 className="ng-h">Land</h3>
-        <div className="rl rl-sm ng-countries" style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
-          {countries.map((cc) => (
-            <button key={cc} type="button" data-cc={cc} className={`rl-row ng-tree-row ${d.country === cc ? 'on' : ''}`} onClick={() => pickCountry(cc)}>
-              <span className="ng-tree-flag"><CountryFlag country={COUNTRY_BY_CC[cc].key} height={14} /></span><span className="rl-name">{COUNTRY_BY_CC[cc].name}</span>
-            </button>
-          ))}
-          {d.country === 'ger' && d.startYear <= 1990 && <div className="rl-row ng-tree-row off" title="DDR-Vereine sind nicht wählbar; sie spielen im Hintergrund mit."><span className="ng-tree-flag"><CountryFlag country="DDR" height={14} /></span><span className="rl-name">DDR</span><span className="rl-num">nicht wählbar</span></div>}
-        </div>
-        <p className="ng-note ng-push">{step === 'club' ? league.note : 'Wähle zuerst die Liga, danach deinen Verein.'}{countries.length === 1 ? ' Weitere Länder sind wählbar, sobald für das Startjahr echte Vereine hinterlegt sind (Editor › Weltdaten).' : ''}</p>
-      </section>
+      <CountryList d={d} onPick={pickCountry}
+        note={`${step === 'club' ? league.note : 'Wähle zuerst die Liga, danach deinen Verein.'}${countries.length === 1 ? ' Weitere Länder sind wählbar, sobald für das Startjahr echte Vereine hinterlegt sind (Editor › Weltdaten).' : ''}`} />
 
       {step === 'league' ? (
         <section className="ng-card ng-pick">
@@ -102,14 +111,14 @@ function ManagerPick({ d, set, chooseCountry }: { d: NewGameDraft; set: (p: Part
             ))}
             {lower.map((l) => (
               <div key={l.tier} className="rl-row ng-tree-row off" style={{ gridTemplateColumns: '1fr auto auto' }}
-                title="Läuft im Hintergrund: Diese Ebene füllt das Spiel beim Start aus dem Amateur-Pool, ihre Vereine haben keinen vollen Kader.">
+                title="Amateur-Pool ohne Spielbetrieb: Von hier steigen Vereine in die unterste Liga auf.">
                 <span className="rl-name">{l.name}</span>
                 <span className="ng-club-role">{l.tier}. Ebene · {l.clubs ? `${l.staffeln > 1 ? `${l.staffeln} Staffeln · ` : ''}im Hintergrund` : 'ohne Spielbetrieb'}</span>
                 <span className="rl-num">{l.clubs ? `${l.clubs} Vereine` : 'nicht wählbar'}</span>
               </div>
             ))}
           </div>
-          <p className="ng-note">Wählbar sind die Ligen mit vollen Kadern (1. und 2. Ebene). Tiefere Ebenen laufen im Hintergrund mit – dorthin führt nur der Weg über Auf- und Abstieg.</p>
+          <p className="ng-note">Wählbar sind alle Ligen mit Spielbetrieb – auch 3. Liga und Regionalligen: Deine Liga bekommt beim Start volle Kader, die übrigen laufen simuliert mit.</p>
         </section>
       ) : (
         <section className="ng-card ng-pick">
@@ -139,10 +148,11 @@ function ManagerPick({ d, set, chooseCountry }: { d: NewGameDraft; set: (p: Part
   );
 }
 
-function CareerPick({ d, set, offers }: { d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void; offers: CareerOffer[] }) {
+function CareerPick({ d, set, offers, chooseCountry }: { d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void; offers: CareerOffer[]; chooseCountry: (cc: string) => void }) {
   const sel = offers.find((o) => o.club.id === d.clubId) ?? offers[0];
   return (
-    <div className="ng-cols ng-cols-career">
+    <div className="ng-cols ng-cols-club ng-cols-career">
+      <CountryList d={d} onPick={chooseCountry} note="Dein Heimatland: Die drei Angebote kommen von Vereinen aus diesem Land." />
       <section className="ng-card">
         <h3 className="ng-h">Deine Angebote</h3>
         <p className="ng-note">Noch kennt dich keiner. Diese drei Vereine trauen dir den Job zu – wähle eines der Angebote.</p>
@@ -166,5 +176,5 @@ function CareerPick({ d, set, offers }: { d: NewGameDraft; set: (p: Partial<NewG
 }
 
 export function StepClub({ d, set, offers, chooseCountry }: { d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void; offers: CareerOffer[]; chooseCountry: (cc: string) => void }) {
-  return d.mode === 'career' ? <CareerPick d={d} set={set} offers={offers} /> : <ManagerPick d={d} set={set} chooseCountry={chooseCountry} />;
+  return d.mode === 'career' ? <CareerPick d={d} set={set} offers={offers} chooseCountry={chooseCountry} /> : <ManagerPick d={d} set={set} chooseCountry={chooseCountry} />;
 }

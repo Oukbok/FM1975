@@ -175,11 +175,20 @@ export function TimelineView({ len, now, momentum, marks }: { len: number; now: 
   );
 }
 
-/** Rückspiel: Hinspiel (heutiges Heimteam zuerst), Gesamtstand und (bis 2020/21) die Auswärtstore live. */
-function AggNote({ fl, hs, as, homeName, awayName }: { fl: NonNullable<OwnMatchInfo['firstLeg']>; hs: number; as: number; homeName: string; awayName: string }) {
+/** Rückspiel: Hinspiel (heutiges Heimteam zuerst), Gesamtstand und (bis 2020/21) die Auswärtstore live.
+ *  `done` (Spielbericht): statt „droht“ steht, wer weiter ist (Gesamtstand, Auswärtstore, n.V./i.E.). */
+export function AggNote({ fl, hs, as, homeName, awayName, done }: {
+  fl: NonNullable<OwnMatchInfo['firstLeg']>; hs: number; as: number; homeName: string; awayName: string;
+  done?: { pens?: { home: number; away: number } | null };
+}) {
   const aggH = hs + fl.ag, aggA = as + fl.hg;
   let note = '';
-  if (aggH === aggA) {
+  if (done) {
+    const winner = aggH !== aggA ? (aggH > aggA ? homeName : awayName)
+      : fl.awayGoals && fl.ag !== as ? `${fl.ag > as ? homeName : awayName}` : done.pens ? (done.pens.home > done.pens.away ? homeName : awayName) : null;
+    const how = aggH !== aggA ? '' : fl.awayGoals && fl.ag !== as ? ' durch Auswärtstore' : done.pens ? ' im Elfmeterschießen' : '';
+    note = winner ? `${winner} weiter${how}` : 'Gleichstand';
+  } else if (aggH === aggA) {
     if (fl.awayGoals && fl.ag !== as) note = `${fl.ag > as ? homeName : awayName} vorn durch Auswärtstore`;
     else note = 'Gleichstand – Verlängerung droht';
   } else note = `${aggH > aggA ? homeName : awayName} liegt vorn`;
