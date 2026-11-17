@@ -1,6 +1,7 @@
 import ClubCrest from '../components/ClubCrest';
 import { PlayerForm, PlayerFreshness } from '../components/status';
 import { ClubLink } from '../components/club/ClubLink';
+import { ClubByName } from '../ui/LinkedText';
 import { EURO_COMP_NAMES } from '../data/europe';
 import { STAFF_BY_ID, staffMonthlyTotal } from '../data/staff';
 import { TIMELINE } from '../data/timeline';
@@ -222,7 +223,7 @@ export function TransfersDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen)
       </DashBox>
 
       <DashBox title="Top auf dem Markt" icon="transfers" onClick={() => onGoto('transfers')} right={`${market.length} verfügbar`}>
-        {best.length ? best.map((p) => <PlayerRow key={p.id} p={p} sub={`${p.age} J. · ${g.clubs[p.clubId]?.shortName ?? '—'}`} value={p.overall} />) : <Empty icon="transfers">Derzeit niemand verfügbar.</Empty>}
+        {best.length ? best.map((p) => <PlayerRow key={p.id} p={p} sub={<>{p.age} J. · <ClubLink id={p.clubId}>{g.clubs[p.clubId]?.shortName ?? '—'}</ClubLink></>} value={p.overall} />) : <Empty icon="transfers">Derzeit niemand verfügbar.</Empty>}
       </DashBox>
 
       <DashBox title="Junge Talente auf dem Markt" icon="youth" onClick={() => onGoto('transfers')}>
@@ -237,7 +238,7 @@ export function TransfersDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen)
         {moves.length ? moves.map(({ p, t }, i) => (
           <div key={i} className="dlist-row">
             <span className="meta" style={{ minWidth: 64 }}>{fmtDateShort(t.date).dmy}</span>
-            <span className="grow">{p.fullName} <span className="muted">· {t.fromClub} → {t.toClub}</span></span>
+            <span className="grow">{p.fullName} <span className="muted">· <ClubByName g={g} name={t.fromClub} /> → <ClubByName g={g} name={t.toClub} /></span></span>
             <span className="val">{t.fee > 0 ? fmtDM(t.fee) : 'ablösefrei'}</span>
           </div>
         )) : <Empty icon="news">Noch keine Wechsel in diesem Spiel.</Empty>}
@@ -348,7 +349,7 @@ export function VereinDashboard({ g, onGoto, onChange }: { g: Game; onGoto: (s: 
       <DashBox title="Vereinsprofil" info="ansehen" icon="stadium">
         <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 8 }}>
           <ClubCrest club={myClub} size={84} />
-          <div><div style={{ fontSize: 22, fontWeight: 900 }}>{myClub.name}</div><div className="dnote">gegründet {myClub.founded} · {myClub.city}</div></div>
+          <div><div style={{ fontSize: 22, fontWeight: 900 }}><ClubLink id={myClub.id}>{myClub.name}</ClubLink></div><div className="dnote">gegründet {myClub.founded} · {myClub.city}</div></div>
         </div>
         <Meter label="Ansehen" value={myClub.reputation} />
         <KV k="Vereinsfarben" v={<span className="dswatch"><i style={{ background: myClub.colors.primary }} /><i style={{ background: myClub.colors.secondary }} /></span>} />

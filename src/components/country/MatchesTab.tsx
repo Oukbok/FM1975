@@ -1,5 +1,6 @@
 // Länderprofil › Länderspiele: Bilanz & Termine · Länderspiele (Liste) | Turnier · WM & EM im Spiel
 // Daten: game/national/ (nationalGame.ts nationMatches/upcoming, tournament.ts).
+import { Fragment } from 'react';
 import { nationMatches, nationalSeason, natName, upcoming } from '../../game/national/nationalGame';
 import { nationInfo } from '../../game/countryProfile';
 import { DashBox, Empty, KV } from '../../ui/DashPage';
@@ -38,7 +39,7 @@ export default function MatchesTab({ g, c }: CountryTabProps) {
         <KV k="Gespeicherte Spiele" v={games.length ? `${all.w} S · ${all.d} U · ${all.l} N · ${all.gf}:${all.ga}` : '–'} />
         {!nat.exists && <div className="dnote">{c.name} besteht in dieser Saison nicht – die Spieler laufen für den Nachfolger auf.</div>}
         <div className="dsec">Nächste Termine (Länderspielkalender)</div>
-        {next.length ? next.map((x) => <div key={x.date + x.text} className="nt-next"><span>{fmtD(x.date)}</span>{x.text}</div>) : <div className="dnote">Keine Termine.</div>}
+        {next.length ? next.map((x) => <div key={x.date + x.text} className="nt-next"><span>{fmtD(x.date)}</span>{x.text}{x.hosts?.map((h) => <Fragment key={h}> <NatFlag nat={h} /></Fragment>)}</div>) : <div className="dnote">Keine Termine.</div>}
       </DashBox>
 
       <DashBox title="Länderspiele" span={2} right={games.length ? `${games.length}` : undefined}>

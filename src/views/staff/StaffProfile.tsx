@@ -4,9 +4,11 @@
 // ihre Eignung für die besten Stellen – mit „Anbieten“ (Arbeitsmarkt) bzw.
 // „Versetzen“ (eigene Mitarbeiter).
 // =============================================================================
+import { ClubByName } from '../../ui/LinkedText';
+import { ClubLink } from '../../components/club/ClubLink';
 import { openContractScreen } from '../../screens/contract/contractOpen';
 import { staffTalkBlocker } from '../../game/staffTalk';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { COACH_PHILOSOPHY_LABEL, COACH_STYLE_LABEL } from '../../engine/aiManager';
 import { economyScale, yearOf } from '../../engine/economy';
 import { memberMonthlySalary, methodFactor, type StaffMember, trainingCourseCost } from '../../engine/staffPeople';
@@ -62,9 +64,9 @@ export function StaffProfile({ g, m, own, role, scope, onOffer, onAct }: {
         </div>
         <Fact k="Alter">{m.age} Jahre</Fact>
         <Fact k="Herkunft">{originText(m, true)}</Fact>
-        {m.exPro?.clubs.length ? <Fact k="Stationen">{m.exPro.clubs.join(', ')}</Fact> : null}
+        {m.exPro?.clubs.length ? <Fact k="Stationen">{m.exPro.clubs.map((c, i) => <Fragment key={i}>{i ? ', ' : ''}<ClubByName g={g} name={c} /></Fragment>)}</Fact> : null}
         {m.coach && <Fact k="Spielidee">{COACH_STYLE_LABEL[m.coach.style]} · {COACH_PHILOSOPHY_LABEL[m.coach.philosophy]}</Fact>}
-        <Fact k="Arbeitgeber">{own ? 'dein Verein' : club ? club.name : 'vereinslos'}</Fact>
+        <Fact k="Arbeitgeber">{own ? 'dein Verein' : club ? <ClubLink id={club.id}>{club.name}</ClubLink> : 'vereinslos'}</Fact>
         {own && <Fact k="Vertrag bis">{m.contractEnd?.slice(0, 4) ?? '–'}</Fact>}
         <Fact k={own ? 'Gehalt' : 'Forderung'} strong>{fmtStaffWage(memberMonthlySalary(own ? m : { ...m, roleId: view, salaryFactor: demandOf(g, m, view) }, scale))}</Fact>
         {!own && m.clubId && <Fact k="Ablöse">{fmtDM(compensationOf(g, m))}</Fact>}

@@ -1,6 +1,8 @@
 // Reiter „Historie“: Platzierungsverlauf · Titel | Direkter Vergleich · Rekordspieler · Rekordtransfers
 import { SeasonPlacement, TITLE_DE, TitleKind, h2hOf, seasonsOf, titlesOf } from '../../game/clubRecords';
 import { Player } from '../../types';
+import type { Game } from '../../game/state';
+import { ClubByName } from '../../ui/LinkedText';
 import { DashBox, Empty, KV } from '../../ui/DashPage';
 import { fmtDM, fmtDateShort } from '../../ui/format';
 import { ClubTabProps, PlacementChart } from './shared';
@@ -119,9 +121,9 @@ export default function HistoryTab({ g, d, openPlayer }: ClubTabProps) {
 
       <DashBox title="Rekordtransfers" icon="transfers">
         <div className="dsec">Teuerste Zugänge</div>
-        {ins.length ? ins.slice(0, 3).map((x) => <TransferRow key={x.p.id + x.date} {...x} dir="von" onClick={() => openPlayer(x.p.id)} />) : <div className="dnote">Keine bekannt.</div>}
+        {ins.length ? ins.slice(0, 3).map((x) => <TransferRow key={x.p.id + x.date} {...x} g={g} dir="von" onClick={() => openPlayer(x.p.id)} />) : <div className="dnote">Keine bekannt.</div>}
         <div className="dsec">Teuerste Abgänge</div>
-        {outs.length ? outs.slice(0, 3).map((x) => <TransferRow key={x.p.id + x.date} {...x} dir="zu" onClick={() => openPlayer(x.p.id)} />) : <div className="dnote">Keine bekannt.</div>}
+        {outs.length ? outs.slice(0, 3).map((x) => <TransferRow key={x.p.id + x.date} {...x} g={g} dir="zu" onClick={() => openPlayer(x.p.id)} />) : <div className="dnote">Keine bekannt.</div>}
       </DashBox>
     </>
   );
@@ -137,11 +139,11 @@ function Rec({ p, value, onClick, away }: { p: Player; value: string; onClick: (
   );
 }
 
-function TransferRow({ p, fee, date, other, dir, onClick }: { p: Player; fee: number; date: string; other: string; dir: string; onClick: () => void }) {
+function TransferRow({ g, p, fee, date, other, dir, onClick }: { g: Game; p: Player; fee: number; date: string; other: string; dir: string; onClick: () => void }) {
   return (
     <div className="dlist-row clickable" onClick={onClick}>
       <PosBadge p={p} compact />
-      <span className="grow">{p.fullName}<span className="muted"> · {dir} {other} · {date.slice(0, 4)}</span></span>
+      <span className="grow">{p.fullName}<span className="muted"> · {dir} <ClubByName g={g} name={other} /> · {date.slice(0, 4)}</span></span>
       <span className="val">{fmtDM(fee)}</span>
     </div>
   );

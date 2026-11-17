@@ -4,7 +4,7 @@
 // laufendes/letztes Turnier (Gruppen + K.-o.), Länderspiele/Rangliste/Sieger.
 // Logik: game/national/ (nationalGame.ts, pool.ts, tournament.ts).
 // =============================================================================
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import type { Game } from '../../game/state';
 import { currentSquad, nationMatches, nationalSeason, natName, upcoming } from '../../game/national/nationalGame';
 import { allStrengths } from '../../game/national/pool';
@@ -107,7 +107,7 @@ export function NationalView({ g }: { g: Game }) {
         <KV k="Trainer" v={coach} />
         <KV k="Saisonbilanz" v={season.length ? `${rec.w} S · ${rec.d} U · ${rec.l} N` : 'noch kein Länderspiel'} />
         <div className="dsec">Nächste Termine</div>
-        {next.length ? next.map((x) => <div key={x.date + x.text} className="nt-next"><span>{fmtD(x.date)}</span>{x.text}</div>) : <div className="dnote">Keine Termine.</div>}
+        {next.length ? next.map((x) => <div key={x.date + x.text} className="nt-next"><span>{fmtD(x.date)}</span>{x.text}{x.hosts?.map((h) => <Fragment key={h}> <NatFlag nat={h} /></Fragment>)}</div>) : <div className="dnote">Keine Termine.</div>}
       </DashBox>
 
       <DashBox title={t && !t.done ? `Aufgebot ${t.kind} ${t.year}` : 'Aufgebot'} right={`${squad.length}`}>
@@ -143,7 +143,7 @@ export function NationalView({ g }: { g: Game }) {
         ) : <Empty icon="international">Noch kein Nationalspieler in deinem Kader.</Empty>}
       </DashBox>
 
-      <DashBox title={t ? `${tName(t)} ${t.place}` : 'Turnier'} span={2}>
+      <DashBox title={t ? <span className="kv-flag">{tName(t)} {t.place}{t.hosts.map((h) => <NatFlag key={h} nat={h} />)}</span> : 'Turnier'} span={2}>
         {t ? <TournamentBox t={t} today={today} home={home} />
           : <Empty icon="trophy">{next.find((x) => /meisterschaft/.test(x.text))?.text ?? 'Kein Turnier angesetzt.'} – Aufgebote und Spielplan 25 Tage vor dem Anpfiff.</Empty>}
       </DashBox>
@@ -168,7 +168,7 @@ export function NationalView({ g }: { g: Game }) {
               <div key={a.kind + a.year} className="nt-arow">
                 <span className="nt-date">{a.kind} {a.year}</span>
                 <span className="nt-pname"><NatFlag nat={a.winner} /> {natName(a.winner)}</span>
-                <span className="nt-club">vor {natName(a.runnerUp)} · {natName(home)}: {a.home}</span>
+                <span className="nt-club">vor <NatFlag nat={a.runnerUp} /> {natName(a.runnerUp)} · {natName(home)}: {a.home}</span>
               </div>
             ))}
           </div>

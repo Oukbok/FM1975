@@ -1,5 +1,6 @@
 import ClubCrest from '../../components/ClubCrest';
 import { ClubLink } from '../../components/club/ClubLink';
+import { ClubByName, LinkedText } from '../../ui/LinkedText';
 import PlayerModal from '../../components/PlayerModal';
 import { CalendarEngine } from '../../engine/calendar';
 import { getAvailablePlayers } from '../../engine/transfers';
@@ -239,7 +240,7 @@ function NegotiationsLedger({ g, onChange }: { g: Game; onChange: () => void }) 
         {news.length ? news.map((m) => (
           <div key={m.id} className="dlist-row">
             <span className="meta" style={{ minWidth: 150 }}>{CalendarEngine.formatDate(m.date)}</span>
-            <span className="grow"><b style={{ fontWeight: m.read ? 600 : 900 }}>{m.subject}</b><span className="dnote" style={{ display: 'block' }}>{m.shortText}</span></span>
+            <span className="grow"><b style={{ fontWeight: m.read ? 600 : 900 }}><LinkedText g={g} text={m.subject} /></b><span className="dnote" style={{ display: 'block' }}><LinkedText g={g} text={m.shortText} /></span></span>
           </div>
         )) : talks.length ? null : <Empty icon="negotiations">Keine laufenden Gespräche. Verhandeln kannst du im Transfermarkt und in der Beobachtungsliste.</Empty>}
       </DashBox>
@@ -266,7 +267,7 @@ function NegotiationsLedger({ g, onChange }: { g: Game; onChange: () => void }) 
       <DashBox title="Wechsel des Vereins" icon="transfers" right={`${moves.length}`}>
         {moves.length ? moves.slice(0, 10).map(({ p, t }) => (
           <PlayerRow key={p.id + t.date} p={p} onClick={() => open(p.id)}
-            sub={t.toClub === club.name ? `von ${t.fromClub}` : `zu ${t.toClub}`}
+            sub={t.toClub === club.name ? <>von <ClubByName g={g} name={t.fromClub} /></> : <>zu <ClubByName g={g} name={t.toClub} /></>}
             value={fmtDM(t.fee)} color={t.toClub === club.name ? 'var(--red)' : 'var(--green)'} />
         )) : <Empty icon="transfers">Noch keine Wechsel.</Empty>}
       </DashBox>

@@ -27,15 +27,22 @@ export function TeamName({ g, id, season, short = false, size = 20 }: { g: Game;
       <span className="cmp-team" title={country ? `${name} (${country})` : isLocalClub(id) ? `${name} (Ortsverein)` : name}>
         <span className="cmp-dot-box" style={{ width: size, height: size }}><span className="cmp-dot" style={{ background: col }} /></span>
         {flag}
-        <span className="cmp-team-name">{name}</span>
+        <ClubLink id={id}><span className="cmp-team-name">{name}</span></ClubLink>
       </span>
     );
   }
   const v = clubView(g, id, seasonStartYear(season));
+  // Mit Flagge: Flagge außerhalb des Vereinslinks, damit ihr Klick das Länderprofil öffnet.
+  if (flag) return (
+    <span className="cmp-team">
+      <ClubLink id={id}><ClubCrest club={v as never} size={size} /></ClubLink>
+      {flag}
+      <ClubLink id={id}><span className="cmp-team-name" title={name}>{name}</span></ClubLink>
+    </span>
+  );
   return (
     <ClubLink id={id} className="cmp-team">
       <ClubCrest club={v as never} size={size} />
-      {flag}
       <span className="cmp-team-name" title={name}>{name}</span>
     </ClubLink>
   );

@@ -110,7 +110,7 @@ export function GegnerView({ g, onGoto, onWatch }: { g: Game; onGoto: (s: Screen
               <Kpi value={Math.round(avg(oppSquad.map((p) => p.overall)))} label="Stärke" />
               <Kpi value={oppRow ? `${oppRow.goalsFor}:${oppRow.goalsAgainst}` : '–'} label="Tore" />
             </div>
-            {units && <UnitRadar units={units} me={myClub.shortName || myClub.name} opp={opp?.shortName || name} />}
+            {units && <UnitRadar units={units} me={myClub.shortName || myClub.name} opp={opp?.shortName || name} meId={myClub.id} oppId={oppId} />}
             <div className="dsec">Gefährlichste Spieler</div>
             <div className="opx-danger">{danger.map((p) => <DangerCard key={p.id} club={opp!} p={p} hurt={hurt.get(p.id)} />)}</div>
           </>

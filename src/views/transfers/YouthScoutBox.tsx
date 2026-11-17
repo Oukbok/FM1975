@@ -1,3 +1,4 @@
+import { ClubLink } from '../../components/club/ClubLink';
 import { useState } from 'react';
 import { scoutRangeText } from '../../engine/scouting';
 import { minYouthMoveAge } from '../../engine/youthScouting';
@@ -22,7 +23,7 @@ export function YouthScoutBox({ g, onChange }: { g: Game; onChange: () => void }
       {list.map((y) => (
         <div key={y.id} data-pid={y.id} className="dlist-row clickable" onClick={() => setSel(y.id)}>
           <span className="grow">
-            <b>{y.fullName}</b> <span className="muted">· {y.naturalPosition} · {y.age} J. · {g.clubs[y.clubId]?.shortName}</span>
+            <b>{y.fullName}</b> <span className="muted">· {y.naturalPosition} · {y.age} J. · <ClubLink id={y.clubId}>{g.clubs[y.clubId]?.shortName}</ClubLink></span>
           </span>
           <span className="meta" style={{ color: 'var(--yellow)' }}>{scoutRangeText(y)}</span>
           {approachedThisSeason(g, y.id) && <span className="meta">angesprochen</span>}

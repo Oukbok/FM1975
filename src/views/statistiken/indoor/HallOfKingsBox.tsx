@@ -43,7 +43,7 @@ function MastersList({ g, st }: { g: Game; st: IndoorState }) {
       {list.map((h) => (
         <div key={h.year} className="dlist-row">
           <span className="meta" style={{ minWidth: 40 }}>{h.year}</span>
-          <span className="grow"><b><ClubLink id={h.mastersWinner!}>{indoorShort(g, h.mastersWinner!)}</ClubLink></b> <span className="muted">{h.mastersScore} {h.mastersRunnerUp ? indoorShort(g, h.mastersRunnerUp) : ''}</span></span>
+          <span className="grow"><b><ClubLink id={h.mastersWinner!}>{indoorShort(g, h.mastersWinner!)}</ClubLink></b> <span className="muted">{h.mastersScore} {h.mastersRunnerUp ? <ClubLink id={h.mastersRunnerUp}>{indoorShort(g, h.mastersRunnerUp)}</ClubLink> : ''}</span></span>
           <span className="meta">{h.city}</span>
         </div>
       ))}

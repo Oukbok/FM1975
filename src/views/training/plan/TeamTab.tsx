@@ -7,6 +7,7 @@
 // =============================================================================
 import { useState } from 'react';
 import Icon from '../../../components/Icon';
+import { ClubLink } from '../../../components/club/ClubLink';
 import ClubCrest from '../../../components/ClubCrest';
 import { FitnessIcon, FormIcon, FreshnessIcon, MoraleIcon, fitness100, form100, freshness100, playerMorale100 } from '../../../components/status';
 import { BLOCKS_BY_ID, TRAINING_BLOCKS, blockAvailable } from '../../../engine/weeklyTraining';
@@ -105,7 +106,7 @@ export function TeamTab({ g, refresh, onTab }: { g: Game; refresh: () => void; o
                       <span className="tr3-mc-comp">{f.comp}</span>
                       <Icon name="matchball" size={30} />
                       {opp ? <ClubCrest club={opp} size={54} /> : <span className="tr3-mc-noc" />}
-                      <span className="tr3-mc-opp">{f.home ? 'gegen' : 'bei'}<b>{oppName}</b></span>
+                      <span className="tr3-mc-opp">{f.home ? 'gegen' : 'bei'}<b><ClubLink id={f.oppId}>{oppName}</ClubLink></b></span>
                       <span className="tr3-mc-ha">{f.home ? 'Heimspiel' : 'Auswärts'}</span>
                     </div>
                   ) : SLOT_KEYS.map((sk) => {

@@ -160,7 +160,7 @@ export function AwardsView({ g }: { g: Game }) {
             {tallies.map((t, i) => (
               <div key={t.p} className="rl-row">
                 <span className="rl-rank">{i + 1}</span>
-                <span className="rl-name grow"><PlayerLink id={t.p}>{t.n}</PlayerLink><span className="muted"> · {t.cn}</span></span>
+                <span className="rl-name grow"><PlayerLink id={t.p}>{t.n}</PlayerLink><span className="muted"> · <ClubLink id={t.c}>{t.cn}</ClubLink></span></span>
                 <span className="rl-num" title="Spieler der Saison">{t.best ? `${t.best}× SdS` : ''}</span>
                 <span className="rl-main">{t.wins}×</span>
               </div>

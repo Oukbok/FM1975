@@ -78,7 +78,7 @@ export function GamesBox({ g, games, fcs, t, sel, onSel, onChange }: Props) {
       {sel && (
         <div className="tk-detail">
           <div className="tk-detail-h">
-            <b>{g.clubs[sel.awayId]?.name ?? sel.awayId}</b>
+            <b><ClubLink id={sel.awayId}>{g.clubs[sel.awayId]?.name ?? sel.awayId}</ClubLink></b>
             <span>{fmtD(sel.date)}{sel.date.slice(0, 4)} · {sel.kind} · {sel.label}</span>
             {!sel.played && selFc?.reasons.length ? <span className="tk-muted">Unsicher: {selFc.reasons.join(', ')}</span> : null}
           </div>

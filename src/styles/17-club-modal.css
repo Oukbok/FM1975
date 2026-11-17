@@ -16,6 +16,7 @@
 .cmx-head { gap: 18px; }
 .cmx-id { min-width: 0; }
 .cmx-id h2 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cmx-land { display: flex; align-items: center; gap: 8px; }
 .cmx-mine {
   margin-left: 12px; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--accent);
   color: var(--accent); font-size: 13px; font-weight: 800; vertical-align: middle; letter-spacing: 0.4px;

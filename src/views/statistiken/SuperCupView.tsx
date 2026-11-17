@@ -4,6 +4,7 @@
 // Siegerliste und die Supercups der übrigen Länder. Logik: game/superCupGame.ts,
 // Stammdaten: data/superCups.ts.
 // =============================================================================
+import { Fragment } from 'react';
 import type { Game } from '../../game/state';
 import { homeCountryKey } from '../../game/state';
 import { ROUND_DE, superCupState, type ScEvent, type ScMatch } from '../../game/superCupGame';
@@ -49,7 +50,7 @@ function EventBox({ g, ev }: { g: Game; ev: ScEvent }) {
       <div className="nt-list">{shown.map((m) => <Line key={m.id} g={g} ev={ev} m={m} />)}</div>
       {open.map((m) => <div key={m.id} className="dnote">{ROUND_DE[m.stage]} am {fmtD(m.date)} – Paarung nach der Runde davor.</div>)}
       {ev.winner && (
-        <div className="nt-champ">{ev.shared ? 'Geteilter Titel' : 'Sieger'}: <b>{ev.shared ? ev.teams.slice(0, 2).map((id) => compClubName(g, id, ev.season)).join(' und ') : compClubName(g, ev.winner, ev.season)}</b></div>
+        <div className="nt-champ">{ev.shared ? 'Geteilter Titel' : 'Sieger'}: <b>{ev.shared ? ev.teams.slice(0, 2).map((id, i) => <Fragment key={id}>{i ? ' und ' : ''}<ClubLink id={id}>{compClubName(g, id, ev.season)}</ClubLink></Fragment>) : <ClubLink id={ev.winner}>{compClubName(g, ev.winner, ev.season)}</ClubLink>}</b></div>
       )}
     </>
   );
@@ -98,19 +99,19 @@ export function SuperCupView({ g }: { g: Game }) {
         {euWinners.length > 0 && <div className="dsec">Bisherige Sieger</div>}
         <div className="nt-list">
           {euWinners.slice(0, 8).map((a) => (
-            <div key={a.season} className="nt-arow"><span className="nt-date">{a.season}</span><span className="nt-pname">{compClubName(g, a.winner, a.season)}</span><span className="nt-club">{a.score}</span></div>
+            <div key={a.season} className="nt-arow"><span className="nt-date">{a.season}</span><span className="nt-pname"><ClubLink id={a.winner}>{compClubName(g, a.winner, a.season)}</ClubLink></span><span className="nt-club">{a.score}</span></div>
           ))}
         </div>
       </DashBox>
 
-      <DashBox title={`Sieger ${cname(homeKey)}`}>
+      <DashBox title={<span className="kv-flag">Sieger <CountryFlag country={homeKey} height={12} />{cname(homeKey)}</span>}>
         {winners.length ? (
           <div className="nt-list">
             {winners.map((a) => (
               <div key={a.season + a.name} className={`nt-arow ${a.winner === g.managedClubId || a.runnerUp === g.managedClubId ? 'me' : ''}`}>
                 <span className="nt-date">{a.season}</span>
                 <span className="nt-pname"><ClubLink id={a.winner}>{compClubName(g, a.winner, a.season)}</ClubLink>{a.shared ? ' (geteilt)' : ''}{a.name !== 'Supercup' ? ` · ${a.name}` : ''}</span>
-                <span className="nt-club">{a.score} gegen {compClubName(g, a.runnerUp, a.season)}</span>
+                <span className="nt-club">{a.score} gegen <ClubLink id={a.runnerUp}>{compClubName(g, a.runnerUp, a.season)}</ClubLink></span>
               </div>
             ))}
           </div>
@@ -123,8 +124,8 @@ export function SuperCupView({ g }: { g: Game }) {
             {others.map((a) => (
               <div key={a.country} className="nt-arow">
                 <span className="nt-date kv-flag"><CountryFlag country={a.country} height={12} />{cname(a.country)}</span>
-                <span className="nt-pname">{compClubName(g, a.winner, a.season)}{a.shared ? ' (geteilt)' : ''}</span>
-                <span className="nt-club">{a.score} gegen {compClubName(g, a.runnerUp, a.season)}</span>
+                <span className="nt-pname"><ClubLink id={a.winner}>{compClubName(g, a.winner, a.season)}</ClubLink>{a.shared ? ' (geteilt)' : ''}</span>
+                <span className="nt-club">{a.score} gegen <ClubLink id={a.runnerUp}>{compClubName(g, a.runnerUp, a.season)}</ClubLink></span>
               </div>
             ))}
           </div>

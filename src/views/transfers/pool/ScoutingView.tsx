@@ -1,6 +1,8 @@
 // =============================================================================
 // TRANSFERS › SCOUTING (Wunsch Pascal): laufende Aufträge, Berichte, Abteilung
 // =============================================================================
+import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
+import { ClubLink } from '../../../components/club/ClubLink';
 import { useMemo, useState } from 'react';
 import PosBadge from '../../../components/PosBadge';
 import { NatFlag } from '../../../components/competition/CountryFlag';
@@ -33,7 +35,7 @@ export function ScoutingView({ g, onChange = () => {} }: { g: Game; onChange?: (
           return (
             <div key={j.id} className="dlist-row pool-jobrow">
               {r && <Face r={r} size={24} />}
-              <span className="grow"><b>{j.name}</b><span className="muted"> · {j.clubName}{j.abroad ? ' · Ausland' : ''}{j.youth ? ' · Jugend' : ''}</span></span>
+              <span className="grow"><b><PlayerLink id={j.id}>{j.name}</PlayerLink></b><span className="muted"> · <ClubLink id={r?.clubId}>{j.clubName}</ClubLink>{j.abroad ? ' · Ausland' : ''}{j.youth ? ' · Jugend' : ''}</span></span>
               <span className="pool-jobmeter"><span className="dmeter-track"><span className="dmeter-fill" style={{ width: `${Math.round(jobProgress(g, j) * 100)}%`, background: 'var(--bar-fill-hi)' }} /></span>
                 <span className="muted">bis {CalendarEngine.formatDate(CalendarEngine.addDays(j.start, j.days))}</span></span>
               <button className="dchip" onClick={() => cancel(j.id)} title="Reisekosten werden nicht erstattet">Abbrechen</button>
@@ -45,7 +47,7 @@ export function ScoutingView({ g, onChange = () => {} }: { g: Game; onChange?: (
           return (
             <div key={q.id} className="dlist-row pool-jobrow wait">
               {r && <Face r={r} size={24} />}
-              <span className="grow"><b>{q.name}</b><span className="muted"> · {q.clubName}{q.abroad ? ' · Ausland' : ''}{q.youth ? ' · Jugend' : ''}</span></span>
+              <span className="grow"><b><PlayerLink id={q.id}>{q.name}</PlayerLink></b><span className="muted"> · <ClubLink id={r?.clubId}>{q.clubName}</ClubLink>{q.abroad ? ' · Ausland' : ''}{q.youth ? ' · Jugend' : ''}</span></span>
               <span className="pool-jobmeter"><span className="muted">vorgemerkt · Platz {i + 1}</span></span>
               <button className="dchip" onClick={() => cancel(q.id)}>Entfernen</button>
             </div>

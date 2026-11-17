@@ -43,7 +43,7 @@ export function H2HBar({ w, d, l }: { w: number; d: number; l: number }) {
 }
 
 /** Netzdiagramm Torwart/Abwehr/Mittelfeld/Angriff: eigene Elf (Vereinsfarbe) gegen den Gegner (Dunkelblau). */
-export function UnitRadar({ units, me, opp }: { units: UnitRow[]; me: string; opp: string }) {
+export function UnitRadar({ units, me, opp, meId, oppId }: { units: UnitRow[]; me: string; opp: string; meId?: string; oppId?: string }) {
   const C = 150, R = 108;
   const order: UnitRow['key'][] = ['GK', 'DEF', 'MID', 'ATT'];
   const ang = [-90, 0, 90, 180].map((a) => (a * Math.PI) / 180);
@@ -69,7 +69,7 @@ export function UnitRadar({ units, me, opp }: { units: UnitRow[]; me: string; op
           );
         })}
       </svg>
-      <div className="opx-legend"><span className="us"><i />{me}</span><span className="them"><i />{opp}</span></div>
+      <div className="opx-legend"><span className="us"><i /><ClubLink id={meId}>{me}</ClubLink></span><span className="them"><i /><ClubLink id={oppId}>{opp}</ClubLink></span></div>
     </div>
   );
 }

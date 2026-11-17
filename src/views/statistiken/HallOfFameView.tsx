@@ -1,4 +1,6 @@
+import { Fragment } from 'react';
 import { Game } from '../../game/state';
+import { ClubByName } from '../../ui/LinkedText';
 import { PlayerLink } from '../../components/playerMenu/PlayerLink';
 import type { ArchivedPlayer } from '../../game/archive';
 import { DashBox, DashPage, Empty, KV } from '../../ui/DashPage';
@@ -19,7 +21,7 @@ function titleLeaders(g: Game, kind: TitleKind): { id: string; n: number; last: 
 // =============================================================================
 // RUHMESHALLE — Karrieren nach dem Karriereende (Spieler-Archiv)
 // =============================================================================
-function Row({ a, value, sub }: { a: ArchivedPlayer; value: React.ReactNode; sub?: string }) {
+function Row({ a, value, sub }: { a: ArchivedPlayer; value: React.ReactNode; sub?: React.ReactNode }) {
   return (
     <div className="dlist-row">
       <PosBadge pos={a.pos} />
@@ -55,7 +57,7 @@ export function HallOfFameView({ g }: { g: Game }) {
                   <td className="num" style={{ color: vColor(a.peak), fontWeight: 800 }}>{a.peak}</td>
                   <td className="num">{a.apps}</td>
                   <td className="num">{a.goals}</td>
-                  <td className="muted" style={{ maxWidth: 360, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.clubs.join(' → ')}</td>
+                  <td className="muted" style={{ maxWidth: 360, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.clubs.map((c, i) => <Fragment key={i}>{i ? ' → ' : ''}<ClubByName g={g} name={c} /></Fragment>)}</td>
                 </tr>
               ))}
             </tbody>
@@ -82,7 +84,7 @@ export function HallOfFameView({ g }: { g: Game }) {
         {topScorer ? <KV k="Meiste Tore" v={`${topScorer.name} (${topScorer.goals})`} /> : null}
         {mostApps ? <KV k="Meiste Einsätze" v={`${mostApps.name} (${mostApps.apps})`} /> : null}
         <div className="dsec">Weltklasse im Ruhestand – Spitze 85+ ({worldClass.length})</div>
-        {worldClass.length ? worldClass.slice(0, 5).map((a) => <Row key={a.id} a={a} value={<span style={{ color: vColor(a.peak) }}>{a.peak}</span>} sub={a.clubs[a.clubs.length - 1]} />)
+        {worldClass.length ? worldClass.slice(0, 5).map((a) => <Row key={a.id} a={a} value={<span style={{ color: vColor(a.peak) }}>{a.peak}</span>} sub={<ClubByName g={g} name={a.clubs[a.clubs.length - 1]} />} />)
           : <Empty icon="youth">Noch kein Weltklassespieler im Ruhestand.</Empty>}
       </DashBox>
     </DashPage>

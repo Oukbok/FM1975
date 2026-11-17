@@ -1,6 +1,7 @@
 // VERHANDLUNGSTISCH — links: der Spieler (Gesicht, Stärke, Kräfteverhältnis, Persönlichkeit
 // als Einschätzung, Karrierephase, bisheriger Vertrag). Verdeckte Werte nie als Zahl –
 // nur Worte bzw. Punkte.
+import { ClubLink } from '../../components/club/ClubLink';
 import ClubCrest from '../../components/ClubCrest';
 import PlayerAvatar from '../../components/PlayerAvatar';
 import PosBadge from '../../components/PosBadge';
@@ -32,7 +33,7 @@ export function ContractPlayer({ g, p, knowledge, levers, compact }: { g: Game; 
           <PlayerAvatar player={p} club={club} size={124} priority />
           <div className="vt-who-r">
             <div className="vt-who-name">{p.fullName}</div>
-            <div className="vt-who-sub">{club && <ClubCrest club={club} size={24} />}<span>{club?.name}</span></div>
+            <div className="vt-who-sub">{club && <ClubCrest club={club} size={24} />}<ClubLink id={club?.id}><span>{club?.name}</span></ClubLink></div>
             <div className="vt-who-sub"><PosBadge p={p} single /><span>{p.age} Jahre</span></div>
           </div>
         </div>

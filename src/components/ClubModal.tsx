@@ -4,9 +4,10 @@
 //   Reiter: Übersicht · Kader · Jugend · Verein · Transfers · Historie (in src/components/club/) · Erfolge (views/verein/trophies/)
 // Geöffnet wird es überall über <ClubLink> (club/ClubProfileContext.tsx).
 // =============================================================================
+import { CountryFlag } from './competition/CountryFlag';
 import { useEffect, useState } from 'react';
 import { buildClubProfile } from '../game/clubProfile';
-import { Game } from '../game/state';
+import { Game, homeCountryKey } from '../game/state';
 import { startTalk } from '../game/transferTalks';
 import { materializeWorldPlayer } from '../game/worldPool';
 import { Kpi } from '../ui/DashPage';
@@ -57,6 +58,8 @@ export default function ClubModal({ g, clubId, nonce, onChange, onClose, onBack,
     setTalkErr(null); onChange(); openContractScreen({ kind: 'transfer', talkId: r.id });
   };
   const props = { g, d, openPlayer: setSelPlayer };
+  // Landesflagge im Kopf (Klick öffnet das Länderprofil): Ausland aus dem Profil, DDR-Vereine bis zur Einheit, sonst Heimatland.
+  const flagKey = d.foreign?.countryKey ?? (clubId.startsWith('ddr') && g.calendar.currentDate < '1990-10-03' ? 'DDR' : homeCountryKey(g));
 
   return (
     <div className="modal-overlay cmx-overlay" onClick={onClose} style={zIndex ? { zIndex } : undefined}>
@@ -65,7 +68,7 @@ export default function ClubModal({ g, clubId, nonce, onChange, onClose, onBack,
           {onBack && <button className="cmx-back" onClick={onBack} title="Zurück zum vorherigen Verein"><Icon name="swap" size={16} /> Zurück</button>}
           <ClubCrest club={d.crestClub} size={84} />
           <div className="cmx-id">
-            <div className="mx-sub">{[d.city, d.founded ? `gegründet ${d.founded}` : null, d.divisionLabel].filter(Boolean).join(' · ')}</div>
+            <div className="mx-sub cmx-land"><CountryFlag country={flagKey} height={14} />{[d.city, d.founded ? `gegründet ${d.founded}` : null, d.divisionLabel].filter(Boolean).join(' · ')}</div>
             <h2>{d.name}{d.isPlayerClub && <span className="cmx-mine">dein Verein</span>}</h2>
             <HonourStrip g={g} clubId={clubId} />
           </div>

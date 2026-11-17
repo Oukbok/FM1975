@@ -49,7 +49,7 @@ export function GoldenBallTop({ g, y, onGala }: { g: Game; y: GBYear; onGala: ()
               <li key={e.p} className={`aw-rest-face ${e.c === mine ? 'mine' : ''}`}>
                 <span className="aw-rk">{i + 4}</span>
                 <span className="aw-rest-who"><FaceThumb p={awardPerson(g, e.p)} size={24} /><AwardName e={e} cls="aw-rest-name" /></span>
-                <span className="aw-rest-club">{e.cn}</span>
+                <span className="aw-rest-club"><ClubLink id={e.c}>{e.cn}</ClubLink></span>
                 <span className="aw-rest-val">{e.gl} T</span>
               </li>
             ))}

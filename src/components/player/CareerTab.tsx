@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 import type { CareerStation, Club, Player, TransferRecord } from '../../types';
 import type { Game } from '../../game/state';
 import { useClubProfile } from '../club/ClubLink';
+import { ClubByName } from '../../ui/LinkedText';
 import { TeamName } from '../../views/statistiken/competition/parts';
 import { formatMoneyShort } from '../../engine/economy';
 import { compStatsOf, type CompTuple } from '../../engine/compStats';
@@ -192,7 +193,7 @@ export default function CareerTab({ p, club, season }: { p: Player; club?: Club;
               <div key={'h' + i} className={`pp3-hon${h.top ? ' top' : ''}`}><span className="w">{h.when}</span><b>{h.what}</b><span className="dim">{h.where ?? ''}</span></div>
             ))}
             {titles.map((t, i) => (
-              <div key={'t' + i} className="pp3-hon"><span className="w">{t.season}</span><b>{t.title}</b><span className="dim">{t.club}</span></div>
+              <div key={'t' + i} className="pp3-hon"><span className="w">{t.season}</span><b>{t.title}</b><span className="dim">{g ? <ClubByName g={g} name={t.club} /> : t.club}</span></div>
             ))}
           </div>
         )}

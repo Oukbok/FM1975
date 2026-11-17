@@ -1,3 +1,4 @@
+import { ClubLink } from '../../components/club/ClubLink';
 import { scoutRange, scoutRangeText } from '../../engine/scouting';
 import PlayerModal from '../../components/PlayerModal';
 import { createPortal } from 'react-dom';
@@ -59,7 +60,7 @@ export function YouthModal({ g, player, club, onClose, onChange, foreign = false
     <div className="mx-grid pp-youth-grid">
       <DashBox title="Jugend" icon="youth">
         <KV k="Altersklasse" v={cls ? `${YOUTH_AGE_CLASS_LABEL[cls]} · ${YOUTH_AGE_CLASS_RANGE[cls]}` : 'Jungtalent'} strong />
-        <KV k="Verein" v={club.name} />
+        <KV k="Verein" v={<ClubLink id={club.id}>{club.name}</ClubLink>} />
         <div className="dsec">Scouting</div>
         <Meter label="Potenzial-Spanne" value={smax - smin} max={2} text={`${smin.toLocaleString('de-DE')}–${smax.toLocaleString('de-DE')}`} />
         <div className="dnote">Das wahre Potenzial ist verborgen. Mit zunehmendem Alter und besserer Akademie wird die Spanne enger.</div>

@@ -1,6 +1,7 @@
 // =============================================================================
 // Abschluss des Textmodus (Halbzeitansprache: changes/TalkTabs.tsx).
 // =============================================================================
+import { ClubLink } from '../../components/club/ClubLink';
 import Icon from '../../components/Icon';
 import type { MatchSim } from '../../engine/match/sim';
 import type { MatchOutcome, Side } from '../../engine/match/types';
@@ -24,12 +25,12 @@ export function EndPanel({ g, sim, side, outcome, onClose }: {
     <div className="ms-dialog-bg">
       <div className="ms-dialog wide">
         <div className="ms-dialog-head">
-          <Icon name="matchball" size={30} /> Abpfiff – {sim.home.club.name} {h}:{a} {sim.away.club.name}
+          <Icon name="matchball" size={30} /> Abpfiff – <ClubLink id={sim.home.club.id}>{sim.home.club.name}</ClubLink> {h}:{a} <ClubLink id={sim.away.club.id}>{sim.away.club.name}</ClubLink>
           {outcome?.penalties && <span className="ms-dim"> ({outcome.penalties.home}:{outcome.penalties.away} i.E.)</span>}
           {outcome?.decision === 'aet' && <span className="ms-dim"> n.V.</span>}
         </div>
         <p className={`ms-verdict ${won ? 'good' : mine < theirs || outcome?.decision === 'penalties' ? 'bad' : ''}`}>{verdict}</p>
-        {motm && <p className="ms-dialog-p">Spieler des Spiels: <b>{motm.firstName} {motm.lastName}</b> ({g.clubs[motm.clubId]?.name ?? ''})</p>}
+        {motm && <p className="ms-dialog-p">Spieler des Spiels: <b>{motm.firstName} {motm.lastName}</b> (<ClubLink id={motm.clubId}>{g.clubs[motm.clubId]?.name ?? ''}</ClubLink>)</p>}
         <div className="ms-grades">
           {lineup.map((e) => {
             const p = g.players[e.id];

@@ -72,7 +72,7 @@ export function BilanzTab({ g, d, rep, onTab }: { g: Game; d: CareerData; rep: n
             <div><b>{ppgText(all)}</b><span>Punkte je Spiel</span></div>
             <div><b>{years}</b><span>{years === 1 ? 'Saison' : 'Saisons'}</span></div>
           </div>
-          <Row k="Verein" v={club.name} />
+          <Row k="Verein" v={<ClubLink id={club.id}>{club.name}</ClubLink>} />
           <Row k="Im Amt seit" v={`${dmy(since)} · ${yearsText}`} />
           <Row k="Siege · Remis · Niederlagen" v={wdlText(all)} />
           <Row k="Tore" v={`${all[3]}:${all[4]}`} />
@@ -86,7 +86,7 @@ export function BilanzTab({ g, d, rep, onTab }: { g: Game; d: CareerData; rep: n
         {/* Polaroid mit Wappen */}
         <figure className="bnd-polaroid">
           <div className="bnd-pol-img"><ClubCrest club={club} size={124} /></div>
-          <figcaption>{club.shortName} · seit {since.slice(0, 4)}</figcaption>
+          <figcaption><ClubLink id={club.id}>{club.shortName}</ClubLink> · seit {since.slice(0, 4)}</figcaption>
         </figure>
 
         {/* Links unten: Blatt „Je Wettbewerb“ */}
@@ -140,7 +140,7 @@ export function BilanzTab({ g, d, rep, onTab }: { g: Game; d: CareerData; rep: n
         <section className="bnd-note bnd-paper">
           <div className="bnd-paper-mast">Sportdienst</div>
           <div className="bnd-paper-h">{headline}</div>
-          <div className="bnd-paper-t">{mgr} und {club.shortName}: {wdlText(all)} in {d.tally.n} Pflichtspielen{best ? `. ${best.k}: ${best.v}` : ''}.</div>
+          <div className="bnd-paper-t">{mgr} und <ClubLink id={club.id}>{club.shortName}</ClubLink>: {wdlText(all)} in {d.tally.n} Pflichtspielen{best ? `. ${best.k}: ${best.v}` : ''}.</div>
           <div className="bnd-paper-cols" aria-hidden="true">{Array.from({ length: 8 }, (_, i) => <i key={i} />)}</div>
         </section>
 
@@ -150,7 +150,7 @@ export function BilanzTab({ g, d, rep, onTab }: { g: Game; d: CareerData; rep: n
           {miles.length ? miles.map(([n, x]) => (
             <div key={n} className="bnd-mile">
               <b>{n}.</b>
-              <span>{dmy(x[0])} · {COMP_DE[x[1]]}<br /><small>{x[6]} {x[4]}:{x[5]}</small></span>
+              <span>{dmy(x[0])} · {COMP_DE[x[1]]}<br /><small><ClubLink id={x[2]}>{x[6]}</ClubLink> {x[4]}:{x[5]}</small></span>
             </div>
           )) : <div className="bnd-empty">Dein erstes Pflichtspiel steht noch aus.</div>}
         </section>

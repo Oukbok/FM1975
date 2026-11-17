@@ -192,14 +192,14 @@ function honourOwnPlayers(g: Game, s: AwardSeason, date: string): void {
 }
 
 /** Anzahl der Siege je Spieler über alle Saisons (Kategorie-Platz 1, Spieler der Saison, Newcomer). */
-export function awardTallies(g: Game): { p: string; n: string; wins: number; best: number; last: string; cn: string }[] {
-  const map = new Map<string, { p: string; n: string; wins: number; best: number; last: string; cn: string }>();
+export function awardTallies(g: Game): { p: string; n: string; wins: number; best: number; last: string; cn: string; c: string }[] {
+  const map = new Map<string, { p: string; n: string; wins: number; best: number; last: string; cn: string; c: string }>();
   for (const s of awardsState(g)?.seasons ?? []) {
     for (const cat of AWARD_CATS) {
       const w = s.cats[cat][0];
       if (!w) continue;
-      const t = map.get(w.p) ?? { p: w.p, n: w.n, wins: 0, best: 0, last: s.season, cn: w.cn };
-      t.wins++; t.last = s.season; t.cn = w.cn;
+      const t = map.get(w.p) ?? { p: w.p, n: w.n, wins: 0, best: 0, last: s.season, cn: w.cn, c: w.c };
+      t.wins++; t.last = s.season; t.cn = w.cn; t.c = w.c;
       if (s.best === cat) t.best++;
       map.set(w.p, t);
     }

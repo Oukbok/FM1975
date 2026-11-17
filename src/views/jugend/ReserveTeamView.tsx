@@ -3,6 +3,8 @@
 // der Amateure, Positionen trainieren, Aufstellung, Tabelle, Ergebnisse.
 // Logik: game/reserveTeam.ts.
 // =============================================================================
+import { ClubByName } from '../../ui/LinkedText';
+import { ClubLink } from '../../components/club/ClubLink';
 import { useState } from 'react';
 import type { Game } from '../../game/state';
 import type { Position } from '../../types';
@@ -108,7 +110,7 @@ export function ReserveTeamView({ g, onChange, onGoto }: { g: Game; onChange?: (
           <tbody>
             {table.map((r, i) => (
               <tr key={r.id} className={r.id === OWN_ID ? 'me' : ''}>
-                <td className="rl-rank">{i + 1}</td><td>{r.name}</td><td className="r">{r.p}</td><td className="r">{r.gf}:{r.ga}</td><td className="r"><b>{r.w * 3 + r.d}</b></td>
+                <td className="rl-rank">{i + 1}</td><td><ClubLink id={r.id === 'own' ? g.managedClubId : r.id}>{r.name}</ClubLink></td><td className="r">{r.p}</td><td className="r">{r.gf}:{r.ga}</td><td className="r"><b>{r.w * 3 + r.d}</b></td>
               </tr>
             ))}
           </tbody>
@@ -121,7 +123,7 @@ export function ReserveTeamView({ g, onChange, onGoto }: { g: Game; onChange?: (
             {st.results.slice(0, 12).map((r, i) => (
               <div key={i} className="res-row">
                 <span className="res-date">{r.date.slice(8, 10)}.{r.date.slice(5, 7)}.</span>
-                <span className="res-name">{r.home ? 'gegen' : 'bei'} {r.opp}</span>
+                <span className="res-name">{r.home ? 'gegen' : 'bei'} {r.opp.endsWith(' II') ? <><ClubByName g={g} name={r.opp.slice(0, -3)} /> II</> : <ClubByName g={g} name={r.opp} />}</span>
                 <span className={`dres dres-${r.gf > r.ga ? 'W' : r.gf < r.ga ? 'L' : 'D'}`}>{r.gf}:{r.ga}</span>
               </div>
             ))}

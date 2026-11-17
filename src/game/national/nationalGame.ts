@@ -352,14 +352,14 @@ export function nationMatches(g: Game, nat: string): NatMatchRow[] {
 }
 
 /** Nächste Termine (Fenster / Turnier). */
-export function upcoming(g: Game): { date: string; text: string }[] {
+export function upcoming(g: Game): { date: string; text: string; hosts?: string[] }[] {
   const st = nationalState(g);
   const today = g.calendar.currentDate;
-  const out: { date: string; text: string }[] = [];
+  const out: { date: string; text: string; hosts?: string[] }[] = [];
   for (const w of st.windows) if (w.dates[0] >= today) out.push({ date: w.dates[0], text: `${w.label} (${w.dates.map(fmtD).join(', ')})` });
   const y = yearOf(today);
   for (const def of [...tournamentsOfYear(y, hostPick), ...tournamentsOfYear(y + 1, hostPick), ...tournamentsOfYear(y + 2, hostPick)]) {
-    if (def.end >= today) out.push({ date: def.start, text: `${def.kind === 'WM' ? 'Weltmeisterschaft' : 'Europameisterschaft'} ${def.year} ${def.place || `in ${natName(def.hosts[0])}`}` });
+    if (def.end >= today) out.push({ date: def.start, text: `${def.kind === 'WM' ? 'Weltmeisterschaft' : 'Europameisterschaft'} ${def.year} ${def.place || `in ${natName(def.hosts[0])}`}`, hosts: def.hosts });
   }
   return out.sort((a, b) => a.date.localeCompare(b.date)).slice(0, 6);
 }

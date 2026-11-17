@@ -7,6 +7,7 @@
 // und was sich für Trainerteam und Kasse ändert.
 // Logik: game/staffTalk.ts, Rechnung engine/staffNegotiation.ts.
 // =============================================================================
+import { ClubLink } from '../../components/club/ClubLink';
 import { useEffect, useMemo, useState } from 'react';
 import Icon from '../../components/Icon';
 import { STAFF_BY_ID } from '../../data/staff';
@@ -188,7 +189,7 @@ export function StaffTalk({ g, req, onClose, onChange }: { g: Game; req: StaffRe
               <div className="vt-who-sub"><span>{m.age} Jahre · {originText(m, true)}</span></div>
             </div>
           </div>
-          <Row k="Derzeit">{v.own ? `bei dir bis ${m.contractEnd?.slice(0, 4) ?? '—'}` : m.clubId ? g.clubs[m.clubId]?.name ?? 'angestellt' : 'vereinslos'}</Row>
+          <Row k="Derzeit">{v.own ? `bei dir bis ${m.contractEnd?.slice(0, 4) ?? '—'}` : m.clubId ? <ClubLink id={m.clubId}>{g.clubs[m.clubId]?.name ?? 'angestellt'}</ClubLink> : 'vereinslos'}</Row>
           <Row k="Entwicklung">{growthWord(m, role)}</Row>
           <h4 className="vt-h">Kräfteverhältnis</h4>
           <Balance levers={v.levers} me="Du" them={m.name.split(' ').slice(-1)[0]} max={5} />

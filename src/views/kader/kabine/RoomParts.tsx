@@ -1,6 +1,7 @@
 // =============================================================================
 // Kabine – Bausteine: Faktorliste, Verlauf, Spieler im Fokus, Maßnahmen.
 // =============================================================================
+import { LinkedText } from '../../../ui/LinkedText';
 import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
 import { useState } from 'react';
 import {
@@ -166,7 +167,7 @@ function JoltList({ g, pid }: { g: Game; pid: string }) {
           return (
             <div key={i} className="kb-factor kb-jolt">
               <span className="meta">{fmtDay(j.date).slice(0, 6)}</span>
-              <span className="kb-f-lbl">{j.label}</span>
+              <span className="kb-f-lbl"><LinkedText g={g} text={j.label} /></span>
               <span className={`kb-f-val ${j.value > 0 ? 'up' : 'down'}`}>{sign(j.value)}</span>
               <span className="kb-j-left">{left === 0 ? 'verflogen' : `noch ${sign(left)}`}</span>
             </div>

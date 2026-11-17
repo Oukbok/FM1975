@@ -4,6 +4,7 @@ import { PHILOSOPHY_INFO, PHILOSOPHY_LABEL, fanEra } from '../../engine/environm
 import { ensureEnvironment } from '../../game/environmentGame';
 import { cateringMatchIncome, expectedAttendance, expectedAttendanceRate, matchdayIncome, clubPriceScale } from '../../engine/finances';
 import { Game } from '../../game/state';
+import { ClubLink } from '../../components/club/ClubLink';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtDM, fmtDMfull, vColor } from '../../ui/format';
 import { FormDots, MatchRow, avg, ownLeagueMatches, resultFor, tableRow } from '../shared';
@@ -73,7 +74,7 @@ export function FansView({ g }: { g: Game }) {
 
       <DashBox title="Heimspiele" icon="dashBall" right={`${home.length}`}>
         {home.length ? [...home].reverse().map((m) => (
-          <Meter key={m.id} label={g.clubs[m.awayClubId]?.name ?? '—'} value={m.result!.attendance} max={st.capacity} text={m.result!.attendance.toLocaleString('de-DE')} />
+          <Meter key={m.id} label={<ClubLink id={m.awayClubId}>{g.clubs[m.awayClubId]?.name ?? '—'}</ClubLink>} value={m.result!.attendance} max={st.capacity} text={m.result!.attendance.toLocaleString('de-DE')} />
         )) : <Empty icon="dashBall">Noch kein Heimspiel.</Empty>}
       </DashBox>
 
@@ -82,7 +83,7 @@ export function FansView({ g }: { g: Game }) {
         <div className="dnote">{PHILOSOPHY_INFO[env.philosophy]}</div>
         <KV k="Tradition" info="tradition" v={env.tradition} />
         <div className="dsec">Rivalen</div>
-        {env.rivals.length ? env.rivals.map((id) => <KV key={id} k={g.clubs[id]?.name ?? g.simClubs?.[id]?.name ?? id} v="Derby" />) : <div className="dnote">Kein Derbygegner in der Liga.</div>}
+        {env.rivals.length ? env.rivals.map((id) => <KV key={id} k={<ClubLink id={id}>{g.clubs[id]?.name ?? g.simClubs?.[id]?.name ?? id}</ClubLink>} v="Derby" />) : <div className="dnote">Kein Derbygegner in der Liga.</div>}
         <div className="dsec">Fankultur</div>
         <div className="dnote">{era.text}</div>
         {away.length > 0 && <div className="dnote mt8">{away.length} Auswärtsfahrten in dieser Saison.</div>}

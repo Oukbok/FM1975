@@ -2,6 +2,7 @@
 // Spielergespräch — linke Buchseite: Kopf, Gesicht, Steckbrief, Leistung,
 // Status, Moral (mit Animation der Veränderung) und Szene.
 // =============================================================================
+import { ClubLink } from '../../../components/club/ClubLink';
 import SuspensionCard from '../../../components/status/SuspensionCard';
 import { useEffect, useRef, useState } from 'react';
 import PlayerAvatar from '../../../components/PlayerAvatar';
@@ -50,7 +51,7 @@ export function TalkLeft({ p, club, phase, anim }: { p: Player; club?: Club; pha
     <section className="ptk-page ptk-left">
       <header className="ptk-id">
         <h2 className="ptk-name"><span className="ptk-no">{p.shirtNumber}</span><span className="ptk-bar" />{p.lastName}</h2>
-        <div className="ptk-club">{club?.name ?? 'Vereinslos'}</div>
+        <div className="ptk-club">{club ? <ClubLink id={club.id}>{club.name}</ClubLink> : 'Vereinslos'}</div>
       </header>
 
       <div className="ptk-card">

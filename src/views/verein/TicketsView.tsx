@@ -16,6 +16,7 @@ import { leagueClubs } from '../../game/season';
 import { forecastStaff } from '../../game/seatingGame';
 import { ensureStadiumBlocks } from '../../game/stadiumGame';
 import type { Game } from '../../game/state';
+import { ClubLink } from '../../components/club/ClubLink';
 import { forecastGame, forecastRecord, homeGames, leagueCaps, setTicketOption, type GameForecast } from '../../game/ticketsGame';
 import type { SeatNums, StandId } from '../../types';
 import { DashBox, DashPage, Empty, KV } from '../../ui/DashPage';
@@ -89,7 +90,7 @@ export function TicketsView({ g, onChange, onGoto }: { g: Game; onChange: () => 
       </DashBox>
 
       <DashBox title="Eintrittspreise festlegen" icon="ticket" info="tribuenenpreise" span={2} flush
-        right={sel && selFc ? <span className="tk-right">Prognose: {g.clubs[sel.awayId]?.name ?? ''}, {sel.date.slice(8, 10)}.{sel.date.slice(5, 7)}.{seatsOnly ? ' · Europapokal: nur Sitzplätze' : ''}</span> : undefined}>
+        right={sel && selFc ? <span className="tk-right">Prognose: <ClubLink id={sel.awayId}>{g.clubs[sel.awayId]?.name ?? ''}</ClubLink>, {sel.date.slice(8, 10)}.{sel.date.slice(5, 7)}.{seatsOnly ? ' · Europapokal: nur Sitzplätze' : ''}</span> : undefined}>
         <PriceTable g={g} club={club} year={year} caps={caps} stands={stands} fc={selFc} sel={stand} onSel={setStand} onChange={changed} />
       </DashBox>
 

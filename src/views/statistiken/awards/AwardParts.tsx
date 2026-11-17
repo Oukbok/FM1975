@@ -104,7 +104,7 @@ export function AwardCard({ g, s, cat, k = 0, compact = false }: {
           <li key={e.p} className={e.c === mine ? 'mine' : ''}>
             <span className="aw-rk">{i + 2}</span>
             <AwardName e={e} cls="aw-rest-name" />
-            <span className="aw-rest-club">{e.cn}</span>
+            <span className="aw-rest-club"><ClubLink id={e.c}>{e.cn}</ClubLink></span>
             <span className="aw-rest-val">{fmtGrade(e.g)}</span>
           </li>
         ))}
