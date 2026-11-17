@@ -3511,6 +3511,33 @@ Etwa **einmal pro Jahr** (Einstellung „Ereignisse“ wirkt mit) bietet sich ei
 - Ab 1990 schützt ein **Fördervertrag** (Jugend → Talent öffnen) für ein Jahr. Er kostet jährlich, je nach Potenzial.`,
   },
   {
+    id: 'reserve-teams',
+    category: 'youth',
+    title: 'Zweite Mannschaften in der Ligapyramide',
+    keywords: ['zweite mannschaft', 'amateure', 'u23', 'ii', 'reserve', 'regionalliga', '3. liga', 'oberliga', 'zwangsabstieg', 'aufstieg gesperrt', 'dfb-pokal', 'amateur-oberliga', 'nachrücker'],
+    body: `## Zweite Mannschaften in der Ligapyramide
+Die zweiten Mannschaften der großen Vereine – bis 2005 „Amateure“, danach „II“ – spielen im echten Ligasystem mit. Auch die KI-Vereine der 1. und 2. Liga haben eine (bis 2008 alle Erstligisten und die meisten Zweitligisten, 2008–2014 Pflicht für alle, danach melden einige ab). Ihre Stärke kommt aus dem Nachwuchs des Stammvereins; deine eigene spielt mit der Elf, die ihr Trainer nach deinem Schwerpunkt aufstellt.
+
+## Wo sie spielen dürfen
+| Zeit | Höchste Liga für zweite Mannschaften |
+|---|---|
+| bis 1978 | Amateurliga (dritte Ebene) |
+| 1978–1994 | Amateur-Oberliga (dritte Ebene) – die 2. Bundesliga bleibt gesperrt |
+| 1994–2008 | Regionalliga (dritte Ebene) |
+| ab 2008 | 3. Liga; je Regionalliga-Staffel höchstens sieben zweite Mannschaften |
+
+Immer gilt: **nie in der 2. Liga**, **nie in derselben oder einer höheren Liga als die erste Mannschaft**. Wird eine zweite Mannschaft Meister und darf nicht aufsteigen, bekommt der Nächste den Platz (**Nachrücker**). Steigt die erste Mannschaft in die Liga der zweiten ab, muss die zweite eine Liga tiefer (**Zwangsabstieg**). Spielt die erste Mannschaft unterhalb der 2. Liga, darf die zweite höchstens in der Oberliga (Amateurliga) spielen; KI-Vereine unterhalb der dritten Ebene melden sie ab.
+
+## Deine zweite Mannschaft
+Spielt sie unterhalb der simulierten Ligen (bis 1994 immer), tritt sie in der **höchsten Amateurliga deiner Region** an: Vereine aus dem Amateur-Pool, zweite Mannschaften der Region und Amateurvereine. Der **Meister steigt auf**, wenn die Ebene darüber erlaubt ist; die letzten drei steigen in die Verbandsliga ab (Meister dort kommt zurück). In einer simulierten Staffel (Regionalliga, 3. Liga) zählt deren Tabelle. Jugend › 2. Mannschaft zeigt Liga, Zonen und den Hinweis „Aufstieg gesperrt“. Neu angelegt beginnt sie in der höchsten Amateurliga; ältere Spielstände mit Ausbaustufe 2 („U23“) werden beim ersten Einordnen direkt in die unterste simulierte Staffel gesetzt, wenn es sie gibt. Die Ausbaustufe macht die Vertragsamateure stärker, die freie Plätze füllen. Ab 2008 stellt der Trainer höchstens **drei Spieler über 23** auf.
+
+## DFB-Pokal
+Von 1974 bis 2007/08 konnten sich Amateurmannschaften über die Verbandspokale für den DFB-Pokal qualifizieren – 1993 stand eine Amateurmannschaft sogar im Finale. Im Spiel bekommen je Saison bis zu drei zweite Mannschaften einen Amateurplatz: deine bei Platz 1–3 der höchsten Amateurliga bzw. ihrer Staffel, die KI nach Abschneiden und Stärke. Im Pokal spielt die Mannschaft mit ihren Vertragsamateuren (Pokalbindung: Profis spielen für die erste Mannschaft) und wird vom Trainer der Amateure betreut. Seit 2008/09 sind zweite Mannschaften ausgeschlossen.
+
+## Vereinfachungen
+Die DDR-Vereine haben im Spiel keine eigenen zweiten Mannschaften (historisch: DDR-Liga bis 1976, dann Nachwuchsoberliga, ab 1984 wieder DDR-Liga ohne Aufstiegsrecht). Die Stammspieler-Regel für Profis (nicht, wer in mehr als der Hälfte der Profispiele eingesetzt wurde) ersetzt im Spiel die Regel „wer in der Profi-Startelf steht, spielt nicht mit“. Anderes Heimatland: nur die Amateurliga ohne Pyramide.`,
+  },
+  {
     id: 'youth-invest',
     category: 'youth',
     title: 'Nachwuchs-Investitionen (Akademie)',
@@ -3530,7 +3557,7 @@ Jeder Baustein hat Stufen mit **Baukosten**, **Bauzeit** und **jährlichem Unter
 | **Schulkooperation** | Partnerschule (ab 1985) → Eliteschule des Fußballs (ab 2006) | Trainingszeit am Vormittag |
 | **Sportwissenschaft** | Ernährung & Diagnostik (ab 1995) → Psychologie (ab 2004) → Analyse-Team (ab 2012) | kleine Ausbildungs-Vorteile |
 | **Scouting-Netz** | lokal → regional → national (ab 1985) → international (ab 1996) | wie viele Talente du im Wettbewerb überhaupt kennst |
-| **Zweite Mannschaft** | Amateure (Oberliga) → U23 (ab 1994) | Spielpraxis für junge Profis bis 23 |
+| **Zweite Mannschaft** | Amateure → U23 (ab 1994) | Spielpraxis für junge Profis bis 23; stärkere Vertragsamateure; Liga siehe Artikel „Zweite Mannschaften in der Ligapyramide“ |
 
 Dazu kommt der **Jugendetat** je Saison (Fahrten, Turniere, Material, Sichtungstage): mehr Breite und etwas Qualität; über der Empfehlung flacht die Wirkung ab.
 
@@ -3545,7 +3572,7 @@ Jedes Jahr gibt es eine Handvoll herausragender **12- bis 16-Jähriger** (ab 199
 ## Zweite Mannschaft & Potenzial
 Junge Profis, die bei den Profis kaum spielen, verloren früher Jahr für Jahr Entfaltung (Potenzial). Mit **Amateuren** sammeln **Eigengewächse** (Spieler aus einer Jugendakademie) bis 23 gewichtete Minuten (40 %), mit einer **U23** mehr (55 %). Eingekaufte junge Profis profitieren davon nicht. Das hält sie im Rhythmus; echte Sprünge gibt es weiter nur mit Einsätzen bei den Profis.
 
-**Deine zweite Mannschaft** (Jugend › 2. Mannschaft) spielt sonntags in ihrer eigenen Liga (Amateur-Oberliga bzw. Regionalliga) mit Tabelle und Ergebnissen. Ihr Trainer stellt nach deinem **Schwerpunkt** auf: *Nachwuchs fördern* (U23 und Eigengewächse zuerst, Spielpraxis +15 %), *Ergebnisse* (die Stärksten, −5 %) oder *Rückkehrer aufbauen* (Profis ohne Einsätze, nach Verletzung oder im Formtief zuerst; über 23 gewinnen sie Form). Profis über 23 spielen nur mit, wenn du es erlaubst. Bei deinem Verein bekommt Spielpraxis nur, wer wirklich aufgestellt wird – dafür auch eingekaufte junge Profis. Unter **Positionen trainieren** legst du bis zu drei Spieler fest, die dort auf einer gewählten Position spielen und sich an sie gewöhnen. Wer in der Profi-Startelf steht, spielt nicht mit. Die KI-Vereine führen ihre zweite Mannschaft automatisch.
+**Deine zweite Mannschaft** (Jugend › 2. Mannschaft) spielt in der Ligapyramide mit – wo genau, regelt der Artikel „Zweite Mannschaften in der Ligapyramide“. Ihr Trainer stellt nach deinem **Schwerpunkt** auf: *Nachwuchs fördern* (U23 und Eigengewächse zuerst, Spielpraxis +15 %), *Ergebnisse* (die Stärksten, −5 %) oder *Rückkehrer aufbauen* (Profis ohne Einsätze, nach Verletzung oder im Formtief zuerst; über 23 gewinnen sie Form). Profis über 23 spielen nur mit, wenn du es erlaubst. Bei deinem Verein bekommt Spielpraxis nur, wer wirklich aufgestellt wird – dafür auch eingekaufte junge Profis. Unter **Positionen trainieren** legst du bis zu drei Spieler fest, die dort auf einer gewählten Position spielen und sich an sie gewöhnen. Wer in der Profi-Startelf steht, spielt nicht mit. Die KI-Vereine führen ihre zweite Mannschaft automatisch.
 
 ## Leistungszentrum-Pflicht
 Nach dem EM-Aus 2000 wurde ein Leistungszentrum Lizenzbedingung: **ab 2001 für die Bundesliga, ab 2002 für die 2. Liga**. Mindestens: Fußballlehrer als Jugendtrainer, zwei Plätze mit Flutlicht, Gastfamilien, Partnerschule und 8 Jugendtrainer. Fehlt etwas, gibt es jedes Jahr eine **Geldstrafe** und der Ruf leidet. Ein Jahr vorher kommt eine Ankündigung. 2002 startet das **DFB-Talentförderprogramm** (Stützpunkte): Alle Scouting-Netze finden mehr Talente.

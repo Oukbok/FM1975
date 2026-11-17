@@ -12,9 +12,11 @@ import type { Game } from '../../game/state';
 import type { Position } from '../../types';
 import { ALL_POSITIONS } from '../../types';
 import {
-  FOCUS_LABEL, FOCUS_TEXT, OWN_ID, eligible, reserveLeagueName, reserveState, setPosTrain, setReserveFocus, setReservePros, sortedTable,
+  FOCUS_LABEL, FOCUS_TEXT, eligible, reserveState, setPosTrain, setReserveFocus, setReservePros,
   type ReserveFocus,
 } from '../../game/reserveTeam';
+import { reserveView } from '../../game/reserveView';
+import { InfoTip } from '../../ui/InfoTip';
 import { DashBox, DashPage, Empty, KV } from '../../ui/DashPage';
 import Seg from '../../ui/Seg';
 import Select from '../../ui/Select';
@@ -30,12 +32,11 @@ export function ReserveTeamView({ g, onChange, onGoto }: { g: Game; onChange?: (
   const ch = () => { setV((v) => v + 1); onChange?.(); };
   const club = g.clubs[g.managedClubId];
   const st = reserveState(g);
-  const year = parseInt(g.season.slice(0, 4), 10);
   if (!st) {
     return (
       <DashPage rows={1}>
         <DashBox title="2. Mannschaft" span={3}>
-          <Empty icon="youth">Dein Verein hat noch keine zweite Mannschaft. Lege sie in der Akademie an (Baustein „Zweite Mannschaft“): Amateure in der Oberliga, ab 1994 eine U23 in der Regionalliga.
+          <Empty icon="youth">Dein Verein hat noch keine zweite Mannschaft. Lege sie in der Akademie an (Baustein „Zweite Mannschaft“): Sie spielt in der Ligapyramide – bis 1994 höchstens in der Amateur-Oberliga, danach bis zur Regionalliga, ab 2008 bis zur 3. Liga, nie in der Liga der ersten Mannschaft.
             <div className="mt8"><button className="btn btn-primary" onClick={() => onGoto?.('akademie')}>Zur Akademie</button></div></Empty>
         </DashBox>
       </DashPage>
@@ -53,10 +54,9 @@ export function ReserveTeamView({ g, onChange, onGoto }: { g: Game; onChange?: (
 function ReserveOverview({ g, ch }: { g: Game; ch: () => void }) {
   const club = g.clubs[g.managedClubId];
   const st = reserveState(g)!;
-  const year = parseInt(g.season.slice(0, 4), 10);
-  const table = sortedTable(st);
-  const pos = table.findIndex((r) => r.id === OWN_ID) + 1;
-  const own = table[pos - 1];
+  const v = reserveView(g)!;
+  const own = v.rows.find((r) => r.me);
+  const resName = g.simClubs[`res-${club.id}`]?.name ?? `${club.shortName} II`;
   const pool = eligible(g, club, true).sort((a, b) => a.age - b.age || b.overall - a.overall);
   const xi = st.lastXI.map(([id, p]) => ({ p: g.players[id] ?? g.youthPlayers?.[id], pos: p })).filter((x) => x.p);
   const setTrain = (i: number, patch: Partial<{ pid: string; pos: Position }>) => {
@@ -67,13 +67,16 @@ function ReserveOverview({ g, ch }: { g: Game; ch: () => void }) {
 
   return (
     <DashPage className="res-page">
-      <DashBox title="2. Mannschaft" info="zweitemannschaft" right={`${club.shortName} II`}>
-        <KV k="Liga" v={reserveLeagueName(st.level, year)} strong />
-        <KV k="Tabellenplatz" v={own.p ? `${pos}. von ${table.length}` : '–'} />
-        <KV k="Bilanz" v={`${own.w} S · ${own.d} U · ${own.l} N · ${own.gf}:${own.ga}`} />
-        <KV k="Spieltag" v={`${st.md} von ${(table.length - 1) * 2}`} />
-        <KV k="Trainer" v="Trainer der Amateure (stellt nach deinen Anweisungen auf)" />
-        <div className="dnote mt8">Gespielt wird sonntags. Wer in der Profi-Startelf steht, spielt nicht mit. Spielpraxis zählt für die Entwicklung bis 23 Jahre.</div>
+      <DashBox title="2. Mannschaft" info="zweitemannschaft" right={resName}>
+        <KV k="Liga" v={<>{v.league}{v.tier ? ` · Ebene ${v.tier}` : ' · Amateurliga'} <InfoTip k="reserveLiga" /></>} strong />
+        <KV k="Tabellenplatz" v={own?.p ? `${v.pos}. von ${v.rows.length}` : '–'} />
+        <KV k="Bilanz" v={own ? `${own.w} S · ${own.d} U · ${own.l} N · ${own.gf}:${own.ga}` : '–'} />
+        <KV k="Spieltag" v={`${v.played} von ${v.total}`} />
+        {v.blocked ? <div className="dnote mt8 res-block">{v.blocked}</div> : <div className="dnote mt8">Meister{v.up > 1 ? ` und die besten ${v.up}` : ''} steigen auf, wenn die Ebene darüber für zweite Mannschaften offen ist.</div>}
+        {v.note && <div className="dnote mt8">Letzter Saisonwechsel: {v.note}</div>}
+        <div className="dnote mt8">Regel der Zeit: {v.rule}</div>
+        <div className="dnote mt8">{v.cup}</div>
+        {!!st.hist?.length && <div className="dnote mt8">Bisher: {st.hist.slice(-4).map((h) => `${h.season} ${h.league} ${h.pos}.`).join(' · ')}</div>}
       </DashBox>
 
       <DashBox title="Anweisungen">
@@ -120,26 +123,30 @@ function ReserveOverview({ g, ch }: { g: Game; ch: () => void }) {
         {xi.length > 0 && xi.length < 11 && <div className="dnote mt8">+ {11 - xi.length} Vertragsamateure</div>}
       </DashBox>
 
-      <DashBox title={`Tabelle · ${reserveLeagueName(st.level, year)}`}>
+      <DashBox title={`Tabelle · ${v.league}`} info="reserveLiga">
         <table className="dtable res-table">
           <thead><tr><th>#</th><th>Verein</th><th className="r">Sp.</th><th className="r">Tore</th><th className="r">Pkt.</th></tr></thead>
           <tbody>
-            {table.map((r, i) => (
-              <tr key={r.id} className={r.id === OWN_ID ? 'me' : ''}>
-                <td className="rl-rank">{i + 1}</td><td><ClubLink id={r.id === 'own' ? g.managedClubId : r.id}>{r.name}</ClubLink></td><td className="r">{r.p}</td><td className="r">{r.gf}:{r.ga}</td><td className="r"><b>{r.w * 3 + r.d}</b></td>
-              </tr>
-            ))}
+            {v.rows.map((r, i) => {
+              const zone = i < v.up ? 'zone-cl' : v.down && i >= v.rows.length - v.down ? 'zone-rel' : '';
+              return (
+                <tr key={r.id} className={r.me ? 'me' : ''}>
+                  <td className="rl-rank"><span className={`rl-z ${zone}`}>{i + 1}</span></td>
+                  <td>{r.linkId ? <ClubLink id={r.linkId}>{r.name}</ClubLink> : r.name}</td><td className="r">{r.p}</td><td className="r">{r.gf}:{r.ga}</td><td className="r"><b>{r.pts}</b></td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </DashBox>
 
       <DashBox title="Letzte Spiele">
-        {st.results.length ? (
+        {v.results.length ? (
           <div className="res-list">
-            {st.results.slice(0, 12).map((r, i) => (
+            {v.results.slice(0, 12).map((r, i) => (
               <div key={i} className="res-row">
                 <span className="res-date">{r.date.slice(8, 10)}.{r.date.slice(5, 7)}.</span>
-                <span className="res-name">{r.home ? 'gegen' : 'bei'} {r.opp.endsWith(' II') ? <><ClubByName g={g} name={r.opp.slice(0, -3)} /> II</> : <ClubByName g={g} name={r.opp} />}</span>
+                <span className="res-name">{r.home ? 'gegen' : 'bei'} {r.oppId ? <ClubLink id={r.oppId}>{r.opp}</ClubLink> : r.opp.endsWith(' II') ? <><ClubByName g={g} name={r.opp.slice(0, -3)} /> II</> : <ClubByName g={g} name={r.opp} />}</span>
                 <span className={`dres dres-${r.gf > r.ga ? 'W' : r.gf < r.ga ? 'L' : 'D'}`}>{r.gf}:{r.ga}</span>
               </div>
             ))}

@@ -60,6 +60,7 @@ import { migrateYouthInvest } from './youthInvest';
 import { migrateYouthComps } from './youthComps/daily';
 import { FINANCE_LEVEL } from './financeMigration';
 import { migrateLeaguePool } from './clubPool';
+import { seedReserveTeams } from './reservePyramid';
 import { initLegends } from './legendsGame';
 import { migrateContracts2 } from './contractClausesGame';
 import { bindHonours } from './clubHonours';
@@ -286,6 +287,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   // Trainer der KI-Vereine (game/coachCarousel.ts).
   ensureCoaches(g0, calendar.currentDate);
   migrateYouthInvest(g0);
+  seedReserveTeams(g0); // zweite Mannschaften in der Ligapyramide (game/reservePyramid.ts)
   // Arbeitsmarkt für Trainer und Betreuer (game/staffWorld.ts).
   ensureStaffWorld(g0);
   // Sponsoring 2.0: Werbeflächen 1975 (Brust, Ausrüster, Banden, Regionalpartner) – KI unterschreibt, du bekommst Angebote.

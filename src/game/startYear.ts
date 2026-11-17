@@ -5,6 +5,7 @@
 // der Startsaison, Historie vor dem Start aus den Weltdaten. Deutschland 1975 ohne
 // Weltdaten läuft weiter über den alten Weg in newGame.ts.
 // =============================================================================
+import { isReserveId } from './reserveIds';
 import { CLUB_SEEDS, SECOND_LIGA_NORD_SEEDS, SECOND_LIGA_SUED_SEEDS } from '../data/generate';
 import { COUNTRY_SEEDS, EURO_EXCLUSIONS } from '../data/worldSeed';
 import { COUNTRY_BY_CC, seasonLabelOf } from '../data/world/countries';
@@ -170,7 +171,7 @@ export function padSecondTier(g: Game, year: number, ligaStart: string): void {
     if (i < 0) continue;
     const d = g.leagues.otherDivisions[i];
     if (d.clubIds.length >= t.teamCount) continue;
-    const pool = Object.values(g.simClubs).filter((s) => s.tier === POOL_TIER).sort((a, b) => b.strength - a.strength || a.id.localeCompare(b.id));
+    const pool = Object.values(g.simClubs).filter((s) => s.tier === POOL_TIER && !isReserveId(s.id)).sort((a, b) => b.strength - a.strength || a.id.localeCompare(b.id));
     const ids = [...d.clubIds];
     for (const s of pool) { if (ids.length >= t.teamCount) break; s.tier = 2; s.group = t.group as LeagueGroup; ids.push(s.id); }
     g.leagues.otherDivisions[i] = buildDivision({ id: d.id, name: d.name, tier: d.tier, group: d.group }, ids, g.pointSystem, season, ligaStart);

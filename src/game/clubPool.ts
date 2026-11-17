@@ -26,6 +26,7 @@ import { DivisionMeta, LeagueGroup, SimClub, divisionLabel, hashStr, mulberry32 
 import { addHistoricSeason, addHistoricTitle } from './clubRecords';
 import { ensureArchive, leagueArchive } from './leagueArchive';
 import type { Game } from './state';
+import { isReserveId, poolPickAllowed } from './reserveIds';
 
 export const isPoolClub = (s: SimClub | undefined) => !!s && (s.tier === POOL_TIER || s.tier === DDR_POOL_TIER);
 
@@ -33,15 +34,15 @@ function reunified(g: Game): boolean {
   return g.appliedReforms.includes('reform-1991-reunification') || seasonStartYear(g.season) >= 1991;
 }
 
-function poolOf(g: Game, ddr: boolean): SimClub[] {
+function poolOf(g: Game, ddr: boolean, withReserves = true): SimClub[] {
   const tier = ddr ? DDR_POOL_TIER : POOL_TIER;
-  return Object.values(g.simClubs).filter((s) => s.tier === tier);
+  return Object.values(g.simClubs).filter((s) => s.tier === tier && (withReserves || !isReserveId(s.id)));
 }
 
-/** Pool-Kandidaten nach Stärke + Zufall, bevorzugt aus `group`. */
-function pickFromPool(pool: SimClub[], n: number, group: LeagueGroup, rnd: () => number, taken: Set<string>): string[] {
+/** Pool-Kandidaten nach Stärke + Zufall, bevorzugt aus `group`; `allow` filtert (zweite Mannschaften, game/reserveIds.ts). */
+function pickFromPool(pool: SimClub[], n: number, group: LeagueGroup, rnd: () => number, taken: Set<string>, allow?: (id: string) => boolean): string[] {
   const score = new Map(pool.map((s) => [s.id, s.strength + rnd() * 6]));
-  const free = pool.filter((s) => !taken.has(s.id));
+  const free = pool.filter((s) => !taken.has(s.id) && (!allow || allow(s.id)));
   const sorted = (xs: SimClub[]) => xs.sort((a, b) => score.get(b.id)! - score.get(a.id)!);
   const ordered = group ? [...sorted(free.filter((s) => s.group === group)), ...sorted(free.filter((s) => s.group !== group))] : sorted(free);
   const out = ordered.slice(0, n).map((s) => s.id);
@@ -59,8 +60,9 @@ export function absorbPlaceholders(g: Game, res: TransitionResult, season: strin
   const taken = new Set<string>();
   const keep: SimClub[] = [];
   for (const ph of res.placeholders) {
-    const [id] = pickFromPool(pool, 1, ph.group, rnd, taken);
     const div = res.divisions.find((d) => d.ids.includes(ph.id));
+    const single = !!div && res.divisions.filter((d) => d.meta.tier === div.meta.tier).length === 1;
+    const [id] = pickFromPool(pool, 1, ph.group, rnd, taken, (x) => !!div && poolPickAllowed(g, x, div.meta.tier, div.ids, single));
     if (!id || !div) { keep.push(ph); continue; }
     div.ids[div.ids.indexOf(ph.id)] = id;
   }
@@ -91,7 +93,7 @@ export function poolExchange(
     const cur = current.find((c) => c.id === m.meta.id);
     if (!cur) continue;
     const down = [...cur.orderedIds].reverse().filter((id) => m.ids.includes(id) && id !== protectedId).slice(0, k);
-    const up = pickFromPool(pool, down.length, m.meta.group, rnd, taken);
+    const up = pickFromPool(pool, down.length, m.meta.group, rnd, taken, (x) => poolPickAllowed(g, x, m.meta.tier, m.ids, divs.length === 1));
     const n = Math.min(down.length, up.length);
     for (let i = 0; i < n; i++) {
       m.ids[m.ids.indexOf(down[i])] = up[i];
@@ -125,7 +127,7 @@ const POOL_COLORS: [string, string][] = [['#1F4E9E', '#FFFFFF'], ['#B71C1C', '#F
 
 export function refillPool(g: Game, season: string): void {
   if (homeCountryOf(g) !== 'ger') return;
-  const pool = poolOf(g, false);
+  const pool = poolOf(g, false, false); // zweite Mannschaften zählen nicht als Amateurvereine
   if (pool.length >= POOL_MIN) return;
   const cities = new Set([...Object.values(g.clubs).map((c) => c.city), ...Object.values(g.simClubs).map((c) => c.city)]);
   const west = g.leagues.otherDivisions.filter((d) => d.tier < 100);
@@ -153,7 +155,7 @@ export function poolDrift(g: Game, season: string): void {
   const ddrLiga = g.leagues.otherDivisions.find((d) => d.tier === 102);
   const baseD = ddrLiga ? avg(ddrLiga.clubIds) - 4 : baseW;
   for (const s of Object.values(g.simClubs)) {
-    if (!isPoolClub(s)) continue;
+    if (!isPoolClub(s) || isReserveId(s.id)) continue; // zweite Mannschaften: Stärke aus dem Stammverein (game/reservePyramid.ts)
     const rnd = mulberry32(hashStr(`drift:${season}:${s.id}`));
     const base = s.tier === DDR_POOL_TIER ? baseD : baseW;
     s.strength = Math.round(Math.max(38, Math.min(72, s.strength + (base - s.strength) * 0.25 + (rnd() - 0.5) * 5)));

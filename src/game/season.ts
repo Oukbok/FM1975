@@ -23,6 +23,7 @@ import { closeSeason, recordTransfer } from '../engine/history';
 import { buildProClub } from '../data/generate';
 import { recordSeasonEnd } from './clubRecords';
 import { archiveSeasonEnd } from './leagueArchive';
+import { isReserveCupId, reserveCupClubs, reserveTransition, syncReserveClubs } from './reservePyramid';
 import { absorbPlaceholders, ddrExchange, mergeDdrPool, poolDrift, poolExchange, refillPool, settlePool } from './clubPool';
 import { CurrentDivision, TransitionResult, computeSeasonTransition, structureForSeason } from '../data/reforms';
 import { seasonStartYear } from '../data/timeline';
@@ -222,6 +223,9 @@ export function startNextSeason(g: Game): void {
   if (!isReunify) balanceDivisions(membership, homeTargets, (id) => clubStrengthFor(g, id), g.managedClubId);
   // Auf-/Abstieg zwischen unterster simulierter Liga und Amateurligen (Vereins-Pool).
   if (!res.reform) pooled.push(...poolExchange(g, membership, current, newSeason, g.managedClubId));
+  // Zweite Mannschaften nach den Regeln der Zeit einordnen (game/reservePyramid.ts).
+  const resT = reserveTransition(g, membership, newSeason);
+  pooled.push(...resT.pooled);
 
   const playerDivId = Object.keys(membership).find((k) => membership[k].ids.includes(g.managedClubId))
     || res.divisions[0].meta.id;
@@ -304,15 +308,18 @@ export function startNextSeason(g: Game): void {
   g.leagues = { playerDivision: membership[playerDivId].meta, otherDivisions, season: newSeason };
   poolDrift(g, newSeason);
   refillPool(g, newSeason); // Pool nie leer laufen lassen (game/clubPool.ts)
+  syncReserveClubs(g, nextStartYear); // Namen/Stärke der zweiten Mannschaften
   historicSimClubs(g, nextStartYear);
 
   const calendar = generateSeasonCalendar(fixtures, seasonStart, seasonEnd);
   calendar.speedMs = g.calendar.speedMs;
 
   // --- 8) Landespokal der neuen Saison (Feld bleibt 32: volle Ligavereine + Amateure) ---
-  const allAm = Object.keys(g.clubs).filter((id) => id.startsWith('am'));
+  // Amateure der Lizenzvereine im Pokal bis 2007/08 (game/reservePyramid.ts).
+  const resCup = reserveCupClubs(g, resT.cup, seasonStart);
+  const allAm = Object.keys(g.clubs).filter((id) => id.startsWith('am') && !isReserveCupId(id));
   const blClubIds = playerClubList.map((c) => c.id);
-  const amateurIds = allAm.slice(0, Math.max(0, 32 - blClubIds.length));
+  const amateurIds = [...resCup, ...allAm].slice(0, Math.max(0, 32 - blClubIds.length));
   // Rahmenterminkalender: Pokalrunden meiden Liga-Hauptspieltage und Europapokal-Wochen.
   const cupAvoid = leagueDateSet(fixtures);
   const euroWeeks = euroFrameDates(nextStartYear);

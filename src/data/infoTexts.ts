@@ -473,8 +473,13 @@ export const INFO_TEXTS = {
   },
   zweitemannschaft: {
     title: 'Zweite Mannschaft',
-    text: 'Die Amateure bzw. die U23 spielen sonntags in ihrer eigenen Liga. Der Trainer stellt nach deinem Schwerpunkt auf; wer dort spielt, bekommt Spielpraxis (bis 23) und gewöhnt sich an trainierte Positionen. Anlegen und ausbauen in der Akademie.',
-    wiki: 'youth-invest',
+    text: 'Die Amateure bzw. die U23 spielen in der Ligapyramide mit – in der höchsten Amateurliga oder einer simulierten Staffel. Der Trainer stellt nach deinem Schwerpunkt auf; wer dort spielt, bekommt Spielpraxis (bis 23) und gewöhnt sich an trainierte Positionen. Anlegen und ausbauen in der Akademie.',
+    wiki: 'reserve-teams',
+  },
+  reserveLiga: {
+    title: 'Liga der zweiten Mannschaft',
+    text: 'Zweite Mannschaften dürfen nie in die 2. Liga und nie in die Liga der ersten Mannschaft oder darüber: bis 1994 höchstens Amateur-Oberliga, dann Regionalliga, ab 2008 auch 3. Liga. Steigt die erste Mannschaft in ihre Liga ab, muss die zweite eine Liga tiefer (Zwangsabstieg). Grün = Aufstieg, rot = Abstieg.',
+    wiki: 'reserve-teams',
   },
   spielermeldung: {
     title: 'Spielermeldung & Ausländerregeln',

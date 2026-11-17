@@ -95,7 +95,7 @@ export function worldClubs(g: Game): Map<string, WorldClubInfo> {
   // Volle Kader zählen nur für deutsche (bzw. Heimat-)Vereine; alte Europapokal-Kader von 1975 (`w_*`) ersetzt der Weltpool.
   const real = (id: string) => (g.clubs[id]?.playerIds.length ?? 0) >= 11 && (!isForeignId(id) || id === g.managedClubId);
   for (const s of Object.values(g.simClubs ?? {})) {
-    if (real(s.id) || s.tier >= 200 || s.tier >= 100) continue; // Länder Spiel für Spiel = Auslandsvereine (unten), DDR-Ligen haben volle Kader
+    if (real(s.id) || s.tier >= 200 || s.tier >= 100 || s.id === `res-${g.managedClubId}`) continue; // deine zweite Mannschaft = deine Spieler // Länder Spiel für Spiel = Auslandsvereine (unten), DDR-Ligen haben volle Kader
     out.set(s.id, { id: s.id, name: s.name, shortName: s.shortName, city: s.city, country: 'Deutschland', level: s.tier, strength: s.strength, colors: s.colors });
   }
   const countries = g.world?.countries ?? {};
