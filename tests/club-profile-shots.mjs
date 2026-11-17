@@ -157,15 +157,15 @@ if (process.env.SAVE) {
     console.log(`Auslandsverein ${foreign} / Kader: ${nums.length} Spieler, ${bad.length ? `ohne/ungültige Nummer: ${bad.length}` : 'alle mit Rückennummer'}`);
     if (bad.length || new Set(nums).size !== nums.length) errors.push(`Auslandsverein: Rückennummern fehlen/doppelt (${nums.join(',')})`);
     // Wie deutsche Vereine (Wunsch Pascal): Platz/Ansehen im Kopf, Transfers je Saison, komplette Historie
-    for (const [i, name] of [[0, 'Uebersicht'], [3, 'Transfers'], [4, 'Historie']]) {
-      await page.locator('.cmx-tabs .tab').nth(i).click();
+    for (const [i, name, label] of [[1, 'Uebersicht', 'Übersicht'], [4, 'Transfers', 'Transfers'], [5, 'Historie', 'Historie']]) {
+      await page.locator('.cmx-tabs .tab', { hasText: label }).first().click();
       await page.waitForTimeout(300);
-      await page.screenshot({ path: `${outDir}/${prefix}_ausland_${i + 1}_${name}.png` });
+      await page.screenshot({ path: `${outDir}/${prefix}_ausland_${i}_${name}.png` });
     }
     const kpis = await page.locator('.cmx-head .mx-kpis').innerText();
     console.log(`Auslandsverein Kopf: ${kpis.replace(/\s+/g, ' ')}`);
     if (/–\s*Ansehen/.test(kpis)) errors.push('Auslandsverein: kein Ansehen im Kopf');
-    await page.locator('.cmx-tabs .tab').nth(3).click();
+    await page.locator('.cmx-tabs .tab', { hasText: 'Transfers' }).first().click();
     await page.waitForTimeout(200);
     const rows = await page.locator('.cmx-modal .ctr-table tbody tr').count();
     // eine Saison zurück: dort sind Sommer und Winter vollständig
