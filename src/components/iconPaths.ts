@@ -250,6 +250,11 @@ export const RAW: Record<string, string> = {
     '<path d="M7.5 16.8c1-1.2 1.6-.2 2.4-.9.6-.5.2-1.6 1-1.9.9-.3 1.3 1.3 2.2 1 .7-.2.8-1 1.4-1" fill="none" stroke="%ACCENT%" stroke-width="1.5" stroke-linecap="round"/>',
 
   // 28) Beobachtungsliste — weißes Auge mit türkiser Iris
+  // Ort / Stadion — Stecknadel
+  pin:
+    '<path d="M12 21.2S5.5 15 5.5 10.2a6.5 6.5 0 0 1 13 0C18.5 15 12 21.2 12 21.2Z" fill="%BASE%"/>' +
+    '<circle cx="12" cy="10" r="2.4" fill="%ACCENT%"/>',
+
   watchlist:
     '<path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12Z" fill="none" stroke="%BASE%" stroke-width="1.6"/>' +
     '<circle cx="12" cy="12" r="2.8" fill="%ACCENT%"/>',

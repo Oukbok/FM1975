@@ -42,7 +42,7 @@ Stil: helles Papier, gerade Draufsicht, keine Schrift/Logos. Einbindung über To
 | `akte/blatt.webp` | Einzelblatt mit Büttenrand, transparent, Rand ≥ 60 px | 1200×1600 | **vorhanden** – Neun-Teile-Rahmen für weitere Blätter |
 | `akte/kalender.webp` | Ringbuch-Kalender (Kraftdeckel, Ringe links, Blattstapel), transparent | 1511×1041 | **vorhanden** – Zentrale › Kalender (Raster in % in `31-akte.css`) |
 | `akte/korn.png` | feines Druck-Korn, nahtlos | 512×512 | offen – über Kopfleiste/Balken |
-| `presse/<epoche>/<motiv>.webp` | Pressefoto (Epoche 1975 = Schwarzweiß der 70er), erfundene Spieler, keine Wappen | 1200×600 | `1975/torjubel`, `verletzung`, `fans`, `abpfiff`, `kopfball`, `stadion`, `training`, `auslosung`, `vertrag`, `vorstand`, `zweikampf`, `torschuss`, `torwart` **vorhanden** (alle 13); später je Epoche 1985/2000/2015 |
+| `presse/<epoche>/<motiv>.webp` | Pressefoto (Epoche 1975 = Schwarzweiß der 70er), erfundene Spieler, keine Wappen | 1200×600 | `1975/torjubel`, `verletzung`, `fans`, `abpfiff`, `kopfball`, `stadion`, `training`, `auslosung`, `vertrag`, `vorstand`, `zweikampf`, `torschuss`, `torwart` **vorhanden** (alle 13); weitere Fassungen je Motiv als `<motiv>_01.webp` … und in `data/pressPhotos.ts` `PRESS_VARIANTS` eintragen (Abpfiff: 10 weitere vorhanden, wechseln je Nachricht); später je Epoche 1985/2000/2015 |
 
 Neues Pressefoto: Datei ablegen und Motiv in `PRESS_PHOTOS` (data/pressPhotos.ts) unter der Epoche eintragen.
 
@@ -162,6 +162,21 @@ Je mehr Personen eine Gruppe hat, desto seltener sehen zwei Spieler gleich aus (
 | `press/zeitung-<epoche>.webp` | **entfällt** – ersetzt durch `akte/zeitung.webp` (später ggf. Fassungen je Epoche im selben Format 1838×856) | – | Presse |
 
 ---
+
+## Spielplan – Fanbild (Aufstellung › Spielplan, Wunsch Pascal)
+Schmales Foto links in der Leiste „Nächstes Pflichtspiel“. **Schwarzweiß, keine Farben**, damit es zu jedem Verein passt (die Seite legt die Vereinsfarbe leicht darüber). Je Jahrzehnt ein Motiv: `spielplan/fans-<jahrzehnt>.webp` (1970 … 2030), 1200 × 450 px (8 : 3), danach in `src/data/fixtureImages.ts` `FAN_PHOTO_DECADES` eintragen. Fehlt ein Jahrzehnt, nimmt die Seite das nächstfrühere.
+
+Grundprompt (gleich für alle Jahrzehnte, nur den Jahrzehnt-Teil tauschen):
+> Black-and-white documentary press photograph, wide horizontal crop 8:3, a packed standing terrace behind the goal seen from slightly below, dense crowd of football supporters filling the whole frame, many faces partly in shadow, raised arms, scarves held up and flags on poles, grain and soft contrast like a period newspaper photo, overcast light, no readable text, no logos, no club crests, no recognizable real people, no color at all (pure monochrome, neutral grey tones), the left two thirds busy and detailed, the right third calmer and slightly darker so it can fade out. [JAHRZEHNT]
+
+Jahrzehnt-Teile:
+- 1970: `1970s West German football terrace: men in parkas, flat caps and long hair, knitted bobble hats, home-made wooden-pole flags, rattles, crush barriers, cigarette smoke, film grain of 35 mm Tri-X.`
+- 1980: `1980s terrace: denim jackets with sew-on patches, mullets, large swinging flags, a few flares and smoke, fences in front of the terrace, harsh flash-lit look, heavier grain.`
+- 1990: `1990s terrace: bomber jackets, baseball caps, long satin scarves held above heads, big banner sections (blank), first all-seater rows at the edge, early ultras with drums.`
+- 2000: `2000s ultras curve: coordinated scarf display, capo on a small platform with megaphone, large blank choreography banners, hooded tops, more younger fans, cleaner digital-camera look but still grainy black-and-white.`
+- 2010: `2010s ultras: matching hooded jackets, huge tifo flags being raised, pyrotechnic flares glowing white, smartphone screens held up, safe-standing rail seats.`
+- 2020: `2020s modern stadium: rail-seating safe standing, banners and flags, many phones filming, LED light glow on faces, sharp modern detail rendered in black-and-white.`
+- 2030: `near-future 2030s stadium: sleek rail seating, dense crowd with scarves and flags, light bands of LED along the stand, phones and small cameras, subtle futuristic architecture, still pure black-and-white.`
 
 ## Offene Bildwünsche aus laufenden Umbauten
 Werden beim Zusammenführen der Stränge ergänzt (Erstes Training, Trainingslager, Sponsoring, Training, Fanartikel, Kartenverkauf).

@@ -1,0 +1,86 @@
+/* =============================================================================
+   Aufstellung › Spielplan (views/spieltag/FixturesView.tsx + fixtures/parts.tsx, Mockup Pascal)
+   Leiste „Nächstes Pflichtspiel“ mit Fanbild über dem Spielplan (2 Spalten) und
+   rechts Saisonbilanz + Spieltag. Spalten/Ränder wie jede .dpage.
+   ============================================================================= */
+.dpage.fxp-page { grid-template-rows: 96px auto minmax(0, 1fr); row-gap: 24px; padding-top: 28px; }
+.fxp-page > .fxp-plan { grid-column: 1 / span 2 !important; grid-row: 2 / 4 !important; }
+.fxp-page > .fxp-bil { grid-column: 3 !important; grid-row: 2 !important; }
+.fxp-page > .fxp-md-box { grid-column: 3 !important; grid-row: 3 !important; }
+
+/* Leiste */
+.fxp-strip { grid-column: 1 / -1; display: flex; align-items: center; gap: 30px; height: 96px; padding-right: 30px;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.fxp-photo { position: relative; flex: 0 0 260px; align-self: stretch; overflow: hidden; background: var(--navy);
+  -webkit-mask-image: linear-gradient(90deg, #000 62%, transparent); mask-image: linear-gradient(90deg, #000 62%, transparent); }
+.fxp-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.05); }
+.fxp-tint { position: absolute; inset: 0; background: var(--club-accent, var(--accent)); mix-blend-mode: soft-light; opacity: .45; }
+.fxp-crowd { position: absolute; inset: 0; width: 100%; height: 100%; fill: rgba(var(--navy-ink-rgb), .55); stroke: rgba(var(--navy-ink-rgb), .55); }
+.fxp-when { flex: 0 0 auto; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.fxp-kicker { font-size: 12.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-2); }
+.fxp-date { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 28px; font-weight: 600; text-transform: uppercase; color: var(--text); white-space: nowrap; }
+.fxp-place { display: inline-flex; align-items: center; gap: 8px; font-size: 15.5px; color: var(--text-2); white-space: nowrap; }
+.fxp-none { font-size: 17px; color: var(--text-3); }
+.fxp-slash { flex: 0 0 1px; align-self: stretch; margin: 14px 0; background: var(--border); transform: skewX(-18deg); }
+.fxp-match { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; gap: 34px; min-width: 0; }
+.fxp-team { display: inline-flex; align-items: center; gap: 22px; min-width: 0; }
+.fxp-team b { font-family: var(--font-display); font-size: 36px; font-weight: 600; text-transform: uppercase; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fxp-nocrest { width: 66px; height: 66px; }
+.fxp-score { flex: 0 0 auto; padding: 8px 18px; border-radius: 4px; background: rgba(var(--ink-rgb), .07); font-family: var(--font-display); font-size: 28px; font-weight: 600; color: var(--text-2); }
+.fxp-go { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 10px; height: 46px; padding: 0 22px; border-radius: 4px; cursor: pointer;
+  background: transparent; border: 2px solid var(--club-accent, var(--accent)); color: var(--club-accent, var(--accent));
+  font-family: var(--font-display); font-size: 19px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; }
+.fxp-go:hover { background: rgba(var(--club-accent-rgb, var(--ink-rgb)), .08); }
+.fxp-go svg { color: currentColor; }
+
+/* Spielplan */
+.fxp-plan .dbox-body { display: flex; flex-direction: column; min-height: 0; }
+.fxp-filters { flex: 0 0 auto; display: flex; align-items: center; gap: 12px; padding: 12px 15px; border-bottom: 1px solid var(--border-soft); }
+.fxp-flabel { font-size: 13px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--text-2); }
+.fxp-fsep { width: 1px; height: 26px; margin: 0 14px; background: var(--border); transform: skewX(-18deg); }
+.fxp-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0 12px; }
+.fxp-table { width: 100%; }
+.fxp-table thead th { position: sticky; top: 0; z-index: 1; background: var(--panel); }
+.fxp-table tbody td { height: 36px; padding-top: 0; padding-bottom: 0; font-size: 16px; }
+.fxp-table tr.fxp-month td { height: 30px; padding: 0 12px; background: rgba(var(--ink-rgb), .07); font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); }
+.fxp-table tr.fxp-month td svg { vertical-align: -3px; margin-right: 12px; }
+.fxp-md { width: 44px; color: var(--text-2); }
+.fxp-dt { width: 230px; white-space: nowrap; }
+.fxp-table td:nth-child(5) { width: 110px; }
+.fxp-table td:nth-child(6) { width: 96px; }
+.fxp-where { width: 70px; color: var(--text-2); }
+.fxp-opp { display: inline-flex; align-items: center; gap: 12px; font-weight: 600; }
+.fxp-res { display: inline-block; min-width: 46px; padding: 2px 6px; border-radius: 4px; text-align: center; font-weight: 800; background: rgba(var(--ink-rgb), .05); color: var(--text-2); }
+.fxp-res.r-W { color: var(--pos); background: color-mix(in srgb, var(--pos) 14%, transparent); }
+.fxp-res.r-L { color: var(--neg); background: color-mix(in srgb, var(--neg) 14%, transparent); }
+.fxp-res.r-D { color: var(--text); }
+.fxp-rep { height: 26px; min-width: 66px; font-size: 12.5px; }
+.fxp-table tr.fxp-next td { color: var(--club-accent, var(--accent)); }
+.fxp-table tr.fxp-next .fxp-opp { color: var(--club-accent, var(--accent)); font-weight: 700; }
+.fxp-table tbody tr.me { box-shadow: inset 4px 0 0 var(--club-accent, var(--accent)); }
+
+/* Saisonbilanz */
+.fxp-bil .dbox-body { display: flex; flex-direction: column; gap: 4px; }
+.fxp-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
+.fxp-kpis > div { display: flex; flex-direction: column; align-items: center; padding: 10px 4px 8px; border-radius: 4px; background: rgba(var(--ink-rgb), .06); }
+.fxp-kpis b { font-family: var(--font-display); font-size: 34px; font-weight: 600; line-height: 1.05; color: var(--text); }
+.fxp-kpis span { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-2); }
+.fxp-wdl { display: flex; height: 30px; margin-bottom: 8px; border-radius: 3px; overflow: hidden; }
+.fxp-wdl span { display: flex; align-items: center; justify-content: center; min-width: 52px; font-size: 14px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--navy-ink); white-space: nowrap; }
+.fxp-wdl .w { background: var(--pos); }
+.fxp-wdl .d { background: rgba(var(--ink-rgb), .38); }
+.fxp-wdl .l { background: var(--neg); }
+.fxp-wdl .e { flex: 1; background: rgba(var(--ink-rgb), .08); color: var(--text-3); }
+
+/* Spieltag */
+.fxp-md-box .dbox-body { overflow-y: auto; }
+.fxp-mdlist { display: flex; flex-direction: column; }
+.fxp-mdrow { display: grid; grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr); align-items: center; min-height: 34px; border-bottom: 1px solid var(--border-soft); }
+.fxp-mdrow.clickable { cursor: pointer; }
+.fxp-mdrow.clickable:hover { background: rgba(var(--ink-rgb), .04); }
+.fxp-mdrow.me { background: var(--rl-me-bg, rgba(var(--ink-rgb), .06)); color: var(--club-accent, var(--accent)); }
+.fxp-mdrow.me .fxp-mdt span { color: var(--club-accent, var(--accent)); }
+.fxp-mdt { display: inline-flex; align-items: center; gap: 14px; font-size: 16px; font-weight: 700; justify-self: center; }
+.fxp-mdt span { min-width: 40px; }
+.fxp-mdt.r span { text-align: left; }
+.fxp-mdres { justify-self: center; padding: 2px 8px; border-radius: 4px; background: rgba(var(--ink-rgb), .06); font-weight: 800; font-size: 16px; }

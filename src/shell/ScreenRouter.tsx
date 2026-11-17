@@ -30,7 +30,7 @@ function page({ screen, g, rerender, setScreen, onWatch, onReplayDraw, onOpenEdi
   switch (screen) {
     case 'dashboard': return <Dashboard g={g} onGoto={setScreen} onWatch={onWatch} onChange={ch} onOpenEditor={onOpenEditor} />;
     case 'table': return <P.TableView g={g} />;
-    case 'fixtures': return <P.FixturesView g={g} onWatch={onWatch} />;
+    case 'fixtures': return <P.FixturesView g={g} onWatch={onWatch} onGoto={setScreen} />;
     case 'squad': return <P.SquadView g={g} onChange={ch} />;
     case 'lineup': return <P.LineupView g={g as never} onChange={ch} onGoto={setScreen} />;
     case 'training': return <P.TrainingPlanView g={g} onChange={ch} onGoto={setScreen} />;

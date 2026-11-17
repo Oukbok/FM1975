@@ -1,17 +1,27 @@
+// =============================================================================
+// AUFSTELLUNG › SPIELPLAN (Mockup Pascal): oben Leiste „Nächstes Pflichtspiel“
+// mit Fanbild, links der eigene Spielplan nach Monaten (Anzeige Alle/Heim/Auswärts,
+// Hin-/Rückrunde), rechts Saisonbilanz und der letzte/nächste Spieltag der Liga.
+// Bausteine fixtures/parts.tsx, CSS `.fxp-*` in 28-fixtures.css.
+// =============================================================================
+import { useMemo, useState } from 'react';
 import ClubCrest from '../../components/ClubCrest';
 import { ClubLink } from '../../components/club/ClubLink';
 import { CalendarEngine } from '../../engine/calendar';
 import { Game } from '../../game/state';
 import { Match } from '../../types';
-import { DashBox, DashPage, Empty, KV, Kpi } from '../../ui/DashPage';
+import { DashBox, Empty, KV } from '../../ui/DashPage';
+import Seg from '../../ui/Seg';
+import Icon from '../../components/Icon';
 import { resultFor } from '../shared';
 import { moveLabel } from '../../game/fixtureWatch';
+import { nextOpponent } from '../../game/opponentView';
+import type { Screen } from '../../shell/navigation';
+import { clubCodes, FixtureStrip } from './fixtures/parts';
 
+const MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
 const dm = (d: string) => `${Number(d.slice(8, 10))}.${Number(d.slice(5, 7))}.`;
 
-// =============================================================================
-// SPIELPLAN — eigene Saison, Bilanz Heim/Auswärts, Spieltag der Liga
-// =============================================================================
 function bilanz(ms: Match[], clubId: string) {
   let w = 0, d = 0, l = 0, gf = 0, ga = 0;
   for (const m of ms) {
@@ -22,75 +32,131 @@ function bilanz(ms: Match[], clubId: string) {
     const r = resultFor(m, clubId);
     if (r === 'W') w++; else if (r === 'D') d++; else l++;
   }
-  return { w, d, l, gf, ga, n: w + d + l };
+  return { w, d, l, gf, ga };
 }
 
-export function FixturesView({ g, onWatch }: { g: Game; onWatch: (id: string) => void }) {
+type Side = 'all' | 'home' | 'away';
+type Half = 1 | 2;
+
+export function FixturesView({ g, onWatch, onGoto }: { g: Game; onWatch: (id: string) => void; onGoto?: (s: Screen) => void }) {
   const mid = g.managedClubId;
-  // Nach Datum: Nachholspiele stehen dort, wo sie gespielt werden.
-  const myMatches = g.fixtures.filter((m) => m.involvesPlayerClub).sort((a, b) => a.date.localeCompare(b.date) || a.matchday - b.matchday);
+  const myMatches = useMemo(() => g.fixtures.filter((m) => m.involvesPlayerClub).sort((a, b) => a.date.localeCompare(b.date) || a.matchday - b.matchday), [g.fixtures]);
   const played = myMatches.filter((m) => m.status === 'finished');
+  const maxMd = myMatches.reduce((a, m) => Math.max(a, m.matchday), 0);
+  const halfOf = (m: Match): Half => (m.matchday <= Math.ceil(maxMd / 2) ? 1 : 2);
+  const nextLeague = myMatches.find((m) => m.status === 'scheduled');
+  const [side, setSide] = useState<Side>('all');
+  const [half, setHalf] = useState<Half>(nextLeague ? halfOf(nextLeague) : played.length ? halfOf(played[played.length - 1]) : 1);
+
   const home = bilanz(played.filter((m) => m.homeClubId === mid), mid);
   const away = bilanz(played.filter((m) => m.awayClubId === mid), mid);
+  const w = home.w + away.w, d = home.d + away.d, l = home.l + away.l;
+  const winPts = g.pointSystem === '3-point' ? 3 : 2;
+  const pts = w * winPts + d;
   const lastMd = played.length ? played[played.length - 1].matchday : null;
-  const nextMd = myMatches.find((m) => m.status === 'scheduled')?.matchday ?? null;
-  const showMd = lastMd ?? nextMd;
+  const showMd = lastMd ?? nextLeague?.matchday ?? null;
   const mdMatches = showMd != null ? g.fixtures.filter((m) => m.matchday === showMd) : [];
-  const ptsHome = g.pointSystem === '3-point' ? 3 : 2;
+  const codes = useMemo(() => {
+    const names: Record<string, string> = {};
+    for (const m of mdMatches) for (const id of [m.homeClubId, m.awayClubId]) names[id] = g.clubs[id]?.shortName ?? g.clubs[id]?.name ?? id;
+    return clubCodes(names);
+  }, [mdMatches, g.clubs]);
 
+  const rows = myMatches.filter((m) => halfOf(m) === half && (side === 'all' || (side === 'home') === (m.homeClubId === mid)));
+  const nx = nextOpponent(g);
+  const body: JSX.Element[] = [];
+  let month = '';
+  for (const m of rows) {
+    const mk = m.date.slice(0, 7);
+    if (mk !== month) {
+      month = mk;
+      body.push(<tr key={`m-${mk}`} className="fxp-month"><td colSpan={6}><Icon name="schedule" size={16} />{MONTHS[+mk.slice(5, 7) - 1]} {mk.slice(0, 4)}</td></tr>);
+    }
+    const isHome = m.homeClubId === mid;
+    const oppId = isHome ? m.awayClubId : m.homeClubId;
+    const opp = g.clubs[oppId];
+    const r = resultFor(m, mid);
+    const score = m.result ? (isHome ? `${m.result.homeGoals}:${m.result.awayGoals}` : `${m.result.awayGoals}:${m.result.homeGoals}`) : '–:–';
+    const isNext = m.id === nextLeague?.id;
+    body.push(
+      <tr key={m.id} className={isNext ? 'me fxp-next' : ''}>
+        <td className="fxp-md">{m.matchday}</td>
+        <td className="fxp-dt">
+          {CalendarEngine.formatDate(m.date)}
+          {m.moved && <span className="fx-tag" title={moveLabel(m) ?? undefined}>{m.moved.makeup ? 'Nachholspiel' : 'verlegt'}</span>}
+        </td>
+        <td className="fxp-where">{isHome ? 'Heim' : 'Ausw.'}</td>
+        <td><ClubLink id={oppId}><span className="fxp-opp">{opp && <ClubCrest club={opp} size={24} />}<span>{opp?.name ?? oppId}</span></span></ClubLink></td>
+        <td className="ctr"><span className={`fxp-res ${r ? 'r-' + r : ''}`}>{score}</span></td>
+        <td className="num">{m.status === 'finished' && <button className="b3 b3-s fxp-rep" onClick={() => onWatch(m.id)}>Bericht</button>}</td>
+      </tr>,
+    );
+  }
+
+  const n = Math.max(1, w + d + l);
   return (
-    <DashPage>
-      <DashBox title={`Spielplan ${g.season}`} icon="schedule" span={2} rows={2} info="spielplan" right={`${played.length} von ${myMatches.length} gespielt`} flush>
-        <table className="dtable">
-          <thead><tr><th className="rl-rank">ST</th><th>Datum</th><th className="ctr">Ort</th><th>Gegner</th><th className="ctr">Ergebnis</th><th /></tr></thead>
-          <tbody>
-            {myMatches.map((m) => {
-              const isHome = m.homeClubId === mid;
-              const oppId = isHome ? m.awayClubId : m.homeClubId;
-              const opp = g.clubs[oppId];
-              const r = resultFor(m, mid);
-              const score = m.result ? (isHome ? `${m.result.homeGoals}:${m.result.awayGoals}` : `${m.result.awayGoals}:${m.result.homeGoals}`) : '–:–';
-              return (
-                <tr key={m.id} className={m.matchday === nextMd ? 'me' : ''}>
-                  <td className="rl-rank">{m.matchday}</td>
-                  <td className="nowrap muted">
-                    {CalendarEngine.formatDate(m.date)}
-                    {m.moved && <span className="fx-tag" title={moveLabel(m) ?? undefined}>{m.moved.makeup ? 'Nachholspiel' : 'verlegt'}</span>}
-                  </td>
-                  <td className="ctr">{isHome ? 'Heim' : 'Ausw.'}</td>
-                  <td>
-                    <ClubLink id={oppId}><span className="rl-club">{opp && <ClubCrest club={opp} size={28} />}<span className="rl-name">{opp?.name}</span></span></ClubLink>
-                  </td>
-                  <td className="ctr"><span className={`dres ${r ? 'dres-' + r : ''}`}>{score}</span></td>
-                  <td className="num">{m.status === 'finished' && <button className="dchip" onClick={() => onWatch(m.id)}>Bericht</button>}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+    <div className="dpage fxp-page">
+      <FixtureStrip g={g} nx={nx} onOpponent={() => onGoto?.('cat-spieltag')} />
+
+      <DashBox title={`Spielplan ${g.season}`} span={2} className="fxp-plan" info="spielplan" right={`${played.length} von ${myMatches.length} gespielt`} flush>
+        <div className="fxp-filters">
+          <span className="fxp-flabel">Anzeige:</span>
+          <Seg<Side> size="s" value={side} onChange={setSide} options={[{ v: 'all', label: 'Alle' }, { v: 'home', label: 'Heim' }, { v: 'away', label: 'Auswärts' }]} />
+          <span className="fxp-fsep" />
+          <span className="fxp-flabel">Runde:</span>
+          <Seg<Half> size="s" value={half} onChange={setHalf} options={[{ v: 1, label: 'Hinrunde' }, { v: 2, label: 'Rückrunde' }]} />
+        </div>
+        <div className="fxp-scroll">
+          {rows.length ? (
+            <table className="dtable fxp-table">
+              <thead><tr><th>St</th><th>Datum</th><th>Ort</th><th>Gegner</th><th className="ctr">Ergebnis</th><th /></tr></thead>
+              <tbody>{body}</tbody>
+            </table>
+          ) : <Empty icon="schedule">Keine Spiele in dieser Auswahl.</Empty>}
+        </div>
       </DashBox>
 
-      <DashBox title="Saisonbilanz" icon="stats">
-        <div className="dkpis">
-          <Kpi value={`${home.w + away.w}-${home.d + away.d}-${home.l + away.l}`} label="S-U-N" />
-          <Kpi value={`${home.gf + away.gf}:${home.ga + away.ga}`} label="Tore" />
+      <DashBox title="Saisonbilanz" className="fxp-bil">
+        <div className="fxp-kpis">
+          <div><b>{pts}</b><span>Punkte</span></div>
+          <div><b>{home.gf + away.gf}:{home.ga + away.ga}</b><span>Tore</span></div>
+          <div><b>{w}-{d}-{l}</b><span>S-U-N</span></div>
+        </div>
+        <div className="fxp-wdl">
+          {w > 0 && <span className="w" style={{ flexGrow: w / n }}>{w} {w === 1 ? 'Sieg' : 'Siege'}</span>}
+          {d > 0 && <span className="d" style={{ flexGrow: d / n }}>{d} U</span>}
+          {l > 0 && <span className="l" style={{ flexGrow: l / n }}>{l} N</span>}
+          {w + d + l === 0 && <span className="e">Noch kein Spiel</span>}
         </div>
         <KV k="Heim (S-U-N, Tore)" v={`${home.w}-${home.d}-${home.l} · ${home.gf}:${home.ga}`} />
         <KV k="Auswärts (S-U-N, Tore)" v={`${away.w}-${away.d}-${away.l} · ${away.gf}:${away.ga}`} />
-        <KV k="Punkte Heim / Auswärts" v={`${home.w * ptsHome + home.d} / ${away.w * ptsHome + away.d}`} />
+        <KV k="Punkte Heim / Auswärts" v={`${home.w * winPts + home.d} / ${away.w * winPts + away.d}`} />
         <KV k="Ø Tore pro Spiel" v={played.length ? ((home.gf + away.gf) / played.length).toFixed(2) : '–'} />
       </DashBox>
 
-      <DashBox title={showMd != null ? `${showMd}. Spieltag` : 'Spieltag'} icon="dashTabelle" right={lastMd ? 'Ergebnisse' : 'Paarungen'}>
-        {mdMatches.length ? mdMatches.map((m) => (
-          <div key={m.id} className={`dlist-row ${m.involvesPlayerClub ? 'clickable' : ''}`} onClick={() => m.status === 'finished' && onWatch(m.id)}>
-            <span className="grow" style={{ textAlign: 'right', fontWeight: m.homeClubId === mid ? 900 : 500 }}><ClubLink id={m.homeClubId}>{g.clubs[m.homeClubId]?.shortName}</ClubLink></span>
-            <span className="dres">{m.result ? `${m.result.homeGoals}:${m.result.awayGoals}` : m.moved?.makeup ? dm(m.date) : '–:–'}</span>
-            <span className="grow" style={{ fontWeight: m.awayClubId === mid ? 900 : 500 }}><ClubLink id={m.awayClubId}>{g.clubs[m.awayClubId]?.shortName}</ClubLink></span>
+      <DashBox title={showMd != null ? `${showMd}. Spieltag` : 'Spieltag'} className="fxp-md-box" right={lastMd ? 'Ergebnisse' : 'Paarungen'}>
+        {mdMatches.length ? (
+          <div className="fxp-mdlist">
+            {mdMatches.map((m) => {
+              const mine = m.homeClubId === mid || m.awayClubId === mid;
+              const team = (id: string, right: boolean) => (
+                <ClubLink id={id} className={`fxp-mdt ${right ? 'r' : ''}`}>
+                  {!right && g.clubs[id] && <ClubCrest club={g.clubs[id]} size={24} />}
+                  <span title={g.clubs[id]?.name}>{codes[id]}</span>
+                  {right && g.clubs[id] && <ClubCrest club={g.clubs[id]} size={24} />}
+                </ClubLink>
+              );
+              return (
+                <div key={m.id} className={`fxp-mdrow ${mine ? 'me' : ''} ${m.status === 'finished' ? 'clickable' : ''}`} onClick={() => m.status === 'finished' && onWatch(m.id)}>
+                  {team(m.homeClubId, false)}
+                  <span className="fxp-mdres">{m.result ? `${m.result.homeGoals}:${m.result.awayGoals}` : m.moved?.makeup ? dm(m.date) : '–:–'}</span>
+                  {team(m.awayClubId, true)}
+                </div>
+              );
+            })}
           </div>
-        )) : <Empty icon="schedule">Kein Spieltag.</Empty>}
+        ) : <Empty icon="schedule">Kein Spieltag.</Empty>}
       </DashBox>
-
-    </DashPage>
+    </div>
   );
 }

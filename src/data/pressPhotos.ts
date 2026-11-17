@@ -17,6 +17,13 @@ export const PRESS_PHOTOS: Record<number, PressMotif[]> = {
   1975: ['zweikampf', 'torschuss', 'torwart', 'torjubel', 'verletzung', 'fans', 'abpfiff', 'kopfball', 'stadion', 'training', 'auslosung', 'vertrag', 'vorstand'],
 };
 
+/** Weitere Fassungen eines Motivs (Wunsch Pascal: nicht immer dasselbe Bild): „Epoche:Motiv“ → Anzahl
+ *  zusätzlicher Dateien `<motiv>_01.webp` … `<motiv>_NN.webp` neben `<motiv>.webp`; die Nachricht wählt
+ *  fest aus ihrer ID. */
+export const PRESS_VARIANTS: Record<string, number> = {
+  '1975:abpfiff': 10,
+};
+
 const MOTIFS_BY_CATEGORY: Partial<Record<InboxMessage['category'], PressMotif[]>> = {
   match: ['zweikampf', 'torschuss', 'torjubel', 'torwart', 'kopfball', 'abpfiff', 'fans'],
   cup: ['auslosung', 'stadion', 'fans'],
@@ -41,7 +48,10 @@ export function pressPhotoFor(m: InboxMessage, opts?: { won?: boolean }): string
   if (m.category === 'match' && !opts?.won) wanted = wanted.filter((x) => x !== 'torjubel');
   for (const era of eras) {
     const have = PRESS_PHOTOS[era].filter((x) => wanted!.includes(x));
-    if (have.length) return `assets/presse/${era}/${have[hash(m.id) % have.length]}.webp`;
+    if (!have.length) continue;
+    const motif = have[hash(m.id) % have.length];
+    const v = hash(`v|${m.id}|${m.date}`) % (1 + (PRESS_VARIANTS[`${era}:${motif}`] ?? 0));
+    return `assets/presse/${era}/${motif}${v ? `_${String(v).padStart(2, '0')}` : ''}.webp`;
   }
   return null;
 }

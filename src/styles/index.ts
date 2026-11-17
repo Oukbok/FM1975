@@ -55,6 +55,7 @@ import './28-euro2.css';
 import './28-status2.css';
 import './28-misc.css';
 import './28-opponent.css';
+import './28-fixtures.css';
 import './28-engine.css';
 import './28-tactics.css'; // Taktik-Seite: Tafel, Anweisungen, Eingespieltheit
 import './28-staff.css'; // Mitarbeiter: Stellenplan, Arbeitsmarkt, Profil, Verhandlung
