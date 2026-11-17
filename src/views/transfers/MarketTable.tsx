@@ -100,7 +100,7 @@ export function MarketTable({ g, rows, onOpen, action, compact = false, extra, f
             <button type="button" className={`toggle mk-only ${onlyScouted ? 'on' : ''}`} aria-pressed={onlyScouted} aria-label="Nur gescoutete Spieler" onClick={() => setOnlyScouted((v) => !v)} />
           </label>
         )}
-        {ms.multi && <span className="muted">{ms.sel.size} ausgewählt</span>}
+        {ms.count > 0 && <span className="muted">{ms.count} ausgewählt</span>}
         <span className="mk-extra">{extra}</span>
       </div>
       <div className="mk-scroll">

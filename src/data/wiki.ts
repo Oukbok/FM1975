@@ -2861,13 +2861,11 @@ Im Alter: Hat ein Führungsspieler **10 % seiner höchsten jemals erreichten St�
     body: `## Wo
 Der Hauptmenüpunkt heißt **Aufstellung** (früher Spieltag) mit Aufstellung, Taktik, **Gegner** und Spielplan. Die Seite Gegner zeigt immer das nächste eigene Pflichtspiel – Liga, Landespokal, Europapokal oder Supercup, je nachdem, was zuerst kommt.
 
-## Boxen
-- **Nächstes Spiel:** Paarung, Datum, Spielort und der **direkte Vergleich** aus allen gespeicherten Pflichtspielen (Siege-Remis-Niederlagen, Tore, die letzten vier Duelle).
-- **Gegner-Analyse:** Tabellenplatz, Ø Stärke gegen deine, Tore, Form, die gefährlichsten Spieler.
-- **So spielt der Gegner:** Trainer, System, Ausrichtung, Tempo, Pressing, Abwehrlinie, Spielaufbau.
-- **Mannschaftsteile im Vergleich:** Ø der Besten je Teil (Torwart 1, Abwehr 4, Mittelfeld 4, Angriff 2) für beide Vereine mit Differenz, dazu das Durchschnittsalter.
-- **Form & letzte Spiele:** die letzten Ligaspiele des Gegners und seine Heim- bzw. Auswärtsbilanz – je nachdem, wo ihr spielt.
-- **Ausfälle & Torjäger:** verletzte, gesperrte und abgestellte Spieler des Gegners und seine besten Torschützen.
+## Aufbau
+Oben steht die Leiste **Nächstes Spiel** mit Paarung, Datum und Wettbewerb. Darunter drei Boxen:
+- **Nächstes Spiel:** beide Wappen, Datum, Stadion, Heim- oder Auswärtsspiel und der **direkte Vergleich** aus allen gespeicherten Pflichtspielen – als Balken Siege (grün), Remis (grau), Niederlagen (rot) und die letzten vier Duelle.
+- **Gegner-Analyse:** Tabellenplatz, Stärke und Tore des Gegners, dazu ein **Netzdiagramm der Mannschaftsteile** (Ø der Besten je Teil: Torwart 1, Abwehr 4, Mittelfeld 4, Angriff 2) – deine Elf in deiner Vereinsfarbe, der Gegner dunkelblau. Unten die drei gefährlichsten Spieler mit Trikot, Position, Stärke und dem Hinweis, wenn einer verletzt oder gesperrt ist.
+- **So spielt der Gegner:** Trainer, Ausrichtung, Grundordnung mit der voraussichtlichen Elf auf dem Feld (Rückennummern) sowie Tempo, Pressing und Abwehrlinie.
 
 Gegen Vereine ohne vollen Kader (Amateure im Pokal, Auslandsvereine) gibt es nur die geschätzte Stärke.`,
   },

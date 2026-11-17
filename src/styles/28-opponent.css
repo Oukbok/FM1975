@@ -1,0 +1,71 @@
+/* =============================================================================
+   Aufstellung › Gegner (views/spieltag/GegnerView.tsx + gegner/parts.tsx, Mockup Pascal):
+   Leiste „Nächstes Spiel“ über drei hohen Boxen. Seitenränder/Spalten wie jede .dpage.
+   ============================================================================= */
+.dpage.opx-page { grid-template-rows: 64px minmax(0, 1fr); row-gap: 28px; }
+
+/* Leiste */
+.opx-strip { grid-column: 1 / -1; display: flex; align-items: center; gap: 28px; height: 64px; padding-right: 28px;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.opx-strip-tag { align-self: stretch; display: flex; align-items: center; padding: 0 44px 0 26px; background: var(--club-accent, var(--accent)); color: var(--club-accent-ink, #fff);
+  font-family: var(--font-display); font-size: 26px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; clip-path: polygon(0 0, 100% 0, calc(100% - 22px) 100%, 0 100%); }
+.opx-strip-match { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; gap: 40px; min-width: 0; }
+.opx-strip-club { display: inline-flex; align-items: center; gap: 14px; font-size: 20px; color: var(--text); }
+.opx-strip-club b { font-weight: 700; white-space: nowrap; }
+.opx-strip-vs { font-family: var(--font-display); font-size: 30px; font-weight: 600; color: var(--text-3); }
+.opx-strip-sep { width: 1px; align-self: stretch; margin: 12px 0; background: var(--border); }
+.opx-strip-info { display: inline-flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 600; color: var(--text); white-space: nowrap; }
+.opx-strip-info svg { color: var(--club-accent, var(--accent)); }
+.opx-strip-none { color: var(--text-3); font-size: 17px; }
+
+/* Box Nächstes Spiel */
+.opx-next .dbox-body { display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+.opx-vs { display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 4px; }
+.opx-side { display: flex; flex-direction: column; align-items: center; gap: 6px; text-decoration: none; }
+.opx-side b { font-family: var(--font-ui); font-size: 22px; font-weight: 800; color: var(--text); }
+.opx-vs-mid { display: flex; align-items: center; gap: 14px; width: 100%; font-family: var(--font-display); font-size: 24px; color: var(--text-3); }
+.opx-vs-mid i { flex: 1 1 auto; height: 1px; background: var(--border); }
+.opx-where { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 22px; font-size: 15px; color: var(--text-2); padding-bottom: 6px; border-bottom: 1px solid var(--border-soft); }
+.opx-where span { display: inline-flex; align-items: center; gap: 8px; }
+.opx-where em { flex-basis: 100%; text-align: center; font-style: normal; color: var(--text-3); }
+.opx-h2h { display: flex; height: 34px; border-radius: 4px; overflow: hidden; font-family: var(--font-display); font-size: 20px; font-weight: 600; }
+.opx-h2h span { display: flex; align-items: center; justify-content: center; flex-basis: 0; color: #fff; }
+.opx-h2h .w { background: var(--pos); } .opx-h2h .d { background: rgba(var(--ink-rgb), .12); color: var(--text); } .opx-h2h .l { background: var(--neg); }
+.opx-last { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.opx-last-c { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 8px 10px; border: 1px solid var(--border-soft); border-radius: 5px; font-size: 13.5px; color: var(--text-3); }
+.opx-last-c .dres { min-width: 46px; font-size: 16px; }
+
+/* Box Gegner-Analyse */
+.opx-ana .dbox-body { display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+.opx-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.opx-radar { position: relative; flex: 1 1 auto; min-height: 0; display: flex; justify-content: center; }
+.opx-radar svg { height: 100%; width: 100%; overflow: visible; }
+.opx-radar .ring { fill: none; stroke: rgba(var(--ink-rgb), .14); stroke-dasharray: 2 3; }
+.opx-radar .axis { stroke: rgba(var(--ink-rgb), .14); }
+.opx-radar .tick { font-family: var(--font-ui); font-size: 9px; fill: var(--text-3); }
+.opx-radar polygon.us { fill: rgba(var(--club-accent-rgb, 200, 32, 42), .18); stroke: var(--club-accent, var(--accent)); stroke-width: 2; }
+.opx-radar polygon.them { fill: rgba(27, 42, 68, .12); stroke: var(--navy, var(--text)); stroke-width: 2; }
+.opx-radar .lab { font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: .05em; fill: var(--text); }
+.opx-radar .val { font-family: var(--font-display); font-size: 19px; font-weight: 600; }
+.opx-radar .val .us { fill: var(--club-accent, var(--accent)); } .opx-radar .val .them { fill: var(--navy, var(--text)); } .opx-radar .val .bar { fill: var(--text-3); }
+.opx-legend { position: absolute; top: 0; right: 0; display: flex; flex-direction: column; gap: 6px; padding: 8px 12px; border: 1px solid var(--border-soft); border-radius: 5px; background: var(--panel); font-size: 13.5px; color: var(--text-2); }
+.opx-legend span { display: inline-flex; align-items: center; gap: 8px; }
+.opx-legend i { width: 18px; height: 10px; border-radius: 2px; }
+.opx-legend .us i { background: var(--club-accent, var(--accent)); } .opx-legend .them i { background: var(--navy, var(--text)); }
+.opx-danger { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.opx-dcard { display: flex; align-items: center; gap: 8px; padding: 8px; border: 1px solid var(--border-soft); border-radius: 5px; min-width: 0; }
+.opx-dcard-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.opx-dcard-t b { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.opx-dcard-top { display: flex; align-items: center; gap: 6px; }
+.opx-dcard-ov { font-size: 13px; color: var(--text-3); }
+.opx-dcard-ov b { display: inline; font-family: var(--font-display); font-size: 17px; color: var(--text); }
+.opx-hurt { display: inline-flex; align-items: center; gap: 3px; padding: 0 5px; border: 1px solid var(--neg); border-radius: 3px; font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: var(--neg); }
+
+/* Box So spielt der Gegner */
+.opx-plays .dbox-body { display: flex; flex-direction: column; overflow: hidden; }
+.opx-pitch { flex: 1 1 auto; min-height: 0; width: 100%; margin: 8px 0; }
+.opx-pitch .grass { fill: #2f7d32; }
+.opx-pitch .lines rect, .opx-pitch .lines line, .opx-pitch .lines circle { fill: none; stroke: rgba(255, 255, 255, .8); stroke-width: .5; }
+.opx-pitch .dot circle { fill: var(--club-accent, var(--accent)); stroke: #fff; stroke-width: .7; }
+.opx-pitch .dot.gk circle { fill: var(--navy, #1b2a44); }
+.opx-pitch .dot text { fill: #fff; font-family: var(--font-ui); font-size: 4.2px; font-weight: 800; text-anchor: middle; }

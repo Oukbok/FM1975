@@ -3,7 +3,9 @@
 // -----------------------------------------------------------------------------
 // Strg/Cmd-Klick nimmt eine Zeile dazu oder heraus, Umschalt-Klick wählt alle
 // Zeilen zwischen dem letzten Klick und dieser (in der angezeigten Reihenfolge).
-// Ein einfacher Klick wählt nur diese Zeile (und tut, was die Zeile sonst tut).
+// Ein einfacher Klick hebt die Häkchen auf und tut, was die Zeile sonst tut (die eine
+// gewählte Zeile zeigt die Tabelle selbst). Häkchen sind sofort sichtbar – auch das erste
+// (Wunsch Pascal: vorher erst ab dem zweiten).
 // Die Tabelle trägt `data-pidsel="id1,id2,…"` (ab zwei Spielern); der Rechtsklick
 // auf eine ausgewählte Zeile öffnet dann im PlayerContextMenu das Gruppenmenü.
 // Das Menü leert die Auswahl über das Ereignis PIDSEL_CLEAR.
@@ -42,7 +44,7 @@ export function useMultiSelect(order: string[]) {
       anchor.current = id;
       return true;
     }
-    setSel(new Set([id]));
+    if (sel.size) setSel(new Set());
     anchor.current = id;
     return false;
   };
@@ -52,11 +54,13 @@ export function useMultiSelect(order: string[]) {
     sel,
     multi,
     click,
-    /** Zeile in der Mehrfachauswahl (nur bei ≥ 2 Spielern, sonst gilt die normale Auswahl). */
-    has: (id: string) => multi && sel.has(id),
+    /** Zeile angehakt (auch der erste Haken ist sichtbar; das Gruppenmenü gibt es ab zwei). */
+    has: (id: string) => sel.has(id),
     clear: () => setSel(new Set()),
     /** Attribute für die Tabelle. */
     attr: multi ? { 'data-pidsel': [...sel].join(',') } : {},
+    /** Anzahl der Haken. */
+    count: sel.size,
     /** Umschalt-Klick soll keinen Text markieren. */
     onMouseDown: (e: MouseEvent) => { if (e.shiftKey) e.preventDefault(); },
   };
