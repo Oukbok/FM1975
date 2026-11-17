@@ -20,7 +20,8 @@ import { seasonStartYear } from '../data/timeline';
 import { LeagueGroup, SimClub, simDisplayName } from '../engine/leagues';
 import { germanRank, initWorld } from '../engine/world';
 import { homeCountryOf, type Game } from './state';
-import { COUNTRY_BY_CC } from '../data/world/countries';
+import { COUNTRY_BY_CC, COUNTRY_BY_KEY } from '../data/world/countries';
+import { historicTiers, tierText } from '../data/leagueTiers';
 
 export type PyramidSide = 'west' | 'ddr' | 'abroad';
 export type PyrZone = 'zone-cl' | 'zone-po' | 'zone-rel' | '';
@@ -42,6 +43,8 @@ export interface PyrDivision {
   /** Text unter dem Kasten, z. B. „Abstieg in die Amateurligen“. */
   downTo?: string;
   pool?: boolean;
+  /** Reine Strukturangabe (Ebene ohne simulierte Vereine, data/leagueTiers.ts): Staffeln/Mannschaften. */
+  struct?: string;
 }
 
 export interface PyrSystem {
@@ -49,6 +52,8 @@ export interface PyrSystem {
   levels: PyrDivision[][];
   available: boolean;
   note?: string;
+  /** Liga besteht in dieser Saison nicht mehr (DDR nach 1991, aufgelöste Länder) – Anzeige „(Archiv)“. */
+  archive?: boolean;
 }
 
 export interface PyramidData {
@@ -124,8 +129,12 @@ function reformList(season: string): PyramidData['reforms'] {
   return LEAGUE_REFORMS.map((r) => ({ season: r.effectiveSeason, title: r.title.replace('2. 1. Liga', '2. Liga'), past: seasonStartYear(r.effectiveSeason) <= y }));
 }
 
-function abroadSystems(countries: { name: string; tiers: string[][]; active: boolean; pool?: string[] }[], clubs: Record<string, { id: string; name: string; shortName: string; city: string; colors: { primary: string; secondary: string }; strength: number }>, ordered: boolean): PyrSystem[] {
-  return countries.filter((c) => c.active).map((c) => {
+function abroadSystems(countries: { name: string; tiers: string[][]; active: boolean; pool?: string[] }[], clubs: Record<string, { id: string; name: string; shortName: string; city: string; colors: { primary: string; secondary: string }; strength: number }>, ordered: boolean, year: number): PyrSystem[] {
+  const gone = countries.filter((c) => !c.active).map((c): PyrSystem => ({
+    side: 'abroad', key: c.name, title: c.name, levels: [], available: false, archive: true,
+    note: `Die Ligen von ${COUNTRY_BY_KEY[c.name]?.name ?? c.name} gibt es in dieser Saison nicht mehr – Tabellen früherer Saisons unter Statistiken › Liga.`,
+  }));
+  return [...gone, ...countries.filter((c) => c.active).map((c) => {
     const lv = c.tiers.map((ids, t) => {
       const list = ids.map((id) => clubs[id]).filter(Boolean).map((e) => ({ id: e.id, name: e.name, shortName: e.shortName, city: e.city, colors: e.colors, strength: e.strength, dotOnly: true }));
       const d = div(`w:${c.name}:${t}`, `${t + 1}. Liga`, t + 1, null, ordered ? list : list.sort(byStrength), 'strength');
@@ -141,8 +150,43 @@ function abroadSystems(countries: { name: string; tiers: string[][]; active: boo
       pd.pool = true;
       lv.push([pd]);
     }
-    return { side: 'abroad' as const, key: c.name, title: c.name, levels: lv, available: true };
-  });
+    return { side: 'abroad' as const, key: c.name, title: c.name, levels: withHistoricTiers(lv, COUNTRY_BY_KEY[c.name]?.cc, year, true), available: true };
+  })];
+}
+
+// -----------------------------------------------------------------------------
+// Historische Struktur bis zur 4. Ebene (data/leagueTiers.ts, Wunsch Pascal)
+// -----------------------------------------------------------------------------
+/**
+ * Ergänzt eine Pyramide um die nicht simulierten Ebenen bis zur 4. Ebene (reine Strukturangabe vor
+ * dem Unterbau). `rename` = simulierte eingleisige Ebenen tragen den historischen Ligennamen
+ * (Auslandsligen heißen im Spiel sonst „1. Liga“/„2. Liga“).
+ */
+export function withHistoricTiers(levels: PyrDivision[][], cc: string | undefined, year: number, rename: boolean): PyrDivision[][] {
+  const rows = cc ? historicTiers(cc, year) : null;
+  if (!rows) return levels;
+  const sim = levels.filter((lv) => !lv[0]?.pool);
+  const pool = levels.filter((lv) => lv[0]?.pool);
+  if (rename) {
+    sim.forEach((lv, i) => {
+      if (!rows[i] || lv.length !== 1) return;
+      lv[0].name = rows[i].name;
+      if (lv[0].downTo?.startsWith('Abstieg in die') && rows[i + 1]) lv[0].downTo = `Abstieg in die ${rows[i + 1].name}`;
+    });
+  }
+  const extra: PyrDivision[][] = [];
+  for (let i = sim.length; i < rows.length; i++) {
+    const r = rows[i];
+    const d = div(`struct:${cc}:${i + 1}`, r.name, i + 1, null, [], 'strength');
+    d.struct = tierText(r);
+    extra.push([d]);
+  }
+  // Abstieg der untersten simulierten Ebene führt jetzt in die nächste Strukturebene.
+  if (extra.length && rename) {
+    const last = sim[sim.length - 1];
+    for (const d of last ?? []) if (d.down && !pool.length) d.downTo = `Abstieg in die ${extra[0][0].name}`;
+  }
+  return [...sim, ...extra, ...pool];
 }
 
 // -----------------------------------------------------------------------------
@@ -170,9 +214,9 @@ export function pyramidPreGame(season = '1975/76'): PyramidData {
   const world = initWorld(euro, year);
   return {
     season,
-    west: { side: 'west', key: 'west', title: 'Deutschland', levels: westLv, available: true },
+    west: { side: 'west', key: 'west', title: 'Deutschland', levels: withHistoricTiers(westLv, 'ger', year, false), available: true },
     ddr: { side: 'ddr', key: 'ddr', title: 'DDR', levels: ddrLv, available: true, note: 'Die DDR spielt bis 1991 in eigenen Ligen. Ihre Vereine sind nicht wählbar, laufen aber im Hintergrund mit.' },
-    abroad: abroadSystems(Object.values(world.countries), euro, false),
+    abroad: abroadSystems(Object.values(world.countries), euro, false, year),
     reforms: reformList(season),
   };
 }
@@ -223,11 +267,11 @@ export function pyramidFromGame(g: Game): PyramidData {
   const countries = Object.values(g.world?.countries ?? {});
   return {
     season,
-    west: { side: 'west', key: homeCountryOf(g) === 'ger' ? 'west' : COUNTRY_BY_CC[homeCountryOf(g)]?.key ?? 'west', title: COUNTRY_BY_CC[homeCountryOf(g)]?.name ?? 'Deutschland', levels: westLv, available: true },
+    west: { side: 'west', key: homeCountryOf(g) === 'ger' ? 'west' : COUNTRY_BY_CC[homeCountryOf(g)]?.key ?? 'west', title: COUNTRY_BY_CC[homeCountryOf(g)]?.name ?? 'Deutschland', levels: withHistoricTiers(westLv, homeCountryOf(g), year, false), available: true },
     ddr: ddrOpen
       ? { side: 'ddr', key: 'ddr', title: 'DDR', levels: ddrLv, available: true, note: 'Die DDR spielt bis 1991 in eigenen Ligen und läuft im Hintergrund mit.' }
-      : { side: 'ddr', key: 'ddr', title: 'DDR', levels: [], available: false, note: 'Seit der Wiedervereinigung 1991/92 spielen die Vereine aus dem Osten in der gesamtdeutschen Pyramide.' },
-    abroad: abroadSystems(countries, (g.euroClubs ?? {}) as never, false),
+      : { side: 'ddr', key: 'ddr', title: 'DDR', levels: [], available: false, archive: true, note: 'Seit der Wiedervereinigung 1991/92 spielen die Vereine aus dem Osten in der gesamtdeutschen Pyramide.' },
+    abroad: abroadSystems(countries, (g.euroClubs ?? {}) as never, false, year),
     reforms: homeCountryOf(g) === 'ger' ? reformList(season) : [],
   };
 }

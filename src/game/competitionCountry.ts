@@ -24,6 +24,7 @@ import { DDR_POOL_TIER, POOL_TIER } from '../data/history/historicClubs';
 import { simDisplayName } from '../engine/leagues';
 import { leagueRepInfo } from './leagueRepGame';
 import { accessSlots } from '../data/euroFormats';
+import { historicTiers } from '../data/leagueTiers';
 import { countryRanking, germanRank, type LeanCup, type LeanDiv } from '../engine/world';
 import type { ResTuple } from './leagueResults';
 import { ensureWorldLive, leanGames, leanMatchdays, leanResTuples, leanTable, leanWinPts, worldLiveDiv, type LeanGame } from './worldLeagues';
@@ -47,10 +48,9 @@ const nameOf = (cc: string, key?: string) => COUNTRY_BY_CC[cc]?.name ?? key ?? c
 // -----------------------------------------------------------------------------
 export function statsCountries(g: Game): StatsCountry[] {
   const home = homeCountryOf(g);
-  const out: StatsCountry[] = [{ cc: home, name: nameOf(home), flag: COUNTRY_BY_CC[home]?.key ?? 'Deutschland', mode: 'home', hint: 'Heimatland' }];
-  // Alle übrigen Länder in EINER alphabetischen Liste (Wunsch Pascal: die DDR nicht gesondert oben);
-  // Ligen, die es nicht mehr gibt, tragen den Hinweis „Archiv“.
-  const rest: StatsCountry[] = [];
+  // ALLE Länder in EINER alphabetischen Liste – auch das Heimatland (Wunsch Pascal; vorgewählt über
+  // `homeStatsCountry`); Ligen, die es in der laufenden Saison nicht mehr gibt, tragen den Hinweis „Archiv“.
+  const rest: StatsCountry[] = [{ cc: home, name: nameOf(home), flag: COUNTRY_BY_CC[home]?.key ?? 'Deutschland', mode: 'home', hint: 'Heimatland' }];
   if (home === 'ger') rest.push({ cc: 'gdr', name: 'DDR', flag: 'DDR', mode: 'div', hint: g.leagues?.otherDivisions.some((d) => d.id.startsWith('ddr-')) ? '' : 'Archiv' });
   for (const c of Object.values(g.world?.countries ?? {})) {
     const cc = COUNTRY_BY_KEY[c.name]?.cc ?? c.name;
@@ -58,7 +58,12 @@ export function statsCountries(g: Game): StatsCountry[] {
     rest.push({ cc, name: nameOf(cc, c.name), flag: c.name, mode: 'world', worldKey: c.name, hint: c.active ? '' : 'Archiv' });
   }
   rest.sort((a, b) => a.name.localeCompare(b.name, 'de'));
-  return [...out, ...rest];
+  return rest;
+}
+
+/** Heimatland aus der Länderliste (Vorauswahl). */
+export function homeStatsCountry(list: StatsCountry[]): StatsCountry {
+  return list.find((c) => c.mode === 'home') ?? list[0];
 }
 
 /** Land einer Auswahl der Basis-Optionen (für Vorauswahl aus der Zentrale). */
@@ -241,7 +246,7 @@ function cupCounts(list: { winner: string | null }[]) {
 }
 
 /** Stand aller Auslandsligen (1. Liga) für die Übersicht unter Statistiken › Ligensystem. */
-export interface WorldLeagueRow { cc: string; key: string; name: string; md: number; total: number; leader?: string; rep?: { rep: number; hist: number; delta: number | null } }
+export interface WorldLeagueRow { cc: string; key: string; name: string; league: string; md: number; total: number; leader?: string; rep?: { rep: number; hist: number; delta: number | null } }
 export function worldLeagueOverview(g: Game): WorldLeagueRow[] {
   const out: WorldLeagueRow[] = [];
   const year = seasonStartYear(g.season);
@@ -250,7 +255,7 @@ export function worldLeagueOverview(g: Game): WorldLeagueRow[] {
     const d = worldLiveDiv(g, c.worldKey, 0);
     if (!d) continue;
     const rep = leagueRepInfo(g, c.worldKey, year) ?? undefined;
-    out.push({ cc: c.cc, key: c.worldKey, name: c.name, md: d.md, total: d.n, leader: d.md ? leanTable(d, c.worldKey, g.season)[0]?.clubId : undefined, rep });
+    out.push({ cc: c.cc, key: c.worldKey, name: c.name, league: historicTiers(c.cc, year)?.[0].name ?? '1. Liga', md: d.md, total: d.n, leader: d.md ? leanTable(d, c.worldKey, g.season)[0]?.clubId : undefined, rep });
   }
   // Mit Ligaruf (Option „Entwicklung der Ligen“): stärkste Ligen zuerst.
   if (out.some((r) => r.rep)) out.sort((a, b) => (b.rep?.rep ?? -1) - (a.rep?.rep ?? -1));

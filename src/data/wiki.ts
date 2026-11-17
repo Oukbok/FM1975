@@ -797,12 +797,13 @@ Beim Start erscheint ein Menü mit:
     id: 'league-system',
     category: 'save',
     title: 'Übersicht Ligensystem',
-    keywords: ['ligensystem', 'pyramide', 'ebene', 'aufstieg', 'abstieg', 'amateurligen', 'pool', 'ddr', 'ausland', 'ligareform', 'unterbau'],
+    keywords: ['ligensystem', 'pyramide', 'ebene', 'aufstieg', 'abstieg', 'amateurligen', 'pool', 'ddr', 'ausland', 'ligareform', 'unterbau', 'archiv', 'staffeln', 'ligen der welt'],
     body: `## Übersicht Ligensystem
-Unter **Statistiken › Ligensystem** (und im Assistenten „Neues Spiel“) siehst du die Ligapyramide der laufenden Saison als klickbare Kästen. Oben wählst du **Deutschland**, **DDR** oder **Ausland** (mit Länderwahl).
+Unter **Statistiken › Ligensystem** (und im Assistenten „Neues Spiel“) siehst du die Ligapyramide der laufenden Saison als klickbare Kästen. Oben wählst du das Land: **alle Länder alphabetisch in einer Liste**, vorgewählt ist dein Heimatland. Ligen, die es in der Saison nicht mehr gibt (DDR nach der Wiedervereinigung, aufgelöste Staaten), stehen mit **„(Archiv)“** dahinter – ihre alten Tabellen findest du unter Statistiken › Liga, wo die Länderwahl genauso aufgebaut ist.
 
 - **Kasten:** Name der Liga, Zahl der Vereine, Meister-/Europapokalplätze, Auf- und Absteiger. „Dein Verein“ markiert deine Liga.
 - **Liste links:** die Vereine der gewählten Liga – während der Saison als aktuelle Tabelle, vor dem Start als Prognose nach Stärke. Farbkanten zeigen die Zonen: Meister/Aufstieg, Europapokal/Aufstiegschance, Abstieg.
+- **Bis zur 4. Ebene:** Für England, Spanien, Italien, Frankreich und Deutschland zeigt die Pyramide die Ligen historisch korrekt je Saison – Namen (z. B. England bis 1992 First bis Fourth Division, danach Premier League; Spanien ab 1977 mit Segunda División B; Italien ab 1978 Serie C1/C2; Frankreich ab 1993 National), Zahl der Staffeln und Mannschaften. Ebenen, die im Spiel nicht mit Vereinen laufen, sind **gestrichelt** und reine Strukturangabe („nicht simuliert“).
 - **Unterbau:** Die Amateurligen spielen nicht selbst; ihre besten Vereine rücken im Tausch mit den Absteigern der untersten Liga nach.
 - **Ligareformen:** Unten stehen die kommenden Umbauten (z. B. eingleisige 2. Liga, Wiedervereinigung, 3. Liga); vergangene sind blass.
 
@@ -1751,7 +1752,7 @@ Die Wahl steht nach dem Start fest. Spielstände aus älteren Versionen laufen o
 Das Land, in dem du spielst, wird nie verändert: Seine Vereine haben volle Kader, ihre Stärke kommt aus den Spielern. Es zählt aber in der Fünfjahreswertung mit und kann so andere Länder verdrängen. Spielst du in einem anderen Land, läuft Deutschland im Hintergrund mit eigenem Ligaruf.
 
 ### Wo du ihn siehst
-Unter **Statistiken › Ligensystem** zeigt „Ligen der Welt“ den Ligaruf jedes Landes mit der Veränderung zur Vorsaison; der Hinweis daneben nennt den historischen Wert der Zeit.
+Unter **Statistiken › Ligensystem** zeigt die Tabelle „Ligen der Welt“ je Land die höchste Liga, den Spieltag (gespielt/gesamt), den Tabellenführer und den Ligaruf mit der Veränderung zur Vorsaison; der Hinweis daneben nennt den historischen Wert der Zeit. Ein Klick auf ein Land öffnet dessen Tabelle unter Statistiken › Liga.
 
 ### Grundlage
 Die historische Kurve ist aus der UEFA-Fünfjahreswertung je Jahrzehnt abgeleitet (z. B. 1975–79 Westdeutschland vor England und Belgien, 1991–95 Italien klar vorn, 1996–2000 Spanien vor Italien, 2004–08 England knapp vor Spanien, 2020–24 England vor Italien und Spanien) – grob übersetzt, keine Messwerte.`,

@@ -31,6 +31,16 @@ export const INFO_TEXTS = {
     text: 'Deine Liga läuft mit vollen Kadern, Minute für Minute. Alle anderen Länder spielen ihre 1. und 2. Liga Spieltag für Spieltag: Hin- und Rückrunde, Ergebnis je Spiel aus Vereinsstärke und Heimvorteil, Tabelle nach der Punkteregel des Landes, Auf- und Abstieg, Europapokal-Plätze nach der Fünfjahreswertung. Tabellen, Spieltage und Begegnungen findest du unter Statistiken › Liga. Eine Wahl der Simulationstiefe je Land gibt es nicht mehr – jede Liga wird gleich gründlich gespielt.',
     wiki: 'world-start',
   },
+  ligenDerWelt: {
+    title: 'Ligen der Welt',
+    text: 'Stand der höchsten Liga jedes anderen Landes. Spieltag = gespielte von allen Spieltagen der Saison, Tabellenführer = aktueller Erster. Ligaruf (0–100) ± Vorsaison zeigt, wie stark die Liga gerade ist – je höher, desto stärker die Vereine und desto mehr Europapokal-Plätze. Ein Klick auf eine Zeile öffnet Tabelle und Begegnungen unter Statistiken › Liga.',
+    wiki: 'league-reputation',
+  },
+  ligenstruktur: {
+    title: 'Ligensystem',
+    text: 'Die Pyramide zeigt die Ligen des Landes in dieser Saison bis zur 4. Ebene, mit den historischen Namen, Staffeln und Mannschaftszahlen. Volle Kästen laufen im Spiel mit Vereinen, gestrichelte Kästen sind nur Struktur und werden nicht simuliert. Ein Klick auf einen Kasten zeigt links die Vereine.',
+    wiki: 'league-system',
+  },
   laenderprofil: {
     title: 'Länderprofil',
     text: 'Ein Klick auf eine Flagge öffnet das Profil des Landes: Ligaruf und Startplätze im Europapokal, Nationalmannschaft mit Länderspielen und Aufgebot, Tabellen und Ligensystem. Was das Spiel für ein Land oder eine Zeit nicht kennt, steht als „keine Daten“ da.',

@@ -23,7 +23,7 @@ const FILES = [
   'src/data/attributeInfo.ts', 'src/data/budgetEras.ts', 'src/data/seatingCatalog.ts', 'src/data/groundsCatalog.ts',
   'src/data/merchCatalog.ts', 'src/data/contractClauses.ts', 'src/data/matchCalendarRules.ts', 'src/data/youthCompetitions.ts',
   'src/data/youthLowerLeagues.ts', 'src/data/euroFormats.ts', 'src/data/winterBreaks.ts', 'src/data/marketing.ts',
-  'src/data/staff.ts', 'src/data/prematch/cityTextsDe.ts', 'src/data/prematch/cityTextsAbroad.ts',
+  'src/data/staff.ts', 'src/data/leagueTiers.ts', 'src/data/prematch/cityTextsDe.ts', 'src/data/prematch/cityTextsAbroad.ts',
   'src/engine/sponsorship.ts',
 ];
 const walk = (d: string): string[] => readdirSync(d).flatMap((f) => {

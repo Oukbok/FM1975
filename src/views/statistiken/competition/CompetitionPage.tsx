@@ -11,7 +11,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { EuroCompId } from '../../../data/europe';
 import { competitionOptions, type CompOption } from '../../../game/competitionView';
 import {
-  countryMatchdays, countryOfKey, countryOptions, countrySeasons, countrySnapshot, pickSeason, seasonSuffix, statsCountries, type StatsCountry,
+  countryMatchdays, countryOfKey, countryOptions, countrySeasons, countrySnapshot, pickSeason, seasonSuffix, statsCountries, homeStatsCountry, type StatsCountry,
 } from '../../../game/competitionCountry';
 import { useSubTab } from '../../../ui/SubTabs';
 import { Caption, CountrySelect, RosterList, WinnersList } from './CountryParts';
@@ -62,11 +62,12 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
   g: Game; start: CompStart; onWatch?: (matchId: string) => void; onReplayDraw?: (comp: 'cup' | EuroCompId, roundIndex: number) => void;
 }) {
   const countries = useMemo(() => statsCountries(g), [g, g.season]);
+  const homeC = homeStatsCountry(countries);
   const [preset] = useState(() => (pendingPreset ? { ...pendingPreset, ...countryOfKey(g, pendingPreset.season, pendingPreset.key) } : null));
   useEffect(() => { pendingPreset = null; }, []);
-  const [remCc, remember] = useSubTab<string>(`cmp-country-${start}`, countries[0].cc);
-  const [cc, setCcState] = useState(() => preset?.cc ?? (start === 'euro' ? countries[0].cc : remCc));
-  const country = countries.find((c) => c.cc === cc) ?? countries[0];
+  const [remCc, remember] = useSubTab<string>(`cmp-country-${start}`, homeC.cc);
+  const [cc, setCcState] = useState(() => preset?.cc ?? (start === 'euro' ? homeC.cc : remCc));
+  const country = countries.find((c) => c.cc === cc) ?? homeC;
   const seasons = useMemo(() => countrySeasons(g, country), [g, g.season, country]); // eslint-disable-line react-hooks/exhaustive-deps
   const [seasonState, setSeason] = useState(() => preset?.season ?? pickSeason(countrySeasons(g, country), g.season));
   const season = seasons.some((s) => s.season === seasonState) ? seasonState : pickSeason(seasons, seasonState);
@@ -95,7 +96,7 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
   }, [start, g.season]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const changeCountry = (v: string) => {
-    const c = countries.find((x) => x.cc === v) ?? countries[0];
+    const c = countries.find((x) => x.cc === v) ?? homeC;
     const list = countrySeasons(g, c);
     const s = pickSeason(list, season);
     const curKind = kind ?? opts.find((o) => o.key === key)?.kind;
