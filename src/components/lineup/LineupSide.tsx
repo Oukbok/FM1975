@@ -1,14 +1,14 @@
 // =============================================================================
 // Aufstellung, rechte Spalte: Taktik-Zusammenfassung (Mentalität, Anweisungen, Kennzahlen –
 // nur Anzeige, Wunsch Pascal: geändert wird ausschließlich auf der Taktik-Seite, Knopf „Taktik ändern“)
-// sowie Kapitän/Standardschützen und Hinweise.
+// sowie Kapitän/Standardschützen (Reihenfolgen, lineup/TakerOrders.tsx) und Hinweise.
 // =============================================================================
 import type { Player, Tactics } from '../../types';
 import type { Formation } from '../../data/formations';
 import { suitabilityColor } from '../../engine/positions';
 import { KV, Meter } from '../../ui/DashPage';
 import type { Hint } from './lineupOps';
-import Select from '../../ui/Select';
+import { TakerGrid } from './TakerOrders';
 import { instrLabel, type InstrKey } from '../tactics/instructions';
 
 export const STYLE_DE: Record<string, string> = { defensive: 'Defensiv', balanced: 'Ausgewogen', attacking: 'Offensiv', counter: 'Konter' };
@@ -58,33 +58,10 @@ export function TacticHead({ t, xiAvg, suitAvg, familiar, xiCount, year, cohesio
   );
 }
 
-type Attr = 'penalties' | 'freeKicks' | 'corners' | 'leadership';
-const ROLES: [keyof Tactics & string, string, Attr][] = [
-  ['captainId', 'Kapitän', 'leadership'],
-  ['penaltyTakerId', 'Elfmeter', 'penalties'],
-  ['freeKickTakerId', 'Freistöße', 'freeKicks'],
-  ['cornerTakerId', 'Ecken', 'corners'],
-];
-
-export function RolesAndHints({ t, xi, hints, set }: { t: Tactics; xi: Player[]; hints: Hint[]; set: (p: Partial<Tactics>) => void }) {
+export function RolesAndHints({ t, xi, squad, hints, set }: { t: Tactics; xi: Player[]; squad: Player[]; hints: Hint[]; set: (p: Partial<Tactics>) => void }) {
   return (
     <>
-      <div className="lu-roles">
-        {ROLES.map(([key, label, attr]) => {
-          const sorted = [...xi].sort((a, b) => b.attributes[attr] - a.attributes[attr]);
-          const v = (t[key] as string | null) ?? '';
-          return (
-            <label key={key} className="lu-role">
-              <span>{label}</span>
-              <Select value={xi.some((p) => p.id === v) ? v : ''} data-role={key}
-                onChange={(v) => set({ [key]: v || null } as Partial<Tactics>)}>
-                <option value="">{key === 'captainId' ? 'keiner' : 'automatisch (Bester)'}</option>
-                {sorted.map((p) => <option key={p.id} value={p.id}>{p.lastName} ({Math.round(p.attributes[attr])})</option>)}
-              </Select>
-            </label>
-          );
-        })}
-      </div>
+      <TakerGrid t={t} xi={xi} squad={squad} set={set} />
       <div className="lu-mlabel">Hinweise</div>
       <ul className="lu-hints">
         {hints.length ? hints.map((h, i) => <li key={i} className={h.level}>{h.text}</li>)

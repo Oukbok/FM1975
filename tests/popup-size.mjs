@@ -172,6 +172,14 @@ for (const view of VIEWS) {
       ['Rolle 3 zeigen', () => page.locator('.txr-row').nth(2).hover({ timeout: 1500 })],
       ['Grundrolle', () => page.locator('.txr-row').nth(0).click({ timeout: 1500 })],
     ] }],
+    ['standards-reihenfolge', '.lu-takpop', async () => {
+      await nav('Aufstellung', 'Aufstellung');
+      await page.locator('button.lu-taker[data-taker="cornerL"]').click({ timeout: 3000 });
+    }, { steps: [
+      ['Leeren', () => page.locator('.lu-takpop button:has-text("Leeren")').click({ timeout: 1500 })],
+      ['Drei Beste', () => page.locator('.lu-takpop button:has-text("Die drei Besten")').click({ timeout: 1500 })],
+      ['Nach unten', () => page.locator('.lu-takpop .lu-takpop-mv button').nth(1).click({ timeout: 1500 })],
+    ] }],
     ['taktik-speichern', '.txp-pop', async () => {
       await nav('Aufstellung', 'Taktik');
       await page.locator('.txp > button.b3').click({ timeout: 3000 });

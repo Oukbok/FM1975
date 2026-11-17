@@ -332,7 +332,7 @@ export default function LineupView({ g, onChange, onGoto }: { g: G; onChange: ()
         </DashBox>
 
         <DashBox title="Kapitän & Standards" info="standards" icon="matchball" right={hints.some((h) => h.level === 'warn') ? <span className="lu-warn-n">{hints.filter((h) => h.level === 'warn').length} Hinweise</span> : undefined}>
-          <RolesAndHints t={t} xi={xiPlayers} hints={hints} set={set} />
+          <RolesAndHints t={t} xi={xiPlayers} squad={squad} hints={hints} set={set} />
         </DashBox>
       </div>
 

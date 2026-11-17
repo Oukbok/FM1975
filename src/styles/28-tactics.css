@@ -6,7 +6,12 @@
    Anweisungen in einer Spalte, rechts Eingespieltheit, Wirkung, Gegner.
    Farben nur über Tokens (Tafel: --board-*, --chalk-rgb in 00-base.css).
    ========================================================================== */
-.dpage.tx-page { grid-template-columns: 30% 34% 26%; }
+.dpage.tx-page { grid-template-columns: 34% 30% 26%; }
+/* Vier Boxen (Wunsch Pascal): oben In Ballbesitz (Tafel | Anweisungen), unten Defensive (Tafel | Anweisungen). */
+.tx-page > .tx-ball-board { grid-column: 1; grid-row: 1; }
+.tx-page > .tx-ball-instr { grid-column: 2; grid-row: 1; }
+.tx-page > .tx-def-board { grid-column: 1; grid-row: 2; }
+.tx-page > .tx-def-instr { grid-column: 2; grid-row: 2; }
 .tx-page > .tx-side { grid-column: 3; grid-row: 1 / span 2; display: flex; flex-direction: column; gap: 28px; min-height: 0; min-width: 0; }
 .tx-side > .dbox { flex: 0 0 auto; min-height: 0; }
 .tx-side > .tx-coh-box { height: 300px; }
@@ -62,6 +67,9 @@
 .txb-mag.special .txb-disc { outline: 2px solid rgba(var(--chalk-rgb), .9); outline-offset: 2px; }
 .txb-mag:hover .txb-disc, .txb-mag:focus-visible .txb-disc { transform: translateY(-2px); }
 .txb-mag:focus-visible { outline: none; }
+/* Globales button:active (translateY 1px) würde die Zentrierung überschreiben: der Magnet sprang beim
+   Drücken um eine halbe Breite weg und der Klick landete daneben (Rollenwahl ging nicht auf). */
+.txb-mag:active { transform: translate(-50%, -26px); }
 .txb-mag:focus-visible .txb-disc, .txb-mag.sel .txb-disc { box-shadow: 0 0 0 3px rgb(var(--chalk-rgb)), 0 7.5px 20.5px rgba(var(--board-shade-rgb), .6); }
 .txb-mag.sel { z-index: 4; }
 @media (prefers-reduced-motion: reduce) { .txb-mag, .txb-disc { transition: none; } }
@@ -204,3 +212,49 @@
 .txo-row.head > span { font-family: var(--font-display); font-size: 16px; font-weight: 500; letter-spacing: .8px; text-transform: uppercase; color: var(--text-3); }
 .txo-row.same > span { color: var(--text-3); font-weight: 500; }
 .txb-arrow.run { stroke-dasharray: 3 9; stroke-width: 2.6; }
+
+/* ---- Liegende Tafeln (TacticBoard, tactics/boardLayers.tsx) ------------------ */
+.dbox .tx-form { font-family: var(--font-ui); font-size: 15px; font-weight: 600; opacity: .85; white-space: nowrap; }
+.txb-land .txb-pitch { position: absolute; transform: rotate(-90deg); }
+.txb-land .txb-cap { font-family: var(--font-ui); font-size: 13.5px; font-weight: 600; letter-spacing: .2px; text-transform: none; }
+.txb-land .txb-cap.sm { font-size: 12.5px; font-weight: 500; }
+.txb-lane { fill: rgba(var(--chalk-rgb), .16); }
+.txb-ball { fill: rgb(var(--chalk-rgb)); stroke: rgba(var(--board-shade-rgb), .6); stroke-width: 1; }
+.txb-land .txb-arrow { stroke-width: 1.8; }
+.txb-arrow.cross { stroke-width: 2; }
+.txb-arrow.cross.flat { stroke-dasharray: none; }
+.txb-arrow.mixed { stroke-dasharray: 7 6; opacity: .8; }
+.txb-arrow.run { stroke-dasharray: 2 6; opacity: .75; }
+.txb-arrow.role { stroke: rgba(var(--chalk-rgb), .95); stroke-dasharray: 9 5; }
+.txb-arrow.press { stroke-width: 2.2; }
+.txb-arrow.back { stroke-dasharray: 4 5; opacity: .8; }
+.txb-land .txb-tempo path { stroke-width: 2.2; }
+.txb-land .txb-mag { width: 100px; transform: translate(-50%, -17px); gap: 1px; }
+/* Globales button:active darf die Zentrierung nicht überschreiben (Klick traf sonst daneben). */
+.txb-land .txb-mag:active { transform: translate(-50%, -17px); }
+.txb-land .txb-disc { width: 34px; height: 34px; font-size: 14px; box-shadow: 0 2px 0 rgba(var(--board-shade-rgb), .55), 0 4px 10px rgba(var(--board-shade-rgb), .5); }
+.txb-land .txb-name { font-size: 13px; max-width: 100px; }
+.txb-land .txb-role { font-size: 11.5px; max-width: 100px; }
+.txb-land .txb-mag.special .txb-disc { outline-width: 1.5px; }
+/* Rollenwahl kompakt, passt in die halbe Höhe */
+.txb-land .txr-head { padding: 6px 6px 6px 14px; }
+.txb-land .txr-head b { font-size: 17px; }
+.txb-land .txr-head i { font-size: 14px; }
+.txb-land .txr-x { width: 30px; height: 30px; }
+.txb-land .txr-row { height: 33px; font-size: 15px; gap: 10px; padding: 0 14px; }
+.txb-land .txr-dot { flex-basis: 14px; width: 14px; height: 14px; }
+.txb-land .txr-tag { font-size: 13px; }
+.txb-land .txr-text { padding: 8px 14px 10px; }
+.txb-land .txr-text b { font-size: 13px; }
+.txb-land .txr-text p { font-size: 14px; line-height: 1.32; }
+/* Anweisungen kompakt (halbe Höhe) */
+.tx-instr-box .txi-rows { padding: 0 16px; }
+.tx-instr-box .txi-h { margin: 8px 0 1px; height: 22px; font-size: 16px; }
+.tx-instr-box .txi-row { grid-template-columns: 112px minmax(0, 1fr); gap: 12px; height: 40px; }
+.tx-instr-box .txi-label { font-size: 15.5px; }
+.tx-instr-box .txi-steps { height: 34px; border-radius: 6px; }
+.tx-instr-box .txi-step { font-size: 13.5px; }
+.tx-instr-box .txi-foot { flex: 0 0 66px; height: 66px; margin-top: 4px; padding: 8px 16px 0; }
+.tx-instr-box .txi-foot p { font-size: 14px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.tx-instr-box .txi-foot p b { color: var(--text); }
+.tx-instr-box .txi-foot-note { color: var(--text-3); }

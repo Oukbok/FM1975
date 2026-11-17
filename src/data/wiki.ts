@@ -1291,8 +1291,9 @@ Beim Laden werden die früheren Kürzel umgerechnet: VS → IV, AV → RV/LV, FL
     keywords: ['taktik', 'tempo', 'pressing', 'abseitsfalle', 'aufbau', 'anweisung', 'taktiktafel', 'deckung', 'manndeckung', 'raumdeckung', 'gegenpressing', 'vorlage', 'stufen'],
     body: `## Die Taktik-Seite
 Unter **Aufstellung › Taktik** steht alles auf einen Blick:
-- **Links die Taktiktafel.** Das Feld zeigt, was deine Anweisungen bedeuten. Ansicht *Gegen den Ball*: Abwehrlinie, Pressingzone, Abseitsfalle und die Deckung (Gegenspieler-Kreise bei Manndeckung, Bänder bei Raumdeckung). Ansicht *Mit Ball*: Breite, Aufbau (kurze Pässe oder langer Ball), Flanken (Bogen = hoch, Strich = flach) und Tempo. Änderst du eine Anweisung, springt die Tafel in die passende Ansicht und die Spieler rücken an ihren neuen Platz. Ein Klick auf einen Spieler wählt seine **Rolle** (siehe *Rollen der Spieler*).
-- **In der Mitte die Anweisungen** in drei Abschnitten: Grundausrichtung, mit Ball, gegen den Ball. Jede Anweisung ist eine Zeile mit festen **Stufen** – keine Regler mehr. Fährst du mit der Maus über eine Stufe, steht unten, was sie bringt und kostet. Der kleine Strich unter einer Stufe zeigt, was die Mannschaft **eingeübt** hat.
+- **Vier Boxen:** oben die Tafel **In Ballbesitz** mit ihren Anweisungen (Grundausrichtung und Mit Ball, dazu Vorlagen und eigene Taktiken), unten die Tafel **Defensive** mit den Anweisungen gegen den Ball. Die Tafeln liegen quer – dein Tor links, Angriff nach rechts.
+- **Auf den Tafeln steht nur, was aus deinen Anweisungen folgt.** In Ballbesitz: die Angriffszonen (hell = dort laufen die meisten Angriffe; Mitte, Mitte und Flügel oder Flügel), der Aufbau (gestrichelte Kurzpasskette oder ein langer Ball in die Spitze), Flanken nur, wenn über außen gespielt wird (Bogen = hoch, Strich in den Rückraum = flach, gestrichelt = gemischt; bei *Eher Flügel*/*Flügel* läuft der Flankengeber bis zur Grundlinie), das Tempo als Pfeilspitzen, die Mentalität über die Lage und die Laufwege besonderer Rollen (offensiver Außenverteidiger hinterläuft, inverser/einrückender Flügel zieht nach innen, Konterstürmer startet in die Tiefe, Schattenstürmer/zweite Spitze stoßen in den Strafraum, Antreiber und freier Mann rücken auf). Defensive: Pressingzone und -höhe, Abwehrlinie (mit Fahnen bei Abseitsfalle), Deckung (Gegenspieler-Kreise bei Manndeckung, Blöcke bei Raumdeckung), Zweikampfhärte und was nach einem Ballverlust passiert (Gegenpressing: die Nächsten laufen zum Ball; Ordnen: die vorderen Spieler fallen zurück).
+- Ein Klick auf einen Spieler wählt seine **Rolle** (siehe *Rollen der Spieler*). Jede Anweisung ist eine Zeile mit festen **Stufen**; fährst du mit der Maus darüber, steht unten, was sie bringt und kostet. Der kleine Strich unter einer Stufe zeigt, was die Mannschaft **eingeübt** hat.
 - **Rechts** die *Eingespieltheit* (siehe eigener Artikel), die gemessene *Wirkung im Spiel* und der *nächste Gegner* im direkten Vergleich mit deinen Einstellungen.
 
 Die Taktik entscheidet, **auf welchem Weg** deine Elf angreift (Kombination durch die Mitte, Flanke, Steilpass, Dribbling, langer Ball, Konter) und verschiebt die **Einzelduelle** (siehe *So rechnet die Match-Engine*).
@@ -1416,14 +1417,15 @@ Jede Mannschaft hat eine Taktik „im Kopf“: die Anweisungen, die sie eingeüb
     title: 'Standardschützen & Kapitän',
     keywords: ['standard', 'elfmeter', 'freistoß', 'ecke', 'kapitän', 'schütze'],
     body: `## Standardschützen
-Im Kasten **Kapitän & Standards** auf der Aufstellungsseite legst du fest, wer ruhende Bälle ausführt. Zur Auswahl stehen nur Spieler der aktuellen Startelf, sortiert nach dem passenden Attribut:
+Im Kasten **Kapitän & Standards** auf der Aufstellungsseite legst du für jeden Standard eine **Reihenfolge** fest (bis zu fünf Spieler): Ein Klick öffnet ein kleines Fenster, dort wählst du die Plätze 1, 2, 3 … und schiebst sie mit den Pfeilen hoch oder runter. Es führt der Erste aus, der auf dem Platz steht; fehlt er, wird er ausgewechselt oder fliegt er vom Platz, übernimmt der Nächste. Steht keiner aus der Liste auf dem Platz, nimmt das Spiel den Feldspieler mit dem besten Wert. In der Box ist der aktuelle Schütze fett, Spieler außerhalb der Elf sind durchgestrichen.
 
-- **Elfmeter** – nach Attribut *Elfmeter*
-- **Freistoß** – nach Attribut *Freistöße*
-- **Ecke** – nach Attribut *Ecken*
-- **Kapitän** – nach Attribut *Führung*
+- **Kapitän** – nach Attribut *Führung*; wird er ausgewechselt, trägt der Nächste der Reihenfolge die Binde
+- **Elfmeter** – nach *Elfmeter*; im Elfmeterschießen treten zuerst die Spieler deiner Reihenfolge an
+- **Freistöße direkt** – nach *Freistöße* (Schuss aufs Tor)
+- **Freistöße als Flanke** – nach *Flanken* (Hereingabe in den Strafraum; leer = die Schützen für direkte Freistöße)
+- **Ecken von links** und **Ecken von rechts** – getrennt, nach *Ecken*; die Ecken wechseln zwischen links und rechts
 
-Der gewählte Schütze wird in der Simulation bei der jeweiligen Standardsituation bevorzugt – ein guter Elfmeterschütze erhöht die Verwandlungschance. Bei *automatisch (Bester)* nimmt das Spiel den Feldspieler mit dem besten Wert. Der **Kapitän** trägt die Binde (Kennzeichen K) und gibt im Textmodus den Zurufen Gewicht: Je besser seine Führungsqualität, desto stärker wirkt ein Zuruf.`,
+Ein guter Schütze verbessert die jeweilige Situation – ein guter Elfmeterschütze erhöht die Verwandlungschance, ein guter Eckenschütze die Qualität der Hereingabe. Der **Kapitän** trägt die Binde (Kennzeichen K) und gibt im Textmodus den Zurufen Gewicht: Je besser seine Führungsqualität, desto stärker wirkt ein Zuruf.`,
   },
   {
     id: 'match',

@@ -235,7 +235,7 @@ export const INFO_TEXTS = {
   // ---------------------------------------------------------------- Taktik
   taktiktafel: {
     title: 'Taktiktafel',
-    text: 'Das Feld zeigt, was deine Anweisungen bedeuten: „Gegen den Ball“ mit Abwehrlinie, Pressingzone, Abseitsfalle und Deckung, „Mit Ball“ mit Breite, Aufbau, Flanken und Tempo. Klick auf einen Spieler, um seine Rolle zu wählen.',
+    text: 'Die Tafel zeigt nur, was aus deinen Anweisungen und Rollen folgt – „In Ballbesitz“: Angriffszonen, Aufbau, Flanken, Tempo, Laufwege; „Defensive“: Pressing, Abwehrlinie, Deckung, Ballverlust. Klick auf einen Spieler, um seine Rolle zu wählen.',
     wiki: 'tactic-options',
   },
   anweisungen: {

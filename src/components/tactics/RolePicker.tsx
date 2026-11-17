@@ -8,7 +8,7 @@ import type { Player, Position } from '../../types';
 import { ROLES, roleFor, roleRef, roleStars, type RoleDef } from '../../engine/tacticRoles';
 import Icon from '../Icon';
 
-const W = 384, H = 424; // px (Entwurfsgröße der Seite)
+const W = 330, H = 300; // px (Entwurfsgröße der Seite; passt in die halbe Höhe der liegenden Tafel)
 
 export function RolePicker({ spot, position, player, year, value, rating, onPick, onClose }: {
   spot: { x: number; y: number }; position: Position; player?: Player; year: number; value: string; rating: number;
@@ -23,7 +23,7 @@ export function RolePicker({ spot, position, player, year, value, rating, onPick
   const left = spot.x < 50;
   return (
     <div className="txr" role="dialog" aria-label={`Rolle ${position}`} onClick={(e) => e.stopPropagation()}
-      style={{ width: W, height: H, left: left ? `calc(${spot.x}% + 44px)` : `calc(${spot.x}% - ${W + 44}px)`, top: `clamp(8px, calc(${spot.y}% - ${H / 2}px), calc(100% - ${H + 8}px))` }}>
+      style={{ width: W, height: H, left: left ? `calc(${spot.x}% + 30px)` : `calc(${spot.x}% - ${W + 30}px)`, top: `clamp(8px, calc(${spot.y}% - ${H / 2}px), calc(100% - ${H + 8}px))` }}>
       <div className="txr-head">
         <span><b>{player ? player.lastName : 'Freier Platz'}</b><i>{position}</i></span>
         <button type="button" className="txr-x" aria-label="Schließen" onClick={onClose}><Icon name="close" size={16} /></button>

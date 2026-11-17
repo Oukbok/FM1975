@@ -173,15 +173,25 @@ const slotPos = (page, id) => slot(page, id).locator('.lu-card-pos').innerText()
   await drag(page, await center(slot(page, 's3')), await center(slot(page, 's4')), { hold: async () => { await page.keyboard.press('Escape'); } });
   check(await slotPid(page, 's3') === e3 && await slotPid(page, 's4') === e4 && await page.locator('.lu-ghost').count() === 0, 'Escape bricht das Ziehen ab');
 
-  // Kapitän + Elfmeter setzen
-  const capSel = page.locator('.sel3[data-role="captainId"]');
+  // Kapitän + Elfmeter: Reihenfolge im Popup (lineup/TakerOrders.tsx)
+  await page.locator('button.lu-taker[data-taker="captain"]').click();
+  const capSel = page.locator('.lu-takpop .sel3[data-role="taker-0"]');
   const capVal = (await optionsOf(page, capSel))[3].value;
   await pickOption(page, capSel, capVal);
-  const penSel = page.locator('.sel3[data-role="penaltyTakerId"]');
-  const penVal = (await optionsOf(page, penSel))[2].value;
-  await pickOption(page, penSel, penVal);
+  await page.locator('.lu-takpop button:has-text("Fertig")').click();
+  await page.locator('button.lu-taker[data-taker="penalty"]').click();
+  await page.locator('.lu-takpop button:has-text("Leeren")').click();
+  const pen0 = page.locator('.lu-takpop .sel3[data-role="taker-0"]');
+  const penVal = (await optionsOf(page, pen0))[2].value;
+  await pickOption(page, pen0, penVal);
+  const pen1 = page.locator('.lu-takpop .sel3[data-role="taker-1"]');
+  const penVal2 = (await optionsOf(page, pen1))[1].value;
+  await pickOption(page, pen1, penVal2);
+  check(await valueOf(pen0) === penVal && await valueOf(pen1) === penVal2 && penVal !== penVal2, 'Elfmeter: Reihenfolge mit zwei Schützen');
+  await page.screenshot({ path: `${outDir}/1975_standards_popup_1920.png` });
+  await page.locator('.lu-takpop button:has-text("Fertig")').click();
   check(await page.locator(`.lu-slot[data-pid="${capVal}"] .lu-cap`).count() === 1, 'Kapitänsbinde auf der Karte');
-  check(await valueOf(penSel) === penVal, 'Elfmeterschütze gesetzt');
+  check(await page.locator('button.lu-taker[data-taker="penalty"] .lu-taker-n').count() === 2, 'Box zeigt zwei Elfmeterschützen');
 
   // Klick öffnet das Spielerprofil
   await slot(page, 's1').click();

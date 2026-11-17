@@ -23,6 +23,8 @@ export interface SavedLineup {
   penaltyTakerId: string | null;
   freeKickTakerId: string | null;
   cornerTakerId: string | null;
+  /** Reihenfolgen Kapitän/Standards (ältere Einträge ohne). */
+  takers?: Tactics['takers'];
 }
 
 export const MAX_SAVED = 12;
@@ -38,7 +40,7 @@ export function saveLineup(g: Game, t: Tactics, name: string): SavedLineup | nul
     id: `lu${Date.now().toString(36)}${list.length}`, name: name.trim() || `Aufstellung ${list.length + 1}`, date: g.calendar.currentDate,
     formation: t.formation, lineupMap: { ...(t.lineupMap ?? {}) }, substitutes: [...(t.substitutes ?? [])],
     slotLayout: t.slotLayout ? JSON.parse(JSON.stringify(t.slotLayout)) : undefined,
-    captainId: t.captainId, penaltyTakerId: t.penaltyTakerId, freeKickTakerId: t.freeKickTakerId, cornerTakerId: t.cornerTakerId,
+    captainId: t.captainId, penaltyTakerId: t.penaltyTakerId, freeKickTakerId: t.freeKickTakerId, cornerTakerId: t.cornerTakerId, takers: t.takers ? JSON.parse(JSON.stringify(t.takers)) : undefined,
   };
   list.push(s);
   return s;
@@ -60,6 +62,7 @@ export function loadLineup(g: Game, t: Tactics, s: SavedLineup, benchSize: numbe
   t.penaltyTakerId = keep(s.penaltyTakerId) ?? t.penaltyTakerId;
   t.freeKickTakerId = keep(s.freeKickTakerId) ?? t.freeKickTakerId;
   t.cornerTakerId = keep(s.cornerTakerId) ?? t.cornerTakerId;
+  if (s.takers) t.takers = Object.fromEntries(Object.entries(s.takers).map(([k, ids]) => [k, (ids ?? []).filter((id) => keep(id))])) as Tactics['takers'];
   syncLineup(t, benchSize);
   return missing;
 }

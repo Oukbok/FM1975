@@ -322,3 +322,21 @@
 .lu-sec-head td { font: 700 13px var(--font-ui); letter-spacing: .6px; }
 .lu-right > .dbox:nth-child(2) { flex: 1.22 1 0; }
 .lu-table th.lu-h-pos { width: 58px; }
+
+/* Kapitän & Standards: Reihenfolgen (lineup/TakerOrders.tsx) */
+.lu-takers { grid-template-columns: 1fr 1fr; gap: 6px 12px; }
+.lu-taker { all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; gap: 3px; font-size: 13px; color: var(--text-3); }
+.lu-taker-box { display: flex; align-items: center; gap: 4px 10px; flex-wrap: nowrap; overflow: hidden; height: 38px; padding: 0 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel-2); }
+.lu-taker:hover .lu-taker-box, .lu-taker:focus-visible .lu-taker-box { border-color: var(--border-strong); }
+.lu-taker-n { white-space: nowrap; font-size: 14px; color: var(--text-2); }
+.lu-taker-n.on { color: var(--text); font-weight: 700; }
+.lu-taker-n.out { color: var(--text-3); text-decoration: line-through; }
+.lu-taker-n.auto, .lu-taker-n.more { color: var(--text-3); }
+.lu-takpop { width: 520px; height: 520px; display: flex; flex-direction: column; padding: 20px 22px; }
+.lu-takpop-note { margin: 10px 0 12px; font-size: 14px; color: var(--text-2); line-height: 1.45; }
+.lu-takpop-list { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+.lu-takpop-row { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 10px; }
+.lu-takpop-i { font-size: 16px; color: var(--text-2); }
+.lu-takpop-mv { display: flex; gap: 4px; }
+.lu-takpop-foot { display: flex; align-items: center; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border-soft); }
+.lu-takpop-sp { flex: 1; }

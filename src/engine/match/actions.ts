@@ -252,9 +252,11 @@ export function shootoutKick(sim: MatchSim): void {
   const side = s.next;
   const T = sim.team(side);
   const O = sim.team(side === 'home' ? 'away' : 'home');
+  // Elfmeterschießen: zuerst die Reihenfolge der Elfmeterschützen, dann nach Können.
+  const ord = T.orders?.penalty ?? (T.penaltyTakerId ? [T.penaltyTakerId] : []);
+  const rank = (id: string) => { const i = ord.indexOf(id); return i < 0 ? 99 : i; };
   const takers = onPitch(T).slice().sort((a, b) => {
-    if (a.id === T.penaltyTakerId) return -1;
-    if (b.id === T.penaltyTakerId) return 1;
+    if (rank(a.id) !== rank(b.id)) return rank(a.id) - rank(b.id);
     return (b.p.attributes.penalties ?? 50) + b.p.attributes.composure * 0.3 - ((a.p.attributes.penalties ?? 50) + a.p.attributes.composure * 0.3);
   });
   const idx = side === 'home' ? s.kicksH : s.kicksA;

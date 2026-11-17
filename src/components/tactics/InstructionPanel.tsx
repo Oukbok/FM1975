@@ -11,10 +11,11 @@ import { tacticEraNotes } from '../../engine/tacticEra';
 import Icon from '../Icon';
 import { INSTRUCTIONS, INSTR_BY_KEY, SECTION_LABEL, instructionState, type InstrKey, type Section } from './instructions';
 
-const SECTIONS: Section[] = ['grund', 'ball', 'gegen'];
 
-export function InstructionPanel({ t, year, set, drilled }: {
+export function InstructionPanel({ t, year, set, drilled, sections }: {
   t: Tactics; year: number; set: (p: Partial<Tactics>) => void;
+  /** Abschnitte dieser Box (Wunsch Pascal: In Ballbesitz = Grundausrichtung + Mit Ball, Defensive = Gegen den Ball). */
+  sections: Section[];
   /** Eingeübte Wahl je Anweisung (Index) – fehlt = keine Markierung. */
   drilled?: Partial<Record<InstrKey, number>>;
 }) {
@@ -27,7 +28,7 @@ export function InstructionPanel({ t, year, set, drilled }: {
   return (
     <div className="txi" onMouseLeave={() => setFocus(null)}>
       <div className="txi-rows">
-        {SECTIONS.map((sec) => (
+        {sections.map((sec) => (
           <section key={sec} className="txi-sec">
             <h4 className="txi-h">{SECTION_LABEL[sec]}</h4>
             {INSTRUCTIONS.filter((d) => d.section === sec).map((d) => (
@@ -54,20 +55,10 @@ export function InstructionPanel({ t, year, set, drilled }: {
       </div>
       <div className="txi-foot" aria-live="polite">
         {fd && focus ? (
-          <>
-            <div className="txi-foot-h"><b>{fd.label}</b><span>{fd.opts[focus.i].label}</span></div>
-            <p>{lock ?? fd.opts[focus.i].text}</p>
-            {!lock && dIdx != null && dIdx !== focus.i && <p className="txi-foot-note">Eingeübt ist „{fd.opts[dIdx].label}“ – die Umstellung braucht Training und Spiele.</p>}
-            {lock && <p className="txi-foot-note">{fd.about}</p>}
-          </>
+          <p><b>{fd.label} · {fd.opts[focus.i].label}:</b> {lock ?? fd.opts[focus.i].text}
+            {!lock && dIdx != null && dIdx !== focus.i && <span className="txi-foot-note"> Eingeübt ist „{fd.opts[dIdx].label}“ – die Umstellung braucht Training und Spiele.</span>}</p>
         ) : (
-          <>
-            <div className="txi-foot-h"><b>Taktik der Zeit</b><span>Saison {year}/{String((year + 1) % 100).padStart(2, '0')}</span></div>
-            <ul className="txi-era">
-              {era.now.map((x) => <li key={x}>{x}</li>)}
-              {era.next && <li className="next">Ab {era.next.year}: {era.next.text}</li>}
-            </ul>
-          </>
+          <p><b>Taktik der Zeit {year}/{String((year + 1) % 100).padStart(2, '0')}:</b> {era.now.join(' ')}{era.next ? <span className="txi-foot-note"> Ab {era.next.year}: {era.next.text}</span> : null}</p>
         )}
       </div>
     </div>

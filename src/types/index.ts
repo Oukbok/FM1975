@@ -1107,6 +1107,9 @@ export interface ClubInfrastructure {
 // 10. VEREIN
 // -----------------------------------------------------------------------------
 
+/** Kapitän und Standards mit eigener Reihenfolge (Ecken von links und rechts getrennt). */
+export type TakerKind = 'captain' | 'penalty' | 'fkDirect' | 'fkCross' | 'cornerL' | 'cornerR';
+
 /** Grundausrichtung / Taktik eines Vereins. */
 export type TacticStyle = 'defensive' | 'balanced' | 'attacking' | 'counter';
 
@@ -1133,6 +1136,9 @@ export interface Tactics {
   freeKickTakerId: string | null;
   /** Eckenschütze (Spieler-ID). */
   cornerTakerId: string | null;
+  /** Reihenfolgen für Kapitän und Standards (Wunsch Pascal; engine/setPieceOrder.ts): spielt der Erste
+   *  nicht oder ist ausgewechselt, übernimmt der Nächste. Fehlt die Liste, gelten die Einzel-IDs oben. */
+  takers?: Partial<Record<TakerKind, string[]>>;
 
   // --- Erweiterte Aufstellung & Taktik (optional; alte Spielstände ohne) ---
   /** Zuordnung Formations-Slot-ID → Spieler-ID (maßgeblich für die Startelf). */

@@ -17,9 +17,12 @@ const sq = (v: number) => (v / 60) * (v / 60);
 /** Grund-Logit des Kopfballduells bei Standards (Verteidiger stehen dicht, Angreifer laufen an). */
 const B_SP = -0.2;
 
-function bestBy(ms: MPlayer[], id: string | null, f: (m: MPlayer) => number): MPlayer | undefined {
-  const chosen = id ? ms.find((m) => m.id === id) : undefined;
-  if (chosen) return chosen;
+/** Schütze: der Erste der Reihenfolge(n) auf dem Platz, sonst der Beste nach `f`. */
+function bestBy(ms: MPlayer[], ids: (string | null | undefined)[], f: (m: MPlayer) => number): MPlayer | undefined {
+  for (const id of ids) {
+    const chosen = id ? ms.find((m) => m.id === id) : undefined;
+    if (chosen) return chosen;
+  }
   let best: MPlayer | undefined; let bv = -1;
   for (const m of ms) { const v = f(m); if (v > bv) { bv = v; best = m; } }
   return best;
@@ -56,7 +59,11 @@ function setPieceDelivery(sim: MatchSim, T: TeamState, O: TeamState, taker: MPla
 export function corner(sim: MatchSim, T: TeamState, O: TeamState, _by?: MPlayer): void {
   T.stats.corners++;
   const fT = fieldOf(T);
-  const taker = bestBy(fT, T.cornerTakerId, (m) => m.p.attributes.corners ?? m.p.attributes.crossing);
+  // Ecken abwechselnd von links und rechts (eigene Reihenfolgen, engine/setPieceOrder.ts).
+  const left = T.stats.corners % 2 === 1;
+  const o = T.orders;
+  const order = o ? [...(o[left ? 'cornerL' : 'cornerR'] ?? []), ...(o[left ? 'cornerR' : 'cornerL'] ?? [])] : [];
+  const taker = bestBy(fT, [...order, T.cornerTakerId], (m) => m.p.attributes.corners ?? m.p.attributes.crossing);
   sim.emit('corner', { side: T.side, player: taker?.id });
   if (!taker) return;
   const rng = sim.rng;
@@ -81,11 +88,11 @@ export function freeKick(sim: MatchSim, T: TeamState, O: TeamState, _victim?: MP
   const fT = fieldOf(T);
   const r = rng();
   if (r < 0.3) {
-    const taker = bestBy(fT, T.freeKickTakerId, (m) => m.p.attributes.freeKicks ?? 50);
+    const taker = bestBy(fT, [...(T.orders?.fkDirect ?? []), T.freeKickTakerId], (m) => m.p.attributes.freeKicks ?? 50);
     if (taker) return void shot(sim, T, O, { build: 'freistoss', type: 'freekick', shooter: taker, q: 1, sp: 'freekick' });
   }
   if (r < 0.78) {
-    const taker = bestBy(fT, T.freeKickTakerId ?? T.cornerTakerId, (m) => (m.p.attributes.freeKicks ?? 50) * 0.4 + m.p.attributes.crossing * 0.6);
+    const taker = bestBy(fT, [...(T.orders?.fkCross ?? []), ...(T.orders?.fkDirect ?? []), T.freeKickTakerId, T.cornerTakerId], (m) => (m.p.attributes.freeKicks ?? 50) * 0.4 + m.p.attributes.crossing * 0.6);
     if (!taker) return;
     const a = taker.p.attributes;
     setPieceDelivery(sim, T, O, taker, ((a.freeKicks ?? 50) * 0.4 + a.crossing * 0.5 + a.technique * 0.1) * taker.cond, 'freekick');
@@ -94,7 +101,7 @@ export function freeKick(sim: MatchSim, T: TeamState, O: TeamState, _victim?: MP
 
 export function penalty(sim: MatchSim, T: TeamState, O: TeamState): void {
   const field = fieldOf(T);
-  const taker = bestBy(field, T.penaltyTakerId, (m) => (m.p.attributes.penalties ?? 0) + m.p.attributes.composure * 0.2);
+  const taker = bestBy(field, [...(T.orders?.penalty ?? []), T.penaltyTakerId], (m) => (m.p.attributes.penalties ?? 0) + m.p.attributes.composure * 0.2);
   if (!taker) return;
   const keeper = keeperOf(O);
   // Elfmeter: immer Druck (mindestens 0,6), dazu Spielsituation → Nervenstärke von Schütze und Torwart.

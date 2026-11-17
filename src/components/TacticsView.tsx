@@ -1,10 +1,10 @@
 // =============================================================================
 // TAKTIK (Aufstellung › Taktik) – Wunsch Pascal: übersichtlich und geordnet
 // -----------------------------------------------------------------------------
-// Links die Taktiktafel: das Spielfeld zeigt, was die Anweisungen bedeuten (zwei
-// Ansichten: mit Ball / gegen den Ball), ein Klick auf einen Spieler wählt seine
-// Rolle. In der Mitte alle Anweisungen in drei Abschnitten, jede Zeile gleich
-// gebaut (fünf Stufen bzw. Wahl), dazu Vorlagen und eigene gespeicherte Taktiken.
+// Vier Boxen (Wunsch Pascal): oben die Tafel „In Ballbesitz“ mit ihren Anweisungen
+// (Grundausrichtung + Mit Ball, dazu Vorlagen/eigene Taktiken), unten die Tafel
+// „Defensive“ mit den Anweisungen gegen den Ball. Die Tafeln zeigen nur, was aus
+// den gewählten Anweisungen und Rollen folgt; ein Klick auf einen Spieler wählt seine Rolle.
 // Rechts: Eingespieltheit, gemessene Wirkung im Spiel, nächster Gegner im Vergleich.
 // Liest/schreibt direkt g.clubs[managedClubId].tactics (wie LineupView).
 // Teile in components/tactics/, CSS 28-tactics.css.
@@ -18,10 +18,9 @@ import { seasonYearOf } from '../engine/match/era';
 import { CalendarEngine } from '../engine/calendar';
 import { nextOpponent } from '../game/opponentView';
 import { DashBox, DashPage } from '../ui/DashPage';
-import Seg from '../ui/Seg';
 import { effectiveFormation } from './lineup/lineupOps';
 import { InstructionPanel } from './tactics/InstructionPanel';
-import { INSTRUCTIONS, type InstrKey } from './tactics/instructions';
+import { INSTRUCTIONS, type InstrKey, type Section } from './tactics/instructions';
 import { CohesionBox, OpponentBox } from './tactics/SideBoxes';
 import { TacticBoard, type BoardPhase } from './tactics/TacticBoard';
 import { TacticEffect } from './tactics/TacticEffect';
@@ -31,7 +30,6 @@ export default function TacticsView({ g, onChange }: { g: Game; onChange: () => 
   const myClub = g.clubs[g.managedClubId];
   const t: Tactics = myClub.tactics;
   const [, force] = useState(0);
-  const [phase, setPhase] = useState<BoardPhase>('gegen');
   const year = seasonYearOf(g.calendar.currentDate);
   const set = (patch: Partial<Tactics>) => { Object.assign(t, patch); force((n) => n + 1); onChange(); };
   const setRole = (slotId: string, roleId: string | null) => {
@@ -54,25 +52,21 @@ export default function TacticsView({ g, onChange }: { g: Game; onChange: () => 
     return out;
   }, [drilledKey, year]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const board = (phase: BoardPhase) => <TacticBoard t={t} year={year} formation={formation} players={g.players} phase={phase} setRole={setRole} />;
+  const panel = (sections: Section[]) => <InstructionPanel t={t} year={year} set={set} drilled={drilled} sections={sections} />;
   return (
     <DashPage className="tx-page">
-      <DashBox title="Taktiktafel" info="taktiktafel" rows={2} flush className="tx-board-box"
-        right={<span className="tx-headr">
-          <span className="tx-form">{getFormation(t.formation).label}</span>
-          <Seg<BoardPhase> size="s" value={phase} onChange={setPhase} aria-label="Ansicht der Taktiktafel"
-            options={[{ v: 'ball', label: 'Mit Ball' }, { v: 'gegen', label: 'Gegen den Ball' }]} />
-        </span>}>
-        <TacticBoard t={t} year={year} formation={formation} players={g.players} phase={phase} setRole={setRole} />
+      <DashBox title="In Ballbesitz" info="taktiktafel" flush className="tx-board-box tx-ball-board" right={<span className="tx-form">{getFormation(t.formation).label}</span>}>
+        {board('ball')}
       </DashBox>
-
-      <DashBox title="Anweisungen" info="anweisungen" rows={2} flush className="tx-instr-box" right={<TacticPresets g={g} t={t} year={year} set={set} />}>
-        <InstructionPanel t={t} year={year} set={(p) => {
-          set(p);
-          // Die Tafel zeigt die Ansicht, zu der die geänderte Anweisung gehört.
-          const k = Object.keys(p)[0];
-          if (['buildup', 'tempo', 'widthFocus', 'crossStyle'].includes(k)) setPhase('ball');
-          else if (['marking', 'pressing', 'defensiveLine', 'offsideTrap'].includes(k)) setPhase('gegen');
-        }} drilled={drilled} />
+      <DashBox title="Anweisungen" info="anweisungen" flush className="tx-instr-box tx-ball-instr" right={<TacticPresets g={g} t={t} year={year} set={set} />}>
+        {panel(['grund', 'ball'])}
+      </DashBox>
+      <DashBox title="Defensive" info="taktiktafel" flush className="tx-board-box tx-def-board">
+        {board('gegen')}
+      </DashBox>
+      <DashBox title="Anweisungen" info="anweisungen" flush className="tx-instr-box tx-def-instr">
+        {panel(['gegen'])}
       </DashBox>
 
       <div className="tx-side">

@@ -1,6 +1,7 @@
 // =============================================================================
 // Laufzeit-Zustand einer Mannschaft in der Simulation.
 // =============================================================================
+import type { TakerKind } from '../../types';
 import { teamBoostOf } from '../teamBoost';
 import type { Club, Tactics } from '../../types';
 import type { FormationSlot } from '../../data/formations';
@@ -42,6 +43,8 @@ export interface TeamState {
   freeKickTakerId: string | null;
   cornerTakerId: string | null;
   captainId: string | null;
+  /** Reihenfolgen für Kapitän/Standards (engine/setPieceOrder.ts); fehlt sie, gelten die Einzel-IDs. */
+  orders?: Partial<Record<TakerKind, string[]>>;
   dirty: boolean;
   /** Zwischenspeicher der Spieler auf dem Platz (null = neu berechnen). */
   pitch: MPlayer[] | null;

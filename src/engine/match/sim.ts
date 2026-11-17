@@ -4,6 +4,7 @@
 // (step() je Minute + Eingriffe des Trainers). Ergebnisse werden in finish()
 // identisch verbucht.
 // =============================================================================
+import { TAKER_KINDS, firstPresent, takerOrder } from '../setPieceOrder'; // Reihenfolgen Kapitän/Standards (Wunsch Pascal)
 import { simulateSeatSales, type SeatSale } from '../seating';
 import { attendanceRestriction } from '../../data/history';
 import type { Club, InjurySeverity, Player, Position } from '../../types';
@@ -161,14 +162,15 @@ export class MatchSim {
     refreshSkills();
     const t = club.tactics;
     const xiIds = new Set(lu.xi.map((x) => x.p.id));
-    const pick = (id: string | null | undefined) => (id && xiIds.has(id) ? id : null);
+    const orders = Object.fromEntries(TAKER_KINDS.map(({ kind }) => [kind, takerOrder(t, kind)])) as TeamState['orders'] & object;
+    const firstXi = (kind: keyof typeof orders, legacy: string | null | undefined) => firstPresent(orders[kind] ?? [], (id) => xiIds.has(id)) ?? (legacy && xiIds.has(legacy) ? legacy : null);
     const team: TeamState = {
       side, club, human, own: savedLineup, players: ps, formation: lu.formation,
       refs: { attack: 1, control: 1, defense: 1 }, units: null as never, mods: null as never, plan: null as never, year: this.era.year,
       goals: 0, stats: emptyStats(), mentality: 0, subsUsed: 0,
       shout: null, shoutUntil: 0, shoutPower: 0, shoutReadyAt: 0, shoutHistory: [], talk: 1,
-      penaltyTakerId: pick(t?.penaltyTakerId), freeKickTakerId: pick(t?.freeKickTakerId),
-      cornerTakerId: pick(t?.cornerTakerId), captainId: pick(t?.captainId), dirty: true, pitch: null, field: null,
+      penaltyTakerId: firstXi('penalty', t?.penaltyTakerId), freeKickTakerId: firstXi('fkDirect', t?.freeKickTakerId),
+      cornerTakerId: firstXi('cornerL', t?.cornerTakerId), captainId: firstXi('captain', t?.captainId), orders, dirty: true, pitch: null, field: null,
       layout: lu.slots ? { formation: lu.formation, slots: lu.slots, map } : undefined,
       coach: human ? { autoSubs: false } : undefined,
     };
@@ -469,10 +471,8 @@ export class MatchSim {
     if (t.layout) for (const k in t.layout.map) if (t.layout.map[k] === outId) t.layout.map[k] = inId;
     t.subsUsed++;
     lineupChanged(t);
-    if (t.captainId === out.id) t.captainId = null;
-    if (t.penaltyTakerId === out.id) t.penaltyTakerId = null;
-    if (t.freeKickTakerId === out.id) t.freeKickTakerId = null;
-    if (t.cornerTakerId === out.id) t.cornerTakerId = null;
+    if (t.captainId === out.id) t.captainId = firstPresent(t.orders?.captain ?? [], (id) => t.players.some((m) => m.id === id && m.onPitch)); // Binde an den Nächsten der Reihenfolge
+    // Schützen: setpieces.ts nimmt den Nächsten der Reihenfolge, der auf dem Platz steht.
     this.incident(0.5);
     this.emit('sub', { side, player: inId, other: outId, detail: reason });
     return true;
