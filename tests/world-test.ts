@@ -24,6 +24,10 @@ import type { Game } from '../src/game/state';
 import { leanDates, leanGames, leanMatchdays, leanPairs, leanTable, leanWinPts, worldLiveDiv } from '../src/game/worldLeagues';
 import { leanCupDates, leanCupRounds, leanCupRoundsN, leanCupWinner } from '../src/game/worldCups';
 import { leanCupScorers, leanScorers } from '../src/game/worldScorers';
+import { buildClubProfile } from '../src/game/clubProfile';
+import { worldPlacesOf } from '../src/engine/worldPlaces';
+import { migrateWorldPlaces } from '../src/game/worldPlacesSeed';
+import { clubTransfersOf, transferSeasons } from '../src/game/clubTransfers';
 import { countryMatchdays, countrySeasons, countrySnapshot, pickSeason, statsCountries } from '../src/game/competitionCountry';
 
 const store = new Map<string, string>();
@@ -172,6 +176,17 @@ for (const [y, divId, full] of [[1991, 'tier3-nordost', false], [1995, 'tier3-we
   const t = leanTable(eng, 'England', g.season);
   ok(t.every((r) => r.p === eng.md) && t.reduce((a, r) => a + r.gf, 0) === t.reduce((a, r) => a + r.ga, 0) && t.every((r, i) => i === 0 || r.pts <= t[i - 1].pts), 'England: Tabelle stimmig (Spiele, Tore, Reihenfolge)');
   ok(leanWinPts('England', '2000/01') === 3 && leanWinPts('England', '1975/76') === 2 && t[0].pts === t[0].w * 3 + t[0].d, 'England: Punkteregel des Landes (3 Punkte ab 1981)');
+  // Vereinsprofil wie in Deutschland: Platz/Ansehen aus der Simulation, komplette Historie ab den Weltdaten 1975
+  {
+    const id = t[3].clubId;
+    const prof = buildClubProfile(g, id);
+    ok(prof.tablePosition === 4 && prof.tableSize === eng.ids.length && prof.points === t[3].pts && prof.reputation != null && prof.reputation > 20 && prof.lastMatches.some((m) => m.comp === 'Liga'),
+      `Profil Ausland: Platz ${prof.tablePosition}. von ${prof.tableSize}, Ansehen ${prof.reputation}, Ligaspiele aus der Auslandsliga`);
+    const hist = prof.foreign?.seasons ?? [];
+    ok(hist.length >= 20 && hist[0].season === '1975/76' && hist.every((x) => x.pos >= 1 && x.pos <= x.size), `Profil Ausland: Platzierungs-Historie aus den Weltdaten (${hist.length} Saisons ab ${hist[0]?.season})`);
+    const big = worldPlacesOf(g.world, 'w_esp-barcelona');
+    ok(big.length === 25 && big.every((x) => x.tier === 1), `Weltdaten vor dem Start: w_esp-barcelona ${big.length} Saisons 1975–1999 in der 1. Liga`);
+  }
   const games = leanGames(eng, g.season, eng.md);
   ok(games.length === eng.ids.length * (eng.ids.length - 1) && games.filter((x) => x.hg != null).length === eng.md * Math.floor(eng.ids.length / 2) && games.filter((x) => x.hg == null).every((x) => x.date > g.calendar.currentDate),
     'England: Begegnungen – gespielte mit Ergebnis, kommende mit Termin in der Zukunft');
@@ -257,6 +272,25 @@ for (const [y, divId, full] of [[1991, 'tier3-nordost', false], [1995, 'tier3-we
   const past = countrySnapshot(g, en2, old, 'world', 'w1')!;
   ok(past.table![0].clubId === fin[0].clubId && past.table![0].pts === fin[0].pts && countryMatchdays(g, en2, old, 'w1')!.res.length === eng.ids.length * (eng.ids.length - 1), 'Vorsaison: volle Abschlusstabelle und alle Begegnungen abrufbar');
   ok(worldLiveDiv(g, 'England', 0)!.md === 0 && g.world!.live!.season === g.season, 'Neue Saison: Auslandsligen starten bei Spieltag 0');
+  {
+    const champ = worldPlacesOf(g.world, fin[0].clubId).at(-1);
+    ok(champ?.year === 2000 && champ.pos === 1 && champ.tier === 1 && champ.size === eng.ids.length, 'Platzierungs-Historie: Endplatz 2000/01 des Meisters festgehalten');
+    const wt = g.worldTransfers!;
+    const rows = (k: string) => (wt.s[k]?.r ? wt.s[k].r.split(';') : []);
+    const win = rows(old), sum = rows(g.season);
+    ok(win.length > 50 && sum.length > 300 && sum.some((r) => r.endsWith('|l')) && sum.some((r) => r.endsWith('|b')), `Welt-Transfers: Winter ${old} ${win.length}, Sommer ${g.season} ${sum.length} (mit Leihen und Rückkehrern)`);
+    const cid = wt.c[0];
+    const ts = clubTransfersOf(g, cid, old);
+    ok(ts.ins.length + ts.outs.length + ts.loanedIn.length + ts.loanedOut.length > 0 && transferSeasons(g).includes(old), `Profil › Transfers: Wechsel von ${cid} im Winter ${old}`);
+    const future = clubTransfersOf(g, cid, g.season);
+    ok([...future.ins, ...future.outs, ...future.loanedIn, ...future.loanedOut].every((r) => r.date <= g.calendar.currentDate), 'Profil › Transfers: nur Wechsel bis heute');
+    const keep = JSON.stringify(g.world!.places);
+    delete g.world!.places;
+    migrateWorldPlaces(g);
+    const re = worldPlacesOf(g.world, fin[0].clubId);
+    ok(re.at(-1)?.pos === 1 && re.at(-1)?.year === 2000 && re.length >= 20, `Alter Spielstand: Platzierungs-Historie nachgebaut (${re.length} Saisons)`);
+    g.world!.places = JSON.parse(keep);
+  }
   {
     const oc = rec.cups?.['England'];
     const w = oc ? leanCupWinner('England', old, oc) : null;

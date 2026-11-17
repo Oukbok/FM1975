@@ -37,7 +37,7 @@ export interface ClubRecordBook {
   h2h: Record<string, H2HTuple[]>;
 }
 
-const MAX_SEASONS = 80;
+const MAX_SEASONS = 200; // komplette Historie (Wunsch Pascal), ≈ 20 Byte je Saison
 const MAX_H2H = 60;
 
 type GameWithRecords = Game & { clubRecords?: ClubRecordBook };

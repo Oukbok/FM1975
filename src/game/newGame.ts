@@ -64,6 +64,7 @@ import { initLegends } from './legendsGame';
 import { migrateContracts2 } from './contractClausesGame';
 import { bindHonours } from './clubHonours';
 import { ensureWorldPool } from './worldPool';
+import { startWorldPlaces } from './worldPlacesSeed';
 import { startShirtNumbers } from './shirtMigration';
 import { migrateCohesion } from './cohesionGame';
 import { ensureCountryPools } from '../engine/world';
@@ -299,6 +300,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   harmonizeSeason(g0); // Rahmenterminkalender: Wochenendspiele an Pokal-/Europapokalwochen (game/fixtureWatch.ts)
   ensureCountryPools(g0.world, g0.euroClubs, Number(g0.season.slice(0, 4))); // Unterbau der Auslandsligen (engine/world.ts)
   ensureWorldPool(g0); // Weltspieler aller Vereine ohne vollen Kader (Spielerpool)
+  startWorldPlaces(g0); // Platzierungs-Historie der Auslandsvereine aus den Weltdaten vor dem Startjahr
   startShirtNumbers(g0); // Rückennummern aller Kader nach Position und Epoche (game/shirtMigration.ts)
   migrateCohesion(g0); // Eingespieltheit: jeder Verein startet eingespielt auf seine Taktik (game/cohesionGame.ts)
   bindMarketing(g0);

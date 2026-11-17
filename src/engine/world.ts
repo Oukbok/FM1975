@@ -23,6 +23,7 @@ import { WorldSeasonRecord, WorldState, WORLD_TABLES_KEEP } from './worldTypes';
 import { clamp, gauss, hash, poisson, rng } from './worldRandom';
 import { applySplits, countryLevel, ensureCountryPool, fillCountry, makeCountry, softClubStrength, targetStrength } from './worldCountries';
 import { euroParticipants, pushCoef, seasonEuroPoints } from './worldEuro';
+import { notePlaces } from './worldPlaces';
 
 // Aufgeteilt (Dateien < 600 Zeilen): Typen in worldTypes.ts, Länder/Vereine/Teilungen in
 // worldCountries.ts, Koeffizienten/Rangliste/Starter in worldEuro.ts – hier weitergereicht.
@@ -194,6 +195,7 @@ export function advanceWorldSeason(
     rec.champions[c.name] = champ;
     rec.cupWinners[c.name] = cupWinner;
     (rec.tables ??= {})[c.name] = [...t1];
+    notePlaces(w, endYear - 1, t1, t2); // komplette Platzierungs-Historie je Verein (engine/worldPlaces.ts)
 
     // Größe: Meister/Spitzenplätze wachsen, Absteiger schrumpfen.
     t1.forEach((id, i) => {

@@ -91,6 +91,8 @@ export interface WorldState {
   history: WorldSeasonRecord[];
   /** Laufende Saison aller Auslandsligen, Spieltag für Spieltag (game/worldLeagues.ts). */
   live?: WorldLive;
+  /** Endplätze aller Auslandsvereine über die ganze Geschichte (engine/worldPlaces.ts); fehlt = alter Spielstand vor der Nachrüstung. */
+  places?: import('./worldPlaces').WorldPlaces;
   nextId: number;
 }
 

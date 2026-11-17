@@ -29,6 +29,7 @@ import type { Player, Position } from '../types';
 import type { Game } from './state';
 import { rememberWorldPlayers } from './worldAwardsStore';
 import { FIXED_SHIRTS_FROM, numberSquad } from '../engine/shirtNumbers';
+import { worldSummerWindow, worldWinterWindow } from './worldTransfers';
 
 /** [id, Verein, Vorname, Nachname, Nation, Ethnie, Geburtsjahr, Position, Stärke, Potenzial, Fuß 0 r/1 l/2 b, Größe, Jugend 0/1, Rückennummer?] */
 export type WP = [string, string, string, string, string, string, number, Position, number, number, number, number, number, number?];
@@ -275,22 +276,9 @@ export function worldPoolSeason(g: Game): void {
   pool.p = keep;
   // Bis 1992/93 tragen die Stammkräfte zur neuen Saison wieder 1–11 nach Position.
   if (year < FIXED_SHIRTS_FROM) for (const w of pool.p) clearShirt(w);
-  // Herausragende Spieler wechseln zu stärkeren Vereinen (eigenes Land bevorzugt, sonst Topliga).
-  const list = [...clubs.values()].sort((a, b) => b.strength - a.strength);
-  for (const w of pool.p) {
-    const club = clubs.get(w[W.club]);
-    const age = year - w[W.born];
-    if (!club || age < 19 || age > 30 || w[W.ov] < club.strength + 9 || r() > 0.6) continue;
-    const want = w[W.ov] - 4;
-    // Ostblock vor 1990: kein Wechsel über die Grenze (wie die Transfersperre des eigenen Vereins).
-    const closed = year < 1990;
-    const cands = list.filter((c) => c.id !== club.id && c.strength >= want && c.strength <= want + 10
-      && !(closed && c.country !== club.country && (EAST.has(c.country) || EAST.has(club.country))));
-    const home = cands.filter((c) => c.country === club.country);
-    const from = home.length && r() < 0.6 ? home : cands;
-    const pick = from[Math.floor(r() * from.length)];
-    if (pick) { w[W.club] = pick.id; w[W.youth] = 0; clearShirt(w); }
-  }
+  // Transferfenster der Welt (game/worldTransfers.ts): Leih-Rückkehrer, Wechsel zu stärkeren Vereinen mit
+  // Ersatzkauf, Routiniers eine Stufe tiefer, Leihen junger Spieler – alles mit Datum/Ablöse protokolliert.
+  worldSummerWindow(g, pool.p, clubs, year, r);
   // Nachführen an die Vereinsstärke (Median-Abstand der Stammkräfte, höchstens ±3 je Saison)
   byClub.clear();
   for (const w of pool.p) { const l = byClub.get(w[W.club]); if (l) l.push(w); else byClub.set(w[W.club], [w]); }
@@ -314,6 +302,13 @@ export function worldPoolSeason(g: Game): void {
   }
   noteGone(g, left);
   ensureWorldPool(g);
+}
+
+/** Winterfenster der Weltspieler (täglich aus day.ts, wirkt nur am 5.1.; game/worldTransfers.ts). */
+export function worldPoolWinter(g: Game, today: string): void {
+  const pool = g.worldPool;
+  if (!pool || today.slice(5) !== '01-05') return;
+  if (worldWinterWindow(g, pool.p, worldClubs(g), today)) numberWorldPool(pool, startYearOf(g));
 }
 
 /** Eintrag nach ID (linear; nur für Einzelzugriffe). */

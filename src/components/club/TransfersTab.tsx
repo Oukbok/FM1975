@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { clubTransfersOf, transferSeasons, type ClubTransferRow } from '../../game/clubTransfers';
 import type { Game } from '../../game/state';
+import { worldEntryFast } from '../../game/worldPool';
 import { DashBox, Empty } from '../../ui/DashPage';
 import { fmtPrice, vColor } from '../../ui/format';
 import Select from '../../ui/Select';
@@ -32,7 +33,7 @@ function TransferList({ g, rows, dir, empty }: { g: Game; rows: ClubTransferRow[
       </tr></thead>
       <tbody>
         {sorted.map((r) => {
-          const known = !!(g.players[r.pid] ?? g.youthPlayers?.[r.pid]);
+          const known = !!(g.players[r.pid] ?? g.youthPlayers?.[r.pid] ?? worldEntryFast(g, r.pid));
           const nm = clubName(g, r.other);
           return (
             <tr key={`${r.date}${r.pid}`} data-pid={known ? r.pid : undefined}>

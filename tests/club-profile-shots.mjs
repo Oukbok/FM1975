@@ -145,7 +145,7 @@ if (process.env.SAVE) {
   const raw = await readFile(process.env.SAVE, 'utf8');
   const g = JSON.parse(raw.startsWith('LZ1:') ? lz.decompressFromUTF16(raw.slice(4)) : raw).game;
   const eu = Object.values(g.euroClubs ?? {});
-  const foreign = (eu.find((e) => /Mailand Rot/.test(e.name)) ?? eu[0])?.id;
+  const foreign = (eu.find((e) => e.id === 'w_esp-barcelona') ?? eu.find((e) => /Mailand Rot/.test(e.name)) ?? eu[0])?.id;
   if (foreign) {
     await page.evaluate((id) => { const d = document.createElement('div'); d.setAttribute('data-club', id); document.body.appendChild(d); d.click(); d.remove(); }, foreign);
     await page.waitForSelector('.cmx-modal');
@@ -156,6 +156,24 @@ if (process.env.SAVE) {
     const bad = nums.filter((t) => !/^[1-9][0-9]?$/.test(t.trim()));
     console.log(`Auslandsverein ${foreign} / Kader: ${nums.length} Spieler, ${bad.length ? `ohne/ungültige Nummer: ${bad.length}` : 'alle mit Rückennummer'}`);
     if (bad.length || new Set(nums).size !== nums.length) errors.push(`Auslandsverein: Rückennummern fehlen/doppelt (${nums.join(',')})`);
+    // Wie deutsche Vereine (Wunsch Pascal): Platz/Ansehen im Kopf, Transfers je Saison, komplette Historie
+    for (const [i, name] of [[0, 'Uebersicht'], [3, 'Transfers'], [4, 'Historie']]) {
+      await page.locator('.cmx-tabs .tab').nth(i).click();
+      await page.waitForTimeout(300);
+      await page.screenshot({ path: `${outDir}/${prefix}_ausland_${i + 1}_${name}.png` });
+    }
+    const kpis = await page.locator('.cmx-head .mx-kpis').innerText();
+    console.log(`Auslandsverein Kopf: ${kpis.replace(/\s+/g, ' ')}`);
+    if (/–\s*Ansehen/.test(kpis)) errors.push('Auslandsverein: kein Ansehen im Kopf');
+    await page.locator('.cmx-tabs .tab').nth(3).click();
+    await page.waitForTimeout(200);
+    const rows = await page.locator('.cmx-modal .ctr-table tbody tr').count();
+    // eine Saison zurück: dort sind Sommer und Winter vollständig
+    await page.locator('.ctr-bar button').first().click();
+    await page.waitForTimeout(300);
+    const prev = await page.locator('.cmx-modal .ctr-table tbody tr').count();
+    await page.screenshot({ path: `${outDir}/${prefix}_ausland_4b_Transfers_Vorsaison.png` });
+    console.log(`Auslandsverein Transfers: laufende Saison ${rows}, Vorsaison ${prev} Zeilen`);
     await closeProfile();
   }
 }

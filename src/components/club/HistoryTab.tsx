@@ -1,10 +1,13 @@
 // Reiter „Historie“: Platzierungsverlauf · Titel | Direkter Vergleich · Rekordspieler · Rekordtransfers
 import { SeasonPlacement, TITLE_DE, TitleKind, h2hOf, seasonsOf, titlesOf } from '../../game/clubRecords';
+import { foreignTitles } from '../../game/foreignClub';
+import { worldTransferRecords } from '../../game/worldTransfers';
 import { Player } from '../../types';
 import type { Game } from '../../game/state';
 import { ClubByName } from '../../ui/LinkedText';
+import { ClubLink } from './ClubLink';
 import { DashBox, Empty, KV } from '../../ui/DashPage';
-import { fmtDM, fmtDateShort } from '../../ui/format';
+import { fmtDM, fmtDateShort, fmtPrice } from '../../ui/format';
 import { ClubTabProps, PlacementChart } from './shared';
 import PosBadge from '../PosBadge';
 import RangeSeg, { effectiveRange, seasonSpan, seasonsInRange, useChartRange } from '../../ui/RangeSeg';
@@ -25,7 +28,11 @@ export default function HistoryTab({ g, d, openPlayer }: ClubTabProps) {
   const span = seasonSpan(seasons, (s) => s.season, g.season);
   const shownSeasons = seasonsInRange(seasons, (s) => s.season, g.season, effectiveRange(range, span, '3'));
   const titles = titlesOf(g, d.clubId);
-  const byKind = TITLE_ORDER.map((k) => ({ k, seasons: titles.filter((t) => t.kind === k).map((t) => t.season) })).filter((x) => x.seasons.length);
+  // Auslandsvereine: Meister aus der kompletten Platzierungs-Historie, Pokal aus Welt-Historie + Weltdaten (game/foreignClub.ts).
+  const byKind = d.foreign
+    ? foreignTitles(g, d.clubId, d.foreign.countryKey).map((x) => ({ k: x.label, label: x.label, seasons: x.seasons }))
+    : TITLE_ORDER.map((k) => ({ k, label: TITLE_DE[k], seasons: titles.filter((t) => t.kind === k).map((t) => t.season) })).filter((x) => x.seasons.length);
+  const titleCount = byKind.reduce((a, x) => a + x.seasons.length, 0);
   let ups = 0, downs = 0;
   for (let i = 1; i < past.length; i++) {
     if (past[i].tier >= 100 || past[i - 1].tier >= 100) continue;
@@ -61,6 +68,8 @@ export default function HistoryTab({ g, d, openPlayer }: ClubTabProps) {
     }
   }
   ins.sort((a, b) => b.fee - a.fee); outs.sort((a, b) => b.fee - a.fee);
+  // Weltspieler (Auslandsvereine): Rekorde aus dem Transferprotokoll der Welt (game/worldTransfers.ts), Ablöse in 1975-Basis.
+  const wrec = ins.length || outs.length ? null : worldTransferRecords(g, d.clubId);
 
   return (
     <>
@@ -73,15 +82,15 @@ export default function HistoryTab({ g, d, openPlayer }: ClubTabProps) {
         </> : <Empty icon="stats">Noch keine abgeschlossene Saison. Nach jedem Saisonende erscheint hier der Endplatz – über alle Ligaebenen hinweg.</Empty>}
       </DashBox>
 
-      <DashBox title="Titel & Erfolge" icon="trophy" right={titles.length ? `${titles.length} Titel` : undefined}>
-        {byKind.length ? byKind.map(({ k, seasons: ss }) => (
+      <DashBox title="Titel & Erfolge" icon="trophy" right={titleCount ? `${titleCount} Titel` : undefined}>
+        {byKind.length ? byKind.map(({ k, label, seasons: ss }) => (
           <div key={k} className="cmx-title">
             <span className="cmx-title-n">{ss.length}×</span>
-            <span className="grow"><b>{TITLE_DE[k]}</b><span className="dnote cmx-title-seasons">{ss.join(', ')}</span></span>
+            <span className="grow"><b>{label}</b><span className="dnote cmx-title-seasons">{ss.join(', ')}</span></span>
           </div>
-        )) : <div className="dnote">Seit Spielbeginn noch kein Titel.</div>}
+        )) : <div className="dnote">{d.foreign ? 'Noch kein Titel.' : 'Seit Spielbeginn noch kein Titel.'}</div>}
         {past.length > 0 && <>
-          <div className="dsec">Bilanz seit Spielbeginn</div>
+          <div className="dsec">{d.foreign ? 'Bilanz' : 'Bilanz seit Spielbeginn'}</div>
           {best && <KV k="Beste Platzierung" v={`${best.pos}. · ${best.league} (${best.season})`} />}
           <KV k="Aufstiege · Abstiege" v={`${ups} · ${downs}`} />
         </>}
@@ -121,9 +130,13 @@ export default function HistoryTab({ g, d, openPlayer }: ClubTabProps) {
 
       <DashBox title="Rekordtransfers" icon="transfers">
         <div className="dsec">Teuerste Zugänge</div>
-        {ins.length ? ins.slice(0, 3).map((x) => <TransferRow key={x.p.id + x.date} {...x} g={g} dir="von" onClick={() => openPlayer(x.p.id)} />) : <div className="dnote">Keine bekannt.</div>}
+        {ins.length ? ins.slice(0, 3).map((x) => <TransferRow key={x.p.id + x.date} {...x} g={g} dir="von" onClick={() => openPlayer(x.p.id)} />)
+          : wrec?.ins.length ? wrec.ins.map((x) => <WorldRow key={x.pid + x.date} g={g} name={x.name} pos={x.pos} other={x.other} date={x.date} fee={x.fee} dir="von" />)
+          : <div className="dnote">Keine bekannt.</div>}
         <div className="dsec">Teuerste Abgänge</div>
-        {outs.length ? outs.slice(0, 3).map((x) => <TransferRow key={x.p.id + x.date} {...x} g={g} dir="zu" onClick={() => openPlayer(x.p.id)} />) : <div className="dnote">Keine bekannt.</div>}
+        {outs.length ? outs.slice(0, 3).map((x) => <TransferRow key={x.p.id + x.date} {...x} g={g} dir="zu" onClick={() => openPlayer(x.p.id)} />)
+          : wrec?.outs.length ? wrec.outs.map((x) => <WorldRow key={x.pid + x.date} g={g} name={x.name} pos={x.pos} other={x.other} date={x.date} fee={x.fee} dir="zu" />)
+          : <div className="dnote">Keine bekannt.</div>}
       </DashBox>
     </>
   );
@@ -148,3 +161,15 @@ function TransferRow({ g, p, fee, date, other, dir, onClick }: { g: Game; p: Pla
     </div>
   );
 }
+
+function WorldRow({ g, name, pos, other, date, fee, dir }: { g: Game; name: string; pos: string; other: string; date: string; fee: number; dir: string }) {
+  return (
+    <div className="dlist-row">
+      <PosBadge pos={pos} compact />
+      <span className="grow">{name}<span className="muted"> · {dir} <ClubLink id={other}>{otherName(g, other)}</ClubLink> · {date.slice(0, 4)}</span></span>
+      <span className="val">{fmtPrice(fee)}</span>
+    </div>
+  );
+}
+
+const otherName = (g: Game, id: string) => g.clubs[id]?.name ?? g.simClubs?.[id]?.name ?? g.euroClubs?.[id]?.name ?? id;

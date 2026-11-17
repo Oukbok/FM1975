@@ -13,6 +13,7 @@ import type { TransferKind } from '../engine/history';
 import type { Game } from './state';
 import type { TLEntry } from './transferLog';
 import { seasonOfDate } from './managerLog';
+import { worldTransferSeasons, worldTransfersOf } from './worldTransfers';
 
 /** [Datum, Spieler-ID, Name, Position, Stärke, Alter, von, zu, Ablöse (1975-Basis), Art] */
 export type CTRow = [string, string, string, string, number, number, string, string, number, (TransferKind | 0)?];
@@ -55,12 +56,14 @@ export function clubTransfersOf(g: Game, clubId: string, season: string): ClubTr
     if (kind === 'loan') (to ? out.loanedIn : out.loanedOut).push(row);
     else (to ? out.ins : out.outs).push(row);
   }
+  // Weltspieler (Auslandsvereine, deutsche Vereine ohne vollen Kader): game/worldTransfers.ts
+  worldTransfersOf(g, clubId, season, out);
   return out;
 }
 
 /** Saisons mit Archiv (neueste zuerst), die laufende immer dabei. */
 export function transferSeasons(g: Game): string[] {
-  const set = new Set([...Object.keys(g.clubTransfers?.s ?? {}), g.season]);
+  const set = new Set([...Object.keys(g.clubTransfers?.s ?? {}), ...worldTransferSeasons(g), g.season]);
   return [...set].sort().reverse();
 }
 

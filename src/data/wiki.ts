@@ -436,7 +436,7 @@ Jeder Spieler jedes Vereins – auch im Ausland und in den unteren Ligen – tr�
     id: 'club-profile',
     category: 'core',
     title: 'Vereinsprofil (Gegner-Info)',
-    keywords: ['verein', 'profil', 'gegner', 'wappen', 'scouting', 'jugend', 'jugendspieler', 'unbekannt', 'historie', 'direkter vergleich', 'trainer', 'rekord', 'platzierung'],
+    keywords: ['verein', 'profil', 'gegner', 'wappen', 'scouting', 'jugend', 'jugendspieler', 'unbekannt', 'historie', 'direkter vergleich', 'trainer', 'rekord', 'platzierung', 'ausland', 'leihe', 'transfers'],
     body: `## Aufruf
 Fast jeder **Vereinsname und jedes Wappen** ist anklickbar und öffnet das Vereinsprofil: Tabelle (Liga und Zentrale), Spielplan und Spieltag, Landespokal, Europapokal, Transfermarkt, Verhandlungen, Torjäger, Spielbericht, Taktik („Nächster Gegner“), Presse und das Spielerprofil (Vereinsname bzw. Wappen am Porträt). Das Profil liegt über allen anderen Fenstern; öffnest du daraus einen weiteren Verein, bringt dich **Zurück** zum vorherigen. Escape schließt erst das Spielerprofil, dann das Vereinsprofil.
 
@@ -451,8 +451,15 @@ Fast jeder **Vereinsname und jedes Wappen** ist anklickbar und öffnet das Verei
 ## Simulierte Vereine
 Vereine aus rein simulierten Ligen haben keinen Einzelkader. Ihr Profil zeigt Liga, Tabellenplatz, geschätzte Gesamtstärke, Spiele und die Historie; Kader und Vereinsdaten werden sichtbar, sobald sie in deine Liga kommen.
 
+## Auslandsvereine
+Vereine aus dem Ausland haben dasselbe Profil wie deutsche Vereine – alles kommt aus der Simulation der Welt:
+- **Tabellenplatz, Punkte, Tore, Form** und die letzten/nächsten Ligaspiele stammen aus ihrer laufenden Liga, die Spieltag für Spieltag gespielt wird (ab dem ersten Spieltag).
+- **Ansehen** ergibt sich aus Stärke, Größe des Vereins (Einzugsgebiet, Tradition, Geld – wächst mit Erfolg) und Meistertiteln.
+- **Historie**: die **komplette Platzierungs-Geschichte** in 1. und 2. Liga – bei einem späteren Startjahr auch alle echten Saisons ab 1975 vor deinem Start. Meister- und Pokaltitel stehen unter Titel & Erfolge.
+- **Transfers**: Auslandsvereine kaufen, verkaufen und verleihen selbst. Im **Sommerfenster** (Juli/August) wechseln herausragende Spieler zu stärkeren Vereinen, der abgebende Verein kauft Ersatz bei einem schwächeren Verein, Routiniers ohne Stammplatz gehen eine Stufe tiefer, junge Ergänzungsspieler werden für eine Saison verliehen und kehren zum 1. Juli zurück. Im **Winterfenster** (Januar) gibt es einzelne Wechsel und Leihen. Vor 1990 wechselt niemand über den Eisernen Vorhang. Ein Wechsel erscheint ab seinem Datum. Die letzten zehn Saisons sind vollständig gespeichert, ältere nur noch mit den Wechseln gegen Ablöse.
+
 ## Historie
-Die Historie wird beim Saisonwechsel geschrieben (Endplätze aller Ligen inkl. DDR, Meister, Landespokal, Europapokal, alle Pflichtspiele gegen deinen Verein). Sie beginnt mit deinem Spielstart; ältere Spielstände füllen sie ab der nächsten Saison.`,
+Die Historie wird beim Saisonwechsel geschrieben (Endplätze aller Ligen inkl. DDR und Ausland, Meister, Landespokal, Europapokal, alle Pflichtspiele gegen deinen Verein) und bleibt vollständig erhalten. Für deutsche Vereine reicht sie bis 1963 zurück; ältere Spielstände füllen das Ausland einmalig aus den gespeicherten Tabellen nach, soweit sie vorhanden sind.`,
   },
   {
     id: 'squad-attributes',

@@ -9,6 +9,7 @@ import { clubStrengthFor } from './season';
 import { Game } from './state';
 import { countryName, worldClubInfo, worldSquadPreview } from './worldPool';
 import type { SeasonPlacement } from './clubRecords';
+import { foreignLive, foreignReputation, foreignSeasons, type ForeignLive } from './foreignClub';
 
 // =============================================================================
 // TABELLE
@@ -58,11 +59,14 @@ function foreignInfo(g: Game, id: string): ForeignInfo | undefined {
   if (!key || key === 'Deutschland') return undefined;
   const w = g.world?.countries?.[key];
   const name = countryName(key);
-  const seasons: SeasonPlacement[] = [];
-  for (const h of g.world?.history ?? []) {
-    const t = h.tables?.[key];
-    const pos = t ? t.indexOf(id) + 1 : 0;
-    if (pos > 0) seasons.push({ season: h.season, tier: 1, pos, size: t!.length, league: `1. Liga ${name}` });
+  // Komplette Historie (engine/worldPlaces.ts); Rückfall: Abschlusstabellen der letzten Saisons.
+  let seasons: SeasonPlacement[] = foreignSeasons(g, id, key);
+  if (!seasons.length) {
+    for (const h of g.world?.history ?? []) {
+      const t = h.tables?.[key];
+      const pos = t ? t.indexOf(id) + 1 : 0;
+      if (pos > 0) seasons.push({ season: h.season, tier: 1, pos, size: t!.length, league: `1. Liga ${name}` });
+    }
   }
   const cups = (g.world?.history ?? []).filter((h) => h.cupWinners?.[key] === id).length;
   const last = w?.lastTable?.indexOf(id) ?? -1;
@@ -243,6 +247,17 @@ export function buildClubProfile(g: Game, clubId: string): ClubProfileData {
   const mine = squadOfClub(g, g.clubs[g.managedClubId]);
 
   const lines = matchLines(g, clubId, year);
+  // Auslandsverein: laufende Liga Spieltag für Spieltag (game/worldLeagues.ts) wie die deutschen Ligen.
+  const live: ForeignLive | null = foreign ? foreignLive(g, clubId, foreign.countryKey) : null;
+  for (const x of live?.games ?? []) {
+    const home = x.home === clubId, oppId = home ? x.away : x.home;
+    const done = x.hg != null && x.ag != null;
+    const gf = home ? x.hg : x.ag, ga = home ? x.ag : x.hg;
+    lines.push({
+      date: x.date, oppId, opponent: clubView(g, oppId, year).name, homeAway: home ? 'H' : 'A', comp: 'Liga',
+      score: done ? `${gf}:${ga}` : null, result: done ? (gf! > ga! ? 'W' : gf! < ga! ? 'L' : 'D') : undefined, upcoming: !done,
+    });
+  }
   const finished = lines.filter((m) => !m.upcoming).sort((a, b) => b.date.localeCompare(a.date));
   const upcoming = lines.filter((m) => m.upcoming).sort((a, b) => a.date.localeCompare(b.date));
   const vsOwn = (m: ClubMatchLine) => m.oppId === g.managedClubId;
@@ -280,16 +295,16 @@ export function buildClubProfile(g: Game, clubId: string): ClubProfileData {
     crestClub: (full ?? view) as Club,
     city: full?.city ?? sim?.city ?? info?.city ?? g.euroClubs?.[clubId]?.city ?? '',
     founded: full?.founded,
-    reputation: full?.reputation,
+    reputation: full?.reputation ?? (foreign ? foreignReputation(g, clubId) : undefined),
     strength: full || sim ? clubStrengthFor(g, clubId) : Math.round(info?.strength ?? g.euroClubs?.[clubId]?.strength ?? 50),
-    divisionLabel: found?.label ?? (foreign && info?.level ? `${info.level}. Liga ${foreign.country}` : foreign ? foreign.country : undefined),
-    tier: found?.tier ?? sim?.tier ?? info?.level,
-    tablePosition: row?.position,
-    tableSize: found?.size,
-    points: row?.points,
-    played: row?.played,
-    goals: row ? `${row.goalsFor}:${row.goalsAgainst}` : undefined,
-    form: row?.form,
+    divisionLabel: found?.label ?? live?.label ?? (foreign && info?.level ? `${info.level}. Liga ${foreign.country}` : foreign ? foreign.country : undefined),
+    tier: found?.tier ?? live?.tier ?? sim?.tier ?? info?.level,
+    tablePosition: row?.position ?? live?.pos,
+    tableSize: found?.size ?? live?.size,
+    points: row?.points ?? live?.points,
+    played: row?.played ?? live?.played,
+    goals: row ? `${row.goalsFor}:${row.goalsAgainst}` : live?.goals,
+    form: row?.form ?? live?.form,
     isPlayerClub: clubId === g.managedClubId,
     fullClub: full,
     squad,
