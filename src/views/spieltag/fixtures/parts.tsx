@@ -41,7 +41,7 @@ function CrowdArt() {
 /** Leiste „Nächstes Pflichtspiel“: Fanbild | Termin/Ort | Heim – Ergebnis – Gast | Gegner ansehen. */
 export function FixtureStrip({ g, nx, onOpponent }: { g: Game; nx: NextOpp | null; onOpponent: () => void }) {
   const year = +g.calendar.currentDate.slice(0, 4);
-  const photo = fanPhoto(year);
+  const photo = fanPhoto(year, nx ? `${nx.date}|${nx.opp}` : g.calendar.currentDate);
   const pic = (
     <div className="fxp-photo">
       {photo ? <img src={photo} alt="" /> : <CrowdArt />}

@@ -22,6 +22,7 @@ export const PRESS_PHOTOS: Record<number, PressMotif[]> = {
  *  fest aus ihrer ID. */
 export const PRESS_VARIANTS: Record<string, number> = {
   '1975:abpfiff': 10,
+  '1975:fans': 10,
 };
 
 const MOTIFS_BY_CATEGORY: Partial<Record<InboxMessage['category'], PressMotif[]>> = {

@@ -164,7 +164,7 @@ Je mehr Personen eine Gruppe hat, desto seltener sehen zwei Spieler gleich aus (
 ---
 
 ## Spielplan – Fanbild (Aufstellung › Spielplan, Wunsch Pascal)
-Schmales Foto links in der Leiste „Nächstes Pflichtspiel“. **Schwarzweiß, keine Farben**, damit es zu jedem Verein passt (die Seite legt die Vereinsfarbe leicht darüber). Je Jahrzehnt ein Motiv: `spielplan/fans-<jahrzehnt>.webp` (1970 … 2030), 1200 × 450 px (8 : 3), danach in `src/data/fixtureImages.ts` `FAN_PHOTO_DECADES` eintragen. Fehlt ein Jahrzehnt, nimmt die Seite das nächstfrühere.
+Schmales Foto links in der Leiste „Nächstes Pflichtspiel“. **Schwarzweiß, keine Farben**, damit es zu jedem Verein passt (die Seite legt die Vereinsfarbe leicht darüber). Je Jahrzehnt ein Motiv: `spielplan/fans-<jahrzehnt>.webp` (1970 … 2030), 1200 × 450 px (8 : 3), danach in `src/data/fixtureImages.ts` `FAN_PHOTOS` eintragen (Liste je Jahrzehnt, wechselt je Spiel). Fehlt ein Jahrzehnt, nimmt die Seite das nächstfrühere. **Vorhanden:** 70er = die 11 Pressefotos `presse/1975/fans*.webp` (auch im Newscenter je Nachricht wechselnd).
 
 Grundprompt (gleich für alle Jahrzehnte, nur den Jahrzehnt-Teil tauschen):
 > Black-and-white documentary press photograph, wide horizontal crop 8:3, a packed standing terrace behind the goal seen from slightly below, dense crowd of football supporters filling the whole frame, many faces partly in shadow, raised arms, scarves held up and flags on poles, grain and soft contrast like a period newspaper photo, overcast light, no readable text, no logos, no club crests, no recognizable real people, no color at all (pure monochrome, neutral grey tones), the left two thirds busy and detailed, the right third calmer and slightly darker so it can fade out. [JAHRZEHNT]
