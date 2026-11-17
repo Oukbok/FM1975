@@ -443,7 +443,8 @@ Fast jeder **Vereinsname und jedes Wappen** ist anklickbar und öffnet das Verei
 - **Übersicht**: Stadt, Gründung, Liga und Tabellenplatz, Form, Ansehen. Kräftevergleich und Duelle mit deinem Verein (nächstes, letztes, Bilanz über alle Jahre). Trainer. **Kurzbewertung**: Ø der Stammkräfte je Mannschaftsteil (1 Torwart, je 4 Abwehr/Mittelfeld, 2 Angriff) als Spiegelbalken gegen dein Team; der stärkere Wert ist hervorgehoben. Stärkste Spieler und die letzten/nächsten Spiele.
 - **Kader**: alle Spieler, sortierbar. Die Stärke siehst du wie auf dem Transfermarkt genau, das **Potenzial nur als Scouting-Spanne** (Sterne von–bis, je nach Scout-Qualität). Klick öffnet das Spielerprofil, **Verhandeln** startet direkt eine Transferverhandlung. Rechts Kaderstruktur und Vertragslage (auslaufende Verträge, wechselwillige Spieler).
 - **Verein**: Stadion, Finanzen aus **Außensicht** (Umsatzklasse in der Liga, Umsatz der Vorsaison gerundet, Transferbudget als geschätzte Spanne, Kaderwert, Gehälter – Kontostand und Schulden bleiben geheim), Trikots, Ausbaustufen des Geländes, Marke/Bekanntheit, Nachwuchs.
-- **Historie**: Platzierungsverlauf über alle Ligaebenen (goldener Punkt = Meister, offener Punkt = laufende Saison), Titel, beste Platzierung, Auf-/Abstiege, direkter Vergleich Spiel für Spiel, Rekordspieler (Einsätze/Tore für den Verein) und Rekordtransfers.
+- **Transfers**: alle Wechsel einer Saison in vier Listen – **Zugänge**, **Abgänge**, **Verliehen**, **Geliehen** – mit Ablöse und Saisonbilanz. Ein Wechsel zählt zur Saison des Tages, an dem der Spieler wechselt bzw. sein Vertrag beginnt (ab 1. Juli = neue Saison). Mit den Pfeilen blätterst du Saison für Saison, über die Auswahlliste springst du direkt zu einem weiter entfernten Jahr.
+- **Historie**: Platzierungsverlauf über alle Ligaebenen (goldener Punkt = Meister, offener Punkt = laufende Saison; Hover zeigt Saison, Platz und Liga, eine gestrichelte Linie trennt die Ligaebenen nach Auf- oder Abstiegen), Titel, beste Platzierung, Auf-/Abstiege, direkter Vergleich Spiel für Spiel, Rekordspieler (Einsätze/Tore für den Verein) und Rekordtransfers.
 
 ## Simulierte Vereine
 Vereine aus rein simulierten Ligen haben keinen Einzelkader. Ihr Profil zeigt Liga, Tabellenplatz, geschätzte Gesamtstärke, Spiele und die Historie; Kader und Vereinsdaten werden sichtbar, sobald sie in deine Liga kommen.
@@ -530,7 +531,7 @@ Fitness ist die **konditionelle Grundverfassung** eines Spielers (**0–100**) �
 Fitness fließt als eigener **Fitness-Faktor** in die Tagesstärke ein: \`0.9 + fitness/100 * 0.1\` (0,9–1,0, \`conditionFactor\` in \`engine/match/team.ts\`). Hartes Training bei niedriger Fitness drückt zudem die Form.
 
 ## Anzeige (Hantel)
-Fitness erscheint als **Hantel** – gestaffelt wie Frische und Moral von Rot bis Dunkelgrün, je fitter, desto voller die Scheiben. Hover zeigt sofort den Wert („Fitness 82/100 – fit“).
+Fitness erscheint als **Hantel** (in der Aufstellung als Spalte neben der Frische) – die Farbe wechselt bei denselben Grenzen wie die Frische (90/75/60/45) von Dunkelgrün über Gelb bis Rot, je fitter, desto voller die Scheiben. Hover zeigt sofort den Wert („Fitness 82/100 – fit“).
 | Fitness | Farbe | Wort |
 |---------|-------|------|
 | ≥ 88 | Dunkelgrün | topfit |

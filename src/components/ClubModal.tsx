@@ -1,7 +1,7 @@
 // =============================================================================
 // ClubModal — Vereinsprofil im Football-Manager-Stil (großes Popup mit Reitern)
 //   Kopf (immer sichtbar): Wappen | Name, Stadt, Liga | Platz, Ø Stärke, Ansehen
-//   Reiter: Übersicht · Kader · Verein · Historie (in src/components/club/) · Erfolge (views/verein/trophies/)
+//   Reiter: Übersicht · Kader · Verein · Transfers · Historie (in src/components/club/) · Erfolge (views/verein/trophies/)
 // Geöffnet wird es überall über <ClubLink> (club/ClubProfileContext.tsx).
 // =============================================================================
 import { useEffect, useState } from 'react';
@@ -16,14 +16,15 @@ import ClubCrest from './ClubCrest';
 import Icon from './Icon';
 import PlayerModal from './PlayerModal';
 import ClubTab from './club/ClubTab';
+import TransfersTab from './club/TransfersTab';
 import HistoryTab from './club/HistoryTab';
 import OverviewTab from './club/OverviewTab';
 import SquadTab from './club/SquadTab';
 import { HonourStrip } from '../views/verein/honours/HonoursView';
 import { TrophyCabinet } from '../views/verein/trophies/TrophyCabinet';
 
-export type ClubTabKey = 'overview' | 'squad' | 'club' | 'history' | 'trophies';
-const TABS: [ClubTabKey, string][] = [['overview', 'Übersicht'], ['squad', 'Kader'], ['club', 'Verein'], ['history', 'Historie'], ['trophies', 'Erfolge']];
+export type ClubTabKey = 'overview' | 'squad' | 'club' | 'transfers' | 'history' | 'trophies';
+const TABS: [ClubTabKey, string][] = [['overview', 'Übersicht'], ['squad', 'Kader'], ['club', 'Verein'], ['transfers', 'Transfers'], ['history', 'Historie'], ['trophies', 'Erfolge']];
 
 export default function ClubModal({ g, clubId, nonce, onChange, onClose, onBack, zIndex }: {
   g: Game; clubId: string; nonce: number; onChange: () => void; onClose: () => void; onBack?: () => void; zIndex?: number;
@@ -79,10 +80,11 @@ export default function ClubModal({ g, clubId, nonce, onChange, onClose, onBack,
           {TABS.map(([t, l]) => <button key={t} className={`tab ${tab === t ? 'active' : ''}`} onClick={() => setTab(t)}>{l}</button>)}
         </nav>
 
-        <div className="mx-body mx-grid cmx-body">
+        <div className={`mx-body mx-grid cmx-body ${tab === 'transfers' ? 'cmx-trgrid' : ''}`}>
           {tab === 'overview' && <OverviewTab {...props} />}
           {tab === 'squad' && <SquadTab {...props} onTalk={onTalk} talkErr={talkErr} />}
           {tab === 'club' && <ClubTab {...props} />}
+          {tab === 'transfers' && <TransfersTab {...props} />}
           {tab === 'history' && <HistoryTab {...props} />}
           {tab === 'trophies' && <TrophyCabinet g={g} clubId={clubId} className="tro-cab-modal" />}
         </div>

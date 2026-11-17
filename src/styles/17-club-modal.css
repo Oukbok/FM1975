@@ -76,6 +76,12 @@
 .cmx-band.alt { fill: rgba(var(--ink-rgb), 0.055); }
 .cmx-axis { fill: var(--text-3); font-size: 12px; font-weight: 700; font-family: var(--font-ui); }
 .cmx-val { fill: var(--text-2); font-size: 11px; font-weight: 700; font-family: var(--font-ui); }
+.cmx-sep { stroke: var(--text-3); stroke-width: 1.5; stroke-dasharray: 6 4; }
+.cmx-guide { stroke: rgba(var(--ink-rgb), 0.25); stroke-width: 1; }
+.cmx-hit { fill: transparent; cursor: default; }
+.cmx-tip rect { fill: var(--navy); }
+.cmx-tip-a { fill: var(--navy-ink); font-size: 12px; font-weight: 700; font-family: var(--font-ui); }
+.cmx-tip-b { fill: var(--navy-ink); font-size: 12.5px; font-family: var(--font-ui); }
 .cmx-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
 .cmx-dot { fill: var(--accent); stroke: var(--panel); stroke-width: 2; }
 .cmx-dot.top { fill: var(--gold); }
@@ -93,3 +99,12 @@
 /* Namen im Fließtext (ui/LinkedText.tsx, Wunsch Pascal): immer als Link erkennbar, nicht erst beim Zeigen. */
 .txt-link { text-decoration: underline; text-decoration-thickness: 1px; text-decoration-color: rgba(var(--ink-rgb), 0.35); text-underline-offset: 3px; }
 .txt-link:hover { color: var(--club-accent, var(--accent)); text-decoration-color: currentColor; }
+
+/* Reiter „Transfers“: Saisonleiste über vier Boxen (2 × 2) */
+.cmx-body.cmx-trgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: 44px repeat(2, minmax(0, 1fr)); }
+.ctr-bar { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; }
+.ctr-sum { margin-left: auto; font-size: 14px; color: var(--text-2); }
+.ctr-sum b { color: var(--text); font-weight: 700; }
+.ctr-sum b.pos { color: var(--pos); }
+.ctr-sum b.neg { color: var(--neg); }
+.ctr-table td, .ctr-table th { padding-left: 8px; padding-right: 8px; }

@@ -12,6 +12,7 @@ import { coachRecordOf, recordText } from '../../game/coachRecord';
 import { currentStint, ensureCareer, stintRecord } from '../../game/careerState';
 import { headCoachRows } from '../../game/headCoaches';
 import { smoothPath, type Pt } from '../../ui/smoothPath';
+import { useState } from 'react';
 
 export interface ClubTabProps {
   g: Game;
@@ -146,6 +147,7 @@ export function verdict(d: ClubProfileData): string {
 const TIER_NAME = (t: number) => (t >= 100 ? 'DDR' : `${t}. Liga`);
 
 export function PlacementChart({ seasons }: { seasons: SeasonPlacement[] }) {
+  const [hov, setHov] = useState<number | null>(null);
   if (!seasons.length) return null;
   // Ebenen als Bänder untereinander (je Ebene so hoch wie ihre größte Liga).
   const tiers = [...new Set(seasons.map((s) => s.tier))].sort((a, b) => a - b);
@@ -161,24 +163,35 @@ export function PlacementChart({ seasons }: { seasons: SeasonPlacement[] }) {
   const y = (s: SeasonPlacement) => padT + ((off[s.tier] + s.pos - 0.5) / total) * (H - padT - padB);
   const labelEvery = Math.max(1, Math.ceil(n / 8));
   const path = smoothPath(seasons.map((s, i): Pt => [x(i), y(s)]));
+  const step = n > 1 ? (W - padL - padR) / (n - 1) : W - padL - padR;
+  const hs = hov != null ? seasons[hov] : null;
+  // Hover-Kärtchen: Saison + Platz + Liga, an den Rand geklemmt.
+  const tip = hs ? (() => {
+    const l1 = `Saison ${hs.season}${hs.live ? ' (laufend)' : ''}`, l2 = `${hs.pos}. Platz · ${hs.league}`;
+    const w = Math.max(l1.length, l2.length) * 6.2 + 22, h = 42;
+    const px = x(hov!), py = y(hs);
+    const tx = Math.min(W - padR - w, Math.max(padL, px - w / 2));
+    const ty = py - h - 14 >= 2 ? py - h - 14 : py + 14;
+    return { l1, l2, w, h, tx, ty };
+  })() : null;
   return (
-    <svg className="cmx-chart" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Platzierungen der vergangenen Saisons">
+    <svg className="cmx-chart" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Platzierungen der vergangenen Saisons" onMouseLeave={() => setHov(null)}>
       {tiers.map((t, i) => {
         const y0 = padT + (off[t] / total) * (H - padT - padB);
         const h = (bandH[t] / total) * (H - padT - padB);
         return (
           <g key={t}>
             <rect x={padL} y={y0} width={W - padL - padR} height={h} className={i % 2 ? 'cmx-band alt' : 'cmx-band'} />
+            {i > 0 && <line x1={padL} x2={W - padR} y1={y0} y2={y0} className="cmx-sep" />}
             <text x={padL - 8} y={y0 + 14} textAnchor="end" className="cmx-axis">{TIER_NAME(t)}</text>
           </g>
         );
       })}
       <path d={path} className="cmx-line" />
+      {hs && <line x1={x(hov!)} x2={x(hov!)} y1={padT} y2={H - padB} className="cmx-guide" />}
       {seasons.map((s, i) => (
         <g key={s.season}>
-          <circle cx={x(i)} cy={y(s)} r={s.pos === 1 ? 6 : 4.5} className={`cmx-dot ${s.pos === 1 ? 'top' : ''} ${s.live ? 'live' : ''}`}>
-            <title>{`${s.season}: ${s.pos}. Platz · ${s.league}${s.live ? ' (laufend)' : ''}`}</title>
-          </circle>
+          <circle cx={x(i)} cy={y(s)} r={(s.pos === 1 ? 6 : 4.5) + (hov === i ? 2 : 0)} className={`cmx-dot ${s.pos === 1 ? 'top' : ''} ${s.live ? 'live' : ''}`} />
           {(n <= 12 || s.pos === 1 || i === n - 1) && (
             <text x={x(i)} y={y(s) - 9} textAnchor="middle" className="cmx-val">{s.pos}.</text>
           )}
@@ -187,6 +200,17 @@ export function PlacementChart({ seasons }: { seasons: SeasonPlacement[] }) {
           ) : null}
         </g>
       ))}
+      {/* Trefferflächen je Saison über die volle Höhe */}
+      {seasons.map((s, i) => (
+        <rect key={`h${s.season}`} x={x(i) - step / 2} y={padT} width={step} height={H - padT - padB} className="cmx-hit" onMouseEnter={() => setHov(i)} />
+      ))}
+      {tip && (
+        <g className="cmx-tip" pointerEvents="none">
+          <rect x={tip.tx} y={tip.ty} width={tip.w} height={tip.h} rx={5} />
+          <text x={tip.tx + 10} y={tip.ty + 17} className="cmx-tip-a">{tip.l1}</text>
+          <text x={tip.tx + 10} y={tip.ty + 34} className="cmx-tip-b">{tip.l2}</text>
+        </g>
+      )}
     </svg>
   );
 }

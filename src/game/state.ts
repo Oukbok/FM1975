@@ -152,6 +152,8 @@ export interface Game {
   budget?: import('./budgetPlan').BudgetState;
   /** Transferprotokoll je Fenster (game/transferLog.ts); fehlt = alter Spielstand. */
   transferLog?: import('./transferLog').TransferLog;
+  /** Transferarchiv je Saison (game/clubTransfers.ts, Reiter „Transfers“ im Vereinsprofil). */
+  clubTransfers?: import('./clubTransfers').ClubTransferArchive;
   /** Bilanz der letzten Bewertungsrunden des eigenen Kaders (Vergleich in der Bewertungs-Show). */
   ratingRounds?: { date: string; label: string; n: number; ups: number; downs: number; sum: number }[];
   /** Kaderplanung der KI über die Saisons: Verlängerungen, Bosman, Leihen (game/aiSquadLog.ts). */

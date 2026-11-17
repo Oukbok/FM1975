@@ -7,12 +7,12 @@ import FaceThumb from '../FaceThumb';
 import { useState, type PointerEvent as RPE, type ReactNode } from 'react';
 import type { Player, Position } from '../../types';
 import { positionSuitability, suitabilityColor } from '../../engine/positions';
-import { PlayerForm, PlayerFreshness, PlayerMorale, MORALE_100, playerMorale100 } from '../status';
+import { PlayerFitness, PlayerFreshness, PlayerMorale, MORALE_100, playerMorale100, fitness100 } from '../status';
 import { PosTag } from '../PosBadge';
 
 export interface ListRow { p: Player; pos: Position | null; slotId?: string; benchIndex?: number }
 
-type SortKey = 'pos' | 'nr' | 'name' | 'eig' | 'fr' | 'form' | 'moral' | 'note' | 'st';
+type SortKey = 'pos' | 'nr' | 'name' | 'eig' | 'fr' | 'fit' | 'moral' | 'note' | 'st';
 const POS_ORDER: Position[] = ['TW', 'LIB', 'IV', 'RV', 'LV', 'DM', 'ZM', 'RM', 'LM', 'OM', 'RA', 'LA', 'HS', 'MS'];
 
 const fmtNote = (p: Player) => (p.seasonStats?.ratedMatches ? p.seasonStats.averageRating.toFixed(1).replace('.', ',') : '–');
@@ -29,7 +29,7 @@ function sortVal(r: ListRow, k: SortKey, idx: number): number | string {
     case 'name': return p.lastName;
     case 'eig': return -rowSuit(r);
     case 'fr': return -(p.frische ?? 100);
-    case 'form': return -(p.form ?? 50);
+    case 'fit': return -fitness100(p);
     case 'moral': return -playerMorale100(p);
     case 'note': return p.seasonStats?.ratedMatches ? p.seasonStats.averageRating : 9;
     case 'st': return -p.overall;
@@ -44,7 +44,7 @@ const COLS: [SortKey, string, string][] = [
   ['name', 'Name', 'Name'],
   ['eig', 'Eig', 'Eignung auf der Position (Reserve: Stammposition)'],
   ['fr', 'Frische', 'Frische (Zustand)'],
-  ['form', 'Form', 'Form'],
+  ['fit', 'Fitness', 'Fitness (Grundkondition)'],
   ['moral', 'Moral', 'Moral'],
   ['note', 'Ø Note', 'Durchschnittsnote der Saison'],
   ['st', 'Stärke', 'Gesamtstärke'],
@@ -83,7 +83,7 @@ export default function SquadList({ xi, free = [], slotOrder = [], bench, reserv
         </td>
         <td className="lu-c-num"><span className="lu-suit" style={{ borderColor: suitabilityColor(suit) }}>{suit}</span></td>
         <td className="lu-c-st"><PlayerFreshness p={p} /></td>
-        <td className="lu-c-st"><PlayerForm p={p} /></td>
+        <td className="lu-c-st"><PlayerFitness p={p} /></td>
         <td className="lu-c-st"><PlayerMorale p={p} /></td>
         <td className="lu-c-num">{fmtNote(p)}</td>
         <td className="lu-c-num lu-strong">{p.overall}</td>

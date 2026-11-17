@@ -22,6 +22,7 @@ import { hashStr } from '../engine/leagues';
 import type { Player } from '../types';
 import type { Game } from './state';
 import { noteMgrTransfer } from './managerLog';
+import { archiveLoan, archiveTransfer, migrateClubTransfers } from './clubTransfers';
 
 export interface TLEntry {
   /** Datum */ d: string;
@@ -136,7 +137,9 @@ function entryOf(g: Game, p: Player, from: string, to: string, feeNominal: numbe
 /** Einen Wechsel eintragen (über den Empfänger in recordTransfer). */
 export function logTransfer(g: Game, p: Player, from: string, to: string, feeNominal: number, date: string, kind?: TransferKind): void {
   const w = winOf(g, windowKeyOf(date));
-  w.e.push(entryOf(g, p, from, to, feeNominal, date, kind));
+  const e = entryOf(g, p, from, to, feeNominal, date, kind);
+  w.e.push(e);
+  archiveTransfer(g, { ...e });
   if (w.e.length > CAP_FULL * 1.25) trimLog(logOf(g), g.managedClubId);
 }
 
@@ -144,7 +147,7 @@ export function logTransfer(g: Game, p: Player, from: string, to: string, feeNom
 export function noteLoan(g: Game, playerId: string): void {
   for (const w of [...(g.transferLog?.wins ?? [])].reverse()) {
     const e = [...w.e].reverse().find((x) => x.p === playerId);
-    if (e) { e.k = 'loan'; return; }
+    if (e) { e.k = 'loan'; archiveLoan(g, playerId, e.d); return; }
   }
 }
 
@@ -253,5 +256,6 @@ export function migrateTransferLog(g: Game): void {
     log.shown = prevKey(cur);
     trimLog(log, g.managedClubId);
   }
+  migrateClubTransfers(g);
   bindTransferLog(g);
 }

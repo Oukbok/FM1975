@@ -10,7 +10,7 @@ import type { Formation } from '../../data/formations';
 import { PITCH_GRID, type GridPoint } from '../../data/pitchGrid';
 import { positionSuitability, suitabilityColor } from '../../engine/positions';
 import PitchSVG from './PitchSVG';
-import { PlayerForm, PlayerFreshness } from '../status';
+import { PlayerFitness, PlayerFreshness } from '../status';
 import { posGroupClass } from '../../ui/positionBadges';
 
 export interface SlotPreview { slotId: string; x: number; y: number; position: Position; grid: GridPoint | null; swapWith: string | null }
@@ -24,7 +24,7 @@ function Card({ p, pos, captain, small }: { p: Player; pos: Position; captain: b
       <div className="lu-card-top">
         <span className={`lu-card-pos ${posGroupClass(pos)}`}>{pos}</span>
         {captain && <span className="lu-cap" title="Kapitän">K</span>}
-        <span className="lu-card-st"><PlayerFreshness p={p} size={13} /><PlayerForm p={p} size={13} /></span>
+        <span className="lu-card-st"><PlayerFreshness p={p} size={13} /><PlayerFitness p={p} size={13} /></span>
         <span className="lu-card-suit" title="Eignung auf dieser Position">{suit}</span>
       </div>
       {!small && <FaceThumb p={p} size={40} className="lu-card-head" />}
