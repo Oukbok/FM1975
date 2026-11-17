@@ -2,6 +2,7 @@
 // Mannschaft im Spiel: Aufstellung auflösen, Spielerstärke auf der Position,
 // Tagesform und die Mannschaftsteile (Angriff, Kontrolle, Abwehr, Torwart).
 // =============================================================================
+import { pickBench } from '../benchPick';
 import { countsAsForeign, euroListOf, isNational, matchForeignCap } from '../registration';
 import type { Club, Player, Position, Tactics } from '../../types';
 import { POSITION_GROUPS } from '../../types';
@@ -166,16 +167,21 @@ export function resolveLineup(club: Club, players: Record<string, Player>, human
     .filter((s) => slotPlayer[s.id])
     .map((s) => ({ p: slotPlayer[s.id], pos: s.position, slot: s.id }));
 
-  // Bank: gespeicherte Ersatzspieler, dann Beste nach Overall; ein Torwart, wenn möglich
+  // Bank: gespeicherte Ersatzspieler, Rest nach Positionen der Startelf (engine/benchPick.ts)
   const bench: Player[] = [];
   const pushBench = (p: Player | undefined) => {
     if (bench.length >= benchSize || !isAvailable(p) || used.has(p.id) || !inPool.has(p.id) || !fits(p)) return;
     bench.push(p); used.add(p.id); take(p);
   };
   if (human) for (const id of t?.substitutes ?? []) pushBench(players[id]);
-  const rest = pool.filter((p) => !used.has(p.id)).sort((a, b) => b.overall - a.overall);
-  if (!bench.some((p) => p.naturalPosition === 'TW')) pushBench(rest.find((p) => p.naturalPosition === 'TW'));
-  for (const p of rest) pushBench(p);
+  const rest = pool.filter((p) => !used.has(p.id) && isAvailable(p)).sort((a, b) => b.overall - a.overall);
+  if (bench.length < benchSize) {
+    // Gespeicherte Ersatzspieler decken ihre Positionen schon ab: nur die übrigen Teile planen.
+    const covered = bench.map((p) => p.naturalPosition);
+    const xiPos = xi.map((x) => x.pos).filter((pos) => !covered.includes(pos));
+    if (bench.some((p) => p.naturalPosition === 'TW')) xiPos.splice(0, xiPos.length, ...xiPos.filter((x) => x !== 'TW'));
+    pickBench(xiPos, rest, benchSize - bench.length, fits, pushBench);
+  }
 
   return { xi, bench, formation: formation.id, slots: formation.slots };
 }

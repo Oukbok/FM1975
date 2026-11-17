@@ -15,6 +15,7 @@ import type { Club, Player, Position, Tactics } from '../types';
 import { FORMATIONS, getFormation, Formation, DEFAULT_FORMATION_ID, currentFormationYear, decadeOf, liberoOut } from '../data/formations';
 import { positionSuitability } from './positions';
 import { withLayout } from '../data/pitchGrid';
+import { pickBench } from './benchPick';
 
 /** Kleiner deterministischer Hash → 32-Bit-Seed. */
 function hashString(str: string): number {
@@ -89,15 +90,11 @@ export function assignToFormation(
 
   // Startelf in Slot-Reihenfolge
   const startingXI = formation.slots.map((s) => lineupMap[s.id]).filter(Boolean) as string[];
-  // Ersatzbank: beste verbleibende Spieler
+  // Ersatzbank (engine/benchPick.ts): Torwart, Abwehr innen/außen, Mittelfeld innen/außen,
+  // Sturm außen/innen – jede Position der Startelf auswechselbar, dann doppelt, dann auffüllen.
   const rest = (opts.benchPool ?? pool).filter((p) => !usedPlayers.has(p.id)).sort((a, b) => b.overall - a.overall);
-  const bench = rest.slice(0, benchSize);
-  // Ein Ersatztorwart gehört auf die Bank, wenn einer da ist.
-  if (benchSize > 0 && !bench.some((p) => p.naturalPosition === 'TW')) {
-    const gk = rest.find((p) => p.naturalPosition === 'TW');
-    if (gk) { if (bench.length >= benchSize) bench.pop(); bench.push(gk); }
-  }
-  const substitutes = bench.map((p) => p.id);
+  const xiPos = formation.slots.filter((s) => lineupMap[s.id]).map((s) => s.position);
+  const substitutes = pickBench(xiPos, rest, benchSize).map((p) => p.id);
 
   return { lineupMap, assignedPositions, startingXI, substitutes };
 }

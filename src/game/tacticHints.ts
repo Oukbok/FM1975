@@ -60,9 +60,8 @@ export function tacticHints(club: Club, players: Record<string, Player>, year: n
   const xi = xiOf(club, players, year);
   const f = teamFit(xi);
   const sure = level >= 55;
-  const maybe = sure ? '' : 'Vielleicht ';
-  const low = (s: string) => (sure ? s : s.charAt(0).toLowerCase() + s.slice(1));
-  const say = (s: string) => maybe + low(s);
+  // Unsicheres Trainerteam: Satz bleibt unverändert, davor „Wir vermuten:“ (kein „Vielleicht“ vor dem Hauptsatz – falsche Wortstellung).
+  const say = (s: string) => (sure ? s : `Wir vermuten: ${s}`);
   const out: TacticHint[] = [];
   const add = (area: HintArea, tone: HintTone, text: string, who?: string[]) => {
     if (!out.some((h) => h.area === area)) out.push({ area, tone, text: say(text), who });
