@@ -2,6 +2,7 @@
 // Mannschaft im Spiel: Aufstellung auflösen, Spielerstärke auf der Position,
 // Tagesform und die Mannschaftsteile (Angriff, Kontrolle, Abwehr, Torwart).
 // =============================================================================
+import { defStyleOf } from '../tacticEra';
 import { pickBench } from '../benchPick';
 import { countsAsForeign, euroListOf, isNational, matchForeignCap } from '../registration';
 import type { Club, Player, Position, Tactics } from '../../types';
@@ -307,10 +308,17 @@ const norm = (v: number | undefined) => ((v ?? 50) - 50) / 50;
 
 export function tacticMods(t: Tactics | undefined, mentality: Mentality, shout: ShoutId | null, shoutPower: number, talk: number): TacticMods {
   const m: TacticMods = { att: 1, def: 1, ctrl: 1, rate: 1, foul: 1, drain: 1, cross: 1, exposed: 1, counter: 1, trap: 0, errors: 1, cards: 1, duel: 1, injury: 1 };
+  // Mentalität mit Ball: Angriffe und Risiko nach vorn.
   switch (t?.style) {
-    case 'attacking': m.att *= 1.07; m.def *= 0.95; m.rate *= 1.1; m.exposed *= 1.15; break;
-    case 'defensive': m.att *= 0.93; m.def *= 1.06; m.rate *= 0.88; m.exposed *= 0.85; break;
+    case 'attacking': m.att *= 1.07; m.rate *= 1.1; break;
+    case 'defensive': m.att *= 0.93; m.rate *= 0.88; break;
     case 'counter': m.ctrl *= 0.95; m.counter *= 1.45; m.exposed *= 0.95; m.rate *= 0.95; break;
+    default: break;
+  }
+  // Mentalität gegen den Ball (Wunsch Pascal: eigene Wahl; ohne Wahl wie bisher aus `style` abgeleitet).
+  switch (t ? defStyleOf(t) : 'balanced') {
+    case 'attacking': m.def *= 0.95; m.exposed *= 1.15; break;
+    case 'defensive': m.def *= 1.06; m.exposed *= 0.85; break;
     default: break;
   }
   const tempo = norm(t?.tempo), press = norm(t?.pressing), line = norm(t?.defensiveLine), hard = norm(t?.tackleHardness), width = norm(t?.widthFocus);

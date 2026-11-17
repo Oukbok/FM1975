@@ -15,7 +15,8 @@
 // =============================================================================
 import type { Tactics } from '../types';
 import { FORMATIONS, getFormation } from '../data/formations';
-import { effectiveTactics, markingOf, stepOf, stepValue } from './tacticEra';
+import { defStyleOf, effectiveTactics, markingOf, stepOf, stepValue } from './tacticEra';
+const DSTYLES = ['defensive', 'balanced', 'attacking'] as const;
 
 export interface Practiced {
   /** Anteil je Mentalität: defensiv, ausgewogen, offensiv, Konter (Summe 1). */
@@ -23,6 +24,8 @@ export interface Practiced {
   pr: number; te: number; li: number; wi: number; ha: number;
   /** Anteil langer Aufbau, Flanken (0 flach … 1 hoch), Abseitsfalle, Raumdeckung, Gegenpressing. */
   bu: number; cr: number; tr: number; mk: number; cp: number;
+  /** Anteil je Mentalität gegen den Ball: defensiv, ausgewogen, offensiv (fehlt in alten Spielständen = wie verlangt). */
+  ds?: [number, number, number];
 }
 export interface Cohesion {
   p: Practiced;
@@ -41,8 +44,10 @@ function targetOf(t0: Tactics, year: number): Practiced {
   const t = effectiveTactics(t0, year)!;
   const st: Practiced['st'] = [0, 0, 0, 0];
   st[styleIdx(t)] = 1;
+  const ds: [number, number, number] = [0, 0, 0];
+  ds[DSTYLES.indexOf(defStyleOf(t))] = 1;
   return {
-    st, pr: t.pressing ?? 50, te: t.tempo ?? 50, li: t.defensiveLine ?? 50, wi: t.widthFocus ?? 50, ha: t.tackleHardness ?? 50,
+    st, ds, pr: t.pressing ?? 50, te: t.tempo ?? 50, li: t.defensiveLine ?? 50, wi: t.widthFocus ?? 50, ha: t.tackleHardness ?? 50,
     bu: t.buildup === 'long' ? 1 : 0, cr: t.crossStyle === 'high' ? 1 : t.crossStyle === 'low' ? 0 : 0.5,
     tr: t.offsideTrap ? 1 : 0, mk: markingOf(t, year) === 'zone' ? 1 : 0, cp: t.counterPress ? 1 : 0,
   };
@@ -50,7 +55,8 @@ function targetOf(t0: Tactics, year: number): Practiced {
 
 /** Gewicht je Anweisung: wie viel Einüben sie braucht. */
 export const GAP_PARTS: { key: keyof Practiced; label: string; w: number }[] = [
-  { key: 'st', label: 'Mentalität', w: 1.2 },
+  { key: 'st', label: 'Mentalität mit Ball', w: 0.8 },
+  { key: 'ds', label: 'Mentalität gegen den Ball', w: 0.6 },
   { key: 'mk', label: 'Deckung', w: 1.4 },
   { key: 'pr', label: 'Pressing', w: 1.0 },
   { key: 'li', label: 'Abwehrlinie', w: 1.0 },
@@ -68,6 +74,7 @@ const GAP_FULL = 2.0;
 
 function partGap(p: Practiced, tg: Practiced, key: keyof Practiced): number {
   if (key === 'st') return 1 - p.st[tg.st.indexOf(1)];
+  if (key === 'ds') return p.ds ? 1 - p.ds[tg.ds!.indexOf(1)] : 0;
   const a = p[key] as number, b = tg[key] as number;
   return NUM.has(key) ? Math.min(1, Math.abs(a - b) / 80) : Math.abs(a - b);
 }
@@ -116,7 +123,10 @@ export function cohesionOf(co: Cohesion, t: Tactics, year: number, formation = t
   const fam = formationFam(co, getFormation(formation).id);
   const ins = clamp(1 - instructionGap(co, t, year).total / GAP_FULL, 0, 1) * 100;
   const lu = clamp((co.s - 0.4) / 0.45, 0, 1) * 100;
-  return { total: Math.round(0.4 * fam + 0.42 * ins + 0.18 * lu), formation: Math.round(fam), instructions: Math.round(ins), lineup: Math.round(lu) };
+  // Wunsch Pascal: ein völlig fremder Teil zieht das Ganze deutlich nach unten (vorher nie unter ≈ 53).
+  const lin = 0.4 * fam + 0.42 * ins + 0.18 * lu;
+  const weak = Math.min(fam, ins, 0.5 * lu + 50);
+  return { total: Math.round(0.65 * lin + 0.35 * weak), formation: Math.round(fam), instructions: Math.round(ins), lineup: Math.round(lu) };
 }
 
 /** Neutralpunkt: ohne Angabe (Labor, Altbestand) rechnet die Engine mit diesem Wert. */
@@ -136,6 +146,8 @@ export function practice(co: Cohesion, t: Tactics, year: number, rate: number, f
   const tg = targetOf(t, year), p = co.p;
   const r = clamp(rate, 0, 1);
   for (let i = 0; i < 4; i++) p.st[i] += (tg.st[i] - p.st[i]) * r;
+  if (!p.ds) p.ds = [...tg.ds!] as [number, number, number]; // alter Spielstand: gilt als eingeübt
+  else for (let i = 0; i < 3; i++) p.ds[i] += (tg.ds![i] - p.ds[i]) * r;
   for (const k of ['pr', 'te', 'li', 'wi', 'ha', 'bu', 'cr', 'tr', 'mk', 'cp'] as const) p[k] += (tg[k] - p[k]) * r;
   const id = getFormation(t.formation).id;
   const cur = co.f[id] ?? formationFam(co, id) * 0.75;
@@ -160,11 +172,12 @@ export function noteMatch(co: Cohesion, t: Tactics, year: number, xi: string[]):
 }
 
 /** Die eingeübten Anweisungen als wählbare Stufen/Schalter (Markierung auf der Taktik-Seite, „Eingeübtes wiederherstellen“). */
-export function practicedTactics(co: Cohesion): Pick<Tactics, 'style' | 'pressing' | 'tempo' | 'defensiveLine' | 'widthFocus' | 'tackleHardness' | 'buildup' | 'crossStyle' | 'offsideTrap' | 'marking' | 'counterPress'> {
+export function practicedTactics(co: Cohesion): Pick<Tactics, 'style' | 'defStyle' | 'pressing' | 'tempo' | 'defensiveLine' | 'widthFocus' | 'tackleHardness' | 'buildup' | 'crossStyle' | 'offsideTrap' | 'marking' | 'counterPress'> {
   const p = co.p;
   const near = (v: number) => stepValue(stepOf(v));
   return {
     style: STYLES[p.st.indexOf(Math.max(...p.st))],
+    ...(p.ds ? { defStyle: DSTYLES[p.ds.indexOf(Math.max(...p.ds))] } : {}),
     pressing: near(p.pr), tempo: near(p.te), defensiveLine: near(p.li), widthFocus: near(p.wi), tackleHardness: near(p.ha),
     buildup: p.bu >= 0.5 ? 'long' : 'short', crossStyle: p.cr > 0.75 ? 'high' : p.cr < 0.25 ? 'low' : 'mixed',
     offsideTrap: p.tr >= 0.5, marking: p.mk >= 0.5 ? 'zone' : 'man', counterPress: p.cp >= 0.5,

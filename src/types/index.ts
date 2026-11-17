@@ -1129,7 +1129,10 @@ export type TacticStyle = 'defensive' | 'balanced' | 'attacking' | 'counter';
 export interface Tactics {
   /** Formationsbezeichnung, z.B. "1-3-3-3" oder "Libero-4-4-2". */
   formation: string;
+  /** Mentalität mit Ball (Angriffe, Risiko, Konter). */
   style: TacticStyle;
+  /** Mentalität gegen den Ball (Wunsch Pascal; fehlt = aus `style` abgeleitet, `defStyleOf` in engine/tacticEra.ts). */
+  defStyle?: 'defensive' | 'balanced' | 'attacking';
   /** Mannschaftsteil-Ausrichtung: Pressinghöhe (0–100). */
   pressing: number;
   /** Tempo / Spielgeschwindigkeit (0–100). */

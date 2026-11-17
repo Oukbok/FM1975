@@ -13,7 +13,7 @@ import { useMemo, useState } from 'react';
 import type { Tactics } from '../types';
 import type { Game } from '../game/state';
 import { getFormation } from '../data/formations';
-import { practicedTactics, validCohesion } from '../engine/cohesion';
+import { instructionGap, practicedTactics, validCohesion, type Practiced } from '../engine/cohesion';
 import { seasonYearOf } from '../engine/match/era';
 import { CalendarEngine } from '../engine/calendar';
 import { nextOpponent } from '../game/opponentView';
@@ -25,6 +25,11 @@ import { CohesionBox, OpponentBox } from './tactics/SideBoxes';
 import { TacticBoard, type BoardPhase } from './tactics/TacticBoard';
 import { TacticHints } from './tactics/TacticHints';
 import { TacticPresets } from './tactics/TacticPresets';
+
+/** Anweisung → Teil des Eingeübten (engine/cohesion.ts); Einsatz muss nicht eingeübt werden. */
+const LEVEL_KEY: Partial<Record<InstrKey, keyof Practiced>> = {
+  style: 'st', dstyle: 'ds', buildup: 'bu', tempo: 'te', width: 'wi', cross: 'cr', marking: 'mk', pressing: 'pr', line: 'li', hard: 'ha', trap: 'tr', cpress: 'cp',
+};
 
 export default function TacticsView({ g, onChange }: { g: Game; onChange: () => void }) {
   const myClub = g.clubs[g.managedClubId];
@@ -52,15 +57,25 @@ export default function TacticsView({ g, onChange }: { g: Game; onChange: () => 
     return out;
   }, [drilledKey, year]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Wie gut ist jede Anweisung eingeübt? (0 = fremd … 1 = sitzt; Balken vor den Stufen, Wunsch Pascal)
+  const tKey = JSON.stringify(t) + drilledKey;
+  const levels = useMemo(() => {
+    if (!validCohesion(co)) return undefined;
+    const gap = Object.fromEntries(instructionGap(co, t, year).parts.map((p) => [p.key, p.gap])) as Partial<Record<keyof Practiced, number>>;
+    const out: Partial<Record<InstrKey, number>> = {};
+    for (const [k, pk] of Object.entries(LEVEL_KEY) as [InstrKey, keyof Practiced][]) out[k] = 1 - (gap[pk] ?? 0);
+    return out;
+  }, [tKey, year]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const board = (phase: BoardPhase) => <TacticBoard t={t} year={year} formation={formation} players={g.players} phase={phase} setRole={setRole} />;
-  const panel = (sections: Section[]) => <InstructionPanel t={t} year={year} set={set} drilled={drilled} sections={sections} />;
+  const panel = (sections: Section[]) => <InstructionPanel t={t} year={year} set={set} drilled={drilled} levels={levels} sections={sections} />;
   return (
     <DashPage className="tx-page">
       <DashBox title="In Ballbesitz" info="taktiktafel" flush className="tx-board-box tx-ball-board" right={<span className="tx-form">{getFormation(t.formation).label}</span>}>
         {board('ball')}
       </DashBox>
       <DashBox title="Anweisungen" info="anweisungen" flush className="tx-instr-box tx-ball-instr" right={<TacticPresets g={g} t={t} year={year} set={set} />}>
-        {panel(['grund', 'ball'])}
+        {panel(['ball'])}
       </DashBox>
       <DashBox title="Defensive" info="taktiktafel" flush className="tx-board-box tx-def-board">
         {board('gegen')}

@@ -87,8 +87,8 @@ export const HONOURS: HonourDef[] = [
   { id: 'spektakel', name: 'Spektakel', group: 'Spielweise und Mannschaft', what: 'Torreicher Fußball füllt Stadion und Fanshop.',
     tiers: [
       { need: 'Bester Angriff der Liga, mindestens 60 % über dem Torschnitt der Liga', fx: `+${pct(0.04)} Zuschauer und Fanartikel`, effects: { demand: 0.04, merch: 0.04 } },
-      { need: 'So zwei Saisons in Folge', fx: `+${pct(0.08)} Zuschauer und Fanartikel`, effects: { demand: 0.08, merch: 0.08 } },
-      { need: 'So drei Saisons in Folge und dabei Meister', fx: `+${pct(0.14)} Zuschauer und Fanartikel`, effects: { demand: 0.14, merch: 0.14 } },
+      { need: 'Bronze-Hürde zwei Saisons in Folge geschafft', fx: `+${pct(0.08)} Zuschauer und Fanartikel`, effects: { demand: 0.08, merch: 0.08 } },
+      { need: 'Bronze-Hürde drei Saisons in Folge geschafft und dabei Meister', fx: `+${pct(0.14)} Zuschauer und Fanartikel`, effects: { demand: 0.14, merch: 0.14 } },
     ] },
   { id: 'bollwerk', name: 'Bollwerk', group: 'Spielweise und Mannschaft', what: 'Verteidiger und Torhüter wechseln lieber zu dir.',
     tiers: [
@@ -99,14 +99,14 @@ export const HONOURS: HonourDef[] = [
   { id: 'fairplay', name: 'Fair Play', group: 'Spielweise und Mannschaft', what: 'Sponsoren schätzen dein sauberes Image.',
     tiers: [
       { need: 'Fairste Mannschaft der Liga ohne Platzverweis', fx: `+${pct(0.05)} Sponsorwert (Image)`, effects: { sponsor: 0.05 } },
-      { need: 'So zwei Saisons in Folge', fx: `+${pct(0.1)} Sponsorwert (Image)`, effects: { sponsor: 0.1 } },
-      { need: 'So vier Saisons in Folge', fx: `+${pct(0.15)} Sponsorwert (Image)`, effects: { sponsor: 0.15 } },
+      { need: 'Bronze-Hürde zwei Saisons in Folge geschafft', fx: `+${pct(0.1)} Sponsorwert (Image)`, effects: { sponsor: 0.1 } },
+      { need: 'Bronze-Hürde vier Saisons in Folge geschafft', fx: `+${pct(0.15)} Sponsorwert (Image)`, effects: { sponsor: 0.15 } },
     ] },
   { id: 'truppe', name: 'Eingeschworene Truppe', group: 'Spielweise und Mannschaft', what: 'Die Moral bricht langsamer ein.',
     tiers: [
       { need: 'Teamstimmung von September bis Juni nie unter 65', fx: `Moral sinkt ${pct(0.1)} langsamer`, effects: { moraleHold: 0.1 } },
       { need: 'Teamstimmung von September bis Juni nie unter 72', fx: `Moral sinkt ${pct(0.2)} langsamer`, effects: { moraleHold: 0.2 } },
-      { need: 'So drei Saisons in Folge (nie unter 72)', fx: `Moral sinkt ${pct(0.3)} langsamer`, effects: { moraleHold: 0.3 } },
+      { need: 'Bronze-Hürde drei Saisons in Folge geschafft (nie unter 72)', fx: `Moral sinkt ${pct(0.3)} langsamer`, effects: { moraleHold: 0.3 } },
     ] },
   { id: 'treue', name: 'Vereinstreue', group: 'Nachwuchs und Kader', what: 'Vertragsverlängerungen werden günstiger.',
     tiers: [
@@ -130,8 +130,8 @@ export const HONOURS: HonourDef[] = [
   { id: 'transfer', name: 'Transfer-Geschick', group: 'Wirtschaft und Umfeld', what: 'Verkäufer und Berater verhandeln weicher mit dir.',
     tiers: [
       { need: 'Positiver Transfersaldo und trotzdem eine deutlich stärkere Mannschaft (+1,5 Stärke der besten 11)', fx: `Geforderte Ablösen ${pct(0.05)} niedriger`, effects: { feeCut: 0.05 } },
-      { need: 'So drei Saisons in Folge', fx: `Geforderte Ablösen ${pct(0.1)} niedriger`, effects: { feeCut: 0.1 } },
-      { need: 'So fünf Saisons in Folge, dazu ein Titel in dieser Zeit', fx: `Ablösen und Beraterprovision ${pct(0.15)} niedriger`, effects: { feeCut: 0.15, agentCut: 0.15 } },
+      { need: 'Bronze-Hürde drei Saisons in Folge geschafft', fx: `Geforderte Ablösen ${pct(0.1)} niedriger`, effects: { feeCut: 0.1 } },
+      { need: 'Bronze-Hürde fünf Saisons in Folge geschafft, dazu ein Titel in dieser Zeit', fx: `Ablösen und Beraterprovision ${pct(0.15)} niedriger`, effects: { feeCut: 0.15, agentCut: 0.15 } },
     ] },
   { id: 'ruhe', name: 'Ruhige Hand', group: 'Wirtschaft und Umfeld', what: 'Trainer auf dem Arbeitsmarkt kommen lieber zu dir.',
     tiers: [

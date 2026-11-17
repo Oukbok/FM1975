@@ -3,15 +3,15 @@
 // -----------------------------------------------------------------------------
 // Jede Anweisung ist eine Zeile mit gleich gebauten Stufen bzw. Wahlmöglichkeiten:
 // Beschriftung, Kurztext je Wahl (was sie bringt und kostet), Sperre mit Grund
-// (Epoche, Formation – engine/tacticEra.ts). Drei Abschnitte: Grundausrichtung,
-// mit Ball, gegen den Ball. Dazu die eingebauten Vorlagen.
+// (Epoche, Formation – engine/tacticEra.ts). Abschnitte: mit Ball (inkl. Mentalität und
+// Einsatz), gegen den Ball (mit eigener Mentalität). Dazu die eingebauten Vorlagen.
 // =============================================================================
 import type { Tactics } from '../../types';
 import {
-  COUNTERPRESS_FROM, HIGH_PRESS_FROM, ZONE_FROM, effectiveTactics, markingOf, stepOf, stepValue, tacticLimits, type TacticLimits,
+  COUNTERPRESS_FROM, HIGH_PRESS_FROM, ZONE_FROM, defStyleOf, effectiveTactics, markingOf, stepOf, stepValue, tacticLimits, type TacticLimits,
 } from '../../engine/tacticEra';
 
-export type InstrKey = 'style' | 'effort' | 'buildup' | 'tempo' | 'width' | 'cross' | 'marking' | 'pressing' | 'line' | 'hard' | 'trap' | 'cpress';
+export type InstrKey = 'style' | 'dstyle' | 'effort' | 'buildup' | 'tempo' | 'width' | 'cross' | 'marking' | 'pressing' | 'line' | 'hard' | 'trap' | 'cpress';
 export type Section = 'grund' | 'ball' | 'gegen';
 export const SECTION_LABEL: Record<Section, string> = { grund: 'Grundausrichtung', ball: 'Mit Ball', gegen: 'Gegen den Ball' };
 
@@ -38,10 +38,11 @@ const five = (key: 'tempo' | 'pressing' | 'defensiveLine' | 'widthFocus' | 'tack
   glyph: (key === 'widthFocus' ? 'zone' : 'level') as InstrDef['glyph'],
 });
 const STYLES = ['defensive', 'balanced', 'attacking', 'counter'] as const;
+const DSTYLES = ['defensive', 'balanced', 'attacking'] as const;
 
 export const INSTRUCTIONS: InstrDef[] = [
   {
-    key: 'style', label: 'Mentalität', section: 'grund', about: 'Wie viel Risiko die Mannschaft geht.',
+    key: 'style', label: 'Mentalität', section: 'ball', about: 'Wie viel Risiko die Mannschaft mit Ball geht.',
     opts: [
       { label: 'Defensiv', text: 'Sicherheit zuerst: weniger eigene Angriffe, dafür kaum Räume für Konter.' },
       { label: 'Ausgewogen', text: 'Gleichgewicht zwischen Angriff und Abwehr.' },
@@ -52,7 +53,7 @@ export const INSTRUCTIONS: InstrDef[] = [
     set: (i) => ({ style: STYLES[i] }),
   },
   {
-    key: 'effort', label: 'Einsatz', section: 'grund', about: 'Wie viel Kraft die Mannschaft in jedes Spiel steckt.',
+    key: 'effort', label: 'Einsatz', section: 'ball', about: 'Wie viel Kraft die Mannschaft in jedes Spiel steckt.',
     opts: [
       { label: 'Schonend', text: 'Kräfte sparen: weniger Druck, dafür frischer in der Schlussphase und im nächsten Spiel.' },
       { label: 'Dosiert', text: 'Etwas zurückgenommen – gut in englischen Wochen.' },
@@ -102,6 +103,16 @@ export const INSTRUCTIONS: InstrDef[] = [
     ],
     get: (t) => (t.crossStyle === 'low' ? 0 : t.crossStyle === 'high' ? 2 : 1),
     set: (i) => ({ crossStyle: (['low', 'mixed', 'high'] as const)[i] }),
+  },
+  {
+    key: 'dstyle', label: 'Mentalität', section: 'gegen', about: 'Wie die Mannschaft gegen den Ball steht (Wunsch Pascal: eigene Mentalität für die Defensive).',
+    opts: [
+      { label: 'Defensiv', text: 'Hinten absichern: stabiler, kaum Räume für Konter – der Gegner hat mehr vom Ball.' },
+      { label: 'Ausgewogen', text: 'Ordnung halten, ohne sich zurückzuziehen.' },
+      { label: 'Offensiv', text: 'Nach vorn verteidigen: schnell nachrücken und attackieren. Weniger stabil, offener für Konter.' },
+    ],
+    get: (t) => Math.max(0, DSTYLES.indexOf(defStyleOf(t))),
+    set: (i) => ({ defStyle: DSTYLES[i] }),
   },
   {
     key: 'marking', label: 'Deckung', section: 'gegen', about: 'Wie die Abwehr den Gegner aufnimmt.',
@@ -185,11 +196,11 @@ export const instrLabel = (key: InstrKey, t: Tactics, year: number): string => {
 };
 
 // --- Vorlagen ---------------------------------------------------------------------
-export type InstrPatch = Pick<Tactics, 'style' | 'effort' | 'buildup' | 'tempo' | 'widthFocus' | 'crossStyle' | 'marking' | 'pressing' | 'defensiveLine' | 'tackleHardness' | 'offsideTrap' | 'counterPress'>;
+export type InstrPatch = Pick<Tactics, 'style' | 'defStyle' | 'effort' | 'buildup' | 'tempo' | 'widthFocus' | 'crossStyle' | 'marking' | 'pressing' | 'defensiveLine' | 'tackleHardness' | 'offsideTrap' | 'counterPress'>;
 export interface TacticPreset { id: string; name: string; text: string; from?: number; patch: InstrPatch }
 const P = (style: Tactics['style'], effort: number, buildup: 'short' | 'long', tempo: number, width: number, cross: 'low' | 'mixed' | 'high',
   marking: 'man' | 'zone', pressing: number, line: number, hard: number, trap: boolean, cp = false): InstrPatch => ({
-  style, effort: stepValue(effort), buildup, tempo: stepValue(tempo), widthFocus: stepValue(width), crossStyle: cross, marking,
+  style, defStyle: style === 'attacking' ? 'attacking' : style === 'balanced' ? 'balanced' : 'defensive', effort: stepValue(effort), buildup, tempo: stepValue(tempo), widthFocus: stepValue(width), crossStyle: cross, marking,
   pressing: stepValue(pressing), defensiveLine: stepValue(line), tackleHardness: stepValue(hard), offsideTrap: trap, counterPress: cp,
 });
 export const PRESETS: TacticPreset[] = [
@@ -210,10 +221,10 @@ const KEYS: (keyof InstrPatch)[] = ['style', 'effort', 'buildup', 'tempo', 'widt
 export function instrPatchOf(t: Tactics, year: number): InstrPatch {
   const e = effectiveTactics(t, year)!;
   return {
-    style: e.style, effort: stepValue(stepOf(e.effort)), buildup: e.buildup === 'long' ? 'long' : 'short', tempo: stepValue(stepOf(e.tempo)),
+    style: e.style, defStyle: defStyleOf(e), effort: stepValue(stepOf(e.effort)), buildup: e.buildup === 'long' ? 'long' : 'short', tempo: stepValue(stepOf(e.tempo)),
     widthFocus: stepValue(stepOf(e.widthFocus)), crossStyle: e.crossStyle ?? 'mixed', marking: markingOf(e, year), pressing: stepValue(stepOf(e.pressing)),
     defensiveLine: stepValue(stepOf(e.defensiveLine)), tackleHardness: stepValue(stepOf(e.tackleHardness)), offsideTrap: !!e.offsideTrap, counterPress: !!e.counterPress,
   };
 }
 /** Sind zwei Sätze von Anweisungen gleich? (Vorlage als „aktiv“ markieren.) */
-export const samePatch = (a: InstrPatch, b: InstrPatch): boolean => KEYS.every((k) => a[k] === b[k]);
+export const samePatch = (a: InstrPatch, b: InstrPatch): boolean => KEYS.every((k) => a[k] === b[k]) && defStyleOf(a) === defStyleOf(b);

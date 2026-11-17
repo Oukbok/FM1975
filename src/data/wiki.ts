@@ -1314,8 +1314,10 @@ Keine Taktik ist für jede Mannschaft die beste – es kommt auf die **Spielerty
 ### Einschätzung des Trainerteams
 Genaue Zahlen gibt es nicht – was am besten funktioniert, findest du durch **Ausprobieren**. Rechts schätzt dein Trainerteam ein, wie Anweisungen und Elf zusammenpassen: oben das Profil der Startelf in Worten, darunter je Bereich höchstens ein Hinweis – **Vorsicht** (eine Anweisung arbeitet gegen deine Leute), **Idee** (eine Stärke bleibt ungenutzt), **Gegner** (eine Schwäche des nächsten Gegners) und **Passt** (das stimmt schon). Bei jedem Hinweis stehen die Spieler, an denen es vor allem hängt. Ein starkes Trainerteam sieht bis zu fünf Dinge, ein schwaches nur zwei und ist sich unsicher.
 
-### Grundausrichtung
-- **Mentalität:** Offensiv = mehr Dribblings und Steilpässe, mehr Schüsse, anfälliger für Konter. Defensiv = weniger Risiko, mehr lange Bälle. Konter = weniger Ballbesitz, aber viel mehr Gegenstöße nach Ballgewinn.
+### Zwei Mentalitäten
+- **Mentalität mit Ball** (oben unter *Mit Ball*): Offensiv = mehr Angriffe, Dribblings und Steilpässe. Defensiv = weniger Risiko, weniger Angriffe, mehr lange Bälle. Konter = weniger Ballbesitz, aber viel mehr Gegenstöße nach Ballgewinn.
+- **Mentalität gegen den Ball** (unten unter *Gegen den Ball*): Defensiv = hinten stabiler, kaum Räume für Konter. Offensiv = nach vorn verteidigen, weniger stabil und offener für Konter. Ohne eigene Wahl richtet sie sich nach der Mentalität mit Ball (Konter = ausgewogen).
+- Vor jeder Anweisung zeigt ein **Balken von Rot nach Grün**, wie gut die Mannschaft sie eingeübt hat (siehe *Eingespieltheit*); beim Einsatz gibt es nichts einzuüben.
 - **Einsatz (5 Stufen):** mehr gewonnene Zweikämpfe und Laufduelle in beide Richtungen, aber mehr Kraftverbrauch, Frischeverlust, Karten und Verletzungen.
 
 ### Mit Ball
@@ -1401,8 +1403,10 @@ Jede Mannschaft hat eine Taktik „im Kopf“: die Anweisungen, die sie eingeüb
 | Anteil | Gewicht | Was zählt |
 | --- | --- | --- |
 | Formation | 40 % | Vertrautheit mit dem System. Verwandte Formationen helfen: Wer ein 4-4-2 beherrscht, findet sich im 4-4-2 mit Raute schneller zurecht als in einem Libero-System. |
-| Anweisungen | 42 % | Abstand zwischen Verlangtem und Eingeübtem. Schwer wiegen Deckung, Mentalität, Pressing und Abwehrlinie, leichter Tempo und Breite, kaum Flanken und Härte. Der Einsatz muss nicht eingeübt werden. |
+| Anweisungen | 42 % | Abstand zwischen Verlangtem und Eingeübtem. Schwer wiegen Deckung, die beiden Mentalitäten, Pressing und Abwehrlinie, leichter Tempo und Breite, kaum Flanken und Härte. Der Einsatz muss nicht eingeübt werden. |
 | Stammelf | 18 % | Wie viele aus der Startelf schon im Spiel davor begannen. Viel Rotation kostet Abstimmung. |
+
+Ein völlig fremder Teil zieht das Ganze zusätzlich nach unten: Zu rund einem Drittel zählt der schwächste Teil. Wer alle Anweisungen auf einmal umwirft, landet deshalb weit unter 50.
 
 ### Wirkung im Spiel
 - **80 ist neutral.** Darüber spielt die Mannschaft besser (100 ≈ +1,6 % auf Angriff, Kontrolle und Abwehr), darunter schlechter (50 ≈ −2,4 %) und sie macht **mehr Fehler im Aufbau**.

@@ -65,7 +65,7 @@ const base = cohesionOf(co, t0, 1985);
 check(base.total >= 90 && base.instructions === 100, `eingespielt auf die eigene Taktik: ${base.total}`);
 const t1 = { ...t0, style: 'attacking' as const, pressing: 70, defensiveLine: 70 };
 const chg = cohesionOf(co, t1, 1985);
-check(chg.total < base.total - 25 && chg.instructions < 30 && instructionGap(co, t1, 1985).parts.filter((p) => p.gap > 0.1).map((p) => p.key).sort().join() === 'li,pr,st', `Umstellen kostet: ${base.total} → ${chg.total} (Mentalität, Pressing, Linie weichen ab)`);
+check(chg.total < base.total - 25 && chg.instructions < 30 && instructionGap(co, t1, 1985).parts.filter((p) => p.gap > 0.1).map((p) => p.key).sort().join() === 'ds,li,pr,st', `Umstellen kostet: ${base.total} → ${chg.total} (Mentalität mit/gegen Ball, Pressing, Linie weichen ab)`);
 const small = cohesionOf(co, { ...t0, tempo: 70 }, 1985);
 check(small.total < base.total && small.total > base.total - 8, `kleine Änderung kostet wenig: ${base.total} → ${small.total}`);
 const newF = cohesionOf(co, { ...t0, formation: '4-3-3' }, 1985);

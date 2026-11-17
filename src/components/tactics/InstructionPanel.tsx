@@ -32,12 +32,26 @@ function Glyph({ kind, i, n }: { kind: 'level' | 'zone'; i: number; n: number })
   );
 }
 
-export function InstructionPanel({ t, year, set, drilled, sections }: {
+/** Eingeübt-Balken: Breite und Farbe (rot → grün) nach dem Stand; Einsatz braucht kein Einüben. */
+function DrillBar({ v }: { v: number | null }) {
+  if (v == null) return <i className="txi-drill none" title="Einsatz muss nicht eingeübt werden" />;
+  const pct = Math.round(Math.max(0, Math.min(1, v)) * 100);
+  const word = pct >= 85 ? 'sitzt' : pct >= 60 ? 'fast eingeübt' : pct >= 30 ? 'halb eingeübt' : 'kaum eingeübt';
+  return (
+    <i className="txi-drill" role="img" aria-label={`Eingeübt: ${word}`} title={`Eingeübt: ${word}`}>
+      <em style={{ width: `${Math.max(4, pct)}%`, background: `color-mix(in srgb, var(--pos) ${pct}%, var(--neg))` }} />
+    </i>
+  );
+}
+
+export function InstructionPanel({ t, year, set, drilled, levels, sections }: {
   t: Tactics; year: number; set: (p: Partial<Tactics>) => void;
   /** Abschnitte dieser Box (Wunsch Pascal: In Ballbesitz = Grundausrichtung + Mit Ball, Defensive = Gegen den Ball). */
   sections: Section[];
   /** Eingeübte Wahl je Anweisung (Index) – fehlt = keine Markierung. */
   drilled?: Partial<Record<InstrKey, number>>;
+  /** Wie gut jede Anweisung eingeübt ist (0–1) – Balken rot → grün vor den Stufen; fehlt = kein Balken. */
+  levels?: Partial<Record<InstrKey, number>>;
 }) {
   const st = instructionState(t, year);
   const [focus, setFocus] = useState<{ key: InstrKey; i: number } | null>(null);
@@ -53,7 +67,10 @@ export function InstructionPanel({ t, year, set, drilled, sections }: {
             <h4 className="txi-h">{SECTION_LABEL[sec]}</h4>
             {INSTRUCTIONS.filter((d) => d.section === sec).map((d) => (
               <div key={d.key} className="txi-row" data-instr={d.key}>
-                <span className="txi-label">{d.label}</span>
+                <span className="txi-label">
+                  <span className="txi-label-t">{d.label}</span>
+                  {levels && <DrillBar v={d.key === 'effort' ? null : levels[d.key] ?? 1} />}
+                </span>
                 <div className={`txi-steps n${d.opts.length}`} role="radiogroup" aria-label={d.label}>
                   {d.opts.map((o, i) => {
                     const lk = st[d.key].locks[i];

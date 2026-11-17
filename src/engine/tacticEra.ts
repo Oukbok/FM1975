@@ -65,6 +65,12 @@ export function tacticLimits(t: Tactics | undefined, year: number): TacticLimits
 /** Obergrenze als Reglerwert: bis knapp unter die nächste Stufe (freie KI-Werte bleiben erhalten). */
 const capOf = (step: number) => (step >= 4 ? 100 : stepValue(step) + 9);
 
+/** Mentalität gegen den Ball: eigene Wahl oder abgeleitet aus der Mentalität mit Ball (Konter = ausgewogen). */
+export function defStyleOf(t: Pick<Tactics, 'style' | 'defStyle'> | undefined): 'defensive' | 'balanced' | 'attacking' {
+  if (t?.defStyle) return t.defStyle;
+  return t?.style === 'attacking' ? 'attacking' : t?.style === 'defensive' ? 'defensive' : 'balanced';
+}
+
 /** Taktik, wie sie die Engine rechnet: Werte auf die Grenzen der Epoche und der Formation gekappt. */
 export function effectiveTactics(t: Tactics | undefined, year: number): Tactics | undefined {
   if (!t) return t;

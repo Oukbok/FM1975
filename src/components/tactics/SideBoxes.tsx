@@ -49,7 +49,7 @@ export function CohesionBox({ g, set }: { g: Game; set: (p: Partial<Tactics>) =>
       <div className="txc-foot">
         {info.gaps.length ? (
           <>
-            <p>Noch nicht eingeübt: <b>{info.gaps.slice(0, 4).map((x) => x.label).join(', ')}</b>.</p>
+            <p>Noch nicht eingeübt ({info.gaps.length}): <b>{info.gaps.map((x) => x.label).join(', ')}</b>.</p>
             <button type="button" className="b3 b3-s" onClick={() => set(practicedTactics(club.cohesion!))} title="Stellt die Anweisungen ein, die die Mannschaft eingeübt hat">Eingeübtes wiederherstellen</button>
           </>
         ) : <p>Die Anweisungen sitzen. {info.formation < 80 ? 'Die Formation braucht noch Spiele.' : info.lineup < 70 ? 'Mehr Konstanz in der Startelf hilft.' : ''}</p>}
