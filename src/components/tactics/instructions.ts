@@ -28,11 +28,14 @@ export interface InstrDef {
   set: (i: number) => Partial<Tactics>;
   /** Sperrgrund für Wahl i (null = wählbar). */
   lock?: (i: number, lim: TacticLimits, year: number) => string | null;
+  /** Kleines Bild je Stufe (InstructionPanel): Stärke-Balken bzw. Angriffszone. */
+  glyph?: 'level' | 'zone';
 }
 
 const five = (key: 'tempo' | 'pressing' | 'defensiveLine' | 'widthFocus' | 'tackleHardness' | 'effort') => ({
   get: (t: Tactics) => stepOf(t[key]),
   set: (i: number) => ({ [key]: stepValue(i) }) as Partial<Tactics>,
+  glyph: (key === 'widthFocus' ? 'zone' : 'level') as InstrDef['glyph'],
 });
 const STYLES = ['defensive', 'balanced', 'attacking', 'counter'] as const;
 

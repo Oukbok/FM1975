@@ -8,6 +8,7 @@
 import type { Tactics } from '../../types';
 import type { TacticMods } from './team';
 import { markingOf, tacticLimits, zoneKnowhow } from '../tacticEra';
+import { NEUTRAL_FIT, type TeamFit } from './tacticFit';
 
 export type Route = 'kurz' | 'flanke' | 'steil' | 'dribbling' | 'weit';
 export const ROUTES: Route[] = ['kurz', 'flanke', 'steil', 'dribbling', 'weit'];
@@ -25,6 +26,14 @@ export interface TacticPlan {
   tackleBias: number;   // eigene Zweikämpfe in der Abwehr (Härte, Einsatz)
   workBias: number;     // eigene Laufduelle/Dribblings im Angriff (Einsatz)
   lineHigh: number;     // -1 tief … +1 hoch: Raum hinter der Abwehr / Abseits
+  /** Laufduell gegen die eigene Abwehr (hohe Linie × Tempo der Verteidiger, engine/match/tacticFit.ts). */
+  lineRisk: number;
+  /** Mehr Gefahr nach riskantem Aufbau, wenn die Passspieler es können (Abschluss nach Kombination/Steilpass). */
+  threat: number;
+  /** Dribblings bei hohem Tempo (nur mit guten Dribblern ein Vorteil). */
+  dribBias: number;
+  /** Flanken-Güte: Flügelspiel mit Flankengebern, hohe Flanken mit Kopfballspielern. */
+  crossBias: number;
   trap: number;         // Abseitsfalle 0/1
   /** Raumdeckung 0…~1,1 (Güte aus Eingespieltheit und Epoche), Manndeckung 0. */
   zone: number;
@@ -51,7 +60,7 @@ function eraRoutes(year: number): Record<Route, number> {
  * Raumdeckung (ab 1981): kompakter Block fängt mehr Pässe ab und deckt den Raum hinter der Linie besser,
  * ist im direkten Zweikampf und bei Flanken aber weniger eng am Mann – und braucht eine eingespielte Mannschaft.
  */
-export function tacticPlan(t: Tactics | undefined, year: number, mods?: TacticMods, cohesion = 80, sweep = 0): TacticPlan {
+export function tacticPlan(t: Tactics | undefined, year: number, mods?: TacticMods, cohesion = 80, sweep = 0, fit: TeamFit = NEUTRAL_FIT): TacticPlan {
   const r = eraRoutes(year);
   const width = norm(t?.widthFocus), tempo = norm(t?.tempo), press = norm(t?.pressing), line = norm(t?.defensiveLine);
   const hard = norm(t?.tackleHardness), eff = norm(t?.effort);
@@ -85,15 +94,27 @@ export function tacticPlan(t: Tactics | undefined, year: number, mods?: TacticMo
   const cs = t?.crossStyle ?? 'mixed';
   const highCross = cs === 'high' ? Math.min(0.92, eraHigh + 0.25) : cs === 'low' ? Math.max(0.15, eraHigh - 0.35) : eraHigh;
   const eraLong = year < 1985 ? 0.56 : year < 1995 ? 0.5 : year < 2008 ? 0.42 : 0.33;
+  // Passt die Taktik zum Kader? (engine/match/tacticFit.ts) – Risiko im Aufbau = langer Ball + hohes Tempo.
+  // Sicheres Kurzpassspiel liefert immer solide (+0,1), Risiko kostet Ballverluste je nach Passqualität,
+  // bringt aber mehr Gefahr – mit guten Passspielern überwiegt die Gefahr.
+  const risk = (long ? 1 : 0) + Math.max(0, tempo);
+  const lossPer = 0.22 * (1 - 0.9 * fit.pass) + 0.25 * Math.max(0, -fit.pass);
+  const threat = risk * (0.07 * Math.max(0, fit.pass) + 0.13 * Math.min(0, fit.pass));
+  const engineF = 1 + 0.4 * fit.engine;
+  const lineRisk = line > 0 ? 0.7 * line * (1 - 0.9 * fit.pace) : 0.7 * line;
+  const highCrossF = cs === 'high' ? 1 : cs === 'low' ? -0.5 : 0;
   return {
     route: r,
     highCross,
     longShot: eraLong * (1 - 0.15 * tempo) * (t?.style === 'defensive' ? 1.1 : 1),
-    passBias: (long ? -0.15 : 0.1) - 0.25 * tempo,
-    pressBias: 0.3 * press + 0.1 * line + 0.09 * zone - 0.02 * zoneOn,
+    passBias: (long ? 0.02 : 0.1) - 0.15 * Math.min(0, tempo) - risk * lossPer,
+    pressBias: 0.3 * press * (press > 0 ? engineF : 1) + 0.1 * line + 0.09 * zone - 0.02 * zoneOn,
     tackleBias: 0.32 * hard + 0.22 * eff - 0.07 * zoneOn,
     workBias: 0.15 * eff,
     lineHigh: line,
+    lineRisk, threat,
+    dribBias: Math.max(0, tempo) * 0.14 * fit.dribble + 0.04 * fit.dribble * (t?.style === 'attacking' ? 1 : 0),
+    crossBias: Math.max(0, width) * 0.2 * fit.cross + highCrossF * 0.15 * fit.aerial,
     trap: t?.offsideTrap ? trapF * (zoneOn ? 0.85 + 0.3 * zone : 1) : 0,
     zone, sweep,
     counter: (t?.style === 'counter' ? 1.55 : t?.style === 'attacking' ? 0.95 : 1) * (1 + 0.25 * tempo) * (1 + 0.3 * press),

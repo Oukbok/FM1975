@@ -1,7 +1,7 @@
 /* =============================================================================
    TAKTIK-SEITE (Aufstellung › Taktik; components/TacticsView.tsx + tactics/)
    Präfixe: .tx-page Raster · .txb Taktiktafel · .txr Rollenwahl · .txi Anweisungen
-            .txp Vorlagen/Speichern · .txc Eingespieltheit · .txe Wirkung · .txo Gegner
+            .txp Vorlagen/Speichern · .txc Eingespieltheit · .txh Einschätzung · .txo Gegner
    Aufbau: links die Tafel (zeigt, was die Anweisungen bedeuten), Mitte alle
    Anweisungen in einer Spalte, rechts Eingespieltheit, Wirkung, Gegner.
    Farben nur über Tokens (Tafel: --board-*, --chalk-rgb in 00-base.css).
@@ -14,7 +14,7 @@
 .tx-page > .tx-def-instr { grid-column: 2; grid-row: 2; }
 .tx-page > .tx-side { grid-column: 3; grid-row: 1 / span 2; display: flex; flex-direction: column; gap: 28px; min-height: 0; min-width: 0; }
 .tx-side > .dbox { flex: 0 0 auto; min-height: 0; }
-.tx-side > .tx-coh-box { height: 300px; }
+.tx-side > .tx-coh-box { height: 272px; }
 .tx-side > .tx-opp-box { height: 352px; }
 .tx-side > .tx-eff-box { flex: 1 1 0; }
 .tx-side .dbox-body { overflow: hidden; }
@@ -178,26 +178,6 @@
 .txc-foot .b3 { flex: 0 0 auto; }
 
 /* ---- Wirkung im Spiel ----------------------------------------------------------- */
-.txe { height: 100%; display: flex; flex-direction: column; gap: 10px; transition: opacity .2s; }
-.txe.busy { opacity: .55; }
-.txe-head { flex: 0 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
-.txe-kpi { display: grid; grid-template-columns: auto 1fr; align-items: baseline; column-gap: 10px; padding: 7.5px 13px 6.5px; border: 1px solid var(--border-soft); border-radius: 7.5px; background: rgba(var(--ink-rgb), .03); }
-.txe-kpi-l { grid-column: 1 / -1; font-size: 15.5px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.txe-kpi b { font-family: var(--font-display); font-size: 33px; font-weight: 600; line-height: 1.05; color: var(--text); }
-.txe-kpi i { font-style: normal; font-size: 16.5px; font-weight: 700; color: var(--text-3); font-variant-numeric: tabular-nums; }
-.txe-kpi i.pos { color: var(--pos); } .txe-kpi i.neg { color: var(--neg); }
-.txe-groups { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr; column-gap: 23px; row-gap: 2px; }
-.txe-group:first-child { grid-row: 1 / span 2; }
-.txe-group h5 { margin: 0 0 1px; font-family: var(--font-display); font-size: 16.5px; font-weight: 500; letter-spacing: .8px; text-transform: uppercase; color: var(--text-3); }
-.txe-row { display: grid; grid-template-columns: minmax(0, 1fr) 82px 54px; align-items: center; gap: 9px; height: 29px; font-size: 17.5px; }
-.txe-l { color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.txe-t { position: relative; height: 7.5px; border-radius: 3px; background: rgba(var(--ink-rgb), .08); }
-.txe-t::after { content: ''; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--border); }
-.txe-t > span { position: absolute; top: 0; bottom: 0; border-radius: 3px; }
-.txe-t > span.pos { background: var(--text-2); } .txe-t > span.neg { background: var(--orange); } .txe-t > span.flat { background: var(--text-4, var(--text-3)); }
-.txe-v { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text); }
-.txe-v.neg { color: var(--orange); }
-.txe-foot { flex: 0 0 auto; font-size: 15.5px; line-height: 1.3; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* ---- Gegner ---------------------------------------------------------------------- */
 .txo { height: 100%; display: flex; flex-direction: column; gap: 7.5px; }
@@ -248,13 +228,48 @@
 .txb-land .txr-text b { font-size: 13px; }
 .txb-land .txr-text p { font-size: 14px; line-height: 1.32; }
 /* Anweisungen kompakt (halbe Höhe) */
-.tx-instr-box .txi-rows { padding: 0 16px; }
-.tx-instr-box .txi-h { margin: 8px 0 1px; height: 22px; font-size: 16px; }
-.tx-instr-box .txi-row { grid-template-columns: 112px minmax(0, 1fr); gap: 12px; height: 40px; }
-.tx-instr-box .txi-label { font-size: 15.5px; }
-.tx-instr-box .txi-steps { height: 34px; border-radius: 6px; }
-.tx-instr-box .txi-step { font-size: 13.5px; }
+.tx-instr-box .txi-rows { padding: 0 16px 6px; }
+/* Wunsch Pascal: kein Leerraum unten – alle Zeilen der Box teilen sich die Höhe gleich (Abschnitte ohne eigene Box) */
+.tx-instr-box .txi-sec { display: contents; }
+.tx-instr-box .txi-h { flex: 0 0 auto; margin: 8px 0 2px; height: 22px; font-size: 16px; }
+.tx-instr-box .txi-row { flex: 1 1 0; grid-template-columns: 112px minmax(0, 1fr); gap: 12px; height: auto; min-height: 40px; max-height: 64px; }
+.tx-instr-box .txi-label { font-size: 16.5px; }
+.tx-instr-box .txi-steps { height: calc(100% - 8px); min-height: 34px; max-height: 54px; border-radius: 7px; padding: 3px; gap: 3px; }
+.tx-instr-box .txi-step { flex-direction: column; gap: 3px; font-size: 14.5px; border-radius: 5px; }
+.tx-instr-box .txi-step-l { display: inline-flex; align-items: center; gap: 4px; min-width: 0; max-width: 100%; }
+.tx-instr-box .txi-step-l > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tx-instr-box .txi-step:not(.on):not(.locked) { background: rgba(var(--ink-rgb), .035); }
+.txi-glyph { flex: 0 0 auto; height: 13px; width: auto; }
+.txi-glyph .g-on { fill: currentColor; }
+.txi-glyph .g-off { fill: currentColor; opacity: .2; }
+.txi-glyph .g-frame { fill: none; stroke: currentColor; stroke-width: 1; opacity: .35; }
+.txi-step.on .txi-glyph .g-off { opacity: .3; }
 .tx-instr-box .txi-foot { flex: 0 0 66px; height: 66px; margin-top: 4px; padding: 8px 16px 0; }
 .tx-instr-box .txi-foot p { font-size: 14px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .tx-instr-box .txi-foot p b { color: var(--text); }
 .tx-instr-box .txi-foot-note { color: var(--text-3); }
+
+/* Einschätzung des Trainerteams (components/tactics/TacticHints.tsx) */
+.txh { height: 100%; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.txh-traits { flex: 0 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.txh-trait { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; padding: 4px 9px 4px; border: 1px solid var(--border-soft); border-radius: 6px; background: rgba(var(--ink-rgb), .03); min-width: 0; }
+.txh-trait i { font-style: normal; font-size: 13px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.txh-trait b { font-family: var(--font-display); font-size: 17px; white-space: nowrap; font-weight: 600; line-height: 1.1; color: var(--text-2); }
+.txh-trait.hi b { color: var(--text); }
+.txh-trait.lo b { color: var(--text-4); }
+.txh-trait.hi { border-left: 3px solid var(--pos); }
+.txh-trait.lo { border-left: 3px solid var(--neg); }
+.txh-list { flex: 1 1 0; min-height: 0; overflow-y: auto; margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.txh-hint { padding: 7px 11px 8px; border: 1px solid var(--border-soft); border-left: 4px solid var(--text-4); border-radius: 6px; background: rgba(var(--ink-rgb), .025); }
+.txh-hint.warn { border-left-color: var(--neg); }
+.txh-hint.idea { border-left-color: var(--club-accent, var(--accent)); }
+.txh-hint.good { border-left-color: var(--pos); }
+.txh-hint.opp { border-left-color: var(--navy, var(--text-3)); }
+.txh-top { display: flex; align-items: baseline; gap: 8px; }
+.txh-tone { font-family: var(--font-display); font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--text-2); }
+.txh-hint.warn .txh-tone { color: var(--neg); }
+.txh-hint.good .txh-tone { color: var(--pos); }
+.txh-area { font-size: 13.5px; color: var(--text-3); }
+.txh-hint p { margin: 3px 0 0; font-size: 15px; line-height: 1.35; color: var(--text); }
+.txh-who { margin-top: 3px; font-size: 13.5px; color: var(--text-3); }
+.txh-note { flex: 0 0 auto; font-size: 13.5px; color: var(--text-3); }

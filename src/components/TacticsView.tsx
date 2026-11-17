@@ -5,7 +5,7 @@
 // (Grundausrichtung + Mit Ball, dazu Vorlagen/eigene Taktiken), unten die Tafel
 // „Defensive“ mit den Anweisungen gegen den Ball. Die Tafeln zeigen nur, was aus
 // den gewählten Anweisungen und Rollen folgt; ein Klick auf einen Spieler wählt seine Rolle.
-// Rechts: Eingespieltheit, gemessene Wirkung im Spiel, nächster Gegner im Vergleich.
+// Rechts: Eingespieltheit, Einschätzung des Trainerteams (Hinweise statt Messwerte), nächster Gegner.
 // Liest/schreibt direkt g.clubs[managedClubId].tactics (wie LineupView).
 // Teile in components/tactics/, CSS 28-tactics.css.
 // =============================================================================
@@ -23,7 +23,7 @@ import { InstructionPanel } from './tactics/InstructionPanel';
 import { INSTRUCTIONS, type InstrKey, type Section } from './tactics/instructions';
 import { CohesionBox, OpponentBox } from './tactics/SideBoxes';
 import { TacticBoard, type BoardPhase } from './tactics/TacticBoard';
-import { TacticEffect } from './tactics/TacticEffect';
+import { TacticHints } from './tactics/TacticHints';
 import { TacticPresets } from './tactics/TacticPresets';
 
 export default function TacticsView({ g, onChange }: { g: Game; onChange: () => void }) {
@@ -73,8 +73,8 @@ export default function TacticsView({ g, onChange }: { g: Game; onChange: () => 
         <DashBox title="Eingespieltheit" info="eingespieltheit" className="tx-coh-box">
           <CohesionBox g={g} set={set} />
         </DashBox>
-        <DashBox title="Wirkung im Spiel" info="wirkung" right="gemessen" className="tx-eff-box">
-          <TacticEffect club={myClub} players={g.players} opp={opp} year={year} />
+        <DashBox title="Einschätzung des Trainerteams" info="wirkung" className="tx-eff-box">
+          <TacticHints g={g} club={myClub} opp={opp} year={year} />
         </DashBox>
         <DashBox title="Nächster Gegner" className="tx-opp-box" right={nx ? (nx.home ? 'Heimspiel' : 'Auswärts') : undefined}>
           <OpponentBox me={myClub} opp={opp} year={year} when={nx ? `${CalendarEngine.formatDate(nx.date)} · ${nx.comp}` : undefined} />

@@ -4,6 +4,8 @@
 // Wahl unter dem Mauszeiger bringt und kostet, warum etwas gesperrt ist – sonst
 // der Steckbrief „Taktik der Zeit“. Ein Punkt markiert, was die Mannschaft
 // eingeübt hat (engine/cohesion.ts).
+// Wunsch Pascal (größer, übersichtlicher): Die Zeilen füllen die Box, jede Stufe ist ein
+// großer Knopf; Stärke-Stufen tragen ansteigende Balken, die Breite eine kleine Angriffszone.
 // =============================================================================
 import { useState } from 'react';
 import type { Tactics } from '../../types';
@@ -11,6 +13,24 @@ import { tacticEraNotes } from '../../engine/tacticEra';
 import Icon from '../Icon';
 import { INSTRUCTIONS, INSTR_BY_KEY, SECTION_LABEL, instructionState, type InstrKey, type Section } from './instructions';
 
+/** Ansteigende Balken (Stufe i von n) bzw. Zone im Spielfeld (Breite: Mitte … Flügel). */
+function Glyph({ kind, i, n }: { kind: 'level' | 'zone'; i: number; n: number }) {
+  if (kind === 'zone') {
+    // fünf Bahnen: 0 = nur Mitte, 4 = nur Flügel
+    const lanes = [[2], [1, 2, 3], [0, 1, 2, 3, 4], [0, 1, 3, 4], [0, 4]][i] ?? [2];
+    return (
+      <svg className="txi-glyph zone" viewBox="0 0 30 12" aria-hidden="true">
+        <rect x="0.5" y="0.5" width="29" height="11" rx="1.5" className="g-frame" />
+        {[0, 1, 2, 3, 4].map((k) => <rect key={k} x={1.5 + k * 5.5} y="2" width="4.5" height="8" rx="0.8" className={lanes.includes(k) ? 'g-on' : 'g-off'} />)}
+      </svg>
+    );
+  }
+  return (
+    <svg className="txi-glyph level" viewBox={`0 0 ${n * 5} 12`} aria-hidden="true">
+      {Array.from({ length: n }, (_, k) => <rect key={k} x={k * 5} y={12 - (4 + k * 8 / Math.max(1, n - 1))} width="3.5" height={4 + k * 8 / Math.max(1, n - 1)} rx="0.6" className={k <= i ? 'g-on' : 'g-off'} />)}
+    </svg>
+  );
+}
 
 export function InstructionPanel({ t, year, set, drilled, sections }: {
   t: Tactics; year: number; set: (p: Partial<Tactics>) => void;
@@ -43,7 +63,8 @@ export function InstructionPanel({ t, year, set, drilled, sections }: {
                         className={`txi-step${on ? ' on' : ''}${lk ? ' locked' : ''}${drilled?.[d.key] === i ? ' drilled' : ''}`}
                         onMouseEnter={() => setFocus({ key: d.key, i })} onFocus={() => setFocus({ key: d.key, i })}
                         onClick={() => { setFocus({ key: d.key, i }); if (!lk && !on) set(d.set(i)); }}>
-                        {lk && <Icon name="lockMono" size={13} />}<span>{o.label}</span>
+                        {d.glyph && <Glyph kind={d.glyph} i={i} n={d.opts.length} />}
+                        <span className="txi-step-l">{lk && <Icon name="lockMono" size={13} />}<span>{o.label}</span></span>
                       </button>
                     );
                   })}

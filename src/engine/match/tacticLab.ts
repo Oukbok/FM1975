@@ -2,8 +2,7 @@
 // Taktik-Labor: misst die echte Wirkung einer Taktik mit der Match-Engine.
 // Dieselbe Mannschaft spielt mit deiner Taktik und mit einer neutralen Taktik
 // je n Heim- und Auswärtsspiele gegen denselben Gegner (gleiche Zufallsfolgen,
-// damit der Unterschied nicht im Rauschen untergeht). Genutzt von der Taktikseite
-// (Kasten „Wirkung im Spiel“) und von `node scripts/matchbench.mjs` (MODE=tactics).
+// damit der Unterschied nicht im Rauschen untergeht). Genutzt von `node scripts/matchbench.mjs` (MODE=tactics, MODE=fit). Die Taktikseite zeigt keine Messwerte mehr (game/tacticHints.ts).
 // =============================================================================
 import type { Club, Player, Tactics } from '../../types';
 import { MatchSim } from './sim';

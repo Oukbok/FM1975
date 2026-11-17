@@ -279,8 +279,8 @@ export const INFO_TEXTS = {
     wiki: 'tactic-options',
   },
   wirkung: {
-    title: 'Wirkung im Spiel',
-    text: 'Gemessen, nicht geschätzt: Die Match-Engine spielt deine Elf mit deiner und mit neutraler Taktik je 40-mal daheim und auswärts. Oben Punkte, Tore und Gegentore mit dem Unterschied zur neutralen Taktik, darunter die Ursachen; orange = Nachteil. Die Eingespieltheit ist hier nicht eingerechnet.',
+    title: 'Einschätzung des Trainerteams',
+    text: 'Dein Trainerteam vergleicht die Anweisungen mit den Spielertypen deiner Startelf: Passspiel, Laufstärke, Tempo der Abwehr, Dribbling, Flanken und Lufthoheit. Es warnt, wenn eine Anweisung gegen deine Leute arbeitet, schlägt ungenutzte Stärken vor und schaut auf den nächsten Gegner – ohne Zahlen. Was am besten funktioniert, findest du nur durch Ausprobieren. Ein schwaches Trainerteam sieht weniger.',
     wiki: 'tactic-options',
   },
   formation: {

@@ -114,3 +114,35 @@ if (MODE === 'tactics') {
     }).join(''));
   }
 }
+
+// MODE=fit – passt die Taktik zum Kader? (engine/match/tacticFit.ts) Ein Spielertyp wird für alle Feldspieler
+// auf schwach/stark gesetzt; gemessen wird die Taktik gegen neutral (Tordifferenz/Punkte je Spiel).
+if (MODE === 'fit') {
+  const base = neutralTactics(club.tactics);
+  // eigener Gegner (nicht das Spiegelbild – sonst ändert sich der Spielertyp auf beiden Seiten)
+  const oc = ranked[Math.floor(ranked.length / 2) + 1].c;
+  const opp = { ...oc, tactics: neutralTactics(oc.tactics) };
+  const field = club.playerIds.map((id) => players[id]).filter((p) => p && p.naturalPosition !== 'TW');
+  const exps: [string, AttributeKey[], [string, Partial<Tactics>][]][] = [
+    ['Passspiel', ['passing', 'vision', 'firstTouch'], [['kurz, ruhig', { tempo: 25 }], ['lang', { buildup: 'long' }], ['Tempo 100', { tempo: 100 }], ['lang + Tempo 75', { buildup: 'long', tempo: 75 }]]],
+    ['Laufstärke', ['stamina', 'workRate'], [['Pressing 100', { pressing: 100 }], ['Pressing 0', { pressing: 0 }]]],
+    ['Tempo', ['speed', 'acceleration'], [['Linie 100', { defensiveLine: 100 }], ['Linie 0', { defensiveLine: 0 }]]],
+    ['Dribbling', ['dribbling', 'agility'], [['Tempo 100', { tempo: 100 }], ['Offensiv', { style: 'attacking' }]]],
+    ['Flanken+Kopfball', ['crossing', 'heading', 'jumping'], [['Breite 90 hoch', { widthFocus: 90, crossStyle: 'high' }], ['Breite 10', { widthFocus: 10 }]]],
+  ];
+  for (const [label, keys, vars] of exps) {
+    if (process.env.ONLY && !label.startsWith(process.env.ONLY)) continue;
+    for (const v of [48, 62, 80]) {
+      const saved: [Player, AttributeKey, number][] = [];
+      for (const p of field) for (const k of keys) { saved.push([p, k, p.attributes[k] as number]); (p.attributes as any)[k] = v; }
+      const ref = labRun(club, opp, players, base, YEAR, N);
+      const out = vars.map(([n, patch]) => {
+        const r = labRun(club, opp, players, { ...base, ...patch }, YEAR, N);
+        const gd = (r.goalsFor - r.goalsAgainst) - (ref.goalsFor - ref.goalsAgainst);
+        return `${n}: TD ${gd >= 0 ? '+' : ''}${gd.toFixed(2)} Pkt ${(r.points - ref.points >= 0 ? '+' : '')}${(r.points - ref.points).toFixed(2)}`;
+      });
+      for (const [p, k, old] of saved) (p.attributes as any)[k] = old;
+      console.log(`${label} ${v}: ${out.join(' | ')}`);
+    }
+  }
+}
