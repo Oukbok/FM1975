@@ -12,6 +12,7 @@ import {
 } from '../../../engine/grounds';
 import { FACILITIES, FACILITY_BY_KEY, facilityAvailable } from '../../../engine/infrastructure';
 import { KV, Meter } from '../../../ui/DashPage';
+import { stadiumComfort } from '../../../engine/stadiumStandard';
 import { vColor } from '../../../ui/format';
 import { money } from './GroundsDetail';
 import { PlotList } from './PlotDetail';
@@ -54,9 +55,16 @@ function Overview({ g, club, gr, year, onChange, onSelect }: Props) {
   const tier = g.leagues?.playerDivision?.tier ?? 1;
   const s = gr.stats;
   const own = plotsOf(club, gr).filter((p) => isOwned(gr, p.id));
+  const comfort = stadiumComfort(club, year);
   const lic = (['floodlight', 'press'] as const).map((k) => ({ k, need: licenseMin(k, tier, year), have: levelOf(gr, k) }));
   return (
     <>
+      {comfort && <>
+        <div className="gp-sec">Komfort gesamt<InfoTip k="stadionKomfort" /></div>
+        <KV k="Stadion (Tribünen, Dach, Tafel …)" v={`${Math.round(comfort.inside)} / ${Math.round(comfort.insideMax)}`} />
+        <KV k="Umfeld (Verpflegung & Anreise)" v={`${Math.round(comfort.outside)} / ${Math.round(comfort.outsideMax)}`} />
+        <KV k="Gesamt gegen Anspruch der Fans" strong v={`${Math.round(comfort.comfort)} / ${Math.round(comfort.expect)}`} color={comfort.comfort < comfort.expect - 1 ? 'var(--red)' : 'var(--green)'} />
+      </>}
       <div className="gp-sec">Lage: {loc.name}</div>
       <div className="dnote">{loc.desc}</div>
       <Meter label="Fläche belegt" info="flaeche" value={used} max={gr.area} color={used >= gr.area ? 'var(--orange)' : undefined} text={`${used} / ${gr.area}`} />

@@ -19,6 +19,7 @@ import {
   scoreboardAllowed, seatAvailable, tierCapacity, videoWall, vipAvailable,
 } from './stadiumBlocks';
 import { clubTier } from './economy';
+import { boardComfort, extrasOf, sightComfort } from './stadiumExtras';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -60,7 +61,7 @@ export function fanExpectation(year: number, tier = 1): number {
 }
 const SEAT_SCORE: Record<SeatType, number> = { steh: 0.25, bank: 0.5, schale: 0.8, komfort: 1, business: 1 };
 
-export interface ComfortPart { key: 'seats' | 'roof' | 'amen' | 'board' | 'cond'; name: string; value: number; max: number }
+export interface ComfortPart { key: 'seats' | 'roof' | 'amen' | 'board' | 'cond' | 'sight'; name: string; value: number; max: number; /** Teil des Umfelds (nicht des Stadions selbst). */ outside?: boolean }
 export interface StadiumComfort {
   built: number;
   cap: number;
@@ -71,22 +72,27 @@ export interface StadiumComfort {
   parts: ComfortPart[];
   /** Nachfragefaktor (0,85 … 1,08). */
   factor: number;
+  /** Aufteilung (Wunsch Pascal): Punkte aus dem Stadion selbst und aus dem Umfeld (Verpflegung & Anreise). */
+  inside: number; outside: number;
+  /** Höchstwerte beider Teile bei voller Ausstattung. */
+  insideMax: number; outsideMax: number;
 }
-/** Ausstattung 0…1 aus Blöcken und Umfeld. */
-function equipment(club: Club): { equip: number; parts: ComfortPart[] } {
+/** Ausstattung 0…1 aus Blöcken, Ausstattung (Anzeigetafel, Laufbahn) und Umfeld. */
+function equipment(club: Club, year: number): { equip: number; parts: ComfortPart[] } {
   const blocks = club.stadium.blocks ?? [];
   let cap = 0, seat = 0;
   for (const b of blocks) for (const t of b.tiers) { const c = tierCapacity(b.id, t); cap += c; seat += c * SEAT_SCORE[t.seat]; }
   const inf = club.infrastructure as unknown as Record<string, number> | undefined;
   const gm = club.grounds?.modules as unknown as Record<string, { level?: number }> | undefined;
   const amen = clamp(((inf?.catering ?? 1) / 5) * 0.5 + ((gm?.transit?.level ?? 0) / 4) * 0.2 + ((gm?.parking?.level ?? 0) / 4) * 0.15 + ((gm?.fanZone?.level ?? 0) / 2) * 0.15, 0, 1);
-  const boards = blocks.filter((b) => b.scoreboard).length;
+  const x = extrasOf(club, year);
   const parts: ComfortPart[] = [
-    { key: 'seats', name: 'Sitzqualität', value: cap ? seat / cap : 0, max: 0.35 },
-    { key: 'roof', name: 'Überdachung', value: roofShare(blocks), max: 0.25 },
-    { key: 'amen', name: 'Verpflegung & Anreise', value: amen, max: 0.15 },
-    { key: 'board', name: 'Anzeigetafel', value: Math.min(1, boards / 2), max: 0.1 },
-    { key: 'cond', name: 'Zustand', value: clamp((club.stadium.condition ?? 70) / 100, 0, 1), max: 0.15 },
+    { key: 'seats', name: 'Sitzqualität', value: cap ? seat / cap : 0, max: 0.33 },
+    { key: 'roof', name: 'Überdachung', value: roofShare(blocks), max: 0.24 },
+    { key: 'board', name: 'Anzeigetafel', value: boardComfort(x), max: 0.1 },
+    { key: 'sight', name: 'Nähe zum Feld', value: sightComfort(x), max: 0.05 },
+    { key: 'cond', name: 'Zustand', value: clamp((club.stadium.condition ?? 70) / 100, 0, 1), max: 0.13 },
+    { key: 'amen', name: 'Verpflegung & Anreise', value: amen, max: 0.15, outside: true },
   ];
   return { equip: parts.reduce((s, p) => s + p.value * p.max, 0), parts };
 }
@@ -95,10 +101,17 @@ export function stadiumComfort(club: Club, year: number): StadiumComfort | null 
   const st = club.stadium;
   if (!st.blocks?.length || st.built == null) return null;
   const cap = standardCap(st.built);
-  const { equip, parts } = equipment(club);
+  const { equip, parts } = equipment(club, year);
   const comfort = Math.round(cap * (0.6 + 0.4 * equip) * 10) / 10;
   const expect = fanExpectation(year, clubTier(club));
-  return { built: st.built, cap, comfort, expect, equip, parts, factor: clamp(1 + (comfort - expect) * 0.006, 0.85, 1.08) };
+  const outShare = parts.filter((p) => p.outside).reduce((s2, p) => s2 + p.value * p.max, 0);
+  const outMaxShare = parts.filter((p) => p.outside).reduce((s2, p) => s2 + p.max, 0);
+  const outside = Math.round(cap * 0.4 * outShare * 10) / 10;
+  return {
+    built: st.built, cap, comfort, expect, equip, parts, factor: clamp(1 + (comfort - expect) * 0.006, 0.85, 1.08),
+    inside: Math.round((comfort - outside) * 10) / 10, outside,
+    insideMax: Math.round(cap * (1 - 0.4 * outMaxShare) * 10) / 10, outsideMax: Math.round(cap * 0.4 * outMaxShare * 10) / 10,
+  };
 }
 /** Nachfragefaktor aus Komfort gegen Anspruch (1 ohne Baujahr). */
 export const comfortDemandFactor = (club: Club, year: number): number => stadiumComfort(club, year)?.factor ?? 1;
@@ -111,7 +124,7 @@ export function loungeLimit(id: BlockId, built: number | undefined): number {
 
 /** Baujahr, mit dem das Stadion die Ansprüche gerade erfüllt (Einführung in alten Spielständen). */
 export function neutralBuilt(club: Club, year: number): number {
-  const { equip } = equipment(club);
+  const { equip } = equipment(club, year);
   const expect = fanExpectation(year, clubTier(club));
   for (let y = 1950; y < year; y++) if (standardCap(y) * (0.6 + 0.4 * equip) >= expect - 0.5) return y;
   return year - 1;

@@ -751,6 +751,10 @@ export interface Stadium {
   built?: number;
   /** Jahr des letzten Hinweises „Stadion veraltet“. */
   agedNote?: number;
+  /** Ausstattung: Anzeigetafel, Banden, Laufbahn (eigener Verein; fehlt = abgeleitet, engine/stadiumExtras.ts). */
+  extras?: import('../engine/stadiumExtras').StadiumExtras;
+  /** Fan-Tribünen: Gästeblock und Fankurve (eigener Verein; fehlt = automatisch). */
+  fans?: import('../engine/stadiumExtras').FanStands;
 }
 
 /** Platzkategorie im Stadion (data/seatingCatalog.ts). */
@@ -864,6 +868,14 @@ export interface BlockProject {
   capacityLoss: number;
   /** Kompletter Neubau: alle 14 Blöcke neu, bei Fertigstellung neues Baujahr (`Stadium.built`). */
   rebuild?: boolean;
+  /** Neue Ausstattung (Anzeigetafel, Banden, Laufbahn) bei Fertigstellung (engine/stadiumExtras.ts). */
+  extras?: import('../engine/stadiumExtras').StadiumExtras;
+  /** Bauablauf: alles gleichzeitig (fehlt), in Etappen oder Abriss mit Ausweichstadion. */
+  mode?: 'parallel' | 'stages' | 'away';
+  /** Etappen: Blöcke und Fertigstellung je Etappe (die erste offene ist gesperrt). */
+  stages?: { ids: BlockId[]; finish: string; done?: boolean }[];
+  /** Ausweichstadion: Name und Plätze während der Bauzeit. */
+  away?: { name: string; capacity: number };
 }
 
 /** Kredit eines Vereins (Beträge nominal). */

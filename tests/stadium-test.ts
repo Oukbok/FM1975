@@ -15,6 +15,12 @@ import { MatchSim } from '../src/engine/match/sim';
 import { applyPlan, planList, putInPlan, summarize } from '../src/views/verein/stadium/planModel';
 import { buildBlocker } from '../src/game/stadiumGame';
 import { StadiumBlock } from '../src/types';
+import { extrasOf, planExtras, type BoardSpot } from '../src/engine/stadiumExtras';
+import { buildPlanFor, startStadiumBuild } from '../src/game/stadiumBuild';
+import { bandenFactor } from '../src/engine/sponsorship';
+import { capsFor, ensureSeating, rawStandCaps, refPrice, standCaps } from '../src/engine/seating';
+import { fanStandMood } from '../src/engine/fanStands';
+import { addMonths } from '../src/engine/stadiumBlocks';
 
 let fails = 0;
 const ok = (cond: unknown, label: string) => { console.log(`${cond ? 'OK  ' : 'FEHL'} ${label}`); if (!cond) fails++; };
@@ -203,7 +209,7 @@ ok(maxEuro <= seated + hosp && maxLiga > seated, `Europapokal max. ${maxEuro} �
   plan = putInPlan(bl, plan, [clone(bl.find((b) => b.id === 'curve_se')!)]); // unverändert → kein Eintrag
   const list = planList(bl, plan);
   ok(list.length === 3 && list.map((t) => t.id).join() === 'main_m,north_w,north_e', `Entwurf: ${list.map((t) => t.id).join(', ')}`);
-  const sum = summarize(g3, bl, plan, 20);
+  const sum = summarize(g3, bl, plan, 20, null, 'parallel'); // bisheriger Ablauf: alles gleichzeitig
   ok(JSON.stringify(c.stadium) === before && c.finances.balance === bal, 'Planen verändert weder Stadion noch Kontostand');
   const grp = groupPlanFor(g3, list);
   ok(sum.cost === grp.cost && sum.months === grp.plan.months && sum.capAfter === blocksCapacity(applyPlan(bl, plan)), `Summe = Engine: ${sum.cost}, ${sum.months} Mon., ${sum.capBefore} → ${sum.capAfter}`);
@@ -218,6 +224,81 @@ ok(maxEuro <= seated + hosp && maxLiga > seated, `Europapokal max. ${maxEuro} �
     g3.calendar.currentDate = bp.finishDate; stadiumDaily(g3, bp.finishDate);
     ok(!c.stadium.blockProject && c.stadium.capacity === sum.capAfter, `fertig: ${c.stadium.capacity} Plätze wie geplant`);
     ok(planList(c.stadium.blocks!, plan).length === 0, 'nach Fertigstellung ist der Entwurf erfüllt');
+  }
+}
+
+// --- Ausstattung, Fan-Tribünen, Bauablauf (Wunsch Pascal) ---
+{
+  const mk = () => {
+    const gx = createNewGame({
+      managedClubId: 'mgl',
+      manager: { name: 'Test', nationality: 'GER', birthYear: 1950, style: 'balanced', background: 'newcomer' } as any,
+      difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300,
+    });
+    delete (gx as any).budget;
+    gx.clubs[gx.managedClubId].finances.balance = 5e8;
+    return gx;
+  };
+  const year = 1975;
+  // Ausstattung: abgeleitet ohne Änderung, Bau nur Ausstattung, Wirkung auf Komfort und Banden
+  {
+    const gx = mk(); const c = gx.clubs[gx.managedClubId];
+    const comfort0 = stadiumComfort(c, year)!;
+    ok(Math.abs(comfort0.inside + comfort0.outside - comfort0.comfort) < 0.2 && comfort0.insideMax > comfort0.inside, `Komfort geteilt: Stadion ${comfort0.inside} + Umfeld ${comfort0.outside} = ${comfort0.comfort}`);
+    const x0 = extrasOf(c, year);
+    const banden0 = bandenFactor(c, year);
+    const x1 = { ...x0, board: 'elektro' as const, spots: ['north', 'south'] as BoardSpot[], track: !x0.track };
+    const r = startStadiumBuild(gx, [], x1, 'parallel', 'cash', 0);
+    ok(r.ok, `nur Ausstattung bauen: ${r.text}`);
+    const bp = c.stadium.blockProject!;
+    gx.calendar.currentDate = bp.finishDate; stadiumDaily(gx, bp.finishDate);
+    ok(!c.stadium.blockProject && c.stadium.extras?.board === 'elektro' && c.stadium.extras.spots.length === 2, 'Ausstattung nach Fertigstellung gespeichert');
+    c.stadium.extras = { ...c.stadium.extras!, ads: 'led' };
+    ok(bandenFactor(c, year) > banden0 * 1.15, `LED-Banden: Bandenwert ${banden0.toFixed(3)} → ${bandenFactor(c, year).toFixed(3)}`);
+    c.stadium.extras = { ...c.stadium.extras!, ads: x0.ads };
+    const c2 = stadiumComfort(c, year)!;
+    ok(c2.parts.find((p) => p.key === 'board')!.value >= comfort0.parts.find((p) => p.key === 'board')!.value, 'zwei elektronische Tafeln: Komfortteil Anzeigetafel nicht kleiner');
+    ok(planExtras(x1, { ...x1, board: 'cube', spots: ['center'] }, 2010, c.stadium.blocks!).errors.length > 0, 'Videowürfel ohne volles Dach über den Geraden wird abgelehnt');
+    ok(planExtras(x1, { ...x1, board: 'video' }, 1980, c.stadium.blocks!).errors.length > 0, 'Videowand 1980 noch nicht erhältlich');
+  }
+  // Gästeblock auf der Haupttribüne nimmt dort Plätze, Fankurve mit günstigen Stehplätzen hebt die Stimmung
+  {
+    const gx = mk(); const c = gx.clubs[gx.managedClubId];
+    const capsA = capsFor(c, 1990).caps; // eigener Gästeblock ab 1984
+    c.stadium.fans = { away: 'haupt' };
+    const capsB = capsFor(c, 1990).caps;
+    ok((capsB.gast ?? 0) === (capsA.gast ?? 0) && (capsB.steh ?? 0) >= (capsA.steh ?? 0), `Gästeblock Haupttribüne: Steh ${capsA.steh} → ${capsB.steh}, Gäste ${capsB.gast}`);
+    const sc = standCaps(c, capsB)!; const raw = rawStandCaps(c)!;
+    const rawHaupt = raw.haupt.steh + raw.haupt.sitz + raw.haupt.dach + raw.haupt.premium;
+    const scHaupt = (sc.haupt.steh ?? 0) + (sc.haupt.sitz ?? 0) + (sc.haupt.dach ?? 0) + (sc.haupt.premium ?? 0);
+    ok(scHaupt < rawHaupt, `Tribünenkontingent Haupttribüne ${rawHaupt} → ${scHaupt}`);
+    const stand = (['tor1', 'tor2', 'ecke1', 'ecke2', 'ecke3', 'ecke4'] as const).find((s) => raw[s].steh > 0.5 * (raw[s].steh + raw[s].sitz + raw[s].dach))!;
+    c.stadium.fans = { away: 'haupt', home: stand };
+    const cheap = fanStandMood(c, year, 'ger')!;
+    const s = ensureSeating(c, year); s.tickets = { ...(s.tickets ?? {} as any), stand: { [stand]: { steh: refPrice(c, 'steh', year) * 1.6 } } } as any;
+    const dear = fanStandMood(c, year, 'ger')!;
+    ok(cheap.mood > 0 && dear.mood < cheap.mood, `Fankurve: Richtpreis ${cheap.mood} · teuer ${dear.mood}`);
+    const eng = fanStandMood(c, 2000, 'eng')!;
+    ok(!eng.standing && Math.abs(eng.mood) <= 3, `England 2000: kein Stehen, halbe Wirkung (${eng.mood})`);
+  }
+  // Bauablauf: Etappen (immer ein Teil offen) und Ausweichstadion
+  {
+    const gx = mk(); const c = gx.clubs[gx.managedClubId]; const bl = c.stadium.blocks!;
+    const t = bl.filter((b) => b.id === 'north_w' || b.id === 'south_w' || b.id === 'main_m').map((b) => ({ ...clone(b), roof: 'full' as const }));
+    const par = buildPlanFor(gx, t, null, 'parallel'), stg = buildPlanFor(gx, t, null, 'stages'), awy = buildPlanFor(gx, t, null, 'away');
+    ok(stg.months > par.months && stg.cost > par.cost && stg.stages.length === 3, `Etappen: ${stg.stages.length} Etappen, ${stg.months} statt ${par.months} Mon.`);
+    ok(awy.months <= par.months && awy.cost < par.cost && !!awy.away, `Ausweichstadion: ${awy.away?.name}, ${awy.away?.capacity} Plätze, ${awy.months} Mon.`);
+    const cap0 = c.stadium.capacity;
+    const r = startStadiumBuild(gx, t, null, 'stages', 'cash', 0);
+    ok(r.ok, `Etappenbau starten: ${r.text}`);
+    const bp = c.stadium.blockProject!;
+    ok(c.stadium.capacity >= cap0 * 0.5 && bp.stages?.length === 3, `während Etappe 1 offen: ${c.stadium.capacity} von ${cap0}`);
+    let d = gx.calendar.currentDate;
+    while (d < bp.stages![0].finish) d = addMonths(d, 1);
+    stadiumDaily(gx, bp.stages![0].finish);
+    ok(bp.stages![0].done && c.stadium.blocks!.find((b) => b.id === stg.stages[0].ids[0])!.roof === 'full', 'Etappe 1 fertig: Block umgebaut, nächste Etappe gesperrt');
+    stadiumDaily(gx, bp.finishDate);
+    ok(!c.stadium.blockProject && c.stadium.blocks!.filter((b) => t.some((x) => x.id === b.id)).every((b) => b.roof === 'full'), 'alle Etappen fertig');
   }
 }
 

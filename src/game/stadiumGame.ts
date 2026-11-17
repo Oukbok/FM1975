@@ -23,6 +23,8 @@ import { ensureEnvironment } from './environmentGame';
 import { checkBudget, noteBudgetSpend } from './budgetPlan';
 import { Game } from './state';
 import { honourFx } from '../engine/honourEffects';
+import { extrasOf, planExtras } from '../engine/stadiumExtras';
+import { stadiumBuildDaily } from './stadiumBuild';
 import {
   RebuildSpec, blockLook, initialBuilt, loungeLimit, neutralBuilt, planRebuild, stadiumComfort, stadiumLook,
 } from '../engine/stadiumStandard';
@@ -229,6 +231,7 @@ export function stadiumDaily(g: Game, today: string): void {
   const club = g.clubs[g.managedClubId];
   if (!club) return;
   convertLegacyBlocks(club);
+  stadiumBuildDaily(g, today); // Etappen, Miete Ausweichstadion (game/stadiumBuild.ts)
   const p = club.stadium.blockProject;
   if (p && today >= p.finishDate && club.stadium.blocks) {
     const env = ensureEnvironment(g);
@@ -237,9 +240,13 @@ export function stadiumDaily(g: Game, today: string): void {
       const cur = club.stadium.blocks!.find((b) => b.id === t.id)!;
       return s2 + planBlock(cur, t, yearOf(p.startDate), club.stadium.capacity + p.capacityLoss, env.tradition).mood;
     }, 0);
-    // Neubau: die Eröffnung begeistert (+6), verlorene Stehplätze wiegen höchstens −8.
-    const plan = { mood: Math.round((p.rebuild ? 6 + Math.max(-8, mood) : mood) * 10) / 10 };
-    if (p.rebuild) club.stadium.built = yearOf(today);
+    const onlyExtras = !!p.extras && targets.every((t) => JSON.stringify(t) === JSON.stringify(club.stadium.blocks!.find((b) => b.id === t.id)));
+    // Neue Ausstattung (Anzeigetafel, Banden, Laufbahn; engine/stadiumExtras.ts)
+    const exMood = p.extras ? planExtras(extrasOf(club, yearOf(p.startDate)), p.extras, yearOf(p.startDate), club.stadium.blocks).mood : 0;
+    if (p.extras) club.stadium.extras = JSON.parse(JSON.stringify(p.extras));
+    // Neubau: die Eröffnung begeistert (+6), verlorene Stehplätze wiegen höchstens −8; Rückkehr aus dem Ausweichstadion +2.
+    const plan = { mood: Math.round(((p.rebuild ? 6 + Math.max(-8, mood) : mood) + exMood + (p.mode === 'away' ? 2 : 0)) * 10) / 10 };
+    if (p.rebuild) { club.stadium.built = yearOf(today); club.stadium.extras = undefined; } // Neubau: Ausstattung neu aus den Blöcken (Tafel/Banden der Zeit, keine Laufbahn)
     club.stadium.blocks = club.stadium.blocks.map((b) => targets.find((t) => t.id === b.id) ?? b);
     club.stadium.capacity = blocksCapacity(club.stadium.blocks);
     club.stadium.vipBoxes = club.stadium.blocks.reduce((s, b) => s + b.lounges, 0);
@@ -250,7 +257,7 @@ export function stadiumDaily(g: Game, today: string): void {
     pushMessage(g.messages, makeMessage({
       date: today, category: 'board', from: 'Bauleitung', subject: `${projectName(p)} fertig`,
       shortText: `Das Stadion fasst jetzt ${club.stadium.capacity.toLocaleString('de-DE')} Zuschauer.`,
-      bodyText: `Der Umbau (${targets.map((t) => BLOCK_NAME[t.id]).join(', ')}) ist abgeschlossen. Kapazität: ${club.stadium.capacity.toLocaleString('de-DE')} Plätze, Logen: ${club.stadium.vipBoxes}.${plan.mood ? `\n\nDie Fans reagieren ${plan.mood > 0 ? 'erfreut' : 'verstimmt'} (${plan.mood > 0 ? '+' : ''}${plan.mood} Stimmung).` : ''}`,
+      bodyText: `Der Umbau (${onlyExtras ? 'Stadionausstattung' : targets.map((t) => BLOCK_NAME[t.id]).join(', ')}) ist abgeschlossen. Kapazität: ${club.stadium.capacity.toLocaleString('de-DE')} Plätze, Logen: ${club.stadium.vipBoxes}.${plan.mood ? `\n\nDie Fans reagieren ${plan.mood > 0 ? 'erfreut' : 'verstimmt'} (${plan.mood > 0 ? '+' : ''}${plan.mood} Stimmung).` : ''}`,
     }));
   }
   ensureStadiumAge(g);

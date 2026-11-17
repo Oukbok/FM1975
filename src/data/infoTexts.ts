@@ -765,9 +765,29 @@ export const INFO_TEXTS = {
     text: 'Im Planungsmodus stellst du für beliebig viele Blöcke ein, wie sie werden sollen – gebaut oder bezahlt wird noch nichts, die Szene zeigt das fertige Stadion. Mit „Bauen“ beginnt ein gemeinsames Bauprojekt: Bauzeit des längsten Blocks plus ein Monat je weiterem Block, zusammen 5 % günstiger.',
     wiki: 'stadium-blocks',
   },
+  stadionKomfortInnen: {
+    title: 'Stadion-Komfort',
+    text: 'Nur das Stadion selbst: Sitzqualität, Dach, Anzeigetafel, Nähe zum Feld (ohne Laufbahn) und Zustand – begrenzt durch das Baujahr. Dazu kommt das Umfeld (Verpflegung und Anreise); den Gesamtkomfort gegen den Anspruch der Fans siehst du unter Verein › Vereinsgelände.',
+    wiki: 'stadium-blocks',
+  },
+  stadionAusstattung: {
+    title: 'Ausstattung',
+    text: 'Anzeigetafel nach Art und Ort (bis zwei Orte, ab 2005 als Videowürfel über dem Mittelkreis – braucht ein volles Dach über beiden Geraden), Banden (bessere Banden bringen mehr Bandenwerbung) und Laufbahn (Fans sitzen weiter weg). Gebaut wird mit dem übrigen Entwurf.',
+    wiki: 'stadium-blocks',
+  },
+  fanTribuenen: {
+    title: 'Gästeblock und Fankurve',
+    text: 'Der Gästeblock nimmt sein Kontingent zuerst von der gewählten Tribüne – auf der Haupttribüne kostet das teure Plätze. Günstige Stehplätze in der Fankurve machen die aktive Szene zufrieden (bis +6 Stimmung je Monat), eine Kurve ohne Stehplätze verärgert sie. Wo Stehen verboten ist, zählen die günstigsten Sitzplätze mit halber Wirkung. Gilt sofort, ohne Bau.',
+    wiki: 'stadium-blocks',
+  },
+  stadionBauablauf: {
+    title: 'Bauablauf',
+    text: 'In Etappen: eine Seite nach der anderen, nur die laufende Etappe ist gesperrt – am längsten, 4 % teurer. Abriss & Ausweichstadion: alles auf einmal, Heimspiele im Ausweichstadion der Region (weniger Plätze, Miete je Monat, Fans murren) – am schnellsten, 8 % günstiger. Alles gleichzeitig: je Block die Hälfte gesperrt.',
+    wiki: 'stadium-blocks',
+  },
   stadionKomfort: {
     title: 'Komfort und Anspruch',
-    text: 'Der Komfort ergibt sich aus Sitzqualität, Dach, Verpflegung und Anreise, Anzeigetafel und Zustand – begrenzt durch das Baujahr des Stadions. Die Fans erwarten jedes Jahr etwas mehr. Liegt der Komfort darunter, kommen bis zu 15 % weniger Zuschauer, liegt er darüber, bis zu 8 % mehr.',
+    text: 'Der Komfort kommt aus dem Stadion (Sitzqualität, Dach, Anzeigetafel, Nähe zum Feld, Zustand) und dem Umfeld (Verpflegung und Anreise) – begrenzt durch das Baujahr des Stadions. Die Fans erwarten jedes Jahr etwas mehr. Liegt der Komfort darunter, kommen bis zu 15 % weniger Zuschauer, liegt er darüber, bis zu 8 % mehr.',
     wiki: 'stadium-blocks',
   },
   stadionNeubau: {

@@ -21,7 +21,7 @@
 import type { Club, SeatCat, SeatNums, StadiumBlock, StadiumSeating, StandId, TicketPriceCat, TicketSettings } from '../types';
 import {
   BUSINESS_ERA, BUSINESS_REGION, CAT_KEYS, EAST_CITIES, FAN_CATS, GUEST_SHARE, GUEST_SHARE_EURO, LOGE_ERA, LOGE_GUESTS, PREMIUM_SHARE,
-  MATCH_PRICE_CATS, PRICE_ANCHORS, ROOF_PREF, SEAT_CAT, STANDS, STEH_SHARE, VIP_AREA_SEATS_PER_LENGTH, lerpTable,
+  MATCH_PRICE_CATS, PRICE_ANCHORS, ROOF_PREF, SEAT_CAT, STAND, STANDS, STEH_SHARE, VIP_AREA_SEATS_PER_LENGTH, lerpTable,
 } from '../data/seatingCatalog';
 import { forecastWindows, saleRng, ticketKey, ticketUncertainty, type CatWindows } from './ticketForecast';
 import { attendanceDemand, clubTier, fairTicketPrice, matchdayPriceScale, tierScale } from './economy';
@@ -173,11 +173,20 @@ export function capsFor(club: Club, year: number, opts: { euro?: boolean; date?:
     caps.steh = 0;
   }
   // Gästeblock: 10 % der Plätze (Europapokal 5 %), zuerst aus Steh-, dann aus Sitzplätzen.
+  // Eigener Verein mit festgelegter Gästetribüne (engine/stadiumExtras.ts): zuerst die Plätze dieser Tribüne.
   caps.gast = 0;
   if (opts.euro || catAvailable('gast', year)) {
     const general = (caps.steh ?? 0) + (caps.sitz ?? 0) + (caps.dach ?? 0);
     let need = Math.round(general * (opts.euro ? GUEST_SHARE_EURO : GUEST_SHARE));
     caps.gast = need;
+    const awayStand = st.blocks?.length ? st.fans?.away : undefined;
+    if (awayStand) {
+      const raw = blockCaps(st.blocks!.filter((b) => STAND[awayStand].blocks.includes(b.id))).caps;
+      for (const k of ['steh', 'sitz', 'dach', 'premium'] as SeatCat[]) {
+        const take = Math.min(need, raw[k] ?? 0, caps[k] ?? 0);
+        caps[k] = (caps[k] ?? 0) - take; need -= take;
+      }
+    }
     for (const k of ['steh', 'sitz', 'dach'] as SeatCat[]) {
       const take = Math.min(need, Math.round((caps[k] ?? 0) * (k === 'steh' ? 0.6 : 1)));
       caps[k] = (caps[k] ?? 0) - take; need -= take;
@@ -377,6 +386,15 @@ export function standCaps(club: Club, caps: SeatNums): Record<StandId, SeatNums>
     if (k === 'sitz' && want > tot && stehTot > 0 && (caps.steh ?? 0) < stehTot) {
       const extra = want - tot;
       for (const d of STANDS) out[d.id][k] = Math.round(raw[d.id][k] + (extra * raw[d.id].steh) / stehTot);
+      continue;
+    }
+    // Festgelegte Gästetribüne: fehlende Plätze (Gästeblock) zuerst dort.
+    const away = club.stadium.fans?.away;
+    if (away && want < tot) {
+      const own = raw[away][k], fromAway = Math.min(tot - want, own);
+      const restTot = tot - own, restWant = want - (own - fromAway);
+      const f2 = restTot > 0 ? restWant / restTot : 0;
+      for (const d of STANDS) out[d.id][k] = d.id === away ? Math.round(own - fromAway) : Math.round(raw[d.id][k] * f2);
       continue;
     }
     const f = tot > 0 ? want / tot : 0;

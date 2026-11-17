@@ -1,7 +1,7 @@
 // =============================================================================
 // BAU-POPOVER EINES BLOCKS im Planungsmodus „Stadion ausbauen“ (Wunsch Pascal):
-// Ränge mit Platzkategorie und Reihen, Dach, VIP-Bereich, Logen, Anzeigetafel,
-// Bauweise – jede Änderung landet sofort im Entwurf, die Szene zeigt das Ergebnis.
+// Ränge mit Platzkategorie und Reihen, Dach, VIP-Bereich, Logen (ganze Seite: für
+// alle Blöcke, Logen +1 je Block), Bauweise (Anzeigetafel: Ausstattung, PlanExtras) – jede Änderung landet sofort im Entwurf, die Szene zeigt das Ergebnis.
 // Unten die Wirkung dieses Blocks (bzw. der Seite); gebaut und bezahlt wird erst
 // über die Entwurfs-Box (PlanPanel.tsx) – alle geplanten Blöcke in einem Schritt.
 // Rechnung: engine/stadiumBlocks.ts über groupPlanFor (game/stadiumGame.ts).
@@ -9,7 +9,7 @@
 import { yearOf } from '../../../engine/economy';
 import {
   BLOCK_NAME, BLOCK_SIDE, ROOF_NAME, SIDE_NAME, TIER_NAME, blockCapacity, loungesAvailable,
-  scoreboardAllowed, seatAvailable, sideBlocks, tierCapacity, videoWall, vipAllowed, vipAvailable,
+  seatAvailable, sideBlocks, tierCapacity, vipAllowed, vipAvailable,
 } from '../../../engine/stadiumBlocks';
 import { groupPlanFor } from '../../../game/stadiumGame';
 import { LOOKS, blockLook, lookOf, lookYear, loungeLimit, stadiumLook } from '../../../engine/stadiumStandard';
@@ -118,18 +118,12 @@ export function BlockConfigurator({ g, draft, setDraft, targets, whole, setWhole
           <div className="bc-sec-h"><span>Ausstattung</span></div>
           {vipAllowed(draft.id) && (
             <label className={`bc-opt ${!vipAvailable(year) && !draft.vip ? 'off' : ''}`}>
-              <span><b>VIP-Bereich</b><small>{vipAvailable(year) ? 'Business-Plätze mit Bewirtung' : 'ab 1980'}</small></span>
+              <span><b>VIP-Bereich</b><small>{!vipAvailable(year) ? 'ab 1980' : whole ? `auf allen ${targets.filter((t) => vipAllowed(t.id)).length} Blöcken der Seite` : 'Business-Plätze mit Bewirtung'}</small></span>
               <button className={`toggle ${draft.vip ? 'on' : ''}`} disabled={!vipAvailable(year) && !draft.vip} onClick={() => upd({ vip: !draft.vip })} aria-label="VIP-Bereich" />
             </label>
           )}
-          {(scoreboardAllowed(draft.id) || draft.scoreboard) && (
-            <label className="bc-opt">
-              <span><b>{videoWall(year) ? 'Videowand' : 'Anzeigetafel'}</b><small>Ergebnis und Spielzeit für alle Ränge</small></span>
-              <button className={`toggle ${draft.scoreboard ? 'on' : ''}`} onClick={() => upd({ scoreboard: !draft.scoreboard })} aria-label="Anzeigetafel" />
-            </label>
-          )}
           <div className={`bc-opt ${!loungesAvailable(year) ? 'off' : ''}`}>
-            <span><b>Logen</b><small>{loungesAvailable(year) ? `höchstens ${maxL} in diesem Block` : 'ab 1985'}</small></span>
+            <span><b>Logen{whole ? ' je Block' : ''}</b><small>{!loungesAvailable(year) ? 'ab 1985' : whole ? `jeder Klick: +1 auf allen ${targets.length} Blöcken · zusammen ${targets.reduce((a, t) => a + t.lounges, 0)}` : `höchstens ${maxL} in diesem Block`}</small></span>
             <span className="bc-step">
               <button disabled={draft.lounges <= 0} onClick={() => upd({ lounges: draft.lounges - 1 })} aria-label="Weniger Logen">−</button>
               <b>{draft.lounges}</b>

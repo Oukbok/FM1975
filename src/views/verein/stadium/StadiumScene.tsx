@@ -16,11 +16,12 @@ import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { BLOCK_NAME, blockCapacity } from '../../../engine/stadiumBlocks';
 import { blockLook } from '../../../engine/stadiumStandard';
+import { SPOT_BLOCK, type AdsKind, type BoardKind, type StadiumExtras } from '../../../engine/stadiumExtras';
 import { PanZoomControls } from '../../../ui/PanZoomControls';
 import { usePanZoom } from '../../../ui/usePanZoom';
 import type { BlockId, StadiumBlock, StadiumTier } from '../../../types';
 import { shade } from '../grounds/isoKit';
-import { D, GAP, V3, W, depth, face, hash, hull, mapper, proj, pts, roofGeo, seg, tierGeometry } from './geo';
+import { D, GAP, V3, W, depth, face, hash, hull, mapper, proj, pts, roofGeo, seg, shadowPt, tierGeometry } from './geo';
 import { SceneColors, StadiumBlockShape, blockOutline, blockShadowPoints } from './StadiumBlockShape';
 import { PLOT, RING, VENUE_SPOTS, Venue, VenueShape, parcelRects, venueDepth, venueLabelAt } from './StadiumSurround';
 import { Tree, scenery } from './StadiumScenery';
@@ -32,9 +33,16 @@ const UP: V3 = [0, 0, 1];
 const pl = (ps: [number, number][]) => ps.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
 const P0 = (x: number, y: number, z = 0.02) => proj([x, y, z]);
 
-function Pitch({ grass, era }: { grass: string; era: number }) {
+function Pitch({ grass, era, track, year }: { grass: string; era: number; track?: boolean; year: number }) {
   const out: ReactNode[] = [];
-  out.push(<polygon key="sur" points={pts([[-GAP, -GAP, 0.01], [W + GAP, -GAP, 0.01], [W + GAP, D + GAP, 0.01], [-GAP, D + GAP, 0.01]])} fill={shade(grass, 0.86)} />);
+  out.push(<polygon key="sur" points={pts([[-GAP, -GAP, 0.01], [W + GAP, -GAP, 0.01], [W + GAP, D + GAP, 0.01], [-GAP, D + GAP, 0.01]])} fill={track ? (year < 1972 ? '#8b6f5a' : '#b5523d') : shade(grass, 0.86)} />);
+  if (track) {
+    // Laufbahn (Asche bis 1971, danach Kunststoff) mit Bahnlinien um das Feld
+    for (const f of [0.3, 0.55, 0.8]) {
+      const o = GAP * f;
+      out.push(<polygon key={`tr${f}`} points={pts([[-o, -o, 0.012], [W + o, -o, 0.012], [W + o, D + o, 0.012], [-o, D + o, 0.012]])} fill="none" stroke="#f3eee8" strokeOpacity={0.55} strokeWidth={0.8} />);
+    }
+  }
   out.push(<polygon key="pf" points={pts([[0, 0, 0.015], [W, 0, 0.015], [W, D, 0.015], [0, D, 0.015]])} fill={grass} />);
   const n = 14;
   for (let i = 0; i < n; i += 2) out.push(<polygon key={`ms${i}`} points={pts([[(W / n) * i, 0, 0.016], [(W / n) * (i + 1), 0, 0.016], [(W / n) * (i + 1), D, 0.016], [(W / n) * i, D, 0.016]])} fill={shade(grass, 1.09)} />);
@@ -74,6 +82,24 @@ function Pitch({ grass, era }: { grass: string; era: number }) {
   return <>{out}</>;
 }
 
+/** Videowürfel über dem Mittelkreis, an Seilen unter dem Dach. */
+function Cube() {
+  const cx = W / 2, cy = D / 2, h = 1.3, z0 = 5.6, z1 = z0 + 2;
+  const c: V3[] = [[cx - h, cy - h, 0], [cx + h, cy - h, 0], [cx + h, cy + h, 0], [cx - h, cy + h, 0]];
+  const at = (i: number, z: number): V3 => [c[i][0], c[i][1], z];
+  const sides: [number, number, V3][] = [[0, 1, [0, -1, 0]], [1, 2, [1, 0, 0]], [2, 3, [0, 1, 0]], [3, 0, [-1, 0, 0]]];
+  return (
+    <g pointerEvents="none">
+      {/* Schatten: Umriss des Würfels in Lichtrichtung auf den Rasen geworfen (wie bei den Tribünen) */}
+      <polygon points={pl(hull([0, 1, 2, 3].flatMap((i) => [shadowPt(at(i, z0)), shadowPt(at(i, z1))])))} fill="#000" opacity={0.2} />
+      {[0, 1, 2, 3].map((i) => seg(`cbl${i}`, at(i, z1), [c[i][0] + (c[i][0] - cx) * 4, c[i][1] + (c[i][1] - cy) * 4, z1 + 5], '#8a939c', 1.4))}
+      {sides.map(([a, b, n]) => face(`cbf${a}`, [at(a, z0), at(b, z0), at(b, z1), at(a, z1)], n, '#1b2129', { stroke: '#4b5560', sw: 1 }))}
+      {sides.map(([a, b, n]) => face(`cbs${a}`, [at(a, z0 + 0.25), at(b, z0 + 0.25), at(b, z1 - 0.25), at(a, z1 - 0.25)].map((v) => [v[0] + n[0] * 0.03, v[1] + n[1] * 0.03, v[2]] as V3), n, '#2a7fb0'))}
+      {face('cbt', [at(0, z1), at(1, z1), at(2, z1), at(3, z1)], UP, '#2b3138')}
+    </g>
+  );
+}
+
 function Goal({ x, dir }: { x: number; dir: number }) {
   const y0 = D / 2 - 1.05, y1 = D / 2 + 1.05, h = 0.7, bx = x - dir * 0.6;
   return (
@@ -90,7 +116,9 @@ function Goal({ x, dir }: { x: number; dir: number }) {
   );
 }
 
-function Boards({ era, colors }: { era: number; colors: SceneColors }) {
+const ADS_ERA: Record<AdsKind, number> = { holz: 0, druck: 1, prisma: 1, led: 2 };
+function Boards({ era: eraIn, colors, ads }: { era: number; colors: SceneColors; ads?: AdsKind }) {
+  const era = ads ? ADS_ERA[ads] : eraIn;
   const out: ReactNode[] = [];
   const o = 0.6, h = 0.3;
   const pal = era === 0 ? ['#f3f1ea', '#e2c84a', '#c7412f', '#2f5d9a', '#f3f1ea', '#3d7a45'] : era === 1 ? ['#f3f3f3', '#1f4f8f', '#d63a2f', '#f2c230', '#2b2f36', colors.primary] : ['#1b2029', '#1b2029', colors.primary, '#1b2029'];
@@ -139,6 +167,8 @@ export interface StadiumSceneProps {
   ghost?: BlockId[];
   /** Tribünen anklickbar (sonst abgeblendet). */
   blocksActive?: boolean;
+  /** Ausstattung: Anzeigetafeln, Videowürfel, Banden, Laufbahn (engine/stadiumExtras.ts). */
+  extras?: StadiumExtras;
   venues?: Venue[];
   /** Aktive Plätze (sonst abgeblendet). */
   venueActive?: (v: Venue) => boolean;
@@ -204,8 +234,13 @@ export function StadiumScene(p: StadiumSceneProps) {
   const ghost = new Set(p.ghost ?? []);
   const inBuild = new Set(Array.isArray(building) ? building : building ? [building] : []);
 
+  // Anzeigetafeln nach Ausstattung: je Ort ein Block (SPOT_BLOCK), Würfel über dem Mittelkreis
+  const ex = p.extras;
+  const boardBlocks = new Set(ex && ex.board !== 'none' && ex.board !== 'cube' ? ex.spots.filter((s2) => s2 !== 'center').map((s2) => SPOT_BLOCK[s2 as keyof typeof SPOT_BLOCK]) : []);
+  const boardOn = (id: BlockId): BoardKind | 'none' | undefined => (!ex ? undefined : boardBlocks.has(id) ? (ex.board as BoardKind) : 'none');
   // Blöcke, Plätze und Masten nach Kameratiefe
   const items: { d: number; n: ReactNode }[] = [];
+  if (ex?.board === 'cube') items.push({ d: depth([W / 2, D / 2, 0]), n: <Cube key="cube" /> });
   for (const b of blocks) {
     const id = b.id;
     const { len, at } = mapper(b);
@@ -219,7 +254,7 @@ export function StadiumScene(p: StadiumSceneProps) {
     items.push({ d: depth(at(len / 2, 0, 0)), n: (
       <g key={id} data-block={id} className={`gr-obj blk ${inSel ? 'sel' : ''} ${ghost.has(id) ? 'sv-ghost' : ''}`} opacity={dim} pointerEvents={blocksActive ? undefined : 'none'}
         onClick={(e) => { e.stopPropagation(); onSelect(id, evPt(e)); }} onMouseEnter={() => onHover(id)} onMouseLeave={() => onHover(null)}>
-        <StadiumBlockShape b={b} colors={colors} look={blockLook(b, { built: p.built })} year={year} others={blocks} crowd={p.crowd ?? 0} />
+        <StadiumBlockShape b={b} colors={colors} look={blockLook(b, { built: p.built })} year={year} others={blocks} crowd={p.crowd ?? 0} board={boardOn(id)} />
         {/* Hervorhebung als Umriss statt CSS-Filter: ein Filter auf der Gruppe ließ andere Blöcke beim
             Überfahren flackern (Wunsch Pascal). */}
         {on && blocksActive && <g className={inSel ? 'blk-sel' : 'blk-hov'} pointerEvents="none">{blockOutline(b).map((d, k) => <polyline key={k} points={d} />)}</g>}
@@ -289,13 +324,13 @@ export function StadiumScene(p: StadiumSceneProps) {
       })}
       <g className="sv-ground-art" pointerEvents="none">{sc.under}</g>
       {treeNodes.filter((t) => t.d < dMid).sort((a, b) => a.d - b.d).map((t) => t.n)}
-      <Pitch grass={grass} era={era} />
+      <Pitch grass={grass} era={era} track={p.extras?.track} year={year} />
       <g filter="url(#stBlur)" opacity={0.3}>
         {blocks.map((b) => <polygon key={`sh${b.id}`} points={pl(hull(blockShadowPoints(b)))} fill="#000" />)}
       </g>
       <Goal x={0} dir={1} />
       <Goal x={W} dir={-1} />
-      <Boards era={era} colors={colors} />
+      <Boards era={era} colors={colors} ads={p.extras?.ads} />
       {[[0, 0], [W, 0], [W, D], [0, D]].map(([x, y]) => (
         <g key={`cf${x}${y}`}>{seg(`cfp${x}${y}`, [x, y, 0], [x, y, 0.55], '#f2f2f2', 1.2)}<polygon points={pts([[x, y, 0.55], [x, y, 0.4], [x + (x ? -0.35 : 0.35), y, 0.48]])} fill={era === 0 ? '#e8c547' : colors.primary} /></g>
       ))}

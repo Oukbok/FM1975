@@ -13,6 +13,7 @@
 // × economyScale des Buchungsjahres: Lange Verträge folgen der Inflation, aber nicht
 // dem schneller wachsenden Werbemarkt – Verlängerungen bringen dann den Sprung.
 // =============================================================================
+import { adsDef } from './stadiumExtras';
 import { COUNTRY_BY_ID, INDUSTRY_BY_ID, LED_YEAR, SLOT_BY_ID, SPONSOR_SLOTS, SponsorSlotDef, industryBan, industryImage, slotAnchorValue, tvEra } from '../data/sponsorCatalog';
 import { SPONSOR_FIRMS } from '../data/sponsorNames';
 import { campDestination } from '../data/campDestinations';
@@ -78,7 +79,9 @@ export function tvPresence(c: Club, year: number, euro = false): number {
 /** Banden: Zuschauer (Kapazität) × TV-Präsenz, ab 2010 LED-Banden (+20 %). */
 export function bandenFactor(c: Club, year: number): number {
   const cap = Math.max(5000, c.stadium?.capacity ?? 30000);
-  return (0.55 + 0.6 * tvPresence(c, year)) * Math.pow(cap / 40000, 0.35) * (year >= LED_YEAR ? 1.2 : 1);
+  // Eigener Verein mit gebauter Bandenart (engine/stadiumExtras.ts): deren Faktor statt der Epoche.
+  const ads = c.stadium?.extras?.ads;
+  return (0.55 + 0.6 * tvPresence(c, year)) * Math.pow(cap / 40000, 0.35) * (ads ? adsDef(ads).value : year >= LED_YEAR ? 1.2 : 1);
 }
 
 /** Wachstum über das letzte Stützjahr hinaus (Vermarktungsmarkt). */

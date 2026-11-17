@@ -11,6 +11,7 @@
 // Kurven teilen denselben Bauplan: entlang u wird bei Kurven in Segmente zerlegt.
 // =============================================================================
 import { memo, type ReactNode } from 'react';
+import type { BoardKind } from '../../../engine/stadiumExtras';
 import type { SeatType, StadiumBlock } from '../../../types';
 import { shade } from '../grounds/isoKit';
 import { SC, SCREEN_DEPTH, V3, VIEW, depth, dot, face, isNear, mapper, neg, proj, pts, roofGeo, seg, tierGeometry } from './geo';
@@ -64,12 +65,12 @@ function endHidden(b: StadiumBlock, u: number, others: StadiumBlock[] | undefine
   return false;
 }
 
-type ShapeProps = { b: StadiumBlock; colors: SceneColors; look: number; year: number; others?: StadiumBlock[]; crowd?: number };
+type ShapeProps = { b: StadiumBlock; colors: SceneColors; look: number; year: number; others?: StadiumBlock[]; crowd?: number; /** Anzeigetafel auf diesem Block (engine/stadiumExtras.ts); fehlt = `b.scoreboard`. */ board?: BoardKind | 'none' };
 /** Neu gezeichnet nur bei echter Änderung (Überfahren anderer Blöcke zeichnet nichts neu). */
 export const StadiumBlockShape = memo(StadiumBlockShapeRaw, (a: ShapeProps, c: ShapeProps) =>
-  a.b === c.b && a.look === c.look && a.crowd === c.crowd && a.year === c.year && a.colors.primary === c.colors.primary && a.colors.secondary === c.colors.secondary
+  a.b === c.b && a.look === c.look && a.board === c.board && a.crowd === c.crowd && a.year === c.year && a.colors.primary === c.colors.primary && a.colors.secondary === c.colors.secondary
   && (a.others === c.others || (a.others?.length === c.others?.length && !!a.others?.every((x, i) => x === c.others![i]))));
-function StadiumBlockShapeRaw({ b, colors, look, year, others, crowd = 0 }: ShapeProps) {
+function StadiumBlockShapeRaw({ b, colors, look, year, others, crowd = 0, board }: ShapeProps) {
   const era = Math.min(2, look); // Alt-Verzweigungen (0 Beton · 1 Stahl · 2 Arena und neuer)
   const P = PAL[look] ?? PAL[0];
   let seedN = 0; for (const ch of b.id) seedN = seedN * 7 + ch.charCodeAt(0);
@@ -343,9 +344,10 @@ function StadiumBlockShapeRaw({ b, colors, look, year, others, crowd = 0 }: Shap
     }
   }
 
-  // Anzeigetafel bzw. Videowand
-  if (b.scoreboard) {
-    const big = year >= 1994;
+  // Anzeigetafel bzw. Videowand (Art aus der Ausstattung; ohne Angabe: Epoche)
+  const kind = board ?? (b.scoreboard ? (year >= 1994 ? 'video' : 'elektro') : 'none');
+  if (kind !== 'none' && kind !== 'cube') {
+    const big = kind === 'video' || kind === 'led';
     const hw = big ? Math.min(2.4, len * 0.26) : Math.min(1.6, len * 0.18);
     const v = vMax - 0.5;
     const base = rg ? rg.zB + (rg.zF - rg.zB) * ((v - rg.vS) / (rg.vB - rg.vS)) : zTop + 0.2;
@@ -362,8 +364,11 @@ function StadiumBlockShapeRaw({ b, colors, look, year, others, crowd = 0 }: Shap
       out.push(front);
       const q = (f0: number, f1: number, za: number, zb: number) => pts([off(P(f0, za)), off(P(f1, za)), off(P(f1, zb)), off(P(f0, zb))]);
       if (big) {
-        out.push(<polygon key={`${id}sbs`} points={q(0.06, 0.94, z0 + 0.25, z1 - 0.25)} fill="#1f6d95" />);
-        out.push(<polygon key={`${id}sbh`} points={q(0.06, 0.94, z1 - 0.9, z1 - 0.25)} fill="#3d9cc9" opacity={0.6} />);
+        out.push(<polygon key={`${id}sbs`} points={q(0.06, 0.94, z0 + 0.25, z1 - 0.25)} fill={kind === 'led' ? '#2a7fb0' : '#1f6d95'} />);
+        out.push(<polygon key={`${id}sbh`} points={q(0.06, 0.94, z1 - 0.9, z1 - 0.25)} fill={kind === 'led' ? '#7cc6ea' : '#3d9cc9'} opacity={0.6} />);
+      } else if (kind === 'hand') {
+        out.push(<polygon key={`${id}sbs`} points={q(0.06, 0.94, z0 + 0.2, z1 - 0.2)} fill="#24412f" />);
+        for (const f of [0.18, 0.34, 0.62, 0.78]) out.push(<polygon key={`${id}sbn${f}`} points={q(f, f + 0.1, z0 + 0.4, z1 - 0.4)} fill="#e9ecef" />);
       } else {
         const dots: ReactNode[] = [];
         for (let rr = 0; rr < 3; rr++) for (let c = 0; c < 14; c++) {

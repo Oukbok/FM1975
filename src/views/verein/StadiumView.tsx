@@ -27,10 +27,11 @@ import { fmtDM } from '../../ui/format';
 import { FacilityDetail, ModuleDetail } from './grounds/GroundsDetail';
 import { BlockConfigurator } from './stadium/BlockConfigurator';
 import { PlanPanel } from './stadium/PlanPanel';
-import { perMatch } from './stadium/planModel';
+import { opponentReps, perMatch } from './stadium/planModel';
 import { usePlanDraft } from './stadium/usePlanDraft';
 import { RebuildPanel } from './stadium/RebuildPanel';
 import { stadiumComfort } from '../../engine/stadiumStandard';
+import { extrasOf } from '../../engine/stadiumExtras';
 import { StadiumScene } from './stadium/StadiumScene';
 import { VENUE_GROUPS, Venue, VenueGroup, venuesOf } from './stadium/StadiumSurround';
 import { InfoTip } from '../../ui/InfoTip';
@@ -94,7 +95,7 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
   // Kennzahlen
   const cap = st.capacity;
   const seated = seatedCapacity(blocks);
-  const exp = expectedSale(club, year);
+  const exp = expectedSale(club, year, { awayRep: opponentReps(g).avg });
   const expRev = Object.values(saleRevenue(club, exp.sold, year)).reduce((a, v) => a + (v ?? 0), 0);
   const log = (st.seating?.log ?? []).slice(0, 8);
   const avgAtt = log.length ? Math.round(log.reduce((a, e) => a + Object.entries(e.sold).reduce((s, [k, v]) => s + (k === 'loge' ? (v ?? 0) * 11 : v ?? 0), 0), 0) / log.length) : 0;
@@ -129,6 +130,7 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
           <StadiumScene blocks={shown} built={st.built} crowd={crowd ? Math.max(0.35, Math.min(0.97, st.averageAttendanceRate ?? 0.6)) : 0} colors={{ primary, secondary }} year={year} month={month} land={gr.plots ? gr.plots.length : gr.landBought} onView={() => setAnchor(null)}
             selected={sel ?? oldSel} hover={hover} building={bp ? (bp.rebuild ? [bp.blockId] : [bp.blockId, ...(bp.more ?? []).map((t) => t.id)]) : null} buildingAll={!!bp?.rebuild}
             group={sel && pd.whole ? blocks.filter((b) => BLOCK_SIDE[b.id] === BLOCK_SIDE[sel]).map((b) => b.id) : []} ghost={rbPreview ? rbPreview.map((t) => t.id) : planOn ? pd.list.map((t) => t.id) : []}
+            extras={rbPreview ? undefined : planOn ? pd.shownExtras : extrasOf(club, year)}
             blocksActive={blocksActive} venues={venues} venueActive={venueActive} selectedVenue={venue}
             onSelect={selectBlock} onHover={setHover} onVenue={selectVenue} />
 
@@ -140,12 +142,13 @@ export function StadiumView({ g, onChange, onGoto }: { g: Game; onChange: () => 
             <div><b className="num">{(avgAtt || exp.attendance).toLocaleString('de-DE')}</b><span>{avgAtt ? 'Ø Zuschauer zuletzt' : 'Zuschauer erwartet'}</span></div>
             <div><b className="num">{fmtDM(expRev)}</b><span>Eintritt je Spiel</span></div>
             {comfort && <div className="sv-kpi-comfort" onClick={() => { close(); setRebuild(true); }} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter') { close(); setRebuild(true); } }}>
-              <b className={`num ${comfort.comfort < comfort.expect - 1 ? 'neg' : ''}`}>{Math.round(comfort.comfort)}<small> / {Math.round(comfort.expect)}</small></b><span>Komfort / Anspruch<InfoTip k="stadionKomfort" /></span></div>}
+              <b className="num">{Math.round(comfort.inside)}<small> / {Math.round(comfort.insideMax)}</small></b><span>Stadion-Komfort<InfoTip k="stadionKomfortInnen" /></span></div>}
             {preview && <div className="sv-kpi-plan"><b className="num">{fmtDM(preview.rev)}</b><span>nach Umbau</span></div>}
             {(bp || old) && <div className="sv-kpi-build"><b>{bp ? projectName(bp) : `Ausbau Stufe ${old!.targetLevel}`}</b><span>im Bau bis {fmtD(bp ? bp.finishDate : old!.finishDate)}{bp ? ` · ${bp.capacityLoss.toLocaleString('de-DE')} Plätze gesperrt` : ''}</span></div>}
           </div>
 
-          {planOn && <PlanPanel g={g} blocks={blocks} plan={pd.plan} selected={sel} onPick={(id) => { setAnchor(null); pd.select(id); }} onRemove={pd.remove}
+          {planOn && <PlanPanel g={g} blocks={blocks} applied={pd.applied} plan={pd.plan} selected={sel} onPick={(id) => { setAnchor(null); pd.select(id); }} onRemove={pd.remove}
+            extras={pd.extras} curExtras={pd.curExtras} setExtras={pd.setExtras} mode={pd.mode} setMode={pd.setMode} onChange={onChange}
             onClose={exitPlan} onDiscard={() => { pd.discard(); exitPlan(); }} onBuilt={(t) => { pd.discard(); exitPlan(); setNotice(t); onChange(); }} />}
 
           {lead && (sel || oldSel || vdef) && (
