@@ -72,11 +72,11 @@
 .hon-strip .hb { gap: 0; }
 
 /* Hover-Fenster */
-.hm-pop { max-width: 380px; padding: 0 !important; }
+.hm-pop { width: 400px; max-width: 400px; padding: 0 !important; white-space: normal; align-items: stretch; } /* .st-tip setzt nowrap – hier umbrechen, sonst ragt der Text hinaus */
 .hm-tip { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; font-size: 13px; line-height: 1.4; }
 .hm-tip-h b { display: block; font-family: var(--font-display); font-size: 17px; text-transform: uppercase; letter-spacing: .02em; }
 .hm-tip-h span { color: var(--text-3); }
-.hm-tip-tier { display: grid; grid-template-columns: 14px 1fr; gap: 8px; padding: 6px 8px; border-radius: 6px; border: 1px solid transparent; }
+.hm-tip-tier { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 8px; padding: 6px 8px; border-radius: 6px; border: 1px solid transparent; }
 .hm-tip-tier.on { border-color: var(--border); background: rgba(var(--ink-rgb), 0.05); }
 .hm-tip-tier b { display: block; font-size: 12.5px; text-transform: uppercase; letter-spacing: .05em; }
 .hm-tip-tier span { display: block; color: var(--text-2); }
