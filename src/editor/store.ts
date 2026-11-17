@@ -72,3 +72,32 @@ export function imageToDataUrl(file: File, max = 256): Promise<string> {
     reader.readAsDataURL(file);
   });
 }
+
+/**
+ * Spielerfoto verkleinern (längste Kante höchstens `max` px) und als WebP speichern
+ * (Qualität 0,82); kann der Browser kein WebP schreiben, als JPEG. Ergebnis: Data-URL.
+ */
+export function photoToDataUrl(file: File, max = 720): Promise<string> {
+  return new Promise((resolve, reject) => {
+    if (!/^image\/(png|jpe?g|webp|gif|bmp|avif)$/.test(file.type)) { reject(new Error(`„${file.name}“ ist kein unterstütztes Bild (PNG, JPEG, WebP).`)); return; }
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error);
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const f = Math.min(1, max / Math.max(img.width, img.height));
+        const c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(img.width * f));
+        c.height = Math.max(1, Math.round(img.height * f));
+        const ctx = c.getContext('2d');
+        if (!ctx) { reject(new Error('Bild konnte nicht verarbeitet werden.')); return; }
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+        const webp = c.toDataURL('image/webp', 0.82);
+        resolve(webp.startsWith('data:image/webp') ? webp : c.toDataURL('image/jpeg', 0.85));
+      };
+      img.onerror = () => reject(new Error(`„${file.name}“ konnte nicht gelesen werden.`));
+      img.src = String(reader.result);
+    };
+    reader.readAsDataURL(file);
+  });
+}

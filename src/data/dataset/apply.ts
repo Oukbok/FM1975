@@ -22,7 +22,8 @@ import { LEGENDS } from '../legends';
 import { applyFormationEras } from '../formations';
 import { setWorldOverride } from '../world/index';
 import { POOL_TOWNS } from '../poolTowns';
-import { Dataset } from './schema';
+import { Dataset, PlayerPhotoSet } from './schema';
+import { isPhotoPose } from '../pressPhotos';
 import { BUILTIN_ID, builtinDataset } from './builtin';
 
 let activeId = BUILTIN_ID;
@@ -46,6 +47,26 @@ export function datasetCrestAt(clubId: string, iso: string | null = crestDate): 
   for (const e of eras) if (e.crest && iso >= `${e.from}-07-01` && (!best || e.from > best.from)) best = e;
   return best?.crest;
 }
+/** Eigene Spielerfotos des aktiven Datensatzes (geprüft; leer = keine). */
+let activePhotos: PlayerPhotoSet[] = [];
+export function datasetPlayerPhotos(): PlayerPhotoSet[] { return activePhotos; }
+const PHOTO_URL = /^data:image\/(webp|jpeg|png);base64,[A-Za-z0-9+/=]+$/;
+/** Nur gültige Einträge: Bezug (Legende oder Name), Bilder als Data-URL, unbekannte Pose = allgemein. */
+export function cleanPlayerPhotos(list: unknown): PlayerPhotoSet[] {
+  if (!Array.isArray(list)) return [];
+  const out: PlayerPhotoSet[] = [];
+  for (const x of list as PlayerPhotoSet[]) {
+    if (!x || typeof x !== 'object') continue;
+    const legendId = typeof x.legendId === 'string' && x.legendId.trim() ? x.legendId.trim() : undefined;
+    const name = typeof x.name === 'string' && x.name.trim() ? x.name.trim().replace(/\s+/g, ' ') : undefined;
+    if (!legendId && !name) continue;
+    const photos = (Array.isArray(x.photos) ? x.photos : []).filter((p) => p && typeof p.img === 'string' && PHOTO_URL.test(p.img))
+      .map((p) => ({ pose: isPhotoPose(p.pose) ? p.pose : 'general' as const, img: p.img }));
+    if (!photos.length) continue;
+    out.push({ id: String(x.id ?? ''), legendId, name, born: Number.isFinite(x.born) ? Number(x.born) : undefined, club: typeof x.club === 'string' && x.club.trim() ? x.club.trim() : undefined, photos });
+  }
+  return out;
+}
 export function datasetKits(clubId: string) { return activeCosmetics.kits?.[clubId] ?? activeCosmetics.kits?.[dsId(clubId)]; }
 
 function replaceArray<T>(target: T[], src: T[] | undefined, fallback: T[]): void {
@@ -63,6 +84,7 @@ export function applyDataset(ds: Dataset | null): void {
   const d = ds ?? base;
   activeId = d.meta?.id ?? BUILTIN_ID;
   activeCosmetics = { crests: d.crests ?? {}, crestEras: d.crestEras ?? {}, kits: d.kits ?? {} };
+  activePhotos = cleanPlayerPhotos(d.playerPhotos);
 
   replaceArray(CLUB_SEEDS, d.clubs?.tier1, base.clubs.tier1);
   replaceArray(SECOND_LIGA_NORD_SEEDS, d.clubs?.secondNord, base.clubs.secondNord);

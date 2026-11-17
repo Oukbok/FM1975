@@ -12,7 +12,7 @@ export interface Hit { sec: Sec; target: Target; path: Path; value: string; labe
 
 const TOP: Record<string, Sec> = {
   meta: 'general', clubs: 'clubs', crests: 'clubs', kits: 'clubs', crestEras: 'clubs', europe: 'europe', timeline: 'timeline',
-  leagues: 'leagues', facilities: 'facilities', staff: 'staff', marketing: 'marketing', names: 'names', legendsV2: 'legends',
+  leagues: 'leagues', facilities: 'facilities', staff: 'staff', marketing: 'marketing', names: 'names', legendsV2: 'legends', playerPhotos: 'photos',
   worldData: 'world', poolTowns: 'pool', economy: 'economy', history: 'history',
 };
 
@@ -54,7 +54,7 @@ export function targetFor(ds: Dataset, path: Path, text?: string): { sec: Sec; t
 const WORDS: Record<string, string> = {
   clubs: 'Vereine', tier1: '1. Liga 1975', secondNord: '2. Liga Nord 1975', secondSued: '2. Liga Süd 1975', ddrOberliga: 'DDR-Oberliga 1975', ddrLiga: 'DDR-Liga 1975',
   worldData: 'Weltdaten', seasons: 'Saisons', europe: 'Europa', countries: 'Länder', timeline: 'Chronik', leagues: 'Ligasystem', reforms: 'Reformen',
-  facilities: 'Einrichtungen', staff: 'Mitarbeiter', marketing: 'Marketing', names: 'Namen', origins: 'Herkünfte', legendsV2: 'Ausnahmetalente',
+  facilities: 'Einrichtungen', staff: 'Mitarbeiter', marketing: 'Marketing', names: 'Namen', origins: 'Herkünfte', legendsV2: 'Ausnahmetalente', playerPhotos: 'Spielerfotos', photos: 'Fotos', pose: 'Art', legendId: 'Legenden-ID', born: 'Geburtsjahr',
   poolTowns: 'Amateur-Pool', economy: 'Wirtschaft', history: 'Zeitabschnitte', crests: 'Wappen', crestEras: 'Spätere Wappen', kits: 'Trikots',
   name: 'Name', shortName: 'Kürzel', short: 'Kürzel', city: 'Stadt', primary: 'Farbe 1', secondary: 'Farbe 2', colors: 'Farben', strength: 'Stärke',
   reputation: 'Ansehen', capacity: 'Plätze', stadium: 'Stadion', founded: 'Gegründet', title: 'Titel', year: 'Jahr', season: 'Saison',

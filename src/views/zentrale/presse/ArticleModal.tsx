@@ -18,7 +18,7 @@ export function ArticleModal({ api, s, ed, onClose, onGoto }: { api: PressApi; s
   const clubs = s.clubs.filter((id) => !!g.clubs[id]);
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal modal-xl np-article" onClick={(e) => e.stopPropagation()}>
+      <div className={`modal modal-xl np-article ${Number(ed.date.slice(0, 4)) < 1986 ? 'np-e1' : ''}`} onClick={(e) => e.stopPropagation()}>
         <div className="mx-head">
           <div>
             <div className="mx-sub">{ed.masthead.name} · Nr. {ed.number} · {s.rubric} · {fmtDateFull(s.date)}</div>
@@ -28,7 +28,7 @@ export function ArticleModal({ api, s, ed, onClose, onGoto }: { api: PressApi; s
         </div>
         <div className="mx-body np-art-body">
           <div className="np-art-img">
-            <StoryImage api={api} img={s.image} size={s.image?.kind === 'club' ? 150 : 190} />
+            <StoryImage api={api} img={s.image} size={s.image?.kind === 'club' ? 150 : 190} story={s} photoSize={210} />
             {s.rumor && <div className="np-art-note">Gerücht – nicht bestätigt</div>}
           </div>
           <div className="np-art-main">

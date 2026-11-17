@@ -95,6 +95,41 @@ await page.click('.ed-nav-item[data-sec="legends"]');
 await page.locator('.ed-table tbody tr').last().locator('.ed-mini.danger').click();
 await page.screenshot({ path: `${outDir}/legends-added.png` });
 
+// Spielerfotos (Wunsch Pascal): Eintrag anlegen, zwei Fotos hochladen, Art wählen; Fotos auch bei einer Legende.
+const png = await page.screenshot({ clip: { x: 0, y: 0, width: 240, height: 300 } });
+await page.click('.ed-nav-item[data-sec="photos"]');
+await page.waitForTimeout(150);
+if (!await page.locator('.ed-photo-rights').count()) fail('Spielerfotos: Rechtehinweis fehlt');
+await page.locator('.ed-table-bar button:has-text("Hinzufügen")').click();
+await page.waitForTimeout(120);
+const pside = page.locator('.ed-photo-side');
+await pside.locator('.ed-field:has-text("Spieler (voller Name)") input').fill('Klaus Testmann');
+{
+  const [fc] = await Promise.all([page.waitForEvent('filechooser'), pside.locator('[data-act="photo-add"]').click()]);
+  await fc.setFiles([{ name: 'a.png', mimeType: 'image/png', buffer: png }, { name: 'b.png', mimeType: 'image/png', buffer: png }]);
+}
+await page.waitForSelector('.ed-photo-side .ed-photo:nth-child(2)', { timeout: 4000 }).catch(() => fail('Spielerfotos: Fotos nicht hochgeladen'));
+await pside.locator('.ed-photo').nth(1).locator('.ed-pose[data-pose="torjubel"]').click();
+const poses = await pside.locator('.ed-photo').evaluateAll((els) => els.map((e) => e.getAttribute('data-pose')));
+if (poses.join() !== 'general,torjubel') fail(`Spielerfotos: Arten ${poses.join()}`);
+const fmt = await pside.locator('.ed-photo img').first().getAttribute('src');
+if (!/^data:image\/(webp|jpeg);base64,/.test(fmt ?? '')) fail('Spielerfotos: nicht als WebP/JPEG gespeichert');
+await page.screenshot({ path: `${outDir}/photos-edited.png` });
+await page.click('.ed-nav-item[data-sec="legends"]');
+await page.waitForTimeout(150);
+await page.locator('.ed-table tbody tr').nth(2).click();
+{
+  const [fc] = await Promise.all([page.waitForEvent('filechooser'), page.locator('.ed-legend [data-act="photo-add"]').click()]);
+  await fc.setFiles({ name: 'c.png', mimeType: 'image/png', buffer: png });
+}
+await page.waitForSelector('.ed-legend .ed-photo', { timeout: 4000 }).catch(() => fail('Legende: Foto nicht hochgeladen'));
+await page.locator('.ed-legend .ed-photo .ed-pose[data-pose="verletzung"]').click();
+await page.locator('.ed-legend .ed-photo').scrollIntoViewIfNeeded();
+await page.screenshot({ path: `${outDir}/legends-photo.png` });
+await page.click('.ed-nav-item[data-sec="photos"]');
+await page.waitForTimeout(150);
+if (await page.locator('.ed-table tbody tr').count() !== 2) fail('Spielerfotos: Legenden-Eintrag fehlt in der Liste');
+
 // Meta-ID setzen, prüfen, exportieren.
 await page.click('.ed-nav-item[data-sec="general"]');
 await page.locator('.ed-field').first().locator('input').fill('testsatz');
@@ -112,6 +147,8 @@ if (dl.suggestedFilename() !== 'testsatz.fm1975.json') fail(`Dateiname: ${dl.sug
 if (json.clubs.tier1[0].name !== 'Testhausen 75') fail('Export enthält die Umbenennung nicht');
 const kit = json.kits?.[json.clubs.tier1[0].id];
 if (!kit?.home || !kit?.away || kit.home.pattern !== 'hoops') fail('Export enthält das Trikot nicht vollständig');
+const pp = json.playerPhotos ?? [];
+if (pp.length !== 2 || pp[0].photos.length !== 2 || pp[0].photos[1].pose !== 'torjubel' || !pp[1].legendId || pp[1].photos[0].pose !== 'verletzung') fail(`Export: Spielerfotos unvollständig (${JSON.stringify(pp.map((x) => [x.name, x.legendId, x.photos.map((f) => f.pose)]))})`);
 
 // Ins Spiel übernehmen.
 await page.click('.ed-tools >> text=Ins Spiel übernehmen');

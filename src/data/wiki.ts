@@ -102,7 +102,7 @@ Betroffen: \`engine/calendar.ts\`, \`engine/league.ts\` und jede neue datumsbezo
     id: 'core-datasets',
     category: 'core',
     title: 'Datensätze & Datensatz-Editor (Modding)',
-    keywords: ['datensatz', 'editor', 'modding', 'mod', 'wappen', 'trikot', 'vereine', 'import', 'export', 'json', 'grafikpaket', 'logo', 'zip', 'vereins-id', 'amateur-pool', 'csv', 'rückgängig', 'suche', 'änderungen'],
+    keywords: ['datensatz', 'editor', 'modding', 'mod', 'wappen', 'trikot', 'vereine', 'import', 'export', 'json', 'grafikpaket', 'logo', 'zip', 'vereins-id', 'amateur-pool', 'csv', 'rückgängig', 'suche', 'änderungen', 'spielerfotos', 'foto', 'pose'],
     body: `## Was ist ein Datensatz?
 Ein Datensatz ist eine einzelne JSON-Datei (\`<id>.fm1975.json\`), die festlegt, womit ein **neues Spiel** startet: Vereine aller Ligen, Wappen und Trikots, Europa (Länder, Starter der ersten Saison), Chronik-Ereignisse, Ligareformen, Einrichtungen, Mitarbeiter-Rollen, Marketing-Kanäle, Namen und Herkünfte, Wirtschaftskurven und besondere Zeitabschnitte. Der eingebaute Datensatz **Standard (1975)** entspricht den Werten im Code.
 
@@ -115,6 +115,7 @@ Der Datensatz-Editor ist eine eigene Seite unter **/editor/** (Hauptmenü → Da
 - **Vereine:** erst **Land**, dann **Liga** (Startligen 1975/76 bzw. 1./2. Liga einer Saison der Weltdaten, Vereine ohne Liga, alle Vereine) – so ist jeder Verein der Welt erreichbar. Je Verein eigenes Wappen (PNG/JPG/SVG, auf 256 px verkleinert) und Heim-/Auswärtstrikot (Farben + Muster). Mit **Weiteres Wappen hinzufügen** legst du spätere Wappen an: Jedes ersetzt das vorige ab Saisonbeginn (1. Juli) des eingetragenen Jahres.
 - **Grafikpakete:** **Vereins-IDs als CSV** exportieren, Bilder danach benennen (\`eng-liverpool-rot.png\`, spätere Wappen \`eng-liverpool-rot@1999.png\`) und das Paket als ZIP, Ordner oder einzelne Bilder importieren. Andere Dateinamen ordnet der Editor nach Vereinsnamen zu, eine \`zuordnung.csv\` (\`datei;id\`) im Paket hat Vorrang. Vor dem Übernehmen zeigt eine Tabelle jede Datei mit Vorschau, Ziel und Status (neu/ersetzt). **Vorlage-Paket** liefert Anleitung und Liste, **Wappen dieses Datensatzes als Grafikpaket** exportiert alle Wappen zum Weitergeben.
 - **Amateur-Pool:** Städte, aus denen Amateurvereine nachrücken, wenn der Pool unter der untersten Liga zu klein wird.
+- **Spielerfotos** (Spieler & Personal): eigene Fotos zu Spielern und Ausnahmetalenten, die **Newscenter** und **Zeitung** zeigen, wenn der Spieler erwähnt wird. Beliebig viele Fotos je Spieler (verkleinert auf 720 px, als WebP/JPEG im Datensatz). Je Foto wählst du die **Art**: **Allgemein** passt immer, eine **Pose** (Torjubel, Torschuss, Kopfball, Zweikampf, Torwart-Parade, Abpfiff, Verletzung, Vertrag, Training) nur zum passenden Anlass – z. B. Torjubel nach einem Sieg, Verletzung bei einer Verletzungsmeldung, Vertrag bei Transfer und Verlängerung. Gibt es keine passende Pose, nimmt das Spiel ein allgemeines Foto, sonst das übliche Pressefoto. Spieler entstehen erst im Spiel – deshalb trägst du den **vollen Namen** ein, wie er im Spiel steht (bei Gleichnamigen mit Geburtsjahr oder aktuellem Verein). Ausnahmetalente ordnest du über ihre **Legenden-ID** zu oder lädst die Fotos direkt im Bereich **Ausnahmetalente** hoch – das hält auch, wenn das Talent erst Jahre später erscheint. Bitte nur eigene oder rechtefreie Bilder verwenden.
 - **Prüfen** zeigt Fehler (z. B. doppelte IDs, ungerade Ligagrößen, fehlende Starter) und Hinweise. Ein Klick auf einen Eintrag springt in den Bereich und hebt die betroffene Zeile hervor.
 - **Rückgängig / Wiederholen** (Strg+Z, Strg+Umschalt+Z oder Strg+Y) über die letzten 40 Schritte; schnelles Tippen zählt als ein Schritt.
 - **Suche** im Kopf (Strg+F) durchsucht alle Namen, IDs und Texte des Datensatzes; Enter oder Klick springt zum Eintrag – auch zu Vereinen im Ausland (Land und Liga werden passend gewählt).
@@ -716,7 +717,7 @@ Die **Zentrale** ist deine Startseite. Oben bleibt das Hauptmenü; den Kalender 
     id: 'presse',
     category: 'messages',
     title: 'Presse: die Sportzeitung',
-    keywords: ['presse', 'zeitung', 'schlagzeile', 'aufmacher', 'artikel', 'gerücht', 'gerüchteküche', 'ausgabe', 'archiv', 'kurz notiert', 'torjäger', 'kommentar'],
+    keywords: ['presse', 'zeitung', 'spielerfoto', 'foto', 'schlagzeile', 'aufmacher', 'artikel', 'gerücht', 'gerüchteküche', 'ausgabe', 'archiv', 'kurz notiert', 'torjäger', 'kommentar'],
     body: `## Worum geht es?
 Unter **Zentrale › Presse** liest du die Sportzeitung des Spiels. Sie erscheint **montags und donnerstags** (wie die großen Fußball-Fachblätter); dazu gibt es immer die **aktuelle Ausgabe des Tages**. Jede Ausgabe berichtet über die Tage seit der vorigen Ausgabe. Oben rechts blätterst du zu älteren Ausgaben der laufenden Saison.
 
@@ -729,6 +730,9 @@ Unter **Zentrale › Presse** liest du die Sportzeitung des Spiels. Sie erschein
 
 ## Alles ist anklickbar
 Eine Schlagzeile öffnet den vollen Artikel mit allen Beteiligten und Knöpfen zum Ziel (Spielbericht, Tabelle, Transfermarkt, Kabine …). **Gesichter** öffnen das Spielerprofil, **Wappen und Vereinsnamen** das Vereinsprofil, ein Ergebnis den Spielbericht.
+
+## Eigene Spielerfotos
+Hat dein Datensatz Fotos zu einem Spieler (Datensatz-Editor › **Spielerfotos** bzw. **Ausnahmetalente**), zeigt die Zeitung bei Artikeln über ihn sein Foto statt des Gesichts – passend zur Art des Artikels (Spielbericht → Torjubel/Torschuss, Verletzung → Verletzung, Transfer/Gerücht → Vertrag, Talente → Training), sonst ein allgemeines Foto. Bis 1985 druckt das Blatt schwarzweiß. Auch das **Newscenter** zeigt bei Nachrichten, die einen solchen Spieler nennen, sein Foto statt des Pressefotos.
 
 ## Epochen
 Blattname und Aufmachung wechseln mit der Zeit (die Blätter sind erfunden). Ab den 2000ern taucht das Netz in den Texten auf, Ablösen stehen bis 2001 in DM, danach in Euro.

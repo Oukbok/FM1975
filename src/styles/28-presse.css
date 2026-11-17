@@ -164,3 +164,9 @@
 .np-who > span:last-child { display: flex; flex-direction: column; font-size: 15px; color: var(--text); line-height: 1.25; }
 .np-who small { font-size: 12.5px; color: var(--text-3); }
 .np-art-actions { display: flex; gap: 10px; margin-top: 20px; }
+
+/* Eigenes Spielerfoto aus dem Datensatz (Editor › Spielerfotos): Hochformat 4:5, Kopf oben im Bild;
+   bis 1985 (np-e1) im Druck der Zeit schwarzweiß. */
+.np-photo { overflow: hidden; border: 1px solid rgba(var(--ink-rgb), 0.25); border-radius: 2px; background: var(--bg-2); }
+.np-photo img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; }
+.np-e1 .np-photo img { filter: grayscale(1) contrast(1.05); }

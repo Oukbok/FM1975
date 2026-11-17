@@ -7,7 +7,9 @@ import PlayerAvatar from '../../../components/PlayerAvatar';
 import { ClubLink } from '../../../components/club/ClubLink';
 import { clubView } from '../../../game/clubProfile';
 import type { Game } from '../../../game/state';
-import type { PressImage, PressResult } from '../../../game/press/types';
+import type { PressImage, PressResult, PressStory } from '../../../game/press/types';
+import { keeperOf, playerPhotoFor } from '../../../game/playerPhotos';
+import { storyPoses } from '../../../data/pressPhotos';
 import type { Player } from '../../../types';
 
 export interface PressApi {
@@ -44,10 +46,37 @@ export function Face({ api, id, size, caption }: { api: PressApi; id: string; si
   );
 }
 
-/** Bild eines Artikels (Gesicht, Trainer oder Wappen). */
-export function StoryImage({ api, img, size }: { api: PressApi; img: PressImage | undefined; size: number }) {
+/**
+ * Eigenes Foto des Spielers aus dem Datensatz (Editor › Spielerfotos) als Pressebild,
+ * Hochformat 4:5 in der Breite `size`; Pose passend zur Art des Artikels, sonst allgemein.
+ */
+export function PlayerPhotoImg({ api, id, src, size }: { api: PressApi; id: string; src: string; size: number }) {
+  const p = playerOf(api.g, id);
+  return (
+    <span className="np-face np-photo" role="button" tabIndex={0} title={p ? `${p.fullName} – Spielerprofil öffnen` : undefined}
+      style={{ width: size, height: Math.round(size * 1.25) }}
+      onClick={(e) => { e.stopPropagation(); api.openPlayer(id); }}
+      onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); api.openPlayer(id); } }}>
+      <img src={src} alt={p?.fullName ?? ''} draggable={false} />
+    </span>
+  );
+}
+
+/** Foto zu einem Artikel oder null (kein Eintrag im Datensatz bzw. keine passende Pose/allgemeines Foto). */
+export function storyPhoto(api: PressApi, s: PressStory | undefined): string | null {
+  if (s?.image?.kind !== 'player') return null;
+  const id = s.image.id;
+  return playerPhotoFor(api.g, id, storyPoses(s.kind, { keeper: keeperOf(api.g, id) }), s.id);
+}
+
+/** Bild eines Artikels (eigenes Spielerfoto, Gesicht, Trainer oder Wappen). `story` wählt die Pose des Fotos. */
+export function StoryImage({ api, img, size, story, photoSize }: { api: PressApi; img: PressImage | undefined; size: number; story?: PressStory; photoSize?: number }) {
   if (!img) return null;
-  if (img.kind === 'player') return <Face api={api} id={img.id} size={size} />;
+  if (img.kind === 'player') {
+    const src = story ? storyPhoto(api, story) : null;
+    if (src) return <PlayerPhotoImg api={api} id={img.id} src={src} size={photoSize ?? size} />;
+    return <Face api={api} id={img.id} size={size} />;
+  }
   if (img.kind === 'coach') {
     const fake = { id: `coach:${img.id}`, fullName: img.name } as Player;
     const pic = <span className="np-face np-coach" title={img.name}><PlayerAvatar player={fake} size={size} staff year={Number(api.g.calendar.currentDate.slice(0, 4))} /></span>;

@@ -22,6 +22,7 @@ import type { Kit, FacilityKey } from '../../types';
 import type { HistoryConfig } from '../history';
 import type { LegendDef } from '../legends/types';
 import type { RealClub, SeasonRow } from '../world/types';
+import type { PhotoPose } from '../pressPhotos';
 
 export const DATASET_FORMAT = 'fm1975-dataset';
 export const DATASET_VERSION = 1;
@@ -62,6 +63,25 @@ export interface OriginData {
 }
 
 export interface CrestEra { from: number; crest: string }
+
+/** Ein eigenes Spielerfoto (Data-URL, WebP/JPEG/PNG) mit Anlass: allgemein oder eine Pose. */
+export interface PlayerPhoto { pose: PhotoPose; img: string }
+
+/**
+ * Fotos eines Spielers bzw. einer Legende (Wunsch Pascal: Bilder in Zeitung und Newscenter).
+ * Zuordnung: `legendId` (Eintrag in `legendsV2`, hält auch, wenn die Legende erst im
+ * Spielverlauf entsteht) – sonst über den vollen Namen wie im Spiel, wahlweise
+ * eingegrenzt per Geburtsjahr und aktuellem Verein (Spieler werden im Spiel erzeugt
+ * und haben keine feste ID im Datensatz).
+ */
+export interface PlayerPhotoSet {
+  id: string;
+  legendId?: string;
+  name?: string;
+  born?: number;
+  club?: string;
+  photos: PlayerPhoto[];
+}
 
 export interface Dataset {
   format: typeof DATASET_FORMAT;
@@ -114,6 +134,8 @@ export interface Dataset {
    * gilt die eingebaute Liste; eine leere Liste schaltet sie ab.
    */
   legendsV2?: LegendDef[];
+  /** Eigene Spielerfotos (Editor › Spielerfotos). Fehlt = keine. */
+  playerPhotos?: PlayerPhotoSet[];
   /**
    * Aufstellungen je Epoche (Wunsch Pascal): Formations-ID → Jahrzehnte, in denen das System
    * typisch ist (1970 = 1975–79 … 2030 = ab 2030). Fehlt das Feld bzw. eine ID, gilt die

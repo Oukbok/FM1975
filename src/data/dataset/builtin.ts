@@ -64,6 +64,7 @@ export function snapshotCurrent(id: string, name: string): Dataset {
     economy: { anchors: ANCHORS, revenueMix: REVENUE_MIX, transferRecords: TRANSFER_RECORD_ANCHORS },
     history: HISTORY,
     legendsV2: LEGENDS,
+    playerPhotos: [],
     worldData: builtinWorldData(),
     poolTowns: POOL_TOWNS,
   } as Dataset);

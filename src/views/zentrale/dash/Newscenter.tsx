@@ -22,7 +22,8 @@ import { useClubProfile } from '../../../components/club/ClubLink';
 import { msgGroup, msgPlayer, msgPlayers, ownGames, type MsgGroup } from './data';
 import PosBadge from '../../../components/PosBadge';
 import { InboxFilterBar, matchesFilter, needsDecision, type InboxFilter } from '../inboxFilter';
-import { pressPhotoFor } from '../../../data/pressPhotos';
+import { messagePoses, pressPhotoFor } from '../../../data/pressPhotos';
+import { messagePlayerPhoto } from '../../../game/playerPhotos';
 
 
 const dmy = (iso: string) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
@@ -151,7 +152,11 @@ function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
   };
   // Offene Entscheidung: kein Pressefoto – Text und Wahl sollen ohne Scrollen passen.
   const deciding = !!m.choices?.length && !!m.eventRef && !m.eventRef.resolved && !m.resultText;
-  const photo = deciding ? null : pressPhotoFor(m, { won: !!game && game.gf != null && game.ga != null && game.gf > game.ga });
+  // Eigenes Spielerfoto aus dem Datensatz (passende Pose → allgemein) vor dem generischen Pressefoto.
+  const res = game ?? (m.category === 'match' && m.relatedId ? ownGames(g).find((x) => x.matchId === m.relatedId) : undefined);
+  const won = !!res && res.gf != null && res.ga != null && res.gf > res.ga;
+  const own = deciding ? null : messagePlayerPhoto(g, m, (keeper) => messagePoses(m, { won, keeper }));
+  const photo = deciding ? null : own?.src ?? pressPhotoFor(m, { won });
   return (
     <article className="dz-read" key={m.id}>
       <div className="dz-rdate"><span>{wd(m.date)}</span> {dmy(m.date)}</div>
@@ -159,7 +164,7 @@ function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
       <div className="dz-rmeta">Von {m.from} · {CATEGORY_META[m.category]?.label}{m.actionRequired && !m.eventRef?.resolved && !m.resultText ? ' · Entscheidung nötig' : ''}</div>
       <div className="dz-rtext">
         {m.shortText && m.shortText !== m.bodyText && <p className="dz-rlead"><LinkedText g={g} text={m.shortText} people={people} /></p>}
-        {photo && <img className="dz-rphoto" src={photo} alt="" loading="lazy" draggable={false} />}
+        {photo && <img className={`dz-rphoto${own ? ' own' : ''}`} src={photo} alt={own ? (g.players[own.pid] ?? g.youthPlayers[own.pid])?.fullName ?? '' : ''} loading="lazy" draggable={false} />}
         <p className="dz-rbody"><LinkedText g={g} text={m.bodyText} people={people} /></p>
       </div>
       {/* Entscheidung außerhalb des Textscrollers: immer sichtbar, egal wie lang Text/Foto sind. */}

@@ -5,6 +5,8 @@ import { Dataset, validateDataset } from '../data/dataset/schema';
 import { LEGEND_TYPES } from '../data/legends/types';
 import { FORMATION_DECADES, FORMATIONS } from '../data/formations';
 import { ALL_POSITIONS } from '../types';
+import { BUILTIN_LEGENDS } from '../data/legends';
+import { isPhotoPose } from '../data/pressPhotos';
 
 /** `find` = ID/Text zum Hinspringen, `year` = Saison (Weltdaten). */
 export interface Issue { level: 'error' | 'warn'; area: string; text: string; find?: string; year?: number }
@@ -175,6 +177,31 @@ export function checkDataset(d: Dataset): Issue[] {
       if (!ok) err(A, `${nm}: Verein „${l.club}“ gibt es im Datensatz nicht (erlaubt: Vereine der Liga 1 und 2).`, l.id);
     }
   }
+
+  // Spielerfotos: Bezug (Legende oder Name), bekannte Legende, gültige Bilder, Größe.
+  const legIds = new Set((Array.isArray(d.legendsV2) ? d.legendsV2 : BUILTIN_LEGENDS).map((l) => l.id));
+  const photoIds = new Set<string>();
+  let photoBytes = 0;
+  for (const e of d.playerPhotos ?? []) {
+    const A = 'Spielerfotos';
+    const nm = e.legendId ? `Legende ${e.legendId}` : e.name?.trim() || e.id || '?';
+    if (!e.id) err(A, `${nm}: Eintrag ohne ID.`);
+    else if (photoIds.has(e.id)) err(A, `ID „${e.id}“ doppelt.`, e.id);
+    photoIds.add(e.id);
+    if (!e.legendId && !e.name?.trim()) err(A, `${e.id}: weder Spielername noch Legenden-ID – das Foto lässt sich keinem Spieler zuordnen.`, e.id);
+    if (e.legendId && !legIds.has(e.legendId)) err(A, `${nm}: Legenden-ID „${e.legendId}“ gibt es nicht.`, e.id);
+    if (e.legendId && e.name?.trim()) warn(A, `${nm}: Legenden-ID und Name – es zählt nur die Legenden-ID.`, e.id);
+    if (e.name?.trim() && !e.legendId && e.name.trim().split(/\s+/).length < 2) warn(A, `${nm}: bitte den vollen Namen (Vor- und Nachname) wie im Spiel eintragen.`, e.id);
+    if (e.born != null && !(e.born >= 1900 && e.born <= 2100)) err(A, `${nm}: Geburtsjahr ${e.born} ist ungültig.`, e.id);
+    if (e.club && !all.has(e.club) && !Object.values(d.worldData ?? {}).some((w) => w.clubs?.some((c) => c.id === e.club))) warn(A, `${nm}: Verein „${e.club}“ gibt es im Datensatz nicht.`, e.id);
+    if (!e.photos?.length) warn(A, `${nm}: noch kein Foto – der Eintrag wirkt nicht.`, e.id);
+    for (const ph of e.photos ?? []) {
+      if (!/^data:image\/(webp|jpeg|png);base64,/.test(ph.img ?? '')) err(A, `${nm}: ein Foto ist kein gültiges Bild (WebP/JPEG/PNG).`, e.id);
+      if (!isPhotoPose(ph.pose)) err(A, `${nm}: unbekannte Art „${ph.pose}“.`, e.id);
+      photoBytes += (ph.img?.length ?? 0) * 0.75;
+    }
+  }
+  if (photoBytes > 25 * 1024 * 1024) warn('Spielerfotos', `Die Fotos sind zusammen ${Math.round(photoBytes / 1048576)} MB groß – Datensatz und Editor werden langsam.`);
 
   // Weltdaten: IDs eindeutig, jede Saison nur bekannte Vereine, gerade Ligagrößen.
   for (const [cc, w] of Object.entries(d.worldData ?? {})) {

@@ -36,6 +36,55 @@ const MOTIFS_BY_CATEGORY: Partial<Record<InboxMessage['category'], PressMotif[]>
   media: ['fans', 'stadion'],
 };
 
+/**
+ * Anlass eines eigenen Spielerfotos aus dem Datensatz (Editor › Spielerfotos, Wunsch Pascal):
+ * „general“ = passt immer, sonst eine Pose passend zu den Pressemotiven.
+ */
+export type PhotoPose = 'general' | 'torjubel' | 'torschuss' | 'zweikampf' | 'kopfball' | 'torwart' | 'abpfiff' | 'verletzung' | 'vertrag' | 'training';
+export const PHOTO_POSES: { id: PhotoPose; label: string; hint: string }[] = [
+  { id: 'general', label: 'Allgemein', hint: 'Porträt oder neutrales Foto – passt zu jeder Nachricht' },
+  { id: 'torjubel', label: 'Torjubel', hint: 'nach Toren und Siegen' },
+  { id: 'torschuss', label: 'Torschuss', hint: 'Spielberichte, Torjäger' },
+  { id: 'kopfball', label: 'Kopfball', hint: 'Spielberichte' },
+  { id: 'zweikampf', label: 'Zweikampf', hint: 'Spielberichte, auch nach Niederlagen' },
+  { id: 'torwart', label: 'Torwart-Parade', hint: 'Spielberichte über Torhüter' },
+  { id: 'abpfiff', label: 'Abpfiff', hint: 'nach dem Spiel, auch enttäuscht' },
+  { id: 'verletzung', label: 'Verletzung', hint: 'Verletzungsmeldungen' },
+  { id: 'vertrag', label: 'Vertrag', hint: 'Transfers, Gerüchte, Vertragsverlängerungen' },
+  { id: 'training', label: 'Training', hint: 'Training, Jugend, Kabine' },
+];
+const POSE_IDS = new Set<string>(PHOTO_POSES.map((x) => x.id));
+export const isPhotoPose = (x: unknown): x is PhotoPose => typeof x === 'string' && POSE_IDS.has(x);
+
+/** Passende Posen eines Spielerfotos zu einer Nachricht, beste zuerst (leer = nur allgemeine Fotos). */
+export function messagePoses(m: InboxMessage, opts?: { won?: boolean; keeper?: boolean }): PhotoPose[] {
+  const text = `${m.subject} ${m.shortText}`;
+  if (m.category === 'injury' || /verletz/i.test(m.subject)) return ['verletzung'];
+  if (m.category === 'transfer' || m.category === 'contract' || /Vertrag|Wechsel|Transfer/i.test(m.subject)) return ['vertrag'];
+  if (m.category === 'training') return ['training'];
+  if (m.category === 'match' || m.category === 'cup') {
+    const goal = /Tor|Treffer|Doppelpack|Hattrick/i.test(text);
+    const base: PhotoPose[] = opts?.won
+      ? ['torjubel', ...(goal ? ['torschuss', 'kopfball'] as PhotoPose[] : []), 'zweikampf', 'abpfiff']
+      : [...(goal ? ['torschuss', 'kopfball'] as PhotoPose[] : []), 'zweikampf', 'abpfiff'];
+    return opts?.keeper ? ['torwart', ...base] : base;
+  }
+  return [];
+}
+
+/** Passende Posen zu einem Zeitungsartikel (game/press/types.ts `PressKind`). */
+export function storyPoses(kind: string, opts?: { keeper?: boolean }): PhotoPose[] {
+  const keeper = opts?.keeper ? ['torwart'] as PhotoPose[] : [];
+  switch (kind) {
+    case 'spiel': return [...keeper, 'torjubel', 'torschuss', 'kopfball', 'zweikampf'];
+    case 'rekord': return [...keeper, 'torjubel', 'torschuss', 'kopfball'];
+    case 'transfer': case 'geruecht': return ['vertrag'];
+    case 'verletzung': return ['verletzung'];
+    case 'jugend': case 'kabine': return ['training'];
+    default: return [];
+  }
+}
+
 const hash = (s: string) => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); };
 
 /** Bildpfad für eine Nachricht oder null (kein passendes Foto vorhanden). `won` = eigenes Spiel gewonnen. */

@@ -270,3 +270,20 @@ button.ed-issue:hover .ed-issue-go { color: var(--accent); }
 .ed-era-col { display: flex; flex-direction: column; gap: 2px; }
 .ed-era-row { padding: 3px 0; }
 .ed-era-row.on { color: var(--text); }
+
+/* --- Spielerfotos (PhotoGallery.tsx, sections/Photos.tsx) --- */
+.ed-photo-rights { font-size: 12.5px; color: var(--text-2); padding: 6px 10px; border-left: 3px solid var(--accent-dim); background: var(--panel-2); border-radius: 0 6px 6px 0; }
+.ed-photos { display: flex; flex-direction: column; gap: 8px; }
+.ed-photo-bar { display: flex; gap: 10px; align-items: center; }
+.ed-photo-list { display: flex; flex-direction: column; gap: 8px; max-height: 52vh; overflow: auto; }
+.ed-photo { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 10px; padding: 8px; border: 1px solid var(--border-soft); border-radius: 6px; background: var(--bg-2); }
+.ed-photo img { width: 96px; height: 120px; object-fit: cover; object-position: 50% 22%; border-radius: 4px; border: 1px solid var(--border-soft); }
+.ed-photo-meta { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.ed-photo-head { display: flex; gap: 8px; align-items: center; }
+.ed-photo-head .ed-label { flex: 1; }
+.ed-pose-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.ed-pose { padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border-soft); background: var(--panel-2); color: var(--text-2); font: inherit; font-size: 12px; cursor: pointer; }
+.ed-pose:hover { border-color: var(--accent-dim); color: var(--text); }
+.ed-pose.on { border-color: var(--accent); background: var(--accent-soft); color: var(--text); font-weight: 700; }
+.ed-side.ed-photo-side { width: 470px; }
+.ed-legend .ed-photo-list { max-height: none; }

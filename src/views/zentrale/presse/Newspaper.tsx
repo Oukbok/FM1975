@@ -41,7 +41,7 @@ function Teaser({ api, s }: { api: PressApi; s: PressStory }) {
       <Rubric s={s} />
       <h3 className={`np-h3 ${s.rumor ? 'rumor' : ''}`}>{s.headline}</h3>
       <div className="np-teaser-body">
-        {s.image && <span className={`np-teaser-img ${big ? 'face' : ''}`}><StoryImage api={api} img={s.image} size={big ? 64 : 44} /></span>}
+        {s.image && <span className={`np-teaser-img ${big ? 'face' : ''}`}><StoryImage api={api} img={s.image} size={big ? 64 : 44} story={s} photoSize={80} /></span>}
         <p className="np-text">{s.dek && <b className="np-dek-in">{s.dek}. </b>}{s.body[0]}</p>
       </div>
       {s.people.length > 1 && (
@@ -56,7 +56,7 @@ function Lead({ api, s }: { api: PressApi; s: PressStory }) {
   return (
     <article className={`np-lead ${s.own ? 'own' : ''}`} {...open(api, s.id)}>
       <div className="np-lead-img">
-        <StoryImage api={api} img={s.image} size={face ? 150 : 130} />
+        <StoryImage api={api} img={s.image} size={face ? 150 : 130} story={s} photoSize={150} />
         {s.image?.kind === 'player' && <div className="np-caption"><PlayerLink id={s.image.id}>{api.g.players[s.image.id]?.fullName ?? ''}</PlayerLink></div>}
       </div>
       <div className="np-lead-main">

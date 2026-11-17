@@ -8,6 +8,10 @@ import { processDay, HEADLESS_UI } from '../src/game/day';
 import { buildEdition, pressIssues } from '../src/game/press/edition';
 import { isIssueDay, issueNumber, mastheadFor } from '../src/game/press/calendar';
 import type { Game } from '../src/game/state';
+import { builtinDataset } from '../src/data/dataset/builtin';
+import { applyDataset } from '../src/data/dataset/apply';
+import { keeperOf, playerPhotoFor } from '../src/game/playerPhotos';
+import { storyPoses } from '../src/data/pressPhotos';
 import type { PressEdition, PressStory } from '../src/game/press/types';
 
 let seed = 1975;
@@ -66,6 +70,29 @@ for (const k of ['spiel', 'spieltag', 'tabelle', 'kommentar']) expect(allKinds.h
 expect(eds.some((e) => e.lead?.image), 'Kein Aufmacher mit Bild');
 expect(eds.flatMap(storiesOf).some((s) => s.image?.kind === 'player'), 'Keine Gesichter in den Ausgaben');
 if (process.env.PRINT) { print(eds[0]); print(eds.find((e) => e.matchday) ?? eds[1]); }
+
+// 2b) Eigene Spielerfotos aus dem Datensatz: Artikel mit Spielerbild bekommt das Foto passend zur Art.
+{
+  const IMG = (t: string) => `data:image/webp;base64,${Buffer.from(t).toString('base64')}`;
+  const stories = eds.flatMap(storiesOf).filter((s) => s.image?.kind === 'player');
+  const s0 = stories.find((s) => s.kind === 'spiel' || s.kind === 'rekord') ?? stories[0];
+  const pid = (s0.image as { id: string }).id;
+  const p = g.players[pid] ?? g.youthPlayers[pid];
+  const ds = builtinDataset();
+  ds.meta.id = 'fototest';
+  ds.playerPhotos = [{ id: 'f1', name: p.fullName, born: Number(p.dateOfBirth.slice(0, 4)), club: p.clubId,
+    photos: [{ pose: 'general', img: IMG('allg') }, { pose: 'torjubel', img: IMG('jubel') }, { pose: 'torwart', img: IMG('parade') }, { pose: 'verletzung', img: IMG('verl') }] }];
+  applyDataset(ds);
+  const got = playerPhotoFor(g, pid, storyPoses(s0.kind, { keeper: keeperOf(g, pid) }), s0.id);
+  const txt = got ? Buffer.from(got.split(',')[1], 'base64').toString() : null;
+  const want = s0.kind === 'spiel' || s0.kind === 'rekord' ? (keeperOf(g, pid) ? 'parade' : 'jubel') : s0.kind === 'verletzung' ? 'verl' : 'allg';
+  expect(txt === want, `Presse: Foto für „${s0.kind}“ ist „${txt}“ statt „${want}“`);
+  expect(storyPoses('transfer')[0] === 'vertrag' && storyPoses('verletzung')[0] === 'verletzung', 'Presse: Posen je Artikelart falsch');
+  const other = stories.find((s) => (s.image as { id: string }).id !== pid);
+  if (other) expect(!playerPhotoFor(g, (other.image as { id: string }).id, storyPoses(other.kind), other.id), 'Presse: Foto bei einem anderen Spieler');
+  applyDataset(null);
+  console.log(`Spielerfotos in der Zeitung: ${s0.kind} → ${txt}`);
+}
 
 // 3) Neues Spiel: vor dem ersten Spieltag und nach 40 Tagen
 const fresh = createNewGame({

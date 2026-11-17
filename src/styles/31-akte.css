@@ -429,3 +429,6 @@ body { background: var(--paper-page); }
 .cal-box .cal-grid-fill .cal-preview { background: rgba(var(--accent-rgb), 0.14); }
 .cal-box .cal-ev-txt { font-size: 15px; }
 .cal-box { background: transparent; border-color: transparent; box-shadow: none; }
+
+/* Eigenes Spielerfoto aus dem Datensatz (game/playerPhotos.ts): Farben wie hochgeladen, Kopf im Bild. */
+.dz-rphoto.own { filter: none; object-position: 50% 22%; }
