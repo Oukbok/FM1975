@@ -990,9 +990,54 @@ export const INFO_TEXTS = {
     wiki: 'transfers-wishes',
   },
   leihe: {
-    title: 'Leihe mit Kaufoption',
-    text: 'Der Spieler kommt bis zum Saisonende gegen eine Leihgebühr. Mit Kaufoption darfst du ihn danach zum vorher festgelegten Preis fest übernehmen.',
-    wiki: 'transfers-market',
+    title: 'Kaufoption',
+    text: 'Mit Kaufoption darfst du einen Leihspieler am Ende der Leihe zum vorher festgelegten Preis fest übernehmen – du musst aber nicht. Kaufoptionen gibt es ab 2000.',
+    wiki: 'loans',
+  },
+  leihen: {
+    title: 'Leihen',
+    text: 'Ein Leihspieler bleibt beim Stammverein unter Vertrag und spielt für eine halbe Saison bis zwei Spielzeiten bei dir. Du zahlst Gehalt (ganz oder anteilig) und eventuell eine Leihgebühr. Leihen beginnen nur im Transferfenster; in den 70ern sind sie selten, ab den 2000ern Alltag.',
+    wiki: 'loans',
+  },
+  leihLaufzeit: {
+    title: 'Laufzeit der Leihe',
+    text: 'Halbe Saison (Rückkehr im Winterfenster), bis Saisonende oder – bis 2021/22 – über zwei Spielzeiten. Seit 2022 erlaubt die FIFA höchstens ein Jahr.',
+    wiki: 'loans',
+  },
+  leihGehalt: {
+    title: 'Gehaltsübernahme',
+    text: 'Den Anteil des Gehalts, den du nicht trägst, erstattet dir der Stammverein jeden Monatsersten. Je mehr du übernimmst, desto lieber gibt er den Spieler her.',
+    wiki: 'loans',
+  },
+  leihKaufpflicht: {
+    title: 'Kaufpflicht',
+    text: 'Ist die Bedingung am Saisonende erfüllt – unbedingt, 20 Pflichtspiele für den Leihverein oder dessen Klassenerhalt –, wechselt der Spieler automatisch fest zum vereinbarten Preis. Kaufpflichten gibt es ab 2010.',
+    wiki: 'loans',
+  },
+  leihEinsatz: {
+    title: 'Einsatzgarantie',
+    text: 'Der Leihverein sagt eine Zahl an Pflichtspielen zu; fehlen sie am Leihende, zahlt er die Strafzahlung an den Stammverein. Talente, die beim Leihverein nicht Stammspieler wären, gibt kaum ein Verein ohne diese Zusage her (ab 2000).',
+    wiki: 'loans',
+  },
+  leihRueckruf: {
+    title: 'Rückrufklausel',
+    text: 'Der Stammverein darf den Spieler im Januar zurückholen – die KI tut das, wenn er beim Leihverein kaum spielt. Für deine verliehenen Spieler gibt es dafür einen Knopf unter Transfers › Leihen (ab 1995).',
+    wiki: 'loans',
+  },
+  leihStammverein: {
+    title: 'Einsatz gegen den Stammverein',
+    text: 'In Deutschland dürfen Leihspieler gegen ihren Stammverein spielen – ausschließen lässt es sich nur per Absprache. In England verbietet es eine Ligaregel (im Spiel ab 1992/93). Gesperrte Leihspieler fehlen in diesen Spielen automatisch.',
+    wiki: 'loans',
+  },
+  leihgrenze: {
+    title: 'Grenzen für Leihspieler',
+    text: 'Seit 2022 begrenzt die FIFA die Zahl der ver- und ausgeliehenen Profis je Verein (8, ab 2023/24 7, ab 2024/25 6) und auf drei zwischen denselben Vereinen; Spieler bis 21 und Eigengewächse zählen nicht. National gilt im Spiel ab 2025/26 dieselbe Grenze von sechs.',
+    wiki: 'loans',
+  },
+  leihangebote: {
+    title: 'Leihangebote',
+    text: 'Vereine, die einen deiner Spieler ausleihen wollen. Setzt du einen Spieler auf die Leihliste, melden sich im Transferfenster montags und donnerstags Vereine, bei denen er spielen würde. Du kannst annehmen, bessere Bedingungen fordern (dann springt der Verein manchmal ab) oder ablehnen.',
+    wiki: 'loans',
   },
   kaderbedarf: {
     title: 'Kaderbedarf',
@@ -1026,8 +1071,8 @@ export const INFO_TEXTS = {
   },
   leihspieler: {
     title: 'Leihspieler',
-    text: 'Eigene Spieler, die du verliehen hast, und Spieler, die du ausgeliehen hast – mit Einsätzen, Minuten, Toren, Vorlagen und Durchschnittsnote der laufenden Saison. Die Leihe endet zum angegebenen Datum; mit Kaufoption kannst du den Spieler dann fest übernehmen.',
-    wiki: 'transfers-market',
+    text: 'Eigene Spieler, die du verliehen hast, und Spieler, die du ausgeliehen hast – mit Einsätzen, Minuten, Toren, Vorlagen und Durchschnittsnote der laufenden Saison. Die Leihe endet zum angegebenen Datum; mit Kaufoption kannst du den Spieler dann fest übernehmen. Alles Weitere unter Transfers › Leihen.',
+    wiki: 'loans',
   },
   scouting: {
     title: 'Scouting',

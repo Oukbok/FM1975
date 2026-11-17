@@ -14,6 +14,7 @@
     "test:contracts2": "node scripts/run-ts.mjs tests/contracts2-test.ts",
     "test:marketing": "node scripts/run-ts.mjs tests/marketing-test.ts",
     "test:negotiation": "node scripts/run-ts.mjs tests/negotiation-test.ts",
+    "test:loans": "node scripts/run-ts.mjs tests/loans-test.ts",
     "test:saves": "node scripts/build.mjs && node tests/save-idb.mjs",
     "test:editor": "node scripts/build.mjs && node tests/editor-ui.mjs && node tests/editor-qol.mjs && node tests/dataset-lib.mjs",
     "test:business": "node scripts/run-ts.mjs tests/club-business-test.ts",

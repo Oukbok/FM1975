@@ -74,6 +74,7 @@ function page({ screen, g, rerender, setScreen, onWatch, onReplayDraw, onOpenEdi
     case 'spielerpool': return <P.SpielerpoolView g={g} onChange={ch} />;
     case 'scouting': return <P.ScoutingView g={g} onChange={ch} />;
     case 'verhandlungen': return <P.VerhandlungenView g={g} onChange={ch} />;
+    case 'leihen': return <P.LoansView g={g} onChange={ch} />;
     case 'sponsoring': return <P.SponsoringView g={g} onGoto={setScreen} onChange={ch} />;
     case 'fanartikel': return <P.MerchView g={g} onChange={ch} />;
     case 'fans': return <P.FansView g={g} />;

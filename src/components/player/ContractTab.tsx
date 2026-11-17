@@ -45,6 +45,7 @@ import { useClubProfile } from '../club/ClubLink';
 import { PLAYER_DRAW_BONUS, PLAYER_WIN_BONUS } from '../../engine/finances';
 import { PROMISES } from '../../engine/transferMarket';
 import type { Game } from '../../game/state';
+import { loanStats, termsLines } from '../../engine/loanDeal';
 import { InfoTip } from '../../ui/InfoTip';
 
 function monthsLeft(expiry: string, today?: string): number | null {
@@ -88,7 +89,14 @@ function extraParams(g: Game | undefined, p: Player): [ReactNode, ReactNode][] {
   if (k.noRivalSale) out.push(['Kein Verkauf an Rivalen', 'zugesagt']);
   if (k.buyBack) out.push(['Rückkaufoption', `${clubNameOf(g, k.buyBack.clubId)} · ${fmtPrice(k.buyBack.fee)} bis ${utcDate(k.buyBack.until)}`]);
   if (p.sellOn) out.push(['Weiterverkaufsbeteiligung', `${Math.round(p.sellOn.pct * 100)} % an ${clubNameOf(g, p.sellOn.clubId)}`]);
-  if (p.loan) out.push(['Leihe', `von ${clubNameOf(g, p.loan.fromClubId)} bis ${utcDate(p.loan.until)}${p.loan.optionFee ? ` · Kaufoption ${fmtPrice(p.loan.optionFee)}` : ''}`]);
+  if (p.loan) {
+    const l = p.loan, d = l.deal, st = loanStats(p);
+    out.push([<>Leihe<InfoTip k="leihen" /></>, `${p.clubId === l.fromClubId ? '' : `von ${clubNameOf(g, l.fromClubId)} an ${clubNameOf(g, p.clubId)} `}bis ${utcDate(l.until)} · ${st.apps} Einsätze, ${st.minutes} Min.${d ? ` · Stärke ${d.ov0} → ${Math.round(p.overall)}` : ''}`]);
+    for (const [key, v] of termsLines({ fee: d?.fee ?? 0, share: d?.share ?? 1, optionFee: l.noOption ? undefined : l.optionFee || undefined, obligation: d?.obligation, minApps: d?.minApps, penalty: d?.penalty, recall: d?.recall, noParent: d?.noParent, noSublet: d?.noSublet }, fmtPrice, utcDate).map((x) => [x.k, x.v] as const)) {
+      out.push([`Leihe: ${key}`, key === 'Einsatzgarantie' ? `${v} (bisher ${st.apps})` : v]);
+    }
+  }
+  if (p.loanListed) out.push(['Leihliste', 'zur Leihe angeboten']);
   if (k.preContractClubId) out.push(['Vorvertrag', `wechselt zum Vertragsende zu ${clubNameOf(g, k.preContractClubId)}`]);
   return out;
 }

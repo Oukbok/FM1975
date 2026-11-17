@@ -147,11 +147,11 @@ export class MatchSim {
     const humanSides = new Set(opts.humanSides ?? []);
     const humanClubs = new Set(opts.humanClubIds ?? []);
     const reg = { year: opts.year, euro: opts.competition === 'Europapokal' };
-    this.home = this.makeTeam('home', homeClub, humanSides.has('home'), humanClubs.has(homeClub.id), reg);
-    this.away = this.makeTeam('away', awayClub, humanSides.has('away'), humanClubs.has(awayClub.id), reg);
+    this.home = this.makeTeam('home', homeClub, humanSides.has('home'), humanClubs.has(homeClub.id), { ...reg, vs: awayClub.id });
+    this.away = this.makeTeam('away', awayClub, humanSides.has('away'), humanClubs.has(awayClub.id), { ...reg, vs: homeClub.id });
   }
 
-  private makeTeam(side: Side, club: Club, human: boolean, savedLineup: boolean, reg: { year: number; euro: boolean }): TeamState {
+  private makeTeam(side: Side, club: Club, human: boolean, savedLineup: boolean, reg: { year: number; euro: boolean; vs?: string }): TeamState {
     const lu = resolveLineup(club, this.players, savedLineup, this.era.benchSize, reg);
     const ps: MPlayer[] = lu.xi.map(({ p, pos }) => makeMPlayer(p, side, pos, true, 0));
     const map: Record<string, string> = {};

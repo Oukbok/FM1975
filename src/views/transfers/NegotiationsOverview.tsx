@@ -19,6 +19,7 @@ import type { Player } from '../../types';
 import { DashBox, Empty, KV } from '../../ui/DashPage';
 import { fmtPrice } from '../../ui/format';
 import { incomingOffers } from '../../game/incomingOffers';
+import { loanStats } from '../../engine/loanDeal';
 import { IncomingOffersList, useOfferAnswers } from './IncomingOffers';
 
 const PHASE: Record<string, string> = { club: 'mit dem Verein', player: 'mit dem Spieler', agreed: 'Einigung' };
@@ -32,12 +33,12 @@ export function windowInfo(today: string): { open: boolean; text: string; next: 
   return { open: false, text: `geschlossen · öffnet am ${CalendarEngine.formatDate(next)}`, next };
 }
 
-function PlayerCell({ g, p }: { g: Game; p?: Player }) {
+export function PlayerCell({ g, p }: { g: Game; p?: Player }) {
   if (!p) return <span className="muted">Spieler</span>;
   return <span className="tm-name"><FaceThumb p={p} club={g.clubs[p.clubId]} size={26} /><span>{p.fullName}</span></span>;
 }
 
-function ClubName({ g, id }: { g: Game; id?: string }) {
+export function ClubName({ g, id }: { g: Game; id?: string }) {
   if (!id) return <span className="muted">–</span>;
   const c = g.clubs[id] ?? sellerOf(g, id);
   return <ClubLink id={id}>{c?.shortName ?? c?.name ?? id}</ClubLink>;
@@ -160,6 +161,7 @@ export function LoansBox({ g }: { g: Game }) {
           <tbody>
             {rows.map(({ p, out: o }) => {
               const s = p.seasonStats;
+              const ls = loanStats(p);
               return (
                 <tr key={p.id} data-pid={p.id}>
                   <td className="nowrap rl-name"><PlayerCell g={g} p={p} /></td>
@@ -167,9 +169,9 @@ export function LoansBox({ g }: { g: Game }) {
                   <td className="num">{p.age}</td>
                   <td className="nowrap">{o ? <>an <ClubName g={g} id={p.clubId} /></> : <>von <ClubName g={g} id={p.loan!.fromClubId} /></>}</td>
                   <td className="num muted nowrap">{CalendarEngine.formatDate(p.loan!.until)}</td>
-                  <td className="num">{s.appearances}{s.starts ? <span className="muted"> ({s.starts})</span> : null}</td>
-                  <td className="num">{s.minutesPlayed.toLocaleString('de-DE')}</td>
-                  <td className="num">{s.goals}</td>
+                  <td className="num">{ls.apps}{ls.starts ? <span className="muted"> ({ls.starts})</span> : null}</td>
+                  <td className="num">{ls.minutes.toLocaleString('de-DE')}</td>
+                  <td className="num">{ls.goals}</td>
                   <td className="num">{s.assists}</td>
                   <td className="num"><b>{note(p)}</b></td>
                   <td className="num nowrap muted">{p.loan!.noOption || !p.loan!.optionFee ? '–' : fmtPrice(p.loan!.optionFee)}</td>
@@ -178,7 +180,7 @@ export function LoansBox({ g }: { g: Game }) {
             })}
           </tbody>
         </table>
-      ) : <Empty icon="transfers">Keine Leihspieler. Eine Leihe vereinbarst du in der Transferverhandlung; eigene Spieler leihst du über Anfragen anderer Vereine aus.</Empty>}
+      ) : <Empty icon="transfers">Keine Leihspieler. Ausleihen („Leihe anfragen“) und Verleihen („Zur Leihe anbieten“) geht über Spielerprofil, Rechtsklick und Transfers › Leihen.</Empty>}
     </DashBox>
   );
 }

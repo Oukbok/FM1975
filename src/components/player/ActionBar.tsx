@@ -1,11 +1,14 @@
 // Aktionsleiste unten im Spielerprofil (Vorbild EA Fussball Manager): runde Symbolknöpfe mit
 // Tooltip. Nur Aktionen, die es im Spiel gibt – Bericht, Spielergespräch (views/kader/talk/),
 // Vertrag verlängern, Transferliste (eigener Kader), Transferverhandlung (fremde Spieler),
+// Leihe (eigene Spieler zur Leihe anbieten bzw. fremde ausleihen, game/loanMarket.ts/loanTalks.ts),
 // Vereinsprofil. Nicht passende Knöpfe bleiben sichtbar, aber gesperrt (Tooltip sagt warum).
 import { useState } from 'react';
 import type { Player } from '../../types';
 import { useClubProfile } from '../club/ClubLink';
 import { startTalk } from '../../game/transferTalks';
+import { toggleLoanListed } from '../../game/loanMarket';
+import { startLoanTalk } from '../../game/loanTalks';
 import { materializeWorldPlayer } from '../../game/worldPool';
 import { PlayerTalkModal } from '../../views/kader/talk/PlayerTalkModal';
 import Icon from '../Icon';
@@ -43,6 +46,17 @@ export default function ActionBar({ p, onTab, onChange }: { p: Player; onTab: (t
         if (typeof r === 'string') { setNote(r); return; }
         setNote(null); changed(); openContractScreen({ kind: 'transfer', talkId: r.id });
       } : undefined, group: 2,
+    },
+    {
+      key: 'loan', icon: 'swap', on: own && !!p.loanListed,
+      tip: own ? (p.loan ? 'Leihe – er ist selbst nur ausgeliehen' : p.loanListed ? 'Nicht mehr zur Leihe anbieten' : 'Zur Leihe anbieten')
+        : foreign ? (p.loan ? 'Leihe anfragen – er ist selbst nur ausgeliehen' : 'Leihe anfragen (Verhandlungstisch)') : 'Leihe – nur für Spieler mit vollem Kader',
+      run: own && !p.loan ? () => { const e = toggleLoanListed(g, p.id); setNote(e); changed(); }
+        : foreign ? () => {
+          const r = startLoanTalk(g, p.id);
+          if (typeof r === 'string') { setNote(r); return; }
+          setNote(null); changed(); openContractScreen({ kind: 'loan', talkId: r.id });
+        } : undefined, group: 2,
     },
     {
       key: 'club', icon: 'shield', tip: 'Vereinsprofil',

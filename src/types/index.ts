@@ -638,7 +638,14 @@ export interface Player {
   /** Teambonus als Führungsspieler (engine/teamBoost.ts), nur über die Bewertungsrunde. */
   teamBoost?: import('../engine/teamBoost').TeamBoost;
   /** Leihe mit Kaufoption: Stammverein, Ende, Kaufoption (1975-Basis). */
-  loan?: { fromClubId: string; until: string; optionFee: number; wage: number; /** Leihe ohne Kaufoption (KI-Leihen, game/aiLoans.ts). */ noOption?: boolean };
+  loan?: {
+    fromClubId: string; until: string; optionFee: number; wage: number;
+    /** Leihe ohne Kaufoption (KI-Leihen, game/aiLoans.ts). */ noOption?: boolean;
+    /** Bedingungen und Bilanz der Leihe (engine/loanDeal.ts); fehlt = alte Leihe ohne Zusatzbedingungen. */
+    deal?: import('../engine/loanDeal').LoanDeal;
+  };
+  /** Zur Leihe angeboten (eigener Verein, game/loanMarket.ts). */
+  loanListed?: boolean;
   /** Herkunft (Namens-/Gesichtsgruppe), siehe data/origins.ts. */
   origin?: string;
   face?: string;

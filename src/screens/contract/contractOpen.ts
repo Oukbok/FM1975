@@ -6,6 +6,8 @@
 export type ContractOpenReq =
   | { kind: 'renew'; pid: string }
   | { kind: 'transfer'; talkId: string }
+  /** Leihe: du leihst einen Spieler aus (game/loanTalks.ts). */
+  | { kind: 'loan'; talkId: string }
   /** Mitarbeiter: Person vom Arbeitsmarkt für eine Stelle (`role`) oder ein eigener Mitarbeiter (Verlängerung). */
   | { kind: 'staff'; id: string; role?: string; replaceId?: string }
   /** Sponsor: Angebot aus Sponsoring 2.0 (`offerId`) oder Namensrechte am Stadion (`naming` = Firma). */

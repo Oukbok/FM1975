@@ -109,6 +109,8 @@ export interface Game {
   sponsorTalks?: Record<string, import('./sponsorTalk').SponsorTalkState>;
   /** Laufende Transferverhandlungen (game/transferTalks.ts). */
   transferTalks?: import('./transferTalks').TransferTalk[];
+  /** Leihgespräche (du leihst aus, game/loanTalks.ts). */
+  loanTalks?: import('./loanTalks').LoanTalk[];
   /** Sperrzeiten der Vereinsereignisse (Typ → Datum). */
   eventCooldowns?: Record<string, string>;
   /** WM-Euphorie: Zuschauer-Faktor für einen Zeitraum. */

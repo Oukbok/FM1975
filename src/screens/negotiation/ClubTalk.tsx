@@ -120,12 +120,7 @@ export function ClubTalk({ g, talk: t, onClose, onChange, onNext, steps }: {
     key, status: status(key), weight: st?.weights[key], known, lockable, locked: locks.includes(key), onLock: () => toggleLock(key), changed: !!t.asks?.includes(key),
   });
   const rows: TermRow[] = [];
-  if (year >= CLAUSE_FROM.loanOption) rows.push({
-    key: 'kind', label: 'Art des Geschäfts', info: 'leihe', ask: c ? (c.loan ? 'Leihe' : 'Kauf') : '–', status: 'na',
-    control: <Seg<number> size="s" value={pk.loan ? 1 : 0} onChange={(v) => set(v ? { loan: true, installments: false, sellOn: 0, bonus: 0, euroBonus: 0, friendly: false, buyBack: 0, optionFee: pk.optionFee ?? r5k(t.currentAsk * 1.1) } : { loan: false })}
-      options={[{ v: 0, label: 'Kauf' }, { v: 1, label: 'Leihe mit Kaufoption' }]} aria-label="Art des Geschäfts" />,
-    hint: <><b>Leihe mit Kaufoption</b> – Eine Saison Leihe gegen Gebühr, danach entscheidest du über die Kaufoption. Stammspieler verleiht kaum ein Verein.</>,
-  });
+  // Leihen laufen über einen eigenen Tisch (screens/negotiation/LoanTalk.tsx, „Leihe anfragen“); alte Gespräche mit Leihpaket zeigen Gebühr/Option weiter.
   rows.push({
     ...base('fee'), label: pk.loan ? 'Leihgebühr' : 'Ablöse',
     ask: c ? fmtPrice(c.fee) : t.round ? fmtPrice(t.currentAsk) : 'noch offen',

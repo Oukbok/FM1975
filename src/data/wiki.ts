@@ -14,6 +14,7 @@
 /** Kategorie eines Wiki-Artikels. */
 import { YOUTH_RECRUIT_EVENTS } from './youthRecruitEvents';
 import { CALENDAR_ERAS } from './matchCalendarRules';
+import { LOAN_SOURCES } from './loanRules';
 
 export interface WikiCategory {
   id: string;
@@ -2709,7 +2710,7 @@ Im Transfermarkt und in der Beobachtungsliste startest du mit **Verhandeln** ein
 | Verhandlungshärte des Vereins | −8 bis +17 % |
 | Bester Spieler eines gleich großen Vereins | „unverkäuflich“: +50 % |
 
-Dein Angebot besteht aus **Ablöse**, **Zahlung** (sofort, zwei Raten – der Verein bewertet sie mit 93 % – oder ab 1990 drei Raten, 89 %), **Weiterverkaufsbeteiligung** (0/10/20 %), **Nachschlag nach Einsätzen** (fällig bei 20 Einsätzen), **Nachschlag bei Europapokal** (fällig am Saisonende, wenn du dich qualifizierst), bis 1998 einem **Ablösespiel** (Freundschaftsspiel beim Verkäufer, Einnahmen für ihn) und optional einem **Spieler-Tausch**: Der Verkäufer rechnet deinen Spieler mit 50–85 % seines Marktwerts an – je nachdem, ob er auf dessen Position Bedarf hat –, und der Tauschspieler muss selbst wechseln wollen. Ab **2000** gibt es die **Leihe mit Kaufoption** (nur für Ergänzungsspieler oder Talente bis 21; der Verein bewertet die Option mit 60 %; am Saisonende entscheidest du, ob du sie ziehst), ab **2005** die **Rückkaufoption** für den Verkäufer (zwei Jahre, senkt den Preis etwas). Ist dein Verein **direkter Tabellennachbar**, verlangt der Verkäufer 8 % mehr. Der Verein antwortet mit einem vollständigen **Gegenvorschlag** – je nach Lage besteht er auf Sofortzahlung, einer Beteiligung am Weiterverkauf oder einem Ablösespiel; übernimmst du den Gegenvorschlag, ist man sich einig. Punkte, die du für **nicht verhandelbar** erklärst, lässt er stehen und verlangt den Gegenwert anderswo (kostet Geduld). Wie der Tisch aufgebaut ist, steht im Artikel „Der Verhandlungstisch“. Lächerliche Angebote kosten viel **Geduld**; ist sie aufgebraucht, endet das Gespräch. Liegt die Ablöse (bei Raten: die erste Rate) über deinem **Transferbudget**, gibt der Vorstand das Angebot nicht frei: Es wird **nicht abgeschickt**, der Grund steht im Verlauf und unter dem Knopf.
+Dein Angebot besteht aus **Ablöse**, **Zahlung** (sofort, zwei Raten – der Verein bewertet sie mit 93 % – oder ab 1990 drei Raten, 89 %), **Weiterverkaufsbeteiligung** (0/10/20 %), **Nachschlag nach Einsätzen** (fällig bei 20 Einsätzen), **Nachschlag bei Europapokal** (fällig am Saisonende, wenn du dich qualifizierst), bis 1998 einem **Ablösespiel** (Freundschaftsspiel beim Verkäufer, Einnahmen für ihn) und optional einem **Spieler-Tausch**: Der Verkäufer rechnet deinen Spieler mit 50–85 % seines Marktwerts an – je nachdem, ob er auf dessen Position Bedarf hat –, und der Tauschspieler muss selbst wechseln wollen. Leihen verhandelst du an einem eigenen Tisch („Leihe anfragen“, siehe Artikel „Leihen“). Ab **2005** die **Rückkaufoption** für den Verkäufer (zwei Jahre, senkt den Preis etwas). Ist dein Verein **direkter Tabellennachbar**, verlangt der Verkäufer 8 % mehr. Der Verein antwortet mit einem vollständigen **Gegenvorschlag** – je nach Lage besteht er auf Sofortzahlung, einer Beteiligung am Weiterverkauf oder einem Ablösespiel; übernimmst du den Gegenvorschlag, ist man sich einig. Punkte, die du für **nicht verhandelbar** erklärst, lässt er stehen und verlangt den Gegenwert anderswo (kostet Geduld). Wie der Tisch aufgebaut ist, steht im Artikel „Der Verhandlungstisch“. Lächerliche Angebote kosten viel **Geduld**; ist sie aufgebraucht, endet das Gespräch. Liegt die Ablöse (bei Raten: die erste Rate) über deinem **Transferbudget**, gibt der Vorstand das Angebot nicht frei: Es wird **nicht abgeschickt**, der Grund steht im Verlauf und unter dem Knopf.
 
 ## Verhandeln mit dem Spieler
 Danach überzeugst du den Spieler am selben Tisch – mit allen Vertragspunkten wie bei einer Verlängerung (Artikel „Vertragsverhandlung“); je mehr ihn dein Verein reizt, desto früher unterschreibt er. Was er will, hängt von seiner **Persönlichkeit** ab (Artikel „Spielerwünsche“). Sein **Berater** (bzw. er selbst) nennt eine überhöhte Forderung, das echte Mindestgehalt bleibt verdeckt. Du bietest **Gehalt** (pro Jahr oder pro Woche, je nach Einstellung), **Laufzeit**, **Handgeld** (zählt anteilig wie Gehalt, Geldgierige schätzen es mehr), **Beraterprovision** (fehlt sie, rät der Berater ab), **Treueprämie** (fällig bei Vertragsende, wenn er bleibt), **Erfolgsklausel** (+10/+20 % Gehalt bei einem Europapokal-Platz), ab **1996** eine **Ausstiegsklausel** (reizt Ehrgeizige und Abenteurer; zahlt ein Verein sie, wechselt der Spieler ohne Verhandlung) und **Versprechen**:
@@ -2735,6 +2736,54 @@ Im Transferfenster (Juli/August, Januar) wird sofort gewechselt, sonst zum näch
 
 ## Wenn andere bieten
 Für deine Spieler bieten vor allem KI-Vereine, die auf seiner Position **Bedarf** haben und sich die Ablöse leisten können (Kaderplanung); für Stars melden sich auch einfach die Großen. Sie bieten nach ihrer verdeckten Höchstgrenze. Forderst du 25 % mehr, zahlen sie, wenn es in ihren Rahmen passt – sonst bessern sie oft bis zur Grenze nach oder springen ab.`,
+  },
+  {
+    id: 'loans',
+    category: 'squad',
+    title: 'Leihen: ausleihen, verleihen, Bedingungen',
+    keywords: ['leihe', 'leihen', 'ausleihen', 'verleihen', 'leihspieler', 'leihgebühr', 'kaufoption', 'kaufpflicht', 'einsatzgarantie', 'rückruf', 'stammverein', 'weiterverleihung', 'leihliste', 'fifa', 'leihgrenze'],
+    body: `## Wo finde ich Leihen?
+Unter **Transfers › Leihen** mit drei Reitern: **Ausgeliehen** (deine Leihspieler mit Einsätzen, Minuten, Toren und Stärke seit Beginn, laufende Leihgespräche, Leihkandidaten anderer Vereine und die Regeln der Saison), **Verliehen** (deine verliehenen Spieler mit ihrer Entwicklung beim Leihverein, Einsatzgarantie, Kaufoption/Kaufpflicht und Rückruf; dazu die Leihliste) und **Angebote** (Leihangebote anderer Vereine). Einzelne Spieler erreichst du auch über das **Spielerprofil** (runder Knopf mit den zwei Pfeilen) und das **Rechtsklick-Menü**: „Leihe anfragen“ bei fremden, „Zur Leihe anbieten“ bei eigenen Spielern.
+
+## Ausleihen
+„Leihe anfragen“ öffnet den **Verhandlungstisch** mit drei Schritten: Verein → Spieler → Abschluss. Die Punkte:
+- **Laufzeit:** halbe Saison (bis 31.12., Rückkehr im Winterfenster; bis 2021/22), bis Saisonende oder – von 1990 bis 2021/22 – über zwei Spielzeiten. Seit 2022 höchstens ein Jahr.
+- **Gehaltsübernahme** 25–100 %: Den Rest zahlt der Stammverein; er erstattet ihn dir jeden Monatsersten.
+- **Leihgebühr:** einmalig beim Wechsel, ab 1990 üblich.
+- **Kaufoption** (ab 2000): Am Saisonende entscheidest du, ob du ihn zum vereinbarten Preis kaufst.
+- **Kaufpflicht** (ab 2010): unbedingt, ab 20 Pflichtspielen für dich oder bei deinem Klassenerhalt (nicht unter den letzten drei). Ist die Bedingung am Saisonende erfüllt, wechselt er automatisch fest.
+- **Einsatzgarantie mit Strafzahlung** (ab 2000): Fehlen am Leihende die zugesagten Pflichtspiele, zahlst du die Strafe.
+- **Rückrufklausel** (ab 1995): Der Stammverein darf ihn im Januar zurückholen – die KI tut das, wenn er bei dir kaum in der Startelf steht.
+- **Einsatz gegen den Stammverein:** In Deutschland erlaubt, per Absprache auszuschließen; in England verbietet es eine Ligaregel. Ein gesperrter Leihspieler fehlt in diesen Spielen automatisch.
+- **Weiterverleihung:** bis 2021/22 per Klausel auszuschließen, seit 2022 verboten.
+
+**So entscheidet der Stammverein:** Er rechnet die Leihe in Geld – übernommenes Gehalt, Leihgebühr, Klauseln – und vergleicht mit seiner Forderung; zu knappe Angebote kosten Geduld. **Leistungsträger** (Top 3 seines Kaders) und **Stammspieler** (Top 11, außer jungen Spielern ab Platz 9) verleiht er nicht. **Talente** (bis 21 oder bis 23 mit Luft nach oben) gibt er gern ab – aber nur, wenn sie spielen: Wären sie bei dir nicht Stammspieler, besteht er (ab 2000) auf einer **Einsatzgarantie**. Bei großen Talenten schrecken ihn Kaufpflicht und eine Kaufoption unter Marktwert ab. In den 70ern sind Leihen unüblich – die Vereine verlangen mehr und haben weniger Geduld.
+
+**Der Spieler** stimmt zu, wenn er bei dir spielen würde (Stammspieler oder Rotation) oder mindestens zehn Einsätze garantiert sind; erfahrene Spieler lassen sich ungern als Ergänzung verleihen, und ein zu großer Schritt nach unten schreckt ab.
+
+**Abschluss:** im Transferfenster (Juli/August, Januar) sofort, sonst mit dem nächsten Fenster. Sein Vertrag beim Stammverein läuft weiter (mindestens bis zum Leihende).
+
+## Verleihen
+Setze Spieler mit „Zur Leihe anbieten“ auf die **Leihliste**. Im Transferfenster melden sich montags und donnerstags Vereine mit Bedarf auf seiner Position, **bei denen er spielen würde** – mit Laufzeit, Gehaltsanteil, eventuell Leihgebühr, und je nach Epoche Kaufoption, Kaufpflicht (nach Einsätzen), Einsatzgarantie oder Rückrufklausel. Auch ohne Leihliste fragen Vereine am 25.7. und 17.1. nach jungen Ergänzungsspielern. Antworten: **Annehmen**, **Bessere Bedingungen fordern** (volles Gehalt und eine Leihgebühr – wer den Spieler dringend braucht, geht mit, sonst ist das Angebot vom Tisch) oder **Ablehnen**; Frist fünf Tage.
+
+Beim Leihverein sammelt er **Spielpraxis**: Einsatzminuten treiben seine Entwicklung wie bei dir. Unter Verliehen siehst du Einsätze, Minuten, Tore und die Stärke seit Leihbeginn; mit Rückrufklausel holst du ihn im Januar per Knopf zurück. Zieht der Leihverein am Saisonende die Kaufoption oder greift die Kaufpflicht, ist er weg – die Ablöse geht an dich.
+
+## Ende der Leihe
+- **31.12.** (halbe Saison): Rückkehr zum Winterfenster, Strafzahlung/Kaufpflicht werden vorher abgerechnet.
+- **29./30.6.:** Einsatzgarantie (Strafzahlung), Kaufpflicht, dann Kaufoption (deine Entscheidung bzw. die der KI nach Einsätzen und Noten) oder Rückkehr. Leihen über zwei Spielzeiten zählen Einsätze über beide Saisons.
+- Rückkehrer stehen wieder in deinem Kader; eine Nachricht nennt Einsätze und Stärke.
+
+## Grenzen je Epoche
+- **Bis 2021/22** keine Höchstzahl (KI-Vereine nehmen höchstens zwei Leihspieler).
+- **FIFA ab 2022/23:** höchstens 8 ver- bzw. ausgeliehene Profis je Verein, 2023/24 7, ab 2024/25 6; höchstens drei zwischen denselben zwei Vereinen; Spieler bis 21 und Eigengewächse zählen nicht. Laufzeit höchstens ein Jahr, keine Weiterverleihung.
+- **National (DFL)** im Spiel ab 2025/26 ebenfalls sechs; U21 ausgenommen.
+- Leihen innerhalb derselben Liga sind erlaubt. Die Ausländer- und Melderegeln (Kader › Spielermeldung) gelten auch für Leihspieler.
+
+## Häufigkeit
+Leihen sind in den 70ern selten, in den 80ern und frühen 90ern gelegentlich, ab Mitte der 90er üblich und ab den 2000ern Alltag (Bundesliga 2003/04 rund 75 Leihen, 2023/24 rund 228).
+
+## Quellen
+${LOAN_SOURCES.map((x) => `- ${x}`).join('\n')}`,
   },
   {
     id: 'transfers-window',

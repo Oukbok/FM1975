@@ -14,6 +14,8 @@ import PlayerModal, { type Tab } from '../PlayerModal';
 import { useClubProfile } from '../club/ClubLink';
 import { openContractScreen } from '../../screens/contract/contractOpen';
 import { startTalk, talkBlocker } from '../../game/transferTalks';
+import { toggleLoanListed } from '../../game/loanMarket';
+import { startLoanTalk } from '../../game/loanTalks';
 import { estimateFor } from '../../game/playerPool';
 import { activeJob, cancelScouting, queueScouting, queuedJob, scoutSlots, scoutingOf } from '../../game/scoutingGame';
 import { PIDSEL_CLEAR } from '../../ui/useMultiSelect';
@@ -150,6 +152,10 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
         label: p.transferListed ? 'Von der Transferliste nehmen' : 'Auf die Transferliste setzen', icon: 'transfers', sep: true,
         run: () => { p.transferListed = !p.transferListed; onChange(); close(); },
       });
+      if (!p.loan) items.push({
+        label: p.loanListed ? 'Nicht mehr zur Leihe anbieten' : 'Zur Leihe anbieten', icon: 'swap',
+        run: () => { const e = toggleLoanListed(g, p.id); onChange(); if (e) setNote(e); else close(); },
+      });
       if (onGoto) items.push({ label: 'Zur Aufstellung', icon: 'lineup', run: () => { onGoto('lineup'); close(); } });
     }
     if (!mine && !p.isYouth && club) {
@@ -159,6 +165,14 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
           const r = startTalk(g, p.id);
           if (typeof r === 'string') { setNote(r); return; }
           onChange(); close(); openContractScreen({ kind: 'transfer', talkId: r.id });
+        },
+      });
+      items.push({
+        label: 'Leihe anfragen', icon: 'swap',
+        run: () => {
+          const r = startLoanTalk(g, p.id);
+          if (typeof r === 'string') { setNote(r); return; }
+          onChange(); close(); openContractScreen({ kind: 'loan', talkId: r.id });
         },
       });
     }

@@ -23,6 +23,9 @@ import { aiClubsDaily } from './aiClubs';
 import { aiContractsDaily } from './aiContracts';
 import { careerDaily } from './careerGame';
 import { aiLoansDaily } from './aiLoans';
+import { loanLifeDaily } from './loanLife';
+import { loanMarketDaily } from './loanMarket';
+import { loanTalksDaily } from './loanTalks';
 import { bindTransferLog, transferWindowDue } from './transferLog';
 import { youthCompsDaily } from './youthComps/daily';
 import { ownTrainingDay } from './trainingWeek';
@@ -236,7 +239,10 @@ export function processDay(g: Game, ui: DayUi): boolean {
   if (germanHome) youthCompsDaily(g, today);
   rollAiOffers(g, today);
   aiContractsDaily(g, today); // KI: vorzeitige Verlängerungen, Altstars, Bosman-Verkäufe, Vorverträge (game/aiContracts.ts)
-  aiLoansDaily(g, today); // KI-Leihen, Anfragen an dich, Rückkehr am 30.6. (game/aiLoans.ts)
+  loanLifeDaily(g, today); // Leihen: Gehaltsanteile, Rückkehr, Rückruf, Strafzahlung/Kaufpflicht am 29.6. (game/loanLife.ts)
+  aiLoansDaily(g, today); // KI-Leihen, Rückkehr/Kaufoption am 30.6. (game/aiLoans.ts)
+  loanMarketDaily(g, today); // Leihangebote für deine Spieler (game/loanMarket.ts)
+  loanTalksDaily(g, today); // deine Leihgespräche: Vollzug im Fenster (game/loanTalks.ts)
   checkPromises(g, today);
   contractClausesDaily(g, today); // Treueprämie, Erfolgsklausel, Leihe mit Kaufoption (game/playerWishesGame.ts)
   contractBonusesDaily(g, today); // Vertrag 2.0: Einsatz-/Tor-/Zu-null-Prämien (game/contractClausesGame.ts)

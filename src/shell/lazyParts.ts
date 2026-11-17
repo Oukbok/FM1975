@@ -56,6 +56,7 @@ export const BeobachtungView = lz(() => import('../views/transfers/TransfersView
 export const SpielerpoolView = lz(() => import('../views/transfers/pool/SpielerpoolView'), 'SpielerpoolView');
 export const ScoutingView = lz(() => import('../views/transfers/pool/ScoutingView'), 'ScoutingView');
 export const VerhandlungenView = lz(() => import('../views/transfers/TransfersView'), 'VerhandlungenView');
+export const LoansView = lz(() => import('../views/transfers/loans/LoansView'), 'LoansView');
 export const FinancesView = lz(() => import('../views/finanzen/FinancesView'), 'FinancesView');
 export const BudgetView = lz(() => import('../views/finanzen/BudgetView'), 'BudgetView');
 export const MarketingView = lz(() => import('../views/finanzen/MarketingView'), 'MarketingView');

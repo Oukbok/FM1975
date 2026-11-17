@@ -1,0 +1,11 @@
+/* =============================================================================
+   Transfers › Leihen (views/transfers/loans/LoansView.tsx)
+   ========================================================================== */
+.ln-cond { max-width: 340px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 15px; }
+.ln-msg { padding: 8px 16px; }
+.ln-msg.bad { color: var(--red); }
+.ln-rules { display: flex; flex-direction: column; gap: 6px; }
+.ln-kv { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--border-soft); font-size: 16px; }
+.ln-kv > span { color: var(--text-2); }
+.ln-kv > b { color: var(--text); text-align: right; }
+.ln-notes { margin: 8px 0 0; padding-left: 18px; color: var(--text-2); font-size: 15px; line-height: 1.45; display: flex; flex-direction: column; gap: 6px; }

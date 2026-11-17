@@ -4,7 +4,7 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   // Kategorie-Dashboards (Übersichtsseiten je Hauptkategorie)
   | 'cat-spieltag' | 'cat-kader' | 'cat-transfers' | 'cat-finanzen' | 'cat-verein' | 'cat-statistiken'
   // Neue Einzelseiten
-  | 'tactics' | 'stadium' | 'presse' | 'vertraege' | 'meldung' | 'reserve' | 'beobachtung' | 'spielerpool' | 'scouting' | 'verhandlungen' | 'sponsoring' | 'fans' | 'international' | 'nationalteams' | 'supercup' | 'vorstand' | 'ruhmeshalle' | 'akademie'
+  | 'tactics' | 'stadium' | 'presse' | 'vertraege' | 'meldung' | 'reserve' | 'beobachtung' | 'spielerpool' | 'scouting' | 'verhandlungen' | 'leihen' | 'sponsoring' | 'fans' | 'international' | 'nationalteams' | 'supercup' | 'vorstand' | 'ruhmeshalle' | 'akademie'
   // Winter: Hallenfußball + Trainingslager
   | 'halle' | 'trainingslager'
   // Saison-Briefing (Archiv)
@@ -82,6 +82,7 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'beobachtung', label: 'Beobachtung', icon: 'watchlist' },
     { screen: 'scouting', label: 'Scouting', icon: 'trVideo' },
     { screen: 'verhandlungen', label: 'Verhandlungen', icon: 'negotiations' },
+    { screen: 'leihen', label: 'Leihen', icon: 'swap' },
   ] },
   { key: 'finanzen', label: 'Finanzen', icon: 'finances', dash: 'cat-finanzen', subs: [
     { screen: 'cat-finanzen', label: 'Finanzen', icon: 'finances' },

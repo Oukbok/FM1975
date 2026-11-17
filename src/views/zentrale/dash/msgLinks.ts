@@ -28,6 +28,9 @@ const EURO_RE = /Europa|UEFA|Landesmeister|Pokal der Pokalsieger|Meisterliga|Kon
 
 function transferLinks(g: Game, m: InboxMessage, faces: Player[]): MsgLink[] {
   const mine = g.managedClubId;
+  if (isOpenIncoming(m) && m.eventRef?.type === 'ai_loan_request') {
+    return [{ label: 'Leihangebot ansehen', screen: 'leihen', tab: ['transfers.leihen', 'angebote'], title: 'Transfers › Leihen › Angebote: annehmen, bessere Bedingungen fordern oder ablehnen' }];
+  }
   if (isOpenIncoming(m)) {
     return [{ label: 'Angebot verhandeln', screen: 'verhandlungen', tab: NEG_TAB, title: 'Transfers › Verhandlungen: Angebote für deine Spieler – annehmen, mehr fordern oder ablehnen' }];
   }
@@ -36,8 +39,12 @@ function transferLinks(g: Game, m: InboxMessage, faces: Player[]): MsgLink[] {
   const ids = new Set([m.relatedId, m.eventRef?.playerId, ...faces.map((p) => p.id)].filter(Boolean) as string[]);
   // Eigene Verhandlung über einen der Spieler (laufend, Einigung, abgeschlossen) → dort steht sie.
   if ((g.transferTalks ?? []).some((t) => ids.has(t.playerId))) return [{ label: 'Verhandlungen', screen: 'verhandlungen', tab: NEG_TAB }];
+  if ((g.loanTalks ?? []).some((t) => ids.has(t.playerId))) return [{ label: 'Leihen', screen: 'leihen', tab: ['transfers.leihen', 'aus'] }];
   const own = faces.filter((p) => p.clubId === mine || p.loan?.fromClubId === mine);
-  if (own.some((p) => p.loan)) return [{ label: 'Leihspieler', screen: 'verhandlungen', tab: NEG_TAB }];
+  if (own.some((p) => p.loan)) {
+    const out = own.some((p) => p.loan && p.loan.fromClubId === mine);
+    return [{ label: 'Leihspieler', screen: 'leihen', tab: ['transfers.leihen', out ? 'ver' : 'aus'] }];
+  }
   if (own.some((p) => p.contract.preContractClubId && p.contract.preContractClubId !== mine)) return [{ label: 'Verhandlungen', screen: 'verhandlungen', tab: NEG_TAB }];
   // Fremder Wechsel: Verein des Spielers (bzw. Käufers) statt einer leeren Seite.
   const other = faces.find((p) => p.clubId && p.clubId !== mine && g.clubs[p.clubId]);

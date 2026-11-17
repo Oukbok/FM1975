@@ -3,12 +3,14 @@
 // zeigt sie, solange eine Entscheidung offen ist; Newscenter-Knopf führt dorthin).
 // -----------------------------------------------------------------------------
 // Quelle sind die Entscheidungs-Nachrichten selbst – KI-Kaufangebote (`ai_offer`,
-// game/aiOffers.ts) und Leihanfragen (`ai_loan_request`, game/aiLoans.ts). Nichts
+// game/aiOffers.ts) und Leihanfragen (`ai_loan_request`, game/loanMarket.ts). Nichts
 // wird zusätzlich gespeichert; die Antwort läuft über `chooseEventOption`, damit
 // Nachricht, Ergebnistext und Moral-Reaktion dieselben sind wie im Newscenter.
 // =============================================================================
 import type { InboxMessage, Player } from '../types';
 import { chooseEventOption } from './eventsGame';
+import type { LoanTerms } from '../engine/loanDeal';
+import { offerTerms } from './loanMarket';
 import type { Game } from './state';
 
 export const INCOMING_TYPES = ['ai_offer', 'ai_loan_request'] as const;
@@ -27,6 +29,8 @@ export interface IncomingOffer {
   deadline: string;
   /** Spieler möchte wechseln (nur Kaufangebote). */
   wish: boolean;
+  /** Bedingungen der Leihe (nur Leihangebote). */
+  terms?: LoanTerms;
 }
 
 /** Ist das eine noch offene Anfrage eines anderen Vereins für einen eigenen Spieler? */
@@ -47,7 +51,7 @@ export function incomingOffers(g: Game): IncomingOffer[] {
     }
     const to = String(r.data?.to ?? '');
     return { msg, kind: 'loan', player, clubId: to, clubName: g.clubs[to]?.name ?? 'Interessent',
-      fee: Number(r.data?.option ?? 0), deadline: r.deadline, wish: false };
+      fee: Number(r.data?.option ?? 0), deadline: r.deadline, wish: false, terms: offerTerms(g, r.data, msg.date) };
   }).sort((a, b) => a.deadline.localeCompare(b.deadline));
 }
 

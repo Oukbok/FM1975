@@ -51,7 +51,7 @@ export function IncomingOffersList({ g, offers, done, setDone, onChange }: {
             <div className="ioff-deal">
               <span className="ioff-club">{o.clubId ? <ClubLink id={o.clubId}>{o.clubName}</ClubLink> : o.clubName}</span>
               <span className="ioff-what">
-                {o.kind === 'sale' ? <>bietet <b>{fmtPrice(o.fee)}</b></> : <>möchte ihn ausleihen{o.fee ? <> · Kaufoption {fmtPrice(o.fee)}</> : null}</>}
+                {o.kind === 'sale' ? <>bietet <b>{fmtPrice(o.fee)}</b></> : <>möchte ihn ausleihen{o.terms ? <> · bis {CalendarEngine.formatDate(o.terms.until)} · <b>{Math.round(o.terms.share * 100)} % Gehalt</b>{o.terms.fee ? <> · {fmtPrice(o.terms.fee)} Gebühr</> : null}{o.terms.optionFee ? <> · Kaufoption {fmtPrice(o.terms.optionFee)}</> : null}{o.terms.obligation ? <> · Kaufpflicht {fmtPrice(o.terms.obligation.fee)}</> : null}{o.terms.minApps ? <> · {o.terms.minApps} Einsätze garantiert</> : null}</> : null}</>}
                 {o.kind === 'sale' && <span className={o.wish ? 'ioff-wish' : 'muted'}> · {o.wish ? 'er will wechseln' : 'er drängt nicht weg'}</span>}
               </span>
               <span className={`ioff-due ${soon ? 'soon' : ''}`}>Frist {CalendarEngine.formatDate(o.deadline)}{days >= 0 ? ` · noch ${days} ${days === 1 ? 'Tag' : 'Tage'}` : ''}</span>

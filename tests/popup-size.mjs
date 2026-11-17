@@ -77,6 +77,25 @@ for (const view of VIEWS) {
       ['Ablöse fest', () => soft('.vt-root .vt-row[data-key="fee"] .vt-lockbtn')],
       ['Angebot abgeben 2', () => soft('.vt-root .vt-send')],
     ] }],
+    // Leihe am Verhandlungstisch (screens/negotiation/LoanTalk.tsx): Transfers › Leihen › „Leihe anfragen“ bei einem Kandidaten,
+    // sonst Rechtsklick im Transfermarkt. Umschalter (zusätzliche Zeilen) + eine Runde.
+    ['leihtisch', '.vt-root', async () => {
+      await nav('Transfers', 'Leihen');
+      const btn = page.locator('.app-main button:has-text("Leihe anfragen"):not([disabled])');
+      if (await btn.count()) await btn.first().click();
+      else {
+        await nav('Transfers', 'Transfermarkt');
+        await page.locator('.app-main tr[data-pid], .app-main .rl-row[data-pid]').nth(14).click({ button: 'right' });
+        await click('.pcm-item:has-text("Leihe anfragen")');
+      }
+      await page.waitForSelector('.vt-root', { timeout: 4000 });
+    }, { steps: [
+      ['Gehalt 100 %', () => soft('.vt-root .vt-row[data-key="share"] .seg3 button:nth-child(4)')],
+      ['Einsatzgarantie', () => soft('.vt-root .vt-row[data-key="minApps"] .seg3 button:nth-child(3)')],
+      ['Angebot abgeben', () => soft('.vt-root .vt-send')],
+      ['Gegenvorschlag', () => soft('.vt-root button:has-text("Gegenvorschlag übernehmen")')],
+      ['Angebot abgeben 2', () => soft('.vt-root .vt-send')],
+    ] }],
     // Vertragsverlängerung: Rechtsklick › „Vertrag verlängern“.
     ['verhandlungstisch', '.vt-root', async () => {
       await nav('Kader', 'Übersicht');

@@ -102,7 +102,7 @@ export interface ResolvedLineup {
  *   (verletzt/gesperrt) werden slotgenau mit dem passendsten Ersatz besetzt.
  * - KI-Verein: stellt in der eigenen Formation jedes Mal neu auf (Eignung × Frische).
  */
-export function resolveLineup(club: Club, players: Record<string, Player>, human: boolean, benchSize: number, ctx?: { year: number; euro?: boolean }): ResolvedLineup {
+export function resolveLineup(club: Club, players: Record<string, Player>, human: boolean, benchSize: number, ctx?: { year: number; euro?: boolean; /** Gegner: Leihspieler mit Einsatzverbot gegen ihren Stammverein fehlen (engine/loanDeal.ts). */ vs?: string }): ResolvedLineup {
   const t: Tactics | undefined = club.tactics;
   // Eigene Slot-Lagen (frei verschobene Positionen) gelten für den gespeicherten Plan.
   const formation = withLayout(getFormation(t?.formation), human ? t?.slotLayout : undefined);
@@ -111,7 +111,8 @@ export function resolveLineup(club: Club, players: Record<string, Player>, human
   const list = ctx?.euro ? euroListOf(club.id) : null;
   let cap = ctx ? matchForeignCap(ctx.year, ctx.euro) : null;
   let foreign = 0;
-  const avail = club.playerIds.map((id) => players[id]).filter(isAvailable);
+  const vs = ctx?.vs;
+  const avail = club.playerIds.map((id) => players[id]).filter((p): p is Player => isAvailable(p) && !(vs && p.loan?.deal?.noParent && p.loan.fromClubId === vs));
   const listed = list ? avail.filter((p) => list.has(p.id)) : avail;
   // Sicherheitsnetz: reicht die Meldeliste nicht für eine Elf, spielt der Kader (sonst Spielabbruch).
   const pool = listed.length >= 11 ? listed : avail;

@@ -44,7 +44,8 @@ export default function ProfileHead({ p, club, tag, best, sel, onSelect }: {
             : p.clubId && g && worldClubInfo(g, p.clubId) ? <ClubLink id={p.clubId}>{worldClubInfo(g, p.clubId)!.name}</ClubLink> : 'Vereinslos'}
           {(p.isYouth || tag) && <span className="pp-tag">{tag ?? 'Jugend'}</span>}
           {p.transferListed && <span className="pp-tag">Transferliste</span>}
-          {p.loan && <span className="pp-tag">Leihe</span>}
+          {p.loan && <span className="pp-tag">{p.loan.fromClubId === g?.managedClubId ? 'Verliehen' : 'Leihe'}</span>}
+          {p.loanListed && <span className="pp-tag">Leihliste</span>}
         </div>
       </div>
       <div className="pp2-idbody">

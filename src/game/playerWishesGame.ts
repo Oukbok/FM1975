@@ -6,6 +6,7 @@
 // Rivale, wo ist er zu Hause, wie lange ist er schon im Verein, spielt der
 // Käufer international, wie dicht ist seine Position besetzt?
 // =============================================================================
+import { returnLoan } from './loanLife';
 import { GROUP_OF } from '../engine/aiManager';
 import { bookTransfer } from '../engine/finances';
 import { book } from '../engine/finances';
@@ -220,9 +221,11 @@ const LOAN_TYPE = 'loan_option';
 /** Saisonende: Für jeden Leihspieler entscheidest du über die Kaufoption. */
 function loanSeasonEnd(g: Game, today: string, end: string): void {
   const own = g.clubs[g.managedClubId];
-  for (const id of own.playerIds) {
+  for (const id of [...own.playerIds]) {
     const p = g.players[id];
     if (!p?.loan || p.loan.until > end) continue;
+    // Ohne Kaufoption endet die Leihe einfach (Kaufpflicht/Strafzahlung rechnet game/loanLife.ts vorher ab).
+    if (!p.loan.optionFee || p.loan.noOption) { returnLoan(g, p, today, 'Die Leihe ist zu Ende.'); continue; }
     const parent = g.clubs[p.loan.fromClubId];
     const msg = makeMessage({
       date: today, category: 'transfer', from: 'Sportdirektor', subject: `Kaufoption für ${p.fullName}`,
