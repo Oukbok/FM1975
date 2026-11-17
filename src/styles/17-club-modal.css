@@ -108,3 +108,8 @@
 .ctr-sum b.pos { color: var(--pos); }
 .ctr-sum b.neg { color: var(--neg); }
 .ctr-table td, .ctr-table th { padding-left: 8px; padding-right: 8px; }
+
+/* Gelände & Einrichtungen (Wunsch Pascal: ohne Bildlauf – die Zeilen teilen sich die Höhe der Box) */
+.cmx-fac .dbox-body { overflow: hidden !important; display: flex; flex-direction: column; justify-content: flex-start; padding-right: 16px; }
+.cmx-fac .dmeter { flex: 1 1 0; min-height: 0; max-height: 46px; padding: 0; grid-template-columns: 220px minmax(0, 1fr) max-content; font-size: 15px; line-height: 1.2; }
+.cmx-fac .dmeter-track { height: 7px; }

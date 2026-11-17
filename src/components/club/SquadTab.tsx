@@ -8,12 +8,15 @@ import { GROUP_DE, ScoutStarBar, ScoutStars, avg, groupOf, monthsUntil, scoutMid
 import { ClubTabProps } from './shared';
 import PosBadge from '../PosBadge';
 
-type Sort = 'pos' | 'ovr' | 'pot' | 'age' | 'val' | 'ctr';
+type Sort = 'nr' | 'name' | 'pos' | 'ovr' | 'pot' | 'age' | 'val' | 'ctr';
 const GROUP_ORDER = ['GK', 'DEF', 'MID', 'ATT'];
 const IDEAL: Record<string, number> = { GK: 2, DEF: 6, MID: 6, ATT: 4 };
 
 export default function SquadTab({ g, d, openPlayer, onTalk, talkErr }: ClubTabProps & { onTalk: (id: string) => void; talkErr: string | null }) {
-  const [sort, setSort] = useState<Sort>('pos');
+  const [sort, setSortKey] = useState<Sort>('pos');
+  const [desc, setDesc] = useState(false);
+  // Wunsch Pascal: jede Spalte sortierbar, zweiter Klick dreht die Reihenfolge um.
+  const setSort = (k: Sort) => { if (k === sort) setDesc((x) => !x); else { setSortKey(k); setDesc(false); } };
   const [grp, setGrp] = useState('all');
   const today = g.calendar.currentDate;
   const all = d.squad;
@@ -24,8 +27,10 @@ export default function SquadTab({ g, d, openPlayer, onTalk, talkErr }: ClubTabP
       </DashBox>
     );
   }
-  const cmp = (a: Player, b: Player) => {
+  const base = (a: Player, b: Player) => {
     switch (sort) {
+      case 'nr': return (a.shirtNumber || 999) - (b.shirtNumber || 999);
+      case 'name': return a.lastName.localeCompare(b.lastName, 'de') || a.fullName.localeCompare(b.fullName, 'de');
       case 'pos': return GROUP_ORDER.indexOf(groupOf(a)) - GROUP_ORDER.indexOf(groupOf(b)) || b.overall - a.overall;
       case 'pot': return scoutMid(b) - scoutMid(a) || b.overall - a.overall;
       case 'age': return a.age - b.age;
@@ -34,9 +39,10 @@ export default function SquadTab({ g, d, openPlayer, onTalk, talkErr }: ClubTabP
       default: return b.overall - a.overall;
     }
   };
+  const cmp = (a: Player, b: Player) => (desc ? -base(a, b) : base(a, b));
   const list = all.filter((p) => grp === 'all' || groupOf(p) === grp).sort(cmp);
   const Th = ({ k, cls, children }: { k: Sort; cls?: string; children: React.ReactNode }) => (
-    <th className={`sortable ${cls ?? ''} ${sort === k ? 'sorted' : ''}`} onClick={() => setSort(k)}>{children}</th>
+    <th className={`sortable ${cls ?? ''} ${sort === k ? 'sorted' : ''}`} onClick={() => setSort(k)} aria-sort={sort === k ? (desc ? 'descending' : 'ascending') : undefined}>{children}{sort === k ? (desc ? ' ▾' : ' ▴') : ''}</th>
   );
   const running = new Set(activeTalks(g).map((t) => t.playerId));
   const expiring = all.filter((p) => monthsUntil(today, p.contract.expiryDate) <= 12).sort((a, b) => b.overall - a.overall);
@@ -51,7 +57,7 @@ export default function SquadTab({ g, d, openPlayer, onTalk, talkErr }: ClubTabP
         </span>}>
         <table className="dtable rl-players">
           <thead><tr>
-            <th className="ctr">#</th><th>Name</th><Th k="pos" cls="ctr">Pos</Th><Th k="age" cls="num">Alter</Th>
+            <Th k="nr" cls="ctr">#</Th><Th k="name">Name</Th><Th k="pos" cls="ctr">Pos</Th><Th k="age" cls="num">Alter</Th>
             <Th k="ovr" cls="num">Stärke</Th><Th k="pot">Potenzial</Th><Th k="val" cls="num">Marktwert</Th><Th k="ctr" cls="num">Vertrag</Th>
             {!d.isPlayerClub && <th />}
           </tr></thead>

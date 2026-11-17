@@ -82,7 +82,7 @@ export default function ClubTab({ g, d, openPlayer }: ClubTabProps) {
         <Kits club={c} />
       </DashBox>
 
-      <DashBox title="Gelände & Einrichtungen" icon="facilities">
+      <DashBox title="Gelände & Einrichtungen" icon="facilities" className="cmx-fac">
         {facilities.map((x) => {
           const lvl = (c.infrastructure as unknown as Record<string, number | undefined>)[x.key] ?? 0;
           return <Meter key={x.key} label={x.name} value={lvl} max={MAX_LEVEL} text={lvl ? `Stufe ${lvl}` : '–'} />;
