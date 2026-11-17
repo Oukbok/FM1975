@@ -6,6 +6,8 @@
 import { ClubByName } from '../../ui/LinkedText';
 import { ClubLink } from '../../components/club/ClubLink';
 import { useState } from 'react';
+import { SubTabsPage, useSubTab } from '../../ui/SubTabs';
+import { ReserveSquad } from './ReserveSquad';
 import type { Game } from '../../game/state';
 import type { Position } from '../../types';
 import { ALL_POSITIONS } from '../../types';
@@ -24,6 +26,7 @@ import type { Screen } from '../../shell/navigation';
 
 export function ReserveTeamView({ g, onChange, onGoto }: { g: Game; onChange?: () => void; onGoto?: (s: Screen) => void }) {
   const [, setV] = useState(0);
+  const [tab, setTab] = useSubTab<'uebersicht' | 'kader'>('jugend.reserve', 'uebersicht');
   const ch = () => { setV((v) => v + 1); onChange?.(); };
   const club = g.clubs[g.managedClubId];
   const st = reserveState(g);
@@ -38,6 +41,19 @@ export function ReserveTeamView({ g, onChange, onGoto }: { g: Game; onChange?: (
       </DashPage>
     );
   }
+  const pros = st.pros || st.focus === 'comeback';
+  const squadCount = eligible(g, club, pros).length;
+  return (
+    <SubTabsPage tabs={[{ id: 'uebersicht', label: 'Übersicht' }, { id: 'kader', label: 'Kader', count: squadCount }]} active={tab} onSelect={setTab}>
+      {tab === 'kader' ? <ReserveSquad g={g} /> : <ReserveOverview g={g} ch={ch} />}
+    </SubTabsPage>
+  );
+}
+
+function ReserveOverview({ g, ch }: { g: Game; ch: () => void }) {
+  const club = g.clubs[g.managedClubId];
+  const st = reserveState(g)!;
+  const year = parseInt(g.season.slice(0, 4), 10);
   const table = sortedTable(st);
   const pos = table.findIndex((r) => r.id === OWN_ID) + 1;
   const own = table[pos - 1];
