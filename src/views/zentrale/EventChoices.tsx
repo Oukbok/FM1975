@@ -1,3 +1,4 @@
+import { LinkedText } from '../../ui/LinkedText';
 import { useState } from 'react';
 import { InboxMessage } from '../../types';
 import { Game } from '../../game/state';
@@ -14,7 +15,7 @@ export function hasEventChoices(msg: InboxMessage): boolean {
  */
 export function EventChoices({ g, msg, onDone, row = false }: { g: Game; msg: InboxMessage; onDone?: () => void; row?: boolean }) {
   const [, tick] = useState(0);
-  if (msg.resultText) return <div className="ev-result">{msg.resultText}</div>;
+  if (msg.resultText) return <div className="ev-result"><LinkedText g={g} text={msg.resultText} /></div>;
   if (!msg.choices?.length || !msg.eventRef || msg.eventRef.resolved) return null;
   return (
     <div className={`ev-choices ${row ? 'ev-row' : ''}`}>

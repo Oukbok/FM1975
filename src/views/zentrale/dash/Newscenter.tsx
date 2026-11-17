@@ -4,6 +4,7 @@
 // (EventChoices), Sprungzielen und Gesicht des betroffenen Spielers.
 // Daten: g.messages (engine/messages.ts) – dieselben wie Zentrale › Nachrichten.
 // =============================================================================
+import { LinkedText } from '../../../ui/LinkedText';
 import { PlayerMorale } from '../../../components/status';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { openContractScreen } from '../../../screens/contract/contractOpen';
@@ -136,6 +137,8 @@ function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
   if (!m) return <div className="dz-read dz-read-empty">Wähle links eine Nachricht aus.</div>;
   const faces = msgPlayers(g, m);
   const p = faces[0] ?? null;
+  // Namen im Text als Links (Wunsch Pascal): volle Namen überall, Nachnamen der Spieler der Nachricht und des eigenen Kaders.
+  const people = [...faces, ...(g.clubs[g.managedClubId]?.playerIds ?? []).map((id) => g.players[id]).filter(Boolean)];
   const game = !p && m.relatedId ? ownGames(g).find((x) => x.matchId === m.relatedId) : undefined;
   const matchId = game ? m.relatedId! : null;
   // Sprungknöpfe nach Inhalt der Nachricht (dash/msgLinks.ts) – nie auf eine leere Seite.
@@ -152,12 +155,12 @@ function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
   return (
     <article className="dz-read" key={m.id}>
       <div className="dz-rdate"><span>{wd(m.date)}</span> {dmy(m.date)}</div>
-      <h3 className="dz-rsubj">{m.subject}</h3>
+      <h3 className="dz-rsubj"><LinkedText g={g} text={m.subject} people={people} /></h3>
       <div className="dz-rmeta">Von {m.from} · {CATEGORY_META[m.category]?.label}{m.actionRequired && !m.eventRef?.resolved && !m.resultText ? ' · Entscheidung nötig' : ''}</div>
       <div className="dz-rtext">
-        {m.shortText && m.shortText !== m.bodyText && <p className="dz-rlead">{m.shortText}</p>}
+        {m.shortText && m.shortText !== m.bodyText && <p className="dz-rlead"><LinkedText g={g} text={m.shortText} people={people} /></p>}
         {photo && <img className="dz-rphoto" src={photo} alt="" loading="lazy" draggable={false} />}
-        <p className="dz-rbody">{m.bodyText}</p>
+        <p className="dz-rbody"><LinkedText g={g} text={m.bodyText} people={people} /></p>
       </div>
       {/* Entscheidung außerhalb des Textscrollers: immer sichtbar, egal wie lang Text/Foto sind. */}
       {hasEventChoices(m) && <div className="dz-rdecide"><EventChoices g={g} msg={m} onDone={onChange} row /></div>}

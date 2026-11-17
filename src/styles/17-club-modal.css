@@ -90,3 +90,6 @@
 /* Wappen/Vereinsnamen mit data-club öffnen per Klick das Vereinsprofil (ClubProfileContext) */
 [data-club] { cursor: pointer; }
 :is(button, [role="button"], .clickable, [data-dnd], [data-lu-drop], [data-noclub]) [data-club] { cursor: inherit; }
+/* Namen im Fließtext (ui/LinkedText.tsx, Wunsch Pascal): immer als Link erkennbar, nicht erst beim Zeigen. */
+.txt-link { text-decoration: underline; text-decoration-thickness: 1px; text-decoration-color: rgba(var(--ink-rgb), 0.35); text-underline-offset: 3px; }
+.txt-link:hover { color: var(--club-accent, var(--accent)); text-decoration-color: currentColor; }

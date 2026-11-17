@@ -3,6 +3,7 @@
 // (Gesichter → Spielerprofil, Wappen → Vereinsprofil) und Sprungziele
 // (Spielbericht, Tabelle, Transfermarkt …).
 // =============================================================================
+import { LinkedText } from '../../../ui/LinkedText';
 import { ClubLink } from '../../../components/club/ClubLink';
 import { fmtDateFull } from '../../../ui/format';
 import type { Screen } from '../../../shell/navigation';
@@ -11,6 +12,8 @@ import { Crest, Face, ResultLine, StoryImage, clubShort, type PressApi } from '.
 
 export function ArticleModal({ api, s, ed, onClose, onGoto }: { api: PressApi; s: PressStory; ed: PressEdition; onClose: () => void; onGoto: (sc: Screen) => void }) {
   const g = api.g;
+  // Namen im Artikel als Links (Wunsch Pascal); Nachnamen der Personen des Artikels.
+  const named = s.people.map((id) => g.players[id] ?? g.youthPlayers?.[id]).filter(Boolean);
   const people = s.people.filter((id) => g.players[id] || g.youthPlayers[id]);
   const clubs = s.clubs.filter((id) => !!g.clubs[id]);
   return (
@@ -29,8 +32,8 @@ export function ArticleModal({ api, s, ed, onClose, onGoto }: { api: PressApi; s
             {s.rumor && <div className="np-art-note">Gerücht – nicht bestätigt</div>}
           </div>
           <div className="np-art-main">
-            {s.dek && <div className="np-dek">{s.dek}</div>}
-            {s.body.map((p, i) => <p key={i} className={i === 0 ? 'np-art-first' : 'np-art-p'}>{p}</p>)}
+            {s.dek && <div className="np-dek"><LinkedText g={g} text={s.dek} people={named} /></div>}
+            {s.body.map((p, i) => <p key={i} className={i === 0 ? 'np-art-first' : 'np-art-p'}><LinkedText g={g} text={p} people={named} /></p>)}
             {s.results && s.results.length > 0 && (
               <div className="np-art-res">
                 <div className="np-sec">Ergebnisse</div>
