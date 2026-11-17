@@ -1019,6 +1019,11 @@ export const INFO_TEXTS = {
     text: 'Ein Scout beobachtet einen Spieler über Tage bis Wochen und kostet Reisegeld. Danach sind Stärke, Potenzial und Wert fast genau bekannt. Jeder Scouting-Mitarbeiter übernimmt einen weiteren Auftrag; sind alle unterwegs, wird vorgemerkt. Mit Strg/Umschalt wählst du mehrere Spieler und scoutest sie per Rechtsklick gemeinsam. Berichte veralten nach einigen Jahren.',
     wiki: 'transfer-pool',
   },
+  clubJugend: {
+    title: 'Jugend eines Vereins',
+    text: 'Die Jugendspieler des Vereins mit Name, Alter und Position. Stärke und Potenzial fremder Jugendlicher kennst du meist nicht („?“) – erst wenn du genug über sie weißt, erscheint eine Spanne. „Scouten“ schickt einen Scout los; der Bericht steht danach unter Transfers › Scouting und im Spielerpool unter „Gescoutet“.',
+    wiki: 'club-profile',
+  },
   beobachtung: {
     title: 'Beobachtung',
     text: 'Spieler auf deiner Liste werden von den Scouts verfolgt. Je länger, desto genauer werden Potenzial-Spanne und Persönlichkeit.',

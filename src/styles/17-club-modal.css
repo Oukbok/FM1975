@@ -113,3 +113,15 @@
 .cmx-fac .dbox-body { overflow: hidden !important; display: flex; flex-direction: column; justify-content: flex-start; padding-right: 16px; }
 .cmx-fac .dmeter { flex: 1 1 0; min-height: 0; max-height: 46px; padding: 0; grid-template-columns: 220px minmax(0, 1fr) max-content; font-size: 15px; line-height: 1.2; }
 .cmx-fac .dmeter-track { height: 7px; }
+
+/* Reiter „Jugend“: unbekannte Werte als „?“ (components/club/YouthTab.tsx) */
+.cmx-unk { display: inline-block; min-width: 22px; text-align: center; font-weight: 700; color: var(--text-4); cursor: help; }
+.cmx-ymsg { color: var(--text); font-weight: 600; }
+.cmx-youth th.cmx-yname { width: 26%; }
+.cmx-youth th.cmx-yw { width: 84px; }
+.cmx-youth th.cmx-yk { width: 104px; }
+.cmx-youth th.cmx-ypos { width: 110px; }
+.cmx-youth th.cmx-yteam { width: 120px; }
+.cmx-youth th.cmx-ypot { width: 150px; }
+.cmx-youth th.cmx-yact { width: 150px; }
+.dtable[data-fixed].cmx-youth td:last-child { overflow: visible; text-overflow: clip; }

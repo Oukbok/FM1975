@@ -1,7 +1,7 @@
 // =============================================================================
 // ClubModal — Vereinsprofil im Football-Manager-Stil (großes Popup mit Reitern)
 //   Kopf (immer sichtbar): Wappen | Name, Stadt, Liga | Platz, Ø Stärke, Ansehen
-//   Reiter: Übersicht · Kader · Verein · Transfers · Historie (in src/components/club/) · Erfolge (views/verein/trophies/)
+//   Reiter: Übersicht · Kader · Jugend · Verein · Transfers · Historie (in src/components/club/) · Erfolge (views/verein/trophies/)
 // Geöffnet wird es überall über <ClubLink> (club/ClubProfileContext.tsx).
 // =============================================================================
 import { useEffect, useState } from 'react';
@@ -20,11 +20,12 @@ import TransfersTab from './club/TransfersTab';
 import HistoryTab from './club/HistoryTab';
 import OverviewTab from './club/OverviewTab';
 import SquadTab from './club/SquadTab';
+import YouthTab from './club/YouthTab';
 import { HonourStrip } from '../views/verein/honours/HonoursView';
 import { TrophyCabinet } from '../views/verein/trophies/TrophyCabinet';
 
-export type ClubTabKey = 'overview' | 'squad' | 'club' | 'transfers' | 'history' | 'trophies';
-const TABS: [ClubTabKey, string][] = [['overview', 'Übersicht'], ['squad', 'Kader'], ['club', 'Verein'], ['transfers', 'Transfers'], ['history', 'Historie'], ['trophies', 'Erfolge']];
+export type ClubTabKey = 'overview' | 'squad' | 'youth' | 'club' | 'transfers' | 'history' | 'trophies';
+const TABS: [ClubTabKey, string][] = [['overview', 'Übersicht'], ['squad', 'Kader'], ['youth', 'Jugend'], ['club', 'Verein'], ['transfers', 'Transfers'], ['history', 'Historie'], ['trophies', 'Erfolge']];
 
 export default function ClubModal({ g, clubId, nonce, onChange, onClose, onBack, zIndex }: {
   g: Game; clubId: string; nonce: number; onChange: () => void; onClose: () => void; onBack?: () => void; zIndex?: number;
@@ -83,6 +84,7 @@ export default function ClubModal({ g, clubId, nonce, onChange, onClose, onBack,
         <div className={`mx-body mx-grid cmx-body ${tab === 'transfers' ? 'cmx-trgrid' : ''}`}>
           {tab === 'overview' && <OverviewTab {...props} />}
           {tab === 'squad' && <SquadTab {...props} onTalk={onTalk} talkErr={talkErr} />}
+          {tab === 'youth' && <YouthTab {...props} onChange={onChange} />}
           {tab === 'club' && <ClubTab {...props} />}
           {tab === 'transfers' && <TransfersTab {...props} />}
           {tab === 'history' && <HistoryTab {...props} />}

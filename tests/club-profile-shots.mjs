@@ -61,9 +61,9 @@ async function overflowReport() {
 }
 
 async function shootProfile(tag) {
-  const tabs = ['Übersicht', 'Kader', 'Verein', 'Historie'];
+  const tabs = ['Übersicht', 'Kader', 'Jugend', 'Verein', 'Transfers', 'Historie'];
   for (let i = 0; i < tabs.length; i++) {
-    await page.locator('.cmx-tabs .tab').nth(i).click();
+    await page.locator('.cmx-tabs .tab', { hasText: new RegExp(`^${tabs[i]}$`) }).click();
     await page.waitForTimeout(250);
     const file = `${outDir}/${prefix}_${tag}_${i + 1}_${tabs[i].replace(/[^A-Za-z]/g, '')}.png`;
     await page.screenshot({ path: file });
@@ -82,6 +82,34 @@ await page.waitForTimeout(300);
 await page.locator('.cmp-table tbody tr:not(.me) .club-link').first().click();
 await page.waitForSelector('.cmx-modal');
 await shootProfile('gegner');
+
+// Reiter „Jugend“: fremde Jugend meist „?“, Scouten legt einen Auftrag an
+let scoutedName = null;
+{
+  await page.locator('.cmx-tabs .tab', { hasText: /^Jugend$/ }).click();
+  await page.waitForTimeout(250);
+  const rows = page.locator('.cmx-youth tbody tr');
+  const n = await rows.count();
+  const unk = await page.locator('.cmx-youth tbody .cmx-unk').count();
+  const pids = await rows.evaluateAll((xs) => xs.filter((x) => !x.getAttribute('data-pid')).length);
+  console.log(`Gegner / Jugend: ${n} Jugendspieler, ${unk} unbekannte Werte („?“)${pids ? `, ${pids} Zeilen ohne data-pid` : ''}`);
+  if (!n) errors.push('Gegner / Jugend: keine Jugendspieler');
+  if (pids) errors.push('Gegner / Jugend: Zeilen ohne data-pid');
+  const btn = page.locator('.cmx-youth tbody button:has-text("Scouten")').first();
+  if (await btn.count()) {
+    const row = btn.locator('xpath=ancestor::tr');
+    const pid = await row.getAttribute('data-pid');
+    scoutedName = (await row.locator('.mk-pname').textContent())?.trim();
+    const box = await page.locator('.cmx-modal').boundingBox();
+    await btn.click();
+    await page.waitForTimeout(250);
+    const after = await page.locator(`.cmx-youth tbody tr[data-pid="${pid}"] button`).textContent().catch(() => '');
+    const box2 = await page.locator('.cmx-modal').boundingBox();
+    if (box && box2 && (Math.abs(box.width - box2.width) > 1 || Math.abs(box.height - box2.height) > 1)) errors.push('Jugend: Fenstergröße hat sich beim Scouten geändert');
+    console.log(`Jugend / Scouten: ${scoutedName} → ${after?.trim()} · ${(await page.locator('.cmx-ymsg').textContent().catch(() => ''))}`);
+    await page.screenshot({ path: `${outDir}/${prefix}_gegner_jugend_scout.png` });
+  } else console.log('Jugend / Scouten: kein Knopf frei');
+}
 
 // Spielerprofil aus dem Kader + zurück über den Vereinsnamen
 await page.locator('.cmx-tabs .tab').nth(1).click();
@@ -136,7 +164,30 @@ if (process.env.SAVE) {
 await page.locator('.cmp-table tbody tr.me .club-link').first().click();
 await page.waitForSelector('.cmx-modal');
 await shootProfile('eigener');
+{
+  await page.locator('.cmx-tabs .tab', { hasText: /^Jugend$/ }).click();
+  await page.waitForTimeout(200);
+  const unk = await page.locator('.cmx-youth tbody .cmx-unk').count();
+  console.log(`Eigener Verein / Jugend: ${await page.locator('.cmx-youth tbody tr').count()} Spieler, ${unk} „?“`);
+  if (unk) errors.push('Eigener Verein / Jugend: eigene Jugendspieler unbekannt');
+}
 await closeProfile();
+
+// 3b) Gescouteter Jugendspieler erscheint unter Transfers › Scouting
+if (scoutedName) {
+  await page.locator('.hd-nav-item:has-text("Transfers")').click();
+  await page.waitForTimeout(250);
+  await page.locator('.tn-sub-item:has-text("Scouting")').first().click();
+  await page.waitForTimeout(400);
+  const seen = await page.locator('.app-main', { hasText: scoutedName }).count();
+  console.log(`Transfers › Scouting: ${scoutedName} ${seen ? 'gefunden' : 'FEHLT'}`);
+  if (!seen) errors.push(`Transfers › Scouting: ${scoutedName} fehlt`);
+  await page.screenshot({ path: `${outDir}/${prefix}_scouting_jugend.png` });
+  await page.locator('.hd-nav-item:has-text("Statistiken")').click();
+  await page.waitForTimeout(250);
+  await page.locator('.tn-sub-item:has-text("Liga")').first().click();
+  await page.waitForTimeout(300);
+}
 
 // 4) Aufruf aus der Zentrale (Tabelle) und dem Spielplan
 await page.locator('.hd-nav-item').first().click();
