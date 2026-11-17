@@ -1,7 +1,8 @@
 // =============================================================================
 // AUFSTELLUNG › SPIELPLAN (Mockup Pascal): oben Leiste „Nächstes Pflichtspiel“
 // mit Fanbild, links der eigene Spielplan nach Monaten (Anzeige Alle/Heim/Auswärts,
-// Hin-/Rückrunde), rechts Saisonbilanz und der letzte/nächste Spieltag der Liga.
+// Hin-/Rückrunde), rechts Saisonbilanz und alle Wettbewerbe der Saison mit Trophäe
+// und Stand (game/ownCompetitions.ts).
 // Bausteine fixtures/parts.tsx, CSS `.fxp-*` in 28-fixtures.css.
 // =============================================================================
 import { useMemo, useState } from 'react';
@@ -17,10 +18,10 @@ import { resultFor } from '../shared';
 import { moveLabel } from '../../game/fixtureWatch';
 import { nextOpponent } from '../../game/opponentView';
 import type { Screen } from '../../shell/navigation';
-import { clubCodes, FixtureStrip } from './fixtures/parts';
+import { CompRow, FixtureStrip } from './fixtures/parts';
+import { ownCompetitions } from '../../game/ownCompetitions';
 
 const MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
-const dm = (d: string) => `${Number(d.slice(8, 10))}.${Number(d.slice(5, 7))}.`;
 
 function bilanz(ms: Match[], clubId: string) {
   let w = 0, d = 0, l = 0, gf = 0, ga = 0;
@@ -53,14 +54,7 @@ export function FixturesView({ g, onWatch, onGoto }: { g: Game; onWatch: (id: st
   const w = home.w + away.w, d = home.d + away.d, l = home.l + away.l;
   const winPts = g.pointSystem === '3-point' ? 3 : 2;
   const pts = w * winPts + d;
-  const lastMd = played.length ? played[played.length - 1].matchday : null;
-  const showMd = lastMd ?? nextLeague?.matchday ?? null;
-  const mdMatches = showMd != null ? g.fixtures.filter((m) => m.matchday === showMd) : [];
-  const codes = useMemo(() => {
-    const names: Record<string, string> = {};
-    for (const m of mdMatches) for (const id of [m.homeClubId, m.awayClubId]) names[id] = g.clubs[id]?.shortName ?? g.clubs[id]?.name ?? id;
-    return clubCodes(names);
-  }, [mdMatches, g.clubs]);
+  const comps = ownCompetitions(g);
 
   const rows = myMatches.filter((m) => halfOf(m) === half && (side === 'all' || (side === 'home') === (m.homeClubId === mid)));
   const nx = nextOpponent(g);
@@ -134,28 +128,8 @@ export function FixturesView({ g, onWatch, onGoto }: { g: Game; onWatch: (id: st
         <KV k="Ø Tore pro Spiel" v={played.length ? ((home.gf + away.gf) / played.length).toFixed(2) : '–'} />
       </DashBox>
 
-      <DashBox title={showMd != null ? `${showMd}. Spieltag` : 'Spieltag'} className="fxp-md-box" right={lastMd ? 'Ergebnisse' : 'Paarungen'}>
-        {mdMatches.length ? (
-          <div className="fxp-mdlist">
-            {mdMatches.map((m) => {
-              const mine = m.homeClubId === mid || m.awayClubId === mid;
-              const team = (id: string, right: boolean) => (
-                <ClubLink id={id} className={`fxp-mdt ${right ? 'r' : ''}`}>
-                  {!right && g.clubs[id] && <ClubCrest club={g.clubs[id]} size={24} />}
-                  <span title={g.clubs[id]?.name}>{codes[id]}</span>
-                  {right && g.clubs[id] && <ClubCrest club={g.clubs[id]} size={24} />}
-                </ClubLink>
-              );
-              return (
-                <div key={m.id} className={`fxp-mdrow ${mine ? 'me' : ''} ${m.status === 'finished' ? 'clickable' : ''}`} onClick={() => m.status === 'finished' && onWatch(m.id)}>
-                  {team(m.homeClubId, false)}
-                  <span className="fxp-mdres">{m.result ? `${m.result.homeGoals}:${m.result.awayGoals}` : m.moved?.makeup ? dm(m.date) : '–:–'}</span>
-                  {team(m.awayClubId, true)}
-                </div>
-              );
-            })}
-          </div>
-        ) : <Empty icon="schedule">Kein Spieltag.</Empty>}
+      <DashBox title="Wettbewerbe" className="fxp-md-box" info="wettbewerbeSaison" right={g.season}>
+        <div className="fxp-comps">{comps.map((c) => <CompRow key={c.key} c={c} />)}</div>
       </DashBox>
     </div>
   );

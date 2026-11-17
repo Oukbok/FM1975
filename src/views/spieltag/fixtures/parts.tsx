@@ -10,6 +10,9 @@ import { fanPhoto } from '../../../data/fixtureImages';
 import { CalendarEngine } from '../../../engine/calendar';
 import type { Game } from '../../../game/state';
 import { oppName, type NextOpp } from '../../../game/opponentView';
+import type { OwnComp } from '../../../game/ownCompetitions';
+import { TrophyArt } from '../../verein/trophies/TrophyArt';
+import { trophyPhoto } from '../../../data/trophyImages';
 
 /** Gezeichnete Fankurve (Rückfall ohne Foto): Köpfe/Schultern in Reihen, nur Grautöne. */
 function CrowdArt() {
@@ -74,19 +77,30 @@ export function FixtureStrip({ g, nx, onOpponent }: { g: Game; nx: NextOpp | nul
   );
 }
 
-/** Kürzel aus drei Buchstaben: „Köln Rot“ → KÖR, „Karlsruhe“ → KAR; bei Doppelungen zweite Wahl. */
-export function clubCodes(names: Record<string, string>): Record<string, string> {
-  const first = (n: string) => {
-    const w = n.replace(/[^\p{L} ]/gu, '').trim().split(/\s+/);
-    return (w.length > 1 ? w[0].slice(0, 2) + w[w.length - 1][0] : w[0].slice(0, 3)).toUpperCase();
-  };
-  const second = (n: string) => {
-    const w = n.replace(/[^\p{L} ]/gu, '').trim().split(/\s+/);
-    return (w.length > 1 ? w[0][0] + w[w.length - 1].slice(0, 2) : w[0][0] + w[0].slice(-2)).toUpperCase();
-  };
-  const out: Record<string, string> = {};
-  const used = new Map<string, number>();
-  for (const n of Object.values(names)) used.set(first(n), (used.get(first(n)) ?? 0) + 1);
-  for (const [id, n] of Object.entries(names)) out[id] = (used.get(first(n)) ?? 0) > 1 ? second(n) : first(n);
-  return out;
+
+const STATE_DE: Record<OwnComp['state'], string> = { live: 'Im Rennen', out: 'Ausgeschieden', won: 'Gewonnen', wait: 'Noch nicht gestartet' };
+
+/** Eine Zeile „Wettbewerbe dieser Saison“: Trophäe | Name + Stand + Runden | letztes/nächstes Spiel. */
+export function CompRow({ c }: { c: OwnComp }) {
+  const photo = trophyPhoto(c.shape);
+  const n = c.steps?.n ?? 0;
+  const at = c.steps?.at ?? 0;
+  const liga = c.key === 'liga';
+  return (
+    <div className={`fxp-comp s-${c.state}`}>
+      <div className="fxp-trophy">{photo ? <img src={photo} alt="" /> : <TrophyArt shape={c.shape} />}</div>
+      <div className="fxp-cmain">
+        <div className="fxp-cname">{c.name}</div>
+        <div className="fxp-cstat"><span className={`fxp-pill s-${c.state}`}>{liga && c.state === 'live' ? 'Läuft' : STATE_DE[c.state]}</span><b>{c.status}</b></div>
+        {n > 0 && (liga
+          ? <div className="fxp-prog"><i style={{ width: `${(100 * at) / n}%` }} /><span>{at} von {n} Spielen</span></div>
+          : <div className="fxp-steps">{Array.from({ length: n }, (_, i) => <i key={i} className={i < at ? 'done' : i === at ? (c.state === 'out' ? 'lost' : c.state === 'won' ? 'done' : c.state === 'live' ? 'now' : '') : ''} />)}</div>)}
+      </div>
+      <div className="fxp-cside">
+        {c.last && <div className="fxp-cline"><span className="fxp-clab">Zuletzt</span><ClubLink id={c.last.oppId}>{c.last.opp}</ClubLink><em className={`fxp-res r-${c.last.res}`}>{c.last.score}</em></div>}
+        {c.next && <div className="fxp-cline"><span className="fxp-clab">Nächstes</span><ClubLink id={c.next.oppId}>{c.next.opp}</ClubLink><em className="fxp-res">{c.next.home ? 'Heim' : 'Ausw.'}</em></div>}
+        {!c.last && !c.next && <div className="fxp-cline none">{c.state === 'wait' ? 'Auslosung steht noch aus' : ''}</div>}
+      </div>
+    </div>
+  );
 }

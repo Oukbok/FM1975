@@ -15,6 +15,11 @@ export interface InfoText {
 
 export const INFO_TEXTS = {
   // ---------------------------------------------------------------- Spielplan
+  wettbewerbeSaison: {
+    title: 'Wettbewerbe dieser Saison',
+    text: 'Alle Wettbewerbe, in denen dein Verein in dieser Saison spielt: Liga, Landespokal, Europapokal und Supercup – mit Trophäe, erreichter Runde, letztem Ergebnis und nächstem Gegner. Die Punkte zeigen die Runden: gefüllt = überstanden, umrandet = aktuelle Runde, rot = hier ausgeschieden.',
+    wiki: 'match-calendar',
+  },
   spielplan: {
     title: 'Spielplan & Termine',
     text: 'Kein Verein spielt an zwei Tagen hintereinander – zwischen zwei Pflichtspielen liegen mindestens zwei Tage. Pokal und Europapokal haben eigene Wochen; Wetter kann Spiele absagen (früher oft, heute selten), das Nachholspiel liegt dann unter der Woche, spätestens vor den letzten zwei Spieltagen.',

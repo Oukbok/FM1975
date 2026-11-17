@@ -72,15 +72,34 @@
 .fxp-wdl .l { background: var(--neg); }
 .fxp-wdl .e { flex: 1; background: rgba(var(--ink-rgb), .08); color: var(--text-3); }
 
-/* Spieltag */
+/* Wettbewerbe dieser Saison */
 .fxp-md-box .dbox-body { overflow-y: auto; }
-.fxp-mdlist { display: flex; flex-direction: column; }
-.fxp-mdrow { display: grid; grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr); align-items: center; min-height: 34px; border-bottom: 1px solid var(--border-soft); }
-.fxp-mdrow.clickable { cursor: pointer; }
-.fxp-mdrow.clickable:hover { background: rgba(var(--ink-rgb), .04); }
-.fxp-mdrow.me { background: var(--rl-me-bg, rgba(var(--ink-rgb), .06)); color: var(--club-accent, var(--accent)); }
-.fxp-mdrow.me .fxp-mdt span { color: var(--club-accent, var(--accent)); }
-.fxp-mdt { display: inline-flex; align-items: center; gap: 14px; font-size: 16px; font-weight: 700; justify-self: center; }
-.fxp-mdt span { min-width: 40px; }
-.fxp-mdt.r span { text-align: left; }
-.fxp-mdres { justify-self: center; padding: 2px 8px; border-radius: 4px; background: rgba(var(--ink-rgb), .06); font-weight: 800; font-size: 16px; }
+.fxp-comps { display: flex; flex-direction: column; }
+.fxp-comp { display: grid; grid-template-columns: 64px minmax(0, 1fr) minmax(0, 0.95fr); align-items: center; column-gap: 14px; min-height: 92px; padding: 8px 0; border-bottom: 1px solid var(--border-soft); }
+.fxp-trophy { width: 64px; height: 72px; display: flex; align-items: center; justify-content: center; }
+.fxp-trophy svg, .fxp-trophy img { width: 100%; height: 100%; object-fit: contain; }
+.fxp-comp.s-out .fxp-trophy { filter: grayscale(1); opacity: .45; }
+.fxp-comp.s-wait .fxp-trophy { opacity: .7; }
+.fxp-cmain { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.fxp-cname { font-family: var(--font-display); font-size: 19px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fxp-cstat { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 14.5px; }
+.fxp-cstat b { font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fxp-pill { flex: 0 0 auto; padding: 1px 7px; border-radius: 3px; font-size: 11.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; border: 1px solid currentColor; }
+.fxp-pill.s-live { color: var(--club-accent, var(--accent)); }
+.fxp-pill.s-won { color: var(--pos); background: color-mix(in srgb, var(--pos) 12%, transparent); }
+.fxp-pill.s-out { color: var(--text-3); }
+.fxp-pill.s-wait { color: var(--text-3); border-style: dashed; }
+.fxp-steps { display: flex; gap: 5px; }
+.fxp-steps i { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid rgba(var(--ink-rgb), .28); }
+.fxp-steps i.done { background: var(--pos); border-color: var(--pos); }
+.fxp-steps i.now { border: 2.5px solid var(--club-accent, var(--accent)); }
+.fxp-steps i.lost { background: var(--neg); border-color: var(--neg); }
+.fxp-prog { position: relative; height: 16px; border-radius: 3px; background: rgba(var(--ink-rgb), .08); overflow: hidden; }
+.fxp-prog i { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(var(--club-accent-rgb, var(--ink-rgb)), .35); }
+.fxp-prog span { position: relative; display: block; padding-left: 6px; font-size: 11.5px; font-weight: 700; line-height: 16px; color: var(--text-2); }
+.fxp-cside { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.fxp-cline { display: grid; grid-template-columns: 62px minmax(0, 1fr) auto; align-items: center; gap: 8px; font-size: 14.5px; }
+.fxp-cline > .fxp-clab { font-size: 11.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--text-3); }
+.fxp-cline .club-link { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fxp-cline em { font-style: normal; min-width: 0; font-size: 13.5px; }
+.fxp-cline.none { display: block; color: var(--text-3); font-size: 13.5px; }
