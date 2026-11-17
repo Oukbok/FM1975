@@ -8,8 +8,6 @@ import { useState, type PointerEvent as RPE, type ReactNode } from 'react';
 import type { Player, Position } from '../../types';
 import { positionSuitability, suitabilityColor } from '../../engine/positions';
 import { PlayerForm, PlayerFreshness, PlayerMorale, MORALE_100, playerMorale100 } from '../status';
-import { InfoTip } from '../../ui/InfoTip';
-import type { InfoKey } from '../../data/infoTexts';
 import { PosTag } from '../PosBadge';
 
 export interface ListRow { p: Player; pos: Position | null; slotId?: string; benchIndex?: number }
@@ -39,12 +37,13 @@ function sortVal(r: ListRow, k: SortKey, idx: number): number | string {
   }
 }
 
-const COLS: [SortKey, string, string, InfoKey?][] = [
+// Kopfzeile ohne Info-Symbole (Wunsch Pascal: sie überschnitten sich mit den Spaltennamen); Erklärung per title.
+const COLS: [SortKey, string, string][] = [
   ['pos', 'Pos', 'Position in der Aufstellung bzw. Stammposition'],
   ['nr', 'Nr', 'Rückennummer'],
   ['name', 'Name', 'Name'],
-  ['eig', 'Eig', 'Eignung auf der Position (Reserve: Stammposition)', 'eignung'],
-  ['fr', 'Frische', 'Frische (Zustand)', 'frische'],
+  ['eig', 'Eig', 'Eignung auf der Position (Reserve: Stammposition)'],
+  ['fr', 'Frische', 'Frische (Zustand)'],
   ['form', 'Form', 'Form'],
   ['moral', 'Moral', 'Moral'],
   ['note', 'Ø Note', 'Durchschnittsnote der Saison'],
@@ -128,8 +127,8 @@ export default function SquadList({ xi, free = [], slotOrder = [], bench, reserv
     <div className="lu-list">
       <table className="lu-table">
         <thead>
-          <tr>{COLS.map(([k, label, title, info]) => (
-            <th key={k} title={title} className={`${sort === k ? 'on' : ''} lu-h-${k}`} onClick={() => setSort(k)}>{label}{info && <InfoTip k={info} />}</th>
+          <tr>{COLS.map(([k, label, title]) => (
+            <th key={k} title={title} className={`${sort === k ? 'on' : ''} lu-h-${k}`} onClick={() => setSort(k)}>{label}</th>
           ))}</tr>
         </thead>
         {section('Startelf', `${xi.length}/11`, 'xi', xi, undefined, xiBody())}

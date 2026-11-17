@@ -1,3 +1,4 @@
+import { retireLibero } from './liberoEra';
 import { rescueLegends } from './legendsGame';
 import { careerSeasonStart, careerSeasonSwitchFinish } from './careerGame';
 import { recordSeasonBriefing } from './seasonBriefing';
@@ -445,6 +446,7 @@ export function startNextSeason(g: Game): void {
   setSeasonGoal(g, calendar.currentDate);
   // Neue Saison, evtl. neue Epoche: Positionsstärken aller Spieler neu bewerten.
   setEraYear(Number(calendar.currentDate.slice(0, 4)));
+  retireLibero(g, Number(calendar.currentDate.slice(0, 4))); // ab 2000/01 keine Libero-Systeme/-Stammpositionen mehr
   for (const p of Object.values(g.players)) if (!p.isYouth) refreshOverall(p);
   // Weltspieler: Entwicklung, Karriereende, Nachrücker, Wechsel (game/worldPool.ts).
   worldPoolSeason(g);

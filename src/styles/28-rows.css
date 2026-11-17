@@ -197,3 +197,6 @@
 .dtable td.sq-shirt { overflow: visible; padding-top: 0; padding-bottom: 0; }
 .dtable td.sq-shirt .sel3 { min-width: 0; }
 .dtable th.sq-shirt-h, .dtable td.sq-shirt { width: 84px; }
+
+/* Stärke in der Aufstellung wie auf dem Transfermarkt (.mk-ov): UI-Schrift, fett, Zeilengröße (Wunsch Pascal). */
+.lu-table td.lu-strong { font-family: var(--font-ui); font-weight: 700; font-size: 16px; }

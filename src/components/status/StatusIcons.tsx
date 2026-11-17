@@ -7,7 +7,7 @@
 // zusätzlich daneben. Formen in components/iconPaths.ts (`STATUS_SHAPES`).
 // =============================================================================
 import { STATUS_SHAPES as S } from '../iconPaths';
-import { type StatusKind, STATUS_NOTE, STATUS_TITLE, statusColor, statusLevel, statusText, statusTipWord } from './statusScale';
+import { type StatusKind, STATUS_NOTE, STATUS_TITLE, statusLevel, statusTone, statusText, statusTipWord } from './statusScale';
 import { useStatusTip } from './StatusTip';
 
 interface Props {
@@ -26,9 +26,9 @@ function Frame({ kind, value, size = 18, showValue, className, children }: Props
   const v = Math.max(0, Math.min(100, Math.round(value)));
   const lvl = statusLevel(kind, v);
   const text = statusText(kind, v);
-  const tip = useStatusTip(STATUS_TITLE[kind], `${v}/100 – ${statusTipWord(kind, lvl)}`, statusColor(lvl, kind), STATUS_NOTE[kind]);
+  const tip = useStatusTip(STATUS_TITLE[kind], `${v}/100 – ${statusTipWord(kind, lvl)}`, statusTone(kind, v), STATUS_NOTE[kind]);
   return (
-    <span {...tip.handlers} className={`st-icon st-${kind} st-l${lvl}${className ? ` ${className}` : ''}`} style={{ color: statusColor(lvl, kind) }}
+    <span {...tip.handlers} className={`st-icon st-${kind} st-l${lvl}${className ? ` ${className}` : ''}`} style={{ color: statusTone(kind, v) }}
       aria-label={text} role="img" tabIndex={0}>
       <svg width={size} height={size} viewBox="0 0 24 24" overflow="visible" aria-hidden="true" focusable="false">{children}</svg>
       {showValue && <span className="st-val">{v}</span>}

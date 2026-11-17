@@ -12,6 +12,7 @@
 // =============================================================================
 
 import type { Position } from '../types';
+import { EXTRA_FORMATIONS } from './formationsExtra';
 
 /** Ein einzelner Positions-Slot auf dem Feld. */
 export interface FormationSlot {
@@ -257,6 +258,8 @@ export const FORMATIONS: Formation[] = [
       S('s10', 'MS', 40, 22), S('s11', 'HS', 62, 26),
     ],
   },
+  // Weitere Systeme (data/formationsExtra.ts)
+  ...EXTRA_FORMATIONS,
 ];
 
 /** Eingebaute Zuordnung Formation → Jahrzehnte (für den Editor: Standard/Änderungen). */
@@ -274,6 +277,16 @@ export const decadeOf = (year: number) => Math.max(1970, Math.min(2030, Math.flo
  */
 export const LIBERO_END = 2000;
 export const liberoOut = (year: number) => year >= LIBERO_END;
+/** Ausbildung endet früher (Wunsch Pascal): ab 1996 erzeugt und schult niemand mehr neue Liberos –
+ *  neue Spieler (engine/playerFactory.ts), Jugend, KI-Positionstraining und Kaderauffüllung werden Innenverteidiger. */
+export const LIBERO_TRAIN_END = 1996;
+export const liberoTrainOut = (year: number) => year >= LIBERO_TRAIN_END;
+/** Position eines neu erzeugten Spielers im Jahr `year` (Libero → Innenverteidiger ab LIBERO_TRAIN_END). */
+export const eraPosition = (pos: Position, year: number): Position => (pos === 'LIB' && liberoTrainOut(year) ? 'IV' : pos);
+/** Nachfolger der Libero-Systeme ab LIBERO_END (gleiche Zahl Verteidiger, game/liberoEra.ts). */
+export const LIBERO_SUCCESSOR: Record<string, string> = {
+  'libero-1-4-3-2': '5-3-2', 'libero-1-3-4-2': '4-4-2', 'libero-1-4-4-1': '5-4-1', 'libero-1-3-3-3': '4-3-3', 'libero-1-2-5-2': '3-5-2',
+};
 
 /** Jahr für die automatische Formationswahl ohne Jahresangabe (Kadererzeugung, lineupAI). */
 let formationYear = 1975;

@@ -65,5 +65,9 @@ export const STATUS_NOTE: Partial<Record<StatusKind, string>> = {
 export const statusWord = (kind: StatusKind, level: StatusLevel) => WORDS[kind][level - 1];
 export const statusTipWord = (kind: StatusKind, level: StatusLevel) => (TIP_WORDS[kind] ?? WORDS[kind])[level - 1];
 export const statusColor = (level: StatusLevel, kind?: StatusKind) => (kind === 'form' ? `var(--fg-${level})` : `var(--st-${level})`);
+/** Farbe eines Symbols nach Wert: Form (Daumen) und Moral (Smiley) färben sich bei denselben
+ *  Grenzen wie die Frische (90/75/60/45) von Grün über Gelb bis Rot (Wunsch Pascal). */
+export const statusTone = (kind: StatusKind, v: number) =>
+  (kind === 'form' || kind === 'moral' ? statusColor(statusLevel('frische', v)) : statusColor(statusLevel(kind, v), kind));
 /** Hover-Text, z. B. „Frische 83/100 – gut erholt“. */
 export const statusText = (kind: StatusKind, v: number) => `${STATUS_TITLE[kind]} ${v}/100 – ${statusTipWord(kind, statusLevel(kind, v))}`;

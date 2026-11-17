@@ -3,6 +3,7 @@
 // (vorher inline in App.tsx). Reihenfolge ist verbindlich; jede Migration ist
 // idempotent. Genutzt von App.tsx (Laden) und tests/season-test.ts.
 // =============================================================================
+import { retireLibero } from './liberoEra';
 import { bindMarketing } from './marketingGame';
 import { setHomeOrigin } from '../data/origins';
 import { bindRegistration } from './registrationGame';
@@ -398,6 +399,7 @@ export function prepareLoadedGame(g: Game): void {
   // Saison aller Länder bis heute nachspielen (ältere Spielstände).
   if (retireFullCountries(g) && g.world) g.world.live = undefined;
   if (g.world && g.world.live?.season !== g.season) worldLiveDaily(g, g.calendar.currentDate);
+  retireLibero(g, Number(g.season.slice(0, 4))); // ältere Stände: Liberos/Libero-Systeme nach 2000 (game/liberoEra.ts)
 }
 
 /** Abgelaufene Verträge von Kaderspielern (sollte es nicht geben): bis zum Ende der nächsten Saison verlängern. */

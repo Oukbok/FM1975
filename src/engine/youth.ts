@@ -15,7 +15,7 @@
 // Über "Hochziehen in den Profikader" wandert ein Talent in die A-Mannschaft.
 // =============================================================================
 
-import { liberoOut } from '../data/formations';
+import { eraPosition } from '../data/formations';
 import { ensurePositionSkill } from './positionSkill';
 import { footForSide } from './positions';
 import { baseMarketValue, hashSeed, mulberry32 } from './youthShared';
@@ -212,7 +212,7 @@ export function generateYouthPlayer(
   const { firstName, lastName } = makeName(origin, rand, currentYear - (age ?? 17));
   const pos0 = opts.positions?.length ? pick(opts.positions) : pick(YOUTH_POSITIONS);
   // Libero ausgestorben: niemand bildet mehr Liberos aus (Wunsch Pascal, data/formations.ts).
-  const pos: Position = pos0 === 'LIB' && liberoOut(currentYear) ? 'IV' : pos0;
+  const pos: Position = eraPosition(pos0, currentYear);
   const useAge = age != null
     ? Math.max(YOUTH_ENTRY_AGE, Math.min(19, Math.round(age)))
     : ri(16, 19);

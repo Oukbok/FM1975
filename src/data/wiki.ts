@@ -1078,6 +1078,23 @@ Die Formation wählst du oben im Spielfeld. Ganz oben stehen die **typischen Sys
 | 4-1-4-1 | ab 2010 | ein Sechser, gut im Pressing |
 | 3-4-3 | ab 2010 | mutig, viel Risiko |
 | 3-4-2-1 | ab 2010 | Dreierkette, Schienenspieler, zwei Zehner |
+| 3-3-1-3 | 70er | totaler Fußball, alle schieben mit |
+| 4-1-3-2 | 90er | Abräumer, breite Dreierreihe, zwei Spitzen |
+| 3-4-3 Raute | 90er | Raute im Mittelfeld, drei Stürmer |
+| 3-1-4-2 | 90er/2000er | Dreierkette mit Sechser davor |
+| 4-2-2-2 (Magisches Viereck) | 90er/2000er | zwei Sechser, zwei Zehner im Halbraum |
+| 5-2-1-2 | 90er/2000er | Fünferkette, Zehner, zwei Spitzen |
+| 3-4-1-2 | 2000er/2010er | Zehner hinter zwei Spitzen |
+| 3-6-1 | 2010er | massives Mittelfeld, eine Spitze |
+| 4-2-1-3 | ab 2010 | Doppelsechs, Zehner, drei Angreifer |
+| 5-2-3 | ab 2010 | Fünferkette, drei Angreifer |
+| 4-6-0 (ohne Stürmer) | ab 2010 | sechs Mittelfeldspieler rotieren in die Spitze |
+| 4-3-3 (falsche Neun) | ab 2010 | hängende Spitze statt Mittelstürmer |
+| WM 3-2-2-3 | historisch | das System der Großväter, nie typisch |
+
+**Libero ausgestorben:** Ab **1996** bildet niemand mehr neue Liberos aus – Jugend, neue Spieler und Positionstraining der KI werden Innenverteidiger. Ab der Saison **2000/01** stellen alle Vereine (auch deiner, beim Saisonwechsel) vom Libero-System auf das Nachfolgesystem mit gleich vielen Verteidigern um, und Spieler mit Stammposition Libero werden Innenverteidiger (Libero bleibt Nebenposition). Wer mag, wählt das Libero-System danach selbst wieder (**Aus der Mode**).
+
+**Fest einrasten:** Das Feld hat 66 Rasterpunkte – je Linie Außen, Halbräume und Zentrum plus Zwischenlinien (tiefer Sechser, Achter, hoher Achter, Zehner, hängende Spitze).
 | 5-4-1 | ab 2010 | der Bus vor dem Tor |
 
 **Der Libero stirbt aus:** Ab der Saison 2000/01 spielt kein Verein mehr mit freiem Mann – kein Trainer (auch keine KI) wählt ein Libero-System, die Jugend bildet keine Liberos mehr aus, und die KI lässt niemanden mehr auf Libero umschulen. Bestehende Liberos spielen weiter, meist in der Innenverteidigung; lernen kann man die Position noch, nur nutzt sie keiner mehr.

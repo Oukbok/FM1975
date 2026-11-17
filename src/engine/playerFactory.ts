@@ -6,6 +6,7 @@
 import { Player, Position, PlayerAttributes, AttributeKey, createEmptyStats, potentialToStars, clampStars } from '../types';
 import { wageForOverall } from './economy';
 import { weightsFor, positionSuitability, footForSide } from './positions';
+import { eraPosition } from '../data/formations';
 import { ensurePositionSkill } from './positionSkill';
 import { initialExperience } from './experience';
 import { bornWorkRate, groupOf } from './attributeAging';
@@ -115,7 +116,8 @@ function birthDate(age: number, year: number, rng: () => number): string {
 }
 
 export function createPlayer(spec: NewPlayerSpec): Player {
-  const { rng, pos, age, strength, year, date } = spec;
+  const { rng, age, strength, year, date } = spec;
+  const pos = eraPosition(spec.pos, year); // ab 1996 keine neuen Liberos (data/formations.ts)
   const origin = spec.origin ?? pickOrigin(year, rng, spec.domestic);
   const { firstName, lastName } = makeName(origin, rng, year - age);
   const attributes = makePositionAttributes(pos, strength, age, rng);

@@ -14,6 +14,7 @@
 // Abwehr 15 % (übliche Verteilung in Profiligen); ≈ 75 % der Tore mit Vorlage; Gelbe
 // Karten je Team und Spiel 1975 ≈ 1,2 → heute ≈ 2,0 (Kartenstatistiken der Bundesliga).
 // =============================================================================
+import { eraPosition } from '../data/formations';
 import type { Club, CupState, Player, Position } from '../types';
 import type { XTuple } from '../types/euro2';
 import { ORIGINS, firstNamesFor } from '../data/origins';
@@ -77,7 +78,8 @@ const SLOTS: Position[] = ['TW', 'TW', 'IV', 'IV', 'RV', 'LV', 'LIB', 'DM', 'ZM'
 export function phantomRoster(cup: CupState, clubId: string, country: string, strength: number, year: number): Pl[] {
   const origin = ORIGINS[COUNTRY_ORIGIN[country] ?? 'eng'] ?? ORIGINS.eng;
   const people = (cup.xpeople ??= {});
-  return SLOTS.map((pos, slot) => {
+  return SLOTS.map((pos0, slot) => {
+    const pos = eraPosition(pos0, year); // ab 1996 keine neuen Liberos
     const gen = Math.floor((year + slot * 3) / 6);
     const key = `${clubId}:${slot}:${gen}`;
     const id = `x${hashKey(key).toString(36)}`;
