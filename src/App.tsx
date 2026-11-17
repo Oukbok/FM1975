@@ -1,6 +1,6 @@
 import { applyDataset } from './data/dataset/apply';
 import { BUILTIN_ID } from './data/dataset/builtin';
-import { cachedDataset, hydrateDatasets } from './data/dataset/storage';
+import { cachedDataset, hydrateDatasets, onDatasetsChanged } from './data/dataset/storage';
 import { hydrateClubOverrides } from './data/clubOverrides';
 import { setCurrencyDate, yearOf } from './engine/economy';
 import { AppSettings, initSaveStore, loadGame, loadSettings, saveSettings } from './engine/save';
@@ -52,7 +52,11 @@ export default function App() {
   // Laden erscheinen.
   useEffect(() => { hydrateClubOverrides().then(rerender).catch(() => {}); }, [rerender]);
   // Eigene Datensätze (IndexedDB) in den Zwischenspeicher laden.
-  useEffect(() => { hydrateDatasets().then(rerender).catch(() => {}); }, [rerender]);
+  // Speichert der Editor (anderes Fenster) einen Datensatz oder wechselt den aktiven, neu einlesen.
+  useEffect(() => {
+    hydrateDatasets().then(rerender).catch(() => {});
+    return onDatasetsChanged(() => { hydrateDatasets().then(rerender).catch(() => {}); });
+  }, [rerender]);
 
   // --- Neues Spiel starten ---
   const startGame = useCallback(async (opts: NewGameOptions, prebuilt?: Game) => {

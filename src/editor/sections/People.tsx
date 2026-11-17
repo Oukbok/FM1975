@@ -14,7 +14,7 @@ export function GeneralSection({ ds, onChange }: P) {
   const c = ds.clubs;
   return (
     <div className="ed-section">
-      <Explain>Name und Beschreibung deines Datensatzes – so erscheint er im Spiel unter <b>Datensätze</b> und bei „Neues Spiel“. Die <b>ID</b> ist der Dateiname und der Speicherschlüssel: nur Kleinbuchstaben, Ziffern, <code>-</code> und <code>_</code>. Ein Datensatz mit gleicher ID ersetzt beim Übernehmen den alten.</Explain>
+      <Explain>Name und Beschreibung deines Datensatzes – so erscheint er im Spiel unter <b>Datensätze</b> und bei „Neues Spiel“. Die <b>ID</b> ist der Dateiname und der Speicherschlüssel: nur Kleinbuchstaben, Ziffern, <code>-</code> und <code>_</code>. Ein Datensatz mit gleicher ID ersetzt beim Speichern den alten; „Speichern unter …“ (Bereich Datensätze) legt eine Kopie mit neuer ID an.</Explain>
       <FieldForm obj={m} onChange={onChange} cols={[
         { key: 'id', label: 'ID', hint: 'z. B. meine-liga-1975' },
         { key: 'name', label: 'Name' },
@@ -29,6 +29,7 @@ export function GeneralSection({ ds, onChange }: P) {
         <Stat n={ds.timeline.length} l="Chronik" /><Stat n={ds.legendsV2?.length ?? 100} l="Legenden" />
         <Stat n={Object.keys(ds.crests ?? {}).length} l="Wappen" /><Stat n={Object.keys(ds.kits ?? {}).length} l="Trikotsätze" />
         <Stat n={(ds.playerPhotos ?? []).reduce((n, e) => n + (e.photos?.length ?? 0), 0)} l="Spielerfotos" />
+        <Stat n={(ds.playerPhotos ?? []).filter((e) => !!e.portrait).length} l="Spielerbilder" />
       </div>
     </div>
   );

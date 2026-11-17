@@ -178,7 +178,7 @@ export function checkDataset(d: Dataset): Issue[] {
     }
   }
 
-  // Spielerfotos: Bezug (Legende oder Name), bekannte Legende, gültige Bilder, Größe.
+  // Spielerfotos/Spielerbilder: Bezug (Legende oder Name), bekannte Legende, gültige Bilder, Größe.
   const legIds = new Set((Array.isArray(d.legendsV2) ? d.legendsV2 : BUILTIN_LEGENDS).map((l) => l.id));
   const photoIds = new Set<string>();
   let photoBytes = 0;
@@ -194,7 +194,11 @@ export function checkDataset(d: Dataset): Issue[] {
     if (e.name?.trim() && !e.legendId && e.name.trim().split(/\s+/).length < 2) warn(A, `${nm}: bitte den vollen Namen (Vor- und Nachname) wie im Spiel eintragen.`, e.id);
     if (e.born != null && !(e.born >= 1900 && e.born <= 2100)) err(A, `${nm}: Geburtsjahr ${e.born} ist ungültig.`, e.id);
     if (e.club && !all.has(e.club) && !Object.values(d.worldData ?? {}).some((w) => w.clubs?.some((c) => c.id === e.club))) warn(A, `${nm}: Verein „${e.club}“ gibt es im Datensatz nicht.`, e.id);
-    if (!e.photos?.length) warn(A, `${nm}: noch kein Foto – der Eintrag wirkt nicht.`, e.id);
+    if (!e.photos?.length && !e.portrait) warn(A, `${nm}: weder Spielerbild noch Foto – der Eintrag wirkt nicht.`, e.id);
+    if (e.portrait != null) {
+      if (!/^data:image\/(webp|jpeg|png);base64,/.test(e.portrait)) err(A, `${nm}: das Spielerbild ist kein gültiges Bild (WebP/JPEG/PNG).`, e.id);
+      photoBytes += e.portrait.length * 0.75;
+    }
     for (const ph of e.photos ?? []) {
       if (!/^data:image\/(webp|jpeg|png);base64,/.test(ph.img ?? '')) err(A, `${nm}: ein Foto ist kein gültiges Bild (WebP/JPEG/PNG).`, e.id);
       if (!isPhotoPose(ph.pose)) err(A, `${nm}: unbekannte Art „${ph.pose}“.`, e.id);

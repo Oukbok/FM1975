@@ -19,6 +19,7 @@ import { setEventFrequency } from '../engine/randomEvents';
 import { setWikiOpener } from '../ui/InfoTip';
 import { applyClubAccent } from '../ui/clubAccent';
 import { setCrestDate } from '../data/dataset/apply';
+import { setPortraitGame } from '../game/playerPortraits';
 import { fmtDateFull } from '../ui/format';
 import { HeaderBar } from './HeaderBar';
 import { preloadEarlyParts, preloadShellParts } from './lazyParts';
@@ -64,6 +65,8 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
 
   const g = game;
   setCrestDate(g.calendar.currentDate); // spätere Wappen aus dem Datensatz (vor dem Rendern der Kinder)
+  setPortraitGame(g); // hochgeladene Spielerbilder aus dem Datensatz (game/playerPortraits.ts)
+  useEffect(() => () => setPortraitGame(null), []);
   const myClub = g.clubs[g.managedClubId];
   // Look „Akte“: Vereinsfarbe (bzw. Zweitfarbe, wenn nah am Dunkelblau) als Akzent (ui/clubAccent.ts).
   useEffect(() => { applyClubAccent(myClub?.colors); }, [myClub?.colors?.primary, myClub?.colors?.secondary]);

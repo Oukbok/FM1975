@@ -8,6 +8,7 @@
 import { useState } from 'react';
 import { Player, Club } from '../types';
 import { faceImageFor, faceFailed, markFaceFailed, type FaceImage } from './faces/faceLookup';
+import { portraitOf } from '../game/playerPortraits';
 
 // -----------------------------------------------------------------------------
 // Deterministischer Hash aus String (für stabilen Seed pro Spieler)
@@ -363,9 +364,17 @@ interface Props {
 
 type FacePerson = Pick<Player, 'id' | 'face' | 'dateOfBirth' | 'age'>;
 
-/** Foto-Adresse einer Person oder null (dann gezeichnetes Gesicht). */
+/** Schlüssel eines hochgeladenen Spielerbilds (Datensatz, game/playerPortraits.ts). */
+export const OWN_PORTRAIT_KEY = 'own';
+
+/** Foto-Adresse einer Person oder null (dann gezeichnetes Gesicht). Ein hochgeladenes
+ *  Spielerbild aus dem Datensatz hat Vorrang vor den Gesichtsbildern. */
 export function faceSrcOf(player: FacePerson, staff?: boolean, year?: number): FaceImage | null {
   if (!player.id) return null;
+  if (!staff) {
+    const own = portraitOf(player.id);
+    if (own) return { src: own, mask: null, key: OWN_PORTRAIT_KEY };
+  }
   const birthYear = player.dateOfBirth ? Number(player.dateOfBirth.slice(0, 4)) : undefined;
   const img = faceImageFor({ id: player.id, face: player.face, birthYear, age: player.age, staff, year });
   return img && !faceFailed(img.src) ? img : null;
@@ -407,7 +416,7 @@ export default function PlayerAvatar(props: Props) {
   const primary = club?.colors.primary;
   const prio = priority ? { fetchpriority: 'high' } as Record<string, string> : undefined;
   return (
-    <span className={`pa-photo${loaded ? ' loaded' : ''}${className ? ` ${className}` : ''}`}
+    <span className={`pa-photo${loaded ? ' loaded' : ''}${img.key === OWN_PORTRAIT_KEY ? ' own' : ''}${className ? ` ${className}` : ''}`}
       data-pid={player.id || undefined} data-face={img.key}
       style={{ width: px }}
       role="img" aria-label={`Porträt ${player.fullName}`}>

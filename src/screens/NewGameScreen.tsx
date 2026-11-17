@@ -1,7 +1,6 @@
 import Icon, { type IconName } from '../components/Icon';
 import { applyDataset, setCrestDate } from '../data/dataset/apply';
-import { BUILTIN_ID } from '../data/dataset/builtin';
-import { cachedDataset } from '../data/dataset/storage';
+import { activeDatasetIdCached, cachedDataset } from '../data/dataset/storage';
 import { AppSettings } from '../engine/save';
 import { createNewGame } from '../game/newGame';
 import type { Game } from '../game/state';
@@ -50,9 +49,11 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
 }) {
   const [step, setStep] = useState(0);
   const [d, setD] = useState<NewGameDraft>(() => {
-    applyDataset(cachedDataset(BUILTIN_ID)); // Vorschau immer auf dem gewählten Datensatz
+    // Vorauswahl = „Im Spiel aktiv“ (Editor › Datensätze bzw. Hauptmenü › Datensätze); Vorschau immer auf dem gewählten Datensatz.
+    const ds0 = activeDatasetIdCached();
+    applyDataset(cachedDataset(ds0));
     return {
-      datasetId: BUILTIN_ID, difficulty: 'normal', injuries: true, historic: 'historic', speedMs: defaults.speedMs,
+      datasetId: ds0, difficulty: 'normal', injuries: true, historic: 'historic', speedMs: defaults.speedMs,
       briefingAuto: defaults.briefingAuto !== false, briefingIntro: defaults.briefingIntro !== false, legends: true,
       mode: 'manager', offerSeed: Math.floor(Math.random() * 2 ** 31),
       league: 'tier1', clubId: topClub(), startYear: 1975, country: 'ger',

@@ -36,6 +36,10 @@
   transition: opacity .15s ease;
 }
 .pa-photo.loaded > .pa-kit { opacity: 1; }
+/* Hochgeladenes Spielerbild (Datensatz): bereits im Kopf-Format 512:600 zugeschnitten,
+   nicht freigestellt – füllt die Box, ohne Verschiebung, kleine Ecken. */
+.pa-photo.own > img { transform: none; object-fit: cover; object-position: center; border-radius: 4px; }
+.pa-photo.own::before { border-radius: 4px; left: 0; right: 0; top: 0; bottom: 0; }
 
 /* Miniatur-Kopf in Listen (components/FaceThumb.tsx): feste Größe, Zeilenhöhe bleibt */
 .fthumb { display: inline-block; flex: none; vertical-align: middle; line-height: 0; }

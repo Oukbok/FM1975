@@ -34,6 +34,8 @@ export interface DatasetMeta {
   description?: string;
   created: string;
   updated?: string;
+  /** Zeitpunkt des letzten Speicherns (ISO mit Uhrzeit, Editor › Datensätze). Optional. */
+  savedAt?: string;
 }
 
 /** Nur die serialisierbaren Felder einer Einrichtung (Effekte bleiben im Code). */
@@ -81,6 +83,11 @@ export interface PlayerPhotoSet {
   born?: number;
   club?: string;
   photos: PlayerPhoto[];
+  /**
+   * Spielerbild (Porträt, Wunsch Pascal): ersetzt im Spiel überall das Gesicht (Profil,
+   * Listen, Presse). Data-URL WebP/JPEG im Kopf-Format 512 × 600 (Editor schneidet zu).
+   */
+  portrait?: string;
 }
 
 export interface Dataset {
@@ -167,6 +174,7 @@ export interface DatasetSummary {
   author?: string;
   description?: string;
   updated?: string;
+  savedAt?: string;
   clubs: number;
   builtin: boolean;
 }

@@ -5,14 +5,15 @@
 // =============================================================================
 import { createContext, useContext } from 'react';
 
-export type Sec = 'general' | 'graphics' | 'changes' | 'clubs' | 'world' | 'pool' | 'europe' | 'timeline' | 'leagues' | 'facilities' | 'staff' | 'marketing' | 'names' | 'legends' | 'photos' | 'formations' | 'economy' | 'history' | 'check';
+export type Sec = 'home' | 'general' | 'graphics' | 'changes' | 'clubs' | 'world' | 'pool' | 'europe' | 'timeline' | 'leagues' | 'facilities' | 'staff' | 'marketing' | 'names' | 'legends' | 'photos' | 'formations' | 'economy' | 'history' | 'check';
 
 // Menü nach Kategorien, ohne Symbole (Wunsch Pascal).
 export const SECTIONS: { key: Sec; label: string; group: string; title: string }[] = [
+  { key: 'home', label: 'Datensätze', group: 'Datensatz', title: 'Datensätze: speichern, laden, exportieren, importieren, im Spiel verwenden' },
   { key: 'general', label: 'Allgemein', group: 'Datensatz', title: 'Allgemein' },
   { key: 'graphics', label: 'Grafikpakete', group: 'Datensatz', title: 'Grafikpakete: Wappen importieren & Vereins-IDs exportieren' },
   { key: 'changes', label: 'Änderungen', group: 'Datensatz', title: 'Änderungen gegenüber dem Standard' },
-  { key: 'check', label: 'Prüfen & Übernehmen', group: 'Datensatz', title: 'Prüfen & Übernehmen' },
+  { key: 'check', label: 'Prüfen', group: 'Datensatz', title: 'Prüfen & Speichern' },
   { key: 'clubs', label: 'Vereine', group: 'Vereine & Wettbewerbe', title: 'Vereine nach Land und Liga: Daten, Wappen & Trikots' },
   { key: 'world', label: 'Ligen je Saison', group: 'Vereine & Wettbewerbe', title: 'Weltdaten: Länder, Ligazusammensetzung je Saison' },
   { key: 'pool', label: 'Amateur-Pool', group: 'Vereine & Wettbewerbe', title: 'Amateur-Pool: Nachrücker für Auf- und Abstieg' },
@@ -20,7 +21,7 @@ export const SECTIONS: { key: Sec; label: string; group: string; title: string }
   { key: 'europe', label: 'Europa & Europapokal', group: 'Vereine & Wettbewerbe', title: 'Europa & Europapokal' },
   { key: 'names', label: 'Namen & Herkünfte', group: 'Spieler & Personal', title: 'Namen, Herkünfte & Ethnie' },
   { key: 'legends', label: 'Ausnahmetalente', group: 'Spieler & Personal', title: 'Ausnahmetalente der Fußballgeschichte' },
-  { key: 'photos', label: 'Spielerfotos', group: 'Spieler & Personal', title: 'Spielerfotos für Zeitung und Newscenter' },
+  { key: 'photos', label: 'Spielerbilder & Fotos', group: 'Spieler & Personal', title: 'Spielerbilder (Porträt) und Fotos für Zeitung und Newscenter' },
   { key: 'formations', label: 'Aufstellungen', group: 'Spieler & Personal', title: 'Aufstellungen je Epoche' },
   { key: 'staff', label: 'Mitarbeiter', group: 'Spieler & Personal', title: 'Mitarbeiter-Rollen' },
   { key: 'economy', label: 'Wirtschaft', group: 'Verein & Wirtschaft', title: 'Wirtschaft' },

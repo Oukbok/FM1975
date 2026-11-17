@@ -47,6 +47,37 @@ export async function loadWork(): Promise<Dataset | null> {
   try { const s = localStorage.getItem(LS_KEY); return s ? JSON.parse(s) as Dataset : null; } catch { return null; }
 }
 
+/** Zustand der Arbeitskopie: ungespeicherte Änderungen gegenüber der Bibliothek (Editor › Datensätze). */
+export interface WorkState { dirty: boolean }
+const STATE_KEY = 'state';
+const LS_STATE = 'fm1975_editor_state';
+
+export async function saveWorkState(st: WorkState): Promise<void> {
+  try {
+    const db = await open();
+    await new Promise<void>((res, rej) => {
+      const t = db.transaction(STORE, 'readwrite');
+      t.objectStore(STORE).put(st, STATE_KEY);
+      t.oncomplete = () => res();
+      t.onerror = () => rej(t.error);
+    });
+  } catch { try { localStorage.setItem(LS_STATE, JSON.stringify(st)); } catch { /* egal */ } }
+}
+
+export async function loadWorkState(): Promise<WorkState> {
+  try {
+    const db = await open();
+    const v = await new Promise<WorkState | undefined>((res, rej) => {
+      const r = db.transaction(STORE, 'readonly').objectStore(STORE).get(STATE_KEY);
+      r.onsuccess = () => res(r.result as WorkState | undefined);
+      r.onerror = () => rej(r.error);
+    });
+    if (v) return v;
+  } catch { /* Rückfall */ }
+  try { const s = localStorage.getItem(LS_STATE); if (s) return JSON.parse(s) as WorkState; } catch { /* egal */ }
+  return { dirty: false };
+}
+
 /** Bild verkleinern (max. 256 px Kantenlänge) und als Data-URL liefern. */
 export function imageToDataUrl(file: File, max = 256): Promise<string> {
   return new Promise((resolve, reject) => {

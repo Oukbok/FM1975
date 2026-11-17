@@ -15,7 +15,7 @@
     "test:marketing": "node scripts/run-ts.mjs tests/marketing-test.ts",
     "test:negotiation": "node scripts/run-ts.mjs tests/negotiation-test.ts",
     "test:saves": "node scripts/build.mjs && node tests/save-idb.mjs",
-    "test:editor": "node scripts/build.mjs && node tests/editor-ui.mjs && node tests/editor-qol.mjs",
+    "test:editor": "node scripts/build.mjs && node tests/editor-ui.mjs && node tests/editor-qol.mjs && node tests/dataset-lib.mjs",
     "test:business": "node scripts/run-ts.mjs tests/club-business-test.ts",
     "test:registration": "node scripts/run-ts.mjs tests/registration-test.ts",
     "test:national": "node scripts/run-ts.mjs tests/national-test.ts",

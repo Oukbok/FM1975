@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import Icon from '../components/Icon';
 import { builtinDataset, BUILTIN_ID } from '../data/dataset/builtin';
-import { cachedDataset, cachedSummaries, downloadDataset, readDatasetFile, removeDataset, storeDataset } from '../data/dataset/storage';
+import { activeDatasetIdCached, cachedDataset, cachedSummaries, DATASET_ACCEPT, downloadDataset, readDatasetFile, removeDataset, setActiveDatasetChoice, storeDataset } from '../data/dataset/storage';
 
 // =============================================================================
 // DATENSÄTZE: importieren, exportieren, löschen; Link zum externen Editor.
@@ -11,6 +11,7 @@ export function DatasetScreen({ onBack }: { onBack: () => void }) {
   const [msg, setMsg] = useState<{ text: string; error?: boolean } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const list = cachedSummaries();
+  const active = activeDatasetIdCached();
 
   const onImport = async (f: File | undefined) => {
     if (!f) return;
@@ -29,13 +30,14 @@ export function DatasetScreen({ onBack }: { onBack: () => void }) {
         <div className="dim mini" style={{ lineHeight: 1.6 }}>
           Ein Datensatz legt fest, mit welchen Vereinen, Ligen, Wappen, Trikots, Namen und welcher Geschichte ein neues Spiel beginnt –
           bis hin zu den Jahren, in denen Regeln, Gebäude oder Mitarbeiter-Rollen auftauchen oder veralten. Mit dem <b>Datensatz-Editor</b> erstellst du eigene
-          Datensätze und teilst sie als Datei. Eigene Datensätze bleiben auf deinem Rechner.
+          Datensätze und teilst sie als Datei (<b>.fm1975</b>, inklusive aller Bilder). Eigene Datensätze bleiben auf deinem Rechner.
+          Der als <b>aktiv</b> markierte Datensatz ist bei „Neues Spiel“ vorausgewählt; Spielstände behalten ihren Datensatz.
         </div>
         <div className="chip-row mt12">
           <a className="chip active" href="editor/" target="_blank" rel="noopener"><Icon name="settings" /> Editor öffnen</a>
           <button className="chip" onClick={() => fileRef.current?.click()}><Icon name="loadGame" /> Datensatz importieren</button>
           <button className="chip" onClick={() => downloadDataset(builtinDataset())}><Icon name="contracts" /> Standard als Vorlage exportieren</button>
-          <input ref={fileRef} type="file" accept=".json,application/json" style={{ display: 'none' }} onChange={(e) => { onImport(e.target.files?.[0]); e.target.value = ''; }} />
+          <input ref={fileRef} type="file" accept={DATASET_ACCEPT} style={{ display: 'none' }} onChange={(e) => { onImport(e.target.files?.[0]); e.target.value = ''; }} />
         </div>
         {msg && <div className={`mini mt8 ${msg.error ? 'red' : 'accent-text'}`}>{msg.text}</div>}
       </div>
@@ -44,10 +46,11 @@ export function DatasetScreen({ onBack }: { onBack: () => void }) {
         {list.map((d) => (
           <div key={d.id} className="row" style={{ padding: '10px 0', borderTop: '1px solid var(--border)', gap: 12 }}>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 800 }}>{d.name}{d.builtin && <span className="dim2 mini"> · eingebaut</span>}</div>
+              <div style={{ fontWeight: 800 }}>{d.name}{d.builtin && <span className="dim2 mini"> · eingebaut</span>}{d.id === active && <span className="accent-text mini" data-active="1"> · aktiv für neue Spiele</span>}</div>
               <div className="dim2 mini">{[d.author, d.updated, `${d.clubs} Vereine`].filter(Boolean).join(' · ')}</div>
               {d.description && <div className="dim mini">{d.description}</div>}
             </div>
+            {d.id !== active && <button className="btn-sm" onClick={() => { setActiveDatasetChoice(d.id); setMsg({ text: `„${d.name}“ ist jetzt für neue Spiele aktiv.` }); setTick((t) => t + 1); }}>Verwenden</button>}
             <button className="btn-sm" onClick={() => downloadDataset(d.id === BUILTIN_ID ? builtinDataset() : cachedDataset(d.id)!)}>Exportieren</button>
             {!d.builtin && <button className="btn-sm" onClick={async () => { await removeDataset(d.id); setMsg({ text: `„${d.name}“ gelöscht.` }); setTick((t) => t + 1); }}>Löschen</button>}
           </div>

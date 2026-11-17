@@ -4,16 +4,26 @@ import { BUILTIN_LEGENDS } from '../../data/legends';
 import { Col, Explain, FieldForm, TableEditor } from '../TableEditor';
 import { useNavTarget } from '../nav';
 import { PhotoGallery, PhotoRightsNote } from '../PhotoGallery';
+import { PortraitEditor } from '../PortraitEditor';
 
 // =============================================================================
 // SPIELERFOTOS (Datensatz-Feld `playerPhotos`, Wunsch Pascal): eigene Bilder zu
-// Spielern und Legenden, die Zeitung und Newscenter zeigen, wenn der Spieler
-// erwähnt wird. Liste links, Bezug + Fotos des gewählten Eintrags rechts.
+// Spielern und Legenden – je Eintrag ein Spielerbild (Porträt, ersetzt im Spiel
+// überall das Gesicht) und beliebig viele Fotos für Zeitung und Newscenter.
+// Liste links, Bezug + Spielerbild + Fotos des gewählten Eintrags rechts.
 // Spieler entstehen im Spiel – deshalb Zuordnung über Namen (+ Geburtsjahr/Verein),
 // Legenden über ihre ID (Bereich Ausnahmetalente).
 // =============================================================================
 type P = { ds: Dataset; onChange: () => void };
 export const LEGEND_IDS_LIST = 'ed-legend-ids';
+
+/** Eintrag einer Legende holen bzw. anlegen (ein Eintrag je Legende – Porträt und Fotos zusammen). */
+export function legendPhotoSet(ds: Dataset, legendId: string): PlayerPhotoSet {
+  ds.playerPhotos ??= [];
+  let set = ds.playerPhotos.find((x) => x.legendId === legendId);
+  if (!set) { set = { id: nextPhotoId(ds.playerPhotos), legendId, photos: [] }; ds.playerPhotos.push(set); }
+  return set;
+}
 
 /** Neue freie ID „foto1“, „foto2“ … */
 export function nextPhotoId(list: PlayerPhotoSet[]): string {
@@ -43,7 +53,7 @@ export function PhotosSection({ ds, onChange }: P) {
   const legendName = (id?: string) => { const l = id ? legends.find((x) => x.id === id) : undefined; return l ? `${l.firstName} ${l.lastName}` : undefined; };
   return (
     <div className="ed-section">
-      <Explain>Eigene Fotos zu Spielern und Ausnahmetalenten. Wird ein Spieler in einer Nachricht im <b>Newscenter</b> oder in einem Artikel der <b>Zeitung</b> erwähnt, erscheint sein Foto statt des üblichen Pressefotos. Je Foto wählst du die <b>Art</b>: „Allgemein“ passt immer, eine <b>Pose</b> (Torjubel, Verletzung, Vertrag …) nur zum passenden Anlass – zuerst die passende Pose, sonst ein allgemeines Foto, sonst das übliche Pressefoto. <b>Zuordnung:</b> Spieler entstehen erst im Spiel und haben keine feste ID – trag den vollen Namen ein, wie er im Spiel steht; bei Gleichnamigen grenzt du per <b>Geburtsjahr</b> oder <b>Verein</b> (Vereins-ID, nur solange er dort spielt) ein. Für Ausnahmetalente die <b>Legenden-ID</b> eintragen (oder die Fotos direkt unter „Ausnahmetalente“ hochladen) – das gilt auch, wenn die Legende erst Jahre später im Spiel erscheint.</Explain>
+      <Explain>Eigene Bilder zu Spielern und Ausnahmetalenten. Das <b>Spielerbild (Porträt)</b> ersetzt im Spiel überall das Gesicht – im Spielerprofil, in allen Listen, in Zeitung und Newscenter; du lädst ein Bild hoch und schneidest es im Kopf-Format zu. Die <b>Fotos</b> dagegen sind Pressebilder: Wird ein Spieler in einer Nachricht im <b>Newscenter</b> oder in einem Artikel der <b>Zeitung</b> erwähnt, erscheint sein Foto statt des üblichen Pressefotos. Je Foto wählst du die <b>Art</b>: „Allgemein“ passt immer, eine <b>Pose</b> (Torjubel, Verletzung, Vertrag …) nur zum passenden Anlass – zuerst die passende Pose, sonst ein allgemeines Foto, sonst das übliche Pressefoto. <b>Zuordnung:</b> Spieler entstehen erst im Spiel und haben keine feste ID – trag den vollen Namen ein, wie er im Spiel steht; bei Gleichnamigen grenzt du per <b>Geburtsjahr</b> oder <b>Verein</b> (Vereins-ID, nur solange er dort spielt) ein. Für Ausnahmetalente die <b>Legenden-ID</b> eintragen (oder die Fotos direkt unter „Ausnahmetalente“ hochladen) – das gilt auch, wenn die Legende erst Jahre später im Spiel erscheint.</Explain>
       <PhotoRightsNote />
       <datalist id={LEGEND_IDS_LIST}>{legends.map((l) => <option key={l.id} value={l.id}>{l.firstName} {l.lastName}</option>)}</datalist>
       <div className="ed-split">
@@ -64,7 +74,9 @@ export function PhotosSection({ ds, onChange }: P) {
                 onChange={(e) => { cur.legendId = e.target.value.trim() || undefined; onChange(); }} />
               <span className="ed-hint">{cur.legendId ? legendName(cur.legendId) ?? 'unbekannte Legenden-ID' : 'Ausnahmetalent statt Name – hat Vorrang vor dem Namen'}</span>
             </label>
-            <div className="ed-sec">Fotos</div>
+            <div className="ed-sec">Spielerbild (Porträt)</div>
+            <PortraitEditor set={cur} ensure={() => cur} onChange={onChange} />
+            <div className="ed-sec">Fotos für Zeitung und Newscenter</div>
             <PhotoGallery set={cur} ensure={() => cur} onChange={onChange} />
           </aside>
         )}

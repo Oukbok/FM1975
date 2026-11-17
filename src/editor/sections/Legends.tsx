@@ -4,7 +4,8 @@ import { Col, Explain, FieldForm, TableEditor } from '../TableEditor';
 import { BUILTIN_LEGENDS, LEGEND_COUNTRIES, LEGEND_TYPES, type LegendDef } from '../../data/legends';
 import { ALL_POSITIONS } from '../../types';
 import { PhotoGallery, PhotoRightsNote } from '../PhotoGallery';
-import { nextPhotoId } from './Photos';
+import { legendPhotoSet } from './Photos';
+import { PortraitEditor } from '../PortraitEditor';
 
 // =============================================================================
 // LEGENDEN: Ausnahmetalente der Fußballgeschichte (Datensatz-Feld `legendsV2`).
@@ -99,14 +100,11 @@ function LegendForm({ ds, l, onChange }: { ds: Dataset; l: LegendDef; onChange: 
         num('persona.loyalitaet', 'Loyalität'), num('persona.geld', 'Geld'), num('persona.heimat', 'Heimatverbundenheit'),
         num('persona.abenteuer', 'Abenteuerlust'), num('persona.rampenlicht', 'Rampenlicht'), num('persona.familie', 'Familie'),
       ]} />
-      <div className="ed-sec">Fotos für Zeitung und Newscenter</div>
+      <div className="ed-sec">Spielerbild (Porträt)</div>
       <PhotoRightsNote />
-      <PhotoGallery set={(ds.playerPhotos ?? []).find((x) => x.legendId === l.id)} onChange={onChange} ensure={() => {
-        ds.playerPhotos ??= [];
-        let set = ds.playerPhotos.find((x) => x.legendId === l.id);
-        if (!set) { set = { id: nextPhotoId(ds.playerPhotos), legendId: l.id, photos: [] }; ds.playerPhotos.push(set); }
-        return set;
-      }} />
+      <PortraitEditor set={(ds.playerPhotos ?? []).find((x) => x.legendId === l.id)} ensure={() => legendPhotoSet(ds, l.id)} onChange={onChange} />
+      <div className="ed-sec">Fotos für Zeitung und Newscenter</div>
+      <PhotoGallery set={(ds.playerPhotos ?? []).find((x) => x.legendId === l.id)} onChange={onChange} ensure={() => legendPhotoSet(ds, l.id)} />
     </aside>
   );
 }

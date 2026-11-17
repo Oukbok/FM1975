@@ -1,9 +1,10 @@
 import { memo, useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import Icon from '../components/Icon';
-import { Dataset, DatasetSummary } from '../data/dataset/schema';
-import { BUILTIN_ID, builtinDataset } from '../data/dataset/builtin';
-import { downloadDataset, listDatasets, loadDataset, readDatasetFile, storeDataset } from '../data/dataset/storage';
-import { loadWork, saveWork } from './store';
+import { Dataset } from '../data/dataset/schema';
+import { builtinDataset } from '../data/dataset/builtin';
+import { activeDatasetChoice, datasetFileName, downloadDataset, freeDatasetId, loadAllDatasets, slugId, storeDataset } from '../data/dataset/storage';
+import { loadWork, loadWorkState, saveWork, saveWorkState } from './store';
+import { HomeSection, type Msg } from './sections/Home';
 import { checkDataset, Issue } from './validate';
 import { ClubsSection } from './sections/Clubs';
 import { EuropeSection } from './sections/Europe';
@@ -38,31 +39,31 @@ function clubIds(ds: Dataset): [string, string][] {
 
 // =============================================================================
 // DATENSATZ-EDITOR (eigenständige Seite unter /editor/)
-// Arbeitskopie im Browser, Prüfen, Export als Datei, Übernahme ins Spiel.
+// Arbeitskopie im Browser (automatisch gesichert, store.ts), Bibliothek der
+// Datensätze auf der Startseite (sections/Home.tsx: Speichern/Laden/Export/
+// Import/Im Spiel verwenden), Prüfen. „Ungespeichert“ = Arbeitskopie weicht von
+// ihrem Stand in der Bibliothek ab (Zustand `dirty`, mit der Kopie gesichert).
 // =============================================================================
 const GROUPS = [...new Set(SECTIONS.map((x) => x.group))];
 
-function freshFromBuiltin(): Dataset {
+function freshFromBuiltin(id = 'mein-datensatz', name = 'Mein Datensatz'): Dataset {
   const d = builtinDataset();
-  d.meta = { id: 'mein-datensatz', name: 'Mein Datensatz', author: '', description: '', created: new Date().toISOString().slice(0, 10) };
+  d.meta = { id, name, author: '', description: '', created: new Date().toISOString().slice(0, 10) };
   return d;
 }
-
-type Msg = { kind: 'ok' | 'err' | 'info'; text: string } | null;
 
 export default function EditorApp() {
   const [ds, setDs] = useState<Dataset | null>(null);
   const [gen, setGen] = useState(0);
   const [, setVer] = useState(0);
-  const [sec, setSec] = useState<Sec>('general');
+  const [sec, setSec] = useState<Sec>('home');
   const [msg, setMsg] = useState<Msg>(null);
   const [saved, setSaved] = useState<'ok' | 'pending' | 'fail'>('ok');
   const [issues, setIssues] = useState<Issue[] | null>(null);
-  const [stored, setStored] = useState<DatasetSummary[]>([]);
-  const [confirm, setConfirm] = useState<{ text: string; run: () => void } | null>(null);
+  const [dirty, setDirtyS] = useState(false);
+  const [libVer, setLibVer] = useState(0);
   const [ver, setVerN] = useState(0);
   const [nav, setNav] = useState<{ target: Target | null; nonce: number }>({ target: null, nonce: 0 });
-  const fileRef = useRef<HTMLInputElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const timer = useRef<number | undefined>(undefined);
   const dsRef = useRef<Dataset | null>(null);
@@ -70,9 +71,14 @@ export default function EditorApp() {
   const [, setHv] = useState(0);
   dsRef.current = ds;
 
+  const dirtyRef = useRef(false);
+  const saveRef = useRef<(() => Promise<boolean>) | null>(null);
+  const setDirty = (v: boolean) => { if (dirtyRef.current !== v) { dirtyRef.current = v; void saveWorkState({ dirty: v }); } setDirtyS(v); };
   useEffect(() => {
-    loadWork().then((w) => { const d = w ?? freshFromBuiltin(); dsRef.current = d; hist.current = new EditHistory(() => JSON.stringify(dsRef.current)); setDs(d); });
-    listDatasets().then(setStored).catch(() => setStored([]));
+    Promise.all([loadWork(), loadWorkState()]).then(([w, st]) => {
+      const d = w ?? freshFromBuiltin(); dsRef.current = d; hist.current = new EditHistory(() => JSON.stringify(dsRef.current));
+      dirtyRef.current = !!(w && st.dirty); setDirtyS(dirtyRef.current); setDs(d);
+    });
   }, []);
 
   const persist = (d: Dataset) => {
@@ -84,14 +90,17 @@ export default function EditorApp() {
     setVer((v) => v + 1); setVerN((v) => v + 1);
     setIssues(null);
     if (ds) persist(ds);
+    setDirty(true);
     hist.current?.touch(() => setHv((v) => v + 1));
     setHv((v) => v + 1);
   };
 
-  const replace = (d: Dataset, text: string) => {
+  /** Arbeitskopie ersetzen (Laden/Neu/Speichern unter); `unsaved` = weicht von der Bibliothek ab. */
+  const replace = (d: Dataset, text: string, unsaved = false) => {
     dsRef.current = d;
-    setDs(d); setGen((g) => g + 1); setIssues(null); setSec('general'); setNav((n) => ({ target: null, nonce: n.nonce + 1 })); setMsg({ kind: 'info', text });
+    setDs(d); setGen((g) => g + 1); setIssues(null); setNav((n) => ({ target: null, nonce: n.nonce + 1 })); setMsg({ kind: 'info', text });
     hist.current?.reset();
+    setDirty(unsaved);
     saveWork(d).then((ok) => setSaved(ok ? 'ok' : 'fail'));
   };
 
@@ -106,12 +115,14 @@ export default function EditorApp() {
     dsRef.current = d;
     setDs(d); setGen((g) => g + 1); setIssues(null); setVerN((v) => v + 1); setHv((v) => v + 1);
     setMsg({ kind: 'info', text: dir === 'undo' ? 'Letzte Änderung rückgängig gemacht.' : 'Änderung wiederhergestellt.' });
+    setDirty(true);
     persist(d);
   }, []);
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
       if (!(e.ctrlKey || e.metaKey)) return;
       const k = e.key.toLowerCase();
+      if (k === 's') { e.preventDefault(); void saveRef.current?.(); return; }
       if (k === 'z' && !e.shiftKey) { e.preventDefault(); step('undo'); }
       else if ((k === 'z' && e.shiftKey) || k === 'y') { e.preventDefault(); step('redo'); }
     };
@@ -130,21 +141,6 @@ export default function EditorApp() {
     let h = window.setTimeout(run, 60);
     return () => window.clearTimeout(h);
   }, [nav]);
-  const ask = (text: string, run: () => void) => setConfirm({ text, run });
-
-  const openFile = async (f?: File) => {
-    if (!f) return;
-    const r = await readDatasetFile(f);
-    if (!r.data) { setMsg({ kind: 'err', text: `Datei nicht geladen: ${r.errors.join(' ')}` }); return; }
-    replace(r.data, `„${r.data.meta.name}“ aus Datei geöffnet.`);
-  };
-  const openStored = async (id: string) => {
-    const d = await loadDataset(id);
-    if (!d) { setMsg({ kind: 'err', text: 'Datensatz nicht gefunden.' }); return; }
-    if (id === BUILTIN_ID) { replace(freshFromBuiltin(), 'Neuer Datensatz auf Basis des Standards angelegt.'); return; }
-    replace(d, `„${d.meta.name}“ aus dem Spiel geöffnet.`);
-  };
-
   const runCheck = (): Issue[] => {
     const list = ds ? checkDataset(ds) : [];
     setIssues(list);
@@ -155,19 +151,46 @@ export default function EditorApp() {
     const list = runCheck();
     downloadDataset(ds);
     const errs = list.filter((i) => i.level === 'error').length;
-    setMsg(errs ? { kind: 'err', text: `Exportiert, aber mit ${errs} Fehler(n) – das Spiel lehnt die Datei evtl. ab.` } : { kind: 'ok', text: `Exportiert als ${ds.meta.id}.fm1975.json` });
+    setMsg(errs ? { kind: 'err', text: `Exportiert, aber mit ${errs} Fehler(n) – das Spiel lehnt die Datei evtl. ab.` } : { kind: 'ok', text: `Exportiert als ${datasetFileName(ds)} (alle Daten und Bilder in einer Datei).` });
   };
-  const doStore = async () => {
-    if (!ds) return;
-    const list = runCheck();
+  /** Datensatz prüfen und in die Bibliothek speichern (gleiche ID = ersetzt). */
+  const saveTo = async (d: Dataset): Promise<boolean> => {
+    const list = checkDataset(d);
     const errs = list.filter((i) => i.level === 'error');
-    if (errs.length) { setSec('check'); setMsg({ kind: 'err', text: `Nicht übernommen: ${errs.length} Fehler. Siehe „Prüfen“.` }); return; }
+    if (errs.length) { setIssues(list); setSec('check'); setMsg({ kind: 'err', text: `Nicht gespeichert: ${errs.length} Fehler. Siehe „Prüfen“.` }); return false; }
     try {
-      const res = await storeDataset(JSON.parse(JSON.stringify(ds)));
-      if (res.length) { setMsg({ kind: 'err', text: res.join(' ') }); return; }
-      setMsg({ kind: 'ok', text: `„${ds.meta.name}“ ist im Spiel unter „Datensätze“ verfügbar (neues Spiel starten).` });
-      listDatasets().then(setStored).catch(() => undefined);
-    } catch (e) { setMsg({ kind: 'err', text: `Speichern fehlgeschlagen: ${(e as Error).message}` }); }
+      const copy = JSON.parse(JSON.stringify(d)) as Dataset;
+      const res = await storeDataset(copy);
+      if (res.length) { setMsg({ kind: 'err', text: res.join(' ') }); return false; }
+      d.meta.updated = copy.meta.updated; d.meta.savedAt = copy.meta.savedAt;
+      setLibVer((v) => v + 1);
+      return true;
+    } catch (e) { setMsg({ kind: 'err', text: `Speichern fehlgeschlagen: ${(e as Error).message}` }); return false; }
+  };
+  const doSave = async (): Promise<boolean> => {
+    const d = dsRef.current;
+    if (!d) return false;
+    if (!(await saveTo(d))) return false;
+    setDirty(false); persist(d);
+    const act = activeDatasetChoice() === d.meta.id;
+    setMsg({ kind: 'ok', text: `„${d.meta.name}“ gespeichert.${act ? ' Er ist im Spiel aktiv – neue Spiele starten mit diesem Stand.' : ' Unter „Datensätze“ kannst du ihn im Spiel verwenden.'}` });
+    return true;
+  };
+  saveRef.current = doSave;
+  const doSaveAs = async (name: string): Promise<boolean> => {
+    const d = dsRef.current;
+    if (!d) return false;
+    const ids = (await loadAllDatasets()).map((x) => x.meta.id);
+    const c = JSON.parse(JSON.stringify(d)) as Dataset;
+    c.meta = { ...c.meta, id: freeDatasetId(slugId(name), ids), name, created: new Date().toISOString().slice(0, 10) };
+    if (!(await saveTo(c))) return false;
+    replace(c, `Als „${name}“ gespeichert (ID ${c.meta.id}).`);
+    return true;
+  };
+  const doNew = async (name: string) => {
+    const ids = (await loadAllDatasets()).map((x) => x.meta.id);
+    const d = freshFromBuiltin(freeDatasetId(slugId(name), ids), name);
+    if (await saveTo(d)) replace(d, `Neuer Datensatz „${name}“ auf Basis des Standards angelegt und gespeichert.`);
   };
 
   if (!ds) return <div className="ed-app ed-loading">Lade Editor …</div>;
@@ -181,7 +204,10 @@ export default function EditorApp() {
     changes: <ChangesSection {...p} />, timeline: <TimelineSection {...p} />, leagues: <LeaguesSection {...p} />, facilities: <FacilitiesSection {...p} />,
     staff: <StaffSection {...p} />, marketing: <MarketingSection {...p} />, names: <NamesSection {...p} />, legends: <LegendsSection {...p} />, photos: <PhotosSection {...p} />, formations: <FormationsSection {...p} />,
     economy: <EconomySection {...p} />, history: <HistorySection {...p} />,
-    check: <CheckSection ds={ds} issues={issues} onCheck={runCheck} onExport={doExport} onStore={doStore}
+    home: <HomeSection ds={ds} dirty={dirty} libVer={libVer} onSave={doSave} onSaveAs={doSaveAs} onNew={doNew} onOpen={(d, t) => replace(d, t)}
+      onExportWork={doExport} onMsg={setMsg} onWorkUnsaved={() => setDirty(true)}
+      onWorkMeta={(name) => { ds.meta.name = name; setVerN((v) => v + 1); persist(ds); }} />,
+    check: <CheckSection ds={ds} issues={issues} onCheck={runCheck} onExport={doExport} onStore={() => void doSave()}
       onJump={(i) => { const cc = i.area.startsWith('Weltdaten ') ? i.area.slice(10) : undefined; goto(secOfArea(i.area), { id: i.find, text: i.find, cc, year: i.year, tab: i.year != null ? 'seasons' : undefined }); }} />,
   };
 
@@ -191,31 +217,19 @@ export default function EditorApp() {
       <header className="ed-top">
         <div className="ed-brand"><span className="ed-logo">1975</span><span>Datensatz-Editor</span></div>
         <div className="ed-ds-name" title={ds.meta.description}>{ds.meta.name} <span className="ed-hint">{ds.meta.id}</span></div>
+        {dirty && <span className="ed-state dirty" data-state="dirty" title="Die Arbeitskopie ist gesichert, aber noch nicht in der Bibliothek gespeichert.">Ungespeichert</span>}
         <div className="ed-quick">
           <SearchBox ds={ds} ver={ver} onGo={goto} />
           <button className="ed-btn" data-act="undo" disabled={!hist.current?.canUndo()} title="Rückgängig (Strg+Z)" onClick={() => step('undo')}>Rückgängig</button>
           <button className="ed-btn" data-act="redo" disabled={!hist.current?.canRedo()} title="Wiederholen (Strg+Umschalt+Z / Strg+Y)" onClick={() => step('redo')}>Wiederholen</button>
         </div>
         <div className="ed-tools">
-          <button className="ed-btn" onClick={() => ask('Neuen Datensatz auf Basis des Standards anlegen? Die Arbeitskopie wird ersetzt.', () => replace(freshFromBuiltin(), 'Neuer Datensatz auf Basis des Standards angelegt.'))}><Icon name="newGame" /> Neu</button>
-          <button className="ed-btn" onClick={() => fileRef.current?.click()}><Icon name="loadGame" /> Datei öffnen</button>
-          <select className="ed-in ed-open" value="" onChange={(e) => { const id = e.target.value; if (id) ask('Diesen Datensatz öffnen? Die Arbeitskopie wird ersetzt.', () => openStored(id)); }}>
-            <option value="">Aus dem Spiel öffnen …</option>
-            {stored.map((s) => <option key={s.id} value={s.id}>{s.builtin ? 'Standard (Vorlage)' : s.name}</option>)}
-          </select>
+          <button className="ed-btn" data-act="datasets" onClick={() => pick('home')}><Icon name="loadGame" /> Datensätze</button>
           <button className="ed-btn" onClick={() => { runCheck(); setSec('check'); }}><Icon name="whistle" /> Prüfen</button>
-          <button className="ed-btn" onClick={doExport}><Icon name="save" /> Exportieren</button>
-          <button className="ed-btn on" onClick={doStore}><Icon name="play" /> Ins Spiel übernehmen</button>
-          <input ref={fileRef} type="file" accept=".json,application/json" style={{ display: 'none' }} onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; ask('Datei öffnen? Die Arbeitskopie wird ersetzt.', () => openFile(f)); }} />
+          <button className="ed-btn" data-act="export" onClick={doExport}><Icon name="contracts" /> Exportieren</button>
+          <button className={`ed-btn ${dirty ? 'on' : ''}`} data-act="save" title="In die Bibliothek speichern (Strg+S)" onClick={() => void doSave()}><Icon name="save" /> Speichern</button>
         </div>
       </header>
-      {confirm && (
-        <div className="ed-confirm">
-          <span>{confirm.text}</span>
-          <button className="ed-btn on" onClick={() => { const c = confirm; setConfirm(null); c.run(); }}>Ja</button>
-          <button className="ed-btn" onClick={() => setConfirm(null)}>Abbrechen</button>
-        </div>
-      )}
       <div className="ed-body">
         <nav className="ed-nav">
           {GROUPS.map((grp) => (

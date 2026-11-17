@@ -1,6 +1,6 @@
 import { CountryFlag } from '../../components/competition/CountryFlag';
 import { InfoTip } from '../../ui/InfoTip';
-import { cachedSummaries } from '../../data/dataset/storage';
+import { activeDatasetIdCached, cachedSummaries } from '../../data/dataset/storage';
 import { COUNTRY_SEEDS } from '../../data/worldSeed';
 import { WORLD_COUNTRIES, countryExists, countryPointSystem, seasonLabelOf } from '../../data/world/countries';
 import { worldSeason } from '../../data/world/index';
@@ -54,6 +54,7 @@ export function StepWorld({ d, set, chooseDataset, chooseYear }: {
 }) {
   const hl = HISTORIC_LEVELS.find((m) => m.id === d.historic) ?? HISTORIC_LEVELS[1];
   const datasets = cachedSummaries();
+  const activeDs = activeDatasetIdCached();
   const y = d.startYear;
   const home = d.country;
   // Länder des Startjahres: Heimatland zuerst, dann Länder mit Weltdaten, dann übrige.
@@ -84,7 +85,7 @@ export function StepWorld({ d, set, chooseDataset, chooseYear }: {
           {datasets.map((ds) => (
             <button key={ds.id} type="button" className={`ng-opt wide ${d.datasetId === ds.id ? 'on' : ''}`} onClick={() => chooseDataset(ds.id)}>
               <b>{ds.name}</b>
-              <small>{ds.builtin ? 'Eingebaut' : ds.author ? `von ${ds.author}` : 'Eigener Datensatz'} · {ds.clubs} Vereine</small>
+              <small>{ds.builtin ? 'Eingebaut' : ds.author ? `von ${ds.author}` : 'Eigener Datensatz'} · {ds.clubs} Vereine{ds.id === activeDs ? ' · im Editor als aktiv gewählt' : ''}</small>
               {ds.description && <span>{ds.description}</span>}
             </button>
           ))}

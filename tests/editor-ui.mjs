@@ -1,6 +1,6 @@
 // Oberflächentest des Datensatz-Editors (/editor/): jeden Bereich öffnen, einen
 // Verein umbenennen, Wappen-/Trikotfeld prüfen, „Prüfen“, Export auslösen,
-// „Ins Spiel übernehmen“ und im Spiel nachsehen, ob der Datensatz auftaucht.
+// „Speichern“ und im Spiel nachsehen, ob der Datensatz auftaucht.
 //   node tests/editor-ui.mjs [ausgabeordner]
 // Voraussetzung: `npm run build` (dist/) und Playwright.
 import { createServer } from 'node:http';
@@ -143,16 +143,16 @@ await page.screenshot({ path: `${outDir}/check.png` });
 const [dl] = await Promise.all([page.waitForEvent('download'), page.click('.ed-tools >> text=Exportieren')]);
 const file = await dl.path();
 const json = JSON.parse(await readFile(file, 'utf8'));
-if (dl.suggestedFilename() !== 'testsatz.fm1975.json') fail(`Dateiname: ${dl.suggestedFilename()}`);
+if (dl.suggestedFilename() !== 'testsatz.fm1975') fail(`Dateiname: ${dl.suggestedFilename()}`);
 if (json.clubs.tier1[0].name !== 'Testhausen 75') fail('Export enthält die Umbenennung nicht');
 const kit = json.kits?.[json.clubs.tier1[0].id];
 if (!kit?.home || !kit?.away || kit.home.pattern !== 'hoops') fail('Export enthält das Trikot nicht vollständig');
 const pp = json.playerPhotos ?? [];
 if (pp.length !== 2 || pp[0].photos.length !== 2 || pp[0].photos[1].pose !== 'torjubel' || !pp[1].legendId || pp[1].photos[0].pose !== 'verletzung') fail(`Export: Spielerfotos unvollständig (${JSON.stringify(pp.map((x) => [x.name, x.legendId, x.photos.map((f) => f.pose)]))})`);
 
-// Ins Spiel übernehmen.
-await page.click('.ed-tools >> text=Ins Spiel übernehmen');
-await page.waitForSelector('.ed-msg.ok', { timeout: 3000 }).catch(() => fail('Übernehmen ohne Erfolgsmeldung'));
+// In die Bibliothek speichern (= im Spiel verfügbar).
+await page.click('.ed-tools [data-act="save"]');
+await page.waitForSelector('.ed-msg.ok', { timeout: 3000 }).catch(() => fail('Speichern ohne Erfolgsmeldung'));
 
 // Autosave: neu laden, Arbeitskopie muss bleiben.
 await page.waitForTimeout(800);
