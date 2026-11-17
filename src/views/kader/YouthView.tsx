@@ -1,6 +1,7 @@
 import { scoutRange } from '../../engine/scouting';
 import { Game } from '../../game/state';
-import { Player, YOUTH_AGE_CLASS_LABEL, YOUTH_AGE_CLASS_ORDER, YOUTH_AGE_CLASS_RANGE, YouthAgeClass, renderStars, youthAgeClass } from '../../types';
+import { ALL_POSITIONS, Player, YOUTH_AGE_CLASS_LABEL, YOUTH_AGE_CLASS_ORDER, YOUTH_AGE_CLASS_RANGE, YouthAgeClass, youthAgeClass } from '../../types';
+import { StarRating } from '../../components/StarRating';
 import { fmtDateShort, vColor } from '../../ui/format';
 import { teamStandings, type YouthStanding } from '../../game/youthComps/view';
 import PosBadge from '../../components/PosBadge';
@@ -19,40 +20,45 @@ import { yearOf } from '../../engine/economy';
 // =============================================================================
 // JUGEND (Jugendakademie) — Talentliste + Detail mit verstecktem Potenzial
 // =============================================================================
-export type YouthSort = 'pot' | 'ovr' | 'age';
+export type YouthSort = 'pot' | 'ovr' | 'age' | 'cls' | 'name' | 'pos' | 'speed' | 'technique' | 'passing' | 'tackling' | 'shooting';
 
 /** Rendert die Scouting-Einschätzung als GOLDENE Sterne-Spanne (min–max). */
 export function ScoutRange({ p }: { p: Player }) {
   const [min, max] = scoutRange(p);
-  if (Math.abs(max - min) < 0.001) {
-    return <span className="stars" title={`Potenzial: ${min.toFixed(1)} Sterne`}>{renderStars(min)}</span>;
-  }
-  return (
-    <span title={`Scouting-Spanne: ${min.toFixed(1)}–${max.toFixed(1)} Sterne`} style={{ whiteSpace: 'nowrap' }}>
-      <span className="stars" style={{ fontSize: 11 }}>{renderStars(min)}</span>
-      <span className="dim2 mini" style={{ margin: '0 4px' }}>bis</span>
-      <span className="stars" style={{ fontSize: 11 }}>{renderStars(max)}</span>
-    </span>
-  );
+  // Vektor-Sterne wie in allen Spielertabellen: alle gleich breit, Viertel wie eine Uhr gefüllt (Wunsch Pascal).
+  return <StarRating lo={min} hi={max} size={17} label="Potenzial" note="Einschätzung der Scouts – die Spanne wird mit dem Alter enger." />;
 }
 
 export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
   const [sel, setSel] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<YouthSort>('pot');
+  const [sortBy, setSortByRaw] = useState<YouthSort>('pot');
+  // Zweiter Klick auf dieselbe Spalte dreht die Richtung (Wunsch Pascal: alle Spalten sortierbar).
+  const [desc, setDesc] = useState(true);
+  const setSortBy = (k: YouthSort) => {
+    if (k === sortBy) setDesc((d) => !d);
+    else { setSortByRaw(k); setDesc(k !== 'name' && k !== 'pos' && k !== 'age' && k !== 'cls'); }
+  };
   const [classFilter, setClassFilter] = useSubTab<YouthAgeClass | 'ALL'>('jugend.mannschaften', 'A');
   const club = g.clubs[g.managedClubId];
   const inv = youthInvestOf(club, yearOf(g.calendar.currentDate));
 
-  const sortFn = (a: Player, b: Player) => {
+  const posIdx = (x: Player) => ALL_POSITIONS.indexOf(x.naturalPosition);
+  const clsIdx = (x: Player) => YOUTH_AGE_CLASS_ORDER.indexOf(youthAgeClass(x.age) ?? 'G');
+  const keyOf = (x: Player): number | string => {
     switch (sortBy) {
-      case 'ovr': return b.overall - a.overall;
-      case 'age': return a.age - b.age;
-      default: {
-        const am = scoutRange(a)[1];
-        const bm = scoutRange(b)[1];
-        return (bm - am) || (b.overall - a.overall);
-      }
+      case 'ovr': return x.overall;
+      case 'age': return x.age;
+      case 'cls': return clsIdx(x);
+      case 'name': return `${x.lastName ?? ''} ${x.fullName}`;
+      case 'pos': return posIdx(x);
+      case 'speed': case 'technique': case 'passing': case 'tackling': case 'shooting': return x.attributes[sortBy];
+      default: return scoutRange(x)[1] * 1000 + x.overall;
     }
+  };
+  const sortFn = (a: Player, b: Player) => {
+    const ka = keyOf(a), kb = keyOf(b);
+    const c = typeof ka === 'string' ? ka.localeCompare(kb as string, 'de') : ka - (kb as number);
+    return (desc ? -c : c) || b.overall - a.overall;
   };
 
   const youth = club.youthPlayerIds
@@ -69,9 +75,13 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
 
   const p = sel ? g.youthPlayers[sel] : null;
 
-  const rows = YOUTH_AGE_CLASS_ORDER.filter((cls) => classFilter === 'ALL' || classFilter === cls).flatMap((cls) => byClass[cls]);
-  const Th = ({ k, children, cls }: { k: YouthSort; children: React.ReactNode; cls?: string }) => (
-    <th className={`sortable ${cls ?? ''} ${sortBy === k ? 'sorted' : ''}`} onClick={() => setSortBy(k)}>{children}</th>
+  const rows = sortBy === 'cls' || classFilter !== 'ALL'
+    ? YOUTH_AGE_CLASS_ORDER.filter((cls) => classFilter === 'ALL' || classFilter === cls).flatMap((cls) => byClass[cls])
+    : [...youth].sort(sortFn);
+  if (sortBy === 'cls' && !desc) rows.reverse();
+  const Th = ({ k, children, cls, title }: { k: YouthSort; children: React.ReactNode; cls?: string; title?: string }) => (
+    <th className={`sortable ${cls ?? ''} ${sortBy === k ? 'sorted' : ''}`} title={title} onClick={() => setSortBy(k)}
+      aria-sort={sortBy === k ? (desc ? 'descending' : 'ascending') : undefined}>{children}{sortBy === k ? (desc ? ' ▾' : ' ▴') : ''}</th>
   );
   const top = [...youth].sort((a, b) => (scoutRange(b)[1] - scoutRange(a)[1]) || b.overall - a.overall).slice(0, 5);
   const ready = youth.filter((x) => youthAgeClass(x.age) === 'A').sort((a, b) => b.overall - a.overall).slice(0, 4);
@@ -102,12 +112,12 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
         {rows.length === 0 ? (
           <Empty icon="youth">{youth.length === 0 ? 'Aktuell keine Talente in der Akademie. Der nächste Bambini-Jahrgang trifft zum 1. Juli ein.' : 'In dieser Altersklasse gibt es derzeit keine Talente.'}</Empty>
         ) : (
-          <table className="dtable rl-players">
+          <table className="dtable rl-players yv-table">
             <thead><tr>
-              <th className="rl-rank">Kl.</th><th>Name</th><th className="ctr">Pos</th><Th k="age" cls="num">Alter</Th>
-              <Th k="ovr" cls="num">Stärke</Th><Th k="pot">Potenzial (Scouting)</Th>
-              <th className="num" title="Tempo">TMP</th><th className="num" title="Technik">TEC</th><th className="num" title="Passspiel">PAS</th>
-              <th className="num" title="Zweikampf">ZWK</th><th className="num" title="Torschuss">TOR</th>
+              <Th k="cls" cls="rl-rank">Kl.</Th><Th k="name">Name</Th><Th k="pos" cls="ctr">Pos</Th><Th k="age" cls="num">Alter</Th>
+              <Th k="ovr" cls="num">Stärke</Th><Th k="pot" title="Potenzial laut Scouting">Potenzial</Th>
+              <Th k="speed" cls="num" title="Tempo">TMP</Th><Th k="technique" cls="num" title="Technik">TEC</Th><Th k="passing" cls="num" title="Passspiel">PAS</Th>
+              <Th k="tackling" cls="num" title="Zweikampf">ZWK</Th><Th k="shooting" cls="num" title="Torschuss">TOR</Th>
             </tr></thead>
             <tbody>
               {rows.map((pl) => (

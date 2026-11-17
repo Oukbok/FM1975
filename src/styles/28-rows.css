@@ -200,3 +200,6 @@
 
 /* Stärke in der Aufstellung wie auf dem Transfermarkt (.mk-ov): UI-Schrift, fett, Zeilengröße (Wunsch Pascal). */
 .lu-table td.lu-strong { font-family: var(--font-ui); font-weight: 700; font-size: 16px; }
+/* Jugend › Mannschaften: Namen nie gekürzt, Spaltenköpfe nie umbrochen (alle Spalten sortierbar) */
+.dtable.yv-table th { white-space: nowrap; }
+.dtable.yv-table td.rl-name { min-width: 200px; overflow: visible; }
