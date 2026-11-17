@@ -123,15 +123,16 @@
 .cmp-statbox .cmp-statlist .cmp-stat { min-height: 0; padding-top: 0; padding-bottom: 0; scroll-snap-align: start; overflow: hidden; }
 .cmp-statbox .cmp-statlist .cmp-stat:last-child { border-bottom: 1px solid var(--border-soft); }
 
-/* Liga mit Spieltagen (Wunsch Pascal): Mitte oben „Begegnungen“ über zwei Reihen, darunter Rote Karten,
-   unterste Reihe Torschützen + Scorer (früher „Deine Lage“), rechts Vorlagen/Gelbe/Weiße Weste. */
+/* Liga mit Spieltagen (Wunsch Pascal): Mitte oben „Begegnungen“ über zwei Reihen, darunter Torschützen
+   und Vorlagen; rechts Rote Karten, Gelbe Karten, Scorer, Weiße Weste – vier gleich hohe Reihen. */
+.dpage.cmp-page.cmp-mdpage { grid-template-rows: repeat(4, minmax(0, 1fr)); } /* gleich hohe Boxen = gleich hohe Spielerzeilen (Wunsch Pascal) */
 .cmp-page.cmp-mdpage > .cmp-mdbox { grid-column: 2 / 3 !important; grid-row: 1 / 3 !important; }
-.cmp-page.cmp-mdpage > .cmp-st-red { grid-column: 2 !important; grid-row: 3 !important; }
-.cmp-page.cmp-mdpage > .cmp-st-goals { grid-column: 2 !important; grid-row: 4 !important; }
-.cmp-page.cmp-mdpage > .cmp-st-scorer { grid-column: 3 !important; grid-row: 4 !important; }
-.cmp-page.cmp-mdpage > .cmp-st-assists { grid-column: 3 !important; grid-row: 1 !important; }
+.cmp-page.cmp-mdpage > .cmp-st-goals { grid-column: 2 !important; grid-row: 3 !important; }
+.cmp-page.cmp-mdpage > .cmp-st-assists { grid-column: 2 !important; grid-row: 4 !important; }
+.cmp-page.cmp-mdpage > .cmp-st-red { grid-column: 3 !important; grid-row: 1 !important; }
 .cmp-page.cmp-mdpage > .cmp-st-yellow { grid-column: 3 !important; grid-row: 2 !important; }
-.cmp-page.cmp-mdpage > .cmp-st-clean { grid-column: 3 !important; grid-row: 3 !important; }
+.cmp-page.cmp-mdpage > .cmp-st-scorer { grid-column: 3 !important; grid-row: 3 !important; }
+.cmp-page.cmp-mdpage > .cmp-st-clean { grid-column: 3 !important; grid-row: 4 !important; }
 .cmp-page.cmp-mdpage > .cmp-statbox:not([class*="cmp-st-"]) { grid-column: auto !important; }
 .cmp-toolbar { display: flex; align-items: center; gap: 12px; }
 .cmp-mdnav { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; }
