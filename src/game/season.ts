@@ -24,6 +24,7 @@ import { buildProClub } from '../data/generate';
 import { recordSeasonEnd } from './clubRecords';
 import { archiveSeasonEnd } from './leagueArchive';
 import { closeAmateurLeagues } from './amateurLeagues';
+import { ddrReserveTransition, syncDdrReserves } from './ddrReserves';
 import { ownAmateurTable } from './reserveTeam';
 import { isReserveCupId, reserveCupClubs, reserveTransition, syncReserveClubs } from './reservePyramid';
 import { absorbPlaceholders, ddrExchange, mergeDdrPool, poolDrift, poolExchange, refillPool, settlePool } from './clubPool';
@@ -279,7 +280,7 @@ export function startNextSeason(g: Game): void {
   }
 
   settlePool(g, pooled);
-  if (isReunify) mergeDdrPool(g);
+  if (isReunify) { mergeDdrPool(g); syncDdrReserves(g, [], [], 1991); } // DDR-Reserven gibt es seit 1990/91 nicht mehr
 
   // --- 6) Spielerliga: neuer Spielplan + Tabelle (volle Engine) ---
   const playerClubList = playerIds.map((id) => g.clubs[id]).filter(Boolean) as Club[];
@@ -302,6 +303,9 @@ export function startNextSeason(g: Game): void {
   if (nextStartYear < 1991 && !isReunify) {
     // Auf-/Abstieg Oberliga ↔ DDR-Liga ↔ DDR-Pool (game/clubPool.ts).
     const ddrNew = ddrExchange(g, ddrDivs.map((d) => ({ id: d.id, tier: d.tier, orderedIds: finalOrder(g, d.id) })), newSeason);
+    // Zweite Mannschaften der Oberligisten: DDR-Liga / Nachwuchsoberliga je Epoche (game/ddrReserves.ts).
+    const ob = ddrDivs.find((d) => d.tier === 101), li = ddrDivs.find((d) => d.tier === 102);
+    if (ob && li) ddrReserveTransition(g, ddrNew, ob.id, li.id, nextStartYear);
     for (const d of ddrDivs) {
       otherDivisions.push(buildDivision(
         { id: d.id, name: d.name, tier: d.tier, group: d.group },

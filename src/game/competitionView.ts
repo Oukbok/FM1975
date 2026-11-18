@@ -381,7 +381,7 @@ export function buildSnapshot(g: Game, season: string, key: string): CompSnapsho
       const table: TableRowLite[] = sortedAm(a.rows, pts).map((r, i) => ({ clubId: r.id, pos: i + 1, p: r.p, w: r.w, d: r.d, l: r.l, gf: r.gf, ga: r.ga, pts: r.w * pts + r.d }));
       return {
         ...base, tier: a.tier, table, clubStats: clubStatsFromRows(table),
-        zones: table.map((_, i) => (i === 0 ? 'zone-cl' : i >= table.length - 3 ? 'zone-rel' : '')),
+        zones: table.map((_, i) => (i === 0 ? 'zone-cl' : i >= table.length - 3 && a.tier < 100 ? 'zone-rel' : '')),
         caption: `${a.md} von ${a.total} Spieltagen`,
         note: 'Höchste Amateurliga unterhalb der simulierten Ligen: nur die Tabelle wird gerechnet (schlankes Ergebnis-Modell wie bei den Auslandsligen), Einzelergebnisse und -statistiken gibt es nicht. '
           + 'Zweite Mannschaften dürfen nie in die Liga ihrer ersten Mannschaft oder höher und nie in die 2. Bundesliga aufsteigen – dann rückt der Nächste nach. Der Meister hat beim Aufstieg den Vorrang.',

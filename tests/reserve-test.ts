@@ -23,7 +23,7 @@ let fails = 0;
 const ok = (c: unknown, l: string) => { console.log(`${c ? 'OK  ' : 'FEHL'} ${l}`); if (!c) fails++; };
 const mgr = { name: 'T', nationality: 'GER', birthYear: 1950, style: 'balanced', background: 'newcomer' } as any;
 const make = (year?: number, club?: string) => createNewGame({ managedClubId: club ?? (year ? composeHome('ger', year)?.tier1[2]?.id ?? 'fra' : 'mgl'), manager: mgr, difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300, ...(year ? { startYear: year, country: 'ger' } : {}) } as any);
-const resIds = (g: Game) => Object.keys(g.simClubs).filter((id) => id.startsWith('res-'));
+const resIds = (g: Game) => Object.keys(g.simClubs).filter((id) => id.startsWith('res-') && !g.simClubs[id].ddr);
 const tierOfClub = (g: Game, id: string) => g.simClubs[id]?.tier ?? (g.clubs[id] ? g.leagues.playerDivision.tier : 99);
 /** Keine zweite Mannschaft in der 2. Liga oder auf/über der Ebene ihrer ersten Mannschaft. */
 const rulesOk = (g: Game) => g.leagues.otherDivisions.filter((d) => d.tier < 100).every((d) => d.clubIds.every((id) => !id.startsWith('res-') || (d.tier >= 3 && d.tier > tierOfClub(g, id.slice(4)))));
@@ -205,6 +205,33 @@ ok(!Object.keys(g10.clubs).some((id) => id.startsWith('amr-')) && rulesOk(g10), 
   amateurLeagues(g95);
   const t95 = amateurTablesView(g95);
   ok(t95.every((t) => t.tier === 4 && t.name.startsWith('Oberliga ')), `ab 1994: ${t95.length} Oberligen auf Ebene 4`);
+}
+// --- 7) DDR: DDR-Liga bis 1976, Nachwuchsoberliga 1976–1984, DDR-Liga ohne Aufstiegsrecht bis 1990 ----------
+{
+  const ddrRes = (x: Game, tier: number) => (x.leagues.otherDivisions.find((d) => d.tier === tier)?.clubIds ?? []).filter((id) => id.startsWith('res-'));
+  const d75 = make();
+  ok(ddrRes(d75, 102).length === 4 && ddrRes(d75, 102).every((id) => d75.simClubs[id]?.ddr && d75.simClubs[id].name.endsWith(' II')), `1975: DDR-Liga mit ${ddrRes(d75, 102).length} zweiten Mannschaften`);
+  startNextSeason(d75);
+  amateurLeagues(d75);
+  const nol = amateurTablesView(d75).find((t) => t.key === 'ddr-nol');
+  ok(ddrRes(d75, 102).length === 0 && !!nol && nol.rows.length === 14, `1976: Nachwuchsoberliga mit ${nol?.rows.length} Mannschaften, DDR-Liga ohne zweite Mannschaften`);
+  ok(competitionOptions(d75, d75.season).some((o) => o.key === 'am:ddr-nol' && o.section === 'DDR'), 'Nachwuchsoberliga unter Statistiken › Liga (DDR)');
+  ok(!Object.keys(d75.clubs).some((id) => id.startsWith('amr-ddr')), 'DDR-Reserven nie im DFB-Pokal');
+  const d85 = make(1985);
+  const li = d85.leagues.otherDivisions.find((d) => d.tier === 102)!;
+  ok(ddrRes(d85, 102).length === 4, `Start 1985: DDR-Liga mit ${ddrRes(d85, 102).length} zweiten Mannschaften`);
+  // Zweite Mannschaft vorne: kein Aufstieg in die Oberliga.
+  const rid = ddrRes(d85, 102)[0];
+  for (const r of li.table.rows) { r.points = r.clubId === rid ? 99 : r.points; }
+  li.table.rows.sort((a, b) => b.points - a.points).forEach((r, i) => { r.position = i + 1; });
+  startNextSeason(d85);
+  ok(ddrRes(d85, 101).length === 0 && ddrRes(d85, 102).includes(rid), 'DDR-Liga: Erster ist zweite Mannschaft → kein Aufstieg, der Nächste rückt nach');
+  const d89 = make(1989);
+  startNextSeason(d89);
+  ok(ddrRes(d89, 102).length === 0 && !Object.values(d89.simClubs).some((s) => s.ddr && s.id.startsWith('res-')), '1990/91: keine zweiten Mannschaften mehr in der DDR');
+  startNextSeason(d89);
+  const east = Object.values(d89.simClubs).filter((s) => s.id.startsWith('res-ddr') && s.tier < 100);
+  ok(d89.season === '1991/92' && !Object.values(d89.simClubs).some((s) => s.ddr && s.id.startsWith('res-') && s.tier > 100), `1991/92: Osten im gesamtdeutschen System (${east.length} zweite Mannschaften von Ost-Vereinen)`);
 }
 console.log(fails ? `\n${fails} Fehler.` : '\nZweite Mannschaft: alle Prüfungen bestanden.');
 process.exit(fails ? 1 : 0);

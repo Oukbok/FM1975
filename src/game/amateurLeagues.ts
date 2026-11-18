@@ -33,8 +33,11 @@ import { hashStr, mulberry32, simDisplayName } from '../engine/leagues';
 import { worldMatchGoals } from '../engine/world';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { localClubId } from './youthComps/localClubs';
+import { nachwuchsOberligaIds } from './ddrReserves';
 import { clubTierNow, isReserveId, ownReserveId, parentOfReserve, reserveTierOk } from './reserveIds';
 
+/** Schlüssel der DDR-Nachwuchsoberliga in den Tabellen. */
+export const NOL_KEY = 'ddr-nol';
 export interface AmGroup { key: string; label: string; lv: Lv[]; region: YcRegion; from?: number; to?: number }
 export const AM_GROUPS: AmGroup[] = [
   { key: 'nord', label: 'Nord', lv: ['SH', 'HH', 'HB', 'NI'], region: 'nord' },
@@ -157,6 +160,12 @@ export function amateurLeagues(g: Game): AmateurLeagues | null {
     const rows = amateurTableIds(g, grp.key, false).map(({ id, str }) => ({ id, str, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0 }));
     leagues.push({ key: grp.key, name: amLeagueName(g, grp.key, year), tier: amTier(g, grp.key), rows, md: 0 });
   }
+  // DDR 1976–1984: Nachwuchsoberliga der zweiten Mannschaften aller Oberligisten (game/ddrReserves.ts).
+  const nol = nachwuchsOberligaIds(g);
+  if (nol.length >= 4) {
+    const ids = nol.length % 2 ? nol.slice(0, -1) : nol;
+    leagues.push({ key: NOL_KEY, name: 'Nachwuchsoberliga', tier: 102, rows: ids.map((id) => ({ id, str: g.simClubs[id]?.strength ?? 50, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0 })), md: 0 });
+  }
   gg.amateurLeagues = { season: g.season, leagues, final: cur?.final };
   return gg.amateurLeagues;
 }
@@ -233,7 +242,7 @@ export function closeAmateurLeagues(g: Game, ownTable?: { key: string; order: st
     const champ = ids[0];
     if (!champ || champ.startsWith('x_yl.')) continue;
     let line = `${names[k]}: ${champ === ownReserveId(g) ? 'deine zweite Mannschaft' : amName(g, champ)}`;
-    if (isReserveId(champ) && !reserveTierOk(amTier(g, k) - 1, clubTierNow(g, parentOfReserve(champ)))) {
+    if (k !== NOL_KEY && isReserveId(champ) && !reserveTierOk(amTier(g, k) - 1, clubTierNow(g, parentOfReserve(champ)))) {
       const next = ids.find((id) => !isReserveId(id) && !id.startsWith('x_yl.'));
       line += ` – als zweite Mannschaft ohne Aufstiegsrecht${next ? `, an der Aufstiegsrunde nimmt ${amName(g, next)} teil` : ''}`;
     }
@@ -277,6 +286,6 @@ export function amateurTablesView(g: Game): AmTableView[] {
     out.push({ key, name: amLeagueName(g, key), tier: amTier(g, key), md: st.md ?? 0, total: (st.table.length - 1) * 2, own: true,
       rows: (st.table as unknown as AmRow[]).map((r) => ({ ...r, id: r.id === 'own' ? own : r.id })) });
   }
-  const order = AM_GROUPS.map((x) => x.key);
+  const order = [...AM_GROUPS.map((x) => x.key), NOL_KEY];
   return out.sort((a, b) => order.indexOf(a.key) - order.indexOf(b.key));
 }

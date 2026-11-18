@@ -38,6 +38,7 @@ import { makeMessage, pushMessage } from '../engine/messages';
 import { RES_PREFIX, clubTierNow, isReserveId, ownReserveId, parentOfReserve, reserveCap, reserveIdOf, reserveTierOk } from './reserveIds';
 import { RESERVE_CUP_PREFIX } from './reserveCup';
 import { amateurFinalPos, lowestSimTier } from './amateurLeagues';
+import { seedDdrReserves } from './ddrReserves';
 import { finishLocalSeason, reserveLevel, sortedTable, xiStrengthNow, type ReserveState } from './reserveTeam';
 
 type G = Game & { reserve?: ReserveState; reserveSeeded?: number };
@@ -131,7 +132,8 @@ export function syncReserveClubs(g: Game, year: number, tierOf: (id: string) => 
     if (wantsReserve(g, p.id, p.tier, year) && (p.tier <= 2 || p.id === g.managedClubId || g.simClubs[rid] || g.clubs[rid])) want.add(rid);
   }
   const removed: string[] = [];
-  for (const id of [...Object.keys(g.simClubs), ...Object.keys(g.clubs)]) if (isReserveId(id) && !want.has(id) && !removed.includes(id)) removed.push(id);
+  // DDR-Reserven (game/ddrReserves.ts) laufen getrennt.
+  for (const id of [...Object.keys(g.simClubs), ...Object.keys(g.clubs)]) if (isReserveId(id) && !g.simClubs[id]?.ddr && !want.has(id) && !removed.includes(id)) removed.push(id);
   const base = amateurBase(g);
   for (const id of want) {
     const pid = parentOfReserve(id);
@@ -199,6 +201,7 @@ export function seedReserveTeams(g: Game): void {
     if (g.simClubs[p.outId]) g.simClubs[p.outId].tier = POOL_TIER;
   }
   (g as G).reserveSeeded = year;
+  seedDdrReserves(g); // DDR-Oberligisten: DDR-Liga bzw. Nachwuchsoberliga (game/ddrReserves.ts)
 }
 
 // -----------------------------------------------------------------------------
@@ -384,7 +387,7 @@ function cupQualifiers(g: Game, year: number): string[] {
     const localPos = st && st.season === g.season && st.table.length ? localPosition(st) : 99;
     if ((p && p.pos <= 3) || (!p && (st?.depth ?? 0) === 0 && localPos <= 3)) out.push(own);
   }
-  const ai = Object.values(g.simClubs).filter((s) => isReserveId(s.id) && s.id !== own).map((s) => {
+  const ai = Object.values(g.simClubs).filter((s) => isReserveId(s.id) && s.id !== own && !s.ddr).map((s) => {
     const p = posIn(s.id);
     const jitter = (hashStr(`rescup:${s.id}:${year}`) % 100) / 10;
     // Amateurliga (game/amateurLeagues.ts): Endplatz zählt wie eine Staffel der Ebene darunter.

@@ -174,7 +174,8 @@ export function ddrExchange(g: Game, orders: { id: string; tier: number; ordered
   const out: Record<string, string[]> = {};
   if (!ober || !liga) return out;
   const down = ober.orderedIds.slice(-2);
-  const up = liga.orderedIds.slice(0, 2);
+  // Zweite Mannschaften der Oberligisten haben kein Aufstiegsrecht (game/ddrReserves.ts) – der Nächste rückt nach.
+  const up = liga.orderedIds.filter((id) => !isReserveId(id)).slice(0, 2);
   const newOber = ober.orderedIds.filter((id) => !down.includes(id)).concat(up);
   let newLiga = liga.orderedIds.filter((id) => !up.includes(id)).concat(down);
   const rnd = mulberry32(hashStr(`ddrpool:${season}`));
