@@ -54,5 +54,85 @@
     "season": "2035/36",
     "gameDate": "2035-12-10",
     "note": "erzeugt 2026-11-17"
+  },
+  {
+    "file": "liga2-1977.txt",
+    "name": "Deutschland 1977 · 2. Liga Nord",
+    "clubName": "Köln Süd",
+    "season": "1977/78",
+    "gameDate": "1977-12-10",
+    "note": "erzeugt 2026-11-18"
+  },
+  {
+    "file": "regionalliga-1995.txt",
+    "name": "Deutschland 1995 · Regionalliga Nord",
+    "clubName": "Lüdenscheid",
+    "season": "1995/96",
+    "gameDate": "1995-12-10",
+    "note": "erzeugt 2026-11-18"
+  },
+  {
+    "file": "liga3-2010.txt",
+    "name": "Deutschland 2010 · 3. Liga",
+    "clubName": "Sandhausen",
+    "season": "2010/11",
+    "gameDate": "2010-12-10",
+    "note": "erzeugt 2026-11-18"
+  },
+  {
+    "file": "regionalliga-2015.txt",
+    "name": "Deutschland 2015 · Regionalliga Nord",
+    "clubName": "Herne",
+    "season": "2015/16",
+    "gameDate": "2015-12-10",
+    "note": "erzeugt 2026-11-18"
+  },
+  {
+    "file": "liga1-2025.txt",
+    "name": "Deutschland 2025 · 1. Liga",
+    "clubName": "Wolfsburg",
+    "season": "2025/26",
+    "gameDate": "2025-12-10",
+    "note": "erzeugt 2026-11-18"
+  },
+  {
+    "file": "england-1992.txt",
+    "name": "England 1992 · 1. Liga",
+    "clubName": "Sheffield Blau-Weiß",
+    "season": "1992/93",
+    "gameDate": "1992-12-10",
+    "note": "erzeugt 2026-11-18"
+  },
+  {
+    "file": "italien-1985.txt",
+    "name": "Italien 1985 · 1. Liga",
+    "clubName": "Mailand Blau-Schwarz",
+    "season": "1985/86",
+    "gameDate": "1985-12-10",
+    "note": "erzeugt 2026-11-18"
+  },
+  {
+    "file": "frankreich-2000.txt",
+    "name": "Frankreich 2000 · 1. Liga",
+    "clubName": "Bastia",
+    "season": "2000/01",
+    "gameDate": "2000-12-10",
+    "note": "erzeugt 2026-11-18"
+  },
+  {
+    "file": "spanien-2005.txt",
+    "name": "Spanien 2005 · 1. Liga",
+    "clubName": "Getafe",
+    "season": "2005/06",
+    "gameDate": "2005-12-10",
+    "note": "erzeugt 2026-11-18"
+  },
+  {
+    "file": "niederlande2-2020.txt",
+    "name": "Niederlande 2020 · 2. Liga",
+    "clubName": "Almere",
+    "season": "2020/21",
+    "gameDate": "2020-12-10",
+    "note": "erzeugt 2026-11-18"
   }
 ]
