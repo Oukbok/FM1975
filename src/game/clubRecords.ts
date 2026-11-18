@@ -10,7 +10,7 @@
 // fehlt es (Altstände), beginnt die Historie einfach mit der nächsten Saison.
 // =============================================================================
 import { titleExperience } from '../engine/experience';
-import type { CurrentDivision } from '../data/reforms';
+import type { CurrentDivision } from '../data/reformTransition';
 import { divisionLabel } from '../engine/leagues';
 import { Game } from './state';
 

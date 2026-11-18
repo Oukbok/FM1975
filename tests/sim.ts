@@ -4,6 +4,7 @@
 // Ausgabe je Saison: Liga-Durchschnitt, Top-Spieler, Altersstruktur, Meister,
 // Kontostand des eigenen Vereins, Verletzte. Bricht bei Fehlern/NaN ab.
 // =============================================================================
+import { structureProblems, structureLine } from './simStructure';
 import { awardsOf } from '../src/game/seasonAwardsGame';
 import { AWARD_CATS } from '../src/engine/seasonAwards';
 import { createNewGame } from '../src/game/newGame';
@@ -372,6 +373,7 @@ function awardsReport(game: Game) {
   const best = a.best ? a.cats[a.best][0] : null;
   console.log(`   AWARDS ${AWARD_CATS.map((c) => { const w = a.cats[c][0]; return w ? `${c} ${w.n.split(' ').pop()} (${w.cn.slice(0, 12)}, ${w.ap} Sp, Note ${w.g.toFixed(2)}, ${w.gl}/${w.as}, ${w.cs} z.n., ${w.pts})` : `${c} —`; }).join(' | ')} | SdS ${best?.n ?? '—'} (${a.best ?? '-'}) | Newc. ${a.rookie ? `${a.rookie.n} ${a.rookie.a}J ${a.rookie.cat}` : '—'}`);
 }
+let structErrors = 0;
 if (process.env.AI) aiReport(g);
 for (let s = 0; s < seasons; s++) {
   let guard = 0;
@@ -402,6 +404,7 @@ for (let s = 0; s < seasons; s++) {
   const promSt = promSeasonEnd(g), promSeason = g.season;
   const tS = performance.now();
   startNextSeason(g);
+  { const sp = g.season === '1991/92' ? [] : structureProblems(g); if (sp.length) { structErrors += sp.length; console.log(`   STRUKTUR ${g.season} FEHLER: ${sp.slice(0, 8).join('; ')}`); } else if (seasonStartYear(g.season) >= 1994) console.log(`   STRUKTUR ${g.season} ok: ${structureLine(g)}`); }
   if (process.env.SPEED) speedSeason(g, promSeason, performance.now() - tS);
   if (process.env.HONOURS) honoursTrack(g);
   if (repMode) leagueRepTrack(g);
@@ -489,6 +492,7 @@ if (process.env.HONOURS) honoursSummary();
 if (process.env.HALL) hallSummary();
 if (process.env.AWARDS) gbSummary();
 if (process.env.SPEED) speedSummary();
+console.log(structErrors ? `STRUKTUR: ${structErrors} Fehler` : 'STRUKTUR: alle Saisons korrekt besetzt');
 console.log(`fertig in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 // Diagnose: Wer ist ≥ 85?
 {

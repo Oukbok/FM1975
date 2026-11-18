@@ -32,6 +32,7 @@ import { RESERVE_OPTIONAL_FROM, foreignReserveRule, reserveCupOpen, reserveName 
 import { bParentOf } from '../engine/worldReserves';
 import { seasonStartYear } from '../data/timeline';
 import { makePlaceholder } from '../data/reforms';
+import { clubRegion, groupForRegion } from '../data/regionGeo';
 import { migrateSeating } from './seatingGame';
 import { isForeignId } from '../engine/world';
 import { buildProClub } from '../data/generate';
@@ -46,7 +47,6 @@ type G = Game & { reserve?: ReserveState; reserveSeeded?: number };
 export interface Slot { key: string; tier: number; group: LeagueGroup; ids: string[] }
 
 const isGer = (g: Game) => homeCountryOf(g) === 'ger';
-const RANK: Record<string, number> = { nord: 4, nordost: 3, west: 2, sued: 1 };
 
 /** Region eines Vereins (Staffel-Kennung) aus der Stadt bzw. seiner Gruppe. */
 export function regionOf(g: Game, id: string): LeagueGroup {
@@ -56,14 +56,19 @@ export function regionOf(g: Game, id: string): LeagueGroup {
   return (g.simClubs[id]?.group ?? 'west') as LeagueGroup;
 }
 
-/** Passende Staffel einer Ebene für eine Region (eingleisig = immer; sonst gleiche bzw. nächstgelegene Region). */
+/** Feine Region für die Staffelwahl (Bayern/Südwest getrennt, data/regionGeo.ts). */
+export function staffelRegionOf(g: Game, id: string): LeagueGroup {
+  return clubRegion(g.clubs[id]?.city ?? g.simClubs[id]?.city ?? '', g.simClubs[id]?.group ?? null);
+}
+
+/** Passende Staffel einer Ebene für eine Region (eingleisig = immer; sonst über die Staffel-Kennungen der Ebene). */
 export function slotForRegion(slots: Slot[], region: LeagueGroup, strict: boolean): Slot | undefined {
   if (!slots.length) return undefined;
   const same = slots.find((s) => s.group === region || s.group == null);
   if (same) return same;
   if (strict && slots.length < 3) return undefined; // z. B. NOFV-Oberliga 1991–94 nur für den Nordosten
-  const r = RANK[region ?? 'west'] ?? 2;
-  return [...slots].sort((a, b) => Math.abs((RANK[a.group ?? ''] ?? 2) - r) - Math.abs((RANK[b.group ?? ''] ?? 2) - r))[0];
+  const want = groupForRegion(region ?? 'west', slots.map((s) => s.group));
+  return slots.find((s) => s.group === want) ?? slots[0];
 }
 
 // -----------------------------------------------------------------------------
@@ -168,7 +173,7 @@ export function planPlacement(g: Game, slots: Slot[], year: number): { key: stri
   const out: { key: string; outId: string; inId: string }[] = [];
   const used = new Set<string>();
   for (const r of cands) {
-    const slot = slotForRegion(low, regionOf(g, parentOfReserve(r.id)), true);
+    const slot = slotForRegion(low, staffelRegionOf(g, parentOfReserve(r.id)), true);
     if (!slot) continue;
     const n = slot.ids.filter(isReserveId).length + out.filter((o) => o.key === slot.key).length;
     if (n >= per) continue;
@@ -324,7 +329,7 @@ export function reserveTransition(
           : parentTier >= tier ? 'die erste Mannschaft spielt in derselben Liga (Zwangsabstieg)'
             : parentTier > 2 ? 'die erste Mannschaft spielt unterhalb der 2. Liga (höchstens Oberliga)'
             : 'zu viele zweite Mannschaften in der Staffel';
-        const dest = slotForRegion(lower.map((x) => ({ key: x, tier: tier + 1, group: membership[x].meta.group, ids: membership[x].ids })), regionOf(g, parentOfReserve(id)), false);
+        const dest = slotForRegion(lower.map((x) => ({ key: x, tier: tier + 1, group: membership[x].meta.group, ids: membership[x].ids })), staffelRegionOf(g, parentOfReserve(id)), false);
         const i = m.ids.indexOf(id);
         if (dest) {
           const dm = membership[dest.key];
@@ -403,7 +408,7 @@ function promoteOwn(g: Game, membership: Record<string, { ids: string[]; meta: {
       : `Meister – Aufstieg gesperrt: die erste Mannschaft spielt selbst in Ebene ${parentTier}.` };
   }
   const slots = keys.filter((k) => membership[k].meta.tier === lowest).map((k) => ({ key: k, tier: lowest, group: membership[k].meta.group, ids: membership[k].ids }));
-  const slot = slotForRegion(slots, regionOf(g, g.managedClubId), true);
+  const slot = slotForRegion(slots, staffelRegionOf(g, g.managedClubId), true);
   if (!slot) return { ok: false, pooled: [], text: 'Meister – für deine Region gibt es auf der nächsten Ebene keine Staffel, der Aufstieg entfällt.' };
   if (slot.ids.filter(isReserveId).length >= reserveCap(year, slots.length === 1)) return { ok: false, pooled: [], text: `Meister – die ${membership[slot.key].meta.name} hat schon die erlaubte Zahl zweiter Mannschaften.` };
   const victim = [...slot.ids].reverse().find((id) => !isReserveId(id) && id !== g.managedClubId);

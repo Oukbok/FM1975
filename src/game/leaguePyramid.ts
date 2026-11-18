@@ -16,6 +16,7 @@ import { allEuroClubs } from '../data/europe';
 import { CLUB_SEEDS, SECOND_LIGA_NORD_SEEDS, SECOND_LIGA_SUED_SEEDS } from '../data/generate';
 import { DDR_POOL_TIER, POOL_TIER, ddrPoolSeeds, westPoolSeeds } from '../data/history/historicClubs';
 import { LEAGUE_REFORMS, structureForSeason } from '../data/reforms';
+import { groupOrder } from '../data/regionGeo';
 import { seasonStartYear } from '../data/timeline';
 import { LeagueGroup, SimClub, simDisplayName } from '../engine/leagues';
 import { germanRank, initWorld } from '../engine/world';
@@ -277,7 +278,7 @@ export function pyramidFromGame(g: Game): PyramidData {
 }
 
 function groupRank(gr: LeagueGroup): number {
-  return gr === 'nord' ? 0 : gr === 'nordost' ? 1 : gr === 'west' ? 2 : gr === 'sued' ? 3 : 4;
+  return gr == null ? 9 : groupOrder(gr);
 }
 
 /** Gültige Soll-Struktur (für Hinweise), re-exportiert für die Oberfläche. */

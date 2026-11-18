@@ -64,30 +64,6 @@
     "note": "erzeugt 2026-11-18"
   },
   {
-    "file": "regionalliga-1995.txt",
-    "name": "Deutschland 1995 · Regionalliga Nord",
-    "clubName": "Lüdenscheid",
-    "season": "1995/96",
-    "gameDate": "1995-12-10",
-    "note": "erzeugt 2026-11-18"
-  },
-  {
-    "file": "liga3-2010.txt",
-    "name": "Deutschland 2010 · 3. Liga",
-    "clubName": "Sandhausen",
-    "season": "2010/11",
-    "gameDate": "2010-12-10",
-    "note": "erzeugt 2026-11-18"
-  },
-  {
-    "file": "regionalliga-2015.txt",
-    "name": "Deutschland 2015 · Regionalliga Nord",
-    "clubName": "Herne",
-    "season": "2015/16",
-    "gameDate": "2015-12-10",
-    "note": "erzeugt 2026-11-18"
-  },
-  {
     "file": "liga1-2025.txt",
     "name": "Deutschland 2025 · 1. Liga",
     "clubName": "Wolfsburg",
@@ -133,6 +109,30 @@
     "clubName": "Almere",
     "season": "2020/21",
     "gameDate": "2020-12-10",
+    "note": "erzeugt 2026-11-18"
+  },
+  {
+    "file": "regionalliga-1995.txt",
+    "name": "Deutschland 1995 · Regionalliga Nord",
+    "clubName": "Bremerhaven",
+    "season": "1995/96",
+    "gameDate": "1995-12-10",
+    "note": "erzeugt 2026-11-18"
+  },
+  {
+    "file": "liga3-2010.txt",
+    "name": "Deutschland 2010 · 3. Liga",
+    "clubName": "Brandenburg",
+    "season": "2010/11",
+    "gameDate": "2010-12-10",
+    "note": "erzeugt 2026-11-18"
+  },
+  {
+    "file": "regionalliga-2015.txt",
+    "name": "Deutschland 2015 · Regionalliga Nord",
+    "clubName": "Hamburg Barmbek",
+    "season": "2015/16",
+    "gameDate": "2015-12-10",
     "note": "erzeugt 2026-11-18"
   }
 ]

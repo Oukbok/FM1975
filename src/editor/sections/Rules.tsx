@@ -47,7 +47,8 @@ export function TimelineSection({ ds, onChange }: P) {
 const DIV_COLS: Col[] = [
   { key: 'id', label: 'ID', width: 120 }, { key: 'tier', label: 'Ebene', type: 'number', width: 70 },
   { key: 'group', label: 'Staffel', type: 'select', optional: true, width: 110, options: [
-    { value: 'nord', label: 'Nord' }, { value: 'sued', label: 'Süd' }, { value: 'nordost', label: 'Nordost' }, { value: 'west', label: 'West' }] },
+    { value: 'nord', label: 'Nord' }, { value: 'sued', label: 'Süd' }, { value: 'nordost', label: 'Nordost' }, { value: 'west', label: 'West' },
+    { value: 'suedwest', label: 'Südwest' }, { value: 'bayern', label: 'Bayern' }] },
   { key: 'name', label: 'Name', width: 180 }, { key: 'teamCount', label: 'Vereine', type: 'number', width: 80, hint: 'gerade Zahl' },
 ];
 

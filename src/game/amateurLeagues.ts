@@ -73,7 +73,7 @@ export function amGroupOf(g: Game, id: string, year = seasonStartYear(g.season))
   const lv = CITY_LV[city];
   if (lv) return (gs.find((x) => x.lv.includes(lv)) ?? gs[0]).key;
   const grp = s?.group ?? 'west';
-  const cands = gs.filter((x) => (grp === 'sued' ? x.region === 'sued' : grp === 'nord' ? x.key === 'nord' : grp === 'nordost' ? x.region === 'nordost' : x.region === 'west' || x.region === 'suedwest'));
+  const cands = gs.filter((x) => (grp === 'sued' || grp === 'bayern' ? x.region === 'sued' : grp === 'nord' ? x.key === 'nord' : grp === 'nordost' ? x.region === 'nordost' : x.region === 'west' || x.region === 'suedwest'));
   const list = cands.length ? cands : gs;
   return list[hashStr(`amg:${city || id}`) % list.length].key;
 }

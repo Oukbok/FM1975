@@ -11,6 +11,7 @@ import { COUNTRY_SEEDS, EURO_EXCLUSIONS } from '../data/worldSeed';
 import { COUNTRY_BY_CC, seasonLabelOf } from '../data/world/countries';
 import { worldSeason } from '../data/world/index';
 import { makePlaceholder, structureForSeason, LEAGUE_REFORMS } from '../data/reforms';
+import { fitsGroup } from '../data/regionGeo';
 import { POOL_TIER } from '../data/history/historicClubs';
 import { seasonStartYear } from '../data/timeline';
 import { accessSlots } from '../data/euroFormats';
@@ -59,8 +60,9 @@ export function pickLowerTiers(simClubs: Record<string, SimClub>, season: string
   const used = new Set<string>();
   return targets.map((t) => {
     const pick = (pred: (s: SimClub) => boolean) => pool.filter((s) => !used.has(s.id) && pred(s));
+    const groups = targets.filter((x) => x.tier === t.tier).map((x) => x.group);
     const ids: string[] = [];
-    for (const s of [...pick((s) => s.group === t.group), ...pick(() => true)]) {
+    for (const s of [...pick((s) => fitsGroup(s.city, s.group, t.group, groups)), ...pick(() => true)]) {
       if (ids.length >= t.teamCount) break;
       if (used.has(s.id)) continue;
       used.add(s.id); ids.push(s.id);

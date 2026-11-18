@@ -21,7 +21,7 @@ import { generateFixtures, calculateTable } from './league';
 // Staffel-Kennung einer Liga-Ebene. `null` = eingleisig. Über Nord/Süd hinaus
 // gibt es ab den Ligareformen weitere regionale Staffeln (Regionalliga:
 // Nord, Nordost, West, Süd), deshalb ist der Typ bewusst breit gehalten.
-export type LeagueGroup = 'nord' | 'sued' | 'nordost' | 'west' | null;
+export type LeagueGroup = 'nord' | 'sued' | 'nordost' | 'west' | 'suedwest' | 'bayern' | null;
 
 // Aggregierter Nicht-Spieler-Verein: nur Stärke + Optik, kein voller Kader.
 export interface SimClub {
@@ -81,13 +81,15 @@ export interface LeagueSystem {
 // -----------------------------------------------------------------------------
 // Beschriftungen
 // -----------------------------------------------------------------------------
-/** Deutsches Label einer Staffel-Kennung ("Nord", "Süd", "Nordost", "West"). */
+/** Deutsches Label einer Staffel-Kennung ("Nord", "Süd", "Nordost", "West", "Südwest", "Bayern"). */
 export function groupLabel(group: LeagueGroup): string {
   switch (group) {
     case 'nord': return 'Nord';
     case 'sued': return 'Süd';
     case 'nordost': return 'Nordost';
     case 'west': return 'West';
+    case 'suedwest': return 'Südwest';
+    case 'bayern': return 'Bayern';
     default: return '';
   }
 }

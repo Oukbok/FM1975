@@ -20,7 +20,8 @@ import { DDR_LIGA_SEEDS, DDR_OBERLIGA_SEEDS } from '../data/ddr';
 import { DDR_POOL_TIER, POOL_TIER, ddrPoolSeeds, westPoolSeeds } from '../data/history/historicClubs';
 import { homeCountryOf } from './state';
 import { HISTORIC_SEASONS, historicDivisions, historicFinal, HIST_RELEGATED } from '../data/history/seasons';
-import type { CurrentDivision, TransitionResult } from '../data/reforms';
+import type { CurrentDivision, TransitionResult } from '../data/reformTransition';
+import { fitsGroup } from '../data/regionGeo';
 import { seasonStartYear } from '../data/timeline';
 import { DivisionMeta, LeagueGroup, SimClub, divisionLabel, hashStr, mulberry32 } from '../engine/leagues';
 import { addHistoricSeason, addHistoricTitle } from './clubRecords';
@@ -40,15 +41,47 @@ function poolOf(g: Game, ddr: boolean, withReserves = true): SimClub[] {
   return Object.values(g.simClubs).filter((s) => s.tier === tier && (withReserves || !isReserveId(s.id)));
 }
 
-/** Pool-Kandidaten nach Stärke + Zufall, bevorzugt aus `group`; `allow` filtert (zweite Mannschaften, game/reserveIds.ts). */
-function pickFromPool(pool: SimClub[], n: number, group: LeagueGroup, rnd: () => number, taken: Set<string>, allow?: (id: string) => boolean, bonus?: (id: string) => number): string[] {
+/** Pool-Kandidaten nach Stärke + Zufall (+ `bonus`), bevorzugt aus der Region der Staffel `group` (unter den Staffeln
+ *  `groups` derselben Ebene, data/regionGeo.ts); `allow` filtert (zweite Mannschaften, game/reserveIds.ts). */
+function pickFromPool(pool: SimClub[], n: number, group: LeagueGroup, rnd: () => number, taken: Set<string>, allow?: (id: string) => boolean, bonus?: (id: string) => number, groups?: LeagueGroup[]): string[] {
   const score = new Map(pool.map((s) => [s.id, s.strength + rnd() * 6 + (bonus?.(s.id) ?? 0)]));
   const free = pool.filter((s) => !taken.has(s.id) && (!allow || allow(s.id)));
   const sorted = (xs: SimClub[]) => xs.sort((a, b) => score.get(b.id)! - score.get(a.id)!);
-  const ordered = group ? [...sorted(free.filter((s) => s.group === group)), ...sorted(free.filter((s) => s.group !== group))] : sorted(free);
+  const regional = !!groups && groups.length > 1; // mehrere Staffeln: nur Vereine der Region (Rest legt pickRegional an)
+  const near = (s: SimClub) => regional ? fitsGroup(s.city, s.group, group, groups!) : s.group === group;
+  const ordered = group ? [...sorted(free.filter(near)), ...(regional ? [] : sorted(free.filter((s) => !near(s))))] : sorted(free);
   const out = ordered.slice(0, n).map((s) => s.id);
   out.forEach((id) => taken.add(id));
   return out;
+}
+
+/**
+ * Wie pickFromPool, aber für Staffeln nach Region: fehlen Pool-Vereine der Region, rückt ein
+ * Amateurverein aus einer freien Pool-Stadt der Region nach (data/poolTowns.ts); erst danach
+ * ein Pool-Verein aus einer anderen Region.
+ */
+function pickRegional(
+  g: Game, pool: SimClub[], n: number, group: LeagueGroup, groups: LeagueGroup[], rnd: () => number,
+  taken: Set<string>, allow: (id: string) => boolean, strength: number, bonus?: (id: string) => number,
+): string[] {
+  const out = pickFromPool(pool, n, group, rnd, taken, allow, bonus, groups);
+  if (out.length >= n || groups.length <= 1) return out; // eine Staffel: pickFromPool nimmt schon alle
+  const cities = new Set([...Object.values(g.clubs).map((c) => c.city), ...Object.values(g.simClubs).map((c) => c.city)]);
+  for (const { town, group: tg } of POOL_TOWNS) {
+    if (out.length >= n) break;
+    const id = `pool-${town.toLowerCase().replace(/[^a-zäöüß]/g, '')}`;
+    if (cities.has(town) || g.simClubs[id] || g.clubs[id] || !fitsGroup(town, tg, group, groups) || !allow(id)) continue;
+    const [primary, secondary] = POOL_COLORS[Math.floor(rnd() * POOL_COLORS.length)];
+    g.simClubs[id] = { id, name: town, shortName: town.slice(0, 3).toUpperCase(), city: town, strength: Math.round(Math.max(40, strength + (rnd() - 0.5) * 6)), colors: { primary, secondary }, tier: POOL_TIER, group: tg };
+    pool.push(g.simClubs[id]); taken.add(id); out.push(id);
+  }
+  return out.length >= n ? out : out.concat(pickFromPool(pool, n - out.length, group, rnd, taken, allow, bonus));
+}
+
+/** Grobe Stärke eines Nachrückers: Schnitt der Staffel minus 6. */
+function newcomerStrength(g: Game, ids: string[]): number {
+  const known = ids.map((id) => g.simClubs[id]?.strength).filter((x): x is number => x != null);
+  return (known.length ? known.reduce((a, b) => a + b, 0) / known.length : 50) - 6;
 }
 
 // -----------------------------------------------------------------------------
@@ -64,9 +97,12 @@ export function absorbPlaceholders(g: Game, res: TransitionResult, season: strin
   for (const ph of res.placeholders) {
     const div = res.divisions.find((d) => d.ids.includes(ph.id));
     const single = !!div && res.divisions.filter((d) => d.meta.tier === div.meta.tier).length === 1;
-    const [id] = pickFromPool(pool, 1, ph.group, rnd, taken, (x) => !!div && poolPickAllowed(g, x, div.meta.tier, div.ids, single), bonus);
+    const groups = div ? res.divisions.filter((d) => d.meta.tier === div.meta.tier).map((d) => d.meta.group) : [];
+    const [id] = pickRegional(g, pool, 1, ph.group, groups, rnd, taken, (x) => !!div && poolPickAllowed(g, x, div.meta.tier, div.ids, single), div ? newcomerStrength(g, div.ids) : 50, bonus);
     if (!id || !div) { keep.push(ph); continue; }
     div.ids[div.ids.indexOf(ph.id)] = id;
+    // Sofort einordnen, damit Pool-Tausch und zweite Mannschaften ihn nicht ein zweites Mal ziehen.
+    g.simClubs[id].tier = div.meta.tier; g.simClubs[id].group = div.meta.group;
   }
   res.placeholders = keep;
 }
@@ -96,7 +132,7 @@ export function poolExchange(
     const cur = current.find((c) => c.id === m.meta.id);
     if (!cur) continue;
     const down = [...cur.orderedIds].reverse().filter((id) => m.ids.includes(id) && id !== protectedId).slice(0, k);
-    const up = pickFromPool(pool, down.length, m.meta.group, rnd, taken, (x) => poolPickAllowed(g, x, m.meta.tier, m.ids, divs.length === 1), bonus);
+    const up = pickRegional(g, pool, down.length, m.meta.group, divs.map((d) => d.meta.group), rnd, taken, (x) => poolPickAllowed(g, x, m.meta.tier, m.ids, divs.length === 1), newcomerStrength(g, m.ids), bonus);
     const n = Math.min(down.length, up.length);
     for (let i = 0; i < n; i++) {
       m.ids[m.ids.indexOf(down[i])] = up[i];

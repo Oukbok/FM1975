@@ -206,14 +206,14 @@ Die 3 Absteiger füllen die 2. Liga wieder auf: Sie werden so verteilt, dass **j
 Unterhalb der untersten simulierten Liga liegen die **Amateurligen** als Vereins-Pool: frühere Bundesligisten wie **Oberhausen**, **Neunkirchen** oder **Berlin Neukölln** (Tasmania), die Absteiger der 2. Liga 1975 und Amateur-Spitzenvereine (z. B. Kiel, Trier, Freiburg). Jede Saison tauschen die Schlechtesten der untersten Liga mit den stärksten Pool-Vereinen ihrer Region – bei zwei Staffeln **je 4**, eingleisig **3**, ab drei Staffeln **je 2**. Wer in den Pool fällt, kann später zurückkehren; steigt ein Pool-Verein bis in deine Liga auf, bekommt er wie jeder Aufsteiger einen vollen Kader. Ligareformen besetzen neue Plätze zuerst aus dem Pool, erst danach mit fiktiven Platzhaltern.
 
 ## Ausblick
-Die historischen Ligareformen (eingleisige 2. Liga **1981/82**, Regionalliga **1994/95**, 3. Liga **2008/09**) sind als datengetriebenes **Reformsystem** umgesetzt und greifen automatisch beim jeweiligen Saisonwechsel — Details siehe Artikel „Ligareformen (historischer Umbau)“. Die DDR-Integration 1991/92 dockt als weiterer Reform-Datensatz an.`,
+Die historischen Ligareformen (eingleisige 2. Liga **1981/82**, Regionalliga **1994/95**, 3. Liga **2008/09**, fünf Regionalliga-Staffeln **2012/13**) sind als datengetriebenes **Reformsystem** umgesetzt und greifen automatisch beim jeweiligen Saisonwechsel — Details siehe Artikel „Ligareformen (historischer Umbau)“. Die DDR-Integration 1991/92 dockt als weiterer Reform-Datensatz an.`,
   },
 
   {
     id: 'leagues-reforms',
     category: 'leagues',
     title: 'Ligareformen (historischer Umbau)',
-    keywords: ['reform', 'reformen', 'umbau', 'struktur', '1981', '1994', '2008', 'eingleisig', 'regionalliga', '3. liga', 'platzhalter', 'migration', 'saisonwechsel'],
+    keywords: ['reform', 'reformen', 'umbau', 'struktur', '1981', '1994', '2008', '2012', 'eingleisig', 'staffel', 'südwest', 'bayern', 'nordost', 'relegation', 'aufstiegsrunde', 'regionalliga', '3. liga', 'platzhalter', 'migration', 'saisonwechsel'],
     body: `## Was ist das Reformsystem?
 Die deutsche Ligastruktur hat sich über die Jahrzehnte mehrfach umgebaut. Diese historischen Umbauten sind im Spiel als **atomare Reform-Datensätze** hinterlegt. Jeder Datensatz beschreibt:
 
@@ -231,7 +231,7 @@ Steht zur neuen Saison eine noch nicht angewandte Reform an, führt die Engine �
 3. Aufstiegs-/Playoff-Runden (vereinfacht) auflösen.
 4. Lizenzprüfung (vereinfacht: **sportlich qualifiziert = lizenziert**).
 5. Reformbedingte Zusatz-Qualifikation.
-6. Vereine geografisch (Nord/Nordost/West/Süd) den Staffeln zuweisen.
+6. Vereine nach ihrer **Region** den Staffeln zuweisen: Jede Stadt gehört zu einem Landesverband; fehlt eine Staffel ihrer Region, nimmt die nächstliegende sie auf (z. B. 2008–2012 Nordost → Nord, Rheinland-Pfalz/Saarland → West; ab 2012 Hessen/Baden-Württemberg → Südwest).
 7. Sollgrößen prüfen: fehlende Plätze mit **klar fiktiven Platzhaltervereinen** auffüllen (erkennbar erfundene Städtenamen wie „FC Musterstadt“, „SV Beispielheim“) **oder** überzählige Vereine dokumentiert entfernen.
 8. Neue Spielpläne der neuen Struktur erzeugen.
 9. Alte Tabellen ersetzen und eine **Chronik-Meldung** zur Reform auslösen.
@@ -249,15 +249,26 @@ Unterhalb der 2. Liga entsteht eine neue **dritte Ebene: die Regionalliga mit vi
 - Ab jetzt ist Auf-/Abstieg zwischen 2. Liga und Regionalliga möglich.
 
 ## Reform 2008/09 – Einführung der 3. Liga
-Zwischen 2. Liga und Regionalliga wird eine neue, **eingleisige 3. Liga mit 20 Vereinen** eingezogen; die Regionalliga rückt auf **Ebene 4** (nun drei Staffeln: Nord, Nordost, Süd zu je 18).
+Zwischen 2. Liga und Regionalliga wird eine neue, **eingleisige 3. Liga mit 20 Vereinen** eingezogen; die Regionalliga rückt auf **Ebene 4** – mit nur noch **drei Staffeln zu je 18**: **Nord** (Norden und Nordosten), **West** (Nordrhein-Westfalen, Rheinland-Pfalz, Saarland) und **Süd** (Bayern, Hessen, Baden-Württemberg).
 - **Qualifikation:** die **besten 5** jeder der vier bisherigen Regionalliga-Staffeln (2007/08) bilden die 20 Startplätze der 3. Liga (vereinfachte Lizenzprüfung).
-- Die übrigen Vereine bilden die neue viertklassige Regionalliga; fehlende Plätze werden mit fiktiven Platzhaltern aufgefüllt.
+- Die übrigen Vereine bilden nach Region die neue viertklassige Regionalliga. Hat eine Region mehr Vereine als Plätze (z. B. der Nordosten), steigen die Schwächsten in die Amateurligen ab; fehlende Plätze kommen aus den Amateurligen der Region, notfalls fiktive Platzhalter.
+- **Auf-/Abstieg:** die drei Meister steigen in die 3. Liga auf, drei steigen ab.
+
+## Reform 2012/13 – Regionalliga mit fünf Staffeln
+Die Regionalverbände übernehmen die vierte Ebene: **Nord** (Niedersachsen, Bremen, Hamburg, Schleswig-Holstein, 18 Vereine), **Nordost** (Berlin und die neuen Länder, 16), **West** (Nordrhein-Westfalen, 20), **Südwest** (Rheinland-Pfalz, Saarland, Hessen, Baden-Württemberg, 18) und **Bayern** (20).
+- Die bisherigen Regionalligisten werden nach Region verteilt, die zusätzlichen Plätze gehen an die stärksten Amateurvereine der Region.
+- **Aufstieg:** nur noch **drei Plätze** für fünf Staffeln. Die fünf Meister und der **Vizemeister Südwest** spielen in drei gelosten Duellen um den Aufstieg; aus der 3. Liga steigen drei ab.
+- **Vereinfachungen:** Südwest hat 18 statt historisch 19 Vereine (der Spielplan braucht gerade Zahlen). Die Aufstiegsrunde wird nicht als eigene Spiele ausgetragen, sondern nach Stärke mit etwas Glück entschieden. Die späteren Sonderregeln (ab 2018/19 Südwest-Meister direkt, wechselnde Direktaufsteiger ab 2020) sind nicht abgebildet.
+- **Absteiger nach Region:** Wer aus der 3. Liga absteigt, kommt in die Staffel seiner Region. Bekommt eine Staffel dadurch mehr Vereine, steigen dort entsprechend mehr in die Amateurligen ab; fehlt einer, rückt ein Amateurverein der Region nach.
+
+## Ältere Spielstände
+Spielstände aus früheren Versionen mit der Regionalliga **Nord/Nordost/Süd** ab 2008 spielen ihre laufende Saison unverändert zu Ende. Beim nächsten Saisonwechsel werden die Staffeln nach Region auf die gültige Struktur (bis 2011/12 Nord/West/Süd, danach die fünf Staffeln) umverteilt. Ist eine Staffel überfüllt, steigen ihre Schwächsten in die Amateurligen ab, fehlende Plätze rücken aus den Amateurligen der Region nach; dein eigener Verein wird immer eingeteilt.
 
 ## Nur die Spielerliga spielt „echt“
 Wie im übrigen Spiel gilt: **nur deine eigene Liga** nutzt die volle Match-Engine. Alle zusätzlichen und neuen Ebenen werden **performant per Stärke simuliert**.
 
 ## Erweiterbar
-Das System ist bewusst datengetrieben: weitere Reformen (z. B. die **DDR-Integration 1991/92**) lassen sich als zusätzlicher Reform-Datensatz ergänzen, ohne die Kernlogik zu ändern.`,
+Das System ist bewusst datengetrieben: weitere Reformen (z. B. die **DDR-Integration 1991/92**) lassen sich als zusätzlicher Reform-Datensatz ergänzen, ohne die Kernlogik zu ändern. Staffeln werden über ihre Kennung (Nord, Nordost, West, Südwest, Süd, Bayern) gefunden, nicht über feste Namen.`,
   },
 
   {

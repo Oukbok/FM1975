@@ -18,6 +18,7 @@ import { seasonsOf, titlesOf } from '../src/game/clubRecords';
 import { compStatsOf } from '../src/engine/compStats';
 import { buildSnapshot, competitionOptions, seasonOptions } from '../src/game/competitionView';
 import { countryOptions, countrySeasons, countrySnapshot, statsCountries } from '../src/game/competitionCountry';
+import { regioChecks } from './regio-checks';
 
 const seasons = Number(process.argv[2] ?? 10);
 let seed = 1977;
@@ -174,6 +175,9 @@ migrateLeaguePool(old);
 migrateLeaguePool(old);
 check(old.simClubs.h_rwo?.tier === POOL_TIER && old.simClubs['ddr-aue']?.tier === DDR_POOL_TIER, 'Migration: Pool ergänzt');
 check(titlesOf(old, 'muc').filter((t) => t.kind === 'meister').length === 4, 'Migration: Titel genau einmal');
+
+// 5) Regionalliga-Staffeln ab 2008/2012 (Reformen, Aufstiegsrunde, Absteiger nach Region, alte Spielstände)
+regioChecks(check);
 
 if (failures) { console.error(`${failures} Fehler`); process.exit(1); }
 console.log('test:leagues OK');

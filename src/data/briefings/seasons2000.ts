@@ -229,7 +229,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'geld', title: 'Fairplay wird ernst', text: 'Mit dieser Saison beginnt der Beobachtungszeitraum des Finanziellen Fairplays; die ersten Prüfungen folgen 2013/14.', inGame: 'Ab jetzt prüft das Spiel nach jeder Saison deine Bilanz für die Europapokal-Lizenz.' },
       { topic: 'medien', title: 'Pyro-Gespräche gescheitert', text: 'Fanvertreter verhandeln mit DFB und DFL über legale Pyrotechnik; im Herbst 2011 erklärt der DFB die Gespräche für beendet.' },
       { topic: 'geld', title: 'TV-Geld steigt kräftig', text: 'Im April 2012 vergibt die DFL die Rechte ab 2013/14 für durchschnittlich rund 628 Mio. Euro pro Saison.' },
-      { topic: 'liga', title: 'Regionalliga-Reform beschlossen', text: 'Ab 2012/13 wird die Regionalliga in fünf Staffeln gespielt; die Meister müssen in Aufstiegsspiele.' },
+      { topic: 'liga', title: 'Regionalliga-Reform beschlossen', text: 'Ab 2012/13 wird die Regionalliga in fünf Staffeln gespielt; die Meister müssen in Aufstiegsspiele.', inGame: 'Zum Saisonwechsel werden die Regionalligisten nach Region auf fünf Staffeln verteilt.' },
       { topic: 'liga', title: 'EM in Polen und der Ukraine', text: 'Im Juni 2012 findet die EM erstmals in Osteuropa statt.' },
     ],
     society: [
@@ -244,7 +244,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     season: '2012/13',
     headline: 'Stille Kurven und billiges Geld',
     football: [
-      { topic: 'liga', title: 'Fünf Regionalligen', text: 'Die vierte Liga spielt nun in den Staffeln Nord, Nordost, West, Südwest und Bayern.' },
+      { topic: 'liga', title: 'Fünf Regionalligen', text: 'Die vierte Liga spielt nun in den Staffeln Nord, Nordost, West, Südwest und Bayern.', inGame: 'Nur drei Aufsteiger: Die fünf Meister und der Vizemeister Südwest losen drei Duelle um die 3. Liga aus.' },
       { topic: 'medien', title: 'Protest „12:12“', text: 'Gegen das Sicherheitspapier der Liga schweigen Fans an mehreren Spieltagen 12 Minuten und 12 Sekunden lang. Im Dezember 2012 wird „Sicheres Stadionerlebnis“ trotzdem beschlossen.', inGame: 'Personalisierte Einlasskontrollen sind baubar: weniger Risiko, aber Unmut in der Kurve.' },
       { topic: 'regeln', title: 'Torlinientechnik erlaubt', text: 'Im Juli 2012 lässt das IFAB Torlinientechnik offiziell zu. Ob die Bundesliga sie nutzt, bleibt umstritten.' },
       { topic: 'geld', title: 'Zinsen im Keller', text: 'Die Europäische Zentralbank senkt den Leitzins auf Rekordtiefs; Kredite werden billig.', inGame: 'Kredite für Stadionprojekte werden günstiger.' },
