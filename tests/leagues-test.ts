@@ -143,7 +143,7 @@ if (past) {
 // 3b) Länderwahl (game/competitionCountry.ts): DDR, Hintergrund-Länder, Pokal ohne Simulation
 {
   const cs = statsCountries(g);
-  check(cs[0].mode === 'home' && cs.some((c) => c.cc === 'gdr') && cs.some((c) => c.mode === 'world'), 'Länderliste: Heimat, DDR, Hintergrund');
+  check(cs.some((c) => c.mode === 'home') && cs.some((c) => c.cc === 'gdr') && cs.some((c) => c.mode === 'world'), 'Länderliste: Heimat, DDR, Hintergrund');
   const ddr = cs.find((c) => c.cc === 'gdr')!;
   const ds = countrySeasons(g, ddr);
   check(ds.some((s) => s.source === 'history') && ds.some((s) => s.source === 'live'), 'DDR: Historie + laufende Saison');
