@@ -14,6 +14,7 @@
 import { LeagueGroup, SimClub, DivisionMeta, mulberry32, hashStr } from '../engine/leagues';
 import { DivisionTarget, LeagueReform, makePlaceholder, pendingReform, structureForSeason } from './reforms';
 import { Region, assignByRegion, clubRegion, groupOrder } from './regionGeo';
+import { ensureProtected, normalizeToSteady } from './reformSteady';
 
 // -----------------------------------------------------------------------------
 // Transition-Typen
@@ -171,7 +172,13 @@ function normalTransition(ctx: TransitionContext): TransitionResult {
     const upper = uppers[0]; // obere Ebene ist in allen Strukturen eingleisig
     const G = lowers.length;
     const upT = targets.find((t) => t.id === upper.id) ?? targets.find((t) => t.tier === upperTier && t.group == null);
-    const P = upT?.upSlots ?? (G >= 3 ? G : 3); // Zahl der Auf-/Absteiger an dieser Grenze
+    // Größe der oberen Liga nach dem Wechsel darüber; Sollgröße der neuen Saison. Weicht sie ab
+    // (Ligareform im Ausland, 2. Liga ab 1994 mit 18 Vereinen, übergroße Liga nach 1991/92),
+    // steigen entsprechend mehr ab (schrumpft) bzw. mehr auf (wächst) – Aufsteiger bleiben oben.
+    const planned = upper.orderedIds.length - remove[upper.id].size + add[upper.id].length;
+    const want = uppers.length === 1 && upT ? upT.teamCount : planned;
+    let P = upT?.upSlots ?? (G >= 3 ? G : 3); // Zahl der Aufsteiger an dieser Grenze
+    if (P - (want - planned) < 0) P = want - planned; // wächst stärker, als aufsteigen: mehr Aufsteiger
 
     // Aufsteiger je Staffel bestimmen (Meister, Rest über Reihung; weniger Plätze als Staffeln = Aufstiegsrunde).
     const promotedByGroup: Record<string, string[]> = {};
@@ -197,8 +204,9 @@ function normalTransition(ctx: TransitionContext): TransitionResult {
     const promoted: string[] = [];
     for (const lg of lowers) promoted.push(...promotedByGroup[lg.id]);
 
-    // Absteiger der oberen Ebene = die schlechtesten `promoted.length` Vereine.
-    const relegated = promoted.length ? upper.orderedIds.slice(-promoted.length) : [];
+    // Absteiger der oberen Ebene = die Schlechtesten (Aufsteiger ± Größenänderung).
+    const D = Math.max(0, promoted.length - (want - planned));
+    const relegated = D ? upper.orderedIds.filter((id) => !remove[upper.id].has(id)).slice(-D) : [];
 
     // Zu-/Abgänge oben vermerken.
     for (const id of relegated) remove[upper.id].add(id);
@@ -231,9 +239,11 @@ function normalTransition(ctx: TransitionContext): TransitionResult {
       const slots: string[] = [];
       for (const lg of lowers) for (let k = 0; k < promotedByGroup[lg.id].length; k++) slots.push(lg.id);
       if (G === 1) {
-        for (let k = 0; k < slots.length && k < relegated.length; k++) add[slots[k]].push(relegated[k]);
+        add[lowers[0].id].push(...relegated); // alle Absteiger (auch mehr als Aufsteiger, Ligaverkleinerung)
       } else {
+        // Plätze je Staffel = eigene Aufsteiger; mehr Absteiger als Aufsteiger reihum verteilen.
         const caps = lowers.map((lg) => ({ group: lg.group, cap: promotedByGroup[lg.id].length }));
+        for (let k = 0, extra = relegated.length - slots.length; k < extra; k++) caps[k % caps.length].cap++;
         const { buckets, overflow } = assignByRegion(relegated, caps, regional ? regionOf : (id) => clubRegion(cityOf(id), null));
         lowers.forEach((lg, k) => add[lg.id].push(...buckets[k]));
         if (overflow.length) dropped.push(...overflow); // kann nicht vorkommen (Summe der Plätze = Absteiger)
@@ -346,12 +356,20 @@ function migrate1994(ctx: TransitionContext, reform: LeagueReform): TransitionRe
   const t2 = findDiv(current, (d) => d.tier === 2)?.orderedIds ?? [];
 
   const { newTier1, newTier2Base, promotedTop, relegatedTop } = topExchangeSingle(t1, t2);
-  const newTier2 = newTier2Base.concat(relegatedTop); // bleibt 20
+  // 2. Liga ab 1994/95 mit 18 Vereinen: die Überzähligen (Tabellenende) gehen in die Regionalliga.
+  const t2Size = reform.targetStructure.find((x) => x.id === 'tier2')!.teamCount;
+  // Wie 1993/94: drei Aufsteiger von der dritten Ebene (im Spiel die NOFV-Oberliga, sofern vorhanden),
+  // dafür fünf Absteiger aus der 2. Liga (Weltdaten ger 1993 → 1994).
+  const old3 = current.filter((d) => d.tier === 3);
+  const up3 = old3.length === 1 && old3[0].orderedIds.length >= 6 ? old3[0].orderedIds.slice(0, 3) : [];
+  const keep2 = Math.max(0, t2Size - relegatedTop.length - up3.length);
+  const newTier2 = newTier2Base.slice(0, keep2).concat(up3, relegatedTop);
+  const down2 = newTier2Base.slice(keep2);
 
   // Neue Regionalliga: vier Staffeln. Eine bereits bestehende dritte Ebene
   // (z. B. die 1991/92 gebildete NOFV-Oberliga) fließt in die neue Regionalliga
   // ein; fehlende Plätze werden mit fiktiven Platzhaltern aufgefüllt.
-  const oldTier3 = current.filter((d) => d.tier === 3).flatMap((d) => d.orderedIds);
+  const oldTier3 = [...down2, ...old3.flatMap((d) => d.orderedIds).filter((id) => !up3.includes(id))];
   const rlTargets = reform.targetStructure.filter((x) => x.tier === 3);
   const { result: rlDivs, placeholders, overflow } = distributeToGroups(oldTier3, rlTargets, regionResolver(ctx), ctx.strengthOf, reform.reformId, ctx.protectedId);
 
@@ -398,11 +416,15 @@ function migrate2008(ctx: TransitionContext, reform: LeagueReform): TransitionRe
   const rlGroups = current.filter((d) => d.tier === 3); // bisherige Regionalliga-Staffeln
 
   const { newTier1, newTier2Base, promotedTop, relegatedTop } = topExchangeSingle(t1, t2);
-  const newTier2 = newTier2Base.concat(relegatedTop); // bleibt 20
+  // 2. Liga in Sollgröße (18; ältere Spielstände mit 20 geben die Letzten an die 3. Liga ab).
+  const t2Size = reform.targetStructure.find((x) => x.id === 'tier2')!.teamCount;
+  const keep2 = Math.max(0, t2Size - relegatedTop.length);
+  const newTier2 = newTier2Base.slice(0, keep2).concat(relegatedTop);
+  const down2 = newTier2Base.slice(keep2);
 
   // 3. Liga: die Besten jeder bisherigen Regionalliga-Staffel (zwei Staffeln 2000–2008: je 10;
   // ältere Spielstände mit vier Staffeln: je 5) = 20 Qualifikanten.
-  const thirdLeague: string[] = [];
+  const thirdLeague: string[] = [...down2];
   const remainder: string[] = [];
   const perGroup = Math.ceil(20 / Math.max(1, rlGroups.length));
   for (const g of rlGroups) {
@@ -506,34 +528,6 @@ function migrate1991(ctx: TransitionContext, reform: LeagueReform): TransitionRe
 }
 
 // -----------------------------------------------------------------------------
-// Normalisierung übergroßer Ebenen auf die Soll-(Steady-)Struktur
-// -----------------------------------------------------------------------------
-// Nach der einmalig übergroßen Wiedervereinigungs-Saison (1. Liga = 20, 2. Liga
-// vergrößert) führt der reguläre Saisonwechsel die Ebenen schrittweise auf ihre
-// Sollgrößen zurück: übergroße Ebenen geben ihre schwächsten Vereine an die
-// nächsttiefere Ebene ab (top-down); auf der untersten Ebene fallen Überzählige
-// aus der Simulation. Dadurch steigen in der Normalisierungs-Saison mehr Vereine
-// ab als sonst. Passt eine Ebene bereits, ist der Schritt ein No-op.
-function normalizeToSteady(res: TransitionResult, newSeason: string, given?: DivisionTarget[]): TransitionResult {
-  const targets = given ?? structureForSeason(newSeason);
-  const tiers = Array.from(new Set(res.divisions.map((d) => d.meta.tier))).sort((a, b) => a - b);
-  const dropped = [...res.dropped];
-  for (const tier of tiers) {
-    for (const d of res.divisions.filter((x) => x.meta.tier === tier)) {
-      const tgt = targets.find((t) => t.id === d.meta.id)?.teamCount
-        ?? targets.find((t) => t.tier === tier)?.teamCount
-        ?? d.ids.length;
-      while (d.ids.length > tgt) {
-        const victim = d.ids.pop() as string; // schwächster (Tabellenende) zuerst
-        const lower = res.divisions.find((x) => x.meta.tier === tier + 1);
-        if (lower) lower.ids.push(victim); else dropped.push(victim);
-      }
-    }
-  }
-  return { ...res, dropped };
-}
-
-// -----------------------------------------------------------------------------
 // Öffentliche Einstiegsfunktion
 // -----------------------------------------------------------------------------
 /**
@@ -558,35 +552,8 @@ export function computeSeasonTransition(ctx: TransitionContext): TransitionResul
     // Regulärer Saisonwechsel; führt zugleich übergroße Ebenen (z. B. die 1991/92
     // einmalig vergrößerte 1./2. Liga) schrittweise auf die Sollgrößen zurück und
     // ordnet Staffeln älterer Spielstände nach der Soll-Struktur neu.
-    res = normalizeToSteady(normalTransition(ctx), ctx.newSeason, ctx.targets);
+    res = normalizeToSteady(normalTransition(ctx), ctx.newSeason, ctx.targets, ctx.current, ctx.protectedId);
     res = alignStructure(res, ctx, structureForSeason(ctx.newSeason));
   }
   return ensureProtected(res, ctx.protectedId);
 }
-
-/**
- * Stellt sicher, dass der Verein des Spielers nie aus der Ligapyramide fällt.
- * Falls eine Reform ihn (z. B. als Absteiger in eine nicht simulierte Amateurliga)
- * entfernen würde, wird er stattdessen in die unterste Ebene aufgenommen und
- * verdrängt dort den schwächsten Eintrag (Platzhalter bevorzugt, sonst realer
- * Verein, der dann absteigt). So bleiben alle Staffelgrößen gerade.
- */
-function ensureProtected(res: TransitionResult, protectedId?: string): TransitionResult {
-  if (!protectedId) return res;
-  if (res.divisions.some((d) => d.ids.includes(protectedId))) return res;
-  const lowestTier = Math.max(...res.divisions.map((d) => d.meta.tier));
-  const target = res.divisions.find((d) => d.meta.tier === lowestTier);
-  if (!target || target.ids.length === 0) return res;
-  const victimIdx = target.ids.length - 1;
-  const victim = target.ids[victimIdx];
-  target.ids[victimIdx] = protectedId;
-  const dropped = res.dropped.filter((id) => id !== protectedId);
-  let placeholders = res.placeholders;
-  if (victim && victim.startsWith('ph-')) {
-    placeholders = res.placeholders.filter((p) => p.id !== victim); // Platzhalter entfällt lautlos
-  } else if (victim) {
-    dropped.push(victim); // realer Verein steigt an Stelle des Spielers ab
-  }
-  return { ...res, dropped, placeholders };
-}
-

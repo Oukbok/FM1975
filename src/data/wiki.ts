@@ -246,7 +246,9 @@ Die beiden Staffeln **Nord und Süd** der 2. Liga werden zu **einer eingleisigen
 ## Reform 1994/95 – Regionalliga als 3. Ebene
 Unterhalb der 2. Liga entsteht eine neue **dritte Ebene: die Regionalliga mit vier Staffeln** (Nord, Nordost, West, Süd) zu je 18 Vereinen.
 - **Besetzung:** Da die realen Amateur-Oberligen nicht Teil der Simulation sind, werden die vier Staffeln mit **klar fiktiven Platzhaltervereinen** besetzt (geografisch zugeordnet).
-- Ab jetzt ist Auf-/Abstieg zwischen 2. Liga und Regionalliga möglich.
+- **2. Liga mit 18 Vereinen:** Zugleich schrumpft die 2. Liga von 20 auf **18 Vereine (34 Spieltage)**. In der Umbau-Saison steigen deshalb **fünf** Zweitligisten in die Regionalliga ab, drei Vereine der dritten Ebene (NOFV-Oberliga) steigen auf.
+- Ab jetzt ist Auf-/Abstieg zwischen 2. Liga und Regionalliga möglich: bis 1999/2000 steigen die vier Staffelmeister auf und vier Zweitligisten ab.
+- **Ältere Spielstände** mit 20 Zweitligisten nach 1994 verkleinern die 2. Liga beim nächsten Saisonwechsel: Es steigen entsprechend mehr ab.
 
 ## Reform 2000/01 – Regionalliga nur noch zweigleisig
 Die Regionalliga schrumpft von vier auf **zwei Staffeln zu je 18**: **Nord** (Norden, Nordosten, Nordrhein-Westfalen) und **Süd** (Bayern, Baden-Württemberg, Hessen, Rheinland-Pfalz, Saarland).
@@ -257,7 +259,7 @@ Die Regionalliga schrumpft von vier auf **zwei Staffeln zu je 18**: **Nord** (No
 Zwischen 2. Liga und Regionalliga wird eine neue, **eingleisige 3. Liga mit 20 Vereinen** eingezogen; die Regionalliga rückt auf **Ebene 4** – mit nur noch **drei Staffeln zu je 18**: **Nord** (Norden und Nordosten), **West** (Nordrhein-Westfalen, Rheinland-Pfalz, Saarland) und **Süd** (Bayern, Hessen, Baden-Württemberg).
 - **Qualifikation:** die **besten zehn** beider bisherigen Regionalliga-Staffeln (2007/08) bilden die 20 Startplätze der 3. Liga (vereinfachte Lizenzprüfung).
 - Die übrigen Vereine bilden nach Region die neue viertklassige Regionalliga. Hat eine Region mehr Vereine als Plätze (z. B. der Nordosten), steigen die Schwächsten in die Amateurligen ab; fehlende Plätze kommen aus den Amateurligen der Region, notfalls fiktive Platzhalter.
-- **Auf-/Abstieg:** die drei Meister steigen in die 3. Liga auf, drei steigen ab.
+- **Auf-/Abstieg:** die drei Meister steigen in die 3. Liga auf, drei steigen ab. Zwischen 2. und 3. Liga steigen vereinfacht drei direkt auf und ab (historisch zwei plus Relegation).
 
 ## Reform 2012/13 – Regionalliga mit fünf Staffeln
 Die Regionalverbände übernehmen die vierte Ebene: **Nord** (Niedersachsen, Bremen, Hamburg, Schleswig-Holstein, 18 Vereine), **Nordost** (Berlin und die neuen Länder, 16), **West** (Nordrhein-Westfalen, 20), **Südwest** (Rheinland-Pfalz, Saarland, Hessen, Baden-Württemberg, 18) und **Bayern** (20).
@@ -274,6 +276,31 @@ Wie im übrigen Spiel gilt: **nur deine eigene Liga** nutzt die volle Match-Engi
 
 ## Erweiterbar
 Das System ist bewusst datengetrieben: weitere Reformen (z. B. die **DDR-Integration 1991/92**) lassen sich als zusätzlicher Reform-Datensatz ergänzen, ohne die Kernlogik zu ändern. Staffeln werden über ihre Kennung (Nord, Nordost, West, Südwest, Süd, Bayern) gefunden, nicht über feste Namen.`,
+  },
+
+  {
+    id: 'leagues-reforms-abroad',
+    category: 'leagues',
+    title: 'Ligareformen im Ausland',
+    keywords: ['reform', 'ausland', 'ligagröße', 'aufsteiger', 'absteiger', 'england', 'italien', 'spanien', 'frankreich', 'portugal', 'niederlande', 'premier league', 'serie a', 'staffel', 'struktur', 'heimatland'],
+    body: `## Ligen wachsen und schrumpfen – auch im Ausland
+Auch außerhalb Deutschlands haben sich die Ligen über die Jahrzehnte verändert. Das Spiel liest die **Größe jeder Liga und die Zahl der Auf- und Absteiger je Saison** aus den Weltdaten ab und stellt beim Saisonwechsel genau diese Struktur her – für alle Länder im Hintergrund und für dein Heimatland, wenn du außerhalb Deutschlands spielst.
+
+Einige Beispiele:
+- **England:** 1. Liga 22 Vereine, 1987/88 kurz 21 (im Spiel 20), ab 1991/92 wieder 22, ab 1995/96 **20** – 1994/95 steigen deshalb vier ab und nur zwei auf. Die 2. Liga wächst 1988/89 auf 24.
+- **Italien:** 16 Vereine bis 1987/88, dann **18**, ab 2004/05 **20**.
+- **Spanien:** 18, ab 1987/88 **20**, 1995/96 und 1996/97 **22**, danach wieder 20.
+- **Frankreich:** 2. Liga bis 1992/93 in zwei Staffeln, ab 1993/94 eine Liga mit 22; 1. Liga 1997–2002 und ab 2023/24 mit 18.
+- **Portugal:** 16, 1987/88 kurz 20, Anfang der 90er zwischen 18 und 20.
+
+## So funktioniert es
+- **Wächst eine Liga**, steigen mehr auf als ab; **schrumpft sie**, steigen mehr ab. Gleiches gilt zwischen 2. Liga und Unterbau (Amateurvereine des Landes).
+- **Wann nichts in den Daten steht** (nach 2025, Länder ohne 2. Liga in den Daten), bleibt die zuletzt bekannte Größe; auf- und absteigen dann so viele wie in einem normalen Jahr.
+- **Ungerade Ligagrößen** (19, 21 …) rundet das Spiel auf die nächste gerade Zahl ab, weil der Spielplan eine gerade Zahl braucht.
+- **Mehrere Staffeln der 2. Liga:** Im Hintergrund spielt die 2. Liga immer eingleisig – bei mehreren Staffeln mit den Besten aus allen Staffeln in Staffelgröße, die übrigen stehen im Unterbau. In deinem Heimatland bleiben zwei Staffeln (Nord/Süd) erhalten; werden sie historisch zu einer Liga, legt das Spiel sie zusammen (Frankreich 1993/94). Mehr Staffeln als im Spiel (Portugal ab 1988/89 drei Zonen) werden nicht neu aufgeteilt.
+- **Zweite Mannschaften** folgen weiter den Regeln ihres Landes (nie über der ersten Mannschaft).
+
+Ältere Spielstände laufen weiter; die neue Struktur gilt ab dem nächsten Saisonwechsel.`,
   },
 
   {
@@ -855,7 +882,7 @@ Im Assistenten „Neues Spiel“ wählst du unter **Spielwelt** das **Startjahr*
 - **Vorgeschichte:** Endplätze und Titel der Jahre davor stehen in der Vereins-Historie; Spieler und Ausnahmetalente sind im passenden Alter.
 
 ### Heimatland
-Unter **Verein** wählst du zuerst das **Land**: Deutschland immer, dazu jedes Land, für das im Startjahr Weltdaten vorliegen. In einem anderen Land spielen die Einheimischen dieses Landes, es gilt dessen Punkteregel, es gibt keine deutschen Ligareformen, keine Hallenturniere und keine deutschen Jugendwettbewerbe; Deutschland läuft dann im Hintergrund mit.
+Unter **Verein** wählst du zuerst das **Land**: Deutschland immer, dazu jedes Land, für das im Startjahr Weltdaten vorliegen. In einem anderen Land spielen die Einheimischen dieses Landes, es gilt dessen Punkteregel und dessen historische Ligastruktur (Größen, Auf- und Absteiger je Saison, Artikel „Ligareformen im Ausland“), es gibt keine deutschen Ligareformen, keine Hallenturniere und keine deutschen Jugendwettbewerbe; Deutschland läuft dann im Hintergrund mit.
 
 Weltdaten gibt es für alle Länder, die im Europapokal spielten (40 Länder einschließlich der Staaten, die es heute nicht mehr gibt, und ihrer Nachfolger). Bei den großen Ländern stammen die 1. Ligen meist aus Ergebnisdaten; bei vielen kleineren Ländern und bei älteren 2. Ligen sind Meister, Europapokalplätze und Absteiger gesichert, die Reihenfolge im Mittelfeld ist dagegen eine Annäherung. Im Editor kannst du jede Saison korrigieren.
 

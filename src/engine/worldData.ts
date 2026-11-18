@@ -17,6 +17,7 @@ import { CLUB_SEEDS, SECOND_LIGA_NORD_SEEDS, SECOND_LIGA_SUED_SEEDS } from '../d
 import { DDR_LIGA_SEEDS, DDR_OBERLIGA_SEEDS } from '../data/ddr';
 import { COUNTRY_BY_CC, COUNTRY_BY_KEY, countryExists, WORLD_COUNTRIES } from '../data/world/countries';
 import { worldSeason } from '../data/world/index';
+import { backgroundSecondSize, worldStructureFor } from '../data/world/structure';
 import type { EuroComp, SeasonRow } from '../data/world/types';
 import { completeRow, countryLevelOf, identOf } from '../game/worldCompose';
 import { applySplits, euroParticipants, fillCountry, makeCountry, WorldState } from './world';
@@ -58,12 +59,23 @@ function dataCountry(w: WorldState, euroClubs: Record<string, EuroClub>, cc: str
   for (const e of Object.values(euroClubs)) if (e.country === key && e.id.startsWith('eu_')) delete euroClubs[e.id];
   c.tiers = [[], []];
   c.active = true;
-  c.tier1 = row.t1.length;
-  c.tier2 = (row.t2?.length ?? 0) + (row.t2b?.length ?? 0) || c.tier2 || def.t2 || 10;
+  // Größen nach der historischen Struktur (data/world/structure.ts): gerade abgerundet, die 2. Ebene
+  // eingleisig (bei mehreren Staffeln die besten im Wechsel aus allen Staffeln, der Rest in den Unterbau).
+  const st = worldStructureFor(cc, year);
+  const t1ids = row.t1.slice(0, st?.t1 ?? row.t1.length);
+  const a2 = row.t2?.length ?? 0, b2 = row.t2b?.length ?? 0;
+  const kb = st?.groups?.length ? st.groups.length - 1 : a2 && b2 % a2 === 0 ? b2 / a2 : 1;
+  const groupsIds = [row.t2 ?? [], ...splitGroups(row.t2b ?? [], kb)];
+  const merged: string[] = [...row.t1.slice(t1ids.length)];
+  for (let i = 0; i < Math.max(0, ...groupsIds.map((x) => x.length)); i++) for (const g of groupsIds) if (g[i]) merged.push(g[i]);
+  const n2 = backgroundSecondSize(st) ?? (b2 && a2 ? a2 - (a2 % 2) : merged.length);
+  const t2ids = merged.slice(0, n2), rest = merged.slice(n2);
+  c.tier1 = t1ids.length;
+  c.tier2 = t2ids.length || c.tier2 || def.t2 || 10;
   const level = countryLevelOf(cc, year);
   const prev = worldSeason(cc, year - 1);
   const ranked = (ids: string[]) => ids.map((id, i) => ({ id, share: i / Math.max(1, ids.length - 1) }));
-  const lists: [string[], number][] = [[row.t1, 0], [[...(row.t2 ?? []), ...(row.t2b ?? [])], 1]];
+  const lists: [string[], number][] = [[t1ids, 0], [t2ids, 1], [rest, 2]];
   for (const [ids, t] of lists) {
     // Stärke aus der Vorsaison, wenn vorhanden (keine Vorhersage des Saisonausgangs).
     const order = prev ? [...prev.t1, ...(prev.t2 ?? []), ...(prev.t2b ?? [])] : ids;
@@ -75,11 +87,11 @@ function dataCountry(w: WorldState, euroClubs: Record<string, EuroClub>, cc: str
       const wid = worldId(id);
       euroClubs[wid] = {
         id: wid, name: ident.name, shortName: ident.shortName, city: ident.city, country: key,
-        strength: strengthFor(level, s, t), colors: { primary: ident.primary, secondary: ident.secondary }, comp: 'uefa',
+        strength: strengthFor(level, s, Math.min(1, t)) - (t === 2 ? 3 : 0), colors: { primary: ident.primary, secondary: ident.secondary }, comp: 'uefa',
       };
-      const size = clamp(t === 0 ? 0.8 - s * 0.6 : 0.3 - s * 0.25, 0.05, 0.9);
+      const size = clamp(t === 0 ? 0.8 - s * 0.6 : t === 1 ? 0.3 - s * 0.25 : 0.12, 0.05, 0.9);
       w.meta[wid] = { country: key, size, home: size, cycle: 0 };
-      c.tiers[t].push(wid);
+      if (t < 2) c.tiers[t].push(wid); else (c.pool ??= []).push(wid);
     }
   }
   fillCountry(w, euroClubs, c, year, r);
@@ -88,6 +100,13 @@ function dataCountry(w: WorldState, euroClubs: Record<string, EuroClub>, cc: str
   c.lastChampion = c.lastTable[0];
   const cw = prev?.cup ? worldId(prev.cup) : undefined;
   c.lastCupWinner = cw && w.meta[cw] ? cw : undefined;
+}
+
+/** Weitere Staffeln (t2b) in `k` gleich große Teile. */
+function splitGroups(ids: string[], k: number): string[][] {
+  if (k <= 1 || !ids.length) return ids.length ? [ids] : [];
+  const n = Math.ceil(ids.length / k);
+  return Array.from({ length: k }, (_, i) => ids.slice(i * n, (i + 1) * n));
 }
 
 /** Deutschland (und DDR) als Hintergrundländer, wenn das Heimatland woanders liegt. */

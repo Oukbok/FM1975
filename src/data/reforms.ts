@@ -142,7 +142,13 @@ export const LEAGUE_REFORMS: LeagueReform[] = [
     ],
   },
   // ---------------------------------------------------------------------------
-  // 1994/95 — Regionalliga als dritte Ebene (vier Staffeln)
+  // 1994/95 — Regionalliga als dritte Ebene (vier Staffeln), 2. Liga mit 18 Vereinen
+  // Quellen: de.wikipedia „2. Fußball-Bundesliga 1993/94“ (20 Vereine, Verkleinerung auf 18),
+  // „2. Fußball-Bundesliga 1994/95“ (18 Vereine, 34 Spieltage); Weltdaten ger 1993 → 1994:
+  // 3 Auf-/3 Absteiger zur 1. Liga, 5 Absteiger in die Regionalliga, 3 Aufsteiger.
+  // Aufstieg aus der Regionalliga: 1994–2000 die vier Meister (vier Absteiger), 2000–2008
+  // je zwei aus Nord/Süd (upSlots 4), ab 2008 3. Liga (vereinfacht drei direkte statt
+  // zwei + Relegation).
   // ---------------------------------------------------------------------------
   {
     reformId: 'reform-1994-regionalliga',
@@ -152,16 +158,19 @@ export const LEAGUE_REFORMS: LeagueReform[] = [
       'Zur Saison 1994/95 wird unterhalb der 2. Liga eine neue dritte Ebene '
       + 'eingeführt: die REGIONALLIGA mit vier regionalen Staffeln (Nord, Nordost, '
       + 'West, Süd) zu je 18 Vereinen. Ab sofort ist Auf-/Abstieg zwischen 2. Liga '
-      + 'und Regionalliga möglich.',
+      + 'und Regionalliga möglich. Die 2. Liga wird zugleich von 20 auf 18 Vereine '
+      + 'verkleinert (34 Spieltage).',
     affectedTiers: [3],
     qualificationRule:
       'Die vier Regionalliga-Staffeln werden mit klar fiktiven Platzhaltervereinen '
       + '(erkennbar erfundene Städtenamen) besetzt, da die realen Amateuroberligen '
       + 'nicht Teil der Simulation sind. Geografische Zuweisung Nord/Nordost/West/Süd. '
-      + 'Ab 1995/96: pro Staffel steigt der Meister auf, aus der 2. Liga steigen 4 ab.',
+      + 'Ab 1995/96: pro Staffel steigt der Meister auf, aus der 2. Liga steigen 4 ab. '
+      + 'Die 2. Liga hat ab 1994/95 18 Vereine: in der Umbau-Saison steigen deshalb fünf '
+      + 'Zweitligisten in die Regionalliga ab.',
     targetStructure: [
       { id: 'tier1', tier: 1, group: null, name: '1. Liga', teamCount: 18 },
-      { id: 'tier2', tier: 2, group: null, name: '2. Liga', teamCount: 20 },
+      { id: 'tier2', tier: 2, group: null, name: '2. Liga', teamCount: 18 },
       { id: 'tier3-nord', tier: 3, group: 'nord', name: 'Regionalliga Nord', teamCount: 18 },
       { id: 'tier3-nordost', tier: 3, group: 'nordost', name: 'Regionalliga Nordost', teamCount: 18 },
       { id: 'tier3-west', tier: 3, group: 'west', name: 'Regionalliga West', teamCount: 18 },
@@ -191,7 +200,7 @@ export const LEAGUE_REFORMS: LeagueReform[] = [
       + 'Plätze, steigen die Schwächsten in die Amateurligen ab.',
     targetStructure: [
       { id: 'tier1', tier: 1, group: null, name: '1. Liga', teamCount: 18 },
-      { id: 'tier2', tier: 2, group: null, name: '2. Liga', teamCount: 20, upSlots: 4 },
+      { id: 'tier2', tier: 2, group: null, name: '2. Liga', teamCount: 18, upSlots: 4 },
       { id: 'tier3-nord', tier: 3, group: 'nord', name: 'Regionalliga Nord', teamCount: 18 },
       { id: 'tier3-sued', tier: 3, group: 'sued', name: 'Regionalliga Süd', teamCount: 18 },
     ],
@@ -223,7 +232,7 @@ export const LEAGUE_REFORMS: LeagueReform[] = [
       + 'Plätze werden aus den Amateurligen bzw. mit klar fiktiven Platzhaltern aufgefüllt.',
     targetStructure: [
       { id: 'tier1', tier: 1, group: null, name: '1. Liga', teamCount: 18 },
-      { id: 'tier2', tier: 2, group: null, name: '2. Liga', teamCount: 20 },
+      { id: 'tier2', tier: 2, group: null, name: '2. Liga', teamCount: 18 },
       { id: 'tier3', tier: 3, group: null, name: '3. Liga', teamCount: 20, upSlots: 3 },
       { id: 'tier4-nord', tier: 4, group: 'nord', name: 'Regionalliga Nord', teamCount: 18 },
       { id: 'tier4-west', tier: 4, group: 'west', name: 'Regionalliga West', teamCount: 18 },
@@ -260,7 +269,7 @@ export const LEAGUE_REFORMS: LeagueReform[] = [
       + 'gelosten Duellen um den Aufstieg, aus der 3. Liga steigen drei ab.',
     targetStructure: [
       { id: 'tier1', tier: 1, group: null, name: '1. Liga', teamCount: 18 },
-      { id: 'tier2', tier: 2, group: null, name: '2. Liga', teamCount: 20 },
+      { id: 'tier2', tier: 2, group: null, name: '2. Liga', teamCount: 18 },
       { id: 'tier3', tier: 3, group: null, name: '3. Liga', teamCount: 20, upSlots: 3 },
       { id: 'tier4-nord', tier: 4, group: 'nord', name: 'Regionalliga Nord', teamCount: 18 },
       { id: 'tier4-nordost', tier: 4, group: 'nordost', name: 'Regionalliga Nordost', teamCount: 16 },

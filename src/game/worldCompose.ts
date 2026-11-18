@@ -126,7 +126,7 @@ export function composeHome(cc: string, year: number): ComposedHome | null {
     const second: ComposedSecond[] = year < 1981
       ? [{ group: 'nord', name: '2. Liga Nord', clubs: SECOND_LIGA_NORD_SEEDS.map((s) => ({ ...s })) },
         { group: 'sued', name: '2. Liga Süd', clubs: SECOND_LIGA_SUED_SEEDS.map((s) => ({ ...s })) }]
-      : [{ group: null, name: '2. Liga', clubs: [...SECOND_LIGA_NORD_SEEDS, ...SECOND_LIGA_SUED_SEEDS].sort((a, b) => b.strength - a.strength).slice(0, 20).map((s) => ({ ...s })) }];
+      : [{ group: null, name: '2. Liga', clubs: [...SECOND_LIGA_NORD_SEEDS, ...SECOND_LIGA_SUED_SEEDS].sort((a, b) => b.strength - a.strength).slice(0, structureForSeason(seasonLabelOf(year)).find((t) => t.id === 'tier2')?.teamCount ?? 20).map((s) => ({ ...s })) }];
     return { cc, year, tier1: CLUB_SEEDS.map((s) => ({ ...s })), second, fromData: false, row: null };
   }
   row = completeRow(cc, year, row);
@@ -136,7 +136,11 @@ export function composeHome(cc: string, year: number): ComposedHome | null {
   const mk = (ids: string[] | undefined) => (ids ?? []).map((id) => toSecondSeed(cc, id, year, share.get(id) ?? 0.75)).filter(Boolean) as SecondLigaSeed[];
   const second: ComposedSecond[] = [];
   if (row.t2b?.length) {
-    second.push({ group: 'nord', name: '2. Liga Nord', clubs: mk(row.t2) }, { group: 'sued', name: '2. Liga Süd', clubs: mk(row.t2b) });
+    // Höchstens zwei Staffeln (Nord/Süd); stehen in t2b mehrere Staffeln hintereinander (Portugal: 16 + 32),
+    // spielt nur die nächste in Staffelgröße mit – die übrigen Vereine stehen im Pool (poolClubsOf).
+    const n = row.t2?.length ?? 0;
+    const b = n && row.t2b.length >= 2 * n ? row.t2b.slice(0, n) : row.t2b;
+    second.push({ group: 'nord', name: '2. Liga Nord', clubs: mk(row.t2) }, { group: 'sued', name: '2. Liga Süd', clubs: mk(b) });
   } else if (row.t2?.length) {
     second.push({ group: null, name: '2. Liga', clubs: mk(row.t2) });
   }
@@ -232,8 +236,10 @@ export function completeRow(cc: string, year: number, row: SeasonRow): SeasonRow
     for (let d = 1; d <= 12; d++) {
       const near = worldSeason(cc, year - d)?.t2?.length ? worldSeason(cc, year - d) : worldSeason(cc, year + d)?.t2?.length ? worldSeason(cc, year + d) : null;
       if (!near) continue;
-      const t2 = [...(near.t2 ?? []), ...(near.t2b ?? [])].filter((id) => !row.t1.includes(id));
-      out = { ...row, t2 };
+      // Staffeln bleiben getrennt (t2 = erste Staffel, t2b = weitere), damit keine 48er-Liga entsteht.
+      const t2 = (near.t2 ?? []).filter((id) => !row.t1.includes(id));
+      const t2b = (near.t2b ?? []).filter((id) => !row.t1.includes(id));
+      out = { ...row, t2, ...(t2b.length ? { t2b } : {}) };
       break;
     }
   }

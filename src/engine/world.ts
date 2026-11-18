@@ -25,6 +25,7 @@ import { applySplits, countryLevel, ensureCountryPool, fillCountry, makeCountry,
 import { euroParticipants, pushCoef, seasonEuroPoints } from './worldEuro';
 import { notePlaces } from './worldPlaces';
 import { cupField, enforceWorldReserves } from './worldReserves';
+import { worldExchangePlan, worldStructureOfKey } from '../data/world/structure';
 
 // Aufgeteilt (Dateien < 600 Zeilen): Typen in worldTypes.ts, Länder/Vereine/Teilungen in
 // worldCountries.ts, Koeffizienten/Rangliste/Starter in worldEuro.ts – hier weitergereicht.
@@ -209,23 +210,28 @@ export function advanceWorldSeason(
       m.size = clamp(m.size + (i < 3 ? 0.01 : -0.004), 0, 1);
     });
 
-    // Auf-/Abstieg (3 bei großen Ligen, 2 bei kleinen)
+    // Auf-/Abstieg in historischer Zahl hin zur Struktur der NEUEN Saison (data/world/structure.ts):
+    // wächst eine Liga, steigen mehr auf als ab, schrumpft sie, umgekehrt. Ohne Weltdaten wie bisher
+    // 3 bei großen Ligen, 2 bei kleinen; 2. Liga ↔ Unterbau 2.
     if (fx?.next) { c.tiers = [fx.next[0].filter((id) => w.meta[id]), fx.next[1].filter((id) => w.meta[id])]; continue; }
-    const n = !t2.length ? 0 : c.tier1 >= 16 ? 3 : 2;
-    const down = n ? t1.slice(-n) : [], up = t2.slice(0, n);
-    c.tiers[0] = [...t1.slice(0, t1.length - n), ...up];
-    c.tiers[1] = [...t2.slice(n), ...down];
-    // 2. Liga ↔ Unterbau: die zwei Letzten gegen die zwei stärksten Amateurvereine (mit Zufall).
-    if (t2.length >= 8) {
-      ensureCountryPool(w, euroClubs, c, endYear, r);
+    if (!t2.length) { enforceWorldReserves(c, endYear, (id) => euroClubs[id]?.strength ?? 0); continue; }
+    const st = worldStructureOfKey(c.name, endYear);
+    const plan = worldExchangePlan(st, t1.length, t2.length, (worldStructureOfKey(c.name, endYear - 1)?.groups?.length ?? 1) > 1);
+    const down = t1.slice(t1.length - plan.down1), up = t2.slice(0, plan.up1);
+    c.tiers[0] = [...t1.slice(0, t1.length - plan.down1), ...up];
+    c.tiers[1] = [...t2.slice(plan.up1), ...down];
+    // 2. Liga ↔ Unterbau: die Letzten gegen die stärksten Amateurvereine (mit Zufall).
+    if (t2.length >= 8 && (plan.out2 || plan.in2)) {
+      ensureCountryPool(w, euroClubs, c, endYear, r, plan.in2 + 2);
       const pool = (c.pool ?? []).filter((id) => euroClubs[id]);
       const rank = pool.map((id) => ({ id, v: euroClubs[id].strength + gauss(r) * 3 })).sort((a, b) => b.v - a.v);
-      const k = Math.min(2, rank.length);
-      const out = t2.slice(-k).filter((id) => !up.includes(id));
-      const inn = rank.slice(0, out.length).map((x) => x.id);
+      const out = plan.out2 ? t2.filter((id) => !up.includes(id)).slice(-plan.out2) : [];
+      const inn = rank.slice(0, plan.in2).map((x) => x.id);
       c.tiers[1] = [...c.tiers[1].filter((id) => !out.includes(id)), ...inn];
       c.pool = [...pool.filter((id) => !inn.includes(id)), ...out];
+      ensureCountryPool(w, euroClubs, c, endYear, r); // wieder mindestens 10 (wie beim Laden, game/loadMigrations.ts)
     }
+    c.tier1 = c.tiers[0].length; c.tier2 = c.tiers[1].length;
     // Zweite Mannschaften (B-Teams) nach den Regeln des Landes (engine/worldReserves.ts).
     enforceWorldReserves(c, endYear, (id) => euroClubs[id]?.strength ?? 0);
   }

@@ -4,6 +4,7 @@ import { EuroClub } from '../data/europe';
 import { COUNTRY_SPLITS, COUNTRY_TRENDS, CountrySeed } from '../data/worldSeed';
 import { WorldCountry, WorldState } from './worldTypes';
 import { clamp, gauss, hash, rng } from './worldRandom';
+import { backgroundSecondSize, worldStructureOfKey } from '../data/world/structure';
 
 // -----------------------------------------------------------------------------
 // Landesniveau im Jahr X
@@ -116,18 +117,26 @@ export function ensureCountryPools(w: WorldState | undefined, euroClubs: Record<
 }
 
 /** Unterbau eines Landes anlegen bzw. auf 10 Vereine auffüllen (erfundene Vereine aus freien Städten). */
-export function ensureCountryPool(w: WorldState, euroClubs: Record<string, EuroClub>, c: WorldCountry, year: number, r: () => number): void {
+export function ensureCountryPool(w: WorldState, euroClubs: Record<string, EuroClub>, c: WorldCountry, year: number, r: () => number, min = 10): void {
   const pool = (c.pool ??= []).filter((id) => euroClubs[id]);
   c.pool = pool;
-  if (pool.length >= 10) return;
+  if (pool.length >= min) return;
   const used = new Set(Object.values(euroClubs).map((e) => e.shortName));
   const level = countryLevel(c, year);
   const cities = [...c.tiers[0], ...c.tiers[1]].map((id) => euroClubs[id]?.city).filter(Boolean) as string[];
-  while (c.pool.length < 10) {
+  while (c.pool.length < min) {
     const city = c.spareCities.shift() ?? cities[Math.floor(r() * Math.max(1, cities.length))] ?? c.name;
     const size = clamp(0.12 + gauss(r) * 0.05, 0.02, 0.3);
     c.pool.push(newClub(w, euroClubs, c, city, targetStrength(level, size, 1) - 4 + gauss(r) * 1.5, size, r, used));
   }
+}
+
+/** Ligagrößen eines neuen Landes nach der historischen Struktur der Saison (data/world/structure.ts). */
+function sizeByStructure(c: WorldCountry, year: number): void {
+  const st = worldStructureOfKey(c.name, year);
+  if (!st) return;
+  c.tier1 = st.t1;
+  c.tier2 = backgroundSecondSize(st) ?? c.tier2;
 }
 
 // -----------------------------------------------------------------------------
@@ -142,6 +151,7 @@ export function applySplits(w: WorldState, euroClubs: Record<string, EuroClub>, 
     const all = [...old.tiers[0], ...old.tiers[1]];
     for (const part of sp.parts) {
       const nc = makeCountry(part);
+      sizeByStructure(nc, year);
       nc.spareCities = part.cities.filter((city) => !all.some((id) => euroClubs[id].city === city));
       w.countries[part.name] = nc;
     }
@@ -150,6 +160,7 @@ export function applySplits(w: WorldState, euroClubs: Record<string, EuroClub>, 
       name: restName, origin: sp.restOrigin ?? old.origin, base: old.base + (sp.restBaseDelta ?? 0),
       tier1: old.tier1, tier2: old.tier2, cities: sp.restCities ?? [],
     }) : old;
+    if (sp.renameRest) sizeByStructure(rest, year);
     // Vereine nach Stadt verteilen (Reihenfolge = bisherige Stärke).
     all.sort((a, b) => euroClubs[b].strength - euroClubs[a].strength);
     for (const id of all) {

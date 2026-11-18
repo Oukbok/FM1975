@@ -22,6 +22,9 @@ const BUILTIN: Record<string, CountryWorld> = {};
 let OVERRIDE: Record<string, CountryWorld> = {};
 
 const cache = new Map<string, Map<string, RealClub>>();
+/** Zähler je Datenänderung (registerCountryData/setWorldOverride) – für abgeleitete Zwischenspeicher (data/world/structure.ts). */
+let dataVersion = 0;
+export const worldDataVersion = (): number => dataVersion;
 
 type Mod = Record<string, unknown>;
 function add(cc: string, ...mods: Mod[]): void {
@@ -77,7 +80,7 @@ import * as svk1 from './clubs/svk'; import * as svk2 from './seasons/svk'; add(
 /** Daten eines Landes eintragen (auch für Tests mit Beispieldaten aus tests/fixtures/). */
 export function registerCountryData(cc: string, clubs: RealClub[], seasons: Record<number, SeasonRow>): void {
   BUILTIN[cc] = { clubs, seasons };
-  cache.clear();
+  cache.clear(); dataVersion++;
 }
 
 /** Eingebaute Daten (für den Datensatz-Schnappschuss/Editor). */
@@ -86,7 +89,7 @@ export function builtinWorldData(): Record<string, CountryWorld> { return BUILTI
 /** Datensatz-Überschreibung setzen (data/dataset/apply.ts); null = keine. */
 export function setWorldOverride(o: Record<string, CountryWorld> | null | undefined): void {
   OVERRIDE = o ? JSON.parse(JSON.stringify(o)) : {};
-  cache.clear();
+  cache.clear(); dataVersion++;
 }
 
 /** Wirksame Daten eines Landes: Überschreibung > eingebaut > keine. */

@@ -31,6 +31,7 @@ import { cupField } from '../engine/worldReserves';
 import { absorbPlaceholders, ddrExchange, mergeDdrPool, poolDrift, poolExchange, refillPool, settlePool } from './clubPool';
 import { structureForSeason } from '../data/reforms';
 import { CurrentDivision, TransitionResult, computeSeasonTransition } from '../data/reformTransition';
+import { applyHomePlan, homeSeasonPlan } from './homeStructure';
 import { seasonStartYear } from '../data/timeline';
 import { generateSeasonCalendar, seasonLabel } from '../engine/calendar';
 import { createCup } from '../engine/cup';
@@ -196,6 +197,8 @@ export function startNextSeason(g: Game): void {
   // Liegt für die neue Saison eine noch nicht angewandte Reform vor (z. B. 1981/82
   // eingleisige 2. Liga), führt computeSeasonTransition die Struktur-Migration aus;
   // sonst den generischen, strukturunabhängigen Auf-/Abstieg.
+  // Anderes Heimatland: Zielgrößen aus der historischen Struktur des Landes (game/homeStructure.ts).
+  const homePlan = isGermanHome(g) ? null : homeSeasonPlan(homeCountryOf(g), current, newSeason);
   const res: TransitionResult = computeSeasonTransition({
     newSeason,
     current,
@@ -203,8 +206,9 @@ export function startNextSeason(g: Game): void {
     cityOf: (id) => g.clubs[id]?.city ?? g.simClubs[id]?.city ?? '',
     appliedReforms: g.appliedReforms,
     protectedId: g.managedClubId,
-    ...(isGermanHome(g) ? {} : { targets: current.filter((c) => c.tier < 100).map((c) => ({ id: c.id, tier: c.tier, group: c.group, name: c.name, teamCount: c.orderedIds.length })) }),
+    ...(homePlan ? { targets: homePlan.targets } : {}),
   });
+  const homePoolSwap = homePlan ? applyHomePlan(res, homePlan, current, newSeason, g.managedClubId) : undefined;
 
   // Neue Plätze zuerst aus dem Vereins-Pool besetzen (game/clubPool.ts), dann fiktive
   // Platzhalter aufnehmen; entfallene Vereine wechseln in den Pool (Platzhalter verschwinden).
@@ -224,12 +228,11 @@ export function startNextSeason(g: Game): void {
   for (const d of res.divisions) membership[d.meta.id] = { ids: d.ids, meta: d.meta };
   // Sollgrößen absichern (Reform-/Relegationssonderfälle dürfen keine Liga
   // dauerhaft verzerren). Ausnahme: die bewusst übergroße Wiedervereinigungssaison.
-  // Anderes Heimatland (Weltdaten): Ligagrößen bleiben, keine deutschen Reformen.
-  const homeTargets = isGermanHome(g) ? structureForSeason(newSeason)
-    : current.filter((c) => c.tier < 100).map((c) => ({ id: c.id, tier: c.tier, group: c.group, name: c.name, teamCount: c.orderedIds.length }));
+  // Anderes Heimatland (Weltdaten): Ligagrößen nach der historischen Struktur, keine deutschen Reformen.
+  const homeTargets = homePlan ? homePlan.targets : structureForSeason(newSeason);
   if (!isReunify) balanceDivisions(membership, homeTargets, (id) => clubStrengthFor(g, id), g.managedClubId);
   // Auf-/Abstieg zwischen unterster simulierter Liga und Amateurligen (Vereins-Pool).
-  if (!res.reform) pooled.push(...poolExchange(g, membership, current, newSeason, g.managedClubId));
+  if (!res.reform) pooled.push(...poolExchange(g, membership, current, newSeason, g.managedClubId, homePoolSwap));
   // Zweite Mannschaften nach den Regeln der Zeit einordnen (game/reservePyramid.ts).
   const resT = reserveTransition(g, membership, newSeason);
   pooled.push(...homeBTeamTransition(g, membership, newSeason)); // B-Teams im Heimatland (Spanien, Portugal)

@@ -117,12 +117,15 @@ export function absorbPlaceholders(g: Game, res: TransitionResult, season: strin
  */
 export function poolExchange(
   g: Game, membership: Record<string, { ids: string[]; meta: DivisionMeta }>, current: CurrentDivision[], season: string, protectedId: string,
+  /** Tauschpaare je Staffel (anderes Heimatland: historische Zahl, game/homeStructure.ts); fehlt = 2/4/3 nach Staffelzahl. */
+  swaps?: number,
 ): string[] {
   const west = Object.values(membership).filter((m) => m.meta.tier < 100);
   if (!west.length) return [];
   const lowest = Math.max(...west.map((m) => m.meta.tier));
   const divs = west.filter((m) => m.meta.tier === lowest);
-  const k = divs.length >= 3 ? 2 : divs.length === 2 ? 4 : 3;
+  const k = swaps ?? (divs.length >= 3 ? 2 : divs.length === 2 ? 4 : 3);
+  if (k <= 0) return [];
   const rnd = mulberry32(hashStr(`pool:${season}`));
   const pool = poolOf(g, false);
   const taken = new Set<string>();

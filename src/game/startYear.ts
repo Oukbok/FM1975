@@ -198,7 +198,7 @@ export function homeExcluded(home: string, year: number): boolean {
 
 /**
  * Deutschland mit Weltdaten: hat die simulierte 2. Liga weniger Vereine als die Struktur des
- * Spiels (z. B. 18 statt 20 ab 1994), mit den stärksten Pool-Vereinen auffüllen – sonst
+ * Spiels (Datenlücken, Datensatz-Änderungen), mit den stärksten Pool-Vereinen auffüllen – sonst
  * verschieben die Größenkorrekturen beim Saisonwechsel ungerade Zahlen in die Regionalligen.
  */
 export function padSecondTier(g: Game, year: number, ligaStart: string): void {
