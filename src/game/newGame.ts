@@ -1,3 +1,4 @@
+import { cupField } from '../engine/worldReserves';
 import { bindMarketing } from './marketingGame';
 import { recordSeasonBriefing } from './seasonBriefing';
 import { startPrivateLife } from './private/privateStart';
@@ -156,12 +157,13 @@ export function createNewGame(opts: NewGameOptions): Game {
 
   // --- Landespokal aufsetzen: Amateurvereine ergänzen (→ 32er-Feld) ---
   const legacy = isGer && !comp;
-  const amateurs = generateCupAmateurs(Math.max(0, 32 - clubList.length), legacy ? undefined : {
+  // B-Teams nur, wenn das Heimatland sie im Pokal zulässt (engine/worldReserves.ts).
+  const blClubIds = cupField(COUNTRY_BY_CC[home]?.key ?? '', year, clubList.map((c) => c.id));
+  const amateurs = generateCupAmateurs(Math.max(0, 32 - blClubIds.length), legacy ? undefined : {
     date: startISO, towns: amateurTownsFor(home, new Set(clubList.map((c) => c.city))), foreignStyle: !isGer,
   });
   Object.assign(world.clubs, amateurs.clubs);
   Object.assign(world.players, amateurs.players);
-  const blClubIds = clubList.map((c) => c.id);
   // Rahmenterminkalender: Pokalrunden meiden Liga-Hauptspieltage und Europapokal-Wochen.
   const cupAvoid = leagueDateSet(fixtures);
   const euroWeeks = euroFrameDates(year);

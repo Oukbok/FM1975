@@ -28,7 +28,8 @@ import type { LeagueDivision, LeagueGroup, SimClub } from '../engine/leagues';
 import { hashStr } from '../engine/leagues';
 import { POOL_TIER } from '../data/history/historicClubs';
 import { CITY_LV, LV_REGION } from '../data/youthCompetitions';
-import { RESERVE_OPTIONAL_FROM, reserveCupOpen, reserveName } from '../data/reserveRules';
+import { RESERVE_OPTIONAL_FROM, foreignReserveRule, reserveCupOpen, reserveName } from '../data/reserveRules';
+import { bParentOf } from '../engine/worldReserves';
 import { seasonStartYear } from '../data/timeline';
 import { makePlaceholder } from '../data/reforms';
 import { migrateSeating } from './seatingGame';
@@ -344,6 +345,51 @@ export function reserveTransition(
     pushMessage(g.messages, makeMessage({ date: g.calendar.currentDate, category: 'general', from: 'Trainer der Amateure', subject: 'Zweite Mannschaft', shortText: n, bodyText: n }));
   }
   return out;
+}
+
+// -----------------------------------------------------------------------------
+// Anderes Heimatland: B-Teams der Weltdaten (`<Stammverein>-ii`) nach Landesregel
+// -----------------------------------------------------------------------------
+/**
+ * Spanien/Portugal …: B-Teams nie über der erlaubten Ebene und nie in oder über der Liga der ersten Mannschaft –
+ * gesperrte Aufsteiger tauschen mit dem Stärksten der Liga darunter, sonst Zwangsabstieg in den Pool.
+ * Rückgabe: Vereine, die in den Pool gehen. (Deutschland: reserveTransition.)
+ */
+export function homeBTeamTransition(
+  g: Game, membership: Record<string, { ids: string[]; meta: { tier: number; group: LeagueGroup; name: string } }>, newSeason: string,
+): string[] {
+  if (isGer(g)) return [];
+  const year = seasonStartYear(newSeason);
+  const rule = foreignReserveRule(homeCountryOf(g), year);
+  const keys = Object.keys(membership).filter((k) => membership[k].meta.tier < 100);
+  const all = keys.flatMap((k) => membership[k].ids);
+  if (!all.some((id) => bParentOf(id))) return [];
+  const top = rule ? (rule.inPyramid ? rule.topTier ?? 2 : 99) : 2;
+  const tierOf = (id: string) => { for (const k of keys) if (membership[k].ids.includes(id)) return membership[k].meta.tier; return 99; };
+  const str = (id: string) => g.simClubs[id]?.strength ?? parentStrength(g, id);
+  const pooled: string[] = [];
+  const taken = new Set(all);
+  const tiers = [...new Set(keys.map((k) => membership[k].meta.tier))].sort((a, b) => a - b);
+  for (const t of tiers) {
+    for (const k of keys.filter((x) => membership[x].meta.tier === t)) {
+      const m = membership[k];
+      for (const id of m.ids.filter((x) => bParentOf(x))) {
+        if (t >= top && t > tierOf(bParentOf(id)!)) continue;
+        const lower = keys.filter((x) => membership[x].meta.tier === t + 1);
+        const cands = lower.flatMap((x) => membership[x].ids.map((c) => ({ k: x, c }))).filter((x) => !bParentOf(x.c) && x.c !== g.managedClubId).sort((a, b) => str(b.c) - str(a.c));
+        const i = m.ids.indexOf(id);
+        if (cands[0]) {
+          const dm = membership[cands[0].k];
+          dm.ids[dm.ids.indexOf(cands[0].c)] = id; m.ids[i] = cands[0].c;
+        } else {
+          const repl = bestPoolClub(g, m.meta.group, taken);
+          if (!repl) continue;
+          taken.add(repl); m.ids[i] = repl; pooled.push(id);
+        }
+      }
+    }
+  }
+  return pooled;
 }
 
 function promoteOwn(g: Game, membership: Record<string, { ids: string[]; meta: { tier: number; group: LeagueGroup; name: string } }>, year: number, taken: Set<string>, silent = false): { ok: boolean; pooled: string[]; text: string } {

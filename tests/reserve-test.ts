@@ -243,5 +243,24 @@ ok(!Object.keys(g10.clubs).some((id) => id.startsWith('amr-')) && rulesOk(g10), 
   ok(c.tiers[1].includes('y-ii'), 'B-Team mit Stammverein in der 1. Liga bleibt in der 2. Liga');
   ok(cupField('Spanien', 1985, ['a', 'y-ii']).length === 2 && cupField('Spanien', 1995, ['a', 'y-ii']).length === 1 && cupField('Portugal', 2015, ['a', 'y-ii']).length === 1, 'Landespokal: Spanien B-Teams bis 1989/90, Portugal nie');
 }
+// --- 9) Anderes Heimatland: B-Teams in der eigenen Pyramide (Spanien) -------------------------------
+{
+  const club = composeHome('esp', 2015)!.tier1[3].id;
+  const e = createNewGame({ managedClubId: club, manager: mgr, difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300, startYear: 2015, country: 'esp' } as any);
+  const bTier = (id: string) => (e.table.rows.some((r) => r.clubId === id) ? e.leagues.playerDivision.tier : e.leagues.otherDivisions.find((d) => d.clubIds.includes(id))?.tier ?? 99);
+  const bs = Object.keys(e.simClubs).filter((id) => id.endsWith('-ii'));
+  const d2 = e.leagues.otherDivisions.find((d) => d.tier === 2)!;
+  const b = d2.clubIds.find((id) => id.endsWith('-ii'));
+  ok(!!b && bs.length >= 1, `Spanien 2015: B-Teams in der 2. Liga (${bs.join(', ')})`);
+  ok(!e.cup!.participantIds.some((id) => id.endsWith('-ii')), 'Spanien: B-Teams nicht im Landespokal');
+  if (b) {
+    for (const r of d2.table.rows) r.points = r.clubId === b ? 99 : Math.min(r.points, 50);
+    d2.table.rows.sort((x, y) => y.points - x.points).forEach((r, i) => { r.position = i + 1; });
+    startNextSeason(e);
+    const t = bTier(b);
+    ok(t === 2, `Spanien: B-Team als Erster der 2. Liga steigt nicht auf (Ebene ${t})`);
+    ok(Object.keys(e.simClubs).concat(Object.keys(e.clubs)).filter((id) => id.endsWith('-ii')).every((id) => bTier(id) >= 2 && bTier(id) > bTier(id.slice(0, -3))), 'Spanien: kein B-Team in oder über der Liga der ersten Mannschaft');
+  }
+}
 console.log(fails ? `\n${fails} Fehler.` : '\nZweite Mannschaft: alle Prüfungen bestanden.');
 process.exit(fails ? 1 : 0);

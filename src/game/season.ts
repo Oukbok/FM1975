@@ -26,7 +26,8 @@ import { archiveSeasonEnd } from './leagueArchive';
 import { closeAmateurLeagues } from './amateurLeagues';
 import { ddrReserveTransition, syncDdrReserves } from './ddrReserves';
 import { ownAmateurTable } from './reserveTeam';
-import { isReserveCupId, reserveCupClubs, reserveTransition, syncReserveClubs } from './reservePyramid';
+import { homeBTeamTransition, isReserveCupId, reserveCupClubs, reserveTransition, syncReserveClubs } from './reservePyramid';
+import { cupField } from '../engine/worldReserves';
 import { absorbPlaceholders, ddrExchange, mergeDdrPool, poolDrift, poolExchange, refillPool, settlePool } from './clubPool';
 import { CurrentDivision, TransitionResult, computeSeasonTransition, structureForSeason } from '../data/reforms';
 import { seasonStartYear } from '../data/timeline';
@@ -43,7 +44,7 @@ import { euroFrameDates } from './euroSetup';
 import { harmonizeSeason } from './fixtureWatch';
 import { nextDrawDate, scheduleDraws } from './cupDraw';
 import { CalendarEngine } from '../engine/calendar';
-import { Game, bestOffer, hashSeed, homeCountryOf, migrateCommerce, offerToContract } from './state';
+import { Game, bestOffer, hashSeed, homeCountryKey, homeCountryOf, migrateCommerce, offerToContract } from './state';
 import { countryPointSystem } from '../data/world/countries';
 import { homeExcluded } from './startYear';
 import { retireFullCountries } from './fullCountries';
@@ -230,6 +231,7 @@ export function startNextSeason(g: Game): void {
   if (!res.reform) pooled.push(...poolExchange(g, membership, current, newSeason, g.managedClubId));
   // Zweite Mannschaften nach den Regeln der Zeit einordnen (game/reservePyramid.ts).
   const resT = reserveTransition(g, membership, newSeason);
+  pooled.push(...homeBTeamTransition(g, membership, newSeason)); // B-Teams im Heimatland (Spanien, Portugal)
   pooled.push(...resT.pooled);
 
   const playerDivId = Object.keys(membership).find((k) => membership[k].ids.includes(g.managedClubId))
@@ -326,7 +328,8 @@ export function startNextSeason(g: Game): void {
   // Amateure der Lizenzvereine im Pokal bis 2007/08 (game/reservePyramid.ts).
   const resCup = reserveCupClubs(g, resT.cup, seasonStart);
   const allAm = Object.keys(g.clubs).filter((id) => id.startsWith('am') && !isReserveCupId(id));
-  const blClubIds = playerClubList.map((c) => c.id);
+  // Anderes Heimatland: B-Teams im Pokal nur nach Landesregel (engine/worldReserves.ts).
+  const blClubIds = cupField(homeCountryKey(g), nextStartYear, playerClubList.map((c) => c.id));
   const amateurIds = [...resCup, ...allAm].slice(0, Math.max(0, 32 - blClubIds.length));
   // Rahmenterminkalender: Pokalrunden meiden Liga-Hauptspieltage und Europapokal-Wochen.
   const cupAvoid = leagueDateSet(fixtures);
