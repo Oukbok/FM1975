@@ -13,6 +13,7 @@
 // Am Saisonende liefert der Pokal den Pokalsieger an die Welt (engine/world.ts
 // `FixedCountryResult.cup`) und bleibt in der Historie (`WorldSeasonRecord.cups`).
 // =============================================================================
+import { cupField } from '../engine/worldReserves';
 import { seasonStartYear } from '../data/timeline';
 import { hashStr, mulberry32 } from '../engine/leagues';
 import { worldMatchGoals, type LeanCup, type WorldLiveCup } from '../engine/world';
@@ -99,9 +100,11 @@ export function leanCupWinner(key: string, season: string, c: LeanCup): string |
   return last && last.played && last.ties.length === 1 ? last.ties[0].winner : null;
 }
 
-/** Teilnehmerfeld: alle Erst- und Zweitligisten des Landes (mindestens vier). */
-export function newLeanCup(g: Game, tiers: string[][]): WorldLiveCup | null {
-  const ids = [...new Set([...(tiers[0] ?? []), ...(tiers[1] ?? [])])].filter((id) => g.euroClubs?.[id]).sort();
+/** Teilnehmerfeld: alle Erst- und Zweitligisten des Landes (mindestens vier, B-Teams nach Landesregel). */
+export function newLeanCup(g: Game, tiers: string[][], countryKey?: string): WorldLiveCup | null {
+  // B-Teams nur, wenn das Land sie im Pokal zulässt (engine/worldReserves.ts).
+  const all = [...new Set([...(tiers[0] ?? []), ...(tiers[1] ?? [])])].filter((id) => g.euroClubs?.[id]).sort();
+  const ids = countryKey ? cupField(countryKey, Number(g.season.slice(0, 4)), all) : all;
   if (ids.length < 4) return null;
   return { ids, r: '', rd: 0, n: leanCupRoundsN(ids.length) };
 }

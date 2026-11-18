@@ -35,8 +35,10 @@
 //  • Spanien: „B“-Teams in derselben Pyramide, nie in der Liga der ersten Mannschaft
 //    (Castilla 1983/84 Meister der Segunda ohne Aufstieg); seit 1990/91 nicht mehr in
 //    der Copa del Rey (Castilla im Finale 1980).
-//  • Italien: seit 2018/19 „U23“-Teams der Serie-A-Vereine in der Serie C (Juventus
+//  • Italien: seit 2018/19 „U23“-Teams der Serie-A-Vereine in der Serie C = dritte Ebene (Juventus
 //    zuerst), nie in derselben oder höheren Liga, Zwangsabstieg, höchstens vier Ältere.
+//  • Portugal: „B“-Teams 1999–2006 in der dritten Liga, seit 2012/13 in der 2. Liga, nie in
+//    der Liga der ersten Mannschaft, von Landes- und Ligapokal ausgeschlossen.
 //  • Frankreich: Reserveteams höchstens vierte Ebene (National 2/National 1 je nach
 //    Ausbildungszentrum), Aufstieg geht sonst an den Nächsten; nicht im Coupe de France.
 // =============================================================================
@@ -55,6 +57,8 @@ export const RESERVE_SOURCES: ReserveSource[] = [
   { title: 'Wikipedia (en): Italian reserve football teams', url: 'https://en.wikipedia.org/wiki/Italian_reserve_football_teams' },
   { title: 'Sportskeeda: Spanish B teams and their eligibility', url: 'https://sportskeeda.com/football/spanish-b-teams-and-their-eligibility' },
   { title: 'Wikipedia (en): 2016–17 EFL Trophy', url: 'https://en.wikipedia.org/wiki/2016%E2%80%9317_EFL_Trophy' },
+  { title: 'Wikipedia (en): FC Porto B (B-Teams in Portugal: Liga, Pokalsperre)', url: 'https://en.wikipedia.org/wiki/FC_Porto_B' },
+  { title: 'DFB-Spielordnung § 12 (Einsatz in zweiten Mannschaften, Pokalspiele)', url: 'https://assets.dfb.de/uploads/000/328/557/original_Heft_04_Spielordnung_Schiedsrichterordnung_20251128.pdf' },
 ];
 
 /** Höchste erlaubte Ebene (kleinste Tier-Zahl) einer zweiten Mannschaft in Deutschland: nie die 2. Liga. */
@@ -128,7 +132,9 @@ export const FOREIGN_RESERVE_RULES: ForeignReserveRule[] = [
   { cc: 'eng', from: 2016, inPyramid: false, cup: true, text: 'U21-Teams der Akademie-Vereine spielen im Pokal der unteren Profiligen mit.' },
   { cc: 'esp', from: 1951, to: 1990, inPyramid: true, topTier: 2, cup: true, text: '„B“-Teams (filiales) in der Pyramide bis zur Segunda, nie in der Liga der ersten Mannschaft; Pokal offen (eine B-Mannschaft stand 1980 im Finale).' },
   { cc: 'esp', from: 1990, inPyramid: true, topTier: 2, cup: false, text: '„B“-Teams bis zur Segunda, seit 1990/91 nicht mehr im Landespokal.' },
-  { cc: 'ita', from: 2018, inPyramid: true, topTier: 2, cup: false, text: 'U23-Teams der Serie-A-Vereine ab der Serie C, nie in derselben oder höheren Liga, Zwangsabstieg, höchstens vier Spieler über 23.' },
+  { cc: 'ita', from: 2018, inPyramid: true, topTier: 3, cup: false, text: 'U23-Teams der Serie-A-Vereine ab der Serie C, nie in derselben oder höheren Liga, Zwangsabstieg, höchstens vier Spieler über 23.' },
+  { cc: 'por', from: 1999, to: 2012, inPyramid: true, topTier: 3, cup: false, text: '„B“-Teams 1999–2006 in der dritten Liga, nie in der Liga der ersten Mannschaft, nicht im Landespokal.' },
+  { cc: 'por', from: 2012, inPyramid: true, topTier: 2, cup: false, text: '„B“-Teams seit 2012/13 in der 2. Liga – kein Aufstieg in die 1. Liga, nicht im Landespokal und Ligapokal.' },
   { cc: 'fra', from: 1970, inPyramid: true, topTier: 4, cup: false, text: 'Reserveteams höchstens auf der vierten Ebene; ein Aufstiegsplatz geht an den Nächsten; nicht im Landespokal.' },
 ];
 

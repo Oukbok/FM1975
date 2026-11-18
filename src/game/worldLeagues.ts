@@ -91,7 +91,7 @@ export function ensureWorldLive(g: Game): WorldLive | null {
     const out: NonNullable<WorldLive['cups']> = {};
     for (const c of Object.values(w.countries)) {
       if (!c.active || !leanCountry(g, c.name)) continue;
-      const cup = newLeanCup(g, c.tiers);
+      const cup = newLeanCup(g, c.tiers, c.name);
       if (cup) out[c.name] = cup;
     }
     return out;

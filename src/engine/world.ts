@@ -24,6 +24,7 @@ import { clamp, gauss, hash, poisson, rng } from './worldRandom';
 import { applySplits, countryLevel, ensureCountryPool, fillCountry, makeCountry, softClubStrength, targetStrength } from './worldCountries';
 import { euroParticipants, pushCoef, seasonEuroPoints } from './worldEuro';
 import { notePlaces } from './worldPlaces';
+import { cupField, enforceWorldReserves } from './worldReserves';
 
 // Aufgeteilt (Dateien < 600 Zeilen): Typen in worldTypes.ts, Länder/Vereine/Teilungen in
 // worldCountries.ts, Koeffizienten/Rangliste/Starter in worldEuro.ts – hier weitergereicht.
@@ -187,7 +188,7 @@ export function advanceWorldSeason(
     const t1 = fx ? given(fx.t1, c.tiers[0]) : playLeague(c.tiers[0], euroClubs, winPts, r);
     const t2 = fx && (fx.t2.length || fx.next) ? given(fx.t2, c.tiers[1]) : playLeague(c.tiers[1], euroClubs, winPts, r);
     const champ = t1[0];
-    const cupWinner = fx?.cup && w.meta[fx.cup] ? fx.cup : playCup([...c.tiers[0], ...c.tiers[1]], euroClubs, r);
+    const cupWinner = fx?.cup && w.meta[fx.cup] ? fx.cup : playCup(cupField(c.name, endYear - 1, [...c.tiers[0], ...c.tiers[1]]), euroClubs, r);
     c.lastTable = t1;
     c.lastChampion = champ;
     c.lastCupWinner = cupWinner;
@@ -225,6 +226,8 @@ export function advanceWorldSeason(
       c.tiers[1] = [...c.tiers[1].filter((id) => !out.includes(id)), ...inn];
       c.pool = [...pool.filter((id) => !inn.includes(id)), ...out];
     }
+    // Zweite Mannschaften (B-Teams) nach den Regeln des Landes (engine/worldReserves.ts).
+    enforceWorldReserves(c, endYear, (id) => euroClubs[id]?.strength ?? 0);
   }
 
   // 3) Staatenteilungen (vor der Stärkeentwicklung, damit neue Ligen mitlaufen)

@@ -19,6 +19,7 @@ import { resolveLineup } from '../src/engine/match/team';
 import { bindRegistration } from '../src/game/registrationGame';
 import { amateurLeagues, amateurLeaguesDaily, amateurTablesView } from '../src/game/amateurLeagues';
 import { competitionOptions, buildSnapshot } from '../src/game/competitionView';
+import { cupField, enforceWorldReserves } from '../src/engine/worldReserves';
 let fails = 0;
 const ok = (c: unknown, l: string) => { console.log(`${c ? 'OK  ' : 'FEHL'} ${l}`); if (!c) fails++; };
 const mgr = { name: 'T', nationality: 'GER', birthYear: 1950, style: 'balanced', background: 'newcomer' } as any;
@@ -232,6 +233,15 @@ ok(!Object.keys(g10.clubs).some((id) => id.startsWith('amr-')) && rulesOk(g10), 
   startNextSeason(d89);
   const east = Object.values(d89.simClubs).filter((s) => s.id.startsWith('res-ddr') && s.tier < 100);
   ok(d89.season === '1991/92' && !Object.values(d89.simClubs).some((s) => s.ddr && s.id.startsWith('res-') && s.tier > 100), `1991/92: Osten im gesamtdeutschen System (${east.length} zweite Mannschaften von Ost-Vereinen)`);
+}
+// --- 8) Ausland: B-Teams nach Landesregel (Hintergrund-Welt) ------------------------------------
+{
+  const c: any = { name: 'Spanien', tiers: [['a', 'y', 'x-ii'], ['c', 'y-ii', 'x', 'd', 'e']], pool: ['p1', 'p2', 'z-ii'] };
+  enforceWorldReserves(c, 2000, (id) => (id === 'p2' ? 60 : 50));
+  ok(!c.tiers[0].includes('x-ii') && c.tiers[0].includes('c'), 'Spanien: B-Team nie in der 1. Liga – der Nächste steigt auf');
+  ok(!c.tiers[1].includes('x-ii') && c.tiers[1].includes('p2') && c.pool.includes('x-ii'), 'Spanien: erste Mannschaft in der 2. Liga → B-Team in den Unterbau (Zwangsabstieg)');
+  ok(c.tiers[1].includes('y-ii'), 'B-Team mit Stammverein in der 1. Liga bleibt in der 2. Liga');
+  ok(cupField('Spanien', 1985, ['a', 'y-ii']).length === 2 && cupField('Spanien', 1995, ['a', 'y-ii']).length === 1 && cupField('Portugal', 2015, ['a', 'y-ii']).length === 1, 'Landespokal: Spanien B-Teams bis 1989/90, Portugal nie');
 }
 console.log(fails ? `\n${fails} Fehler.` : '\nZweite Mannschaft: alle Prüfungen bestanden.');
 process.exit(fails ? 1 : 0);
