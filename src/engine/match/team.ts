@@ -4,7 +4,7 @@
 // =============================================================================
 import { defStyleOf } from '../tacticEra';
 import { pickBench } from '../benchPick';
-import { countsAsForeign, euroListOf, isNational, matchForeignCap } from '../registration';
+import { countsAsForeign, cupTiedOf, euroListOf, isNational, matchForeignCap } from '../registration';
 import type { Club, Player, Position, Tactics } from '../../types';
 import { POSITION_GROUPS } from '../../types';
 import { getFormation, type FormationSlot } from '../../data/formations';
@@ -102,7 +102,7 @@ export interface ResolvedLineup {
  *   (verletzt/gesperrt) werden slotgenau mit dem passendsten Ersatz besetzt.
  * - KI-Verein: stellt in der eigenen Formation jedes Mal neu auf (Eignung × Frische).
  */
-export function resolveLineup(club: Club, players: Record<string, Player>, human: boolean, benchSize: number, ctx?: { year: number; euro?: boolean; /** Gegner: Leihspieler mit Einsatzverbot gegen ihren Stammverein fehlen (engine/loanDeal.ts). */ vs?: string }): ResolvedLineup {
+export function resolveLineup(club: Club, players: Record<string, Player>, human: boolean, benchSize: number, ctx?: { year: number; euro?: boolean; /** Landespokal: Pokalbindung (engine/registration.ts `cupTiedOf`). */ cup?: boolean; /** Gegner: Leihspieler mit Einsatzverbot gegen ihren Stammverein fehlen (engine/loanDeal.ts). */ vs?: string }): ResolvedLineup {
   const t: Tactics | undefined = club.tactics;
   // Eigene Slot-Lagen (frei verschobene Positionen) gelten für den gespeicherten Plan.
   const formation = withLayout(getFormation(t?.formation), human ? t?.slotLayout : undefined);
@@ -112,7 +112,8 @@ export function resolveLineup(club: Club, players: Record<string, Player>, human
   let cap = ctx ? matchForeignCap(ctx.year, ctx.euro) : null;
   let foreign = 0;
   const vs = ctx?.vs;
-  const avail = club.playerIds.map((id) => players[id]).filter((p): p is Player => isAvailable(p) && !(vs && p.loan?.deal?.noParent && p.loan.fromClubId === vs));
+  const tied = ctx?.cup ? cupTiedOf(club.id) : null;
+  const avail = club.playerIds.map((id) => players[id]).filter((p): p is Player => isAvailable(p) && !(vs && p.loan?.deal?.noParent && p.loan.fromClubId === vs) && !tied?.has(p.id));
   const listed = list ? avail.filter((p) => list.has(p.id)) : avail;
   // Sicherheitsnetz: reicht die Meldeliste nicht für eine Elf, spielt der Kader (sonst Spielabbruch).
   const pool = listed.length >= 11 ? listed : avail;

@@ -36,6 +36,7 @@ import { isForeignId } from '../engine/world';
 import { buildProClub } from '../data/generate';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { RES_PREFIX, clubTierNow, isReserveId, ownReserveId, parentOfReserve, reserveCap, reserveIdOf, reserveTierOk } from './reserveIds';
+import { RESERVE_CUP_PREFIX } from './reserveCup';
 import { finishLocalSeason, reserveLevel, sortedTable, xiStrengthNow, type ReserveState } from './reserveTeam';
 
 type G = Game & { reserve?: ReserveState; reserveSeeded?: number };
@@ -395,7 +396,7 @@ function localPosition(st: ReserveState): number {
   return sortedTable(st).findIndex((r) => r.id === 'own') + 1;
 }
 
-export const RESERVE_CUP_PREFIX = 'amr-';
+export { RESERVE_CUP_PREFIX };
 
 /** Pokal-Vereine der Amateure der neuen Saison: alte entfernen, neue mit Vertragsamateuren anlegen. */
 export function reserveCupClubs(g: Game, ids: string[], seasonStart: string): string[] {

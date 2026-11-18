@@ -13,16 +13,23 @@ import { isForeignId } from './world';
 
 let homeNat = 'GER';
 let euroLists: Record<string, Set<string>> = {};
+/** Pokalbindung (game/reserveCup.ts): je Verein Spieler, die im Landespokal dieser Saison nicht spielen dürfen. */
+let cupTied: Record<string, Set<string>> = {};
 /** Heimat-Nationalität (Deutschland: GER; DDR-Spieler zählen nach 1990 als Deutsche). */
 export function setRegHome(nat: string): void { homeNat = nat || 'GER'; }
 export function regHome(): string { return homeNat; }
 /** Ausgangszustand (game/resetModuleState.ts). */
-export function resetRegistrationState(): void { homeNat = 'GER'; euroLists = {}; }
+export function resetRegistrationState(): void { homeNat = 'GER'; euroLists = {}; cupTied = {}; }
 /** Europapokal-Meldelisten je Verein (nur Vereine mit Liste werden gefiltert). */
 export function setEuroLists(lists: Record<string, string[]>): void {
   euroLists = Object.fromEntries(Object.entries(lists).map(([k, v]) => [k, new Set(v)]));
 }
 export function euroListOf(clubId: string): Set<string> | null { return euroLists[clubId] ?? null; }
+/** Pokalbindung: gesperrte Spieler je Verein im Landespokal setzen (leere Liste = keine Sperre). */
+export function setCupTied(lists: Record<string, string[]>): void {
+  cupTied = Object.fromEntries(Object.entries(lists).filter(([, v]) => v.length).map(([k, v]) => [k, new Set(v)]));
+}
+export function cupTiedOf(clubId: string): Set<string> | null { return cupTied[clubId] ?? null; }
 
 const isNative = (nat: string | undefined, year: number) => !!nat && (nat === homeNat || (homeNat === 'GER' && nat === 'GDR' && year >= 1990));
 

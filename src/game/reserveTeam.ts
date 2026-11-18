@@ -149,12 +149,13 @@ const avgTop = (ps: Player[], n: number) => { const o = ps.map((p) => p.overall)
 const out = (p: Player) => !!p.injury || p.suspensionMatches > 0 || p.availability !== 'available';
 
 /** Spieler, die für die zweite Mannschaft in Frage kommen (nicht in der Profi-Startelf). */
-export function eligible(g: Game, club: Club, pros: boolean): Player[] {
+export function eligible(g: Game, club: Club, pros: boolean, exclude?: Set<string>): Player[] {
   const xi = new Set(club.tactics?.startingXI ?? Object.values(club.tactics?.lineupMap ?? {}));
+  for (const id of exclude ?? []) xi.add(id);
   const squad = club.playerIds.map((id) => g.players[id]).filter((p): p is Player => !!p && !out(p) && !xi.has(p.id) && (pros || p.age <= 23));
   // Ältere A-Jugendliche (ab 17) helfen aus – wie bei echten Amateurmannschaften.
   const youth = (club.youthPlayerIds ?? []).map((id) => g.youthPlayers?.[id] ?? g.players[id]).filter((p): p is Player => !!p && !out(p) && p.age >= 17);
-  return [...squad, ...youth.filter((y) => !squad.includes(y))];
+  return [...squad, ...youth.filter((y) => !squad.includes(y) && !xi.has(y.id))];
 }
 
 /** Stärke der Vertragsamateure (ohne Profistatus), die Plätze füllen: Niveau der Amateurliga + Ausbaustufe. */
@@ -162,9 +163,9 @@ export const amateurStrength = (g: Game, level: number) => poolBase(g) + 2 + lev
 const effOf = (p: Player, pos: Position) => p.overall * Math.min(1, 0.6 + positionSuitability(p, pos) / 250);
 
 /** Aufstellung nach Schwerpunkt; Positions-Trainees fest auf ihrer Position; ab 2008 höchstens drei über 23. */
-export function pickReserveXI(g: Game, club: Club, st: Pick<ReserveState, 'pros' | 'focus' | 'posTrain'>): [Player, Position][] {
+export function pickReserveXI(g: Game, club: Club, st: Pick<ReserveState, 'pros' | 'focus' | 'posTrain'>, exclude?: Set<string>): [Player, Position][] {
   const pros = st.pros || st.focus === 'comeback';
-  const pool = eligible(g, club, pros);
+  const pool = eligible(g, club, pros, exclude);
   const maxOld = reserveEra(seasonStartYear(g.season)).over23 ?? 11;
   const prio = (p: Player) => st.focus === 'results' ? p.overall
     : st.focus === 'youth' ? p.overall * 0.3 + (23 - Math.min(23, p.age)) * 3 + (p.id.includes('_y_') ? 12 : 0)

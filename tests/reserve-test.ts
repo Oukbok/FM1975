@@ -11,6 +11,12 @@ import { reserveView } from '../src/game/reserveView';
 import { ensurePositionSkill } from '../src/engine/positionSkill';
 import { composeHome } from '../src/game/worldCompose';
 import type { Game } from '../src/game/state';
+import { processDay } from '../src/game/day';
+import { HEADLESS_UI } from '../src/game/dayUi';
+import { findOwnMatchDue, findMatch, quickSimOwnMatch } from '../src/game/ownMatch';
+import { cupTieState, ownAmrId } from '../src/game/reserveCup';
+import { resolveLineup } from '../src/engine/match/team';
+import { bindRegistration } from '../src/game/registrationGame';
 let fails = 0;
 const ok = (c: unknown, l: string) => { console.log(`${c ? 'OK  ' : 'FEHL'} ${l}`); if (!c) fails++; };
 const mgr = { name: 'T', nationality: 'GER', birthYear: 1950, style: 'balanced', background: 'newcomer' } as any;
@@ -76,6 +82,52 @@ ok(!!d96 && d96.tier === 3 && /steigt/.test(reserveState(g95)!.note ?? ''), `199
 ok(Object.keys(g95.clubs).some((id) => id.startsWith('amr-')), 'Pokal 1996/97: Amateure dabei');
 const v96 = reserveView(g95)!;
 ok(v96.tier === 3 && v96.rows.length === 18 && !!v96.blocked, `Anzeige: ${v96.league}, Hinweis „${v96.blocked}“`);
+// --- 3b) Deine Amateure im Pokal mit eigenem Kader + Pokalbindung --------------------------------
+{
+  const amr = ownAmrId(g95);
+  ok(g95.cup!.participantIds.includes(amr), 'Pokal 1996/97: deine Amateure im Feld');
+  let played: { match: any; round: string } | null = null;
+  for (let i = 0; i < 330 && !played; i++) {
+    if (!processDay(g95, HEADLESS_UI)) { const due = findOwnMatchDue(g95); if (due) { quickSimOwnMatch(g95, due); processDay(g95, HEADLESS_UI); } }
+    for (const r of g95.cup!.rounds) for (const t of r.ties) {
+      const m = t.legs?.[0]?.match ?? t.match;
+      if (m?.result && (t.homeClubId === amr || t.awayClubId === amr)) played = { match: m, round: r.name };
+    }
+  }
+  ok(!!played, `Pokalspiel der Amateure gespielt (${played?.round})`);
+  if (played) {
+    const m = played.match;
+    const side = m.homeClubId === amr ? 'home' : 'away';
+    const lu = m.result.report?.lineups?.[side] ?? [];
+    const mine = lu.filter((x: any) => (g95.players[x.id] ?? g95.youthPlayers[x.id])?.clubId === g95.managedClubId);
+    ok(lu.length >= 11 && mine.length >= 6, `Aufstellung mit eigenem Kader: ${mine.length} eigene Spieler von ${lu.length}`);
+    const pros = new Set(g95.clubs[g95.managedClubId].tactics?.startingXI ?? []);
+    const sameDay = g95.fixtures.some((f) => f.date === m.date && f.involvesPlayerClub);
+    ok(!sameDay || mine.every((x: any) => !pros.has(x.id)), 'Profi-Startelf nicht doppelt am selben Tag');
+    const tie = cupTieState(g95);
+    ok(mine.every((x: any) => tie.amateurs.includes(x.id)), `Pokalbindung: ${tie.amateurs.length} Spieler an die Amateure gebunden`);
+    const msg = g95.messages.find((x) => x.relatedId === m.id && x.from === 'Trainer der Amateure');
+    ok(!!msg && !!findMatch(g95, m.id), `Nachricht + Spielbericht („${msg?.subject}“)`);
+    // Gebundene Spieler fehlen in der Pokal-Aufstellung der Profis.
+    bindRegistration(g95);
+    const club = g95.clubs[g95.managedClubId];
+    const tied = tie.amateurs.find((id) => g95.players[id]);
+    if (tied) {
+      const save = club.tactics!.startingXI, saveMap = club.tactics!.lineupMap;
+      const map = { ...(saveMap ?? {}) };
+      const slot = Object.keys(map).find((k) => g95.players[map[k]]?.naturalPosition !== 'TW') ?? 's2';
+      for (const k of Object.keys(map)) if (map[k] === tied) delete map[k];
+      map[slot] = tied;
+      club.tactics!.lineupMap = map;
+      club.tactics!.startingXI = Object.values(map);
+      const cupLu = resolveLineup(club, g95.players, true, 7, { year: 1996, cup: true });
+      const ligaLu = resolveLineup(club, g95.players, true, 7, { year: 1996 });
+      ok(!cupLu.xi.some((x) => x.p.id === tied) && !cupLu.bench.some((p) => p.id === tied), 'Pokalbindung: Gebundener fehlt bei den Profis im Pokal');
+      ok(ligaLu.xi.some((x) => x.p.id === tied) || !!g95.players[tied].injury || g95.players[tied].suspensionMatches > 0, 'Liga: derselbe Spieler darf für die Profis spielen');
+      club.tactics!.startingXI = save; club.tactics!.lineupMap = saveMap;
+    }
+  }
+}
 startNextSeason(g10);
 ok(!Object.keys(g10.clubs).some((id) => id.startsWith('amr-')) && rulesOk(g10), 'ab 2008/09: keine zweite Mannschaft im Pokal');
 

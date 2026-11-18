@@ -3,6 +3,7 @@
 // Spieltage, Bewertungsrunden, Transferfenster, Saisonende) und die Vorschau des
 // Trainerstabs eine Woche vor jeder Bewertungsrunde. Aufgerufen aus game/day.ts.
 // =============================================================================
+import { noteCupAppearances, ownAmrId, ownReserveCupMessage, withOwnReserveCup } from './reserveCup';
 import { superCupMatchday } from './superCupGame';
 import { snapshotAttributes } from '../engine/history';
 import { EURO_COMP_NAMES } from '../data/europe';
@@ -144,9 +145,13 @@ export function processDayEvents(g: Game, ui: DayUi, todaysEvents: CalendarEvent
           // Alle noch nicht gespielten Begegnungen der Runde simulieren.
           for (const tie of round.ties) {
             if (tie.played) continue;
-            simulateCupTie(tie, g.clubs, g.players, g.pointSystem, cup.seed, {
-              logClubIds: [g.managedClubId], applyInjuries: g.injuriesEnabled,
-            });
+            withOwnReserveCup(g, tie.homeClubId, tie.awayClubId, tie.date, (logClubIds) => simulateCupTie(tie, g.clubs, g.players, g.pointSystem, cup.seed, {
+              logClubIds, applyInjuries: g.injuriesEnabled,
+            }));
+            if (tie.match) {
+              const fresh = noteCupAppearances(g, tie.match);
+              if (tie.homeClubId === ownAmrId(g) || tie.awayClubId === ownAmrId(g)) ownReserveCupMessage(g, cup, tie, round.name, tie.match, fresh);
+            }
             const home = g.clubs[tie.homeClubId];
             const away = g.clubs[tie.awayClubId];
             if (tie.match?.result) {

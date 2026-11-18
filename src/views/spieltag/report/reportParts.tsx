@@ -65,11 +65,11 @@ export function StatTable({ r, hs, as, av }: { r: MatchResultExt; hs?: TeamStats
 }
 
 export function LineupCol({ g, list, detail, av }: { g: Game; list: LineupEntry[]; detail: boolean; av: EraStats }) {
-  const nm = shortNamer(list.map((e) => g.players[e.id]));
+  const nm = shortNamer(list.map((e) => g.players[e.id] ?? g.youthPlayers?.[e.id]));
   return (
     <div className="mr-lu">
       {list.map((e) => {
-        const p = g.players[e.id];
+        const p = g.players[e.id] ?? g.youthPlayers?.[e.id]; // A-Jugendliche bei den Amateuren im Pokal
         return (
           <div key={e.id}>
             <div className={`mr-lu-row ${e.started ? '' : 'sub'}`}>

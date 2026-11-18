@@ -24,6 +24,7 @@ import type { CupLeg } from '../types/euro2';
 import { cupNextDrawMessage, cupResultMessage } from './competitions';
 import { hasScheduledDraw } from './cupDraw';
 import { hashSeed, type Game } from './state';
+import { noteCupAppearances, ownAmrId, ownReserveCupMessage, withOwnReserveCup } from './reserveCup';
 
 const startYearOf = (cup: CupState) => Number(cup.season.slice(0, 4));
 /** Keine Wiederholungsspiele über die Feiertage (21.12.–6.1.). */
@@ -80,11 +81,11 @@ export function cupKoRule(cup: CupState, ri: number, replay: boolean): KoRule | 
 }
 
 function play(g: Game, cup: CupState, tie: CupTie, home: string, away: string, date: string, id: string, ko: KoRule | undefined) {
-  const engine = new MatchEngine(g.clubs[home], g.clubs[away], g.players, g.pointSystem, {
-    seed: hashSeed(`${cup.seed}:${id}`), date, competition: 'Pokal', logClubIds: [g.managedClubId],
+  // Deine Amateure spielen mit ihrem echten Kader (game/reserveCup.ts).
+  const o = withOwnReserveCup(g, home, away, date, (logClubIds) => new MatchEngine(g.clubs[home], g.clubs[away], g.players, g.pointSystem, {
+    seed: hashSeed(`${cup.seed}:${id}`), date, competition: 'Pokal', logClubIds,
     applyInjuries: g.injuriesEnabled, ko: ko ?? { extraTime: true, shootout: true },
-  });
-  const o = engine.simulateCup();
+  }).simulateCup());
   const match: Match = {
     id, matchday: tie.round + 1, date, homeClubId: home, awayClubId: away, status: 'finished',
     result: o.result, events: o.events, involvesPlayerClub: tie.involvesPlayerClub,
@@ -112,6 +113,8 @@ export function cupMatchdayV2(g: Game, ri: number, slot: number, today: string):
     const date = replay ? tie.legs![1].date : tie.date;
     const id = replay ? `${tie.id}_w` : tie.id;
     const { o, match, draw } = play(g, cup, tie, home, away, date, id, cupKoRule(cup, ri, replay));
+    const amr = home === ownAmrId(g) || away === ownAmrId(g);
+    const fresh = noteCupAppearances(g, match); // Pokalbindung Profis/Amateure
     if (g.clubs[home]) bookCupHomeMatch(g.clubs[home], o.result, date, home === mid, scale);
     const leg: CupLeg = {
       home, away, date, played: true, homeGoals: o.result.homeGoals, awayGoals: o.result.awayGoals,
@@ -122,6 +125,7 @@ export function cupMatchdayV2(g: Game, ri: number, slot: number, today: string):
       tie.legs = [leg, { home: away, away: home, date: round.dates?.[1] ?? CalendarEngine.addDays(date, 7), played: false, homeGoals: null, awayGoals: null, decision: null, penalties: null, match: null }];
       tie.match = match;
       for (const id2 of [home, away]) if (g.clubs[id2]) applyMatchEffects(g.clubs[id2], g.players, 'D');
+      if (amr) ownReserveCupMessage(g, cup, tie, round.name, match, fresh, tie.legs[1].date);
       if (tie.involvesPlayerClub) {
         own = match.id;
         const opp = g.clubs[home === mid ? away : home]?.name ?? '';
@@ -155,6 +159,7 @@ export function cupMatchdayV2(g: Game, ri: number, slot: number, today: string):
       own = match.id;
       pushMessage(g.messages, cupResultMessage(cup, g.clubs, mid, tie, ri, Math.round(prize * scale)));
     }
+    if (amr) ownReserveCupMessage(g, cup, tie, round.name, match, fresh);
   }
   if (round.ties.every((t) => t.played)) {
     if (ri < cup.rounds.length - 1) {

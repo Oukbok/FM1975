@@ -12,6 +12,7 @@
 //   (Prüfung am 1.9. und 1.2., Verstoß = Geldstrafe der Liga).
 // Regeln/Quellen: data/registrationRules.ts. Seite: views/kader/RegistrationView.tsx.
 // =============================================================================
+import { bindCupTied } from './reserveCup';
 import type { Game } from './state';
 import { homeCountryOf } from './state';
 import type { Club, Player } from '../types';
@@ -182,6 +183,7 @@ export function setEuroList(g: Game, ids: string[]): string | null {
 export function bindRegistration(g: Game): void {
   setRegHome(homeNat(g));
   setEuroLists(ownInEurope(g) && euroRulesFor(seasonYear(g)).listMax != null ? { [g.managedClubId]: euroRegistered(g) } : {});
+  bindCupTied(g); // Pokalbindung Profis/Amateure (game/reserveCup.ts)
 }
 
 // ---------------------------------------------------------------- Kaderauflagen der Liga
