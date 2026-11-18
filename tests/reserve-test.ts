@@ -38,7 +38,7 @@ me.youthInvest!.levels.reserve = 1;
 const st = reserveState(g)!;
 ok(st && st.table.length >= 10 && st.table.length % 2 === 0, `Liga mit ${st.table.length} Mannschaften`);
 ok(st.table.some((r) => r.id.startsWith('res-')) && st.table.some((r) => g.simClubs[r.id]?.tier === 9 && !r.id.startsWith('res-')), 'Amateurliga: zweite Mannschaften und Pool-Vereine der Region');
-ok(reserveView(g)!.league === 'Amateurliga' && !ownReserveDivision(g), `1975: höchste Amateurliga „${reserveView(g)!.league}“`);
+ok(reserveView(g)!.league.startsWith('Amateurliga ') && !ownReserveDivision(g), `1975: höchste Amateurliga „${reserveView(g)!.league}“`);
 ok(!!reserveView(g)!.blocked?.includes('2. Liga'), 'Hinweis: Aufstieg in die 2. Liga gesperrt');
 setReserveFocus(g, 'youth');
 const xi = pickReserveXI(g, me, st);

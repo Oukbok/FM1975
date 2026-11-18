@@ -8,6 +8,9 @@ import { ownReserveId, reserveTierOk } from './reserveIds';
 import { reserveCupOpen, reserveEra } from '../data/reserveRules';
 import { seasonStartYear } from '../data/timeline';
 import { simDisplayName } from '../engine/leagues';
+import { ownAmrInCup, type CupTieState } from './reserveCup';
+import { amGroupOf, amTier } from './amateurLeagues';
+import { homeCountryOf } from './state';
 
 export interface ReserveViewRow { id: string; linkId?: string; name: string; p: number; w: number; d: number; l: number; gf: number; ga: number; pts: number; me: boolean }
 export interface ReserveView {
@@ -52,8 +55,10 @@ export function reserveView(g: Game): ReserveView | null {
   const parentTier = g.leagues?.playerDivision.tier ?? 1;
   const parentName = g.leagues?.playerDivision.name ?? '1. Liga';
   const era = reserveEra(year);
+  const ct = (g as Game & { reserveCupTie?: CupTieState }).reserveCupTie;
+  const tied = ownAmrInCup(g) && ct?.season === g.season ? ct.amateurs.length : 0;
   const cup = reserveCupOpen(year)
-    ? 'DFB-Pokal: Amateure können sich über den Verbandspokal qualifizieren (im Spiel: Platz 1–3 der höchsten Amateurliga bzw. Staffel).'
+    ? `DFB-Pokal: Amateure können sich über den Verbandspokal qualifizieren (im Spiel: Platz 1–3 der höchsten Amateurliga bzw. Staffel). Sie spielen mit ihrem Kader; wer für sie im Pokal spielt, ist in dieser Saison im Pokal an die Amateure gebunden${tied ? ` (bisher ${tied})` : ''}.`
     : year >= 2008 ? 'DFB-Pokal: seit 2008/09 sind zweite Mannschaften ausgeschlossen.' : 'DFB-Pokal: noch nicht offen für Amateurmannschaften.';
   const div = ownReserveDivision(g);
   const blockText = (tier: number) => (tier <= 2
@@ -86,7 +91,7 @@ export function reserveView(g: Game): ReserveView | null {
   const low = lowestWest(g);
   const blocked = depth > 0 ? null : !reserveTierOk(low.tier, parentTier) ? blockText(low.tier) : null;
   return {
-    league: st.leagueName ?? 'Amateurliga', tier: null, rows, pos: rows.findIndex((r) => r.me) + 1, played: st.md, total: (t.length - 1) * 2,
+    league: st.leagueName ?? 'Amateurliga', tier: depth === 0 && homeCountryOf(g) === 'ger' && st.table.every((r) => !r.id.startsWith('t:')) ? amTier(g, amGroupOf(g, g.managedClubId)) : null, rows, pos: rows.findIndex((r) => r.me) + 1, played: st.md, total: (t.length - 1) * 2,
     results: st.results, up: blocked ? 0 : 1, down: depth >= 2 ? 0 : 3, blocked, rule: era.text, cup, note: st.note,
   };
 }

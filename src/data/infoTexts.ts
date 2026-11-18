@@ -478,7 +478,7 @@ export const INFO_TEXTS = {
   },
   reserveLiga: {
     title: 'Liga der zweiten Mannschaft',
-    text: 'Zweite Mannschaften dürfen nie in die 2. Liga und nie in die Liga der ersten Mannschaft oder darüber: bis 1994 höchstens Amateur-Oberliga, dann Regionalliga, ab 2008 auch 3. Liga. Steigt die erste Mannschaft in ihre Liga ab, muss die zweite eine Liga tiefer (Zwangsabstieg). Grün = Aufstieg, rot = Abstieg.',
+    text: 'Zweite Mannschaften dürfen nie in die 2. Liga und nie in die Liga der ersten Mannschaft oder darüber: bis 1994 höchstens Amateur-Oberliga, dann Regionalliga, ab 2008 auch 3. Liga. Steigt die erste Mannschaft in ihre Liga ab, muss die zweite eine Liga tiefer (Zwangsabstieg). Grün = Aufstieg, rot = Abstieg. Die Amateurligen aller Regionen mit den übrigen zweiten Mannschaften stehen unter Statistiken › Liga. Im DFB-Pokal (bis 2007/08) spielt deine zweite Mannschaft mit ihrem Kader – wer dort spielt, ist im Pokal an die Amateure gebunden.',
     wiki: 'reserve-teams',
   },
   spielermeldung: {

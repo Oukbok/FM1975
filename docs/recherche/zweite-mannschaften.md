@@ -31,6 +31,8 @@ Nachwuchsoberliga), ab 1984 wieder in der DDR-Liga ohne Aufstiegsrecht, 1990/91 
   Segunda ohne Aufstieg; Mestalla 1952 Aufstieg verweigert); seit 1990/91 nicht mehr in der Copa del Rey (Castilla im Finale 1980).
 - **Italien:** seit 2018/19 U23-Teams der Serie-A-Vereine ab der Serie C (Juventus, später Atalanta, Milan, Inter);
   nie gleich/höher als die erste Mannschaft, Zwangsabstieg, höchstens vier Spieler über 23 im Spielbericht.
+- **Portugal:** „B“-Teams 1999–2006 in der dritten Liga, seit 2012/13 in der Segunda Liga; nie in der Liga der ersten
+  Mannschaft (kein Aufstieg in die Primeira Liga), von Taça de Portugal und Taça da Liga ausgeschlossen.
 - **Frankreich:** Reserveteams höchstens vierte (mit Ausbildungszentrum) bzw. fünfte Ebene, Aufstieg geht sonst an
   den Nächsten; nicht im Coupe de France.
 
@@ -38,15 +40,32 @@ Nachwuchsoberliga), ab 1984 wieder in der DDR-Liga ohne Aufstiegsrecht, 1990/91 
 - KI-Vereine der 1./2. Liga haben je Epoche eine zweite Mannschaft (bis 2007/08 alle Erstligisten + ~70 % der
   Zweitligisten, 2008–2014 alle, danach ~80 % bzw. ~45 %); Stärke = Amateurniveau + Abstand des Stammvereins.
   Abgestiegene Vereine auf Ebene 3 behalten sie (höchstens Amateurliga), darunter melden sie ab.
-- Unterhalb der simulierten Ligen (bis 1994 immer) spielen zweite Mannschaften im Amateur-Pool; deine spielt dort in
-  der höchsten Amateurliga ihrer Region (Pool-Vereine + zweite Mannschaften der Region + Amateurvereine), Meister
-  steigt auf, wenn erlaubt; die letzten drei steigen ab (Verbands-/Landesliga).
+- **Amateurligen** (`src/game/amateurLeagues.ts`): unterhalb der simulierten Ligen je Verbandsgruppe eine Staffel
+  mit 18 Mannschaften (Nord, Berlin bzw. ab 1991 Nordost, Nordrhein, Westfalen, Südwest, Hessen, Baden-Württemberg,
+  Bayern; Amateurliga → 1978 Amateur-Oberliga → 1994 Oberliga): zweite Mannschaften der Gruppe (höchstens acht),
+  stärkste Pool-Vereine, Ortsvereine. Sonntags mit `worldMatchGoals`, nur Tabelle. Meister haben beim Pool-Tausch
+  Vorrang (+40, dann −12 je Platz), zweite Mannschaften sind bis 1994 für die 2. Bundesliga gesperrt. 1991–94 liegt
+  der Nordosten eine Ebene tiefer (unter der NOFV-Oberliga, „Verbandsliga Nordost“). Deine zweite Mannschaft spielt
+  in der Staffel ihrer Gruppe (gleiche Besetzung).
 - Beim Spielstart ab 1994 belegen bis zu drei zweite Mannschaften je Staffel die unterste simulierte Ebene.
 - Obergrenze je Staffel vor 2008: sechs (Spielannahme), ab 2008 sieben, 3. Liga vier.
-- DFB-Pokal bis 2007/08: bis zu drei zweite Mannschaften je Saison (deine bei Platz 1–3, KI nach Abschneiden/Stärke)
-  als Pokal-Verein mit Vertragsamateuren (Pokalbindung).
+- **DFB-Pokal bis 2007/08**: bis zu drei zweite Mannschaften je Saison (deine bei Platz 1–3, KI nach Endplatz in
+  Staffel/Amateurliga). Deine spielt mit ihrem echten Kader (`src/game/reserveCup.ts`: Auswahl wie am Liga-Sonntag,
+  Vertragsamateure füllen auf, Profis am selben Tag gesperrt). **Pokalbindung** (Spielannahme): wer für die Amateure
+  im Pokal gespielt hat, darf in der Saison im Pokal nicht mehr für die Profis spielen und umgekehrt. Eine
+  ausdrückliche Regel dazu war in den heutigen Ordnungen nicht zu finden; die DFB-Spielordnung § 12 Nr. 1 regelt den
+  Einsatz in zweiten Mannschaften bei DFB-Pokalspielen eigens (heute: U23 + bis zu drei Ältere) und verbietet
+  Lizenzspieler in Landespokalspielen. KI-Amateure spielen mit Vertragsamateuren.
 - Ab 2008 höchstens drei Spieler über 23 in der Elf deiner zweiten Mannschaft; die Stammspieler-Regel ist durch
-  „wer in der Profi-Startelf steht, spielt nicht mit“ ersetzt. DDR-Vereine ohne zweite Mannschaften.
+  „wer in der Profi-Startelf steht, spielt nicht mit“ ersetzt.
+- **DDR** (`src/game/ddrReserves.ts`): bis 1976 und 1984–1990 in der DDR-Liga ohne Aufstiegsrecht – im Spiel ist die
+  DDR-Liga eine Staffel mit zwölf Vereinen, deshalb höchstens vier zweite Mannschaften; Zwangsabstieg, Abstieg =
+  abgemeldet; 1976–1984 Nachwuchsoberliga aller Oberligisten (Tabelle); ab 1990/91 keine mehr.
+- **Ausland** (`src/engine/worldReserves.ts`): B-Teams der Weltdaten (`…-ii`, Spanien/Portugal) höchstens 2. Liga, nie
+  in oder über der Liga der ersten Mannschaft, Pokal nach Landesregel; auch in der eigenen Pyramide, wenn Spanien
+  oder Portugal Heimatland ist. England/Italien/Frankreich: zweite Mannschaften unterhalb der simulierten Ebenen bzw.
+  in eigenen Reserveligen – in der Hintergrund-Welt nicht geführt (sie bräuchten eigene Vereine mit Kadern im
+  Weltpool, ohne sichtbaren Nutzen).
 
 ## Quellen
 - Wikipedia (en): German reserve football teams – https://en.wikipedia.org/wiki/German_reserve_football_teams
@@ -60,3 +79,5 @@ Nachwuchsoberliga), ab 1984 wieder in der DDR-Liga ohne Aufstiegsrecht, 1990/91 
 - Wikipedia (en): Italian reserve football teams – https://en.wikipedia.org/wiki/Italian_reserve_football_teams
 - Sportskeeda: Spanish B teams and their eligibility – https://sportskeeda.com/football/spanish-b-teams-and-their-eligibility
 - Wikipedia (en): 2016–17 EFL Trophy – https://en.wikipedia.org/wiki/2016%E2%80%9317_EFL_Trophy
+- Wikipedia (en): FC Porto B – https://en.wikipedia.org/wiki/FC_Porto_B
+- DFB-Spielordnung (§ 12 Einsatz in zweiten Mannschaften, Pokalspiele) – https://assets.dfb.de/uploads/000/328/557/original_Heft_04_Spielordnung_Schiedsrichterordnung_20251128.pdf

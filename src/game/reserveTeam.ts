@@ -36,7 +36,7 @@ import { localLeagueName, reserveEra } from '../data/reserveRules';
 import { seasonStartYear } from '../data/timeline';
 import { isReserveId, ownReserveId, reserveIdOf } from './reserveIds';
 import { regionOf } from './reservePyramid';
-import { amGroupOf, amateurTableIds, dropOwnAmateurGroup } from './amateurLeagues';
+import { amGroupOf, amLeagueName, amateurTableIds, dropOwnAmateurGroup } from './amateurLeagues';
 import { localClubName } from './youthComps/localClubs';
 
 export type ReserveFocus = 'youth' | 'results' | 'comeback';
@@ -144,7 +144,7 @@ export function reserveState(g: Game): ReserveState | null {
     gg.reserve = {
       season: g.season, focus: prev?.focus ?? 'youth', pros: prev?.pros ?? false, posTrain: (prev?.posTrain ?? []).filter((x) => club.playerIds.includes(x.pid)),
       table: div ? [] : newLocalTable(g, club, depth), results: [], lastXI: [], md: 0, level, depth,
-      leagueName: div ? div.name : localLeagueName(seasonStartYear(g.season), depth), note: prev?.note, hist: prev?.hist,
+      leagueName: div ? div.name : depth === 0 && homeCountryOf(g) === 'ger' ? amLeagueName(g, amGroupOf(g, club.id)) : localLeagueName(seasonStartYear(g.season), depth), note: prev?.note, hist: prev?.hist,
     };
     if (!div) catchUp(g, gg.reserve!);
     dropOwnAmateurGroup(g); // diese Staffel führt jetzt deine Tabelle
