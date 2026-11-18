@@ -276,7 +276,7 @@ export function titleCounts(list: Holder[]): { clubId: string; champ: number; cu
 // -----------------------------------------------------------------------------
 // Ligen (Tabellen der laufenden bzw. letzten Saison)
 // -----------------------------------------------------------------------------
-export interface CountryLeagues { country: StatsCountry; season: string; snaps: CompSnapshot[]; preset: string }
+export interface CountryLeagues { country: StatsCountry; season: string; snaps: CompSnapshot[]; preset: string; /** Weitere Staffeln der 2. Ebene (nicht als Tabelle gezeigt), z. B. „2. Liga Süd“. */ moreGroups: string[] }
 
 export function countryLeagues(g: Game, ref: CountryRef): CountryLeagues | null {
   const c = statsCountryOf(g, ref);
@@ -294,7 +294,9 @@ export function countryLeagues(g: Game, ref: CountryRef): CountryLeagues | null 
   }
   const snaps = pick.map((o) => countrySnapshot(g, c, season, src, o.key)).filter((s): s is CompSnapshot => !!s && !!s.table?.length);
   const preset = c.mode === 'world' ? `w:${c.worldKey}` : pick[0]?.key ?? '';
-  return { country: c, season, snaps, preset };
+  const shown = new Set(pick.map((o) => o.key));
+  const moreGroups = leagues.filter((o) => o.tier === 2 && !shown.has(o.key) && c.mode === 'world').map((o) => o.label);
+  return { country: c, season, snaps, preset, moreGroups };
 }
 
 // -----------------------------------------------------------------------------

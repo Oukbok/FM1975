@@ -17,7 +17,8 @@ import { CLUB_SEEDS, SECOND_LIGA_NORD_SEEDS, SECOND_LIGA_SUED_SEEDS } from '../d
 import { DDR_LIGA_SEEDS, DDR_OBERLIGA_SEEDS } from '../data/ddr';
 import { COUNTRY_BY_CC, COUNTRY_BY_KEY, countryExists, WORLD_COUNTRIES } from '../data/world/countries';
 import { worldSeason } from '../data/world/index';
-import { backgroundSecondSize, worldStructureFor } from '../data/world/structure';
+import { worldStructureFor } from '../data/world/structure';
+import { gapGroups, rowGroups } from '../data/world/secondGroups';
 import type { EuroComp, SeasonRow } from '../data/world/types';
 import { completeRow, countryLevelOf, identOf } from '../game/worldCompose';
 import { applySplits, euroParticipants, fillCountry, makeCountry, WorldState } from './world';
@@ -59,17 +60,16 @@ function dataCountry(w: WorldState, euroClubs: Record<string, EuroClub>, cc: str
   for (const e of Object.values(euroClubs)) if (e.country === key && e.id.startsWith('eu_')) delete euroClubs[e.id];
   c.tiers = [[], []];
   c.active = true;
-  // Größen nach der historischen Struktur (data/world/structure.ts): gerade abgerundet, die 2. Ebene
-  // eingleisig (bei mehreren Staffeln die besten im Wechsel aus allen Staffeln, der Rest in den Unterbau).
+  // Größen nach der historischen Struktur (data/world/structure.ts): gerade abgerundet; mehrere Staffeln der
+  // 2. Ebene bleiben getrennt (je eine Liga, engine/worldSecond.ts), Überzählige stehen im Unterbau.
+  // Datenlücke (completeRow füllt aus einer Nachbarsaison): Staffeln wie in der aufgefüllten Zeile.
   const st = worldStructureFor(cc, year);
   const t1ids = row.t1.slice(0, st?.t1 ?? row.t1.length);
-  const a2 = row.t2?.length ?? 0, b2 = row.t2b?.length ?? 0;
-  const kb = st?.groups?.length ? st.groups.length - 1 : a2 && b2 % a2 === 0 ? b2 / a2 : 1;
-  const groupsIds = [row.t2 ?? [], ...splitGroups(row.t2b ?? [], kb)];
-  const merged: string[] = [...row.t1.slice(t1ids.length)];
-  for (let i = 0; i < Math.max(0, ...groupsIds.map((x) => x.length)); i++) for (const g of groupsIds) if (g[i]) merged.push(g[i]);
-  const n2 = backgroundSecondSize(st) ?? (b2 && a2 ? a2 - (a2 % 2) : merged.length);
-  const t2ids = merged.slice(0, n2), rest = merged.slice(n2);
+  const groupsIds = (!row0.t2?.length ? gapGroups(cc, year, row.t1) : null) ?? rowGroups(row);
+  const sizes = st?.groups && st.groups.length === groupsIds.length ? st.groups : groupsIds.map((x) => x.length - (x.length % 2));
+  const kept = groupsIds.map((ids, i) => ids.slice(0, sizes[i]));
+  const t2ids = kept.flat();
+  const rest = [...row.t1.slice(t1ids.length), ...groupsIds.flatMap((ids, i) => ids.slice(sizes[i]))];
   c.tier1 = t1ids.length;
   c.tier2 = t2ids.length || c.tier2 || def.t2 || 10;
   const level = countryLevelOf(cc, year);
@@ -94,19 +94,16 @@ function dataCountry(w: WorldState, euroClubs: Record<string, EuroClub>, cc: str
       if (t < 2) c.tiers[t].push(wid); else (c.pool ??= []).push(wid);
     }
   }
+  // Staffeln der 2. Ebene (nur Vereine, die angelegt wurden; fillCountry füllt eingleisig auf).
+  const made = kept.map((ids) => ids.map(worldId).filter((id) => w.meta[id] && c.tiers[1].includes(id)));
+  if (made.length > 1 && made.every((g) => g.length >= 4)) { c.tiers[1] = made.flat(); c.groups = made.map((g) => g.length); c.tier2 = c.tiers[1].length; }
+  else delete c.groups;
   fillCountry(w, euroClubs, c, year, r);
   const prevT1 = prev?.t1.map(worldId).filter((id) => w.meta[id]) ?? [];
   c.lastTable = prevT1.length >= 4 ? prevT1 : [...c.tiers[0]].sort((a, b) => euroClubs[b].strength - euroClubs[a].strength);
   c.lastChampion = c.lastTable[0];
   const cw = prev?.cup ? worldId(prev.cup) : undefined;
   c.lastCupWinner = cw && w.meta[cw] ? cw : undefined;
-}
-
-/** Weitere Staffeln (t2b) in `k` gleich große Teile. */
-function splitGroups(ids: string[], k: number): string[][] {
-  if (k <= 1 || !ids.length) return ids.length ? [ids] : [];
-  const n = Math.ceil(ids.length / k);
-  return Array.from({ length: k }, (_, i) => ids.slice(i * n, (i + 1) * n));
 }
 
 /** Deutschland (und DDR) als Hintergrundländer, wenn das Heimatland woanders liegt. */

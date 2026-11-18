@@ -48,6 +48,7 @@ export default function LeaguesTab({ g, c, onGoto }: CountryTabProps) {
         {record.length ? record.map((r) => <KV key={r.clubId} k={<TeamName g={g} id={r.clubId} season={g.season} size={16} />} v={`${r.champ}× Meister${r.cup ? ` · ${r.cup}× Pokal` : ''}`} />)
           : <div className="dnote">Keine Daten.</div>}
         <div className="dnote mt8">Bekannte Saisons: Weltdaten vor deinem Start (grau) und alle seitdem.</div>
+        {!!lg?.moreGroups.length && <div className="dnote mt8">Die 2. Liga spielt in Staffeln – {lg.moreGroups.join(', ')} unter Statistiken › Liga.</div>}
         {lg && onGoto && <button type="button" className="b3 b3-s cnx-goto" onClick={open}>Statistiken › Liga öffnen</button>}
       </DashBox>
     </>

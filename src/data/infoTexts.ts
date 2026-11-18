@@ -38,12 +38,12 @@ export const INFO_TEXTS = {
   },
   ligenDerWelt: {
     title: 'Ligen der Welt',
-    text: 'Stand der höchsten Liga jedes anderen Landes. Spieltag = gespielte von allen Spieltagen der Saison, Tabellenführer = aktueller Erster. Ligaruf (0–100) ± Vorsaison zeigt, wie stark die Liga gerade ist – je höher, desto stärker die Vereine und desto mehr Europapokal-Plätze. Ein Klick auf eine Zeile öffnet Tabelle und Begegnungen unter Statistiken › Liga.',
+    text: 'Stand der höchsten Liga jedes anderen Landes. Spieltag = gespielte von allen Spieltagen der Saison, Tabellenführer = aktueller Erster. „2. Liga n Staffeln“ heißt: die zweite Liga des Landes spielt in mehreren Staffeln, jede als eigene Liga. Ligaruf (0–100) ± Vorsaison zeigt, wie stark die Liga gerade ist – je höher, desto stärker die Vereine und desto mehr Europapokal-Plätze. Ein Klick auf eine Zeile öffnet Tabelle und Begegnungen unter Statistiken › Liga.',
     wiki: 'league-reputation',
   },
   ligenstruktur: {
     title: 'Ligensystem',
-    text: 'Die Pyramide zeigt die Ligen des Landes in dieser Saison bis zur 4. Ebene, mit den historischen Namen, Staffeln und Mannschaftszahlen. Volle Kästen laufen im Spiel mit Vereinen, gestrichelte Kästen sind nur Struktur und werden nicht simuliert. Ein Klick auf einen Kasten zeigt links die Vereine.',
+    text: 'Die Pyramide zeigt die Ligen des Landes in dieser Saison bis zur 4. Ebene, mit den historischen Namen, Staffeln und Mannschaftszahlen. Volle Kästen laufen im Spiel mit Vereinen – bei mehreren Staffeln einer Ebene (z. B. 2. Liga Nord und Süd) jede Staffel als eigener Kasten und eigene Liga –, gestrichelte Kästen sind nur Struktur und werden nicht simuliert. Ein Klick auf einen Kasten zeigt links die Vereine.',
     wiki: 'league-system',
   },
   laenderprofil: {

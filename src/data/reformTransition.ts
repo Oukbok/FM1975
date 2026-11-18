@@ -40,6 +40,8 @@ export interface TransitionContext {
   protectedId?: string;
   /** Sollgrößen statt der deutschen Struktur (anderes Heimatland, Weltdaten). */
   targets?: DivisionTarget[];
+  /** Anderes Heimatland mit mehreren Staffeln: Staffel-Region eines Absteigers (Zone laut Weltdaten, game/homeStructure.ts); null = unbekannt. */
+  regionHint?: (id: string) => Region | null;
 }
 
 export interface TransitionResult {
@@ -244,7 +246,7 @@ function normalTransition(ctx: TransitionContext): TransitionResult {
         // Plätze je Staffel = eigene Aufsteiger; mehr Absteiger als Aufsteiger reihum verteilen.
         const caps = lowers.map((lg) => ({ group: lg.group, cap: promotedByGroup[lg.id].length }));
         for (let k = 0, extra = relegated.length - slots.length; k < extra; k++) caps[k % caps.length].cap++;
-        const { buckets, overflow } = assignByRegion(relegated, caps, regional ? regionOf : (id) => clubRegion(cityOf(id), null));
+        const { buckets, overflow } = assignByRegion(relegated, caps, regional ? regionOf : (id) => ctx.regionHint?.(id) ?? clubRegion(cityOf(id), null));
         lowers.forEach((lg, k) => add[lg.id].push(...buckets[k]));
         if (overflow.length) dropped.push(...overflow); // kann nicht vorkommen (Summe der Plätze = Absteiger)
       }

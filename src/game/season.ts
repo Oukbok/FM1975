@@ -31,7 +31,7 @@ import { cupField } from '../engine/worldReserves';
 import { absorbPlaceholders, ddrExchange, mergeDdrPool, poolDrift, poolExchange, refillPool, settlePool } from './clubPool';
 import { structureForSeason } from '../data/reforms';
 import { CurrentDivision, TransitionResult, computeSeasonTransition } from '../data/reformTransition';
-import { applyHomePlan, homeSeasonPlan } from './homeStructure';
+import { applyHomePlan, homeRegionHint, homeSeasonPlan, homeZoneOf } from './homeStructure';
 import { seasonStartYear } from '../data/timeline';
 import { generateSeasonCalendar, seasonLabel } from '../engine/calendar';
 import { createCup } from '../engine/cup';
@@ -206,9 +206,9 @@ export function startNextSeason(g: Game): void {
     cityOf: (id) => g.clubs[id]?.city ?? g.simClubs[id]?.city ?? '',
     appliedReforms: g.appliedReforms,
     protectedId: g.managedClubId,
-    ...(homePlan ? { targets: homePlan.targets } : {}),
+    ...(homePlan ? { targets: homePlan.transition ?? homePlan.targets, regionHint: homeRegionHint(g, current, newSeason) } : {}),
   });
-  const homePoolSwap = homePlan ? applyHomePlan(res, homePlan, current, newSeason, g.managedClubId) : undefined;
+  const homePoolSwap = homePlan ? applyHomePlan(res, homePlan, current, newSeason, g.managedClubId, (id, n) => homeZoneOf(homeCountryOf(g), id, g.clubs[id]?.city ?? g.simClubs[id]?.city, n, nextStartYear)) : undefined;
 
   // Neue Plätze zuerst aus dem Vereins-Pool besetzen (game/clubPool.ts), dann fiktive
   // Platzhalter aufnehmen; entfallene Vereine wechseln in den Pool (Platzhalter verschwinden).

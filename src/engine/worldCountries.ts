@@ -4,7 +4,7 @@ import { EuroClub } from '../data/europe';
 import { COUNTRY_SPLITS, COUNTRY_TRENDS, CountrySeed } from '../data/worldSeed';
 import { WorldCountry, WorldState } from './worldTypes';
 import { clamp, gauss, hash, rng } from './worldRandom';
-import { backgroundSecondSize, worldStructureOfKey } from '../data/world/structure';
+import { worldStructureOfKey } from '../data/world/structure';
 
 // -----------------------------------------------------------------------------
 // Landesniveau im Jahr X
@@ -136,7 +136,9 @@ function sizeByStructure(c: WorldCountry, year: number): void {
   const st = worldStructureOfKey(c.name, year);
   if (!st) return;
   c.tier1 = st.t1;
-  c.tier2 = backgroundSecondSize(st) ?? c.tier2;
+  c.tier2 = st.t2 ?? c.tier2;
+  // Mehrere Staffeln: fillCountry füllt die 2. Ebene in einem Stück, die Größen teilen sie (engine/worldSecond.ts).
+  if (st.groups && st.groups.length > 1) c.groups = [...st.groups]; else delete c.groups;
 }
 
 // -----------------------------------------------------------------------------

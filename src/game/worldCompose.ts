@@ -15,6 +15,8 @@ import { COUNTRY_BY_CC, countryExists, seasonLabelOf, WORLD_COUNTRIES } from '..
 import { structureForSeason } from '../data/reforms';
 import { realClub, realClubName, worldSeason } from '../data/world/index';
 import type { SeasonRow } from '../data/world/types';
+import { dataZoneOf, gapGroups, homeGroupKeys, rowGroups, secondLabel } from '../data/world/secondGroups';
+import { worldStructureFor } from '../data/world/structure';
 import type { LeagueGroup, SimClub } from '../engine/leagues';
 
 export interface ComposedSecond { group: LeagueGroup; name: string; clubs: SecondLigaSeed[] }
@@ -129,21 +131,18 @@ export function composeHome(cc: string, year: number): ComposedHome | null {
       : [{ group: null, name: '2. Liga', clubs: [...SECOND_LIGA_NORD_SEEDS, ...SECOND_LIGA_SUED_SEEDS].sort((a, b) => b.strength - a.strength).slice(0, structureForSeason(seasonLabelOf(year)).find((t) => t.id === 'tier2')?.teamCount ?? 20).map((s) => ({ ...s })) }];
     return { cc, year, tier1: CLUB_SEEDS.map((s) => ({ ...s })), second, fromData: false, row: null };
   }
+  const raw = row;
   row = completeRow(cc, year, row);
   const share = rankShare(cc, year, row);
   const tier1 = row.t1.map((id) => toTier1Seed(cc, id, year, share.get(id) ?? 0.5, row.t1.length)).filter(Boolean) as ClubSeed[];
   // Neu zusammengesetzt: echte Vereine bleiben ihren Seeds treu (Stadion), Ansehen aus dem Rang.
   const mk = (ids: string[] | undefined) => (ids ?? []).map((id) => toSecondSeed(cc, id, year, share.get(id) ?? 0.75)).filter(Boolean) as SecondLigaSeed[];
   const second: ComposedSecond[] = [];
-  if (row.t2b?.length) {
-    // Höchstens zwei Staffeln (Nord/Süd); stehen in t2b mehrere Staffeln hintereinander (Portugal: 16 + 32),
-    // spielt nur die nächste in Staffelgröße mit – die übrigen Vereine stehen im Pool (poolClubsOf).
-    const n = row.t2?.length ?? 0;
-    const b = n && row.t2b.length >= 2 * n ? row.t2b.slice(0, n) : row.t2b;
-    second.push({ group: 'nord', name: '2. Liga Nord', clubs: mk(row.t2) }, { group: 'sued', name: '2. Liga Süd', clubs: mk(b) });
-  } else if (row.t2?.length) {
-    second.push({ group: null, name: '2. Liga', clubs: mk(row.t2) });
-  }
+  // Jede Staffel der 2. Ebene als eigene Liga (Nord/Süd, Portugal Nord/Mitte/Süd; data/world/secondGroups.ts);
+  // Datenlücke: Staffeln der nächstgelegenen mehrgleisigen Saison (`gapGroups`).
+  const groups = (cc !== 'ger' && !raw.t2?.length ? gapGroups(cc, year, row.t1) : null) ?? rowGroups(row);
+  const keys = homeGroupKeys(groups.length);
+  groups.forEach((ids, i) => second.push({ group: keys[i] ?? null, name: secondLabel(groups.length, i), clubs: mk(ids) }));
   // Gerade Vereinszahl (Spielplan-Generator): überzählige schwächste fallen weg.
   if (tier1.length % 2) tier1.pop();
   for (const s of second) if (s.clubs.length % 2) s.clubs.pop();
@@ -162,6 +161,14 @@ export function poolClubsOf(cc: string, year: number, taken: Set<string>, tier: 
   void row;
   const lvl = countryLevelOf(cc, year) - 68;
   const out: SimClub[] = [];
+  // Mehrgleisige 2. Ebene (anderes Heimatland): Zone laut Weltdaten als Staffelkennung, damit Pool-Tausch und
+  // Nachrücker die Staffel der Region finden (game/clubPool.ts `fitsGroup` nutzt die Kennung als Region).
+  const nG = cc === 'ger' ? 1 : (worldStructureFor(cc, year)?.groups?.length ?? gapGroups(cc, year, row?.t1 ?? [])?.length ?? 1);
+  const zoneKey = (id: string, city: string): LeagueGroup => {
+    if (nG < 2) return null;
+    const z = dataZoneOf(cc, id, city, nG, year);
+    return z == null ? null : homeGroupKeys(nG)[z] ?? null;
+  };
   for (const id of ids) {
     if (taken.has(id)) continue;
     const ident = identOf(cc, id, year);
@@ -169,7 +176,7 @@ export function poolClubsOf(cc: string, year: number, taken: Set<string>, tier: 
     out.push({
       id, name: ident.name, shortName: ident.shortName, city: ident.city,
       strength: clamp(48 + lvl + (Math.abs(hashCode(id)) % 7) - 3, 36, 66),
-      colors: { primary: ident.primary, secondary: ident.secondary }, tier, group: null,
+      colors: { primary: ident.primary, secondary: ident.secondary }, tier, group: zoneKey(id, ident.city),
     });
   }
   return out;

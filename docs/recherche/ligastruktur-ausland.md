@@ -52,15 +52,33 @@ bekannte Ligageschichte geprüft – bei Zweifeln die Artikel öffnen.
 - Deutschland: https://en.wikipedia.org/wiki/1994%E2%80%9395_Regionalliga,
   https://www.wikipedia.org/wiki/1994%E2%80%9395_2._Bundesliga
 
+## Mehrere Staffeln der 2. Ebene (alle simuliert)
+
+Länder/Saisons mit mehreren Staffeln in den Weltdaten (`t2` + `t2b`, `rowGroups` in
+`src/data/world/secondGroups.ts`):
+
+| Land | Saisons | Staffeln | Quelle |
+|---|---|---|---|
+| Frankreich | 1975/76–1992/93 | 2 × 18 (Groupe A Nord/West, Groupe B Süd/Ost) | https://en.wikipedia.org/wiki/1992%E2%80%9393_French_Division_2 (zwei Gruppen à 18, 1993/94 eingleisig), https://rsssf.org/tablesf/fran2hist.html |
+| Portugal | 1976/77, 1980/81–1982/83 (dazwischen Datenlücken), 1988/89–1989/90 | 3 × 16, ab 1988/89 3 × 18 (Zona Norte/Centro/Sul) | https://en.wikipedia.org/wiki/1976%E2%80%9377_Segunda_Divis%C3%A3o (drei Zonen à 16, Zonensieger steigen auf), https://en.wikipedia.org/wiki/1988%E2%80%9389_Segunda_Divis%C3%A3o (drei Zonen à 18, drei Aufsteiger) |
+| Deutschland (nur im Hintergrund) | 1975/76–1980/81, 1991/92 | 2 × 20 (1980/81 22 + 20), 1991/92 2 × 12 | bekannt (2. Bundesliga Nord/Süd) |
+
+Im Spiel: jede Staffel eine eigene Liga (Hintergrund `engine/worldSecond.ts`, Heimatland
+`game/homeStructure.ts`); Staffelsieger steigen auf, weitere Aufsteiger = Zweite (stärkste zuerst);
+Absteiger in den Unterbau reihum vom Tabellenende jeder Staffel (Zahl aus den Daten);
+Zuordnung zu einer Staffel: bisherige Staffel → Zone laut Weltdaten → Zone der Stadt → meiste freie
+Plätze. Portugal-Lücken 1977–79 und 1983–87 (keine 2. Liga in den Daten): drei Zonen bleiben
+bestehen; Start in einer Lücke übernimmt die Zonen der nächstgelegenen Saison (`gapGroups`).
+
 ## Vereinfachungen
 
 - Ungerade Größen → gerade abgerundet (England 1987/88 20 statt 21, Belgien 1975/76 18 statt 19,
   Türkei 2020/21 20 statt 21, UdSSR 1990 12 statt 13).
-- Hintergrund-Welt: 2. Ebene immer eingleisig; bei mehreren Staffeln eine Liga in Staffelgröße mit den
-  Besten aller Staffeln (im Wechsel), die übrigen im Unterbau. Absteiger in den Unterbau dann
-  nicht aus den Daten (2).
-- Heimatland: zwei Staffeln (Nord/Süd) möglich; Zusammenlegen zu einer Liga ja (Frankreich 1993/94),
-  Aufteilen in mehr Staffeln nein (Portugal 1988/89 drei Zonen) – dann bleiben die Größen.
+- Mehrere Staffeln: keine Aufstiegsrunde/Relegation – bei weniger Aufsteigern als Staffeln steigen die
+  stärksten Staffelsieger auf, zusätzliche Plätze bekommen die stärksten Zweiten (Frankreich:
+  historisch Barrage der Zweiten). Staffelnamen vereinfacht Nord/Süd bzw. Nord/Mitte/Süd.
+- Ist die Staffel der Region voll (viele Absteiger aus einer Region), rückt ein Verein in die Staffel
+  mit den meisten freien Plätzen.
 - Länder ohne 2. Liga in den Daten: Größe der 2. Liga bleibt wie bisher; Auf-/Abstieg zur 1. Liga
   trotzdem aus den Daten (Neulinge/Abgänge der 1. Liga).
 - Nach 2025: letzte Größe, Auf-/Abstieg wie im letzten Saisonwechsel ohne Größenänderung.

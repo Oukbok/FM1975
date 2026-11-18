@@ -5,6 +5,7 @@
 // Historie vor Spielbeginn (data/history/). Die Seiten in views/statistiken/
 // (Liga, Pokal, International) lesen nur diesen Schnappschuss.
 // =============================================================================
+import { groupOrder } from '../data/regionGeo';
 import { amateurTablesView, sortedAm } from './amateurLeagues';
 import { COUNTRY_BY_CC } from '../data/world/countries';
 import { identOf } from './worldCompose';
@@ -153,7 +154,9 @@ function sourceOf(g: Game, season: string): Source | null {
 /** Abschnitt einer Liga in der Auswahl: Heimatland (Weltdaten), DDR, bzw. Länder Spiel für Spiel. */
 const leagueSection = (tier: number, g?: Game) => (tier >= 200 ? 'Länder Spiel für Spiel' : tier >= 100 ? 'DDR' : homeName(g));
 const homeName = (g?: Game) => (g ? COUNTRY_BY_CC[homeCountryOf(g)]?.name ?? 'Deutschland' : 'Deutschland');
-const tierSort = (a: { tier: number; id: string }, b: { tier: number; id: string }) => a.tier - b.tier || a.id.localeCompare(b.id);
+// Staffeln einer Ebene in fester Lage-Reihenfolge (Nord, Nordost, West/Mitte, Südwest, Süd, Bayern – data/regionGeo.ts).
+const groupRankOf = (id: string) => { const k = /-([a-z]+)$/.exec(id)?.[1]; return k ? groupOrder(k as LeagueGroup) : 0; };
+const tierSort = (a: { tier: number; id: string }, b: { tier: number; id: string }) => a.tier - b.tier || groupRankOf(a.id) - groupRankOf(b.id) || a.id.localeCompare(b.id);
 
 export function competitionOptions(g: Game, season: string): CompOption[] {
   const src = sourceOf(g, season);

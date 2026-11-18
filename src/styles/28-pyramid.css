@@ -99,7 +99,8 @@
 .lsv-headrow:hover { background: none; }
 .lsv-land { display: inline-flex; align-items: center; gap: 8px; }
 .lsv-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
-.lsv-league { color: var(--text-2); }
+.lsv-league { color: var(--text-2); line-height: 1.15; }
+.lsv-groups { display: block; font-size: 11.5px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; }
 .lsv-md { text-align: right; font-variant-numeric: tabular-nums; }
 .lsv-md small { font-size: 12.5px; color: var(--text-3); }
 .lsv-lead { color: var(--text-2); }

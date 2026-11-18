@@ -1,6 +1,7 @@
 // Weltspieler + Spielerpool + Scouting ohne UI (game/worldPool.ts, playerPool.ts, scoutingGame.ts)
 import { createNewGame } from '../src/game/newGame';
 import { processDay, HEADLESS_UI } from '../src/game/day';
+import { findOwnMatchDue, quickSimOwnMatch } from '../src/game/ownMatch';
 import { clubOffer, playerOffer, startTalk, stanceFor, talkBlocker } from '../src/game/transferTalks';
 import { materializeWorldPlayer, worldClubs, worldEntry, worldPoolSeason, WP_FIELD as WF } from '../src/game/worldPool';
 import { checkShirtNumbers } from './shirt-checks';
@@ -88,7 +89,10 @@ const p2 = materializeWorldPlayer(g, w2[0])!;
 const t2 = startTalk(g, p2.id);
 if (typeof t2 === 'string') fail(t2);
 t2.phase = 'failed';
-processDay(g, HEADLESS_UI);
+// Nachgeholter Tageswechsel (`pendingAdvance`) bzw. eigenes Pflichtspiel: bis zu drei Tage weiter, wie die Oberfläche.
+for (let k = 0; k < 3 && g.players[p2.id]; k++) {
+  if (!processDay(g, HEADLESS_UI)) { const due = findOwnMatchDue(g); if (due) { quickSimOwnMatch(g, due); processDay(g, HEADLESS_UI); } }
+}
 if (g.players[p2.id]) fail('abgebrochener Weltspieler noch in g.players');
 if (!worldEntry(g, p2.id)) fail('Eintrag weg');
 checkShirtNumbers(g, fail, worldPoolSeason, WF);

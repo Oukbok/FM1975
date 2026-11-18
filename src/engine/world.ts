@@ -1,6 +1,7 @@
 // =============================================================================
 // EUROPA IM HINTERGRUND — Ligen der Welt auf Detailstufe 3 („Profil“)
 // -----------------------------------------------------------------------------
+// Mehrere Staffeln der 2. Ebene: engine/worldSecond.ts.
 // Jeder ausländische Verein ist nur ein schlanker Eintrag (EuroClub: Name, Land,
 // Stärke, Farben) plus Meta (Größe, Liga-Ebene). Eine Saison wird am Saisonende
 // in einem Rutsch per Poisson-Ergebnissen durchgerechnet (doppelte Runde, Auf-/
@@ -25,7 +26,7 @@ import { applySplits, countryLevel, ensureCountryPool, fillCountry, makeCountry,
 import { euroParticipants, pushCoef, seasonEuroPoints } from './worldEuro';
 import { notePlaces } from './worldPlaces';
 import { cupField, enforceWorldReserves } from './worldReserves';
-import { worldExchangePlan, worldStructureOfKey } from '../data/world/structure';
+import { exchangeSecond, secondGroups } from './worldSecond';
 
 // Aufgeteilt (Dateien < 600 Zeilen): Typen in worldTypes.ts, Länder/Vereine/Teilungen in
 // worldCountries.ts, Koeffizienten/Rangliste/Starter in worldEuro.ts – hier weitergereicht.
@@ -75,7 +76,7 @@ const HOME_KEY = '__home__';
 
 /** Länder, deren Ligen das Spiel selbst Spiel für Spiel rechnet (voll simulierte Länder). */
 /** `next` = fertige Ligen der Folgesaison (Länder „Spiel für Spiel“); fehlt es, regelt die Welt Auf- und Abstieg selbst. */
-export interface FixedCountryResult { t1: string[]; t2: string[]; next?: string[][]; /** Pokalsieger aus dem ausgespielten Landespokal (game/worldCups.ts). */ cup?: string }
+export interface FixedCountryResult { t1: string[]; t2: string[]; /** Endtabellen je Staffel der 2. Ebene (mehrgleisig; `t2` = alle hintereinander). */ t2g?: string[][]; next?: string[][]; /** Pokalsieger aus dem ausgespielten Landespokal (game/worldCups.ts). */ cup?: string }
 
 // -----------------------------------------------------------------------------
 // Eine Liga durchrechnen
@@ -187,7 +188,13 @@ export function advanceWorldSeason(
     // eine nicht vorgegebene 2. Liga rechnet die Welt selbst.
     const given = (ids: string[], tier: string[]) => { const got = ids.filter((id) => w.meta[id]); return fx?.next ? got : [...got, ...tier.filter((id) => !got.includes(id))]; };
     const t1 = fx ? given(fx.t1, c.tiers[0]) : playLeague(c.tiers[0], euroClubs, winPts, r);
-    const t2 = fx && (fx.t2.length || fx.next) ? given(fx.t2, c.tiers[1]) : playLeague(c.tiers[1], euroClubs, winPts, r);
+    // 2. Ebene Staffel für Staffel (engine/worldSecond.ts); eine nicht vorgegebene Staffel rechnet die Welt selbst.
+    const groups = secondGroups(c);
+    const t2g = groups.map((g, i) => {
+      const fg = fx?.t2g?.[i] ?? (groups.length === 1 ? fx?.t2 : fx?.t2.filter((id) => g.includes(id)));
+      return fx && (fg?.length || fx.next) ? given(fg ?? [], g) : playLeague(g, euroClubs, winPts, r);
+    });
+    const t2 = t2g.flat();
     const champ = t1[0];
     const cupWinner = fx?.cup && w.meta[fx.cup] ? fx.cup : playCup(cupField(c.name, endYear - 1, [...c.tiers[0], ...c.tiers[1]]), euroClubs, r);
     c.lastTable = t1;
@@ -197,7 +204,7 @@ export function advanceWorldSeason(
     rec.champions[c.name] = champ;
     rec.cupWinners[c.name] = cupWinner;
     (rec.tables ??= {})[c.name] = [...t1];
-    notePlaces(w, endYear - 1, t1, t2); // komplette Platzierungs-Historie je Verein (engine/worldPlaces.ts)
+    notePlaces(w, endYear - 1, t1, t2g); // komplette Platzierungs-Historie je Verein (engine/worldPlaces.ts)
 
     // Größe: Meister/Spitzenplätze wachsen, Absteiger schrumpfen.
     t1.forEach((id, i) => {
@@ -205,33 +212,17 @@ export function advanceWorldSeason(
       const rel = 1 - i / Math.max(1, t1.length - 1);
       m.size = clamp(m.size + (rel - 0.55) * 0.012 + (i === 0 ? 0.006 : 0), 0, 1);
     });
-    t2.forEach((id, i) => {
+    for (const g of t2g) g.forEach((id, i) => {
       const m = w.meta[id];
       m.size = clamp(m.size + (i < 3 ? 0.01 : -0.004), 0, 1);
     });
 
     // Auf-/Abstieg in historischer Zahl hin zur Struktur der NEUEN Saison (data/world/structure.ts):
-    // wächst eine Liga, steigen mehr auf als ab, schrumpft sie, umgekehrt. Ohne Weltdaten wie bisher
-    // 3 bei großen Ligen, 2 bei kleinen; 2. Liga ↔ Unterbau 2.
-    if (fx?.next) { c.tiers = [fx.next[0].filter((id) => w.meta[id]), fx.next[1].filter((id) => w.meta[id])]; continue; }
+    // wächst eine Liga, steigen mehr auf als ab, schrumpft sie, umgekehrt; mehrere Staffeln der 2. Ebene
+    // werden neu verteilt (zusammengelegt/aufgeteilt). Ohne Weltdaten wie bisher 3 bzw. 2, Unterbau 2 je Staffel.
+    if (fx?.next) { c.tiers = [fx.next[0].filter((id) => w.meta[id]), fx.next[1].filter((id) => w.meta[id])]; delete c.groups; continue; }
     if (!t2.length) { enforceWorldReserves(c, endYear, (id) => euroClubs[id]?.strength ?? 0); continue; }
-    const st = worldStructureOfKey(c.name, endYear);
-    const plan = worldExchangePlan(st, t1.length, t2.length, (worldStructureOfKey(c.name, endYear - 1)?.groups?.length ?? 1) > 1);
-    const down = t1.slice(t1.length - plan.down1), up = t2.slice(0, plan.up1);
-    c.tiers[0] = [...t1.slice(0, t1.length - plan.down1), ...up];
-    c.tiers[1] = [...t2.slice(plan.up1), ...down];
-    // 2. Liga ↔ Unterbau: die Letzten gegen die stärksten Amateurvereine (mit Zufall).
-    if (t2.length >= 8 && (plan.out2 || plan.in2)) {
-      ensureCountryPool(w, euroClubs, c, endYear, r, plan.in2 + 2);
-      const pool = (c.pool ?? []).filter((id) => euroClubs[id]);
-      const rank = pool.map((id) => ({ id, v: euroClubs[id].strength + gauss(r) * 3 })).sort((a, b) => b.v - a.v);
-      const out = plan.out2 ? t2.filter((id) => !up.includes(id)).slice(-plan.out2) : [];
-      const inn = rank.slice(0, plan.in2).map((x) => x.id);
-      c.tiers[1] = [...c.tiers[1].filter((id) => !out.includes(id)), ...inn];
-      c.pool = [...pool.filter((id) => !inn.includes(id)), ...out];
-      ensureCountryPool(w, euroClubs, c, endYear, r); // wieder mindestens 10 (wie beim Laden, game/loadMigrations.ts)
-    }
-    c.tier1 = c.tiers[0].length; c.tier2 = c.tiers[1].length;
+    exchangeSecond(w, euroClubs, c, t1, t2g, endYear, r);
     // Zweite Mannschaften (B-Teams) nach den Regeln des Landes (engine/worldReserves.ts).
     enforceWorldReserves(c, endYear, (id) => euroClubs[id]?.strength ?? 0);
   }

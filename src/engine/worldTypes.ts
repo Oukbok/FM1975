@@ -8,8 +8,13 @@ export interface WorldCountry {
   base: number;
   tier1: number;
   tier2: number;
-  /** Liga-Ebenen: [1. Liga, 2. Liga] mit Vereins-IDs. */
+  /** Liga-Ebenen: [1. Liga, 2. Ebene] mit Vereins-IDs; die 2. Ebene bei mehreren Staffeln Staffel für Staffel hintereinander (`groups`). */
   tiers: string[][];
+  /**
+   * Staffelgrößen der 2. Ebene in Reihenfolge (Summe = `tiers[1].length`), nur bei mehreren Staffeln
+   * (Frankreich bis 1992/93, Portugal bis 1989/90 …; engine/worldSecond.ts). Fehlt = eingleisig (alte Spielstände).
+   */
+  groups?: number[];
   /** Ungenutzte Städte für Nachrücker. */
   spareCities: string[];
   /** Letzte Endtabelle der 1. Liga (IDs nach Platz). */
@@ -49,11 +54,11 @@ export interface WorldSeasonRecord {
   cupWinners: Record<string, string>;
   /** Abschluss-Reihenfolge der 1. Liga je Land (nur die letzten WORLD_TABLES_KEEP Saisons; optional). */
   tables?: Record<string, string[]>;
-  /** Auslandsligen der Saison je Land [1. Liga, 2. Liga] mit allen Ergebnissen (game/worldLeagues.ts; nur die letzten WORLD_TABLES_KEEP Saisons). */
+  /** Auslandsligen der Saison je Land [1. Liga, 2. Liga bzw. deren Staffeln 1…k] mit allen Ergebnissen (game/worldLeagues.ts; nur die letzten WORLD_TABLES_KEEP Saisons). */
   divs?: Record<string, (LeanDiv | null)[]>;
   /** Landespokale der Saison je Land mit allen Runden (game/worldCups.ts; nur die letzten WORLD_TABLES_KEEP Saisons). */
   cups?: Record<string, LeanCup>;
-  /** Torschützenlisten der Auslandsligen, Schlüssel `Land|Ebene`: [Name, Verein, Position, Tore] (nur die letzten WORLD_TABLES_KEEP Saisons). */
+  /** Torschützenlisten der Auslandsligen, Schlüssel `Land|Index` (0 = 1. Liga, 1… = Staffeln der 2. Ebene): [Name, Verein, Position, Tore] (nur die letzten WORLD_TABLES_KEEP Saisons). */
   scorers?: Record<string, [string, string, string, number][]>;
   /** Alle Einzelwertungen (beste zehn) je `Land|Ebene` bzw. `Land|cup`: Wertung → [Name, Verein, Position, Wert, Gesicht, Geburtsjahr]. */
   pstats?: Record<string, Partial<Record<string, [string, string, string, number, string, number][]>>>;

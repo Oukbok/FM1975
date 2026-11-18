@@ -66,6 +66,8 @@ function pickRegional(
 ): string[] {
   const out = pickFromPool(pool, n, group, rnd, taken, allow, bonus, groups);
   if (out.length >= n || groups.length <= 1) return out; // eine Staffel: pickFromPool nimmt schon alle
+  // Anderes Heimatland: keine deutschen Amateurstädte – gleich ein Pool-Verein aus einer anderen Region.
+  if (homeCountryOf(g) !== 'ger') return out.concat(pickFromPool(pool, n - out.length, group, rnd, taken, allow, bonus));
   const cities = new Set([...Object.values(g.clubs).map((c) => c.city), ...Object.values(g.simClubs).map((c) => c.city)]);
   for (const { town, group: tg } of POOL_TOWNS) {
     if (out.length >= n) break;

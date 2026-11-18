@@ -11,7 +11,8 @@ import { worldSeason, worldYears } from '../data/world/index';
 import { worldPlacesOf } from '../engine/worldPlaces';
 import type { SeasonPlacement } from './clubRecords';
 import type { Game } from './state';
-import { leanGames, leanTable, worldLiveDiv } from './worldLeagues';
+import { leanGames, leanTable, worldLiveDiv, worldLiveDivCount } from './worldLeagues';
+import { groupNames } from '../data/world/secondGroups';
 import { countryName } from './worldPool';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -39,10 +40,13 @@ export interface ForeignLive {
 
 /** Laufende Liga eines Auslandsvereins (null: Verein spielt in keiner Auslandsliga). */
 export function foreignLive(g: Game, id: string, key: string): ForeignLive | null {
-  for (const t of [0, 1]) {
-    const d = worldLiveDiv(g, key, t);
+  const n = worldLiveDivCount(g, key);
+  for (let i = 0; i < Math.max(2, n); i++) {
+    const d = worldLiveDiv(g, key, i);
     if (!d || !d.ids.includes(id)) continue;
-    const label = `${t + 1}. Liga ${countryName(key)}`;
+    const t = Math.min(1, i);
+    // Mehrere Staffeln der 2. Ebene: „2. Liga Nord Frankreich“.
+    const label = `${t + 1}. Liga${n > 2 && i > 0 ? ` ${groupNames(n - 1)[i - 1]}` : ''} ${countryName(key)}`;
     const games = leanGames(d, g.season, d.md).filter((x) => x.home === id || x.away === id);
     if (d.md <= 0) return { label, tier: t + 1, size: d.ids.length, games };
     const row = leanTable(d, key, g.season).find((r) => r.clubId === id)!;
@@ -56,7 +60,8 @@ export function foreignSeasons(g: Game, id: string, key: string): SeasonPlacemen
   const name = countryName(key);
   return worldPlacesOf(g.world, id).map((p) => ({
     season: `${p.year}/${String((p.year + 1) % 100).padStart(2, '0')}`,
-    tier: p.tier, pos: p.pos, size: p.size, league: `${p.tier}. Liga ${name}`,
+    tier: p.tier, pos: p.pos, size: p.size,
+    league: `${p.tier}. Liga${p.group != null ? ` ${p.groups ? groupNames(p.groups)[p.group] : `Staffel ${p.group + 1}`}` : ''} ${name}`,
   }));
 }
 

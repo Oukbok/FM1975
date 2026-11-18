@@ -31,6 +31,14 @@ import type { ResTuple } from './leagueResults';
 import { homeCountryOf, type Game } from './state';
 import { finishWorldCups, newLeanCup, worldCupsDaily } from './worldCups';
 import { leanCupStats, leanStats, packScorers, packStats, type PackedStats } from './worldScorers';
+import { secondGroups } from '../engine/worldSecond';
+
+/**
+ * Ligen eines Landes in der schlanken Simulation: Index 0 = 1. Liga, 1… = Staffeln der 2. Ebene
+ * (eingleisig nur Index 1). Schlüssel in `world.live.divs` = `Land|Index`, ebenso die Einträge in
+ * `WorldSeasonRecord.divs[Land][Index]` und die Statistik-Schlüssel (`scorers`/`pstats`).
+ */
+export const leanDivKey = (country: string, idx: number) => `${country}|${idx}`;
 
 /** Paarungen eines Spieltags (Index-Paare [Heim, Gast]) nach dem Kreisverfahren; bei ungerader Zahl setzt einer aus. */
 export function leanPairs(n: number, md: number): [number, number][] {
@@ -107,10 +115,10 @@ export function ensureWorldLive(g: Game): WorldLive | null {
   const live: WorldLive = { season: g.season, divs: {}, cups: cups() };
   for (const c of Object.values(w.countries)) {
     if (!c.active || !leanCountry(g, c.name)) continue;
-    c.tiers.forEach((ids0, t) => {
+    [c.tiers[0] ?? [], ...secondGroups(c)].forEach((ids0, t) => {
       const ids = ids0.filter((id) => g.euroClubs![id]);
       if (ids.length < 4) return;
-      live.divs[`${c.name}|${t}`] = { ids, md: 0, n: leanMatchdays(ids.length), r: '' };
+      live.divs[leanDivKey(c.name, t)] = { ids, md: 0, n: leanMatchdays(ids.length), r: '' };
     });
   }
   w.live = live;
@@ -187,9 +195,17 @@ export function leanTable(d: LeanDiv, key: string, season: string): LeanTableRow
     .map((r, i) => ({ ...r, pos: i + 1, form: r.form.slice(-5) }));
 }
 
-/** Laufende Liga eines Landes (null: Land läuft nicht schlank bzw. hat die Liga nicht). */
-export function worldLiveDiv(g: Game, key: string, tier: number): WorldLiveDiv | null {
-  return ensureWorldLive(g)?.divs[`${key}|${tier}`] ?? null;
+/** Laufende Liga eines Landes (Index wie `leanDivKey`; null: Land läuft nicht schlank bzw. hat die Liga nicht). */
+export function worldLiveDiv(g: Game, key: string, idx: number): WorldLiveDiv | null {
+  return ensureWorldLive(g)?.divs[leanDivKey(key, idx)] ?? null;
+}
+
+/** Zahl der laufenden Ligen eines Landes in der schlanken Simulation (1. Liga + Staffeln). */
+export function worldLiveDivCount(g: Game, key: string): number {
+  const live = ensureWorldLive(g);
+  let n = 0;
+  while (live?.divs[leanDivKey(key, n)]) n++;
+  return n;
 }
 
 /** Saisonende: alle Ligen zu Ende spielen; Endtabellen für engine/world.ts und die Ligen für die Historie. */
@@ -212,14 +228,18 @@ export function worldLiveResults(g: Game): WorldLiveEnd {
     const [key, t] = k.split('|');
     const order = leanTable(d, key, live.season).map((r) => r.clubId);
     const fx = (fixed[key] ??= { t1: [], t2: [] });
-    if (t === '0') fx.t1 = order; else fx.t2 = order;
+    const idx = Number(t);
+    if (idx === 0) fx.t1 = order; else (fx.t2g ??= [])[idx - 1] = order;
     const list = (divs[key] ??= [null, null]);
-    list[Number(t)] = { ids: d.ids, r: d.r };
+    while (list.length <= idx) list.push(null);
+    list[idx] = { ids: d.ids, r: d.r };
     const st = leanStats(g, d, live.season, 10);
     if (st.goals.length) { scorers[k] = packScorers(st.goals); pstats[k] = packStats(st); }
   }
   // Länder ohne 1. Liga in der schlanken Rechnung (zu wenige Vereine) rechnet die Welt wie bisher.
   for (const key of Object.keys(fixed)) if (!fixed[key].t1.length) { delete fixed[key]; delete divs[key]; }
+  // 2. Ebene: alle Staffeln hintereinander (`t2`), einzeln in `t2g` (fehlende Staffel = leer → Welt rechnet sie).
+  for (const fx of Object.values(fixed)) if (fx.t2g) { fx.t2g = Array.from(fx.t2g, (x) => x ?? []); fx.t2 = fx.t2g.flat(); }
   // Landespokale zu Ende spielen: der Sieger geht an die Welt.
   const cupEnd = finishWorldCups(g, live.season, live.cups ?? {});
   const cups: WorldLiveEnd['cups'] = {};

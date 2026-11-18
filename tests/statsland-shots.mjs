@@ -137,6 +137,25 @@ if (!process.env.HALLE) {
       await shot('pokal_esp');
     }
   }
+  // Mehrere Staffeln der 2. Ebene (Frankreich bis 1992/93, Portugal bis 1989/90): jede Staffel eine eigene Liga.
+  for (const cc of (process.env.MULTI ?? 'fra,por').split(',').filter(Boolean)) {
+    if (!countries.includes(cc)) continue;
+    await pickOption(page, countrySel(), cc);
+    const ss = await optionsOf(page, seasonSel());
+    if (await seasonSel().getAttribute('data-value') !== ss.at(-1).value) await pickOption(page, seasonSel(), ss.at(-1).value);
+    const comps = (await optionsOf(page, compSel()));
+    const groups = comps.filter((o) => /^r2(:\d+)?$/.test(o.value));
+    console.log(`Wettbewerbe ${cc}:`, comps.map((o) => `${o.value}=${o.label}`).join(' | '));
+    if (groups.length > 1) {
+      await compSel().click(); await shot(`liga_${cc}_wahl`); await page.keyboard.press('Escape');
+      for (const o of groups) {
+        await pickOption(page, compSel(), o.value); await shot(`liga_${cc}_${o.value.replace(':', '_')}`);
+        if (!await page.locator('.cmp-mdbox .md-row').count()) errors.push(`${cc} ${o.value}: Box „Begegnungen“ ohne Spiele`);
+        if (!await page.locator('.cmp-st-goals .cmp-stat').count()) errors.push(`${cc} ${o.value}: Torschützen fehlen`);
+      }
+    }
+    await pickOption(page, compSel(), comps[0].value);
+  }
   // Vorauswahl von außen bei offener Seite: Länderprofil › Ligen › „Statistiken › Liga öffnen“
   // muss das Land auch dann übernehmen, wenn Statistiken › Liga schon angezeigt wird.
   await go('Liga');

@@ -41,7 +41,7 @@ export function LeagueSystemView({ g, onGoto }: { g: Game; onChange?: () => void
               <button key={r.cc} type="button" className={`lsv-row ${withRep ? 'rep' : ''}`} data-cc={r.cc} title={`${r.name}: Tabelle und Begegnungen unter Statistiken › Liga öffnen`}
                 onClick={() => { presetCompetition(g.season, `w:${r.key}`); onGoto?.('table'); }}>
                 <span className="lsv-land"><CountryFlag country={r.key} height={14} noLink /><span className="lsv-name">{r.name}</span></span>
-                <span className="lsv-league">{r.league}</span>
+                <span className="lsv-league" title={r.groups > 1 ? `2. Ebene in ${r.groups} Staffeln – jede Staffel wird Spieltag für Spieltag simuliert` : undefined}>{r.league}{r.groups > 1 && <small className="lsv-groups">2. Liga {r.groups} Staffeln</small>}</span>
                 <span className="lsv-md">{r.md}<small>/{r.total}</small></span>
                 <span className="lsv-lead">{r.leader ? <TeamName g={g} id={r.leader} season={g.season} size={14} /> : <span className="muted">noch kein Spiel</span>}</span>
                 {withRep && (

@@ -21,6 +21,7 @@
 import { COUNTRY_BY_KEY } from './countries';
 import { worldDataVersion, worldSeason, worldYears } from './index';
 import type { SeasonRow } from './types';
+import { rowGroups } from './secondGroups';
 
 export interface WorldStructure {
   /** Saison (Startjahr). */
@@ -46,11 +47,8 @@ const second = (r: SeasonRow) => [...(r.t2 ?? []), ...(r.t2b ?? [])];
 
 /** Staffelgrößen der 2. Ebene einer Saison (t2b = weitere Staffeln in t2-Größe hintereinander). */
 function groupsOf(r: SeasonRow): number[] | null {
-  const a = r.t2?.length ?? 0, b = r.t2b?.length ?? 0;
-  if (!a) return null;
-  if (!b) return [even(a)];
-  const k = b % a === 0 ? b / a : 1;
-  return [even(a), ...Array.from({ length: k }, () => even(Math.round(b / k)))];
+  const gs = rowGroups(r);
+  return gs.length ? gs.map((x) => even(x.length)) : null;
 }
 
 interface Step { up: number; down: number; down2: number | null }
@@ -118,50 +116,54 @@ export function worldStructureFor(cc: string, year: number): WorldStructure | nu
   return { ...s, year, up: calm.down, down: calm.down, down2: calm.down2, src: 'carry' };
 }
 
+/**
+ * Datenlücke ohne 2. Ebene (Portugal 1977–79, 1983–87): Staffelgrößen der letzten Saison davor mit Daten
+ * (bis 12 Jahre zurück), nur wenn sie mehrgleisig war; sonst null (= Staffeln bleiben wie sie sind).
+ */
+export function carriedGroups(cc: string, year: number): number[] | null {
+  for (let y = year - 1; y >= year - 12; y--) {
+    const s = tableOf(cc)?.get(y);
+    if (s?.groups) return s.groups.length > 1 ? s.groups : null;
+  }
+  return null;
+}
+
 /** Wie worldStructureFor, aber über den Schlüssel der Hintergrund-Welt (`WorldCountry.name`). */
 export function worldStructureOfKey(key: string, year: number): WorldStructure | null {
   const cc = COUNTRY_BY_KEY[key]?.cc;
   return cc ? worldStructureFor(cc, year) : null;
 }
 
-/**
- * Größe der 2. Liga in der Hintergrund-Welt: die Hintergrund-Welt führt die 2. Ebene immer
- * EINGLEISIG (engine/world.ts `tiers[1]`). Bei mehreren Staffeln entspricht sie einer Staffel
- * (die besten Zweitligisten beider/aller Staffeln, die übrigen stehen im Unterbau) – eine
- * Liga mit 36–48 Vereinen hätte 70–94 Spieltage.
- */
-export function backgroundSecondSize(s: WorldStructure | null): number | null {
-  if (!s?.groups) return null;
-  return s.groups.length > 1 ? s.groups[0] : s.t2;
-}
-
 /** Auf-/Abstieg eines Saisonwechsels der Hintergrund-Welt. */
 export interface WorldExchange {
-  /** Aufsteiger 2. → 1. Liga, Absteiger 1. → 2. Liga. */
+  /** Aufsteiger 2. → 1. Liga, Absteiger 1. → 2. Liga (über alle Staffeln). */
   up1: number; down1: number;
-  /** Absteiger 2. Liga → Unterbau, Aufsteiger Unterbau → 2. Liga. */
+  /** Absteiger 2. Ebene → Unterbau, Aufsteiger Unterbau → 2. Ebene (über alle Staffeln). */
   out2: number; in2: number;
+  /** Staffelgrößen der 2. Ebene in der neuen Saison (eine Zahl = eingleisig). */
+  sizes: number[];
 }
 
 /**
- * Plan für den Saisonwechsel eines Hintergrund-Landes mit `n1`/`n2` Vereinen in 1./2. Liga
- * hin zur Struktur der NEUEN Saison `s` (null = bisheriges Verhalten: 3 bzw. 2 Auf-/Absteiger,
- * 2 gegen den Unterbau). `prevMulti` = die Vorsaison hatte mehrere Zweitliga-Staffeln
- * (Abstiegszahl in den Unterbau dann nicht aus den Daten übertragbar → 2).
+ * Plan für den Saisonwechsel eines Hintergrund-Landes mit `n1` Vereinen in der 1. Liga und den
+ * Staffeln `old` (Größen) der 2. Ebene hin zur Struktur der NEUEN Saison `s` (null = bisheriges
+ * Verhalten: 3 bzw. 2 Auf-/Absteiger, 2 je Staffel gegen den Unterbau). Jede Staffel wird als eigene
+ * Liga gespielt (engine/worldSecond.ts); kennt `s` keine 2. Ebene (Datenlücke), bleiben die Staffeln.
  */
-export function worldExchangePlan(s: WorldStructure | null, n1: number, n2: number, prevMulti = false): WorldExchange {
-  if (!s) { const n = n1 >= 16 ? 3 : 2; return { up1: n, down1: n, out2: 2, in2: 2 }; }
+export function worldExchangePlan(s: WorldStructure | null, n1: number, old: number[]): WorldExchange {
+  const n2 = old.reduce((a, b) => a + b, 0);
+  if (!s) { const n = n1 >= 16 ? 3 : 2; return { up1: n, down1: n, out2: 2 * old.length, in2: 2 * old.length, sizes: old }; }
+  const sizes = s.groups ?? old;
   const T1 = s.t1;
-  const T2 = backgroundSecondSize(s) ?? n2;
+  const T2 = sizes.reduce((a, b) => a + b, 0);
   let down1 = Math.min(s.down, Math.max(0, n1 - 2));
   let up1 = down1 + (T1 - n1);
   if (up1 < 0) { down1 = Math.min(n1 - 2, down1 - up1); up1 = 0; }
   up1 = Math.min(up1, Math.max(0, n2 - 2));
   const m2 = n2 - up1 + down1;
-  const single = (s.groups?.length ?? 1) === 1 && !prevMulti;
-  let out2 = Math.max(0, single && s.down2 != null ? s.down2 : 2);
-  out2 = Math.min(out2, Math.max(0, m2 - down1 - 2)); // nie die eben Abgestiegenen und nie leer
+  const keepMax = Math.max(0, n2 - up1 - 2); // nie die eben Abgestiegenen und nie leer
+  let out2 = Math.min(Math.max(0, s.down2 ?? 2 * old.length), keepMax);
   let in2 = T2 - m2 + out2;
-  if (in2 < 0) { out2 = Math.min(Math.max(0, m2 - down1 - 2), out2 - in2); in2 = Math.max(0, T2 - m2 + out2); }
-  return { up1, down1, out2, in2 };
+  if (in2 < 0) { out2 = Math.min(keepMax, out2 - in2); in2 = Math.max(0, T2 - m2 + out2); }
+  return { up1, down1, out2, in2, sizes };
 }

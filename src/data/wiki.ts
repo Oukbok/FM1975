@@ -282,7 +282,7 @@ Das System ist bewusst datengetrieben: weitere Reformen (z. B. die **DDR-Integra
     id: 'leagues-reforms-abroad',
     category: 'leagues',
     title: 'Ligareformen im Ausland',
-    keywords: ['reform', 'ausland', 'ligagröße', 'aufsteiger', 'absteiger', 'england', 'italien', 'spanien', 'frankreich', 'portugal', 'niederlande', 'premier league', 'serie a', 'staffel', 'struktur', 'heimatland'],
+    keywords: ['reform', 'ausland', 'ligagröße', 'aufsteiger', 'absteiger', 'england', 'italien', 'spanien', 'frankreich', 'portugal', 'niederlande', 'premier league', 'serie a', 'staffel', 'struktur', 'heimatland', 'zone', 'nord', 'süd', 'mitte', 'mehrgleisig', 'zweigleisig'],
     body: `## Ligen wachsen und schrumpfen – auch im Ausland
 Auch außerhalb Deutschlands haben sich die Ligen über die Jahrzehnte verändert. Das Spiel liest die **Größe jeder Liga und die Zahl der Auf- und Absteiger je Saison** aus den Weltdaten ab und stellt beim Saisonwechsel genau diese Struktur her – für alle Länder im Hintergrund und für dein Heimatland, wenn du außerhalb Deutschlands spielst.
 
@@ -297,10 +297,13 @@ Einige Beispiele:
 - **Wächst eine Liga**, steigen mehr auf als ab; **schrumpft sie**, steigen mehr ab. Gleiches gilt zwischen 2. Liga und Unterbau (Amateurvereine des Landes).
 - **Wann nichts in den Daten steht** (nach 2025, Länder ohne 2. Liga in den Daten), bleibt die zuletzt bekannte Größe; auf- und absteigen dann so viele wie in einem normalen Jahr.
 - **Ungerade Ligagrößen** (19, 21 …) rundet das Spiel auf die nächste gerade Zahl ab, weil der Spielplan eine gerade Zahl braucht.
-- **Mehrere Staffeln der 2. Liga:** Im Hintergrund spielt die 2. Liga immer eingleisig – bei mehreren Staffeln mit den Besten aus allen Staffeln in Staffelgröße, die übrigen stehen im Unterbau. In deinem Heimatland bleiben zwei Staffeln (Nord/Süd) erhalten; werden sie historisch zu einer Liga, legt das Spiel sie zusammen (Frankreich 1993/94). Mehr Staffeln als im Spiel (Portugal ab 1988/89 drei Zonen) werden nicht neu aufgeteilt.
+- **Mehrere Staffeln der 2. Liga:** Jede Staffel ist eine eigene Liga und wird Spieltag für Spieltag gespielt – mit Tabelle, Begegnungen und Torschützen, im Hintergrund wie in deinem Heimatland. Zwei Staffeln heißen Nord und Süd, drei Nord, Mitte und Süd. In den Weltdaten sind das Frankreich bis 1992/93 (2 × 18), Portugal bis 1989/90 (drei Zonen mit 16, ab 1988/89 mit 18 Vereinen) und Deutschland im Hintergrund 1975/76–1980/81 sowie 1991/92.
+- **Aufstieg aus mehreren Staffeln:** Zuerst steigen die Staffelsieger auf, dann – wenn es historisch mehr Aufsteiger gab – die Zweiten (der stärkste zuerst). Absteiger aus der 1. Liga kommen in die Staffel ihrer Region, in den Unterbau steigen die Letzten jeder Staffel ab.
+- **Staffel eines Vereins:** Er bleibt in seiner Staffel. Neue Vereine (Absteiger, Aufsteiger aus dem Unterbau) kommen in die Staffel, in der sie laut den Weltdaten zuletzt spielten bzw. in der die Vereine ihrer Stadt spielen; ist sie voll, in die Staffel mit den meisten freien Plätzen.
+- **Zusammenlegen und Aufteilen:** Wird aus mehreren Staffeln eine Liga (Frankreich 1993/94, Portugal 1990/91), spielen ab dann alle in einer Liga; die Überzähligen steigen in den Unterbau ab. Wird eine Liga aufgeteilt, verteilt das Spiel alle Zweitligisten nach Region auf die Staffeln.
 - **Zweite Mannschaften** folgen weiter den Regeln ihres Landes (nie über der ersten Mannschaft).
 
-Ältere Spielstände laufen weiter; die neue Struktur gilt ab dem nächsten Saisonwechsel.`,
+Ältere Spielstände laufen weiter; die neue Struktur – auch die Aufteilung der 2. Liga in Staffeln – gilt ab dem nächsten Saisonwechsel.`,
   },
 
   {
