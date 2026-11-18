@@ -75,6 +75,17 @@ for (const g of [...GROUPS, 'staff']) {
   if (!table[g]) continue;
   console.log(`  ${g.padEnd(14)} ${EPOCHS.map((e) => `${e}: ${String(table[g][e]?.size ?? 0).padStart(3)}`).join('  ')}`);
 }
+// Gesichtet? (docs/bilder/faces-gesichtet.txt – jedes Bild einmal angesehen und seiner Ethnie zugeordnet)
+const REVIEW = process.env.FACES_REVIEW ?? 'docs/bilder/faces-gesichtet.txt';
+if (existsSync(REVIEW)) {
+  const seen = new Set(readFileSync(REVIEW, 'utf8').split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#')));
+  const fresh = files.filter((k) => !seen.has(k) && !k.startsWith('staff/'));
+  if (fresh.length) {
+    console.log(`\n${fresh.length} Bild(er) noch nicht gesichtet – Ethnie prüfen (python3 scripts/faces-sheet.py), dann in ${REVIEW} eintragen:`);
+    for (const k of fresh.slice(0, 40)) console.log('  · ' + k);
+    if (fresh.length > 40) console.log(`  … und ${fresh.length - 40} weitere`);
+  }
+}
 if (problems.length) {
   console.log(`\n${problems.length} Hinweis(e):`);
   for (const p of problems) console.log('  - ' + p);
