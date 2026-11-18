@@ -1,4 +1,4 @@
-// Regionalliga-Staffeln ab 2008 (Nord/West/Süd) und ab 2012 (Nord/Nordost/West/Südwest/Bayern):
+// Regionalliga-Staffeln 2000–2008 (Nord/Süd), ab 2008 (Nord/West/Süd) und ab 2012 (Nord/Nordost/West/Südwest/Bayern):
 // Reformen, Aufstiegsrunde, Absteiger nach Region und Umbau alter Spielstände (Nord/Nordost/Süd).
 // Ohne UI, direkt auf data/reformTransition.ts – aufgerufen aus tests/leagues-test.ts.
 import { computeSeasonTransition, CurrentDivision, TransitionResult } from '../src/data/reformTransition';
@@ -74,9 +74,30 @@ export function regioChecks(check: Check): void {
   check(s12 === 'nord,nordost,west,suedwest,bayern', `ab 2012: fünf Staffeln (ist ${s12})`);
   check(structureForSeason('2015/16').every((t) => t.teamCount % 2 === 0), 'ab 2012: gerade Staffelgrößen');
 
-  // A) Reform 2008/09 aus vier Regionalliga-Staffeln
+  const s00 = structureForSeason('2003/04').filter((t) => t.tier === 3).map((t) => t.group).join(',');
+  check(s00 === 'nord,sued', `2000–2008: Regionalliga Nord/Süd (ist ${s00})`);
   const rl = (g: string, regions: string[]) => div(`tier3-${g}`, 3, g as LeagueGroup, mix(regions, 18));
-  const cur08 = [top()[0], top()[1], rl('nord', ['nord']), rl('nordost', ['nordost']), rl('west', ['west', 'suedwest']), rl('sued', ['sued', 'bayern'])];
+
+  // 0) Reform 2000/01 aus vier Staffeln (Nord, Nordost, West, Süd) → Nord/Süd
+  const cur00 = [top()[0], top()[1], rl('nord', ['nord']), rl('nordost', ['nordost']), rl('west', ['west', 'suedwest']), rl('sued', ['sued', 'bayern'])];
+  const own00 = cur00[3].orderedIds[17];
+  const r00 = run('2000/01', cur00, appliedBefore('2000/01'), own00);
+  check(r00.reform?.reformId === 'reform-2000-regionalliga', '2000: Reform angewandt');
+  sane(check, '2000', '2000/01', cur00, r00);
+  check(share(r00, 'tier3-nord', ['nord', 'nordost', 'west']) === 1, '2000: Nord = Norden + Nordosten + NRW');
+  check(share(r00, 'tier3-sued', ['sued', 'bayern', 'suedwest']) === 1, '2000: Süd = Bayern/Hessen/BW + Rheinland-Pfalz/Saar');
+  check(r00.divisions.some((d) => d.meta.tier === 3 && d.ids.includes(own00)), '2000: eigener Verein (Letzter Nordost) bleibt in der Regionalliga');
+  check(r00.dropped.length >= 30, `2000: Überzählige in die Amateurligen (${r00.dropped.length})`);
+
+  // 0b) Normaler Wechsel 2003/04: je Staffel zwei Aufsteiger, vier Absteiger aus der 2. Liga
+  const cur03 = [top()[0], top()[1], rl('nord', ['nord', 'nordost', 'west']), rl('sued', ['sued', 'bayern', 'suedwest'])];
+  const r03 = run('2003/04', cur03, appliedBefore('2003/04'));
+  sane(check, '2003', '2003/04', cur03, r03);
+  const t2of03 = r03.divisions.find((d) => d.meta.id === 'tier2')!.ids;
+  for (const d of cur03.slice(2)) check(d.orderedIds.slice(0, 2).every((id) => t2of03.includes(id)), `2003: Erster und Zweiter ${d.id} steigen auf`);
+
+  // A) Reform 2008/09 aus den zwei Regionalliga-Staffeln (je zehn in die 3. Liga)
+  const cur08 = [top()[0], top()[1], rl('nord', ['nord', 'nordost', 'west']), rl('sued', ['sued', 'bayern', 'suedwest'])];
   const r08 = run('2008/09', cur08, appliedBefore('2008/09'));
   check(r08.reform?.reformId === 'reform-2008-third-league', '2008: Reform angewandt');
   sane(check, '2008', '2008/09', cur08, r08);

@@ -206,7 +206,7 @@ Die 3 Absteiger füllen die 2. Liga wieder auf: Sie werden so verteilt, dass **j
 Unterhalb der untersten simulierten Liga liegen die **Amateurligen** als Vereins-Pool: frühere Bundesligisten wie **Oberhausen**, **Neunkirchen** oder **Berlin Neukölln** (Tasmania), die Absteiger der 2. Liga 1975 und Amateur-Spitzenvereine (z. B. Kiel, Trier, Freiburg). Jede Saison tauschen die Schlechtesten der untersten Liga mit den stärksten Pool-Vereinen ihrer Region – bei zwei Staffeln **je 4**, eingleisig **3**, ab drei Staffeln **je 2**. Wer in den Pool fällt, kann später zurückkehren; steigt ein Pool-Verein bis in deine Liga auf, bekommt er wie jeder Aufsteiger einen vollen Kader. Ligareformen besetzen neue Plätze zuerst aus dem Pool, erst danach mit fiktiven Platzhaltern.
 
 ## Ausblick
-Die historischen Ligareformen (eingleisige 2. Liga **1981/82**, Regionalliga **1994/95**, 3. Liga **2008/09**, fünf Regionalliga-Staffeln **2012/13**) sind als datengetriebenes **Reformsystem** umgesetzt und greifen automatisch beim jeweiligen Saisonwechsel — Details siehe Artikel „Ligareformen (historischer Umbau)“. Die DDR-Integration 1991/92 dockt als weiterer Reform-Datensatz an.`,
+Die historischen Ligareformen (eingleisige 2. Liga **1981/82**, Regionalliga **1994/95**, zweigleisige Regionalliga **2000/01**, 3. Liga **2008/09**, fünf Regionalliga-Staffeln **2012/13**) sind als datengetriebenes **Reformsystem** umgesetzt und greifen automatisch beim jeweiligen Saisonwechsel — Details siehe Artikel „Ligareformen (historischer Umbau)“. Die DDR-Integration 1991/92 dockt als weiterer Reform-Datensatz an.`,
   },
 
   {
@@ -248,9 +248,14 @@ Unterhalb der 2. Liga entsteht eine neue **dritte Ebene: die Regionalliga mit vi
 - **Besetzung:** Da die realen Amateur-Oberligen nicht Teil der Simulation sind, werden die vier Staffeln mit **klar fiktiven Platzhaltervereinen** besetzt (geografisch zugeordnet).
 - Ab jetzt ist Auf-/Abstieg zwischen 2. Liga und Regionalliga möglich.
 
+## Reform 2000/01 – Regionalliga nur noch zweigleisig
+Die Regionalliga schrumpft von vier auf **zwei Staffeln zu je 18**: **Nord** (Norden, Nordosten, Nordrhein-Westfalen) und **Süd** (Bayern, Baden-Württemberg, Hessen, Rheinland-Pfalz, Saarland).
+- Die Saison 1999/2000 zählt als Qualifikation: Nach Auf- und Abstieg werden alle Vereine der dritten Ebene nach Region verteilt; hat eine Region mehr Vereine als Plätze, steigen die Schwächsten in die Amateurligen ab.
+- Ab jetzt steigen **je Staffel zwei** in die 2. Liga auf, aus der 2. Liga steigen vier ab.
+
 ## Reform 2008/09 – Einführung der 3. Liga
 Zwischen 2. Liga und Regionalliga wird eine neue, **eingleisige 3. Liga mit 20 Vereinen** eingezogen; die Regionalliga rückt auf **Ebene 4** – mit nur noch **drei Staffeln zu je 18**: **Nord** (Norden und Nordosten), **West** (Nordrhein-Westfalen, Rheinland-Pfalz, Saarland) und **Süd** (Bayern, Hessen, Baden-Württemberg).
-- **Qualifikation:** die **besten 5** jeder der vier bisherigen Regionalliga-Staffeln (2007/08) bilden die 20 Startplätze der 3. Liga (vereinfachte Lizenzprüfung).
+- **Qualifikation:** die **besten zehn** beider bisherigen Regionalliga-Staffeln (2007/08) bilden die 20 Startplätze der 3. Liga (vereinfachte Lizenzprüfung).
 - Die übrigen Vereine bilden nach Region die neue viertklassige Regionalliga. Hat eine Region mehr Vereine als Plätze (z. B. der Nordosten), steigen die Schwächsten in die Amateurligen ab; fehlende Plätze kommen aus den Amateurligen der Region, notfalls fiktive Platzhalter.
 - **Auf-/Abstieg:** die drei Meister steigen in die 3. Liga auf, drei steigen ab.
 
@@ -3534,7 +3539,7 @@ Die zweiten Mannschaften der großen Vereine – bis 2005 „Amateure“, danach
 |---|---|
 | bis 1978 | Amateurliga (dritte Ebene) |
 | 1978–1994 | Amateur-Oberliga (dritte Ebene) – die 2. Bundesliga bleibt gesperrt |
-| 1994–2008 | Regionalliga (dritte Ebene) |
+| 1994–2008 | Regionalliga (dritte Ebene; 2000–2008 nur Nord und Süd) |
 | ab 2008 | 3. Liga; je Regionalliga-Staffel höchstens sieben zweite Mannschaften |
 
 Immer gilt: **nie in der 2. Liga**, **nie in derselben oder einer höheren Liga als die erste Mannschaft**. Wird eine zweite Mannschaft Meister und darf nicht aufsteigen, bekommt der Nächste den Platz (**Nachrücker**). Steigt die erste Mannschaft in die Liga der zweiten ab, muss die zweite eine Liga tiefer (**Zwangsabstieg**). Spielt die erste Mannschaft unterhalb der 2. Liga, darf die zweite höchstens in der Oberliga (Amateurliga) spielen; KI-Vereine unterhalb der dritten Ebene melden sie ab.

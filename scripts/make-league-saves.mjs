@@ -12,6 +12,7 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 const SAVES = [
   ['liga2-1977', 'ger', 1977, 2, 3, 'Deutschland'],
   ['regionalliga-1995', 'ger', 1995, 3, 5, 'Deutschland'],
+  ['regionalliga-2004', 'ger', 2004, 3, 7, 'Deutschland'],
   ['liga3-2010', 'ger', 2010, 3, 8, 'Deutschland'],
   ['regionalliga-2015', 'ger', 2015, 4, 6, 'Deutschland'],
   ['liga1-2025', 'ger', 2025, 1, 10, 'Deutschland'],

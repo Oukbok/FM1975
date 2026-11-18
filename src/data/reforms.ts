@@ -169,6 +169,34 @@ export const LEAGUE_REFORMS: LeagueReform[] = [
     ],
   },
   // ---------------------------------------------------------------------------
+  // 2000/01 — Regionalliga zweigleisig (Nord, Süd)
+  // Quellen: de.wikipedia „Fußball-Regionalliga 1999/2000“ (letzte Saison mit vier Staffeln,
+  // zugleich Qualifikation), en.wikipedia „2000–01 Regionalliga“ (Nord und Süd, je 18;
+  // je Staffel steigen zwei in die 2. Liga auf), „Regionalliga West/Südwest“ (aufgelöst 2000:
+  // NRW → Nord, Rheinland-Pfalz/Saarland → Süd; Nordosten → Nord).
+  // ---------------------------------------------------------------------------
+  {
+    reformId: 'reform-2000-regionalliga',
+    effectiveSeason: '2000/01',
+    title: 'Regionalliga nur noch zweigleisig',
+    description:
+      'Zur Saison 2000/01 wird die Regionalliga von vier auf zwei Staffeln zu je 18 Vereinen '
+      + 'verkleinert: Nord (Norden, Nordosten, Nordrhein-Westfalen) und Süd (Bayern, '
+      + 'Baden-Württemberg, Hessen, Rheinland-Pfalz, Saarland). Je Staffel steigen die ersten '
+      + 'zwei in die 2. Liga auf, aus der 2. Liga steigen vier ab.',
+    affectedTiers: [3],
+    qualificationRule:
+      'Die Saison 1999/2000 gilt als Qualifikation: Nach Auf- und Abstieg werden alle Vereine der '
+      + 'dritten Ebene nach Region auf Nord und Süd verteilt; hat eine Region mehr Vereine als '
+      + 'Plätze, steigen die Schwächsten in die Amateurligen ab.',
+    targetStructure: [
+      { id: 'tier1', tier: 1, group: null, name: '1. Liga', teamCount: 18 },
+      { id: 'tier2', tier: 2, group: null, name: '2. Liga', teamCount: 20, upSlots: 4 },
+      { id: 'tier3-nord', tier: 3, group: 'nord', name: 'Regionalliga Nord', teamCount: 18 },
+      { id: 'tier3-sued', tier: 3, group: 'sued', name: 'Regionalliga Süd', teamCount: 18 },
+    ],
+  },
+  // ---------------------------------------------------------------------------
   // 2008/09 — Einführung der 3. Liga (eingleisig), Regionalliga wird 4. Ebene
   // Quelle: https://en.wikipedia.org/wiki/Regionalliga (2008–2012: drei Staffeln
   // Nord = Norden + Nordosten, West = Nordrhein-Westfalen + Rheinland-Pfalz/Saar,
@@ -187,7 +215,7 @@ export const LEAGUE_REFORMS: LeagueReform[] = [
       + 'auf, aus der 3. Liga steigen drei ab.',
     affectedTiers: [3, 4],
     qualificationRule:
-      'Die besten 5 Vereine jeder der vier bisherigen Regionalliga-Staffeln (2007/08) '
+      'Die besten zehn Vereine beider bisherigen Regionalliga-Staffeln (2007/08) '
       + 'qualifizieren sich sportlich für die 20 Startplätze der neuen 3. Liga '
       + '(vereinfachte Lizenzprüfung: sportlich = lizenziert). Die übrigen Vereine '
       + 'bilden nach Region die neue viertklassige Regionalliga Nord/West/Süd (hat eine Region '

@@ -365,6 +365,30 @@ function migrate1994(ctx: TransitionContext, reform: LeagueReform): TransitionRe
 }
 
 // -----------------------------------------------------------------------------
+// 2000/01 — Regionalliga von vier auf zwei Staffeln (Nord, Süd)
+// -----------------------------------------------------------------------------
+// Auf-/Abstieg 1999/2000 noch nach altem Modus (vier Meister steigen auf, vier
+// Absteiger aus der 2. Liga), danach werden alle Vereine der Ebene 3 nach Region auf
+// Nord und Süd verteilt; Überzählige steigen in die Amateurligen ab.
+function migrate2000(ctx: TransitionContext, reform: LeagueReform): TransitionResult {
+  const base = normalTransition({ ...ctx, targets: undefined });
+  const t = reform.targetStructure;
+  const rl = base.divisions.filter((d) => d.meta.tier === 3).flatMap((d) => d.ids);
+  const { result, placeholders, overflow } = distributeToGroups(rl, t.filter((x) => x.tier === 3), regionResolver(ctx), ctx.strengthOf, reform.reformId, ctx.protectedId);
+  const upper = base.divisions.filter((d) => d.meta.tier < 3).map((d) => {
+    const tt = t.find((x) => x.tier === d.meta.tier && x.group === d.meta.group);
+    return tt ? { meta: metaOf(tt), ids: d.ids } : d;
+  });
+  return {
+    ...base,
+    divisions: [...upper, ...result],
+    placeholders: [...base.placeholders, ...placeholders],
+    dropped: [...base.dropped, ...overflow],
+    reform,
+  };
+}
+
+// -----------------------------------------------------------------------------
 // 2008/09 — 3. Liga (eingleisig) einziehen, Regionalliga auf Ebene 4
 // -----------------------------------------------------------------------------
 function migrate2008(ctx: TransitionContext, reform: LeagueReform): TransitionResult {
@@ -376,13 +400,16 @@ function migrate2008(ctx: TransitionContext, reform: LeagueReform): TransitionRe
   const { newTier1, newTier2Base, promotedTop, relegatedTop } = topExchangeSingle(t1, t2);
   const newTier2 = newTier2Base.concat(relegatedTop); // bleibt 20
 
-  // 3. Liga: beste 5 jeder bisherigen Regionalliga-Staffel = 20 Qualifikanten.
+  // 3. Liga: die Besten jeder bisherigen Regionalliga-Staffel (zwei Staffeln 2000–2008: je 10;
+  // ältere Spielstände mit vier Staffeln: je 5) = 20 Qualifikanten.
   const thirdLeague: string[] = [];
   const remainder: string[] = [];
+  const perGroup = Math.ceil(20 / Math.max(1, rlGroups.length));
   for (const g of rlGroups) {
-    thirdLeague.push(...g.orderedIds.slice(0, 5));
-    remainder.push(...g.orderedIds.slice(5));
+    thirdLeague.push(...g.orderedIds.slice(0, perGroup));
+    remainder.push(...g.orderedIds.slice(perGroup));
   }
+  while (thirdLeague.length > 20) remainder.unshift(thirdLeague.pop()!);
   // Sollgröße 20 der 3. Liga sicherstellen (auffüllen, falls Datenlage kleiner).
   const thirdTarget = reform.targetStructure.find((x) => x.id === 'tier3')!;
   const thirdPlaceholders: SimClub[] = [];
@@ -522,6 +549,7 @@ export function computeSeasonTransition(ctx: TransitionContext): TransitionResul
       case 'reform-1981-single-second': res = migrate1981(ctx, pending); break;
       case 'reform-1991-reunification': res = migrate1991(ctx, pending); break;
       case 'reform-1994-regionalliga': res = migrate1994(ctx, pending); break;
+      case 'reform-2000-regionalliga': res = migrate2000(ctx, pending); break;
       case 'reform-2008-third-league': res = migrate2008(ctx, pending); break;
       case 'reform-2012-regionalliga': res = migrate2012(ctx, pending); break;
       default: res = alignStructure(normalTransition(ctx), ctx, pending.targetStructure); break;
