@@ -11,12 +11,14 @@ import { COUNTRY_SEEDS, EURO_EXCLUSIONS } from '../data/worldSeed';
 import { COUNTRY_BY_CC, seasonLabelOf } from '../data/world/countries';
 import { worldSeason } from '../data/world/index';
 import { makePlaceholder, structureForSeason, LEAGUE_REFORMS } from '../data/reforms';
-import { fitsGroup } from '../data/regionGeo';
+import { clubRegion, fitsGroup, preferredGroups } from '../data/regionGeo';
+import { POOL_TOWNS } from '../data/poolTowns';
+import { POOL_COLORS } from './clubPool';
 import { POOL_TIER } from '../data/history/historicClubs';
 import { seasonStartYear } from '../data/timeline';
 import { accessSlots } from '../data/euroFormats';
 import type { EuroCompId } from '../data/europe';
-import { buildDivision, LeagueGroup, SimClub } from '../engine/leagues';
+import { buildDivision, hashStr, LeagueGroup, mulberry32, SimClub } from '../engine/leagues';
 import { EURO_MAP } from '../engine/worldData';
 import { addHistoricSeason, addHistoricTitle } from './clubRecords';
 import { ComposedHome, countryLevelOf, poolClubsOf } from './worldCompose';
@@ -58,17 +60,50 @@ export function pickLowerTiers(simClubs: Record<string, SimClub>, season: string
   const targets = structureForSeason(season).filter((t) => t.tier >= 3);
   const pool = Object.values(simClubs).filter((s) => s.tier === POOL_TIER).sort((a, b) => b.strength - a.strength || a.id.localeCompare(b.id));
   const used = new Set<string>();
-  return targets.map((t) => {
-    const pick = (pred: (s: SimClub) => boolean) => pool.filter((s) => !used.has(s.id) && pred(s));
-    const groups = targets.filter((x) => x.tier === t.tier).map((x) => x.group);
-    const ids: string[] = [];
-    for (const s of [...pick((s) => fitsGroup(s.city, s.group, t.group, groups)), ...pick(() => true)]) {
-      if (ids.length >= t.teamCount) break;
-      if (used.has(s.id)) continue;
-      used.add(s.id); ids.push(s.id);
+  const out = new Map<string, string[]>();
+  // Je Ebene: stärkste Vereine zuerst in die Staffel ihrer Region, dann in die Nachbarstaffel
+  // (zweite Wahl der Region). Wer auch dort keinen Platz findet, bleibt im Pool – Lücken füllen
+  // Platzhalter (fillLowerTiers), statt Vereine quer durchs Land zu verteilen.
+  for (const tier of [...new Set(targets.map((t) => t.tier))].sort((a, b) => a - b)) {
+    const slots = targets.filter((t) => t.tier === tier);
+    const ids = pool.filter((s) => !used.has(s.id)).map((s) => s.id);
+    const buckets: string[][] = slots.map(() => []);
+    if (slots.length === 1 && slots[0].group == null) buckets[0] = ids.slice(0, slots[0].teamCount);
+    else {
+      const groups = slots.map((t) => t.group as LeagueGroup);
+      let rest = ids;
+      for (let round = 0; round < 2 && rest.length; round++) {
+        const next: string[] = [];
+        for (const id of rest) {
+          const want = preferredGroups(clubRegion(simClubs[id].city, simClubs[id].group), groups)[round];
+          const k = slots.findIndex((t, i) => t.group === want && buckets[i].length < t.teamCount);
+          if (k >= 0) buckets[k].push(id); else next.push(id);
+        }
+        rest = next;
+      }
     }
-    return { t, ids };
-  });
+    // Fehlen Vereine der Region, rücken Amateurvereine aus freien Pool-Städten der Region nach
+    // (wie beim Saisonwechsel, game/clubPool.ts pickRegional) – erst danach Platzhalter.
+    if (slots.length > 1) {
+      const groups = slots.map((t) => t.group as LeagueGroup);
+      const rnd = mulberry32(hashStr(`start-towns:${season}:${tier}`));
+      const cities = new Set(Object.values(simClubs).map((c) => c.city));
+      slots.forEach((t, i) => {
+        const known = buckets[i].map((id) => simClubs[id].strength);
+        const base = (known.length ? known.reduce((a, b) => a + b, 0) / known.length : 50) - 6;
+        for (const { town, group: tg } of POOL_TOWNS) {
+          if (buckets[i].length >= t.teamCount) break;
+          const id = `pool-${town.toLowerCase().replace(/[^a-zäöüß]/g, '')}`;
+          if (cities.has(town) || simClubs[id] || !fitsGroup(town, tg, t.group as LeagueGroup, groups)) continue;
+          const [primary, secondary] = POOL_COLORS[Math.floor(rnd() * POOL_COLORS.length)];
+          simClubs[id] = { id, name: town, shortName: town.slice(0, 3).toUpperCase(), city: town, strength: Math.round(Math.max(40, base + (rnd() - 0.5) * 6)), colors: { primary, secondary }, tier: POOL_TIER, group: tg } as SimClub;
+          cities.add(town); buckets[i].push(id);
+        }
+      });
+    }
+    slots.forEach((t, i) => { buckets[i].forEach((id) => used.add(id)); out.set(t.id, buckets[i]); });
+  }
+  return targets.map((t) => ({ t, ids: out.get(t.id) ?? [] }));
 }
 
 /** Ebenen ab Tier 3 (Struktur des Startjahres, Deutschland) aus dem Pool füllen, Rest Platzhalter.

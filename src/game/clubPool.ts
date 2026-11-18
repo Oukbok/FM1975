@@ -162,7 +162,7 @@ export function settlePool(g: Game, ids: string[]): void {
 // -----------------------------------------------------------------------------
 const POOL_MIN = 24;
 // Städte für den Nachschub: data/poolTowns.ts (im Editor unter „Amateur-Pool“ änderbar).
-const POOL_COLORS: [string, string][] = [['#1F4E9E', '#FFFFFF'], ['#B71C1C', '#FFFFFF'], ['#1B5E20', '#FFFFFF'], ['#F2C200', '#1A1A1A'], ['#4A148C', '#FFFFFF'], ['#0D47A1', '#F2C200'], ['#263238', '#FFFFFF'], ['#C62828', '#1A1A1A']];
+export const POOL_COLORS: [string, string][] = [['#1F4E9E', '#FFFFFF'], ['#B71C1C', '#FFFFFF'], ['#1B5E20', '#FFFFFF'], ['#F2C200', '#1A1A1A'], ['#4A148C', '#FFFFFF'], ['#0D47A1', '#F2C200'], ['#263238', '#FFFFFF'], ['#C62828', '#1A1A1A']];
 
 export function refillPool(g: Game, season: string): void {
   if (homeCountryOf(g) !== 'ger') return;
