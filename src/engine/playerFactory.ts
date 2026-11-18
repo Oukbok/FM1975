@@ -11,7 +11,8 @@ import { ensurePositionSkill } from './positionSkill';
 import { initialExperience } from './experience';
 import { bornWorkRate, groupOf } from './attributeAging';
 import { estimatedPeak } from './teamBoost';
-import { pickOrigin, makeName, faceFor, Origin } from '../data/origins';
+import { pickOrigin, Origin } from '../data/origins';
+import { nameAndFace } from '../data/ethnicity';
 import { exceptionalPotential, getTalentSupply, POT_CAP } from './talent';
 
 export interface NewPlayerSpec {
@@ -119,7 +120,8 @@ export function createPlayer(spec: NewPlayerSpec): Player {
   const { rng, age, strength, year, date } = spec;
   const pos = eraPosition(spec.pos, year); // ab 1996 keine neuen Liberos (data/formations.ts)
   const origin = spec.origin ?? pickOrigin(year, rng, spec.domestic);
-  const { firstName, lastName } = makeName(origin, rng, year - age);
+  // Ethnie fest aus der ID, Name passend dazu (data/ethnicity.ts; gleiche Zufallszahlen wie makeName).
+  const { firstName, lastName, face } = nameAndFace(origin, rng, year - age, spec.id);
   const attributes = makePositionAttributes(pos, strength, age, rng);
   const probe = { attributes, naturalPosition: pos, secondaryPositions: [] } as unknown as Player;
   const overall = positionSuitability(probe, pos);
@@ -133,7 +135,7 @@ export function createPlayer(spec: NewPlayerSpec): Player {
     firstName, lastName, fullName: `${firstName} ${lastName}`,
     shirtNumber: spec.shirt ?? 0,
     nationality: origin.nationality,
-    origin: origin.id, face: faceFor(origin, year - age, spec.id),
+    origin: origin.id, face,
     dateOfBirth: birthDate(age, year, rng), age,
     height: pos === 'TW' ? 182 + Math.floor(rng() * 14) : 168 + Math.floor(rng() * 24),
     weight: 64 + Math.floor(rng() * 24),

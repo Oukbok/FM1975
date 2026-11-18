@@ -282,27 +282,42 @@ for (const [id, eras] of Object.entries(FIRST_BY_ERA)) {
 
 // -----------------------------------------------------------------------------
 // Verdeckte Ethnie je Herkunft (Vorgabe; im Editor unter Namen › Ethnie änderbar).
-// Grobe Anteile im Profifußball des jeweiligen Landes, keine Statistik.
+// Grobe Anteile unter den Profis DIESER Nationalität (nicht der Liga), Stützjahr =
+// Jahr, in dem die Spieler etwa 20 sind. Weicht die Ethnie ab, passt der Name dazu
+// (data/ethnicity.ts). Quellen und Herleitung: docs/recherche/ethnie.md – u. a.
+// WM-Kader 2018 mit Migrationswurzeln (Big Think nach Pew/UN): Frankreich > 75 %,
+// Schweiz fast 2/3, Belgien fast 1/2, England 48 %, Deutschland 39 %, Portugal 30 %,
+// Spanien/Schweden 17 %, Dänemark 13 %; Profis in England heute rund ein Drittel
+// mit schwarzen Wurzeln (The Conversation), Premier League 43 % schwarze Spieler
+// inkl. Ausländer (Black Footballers Partnership); Eredivisie 2009 fast 150 Spieler
+// mit surinamischen Wurzeln (These Football Times); Schweiz EM 2016: 14 von 23 mit
+// Migrationsgeschichte, ein Drittel vom Balkan (swissinfo). Nationalteams liegen über
+// dem Ligaschnitt – die Werte hier bewusst darunter. Ostblock bis 1990 kaum.
 // -----------------------------------------------------------------------------
 const FACE_MIX: Record<string, FaceMix> = {
   eng: [[1975, { mitteleuropa: 97, westafrika: 3 }], [1990, { mitteleuropa: 86, westafrika: 13, suedeuropa: 1 }], [2010, { mitteleuropa: 70, westafrika: 26, nordafrika: 2, suedeuropa: 2 }], [2025, { mitteleuropa: 60, westafrika: 34, nordafrika: 3, suedeuropa: 3 }]],
-  sco: [[1975, { mitteleuropa: 100 }], [2025, { mitteleuropa: 92, westafrika: 8 }]],
-  fra: [[1975, { mitteleuropa: 86, suedeuropa: 6, westafrika: 4, nordafrika: 4 }], [1995, { mitteleuropa: 66, westafrika: 20, nordafrika: 9, suedeuropa: 5 }], [2025, { mitteleuropa: 44, westafrika: 38, nordafrika: 15, suedeuropa: 3 }]],
-  ned: [[1975, { mitteleuropa: 95, westafrika: 4, ostasien: 1 }], [1990, { mitteleuropa: 80, westafrika: 16, nordafrika: 2, ostasien: 2 }], [2025, { mitteleuropa: 60, westafrika: 28, nordafrika: 10, ostasien: 2 }]],
-  bel: [[1975, { mitteleuropa: 97, suedeuropa: 2, nordafrika: 1 }], [1995, { mitteleuropa: 82, westafrika: 10, nordafrika: 6, suedeuropa: 2 }], [2025, { mitteleuropa: 56, westafrika: 30, nordafrika: 12, suedeuropa: 2 }]],
-  sui: [[1975, { mitteleuropa: 94, suedeuropa: 6 }], [2000, { mitteleuropa: 76, balkan: 12, suedeuropa: 6, westafrika: 4, tuerkei: 2 }], [2025, { mitteleuropa: 64, balkan: 16, westafrika: 12, tuerkei: 4, suedeuropa: 4 }]],
-  aut: [[1975, { mitteleuropa: 98, balkan: 2 }], [2025, { mitteleuropa: 72, balkan: 13, tuerkei: 7, westafrika: 8 }]],
-  swe: [[1975, { nordeuropa: 98, balkan: 2 }], [2000, { nordeuropa: 86, balkan: 8, westafrika: 4, nordafrika: 2 }], [2025, { nordeuropa: 68, balkan: 10, westafrika: 14, nordafrika: 6, tuerkei: 2 }]],
-  den: [[1975, { nordeuropa: 100 }], [2025, { nordeuropa: 82, westafrika: 9, tuerkei: 4, balkan: 3, nordafrika: 2 }]],
-  nor: [[1975, { nordeuropa: 100 }], [2025, { nordeuropa: 80, westafrika: 12, nordafrika: 4, balkan: 4 }]],
-  por: [[1975, { suedeuropa: 88, westafrika: 12 }], [2025, { suedeuropa: 76, westafrika: 22, lateinamerika: 2 }]],
-  esp: [[1975, { suedeuropa: 99, lateinamerika: 1 }], [2025, { suedeuropa: 84, westafrika: 9, nordafrika: 5, lateinamerika: 2 }]],
-  ita: [[1975, { suedeuropa: 100 }], [2025, { suedeuropa: 88, westafrika: 9, nordafrika: 2, lateinamerika: 1 }]],
+  sco: [[1975, { mitteleuropa: 100 }], [2000, { mitteleuropa: 98, westafrika: 2 }], [2025, { mitteleuropa: 92, westafrika: 8 }]],
+  fra: [[1975, { mitteleuropa: 86, suedeuropa: 6, westafrika: 4, nordafrika: 4 }], [1995, { mitteleuropa: 66, westafrika: 20, nordafrika: 9, suedeuropa: 5 }], [2010, { mitteleuropa: 52, westafrika: 32, nordafrika: 12, suedeuropa: 4 }], [2025, { mitteleuropa: 42, westafrika: 40, nordafrika: 15, suedeuropa: 3 }]],
+  ned: [[1975, { mitteleuropa: 95, westafrika: 4, ostasien: 1 }], [1990, { mitteleuropa: 80, westafrika: 16, nordafrika: 2, ostasien: 2 }], [2010, { mitteleuropa: 68, westafrika: 24, nordafrika: 6, ostasien: 2 }], [2025, { mitteleuropa: 60, westafrika: 28, nordafrika: 10, ostasien: 2 }]],
+  bel: [[1975, { mitteleuropa: 97, suedeuropa: 2, nordafrika: 1 }], [1995, { mitteleuropa: 82, westafrika: 10, nordafrika: 6, suedeuropa: 2 }], [2010, { mitteleuropa: 66, westafrika: 22, nordafrika: 10, suedeuropa: 2 }], [2025, { mitteleuropa: 54, westafrika: 30, nordafrika: 14, suedeuropa: 2 }]],
+  sui: [[1975, { mitteleuropa: 94, suedeuropa: 6 }], [1990, { mitteleuropa: 88, suedeuropa: 6, balkan: 5, tuerkei: 1 }], [2005, { mitteleuropa: 72, balkan: 15, suedeuropa: 6, westafrika: 5, tuerkei: 2 }], [2025, { mitteleuropa: 58, balkan: 20, westafrika: 14, tuerkei: 4, suedeuropa: 4 }]],
+  aut: [[1975, { mitteleuropa: 98, balkan: 2 }], [1995, { mitteleuropa: 92, balkan: 6, tuerkei: 2 }], [2025, { mitteleuropa: 70, balkan: 14, tuerkei: 7, westafrika: 9 }]],
+  swe: [[1975, { nordeuropa: 98, balkan: 2 }], [2000, { nordeuropa: 87, balkan: 8, westafrika: 3, nordafrika: 2 }], [2025, { nordeuropa: 74, balkan: 9, westafrika: 11, nordafrika: 4, tuerkei: 2 }]],
+  den: [[1975, { nordeuropa: 100 }], [1995, { nordeuropa: 97, westafrika: 2, tuerkei: 1 }], [2025, { nordeuropa: 84, westafrika: 8, tuerkei: 4, balkan: 2, nordafrika: 2 }]],
+  nor: [[1975, { nordeuropa: 100 }], [1995, { nordeuropa: 97, westafrika: 3 }], [2025, { nordeuropa: 80, westafrika: 12, nordafrika: 4, balkan: 4 }]],
+  por: [[1975, { suedeuropa: 88, westafrika: 12 }], [2000, { suedeuropa: 80, westafrika: 19, lateinamerika: 1 }], [2025, { suedeuropa: 70, westafrika: 27, lateinamerika: 3 }]],
+  esp: [[1975, { suedeuropa: 99, lateinamerika: 1 }], [2000, { suedeuropa: 96, lateinamerika: 2, westafrika: 1, nordafrika: 1 }], [2025, { suedeuropa: 84, westafrika: 9, nordafrika: 5, lateinamerika: 2 }]],
+  ita: [[1975, { suedeuropa: 100 }], [2000, { suedeuropa: 98, westafrika: 1, lateinamerika: 1 }], [2025, { suedeuropa: 88, westafrika: 9, nordafrika: 2, lateinamerika: 1 }]],
+  gre: [[1990, { suedeuropa: 100 }], [2025, { suedeuropa: 90, balkan: 6, westafrika: 4 }]],
+  pol: [[1990, { osteuropa: 100 }], [2025, { osteuropa: 97, westafrika: 2, balkan: 1 }]],
+  cze: [[1990, { osteuropa: 100 }], [2025, { osteuropa: 97, westafrika: 2, balkan: 1 }]],
+  hun: [[1990, { osteuropa: 100 }], [2025, { osteuropa: 97, westafrika: 2, balkan: 1 }]],
+  rus: [[1990, { osteuropa: 100 }], [2025, { osteuropa: 94, westafrika: 2, tuerkei: 4 }]],
   bra: [[1975, { lateinamerika: 62, westafrika: 36, suedeuropa: 2 }], [2025, { lateinamerika: 60, westafrika: 38, suedeuropa: 2 }]],
   arg: [[1975, { lateinamerika: 70, suedeuropa: 30 }], [2025, { lateinamerika: 76, suedeuropa: 24 }]],
   usa: [[1975, { mitteleuropa: 80, lateinamerika: 10, westafrika: 10 }], [2025, { mitteleuropa: 48, westafrika: 26, lateinamerika: 24, ostasien: 2 }]],
-  rus: [[1975, { osteuropa: 100 }], [2025, { osteuropa: 94, westafrika: 2, tuerkei: 4 }]],
-  ger_modern: [[2000, { mitteleuropa: 100 }], [2025, { mitteleuropa: 94, osteuropa: 3, suedeuropa: 3 }]],
+  // Deutschland: Herkünfte ger_tr/ger_af/ger_pl/ger_it/ger_yu in MIX; dazu die junge Generation (ger_modern).
+  ger_modern: [[2000, { mitteleuropa: 96, osteuropa: 2, suedeuropa: 2 }], [2025, { mitteleuropa: 84, westafrika: 6, nordafrika: 3, tuerkei: 2, osteuropa: 3, suedeuropa: 2 }]],
 };
 for (const [id, mix] of Object.entries(FACE_MIX)) {
   const o = ORIGINS[id];

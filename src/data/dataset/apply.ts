@@ -14,6 +14,7 @@ import { FACILITIES, FACILITY_BY_KEY } from '../../engine/infrastructure';
 import { STAFF_BY_ID, STAFF_ROLES } from '../staff';
 import { MARKETING_AREAS, MARKETING_BY_ID } from '../marketing';
 import { MIX, ORIGINS, Origin } from '../origins';
+import { isFaceGroup } from '../faceGroups';
 import { BLOCKED_NAMES } from '../namePools';
 import { ANCHORS, REVENUE_MIX, resetEconomyCache } from '../../engine/economy';
 import { HISTORY } from '../history';
@@ -63,8 +64,9 @@ export function cleanPlayerPhotos(list: unknown): PlayerPhotoSet[] {
     const photos = (Array.isArray(x.photos) ? x.photos : []).filter((p) => p && typeof p.img === 'string' && PHOTO_URL.test(p.img))
       .map((p) => ({ pose: isPhotoPose(p.pose) ? p.pose : 'general' as const, img: p.img }));
     const portrait = typeof x.portrait === 'string' && PHOTO_URL.test(x.portrait) ? x.portrait : undefined;
-    if (!photos.length && !portrait) continue;
-    out.push({ id: String(x.id ?? ''), legendId, name, born: Number.isFinite(x.born) ? Number(x.born) : undefined, club: typeof x.club === 'string' && x.club.trim() ? x.club.trim() : undefined, photos, ...(portrait ? { portrait } : {}) });
+    const face = isFaceGroup(x.face) ? x.face : undefined;
+    if (!photos.length && !portrait && !face) continue;
+    out.push({ id: String(x.id ?? ''), legendId, name, born: Number.isFinite(x.born) ? Number(x.born) : undefined, club: typeof x.club === 'string' && x.club.trim() ? x.club.trim() : undefined, photos, ...(portrait ? { portrait } : {}), ...(face ? { face } : {}) });
   }
   return out;
 }

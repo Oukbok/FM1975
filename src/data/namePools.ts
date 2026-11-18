@@ -107,3 +107,12 @@ export const BLOCKED_NAMES = new Set([
   'Jürgen Kohler', 'Thomas Berthold', 'Lukas Podolski', 'Marco Reus', 'Mario Gomez', 'Jan Koller', 'Uwe Seeler',
   'Ji-sung Park', 'Heung-min Son', 'Ilkay Gündogan', 'Ilkay Gündoğan', 'Mesut Özil', 'Jerome Boateng', 'Ivan Rakitić', 'Luka Modrić', 'Marko Arnautović',
 ]);
+
+/**
+ * Zusätzlich gesperrt nur für Namen zur abweichenden Ethnie (data/ethnicity.ts `heritageName`):
+ * neue Kombinationen aus Gastland-Vorname + Herkunfts-Nachname. Getrennt von BLOCKED_NAMES,
+ * damit `makeName` (und damit die Zufallsfolge aller übrigen Spieler) unverändert bleibt.
+ */
+export const HERITAGE_BLOCKED = new Set([
+  'Christian Bassogog', 'Stéphane Mbia', 'Benoît Assou-Ekotto', 'Nicolas Nkoulou', 'Sofyan Amrabat', 'Nordin Amrabat', 'Asamoah Gyan', 'Stephen Appiah', 'Kevin-Prince Boateng', 'Yaya Touré', 'Kolo Touré', 'Djibril Cissé', 'Papiss Cissé', 'Moussa Sissoko', 'Mahamadou Diarra', 'Lassana Diarra', 'Alou Diarra', 'Adama Traoré', 'Hamari Traoré', 'Ibrahima Traoré', 'Sadio Mané', 'Ismaïla Sarr', 'Kalidou Koulibaly', 'Ousmane Dembélé', 'Moussa Dembélé', 'Idrissa Gueye', 'Mamadou Sakho', 'Cheikhou Kouyaté', 'Abdoulaye Doucouré', 'Moussa Diaby', 'Ibrahima Konaté', 'Moussa Konaté', 'Ferland Mendy', 'Benjamin Mendy', 'Edouard Mendy', 'Hakim Ziyech', 'Achraf Hakimi', 'Karim Benzema', 'Riyad Mahrez', "Samuel Eto'o", 'Joël Matip', 'André Onana', 'Wilfred Ndidi', 'Victor Moses', 'Ahmed Musa', 'Victor Osimhen', 'Kelechi Iheanacho', 'Emmanuel Adebayor', 'Michael Essien', 'Sulley Muntari', 'Thomas Partey', 'Mohammed Kudus', 'Inaki Williams', 'Burak Yılmaz', 'Hakan Çalhanoğlu', 'Arda Turan', 'Arda Güler', 'Cenk Tosun', 'Nuri Şahin', 'Hamit Altıntop', 'Halil Altıntop', 'Emre Can', 'Ozan Kabak', 'Kerem Demirbay', 'Mehmet Scholl', 'Ivan Perišić', 'Mario Mandžukić', 'Dejan Lovren', 'Davor Šuker', 'Zvonimir Boban', 'Granit Xhaka', 'Xherdan Shaqiri', 'Haris Seferović', 'Valon Behrami', 'Blerim Džemaili', 'Robert Lewandowski', 'Jakub Błaszczykowski', 'Łukasz Piszczek', 'Miroslav Klose', 'Dariusz Wosz', 'Shinji Kagawa', 'Makoto Hasebe', 'Takumi Minamino', 'Ritsu Doan', 'Kim Min-jae', 'Son Heung-min',
+]);

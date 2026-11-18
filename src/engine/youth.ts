@@ -25,6 +25,7 @@ export type { YouthDevReveal } from './youthWeekly';
 import { ensureDevFields, refreshOverall } from './development';
 import { updateScoutEstimate } from './scouting';
 import { pickOrigin, makeName, faceFor } from '../data/origins';
+import { heritageName } from '../data/ethnicity';
 import { makePersonality } from './playerFactory';
 import {
   Player, Club, PlayerAttributes, Position, AttributeKey,
@@ -209,7 +210,7 @@ export function generateYouthPlayer(
   const currentYear = Number(currentDate.slice(0, 4));
   let origin = pickOrigin(currentYear, rand, !opts.foreign && rand() < 0.9);
   for (let t = 0; opts.foreign && origin.nationality === 'GER' && t < 8; t++) origin = pickOrigin(currentYear, rand, false);
-  const { firstName, lastName } = makeName(origin, rand, currentYear - (age ?? 17));
+  let { firstName, lastName } = makeName(origin, rand, currentYear - (age ?? 17));
   const pos0 = opts.positions?.length ? pick(opts.positions) : pick(YOUTH_POSITIONS);
   // Libero ausgestorben: niemand bildet mehr Liberos aus (Wunsch Pascal, data/formations.ts).
   const pos: Position = eraPosition(pos0, currentYear);
@@ -243,13 +244,18 @@ export function generateYouthPlayer(
   const [scoutMin, scoutMax] = initialScoutRange(rand, truePot, academyLevel, useAge);
 
   const value = Math.round(overall * overall * 400);
+  // Ethnie fest aus der ID; weicht sie von der Herkunft ab, passt der Name dazu (data/ethnicity.ts, ohne Spielzufall).
+  const youthId = `${clubId}_y_${uniqueSeed}`;
+  const face = faceFor(origin, currentYear - useAge, youthId);
+  const alt = heritageName(origin, face, currentYear - useAge, youthId);
+  if (alt) ({ firstName, lastName } = alt);
 
   const youth: Player = {
     id: `${clubId}_y_${uniqueSeed}`,
     youthJoined: currentDate,
     firstName, lastName, fullName: `${firstName} ${lastName}`,
     shirtNumber: 30 + ri(0, 69),
-    nationality: origin.nationality, origin: origin.id, face: faceFor(origin, currentYear - useAge, `${clubId}_y_${uniqueSeed}`),
+    nationality: origin.nationality, origin: origin.id, face,
     dateOfBirth: birthDate(rand, useAge, currentYear), age: useAge,
     height: ri(168, 192), weight: ri(60, 82),
     preferredFoot: footForSide(pos, rand() < 0.7 ? 'right' : (rand() < 0.7 ? 'left' : 'both'), `${clubId}_y_${uniqueSeed}`),

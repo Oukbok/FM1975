@@ -65,6 +65,7 @@
     "test:merch": "node scripts/run-ts.mjs tests/merch-test.ts",
     "test:budget": "node scripts/run-ts.mjs tests/budget-test.ts",
     "test:faces": "node scripts/run-ts.mjs tests/faces-test.ts",
+    "test:ethnicity": "node scripts/run-ts.mjs tests/ethnicity-test.ts",
     "test:season": "node scripts/run-ts.mjs tests/season-test.ts",
     "test:world": "node scripts/run-ts.mjs tests/world-test.ts",
     "test:worldstructure": "node scripts/run-ts.mjs tests/world-structure-checks.ts",

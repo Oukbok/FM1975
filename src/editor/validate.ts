@@ -2,6 +2,7 @@
 // Prüfungen des Editors (zusätzlich zu validateDataset aus dem Spiel).
 // =============================================================================
 import { Dataset, validateDataset } from '../data/dataset/schema';
+import { isFaceGroup } from '../data/faceGroups';
 import { LEGEND_TYPES } from '../data/legends/types';
 import { FORMATION_DECADES, FORMATIONS } from '../data/formations';
 import { ALL_POSITIONS } from '../types';
@@ -194,7 +195,8 @@ export function checkDataset(d: Dataset): Issue[] {
     if (e.name?.trim() && !e.legendId && e.name.trim().split(/\s+/).length < 2) warn(A, `${nm}: bitte den vollen Namen (Vor- und Nachname) wie im Spiel eintragen.`, e.id);
     if (e.born != null && !(e.born >= 1900 && e.born <= 2100)) err(A, `${nm}: Geburtsjahr ${e.born} ist ungültig.`, e.id);
     if (e.club && !all.has(e.club) && !Object.values(d.worldData ?? {}).some((w) => w.clubs?.some((c) => c.id === e.club))) warn(A, `${nm}: Verein „${e.club}“ gibt es im Datensatz nicht.`, e.id);
-    if (!e.photos?.length && !e.portrait) warn(A, `${nm}: weder Spielerbild noch Foto – der Eintrag wirkt nicht.`, e.id);
+    if (!e.photos?.length && !e.portrait && !e.face) warn(A, `${nm}: weder Spielerbild, Foto noch Ethnie – der Eintrag wirkt nicht.`, e.id);
+    if (e.face != null && e.face !== '' && !isFaceGroup(e.face)) err(A, `${nm}: unbekannte Ethnie „${e.face}“.`, e.id);
     if (e.portrait != null) {
       if (!/^data:image\/(webp|jpeg|png);base64,/.test(e.portrait)) err(A, `${nm}: das Spielerbild ist kein gültiges Bild (WebP/JPEG/PNG).`, e.id);
       photoBytes += e.portrait.length * 0.75;

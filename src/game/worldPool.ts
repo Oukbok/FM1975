@@ -23,7 +23,8 @@ import { isForeignId, softClubStrength } from '../engine/world';
 import { POT_CAP, youngTop } from '../engine/talent';
 import { createPlayer } from '../engine/playerFactory';
 import { marketValueFor } from '../engine/clubEconomy';
-import { faceFor, makeName, ORIGINS, pickOrigin, type Origin } from '../data/origins';
+import { ORIGINS, pickOrigin, type Origin } from '../data/origins';
+import { nameAndFace } from '../data/ethnicity';
 import { COUNTRY_BY_KEY } from '../data/world/countries';
 import type { Player, Position } from '../types';
 import type { Game } from './state';
@@ -143,13 +144,13 @@ function headroom(age: number, r: () => number): number {
 function makeWP(g: Game, pool: WorldPool, club: WorldClubInfo, pos: Position, ov: number, age: number, year: number, youth: boolean, r: () => number): WP {
   const o = originFor(club, year, r);
   const born = year - age;
-  const { firstName, lastName } = makeName(o, r, born);
   const id = `wp${(pool.next++).toString(36)}`;
+  const { firstName, lastName, face } = nameAndFace(o, r, born, id); // Name passt zur Ethnie (data/ethnicity.ts)
   const s = Math.round(clamp(softTop(ov), 25, Math.min(POT_CAP, youngTop(age) - 2)));
   const pot = Math.round(clamp(s + headroom(age, r), s, POT_CAP));
   const foot = r() < 0.72 ? 0 : r() < 0.85 ? 1 : 2;
   const height = pos === 'TW' ? 182 + Math.floor(r() * 14) : 168 + Math.floor(r() * 24);
-  return [id, club.id, firstName, lastName, o.nationality, faceFor(o, born, id), born, pos, s, pot, foot, height, youth ? 1 : 0];
+  return [id, club.id, firstName, lastName, o.nationality, face, born, pos, s, pot, foot, height, youth ? 1 : 0];
 }
 
 function squadFor(g: Game, pool: WorldPool, club: WorldClubInfo, year: number): WP[] {

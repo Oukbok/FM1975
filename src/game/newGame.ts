@@ -68,6 +68,7 @@ import { bindHonours } from './clubHonours';
 import { ensureWorldPool } from './worldPool';
 import { startWorldPlaces } from './worldPlacesSeed';
 import { startShirtNumbers } from './shirtMigration';
+import { FACE_NAME_VERSION } from './faceNameMigration';
 import { migrateCohesion } from './cohesionGame';
 import { ensureCountryPools } from '../engine/world';
 
@@ -306,6 +307,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   ensureWorldPool(g0); // Weltspieler aller Vereine ohne vollen Kader (Spielerpool)
   startWorldPlaces(g0); // Platzierungs-Historie der Auslandsvereine aus den Weltdaten vor dem Startjahr
   startShirtNumbers(g0); // Rückennummern aller Kader nach Position und Epoche (game/shirtMigration.ts)
+  g0.faceNameV = FACE_NAME_VERSION; // neue Spieler: Name passt schon zur Ethnie (data/ethnicity.ts)
   migrateCohesion(g0); // Eingespieltheit: jeder Verein startet eingespielt auf seine Taktik (game/cohesionGame.ts)
   bindMarketing(g0);
   bindHonours(g0, true); // Vereinsauszeichnungen: leere Wirkungstabelle für das neue Spiel

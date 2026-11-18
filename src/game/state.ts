@@ -178,6 +178,8 @@ export interface Game {
   worldTransfers?: import('./worldTransfers').WorldTransferStore;
   /** 1 = Rückennummern aller KI-Kader nach Position vergeben (game/shirtMigration.ts); fehlt = alte Nummern „kleinste freie“. */
   shirtsV?: 1;
+  /** 1 = Ethnie alter Spieler einmalig an ihren Nachnamen angepasst (game/faceNameMigration.ts); fehlt = noch nicht. Neue Spiele: 1. */
+  faceNameV?: number;
   /** Einzel-Scouting und Berichte (game/scoutingGame.ts). */
   scouting?: import('./scoutingGame').ScoutingState;
   /** Privatleben: Familie, Freizeit, Vermögen, Generationen (game/private/). */

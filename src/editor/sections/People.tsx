@@ -1,4 +1,5 @@
 import { useNavTarget } from '../nav';
+import { FACE_OPTIONS } from '../../data/faceGroups';
 import { useState } from 'react';
 import { Dataset, OriginData } from '../../data/dataset/schema';
 import { Col, Explain, FieldForm, SortTh, TableEditor, useSort } from '../TableEditor';
@@ -39,8 +40,7 @@ function Stat({ n, l }: { n: number; l: string }) {
   return <div className="ed-stat"><b>{n}</b><span>{l}</span></div>;
 }
 
-const FACES = ['mitteleuropa', 'nordeuropa', 'suedeuropa', 'osteuropa', 'balkan', 'tuerkei', 'westafrika', 'lateinamerika', 'ostasien', 'nordafrika']
-  .map((f) => ({ value: f, label: f }));
+const FACES: { value: string; label: string }[] = FACE_OPTIONS;
 
 export function NamesSection({ ds, onChange }: P) {
   const target = useNavTarget();
@@ -125,7 +125,7 @@ function FaceMixEditor({ ds, onChange }: P) {
   const origins = st.sorted(ds.names.origins, (o, k) => k === 'id' ? o.id : k === 'nat' ? o.nationality : k === 'face' ? o.face : o.faceMix?.length ?? 0);
   return (
     <>
-      <Explain>Die <b>Ethnie</b> ist verdeckt: Sie erscheint nie im Spiel und bestimmt nur, welches Gesicht ein Spieler bekommt – unabhängig von seiner Nationalität. So kann ein Engländer schwarz sein. Je Herkunft eine Zeile pro Stützjahr (Jahr, in dem die Spieler etwa 20 sind): <code>2025: mitteleuropa 60, westafrika 34</code>. Dazwischen wird übergeblendet. Leer = immer die Vorgabe der Herkunft. Gruppen: {groups.join(', ')}. Bei den Ausnahmetalenten wird die Ethnie je Spieler unter <b>Legenden</b> festgelegt.</Explain>
+      <Explain>Die <b>Ethnie</b> ist verdeckt: Sie erscheint nie im Spiel und bestimmt nur, welches Gesicht ein Spieler bekommt – unabhängig von seiner Nationalität. So kann ein Engländer schwarz sein. Je Herkunft eine Zeile pro Stützjahr (Jahr, in dem die Spieler etwa 20 sind): <code>2025: mitteleuropa 60, westafrika 34</code>. Dazwischen wird übergeblendet. Leer = immer die Vorgabe der Herkunft. Gruppen: {groups.join(', ')}. Weicht die Ethnie eines neuen Spielers von der Vorgabe seiner Herkunft ab, passt sein Name dazu (Nachname aus einer Herkunft dieser Ethnie, Vorname je nach Jahrgang aus dem Land oder der Familie). Je Spieler legst du die Ethnie unter <b>Ausnahmetalente</b> bzw. <b>Spielerbilder &amp; Fotos</b> fest.</Explain>
       <div className="ed-table-scroll">
         <table className="ed-table">
           <thead><tr>

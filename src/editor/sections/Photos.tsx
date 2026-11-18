@@ -5,6 +5,7 @@ import { Col, Explain, FieldForm, TableEditor } from '../TableEditor';
 import { useNavTarget } from '../nav';
 import { PhotoGallery, PhotoRightsNote } from '../PhotoGallery';
 import { PortraitEditor } from '../PortraitEditor';
+import { FACE_OPTIONS } from '../../data/faceGroups';
 
 // =============================================================================
 // SPIELERFOTOS (Datensatz-Feld `playerPhotos`, Wunsch Pascal): eigene Bilder zu
@@ -48,12 +49,13 @@ export function PhotosSection({ ds, onChange }: P) {
     { key: 'legendId', label: 'Legenden-ID', width: 120, optional: true },
     { key: 'born', label: 'Geburtsjahr', type: 'number', optional: true, width: 90 },
     { key: 'club', label: 'Verein', ref: 'club', optional: true, width: 110 },
+    { key: 'face', label: 'Ethnie', type: 'select', options: FACE_OPTIONS, optional: true, emptyLabel: 'automatisch', width: 130 },
   ];
   const make = (): PlayerPhotoSet => ({ id: nextPhotoId(rows), name: 'Vorname Nachname', photos: [] });
   const legendName = (id?: string) => { const l = id ? legends.find((x) => x.id === id) : undefined; return l ? `${l.firstName} ${l.lastName}` : undefined; };
   return (
     <div className="ed-section">
-      <Explain>Eigene Bilder zu Spielern und Ausnahmetalenten. Das <b>Spielerbild (Porträt)</b> ersetzt im Spiel überall das Gesicht – im Spielerprofil, in allen Listen, in Zeitung und Newscenter; du lädst ein Bild hoch und schneidest es im Kopf-Format zu. Die <b>Fotos</b> dagegen sind Pressebilder: Wird ein Spieler in einer Nachricht im <b>Newscenter</b> oder in einem Artikel der <b>Zeitung</b> erwähnt, erscheint sein Foto statt des üblichen Pressefotos. Je Foto wählst du die <b>Art</b>: „Allgemein“ passt immer, eine <b>Pose</b> (Torjubel, Verletzung, Vertrag …) nur zum passenden Anlass – zuerst die passende Pose, sonst ein allgemeines Foto, sonst das übliche Pressefoto. <b>Zuordnung:</b> Spieler entstehen erst im Spiel und haben keine feste ID – trag den vollen Namen ein, wie er im Spiel steht; bei Gleichnamigen grenzt du per <b>Geburtsjahr</b> oder <b>Verein</b> (Vereins-ID, nur solange er dort spielt) ein. Für Ausnahmetalente die <b>Legenden-ID</b> eintragen (oder die Fotos direkt unter „Ausnahmetalente“ hochladen) – das gilt auch, wenn die Legende erst Jahre später im Spiel erscheint.</Explain>
+      <Explain>Eigene Bilder zu Spielern und Ausnahmetalenten. Das <b>Spielerbild (Porträt)</b> ersetzt im Spiel überall das Gesicht – im Spielerprofil, in allen Listen, in Zeitung und Newscenter; du lädst ein Bild hoch und schneidest es im Kopf-Format zu. Die <b>Fotos</b> dagegen sind Pressebilder: Wird ein Spieler in einer Nachricht im <b>Newscenter</b> oder in einem Artikel der <b>Zeitung</b> erwähnt, erscheint sein Foto statt des üblichen Pressefotos. Je Foto wählst du die <b>Art</b>: „Allgemein“ passt immer, eine <b>Pose</b> (Torjubel, Verletzung, Vertrag …) nur zum passenden Anlass – zuerst die passende Pose, sonst ein allgemeines Foto, sonst das übliche Pressefoto. <b>Zuordnung:</b> Spieler entstehen erst im Spiel und haben keine feste ID – trag den vollen Namen ein, wie er im Spiel steht; bei Gleichnamigen grenzt du per <b>Geburtsjahr</b> oder <b>Verein</b> (Vereins-ID, nur solange er dort spielt) ein. Die <b>Ethnie</b> (verdeckt, nie sichtbar) legt fest, welche Gesichtsbilder der Spieler bekommt – leer = automatisch; ein Eintrag nur mit Ethnie ist erlaubt. Für Ausnahmetalente die <b>Legenden-ID</b> eintragen (oder die Fotos direkt unter „Ausnahmetalente“ hochladen) – das gilt auch, wenn die Legende erst Jahre später im Spiel erscheint.</Explain>
       <PhotoRightsNote />
       <datalist id={LEGEND_IDS_LIST}>{legends.map((l) => <option key={l.id} value={l.id}>{l.firstName} {l.lastName}</option>)}</datalist>
       <div className="ed-split">
@@ -67,6 +69,7 @@ export function PhotosSection({ ds, onChange }: P) {
               { key: 'name', label: 'Spieler (voller Name)', optional: true, hint: 'genau wie im Spiel, z. B. „Klaus Berger“; leer bei Legenden' },
               { key: 'born', label: 'Geburtsjahr', type: 'number', optional: true, hint: 'optional, für Gleichnamige' },
               { key: 'club', label: 'Verein (aktuell)', ref: 'club', optional: true, hint: 'optional: Vereins-ID – gilt nur, solange er dort spielt' },
+              { key: 'face', label: 'Ethnie (verdeckt)', type: 'select', options: FACE_OPTIONS, optional: true, emptyLabel: 'automatisch', hint: 'bestimmt, welche Gesichtsbilder der Spieler im Spiel bekommt; leer = automatisch' },
             ]} />
             <label className="ed-field">
               <span className="ed-label">Legenden-ID</span>

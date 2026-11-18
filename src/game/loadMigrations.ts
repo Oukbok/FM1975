@@ -74,6 +74,7 @@ import { migrateLeagueRep } from './leagueRepGame';
 import { migrateTransferLog } from './transferLog';
 import { migrateCareer } from './careerGame';
 import { migrateShirtNumbers } from './shirtMigration';
+import { migrateFaceNames } from './faceNameMigration';
 import { bindHonours } from './clubHonours';
 import { bindStaffFactor } from './staffGame';
 import { bindCoaching } from './coachingGame';
@@ -397,6 +398,8 @@ export function prepareLoadedGame(g: Game): void {
   if (!g.worldPool || g.worldPool.v !== 2) ensureWorldPool(g); // Weltspieler anlegen bzw. auf den EA-FC-Maßstab stauchen (migrateWorldScale)
   // Rückennummern aller Vereine + Weltspieler (game/shirtMigration.ts, nach dem Weltpool).
   try { migrateShirtNumbers(g); } catch (err) { console.error('Rückennummern-Nachrüstung fehlgeschlagen:', err); }
+  // Ethnie passt zum Namen (game/faceNameMigration.ts): einmalig, nach dem Weltpool, Namen bleiben.
+  try { migrateFaceNames(g); } catch (err) { console.error('Ethnie-Abgleich fehlgeschlagen:', err); }
   // Auslandsligen (game/worldLeagues.ts): frühere „Spiel für Spiel“-Divisionen ablösen und die laufende
   // Saison aller Länder bis heute nachspielen (ältere Spielstände).
   if (retireFullCountries(g) && g.world) g.world.live = undefined;

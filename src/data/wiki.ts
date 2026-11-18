@@ -117,7 +117,7 @@ Der Datensatz-Editor ist eine eigene Seite unter **/editor/** (Hauptmenü → Da
 - **Vereine:** erst **Land**, dann **Liga** (Startligen 1975/76 bzw. 1./2. Liga einer Saison der Weltdaten, Vereine ohne Liga, alle Vereine) – so ist jeder Verein der Welt erreichbar. Je Verein eigenes Wappen (PNG/JPG/SVG, auf 256 px verkleinert) und Heim-/Auswärtstrikot (Farben + Muster). Mit **Weiteres Wappen hinzufügen** legst du spätere Wappen an: Jedes ersetzt das vorige ab Saisonbeginn (1. Juli) des eingetragenen Jahres.
 - **Grafikpakete:** **Vereins-IDs als CSV** exportieren, Bilder danach benennen (\`eng-liverpool-rot.png\`, spätere Wappen \`eng-liverpool-rot@1999.png\`) und das Paket als ZIP, Ordner oder einzelne Bilder importieren. Andere Dateinamen ordnet der Editor nach Vereinsnamen zu, eine \`zuordnung.csv\` (\`datei;id\`) im Paket hat Vorrang. Vor dem Übernehmen zeigt eine Tabelle jede Datei mit Vorschau, Ziel und Status (neu/ersetzt). **Vorlage-Paket** liefert Anleitung und Liste, **Wappen dieses Datensatzes als Grafikpaket** exportiert alle Wappen zum Weitergeben.
 - **Amateur-Pool:** Städte, aus denen Amateurvereine nachrücken, wenn der Pool unter der untersten Liga zu klein wird.
-- **Spielerbild (Porträt)** (Spieler & Personal › Spielerbilder & Fotos, und im Formular jedes Ausnahmetalents): ein eigenes Bild je Spieler bzw. Legende, das im Spiel **überall das Gesicht ersetzt** – im Spielerprofil, in allen Listen und Tabellen, in Zeitung und Newscenter. Bild wählen oder in das Feld ziehen; die Vorschau zeigt den Ausschnitt im Kopf-Format der Gesichter (512 × 600), automatisch zentriert – Ziehen verschiebt, Mausrad oder Regler zoomt, **Übernehmen** speichert verkleinert als WebP (sonst JPEG). Zuordnung wie bei den Fotos (Name bzw. Legenden-ID).
+- **Spielerbild (Porträt)** (Spieler & Personal › Spielerbilder & Fotos, und im Formular jedes Ausnahmetalents): ein eigenes Bild je Spieler bzw. Legende, das im Spiel **überall das Gesicht ersetzt** – im Spielerprofil, in allen Listen und Tabellen, in Zeitung und Newscenter. Bild wählen oder in das Feld ziehen; die Vorschau zeigt den Ausschnitt im Kopf-Format der Gesichter (512 × 600), automatisch zentriert – Ziehen verschiebt, Mausrad oder Regler zoomt, **Übernehmen** speichert verkleinert als WebP (sonst JPEG). Zuordnung wie bei den Fotos (Name bzw. Legenden-ID). Im selben Eintrag wählst du auf Wunsch die **Ethnie** des Spielers (Mitteleuropa, Westafrika …) – sie bestimmt, welche Gesichtsbilder er im Spiel bekommt; leer = automatisch.
 - **Spielerfotos** (Spieler & Personal): eigene Fotos zu Spielern und Ausnahmetalenten, die **Newscenter** und **Zeitung** zeigen, wenn der Spieler erwähnt wird. Beliebig viele Fotos je Spieler (verkleinert auf 720 px, als WebP/JPEG im Datensatz). Je Foto wählst du die **Art**: **Allgemein** passt immer, eine **Pose** (Torjubel, Torschuss, Kopfball, Zweikampf, Torwart-Parade, Abpfiff, Verletzung, Vertrag, Training) nur zum passenden Anlass – z. B. Torjubel nach einem Sieg, Verletzung bei einer Verletzungsmeldung, Vertrag bei Transfer und Verlängerung. Gibt es keine passende Pose, nimmt das Spiel ein allgemeines Foto, sonst das übliche Pressefoto. Spieler entstehen erst im Spiel – deshalb trägst du den **vollen Namen** ein, wie er im Spiel steht (bei Gleichnamigen mit Geburtsjahr oder aktuellem Verein). Ausnahmetalente ordnest du über ihre **Legenden-ID** zu oder lädst die Fotos direkt im Bereich **Ausnahmetalente** hoch – das hält auch, wenn das Talent erst Jahre später erscheint. Bitte nur eigene oder rechtefreie Bilder verwenden.
 - **Prüfen** zeigt Fehler (z. B. doppelte IDs, ungerade Ligagrößen, fehlende Starter) und Hinweise. Ein Klick auf einen Eintrag springt in den Bereich und hebt die betroffene Zeile hervor.
 - **Rückgängig / Wiederholen** (Strg+Z, Strg+Umschalt+Z oder Strg+Y) über die letzten 40 Schritte; schnelles Tippen zählt als ein Schritt.
@@ -435,7 +435,7 @@ Frühere Bundesligisten, die 1975 nur noch in den Amateurligen spielen, existier
     id: 'squad-names-faces',
     category: 'squad',
     title: 'Namen, Herkunft & Gesichter',
-    keywords: ['name', 'namen', 'vorname', 'herkunft', 'nationalität', 'gesicht', 'porträt', 'foto', 'jahrgang', 'ddr', 'ausländer'],
+    keywords: ['name', 'namen', 'vorname', 'herkunft', 'nationalität', 'gesicht', 'porträt', 'foto', 'jahrgang', 'ddr', 'ausländer', 'ethnie', 'aussehen', 'migration'],
     body: `## Namen nach Herkunft und Jahrgang
 Jeder neu erzeugte Spieler, Trainer und Mitarbeiter bekommt eine **Herkunft** (z. B. deutsch, ostdeutsch, Deutsch-Türke, Deutsch-Italiener, jugoslawisch, niederländisch, skandinavisch, polnisch, westafrikanisch, südamerikanisch). Welche Herkünfte wie oft vorkommen, ändert sich mit den Jahrzehnten – 1975 sind über 90 % der Neuen Deutsche, heute rund die Hälfte. Ostdeutsche Spieler kommen erst nach der Wiedervereinigung in größerer Zahl dazu.
 
@@ -443,13 +443,20 @@ Die **Vornamen** richten sich nach dem **Geburtsjahrgang**: Ein 1975 aufgestellt
 
 **Bestehende Namen ändern sich nie** – der Name ist die Identität eines Spielers.
 
+## Aussehen und Name
+Jeder Spieler hat eine **verdeckte Ethnie**, die nur sein Aussehen bestimmt und nirgends angezeigt wird. Sie hängt von Land und Jahrgang ab: Mit den Jahrzehnten unterscheiden sich Nationalität und Herkunft der Familie immer öfter – etwa Franzosen, Engländer, Niederländer oder Belgier mit afrikanischen Eltern, Schweizer und Österreicher mit Wurzeln auf dem Balkan, Deutsche mit türkischen, polnischen oder ghanaischen Eltern. Im Ostblock bleibt das bis 1990 die große Ausnahme.
+
+Der **Name passt zum Aussehen**: Der Nachname stammt aus der Herkunft der Familie, der Vorname bei älteren Jahrgängen meist auch, bei jüngeren immer öfter aus dem Land, in dem der Spieler aufgewachsen ist. Die Nationalität bleibt die des Landes. In manchen Ländern sieht man die Herkunft am Namen nicht – ein afro-brasilianischer Spieler heißt wie jeder Brasilianer.
+
+Bei älteren Spielständen bleiben alle Namen, wie sie sind; einmalig wird nur das Aussehen eines Spielers angepasst, wenn sein Nachname eindeutig zu einer anderen Herkunft gehört.
+
 ## Gesichter
 Jedes Gesicht wird fest aus der Spieler-ID bestimmt: derselbe Spieler sieht immer gleich aus. Liegt ein **Porträtfoto** passend zur Herkunftsgruppe und zum Jahrzehnt seiner aktiven Zeit vor, zeigt das Spiel das Foto (mit Trikot in Vereinsfarben, wo eine Trikotmaske vorliegt) und lässt den Spieler über die Altersstufen 18/25/32/38 altern. Sonst erscheint das gezeichnete Gesicht – der Hautton passt dabei zur Herkunft. Trainer, Berater und Manager nutzen eigene Porträts der jeweiligen Zeit.
 
 **Eigene Spielerbilder:** Hat der Datensatz zu einem Spieler oder Ausnahmetalent ein hochgeladenes **Spielerbild** (Datensatz-Editor › Spielerbilder & Fotos bzw. Ausnahmetalente), zeigt das Spiel dieses Bild überall statt des Gesichts – im Profil, in Listen, in Zeitung und Newscenter. Es gilt, solange der Spielstand mit diesem Datensatz läuft.
 
 ## Im Datensatz-Editor
-Unter **Namen › Vornamen je Jahrgang** legst du je Herkunft fest, welche Vornamen ab welchem Geburtsjahr üblich sind (\`abJahr: Name, Name, …\`).`,
+Unter **Namen › Vornamen je Jahrgang** legst du je Herkunft fest, welche Vornamen ab welchem Geburtsjahr üblich sind (\`abJahr: Name, Name, …\`). Unter **Namen › Ethnie** stellst du je Herkunft die Anteile über die Jahre ein. Für einzelne Spieler wählst du die Ethnie unter **Spielerbilder & Fotos** (Zuordnung über den Namen, leer = automatisch) bzw. bei den **Ausnahmetalenten**.`,
   },
   {
     id: 'squad-table',

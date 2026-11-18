@@ -88,6 +88,11 @@ export interface PlayerPhotoSet {
    * Listen, Presse). Data-URL WebP/JPEG im Kopf-Format 512 × 600 (Editor schneidet zu).
    */
   portrait?: string;
+  /**
+   * Ethnie (Gesichtsgruppe, Wunsch Pascal): überschreibt im Spiel die verdeckte Ethnie
+   * `Player.face` des zugeordneten Spielers (welche Gesichtsbilder er bekommt). Leer = automatisch.
+   */
+  face?: string;
 }
 
 export interface Dataset {

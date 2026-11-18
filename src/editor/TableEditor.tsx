@@ -33,6 +33,8 @@ export interface Col {
   step?: number;
   /** Feld enthält eine Vereins-ID: Vorschlagsliste beim Tippen, unbekannte IDs rot. */
   ref?: 'club';
+  /** Beschriftung der leeren Auswahl bei optionalen Auswahlfeldern (Standard „–“). */
+  emptyLabel?: string;
 }
 
 export type SortState = { key: string; dir: 1 | -1 } | null;
@@ -101,7 +103,7 @@ export function Cell({ row, col, onChange }: { row: Record<string, unknown>; col
   if (t === 'select') {
     return (
       <select className="ed-in" value={v == null ? '' : String(v)} onChange={(e) => set(e.target.value === '' && col.optional ? undefined : e.target.value)}>
-        {col.optional && <option value="">–</option>}
+        {col.optional && <option value="">{col.emptyLabel ?? '–'}</option>}
         {col.options?.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
     );

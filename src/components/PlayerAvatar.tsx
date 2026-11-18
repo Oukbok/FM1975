@@ -8,7 +8,7 @@
 import { useState } from 'react';
 import { Player, Club } from '../types';
 import { faceImageFor, faceFailed, markFaceFailed, type FaceImage } from './faces/faceLookup';
-import { portraitOf } from '../game/playerPortraits';
+import { portraitOf, shownFace } from '../game/playerPortraits';
 
 // -----------------------------------------------------------------------------
 // Deterministischer Hash aus String (für stabilen Seed pro Spieler)
@@ -63,7 +63,8 @@ const SKIN_RANGE: Record<string, [number, number]> = {
 
 export function generatePlayerAvatar(player: Player, _club?: Club): AvatarConfig {
   const seed = hashString(player.id || player.fullName || 'x');
-  const range = player.face ? SKIN_RANGE[player.face] : undefined;
+  const face = shownFace(player); // Ethnie aus dem Datensatz hat Vorrang (game/playerPortraits.ts)
+  const range = face ? SKIN_RANGE[face] : undefined;
   const skinTone = range ? range[0] + (seed % (range[1] - range[0] + 1)) : seed % 10;
   const faceId = Math.floor(seed / 10) % 20;
   const hairStyle = Math.floor(seed / 200) % 20;
@@ -376,7 +377,7 @@ export function faceSrcOf(player: FacePerson, staff?: boolean, year?: number): F
     if (own) return { src: own, mask: null, key: OWN_PORTRAIT_KEY };
   }
   const birthYear = player.dateOfBirth ? Number(player.dateOfBirth.slice(0, 4)) : undefined;
-  const img = faceImageFor({ id: player.id, face: player.face, birthYear, age: player.age, staff, year });
+  const img = faceImageFor({ id: player.id, face: staff ? player.face : shownFace(player), birthYear, age: player.age, staff, year });
   return img && !faceFailed(img.src) ? img : null;
 }
 

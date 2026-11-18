@@ -6,6 +6,7 @@ import { ALL_POSITIONS } from '../../types';
 import { PhotoGallery, PhotoRightsNote } from '../PhotoGallery';
 import { legendPhotoSet } from './Photos';
 import { PortraitEditor } from '../PortraitEditor';
+import { FACE_OPTIONS } from '../../data/faceGroups';
 
 // =============================================================================
 // LEGENDEN: Ausnahmetalente der Fußballgeschichte (Datensatz-Feld `legendsV2`).
@@ -13,7 +14,6 @@ import { PortraitEditor } from '../PortraitEditor';
 // =============================================================================
 type P = { ds: Dataset; onChange: () => void };
 
-const FACES = ['mitteleuropa', 'nordeuropa', 'suedeuropa', 'osteuropa', 'balkan', 'tuerkei', 'westafrika', 'lateinamerika', 'ostasien', 'nordafrika'];
 const opt = (xs: string[]) => xs.map((x) => ({ value: x, label: x }));
 const COUNTRY_OPTS = Object.entries(LEGEND_COUNTRIES).map(([value, label]) => ({ value, label: `${label} (${value})` }));
 const POS_OPTS = opt(ALL_POSITIONS as string[]);
@@ -38,7 +38,7 @@ export function LegendsSection({ ds, onChange }: P) {
     { key: 'country', label: 'Land', type: 'select', options: COUNTRY_OPTS, width: 180 },
     { key: 'pos', label: 'Pos.', type: 'select', options: POS_OPTS, width: 70 },
     { key: 'potential', label: 'Potenzial', type: 'number', width: 80 },
-    { key: 'face', label: 'Ethnie', type: 'select', options: opt(FACES), optional: true, width: 130 },
+    { key: 'face', label: 'Ethnie', type: 'select', options: FACE_OPTIONS, optional: true, emptyLabel: 'automatisch', width: 130 },
   ];
   const make = (): LegendDef => ({
     id: `talent${rows.length + 1}`, firstName: 'Vorname', lastName: 'Nachname', birth: '2010-01-01', country: 'GER', pos: 'ZM',
@@ -72,7 +72,7 @@ function LegendForm({ ds, l, onChange }: { ds: Dataset; l: LegendDef; onChange: 
         { key: 'foot', label: 'Starker Fuß', type: 'select', options: [{ value: 'right', label: 'rechts' }, { value: 'left', label: 'links' }, { value: 'both', label: 'beidfüßig' }] },
         { key: 'type', label: 'Spielertyp', type: 'select', options: LEGEND_TYPES.map((t) => ({ value: t.id, label: t.label })) },
         num('height', 'Größe (cm)'),
-        { key: 'face', label: 'Ethnie (verdeckt)', type: 'select', options: opt(FACES), optional: true, hint: 'bestimmt nur das Gesicht, nie sichtbar; leer = typisch fürs Land' },
+        { key: 'face', label: 'Ethnie (verdeckt)', type: 'select', options: FACE_OPTIONS, optional: true, emptyLabel: 'automatisch', hint: 'bestimmt nur das Gesicht, nie sichtbar; leer = typisch fürs Land' },
       ]} />
       <div className="ed-sec">Erscheinen</div>
       <FieldForm obj={obj} onChange={onChange} cols={[
