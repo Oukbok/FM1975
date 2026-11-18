@@ -37,6 +37,7 @@ import { buildProClub } from '../data/generate';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { RES_PREFIX, clubTierNow, isReserveId, ownReserveId, parentOfReserve, reserveCap, reserveIdOf, reserveTierOk } from './reserveIds';
 import { RESERVE_CUP_PREFIX } from './reserveCup';
+import { amateurFinalPos, lowestSimTier } from './amateurLeagues';
 import { finishLocalSeason, reserveLevel, sortedTable, xiStrengthNow, type ReserveState } from './reserveTeam';
 
 type G = Game & { reserve?: ReserveState; reserveSeeded?: number };
@@ -386,7 +387,9 @@ function cupQualifiers(g: Game, year: number): string[] {
   const ai = Object.values(g.simClubs).filter((s) => isReserveId(s.id) && s.id !== own).map((s) => {
     const p = posIn(s.id);
     const jitter = (hashStr(`rescup:${s.id}:${year}`) % 100) / 10;
-    return { id: s.id, score: p ? (6 - p.tier) * 30 - p.pos * 2 + jitter : s.strength - 20 + jitter };
+    // Amateurliga (game/amateurLeagues.ts): Endplatz zählt wie eine Staffel der Ebene darunter.
+    const am = p ? null : amateurFinalPos(g, s.id);
+    return { id: s.id, score: p ? (6 - p.tier) * 30 - p.pos * 2 + jitter : am ? (6 - lowestSimTier(g) - 1) * 30 - am * 2 + jitter : s.strength - 20 + jitter };
   }).sort((a, b) => b.score - a.score);
   for (const x of ai) { if (out.length >= 3) break; out.push(x.id); }
   return out;

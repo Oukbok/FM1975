@@ -17,6 +17,8 @@ import { findOwnMatchDue, findMatch, quickSimOwnMatch } from '../src/game/ownMat
 import { cupTieState, ownAmrId } from '../src/game/reserveCup';
 import { resolveLineup } from '../src/engine/match/team';
 import { bindRegistration } from '../src/game/registrationGame';
+import { amateurLeagues, amateurLeaguesDaily, amateurTablesView } from '../src/game/amateurLeagues';
+import { competitionOptions, buildSnapshot } from '../src/game/competitionView';
 let fails = 0;
 const ok = (c: unknown, l: string) => { console.log(`${c ? 'OK  ' : 'FEHL'} ${l}`); if (!c) fails++; };
 const mgr = { name: 'T', nationality: 'GER', birthYear: 1950, style: 'balanced', background: 'newcomer' } as any;
@@ -168,6 +170,41 @@ ok(!Object.keys(g10.clubs).some((id) => id.startsWith('amr-')) && rulesOk(g10), 
   ok(resIds(o).length > 20 && (o as any).reserveSeeded, `nächste Saison: ${resIds(o).length} zweite Mannschaften angelegt`);
   const ost = reserveState(o)!;
   ok(ost.table.length === 18 && ost.table.some((r) => g.simClubs[r.id] || o.simClubs[r.id]), `eingeordnet: ${ost.leagueName} mit echten Vereinen`);
+}
+// --- 6) Amateurligen mit den KI-Amateuren vor 1994 ---------------------------------------------
+{
+  const h = make();
+  const sundays = (from: string, to: string) => { const out: string[] = []; const d = new Date(`${from}T00:00:00Z`); while (d.getUTCDay() !== 0) d.setUTCDate(d.getUTCDate() + 1); for (; d.toISOString().slice(0, 10) <= to; d.setUTCDate(d.getUTCDate() + 7)) out.push(d.toISOString().slice(0, 10)); return out; };
+  for (const d of sundays('1975-08-01', '1975-11-30')) amateurLeaguesDaily(h, d);
+  const tv = amateurTablesView(h);
+  const resIn = tv.reduce((a, t) => a + t.rows.filter((r) => r.id.startsWith('res-')).length, 0);
+  ok(tv.length >= 7 && tv.every((t) => t.rows.length === 18 && t.tier === 3 && t.name.startsWith('Amateurliga ')), `1975: ${tv.length} Amateurligen (${tv.map((t) => t.name.replace('Amateurliga ', '')).join(', ')})`);
+  ok(resIn >= 25 && tv.every((t) => t.md >= 15), `${resIn} zweite Mannschaften spielen Tabelle (Spieltag ${tv[0]?.md})`);
+  const opts = competitionOptions(h, h.season).filter((o) => o.key.startsWith('am:'));
+  const snap = buildSnapshot(h, h.season, opts[0]?.key ?? '');
+  ok(opts.length === tv.length && !!snap?.table?.length && snap.table[0].p > 0, `Statistiken › Liga: ${opts.length} Amateurligen mit Tabelle`);
+  const pool9 = new Set(Object.values(h.simClubs).filter((x) => x.tier === 9 && !x.id.startsWith('res-')).map((x) => x.id));
+  startNextSeason(h);
+  const fin = (h as any).amateurLeagues?.final;
+  const champs = Object.values(fin?.order ?? {}).map((ids: any) => ids.find((id: string) => !id.startsWith('res-') && !id.startsWith('x_yl.')));
+  const up = h.leagues.otherDivisions.filter((d) => d.tier === 2).flatMap((d) => d.clubIds).filter((id) => pool9.has(id));
+  const champUp = up.filter((id) => champs.includes(id));
+  ok(!!fin && up.length >= 4 && champUp.length >= Math.min(4, up.length) - 1, `Aufsteiger in die 2. Liga aus dem Pool: ${up.length}, davon Amateurmeister ${champUp.length}`);
+  ok(h.messages.some((m) => m.subject.startsWith('Amateurligen 1975/76')), 'Chronik: Meister der Amateurligen');
+  ok(rulesOk(h) && !up.some((id) => id.startsWith('res-')), 'keine zweite Mannschaft steigt in die 2. Liga auf');
+  const al = amateurLeagues(h)!;
+  ok(al.season === '1976/77' && al.leagues.every((l) => l.md === 0), 'neue Saison: neue Tabellen');
+  const g85 = make(1985);
+  const t85 = amateurTablesView(g85).length ? amateurTablesView(g85) : (amateurLeagues(g85), amateurTablesView(g85));
+  ok(t85.length >= 7 && t85.every((t) => t.name.startsWith('Amateur-Oberliga ')), `1985: ${t85[0]?.name} …`);
+  const g92 = make(1992);
+  amateurLeagues(g92);
+  const t92 = amateurTablesView(g92);
+  const no = t92.find((t) => t.key === 'nordost'), we = t92.find((t) => t.key === 'westfalen');
+  ok(!!we && we.tier === 3 && (!no || (no.tier === 4 && no.name.startsWith('Verbandsliga'))), `1992: ${we?.name} (Ebene ${we?.tier}), ${no?.name ?? '–'} (Ebene ${no?.tier ?? '–'})`);
+  amateurLeagues(g95);
+  const t95 = amateurTablesView(g95);
+  ok(t95.every((t) => t.tier === 4 && t.name.startsWith('Oberliga ')), `ab 1994: ${t95.length} Oberligen auf Ebene 4`);
 }
 console.log(fails ? `\n${fails} Fehler.` : '\nZweite Mannschaft: alle Prüfungen bestanden.');
 process.exit(fails ? 1 : 0);

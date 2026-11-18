@@ -75,6 +75,7 @@ import { recordMonthlyOv } from './ovHistory';
 import { standNamesMonthly } from './standNames';
 import { bindRegistration, registrationDaily } from './registrationGame';
 import { reserveDaily } from './reserveTeam';
+import { amateurLeaguesDaily } from './amateurLeagues';
 import { nationalDaily } from './national/nationalGame';
 import { bindHonours } from './clubHonours';
 import { bindGameIds } from './resetModuleState';
@@ -296,6 +297,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
     // es erscheint KEIN Popup und der Lauf pausiert nicht mehr. Eine Meldung
     // gibt es nur noch bei den großen Auf-/Abwertungsrunden (rating_update).
     reserveDaily(g, today); // Spieltag der zweiten Mannschaft (game/reserveTeam.ts) – vor der Entwicklung
+    amateurLeaguesDaily(g, today); // höchste Amateurligen mit den KI-Amateuren (game/amateurLeagues.ts)
     weeklyDevelopment(g.players, g.clubs, yearOf(today), withReserve(devContextFor(g, today), today, g), g.managedClubId);
     recordProfileWeek(g, today); // Wochenverlauf fürs Spielerprofil (nur eigener Kader)
     // Jugendentwicklung aller Vereine (Talente wachsen; Scouting präzisiert sich).

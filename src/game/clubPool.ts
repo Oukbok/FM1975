@@ -27,6 +27,7 @@ import { addHistoricSeason, addHistoricTitle } from './clubRecords';
 import { ensureArchive, leagueArchive } from './leagueArchive';
 import type { Game } from './state';
 import { isReserveId, poolPickAllowed } from './reserveIds';
+import { amateurPoolBonus } from './amateurLeagues';
 
 export const isPoolClub = (s: SimClub | undefined) => !!s && (s.tier === POOL_TIER || s.tier === DDR_POOL_TIER);
 
@@ -40,8 +41,8 @@ function poolOf(g: Game, ddr: boolean, withReserves = true): SimClub[] {
 }
 
 /** Pool-Kandidaten nach Stärke + Zufall, bevorzugt aus `group`; `allow` filtert (zweite Mannschaften, game/reserveIds.ts). */
-function pickFromPool(pool: SimClub[], n: number, group: LeagueGroup, rnd: () => number, taken: Set<string>, allow?: (id: string) => boolean): string[] {
-  const score = new Map(pool.map((s) => [s.id, s.strength + rnd() * 6]));
+function pickFromPool(pool: SimClub[], n: number, group: LeagueGroup, rnd: () => number, taken: Set<string>, allow?: (id: string) => boolean, bonus?: (id: string) => number): string[] {
+  const score = new Map(pool.map((s) => [s.id, s.strength + rnd() * 6 + (bonus?.(s.id) ?? 0)]));
   const free = pool.filter((s) => !taken.has(s.id) && (!allow || allow(s.id)));
   const sorted = (xs: SimClub[]) => xs.sort((a, b) => score.get(b.id)! - score.get(a.id)!);
   const ordered = group ? [...sorted(free.filter((s) => s.group === group)), ...sorted(free.filter((s) => s.group !== group))] : sorted(free);
@@ -59,10 +60,11 @@ export function absorbPlaceholders(g: Game, res: TransitionResult, season: strin
   const pool = poolOf(g, false);
   const taken = new Set<string>();
   const keep: SimClub[] = [];
+  const bonus = amateurPoolBonus(g); // Meister der Amateurligen zuerst (game/amateurLeagues.ts)
   for (const ph of res.placeholders) {
     const div = res.divisions.find((d) => d.ids.includes(ph.id));
     const single = !!div && res.divisions.filter((d) => d.meta.tier === div.meta.tier).length === 1;
-    const [id] = pickFromPool(pool, 1, ph.group, rnd, taken, (x) => !!div && poolPickAllowed(g, x, div.meta.tier, div.ids, single));
+    const [id] = pickFromPool(pool, 1, ph.group, rnd, taken, (x) => !!div && poolPickAllowed(g, x, div.meta.tier, div.ids, single), bonus);
     if (!id || !div) { keep.push(ph); continue; }
     div.ids[div.ids.indexOf(ph.id)] = id;
   }
@@ -89,11 +91,12 @@ export function poolExchange(
   const pool = poolOf(g, false);
   const taken = new Set<string>();
   const out: string[] = [];
+  const bonus = amateurPoolBonus(g); // Meister der Amateurligen zuerst (game/amateurLeagues.ts)
   for (const m of divs) {
     const cur = current.find((c) => c.id === m.meta.id);
     if (!cur) continue;
     const down = [...cur.orderedIds].reverse().filter((id) => m.ids.includes(id) && id !== protectedId).slice(0, k);
-    const up = pickFromPool(pool, down.length, m.meta.group, rnd, taken, (x) => poolPickAllowed(g, x, m.meta.tier, m.ids, divs.length === 1));
+    const up = pickFromPool(pool, down.length, m.meta.group, rnd, taken, (x) => poolPickAllowed(g, x, m.meta.tier, m.ids, divs.length === 1), bonus);
     const n = Math.min(down.length, up.length);
     for (let i = 0; i < n; i++) {
       m.ids[m.ids.indexOf(down[i])] = up[i];

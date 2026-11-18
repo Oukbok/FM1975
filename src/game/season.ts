@@ -23,6 +23,8 @@ import { closeSeason, recordTransfer } from '../engine/history';
 import { buildProClub } from '../data/generate';
 import { recordSeasonEnd } from './clubRecords';
 import { archiveSeasonEnd } from './leagueArchive';
+import { closeAmateurLeagues } from './amateurLeagues';
+import { ownAmateurTable } from './reserveTeam';
 import { isReserveCupId, reserveCupClubs, reserveTransition, syncReserveClubs } from './reservePyramid';
 import { absorbPlaceholders, ddrExchange, mergeDdrPool, poolDrift, poolExchange, refillPool, settlePool } from './clubPool';
 import { CurrentDivision, TransitionResult, computeSeasonTransition, structureForSeason } from '../data/reforms';
@@ -180,6 +182,8 @@ export function startNextSeason(g: Game): void {
   archiveSeasonEnd(g, oldSeason);
   // Ergebnisse je Spieltag aller Ligen (Statistiken › Liga: Spieltage, Heim/Auswärts/Form) – game/leagueResults.ts.
   storeSeasonResults(g, oldSeason);
+  // Höchste Amateurligen: Endstand vor dem Pool-Tausch (Meister haben Vorrang, game/amateurLeagues.ts).
+  closeAmateurLeagues(g, ownAmateurTable(g));
   // Vereinsauszeichnungen (Bronze/Silber/Gold) für alle Vereine mit vollem Kader.
   honoursSeasonEnd(g, oldSeason);
   // Managerkarriere: Ansehen, Trainer- und Managerbilanz (kein Vereinswechsel mehr; careerSw ist immer null)

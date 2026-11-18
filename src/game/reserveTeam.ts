@@ -36,6 +36,8 @@ import { localLeagueName, reserveEra } from '../data/reserveRules';
 import { seasonStartYear } from '../data/timeline';
 import { isReserveId, ownReserveId, reserveIdOf } from './reserveIds';
 import { regionOf } from './reservePyramid';
+import { amGroupOf, amateurTableIds, dropOwnAmateurGroup } from './amateurLeagues';
+import { localClubName } from './youthComps/localClubs';
 
 export type ReserveFocus = 'youth' | 'results' | 'comeback';
 export const FOCUS_LABEL: Record<ReserveFocus, string> = { youth: 'Nachwuchs fördern', results: 'Ergebnisse', comeback: 'Rückkehrer aufbauen' };
@@ -107,6 +109,11 @@ function newLocalTable(g: Game, club: Club, depth: number): ReserveRow[] {
   const row = (id: string, name: string, str: number): ReserveRow => ({ id, name, str, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0 });
   const rows: ReserveRow[] = [row(OWN_ID, g.simClubs[own]?.name ?? `${club.name} II`, base)];
   if (depth === 0) {
+    // Höchste Amateurliga der Verbandsgruppe – dieselbe Besetzung wie die KI-Staffeln (game/amateurLeagues.ts).
+    if (homeCountryOf(g) === 'ger') {
+      for (const x of amateurTableIds(g, amGroupOf(g, club.id), true)) rows.push(row(x.id, g.simClubs[x.id]?.name ?? localClubName(x.id), x.str));
+      return rows;
+    }
     const pool = Object.values(g.simClubs).filter((s) => s.tier === POOL_TIER && s.id !== own && regionOf(g, s.id) === region);
     const res = pool.filter((s) => isReserveId(s.id)).sort((a, b) => b.strength - a.strength).slice(0, 4);
     const ama = pool.filter((s) => !isReserveId(s.id)).sort((a, b) => b.strength - a.strength).slice(0, 13 - res.length);
@@ -140,6 +147,7 @@ export function reserveState(g: Game): ReserveState | null {
       leagueName: div ? div.name : localLeagueName(seasonStartYear(g.season), depth), note: prev?.note, hist: prev?.hist,
     };
     if (!div) catchUp(g, gg.reserve!);
+    dropOwnAmateurGroup(g); // diese Staffel führt jetzt deine Tabelle
   }
   gg.reserve!.level = level;
   return gg.reserve!;
@@ -322,6 +330,15 @@ export function ownReserveMinutes(g: Game, p: Player, proMinutes: number): numbe
   if (!st || st.season !== g.season || !st.lastXI.some(([id]) => id === p.id) || p.age > 23) return 0;
   const w = RESERVE_WEIGHT[Math.min(2, st.level)] * (st.focus === 'youth' ? 1.15 : st.focus === 'results' ? 0.95 : 1);
   return Math.max(0, RESERVE_MINUTES - proMinutes) * w;
+}
+
+/** Endstand deiner Amateurliga für die Staffel-Übersicht (game/amateurLeagues.ts), sonst null. */
+export function ownAmateurTable(g: Game): { key: string; order: string[] } | null {
+  const st = (g as G).reserve;
+  if (!st || st.season !== g.season || (st.depth ?? 0) > 0 || !st.table.length || ownReserveDivision(g) || homeCountryOf(g) !== 'ger') return null;
+  finishLocalSeason(g, st);
+  const own = ownReserveId(g);
+  return { key: amGroupOf(g, g.managedClubId), order: sortedTable(st, g.pointSystem === '3-point' ? 3 : 2).map((r) => (r.id === OWN_ID ? own : r.id)) };
 }
 
 export function sortedTable(st: ReserveState, win = 3): ReserveRow[] {

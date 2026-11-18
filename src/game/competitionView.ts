@@ -5,6 +5,7 @@
 // Historie vor Spielbeginn (data/history/). Die Seiten in views/statistiken/
 // (Liga, Pokal, International) lesen nur diesen Schnappschuss.
 // =============================================================================
+import { amateurTablesView, sortedAm } from './amateurLeagues';
 import { COUNTRY_BY_CC } from '../data/world/countries';
 import { identOf } from './worldCompose';
 import { homeCountryOf } from './state';
@@ -176,6 +177,8 @@ export function competitionOptions(g: Game, season: string): CompOption[] {
     const pd = g.leagues.playerDivision;
     const divs = [{ id: pd.id, name: pd.name, tier: pd.tier }, ...g.leagues.otherDivisions.map((d) => ({ id: d.id, name: d.name, tier: d.tier }))].sort(tierSort);
     for (const d of divs) out.push({ key: d.id, label: d.name, kind: 'league', section: leagueSection(d.tier, g), tier: d.tier });
+    // Höchste Amateurligen mit den zweiten Mannschaften (game/amateurLeagues.ts).
+    for (const a of amateurTablesView(g)) out.push({ key: `am:${a.key}`, label: a.name, kind: 'league', section: leagueSection(a.tier, g), tier: a.tier });
     if (g.cup) out.push({ key: 'cup', label: CUP_LABEL('cup', season), kind: 'cup', section: 'Pokal' });
     for (const k of ['ec', 'cwc', 'uefa'] as const) if (g.euroCups?.[k]) out.push({ key: k, label: CUP_LABEL(k, season), kind: 'cup', section: 'Europa' });
   }
@@ -372,6 +375,18 @@ export function buildSnapshot(g: Game, season: string, key: string): CompSnapsho
         clubStats: clubStatsFromRows(table, g.fixtures),
       };
     }
+    if (key.startsWith('am:')) {
+      const a = amateurTablesView(g).find((x) => `am:${x.key}` === key);
+      if (!a) return null;
+      const table: TableRowLite[] = sortedAm(a.rows, pts).map((r, i) => ({ clubId: r.id, pos: i + 1, p: r.p, w: r.w, d: r.d, l: r.l, gf: r.gf, ga: r.ga, pts: r.w * pts + r.d }));
+      return {
+        ...base, tier: a.tier, table, clubStats: clubStatsFromRows(table),
+        zones: table.map((_, i) => (i === 0 ? 'zone-cl' : i >= table.length - 3 ? 'zone-rel' : '')),
+        caption: `${a.md} von ${a.total} Spieltagen`,
+        note: 'Höchste Amateurliga unterhalb der simulierten Ligen: nur die Tabelle wird gerechnet (schlankes Ergebnis-Modell wie bei den Auslandsligen), Einzelergebnisse und -statistiken gibt es nicht. '
+          + 'Zweite Mannschaften dürfen nie in die Liga ihrer ersten Mannschaft oder höher und nie in die 2. Bundesliga aufsteigen – dann rückt der Nächste nach. Der Meister hat beim Aufstieg den Vorrang.',
+      };
+    }
     const d = g.leagues.otherDivisions.find((x) => x.id === key)!;
     const table: TableRowLite[] = d.table.rows.map((r) => ({ clubId: r.clubId, pos: r.position, p: r.played, w: r.won, d: r.drawn, l: r.lost, gf: r.goalsFor, ga: r.goalsAgainst, pts: r.points, ded: r.deduction, form: r.form }));
     const ids = table.map((r) => r.clubId);
@@ -416,6 +431,7 @@ export function compClubName(g: Game, id: string, season: string, short = false)
   const hf = HIST_FOREIGN[id];
   if (hf) return hf.name;
   if (isLocalClub(id)) return localClubName(id); // erzeugte Ortsvereine der Jugendstaffeln
+  if (id.startsWith('t:')) return id.slice(2); // Amateurverein einer alten Amateurliga (game/reserveTeam.ts)
   const archName = archivedSeason(g, season)?.names[id];
   if (!g.clubs[id] && !g.simClubs[id] && archName) return archName;
   const v = clubView(g, id, year);

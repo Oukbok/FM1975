@@ -21,7 +21,7 @@ export function TeamName({ g, id, season, short = false, size = 20 }: { g: Game;
   const name = compClubName(g, id, season, short);
   const withFlag = useContext(TeamFlagCtx);
   const flag = withFlag ? <CountryFlag country={country ?? (id.startsWith('ddr') ? 'DDR' : 'Deutschland')} height={Math.max(10, Math.round(size * 0.55))} /> : null;
-  if (country || id.startsWith('x_')) {
+  if (country || id.startsWith('x_') || id.startsWith('t:')) {
     const col = g.euroClubs?.[id]?.colors.primary ?? (isLocalClub(id) ? localClubColor(id) : 'var(--text-4)');
     return (
       <span className="cmp-team" title={country ? `${name} (${country})` : isLocalClub(id) ? `${name} (Ortsverein)` : name}>
