@@ -25,6 +25,7 @@ export const PRESS_VARIANTS: Record<string, number> = {
   '1975:fans': 10,
   '1975:kopfball': 3,
   '1975:torjubel': 6,
+  '1975:torschuss': 10,
 };
 
 const MOTIFS_BY_CATEGORY: Partial<Record<InboxMessage['category'], PressMotif[]>> = {
