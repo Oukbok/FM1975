@@ -61,6 +61,8 @@ Die Seiten liegen jetzt auf Papier; diese Fotos werden nur noch für die dunklen
 ## 2. Spielergesichter (A – größter Einzelhebel)
 **Stand:** 615 Bilder – Epoche `1970` 310, Epoche `1980` 305 (dünn besetzt: `ostasien`, `nordafrika`, `lateinamerika`), alle ohne Altersstufe und ohne Maske; es fehlen `staff` und alle Epochen ab `1990`. Seit dem Look „Akte“ werden die Köpfe senkrecht mittig gezeigt – Bildvorgaben bleiben gleich.
 
+**Epoche 1990 (2026-11-19):** 268 Bilder aus 27 Paketen (Pakete 18–20 und die Bilder 242, 297 fehlen), nach Aussehen einsortiert – gemischte Herkunft (z. B. „französisch-senegalesisch“) liegt bei `westafrika`/`nordafrika`. Prompt für die 2000er: `docs/bilder/faces-2000-prompt.md`.
+
 **Ethnie gesichtet (2026-11-18):** Alle 615 Bilder angesehen. Die Ordner passen zum Aussehen; einzige Ausnahme `suedeuropa/1980/159` (gemischte Herkunft, wirkt südamerikanisch) liegt jetzt unter `lateinamerika/1980/159`. Neue Bilder: nach dem Ablegen `node scripts/faces-register.mjs` – es listet nicht gesichtete Bilder; Übersichtsbilder `python3 scripts/faces-sheet.py`, Liste `docs/bilder/faces-gesichtet.txt`. Am dringendsten fehlen mit wachsender Vielfalt ab den 90ern: `westafrika`, `nordafrika`, `tuerkei`, `lateinamerika` sowie alle Gruppen ab Epoche `1990`.
 
 Technik steht (Register `src/data/faceImages.ts`, Zuordnung `src/components/faces/faceLookup.ts`, Anzeige `src/components/PlayerAvatar.tsx`).
