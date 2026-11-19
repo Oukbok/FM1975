@@ -4,7 +4,7 @@
 # Sichten: python3 scripts/faces-sheet.py (schreibt test-output/faces-sichtung/*.jpg).
 # Passt ein Bild nicht zum Ordner, in den richtigen Gruppenordner verschieben, dann hier eintragen.
 # Stand 2026-11-18: 615 Bilder gesichtet; verschoben: suedeuropa/1980/159 → lateinamerika/1980/159.
-# Stand 2026-11-19: 298 Bilder Epoche 1990 gesichtet (Nr. 242 und 297 fehlen); 34 nach Aussehen umsortiert (u. a. gemischte Herkunft → westafrika/nordafrika).
+# Stand 2026-11-19: 300 Bilder Epoche 1990 gesichtet; 34 nach Aussehen umsortiert (u. a. gemischte Herkunft → westafrika/nordafrika).
 balkan/1970/03
 balkan/1970/102
 balkan/1970/115
@@ -918,3 +918,5 @@ westafrika/1990/182
 westafrika/1990/186
 westafrika/1990/192
 westafrika/1990/197
+mitteleuropa/1990/242
+mitteleuropa/1990/297
