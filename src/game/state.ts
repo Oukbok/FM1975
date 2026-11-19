@@ -2,6 +2,7 @@ import { PlannedActivity } from '../data/activities';
 import { COUNTRY_BY_CC } from '../data/world/countries';
 import { EuroClub } from '../data/europe';
 import type { WorldState } from '../engine/world';
+import type { NationalJob, NationalOffer } from './national/nationalJob';
 import type { SeasonPhase, StaffMember, TrainingFocus } from '../engine/staffPeople';
 import type { ClubEnvironment } from '../engine/environment';
 import { generateBandenOffers, generateShirtOffers } from '../engine/finances';
@@ -192,6 +193,13 @@ export interface Game {
   savedTactics?: import('../components/tactics/savedTactics').SavedTactic[];
   /** Privatleben beim Start abgeschaltet. */
   privateOff?: boolean;
+  /** Nationaltrainer (game/national/nationalJob.ts): laufende/letzte Amtszeit; fehlt = nie Nationaltrainer. */
+  nationalJob?: NationalJob;
+  /** Entlassung als Nationaltrainer möglich (Option im Assistenten); fehlt = an. */
+  nationalSackable?: boolean;
+  /** Offenes Angebot eines Verbandes / abgelehnte Angebote (Nation → Datum). */
+  nationalOffer?: NationalOffer;
+  nationalDeclined?: Record<string, string>;
 }
 
 /** Heimatland des Spielstands (fehlt = Deutschland). */

@@ -33,6 +33,8 @@ export { intlValueFactor } from '../../engine/clubEconomy';
 import { homeNat } from '../registrationGame';
 import { countryInfo, countryOfNat } from '../../data/countryFlags';
 import { moraleJolt } from '../moraleJolt';
+import { activeJob, nextCycleDef, bookOwnMatch, fixedTeamsFor, jobDaily, nationalVacancies, noteExpectations, tKey, tournamentJobDay } from './nationalJob';
+import { jobSquadFor } from './nationalPick';
 
 export interface IntlWindow { from: string; dates: string[]; matches: NtMatch[]; label: string; squads: Record<string, string[]>; done?: boolean }
 export interface TournamentRecord { kind: TournamentKind; year: number; place: string; winner: string; runnerUp: string; home: string; topScorer?: [string, string, number] }
@@ -111,12 +113,13 @@ function nextTournamentKind(y0: number): TournamentKind | null {
   return null;
 }
 
-function hostPick(kind: TournamentKind, year: number): string {
+export function hostPick(kind: TournamentKind, year: number): string {
   const list = activeNations(year).filter((c) => kind === 'WM' || confOf(NATION_BY_CODE[c], year) === 'UEFA');
   return list[hashStr(`${kind}${year}host`) % list.length];
 }
 
-const available = (g: Game) => (c: Cand) => {
+/** Ausschluss für die Nominierung (true = nicht berufen): volle Spieler bei Verletzung/Sperre, Weltspieler nie ausgeschlossen. */
+export const available = (g: Game) => (c: Cand) => {
   if (!c.full) return false;
   const p = g.players[c.id];
   return !p || !!p.injury || (p.availability !== 'available' && p.availability !== 'international');
@@ -125,13 +128,16 @@ const available = (g: Game) => (c: Cand) => {
 /** Fenster beginnt: Aufgebote, Spiele (alle Nationen), Abstellung. */
 function startWindow(g: Game, st: NationalState, w: IntlWindow): void {
   const year = yearOf(w.dates[0]);
-  const strength = allStrengths(g, w.from);
+  // Kopie: die eigene Nation des Nationaltrainers spielt mit deinem Aufgebot (game/national/nationalPick.ts).
+  const strength = new Map(allStrengths(g, w.from));
   const r = mulberry32(hashStr(`${g.season}|${w.dates[0]}|lsp`));
   const nats = activeNations(year).filter((c) => strength.has(c));
   const size = Math.min(23, squadSizeOf(year));
   const squads = new Map<string, Cand[]>();
   for (const n of nats) {
-    const sq = pickSquad(g, n, w.from, size, available(g));
+    const own = jobSquadFor(g, n, `w:${w.dates[0]}`, w.from, size);
+    if (own) strength.set(n, own.strength);
+    const sq = own?.squad ?? pickSquad(g, n, w.from, size, available(g));
     squads.set(n, sq);
     w.squads[n] = sq.map((c) => c.id);
   }
@@ -150,6 +156,8 @@ function startWindow(g: Game, st: NationalState, w: IntlWindow): void {
       }
     }
   }
+  const job = activeJob(g);
+  if (job) noteExpectations(job, w.matches, (c) => strength.get(c) ?? 60);
   const until = w.dates[w.dates.length - 1];
   for (const sq of squads.values()) for (const c of sq) if (c.full) st.away[c.id] = until;
   // Nachricht: eigene Abstellungen
@@ -161,6 +169,14 @@ function startWindow(g: Game, st: NationalState, w: IntlWindow): void {
       bodyText: `Zu den Länderspielen am ${w.dates.map(fmtD).join(' und ')} (${w.label}) sind abgestellt:\n${own.map((c) => `• ${c.name} (${natName(c.nat)})`).join('\n')}\n\nSie fehlen dir bis einschließlich ${fmtD(until)} und kommen weniger frisch zurück. Überblick: Statistiken › Nationalteams.`,
     }));
   }
+}
+
+/** Bilanz-Schlüssel eines Fensters: „Qualifikation EM 1976“ bzw. „Freundschaftsspiel 1975/76“. */
+function windowCompKey(g: Game, w: IntlWindow): string {
+  const job = activeJob(g);
+  const def = job ? nextCycleDef(job.nat, w.dates[0]) : null;
+  if (/Qualifikation/.test(w.label) && def) return `Qualifikation ${tKey(def)}`;
+  return `${w.label} ${g.season}`;
 }
 
 const fmtD = (d: string) => `${d.slice(8, 10)}.${d.slice(5, 7)}.`;
@@ -223,14 +239,19 @@ function maybeBuildTournament(g: Game, st: NationalState, today: string): void {
     if (today < nominate || today > def.end) continue;
     if (st.tourn && st.tourn.kind === def.kind && st.tourn.year === def.year) return;
     if (st.archive.some((a) => a.kind === def.kind && a.year === def.year)) return;
-    const strength = allStrengths(g, today);
+    const strength = new Map(allStrengths(g, today));
     const place = def.place || `in ${natName(def.hosts[0])}`;
-    const t = buildTournament(def, strength, y, place);
+    const fixed = fixedTeamsFor(g, def);
     const size = squadSizeOf(def.year);
+    // Nationaltrainer: deine Nation spielt mit deinem Turnieraufgebot (nur wenn qualifiziert).
+    const job = activeJob(g);
+    const ownSq = job && (fixed ?? []).includes(job.nat) ? jobSquadFor(g, job.nat, `t:${tKey(def)}`, today, size) : null;
+    if (ownSq && job) strength.set(job.nat, ownSq.strength);
+    const t = buildTournament(def, strength, y, place, fixed);
     const r = mulberry32(hashStr(`${def.kind}${def.year}|sc`));
     const sq = new Map<string, Cand[]>();
     for (const n of t.teams) {
-      const s = pickSquad(g, n, today, size, available(g));
+      const s = ownSq && n === job?.nat ? ownSq.squad : pickSquad(g, n, today, size, available(g));
       sq.set(n, s);
       t.squads[n] = s.map((c) => c.id);
       for (const c of s) t.names[c.id] = [c.name, c.pos, c.ov, c.clubId];
@@ -254,6 +275,7 @@ function maybeBuildTournament(g: Game, st: NationalState, today: string): void {
 function tournamentDaily(g: Game, st: NationalState, today: string): void {
   const t = st.tourn;
   if (!t || t.done) return;
+  tournamentJobDay(g, t, today); // Nationaltrainer: eigene Spiele, Aus/Titel bewerten
   const home = homeNat(g);
   // Eigene Nation: Aus oder Titel melden.
   if (t.teams.includes(home) && t.out[home] === addDaysISO(today, -1)) {
@@ -300,6 +322,7 @@ function tournamentDaily(g: Game, st: NationalState, today: string): void {
     topScorer: top ? [t.names[top[0]]?.[0] ?? '', Object.entries(sq).find(([, ids]) => ids.includes(top[0]))?.[0] ?? '', top[1]] : undefined,
   });
   t.done = true;
+  nationalVacancies(g, t, today); // Verbände suchen Nachfolger → evtl. Angebot an dich
 }
 
 // -----------------------------------------------------------------------------
@@ -307,11 +330,15 @@ function tournamentDaily(g: Game, st: NationalState, today: string): void {
 // -----------------------------------------------------------------------------
 export function nationalDaily(g: Game, today: string): void {
   const st = nationalSeason(g);
+  jobDaily(g, st.windows, today); // Nationaltrainer: Nominierungstermine, Qualifikation
   maybeBuildTournament(g, st, today);
   for (const w of st.windows) {
     if (w.done) continue;
     if (today === w.from && !w.matches.length) startWindow(g, st, w);
-    for (const d of w.dates) if (d === addDaysISO(today, -1) && w.matches.length) bookMatches(g, w.matches.filter((m) => m.date === d), w.squads, d);
+    for (const d of w.dates) if (d === addDaysISO(today, -1) && w.matches.length) {
+      bookMatches(g, w.matches.filter((m) => m.date === d), w.squads, d);
+      for (const m of w.matches) if (m.date === d) bookOwnMatch(g, m, windowCompKey(g, w), /Qualifikation/.test(w.label));
+    }
     if (today > w.dates[w.dates.length - 1]) w.done = true;
   }
   tournamentDaily(g, st, today);

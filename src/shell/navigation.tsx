@@ -26,7 +26,9 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   // Managerkarriere (Privat › Karriere)
   | 'karriere'
   // Privatleben (Privat): Übersicht, Familie, Freizeit, Vermögen
-  | 'privat' | 'familie' | 'freizeit' | 'vermoegen';
+  | 'privat' | 'familie' | 'freizeit' | 'vermoegen'
+  // Nationaltrainer (Ansicht Nationalteam): Übersicht/Aufgebot/Spiele & Turniere (views/national/)
+  | 'nationalteam';
 
 // =============================================================================
 // MENÜ-STRUKTUR (zweistufige Top-Navigation)
@@ -122,10 +124,44 @@ export const MENU_STRUCTURE: MainCat[] = [
   ] },
 ];
 
+// Ansicht Nationalteam (Wunsch Pascal, Umschalter in der Kopfleiste, shell/viewMode.ts): nur
+// Bereiche, die für die Nationalmannschaft zählen. Zentrale zeigt dann die Nationalteam-Widgets.
+export const NATIONAL_MENU: MainCat[] = [
+  { key: 'nt-zentrale', label: 'Zentrale', icon: 'zentrale', dash: 'dashboard', subs: [
+    { screen: 'dashboard', label: 'Zentrale', icon: 'zentrale' },
+    { screen: 'calendar', label: 'Kalender', icon: 'kalender' },
+    { screen: 'presse', label: 'Presse', icon: 'presse' },
+  ] },
+  { key: 'nt-team', label: 'Nationalteam', icon: 'international', dash: 'nationalteam', subs: [
+    { screen: 'nationalteam', label: 'Nationalteam', icon: 'international' },
+  ] },
+  { key: 'nt-scout', label: 'Beobachten', icon: 'watchlist', dash: 'spielerpool', subs: [
+    { screen: 'spielerpool', label: 'Spielerpool', icon: 'international' },
+    { screen: 'scouting', label: 'Scouting', icon: 'trVideo' },
+  ] },
+  { key: 'nt-stats', label: 'Statistiken', icon: 'stats', dash: 'nationalteams', subs: [
+    { screen: 'nationalteams', label: 'Nationalteams', icon: 'international' },
+    { screen: 'table', label: 'Liga', icon: 'stats' },
+    { screen: 'ligensystem', label: 'Ligensystem', icon: 'stats' },
+    { screen: 'international', label: 'International', icon: 'international' },
+    { screen: 'auszeichnungen', label: 'Auszeichnungen', icon: 'trophy' },
+  ] },
+  { key: 'nt-privat', label: 'Privat', icon: 'home', dash: 'privat', subs: [
+    { screen: 'privat', label: 'Privat', icon: 'home' },
+    { screen: 'karriere', label: 'Karriere', icon: 'whistle' },
+  ] },
+];
+/** Menü der Ansicht. */
+export const menuFor = (view: 'club' | 'national'): MainCat[] => (view === 'national' ? NATIONAL_MENU : MENU_STRUCTURE);
+/** Seiten, die in beiden Ansichten passen (kein Umschalten beim Aufruf). */
+export const NEUTRAL_SCREENS: Screen[] = ['wiki', 'chronicle'];
+/** Seiten der Ansicht. */
+export const screensOf = (menu: MainCat[]): Set<Screen> => new Set(menu.flatMap((c) => [c.dash, ...c.subs.map((s) => s.screen)]));
+
 /** Zweistufige Top-Navigation: Hauptkategorien + Unterpunkte der aktiven Kategorie. */
-export function TopNav({ screen, setScreen, dateLabel, onBack, onForward }: { screen: Screen; setScreen: (s: Screen) => void; dateLabel?: string; onBack?: () => void; onForward?: () => void }) {
-  const matched = MENU_STRUCTURE.find((c) => c.dash === screen || c.subs.some((s) => s.screen === screen));
-  const activeCat = matched ?? MENU_STRUCTURE[0];
+export function TopNav({ screen, setScreen, dateLabel, onBack, onForward, menu = MENU_STRUCTURE }: { screen: Screen; setScreen: (s: Screen) => void; dateLabel?: string; onBack?: () => void; onForward?: () => void; menu?: MainCat[] }) {
+  const matched = menu.find((c) => c.dash === screen || c.subs.some((s) => s.screen === screen));
+  const activeCat = matched ?? menu[0];
   return (
     <nav className="top-nav sub-only">
       <div className="tn-sub">

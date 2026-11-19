@@ -1,5 +1,6 @@
 // Länderprofil › Länderspiele: Bilanz & Termine · Länderspiele (Liste) | Turnier · WM & EM im Spiel
 // Daten: game/national/ (nationalGame.ts nationMatches/upcoming, tournament.ts).
+import { activeJob } from '../../game/national/nationalJob';
 import { Fragment } from 'react';
 import { nationMatches, nationalSeason, natName, upcoming } from '../../game/national/nationalGame';
 import { nationInfo } from '../../game/countryProfile';
@@ -49,7 +50,7 @@ export default function MatchesTab({ g, c }: CountryTabProps) {
 
       <DashBox title={t ? `${t.kind === 'WM' ? 'Weltmeisterschaft' : 'Europameisterschaft'} ${t.year}` : 'Turnier'} span={2}
         right={t ? (inT ? (today > t.end ? t.result[code] ?? 'Teilnehmer' : 'qualifiziert') : 'nicht dabei') : undefined}>
-        {t && inT ? <TournamentBox t={t} today={today} home={code} />
+        {t && inT ? <TournamentBox t={t} today={today} home={code} mine={activeJob(g)?.nat} />
           : <Empty icon="trophy">{t ? `${c.name} ist bei diesem Turnier nicht dabei.` : `${next.find((x) => /meisterschaft/.test(x.text))?.text ?? 'Kein Turnier angesetzt'} – Aufgebote und Spielplan 25 Tage vor dem Anpfiff.`}</Empty>}
       </DashBox>
 

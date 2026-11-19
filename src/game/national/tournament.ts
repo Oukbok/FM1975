@@ -77,9 +77,10 @@ function koWinner(a: string, b: string, sa: number, sb: number, r: () => number,
   return m.pw;
 }
 
-/** Turnier aufbauen und vollständig ausspielen. */
-export function buildTournament(def: TournamentDef, strengthAll: Map<string, number>, year: number, place: string): Tournament {
-  const teams = qualify(def, strengthAll, year);
+/** Turnier aufbauen und vollständig ausspielen. `fixedTeams` = Teilnehmer stehen schon fest
+ *  (Nationaltrainer: Qualifikation wird ein paar Tage vor der Nominierung entschieden). */
+export function buildTournament(def: TournamentDef, strengthAll: Map<string, number>, year: number, place: string, fixedTeams?: string[]): Tournament {
+  const teams = fixedTeams?.length === def.teams ? fixedTeams : qualify(def, strengthAll, year);
   const S = (c: string) => strengthAll.get(c) ?? 60;
   const r = mulberry32(hashStr(`${def.kind}|${def.year}|turnier`));
   const host = new Set(def.hosts);

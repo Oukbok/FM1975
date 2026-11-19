@@ -14,9 +14,12 @@ import type { Screen } from '../../shell/navigation';
 import { LeftColumn } from './dash/LeftWidgets';
 import { Newscenter } from './dash/Newscenter';
 import { RightColumn } from './dash/RightWidgets';
+import { NationalLeftColumn, NationalRightColumn } from '../national/NationalWidgets';
 
-export function Dashboard({ g, onGoto, onWatch, onChange }: {
-  g: Game; onGoto: (s: Screen) => void; onWatch: (id: string) => void;
+export function Dashboard({ g, onGoto, onWatch, onChange, national = false }: {
+  g: Game;
+  /** Ansicht Nationalteam (shell/viewMode.ts): Kurz-Widgets der Nationalmannschaft. */
+  national?: boolean; onGoto: (s: Screen) => void; onWatch: (id: string) => void;
   /** Spielstand geändert (gelesen, Entscheidung …) → neu zeichnen. */
   onChange?: () => void;
   /** Früher „Bearbeiten“ im Vereinsüberblick; bleibt für die Aufrufstelle erhalten. */
@@ -31,9 +34,9 @@ export function Dashboard({ g, onGoto, onWatch, onChange }: {
   return (
     <div className="zentrale-wrap">
       <div className="dz">
-        <LeftColumn g={g} onGoto={onGoto} openPlayer={setPlayerId} />
+        {national ? <NationalLeftColumn g={g} onGoto={onGoto} openPlayer={setPlayerId} /> : <LeftColumn g={g} onGoto={onGoto} openPlayer={setPlayerId} />}
         <Newscenter g={g} onGoto={onGoto} onWatch={onWatch} onChange={changed} openPlayer={setPlayerId} />
-        <RightColumn g={g} onGoto={onGoto} />
+        {national ? <NationalRightColumn g={g} onGoto={onGoto} /> : <RightColumn g={g} onGoto={onGoto} />}
       </div>
       {p && createPortal(
         <PlayerModal player={p} club={g.clubs[p.clubId]} squad={g.clubs[p.clubId]?.playerIds.map((id) => g.players[id]).filter(Boolean)}

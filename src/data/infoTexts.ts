@@ -406,6 +406,36 @@ export const INFO_TEXTS = {
     text: 'Alle Nationen spielen in den Länderspielfenstern und bei WM/EM. Aufgebote entstehen aus den Spielern der Spielwelt; abgestellte Spieler fehlen dir in dieser Zeit und kommen weniger frisch zurück. Länderspiele und ein starkes Turnier steigern den Marktwert.',
     wiki: 'national-teams',
   },
+  nationaltrainer: {
+    title: 'Zusätzlich Nationaltrainer',
+    text: 'Neben deinem Verein betreust du eine Nationalmannschaft: Vor jedem Länderspielfenster und vor WM/EM nominierst du das Aufgebot, der Verband setzt dir je Turnier ein Ziel. Umschalten zwischen Verein und Nationalteam: Klick auf Wappen bzw. Flagge oben in der Kopfleiste.',
+    wiki: 'national-coach',
+  },
+  ntEntlassung: {
+    title: 'Entlassung als Nationaltrainer',
+    text: 'An: Verfehlst du Ziele und sinkt das Vertrauen des Verbandes unter 20, endet deine Amtszeit, und ohne Erfolg verlängert er deinen Vertrag nicht. Aus: Der Verband hält immer an dir fest und bietet dir nach jedem Turnier eine Verlängerung an. Zurücktreten kannst du in beiden Fällen.',
+    wiki: 'national-coach',
+  },
+  ntZiel: {
+    title: 'Ziel des Verbandes',
+    text: 'Je Turnier aus deinem Stärke-Rang unter den Nationen, die mitspielen dürfen: Rang r heißt, der Verband erwartet ungefähr Platz 2r+1 – vom achtbaren Auftreten über die Qualifikation bis zum Titel.',
+    wiki: 'national-coach',
+  },
+  ntVertrauen: {
+    title: 'Vertrauen des Verbandes',
+    text: 'Start 60. Jedes Länderspiel gegen die Erwartung bewegt es ein wenig, Qualifikation und Turnier gegen das Ziel viel. Unter 20 entlässt dich der Verband (falls die Entlassung eingeschaltet ist).',
+    wiki: 'national-coach',
+  },
+  ntAufgebot: {
+    title: 'Aufgebot nominieren',
+    text: 'Drei Tage vor jedem Länderspielfenster und vor dem Turnier kommt der Termin: Die Zeit hält an, bis du dein Aufgebot bestätigst. Der Co-Trainer schlägt die Besten vor – lässt du alles so, nominiert er wie bisher. Bessere Spieler daheim zu lassen, sorgt für Gerede.',
+    wiki: 'national-coach',
+  },
+  ntFormation: {
+    title: 'Formation und Startelf',
+    text: 'Automatisch spielt die beste Elf des Aufgebots. Wählst du eine Formation, stellt der Co-Trainer die Besten je Mannschaftsteil auf; jeder Spieler außerhalb seines Mannschaftsteils kostet 0,5 Stärke. Eigene Startelf: Haken in der Spalte „Elf“.',
+    wiki: 'national-coach',
+  },
   privatleben: {
     title: 'Privatleben',
     text: 'Dein Leben neben dem Verein: Energie, Laune, Gesundheit und Kontakte, Familie und Vermögen. Es wirkt auf den Verein – erschöpft trainierst und redest du schlechter, Kontakte bringen Sponsorengeld und Vertrauen des Vorstands, Kinder können Spieler oder dein Nachfolger werden.',

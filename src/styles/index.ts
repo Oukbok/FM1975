@@ -77,6 +77,7 @@ import './28-tickets.css';
 import './28-budget.css';
 import './28-pyramid.css';
 import './28-country.css'; // Länderprofil (components/country/)
+import './28-natjob.css'; // Nationaltrainer: Seite, Widgets, Kopfleisten-Umschalter, Assistent
 import './28-faces.css';
 import './28-career.css';
 import './28-career-binder.css'; // Karriere › Bilanz als Ringmappe

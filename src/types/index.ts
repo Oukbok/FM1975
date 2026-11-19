@@ -2089,6 +2089,10 @@ export interface NewGameOptions {
   fullAll?: boolean;
   /** Privatleben (game/private/), Standard an. */
   privateLife?: boolean;
+  /** Zusätzlich Nationaltrainer dieser Nation (Kürzel aus data/nationalTeams.ts, game/national/nationalJob.ts). */
+  nationalTeam?: string;
+  /** Entlassung als Nationaltrainer möglich, Standard an. */
+  nationalSackable?: boolean;
 }
 
 // -----------------------------------------------------------------------------

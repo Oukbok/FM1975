@@ -63,6 +63,7 @@ import { FINANCE_LEVEL } from './financeMigration';
 import { migrateLeaguePool } from './clubPool';
 import { seedReserveTeams } from './reservePyramid';
 import { initLegends } from './legendsGame';
+import { startNationalJob } from './national/nationalJob';
 import { migrateContracts2 } from './contractClausesGame';
 import { bindHonours } from './clubHonours';
 import { ensureWorldPool } from './worldPool';
@@ -314,5 +315,8 @@ export function createNewGame(opts: NewGameOptions): Game {
   // Privatleben: Familie, Freizeit, Vermögen; Junger Manager mit Hintergrundgeschichte (game/private/).
   if (opts.privateLife === false) g0.privateOff = true;
   else startPrivateLife(g0);
+  // Zusätzlich Nationaltrainer (Option im Assistenten, game/national/nationalJob.ts).
+  if (opts.nationalSackable === false) g0.nationalSackable = false;
+  if (opts.nationalTeam) startNationalJob(g0, opts.nationalTeam);
   return g0;
 }

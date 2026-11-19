@@ -3038,7 +3038,35 @@ Gastgeber, Termine und Teilnehmerzahl wie historisch: EM 1976 mit 4 Teams, 1980�
 ## Folgen für deinen Verein
 - **Marktwert:** Nationalspieler sind mehr wert (bis +15 % mit vielen Einsätzen, solange sie berufen werden). Ein starkes Turnier gibt einen zusätzlichen Schub – Titel +30 %, Finale +20 %, Halbfinale +12 %, Viertelfinale +6 %, dazu Tore –, der über zweieinhalb Jahre abklingt. Gilt für Verkauf, Kauf und alle Vereine.
 - **Form und Moral:** Siege im Nationaltrikot heben die Form ein wenig, Welt- und Europameister kommen mit Schwung und Stolz zurück.
-- **Fehlzeiten:** Wer viele Nationalspieler hat, verliert sie in den Fenstern – plane Ersatz ein, vor allem in Epochen ohne Länderspielpause.`,
+- **Fehlzeiten:** Wer viele Nationalspieler hat, verliert sie in den Fenstern – plane Ersatz ein, vor allem in Epochen ohne Länderspielpause.
+
+## Selbst Nationaltrainer
+Zusätzlich zum Verein kannst du eine Nationalmannschaft betreuen – siehe „Nationaltrainer: zusätzlich eine Nationalmannschaft“.`,
+  },
+  {
+    id: 'national-coach',
+    category: 'squad',
+    title: 'Nationaltrainer: zusätzlich eine Nationalmannschaft',
+    keywords: ['nationaltrainer', 'bundestrainer', 'aufgebot', 'nominieren', 'nominierung', 'verband', 'vertrauen', 'ziel', 'rücktritt', 'entlassung', 'angebot', 'kopfleiste', 'umschalten', 'nationalteam'],
+    body: `## Wie wirst du Nationaltrainer?
+- **Bei Spielbeginn:** im Assistenten (Schritt Spielmodus) „Zusätzlich Nationaltrainer“ einschalten und eine Nation wählen – alle, die im Startjahr bestehen und spielen dürfen, mit ihrem Rang nach Grundstärke. Standard: aus.
+- **Mitten im Spiel nur über Angebote:** Nach jedem großen Turnier trennen sich Verbände, deren Ziel verfehlt wurde (manchmal auch andere), von ihrem Trainer. Passt dein Ansehen (Privat › Karriere), fragt dich der Verband per Nachricht – kleine Nationen früh, große erst nach Erfolgen. Nur wenn du gerade keine Nationalmannschaft hast; bewerben kannst du dich nicht.
+
+## Verein und Nationalteam
+Du bleibst Manager deines Vereins. Oben in der Kopfleiste stehen dann Wappen und Flagge nebeneinander: die gerade nicht gewählte Seite ist ausgegraut, unter der Maus farbig. Ein Klick auf die Flagge schaltet die ganze Oberfläche in die **Sicht des Nationalteams** – schlankes Menü (Zentrale mit Länderspiel-Widgets, Nationalteam, Beobachten = Spielerpool/Scouting, Statistiken, Privat), Akzent in den Landesfarben. Ein Klick aufs Wappen schaltet zurück. Das ist nur eine Ansicht: Zeitlauf und Spielstand bleiben gleich. In der Vereinssicht markieren Statistiken › Nationalteams und das Länderprofil deine Nation mit „Dein Team“, der Kalender zeigt ihre Termine.
+
+## Aufgebot
+Drei Tage vor jedem Länderspielfenster und kurz vor dem Turnier kommt der Termin **„Aufgebot nominieren“** – eine Nachricht mit Entscheidung, die Zeit hält an. Unter Nationalteam › Aufgebot stehen alle Kandidaten der Nation (Spieler der Spielwelt), dein Co-Trainer hat einen Vorschlag gemacht. Du kannst Spieler tauschen (bis zur Kadergröße der Epoche: 22, ab 2001 23, ab 2021 26; in Fenstern höchstens 23), eine Formation und deine Startelf wählen. Lässt du alles so, nominiert der Co-Trainer am Stichtag die Besten – genau wie ohne Nationaltrainer.
+Die **Stärke** deiner Nation kommt dann aus deinem Aufgebot und deiner Startelf, sonst ist alles dieselbe Simulation. Mit gewählter Formation kostet jeder Spieler außerhalb seines Mannschaftsteils 0,5 Stärke. Spieler deines Vereins im Aufgebot fehlen ihm wie bisher. Lässt du deutlich bessere Spieler daheim, fragt die Presse nach (Vertrauen −2), übergangene Spieler deines Vereins sind etwas verstimmt.
+
+## Ziel, Vertrauen, Vertrag
+- **Ziel je Turnier** aus dem Stärke-Rang unter den Nationen, die mitspielen dürfen (EM nur Europa): Rang r → erwartet etwa Platz 2r+1, also vom achtbaren Auftreten über die Qualifikation bis zum Titel.
+- **Qualifikation:** fünf Tage vor der Nominierung entschieden – aus der Stärke deiner Aufgebote der Länderspielfenster im Zyklus plus einem Bonus für Ergebnisse über der Erwartung (±3).
+- **Vertrauen** (Start 60): jedes Länderspiel gegen die Erwartung ein wenig, Qualifikation und Turnier gegen das Ziel viel (bis +30 bzw. −35).
+- **Vertrag** bis zum Ende des nächsten großen Turniers. Erreichst du das Ziel, bietet der Verband eine Verlängerung um einen Turnierzyklus an (ohne Antwort angenommen); sonst läuft der Vertrag aus.
+- **Entlassung** unter 20 Vertrauen – abschaltbar im Assistenten („Entlassung möglich“, Standard an). Ist sie aus, hält der Verband immer an dir fest und bietet nach jedem Turnier die Verlängerung an.
+- **Rücktritt** jederzeit auf Nationalteam › Übersicht; mitten im Zyklus kostet er 3 Punkte Ansehen.
+Alle Amtszeiten mit Bilanz und Turnieren stehen in Privat › Karriere › Nationalteam.`,
   },
   {
     id: 'country-profile',

@@ -79,11 +79,12 @@ export function startingXI(squad: Cand[]): Cand[] {
   return gk ? [gk, ...field] : field;
 }
 
-/** Stärke einer Nation aus dem Aufgebot (Lücken = Grundstärke − 3). */
-export function nationStrength(nat: string, squad: Cand[], year: number, depth = squad.length): number {
+/** Stärke einer Nation aus dem Aufgebot (Lücken = Grundstärke − 3). `chosenXI` = selbst gewählte
+ *  Startelf (Nationaltrainer, game/national/nationalJob.ts), sonst die beste Elf des Aufgebots. */
+export function nationStrength(nat: string, squad: Cand[], year: number, depth = squad.length, chosenXI?: Cand[]): number {
   const def = NATION_BY_CODE[nat];
   const base = def ? baseStrength(def, year) : 60;
-  const xi = startingXI(squad);
+  const xi = chosenXI ?? startingXI(squad);
   const known = xi.reduce((a, c) => a + c.ov, 0) + Math.max(0, 11 - xi.length) * (base - 3);
   const kAvg = known / 11;
   // Tiefer Pool (Liga in der Spielwelt) = aussagekräftig; sonst nur Legionäre → Grundstärke zählt mehr.

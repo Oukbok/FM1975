@@ -23,7 +23,10 @@ import { setPortraitGame } from '../game/playerPortraits';
 import { fmtDateFull } from '../ui/format';
 import { HeaderBar } from './HeaderBar';
 import { preloadEarlyParts, preloadShellParts } from './lazyParts';
-import { Screen, TopNav } from './navigation';
+import { NEUTRAL_SCREENS, Screen, TopNav, menuFor, screensOf } from './navigation';
+import { setViewMode, useViewMode } from './viewMode';
+import { activeJob } from '../game/national/nationalJob';
+import { nationAccent } from '../views/national/natColors';
 import { PopupLayer } from './PopupLayer';
 import { ScreenRouter } from './ScreenRouter';
 import { chainFlags, usePopupQueue } from './usePopupQueue';
@@ -69,8 +72,22 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   useEffect(() => () => setPortraitGame(null), []);
   const myClub = g.clubs[g.managedClubId];
   // Look „Akte“: Vereinsfarbe (bzw. Zweitfarbe, wenn nah am Dunkelblau) als Akzent (ui/clubAccent.ts).
-  useEffect(() => { applyClubAccent(myClub?.colors); }, [myClub?.colors?.primary, myClub?.colors?.secondary]);
+  // Ansicht Verein ↔ Nationalteam (shell/viewMode.ts): ohne laufende Amtszeit immer Verein.
+  const job = activeJob(g);
+  const vm = useViewMode();
+  const view = job ? vm : 'club';
+  const menu = menuFor(view);
+  // Nationalteam-Sicht: Landesfarbe statt Vereinsfarbe als Akzent.
+  useEffect(() => { applyClubAccent(view === 'national' && job ? nationAccent(job.nat) : myClub?.colors); }, [view, job?.nat, myClub?.colors?.primary, myClub?.colors?.secondary]);
   const q = usePopupQueue(g, settings, rerender, setRunning);
+  // Seite gehört zur anderen Ansicht (Sprung aus Kalender/Nachricht) → Ansicht mitnehmen.
+  useEffect(() => {
+    if (!job || NEUTRAL_SCREENS.includes(screen)) return;
+    const inNat = screensOf(menuFor('national')).has(screen), inClub = screensOf(menuFor('club')).has(screen);
+    if (view === 'club' && inNat && !inClub) setViewMode('national');
+    else if (view === 'national' && !inNat && inClub) setViewMode('club');
+  }, [screen, view, !!job]); // eslint-disable-line react-hooks/exhaustive-deps
+  const switchView = (v: 'club' | 'national') => { setViewMode(v); setScreen(v === 'national' ? 'nationalteam' : 'dashboard'); };
   // Verhandlungstisch (screens/contract/): von überall per Ereignis geöffnet, hält die Zeit an.
   const [contractReq, setContractReq] = useState<(ContractOpenReq & { n: number }) | null>(null);
   useEffect(() => {
@@ -165,7 +182,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
     <CountryProfileProvider g={g} onChange={rerender} onGoto={(s) => setScreen(s as Screen)}>
     <div className={`app-shell ${screen === 'dashboard' ? 'shell-zentrale' : ''} shell-dashlike ${isScene ? 'shell-scene' : ''} ${calLive ? 'cal-live' : ''}`}>
       <HeaderBar g={g} settings={settings} onSettings={onUpdateSettings} screen={screen} setScreen={setScreen} saveMsg={saveMsg} running={running} seasonOver={seasonOver}
-        due={due} prematchOn={prematchOn} mustRead={mustRead}
+        due={due} prematchOn={prematchOn} mustRead={mustRead} cats={menu} view={view} natCode={job?.nat} onView={switchView}
         menu={{
           settings: () => setShowSettings(true), wiki: () => setScreen('wiki'), editor: () => setClubEditorOpen(true),
           save: () => setSaveLoadMode('save'), load: () => setSaveLoadMode('load'), exit: onExit,
@@ -178,10 +195,10 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
         }} />
 
       {/* Untermenü (Unterpunkte der aktiven Kategorie) */}
-      <TopNav screen={screen} setScreen={setScreen} dateLabel={fmtDateFull(g.calendar.currentDate)} onBack={nav.onBack} onForward={nav.onForward} />
+      <TopNav menu={menu} screen={screen} setScreen={setScreen} dateLabel={fmtDateFull(g.calendar.currentDate)} onBack={nav.onBack} onForward={nav.onForward} />
 
       <main className="app-main">
-        <ScreenRouter screen={screen} g={g} rerender={rerender} setScreen={setScreen} wikiArticle={wikiArticle}
+        <ScreenRouter view={view} screen={screen} g={g} rerender={rerender} setScreen={setScreen} wikiArticle={wikiArticle}
           onWatch={(id) => q.setLiveMatchId(id)} onReplayDraw={q.replayDraw}
           onOpenEditor={() => setClubEditorOpen(true)} onPause={() => setRunning(false)} />
       </main>

@@ -1,6 +1,7 @@
 // Gemeinsamer Ablauf „Neues Spiel“ für die Oberflächentests (Assistent in sechs Schritten:
 // Manager · Spielmodus · Spielwelt · Verein · Ligensystem · Willkommen).
-//   startNewGame(page, { name, clubIndex, league, speed, shots, keepBriefing, career, young, year })
+//   startNewGame(page, { name, clubIndex, league, speed, shots, keepBriefing, career, young, year, national })
+//   national = Kürzel (z. B. 'NED') → „Zusätzlich Nationaltrainer“ an + Nation wählen
 export async function startNewGame(page, opts = {}) {
   const { name = 'Test', clubIndex = 0, league, speed = '300', shots, career = false, young = false, year } = opts;
   const next = () => page.click('.ng-foot button:has-text("Weiter")');
@@ -17,6 +18,11 @@ export async function startNewGame(page, opts = {}) {
   if (career) await page.click('.ng-modecard:has-text("Karriere")');
   if (young) { await page.click('.ng-modecard:has-text("Junger Manager")'); await page.click('.ng-story >> nth=1'); }
   await page.locator('.ng-speed input[type=range]').fill(speed);
+  if (opts.national) {
+    await page.click('.ng-nat .ng-toggle:has-text("Zusätzlich Nationaltrainer")');
+    await page.locator(`.ng-natrow[data-nat="${opts.national}"]`).scrollIntoViewIfNeeded();
+    await page.click(`.ng-natrow[data-nat="${opts.national}"]`);
+  }
   await shot('2_spielmodus');
   await next();
   // 3) Spielwelt

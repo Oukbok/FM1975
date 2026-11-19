@@ -79,6 +79,10 @@ export interface NewGameDraft {
   story: string;
   /** Privatleben (Familie, Freizeit, Vermögen), Standard an. */
   privateLife: boolean;
+  /** Zusätzlich Nationaltrainer (Standard aus) + Nation (game/national/jobNations.ts) + Entlassung möglich. */
+  nationalOn: boolean;
+  nationalTeam: string;
+  nationalSackable: boolean;
 }
 
 export const START_ISO = '1975-07-01';
@@ -183,6 +187,7 @@ export function gameOptions(d: NewGameDraft): NewGameOptions {
     ...(d.privateLife ? {} : { privateLife: false }),
     ...(d.startYear !== 1975 ? { startYear: d.startYear } : {}),
     ...(d.country !== 'ger' ? { country: d.country } : {}),
+    ...(d.nationalOn && d.nationalTeam ? { nationalTeam: d.nationalTeam, ...(d.nationalSackable ? {} : { nationalSackable: false }) } : {}),
   };
 }
 

@@ -16,6 +16,7 @@ import { StepWelcome } from './newgame/StepWelcome';
 import { leaguePreview, sortClubs } from './newgame/clubPreview';
 import { playableCountries } from '../game/worldCompose';
 import { seasonLabelOf } from '../data/world/countries';
+import { jobNationFor } from '../game/national/jobNations';
 
 // -----------------------------------------------------------------------------
 // NEUES SPIEL — Assistent in sechs Schritten (Vorbild: große Managerspiele):
@@ -60,6 +61,7 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
       firstName: '', lastName: '', birthDay: 1, birthMonth: 1, birthYear: 1940,
       nationality: 'Deutschland', nationality2: '', avatarSeed: Math.random().toString(36).slice(2, 8),
       favoriteClubId: '', avoidClubId: '', style: 'balanced', background: 'ex_pro', story: 'erbe', privateLife: true,
+      nationalOn: false, nationalTeam: 'GER', nationalSackable: true,
     };
   });
   const set = (p: Partial<NewGameDraft>) => setD((x) => ({ ...x, ...p }));
@@ -81,7 +83,7 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
   /** Startjahr wählen: Land bleibt, wenn es im Jahr spielbar ist; Verein = Spitzenverein bzw. erstes Angebot. */
   const chooseYear = (y: number) => {
     const cc = playableCountries(y).includes(d.country) ? d.country : 'ger';
-    set({ startYear: y, birthYear: d.birthYear + (y - d.startYear), country: cc, ...clubFor(d.mode, cc, y, d.avoidClubId) });
+    set({ startYear: y, birthYear: d.birthYear + (y - d.startYear), country: cc, ...clubFor(d.mode, cc, y, d.avoidClubId), nationalTeam: jobNationFor(d.nationalTeam, y, 'GER') });
   };
   const chooseCountry = (cc: string) => {
     if (cc === d.country) return;

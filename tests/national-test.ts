@@ -11,6 +11,7 @@ import { buildTournament } from '../src/game/national/tournament';
 import { intlValueFactor } from '../src/engine/clubEconomy';
 import { ownFixtures } from '../src/game/trainingWeek';
 import { TOURNAMENTS } from '../src/data/nationalTeams';
+import { runJobChecks } from './national-job-checks';
 
 let fails = 0;
 const ok = (c: unknown, l: string) => { console.log(`${c ? 'OK  ' : 'FEHL'} ${l}`); if (!c) fails++; };
@@ -63,5 +64,6 @@ if (until >= '1976-06-21') {
   ok(tp && intlValueFactor(tp, 1976) > 1, `Turnierteilnehmer mit Marktwert-Faktor ${tp ? intlValueFactor(tp, 1976).toFixed(2) : '-'}`);
   ok(!Object.values(g.players).some((p) => p.availability === 'international' && !st.away[p.id]), 'alle Abgestellten zurück');
 }
+runJobChecks(ok, until >= '1976-06-21');
 console.log(fails ? `\n${fails} Fehler.` : '\nNationalmannschaften: alle Prüfungen bestanden.');
 process.exit(fails ? 1 : 0);

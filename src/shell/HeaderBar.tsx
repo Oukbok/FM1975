@@ -6,7 +6,9 @@ import Icon from '../components/Icon';
 import type { OwnMatchInfo } from '../game/ownMatch';
 import type { Game } from '../game/state';
 import { fmtDMfull } from '../ui/format';
-import { MENU_STRUCTURE, Screen } from './navigation';
+import { MENU_STRUCTURE, Screen, type MainCat } from './navigation';
+import { NatFlag } from '../components/competition/CountryFlag';
+import { natName } from '../game/national/nationalGame';
 import type { AppSettings } from '../engine/save';
 
 export interface HeaderMenu {
@@ -15,10 +17,12 @@ export interface HeaderMenu {
 }
 
 export function HeaderBar({ g, settings, onSettings, screen, setScreen, saveMsg, menu, running, seasonOver, due, prematchOn, mustRead,
-  onOpenPrematch, onQuickSim, onStartText, onReadMail, onContinue }: {
+  onOpenPrematch, onQuickSim, onStartText, onReadMail, onContinue, cats = MENU_STRUCTURE, view = 'club', natCode, onView }: {
   g: Game; settings: AppSettings; onSettings: (s: AppSettings) => void; screen: Screen; setScreen: (s: Screen) => void; saveMsg: string; menu: HeaderMenu;
   running: boolean; seasonOver: boolean; due: OwnMatchInfo | null; prematchOn: boolean; mustRead: boolean;
   onOpenPrematch: () => void; onQuickSim: () => void; onStartText: () => void; onReadMail: () => void; onContinue: () => void;
+  /** Menü der Ansicht (shell/navigation.tsx `menuFor`), Ansicht und Nation des Nationaltrainers. */
+  cats?: MainCat[]; view?: 'club' | 'national'; natCode?: string; onView?: (v: 'club' | 'national') => void;
 }) {
   const myClub = g.clubs[g.managedClubId];
   // Das Zahnrad-Menü öffnet/schließt NUR per Klick (kein Hover); Klick außerhalb schließt es.
@@ -35,7 +39,7 @@ export function HeaderBar({ g, settings, onSettings, screen, setScreen, saveMsg,
   useEffect(() => { if (running) setMenuOpen(false); }, [running]);
   const pick = (fn: () => void) => () => { setMenuOpen(false); fn(); };
   // Aktive Hauptkategorie für die Navigation.
-  const navMatched = MENU_STRUCTURE.find((c) => c.dash === screen || c.subs.some((s) => s.screen === screen));
+  const navMatched = cats.find((c) => c.dash === screen || c.subs.some((s) => s.screen === screen));
   const hdrBtnLabel = seasonOver ? 'Neue Saison' : running ? 'Pause' : 'Weiter';
 
   return (
@@ -47,7 +51,7 @@ export function HeaderBar({ g, settings, onSettings, screen, setScreen, saveMsg,
       </div>
 
       <nav className="hd-nav">
-        {MENU_STRUCTURE.map((cat) => (
+        {cats.map((cat) => (
           <button key={cat.key} className={`hd-nav-item ${navMatched && cat.key === navMatched.key ? 'active' : ''}`} onClick={() => setScreen(cat.dash)}>
             {cat.label}
           </button>
@@ -57,10 +61,24 @@ export function HeaderBar({ g, settings, onSettings, screen, setScreen, saveMsg,
       {/* Rechter Block: Verein, Kontostand, Einstellungen, Weiter */}
       <div className="hd-right">
         {saveMsg && <span className="save-toast">{saveMsg}</span>}
-        <div className="hd-club" title={myClub.name}>
-          <ClubCrest club={myClub} size={60} />
-          <span className="hd-club-name">{myClub.name}</span>
-        </div>
+        {natCode && onView ? <>
+          {/* Umschalter Verein ↔ Nationalteam (Wunsch Pascal): die gerade nicht gewählte Seite ist ausgegraut, bei Hover in Farbe. */}
+          <button type="button" className={`hd-club hd-switch ${view === 'club' ? 'on' : 'off'}`} title={view === 'club' ? myClub.name : `Zur Ansicht ${myClub.name}`}
+            aria-pressed={view === 'club'} onClick={() => onView('club')}>
+            <ClubCrest club={myClub} size={60} />
+            <span className="hd-club-name">{myClub.name}</span>
+          </button>
+          <button type="button" className={`hd-nat hd-switch ${view === 'national' ? 'on' : 'off'}`} title={view === 'national' ? `Nationalteam ${natName(natCode)}` : `Zur Ansicht Nationalteam ${natName(natCode)}`}
+            aria-pressed={view === 'national'} onClick={() => onView('national')}>
+            <NatFlag nat={natCode} height={30} />
+            <span className="hd-club-name">{natName(natCode)}</span>
+          </button>
+        </> : (
+          <div className="hd-club" title={myClub.name}>
+            <ClubCrest club={myClub} size={60} />
+            <span className="hd-club-name">{myClub.name}</span>
+          </div>
+        )}
         <span className="hd-sep" aria-hidden="true" />
         <div className="hd-balance">
           <span className="hd-balance-ico"><Icon name="finances" /></span>

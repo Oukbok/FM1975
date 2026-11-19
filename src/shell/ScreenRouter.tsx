@@ -19,16 +19,19 @@ export interface RouterProps {
   onOpenEditor: () => void;
   onPause: () => void;
   wikiArticle: { id: string; n: number } | null;
+  /** Ansicht Verein/Nationalteam (shell/viewMode.ts). */
+  view?: 'club' | 'national';
 }
 
 export function ScreenRouter(r: RouterProps) {
   return <Suspense fallback={<PageLoading />}>{page(r)}</Suspense>;
 }
 
-function page({ screen, g, rerender, setScreen, onWatch, onReplayDraw, onOpenEditor, onPause, wikiArticle }: RouterProps) {
+function page({ screen, g, rerender, setScreen, onWatch, onReplayDraw, onOpenEditor, onPause, wikiArticle, view }: RouterProps) {
   const ch = rerender;
   switch (screen) {
-    case 'dashboard': return <Dashboard g={g} onGoto={setScreen} onWatch={onWatch} onChange={ch} onOpenEditor={onOpenEditor} />;
+    case 'dashboard': return <Dashboard g={g} national={view === 'national'} onGoto={setScreen} onWatch={onWatch} onChange={ch} onOpenEditor={onOpenEditor} />;
+    case 'nationalteam': return <P.NationalTeamView g={g} onChange={ch} onGoto={setScreen} />;
     case 'table': return <P.TableView g={g} />;
     case 'fixtures': return <P.FixturesView g={g} onWatch={onWatch} onGoto={setScreen} />;
     case 'squad': return <P.SquadView g={g} onChange={ch} />;
@@ -66,7 +69,7 @@ function page({ screen, g, rerender, setScreen, onWatch, onReplayDraw, onOpenEdi
     // Einzelseiten
     case 'presse': return <P.PresseView g={g} onWatch={onWatch} onGoto={setScreen} />;
     case 'vertraege': return <P.VertraegeView g={g} onChange={ch} />;
-    case 'nationalteams': return <P.NationalView g={g} />;
+    case 'nationalteams': return <P.NationalView g={g} onGoto={setScreen} />;
     case 'supercup': return <P.SuperCupView g={g} />;
     case 'meldung': return <P.RegistrationView g={g} onChange={ch} />;
     case 'reserve': return <P.ReserveTeamView g={g} onChange={ch} onGoto={setScreen} />;

@@ -1,5 +1,6 @@
 // Länderprofil › Übersicht: Steckbrief · Ligaruf international · Nationalmannschaft |
 // Meister & Pokal · Beste Vereine · Beste Spieler
+import { activeJob } from '../../game/national/nationalJob';
 import { useMemo } from 'react';
 import {
   bestClubs, bestPlayers, countryFacts, countryHolders, countryLeagues, countryRep, countrySystem, nationInfo, titleCounts,
@@ -51,8 +52,9 @@ export default function OverviewTab({ g, c, pyramid }: CountryTabProps) {
         </> : <Empty icon="international">{c.kind === 'none' ? 'Keine Liga im Spiel – deshalb kein Ligaruf und keine Fünfjahreswertung.' : `${c.name} besteht in dieser Saison nicht – kein Ligaruf, keine Fünfjahreswertung.`}</Empty>}
       </DashBox>
 
-      <DashBox title="Nationalmannschaft" info="nationalteams" right={nat?.rank ? `Weltrang ${nat.rank}` : undefined}>
+      <DashBox title="Nationalmannschaft" info="nationalteams" right={<>{activeJob(g)?.nat === c.code && <i className="ntj-tag">Dein Team</i>}{nat?.rank ? ` Weltrang ${nat.rank}` : ''}</>}>
         {nat ? <>
+          {activeJob(g)?.nat === c.code && <KV k="Nationaltrainer" v="du" />}
           <KV k="Stärke heute" v={nat.strength != null ? <b style={{ color: vColor(nat.strength) }}>{Math.round(nat.strength)}</b> : nat.exists ? '–' : 'besteht nicht'} strong />
           <KV k="Titel im Spiel" v={nat.titles.wm.length + nat.titles.em.length ? [nat.titles.wm.length && `WM ${years(nat.titles.wm)}`, nat.titles.em.length && `EM ${years(nat.titles.em)}`].filter(Boolean).join(' · ') : 'keine'} />
           {(nat.titles.wmFinals.length > 0 || nat.titles.emFinals.length > 0) && <KV k="Finale verloren" v={[...nat.titles.wmFinals.map((y) => `WM ${y}`), ...nat.titles.emFinals.map((y) => `EM ${y}`)].join(', ')} />}

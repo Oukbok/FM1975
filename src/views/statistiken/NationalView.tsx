@@ -19,6 +19,8 @@ import { PlayerLink } from '../../components/playerMenu/PlayerLink';
 import { ClubLink } from '../../components/club/ClubLink';
 import PosBadge from '../../components/PosBadge';
 import type { Position } from '../../types';
+import type { Screen } from '../../shell/navigation';
+import { activeJob } from '../../game/national/nationalJob';
 
 const fmtD = (d: string) => `${d.slice(8, 10)}.${d.slice(5, 7)}.${d.slice(0, 4)}`;
 const tName = (t: { kind: string; year: number }) => `${t.kind === 'WM' ? 'Weltmeisterschaft' : 'Europameisterschaft'} ${t.year}`;
@@ -40,7 +42,8 @@ export function MatchLine({ m, today, label }: { m: NtMatch; today: string; labe
   );
 }
 
-export function TournamentBox({ t, today, home }: { t: Tournament; today: string; home: string }) {
+/** `mine` = Nation des Nationaltrainers (Etikett „Dein Team“). */
+export function TournamentBox({ t, today, home, mine }: { t: Tournament; today: string; home: string; mine?: string }) {
   const ko = t.matches.filter((m) => !m.stage.startsWith('G'));
   // Eine K.-o.-Runde erscheint erst, wenn die Runde davor komplett gespielt ist (keine Vorschau auf Weiterkommen).
   const order = ['G', ...new Set(ko.map((m) => m.stage))];
@@ -54,8 +57,8 @@ export function TournamentBox({ t, today, home }: { t: Tournament; today: string
           <div key={gr.name} className="nt-group">
             <div className="dsec">Gruppe {gr.name}</div>
             {groupTable(t, gr, today).map((r, i) => (
-              <div key={r.c} className={`nt-grow ${r.c === home ? 'me' : ''}`}>
-                <span className="rl-rank">{i + 1}</span><NatFlag nat={r.c} /><span className="nt-gname">{natName(r.c)}</span>
+              <div key={r.c} className={`nt-grow ${r.c === home || r.c === mine ? 'me' : ''}`}>
+                <span className="rl-rank">{i + 1}</span><NatFlag nat={r.c} /><span className="nt-gname">{natName(r.c)}{r.c === mine && <i className="ntj-tag">Dein Team</i>}</span>
                 <span>{r.p}</span><span>{r.gf}:{r.ga}</span><b>{r.pts}</b>
               </div>
             ))}
@@ -76,7 +79,8 @@ export function TournamentBox({ t, today, home }: { t: Tournament; today: string
   );
 }
 
-export function NationalView({ g }: { g: Game }) {
+export function NationalView({ g, onGoto }: { g: Game; onGoto?: (s: Screen) => void }) {
+  const job = activeJob(g);
   const today = g.calendar.currentDate;
   const year = parseInt(today.slice(0, 4), 10);
   const st = nationalSeason(g);
@@ -101,10 +105,11 @@ export function NationalView({ g }: { g: Game }) {
 
   return (
     <DashPage className="nt-page">
-      <DashBox title={`Nationalmannschaft ${natName(home)}`} info="nationalteams" right={<NatFlag nat={home} height={18} />}>
+      <DashBox title={`Nationalmannschaft ${natName(home)}`} info="nationalteams" right={<>{job?.nat === home && <i className="ntj-tag">Dein Team</i>} <NatFlag nat={home} height={18} /></>}>
         <KV k="Stärke" v={<b style={{ color: vColor(strength.get(home) ?? 0) }}>{Math.round(strength.get(home) ?? 0)}</b>} strong />
         <KV k="Rangliste" v={myRank ? `${myRank}. von ${rank.length}` : '–'} />
-        <KV k="Trainer" v={coach} />
+        <KV k="Trainer" v={job?.nat === home ? 'du' : coach} />
+        {job && onGoto && <div className="ntj-actions"><button type="button" className="b3 b3-s b3-primary" onClick={() => onGoto('nationalteam')}>Dein Nationalteam: {natName(job.nat)}</button></div>}
         <KV k="Saisonbilanz" v={season.length ? `${rec.w} S · ${rec.d} U · ${rec.l} N` : 'noch kein Länderspiel'} />
         <div className="dsec">Nächste Termine</div>
         {next.length ? next.map((x) => <div key={x.date + x.text} className="nt-next"><span>{fmtD(x.date)}</span>{x.text}{x.hosts?.map((h) => <Fragment key={h}> <NatFlag nat={h} /></Fragment>)}</div>) : <div className="dnote">Keine Termine.</div>}
@@ -144,7 +149,7 @@ export function NationalView({ g }: { g: Game }) {
       </DashBox>
 
       <DashBox title={t ? <span className="kv-flag">{tName(t)} {t.place}{t.hosts.map((h) => <NatFlag key={h} nat={h} />)}</span> : 'Turnier'} span={2}>
-        {t ? <TournamentBox t={t} today={today} home={home} />
+        {t ? <TournamentBox t={t} today={today} home={home} mine={job?.nat} />
           : <Empty icon="trophy">{next.find((x) => /meisterschaft/.test(x.text))?.text ?? 'Kein Turnier angesetzt.'} – Aufgebote und Spielplan 25 Tage vor dem Anpfiff.</Empty>}
       </DashBox>
 
@@ -155,8 +160,8 @@ export function NationalView({ g }: { g: Game }) {
         {tab === 'rang' && (
           <div className="nt-list">
             {rank.slice(0, 40).map(([c, v], i) => (
-              <div key={c} className={`nt-prow ${c === home ? 'me' : ''}`}>
-                <span className="rl-rank">{i + 1}</span><NatFlag nat={c} /><span className="nt-pname">{natName(c)}</span>
+              <div key={c} className={`nt-prow ${c === home || c === job?.nat ? 'me' : ''}`}>
+                <span className="rl-rank">{i + 1}</span><NatFlag nat={c} /><span className="nt-pname">{natName(c)}{c === job?.nat && <i className="ntj-tag">Dein Team</i>}</span>
                 <b style={{ color: vColor(v) }}>{Math.round(v)}</b>
               </div>
             ))}

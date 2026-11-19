@@ -1,5 +1,6 @@
 import type { NationalState } from '../game/national/nationalGame';
 import { TOURNAMENTS } from '../data/nationalTeams';
+import { jobCalendar } from '../game/national/nationalJobView';
 import { type IconName } from '../components/Icon';
 import { ownCampDays, ownIndoorDays } from '../game/winterShared';
 import { ACTIVITY_DEFS, addDaysUTC } from '../data/activities';
@@ -198,6 +199,9 @@ export function buildDayEventsMap(g: Game): Map<string, StripEvent[]> {
     consider({ date: t.start, icon: 'international', line: `${t.kind === 'WM' ? 'Weltmeisterschaft' : 'Europameisterschaft'}: Anpfiff`, accent: undefined, isMatch: false, prio: 24, screen: 'nationalteams', kind: 'Länderspiel' });
     consider({ date: t.end, icon: 'international', line: `${t.kind}-Finale`, accent: undefined, isMatch: false, prio: 24, screen: 'nationalteams', kind: 'Länderspiel' });
   }
+
+  // Quelle N2 — Nationaltrainer: Nominierungstermine und Spiele deiner Nation (game/national/nationalJobView.ts).
+  for (const e of jobCalendar(g)) consider({ date: e.date, icon: 'international', line: e.line, accent: undefined, isMatch: false, prio: e.own ? 29 : 27, screen: 'nationalteam', kind: 'Länderspiel' });
 
   // Quelle F — Jugendwettbewerbe: Spiele und Spielfeste der eigenen Jugendmannschaften (game/youthComps/).
   const yc = youthCompsOf(g);

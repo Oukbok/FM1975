@@ -1,6 +1,39 @@
 import Icon from '../../components/Icon';
 import { rangePct, type NewGameDraft, type StartMode } from './draft';
 import { STORIES } from '../../data/privateLife';
+import { InfoTip } from '../../ui/InfoTip';
+import { NatFlag } from '../../components/competition/CountryFlag';
+import { jobNationFor, jobNations } from '../../game/national/jobNations';
+import { countryInfo, countryOfNat } from '../../data/countryFlags';
+
+const natLabel = (code: string) => { const k = countryOfNat(code); return k ? countryInfo(k).name : code; };
+
+/** Zusätzlich Nationaltrainer (Wunsch Pascal): Schalter, Nation mit Flagge und Stärke-Rang, Entlassung an/aus. */
+function NationalPick({ d, set }: { d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void }) {
+  const list = jobNations(d.startYear);
+  const own = countryInfo(d.nationality).code;
+  return (
+    <div className="ng-nat">
+      <h3 className="ng-h">Nationalmannschaft <InfoTip k="nationaltrainer" /></h3>
+      <div className="ng-nat-top">
+        <Toggle on={d.nationalOn} onChange={(v) => set({ nationalOn: v, ...(v && !d.nationalOn ? { nationalTeam: jobNationFor(d.nationalTeam === 'GER' && own ? own : d.nationalTeam, d.startYear, 'GER') } : {}) })}
+          label="Zusätzlich Nationaltrainer" text="Neben dem Verein eine Nationalmannschaft betreuen." />
+        <Toggle on={d.nationalOn && d.nationalSackable} onChange={(v) => d.nationalOn && set({ nationalSackable: v })}
+          label="Entlassung möglich" text="Verfehlte Ziele können dich das Amt kosten." />
+      </div>
+      <div className={`ng-natlist ${d.nationalOn ? '' : 'off'}`} role="listbox" aria-label="Nation" aria-disabled={!d.nationalOn}>
+        {list.map((n) => (
+          <button key={n.code} type="button" role="option" aria-selected={d.nationalTeam === n.code} disabled={!d.nationalOn}
+            className={`ng-natrow ${d.nationalTeam === n.code ? 'on' : ''}`} data-nat={n.code} onClick={() => set({ nationalTeam: n.code })}>
+            <NatFlag nat={n.code} height={16} /><b>{natLabel(n.code)}</b>
+            <small>{n.conf}</small><small>Rang {n.rank} · {n.label}</small><em>{n.base}</em>
+          </button>
+        ))}
+      </div>
+      <p className="ng-note ng-natnote">{d.nationalOn ? `Stand ${d.startYear}: Stärke = Grundstärke des Landes; im Spiel zählt dein Aufgebot. Umschalten Verein ↔ Nationalteam über die Kopfleiste.` : 'Standard aus. Später bieten dir Verbände ein Amt an, wenn dein Ansehen passt.'}</p>
+    </div>
+  );
+}
 
 // Schritt 2: Spielmodus — Teammanager oder Karriere, dazu die Spieloptionen
 /** Ton der Segment-Wahl nach Bedeutung (Farben in 24-newgame.css, Tokens --ng-*). */
@@ -54,6 +87,7 @@ export function StepMode({ d, set, chooseMode }: { d: NewGameDraft; set: (p: Par
             <span className="ng-speed-val"><b>{d.speedMs}</b> ms je Tag · {d.speedMs <= 600 ? 'schnell' : d.speedMs >= 1200 ? 'langsam' : 'mittel'}</span>
           </div>
           <p className="ng-note">Wie schnell die Tage ablaufen. Jederzeit im Spiel änderbar.</p>
+          <NationalPick d={d} set={set} />
         </section>
 
         <section className="ng-card">
