@@ -27,6 +27,7 @@ Gemessen im Spiel an allen Spielern der Jahrgänge 1975–1984 (Vorlage „Test 
 
 - Name: `2000_<nr>_<gruppe>[_<herkunft>].png`, z. B. `2000_237_westafrika_franzoesisch-senegalesisch.png`.
 - Format: PNG mit transparentem Hintergrund, 1024 × 1200 px (wie die 1990er Pakete).
+- Nur Kopf und Hals, ohne Trikot und ohne Schultern; unterhalb des Halses ist alles durchsichtig (wie die 1990er Bilder). Ein Bild mit Trikot passt nicht zu den übrigen Köpfen.
 - Je Paket eine ZIP-Datei `faces_2000_batch_<NN>_<gruppe>.zip` mit genau 10 Bildern.
 
 ## Prompt (für jedes Paket; nur den Block „Paket“ anpassen)
@@ -35,13 +36,13 @@ Gemessen im Spiel an allen Spielern der Jahrgänge 1975–1984 (Vorlage „Test 
 Create 10 separate photorealistic portrait images of fictional professional male football players from the 2000s (born 1975–1984, age about 25). They must NOT resemble any real person.
 
 TECHNICAL (identical for all 10):
-- One person per image, 1024 x 1200 px, PNG with fully transparent background (no backdrop, no shadow on the background).
-- Head and shoulders down to mid-chest, head centred, top of the hair about 60 px below the top edge, chin at about 60 % of the image height, shoulders filling the width at the bottom.
+- One person per image, 1024 x 1200 px, PNG with fully transparent background (no backdrop, no shadow, no white).
+- ONLY the head and the neck – NO shirt, NO collar, NO clothing, NO shoulders. The neck ends in a soft, slightly curved cut just below the Adam's apple, like a cut-out portrait sticker; everything below the cut is transparent.
+- Framing: top of the hair about 50 px below the top edge, bottom of the neck cut at about 89 % of the image height (about 1070 px), head centred, the head (incl. hair) about 75–80 % of the image width. Leave transparent space left and right of the head – do NOT fill the frame.
 - Frontal to slightly angled (max 15°), eyes looking into the camera, neutral to slightly friendly expression.
 - Soft, even studio light from the front, no hard shadows, no coloured light.
-- Plain crew-neck or collared football shirt in flat mid-grey #808080, natural fabric folds, NO logo, NO text, NO number, NO sponsor.
 - Natural skin texture, typical mid-2000s team-photo look (sharp digital photo, slightly saturated).
-- No jewellery except at most a small earring stud, no headbands, no hats, no glasses, no watermark.
+- No jewellery except at most a small earring stud, no headbands, no hats, no glasses, no text, no watermark.
 
 PAKET:
 - Group: <GRUPPE> – <HERKUNFT-LISTE>

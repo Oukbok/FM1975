@@ -100,10 +100,10 @@ Beispiele: `faces/mitteleuropa/1970/01-25.webp`, `faces/mitteleuropa/1970/01-32.
 
 ### Bildvorgaben
 - **Format:** WebP mit Alpha-Kanal (transparenter Hintergrund), **512 × 600 px**, Qualität ~80, Ziel < 150 KB.
-- **Ausschnitt:** Kopf und Schultern bis Brustmitte; Kopf mittig, Scheitel ca. 60 px unter dem oberen Rand, Kinn bei ca. 60 % der Höhe; Schultern füllen die Breite unten aus (das Bild wird unten bündig eingepasst).
+- **Ausschnitt:** nur Kopf und Hals, freigestellt – kein Trikot, keine Schultern. Haaransatz oben bei ca. 4 % der Höhe, Halsende (weicher, leicht gebogener Schnitt) bei ca. 89 %, Kopf mittig und ca. 75–80 % der Breite (so sind alle vorhandenen Bilder).
 - **Blick:** frontal bis leicht schräg (max. 15°), Blick in die Kamera, neutraler bis leicht freundlicher Ausdruck; gleichmäßiges, weiches Licht von vorne, kein Bernstein-Schein, keine harten Schatten.
 - **Hintergrund:** transparent (das Spiel legt den dunklen Porträt-Hintergrund darunter).
-- **Trikot:** schlichtes Rundhals- oder Kragentrikot ohne Logo/Schrift/Nummer in **Mittelgrau #808080** mit natürlichen Falten. Mit Maske wird daraus genau die Vereinsfarbe (Falten bleiben); ohne Maske bleibt es grau. Mitarbeiter: Anzug, Trainingsjacke oder Pullover in gedeckten Farben (keine Maske nötig).
+- **Kleidung:** keine – das Spiel zeigt nur den freigestellten Kopf. (Die frühere Idee mit grauem Trikot und Maske wird nicht genutzt.)
 - **Epochenlook:** 1970er lange Haare/Koteletten/Schnauzer, 1980er Vokuhila/Locken/Schnauzer, 1990er Seitenscheitel/Undercut/Spitzbart, 2000er kurz/gegelt/Irokese, 2010er Fade/Dutt/Vollbart, 2020er Fade/Locken/gepflegter Bart. Alterungsstufen: 18 jugendlich, 25 Höhepunkt, 32 erste Falten, 38 grau meliert.
 - **Keine echten Personen** (keine Ähnlichkeit mit realen Spielern), keine Wasserzeichen.
 
