@@ -27,11 +27,12 @@ export function SettingsScreen({ settings, onBack, onSave }: {
           <label className="toggle-item">
             <input type="checkbox" checked={s.soundEnabled} onChange={(e) => setS({ ...s, soundEnabled: e.target.checked })} />
             <span className={`toggle ${s.soundEnabled ? 'on' : ''}`}></span>
-            Klickgeräusch
+            Ton: Klickgeräusch bei jedem Klick
           </label>
           {s.soundEnabled && (
             <label className="dim mini" style={{ display: 'block', paddingLeft: 4 }}>
               Lautstärke: <b className="accent-text">{s.clickVolume ?? 60}%</b>
+              <button type="button" className="btn-sm" style={{ marginLeft: 10 }} onClick={() => previewClick(s.clickVolume ?? 60)}>Probe</button>
               <input type="range" min={5} max={100} step={5} value={s.clickVolume ?? 60}
                 onChange={(e) => setS({ ...s, clickVolume: +e.target.value })}
                 onPointerUp={(e) => previewClick(+(e.target as HTMLInputElement).value)} style={{ width: '100%' }} />

@@ -14,6 +14,8 @@
 .cmp-team-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cmp-team > .club-link { display: inline-flex; align-items: center; min-width: 0; }
 .cmp-dot { width: 12px; height: 12px; border-radius: 50%; flex: 0 0 auto; border: 1px solid var(--border); }
+.cmp-dot-box { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+.cmp-shield { display: block; }
 .cmp-ded { color: var(--neg); margin-left: 3px; }
 .cmp-inline { display: inline-flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; justify-content: flex-end; }
 
@@ -38,9 +40,8 @@
 .rb { display: flex; gap: 10px; min-height: 100%; min-width: max-content; }
 .rb-col { flex: 1 1 0; min-width: 150px; display: flex; flex-direction: column; }
 /* Internationale Bäume (mit Flaggen, Wunsch Pascal): breitere Spalten (sonst nur „Neu…“) – der Baum
-   scrollt dann seitlich; Farbpunkt entfällt neben der Flagge. */
+   scrollt dann seitlich. */
 .rb:has(.cflag) .rb-col { min-width: 228px; }
-.rb .cmp-dot-box:has(+ .cflag) { display: none; }
 .rb-head {
   font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .6px;
   padding: 0 2px 6px; border-bottom: 1px solid var(--border-soft); margin-bottom: 6px;

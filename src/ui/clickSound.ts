@@ -44,13 +44,25 @@ export function playClick(force = false): void {
   if (now - last < 45) return;
   last = now;
   if (!buf || !ctx) { void load(); return; }
-  if (ctx.state === 'suspended') void ctx.resume();
-  const src = ctx.createBufferSource();
-  const gain = ctx.createGain();
-  gain.gain.value = volume;
-  src.buffer = buf;
-  src.connect(gain).connect(ctx.destination);
-  src.start();
+  const c = ctx, b = buf, v = volume;
+  const go = () => {
+    const src = c.createBufferSource();
+    const gain = c.createGain();
+    gain.gain.value = v;
+    src.buffer = b;
+    src.connect(gain).connect(c.destination);
+    src.start();
+  };
+  // Der Kontext startet stumm (Autoplay-Regeln); erst nach dem Aufwecken abspielen.
+  if (c.state !== 'running') { void c.resume().then(() => { if (c.state === 'running') go(); }).catch(() => undefined); return; }
+  go();
+}
+
+/** Browser (vor allem Safari/iOS) lassen Ton erst nach einer „echten“ Nutzer-Geste zu – pointerdown zählt
+ *  dort nicht, touchend/click/keydown schon. Bei jeder solchen Geste den Kontext aufwecken. */
+function unlock(): void {
+  if (!ctx) { void load(); return; }
+  if (ctx.state !== 'running') void ctx.resume().catch(() => undefined);
 }
 
 function isClickable(t: EventTarget | null): boolean {
@@ -73,6 +85,7 @@ export function installClickSound(): void {
     if (!buf) void load();
     if (isClickable(e.target)) playClick();
   }, { capture: true, passive: true });
+  for (const ev of ['touchend', 'click', 'keydown'] as const) window.addEventListener(ev, unlock, { capture: true, passive: true });
 }
 
 /** Probeklick mit einer Lautstärke (Regler in den Einstellungen, vor dem Speichern). */

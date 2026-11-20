@@ -25,9 +25,10 @@ export function TeamName({ g, id, season, short = false, size = 20 }: { g: Game;
   const flag = withFlag ? <CountryFlag country={country ?? (isDdrClub(g, id) && Number(season.slice(0, 4)) < 1991 ? 'DDR' : homeCountryKey(g))} height={Math.max(10, Math.round(size * 0.55))} /> : null;
   if (country || id.startsWith('x_') || id.startsWith('t:')) {
     const col = g.euroClubs?.[id]?.colors.primary ?? ctClub(id)?.club.colors[0] ?? (isLocalClub(id) ? localClubColor(id) : 'var(--text-4)');
+    const col2 = g.euroClubs?.[id]?.colors.secondary ?? ctClub(id)?.club.colors[1] ?? col;
     return (
       <span className="cmp-team" title={country ? `${name} (${country})` : isLocalClub(id) ? `${name} (Ortsverein)` : name}>
-        <span className="cmp-dot-box" style={{ width: size, height: size }}><span className="cmp-dot" style={{ background: col }} /></span>
+        <span className="cmp-dot-box" style={{ width: size, height: size }}><ColorShield c1={col} c2={col2} size={size} /></span>
         {flag}
         <ClubLink id={id}><span className="cmp-team-name">{name}</span></ClubLink>
       </span>
@@ -65,4 +66,16 @@ export function zoneOf(pos: number, tier: number | undefined, rows: number, hist
   if (tier === 101) return pos === 1 ? 'zone-cl' : pos > rows - 2 ? 'zone-rel' : '';
   if (tier === 2) return pos === 1 ? 'zone-cl' : pos === 2 ? 'zone-eu' : '';
   return pos === 1 ? 'zone-cl' : '';
+}
+
+/** Platzhalter-Wappen in Vereinsfarben (Wunsch Pascal): gleiche feste Größe wie ein echtes Wappen,
+ *  damit Vereine ohne Wappen im Layout nicht anders aussehen (statt eines kleinen Farbpunkts). */
+export function ColorShield({ c1, c2, size }: { c1: string; c2: string; size: number }) {
+  return (
+    <svg className="cmp-shield" width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 2.5H20V12C20 17.6 15.6 20.6 12 22C8.4 20.6 4 17.6 4 12Z" fill={c1} />
+      <path d="M12 2.5H20V12C20 17.6 15.6 20.6 12 22Z" fill={c2} />
+      <path d="M4 2.5H20V12C20 17.6 15.6 20.6 12 22C8.4 20.6 4 17.6 4 12Z" fill="none" stroke="var(--flag-edge)" strokeWidth="1" />
+    </svg>
+  );
 }
