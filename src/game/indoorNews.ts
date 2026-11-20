@@ -2,13 +2,15 @@
 // HALLENFUSSBALL – Nachrichten (Einladung, Absage, eigenes Ergebnis, Masters) und
 // Anzeigenamen. Spielablauf: game/indoorGame.ts.
 // =============================================================================
+import { ABROAD_BY_ID } from '../data/indoorAbroad';
 import { mastersMoney, tournamentFeeBase, winterYearOf } from '../data/indoorHistory';
 import { INDOOR_SQUAD_LABEL, winnerOf } from '../engine/indoor';
 import { CalendarEngine } from '../engine/calendar';
 import { economyScale, yearOf } from '../engine/economy';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { fmtDM, fmtDay } from '../ui/format';
-import { Game } from './state';
+import { Game, homeCountryKey } from './state';
+import { countryName } from './worldPool';
 import { IndoorTournament, IndoorWinter, indoorState } from './winterShared';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -24,7 +26,7 @@ export function indoorShort(g: Game, id: string): string {
 export function sendInvite(g: Game, t: IndoorTournament, today: string): void {
   const club = g.clubs[g.managedClubId];
   const scale = economyScale(yearOf(t.date));
-  const fee = t.kind === 'masters' ? mastersMoney(winterYearOf(g.season)).start : Math.round(tournamentFeeBase(club.reputation) * scale);
+  const fee = t.kind === 'masters' ? mastersMoney(winterYearOf(g.season)).start : Math.round(tournamentFeeBase(club.reputation) * scale * (t.kind === 'abroad' ? ABROAD_BY_ID[t.aid ?? '']?.fee ?? 1 : 1));
   const others = t.clubIds.filter((id) => id !== g.managedClubId).map((id) => indoorName(g, id));
   const deadline = CalendarEngine.addDays(t.date, -2) > today ? CalendarEngine.addDays(t.date, -2) : today;
   const masters = t.kind === 'masters';
@@ -34,7 +36,7 @@ export function sendInvite(g: Game, t: IndoorTournament, today: string): void {
     shortText: masters ? `Endrunde in der ${t.hall}, ${t.city}. Teilnehmen?` : `${t.hall}, ${t.city}. Antrittsgeld ${fmtDM(fee)}.`,
     bodyText: (masters
       ? `Glückwunsch: Über die Hallentour habt ihr euch für die Endrunde des DFB-Hallenpokals qualifiziert – ${t.days} Tage in der ${t.hall} (${t.city}) ab ${fmtDay(t.date)}.\n\n`
-      : `Wir laden euch zum ${t.name} in die ${t.hall} ein (${fmtDay(t.date)}).\n\nBisher zugesagt: ${others.join(', ') || 'noch offen'}.\n\n`)
+      : `Wir laden euch zum ${t.name} in die ${t.hall} ein (${fmtDay(t.date)}${t.days > 1 ? `, ${t.days} Tage` : ''}).${abroadNote(g, t)}\n\nBisher zugesagt: ${others.join(', ') || 'noch offen'}.\n\n`)
       + `Antrittsgeld: ${fee > 0 ? fmtDM(fee) : 'keines'}${masters ? ' – dazu Prämien nach Platzierung' : ' – der Turniersieger bekommt eine Prämie'}.\n\n`
       + `Fünf Feldspieler plus Torwart, Rundumbande, kurze Spielzeiten. Gut für Spielpraxis von Reservisten und für die Fans – `
       + `aber der Hallenboden ist hart: Prellungen und Bänderverletzungen sind keine Seltenheit, und die Winterpause wird kürzer.\n\n`
@@ -47,6 +49,13 @@ export function sendInvite(g: Game, t: IndoorTournament, today: string): void {
   ];
   msg.eventRef = { type: 'indoor_invite', deadline, defaultChoice: 'mix', data: { tid: t.id } };
   pushMessage(g.messages, msg);
+}
+
+/** Zusatz der Einladung zu einem Auslandsturnier (Reise bzw. Heimturnier im Heimatland). */
+function abroadNote(g: Game, t: IndoorTournament): string {
+  if (t.kind !== 'abroad') return '';
+  if (t.cc === homeCountryKey(g)) return g.clubs[g.managedClubId]?.city === t.city ? ' Ein Heimturnier vor den eigenen Fans.' : '';
+  return ` Ein internationales Turnier in ${countryName(t.cc ?? '')} – Reise inklusive, Gegner aus mehreren Ländern.`;
 }
 
 export function declinePenalty(g: Game, t: IndoorTournament, today: string): void {

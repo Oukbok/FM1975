@@ -1,7 +1,8 @@
 // Screenshots der Hallen-Show (screens/indoor/) bei 1920×1080 und 1366×768:
 // Startseite, Nächstes Spiel mit Entscheidung, kurzer Textmodus (laufend + Abpfiff),
 // Übersicht nach fremden Spielen, Siegerehrung; dazu Klick auf einen Teilnehmer
-// (Hallenkader + Kaderwahl), danach Statistiken › Halle (Masters-Wertung, Hallenkönige).
+// (Hallenkader + Kaderwahl), danach Statistiken › Halle (Masters-Wertung, Hallenkönige, Turniere im Ausland).
+// Show mit Auslandsturnier: SAVE aus tests/indoor-abroad-prep.ts, `ABROAD=wien` wählt das Turnier in der Statistik.
 // Prüft feste Größe der Mittelkarte, waagerechten Überlauf und JS-Fehler.
 //   npm run build
 //   DUMP=test-output/indoor/save1990.txt UNTIL=1990-12-19 node scripts/sim.mjs 15
@@ -150,6 +151,13 @@ async function run(width, height) {
   const kings = await page.locator('.hk-table tbody tr').count();
   console.log(`[${tag}] Hallenkönige: ${kings} Zeilen`);
   if (!kings) errors.push(`[${tag}] Hallenkönige leer`);
+  // Turniere im Ausland (Wunsch Pascal): Turnierwahl mit Flagge, Sieger je Winter.
+  await pickOption(page, page.locator('.hk-box .sel3').first(), 'abroad');
+  await page.waitForTimeout(300);
+  if (process.env.ABROAD) await pickOption(page, page.locator('.hk-pick .sel3').first(), process.env.ABROAD);
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${outDir}/${tag}_9_ausland.png` });
+  console.log(`[${tag}] Turniere im Ausland: ${await page.locator('.hk-box .dlist-row').count()} Zeilen`);
   const ovf = await page.evaluate(() => [...document.querySelectorAll('.dbox, .hk-scroll, .mst-scroll')].filter((el) => el.scrollWidth > el.clientWidth + 2).map((el) => el.className));
   if (ovf.length) errors.push(`[${tag}] Statistik Halle läuft waagerecht über: ${ovf.join(', ')}`);
   await page.close();

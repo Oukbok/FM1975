@@ -9,7 +9,10 @@ import { MastersBox } from './indoor/MastersBox';
 import { HallOfKingsBox } from './indoor/HallOfKingsBox';
 import { mastersScoring } from '../../game/indoorMasters';
 import { allTournaments, indoorName, indoorShort, setOwnIndoorDecision } from '../../game/indoorGame';
-import { Game } from '../../game/state';
+import { Game, homeCountryKey, homeCountryOf } from '../../game/state';
+import { CountryFlag } from '../../components/competition/CountryFlag';
+import { abroadFor } from '../../data/indoorAbroad';
+import { IndoorFlag } from '../../screens/indoor/IndoorFlag';
 import { IndoorDecision, IndoorTournament, indoorState } from '../../game/winterShared';
 import { DashBox, DashPage, Empty, KV, Meter } from '../../ui/DashPage';
 import { fmtDM, fmtDay } from '../../ui/format';
@@ -51,8 +54,12 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
 
   // Reale Sieger nur bis zum aktuellen Winter (keine Vorschau auf die Zukunft).
   const title = (id: string) => st.titles[id] ?? 0;
+  const homeKey = homeCountryKey(g);
+  const abroadN = cur?.abroad?.length ?? abroadFor(wy).length;
   const ownPhaseStatus = phase === 'none'
-    ? (wy > INDOOR_LAST_WINTER ? `Seit ${INDOOR_LAST_WINTER + 1} keine Hallenturniere mehr` : 'Noch keine Hallensaison')
+    ? (homeCountryOf(g) !== 'ger'
+      ? (abroadN ? 'Hallenturniere in deinem Heimatland und bei den Nachbarn: Einladungsturniere ohne Endrunde (Statistiken › Halle, Turniere im Ausland).' : 'In diesem Winter gibt es keine Hallenturniere mit Profis.')
+      : wy > INDOOR_LAST_WINTER ? `Seit ${INDOOR_LAST_WINTER + 1} keine Hallenturniere mehr in Deutschland${abroadN ? ' – im Ausland laufen noch einzelne Turniere' : ''}` : 'Noch keine Hallensaison')
     : phase === 'masters' && mastersScoring() === 'place'
       ? 'DFB-Hallenpokal: Qualifikationsturniere, Wertung nach Platzierungspunkten (Einstellung), die Besten spielen das Masters.'
       : PHASE_TEXT[phase];
@@ -63,7 +70,7 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
         right={cur?.phase && cur.phase !== 'none' ? `${list.filter((t) => t.done).length}/${list.length} gespielt` : undefined}>
         {!list.length ? (
           <Empty icon="kalender">{phase === 'none'
-            ? (wy > INDOOR_LAST_WINTER ? 'Der Hallenfußball mit Profis ist Geschichte – die Winterpause gehört dem Trainingslager.' : 'Hallenturniere gibt es in dieser Saison nicht.')
+            ? (wy > INDOOR_LAST_WINTER && !abroadN ? 'Der Hallenfußball mit Profis ist Geschichte – die Winterpause gehört dem Trainingslager.' : abroadN ? 'Die Einladungen für die Hallenturniere kommen Anfang November.' : 'Hallenturniere gibt es in dieser Saison nicht.')
             : 'Die Einladungen für die Hallenturniere kommen Anfang November.'}</Empty>
         ) : list.map((t) => {
           const mine = t.own !== undefined;
@@ -72,8 +79,9 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
             <div key={t.id} className={`dlist-row clickable ${sel?.id === t.id ? 'win-sel' : ''}`} onClick={() => setSelId(t.id)}>
               <span className="meta" style={{ minWidth: 72 }}>{fmtDay(t.date)}{t.days > 1 ? ' +1' : ''}</span>
               <span className="grow">
-                <b>{t.kind === 'masters' ? t.name : t.city}</b>
-                <span className="muted"> · {t.hall}{t.kind !== 'masters' ? ` · ${t.clubIds.map((id) => indoorShort(g, id)).join(', ')}` : ''}</span>
+                {t.kind === 'abroad' && t.cc && t.cc !== homeKey && <span className="ix-flag"><CountryFlag country={t.cc} height={12} noLink /></span>}
+                <b>{t.kind === 'masters' || t.kind === 'abroad' ? t.name : t.city}</b>
+                <span className="muted"> · {t.kind === 'abroad' ? `${t.hall}, ${t.city}` : t.hall}{t.kind !== 'masters' ? ` · ${t.clubIds.map((id) => indoorShort(g, id)).join(', ')}` : ''}</span>
               </span>
               {mine && <span className="mini nowrap">{ownLabel(t)}</span>}
               {editable && (
@@ -108,13 +116,13 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
 
       <MastersBox g={g} st={st} cur={cur} wy={wy} />
 
-      <DashBox title={!sel ? 'Turnier' : sel.kind === 'masters' ? sel.name : `Turnier ${sel.city} ${fmtDay(sel.date)}`} icon="matchball">
+      <DashBox title={!sel ? 'Turnier' : sel.kind === 'masters' || sel.kind === 'abroad' ? sel.name : `Turnier ${sel.city} ${fmtDay(sel.date)}`} icon="matchball">
         {!sel ? <Empty icon="matchball">Kein Turnier ausgewählt.</Empty> : !sel.done || !sel.result ? (
           <>
             <div className="dnote">{fmtDay(sel.date)} · {sel.hall}, {sel.city}</div>
             <div className="dsec">Teilnehmer</div>
             {sel.clubIds.length ? sel.clubIds.map((id) => (
-              <div key={id} className="dlist-row"><span className="grow"><ClubLink id={id}>{indoorName(g, id)}</ClubLink></span>
+              <div key={id} className="dlist-row"><span className="grow"><IndoorFlag g={g} id={id} /><ClubLink id={id}>{indoorName(g, id)}</ClubLink></span>
                 <span className="meta">{id === mid ? (sel.own === 'decline' ? 'abgesagt' : sel.own ? (sel.ownIds?.length ? 'eigene Auswahl' : 'zugesagt') : 'offen') : sel.squads[id] ? INDOOR_SQUAD_LABEL[sel.squads[id]] : ''}</span></div>
             )) : <div className="dnote">Das Teilnehmerfeld steht nach der letzten Qualifikation fest.</div>}
           </>
@@ -125,7 +133,7 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
                 <div className="dsec">Gruppe {gi === 0 ? 'A' : 'B'}</div>
                 {tb.map((r) => (
                   <div key={r.id} className={`dlist-row ${r.id === mid ? 'win-me' : ''}`}>
-                    <span className="grow">{indoorShort(g, r.id)}</span><span className="meta">{r.gf}:{r.ga}</span><b>{r.pts}</b>
+                    <span className="grow"><IndoorFlag g={g} id={r.id} />{indoorShort(g, r.id)}</span><span className="meta">{r.gf}:{r.ga}</span><b>{r.pts}</b>
                   </div>
                 ))}
               </div>
@@ -146,7 +154,7 @@ function MatchLine({ g, m, mid }: { g: Game; m: IndoorMatch; mid: string }) {
   return (
     <div className={`dlist-row ${m.a === mid || m.b === mid ? 'win-me' : ''}`}>
       <span className="meta" style={{ minWidth: 48 }}>{STAGE[m.stage]}</span>
-      <span className="grow"><span style={{ fontWeight: w === m.a ? 800 : 400 }}>{indoorShort(g, m.a)}</span> – <span style={{ fontWeight: w === m.b ? 800 : 400 }}>{indoorShort(g, m.b)}</span></span>
+      <span className="grow"><IndoorFlag g={g} id={m.a} /><span style={{ fontWeight: w === m.a ? 800 : 400 }}>{indoorShort(g, m.a)}</span> – <IndoorFlag g={g} id={m.b} /><span style={{ fontWeight: w === m.b ? 800 : 400 }}>{indoorShort(g, m.b)}</span></span>
       <b>{m.ga}:{m.gb}</b>{m.pa != null && <span className="meta">({m.pa}:{m.pb} NM)</span>}
     </div>
   );

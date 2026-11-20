@@ -231,6 +231,11 @@ export const INFO_TEXTS = {
     text: 'Historisch zählt der Schnitt aller Spiele der Qualifikationsturniere (Ø Punkte je Spiel, dann Tordifferenz je Spiel, dann Tore) – ein starkes Turnier kann reichen. In den Einstellungen kannst du stattdessen Platzierungspunkte je Turnier wählen (Sieger 10, Zweiter 7, Dritter 5, Vierter 4, dahinter 3/2/1; Gleichstand nach Schnitt). Die besten 8 Vereine der beiden oberen Ligen fahren zum Masters; wer verzichtet oder noch ein Pflichtspiel hat, macht Platz für Nachrücker. Ohne Masters (vor 1988, nach 2001) zählen Turniersiege, dann Punkte.',
     wiki: 'indoor-football',
   },
+  hallenAusland: {
+    title: 'Hallenturniere im Ausland',
+    text: 'Auch in Nachbarländern gab es große Hallenturniere: in Wien (Stadthalle, bis 2009), Genf (ab 1982), Paris (1984–1991), die Schweizer Hallenmeisterschaft (1997–1999, Vorrunden und Finale der Besten), in Graz und die englischen Five- und Six-a-side-Turniere in London und Birmingham/Manchester. Gespielt wird wie bei den deutschen Turnieren; dein Verein kann eingeladen werden, wenn es in seine Winterpause passt. Turniere im eigenen Heimatland gelten als Heimturniere. Hier stehen die Sieger je Winter.',
+    wiki: 'indoor-football',
+  },
   hallenkoenige: {
     title: 'Hallenkönige',
     text: 'Ewige Bestenliste der Hallenspieler. Der Hallenruf wächst mit jedem Hallentor (+1), jedem Turniersieg (+3) und jedem Masters-Sieg (+5 zusätzlich). Hallenspezialist sind die rund 15 besten aktiven Hallenspieler – die Schwelle hängt von der Epoche ab (früh niedriger, in der Masters-Zeit höher) und steht unter der Liste. Das Etikett steht in der Hallenkader-Auswahl und im Spielerprofil.',

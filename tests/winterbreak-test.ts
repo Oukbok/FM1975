@@ -117,7 +117,9 @@ for (const y of [1976, 1984, 1986, 1987, 1990, 1993, 1996, 1997, 1998, 2000, 200
   const ts = allTournaments(st.current);
   const phase = indoorPhase(y + 1);
   if (phase !== 'none') check(ts.length > 0, `${g.season}: keine Hallenturniere`);
-  for (const t of ts) {
+  // Auslandsturniere (game/indoorAbroad.ts) folgen dem Kalender ihres Landes (London im November);
+  // an deine Pause gebunden sind sie nur mit deinem Verein. Jeder Teilnehmer bleibt in seiner Pause (bc.fits unten).
+  for (const t of ts.filter((x) => x.kind !== 'abroad' || x.clubIds.includes(g.managedClubId))) {
     for (let i = 0; i < t.days; i++) {
       const d = CalendarEngine.addDays(t.date, i);
       check(d >= win.from && d <= win.to, `${g.season}: ${t.name} am ${d} außerhalb der Pause ${win.from}–${win.to}`);
@@ -129,7 +131,7 @@ for (const y of [1976, 1984, 1986, 1987, 1990, 1993, 1996, 1997, 1998, 2000, 200
   const m = st.current.masters;
   if (phase === 'masters') {
     check(!!m && m.date.slice(5, 7) === '01', `${g.season}: Masters nicht im Januar (${m?.date})`);
-    check(ts.filter((t) => t !== m).every((t) => t.date < m!.date), `${g.season}: Tour-Turnier nach dem Masters`);
+    check(st.current.tournaments.every((t) => t.date < m!.date), `${g.season}: Tour-Turnier nach dem Masters`);
   }
   console.log(`${g.season}: Pause ${wb.last} → ${wb.first} (${(days(wb.last, wb.first) / 7).toFixed(1)} Wo.), Fenster ${win.from}–${win.to}, ${ts.length} Hallenturniere${m ? `, Masters ${m.date}` : ''}, Pokal ${cup.rounds.map((r) => r.date.slice(5)).join(' ')}`);
 }

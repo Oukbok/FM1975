@@ -18,6 +18,7 @@ import type { Player } from '../../types';
 import { vColor } from '../../ui/format';
 import { AnyCrest } from '../../views/transfers/window/parts';
 import { indoorName } from './indoorScript';
+import { IndoorFlag } from './IndoorFlag';
 
 /** Kleines Etikett „Hallenspezialist“ (Hallenruf ab der Schwelle der Epoche, `hallSpecialistAt`). */
 export function HallTag({ g, pid }: { g: Game; pid: string }) {
@@ -37,7 +38,7 @@ function EntrantSquad({ g, id, squad, strength }: { g: Game; id: string; squad?:
   if (!squad?.length) {
     return (
       <div className="ix-esq-empty ix-dim">
-        Ohne vollen Kader (Ausland, Amateure, untere Ligen): Der Verein tritt mit seiner Vereinsstärke an – Hallenstärke {Math.round(strength)}.
+        Ohne vollen Kader (Amateure, untere Ligen): Der Verein tritt mit seiner Vereinsstärke an – Hallenstärke {Math.round(strength)}.
       </div>
     );
   }
@@ -75,7 +76,7 @@ export function EntrantsSection({ g, t, live, squads }: { g: Game; t: IndoorTour
         <h3 className="ix-h ix-esq-title">
           <button type="button" className="ix-back" onClick={() => setSel(null)} title="Zurück zu allen Teilnehmern" aria-label="Zurück zu allen Teilnehmern"><Icon name="navPrev" size={18} /></button>
           <span className="ix-crest" style={{ width: 26, height: 26 }}><AnyCrest g={g} id={sel} size={26} /></span>
-          <span className="ix-esq-club">{indoorName(g, sel)}</span>
+          <span className="ix-esq-club"><IndoorFlag g={g} id={sel} height={14} />{indoorName(g, sel)}</span>
         </h3>
         <div className="ix-esq-meta">
           <span className="ix-sq-tag" title="Kaderwahl für dieses Turnier">{squads.get(sel)?.length ? squadLabel(g, t, sel) : 'Vereinsauswahl'}</span>
@@ -95,6 +96,7 @@ export function EntrantsSection({ g, t, live, squads }: { g: Game; t: IndoorTour
               <span className="rl-rank">{i + 1}</span>
               <span className={`ix-club ${id === mid ? 'me' : ''}`}>
                 <span className="ix-crest" style={{ width: 26, height: 26 }}><AnyCrest g={g} id={id} size={26} /></span>
+                <IndoorFlag g={g} id={id} />
                 <span className="ix-name">{indoorName(g, id)}</span>
               </span>
               <span className="ix-dim">Gruppe {grp(id)}</span>

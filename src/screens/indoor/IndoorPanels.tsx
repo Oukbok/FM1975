@@ -13,6 +13,7 @@ import { vColor } from '../../ui/format';
 import { AnyCrest } from '../../views/transfers/window/parts';
 import { STAGE_LABEL, indoorName, indoorShort } from './indoorScript';
 import PosBadge from '../../components/PosBadge';
+import { IndoorFlag } from './IndoorFlag';
 
 export function IxClub({ g, id, size = 26, short }: { g: Game; id: string | null; size?: number; short?: boolean }) {
   if (!id) return <span className="ix-club open"><span className="ix-crest" style={{ width: size, height: size }} /><span className="ix-name">offen</span></span>;
@@ -20,6 +21,7 @@ export function IxClub({ g, id, size = 26, short }: { g: Game; id: string | null
     <ClubLink id={id}>
       <span className={`ix-club ${id === g.managedClubId ? 'me' : ''}`}>
         <span className="ix-crest" style={{ width: size, height: size }}><AnyCrest g={g} id={id} size={size} /></span>
+        <IndoorFlag g={g} id={id} />
         <span className="ix-name">{short ? indoorShort(g, id) : indoorName(g, id)}</span>
       </span>
     </ClubLink>

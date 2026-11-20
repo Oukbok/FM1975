@@ -21,6 +21,7 @@ import { IxClub, scoreText } from './IndoorPanels';
 import { EntrantsSection } from './IndoorEntrants';
 import { hallDrillBonus } from '../../game/indoorRecords';
 import { STAGE_LABEL, indoorName } from './indoorScript';
+import { IndoorFlag } from './IndoorFlag';
 
 export function IntroStage({ g, t, live, squad, squads, cands, onSquad, onStart, onAll }: {
   g: Game; t: IndoorTournament; live: IndoorLive; squad: Player[]; squads: Map<string, Player[]>; cands: Player[]; onSquad: (ids: string[]) => void;
@@ -72,7 +73,7 @@ export function NextStage({ g, live, slot, plan, onPlan, year, last, onText, onR
   const sideBox = (id: string | null) => (
     <div className={`ix-nx-side ${id === mid ? 'me' : ''}`}>
       <span className="ix-nx-crest">{id && <AnyCrest g={g} id={id} size={120} />}</span>
-      <span className="ix-nx-name">{id ? indoorName(g, id) : 'offen'}</span>
+      <span className="ix-nx-name">{id && <IndoorFlag g={g} id={id} height={16} />}{id ? indoorName(g, id) : 'offen'}</span>
       {id && <span className="ix-dim">Hallenstärke {Math.round(live.strength[id])}</span>}
     </div>
   );
@@ -157,7 +158,7 @@ export function CeremonyStage({ g, t, res, out, onClose }: { g: Game; t: IndoorT
         <div className="ix-k">Turniersieger</div>
         <div className={`ix-cer-champ ${won ? 'me' : ''}`}>
           <AnyCrest g={g} id={champ} size={64} />
-          <span>{indoorName(g, champ)}</span>
+          <span><IndoorFlag g={g} id={champ} height={16} />{indoorName(g, champ)}</span>
         </div>
         {fin && <div className="ix-dim ix-cer-fin">Finale {indoorName(g, fin.a)} – {indoorName(g, fin.b)} {scoreText(fin)}</div>}
       </div>

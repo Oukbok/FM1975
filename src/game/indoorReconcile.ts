@@ -23,7 +23,7 @@ const span = (t: IndoorTournament, date = t.date) => Array.from({ length: t.days
 /** Prüft alle künftigen Hallentermine; `sub` füllt einen frei gewordenen Platz. Rückgabe: Anzahl Änderungen. */
 export function reconcileIndoor(g: Game, cur: IndoorWinter, today: string, sub: (t: IndoorTournament) => unknown): number {
   const mid = g.managedClubId;
-  const all = [...cur.tournaments, ...(cur.masters ? [cur.masters] : [])];
+  const all = [...cur.tournaments, ...(cur.abroad ?? []), ...(cur.masters ? [cur.masters] : [])];
   const bc = new BreakCache(g);
   let changes = 0;
   for (const t of all) {

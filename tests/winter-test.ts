@@ -26,6 +26,7 @@ import { HALL_SPEC_TARGET, hallDrillBonus, hallKings, hallRuf, hallSpecialistAt,
 import { BLOCKS_BY_ID, blockAvailable } from '../src/engine/weeklyTraining';
 import { blockFactorFn } from '../src/game/trainerTeam';
 import { sanitizePlan } from '../src/engine/trainingPlan';
+import { abroadChecks } from './indoor-abroad-checks';
 
 let seed = 1991;
 Math.random = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
@@ -128,7 +129,7 @@ function runWinter(g: Game, season: string, beforeEachDay?: (d: string) => void)
   g.season = season;
   const y0 = Number(season.slice(0, 4));
   let d = `${y0}-10-30`;
-  while (d <= `${y0 + 1}-01-20`) {
+  while (d <= `${y0 + 1}-02-10`) {
     g.calendar.currentDate = d;
     beforeEachDay?.(d);
     indoorDaily(g, d);
@@ -178,7 +179,9 @@ function runWinter(g: Game, season: string, beforeEachDay?: (d: string) => void)
   for (const s of ['2004/05', '2010/11', '2025/26']) {
     runWinter(g, s);
     const c = indoorState(g).current!;
-    expect(c.phase === 'none' && allTournaments(c).length === 0, `Hallenturniere in ${s}`);
+    // Deutsche Turniere enden 2004; Auslandsturniere (Wien, Genf) laufen bis 2009 (data/indoorAbroad.ts).
+    expect(c.phase === 'none' && c.tournaments.length === 0 && !c.masters, `Hallenturniere in ${s}`);
+    if (s !== '2004/05') expect(allTournaments(c).length === 0, `Auslandsturniere in ${s}`);
   }
 }
 
@@ -339,7 +342,8 @@ function runWinter(g: Game, season: string, beforeEachDay?: (d: string) => void)
     const res = liveResult(live);
     expect(res.ranking.length === t.clubIds.length && new Set(res.ranking).size === res.ranking.length, 'Live-Endstand unvollständig');
     const want = new Map<string, number>();
-    for (const m of res.matches) for (const side of [0, 1] as const) for (const id of m.sc?.[side] ?? []) want.set(id, (want.get(id) ?? 0) + 1);
+    // Torschützen mit vollem Datensatz (Weltpool-Gäste sammeln keinen Hallenruf).
+    for (const m of res.matches) for (const side of [0, 1] as const) for (const id of m.sc?.[side] ?? []) if (g.players[id]) want.set(id, (want.get(id) ?? 0) + 1);
     expect(want.size > 0 || !res.matches.some((m) => (m.a === mid && m.ga > 0) || (m.b === mid && m.gb > 0)), 'Textmodus ohne Torschützen');
     const before = new Map([...want.keys()].map((id) => [id, indoorState(g).rec?.[id]?.g ?? 0]));
     const out = finishIndoorShow(g, t.id, res, 1);
@@ -378,7 +382,7 @@ function runWinter(g: Game, season: string, beforeEachDay?: (d: string) => void)
     // Hallenruf: alle Tore der Vereine mit vollem Kader sind verbucht.
     const rec = indoorState(g).rec ?? {};
     let goals = 0;
-    for (const t of [...cur.tournaments, cur.masters!]) for (const m of t.result!.matches) {
+    for (const t of [...cur.tournaments, ...(cur.abroad ?? []), cur.masters!]) for (const m of t.result!.matches) {
       if (g.clubs[m.a] && !m.a.startsWith('eu_')) goals += m.ga;
       if (g.clubs[m.b] && !m.b.startsWith('eu_')) goals += m.gb;
       expect(!m.sc, 'Torschützen nicht aus dem Ergebnis entfernt');
@@ -440,4 +444,6 @@ function runWinter(g: Game, season: string, beforeEachDay?: (d: string) => void)
   expect(sanitizePlan(plan as any, 2005).days.every((d) => d.slot1 === 'technik'), 'Hallentraining nach 2004 nicht ersetzt');
   console.log(`Hallentraining: Faktor Hallenzeit ${fOn.toFixed(2)}, sonst ${fOff.toFixed(2)}, Bonus max +2`);
 }
+// 8) Auslandsgäste + Hallenturniere im Ausland (tests/indoor-abroad-checks.ts)
+abroadChecks(fresh, runWinter, expect);
 console.log('Winter-Test OK');

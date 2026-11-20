@@ -22,6 +22,7 @@ import { hashStr, mulberry32 } from '../../engine/leagues';
 import { candidatesOf, finishIndoorShow, indoorWinPts, tournamentEntrants, type IndoorOutcome } from '../../game/indoorGame';
 import type { Game } from '../../game/state';
 import type { IndoorTournament } from '../../game/winterShared';
+import { countryName } from '../../game/worldPool';
 import { fmtDateFull } from '../../ui/format';
 import { IndoorMatchPanel, type TickSpeed } from './IndoorMatchPanel';
 import { GroupTablesPanel, SchedulePanel } from './IndoorPanels';
@@ -31,6 +32,7 @@ import { indoorSide, narrate, type TickLine } from './indoorScript';
 type Phase = 'intro' | 'board' | 'match' | 'done';
 const KIND_LABEL: Record<IndoorTournament['kind'], string> = {
   invite: 'Einladungsturnier', qualifier: 'DFB-Hallenpokal · Qualifikation', masters: 'DFB-Hallenpokal · Endrunde', regional: 'Regionalturnier',
+  abroad: 'Internationales Hallenturnier',
 };
 
 export function IndoorShow({ g, t, settings, onSettings, onClose }: {
@@ -142,7 +144,7 @@ export function IndoorShow({ g, t, settings, onSettings, onClose }: {
     <div className={`ix-root phase-${phase}`} role="dialog" aria-label={t.name}>
       <header className="ix-top">
         <div className="ix-top-l">
-          <span className="ix-kicker">{KIND_LABEL[t.kind]}</span>
+          <span className="ix-kicker">{t.kind === 'abroad' && t.cc ? `${KIND_LABEL[t.kind]} · ${countryName(t.cc)}` : KIND_LABEL[t.kind]}</span>
           <h1 className="ix-title">{t.name}</h1>
           <span className="ix-sub">{t.hall}, {t.city} · {fmtDateFull(t.date)}{masters ? ' · zwei Tage' : ''}</span>
         </div>

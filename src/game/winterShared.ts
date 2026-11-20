@@ -20,7 +20,7 @@ import { defaultLodging } from '../data/campLodgings';
 // -----------------------------------------------------------------------------
 // Hallenfußball
 // -----------------------------------------------------------------------------
-export type IndoorKind = 'invite' | 'qualifier' | 'masters' | 'regional';
+export type IndoorKind = 'invite' | 'qualifier' | 'masters' | 'regional' | 'abroad';
 export type IndoorDecision = IndoorSquad | 'decline';
 
 export interface IndoorTournament {
@@ -42,6 +42,9 @@ export interface IndoorTournament {
   result?: IndoorResult;
   strengths?: Record<string, number>;
   done: boolean;
+  /** Auslandsturnier (kind 'abroad'): Stammdaten-ID (data/indoorAbroad.ts) und Gastgeberland (Weltdaten-Schlüssel). */
+  aid?: string;
+  cc?: string;
 }
 
 export interface IndoorWinter {
@@ -51,6 +54,8 @@ export interface IndoorWinter {
   phase: IndoorPhase;
   tournaments: IndoorTournament[];
   masters?: IndoorTournament;
+  /** Hallenturniere im Ausland (game/indoorAbroad.ts); fehlt bei alten Spielständen. */
+  abroad?: IndoorTournament[];
   /** Tour-Wertung (Qualifikation zur Endrunde). */
   tour?: TourStat[];
   /** Vereine, die ihren Endrunden-Platz nicht wahrgenommen haben. */
@@ -73,6 +78,8 @@ export interface IndoorHistoryEntry {
   winners?: string[];
   /** Endwertung des Winters (Masters-Wertung bzw. Hallensaison, game/indoorMasters.ts); fehlt bei alten Spielständen. */
   board?: BoardArchive;
+  /** Auslandsturniere des Winters: [Turnier-ID, Sieger, Zweiter, Platz deines Vereins (0 = nicht dabei)]. */
+  abroad?: [string, string, string, number][];
 }
 
 export interface IndoorState {
@@ -228,7 +235,7 @@ export function ownIndoorDays(g: Game, includePending = true): Map<string, Indoo
   const out = new Map<string, IndoorTournament>();
   const cur = indoorState(g).current;
   if (!cur) return out;
-  for (const t of [...cur.tournaments, ...(cur.masters ? [cur.masters] : [])]) {
+  for (const t of [...cur.tournaments, ...(cur.abroad ?? []), ...(cur.masters ? [cur.masters] : [])]) {
     if (t.own === undefined || t.own === 'decline') continue;
     if (t.own === null && !includePending) continue;
     for (let i = 0; i < t.days; i++) out.set(CalendarEngine.addDays(t.date, i), t);

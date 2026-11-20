@@ -68,3 +68,7 @@
 .hk-star { color: var(--text-3); }
 .hk-empty { padding: 8px 15px; }
 .hk-foot { margin-top: 6px; font-size: 12.5px; }
+/* Statistiken › Halle, Ansicht „Turniere im Ausland“ (views/statistiken/indoor/AbroadList.tsx) */
+.hk-pick { margin: 8px 15px 4px; }
+.hk-opt { display: inline-flex; align-items: center; gap: 6px; }
+.hk-abroad-note { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }

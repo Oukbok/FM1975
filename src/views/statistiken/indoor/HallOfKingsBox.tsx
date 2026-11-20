@@ -14,23 +14,28 @@ import type { Game } from '../../../game/state';
 import type { IndoorState } from '../../../game/winterShared';
 import { DashBox } from '../../../ui/DashPage';
 import Select from '../../../ui/Select';
+import { ABROAD_GROUPS, AbroadList } from './AbroadList';
 
-type View = 'masters' | 'kings';
+type View = 'masters' | 'kings' | 'abroad';
 let lastView: View = 'masters';
+let lastGroup = ABROAD_GROUPS[0];
 
 export function HallOfKingsBox({ g, st }: { g: Game; st: IndoorState }) {
   const [view, setViewState] = useState<View>(lastView);
   const setView = (v: View) => { lastView = v; setViewState(v); };
   const [by, setBy] = useState<HallKingSort>('ruf');
+  const [group, setGroupState] = useState(lastGroup);
+  const setGroup = (v: string) => { lastGroup = v; setGroupState(v); };
   const right = (
-    <Select size="s" width={176} value={view} onChange={(v) => setView(v as View)} title="Ansicht" aria-label="Ansicht">
+    <Select size="s" width={212} value={view} onChange={(v) => setView(v as View)} title="Ansicht" aria-label="Ansicht">
       <option value="masters">Masters-Sieger</option>
       <option value="kings">Hallenkönige</option>
+      <option value="abroad">Turniere im Ausland</option>
     </Select>
   );
   return (
-    <DashBox title={view === 'masters' ? 'Masters-Siegerliste' : 'Hallenkönige'} info={view === 'masters' ? 'hallenMasters' : 'hallenkoenige'} right={right} flush className="hk-box">
-      {view === 'masters' ? <MastersList g={g} st={st} /> : <Kings g={g} by={by} setBy={setBy} />}
+    <DashBox title={view === 'masters' ? 'Masters-Siegerliste' : view === 'kings' ? 'Hallenkönige' : 'Turniere im Ausland'} info={view === 'masters' ? 'hallenMasters' : view === 'kings' ? 'hallenkoenige' : 'hallenAusland'} right={right} flush className="hk-box">
+      {view === 'masters' ? <MastersList g={g} st={st} /> : view === 'kings' ? <Kings g={g} by={by} setBy={setBy} /> : <AbroadList g={g} st={st} group={group} onGroup={setGroup} />}
     </DashBox>
   );
 }

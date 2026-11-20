@@ -937,7 +937,7 @@ Im Assistenten „Neues Spiel“ wählst du unter **Spielwelt** das **Startjahr*
 - **Vorgeschichte:** Endplätze und Titel der Jahre davor stehen in der Vereins-Historie; Spieler und Ausnahmetalente sind im passenden Alter.
 
 ### Heimatland
-Unter **Verein** wählst du zuerst das **Land**: Deutschland immer, bis 1990 auch die **DDR** (Oberliga oder DDR-Liga, Wiedervereinigung 1991/92 – siehe „DDR-Ligen & Wiedervereinigung“), dazu jedes Land, für das im Startjahr Weltdaten vorliegen. In einem anderen Land spielen die Einheimischen dieses Landes, es gilt dessen Punkteregel und dessen historische Ligastruktur (Größen, Auf- und Absteiger je Saison, Artikel „Ligareformen im Ausland“), es gibt keine deutschen Ligareformen, keine Hallenturniere und keine deutschen Jugendwettbewerbe; Deutschland läuft dann im Hintergrund mit.
+Unter **Verein** wählst du zuerst das **Land**: Deutschland immer, bis 1990 auch die **DDR** (Oberliga oder DDR-Liga, Wiedervereinigung 1991/92 – siehe „DDR-Ligen & Wiedervereinigung“), dazu jedes Land, für das im Startjahr Weltdaten vorliegen. In einem anderen Land spielen die Einheimischen dieses Landes, es gilt dessen Punkteregel und dessen historische Ligastruktur (Größen, Auf- und Absteiger je Saison, Artikel „Ligareformen im Ausland“), es gibt keine deutschen Ligareformen, keine deutschen Hallenturniere (aber die Hallenturniere des eigenen Landes und der Nachbarn, Artikel „Hallenfußball & Hallen-Masters“) und keine deutschen Jugendwettbewerbe; Deutschland läuft dann im Hintergrund mit.
 
 **Start in der 3. oder 4. Liga im Ausland:** In den stärksten Ländern (Rang 1–5 der Länderwertung bis zur 4. Ebene, Rang 6–7 bis zur 3. Ebene – Artikel „Ligareformen im Ausland“) kannst du unter **Verein** auch eine Liga der 3./4. Ebene wählen, z. B. England 1995 die 3. oder 4. League, Spanien 2010 eine Staffel der 3. División. Deine Liga bekommt beim Start volle Kader (kleine Stadien, wenig Geld, Ansehen einer unteren Liga), die 1. und 2. Liga und die übrigen Staffeln laufen simuliert mit. Im Heimatland behalten die 3./4. Ebene beim Saisonwechsel die Staffelzahl des Startjahres, die Größen folgen der Geschichte; die Namen bleiben im Schema (3. League, 4. League).
 
@@ -4290,14 +4290,38 @@ Jugendintegration). Sie zahlen über ihre Finanzen und bekommen rund ein Drittel
     id: 'indoor-football',
     category: 'calendar',
     title: 'Hallenfußball & Hallen-Masters',
-    keywords: ['halle', 'hallenturnier', 'masters', 'hallenpokal', 'budenzauber', 'bande', 'westfalenhalle', 'olympiahalle', 'winterpause', 'platzierungspunkte', 'hallenruf', 'hallenspezialist', 'hallenkönige', 'hallentraining'],
+    keywords: ['halle', 'hallenturnier', 'masters', 'hallenpokal', 'budenzauber', 'bande', 'westfalenhalle', 'olympiahalle', 'winterpause', 'platzierungspunkte', 'hallenruf', 'hallenspezialist', 'hallenkönige', 'hallentraining', 'gäste', 'ausland', 'wien', 'genf', 'paris', 'schweiz', 'five-a-side', 'six-a-side'],
     body: `## Geschichte im Spiel
 - **1976–1987:** Einladungsturniere mit Bundesligisten (Dortmund, Berlin, Stuttgart, München, Frankfurt) – ohne Endrunde.
 - **1988–2001: DFB-Hallenpokal.** Qualifikationsturniere (1988: 18, bis 1997: 16, ab 1998: 4), Wertung nach **Durchschnittspunkten je Spiel**
   (ein einziges Turnier kann reichen), die **8 Besten** spielen das **Hallen-Masters** (Frankfurter Festhalle, Westfalenhalle Dortmund, Olympiahalle München – Ort wie in der Wirklichkeit).
 - **Termine:** Hallenturniere gibt es erst, wenn die Bundesliga – und für den einzelnen Verein auch Pokal und Europapokal – in der Winterpause ist: frühestens zwei Tage nach dem letzten Pflichtspiel eines Teilnehmers, spätestens drei Tage vor seinem ersten danach (Artikel „Winterpause & Spielplan“). Wer im Dezember noch Europapokal spielt, wird erst danach eingeladen bzw. ersetzt. Heiligabend, 1. Weihnachtstag, Silvester und Neujahr sind hallenfrei. Die Tour-Turniere laufen bis kurz vor dem
   **Masters**, das wie historisch **Mitte Januar** stattfindet (Wochenende um den 13.1.); ohne Masters enden die Turniere Ende Januar – der Februar der langen Pausen gehört dem Trainingslager.
-- **2002–2004:** nur noch wenige Regionalturniere. **Danach findet nichts mehr statt** (Chronik: „Hallen-Masters abgeschafft“).
+- **2002–2004:** nur noch wenige Regionalturniere. **Danach findet in Deutschland nichts mehr statt** (Chronik: „Hallen-Masters abgeschafft“).
+
+## Gäste aus dem Ausland
+Wie in der Wirklichkeit spielen in den deutschen Turnieren immer wieder **ausländische Profivereine als Gäste** mit – die Veranstalter füllten damit Hallen und Fernsehzeit, die Teilnahme der Bundesligisten war bis 1997 freiwillig, und viele Nachbarländer hatten selbst Winterpause. Belegt sind etwa Gäste aus Prag, Ostrau, Moskau, Tiflis, St. Petersburg, Brøndby, Malmö, Norrköping, Chorzów und Istanbul. Im Spiel kommen die Gäste aus der **1. Liga der Länder mit Winterpause** (Tschechoslowakei/Tschechien, Dänemark, Sowjetunion/Russland, Schweden, Polen, Türkei, Österreich, Schweiz, Niederlande, Ungarn, Jugoslawien …), auch aus dem **Ostblock vor 1989** – Gastspiele waren erlaubt. Ihre Hallenstärke ist die Stärke des Vereins in der Hintergrund-Welt, der Hallenkader (Namen im Textmodus, Klick auf den Teilnehmer) kommt aus dem Weltpool. In Tabellen, Spielplan und Show steht eine **Flagge** vor ihnen.
+- **Einladungsturniere 1976–1987:** etwa jedes zweite Turnier hat einen Gast.
+- **DFB-Qualifikation 1988–1997:** etwa jedes dritte Turnier. Für das **Masters können sich Gäste nicht qualifizieren** – sie stehen grau unter der Masters-Wertung.
+- **Ab der Reform 1997/98** werden die Profivereine den Turnieren zugeteilt, **ausländische Teams gibt es nicht mehr**; auch die Regionalturniere 2002–2004 bleiben unter sich.
+
+## Hallenturniere im Ausland
+Auch in den Nachbarländern gab es große Hallenturniere. Sie laufen jeden Winter mit (Jahre wie in der Wirklichkeit, Namen verfremdet):
+
+| Turnier | Ort | Im Spiel | Teilnehmer |
+|---|---|---|---|
+| Wiener Hallenturnier | Stadthalle, Wien | 1976–2009 (ohne 2006, 2008) | Wiener Vereine + Gäste (München, Ungarn, ČSSR …); ab 1999 Vorrunde des österreichischen Hallencups, nur Österreicher |
+| Grazer Hallen-Cup | Eishalle Liebenau, Graz | 1999–2005 | Grazer und österreichische Vereine (Annahme) |
+| Genfer Hallen-Cup | Patinoire des Vernets, Genf | 1982–1993, 1998–2003, 2006–2009 | Genfer Spitzenverein + Schweizer, Franzosen, Gäste aus Europa – Bundesligisten gewannen mehrfach; ab 2006 nur Westschweizer |
+| Pariser Hallenturnier | Bercy, Paris | 1984–1991 (zwei Abende) | Pariser Spitzenverein, Franzosen, Bundesligisten, Gäste aus Europa |
+| Schweizer Hallenmeisterschaft | Vorrunden St. Gallen, Zürich, Lausanne · Finale Basel | 1997–1999 | Erstligisten der Schweiz; jeder spielt zwei Vorrunden, die **8 Besten nach Platzierungspunkten** spielen das Finale |
+| Londoner Five-a-Side | Wembley Arena, London | 1976–1987 (November) | englische Ligavereine, gelegentlich Schotten |
+| Englisches Six-a-side-Turnier | Birmingham, ab 1987 Manchester | 1983–1992 (Dezember) | englische Erstligisten |
+
+Gespielt wird wie bei den deutschen Turnieren (sechs bzw. acht Teams, zwei Gruppen, Halbfinale, Finale). Südamerikanische Gäste (Paris, Genf) gibt es im Spiel nicht – ihre Plätze gehen an europäische Vereine.
+- **Einladung deines Vereins:** Als Spitzenverein (Ansehen ab etwa 70) kommt höchstens eine Einladung ins Ausland je Winter – nur zu Turnieren, die damals deutsche Gäste hatten, und nur, wenn der Termin in deine Winterpause passt. Zusage/Absage, Hallenkader am Turniertag, Antrittsgeld (international etwas höher) und Show wie gewohnt.
+- **Anderes Heimatland:** Spielst du in Österreich, der Schweiz, Frankreich oder England, gelten die Turniere deines Landes als **Heimturniere** – als Erstligist wirst du eingeladen (der Verein aus der Gastgeberstadt immer, in der Schweiz zu zwei Vorrunden). Die deutschen Turniere und das Masters laufen dann nicht.
+- **Statistik:** Unter **Statistiken › Halle** stehen die Turniere des Winters mit Flagge des Gastgeberlandes in der Liste; die Box **Masters-Siegerliste** schaltet über die Auswahl rechts oben auf **Turniere im Ausland** um – Turnier wählen, Sieger und Zweiter je Winter und dein Platz.
 
 ## Modus
 Sechs Teams je Turnier (zwei Dreiergruppen, Halbfinale, Spiel um Platz 3, Finale); Masters mit zwei Vierergruppen über zwei Tage.

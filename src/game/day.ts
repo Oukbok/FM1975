@@ -235,7 +235,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   announceUpcomingRules(g, today);
   aiClubsDaily(g, today);
   careerDaily(g, today); // Managerkarriere: Trainer-Historie, Vorstandsdruck gegen den Trainer (game/careerGame.ts)
-  // Jugendwettbewerbe und Hallenturniere gibt es nur in Deutschland (Heimatland, Weltdaten).
+  // Jugendwettbewerbe gibt es nur in Deutschland (Heimatland, Weltdaten).
   const germanHome = homeCountryOf(g) === 'ger';
   if (germanHome) youthCompsDaily(g, today);
   rollAiOffers(g, today);
@@ -260,7 +260,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
   cohesionDaily(g, today);  // Eingespieltheit: taktisches Training des eigenen Vereins, KI montags (game/cohesionGame.ts)
   if (g.worldPool && new Date(`${today}T00:00:00Z`).getUTCDay() === 1) ensureWorldPool(g); // montags: Weltspieler mit den Vereinen abgleichen (neue/aufgestiegene Vereine)
   // Winter-Systeme: Hallenturniere/Masters (game/indoorGame.ts) und Trainingslager (game/trainingCampGame.ts).
-  const indoorShow = germanHome ? indoorDaily(g, today, ui.onIndoorShow ? (t) => ui.onIndoorShow!(t.id) : undefined) : null;
+  // Deutsche Turniere nur mit Heimatland Deutschland (setupIndoorWinter), Auslandsturniere immer (game/indoorAbroad.ts).
+  const indoorShow = indoorDaily(g, today, ui.onIndoorShow ? (t) => ui.onIndoorShow!(t.id) : undefined);
   const campsEnded = campDaily(g, today);
   winterBreakDaily(g, today);   // Formdrift in der Winterpause (game/winterShared.ts)
   advanceDivisionsTo(g, today); // Sim-Ligen nach eigenem Spielplan (game/season.ts)

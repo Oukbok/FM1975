@@ -4,14 +4,16 @@
 // Historie/Quellen: data/indoorHistory.ts · Simulation: engine/indoor.ts ·
 // Spielstand: game/winterShared.ts · Anschluss: game/day.ts (indoorDaily).
 // =============================================================================
-import { ddrBorderClosed } from './ddrHome';
-import { playerLevel } from './state';
+import { PoolClub, aiSquad, buildPool, maxPerClub, weightedPick, willingness } from './indoorPool';
+import { abroadFee, abroadHistory, abroadSubstitute, buildAbroadFinal, setupAbroad } from './indoorAbroad';
+import { worldSquadPreview } from './worldPool';
+import { ABROAD_BY_ID } from '../data/indoorAbroad';
 import { mastersBoard, mastersRanking, mastersWeekend, packBoard } from './indoorMasters';
 import { creditIndoorTournament, hallDrillBonus, pruneIndoorRecs } from './indoorRecords';
 import { INDOOR_GAP_DAYS } from '../data/matchCalendarRules';
 import { addDevPoints } from '../engine/devLog';
 import {
-  INDOOR_LAST_WINTER, MASTERS_TEAMS, TEAMS_PER_TOURNAMENT, TOURNAMENT_WIN_BASE, indoorPhase, mastersMoney, mastersVenue,
+  INDOOR_LAST_WINTER, MASTERS_TEAMS, TEAMS_PER_TOURNAMENT, TOURNAMENT_WIN_BASE, guestRate, indoorPhase, mastersMoney, mastersVenue,
   topClubEnthusiasm, tournamentCount, tournamentFeeBase, venuesFor, winterYearOf,
 } from '../data/indoorHistory';
 import {
@@ -33,7 +35,7 @@ import { reconcileIndoor } from './indoorReconcile';
 import { declinePenalty, indoorName, indoorShort, mastersNews, ownResultMessage, sendInvite } from './indoorNews';
 
 export { indoorName, indoorShort };
-import { Game, bumpMorale } from './state';
+import { Game, bumpMorale, homeCountryOf } from './state';
 import {
   IndoorDecision, IndoorHistoryEntry, IndoorKind, IndoorTournament, IndoorWinter, competitiveDays, daysBetween, indoorState, ownCampDays,
   winterWindow,
@@ -43,95 +45,24 @@ type Rng = () => number;
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
 // -----------------------------------------------------------------------------
-// Teilnehmer-Pool
-// -----------------------------------------------------------------------------
-interface PoolClub { id: string; tier: number; rep: number; city: string; kind: 'league' | 'amateur' | 'foreign'; strength: number }
-
-function buildPool(g: Game): PoolClub[] {
-  const out: PoolClub[] = [];
-  const seen = new Set<string>();
-  const add = (id: string, tier: number) => {
-    if (seen.has(id) || tier > 2) return;
-    seen.add(id);
-    const c = g.clubs[id];
-    const s = g.simClubs[id];
-    if (!c && !s) return;
-    const strength = c ? avgTop(g, c.playerIds) : (s!.strength + 3);
-    out.push({ id, tier, rep: c?.reputation ?? clamp(s!.strength, 30, 90), city: c?.city ?? s!.city, kind: 'league', strength });
-  };
-  const ptier = playerLevel(g);
-  // DDR-Start (game/ddrHome.ts): vor dem Mauerfall keine Einladungen zu Hallenturnieren im Westen.
-  const ddrClosed = ddrBorderClosed(g, g.calendar.currentDate);
-  if (!ddrClosed) for (const r of g.table.rows) add(r.clubId, ptier);
-  for (const d of g.leagues?.otherDivisions ?? []) if (d.tier <= 2) for (const id of d.clubIds) add(id, d.tier);
-  for (const c of Object.values(g.clubs)) {
-    if (!ddrClosed && c.id.startsWith('am') && !seen.has(c.id)) { seen.add(c.id); out.push({ id: c.id, tier: 4, rep: c.reputation, city: c.city, kind: 'amateur', strength: avgTop(g, c.playerIds) - 4 }); }
-  }
-  for (const e of Object.values(g.euroClubs ?? {})) {
-    if (!seen.has(e.id)) { seen.add(e.id); out.push({ id: e.id, tier: 0, rep: 75, city: e.city, kind: 'foreign', strength: e.strength }); }
-  }
-  return out;
-}
-
-function avgTop(g: Game, ids: string[]): number {
-  const ovr = ids.map((id) => g.players[id]?.overall ?? 0).filter((v) => v > 0).sort((a, b) => b - a).slice(0, 8);
-  return ovr.length ? ovr.reduce((a, b) => a + b, 0) / ovr.length : 55;
-}
-
-/** Teilnahmebereitschaft eines KI-Vereins (Größe, Epoche, Trainerphilosophie). */
-function willingness(g: Game, p: PoolClub, winterYear: number, kind: IndoorKind): number {
-  if (p.kind === 'amateur') return kind === 'regional' ? 0.8 : 0.15;
-  if (p.kind === 'foreign') return kind === 'invite' ? 0.3 : 0.08;
-  let w: number;
-  if (kind === 'regional') w = p.tier === 1 ? (p.rep >= 78 ? 0.05 : 0.25) : 1;
-  else if (kind === 'invite') w = p.tier === 1 ? 1 : 0.3;
-  else w = p.tier === 1 ? 0.95 : 0.8;
-  if (p.tier === 1 && p.rep >= 80 && kind !== 'regional') w *= topClubEnthusiasm(winterYear);
-  const coach = g.clubs[p.id]?.coach;
-  if (coach?.style === 'offensiv') w *= 1.15;
-  if (coach?.style === 'defensiv') w *= 0.9;
-  if (coach?.philosophy === 'jugend') w *= 1.15;
-  return w;
-}
-
-/** Kaderwahl eines KI-Vereins: Spitzenvereine schonen ab Mitte der 90er ihre Stars [S1]. */
-function aiSquad(g: Game, id: string, winterYear: number, rng: Rng): IndoorSquad {
-  const c = g.clubs[id];
-  const rep = c?.reputation ?? 60;
-  if (c?.coach?.philosophy === 'jugend' && rng() < 0.6) return 'youth';
-  const enth = topClubEnthusiasm(winterYear);
-  if (rep >= 78) return rng() < enth ? 'stars' : rng() < 0.5 ? 'mix' : 'youth';
-  return rng() < 0.55 + enth * 0.3 ? 'stars' : 'mix';
-}
-
-function weightedPick<T>(items: T[], weight: (t: T) => number, n: number, rng: Rng): T[] {
-  const pool = items.map((t) => ({ t, w: Math.max(0, weight(t)) })).filter((x) => x.w > 0);
-  const out: T[] = [];
-  while (out.length < n && pool.length) {
-    const total = pool.reduce((s, x) => s + x.w, 0);
-    let r = rng() * total;
-    let i = 0;
-    for (; i < pool.length - 1; i++) { r -= pool[i].w; if (r <= 0) break; }
-    out.push(pool[i].t);
-    pool.splice(i, 1);
-  }
-  return out;
-}
-
-function maxPerClub(phaseKind: IndoorKind, winterYear: number): number {
-  if (phaseKind === 'invite') return 2;
-  if (phaseKind === 'regional') return 1;
-  return winterYear >= 1998 ? 2 : 4;
-}
-
-// -----------------------------------------------------------------------------
 // Winter aufsetzen (Anfang November)
 // -----------------------------------------------------------------------------
 export function setupIndoorWinter(g: Game, today: string): IndoorWinter {
   const winterYear = winterYearOf(g.season);
-  const phase = indoorPhase(winterYear);
+  // Deutsche Hallenturniere/Masters nur mit Heimatland Deutschland; Auslandsturniere immer (game/indoorAbroad.ts).
+  const phase = homeCountryOf(g) === 'ger' ? indoorPhase(winterYear) : 'none';
   const cur: IndoorWinter = { season: g.season, winterYear, phase, tournaments: [] };
-  if (phase === 'none') return cur;
+  const ownBusy = new Set<string>();
+  if (phase !== 'none') setupGermanWinter(g, cur, today, ownBusy);
+  setupAbroad(g, cur, today, mulberry32(hashStr(`indoor-abroad|${g.season}|${g.managedClubId}`)), ownBusy);
+  for (const t of cur.abroad ?? []) if (t.own === null) sendInvite(g, t, today);
+  if (!cur.abroad?.length) delete cur.abroad;
+  return cur;
+}
+
+/** Deutsche Hallensaison: Einladungs-/Qualifikationsturniere, Masters-Termin, Einladungen, KI-Felder. */
+function setupGermanWinter(g: Game, cur: IndoorWinter, today: string, ownBusy: Set<string>): void {
+  const { winterYear, phase } = cur;
   const rng = mulberry32(hashStr(`indoor|${g.season}|${g.managedClubId}`));
   const win = winterWindow(g);
   // Winterpause je Verein (game/indoorWindow.ts): Halle erst nach dem letzten Pflichtspiel.
@@ -179,7 +110,9 @@ export function setupIndoorWinter(g: Game, today: string): IndoorWinter {
     if (invites <= 0) break;
     if (ownDates.has(t.date) || campDays.has(t.date) || !bc.fits(g.managedClubId, t.date, t.days)) continue;
     t.own = null; t.clubIds.push(g.managedClubId); ownDates.add(t.date); invites--;
+    for (let k = -1; k <= t.days; k++) ownBusy.add(CalendarEngine.addDays(t.date, k));
   }
+  if (cur.masters) for (let k = -1; k <= cur.masters.days; k++) ownBusy.add(CalendarEngine.addDays(cur.masters.date, k));
   // KI-Teilnehmer je Turnier.
   const count = new Map<string, number>();
   const dayUse = new Map<string, Set<string>>();
@@ -189,9 +122,11 @@ export function setupIndoorWinter(g: Game, today: string): IndoorWinter {
     dayUse.set(t.date, used);
     const ai = pool.filter((p) => p.id !== g.managedClubId && !used.has(p.id) && (count.get(p.id) ?? 0) < cap && bc.fits(p.id, t.date, t.days));
     let slots = TEAMS_PER_TOURNAMENT - t.clubIds.length;
-    const guestRate = kind === 'invite' ? 0.5 : kind === 'qualifier' ? 0.25 : 0;
+    // Auslandsgäste: bis 1997 aus Ländern mit Winterpause, Ostblock eingeschlossen; nie im Masters (data/indoorHistory.ts [S8]).
     const extra: PoolClub[] = [];
-    if (rng() < guestRate) extra.push(...weightedPick(ai.filter((p) => p.kind === 'foreign'), () => 1, 1, rng));
+    if (rng() < guestRate(winterYear, kind as 'invite' | 'qualifier' | 'regional')) {
+      extra.push(...weightedPick(ai.filter((p) => p.kind === 'foreign'), (p) => willingness(g, p, winterYear, kind), 1, rng));
+    }
     if (rng() < (kind === 'regional' ? 1 : kind === 'qualifier' ? 0.3 : 0.15)) extra.push(...weightedPick(ai.filter((p) => p.kind === 'amateur'), () => 1, 1, rng));
     slots -= extra.length;
     const league = weightedPick(ai.filter((p) => p.kind === 'league'),
@@ -203,12 +138,11 @@ export function setupIndoorWinter(g: Game, today: string): IndoorWinter {
     if (t.own === null) used.add(g.managedClubId);
   }
   for (const t of cur.tournaments) if (t.own === null) sendInvite(g, t, today);
-  return cur;
 }
 
 /** Alle Turniere des laufenden Winters (inkl. Endrunde). */
 export function allTournaments(cur: IndoorWinter | undefined): IndoorTournament[] {
-  return cur ? [...cur.tournaments, ...(cur.masters ? [cur.masters] : [])] : [];
+  return cur ? [...cur.tournaments, ...(cur.abroad ?? []), ...(cur.masters ? [cur.masters] : [])] : [];
 }
 
 /**
@@ -265,9 +199,9 @@ export function indoorDaily(g: Game, today: string, show?: (t: IndoorTournament)
     st.current = setupIndoorWinter(g, today);
   }
   const cur = st.current;
-  if (cur.phase === 'none' || cur.finished) return false;
+  if (cur.finished || !allTournaments(cur).length) return false;
   // Termine in Pflichtspielzeit (alte Spielstände, Nachholspiele) verlegen bzw. absagen.
-  reconcileIndoor(g, cur, today, (t) => substituteIndoor(g, cur, t, mulberry32(hashStr(`${g.season}|${t.id}|sub|${today}`))));
+  reconcileIndoor(g, cur, today, (t) => substituteAny(g, cur, t, mulberry32(hashStr(`${g.season}|${t.id}|sub|${today}`))));
   // Eine Show, die über ihren Tag hinaus offen blieb (Laden, Einstellung), läuft im Hintergrund.
   if (cur.live) {
     const lt = allTournaments(cur).find((x) => x.id === cur.live);
@@ -285,6 +219,19 @@ export function indoorDaily(g: Game, today: string, show?: (t: IndoorTournament)
   };
   for (const t of cur.tournaments) {
     if (!due(t)) continue;
+    if (startShow(t)) return true;
+    playTournament(g, cur, t, today);
+  }
+  for (const t of cur.abroad ?? []) {
+    // Finale einer Serie (Schweiz): Feld aus den Vorrunden, sobald sie gespielt sind.
+    const def = ABROAD_BY_ID[t.aid ?? ''];
+    if (def?.stage === 'f' && !t.clubIds.length && !t.done) {
+      const quali = (cur.abroad ?? []).filter((q) => q !== t && ABROAD_BY_ID[q.aid ?? '']?.series === def.series);
+      if (quali.every((q) => q.done) || today >= CalendarEngine.addDays(t.date, -1)) {
+        if (buildAbroadFinal(g, cur, t, mulberry32(hashStr(`${g.season}|${t.id}|final`)))) sendInvite(g, t, today);
+      }
+    }
+    if (!t.clubIds.length || !due(t)) continue;
     if (startShow(t)) return true;
     playTournament(g, cur, t, today);
   }
@@ -344,7 +291,7 @@ function prepareTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, toda
   if (t.own === null) t.own = 'mix';
   if (t.own === 'decline' && t.clubIds.includes(mid)) {
     t.clubIds = t.clubIds.filter((id) => id !== mid);
-    substituteIndoor(g, cur, t, rng);
+    substituteAny(g, cur, t, rng);
     declinePenalty(g, t, today);
   } else if (t.own && t.own !== 'decline') {
     t.squads[mid] = t.own;
@@ -353,8 +300,13 @@ function prepareTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, toda
   // Mindestens 6 Teilnehmer = zwei Gruppen à 3 (Wunsch Pascal: eine Zweiergruppe ist sinnlos).
   // Erst Vereine in der Winterpause, notfalls jeder freie Verein aus dem Pool.
   for (let i = 0; t.clubIds.length < INDOOR_MIN_TEAMS && i < 12; i++) {
-    if (!substituteIndoor(g, cur, t, rng) && !substituteIndoor(g, cur, t, rng, true)) break;
+    if (!substituteAny(g, cur, t, rng) && !substituteAny(g, cur, t, rng, true)) break;
   }
+}
+
+/** Ersatz je Turnierart: Auslandsturnier aus dem Gastgeberland, sonst deutscher Pool. */
+function substituteAny(g: Game, cur: IndoorWinter, t: IndoorTournament, rng: Rng, relaxed = false): string | undefined {
+  return t.kind === 'abroad' ? abroadSubstitute(g, cur, t, rng) : substituteIndoor(g, cur, t, rng, relaxed);
 }
 
 /** Ersatzverein für einen frei gewordenen Platz (nur Vereine, die an dem Tag Winterpause haben). */
@@ -399,6 +351,10 @@ export function tournamentEntrants(g: Game, t: IndoorTournament): { entrants: In
       return { id, strength: (sq.length >= 6 ? indoorStrength(sq) : 45) + (id === g.managedClubId ? hallDrillBonus(g, t.date) : 0) };
     }
     const base = g.simClubs[id]?.strength ?? g.euroClubs?.[id]?.strength ?? 55;
+    // Ohne vollen Kader (Auslandsgäste, untere Ligen): Hallenkader aus dem Weltpool nur für Namen/Anzeige,
+    // die Stärke bleibt die der Hintergrund-Welt (game/worldPool.ts).
+    const wsq = worldSquadPreview(g, id);
+    if (wsq.length >= 6 && wsq.some((p) => p.naturalPosition === 'TW')) squads.set(id, pickIndoorSquad(wsq, 'stars'));
     return { id, strength: base + 3 };
   });
   return { entrants, squads };
@@ -443,7 +399,8 @@ function applyTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, res: I
     addResultToTour(map, res, winPts);
     cur.tour = [...map.values()];
   }
-  creditIndoorTournament(g, t, res, squads, cur.winterYear); // Hallenruf der Spieler
+  // Hallenruf nur für Spieler mit vollem Datensatz (Weltpool-Gäste zählen nicht).
+  creditIndoorTournament(g, t, res, new Map([...squads].filter(([id]) => !!g.clubs[id] && !id.startsWith('eu_'))), cur.winterYear);
   // Wirkungen und Geld je vollem Verein.
   const year = yearOf(today);
   const scale = economyScale(year);
@@ -487,7 +444,7 @@ function applyTournament(g: Game, cur: IndoorWinter, t: IndoorTournament, res: I
       const mm = mastersMoney(cur.winterYear);
       money = mm.start + (place === 0 ? mm.winner : place === 1 ? mm.runnerUp : place <= 3 ? mm.semi : mm.group);
     } else {
-      money = Math.round((tournamentFeeBase(club.reputation) + (place === 0 ? TOURNAMENT_WIN_BASE : 0)) * scale);
+      money = Math.round((tournamentFeeBase(club.reputation) + (place === 0 ? TOURNAMENT_WIN_BASE : 0)) * scale * abroadFee(t));
     }
     if (money > 0) book(club.finances, today, money, 'prize_money', `${t.name}: Antrittsgeld/Prämie (Platz ${place + 1})`, id === mid);
     if (t.kind === 'masters' && place === 0) mastersTitleEffects(g, id, cur);
@@ -558,7 +515,7 @@ function finishWinter(g: Game, today: string): void {
   const cur = st.current;
   if (!cur || cur.finished) return;
   cur.finished = true;
-  if (cur.phase === 'none') return;
+  if (cur.phase === 'none' && !cur.abroad?.length) return;
   const mid = g.managedClubId;
   const mine = allTournaments(cur).filter((t) => t.done && t.result?.ranking.includes(mid));
   let own: string | undefined;
@@ -579,6 +536,8 @@ function finishWinter(g: Game, today: string): void {
     entry.mastersScore = `${wa ? fin.ga : fin.gb}:${wa ? fin.gb : fin.ga}${fin.pa != null ? ` (${wa ? fin.pa : fin.pb}:${wa ? fin.pb : fin.pa} n. N.)` : ''}`;
     entry.city = m.city;
   }
+  const abroad = abroadHistory(g, cur);
+  if (abroad.length) entry.abroad = abroad;
   if (!st.history.some((h) => h.year === entry.year)) st.history.push(entry);
   pruneIndoorRecs(g, cur.winterYear);
   st.snub = Math.max(0, st.snub - 1);
@@ -591,9 +550,9 @@ function finishWinter(g: Game, today: string): void {
  */
 export function migrateIndoorDates(g: Game): number {
   const cur = indoorState(g).current;
-  if (!cur || cur.season !== g.season || cur.finished || cur.phase === 'none') return 0;
+  if (!cur || cur.season !== g.season || cur.finished || !allTournaments(cur).length) return 0;
   const today = g.calendar.currentDate;
-  return reconcileIndoor(g, cur, today, (t) => substituteIndoor(g, cur, t, mulberry32(hashStr(`${g.season}|${t.id}|sub|${today}`))));
+  return reconcileIndoor(g, cur, today, (t) => substituteAny(g, cur, t, mulberry32(hashStr(`${g.season}|${t.id}|sub|${today}`))));
 }
 
 /** Ob in diesem Winter überhaupt noch Hallenturniere stattfinden (für die Anzeige). */

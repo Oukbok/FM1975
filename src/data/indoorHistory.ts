@@ -28,6 +28,13 @@
 //       bis Ende der 1980er die Hallen (Vorläufer ohne Masters).
 //  [S7] schwaebische.de, „Spielt lieber endlich wieder in der Halle“: Hallenturniere mit Stars
 //       in Dortmund, Stuttgart, München, Frankfurt und Berlin („Budenzauber“).
+//  [S8] de.wikipedia.org/wiki/DFB-Hallenpokal: „zeitweise auch Amateurmannschaften und ausländische
+//       Vereine“ in den Qualifikationsturnieren; Beispiele 1988/89 Baunatal (Prag 1., Brøndby 2.),
+//       1994 Moskau/Malmö/Prag/Istanbul/Tiflis/Chorzów, 1995 Moskau/Norrköping, 1996 Moskau, 1997 Prag
+//       (Slavia), St. Petersburg, Brøndby; ausländische Erstligisten 1994 mit 20 Grundpunkten gewertet;
+//       Teilnahme der Profivereine in den 90ern „auf freiwilliger Basis“; Reform 1997/98: jeder der
+//       36 Profivereine wird einem von fünf Turnierorten zugeteilt – danach keine Auslandsvereine mehr.
+//       Alle genannten Masters-Teilnehmer sind deutsche Vereine (Gäste nicht startberechtigt).
 // Annahmen sind im Code als „Annahme“ markiert.
 // =============================================================================
 
@@ -163,4 +170,33 @@ export function topClubEnthusiasm(winterYear: number): number {
   if (winterYear < 1994) return 0.6;
   if (winterYear < 1998) return 0.4;
   return 0.2;
+}
+
+// -----------------------------------------------------------------------------
+// Auslandsgäste in deutschen Hallenturnieren [S8]
+// -----------------------------------------------------------------------------
+/**
+ * Letzter Winter (Januar-Jahr) mit Auslandsgästen in den Qualifikationsturnieren: 1997
+ * (Saison 1996/97, Slavia Prag, Zenit, Brøndby [S8]). Ab der Reform 1997/98 (Winter 1998)
+ * nur noch zugeteilte deutsche Vereine. Die Einladungsturniere vor 1988 hatten ebenfalls Gäste.
+ */
+export const GUESTS_LAST_WINTER = 1997;
+
+/**
+ * Herkunftsländer der Gäste (Schlüssel der Weltdaten) mit Gewicht. Belegte Gäste [S8] kamen aus
+ * der Tschechoslowakei/Tschechien, Dänemark, der Sowjetunion bzw. Russland/Georgien, Schweden,
+ * Polen und der Türkei; dazu Nachbarn mit eigener Winterpause (Österreich, Schweiz, Niederlande,
+ * Ungarn, Jugoslawien – Annahme). Ostblock-Vereine durften vor 1989 Gastspiele bestreiten.
+ * Länder ohne Winterpause (England, Spanien, Portugal …) schicken keine Gäste.
+ */
+export const GUEST_COUNTRIES: Record<string, number> = {
+  Tschechoslowakei: 5, Tschechien: 5, Slowakei: 1, Daenemark: 4, Sowjetunion: 4, Russland: 4, Ukraine: 1,
+  Schweden: 3, Polen: 2, Tuerkei: 1.5, Oesterreich: 2, Schweiz: 1.5, Niederlande: 1.5, Ungarn: 1.5,
+  Jugoslawien: 1, Kroatien: 1, Norwegen: 1, Belgien: 1,
+};
+
+/** Chance je Turnier auf einen Auslandsgast (Annahme nach [S8]: 1994 sechs Gäste in acht Turnieren, 1997 vier in 15). */
+export function guestRate(winterYear: number, kind: 'invite' | 'qualifier' | 'regional'): number {
+  if (kind === 'regional' || winterYear > GUESTS_LAST_WINTER) return 0;
+  return kind === 'invite' ? 0.5 : 0.35;
 }
