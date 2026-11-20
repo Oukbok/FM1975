@@ -26,23 +26,27 @@ for (const view of VIEWS) {
   await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
   await loadSave(page, url(), SAVE);
   await closeAll(page);
+  // Offene Vorschau „Nächstes Spiel“ (Spielstand am Spieltag) mit Escape schließen.
+  for (let k = 0; k < 3 && await page.locator('.pm-root').count(); k++) { await page.keyboard.press('Escape'); await page.waitForTimeout(250); }
 
-  // 1) Echte Flagge: Statistiken › Nationalteams, Rangliste → dritte Flagge.
+  // 1) Echte Flagge: Statistiken › Nationalteams › Weltrangliste → dritte Flagge.
   await page.locator('.hd-nav-item:has-text("Statistiken")').first().click();
   await page.locator('.tn-sub-item:has-text("Nationalteams")').first().click();
   await page.waitForTimeout(500);
-  await page.locator('.app-main .dchip:has-text("Rangliste")').first().click().catch(() => {});
-  await page.waitForTimeout(200);
-  const flag = page.locator('.app-main .nt-prow .cflag[data-country]').nth(2);
+  await page.screenshot({ path: `${outDir}/${prefix}_${W}_nationalteams.png` });
+  await page.locator('.app-main .sub3-tabs .tab:has-text("Weltrangliste")').first().click().catch(() => {});
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${outDir}/${prefix}_${W}_weltrangliste.png` });
+  const flag = page.locator('.app-main .wr-trow .cflag[data-country]').nth(2);
   if (await flag.count()) {
     await flag.click();
-    await page.waitForSelector('.cnx-modal', { timeout: 5000 }).catch(() => errors.push(`${view}: Flagge in der Rangliste öffnet kein Länderprofil`));
+    await page.waitForSelector('.cnx-modal', { timeout: 5000 }).catch(() => errors.push(`${view}: Flagge in der Weltrangliste öffnet kein Länderprofil`));
     await page.waitForTimeout(400);
     await page.screenshot({ path: `${outDir}/${prefix}_${W}_flagge.png` });
     // Klick auf eine Flagge im Profil (Länderspiele: Gegner) stapelt ein weiteres Land.
     await page.keyboard.press('Escape');
     await page.waitForTimeout(300);
-  } else errors.push(`${view}: keine Flagge in der Rangliste gefunden`);
+  } else errors.push(`${view}: keine Flagge in der Weltrangliste gefunden`);
   if (await page.locator('.cnx-modal').count()) errors.push(`${view}: Escape schließt das Länderprofil nicht`);
 
   // 2) Länder über eine eingefügte Flagge öffnen (gleicher Weg wie jede Flagge im Spiel).

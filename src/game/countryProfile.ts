@@ -16,7 +16,7 @@ import { CT_BY_KEY } from '../data/world/continents';
 import { COUNTRY_BY_CC, COUNTRY_BY_KEY, countryExists, type WorldCountryDef } from '../data/world/countries';
 import { worldSeason, worldYears } from '../data/world/index';
 import { seasonLabelOf } from '../data/world/countries';
-import { NATION_BY_CODE, baseStrength, confOf, nationExists, type Conf, type NationDef } from '../data/nationalTeams';
+import { NATION_BY_CODE, confOf, nationExists, type Conf, type NationDef } from '../data/nationalTeams';
 import { repTargetAt } from '../data/leagueReputation';
 import { accessSlots, euroCompName } from '../data/euroFormats';
 import { seasonStartYear } from '../data/timeline';
@@ -166,10 +166,8 @@ export function countryRep(g: Game, ref: CountryRef): CountryRep | null {
 export interface NationInfo {
   code: string;
   exists: boolean;
+  /** Stärke heute (Startelf + Grundstärke); Platz in der Weltrangliste: game/national/ranking.ts `worldRank`. */
   strength: number | null;
-  rank: number | null;
-  of: number;
-  decades: { year: number; v: number; now: boolean }[];
   titles: { wm: number[]; em: number[]; wmFinals: number[]; emFinals: number[] };
   /** Ergebnis beim laufenden/letzten Turnier („Halbfinale“ …). */
   current?: { label: string; result: string };
@@ -180,13 +178,7 @@ export function nationInfo(g: Game, ref: CountryRef): NationInfo | null {
   if (!n) return null;
   const y = yearOf(g);
   const code = ref.code;
-  const all = allStrengths(g);
-  const sorted = [...all.entries()].sort((a, b) => b[1] - a[1]);
-  const i = sorted.findIndex(([c]) => c === code);
-  // Nur Jahrzehnte, in denen es die Nation gab (DDR bis 1990, Kroatien ab 1992 …).
-  const decades = [1975, 1985, 1995, 2005, 2015, 2025]
-    .filter((yy) => (n.to == null || n.to >= yy - 5) && (n.from == null || n.from <= yy + 4))
-    .map((yy) => ({ year: yy, v: Math.round(baseStrength(n, yy)), now: y >= yy - 5 && y < yy + 5 }));
+  const strength = allStrengths(g).get(code) ?? null;
   const st = nationalState(g);
   const titles = { wm: [] as number[], em: [] as number[], wmFinals: [] as number[], emFinals: [] as number[] };
   for (const a of st.archive) {
@@ -197,8 +189,7 @@ export function nationInfo(g: Game, ref: CountryRef): NationInfo | null {
   const current = t && g.calendar.currentDate >= t.nominate && t.teams.includes(code)
     ? { label: `${t.kind} ${t.year}`, result: g.calendar.currentDate > t.end ? t.result[code] ?? 'Teilnehmer' : 'qualifiziert' } : undefined;
   return {
-    code, exists: nationExists(n, y), strength: i >= 0 ? sorted[i][1] : null, rank: i >= 0 ? i + 1 : null, of: sorted.length,
-    decades, titles, current,
+    code, exists: nationExists(n, y), strength, titles, current,
   };
 }
 

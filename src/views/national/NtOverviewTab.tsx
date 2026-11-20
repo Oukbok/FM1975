@@ -1,5 +1,6 @@
 // Nationalteam › Übersicht: Nation & Vertrag | Nächste Termine | Bilanz,
 // Amtszeit (Verlauf) | Kandidaten aus deinem Verein. Rücktritt mit Bestätigung (feste Größe).
+import { worldRank } from '../../game/national/ranking';
 import { useState } from 'react';
 import type { Game } from '../../game/state';
 import type { Screen } from '../../shell/navigation';
@@ -26,6 +27,7 @@ export function NtOverviewTab({ g, onChange, onTab, onGoto }: { g: Game; onChang
   const strength = allStrengths(g);
   const rank = [...strength.entries()].sort((a, b) => b[1] - a[1]);
   const r = rank.findIndex(([c]) => c === job.nat) + 1;
+  const wr = worldRank(g, job.nat);
   const next = jobCalendar(g).filter((e) => e.date >= today).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 8);
   const mine = (candidatesByNation(g).get(job.nat) ?? []).filter((c) => c.clubId === g.managedClubId).slice(0, 12);
   const pick = activeJob(g)?.pick;
@@ -39,7 +41,8 @@ export function NtOverviewTab({ g, onChange, onTab, onGoto }: { g: Game; onChang
         <KV k="Vertrag" v={active ? (def ? `bis ${tLong(def)}` : job.untilKey) : `beendet ${fmtDay(job.ended!.date)}`} />
         <KV k="Ziel" info="ntZiel" v={job.goal ? `${job.goal.label}` : '–'} strong />
         <Meter label="Vertrauen" info="ntVertrauen" value={job.trust} color={condBar(job.trust)} />
-        <KV k="Stärke · Rang" v={<><b style={{ color: vColor(strength.get(job.nat) ?? 0) }}>{Math.round(strength.get(job.nat) ?? 0)}</b> · {r ? `${r}. von ${rank.length}` : '–'}</>} />
+        <KV k="Stärke · Rang nach Stärke" v={<><b style={{ color: vColor(strength.get(job.nat) ?? 0) }}>{Math.round(strength.get(job.nat) ?? 0)}</b> · {r ? `${r}. von ${rank.length}` : '–'}</>} />
+        <KV k="Weltrangliste" info="weltrangliste" v={wr ? `${wr.rank}. · ${wr.pts} Punkte` : '–'} />
         <KV k="Entlassung möglich" info="ntEntlassung" v={sackable(g) ? 'ja' : 'nein'} />
         {active && <div className="ntj-actions ntj-push">
           <button type="button" className="b3 b3-s" onClick={() => setAsk(true)}>Zurücktreten</button>

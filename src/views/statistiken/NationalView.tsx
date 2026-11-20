@@ -1,10 +1,14 @@
 // =============================================================================
 // STATISTIKEN › NATIONALTEAMS (Wunsch Pascal, #36): Nationalmannschaft des
-// Heimatlandes (Stärke, Rangliste, Termine), Aufgebot, deine Nationalspieler,
-// laufendes/letztes Turnier (Gruppen + K.-o.), Länderspiele/Rangliste/Sieger.
-// Logik: game/national/ (nationalGame.ts, pool.ts, tournament.ts).
+// Heimatlandes (Stärke, Weltrangliste, Termine), Aufgebot, deine Nationalspieler,
+// laufendes/letztes Turnier (Gruppen + K.-o.), Länderspiele/Sieger. Drittes Menü
+// Übersicht | Weltrangliste (national/WorldRankingView.tsx, Daten ranking.ts).
+// Logik: game/national/ (nationalGame.ts, pool.ts, tournament.ts, ranking.ts).
 // =============================================================================
 import { Fragment, useState } from 'react';
+import { SubTabsPage, useSubTab } from '../../ui/SubTabs';
+import { worldRank } from '../../game/national/ranking';
+import WorldRankingView from './national/WorldRankingView';
 import type { Game } from '../../game/state';
 import { currentSquad, nationMatches, nationalSeason, natName, upcoming } from '../../game/national/nationalGame';
 import { allStrengths } from '../../game/national/pool';
@@ -80,14 +84,22 @@ export function TournamentBox({ t, today, home, mine }: { t: Tournament; today: 
 }
 
 export function NationalView({ g, onGoto }: { g: Game; onGoto?: (s: Screen) => void }) {
+  const [tab, setTab] = useSubTab<'overview' | 'ranking'>('nationalteams', 'overview');
+  return (
+    <SubTabsPage tabs={[{ id: 'overview', label: 'Übersicht' }, { id: 'ranking', label: 'Weltrangliste' }]} active={tab} onSelect={setTab}>
+      {tab === 'ranking' ? <WorldRankingView g={g} /> : <NationalOverview g={g} onGoto={onGoto} />}
+    </SubTabsPage>
+  );
+}
+
+function NationalOverview({ g, onGoto }: { g: Game; onGoto?: (s: Screen) => void }) {
   const job = activeJob(g);
   const today = g.calendar.currentDate;
   const year = parseInt(today.slice(0, 4), 10);
   const st = nationalSeason(g);
   const home = homeNat(g);
   const strength = allStrengths(g);
-  const rank = [...strength.entries()].sort((a, b) => b[1] - a[1]);
-  const myRank = rank.findIndex(([c]) => c === home) + 1;
+  const wr = worldRank(g, home);
   const squad = currentSquad(g, home).sort((a, b) => (a.pos === 'TW' ? 0 : 1) - (b.pos === 'TW' ? 0 : 1) || b.ov - a.ov);
   const games = nationMatches(g, home);
   const season = games.filter((m) => m.date >= `${g.season.slice(0, 4)}-07-01`);
@@ -99,7 +111,7 @@ export function NationalView({ g, onGoto }: { g: Game; onGoto?: (s: Screen) => v
   const mine = club.playerIds.map((id) => g.players[id]).filter((p) => p && (p.intl?.caps || awayIds.has(p.id) || inSquad.has(p.id)))
     .sort((a, b) => (b.intl?.caps ?? 0) - (a.intl?.caps ?? 0));
   const t = st.tourn && today >= st.tourn.nominate ? st.tourn : null;
-  const [tab, setTab] = useState<'spiele' | 'rang' | 'sieger'>('spiele');
+  const [tab, setTab] = useState<'spiele' | 'sieger'>('spiele');
   const coach = home === 'GER' ? 'der Bundestrainer' : 'der Nationaltrainer';
   const cName = (id: string) => g.clubs[id]?.name ?? worldClubInfo(g, id)?.name ?? clubNameOf(g, id);
 
@@ -107,7 +119,7 @@ export function NationalView({ g, onGoto }: { g: Game; onGoto?: (s: Screen) => v
     <DashPage className="nt-page">
       <DashBox title={`Nationalmannschaft ${natName(home)}`} info="nationalteams" right={<>{job?.nat === home && <i className="ntj-tag">Dein Team</i>} <NatFlag nat={home} height={18} /></>}>
         <KV k="Stärke" v={<b style={{ color: vColor(strength.get(home) ?? 0) }}>{Math.round(strength.get(home) ?? 0)}</b>} strong />
-        <KV k="Rangliste" v={myRank ? `${myRank}. von ${rank.length}` : '–'} />
+        <KV k="Weltrangliste" info="weltrangliste" v={wr ? `${wr.rank}. von ${wr.of} · ${wr.pts} Punkte` : '–'} />
         <KV k="Trainer" v={job?.nat === home ? 'du' : coach} />
         {job && onGoto && <div className="ntj-actions"><button type="button" className="b3 b3-s b3-primary" onClick={() => onGoto('nationalteam')}>Dein Nationalteam: {natName(job.nat)}</button></div>}
         <KV k="Saisonbilanz" v={season.length ? `${rec.w} S · ${rec.d} U · ${rec.l} N` : 'noch kein Länderspiel'} />
@@ -153,20 +165,10 @@ export function NationalView({ g, onGoto }: { g: Game; onGoto?: (s: Screen) => v
           : <Empty icon="trophy">{next.find((x) => /meisterschaft/.test(x.text))?.text ?? 'Kein Turnier angesetzt.'} – Aufgebote und Spielplan 25 Tage vor dem Anpfiff.</Empty>}
       </DashBox>
 
-      <DashBox title="Länderspiele" right={<span className="nt-tabs">{([['spiele', 'Spiele'], ['rang', 'Rangliste'], ['sieger', 'Sieger']] as const).map(([k, l]) => (
+      <DashBox title="Länderspiele" right={<span className="nt-tabs">{([['spiele', 'Spiele'], ['sieger', 'Sieger']] as const).map(([k, l]) => (
           <button key={k} className={`dchip ${tab === k ? 'on' : ''}`} onClick={() => setTab(k)}>{l}</button>))}</span>}>
         {tab === 'spiele' && (games.length ? <div className="nt-list">{games.slice(0, 20).map((m, i) => <MatchLine key={i} m={m} today={today} label={m.label} />)}</div>
           : <Empty icon="schedule">Noch keine Länderspiele.</Empty>)}
-        {tab === 'rang' && (
-          <div className="nt-list">
-            {rank.slice(0, 40).map(([c, v], i) => (
-              <div key={c} className={`nt-prow ${c === home || c === job?.nat ? 'me' : ''}`}>
-                <span className="rl-rank">{i + 1}</span><NatFlag nat={c} /><span className="nt-pname">{natName(c)}{c === job?.nat && <i className="ntj-tag">Dein Team</i>}</span>
-                <b style={{ color: vColor(v) }}>{Math.round(v)}</b>
-              </div>
-            ))}
-          </div>
-        )}
         {tab === 'sieger' && (st.archive.length ? (
           <div className="nt-list">
             {[...st.archive].reverse().map((a) => (

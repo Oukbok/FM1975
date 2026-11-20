@@ -3095,7 +3095,7 @@ Antrittsgeld und Siegprämie (Ligapokal und Europäischer Supercup höher), Heim
     title: 'Nationalmannschaften, Länderspiele, WM und EM',
     keywords: ['nationalmannschaft', 'länderspiel', 'länderspielpause', 'abstellung', 'wm', 'em', 'weltmeisterschaft', 'europameisterschaft', 'turnier', 'bundestrainer', 'marktwert', 'nationalspieler', 'qualifikation', 'nations league'],
     body: `## Wo
-**Statistiken › Nationalteams** zeigt die Nationalmannschaft deines Landes (Stärke, Rangliste, Termine), das aktuelle Aufgebot, deine Nationalspieler, das laufende bzw. letzte Turnier mit Gruppen und K.-o.-Runden sowie Länderspiele, Rangliste und Turniersieger. Im Spielerprofil stehen Länderspiele und Tore.
+**Statistiken › Nationalteams** zeigt unter „Übersicht“ die Nationalmannschaft deines Landes (Stärke, Platz in der Weltrangliste, Termine), das aktuelle Aufgebot, deine Nationalspieler, das laufende bzw. letzte Turnier mit Gruppen und K.-o.-Runden sowie Länderspiele und Turniersieger; der Reiter **Weltrangliste** zeigt die ganze Liste (siehe „Weltrangliste der Nationalmannschaften“). Im Spielerprofil stehen Länderspiele und Tore.
 
 ## Wer spielt mit?
 Alle Nationen der Spielwelt spielen – auch die, deren Spieler du nie siehst. Aufgebote stellt der jeweilige Nationaltrainer aus den Spielern der Spielwelt zusammen: drei Torhüter, dann die Besten nach Stärke, mit einer leichten persönlichen Note; ab Mitte 30 wird es schwer. Verletzte fahren nicht mit. Zerfallene Staaten gehen an ihre Nachfolger (Sowjetunion → Russland, Jugoslawien → Serbien, Tschechoslowakei → Tschechien), DDR-Spieler spielen nach der Einheit für Deutschland.
@@ -3117,6 +3117,31 @@ Gastgeber, Termine und Teilnehmerzahl wie historisch: EM 1976 mit 4 Teams, 1980�
 
 ## Selbst Nationaltrainer
 Zusätzlich zum Verein kannst du eine Nationalmannschaft betreuen – siehe „Nationaltrainer: zusätzlich eine Nationalmannschaft“.`,
+  },
+  {
+    id: 'world-ranking',
+    category: 'squad',
+    title: 'Weltrangliste der Nationalmannschaften',
+    keywords: ['weltrangliste', 'rangliste', 'elo', 'punkte', 'fifa', 'platz', 'nationalmannschaft', 'länderspiel', 'ausgabe', 'verlauf'],
+    body: `## Wo
+**Statistiken › Nationalteams › Weltrangliste** zeigt alle Nationen mit Platz, Veränderung, Kontinent, Punkten und Punkte-Veränderung (Filter je Kontinent), dazu dein Land mit dem Verlauf seines Rangs und die größten Sprünge seit der letzten Ausgabe. Im **Länderprofil** (Klick auf eine Flagge) steht auf der Übersicht die Box „Weltrangliste“: Platz, Punkte, ± zur Ausgabe davor, die Nachbarn in der Liste und der Verlauf über die Jahre.
+
+## Wie wird gerechnet?
+Wie bei der bekannten Elo-Weltrangliste des Fußballs: Jede Nation hat Punkte, jedes Länderspiel verschiebt sie. Wer gewinnt, bekommt Punkte vom Verlierer – umso mehr, je stärker der Gegner war, je wichtiger das Spiel und je deutlicher das Ergebnis.
+- **Gewicht:** WM-Endrunde 60, EM-Endrunde 50, Qualifikation und Nations League 40, Freundschaftsspiel 20.
+- **Deutlichkeit:** Sieg mit zwei Toren ×1,5, mit drei ×1,75, danach je Tor ein Achtel mehr.
+- **Heimvorteil:** die Heimmannschaft wird mit 100 Punkten mehr gerechnet – ein Heimsieg bringt deshalb weniger als ein Auswärtssieg. Bei WM und EM spielt nur der Gastgeber zu Hause.
+- **Elfmeterschießen** zählt als Unentschieden, ein Sieg nach Verlängerung als Sieg.
+
+## Start und Fortschreibung
+Zu Spielbeginn stehen die Nationen so, wie es die Geschichte nahelegt (1975 vorne: BR Deutschland, Niederlande, Brasilien, Polen, England) – nachgerechnet aus allen echten Länderspielen bis zum Startjahr. Danach zählt **nur, was im Spiel gespielt wird**: Länderspielfenster, Qualifikation, WM und EM. Ein Spiel geht am Tag danach in die Punkte ein. Damit die Liste über Jahrzehnte glaubwürdig bleibt (Länder spielen meist nur gegen Nachbarn aus dem eigenen Kontinent), rückt jede Nation am Monatsersten ein Stück an ihren Richtwert heran (6 % des Abstands, wer ein Jahr lang nicht spielt 10 %). Der Richtwert ist ihr historischer Wert – ist die Mannschaft im Spiel stärker oder schwächer als ihre Grundstärke, verschiebt er sich mit. Ergebnisse bewegen die Liste also kurz- und mittelfristig (ein Turniersieg wirkt etwa ein Jahr nach), die Stärke im Spiel auf Dauer. Spiele außerhalb Europas in Fenstern der EM-Qualifikation zählen als Freundschaftsspiel.
+Nachfolgestaaten übernehmen die Punkte: Russland die der Sowjetunion, Serbien die Jugoslawiens, Tschechien die der Tschechoslowakei. Neue Nationen beginnen bei ihrem Richtwert.
+
+## Ausgaben
+Wie bei der FIFA erscheint die Liste **am Monatsersten**. Das ± vergleicht mit der Ausgabe davor. Die Januar-Ausgabe hält den Platz zum Jahresende fest – daraus entsteht der Verlauf (die letzten 30 Jahre). Ältere Spielstände bekommen die Liste beim Laden aus den Richtwerten; der Verlauf bis dahin und die Ausgabe davor kommen dann ebenfalls aus den historischen Richtwerten, ab dem Laden zählen die Länderspiele im Spiel.
+
+## Weltrangliste und Stärke
+Die **Stärke** einer Nation (Startelf aus den Spielern der Spielwelt) entscheidet über Ergebnisse, Qualifikation und die Ziele eines Nationaltrainers. Die **Weltrangliste** misst dagegen, was dabei herauskommt – eine starke Mannschaft mit schwachen Ergebnissen steht hinten, bis sie gewinnt.`,
   },
   {
     id: 'national-coach',
@@ -3152,8 +3177,8 @@ Alle Amtszeiten mit Bilanz und Turnieren stehen in Privat › Karriere › Natio
 Ein Klick auf eine **Flagge** öffnet das Profil des Landes – in Tabellen, Spielerprofilen, Bestenlisten, Nationalteams, Ligensystem und überall sonst. Flaggen in Knöpfen oder klickbaren Zeilen behalten ihre eigene Aktion. Wie Vereins- und Spielerprofile stapeln sich die Fenster: das zuletzt geöffnete liegt oben, „Zurück“ führt zum vorher geöffneten Land.
 
 ## Reiter
-- **Übersicht:** Steckbrief (Kontinent, Bestehen, Vorgänger und Nachfolger, wie das Land im Spiel läuft), **Ligaruf international** (0–100 mit Veränderung zur Vorsaison, Rang in der Fünfjahreswertung, Startplätze im Europapokal), Nationalmannschaft (Stärke, Weltrang, Titel bei WM/EM seit deinem Start, Richtwert der Stärke je Jahrzehnt), Meister und Pokalsieger, die stärksten Vereine und die besten Spieler des Landes nach Nationalität.
-- **Länderspiele:** Bilanz der Saison, nächste Termine, alle gespeicherten Länderspiele, das laufende Turnier mit Gruppe und K.-o.-Runden sowie die WM- und EM-Sieger seit deinem Start.
+- **Übersicht:** Steckbrief (Kontinent, Bestehen, Vorgänger und Nachfolger, wie das Land im Spiel läuft), **Ligaruf international** (0–100 mit Veränderung zur Vorsaison, Rang in der Fünfjahreswertung, Startplätze im Europapokal), **Weltrangliste** (Platz, Punkte, Veränderung seit der letzten Ausgabe, Ausschnitt der Liste rund um das Land und Verlauf des Rangs über die Jahre), Meister und Pokalsieger, die stärksten Vereine und die besten Spieler des Landes nach Nationalität.
+- **Länderspiele:** Bilanz der Saison mit Platz in der Weltrangliste, nächste Termine, alle gespeicherten Länderspiele, das laufende Turnier mit Gruppe und K.-o.-Runden sowie die WM- und EM-Sieger seit deinem Start.
 - **Nationalkader:** das aktuelle Aufgebot (vor der ersten Berufung der Saison: wen der Nationaltrainer heute berufen würde) mit Gesicht, Position, Alter, Verein, Länderspielen und Stärke, Kennzahlen des Kaders und die nächsten Kandidaten.
 - **Ligen:** Tabellen der 1. und 2. Liga (laufend oder letzte gespeicherte Saison), Meister und Pokalsieger je Saison – vor deinem Start aus den Weltdaten – und die Rekordmeister. Der Knopf öffnet das Land unter **Statistiken › Liga**.
 - **Ligensystem:** die Pyramide des Landes mit allen Ebenen und Zonen.

@@ -74,6 +74,7 @@ import { migrateContracts2 } from './contractClausesGame';
 import { bindHonours } from './clubHonours';
 import { ensureWorldPool } from './worldPool';
 import { ensureContinents } from './continents';
+import { ensureRanking } from './national/ranking';
 import { startWorldPlaces } from './worldPlacesSeed';
 import { startShirtNumbers } from './shirtMigration';
 import { FACE_NAME_VERSION } from './faceNameMigration';
@@ -336,6 +337,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   ensureCountryPools(g0.world, g0.euroClubs, Number(g0.season.slice(0, 4))); // Unterbau der Auslandsligen (engine/world.ts)
   if (g0.world && g0.euroClubs) updateWorldDepths(g0.world, g0.euroClubs, year); // tiefere Ebenen nach Länderrang (engine/worldDeep.ts)
   ensureWorldPool(g0); // Weltspieler aller Vereine ohne vollen Kader (Spielerpool)
+  ensureRanking(g0); // Weltrangliste der Nationalmannschaften aus den historischen Stützwerten (game/national/ranking.ts)
   ensureContinents(g0); // andere Kontinente: Meister + Kontinentalpokale im Hintergrund (game/continents.ts)
   startWorldPlaces(g0); // Platzierungs-Historie der Auslandsvereine aus den Weltdaten vor dem Startjahr
   startShirtNumbers(g0); // Rückennummern aller Kader nach Position und Epoche (game/shirtMigration.ts)

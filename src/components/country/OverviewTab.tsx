@@ -1,23 +1,22 @@
-// Länderprofil › Übersicht: Steckbrief · Ligaruf international · Nationalmannschaft |
+// Länderprofil › Übersicht: Steckbrief · Ligaruf international · Weltrangliste |
 // Meister & Pokal · Beste Vereine · Beste Spieler
-import { activeJob } from '../../game/national/nationalJob';
 import { useMemo } from 'react';
 import {
-  bestClubs, bestPlayers, countryFacts, countryHolders, countryLeagues, countryRep, countrySystem, nationInfo, titleCounts,
+  bestClubs, bestPlayers, countryFacts, countryHolders, countryLeagues, countryRep, countrySystem, titleCounts,
 } from '../../game/countryProfile';
 import { DashBox, Empty, KV, Meter } from '../../ui/DashPage';
 import { vColor } from '../../ui/format';
 import { TeamName } from '../../views/statistiken/competition/parts';
 import { NatRow, type CountryTabProps } from './parts';
 import { CtChampBox, CtClubsBox, CtCupBox } from './ContinentBoxes';
+import { WorldRankBox } from './WorldRankBox';
+import { nationExists } from '../../data/nationalTeams';
 
 const sign = (d: number) => `${d > 0 ? '+' : d < 0 ? '−' : '±'}${Math.abs(d).toFixed(0)}`;
-const years = (l: number[]) => `${l.length}× (${l.join(', ')})`;
 
 export default function OverviewTab({ g, c, pyramid }: CountryTabProps) {
   const facts = countryFacts(g, c);
   const rep = countryRep(g, c);
-  const nat = nationInfo(g, c);
   const holders = useMemo(() => countryHolders(g, c), [g, c]);
   const leagues = useMemo(() => countryLeagues(g, c), [g, c]);
   const sys = countrySystem(c, pyramid);
@@ -53,25 +52,7 @@ export default function OverviewTab({ g, c, pyramid }: CountryTabProps) {
         </> : <Empty icon="international">{c.kind === 'none' ? 'Keine Liga im Spiel – deshalb kein Ligaruf und keine Fünfjahreswertung.' : `${c.name} besteht in dieser Saison nicht – kein Ligaruf, keine Fünfjahreswertung.`}</Empty>}
       </DashBox>}
 
-      <DashBox title="Nationalmannschaft" info="nationalteams" right={<>{activeJob(g)?.nat === c.code && <i className="ntj-tag">Dein Team</i>}{nat?.rank ? ` Weltrang ${nat.rank}` : ''}</>}>
-        {nat ? <>
-          {activeJob(g)?.nat === c.code && <KV k="Nationaltrainer" v="du" />}
-          <KV k="Stärke heute" v={nat.strength != null ? <b style={{ color: vColor(nat.strength) }}>{Math.round(nat.strength)}</b> : nat.exists ? '–' : 'besteht nicht'} strong />
-          <KV k="Titel im Spiel" v={nat.titles.wm.length + nat.titles.em.length ? [nat.titles.wm.length && `WM ${years(nat.titles.wm)}`, nat.titles.em.length && `EM ${years(nat.titles.em)}`].filter(Boolean).join(' · ') : 'keine'} />
-          {(nat.titles.wmFinals.length > 0 || nat.titles.emFinals.length > 0) && <KV k="Finale verloren" v={[...nat.titles.wmFinals.map((y) => `WM ${y}`), ...nat.titles.emFinals.map((y) => `EM ${y}`)].join(', ')} />}
-          {nat.current && <KV k={nat.current.label} v={nat.current.result} />}
-          <div className="dsec">Stärke je Jahrzehnt (Richtwert)</div>
-          <div className="cnx-dec">
-            {nat.decades.map((d) => (
-              <div key={d.year} className={`cnx-dec-col ${d.now ? 'now' : ''}`} title={`${d.year}: Grundstärke ${d.v}`}>
-                <b>{d.v}</b>
-                <span className="cnx-dec-bar"><i style={{ height: `${Math.max(4, Math.min(100, (d.v - 50) * 2.5))}%` }} /></span>
-                <span>{d.year}</span>
-              </div>
-            ))}
-          </div>
-        </> : <Empty icon="international">Keine Daten zur Nationalmannschaft.</Empty>}
-      </DashBox>
+      <WorldRankBox g={g} c={c} />
 
       {c.kind === 'continent' ? <><CtChampBox g={g} c={c} pyramid={pyramid} /><CtClubsBox g={g} c={c} pyramid={pyramid} /></> : <>
       <DashBox title="Meister & Pokal" right={leagues?.season}>
@@ -103,7 +84,7 @@ export default function OverviewTab({ g, c, pyramid }: CountryTabProps) {
 
       <DashBox title="Beste Spieler" info="laenderprofilSpieler">
         {players.length ? <div className="cnx-list">{players.map((p, i) => <NatRow key={p.id} g={g} p={p} rank={i + 1} />)}</div>
-          : <Empty icon="squad">Keine Spieler dieser Nationalität in der Spielwelt{c.nation && !nat?.exists ? ' – das Land besteht nicht mehr' : ''}.</Empty>}
+          : <Empty icon="squad">Keine Spieler dieser Nationalität in der Spielwelt{c.nation && !nationExists(c.nation, parseInt(g.season.slice(0, 4), 10)) ? ' – das Land besteht nicht mehr' : ''}.</Empty>}
       </DashBox>
     </>
   );

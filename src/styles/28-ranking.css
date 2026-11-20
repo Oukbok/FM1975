@@ -1,0 +1,48 @@
+/* =============================================================================
+   WELTRANGLISTE (Wunsch Pascal): Box im Länderprofil (components/country/WorldRankBox.tsx)
+   und Statistiken › Nationalteams › Weltrangliste (views/statistiken/national/).
+   Nur Tokens; eigene Nation mit Akzent-Kante wie .nt-prow.me.
+   ============================================================================= */
+.dbox-body:has(> .wr-box), .dbox-body:has(> .wr-table) { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.wr-box { display: flex; flex-direction: column; min-height: 0; flex: 1; gap: 4px; }
+.wr-kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border-soft); }
+.wr-kpis > div { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; min-width: 0; }
+.wr-kpis b, .wr-kpis .wr-d.wide { font-family: var(--font-display); font-size: 26px; font-weight: 600; line-height: 1.1; color: var(--text); }
+.wr-kpis .wr-d.wide.up { color: var(--pos); }
+.wr-kpis .wr-d.wide.down { color: var(--neg); }
+.wr-kpis span:not(.wr-d) { font-size: 12.5px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+
+.wr-list { display: flex; flex-direction: column; min-height: 0; }
+.wr-row { display: grid; grid-template-columns: 26px 24px minmax(0, 1fr) 52px 40px; gap: 8px; align-items: center; padding: 4px 2px; border-bottom: 1px solid var(--border-soft); font-size: 14px; }
+.wr-row .cflag { justify-self: center; }
+.wr-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 7px; min-width: 0; }
+.wr-pts { text-align: right; font-weight: 600; color: var(--text); }
+.wr-row.me, .wr-trow.me { box-shadow: inset 4px 0 0 var(--club-accent, var(--accent)); }
+.wr-row.me .wr-name, .wr-trow.me .wr-name { color: var(--club-accent, var(--accent)); font-weight: 600; }
+.wr-moves .wr-row { grid-template-columns: 26px 24px minmax(0, 1fr) 40px; }
+
+/* Veränderung in Plätzen / Punkten */
+.wr-d, .wr-dp { font-size: 12.5px; color: var(--text-3); text-align: right; white-space: nowrap; }
+.wr-d.up, .wr-dp.up { color: var(--pos); }
+.wr-d.down, .wr-dp.down { color: var(--neg); }
+.wr-d.wide { text-align: left; }
+
+/* Verlauf des Rangs */
+.wr-spark-wrap { position: relative; flex: 1 1 0; min-height: 64px; }
+.wr-spark { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.wr-spark .wr-grid { stroke: var(--border-soft); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.wr-spark .wr-ax { fill: var(--text-3); font-size: 13px; font-family: var(--font-ui); }
+.wr-spark .wr-line { fill: none; stroke: var(--text-2); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.wr-spark .wr-dot { fill: var(--text-2); }
+.wr-spark .wr-now { fill: var(--club-accent, var(--accent)); }
+.wr-foot { margin-top: auto; padding-top: 4px; font-size: 12px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: none; }
+
+/* Volle Liste (Statistiken › Nationalteams › Weltrangliste) */
+.wr-table { display: flex; flex-direction: column; min-height: 0; flex: 1; }
+.wr-tbody { overflow-y: auto; min-height: 0; flex: 1; }
+.wr-trow { display: grid; grid-template-columns: 44px 44px minmax(0, 1fr) 200px 70px 64px; gap: 10px; align-items: center; padding: 6px 4px; border-bottom: 1px solid var(--border-soft); font-size: 15px; }
+.wr-trow .wr-d, .wr-trow .wr-dp { font-size: 13.5px; }
+.wr-thead { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; padding-top: 0; flex: none; }
+.wr-thead span:nth-child(2), .wr-thead span:nth-child(5), .wr-thead span:nth-child(6) { text-align: right; }
+.wr-conf { color: var(--text-3); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wr-page .nt-tabs { flex-wrap: nowrap; }

@@ -35,6 +35,7 @@ import { countryInfo, countryOfNat } from '../../data/countryFlags';
 import { moraleJolt } from '../moraleJolt';
 import { activeJob, nextCycleDef, bookOwnMatch, fixedTeamsFor, jobDaily, nationalVacancies, noteExpectations, tKey, tournamentJobDay } from './nationalJob';
 import { jobSquadFor } from './nationalPick';
+import { rankingDaily } from './ranking';
 
 export interface IntlWindow { from: string; dates: string[]; matches: NtMatch[]; label: string; squads: Record<string, string[]>; done?: boolean }
 export interface TournamentRecord { kind: TournamentKind; year: number; place: string; winner: string; runnerUp: string; home: string; topScorer?: [string, string, number] }
@@ -342,6 +343,7 @@ export function nationalDaily(g: Game, today: string): void {
     if (today > w.dates[w.dates.length - 1]) w.done = true;
   }
   tournamentDaily(g, st, today);
+  rankingDaily(g, st, today, () => allStrengths(g, today)); // Weltrangliste: gestrige Länderspiele (Elo), Ausgabe am Monatsersten (ranking.ts)
   // Abstellungen: weg setzen bzw. zurück. Hat der Verein heute ein Pflichtspiel (z. B. Pokalfinale
   // während eines Turniers), spielt der Spieler für ihn – der Verband gibt ihn frei.
   const playing = new Set<string>();

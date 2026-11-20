@@ -411,6 +411,11 @@ export const INFO_TEXTS = {
     text: 'Alle Nationen spielen in den Länderspielfenstern und bei WM/EM. Aufgebote entstehen aus den Spielern der Spielwelt; abgestellte Spieler fehlen dir in dieser Zeit und kommen weniger frisch zurück. Länderspiele und ein starkes Turnier steigern den Marktwert.',
     wiki: 'national-teams',
   },
+  weltrangliste: {
+    title: 'Weltrangliste',
+    text: 'Elo-Punkte wie bei der bekannten Elo-Weltrangliste: Start mit historischen Werten, danach zählt nur, was im Spiel gespielt wird. Ein Sieg bringt umso mehr, je stärker der Gegner, je wichtiger das Spiel (WM-Endrunde 60, EM-Endrunde 50, Qualifikation/Nations League 40, Freundschaftsspiel 20) und je höher er ausfällt; der Gastgeber hat 100 Punkte Heimvorteil. Neue Ausgabe am Monatsersten, ± = Plätze seit der Ausgabe davor.',
+    wiki: 'world-ranking',
+  },
   nationaltrainer: {
     title: 'Zusätzlich Nationaltrainer',
     text: 'Neben deinem Verein betreust du eine Nationalmannschaft: Vor jedem Länderspielfenster und vor WM/EM nominierst du das Aufgebot, der Verband setzt dir je Turnier ein Ziel. Umschalten zwischen Verein und Nationalteam: Klick auf Wappen bzw. Flagge oben in der Kopfleiste.',

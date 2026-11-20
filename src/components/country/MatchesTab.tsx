@@ -4,6 +4,7 @@ import { activeJob } from '../../game/national/nationalJob';
 import { Fragment } from 'react';
 import { nationMatches, nationalSeason, natName, upcoming } from '../../game/national/nationalGame';
 import { nationInfo } from '../../game/countryProfile';
+import { worldRank } from '../../game/national/ranking';
 import { DashBox, Empty, KV } from '../../ui/DashPage';
 import { MatchLine, TournamentBox } from '../../views/statistiken/NationalView';
 import { NatFlag } from '../competition/CountryFlag';
@@ -14,6 +15,7 @@ const fmtD = (d: string) => `${d.slice(8, 10)}.${d.slice(5, 7)}.${d.slice(0, 4)}
 export default function MatchesTab({ g, c }: CountryTabProps) {
   const today = g.calendar.currentDate;
   const nat = nationInfo(g, c);
+  const wr = worldRank(g, c.code);
   if (!c.nation || !nat) {
     return <DashBox title="Länderspiele" span={3} rows={2}><Empty icon="international">Für {c.name} gibt es im Spiel keine Nationalmannschaft – keine Daten.</Empty></DashBox>;
   }
@@ -35,7 +37,7 @@ export default function MatchesTab({ g, c }: CountryTabProps) {
 
   return (
     <>
-      <DashBox title="Bilanz & Termine" right={nat.rank ? `Weltrang ${nat.rank}` : undefined}>
+      <DashBox title="Bilanz & Termine" right={wr ? `Weltrangliste: Platz ${wr.rank}` : undefined}>
         <KV k={`Saison ${g.season}`} v={season.length ? `${s.w} S · ${s.d} U · ${s.l} N · ${s.gf}:${s.ga}` : 'noch kein Länderspiel'} strong />
         <KV k="Gespeicherte Spiele" v={games.length ? `${all.w} S · ${all.d} U · ${all.l} N · ${all.gf}:${all.ga}` : '–'} />
         {!nat.exists && <div className="dnote">{c.name} besteht in dieser Saison nicht – die Spieler laufen für den Nachfolger auf.</div>}

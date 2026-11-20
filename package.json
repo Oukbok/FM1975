@@ -20,6 +20,7 @@
     "test:business": "node scripts/run-ts.mjs tests/club-business-test.ts",
     "test:registration": "node scripts/run-ts.mjs tests/registration-test.ts",
     "test:national": "node scripts/run-ts.mjs tests/national-test.ts",
+    "test:ranking": "node scripts/run-ts.mjs tests/ranking-test.ts",
     "test:supercup": "node scripts/run-ts.mjs tests/supercup-test.ts",
     "test:private": "node scripts/run-ts.mjs tests/private-test.ts",
     "test:matchdnd": "node tests/match-dnd.mjs",

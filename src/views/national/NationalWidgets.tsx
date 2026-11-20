@@ -1,7 +1,7 @@
 // =============================================================================
 // ZENTRALE in der Ansicht Nationalteam (Wunsch Pascal): Kurz-Widgets links/rechts
 // neben dem Newscenter – nächstes Länderspiel, Aufgebot, verletzte Kandidaten |
-// Ziel & Vertrauen, Gruppe bzw. Bilanz, Rangliste. Rahmen `Widget` aus dash/LeftWidgets.
+// Ziel & Vertrauen, Gruppe bzw. Bilanz, Weltrangliste. Rahmen `Widget` aus dash/LeftWidgets.
 // =============================================================================
 import type { Game } from '../../game/state';
 import type { Screen } from '../../shell/navigation';
@@ -9,10 +9,11 @@ import { NatFlag } from '../../components/competition/CountryFlag';
 import PosBadge from '../../components/PosBadge';
 import { activeJob, defOfKey, tLong } from '../../game/national/nationalJob';
 import { nationalState, natName } from '../../game/national/nationalGame';
-import { allStrengths, candidatesByNation } from '../../game/national/pool';
+import { candidatesByNation } from '../../game/national/pool';
+import { rankingRows } from '../../game/national/ranking';
 import { groupTable } from '../../game/national/tournament';
 import { ddmm, jobCalendar, recText } from '../../game/national/nationalJobView';
-import { condBar, condColor, vColor } from '../../ui/format';
+import { condBar, condColor } from '../../ui/format';
 import { InfoTip } from '../../ui/InfoTip';
 import { Widget } from '../zentrale/dash/LeftWidgets';
 import type { Position } from '../../types';
@@ -103,15 +104,16 @@ function GroupWidget({ g, onGoto }: { g: Game; onGoto: Go }) {
 
 function RankWidget({ g, onGoto }: { g: Game; onGoto: Go }) {
   const job = activeJob(g)!;
-  const rank = [...allStrengths(g).entries()].sort((a, b) => b[1] - a[1]);
-  const mine = rank.findIndex(([c]) => c === job.nat);
-  const shown = rank.slice(0, 8);
-  if (mine >= 8) shown.push(rank[mine]);
+  // Elo-Weltrangliste (game/national/ranking.ts), nicht mehr die Stärke-Reihenfolge.
+  const rows = rankingRows(g);
+  const mine = rows.find((r) => r.code === job.nat);
+  const shown = rows.slice(0, 8);
+  if (mine && mine.rank > 8) shown.push(mine);
   return (
-    <Widget title="Rangliste nach Stärke" to="nationalteams" onGoto={onGoto} right={`Rang ${mine + 1}`}>
-      <div className="ntw-list">{shown.map(([c, v]) => (
-        <div key={c} className={`ntw-row ${c === job.nat ? 'me' : ''}`}><span className="dz-dim">{rank.findIndex(([x]) => x === c) + 1}.</span><span className="ntw-txt"><NatFlag nat={c} /> {natName(c)}</span><b style={{ color: vColor(v) }}>{Math.round(v)}</b></div>
-      ))}</div>
+    <Widget title="Weltrangliste" to="nationalteams" onGoto={onGoto} right={mine ? `Platz ${mine.rank}` : undefined}>
+      {shown.length ? <div className="ntw-list">{shown.map((r) => (
+        <div key={r.code} className={`ntw-row ${r.code === job.nat ? 'me' : ''}`}><span className="dz-dim">{r.rank}.</span><span className="ntw-txt"><NatFlag nat={r.code} /> {natName(r.code)}</span><b>{r.pts}</b></div>
+      ))}</div> : <div className="dz-empty">Noch keine Weltrangliste.</div>}
     </Widget>
   );
 }
