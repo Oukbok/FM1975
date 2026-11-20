@@ -12,7 +12,7 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   // Kabine (Kader › Kabine)
   | 'kabine'
   // Training (Kategorie) + Jugend (Kategorie)
-  | 'cat-training' | 'trainerteam' | 'cat-jugend' | 'jugendwettbewerbe'
+  | 'cat-training' | 'trainerteam' | 'cat-jugend' | 'jugendwettbewerbe' | 'jugendcamps'
   // Die Besten der Saison (Statistiken › Auszeichnungen)
   | 'auszeichnungen'
   // Fanartikel (Finanzen › Fanartikel)
@@ -76,6 +76,7 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'youth', label: 'Mannschaften', icon: 'youth' },
     { screen: 'reserve', label: '2. Mannschaft', icon: 'squad' },
     { screen: 'jugendwettbewerbe', label: 'Jugendwettbewerbe', icon: 'trophy' },
+    { screen: 'jugendcamps', label: 'Jugendcamps', icon: 'international' },
   ] },
   { key: 'transfers', label: 'Transfers', icon: 'transfers', dash: 'cat-transfers', subs: [
     { screen: 'cat-transfers', label: 'Transfers', icon: 'transfers' },

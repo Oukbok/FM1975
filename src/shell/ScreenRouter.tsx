@@ -91,6 +91,7 @@ function page({ screen, g, rerender, setScreen, onWatch, onReplayDraw, onOpenEdi
     case 'kabine': return <P.DressingRoomView g={g} onChange={ch} />;
     case 'trainerteam': return <P.TrainerTeamView g={g} onChange={ch} />;
     case 'jugendwettbewerbe': return <P.YouthCompetitionsView g={g} />;
+    case 'jugendcamps': return <P.YouthCampsView g={g} onChange={ch} />;
     default: return null;
   }
 }

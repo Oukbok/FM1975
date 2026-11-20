@@ -41,6 +41,9 @@ import { checkPromises } from './promises';
 import { seasonPromisesDaily, seasonPromisesFitness } from './seasonPromisesGame';
 import { transferTalkDaily } from './transferTalks';
 import { scoutingDaily } from './scoutingGame';
+import { softwareMonthly } from './scoutSoftware';
+import { abroadDaily } from './scoutAbroad';
+import { youthCampsDaily } from './youthCamps';
 import { ensureWorldPool, worldPoolWinter } from './worldPool';
 import { worldLiveDaily } from './worldLeagues';
 import { cohesionDaily } from './cohesionGame';
@@ -223,6 +226,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
   // -------------------------------------------------------------------------
   youthIntakeDaily(g, today); // game/dayYouthIntake.ts
 
+  youthCampsDaily(g, today); // Jugendcamps im Ausland: Bau, Betrieb, Talente am 1.7., KI-Talente (game/youthCamps.ts)
+
   legendsDaily(g, today); // 1. Juli: Ausnahmetalente der Fußballgeschichte (still, game/legendsGame.ts)
 
   // -------------------------------------------------------------------------
@@ -252,6 +257,8 @@ export function processDay(g: Game, ui: DayUi): boolean {
   buyBackDaily(g, today, (p, from, to, fee) => { transferPlayer(g, p, from, to, fee, today); repairSquadLists(g); });
   transferTalkDaily(g, today);
   scoutingDaily(g, today); // Einzel-Scouting (Transfers › Scouting)
+  abroadDaily(g, today); // Scouts im Ausland: Rückkehr, Länderwissen, Funde (game/scoutAbroad.ts)
+  softwareMonthly(g, today); // Scouting-Abos am 1. abbuchen, Kündigungen (game/scoutSoftware.ts)
   bindRegistration(g); registrationDaily(g, today); // Spielermeldung & Ausländerregeln (game/registrationGame.ts)
   nationalDaily(g, today); // Nationalmannschaften, Länderspiele, WM/EM (game/national/nationalGame.ts)
   privateDaily(g, today); // Privatleben: Wochenplan, Monatsabschluss, Familie, Generationen (game/private/privateGame.ts)

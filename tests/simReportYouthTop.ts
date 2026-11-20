@@ -45,6 +45,9 @@ export function youthReport(game: Game, ps: Player[]) {
     const race = game.youthRace;
     console.log(`   YOUTH Invest Qualität ${q(invs.map((v: any) => v.quality))} Ruf ${q(invs.map((v: any) => v.reputation))} Perspektive ${q(invs.map((v: any) => v.perspective))} Kosten(Basis,k) ${q(cost.map((x: number) => x / 1000))}${race ? ` | Talentwettbewerb ${race.entries.filter((e) => e.to).length}/${race.entries.length} an Ligavereine` : ''}`);
   }
+  const camps = (game as any).youthCamps?.ai as [number, number][] | undefined;
+  const campNow = camps?.find((x) => x[0] === Number(game.calendar.currentDate.slice(0, 4)) || x[0] === Number(game.season.slice(0, 4)));
+  if (campNow) console.log(`   YOUTH KI-Jugendcamps/Abos: ${campNow[1]} zusätzliche Auslandstalente (${campNow[0]})`);
   console.log(`   YOUTH Akademie in Liga 1:${acad.length}/${ps.length} (${(share * 100).toFixed(1)} %) | bester ${best ? `${best.overall} (${best.age} J., ${game.clubs[best.clubId]?.shortName ?? '?'})` : '-'} | ≥80 ${acad.filter((p) => p.overall >= 80).length} ≥85 ${acad.filter((p) => p.overall >= 85).length} | U23 ${u23.length} Ø ${avg(u23.map((p) => p.overall)).toFixed(1)}`);
 }
 export function youthSummary(game: Game) {

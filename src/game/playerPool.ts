@@ -13,6 +13,9 @@
 //   + Scouting-Abteilung (Qualität der Scouts), + laufende Verhandlung.
 //   Jugendliche: nur knapp die Hälfte. Scouting-Berichte heben den Wert (game/
 //   scoutingGame.ts) und veralten mit 0,12 je Jahr.
+//   + Software & Abos (game/scoutSoftware.ts, je Region/Ligaebene/Jugend) und
+//     Länderwissen der Scouts im Ausland (game/scoutAbroad.ts): zusammen als
+//     Anteil der Lücke bis 1 (nach dem Jugend-Abschlag).
 // SCHÄTZUNG: Stärke, Potenzial und Marktwert als Spanne um einen fest verschobenen
 //   Mittelwert (Schätzfehler je Spieler aus der ID). Je besser bekannt, desto
 //   schmaler und genauer. Sortierung und Filter nutzen nur die Schätzung.
@@ -26,6 +29,10 @@ import { staffEffectsOf } from './staffGame';
 import type { Game } from './state';
 import { ensureWorldPool, worldClubs, worldValue, WP_FIELD as W, type WorldClubInfo } from './worldPool';
 import { scoutReport } from './scoutingGame';
+import { softBoostFor, softProfile, type SoftItem } from './scoutSoftware';
+import { areaMap } from './scoutAbroad';
+import { regionOfCountry } from '../data/scoutingProducts';
+import { homeCountryKey } from './state';
 
 export type PoolKind = 'pro' | 'youth' | 'world';
 export interface PoolRow {
@@ -126,7 +133,7 @@ export function mediaEra(year: number): number {
   return 0.3 * t;
 }
 
-export interface KnowCtx { g: Game; year: number; scout: number; home: string; leagueIds: Set<string>; meet: Map<string, number>; talks: Set<string> }
+export interface KnowCtx { g: Game; year: number; scout: number; home: string; leagueIds: Set<string>; meet: Map<string, number>; talks: Set<string>; soft: SoftItem[]; homeKey: string; areas: Map<string, number> }
 
 export function knowCtx(g: Game): KnowCtx {
   const fx = staffEffectsOf(g);
@@ -134,6 +141,7 @@ export function knowCtx(g: Game): KnowCtx {
     g, year: Number(g.calendar.currentDate.slice(0, 4)), scout: fx.scouting ?? 0, home: homeNationality(),
     leagueIds: new Set((g.table?.rows ?? []).map((r) => r.clubId)), meet: new Map(),
     talks: new Set((g.transferTalks ?? []).filter((t) => t.phase === 'club' || t.phase === 'player' || t.phase === 'agreed').map((t) => t.playerId)),
+    soft: softProfile(g), homeKey: homeCountryKey(g), areas: areaMap(g),
   };
 }
 
@@ -158,6 +166,10 @@ export function knowledge(ctx: KnowCtx, r: PoolRow): number {
   if (r.nat === ctx.home && !domestic) k += 0.04;
   k += ctx.scout * 1.2;
   if (r.youth) k *= 0.45;
+  // Software/Abos und Scouts im Ausland: Anteil der Lücke bis „genau bekannt“.
+  const sb = ctx.soft.length ? softBoostFor(ctx.soft, domestic ? 'heimat' : regionOfCountry(r.country, ctx.homeKey), r.level, r.youth) : 0;
+  const ab = ctx.areas.get(r.country) ?? 0;
+  if (sb > 0 || ab > 0) k += (1 - (1 - sb) * (1 - ab)) * (1 - k);
   if (ctx.talks.has(r.id)) k += 0.15;
   const rep = scoutReport(g, r.id);
   if (rep) k = Math.max(k, rep);

@@ -36,9 +36,22 @@ export interface ScoutJob {
 }
 export interface ScoutReport { k: number; date: string }
 export type ScoutArgs = { id: string; name: string; clubName: string; abroad: boolean; youth: boolean };
-export interface ScoutingState { v: 1; jobs: ScoutJob[]; reports: Record<string, ScoutReport>; /** wartende Aufträge */ queue?: ScoutArgs[] }
+export interface ScoutingState {
+  v: 1; jobs: ScoutJob[]; reports: Record<string, ScoutReport>; /** wartende Aufträge */ queue?: ScoutArgs[];
+  /** gekaufte Datenträger je Produkt/Region (game/scoutSoftware.ts); fehlt = keine */
+  buys?: import('./scoutSoftware').SoftBuy[];
+  /** laufende Abos (game/scoutSoftware.ts); fehlt = keine */
+  subs?: import('./scoutSoftware').SoftSub[];
+  /** Scouts im Ausland (game/scoutAbroad.ts); belegen je einen Platz */
+  abroad?: import('./scoutAbroad').AbroadJob[];
+  /** Länderwissen aus Auslandsreisen: Land → Bekanntheits-Zuschlag + Rückkehrdatum */
+  areas?: Record<string, { k: number; date: string }>;
+  /** abgeschlossene Auslandsreisen (die letzten 12) */
+  abroadLog?: import('./scoutAbroad').AbroadDone[];
+}
 
-function cpi(year: number): number {
+/** Verbraucherpreise relativ zu 1975 (für Reisen, Software, Camps – nicht Fußballgeld). */
+export function cpi(year: number): number {
   const t = MERCH_CPI;
   if (year <= t[0][0]) return t[0][1];
   for (let i = 1; i < t.length; i++) if (year <= t[i][0]) { const [y0, a] = t[i - 1], [y1, b] = t[i]; return a + (b - a) * (year - y0) / (y1 - y0); }
@@ -49,6 +62,13 @@ function cpi(year: number): number {
 const SCOUT_ROLES = ['scout_1975', 'chefscout', 'intl_scout', 'nachwuchskoord'];
 const MAX_REPORTS = 600;
 export const MAX_QUEUE = 40;
+export const SCOUT_ROLE_IDS = SCOUT_ROLES;
+
+/** belegte Plätze: Einzelaufträge + Scouts im Ausland */
+export function busySlots(g: Game): number {
+  const s = g.scouting;
+  return s ? s.jobs.length + (s.abroad?.length ?? 0) : 0;
+}
 
 export function scoutingOf(g: Game): ScoutingState {
   return (g.scouting ??= { v: 1, jobs: [], reports: {} });
@@ -103,7 +123,7 @@ export function jobProgress(g: Game, j: ScoutJob): number {
 export function startScouting(g: Game, job: ScoutArgs): string | null {
   const s = scoutingOf(g);
   if (activeJob(g, job.id)) return 'Ein Scout ist bereits unterwegs.';
-  if (s.jobs.length >= scoutSlots(g)) return `Alle ${scoutSlots(g)} Scouts sind unterwegs. Mehr Scouting-Mitarbeiter = mehr Aufträge gleichzeitig.`;
+  if (busySlots(g) >= scoutSlots(g)) return `Alle ${scoutSlots(g)} Scouts sind unterwegs. Mehr Scouting-Mitarbeiter = mehr Aufträge gleichzeitig.`;
   const own = g.clubs[g.managedClubId];
   const t = jobTerms(g, job.abroad, job.youth);
   const today = g.calendar.currentDate;
@@ -119,7 +139,7 @@ export function queueScouting(g: Game, job: ScoutArgs): 'started' | 'queued' | s
   const s = scoutingOf(g);
   if (activeJob(g, job.id)) return 'Ein Scout ist bereits unterwegs.';
   if (queuedJob(g, job.id) >= 0) return 'Der Spieler ist schon vorgemerkt.';
-  if (s.jobs.length < scoutSlots(g)) {
+  if (busySlots(g) < scoutSlots(g)) {
     const err = startScouting(g, job);
     return err ?? 'started';
   }
@@ -140,7 +160,7 @@ export function cancelScouting(g: Game, id: string): void {
 function startQueued(g: Game): void {
   const s = g.scouting;
   if (!s?.queue?.length) return;
-  while (s.queue.length && s.jobs.length < scoutSlots(g)) {
+  while (s.queue.length && busySlots(g) < scoutSlots(g)) {
     const next = s.queue[0];
     if (activeJob(g, next.id)) { s.queue.shift(); continue; }
     if (startScouting(g, next)) break; // kein Geld: warten

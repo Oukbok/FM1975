@@ -76,6 +76,8 @@ import { migrateTransferLog } from './transferLog';
 import { migrateCareer } from './careerGame';
 import { migrateShirtNumbers } from './shirtMigration';
 import { migrateFaceNames } from './faceNameMigration';
+import { migrateYouthCamps } from './youthCamps';
+import { migrateScoutExtras } from './scoutSoftware';
 import { bindHonours } from './clubHonours';
 import { bindStaffFactor } from './staffGame';
 import { bindCoaching } from './coachingGame';
@@ -388,6 +390,7 @@ export function prepareLoadedGame(g: Game): void {
   migrateHistoryMode(g);
   migrateLeagueRep(g);
   try { migrateTransferLog(g); } catch (err) { console.error('Transferprotokoll-Nachrüstung fehlgeschlagen:', err); }
+  try { migrateYouthCamps(g); migrateScoutExtras(g); } catch (err) { console.error('Scouting/Jugendcamp-Nachrüstung fehlgeschlagen:', err); }
   try { migrateCareer(g); } catch (err) { console.error('Karriere-Bereinigung fehlgeschlagen:', err); }
   try { migrateBudget(g); } catch (err) { console.error('Saisonbudget-Nachrüstung fehlgeschlagen:', err); }
   try { migrateContracts2(g); } catch (err) { console.error('Vertrag-2.0-Nachrüstung fehlgeschlagen:', err); }

@@ -1,5 +1,7 @@
 // =============================================================================
-// TRANSFERS › SCOUTING (Wunsch Pascal): laufende Aufträge, Berichte, Abteilung
+// TRANSFERS › SCOUTING (Wunsch Pascal): drittes Menü
+//   Aufträge (laufende Einzelaufträge, Berichte, Abteilung) | Software & Abos
+//   (SoftwareTab.tsx) | Scouts im Ausland (AbroadTab.tsx)
 // =============================================================================
 import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
 import { ClubLink } from '../../../components/club/ClubLink';
@@ -7,14 +9,36 @@ import { useMemo, useState } from 'react';
 import PosBadge from '../../../components/PosBadge';
 import { NatFlag } from '../../../components/competition/CountryFlag';
 import { estimate, knowCtx, knowledge, poolRows, type Estimate, type PoolRow } from '../../../game/playerPool';
-import { cancelScouting, jobProgress, jobTerms, scoutSlots, scoutingOf } from '../../../game/scoutingGame';
+import { busySlots, cancelScouting, jobProgress, jobTerms, scoutSlots, scoutingOf } from '../../../game/scoutingGame';
+import { SubTabsPage, useSubTab } from '../../../ui/SubTabs';
+import { SoftwareTab } from './SoftwareTab';
+import { AbroadTab } from './AbroadTab';
 import type { Game } from '../../../game/state';
 import { CalendarEngine } from '../../../engine/calendar';
 import { DashBox, DashPage, Empty, KV } from '../../../ui/DashPage';
 import { fmtPrice } from '../../../ui/format';
 import { ClubCell, Face, KnowBar, OvEst, StarEst, ValueEst } from './poolParts';
 
+type ScoutTab = 'auftraege' | 'software' | 'ausland';
+
 export function ScoutingView({ g, onChange = () => {} }: { g: Game; onChange?: () => void }) {
+  const [tab, setTab] = useSubTab<ScoutTab>('scouting', 'auftraege');
+  const s = g.scouting;
+  const tabs = [
+    { id: 'auftraege' as const, label: 'Aufträge', count: (s?.jobs.length ?? 0) + (s?.queue?.length ?? 0) || undefined },
+    { id: 'software' as const, label: 'Software & Abos', count: ((s?.subs ?? []).filter((x) => !x.end).length + (s?.buys?.length ?? 0)) || undefined },
+    { id: 'ausland' as const, label: 'Scouts im Ausland', count: s?.abroad?.length || undefined },
+  ];
+  return (
+    <SubTabsPage tabs={tabs} active={tab} onSelect={setTab}>
+      {tab === 'auftraege' && <JobsTab g={g} onChange={onChange} />}
+      {tab === 'software' && <SoftwareTab g={g} onChange={onChange} />}
+      {tab === 'ausland' && <AbroadTab g={g} onChange={onChange} />}
+    </SubTabsPage>
+  );
+}
+
+function JobsTab({ g, onChange }: { g: Game; onChange: () => void }) {
   const [, setTick] = useState(0);
   const s = scoutingOf(g);
   const { rows, clubs } = poolRows(g);
@@ -29,7 +53,7 @@ export function ScoutingView({ g, onChange = () => {} }: { g: Game; onChange?: (
 
   return (
     <DashPage>
-      <DashBox title="Scouts unterwegs" info="scouting" span={2} right={`${s.jobs.length} / ${slots}${s.queue?.length ? ` · ${s.queue.length} vorgemerkt` : ''}`}>
+      <DashBox title="Scouts unterwegs" info="scouting" span={2} right={`${busySlots(g)} / ${slots}${s.abroad?.length ? ` · ${s.abroad.length} im Ausland` : ''}${s.queue?.length ? ` · ${s.queue.length} vorgemerkt` : ''}`}>
         {s.jobs.length ? s.jobs.map((j) => {
           const r = byId.get(j.id);
           return (
@@ -60,7 +84,7 @@ export function ScoutingView({ g, onChange = () => {} }: { g: Game; onChange?: (
         <KV k="Inland" v={`${home.days} Tage · ${fmtPrice(home.cost)}`} />
         <KV k="Ausland" v={`${abroad.days} Tage · ${fmtPrice(abroad.cost)}`} />
         <KV k="Jugendspieler" v="+4 Tage" />
-        <div className="dnote mt8">Jeder Scouting-Mitarbeiter (Scout, Chefscout, internationaler Scout, Nachwuchskoordinator) übernimmt einen weiteren Auftrag. Ein internationaler Scout macht Auslandsreisen kürzer und billiger, Video- und Datenanalysten beschleunigen jede Beobachtung, gute Scouts liefern genauere Berichte.</div>
+        <div className="dnote mt8">Jeder Scouting-Mitarbeiter (Scout, Chefscout, internationaler Scout, Nachwuchskoordinator) übernimmt einen weiteren Auftrag; Scouts im Ausland belegen ebenfalls einen Platz. Ein internationaler Scout macht Auslandsreisen kürzer und billiger, Video- und Datenanalysten beschleunigen jede Beobachtung, gute Scouts liefern genauere Berichte.</div>
         <div className="dnote mt8">Wie gut du einen Spieler kennst, hängt auch ohne Scout von vielem ab: Spieler deiner Liga und Gegner, gegen die du oft spielst, kennst du gut, Stars kennt jeder, Amateure, Jugendliche und kleine Auslandsligen kaum. Mit Fernsehen, Internet und Datenbanken wächst das Wissen über die Jahrzehnte. Berichte veralten nach einigen Jahren.</div>
       </DashBox>
 

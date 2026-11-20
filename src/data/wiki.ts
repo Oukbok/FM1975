@@ -4759,6 +4759,66 @@ Das Niveau 1975 ist recherchiert (Erstligist ≈ 4,5 Mio. DM Umsatz). Mit dem In
 ## Währungen der Länder
 Interne Beträge bleiben **nominal in DM**; die Anzeige rechnet in die Währung des Heimatlands am jeweiligen Tag um (Stichtage der Euro-Einführungen, Währungsreformen und Streichungen von Nullen, Kurse als Jahresmittel). In Deutschland heißt das: bis 2001 D-Mark, ab 2002 Euro zu 1,95583 DM. Daten und Quellen: docs/recherche/waehrungen.md.`,
   },
+  {
+    id: 'scouting-software',
+    category: 'squad',
+    title: 'Scouting-Software & Abos',
+    keywords: ['software', 'abo', 'abonnement', 'datenbank', 'cd-rom', 'videokassette', 'karteikarte', 'videoplattform', 'datenanalyse', 'kündigen', 'neuauflage', 'scouting', 'region'],
+    body: `## Kaufen oder abonnieren
+Unter **Transfers › Scouting › Software & Abos** kaufst du Wissen über Spieler, ohne einen Scout loszuschicken. Was es gibt, hängt von der Zeit ab:
+- **ab 1975 – Karteikarten** eines Sportverlags: nur das Heimatland, keine Jugend.
+- **ab 1983 – Videokassetten-Archive** mit den Erstligaspielen einer Region; Osteuropa fehlt.
+- **ab 1993 – Datenbanken auf CD-ROM**, ab 1998 die Profi-Ausgabe mit Spielszenen und Jugendauswahlen.
+- **ab 2005 – Online-Datenbanken im Abo**, ab 2009 **Videoplattformen** bis zur vierten Liga und in der Jugend, ab 2015 **Daten- und Leistungsanalyse** der ersten beiden Ligen.
+
+**Gekaufte Datenträger** gelten für eine Region (Heimatland, West-, Süd-, Nord- oder Osteuropa) und zeigen den Stand ihres Kaufjahres. Jedes Jahr verlieren sie spürbar an Wert (CD-ROM rund 20 %); mit einer **Neuauflage** bist du wieder aktuell. **Abos** decken alle Regionen ab, sind immer aktuell und werden mit der Laufzeit genauer (nach zwei Jahren volle Wirkung) – und je länger es die Technik schon gibt, desto besser. Abos kosten monatlich und sind zum Monatsende **kündbar**.
+
+## Wirkung
+Software schließt einen Teil der Lücke bis „genau bekannt“ – bei Spielern der abgedeckten Regionen und Ligaebenen, bei Jugendlichen nur, wenn das Produkt sie erfasst. Mehrere Produkte ergänzen sich, zusammen höchstens 60 %. Die Spannen für Stärke, Potenzial und Wert werden enger. Ein eigener Scout bleibt genauer als jede Datenbank.
+
+## Preise
+Die Preise folgen den Verbraucherpreisen, nicht dem Fußballgeld: Karteikarten rund 2.400 DM (1975), Videoarchiv rund 9.500 DM je Region (1985), CD-ROM rund 18.600 DM (1995), Online-Datenbank rund 800 € im Monat (2005), Videoplattform rund 1.800 € und Datenanalyse rund 4.000 € im Monat (2015). Heutige Scouting-Plattformen kosten Profivereine grob 15.000–25.000 € im Jahr, Datenanbieter 30.000–80.000 €.
+
+## Andere Vereine
+Große Vereine nutzen ab den 1990ern ebenfalls Datenbanken und Camps; im Spiel bekommen sie dafür etwas mehr ausländische Talente (siehe Jugendcamps).`,
+  },
+  {
+    id: 'scouting-abroad',
+    category: 'squad',
+    title: 'Scouts im Ausland',
+    keywords: ['ausland', 'scout', 'reise', 'länderwissen', 'talente', 'funde', 'scouting', 'mitarbeiter', 'ostblock'],
+    body: `## Reise planen
+Unter **Transfers › Scouting › Scouts im Ausland** schickst du einen **Scouting-Mitarbeiter** (Scout, Chefscout, internationaler Scout, Nachwuchskoordinator) für **4, 8 oder 12 Wochen** in ein Land. Er belegt so lange einen Scouting-Platz wie ein Einzelauftrag. Das Reisegeld je Woche folgt den Verbraucherpreisen; Reisen hinter den Eisernen Vorhang sind vor 1990 teurer, ferne Länder ebenfalls, ein internationaler Scout reist günstiger.
+
+## Länderwissen
+Während der Reise wächst das **Länderwissen**, nach der Rückkehr gilt es voll: 0,10 plus 0,03 je Woche plus etwas für gute Scouts, höchstens 0,45. Es schließt diesen Teil der Lücke bis „genau bekannt“ – bei Profis **und Jugendlichen** des Landes. Danach verblasst es um 0,15 im Jahr. Holst du einen Scout früher zurück, bleibt das bis dahin Gesehene.
+
+## Funde
+Bei der Rückkehr liegen **Berichte** über die drei größten Jugendtalente des Landes und zwei unterschätzte junge Profis vor (Nachricht, Transfers › Scouting, Spielerpool „Gescoutet“). Die Einzelaufträge für einzelne Spieler gibt es weiterhin.`,
+  },
+  {
+    id: 'youth-camps',
+    category: 'youth',
+    title: 'Jugendcamps im Ausland',
+    keywords: ['jugendcamp', 'camp', 'akademie', 'partnerschule', 'ausland', 'ghana', 'brasilien', 'fifa', 'minderjährige', 'talente', 'partnerverein'],
+    body: `## Standorte
+Unter **Jugend › Jugendcamps** baust du Nachwuchs-Standorte in anderen Ländern – höchstens drei. Die ersten gehen ab 1990 (Brasilien, Türkei), Westafrika ab Mitte der 1990er, Japan, die USA und Südkorea später. Jedes Land hat eigene Kosten und eine eigene Talentdichte.
+
+## Stufen
+- **Partnerschule** (ab 1990): Kooperation mit einer örtlichen Fußballschule, 1 Talent im Jahr, 4 Monate Aufbau.
+- **Eigenes Camp** (ab 1995): Platz, Internat, eigene Trainer, 2 Talente mit etwas mehr Potenzial, 8 Monate.
+- **Akademie** (ab 2000): 3 Talente mit deutlich mehr Potenzial, ein Jahr Bauzeit.
+Der Bau zählt aufs Jugendbudget, der Betrieb kostet ab der Fertigstellung monatlich. Ein Ausbau kostet die Differenz zur nächsten Stufe. Schließt du ein Camp, sind Geld und Talente weg.
+
+## Talente
+Jeden **1. Juli** kommen neue Talente mit 14 bis 16 Jahren ins Camp – mit Namen, Gesicht und Nationalität des Landes. Sie spielen beim Partnerverein, bis sie wechseln dürfen:
+- bis 2000/01 ab **16 Jahren**,
+- seit 2001/02 schützt die FIFA Minderjährige: internationale Wechsel erst ab **18** (Ausnahme: innerhalb der EU ab 16, z. B. Polen ab 2004, Kroatien ab 2013).
+Dann holst du sie mit **Übernehmen** in deine Jugend. Mit 20 verlassen sie das Camp. In der Spielermeldung zählen sie als Ausländer.
+
+## Andere Vereine
+Große Vereine (hohes Ansehen) haben ab 1995 mit wachsender Wahrscheinlichkeit eigene Camps oder Daten-Abos: Sie bekommen gelegentlich ein zusätzliches ausländisches Talent im Jahr.`,
+  },
 ];
 
 /** Freitext-Filter über Titel, Body und Keywords. */

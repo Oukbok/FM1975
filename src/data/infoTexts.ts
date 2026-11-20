@@ -1114,6 +1114,36 @@ export const INFO_TEXTS = {
     text: 'Eigene Spieler, die du verliehen hast, und Spieler, die du ausgeliehen hast – mit Einsätzen, Minuten, Toren, Vorlagen und Durchschnittsnote der laufenden Saison. Die Leihe endet zum angegebenen Datum; mit Kaufoption kannst du den Spieler dann fest übernehmen. Alles Weitere unter Transfers › Leihen.',
     wiki: 'loans',
   },
+  scoutSoftware: {
+    title: 'Scouting-Software & Abos',
+    text: 'Datenträger (Karteikarten, Videokassetten, CD-ROM) kaufst du einmal je Region – sie zeigen den Stand ihres Kaufjahres und veralten jedes Jahr. Ab 2005 gibt es Online-Datenbanken, Videoplattformen und Datenanalyse im Abo: immer aktuell, mit der Laufzeit genauer, monatlich kündbar.',
+    wiki: 'scouting-software',
+  },
+  scoutRegionen: {
+    title: 'Wirkung je Region',
+    text: 'Welchen Teil der Lücke bis „genau bekannt“ deine Software bei Spielern einer Region schließt – links für erste Ligen, rechts für Jugendspieler. Mehrere Produkte ergänzen sich, zusammen höchstens 60 %.',
+    wiki: 'scouting-software',
+  },
+  scoutAusland: {
+    title: 'Scouts im Ausland',
+    text: 'Ein Scouting-Mitarbeiter reist 4, 8 oder 12 Wochen in ein Land und belegt so lange einen Scouting-Platz. Danach kennst du Profis und Jugendliche dort besser (Länderwissen) und hast Berichte über die größten Talente. Das Wissen verblasst um 15 Punkte im Jahr.',
+    wiki: 'scouting-abroad',
+  },
+  jugendcamps: {
+    title: 'Jugendcamps im Ausland',
+    text: 'Ab den 1990ern kannst du in anderen Ländern Partnerschulen, Camps und Akademien bauen (höchstens drei). Jeden 1. Juli kommen dort je Stufe ein bis drei Talente mit Namen und Herkunft des Landes dazu. Bau zählt aufs Jugendbudget, der Betrieb kostet monatlich.',
+    wiki: 'youth-camps',
+  },
+  fifaMinderjaehrige: {
+    title: 'Schutz Minderjähriger',
+    text: 'Seit der Saison 2001/02 dürfen Spieler erst mit 18 international wechseln (Ausnahme u. a. innerhalb der EU ab 16). Bis dahin spielen deine Camp-Talente beim Partnerverein vor Ort. Vorher war der Wechsel ab 16 üblich.',
+    wiki: 'youth-camps',
+  },
+  campTalente: {
+    title: 'Talente in den Camps',
+    text: 'Alle Talente deiner Camps mit der Einschätzung der Trainer vor Ort. Sobald sie alt genug sind, holst du sie mit „Übernehmen“ in deine Jugend; mit 20 suchen sie sich einen anderen Verein. Als Ausländer zählen sie bei der Spielermeldung mit.',
+    wiki: 'youth-camps',
+  },
   scouting: {
     title: 'Scouting',
     text: 'Ein Scout beobachtet einen Spieler über Tage bis Wochen und kostet Reisegeld. Danach sind Stärke, Potenzial und Wert fast genau bekannt. Jeder Scouting-Mitarbeiter übernimmt einen weiteren Auftrag; sind alle unterwegs, wird vorgemerkt. Mit Strg/Umschalt wählst du mehrere Spieler und scoutest sie per Rechtsklick gemeinsam. Berichte veralten nach einigen Jahren.',

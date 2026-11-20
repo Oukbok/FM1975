@@ -186,6 +186,8 @@ export interface Game {
   faceNameV?: number;
   /** Einzel-Scouting und Berichte (game/scoutingGame.ts). */
   scouting?: import('./scoutingGame').ScoutingState;
+  /** Jugendcamps im Ausland + KI-Zähler (game/youthCamps.ts); fehlt = keine. */
+  youthCamps?: import('./youthCamps').YouthCampsState;
   /** Privatleben: Familie, Freizeit, Vermögen, Generationen (game/private/). */
   private?: import('./private/privateState').PrivateState;
   /** Gespeicherte Aufstellungen (components/lineup/SavedLineups.tsx). */

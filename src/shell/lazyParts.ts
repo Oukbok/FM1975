@@ -66,6 +66,7 @@ export const YouthView = lz(() => import('../views/kader/YouthView'), 'YouthView
 export const AcademyView = lz(() => import('../views/kader/AcademyView'), 'AcademyView');
 export const VertraegeView = lz(() => import('../views/kader/VertraegeView'), 'VertraegeView');
 export const ReserveTeamView = lz(() => import('../views/jugend/ReserveTeamView'), 'ReserveTeamView');
+export const YouthCampsView = lz(() => import('../views/jugend/YouthCampsView'), 'YouthCampsView');
 export const NationalView = lz(() => import('../views/statistiken/NationalView'), 'NationalView');
 export const NationalTeamView = lz(() => import('../views/national/NationalTeamView'), 'NationalTeamView');
 export const PrivatView = lz(() => import('../views/privat/PrivatView'), 'PrivatView');

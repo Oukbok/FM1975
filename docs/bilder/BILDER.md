@@ -236,3 +236,10 @@ Werden beim Zusammenführen der Stränge ergänzt (Erstes Training, Trainingslag
 | `akte/bilanz/klebestreifen.webp`, `polaroid.webp` | Klebestreifen, Sofortbild (Fotofeld grau) | 380 / 440 px | Befestigung, Wappen |
 Keine Büroklammern (Wunsch Pascal). Lagen in % der Mappe in `src/styles/28-career-binder.css`.
 
+
+## Scouting 2.0 & Jugendcamps (Wunsch Pascal) – optional, noch nicht eingebunden
+Die Seiten kommen ohne Bilder aus (Karte gezeichnet). Wünsche für später:
+| Datei | Motiv | Größe | Einsatz |
+|---|---|---|---|
+| `scouting/<produkt>.webp` (kartei, band, cd, cdpro, lupe, vista, werk) | Träger der Epoche: Karteikasten, Videokassetten-Regal, CD-ROM-Hülle, Bildschirm mit Datenbank/Video/Kennzahlen – ohne echte Marken | 640×360 | Transfers › Scouting › Software & Abos (Produktzeile) |
+| `camps/<land>.webp` (bra, arg, gha, nga, cmr, mar, tur, pol, cro, srb, usa, jpn, kor) | Trainingsplatz einer Fußballschule im Land, Jugendliche von hinten/unscharf | 960×540 | Jugend › Jugendcamps (Standort) |

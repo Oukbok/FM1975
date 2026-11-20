@@ -1,4 +1,7 @@
 import type { NationalState } from '../game/national/nationalGame';
+import { abroadReturns } from '../game/scoutAbroad';
+import { campDates } from '../game/youthCamps';
+import { countryName } from '../game/worldPool';
 import { TOURNAMENTS } from '../data/nationalTeams';
 import { jobCalendar } from '../game/national/nationalJobView';
 import { type IconName } from '../components/Icon';
@@ -183,6 +186,10 @@ export function buildDayEventsMap(g: Game): Map<string, StripEvent[]> {
     const last = date === b.end;
     consider({ date, icon: 'weather', line: date === b.start ? 'Trainingslager: Abreise' : last ? 'Trainingslager: Rückkehr' : 'Trainingslager', accent: undefined, isMatch: false, prio: date === b.start || last ? 23 : 22, screen: 'trainingslager', kind: 'Training' });
   }
+
+  // Quelle S — Scouting 2.0: Rückkehr der Scouts aus dem Ausland, Fertigstellung der Jugendcamps.
+  for (const r of abroadReturns(g)) consider({ date: r.date, icon: 'international', line: `Scout zurück: ${countryName(r.country)}`, accent: undefined, isMatch: false, prio: 21, screen: 'scouting', kind: 'Scouting' });
+  for (const c of campDates(g)) consider({ date: c.date, icon: 'youth', line: `Jugendcamp ${c.name} fertig`, accent: undefined, isMatch: false, prio: 21, screen: 'jugendcamps', kind: 'Jugend' });
 
   // Quelle E — Ehrungen: Goldener Ball (20.12., game/goldenBallGame.ts) und „Die Besten der Saison“
   // (Tag nach dem letzten Ligaspiel, game/seasonAwardsGame.ts).

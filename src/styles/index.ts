@@ -85,6 +85,7 @@ import './28-linechart.css';
 import './28-honours.css';
 import './28-verhandlung.css'; // Verhandlungstisch: Spieler, Vereine, Mitarbeiter (screens/negotiation/)
 import './28-loans.css'; // Transfers › Leihen
+import './28-scoutx.css'; // Scouting 2.0: Software & Abos, Scouts im Ausland, Jugendcamps
 import './28-lazy.css';
 import './29-look.css'; // ruhige Gesamtoptik
 import './29-buttons.css'; // Knopf-System + Auswahlliste (Tokens --btn-*/--sel-*)
