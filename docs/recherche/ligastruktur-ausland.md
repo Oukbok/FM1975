@@ -89,9 +89,9 @@ bestehen; Start in einer Lücke übernimmt die Zonen der nächstgelegenen Saison
 Tiefe nach dem Rang in der Länderwertung (Ligaruf, `data/leagueReputation.ts` – grob aus der
 UEFA-Fünfjahreswertung je Jahrzehnt; mit Option „Entwicklung der Ligen“ der Ruf im Spiel):
 Rang 1–5 bis Ebene 4, Rang 6–7 bis Ebene 3, sonst Ebene 1/2. Beim Start so, wie ein 1975 begonnenes
-Spiel bis dahin hätte (alle fünf Jahre geprüft), danach alle fünf Jahre mit Puffer (4. Ebene fällt erst
-ab Rang 8 weg, 3. Ebene ab Rang 10) – Grund: England fiel durch den Europapokal-Ausschluss 1985–90 bis
-1995 auf Rang 6/7, behält aber seine Football League. Code `data/world/deepStructure.ts`,
+Spiel bis dahin hätte (alle fünf Jahre geprüft), danach alle fünf Jahre: Ebenen kommen dazu, fallen
+aber nie weg (Wunsch Pascal: keine Liga verschwindet während eines Spiels; z. B. England, das durch den
+Europapokal-Ausschluss 1985–90 bis 1995 auf Rang 6/7 fiel, behält seine 3./4. Ebene). Code `data/world/deepStructure.ts`,
 Hintergrund `engine/worldDeep.ts`, Heimatland `game/homeDeep.ts`.
 
 Struktur je Saison (Namen, Staffeln, Größen) in `data/leagueTiers.ts`. Quellen (abgerufen 11/2026):

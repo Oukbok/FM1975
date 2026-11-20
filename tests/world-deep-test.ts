@@ -6,7 +6,7 @@ import { advanceWorldSeason, initWorld, type WorldState } from '../src/engine/wo
 import { worldOverlay } from '../src/engine/worldData';
 import { deepGroupsOf, deepIdsOf, updateWorldDepths } from '../src/engine/worldDeep';
 import { deepLevelsFor } from '../src/data/world/deepStructure';
-import { COUNTRY_BY_KEY, seasonLabelOf } from '../src/data/world/countries';
+import { COUNTRY_BY_KEY, countryExists, seasonLabelOf } from '../src/data/world/countries';
 import { secondGroups } from '../src/engine/worldSecond';
 import { worldPlacesOf } from '../src/engine/worldPlaces';
 
@@ -62,11 +62,19 @@ if (PART === 'welt' || PART === 'alle') {
     const t0 = Date.now();
     for (let i = 0; i < N; i++) {
       const y = start + i;
+      const depthBefore = new Map(Object.values(w.countries).map((c) => [c.name, c.deep?.length ?? 0]));
       const before = new Map<string, number>();
       for (const c of Object.values(w.countries)) if (c.deep?.length) for (const id of [...c.tiers[1], ...deepIdsOf(c), ...(c.pool ?? [])]) before.set(id, tierOf(id));
       advanceWorldSeason(w, euro, seasonLabelOf(y), y + 1, y >= 1995 ? 3 : 2, undefined, () => false);
       updateWorldDepths(w, euro, y + 1);
       checkWorld(w, euro, y + 1, `${y + 1}`);
+      // Wunsch Pascal: keine Liga verschwindet während eines Spiels (außer das Land zerfällt).
+      for (const c of Object.values(w.countries)) {
+        const was = depthBefore.get(c.name);
+        const def = COUNTRY_BY_KEY[c.name];
+        if (def && !countryExists(def, y + 1)) continue;
+        if (was != null && (c.deep?.length ?? 0) < was) ok(false, `${y + 1}: ${c.name} verliert eine tiefere Ebene (${was} → ${c.deep?.length ?? 0})`);
+      }
       for (const [id, t] of before) {
         const n = tierOf(id);
         if (t === 3 && n === 2) moves.up32++;

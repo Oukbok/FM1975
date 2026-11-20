@@ -4,10 +4,9 @@
 // Tiefe nach dem Rang des Landes in der Länderwertung (Ligaruf, data/leagueReputation.ts bzw.
 // `WorldCountry.rep` mit der Option „Entwicklung der Ligen“; Deutschland zählt mit):
 //   Rang 1–5 → bis zur 4. Ebene, Rang 6–7 → bis zur 3. Ebene, übrige → 1./2. Ebene wie bisher.
-// Festgelegt beim Spielstart, danach alle fünf Jahre (Saisons 1980/81, 1985/86 …) neu geprüft – mit
-// Puffer, damit ein kurzer Einbruch (England 1985–90 ohne Europapokal) keine Liga auflöst: eine Ebene
-// kommt dazu, sobald der Rang reicht, und fällt erst weg, wenn das Land zwei Ränge unter der Grenze
-// liegt (4. Ebene ab Rang 8, 3. Ebene ab Rang 10). Beim Heimatland gilt die Tiefe des Spielstarts.
+// Festgelegt beim Spielstart, danach alle fünf Jahre (Saisons 1980/81, 1985/86 …) neu geprüft: eine
+// Ebene kommt dazu, sobald der Rang reicht, und fällt NIE wieder weg (Wunsch Pascal: keine Liga darf
+// während eines Spiels verschwinden). Beim Heimatland gilt die Tiefe des Spielstarts.
 // Struktur (Name, Staffeln, Mannschaften) je Saison aus data/leagueTiers.ts. Vereinfachung für
 // Rechenzeit und Spielstand: höchstens DEEP_MAX_GROUPS Staffeln je Ebene (Spanien hat z. B. 18
 // Tercera-Staffeln – im Spiel 4), regional verschiedene Größen = DEEP_DEFAULT_TEAMS, ungerade Zahl
@@ -62,13 +61,11 @@ export function deepLabel(name: string, n: number, i: number): string {
 /** Tiefe nach Rang (1 = bestes Land), ohne Puffer. */
 export const depthForRank = (rank: number) => (rank <= 5 ? 4 : rank <= 7 ? 3 : 2);
 
-/** Tiefe mit Puffer gegenüber der bisherigen Tiefe (siehe Kopf). */
+/** Neue Tiefe nach Rang: wächst nur, schrumpft nie (Wunsch Pascal: eine Liga darf während eines Spiels
+ *  nicht verschwinden – sonst ginge z. B. ein Verein in der 4. Ebene mit seiner Liga verloren). Fällt ein Land
+ *  in der Wertung zurück, bleiben seine 3./4. Ebene bestehen. `rank` bleibt für spätere Regeln erhalten. */
 export function nextDepth(prev: number, rank: number): number {
-  const want = depthForRank(rank);
-  if (want >= prev) return want;
-  if (prev >= 4 && rank < 8) return Math.max(want, 4);
-  if (prev >= 3 && rank < 10) return Math.max(want, 3);
-  return want;
+  return Math.max(prev, depthForRank(rank));
 }
 
 const GONE = new Set(['Sowjetunion', 'Jugoslawien', 'Tschechoslowakei', 'DDR']);
