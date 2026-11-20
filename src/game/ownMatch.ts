@@ -20,6 +20,9 @@ import { legKoRule } from './euroFlow';
 import { cupKoRule } from './cupReplay';
 import { forecastWeather } from './matchWeather';
 import { findSuperCupMatch, ownSuperCupDue, ROUND_DE } from './superCupGame';
+import { isIcMatchId, ownIcDue } from './intercontinental';
+import { ensureIcClub } from './intercontinentalPlay';
+import { isContinentalId } from '../data/world/continents';
 import { recordTicker, runNarrated } from './matchTicker';
 import type { Line } from '../data/ticker/narrator';
 
@@ -44,6 +47,8 @@ export interface OwnMatchInfo {
   firstLeg?: { home: string; away: string; hg: number; ag: number; awayGoals: boolean };
   /** Gruppen-/Ligaspiel bzw. Hinspiel (kein K.-o.-Ende). */
   stageNote?: string;
+  /** Neutraler Spielort (Weltpokal in Tokio, Klub-WM), sonst Stadion des Heimvereins. */
+  venue?: string;
 }
 
 function tieInfo(g: Game, kind: 'pokal' | 'euro', cup: CupState, ri: number, tie: CupTie, label: string): OwnMatchInfo {
@@ -72,6 +77,18 @@ export function findOwnMatchDue(g: Game): OwnMatchInfo | null {
         kind: 'liga', homeId: m.homeClubId, awayId: m.awayClubId, date: m.date, competition: 'Liga', knockout: false,
         label: `Liga · ${m.matchday}. Spieltag${m.moved?.makeup ? ' (Nachholspiel)' : ''}`, matchId: m.id, side: m.homeClubId === mid ? 'home' : 'away',
       };
+    }
+    if (ev.type === 'super_cup' && isIcMatchId(ev.matchId)) {
+      // Weltpokal / Klub-WM / Interkontinentalpokal (game/intercontinental.ts) über denselben Weg.
+      const d = ownIcDue(g, ev.matchId);
+      if (d) {
+        const { m, ko } = d;
+        return {
+          kind: 'pokal', homeId: m.home, awayId: m.away, date: m.date, competition: 'Pokal', knockout: !!ko,
+          label: d.label, matchId: m.id, side: m.home === mid ? 'home' : 'away', ko, firstLeg: d.firstLeg, stageNote: d.stageNote, venue: d.venue,
+        };
+      }
+      continue;
     }
     if (ev.type === 'super_cup') {
       const d = ownSuperCupDue(g, ev.matchId);
@@ -157,6 +174,7 @@ export function isPrepared(info: OwnMatchInfo): boolean {
 export function ensureClubs(g: Game, info: OwnMatchInfo): boolean {
   for (const id of [info.homeId, info.awayId]) {
     if (g.clubs[id]) continue;
+    if (isContinentalId(id)) { if (!ensureIcClub(g, id)) return false; continue; } // andere Kontinente (Weltpokal/Klub-WM)
     const euro = g.euroClubs?.[id];
     if (!euro) return false;
     g.clubs[id] = buildEuroClubFull(euro, g.calendar?.seasonStartDate ?? '', g.players);

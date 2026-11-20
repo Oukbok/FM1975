@@ -22,7 +22,9 @@ export type TitleKind = 'meister' | 'ddr' | 'pokal' | 'ec' | 'cwc' | 'uefa' | 'h
   /** E-/F-Jugend: Endrunde der Kreismeister im Landesverband (Wunsch Pascal). */
   | 'jugendEReg' | 'jugendFReg'
   /** Supercups & Ligapokal (game/superCupGame.ts). */
-  | 'super' | 'ligapokal' | 'uefasuper';
+  | 'super' | 'ligapokal' | 'uefasuper'
+  /** Weltpokal, Klub-WM, Interkontinentalpokal (game/intercontinental.ts). */
+  | 'weltpokal' | 'klubwm' | 'intercup';
 /** Ein Spiel deines Vereins gegen diesen Gegner: [Saison, Datum, Wettbewerb, Heim (1/0), Tore dein Verein, Tore Gegner] */
 export type H2HTuple = [string, string, 'L' | 'P' | 'E', number, number, number];
 
@@ -57,6 +59,7 @@ export const TITLE_DE: Record<TitleKind, string> = {
   ec: 'Europapokal der Landesmeister', cwc: 'Europapokal der Pokalsieger', uefa: 'UEFA-Pokal',
   halle: 'DFB-Hallenpokal (Masters)',
   super: 'Supercup', ligapokal: 'Ligapokal', uefasuper: 'Europäischer Supercup',
+  weltpokal: 'Weltpokal', klubwm: 'Klub-Weltmeisterschaft', intercup: 'Interkontinentalpokal',
   jugendA: 'Deutscher A-Jugend-Meister', jugendB: 'Deutscher B-Jugend-Meister', jugendPokal: 'DFB-Junioren-Pokal',
   jugendDdr: 'DDR-Juniorenmeister', uyl: 'UEFA Youth League',
   jugendC: 'Staffelsieg C-Jugend', jugendD: 'Staffelsieg D-Jugend', jugendE: 'Staffelsieg E-Jugend', jugendF: 'Staffelsieg F-Jugend',

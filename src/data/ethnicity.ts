@@ -30,6 +30,8 @@ export const LOCAL_FACES: Record<string, FaceGroup[]> = {
   esp: ['lateinamerika'],
   usa: ['westafrika'],
   ned: ['ostasien'],
+  col: ['westafrika'],
+  ecu: ['westafrika'],
 };
 
 /** Namens-Herkünfte je Ethnie (Reihenfolge egal, gleich gewichtet). */

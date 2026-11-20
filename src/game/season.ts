@@ -38,6 +38,7 @@ import { generateSeasonCalendar, seasonLabel } from '../engine/calendar';
 import { createCup } from '../engine/cup';
 import { computeGermanEuroQualifiers } from '../engine/euro';
 import { setupSuperCups, superCupSeeds } from './superCupGame';
+import { ensureContinents } from './continents';
 import { calculateTable, generateFixtures } from '../engine/league';
 import { DivisionMeta, LeagueDivision, LeagueGroup, buildDivision, flushDivision, hashStr, mulberry32, simClubFromClub, simMatchGoals } from '../engine/leagues';
 import { makeMessage, pushMessage } from '../engine/messages';
@@ -421,7 +422,10 @@ export function startNextSeason(g: Game): void {
   }
   // Rahmenterminkalender: Fr/So/Mo-Spiele an Pokal-/Europapokalwochen anpassen (game/fixtureWatch.ts).
   harmonizeSeason(g);
-  // Supercups & Ligapokal vor dem Ligastart, übrige Länder ins Archiv (game/superCupGame.ts).
+  // Andere Kontinente: Meister des Vorjahres + Kontinentalpokale (game/continents.ts) – Teilnehmer für den Weltpokal.
+  ensureContinents(g, nextStartYear);
+  // Supercups & Ligapokal vor dem Ligastart, übrige Länder ins Archiv (game/superCupGame.ts);
+  // danach Weltpokal/Klub-WM (game/intercontinental.ts).
   setupSuperCups(g, scSeeds);
 
   // --- 8b) Ligareform: Meilenstein-Nachricht + Reform als angewandt vormerken ---

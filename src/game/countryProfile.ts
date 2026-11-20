@@ -12,6 +12,7 @@
 // =============================================================================
 import { leagueName } from '../data/leagueNames';
 import { countryInfo } from '../data/countryFlags';
+import { CT_BY_KEY } from '../data/world/continents';
 import { COUNTRY_BY_CC, COUNTRY_BY_KEY, countryExists, type WorldCountryDef } from '../data/world/countries';
 import { worldSeason, worldYears } from '../data/world/index';
 import { seasonLabelOf } from '../data/world/countries';
@@ -30,7 +31,8 @@ import { currentSquad, nationalState } from './national/nationalGame';
 import { worldEntry, WP_FIELD } from './worldPool';
 import type { PyrClub, PyrSystem, PyramidData } from './leaguePyramid';
 
-export type CountryKind = 'home' | 'ddr' | 'world' | 'none';
+/** `continent` = Land der Hintergrund-Kontinente (game/continents.ts): nur Meister/Kontinentalpokal je Saison. */
+export type CountryKind = 'home' | 'ddr' | 'world' | 'continent' | 'none';
 
 export interface CountryRef {
   /** Flaggen-Schlüssel (data/countryFlags.ts). */
@@ -61,6 +63,7 @@ export function countryRef(g: Game, key: string): CountryRef {
   if (def?.cc === home) kind = 'home';
   else if (def?.cc === 'gdr' && home === 'ger') kind = 'ddr';
   else if (g.world?.countries[key]) kind = 'world';
+  else if (CT_BY_KEY[key]) kind = 'continent';
   return { key, name: def?.name ?? info.name, code: info.code, cc: def?.cc, def, nation, kind };
 }
 
@@ -89,6 +92,7 @@ export function countryFacts(g: Game, ref: CountryRef): CountryFacts {
   const ligen = ref.kind === 'home' ? 'Heimatland – alle Ligen mit vollen Kadern'
     : ref.kind === 'ddr' ? (g.leagues?.otherDivisions.some((x) => x.id.startsWith('ddr-')) ? 'Oberliga und Liga laufen mit deinem Spielstand' : 'aufgegangen in der gesamtdeutschen Pyramide')
       : ref.kind === 'world' ? (g.world?.countries[ref.key]?.active ? `${leagueName(ref.cc, 1)} und ${leagueName(ref.cc, 2)} Spieltag für Spieltag` : 'keine Ligen mehr (Archiv)')
+        : ref.kind === 'continent' ? 'Hintergrund: Meister und Kontinentalpokal je Saison (nicht spielbar)'
         : 'keine Liga im Spiel – nur Nationalmannschaft';
   return {
     conf: n ? CONF_LABEL[confOf(n, y)] : d ? 'Europa' : null,
@@ -124,7 +128,7 @@ export interface CountryRep {
 }
 
 export function countryRep(g: Game, ref: CountryRef): CountryRep | null {
-  if (ref.kind === 'none' || !countryAlive(g, ref)) return null;
+  if (ref.kind === 'none' || ref.kind === 'continent' || !countryAlive(g, ref)) return null;
   const y = yearOf(g);
   const w = g.world;
   const info = ref.kind === 'world' ? leagueRepInfo(g, ref.key, y) : null;

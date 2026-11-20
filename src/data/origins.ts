@@ -157,6 +157,28 @@ export const ORIGINS: Record<string, Origin> = {
   usa: { id: 'usa', nationality: 'USA', face: 'mitteleuropa',
     first: ['Brian', 'Tyler', 'Josh', 'Chris', 'Matt', 'Weston'],
     last: ['Miller', 'Davis', 'Clark', 'Lewis', 'Walker', 'Young'] },
+  // Weitere Länder außerhalb Europas (Gegnerkader in Weltpokal/Klub-WM, data/world/continents/).
+  uru: { id: 'uru', nationality: 'URU', face: 'lateinamerika', first: ['Martín', 'Gastón', 'Sebastián', 'Nicolás', 'Rodrigo', 'Facundo', 'Matías', 'Federico'], last: ['Pereira', 'Olivera', 'Méndez', 'Cabrera', 'Ferreira', 'Silva', 'Techera', 'Lemos', 'Píriz', 'Viera'] },
+  col: { id: 'col', nationality: 'COL', face: 'lateinamerika', first: ['Andrés', 'Camilo', 'Santiago', 'Jhon', 'Wilmar', 'Yerson', 'Duván', 'Luis'], last: ['Moreno', 'Rojas', 'Valencia', 'Mosquera', 'Cuesta', 'Ramírez', 'Arboleda', 'Palacios', 'Restrepo', 'Ocampo'] },
+  chi: { id: 'chi', nationality: 'CHI', face: 'lateinamerika', first: ['Cristián', 'Felipe', 'Matías', 'Jorge', 'Rodrigo', 'Mauricio', 'Esteban', 'Pablo'], last: ['Muñoz', 'Rojas', 'Soto', 'Contreras', 'Sepúlveda', 'Fuentes', 'Navarro', 'Tapia', 'Riquelme', 'Pizarro'] },
+  par: { id: 'par', nationality: 'PAR', face: 'lateinamerika', first: ['Óscar', 'Julio', 'Derlis', 'Celso', 'Néstor', 'Miguel', 'Gustavo', 'Hernán'], last: ['Benítez', 'Giménez', 'Ortiz', 'Cáceres', 'Villalba', 'Aquino', 'Riveros', 'Ayala', 'Duarte', 'Ojeda'] },
+  ecu: { id: 'ecu', nationality: 'ECU', face: 'lateinamerika', first: ['Byron', 'Jefferson', 'Édison', 'Christian', 'Walter', 'Segundo', 'Pedro', 'Jhonny'], last: ['Caicedo', 'Mina', 'Arroyo', 'Quiñónez', 'Ayoví', 'Hurtado', 'Cevallos', 'Plata', 'Corozo', 'Angulo'] },
+  per: { id: 'per', nationality: 'PER', face: 'lateinamerika', first: ['José', 'Renato', 'Christian', 'Edison', 'Raúl', 'Wilder', 'Aldo', 'Miguel'], last: ['Flores', 'Quispe', 'Ramos', 'Vargas', 'Chávez', 'Mendoza', 'Huamán', 'Castillo', 'Salas', 'Cueva'] },
+  mex: { id: 'mex', nationality: 'MEX', face: 'lateinamerika', first: ['Jesús', 'Héctor', 'Alejandro', 'Ricardo', 'Jorge', 'Raúl', 'Édgar', 'Rafael'], last: ['Hernández', 'García', 'Martínez', 'Sánchez', 'Ramírez', 'Torres', 'Reyes', 'Jiménez', 'Aguilar', 'Castro'] },
+  crc: { id: 'crc', nationality: 'CRC', face: 'lateinamerika', first: ['Randall', 'Bryan', 'Joel', 'Esteban', 'Johan', 'Kendall', 'Allan', 'Ronald'], last: ['Mora', 'Jiménez', 'Solís', 'Araya', 'Calvo', 'Chaves', 'Quesada', 'Alfaro', 'Ugalde', 'Brenes'] },
+  egy: { id: 'egy', nationality: 'EGY', face: 'nordafrika', first: ['Mohamed', 'Ahmed', 'Mahmoud', 'Omar', 'Amr', 'Hossam', 'Tarek', 'Walid'], last: ['Hassan', 'Ibrahim', 'Abdelrahman', 'Fathy', 'Gaber', 'Soliman', 'Shawky', 'Farouk', 'Mostafa', 'Ashour'] },
+  tun: { id: 'tun', nationality: 'TUN', face: 'nordafrika', first: ['Aymen', 'Anis', 'Hamza', 'Ali', 'Seif', 'Ghazi', 'Bilel', 'Fakhri'], last: ['Trabelsi', 'Ben Amor', 'Gharbi', 'Jouini', 'Mejri', 'Sassi', 'Hammami', 'Bouazizi', 'Dridi', 'Chaouachi'] },
+  alg: { id: 'alg', nationality: 'ALG', face: 'nordafrika', first: ['Rafik', 'Yacine', 'Nabil', 'Karim', 'Sofiane', 'Hocine', 'Abdelkader', 'Mehdi'], last: ['Belkacem', 'Benaissa', 'Boudjema', 'Cherif', 'Hamdani', 'Mansouri', 'Saidi', 'Zerrouki', 'Bouziane', 'Lakhdari'] },
+  rsa: { id: 'rsa', nationality: 'RSA', face: 'westafrika', first: ['Sipho', 'Thabo', 'Teko', 'Bongani', 'Themba', 'Kagiso', 'Andile', 'Siyabonga'], last: ['Mokoena', 'Nkosi', 'Dlamini', 'Khumalo', 'Ndlovu', 'Mahlangu', 'Zulu', 'Mthembu', 'Sithole', 'Mabaso'] },
+  cod: { id: 'cod', nationality: 'COD', face: 'westafrika', first: ['Trésor', 'Cédric', 'Dieumerci', 'Glody', 'Jonathan', 'Arsène', 'Chancel', 'Yannick'], last: ['Mbuyi', 'Kabangu', 'Ilunga', 'Kasongo', 'Tshibola', 'Mukoko', 'Mulumba', 'Kalala', 'Nsimba', 'Lusamba'] },
+  civ: { id: 'civ', nationality: 'CIV', face: 'westafrika', first: ['Koffi', 'Serge', 'Yao', 'Wilfried', 'Arsène', 'Ismaël', 'Seydou', 'Franck'], last: ['Kouassi', 'Koné', 'Bamba', 'Traoré', 'Kouamé', 'Gnagnon', 'Yapi', 'Doumbia', 'Coulibaly', 'Ouattara'] },
+  ksa: { id: 'ksa', nationality: 'KSA', face: 'nordafrika', first: ['Abdullah', 'Mohammed', 'Fahad', 'Salem', 'Nawaf', 'Saud', 'Yasser', 'Hattan'], last: ['Al-Otaibi', 'Al-Shahrani', 'Al-Ghamdi', 'Al-Qahtani', 'Al-Harbi', 'Al-Mutairi', 'Al-Zahrani', 'Al-Anazi', 'Al-Shammari', 'Al-Juhani'] },
+  irn: { id: 'irn', nationality: 'IRN', face: 'tuerkei', first: ['Ali', 'Reza', 'Mehdi', 'Saeed', 'Hossein', 'Karim', 'Vahid', 'Morteza'], last: ['Ahmadi', 'Hosseini', 'Karimi', 'Rezaei', 'Mohammadi', 'Moradi', 'Jafari', 'Sadeghi', 'Rahimi', 'Nazari'] },
+  chn: { id: 'chn', nationality: 'CHN', face: 'ostasien', first: ['Wei', 'Lei', 'Hao', 'Jun', 'Peng', 'Tao', 'Xin', 'Long'], last: ['Wang', 'Li', 'Zhang', 'Liu', 'Chen', 'Yang', 'Zhao', 'Huang', 'Zhou', 'Wu'] },
+  qat: { id: 'qat', nationality: 'QAT', face: 'nordafrika', first: ['Abdulaziz', 'Hassan', 'Khalid', 'Ahmed', 'Hamad', 'Tarek', 'Abdulkarim', 'Jassim'], last: ['Al-Kuwari', 'Al-Marri', 'Al-Sulaiti', 'Al-Hajri', 'Al-Mohannadi', 'Al-Naimi', 'Al-Yazidi', 'Al-Rawi'] },
+  uae: { id: 'uae', nationality: 'UAE', face: 'nordafrika', first: ['Ahmed', 'Omar', 'Ali', 'Khalifa', 'Majed', 'Saeed', 'Ismail', 'Walid'], last: ['Al-Hammadi', 'Al-Mazrouei', 'Al-Shamsi', 'Al-Kaabi', 'Al-Ahbabi', 'Al-Dhaheri', 'Al-Mansouri', 'Al-Blooshi'] },
+  aus: { id: 'aus', nationality: 'AUS', face: 'mitteleuropa', first: ['Jack', 'Daniel', 'Mark', 'Luke', 'Scott', 'Brett', 'Josh', 'Ryan'], last: ['Smith', 'Jones', 'Williams', 'Brown', 'Wilson', 'Taylor', 'Johnson', 'White', 'Martin', 'Anderson'] },
+  nzl: { id: 'nzl', nationality: 'NZL', face: 'mitteleuropa', first: ['Liam', 'Ryan', 'Michael', 'Sam', 'Chris', 'Ben', 'Tom', 'Ethan'], last: ['Smith', 'Wilson', 'Thompson', 'Walker', 'Robinson', 'Clarke', 'Hall', 'Mitchell', 'Young', 'Campbell'] },
 };
 
 // -----------------------------------------------------------------------------
@@ -318,6 +340,9 @@ const FACE_MIX: Record<string, FaceMix> = {
   bra: [[1975, { lateinamerika: 62, westafrika: 36, suedeuropa: 2 }], [2025, { lateinamerika: 60, westafrika: 38, suedeuropa: 2 }]],
   arg: [[1975, { lateinamerika: 70, suedeuropa: 30 }], [2025, { lateinamerika: 76, suedeuropa: 24 }]],
   usa: [[1975, { mitteleuropa: 80, lateinamerika: 10, westafrika: 10 }], [2025, { mitteleuropa: 48, westafrika: 26, lateinamerika: 24, ostasien: 2 }]],
+  col: [[1975, { lateinamerika: 75, westafrika: 25 }], [2025, { lateinamerika: 68, westafrika: 32 }]],
+  ecu: [[1975, { lateinamerika: 60, westafrika: 40 }], [2025, { lateinamerika: 50, westafrika: 50 }]],
+  aus: [[1975, { mitteleuropa: 82, suedeuropa: 13, balkan: 5 }], [2025, { mitteleuropa: 66, suedeuropa: 12, balkan: 8, westafrika: 8, ostasien: 6 }]],
   // Deutschland: Herkünfte ger_tr/ger_af/ger_pl/ger_it/ger_yu in MIX; dazu die junge Generation (ger_modern).
   ger_modern: [[2000, { mitteleuropa: 96, osteuropa: 2, suedeuropa: 2 }], [2025, { mitteleuropa: 84, westafrika: 6, nordafrika: 3, tuerkei: 2, osteuropa: 3, suedeuropa: 2 }]],
 };

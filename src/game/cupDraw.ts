@@ -20,6 +20,8 @@ import { hashSeed, homeCountryKey, type Game } from './state';
 import { drawMessageV2, performDrawV2 } from './euroDraw';
 import { isV2 } from './euroSetup';
 import { euroCompName } from '../data/euroFormats';
+import { ctClub, isContinentalId } from '../data/world/continents';
+import { continentalStrength } from './continents';
 
 export const DRAW_COMPS: DrawComp[] = ['cup', 'ec', 'cwc', 'uefa'];
 
@@ -59,6 +61,7 @@ export function scheduleDraws(cup: CupState, comp: DrawComp, calendar: GameCalen
 
 /** Spielstärke für Setzliste und Zusammenfassung. */
 export function clubStrength(g: Game, id: string): number {
+  if (isContinentalId(id) && !g.clubs[id]) return continentalStrength(g, id); // andere Kontinente (game/continents.ts)
   const eu = g.euroClubs?.[id];
   if (eu && !g.clubs[id]) return eu.strength;
   const c = g.clubs[id];
@@ -70,10 +73,10 @@ export function clubStrength(g: Game, id: string): number {
   return g.simClubs?.[id]?.strength ?? eu?.strength ?? 50;
 }
 export function drawClubName(g: Game, id: string): string {
-  return g.clubs[id]?.name ?? g.euroClubs?.[id]?.name ?? g.simClubs?.[id]?.name ?? id;
+  return g.clubs[id]?.name ?? g.euroClubs?.[id]?.name ?? g.simClubs?.[id]?.name ?? ctClub(id)?.club.name ?? id;
 }
 export function drawCountry(g: Game, id: string): string {
-  return g.euroClubs?.[id]?.country ?? homeCountryKey(g);
+  return g.euroClubs?.[id]?.country ?? ctClub(id)?.country.key ?? homeCountryKey(g);
 }
 
 function participantsOf(cup: CupState, ri: number): string[] | null {

@@ -97,6 +97,10 @@ const CLUBS: RegExp[] = [
   /\bTernana\b/, /\bCasertana\b/, /\bEspanyol\b/, /\bCelta\b/, /\bAlavés\b/, /\bRayo Vallecano\b/, /\bRecreativo\b/, /\bCastilla\b(?! y)/,
   /\bMarítimo\b/, /\bSalgueiros\b/, /\bFarense\b/, /\bFeirense\b/, /\bTirsense\b/, /\bBoavista\b/, /\bBelenenses\b/, /\bGil Vicente\b/,
   /\bRiver Plate\b/, /\bAl-(?:Hilal|Nassr|Ittihad|Ahly)\b/,
+  // Andere Kontinente (data/world/continents/, Wunsch Pascal)
+  /\bFlamengo\b/, /\bFluminense\b/, /\bCorinthians\b/, /\bPalmeiras\b/, /\bGrêmio\b/, /\bCruzeiro\b/, /\bPeñarol\b/,
+  /\bColo-Colo\b/, /\bEstudiantes\b/, /\bIndependiente\b/, /\bVélez\b/, /\bCruz Azul\b/, /\bChivas\b/, /\bZamalek\b/,
+  /\bMazembe\b/, /\bWydad\b/, /\bEspérance\b/, /\bKaizer Chiefs\b/, /\bSundowns\b/, /\bKashima Antlers\b/, /\bAuckland City\b/,
 ];
 // Marken in Stadionnamen und Sponsoren mit Bezug zum Fußball – und (Wunsch Pascal) Fernsehsender, Sendungen,
 // Streamingdienste und Mediengruppen: im Text nur umschrieben („ein Privatsender“, „der Bezahlsender“).

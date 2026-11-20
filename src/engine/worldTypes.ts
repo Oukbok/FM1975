@@ -117,4 +117,5 @@ export interface WorldState {
 }
 
 /** Auslandsverein (Europa-Simulation) statt deutscher Verein? */
+/** Auslandsverein (Europapokal `eu_`, Weltdaten `w_`, andere Kontinente `w_ct_`). */
 export const isForeignId = (id: string) => id.startsWith('eu_') || id.startsWith('w_');

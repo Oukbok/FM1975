@@ -11,7 +11,7 @@ export default function SystemTab({ g, c, pyramid }: CountryTabProps) {
   return (
     <DashBox title="Ligensystem" span={3} rows={2} right={`Saison ${pyramid.season}`} className="lp-box-page cnx-pyr">
       {ok ? <LeaguePyramid data={pyramid} mineId={g.managedClubId} lock={{ side: s.side, country: s.side === 'abroad' ? s.sys.key : undefined }} />
-        : <Empty icon="stats">{c.kind === 'none' ? `Die Ligen von ${c.name} laufen im Spiel nicht mit – keine Daten.` : s?.sys.note ?? `${c.name} hat in dieser Saison keine eigenen Ligen – keine Daten.`}</Empty>}
+        : <Empty icon="stats">{c.kind === 'continent' ? `${c.name} läuft nur im Hintergrund: je Saison werden Meister und Kontinentalpokal ausgelost – ohne Ligen, Spieltage und Kader.` : c.kind === 'none' ? `Die Ligen von ${c.name} laufen im Spiel nicht mit – keine Daten.` : s?.sys.note ?? `${c.name} hat in dieser Saison keine eigenen Ligen – keine Daten.`}</Empty>}
     </DashBox>
   );
 }

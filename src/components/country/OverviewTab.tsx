@@ -9,6 +9,7 @@ import { DashBox, Empty, KV, Meter } from '../../ui/DashPage';
 import { vColor } from '../../ui/format';
 import { TeamName } from '../../views/statistiken/competition/parts';
 import { NatRow, type CountryTabProps } from './parts';
+import { CtChampBox, CtClubsBox, CtCupBox } from './ContinentBoxes';
 
 const sign = (d: number) => `${d > 0 ? '+' : d < 0 ? '−' : '±'}${Math.abs(d).toFixed(0)}`;
 const years = (l: number[]) => `${l.length}× (${l.join(', ')})`;
@@ -40,7 +41,7 @@ export default function OverviewTab({ g, c, pyramid }: CountryTabProps) {
         <KV k="Ligen im Spiel" v={facts.ligen} />
       </DashBox>
 
-      <DashBox title="Ligaruf international" info="ligaruf" right={rep?.rank ? `Rang ${rep.rank}` : undefined}>
+      {c.kind === 'continent' ? <CtCupBox g={g} c={c} pyramid={pyramid} /> : <DashBox title="Ligaruf international" info="ligaruf" right={rep?.rank ? `Rang ${rep.rank}` : undefined}>
         {rep ? <>
           <Meter label={rep.live ? `Ligaruf (${rep.mode})` : 'Richtwert'} value={rep.rep} color={vColor(rep.rep)}
             text={<>{rep.rep.toFixed(0)}{rep.delta != null && <small className={`cnx-delta ${Math.abs(rep.delta) < 0.5 ? '' : rep.delta > 0 ? 'up' : 'down'}`}> {sign(rep.delta)} zur Vorsaison</small>}</>} />
@@ -50,7 +51,7 @@ export default function OverviewTab({ g, c, pyramid }: CountryTabProps) {
           <div className="dsec">Startplätze Europapokal {g.season}</div>
           {rep.slots.length ? rep.slots.map((s) => <KV key={s.label} k={s.label} v={s.n} />) : <div className="dnote">Keine Daten – das Land steht nicht in der Wertung.</div>}
         </> : <Empty icon="international">{c.kind === 'none' ? 'Keine Liga im Spiel – deshalb kein Ligaruf und keine Fünfjahreswertung.' : `${c.name} besteht in dieser Saison nicht – kein Ligaruf, keine Fünfjahreswertung.`}</Empty>}
-      </DashBox>
+      </DashBox>}
 
       <DashBox title="Nationalmannschaft" info="nationalteams" right={<>{activeJob(g)?.nat === c.code && <i className="ntj-tag">Dein Team</i>}{nat?.rank ? ` Weltrang ${nat.rank}` : ''}</>}>
         {nat ? <>
@@ -72,6 +73,7 @@ export default function OverviewTab({ g, c, pyramid }: CountryTabProps) {
         </> : <Empty icon="international">Keine Daten zur Nationalmannschaft.</Empty>}
       </DashBox>
 
+      {c.kind === 'continent' ? <><CtChampBox g={g} c={c} pyramid={pyramid} /><CtClubsBox g={g} c={c} pyramid={pyramid} /></> : <>
       <DashBox title="Meister & Pokal" right={leagues?.season}>
         {holders.length || leader ? <>
           {leader && <KV k="Tabellenführer" v={<TeamName g={g} id={leader} season={g.season} size={18} />} strong />}
@@ -97,6 +99,7 @@ export default function OverviewTab({ g, c, pyramid }: CountryTabProps) {
           </div>
         ) : <Empty icon="dashVerein">{c.kind === 'none' ? 'Keine Vereine im Spiel.' : 'Keine eigenen Ligen in dieser Saison – keine Daten.'}</Empty>}
       </DashBox>
+      </>}
 
       <DashBox title="Beste Spieler" info="laenderprofilSpieler">
         {players.length ? <div className="cnx-list">{players.map((p, i) => <NatRow key={p.id} g={g} p={p} rank={i + 1} />)}</div>

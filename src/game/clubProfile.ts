@@ -1,4 +1,5 @@
 import { seasonStartYear } from '../data/timeline';
+import { ctClub } from '../data/world/continents';
 import { historicClubInfo, historicClubName } from '../data/history/historicClubs';
 import { EURO_COMP_NAMES } from '../data/europe';
 import { isLeagueClub, lastRevenue } from '../engine/clubEconomy';
@@ -29,6 +30,9 @@ export function clubView(g: Game, id: string, year?: number): { id: string; name
   // Auslandsvereine der Hintergrund-Welt (Europapokal, Weltdaten).
   const e = g.euroClubs?.[id];
   if (e) return { id, name: e.name, shortName: e.shortName, city: e.city, colors: e.colors };
+  // Vereine anderer Kontinente (data/world/continents/, nur Weltpokal/Klub-WM).
+  const ct = ctClub(id);
+  if (ct) return { id, name: ct.club.name, shortName: ct.club.short, city: ct.club.city, colors: { primary: ct.club.colors[0], secondary: ct.club.colors[1] } };
   // Historische Vereine, die der Spielstand nicht (mehr) kennt (data/history/historicClubs.ts).
   const h = historicClubInfo(id);
   if (h) return { id, name: historicClubName(id, year) ?? h.name, shortName: h.shortName, city: h.city, colors: h.colors };

@@ -21,6 +21,7 @@ import { generateShirtOffers, generateBandenOffers } from '../engine/finances';
 import { academyStartingCohort, getYouthSalt } from '../engine/youth';
 import { economyScale } from '../engine/economy';
 import { COUNTRY_BY_KEY } from './world/countries';
+import { CT_ORIGIN_BY_KEY } from './world/continents';
 import type { ClubCommerce, SponsorOffer } from '../types';
 import type { EuroClub } from './europe';
 
@@ -549,7 +550,7 @@ export function buildEuroClubFull(
   const playerIds: string[] = [];
   let shirt = 1;
   SQUAD_TEMPLATE.forEach((pos, idx) => {
-    const p = makePlayer(euro.id, idx, pos, strengthBase, shirt++, ORIGINS[COUNTRY_ORIGIN[euro.country] ?? COUNTRY_BY_KEY[euro.country]?.origin ?? 'eng'], 88);
+    const p = makePlayer(euro.id, idx, pos, strengthBase, shirt++, ORIGINS[COUNTRY_ORIGIN[euro.country] ?? COUNTRY_BY_KEY[euro.country]?.origin ?? CT_ORIGIN_BY_KEY[euro.country] ?? 'eng'], 88);
     players[p.id] = p;
     playerIds.push(p.id);
   });

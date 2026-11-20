@@ -501,6 +501,11 @@ export const INFO_TEXTS = {
     text: 'Sehr seltene Spieler mit überragender Führungsstärke und Erfahrung reißen die Mannschaft mit: Bronze +0,5 %, Silber +1 %, Gold +2 % auf Angriff, Spielkontrolle und Abwehr, solange sie spielen – zusammen höchstens +3 %. Verliehen wird das nur in der Auf- und Abwertungsrunde; maßgeblich ist die höchste jemals erreichte Stärke: Wer 10 % davon verloren hat, kann den Bonus wieder verlieren, ab 15 % sehr wahrscheinlich.',
     wiki: 'team-boost',
   },
+  weltpokal: {
+    title: 'Weltpokal & Klub-WM',
+    text: 'Gewinnst du den Europapokal der Landesmeister bzw. die Meisterliga, spielst du in der nächsten Saison gegen die besten Vereine der anderen Kontinente: bis 2004 im Weltpokal gegen den Sieger Südamerikas (bis 1979 Hin- und Rückspiel, danach ein Spiel in Tokio), ab 2005 bei der Klub-WM im Dezember, ab 2024 im Interkontinentalpokal (du steigst im Finale ein) und alle vier Jahre ab 2025 bei der großen Klub-WM mit 32 Teams im Juli. Die anderen Kontinente laufen nur im Hintergrund: Meister und Kontinentalpokale werden je Saison ausgelost, nicht Spiel für Spiel gespielt.',
+    wiki: 'world-club-cups',
+  },
   supercup: {
     title: 'Supercup & Ligapokal',
     text: 'Vor dem Ligastart spielen Meister und Pokalsieger der Vorsaison um den Supercup – je nach Land und Zeit in einem Spiel, mit Hin- und Rückspiel oder als kleines Turnier (Ligapokal 1997–2007 mit sechs Mannschaften). Wer das Double holte, trifft auf den Pokalfinalisten bzw. den Vizemeister. Es gibt Antrittsgeld und eine Siegprämie, der Titel zählt im Trophäenschrank.',

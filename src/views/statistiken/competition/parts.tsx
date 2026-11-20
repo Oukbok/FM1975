@@ -11,6 +11,7 @@ import { compClubName, foreignCountry } from '../../../game/competitionView';
 import type { Game } from '../../../game/state';
 import { seasonStartYear } from '../../../data/timeline';
 import Seg from '../../../ui/Seg';
+import { ctClub } from '../../../data/world/continents';
 import { isLocalClub, localClubColor } from '../../../game/youthComps/localClubs';
 
 /** Internationale Wettbewerbe (Wunsch Pascal): hinter dem Wappen die Landesflagge. */
@@ -23,7 +24,7 @@ export function TeamName({ g, id, season, short = false, size = 20 }: { g: Game;
   const withFlag = useContext(TeamFlagCtx);
   const flag = withFlag ? <CountryFlag country={country ?? (isDdrClub(g, id) && Number(season.slice(0, 4)) < 1991 ? 'DDR' : 'Deutschland')} height={Math.max(10, Math.round(size * 0.55))} /> : null;
   if (country || id.startsWith('x_') || id.startsWith('t:')) {
-    const col = g.euroClubs?.[id]?.colors.primary ?? (isLocalClub(id) ? localClubColor(id) : 'var(--text-4)');
+    const col = g.euroClubs?.[id]?.colors.primary ?? ctClub(id)?.club.colors[0] ?? (isLocalClub(id) ? localClubColor(id) : 'var(--text-4)');
     return (
       <span className="cmp-team" title={country ? `${name} (${country})` : isLocalClub(id) ? `${name} (Ortsverein)` : name}>
         <span className="cmp-dot-box" style={{ width: size, height: size }}><span className="cmp-dot" style={{ background: col }} /></span>

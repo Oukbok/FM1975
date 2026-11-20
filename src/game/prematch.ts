@@ -7,6 +7,7 @@
 // (data/prematch/cityGeo.ts) und Stadttext (data/prematch/cityTexts*.ts).
 // Ausländische Gegner werden – wie beim Spielstart – als voller Verein angelegt.
 // =============================================================================
+import { ctClub } from '../data/world/continents';
 import { attendanceRestriction } from '../data/history';
 import { CITY_TEXTS_ABROAD } from '../data/prematch/cityTextsAbroad';
 import { CITY_TEXTS_DE } from '../data/prematch/cityTextsDe';
@@ -80,8 +81,9 @@ function sideOf(g: Game, id: string, ranks: Map<string, number>, rankOf: number)
   let strength = clubStrengthFor(g, id);
   try { if (club) strength = calculateTeamStrength(club, g.players).overall; } catch { /* Anzeige */ }
   const form = prof.lastMatches.filter((m) => m.result).slice(0, 5).map((m) => m.result!).reverse();
-  const city = club?.city ?? euro?.city ?? prof.city ?? '';
-  const country = euro?.country;
+  const ct = ctClub(id);
+  const city = club?.city ?? euro?.city ?? ct?.club.city ?? prof.city ?? '';
+  const country = euro?.country ?? ct?.country.key;
   return {
     id, name: prof.name, short: club ? short(club) : prof.shortName, club: club ?? prof.crestClub, city, country,
     mine: id === g.managedClubId,
@@ -201,7 +203,7 @@ export function buildPrematch(g: Game, info: OwnMatchInfo): PrematchData {
   const expected = homeClub ? Math.min(capacity, expectedCrowd(homeClub, g.clubs[info.awayId], info, weather)) : 0;
   const distance = home.geo && away.geo ? distanceKm(home.geo, away.geo) : null;
   const deOnly = isGermanCity(home.city) && isGermanCity(away.city) && !home.country && !away.country;
-  const stadium = homeClub?.stadium.name ?? '';
+  const stadium = info.venue ?? homeClub?.stadium.name ?? '';
   const oppStadium = g.clubs[opp.id]?.stadium.name ?? '';
   return {
     info, home, away, opp, stadium, capacity, expected, weather,

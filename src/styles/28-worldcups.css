@@ -1,0 +1,23 @@
+/* =============================================================================
+   Statistiken › International › Welt (views/statistiken/world/WorldCupsView.tsx)
+   Links groß Gruppen + Turnierbaum, rechts Modus/Teilnehmer und Siegerliste.
+   Unter der Reiterleiste: Spalten in fr (Regel 28-subtabs.css).
+   ========================================================================== */
+.sub3-page > .dpage.wcx-page {
+  grid-template-columns: minmax(0, 64fr) minmax(0, 30fr); column-gap: 1.5%;
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); padding: 14px 2.5% 24px; row-gap: 14px;
+}
+.wcx-page > .wcx-main { grid-column: 1 / 2 !important; grid-row: 1 / -1 !important; }
+.wcx-page > .wcx-side { grid-column: 2 / 3 !important; grid-row: auto / span 1 !important; }
+.wcx-page .wcx-side .dbox-body { overflow-y: auto; }
+.wcx-scroll { display: flex; flex-direction: column; gap: 14px; }
+.wcx-note { margin: 0; }
+.wcx-bracket { flex: 0 0 auto; min-height: 220px; }
+.wcx-teams { display: grid; grid-template-columns: 1fr; gap: 2px; }
+.wcx-team { min-height: 28px; display: flex; align-items: center; padding-left: 9px; border-bottom: 1px solid var(--border-soft); font-size: 14px; }
+.wcx-team.me { box-shadow: inset 4px 0 0 var(--accent); }
+.wcx-winners .nt-arow { display: grid; grid-template-columns: 62px minmax(0, 1fr) auto; }
+.wcx-winners .nt-club { white-space: nowrap; max-width: none; overflow: visible; font-size: 13px; color: var(--text-3); }
+.wcx-winners .wcx-pre { color: var(--text-3); }
+.wcx-winners .nt-pname { min-width: 0; overflow: hidden; }
+.cnx-pre { color: var(--text-3); }

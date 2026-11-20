@@ -82,6 +82,7 @@ import { bindHonours } from './clubHonours';
 import { bindStaffFactor } from './staffGame';
 import { bindCoaching } from './coachingGame';
 import { ensureWorldPool } from './worldPool';
+import { ensureContinents } from './continents';
 import { migrateWorldPlaces } from './worldPlacesSeed';
 import { worldLiveDaily } from './worldLeagues';
 import { retireFullCountries } from './fullCountries';
@@ -401,6 +402,7 @@ export function prepareLoadedGame(g: Game): void {
   fixStaleContracts(g); // Spieler im Kader mit abgelaufenem Vertrag (Hochziehen nach dem 1. Juli, alte Spielstände)
   ensureCountryPools(g.world, g.euroClubs, Number(g.season.slice(0, 4))); // Unterbau der Auslandsligen (engine/world.ts)
   try { migrateWorldPlaces(g); } catch (err) { console.error('Platzierungs-Historie-Nachrüstung fehlgeschlagen:', err); }
+  try { ensureContinents(g); } catch (err) { console.error('Kontinente-Nachrüstung fehlgeschlagen:', err); } // andere Kontinente (game/continents.ts)
   if (!g.worldPool || g.worldPool.v !== 2) ensureWorldPool(g); // Weltspieler anlegen bzw. auf den EA-FC-Maßstab stauchen (migrateWorldScale)
   // Rückennummern aller Vereine + Weltspieler (game/shirtMigration.ts, nach dem Weltpool).
   try { migrateShirtNumbers(g); } catch (err) { console.error('Rückennummern-Nachrüstung fehlgeschlagen:', err); }

@@ -8,6 +8,8 @@
 // Fehlt ein Ort: Landesmitte (COUNTRY), sonst keine Markierung.
 // =============================================================================
 
+import { CT_CITY_GEO, CT_COUNTRY_GEO } from '../world/continents';
+
 export type LatLon = [number, number];
 
 const DE: Record<string, LatLon> = {
@@ -189,6 +191,7 @@ const ALIAS: Record<string, string> = {
 
 /** Ungefähre Landesmitte (bzw. Hauptstadt) als Rückfall. */
 const COUNTRY: Record<string, LatLon> = {
+  ...CT_COUNTRY_GEO,
   Deutschland: [51.0, 10.4], DDR: [52.0, 12.6], England: [52.8, -1.5], Wales: [52.3, -3.7], Schottland: [56.5, -4.0],
   Nordirland: [54.6, -6.7], Irland: [53.3, -7.7], Italien: [42.8, 12.5], Spanien: [40.2, -3.6], Frankreich: [46.6, 2.4],
   Niederlande: [52.2, 5.5], Belgien: [50.6, 4.6], Luxemburg: [49.8, 6.1], Portugal: [39.6, -8.0], Oesterreich: [47.6, 14.1],
@@ -199,7 +202,8 @@ const COUNTRY: Record<string, LatLon> = {
   Rumaenien: [45.9, 24.9], Bulgarien: [42.7, 25.5], Albanien: [41.2, 20.2], Zypern: [35.1, 33.4], Malta: [35.9, 14.4],
 };
 
-const ALL: Record<string, LatLon> = { ...DE, ...ABROAD };
+// Länder/Städte der Hintergrund-Kontinente (data/world/continents/): Weltpokal, Klub-WM.
+const ALL: Record<string, LatLon> = { ...CT_CITY_GEO, ...DE, ...ABROAD };
 
 /** Stadtname, unter dem die Lage geführt wird (Alias aufgelöst, Farbzusatz entfernt). */
 export function canonicalCity(city: string): string {

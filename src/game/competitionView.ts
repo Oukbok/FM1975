@@ -5,6 +5,7 @@
 // Historie vor Spielbeginn (data/history/). Die Seiten in views/statistiken/
 // (Liga, Pokal, International) lesen nur diesen Schnappschuss.
 // =============================================================================
+import { ctClub } from '../data/world/continents';
 import { groupOrder } from '../data/regionGeo';
 import { amateurTablesView, sortedAm } from './amateurLeagues';
 import { COUNTRY_BY_CC } from '../data/world/countries';
@@ -429,6 +430,8 @@ export function compClubName(g: Game, id: string, season: string, short = false)
   const year = seasonStartYear(season);
   const eu = g.euroClubs?.[id];
   if (eu) return short ? eu.shortName : eu.name;
+  const ct = ctClub(id);
+  if (ct) return short ? ct.club.short : ct.club.name;
   const wd = worldDataIdent(id, year);
   if (wd) return short ? wd.ident.shortName : wd.ident.name;
   const hf = HIST_FOREIGN[id];
@@ -442,7 +445,7 @@ export function compClubName(g: Game, id: string, season: string, short = false)
 }
 
 export function foreignCountry(g: Game, id: string): string | undefined {
-  return g.euroClubs?.[id]?.country ?? HIST_FOREIGN[id]?.country ?? worldDataIdent(id, 2000)?.country;
+  return g.euroClubs?.[id]?.country ?? ctClub(id)?.country.key ?? HIST_FOREIGN[id]?.country ?? worldDataIdent(id, 2000)?.country;
 }
 
 /** Verein aus den Weltdaten (`w_<id>`), der im Spielstand nicht (mehr) existiert – z. B. Saisons vor dem Startjahr. */

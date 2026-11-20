@@ -8,10 +8,12 @@ import { DashBox, Empty, KV } from '../../ui/DashPage';
 import { TeamName } from '../../views/statistiken/competition/parts';
 import { presetCompetition } from '../../views/statistiken/competition/CompetitionPage';
 import { MiniTable, type CountryTabProps } from './parts';
+import { ContinentLeagues } from './ContinentBoxes';
 
-export default function LeaguesTab({ g, c, onGoto }: CountryTabProps) {
+export default function LeaguesTab({ g, c, pyramid, onGoto }: CountryTabProps) {
   const lg = useMemo(() => countryLeagues(g, c), [g, c]);
   const holders = useMemo(() => countryHolders(g, c), [g, c]);
+  if (c.kind === 'continent') return <ContinentLeagues g={g} c={c} pyramid={pyramid} />;
   if (c.kind === 'none') {
     return <DashBox title="Ligen" span={3} rows={2}><Empty icon="stats">Die Ligen von {c.name} laufen im Spiel nicht mit – keine Daten.</Empty></DashBox>;
   }

@@ -42,6 +42,7 @@ import './28-briefing2.css'; // Zentrale › Briefing (Archiv im Zeitungslayout)
 import './28-sponsor.css';
 import './28-positions.css';
 import './28-leagues.css';
+import './28-worldcups.css'; // Statistiken › International › Welt
 import './28-calendar.css';
 import './28-calpage.css'; // Kalenderseite (Zentrale › Kalender): Heute, Kürzel, ruhige Flächen
 import './28-kabine.css';

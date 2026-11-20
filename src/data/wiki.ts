@@ -3039,6 +3039,31 @@ Oben steht die Leiste **Nächstes Spiel** mit Paarung, Datum und Wettbewerb. Dar
 Gegen Vereine ohne vollen Kader (Amateure im Pokal, Auslandsvereine) gibt es nur die geschätzte Stärke.`,
   },
   {
+    id: 'world-club-cups',
+    category: 'cup',
+    title: 'Weltpokal, Klub-WM und die anderen Kontinente',
+    keywords: ['weltpokal', 'klub-wm', 'klub-weltmeisterschaft', 'interkontinentalpokal', 'tokio', 'südamerika', 'afrika', 'asien', 'kontinentalpokal', 'kontinente', 'welt'],
+    body: `## Wo
+**Statistiken › International › Welt** zeigt Weltpokal, Klub-Weltmeisterschaft und Interkontinentalpokal (Modus der Epoche, Gruppen, Turnierbaum, Siegerliste) sowie die Kontinentalpokale Südamerikas, Nord- und Mittelamerikas, Afrikas, Asiens und Ozeaniens. Ein Klick auf eine Flagge öffnet das **Länderprofil** – auch für Brasilien, Mexiko, Ägypten oder Japan: Meister je Saison, Vereine mit Stärke, Titel im Kontinentalpokal.
+
+## Wann spielst du mit?
+Gewinnst du den Europapokal der Landesmeister bzw. die Meisterliga, bist du in der folgenden Saison dabei. Deine Spiele stehen im Kalender und laufen wie ein Pokalspiel: Vorschau „Nächstes Spiel“, Textmodus oder Schnellsimulation, Spielbericht, Prämie, Titel in der Vitrine (Verein › Erfolge).
+
+## Die Formate
+- **Weltpokal 1960–1979:** Hin- und Rückspiel gegen den Sieger Südamerikas (Herbst/Winter). Europas Meister sagten damals oft ab – im Spiel verzichtet ein KI-Meister manchmal, dann springt der Finalist ein oder der Weltpokal fällt aus. Du sagst nie ab.
+- **Weltpokal 1980–2004:** ein Endspiel im Dezember auf neutralem Platz in Tokio.
+- **Klub-WM Januar 2000:** acht Teams in zwei Vierergruppen, die Gruppensieger im Finale.
+- **Klub-WM 2005–2023 (Dezember):** die sechs Kontinentalsieger, ab 2007 dazu der Meister des Gastlandes. Europa und Südamerika steigen im Halbfinale ein.
+- **Interkontinentalpokal ab 2024 (Dezember):** die übrigen Kontinentalsieger spielen den Finalgegner aus, Europas Meister steigt im Finale ein.
+- **Große Klub-WM ab 2025, alle vier Jahre:** 32 Teams (12 aus Europa) in acht Vierergruppen, Achtelfinale bis Finale. Im Spiel im **Juli vor dem Ligastart**, damit das Turnier nicht über den Saisonwechsel läuft.
+
+## Die anderen Kontinente (vereinfacht)
+Dort kannst du nicht spielen. Je Land laufen nur einige Spitzenvereine mit (Namen nach Stadt und Farbe), ihre Stärke folgt der Geschichte (z. B. Südamerika in den 1980ern auf Augenhöhe mit Europa, ab etwa 2005 dahinter). Statt Ligen mit Spieltagen wird je Saison nur das Ergebnis ausgelost – Stärke der Epoche + Saisonform + Zufall. Der Kontinentalpokal ist ein schlanker K.-o.-Baum (8 bzw. 16 Teams). Mit „Historische Entwicklung der Vereine“ (Historisch/Streng) haben die echten Sieger einen Vorteil. Das kostet kaum Rechenzeit und wenig Speicher.
+
+## Gegner
+Spielst du gegen einen Verein eines anderen Kontinents, bekommt er für dieses Spiel einen vollen Kader – Namen und Gesichter passend zum Land, Stärke wie sein Verein. Nach der Saison wird der Kader wieder gelöscht.`,
+  },
+  {
     id: 'supercup',
     category: 'cup',
     title: 'Supercup, Ligapokal und Europäischer Supercup',

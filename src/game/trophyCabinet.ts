@@ -19,6 +19,7 @@ import { compClubName } from './competitionView';
 import { archivedSeason, type ArchRow, type CupKey } from './leagueArchive';
 import type { Game } from './state';
 import { homeCountryKey } from './state';
+import { icArchiveFor } from './intercontinental';
 import { superCupArchiveFor } from './superCupGame';
 import { indoorState } from './winterShared';
 
@@ -31,7 +32,7 @@ export const TROPHY_CATS: { key: TrophyCat; label: string }[] = [
 /** Form der gezeichneten Trophäe = Name des Foto-Slots (`bilder/trophies/<shape>.webp`). */
 export type TrophyShape =
   | 'schale' | 'ddr' | 'teller' | 'pokal' | 'henkel' | 'cwc' | 'konferenz' | 'uefa'
-  | 'halle' | 'jugend' | 'uyl' | 'aufstieg';
+  | 'halle' | 'jugend' | 'uyl' | 'aufstieg' | 'welt';
 
 export interface TrophyEntry {
   id: string;
@@ -66,13 +67,14 @@ function shapeOf(kind: TitleKind, year: number): TrophyShape {
     case 'halle': return 'halle';
     case 'uyl': return 'uyl';
     case 'super': case 'ligapokal': case 'uefasuper': return 'pokal';
+    case 'weltpokal': case 'klubwm': case 'intercup': return 'welt';
     default: return 'jugend';
   }
 }
 function catOf(kind: TitleKind): TrophyCat {
   if (kind === 'meister' || kind === 'ddr') return 'liga';
   if (kind === 'pokal' || kind === 'super' || kind === 'ligapokal') return 'pokal';
-  if (kind === 'uefasuper') return 'kontinental';
+  if (kind === 'uefasuper' || kind === 'weltpokal' || kind === 'klubwm' || kind === 'intercup') return 'kontinental';
   if (kind === 'ec' || kind === 'cwc' || kind === 'uefa') return 'kontinental';
   if (kind === 'halle') return 'andere';
   return 'jugend';
@@ -122,7 +124,7 @@ const CAT_RANK: Record<TrophyCat, number> = { liga: 0, pokal: 1, kontinental: 2,
 const KIND_RANK: Partial<Record<TrophyEntry['kind'], number>> = {
   meister: 0, ddr: 0, staffel: 1, ec: 0, cwc: 1, uefa: 2,
   uyl: 0, jugendA: 1, jugendB: 2, jugendPokal: 3, jugendDdr: 4, jugendC: 5, jugendD: 6, jugendEReg: 7, jugendFReg: 7, jugendE: 8, jugendF: 9,
-  halle: 0, aufstieg: 1, pokal: 0, ligapokal: 1, super: 2, uefasuper: 3,
+  halle: 0, aufstieg: 1, pokal: 0, ligapokal: 1, super: 2, uefasuper: 3, weltpokal: 3, klubwm: 3, intercup: 4,
 };
 const catRank = (e: TrophyEntry) => CAT_RANK[e.cat] * 10 + (KIND_RANK[e.kind] ?? 0);
 
@@ -267,6 +269,9 @@ export function trophyFacts(g: Game, e: TrophyEntry, clubId: string): TrophyFact
   } else if (e.kind === 'super' || e.kind === 'ligapokal' || e.kind === 'uefasuper') {
     const a = superCupArchiveFor(g, e.season, e.kind === 'uefasuper' ? 'Europa' : homeCountryKey(g), clubId);
     if (a) facts.push({ k: 'Finale', v: `${a.score} gegen ${compClubName(g, a.winner === clubId ? a.runnerUp : a.winner, e.season)}${a.shared ? ' (geteilt)' : ''}` });
+  } else if (e.kind === 'weltpokal' || e.kind === 'klubwm' || e.kind === 'intercup') {
+    const a = icArchiveFor(g, e.season, e.kind, clubId);
+    if (a) facts.push({ k: 'Finale', v: `${a.score} gegen ${compClubName(g, a.winner === clubId ? a.runnerUp : a.winner, e.season)}` });
   }
   const coach = coachAt(g, e.season, clubId);
   if (coach) facts.push({ k: 'Trainer', v: coach });

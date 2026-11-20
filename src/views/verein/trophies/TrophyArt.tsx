@@ -261,9 +261,30 @@ function Uyl({ id }: ArtProps) {
   return <g transform={`translate(${CX * 0.18} 78) scale(0.82)`}><Henkel id={id} /></g>;
 }
 
+/** Welt-Pokal (Weltpokal, Klub-WM, Interkontinentalpokal): vergoldete Weltkugel auf geschwungenem Schaft. */
+function Welt({ id }: ArtProps) {
+  const cy = 150, r = 82;
+  const stem: P[] = [[34, 236], [22, 262], [16, 300], [24, 330], [44, 352], [58, 362], [58, 362]];
+  return (
+    <g>
+      <Floor id={id} rx={112} y={428} />
+      <Plinth id={id} r={84} y={362} h={56} />
+      <Body id={id} d={lathe(stem)} metal="gd" />
+      <path d={`M ${CX - 52} 250 C ${CX - 20} 236, ${CX - 40} 210, ${CX - 8} 196 M ${CX + 52} 250 C ${CX + 20} 236, ${CX + 40} 210, ${CX + 8} 196`} fill="none" style={{ stroke: 'var(--gilt-2)' }} strokeWidth="10" strokeLinecap="round" />
+      <circle cx={CX} cy={cy} r={r + 3} style={{ fill: 'var(--metal-4)' }} />
+      <circle cx={CX} cy={cy} r={r} fill={`url(#${id}-gd)`} />
+      {[-0.62, -0.25, 0.25, 0.62].map((t) => <ellipse key={t} cx={CX} cy={cy + t * r} rx={r * Math.sqrt(1 - t * t)} ry={r * Math.sqrt(1 - t * t) * 0.16} fill="none" style={{ stroke: 'var(--gilt-3)' }} strokeWidth="1.6" opacity="0.8" />)}
+      {[0.3, 0.62, 0.9].map((k) => <ellipse key={k} cx={CX} cy={cy} rx={r * k} ry={r} fill="none" style={{ stroke: 'var(--gilt-3)' }} strokeWidth="1.6" opacity="0.8" />)}
+      <path d={`M ${CX - r} ${cy} L ${CX + r} ${cy}`} style={{ stroke: 'var(--gilt-3)' }} strokeWidth="2" />
+      <Ring r={18} y={240} metal="gd" /><Ring r={44} y={352} metal="gd" />
+      <Glint x={CX - 34} y={cy - 36} rx={22} ry={34} rot={-30} o={0.32} />
+    </g>
+  );
+}
+
 const ART: Record<TrophyShape, (p: ArtProps) => JSX.Element> = {
   schale: Schale, ddr: Ddr, teller: Teller, pokal: Pokal, henkel: Henkel, cwc: Cwc,
-  konferenz: Konferenz, uefa: Uefa, halle: Halle, jugend: Jugend, uyl: Uyl, aufstieg: Aufstieg,
+  konferenz: Konferenz, uefa: Uefa, halle: Halle, jugend: Jugend, uyl: Uyl, aufstieg: Aufstieg, welt: Welt,
 };
 
 export function TrophyArt({ shape, className = '' }: { shape: TrophyShape; className?: string }) {

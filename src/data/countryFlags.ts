@@ -100,6 +100,9 @@ export const COUNTRY_INFO: Record<string, CountryInfo> = {
   Iran: { name: 'Iran', code: 'IRN', flag: { kind: 'h', c: [G, W, R] } },
   'Costa Rica': { name: 'Costa Rica', code: 'CRC', flag: { kind: 'h', c: [B, W, R, W, B] } },
   Neuseeland: { name: 'Neuseeland', code: 'NZL', flag: { kind: 'plain', bg: '#1f3a7a', dot: R } },
+  // Länder der Hintergrund-Kontinente (data/world/continents/)
+  'DR Kongo': { name: 'DR Kongo', code: 'COD', flag: { kind: 'plain', bg: '#3a86c8', dot: Y } },
+  VAE: { name: 'Vereinigte Arabische Emirate', code: 'UAE', flag: { kind: 'h', c: [G, W, K] } },
 };
 
 /** Anzeigedaten eines Landes (unbekannte Länder: neutrale Flagge, Kürzel aus dem Namen). */

@@ -26,6 +26,7 @@ import { CalendarEngine } from '../engine/calendar';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { addTitleRecord } from './clubRecords';
 import { clubStrength, drawClubName } from './cupDraw';
+import { findIcMatch, icMatchday, isIcMatchId, setupIntercontinental } from './intercontinental';
 
 export type ScStage = 'QF' | 'SF' | 'F' | 'L1' | 'L2';
 export interface ScMatch {
@@ -57,7 +58,7 @@ export const ROUND_DE: Record<ScStage, string> = { QF: 'Viertelfinale', SF: 'Hal
 // -----------------------------------------------------------------------------
 // Teilnehmer aus der abgelaufenen Saison
 // -----------------------------------------------------------------------------
-export interface ScSeeds { order: string[]; cupWinner: string | null; cupFinalist: string | null; ec: string | null; cwc: string | null; uefa: string | null }
+export interface ScSeeds { order: string[]; cupWinner: string | null; cupFinalist: string | null; ec: string | null; cwc: string | null; uefa: string | null; /** Finalist des Landesmeister-Pokals (Weltpokal/Klub-WM, game/intercontinental.ts). */ ecRu?: string | null }
 
 /** Vor dem Überschreiben von Tabelle/Pokal/Europapokal aufrufen (season.ts). */
 export function superCupSeeds(g: Game): ScSeeds {
@@ -68,7 +69,10 @@ export function superCupSeeds(g: Game): ScSeeds {
   const cupWinner = cup?.winnerClubId ?? fin?.winnerClubId ?? null;
   const cupFinalist = fin && fin.winnerClubId ? (fin.winnerClubId === fin.homeClubId ? fin.awayClubId : fin.homeClubId) : null;
   const w = (k: 'ec' | 'cwc' | 'uefa') => g.euroCups?.[k]?.winnerClubId ?? null;
-  return { order: rows.map((r) => r.clubId), cupWinner, cupFinalist, ec: w('ec'), cwc: w('cwc'), uefa: w('uefa') };
+  const ecFin = g.euroCups?.ec?.rounds[g.euroCups.ec.rounds.length - 1]?.ties[0];
+  const ec = w('ec');
+  const ecRu = ec && ecFin ? (ecFin.homeClubId === ec ? ecFin.awayClubId : ecFin.awayClubId === ec ? ecFin.homeClubId : null) : null;
+  return { order: rows.map((r) => r.clubId), cupWinner, cupFinalist, ec, cwc: w('cwc'), uefa: w('uefa'), ecRu };
 }
 
 // -----------------------------------------------------------------------------
@@ -188,6 +192,8 @@ export function setupSuperCups(g: Game, s: ScSeeds): void {
     }));
   }
   backgroundSuperCups(g, y);
+  // Weltpokal / Klub-WM / Interkontinentalpokal (game/intercontinental.ts) – nach den Supercup-Terminen.
+  setupIntercontinental(g, { ec: s.ec, ecRu: s.ecRu ?? null });
 }
 
 const m0 = (ev: ScEvent) => ev.matches[ev.matches.length - 1];
@@ -325,6 +331,7 @@ function finish(g: Game, ev: ScEvent, date: string): void {
 
 /** Kalender-Ereignis 'super_cup' (day.ts). Rückgabe: Match-ID des eigenen Spiels. */
 export function superCupMatchday(g: Game, matchId: string | undefined, today: string): string | null {
+  if (isIcMatchId(matchId)) return icMatchday(g, matchId, today);
   const st = superCupState(g);
   for (const ev of st.events) {
     const m = ev.matches.find((x) => x.id === matchId);
@@ -361,7 +368,7 @@ export function ownSuperCupDue(g: Game, matchId: string | undefined): { ev: ScEv
 /** Match-Objekt für den Spielbericht. */
 export function findSuperCupMatch(g: Game, id: string): { match: Match; label: string } | null {
   for (const ev of (g as G).superCup?.events ?? []) for (const m of ev.matches) if (m.match?.id === id) return { match: m.match, label: `${ev.name} · ${ROUND_DE[m.stage]}` };
-  return null;
+  return findIcMatch(g, id);
 }
 
 /** Archiv-Eintrag eines Landes/einer Saison mit Beteiligung des Vereins (Trophäenschrank). */
