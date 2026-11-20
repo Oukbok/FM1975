@@ -37,13 +37,15 @@ const pct = (x: number) => (x * 100).toFixed(1).padStart(5) + ' %';
 const t0 = Date.now();
 const MODE = process.env.MODE ?? 'all';
 const subsByYear: Record<number, number> = {};
+const distByYear: Record<number, number[]> = {};
 let shotMix: Record<string, [number, number]> = {}, buildMix: Record<string, [number, number]> = {}, failMix: Record<string, number> = {};
 
 /** Ist-Werte einer Epoche (gleiche Schlüssel wie die Soll-Werte in data/matchStats.ts). */
 function measure(year: number, n: number): Record<keyof MatchTargets, number> & { goalsRaw: number } {
   setEraYear(year);
   const z = { goals: 0, hw: 0, dr: 0, shots: 0, sot: 0, yel: 0, red: 0, corners: 0, fouls: 0, off: 0, pen: 0,
-    head: 0, corner: 0, fk: 0, penG: 0, cnt: 0, long: 0, own: 0, duels: 0, passes: 0, passOk: 0, crosses: 0, crossOk: 0, subs: 0 };
+    head: 0, corner: 0, fk: 0, penG: 0, cnt: 0, long: 0, own: 0, duels: 0, passes: 0, passOk: 0, crosses: 0, crossOk: 0, subs: 0,
+    nil: 0, g2: 0, penAll: 0, dist: [0, 0, 0, 0, 0, 0, 0] };
   for (let i = 0; i < n; i++) {
     const h = clubs[i % clubs.length];
     let a = clubs[(i * 7 + 3) % clubs.length];
@@ -52,6 +54,9 @@ function measure(year: number, n: number): Record<keyof MatchTargets, number> & 
     const H = sim.home, A = sim.away;
     z.goals += H.goals + A.goals;
     if (H.goals > A.goals) z.hw++; else if (H.goals === A.goals) z.dr++;
+    if (H.goals + A.goals === 0) z.nil++;
+    z.dist[Math.min(6, H.goals + A.goals)]++;
+    z.g2 += H.goals + A.goals - sim.halftimeScore[0] - sim.halftimeScore[1];
     for (const T of [H, A]) {
       const st = T.stats;
       z.shots += st.shots; z.sot += st.shotsOnTarget; z.yel += st.yellow; z.red += st.red; z.corners += st.corners;
@@ -87,10 +92,11 @@ function measure(year: number, n: number): Record<keyof MatchTargets, number> & 
     console.log(`${year} Ballverluste: ${Object.entries(failMix).map(([k, v]) => `${k} ${(v / n).toFixed(1)}`).join(' | ')}`);
   }
   shotMix = {}; buildMix = {}; failMix = {};
+  distByYear[year] = z.dist.map((v) => v / n);
   subsByYear[year] = z.subs / n;
   return {
     goalsRaw: z.goals,
-    goals: z.goals / n, homeWin: z.hw / n, draw: z.dr / n, shotsPerTeam: z.shots / n / 2, onTargetShare: z.sot / Math.max(1, z.shots),
+    goals: z.goals / n, zeroZero: z.nil / n, secondHalfShare: z.g2 / G, penaltyConv: z.penG / Math.max(1, z.pen), homeWin: z.hw / n, draw: z.dr / n, shotsPerTeam: z.shots / n / 2, onTargetShare: z.sot / Math.max(1, z.shots),
     headerShare: z.head / G, setPieceShare: (z.corner + z.fk + z.penG) / G, cornerShare: z.corner / G, freeKickShare: z.fk / G,
     penaltyShare: z.penG / G, counterShare: z.cnt / G, longShare: z.long / G, ownGoalShare: z.own / G,
     penalties: z.pen / n, fouls: z.fouls / n, yellow: z.yel / n, red: z.red / n, offsides: z.off / n, corners: z.corners / n,
@@ -99,7 +105,7 @@ function measure(year: number, n: number): Record<keyof MatchTargets, number> & 
   };
 }
 
-const fmt = (k: string, v: number) => (k.endsWith('Share') || k === 'homeWin' || k === 'draw' || k.endsWith('Accuracy')) ? (v * 100).toFixed(1) + '%' : v >= 100 ? v.toFixed(0) : v.toFixed(2);
+const fmt = (k: string, v: number) => (k.endsWith('Share') || k === 'zeroZero' || k === 'penaltyConv' || k === 'homeWin' || k === 'draw' || k.endsWith('Accuracy')) ? (v * 100).toFixed(1) + '%' : v >= 100 ? v.toFixed(0) : v.toFixed(2);
 if (MODE === 'all' || MODE === 'era') {
   const years = [1975, 1985, 1995, 2005, 2015, 2024];
   const res = years.map((y) => measure(y, N));
@@ -118,6 +124,7 @@ if (MODE === 'all' || MODE === 'era') {
     });
     console.log(line);
   }
+  console.log('Tore je Spiel 0–6+'.padEnd(18) + years.map((y) => distByYear[y].map((v) => (v * 100).toFixed(0)).join('/').padStart(22)).join(''));
   console.log('Wechsel/Spiel'.padEnd(18) + years.map((y) => subsByYear[y].toFixed(2).padStart(22)).join(''));
   console.log(`Abweichungen: ${misses} von ${keys.length * years.length}`);
 }
