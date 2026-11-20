@@ -13,6 +13,7 @@ import { DashBox, DashPage, Empty, KV } from '../../ui/DashPage';
 import { vColor } from '../../ui/format';
 import PosBadge from '../../components/PosBadge';
 import FaceThumb from '../../components/FaceThumb';
+import { PlayerInfoButton } from '../../components/playerCard/PlayerCardFloat';
 import { PlayerLink } from '../../components/playerMenu/PlayerLink';
 import { ScoutStarBar } from '../shared';
 import { scoutRange } from '../../engine/scouting';
@@ -74,7 +75,7 @@ export function ReserveSquad({ g }: { g: Game }) {
               {rows.map((p) => (
                 <tr key={p.id} data-pid={p.id} className={xiPos.has(p.id) ? 'res-in' : ''}>
                   <td className="ctr">{xiPos.has(p.id) ? <PosBadge pos={xiPos.get(p.id)!} /> : <span className="dim">–</span>}</td>
-                  <td className="rl-name"><span className="res-sq-name"><FaceThumb p={p} size={24} /><PlayerLink id={p.id}>{p.fullName}</PlayerLink>
+                  <td className="rl-name"><span className="res-sq-name"><FaceThumb p={p} size={24} /><PlayerInfoButton p={p} /><PlayerLink id={p.id}>{p.fullName}</PlayerLink>
                     {train.has(p.id) && <span className="res-tag" title="Positionstraining in der 2. Mannschaft">übt {train.get(p.id)}</span>}</span></td>
                   <td className="ctr"><PosBadge p={p} /></td>
                   <td className="num">{p.age}</td>

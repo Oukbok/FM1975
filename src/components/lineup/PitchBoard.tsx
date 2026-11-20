@@ -10,6 +10,7 @@ import type { Formation } from '../../data/formations';
 import { PITCH_GRID, type GridPoint } from '../../data/pitchGrid';
 import { familiarity, positionSuitability } from '../../engine/positions';
 import PitchSVG from './PitchSVG';
+import { useDelayedPlayerCard } from '../playerCard/PlayerCardFloat';
 import { posGroupClass } from '../../ui/positionBadges';
 
 export interface SlotPreview { slotId: string; x: number; y: number; position: Position; grid: GridPoint | null; swapWith: string | null }
@@ -49,6 +50,8 @@ export default function PitchBoard({ formation, map, players, captainId, bench, 
   wide?: boolean;
 }) {
   const showGrid = !!dragSlot && snap;
+  // Infokarte nach 2 s Hover über einen aufgestellten Spieler (Wunsch Pascal); beim Ziehen nie.
+  const hoverCard = useDelayedPlayerCard(2000, !!dragSlot || !!dragPid || lifted);
   // Breites Feld: Seitenverhältnis der Box messen, das Spielfeld wird entsprechend breiter gezeichnet.
   const pitchRef = useRef<HTMLDivElement>(null);
   const [stretch, setStretch] = useState(1);
@@ -79,7 +82,7 @@ export default function PitchBoard({ formation, map, players, captainId, bench, 
               return (
                 <div key={s.id} className={`lu-slot ${hover === `slot:${s.id}` ? 'over' : ''} ${dragSlot === s.id ? 'dragging' : ''} ${dragSlot === s.id && lifted ? 'lifted' : ''} ${s.position === 'TW' ? 'gk' : ''}`}
                   style={{ left: `${x}%`, top: `${y}%` }} data-lu-drop={`slot:${s.id}`} data-slot={s.id} data-pid={pid ?? ""}
-                  onPointerDown={(e) => onSlotDown(e, s.id)}>
+                  onPointerDown={(e) => onSlotDown(e, s.id)} {...hoverCard.bind(p)}>
                   {p ? <Card p={p} pos={pos} captain={captainId === p.id} />
                     : <div className="lu-card empty"><div className="lu-card-top"><span className={`lu-card-pos ${posGroupClass(pos)}`}>{pos}</span></div><div className="lu-card-name dim">frei</div></div>}
                   {moving && !snap && <div className="lu-live-pos">{preview!.grid?.label}</div>}
@@ -102,7 +105,7 @@ export default function PitchBoard({ formation, map, players, captainId, bench, 
               const p = bench[i];
               return (
                 <div key={i} className={`lu-bslot ${hover === `bench:${i}` && full !== 'bench' ? 'over' : ''} ${p ? '' : 'free'} ${p && lifted && p.id === dragPid ? 'lifted' : ''}`} data-lu-drop={`bench:${i}`}
-                  onPointerDown={p ? (e) => onPlayerDown(e, p) : undefined} data-pid={p?.id}>
+                  onPointerDown={p ? (e) => onPlayerDown(e, p) : undefined} data-pid={p?.id} {...hoverCard.bind(p)}>
                   {p ? <Card p={p} pos={p.naturalPosition} captain={false} small /> : <div className="lu-card sm empty"><div className="lu-card-name dim">frei</div></div>}
                 </div>
               );
@@ -114,6 +117,7 @@ export default function PitchBoard({ formation, map, players, captainId, bench, 
           <div className="lu-reserve-box" data-lu-drop="reserve">hierher ziehen</div>
         </div>
       </div>
+      {hoverCard.card}
     </div>
   );
 }

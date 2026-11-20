@@ -10,6 +10,7 @@
 // Player.contract.preContractClubId.
 // =============================================================================
 import FaceThumb from '../../components/FaceThumb';
+import { PlayerInfoButton } from '../../components/playerCard/PlayerCardFloat';
 import PosBadge from '../../components/PosBadge';
 import { ClubLink } from '../../components/club/ClubLink';
 import { CalendarEngine } from '../../engine/calendar';
@@ -35,7 +36,7 @@ export function windowInfo(today: string): { open: boolean; text: string; next: 
 
 export function PlayerCell({ g, p }: { g: Game; p?: Player }) {
   if (!p) return <span className="muted">Spieler</span>;
-  return <span className="tm-name"><FaceThumb p={p} club={g.clubs[p.clubId]} size={26} /><span>{p.fullName}</span></span>;
+  return <span className="tm-name"><FaceThumb p={p} club={g.clubs[p.clubId]} size={26} /><PlayerInfoButton p={p} /><span>{p.fullName}</span></span>;
 }
 
 export function ClubName({ g, id }: { g: Game; id?: string }) {

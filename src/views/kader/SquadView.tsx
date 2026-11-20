@@ -11,6 +11,7 @@ import { PlayerFitness, PlayerForm, PlayerFreshness, PlayerMorale, MORALE_100, p
 import { InfoTip } from '../../ui/InfoTip';
 import { GROUP_DE, PlayerRow, ScoutStarBar, avg, groupOf, scoutMid } from '../shared';
 import FaceThumb from '../../components/FaceThumb';
+import { PlayerInfoButton } from '../../components/playerCard/PlayerCardFloat';
 import { useState } from 'react';
 import { SubTabsPage, useSubTab } from '../../ui/SubTabs';
 import { demandFor, offerContract } from '../../game/contracts';
@@ -96,7 +97,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
                         return { value: n, text: String(n), label: who ? `${n} · ${who.lastName} (Tausch)` : String(n) };
                       })} />
                   </td>
-                  <td className="nowrap rl-name"><span className="tm-name"><FaceThumb p={pl} club={club} size={26} /><span className="mk-pname">{pl.fullName}</span></span></td>
+                  <td className="nowrap rl-name"><span className="tm-name"><FaceThumb p={pl} club={club} size={26} /><PlayerInfoButton p={pl} /><span className="mk-pname">{pl.fullName}</span></span></td>
                   <td className="ctr"><PosBadge p={pl} /></td>
                   <td className="num">{pl.age}</td>
                   <td className="num mk-num"><b className="mk-ov" style={{ color: vColor(pl.overall) }}>{pl.overall}</b></td>

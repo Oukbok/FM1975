@@ -4,6 +4,7 @@
 // =============================================================================
 import SuspensionCard from '../status/SuspensionCard';
 import FaceThumb from '../FaceThumb';
+import { PlayerInfoButton } from '../playerCard/PlayerCardFloat';
 import { useState, type PointerEvent as RPE, type ReactNode } from 'react';
 import type { Player, Position } from '../../types';
 import { positionSuitability, suitabilityColor } from '../../engine/positions';
@@ -76,6 +77,7 @@ export default function SquadList({ xi, free = [], slotOrder = [], bench, reserv
         <td className="lu-c-num lu-c-nr">{p.shirtNumber ?? ''}</td>
         <td className="lu-c-name">
           <FaceThumb p={p} size={24} className="lu-face" />
+          <PlayerInfoButton p={p} />
           <span className="lu-name">{p.fullName}</span>
           {captainId === p.id && <span className="lu-cap" title="Kapitän">K</span>}
           {p.injury || p.availability === 'injured' ? <span className="lu-flag red">verletzt</span>

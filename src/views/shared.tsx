@@ -2,6 +2,7 @@
 import { PlayerLink } from '../components/playerMenu/PlayerLink';
 import { ClubLink } from '../components/club/ClubLink';
 import FaceThumb from '../components/FaceThumb';
+import { PlayerInfoButton } from '../components/playerCard/PlayerCardFloat';
 import ClubCrest from '../components/ClubCrest';
 import { Game } from '../game/state';
 import { Match, Player, POSITION_GROUPS } from '../types';
@@ -65,6 +66,7 @@ export function PlayerRow({ p, value, sub, onClick, color, face }: { p: Player; 
     <div className={`dlist-row ${onClick ? 'clickable' : ''}`} onClick={onClick} data-pid={p.id}>
       <PosBadge p={p} compact />
       {face && <FaceThumb p={p} size={22} className="dl-face" />}
+      {face && <PlayerInfoButton p={p} />}
       <span className="grow">{onClick ? p.fullName : <PlayerLink id={p.id}>{p.fullName}</PlayerLink>}{sub != null && <span className="muted"> · {sub}</span>}</span>
       {value != null && <span className="val" style={{ color: color ?? (typeof value === 'number' ? vColor(value) : undefined) }}>{value}</span>}
     </div>

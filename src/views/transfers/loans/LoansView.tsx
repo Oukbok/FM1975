@@ -32,11 +32,12 @@ import { SubTabsPage, useSubTab } from '../../../ui/SubTabs';
 import { IncomingOffersList, useOfferAnswers } from '../IncomingOffers';
 import { ClubName, windowInfo } from '../NegotiationsOverview';
 import FaceThumb from '../../../components/FaceThumb';
+import { PlayerInfoButton } from '../../../components/playerCard/PlayerCardFloat';
 import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
 
 /** Gesicht + Name (Klick öffnet das Profil). */
 function PlayerCell({ g, p }: { g: Game; p: Player }) {
-  return <span className="tm-name"><FaceThumb p={p} club={g.clubs[p.clubId]} size={26} /><PlayerLink id={p.id}>{p.fullName}</PlayerLink></span>;
+  return <span className="tm-name"><FaceThumb p={p} club={g.clubs[p.clubId]} size={26} /><PlayerInfoButton p={p} /><PlayerLink id={p.id}>{p.fullName}</PlayerLink></span>;
 }
 
 type Tab = 'aus' | 'ver' | 'angebote';

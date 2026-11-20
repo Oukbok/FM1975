@@ -65,6 +65,7 @@ import './28-rows.css';
 import './28-ratings.css';
 import './28-dash2.css';
 import './28-profile2.css';
+import './28-playercard.css'; // Spieler-Infokarte (components/playerCard/)
 import './28-transfer3.css';
 import './28-prematch.css';
 import './28-textmode2.css';
