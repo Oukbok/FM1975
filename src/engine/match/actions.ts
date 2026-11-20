@@ -10,7 +10,8 @@ import type { InjurySeverity } from '../../types';
 import type { MatchSim } from './sim';
 import { lineupChanged, onPitch, type TeamState } from './state';
 import { matchBase, rating } from './team';
-import { attRole, keeperOf, pickC, pulse } from './attack';
+import { attRole, counter, keeperOf, pickC, pulse } from './attack';
+import { aggrFoulF, kickF, leadPressF, REF, reboundF, whyFinish, type Why } from './traits';
 import { corner, freeKick } from './setpieces';
 import { blockSkill, boxSkill, duelP, finishSkill, keeperValue, weighted, type KeeperSituation, type ShotKind } from './skills';
 import type { BuildKind, ChanceKind, MPlayer, ShotOutcome } from './types';
@@ -50,6 +51,8 @@ export interface ShotSpec {
   rebound?: boolean;
   sp?: 'corner' | 'freekick';
   low?: boolean;
+  /** Entscheidendes Attribut des Duells davor (Kommentar). */
+  why?: Why;
 }
 
 export function shot(sim: MatchSim, T: TeamState, O: TeamState, s: ShotSpec): void {
@@ -57,15 +60,22 @@ export function shot(sim: MatchSim, T: TeamState, O: TeamState, s: ShotSpec): vo
   const { type, build, shooter, assister, rebound } = s;
   const [b0, b1] = XG[type];
   let xg = (b0 + rng() * b1) * clamp(s.q ?? 1, 0.5, 1.8);
+  // Fernschüsse waren früher gefährlicher (Torhüter, Bälle, Plätze; Distanztore 1970er ≈ 20 %, heute ≈ 11 %)
+  if (type === 'long') xg *= sim.year < 1985 ? 1.22 : sim.year < 1995 ? 1.15 : sim.year < 2005 ? 1.12 : sim.year < 2015 ? 1.2 : 1;
   if (build === 'fehler') xg = 0.3 + rng() * 0.3;
   if (rebound) xg = 0.12 + rng() * 0.18;
 
-  const press = sim.pressureNow();
-  const fin = finishSkill(shooter, KIND[type], press);
+  // Druck des Moments – ein Kapitän mit Führungsqualität nimmt ihn der Mannschaft (traits.ts)
+  const press = sim.pressureNow() * leadPressF(T.tr);
+  let fin = finishSkill(shooter, KIND[type], press);
+  // Nervenstärke allein vor dem Torwart: wer ruhig bleibt, schiebt ein (zusätzlich zum Anteil im Abschluss)
+  if (SIT[type] === 'oneOnOne') fin *= 1 + (shooter.p.attributes.composure - REF.composure) / 220;
   const keeper = keeperOf(O);
   const gk = keeperValue(keeper, SIT[type], press);
   const wetBoost = (sim.weather === 'regen' || sim.weather === 'schnee') && (type === 'long' || type === 'freekick') ? 1.12 : 1;
-  const pGoal = clamp(xg * Math.pow(fin / 62, FIN_EXP) * Math.pow(62 / Math.max(20, gk), GK_EXP) * sim.era.goalFactor * GOAL_SCALE * wetBoost, 0.006, 0.92);
+  // Direkter Freistoß: der Spezialist zählt stärker (Schuss über die Mauer), zentriert auf den üblichen Schützen
+  const fkF = type === 'freekick' ? Math.pow(fin / REF.fkFin, 1.1) : 1;
+  const pGoal = clamp(xg * Math.pow(fin / 62, FIN_EXP) * Math.pow(62 / Math.max(20, gk), GK_EXP) * sim.era.goalFactor * GOAL_SCALE * wetBoost * fkF, 0.006, 0.92);
   const big = xg >= 0.3;
 
   // Angezeigter xG-Wert = Torwahrscheinlichkeit für einen durchschnittlichen Schützen
@@ -89,7 +99,8 @@ export function shot(sim: MatchSim, T: TeamState, O: TeamState, s: ShotSpec): vo
       if (rng() < bp * 2 * duelP(bv, sv)) outcome = 'blocked';
     }
     // Aufs Tor: Genauigkeit des Schützen
-    outcome ??= rng() < ON_T[type] * (0.75 + 0.5 * duelP(fin, 62)) ? 'saved'
+    // Heute gehen weniger Schüsse aufs Tor (Daten 2005–2025: 36–38 % inkl. Tore)
+    outcome ??= rng() < ON_T[type] * (0.75 + 0.5 * duelP(fin, 62)) * (sim.year < 2000 ? 1 : 0.86) ? 'saved'
       : rng() < 0.08 ? 'post'
       : type === 'header' || type === 'long' ? (rng() < 0.55 ? 'over' : 'wide') : (rng() < 0.45 ? 'over' : 'wide');
   }
@@ -126,9 +137,10 @@ export function shot(sim: MatchSim, T: TeamState, O: TeamState, s: ShotSpec): vo
   if (outcome !== 'goal' && big) { shooter.bigMissed++; shooter.impact -= 0.25; }
   if (outcome === 'goal' && disallowed) shooter.impact += 0.1;
 
+  const fin2 = sim.live || sim.trace ? whyFinish(shooter, keeper, SIT[type] === 'oneOnOne' ? 'oneOnOne' : SIT[type] === 'long' ? 'long' : SIT[type] === 'air' ? 'air' : 'shot', outcome === 'goal' && !ownGoal && !disallowed, outcome === 'saved', xg) : undefined;
   sim.emit('chance', {
     side: T.side, player: scorer.id, assist: ownGoal ? undefined : assister?.id, keeper: keeper?.id, build,
-    other: s.culprit ?? (outcome === 'blocked' ? blocker?.id : s.other),
+    other: s.culprit ?? (outcome === 'blocked' ? blocker?.id : s.other), why: s.why, fin: fin2,
     chance: {
       type, xg: Math.round(xg * 100) / 100, outcome, big, ownGoal: ownGoal || undefined, disallowed: disallowed || undefined,
       rebound: rebound || undefined, sp: s.sp, low: s.low || undefined,
@@ -138,11 +150,14 @@ export function shot(sim: MatchSim, T: TeamState, O: TeamState, s: ShotSpec): vo
 
   // Nachspiel: Abpraller (wer ist zuerst da?), Ecke
   if (outcome === 'saved' || outcome === 'blocked') {
-    if (!rebound && rng() < 0.11) {
+    // Fangsicherheit: ein Torwart, der den Ball festhält, lässt keine Abpraller zu (nur nach Paraden)
+    if (!rebound && rng() < 0.11 * (outcome === 'saved' ? reboundF(keeper) : 1)) {
       const r = pickC(sim, T, 29, (m) => attRole(m) * (boxSkill(m) / 60) ** 2, undefined, true);
-      if (r) { shot(sim, T, O, { build: 'abpraller', type: 'normal', shooter: r, rebound: true, sp: s.sp }); return; }
+      if (r) { shot(sim, T, O, { build: 'abpraller', type: 'normal', shooter: r, rebound: true, sp: s.sp, why: outcome === 'saved' && keeper && keeper.p.attributes.handling < 62 ? 'handling' : undefined }); return; }
     }
-    if (rng() < (outcome === 'blocked' ? 0.4 : 0.3)) corner(sim, T, O);
+    if (rng() < (outcome === 'blocked' ? 0.4 : 0.3)) { corner(sim, T, O); return; }
+    // Gehalten und festgehalten: schneller Abwurf/Abschlag leitet den Gegenstoß ein (Abschlag)
+    if (outcome === 'saved' && keeper && keeper.onPitch && rng() < 0.055 * kickF(keeper) * O.plan.counter) counter(sim, O, T, keeper);
   }
 }
 
@@ -151,9 +166,10 @@ export function shot(sim: MatchSim, T: TeamState, O: TeamState, s: ShotSpec): vo
 // -----------------------------------------------------------------------------
 
 export function openPlayFoul(sim: MatchSim, T: TeamState, O: TeamState): void {
-  const eraF = sim.year < 1985 ? 1.15 : sim.year < 2000 ? 1.08 : 1.03;
+  const eraF = sim.era.foulRate;
   const derby = sim.derby ? 1.15 : 1;
-  if (sim.rng() >= 0.096 * T.mods.foul * T.plan.foul * eraF * derby) return;
+  // Aggressivität der Elf: mehr Fouls im Spielaufbau (traits.ts)
+  if (sim.rng() >= 0.096 * T.mods.foul * T.plan.foul * eraF * derby * aggrFoulF(T.tr)) return;
   const fouler = weighted(sim.rng, onPitch(T), (m) => (m.group === 'GK' ? 0 : m.group === 'DEF' ? 1.5 : m.group === 'MID' ? 1.4 : 0.8) * (0.4 + m.p.attributes.aggression / 100));
   const victim = weighted(sim.rng, onPitch(O), (m) => (m.group === 'GK' ? 0 : 0.5 + m.p.attributes.dribbling / 100));
   if (!fouler) return;
@@ -162,7 +178,7 @@ export function openPlayFoul(sim: MatchSim, T: TeamState, O: TeamState): void {
   sim.emit('foul', { side: T.side, player: fouler.id, other: victim?.id, zone });
   card(sim, T, fouler, 1, false);
   // Foul in der eigenen Hälfte nahe dem Strafraum → Freistoß in aussichtsreicher Lage für den Gegner
-  if (zone === 'def' && sim.rng() < 0.5) freeKick(sim, O, T, victim);
+  if (zone === 'def' && sim.rng() < (sim.year < 1995 ? 0.5 : sim.year < 2005 ? 0.45 : sim.year < 2015 ? 0.5 : 0.6)) freeKick(sim, O, T, victim);
 }
 
 /** Karte nach einem Foul. `sev` > 1 = taktisches/hartes Foul. */

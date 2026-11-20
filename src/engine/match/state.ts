@@ -2,6 +2,7 @@
 // Laufzeit-Zustand einer Mannschaft in der Simulation.
 // =============================================================================
 import { teamFit } from './tacticFit';
+import { computeTraits, leadTeamF, type TeamTraits } from './traits';
 import type { TakerKind } from '../../types';
 import { teamBoostOf } from '../teamBoost';
 import type { Club, Tactics } from '../../types';
@@ -28,6 +29,8 @@ export interface TeamState {
   mods: TacticMods;
   /** Angriffswege und Duell-Verschiebungen aus der Taktik (engine/match/tacticPlan.ts). */
   plan: TacticPlan;
+  /** Mannschafts-Eigenschaften aus den Attributen der Elf auf dem Platz (engine/match/traits.ts). */
+  tr: TeamTraits;
   /** Saisonjahr (für den Epochen-Mix der Angriffswege). */
   year: number;
   goals: number;
@@ -134,5 +137,9 @@ export function refresh(t: TeamState, minute: number): void {
   const pitch = onPitch(t);
   t.plan = tacticPlan(tac, t.year, t.mods, coh, sweep, teamFit(pitch.map((m) => ({ p: m.p, pos: m.pos }))));
   t.units = computeUnits(pitch, t.refs);
+  t.tr = computeTraits(pitch, t.captainId);
+  // Führung auf dem Platz (traits.ts): ein starker Kapitän hebt die Elf leicht an, ein schwacher kostet etwas
+  const lf = leadTeamF(t.tr);
+  if (lf !== 1) t.mods = { ...t.mods, att: t.mods.att * lf, ctrl: t.mods.ctrl * lf, def: t.mods.def * lf };
   t.dirty = false;
 }

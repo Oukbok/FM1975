@@ -12,6 +12,8 @@ export interface EraRules {
   homeAdvantage: number;
   /** Gelbe Karten pro Foul (Wahrscheinlichkeit). */
   yellowPerFoul: number;
+  /** Faktor auf die Fouls im Spielaufbau (Zählweise/Spielweise der Epoche). */
+  foulRate: number;
   /** Rote Karten (direkt) pro Foul. */
   redPerFoul: number;
   /** Erlaubte Auswechslungen. */
@@ -48,16 +50,19 @@ export function seasonYearOf(date: string): number {
 
 /** Regeln der Saison, die im Jahr `year` beginnt (z. B. 2017 = 2017/18: Videobeweis). */
 export function eraRules(year: number): EraRules {
+  // Epochen wie die Soll-Werte (data/matchStats.ts, echte Bundesliga-Daten je Jahrzehnt)
   const goalFactor =
-    year < 1980 ? 1.12 : year < 1990 ? 1.12 : year < 2000 ? 1.01 : year < 2010 ? 0.94 : year < 2020 ? 0.97 : 1.03;
+    year < 1985 ? 1.13 : year < 1995 ? 0.95 : year < 2005 ? 0.92 : year < 2015 ? 0.9 : year < 2024 ? 0.95 : 1.0;
   const homeAdvantage =
-    year < 1985 ? 1.8 : year < 1995 ? 1.5 : year < 2005 ? 1.36 : year < 2015 ? 1.28 : 1.22;
+    year < 1985 ? 2.05 : year < 1995 ? 1.76 : year < 2005 ? 1.5 : year < 2015 ? 1.28 : year < 2020 ? 1.26 : 1.18;
   return {
     year,
     goalFactor,
     homeAdvantage,
-    yellowPerFoul: year < 1985 ? 0.065 : year < 1995 ? 0.095 : year < 2005 ? 0.13 : 0.155,
-    redPerFoul: year < 1995 ? 0.0016 : 0.0012,
+    // Fouls je Spiel nach den Daten (35–41 bis etwa 2010, 21 heute, `foulRate`) – Karten je Foul entsprechend
+    yellowPerFoul: year < 1985 ? 0.04 : year < 1995 ? 0.058 : year < 2005 ? 0.085 : year < 2015 ? 0.1 : year < 2020 ? 0.13 : 0.168,
+    foulRate: year < 1985 ? 1.95 : year < 1995 ? 1.95 : year < 2005 ? 2.05 : year < 2015 ? 1.85 : year < 2020 ? 1.25 : 1.0,
+    redPerFoul: year < 1995 ? 0.0016 : year < 2005 ? 0.001 : year < 2015 ? 0.00085 : year < 2020 ? 0.00082 : 0.0012,
     maxSubs: year < 1995 ? 2 : year < 2020 ? 3 : 5,
     benchSize: year < 1995 ? 5 : year < 2008 ? 7 : year < 2020 ? 7 : 9,
     var: year >= 2017,

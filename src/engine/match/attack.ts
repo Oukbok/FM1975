@@ -24,6 +24,10 @@ import {
 import { ROUTES, type Route } from './tacticPlan';
 import type { MPlayer, Side } from './types';
 import { isCentreForward, isWidePosition } from '../positions';
+import {
+  commBias, counterPaceF, errorTraitF, kickF, kickValue, lapseBias, paceDribBias, raceP, REF, steilRouteF, teamworkBias,
+  whyAerial, whyDribble, whyIntercept, whyPass, whyRace, type Why,
+} from './traits';
 
 const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
 /** Wie stark die Mannschaftsstärke (Angriff/Abwehr, Heimvorteil, Ausrichtung) die Duelle verschiebt. */
@@ -129,13 +133,18 @@ export function pickC(sim: MatchSim, T: TeamState, _slot: number, w: (m: MPlayer
 
 type FailKind = 'intercept' | 'tackle' | 'aerial' | 'claim' | 'cross_blocked' | 'race' | 'recycle' | 'longball';
 
-function fail(sim: MatchSim, T: TeamState, O: TeamState, kind: FailKind, loser?: MPlayer, winner?: MPlayer): void {
-  sim.note('attack_fail', { side: T.side, player: loser?.id, other: winner?.id, fail: kind });
+function fail(sim: MatchSim, T: TeamState, O: TeamState, kind: FailKind, loser?: MPlayer, winner?: MPlayer, why?: Why): void {
+  sim.note('attack_fail', { side: T.side, player: loser?.id, other: winner?.id, fail: kind, why });
   // Ballgewinn → Konter. Abgefangene Pässe und gewonnene Zweikämpfe im Mittelfeld kontern am besten.
-  const kindF = kind === 'intercept' || kind === 'tackle' ? 1.25 : kind === 'race' ? 1.1 : kind === 'recycle' ? 0.4 : 0.65;
-  const eraF = sim.year < 1985 ? 0.85 : sim.year < 2000 ? 0.97 : 1.15;
-  if (sim.rng() < 0.11 * kindF * eraF * O.plan.counter * T.mods.exposed) counter(sim, O, T, winner);
+  // Schnelle Angreifer gegen langsame Abwehr kontern öfter, Laufbereitschaft der Verlierer bremst (traits.ts);
+  // nach einer gefangenen Flanke entscheidet der Abschlag des Torwarts.
+  const kindF = kind === 'intercept' || kind === 'tackle' ? 1.25 : kind === 'race' ? 1.1 : kind === 'recycle' ? 0.4 : kind === 'claim' ? 0.65 * kickF(winner) : 0.65;
+  const eraF = sim.year < 1985 ? 0.93 : sim.year < 2000 ? 1.08 : sim.year < 2010 ? 1.18 : sim.year < 2020 ? 1.3 : 1.38;
+  if (sim.rng() < 0.11 * kindF * eraF * O.plan.counter * T.mods.exposed * counterPaceF(O.tr, T.tr)) counter(sim, O, T, winner);
 }
+
+/** Grund nur ermitteln, wenn ihn jemand liest (Textmodus/Benchmarks). */
+const told = (sim: MatchSim) => sim.live || sim.trace;
 
 // -----------------------------------------------------------------------------
 // Angriff
@@ -150,7 +159,9 @@ export function attack(sim: MatchSim, T: TeamState, O: TeamState): void {
 
   // Fehler des Gegners im Aufbau (Pressing, Tempo, Wetter, schwache Ballkontrolle) → Großchance
   const errP = 0.0075 * O.mods.errors * (1 + 0.6 * T.plan.pressBias) * (sim.weather === 'regen' || sim.weather === 'schnee' ? 1.2 : 1)
-    * clamp(62 / Math.max(30, O.units.control), 0.7, 1.5);
+    * clamp(62 / Math.max(30, O.units.control), 0.7, 1.5)
+    // Pressingresistenz, Konzentration (spät doppelt), Kommandos, Führung gegen Laufbereitschaft/Aggressivität (traits.ts)
+    * errorTraitF(O.tr, T.tr, sim.minute);
   if (rng() < errP) {
     const culprit = weighted(rng, fO, (m) => (m.group === 'ATT' ? 0 : m.group === 'DEF' ? 2 : 1) * (120 - m.p.attributes.composure * 0.6 - (m.p.attributes.experience ?? 50) * 0.4));
     if (culprit) { culprit.errors++; culprit.impact -= 0.5; }
@@ -160,9 +171,11 @@ export function attack(sim: MatchSim, T: TeamState, O: TeamState): void {
   }
 
   const r = T.plan.route;
-  let x = rng();
+  // Schnelle Angreifer suchen gegen langsame bzw. hoch stehende Abwehr öfter den Steilpass (traits.ts).
+  const sf = steilRouteF(T.tr, O.tr, O.plan.lineHigh);
+  let x = rng() * (1 + r.steil * (sf - 1));
   let route: Route = 'kurz';
-  for (const k of ROUTES) { x -= r[k]; if (x <= 0) { route = k; break; } }
+  for (const k of ROUTES) { x -= k === 'steil' ? r[k] * sf : r[k]; if (x <= 0) { route = k; break; } }
   switch (route) {
     case 'kurz': return kurz(sim, T, O, fT, fO, adv);
     case 'flanke': return flanke(sim, T, O, fT, fO, adv);
@@ -189,7 +202,7 @@ function attackFoul(sim: MatchSim, T: TeamState, O: TeamState, fouler: MPlayer, 
   sim.emit('foul', { side: O.side, player: fouler.id, other: victim?.id, zone: 'att' });
   card(sim, O, fouler, sev, notbremse);
   // Elfmeter je Spiel: Bundesliga 1963–2021 im Schnitt ~0,28, 2018/19 0,30, 2019/20 0,24
-  if (sim.rng() < inBoxP * (sim.year < 1995 ? 1.5 : sim.year < 2010 ? 1.4 : 1.2)) penalty(sim, T, O);
+  if (sim.rng() < inBoxP * (sim.year < 1995 ? 1.6 : sim.year < 2010 ? 1.4 : 1.2)) penalty(sim, T, O);
   else freeKick(sim, T, O, victim);
 }
 
@@ -205,9 +218,11 @@ function kurz(sim: MatchSim, T: TeamState, O: TeamState, fT: MPlayer[], fO: MPla
   const passer = pickC(sim, T, 2, (m) => passRole(m) * sq(passSkill(m)))!;
   const recv = pickC(sim, T, 3, attRole, passer) ?? passer;
   const icp = pickC(sim, O, 4, (m) => defRole(m) * (interceptSkill(m) / 60))!;
-  const ok = rng() < duelP(passSkill(passer), interceptSkill(icp), B.kurz + adv + T.plan.passBias - O.plan.pressBias);
+  // Ballannahme des Empfängers und Teamwork der Elf helfen dem Pass (traits.ts)
+  const touch = (recv.p.attributes.firstTouch - REF.touch) * 0.3;
+  const ok = rng() < duelP(passSkill(passer) + touch, interceptSkill(icp), B.kurz + adv + T.plan.passBias - O.plan.pressBias + teamworkBias(T.tr));
   passed(T, passer, ok);
-  if (!ok) { icp.tackles++; icp.impact += 0.04; return fail(sim, T, O, 'intercept', passer, icp); }
+  if (!ok) { icp.tackles++; icp.impact += 0.04; return fail(sim, T, O, 'intercept', passer, icp, told(sim) ? whyIntercept(icp, passer) : undefined); }
   if (rng() < (0.02 + 0.03 * O.plan.trap) * 2 * duelP(64, timingSkill(recv))) return offside(sim, T, recv, passer, 'kurzpass');
   // Am Strafraum: Distanzschuss (Neigung aus Taktik × Fernschuss-Wert) oder Weg in den Strafraum
   const ls = recv.p.attributes.longShots;
@@ -217,17 +232,20 @@ function kurz(sim: MatchSim, T: TeamState, O: TeamState, fT: MPlayer[], fO: MPla
   const def = pickC(sim, O, 5, (m) => defRole(m) * (tackleSkill(m) / 60), icp) ?? icp;
   const att = (dribbleSkill(recv) + boxSkill(recv)) / 2;
   const dv = tackleSkill(def) * O.mods.duel;
-  const p = duelP(att, dv, B.box + adv + T.plan.workBias + T.plan.threat - O.plan.tackleBias);
+  // Spät lässt die Konzentration einer unkonzentrierten Abwehr nach (traits.ts)
+  const p = duelP(att, dv, B.box + adv + T.plan.workBias + T.plan.threat - O.plan.tackleBias + lapseBias(O.tr, sim.minute));
   const won = rng() < p;
   countDuel(won ? recv : def, won ? def : recv, won ? T.stats : O.stats, won ? O.stats : T.stats);
   if (won) {
     if (rng() < foulP(def, O, 0.14)) return attackFoul(sim, T, O, def, recv, 1.3, 0.16);
     const margin = clamp(1 - p, 0.1, 0.9); // knapp gewonnen = enge Lage, klar gewonnen = frei
-    const big = rng() < 0.05 + 0.25 * (1 - margin) * (1 - margin);
-    return void shot(sim, T, O, { build: 'kurzpass', type: big ? 'big' : 'normal', shooter: recv, assister: passer, q: 0.8 + 0.5 * (1 - margin), other: def.id });
+    // Übersicht des Passgebers: der eine Pass, der die Abwehr aushebelt
+    const big = rng() < 0.05 + 0.25 * (1 - margin) * (1 - margin) + (passer.p.attributes.vision - REF.vision) / 400;
+    const why = told(sim) ? (big ? whyPass(passer, recv, icp) : undefined) ?? whyDribble(recv, def, true) : undefined;
+    return void shot(sim, T, O, { build: 'kurzpass', type: big ? 'big' : 'normal', shooter: recv, assister: passer, q: 0.8 + 0.5 * (1 - margin), other: def.id, why });
   }
   def.tackles++;
-  return fail(sim, T, O, 'tackle', recv, def);
+  return fail(sim, T, O, 'tackle', recv, def, told(sim) ? whyDribble(recv, def, false) : undefined);
 }
 
 // --- Flanke ----------------------------------------------------------------------
@@ -242,7 +260,8 @@ function flanke(sim: MatchSim, T: TeamState, O: TeamState, fT: MPlayer[], fO: MP
   const freeOk = rng() < free;
   countDuel(freeOk ? crosser : wd, freeOk ? wd : crosser, freeOk ? T.stats : O.stats, freeOk ? O.stats : T.stats);
   if (!freeOk) {
-    if (rng() < 0.36) return corner(sim, T, O, crosser);
+    // Geblockte Flanke → Ecke (heute öfter: mehr Flanken unter Druck, 9,6–10,1 Ecken je Spiel)
+    if (rng() < (sim.year < 1995 ? 0.36 : sim.year < 2005 ? 0.4 : 0.44)) return corner(sim, T, O, crosser);
     return fail(sim, T, O, 'cross_blocked', crosser, wd);
   }
   const cq = crossSkill(crosser);
@@ -255,22 +274,23 @@ function flanke(sim: MatchSim, T: TeamState, O: TeamState, fT: MPlayer[], fO: MP
     }
     const tgt = pickC(sim, T, 8, (m) => airRole(m, false) * sq(aerialSkill(m)), crosser) ?? crosser;
     const dd = pickC(sim, O, 9, (m) => airDefRole(m) * sq(aerialSkill(m)))!;
-    const p = duelP(aerialSkill(tgt) + (cq - 60) * 0.6, aerialSkill(dd), B.air + adv * 0.5 - 0.15 * O.plan.lineHigh + (O.plan.zone > 0 ? 0.07 : 0));
+    // Deckung (Zuordnung im Strafraum) und Kommandos des Torwarts helfen der Abwehr (traits.ts)
+    const p = duelP(aerialSkill(tgt) + (cq - 60) * 0.6, aerialSkill(dd) + markF(dd), B.air + adv * 0.5 - 0.15 * O.plan.lineHigh + (O.plan.zone > 0 ? 0.07 : 0) - commBias(O.tr));
     const won = rng() < p;
     aerial(T, O, won ? tgt : dd, won ? dd : tgt, won);
     if (won) {
       crosser.crossesOk = (crosser.crossesOk ?? 0) + 1; T.stats.crossesOk = (T.stats.crossesOk ?? 0) + 1;
       // Nicht jeder gewonnene Kopfball ist ein Torschuss (Ablage, Verlängerung ins Aus)
       if (rng() < 0.3) return fail(sim, T, O, 'recycle', tgt, undefined);
-      return void shot(sim, T, O, { build: 'flanke', type: 'header', shooter: tgt, assister: crosser, q: 0.75 + 0.6 * (1 - p), other: dd.id });
+      return void shot(sim, T, O, { build: 'flanke', type: 'header', shooter: tgt, assister: crosser, q: 0.75 + 0.6 * (1 - p), other: dd.id, why: told(sim) ? whyAerial(tgt, dd) : undefined });
     }
     if (rng() < 0.15) return corner(sim, T, O, crosser);
-    return fail(sim, T, O, 'aerial', tgt, dd);
+    return fail(sim, T, O, 'aerial', tgt, dd, told(sim) ? whyAerial(dd, tgt) : undefined);
   }
   // Flache Hereingabe / Rückraum
   const tgt = pickC(sim, T, 10, (m) => attRole(m) * sq(boxSkill(m)), crosser) ?? crosser;
   const dd = pickC(sim, O, 11, (m) => defRole(m) * (interceptSkill(m) / 60))!;
-  const p = duelP(boxSkill(tgt) + (cq - 60) * 0.55, interceptSkill(dd), B.low + adv * 0.5);
+  const p = duelP(boxSkill(tgt) + (cq - 60) * 0.55, interceptSkill(dd) + markF(dd) * 0.8, B.low + adv * 0.5 + lapseBias(O.tr, sim.minute));
   if (rng() < p) {
     crosser.crossesOk = (crosser.crossesOk ?? 0) + 1; T.stats.crossesOk = (T.stats.crossesOk ?? 0) + 1;
     if (rng() < 0.25) return fail(sim, T, O, 'recycle', tgt, undefined);
@@ -279,8 +299,11 @@ function flanke(sim: MatchSim, T: TeamState, O: TeamState, fT: MPlayer[], fO: MP
   }
   dd.tackles++;
   if (rng() < 0.12) return corner(sim, T, O, crosser);
-  return fail(sim, T, O, 'intercept', tgt, dd);
+  return fail(sim, T, O, 'intercept', tgt, dd, told(sim) ? whyIntercept(dd, crosser) : undefined);
 }
+
+/** Deckung eines Verteidigers im Strafraum (Zuordnung, Gegenspieler nicht aus den Augen lassen), zentriert. */
+const markF = (m: MPlayer) => (m.group === 'DEF' ? (m.p.attributes.marking - REF.marking) * 0.25 : 0);
 
 /** Luftduell zählen. */
 export function aerial(T: TeamState, O: TeamState, win: MPlayer, lose: MPlayer, attWon: boolean): void {
@@ -298,27 +321,30 @@ function steil(sim: MatchSim, T: TeamState, O: TeamState, fT: MPlayer[], fO: MPl
   const runner = pickC(sim, T, 13, (m) => attRole(m) * sq(paceSkill(m)), passer) ?? passer;
   const icp = pickC(sim, O, 14, (m) => defRole(m) * (interceptSkill(m) / 60))!;
   const vis = (passer.p.attributes.vision - 60) * 0.25;
-  const ok = rng() < duelP(passSkill(passer) + vis, interceptSkill(icp), B.steil + adv + 0.5 * T.plan.passBias - 0.5 * O.plan.pressBias);
+  const ok = rng() < duelP(passSkill(passer) + vis, interceptSkill(icp), B.steil + adv + 0.5 * T.plan.passBias - 0.5 * O.plan.pressBias + 0.5 * teamworkBias(T.tr));
   passed(T, passer, ok);
-  if (!ok) { icp.tackles++; return fail(sim, T, O, 'intercept', passer, icp); }
-  // Abseitslinie: Timing des Läufers gegen Linie/Falle
-  const offP = (0.4 + 0.18 * O.plan.trap + 0.06 * O.plan.lineHigh) * (sim.year < 1990 ? 1.3 : 1.05) * 2 * duelP(64, timingSkill(runner));
+  if (!ok) { icp.tackles++; return fail(sim, T, O, 'intercept', passer, icp, told(sim) ? whyIntercept(icp, passer) : undefined); }
+  // Abseitslinie: Timing des Läufers gegen Linie/Falle; die Falle schnappt nur bei einer eingespielten Kette zu (Teamwork)
+  const offP = (0.4 + 0.18 * O.plan.trap * (1 + 1.2 * teamworkBias(O.tr)) + 0.06 * O.plan.lineHigh) * (sim.year < 1990 ? 1.8 : sim.year < 2000 ? 1.45 : 1.2) * 2 * duelP(64, timingSkill(runner));
   if (rng() < offP) {
     T.stats.offsides++;
     sim.emit('offside', { side: T.side, player: runner.id, assist: passer.id, build: 'steilpass' });
     return;
   }
   const chaser = pickC(sim, O, 15, (m) => (m.group === 'DEF' ? 3 : m.pos === 'DM' ? 1 : 0.2) * sq(recoverSkill(m)))!;
-  const p = duelP(paceSkill(runner), recoverSkill(chaser), B.race + adv * 0.5 + T.plan.workBias + T.plan.threat + O.plan.lineRisk + 0.3 * O.plan.trap - 0.14 * O.plan.zone - O.plan.sweep);
+  // Laufduell gegen die Linie: hoch = reines Tempo, tief = Stellungsspiel (traits.ts raceP)
+  const p = raceP(runner, chaser, O.plan.lineHigh, B.race + adv * 0.5 + T.plan.workBias + T.plan.threat + O.plan.lineRisk + 0.3 * O.plan.trap - 0.14 * O.plan.zone - O.plan.sweep + lapseBias(O.tr, sim.minute));
   const won = rng() < p;
   countDuel(won ? runner : chaser, won ? chaser : runner, won ? T.stats : O.stats, won ? O.stats : T.stats);
   if (won) {
     if (rng() < foulP(chaser, O, 0.08)) return attackFoul(sim, T, O, chaser, runner, 2.6, 0.21, rng() < 0.05);
-    return void shot(sim, T, O, { build: 'steilpass', type: rng() < 0.55 ? 'big' : 'normal', shooter: runner, assister: passer, q: 0.85 + 0.4 * (1 - p), other: chaser.id });
+    // Ballannahme im Lauf: wer den Ball sauber mitnimmt, hat die bessere Chance
+    const q = (0.85 + 0.4 * (1 - p)) * (1 + (runner.p.attributes.firstTouch - REF.touch) / 250);
+    return void shot(sim, T, O, { build: 'steilpass', type: rng() < 0.55 ? 'big' : 'normal', shooter: runner, assister: passer, q, other: chaser.id, why: told(sim) ? whyRace(runner, chaser, true, O.plan.lineHigh) : undefined });
   }
   chaser.tackles++;
   if (rng() < foulP(chaser, O, 0.06)) return attackFoul(sim, T, O, chaser, runner, 1.4, 0.07);
-  return fail(sim, T, O, 'race', runner, chaser);
+  return fail(sim, T, O, 'race', runner, chaser, told(sim) ? whyRace(chaser, runner, false, O.plan.lineHigh) : undefined);
 }
 
 // --- Dribbling -------------------------------------------------------------------
@@ -328,39 +354,45 @@ function dribbling(sim: MatchSim, T: TeamState, O: TeamState, fT: MPlayer[], fO:
   const wide = isWidePosition(dr.pos);
   const def = pickC(sim, O, wide ? 40 : 17, (m) => (wide ? wideDefRole(m) : defRole(m)) * (tackleSkill(m) / 60))!;
   dr.dribbles = (dr.dribbles ?? 0) + 1; T.stats.dribbles = (T.stats.dribbles ?? 0) + 1;
-  const p = duelP(dribbleSkill(dr), tackleSkill(def) * O.mods.duel, B.drib + adv + T.plan.workBias + T.plan.dribBias - O.plan.tackleBias);
+  // Tempodribbling: ein schneller Flügelspieler lässt den langsameren Verteidiger einfach stehen (traits.ts)
+  const p = duelP(dribbleSkill(dr), tackleSkill(def) * O.mods.duel, B.drib + adv + T.plan.workBias + T.plan.dribBias - O.plan.tackleBias + paceDribBias(dr, def, wide));
   const won = rng() < p;
   countDuel(won ? dr : def, won ? def : dr, won ? T.stats : O.stats, won ? O.stats : T.stats);
-  if (!won) { def.tackles++; def.impact += 0.04; return fail(sim, T, O, 'tackle', dr, def); }
+  if (!won) { def.tackles++; def.impact += 0.04; return fail(sim, T, O, 'tackle', dr, def, told(sim) ? whyDribble(dr, def, false) : undefined); }
+  const why = told(sim) ? whyDribble(dr, def, true) : undefined;
   dr.dribblesOk = (dr.dribblesOk ?? 0) + 1; T.stats.dribblesOk = (T.stats.dribblesOk ?? 0) + 1;
   if (rng() < foulP(def, O, 0.2)) return attackFoul(sim, T, O, def, dr, 1.5, wide ? 0.09 : 0.15);
   const r = rng();
   if (r > 0.8) return fail(sim, T, O, 'recycle', dr, undefined);
-  if (r < 0.1 + 0.15 * (1 - p)) return void shot(sim, T, O, { build: 'dribbling', type: 'solo', shooter: dr, q: 0.8 + 0.4 * (1 - p), other: def.id });
+  // Flair: der Kreative sucht nach dem Dribbling öfter selbst den Abschluss
+  if (r < 0.1 + 0.15 * (1 - p) + (dr.p.attributes.flair - REF.flair) / 450) return void shot(sim, T, O, { build: 'dribbling', type: 'solo', shooter: dr, q: 0.8 + 0.4 * (1 - p), other: def.id, why });
   if (r < 0.45 && rng() < clamp((dr.p.attributes.longShots / 60) ** 1.2, 0.4, 1.5) * 0.7) {
-    return void shot(sim, T, O, { build: 'dribbling', type: 'long', shooter: dr, q: 1, other: def.id });
+    return void shot(sim, T, O, { build: 'dribbling', type: 'long', shooter: dr, q: 1, other: def.id, why });
   }
   if (wide && r < 0.75) {
     // Außen durchgebrochen → Flanke ohne weiteren Zweikampf
     const tgt = pickC(sim, T, 18, (m) => airRole(m, false) * sq(aerialSkill(m)), dr) ?? dr;
     const dd = pickC(sim, O, 19, (m) => airDefRole(m) * sq(aerialSkill(m)), def)!;
     dr.crosses = (dr.crosses ?? 0) + 1; T.stats.crosses = (T.stats.crosses ?? 0) + 1;
-    const pa = duelP(aerialSkill(tgt) + (crossSkill(dr) - 60) * 0.35, aerialSkill(dd), B.air + 0.3 + adv * 0.5);
+    const pa = duelP(aerialSkill(tgt) + (crossSkill(dr) - 60) * 0.35, aerialSkill(dd) + markF(dd), B.air + 0.3 + adv * 0.5 - commBias(O.tr));
     const w = rng() < pa;
     aerial(T, O, w ? tgt : dd, w ? dd : tgt, w);
-    if (!w) return fail(sim, T, O, 'aerial', tgt, dd);
+    if (!w) return fail(sim, T, O, 'aerial', tgt, dd, told(sim) ? whyAerial(dd, tgt) : undefined);
     dr.crossesOk = (dr.crossesOk ?? 0) + 1; T.stats.crossesOk = (T.stats.crossesOk ?? 0) + 1;
-    return void shot(sim, T, O, { build: 'flanke', type: 'header', shooter: tgt, assister: dr, q: 0.8 + 0.5 * (1 - pa), other: dd.id });
+    return void shot(sim, T, O, { build: 'flanke', type: 'header', shooter: tgt, assister: dr, q: 0.8 + 0.5 * (1 - pa), other: dd.id, why: told(sim) ? whyAerial(tgt, dd) : undefined });
   }
-  return void shot(sim, T, O, { build: 'dribbling', type: 'normal', shooter: dr, q: 0.9 + 0.4 * (1 - p), other: def.id });
+  return void shot(sim, T, O, { build: 'dribbling', type: 'normal', shooter: dr, q: 0.9 + 0.4 * (1 - p), other: def.id, why });
 }
 
 // --- Langer Ball -------------------------------------------------------------------
 function weit(sim: MatchSim, T: TeamState, O: TeamState, fT: MPlayer[], fO: MPlayer[], adv: number): void {
   const rng = sim.rng;
-  const passer = pickC(sim, T, 20, (m) => (m.group === 'DEF' ? 2 : m.pos === 'DM' ? 1.5 : m.group === 'MID' ? 0.8 : 0.2) * sq(longPassSkill(m)))!;
+  // Jeder fünfte lange Ball kommt direkt vom Torwart (Abschlag/Abwurf, Attribut Abschlag)
+  const gkT = keeperOf(T);
+  const fromGk = !!gkT && gkT.group === 'GK' && rng() < 0.2;
+  const passer = fromGk ? gkT! : pickC(sim, T, 20, (m) => (m.group === 'DEF' ? 2 : m.pos === 'DM' ? 1.5 : m.group === 'MID' ? 0.8 : 0.2) * sq(longPassSkill(m)))!;
   const tgt = pickC(sim, T, 21, (m) => airRole(m, false) * sq(aerialSkill(m)), passer) ?? passer;
-  const ok = rng() < duelP(longPassSkill(passer), 62, B.longball + T.plan.threat);
+  const ok = rng() < duelP(fromGk ? kickValue(passer) : longPassSkill(passer), 62, B.longball + T.plan.threat + (fromGk ? -0.15 : 0));
   passed(T, passer, ok);
   if (!ok) return fail(sim, T, O, 'longball', passer, undefined);
   if (rng() < (0.06 + 0.06 * O.plan.trap) * 2 * duelP(64, timingSkill(tgt))) return offside(sim, T, tgt, passer, 'weit');
@@ -368,7 +400,7 @@ function weit(sim: MatchSim, T: TeamState, O: TeamState, fT: MPlayer[], fO: MPla
   const p = duelP(aerialSkill(tgt), aerialSkill(dd), B.airLong + adv * 0.5);
   const won = rng() < p;
   aerial(T, O, won ? tgt : dd, won ? dd : tgt, won);
-  if (!won) return fail(sim, T, O, 'aerial', tgt, dd);
+  if (!won) return fail(sim, T, O, 'aerial', tgt, dd, told(sim) ? whyAerial(dd, tgt) : undefined);
   // Ablage auf den zweiten Mann
   const second = pickC(sim, T, 23, attRole, tgt) ?? tgt;
   const r = rng();
@@ -389,22 +421,26 @@ export function counter(sim: MatchSim, A: TeamState, D: TeamState, winner?: MPla
   const launcher = winner && winner.onPitch && winner.side === A.side ? winner : pickC(sim, A, 24, (m) => passRole(m) * sq(passSkill(m)))!;
   const runner = pickC(sim, A, 25, (m) => attRole(m) * sq(paceSkill(m)) * 1.4, launcher) ?? launcher;
   const icp = pickC(sim, D, 26, (m) => (m.group === 'MID' ? 2 : m.group === 'DEF' ? 1 : 0.3) * (interceptSkill(m) / 60))!;
-  const ok = rng() < duelP(passSkill(launcher), interceptSkill(icp), B.counterPass + 0.5 * A.plan.passBias);
+  // Erster Pass nach Ballgewinn: Torwart mit Abschlag, Feldspieler kurz/lang (Lange Bälle), Teamwork der Läufer
+  const lv = launcher.group === 'GK' ? kickValue(launcher) : passSkill(launcher) * 0.65 + longPassSkill(launcher) * 0.35;
+  const ok = rng() < duelP(lv, interceptSkill(icp), B.counterPass + 0.5 * A.plan.passBias + 0.5 * teamworkBias(A.tr));
   passed(A, launcher, ok);
-  if (!ok) { icp.tackles++; sim.note('attack_fail', { side: A.side, player: launcher.id, other: icp.id, fail: 'intercept', build: 'konter' }); return; }
+  if (!ok) { icp.tackles++; sim.note('attack_fail', { side: A.side, player: launcher.id, other: icp.id, fail: 'intercept', build: 'konter', why: told(sim) ? whyIntercept(icp, launcher) : undefined }); return; }
   if (rng() < (0.13 + 0.14 * D.plan.trap) * 2 * duelP(64, timingSkill(runner))) {
     A.stats.offsides++;
     sim.emit('offside', { side: A.side, player: runner.id, assist: launcher.id, build: 'konter' });
     return;
   }
   const chaser = pickC(sim, D, 27, (m) => (m.group === 'DEF' ? 3 : m.pos === 'DM' ? 1.2 : 0.2) * sq(recoverSkill(m)))!;
-  const p = duelP(paceSkill(runner), recoverSkill(chaser), B.counterRace + adv * 0.5 + A.plan.workBias + D.plan.lineRisk - 0.1 * D.plan.zone - D.plan.sweep);
+  // Konter-Laufduell: aufgerückte (hohe) Linie = reines Tempo, tiefe = Stellungsspiel (traits.ts raceP)
+  const p = raceP(runner, chaser, D.plan.lineHigh, B.counterRace + adv * 0.5 + A.plan.workBias + D.plan.lineRisk - 0.1 * D.plan.zone - D.plan.sweep + lapseBias(D.tr, sim.minute));
   const won = rng() < p;
   countDuel(won ? runner : chaser, won ? chaser : runner, won ? A.stats : D.stats, won ? D.stats : A.stats);
   pulse(sim, A.side, 0.4);
   if (won) {
     if (rng() < foulP(chaser, D, 0.12)) return attackFoul(sim, A, D, chaser, runner, 2.6, 0.12, rng() < 0.06);
-    return void shot(sim, A, D, { build: 'konter', type: rng() < 0.62 ? 'counter' : 'normal', shooter: runner, assister: launcher, q: 0.85 + 0.4 * (1 - p), other: chaser.id });
+    const why = told(sim) ? (launcher.group === 'GK' && launcher.p.attributes.kicking >= 75 ? 'kicking' : whyRace(runner, chaser, true, D.plan.lineHigh)) : undefined;
+    return void shot(sim, A, D, { build: 'konter', type: rng() < 0.62 ? 'counter' : 'normal', shooter: runner, assister: launcher, q: 0.85 + 0.4 * (1 - p), other: chaser.id, why });
   }
   chaser.tackles++;
   if (rng() < foulP(chaser, D, 0.1)) {
@@ -413,5 +449,5 @@ export function counter(sim: MatchSim, A: TeamState, D: TeamState, winner?: MPla
     card(sim, D, chaser, 2.4, false);
     return;
   }
-  sim.note('attack_fail', { side: A.side, player: runner.id, other: chaser.id, fail: 'race', build: 'konter' });
+  sim.note('attack_fail', { side: A.side, player: runner.id, other: chaser.id, fail: 'race', build: 'konter', why: told(sim) ? whyRace(chaser, runner, false, D.plan.lineHigh) : undefined });
 }

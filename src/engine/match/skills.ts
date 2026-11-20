@@ -69,7 +69,7 @@ const heightBonus = (m: MPlayer) => 50 + ((m.p.height || 182) - 182) * 2.2;
 // --- Ballführung & Zweikampf --------------------------------------------------
 const raw_dribbleSkill = (m: MPlayer) => {
   const a = A(m);
-  return (a.dribbling * 0.34 + a.ballControl * 0.2 + a.agility * 0.12 + a.balance * 0.1 + a.acceleration * 0.14 + a.flair * 0.1) * phys(m);
+  return (a.dribbling * 0.3 + a.ballControl * 0.14 + a.technique * 0.08 + a.agility * 0.12 + a.balance * 0.12 + a.acceleration * 0.14 + a.flair * 0.1) * phys(m);
 };
 const raw_tackleSkill = (m: MPlayer) => {
   const a = A(m);
@@ -113,7 +113,7 @@ const raw_recoverSkill = (m: MPlayer) => raw_paceSkill(m) * 0.7 + A(m).positioni
 /** Timing des Läufers gegen die Abseitslinie. */
 const raw_timingSkill = (m: MPlayer) => {
   const a = A(m);
-  return (a.decisions * 0.45 + a.concentration * 0.25 + a.vision * 0.15 + a.composure * 0.15) * m.cond * (m.day ?? 1);
+  return (a.decisions * 0.4 + a.concentration * 0.25 + a.vision * 0.15 + a.composure * 0.1 + (a.experience ?? 50) * 0.1) * m.cond * (m.day ?? 1);
 };
 
 // --- Abschluss ------------------------------------------------------------------
@@ -123,9 +123,9 @@ export function finishSkill(m: MPlayer, kind: ShotKind, pressure = 0): number {
   let v: number;
   switch (kind) {
     case 'header': v = a.heading * 0.6 + a.jumping * 0.2 + a.strength * 0.1 + a.composure * 0.1; break;
-    case 'long': v = a.longShots * 0.6 + a.shotPower * 0.25 + a.technique * 0.15; break;
+    case 'long': v = a.longShots * 0.5 + a.shotPower * 0.35 + a.technique * 0.15; break;
     case 'penalty': v = (a.penalties ?? 55) * 0.7 + a.composure * 0.3; break;
-    case 'freekick': v = (a.freeKicks ?? 50) * 0.75 + a.shotPower * 0.1 + a.technique * 0.15; break;
+    case 'freekick': v = (a.freeKicks ?? 50) * 0.7 + a.shotPower * 0.15 + a.technique * 0.15; break;
     default: v = a.shooting * 0.45 + a.shotPower * 0.12 + a.composure * 0.23 + a.technique * 0.12 + a.firstTouch * 0.08;
   }
   return v * (m.cond * (m.day ?? 1) * (0.85 + 0.15 * m.energy / 100)) * nerveF(m, pressure);

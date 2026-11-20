@@ -2,6 +2,7 @@
 // Typen der Spiel-Engine (Simulation, Live-Ereignisse, Spielbericht).
 // =============================================================================
 import type { InjurySeverity, MatchEvent, MatchResult, Player, Position, PositionGroup } from '../../types';
+import type { Why } from './traits';
 
 export type Side = 'home' | 'away';
 export const other = (s: Side): Side => (s === 'home' ? 'away' : 'home');
@@ -143,6 +144,10 @@ export interface SimEvent {
   card?: 'yellow' | 'yellowRed' | 'red';
   /** Ballverlust: wie der Angriff endete (Duell-Art) – für den Kommentar. */
   fail?: 'intercept' | 'tackle' | 'aerial' | 'claim' | 'cross_blocked' | 'race' | 'recycle' | 'longball';
+  /** Entscheidendes Attribut des Duells davor (engine/match/traits.ts, nur Kommentar; nur mit live/trace). */
+  why?: Why;
+  /** Entscheidendes Attribut beim Abschluss (Nervenstärke, Schusskraft, Reflexe …; nur Kommentar). */
+  fin?: Why;
   severity?: InjurySeverity;
   /** Grund für Fehlversuch / VAR / Ansage (frei). */
   detail?: string;

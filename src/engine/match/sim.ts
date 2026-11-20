@@ -19,6 +19,7 @@ import { aerialSkill, countDuel, dayForm, dribbleSkill, duelP, duelSkill, refres
 import type { MPlayer, Mentality, ShoutId, Side, SimEvent, SimEventKind, TeamTalk } from './types';
 import { applyWarmBonus, assistantCoach, drainWarmUps } from './sideline';
 import { other } from './types';
+import { NEUTRAL_TRAITS, teamworkBias, workRateF } from './traits';
 
 export function mulberry32(seed: number): () => number {
   let a = seed >>> 0;
@@ -75,7 +76,7 @@ const PERIOD_END = [0, 45, 90, 105, 120];
 /** Hintergrund-Zweikämpfe je Minute (dazu kommen die Duelle der Angriffe). */
 const BG_DUELS = 1;
 /** Angriffe ins letzte Drittel je Minute und Team (Grundwert). */
-const ATTACK_PACE = 0.42;
+const ATTACK_PACE = 0.405;
 const bgRole = (m: MPlayer) => (m.group === 'MID' ? 1.4 : m.group === 'ATT' ? 1 : 0.9);
 /** Schnelle Auswahl nach Rolle für Hintergrund-Zweikämpfe (ohne Zwischenarrays). */
 function bgPick(ms: MPlayer[], r: number): MPlayer {
@@ -166,7 +167,7 @@ export class MatchSim {
     const firstXi = (kind: keyof typeof orders, legacy: string | null | undefined) => firstPresent(orders[kind] ?? [], (id) => xiIds.has(id)) ?? (legacy && xiIds.has(legacy) ? legacy : null);
     const team: TeamState = {
       side, club, human, own: savedLineup, players: ps, formation: lu.formation,
-      refs: { attack: 1, control: 1, defense: 1 }, units: null as never, mods: null as never, plan: null as never, year: this.era.year,
+      refs: { attack: 1, control: 1, defense: 1 }, units: null as never, mods: null as never, plan: null as never, tr: NEUTRAL_TRAITS, year: this.era.year,
       goals: 0, stats: emptyStats(), mentality: 0, subsUsed: 0,
       shout: null, shoutUntil: 0, shoutPower: 0, shoutReadyAt: 0, shoutHistory: [], talk: 1,
       penaltyTakerId: firstXi('penalty', t?.penaltyTakerId), freeKickTakerId: firstXi('fkDirect', t?.freeKickTakerId),
@@ -370,10 +371,14 @@ export class MatchSim {
     this.duels(H, A, ph);
 
     // --- Angriffe ---
-    const pace = ATTACK_PACE * (this.year < 1990 ? 1.04 : this.year < 2005 ? 0.98 : 1);
-    const late = this.minute > 75 ? 1.06 : 1;
-    const rateH = pace * H.mods.rate * (0.75 + 0.5 * ph) * late;
-    const rateA = pace * A.mods.rate * (0.75 + 0.5 * (1 - ph)) * late;
+    const pace = ATTACK_PACE * (this.year < 1990 ? 1.04 : this.year < 2005 ? 0.97 : this.year < 2015 ? 0.93 : this.year < 2020 ? 0.92 : 0.94);
+    // Mehr Tore nach der Pause (Daten 1994–2026: 54–58 %): Müdigkeit, Wechsel, Risiko in der Schlussphase
+    const late = this.period >= 2 ? (this.minute > 75 ? 1.17 : 1.08) : 0.96;
+    // Laufbereitschaft (× Kraft): mehr Spieler gehen mit nach vorn (engine/match/traits.ts)
+    // Unentschieden in der Schlussphase: beide gehen weniger Risiko (Remis 1985–94: 29 %, sonst 24–26 %)
+    const level = this.minute > 60 && this.effDiff('home') === 0 ? (this.year >= 1985 && this.year < 1995 ? 0.7 : 0.9) : 1;
+    const rateH = pace * H.mods.rate * (0.75 + 0.5 * ph) * late * level * workRateF(H.tr);
+    const rateA = pace * A.mods.rate * (0.75 + 0.5 * (1 - ph)) * late * level * workRateF(A.tr);
     const first: Side = this.rng() < 0.5 ? 'home' : 'away';
     for (const s of [first, other(first)]) {
       const t = this.team(s);
@@ -418,7 +423,8 @@ export class MatchSim {
     // eigene Taktik (kurz/Tempo) und das Pressing des Gegners.
     const o = this.team(other(t.side));
     const eraAcc = this.year < 1985 ? 0.69 : this.year < 1995 ? 0.72 : this.year < 2005 ? 0.75 : this.year < 2015 ? 0.78 : 0.8;
-    const accBase = eraAcc + (t.units.passing - 62) / 100 * 0.45 + t.plan.passBias * 0.12 - o.plan.pressBias * 0.08;
+    // Teamwork: Laufwege und Abstimmung (±1 % Passquote bei ±12 Punkten)
+    const accBase = eraAcc + (t.units.passing - 62) / 100 * 0.45 + t.plan.passBias * 0.12 - o.plan.pressBias * 0.08 + teamworkBias(t.tr) * 0.05;
     const acc = Math.max(0.5, Math.min(0.93, accBase + (share - 0.5) * 0.12 - (this.weather === 'regen' || this.weather === 'schnee' ? 0.025 : 0)));
     t.stats.passes += n; t.stats.passesOk += n * acc;
   }

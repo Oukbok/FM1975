@@ -9,6 +9,7 @@ import type { TeamState } from './state';
 import { shot } from './actions';
 import { advantage, aerial, airDefRole, airRole, fieldOf, keeperOf, pickC, pulse } from './attack';
 import { aerialSkill, duelP, finishSkill, keeperValue } from './skills';
+import { commBias, REF, whyAerial } from './traits';
 import type { MPlayer, ShotOutcome } from './types';
 
 const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
@@ -34,21 +35,24 @@ function setPieceDelivery(sim: MatchSim, T: TeamState, O: TeamState, taker: MPla
   const fT = fieldOf(T), fO = fieldOf(O);
   const gk = keeperOf(O);
   if (gk && rng() < 0.12 * clamp((keeperValue(gk, 'air') / 65) ** 2, 0.4, 2) * clamp(68 / Math.max(30, quality), 0.6, 1.6)) {
-    sim.note('attack_fail', { side: T.side, player: taker.id, other: gk.id, fail: 'claim', build: sp === 'corner' ? 'ecke' : 'freistoss' });
+    sim.note('attack_fail', { side: T.side, player: taker.id, other: gk.id, fail: 'claim', build: sp === 'corner' ? 'ecke' : 'freistoss', why: (sim.live || sim.trace) && gk.p.attributes.communication >= 80 ? 'comm' : undefined });
     return;
   }
   const tgt = pickC(sim, T, 30, (m) => airRole(m, true) * sq(aerialSkill(m)), taker) ?? taker;
   const dd = pickC(sim, O, 31, (m) => airDefRole(m) * sq(aerialSkill(m)))!;
   if (!dd) return;
   const adv = advantage(sim, T, O);
-  const p = duelP(aerialSkill(tgt) + (quality - 60) * 0.4, aerialSkill(dd), B_SP + adv * 0.4);
+  // Hereingabe (Ecken/Freistöße) gegen Kopfball, Deckung der Verteidiger und Kommandos des Torwarts (traits.ts)
+  const mk = dd.group === 'DEF' ? (dd.p.attributes.marking - REF.marking) * 0.25 : 0;
+  const p = duelP(aerialSkill(tgt) + (quality - 60) * 0.55, aerialSkill(dd) + mk, B_SP + adv * 0.4 - commBias(O.tr));
   const won = rng() < p;
   aerial(T, O, won ? tgt : dd, won ? dd : tgt, won);
+  const told = sim.live || sim.trace;
   if (won) {
-    shot(sim, T, O, { build: sp === 'corner' ? 'ecke' : 'flanke', type: 'header', shooter: tgt, assister: taker, q: 1 + 0.6 * (1 - p), sp, other: dd.id });
+    shot(sim, T, O, { build: sp === 'corner' ? 'ecke' : 'flanke', type: 'header', shooter: tgt, assister: taker, q: 1 + 0.6 * (1 - p), sp, other: dd.id, why: told ? whyAerial(tgt, dd) : undefined });
     return;
   }
-  sim.note('attack_fail', { side: T.side, player: tgt.id, other: dd.id, fail: 'aerial', build: sp === 'corner' ? 'ecke' : 'freistoss' });
+  sim.note('attack_fail', { side: T.side, player: tgt.id, other: dd.id, fail: 'aerial', build: sp === 'corner' ? 'ecke' : 'freistoss', why: told ? whyAerial(dd, tgt) : undefined });
   // Zweiter Ball an der Strafraumgrenze
   if (rng() < 0.1) {
     const sh = pickC(sim, T, 32, (m) => (m.group === 'MID' ? 2 : 0.6) * sq(m.p.attributes.longShots));
