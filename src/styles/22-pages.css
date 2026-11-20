@@ -349,3 +349,20 @@
 .opp-unit-d.pos { color: var(--pos); }
 .opp-unit-d.neg { color: var(--neg); }
 .dvs-nocrest { display: block; width: 72px; height: 72px; }
+
+/* Catering als Jahresentscheidung (MarketingView, game/cateringGame.ts) */
+.dmkt-cat-exp { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 10px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; }
+.dmkt-cat-exp span { font-size: 14.5px; color: var(--text-2); }
+.dmkt-cat-exp b { font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--text); }
+.dmkt-cat-exp i { grid-column: 1 / -1; font-style: normal; font-size: 13px; color: var(--text-3); }
+.dmkt-cat-list { display: grid; gap: 4px; margin-top: 8px; }
+.dmkt-cat-opt { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 5px 10px; border: 1px solid var(--border-soft); border-radius: 6px; background: transparent; color: var(--text); font: inherit; text-align: left; cursor: pointer; }
+.dmkt-cat-opt:not(:disabled):hover { border-color: var(--accent); }
+.dmkt-cat-opt:disabled { cursor: default; }
+.dmkt-cat-opt.on { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+.dmkt-cat-opt span b { display: block; font-size: 14.5px; }
+.dmkt-cat-opt span small { display: block; font-size: 12.5px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dmkt-cat-opt em { font-style: normal; font-weight: 700; font-size: 14.5px; text-align: right; white-space: nowrap; }
+.dmkt-cat-opt em small { display: block; font-size: 12px; font-weight: 600; }
+.dmkt-cat-opt em small.up { color: var(--pos); }
+.dmkt-cat-opt em small.down { color: var(--neg); }

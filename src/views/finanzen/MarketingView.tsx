@@ -1,16 +1,15 @@
 import { GOAL_LABEL, MARKETING_AREAS, MARKETING_BY_ID, MARKETING_GOALS, areaMonthlyCostBase, areaSaturation, channelGoals, marketingAvailable, marketingPriceFactor, type MarketingGoal } from '../../data/marketing';
 import { marketingView } from '../../game/marketingGame';
+import { cateringDealNow, cateringExpectation, cateringOffers, cateringOpen, chooseCatering } from '../../game/cateringGame';
 import { economyScale, yearOf } from '../../engine/economy';
 import { LED_YEAR } from '../../data/sponsorCatalog';
 import { computeMonthly } from '../../engine/finances';
 import { bandenFactor, tvEraText, tvPresence } from '../../engine/sponsorship';
-import { CATERING_LEASE, CATERING_NETPERHEAD, CATERING_UPKEEP, cateringMatchIncome, expectedAttendance, matchdayIncome, clubPriceScale } from '../../engine/finances';
+import { CATERING_UPKEEP, cateringMatchIncome, expectedAttendance, matchdayIncome, clubPriceScale } from '../../engine/finances';
 import { MAX_LEVEL } from '../../engine/infrastructure';
 import { Game } from '../../game/state';
-import { CateringMode } from '../../types';
 import { DashBox, DashPage, KV, Kpi } from '../../ui/DashPage';
 import { fmtDM, fmtDMfull } from '../../ui/format';
-import { fmtSmallMoney } from '../shared';
 
 // =============================================================================
 // MARKETING — Werbe-Regler je Kanal, epochenabhängig (Block p11)
@@ -39,15 +38,11 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
 
   // --- Mitgliedsbeitraege, Catering-Betriebsform, Programmhefte (Finanzsystem) ---
   const cateringLevel = Math.max(1, Math.min(MAX_LEVEL, Math.round(club.infrastructure?.catering ?? 1)));
-  const cateringMode: CateringMode = club.commerce?.cateringMode ?? 'verpachtung';
-  const CATERING_MODE_LABEL: Record<CateringMode, string> = {
-    eigenbetrieb: 'Eigenbetrieb', umsatz: 'Umsatzbeteiligung', verpachtung: 'Verpachtung',
-  };
-  const setCateringMode = (m: CateringMode) => {
-    const com = club.commerce ?? (club.commerce = { cateringMode: 'verpachtung' });
-    com.cateringMode = m;
-    onChange();
-  };
+  const cExp = cateringExpectation(g, club);
+  const cOffers = cateringOffers(g);
+  const cDeal = cateringDealNow(g);
+  const cOpen = cateringOpen(g);
+  const pickCatering = (i: number | null) => { chooseCatering(g, i); onChange(); };
   // Mitgliedsbeiträge und Werbeflächen wie im Monatsabschluss (engine/finances.ts computeMonthly).
   const monthly = computeMonthly(club, g.players, g.table, scale, curYear);
   const membershipMonth = monthly.membership;
@@ -131,28 +126,42 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
         {future.length > 0 && <KV k="Nächster Werbekanal" v={`${future[0].name} · ab ${future[0].unlockYear}`} />}
       </DashBox>
 
-      <DashBox title="Werbeflächen im Stadion" info="reichweite" icon="stadium">
+      <DashBox title="Stadion & Spieltag" info="reichweite" icon="stadium">
+        <div className="dsec">Werbeflächen</div>
         <KV k="Bandenpartner" v={bandenDeal ? `${bandenDeal.partner} · ${fmtDM(monthly.advertising * 12)}/Jahr` : 'frei – siehe Sponsoring'} />
         <KV k="Banden" v={curYear >= LED_YEAR ? 'LED, wechselnde Motive' : 'statisch'} />
         <KV k="Wert (Zuschauer × TV)" info="reichweite" v={`${Math.round(bandenFactor(club, curYear) * 100)} %`} />
         <KV k="TV-Präsenz" v={`${Math.round(presence * 100)} %`} />
         <div className="dnote mt8">{tvEraText(curYear)}.</div>
+        <div className="dsec">Pro Heimspiel (erwartet)</div>
+        <KV k="Zuschauer" v={expAtt.toLocaleString('de-DE')} />
+        <KV k="Catering" v={cDeal ? `${fmtDM(Math.round(cDeal.annual / 12))}/Monat fest` : fmtDM(expCatering)} />
+        <KV k="Programmhefte" v={fmtDM(expProgramme)} />
       </DashBox>
 
       <DashBox title="Catering & Spieltag" info="catering" icon="catering" right={`Stufe ${cateringLevel}`}>
-        <div className="dbtnrow" style={{ marginBottom: 8 }}>
-          {(['eigenbetrieb', 'umsatz', 'verpachtung'] as CateringMode[]).map((m) => (
-            <button key={m} className={`dchip ${cateringMode === m ? 'on' : ''}`} onClick={() => setCateringMode(m)}>{CATERING_MODE_LABEL[m]}</button>
-          ))}
+        {/* Wunsch Pascal: Jahresentscheidung statt fester Betriebsform (game/cateringGame.ts) */}
+        <div className="dmkt-cat-exp">
+          <span>Eigenbetrieb erwartet / Saison</span>
+          <b>{fmtDM(cExp.mid)}</b>
+          <i>je nach Zuschauern {fmtDM(cExp.lo)} bis {fmtDM(cExp.hi)} · Fixkosten {fmtDMfull(Math.round(CATERING_UPKEEP.eigenbetrieb[cateringLevel] * scale))}/Monat</i>
         </div>
-        <KV k="Netto pro Besucher" v={fmtSmallMoney(CATERING_NETPERHEAD[cateringMode][cateringLevel] * scale, curYear)} />
-        <KV k="Fixkosten / Monat" v={`−${fmtDMfull(Math.round(CATERING_UPKEEP[cateringMode][cateringLevel] * scale))}`} color="var(--red)" />
-        {cateringMode === 'verpachtung' && <KV k="Pacht / Monat" v={`+${fmtDMfull(Math.round(CATERING_LEASE[cateringLevel] * scale))}`} color="var(--green)" />}
-        <div className="dsec">Pro Heimspiel (erwartet)</div>
-        <KV k="Zuschauer" v={expAtt.toLocaleString('de-DE')} />
-        <KV k="Catering" v={fmtDM(expCatering)} />
-        <KV k="Programmhefte" v={fmtDM(expProgramme)} />
-        <div className="dnote mt8">Eigenbetrieb: höchster Erlös, hohe Fixkosten. Verpachtung: feste Pacht, kaum Kosten.</div>
+        <div className="dmkt-cat-list">
+          <button type="button" className={`dmkt-cat-opt ${!cDeal ? 'on' : ''}`} disabled={!cOpen} onClick={() => pickCatering(null)}>
+            <span><b>Eigenbetrieb</b><small>Erlös je Besucher – läuft es gut, verdienst du mehr</small></span><em>variabel</em>
+          </button>
+          {cOffers.map((o, i) => {
+            const on = cDeal?.caterer === o.caterer;
+            const diff = cExp.mid ? Math.round((o.annual / cExp.mid - 1) * 100) : 0;
+            return (
+              <button key={o.caterer} type="button" className={`dmkt-cat-opt ${on ? 'on' : ''}`} disabled={!cOpen} onClick={() => pickCatering(i)}>
+                <span><b>{o.caterer}</b><small>Jahresvertrag, feste Summe in Monatsraten</small></span>
+                <em>{fmtDM(o.annual)}<small className={diff >= 0 ? 'up' : 'down'}>{diff >= 0 ? '+' : '−'}{Math.abs(diff)} %</small></em>
+              </button>
+            );
+          })}
+        </div>
+        <div className="dnote mt8">{cOpen ? `Entscheide bis 31. Juli ${g.season.slice(0, 4)}. Ohne Wahl bleibt der Eigenbetrieb.` : cDeal ? `Vertrag mit ${cDeal.caterer} bis Saisonende – nächste Saison neu.` : 'Eigenbetrieb bis Saisonende – nächste Saison gibt es neue Angebote.'}</div>
       </DashBox>
     </DashPage>
   );

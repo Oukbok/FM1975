@@ -626,7 +626,7 @@ export const INFO_TEXTS = {
   },
   catering: {
     title: 'Catering-Betrieb',
-    text: 'Eigenbetrieb bringt den höchsten Erlös je Besucher, aber hohe Fixkosten. Umsatzbeteiligung teilt Risiko und Ertrag, Verpachtung bringt eine feste Pacht ohne Aufwand.',
+    text: 'Jede Saison entscheidest du bis 31. Juli: Eigenbetrieb (Erlös je Besucher, hohe Fixkosten – eine starke Saison mit vollen Rängen bringt mehr) oder ein Jahresvertrag mit einem Caterer (feste Summe in Monatsraten). Die Angebote liegen mal über, mal unter dem erwarteten Eigenbetrieb.',
     wiki: 'finance-catering',
   },
   mitglieder: {

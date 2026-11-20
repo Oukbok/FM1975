@@ -2209,8 +2209,11 @@ Transferbudget (Spielerkäufe) und Gehaltsbudget (Wochenlohnsumme) werden getren
     id: 'finance-catering',
     category: 'finance',
     title: 'Catering & Betriebsformen (Würstchenbuden)',
-    keywords: ['catering', 'würstchen', 'imbiss', 'getränke', 'betriebsform', 'eigenbetrieb', 'umsatz', 'verpachtung', 'pacht', 'pro-kopf', 'spieltag'],
+    keywords: ['catering', 'jahresvertrag', 'caterer', 'würstchen', 'imbiss', 'getränke', 'betriebsform', 'eigenbetrieb', 'umsatz', 'verpachtung', 'pacht', 'pro-kopf', 'spieltag'],
     body: `## Catering / Würstchenbuden
+## Deine Entscheidung je Saison: Eigenbetrieb oder Jahresvertrag
+Unter **Finanzen › Marketing** bieten dir zu jeder Saison drei Caterer einen **Jahresvertrag** mit fester Summe an – mal über, mal unter dem, was der Eigenbetrieb voraussichtlich bringt (die Box zeigt den Erwartungswert und die Spanne je nach Zuschauern). Bis zum **31. Juli** wählst du: **Eigenbetrieb** (Erlös je Besucher, hohe Fixkosten – läuft die Saison gut und kommen viele Zuschauer, verdienst du mehr) oder einen **Vertrag** (feste Summe in Monatsraten, kaum Kosten – du bist gegen leere Ränge abgesichert, verschenkst aber den Mehrerlös einer starken Saison). Ohne Wahl bleibt der Eigenbetrieb; zur nächsten Saison gibt es neue Angebote. Die Betriebsformen unten gelten weiter für die KI-Vereine und ältere Spielstände bis zum nächsten Saisonwechsel.
+
 Catering ist eine **ausbaubare Einrichtung** (Bereich **Gelände**, 5 Stufen) mit eigenem Icon. Der Erlös entsteht **pro Heimspiel**:
 \`Zuschauer × Netto-pro-Kopf\` (era-skaliert, 1975-Basis). Die **Betriebsform** wählst du im Bereich **Marketing** oder direkt an der Catering-Einrichtung im **Gelände**.
 

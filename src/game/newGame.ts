@@ -1,3 +1,4 @@
+import { cateringSeasonStart } from './cateringGame';
 import { cupField } from '../engine/worldReserves';
 import { bindMarketing } from './marketingGame';
 import { recordSeasonBriefing } from './seasonBriefing';
@@ -297,6 +298,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   // Sponsoring 2.0: Werbeflächen 1975 (Brust, Ausrüster, Banden, Regionalpartner) – KI unterschreibt, du bekommst Angebote.
   initSponsorship(g0);
   // Saison-Briefing „So anders ist der Fußball 1975/76“ (game/seasonBriefing.ts).
+  cateringSeasonStart(g0); // eigener Verein startet im Catering-Eigenbetrieb, Verträge wählbar bis 31.7.
   recordSeasonBriefing(g0, true);
   recordBudgetPlan(g0, { pending: true }); // Saisonbudget (game/budgetPlan.ts)
   migratePositionSkills(g0); // Positionsvertrautheit aller Spieler (game/positionsGame.ts)

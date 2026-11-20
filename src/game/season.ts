@@ -56,6 +56,7 @@ import { homeExtraAwards, worldExtraAwards } from './extraAwardsGame';
 
 const isGermanHome = (g: Game) => homeCountryOf(g) === 'ger';
 import { sponsorSeasonStart } from './sponsorGame';
+import { cateringSeasonStart } from './cateringGame';
 import { contractSeasonStart } from './contractClausesGame';
 import { honoursSeasonEnd } from './clubHonours';
 import { worldPoolSeason } from './worldPool';
@@ -351,6 +352,7 @@ export function startNextSeason(g: Game): void {
 
   // --- 7c) Sponsoring 2.0: Laufzeiten, Abstiegsklauseln, Angebote, KI-Abschlüsse (game/sponsorGame.ts) ---
   sponsorSeasonStart(g, newSeason, calendar.seasonStartDate);
+  cateringSeasonStart(g, newSeason); // Catering-Vertrag läuft ab → Eigenbetrieb, neue Angebote
   // Vertrag 2.0: Abstiegsklausel, gestaffelte Gehälter, Klassenerhalt-Prämien (game/contractClausesGame.ts)
   contractSeasonStart(g);
 

@@ -112,6 +112,8 @@ function clampCateringLevel(level: number): number {
 
 /** Netto-Catering-Erloes eines Heimspiels (bereits era-skaliert). */
 export function cateringMatchIncome(club: Club, attendance: number, scale = 1): number {
+  // Jahresvertrag (game/cateringGame.ts): feste Summe über die Pacht, kein Erlös je Besucher.
+  if (club.commerce?.cateringDeal) return 0;
   const mode: CateringMode = club.commerce?.cateringMode ?? 'verpachtung';
   const level = clampCateringLevel(club.infrastructure?.catering ?? 1);
   return Math.round(attendance * CATERING_NETPERHEAD[mode][level] * scale);
@@ -397,8 +399,9 @@ export function computeMonthly(
   const membership = Math.round(membershipYear * (1 + honourFx(club.id, 'members')) / 12); // Volle Hütte
   // Catering-Pacht nur bei Verpachtung.
   const cLevel = Math.max(1, Math.min(5, Math.round(club.infrastructure?.catering ?? 1)));
-  const cateringLease = (club.commerce?.cateringMode ?? 'verpachtung') === 'verpachtung'
-    ? Math.round(CATERING_LEASE[cLevel] * localScale) : 0;
+  const deal = club.commerce?.cateringDeal;
+  const cateringLease = deal ? Math.round(deal.annual / 12)
+    : (club.commerce?.cateringMode ?? 'verpachtung') === 'verpachtung' ? Math.round(CATERING_LEASE[cLevel] * localScale) : 0;
 
   // Platzierungsbonus vom Sponsor (monatlich, je besser die Tabellenposition)
   let placementBonus = 0;

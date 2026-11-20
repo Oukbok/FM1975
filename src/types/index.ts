@@ -1247,6 +1247,8 @@ export interface ClubCommerce {
   banden?: SponsorContract;
   /** Betriebsform der Wuerstchenbuden (Default 'verpachtung'). */
   cateringMode: CateringMode;
+  /** Catering-Jahresvertrag des eigenen Vereins (game/cateringGame.ts): feste Summe für eine Saison, nominal. */
+  cateringDeal?: { season: string; caterer: string; annual: number };
   /** Aktuelle Trikot-Angebote (je Saison neu). */
   shirtOffers?: SponsorOffer[];
   /** Aktuelle Banden-Angebote (je Saison neu). */
