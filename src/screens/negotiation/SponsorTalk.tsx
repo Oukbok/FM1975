@@ -94,7 +94,8 @@ export function SponsorTalk({ g, req, onClose, onChange }: { g: Game; req: Spons
     setTick((t) => t + 1);
     onChange();
   };
-  const cancel = () => { cancelSponsorTalk(g, key); setTick((t) => t + 1); onChange(); };
+  // Abbrechen schließt den Tisch (Wunsch Pascal: vorher blieb sichtbar alles gleich); das Angebot bleibt bestehen.
+  const cancel = () => { cancelSponsorTalk(g, key); onChange(); onClose(); };
   const set = (x: Partial<SponsorTerms>) => offer && setOffer({ ...offer, ...x });
   const toggleLock = (k: SponsorPoint) => setLocks((cur) => (cur.includes(k) ? cur.filter((y) => y !== k) : [...cur, k]));
 
@@ -237,7 +238,8 @@ export function SponsorTalk({ g, req, onClose, onChange }: { g: Game; req: Spons
                 reverse: true, offer: v.worth!(offer), ask: v.askWorth, open: 1, zone: v.zone, hist: v.hist, fmt: pctText,
                 offerLabel: 'Deine Forderung', askLabel: st?.round ? 'Sponsor bietet' : 'Sponsor bietet (Eröffnung)',
                 zoneLabel: 'Marketing schätzt: bis hier geht er mit', unit: 'Kosten für den Sponsor, gemessen an seinem ersten Angebot (= 100 %)',
-                gapFmt: (x) => `${Math.round(x * 100)} Punkte`,
+                // Wunsch Pascal: statt „Punkte“ die Differenz in % und als Betrag pro Jahr (gemessen am ersten Angebot).
+                gapFmt: (x) => `Differenz ${Math.round(x * 100)} % · ≈ ${money(x * b.value)} / Jahr`,
               }} />
             </NegCard>
             <NegCard title="Vertragspunkte" className="vt-tablecard" right={locks.length ? `${locks.length} nicht verhandelbar` : undefined}>

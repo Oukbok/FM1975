@@ -208,7 +208,7 @@ export function StaffTalk({ g, req, onClose, onChange }: { g: Game; req: StaffRe
                 offer: v.worth!(offer), ask: v.askWorth, open: 1, zone: v.zone, hist: v.hist, fmt: pctText,
                 offerLabel: 'Dein Paket', askLabel: st?.round ? 'Forderung' : 'Forderung (Eröffnung)',
                 zoneLabel: 'Dein Stab schätzt: ab hier sagt er zu', unit: 'Wert für ihn, gemessen an seiner ersten Forderung (= 100 %)',
-                gapFmt: (x) => `${Math.round(x * 100)} Punkte`,
+                gapFmt: (x) => `Differenz ${Math.round(x * 100)} %`,
               }} />
             </NegCard>
             <NegCard title="Vertragspunkte" className="vt-tablecard" right={locks.length ? `${locks.length} nicht verhandelbar` : undefined}>

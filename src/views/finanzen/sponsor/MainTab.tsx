@@ -80,10 +80,10 @@ export function MainTab({ ctx, ui, onTab, onGoto }: { ctx: SpCtx; ui: SponsorUi;
             <div className="sp3-shirt-cap">{preview ? <>Vorschau: <b>{preview.partner}</b> · {SLOT_BY_ID[preview.slot].short}</> : `Heimtrikot ${g.season}`}</div>
           </div>
           <div className="sp3-hp-cards">
-            <SlotCard ctx={ctx} ui={ui} slot="brust" d={brust} n={count('brust')} onOffers={showOffers} big />
-            <SlotCard ctx={ctx} ui={ui} slot="ausruester" d={ausr} n={count('ausruester')} onOffers={showOffers} />
-            {aermel || aermelOpen ? <SlotCard ctx={ctx} ui={ui} slot="aermel" d={aermel} n={count('aermel')} onOffers={showOffers} />
-              : <div className="sp3-scard locked"><span className="sp3-scard-lbl">Ärmel</span><b>noch Liga-Fläche</b><span className="dnote">Ab 2017/18 vermarktet der Verein den Ärmel selbst.</span></div>}
+            <SlotCard ctx={ctx} ui={ui} slot="brust" d={brust} n={count('brust')} onOffers={showOffers} sel={filter === 'brust'} big />
+            <SlotCard ctx={ctx} ui={ui} slot="ausruester" d={ausr} n={count('ausruester')} onOffers={showOffers} sel={filter === 'ausruester'} />
+            {aermel || aermelOpen ? <SlotCard ctx={ctx} ui={ui} slot="aermel" d={aermel} n={count('aermel')} onOffers={showOffers} sel={filter === 'aermel'} />
+              : <div className={`sp3-scard locked ${filter === 'aermel' ? 'on' : ''}`} role="button" tabIndex={0} onClick={() => showOffers('aermel')}><span className="sp3-scard-lbl">Ärmel</span><b>noch Liga-Fläche</b><span className="dnote">Ab 2017/18 vermarktet der Verein den Ärmel selbst.</span></div>}
           </div>
         </div>
       </DashBox>
@@ -127,9 +127,15 @@ export function MainTab({ ctx, ui, onTab, onGoto }: { ctx: SpCtx; ui: SponsorUi;
 }
 
 /** Karte je Trikotfläche: laufender Vertrag mit den wichtigsten Werten bzw. frei mit Marktwert und Angeboten. */
-function SlotCard({ ctx, ui, slot, d, n, onOffers, big }: {
-  ctx: SpCtx; ui: SponsorUi; slot: 'brust' | 'ausruester' | 'aermel'; d?: SponsorDeal; n: number; onOffers: (s: SponsorSlotId) => void; big?: boolean;
+function SlotCard({ ctx, ui, slot, d, n, onOffers, big, sel }: {
+  ctx: SpCtx; ui: SponsorUi; slot: 'brust' | 'ausruester' | 'aermel'; d?: SponsorDeal; n: number; onOffers: (s: SponsorSlotId) => void; big?: boolean; sel?: boolean;
 }) {
+  // Wunsch Pascal: Klick auf eine Fläche zeigt unten ihre offenen Angebote; Details per Rechtsklick.
+  const pick = (t: Parameters<SponsorUi['bind']>[0], label: string) => {
+    const b = ui.bind(t, label);
+    return { ...b, onClick: (e: React.MouseEvent) => { e.stopPropagation(); onOffers(slot); },
+      onKeyDown: (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOffers(slot); } else b.onKeyDown?.(e as never); } };
+  };
   const { g, year, club, tier } = ctx;
   const def = SLOT_BY_ID[slot];
   const s = economyScale(year);
@@ -137,7 +143,7 @@ function SlotCard({ ctx, ui, slot, d, n, onOffers, big }: {
     const market = slotMarketValue(club, slot, year, tier);
     const best = ctx.offers.filter((o) => o.slot === slot && !o.renewal).sort((x, y) => y.annualValue - x.annualValue)[0];
     return (
-      <div className={`sp3-scard free ${ui.isOpen({ kind: 'free', slot }) ? 'on' : ''}`} {...ui.bind({ kind: 'free', slot }, def.name)}>
+      <div className={`sp3-scard free ${sel ? 'on' : ''}`} {...pick({ kind: 'free', slot }, def.name)}>
         <span className="sp3-scard-lbl">{def.short}</span>
         <b className="sp3-scard-name">frei</b>
         <span className="dnote">Marktwert ≈ {fmtDM(market)} pro Jahr</span>
@@ -152,7 +158,7 @@ function SlotCard({ ctx, ui, slot, d, n, onOffers, big }: {
   const b = d.bonuses;
   const renew = ctx.offers.find((o) => o.renewal && o.partner === d.partner);
   return (
-    <div className={`sp3-scard ${big ? 'big' : ''} ${ui.isOpen({ kind: 'deal', id: d.id }) ? 'on' : ''}`} {...ui.bind({ kind: 'deal', id: d.id }, d.partner)}>
+    <div className={`sp3-scard ${big ? 'big' : ''} ${sel ? 'on' : ''}`} {...pick({ kind: 'deal', id: d.id }, d.partner)}>
       <span className="sp3-scard-lbl">{def.short}</span>
       <span className="sp3-scard-head">
         <SponsorLogo name={d.partner} industry={d.industry} year={Number(d.since.slice(0, 4))} variant="mark" className="sp3-scard-logo" />

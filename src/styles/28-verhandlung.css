@@ -117,7 +117,7 @@
 .vt-pos-num.theirs { text-align: right; }
 .vt-pos-num.theirs > b { color: var(--navy); }
 .vt-pos-num.gap { text-align: center; padding: 6px 18px; border-radius: 6px; background: rgba(var(--ink-rgb), 0.05); }
-.vt-pos-num.gap > b { font-size: 27px; font-weight: 600; color: var(--text); }
+.vt-pos-num.gap > b { font-size: 22px; font-weight: 600; color: var(--text); white-space: nowrap; }
 .vt-pos.tone-good .vt-pos-num.gap { background: rgba(var(--green-rgb), 0.14); }
 .vt-pos.tone-good .vt-pos-num.gap > span { color: var(--green); }
 .vt-pos.tone-mid .vt-pos-num.gap { background: rgba(var(--yellow-rgb), 0.16); }

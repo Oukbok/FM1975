@@ -107,11 +107,17 @@ export function useSponsorUi(g: Game, onChange: () => void, onGoto: (s: Screen) 
     return [details];
   };
 
+  const openTarget = (t: SpTarget) => {
+    if (t.kind === 'offer') return setTalk(t.id);
+    if (t.kind === 'namingOffer') { const o = currentNamingOffers(g)[t.idx]; if (o) return talkNaming(o.sponsor); }
+    setCard(t);
+  };
   const bind: SponsorUi['bind'] = (t, label) => ({
-    onClick: (e) => { e.stopPropagation(); setCard(t); },
+    // Angebote (Wunsch Pascal): Klick führt direkt an den Verhandlungstisch, die Karteikarte gibt es per Rechtsklick › Details.
+    onClick: (e) => { e.stopPropagation(); openTarget(t); },
     onContextMenu: (e) => { e.preventDefault(); e.stopPropagation(); setMenu({ x: e.clientX, y: e.clientY, t }); },
     onKeyDown: (e) => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setCard(t); }
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openTarget(t); }
       if (e.key === 'ContextMenu' || (e.shiftKey && e.key === 'F10')) {
         e.preventDefault();
         const r = (e.currentTarget as HTMLElement).getBoundingClientRect();

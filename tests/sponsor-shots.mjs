@@ -70,10 +70,12 @@ for (const [W, H] of views) {
       await page.mouse.move(5, 5);
     }
     if (W !== views[0][0]) continue;
-    // Linksklick: Karteikarte des ersten Vertrags/Angebots/Felds
-    const first = page.locator('.sp3-dpage [data-sp^="deal:"], .sp3-dpage [data-sp^="offer:"], .sp3-dpage [data-sp^="st:"]').first();
+    // Karteikarte des ersten Vertrags/Felds (Rechtsklick › Details; Linksklick auf ein Angebot öffnet den Verhandlungstisch,
+    // auf eine Trikotfläche filtert er die Angebote)
+    const first = page.locator('.sp3-dpage [data-sp^="deal:"], .sp3-dpage [data-sp^="st:"]').first();
     if (await first.count()) {
-      await first.click();
+      await first.click({ button: 'right' });
+      await page.locator('.sp3-menu .pcm-item:has-text("Details")').click();
       await page.waitForTimeout(300);
       await shot(`${id}_karte`);
       await page.locator('.sp3-card .modal-close').click();
@@ -89,7 +91,8 @@ for (const [W, H] of views) {
     }
     const free = page.locator('.sp3-dpage [data-sp^="free:"]').first();
     if (id === 'pyramide' && await free.count()) {
-      await free.click();
+      await free.click({ button: 'right' });
+      await page.locator('.sp3-menu .pcm-item').first().click();
       await page.waitForTimeout(300);
       await shot(`${id}_frei`);
       await page.locator('.sp3-card .modal-close').click();

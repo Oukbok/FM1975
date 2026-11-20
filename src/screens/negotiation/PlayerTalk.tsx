@@ -172,7 +172,7 @@ export function PlayerTalk({ g, req, onClose, onChange, steps }: { g: Game; req:
                 offer: v.worth!(offer!), ask: v.askWorth, open: 1, zone: v.zone, hist: v.hist, fmt: pctText,
                 offerLabel: 'Dein Paket', askLabel: v.round ? 'Seine Forderung' : 'Seine Forderung (Eröffnung)',
                 zoneLabel: 'Dein Stab schätzt: ab hier unterschreibt er', unit: 'Wert für ihn, gemessen an seiner ersten Forderung (= 100 %)',
-                gapFmt: (x) => `${Math.round(x * 100)} Punkte`,
+                gapFmt: (x) => `Differenz ${Math.round(x * 100)} %`,
               }} />
             </NegCard>
             <NegCard title="Vertragspunkte" className="vt-tablecard" right={locks.length ? `${locks.length} nicht verhandelbar` : undefined}>
