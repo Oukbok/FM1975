@@ -158,3 +158,4 @@
 .md-score b { background: var(--navy); color: var(--navy-ink); font-family: var(--font-display); font-size: 17px; line-height: 26px; border-radius: 3px 3px 0 0; }
 .md-score small { background: rgba(var(--ink-rgb), 0.38); color: var(--navy-ink); font-size: 12px; line-height: 17px; border-radius: 0 0 3px 3px; }
 .md-score b:only-child { border-radius: 3px; }
+.ind-team { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }

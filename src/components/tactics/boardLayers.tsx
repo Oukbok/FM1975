@@ -77,17 +77,25 @@ export function BallLayer({ geo: g, spots, eff, head }: { geo: Geo; spots: Spot[
   const crossOn = ws >= 2;
   const high = eff.crossStyle === 'high', low = eff.crossStyle === 'low';
   // Flankengeber: äußerster Mittelfeldspieler/Angreifer der Seite, Außenverteidiger nur als offensive Rolle.
-  const wide = (side: -1 | 1) => out.filter((s) => (side < 0 ? s.x < 30 : s.x > 70) && (s.grp !== 'DEF' || s.role === 'av_off')).sort((a, b) => a.y - b.y)[0];
+  const wide = (side: -1 | 1) => out.filter((s) => (side < 0 ? s.x < 30 : s.x > 70) && (s.grp !== 'DEF' || s.role === 'av_off')).sort((a, b) => a.y - b.y)[0]
+    // Ohne Flügelspieler flankt der Außenverteidiger dieser Seite (Wunsch Pascal: Pfeile kommen immer von einem Spieler).
+    ?? out.filter((s) => (side < 0 ? s.x < 30 : s.x > 70)).sort((a, b) => a.y - b.y)[0];
+  // Abnehmer im Strafraum: hoch = Angreifer (Kopfball), flach = wer am nächsten am Rückraum steht.
+  const d2 = (s: Spot, p: { x: number; y: number }) => (s.x - p.x) ** 2 + (s.y - p.y) ** 2;
+  const nearest = (p: { x: number; y: number }, pool: Spot[], not?: Spot) => pool.filter((s) => s !== not).sort((a, b) => d2(a, p) - d2(b, p))[0];
   const cross = (side: -1 | 1) => {
     const s = wide(side);
+    if (!s) return null;
     const bx = g.sx(13), by = g.sy(50 + side * 37);
-    const far = [g.sx(10), g.sy(50 - side * 8)] as [number, number];
-    const back = [g.sx(22), g.sy(50 + side * 4)] as [number, number];
+    const head1 = nearest({ x: 50 - side * 8, y: 10 }, atts.length ? atts : out, s);
+    const back1 = nearest({ x: 50 + side * 4, y: 22 }, out.filter((o) => o.grp !== 'DEF'), s);
+    const far: [number, number] = head1 ? at(g, head1) : [g.sx(10), g.sy(50 - side * 8)];
+    const back: [number, number] = back1 ? at(g, back1) : [g.sx(22), g.sy(50 + side * 4)];
     return (
       <g key={side} className="txb-cross">
-        {ws >= 3 && s && <Arrow g={g} a={at(g, s)} b={[bx, by]} cls="run" head={head} cutB={false} />}
-        {!low && <Arrow g={g} a={[bx, by]} b={far} cls={`cross${high ? '' : ' mixed'}`} head={head} bend={side * -38} cutA={false} cutB={false} />}
-        {!high && <Arrow g={g} a={[bx, by]} b={back} cls={`cross flat${low ? '' : ' mixed'}`} head={head} cutA={false} cutB={false} />}
+        <Arrow g={g} a={at(g, s)} b={[bx, by]} cls="run" head={head} cutB={false} />
+        {!low && <Arrow g={g} a={[bx, by]} b={far} cls={`cross${high ? '' : ' mixed'}`} head={head} bend={side * -38} cutA={false} cutB={!!head1} />}
+        {!high && <Arrow g={g} a={[bx, by]} b={back} cls={`cross flat${low ? '' : ' mixed'}`} head={head} cutA={false} cutB={!!back1} />}
       </g>
     );
   };
@@ -130,7 +138,12 @@ export function DefLayer({ geo: g, spots, eff, year, yLine, yPress, head }: {
   }) : null;
   const marked = zone ? [] : out.filter((s) => (s.grp === 'DEF' && s.slot.position !== 'LIB') || s.slot.position === 'DM');
   // Ballverlust in der gegnerischen Hälfte: Gegenpressing = die Nächsten laufen zum Ball, sonst zurück in die Ordnung.
-  const ball: [number, number] = [g.sx(26), g.sy(38)];
+  // Ort des Ballverlusts vor der vordersten Reihe und seitlich in einer Lücke (Wunsch Pascal: nie im Laufweg der Stürmer).
+  const frontY = Math.min(...out.map((s) => s.y));
+  const ballDepth = Math.max(7, Math.min(26, frontY - 11));
+  const ballLat = [38, 62, 26, 74, 50].map((x) => ({ x, d: Math.min(...out.map((s) => (s.x - x) ** 2 + ((s.y - ballDepth) * 1.6) ** 2)) }))
+    .sort((a, b) => b.d - a.d)[0].x;
+  const ball: [number, number] = [g.sx(ballDepth), g.sy(ballLat)];
   const near = [...out].sort((a, b) => Math.hypot(g.X(a) - ball[0], g.Y(a) - ball[1]) - Math.hypot(g.X(b) - ball[0], g.Y(b) - ball[1])).slice(0, 3);
   const fronts = [...out].sort((a, b) => a.y - b.y).slice(0, 3);
   return (

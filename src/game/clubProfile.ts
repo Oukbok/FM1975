@@ -158,6 +158,8 @@ export interface ClubProfileData {
   units: { key: UnitKey; label: string; theirs: number; ours: number; n: number }[];
   /** Auslandsverein: Land, Titel, Platzierungen (Hintergrund-Welt). */
   foreign?: ForeignInfo;
+  /** Tabelle der laufenden Auslandsliga (Box „Tabelle“ statt Trainer). */
+  leagueRows?: ForeignLive['rows'];
   /** Kader aus dem Weltpool (schlanke Spieler, erst bei Verhandlung gespeichert). */
   worldSquad?: boolean;
   /** Außensicht der Finanzen (nur volle Vereine). */
@@ -249,7 +251,10 @@ export function buildClubProfile(g: Game, clubId: string): ClubProfileData {
   const worldSq = full ? [] : worldSquadPreview(g, clubId);
   const squad = full ? squadOfClub(g, full) : worldSq;
   const info = full ? undefined : worldClubInfo(g, clubId);
-  const foreign = full ? undefined : foreignInfo(g, clubId);
+  // Auslandsvereine mit vollem Kader (Europapokal-/Weltpokal-Gegner, `w_…`/`euroClubs`) bleiben Auslandsvereine:
+  // Land, Liga und Tabellenplatz aus der Welt, nicht aus der Heimat (Wunsch Pascal).
+  const foreignFull = !!full && (clubId.startsWith('w_') || !!g.euroClubs?.[clubId]) && !found;
+  const foreign = full && !foreignFull ? undefined : foreignInfo(g, clubId);
   const mine = squadOfClub(g, g.clubs[g.managedClubId]);
 
   const lines = matchLines(g, clubId, year);
@@ -321,6 +326,7 @@ export function buildClubProfile(g: Game, clubId: string): ClubProfileData {
     units,
     finance,
     foreign,
+    leagueRows: live?.rows,
     worldSquad: worldSq.length > 0,
   };
 }

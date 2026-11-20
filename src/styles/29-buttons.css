@@ -144,6 +144,7 @@ button.active:not(.tab):not(.btn-primary):not(.hd-nav-item):not(.tn-sub-item) {
   user-select: none;
 }
 .sel3-opt-lbl { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sel3-opt.mine { background: var(--rl-me-bg); box-shadow: inset 3px 0 0 var(--accent); }
 .sel3-opt.act { background: var(--pop-hover); color: var(--text); }
 .sel3-opt.sel { color: var(--sel-text); font-weight: 700; background: var(--sel-bg); }
 .sel3-opt.off { color: var(--text-4); cursor: not-allowed; }

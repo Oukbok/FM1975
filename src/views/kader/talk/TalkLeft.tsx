@@ -9,7 +9,7 @@ import PlayerAvatar from '../../../components/PlayerAvatar';
 import { FitnessIcon, FormIcon, FreshnessIcon, MoraleIcon, fitness100, form100, freshness100, statusLevel, statusWord } from '../../../components/status';
 import { PLAYER_TYPE, footLabel } from '../../../components/player/shared';
 import { personaOf, personaTitle } from '../../../engine/persona';
-import { scoutRangeText } from '../../../engine/scouting';
+import { ScoutStarBar } from '../../shared';
 import { Club, Player } from '../../../types';
 import { InfoTip } from '../../../ui/InfoTip';
 import { vColor } from '../../../ui/format';
@@ -59,7 +59,7 @@ export function TalkLeft({ p, club, phase, anim }: { p: Player; club?: Club; pha
         <div className="ptk-facts">
           <div className="ptk-facts-top">
             <span className="ptk-nat"><NatFlag nat={p.nationality} height={16} /></span>
-            <span className="ptk-pot">{scoutRangeText(p)}<InfoTip k="potenzial" /></span>
+            <span className="ptk-pot"><ScoutStarBar p={p} size={18} /><InfoTip k="potenzial" /></span>
           </div>
           <Row k="Position" v={<PosBadge p={p} />} />
           <Row k="Stärke" v={<b style={{ color: vColor(p.overall) }}>{p.overall}</b>} />

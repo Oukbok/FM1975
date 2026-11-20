@@ -3,6 +3,7 @@
 // =============================================================================
 import { Club } from '../types';
 import { resolveCrestImage } from '../data/clubOverrides';
+import { useCenteredCrest } from '../ui/crestTrim';
 
 function contrast(hex: string): string {
   const c = hex.replace('#', '');
@@ -14,11 +15,10 @@ function contrast(hex: string): string {
 export default function ClubCrest({ club, size = 40 }: { club: Club; size?: number }) {
   // Wappen-Auflösung: spielweiter Override-Store (nach club.id) zuerst, danach
   // das save-gebundene Club.customCrest, sonst das generierte SVG-Wappen.
-  const crestImg = resolveCrestImage(club);
+  const crestImg = useCenteredCrest(resolveCrestImage(club));
   if (crestImg) {
     return (
       <img
-        key={crestImg}
         src={crestImg}
         width={size}
         height={size}

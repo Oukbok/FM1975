@@ -29,7 +29,6 @@ function columns(p: Player, pos: Position) {
 
 export default function SkillsPanel({ p, pos, onPos }: { p: Player; pos: Position; onPos: (pos: Position) => void }) {
   const g = useClubProfile()?.game;
-  const [onlyKey, setOnlyKey] = useState(false);
   const [progress, setProgress] = useState(false);
   const tiers = attrTiers(pos);
   const ch = attrChanges(p);
@@ -37,15 +36,11 @@ export default function SkillsPanel({ p, pos, onPos }: { p: Player; pos: Positio
   const hasProgress = !!ch.sinceLabel && Object.keys(ch.since).length > 0;
   const showProg = progress && hasProgress;
 
-  const colsRef = useFitRows([p.id, pos, onlyKey, showProg]);
+  const colsRef = useFitRows([p.id, pos, showProg]);
   return (
     <section className="pp2-skills">
       <div className="pp2-skills-head">
         <h3 className="pp2-h">Fähigkeiten</h3>
-        <div className="pp2-seg">
-          <button type="button" className={`dchip${onlyKey ? '' : ' on'}`} onClick={() => setOnlyKey(false)}>Alle Fähigkeiten</button>
-          <button type="button" className={`dchip${onlyKey ? ' on' : ''}`} onClick={() => setOnlyKey(true)}>Nur wichtige</button>
-        </div>
         <label className="pp2-forpos">für
           <Select className="pp2-select" value={pos} onChange={(v) => onPos(v as Position)}>
             {[...SPOTS].reverse().map((s) => <option key={s.pos} value={s.pos}>{s.pos} · {POSITION_NAMES_DE[s.pos]}</option>)}
@@ -57,7 +52,7 @@ export default function SkillsPanel({ p, pos, onPos }: { p: Player; pos: Positio
         {columns(p, pos).map((col, ci) => (
           <div key={ci} className="pp2-skill-col">
             {col.map((grp) => {
-              const keys = sortedKeys(grp.keys).filter((k) => !onlyKey || tiers.has(k));
+              const keys = sortedKeys(grp.keys);
               if (!keys.length) return null;
               return (
                 <div key={grp.title} className="pp2-sgroup">

@@ -12,12 +12,12 @@ import { TeamName } from './parts';
 
 /** Länderwahl: alle Länder alphabetisch in einer Liste (Wunsch Pascal, wie Statistiken › Ligensystem);
  *  vorgewählt ist das Heimatland, nicht mehr bestehende Ligen mit „(Archiv)“. */
-export function CountrySelect({ countries, value, onChange }: { countries: StatsCountry[]; value: string; onChange: (cc: string) => void }) {
+export function CountrySelect({ countries, value, onChange, mineCc }: { countries: StatsCountry[]; value: string; onChange: (cc: string) => void; mineCc?: string }) {
   return (
     <Select className="dselect cmp-country" width={168} popWidth={250} listHeight={420} value={value} onChange={onChange} title="Land" aria-label="Land"
       options={countries.map((c) => {
         const text = `${c.name}${c.hint === 'Archiv' ? ' (Archiv)' : ''}`;
-        return { value: c.cc, text, label: <><span className="cmp-cflag"><CountryFlag country={c.flag} height={13} /></span>{text}</> };
+        return { value: c.cc, text, mine: c.cc === mineCc, label: <><span className="cmp-cflag"><CountryFlag country={c.flag} height={13} /></span>{text}</> };
       })} />
   );
 }

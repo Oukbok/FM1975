@@ -11,7 +11,7 @@ import { worldSeason, worldYears } from '../data/world/index';
 import { worldPlacesOf } from '../engine/worldPlaces';
 import type { SeasonPlacement } from './clubRecords';
 import type { Game } from './state';
-import { deepIdx, leanGames, leanTable, worldLiveDiv, worldLiveDivCount } from './worldLeagues';
+import { deepIdx, leanGames, leanTable, worldLiveDiv, worldLiveDivCount, type LeanTableRow } from './worldLeagues';
 import { deepGroupsOf } from '../engine/worldDeep';
 import { groupNamesOf, leagueLabel, leagueName } from '../data/leagueNames';
 import { countryName } from './worldPool';
@@ -37,6 +37,8 @@ export interface ForeignLive {
   label: string; tier: number; pos?: number; size: number; points?: number; played?: number; goals?: string;
   form?: ('W' | 'D' | 'L')[];
   games: { date: string; home: string; away: string; hg: number | null; ag: number | null }[];
+  /** Ganze Tabelle der Liga (Vereinsprofil „Tabelle“); vor dem 1. Spieltag alle mit 0 Punkten. */
+  rows: LeanTableRow[];
 }
 
 /** Laufende Liga eines Auslandsvereins (null: Verein spielt in keiner Auslandsliga). */
@@ -50,9 +52,10 @@ export function foreignLive(g: Game, id: string, key: string): ForeignLive | nul
     // Mehrere Staffeln der 2. Ebene, Name in der Landessprache: „2. Ligue Nord Frankreich“.
     const label = `${leagueLabel(cc, t + 1, n > 2 && i > 0 ? { n: n - 1, i: i - 1 } : {})} ${countryName(key)}`;
     const games = leanGames(d, g.season, d.md).filter((x) => x.home === id || x.away === id);
-    if (d.md <= 0) return { label, tier: t + 1, size: d.ids.length, games };
-    const row = leanTable(d, key, g.season).find((r) => r.clubId === id)!;
-    return { label, tier: t + 1, pos: row.pos, size: d.ids.length, points: row.pts, played: row.p, goals: `${row.gf}:${row.ga}`, form: row.form, games };
+    const rows = leanTable(d, key, g.season);
+    if (d.md <= 0) return { label, tier: t + 1, size: d.ids.length, games, rows };
+    const row = rows.find((r) => r.clubId === id)!;
+    return { label, tier: t + 1, pos: row.pos, size: d.ids.length, points: row.pts, played: row.p, goals: `${row.gf}:${row.ga}`, form: row.form, games, rows };
   }
   // Tiefere Ebenen (engine/worldDeep.ts): „3. División Grupo 2 Spanien“.
   const c = g.world?.countries[key];
@@ -64,9 +67,10 @@ export function foreignLive(g: Game, id: string, key: string): ForeignLive | nul
     if (!d) return null;
     const label = `${leagueLabel(cc, k + 3, { n: gs.length, i })} ${countryName(key)}`;
     const games = leanGames(d, g.season, d.md).filter((x) => x.home === id || x.away === id);
-    if (d.md <= 0) return { label, tier: k + 3, size: d.ids.length, games };
-    const row = leanTable(d, key, g.season).find((r) => r.clubId === id)!;
-    return { label, tier: k + 3, pos: row.pos, size: d.ids.length, points: row.pts, played: row.p, goals: `${row.gf}:${row.ga}`, form: row.form, games };
+    const rows = leanTable(d, key, g.season);
+    if (d.md <= 0) return { label, tier: k + 3, size: d.ids.length, games, rows };
+    const row = rows.find((r) => r.clubId === id)!;
+    return { label, tier: k + 3, pos: row.pos, size: d.ids.length, points: row.pts, played: row.p, goals: `${row.gf}:${row.ga}`, form: row.form, games, rows };
   }
   return null;
 }

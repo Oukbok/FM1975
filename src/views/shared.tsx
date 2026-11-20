@@ -85,7 +85,9 @@ export const scoutMid = (p: Player) => { const [a, b] = scoutRange(p); return (a
 
 /** Scout-Einschätzung des Potenzials als Text-Spanne, z. B. „3,5–4,5 ★“. */
 export function ScoutStars({ p }: { p: Player }) {
-  return <span className="dscout" title="Scouting-Einschätzung des Potenzials">{scoutRangeText(p)}</span>;
+  // Wunsch Pascal: Potenzial überall als Sterne (gelb = sicher, weiß = möglich), nicht als Text.
+  const [lo, hi] = scoutRange(p);
+  return <span className="dscout"><StarRating lo={lo} hi={hi} size={15} label="Potenzial" note="Einschätzung deiner Scouts." /></span>;
 }
 
 /** Scout-Einschätzung des Potenzials als Sterne wie im Transfermarkt (gelb = sicher, weiß = möglich) – für Spielertabellen. */

@@ -1,7 +1,7 @@
 // Reiter „Allgemein“ (Vorbild EA Fussball Manager): Spielerdaten, Kacheln Alter/Gewicht/Größe/
 // Fitness/Frische und Erfahrung/Moral/Form/Zufriedenheit/Status, darunter Disziplin und
 // Führung in Worten sowie die verdeckten Werte nur als Einschätzung (game/hiddenTraits.ts).
-import { NatFlag } from '../competition/CountryFlag';
+import { NatFlag, NatLink } from '../competition/CountryFlag';
 import type { ReactNode } from 'react';
 import type { Player } from '../../types';
 import { useClubProfile } from '../club/ClubLink';
@@ -61,7 +61,7 @@ export default function GeneralTab({ p }: { p: Player }) {
       <Section title="Spielerdaten">
         <div className="pp-list">
           <Row label="Name">{p.fullName}</Row>
-          <Row label="Nationalität"><NatFlag nat={p.nationality} height={16} />{nationName(p.nationality)}</Row>
+          <Row label="Nationalität"><NatLink nat={p.nationality} name={nationName(p.nationality)} /></Row>
           {p.intl?.caps ? <Row label="Länderspiele">{p.intl.caps} · {p.intl.goals} Tore{p.intl.tourn?.length ? <span className="dim"> · {p.intl.tourn.map((x) => `${x.t} (${x.res})`).join(', ')}</span> : null}</Row> : null}
           {hall ? <Row label="Halle">{isHallSpecialist(g!, p.id) ? <b>Hallenspezialist · </b> : null}{hall.r.g} Tore in {hall.r.t} Turnieren{hall.r.w ? ` · ${hall.r.w} Turniersieg${hall.r.w === 1 ? '' : 'e'}` : ''}<span className="dim" title={`Hallenspezialist ${hallSpecialistNote(g!)}`}> · Hallenruf {hall.ruf}</span></Row> : null}
           <Row label="Sprache">{languageOf(p)}</Row>

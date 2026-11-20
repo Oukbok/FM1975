@@ -86,7 +86,7 @@ export function AwardsView({ g }: { g: Game }) {
           </span>
         ) : undefined}>
         {!season ? (
-          <Empty icon="trophy">Am 20. Dezember wird der Goldene Ball verliehen, am Tag nach dem letzten Ligaspieltag werden die besten Spieler auf ihren Positionen geehrt – Torwart, Abwehr, Mittelfeld und Sturm. Die erste Ehrung steht am Ende der Saison {g.season} an.</Empty>
+          <Empty icon="trophy">Der Goldene Ball (seit 1956) wird jedes Jahr am 20. Dezember verliehen – in deiner ersten Saison also schon im Dezember {g.season.slice(0, 4)}. Am Tag nach dem letzten Ligaspieltag werden außerdem die besten Spieler auf ihren Positionen geehrt – Torwart, Abwehr, Mittelfeld und Sturm.</Empty>
         ) : showGb ? (
           <GoldenBallTop g={g} y={gbYear!} onGala={() => setGala(gbYear!.year)} />
         ) : league === 'shoe' && shoe ? (
@@ -153,7 +153,7 @@ export function AwardsView({ g }: { g: Game }) {
               );
             })}
           </div>
-        ) : <Empty icon="trophy">Der erste Goldene Ball wird am 20. Dezember verliehen.</Empty>}
+        ) : <Empty icon="trophy">Der Goldene Ball wird seit 1956 vergeben – die nächste Wahl ist am 20. Dezember {g.season.slice(0, 4)}.</Empty>}
         <div className="dsec aw-dsec">Meistgeehrt (Saison)</div>
         {tallies.length ? (
           <div className="rl rl-sm rl-players aw-tally">

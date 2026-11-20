@@ -4,12 +4,12 @@
 // Logik: game/indoorMasters.ts
 // =============================================================================
 import { useState } from 'react';
-import { ClubLink } from '../../../components/club/ClubLink';
 import { indoorShort } from '../../../game/indoorGame';
 import { mastersBoard, unpackBoard, type MastersRow, type MastersStatus } from '../../../game/indoorMasters';
 import type { Game } from '../../../game/state';
 import type { IndoorState, IndoorWinter } from '../../../game/winterShared';
 import { DashBox } from '../../../ui/DashPage';
+import { TeamName } from '../competition/parts';
 import Select from '../../../ui/Select';
 
 const STATUS: Record<MastersStatus, [string, string]> = {
@@ -74,7 +74,7 @@ export function MastersBox({ g, st, cur, wy }: { g: Game; st: IndoorState; cur: 
                 return (
                   <tr key={r.id} className={`${r.id === mid ? 'me' : ''} ${cut ? 'mst-cut' : ''} ${firstGuest ? 'mst-guests' : ''} ${r.status === 'guest' || r.status === 'declined' ? 'mst-dim' : ''}`}>
                     <td className="rl-rank"><span className={`rl-z ${zone}`}>{r.status === 'guest' || (!r.sp && !r.place && r.status !== 'q' && r.status !== 'sub') ? '' : i + 1}</span></td>
-                    <td className="nowrap"><ClubLink id={r.id}><span className="rl-name">{indoorShort(g, r.id)}</span></ClubLink></td>
+                    <td className="nowrap rl-club">{/* Wappen + Name (Wunsch Pascal: Wappen fehlten) */}<TeamName g={g} id={r.id} season={g.season} size={22} /></td>
                     {!masters && <td className="num rl-main">{r.wins}</td>}
                     <td className="num">{r.t}</td><td className="num">{r.sp}</td>
                     <td className={`num ${masters ? '' : 'muted'}`}>{r.pts}</td>

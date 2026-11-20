@@ -2,12 +2,12 @@
 // Wappen links oben, freigestellter Kopf schräg rechts unten davor (ohne Kasten), daneben Steckbrief – Stärke, Potenzial (Scout-Spanne), Nation,
 // Tabelle der sechs besten Positionen (Eignung), Fuß, Spielertyp, Charakter (Einschätzung).
 import { BOOST_DE, BOOST_PCT } from '../../engine/teamBoost';
-import { NatFlag } from '../competition/CountryFlag';
+import { NatFlag, NatLink } from '../competition/CountryFlag';
 import type { Player, Club, Position } from '../../types';
 import PlayerAvatar from '../PlayerAvatar';
 import ClubCrest from '../ClubCrest';
 import { ClubLink, useClubProfile } from '../club/ClubLink';
-import { scoutRangeText } from '../../engine/scouting';
+import { ScoutStarBar } from '../../views/shared';
 import { personaOf, personaTitle } from '../../engine/persona';
 import { scoutKnowledge } from '../../game/transferTalks';
 import { POSITION_NAMES_DE } from '../../engine/positions';
@@ -56,9 +56,9 @@ export default function ProfileHead({ p, club, tag, best, sel, onSelect }: {
         <div className="pp2-facts">
           <div className="pp2-keyrow">
             <div className="pp2-kv"><span>Stärke<InfoTip k="staerke" /></span><b className="pp2-big">{p.overall}</b></div>
-            <div className="pp2-kv"><span>Potenzial<InfoTip k="potenzial" /></span><b>{scoutRangeText(p)}</b></div>
+            <div className="pp2-kv"><span>Potenzial<InfoTip k="potenzial" /></span><b><ScoutStarBar p={p} size={22} /></b></div>
             <div className="pp2-kv"><span>Alter</span><b>{p.age} Jahre</b></div>
-            <div className="pp2-kv"><span>Nation</span><b><NatFlag nat={p.nationality} height={16} />{nationName(p.nationality)}</b></div>
+            <div className="pp2-kv"><span>Nation</span><b><NatLink nat={p.nationality} name={nationName(p.nationality)} /></b></div>
           </div>
           <table className="pp2-postable">
             <tbody>

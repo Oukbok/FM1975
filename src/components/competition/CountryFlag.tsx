@@ -53,3 +53,11 @@ export function NatFlag({ nat, height = 14 }: { nat: string; height?: number }) 
 export function LandFlag({ country, height = 14 }: { country: string; height?: number }) {
   return <span className="cflag-nat" title={countryInfo(country).name}><CountryFlag country={country} height={height} /></span>;
 }
+
+/** Flagge + Ländername als ein Link zum Länderprofil (Wunsch Pascal: auch Name und Zwischenraum klickbar).
+ *  Klick wird wie bei der Flagge über `data-country` (CountryProfileContext) behandelt. */
+export function NatLink({ nat, name, height = 16 }: { nat: string; name: string; height?: number }) {
+  const key = countryOfNat(nat || 'GER');
+  if (!key) return <>{name}</>;
+  return <span className="cflag-link" data-country={key} title={`Länderprofil ${countryInfo(key).name}`}><CountryFlag country={key} height={height} noLink />{name}</span>;
+}

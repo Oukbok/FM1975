@@ -67,6 +67,7 @@
 .txb-mag.special .txb-disc { outline: 2px solid rgba(var(--chalk-rgb), .9); outline-offset: 2px; }
 .txb-mag:hover .txb-disc, .txb-mag:focus-visible .txb-disc { transform: translateY(-2px); }
 .txb-mag:focus-visible { outline: none; }
+.txb-mag:hover, .txb-mag:active, .txb-mag:focus { background: none; border: 0; } /* kein heller Knopf-Hintergrund beim Zeigen (Wunsch Pascal) */
 /* Globales button:active (translateY 1px) würde die Zentrierung überschreiben: der Magnet sprang beim
    Drücken um eine halbe Breite weg und der Klick landete daneben (Rollenwahl ging nicht auf). */
 .txb-mag:active { transform: translate(-50%, -26px); }

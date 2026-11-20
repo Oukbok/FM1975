@@ -6,6 +6,7 @@ import {
 } from '../../data/indoorHistory';
 import { INDOOR_SQUAD_LABEL, IndoorMatch, winnerOf } from '../../engine/indoor';
 import { MastersBox } from './indoor/MastersBox';
+import { TeamName } from './competition/parts';
 import { HallOfKingsBox } from './indoor/HallOfKingsBox';
 import { mastersScoring } from '../../game/indoorMasters';
 import { allTournaments, indoorName, indoorShort, setOwnIndoorDecision } from '../../game/indoorGame';
@@ -110,7 +111,8 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
         )}
         <KV k="Masters-Titel (dein Verein)" v={String(title(mid))} />
         <KV k="Turniersiege (dein Verein)" v={String(st.wins[mid] ?? 0)} />
-        <Meter label="Ärger über Absagen" value={Math.min(100, st.snub * 33)} color="var(--red)" text={st.snub >= 2 ? 'weniger Einladungen' : st.snub > 0 ? 'spürbar' : 'keiner'} />
+        {/* Verständlicher (Wunsch Pascal): wer Einladungen absagt, verärgert die Veranstalter und wird seltener eingeladen. */}
+        <Meter label="Verärgerte Veranstalter (durch deine Absagen)" value={Math.min(100, st.snub * 33)} color="var(--red)" text={st.snub >= 2 ? 'du wirst seltener eingeladen' : st.snub > 0 ? 'leicht verärgert – noch folgenlos' : 'alle zufrieden'} />
         <div className="dnote mt8">Plus: Antrittsgeld, Fans, Spielpraxis für Reservisten, Moral bei Titeln. Minus: harter Boden und Bande (Verletzungen), müde Spieler, kürzere Pause, Konflikt mit dem Trainingslager.</div>
       </DashBox>
 
@@ -122,7 +124,7 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
             <div className="dnote">{fmtDay(sel.date)} · {sel.hall}, {sel.city}</div>
             <div className="dsec">Teilnehmer</div>
             {sel.clubIds.length ? sel.clubIds.map((id) => (
-              <div key={id} className="dlist-row"><span className="grow"><IndoorFlag g={g} id={id} /><ClubLink id={id}>{indoorName(g, id)}</ClubLink></span>
+              <div key={id} className="dlist-row"><span className="grow ind-team"><IndoorFlag g={g} id={id} /><TeamName g={g} id={id} season={g.season} size={22} /></span>
                 <span className="meta">{id === mid ? (sel.own === 'decline' ? 'abgesagt' : sel.own ? (sel.ownIds?.length ? 'eigene Auswahl' : 'zugesagt') : 'offen') : sel.squads[id] ? INDOOR_SQUAD_LABEL[sel.squads[id]] : ''}</span></div>
             )) : <div className="dnote">Das Teilnehmerfeld steht nach der letzten Qualifikation fest.</div>}
           </>
@@ -133,7 +135,7 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
                 <div className="dsec">Gruppe {gi === 0 ? 'A' : 'B'}</div>
                 {tb.map((r) => (
                   <div key={r.id} className={`dlist-row ${r.id === mid ? 'win-me' : ''}`}>
-                    <span className="grow"><IndoorFlag g={g} id={r.id} />{indoorShort(g, r.id)}</span><span className="meta">{r.gf}:{r.ga}</span><b>{r.pts}</b>
+                    <span className="grow ind-team"><IndoorFlag g={g} id={r.id} /><TeamName g={g} id={r.id} season={g.season} size={20} /></span><span className="meta">{r.gf}:{r.ga}</span><b>{r.pts}</b>
                   </div>
                 ))}
               </div>

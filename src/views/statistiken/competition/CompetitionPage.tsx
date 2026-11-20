@@ -51,6 +51,12 @@ function defaultKey(g: Game, opts: CompOption[], start: CompStart): string {
   return opts.find((o) => o.key === mineIn)?.key ?? opts.find((o) => o.section === 'Europa')?.key ?? opts[0]?.key ?? '';
 }
 
+/** Reiter zeigen nur ihre Art (Wunsch Pascal): Liga = Ligen, Pokal = Pokale, International = Europapokale. */
+export function fitsTab(o: CompOption, start: CompStart): boolean {
+  if (start === 'euro') return o.section === 'Europa';
+  return o.section !== 'Europa' && o.kind === (start === 'cup' ? 'cup' : 'league');
+}
+
 /** Erster Wettbewerb eines anderen Landes: gleiche Art wie bisher (Liga/Pokal). */
 function keyFor(g: Game, c: StatsCountry, opts: CompOption[], start: CompStart, kind?: 'league' | 'cup'): string {
   if (c.mode === 'home' && !kind) return defaultKey(g, opts, start);
@@ -74,7 +80,7 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
   const [seasonState, setSeason] = useState(() => preset?.season ?? pickSeason(countrySeasons(g, country), g.season));
   const season = seasons.some((s) => s.season === seasonState) ? seasonState : pickSeason(seasons, seasonState);
   const src = seasons.find((s) => s.season === season)?.source ?? 'live';
-  const opts = useMemo(() => countryOptions(g, country, season, src).filter((o) => (o.section === 'Europa') === euroMode), [g, country, season, src, euroMode]);
+  const opts = useMemo(() => countryOptions(g, country, season, src).filter((o) => fitsTab(o, start)), [g, country, season, src, start]);
   const [key, setKeyState] = useState(() => preset?.key ?? keyFor(g, country, countryOptions(g, country, season, src), start));
   const [kind, setKind] = useState<'league' | 'cup' | undefined>(undefined);
   const setKey = (k: string) => { setKeyState(k); setKind(opts.find((o) => o.key === k)?.kind); };
@@ -114,17 +120,20 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
   const sIdx = seasons.findIndex((s) => s.season === season);
   const step = (d: number) => { const n = seasons[sIdx + d]; if (n) setSeason(n.season); };
   const sections = [...new Set(opts.map((o) => o.section))];
+  // Eigene aktive Liga / eigener Europapokal dezent hinterlegt (Wunsch Pascal).
+  const mineEuro = (['ec', 'cwc', 'uefa'] as const).find((k) => inEuroCup(g.euroCups?.[k], g.managedClubId));
+  const isMineComp = (k: string) => season === g.season && (country.cc === homeC.cc || euroMode) && (k === g.leagues.playerDivision.id || k === mineEuro);
 
   // Reihenfolge im Kopf (Wunsch Pascal): Land | Wettbewerb | Saison; darunter der Spieltag (in der Tabelle).
   const header = (
     <span className="cmp-select">
       {euroMode
         ? <Select className="dselect cmp-country" width={168} value="eu" onChange={() => undefined} title="Wettbewerbe" options={[{ value: 'eu', text: 'Europa', label: 'Europa' }]} />
-        : <CountrySelect countries={countries} value={country.cc} onChange={changeCountry} />}
+        : <CountrySelect countries={countries} value={country.cc} onChange={changeCountry} mineCc={homeC.cc} />}
       <Select className="dselect cmp-comp" width={190} popWidth={260} value={effKey} onChange={(v) => setKey(v)} title="Wettbewerb">
         {sections.map((sec) => (
           <optgroup key={sec} label={sec}>
-            {opts.filter((o) => o.section === sec).map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
+            {opts.filter((o) => o.section === sec).map((o) => <option key={o.key} value={o.key} data-mine={isMineComp(o.key) || undefined}>{o.label}</option>)}
           </optgroup>
         ))}
       </Select>

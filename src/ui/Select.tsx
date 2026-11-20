@@ -37,6 +37,8 @@ export interface SelectOption {
   group?: string;
   /** Trennlinie vor diesem Eintrag. */
   divider?: boolean;
+  /** Eigenes Land / eigene aktive Liga: dezenter Hintergrund (Wunsch Pascal). Kinder: <option data-mine>. */
+  mine?: boolean;
 }
 
 type Row = { kind: 'opt'; o: SelectOption; i: number } | { kind: 'group'; label: string } | { kind: 'div' };
@@ -54,7 +56,7 @@ function optionsFromChildren(children: ReactNode, group?: string, out: SelectOpt
   let first = true;
   Children.forEach(children, (c) => {
     if (!isValidElement(c)) return;
-    const props = c.props as { value?: string | number; children?: ReactNode; disabled?: boolean; label?: string };
+    const props = c.props as { value?: string | number; children?: ReactNode; disabled?: boolean; label?: string; 'data-mine'?: boolean };
     if (c.type === Fragment) { optionsFromChildren(props.children, group, out); return; }
     if (c.type === 'optgroup') {
       const before = out.length;
@@ -66,7 +68,7 @@ function optionsFromChildren(children: ReactNode, group?: string, out: SelectOpt
       const label = props.children;
       const t = textOf(label);
       out.push({
-        value: props.value ?? t, label, text: t, disabled: props.disabled,
+        value: props.value ?? t, label, text: t, disabled: props.disabled, mine: !!props['data-mine'],
         group: first && group !== undefined ? group : undefined,
       });
       first = false;
@@ -290,7 +292,7 @@ export default function Select({
                   role="option"
                   aria-selected={sel}
                   aria-disabled={o.disabled || undefined}
-                  className={`sel3-opt${sel ? ' sel' : ''}${i === active ? ' act' : ''}${o.disabled ? ' off' : ''}`}
+                  className={`sel3-opt${sel ? ' sel' : ''}${i === active ? ' act' : ''}${o.disabled ? ' off' : ''}${o.mine ? ' mine' : ''}`}
                   onPointerEnter={() => { if (!o.disabled) setActive(i); }}
                   onClick={() => pick(i)}
                 >

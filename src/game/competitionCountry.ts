@@ -165,7 +165,8 @@ export function countryOptions(g: Game, c: StatsCountry, season: string, source:
     const base = competitionOptions(g, season).filter((o) => belongs(o, c, !!g.ddrHome && season === g.season))
       .map((o) => (o.kind === 'league' && o.tier != null ? { ...o, section: levelSection(o.tier) } : o));
     const leagues = base.filter((o) => o.kind === 'league'), rest = base.filter((o) => o.kind !== 'league');
-    return c.mode === 'home' ? [...leagues, ...pool, ...rest] : [...leagues, ...pool, ...rest, cup];
+    // DDR-Start: der laufende FDGB-Pokal steht schon in `rest` – kein zweiter Eintrag (Fehlermeldung Pascal).
+    return c.mode === 'home' || rest.some((o) => o.kind === 'cup') ? [...leagues, ...pool, ...rest] : [...leagues, ...pool, ...rest, cup];
   }
   const l1 = leagueLabel(c.cc, 1);
   const s1 = levelSection(1), s2 = levelSection(2);

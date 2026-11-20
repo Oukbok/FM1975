@@ -2,6 +2,7 @@
 import { Player, starsToPotential } from '../../types';
 import { scoutRange, scoutRangeText } from '../../engine/scouting';
 import { utcDate, Section, Line, ATTR_DE, AttrKey } from './shared';
+import { ScoutStarBar } from '../../views/shared';
 import { useClubProfile } from '../club/ClubLink';
 import { hiddenFor } from '../../game/hiddenTraits';
 
@@ -74,7 +75,7 @@ export function PotentialBox({ p }: { p: Player }) {
   const last = p.development.lastRatingChange;
   return (
     <Section title="Potenzial">
-      <div className="pp-stars">{scoutRangeText(p)}</div>
+      <div className="pp-stars"><ScoutStarBar p={p} size={22} /></div>
       <div className="pp-growth-track"><div className="pp-growth-fill" style={{ width: `${maxOvr > 0 ? Math.min(100, (p.overall / maxOvr) * 100) : 100}%` }} /></div>
       <div className="pp-list mt8">
         <Line label="Aktuelle Stärke" value={p.overall} strong />
