@@ -36,7 +36,7 @@ export const DEEP_TOWNS: Record<string, string[]> = {
     'Piacenza', 'Reggio Emilia', 'Carpi', 'Ferrara', 'Ravenna', 'Rimini', 'Forlì', 'Treviso', 'Padua', 'Venedig',
     'Triest', 'Pordenone', 'Trient', 'Bozen', 'La Spezia', 'Savona', 'Sanremo', 'Pisa', 'Livorno', 'Lucca',
     'Siena', 'Arezzo', 'Prato', 'Pistoia', 'Empoli', 'Grosseto', 'Ancona', 'Pesaro', 'Macerata', 'Fermo',
-    'Teramo', "L'Aquila", 'Chieti', 'Campobasso', 'Benevent', 'Salerno', 'Caserta', 'Neapel-Ost', 'Juve Stabia', 'Potenza',
+    'Teramo', "L'Aquila", 'Chieti', 'Campobasso', 'Benevent', 'Salerno', 'Caserta', 'Neapel-Ost', 'Torre del Greco', 'Potenza',
     'Matera', 'Cosenza', 'Catanzaro', 'Crotone', 'Reggio Calabria', 'Messina', 'Trapani', 'Siracusa', 'Ragusa', 'Agrigent',
     'Sassari', 'Olbia', 'Latina', 'Frosinone', 'Viterbo', 'Rieti', 'Terni-Süd', 'Gubbio', 'Foligno', 'Sangiovannese',
     'Legnano', 'Pavia', 'Varese-Nord', 'Sondrio', 'Vigevano', 'Lumezzane', 'Südtirol', 'Bassano', 'Belluno', 'Rovigo',
