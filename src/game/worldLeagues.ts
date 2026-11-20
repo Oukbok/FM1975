@@ -32,6 +32,7 @@ import { homeCountryOf, type Game } from './state';
 import { finishWorldCups, newLeanCup, worldCupsDaily } from './worldCups';
 import { leanCupStats, leanStats, packScorers, packStats, type PackedStats } from './worldScorers';
 import { secondGroups } from '../engine/worldSecond';
+import { deepGroupsOf } from '../engine/worldDeep';
 
 /**
  * Ligen eines Landes in der schlanken Simulation: Index 0 = 1. Liga, 1… = Staffeln der 2. Ebene
@@ -39,6 +40,13 @@ import { secondGroups } from '../engine/worldSecond';
  * `WorldSeasonRecord.divs[Land][Index]` und die Statistik-Schlüssel (`scorers`/`pstats`).
  */
 export const leanDivKey = (country: string, idx: number) => `${country}|${idx}`;
+/** Index der Staffel `i` der tieferen Ebene `tier` (3/4, engine/worldDeep.ts): 100 + i bzw. 200 + i. */
+export const deepIdx = (tier: number, i: number) => 100 * (tier - 2) + i;
+/** Ebene (1–4) und Staffel (0-basiert) eines Index. */
+export function leanTierOf(idx: number): { tier: number; group: number } {
+  if (idx >= 100) return { tier: 2 + Math.floor(idx / 100), group: idx % 100 };
+  return idx === 0 ? { tier: 1, group: 0 } : { tier: 2, group: idx - 1 };
+}
 
 /** Paarungen eines Spieltags (Index-Paare [Heim, Gast]) nach dem Kreisverfahren; bei ungerader Zahl setzt einer aus. */
 export function leanPairs(n: number, md: number): [number, number][] {
@@ -120,6 +128,11 @@ export function ensureWorldLive(g: Game): WorldLive | null {
       if (ids.length < 4) return;
       live.divs[leanDivKey(c.name, t)] = { ids, md: 0, n: leanMatchdays(ids.length), r: '' };
     });
+    // Tiefere Ebenen (engine/worldDeep.ts): jede Staffel eine eigene Liga.
+    (c.deep ?? []).forEach((_, k) => deepGroupsOf(c, k).forEach((ids0, i) => {
+      const ids = ids0.filter((id) => g.euroClubs![id]);
+      if (ids.length >= 4) live.divs[leanDivKey(c.name, deepIdx(k + 3, i))] = { ids, md: 0, n: leanMatchdays(ids.length), r: '' };
+    }));
   }
   w.live = live;
   return live;
@@ -216,19 +229,31 @@ export interface WorldLiveEnd {
   cups: Record<string, LeanCup>;
   scorers: Record<string, [string, string, string, number][]>;
   pstats: Record<string, PackedStats>;
+  /** Tiefere Ebenen je Land: [Ebene 3, Ebene 4] → Staffeln (für `WorldSeasonRecord.deep`). */
+  deep: Record<string, LeanDiv[][]>;
 }
 export function worldLiveResults(g: Game): WorldLiveEnd {
   const fixed: Record<string, FixedCountryResult> = {}, divs: Record<string, (LeanDiv | null)[]> = {};
   const scorers: WorldLiveEnd['scorers'] = {};
   const pstats: WorldLiveEnd['pstats'] = {};
+  const deep: WorldLiveEnd['deep'] = {};
   const live = ensureWorldLive(g);
-  if (!live) return { fixed, divs, cups: {}, scorers, pstats };
+  if (!live) return { fixed, divs, cups: {}, scorers, pstats, deep };
   for (const [k, d] of Object.entries(live.divs)) {
     while (d.md < d.n) playMatchday(g, k, d);
     const [key, t] = k.split('|');
     const order = leanTable(d, key, live.season).map((r) => r.clubId);
     const fx = (fixed[key] ??= { t1: [], t2: [] });
     const idx = Number(t);
+    if (idx >= 100) {
+      // Tiefere Ebene: Endtabelle an die Welt, Ergebnisse in die (kurze) Historie; keine Kader → keine Einzelstatistik.
+      const { tier, group } = leanTierOf(idx);
+      const lv = ((fx.deep ??= [])[tier - 3] ??= []);
+      lv[group] = order;
+      const dl = ((deep[key] ??= [])[tier - 3] ??= []);
+      dl[group] = { ids: d.ids, r: d.r };
+      continue;
+    }
     if (idx === 0) fx.t1 = order; else (fx.t2g ??= [])[idx - 1] = order;
     const list = (divs[key] ??= [null, null]);
     while (list.length <= idx) list.push(null);
@@ -250,5 +275,8 @@ export function worldLiveResults(g: Game): WorldLiveEnd {
     const st = leanCupStats(g, key, live.season, cups[key], 10);
     if (st.goals.length) { scorers[`${key}|cup`] = packScorers(st.goals); pstats[`${key}|cup`] = packStats(st); }
   }
-  return { fixed, divs, cups, scorers, pstats };
+  // Lücken (Staffel ohne Liga) als leere Tabellen: die Welt rechnet sie selbst.
+  for (const fx of Object.values(fixed)) if (fx.deep) fx.deep = Array.from(fx.deep, (lv) => Array.from(lv ?? [], (x) => x ?? []));
+  for (const [key, lv] of Object.entries(deep)) deep[key] = Array.from(lv, (x) => Array.from(x ?? [], (d) => d ?? { ids: [], r: '' }));
+  return { fixed, divs, cups, scorers, pstats, deep };
 }

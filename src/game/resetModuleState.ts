@@ -45,6 +45,7 @@ import { clearSellerCache } from './transferTalks';
 import { clearPoolCache } from './playerPool';
 import { clearNationalCache } from './national/pool';
 import { clearLegendCache } from './legendsGame';
+import { clearHomeDeepCache } from './homeDeep';
 import { setDisplayYear } from '../ui/format';
 
 /** Alle Module auf den Ausgangszustand (wie nach dem Laden der Seite). */
@@ -78,6 +79,7 @@ export function resetModuleState(): void {
   clearPoolCache();
   clearNationalCache();
   clearLegendCache();
+  clearHomeDeepCache(); // 3./4. Ebene des Heimatlandes (game/homeDeep.ts)
 }
 
 /** Zähler des Spielstands für IDs binden (fehlt bei älteren Spielständen → beginnt bei 0, neues ID-Format). */

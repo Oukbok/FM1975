@@ -29,11 +29,13 @@ import { accessSlots } from '../data/euroFormats';
 import { historicTiers } from '../data/leagueTiers';
 import { countryRanking, germanRank, type LeanCup, type LeanDiv } from '../engine/world';
 import type { ResTuple } from './leagueResults';
-import { ensureWorldLive, leanGames, leanMatchdays, leanResTuples, leanTable, leanWinPts, worldLiveDiv, type LeanGame } from './worldLeagues';
+import { deepIdx, leanTierOf, ensureWorldLive, leanGames, leanMatchdays, leanResTuples, leanTable, leanWinPts, worldLiveDiv, type LeanGame } from './worldLeagues';
 import { leanCupDates, leanCupRounds, leanCupRoundsN, leanCupWinner, roundName } from './worldCups';
 import { secondLabel } from '../data/world/secondGroups';
 import { secondGroups } from '../engine/worldSecond';
 import { worldStructureOfKey } from '../data/world/structure';
+import { deepGroupsOf } from '../engine/worldDeep';
+import { DEEP_NOTE, deepHistDiv, deepOptions, deepZones } from './worldDeepView';
 import { emptyLeanStats, leanCupStats, leanStats, unpackScorers, unpackStats, type LeanStats, type PackedStats } from './worldScorers';
 
 export type CountryMode = 'home' | 'div' | 'world';
@@ -42,14 +44,19 @@ export type CSource = Source | 'data' | 'world' | 'roster';
 export interface CSeasonOption { season: string; source: CSource }
 
 const OWN_KEYS = new Set(['d1', 'd2', 'd2b', 'xcup', 'w1', 'w2', 'r1', 'r2', 'pool']);
-const isOwnKey = (key: string) => OWN_KEYS.has(key) || /^[rwd]2:\d+$/.test(key);
-/** Index der schlanken Liga zu einem Schlüssel r1/r2/r2:n bzw. w1/w2/w2:n (0 = 1. Liga, 1… = Staffeln); −1 = keiner. */
+const isOwnKey = (key: string) => OWN_KEYS.has(key) || /^[rwd]2:\d+$/.test(key) || /^[rw][34](:\d+)?$/.test(key);
+/**
+ * Index der schlanken Liga zu einem Schlüssel r1/r2/r2:n bzw. w1/w2/w2:n (0 = 1. Liga, 1… = Staffeln), tiefere
+ * Ebenen r3/r3:n/r4 … (engine/worldDeep.ts: 100 + Staffel bzw. 200 + Staffel); −1 = keiner.
+ */
 export function leanIdxOf(key: string): number {
-  const m = /^[rw]([12])(?::(\d+))?$/.exec(key);
-  return !m ? -1 : m[1] === '1' ? 0 : Math.max(1, Number(m[2] ?? 1));
+  const m = /^[rw]([1-4])(?::(\d+))?$/.exec(key);
+  if (!m) return -1;
+  const t = Number(m[1]), n = Math.max(1, Number(m[2] ?? 1));
+  return t === 1 ? 0 : t === 2 ? n : deepIdx(t, n - 1);
 }
-/** Schlüssel der Staffel `i` (0-basiert) der 2. Ebene: r2, r2:2, r2:3 … */
-const groupKey = (base: 'r2' | 'w2' | 'd2', i: number) => (i === 0 ? base : `${base}:${i + 1}`);
+/** Schlüssel der Staffel `i` (0-basiert) der 2. Ebene: r2, r2:2, r2:3 … (auch r3/w3/r4/w4 der tieferen Ebenen). */
+const groupKey = (base: string, i: number) => (i === 0 ? base : `${base}:${i + 1}`);
 /** Gruppe der Wettbewerbswahl (Wunsch Pascal: alle Ligen des Landes, nach Ebene geordnet). */
 const levelSection = (tier: number) => `${tier >= 100 ? tier % 100 : tier}. Ebene`;
 const UNTERBAU = 'Unterbau';
@@ -170,6 +177,7 @@ export function countryOptions(g: Game, c: StatsCountry, season: string, source:
     return [
       { key: 'r1', label: l1, kind: 'league', section: s1, tier: 1 },
       ...Array.from({ length: n }, (_, i): CompOption => ({ key: groupKey('r2', i), label: secondLabel(n, i, l2), kind: 'league', section: s2, tier: 2 })),
+      ...deepOptions(c.cc, y, wc ? (wc.deep ?? []).map((_, k) => deepGroupsOf(wc, k).length) : [], 'r', levelSection),
       ...pool,
       cup,
     ];
@@ -180,6 +188,7 @@ export function countryOptions(g: Game, c: StatsCountry, season: string, source:
   return [
     { key: 'w1', label: l1, kind: 'league', section: s1, tier: 1 },
     ...Array.from({ length: n }, (_, i): CompOption => ({ key: groupKey('w2', i), label: secondLabel(n, i, l2), kind: 'league', section: s2, tier: 2 })),
+    ...deepOptions(c.cc, y, (rec?.deep?.[c.worldKey!] ?? []).map((lv) => lv.length), 'w', levelSection),
     cup,
   ];
 }
@@ -298,8 +307,9 @@ function leanDivFor(g: Game, wk: string, season: string, key: string): { div: Le
     const d = worldLiveDiv(g, wk, idx);
     return d ? { div: d, live: true, md: d.md, total: d.n } : null;
   }
-  const d = g.world?.history.find((r) => r.season === season)?.divs?.[wk]?.[idx];
-  if (!d) return null;
+  const rec = g.world?.history.find((r) => r.season === season);
+  const d = idx >= 100 ? deepHistDiv(rec, wk, idx) : rec?.divs?.[wk]?.[idx];
+  if (!d?.ids.length) return null;
   const total = leanMatchdays(d.ids.length);
   return { div: d, live: false, md: total, total };
 }
@@ -462,15 +472,15 @@ export function countrySnapshot(g: Game, c: StatsCountry, season: string, source
     let rows = leanTable(lean.div, wk, season);
     if (!lean.md) rows = [...rows].sort((a, b) => compClubName(g, a.clubId, season).localeCompare(compClubName(g, b.clubId, season), 'de')).map((r, i) => ({ ...r, pos: i + 1 }));
     const top = (f: (r: (typeof rows)[number]) => number, low = false) => [...rows].sort((a, b) => (low ? f(a) - f(b) : f(b) - f(a)) || a.pos - b.pos).slice(0, 10).map((r) => ({ clubId: r.clubId, value: f(r) }));
-    const idx = leanIdxOf(key), tier2 = idx > 0;
-    const nGroups = Math.max(1, countryOptions(g, c, season, source).filter((o) => o.kind === 'league' && o.tier === 2).length);
+    const idx = leanIdxOf(key), tier2 = idx > 0, tierN = leanTierOf(idx).tier;
+    const nGroups = Math.max(1, countryOptions(g, c, season, source).filter((o) => o.kind === 'league' && o.tier === tierN).length);
     const prev = [...(g.world?.history ?? [])].reverse().find((r) => r.season < season && r.champions[wk]);
     const rec = g.world?.history.find((r) => r.season === season);
     const games = rows.reduce((a, r) => a + r.p, 0) / 2, goals = rows.reduce((a, r) => a + r.gf, 0);
     return {
-      ...base, source: lean.live ? 'live' : 'archive', tier: tier2 ? 2 : 1,
+      ...base, source: lean.live ? 'live' : 'archive', tier: tierN,
       table: rows.map((r) => ({ clubId: r.clubId, pos: r.pos, p: r.p, w: r.w, d: r.d, l: r.l, gf: r.gf, ga: r.ga, pts: r.pts, form: r.form })),
-      zones: lean.md ? leanZones(g, wk, season, tier2, rows.length, nGroups) : [],
+      zones: !lean.md ? [] : tierN >= 3 ? deepZones(g, wk, season, tierN, rows.length, nGroups) : leanZones(g, wk, season, tier2, rows.length, nGroups),
       // Laufende Saison ohne Zeile über der Tabelle (Wunsch Pascal) – Land und Spieltag stehen schon in Kopf und Spieltag-Wahl.
       caption: !lean.live ? `Abschlusstabelle ${season}` : undefined,
       clubStats: lean.md ? { gf: top((r) => r.gf), ga: top((r) => r.ga, true), w: top((r) => r.w), cs: top((r) => r.cs), ti: titleList(g, wk) } : { ti: titleList(g, wk) },
@@ -482,13 +492,13 @@ export function countrySnapshot(g: Game, c: StatsCountry, season: string, source
         ...(games ? [{ k: 'Tore gesamt · Ø pro Spiel', text: `${goals} · ${(goals / games).toFixed(2).replace('.', ',')}` }] : []),
       ],
       // Einzelstatistik wie bei der Heimatliga (Wunsch Pascal): fest aus den Kadern des Spielerpools verteilt.
-      stats: !lean.md ? emptyLeanStats() : lean.live ? leanStats(g, lean.div, season) : archivedStats(rec, `${wk}|${idx}`, () => leanStats(g, lean.div, season)),
-      note: `${c.name} wird Spieltag für Spieltag simuliert: Ergebnis aus Vereinsstärke und Heimvorteil. Torschützen, Vorlagen, Karten und Zu-null-Spiele werden daraus auf die Kader des Spielerpools verteilt.`,
+      stats: !lean.md || tierN >= 3 ? emptyLeanStats() : lean.live ? leanStats(g, lean.div, season) : archivedStats(rec, `${wk}|${idx}`, () => leanStats(g, lean.div, season)),
+      note: tierN >= 3 ? DEEP_NOTE(c.name) : `${c.name} wird Spieltag für Spieltag simuliert: Ergebnis aus Vereinsstärke und Heimvorteil. Torschützen, Vorlagen, Karten und Zu-null-Spiele werden daraus auf die Kader des Spielerpools verteilt.`,
     };
   }
   if (key[0] === 'r' && leanIdxOf(key) >= 0) {
     const ri = leanIdxOf(key);
-    const ids = [...((ri === 0 ? wc?.tiers[0] : wc ? secondGroups(wc)[ri - 1] : undefined) ?? [])].sort((a, b) => compClubName(g, a, season).localeCompare(compClubName(g, b, season), 'de'));
+    const ids = [...((ri === 0 ? wc?.tiers[0] : ri >= 100 ? (wc ? deepGroupsOf(wc, leanTierOf(ri).tier - 3)[leanTierOf(ri).group] : undefined) : wc ? secondGroups(wc)[ri - 1] : undefined) ?? [])].sort((a, b) => compClubName(g, a, season).localeCompare(compClubName(g, b, season), 'de'));
     const prev = [...(g.world?.history ?? [])].reverse().find((r) => r.champions[wk]);
     return {
       ...base, roster: true, placingsOnly: true, table: placings(ids),

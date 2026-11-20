@@ -25,6 +25,7 @@ import type { CurrentDivision, TransitionResult } from '../data/reformTransition
 import { makePlaceholder, type DivisionTarget } from '../data/reforms';
 import { seasonStartYear } from '../data/timeline';
 import { worldStructureFor } from '../data/world/structure';
+import { deepLabel, deepLevelsFor } from '../data/world/deepStructure';
 import { assignToGroups, dataZoneOf, homeGroupKeys, secondLabel } from '../data/world/secondGroups';
 import type { Region } from '../data/regionGeo';
 import { homeCountryOf, type Game } from './state';
@@ -75,7 +76,15 @@ export function homeSeasonPlan(cc: string, current: CurrentDivision[], newSeason
     regroup = { ids: second.map((d) => d.id), into };
     targets.push(...into);
   }
-  targets.push(...divs.filter((d) => d.tier > 2).map(keep));
+  // Ebenen 3/4 (game/homeDeep.ts): Staffeln und Größen wie bisher, Name der Saison aus data/leagueTiers.ts.
+  const deepNames = deepLevelsFor(cc, y, 4);
+  for (const d of divs.filter((x) => x.tier > 2)) {
+    const lv = deepNames[d.tier - 3];
+    const same = divs.filter((x) => x.tier === d.tier);
+    // Gleiche Staffelzahl wie in der Struktur der Saison: deren Größe (England 1995/96 Third Division 22 → 24).
+    const size = lv && lv.groups.length === same.length ? lv.groups[same.indexOf(d)] : undefined;
+    targets.push({ ...keep(d), ...(lv ? { name: deepLabel(lv.name, same.length, same.indexOf(d)) } : {}), ...(size ? { teamCount: size } : {}) });
+  }
   const lowest = Math.max(...divs.map((d) => d.tier));
   const singleBoth = (st.groups?.length ?? 0) === 1 && (prev?.groups?.length ?? 0) === 1;
   // Mehrere Staffeln in beiden Saisons (gleiche Zahl): Absteiger in den Unterbau je Staffel aus den Daten.
@@ -93,6 +102,11 @@ export function homeSeasonPlan(cc: string, current: CurrentDivision[], newSeason
  */
 export function applyHomePlan(res: TransitionResult, plan: HomePlan, current: CurrentDivision[], season: string, protectedId?: string, zoneOf?: (id: string, n: number) => Region | null): number | undefined {
   const before = new Map<string, Set<string>>(current.map((c) => [c.id, new Set(c.orderedIds)]));
+  // Neuer Name der Ebenen 3/4 (z. B. England 2004 „League One“).
+  for (const d of res.divisions) {
+    const t = d.meta.tier > 2 ? plan.targets.find((x) => x.id === d.meta.id) : undefined;
+    if (t && t.name !== d.meta.name) d.meta = { ...d.meta, name: t.name };
+  }
   if (plan.regroup) {
     const parts = res.divisions.filter((d) => plan.regroup!.ids.includes(d.meta.id));
     if (parts.length) {

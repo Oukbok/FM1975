@@ -33,6 +33,7 @@ import { createDefaultWeeklyPlan } from '../engine/weeklyTraining';
 import { ensureStaffWorld } from './staffWorld';
 import { academyStartingCohort, generateYouthPlayer, setYouthSalt } from '../engine/youth';
 import { initWorld } from '../engine/world';
+import { updateWorldDepths } from '../engine/worldDeep';
 import { startLeagueRep } from './leagueRepGame';
 import { startingStaff } from './trainerTeam';
 import { allocateTv, commercialAnnualFor, isLeagueClub, refreshMarketValues } from '../engine/clubEconomy';
@@ -51,6 +52,7 @@ import { composeHome, ddrSeedsFor, secondSimClubs } from './worldCompose';
 import { applyHomeModules, ddrAmateurTowns, ddrLeagueOf, ddrStartSeeds, DDR_LAST_START, levelOfTier, mergeQualifiers } from './ddrHome';
 import { DDR_LIGA_ID, DDR_OBERLIGA_ID } from '../data/ddr';
 import { lowerStartDivision, materializeLowerStart } from './lowerTierStart';
+import { fillHomeDeep } from './homeDeep';
 import { amateurTownsFor, clampStartYear, fillLowerTiers, padSecondTier, reformsAppliedAt, seedPreStartHistory, seedStartPool, startEuroQualifiers } from './startYear';
 import { needsOverlay, worldOverlay } from '../engine/worldData';
 import { setHomeLabel, type LeagueDivision, type LeagueGroup } from '../engine/leagues';
@@ -122,7 +124,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   const ddrOwn = ddrStart ? ddrLeagueOf(year, opts.managedClubId) ?? DDR_OBERLIGA_ID : null;
   // Start in einer unteren Liga (3. Liga/Regionalliga/NOFV-Oberliga, game/lowerTierStart.ts):
   // diese Liga wird Spielerliga mit vollen Kadern, 1. und 2. Liga laufen simuliert.
-  const lowerStart = !startSim && isGer && comp && !world.clubs[opts.managedClubId] ? lowerStartDivision(home, year, opts.managedClubId) : null;
+  const lowerStart = !startSim && comp && !world.clubs[opts.managedClubId] ? lowerStartDivision(home, year, opts.managedClubId) : null;
   let playerDivMeta: DivisionMeta = { id: 'tier1', name: '1. Liga', tier: 1, group: null };
   let tier1SimIds: string[] = [];
   if (startSim || lowerStart || ddrStart) {
@@ -281,6 +283,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   };
   // Vereins-Pool (Amateurligen) + Historie 1963–1975 (game/clubPool.ts).
   if (comp) seedStartPool(g0, home, year); // übrige Vereine des Landes (Weltdaten)
+  if (comp && !isGer) fillHomeDeep(g0, home, year, ligaStart); // 3./4. Ebene im Heimatland (game/homeDeep.ts)
   migrateLeaguePool(g0);
   startLeagueRep(g0, year); // Ligaruf je Land (Option „Entwicklung der Ligen“, game/leagueRepGame.ts)
   // Ebenen unterhalb der 2. Liga, die es im Startjahr schon gibt (Regionalligen, 3. Liga).
@@ -329,6 +332,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   migrateContracts2(g0); // Vertragsbausteine-Zustand von Beginn an (wie beim Laden, game/contractClausesGame.ts)
   harmonizeSeason(g0); // Rahmenterminkalender: Wochenendspiele an Pokal-/Europapokalwochen (game/fixtureWatch.ts)
   ensureCountryPools(g0.world, g0.euroClubs, Number(g0.season.slice(0, 4))); // Unterbau der Auslandsligen (engine/world.ts)
+  if (g0.world && g0.euroClubs) updateWorldDepths(g0.world, g0.euroClubs, year); // tiefere Ebenen nach Länderrang (engine/worldDeep.ts)
   ensureWorldPool(g0); // Weltspieler aller Vereine ohne vollen Kader (Spielerpool)
   startWorldPlaces(g0); // Platzierungs-Historie der Auslandsvereine aus den Weltdaten vor dem Startjahr
   startShirtNumbers(g0); // Rückennummern aller Kader nach Position und Epoche (game/shirtMigration.ts)

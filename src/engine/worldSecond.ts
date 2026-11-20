@@ -19,6 +19,7 @@ import { COUNTRY_BY_KEY } from '../data/world/countries';
 import { assignToGroups, dataZoneOf, splitBySizes } from '../data/world/secondGroups';
 import { carriedGroups, worldExchangePlan, worldStructureOfKey } from '../data/world/structure';
 import { ensureCountryPool } from './worldCountries';
+import { pickPromoted } from './worldDeep';
 import { gauss } from './worldRandom';
 import type { WorldCountry, WorldState } from './worldTypes';
 
@@ -67,7 +68,9 @@ function fitSizes(sizes: number[], total: number): number[] {
  * Auf-/Abstieg eines Hintergrund-Landes: `t1` = Endtabelle 1. Liga, `t2g` = Endtabellen der Staffeln
  * der 2. Ebene. Setzt `c.tiers`, `c.groups`, `c.pool` für die Saison mit Startjahr `endYear`.
  */
-export function exchangeSecond(w: WorldState, euroClubs: Record<string, EuroClub>, c: WorldCountry, t1: string[], t2g: string[][], endYear: number, r: () => number): void {
+export function exchangeSecond(w: WorldState, euroClubs: Record<string, EuroClub>, c: WorldCountry, t1: string[], t2g: string[][], endYear: number, r: () => number,
+  /** Endtabellen der 3. Ebene (engine/worldDeep.ts): Aufsteiger kommen dann von dort statt aus dem Unterbau, Absteiger gehen dorthin. */
+  below?: string[][]): { out: string[]; inn: string[] } {
   const old = t2g.map((g) => g.length);
   // Datenlücke: mehrgleisige Staffeln der letzten bekannten Saison (ältere Spielstände mit eingleisiger 2. Liga teilen so auf).
   const st0 = worldStructureOfKey(c.name, endYear), cc = COUNTRY_BY_KEY[c.name]?.cc;
@@ -87,7 +90,16 @@ export function exchangeSecond(w: WorldState, euroClubs: Record<string, EuroClub
   const out: string[] = [];
   let inn: string[] = [];
   const swap = sum(old) >= 8 && (plan.out2 || plan.in2) > 0;
-  if (swap) {
+  if (swap && below?.length) {
+    const longest = Math.max(0, ...stay.map((g) => g.length));
+    for (let k = 0; out.length < plan.out2 && k < longest; k++) {
+      for (const g of stay) {
+        const id = g[g.length - 1 - k];
+        if (id && out.length < plan.out2 && g.length - k > 2) out.push(id);
+      }
+    }
+    inn = pickPromoted(below, plan.in2, str);
+  } else if (swap) {
     ensureCountryPool(w, euroClubs, c, endYear, r, plan.in2 + 2);
     const pool = (c.pool ?? []).filter((id) => euroClubs[id]);
     // Reihum vom Tabellenende jeder Staffel (schwächste Staffel zuerst).
@@ -114,5 +126,6 @@ export function exchangeSecond(w: WorldState, euroClubs: Record<string, EuroClub
     setSecondGroups(c, buckets);
     if (overflow.length) c.pool = [...(c.pool ?? []), ...overflow];
   }
-  if (swap) ensureCountryPool(w, euroClubs, c, endYear, r); // wieder mindestens 10 (wie beim Laden, game/loadMigrations.ts)
+  if (swap && !below?.length) ensureCountryPool(w, euroClubs, c, endYear, r); // wieder mindestens 10 (wie beim Laden, game/loadMigrations.ts)
+  return { out: below?.length ? out : [], inn: below?.length ? inn : [] };
 }

@@ -19,12 +19,13 @@ import { historicPointSystem } from './leagueSetup';
 import { padSecondTier, pickLowerTiers, reformsAppliedAt, seedStartPool } from './startYear';
 import type { Game } from './state';
 import { composeHome, secondSimClubs } from './worldCompose';
+import { homeDeepPlan } from './homeDeep';
 
 export interface LowerDivPlan { meta: DivisionMeta; size: number; clubs: SimClub[] }
 
-/** Besetzung der Ligen ab der 3. Ebene beim Spielstart (nur Deutschland mit Ligastruktur des Jahres). */
+/** Besetzung der Ligen ab der 3. Ebene beim Spielstart (Deutschland: Ligastruktur des Jahres; andere Heimatländer: game/homeDeep.ts). */
 export function lowerTierPlan(home: string, year: number): LowerDivPlan[] {
-  if (home !== 'ger') return [];
+  if (home !== 'ger') return homeDeepPlan(home, year).divs;
   const comp = composeHome(home, year);
   if (!comp) return [];
   const season = seasonLabelOf(year);

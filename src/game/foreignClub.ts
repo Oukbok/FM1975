@@ -11,7 +11,8 @@ import { worldSeason, worldYears } from '../data/world/index';
 import { worldPlacesOf } from '../engine/worldPlaces';
 import type { SeasonPlacement } from './clubRecords';
 import type { Game } from './state';
-import { leanGames, leanTable, worldLiveDiv, worldLiveDivCount } from './worldLeagues';
+import { deepIdx, leanGames, leanTable, worldLiveDiv, worldLiveDivCount } from './worldLeagues';
+import { deepGroupsOf } from '../engine/worldDeep';
 import { groupNames } from '../data/world/secondGroups';
 import { countryName } from './worldPool';
 
@@ -51,6 +52,20 @@ export function foreignLive(g: Game, id: string, key: string): ForeignLive | nul
     if (d.md <= 0) return { label, tier: t + 1, size: d.ids.length, games };
     const row = leanTable(d, key, g.season).find((r) => r.clubId === id)!;
     return { label, tier: t + 1, pos: row.pos, size: d.ids.length, points: row.pts, played: row.p, goals: `${row.gf}:${row.ga}`, form: row.form, games };
+  }
+  // Tiefere Ebenen (engine/worldDeep.ts): „3. Liga Staffel 2 Spanien“.
+  const c = g.world?.countries[key];
+  for (let k = 0; c && k < (c.deep?.length ?? 0); k++) {
+    const gs = deepGroupsOf(c, k);
+    const i = gs.findIndex((x) => x.includes(id));
+    if (i < 0) continue;
+    const d = worldLiveDiv(g, key, deepIdx(k + 3, i));
+    if (!d) return null;
+    const label = `${k + 3}. Liga${gs.length > 1 ? ` ${groupNames(gs.length)[i]}` : ''} ${countryName(key)}`;
+    const games = leanGames(d, g.season, d.md).filter((x) => x.home === id || x.away === id);
+    if (d.md <= 0) return { label, tier: k + 3, size: d.ids.length, games };
+    const row = leanTable(d, key, g.season).find((r) => r.clubId === id)!;
+    return { label, tier: k + 3, pos: row.pos, size: d.ids.length, points: row.pts, played: row.p, goals: `${row.gf}:${row.ga}`, form: row.form, games };
   }
   return null;
 }

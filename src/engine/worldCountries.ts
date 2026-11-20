@@ -58,7 +58,7 @@ function makeShort(name: string, used: Set<string>): string {
   return s;
 }
 
-function newClub(
+export function newClub(
   w: WorldState, euroClubs: Record<string, EuroClub>, country: WorldCountry,
   city: string, strength: number, size: number, r: () => number, usedShort: Set<string>,
 ): string {
@@ -150,6 +150,9 @@ export function applySplits(w: WorldState, euroClubs: Record<string, EuroClub>, 
     if (sp.year !== year) continue;
     const old = w.countries[sp.from];
     if (!old || !old.active) continue;
+    // Tiefere Ebenen (engine/worldDeep.ts) des geteilten Landes entfallen; die neuen Länder legen sie beim nächsten Prüfen neu an.
+    for (const id of (old.deep ?? []).flatMap((d) => d.ids)) { delete w.meta[id]; delete euroClubs[id]; }
+    delete old.deep; delete old.depth;
     const all = [...old.tiers[0], ...old.tiers[1]];
     for (const part of sp.parts) {
       const nc = makeCountry(part);

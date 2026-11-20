@@ -34,6 +34,26 @@
 //    (bis 1978 15 Amateurligen, 1978–94 8 Oberligen + ab 1991 3 NOFV-Staffeln, 1994–2004 10 bzw.
 //    2004–08 9 Oberligen als 4. Ebene); Regionalligen 1994–2000 4, 2000–08 2, ab 2008 4. Ebene
 //    (3 Staffeln, ab 2012 5). Namen wie im Spiel („1. Liga“, „2. Liga“).
+//  Weitere Länder für die tiefere Simulation (Rang 1–7 der Länderwertung, data/world/deepStructure.ts;
+//  Ebene 1/2 laufen aus den Weltdaten, hier zählen Ebene 3/4):
+//  Niederlande: en.wikipedia.org/wiki/Vierde_Divisie (Hoofdklasse 1974 als höchste Amateurklasse unter
+//    Eredivisie/Eerste Divisie, zuerst nur Sonntag – 42 Vereine in drei Staffeln –, Samstag ab 1996;
+//    2010 Topklasse darüber, 2016 Tweede Divisie + Derde Divisie), en.wikipedia.org/wiki/Derde_Divisie,
+//    en.wikipedia.org/wiki/Dutch_football_league_system (Tweede Divisie 18, Derde Divisie 2 × 18).
+//    Eerste Klasse 1975–2010 als 4. Ebene: regional, im Spiel 4 × 14 angenommen.
+//  Belgien: en.wikipedia.org/wiki/Belgian_National_Division_1 (2016 Eerste Amateurklasse auf Ebene 3,
+//    darunter Tweede Amateurklasse; 2020 umbenannt in Nationale 1/Tweede Afdeling; 2022/23 20, 2023/24 18;
+//    ab 2024/25 geteilt in Flandern 16 + Wallonien 12), en.wikipedia.org/wiki/Belgian_football_league_system.
+//    Davor (bis 2015/16) Derde Klasse 2 × 16 und Bevordering 4 × 16 (Stand der Wikipedia-Saisonartikel).
+//  Portugal: en.wikipedia.org/wiki/Portuguese_Second_Division (bis 1989/90 2. Ebene in Zonen, 1990–2013
+//    Ebene 3 = Segunda Divisão B, ab 1998/99 drei Zonen, 2012/13 3 × 16; 2013 mit der Terceira Divisão
+//    zum Campeonato Nacional de Seniores verschmolzen), en.wikipedia.org/wiki/Portuguese_football_league_system
+//    (Liga 3 ab 2021/22 2 × 10, Campeonato de Portugal 4 × 14). Terceira Divisão vor 1990 und 1990–2013
+//    regional (im Spiel 4 × 18); Campeonato Nacional de Seniores 2013–21 im Spiel 4 × 10 (erste Phase).
+//  Sowjetunion/Russland (nur 3. Ebene, Rang 6–7): Vtoraya Liga in Zonen (1975–89 im Spiel 4 × 20,
+//    1990/91 Vtoraya + Vtoraya Nizshaya Liga), Russland 1992–97 Vtoraya Liga, 1998–2010 Vtoroi Divizion,
+//    2011–22 PFL in Zonen, ab 2023 Vtoraya Liga A (en.wikipedia.org/wiki/Russian_Second_League);
+//    Staffelgrößen gerundet (Angaben schwanken je Saison).
 // =============================================================================
 
 export interface TierRow {
@@ -116,8 +136,43 @@ const GER: TierEra[] = [
   { from: 2012, tiers: [t('1. Liga', 1, 18), t('2. Liga', 1, 18), t('3. Liga', 1, 20), t('Regionalligen', 5, 18)] },
 ];
 
+const NED: TierEra[] = [
+  { from: 1975, tiers: [t('Eredivisie', 1, 18), t('Eerste Divisie', 1, 20), t('Hoofdklasse', 3, 14), t('Eerste Klasse', 4, 14)] },
+  { from: 1996, tiers: [t('Eredivisie', 1, 18), t('Eerste Divisie', 1, 18), t('Hoofdklasse', 6, 14), t('Eerste Klasse', 12, 14)] },
+  { from: 2010, tiers: [t('Eredivisie', 1, 18), t('Eerste Divisie', 1, 18), t('Topklasse', 2, 16), t('Hoofdklasse', 6, 14)] },
+  { from: 2016, tiers: [t('Eredivisie', 1, 18), t('Eerste Divisie', 1, 20), t('Tweede Divisie', 1, 18), t('Derde Divisie', 2, 18)] },
+];
+
+const BEL: TierEra[] = [
+  { from: 1975, tiers: [t('Eerste Klasse', 1, 20), t('Tweede Klasse', 1, 16), t('Derde Klasse', 2, 16), t('Bevordering', 4, 16)] },
+  { from: 2016, tiers: [t('Eerste Klasse A', 1, 16), t('Eerste Klasse B', 1, 8), t('Eerste Amateurklasse', 1, 16), t('Tweede Amateurklasse', 3, 16)] },
+  { from: 2020, tiers: [t('Eerste Klasse A', 1, 18), t('Eerste Klasse B', 1, 8), t('Nationale 1', 1, 16), t('Tweede Afdeling', 3, 16)] },
+  { from: 2022, tiers: [t('Eerste Klasse A', 1, 18), t('Challenger Pro League', 1, 12), t('Nationale 1', 1, 20), t('Tweede Afdeling', 3, 16)] },
+  { from: 2023, tiers: [t('Eerste Klasse A', 1, 16), t('Challenger Pro League', 1, 16), t('Nationale 1', 1, 18), t('Tweede Afdeling', 3, 16)] },
+  { from: 2024, tiers: [t('Eerste Klasse A', 1, 16), t('Challenger Pro League', 1, 16), t('Eerste Afdeling', 2, 14), t('Tweede Afdeling', 3, 16)] },
+];
+
+const POR: TierEra[] = [
+  { from: 1975, tiers: [t('Primeira Divisão', 1, 16), t('Segunda Divisão', 3, 16), t('Terceira Divisão', 4, 18), t('Distritais', 1, null)] },
+  { from: 1990, tiers: [t('Primeira Divisão', 1, 18), t('Segunda Divisão de Honra', 1, 20), t('Segunda Divisão B', 3, 18), t('Terceira Divisão', 6, 18)] },
+  { from: 2013, tiers: [t('Primeira Liga', 1, 18), t('Segunda Liga', 1, 22), t('Campeonato Nacional de Seniores', 8, 10), t('Distritais', 1, null)] },
+  { from: 2021, tiers: [t('Primeira Liga', 1, 18), t('Liga Portugal 2', 1, 18), t('Liga 3', 2, 10), t('Campeonato de Portugal', 4, 14)] },
+];
+
+const URS: TierEra[] = [
+  { from: 1975, tiers: [t('Vysshaya Liga', 1, 16), t('Pervaya Liga', 1, 20), t('Vtoraya Liga', 6, 20), t('Amateurligen', 1, null)] },
+  { from: 1990, tiers: [t('Vysshaya Liga', 1, 16), t('Pervaya Liga', 1, 22), t('Vtoraya Liga', 3, 22), t('Vtoraya Nizshaya Liga', 9, 20)] },
+];
+
+const RUS: TierEra[] = [
+  { from: 1992, tiers: [t('Vysshaya Liga', 1, 20), t('Pervaya Liga', 2, 20), t('Vtoraya Liga', 6, 20), t('Tretya Liga', 6, 18)] },
+  { from: 1998, tiers: [t('Vysshiy Divizion', 1, 16), t('Pervyy Divizion', 1, 22), t('Vtoroi Divizion', 6, 18), t('Amateurligen', 1, null)] },
+  { from: 2011, tiers: [t('Premier-Liga', 1, 16), t('FNL', 1, 20), t('PFL', 5, 16), t('Amateurligen', 1, null)] },
+  { from: 2023, tiers: [t('Premier-Liga', 1, 16), t('Erste Liga', 1, 18), t('Vtoraya Liga A', 2, 10), t('Vtoraya Liga B', 4, 16)] },
+];
+
 /** Länder mit Strukturdaten, Schlüssel = Ländercode aus data/world/countries.ts. */
-const BY_CC: Record<string, TierEra[]> = { eng: ENG, esp: ESP, ita: ITA, fra: FRA, ger: GER };
+const BY_CC: Record<string, TierEra[]> = { eng: ENG, esp: ESP, ita: ITA, fra: FRA, ger: GER, ned: NED, bel: BEL, por: POR, urs: URS, rus: RUS };
 
 /** Ebene 1–4 des Landes in der Saison mit Startjahr `year` (null = keine Strukturdaten). */
 export function historicTiers(cc: string, year: number): TierRow[] | null {

@@ -15,6 +15,7 @@ import { LeagueGroup, SimClub, DivisionMeta, mulberry32, hashStr } from '../engi
 import { DivisionTarget, LeagueReform, makePlaceholder, pendingReform, structureForSeason } from './reforms';
 import { Region, assignByRegion, clubRegion, groupOrder } from './regionGeo';
 import { ensureProtected, normalizeToSteady } from './reformSteady';
+import { multiUpperExchange } from './multiUpperTransition';
 
 // -----------------------------------------------------------------------------
 // Transition-Typen
@@ -171,7 +172,9 @@ function normalTransition(ctx: TransitionContext): TransitionResult {
     const uppers = current.filter((d) => d.tier === upperTier);
     const lowers = current.filter((d) => d.tier === lowerTier);
     if (uppers.length === 0 || lowers.length === 0) continue;
-    const upper = uppers[0]; // obere Ebene ist in allen Strukturen eingleisig
+    // Anderes Heimatland mit mehrgleisiger oberer Ebene (3. → 4. Ebene, data/multiUpperTransition.ts).
+    if (uppers.length > 1 && ctx.targets) { multiUpperExchange(uppers, lowers, remove, add, ctx); continue; }
+    const upper = uppers[0]; // obere Ebene ist in allen deutschen Strukturen eingleisig
     const G = lowers.length;
     const upT = targets.find((t) => t.id === upper.id) ?? targets.find((t) => t.tier === upperTier && t.group == null);
     // Größe der oberen Liga nach dem Wechsel darüber; Sollgröße der neuen Saison. Weicht sie ab

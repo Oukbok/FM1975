@@ -58,6 +58,13 @@
   color: var(--text); font-family: inherit; cursor: pointer; transition: border-color 0.2s, transform 0.2s, background 0.2s;
 }
 .lp-level:first-child .lp-box { width: 350px; }
+/* Ebenen mit vier und mehr Staffeln (tiefere Auslandsligen, Regionalligen): Kästen schmaler, Schrift kleiner. */
+.lp-boxes:has(> .lp-box:nth-child(4)) { gap: 10px; }
+.lp-boxes:has(> .lp-box:nth-child(4)) .lp-box { width: 192px; min-width: 0; padding: 11px 8px 9px; }
+.lp-boxes:has(> .lp-box:nth-child(5)) .lp-box { width: 160px; }
+.lp-boxes:has(> .lp-box:nth-child(4)) .lp-box * { white-space: normal; }
+.lp-boxes:has(> .lp-box:nth-child(4)) .lp-box b { font-size: 17px; letter-spacing: 0.5px; }
+.lp-boxes:has(> .lp-box:nth-child(4)) .lp-box small { font-size: 12.5px; }
 .lp-box:hover { border-color: var(--text-4); transform: translateY(-1px); }
 .lp-box b { font: 500 24px var(--font-display); letter-spacing: 1px; text-transform: uppercase; }
 .lp-box small { font-size: 14px; color: var(--text-3); }

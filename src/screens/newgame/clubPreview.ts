@@ -75,7 +75,8 @@ function planOf(cc: string, year: number): LowerDivPlan[] {
 }
 
 /** Wählbare Ligen eines Landes im Startjahr (Weltdaten; sonst die drei Ligen von 1975) –
- *  in Deutschland auch die Ligen ab der 3. Ebene (3. Liga, Regionalligen, NOFV-Oberliga). */
+ *  in Deutschland auch die Ligen ab der 3. Ebene (3. Liga, Regionalligen, NOFV-Oberliga), in den
+ *  stärksten Auslandsligen die 3./4. Ebene (game/homeDeep.ts, Tiefe nach Länderrang). */
 export function leaguesFor(cc = 'ger', year = 1975): { key: LeagueKey; name: string; tier: number; note: string }[] {
   if (cc === 'gdr') return [
     { key: DDR_OBERLIGA_ID, name: 'DDR-Oberliga', tier: 1, note: 'Die höchste Spielklasse der DDR. Bis 1991 eigener Weg – danach geht es in den gesamtdeutschen Fußball.' },
@@ -99,9 +100,14 @@ export function leaguesFor(cc = 'ger', year = 1975): { key: LeagueKey; name: str
  */
 export interface BackgroundLevel { tier: number; name: string; staffeln: number; clubs: number | null; teams?: number | null }
 export function backgroundLevels(cc = 'ger', year = 1975): BackgroundLevel[] {
-  // Top-Ligen im Ausland (Wunsch Pascal): 3. und 4. Ebene mit historischem Namen (data/leagueTiers.ts), nur Anzeige.
   if (cc === 'gdr') return [{ tier: 3, name: 'Bezirksligen', staffeln: 15, clubs: null }];
-  if (cc !== 'ger') return (historicTiers(cc, year) ?? []).slice(2, 4).map((r, i) => ({ tier: i + 3, name: r.name, staffeln: r.groups, clubs: null, teams: r.teams }));
+  // Ausland (Wunsch Pascal): Ebene 3/4 der stärksten Ligen sind wählbar (game/homeDeep.ts); darunter nur Anzeige –
+  // die historischen Ebenen ohne Spielbetrieb im Spiel (data/leagueTiers.ts) und der Unterbau.
+  if (cc !== 'ger') {
+    const deepest = planOf(cc, year).reduce((a, d) => Math.max(a, d.meta.tier), 2);
+    const rows = (historicTiers(cc, year) ?? []).slice(deepest, 4).map((r, i) => ({ tier: deepest + i + 1, name: r.name, staffeln: r.groups, clubs: null, teams: r.teams }));
+    return [...rows, { tier: deepest + rows.length + 1, name: 'Unterbau', staffeln: 0, clubs: null }];
+  }
   const lower = structureForSeason(seasonLabelOf(year)).filter((t) => t.tier >= 3);
   const deepest = lower.reduce((a, t) => Math.max(a, t.tier), 2);
   return [{ tier: deepest + 1, name: 'Amateurligen', staffeln: 0, clubs: null }];

@@ -51,6 +51,7 @@ import { countryPointSystem } from '../data/world/countries';
 import { homeExcluded } from './startYear';
 import { retireFullCountries } from './fullCountries';
 import { worldLiveResults } from './worldLeagues';
+import { updateWorldDepths } from '../engine/worldDeep';
 import { worldSeasonAwards } from './worldAwardsGame';
 import { homeExtraAwards, worldExtraAwards } from './extraAwardsGame';
 
@@ -394,8 +395,11 @@ export function startNextSeason(g: Game): void {
     if (rec && rec.season === oldSeason && Object.keys(leanResults.divs).length) rec.divs = leanResults.divs;
     if (rec && rec.season === oldSeason && Object.keys(leanResults.cups).length) rec.cups = leanResults.cups;
     if (rec && rec.season === oldSeason && Object.keys(leanResults.scorers).length) { rec.scorers = leanResults.scorers; rec.pstats = leanResults.pstats; }
+    if (rec && rec.season === oldSeason && Object.keys(leanResults.deep).length) rec.deep = leanResults.deep;
     g.world.live = undefined;
   }
+  // Tiefere Ebenen der Auslandsligen nach Rang der Länderwertung (engine/worldDeep.ts; alte Spielstände bekommen sie hier).
+  updateWorldDepths(g.world, euroClubs, nextStartYear);
   historicWorldAfter(g, g.world, euroClubs, nextStartYear);
   for (const note of worldRes.notes) {
     pushMessage(g.messages, makeMessage({

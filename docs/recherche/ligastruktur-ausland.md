@@ -83,3 +83,52 @@ bestehen; Start in einer Lücke übernimmt die Zonen der nächstgelegenen Saison
   trotzdem aus den Daten (Neulinge/Abgänge der 1. Liga).
 - Nach 2025: letzte Größe, Auf-/Abstieg wie im letzten Saisonwechsel ohne Größenänderung.
 - Datenfehler (Umbenennungen mit neuer ID, Fusionen) zählen als Ab- und Aufsteiger.
+
+## 3. und 4. Ebene (Wunsch Pascal: Auslandsligen tiefer simulieren und spielbar)
+
+Tiefe nach dem Rang in der Länderwertung (Ligaruf, `data/leagueReputation.ts` – grob aus der
+UEFA-Fünfjahreswertung je Jahrzehnt; mit Option „Entwicklung der Ligen“ der Ruf im Spiel):
+Rang 1–5 bis Ebene 4, Rang 6–7 bis Ebene 3, sonst Ebene 1/2. Beim Start so, wie ein 1975 begonnenes
+Spiel bis dahin hätte (alle fünf Jahre geprüft), danach alle fünf Jahre mit Puffer (4. Ebene fällt erst
+ab Rang 8 weg, 3. Ebene ab Rang 10) – Grund: England fiel durch den Europapokal-Ausschluss 1985–90 bis
+1995 auf Rang 6/7, behält aber seine Football League. Code `data/world/deepStructure.ts`,
+Hintergrund `engine/worldDeep.ts`, Heimatland `game/homeDeep.ts`.
+
+Struktur je Saison (Namen, Staffeln, Größen) in `data/leagueTiers.ts`. Quellen (abgerufen 11/2026):
+
+- England, Spanien, Italien, Frankreich, Deutschland: siehe Kopf von `data/leagueTiers.ts`
+  (en.wikipedia.org English_Football_League, Segunda_División_B, Tercera_División, Serie_C1,
+  Serie_C2, Serie_D, French_Division_3/4, Championnat_National, Oberliga_(football)).
+- Niederlande: en.wikipedia.org/wiki/Vierde_Divisie (Hoofdklasse ab 1974 höchste Amateurklasse, erst
+  nur Sonntag – 42 Vereine in drei Staffeln –, Samstag ab 1996; 2010 Topklasse darüber, 2016 Tweede
+  Divisie + Derde Divisie), en.wikipedia.org/wiki/Derde_Divisie,
+  en.wikipedia.org/wiki/Dutch_football_league_system. Eerste Divisie ↔ Amateure bis 2009/10 praktisch
+  geschlossen: die Weltdaten zeigen kaum Absteiger, entsprechend wenig Tausch.
+- Belgien: en.wikipedia.org/wiki/Belgian_National_Division_1 (2016 Eerste Amateurklasse als 3. Ebene,
+  2020 Nationale 1, 2022/23 20, 2023/24 18, ab 2024/25 in Flandern 16 + Wallonien 12 geteilt),
+  en.wikipedia.org/wiki/Belgian_football_league_system; davor Derde Klasse 2 × 16, Bevordering 4 × 16.
+- Portugal: en.wikipedia.org/wiki/Portuguese_Second_Division (bis 1989/90 2. Ebene in Zonen, 1990–2013
+  3. Ebene, 2012/13 drei Zonen × 16, 2013 Verschmelzung mit der Terceira Divisão),
+  en.wikipedia.org/wiki/Portuguese_football_league_system (Liga 3 2 × 10, Campeonato de Portugal 4 × 14).
+- Sowjetunion/Russland: Vtoraya Liga in Zonen, Russland 1998–2010 Vtoroi Divizion, 2011–22 PFL, ab
+  2023 Vtoraya Liga A/B (en.wikipedia.org/wiki/Russian_Second_League); Staffelgrößen gerundet.
+
+Vereinfachungen:
+
+- Höchstens vier Staffeln je Ebene (Spanien Tercera 17–18, Serie D 9, Frankreich Division 4 8 Staffeln);
+  regional verschiedene Größen = 16 Mannschaften, ungerade Größen gerade abgerundet.
+- Vereine: echte Daten nur für Ebene 1/2. Darunter zuerst die übrigen Vereine des Landes aus den
+  Weltdaten (Unterbau), dann erfundene Vereine aus Städten des Landes (`data/world/deepTowns.ts`),
+  bei zwei Vereinen einer Stadt mit Farbe.
+- Auf-/Abstieg ohne Aufstiegsrunden: Staffelsieger zuerst, dann Zweite (stärkste zuerst); Absteiger
+  je Grenze ⌊Größe / 6⌉ (mindestens eine je Staffel darunter, England 3. → 4. Ebene: 4), unterste Ebene
+  ↔ Unterbau 2 je Staffel; 2. ↔ 3. Ebene in der historischen Zahl der 2. Ebene.
+- Keine Kader (keine Weltspieler) für Ebene 3/4: keine Einzelstatistik, keine Transfers dieser Vereine;
+  Ergebnisse der Ebenen 3/4 nur für die letzten drei Saisons gespeichert (`WORLD_DEEP_KEEP`).
+- Heimatland: Staffelzahl der Ebenen 3/4 bleibt wie beim Start; Größe je Staffel und Name folgen der
+  Saison, wenn die Staffelzahl gleich ist.
+
+Speicherbedarf (Spielstand Deutschland 1995, JSON / lz-string komprimiert wie im Speicher):
+neues Spiel vorher 6 028 KB / 1 441 KB, nachher 6 192 KB / 1 483 KB (+2,9 %); nach drei Saisons
+(Herbst 1998) vorher 12 082 KB / 3 158 KB, nachher 12 415 KB / 3 273 KB (+3,6 %) – rund 520 zusätzliche
+Auslandsvereine ohne Kader plus Ergebnisse der Ebenen 3/4 für drei Saisons.

@@ -117,7 +117,7 @@ function ManagerPick({ d, set, chooseCountry }: { d: NewGameDraft; set: (p: Part
           </div>
           <p className="ng-note">{d.country === 'gdr'
             ? 'Deine Liga bekommt beim Start volle Kader, die andere DDR-Liga und die Bundesliga laufen simuliert mit. Zur Saison 1991/92 geht es in den gesamtdeutschen Fußball.'
-            : 'Wählbar sind alle Ligen mit Spielbetrieb – auch 3. Liga und Regionalligen: Deine Liga bekommt beim Start volle Kader, die übrigen laufen simuliert mit.'}</p>
+            : <>Wählbar sind alle Ligen mit Spielbetrieb – auch 3. Liga und Regionalligen, im Ausland bei den stärksten Ligen die 3. und 4. Ebene: Deine Liga bekommt beim Start volle Kader, die übrigen laufen simuliert mit.</>}</p>
         </section>
       ) : (
         <section className="ng-card ng-pick">

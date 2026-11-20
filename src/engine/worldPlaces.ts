@@ -24,6 +24,12 @@ export interface WorldPlaces {
   c: Record<string, string>;
   /** Staffel der 2. Ebene je Verein und Saison (ein Zeichen, siehe oben); fehlt = nie mehrgleisig. */
   s?: Record<string, string>;
+  /**
+   * Tiefere Ebenen (engine/worldDeep.ts): je Verein zwei Zeichen je Saison wie `c` – Zeichen 1 = Ebene 3
+   * Platz 1–45 (Index 0–44) bzw. Ebene 4 Platz 1–45 (Index 45–89), Zeichen 2 = Größe der Staffel; Staffel in `s`.
+   * Fehlt = keine tieferen Ebenen.
+   */
+  d?: Record<string, string>;
 }
 
 const ABC = (() => {
@@ -36,6 +42,23 @@ const T1_MAX = 40, T2_MAX = 50, SIZE_MAX = ABC.length - 1;
 const placeChar = (tier: number, pos: number) => ABC[tier === 1 ? Math.min(T1_MAX, pos) - 1 : T1_MAX + Math.min(T2_MAX, pos) - 1];
 const sizeChar = (n: number) => ABC[Math.max(1, Math.min(SIZE_MAX, n))];
 
+const DEEP_MAX = 45;
+const deepChar = (tier: number, pos: number) => ABC[(tier >= 4 ? DEEP_MAX : 0) + Math.min(DEEP_MAX, pos) - 1];
+
+/** Endtabellen einer tieferen Ebene (3/4) einer Saison: je Staffel Platz und Größe, Staffel in `s`. */
+export function noteDeepPlaces(w: WorldState, year: number, tier: number, groups: string[][]): void {
+  const p = placesOfWorld(w);
+  if (!p.y0) p.y0 = year;
+  if (year < p.y0) return;
+  const m = (p.d ??= {});
+  const i = (year - p.y0) * 2;
+  groups.forEach((g, k) => g.forEach((id, j) => {
+    const s = (m[id] ?? '').padEnd(i, '.');
+    m[id] = s.slice(0, i) + deepChar(tier, j + 1) + sizeChar(g.length) + s.slice(i + 2);
+    if (groups.length > 1) setGroupPlace(p, id, year, k, groups.length);
+  }));
+}
+
 export function placesOfWorld(w: WorldState): WorldPlaces {
   return (w.places ??= { y0: 0, c: {} });
 }
@@ -47,6 +70,7 @@ export function setPlace(p: WorldPlaces, id: string, year: number, tier: number,
     const pad = '..'.repeat(p.y0 - year);
     for (const k of Object.keys(p.c)) p.c[k] = pad + p.c[k];
     for (const k of Object.keys(p.s ?? {})) p.s![k] = '.'.repeat(p.y0 - year) + p.s![k];
+    for (const k of Object.keys(p.d ?? {})) p.d![k] = pad + p.d![k];
     p.y0 = year;
   }
   const i = (year - p.y0) * 2;
@@ -85,15 +109,21 @@ export interface WorldPlace { year: number; tier: number; pos: number; size: num
 /** Alle bekannten Endplätze eines Vereins (chronologisch). */
 export function worldPlacesOf(w: WorldState | undefined, id: string): WorldPlace[] {
   const p = w?.places;
-  const s = p?.c[id];
-  if (!p || !s) return [];
+  const s = p?.c[id] ?? '', d = p?.d?.[id] ?? '';
+  if (!p || (!s && !d)) return [];
   const out: WorldPlace[] = [];
-  for (let i = 0; i + 1 < s.length; i += 2) {
-    if (s[i] === '.') continue;
-    const k = ABC.indexOf(s[i]);
-    if (k < 0) continue;
-    const gr = k >= T1_MAX ? decodeGroup(p.s?.[id]?.[i / 2]) : null;
-    out.push({ year: p.y0 + i / 2, tier: k < T1_MAX ? 1 : 2, pos: k < T1_MAX ? k + 1 : k - T1_MAX + 1, size: Math.max(1, ABC.indexOf(s[i + 1])), ...(gr ?? {}) });
+  for (let i = 0; i + 1 < Math.max(s.length, d.length); i += 2) {
+    if (s[i] && s[i] !== '.') {
+      const k = ABC.indexOf(s[i]);
+      if (k < 0) continue;
+      const gr = k >= T1_MAX ? decodeGroup(p.s?.[id]?.[i / 2]) : null;
+      out.push({ year: p.y0 + i / 2, tier: k < T1_MAX ? 1 : 2, pos: k < T1_MAX ? k + 1 : k - T1_MAX + 1, size: Math.max(1, ABC.indexOf(s[i + 1])), ...(gr ?? {}) });
+    } else if (d[i] && d[i] !== '.') {
+      const k = ABC.indexOf(d[i]);
+      if (k < 0) continue;
+      const gr = decodeGroup(p.s?.[id]?.[i / 2]);
+      out.push({ year: p.y0 + i / 2, tier: k < DEEP_MAX ? 3 : 4, pos: (k % DEEP_MAX) + 1, size: Math.max(1, ABC.indexOf(d[i + 1])), ...(gr ?? {}) });
+    }
   }
   return out;
 }

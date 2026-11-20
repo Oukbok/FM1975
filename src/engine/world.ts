@@ -20,13 +20,14 @@
 import { allEuroClubs, EuroClub, EuroCompId } from '../data/europe';
 import { COUNTRY_SEEDS } from '../data/worldSeed';
 import { CupState } from '../types';
-import { WorldSeasonRecord, WorldState, WORLD_TABLES_KEEP } from './worldTypes';
+import { WorldSeasonRecord, WorldState, WORLD_DEEP_KEEP, WORLD_TABLES_KEEP } from './worldTypes';
 import { clamp, gauss, hash, poisson, rng } from './worldRandom';
 import { applySplits, countryLevel, ensureCountryPool, fillCountry, makeCountry, softClubStrength, targetStrength } from './worldCountries';
 import { euroParticipants, pushCoef, seasonEuroPoints } from './worldEuro';
-import { notePlaces } from './worldPlaces';
+import { noteDeepPlaces, notePlaces } from './worldPlaces';
 import { cupField, enforceWorldReserves } from './worldReserves';
 import { exchangeSecond, secondGroups } from './worldSecond';
+import { deepGroupsOf, deepStrength, exchangeDeep, poolShift } from './worldDeep';
 
 // Aufgeteilt (Dateien < 600 Zeilen): Typen in worldTypes.ts, Länder/Vereine/Teilungen in
 // worldCountries.ts, Koeffizienten/Rangliste/Starter in worldEuro.ts – hier weitergereicht.
@@ -76,7 +77,7 @@ const HOME_KEY = '__home__';
 
 /** Länder, deren Ligen das Spiel selbst Spiel für Spiel rechnet (voll simulierte Länder). */
 /** `next` = fertige Ligen der Folgesaison (Länder „Spiel für Spiel“); fehlt es, regelt die Welt Auf- und Abstieg selbst. */
-export interface FixedCountryResult { t1: string[]; t2: string[]; /** Endtabellen je Staffel der 2. Ebene (mehrgleisig; `t2` = alle hintereinander). */ t2g?: string[][]; next?: string[][]; /** Pokalsieger aus dem ausgespielten Landespokal (game/worldCups.ts). */ cup?: string }
+export interface FixedCountryResult { t1: string[]; t2: string[]; /** Endtabellen je Staffel der 2. Ebene (mehrgleisig; `t2` = alle hintereinander). */ t2g?: string[][]; next?: string[][]; /** Pokalsieger aus dem ausgespielten Landespokal (game/worldCups.ts). */ cup?: string; /** Endtabellen der tieferen Ebenen: [Ebene 3, Ebene 4] → Staffeln (engine/worldDeep.ts). */ deep?: string[][][] }
 
 // -----------------------------------------------------------------------------
 // Eine Liga durchrechnen
@@ -195,6 +196,11 @@ export function advanceWorldSeason(
       return fx && (fg?.length || fx.next) ? given(fg ?? [], g) : playLeague(g, euroClubs, winPts, r);
     });
     const t2 = t2g.flat();
+    // Tiefere Ebenen (engine/worldDeep.ts) Staffel für Staffel; nicht vorgegebene rechnet die Welt selbst.
+    const deepT = (c.deep ?? []).map((_, k) => deepGroupsOf(c, k).map((g, i) => {
+      const fg = fx?.deep?.[k]?.[i];
+      return fg?.length ? given(fg, g) : playLeague(g, euroClubs, winPts, r);
+    }));
     const champ = t1[0];
     const cupWinner = fx?.cup && w.meta[fx.cup] ? fx.cup : playCup(cupField(c.name, endYear - 1, [...c.tiers[0], ...c.tiers[1]]), euroClubs, r);
     c.lastTable = t1;
@@ -205,6 +211,7 @@ export function advanceWorldSeason(
     rec.cupWinners[c.name] = cupWinner;
     (rec.tables ??= {})[c.name] = [...t1];
     notePlaces(w, endYear - 1, t1, t2g); // komplette Platzierungs-Historie je Verein (engine/worldPlaces.ts)
+    deepT.forEach((gs, k) => noteDeepPlaces(w, endYear - 1, k + 3, gs));
 
     // Größe: Meister/Spitzenplätze wachsen, Absteiger schrumpfen.
     t1.forEach((id, i) => {
@@ -222,7 +229,8 @@ export function advanceWorldSeason(
     // werden neu verteilt (zusammengelegt/aufgeteilt). Ohne Weltdaten wie bisher 3 bzw. 2, Unterbau 2 je Staffel.
     if (fx?.next) { c.tiers = [fx.next[0].filter((id) => w.meta[id]), fx.next[1].filter((id) => w.meta[id])]; delete c.groups; continue; }
     if (!t2.length) { enforceWorldReserves(c, endYear, (id) => euroClubs[id]?.strength ?? 0); continue; }
-    exchangeSecond(w, euroClubs, c, t1, t2g, endYear, r);
+    const moved = exchangeSecond(w, euroClubs, c, t1, t2g, endYear, r, deepT[0]);
+    if (c.deep?.length) exchangeDeep(w, euroClubs, c, deepT, moved.out, moved.inn, endYear, r);
     // Zweite Mannschaften (B-Teams) nach den Regeln des Landes (engine/worldReserves.ts).
     enforceWorldReserves(c, endYear, (id) => euroClubs[id]?.strength ?? 0);
   }
@@ -248,6 +256,7 @@ export function advanceWorldSeason(
         club.strength = Math.round(clamp(club.strength + (target - club.strength) * 0.4 + gauss(r) * 1.5, 40, 86));
       }
     });
+    deepStrength(w, euroClubs, c, endYear, r);
   }
 
   // 4b) Unterbau: Amateurniveau unterhalb der 2. Liga
@@ -258,7 +267,7 @@ export function advanceWorldSeason(
       const club = euroClubs[id], m = w.meta[id];
       if (!club || !m) continue;
       m.size = clamp(m.size + gauss(r) * 0.01, 0.02, 0.3);
-      const target = targetStrength(level, m.size, 1) - 4;
+      const target = targetStrength(level, m.size, 1) - 4 - poolShift(c);
       club.strength = Math.round(clamp(club.strength + (target - club.strength) * 0.4 + gauss(r) * 1.5, 35, 80));
     }
   }
@@ -268,6 +277,7 @@ export function advanceWorldSeason(
   w.participants = participants;
   w.history.push(rec);
   if (w.history.length > 60) w.history.shift();
+  for (let i = 0; i < w.history.length - WORLD_DEEP_KEEP; i++) delete w.history[i].deep;
   for (let i = 0; i < w.history.length - WORLD_TABLES_KEEP; i++) { delete w.history[i].tables; delete w.history[i].divs; delete w.history[i].cups; delete w.history[i].scorers; delete w.history[i].pstats; }
   return { notes, participants };
 }

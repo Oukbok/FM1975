@@ -36,7 +36,18 @@ export interface WorldCountry {
   repStart?: number;
   /** Ligaruf der letzten Saisonwechsel (neueste zuletzt, höchstens 10). */
   repHist?: number[];
+  /**
+   * Tiefere Ebenen (Wunsch Pascal, engine/worldDeep.ts): [Ebene 3, Ebene 4] mit allen Staffeln hintereinander
+   * (`ids`) und den Staffelgrößen (`groups`). Fehlt = nur 1./2. Ebene (alte Spielstände, kleinere Länder).
+   * Diese Vereine haben keine Weltspieler-Kader (Spielstand klein).
+   */
+  deep?: DeepTier[];
+  /** Simulierte Tiefe 2–4 nach Rang der Länderwertung (data/world/deepStructure.ts); fehlt = noch nicht festgelegt. */
+  depth?: number;
 }
+
+/** Eine tiefere Ebene eines Hintergrund-Landes: Staffeln hintereinander + Größen. */
+export interface DeepTier { ids: string[]; groups: number[] }
 
 export interface WorldClubMeta {
   country: string;
@@ -56,6 +67,8 @@ export interface WorldSeasonRecord {
   tables?: Record<string, string[]>;
   /** Auslandsligen der Saison je Land [1. Liga, 2. Liga bzw. deren Staffeln 1…k] mit allen Ergebnissen (game/worldLeagues.ts; nur die letzten WORLD_TABLES_KEEP Saisons). */
   divs?: Record<string, (LeanDiv | null)[]>;
+  /** Tiefere Ebenen der Saison je Land: [Ebene 3, Ebene 4] → Staffeln (engine/worldDeep.ts; nur die letzten WORLD_DEEP_KEEP Saisons). */
+  deep?: Record<string, LeanDiv[][]>;
   /** Landespokale der Saison je Land mit allen Runden (game/worldCups.ts; nur die letzten WORLD_TABLES_KEEP Saisons). */
   cups?: Record<string, LeanCup>;
   /** Torschützenlisten der Auslandsligen, Schlüssel `Land|Index` (0 = 1. Liga, 1… = Staffeln der 2. Ebene): [Name, Verein, Position, Tore] (nur die letzten WORLD_TABLES_KEEP Saisons). */
@@ -84,6 +97,8 @@ export interface WorldLive { season: string; divs: Record<string, WorldLiveDiv>;
 
 /** So viele Saisons behält die Welt-Historie die Abschluss-Reihenfolge (Spielstand-Größe). */
 export const WORLD_TABLES_KEEP = 10;
+/** So viele Saisons behält die Welt-Historie die Ergebnisse der tieferen Ebenen (viele Staffeln, Spielstand-Größe). */
+export const WORLD_DEEP_KEEP = 3;
 
 export interface WorldState {
   version: 1;
