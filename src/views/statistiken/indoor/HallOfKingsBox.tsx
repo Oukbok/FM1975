@@ -94,7 +94,8 @@ function Kings({ g, by, setBy }: { g: Game; by: HallKingSort; setBy: (b: HallKin
           })}
         </tbody>
       </table>
-      <div className="dnote hk-foot">* Hallenspezialist (derzeit ab Ruf {at}, je Epoche verschieden). Grau: nicht mehr aktiv. Verein = zuletzt in der Halle.</div>
+      {/* Wie die Hallenwerte zustande kommen, erklärt nur noch die Kaderwahl am Turniertag (Wunsch Pascal). */}
+      <div className="dnote hk-foot">* Hallenspezialist. Grau: nicht mehr aktiv. Verein = zuletzt in der Halle.</div>
     </div>
   );
 }
