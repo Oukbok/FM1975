@@ -116,7 +116,7 @@ export const GOAL_CAP: Record<MarketingGoal, number> = { att: 0.05, members: 0.1
 /** Worauf ein Kanal einzahlt (Gewichte). Kanäle eigener Datensätze ohne Eintrag: `DEFAULT_GOALS`. */
 export const CHANNEL_GOALS: Record<string, Partial<Record<MarketingGoal, number>>> = {
   stadionwerbung: { att: 3, merch: 1, members: 1 },
-  lokalpresse: { att: 2, members: 2, reg: 3 },
+  lokalpresse: { att: 2, members: 2, reg: 3, merch: 1 }, // Fanartikel: Anzeigen mit Trikot/Schal (Wunsch Pascal)
   fernsehwerbung: { nat: 3, reg: 1, att: 1, merch: 1 },
   ueberregional: { nat: 3, members: 1 },
   merchandising_kampagne: { merch: 4 },

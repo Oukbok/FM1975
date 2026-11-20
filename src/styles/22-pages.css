@@ -229,15 +229,21 @@
 .dmkt-fx-h, .dmkt-fx-row { display: grid; grid-template-columns: minmax(0, 1.5fr) 70px 70px minmax(0, 1fr); gap: 8px; align-items: baseline; }
 .dmkt-fx-h { font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-3); padding-bottom: 4px; }
 .dmkt-fx-h span:not(:first-child), .dmkt-fx-row span:not(:first-child) { text-align: right; }
-.dmkt-fx-row { position: relative; padding: 6px 0 10px; border-top: 1px solid var(--border-soft); font-size: 15.5px; }
+.dmkt-fx-row { position: relative; padding: 3px 0 15px; border-top: 1px solid var(--border-soft); font-size: 15.5px; }
 .dmkt-fx-row span:nth-child(3) { font-weight: 700; }
 .dmkt-fx-row span:nth-child(4) { color: var(--pos); font-weight: 600; white-space: nowrap; }
 .dmkt-fx-row.off { color: var(--text-4); }
 .dmkt-fx-row.sum { grid-template-columns: minmax(0, 1fr) 0 0 auto; padding-bottom: 6px; color: var(--text-2); font-size: 14.5px; }
-.dmkt-fx-bar { position: absolute; left: 0; right: 0; bottom: 3px; height: 4px; border-radius: 2px; background: rgba(var(--ink-rgb), 0.08); overflow: hidden; }
+.dmkt-fx-bar { position: absolute; left: 0; right: 0; bottom: 3px; height: 5px; border-radius: 2px; background: rgba(var(--ink-rgb), 0.08); overflow: hidden; }
 .dmkt-fx-bar b, .dmkt-fx-bar em { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 2px; }
 .dmkt-fx-bar b { background: rgba(var(--ink-rgb), 0.22); }
 .dmkt-fx-bar em { background: var(--navy); }
+/* Pfeile von oben auf den Balken: jetzt (dunkel) und Ziel (hell, Rand) */
+.dmkt-fx-arrow { position: absolute; bottom: 9px; width: 0; height: 0; margin-left: -5px; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid var(--navy); }
+.dmkt-fx-arrow.goal { border-top-color: rgba(var(--ink-rgb), 0.38); }
+.dmkt-legend { display: flex; gap: 18px; margin-top: 6px; font-size: 13px; color: var(--text-3); }
+.dmkt-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.dmkt-legend .dmkt-fx-arrow { position: static; margin: 0; }
 
 /* --- Vereinsgelände ----------------------------------------------------- */
 .dfac { display: grid; grid-template-columns: 230px 1fr 260px; gap: 16px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-soft); }

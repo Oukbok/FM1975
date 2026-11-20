@@ -63,7 +63,7 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
 
   return (
     <DashPage>
-      <DashBox title="Werbekanäle" info="werbekanaele" icon="marketing" span={2} rows={future.length ? 1 : 2} right={`${areas.length} verfügbar`}>
+      <DashBox title="Werbekanäle" info="werbekanaele" icon="marketing" span={2} right={`${areas.length} verfügbar${future.length ? ` · nächster ab ${future[0].unlockYear}` : ''}`}>
         {areas.map((a) => {
           const avail = marketingAvailable(a, curYear);
           const units = budgets[a.id] ?? 0;
@@ -89,15 +89,6 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
         <div className="dnote mt8">Kosten steigen linear mit der Stufe, die Wirkung flacht ab – die ersten Stufen bringen am meisten. Eine Kampagne braucht rund ein halbes Jahr, bis sie voll wirkt, und klingt ebenso langsam ab. Markenwerbung bleibt als Wert erhalten.</div>
       </DashBox>
 
-      {future.length > 0 && <DashBox title="Kommende Werbekanäle" icon="kalender" span={2} right={`${future.length} weitere`}>
-        {future.length ? future.map((a) => (
-          <div key={a.id} className="dlist-row">
-            <span className="dchip" style={{ minWidth: 70, textAlign: 'center' }}>ab {a.unlockYear}</span>
-            <span className="grow"><b>{a.name}</b><span className="dnote" style={{ display: 'block' }}>{a.desc}</span></span>
-          </div>
-        )) : null}
-      </DashBox>}
-
       <DashBox title="Wirkung der Werbung" info="werbewirkung" icon="finances">
         <div className="dkpis">
           <Kpi value={fmtDM(mv.costYear)} label="Kosten / Jahr" color={mv.costYear ? 'var(--red)' : undefined} />
@@ -111,11 +102,20 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
               <span>{r.now > 0 ? fxText(r.goal, r.now) : '–'}</span>
               <span>{r.target > 0 ? fxText(r.goal, r.target) : '–'}</span>
               <span>{brandGoal(r.goal) ? '' : r.perYear ? `+${fmtDM(r.perYear)}` : '–'}</span>
+              {/* Wunsch Pascal: Pfeil „jetzt“ (dunkel) und „Ziel mit diesen Einstellungen“ (hell) von oben auf den Balken */}
               <i className="dmkt-fx-bar"><b style={{ width: `${Math.min(100, (r.target / r.cap) * 100)}%` }} /><em style={{ width: `${Math.min(100, (r.now / r.cap) * 100)}%` }} /></i>
+              {(r.target > 0 || r.now > 0) && <>
+                <i className="dmkt-fx-arrow now" style={{ left: `${Math.min(100, (r.now / r.cap) * 100)}%` }} title={`Jetzt ${fxText(r.goal, r.now)}`} />
+                <i className="dmkt-fx-arrow goal" style={{ left: `${Math.min(100, (r.target / r.cap) * 100)}%` }} title={`Ziel ${fxText(r.goal, r.target)}`} />
+              </>}
             </div>
           ))}
           <div className="dmkt-fx-row sum"><span>Marke gesamt → Sponsoring, Vermarktung, Fanartikel</span><span /><span /><span>{mv.brandYear ? `+${fmtDM(mv.brandYear)}` : '–'}</span></div>
         </div>
+        <div className="dmkt-legend"><span><i className="dmkt-fx-arrow now" />jetzt</span><span><i className="dmkt-fx-arrow goal" />Ziel mit diesen Einstellungen</span></div>
+      </DashBox>
+
+      <DashBox title="Zugkraft & Empfehlung" info="werbewirkung" icon="trendUp">
         <div className="dmkt-pull" title={mv.pull.why}>
           <span>Zugkraft des Vereins</span><b className={mv.pull.factor >= 1.07 ? 'up' : mv.pull.factor <= 0.93 ? 'down' : ''}>{mv.pull.word} · ×{mv.pull.factor.toFixed(2).replace('.', ',')}</b>
           <i>{mv.pull.why}</i>
@@ -128,12 +128,15 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
           {mv.costYear > 0 && mv.progress < 0.85 ? ` Die Kampagnen laufen noch an (${Math.round(mv.progress * 100)} % der Zielwirkung).` : ''}
         </div>
         <KV k="Mitgliedsbeiträge / Monat" info="mitglieder" v={`+${fmtDM(membershipMonth)}`} color="var(--green)" />
-        <div className="dsec">Werbeflächen im Stadion</div>
+        {future.length > 0 && <KV k="Nächster Werbekanal" v={`${future[0].name} · ab ${future[0].unlockYear}`} />}
+      </DashBox>
+
+      <DashBox title="Werbeflächen im Stadion" info="reichweite" icon="stadium">
         <KV k="Bandenpartner" v={bandenDeal ? `${bandenDeal.partner} · ${fmtDM(monthly.advertising * 12)}/Jahr` : 'frei – siehe Sponsoring'} />
         <KV k="Banden" v={curYear >= LED_YEAR ? 'LED, wechselnde Motive' : 'statisch'} />
         <KV k="Wert (Zuschauer × TV)" info="reichweite" v={`${Math.round(bandenFactor(club, curYear) * 100)} %`} />
         <KV k="TV-Präsenz" v={`${Math.round(presence * 100)} %`} />
-        <div className="dnote">{tvEraText(curYear)}.</div>
+        <div className="dnote mt8">{tvEraText(curYear)}.</div>
       </DashBox>
 
       <DashBox title="Catering & Spieltag" info="catering" icon="catering" right={`Stufe ${cateringLevel}`}>
