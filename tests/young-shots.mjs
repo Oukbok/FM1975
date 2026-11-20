@@ -1,4 +1,4 @@
-// Screenshots „Junger Manager“ (Wunsch Pascal #47): Spielmodus mit Hintergrundgeschichte,
+// Screenshots Privatleben (Wunsch Pascal #47; Modus „Junger Manager“ entfernt):
 // Spielstart, Privat-Seiten (Übersicht, Karriere, Familie, Freizeit, Vermögen).
 //   npm run build && node tests/young-shots.mjs [ordner]   (VIEW=1366x768 möglich)
 import { createServer } from 'node:http';
@@ -23,7 +23,7 @@ const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
 await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
 await page.goto(url);
-await startNewGame(page, { young: true, shots: (n) => (n.startsWith('2') || n.startsWith('1') ? page.screenshot({ path: `${out}/${W}x${H}_${n}.png` }) : null) });
+await startNewGame(page, { shots: (n) => (n.startsWith('2') || n.startsWith('1') ? page.screenshot({ path: `${out}/${W}x${H}_${n}.png` }) : null) });
 await page.waitForTimeout(800);
 for (const sub of ['Privat', 'Karriere', 'Familie', 'Freizeit', 'Vermögen']) {
   await page.click('.hd-nav-item:has-text("Privat")');

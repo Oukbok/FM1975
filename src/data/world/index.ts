@@ -9,6 +9,7 @@
 // Ein Datensatz (Editor) kann je Land Vereine/Saisons überschreiben (`setWorldOverride`).
 // =============================================================================
 import type { RealClub, SeasonRow } from './types';
+import { projectRow } from './projection';
 
 export interface CountryWorld {
   clubs: RealClub[];
@@ -113,8 +114,14 @@ export function worldCountriesWithData(): string[] {
 export function worldSeason(cc: string, year: number): SeasonRow | null {
   const w = countryWorld(cc);
   const row = w?.seasons[year] ?? (w?.seasons as Record<string, SeasonRow> | undefined)?.[String(year)];
-  return row && Array.isArray(row.t1) && row.t1.length >= 2 ? row : null;
+  if (row && Array.isArray(row.t1) && row.t1.length >= 2) return row;
+  // Nach der letzten echten Saison (2025/26): fortgeschrieben bis zum spätesten Startjahr (data/world/projection.ts).
+  if (!w) return null;
+  const key = `${cc}|${year}|${dataVersion}`;
+  if (!projCache.has(key)) projCache.set(key, projectRow(w.seasons, year));
+  return projCache.get(key) ?? null;
 }
+const projCache = new Map<string, SeasonRow | null>();
 
 /** Verein eines Landes nach ID. */
 export function realClub(cc: string, id: string): RealClub | undefined {

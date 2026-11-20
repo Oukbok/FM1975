@@ -4,17 +4,16 @@
 // Bühne in Textmodus-Größe: Mittellinie und Mittelkreis zeichnen sich, die
 // Saisonzahl rollt ein (bis 1986 als Fallblatt-Anzeigetafel), Schlagzeile,
 // Epoche, dann Wappen, Verein, Liga und Saisonziel. Der Bernstein-Bogen um den
-// Mittelkreis zeigt die Restzeit. Überspringen: Klick, Leertaste, Enter, Esc
-// (Tasten fängt BriefingModal ab). Nur CSS-Animationen (28-season-intro.css),
+// Mittelkreis läuft einmal voll. Weiter nur über den Knopf „Los geht’s“ unten rechts
+// (Wunsch Pascal: kein automatischer Übergang; Tasten fängt BriefingModal ab). Nur CSS-Animationen (28-season-intro.css),
 // `prefers-reduced-motion` → BriefingModal zeigt die Bühne gar nicht.
 // =============================================================================
-import { useEffect } from 'react';
 import ClubCrest from '../../../components/ClubCrest';
 import type { EraTipSet } from '../../../data/briefings/eraTips';
 import type { SeasonBriefing } from '../../../game/seasonBriefing';
 import type { Club } from '../../../types';
 
-/** Gesamtdauer bis zum automatischen Übergang (ms). */
+/** Dauer der Animation (Bogen um den Mittelkreis, ms). */
 export const INTRO_MS = 6200;
 
 /** Ziffernfolge einer Rolle: von `from` mehrfach durchlaufen bis `to`. */
@@ -48,18 +47,14 @@ function RollingYear({ year, prev, flap }: { year: number; prev: number; flap: b
 }
 
 export function SeasonIntro({ b, club, era, leaving, onSkip }: {
-  b: SeasonBriefing; club?: Club; era: EraTipSet; leaving: boolean; onSkip: () => void;
+  b: SeasonBriefing; club?: Club; era: EraTipSet; leaving: boolean; onSkip?: () => void;
 }) {
-  useEffect(() => {
-    const t = setTimeout(onSkip, INTRO_MS);
-    return () => clearTimeout(t);
-  }, [onSkip]);
   const y = b.startYear;
   const tail = b.season.slice(b.season.indexOf('/') + 1).slice(-2);
   const sit = b.situation;
   const flap = era.motif === 'tv';
   return (
-    <div className={`si-stage si-motif-${era.motif} ${leaving ? 'leaving' : ''}`} onClick={onSkip} role="presentation">
+    <div className={`si-stage si-motif-${era.motif} ${leaving ? 'leaving' : ''}`} role="presentation">
       <div className="si-pattern" />
       <svg className="si-pitch" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" aria-hidden>
         <line className="si-halfway l" x1="680" y1="420" x2="0" y2="420" />
@@ -94,7 +89,6 @@ export function SeasonIntro({ b, club, era, leaving, onSkip }: {
         </div>
       </div>
 
-      <div className="si-skip">Klick, Leertaste oder Esc – weiter zum Briefing</div>
     </div>
   );
 }

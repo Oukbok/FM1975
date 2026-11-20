@@ -1,36 +1,17 @@
 import Icon from '../../components/Icon';
 import { rangePct, type NewGameDraft, type StartMode } from './draft';
-import { STORIES } from '../../data/privateLife';
 import { InfoTip } from '../../ui/InfoTip';
-import { NatFlag } from '../../components/competition/CountryFlag';
-import { jobNationFor, jobNations } from '../../game/national/jobNations';
-import { countryInfo, countryOfNat } from '../../data/countryFlags';
+import { jobNationFor } from '../../game/national/jobNations';
+import { countryInfo } from '../../data/countryFlags';
 
-const natLabel = (code: string) => { const k = countryOfNat(code); return k ? countryInfo(k).name : code; };
-
-/** Zusätzlich Nationaltrainer (Wunsch Pascal): Schalter, Nation mit Flagge und Stärke-Rang, Entlassung an/aus. */
+/** Zusätzlich Nationaltrainer (Wunsch Pascal): nur der Schalter; die Nation wählt man im eigenen Schritt „Nationalteam“ nach dem Verein. */
 function NationalPick({ d, set }: { d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void }) {
-  const list = jobNations(d.startYear);
   const own = countryInfo(d.nationality).code;
   return (
     <div className="ng-nat">
       <h3 className="ng-h">Nationalmannschaft <InfoTip k="nationaltrainer" /></h3>
-      <div className="ng-nat-top">
-        <Toggle on={d.nationalOn} onChange={(v) => set({ nationalOn: v, ...(v && !d.nationalOn ? { nationalTeam: jobNationFor(d.nationalTeam === 'GER' && own ? own : d.nationalTeam, d.startYear, 'GER') } : {}) })}
-          label="Zusätzlich Nationaltrainer" text="Neben dem Verein eine Nationalmannschaft betreuen." />
-        <Toggle on={d.nationalOn && d.nationalSackable} onChange={(v) => d.nationalOn && set({ nationalSackable: v })}
-          label="Entlassung möglich" text="Verfehlte Ziele können dich das Amt kosten." />
-      </div>
-      <div className={`ng-natlist ${d.nationalOn ? '' : 'off'}`} role="listbox" aria-label="Nation" aria-disabled={!d.nationalOn}>
-        {list.map((n) => (
-          <button key={n.code} type="button" role="option" aria-selected={d.nationalTeam === n.code} disabled={!d.nationalOn}
-            className={`ng-natrow ${d.nationalTeam === n.code ? 'on' : ''}`} data-nat={n.code} onClick={() => set({ nationalTeam: n.code })}>
-            <NatFlag nat={n.code} height={16} /><b>{natLabel(n.code)}</b>
-            <small>{n.conf}</small><small>Rang {n.rank} · {n.label}</small><em>{n.base}</em>
-          </button>
-        ))}
-      </div>
-      <p className="ng-note ng-natnote">{d.nationalOn ? `Stand ${d.startYear}: Stärke = Grundstärke des Landes; im Spiel zählt dein Aufgebot. Umschalten Verein ↔ Nationalteam über die Kopfleiste.` : 'Standard aus. Später bieten dir Verbände ein Amt an, wenn dein Ansehen passt.'}</p>
+      <Toggle on={d.nationalOn} onChange={(v) => set({ nationalOn: v, ...(v && !d.nationalOn ? { nationalTeam: jobNationFor(d.nationalTeam === 'GER' && own ? own : d.nationalTeam, d.startYear, 'GER') } : {}) })}
+        label="Zusätzlich Nationaltrainer" text="Neben dem Verein eine Nationalmannschaft betreuen. Die Nation wählst du in einem eigenen Schritt." />
     </div>
   );
 }
@@ -38,13 +19,12 @@ function NationalPick({ d, set }: { d: NewGameDraft; set: (p: Partial<NewGameDra
 // Schritt 2: Spielmodus — Teammanager oder Karriere, dazu die Spieloptionen
 /** Ton der Segment-Wahl nach Bedeutung (Farben in 24-newgame.css, Tokens --ng-*). */
 
-const MODES: { k: StartMode; title: string; text: string; icon: 'dashVerein' | 'contracts' | 'home' }[] = [
-  { k: 'manager', title: 'Teammanager', text: 'Du wählst selbst, welchen Verein du übernimmst – vom Meisterschaftsfavoriten bis zum Zweitligisten.', icon: 'dashVerein' },
+const MODES: { k: Exclude<StartMode, 'young'>; title: string; text: string; icon: 'dashVerein' | 'contracts' }[] = [
+  { k: 'manager', title: 'Teammanager', text: 'Du wählst deinen Verein selbst und bleibst ihm über Jahrzehnte treu – du allein bist für ihn verantwortlich.', icon: 'dashVerein' },
   { k: 'career', title: 'Karriere', text: 'Als unbekannter Manager bekommst du Angebote von drei schwächeren Vereinen und suchst dir eines aus.', icon: 'contracts' },
-  { k: 'young', title: 'Junger Manager', text: 'Mit 20 auf der Bank – mit einer Geschichte, warum. Ein ganzes Leben vor dir: Familie, Kinder, Nachfolger über Generationen.', icon: 'home' },
 ];
 
-function Toggle({ on, onChange, label, text }: { on: boolean; onChange: (v: boolean) => void; label: string; text: string }) {
+export function Toggle({ on, onChange, label, text }: { on: boolean; onChange: (v: boolean) => void; label: string; text: string }) {
   return (
     <button type="button" className={`ng-toggle ${on ? 'on' : ''}`} role="switch" aria-checked={on} onClick={() => onChange(!on)}>
       <span className="ng-switch" />
@@ -66,18 +46,6 @@ export function StepMode({ d, set, chooseMode }: { d: NewGameDraft; set: (p: Par
         ))}
       </div>
 
-      {d.mode === 'young' && (
-        <section className="ng-card ng-stories" data-mode="young">
-          <h3 className="ng-h">Deine Geschichte – warum so jung?</h3>
-          <div className="ng-story-list">
-            {STORIES.map((st) => (
-              <button key={st.id} type="button" className={`ng-opt ng-story ${d.story === st.id ? 'on' : ''}`} onClick={() => set({ story: st.id })}>
-                <b>{st.title}</b><small>{st.teaser}</small>
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
 
       <div className="ng-cols ng-cols-2">
         <section className="ng-card">
@@ -97,7 +65,7 @@ export function StepMode({ d, set, chooseMode }: { d: NewGameDraft; set: (p: Par
             <Toggle on={d.briefingAuto} onChange={(v) => set({ briefingAuto: v })} label="Saison-Briefing & Tipps" text="Zu jedem Saisonstart: was neu ist, deine Aufgaben und Tipps zur Epoche." />
             <Toggle on={d.briefingIntro} onChange={(v) => set({ briefingIntro: v && d.briefingAuto })} label="Auftakt-Animation" text="Kurze Einstimmung vor dem Briefing." />
             <Toggle on={d.legends} onChange={(v) => set({ legends: v })} label="Ausnahmetalente der Geschichte" text="Große Talente der Fußballgeschichte wachsen irgendwo in der Spielwelt heran – unerkannt wie alle anderen." />
-            <Toggle on={d.privateLife} onChange={(v) => set({ privateLife: v || d.mode === 'young' })} label="Privatleben" text="Familie, Freizeit, Vermögen – mit Folgen für den Verein. Beim Jungen Manager immer an." />
+            <Toggle on={d.privateLife} onChange={(v) => set({ privateLife: v })} label="Privatleben" text="Familie, Freizeit, Vermögen – mit Folgen für den Verein." />
           </div>
           <p className="ng-note ng-hint ng-push">Es gibt keinen Vereinswechsel und keine Entlassung: Du führst deinen Verein als Manager durch die Jahrzehnte und stellst deine Trainer selbst ein. Sinkt das Vertrauen des Vorstands stark, kürzt er dein Transferbudget und legt dir einen Trainerwechsel nahe.</p>
         </section>

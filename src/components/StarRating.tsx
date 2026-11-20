@@ -21,13 +21,15 @@ function sector(x: number, f0: number, f1: number): string {
 const fmt = (x: number) => String(Math.round(x * 100) / 100).replace('.', ',');
 export const starText = (lo: number, hi: number) => (lo === hi ? `${fmt(lo)} Sterne` : `${fmt(lo)}–${fmt(hi)} Sterne`);
 
-export function StarRating({ lo, hi, size = 22, label, note }: {
+export function StarRating({ lo, hi, size = 22, label, note, plain }: {
   /** sicher (gelb) bis lo, geschätzt (weiß) bis hi – je in Vierteln 0..5 */
   lo: number; hi: number; size?: number;
   /** Titel im Hover, z. B. „Potenzial“ */
   label: string;
   /** Erklärsatz im Hover */
   note?: string;
+  /** Ohne Hover/Fokus – für Sterne innerhalb eines Knopfes (Listenzeile). */
+  plain?: boolean;
 }) {
   const id = useId().replace(/:/g, '');
   const a = Math.max(0, Math.min(5, Math.round(lo * 4) / 4));
@@ -41,7 +43,7 @@ export function StarRating({ lo, hi, size = 22, label, note }: {
   const gap = 2;
   const w = 5 * 24 + 4 * gap;
   return (
-    <span className="mk-stars" tabIndex={0} aria-label={`${label}: ${starText(a, b)}`} {...tip.handlers}>
+    <span className="mk-stars" {...(plain ? {} : { tabIndex: 0, ...tip.handlers })} aria-label={`${label}: ${starText(a, b)}`}>
       <svg viewBox={`0 0 ${w} 24`} width={(size * w) / 24} height={size} aria-hidden>
         <defs>
           <clipPath id={`${id}s`}>{[0, 1, 2, 3, 4].map((i) => <path key={i} d={STAR} transform={`translate(${i * (24 + gap)} 0)`} />)}</clipPath>
@@ -64,7 +66,7 @@ export function StarRating({ lo, hi, size = 22, label, note }: {
         {/* Umriss: kräftig bei sicheren/möglichen Sternen, blass bei leeren – so hebt sich Weiß vom Papier ab */}
         {[0, 1, 2, 3, 4].map((i) => <path key={i} className={`mk-star-line ${b > i ? 'hit' : 'empty'}`} d={STAR} transform={`translate(${i * (24 + gap)} 0)`} />)}
       </svg>
-      {tip.layer}
+      {!plain && tip.layer}
     </span>
   );
 }

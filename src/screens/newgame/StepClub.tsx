@@ -1,3 +1,4 @@
+import { StarRating } from '../../components/StarRating';
 import { useMemo, useState } from 'react';
 import ClubCrest from '../../components/ClubCrest';
 import JerseySVG from '../../components/JerseySVG';
@@ -14,11 +15,8 @@ import { clubBandVars, type CareerOffer, type NewGameDraft } from './draft';
 /** Vereinsfarben als CSS-Variablen (Band an der Vorschau, Kante der gewählten Zeile). */
 const clubVars = (c: ClubPreview) => clubBandVars(c.primary, c.secondary);
 
-const repDots =(rep: number) => Math.max(1, Math.min(5, Math.round((rep - 45) / 9)));
-
-function Dots({ n, max = 5 }: { n: number; max?: number }) {
-  return <span className="ng-dots">{Array.from({ length: max }, (_, i) => <i key={i} className={i < n ? 'on' : ''} />)}</span>;
-}
+/** Ansehen in halben Sternen (Wunsch Pascal: Sterne wie beim Spielerpotenzial statt Punkte). */
+const repStars = (rep: number) => Math.max(0.5, Math.min(5, Math.round((rep - 45) / 4.5) / 2));
 
 function ClubDetail({ c, leagueName }: { c: ClubPreview; leagueName: string }) {
   const home = getClubKitDisplay(c.club, 'home');
@@ -37,8 +35,8 @@ function ClubDetail({ c, leagueName }: { c: ClubPreview; leagueName: string }) {
       <div className="ng-detail-grid">
         <div className="ng-stat"><span>Liga</span><b>{leagueName}</b></div>
         <div className="ng-stat"><span>Kaderstärke</span><b>{c.rank}. von {c.size}</b></div>
-        <div className="ng-stat"><span>Ansehen</span><Dots n={repDots(c.reputation)} /></div>
-        <div className="ng-stat"><span>Finanzkraft</span><Dots n={c.finance} /></div>
+        <div className="ng-stat"><span>Ansehen</span><StarRating lo={repStars(c.reputation)} hi={repStars(c.reputation)} size={18} label="Ansehen" note="Bekanntheit und Größe des Vereins." /></div>
+        <div className="ng-stat"><span>Finanzkraft</span><StarRating lo={c.finance} hi={c.finance} size={18} label="Finanzkraft" note="Im Vergleich mit allen Vereinen des Landes." /></div>
       </div>
       <div className="ng-meter"><i style={{ width: `${pct}%` }} /></div>
       <div className="ng-kv"><span>Stadion</span><b>{c.stadium}</b></div>
@@ -49,7 +47,7 @@ function ClubDetail({ c, leagueName }: { c: ClubPreview; leagueName: string }) {
         <div><JerseySVG {...home} size={96} /><small>Heim</small></div>
         <div><JerseySVG {...away} size={96} /><small>Auswärts</small></div>
       </div>
-      <p className="ng-note ng-hint ng-push">Kaderstärke und Finanzkraft sind Einschätzungen im Ligavergleich; die Kader entstehen beim Start.</p>
+      <p className="ng-note ng-hint ng-push">Kaderstärke ist eine Einschätzung im Ligavergleich, Finanzkraft im Vergleich mit allen Vereinen des Landes; die Kader entstehen beim Start.</p>
     </section>
   );
 }
@@ -111,9 +109,9 @@ function ManagerPick({ d, set, chooseCountry }: { d: NewGameDraft; set: (p: Part
             ))}
             {lower.map((l) => (
               <div key={l.tier} className="rl-row ng-tree-row off" style={{ gridTemplateColumns: '1fr auto auto' }}
-                title="Amateur-Pool ohne Spielbetrieb: Von hier steigen Vereine in die unterste Liga auf.">
+                title={l.teams === undefined ? 'Von hier steigen Vereine in die unterste Liga auf.' : 'Diese Ebene ist (noch) nicht als eigene Liga wählbar.'}>
                 <span className="rl-name">{l.name}</span>
-                <span className="ng-club-role">{l.tier}. Ebene · {l.clubs ? `${l.staffeln > 1 ? `${l.staffeln} Staffeln · ` : ''}im Hintergrund` : 'ohne Spielbetrieb'}</span>
+                <span className="ng-club-role">{l.tier}. Ebene{l.staffeln > 1 ? ` · ${l.staffeln} Staffeln` : ''}{l.teams ? ` · ${l.staffeln > 1 ? 'je ' : ''}${l.teams} Vereine` : ''}</span>
                 <span className="rl-num">{l.clubs ? `${l.clubs} Vereine` : 'nicht wählbar'}</span>
               </div>
             ))}
@@ -136,7 +134,7 @@ function ManagerPick({ d, set, chooseCountry }: { d: NewGameDraft; set: (p: Part
               <button key={c.id} type="button" className={`rl-row ng-club ${sel?.id === c.id ? 'on' : ''}`} style={clubVars(c)} onClick={() => set({ clubId: c.id })}>
                 <span className="rl-club"><ClubCrest club={c.club} size={30} /><span className="rl-name">{c.name}</span></span>
                 <span className="ng-club-role">{sort === 'region' ? c.region : c.role}</span>
-                <Dots n={repDots(c.reputation)} />
+                <StarRating lo={repStars(c.reputation)} hi={repStars(c.reputation)} size={16} label="Ansehen" plain />
               </button>
             ))}
           </div>

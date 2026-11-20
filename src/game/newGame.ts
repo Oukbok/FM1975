@@ -312,7 +312,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   migrateCohesion(g0); // Eingespieltheit: jeder Verein startet eingespielt auf seine Taktik (game/cohesionGame.ts)
   bindMarketing(g0);
   bindHonours(g0, true); // Vereinsauszeichnungen: leere Wirkungstabelle für das neue Spiel
-  // Privatleben: Familie, Freizeit, Vermögen; Junger Manager mit Hintergrundgeschichte (game/private/).
+  // Privatleben: Familie, Freizeit, Vermögen; Hintergrundgeschichte nur noch in alten Spielständen (game/private/).
   if (opts.privateLife === false) g0.privateOff = true;
   else startPrivateLife(g0);
   // Zusätzlich Nationaltrainer (Option im Assistenten, game/national/nationalJob.ts).

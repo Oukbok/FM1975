@@ -1,3 +1,4 @@
+import { historicTiers } from '../../data/leagueTiers';
 // =============================================================================
 // Vorschau-Daten für die Vereinswahl (vor dem Erzeugen des Spiels)
 // -----------------------------------------------------------------------------
@@ -37,7 +38,8 @@ export interface ClubPreview {
   rank: number; size: number; tier: number;
   expectation: string;
   role: 'Favorit' | 'Spitzengruppe' | 'Mittelfeld' | 'Abstiegskampf';
-  finance: 1 | 2 | 3 | 4 | 5;
+  /** Finanzkraft in halben Sternen 0,5–5, im Vergleich mit allen Vereinen des Landes (alle Ligen). */
+  finance: number;
   region: string;
   rivals: string[];
   /** Pseudo-Verein für Wappen/Trikot-Anzeige. */
@@ -89,9 +91,10 @@ export function leaguesFor(cc = 'ger', year = 1975): { key: LeagueKey; name: str
  * ohne Spielbetrieb). Die Ligen ab der 3. Ebene laut Ligastruktur des Startjahres (data/reforms.ts)
  * sind wählbar (leaguesFor) – der gewählte Verein und seine Liga bekommen beim Start volle Kader.
  */
-export interface BackgroundLevel { tier: number; name: string; staffeln: number; clubs: number | null }
+export interface BackgroundLevel { tier: number; name: string; staffeln: number; clubs: number | null; teams?: number | null }
 export function backgroundLevels(cc = 'ger', year = 1975): BackgroundLevel[] {
-  if (cc !== 'ger') return [];
+  // Top-Ligen im Ausland (Wunsch Pascal): 3. und 4. Ebene mit historischem Namen (data/leagueTiers.ts), nur Anzeige.
+  if (cc !== 'ger') return (historicTiers(cc, year) ?? []).slice(2, 4).map((r, i) => ({ tier: i + 3, name: r.name, staffeln: r.groups, clubs: null, teams: r.teams }));
   const lower = structureForSeason(seasonLabelOf(year)).filter((t) => t.tier >= 3);
   const deepest = lower.reduce((a, t) => Math.max(a, t.tier), 2);
   return [{ tier: deepest + 1, name: 'Amateurligen', staffeln: 0, clubs: null }];
@@ -143,14 +146,16 @@ export function leaguePreview(key: LeagueKey, cc = 'ger', year = 1975): ClubPrev
   const everyone = leaguesFor(cc, year).flatMap((l) => rawLeague(l.key, cc, year));
   const sorted = [...base].sort((a, b) => b.strength - a.strength);
   const size = base.length;
-  const caps = base.map((c) => c.capacity).sort((a, b) => a - b);
+  const allReps = everyone.map((c) => c.reputation), allCaps = everyone.map((c) => c.capacity);
   return base.map((c) => {
     const rank = sorted.findIndex((x) => x.id === c.id) + 1;
     const share = rank / size;
     const role: ClubPreview['role'] = rank <= 2 ? 'Favorit' : share <= 0.3 ? 'Spitzengruppe' : share <= 0.75 ? 'Mittelfeld' : 'Abstiegskampf';
-    // Finanzkraft: Ansehen und Stadiongröße im Ligavergleich (1–5).
-    const capPct = caps.indexOf(c.capacity) / Math.max(1, caps.length - 1);
-    const fin = Math.round(1 + 4 * (0.6 * (1 - share) + 0.4 * capPct));
+    // Finanzkraft (Wunsch Pascal: kein Zweitligist mit fünf Sternen): Ansehen und Stadiongröße im Vergleich
+    // mit ALLEN Vereinen des Landes, dazu ein Abschlag je Ligaebene; halbe Sterne.
+    const repPct = allReps.filter((r) => r < c.reputation).length / Math.max(1, allReps.length - 1);
+    const capPct = allCaps.filter((x) => x < c.capacity).length / Math.max(1, allCaps.length - 1);
+    const fin = Math.round(2 * (0.5 + 4.5 * (0.6 * repPct + 0.4 * capPct) - 0.5 * Math.max(0, (c.tier ?? 1) - 1))) / 2;
     const rivals = everyone
       .filter((o) => o.id !== c.id && (cc === 'ger' ? sameRegion(o.city, c.city) : o.city === c.city))
       .sort((a, b) => Number(b.city === c.city) - Number(a.city === c.city) || b.reputation - a.reputation)
@@ -159,7 +164,7 @@ export function leaguePreview(key: LeagueKey, cc = 'ger', year = 1975): ClubPrev
       ...c, rank, size,
       ...(cc === 'ger' ? {} : { region: c.city }),
       expectation: seasonExpectation(rank, size, c.tier),
-      role, finance: Math.max(1, Math.min(5, fin)) as ClubPreview['finance'], rivals,
+      role, finance: Math.max(0.5, Math.min(5, fin)), rivals,
     };
   });
 }

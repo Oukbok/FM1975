@@ -26,7 +26,7 @@ import type { Game } from './state';
 import type { EuroComp } from '../data/world/types';
 
 export const MIN_START_YEAR = 1975;
-export const MAX_START_YEAR = 2025;
+export const MAX_START_YEAR = 2027;
 export const clampStartYear = (y?: number) => Math.max(MIN_START_YEAR, Math.min(MAX_START_YEAR, Math.round(y ?? 1975)));
 
 /** Reformen, die zum Startjahr schon gelten (Deutschland) bzw. alle (andere Heimatländer). */

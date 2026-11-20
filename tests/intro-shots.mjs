@@ -66,9 +66,12 @@ for (const t of [250, 700, 1200, 1800, 2400, 3100, 3700, 4600]) {
   await page.waitForTimeout(60);
   await shot(`anim_${String(t).padStart(4, '0')}`);
 }
-// Übergang: Uhr bis zum automatischen Ende laufen lassen.
+// Übergang: bleibt stehen, bis „Los geht’s“ geklickt wird.
 await page.evaluate(() => { for (const a of document.getAnimations()) a.finish(); });
 await page.clock.runFor(6300);
+await shot('anim_8_wartet');
+if (!(await page.locator('.si-stage').count())) errors.push(`${prefix}: Bühne ohne Klick verschwunden`);
+await page.click('.si-next .bf-continue');
 await page.waitForTimeout(50);
 await page.evaluate(() => { for (const a of document.getAnimations()) { a.pause(); a.currentTime = 200; } });
 await shot('anim_9_uebergang');

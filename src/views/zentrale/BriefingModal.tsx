@@ -67,8 +67,9 @@ export function BriefingModal({ b, g, onClose, onGoto, initialTab = 'overview', 
       const tag = (e.target as HTMLElement)?.tagName;
       if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
       const k = e.key;
+      // Auftakt (Wunsch Pascal): bleibt stehen, bis „Los geht’s“ geklickt wird – Tasten nur abfangen.
       if (phaseRef.current !== 'content') {
-        if (k === ' ' || k === 'Enter' || k === 'Escape') { e.preventDefault(); e.stopPropagation(); skip(); }
+        if (k === ' ' || k === 'Enter' || k === 'Escape') { e.preventDefault(); e.stopPropagation(); }
         return;
       }
       if (k === 'Escape') { e.stopPropagation(); onClose(); }
@@ -91,7 +92,8 @@ export function BriefingModal({ b, g, onClose, onGoto, initialTab = 'overview', 
 
   return (
     <div className={`si-root si-motif-${era.motif}`} role="dialog" aria-label={`Saison-Briefing ${b.season}`}>
-      {phase !== 'content' && <SeasonIntro b={b} club={club} era={era} leaving={phase === 'outro'} onSkip={skip} />}
+      {phase !== 'content' && <SeasonIntro b={b} club={club} era={era} leaving={phase === 'outro'} />}
+      {phase === 'intro' && <div className="si-next"><button type="button" className="btn-primary bf-continue" onClick={skip}>Los geht’s</button></div>}
       {phase !== 'intro' && (
         <div className={`si-window bf-modal ${intro ? 'from-intro' : ''}`}>
           <header className="si-head">
@@ -102,7 +104,6 @@ export function BriefingModal({ b, g, onClose, onGoto, initialTab = 'overview', 
               <h2>{b.headline}</h2>
             </div>
             <div className="si-head-season">{b.season}</div>
-            <button className="modal-close si-close" onClick={onClose} aria-label="Schließen">×</button>
           </header>
 
           <nav className="tabs bf-tabs">

@@ -11,6 +11,7 @@ import { StepManager } from './newgame/StepManager';
 import { StepMode } from './newgame/StepMode';
 import { StepWorld } from './newgame/StepWorld';
 import { StepClub } from './newgame/StepClub';
+import { StepNation } from './newgame/StepNation';
 import { StepLeagues } from './newgame/StepLeagues';
 import { StepWelcome } from './newgame/StepWelcome';
 import { leaguePreview, sortClubs } from './newgame/clubPreview';
@@ -20,24 +21,29 @@ import { jobNationFor } from '../game/national/jobNations';
 
 // -----------------------------------------------------------------------------
 // NEUES SPIEL — Assistent in sechs Schritten (Vorbild: große Managerspiele):
-//   1. Manager  2. Spielmodus  3. Spielwelt  4. Verein  5. Ligensystem  6. Willkommen
+//   1. Manager  2. Spielmodus  3. Spielwelt  4. Verein  (Nationalteam)  5. Ligensystem  6. Willkommen
+// „Nationalteam“ nur mit „Zusätzlich Nationaltrainer“ (Schritte über `StepDef.id`).
 // Im letzten Schritt wird die Spielwelt schon erzeugt (Kader, Vorstand, Fans), damit
 // „Willkommen beim Verein“ echte Werte zeigt; „Karriere starten“ übernimmt genau
 // dieses Spiel (App.tsx `startGame(opts, prebuilt)`).
 // -----------------------------------------------------------------------------
 export type { NewGameDraft } from './newgame/draft';
 
-type StepDef = { label: string; sub: string; icon: IconName; title: string; lead: string; fill?: boolean };
-function stepsFor(year: number): StepDef[] {
+type StepId = 'manager' | 'mode' | 'world' | 'club' | 'nation' | 'leagues' | 'welcome';
+type StepDef = { id: StepId; label: string; sub: string; icon: IconName; title: string; lead: string; fill?: boolean };
+/** Schritt „Nationalteam“ nur mit „Zusätzlich Nationaltrainer“ (erscheint/verschwindet in der Kopfleiste). */
+function stepsFor(year: number, national: boolean): StepDef[] {
   const se = seasonLabelOf(year);
-  return [
-    { label: 'Manager', sub: 'Persönliches & Profil', icon: 'squad', title: 'Dein Manager', lead: `Wer übernimmt im Sommer ${year} die Trainerbank? Name, Herkunft und dein Profil als Trainer.` },
-    { label: 'Spielmodus', sub: 'Modus & Optionen', icon: 'settings', title: 'Spielmodus wählen', lead: 'Wie beginnt deine Karriere – und mit welchen Einstellungen spielst du?' },
-    { label: 'Spielwelt', sub: 'Startjahr & Länder', icon: 'international', title: 'Die Spielwelt', lead: 'Startjahr, Datensatz, alle Länder, deren Ligen mitspielen – und wie historisch sich die Welt entwickelt.', fill: true },
-    { label: 'Verein', sub: 'Land, Liga, Verein', icon: 'dashVerein', title: 'Verein auswählen', lead: 'Bei welchem Verein beginnst du? Du bleibst ihm treu – über alle Jahrzehnte.', fill: true },
-    { label: 'Ligensystem', sub: 'Übersicht', icon: 'stats', title: 'Übersicht Ligensystem', lead: `So ist der Fußball ${se} aufgebaut. Klick auf eine Liga, um ihre Vereine zu sehen.`, fill: true },
-    { label: 'Start', sub: 'Willkommen', icon: 'newGame', title: 'Dein erster Arbeitstag', lead: `Mannschaft, Vorstand und Fans warten. Alles bereit für die Saison ${se}.` },
+  const all: StepDef[] = [
+    { id: 'manager', label: 'Manager', sub: 'Persönliches & Profil', icon: 'squad', title: 'Dein Manager', lead: `Wer übernimmt im Sommer ${year} die Trainerbank? Name, Herkunft und dein Profil als Trainer.` },
+    { id: 'mode', label: 'Spielmodus', sub: 'Modus & Optionen', icon: 'settings', title: 'Spielmodus wählen', lead: 'Wie beginnt deine Karriere – und mit welchen Einstellungen spielst du?' },
+    { id: 'world', label: 'Spielwelt', sub: 'Startjahr & Länder', icon: 'international', title: 'Die Spielwelt', lead: 'Startjahr, Datensatz, alle Länder, deren Ligen mitspielen – und wie historisch sich die Welt entwickelt.', fill: true },
+    { id: 'club', label: 'Verein', sub: 'Land, Liga, Verein', icon: 'dashVerein', title: 'Verein auswählen', lead: 'Bei welchem Verein beginnst du? Du bleibst ihm treu – über alle Jahrzehnte.', fill: true },
+    { id: 'nation', label: 'Nationalteam', sub: 'Nation & Amt', icon: 'international', title: 'Nationalmannschaft wählen', lead: `Welches Land betreust du neben deinem Verein? Rang und Stärke Stand Sommer ${year}.`, fill: true },
+    { id: 'leagues', label: 'Ligensystem', sub: 'Übersicht', icon: 'stats', title: 'Übersicht Ligensystem', lead: `So ist der Fußball ${se} aufgebaut. Klick auf eine Liga, um ihre Vereine zu sehen.`, fill: true },
+    { id: 'welcome', label: 'Start', sub: 'Willkommen', icon: 'newGame', title: 'Dein erster Arbeitstag', lead: `Mannschaft, Vorstand und Fans warten. Alles bereit für die Saison ${se}.` },
   ];
+  return national ? all : all.filter((s) => s.id !== 'nation');
 }
 
 /** Stärkster Verein der 1. Liga eines Landes im Startjahr. */
@@ -54,7 +60,7 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
     const ds0 = activeDatasetIdCached();
     applyDataset(cachedDataset(ds0));
     return {
-      datasetId: ds0, difficulty: 'normal', injuries: true, historic: 'historic', speedMs: defaults.speedMs,
+      datasetId: ds0, difficulty: 'normal', injuries: true, historic: 'historic', historicLeagues: 'historic', speedMs: defaults.speedMs,
       briefingAuto: defaults.briefingAuto !== false, briefingIntro: defaults.briefingIntro !== false, legends: true,
       mode: 'manager', offerSeed: Math.floor(Math.random() * 2 ** 31),
       league: 'tier1', clubId: topClub(), startYear: 1975, country: 'ger',
@@ -96,13 +102,12 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
     if (d.mode !== 'career' || offers.some((o) => o.club.id === d.clubId)) return;
     set(offers[0] ? { clubId: offers[0].club.id, league: offers[0].league } : { clubId: '' });
   }, [d.mode, d.clubId, offers]); // eslint-disable-line react-hooks/exhaustive-deps
-  const STEPS = stepsFor(d.startYear);
+  const STEPS = stepsFor(d.startYear, d.nationalOn);
+  const sid = STEPS[step]?.id ?? 'manager';
   const chooseMode = (m: NewGameDraft['mode']) => {
     if (m === d.mode) return;
     if (m === 'career') set({ mode: m, clubId: offers[0]?.club.id ?? '', league: offers[0]?.league ?? 'tier1' });
-    // Junger Manager: 20 Jahre alt, Werdegang Newcomer, Privatleben an (Hintergrundgeschichte in StepMode).
-    else if (m === 'young') set({ mode: m, birthYear: d.startYear - 20, birthMonth: Math.min(d.birthMonth, 6), background: 'rookie', privateLife: true });
-    else set({ mode: m, ...(d.mode === 'young' ? { birthYear: d.startYear - 40 } : {}) });
+    else set({ mode: m });
   };
 
   // --- Spielwelt für „Willkommen“ vorab erzeugen (≈ 0,5 s) ---
@@ -119,7 +124,7 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
   }, [step, optsKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const ready = built?.key === optsKey ? built.game : null;
 
-  const canNext = step === 0 ? nameOk(d) : step === 3 ? !!d.clubId && (d.mode !== 'career' || offers.some((o) => o.club.id === d.clubId)) : true;
+  const canNext = sid === 'manager' ? nameOk(d) : sid === 'club' ? !!d.clubId && (d.mode !== 'career' || offers.some((o) => o.club.id === d.clubId)) : true;
   const last = step === STEPS.length - 1;
   const start = () => {
     if (!ready) return;
@@ -127,8 +132,8 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
     ready.calendar.speedMs = d.speedMs;
     onStart(gameOptions(d), ready);
   };
-  const hint = step === 0 && !canNext ? 'Gib Vor- und Nachnamen ein (Nachname mindestens 2 Zeichen).'
-    : step === 3 && !canNext ? (d.mode === 'career' && !offers.length ? 'Für dieses Land und Startjahr gibt es keine Angebote – wähle ein anderes Startjahr oder Land.' : 'Wähle einen Verein.')
+  const hint = sid === 'manager' && !canNext ? 'Gib Vor- und Nachnamen ein (Nachname mindestens 2 Zeichen).'
+    : sid === 'club' && !canNext ? (d.mode === 'career' && !offers.length ? 'Für dieses Land und Startjahr gibt es keine Angebote – wähle ein anderes Startjahr oder Land.' : 'Wähle einen Verein.')
     : last && !ready ? 'Die Spielwelt wird aufgebaut …' : `Schritt ${step + 1} von ${STEPS.length}`;
 
   return (
@@ -141,7 +146,7 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
         </div>
         <nav className="ng-steps" aria-label="Schritte">
           {STEPS.map((s, i) => (
-            <button key={s.label} className={`ng-step ${i === step ? 'on' : ''} ${i < step ? 'done' : ''}`}
+            <button key={s.id} className={`ng-step ${i === step ? 'on' : ''} ${i < step ? 'done' : ''}`}
               disabled={i > step} onClick={() => i < step && setStep(i)}>
               <span className="ng-step-no">{i < step ? <Icon name="check" size={16} /> : i + 1}</span>
               <span className="ng-step-txt"><b>{s.label}</b><small>{s.sub}</small></span>
@@ -155,15 +160,16 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
       <main className="ng-body">
         <div key={step} className={`ng-stage ${STEPS[step].fill ? 'fill' : 'fit'}`}>
           <div className="ng-title">
-            <h1>{step === 3 && d.mode === 'career' ? 'Deine Angebote' : STEPS[step].title}</h1>
-            <p>{step === 3 && d.mode === 'career' ? 'Drei Vereine trauen dir den Job zu. Sieh sie dir an und nimm ein Angebot an.' : STEPS[step].lead}</p>
+            <h1>{sid === 'club' && d.mode === 'career' ? 'Deine Angebote' : STEPS[step].title}</h1>
+            <p>{sid === 'club' && d.mode === 'career' ? 'Drei Vereine trauen dir den Job zu. Sieh sie dir an und nimm ein Angebot an.' : STEPS[step].lead}</p>
           </div>
-          {step === 0 && <StepManager d={d} set={set} />}
-          {step === 1 && <StepMode d={d} set={set} chooseMode={chooseMode} />}
-          {step === 2 && <StepWorld d={d} set={set} chooseDataset={chooseDataset} chooseYear={chooseYear} />}
-          {step === 3 && <StepClub d={d} set={set} offers={offers} chooseCountry={chooseCountry} />}
-          {step === 4 && <StepLeagues d={d} game={ready} />}
-          {step === 5 && <StepWelcome d={d} game={ready} />}
+          {sid === 'manager' && <StepManager d={d} set={set} />}
+          {sid === 'mode' && <StepMode d={d} set={set} chooseMode={chooseMode} />}
+          {sid === 'world' && <StepWorld d={d} set={set} chooseDataset={chooseDataset} chooseYear={chooseYear} />}
+          {sid === 'club' && <StepClub d={d} set={set} offers={offers} chooseCountry={chooseCountry} />}
+          {sid === 'nation' && <StepNation d={d} set={set} />}
+          {sid === 'leagues' && <StepLeagues d={d} game={ready} />}
+          {sid === 'welcome' && <StepWelcome d={d} game={ready} />}
         </div>
       </main>
 

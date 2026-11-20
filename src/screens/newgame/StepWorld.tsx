@@ -5,12 +5,12 @@ import { COUNTRY_SEEDS } from '../../data/worldSeed';
 import { WORLD_COUNTRIES, countryExists, countryPointSystem, seasonLabelOf } from '../../data/world/countries';
 import { worldSeason } from '../../data/world/index';
 import { MAX_START_YEAR, MIN_START_YEAR } from '../../game/startYear';
-import { ERA_NAME, eraKey, HISTORIC_LEVELS, rangePct, type NewGameDraft } from './draft';
+import { ERA_NAME, eraKey, HISTORIC_LEVELS, LEAGUE_LEVELS, rangePct, type NewGameDraft } from './draft';
 import { CURRENCIES } from '../../data/currencies';
 
 // Schritt 3: Spielwelt — Startjahr (Standard 1975), Datensatz und die Länder: deine Liga mit
 // vollen Kadern, alle übrigen Länder Spieltag für Spieltag (game/worldLeagues.ts).
-const ERA_STOPS = [1975, 1985, 1995, 2005, 2015, 2025];
+const ERA_STOPS = [1975, 1985, 1995, 2005, 2015, 2027];
 
 /** Was im Startjahr anders ist (kurz, für den Hinweis unter dem Jahr). */
 /** Währung zum Start plus nächste Umstellung („D-Mark (ab 2002 Euro)“). */
@@ -53,6 +53,7 @@ export function StepWorld({ d, set, chooseDataset, chooseYear }: {
   d: NewGameDraft; set: (p: Partial<NewGameDraft>) => void; chooseDataset: (id: string) => void; chooseYear: (y: number) => void;
 }) {
   const hl = HISTORIC_LEVELS.find((m) => m.id === d.historic) ?? HISTORIC_LEVELS[1];
+  const ll = LEAGUE_LEVELS.find((m) => m.id === d.historicLeagues) ?? LEAGUE_LEVELS[1];
   const datasets = cachedSummaries();
   const activeDs = activeDatasetIdCached();
   const y = d.startYear;
@@ -105,17 +106,15 @@ export function StepWorld({ d, set, chooseDataset, chooseYear }: {
           <div className="ng-crow head"><span>Land</span><span>Ligen</span><span className="num">Vereine</span><span>Simulation</span></div>
           <div className="ng-crows">
             {rows.map(({ c, text, clubs, data }) => {
-              const mine = c.cc === home;
-              const gdr = home === 'ger' && c.cc === 'gdr';
+              // Wunsch Pascal: noch kein Verein gewählt → kein „Deine Liga“; jedes Land mit echten Vereinen ist wählbar.
+              const gdr = c.cc === 'gdr';
               return (
-                <div key={c.cc} className={`ng-crow ${mine ? 'main' : ''}`} data-cc={c.cc}>
+                <div key={c.cc} className="ng-crow" data-cc={c.cc}>
                   <span className="ng-ccountry"><CountryFlag country={c.key} height={16} /><b>{c.name}</b><em>{c.cc.toUpperCase()}</em></span>
                   <span className="ng-cleagues">{text}<small> · {data ? 'echte Vereine' : 'Städtevereine'}</small></span>
                   <span className="num">{clubs || '–'}</span>
                   <span className="ng-cmode">
-                    {mine ? <><i className="ng-badge on">Deine Liga</i>Volle Kader, Minute für Minute</>
-                      : gdr ? <><i className="ng-badge">bis 1991</i>Spieltag für Spieltag</>
-                      : 'Spieltag für Spieltag'}
+                    {gdr ? <><i className="ng-badge">bis 1991</i>Spieltag für Spieltag</> : 'Spieltag für Spieltag'}
                   </span>
                 </div>
               );
@@ -124,7 +123,7 @@ export function StepWorld({ d, set, chooseDataset, chooseYear }: {
         </div>
         <div className="ng-repmode">
           <div className="ng-h-row">
-            <h3 className="ng-h">Historische Entwicklung <InfoTip k="entwicklung" /></h3>
+            <h3 className="ng-h">Historische Entwicklung der Vereine <InfoTip k="entwicklung" /></h3>
             <div className="ng-seg small">
               {HISTORIC_LEVELS.map((m) => (
                 <button key={m.id} type="button" data-hist={m.id} data-tone={m.id === 'free' ? 'cool' : m.id === 'strict' ? 'hot' : 'warm'} className={d.historic === m.id ? 'on' : ''} onClick={() => set({ historic: m.id })}>{m.label}</button>
@@ -132,8 +131,17 @@ export function StepWorld({ d, set, chooseDataset, chooseYear }: {
             </div>
           </div>
           <p className="ng-note ng-repnote">{hl.desc} Nie für deinen Verein; steht ab Spielstart fest.</p>
+          <div className="ng-h-row">
+            <h3 className="ng-h">Historische Entwicklung der Ligen <InfoTip k="ligaruf" /></h3>
+            <div className="ng-seg small">
+              {LEAGUE_LEVELS.map((m) => (
+                <button key={m.id} type="button" data-histl={m.id} data-tone={m.id === 'free' ? 'cool' : 'warm'} className={d.historicLeagues === m.id ? 'on' : ''} onClick={() => set({ historicLeagues: m.id })}>{m.label}</button>
+              ))}
+            </div>
+          </div>
+          <p className="ng-note ng-repnote">{ll.desc} Nie für dein Heimatland; steht ab Spielstart fest.</p>
         </div>
-        <p className="ng-note ng-hint">Deine Liga läuft mit vollen Kadern. Alle anderen Länder spielen ihre 1. und 2. Liga Spieltag für Spieltag – mit Tabelle, Begegnungen, Auf- und Abstieg, sichtbar unter Statistiken › Liga. Das Ergebnis entsteht dort aus Vereinsstärke und Heimvorteil; das kostet kaum Rechenzeit. Europapokal, Transfers und Talente kommen aus allen Ländern. Länder mit echten Vereinen kannst du im nächsten Schritt als Heimatland wählen.</p>
+        <p className="ng-note ng-hint">Die Liga, in der du im nächsten Schritt deinen Verein wählst, läuft mit vollen Kadern Minute für Minute. Alle anderen Länder spielen ihre 1. und 2. Liga Spieltag für Spieltag – mit Tabelle, Begegnungen, Auf- und Abstieg, sichtbar unter Statistiken › Liga. Das Ergebnis entsteht dort aus Vereinsstärke und Heimvorteil; das kostet kaum Rechenzeit. Europapokal, Transfers und Talente kommen aus allen Ländern. Länder mit echten Vereinen kannst du im nächsten Schritt als Heimatland wählen.</p>
       </section>
     </div>
   );

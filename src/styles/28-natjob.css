@@ -80,9 +80,9 @@
 
 /* --- Assistent: Nationalmannschaft (StepMode) --- */
 .ng-nat { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; min-height: 0; }
-.ng-nat-top { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.ng-natlist { height: 168px; overflow-y: auto; border: 1px solid var(--border-soft); border-radius: 6px; }
-.ng-natlist.off { opacity: 0.4; }
+.ng-natstep { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 16px; }
+.ng-natlist { min-height: 0; overflow-y: auto; border: 1px solid var(--border-soft); border-radius: 6px; }
+.ng-natside { display: flex; flex-direction: column; gap: 12px; align-self: start; }
 .ng-natrow { width: 100%; display: grid; grid-template-columns: 26px minmax(0, 1fr) 90px 170px 34px; gap: 10px; align-items: center; padding: 6px 10px; border: 0; border-bottom: 1px solid var(--border-soft); background: transparent; color: var(--text); font: inherit; font-size: 15px; text-align: left; cursor: pointer; }
 .ng-natrow:disabled { cursor: default; }
 .ng-natrow b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -90,4 +90,3 @@
 .ng-natrow em { font-style: normal; font-weight: 700; text-align: right; color: var(--text-2); }
 .ng-natrow:not(:disabled):hover { background: rgba(var(--ink-rgb), 0.05); }
 .ng-natrow.on { background: color-mix(in srgb, var(--ng-amber) 12%, transparent); box-shadow: inset 3px 0 0 var(--ng-amber); }
-.ng-natnote { font-size: 14px; min-height: 40px; }

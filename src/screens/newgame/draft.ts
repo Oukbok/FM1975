@@ -24,22 +24,26 @@ export const DIFF_DE: [Difficulty, string, string][] = [
 
 export type StartMode = 'manager' | 'career' | 'young';
 
-/** Historische Entwicklung: eine Frage im Assistenten (StepWorld), setzt beide Mechaniken –
- *  `historyMode` (andere Vereine, game/historicSteer.ts) und `leagueRepMode` (Ligaruf, game/leagueRepGame.ts). */
+/** Historische Entwicklung (Wunsch Pascal: zwei getrennte Fragen im Assistenten, StepWorld):
+ *  Vereine → `historyMode` (game/historicSteer.ts), Ligen → `leagueRepMode` (game/leagueRepGame.ts). */
 export type HistoricLevel = 'free' | 'historic' | 'strict';
-export const HISTORIC_LEVELS: { id: HistoricLevel; label: string; history: HistoryMode; leagueRep: LeagueRepMode; desc: string }[] = [
+export const HISTORIC_LEVELS: { id: HistoricLevel; label: string; history: HistoryMode; desc: string }[] = [
   {
-    id: 'free', label: 'Frei', history: 'off', leagueRep: 'free',
-    desc: 'Kein Eingriff von außen: Vereine wachsen nur mit Erfolg, Geld und Glück, Ligen nur mit ihren Europapokal-Ergebnissen. Auch Braunschweig kann eine Ära prägen – und 2026 können ganz andere Länder zu den Top 5 gehören.',
+    id: 'free', label: 'Frei', history: 'off',
+    desc: 'Kein Eingriff von außen: Vereine wachsen nur mit Erfolg, Geld und Glück. Auch Braunschweig kann eine Ära prägen.',
   },
   {
-    id: 'historic', label: 'Historisch', history: 'medium', leagueRep: 'historic',
-    desc: 'Vereine und Ligen werden zur echten Geschichte gezogen, Überraschungen bleiben häufig: Die Großklubs haben einen spürbaren Vorteil, Italien wird in den 90ern stark. Liegt eine Liga über ihrem historischen Ruf, verliert sie jede Saison mindestens ein Viertel des Vorsprungs.',
+    id: 'historic', label: 'Historisch', history: 'medium',
+    desc: 'Vereine werden zur echten Geschichte gezogen, Überraschungen bleiben häufig: Die Großklubs der Zeit haben einen spürbaren Vorteil.',
   },
   {
-    id: 'strict', label: 'Streng historisch', history: 'strong', leagueRep: 'historic',
-    desc: 'Die echten Großklubs landen meist oben: Mönchengladbach und Hamburg Blau in den 70ern, München Rot ab 2012 erdrückend, im Ausland Liverpool Rot, später Madrid Weiß und Barcelona. Die Ligen folgen der Geschichte wie bei Historisch.',
+    id: 'strict', label: 'Streng historisch', history: 'strong',
+    desc: 'Die echten Großklubs landen meist oben: Mönchengladbach und Hamburg Blau in den 70ern, München Rot ab 2012 erdrückend, im Ausland Liverpool Rot, später Madrid Weiß und Barcelona.',
   },
+];
+export const LEAGUE_LEVELS: { id: LeagueRepMode; label: string; desc: string }[] = [
+  { id: 'free', label: 'Frei', desc: 'Ligen steigen und fallen nur mit ihren Europapokal-Ergebnissen – 2027 können ganz andere Länder zu den Top 5 gehören.' },
+  { id: 'historic', label: 'Historisch', desc: 'Ligen werden zu ihrem echten Ruf der Zeit gezogen: Italien wird in den 90ern stark. Liegt eine Liga darüber, verliert sie jede Saison mindestens ein Viertel des Vorsprungs.' },
 ];
 
 /** Gemeinsamer Zustand aller Schritte. */
@@ -47,8 +51,10 @@ export interface NewGameDraft {
   datasetId: string;
   difficulty: Difficulty;
   injuries: boolean;
-  /** Historische Entwicklung (eine Frage für Vereine und Ligen, HISTORIC_LEVELS), Standard historisch. */
+  /** Historische Entwicklung der Vereine (HISTORIC_LEVELS), Standard historisch. */
   historic: HistoricLevel;
+  /** Historische Entwicklung der Ligen (LEAGUE_LEVELS), Standard historisch. */
+  historicLeagues: LeagueRepMode;
   speedMs: number;
   briefingAuto: boolean;
   briefingIntro: boolean;
@@ -175,15 +181,15 @@ export function managerProfile(d: NewGameDraft): ManagerProfile {
 }
 
 /** Beide Felder der Spieloptionen aus der einen Frage „Historische Entwicklung“. */
-export function historicOptions(level: HistoricLevel): Pick<NewGameOptions, 'historyMode' | 'leagueRepMode'> {
+export function historicOptions(level: HistoricLevel, leagues: LeagueRepMode = 'historic'): Pick<NewGameOptions, 'historyMode' | 'leagueRepMode'> {
   const l = HISTORIC_LEVELS.find((x) => x.id === level) ?? HISTORIC_LEVELS[1];
-  return { historyMode: l.history, leagueRepMode: l.leagueRep };
+  return { historyMode: l.history, leagueRepMode: leagues };
 }
 
 export function gameOptions(d: NewGameDraft): NewGameOptions {
   return {
     managedClubId: d.clubId, manager: managerProfile(d), difficulty: d.difficulty, realisticSquads: true,
-    injuriesEnabled: d.injuries, speedMs: d.speedMs, datasetId: d.datasetId, ...historicOptions(d.historic), legends: d.legends,
+    injuriesEnabled: d.injuries, speedMs: d.speedMs, datasetId: d.datasetId, ...historicOptions(d.historic, d.historicLeagues), legends: d.legends,
     ...(d.privateLife ? {} : { privateLife: false }),
     ...(d.startYear !== 1975 ? { startYear: d.startYear } : {}),
     ...(d.country !== 'ger' ? { country: d.country } : {}),
