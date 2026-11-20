@@ -17,7 +17,7 @@ import type { Game } from '../../game/state';
 import type { AppSettings } from '../../engine/save';
 import { fmtDateFull } from '../../ui/format';
 import { StatsPanel, TacticsPanel } from './MatchPanels';
-import { EndPanel } from './MatchDialogs';
+import { EndTab, verdictOf } from './MatchDialogs';
 import { useTicker, type TextSpeed } from './useTicker';
 import { Stage } from './board/Stage';
 import { TickerList } from './board/TickerList';
@@ -30,8 +30,8 @@ import { ChangesScreen, type ChangesTab } from './changes/ChangesScreen';
 const WEATHER: Record<string, string> = {
   sonnig: 'Sonnig', bewoelkt: 'Bewölkt', regen: 'Regen', schnee: 'Schnee', hitze: 'Hitze', wind: 'Windig', nebel: 'Nebel',
 };
-type RTab = 'team' | 'taktik' | 'gegner' | 'live' | 'stats' | 'tabelle';
-const RTABS: [RTab, string][] = [['team', 'Team'], ['taktik', 'Taktik'], ['gegner', 'Gegner'], ['live', 'Live'], ['stats', 'Statistik'], ['tabelle', 'Tabelle']];
+type RTab = 'end' | 'team' | 'taktik' | 'gegner' | 'live' | 'stats' | 'tabelle';
+const RTABS: [RTab, string][] = [['end', 'Abpfiff'], ['team', 'Team'], ['taktik', 'Taktik'], ['gegner', 'Gegner'], ['live', 'Live'], ['stats', 'Statistik'], ['tabelle', 'Tabelle']];
 
 export function MatchScreen({ g, sim, info, settings, onSettings, onComplete, onFinish }: {
   g: Game; sim: MatchSim; info: OwnMatchInfo; settings: AppSettings;
@@ -62,6 +62,8 @@ export function MatchScreen({ g, sim, info, settings, onSettings, onComplete, on
   });
   const [outcome, setOutcome] = useState<MatchOutcome | null>(null);
   useEffect(() => { if (state.ended && !outcome) setOutcome(onComplete(state.all)); }, [state.ended]);
+  // Abpfiff: Reiter „Abpfiff“ mit Noten öffnen (früher eigenes Fenster).
+  useEffect(() => { if (state.ended) setRtab('end'); }, [state.ended]);
 
   // Co-Trainer (Option „Automatische Auswechslungen“) in der Engine setzen
   const t = sim.team(side);
@@ -129,11 +131,12 @@ export function MatchScreen({ g, sim, info, settings, onSettings, onComplete, on
           <RefereeBox sim={sim} info={info} />
           <div className="ms-panel tm-rpanel">
             <div className="tm-tabs" role="tablist">
-              {RTABS.map(([id, label]) => (
+              {RTABS.filter(([id]) => id !== 'end' || state.ended).map(([id, label]) => (
                 <button key={id} role="tab" aria-selected={rtab === id} className={rtab === id ? 'on' : ''} onClick={() => setRtab(id)}>{label}</button>
               ))}
             </div>
             <div className="tm-rbody">
+              {rtab === 'end' && state.ended && <EndTab g={g} sim={sim} side={side} outcome={outcome} />}
               {rtab === 'team' && <LineupBoard sim={sim} mySide={side} view={side} act={act} onPlayer={setProfile} />}
               {rtab === 'gegner' && <LineupBoard sim={sim} mySide={side} view={opp} act={act} onPlayer={setProfile} />}
               {rtab === 'taktik' && <div className="tm-pad"><TacticsPanel sim={sim} side={side} act={act} /></div>}
@@ -142,6 +145,12 @@ export function MatchScreen({ g, sim, info, settings, onSettings, onComplete, on
               {rtab === 'tabelle' && <TablePanel g={g} sim={sim} info={info} live={false} />}
             </div>
           </div>
+          {state.ended ? (
+            <div className="tm-actions tm-end-bar">
+              <span className={`tm-end-verdict ${verdictOf(sim, side, outcome).tone}`}>{verdictOf(sim, side, outcome).text}</span>
+              <button type="button" className="btn-primary tm-end-btn ms-continue" onClick={onFinish}>Weiter</button>
+            </div>
+          ) : (
           <div className="tm-actions">
             <div className="tm-act-grid">
               <button type="button" className="ms-btn" onClick={() => openChanges('gespraeche')} disabled={state.ended}>Individuelle Anweisungen</button>
@@ -157,6 +166,7 @@ export function MatchScreen({ g, sim, info, settings, onSettings, onComplete, on
                 aria-label={sim.period === 1 ? 'Bis zur Pause vorspulen' : 'Bis zum Ende vorspulen'}><Icon name="skip" size={30} /></button>
             </div>
           </div>
+          )}
           {optsOpen && (
             <div className="tm-opt-pop">
               <OptionsBox settings={settings} onSettings={onSettings} speed={speed} onSpeed={setSpeed} />
@@ -171,7 +181,6 @@ export function MatchScreen({ g, sim, info, settings, onSettings, onComplete, on
           autoSubs={stopOpts.current.autoSubs} onAutoSubs={(v) => onSettings({ ...settings, matchAutoSubs: v })}
           onConfirm={(apply) => closeChanges(apply)} onCancel={() => closeChanges()} onPlayer={setProfile} />
       )}
-      {state.ended && <EndPanel g={g} sim={sim} side={side} outcome={outcome} onClose={onFinish} />}
       {prof && (
         <div className="tm-profile">
           <PlayerModal player={prof} club={g.clubs[prof.clubId]} today={g.calendar.currentDate} season={g.season} onClose={() => setProfile(null)} />

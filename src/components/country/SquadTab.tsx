@@ -10,11 +10,13 @@ import { DashBox, Empty, KV } from '../../ui/DashPage';
 import { vColor } from '../../ui/format';
 import { TeamName } from '../../views/statistiken/competition/parts';
 import { NatRow, type CountryTabProps } from './parts';
+import { squadSeasonLines } from '../../game/nationSquadLines';
 
 export default function SquadTab({ g, c }: CountryTabProps) {
   const squad = useMemo(() => nationSquad(g, c), [g, c]);
   const more = useMemo(() => nextCandidates(g, c, squad, 12), [g, c, squad]);
   const nat = nationInfo(g, c);
+  const lines = useMemo(() => squadSeasonLines(g, squad), [g, squad]);
   if (!c.nation || !nat) {
     return <DashBox title="Nationalkader" span={3} rows={2}><Empty icon="squad">Für {c.name} gibt es im Spiel keine Nationalmannschaft – keine Daten.</Empty></DashBox>;
   }
@@ -35,8 +37,8 @@ export default function SquadTab({ g, c }: CountryTabProps) {
     <>
       <DashBox title={t ? `Aufgebot ${t.kind} ${t.year}` : nominated || !squad.length ? 'Aufgebot' : 'Aufgebot (Vorschlag)'} span={2} rows={2} right={squad.length ? `${squad.length} Spieler` : undefined}>
         {squad.length ? <>
-          <div className="cnx-prow head caps"><span className="fthumb-pad" /><span className="cnx-pname">Name</span><span className="cnx-pos">Pos.</span><span className="cnx-age">Alter</span><span className="cnx-club">Verein</span><span className="cnx-caps">Spiele · Tore</span><b className="cnx-ov">Stärke</b></div>
-          <div className="cnx-list">{squad.map((p) => <NatRow key={p.id} g={g} p={p} caps />)}</div>
+          <div className="cnx-prow head caps"><span className="fthumb-pad" /><span className="cnx-pname">Name</span><span className="cnx-pos">Pos.</span><span className="cnx-age">Alter</span><span className="cnx-club">Verein</span><span className="cnx-num" title="Länderspiele seit Spielbeginn">LSp</span><span className="cnx-num" title="Einsätze im Verein in dieser Saison">Sp.</span><span className="cnx-num" title="Tore im Verein in dieser Saison">Tore</span><span className="cnx-num" title="Vorlagen im Verein in dieser Saison">Vorl.</span><span className="cnx-num" title="Notenschnitt in dieser Saison (nur Spieler mit vollem Profil)">Note</span><b className="cnx-ov">Stärke</b></div>
+          <div className="cnx-list">{squad.map((p) => <NatRow key={p.id} g={g} p={p} caps line={lines.get(p.id) ?? null} />)}</div>
         </> : <Empty icon="squad">{nat.exists ? 'Keine Spieler dieser Nationalität in der Spielwelt.' : `${c.name} besteht in dieser Saison nicht.`}</Empty>}
       </DashBox>
 

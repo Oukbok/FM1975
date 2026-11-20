@@ -111,8 +111,8 @@ export function AwardsView({ g }: { g: Game }) {
         )}
       </DashBox>
 
-      <DashBox title="Alle Jahrgänge" icon="chronicle" span={2} flush right={`${seasons.length} Saisons`}>
-        {!seasons.length ? <Empty icon="chronicle">Noch keine Saison abgeschlossen.</Empty> : (
+      <DashBox title="Die Besten der Saison – alle Jahrgänge" icon="chronicle" span={2} flush right={seasons.length ? `${seasons.length} Saisons` : undefined}>
+        {!seasons.length ? <Empty icon="chronicle">Am Tag nach dem letzten Ligaspieltag werden die Besten der Saison {g.season} geehrt. Ab dann stehen hier alle Jahrgänge.</Empty> : (
         <table className="dtable rl-players aw-years">
           <thead><tr>
             <th>Saison</th>

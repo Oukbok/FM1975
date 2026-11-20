@@ -47,8 +47,9 @@ export function CountryModal({ g, countryKey, zIndex, onClose, onBack, onGoto }:
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
 
-  const sub = [facts.conf, countryAlive(g, c) ? facts.exists : `${facts.exists} (heute nicht mehr)`,
-    c.kind === 'home' ? 'dein Heimatland' : c.kind === 'ddr' ? 'mit vollen Daten' : null].filter(Boolean).join(' · ');
+  // Kopfzeile nur Kontinent (Wunsch Pascal: „besteht“/„dein Heimatland“ ohne Mehrwert); nur ein
+  // nicht mehr bestehendes Land nennt sein Ende.
+  const sub = [facts.conf, countryAlive(g, c) ? null : `${facts.exists} (heute nicht mehr)`].filter(Boolean).join(' · ');
   const props = { g, c, pyramid, onGoto };
 
   return (
@@ -60,7 +61,6 @@ export function CountryModal({ g, countryKey, zIndex, onClose, onBack, onGoto }:
           <div className="cmx-id">
             <div className="mx-sub">{sub}</div>
             <h2>{c.name}{c.kind === 'home' && <span className="cmx-mine">Heimatland</span>}</h2>
-            <div className="cnx-sub2">{facts.ligen}</div>
           </div>
           <div className="mx-kpis">
             <Kpi value={rep ? rep.rep.toFixed(0) : '–'} label="Ligaruf" info="ligaruf" />

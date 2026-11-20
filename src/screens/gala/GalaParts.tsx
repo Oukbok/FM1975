@@ -84,7 +84,6 @@ export function PodiumCard({ g, e, place, shown, season, mine }: { g: Game; e: G
           <div className="gb-kpis">{kpis(e).map((x) => <div key={x.k} className="gb-kpi"><b>{x.v}</b><span>{x.k}</span></div>)}</div>
           {e.tt?.length ? <div className="gb-titles">{e.tt.map((t) => <span key={t} className="gb-honor">{GB_TITLE_LABEL[t]}</span>)}</div> : null}
           {e.why && <p className="gb-why">{e.why}</p>}
-          {e.est && <p className="gb-est">Werte des Auslandsvereins geschätzt</p>}
         </div>
       ) : (
         <div className="gb-pod-hidden">Platz {place}</div>

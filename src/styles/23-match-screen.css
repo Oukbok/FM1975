@@ -286,3 +286,15 @@
 .mr-card.r { background: var(--red); }
 .mr-grade { text-align: center; font-weight: 800; font-size: 14px; border-radius: 5px; font-variant-numeric: tabular-nums; }
 .mr-empty { padding: 14px 16px; color: var(--text-3); font-size: 14px; }
+
+/* Abpfiff im Textmodus (Reiter „Abpfiff“ + Leiste statt eigenem Fenster, Wunsch Pascal) */
+.tm-end { display: flex; flex-direction: column; gap: 10px; }
+.tm-end-verdict { display: flex; align-items: center; gap: 10px; font-size: 26px; font-weight: 900; color: var(--text); }
+.tm-end-verdict.good { color: var(--accent); }
+.tm-end-verdict.bad { color: var(--red); }
+.tm-end-motm { font-size: 15px; color: var(--text-2); }
+.tm-end-grades .ms-gr { font-size: 15px; padding: 5px 0; grid-template-columns: 44px minmax(0, 1fr) auto 50px; }
+.tm-end-grades .ms-grade { font-size: 15px; }
+.tm-end-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.tm-end-bar .tm-end-verdict { font-size: 30px; }
+.tm-end-btn { min-width: 220px; height: 64px; font-size: 22px; }

@@ -1,5 +1,6 @@
 // Gemeinsame Bausteine des Länderprofils (components/country/): Reiter-Props, kurze
 // Ligatabelle, Spielerzeile mit Gesicht/Position/Verein/Stärke.
+import type { SeasonLine } from '../../game/nationSquadLines';
 import type { Game } from '../../game/state';
 import type { CompSnapshot } from '../../game/competitionView';
 import type { CountryRef, NatPlayer } from '../../game/countryProfile';
@@ -42,7 +43,7 @@ export function MiniTable({ g, snap }: { g: Game; snap: CompSnapshot }) {
 }
 
 /** Spielerzeile (Nationalspieler, beste Spieler): Gesicht, Name, Position, Verein, Stärke, optional Länderspiele. */
-export function NatRow({ g, p, rank, caps = false }: { g: Game; p: NatPlayer; rank?: number; caps?: boolean }) {
+export function NatRow({ g, p, rank, caps = false, line }: { g: Game; p: NatPlayer; rank?: number; caps?: boolean; line?: SeasonLine | null }) {
   const face = g.players[p.id] ?? (p.face && p.born ? { id: p.id, face: p.face, dateOfBirth: `${p.born}-07-01`, age: p.age, fullName: p.name } : null);
   return (
     <div className={`cnx-prow ${caps ? 'caps' : ''}`} data-pid={g.players[p.id] ? p.id : undefined}>
@@ -52,7 +53,14 @@ export function NatRow({ g, p, rank, caps = false }: { g: Game; p: NatPlayer; ra
       <span className="cnx-pos"><PosBadge pos={p.pos as Position} /></span>
       <span className="cnx-age">{p.age ? `${p.age} J.` : ''}</span>
       <span className="cnx-club">{p.clubId ? <TeamName g={g} id={p.clubId} season={g.season} size={16} /> : <span className="muted">vereinslos</span>}</span>
-      {caps && <span className="cnx-caps" title="Länderspiele · Tore (seit Spielbeginn)">{p.caps == null ? '–' : `${p.caps} · ${p.goals ?? 0}`}</span>}
+      {caps && <>
+        {/* Wunsch Pascal: statt „Spiele · Tore“ seit Spielbeginn die Saisonbilanz im Verein (game/nationSquadLines.ts) */}
+        <span className="cnx-num" title={p.goals ? `${p.goals} Länderspieltore` : undefined}>{p.caps || '–'}</span>
+        <span className="cnx-num">{line?.apps ?? '–'}</span>
+        <span className="cnx-num">{line ? line.goals : '–'}</span>
+        <span className="cnx-num">{line ? line.assists : '–'}</span>
+        <span className="cnx-num">{line?.grade != null ? line.grade.toFixed(1).replace('.', ',') : '–'}</span>
+      </>}
       <b className="cnx-ov" style={{ color: vColor(p.ov) }}>{p.ov}</b>
     </div>
   );

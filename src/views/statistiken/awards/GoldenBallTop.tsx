@@ -25,7 +25,7 @@ export function GoldenBallTop({ g, y, onGala }: { g: Game; y: GBYear; onGala: ()
       <div className="aw-grid compact gbt-grid">
         {y.top.slice(0, 3).map((e, i) => (
           <article key={e.p} className={`aw-card compact ${e.c === mine ? 'mine' : ''} ${i === 0 ? 'gbt-first' : ''}`} style={{ '--k': i } as CSSProperties}>
-            <div className="aw-cat"><span>Platz {i + 1}</span>{e.est ? <span className="aw-tag" title="Spieler eines Auslandsvereins: Note aus Toren, Vorlagen und Stärke geschätzt">geschätzt</span> : null}</div>
+            <div className="aw-cat"><span>Platz {i + 1}</span></div>
             <div className="aw-hero">
               <AwardFace g={g} e={e} size={88} />
               <div className="aw-who">
@@ -36,7 +36,8 @@ export function GoldenBallTop({ g, y, onGala }: { g: Game; y: GBYear; onGala: ()
             </div>
             <div className="aw-kpis">
               {[['Spiele', String(e.ap)], ['Note', fmtGrade(e.g)], ['Tore', String(e.gl)], ['Vorlagen', String(e.as)]].map(([k, v]) => (
-                <div key={k} className="aw-kpi"><b>{v}</b><span>{k}</span></div>
+                // Kein Etikett „geschätzt“ mehr (Wunsch Pascal: die Wahl hat stattgefunden); Hinweis nur noch beim Zeigen auf die Note.
+                <div key={k} className="aw-kpi" title={k === 'Note' && e.est ? 'Note eines Auslandsspielers aus Toren, Vorlagen und Stärke ermittelt' : undefined}><b>{v}</b><span>{k}</span></div>
               ))}
             </div>
             {e.why && <p className="aw-why">{e.why}</p>}
