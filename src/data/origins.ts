@@ -4,6 +4,9 @@ import { FIRST_BY_ERA, type FirstNameEra } from './nameEras';
 import { XL_NEW_ORIGINS, XL_WEST, type XLNames } from './namePoolsXL';
 import { XL_SOUTH_EAST } from './namePoolsXL2';
 import { XL_WORLD } from './namePoolsXL3';
+import { XL4_WEST } from './namePoolsXL4West';
+import { XL4_SOUTH } from './namePoolsXL4South';
+import { XL4_WORLD } from './namePoolsXL4World';
 // =============================================================================
 // Herkünfte: Namenslisten, Nationalität und Gesichtsgruppe (für spätere Porträts).
 // Der Ausländeranteil und die Herkunftsmischung ändern sich je Jahrzehnt.
@@ -333,7 +336,8 @@ export function mergeXL(o: Origin, x: XLNames): void {
   const years = [...new Set([...old.map(([y]) => y), ...x.eras.map(([y]) => y)])].sort((a, b) => a - b);
   o.firstByEra = years.map((y) => [y, [...new Set([...activeAt(old, y), ...activeAt(x.eras!, y)])]] as FirstNameEra);
 }
-for (const [id, x] of [...Object.entries(XL_WEST), ...Object.entries(XL_SOUTH_EAST), ...Object.entries(XL_WORLD)]) {
+for (const [id, x] of [...Object.entries(XL_WEST), ...Object.entries(XL_SOUTH_EAST), ...Object.entries(XL_WORLD),
+  ...Object.entries(XL4_WEST), ...Object.entries(XL4_SOUTH), ...Object.entries(XL4_WORLD)]) {
   const o = ORIGINS[id];
   if (o) mergeXL(o, x);
 }

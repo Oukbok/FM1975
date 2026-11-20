@@ -1,0 +1,65 @@
+ger	last 446	first 88	eras 0:64 1950:66 1960:60 1970:63 1980:64 1990:67 2000:75 2010:71
+ger_modern	last 147	first 60	eras 0:34 1950:38 1960:35 1970:35 1980:36 1990:36 2000:36 2010:36
+ger_tr	last 79	first 50	eras 0:15 1985:27 2000:24
+ger_af	last 59	first 33	eras -
+ger_pl	last 53	first 29	eras 0:12 1988:14 2003:12
+aut	last 111	first 50	eras 0:27 1960:26 1978:26 1995:34
+sui	last 96	first 89	eras 0:20 1965:22 1985:24 2000:28
+ned	last 102	first 45	eras 0:27 1960:30 1980:32 1998:33
+bel	last 85	first 103	eras 0:23 1965:26 1985:25 2000:24
+den	last 76	first 32	eras 0:25 1960:24 1980:23 1998:24
+swe	last 75	first 30	eras 0:29 1960:25 1980:25 1998:26
+nor	last 71	first 30	eras 0:26 1970:30 1993:29
+yug	last 55	first 25	eras 0:23 1960:24
+cro	last 45	first 26	eras 0:25 1980:26
+srb	last 45	first 16	eras 0:25 1980:19
+pol	last 73	first 28	eras 0:22 1960:21 1980:23 1998:24
+cze	last 60	first 42	eras 0:17 1965:20 1988:19
+hun	last 58	first 43	eras 0:20 1965:18 1988:18
+rus	last 91	first 50	eras 0:17 1965:17 1988:18
+ita	last 106	first 41	eras 0:34 1960:27 1978:29 1996:28
+esp	last 104	first 40	eras 0:31 1965:30 1985:34 1990:29 2000:38
+por	last 86	first 61	eras 0:21 1965:20 1985:22 2000:20
+fra	last 119	first 45	eras 0:32 1962:26 1978:27 1996:31
+fra_af	last 36	first 41	eras 0:10 1975:13 1995:16
+eng	last 166	first 55	eras 0:40 1960:31 1975:31 1995:42
+sco	last 82	first 72	eras 0:24 1965:22 1990:24
+tur	last 75	first 36	eras 0:24 1965:34 1975:27 1980:31 1995:31 1998:26
+gre	last 47	first 46	eras 0:15 1975:17 1995:16
+bra	last 60	first 40	eras 0:23 1960:31 1965:25 1978:29 1988:30 1996:26 2003:28
+arg	last 81	first 67	eras 0:19 1970:18 1992:18
+gha	last 47	first 34	eras -
+nga	last 36	first 32	eras -
+cmr	last 38	first 29	eras -
+mar	last 38	first 37	eras -
+jpn	last 41	first 55	eras 0:14 1970:14 1990:16
+kor	last 36	first 38	eras -
+ger_ost	last 183	first 32	eras 0:40 1960:39 1970:41 1980:36 1990:49 2000:46 2010:51
+ger_it	last 29	first 19	eras 0:15 1988:14 2003:12
+ger_yu	last 28	first 21	eras 0:14 1990:14
+usa	last 74	first 64	eras 0:18 1970:20 1990:19
+uru	last 68	first 23	eras -
+col	last 71	first 23	eras -
+chi	last 69	first 21	eras -
+par	last 69	first 19	eras -
+ecu	last 68	first 20	eras -
+per	last 60	first 21	eras -
+mex	last 70	first 25	eras -
+crc	last 70	first 15	eras -
+egy	last 26	first 20	eras -
+tun	last 17	first 25	eras -
+alg	last 18	first 20	eras -
+rsa	last 22	first 19	eras -
+cod	last 17	first 19	eras -
+civ	last 21	first 17	eras -
+ksa	last 22	first 21	eras -
+irn	last 18	first 20	eras -
+chn	last 36	first 25	eras -
+qat	last 12	first 19	eras -
+uae	last 19	first 17	eras -
+aus	last 41	first 27	eras -
+nzl	last 31	first 26	eras -
+eng_car	last 50	first 18	eras 0:13 1965:20 1990:22
+fra_car	last 42	first 18	eras 0:11 1970:16 1995:18
+fra_mag	last 44	first 19	eras 0:10 1970:15 1990:18
+ned_sur	last 42	first 18	eras 0:10 1970:18 1995:13
