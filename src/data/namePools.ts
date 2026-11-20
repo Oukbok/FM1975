@@ -106,6 +106,11 @@ export const BLOCKED_NAMES = new Set([
   'Peter Neururer', 'Hans Meyer', 'Thomas Schaaf', 'Werner Lorant', 'Christian Ziege', 'Thomas Helmer', 'Stefan Kuntz',
   'Jürgen Kohler', 'Thomas Berthold', 'Lukas Podolski', 'Marco Reus', 'Mario Gomez', 'Jan Koller', 'Uwe Seeler',
   'Ji-sung Park', 'Heung-min Son', 'Ilkay Gündogan', 'Ilkay Gündoğan', 'Mesut Özil', 'Jerome Boateng', 'Ivan Rakitić', 'Luka Modrić', 'Marko Arnautović',
+  // Historische Täter und Politiker (Hinweis aus der Namensprüfung): solche Paare nie erzeugen.
+  'Albert Speer', 'Rudolf Hess', 'Rudolf Heß', 'Hermann Göring', 'Heinrich Himmler', 'Joseph Goebbels', 'Adolf Eichmann',
+  'Martin Bormann', 'Reinhard Heydrich', 'Erich Mielke', 'Erich Honecker', 'Walter Ulbricht', 'Egon Krenz',
+  'Willy Brandt', 'Helmut Schmidt', 'Helmut Kohl', 'Gerhard Schröder', 'Angela Merkel', 'Olaf Scholz', 'Friedrich Merz',
+  'Gordon Brown', 'Tony Blair', 'David Cameron', 'Boris Johnson', 'Margaret Thatcher', 'John Major',
 ]);
 
 /**
