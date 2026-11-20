@@ -1621,7 +1621,7 @@ Der Kommentar wird aus einer Grammatik mit vielen ineinander verschachtelten Bau
     id: 'match-engine',
     category: 'match',
     title: 'So rechnet die Match-Engine',
-    keywords: ['engine', 'simulation', 'stärke', 'position', 'eignung', 'heimvorteil', 'tore', 'xg', 'chance', 'note', 'kraft', 'frische', 'epoche'],
+    keywords: ['engine', 'simulation', 'stärke', 'position', 'eignung', 'heimvorteil', 'tore', 'xg', 'chance', 'note', 'kraft', 'frische', 'epoche', 'attribute', 'schnelligkeit', 'antritt', 'teamwork', 'laufbereitschaft', 'konzentration', 'führung', 'abschlag', 'fangsicherheit', 'kommandos'],
     body: `## Spielerstärke im Spiel
 Jeder Spieler bringt seine **Positionsstärke** auf der Position mit, auf der er tatsächlich spielt, dazu die **Tagesform** aus Form, Moral, Fitness und Frische. Während des Spiels sinkt die **Kraft**; müde Spieler verlieren in jedem Duell bis zu 18 %.
 
@@ -1639,6 +1639,23 @@ Ein Angriff besteht aus mehreren Schritten, und jeder Schritt wird zwischen **zw
 
 Ein Duell 60 gegen 85 gewinnt der Bessere in gut drei von vier Fällen – deutlich, aber mit Zufall. Die Mannschaftsstärke (Angriff gegen Abwehr), der **Heimvorteil** und deine **Ausrichtung** verschieben alle Duelle ein wenig.
 
+### Was jedes Attribut im Spiel bewirkt
+Kein Wert ist Dekoration. Neben den Duellen oben wirken die Attribute so:
+- **Schnelligkeit & Antritt:** entscheiden jedes Laufduell bei Steilpässen und Kontern. Gegen eine **hoch stehende Abwehr** zählt fast nur noch das Tempo (und der Unterschied wirkt stärker), gegen eine tiefe Abwehr hilft dem Verteidiger sein **Stellungsspiel**. Schnelle Angreifer gegen eine langsame Abwehr kontern öfter, die Mannschaft sucht dann auch öfter den Steilpass, und ein schneller Flügelspieler lässt seinen Gegenspieler im Dribbling einfach stehen.
+- **Ausdauer:** wie schnell die Kraft sinkt; müde Spieler verlieren Duelle, und die **Laufbereitschaft** sinkt mit der Kraft.
+- **Laufbereitschaft (Mannschaft):** mehr Spieler gehen mit nach vorn, das Pressing erzwingt mehr Fehler, und nach einem Ballverlust eilen alle zurück – der Gegner kontert seltener.
+- **Teamwork:** Kombinationen, Steil- und Konterpässe kommen öfter an (abgestimmte Laufwege); die Abseitsfalle schnappt nur bei einer eingespielten Kette zu.
+- **Konzentration:** weniger Patzer im Aufbau – besonders in der Schlussphase, wenn unkonzentrierte Abwehrreihen nachlassen.
+- **Ballkontrolle, Ballannahme, Ruhe und Erfahrung** von Abwehr und Mittelfeld: Pressingresistenz – wer sie hat, verliert unter Druck seltener den Ball. Die **Ballannahme** des Empfängers hilft auch bei jedem Pass in den Strafraum und beim Mitnehmen im Lauf.
+- **Aggressivität:** mehr Fouls und Karten, aber auch ein wuchtigeres Pressing – ein Abwägen.
+- **Führung:** Ein Kapitän mit Führungsqualität hebt die Elf leicht an (bis etwa 3 %), nimmt ihr in heiklen Momenten den Druck und sorgt für weniger Fehler.
+- **Übersicht:** der eine Pass, der eine Großchance öffnet. **Flair:** der Kreative sucht nach dem Dribbling öfter selbst den Abschluss.
+- **Deckung:** Zuordnung im Strafraum bei Flanken und Ecken. **Kommandos des Torwarts:** die Abwehr steht bei hohen Bällen besser, es gibt weniger Fehler.
+- **Fangsicherheit:** ein Torwart, der den Ball festhält, lässt kaum Nachschüsse zu. **Abschlag:** schneller Abwurf/Abschlag nach Paraden und gefangenen Flanken leitet Konter ein; jeder fünfte lange Ball kommt direkt vom Torwart.
+- **Freistöße/Ecken/Elfmeter, Schusskraft, Weitschuss:** Qualität der Standards und der Fernschüsse.
+
+Alle diese Wirkungen sind auf typische Ligawerte ausgerichtet: Eine durchschnittliche Mannschaft spielt wie bisher, Stärken und Schwächen verschieben das Spiel. Der **Kommentar** erzählt, welches Attribut eine Szene entschieden hat („… läuft ihm einfach davon“, „steigt am höchsten“, „eiskalt“, „Glanzparade“).
+
 ### Verdeckte Werte
 - **Konstanz:** Die Tagesleistung schwankt je Spiel – wenig konstante Spieler streuen stärker nach oben und unten, im Schnitt sind sie nicht schlechter.
 - **Nervenstärke (wichtige Spiele) und Ruhe:** wirken unter Druck – Derby, Pokal, Europapokal, Verlängerung, Elfmeter und eine knappe Schlussphase – auf Abschluss und Torwart.
@@ -1652,9 +1669,10 @@ Ein Duell 60 gegen 85 gewinnt der Bessere in gut drei von vier Fällen – deutl
 Gezählt wird jede Aktion: Schüsse und Schüsse aufs Tor, Pässe (angekommen), Zweikämpfe und Luftduelle (gewonnen), Flanken, Dribblings, Balleroberungen und Torvorlagen je Spieler. Der Spielbericht zeigt sie unter **Einzelwerte**, das Spielerprofil (Reiter Saison) die Quoten der Saison – jeweils nur, was es in der Epoche schon gab.
 
 ## Epochen (Soll-Werte mit Quellen in \`data/matchStats.ts\`)
-- **Torschnitt:** rund 3,3 Tore pro Spiel in den Siebzigern, um 2,9 um die Jahrtausendwende, heute gut 3,1.
+- **Torschnitt** (echte Bundesliga-Daten): 3,4 Tore pro Spiel 1975–84, 2,9 von 1985 bis 2014, 3,05 in 2015–23, heute knapp 3,2; 0:0 in 5–8 % der Spiele, gut 55 % der Tore fallen nach der Pause.
 - **Torarten heute:** etwa 16 % Kopfballtore, ein Viertel nach Standards (Ecken ~10 %, Freistöße ~7 %, Elfmeter ~6 %), ~13–15 % nach Kontern, ~12 % aus der Distanz. In den Siebzigern mehr Flanken, Kopfbälle, lange Bälle und Fernschüsse, weniger Pressing und Konter, weniger Pässe (gut 70 % Passquote statt heute über 80 %).
-- **Heimvorteil:** in den Siebzigern deutlich stärker (rund 55 % Heimsiege), heute gut 40 %.
+- **Heimvorteil:** in den Siebzigern deutlich stärker (rund 57 % Heimsiege), 1985–2004 knapp 50 %, heute gut 40 %. Remis: 24 %, 1985–94 sogar 29 % (Zwei-Punkte-Regel – bei Gleichstand gehen beide in der Schlussphase weniger Risiko).
+- **Fouls:** bis etwa 2010 35–40 je Spiel (damalige Zählweise), heute rund 21; Gelb je Foul entsprechend seltener.
 - **Karten, Wechsel, Videobeweis:** Gelb-Rot ab 1991/92, Gelbsperre ab 1979/80; 2 Wechsel bis 1994, 3 ab 1995/96, 5 ab 2020/21; Videobeweis ab 2017/18. Regeln gelten ab dem **Saisonstart (1. Juli)**.
 
 ## Noten
