@@ -67,12 +67,14 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
   useEffect(() => { pendingPreset = null; }, []);
   const [remCc, remember] = useSubTab<string>(`cmp-country-${start}`, homeC.cc);
   const [cc, setCcState] = useState(() => preset?.cc ?? (start === 'euro' ? homeC.cc : remCc));
-  const country = countries.find((c) => c.cc === cc) ?? homeC;
+  // Europapokale stehen unter „Europa“ (Wunsch Pascal), nicht unter einem Land: Daten aus dem Heimatland.
+  const euroMode = start === 'euro';
+  const country = euroMode ? homeC : countries.find((c) => c.cc === cc) ?? homeC;
   const seasons = useMemo(() => countrySeasons(g, country), [g, g.season, country]); // eslint-disable-line react-hooks/exhaustive-deps
   const [seasonState, setSeason] = useState(() => preset?.season ?? pickSeason(countrySeasons(g, country), g.season));
   const season = seasons.some((s) => s.season === seasonState) ? seasonState : pickSeason(seasons, seasonState);
   const src = seasons.find((s) => s.season === season)?.source ?? 'live';
-  const opts = useMemo(() => countryOptions(g, country, season, src), [g, country, season, src]);
+  const opts = useMemo(() => countryOptions(g, country, season, src).filter((o) => (o.section === 'Europa') === euroMode), [g, country, season, src, euroMode]);
   const [key, setKeyState] = useState(() => preset?.key ?? keyFor(g, country, countryOptions(g, country, season, src), start));
   const [kind, setKind] = useState<'league' | 'cup' | undefined>(undefined);
   const setKey = (k: string) => { setKeyState(k); setKind(opts.find((o) => o.key === k)?.kind); };
@@ -116,7 +118,9 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
   // Reihenfolge im Kopf (Wunsch Pascal): Land | Wettbewerb | Saison; darunter der Spieltag (in der Tabelle).
   const header = (
     <span className="cmp-select">
-      <CountrySelect countries={countries} value={country.cc} onChange={changeCountry} />
+      {euroMode
+        ? <Select className="dselect cmp-country" width={168} value="eu" onChange={() => undefined} title="Wettbewerbe" options={[{ value: 'eu', text: 'Europa', label: 'Europa' }]} />
+        : <CountrySelect countries={countries} value={country.cc} onChange={changeCountry} />}
       <Select className="dselect cmp-comp" width={190} popWidth={260} value={effKey} onChange={(v) => setKey(v)} title="Wettbewerb">
         {sections.map((sec) => (
           <optgroup key={sec} label={sec}>

@@ -111,7 +111,8 @@ for (const file of ['public/saves/test-20-jahre.txt', 'public/saves/england-1992
   delete g.faceNameV;
   ok(migrateFaceNames(g) === 0 && faces() === f1, `${file}: nicht idempotent (zweiter Lauf ohne Markierung)`);
   console.log(`Migration ${file}: ${n} von ${total} Spielern umgestellt`);
-  ok(n > 0 && n < total * 0.2, `${file}: unplausible Zahl umgestellter Spieler (${n})`);
+  // Neu erzeugte Vorlagen haben schon passende Gesichter (0 umgestellt) – nur zu viele wären falsch.
+  ok(n < total * 0.2, `${file}: unplausible Zahl umgestellter Spieler (${n})`);
 }
 
 // 5) Ethnie aus dem Datensatz überschreibt das Gesicht.

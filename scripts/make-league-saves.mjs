@@ -21,6 +21,8 @@ const SAVES = [
   ['frankreich-2000', 'fra', 2000, 1, 7, 'Frankreich'],
   ['spanien-2005', 'esp', 2005, 1, 8, 'Spanien'],
   ['niederlande2-2020', 'ned', 2020, 2, 4, 'Niederlande'],
+  ['ddr-1980', 'gdr', 1980, 1, 4, 'DDR'],
+  ['england3-1995', 'eng', 1995, 3, 5, 'England'],
 ];
 const only = process.env.ONLY?.split(',');
 const idxPath = 'public/saves/index.json';

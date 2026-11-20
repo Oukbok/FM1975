@@ -61,9 +61,8 @@ export default function RoundsBracket({ rounds, renderTeam, onTie, active }: {
                 <div key={t.id} className={`rb-tie ${t.mine ? 'mine' : ''} ${onTie && t.matchId ? 'clickable' : ''} ${legs.length ? 'legs' : ''}`}
                   onClick={() => onTie && t.matchId && onTie(t)}>
                   <div className={`rb-team ${done && t.winner === t.home ? 'won' : ''}`}>{renderTeam(t.home, done && t.winner === t.home)}{goals(0)}</div>
-                  <div className={`rb-team ${done && t.winner === t.away ? 'won' : ''}`}>{renderTeam(t.away, done && t.winner === t.away)}
-                    {note && !t.scoreText && <span className="rb-note">{note}</span>}
-                    {goals(1)}</div>
+                  <div className={`rb-team ${done && t.winner === t.away ? 'won' : ''}`}>{renderTeam(t.away, done && t.winner === t.away)}{goals(1)}</div>
+                  {note && !t.scoreText && <div className="rb-note rb-txt">{note}</div>}
                   {t.scoreText && <div className="rb-note rb-txt">{t.scoreText}</div>}
                   {!t.agg && (t.legs?.length ?? 0) === 2 && <div className="rb-note rb-txt">Wiederholung · zuvor {t.legs![0][0]}:{t.legs![0][1]} n. V.</div>}
                 </div>

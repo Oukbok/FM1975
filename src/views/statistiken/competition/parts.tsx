@@ -8,7 +8,7 @@ import ClubCrest from '../../../components/ClubCrest';
 import { ClubLink } from '../../../components/club/ClubLink';
 import { clubView } from '../../../game/clubProfile';
 import { compClubName, foreignCountry } from '../../../game/competitionView';
-import type { Game } from '../../../game/state';
+import { homeCountryKey, type Game } from '../../../game/state';
 import { seasonStartYear } from '../../../data/timeline';
 import Seg from '../../../ui/Seg';
 import { ctClub } from '../../../data/world/continents';
@@ -22,7 +22,7 @@ export function TeamName({ g, id, season, short = false, size = 20 }: { g: Game;
   const country = foreignCountry(g, id);
   const name = compClubName(g, id, season, short);
   const withFlag = useContext(TeamFlagCtx);
-  const flag = withFlag ? <CountryFlag country={country ?? (isDdrClub(g, id) && Number(season.slice(0, 4)) < 1991 ? 'DDR' : 'Deutschland')} height={Math.max(10, Math.round(size * 0.55))} /> : null;
+  const flag = withFlag ? <CountryFlag country={country ?? (isDdrClub(g, id) && Number(season.slice(0, 4)) < 1991 ? 'DDR' : homeCountryKey(g))} height={Math.max(10, Math.round(size * 0.55))} /> : null;
   if (country || id.startsWith('x_') || id.startsWith('t:')) {
     const col = g.euroClubs?.[id]?.colors.primary ?? ctClub(id)?.club.colors[0] ?? (isLocalClub(id) ? localClubColor(id) : 'var(--text-4)');
     return (

@@ -37,21 +37,25 @@ export function pickBench(xiPos: Position[], rest: Player[], size: number, fits:
   if (size <= 0) return out;
   const free = rest.filter(Boolean);
   const used = new Set<string>();
-  const take = (p: Player) => { out.push(p); used.add(p.id); onTake?.(p); };
+  // Mannschaftsteil, für den ein Spieler auf der Bank sitzt – danach wird die Bank am Ende sortiert
+  // (Wunsch Pascal: von hinten nach vorn, Torwart zuerst, Sturm zuletzt).
+  const partOf = new Map<string, number>();
+  const natPart = (p: Player) => { const i = PARTS.findIndex((x) => x.pos.includes(p.naturalPosition)); return i < 0 ? PARTS.length : i; };
+  const take = (p: Player, part = natPart(p)) => { out.push(p); used.add(p.id); partOf.set(p.id, part); onTake?.(p); };
   // Wert eines Kandidaten für einen Mannschaftsteil: beste Eignung für eine der Startelf-Positionen darin.
   const valueFor = (p: Player, ps: Position[]) => {
     let best = 0;
     for (const pos of ps) if (familiarity(p, pos) >= MIN_FAM) best = Math.max(best, positionSuitability(p, pos));
     return best;
   };
-  const fill = (ps: Position[]): boolean => {
+  const fill = (ps: Position[], part: number): boolean => {
     let bp: Player | null = null, bv = 0;
     for (const p of free) {
       if (used.has(p.id) || !fits(p)) continue;
       const v = valueFor(p, ps);
       if (v > bv) { bv = v; bp = p; }
     }
-    if (bp) take(bp);
+    if (bp) take(bp, part);
     return !!bp;
   };
   const need = PARTS.map((part) => {
@@ -60,11 +64,11 @@ export function pickBench(xiPos: Position[], rest: Player[], size: number, fits:
   });
   // Runde 1: je Teil der Startelf ein Ersatz, zuerst der Torwart.
   for (let i = 0; i < need.length && out.length < size; i++) {
-    if (need[i].ps.length) fill(need[i].ps);
+    if (need[i].ps.length) fill(need[i].ps, i);
   }
   // Runde 2: mehrfach besetzte Teile doppelt (nie ein dritter Torwart).
   for (let i = 1; i < need.length && out.length < size; i++) {
-    if (need[i].n >= 2 && need[i].ps.length) fill(need[i].ps);
+    if (need[i].n >= 2 && need[i].ps.length) fill(need[i].ps, i);
   }
   // Auffüllen: wer die Startelf-Positionen am besten vertreten kann (Feldspieler; ohne zweiten Ersatztorwart,
   // solange es Feldspieler gibt).
@@ -73,5 +77,6 @@ export function pickBench(xiPos: Position[], rest: Player[], size: number, fits:
   const left = free.filter((p) => !used.has(p.id) && fits(p))
     .sort((a, b) => (Number(a.naturalPosition === 'TW') - Number(b.naturalPosition === 'TW')) || score(b) - score(a) || b.overall - a.overall);
   for (const p of left) { if (out.length >= size) break; if (fits(p)) take(p); }
-  return out;
+  const order = new Map(out.map((p, i) => [p.id, i]));
+  return out.sort((a, b) => (partOf.get(a.id)! - partOf.get(b.id)!) || order.get(a.id)! - order.get(b.id)!);
 }

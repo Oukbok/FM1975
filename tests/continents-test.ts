@@ -192,6 +192,8 @@ if (!wonOnce) {
 {
   const raw = readFileSync('public/saves/test-40-jahre.txt', 'utf8');
   const g: Game = JSON.parse(raw.startsWith('LZ1:') ? decompressFromUTF16(raw.slice(4))! : raw).game;
+  // Die Vorlagen werden inzwischen mit Kontinenten erzeugt: für den Test „alter Stand“ die Felder entfernen.
+  delete (g as any).continents; delete (g as any).icCups;
   const had = !!(g as any).continents;
   const before = lz(g);
   prepareLoadedGame(g);
