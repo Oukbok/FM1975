@@ -310,12 +310,12 @@ Einige Beispiele:
     id: 'leagues-ddr',
     category: 'leagues',
     title: 'DDR-Ligen & Wiedervereinigung 1991/92',
-    keywords: ['ddr', 'oberliga', 'ddr-liga', 'ost', 'osten', 'wiedervereinigung', 'wende', 'nofv', '1991', 'karl-marx-stadt', 'chemnitz', 'dresden', 'rostock', 'ostberlin'],
+    keywords: ['ddr', 'oberliga', 'ddr-liga', 'ost', 'osten', 'wiedervereinigung', 'wende', 'nofv', '1991', 'karl-marx-stadt', 'chemnitz', 'dresden', 'rostock', 'ostberlin', 'mauerfall', 'fdgb-pokal', 'mark der ddr', 'heimatland ddr'],
     body: `## Parallele DDR-Ligapyramide (bis 1991/92)
 Von Saisonstart 1975/76 an läuft **parallel** zum bundesdeutschen Ligasystem eine eigene DDR-Ligapyramide:
 
 - **DDR-Oberliga** – oberste DDR-Ebene, **14 Vereine**.
-- **DDR-Liga** – vereinfachter Unterbau, eine Staffel (**12 Vereine**).
+- **DDR-Liga** – vereinfachter Unterbau, eine Staffel (**16 Vereine** aus den Weltdaten, ohne Daten 12).
 
 Jede Saison steigen die **zwei Letzten der Oberliga** ab und die **zwei Besten der DDR-Liga** auf; die zwei Letzten der DDR-Liga tauschen mit dem DDR-Pool (u. a. Stralsund, Stendal, Steinach, Neubrandenburg, Gera, Eisenhüttenstadt).
 
@@ -339,6 +339,18 @@ Die separat geführte DDR-Struktur wird damit **aufgelöst**; die Ost-Vereine si
 
 ## Normalisierung 20 → 18
 Die einmalig vergrößerte 1. Liga (und die vergrößerte 2. Liga) werden **ab der Folgesaison 1992/93** durch den regulären Auf-/Abstieg wieder auf ihre **Sollgrößen** (18 bzw. 20) zurückgeführt: In jener Saison steigen entsprechend **mehr Vereine ab** als sonst (übergroße Ebenen geben ihre schwächsten Vereine an die nächsttiefere Ebene ab, auf der untersten Ebene fallen Überzählige aus der Simulation).
+
+## Start in der DDR
+Bei einem Startjahr von 1975 bis 1990 kannst du im Assistenten unter **Verein** auch die **DDR** als Land wählen – und dort einen Verein der **DDR-Oberliga** oder der **DDR-Liga**.
+
+- **Deine Liga** bekommt volle Kader, die andere DDR-Liga und die **Bundesliga mit ihrem Unterbau laufen simuliert** im Hintergrund mit (zu sehen unter Statistiken › Liga bzw. Ligensystem, die DDR ist dort vorgewählt).
+- **DDR-Liga:** Historisch spielte sie in mehreren Staffeln; das Spiel führt **eine Staffel mit den 16 stärksten Vereinen** der Vorsaison. Die zwei Besten steigen auf, die zwei Letzten der Oberliga ab, die Letzten der DDR-Liga tauschen mit den Bezirksligen – dein Verein steigt nie in die Bezirksliga ab.
+- **Regeln:** 2 Punkte je Sieg, Geld in **Mark der DDR** (ab der Währungsunion am 1. Juli 1990 D-Mark), im Kader nur Spieler aus der DDR. Vor dem **Mauerfall (9. November 1989)** kannst du keine Spieler aus dem Westen oder dem Ausland verpflichten, Auslandsvereine bieten nicht für deine Spieler, und es gibt keine Hallenturniere im Westen. Danach ist der Markt offen.
+- **Pokal:** Du spielst den **FDGB-Pokal** mit den Vereinen deiner Liga und Amateurmannschaften aus der DDR.
+- **Europapokal:** In der ersten Saison die echten DDR-Starter, danach Meister (Landesmeister), Pokalsieger (Pokalsieger-Wettbewerb) und die nächsten zwei der Oberliga (UEFA-Pokal) – zusätzlich zu den Startern aus der Bundesliga.
+- **Wiedervereinigung:** Zur Saison 1991/92 verteilt das Spiel die Vereine wie oben beschrieben nach dem Endstand der Oberliga 1990/91. Dein Verein spielt danach im gesamtdeutschen System weiter (1. Liga, 2. Liga oder NOFV-Oberliga), dein Heimatland ist ab dann Deutschland – mit D-Mark, DFB-Pokal und allen weiteren Ligareformen.
+
+Vereinfachungen: Sponsoren, Trainingslager und Jugendwettbewerbe laufen wie im Westen; die Chronik und das Saison-Briefing erzählen den deutschen Fußball insgesamt.
 
 ## Reihenfolge der Reformen
 Die 1981er-Reform (eingleisige 2. Liga) liegt vor der Wiedervereinigung, die Regionalliga-Reform (1994/95) danach. Alle Reformen greifen sauber ineinander, und dein eigener Verein bleibt jederzeit geschützt (fällt nie aus der Simulation).`,
@@ -893,7 +905,7 @@ Im Assistenten „Neues Spiel“ wählst du unter **Spielwelt** das **Startjahr*
 - **Vorgeschichte:** Endplätze und Titel der Jahre davor stehen in der Vereins-Historie; Spieler und Ausnahmetalente sind im passenden Alter.
 
 ### Heimatland
-Unter **Verein** wählst du zuerst das **Land**: Deutschland immer, dazu jedes Land, für das im Startjahr Weltdaten vorliegen. In einem anderen Land spielen die Einheimischen dieses Landes, es gilt dessen Punkteregel und dessen historische Ligastruktur (Größen, Auf- und Absteiger je Saison, Artikel „Ligareformen im Ausland“), es gibt keine deutschen Ligareformen, keine Hallenturniere und keine deutschen Jugendwettbewerbe; Deutschland läuft dann im Hintergrund mit.
+Unter **Verein** wählst du zuerst das **Land**: Deutschland immer, bis 1990 auch die **DDR** (Oberliga oder DDR-Liga, Wiedervereinigung 1991/92 – siehe „DDR-Ligen & Wiedervereinigung“), dazu jedes Land, für das im Startjahr Weltdaten vorliegen. In einem anderen Land spielen die Einheimischen dieses Landes, es gilt dessen Punkteregel und dessen historische Ligastruktur (Größen, Auf- und Absteiger je Saison, Artikel „Ligareformen im Ausland“), es gibt keine deutschen Ligareformen, keine Hallenturniere und keine deutschen Jugendwettbewerbe; Deutschland läuft dann im Hintergrund mit.
 
 Weltdaten gibt es für alle Länder, die im Europapokal spielten (40 Länder einschließlich der Staaten, die es heute nicht mehr gibt, und ihrer Nachfolger). Bei den großen Ländern stammen die 1. Ligen meist aus Ergebnisdaten; bei vielen kleineren Ländern und bei älteren 2. Ligen sind Meister, Europapokalplätze und Absteiger gesichert, die Reihenfolge im Mittelfeld ist dagegen eine Annäherung. Im Editor kannst du jede Saison korrigieren.
 

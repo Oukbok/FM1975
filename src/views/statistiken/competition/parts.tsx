@@ -1,6 +1,7 @@
 // =============================================================================
 // Gemeinsame Bausteine der Wettbewerbs-Seiten (Vereinszeile, Zonen, Chips)
 // =============================================================================
+import { isDdrClub } from '../../../game/ddrHome';
 import { createContext, useContext, type ReactNode } from 'react';
 import { CountryFlag } from '../../../components/competition/CountryFlag';
 import ClubCrest from '../../../components/ClubCrest';
@@ -20,7 +21,7 @@ export function TeamName({ g, id, season, short = false, size = 20 }: { g: Game;
   const country = foreignCountry(g, id);
   const name = compClubName(g, id, season, short);
   const withFlag = useContext(TeamFlagCtx);
-  const flag = withFlag ? <CountryFlag country={country ?? (id.startsWith('ddr') ? 'DDR' : 'Deutschland')} height={Math.max(10, Math.round(size * 0.55))} /> : null;
+  const flag = withFlag ? <CountryFlag country={country ?? (isDdrClub(g, id) && Number(season.slice(0, 4)) < 1991 ? 'DDR' : 'Deutschland')} height={Math.max(10, Math.round(size * 0.55))} /> : null;
   if (country || id.startsWith('x_') || id.startsWith('t:')) {
     const col = g.euroClubs?.[id]?.colors.primary ?? (isLocalClub(id) ? localClubColor(id) : 'var(--text-4)');
     return (

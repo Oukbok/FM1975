@@ -25,6 +25,11 @@ function currencyFact(cc: string, y: number): string {
 
 function eraNotes(y: number, home: string): string[] {
   const out: string[] = [];
+  if (home === 'gdr') {
+    out.push('DDR-Oberliga (14) und DDR-Liga', 'Bundesliga läuft im Hintergrund');
+    out.push(y <= 1988 ? 'Keine Wechsel aus dem Westen vor dem Mauerfall' : 'Mauerfall im November 1989');
+    out.push('Ab 1991/92 gesamtdeutscher Fußball');
+  }
   if (home === 'ger') {
     out.push(y < 1981 ? '2. Liga in zwei Staffeln (Nord/Süd)' : y < 1994 ? 'Eingleisige 2. Liga' : y < 2008 ? 'Regionalligen als dritte Ebene' : '3. Liga als Profiliga');
     if (y <= 1990) out.push('DDR-Oberliga spielt getrennt');
@@ -39,6 +44,7 @@ function eraNotes(y: number, home: string): string[] {
 
 function leaguesText(cc: string, key: string, y: number): { text: string; clubs: number; data: boolean } {
   const row = worldSeason(cc, y);
+  if (row && cc === 'gdr') return { text: `Oberliga ${row.t1.length} · DDR-Liga ${(row.t2?.length ?? 0) + (row.t2b?.length ?? 0)}`, clubs: row.t1.length + (row.t2?.length ?? 0) + (row.t2b?.length ?? 0), data: true };
   if (row) {
     const t2 = (row.t2?.length ?? 0) + (row.t2b?.length ?? 0);
     return { text: `1. Liga ${row.t1.length}${t2 ? ` · 2. Liga ${t2}` : ''}`, clubs: row.t1.length + t2, data: true };
@@ -59,7 +65,7 @@ export function StepWorld({ d, set, chooseDataset, chooseYear }: {
   const y = d.startYear;
   const home = d.country;
   // Länder des Startjahres: Heimatland zuerst, dann Länder mit Weltdaten, dann übrige.
-  const rows = WORLD_COUNTRIES.filter((c) => countryExists(c, y) && (c.cc !== 'gdr' || home === 'ger') && (c.cc === home || c.cc === 'ger' || c.cc === 'gdr' || !!worldSeason(c.cc, y) || COUNTRY_SEEDS.some((s) => s.name === c.key)))
+  const rows = WORLD_COUNTRIES.filter((c) => countryExists(c, y) && (c.cc !== 'gdr' || home === 'ger' || home === 'gdr') && (c.cc === home || c.cc === 'ger' || c.cc === 'gdr' || !!worldSeason(c.cc, y) || COUNTRY_SEEDS.some((s) => s.name === c.key)))
     .map((c) => ({ c, ...leaguesText(c.cc, c.key, y) }))
     .sort((a, b) => Number(b.c.cc === home) - Number(a.c.cc === home) || Number(b.data) - Number(a.data) || a.c.name.localeCompare(b.c.name, 'de'));
   const total = rows.reduce((a, r) => a + r.clubs, 0);

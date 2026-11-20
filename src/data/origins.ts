@@ -204,6 +204,8 @@ function swapHome(mix: Record<string, number>): Record<string, number> {
 
 /** Gewichtete Herkunfts-Mischung für ein Jahr (lineare Interpolation zwischen den Stützjahren). */
 export function originMixForYear(year: number): Record<string, number> {
+  // DDR als Heimatland (game/ddrHome.ts): bis zur Wende praktisch keine Ausländer in den Kadern.
+  if (homeOrigin === 'ger_ost') return { ger_ost: 1 };
   return swapHome(baseMixForYear(year));
 }
 

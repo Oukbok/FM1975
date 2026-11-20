@@ -7,6 +7,7 @@
 // Übrige eines alten Spielstands einmalig um; die Markierung `game.financeLevel`
 // macht sie idempotent (zweiter Aufruf ändert nichts).
 // =============================================================================
+import { playerLevel } from './state';
 import type { Game } from './state';
 import type { Club, Player } from '../types';
 import { fairTicketPrice, wageForOverall } from '../engine/economy';
@@ -90,7 +91,7 @@ function migrateClub(c: Club, players: Record<string, Player>, managed: boolean)
 export function migrateFinanceLevel(g: Game): boolean {
   if ((g.financeLevel ?? 1) >= FINANCE_LEVEL) return false;
   const F = FINANCE_FACTOR;
-  const tier = g.leagues?.playerDivision?.tier ?? 1;
+  const tier = playerLevel(g);
   for (const c of Object.values(g.clubs)) {
     migrateClub(c, g.players, c.id === g.managedClubId);
     if (isLeagueClub(c)) c.finances.leagueTier = tier;

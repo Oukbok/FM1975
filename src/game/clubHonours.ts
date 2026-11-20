@@ -14,6 +14,7 @@
 // höchstens verliehen; ein Verkauf (auch mit späterem Rückkauf) beendet den Status.
 // Spielminuten-Hürde 1.500 bei 34 Spieltagen, anteilig bei anderer Ligagröße.
 // =============================================================================
+import { playerLevel } from './state';
 import { HG_MINUTES_34, HONOURS, HONOUR_BY_ID, HONOUR_YEARS, TIER_NAME, type HonourId } from '../data/clubHonours';
 import { seasonStartYear } from '../data/timeline';
 import { setHonourTable, type HonourEffects } from '../engine/honourEffects';
@@ -169,7 +170,7 @@ function factsFor(g: Game, club: Club, season: string, ctx: SeasonCtx): HonourFa
   const prev = honourState(g).facts[id]?.slice(-1)[0];
   const saldo = ctx.saldo[id] ?? 0;
   return {
-    s: season, tier: g.leagues.playerDivision.tier, pos: row?.position ?? 99,
+    s: season, tier: playerLevel(g), pos: row?.position ?? 99,
     hg: hgs.length, hg80: hgs.filter((p) => p.overall >= 80).length,
     hgTop: mine.length, hgRec: sales[0]?.f === id && sales[0].p.startsWith(`${id}_y_`) ? 1 : 0,
     // Jugendtitel: A-/B-Jugend, Junioren-Pokal, DDR, Youth League, Staffelsiege C/D (E/F = Kinderfußball ohne Meisterschaft)

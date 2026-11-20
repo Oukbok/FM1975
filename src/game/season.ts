@@ -62,6 +62,8 @@ import { honoursSeasonEnd } from './clubHonours';
 import { worldPoolSeason } from './worldPool';
 import { storeSeasonResults } from './leagueResults';
 import { bindGameIds } from './resetModuleState';
+import { ddrEuroQualifiers, ddrRenameClubs, ddrReunifyHome, isDdrClub, isDdrHome, levelOfTier, mergeQualifiers } from './ddrHome';
+import { DDR_POOL_TIER } from '../data/history/historicClubs';
 
 // Spieltag, Sim-Ligen, Spielbericht (game/seasonMatchday.ts) und Meilensteine (game/seasonTimeline.ts).
 export { advanceDivisionsTo, emitMatchMessage, leagueClubs, simulateMatchday } from './seasonMatchday';
@@ -137,7 +139,10 @@ export function startNextSeason(g: Game): void {
 
   // Europapokal-Starter der neuen Saison AUS der abgelaufenen Saison ableiten
   // (Endtabelle + Landespokalsieger) – VOR dem Überschreiben von g.table/g.cup.
-  const euroQuals = computeGermanEuroQualifiers(g, false);
+  // DDR-Start (game/ddrHome.ts): BRD-Starter ohne den FDGB-Pokal, dazu die DDR-Starter aus der Oberliga.
+  const euroQuals = isDdrHome(g)
+    ? mergeQualifiers(ddrEuroQualifiers(g), computeGermanEuroQualifiers({ ...g, cup: null } as Game, false))
+    : computeGermanEuroQualifiers(g, false);
   // Supercup/Ligapokal: Teilnehmer ebenfalls jetzt festhalten (game/superCupGame.ts).
   const scSeeds = superCupSeeds(g);
   // Punkteregel des Heimatlandes (Deutschland: Chronik-Meilenstein 1995/96).
@@ -167,22 +172,23 @@ export function startNextSeason(g: Game): void {
 
   // --- 2) Endstände ALLER aktuellen Divisionen einlesen (Spielerliga + Sim) ---
   const pd = g.leagues.playerDivision;
-  const current: CurrentDivision[] = [
-    { id: pd.id, tier: pd.tier, group: pd.group, name: pd.name, orderedIds: finalOrder(g, pd.id) },
-  ];
+  const isReunify = newSeason === '1991/92'
+    && !g.appliedReforms.includes('reform-1991-reunification');
+  // DDR-Start: Spielerliga ist eine DDR-Liga – bis zur Wiedervereinigung läuft sie mit den DDR-Ligen getrennt.
+  const ddrSep = pd.id.startsWith('ddr-') && !isReunify;
+  const pdEntry: CurrentDivision = { id: pd.id, tier: pd.tier, group: pd.group, name: pd.name, orderedIds: finalOrder(g, pd.id) };
+  const current: CurrentDivision[] = ddrSep ? [] : [pdEntry];
   // DDR-Divisionen (tier 101/102) laufen normalerweise SEPARAT und dürfen den
   // West-Auf-/Abstieg nicht berühren – daher aus `current` heraushalten. NUR zur
   // Wiedervereinigungs-Saison 1991/92 werden sie mitgegeben, damit migrate1991
   // die DDR-Endstände in die gesamtdeutsche Pyramide integrieren kann.
-  const isReunify = newSeason === '1991/92'
-    && !g.appliedReforms.includes('reform-1991-reunification');
   const ddrDivs = g.leagues.otherDivisions.filter((d) => d.id.startsWith('ddr-'));
   for (const div of g.leagues.otherDivisions) {
     if (div.id.startsWith('ddr-') && !isReunify) continue;
     current.push({ id: div.id, tier: div.tier, group: div.group, name: div.name, orderedIds: finalOrder(g, div.id) });
   }
   // Vereinsprofil-Historie (Endplätze, Titel, direkter Vergleich) vor dem Überschreiben sichern.
-  recordSeasonEnd(g, oldSeason, [...current, ...(isReunify ? [] : ddrDivs.map((d) => ({ id: d.id, tier: d.tier, group: d.group, name: d.name, orderedIds: finalOrder(g, d.id) })))]);
+  recordSeasonEnd(g, oldSeason, [...current, ...(ddrSep ? [pdEntry] : []), ...(isReunify ? [] : ddrDivs.map((d) => ({ id: d.id, tier: d.tier, group: d.group, name: d.name, orderedIds: finalOrder(g, d.id) })))]);
   // Liga-Archiv: Tabellen, Pokalrunden, Bestenlisten (game/leagueArchive.ts).
   archiveSeasonEnd(g, oldSeason);
   // Ergebnisse je Spieltag aller Ligen (Statistiken › Liga: Spieltage, Heim/Auswärts/Form) – game/leagueResults.ts.
@@ -206,7 +212,7 @@ export function startNextSeason(g: Game): void {
     strengthOf: (id) => clubStrengthFor(g, id),
     cityOf: (id) => g.clubs[id]?.city ?? g.simClubs[id]?.city ?? '',
     appliedReforms: g.appliedReforms,
-    protectedId: g.managedClubId,
+    protectedId: ddrSep ? undefined : g.managedClubId,
     ...(homePlan ? { targets: homePlan.transition ?? homePlan.targets, regionHint: homeRegionHint(g, current, newSeason) } : {}),
   });
   const homePoolSwap = homePlan ? applyHomePlan(res, homePlan, current, newSeason, g.managedClubId, (id, n) => homeZoneOf(homeCountryOf(g), id, g.clubs[id]?.city ?? g.simClubs[id]?.city, n, nextStartYear)) : undefined;
@@ -238,6 +244,14 @@ export function startNextSeason(g: Game): void {
   const resT = reserveTransition(g, membership, newSeason);
   pooled.push(...homeBTeamTransition(g, membership, newSeason)); // B-Teams im Heimatland (Spanien, Portugal)
   pooled.push(...resT.pooled);
+  // DDR-Start: Auf-/Abstieg Oberliga ↔ DDR-Liga ↔ DDR-Pool inkl. Spielerliga (eigener Verein nie in den Pool).
+  if (ddrSep && nextStartYear < 1991) {
+    const orders = [pdEntry, ...ddrDivs.map((d) => ({ id: d.id, tier: d.tier, group: d.group, name: d.name, orderedIds: finalOrder(g, d.id) }))];
+    const ddrNew = ddrExchange(g, orders, newSeason, g.managedClubId);
+    const ob = orders.find((d) => d.tier === 101), li = orders.find((d) => d.tier === 102);
+    if (ob && li) ddrReserveTransition(g, ddrNew, ob.id, li.id, nextStartYear);
+    for (const d of orders) membership[d.id] = { ids: ddrNew[d.id] ?? d.orderedIds, meta: { id: d.id, name: d.name, tier: d.tier, group: d.group } };
+  }
 
   const playerDivId = Object.keys(membership).find((k) => membership[k].ids.includes(g.managedClubId))
     || res.divisions[0].meta.id;
@@ -256,7 +270,7 @@ export function startNextSeason(g: Game): void {
     if (!g.clubs[id]) {
       const sc = g.simClubs[id];
       if (sc) {
-        g.clubs[id] = buildProClub(sc, g.managedClubId, seasonStart, g.players, g.youthPlayers, membership[playerDivId].meta.tier);
+        g.clubs[id] = buildProClub(sc, g.managedClubId, seasonStart, g.players, g.youthPlayers, levelOfTier(membership[playerDivId].meta.tier));
         delete g.simClubs[id];
       }
     }
@@ -275,8 +289,11 @@ export function startNextSeason(g: Game): void {
       continue;
     }
     if (playerSet.has(c.id)) continue;
-    const dest = divOf[c.id] ?? { tier: 2, group: 'nord' as LeagueGroup };
+    // DDR-Verein ohne neue Liga (DDR-Pool) bzw. nach der Wende: Kennung `ddr` bleibt (game/ddrHome.ts).
+    const ddrClub = isDdrHome(g) && isDdrClub(g, c.id);
+    const dest = divOf[c.id] ?? (ddrClub && ddrSep ? { tier: DDR_POOL_TIER, group: 'nordost' as LeagueGroup } : { tier: 2, group: 'nord' as LeagueGroup });
     g.simClubs[c.id] = simClubFromClub(c, g.players, dest.tier, dest.group);
+    if (ddrClub) g.simClubs[c.id].ddr = true;
     for (const pid of c.playerIds) delete g.players[pid];
     for (const yid of (c.youthPlayerIds || [])) delete g.youthPlayers[yid];
     delete g.clubs[c.id];
@@ -288,10 +305,14 @@ export function startNextSeason(g: Game): void {
 
   settlePool(g, pooled);
   if (isReunify) { mergeDdrPool(g); syncDdrReserves(g, [], [], 1991); } // DDR-Reserven gibt es seit 1990/91 nicht mehr
+  // DDR-Start: ab 1991/92 gesamtdeutsch, Heimatland Deutschland (game/ddrHome.ts).
+  if (isDdrHome(g)) ddrRenameClubs(g, nextStartYear); // Umbenennungen (Weltdaten), auch noch zur Wende-Saison
+  if (isReunify && isDdrHome(g)) ddrReunifyHome(g, membership[playerDivId].meta.name);
 
   // --- 6) Spielerliga: neuer Spielplan + Tabelle (volle Engine) ---
   const playerClubList = playerIds.map((id) => g.clubs[id]).filter(Boolean) as Club[];
-  const fixtures = generateFixtures(playerClubList, fixturesStart, { tier: membership[playerDivId].meta.tier, spread: true });
+  const newPdTier = membership[playerDivId].meta.tier;
+  const fixtures = generateFixtures(playerClubList, fixturesStart, { tier: levelOfTier(newPdTier), spread: true, ...(newPdTier > 100 && newPdTier < 109 ? { kind: 'ddr' as const } : {}) });
   for (const m of fixtures) {
     m.involvesPlayerClub = m.homeClubId === g.managedClubId || m.awayClubId === g.managedClubId;
   }
@@ -307,7 +328,7 @@ export function startNextSeason(g: Game): void {
   // DDR-Ligen bleiben bis zur Wiedervereinigung SEPARAT bestehen: mit gleicher
   // Mannschaftsbesetzung für die neue Saison neu aufbauen. Ab 1991/92 (isReunify)
   // sind die DDR-Vereine integriert und die separate Struktur ist aufgelöst.
-  if (nextStartYear < 1991 && !isReunify) {
+  if (nextStartYear < 1991 && !isReunify && !ddrSep) {
     // Auf-/Abstieg Oberliga ↔ DDR-Liga ↔ DDR-Pool (game/clubPool.ts).
     const ddrNew = ddrExchange(g, ddrDivs.map((d) => ({ id: d.id, tier: d.tier, orderedIds: finalOrder(g, d.id) })), newSeason);
     // Zweite Mannschaften der Oberligisten: DDR-Liga / Nachwuchsoberliga je Epoche (game/ddrReserves.ts).

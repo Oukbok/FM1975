@@ -15,6 +15,7 @@
 import {
   INDOOR_GAP_DAYS, MAKEUP_BEFORE_LAST, MAX_POSTPONEMENTS, MIN_GAP_DAYS, POSTPONE_TEXT, WANT_GAP_DAYS, WD_NAME, calendarEra,
 } from '../data/matchCalendarRules';
+import { playerLevel } from './state';
 import { CalendarEngine } from '../engine/calendar';
 import { addD, dayDiff, gapTo, findSlotTiered, matchdayBaseDates, wdOf, weatherPostponement } from '../engine/fixtureRules';
 import { makeMessage, pushMessage } from '../engine/messages';
@@ -225,7 +226,7 @@ export function findMakeupDate(g: Game, m: Match, from: string): string | null {
 }
 
 function weatherCheck(g: Game, day: string, today: string): void {
-  const tier = g.leagues?.playerDivision?.tier ?? 1;
+  const tier = playerLevel(g);
   for (const m of g.fixtures) {
     if (m.status !== 'scheduled' || m.date !== day) continue;
     if ((m.moved?.n ?? 0) >= MAX_POSTPONEMENTS) continue;

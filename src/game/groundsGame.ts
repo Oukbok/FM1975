@@ -5,6 +5,7 @@
 // Rechenlogik: engine/grounds.ts · Katalog: data/groundsCatalog.ts.
 // Einstieg: groundsDaily() aus game/day.ts, migrateGrounds() beim Laden.
 // =============================================================================
+import { playerLevel } from './state';
 import { checkBudget, noteBudgetSpend } from './budgetPlan';
 import { Game } from './state';
 import { Club } from '../types';
@@ -30,7 +31,7 @@ function seasonOf(date: string): string {
   const s = Number(date.slice(5, 7)) >= 7 ? y : y - 1;
   return `${s}/${String((s + 1) % 100).padStart(2, '0')}`;
 }
-const tierOf = (g: Game) => g.leagues?.playerDivision?.tier ?? 1;
+const tierOf = (g: Game) => playerLevel(g);
 const isMine = (g: Game, c: Club) => c.id === g.managedClubId && !(g as any).simAutoManage;
 
 function msg(g: Game, date: string, from: string, subject: string, body: string, short?: string) {

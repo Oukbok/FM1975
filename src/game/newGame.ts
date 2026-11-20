@@ -18,7 +18,7 @@ import { LEAGUE_REFORMS } from '../data/reforms';
 import { seasonStartYear, timelineEventsUpTo } from '../data/timeline';
 import { generateSeasonCalendar } from '../engine/calendar';
 import { createCup } from '../engine/cup';
-import { setCurrencyDate, setHomeCurrency, yearOf } from '../engine/economy';
+import { setCurrencyDate, yearOf } from '../engine/economy';
 import { setTransferDate } from '../engine/transfers';
 import { bindIdCounter } from '../engine/idSeq';
 import { resetModuleState } from './resetModuleState';
@@ -45,9 +45,11 @@ import { buildProClub } from '../data/generate';
 import { seasonExpectation } from '../engine/environment';
 import { buildDdrDivisions, buildSecondLigaSimClubs, historicPointSystem } from './leagueSetup';
 import { COUNTRY_BY_CC, countryOrigin, countryPointSystem, seasonLabelOf } from '../data/world/countries';
-import { ORIGINS, setHomeOrigin } from '../data/origins';
+import { ORIGINS } from '../data/origins';
 import { setRegHome } from '../engine/registration';
 import { composeHome, ddrSeedsFor, secondSimClubs } from './worldCompose';
+import { applyHomeModules, ddrAmateurTowns, ddrLeagueOf, ddrStartSeeds, DDR_LAST_START, levelOfTier, mergeQualifiers } from './ddrHome';
+import { DDR_LIGA_ID, DDR_OBERLIGA_ID } from '../data/ddr';
 import { lowerStartDivision, materializeLowerStart } from './lowerTierStart';
 import { amateurTownsFor, clampStartYear, fillLowerTiers, padSecondTier, reformsAppliedAt, seedPreStartHistory, seedStartPool, startEuroQualifiers } from './startYear';
 import { needsOverlay, worldOverlay } from '../engine/worldData';
@@ -82,6 +84,8 @@ export function createNewGame(opts: NewGameOptions): Game {
   bindIdCounter(ids);
   // Startjahr/Heimatland (Wunsch Pascal, Weltdaten): Standard 1. Juli 1975 in Deutschland.
   const year = clampStartYear(opts.startYear);
+  // DDR (game/ddrHome.ts): technisch ein deutsches Spiel, Spielerliga = DDR-Oberliga/DDR-Liga.
+  const ddrStart = opts.country === 'gdr' && year <= DDR_LAST_START;
   const home = opts.country && COUNTRY_BY_CC[opts.country] && opts.country !== 'gdr' ? opts.country : 'ger';
   const isGer = home === 'ger';
   const season = seasonLabelOf(year);
@@ -90,9 +94,9 @@ export function createNewGame(opts: NewGameOptions): Game {
   setTransferDate(startISO);
   setDisplayYear(year);
   setCurrencyDate(startISO);
-  setHomeOrigin(isGer ? null : countryOrigin(home));
   setRegHome(isGer ? 'GER' : (ORIGINS[countryOrigin(home)]?.nationality ?? 'GER'));
-  setHomeCurrency(home); // Anzeige in der Heimatwährung (data/currencies.ts)
+  // Anzeige in der Heimatwährung (data/currencies.ts) + Herkunft der Einheimischen; DDR: Mark der DDR, ostdeutsche Namen.
+  applyHomeModules(ddrStart ? { ddrHome: true } : { homeCountry: isGer ? undefined : home });
   setHomeLabel(COUNTRY_BY_CC[home].name);
   setEraYear(year);
   // Punktesystem historisch fest ableiten (Deutschland: 3 Punkte ab 1995/96 über den Meilenstein;
@@ -112,13 +116,16 @@ export function createNewGame(opts: NewGameOptions): Game {
     : [{ group: 'nord', name: '2. Liga Nord' }, { group: 'sued', name: '2. Liga Süd' }];
   const simClubs = comp ? secondSimClubs(comp) : buildSecondLigaSimClubs();
   const secondId = (gr: LeagueGroup) => (gr ? `tier2-${gr}` : 'tier2');
-  const startSim = simClubs[opts.managedClubId];
+  const startSim = ddrStart ? undefined : simClubs[opts.managedClubId];
+  // DDR-Start: Ligen der DDR zum Startjahr, die Liga des Vereins wird Spielerliga.
+  const ddrSeeds = ddrStart ? ddrStartSeeds(year) : null;
+  const ddrOwn = ddrStart ? ddrLeagueOf(year, opts.managedClubId) ?? DDR_OBERLIGA_ID : null;
   // Start in einer unteren Liga (3. Liga/Regionalliga/NOFV-Oberliga, game/lowerTierStart.ts):
   // diese Liga wird Spielerliga mit vollen Kadern, 1. und 2. Liga laufen simuliert.
   const lowerStart = !startSim && isGer && comp && !world.clubs[opts.managedClubId] ? lowerStartDivision(home, year, opts.managedClubId) : null;
   let playerDivMeta: DivisionMeta = { id: 'tier1', name: '1. Liga', tier: 1, group: null };
   let tier1SimIds: string[] = [];
-  if (startSim || lowerStart) {
+  if (startSim || lowerStart || ddrStart) {
     tier1SimIds = Object.keys(world.clubs);
     for (const id of tier1SimIds) {
       const c = world.clubs[id];
@@ -138,9 +145,15 @@ export function createNewGame(opts: NewGameOptions): Game {
   } else if (lowerStart) {
     materializeLowerStart(lowerStart, opts.managedClubId, startISO, world.clubs, world.players, world.youthPlayers);
     playerDivMeta = lowerStart.meta;
+  } else if (ddrSeeds && ddrOwn) {
+    const ober = ddrOwn === DDR_OBERLIGA_ID;
+    for (const sc of ober ? ddrSeeds.ober : ddrSeeds.liga) {
+      world.clubs[sc.id] = buildProClub(sc, opts.managedClubId, startISO, world.players, world.youthPlayers, ober ? 1 : 2);
+    }
+    playerDivMeta = { id: ddrOwn, name: ober ? 'DDR-Oberliga' : 'DDR-Liga', tier: ober ? 101 : 102, group: 'nordost' };
   }
   const clubList = Object.values(world.clubs);
-  const fixtures = generateFixtures(clubList, fxStart, { tier: playerDivMeta.tier, spread: true });
+  const fixtures = generateFixtures(clubList, fxStart, { tier: levelOfTier(playerDivMeta.tier), spread: true, ...(ddrStart ? { kind: 'ddr' as const } : {}) });
   for (const m of fixtures) {
     m.involvesPlayerClub = m.homeClubId === opts.managedClubId || m.awayClubId === opts.managedClubId;
   }
@@ -148,14 +161,14 @@ export function createNewGame(opts: NewGameOptions): Game {
   const calendar = generateSeasonCalendar(fixtures, startISO, `${year + 1}-06-30`);
   calendar.speedMs = opts.speedMs;
   const club = world.clubs[opts.managedClubId];
-  if ((startSim || lowerStart) && club) {
+  if ((startSim || lowerStart || ddrStart) && club) {
     // Saisonziel in der 2. Liga bzw. unteren Liga aus der Kaderstärke ableiten.
     const str = (c: typeof club) => {
       const o = c.playerIds.map((id) => world.players[id]?.overall ?? 0).sort((a, b) => b - a).slice(0, 14);
       return o.reduce((a, b) => a + b, 0) / Math.max(1, o.length);
     };
     const ranked = [...clubList].sort((a, b) => str(b) - str(a));
-    club.boardExpectation = seasonExpectation(ranked.findIndex((c) => c.id === club.id) + 1, ranked.length, playerDivMeta.tier);
+    club.boardExpectation = seasonExpectation(ranked.findIndex((c) => c.id === club.id) + 1, ranked.length, levelOfTier(playerDivMeta.tier));
   }
 
   // --- Landespokal aufsetzen: Amateurvereine ergänzen (→ 32er-Feld) ---
@@ -163,7 +176,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   // B-Teams nur, wenn das Heimatland sie im Pokal zulässt (engine/worldReserves.ts).
   const blClubIds = cupField(COUNTRY_BY_CC[home]?.key ?? '', year, clubList.map((c) => c.id));
   const amateurs = generateCupAmateurs(Math.max(0, 32 - blClubIds.length), legacy ? undefined : {
-    date: startISO, towns: amateurTownsFor(home, new Set(clubList.map((c) => c.city))), foreignStyle: !isGer,
+    date: startISO, towns: ddrStart ? ddrAmateurTowns(new Set(clubList.map((c) => c.city))) : amateurTownsFor(home, new Set(clubList.map((c) => c.city))), foreignStyle: !isGer,
   });
   Object.assign(world.clubs, amateurs.clubs);
   Object.assign(world.players, amateurs.players);
@@ -198,12 +211,15 @@ export function createNewGame(opts: NewGameOptions): Game {
   const euroClubs = allEuroClubs();
   const overlay = needsOverlay(year, home);
   const worldState = overlay ? initWorld(euroClubs, year, { overlay: worldOverlay({ home }) }) : null;
-  const euroQuals = legacy
+  const euroQuals0 = legacy
     ? computeGermanEuroQualifiers(
       { clubs: world.clubs, simClubs, players: world.players, managedClubId: opts.managedClubId, pointSystem } as any,
       true,
     )
     : startEuroQualifiers({ clubs: world.clubs, simClubs }, home, year, comp);
+  // DDR-Start: Starter der DDR aus den Weltdaten zusätzlich (die BRD-Starter laufen als Sim-Vereine mit).
+  if (ddrSeeds) for (const s of [...ddrSeeds.ober, ...ddrSeeds.liga]) if (!world.clubs[s.id]) simClubs[s.id] = { ...s };
+  const euroQuals = ddrSeeds ? mergeQualifiers(startEuroQualifiers({ clubs: world.clubs, simClubs }, 'gdr', year, null), euroQuals0) : euroQuals0;
   const euroCups = buildEuroCupsForSeason(
     euroQuals, euroClubs, leagueDateSet([...fixtures, ...generateFixtures(clubList, fxStart, { tier: 1 })]), cupDateSet(cup),
     opts.managedClubId + ':' + year, calendar.seasonStartDate, opts.managedClubId, calendar, worldState?.participants ?? null, true,
@@ -219,7 +235,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   // --- Mehrstufiges Ligasystem: 1. Liga/2. Liga (aggregiert simuliert) ---
   const ligaStart = fixtures[0]?.date ?? calendar.seasonStartDate;
   const otherDivisions: LeagueDivision[] = [];
-  if (startSim || lowerStart) otherDivisions.push(buildDivision({ id: 'tier1', name: '1. Liga', tier: 1, group: null }, tier1SimIds, pointSystem, season, ligaStart));
+  if (startSim || lowerStart || ddrStart) otherDivisions.push(buildDivision({ id: 'tier1', name: '1. Liga', tier: 1, group: null }, tier1SimIds, pointSystem, season, ligaStart));
   for (const sec of seconds) {
     if (startSim && sec.group === startSim.group) continue;
     otherDivisions.push(buildDivision(
@@ -229,7 +245,12 @@ export function createNewGame(opts: NewGameOptions): Game {
   }
   const leagues = { playerDivision: playerDivMeta, otherDivisions, season };
   // Parallele DDR-Ligapyramide (bis zur Wiedervereinigung 1991/92) ergänzen.
-  if (isGer && year <= 1990) leagues.otherDivisions.push(...buildDdrDivisions(simClubs, pointSystem, season, ligaStart, legacy ? undefined : ddrSeedsFor(year) ?? undefined));
+  if (ddrSeeds && ddrOwn) {
+    // Nur die andere DDR-Liga läuft simuliert (die eigene ist Spielerliga).
+    const other = ddrOwn === DDR_OBERLIGA_ID ? ddrSeeds.liga : ddrSeeds.ober;
+    const ober = ddrOwn !== DDR_OBERLIGA_ID;
+    leagues.otherDivisions.push(buildDivision({ id: ober ? DDR_OBERLIGA_ID : DDR_LIGA_ID, name: ober ? 'DDR-Oberliga' : 'DDR-Liga', tier: ober ? 101 : 102, group: 'nordost' }, other.map((s) => s.id), pointSystem, season, ligaStart));
+  } else if (isGer && year <= 1990) leagues.otherDivisions.push(...buildDdrDivisions(simClubs, pointSystem, season, ligaStart, legacy ? undefined : ddrSeedsFor(year) ?? undefined));
   const g0: Game = {
     clubs: world.clubs, players: world.players, youthPlayers: world.youthPlayers,
     fixtures, table, calendar,
@@ -256,6 +277,7 @@ export function createNewGame(opts: NewGameOptions): Game {
     ids,
     ...(legacy ? {} : { startYear: year }),
     ...(isGer ? {} : { homeCountry: home }),
+    ...(ddrStart ? { ddrHome: true as const } : {}),
   };
   // Vereins-Pool (Amateurligen) + Historie 1963–1975 (game/clubPool.ts).
   if (comp) seedStartPool(g0, home, year); // übrige Vereine des Landes (Weltdaten)
@@ -280,7 +302,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   // Grundausstattung des Stabs: Cheftrainer, Co-Trainer nach Vereinsgröße, Masseur, Mannschaftsarzt (game/trainerTeam.ts).
   g0.staff = startingStaff(g0);
   g0.hiredStaff = g0.staff.map((m) => m.roleId);
-  const startTier = g0.leagues.playerDivision.tier;
+  const startTier = levelOfTier(g0.leagues.playerDivision.tier);
   for (const c of leagueClubs) { c.finances.commercialAnnual = commercialAnnualFor(c, startTier, year); c.finances.leagueTier = startTier; }
   allocateTv(leagueClubs, startTier, year, (id) => 1 - byRep.indexOf(id) / Math.max(1, byRep.length - 1));
   // Volle Jugendmannschaften des eigenen Vereins (game/youthTeams.ts).

@@ -1,6 +1,7 @@
 // =============================================================================
 // SAISONBUDGET — Anzeigedaten: Saisonziele, Finanzberater, Kontext für die Texte
 // =============================================================================
+import { playerLevel } from './state';
 import { Club } from '../types';
 import { DM_PER_EUR, economyScale, yearOf } from '../engine/economy';
 import { AdvisorCtx, advisorText, AdvisorText } from '../engine/budgetAdvisor';
@@ -25,7 +26,7 @@ export function seasonGoals(g: Game): SeasonGoal[] {
   if (!club) return out;
   out.push({ kind: 'league', title: g.leagues?.playerDivision?.name ?? 'Liga', goal: club.boardExpectation || 'Gesicherter Mittelfeldplatz' });
   const share = strengthShare(g, club);
-  const tier = g.leagues?.playerDivision?.tier ?? 1;
+  const tier = playerLevel(g);
   if (g.cup?.participantIds?.includes(club.id)) {
     const cg = tier >= 2 ? (share > 0.7 ? '2. Runde' : '1. Runde überstehen')
       : share > 0.85 ? 'Halbfinale' : share > 0.6 ? 'Viertelfinale' : share > 0.35 ? 'Achtelfinale' : '2. Runde';
@@ -76,7 +77,7 @@ export function advisorFor(g: Game, p: BudgetPlan, s: BudgetSplit): AdvisorText 
   const club = g.clubs[g.managedClubId];
   const year = yearOf(p.date);
   const rev = planRevenue(p);
-  const tier = g.leagues?.playerDivision?.tier ?? 1;
+  const tier = playerLevel(g);
   const sh = (v: number) => v / rev;
   const goal = club.boardExpectation ?? '';
   const ctx: AdvisorCtx = {

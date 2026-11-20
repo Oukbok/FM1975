@@ -17,6 +17,7 @@ import {
   BRIEFING_TOPICS, BriefingItem, BriefingTopic, DifferenceToToday,
   briefingFor, differencesEnded, differencesFor, differencesStarting, topicMeta,
 } from '../data/briefings';
+import { playerLevel } from './state';
 import { economyScale } from '../engine/economy';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { GameChange, gameChangesFor } from './briefingChanges';
@@ -180,7 +181,7 @@ export function situationOf(g: Game): BriefingSituation | undefined {
     goal: club.boardExpectation,
     confidence: Math.round(club.boardConfidence ?? 60),
     league: g.leagues?.playerDivision?.name ?? '1. Liga',
-    tier: g.leagues?.playerDivision?.tier ?? 1,
+    tier: playerLevel(g),
     balance: Math.round(club.finances.balance),
     transferBudget: Math.round(club.finances.transferBudget * economyScale(year)),
     squad: squad.length,

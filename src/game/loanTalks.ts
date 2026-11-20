@@ -73,7 +73,7 @@ export function loanTalkBlocker(g: Game, p: Player): string | null {
   if (p.isYouth) return 'Jugendspieler kannst du nicht ausleihen.';
   const lender = g.clubs[p.clubId];
   if (!lender || !isAiClub(g, lender)) return 'Leihen gibt es nur mit Vereinen, deren Kader voll simuliert wird.';
-  if (p.clubId.startsWith('ddr') && yearOf(g.calendar.currentDate) < 1990) return 'Spieler aus der DDR-Oberliga dürfen nicht in den Westen wechseln.';
+  if (!g.ddrHome && p.clubId.startsWith('ddr') && yearOf(g.calendar.currentDate) < 1990) return 'Spieler aus der DDR-Oberliga dürfen nicht in den Westen wechseln.';
   if (p.contract.preContractClubId) return 'Er hat schon bei einem anderen Verein unterschrieben.';
   if (hasTransferBan(own, g.season)) return 'Transfersperre (Lizenzauflage).';
   const reg = registrationBlocker(g, p);

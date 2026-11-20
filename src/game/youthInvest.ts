@@ -13,6 +13,7 @@
 //   (Anschluss in game/aiClubs.ts: aiYouthInvest).
 // • Zweite Mannschaft: Reserve-Minuten für junge Profis (engine/development.ts).
 // =============================================================================
+import { playerLevel } from './state';
 import { ownReserveMinutes } from './reserveTeam';
 import { ClubDevContext } from '../engine/development';
 import { clubTier, economyScale, tierScale, yearOf } from '../engine/economy';
@@ -217,7 +218,7 @@ function graduateSuccess(g: Game, club: Club): number {
 export function youthInvestSeasonStart(g: Game, today: string): void {
   const year = yearOf(today);
   if ((g.youthRace?.year ?? 0) >= year) return;
-  const tier = g.leagues?.playerDivision?.tier ?? 1;
+  const tier = playerLevel(g);
   const duty = nlzDutyYear(tier);
   const season = `${year}/${String((year + 1) % 100).padStart(2, '0')}`;
   for (const club of leagueClubs(g)) {
@@ -278,7 +279,7 @@ function poolSize(year: number): { dom: number; foreign: number } {
 function talentRace(g: Game, today: string, year: number): void {
   const clubs = leagueClubs(g);
   if (!clubs.length) return;
-  const tier = g.leagues?.playerDivision?.tier ?? 1;
+  const tier = playerLevel(g);
   const { dom, foreign } = poolSize(year);
   const taken = new Map<string, number>();
   const entries: YouthRaceEntry[] = [];

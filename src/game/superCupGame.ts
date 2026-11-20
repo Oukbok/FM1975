@@ -63,7 +63,7 @@ export interface ScSeeds { order: string[]; cupWinner: string | null; cupFinalis
 export function superCupSeeds(g: Game): ScSeeds {
   const top = g.leagues && g.leagues.playerDivision.tier !== 1 ? g.leagues.otherDivisions.find((d) => d.tier === 1)?.table : g.table;
   const rows = top?.rows ?? []; // bereits nach Platz sortiert (wie euroSetup.germanQualifiersV2)
-  const cup = g.cup;
+  const cup = g.ddrHome ? null : g.cup; // DDR-Start: der FDGB-Pokal gehört nicht zum Supercup der BRD
   const fin = cup?.rounds[cup.rounds.length - 1]?.ties[0];
   const cupWinner = cup?.winnerClubId ?? fin?.winnerClubId ?? null;
   const cupFinalist = fin && fin.winnerClubId ? (fin.winnerClubId === fin.homeClubId ? fin.awayClubId : fin.homeClubId) : null;

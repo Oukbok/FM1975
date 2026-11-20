@@ -3,6 +3,7 @@
 // TV-Gelder verteilen, Lizenz/Fairplay prüfen, KI-Haushalte führen.
 // Aufgerufen aus game/season.ts (startNextSeason) und game/newGame.ts.
 // =============================================================================
+import { playerLevel } from './state';
 import { Game } from './state';
 import { Club } from '../types';
 import { economyScale, euroMoneyFactor, euroStartFactor, yearOf } from '../engine/economy';
@@ -31,7 +32,7 @@ export function closeFinancialSeason(g: Game, oldSeason: string, date: string): 
   const year = yearOf(date);
   const rows = g.table.rows;
   const n = rows.length;
-  const tier = g.leagues?.playerDivision?.tier ?? 1;
+  const tier = playerLevel(g);
   const euroPts = seasonEuroPoints(g.euroCups as any);
   const euroWinners = new Set(['ec', 'cwc', 'uefa'].map((c) => (g.euroCups as any)?.[c]?.winnerClubId).filter(Boolean));
   const perf: PerfMap = {};
@@ -78,7 +79,7 @@ export function openFinancialSeason(g: Game, newSeason: string, date: string, pr
   seatingNewSeason(g, date); // Platzkategorien: Preise, Potenzial, KI-Platzmix
 
   // TV-Gelder der neuen Saison.
-  const tier = g.leagues?.playerDivision?.tier ?? 1;
+  const tier = playerLevel(g);
   for (const c of league) c.finances.leagueTier = tier;
   allocateTv(league, tier, year, (id) => prevPerf[id] ?? 0.15);
   for (const c of league) c.finances.commercialAnnual = commercialAnnualFor(c, tier, year);

@@ -68,6 +68,7 @@
     "test:ethnicity": "node scripts/run-ts.mjs tests/ethnicity-test.ts",
     "test:season": "node scripts/run-ts.mjs tests/season-test.ts",
     "test:world": "node scripts/run-ts.mjs tests/world-test.ts",
+    "test:ddrhome": "node scripts/run-ts.mjs tests/ddrhome-test.ts",
     "test:worldstructure": "node scripts/run-ts.mjs tests/world-structure-checks.ts",
     "test:newgame-repro": "node scripts/run-ts.mjs tests/newgame-repro.ts",
     "test:popups": "node scripts/build.mjs && node tests/popup-size.mjs",

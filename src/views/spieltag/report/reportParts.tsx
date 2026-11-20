@@ -2,6 +2,7 @@
 // Bausteine des Spielberichts (bisheriges Layout und Ticker-Bericht):
 // Statistik mit Balken, Aufstellungen mit Noten/Einzelwerten, Landesflagge.
 // =============================================================================
+import { isDdrClub } from '../../../game/ddrHome';
 import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
 import FaceThumb from '../../../components/FaceThumb';
 import { CountryFlag } from '../../../components/competition/CountryFlag';
@@ -20,7 +21,7 @@ export type EraStats = ReturnType<typeof eraRules>['stats'];
 /** Land eines Vereins am Spieltag (Flaggen-Schlüssel): Ausland aus Europapokal/Weltdaten,
  *  DDR-Vereine bis zur Einheit am 3.10.1990, sonst das Heimatland. */
 export function clubCountry(g: Game, id: string, date: string): string {
-  return foreignCountry(g, id) ?? (id.startsWith('ddr') && date < '1990-10-03' ? 'DDR' : homeCountryKey(g));
+  return foreignCountry(g, id) ?? (isDdrClub(g, id) && date < '1990-10-03' ? 'DDR' : homeCountryKey(g));
 }
 
 /** Landesflagge vor einem Vereinsnamen (Wunsch Pascal). */

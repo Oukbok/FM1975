@@ -9,6 +9,7 @@
 // (views/zentrale/briefing/TasksPanel.tsx). Live berechnet → erledigte Aufgaben
 // verschwinden beim nächsten Öffnen. Epochen-Tipps: data/briefings/eraTips.ts.
 // =============================================================================
+import { playerLevel } from './state';
 import { POSITION_GROUPS, Player, PositionGroup } from '../types';
 import { bosmanActive, seasonEndYear } from '../engine/contractTalks';
 import { destinationsFor } from '../engine/trainingCamp';
@@ -185,7 +186,7 @@ export function seasonTasks(g: Game, sit?: BriefingSituation, changes: GameChang
   }
 
   // --- Nachwuchs ------------------------------------------------------------
-  const tier = sit?.tier ?? g.leagues?.playerDivision?.tier ?? 1;
+  const tier = sit?.tier ?? playerLevel(g);
   const duty = nlzDutyYear(tier);
   const inv = youthInvestOf(club, year);
   if (duty && y0 >= duty - 3) {

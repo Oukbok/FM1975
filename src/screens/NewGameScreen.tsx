@@ -14,7 +14,7 @@ import { StepClub } from './newgame/StepClub';
 import { StepNation } from './newgame/StepNation';
 import { StepLeagues } from './newgame/StepLeagues';
 import { StepWelcome } from './newgame/StepWelcome';
-import { leaguePreview, sortClubs } from './newgame/clubPreview';
+import { leaguePreview, leaguesFor, sortClubs } from './newgame/clubPreview';
 import { playableCountries } from '../game/worldCompose';
 import { seasonLabelOf } from '../data/world/countries';
 import { jobNationFor } from '../game/national/jobNations';
@@ -47,7 +47,8 @@ function stepsFor(year: number, national: boolean): StepDef[] {
 }
 
 /** Stärkster Verein der 1. Liga eines Landes im Startjahr. */
-const topClub = (cc = 'ger', year = 1975) => sortClubs(leaguePreview('tier1', cc, year), 'reputation')[0]?.id ?? '';
+const firstLeague = (cc = 'ger', year = 1975) => leaguesFor(cc, year)[0]?.key ?? 'tier1';
+const topClub = (cc = 'ger', year = 1975) => sortClubs(leaguePreview(firstLeague(cc, year), cc, year), 'reputation')[0]?.id ?? '';
 
 export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
   defaults: AppSettings; onBack: () => void;
@@ -77,7 +78,7 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
    *  Wer Startjahr, Land oder Datensatz ändert, bekommt so immer eine gültige Auswahl (vorher blieb im Karrieremodus
    *  der alte Verein stehen, der nicht mehr unter den Angeboten war → „Weiter“ gesperrt). */
   const clubFor = (mode: NewGameDraft['mode'], cc: string, y: number, avoid: string): Pick<NewGameDraft, 'league' | 'clubId'> => {
-    if (mode !== 'career') return { league: 'tier1', clubId: topClub(cc, y) };
+    if (mode !== 'career') return { league: firstLeague(cc, y), clubId: topClub(cc, y) };
     const o = careerOffers(d.offerSeed, avoid, cc, y)[0];
     return { league: o?.league ?? 'tier1', clubId: o?.club.id ?? '' };
   };

@@ -209,7 +209,7 @@ export function poolDrift(g: Game, season: string): void {
 // -----------------------------------------------------------------------------
 // DDR: Auf-/Abstieg Oberliga ↔ DDR-Liga ↔ DDR-Pool (bis 1990/91)
 // -----------------------------------------------------------------------------
-export function ddrExchange(g: Game, orders: { id: string; tier: number; orderedIds: string[] }[], season: string): Record<string, string[]> {
+export function ddrExchange(g: Game, orders: { id: string; tier: number; orderedIds: string[] }[], season: string, protectedId?: string): Record<string, string[]> {
   const ober = orders.find((d) => d.tier === 101);
   const liga = orders.find((d) => d.tier === 102);
   const out: Record<string, string[]> = {};
@@ -220,7 +220,8 @@ export function ddrExchange(g: Game, orders: { id: string; tier: number; ordered
   const newOber = ober.orderedIds.filter((id) => !down.includes(id)).concat(up);
   let newLiga = liga.orderedIds.filter((id) => !up.includes(id)).concat(down);
   const rnd = mulberry32(hashStr(`ddrpool:${season}`));
-  const toPool = liga.orderedIds.filter((id) => !up.includes(id)).slice(-2);
+  // Eigener Verein (DDR-Start, game/ddrHome.ts) steigt nie in den Pool ab – der Nächste davor geht.
+  const toPool = liga.orderedIds.filter((id) => !up.includes(id) && id !== protectedId).slice(-2);
   const fromPool = pickFromPool(poolOf(g, true), toPool.length, 'nordost', rnd, new Set());
   for (let i = 0; i < Math.min(toPool.length, fromPool.length); i++) {
     newLiga = newLiga.map((id) => (id === toPool[i] ? fromPool[i] : id));

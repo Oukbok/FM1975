@@ -118,7 +118,8 @@ export function syncDdrReserves(g: Game, oberIds: string[], ligaIds: string[], y
     if (mode === 'nol' && oberIds.includes(parentOfReserve(s.id))) { s.tier = DDR_RES_TIER; continue; }
     delete g.simClubs[s.id]; // Bezirksliga bzw. Stammverein nicht mehr in der Oberliga
   }
-  if (mode === 'nol') for (const id of oberIds) ensureDdrReserve(g, id, year, DDR_RES_TIER)!.tier = DDR_RES_TIER;
+  // Volle Oberligisten (DDR-Start, game/ddrHome.ts) haben keine simulierte Reserve.
+  if (mode === 'nol') for (const id of oberIds) { const r = ensureDdrReserve(g, id, year, DDR_RES_TIER); if (r) r.tier = DDR_RES_TIER; }
 }
 
 /** Saisonwechsel (season.ts, nach ddrExchange): Besetzung der DDR-Liga + Nachwuchsoberliga. */

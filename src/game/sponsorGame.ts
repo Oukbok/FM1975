@@ -5,6 +5,7 @@
 // Oberfläche (Unterschreiben, Verhandeln, Option ziehen, Auflösen), Migration.
 // Rechnung: engine/sponsorship.ts · Daten: data/sponsorCatalog.ts.
 // =============================================================================
+import { playerLevel } from './state';
 import { partnerLock } from './corporateGame';
 import { SLOT_BY_ID, SPONSOR_SLOTS, industryBan, industryImage } from '../data/sponsorCatalog';
 import { campDestination } from '../data/campDestinations';
@@ -33,7 +34,7 @@ const isSponsorClub = (c: Club) => !c.id.startsWith('eu_') && !c.id.startsWith('
 
 export function clubTierNow(g: Game, c: Club): number {
   if (c.id.startsWith('am')) return 5;
-  return g.leagues?.playerDivision?.tier ?? c.finances.leagueTier ?? 1;
+  return g.leagues?.playerDivision ? playerLevel(g) : c.finances.leagueTier ?? 1;
 }
 
 function seasonEnd(season: string): string {

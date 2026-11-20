@@ -82,7 +82,8 @@ const isGer = (g: Game) => homeCountryOf(g) === 'ger';
 const westDivs = (g: Game) => (g.leagues?.otherDivisions ?? []).filter((d) => d.tier < 100);
 /** Unterste simulierte West-Ebene (mit Spielerliga). */
 export function lowestSimTier(g: Game): number {
-  return Math.max(g.leagues?.playerDivision.tier ?? 1, ...westDivs(g).map((d) => d.tier));
+  const pt = g.leagues?.playerDivision.tier ?? 1; // DDR-Spielerliga (ab 101) zählt nicht zum West-Unterbau
+  return Math.max(pt < 100 ? pt : 1, ...westDivs(g).map((d) => d.tier));
 }
 /** Pool-Vereine (West bzw. ab 1991 gesamt) außer deiner zweiten Mannschaft. */
 function poolClubs(g: Game) {
@@ -103,7 +104,8 @@ const divRegion = (r: YcRegion) => (r === 'suedwest' ? 'west' : r);
  */
 export function amTier(g: Game, key: string): number {
   const grp = AM_GROUPS.find((x) => x.key === key) ?? AM_GROUPS[0];
-  const divs = [{ tier: g.leagues?.playerDivision.tier ?? 1, group: g.leagues?.playerDivision.group ?? null }, ...westDivs(g)];
+  const pd = g.leagues?.playerDivision;
+  const divs = [...(pd && pd.tier < 100 ? [{ tier: pd.tier, group: pd.group }] : []), ...westDivs(g)];
   let t = 1;
   for (const d of divs) {
     const n = divs.filter((x) => x.tier === d.tier).length;

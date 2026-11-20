@@ -64,7 +64,9 @@ export function statsCountries(g: Game): StatsCountry[] {
   // ALLE Länder in EINER alphabetischen Liste – auch das Heimatland (Wunsch Pascal; vorgewählt über
   // `homeStatsCountry`); Ligen, die es in der laufenden Saison nicht mehr gibt, tragen den Hinweis „Archiv“.
   const rest: StatsCountry[] = [{ cc: home, name: nameOf(home), flag: COUNTRY_BY_CC[home]?.key ?? 'Deutschland', mode: 'home', hint: 'Heimatland' }];
-  if (home === 'ger') rest.push({ cc: 'gdr', name: 'DDR', flag: 'DDR', mode: 'div', hint: g.leagues?.otherDivisions.some((d) => d.id.startsWith('ddr-')) ? '' : 'Archiv' });
+  // DDR-Start (game/ddrHome.ts): die DDR ist dein Land – Hinweis „Heimatland“, Vorauswahl über `homeStatsCountry`.
+  if (home === 'ger') rest.push({ cc: 'gdr', name: 'DDR', flag: 'DDR', mode: 'div', hint: g.ddrHome ? 'Heimatland' : g.leagues?.otherDivisions.some((d) => d.id.startsWith('ddr-')) ? '' : 'Archiv' });
+  if (g.ddrHome) rest[0] = { ...rest[0], hint: '' };
   for (const c of Object.values(g.world?.countries ?? {})) {
     const cc = COUNTRY_BY_KEY[c.name]?.cc ?? c.name;
     if (cc === home || rest.some((x) => x.cc === cc)) continue;
@@ -76,7 +78,7 @@ export function statsCountries(g: Game): StatsCountry[] {
 
 /** Heimatland aus der Länderliste (Vorauswahl). */
 export function homeStatsCountry(list: StatsCountry[]): StatsCountry {
-  return list.find((c) => c.mode === 'home') ?? list[0];
+  return list.find((c) => c.hint === 'Heimatland') ?? list.find((c) => c.mode === 'home') ?? list[0];
 }
 
 /** Land einer Auswahl der Basis-Optionen (für Vorauswahl aus der Zentrale). */
@@ -91,7 +93,9 @@ export function countryOfKey(g: Game, season: string, key: string): { cc: string
 }
 
 /** Gehört eine Basis-Option zu diesem Land? */
-function belongs(o: CompOption, c: StatsCountry): boolean {
+function belongs(o: CompOption, c: StatsCountry, ddrCup = false): boolean {
+  // DDR-Start: der laufende Landespokal ist der FDGB-Pokal.
+  if (o.key === 'cup' && ddrCup) return c.cc === 'gdr';
   if (c.mode === 'home') return o.section !== 'DDR' && o.section !== 'Länder Spiel für Spiel' && o.section !== 'Ausland';
   if (c.cc === 'gdr') return o.section === 'DDR';
   return o.key.startsWith(`x-${c.cc}-`);
@@ -110,7 +114,7 @@ export function countrySeasons(g: Game, c: StatsCountry): CSeasonOption[] {
   let out: CSeasonOption[] = [];
   if (c.mode !== 'world') {
     const base = seasonOptions(g);
-    out = c.mode === 'home' ? base : base.filter((s) => competitionOptions(g, s.season).some((o) => belongs(o, c)));
+    out = c.mode === 'home' ? base : base.filter((s) => competitionOptions(g, s.season).some((o) => belongs(o, c, !!g.ddrHome && s.season === g.season)));
   } else {
     const wc = g.world?.countries[c.worldKey!];
     for (const rec of g.world?.history ?? []) {
@@ -153,7 +157,7 @@ export function countryOptions(g: Game, c: StatsCountry, season: string, source:
   const pool = season === g.season ? poolOption(g, c) : [];
   if (c.mode !== 'world') {
     // Alle Ligen, die das Spiel führt (1./2. Liga, Oberligen, Regionalligen, 3. Liga … je Epoche), nach Ebene gruppiert.
-    const base = competitionOptions(g, season).filter((o) => belongs(o, c))
+    const base = competitionOptions(g, season).filter((o) => belongs(o, c, !!g.ddrHome && season === g.season))
       .map((o) => (o.kind === 'league' && o.tier != null ? { ...o, section: levelSection(o.tier) } : o));
     const leagues = base.filter((o) => o.kind === 'league'), rest = base.filter((o) => o.kind !== 'league');
     return c.mode === 'home' ? [...leagues, ...pool, ...rest] : [...leagues, ...pool, ...rest, cup];
@@ -191,12 +195,13 @@ function poolInfo(g: Game, c: StatsCountry): PoolInfo | null {
     return ids.length ? { ids, label: 'Unterbau', strength: (id) => g.euroClubs?.[id]?.strength ?? 0, above: '2. Liga' } : null;
   }
   const ddr = c.cc === 'gdr';
-  const divs = g.leagues.otherDivisions.filter((d) => (ddr ? d.tier > 100 && d.tier < 109 : d.tier < 100));
+  const pd = g.leagues.playerDivision;
+  const divs = [...g.leagues.otherDivisions, ...(pd.tier > 100 && pd.tier < 109 ? [{ tier: pd.tier, name: pd.name }] : [])].filter((d) => (ddr ? d.tier > 100 && d.tier < 109 : d.tier < 100));
   if (ddr && !divs.length) return null; // nach der Wiedervereinigung kein eigener DDR-Unterbau mehr
   const tier = ddr ? DDR_POOL_TIER : POOL_TIER;
   const ids = Object.values(g.simClubs).filter((s) => s.tier === tier).map((s) => s.id);
   if (!ids.length) return null;
-  const lowest = Math.max(ddr ? 101 : g.leagues.playerDivision.tier, ...divs.map((d) => d.tier));
+  const lowest = Math.max(ddr ? 101 : pd.tier < 100 ? pd.tier : 1, ...divs.map((d) => d.tier));
   const above = [...new Set(divs.filter((d) => d.tier === lowest).map((d) => d.name.replace(/ (Nord|Süd|Nordost|West)$/, '')))].join(' / ')
     || g.leagues.playerDivision.name;
   return { ids, label: ddr ? 'Bezirksligen' : homeCountryOf(g) === 'ger' ? 'Amateurligen' : 'Unterbau', strength: (id) => g.simClubs[id]?.strength ?? 0, above };

@@ -5,9 +5,9 @@
 // =============================================================================
 import { retireLibero } from './liberoEra';
 import { bindMarketing } from './marketingGame';
-import { setHomeOrigin } from '../data/origins';
+import { applyHomeModules } from './ddrHome';
 import { bindRegistration } from './registrationGame';
-import { COUNTRY_BY_CC, countryOrigin } from '../data/world/countries';
+import { COUNTRY_BY_CC } from '../data/world/countries';
 import { setHomeLabel } from '../engine/leagues';
 import { applyDataset } from '../data/dataset/apply';
 import { BUILTIN_ID } from '../data/dataset/builtin';
@@ -27,7 +27,7 @@ import { seasonStartYear, timelineEventsUpTo } from '../data/timeline';
 import { CalendarEngine } from '../engine/calendar';
 import { createCup } from '../engine/cup';
 import { isForeignId } from '../engine/world';
-import { setCurrencyDate, setHomeCurrency, yearOf } from '../engine/economy';
+import { setCurrencyDate, yearOf } from '../engine/economy';
 import { computeGermanEuroQualifiers } from '../engine/euro';
 import { applyFacilityEffects, makeInfrastructure } from '../engine/infrastructure';
 import { advanceDivision } from '../engine/leagues';
@@ -102,9 +102,9 @@ export function prepareLoadedGame(g: Game): void {
     }));
   }
   // Heimatland (Weltdaten): Herkunft der Einheimischen für neue Spieler/Jugend.
-  setHomeOrigin(g.homeCountry && g.homeCountry !== 'ger' ? countryOrigin(g.homeCountry) : null);
+  // DDR-Start (game/ddrHome.ts): Mark der DDR, ostdeutsche Namen.
+  applyHomeModules(g);
   bindRegistration(g);
-  setHomeCurrency(g.homeCountry); // Anzeige in der Heimatwährung (data/currencies.ts)
   setHomeLabel(COUNTRY_BY_CC[g.homeCountry ?? 'ger']?.name ?? 'Deutschland');
   // Positionsbewertung auf das Spieljahr einstellen; ältere Spielstände auf Entwicklung 2.0 heben.
   setEraYear(Number(g.calendar.currentDate.slice(0, 4)));
@@ -314,7 +314,7 @@ export function prepareLoadedGame(g: Game): void {
   // bis zum aktuellen Liga-Spieltag nachgezogen. Stände AB 1991/92 gelten als
   // bereits integriert (die DDR-Struktur wurde dort aufgelöst) – nichts zu tun.
   try {
-    const hasDdr = g.leagues?.otherDivisions?.some((d: any) => String(d.id).startsWith('ddr-'));
+    const hasDdr = g.leagues?.otherDivisions?.some((d: any) => String(d.id).startsWith('ddr-')) || String(g.leagues?.playerDivision?.id ?? '').startsWith('ddr-');
     const beforeWende = seasonStartYear(g.season) < 1991;
     const reunified = Array.isArray(g.appliedReforms)
       && g.appliedReforms.includes('reform-1991-reunification');

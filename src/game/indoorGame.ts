@@ -4,6 +4,8 @@
 // Historie/Quellen: data/indoorHistory.ts · Simulation: engine/indoor.ts ·
 // Spielstand: game/winterShared.ts · Anschluss: game/day.ts (indoorDaily).
 // =============================================================================
+import { ddrBorderClosed } from './ddrHome';
+import { playerLevel } from './state';
 import { mastersBoard, mastersRanking, mastersWeekend, packBoard } from './indoorMasters';
 import { creditIndoorTournament, hallDrillBonus, pruneIndoorRecs } from './indoorRecords';
 import { INDOOR_GAP_DAYS } from '../data/matchCalendarRules';
@@ -57,11 +59,13 @@ function buildPool(g: Game): PoolClub[] {
     const strength = c ? avgTop(g, c.playerIds) : (s!.strength + 3);
     out.push({ id, tier, rep: c?.reputation ?? clamp(s!.strength, 30, 90), city: c?.city ?? s!.city, kind: 'league', strength });
   };
-  const ptier = g.leagues?.playerDivision?.tier ?? 1;
-  for (const r of g.table.rows) add(r.clubId, ptier);
+  const ptier = playerLevel(g);
+  // DDR-Start (game/ddrHome.ts): vor dem Mauerfall keine Einladungen zu Hallenturnieren im Westen.
+  const ddrClosed = ddrBorderClosed(g, g.calendar.currentDate);
+  if (!ddrClosed) for (const r of g.table.rows) add(r.clubId, ptier);
   for (const d of g.leagues?.otherDivisions ?? []) if (d.tier <= 2) for (const id of d.clubIds) add(id, d.tier);
   for (const c of Object.values(g.clubs)) {
-    if (c.id.startsWith('am') && !seen.has(c.id)) { seen.add(c.id); out.push({ id: c.id, tier: 4, rep: c.reputation, city: c.city, kind: 'amateur', strength: avgTop(g, c.playerIds) - 4 }); }
+    if (!ddrClosed && c.id.startsWith('am') && !seen.has(c.id)) { seen.add(c.id); out.push({ id: c.id, tier: 4, rep: c.reputation, city: c.city, kind: 'amateur', strength: avgTop(g, c.playerIds) - 4 }); }
   }
   for (const e of Object.values(g.euroClubs ?? {})) {
     if (!seen.has(e.id)) { seen.add(e.id); out.push({ id: e.id, tier: 0, rep: 75, city: e.city, kind: 'foreign', strength: e.strength }); }

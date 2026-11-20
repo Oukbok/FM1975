@@ -99,6 +99,8 @@ let homeLabel = 'Deutschland';
 export function setHomeLabel(name: string): void { homeLabel = name || 'Deutschland'; }
 
 export function divisionLabel(tier: number, group: LeagueGroup): string {
+  if (tier === 101) return 'DDR-Oberliga';
+  if (tier === 102) return 'DDR-Liga';
   if (tier === 1) return `${homeLabel} 1. Liga`;
   if (tier === 2) {
     if (group) return `2. Liga ${groupLabel(group)}`;

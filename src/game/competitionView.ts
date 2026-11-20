@@ -182,7 +182,7 @@ export function competitionOptions(g: Game, season: string): CompOption[] {
     for (const d of divs) out.push({ key: d.id, label: d.name, kind: 'league', section: leagueSection(d.tier, g), tier: d.tier });
     // Höchste Amateurligen mit den zweiten Mannschaften (game/amateurLeagues.ts).
     for (const a of amateurTablesView(g)) out.push({ key: `am:${a.key}`, label: a.name, kind: 'league', section: leagueSection(a.tier, g), tier: a.tier });
-    if (g.cup) out.push({ key: 'cup', label: CUP_LABEL('cup', season), kind: 'cup', section: 'Pokal' });
+    if (g.cup) out.push({ key: 'cup', label: g.ddrHome ? 'FDGB-Pokal' : CUP_LABEL('cup', season), kind: 'cup', section: 'Pokal' });
     for (const k of ['ec', 'cwc', 'uefa'] as const) if (g.euroCups?.[k]) out.push({ key: k, label: CUP_LABEL(k, season), kind: 'cup', section: 'Europa' });
   }
   return out;

@@ -4,6 +4,7 @@
 // Abgeschlossene Saisons werden beim Saisonwechsel aufaddiert (`upTo`), die
 // laufende Saison kommt live aus dem Spielplan der Spielerliga dazu.
 // =============================================================================
+import { playerLevel } from './state';
 import { Club, CoachRecord } from '../types';
 import { Game } from './state';
 
@@ -51,7 +52,7 @@ export function recordText(r: CoachRecord): string {
 /** Saisonwechsel (vor dem Trainerkarussell): Saison zur gespeicherten Bilanz addieren, Meistertitel zählen. */
 export function coachRecordsSeasonEnd(g: Game): void {
   const date = g.calendar.currentDate;
-  const champ = g.leagues?.playerDivision?.tier === 1 ? g.table.rows[0]?.clubId : undefined;
+  const champ = playerLevel(g) === 1 ? g.table.rows[0]?.clubId : undefined;
   for (const club of Object.values(g.clubs)) {
     const c = club.coach;
     if (!c) continue;

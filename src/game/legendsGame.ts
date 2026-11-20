@@ -18,6 +18,8 @@
 //    einem verbleibenden Verein (sonst gingen sie mit dem Kader verloren).
 // Alte Spielstände (ohne `legends2`) bekommen keine Legenden.
 // =============================================================================
+import { playerLevel } from './state';
+import { DDR_OPEN_DATE } from './ddrHome';
 import type { Club, Player } from '../types';
 import type { Game } from './state';
 import { LEGENDS, type LegendDef } from '../data/legends';
@@ -101,6 +103,15 @@ export function routeOf(def: LegendDef, date: string, s: string, start: boolean)
   return age >= joinAge(def, s) ? { kind: 'pro', from: 'Ausland' } : { kind: 'wait' };
 }
 
+/** DDR-Talent bei DDR-Start: wie ein einheimisches Talent (Startkader ab 18, sonst über die Jugend). */
+function ddrRoute(def: LegendDef, date: string, start: boolean): Route {
+  const age = ageOn(def.birth, date);
+  if (age > 34) return { kind: 'skip' };
+  if (start && age >= 18) return { kind: 'pro', from: '' };
+  if (age >= 15 && age <= 19) return { kind: 'youth' };
+  return age < 15 ? { kind: 'wait' } : { kind: 'skip' };
+}
+
 /** Herkunftsverein für die Transferhistorie (Auslandsverein des Landes bzw. DDR-Verein). */
 function fromName(g: Game, def: LegendDef, rng: () => number): string {
   if (def.country === 'DDR') {
@@ -140,7 +151,10 @@ export function legendIds(g: Game): Set<string> {
 function spawnOne(g: Game, def: LegendDef, date: string, start: boolean): void {
   const st = g.legends2!;
   const s = salt(g);
-  const route = routeOf(def, date, s, start);
+  // DDR-Start (game/ddrHome.ts): bis zur Wende sind DDR-Talente Einheimische; alle anderen kommen nicht vor dem Mauerfall.
+  const ddrH = !!g.ddrHome;
+  if (ddrH && def.country !== 'DDR' && date < DDR_OPEN_DATE) return;
+  const route = ddrH && def.country === 'DDR' ? ddrRoute(def, date, start) : routeOf(def, date, s, start);
   if (route.kind === 'wait') return;
   if (route.kind === 'skip') { st.done[def.id] = '-'; return; }
   const rng = seededRng(`${def.id}|${s}|${date}`);
@@ -178,7 +192,7 @@ function spawnOne(g: Game, def: LegendDef, date: string, start: boolean): void {
 /** Liga-Ebene eines Vereins (1 = oberste Liga des Heimatlandes); unbekannt = 9. */
 function tierOf(g: Game, clubId: string): number {
   const L = g.leagues;
-  if (g.table.rows.some((r) => r.clubId === clubId)) return L?.playerDivision.tier ?? 1;
+  if (g.table.rows.some((r) => r.clubId === clubId)) return playerLevel(g);
   if (L) for (const d of L.otherDivisions) if (d.table?.rows.some((r) => r.clubId === clubId)) return d.tier;
   return 9;
 }

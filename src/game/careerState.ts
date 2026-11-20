@@ -8,6 +8,7 @@
 // Dazu: Cheftrainer-Historie (headCoaches.ts), Vorstandsdruck gegen den Trainer
 // (boardPressure.ts), Managerbilanz (managerLog.ts).
 // =============================================================================
+import { playerLevel } from './state';
 import { CoachRecord } from '../types';
 import { seasonExpectation } from '../engine/environment';
 import { isForeignId } from '../engine/world';
@@ -141,7 +142,7 @@ export function isCareerMode(g: Game): boolean {
 
 /** Spielt der eigene Verein in der Spielerliga (volle Kader)? */
 export function playerTier(g: Game): number {
-  return g.leagues?.playerDivision?.tier ?? 1;
+  return playerLevel(g);
 }
 
 /** Liga eines Vereins (Spielerliga oder Sim-Liga). */

@@ -14,6 +14,7 @@
 // Ende des Sommerfensters. Der eigene Verein wird nie angefasst (nur in der
 // Simulation ohne Oberfläche, `simAutoManage`).
 // =============================================================================
+import { ddrBorderClosed, isDdrClub } from './ddrHome';
 import { Club, Player } from '../types';
 import { assessSquad, GROUP_LABEL, GROUP_OF, GROUP_POS, GroupNeed, PosGroup, squadLevel11, SquadAssessment, targetStrength } from '../engine/aiManager';
 import { AI_RESERVE, hasTransferBan, isLeagueClub, lastRevenue, marketValueFor, marketWage } from '../engine/clubEconomy';
@@ -325,6 +326,7 @@ function lowerClubName(g: Game, rng: () => number): string | null {
 function buyExternal(ctx: RoundCtx, club: Club, need: GroupNeed, want: { min: number; ideal: number }, kind: 'ausland' | 'unten'): boolean {
   const { g, rng, year, today } = ctx;
   const lower = kind === 'unten';
+  if (!lower && ddrBorderClosed(g, today) && isDdrClub(g, club.id)) return false; // DDR-Start: vor dem Mauerfall keine Zugänge aus dem Ausland
   const from = lower ? lowerClubName(g, rng) : 'Ausland';
   if (!from) return false;
   // Unterklassige Spieler sind jünger und etwas schwächer; niemand übertrifft das Liganiveau.

@@ -17,6 +17,7 @@
 //   Mittelwert (Schätzfehler je Spieler aus der ID). Je besser bekannt, desto
 //   schmaler und genauer. Sortierung und Filter nutzen nur die Schätzung.
 // =============================================================================
+import { playerLevel } from './state';
 import { homeNationality } from '../data/origins';
 import { potentialToStars, type Player, type Position } from '../types';
 import { scoutRange } from '../engine/scouting';
@@ -55,7 +56,7 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 
 /** Land und Liga-Ebene eines Vereins mit vollem Kader. */
 function clubFormOf(g: Game, id: string): { country: string; level: number } {
-  if (g.table?.rows.some((r) => r.clubId === id)) return { country: 'Deutschland', level: g.leagues?.playerDivision?.tier ?? 1 };
+  if (g.table?.rows.some((r) => r.clubId === id)) return { country: 'Deutschland', level: playerLevel(g) };
   if (id.startsWith('ddr')) return { country: 'DDR', level: 1 };
   if (/^am\d/.test(id)) return { country: 'Deutschland', level: 5 };
   const e = g.euroClubs?.[id];

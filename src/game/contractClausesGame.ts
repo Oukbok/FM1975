@@ -11,6 +11,7 @@
 // Punktprämien aus engine/finances.ts (gleiches Niveau, Balance unverändert).
 // Alle Beträge in 1975-Basis, gebucht nominal (× economyScale).
 // =============================================================================
+import { playerLevel } from './state';
 import type { ContractTerms } from '../engine/contractNegotiation';
 import { economyScale, yearOf } from '../engine/economy';
 import { book } from '../engine/finances';
@@ -31,7 +32,7 @@ export interface Contracts2State {
 }
 
 function state(g: Game): Contracts2State {
-  return (g.contracts2 ??= { v: 1, lastTier: g.leagues?.playerDivision?.tier ?? 1 });
+  return (g.contracts2 ??= { v: 1, lastTier: playerLevel(g) });
 }
 
 /** Kurzfassung eines Pakets für Verlauf und Nachrichten. */
@@ -183,7 +184,7 @@ export function contractSeasonStart(g: Game): void {
   if (!club) return;
   const st = state(g);
   const today = g.calendar.currentDate;
-  const tier = g.leagues?.playerDivision?.tier ?? 1;
+  const tier = playerLevel(g);
   const relegated = tier > (st.lastTier ?? tier);
   st.lastTier = tier;
   if ((g as { simAutoManage?: boolean }).simAutoManage) { st.stayPending = []; return; }

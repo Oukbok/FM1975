@@ -10,6 +10,7 @@
 //    zufrieden. Talente sind geduldiger.
 // Alles nur für den eigenen Verein; KI-Vereine pflegen ihre Kader selbst.
 // =============================================================================
+import { ddrBorderClosed } from './ddrHome';
 import { CalendarEngine } from '../engine/calendar';
 import { baseMarketValue } from '../engine/clubEconomy';
 import { economyScale, yearOf } from '../engine/economy';
@@ -89,7 +90,9 @@ export function rollAiOffers(g: Game, today: string): void {
       + (60 - sat) / 300 + (p.transferListed ? 0.3 : 0), 0.02, 0.4);
     if (Math.random() >= chance) continue;
     // Stars ziehen gelegentlich große Auslandsvereine an – die zahlen nach der Weltkurve.
-    const abroad = p.overall >= 82 && Math.random() < 0.3 ? foreignBidder(g) : null;
+    // DDR-Start: vor dem Mauerfall keine Angebote aus dem Westen/Ausland (game/ddrHome.ts).
+    const closed = ddrBorderClosed(g, today);
+    const abroad = !closed && p.overall >= 82 && Math.random() < 0.3 ? foreignBidder(g) : null;
     let buyerId: string, buyerName: string, maxPay: number, bigger: boolean;
     if (abroad) {
       const raw = cappedMarketValue(baseMarketValue(p), year, 'world');

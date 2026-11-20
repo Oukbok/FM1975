@@ -5,6 +5,7 @@
 // und Europapokal-Chance (aus Ansehen und Tabelle), echtes Interesse anderer
 // Vereine (für den Berater-Bluff) und wie verlässlich dein Stab Gerüchte prüft.
 // =============================================================================
+import { playerLevel } from './state';
 import { GROUP_OF } from '../engine/aiManager';
 import { isLeagueClub } from '../engine/clubEconomy';
 import { Club, Player } from '../types';
@@ -47,7 +48,7 @@ export function calcAgeRank(g: Game, p: Player, club: Club): { depthRank: number
   const expCleanSheets = keeperOrDef ? Math.round(expApps * clamp(0.38 - rank / n * 0.22, 0.12, 0.38) * 10) / 10 : 0;
   const pTitle = (rank <= 1.5 ? 0.3 : rank <= 3 ? 0.15 : rank <= 6 ? 0.06 : 0.02) + 0.03;
   const pRelegation = rank > n - 3 ? 0.3 : rank > n - 6 ? 0.12 : 0.03;
-  const tier = g.leagues?.playerDivision?.tier ?? 1;
+  const tier = playerLevel(g);
   const pEuro = tier !== 1 ? 0.02 : playsEurope(g, club.id) ? 0.6 : rank <= 4 ? 0.35 : rank <= 7 ? 0.15 : 0.04;
   return { depthRank, starter, keeperOrDef, attacker, expect: { expApps, expGoals, expCleanSheets, pTitle, pRelegation, pEuro } };
 }

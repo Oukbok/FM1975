@@ -4,6 +4,7 @@
 //   Reiter: Übersicht · Kader · Jugend · Verein · Transfers · Historie (in src/components/club/) · Erfolge (views/verein/trophies/)
 // Geöffnet wird es überall über <ClubLink> (club/ClubProfileContext.tsx).
 // =============================================================================
+import { isDdrClub } from '../game/ddrHome';
 import { CountryFlag } from './competition/CountryFlag';
 import { useEffect, useState } from 'react';
 import { buildClubProfile } from '../game/clubProfile';
@@ -59,7 +60,7 @@ export default function ClubModal({ g, clubId, nonce, onChange, onClose, onBack,
   };
   const props = { g, d, openPlayer: setSelPlayer };
   // Landesflagge im Kopf (Klick öffnet das Länderprofil): Ausland aus dem Profil, DDR-Vereine bis zur Einheit, sonst Heimatland.
-  const flagKey = d.foreign?.countryKey ?? (clubId.startsWith('ddr') && g.calendar.currentDate < '1990-10-03' ? 'DDR' : homeCountryKey(g));
+  const flagKey = d.foreign?.countryKey ?? (isDdrClub(g, clubId) && g.calendar.currentDate < '1990-10-03' ? 'DDR' : homeCountryKey(g));
 
   return (
     <div className="modal-overlay cmx-overlay" onClick={onClose} style={zIndex ? { zIndex } : undefined}>

@@ -13,6 +13,8 @@ import { lowerTierPlan, type LowerDivPlan } from '../../game/lowerTierStart';
 import type { SimClub } from '../../engine/leagues';
 import { activeDatasetId, datasetKits } from '../../data/dataset/apply';
 import { composeHome, type ComposedHome } from '../../game/worldCompose';
+import { ddrStartSeeds } from '../../game/ddrHome';
+import { DDR_LIGA_ID, DDR_OBERLIGA_ID } from '../../data/ddr';
 import { regionOf, sameRegion, seasonExpectation } from '../../engine/environment';
 import { Club } from '../../types';
 import { structureForSeason } from '../../data/reforms';
@@ -75,6 +77,10 @@ function planOf(cc: string, year: number): LowerDivPlan[] {
 /** Wählbare Ligen eines Landes im Startjahr (Weltdaten; sonst die drei Ligen von 1975) –
  *  in Deutschland auch die Ligen ab der 3. Ebene (3. Liga, Regionalligen, NOFV-Oberliga). */
 export function leaguesFor(cc = 'ger', year = 1975): { key: LeagueKey; name: string; tier: number; note: string }[] {
+  if (cc === 'gdr') return [
+    { key: DDR_OBERLIGA_ID, name: 'DDR-Oberliga', tier: 1, note: 'Die höchste Spielklasse der DDR. Bis 1991 eigener Weg – danach geht es in den gesamtdeutschen Fußball.' },
+    { key: DDR_LIGA_ID, name: 'DDR-Liga', tier: 2, note: 'Unterbau der Oberliga (im Spiel eine Staffel der Stärksten). Zwei Aufsteiger je Saison.' },
+  ];
   const comp = compOf(cc, year);
   if (!comp) return LEAGUES;
   const note2 = 'Der lange Weg nach oben: kleines Budget, kleine Stadien.';
@@ -94,6 +100,7 @@ export function leaguesFor(cc = 'ger', year = 1975): { key: LeagueKey; name: str
 export interface BackgroundLevel { tier: number; name: string; staffeln: number; clubs: number | null; teams?: number | null }
 export function backgroundLevels(cc = 'ger', year = 1975): BackgroundLevel[] {
   // Top-Ligen im Ausland (Wunsch Pascal): 3. und 4. Ebene mit historischem Namen (data/leagueTiers.ts), nur Anzeige.
+  if (cc === 'gdr') return [{ tier: 3, name: 'Bezirksligen', staffeln: 15, clubs: null }];
   if (cc !== 'ger') return (historicTiers(cc, year) ?? []).slice(2, 4).map((r, i) => ({ tier: i + 3, name: r.name, staffeln: r.groups, clubs: null, teams: r.teams }));
   const lower = structureForSeason(seasonLabelOf(year)).filter((t) => t.tier >= 3);
   const deepest = lower.reduce((a, t) => Math.max(a, t.tier), 2);
@@ -117,6 +124,11 @@ function secondRaw(s: { id: string; name: string; shortName: string; city: strin
   };
 }
 
+/** DDR-Verein (game/ddrHome.ts): Ansehen/Stadion wie beim Spielstart über buildProClub (Stärke − 6). */
+function ddrRaw(s: SimClub): Raw {
+  return secondRaw({ id: s.id, name: s.name, shortName: s.shortName, city: s.city, primary: s.colors.primary, secondary: s.colors.secondary, strength: s.strength });
+}
+
 function lowerRaw(s: SimClub, tier: number): Raw {
   const lv = lowerTierLevel(s.strength, tier);
   return {
@@ -128,6 +140,11 @@ function lowerRaw(s: SimClub, tier: number): Raw {
 
 /** Alle Vereine einer wählbaren Liga. */
 function rawLeague(key: LeagueKey, cc = 'ger', year = 1975): Raw[] {
+  if (cc === 'gdr') {
+    const s = ddrStartSeeds(year);
+    const ober = key === DDR_OBERLIGA_ID;
+    return (ober ? s.ober : key === DDR_LIGA_ID ? s.liga : []).map((c) => ({ ...ddrRaw(c), tier: ober ? 1 : 2 }));
+  }
   const comp = compOf(cc, year);
   const low = comp ? planOf(cc, year).find((d) => d.meta.id === key) : undefined;
   if (low) return low.clubs.map((c) => lowerRaw(c, low.meta.tier));
@@ -157,12 +174,12 @@ export function leaguePreview(key: LeagueKey, cc = 'ger', year = 1975): ClubPrev
     const capPct = allCaps.filter((x) => x < c.capacity).length / Math.max(1, allCaps.length - 1);
     const fin = Math.round(2 * (0.5 + 4.5 * (0.6 * repPct + 0.4 * capPct) - 0.5 * Math.max(0, (c.tier ?? 1) - 1))) / 2;
     const rivals = everyone
-      .filter((o) => o.id !== c.id && (cc === 'ger' ? sameRegion(o.city, c.city) : o.city === c.city))
+      .filter((o) => o.id !== c.id && (cc === 'ger' || cc === 'gdr' ? sameRegion(o.city, c.city) : o.city === c.city))
       .sort((a, b) => Number(b.city === c.city) - Number(a.city === c.city) || b.reputation - a.reputation)
       .slice(0, 3).map((o) => o.name);
     return {
       ...c, rank, size,
-      ...(cc === 'ger' ? {} : { region: c.city }),
+      ...(cc === 'ger' || cc === 'gdr' ? {} : { region: c.city }),
       expectation: seasonExpectation(rank, size, c.tier),
       role, finance: Math.max(0.5, Math.min(5, fin)), rivals,
     };

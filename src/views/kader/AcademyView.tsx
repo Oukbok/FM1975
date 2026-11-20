@@ -4,6 +4,7 @@
 // um Talente, Akademien der Liga. Rechnung: engine/youthAcademy.ts,
 // Spielablauf: game/youthInvest.ts.
 // =============================================================================
+import { playerLevel } from '../../game/state';
 import Icon from '../../components/Icon';
 import { ClubLink } from '../../components/club/ClubLink';
 import { lastRevenue } from '../../engine/clubEconomy';
@@ -47,9 +48,9 @@ export function AcademyView({ g, onChange }: { g: Game; onChange: () => void }) 
   const scale = economyScale(year);
   const target = targetQuality(club, inv, year);
   const annual = annualCostBase(inv);
-  const revenueBase = lastRevenue(club, year, g.leagues?.playerDivision?.tier ?? 1) / scale;
+  const revenueBase = lastRevenue(club, year, playerLevel(g)) / scale;
   const act = (fn: () => unknown) => { fn(); onChange(); };
-  const tier = g.leagues?.playerDivision?.tier ?? 1;
+  const tier = playerLevel(g);
   const duty = nlzDutyYear(tier);
   const missing = nlzMissing(club, inv);
   const clubs = leagueClubs(g);

@@ -16,6 +16,7 @@
 //      nächsten Fenster. Ab Bosman können Spieler mit auslaufendem Vertrag
 //      (≤ 6 Monate) ohne Vereinsgespräch einen Vorvertrag unterschreiben.
 // =============================================================================
+import { ddrTransferBlocker } from './ddrHome';
 import { registrationBlocker } from './registrationGame';
 import { wageLimitFactor } from './budgetPlan';
 import { CalendarEngine } from '../engine/calendar';
@@ -135,7 +136,10 @@ export function talkBlocker(g: Game, p: Player): string | null {
   if (p.isYouth) return 'Jugendspieler holst du über das Jugend-Scouting.';
   // Spieler ausländischer Vereine sind verhandelbar (Wunsch Pascal) – Verkäufer über die Weltvereine (sellerOf).
   if (!g.clubs[p.clubId] && !sellerOf(g, p.clubId)) return 'Sein Verein ist nicht erreichbar.';
-  if (p.clubId.startsWith('ddr') && yearOf(g.calendar.currentDate) < 1990) return 'Spieler aus der DDR-Oberliga dürfen nicht in den Westen wechseln.';
+  // DDR-Start (game/ddrHome.ts): umgekehrte Sperre – vor dem Mauerfall nur Spieler aus der DDR.
+  const ddrBlock = ddrTransferBlocker(g, p.clubId, g.calendar.currentDate);
+  if (ddrBlock) return ddrBlock;
+  if (!g.ddrHome && p.clubId.startsWith('ddr') && yearOf(g.calendar.currentDate) < 1990) return 'Spieler aus der DDR-Oberliga dürfen nicht in den Westen wechseln.';
   if ((isWorldPlayer(p) || isForeignId(p.clubId)) && yearOf(g.calendar.currentDate) < 1989 && EAST_BLOC.has(worldClubs(g).get(p.clubId)?.country ?? '')) return 'Spieler aus dem Ostblock dürfen vor 1989 nicht in den Westen wechseln.';
   if (p.loan) return 'Er ist nur ausgeliehen.';
   if (hasTransferBan(g.clubs[g.managedClubId], g.season)) return 'Transfersperre (Lizenzauflage).';

@@ -4,6 +4,7 @@
 // Vereins-Historie (clubRecords), Pokalrunden aus dem Liga-Archiv, Titel aus
 // trophyCabinet.ts, Ansehen/Saisonziele aus den Karriere-Stationen.
 // =============================================================================
+import { playerLevel } from './state';
 import { euroCompName } from '../data/euroFormats';
 type EuroCompId = 'ec' | 'cwc' | 'uefa';
 import { seasonStartYear } from '../data/timeline';
@@ -146,7 +147,7 @@ export function careerData(g: Game): CareerData | null {
   const row = g.table.rows.find((r) => r.clubId === me);
   if (!log.seasons[g.season]) {
     seasons.push({
-      season: g.season, tier: g.leagues?.playerDivision?.tier, league: g.leagues?.playerDivision?.name, pos: row?.position, size: g.table.rows.length,
+      season: g.season, tier: playerLevel(g), league: g.leagues?.playerDivision?.name, pos: row?.position, size: g.table.rows.length,
       goal: club.boardExpectation, ...seasonCups(g, g.season, me, true), titles: [], rep: c.rep, L: liveRec.L, live: true,
       coach: c.coaches?.filter((e) => !e.to).pop()?.name,
     });

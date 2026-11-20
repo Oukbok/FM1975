@@ -1,6 +1,7 @@
 // Gemeinsamer Ablauf „Neues Spiel“ für die Oberflächentests (Assistent in sechs Schritten:
 // Manager · Spielmodus · Spielwelt · Verein · Ligensystem · Willkommen).
-//   startNewGame(page, { name, clubIndex, league, speed, shots, keepBriefing, career, year, national })
+//   startNewGame(page, { name, clubIndex, league, speed, shots, keepBriefing, career, year, national, country })
+//   country = Ländercode (z. B. 'gdr' für die DDR, 'eng') → im Schritt Verein das Land wählen
 //   national = Kürzel (z. B. 'NED') → „Zusätzlich Nationaltrainer“ an + Nation wählen
 export async function startNewGame(page, opts = {}) {
   const { name = 'Test', clubIndex = 0, league, speed = '300', shots, career = false, year } = opts;
@@ -26,6 +27,10 @@ export async function startNewGame(page, opts = {}) {
   await shot('3_spielwelt');
   await next();
   // 4) Verein
+  if (opts.country) {
+    await page.click(`.ng-countries [data-cc="${opts.country}"]`);
+    await page.waitForTimeout(150);
+  }
   if (career) {
     await page.click(`.ng-offer >> nth=${clubIndex}`);
   } else {

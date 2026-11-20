@@ -169,6 +169,9 @@ export interface Game {
   startYear?: number;
   /** Heimatland (data/world/countries.ts); fehlt = 'ger'. */
   homeCountry?: string;
+  /** Start in der DDR (game/ddrHome.ts): Spielerliga ist DDR-Oberliga/DDR-Liga, Deutschland (BRD) läuft simuliert;
+   *  entfällt mit der Wiedervereinigung 1991/92 (danach gesamtdeutsch, Heimatland Deutschland). Fehlt = kein DDR-Start. */
+  ddrHome?: true;
   /** Abgelöst (nur ältere Spielstände): frühere „Spiel für Spiel“-Länder; `retireFullCountries` entfernt sie beim Laden. */
   fullCountries?: string[];
   /** Abgelöst (nur ältere Spielstände), siehe `fullCountries`. */
@@ -230,3 +233,9 @@ export function hashSeed(s: string): number {
   }
   return h >>> 0;
 }
+
+/** Ligaebene der Spielerliga für Finanzen/Ziele/Kader: DDR-Oberliga (101) = 1, DDR-Liga (102) = 2, sonst wie gespeichert. */
+export const playerLevel = (g: { leagues?: { playerDivision?: { tier: number } } }): number => {
+  const t = g.leagues?.playerDivision?.tier ?? 1;
+  return t > 100 && t < 109 ? t - 100 : t;
+};

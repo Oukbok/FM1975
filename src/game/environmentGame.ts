@@ -1,6 +1,7 @@
 // =============================================================================
 // Vereinsumfeld im Spielablauf (monatlich + Saisonwechsel). Siehe engine/environment.ts.
 // =============================================================================
+import { playerLevel } from './state';
 import { boardSeatSwing } from './corporateGame';
 import { fanStandMood } from '../engine/fanStands';
 import { legendStandMood } from './standNames';
@@ -131,7 +132,7 @@ export function setSeasonGoal(g: Game, date: string): void {
   const ranked = [...league].sort((a, b) => strength(b) - strength(a));
   // Geldgeber (Ausgliederung/Investor) erwarten mehr: Ziel wie ein stärkerer Kader.
   const rank = ranked.findIndex((c) => c.id === club.id) + 1;
-  const tier = g.leagues?.playerDivision?.tier ?? 1;
+  const tier = playerLevel(g);
   club.boardExpectation = seasonExpectation(Math.max(1, rank - expectationShift(club)), ranked.length, tier);
   pushMessage(g.messages, makeMessage({
     date, category: 'board', from: 'Vorstand',

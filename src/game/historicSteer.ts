@@ -17,6 +17,7 @@
 //   • Auslandsvereine (engine/world.ts): natürliche Größe/Größe Richtung Kurve.
 // Aufrufe aus game/season.ts (startNextSeason).
 // =============================================================================
+import { playerLevel } from './state';
 import { Game } from './state';
 import { book } from '../engine/finances';
 import { brandFromReputation, ensureBrand, isLeagueClub, lastRevenue } from '../engine/clubEconomy';
@@ -99,7 +100,7 @@ export function historicSeasonClose(g: Game, year: number): void {
 export function historicMoney(g: Game, year: number, date: string): void {
   const w = weightsOf(g);
   if (!w) return;
-  const tier = g.leagues?.playerDivision?.tier ?? 1;
+  const tier = playerLevel(g);
   // Bezug ist der Medianumsatz der Liga (nicht der eigene Umsatz): sonst würde der Zufluss
   // über den Umsatz des Vorjahres immer weiter wachsen.
   const league = Object.values(g.clubs).filter(isLeagueClub);
@@ -134,7 +135,7 @@ export function historicSimClubs(g: Game, year: number): void {
   // Maßstab der höchsten Liga (West bzw. DDR-Oberliga): Großklubs gehören dorthin, auch
   // wenn sie gerade tiefer spielen. Spielt deine Liga oben, zählt die mittlere Kaderstärke.
   const topSim = (ddr: boolean) => Object.values(g.simClubs).filter((s) => (ddr ? s.tier === 101 : s.tier === 1)).map((s) => s.strength);
-  const fullTop = g.leagues?.playerDivision?.tier === 1
+  const fullTop = playerLevel(g) === 1
     ? Object.values(g.clubs).filter((c) => isLeagueClub(c)).map((c) => {
       const o = c.playerIds.map((id) => g.players[id]?.overall ?? 50);
       return o.length ? o.reduce((a, b) => a + b, 0) / o.length : 60;

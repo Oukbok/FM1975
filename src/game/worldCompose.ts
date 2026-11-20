@@ -182,9 +182,10 @@ export function poolClubsOf(cc: string, year: number, taken: Set<string>, tier: 
   return out;
 }
 
-/** Länder, die im Jahr als Heimatland wählbar sind (Deutschland immer, sonst mit Saisondaten). */
+/** Länder, die im Jahr als Heimatland wählbar sind (Deutschland immer, DDR bis 1990, sonst mit Saisondaten). */
 export function playableCountries(year: number): string[] {
-  return WORLD_COUNTRIES.filter((c) => countryExists(c, year) && c.cc !== 'gdr' && (c.cc === 'ger' || !!worldSeason(c.cc, year))).map((c) => c.cc);
+  // DDR bis 1990/91 (Wunsch Pascal; game/ddrHome.ts) – Oberliga/DDR-Liga aus den Weltdaten oder den Vereinen von 1975.
+  return WORLD_COUNTRIES.filter((c) => countryExists(c, year) && (c.cc === 'ger' || c.cc === 'gdr' || !!worldSeason(c.cc, year))).map((c) => c.cc);
 }
 
 /** DDR-Ligen einer Saison aus den Weltdaten (`gdr`), sonst null (= Vereine von 1975). */
@@ -204,7 +205,17 @@ export function ddrSeedsFor(year: number): { ober: SimClub[]; liga: SimClub[] } 
   }).filter(Boolean) as SimClub[];
   const ober = mk(row.t1, 101);
   // DDR-Liga in mehreren Staffeln: das Spiel führt eine Staffel (16 Stärkste nach der Vorsaison).
-  const liga = mk([...(row.t2 ?? []), ...(row.t2b ?? [])], 102).sort((a, b) => b.strength - a.strength || a.id.localeCompare(b.id)).slice(0, 16);
+  // Datenlücke (DDR-Liga 1988–1990 fehlt): Absteiger der Vorsaison + DDR-Liga der nächstälteren Saison.
+  let t2 = [...(row.t2 ?? []), ...(row.t2b ?? [])];
+  if (!t2.length) {
+    const inT1 = new Set(row.t1);
+    for (let d = 1; d <= 6 && !t2.length; d++) {
+      const near = worldSeason('gdr', year - d);
+      if (near?.t2?.length) t2 = [...near.t1, ...near.t2, ...(near.t2b ?? [])].filter((id) => !inT1.has(id));
+    }
+    t2.forEach((id, i) => { if (!share.has(id)) share.set(id, 0.55 + 0.45 * (i / Math.max(1, t2.length - 1))); });
+  }
+  const liga = mk(t2, 102).sort((a, b) => b.strength - a.strength || a.id.localeCompare(b.id)).slice(0, 16);
   if (ober.length % 2) ober.pop();
   if (liga.length % 2) liga.pop();
   const oberIds = new Set(ober.map((s) => s.id));

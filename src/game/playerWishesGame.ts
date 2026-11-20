@@ -6,6 +6,7 @@
 // Rivale, wo ist er zu Hause, wie lange ist er schon im Verein, spielt der
 // Käufer international, wie dicht ist seine Position besetzt?
 // =============================================================================
+import { playerLevel } from './state';
 import { returnLoan } from './loanLife';
 import { GROUP_OF } from '../engine/aiManager';
 import { bookTransfer } from '../engine/finances';
@@ -83,7 +84,7 @@ export function playsEurope(g: Game, clubId: string): boolean {
   const rows = g.table?.rows ?? [];
   const pos = rows.findIndex((r) => r.clubId === clubId) + 1;
   const played = rows[0]?.played ?? 0;
-  return pos > 0 && pos <= 4 && played >= 8 && (g.leagues?.playerDivision?.tier ?? 1) === 1;
+  return pos > 0 && pos <= 4 && played >= 8 && (playerLevel(g)) === 1;
 }
 
 /** Spieler seiner Positionsgruppe, die beim Käufer besser sind. */
@@ -106,7 +107,7 @@ export function wishCtxFor(g: Game, p: Player, buyer: Club, o: WishOpts = {}): W
   const rivHome = pe.homeClubId && g.clubs[pe.homeClubId] ? rivalsOf(g, pe.homeClubId) : [];
   return {
     year: yearOf(today), current, buyer,
-    buyerTier: o.buyerTier ?? (g.leagues?.playerDivision?.tier ?? 1),
+    buyerTier: o.buyerTier ?? (playerLevel(g)),
     buyerEuro: playsEurope(g, buyer.id),
     depthRank: depthRankAt(g, p, buyer),
     rivalOfCurrent: rivCur.slice(0, 1).includes(buyer.id),
@@ -192,7 +193,7 @@ export function contractClausesDaily(g: Game, today: string): void {
   if (!own) return;
   const scale = economyScale(yearOf(today));
   const pos = g.table.rows.findIndex((r) => r.clubId === own.id) + 1;
-  const tier = g.leagues?.playerDivision?.tier ?? 1;
+  const tier = playerLevel(g);
   const end = `${today.slice(0, 4)}-06-30`; // Verträge/Leihen enden am 30.6.
   for (const id of own.playerIds) {
     const p = g.players[id];

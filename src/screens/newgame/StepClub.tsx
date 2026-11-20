@@ -64,7 +64,6 @@ function CountryList({ d, onPick, note }: { d: NewGameDraft; onPick: (cc: string
             <span className="ng-tree-flag"><CountryFlag country={COUNTRY_BY_CC[cc].key} height={14} /></span><span className="rl-name">{COUNTRY_BY_CC[cc].name}</span>
           </button>
         ))}
-        {d.country === 'ger' && d.startYear <= 1990 && <div className="rl-row ng-tree-row off" title="DDR-Vereine sind nicht wählbar; sie spielen im Hintergrund mit."><span className="ng-tree-flag"><CountryFlag country="DDR" height={14} /></span><span className="rl-name">DDR</span><span className="rl-num">nicht wählbar</span></div>}
       </div>
       <p className="ng-note ng-push">{note}</p>
     </section>
@@ -116,7 +115,9 @@ function ManagerPick({ d, set, chooseCountry }: { d: NewGameDraft; set: (p: Part
               </div>
             ))}
           </div>
-          <p className="ng-note">Wählbar sind alle Ligen mit Spielbetrieb – auch 3. Liga und Regionalligen: Deine Liga bekommt beim Start volle Kader, die übrigen laufen simuliert mit.</p>
+          <p className="ng-note">{d.country === 'gdr'
+            ? 'Deine Liga bekommt beim Start volle Kader, die andere DDR-Liga und die Bundesliga laufen simuliert mit. Zur Saison 1991/92 geht es in den gesamtdeutschen Fußball.'
+            : 'Wählbar sind alle Ligen mit Spielbetrieb – auch 3. Liga und Regionalligen: Deine Liga bekommt beim Start volle Kader, die übrigen laufen simuliert mit.'}</p>
         </section>
       ) : (
         <section className="ng-card ng-pick">

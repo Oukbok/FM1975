@@ -37,7 +37,9 @@ function flowText(d: PyrDivision): string[] {
  * bei „abroad“ der Länder-Schlüssel.
  */
 export function LeaguePyramid({ data, mineId, className = '', lock }: { data: PyramidData; mineId?: string; className?: string; lock?: { side: PyramidSide; country?: string } }) {
-  const [side, setSide] = useState<PyramidSide>(lock?.side ?? 'west');
+  // Dein Verein in der DDR (DDR-Start, game/ddrHome.ts) → DDR-Pyramide vorgewählt.
+  const mineInDdr = !!mineId && !!data.ddr.available && data.ddr.levels.flat().some((d) => d.clubs.some((c) => c.id === mineId));
+  const [side, setSide] = useState<PyramidSide>(lock?.side ?? (mineInDdr ? 'ddr' : 'west'));
   const [country, setCountry] = useState<string>(lock?.country ?? data.abroad.find((a) => a.available)?.key ?? '');
   const sys: PyrSystem | undefined = side === 'west' ? data.west : side === 'ddr' ? data.ddr : data.abroad.find((a) => a.key === country) ?? data.abroad[0];
   const [selId, setSelId] = useState<string | undefined>(() => findDiv(sys, mineId)?.id);

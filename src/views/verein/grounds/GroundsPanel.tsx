@@ -2,6 +2,7 @@
 // VEREINSGELÄNDE — Seitenleiste: Lage & Kennzahlen (Fläche, Anreise, Sicherheit,
 // Wirkung, Saisonbilanz, Vorhaben, Lizenz) und die Bauliste je Kategorie.
 // =============================================================================
+import { playerLevel } from '../../../game/state';
 import { useState } from 'react';
 import { Game } from '../../../game/state';
 import { Club, FacilityKey } from '../../../types';
@@ -52,7 +53,7 @@ function Overview({ g, club, gr, year, onChange, onSelect }: Props) {
   const riskD = incidentRisk(gr, year, true, mood);
   const att = groundsAttendanceParts(club, gr, year);
   const moodParts = groundsMoodParts(gr, year, g.calendar.currentDate);
-  const tier = g.leagues?.playerDivision?.tier ?? 1;
+  const tier = playerLevel(g);
   const s = gr.stats;
   const own = plotsOf(club, gr).filter((p) => isOwned(gr, p.id));
   const comfort = stadiumComfort(club, year);
