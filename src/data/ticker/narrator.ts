@@ -10,6 +10,7 @@ import type { Club } from '../../types';
 import { AMBIENCE } from './ambience';
 import { CHANCES } from './chances';
 import { DUELS } from './duels';
+import { ATTR_DUELS } from './attrDuels';
 import { Speaker, type TextCtx } from './grammar';
 import { LEXICON } from './lexicon';
 import { SITUATIONS } from './situations';
@@ -90,7 +91,7 @@ export class Narrator {
 
   constructor(private sim: MatchSim, public opts: NarratorOpts) {
     const seed = ((sim.seed ?? 0) ^ 0x5bd1e995) >>> 0;
-    this.sp = new Speaker({ ...LEXICON, ...CHANCES, ...SITUATIONS, ...AMBIENCE, ...DUELS }, mulberry(seed));
+    this.sp = new Speaker({ ...LEXICON, ...CHANCES, ...SITUATIONS, ...AMBIENCE, ...DUELS, ...ATTR_DUELS }, mulberry(seed));
     this.r = mulberry((seed + 0x9e3779b9) >>> 0);
   }
 
@@ -194,7 +195,8 @@ export class Narrator {
           if (this.rnd() >= 0.7) break;
           // Duell-Art (Engine 2): passender Text mit Verlierer {p} und Gewinner {d}
           const c = this.ctx(ev, { d: this.name(ev.other) || this.randomDefender(other(ev.side!)), p: this.name(ev.player) || this.randomAttacker(ev.side!) });
-          const t = (ev.fail && this.sp.say(`fail_${ev.fail}`, c)) || this.sp.say('fail', c);
+          // Entscheidendes Attribut (engine/match/traits.ts) zuerst: „{d} ist einfach schneller als {p}“
+          const t = (ev.fail && ev.why && this.sp.say(`fail_${ev.fail}_${ev.why}`, c)) || (ev.fail && this.sp.say(`fail_${ev.fail}`, c)) || this.sp.say('fail', c);
           out.push(this.line(ev, t, 'normal', { danger: ev.zone === 'att' || ev.build === 'ecke' ? 2 : 1 }));
           break;
         }
@@ -341,7 +343,8 @@ export class Narrator {
       // Aufbau passend zum Duell: flache Hereingabe, Freistoß-Flanke, gewonnenes Laufduell
       const sym = build === 'flanke' && ch.low ? 'b_flanke_flach' : build === 'flanke' && ch.sp === 'freekick' ? 'b_fk_flanke'
         : build === 'steilpass' && ev.other && this.rnd() < 0.6 ? 'b_steil_lauf' : build === 'konter' && ev.other && this.rnd() < 0.5 ? 'b_konter_lauf' : `b_${build}`;
-      const t = this.sp.say(sym, c) || this.sp.say('b_kurzpass', c);
+      // Hat ein Attribut das Duell davor entschieden (ev.why), erzählt es der Aufbau (data/ticker/attrDuels.ts)
+      const t = (ev.why && this.sp.say(`b_${build}_${ev.why}`, c)) || this.sp.say(sym, c) || this.sp.say('b_kurzpass', c);
       out.push(this.line(ev, t, ch.big ? 'chance' : 'normal', { danger: ch.big ? 2 : 1 }));
       if (ch.big && this.rnd() < 0.45) out.push(this.line(ev, this.sp.say('b_spannung', c), 'chance', { danger: 2 }));
     }
@@ -374,7 +377,7 @@ export class Narrator {
     } else if (ch.type === 'penalty') osym = ch.outcome === 'saved' ? 'o_saved_penalty' : 'o_missed_penalty';
     else if (ch.outcome === 'post') osym = 'o_post';
     else osym = `o_${ch.outcome}`;
-    let otext = this.sp.say(osym, c);
+    let otext = (ev.fin && !ch.ownGoal && ch.type !== 'penalty' && this.sp.say(`o_${ch.outcome}_${ev.fin}`, c)) || this.sp.say(osym, c);
     if (ch.outcome === 'post' && word) otext = otext.replace(word === 'LATTE!' ? /Pfosten!/ : /Latte!/, word === 'LATTE!' ? 'Latte!' : 'Pfosten!');
     const scorer = scored ? `${this.plainName(ev.player)}${ch.type === 'penalty' ? ' (E)' : ch.ownGoal ? ' (ET)' : ''}` : undefined;
     out.push(this.line(ev, otext, scored ? 'goal' : ch.outcome === 'saved' ? 'save' : ch.big ? 'chance' : 'normal', { score: scored ? [h, a] : undefined, hold: scored ? 1.4 : ch.big ? 1.1 : 1, scorer, scorerId: scored && !ch.ownGoal ? ev.player : undefined }));
