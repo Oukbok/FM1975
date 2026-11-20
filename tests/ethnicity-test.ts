@@ -82,7 +82,9 @@ for (let i = 0; i < 400; i++) {
 console.log(`\nJugend 2024 (Deutschland): ${youthDev} von 400 mit abweichender Ethnie und passendem Namen`);
 
 // 3) Einzelfälle der Migration.
-ok(faceForName('Smith', 'ENG', 'westafrika') === 'mitteleuropa', '„Smith“ (ENG, westafrika) → mitteleuropa');
+ok(faceForName('Schneider', 'GER', 'westafrika') === 'mitteleuropa', '„Schneider“ (GER, westafrika) → mitteleuropa');
+// Karibische Familien in England tragen englische Nachnamen (eng_car) → bleibt.
+ok(faceForName('Smith', 'ENG', 'westafrika') === null, '„Smith“ (ENG, westafrika) karibische Familie → bleibt');
 ok(faceForName('Mensah', 'GER', 'mitteleuropa') === 'westafrika', '„Mensah“ (GER) → westafrika');
 ok(faceForName('Yilmaz', 'SUI', 'mitteleuropa') === 'tuerkei', '„Yilmaz“ (SUI) → tuerkei');
 ok(faceForName('Kowalski', 'GER', 'mitteleuropa') === 'osteuropa', '„Kowalski“ (GER) → osteuropa');

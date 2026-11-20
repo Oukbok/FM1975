@@ -8,9 +8,8 @@ import { useLayoutEffect, useRef, useState, type PointerEvent as RPE, type React
 import type { Player, Position } from '../../types';
 import type { Formation } from '../../data/formations';
 import { PITCH_GRID, type GridPoint } from '../../data/pitchGrid';
-import { positionSuitability, suitabilityColor } from '../../engine/positions';
+import { familiarity, positionSuitability } from '../../engine/positions';
 import PitchSVG from './PitchSVG';
-import { PlayerFitness, PlayerFreshness } from '../status';
 import { posGroupClass } from '../../ui/positionBadges';
 
 export interface SlotPreview { slotId: string; x: number; y: number; position: Position; grid: GridPoint | null; swapWith: string | null }
@@ -19,15 +18,17 @@ const isOut = (p: Player) => p.availability !== 'available' || !!p.injury || p.s
 
 function Card({ p, pos, captain, small }: { p: Player; pos: Position; captain: boolean; small?: boolean }) {
   const suit = positionSuitability(p, pos);
+  // Box in der Farbe der Eignung auf der Position (Vertrautheit), nicht der Stärke (Wunsch Pascal).
+  const fam = Math.round(p.positionSkill?.v[pos] ?? familiarity(p, pos) * 100);
+  const famCls = fam >= 90 ? 'f4' : fam >= 70 ? 'f3' : fam >= 50 ? 'f2' : 'f1';
   return (
-    <div className={`lu-card ${small ? 'sm' : ''} ${isOut(p) ? 'out' : ''}`} style={{ borderLeftColor: suitabilityColor(suit) }}>
+    <div className={`lu-card ${small ? 'sm' : ''} ${isOut(p) ? 'out' : ''}`}>
       <div className="lu-card-top">
         <span className={`lu-card-pos ${posGroupClass(pos)}`}>{pos}</span>
         {captain && <span className="lu-cap" title="Kapitän">K</span>}
-        <span className="lu-card-st"><PlayerFreshness p={p} size={13} /><PlayerFitness p={p} size={13} /></span>
-        <span className="lu-card-suit" title="Eignung auf dieser Position">{suit}</span>
+        <span className={`lu-card-suit ${famCls}`} title={`Stärke auf dieser Position ${suit} · Vertrautheit ${fam} %`}>{suit}</span>
       </div>
-      {!small && <FaceThumb p={p} size={40} className="lu-card-head" />}
+      {!small && <FaceThumb p={p} size={50} className="lu-card-head" />}
       <div className="lu-card-name">{small && <FaceThumb p={p} size={16} className="lu-card-face" />}{p.lastName}</div>
     </div>
   );

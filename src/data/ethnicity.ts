@@ -50,12 +50,13 @@ export const HERITAGE: Record<FaceGroup, string[]> = {
 
 /** Engere Wahl je Gastland (Sprache, Kolonialgeschichte, Gastarbeiter). */
 const HOST_HERITAGE: Record<string, Partial<Record<FaceGroup, string[]>>> = {
-  fra: { westafrika: ['fra_af', 'fra_af', 'cmr'], suedeuropa: ['por', 'ita', 'esp'] },
-  bel: { westafrika: ['cmr', 'fra_af'], suedeuropa: ['ita', 'esp'] },
+  // Namen der Ethnien im Land (Wunsch Pascal): Karibik/Antillen, Maghreb, Suriname (data/namePoolsXL.ts).
+  fra: { westafrika: ['fra_af', 'fra_af', 'fra_car', 'cmr', 'civ'], nordafrika: ['fra_mag', 'fra_mag', 'alg', 'mar', 'tun'], suedeuropa: ['por', 'ita', 'esp'] },
+  bel: { westafrika: ['cod', 'cmr', 'fra_af'], nordafrika: ['mar', 'mar', 'fra_mag'], suedeuropa: ['ita', 'esp'] },
   sui: { westafrika: ['cmr', 'fra_af', 'nga'], balkan: ['yug', 'cro', 'srb', 'ger_yu'], suedeuropa: ['ita', 'por', 'esp'] },
-  eng: { westafrika: ['nga', 'gha', 'nga'], suedeuropa: ['ita', 'gre', 'por'] },
+  eng: { westafrika: ['eng_car', 'eng_car', 'nga', 'gha'], suedeuropa: ['ita', 'gre', 'por'], nordafrika: ['mar', 'egy'] },
   sco: { westafrika: ['nga', 'gha'] },
-  ned: { westafrika: ['gha', 'nga'] },
+  ned: { westafrika: ['ned_sur', 'ned_sur', 'ned_sur', 'gha'], nordafrika: ['mar', 'mar', 'tun'] },
   aut: { balkan: ['yug', 'cro', 'srb', 'ger_yu'], tuerkei: ['tur', 'ger_tr'] },
   ger_modern: { westafrika: ['ger_af', 'gha', 'nga'], tuerkei: ['ger_tr'], osteuropa: ['ger_pl'], suedeuropa: ['ger_it'], balkan: ['ger_yu'] },
   swe: { balkan: ['yug', 'cro', 'srb'] },

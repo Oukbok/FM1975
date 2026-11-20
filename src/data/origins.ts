@@ -1,6 +1,9 @@
 import { BLOCKED_NAMES, EXTRA_NAMES } from './namePools';
 import { MORE_NAMES } from './namePoolsMore';
 import { FIRST_BY_ERA, type FirstNameEra } from './nameEras';
+import { XL_NEW_ORIGINS, XL_WEST, type XLNames } from './namePoolsXL';
+import { XL_SOUTH_EAST } from './namePoolsXL2';
+import { XL_WORLD } from './namePoolsXL3';
 // =============================================================================
 // Herkünfte: Namenslisten, Nationalität und Gesichtsgruppe (für spätere Porträts).
 // Der Ausländeranteil und die Herkunftsmischung ändern sich je Jahrzehnt.
@@ -302,6 +305,37 @@ for (const [id, extra] of [...Object.entries(EXTRA_NAMES), ...Object.entries(MOR
 for (const [id, eras] of Object.entries(FIRST_BY_ERA)) {
   const o = ORIGINS[id];
   if (o && !o.firstByEra) o.firstByEra = eras.map(([y, n]) => [y, [...new Set(n)]] as FirstNameEra);
+}
+
+// -----------------------------------------------------------------------------
+// Vierte Stufe der Namenspools (Wunsch Pascal: Namen wiederholten sich zu oft;
+// data/namePoolsXL*.ts). Neue Herkünfte für Ethnien im Land (Karibik, Maghreb,
+// Suriname) anlegen; Nachnamen/Grundvornamen ohne Dubletten anhängen; Vornamen
+// je Geburtsjahr: Stufen = Vereinigung der alten und neuen Stufenjahre, jede Stufe
+// enthält die bisher dort geltenden Namen plus die neuen der Zeit (nichts fällt weg).
+// -----------------------------------------------------------------------------
+for (const [id, n] of Object.entries(XL_NEW_ORIGINS)) {
+  if (ORIGINS[id]) continue;
+  ORIGINS[id] = { id, nationality: n.nationality, face: n.face as FaceGroup, first: [...n.first], last: [...n.last] };
+  if (n.eras) ORIGINS[id].firstByEra = n.eras.map(([y, l]) => [y, [...l]] as FirstNameEra);
+}
+function activeAt(eras: FirstNameEra[] | [number, string[]][], y: number): string[] {
+  let cur: string[] = [];
+  for (const [from, names] of eras) if (from <= y) cur = names;
+  return cur;
+}
+export function mergeXL(o: Origin, x: XLNames): void {
+  if (x.last) o.last = [...new Set([...o.last, ...x.last])];
+  if (x.first) o.first = [...new Set([...o.first, ...x.first])];
+  if (!x.eras?.length) return;
+  const old = o.firstByEra ?? [];
+  if (!old.length) { o.firstByEra = x.eras.map(([y, l]) => [y, [...new Set(l)]] as FirstNameEra); o.first = [...new Set([...o.first, ...x.eras.flatMap(([, l]) => l)])]; return; }
+  const years = [...new Set([...old.map(([y]) => y), ...x.eras.map(([y]) => y)])].sort((a, b) => a - b);
+  o.firstByEra = years.map((y) => [y, [...new Set([...activeAt(old, y), ...activeAt(x.eras!, y)])]] as FirstNameEra);
+}
+for (const [id, x] of [...Object.entries(XL_WEST), ...Object.entries(XL_SOUTH_EAST), ...Object.entries(XL_WORLD)]) {
+  const o = ORIGINS[id];
+  if (o) mergeXL(o, x);
 }
 
 // -----------------------------------------------------------------------------
